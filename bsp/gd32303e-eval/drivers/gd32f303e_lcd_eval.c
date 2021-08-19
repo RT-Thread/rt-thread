@@ -1,21 +1,51 @@
 /*!
-    \file  gd32f303e_lcd_eval.c
-    \brief LCD driver functions
+    \file    gd32f303e_lcd_eval.c
+    \brief   LCD driver functions
+
+    \version 2021-03-23, V2.0.0, demo for GD32F30x
 */
 
 /*
-    Copyright (C) 2017 GigaDevice
+    Copyright (c) 2021, GigaDevice Semiconductor Inc.
 
-    2017-05-19, V1.0.0, demo for GD32F30x
+    Redistribution and use in source and binary forms, with or without modification, 
+are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice, this 
+       list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
+       and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
+       specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+OF SUCH DAMAGE.
 */
 
 #include "gd32f30x.h"
 #include "gd32f303e_lcd_eval.h"
 #include "lcd_font.h"
 
+#define LCD_ILI9320       0x9320
+#define LCD_ILI9325       0x9325
+
+#define ABS(X)  ((X) > 0 ? (X) : -(X))
+
+uint16_t device_code;
+
 /*!
     \brief      lcd peripheral initialize
-    \param[in]  none
+    \param[in]  none 
     \param[out] none
     \retval     none
 */
@@ -37,15 +67,15 @@ void exmc_lcd_init(void)
     gpio_init(GPIOD, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1| GPIO_PIN_8 | GPIO_PIN_9 |
                                                          GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15);
 
-    /* PE7(EXMC_D4), PE8(EXMC_D5), PE9(EXMC_D6), PE10(EXMC_D7), PE11(EXMC_D8), PE12(EXMC_D9),
+    /* PE7(EXMC_D4), PE8(EXMC_D5), PE9(EXMC_D6), PE10(EXMC_D7), PE11(EXMC_D8), PE12(EXMC_D9), 
        PE13(EXMC_D10), PE14(EXMC_D11), PE15(EXMC_D12) */
-    gpio_init(GPIOE, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 |
-                                                         GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 |
+    gpio_init(GPIOE, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | 
+                                                         GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | 
                                                          GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
 
-    /* configure PE2(EXMC_A23) */
+    /* configure PE2(EXMC_A23) */ 
     gpio_init(GPIOE, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_2);
-
+    
     /* configure NOE and NWE */
     gpio_init(GPIOD, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_4 | GPIO_PIN_5);
 
@@ -56,9 +86,9 @@ void exmc_lcd_init(void)
     lcd_timing_init_struct.syn_data_latency = EXMC_DATALAT_2_CLK;
     lcd_timing_init_struct.syn_clk_division = EXMC_SYN_CLOCK_RATIO_DISABLE;
     lcd_timing_init_struct.bus_latency = 2;
-    lcd_timing_init_struct.asyn_data_setuptime = 10;
-    lcd_timing_init_struct.asyn_address_holdtime = 2;
-    lcd_timing_init_struct.asyn_address_setuptime = 5;
+    lcd_timing_init_struct.asyn_data_setuptime = 18;
+    lcd_timing_init_struct.asyn_address_holdtime = 3;
+    lcd_timing_init_struct.asyn_address_setuptime = 8;
 
     lcd_init_struct.norsram_region = EXMC_BANK0_NORSRAM_REGION1;
     lcd_init_struct.write_mode = EXMC_ASYN_WRITE;
@@ -106,7 +136,7 @@ uint16_t lcd_register_read(uint8_t register_id)
 {
     uint16_t data;
     *(__IO uint16_t *) (BANK0_LCD_C)= register_id;
-    data = *(__IO uint16_t *) (BANK0_LCD_D);
+    data = *(__IO uint16_t *) (BANK0_LCD_D); 
     return  data;
 }
 
@@ -119,7 +149,7 @@ uint16_t lcd_register_read(uint8_t register_id)
 void lcd_command_write(uint16_t value)
 {
     /* write 16-bit index, then write reg */
-    *(__IO uint16_t *) (BANK0_LCD_D) = value;
+    *(__IO uint16_t *) (BANK0_LCD_C) = value;
 }
 
 /*!
@@ -154,13 +184,13 @@ void lcd_gram_write(uint16_t rgb_code)
 uint16_t lcd_gram_read(void)
 {
   uint16_t data;
-
+    
   /* write GRAM register (R22h) */
   *(__IO uint16_t *) (BANK0_LCD_C) = 0x0022;
   /* dummy read (invalid data) */
-  *(__IO uint16_t *) (BANK0_LCD_D);
-
   data = *(__IO uint16_t *) (BANK0_LCD_D);
+
+  data = *(__IO uint16_t *) (BANK0_LCD_D); 
   return data;
 }
 
@@ -172,9 +202,12 @@ uint16_t lcd_gram_read(void)
 */
 void lcd_init(void)
 {
-    uint16_t i;
+    __IO uint16_t i;
 
-    if(1){    /*!< if(device_code == 0x8989) */
+    /* read the LCD controller device code */
+    device_code = lcd_register_read(0x0000);
+
+    if(0x8989 == device_code){             // SSD1289
         lcd_register_write(0x0000,0x0001);
         lcd_register_write(0x0003,0xA8A4);
         lcd_register_write(0x000C,0x0000);
@@ -216,10 +249,59 @@ void lcd_init(void)
         lcd_register_write(0x0025,0x8000);
         lcd_register_write(0x004e,0);
         lcd_register_write(0x004f,0);
+    }else if((0x9320 == device_code) || (0x9300 == device_code)){    //ILI9320
+        lcd_register_write(0x01,0x0100);         //driver output control
+        lcd_register_write(0x02,0x0700);         //lcd driver waveform control
+        lcd_register_write(0x03,0x1020);         //entry mode set
+
+        lcd_register_write(0x04,0x0000);         //resizing control
+        lcd_register_write(0x08,0x0202);         //display control 2
+        lcd_register_write(0x09,0x0000);         //display control 3
+        lcd_register_write(0x0a,0x0000);         //frame cycle control
+        lcd_register_write(0x0c,(1<<0));         //extern display interface control 1
+        lcd_register_write(0x0d,0x0000);         //frame maker position
+        lcd_register_write(0x0f,0x0000);         //extern display interface control 2
+
+        for(i=50000;i>0;i--);
+        lcd_register_write(0x07,0x0101);         //display control
+        for(i=50000;i>0;i--);
+
+        lcd_register_write(0x10,(1<<12)|(0<<8)|(1<<7)|(1<<6)|(0<<4));        //power control 1
+        lcd_register_write(0x11,0x0007);                                     //power control 2
+        lcd_register_write(0x12,(1<<8)|(1<<4)|(0<<0));                       //power control 3
+        lcd_register_write(0x13,0x0b00);                                     //power control 4
+        lcd_register_write(0x29,0x0000);                                     //power control 7
+        lcd_register_write(0x2b,(1<<14)|(1<<4));
+        lcd_register_write(0x50,0);              //set x start
+        lcd_register_write(0x51,239);            //set x end
+        lcd_register_write(0x52,0);              //set y start
+        lcd_register_write(0x53,319);            //set y end
+
+        lcd_register_write(0x60,0x2700);         //driver output control
+        lcd_register_write(0x61,0x0001);         //driver output control
+        lcd_register_write(0x6a,0x0000);         //vertical srcoll control
+
+        lcd_register_write(0x80,0x0000);         //display position? partial display 1
+        lcd_register_write(0x81,0x0000);         //ram address start? partial display 1
+        lcd_register_write(0x82,0x0000);         //ram address end-partial display 1
+        lcd_register_write(0x83,0x0000);         //display position? partial display 2
+        lcd_register_write(0x84,0x0000);         //ram address start? partial display 2
+        lcd_register_write(0x85,0x0000);         //ram address end? partial display 2
+
+        lcd_register_write(0x90,(0<<7)|(16<<0)); //frame cycle control
+        lcd_register_write(0x92,0x0000);         //panel interface control 2
+        lcd_register_write(0x93,0x0001);         //panel interface control 3
+        lcd_register_write(0x95,0x0110);         //frame cycle control
+        lcd_register_write(0x97,(0<<8));
+        lcd_register_write(0x98,0x0000);         //frame cycle control
+        for(i=50000;i>0;i--);
+        lcd_register_write(0x07,0x0173);
+        for(i=50000;i>0;i--);
+
     }else{
         return;
     }
-
+    
     for(i=50000;i>0;i--);
 }
 
@@ -232,9 +314,13 @@ void lcd_init(void)
 */
 void lcd_cursor_set(uint16_t x,uint16_t y)
 {
-    lcd_register_write(0x004e,x);
-    lcd_register_write(0x004f,y);
-
+    if(0x8989 == device_code){             // SSD1289
+        lcd_register_write(0x004e, x);
+        lcd_register_write(0x004f, y);
+    }else if((0x9320 == device_code) || (0x9300 == device_code)){    //ILI9320
+        lcd_register_write(0x20, x);
+        lcd_register_write(0x21, y);
+    }
 }
 
 /*!
@@ -246,11 +332,20 @@ void lcd_cursor_set(uint16_t x,uint16_t y)
 void lcd_clear(uint16_t color)
 {
     uint32_t index=0;
-    lcd_cursor_set(0,0);
-    /* prepare to write GRAM */
-    lcd_gram_write_prepare();
-    for(index=0;index<76800;index++){
-        *(__IO uint16_t *) (BANK0_LCD_D) = color;
+    if(0x8989 == device_code){             // SSD1289
+        lcd_cursor_set(0,0);
+        /* prepare to write GRAM */
+        lcd_gram_write_prepare();
+        for(index=0; index<LCD_PIXEL_WIDTH*LCD_PIXEL_HEIGHT; index++){
+            *(__IO uint16_t *) (BANK0_LCD_D) = color;
+        }
+    }else if((0x9320 == device_code) || (0x9300 == device_code)){    //ILI9320
+        lcd_register_write(0x20, 0);
+        lcd_register_write(0x21, 0);
+        lcd_command_write(0x22);
+        for(index=0; index<LCD_PIXEL_WIDTH*LCD_PIXEL_HEIGHT; index++){
+            *(__IO uint16_t *) (BANK0_LCD_D) = color;
+        }
     }
 }
 
@@ -264,12 +359,18 @@ void lcd_clear(uint16_t color)
 */
 void lcd_point_set(uint16_t x,uint16_t y,uint16_t point)
 {
-    if ((x > 240)||(y > 320)){
+    if ((x > LCD_PIXEL_HEIGHT)||(y > LCD_PIXEL_WIDTH)){
         return;
     }
-    lcd_cursor_set(x,y);
-    lcd_gram_write_prepare();
-    lcd_gram_write(point);
+    if(0x8989 == device_code){             // SSD1289
+        lcd_cursor_set(x,y);
+        lcd_gram_write_prepare();
+        lcd_gram_write(point);
+    }else if((0x9320 == device_code) || (0x9300 == device_code)){    //ILI9320
+        lcd_register_write(0x20, x);
+        lcd_register_write(0x21, y);
+        lcd_register_write(0x22, point);
+    }
 }
 
 /*!
@@ -277,16 +378,16 @@ void lcd_point_set(uint16_t x,uint16_t y,uint16_t point)
     \param[in]  x: the row-coordinate
     \param[in]  y: the column-coordinate
     \param[out] none
-    \retval     GRAM value of point
+    \retval     GRAM value of point 
 */
 uint16_t lcd_point_get(uint16_t x,uint16_t y)
 {
     uint16_t data;
-
-    if ((x > 240)||(y > 320)){
+    
+    if ((x > LCD_PIXEL_HEIGHT)||(y > LCD_PIXEL_WIDTH)){
         return 0;
     }
-
+    
     lcd_cursor_set(x,y);
     data = lcd_gram_read();
 
@@ -304,12 +405,22 @@ uint16_t lcd_point_get(uint16_t x,uint16_t y)
 */
 void lcd_windows_set(uint16_t start_x,uint16_t start_y,uint16_t end_x,uint16_t end_y)
 {
-    lcd_cursor_set(start_x, start_y);
+    if(0x8989 == device_code){             // SSD1289
+        lcd_register_write(0x0044, start_x + (end_x<<8));
+        lcd_register_write(0x0045, start_y);
+        lcd_register_write(0x0046, end_y);
+        
+        lcd_cursor_set(start_x, start_y);
+        lcd_gram_write_prepare();
+    }else if((0x9320 == device_code) || (0x9300 == device_code)){    //ILI9320
+        lcd_register_write(0x0050, start_x);
+        lcd_register_write(0x0052, start_y);
+        lcd_register_write(0x0051, end_x);
+        lcd_register_write(0x0053, end_y);
 
-    lcd_register_write(0x0050, start_x);
-    lcd_register_write(0x0052, start_y);
-    lcd_register_write(0x0051, end_x);
-    lcd_register_write(0x0053, end_y);
+        lcd_cursor_set(start_x, start_y);
+        lcd_gram_write_prepare();
+    }
 }
 
 /*!
@@ -332,6 +443,30 @@ void lcd_hline_draw(uint16_t x,uint16_t start_y,uint16_t end_y,uint16_t color,ui
 
         for (y = start_y; y < end_y; y++) {
             lcd_point_set(sx, y, color);
+        }
+    }
+}
+
+/*!
+    \brief      draw a vertical line on LCD screen
+    \param[in]  start_x: the start column-coordinate
+    \param[in]  end_x: the end column-coordinate
+    \param[in]  y: the row-coordinate
+    \param[in]  color: specified color of the point
+    \param[in]  width: line width
+    \param[out] none
+    \retval     none
+*/
+
+void lcd_vline_draw(uint16_t start_x,uint16_t end_x,uint16_t y,uint16_t color,uint16_t width)
+{
+    uint16_t i, x;
+
+    for (i = 0; i < width; i++) {
+        uint16_t sy = y + i;
+
+        for (x = start_x; x < end_x; x++) {
+            lcd_point_set(x, sy, color);
         }
     }
 }
@@ -410,7 +545,7 @@ void lcd_picture_draw(uint16_t start_x,uint16_t start_y,uint16_t end_x,uint16_t 
     y = start_y;
 
     total = (end_x - start_x + 1) * (end_y - start_y + 1);
-
+    
     for(i = 0; i < total; i ++){
         /* set point according to the specified position and color */
         lcd_point_set(x,y,*picturepointer++);
@@ -428,11 +563,11 @@ void lcd_picture_draw(uint16_t start_x,uint16_t start_y,uint16_t end_x,uint16_t 
     \param[in]  y: the start position of column-coordinate
     \param[in]  c: the char
     \param[in]  char_color: the color of char
-    \param[in]  c_format: the struct of char format
+    \param[in]  c_format: the structure of char format
                   font: CHAR_FONT_8_16 or CHAR_FONT_16_24
                   direction: CHAR_DIRECTION_HORIZONTAL or CHAR_DIRECTION_VERTICAL
                   char_color: the color of char
-                  bk_color: the color of backgroud
+                  bk_color: the color of background
     \param[out] none
     \retval     none
 */
@@ -441,7 +576,7 @@ void lcd_char_display(uint16_t x,uint16_t y,uint8_t c,char_format_struct c_forma
     uint16_t i = 0, j = 0;
     uint8_t temp_char = 0;
     uint16_t temp_char_16 = 0;
-
+    
     if(CHAR_FONT_8_16 == c_format.font){ /* 8x16 ASCII */
         for (i = 0; i < 16; i++) {
             temp_char = ascii_8x16[((c - 0x20) * 16) + i];
