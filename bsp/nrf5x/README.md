@@ -116,6 +116,10 @@ nrf5x
 - 进入Bluetooth Samples 选择ble beacon sample
 - 执行`pkgs --update` 下载需要的软件包
 - 执行`scons --target=mdk5` 
+- 打开keil工程，勾选GNU extensions
+
+![screen2021-08-19_100407](docs/images/screen2021-08-19_100407.jpg)
+
 - 打开keil工程烧入代码，这个时候需要注意的是，如果之前有softdevice存在flash中，需要擦除芯片中的softdevice。
 - 烧入之后执行cmd `ble_ibeacon`
 - 之后用nrf connect 软件可以搜索到对应的beacon设备。
