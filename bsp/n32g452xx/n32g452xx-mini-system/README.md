@@ -37,9 +37,9 @@ N32G452 MINI-SYSTEM 板级包支持MDK5开发环境和GCC编译器，以下是�
 | GPIO      | 支持(已移植，已测试)     | PA0...PF7                  |
 | IIC       | 支持(已移植，待测试)     | GPIO-I2C                   |
 | SPI       | 支持(已移植，待测试)     | SPI1/2                     |
-| ADC       | 支持(已移植，待测试)     | ADC1/2                     |
+| ADC       | 支持(已移植，已测试)     | ADC1/2                     |
 | PWM       | 支持(已移植，待测试)     | TMR1/2                     |
-| HWTIMER   | 支持(已移植，待测试)     | TMR3/4/5                   |
+| HWTIMER   | 支持(已移植，已测试)     | TMR6/7                     |
 | SDIO      | 支持(已移植，待测试)     | SDIO1                      |
 | CAN       | 支持(已移植，待测试)     | CAN1/2                     |
 | WDT       | 支持(已移植，待测试)     |                            |
@@ -81,8 +81,6 @@ N32G452 MINI-SYSTEM 板级包支持MDK5开发环境和GCC编译器，以下是�
 | PC1  | ADC1/2_IN11    |
 | PC2  | ADC1/2_IN12    |
 | PC3  | ADC1/2_IN13    |
-| PC4  | ADC1/2_IN14    |
-| PC5  | ADC1/2_IN15    |
 
 ## 使用说明
 
