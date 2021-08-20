@@ -5,8 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-01-15     shelton      first version
- * 2021-02-09     shelton      add flash macros
+ * 2021-08-20     breo.com     first version
  */
 
 #ifndef __BOARD_H__

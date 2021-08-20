@@ -5,11 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-03-16     Leo          first version
+ * 2021-08-20     breo.com     first version
  */
 
-#ifndef __TMR_CONFIG_H__
-#define __TMR_CONFIG_H__
+#ifndef __TIM_CONFIG_H__
+#define __TIM_CONFIG_H__
 
 #include <rtthread.h>
 #include <drivers/hwtimer.h>
@@ -18,8 +18,8 @@
 extern "C" {
 #endif
 
-#ifndef TMR_DEV_INFO_CONFIG
-#define TMR_DEV_INFO_CONFIG                     \
+#ifndef TIM_DEV_INFO_CONFIG
+#define TIM_DEV_INFO_CONFIG                     \
     {                                           \
         .maxfreq = 1000000,                     \
         .minfreq = 4000,                        \
@@ -28,53 +28,76 @@ extern "C" {
     }
 #endif /* TIM_DEV_INFO_CONFIG */
 
-#ifdef BSP_USING_HWTMR2
-#ifndef TMR2_CONFIG
-#define TMR2_CONFIG                   \
+#ifdef BSP_USING_HWTIM2
+#ifndef TIM2_CONFIG
+#define TIM2_CONFIG                   \
     {                                 \
-       .tim_handle    = TMR2,         \
-       .tim_irqn      = TMR2_GLOBAL_IRQn, \
+       .tim_handle    = TIM2,         \
+       .tim_irqn      = TIM2_IRQn,    \
        .name          = "timer2",     \
     }
-#endif /* TMR2_CONFIG */
-#endif /* BSP_USING_HWTMR2 */
+#endif /* TIM2_CONFIG */
+#endif /* BSP_USING_HWTIM2 */
 
-#ifdef BSP_USING_HWTMR3
-#ifndef TMR3_CONFIG
-#define TMR3_CONFIG                   \
+#ifdef BSP_USING_HWTIM3
+#ifndef TIM3_CONFIG
+#define TIM3_CONFIG                   \
     {                                 \
-       .tim_handle    = TMR3,         \
-       .tim_irqn      = TMR3_GLOBAL_IRQn, \
+       .tim_handle    = TIM3,         \
+       .tim_irqn      = TIM3_IRQn,    \
        .name          = "timer3",     \
     }
-#endif /* TMR3_CONFIG */
-#endif /* BSP_USING_HWTMR3 */
+#endif /* TIM3_CONFIG */
+#endif /* BSP_USING_HWTIM3 */
 
-#ifdef BSP_USING_HWTMR4
-#ifndef TMR4_CONFIG
-#define TMR4_CONFIG                   \
+#ifdef BSP_USING_HWTIM4
+#ifndef TIM4_CONFIG
+#define TIM4_CONFIG                   \
     {                                 \
-       .tim_handle    = TMR4,         \
-       .tim_irqn      = TMR4_GLOBAL_IRQn, \
+       .tim_handle    = TIM4,         \
+       .tim_irqn      = TIM4_IRQn,    \
        .name          = "timer4",     \
     }
-#endif /* TMR4_CONFIG */
-#endif /* BSP_USING_HWTMR4 */
+#endif /* TIM4_CONFIG */
+#endif /* BSP_USING_HWTIM4 */
 
-#ifdef BSP_USING_HWTMR5
-#ifndef TMR5_CONFIG
-#define TMR5_CONFIG                   \
+#ifdef BSP_USING_HWTIM5
+#ifndef TIM5_CONFIG
+#define TIM5_CONFIG                   \
     {                                 \
-       .tim_handle    = TMR5,         \
-       .tim_irqn      = TMR5_GLOBAL_IRQn, \
+       .tim_handle    = TIM5,         \
+       .tim_irqn      = TIM5_IRQn,    \
        .name          = "timer5",     \
     }
-#endif /* TMR5_CONFIG */
-#endif /* BSP_USING_HWTMR5 */
+#endif /* TIM5_CONFIG */
+#endif /* BSP_USING_HWTIM5 */
+
+#ifdef BSP_USING_HWTIM6
+#ifndef TIM6_CONFIG
+#define TIM6_CONFIG                   \
+    {                                 \
+       .tim_handle    = TIM6,         \
+       .tim_irqn      = TIM6_IRQn,    \
+       .name          = "timer6",     \
+    }
+#endif /* TIM6_CONFIG */
+#endif /* BSP_USING_HWTIM6 */
+
+#ifdef BSP_USING_HWTIM7
+#ifndef TIM7_CONFIG
+#define TIM7_CONFIG                   \
+    {                                 \
+       .tim_handle    = TIM7,         \
+       .tim_irqn      = TIM7_IRQn,    \
+       .name          = "timer7",     \
+    }
+#endif /* TIM7_CONFIG */
+#endif /* BSP_USING_HWTIM7 */
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __TMR_CONFIG_H__ */
+#endif /* __TIM_CONFIG_H__ */
 

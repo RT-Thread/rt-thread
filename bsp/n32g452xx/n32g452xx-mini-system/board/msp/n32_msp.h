@@ -13,10 +13,10 @@
 
 void n32_msp_usart_init(void *Instance);
 void n32_msp_spi_init(void *Instance);
-void n32_msp_tmr_init(void *Instance);
+void n32_msp_tim_init(void *Instance);
 void n32_msp_sdio_init(void *Instance);
 void n32_msp_adc_init(void *Instance);
-void n32_msp_hwtmr_init(void *Instance);
+void n32_msp_hwtim_init(void *Instance);
 void n32_msp_can_init(void *Instance);
 
 #endif /* __N32_MSP_H__ */
