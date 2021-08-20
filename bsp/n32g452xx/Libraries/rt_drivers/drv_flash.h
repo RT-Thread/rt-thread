@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-02-09     shelton      the first version
+ * 2021-08-20     breo.com     first version
  */
 
 #ifndef __DRV_FLASH_H__

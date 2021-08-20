@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-12-07     Leo         first version
+ * 2021-08-20     breo.com     first version
  */
 
 #ifndef __ADC_CONFIG_H__

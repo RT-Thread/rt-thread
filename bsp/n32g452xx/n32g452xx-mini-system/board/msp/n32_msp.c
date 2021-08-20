@@ -5,11 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-04-13     shelton      first version
+ * 2021-08-20     breo.com     first version
  */
 
 
 #include <rtthread.h>
+#include <rtdevice.h>
 #include "n32g45x.h"
 #include "n32_msp.h"
 
@@ -53,6 +54,20 @@ void n32_msp_usart_init(void *Instance)
     if(USART3 == USARTx)
     {
         RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_USART3, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_10;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_11;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+    }
+#endif
+#ifdef BSP_USING_UART4
+    if(UART4 == USARTx)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_UART4, ENABLE);
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_10;
@@ -141,7 +156,7 @@ void n32_msp_sdio_init(void *Instance)
 #endif /* BSP_USING_SDIO */
 
 #ifdef BSP_USING_PWM
-void n32_msp_tmr_init(void *Instance)
+void n32_msp_tim_init(void *Instance)
 {
     GPIO_InitType GPIO_InitCtlStructure;
     GPIO_InitStruct(&GPIO_InitCtlStructure);
@@ -196,7 +211,7 @@ void n32_msp_adc_init(void *Instance)
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
 
         /* Configure ADC Channel as analog input */
-        GPIO_InitCtlStruct.Pin = GPIO_PIN_0;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
         GPIO_InitCtlStruct.GPIO_Speed = GPIO_Speed_2MHz;
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AIN;
         GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
@@ -222,7 +237,7 @@ void n32_msp_adc_init(void *Instance)
 #endif /* BSP_USING_ADC */
 
 #ifdef BSP_USING_HWTIMER
-void n32_msp_hwtmr_init(void *Instance)
+void n32_msp_hwtim_init(void *Instance)
 {
     TIM_Module *TIMx = (TIM_Module *)Instance;
 
@@ -248,6 +263,22 @@ void n32_msp_hwtmr_init(void *Instance)
         /* TIM5 clock enable */
         RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM5, ENABLE);
     }
+#endif
+
+#ifdef BSP_USING_HWTIM6
+        if(TIMx == TIM6)
+        {
+            /* TIM6 clock enable */
+            RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM6, ENABLE);
+        }
+#endif
+
+#ifdef BSP_USING_HWTIM7
+        if(TIMx == TIM7)
+        {
+            /* TIM7 clock enable */
+            RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM7, ENABLE);
+        }
 #endif
 }
 #endif
@@ -280,7 +311,7 @@ void n32_msp_can_init(void *Instance)
         RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_CAN2, ENABLE);
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
-//        GPIO_PinsRemapConfig(AFIO_MAP6_CAN2_0001, ENABLE);
+        //        GPIO_PinsRemapConfig(AFIO_MAP6_CAN2_0001, ENABLE);
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_6;
         GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
@@ -292,4 +323,143 @@ void n32_msp_can_init(void *Instance)
 #endif
 }
 #endif /* BSP_USING_CAN */
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#ifdef BSP_USING_UART
+static void uart_test_rw(rt_device_t uartx, const char *name)
+{
+    if (uartx == NULL)
+    {
+        uartx = rt_device_find(name);
+        rt_err_t err = rt_device_open(uartx, RT_DEVICE_FLAG_INT_RX|RT_DEVICE_FLAG_DMA_RX);
+        RT_ASSERT(err == RT_EOK);
+    }
+    rt_device_write(uartx, 0, name, strlen(name));
+    rt_device_write(uartx, 0, "\r\n", 2);
+    uint8_t recv_buf[64] = {0x0};
+    int ret = rt_device_read(uartx, 0, recv_buf, sizeof(recv_buf));
+    if (ret != 0)
+    {
+        for (int i=0; i<ret; ++i)
+            rt_kprintf("[%02x]", recv_buf[i]);
+    }
+    rt_device_write(uartx, 0, "\r\n", 2);
+}
+static void uart_test(void)
+{
+#ifdef BSP_USING_UART2
+    static rt_device_t u2 = NULL;
+    uart_test_rw(u2, "uart2");
+#endif
+#ifdef BSP_USING_UART2
+    static rt_device_t u3 = NULL;
+    uart_test_rw(u3, "uart3");
+#endif
+}
+MSH_CMD_EXPORT(uart_test, uart_test)
+#endif
+
+#ifdef BSP_USING_ADC
+#ifdef BSP_USING_ADC1
+#define ADC_DEV_NAME        "adc1"
+#else
+#define ADC_DEV_NAME        "adc2"
+#endif
+#define REFER_VOLTAGE       3300
+#define CONVERT_BITS        (1 << 12)
+static int adc_vol_sample(int argc, char *argv[])
+{
+    rt_adc_device_t adc_dev;
+    rt_uint32_t value, vol;
+    rt_err_t ret = RT_EOK;
+
+    adc_dev = (rt_adc_device_t)rt_device_find(ADC_DEV_NAME);
+    if (adc_dev == RT_NULL)
+    {
+        rt_kprintf("adc sample run failed! can't find %s device!\n", ADC_DEV_NAME);
+        return RT_ERROR;
+    }
+
+    for (int i=6; i<=9; ++i)
+    {
+        ret = rt_adc_enable(adc_dev, i);
+        value = rt_adc_read(adc_dev, i);
+        rt_kprintf("ch=[%d] the value is :[%d] \n", i, value);
+        vol = value * REFER_VOLTAGE / CONVERT_BITS;
+        rt_kprintf("ch=[%d] the voltage is :[%d] \n", i, vol);
+    }
+
+    return ret;
+}
+MSH_CMD_EXPORT(adc_vol_sample, adc voltage convert sample);
+#endif
+
+#ifdef BSP_USING_HWTIMER
+static rt_err_t timeout_cb(rt_device_t dev, rt_size_t size)
+{
+    rt_kprintf("this is hwtimer timeout callback fucntion!\n");
+    rt_kprintf("timer name is :%s.\n", dev->parent.name);
+    rt_kprintf("tick is :%d !\n", rt_tick_get());
+
+    return 0;
+}
+static int hwtimer_init(const char *name)
+{
+    rt_err_t ret = RT_EOK;
+    rt_hwtimerval_t timeout_s;
+    rt_device_t hw_dev = RT_NULL;
+    rt_hwtimer_mode_t mode;
+    hw_dev = rt_device_find(name);
+    if (hw_dev == RT_NULL)
+    {
+        rt_kprintf("hwtimer sample run failed! can't find %s device!\n", name);
+        return RT_ERROR;
+    }
+    ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
+    if (ret != RT_EOK)
+    {
+        rt_kprintf("open %s device failed!\n", name);
+        return ret;
+    }
+    rt_device_set_rx_indicate(hw_dev, timeout_cb);
+    mode = HWTIMER_MODE_PERIOD;
+    ret = rt_device_control(hw_dev, HWTIMER_CTRL_MODE_SET, &mode);
+    if (ret != RT_EOK)
+    {
+        rt_kprintf("set mode failed! ret is :%d\n", ret);
+        return ret;
+    }
+    timeout_s.sec = 5;
+    timeout_s.usec = 0;
+    if (rt_device_write(hw_dev, 0, &timeout_s, sizeof(timeout_s)) != sizeof(timeout_s))
+    {
+        rt_kprintf("set timeout value failed\n");
+        return RT_ERROR;
+    }
+
+    rt_thread_mdelay(3500);
+
+    rt_device_read(hw_dev, 0, &timeout_s, sizeof(timeout_s));
+    rt_kprintf("Read: Sec = %d, Usec = %d\n", timeout_s.sec, timeout_s.usec);
+
+    return ret;
+}
+
+static int hwtimer_sample(int argc, char *argv[])
+{
+#ifdef BSP_USING_HWTIM6
+    hwtimer_init("timer6");
+#endif
+#ifdef BSP_USING_HWTIM7
+    hwtimer_init("timer7");
+#endif
+    return RT_EOK;
+}
+MSH_CMD_EXPORT(hwtimer_sample, hwtimer sample);
+#endif
+
+
+#endif
+
 

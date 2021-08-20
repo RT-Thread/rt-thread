@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2017-10-20     ZYH            the first version
+ * 2021-08-20     breo.com     first version
  */
 
 #include "drv_gpio.h"

@@ -10,8 +10,8 @@ menu "Onboard Peripheral Drivers"
 
     config RT_USING_SERIAL
         bool "Enable USART (uart1)"
-        select RT_USING_UART
-        select RT_USING_UART1
+        select BSP_USING_UART
+        select BSP_USING_UART1
         default y
 
 endmenu
@@ -27,20 +27,20 @@ menu "On-chip Peripheral Drivers"
         bool "Enable on-chip FLASH"
         default n 
 
-    menuconfig RT_USING_UART
+    menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
         select RT_USING_SERIAL
-        if RT_USING_UART
-            config RT_USING_UART1
+        if BSP_USING_UART
+            config BSP_USING_UART1
                 bool "Enable UART1"
                 default y
 
-            config RT_USING_UART2
+            config BSP_USING_UART2
                 bool "Enable UART2"
                 default n
 
-            config RT_USING_UART3
+            config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
         endif
@@ -89,6 +89,12 @@ menu "On-chip Peripheral Drivers"
             default n
         config BSP_USING_HWTIM5
             bool "Enable hardware timer5"
+            default n
+        config BSP_USING_HWTIM6
+            bool "Enable hardware timer6"
+            default n
+        config BSP_USING_HWTIM7
+            bool "Enable hardware timer7"
             default n
         endif
 
