@@ -164,7 +164,7 @@ void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
     shell->prompt_mode = prompt_mode;
 }
 
-static int finsh_getchar(void)
+char finsh_getchar(void)
 {
 #ifdef RT_USING_DEVICE
 #ifdef RT_USING_POSIX
@@ -176,7 +176,7 @@ static int finsh_getchar(void)
     while (rt_device_read(shell->device, -1, &ch, 1) != 1)
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
 
-    return (int)ch;
+    return ch;
 #endif
 #else
     extern char rt_hw_console_getchar(void);
@@ -329,7 +329,7 @@ static void finsh_wait_auth(void)
             while (1)
             {
                 /* read one character from device */
-                ch = finsh_getchar();
+                ch = (int)finsh_getchar();
                 if (ch < 0)
                 {
                     continue;
@@ -541,7 +541,7 @@ void finsh_thread_entry(void *parameter)
 
     while (1)
     {
-        ch = finsh_getchar();
+        ch = (int)finsh_getchar();
         if (ch < 0)
         {
             continue;
