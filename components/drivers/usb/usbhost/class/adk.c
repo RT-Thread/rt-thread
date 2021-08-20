@@ -53,7 +53,7 @@ RTM_EXPORT(rt_usbh_adk_set_string);
 */
 static rt_err_t rt_usbh_adk_get_protocol(struct uintf* intf, rt_uint16_t *protocol)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     uinst_t device;
     int timeout = USB_TIMEOUT_BASIC;
 
@@ -63,8 +63,8 @@ static rt_err_t rt_usbh_adk_get_protocol(struct uintf* intf, rt_uint16_t *protoc
 
     device = intf->device;
 
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_VENDOR |
-        USB_REQ_TYPE_DEVICE;
+    setup. = USB_DIR_IN | USB_TYPE_VENDOR |
+        USB_RECIP_DEVICE;
     setup.request = USB_REQ_GET_PROTOCOL;
     setup.index = 0;
     setup.length = 2;
@@ -87,7 +87,7 @@ static rt_err_t rt_usbh_adk_get_protocol(struct uintf* intf, rt_uint16_t *protoc
 static rt_err_t rt_usbh_adk_send_string(struct uintf* intf, rt_uint16_t index,
     const char* str)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     uinst_t device;
     int timeout = USB_TIMEOUT_BASIC;
 
@@ -97,8 +97,8 @@ static rt_err_t rt_usbh_adk_send_string(struct uintf* intf, rt_uint16_t index,
 
     device = intf->device;
 
-    setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_VENDOR |
-        USB_REQ_TYPE_DEVICE;
+    setup.bRequestType = USB_DIR_OUT | USB_TYPE_VENDOR |
+        USB_RECIP_DEVICE;
     setup.request = USB_REQ_SEND_STRING;
     setup.index = index;
     setup.length = rt_strlen(str) + 1;
@@ -120,7 +120,7 @@ static rt_err_t rt_usbh_adk_send_string(struct uintf* intf, rt_uint16_t index,
 */
 static rt_err_t rt_usbh_adk_start(struct uintf* intf)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     uinst_t device;
     int timeout = USB_TIMEOUT_BASIC;
 
@@ -130,8 +130,8 @@ static rt_err_t rt_usbh_adk_start(struct uintf* intf)
 
     device = intf->device;
 
-    setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_VENDOR |
-        USB_REQ_TYPE_DEVICE;
+    setup.bRequestType = USB_DIR_OUT | USB_TYPE_VENDOR |
+        USB_RECIP_DEVICE;
     setup.request = USB_REQ_START;
     setup.index = 0;
     setup.length = 0;
@@ -220,7 +220,7 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
     int i = 0;
     uadk_t adk;
     struct uintf* intf = (struct uintf*)arg;
-    udev_desc_t dev_desc;
+    struct usb_device_descriptor* dev_desc;
     rt_uint16_t protocol;
     rt_err_t ret;
 
@@ -296,7 +296,7 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
 
     for(i=0; i<intf->intf_desc->bNumEndpoints; i++)
     {
-        uep_desc_t ep_desc;
+        struct usb_endpoint_descriptor* ep_desc;
 
         /* get endpoint descriptor from interface descriptor */
         rt_usbh_get_endpoint_descriptor(intf->intf_desc, i, &ep_desc);
@@ -307,7 +307,7 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
         }
 
         /* the endpoint type of adk class should be BULK */
-        if((ep_desc->bmAttributes & USB_EP_ATTR_TYPE_MASK) != USB_EP_ATTR_BULK)
+        if((ep_desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) != USB_ENDPOINT_XFER_BULK)
             continue;
 
         /* allocate pipes according to the endpoint type */

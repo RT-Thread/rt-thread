@@ -36,7 +36,7 @@ typedef struct nu_port_dev
     rt_bool_t bRHParent;
     UDEV_T *pUDev;
     EP_INFO_T *apsEPInfo[NU_MAX_USBH_PIPE];
-    struct urequest asSetupReq[NU_MAX_USBH_PIPE];
+    struct usb_ctrlrequest asSetupReq[NU_MAX_USBH_PIPE];
     struct rt_completion utr_completion;
     int port_num;
     rt_bool_t bEnumDone;
@@ -362,14 +362,14 @@ static rt_err_t nu_close_pipe(upipe_t pipe)
 
 static int nu_ctrl_xfer(
     S_NU_PORT_DEV *psPortDev,
-    struct urequest *psSetup,
+    struct usb_ctrlrequest *psSetup,
     void *buffer,
     int timeouts)
 {
     uint32_t  xfer_len = 0;
     int    ret;
 
-    ret = usbh_ctrl_xfer(psPortDev->pUDev, psSetup->request_type, psSetup->bRequest, psSetup->wValue, psSetup->wIndex, psSetup->wLength, buffer, &xfer_len, timeouts * 10);
+    ret = usbh_ctrl_xfer(psPortDev->pUDev, psSetup->bRequestType, psSetup->bRequest, psSetup->wValue, psSetup->wIndex, psSetup->wLength, buffer, &xfer_len, timeouts * 10);
     if (ret < 0)
     {
         RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_ctrl_xfer ERROR: xfer failed %d\n", ret));
@@ -381,10 +381,10 @@ static int nu_ctrl_xfer(
         RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_ctrl_xfer ERROR: xfer length %d %d\n", psSetup->wLength, xfer_len));
     }
 
-    if ((psSetup->bRequest == USB_REQ_SET_ADDRESS) && ((psSetup->request_type & 0x60) == REQ_TYPE_STD_DEV))
+    if ((psSetup->bRequest == USB_REQ_SET_ADDRESS) && ((psSetup->bRequestType & 0x60) == REQ_TYPE_STD_DEV))
         psPortDev->pUDev->dev_num = psSetup->wValue;
 
-    if ((psSetup->bRequest == USB_REQ_SET_CONFIGURATION) && ((psSetup->request_type & 0x60) == REQ_TYPE_STD_DEV))
+    if ((psSetup->bRequest == USB_REQ_SET_CONFIGURATION) && ((psSetup->bRequestType & 0x60) == REQ_TYPE_STD_DEV))
     {
         psPortDev->pUDev->cur_conf = psSetup->wValue;
         psPortDev->bEnumDone = TRUE;
@@ -500,19 +500,19 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
 #endif
 
     //ctrl xfer
-    if (pipe->ep.bmAttributes == USB_EP_ATTR_CONTROL)
+    if (pipe->ep.bmAttributes == USB_ENDPOINT_XFER_CONTROL)
     {
         int ret;
         if (token == USBH_PID_SETUP)
         {
-            struct urequest *psSetup = (struct urequest *)buffer_nonch;
+            struct usb_ctrlrequest *psSetup = (struct usb_ctrlrequest *)buffer_nonch;
             RT_ASSERT(buffer_nonch != RT_NULL);
 
             /* Read data from USB device. */
-            if (psSetup->request_type & USB_REQ_TYPE_DIR_IN)
+            if (psSetup->bRequestType & USB_DIR_IN)
             {
                 //Store setup request
-                rt_memcpy(&psPortCtrl->asHubPortDev->asSetupReq[pipe->pipe_index], psSetup, sizeof(struct urequest));
+                rt_memcpy(&psPortCtrl->asHubPortDev->asSetupReq[pipe->pipe_index], psSetup, sizeof(struct usb_ctrlrequest));
             }
             else
             {
@@ -526,7 +526,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         else
         {
             //token == USBH_PID_DATA
-            if (buffer_nonch && ((pipe->ep.bEndpointAddress & USB_DIR_MASK) == USB_DIR_IN))
+            if (buffer_nonch && ((pipe->ep.bEndpointAddress & USB_ENDPOINT_DIR_MASK) == USB_DIR_IN))
             {
                 /* Read data from USB device. */
                 //Trigger USBHostLib Ctril_Xfer
@@ -542,7 +542,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         } //else
         i32XferLen = nbytes;
         goto exit_nu_pipe_xfer;
-    } // if ( pipe->ep.bmAttributes == USB_EP_ATTR_CONTROL )
+    } // if ( pipe->ep.bmAttributes == USB_ENDPOINT_XFER_CONTROL )
     else
     {
 
@@ -566,7 +566,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         //others xfer
         rt_completion_init(&(psPortDev->utr_completion));
 
-        if (pipe->ep.bmAttributes == USB_EP_ATTR_BULK)
+        if (pipe->ep.bmAttributes == USB_ENDPOINT_XFER_BULK)
         {
             if (nu_bulk_xfer(psPortDev, psUTR, timeouts) < 0)
             {
@@ -574,7 +574,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
                 goto exit_nu_pipe_xfer;
             }
         }
-        else if (pipe->ep.bmAttributes == USB_EP_ATTR_INT)
+        else if (pipe->ep.bmAttributes == USB_ENDPOINT_XFER_INT)
         {
             psUTR->func = int_xfer_done_cb;
             psUTR->context = pipe;
@@ -590,7 +590,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
             }
             return i32XferLen;
         }
-        else if (pipe->ep.bmAttributes == USB_EP_ATTR_ISOC)
+        else if (pipe->ep.bmAttributes == USB_ENDPOINT_XFER_ISOC)
         {
             //TODO: ISO transfer
             RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_pipe_xfer ERROR: isoc transfer not support\n"));

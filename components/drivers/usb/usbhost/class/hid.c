@@ -29,7 +29,7 @@ static rt_list_t _protocal_list;
 */
 rt_err_t rt_usbh_hid_set_idle(struct uhintf* intf, int duration, int report_id)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     struct uinstance* device;
     int timeout = USB_TIMEOUT_BASIC;
 
@@ -39,8 +39,8 @@ rt_err_t rt_usbh_hid_set_idle(struct uhintf* intf, int duration, int report_id)
 
     device = intf->device;
 
-    setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_CLASS |
-        USB_REQ_TYPE_INTERFACE;
+    setup.bRequestType = USB_DIR_OUT | USB_TYPE_CLASS |
+        USB_RECIP_INTERFACE;
     setup.bRequest = USB_REQ_SET_IDLE;
     setup.wIndex = 0;
     setup.wLength = 0;
@@ -64,7 +64,7 @@ rt_err_t rt_usbh_hid_set_idle(struct uhintf* intf, int duration, int report_id)
 rt_err_t rt_usbh_hid_get_report(struct uhintf* intf, rt_uint8_t type,
     rt_uint8_t id, rt_uint8_t *buffer, rt_size_t size)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     struct uinstance* device;
     int timeout = USB_TIMEOUT_BASIC;
 
@@ -74,8 +74,8 @@ rt_err_t rt_usbh_hid_get_report(struct uhintf* intf, rt_uint8_t type,
 
     device = intf->device;
 
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS |
-        USB_REQ_TYPE_INTERFACE;
+    setup.bRequestType = USB_DIR_IN | USB_TYPE_CLASS |
+        USB_RECIP_INTERFACE;
     setup.bRequest = USB_REQ_GET_REPORT;
     setup.wIndex = intf->intf_desc->bInterfaceNumber;
     setup.wLength = size;
@@ -107,7 +107,7 @@ rt_err_t rt_usbh_hid_get_report(struct uhintf* intf, rt_uint8_t type,
 */
 rt_err_t rt_usbh_hid_set_report(struct uhintf* intf, rt_uint8_t *buffer, rt_size_t size)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     struct uinstance* device;
     int timeout = USB_TIMEOUT_BASIC;
 
@@ -117,8 +117,8 @@ rt_err_t rt_usbh_hid_set_report(struct uhintf* intf, rt_uint8_t *buffer, rt_size
 
     device = intf->device;
 
-    setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_CLASS |
-        USB_REQ_TYPE_INTERFACE;
+    setup.bRequestType = USB_DIR_OUT | USB_TYPE_CLASS |
+        USB_RECIP_INTERFACE;
     setup.bRequest = USB_REQ_SET_REPORT;
     setup.wIndex = intf->intf_desc->bInterfaceNumber;
     setup.wLength = size;
@@ -140,7 +140,7 @@ rt_err_t rt_usbh_hid_set_report(struct uhintf* intf, rt_uint8_t *buffer, rt_size
  */
 rt_err_t rt_usbh_hid_set_protocal(struct uhintf* intf, int protocol)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     struct uinstance* device;
     int timeout = USB_TIMEOUT_BASIC;
 
@@ -150,8 +150,8 @@ rt_err_t rt_usbh_hid_set_protocal(struct uhintf* intf, int protocol)
 
     device = intf->device;
 
-    setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_CLASS |
-        USB_REQ_TYPE_INTERFACE;
+    setup.bRequestType = USB_DIR_OUT | USB_TYPE_CLASS |
+        USB_RECIP_INTERFACE;
     setup.bRequest = USB_REQ_SET_PROTOCOL;
     setup.wIndex = 0;
     setup.wLength = 0;
@@ -176,7 +176,7 @@ rt_err_t rt_usbh_hid_set_protocal(struct uhintf* intf, int protocol)
 rt_err_t rt_usbh_hid_get_report_descriptor(struct uhintf* intf,
     rt_uint8_t *buffer, rt_size_t size)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     struct uinstance* device;
     int timeout = USB_TIMEOUT_BASIC;
 
@@ -186,12 +186,12 @@ rt_err_t rt_usbh_hid_get_report_descriptor(struct uhintf* intf,
 
     device = intf->device;
 
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_STANDARD|
-        USB_REQ_TYPE_INTERFACE;
+    setup.bRequestType = USB_DIR_IN | USB_TYPE_STANDARD|
+        USB_RECIP_INTERFACE;
     setup.bRequest = USB_REQ_GET_DESCRIPTOR;
     setup.wIndex = 0;
     setup.wLength = size;
-    setup.wValue = USB_DESC_TYPE_REPORT << 8;
+    setup.wValue = HID_DT_REPORT << 8;
 
     if (rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) == 8)
     {
@@ -325,7 +325,7 @@ static rt_err_t rt_usbh_hid_enable(void* arg)
     for(i=0; i<intf->intf_desc->bNumEndpoints; i++)
     {
         rt_err_t ret;
-        uep_desc_t ep_desc;
+        struct usb_endpoint_descriptor* ep_desc;
 
         /* get endpoint descriptor */
         rt_usbh_get_endpoint_descriptor(intf->intf_desc, i, &ep_desc);
@@ -334,14 +334,10 @@ static rt_err_t rt_usbh_hid_enable(void* arg)
             rt_kprintf("rt_usbh_get_endpoint_descriptor error\n");
             return -RT_ERROR;
         }
-
-        if(USB_EP_ATTR(ep_desc->bmAttributes) != USB_EP_ATTR_INT)
-            continue;
-
-        if(!(ep_desc->bEndpointAddress & USB_DIR_IN)) continue;
+        if(!usb_endpoint_is_int_in(ep_desc)) continue;
 
         ret = rt_usb_hcd_alloc_pipe(intf->device->hcd, &hid->pipe_in,
-            intf, ep_desc);
+            intf->device, ep_desc);
         if(ret != RT_EOK) return ret;
     }
 

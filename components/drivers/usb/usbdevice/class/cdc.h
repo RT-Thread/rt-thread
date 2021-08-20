@@ -132,14 +132,14 @@ typedef struct ucdc_union_descriptor* ucdc_union_desc_t;
 struct ucdc_comm_descriptor
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
-    struct uiad_descriptor iad_desc;
+    struct usb_interface_assoc_descriptor iad_desc;
 #endif
-    struct uinterface_descriptor intf_desc;
+    struct usb_interface_descriptor intf_desc;
     struct ucdc_header_descriptor hdr_desc;
     struct ucdc_call_mgmt_descriptor call_mgmt_desc;
     struct ucdc_acm_descriptor acm_desc;
     struct ucdc_union_descriptor union_desc;
-    struct uendpoint_descriptor ep_desc;
+    struct usb_endpoint_descriptor ep_desc;
 };
 typedef struct ucdc_comm_descriptor* ucdc_comm_desc_t;
 
@@ -157,21 +157,21 @@ struct ucdc_enet_descriptor
 struct ucdc_eth_descriptor
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
-    struct uiad_descriptor iad_desc;
+    struct usb_interface_assoc_descriptor iad_desc;
 #endif
-    struct uinterface_descriptor    intf_desc;
+    struct usb_interface_descriptor    intf_desc;
     struct ucdc_header_descriptor   hdr_desc;
     struct ucdc_union_descriptor    union_desc;
     struct ucdc_enet_descriptor     enet_desc;
-    struct uendpoint_descriptor     ep_desc;
+    struct usb_endpoint_descriptor     ep_desc;
 };
 typedef struct ucdc_eth_descriptor* ucdc_eth_desc_t;
 
 struct ucdc_data_descriptor
 {
-    struct uinterface_descriptor intf_desc;
-    struct uendpoint_descriptor ep_out_desc;
-    struct uendpoint_descriptor ep_in_desc;
+    struct usb_interface_descriptor intf_desc;
+    struct usb_endpoint_descriptor ep_out_desc;
+    struct usb_endpoint_descriptor ep_in_desc;
 };
 typedef struct ucdc_data_descriptor* ucdc_data_desc_t;
 

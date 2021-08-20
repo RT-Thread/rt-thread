@@ -92,12 +92,12 @@ struct vcom_tx_msg
 };
 
 ALIGN(4)
-static struct udevice_descriptor dev_desc =
+static struct usb_device_descriptor dev_desc =
 {
-    USB_DESC_LENGTH_DEVICE,     //bLength;
-    USB_DESC_TYPE_DEVICE,       //type;
+    USB_DT_DEVICE_SIZE,     //bLength;
+    USB_DT_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
-    USB_CLASS_CDC,              //bDeviceClass;
+    USB_CLASS_COMM,              //bDeviceClass;
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
     CDC_MAX_PACKET_SIZE,          //bMaxPacketSize0;
@@ -115,9 +115,9 @@ ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
-    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    USB_DT_DEVICE_QUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
-    USB_CLASS_CDC,                  //bDeviceClass
+    USB_CLASS_COMM,                  //bDeviceClass
     0x00,                           //bDeviceSubClass
     0x00,                           //bDeviceProtocol
     64,                             //bMaxPacketSize0
@@ -132,8 +132,8 @@ const static struct ucdc_comm_descriptor _comm_desc =
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
     {
-        USB_DESC_LENGTH_IAD,
-        USB_DESC_TYPE_IAD,
+        USB_DT_INTERFACE_ASSOCIATION_SIZE,
+        USB_DT_INTERFACE_ASSOCIATION,
         USB_DYNAMIC,
         0x02,
         USB_CDC_CLASS_COMM,
@@ -144,8 +144,8 @@ const static struct ucdc_comm_descriptor _comm_desc =
 #endif
     /* Interface Descriptor */
     {
-        USB_DESC_LENGTH_INTERFACE,
-        USB_DESC_TYPE_INTERFACE,
+        USB_DT_INTERFACE_SIZE,
+        USB_DT_INTERFACE,
         USB_DYNAMIC,
         0x00,
         0x01,
@@ -190,10 +190,10 @@ const static struct ucdc_comm_descriptor _comm_desc =
     },
     /* Endpoint Descriptor */
     {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
+        USB_DT_ENDPOINT_SIZE,
+        USB_DT_ENDPOINT,
         USB_DYNAMIC | USB_DIR_IN,
-        USB_EP_ATTR_INT,
+        USB_ENDPOINT_XFER_INT,
         0x08,
         0xFF,
     },
@@ -205,8 +205,8 @@ const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
     {
-        USB_DESC_LENGTH_INTERFACE,
-        USB_DESC_TYPE_INTERFACE,
+        USB_DT_INTERFACE_SIZE,
+        USB_DT_INTERFACE,
         USB_DYNAMIC,
         0x00,
         0x02,
@@ -217,19 +217,19 @@ const static struct ucdc_data_descriptor _data_desc =
     },
     /* endpoint, bulk out */
     {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
+        USB_DT_ENDPOINT_SIZE,
+        USB_DT_ENDPOINT,
         USB_DYNAMIC | USB_DIR_OUT,
-        USB_EP_ATTR_BULK,
+        USB_ENDPOINT_XFER_BULK,
         USB_CDC_BUFSIZE,
         0x00,
     },
     /* endpoint, bulk in */
     {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
+        USB_DT_ENDPOINT_SIZE,
+        USB_DT_ENDPOINT,
         USB_DYNAMIC | USB_DIR_IN,
-        USB_EP_ATTR_BULK,
+        USB_ENDPOINT_XFER_BULK,
         USB_CDC_BUFSIZE,
         0x00,
     },
@@ -375,7 +375,7 @@ static rt_err_t _ep_cmd_handler(ufunction_t func, rt_size_t size)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _cdc_get_line_coding(udevice_t device, ureq_t setup)
+static rt_err_t _cdc_get_line_coding(udevice_t device, struct usb_ctrlrequest* setup)
 {
     struct ucdc_line_coding data;
     rt_uint16_t size;
@@ -413,7 +413,7 @@ static rt_err_t _cdc_set_line_coding_callback(udevice_t device, rt_size_t size)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _cdc_set_line_coding(udevice_t device, ureq_t setup)
+static rt_err_t _cdc_set_line_coding(udevice_t device, struct usb_ctrlrequest* setup)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
@@ -434,7 +434,7 @@ static rt_err_t _cdc_set_line_coding(udevice_t device, ureq_t setup)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
+static rt_err_t _interface_handler(ufunction_t func, struct usb_ctrlrequest* setup)
 {
     struct vcom *data;
 
@@ -470,7 +470,7 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
     case CDC_SEND_BREAK:
         break;
     default:
-        rt_kprintf("unknown cdc request\n",setup->request_type);
+        rt_kprintf("unknown cdc request\n",setup->bRequestType);
         return -RT_ERROR;
     }
 

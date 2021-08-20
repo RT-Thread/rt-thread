@@ -52,12 +52,12 @@ struct rt_ecm_eth
 typedef struct rt_ecm_eth * rt_ecm_eth_t;
 
 ALIGN(4)
-static struct udevice_descriptor _dev_desc =
+static struct usb_device_descriptor _dev_desc =
 {
-    USB_DESC_LENGTH_DEVICE,     /* bLength */
-    USB_DESC_TYPE_DEVICE,       /* type */
+    USB_DT_DEVICE_SIZE,     /* bLength */
+    USB_DT_DEVICE,       /* type */
     USB_BCD_VERSION,            /* bcdUSB */
-    USB_CLASS_CDC,              /* bDeviceClass */
+    USB_CLASS_COMM,              /* bDeviceClass */
     USB_CDC_SUBCLASS_ETH,       /* bDeviceSubClass */
     USB_CDC_PROTOCOL_NONE,      /* bDeviceProtocol */
     0x40,                       /* bMaxPacketSize0 */
@@ -77,8 +77,8 @@ const static struct ucdc_eth_descriptor _comm_desc =
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
     {
-        USB_DESC_LENGTH_IAD,
-        USB_DESC_TYPE_IAD,
+        USB_DT_INTERFACE_ASSOCIATION_SIZE,
+        USB_DT_INTERFACE_ASSOCIATION,
         USB_DYNAMIC,
         0x02,
         USB_CDC_CLASS_COMM,
@@ -89,8 +89,8 @@ const static struct ucdc_eth_descriptor _comm_desc =
 #endif
     /* Interface Descriptor */
     {
-        USB_DESC_LENGTH_INTERFACE,
-        USB_DESC_TYPE_INTERFACE,
+        USB_DT_INTERFACE_SIZE,
+        USB_DT_INTERFACE,
         USB_DYNAMIC,
         0x00,
         0x01,
@@ -131,10 +131,10 @@ const static struct ucdc_eth_descriptor _comm_desc =
     },
     /* Endpoint Descriptor */
     {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
+        USB_DT_ENDPOINT_SIZE,
+        USB_DT_ENDPOINT,
         USB_DIR_IN | USB_DYNAMIC,
-        USB_EP_ATTR_INT,
+        USB_ENDPOINT_XFER_INT,
         0x08,
         0xFF,
     },
@@ -146,8 +146,8 @@ const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
     {
-        USB_DESC_LENGTH_INTERFACE,
-        USB_DESC_TYPE_INTERFACE,
+        USB_DT_INTERFACE_SIZE,
+        USB_DT_INTERFACE,
         USB_DYNAMIC,
         0x00,
         0x02,
@@ -158,19 +158,19 @@ const static struct ucdc_data_descriptor _data_desc =
     },
     /* endpoint, bulk out */
     {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
+        USB_DT_ENDPOINT_SIZE,
+        USB_DT_ENDPOINT,
         USB_DIR_OUT | USB_DYNAMIC,
-        USB_EP_ATTR_BULK,
+        USB_ENDPOINT_XFER_BULK,
         USB_DYNAMIC,
         0x00,
     },
     /* endpoint, bulk in */
     {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
+        USB_DT_ENDPOINT_SIZE,
+        USB_DT_ENDPOINT,
         USB_DYNAMIC | USB_DIR_IN,
-        USB_EP_ATTR_BULK,
+        USB_ENDPOINT_XFER_BULK,
         USB_DYNAMIC,
         0x00,
     },
@@ -192,9 +192,9 @@ ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
-    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    USB_DT_DEVICE_QUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
-    USB_CLASS_CDC,                  //bDeviceClass
+    USB_CLASS_COMM,                  //bDeviceClass
     USB_CDC_SUBCLASS_ETH,           //bDeviceSubClass
     USB_CDC_PROTOCOL_NONE,          //bDeviceProtocol
     64,                             //bMaxPacketSize0
@@ -221,7 +221,7 @@ static rt_err_t _cdc_send_notifi(ufunction_t func,ucdc_notification_code_t notif
 }
 
 
-static rt_err_t _ecm_set_eth_packet_filter(ufunction_t func, ureq_t setup)
+static rt_err_t _ecm_set_eth_packet_filter(ufunction_t func, struct usb_ctrlrequest* setup)
 {
     rt_ecm_eth_t _ecm_eth = (rt_ecm_eth_t)func->user_data;
     dcd_ep0_send_status(func->device->dcd);
@@ -245,7 +245,7 @@ static rt_err_t _ecm_set_eth_packet_filter(ufunction_t func, ureq_t setup)
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
+static rt_err_t _interface_handler(ufunction_t func, struct usb_ctrlrequest* setup)
 {
     RT_ASSERT(func != RT_NULL);
     RT_ASSERT(setup != RT_NULL);

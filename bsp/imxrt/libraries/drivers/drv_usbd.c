@@ -69,22 +69,22 @@ static void USB_DeviceClockInit(uint8_t controllerId)
 
 static struct ep_id _ehci0_ep_pool[] =
 {
-    {0x0,  USB_EP_ATTR_CONTROL,     USB_DIR_INOUT,  64, ID_ASSIGNED  },
-    {0x1,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
-    {0x1,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x2,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
-    {0x2,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x3,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
-    {0x3,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x4,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
-    {0x4,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x5,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
-    {0x5,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x6,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
-    {0x6,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0x7,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
-    {0x7,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
-    {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
+    {0x0,  USB_ENDPOINT_XFER_CONTROL,     USB_DIR_IN,  64, ID_ASSIGNED  },
+    {0x1,  USB_ENDPOINT_XFER_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x1,  USB_ENDPOINT_XFER_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x2,  USB_ENDPOINT_XFER_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x2,  USB_ENDPOINT_XFER_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x3,  USB_ENDPOINT_XFER_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x3,  USB_ENDPOINT_XFER_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x4,  USB_ENDPOINT_XFER_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x4,  USB_ENDPOINT_XFER_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x5,  USB_ENDPOINT_XFER_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x5,  USB_ENDPOINT_XFER_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x6,  USB_ENDPOINT_XFER_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x6,  USB_ENDPOINT_XFER_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x7,  USB_ENDPOINT_XFER_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x7,  USB_ENDPOINT_XFER_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0xFF, USB_ENDPOINT_XFERTYPE_MASK,   USB_ENDPOINT_DIR_MASK,   0,  ID_ASSIGNED  },
 };
 
 /*!
@@ -254,7 +254,7 @@ static usb_status_t usb_device_endpoint_callback(usb_device_handle handle, usb_d
 
     if(message->isSetup)
     {
-        rt_usbd_ep0_setup_handler(udcd, (struct urequest*)message->buffer);
+        rt_usbd_ep0_setup_handler(udcd, (struct usb_ctrlrequest*)message->buffer);
     }
     else if(ep_addr == 0x00)
     {
@@ -301,7 +301,7 @@ static usb_status_t usb_device_callback(usb_device_handle handle, uint32_t callb
     {
         0x40,
         0x00,
-        USB_EP_ATTR_CONTROL,
+        USB_ENDPOINT_XFER_CONTROL,
         0
     };
     usb_device_endpoint_callback_struct_t ep0_callback =

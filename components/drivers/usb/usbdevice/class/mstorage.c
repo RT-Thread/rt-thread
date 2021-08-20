@@ -72,10 +72,10 @@ struct mstorage
 };
 
 ALIGN(4)
-static struct udevice_descriptor dev_desc =
+static struct usb_device_descriptor dev_desc =
 {
-    USB_DESC_LENGTH_DEVICE,     //bLength;
-    USB_DESC_TYPE_DEVICE,       //type;
+    USB_DT_DEVICE_SIZE,     //bLength;
+    USB_DT_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
     USB_CLASS_MASS_STORAGE,     //bDeviceClass;
     0x06,                       //bDeviceSubClass;
@@ -95,7 +95,7 @@ ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
-    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    USB_DT_DEVICE_QUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
     USB_CLASS_MASS_STORAGE,         //bDeviceClass
     0x06,                           //bDeviceSubClass
@@ -112,8 +112,8 @@ const static struct umass_descriptor _mass_desc =
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
     {
-        USB_DESC_LENGTH_IAD,
-        USB_DESC_TYPE_IAD,
+        USB_DT_INTERFACE_ASSOCIATION_SIZE,
+        USB_DT_INTERFACE_ASSOCIATION,
         USB_DYNAMIC,
         0x01,
         USB_CLASS_MASS_STORAGE,
@@ -123,8 +123,8 @@ const static struct umass_descriptor _mass_desc =
     },
 #endif
     {
-        USB_DESC_LENGTH_INTERFACE,  //bLength;
-        USB_DESC_TYPE_INTERFACE,    //type;
+        USB_DT_INTERFACE_SIZE,  //bLength;
+        USB_DT_INTERFACE,    //type;
         USB_DYNAMIC,                //bInterfaceNumber;
         0x00,                       //bAlternateSetting;
         0x02,                       //bNumEndpoints
@@ -139,19 +139,19 @@ const static struct umass_descriptor _mass_desc =
     },
 
     {
-        USB_DESC_LENGTH_ENDPOINT,   //bLength;
-        USB_DESC_TYPE_ENDPOINT,     //type;
+        USB_DT_ENDPOINT_SIZE,   //bLength;
+        USB_DT_ENDPOINT,     //type;
         USB_DYNAMIC | USB_DIR_OUT,  //bEndpointAddress;
-        USB_EP_ATTR_BULK,           //bmAttributes;
+        USB_ENDPOINT_XFER_BULK,           //bmAttributes;
         USB_DYNAMIC,                //wMaxPacketSize;
         0x00,                       //bInterval;
     },
 
     {
-        USB_DESC_LENGTH_ENDPOINT,   //bLength;
-        USB_DESC_TYPE_ENDPOINT,     //type;
+        USB_DT_ENDPOINT_SIZE,   //bLength;
+        USB_DT_ENDPOINT,     //type;
         USB_DYNAMIC | USB_DIR_IN,   //bEndpointAddress;
-        USB_EP_ATTR_BULK,           //bmAttributes;
+        USB_ENDPOINT_XFER_BULK,           //bmAttributes;
         USB_DYNAMIC,                //wMaxPacketSize;
         0x00,                       //bInterval;
     },
@@ -920,7 +920,7 @@ exit:
  *
  * @return RT_EOK on successful.
  */
-static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
+static rt_err_t _interface_handler(ufunction_t func, struct usb_ctrlrequest* setup)
 {
     rt_uint8_t lun = 0;
 

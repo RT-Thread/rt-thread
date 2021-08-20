@@ -52,9 +52,9 @@
 struct uac_ac_descriptor
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
-    struct uiad_descriptor iad_desc;
+    struct usb_interface_assoc_descriptor iad_desc;
 #endif
-    struct uinterface_descriptor intf_desc;
+    struct usb_interface_descriptor intf_desc;
     struct usb_audio_control_descriptor hdr_desc;
     struct usb_audio_input_terminal it_desc;
     struct usb_audio_output_terminal ot_desc;
@@ -65,10 +65,10 @@ struct uac_ac_descriptor
 
 struct uac_as_descriptor
 {
-    struct uinterface_descriptor intf_desc;
+    struct usb_interface_descriptor intf_desc;
     struct usb_audio_streaming_interface_descriptor hdr_desc;
     struct usb_audio_streaming_type1_descriptor format_type_desc;
-    struct uendpoint_descriptor ep_desc;
+    struct usb_endpoint_descriptor ep_desc;
     struct usb_audio_streaming_endpoint_descriptor as_ep_desc;
 };
 
@@ -90,12 +90,12 @@ struct uac_audio_speaker
 static struct uac_audio_speaker speaker;
 
 ALIGN(4)
-static struct udevice_descriptor dev_desc =
+static struct usb_device_descriptor dev_desc =
 {
-    USB_DESC_LENGTH_DEVICE,     //bLength;
-    USB_DESC_TYPE_DEVICE,       //type;
+    USB_DT_DEVICE_SIZE,     //bLength;
+    USB_DT_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
-    USB_CLASS_DEVICE,           //bDeviceClass;
+    USB_CLASS_PER_INTERFACE,           //bDeviceClass;
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
     UAC_MAX_PACKET_SIZE,        //bMaxPacketSize0;
@@ -113,7 +113,7 @@ ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
-    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    USB_DT_DEVICE_QUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
     USB_CLASS_AUDIO,                //bDeviceClass
     0x00,                           //bDeviceSubClass
@@ -140,8 +140,8 @@ static struct uac_ac_descriptor ac_desc =
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
     {
-        USB_DESC_LENGTH_IAD,
-        USB_DESC_TYPE_IAD,
+        USB_DT_INTERFACE_ASSOCIATION_SIZE,
+        USB_DT_INTERFACE_ASSOCIATION,
         USB_DYNAMIC,
         0x02,
         USB_CLASS_AUDIO,
@@ -152,8 +152,8 @@ static struct uac_ac_descriptor ac_desc =
 #endif
     /* Interface Descriptor */
     {
-        USB_DESC_LENGTH_INTERFACE,
-        USB_DESC_TYPE_INTERFACE,
+        USB_DT_INTERFACE_SIZE,
+        USB_DT_INTERFACE,
         USB_DYNAMIC,
         0x00,
         0x00,
@@ -215,10 +215,10 @@ static struct uac_ac_descriptor ac_desc =
 };
 
 ALIGN(4)
-static struct uinterface_descriptor as_desc0 =
+static struct usb_interface_descriptor as_desc0 =
 {
-    USB_DESC_LENGTH_INTERFACE,
-    USB_DESC_TYPE_INTERFACE,
+    USB_DT_INTERFACE_SIZE,
+    USB_DT_INTERFACE,
     USB_DYNAMIC,
     0x00,
     0x00,
@@ -233,8 +233,8 @@ static struct uac_as_descriptor as_desc =
 {
     /* Interface Descriptor */
     {
-        USB_DESC_LENGTH_INTERFACE,
-        USB_DESC_TYPE_INTERFACE,
+        USB_DT_INTERFACE_SIZE,
+        USB_DT_INTERFACE,
         USB_DYNAMIC,
         0x01,
         0x01,
@@ -266,10 +266,10 @@ static struct uac_as_descriptor as_desc =
     },
     /* Endpoint Descriptor */
     {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
+        USB_DT_ENDPOINT_SIZE,
+        USB_DT_ENDPOINT,
         USB_DYNAMIC | USB_DIR_OUT,
-        USB_EP_ATTR_ISOC,
+        USB_ENDPOINT_XFER_ISOC,
         UAC_EP_MAX_PACKET_SIZE,
         0x01,
     },
@@ -397,7 +397,7 @@ static rt_err_t _ep_data_handler(ufunction_t func, rt_size_t size)
     return RT_EOK;
 }
 
-static rt_err_t _interface_as_handler(ufunction_t func, ureq_t setup)
+static rt_err_t _interface_as_handler(ufunction_t func, struct usb_ctrlrequest* setup)
 {
     RT_ASSERT(func != RT_NULL);
     RT_ASSERT(func->device != RT_NULL);
@@ -405,7 +405,7 @@ static rt_err_t _interface_as_handler(ufunction_t func, ureq_t setup)
 
     LOG_D("_interface_as_handler");
 
-    if ((setup->request_type & USB_REQ_TYPE_MASK) == USB_REQ_TYPE_STANDARD)
+    if ((setup->bRequestType & USB_TYPE_MASK) == USB_TYPE_STANDARD)
     {
         switch (setup->bRequest)
         {
@@ -517,7 +517,7 @@ ufunction_t rt_usbd_function_uac_speaker_create(udevice_t device)
 
     /* create alternate setting */
     setting_ac = rt_usbd_altsetting_new(sizeof(struct uac_ac_descriptor));
-    setting_as0 = rt_usbd_altsetting_new(sizeof(struct uinterface_descriptor));
+    setting_as0 = rt_usbd_altsetting_new(sizeof(struct usb_interface_descriptor));
     setting_as = rt_usbd_altsetting_new(sizeof(struct uac_as_descriptor));
     /* config desc in alternate setting */
     rt_usbd_altsetting_config_descriptor(setting_ac, &ac_desc,

@@ -59,7 +59,7 @@ static rt_err_t _pipe_check(struct uhintf* intf, upipe_t pipe)
     {
         /* clear the pipe stall status */
         ret = rt_usbh_clear_feature(device, pipe->ep.bEndpointAddress,
-            USB_FEATURE_ENDPOINT_HALT);
+            USB_ENDPOINT_HALT);
         if(ret != RT_EOK) return ret;
     }
 
@@ -189,7 +189,7 @@ static rt_err_t rt_usb_bulk_only_xfer(struct uhintf* intf,
 rt_err_t rt_usbh_storage_get_max_lun(struct uhintf* intf, rt_uint8_t* max_lun)
 {
     struct uinstance* device;
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     int timeout = USB_TIMEOUT_BASIC;
 
     if(intf == RT_NULL)
@@ -206,8 +206,8 @@ rt_err_t rt_usbh_storage_get_max_lun(struct uhintf* intf, rt_uint8_t* max_lun)
     device = intf->device;
 
     /* construct the request */
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS |
-        USB_REQ_TYPE_INTERFACE;
+    setup.bRequestType = USB_DIR_IN | USB_TYPE_CLASS |
+        USB_RECIP_INTERFACE;
     setup.bRequest = USBREQ_GET_MAX_LUN;
     setup.wValue = intf->intf_desc->bInterfaceNumber;
     setup.wIndex = 0;
@@ -238,7 +238,7 @@ rt_err_t rt_usbh_storage_get_max_lun(struct uhintf* intf, rt_uint8_t* max_lun)
  */
 rt_err_t rt_usbh_storage_reset(struct uhintf* intf)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     struct uinstance* device;
     int timeout = USB_TIMEOUT_BASIC;
 
@@ -256,8 +256,8 @@ rt_err_t rt_usbh_storage_reset(struct uhintf* intf)
     device = intf->device;
 
     /* construct the request */
-    setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_CLASS |
-        USB_REQ_TYPE_INTERFACE;
+    setup.bRequestType = USB_DIR_OUT | USB_TYPE_CLASS |
+        USB_RECIP_INTERFACE;
     setup.bRequest = USBREQ_MASS_STORAGE_RESET;
     setup.wIndex = intf->intf_desc->bInterfaceNumber;
     setup.wLength = 0;
@@ -551,7 +551,7 @@ static rt_err_t rt_usbh_storage_enable(void* arg)
 
     for(i=0; i<intf->intf_desc->bNumEndpoints; i++)
     {
-        uep_desc_t ep_desc;
+        struct usb_endpoint_descriptor* ep_desc;
 
         /* get endpoint descriptor from interface descriptor */
         rt_usbh_get_endpoint_descriptor(intf->intf_desc, i, &ep_desc);
@@ -562,7 +562,7 @@ static rt_err_t rt_usbh_storage_enable(void* arg)
         }
 
         /* the endpoint type of mass storage class should be BULK */
-        if((ep_desc->bmAttributes & USB_EP_ATTR_TYPE_MASK) != USB_EP_ATTR_BULK)
+        if((ep_desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) != USB_ENDPOINT_XFER_BULK)
             continue;
 
         /* allocate pipes according to the endpoint type */

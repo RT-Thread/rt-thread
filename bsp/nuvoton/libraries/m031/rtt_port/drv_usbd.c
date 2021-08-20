@@ -56,8 +56,8 @@
 #define EP7_BUF_BASE    (EP6_BUF_BASE + EP6_BUF_LEN)
 #define EP7_BUF_LEN     EP7_MAX_PKT_SIZE
 
-#define EPADR_SW2HW(address) ((((address & USB_EPNO_MASK) * 2) +  (!(address & USB_DIR_IN))))
-#define EPADR_HW2SW(address) ((address & USB_EPNO_MASK) / 2)
+#define EPADR_SW2HW(address) ((((address & USB_ENDPOINT_NUMBER_MASK) * 2) +  (!(address & USB_DIR_IN))))
+#define EPADR_HW2SW(address) ((address & USB_ENDPOINT_NUMBER_MASK) / 2)
 /* Private typedef --------------------------------------------------------------*/
 typedef struct _nu_usbd_t
 {
@@ -77,14 +77,14 @@ static struct udcd _rt_obj_udc;
 
 static struct ep_id _ep_pool[] =
 {
-    {EPADR_HW2SW(EP0),  USB_EP_ATTR_CONTROL,     USB_DIR_INOUT,  EP0_MAX_PKT_SIZE, ID_ASSIGNED  },
-    {EPADR_HW2SW(EP2),  USB_EP_ATTR_BULK,        USB_DIR_IN,     EP2_MAX_PKT_SIZE, ID_UNASSIGNED},
-    {EPADR_HW2SW(EP3),  USB_EP_ATTR_BULK,        USB_DIR_OUT,    EP3_MAX_PKT_SIZE, ID_UNASSIGNED},
-    {EPADR_HW2SW(EP4),  USB_EP_ATTR_INT,         USB_DIR_IN,     EP4_MAX_PKT_SIZE, ID_UNASSIGNED},
-    {EPADR_HW2SW(EP5),  USB_EP_ATTR_INT,         USB_DIR_OUT,    EP5_MAX_PKT_SIZE, ID_UNASSIGNED},
-    {EPADR_HW2SW(EP6),  USB_EP_ATTR_BULK,        USB_DIR_IN,     EP6_MAX_PKT_SIZE, ID_UNASSIGNED},
-    {EPADR_HW2SW(EP7),  USB_EP_ATTR_BULK,        USB_DIR_OUT,    EP7_MAX_PKT_SIZE, ID_UNASSIGNED},
-    {0xFF,              USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,                ID_ASSIGNED  },
+    {EPADR_HW2SW(EP0),  USB_ENDPOINT_XFER_CONTROL,     USB_DIR_IN,  EP0_MAX_PKT_SIZE, ID_ASSIGNED  },
+    {EPADR_HW2SW(EP2),  USB_ENDPOINT_XFER_BULK,        USB_DIR_IN,     EP2_MAX_PKT_SIZE, ID_UNASSIGNED},
+    {EPADR_HW2SW(EP3),  USB_ENDPOINT_XFER_BULK,        USB_DIR_OUT,    EP3_MAX_PKT_SIZE, ID_UNASSIGNED},
+    {EPADR_HW2SW(EP4),  USB_ENDPOINT_XFER_INT,         USB_DIR_IN,     EP4_MAX_PKT_SIZE, ID_UNASSIGNED},
+    {EPADR_HW2SW(EP5),  USB_ENDPOINT_XFER_INT,         USB_DIR_OUT,    EP5_MAX_PKT_SIZE, ID_UNASSIGNED},
+    {EPADR_HW2SW(EP6),  USB_ENDPOINT_XFER_BULK,        USB_DIR_IN,     EP6_MAX_PKT_SIZE, ID_UNASSIGNED},
+    {EPADR_HW2SW(EP7),  USB_ENDPOINT_XFER_BULK,        USB_DIR_OUT,    EP7_MAX_PKT_SIZE, ID_UNASSIGNED},
+    {0xFF,              USB_ENDPOINT_XFERTYPE_MASK,   USB_ENDPOINT_DIR_MASK,   0,                ID_ASSIGNED  },
 };
 
 static void _nu_ep_partition(void)
@@ -176,7 +176,7 @@ static rt_err_t _ep_enable(uep_t ep)
     USBD_CONFIG_EP(EPADR_SW2HW(EP_ADDRESS(ep)),
                    USBD_CFG_CSTALL
                    | ((EP_ADDRESS(ep) & USB_DIR_IN) ? USBD_CFG_EPMODE_IN : USBD_CFG_EPMODE_OUT)
-                   | (EP_ADDRESS(ep) & USB_EPNO_MASK));
+                   | (EP_ADDRESS(ep) & USB_ENDPOINT_NUMBER_MASK));
 
     return RT_EOK;
 }
@@ -336,7 +336,7 @@ __STATIC_INLINE void _USBD_IRQHandler(void)
             USBD_STOP_TRANSACTION(EP1);
 
             USBD_SET_DATA1(EP0);
-            rt_usbd_ep0_setup_handler(&_rt_obj_udc, (struct urequest *)USBD_BUF_BASE);
+            rt_usbd_ep0_setup_handler(&_rt_obj_udc, (struct usb_ctrlrequest *)USBD_BUF_BASE);
         }
 
         // EP events

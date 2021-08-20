@@ -80,7 +80,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
         if (HAL_HCD_HC_GetState(&stm32_hhcd_fs, pipe->pipe_index) == HC_NAK)
         {
             RT_DEBUG_LOG(RT_DEBUG_USB, ("nak\n"));
-            if (pipe->ep.bmAttributes == USB_EP_ATTR_INT)
+            if (pipe->ep.bmAttributes == USB_ENDPOINT_XFER_INT)
             {
                 rt_thread_delay((pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) > 0 ? (pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) : 1);
             }

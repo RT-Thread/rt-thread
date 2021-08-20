@@ -23,10 +23,10 @@ struct winusb_device
 typedef struct winusb_device * winusb_device_t;
 
 ALIGN(4)
-static struct udevice_descriptor dev_desc =
+static struct usb_device_descriptor dev_desc =
 {
-    USB_DESC_LENGTH_DEVICE,     //bLength;
-    USB_DESC_TYPE_DEVICE,       //type;
+    USB_DT_DEVICE_SIZE,     //bLength;
+    USB_DT_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
     0x00,                       //bDeviceClass;
     0x00,                       //bDeviceSubClass;
@@ -46,7 +46,7 @@ ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
-    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    USB_DT_DEVICE_QUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
     0xFF,                           //bDeviceClass
     0x00,                           //bDeviceSubClass
@@ -62,8 +62,8 @@ struct winusb_descriptor _winusb_desc =
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
     {
-        USB_DESC_LENGTH_IAD,
-        USB_DESC_TYPE_IAD,
+        USB_DT_INTERFACE_ASSOCIATION_SIZE,
+        USB_DT_INTERFACE_ASSOCIATION,
         USB_DYNAMIC,
         0x01,
         0xFF,
@@ -74,8 +74,8 @@ struct winusb_descriptor _winusb_desc =
 #endif
     /*interface descriptor*/
     {
-        USB_DESC_LENGTH_INTERFACE,  //bLength;
-        USB_DESC_TYPE_INTERFACE,    //type;
+        USB_DT_INTERFACE_SIZE,  //bLength;
+        USB_DT_INTERFACE,    //type;
         USB_DYNAMIC,                //bInterfaceNumber;
         0x00,                       //bAlternateSetting;
         0x02,                       //bNumEndpoints
@@ -90,19 +90,19 @@ struct winusb_descriptor _winusb_desc =
     },
     /*endpoint descriptor*/
     {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
+        USB_DT_ENDPOINT_SIZE,
+        USB_DT_ENDPOINT,
         USB_DYNAMIC | USB_DIR_OUT,
-        USB_EP_ATTR_BULK,
+        USB_ENDPOINT_XFER_BULK,
         USB_DYNAMIC,
         0x00,
     },
     /*endpoint descriptor*/
     {
-        USB_DESC_LENGTH_ENDPOINT,
-        USB_DESC_TYPE_ENDPOINT,
+        USB_DT_ENDPOINT_SIZE,
+        USB_DT_ENDPOINT,
         USB_DYNAMIC | USB_DIR_IN,
-        USB_EP_ATTR_BULK,
+        USB_ENDPOINT_XFER_BULK,
         USB_DYNAMIC,
         0x00,
     },
@@ -172,14 +172,14 @@ static rt_err_t _ep0_cmd_handler(udevice_t device, rt_size_t size)
     dcd_ep0_send_status(device->dcd);
     return RT_EOK;
 }
-static rt_err_t _ep0_cmd_read(ufunction_t func, ureq_t setup)
+static rt_err_t _ep0_cmd_read(ufunction_t func, struct usb_ctrlrequest* setup)
 {
     winusb_device_t winusb_device = (winusb_device_t)func->user_data;
     cmd_func = func;
     rt_usbd_ep0_read(func->device,winusb_device->cmd_buff,setup->wLength,_ep0_cmd_handler);
     return RT_EOK;
 }
-static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
+static rt_err_t _interface_handler(ufunction_t func, struct usb_ctrlrequest* setup)
 {
     switch(setup->bRequest)
     {

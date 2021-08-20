@@ -29,10 +29,10 @@ const static char* ustring[] =
     USB_STRING_OS
 };
 
-static struct udevice_descriptor compsit_desc =
+static struct usb_device_descriptor compsit_desc =
 {
-    USB_DESC_LENGTH_DEVICE,     //bLength;
-    USB_DESC_TYPE_DEVICE,       //type;
+    USB_DT_DEVICE_SIZE,     //bLength;
+    USB_DT_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
     USB_CLASS_MISC,             //bDeviceClass;
     0x02,                       //bDeviceSubClass;
@@ -51,7 +51,7 @@ static struct udevice_descriptor compsit_desc =
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
-    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
+    USB_DT_DEVICE_QUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
     USB_CLASS_MISC,                 //bDeviceClass
     0x02,                           //bDeviceSubClass

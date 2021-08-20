@@ -198,7 +198,7 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
     /* set interface */
 //    ret = rt_usbh_set_interface(intf->device, intf->intf_desc->bInterfaceNumber);
 //    if(ret != RT_EOK)
-//        rt_usbh_clear_feature(intf->device, 0, USB_FEATURE_ENDPOINT_HALT);
+//        rt_usbh_clear_feature(intf->device, 0, USB_ENDPOINT_HALT);
     /* reset mass storage class device */
     ret = rt_usbh_storage_reset(intf);
     if(ret != RT_EOK) return ret;
@@ -208,13 +208,13 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
     /* get max logic unit number */
     ret = rt_usbh_storage_get_max_lun(intf, &max_lun);
     if(ret != RT_EOK)
-        rt_usbh_clear_feature(intf->device, 0, USB_FEATURE_ENDPOINT_HALT);
+        rt_usbh_clear_feature(intf->device, 0, USB_ENDPOINT_HALT);
 
     /* reset pipe in endpoint */
     if(stor->pipe_in->status == UPIPE_STATUS_STALL)
     {
         ret = rt_usbh_clear_feature(intf->device,
-        stor->pipe_in->ep.bEndpointAddress, USB_FEATURE_ENDPOINT_HALT);
+        stor->pipe_in->ep.bEndpointAddress, USB_ENDPOINT_HALT);
         if(ret != RT_EOK) return ret;
     }
 
@@ -223,7 +223,7 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
     if(stor->pipe_out->status == UPIPE_STATUS_STALL)
     {
         ret = rt_usbh_clear_feature(intf->device,
-        stor->pipe_out->ep.bEndpointAddress, USB_FEATURE_ENDPOINT_HALT);
+        stor->pipe_out->ep.bEndpointAddress, USB_ENDPOINT_HALT);
         if(ret != RT_EOK) return ret;
     }
 

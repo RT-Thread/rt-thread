@@ -19,11 +19,11 @@
 struct umass_descriptor
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
-    struct uiad_descriptor iad_desc;
+    struct usb_interface_assoc_descriptor iad_desc;
 #endif
-    struct uinterface_descriptor intf_desc;
-    struct uendpoint_descriptor ep_out_desc;
-    struct uendpoint_descriptor ep_in_desc;
+    struct usb_interface_descriptor intf_desc;
+    struct usb_endpoint_descriptor ep_out_desc;
+    struct usb_endpoint_descriptor ep_in_desc;
 };
 typedef struct umass_descriptor* umass_desc_t;
 

@@ -12,7 +12,7 @@
 #define __HID_H__
 
 #include <rtthread.h>
-
+#include <uapi/usb/hid.h>
 struct uhid
 {
     upipe_t pipe_in;

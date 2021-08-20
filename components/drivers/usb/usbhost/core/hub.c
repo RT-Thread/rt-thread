@@ -30,19 +30,19 @@ static rt_err_t root_hub_ctrl(struct uhcd *hcd, rt_uint16_t port, rt_uint8_t cmd
     case RH_CLEAR_PORT_FEATURE:
         switch(((rt_uint32_t)args))
         {
-        case PORT_FEAT_C_CONNECTION:
+        case USB_PORT_FEAT_C_CONNECTION:
             hcd->roothub->port_status[port-1] &= ~PORT_CCSC;
             break;
-        case PORT_FEAT_C_ENABLE:
+        case USB_PORT_FEAT_C_ENABLE:
             hcd->roothub->port_status[port-1] &= ~PORT_PESC;
             break;
-        case PORT_FEAT_C_SUSPEND:
+        case USB_PORT_FEAT_C_SUSPEND:
             hcd->roothub->port_status[port-1] &= ~PORT_PSSC;
             break;
-        case PORT_FEAT_C_OVER_CURRENT:
+        case USB_PORT_FEAT_C_OVER_CURRENT:
             hcd->roothub->port_status[port-1] &= ~PORT_POCIC;
             break;
-        case PORT_FEAT_C_RESET:
+        case USB_PORT_FEAT_C_RESET:
             hcd->roothub->port_status[port-1] &= ~PORT_PRSC;
             break;
         }
@@ -50,26 +50,24 @@ static rt_err_t root_hub_ctrl(struct uhcd *hcd, rt_uint16_t port, rt_uint8_t cmd
     case RH_SET_PORT_FEATURE:
         switch((rt_uint32_t)args)
         {
-        case PORT_FEAT_CONNECTION:
+        case USB_PORT_FEAT_CONNECTION:
             hcd->roothub->port_status[port-1] |= PORT_CCSC;
             break;
-        case PORT_FEAT_ENABLE:
+        case USB_PORT_FEAT_ENABLE:
             hcd->roothub->port_status[port-1] |= PORT_PESC;
             break;
-        case PORT_FEAT_SUSPEND:
+        case USB_PORT_FEAT_SUSPEND:
             hcd->roothub->port_status[port-1] |= PORT_PSSC;
             break;
-        case PORT_FEAT_OVER_CURRENT:
+        case USB_PORT_FEAT_OVER_CURRENT:
             hcd->roothub->port_status[port-1] |= PORT_POCIC;
             break;
-        case PORT_FEAT_RESET:
+        case USB_PORT_FEAT_RESET:
             hcd->ops->reset_port(port);
             break;
-        case PORT_FEAT_POWER:
+        case USB_PORT_FEAT_POWER:
             break;
-        case PORT_FEAT_LOWSPEED:
-            break;
-        case PORT_FEAT_HIGHSPEED:
+        case USB_PORT_FEAT_LOWSPEED:
             break;
         }
         break;
@@ -83,14 +81,14 @@ void rt_usbh_root_hub_connect_handler(struct uhcd *hcd, rt_uint8_t port, rt_bool
     struct uhost_msg msg;
     msg.type = USB_MSG_CONNECT_CHANGE;
     msg.content.hub = hcd->roothub;
-    hcd->roothub->port_status[port - 1] |= PORT_CCS | PORT_CCSC;
+    hcd->roothub->port_status[port - 1] |= USB_PORT_STAT_CONNECTION | PORT_CCSC;
     if(isHS)
     {
-        hcd->roothub->port_status[port - 1] &= ~PORT_LSDA;
+        hcd->roothub->port_status[port - 1] &= ~USB_PORT_STAT_LOW_SPEED;
     }
     else
     {
-        hcd->roothub->port_status[port - 1] |= PORT_LSDA;
+        hcd->roothub->port_status[port - 1] |= USB_PORT_STAT_LOW_SPEED;
     }
     rt_usbh_event_signal(&msg);
 }
@@ -101,7 +99,7 @@ void rt_usbh_root_hub_disconnect_handler(struct uhcd *hcd, rt_uint8_t port)
     msg.type = USB_MSG_CONNECT_CHANGE;
     msg.content.hub = hcd->roothub;
     hcd->roothub->port_status[port - 1] |= PORT_CCSC;
-    hcd->roothub->port_status[port - 1] &= ~PORT_CCS;
+    hcd->roothub->port_status[port - 1] &= ~USB_PORT_STAT_CONNECTION;
     rt_usbh_event_signal(&msg);
 }
 
@@ -117,17 +115,17 @@ void rt_usbh_root_hub_disconnect_handler(struct uhcd *hcd, rt_uint8_t port)
  */
 rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer, rt_size_t nbytes)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     int timeout = USB_TIMEOUT_BASIC;
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
 
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_DEVICE;
+    setup.bRequestType = USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_DEVICE;
     setup.bRequest = USB_REQ_GET_DESCRIPTOR;
     setup.wIndex = 0;
     setup.wLength = nbytes;
-    setup.wValue = USB_DESC_TYPE_HUB << 8;
+    setup.wValue = USB_DT_HUB << 8;
 
     if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) == 8)
     {
@@ -150,13 +148,13 @@ rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer
  */
 rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint32_t* buffer)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     int timeout = USB_TIMEOUT_BASIC;
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
 
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_DEVICE;
+    setup.bRequestType = USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_DEVICE;
     setup.bRequest = USB_REQ_GET_STATUS;
     setup.wIndex = 0;
     setup.wLength = 4;
@@ -183,7 +181,7 @@ rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint32_t* buffer)
  */
 rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port, rt_uint32_t* buffer)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     int timeout = USB_TIMEOUT_BASIC;
 
     /* parameter check */
@@ -197,7 +195,7 @@ rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port, rt_uint32_t* 
         return RT_EOK;
     }
 
-    setup.request_type = USB_REQ_TYPE_DIR_IN | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_OTHER;
+    setup.bRequestType = USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_OTHER;
     setup.bRequest = USB_REQ_GET_STATUS;
     setup.wIndex = port;
     setup.wLength = 4;
@@ -225,7 +223,7 @@ rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port, rt_uint32_t* 
  */
 rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, rt_uint16_t feature)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     int timeout = USB_TIMEOUT_BASIC;
 
     /* parameter check */
@@ -239,8 +237,8 @@ rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, rt_uint16_
         return RT_EOK;
     }
 
-    setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_CLASS |
-        USB_REQ_TYPE_OTHER;
+    setup.bRequestType = USB_DIR_OUT | USB_TYPE_CLASS |
+        USB_RECIP_OTHER;
     setup.bRequest = USB_REQ_CLEAR_FEATURE;
     setup.wIndex = port;
     setup.wLength = 0;
@@ -266,7 +264,7 @@ rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, rt_uint16_
 rt_err_t rt_usbh_hub_set_port_feature(uhub_t hub, rt_uint16_t port,
     rt_uint16_t feature)
 {
-    struct urequest setup;
+    struct usb_ctrlrequest setup;
     int timeout = USB_TIMEOUT_BASIC;
 
     /* parameter check */
@@ -280,8 +278,8 @@ rt_err_t rt_usbh_hub_set_port_feature(uhub_t hub, rt_uint16_t port,
         return RT_EOK;
     }
 
-    setup.request_type = USB_REQ_TYPE_DIR_OUT | USB_REQ_TYPE_CLASS |
-        USB_REQ_TYPE_OTHER;
+    setup.bRequestType = USB_DIR_OUT | USB_TYPE_CLASS |
+        USB_RECIP_OTHER;
     setup.bRequest = USB_REQ_SET_FEATURE;
     setup.wIndex = port;
     setup.wLength = 0;
@@ -313,17 +311,17 @@ rt_err_t rt_usbh_hub_reset_port(uhub_t hub, rt_uint16_t port)
     rt_thread_delay(50);
 
     /* reset hub port */
-    ret = rt_usbh_hub_set_port_feature(hub, port, PORT_FEAT_RESET);
+    ret = rt_usbh_hub_set_port_feature(hub, port, USB_PORT_FEAT_RESET);
     if(ret != RT_EOK) return ret;
 
     while(1)
     {
         ret = rt_usbh_hub_get_port_status(hub, port, &pstatus);
-        if(!(pstatus & PORT_PRS)) break;
+        if(!(pstatus & USB_PORT_STAT_RESET)) break;
     }
 
     /* clear port reset feature */
-    ret = rt_usbh_hub_clear_port_feature(hub, port, PORT_FEAT_C_RESET);
+    ret = rt_usbh_hub_clear_port_feature(hub, port, USB_PORT_FEAT_C_RESET);
     if(ret != RT_EOK) return ret;
 
     rt_thread_delay(50);
@@ -357,7 +355,7 @@ rt_err_t rt_usbh_hub_port_debounce(uhub_t hub, rt_uint16_t port)
         ret = rt_usbh_hub_get_port_status(hub, port, &pstatus);
         if(ret != RT_EOK) return ret;
 
-        if(!(pstatus & PORT_CCS))
+        if(!(pstatus & USB_PORT_STAT_CONNECTION))
         {
             connect = RT_FALSE;
             break;
@@ -405,13 +403,13 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
         if (pstatus & PORT_CCSC)
         {
             /* clear port status change feature */
-            rt_usbh_hub_clear_port_feature(hub, i + 1, PORT_FEAT_C_CONNECTION);
+            rt_usbh_hub_clear_port_feature(hub, i + 1, USB_PORT_FEAT_C_CONNECTION);
             reconnect = RT_TRUE;
         }
 
         if(pstatus & PORT_PESC)
         {
-            rt_usbh_hub_clear_port_feature(hub, i + 1, PORT_FEAT_C_ENABLE);
+            rt_usbh_hub_clear_port_feature(hub, i + 1, USB_PORT_FEAT_C_ENABLE);
             reconnect = RT_TRUE;
         }
 
@@ -433,7 +431,7 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
             if(device == RT_NULL) break;
 
             /* set usb device speed */
-            device->speed = (pstatus & PORT_LSDA) ? 1 : 0;
+            device->speed = (pstatus & USB_PORT_STAT_LOW_SPEED) ? 1 : 0;
             device->parent_hub = hub;
             device->hcd = hub->hcd;
             device->port = i + 1;
@@ -497,7 +495,7 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
 {
     int i = 0;
     rt_err_t ret = RT_EOK;
-    uep_desc_t ep_desc = RT_NULL;
+    struct usb_endpoint_descriptor* ep_desc = RT_NULL;
     uhub_t hub;
     struct uinstance* device;
     struct uhintf* intf = (struct uhintf*)arg;
@@ -529,7 +527,7 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
 
     /* get full hub descriptor */
     ret = rt_usbh_hub_get_descriptor(device, (rt_uint8_t*)&hub->hub_desc,
-        hub->hub_desc.length);
+        hub->hub_desc.bDescLength);
     if(ret != RT_EOK)
     {
         rt_kprintf("get hub descriptor again failed\n");
@@ -538,10 +536,10 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
 
     /* get hub ports number */
     /* If hub device supported ports over USB_HUB_PORT_NUM(Ex: 8 port hub). Set hub->num_ports to USB_HUB_PORT_NUM */
-    if(hub->hub_desc.num_ports > USB_HUB_PORT_NUM)
+    if(hub->hub_desc.bNbrPorts > USB_HUB_PORT_NUM)
         hub->num_ports = USB_HUB_PORT_NUM;
     else
-        hub->num_ports = hub->hub_desc.num_ports;
+        hub->num_ports = hub->hub_desc.bNbrPorts;
 
     hub->hcd = device->hcd;
     hub->self = device;
@@ -549,8 +547,8 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
     /* reset all hub ports */
     for (i = 0; i < hub->num_ports; i++)
     {
-        rt_usbh_hub_set_port_feature(hub, i + 1, PORT_FEAT_POWER);
-        rt_thread_delay(hub->hub_desc.pwron_to_good
+        rt_usbh_hub_set_port_feature(hub, i + 1, USB_PORT_FEAT_POWER);
+        rt_thread_delay(hub->hub_desc.bPwrOn2PwrGood
             * 2 * RT_TICK_PER_SECOND / 1000 );
     }
 
@@ -566,11 +564,8 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
     }
 
     /* the endpoint type of hub class should be interrupt */
-    if( USB_EP_ATTR(ep_desc->bmAttributes) == USB_EP_ATTR_INT)
+    if( usb_endpoint_is_int_in(ep_desc))
     {
-        /* the endpoint direction of hub class should be in */
-        if(ep_desc->bEndpointAddress & USB_DIR_IN)
-        {
             /* allocate a pipe according to the endpoint type */
             pipe_in = rt_usb_instance_find_pipe(device,ep_desc->bEndpointAddress);
             if(pipe_in == RT_NULL)
@@ -578,9 +573,12 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
                 return RT_ERROR;
             }
             rt_usb_pipe_add_callback(pipe_in,rt_usbh_hub_irq);
-        }
-        else return -RT_ERROR;
     }
+    else 
+    {
+        return -RT_ERROR;
+    }
+    
 
     /* parameter check */
     RT_ASSERT(device->hcd != RT_NULL);
