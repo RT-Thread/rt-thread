@@ -277,7 +277,6 @@ typedef int (*init_fn_t)(void);
 /* define these to empty, even if not include finsh.h file */
 #define FINSH_FUNCTION_EXPORT(name, desc)
 #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
-#define FINSH_VAR_EXPORT(name, type, desc)
 
 #define MSH_CMD_EXPORT(command, desc)
 #define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
