@@ -267,8 +267,7 @@ en_result_t Dma_InitChannel(en_dma_channel_t enCh, stc_dma_config_t* pstcConfig)
   ASSERT(IS_VALID_ADDR_MODE(pstcConfig->enDstAddrMode));
   
   /* Check for channel and NULL pointer */
-  if ((pstcConfig == NULL) || 
-      (!IS_VALID_CH(enCh)))
+  if (!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
