@@ -8,7 +8,7 @@
  */
 
 #include "tc_comm.h"
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 #endif
 
@@ -25,7 +25,6 @@ static const char* _tc_current;
 static void (*_tc_cleanup)(void) = RT_NULL;
 
 static rt_uint32_t _tc_scale = 1;
-FINSH_VAR_EXPORT(_tc_scale, finsh_type_int, the testcase timer timeout scale)
 
 static rt_uint32_t _tc_loop;
 

@@ -814,7 +814,7 @@ int32_t rw009_rssi(void)
     return 0;
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 
 static rt_err_t rw009_scan(void)
@@ -849,4 +849,4 @@ FINSH_FUNCTION_EXPORT(rw009_scan, SACN and list AP.);
 FINSH_FUNCTION_EXPORT(rw009_join, RW009 join to AP.);
 FINSH_FUNCTION_EXPORT(rw009_rssi, get RW009 current AP rssi.);
 
-#endif // RT_USING_FINSH
+#endif // RT_USING_MSH

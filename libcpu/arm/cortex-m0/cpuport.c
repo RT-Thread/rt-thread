@@ -108,7 +108,7 @@ void rt_hw_hard_fault_exception(struct exception_stack_frame *contex)
 
     rt_kprintf("hard fault on thread: %s\n", rt_current_thread->name);
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     list_thread();
 #endif
 

@@ -264,7 +264,7 @@ __usage:
     usage();
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 MSH_CMD_EXPORT_ALIAS(tcpserver_test, tcpserver,
     Start a tcp server. Help: tcpserver --help);
 #endif

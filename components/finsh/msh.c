@@ -10,60 +10,26 @@
  * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
 #include <rtthread.h>
+#include <string.h>
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
+
+#ifndef FINSH_ARG_MAX
+    #define FINSH_ARG_MAX    8
+#endif
 
 #include "msh.h"
-#include <finsh.h>
-#include <shell.h>
+#include "shell.h"
 
 #ifdef RT_USING_DFS
-#include <dfs_posix.h>
+    #include <dfs_posix.h>
 #endif
 
 #ifdef RT_USING_MODULE
-#include <dlmodule.h>
-#endif
-
-#ifndef FINSH_ARG_MAX
-#define FINSH_ARG_MAX    8
+    #include <dlmodule.h>
 #endif
 
 typedef int (*cmd_function_t)(int argc, char **argv);
-
-#ifdef FINSH_USING_MSH
-#ifdef FINSH_USING_MSH_ONLY
-rt_bool_t msh_is_used(void)
-{
-    return RT_TRUE;
-}
-#else
-#ifdef FINSH_USING_MSH_DEFAULT
-static rt_bool_t __msh_state = RT_TRUE;
-#else
-static rt_bool_t __msh_state = RT_FALSE;
-#endif
-rt_bool_t msh_is_used(void)
-{
-    return __msh_state;
-}
-
-static int msh_exit(int argc, char **argv)
-{
-    /* return to finsh shell mode */
-    __msh_state = RT_FALSE;
-    return 0;
-}
-FINSH_FUNCTION_EXPORT_ALIAS(msh_exit, __cmd_exit, return to RT-Thread shell mode.);
-
-static int msh_enter(void)
-{
-    /* enter module shell mode */
-    __msh_state = RT_TRUE;
-    return 0;
-}
-FINSH_FUNCTION_EXPORT_ALIAS(msh_enter, msh, use module shell);
-#endif
 
 int msh_help(int argc, char **argv)
 {
@@ -87,7 +53,7 @@ int msh_help(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, RT-Thread shell help.);
+MSH_CMD_EXPORT_ALIAS(msh_help, help, RT - Thread shell help.);
 
 int cmd_ps(int argc, char **argv)
 {
@@ -102,7 +68,7 @@ int cmd_ps(int argc, char **argv)
         list_thread();
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
+MSH_CMD_EXPORT_ALIAS(cmd_ps, ps, List threads in the system.);
 
 #ifdef RT_USING_HEAP
 int cmd_free(int argc, char **argv)
@@ -117,7 +83,7 @@ int cmd_free(int argc, char **argv)
 #endif
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
+MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system.);
 #endif
 
 static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
@@ -128,7 +94,8 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
     rt_size_t i;
 
     ptr = cmd;
-    position = 0; argc = 0;
+    position = 0;
+    argc = 0;
 
     while (position < length)
     {
@@ -136,13 +103,14 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
         while ((*ptr == ' ' || *ptr == '\t') && position < length)
         {
             *ptr = '\0';
-            ptr ++; position ++;
+            ptr ++;
+            position ++;
         }
 
-        if(argc >= FINSH_ARG_MAX)
+        if (argc >= FINSH_ARG_MAX)
         {
             rt_kprintf("Too many args ! We only Use:\n");
-            for(i = 0; i < argc; i++)
+            for (i = 0; i < argc; i++)
             {
                 rt_kprintf("%s ", argv[i]);
             }
@@ -155,8 +123,10 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
         /* handle string */
         if (*ptr == '"')
         {
-            ptr ++; position ++;
-            argv[argc] = ptr; argc ++;
+            ptr ++;
+            position ++;
+            argv[argc] = ptr;
+            argc ++;
 
             /* skip this string */
             while (*ptr != '"' && position < length)
@@ -165,15 +135,19 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
                 {
                     if (*(ptr + 1) == '"')
                     {
-                        ptr ++; position ++;
+                        ptr ++;
+                        position ++;
                     }
                 }
-                ptr ++; position ++;
+                ptr ++;
+                position ++;
             }
             if (position >= length) break;
 
             /* skip '"' */
-            *ptr = '\0'; ptr ++; position ++;
+            *ptr = '\0';
+            ptr ++;
+            position ++;
         }
         else
         {
@@ -181,7 +155,8 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
             argc ++;
             while ((*ptr != ' ' && *ptr != '\t') && position < length)
             {
-                ptr ++; position ++;
+                ptr ++;
+                position ++;
             }
             if (position >= length) break;
         }
@@ -340,7 +315,7 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
     int fd = -1;
     char *pg_name;
 
-    extern int exec(char*, int, char**);
+    extern int exec(char *, int, char **);
 
     /* find the size of first command */
     while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
@@ -642,6 +617,4 @@ void msh_auto_complete(char *prefix)
 
     return ;
 }
-#endif
-
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_MSH */

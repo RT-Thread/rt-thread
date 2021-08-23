@@ -715,7 +715,7 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
     _pm_init_flag = 1;
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 
 static const char *_pm_sleep_str[] = PM_SLEEP_MODE_NAMES;

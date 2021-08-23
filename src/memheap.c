@@ -667,7 +667,7 @@ void rt_memheap_free(void *ptr)
 }
 RTM_EXPORT(rt_memheap_free);
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 static void _memheap_dump_tag(struct rt_memheap_item *item)
 {
     rt_uint8_t name[2 * sizeof(void *)];
@@ -750,7 +750,7 @@ int memheaptrace(void)
     return 0;
 }
 MSH_CMD_EXPORT(memheaptrace, dump memory trace information);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #ifdef RT_USING_MEMHEAP_AS_HEAP
 static struct rt_memheap _heap;
@@ -1003,10 +1003,10 @@ void memtrace_heap()
     }
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 MSH_CMD_EXPORT(memtrace_heap, dump memory trace for heap);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #endif /* RT_USING_MEMTRACE */
 

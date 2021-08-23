@@ -69,7 +69,7 @@ void finsh_sz(void *parameter)
     rt_kprintf(FINSH_PROMPT);
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 #include <shell.h>
 

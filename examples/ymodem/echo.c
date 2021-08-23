@@ -41,7 +41,7 @@ rt_err_t rym_cat_to_dev(rt_device_t idev, rt_device_t odev)
     return res;
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 void rym_cat_vcom(void)
 {

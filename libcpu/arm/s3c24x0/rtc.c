@@ -167,7 +167,7 @@ void rt_hw_rtc_init(void)
     rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 void list_date()
 {

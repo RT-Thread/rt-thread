@@ -218,7 +218,7 @@ rt_err_t ping(char* target_name, rt_uint32_t times, rt_size_t size)
 
     return RT_EOK;
 }
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 
 FINSH_FUNCTION_EXPORT(ping, ping network host);
@@ -237,7 +237,7 @@ int cmd_ping(int argc, char **argv)
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ping, __cmd_ping, ping network host);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #endif /* RT_USING_NETDEV */
 

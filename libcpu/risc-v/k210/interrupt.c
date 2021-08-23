@@ -387,7 +387,7 @@ uintptr_t handle_trap(uintptr_t mcause, uintptr_t epc, uintptr_t * sp)
         print_stack_frame(sp);
         rt_kprintf("exception pc => 0x%08x\n", epc);
         rt_kprintf("current thread: %.*s\n", RT_NAME_MAX, tid->name);
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
         list_thread();
 #endif
         while(1);

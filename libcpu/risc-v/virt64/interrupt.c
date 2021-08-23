@@ -265,7 +265,7 @@ void handle_trap(rt_size_t xcause,rt_size_t xtval,rt_size_t xepc,struct rt_hw_st
         dump_regs(sp);
         rt_kprintf("exception pc => 0x%08x\n", xepc);
         rt_kprintf("current thread: %.*s\n", RT_NAME_MAX, tid->name);
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
         list_thread();
 #endif
         while(1);

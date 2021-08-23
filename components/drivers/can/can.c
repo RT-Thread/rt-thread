@@ -903,7 +903,7 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
     }
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 int cmd_canstat(int argc, void **argv)
 {

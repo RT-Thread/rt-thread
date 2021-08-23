@@ -12,6 +12,7 @@
  * COPYRIGHT (C) 2012, Shanghai Real Thread
  */
 
+#include <string.h>
 #include <drivers/mtd_nand.h>
 
 #ifdef RT_USING_MTD_NAND
@@ -95,7 +96,7 @@ rt_err_t rt_mtd_nand_register_device(const char                *name,
     return rt_device_register(dev, name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STANDALONE);
 }
 
-#if defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_FINSH)
+#if defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_MSH)
 #include <finsh.h>
 #define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
 
@@ -278,7 +279,7 @@ int mtd_nand_erase_all(const char *name)
     return 0;
 }
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
 static void mtd_nand(int argc, char **argv)
 {
     /* If the number of arguments less than 2 */
@@ -346,17 +347,17 @@ help:
     }
 }
 MSH_CMD_EXPORT(mtd_nand, MTD nand device test function);
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_MSH */
 
-#ifndef FINSH_USING_MSH_ONLY
+#ifndef RT_USING_MSH
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nandid, nand_id, read ID - nandid(name));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_read, nand_read, read page in nand - nand_read(name, block, page));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_readoob, nand_readoob, read spare data in nand - nand_readoob(name, block, page));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_write, nand_write, write dump data to nand - nand_write(name, block, page));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase, nand_erase, nand_erase(name, block));
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase_all, nand_erase_all, erase all of nand device - nand_erase_all(name, block));
-#endif /* FINSH_USING_MSH_ONLY */
+#endif /* RT_USING_MSH */
 
-#endif /* defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_FINSH) */
+#endif /* defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_MSH) */
 
 #endif /* RT_USING_MTD_NAND */

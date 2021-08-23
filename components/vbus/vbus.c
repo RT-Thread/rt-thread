@@ -1306,7 +1306,7 @@ void rt_vbus_chm_wm_dump(void)
 }
 #endif
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT_ALIAS(rt_vbus_rb_dump,    vbrb, dump vbus ringbuffer status);
 FINSH_FUNCTION_EXPORT_ALIAS(rt_vbus_chn_dump,  vbchn, dump vbus channel status);

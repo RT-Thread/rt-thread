@@ -230,7 +230,7 @@ void chargen_init(void)
                                CHARGEN_PRIORITY, 5);
     if (chargen != RT_NULL) rt_thread_startup(chargen);
 }
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 void chargen()
 {

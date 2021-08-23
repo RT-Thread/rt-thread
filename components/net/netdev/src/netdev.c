@@ -884,7 +884,7 @@ void netdev_low_level_set_dhcp_status(struct netdev *netdev, rt_bool_t is_enable
     }
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 
 #include <finsh.h>
 
@@ -1273,4 +1273,4 @@ int netdev_netstat(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(netdev_netstat, __cmd_netstat, list the information of TCP / IP);
 #endif /* NETDEV_USING_NETSTAT */
 
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

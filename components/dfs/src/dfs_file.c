@@ -509,7 +509,7 @@ int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
     return result;
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 
 static struct dfs_fd fd;

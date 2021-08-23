@@ -604,7 +604,7 @@ err1:
 
 #endif
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 void mkfs(const char *fs_name, const char *device_name)
 {

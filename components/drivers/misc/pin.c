@@ -11,7 +11,7 @@
 
 #include <drivers/pin.h>
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <finsh.h>
 #endif
 
