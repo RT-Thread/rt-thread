@@ -268,7 +268,7 @@ en_result_t Dma_InitChannel(en_dma_channel_t enCh, stc_dma_config_t* pstcConfig)
   
   /* Check for channel and NULL pointer */
   if ((!IS_VALID_CH(enCh)) || 
-      (NULL == pstcConfig))
+      (pstcConfig == NULL))
   {
     return ErrorInvalidParameter;
   }

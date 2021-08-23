@@ -88,11 +88,6 @@
 //#define __CC_ARM
 #endif
 
-
-
-
-
-
 uint32_t Log2(uint32_t u32Val)
 {
     uint32_t u32V1 = 0;
@@ -146,61 +141,13 @@ void DDL_WAIT_LOOP_HOOK(void)
  *****************************************************************************/
 void Debug_UartInit(void)
 {
-#ifdef __DEBUG
-    //uint32_t u32Pclk1 =  0;
-    //volatile uint32_t u32ReloadVal = 0;
-    //
-    //// UART0_TXD/P35, 19200bps
-    //M0P_GPIO->P3ADS_f.P35 = 0;
-    //M0P_GPIO->P35_SEL_f.SEL = 3;
-    //M0P_GPIO->P3DIR_f.P35 = 0;
-    //
-    //u32Pclk1 = Sysctrl_GetPClkFreq();
-    //u32ReloadVal = 65536 - u32Pclk1 * 2 / 19200 / 32;
-    //
-    //M0P_BT0->CR_f.CT = 0;
-    //M0P_BT0->CR_f.MD = 1;
-    //M0P_BT0->CR_f.TOG_EN = 1;
-    //M0P_BT0->ARR = u32ReloadVal;
-    //M0P_BT0->CNT = u32ReloadVal;
-    //M0P_BT0->CR_f.TR = 1;
-    //
-    //M0P_UART0->SCON_f.DBAUD = 1;
-    //M0P_UART0->SCON_f.SM01 = 1;
-#endif
+
 }
 
 void Debug_Output(uint8_t u8Data)
 {
-    //M0P_UART0->SCON_f.REN = 0;
-    //M0P_UART0->SBUF = u8Data;
-    //
-    //while (TRUE != M0P_UART0->ISR_f.TI)
-    //{
-    //    ;
-    //}
-    //M0P_UART0->ICR_f.TICLR = 0;
+
 }
-
-//#ifdef __DEBUG
-///**
-// ******************************************************************************
-// ** \brief  Re-target putchar function
-// ******************************************************************************/
-//int fputc(int ch, FILE *f)
-//{
-
-//    if (((uint8_t)ch) == '\n')
-//    {
-//        Debug_Output('\r');
-//    }
-//    Debug_Output(ch);
-
-//    return ch;
-//}
-//#endif
-
-
 
 extern void Debug_UartInit(void);
 extern void Debug_Output(uint8_t u8Data);
@@ -209,7 +156,7 @@ extern void Debug_Output(uint8_t u8Data);
 #pragma import(__use_no_semihosting)
 void _sys_exit(int x)
 {
-    x = x;
+    (void)x;
 }
 struct __FILE
 {
