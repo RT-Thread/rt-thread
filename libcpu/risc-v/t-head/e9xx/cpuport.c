@@ -1,11 +1,13 @@
 /*
  * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2021, Alibaba Group Holding Limited
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020/08/20     zx.chen      The T-HEAD RISC-V CPU E906 porting code.
+ * 2021/08/13     zx.chen      update T-HEAD E9xx-series(E906/7/F/D/P) CPU porting code.
  */
 
 #include <rthw.h>
@@ -143,8 +145,8 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
 
 rt_base_t rt_hw_interrupt_disable(void)
 {
-    __asm volatile("csrc mstatus, 8");
-    return 0;
+    __asm volatile("csrrci a0, mstatus, 8");
+    return;
 }
 
 /**
@@ -154,9 +156,10 @@ rt_base_t rt_hw_interrupt_disable(void)
  *
  * @return none
  */
+/* XXX:rename rt_hw_interrupt_restore? */
 void rt_hw_interrupt_enable(rt_base_t level)
 {
-    __asm volatile("csrs mstatus, 8");
+    __asm volatile("csrw mstatus, a0");
 }
 
 /** shutdown CPU */

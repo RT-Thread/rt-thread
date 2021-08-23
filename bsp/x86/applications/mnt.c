@@ -11,7 +11,7 @@ extern int rt_floppy_init(void);
 
 int mnt_init(void)
 {
-    rt_floppy_init();
-
-    return 0;
+    return rt_floppy_init();
 }
+INIT_ENV_EXPORT(mnt_init);
+

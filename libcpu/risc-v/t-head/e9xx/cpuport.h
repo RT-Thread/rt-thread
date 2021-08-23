@@ -12,6 +12,7 @@
 #define CPUPORT_H__
 
 #include <rtconfig.h>
+#include <theadconfig.h>
 
 /* bytes of register width  */
 #ifdef ARCH_RISCV_64

@@ -65,7 +65,10 @@ void systemmap_config(void)
 void SystemInit(void)
 {
     int i;
+#if ((CONFIG_CPU_E902 != 1) && (CONFIG_CPU_E902M != 1))
     systemmap_config();
+#endif
+
     /* enable mstatus FS */
 #if (__riscv_flen)
     uint32_t mstatus = __get_MSTATUS();
