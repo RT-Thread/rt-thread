@@ -6,6 +6,9 @@ set *(int *)0x40011008=0x0
 set *(int *)0x4001101c=0x0
 set disassemble-next-line on
 show disassemble-next-line
+
+hb Default_Handler
 lo
+c
 
 
