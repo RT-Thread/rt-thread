@@ -59,7 +59,6 @@
 #include "hc32l136.h"
 #include "system_hc32l136.h"
 #include "sysctrl.h"
-//#include "gpio.h"
 
 /* C binding of definitions if building with C++ compiler                     */
 #ifdef __cplusplus
