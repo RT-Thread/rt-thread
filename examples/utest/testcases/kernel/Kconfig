@@ -5,9 +5,18 @@ config UTEST_MEMHEAP_TC
     default y
     depends on RT_USING_MEMHEAP
 
+config UTEST_IRQ_TC
+    bool "IRQ test"
+    default n
+
 config UTEST_SEMAPHORE_TC
     bool "semaphore test"
     default n
     depends on RT_USING_SEMAPHORE
+
+config UTEST_EVENT_TC
+    bool "event test"
+    default n
+    depends on RT_USING_EVENT
 
 endmenu
