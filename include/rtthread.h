@@ -585,7 +585,7 @@ void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
 #endif /* RT_DEBUG */
 
 #ifdef RT_USING_FINSH
-#include <finsh_api.h>
+#include <finsh.h>
 #endif
 
 /**@}*/
