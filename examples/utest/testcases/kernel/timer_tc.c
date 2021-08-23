@@ -264,7 +264,6 @@ static void test_static_timer_control(void)
 #define test_dynamic_timer_stop test_dynamic_timer_create
 #define test_dynamic_timer_delete test_dynamic_timer_create
 
-
 static void dynamic_timer_oneshot(void *param)
 {
     timer_struct *timer_call;
