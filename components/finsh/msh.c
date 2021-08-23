@@ -41,11 +41,10 @@ int msh_help(int argc, char **argv)
                 index < _syscall_table_end;
                 FINSH_NEXT_SYSCALL(index))
         {
-            if (strncmp(index->name, "__cmd_", 6) != 0) continue;
 #if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
-            rt_kprintf("%-16s - %s\n", &index->name[6], index->desc);
+            rt_kprintf("%-16s - %s\n", index->name, index->desc);
 #else
-            rt_kprintf("%s ", &index->name[6]);
+            rt_kprintf("%s ", index->name);
 #endif
         }
     }
@@ -174,10 +173,8 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
             index < _syscall_table_end;
             FINSH_NEXT_SYSCALL(index))
     {
-        if (strncmp(index->name, "__cmd_", 6) != 0) continue;
-
-        if (strncmp(&index->name[6], cmd, size) == 0 &&
-                index->name[6 + size] == '\0')
+        if (strncmp(index->name, cmd, size) == 0 &&
+                index->name[size] == '\0')
         {
             cmd_func = (cmd_function_t)index->func;
             break;
