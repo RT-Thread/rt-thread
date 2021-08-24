@@ -54,8 +54,8 @@ static struct utest local_utest = {UTEST_PASSED, 0, 0};
 #endif
 
 #define TC_FAIL_LIST_SIZE                (RT_ALIGN(tc_num, 8) / 8)
-#define TC_FAIL_LIST_MARK_FAILED(index)  (tc_fail_list[RT_ALIGN(index, 8) / 8] |= (1UL << (index % 8)))
-#define TC_FAIL_LIST_IS_FAILED(index)    (tc_fail_list[RT_ALIGN(index, 8) / 8] &  (1UL << (index % 8)))
+#define TC_FAIL_LIST_MARK_FAILED(index)  (tc_fail_list[index / 8] |= (1UL << (index % 8)))
+#define TC_FAIL_LIST_IS_FAILED(index)    (tc_fail_list[index / 8] &  (1UL << (index % 8)))
 
 void utest_log_lv_set(rt_uint8_t lv)
 {
