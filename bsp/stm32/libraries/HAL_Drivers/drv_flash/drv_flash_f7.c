@@ -8,6 +8,7 @@
  * 2018-12-5      SummerGift   first version
  * 2019-3-2       jinsheng     add Macro judgment
  * 2020-1-6       duminmin     support single bank mode
+ * 2021-8-11      CX           fix the sector calculation error bug
  */
 
 #include "board.h"
@@ -280,7 +281,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
     /* Get the 1st sector to erase */
     FirstSector = GetSector(addr);
     /* Get the number of sector to erase from 1st sector*/
-    NbOfSectors = GetSector(addr + size) - FirstSector + 1;
+    NbOfSectors = GetSector(addr + size - 1) - FirstSector + 1;
     /* Fill EraseInit structure*/
     EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
     EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
