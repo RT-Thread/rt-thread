@@ -103,7 +103,7 @@ static void test_static_timer_init(void)
             }
 
             /* wait for timerout */
-            rt_thread_mdelay(time_out + 5);
+            rt_thread_delay(time_out + 1);
 
             /* detach timer */
             result = rt_timer_detach(&timer.static_timer);
@@ -145,7 +145,7 @@ static void test_static_timer_init(void)
             }
 
             /* wait for timerout */
-            rt_thread_mdelay(time_out + 5);
+            rt_thread_delay(time_out + 1);
 
             /* detach timer */
             result = rt_timer_detach(&timer.static_timer);
@@ -238,7 +238,7 @@ static void test_static_timer_control(void)
         return;
     }
 
-    rt_thread_mdelay(set_data + 5);
+    rt_thread_delay(set_data + 1);
 
     /* detach timer */
     result = rt_timer_detach(&timer.static_timer);
@@ -329,7 +329,7 @@ static void test_dynamic_timer_create(void)
             }
 
             /* wait for timerout */
-            rt_thread_mdelay(time_out + 5);
+            rt_thread_delay(time_out + 1);
 
             /* detach timer */
             result = rt_timer_delete(timer.dynamic_timer);
@@ -370,7 +370,7 @@ static void test_dynamic_timer_create(void)
             }
 
             /* wait for timerout */
-            rt_thread_mdelay(time_out + 5);
+            rt_thread_delay(time_out + 1);
 
             /* detach timer */
             result = rt_timer_delete(timer.dynamic_timer);
@@ -462,7 +462,7 @@ static void test_dynamic_timer_control(void)
         return;
     }
 
-    rt_thread_mdelay(set_data + 5);
+    rt_thread_delay(set_data + 1);
 
     /* detach timer */
     result = rt_timer_delete(timer.dynamic_timer);
