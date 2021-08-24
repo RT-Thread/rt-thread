@@ -162,35 +162,35 @@ void n32_msp_tim_init(void *Instance)
     GPIO_InitStruct(&GPIO_InitCtlStructure);
     TIM_Module *TIMx = (TIM_Module *)Instance;
 
-//    if(TIMx == TIM1)
-//    {
-//        /* TIM1 clock enable */
-//        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_TIM1, ENABLE);
-//        /* GPIOA clock enable */
-//        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
-//
-//        /* GPIOA Configuration:TIM1 Channel1 and Channel4 as alternate function push-pull */
-//        GPIO_InitCtlStructure.Pin = GPIO_PIN_8 | GPIO_PIN_11;
-//        GPIO_InitCtlStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-//        GPIO_InitCtlStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//
-//        GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStructure);
-//    }
+    if(TIMx == TIM1)
+    {
+        /* TIM1 clock enable */
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_TIM1, ENABLE);
+        /* GPIOA clock enable */
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
 
-//    if(TIMx == TIM2)
-//    {
-//        /* TIM2 clock enable */
-//        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM2, ENABLE);
-//        /* GPIOA clock enable */
-//        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
-//
-//        /* GPIOA Configuration:TIM2 Channel1 and Channel2 as alternate function push-pull */
-//        GPIO_InitCtlStructure.Pin = GPIO_PIN_0 | GPIO_PIN_1;
-//        GPIO_InitCtlStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-//        GPIO_InitCtlStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//
-//        GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStructure);
-//    }
+        /* GPIOA Configuration:TIM1 Channel1 and Channel4 as alternate function push-pull */
+        GPIO_InitCtlStructure.Pin = GPIO_PIN_8 | GPIO_PIN_11;
+        GPIO_InitCtlStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+        GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStructure);
+    }
+
+    if(TIMx == TIM2)
+    {
+        /* TIM2 clock enable */
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TIM2, ENABLE);
+        /* GPIOA clock enable */
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
+
+        /* GPIOA Configuration:TIM2 Channel1 and Channel2 as alternate function push-pull */
+        GPIO_InitCtlStructure.Pin = GPIO_PIN_0 | GPIO_PIN_1;
+        GPIO_InitCtlStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+        GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStructure);
+    }
 
     if(TIMx == TIM3)
     {
@@ -341,7 +341,7 @@ void n32_msp_can_init(void *Instance)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-#ifdef BSP_USING_UART
+#if defined(BSP_USING_UART2) || defined(BSP_USING_UART3)
 static void uart_test_rw(rt_device_t uartx, const char *name)
 {
     if (uartx == NULL)
@@ -488,16 +488,31 @@ static int pwm_set_test(const char *name, int ch,
     rt_pwm_enable(pwm_dev, ch);
     return RT_EOK;
 }
+#define PWM_TEST_NAME_CH_1 "tim3pwm1"
+#define PWM_TEST_NAME_CH_2 "tim3pwm2"
+#define PWM_TEST_NAME_CH_3 "tim3pwm3"
+#define PWM_TEST_NAME_CH_4 "tim3pwm4"
 static int pwm_led_sample(int argc, char *argv[])
 {
-    pwm_set_test("tim3pwm1", 1, 1000, 200);
-    pwm_set_test("tim3pwm2", 2, 1000, 400);
-    pwm_set_test("tim3pwm3", 3, 1000, 600);
-    pwm_set_test("tim3pwm4", 4, 1000, 700);
+    pwm_set_test(PWM_TEST_NAME_CH_1, 1, 1000, 200);
+    pwm_set_test(PWM_TEST_NAME_CH_2, 2, 1000, 400);
+    pwm_set_test(PWM_TEST_NAME_CH_3, 3, 1000, 600);
+    pwm_set_test(PWM_TEST_NAME_CH_4, 4, 1000, 700);
     return RT_EOK;
 }
-/* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(pwm_led_sample, pwm sample);
+static int pwm_led_sample_off(int argc, char *argv[])
+{
+    struct rt_device_pwm *pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_TEST_NAME_CH_1);
+    if (pwm_dev == RT_NULL)
+    {
+        rt_kprintf("pwm sample run failed! can't find %s device!\n", PWM_TEST_NAME_CH_1);
+        return RT_ERROR;
+    }
+    rt_pwm_disable(pwm_dev, 1);
+    return RT_EOK;
+}
+MSH_CMD_EXPORT(pwm_led_sample_off, pwm sample off);
 #endif
 
 #endif
