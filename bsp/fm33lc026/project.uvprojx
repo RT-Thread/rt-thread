@@ -392,11 +392,6 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-            <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
@@ -405,6 +400,11 @@
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+            </File>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.S</FileName>
@@ -427,19 +427,9 @@
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
             </File>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
             <File>
               <FileName>workqueue.c</FileName>
@@ -447,19 +437,29 @@
               <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -507,11 +507,6 @@
               <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
             <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
-            </File>
-            <File>
               <FileName>finsh_vm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
@@ -520,6 +515,11 @@
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\shell.c</FilePath>
+            </File>
+            <File>
+              <FileName>finsh_token.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
             </File>
             <File>
               <FileName>finsh_var.c</FileName>
@@ -547,9 +547,9 @@
               <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
             </File>
             <File>
-              <FileName>finsh_token.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
             <File>
               <FileName>finsh_init.c</FileName>
@@ -602,9 +602,19 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>components.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
             <File>
               <FileName>mempool.c</FileName>
@@ -612,14 +622,14 @@
               <FilePath>..\..\src\mempool.c</FilePath>
             </File>
             <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+            <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
             </File>
             <File>
               <FileName>idle.c</FileName>
@@ -632,14 +642,14 @@
               <FilePath>..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
+              <FilePath>..\..\src\components.c</FilePath>
             </File>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
             <File>
               <FileName>irq.c</FileName>
@@ -650,16 +660,6 @@
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
             <File>
               <FileName>device.c</FileName>
