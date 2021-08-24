@@ -103,45 +103,42 @@ static rt_err_t drv_pwm_enable(TIM_Module* TIMx, struct rt_pwm_configuration *co
     {
         if(channel == 1)
         {
-            TIM_SelectOcMode(TIMx, TIM_CH_1, TIM_OCMODE_INACTIVE);
+            TIM_EnableCapCmpCh(TIMx, TIM_CH_1, TIM_CAP_CMP_DISABLE);
         }
         else if(channel == 2)
         {
-            TIM_SelectOcMode(TIMx, TIM_CH_2, TIM_OCMODE_INACTIVE);
+            TIM_EnableCapCmpCh(TIMx, TIM_CH_2, TIM_CAP_CMP_DISABLE);
         }
         else if(channel == 3)
         {
-            TIM_SelectOcMode(TIMx, TIM_CH_3, TIM_OCMODE_INACTIVE);
+            TIM_EnableCapCmpCh(TIMx, TIM_CH_3, TIM_CAP_CMP_DISABLE);
         }
         else if(channel == 4)
         {
-            TIM_SelectOcMode(TIMx, TIM_CH_4, TIM_OCMODE_INACTIVE);
+            TIM_EnableCapCmpCh(TIMx, TIM_CH_4, TIM_CAP_CMP_DISABLE);
         }
     }
     else
     {
         if(channel == 1)
         {
-            TIM_SelectOcMode(TIMx, TIM_CH_1, TIM_OCMODE_ACTIVE);
+            TIM_EnableCapCmpCh(TIMx, TIM_CH_1, TIM_CAP_CMP_ENABLE);
         }
         else if(channel == 2)
         {
-            TIM_SelectOcMode(TIMx, TIM_CH_2, TIM_OCMODE_ACTIVE);
+            TIM_EnableCapCmpCh(TIMx, TIM_CH_2, TIM_CAP_CMP_ENABLE);
         }
         else if(channel == 3)
         {
-            TIM_SelectOcMode(TIMx, TIM_CH_3, TIM_OCMODE_ACTIVE);
+            TIM_EnableCapCmpCh(TIMx, TIM_CH_3, TIM_CAP_CMP_ENABLE);
         }
         else if(channel == 4)
         {
-            TIM_SelectOcMode(TIMx, TIM_CH_4, TIM_OCMODE_ACTIVE);
+            TIM_EnableCapCmpCh(TIMx, TIM_CH_4, TIM_CAP_CMP_ENABLE);
         }
     }
 
-    /* TIMx enable counter */
     TIM_Enable(TIMx, ENABLE);
-
-    rt_kprintf("2222222 ch=[%d], en=[%d]\n", channel, enable);
 
     return RT_EOK;
 }
@@ -176,31 +173,38 @@ static rt_err_t drv_pwm_get(TIM_Module* TIMx, struct rt_pwm_configuration *confi
     if(channel == 4)
         configuration->pulse = (cc4 + 1) * (div + 1) * 1000UL / tim_clock;
 
-    rt_kprintf("33333333 ch=[%d], tim_clock=[%d], pulse=[%d]\n", channel, tim_clock, configuration->pulse);
-
     return RT_EOK;
 }
 
 static rt_err_t drv_pwm_set(TIM_Module* TIMx, struct rt_pwm_configuration *configuration)
 {
-    TIM_TimeBaseInitType TIM_TIMeBaseStructure;
-    OCInitType  TIM_OCInitStructure;
-    rt_uint32_t period, pulse;
-    rt_uint64_t psc;
-    /* Get the channel number */
-    rt_uint32_t channel = configuration->channel;
-
     /* Init timer pin and enable clock */
     n32_msp_tim_init(TIMx);
 
-    /* Convert nanosecond to frequency and duty cycle. */
-    period = (unsigned long long)configuration->period ;
-    psc = period / MAX_PERIOD + 1;
-    period = period / psc;
+    RCC_ClocksType RCC_Clock;
+    RCC_GetClocksFreqValue(&RCC_Clock);
+    rt_uint64_t input_clock;
+    if ((TIM1 == TIMx) || (TIM8 == TIMx))
+    {
+        RCC_ConfigTim18Clk(RCC_TIM18CLK_SRC_SYSCLK);
+        input_clock = RCC_Clock.SysclkFreq;
+    }
+    else
+    {
+        if (1 == (RCC_Clock.HclkFreq/RCC_Clock.Pclk1Freq))
+            input_clock = RCC_Clock.Pclk1Freq;
+        else
+            input_clock = RCC_Clock.Pclk1Freq * 2;
+    }
 
-    rt_kprintf("444444 period=[%d], psc=[%d], channel=[%d]\n", period, psc, channel);
+    /* Convert nanosecond to frequency and duty cycle. */
+    rt_uint32_t period = (unsigned long long)configuration->period ;
+    rt_uint64_t psc = period / MAX_PERIOD + 1;
+    period = period / psc;
+    psc = psc * (input_clock / 1000000);
 
     /* TIMe base configuration */
+    TIM_TimeBaseInitType TIM_TIMeBaseStructure;
     TIM_InitTimBaseStruct(&TIM_TIMeBaseStructure);
     TIM_TIMeBaseStructure.Period = period;
     TIM_TIMeBaseStructure.Prescaler = psc - 1;
@@ -208,14 +212,16 @@ static rt_err_t drv_pwm_set(TIM_Module* TIMx, struct rt_pwm_configuration *confi
     TIM_TIMeBaseStructure.CntMode = TIM_CNT_MODE_UP;
     TIM_InitTimeBase(TIMx, &TIM_TIMeBaseStructure);
 
-    pulse = (unsigned long long)configuration->pulse;
+    rt_uint32_t pulse = (unsigned long long)configuration->pulse;
     /* PWM1 Mode configuration: Channel1 */
+    OCInitType  TIM_OCInitStructure;
     TIM_InitOcStruct(&TIM_OCInitStructure);
     TIM_OCInitStructure.OcMode = TIM_OCMODE_PWM1;
     TIM_OCInitStructure.OutputState = TIM_OUTPUT_STATE_ENABLE;
     TIM_OCInitStructure.Pulse = pulse;
     TIM_OCInitStructure.OcPolarity = TIM_OC_POLARITY_HIGH;
 
+    rt_uint32_t channel = configuration->channel;
     if(channel == 1)
     {
         TIM_InitOc1(TIMx, &TIM_OCInitStructure);
@@ -238,11 +244,7 @@ static rt_err_t drv_pwm_set(TIM_Module* TIMx, struct rt_pwm_configuration *confi
     }
 
     TIM_ConfigArPreload(TIMx, ENABLE);
-
-    if(TIMx == TIM1 || TIMx == TIM8)
-    {
-        TIM_EnableCtrlPwmOutputs(TIMx,ENABLE);
-    }
+    TIM_EnableCtrlPwmOutputs(TIMx, ENABLE);
 
     return RT_EOK;
 }
@@ -251,7 +253,6 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
 {
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
     TIM_Module *TIMx = (TIM_Module *)device->parent.user_data;
-    rt_kprintf("11111111111\n");
 
     switch (cmd)
     {
@@ -270,8 +271,6 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
 
 static int rt_hw_pwm_init(void)
 {
-    rt_kprintf("??????\n");
-
     int i = 0;
     int result = RT_EOK;
 
@@ -286,7 +285,6 @@ static int rt_hw_pwm_init(void)
             LOG_D("%s register failed", n32_pwm_obj[i].name);
             result = -RT_ERROR;
         }
-        rt_kprintf("00000 i=[%d]\n", i);
     }
 
     return result;
