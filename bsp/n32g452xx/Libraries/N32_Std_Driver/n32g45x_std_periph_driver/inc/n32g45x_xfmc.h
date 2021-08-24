@@ -73,7 +73,7 @@ typedef struct
                                     This parameter can be a value between 1 and 0xFF.
                                     @note: It is used for SRAMs, ROMs and asynchronous multiplexed NOR Flash memories. */
 
-    uint32_t BusRecoveryCycle;  /*!< Defines the number of HCLK cycles to configure 
+    uint32_t BusRecoveryCycle;  /*!< Defines the number of HCLK cycles to configure
                                     the duration of the bus turnaround.
                                     This parameter can be a value between 0 and 0xF.
                                     @note: It is only used for multiplexed NOR Flash memories. */
@@ -148,10 +148,10 @@ typedef struct
     uint32_t WriteBurstEnable;  /*!< Enables or disables the write burst operation.
                                     This parameter can be a value of @ref XFMC_Write_Burst */
 
-    XFMC_NorSramTimingInitType* RWTimingStruct; /*!< Timing Parameters for write and read access 
+    XFMC_NorSramTimingInitType* RWTimingStruct; /*!< Timing Parameters for write and read access
                                                         if the  ExtendedMode is not used*/
 
-    XFMC_NorSramTimingInitType* WTimingStruct;  /*!< Timing Parameters for write access if the  
+    XFMC_NorSramTimingInitType* WTimingStruct;  /*!< Timing Parameters for write access if the
                                                         ExtendedMode is used*/
 } XFMC_NorSramInitTpye;
 
@@ -431,7 +431,7 @@ typedef struct
 /**
  * @} End of NOR_SRAM_Controller
  */
- 
+
 
 /** @addtogroup NOR_SRAM_Time_Control
  * @{

@@ -83,15 +83,15 @@ typedef struct
  /**
  * @brief DES_Init
  * @return DES_Init_OK, DES/TDES Init success; othets: DES/TDES Init fail
- * @note    
+ * @note
  */
 uint32_t DES_Init(DES_PARM* parm);
 
 /**
  * @brief DES crypto
  * @param[in] parm pointer to DES/TDES context and the detail please refer to struct DES_PARM in DES.h
- * @return DES_Crypto_OK, DES/TDES crypto success; othets: DES/TDES crypto fail(reference to the definition by enum variation) 
- * @note  1.Please refer to the demo in user guidance before using this function  
+ * @return DES_Crypto_OK, DES/TDES crypto success; othets: DES/TDES crypto fail(reference to the definition by enum variation)
+ * @note  1.Please refer to the demo in user guidance before using this function
  *        2.Input and output can be the same buffer
  *        3. IV can be NULL when ECB mode
  *        4. The word lengrh of message must be as times as 2.
@@ -111,7 +111,7 @@ void DES_Close(void);
  * @param[out] type pointer one byte type information represents the type of the lib, like Commercial version.\
  * @Bits 0~4 stands for Commercial (C), Security (S), Normal (N), Evaluation (E), Test (T), Bits 5~7 are reserved. e.g. 0x09 stands for CE version.
  * @param[out] customer pointer one byte customer information represents customer ID. for example, 0x00 stands for standard version, 0x01 is for Tianyu customized version...
- * @param[out] date pointer array which include three bytes date information. If the returned bytes are 18,9,13,this denotes September 13,2018 
+ * @param[out] date pointer array which include three bytes date information. If the returned bytes are 18,9,13,this denotes September 13,2018
  * @param[out] version pointer one byte version information represents develop version of the lib. e.g. 0x12 denotes version 1.2.
  * @return none
  * @1.You can recall this function to get DES/TDES lib information

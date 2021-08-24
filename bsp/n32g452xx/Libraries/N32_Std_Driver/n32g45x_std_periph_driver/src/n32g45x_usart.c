@@ -260,7 +260,7 @@ void USART_Init(USART_Module* USARTx, USART_InitType* USART_InitStruct)
     /* Determine the fractional part */
     fractionaldivider = integerdivider - (100 * (tmpregister >> 4));
 
-    /* Implement the fractional part in the register */   
+    /* Implement the fractional part in the register */
     tmpregister |= ((((fractionaldivider * 16) + 50) / 100)) & ((uint8_t)0x0F);
 
     /* Write to USART PBC */
