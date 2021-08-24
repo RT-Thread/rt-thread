@@ -29,46 +29,15 @@
 #include <rtdbg.h>
 
 #ifdef BSP_USING_SDCARD_FATFS
-static void sd_mount(void *parameter)
-{
-    while (1)
-    {
-        rt_thread_mdelay(500);
-        if(rt_device_find("sd0") != RT_NULL)
-        {
-            if (dfs_mount("sd0", "/sdcard", "elm", 0, 0) == RT_EOK)
-            {
-                LOG_I("sd card mount to '/sdcard'");
-                break;
-            }
-            else
-            {
-                LOG_W("sd card mount to '/sdcard' failed!");
-            }
-        }
-    }
-}
-
 static int onboard_sdcard_mount(void)
 {
-    rt_thread_t tid;
-
     if (dfs_mount("sd0", "/sdcard", "elm", 0, 0) == RT_EOK)
     {
-        LOG_I("sd card mount to '/sdcard'");
+        LOG_I("SD card mount to '/sdcard'");
     }
     else
     {
-        tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,
-                               1024, RT_THREAD_PRIORITY_MAX - 2, 20);
-        if (tid != RT_NULL)
-        {
-            rt_thread_startup(tid);
-        }
-        else
-        {
-            LOG_E("create sd_mount thread err!");
-        }
+        LOG_E("SD card mount to '/sdcard' failed!");
     }
 
     return RT_EOK;
