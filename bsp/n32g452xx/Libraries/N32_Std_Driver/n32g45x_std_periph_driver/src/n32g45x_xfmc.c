@@ -94,7 +94,7 @@
  *   This parameter can be one of the following values:
  *     @arg XFMC_BANK1_BLOCK1   XFMC Bank1 NOR/SRAM1
  *     @arg XFMC_BANK1_BLOCK2   XFMC Bank1 NOR/SRAM2
- * @retval None 
+ * @retval None
  */
 void XFMC_DeInitNorSram(XFMC_Bank1_Block *Block)
 {
@@ -111,7 +111,7 @@ void XFMC_DeInitNorSram(XFMC_Bank1_Block *Block)
     {
         Block->CRx = XFMC_NOR_SRAM_CR2_RESET;
     }
-    
+
     Block->TRx   = XFMC_NOR_SRAM_TR_RESET;
     Block->WTRx  = XFMC_NOR_SRAM_WTR_RESET;
 }
@@ -122,7 +122,7 @@ void XFMC_DeInitNorSram(XFMC_Bank1_Block *Block)
  *   This parameter can be one of the following values:
  *     @arg XFMC_BANK2_NAND XFMC Bank2 NAND
  *     @arg XFMC_BANK3_NAND XFMC Bank3 NAND
- * @retval None 
+ * @retval None
  */
 void XFMC_DeInitNand(XFMC_Bank23_Module *Bank)
 {
@@ -141,7 +141,7 @@ void XFMC_DeInitNand(XFMC_Bank23_Module *Bank)
  * @param XFMC_NORSRAMInitStruct pointer to a XFMC_NorSramInitTpye
  *         structure that contains the configuration information for
  *        the XFMC NOR/SRAM specified Banks.
- * @retval None 
+ * @retval None
  */
 void XFMC_InitNorSram(XFMC_NorSramInitTpye* XFMC_NORSRAMInitStruct)
 {
@@ -170,14 +170,14 @@ void XFMC_InitNorSram(XFMC_NorSramInitTpye* XFMC_NORSRAMInitStruct)
     /* Bank1 NOR/SRAM control register configuration */
     XFMC_NORSRAMInitStruct->Block->CRx = XFMC_NORSRAMInitStruct->DataAddrMux
                                         | XFMC_NORSRAMInitStruct->MemType
-                                        | XFMC_NORSRAMInitStruct->MemDataWidth 
+                                        | XFMC_NORSRAMInitStruct->MemDataWidth
                                         | XFMC_NORSRAMInitStruct->BurstAccMode
-                                        | XFMC_NORSRAMInitStruct->AsynchroWait 
+                                        | XFMC_NORSRAMInitStruct->AsynchroWait
                                         | XFMC_NORSRAMInitStruct->WaitSigPolarity
-                                        | XFMC_NORSRAMInitStruct->WrapMode 
-                                        | XFMC_NORSRAMInitStruct->WaitSigConfig 
+                                        | XFMC_NORSRAMInitStruct->WrapMode
+                                        | XFMC_NORSRAMInitStruct->WaitSigConfig
                                         | XFMC_NORSRAMInitStruct->WriteEnable
-                                        | XFMC_NORSRAMInitStruct->WaitSigEnable 
+                                        | XFMC_NORSRAMInitStruct->WaitSigEnable
                                         | XFMC_NORSRAMInitStruct->ExtModeEnable
                                         | XFMC_NORSRAMInitStruct->WriteBurstEnable;
 
@@ -223,7 +223,7 @@ void XFMC_InitNorSram(XFMC_NorSramInitTpye* XFMC_NORSRAMInitStruct)
  * @param XFMC_NANDInitStruct pointer to a XFMC_NandInitType
  *         structure that contains the configuration information for the XFMC
  *         NAND specified Banks.
- * @retval None 
+ * @retval None
  */
 void XFMC_InitNand(XFMC_NandInitType* XFMC_NANDInitStruct)
 {
@@ -248,7 +248,7 @@ void XFMC_InitNand(XFMC_NandInitType* XFMC_NANDInitStruct)
 
     /* Set the tmppcr value according to XFMC_NANDInitStruct parameters */
     tmppcr =    XFMC_BANK23_MEM_TYPE_NAND
-            |   XFMC_NANDInitStruct->WaitFeatureEnable 
+            |   XFMC_NANDInitStruct->WaitFeatureEnable
             |   XFMC_NANDInitStruct->MemDataWidth
             |   XFMC_NANDInitStruct->EccEnable
             |   XFMC_NANDInitStruct->EccPageSize
@@ -440,7 +440,7 @@ void XFMC_RestartNandEcc(XFMC_Bank23_Module *Bank)
 uint32_t XFMC_GetEcc(XFMC_Bank23_Module *Bank)
 {
     uint32_t tEccPageSize,tECC = 0;
-    
+
     assert_param(IS_XFMC_NAND_BANK(Bank));
 
     tEccPageSize = Bank->CTRLx & XFMC_CTRL_ECCPGS_MASK;
@@ -468,7 +468,7 @@ uint32_t XFMC_GetEcc(XFMC_Bank23_Module *Bank)
         default:
                 break;
     }
-    
+
     /* Return the error correction code value */
     return (tECC);
 }

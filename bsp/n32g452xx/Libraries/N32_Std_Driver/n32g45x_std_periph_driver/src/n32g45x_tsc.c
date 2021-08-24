@@ -59,7 +59,7 @@ TSC_ErrorTypeDef TSC_Init(TSC_InitType* TSC_Init)
     do
     {
         __TSC_HW_DISABLE();
-        
+
         if(++timeout > TSC_TIMEOUT)
             return TSC_ERROR_HW_MODE;
     }while (__TSC_GET_HW_MODE());
@@ -85,7 +85,7 @@ TSC_ErrorTypeDef TSC_Init(TSC_InitType* TSC_Init)
 }
 
 /**
- * @brief  Config the clock source of TSC 
+ * @brief  Config the clock source of TSC
  * @param  TSC_ClkSource specifies the clock source of TSC
  *   This parameter can be one of the following values:
  *     @arg TSC_CLK_SRC_LSI:              TSC clock source is LSI(default)
@@ -96,7 +96,7 @@ TSC_ErrorTypeDef TSC_Init(TSC_InitType* TSC_Init)
 TSC_ErrorTypeDef TSC_ClockConfig(uint32_t TSC_ClkSource)
 {
     uint32_t timeout;
-    
+
     /*Enable PWR  peripheral Clock*/
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_PWR,ENABLE);
 
@@ -130,7 +130,7 @@ TSC_ErrorTypeDef TSC_ClockConfig(uint32_t TSC_ClkSource)
     }
     else
         return TSC_ERROR_PARAMETER;
-    
+
     /*Enable TSC clk*/
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_TSC,ENABLE);
 
@@ -138,17 +138,17 @@ TSC_ErrorTypeDef TSC_ClockConfig(uint32_t TSC_ClkSource)
 }
 
 /**
-* @brief  Configure internal charge resistor for some channels 
+* @brief  Configure internal charge resistor for some channels
 * @param  res:  internal resistor selecte
 *   This parameter can be one of the following values:
 *      @arg TSC_RESR_CHN_RESIST_0:    1M OHM
-*      @arg TSC_RESR_CHN_RESIST_1:    882K OHM 
-*      @arg TSC_RESR_CHN_RESIST_2:    756K OHM 
-*      @arg TSC_RESR_CHN_RESIST_3:    630K OHM 
-*      @arg TSC_RESR_CHN_RESIST_4:    504K OHM 
+*      @arg TSC_RESR_CHN_RESIST_1:    882K OHM
+*      @arg TSC_RESR_CHN_RESIST_2:    756K OHM
+*      @arg TSC_RESR_CHN_RESIST_3:    630K OHM
+*      @arg TSC_RESR_CHN_RESIST_4:    504K OHM
 *      @arg TSC_RESR_CHN_RESIST_5:    378K OHM
-*      @arg TSC_RESR_CHN_RESIST_6:    252K OHM 
-*      @arg TSC_RESR_CHN_RESIST_7:    126K OHM 
+*      @arg TSC_RESR_CHN_RESIST_6:    252K OHM
+*      @arg TSC_RESR_CHN_RESIST_7:    126K OHM
 * @param  Channels: channels to be configed, as TSC_CHNEN defined
 *   This parameter:bit[0:23] used,bit[24:31] must be 0
 *                  bitx: TSC channel x
@@ -164,20 +164,20 @@ TSC_ErrorTypeDef TSC_ConfigInternalResistor(uint32_t Channels, uint32_t res )
     /*Check charge resistor value */
     if(res > TSC_RESR_CHN_RESIST_125K)
         return TSC_ERROR_PARAMETER;
-    
+
     /* waiting tsc hw for idle status.*/
     timeout = 0;
     do
     {
         __TSC_HW_DISABLE();
-        
+
         if(++timeout > TSC_TIMEOUT)
             return TSC_ERROR_HW_MODE;
     }while (__TSC_GET_HW_MODE());
 
     /* Mask invalie bits*/
     chn  = Channels & TSC_CHNEN_CHN_SEL_MASK;
-    
+
     /* Set resistance for each channel one by one*/
     for (i = 0; i<MAX_TSC_HW_CHN; i++)
     {
@@ -195,7 +195,7 @@ TSC_ErrorTypeDef TSC_ConfigInternalResistor(uint32_t Channels, uint32_t res )
 }
 
 /**
-* @brief  Configure threshold value for some channels 
+* @brief  Configure threshold value for some channels
 * @param  Channels: channels to be configed, as TSC_CHNEN defined
 *   This parameter:bit[0:23] used,bit[24:31] must be 0
 *                  bitx: TSC channel x
@@ -213,20 +213,20 @@ TSC_ErrorTypeDef TSC_ConfigThreshold(  uint32_t Channels, uint32_t base, uint32_
     /*Check the base and delta value*/
     if( (base>MAX_TSC_THRESHOLD_BASE)||(delta>MAX_TSC_THRESHOLD_DELTA))
         return TSC_ERROR_PARAMETER;
-    
+
     /* waiting tsc hw for idle status.*/
     timeout = 0;
     do
     {
         __TSC_HW_DISABLE();
-        
+
         if(++timeout > TSC_TIMEOUT)
             return TSC_ERROR_HW_MODE;
     }while (__TSC_GET_HW_MODE());
 
     /*Mask invalie bits*/
     chn = Channels & TSC_CHNEN_CHN_SEL_MASK;
-    
+
     /* Set the base and delta for each channnel one by one*/
     for (i = 0; i<MAX_TSC_HW_CHN; i++)
     {
@@ -324,7 +324,7 @@ void TSC_Cmd(TSC_Module* TSC_Def, uint32_t Channels, FunctionalState Cmd)
 {
     if(TSC_Def != TSC)
         return;
-    
+
     if (Cmd != DISABLE)
     {
         // enable tsc channel
@@ -360,7 +360,7 @@ void TSC_SW_SwtichChn(TSC_Module* TSC_Def, uint32_t Channel, TIM_Module* TIMx, F
 
     if(TSC_Def != TSC)
         return;
-    
+
     /* Disable the TSC HW MODE */
     while (__TSC_GET_HW_MODE())
     {
@@ -390,7 +390,7 @@ void TSC_SW_SwtichChn(TSC_Module* TSC_Def, uint32_t Channel, TIM_Module* TIMx, F
 
             Channel >>= 1;
         }
-        
+
         // Select to output to specified TIMER.
         if (TIMx == TIM4)
         {
@@ -419,10 +419,10 @@ void TSC_SetAnaoCfg(TSC_Module* TSC_Def, TSC_AnaoCfg* AnaoCfg)
 {
     if(TSC_Def != TSC)
         return;
-    
+
     if(AnaoCfg == 0)
         return;
-    
+
     __TSC_PAD_OPT_CONFIG(AnaoCfg->TSC_AnaoptrResisOption);
     __TSC_PAD_SPEED_CONFIG(AnaoCfg->TSC_AnaoptrSpeedOption);
 }

@@ -187,8 +187,8 @@ static int rt_hw_adc_init(void)
     for (i = 0; i < sizeof(n32_adc_obj) / sizeof(n32_adc_obj[0]); i++)
     {
         /* register ADC device */
-        if (rt_hw_adc_register(&n32_adc_obj[i].n32_adc_device, 
-                    n32_adc_obj[i].name, &at_adc_ops, 
+        if (rt_hw_adc_register(&n32_adc_obj[i].n32_adc_device,
+                    n32_adc_obj[i].name, &at_adc_ops,
                     n32_adc_obj[i].ADC_Handler) == RT_EOK)
         {
             LOG_D("%s register success", n32_adc_obj[i].name);

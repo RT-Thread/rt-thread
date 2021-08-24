@@ -102,7 +102,7 @@ static uint8_t RTC_Bcd2ToByte(uint8_t Value);
 
 /**
  * @brief  Deinitializes the RTC registers to their default reset values.
- * @note   This function doesn't reset the RTC Clock source 
+ * @note   This function doesn't reset the RTC Clock source
  * @return An ErrorStatus enumeration value:
  *          - SUCCESS: RTC registers are deinitialized
  *          - ERROR: RTC registers are not deinitialized
@@ -1576,14 +1576,14 @@ void RTC_EnableTimeStamp(uint32_t RTC_TimeStampEdge, FunctionalState Cmd)
 void RTC_GetTimeStamp(uint32_t RTC_Format, RTC_TimeType* RTC_StampTimeStruct, RTC_DateType* RTC_StampDateStruct)
 {
     uint32_t tmptime = 0, tmpdate = 0;
-    
+
     /* Check the parameters */
     assert_param(IS_RTC_FORMAT(RTC_Format));
 
     /* Get the TimeStamp time and date registers values */
     tmptime = (uint32_t)(RTC->TST & RTC_TR_RESERVED_MASK);
     tmpdate = (uint32_t)(RTC->TSD & RTC_DATE_RESERVED_MASK);
-    
+
     /* Fill the Time structure fields with the read parameters */
     RTC_StampTimeStruct->Hours   = (uint8_t)((tmptime & (RTC_TSH_HOT | RTC_TSH_HOU)) >> 16);
     RTC_StampTimeStruct->Minutes = (uint8_t)((tmptime & (RTC_TSH_MIT | RTC_TSH_MIU)) >> 8);

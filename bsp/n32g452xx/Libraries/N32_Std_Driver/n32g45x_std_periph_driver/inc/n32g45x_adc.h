@@ -536,7 +536,7 @@ typedef struct
 /**
  * @}
  */
- 
+
 typedef enum
 {
     ADC_CTRL3_CKMOD_AHB = 0,
@@ -547,7 +547,7 @@ typedef enum
     ADC_CTRL3_RES_12BIT  = 3,
     ADC_CTRL3_RES_10BIT  = 2,
     ADC_CTRL3_RES_8BIT   = 1,
-    ADC_CTRL3_RES_6BIT   = 0,   
+    ADC_CTRL3_RES_6BIT   = 0,
 } ADC_CTRL3_RES;
 typedef struct
 {

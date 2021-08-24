@@ -50,28 +50,21 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
-        menuconfig BSP_USING_TIM1
-            bool "Enable timer1 output PWM"
+        menuconfig BSP_USING_TIM3
+            bool "Enable timer3 output PWM"
             default n
-            if BSP_USING_TIM1
-                config BSP_USING_TIM1_CH1
-                    bool "Enable TIM1 channel1 PWM"
+            if BSP_USING_TIM3
+                config BSP_USING_TIM3_CH1
+                    bool "Enable TIM3 channel1 PWM"
                     default n
-
-                config BSP_USING_TIM1_CH4
-                    bool "Enable TIM1 channel4 PWM"
+                config BSP_USING_TIM3_CH2
+                    bool "Enable TIM3 channel2 PWM"
                     default n
-            endif
-        menuconfig BSP_USING_TIM2
-            bool "Enable timer2 output PWM"
-            default n
-            if BSP_USING_TIM2
-                config BSP_USING_TIM2_CH1
-                    bool "Enable TIM2 channel1 PWM"
+                config BSP_USING_TIM3_CH3
+                    bool "Enable TIM3 channel2 PWM"
                     default n
-
-                config BSP_USING_TIM2_CH2
-                    bool "Enable TIM2 channel2 PWM"
+                config BSP_USING_TIM3_CH4
+                    bool "Enable TIM3 channel2 PWM"
                     default n
             endif
         endif

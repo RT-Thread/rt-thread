@@ -44,7 +44,7 @@
  * @brief AES symmetrical cipher algorithm
  * @{
  */
- 
+
 #define AES_ECB (0x11111111)
 #define AES_CBC (0x22222222)
 #define AES_CTR (0x33333333)
@@ -54,34 +54,34 @@
 
 enum
 {
-	AES_Crypto_OK = 0x0,   //AES opreation success
-	AES_Init_OK = 0x0,   //AES Init opreation success
-	AES_Crypto_ModeError = 0x5a5a5a5a,	 //Working mode error(Neither ECB nor CBC nor CTR)
-	AES_Crypto_EnOrDeError,    //En&De error(Neither encryption nor decryption)
-	AES_Crypto_ParaNull,    // the part of input(output/iv) Null    
-	AES_Crypto_LengthError,     // if Working mode is ECB or CBC,the length of input message must be 4 times and cannot be zero;
-	                            //if Working mode is CTR,the length of input message cannot be zero; othets: return AES_Crypto_LengthError
+    AES_Crypto_OK = 0x0,   //AES opreation success
+    AES_Init_OK = 0x0,   //AES Init opreation success
+    AES_Crypto_ModeError = 0x5a5a5a5a,   //Working mode error(Neither ECB nor CBC nor CTR)
+    AES_Crypto_EnOrDeError,    //En&De error(Neither encryption nor decryption)
+    AES_Crypto_ParaNull,    // the part of input(output/iv) Null
+    AES_Crypto_LengthError,     // if Working mode is ECB or CBC,the length of input message must be 4 times and cannot be zero;
+                                //if Working mode is CTR,the length of input message cannot be zero; othets: return AES_Crypto_LengthError
 
-	AES_Crypto_KeyLengthError, //the keyWordLen must be 4 or 6 or 8; othets:return AES_Crypto_KeyLengthError
+    AES_Crypto_KeyLengthError, //the keyWordLen must be 4 or 6 or 8; othets:return AES_Crypto_KeyLengthError
   AES_Crypto_UnInitError, //AES uninitialized
 };
 
 typedef struct
 {
-	uint32_t *in;		// the part of input to be encrypted or decrypted
-	uint32_t *iv;		// the part of initial vector
-	uint32_t *out;		// the part of out
-	uint32_t *key;		// the part of key
-	uint32_t keyWordLen;   // the length(by word) of key
-	uint32_t inWordLen;	// the length(by word) of plaintext or cipher
-	uint32_t En_De;	// 0x44444444- encrypt, 0x55555555 - decrypt
-	uint32_t Mode;  // 0x11111111 - ECB, 0x22222222 - CBC, 0x33333333 - CTR
+    uint32_t *in;       // the part of input to be encrypted or decrypted
+    uint32_t *iv;       // the part of initial vector
+    uint32_t *out;      // the part of out
+    uint32_t *key;      // the part of key
+    uint32_t keyWordLen;   // the length(by word) of key
+    uint32_t inWordLen; // the length(by word) of plaintext or cipher
+    uint32_t En_De; // 0x44444444- encrypt, 0x55555555 - decrypt
+    uint32_t Mode;  // 0x11111111 - ECB, 0x22222222 - CBC, 0x33333333 - CTR
 }AES_PARM;
 
  /**
  * @brief AES_Init
  * @return AES_Init_OK, AES Init success; othets: AES Init fail
- * @note    
+ * @note
  */
 
 uint32_t  AES_Init(AES_PARM *parm);
@@ -89,12 +89,12 @@ uint32_t  AES_Init(AES_PARM *parm);
 /**
  * @brief AES crypto
  * @param[in] parm pointer to AES context and the detail please refer to struct AES_PARM in AES.h
- * @return AES_Crypto_OK, AES crypto success; othets: AES crypto fail(reference to the definition by enum variation) 
- * @note  1.Please refer to the demo in user guidance before using this function  
+ * @return AES_Crypto_OK, AES crypto success; othets: AES crypto fail(reference to the definition by enum variation)
+ * @note  1.Please refer to the demo in user guidance before using this function
  *        2.Input and output can be the same buffer
  *        3. IV can be NULL when ECB mode
  *        4. If Working mode is ECB or CBC,the length of input message must be 4 times and cannot be zero;
- *	         if Working mode is CTR,the length of input message cannot be zero;
+ *           if Working mode is CTR,the length of input message cannot be zero;
  *        5. If the input is in byte, make sure align by word.
  */
 uint32_t AES_Crypto(AES_PARM *parm);
@@ -111,7 +111,7 @@ void AES_Close(void);
  * @param[out] type pointer one byte type information represents the type of the lib, like Commercial version.\
  * @Bits 0~4 stands for Commercial (C), Security (S), Normal (N), Evaluation (E), Test (T), Bits 5~7 are reserved. e.g. 0x09 stands for CE version.
  * @param[out] customer pointer one byte customer information represents customer ID. for example, 0x00 stands for standard version, 0x01 is for Tianyu customized version...
- * @param[out] date pointer array which include three bytes date information. If the returned bytes are 18,9,13,this denotes September 13,2018 
+ * @param[out] date pointer array which include three bytes date information. If the returned bytes are 18,9,13,this denotes September 13,2018
  * @param[out] version pointer one byte version information represents develop version of the lib. e.g. 0x12 denotes version 1.2.
  * @return none
  * @1.You can recall this function to get AES lib information
