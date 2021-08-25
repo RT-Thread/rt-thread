@@ -584,9 +584,7 @@ void msh_auto_complete(char *prefix)
         for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
         {
             /* skip finsh shell function */
-            if (strncmp(index->name, "__cmd_", 6) != 0) continue;
-
-            cmd_name = (const char *) &index->name[6];
+            cmd_name = (const char *) index->name;
             if (strncmp(prefix, cmd_name, strlen(prefix)) == 0)
             {
                 if (min_length == 0)

@@ -884,7 +884,7 @@ MSH_CMD_EXPORT(list_device, list device in system);
 
 long list(void)
 {
-    rt_kprintf("--Function List:\n");
+    rt_kprintf("--Commands List:\n");
     {
         struct finsh_syscall *index;
         for (index = _syscall_table_begin;
@@ -904,6 +904,6 @@ long list(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(list, list all symbol in system)
+MSH_CMD_EXPORT(list, list all commands in system)
 
 #endif /* RT_USING_FINSH */
