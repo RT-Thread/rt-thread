@@ -147,7 +147,6 @@ __exit:
 /* export to finsh */
 FINSH_FUNCTION_EXPORT(readwrite, perform file read and write test);
 
-#ifdef FINSH_USING_MSH
 static void cmd_readwrite(int argc, char *argv[])
 {
     char* filename;
@@ -164,5 +163,4 @@ static void cmd_readwrite(int argc, char *argv[])
     readwrite(filename);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_readwrite, __cmd_readwrite, perform file read and write test);
-#endif /* FINSH_USING_MSH */
 #endif /* RT_USING_FINSH */
