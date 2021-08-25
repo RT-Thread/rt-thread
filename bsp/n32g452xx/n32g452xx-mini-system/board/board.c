@@ -56,7 +56,7 @@ void SysTick_Handler(void)
 }
 
 /**
- * This function will initial AT32 board.
+ * This function will initial N32 board.
  */
 void rt_hw_board_init()
 {

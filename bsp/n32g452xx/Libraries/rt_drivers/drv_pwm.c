@@ -12,11 +12,7 @@
 #include "drv_pwm.h"
 
 #ifdef RT_USING_PWM
-#if !defined(BSP_USING_TIM1_CH1) && !defined(BSP_USING_TIM1_CH2) && \
-    !defined(BSP_USING_TIM1_CH3) && !defined(BSP_USING_TIM1_CH4) && \
-    !defined(BSP_USING_TIM2_CH1) && !defined(BSP_USING_TIM2_CH2) && \
-    !defined(BSP_USING_TIM2_CH3) && !defined(BSP_USING_TIM2_CH4) && \
-    !defined(BSP_USING_TIM3_CH1) && !defined(BSP_USING_TIM3_CH2) && \
+#if !defined(BSP_USING_TIM3_CH1) && !defined(BSP_USING_TIM3_CH2) && \
     !defined(BSP_USING_TIM3_CH3) && !defined(BSP_USING_TIM3_CH4)
 #error "Please define at least one BSP_USING_TIMx_CHx"
 #endif
@@ -39,38 +35,6 @@ struct n32_pwm
 
 static struct n32_pwm n32_pwm_obj[] =
 {
-  #ifdef BSP_USING_TIM1_CH1
-    PWM1_CONFIG,
-  #endif
-
-  #ifdef BSP_USING_TIM1_CH2
-    PWM2_CONFIG,
-  #endif
-
-  #ifdef BSP_USING_TIM1_CH3
-    PWM3_CONFIG,
-  #endif
-
-  #ifdef BSP_USING_TIM1_CH4
-    PWM4_CONFIG,
-  #endif
-
-  #ifdef BSP_USING_TIM2_CH1
-    PWM5_CONFIG,
-  #endif
-
-  #ifdef BSP_USING_TIM2_CH2
-    PWM6_CONFIG,
-  #endif
-
-  #ifdef BSP_USING_TIM2_CH3
-    PWM7_CONFIG,
-  #endif
-
-  #ifdef BSP_USING_TIM2_CH4
-    PWM8_CONFIG,
-  #endif
-
 #ifdef BSP_USING_TIM3_CH1
     PWM1_TIM3_CONFIG,
 #endif

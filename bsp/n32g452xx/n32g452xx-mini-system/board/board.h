@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-/* Just only support for AT32F40xxG */
+/* Just only support for N32G452XX */
 #define N32_FLASH_START_ADRESS      ((uint32_t)0x08000000)
 #define FLASH_PAGE_SIZE             (2 * 1024)
 #define N32_FLASH_SIZE              (256 * 1024)

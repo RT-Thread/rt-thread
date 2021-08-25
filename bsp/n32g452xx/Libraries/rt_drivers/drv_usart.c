@@ -49,7 +49,7 @@ struct n32_uart
 
 static void DMA_Configuration(struct rt_serial_device *serial);
 
-static rt_err_t n32_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+static rt_err_t n32_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct n32_uart* uart;
     USART_InitType USART_InitStructure;
@@ -107,7 +107,7 @@ static rt_err_t n32_configure(struct rt_serial_device *serial, struct serial_con
     return RT_EOK;
 }
 
-static rt_err_t n32_control(struct rt_serial_device *serial, int cmd, void *arg)
+static rt_err_t n32_uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct n32_uart* uart;
     rt_uint32_t ctrl_arg = (rt_uint32_t)(arg);
@@ -142,7 +142,7 @@ static rt_err_t n32_control(struct rt_serial_device *serial, int cmd, void *arg)
     return RT_EOK;
 }
 
-static int n32_putc(struct rt_serial_device *serial, char c)
+static int n32_uart_putc(struct rt_serial_device *serial, char c)
 {
     struct n32_uart* uart;
 
@@ -168,7 +168,7 @@ static int n32_putc(struct rt_serial_device *serial, char c)
     return 1;
 }
 
-static int n32_getc(struct rt_serial_device *serial)
+static int n32_uart_getc(struct rt_serial_device *serial)
 {
     int ch;
     struct n32_uart* uart;
@@ -275,16 +275,16 @@ static void uart_isr(struct rt_serial_device *serial)
     }
     if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_OREF) == SET)
     {
-        n32_getc(serial);
+        n32_uart_getc(serial);
     }
 }
 
 static const struct rt_uart_ops n32_uart_ops =
 {
-    n32_configure,
-    n32_control,
-    n32_putc,
-    n32_getc,
+    n32_uart_configure,
+    n32_uart_control,
+    n32_uart_putc,
+    n32_uart_getc,
 };
 
 #if defined(BSP_USING_UART1)
@@ -551,23 +551,6 @@ int rt_hw_usart_init(void)
                           RT_DEVICE_FLAG_INT_TX |   RT_DEVICE_FLAG_DMA_RX,
                           uart);
 #endif /* BSP_USING_UART3 */
-
-#if defined(BSP_USING_UART4)
-    uart = &uart4;
-
-    config.baud_rate = BAUD_RATE_115200;
-
-    serial4.ops    = &n32_uart_ops;
-    serial4.config = config;
-
-    NVIC_Configuration(uart);
-
-    /* register UART4 device */
-    rt_hw_serial_register(&serial4, "uart4",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
-                          RT_DEVICE_FLAG_INT_TX |   RT_DEVICE_FLAG_DMA_RX,
-                          uart);
-#endif /* BSP_USING_UART4 */
 
     return RT_EOK;
 }

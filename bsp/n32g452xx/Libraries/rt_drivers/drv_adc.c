@@ -112,7 +112,6 @@ static rt_err_t n32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 
     n32_msp_adc_init(n32_adc_handler);
 
-    /* ADCx configuration ------------------------------------------------------*/
     ADC_InitStruct(&ADC_InitStructure);
     ADC_InitStructure.WorkMode              = ADC_WORKMODE_INDEPENDENT;
     ADC_InitStructure.MultiChEn             = DISABLE;
@@ -127,11 +126,6 @@ static rt_err_t n32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 
     /* Enable ADCx */
     ADC_Enable(n32_adc_handler, ENABLE);
-
-    //    /* Enable ADCx reset calibration register */
-    //    ADC_RstCalibration(n32_adc_handler);
-    //    /* Check the end of ADCx reset calibration register */
-    //    while(ADC_GetResetCalibrationStatus(n32_adc_handler));
 
     /* Start ADCx calibration */
     ADC_StartCalibration(n32_adc_handler);

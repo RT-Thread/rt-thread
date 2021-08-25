@@ -15,14 +15,14 @@
 #include <rthw.h>
 #include <rtdevice.h>
 
-/* at32 config class */
+/* n32 config class */
 struct n32_soft_i2c_config
 {
     rt_uint8_t scl;
     rt_uint8_t sda;
     const char *bus_name;
 };
-/* at32 i2c dirver class */
+/* n32 i2c dirver class */
 struct n32_i2c
 {
     struct rt_i2c_bit_ops ops;
