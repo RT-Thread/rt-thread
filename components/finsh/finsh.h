@@ -97,7 +97,7 @@ typedef long (*syscall_func)(void);
 /**
  * @ingroup finsh
  *
- * This macro exports a system function to finsh shell.
+ * This macro exports a system function to finsh shell (discarded).
  *
  * @param name the name of function.
  * @param desc the description of function, which will show in help.
@@ -107,7 +107,7 @@ typedef long (*syscall_func)(void);
 /**
  * @ingroup finsh
  *
- * This macro exports a system function with an alias name to finsh shell.
+ * This macro exports a system function with an alias name to finsh shell (discarded).
  *
  * @param name the name of function.
  * @param alias the alias name of function.
@@ -125,6 +125,16 @@ typedef long (*syscall_func)(void);
  */
 #define MSH_CMD_EXPORT(command, desc)   \
     MSH_FUNCTION_EXPORT_CMD(command, command, desc)
+
+/**
+ * @ingroup finsh
+ *
+ * This macro exports a command with an alias name to module shell.
+ *
+ * @param name the name of command.
+ * @param alias the alias name of command.
+ * @param desc the description of command, which will show in help.
+ */
 #define MSH_CMD_EXPORT_ALIAS(command, alias, desc)  \
     MSH_FUNCTION_EXPORT_CMD(command, alias, desc)
 
@@ -153,13 +163,35 @@ extern struct finsh_syscall *_syscall_table_begin, *_syscall_table_end;
     #define FINSH_NEXT_SYSCALL(index)  index=finsh_syscall_next(index)
 #else
     #define FINSH_NEXT_SYSCALL(index)  index++
-#endif
+#endif /* defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__)) */
 
 /* find out system call, which should be implemented in user program */
 struct finsh_syscall *finsh_syscall_lookup(const char *name);
 
+int finsh_system_init(void);
 #ifdef RT_USING_DEVICE
-    void finsh_set_device(const char *device_name);
+void finsh_set_device(const char *device_name);
+const char *finsh_get_device(void);
 #endif
+
+char finsh_getchar(void);
+
+#define FINSH_OPTION_ECHO   0x01
+void finsh_set_echo(rt_uint32_t echo);
+rt_uint32_t finsh_get_echo(void);
+
+#define FINSH_PROMPT        finsh_get_prompt()
+rt_uint32_t finsh_get_prompt_mode(void);
+void finsh_set_prompt_mode(rt_uint32_t prompt_mode);
+
+#ifdef FINSH_USING_AUTH
+rt_err_t finsh_set_password(const char *password);
+const char *finsh_get_password(void);
+#endif
+
+int msh_exec(char *cmd, rt_size_t length);
+void msh_auto_complete(char *prefix);
+int msh_exec_module(const char *cmd_line, int size);
+int msh_exec_script(const char *cmd_line, int size);
 
 #endif

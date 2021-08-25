@@ -9,7 +9,7 @@
 #include <rtthread.h>
 #include "board.h"
 
-#include <shell.h>
+#include <finsh.h>
 
 int platform_init(void)
 {

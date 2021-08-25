@@ -9,31 +9,31 @@
  * 2014-01-03     Bernard      msh can execute module.
  * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
-#include <rtthread.h>
-#include <string.h>
+
+#include <rtconfig.h>
 
 #ifdef RT_USING_FINSH
 
-#ifndef FINSH_ARG_MAX
-    #define FINSH_ARG_MAX    8
-#endif
+#include <rtthread.h>
+#include <string.h>
 
-#include "msh.h"
-#include "shell.h"
+#ifndef FINSH_ARG_MAX
+#define FINSH_ARG_MAX    8
+#endif /* FINSH_ARG_MAX */
 
 #ifdef RT_USING_DFS
-    #include <dfs_posix.h>
-#endif
+#include <dfs_posix.h>
+#endif /* RT_USING_DFS */
 
 #ifdef RT_USING_MODULE
-    #include <dlmodule.h>
-#endif
+#include <dlmodule.h>
+#endif /* RT_USING_MODULE */
 
 typedef int (*cmd_function_t)(int argc, char **argv);
 
 int msh_help(int argc, char **argv)
 {
-    rt_kprintf("RT-Thread shell commands:\n");
+    rt_kprintf("RT-Thread Finsh commands:\n");
     {
         struct finsh_syscall *index;
 

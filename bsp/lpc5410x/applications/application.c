@@ -11,7 +11,6 @@
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-#include <shell.h>
 #endif
 
 extern int demo_init(void);

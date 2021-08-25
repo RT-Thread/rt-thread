@@ -8,7 +8,6 @@
 
 #include <rtthread.h>
 #include <finsh.h>
-#include <shell.h>
 #include <dfs.h>
 #include <dfs_file.h>
 #include "zdef.h"
@@ -71,7 +70,6 @@ void finsh_sz(void *parameter)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-#include <shell.h>
 
 static void rz(char *para)
 {

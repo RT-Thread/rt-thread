@@ -9,7 +9,6 @@
 
 #include <rtthread.h>
 #include <finsh.h>
-#include <shell.h>
 #include <rtdef.h>
 #include <dfs.h>
 #include <dfs_file.h>

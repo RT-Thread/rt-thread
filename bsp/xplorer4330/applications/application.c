@@ -14,7 +14,6 @@
 #include "drv_led.h"
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-#include <shell.h>
 #endif
 
 /* thread phase init */

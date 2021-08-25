@@ -32,7 +32,6 @@
 #endif
 
 #ifdef RT_USING_FINSH
-#include <shell.h>
 #include <finsh.h>
 #endif
 

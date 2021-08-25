@@ -12,7 +12,6 @@
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-#include <shell.h>
 #endif
 
 #include "led.h"

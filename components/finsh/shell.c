@@ -18,32 +18,98 @@
  * 2018-07-02     aozima       add custom prompt support.
  */
 
+#include <rtconfig.h>
+
+#ifdef RT_USING_FINSH
 #include <rthw.h>
 #include <string.h>
 #include <stdio.h>
-
-#ifdef RT_USING_FINSH
-
-#include "shell.h"
-#include "msh.h"
-
 #if defined(RT_USING_DFS)
-    #include <dfs_posix.h>
+#include <dfs_posix.h>
 #endif /* RT_USING_DFS */
 
-/* finsh thread */
+#ifndef FINSH_THREAD_PRIORITY
+#define FINSH_THREAD_PRIORITY 20
+#endif /* FINSH_THREAD_PRIORITY */
+#ifndef FINSH_THREAD_STACK_SIZE
+#define FINSH_THREAD_STACK_SIZE 2048
+#endif /* FINSH_THREAD_STACK_SIZE */
+#ifndef FINSH_CMD_SIZE
+#define FINSH_CMD_SIZE      80
+#endif /* FINSH_CMD_SIZE */
+
+
+#ifdef FINSH_USING_HISTORY
+#ifndef FINSH_HISTORY_LINES
+#define FINSH_HISTORY_LINES 5
+#endif /* FINSH_HISTORY_LINES */
+#endif /* FINSH_USING_HISTORY */
+
+#ifdef FINSH_USING_AUTH
+#ifndef FINSH_PASSWORD_MAX
+#define FINSH_PASSWORD_MAX RT_NAME_MAX
+#endif /* FINSH_PASSWORD_MAX */
+#ifndef FINSH_PASSWORD_MIN
+#define FINSH_PASSWORD_MIN 6
+#endif /* FINSH_PASSWORD_MIN */
+#ifndef FINSH_DEFAULT_PASSWORD
+#define FINSH_DEFAULT_PASSWORD "rtthread"
+#endif /* FINSH_DEFAULT_PASSWORD */
+#endif /* FINSH_USING_AUTH */
+
+#ifndef FINSH_THREAD_NAME
+#define FINSH_THREAD_NAME   "tshell"
+#endif /* FINSH_THREAD_NAME */
+
+enum input_stat
+{
+    WAIT_NORMAL,
+    WAIT_SPEC_KEY,
+    WAIT_FUNC_KEY,
+};
+
+struct finsh_shell
+{
+    struct rt_semaphore rx_sem;
+
+    enum input_stat stat;
+
+    rt_uint8_t echo_mode: 1;
+    rt_uint8_t prompt_mode: 1;
+
+#ifdef FINSH_USING_HISTORY
+    rt_uint16_t current_history;
+    rt_uint16_t history_count;
+
+    char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
+#endif
+
+    char line[FINSH_CMD_SIZE + 1];
+    rt_uint16_t line_position;
+    rt_uint16_t line_curpos;
+
+#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
+    rt_device_t device;
+#endif
+
+#ifdef FINSH_USING_AUTH
+    char password[FINSH_PASSWORD_MAX];
+#endif
+};
+
 #ifndef RT_USING_HEAP
-    static struct rt_thread finsh_thread;
-    ALIGN(RT_ALIGN_SIZE)
-    static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
-    struct finsh_shell _shell;
+/* finsh thread */
+static struct rt_thread finsh_thread;
+ALIGN(RT_ALIGN_SIZE)
+static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
+struct finsh_shell _shell;
 #endif
 
 /* finsh symtab */
 #ifdef FINSH_USING_SYMTAB
-    struct finsh_syscall *_syscall_table_begin  = NULL;
-    struct finsh_syscall *_syscall_table_end    = NULL;
-#endif
+struct finsh_syscall *_syscall_table_begin  = NULL;
+struct finsh_syscall *_syscall_table_end    = NULL;
+#endif /* FINSH_USING_SYMTAB */
 
 struct finsh_shell *shell;
 static char *finsh_prompt_custom = RT_NULL;
@@ -58,7 +124,6 @@ struct finsh_syscall *finsh_syscall_next(struct finsh_syscall *call)
 
     return (struct finsh_syscall *)ptr;
 }
-
 #endif /* defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__)) */
 
 #ifdef RT_USING_HEAP
@@ -250,7 +315,7 @@ void finsh_set_echo(rt_uint32_t echo)
  *
  * @return the echo mode
  */
-rt_uint32_t finsh_get_echo()
+rt_uint32_t finsh_get_echo(void)
 {
     RT_ASSERT(shell != RT_NULL);
 
@@ -773,4 +838,3 @@ int finsh_system_init(void)
 INIT_APP_EXPORT(finsh_system_init);
 
 #endif /* RT_USING_FINSH */
-

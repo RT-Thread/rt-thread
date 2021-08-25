@@ -49,7 +49,6 @@
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-#include <shell.h>
 #endif
 
 int main(void)
@@ -57,10 +56,8 @@ int main(void)
 
     for(;;)
     {
-    	rt_kprintf("hello rt-thread\n");
-    	rt_thread_mdelay(1000);
-
-
+        rt_kprintf("hello rt-thread\n");
+        rt_thread_mdelay(1000);
     }
 }
 

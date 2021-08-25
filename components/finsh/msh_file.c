@@ -14,7 +14,6 @@
 #if defined(RT_USING_FINSH) && defined(RT_USING_DFS)
 
 #include <finsh.h>
-#include "msh.h"
 #include <dfs_posix.h>
 
 static int msh_readline(int fd, char *line_buf, int size)
