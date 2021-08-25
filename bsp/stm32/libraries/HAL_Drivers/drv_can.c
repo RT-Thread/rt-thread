@@ -12,6 +12,8 @@
  * 2019-03-27     YLZ          support double can channels, support stm32F4xx (only Legacy mode).
  * 2019-06-17     YLZ          port to new STM32F1xx HAL V1.1.3.
  * 2021-02-02     YuZhe XU     fix bug in filter config
+ * 2021-8-25      SVCHAO       The baud rate is configured according to the different APB1 frequencies.
+                               f4-series only.
  */
 
 #include "drv_can.h"
@@ -34,7 +36,22 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
     {CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_8TQ  | CAN_BS2_3TQ | 150)},
     {CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_8TQ  | CAN_BS2_3TQ | 300)}
 };
-#elif defined (SOC_SERIES_STM32F4)/* APB1 45MHz(max) */
+#elif defined (SOC_SERIES_STM32F4)  /* 42MHz or 45MHz */
+#if defined(STM32F405xx) || defined(STM32F415xx) || defined(STM32F407xx)|| defined(STM32F417xx) ||\
+    defined(STM32F401xC) || defined(STM32F401xE) /* 42MHz(max) */
+static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
+{
+    {CAN1MBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_4TQ | 3)},
+    {CAN800kBaud, (CAN_SJW_2TQ | CAN_BS1_8TQ  | CAN_BS2_5TQ | 4)},
+    {CAN500kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 6)},
+    {CAN250kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 12)},
+    {CAN125kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 24)},
+    {CAN100kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 30)},
+    {CAN50kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 60)},
+    {CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 150)},
+    {CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 300)}
+};
+#else  /* APB1 45MHz(max) */
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
 {
     {CAN1MBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 3)},
@@ -47,6 +64,7 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
     {CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 150)},
     {CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 300)}
 };
+#endif
 #elif defined (SOC_SERIES_STM32F7)/* APB1 54MHz(max) */
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
 {
