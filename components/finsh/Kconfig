@@ -31,6 +31,10 @@ config FINSH_USING_DESCRIPTION
     bool "Keeping description in symbol table"
     default y
 
+config FINSH_USING_BUILT_IN_COMMANDS
+    bool "Enable built-in commands, such as list_thread"
+    default y
+
 config FINSH_ECHO_DISABLE_DEFAULT
     bool "Disable the echo mode in default"
     default n
