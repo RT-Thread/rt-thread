@@ -42,7 +42,7 @@ static struct n32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0
 /**
  * This function initializes the i2c pin.
  *
- * @param Stm32 i2c dirver class.
+ * @param n32 i2c dirver class.
  */
 static void n32_i2c_gpio_init(struct n32_i2c *i2c)
 {
@@ -58,7 +58,7 @@ static void n32_i2c_gpio_init(struct n32_i2c *i2c)
 /**
  * This function sets the sda pin.
  *
- * @param Stm32 config class.
+ * @param n32 config class.
  * @param The sda pin state.
  */
 static void n32_set_sda(void *data, rt_int32_t state)
@@ -77,7 +77,7 @@ static void n32_set_sda(void *data, rt_int32_t state)
 /**
  * This function sets the scl pin.
  *
- * @param Stm32 config class.
+ * @param n32 config class.
  * @param The scl pin state.
  */
 static void n32_set_scl(void *data, rt_int32_t state)
@@ -164,7 +164,7 @@ static const struct rt_i2c_bit_ops n32_bit_ops_default =
 /**
  * if i2c is locked, this function will unlock it
  *
- * @param at32 config class
+ * @param n32 config class
  *
  * @return RT_EOK indicates successful unlock.
  */

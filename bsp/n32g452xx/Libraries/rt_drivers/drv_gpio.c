@@ -24,7 +24,7 @@
 }
 #define __N32_PIN_DEFAULT {-1, 0, 0, 0, 0, 0}
 
-/* STM32 GPIO driver */
+/* N32 GPIO driver */
 struct pin_index
 {
     int index;
