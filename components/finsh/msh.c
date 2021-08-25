@@ -54,6 +54,7 @@ int msh_help(int argc, char **argv)
 }
 MSH_CMD_EXPORT_ALIAS(msh_help, help, RT - Thread shell help.);
 
+#ifdef FINSH_USING_BUILT_IN_COMMANDS
 int cmd_ps(int argc, char **argv)
 {
     extern long list_thread(void);
@@ -77,13 +78,14 @@ int cmd_free(int argc, char **argv)
 
 #ifdef RT_USING_MEMHEAP_AS_HEAP
     list_memheap();
-#else
+#else /* RT_USING_MEMHEAP_AS_HEAP */
     list_mem();
 #endif
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system.);
-#endif
+#endif /* RT_USING_HEAP */
+#endif /* FINSH_USING_BUILT_IN_COMMANDS */
 
 static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
 {
@@ -270,7 +272,7 @@ int system(const char *command)
     return ret;
 }
 RTM_EXPORT(system);
-#endif
+#endif /* defined(RT_USING_MODULE) && defined(RT_USING_DFS) */
 
 static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
 {
@@ -339,7 +341,7 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
 
     return 0;
 }
-#endif
+#endif /* defined(RT_USING_LWP) && defined(RT_USING_DFS) */
 
 int msh_exec(char *cmd, rt_size_t length)
 {
@@ -376,15 +378,15 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return 0;
     }
-#endif
+#endif /* RT_USING_MODULE */
 
 #ifdef RT_USING_LWP
     if (_msh_exec_lwp(cmd, length) == 0)
     {
         return 0;
     }
-#endif
-#endif
+#endif /* RT_USING_LWP */
+#endif /* RT_USING_DFS */
 
     /* truncate the cmd at the first space. */
     {
@@ -534,7 +536,7 @@ void msh_auto_complete_path(char *path)
     closedir(dir);
     rt_free(full_path);
 }
-#endif
+#endif /* RT_USING_DFS */
 
 void msh_auto_complete(char *prefix)
 {
@@ -575,9 +577,9 @@ void msh_auto_complete(char *prefix)
         {
             msh_auto_complete_path(ptr);
         }
-#endif
+#endif /* RT_USING_MODULE */
     }
-#endif
+#endif /* RT_USING_DFS */
 
     /* checks in internal command */
     {
