@@ -61,10 +61,10 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TIM3 channel2 PWM"
                     default n
                 config BSP_USING_TIM3_CH3
-                    bool "Enable TIM3 channel2 PWM"
+                    bool "Enable TIM3 channel3 PWM"
                     default n
                 config BSP_USING_TIM3_CH4
-                    bool "Enable TIM3 channel2 PWM"
+                    bool "Enable TIM3 channel4 PWM"
                     default n
             endif
         endif
