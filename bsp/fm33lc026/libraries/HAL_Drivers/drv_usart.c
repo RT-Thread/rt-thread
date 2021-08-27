@@ -5,12 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-10-30     SummerGift   first version
- * 2020-03-16     SummerGift   add device close feature
- * 2020-03-20     SummerGift   fix bug caused by ORE
- * 2020-05-02     whj4674672   support stm32h7 uart dma
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
- */
+ * 2021-08-27     Jiao         first version
+*/
 
 #include "drv_usart.h"
 #include "drv_config.h"
@@ -69,23 +65,23 @@ static struct _uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0}
 
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-	extern FL_ErrorStatus FL_UART_GPIO_Init(UART_Type *UARTx);
-	
+    extern FL_ErrorStatus FL_UART_GPIO_Init(UART_Type * UARTx);
+
     struct _uart *uart;
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
     uart = rt_container_of(serial, struct _uart, serial);
-	
-	if (FL_UART_GPIO_Init(uart->config->InitTypeDef) != FL_PASS)
+
+    if (FL_UART_GPIO_Init(uart->config->InitTypeDef) != FL_PASS)
     {
         return -RT_ERROR;
     }
-		
+
     uart->handle.clockSrc          = uart->config->clockSrc;
     uart->handle.baudRate          = cfg->baud_rate;
-	
-	switch (cfg->data_bits)
+
+    switch (cfg->data_bits)
     {
     case DATA_BITS_8:
         uart->handle.dataWidth = FL_UART_DATA_WIDTH_8B;
@@ -97,8 +93,8 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
         uart->handle.dataWidth = FL_UART_DATA_WIDTH_8B;
         break;
     }
-	
-	switch (cfg->stop_bits)
+
+    switch (cfg->stop_bits)
     {
     case STOP_BITS_1:
         uart->handle.stopBits = FL_UART_STOP_BIT_WIDTH_1B;
@@ -125,10 +121,10 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
         uart->handle.parity = FL_UART_PARITY_NONE;
         break;
     }
-	
+
     uart->handle.transferDirection = FL_UART_DIRECTION_TX_RX;
 
-    if (FL_UART_Init(uart->config->InitTypeDef,&uart->handle) != FL_PASS)
+    if (FL_UART_Init(uart->config->InitTypeDef, &uart->handle) != FL_PASS)
     {
         return -RT_ERROR;
     }
@@ -153,17 +149,17 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
         /* disable rx irq */
         NVIC_DisableIRQ(uart->config->irq_type);
         /* disable interrupt */
-	    FL_UART_DisableIT_RXBuffFull(uart->config->InitTypeDef);
+        FL_UART_DisableIT_RXBuffFull(uart->config->InitTypeDef);
 
         break;
 
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
-        NVIC_SetPriority(uart->config->irq_type, 1); 
+        NVIC_SetPriority(uart->config->irq_type, 1);
         NVIC_EnableIRQ(uart->config->irq_type);
         /* enable interrupt */
-	    FL_UART_EnableIT_RXBuffFull(uart->config->InitTypeDef);
+        FL_UART_EnableIT_RXBuffFull(uart->config->InitTypeDef);
         break;
 
 #ifdef RT_SERIAL_USING_DMA
@@ -173,7 +169,7 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 #endif
 
     case RT_DEVICE_CTRL_CLOSE:
-        if (FL_UART_DeInit(uart->config->InitTypeDef) != FL_PASS )
+        if (FL_UART_DeInit(uart->config->InitTypeDef) != FL_PASS)
         {
             RT_ASSERT(0)
         }
@@ -188,8 +184,8 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     struct _uart *uart;
     RT_ASSERT(serial != RT_NULL);
 
-    uart = rt_container_of(serial, struct _uart, serial);	
-	FL_UART_WriteTXBuff(uart->config->InitTypeDef, c); //发送一个数据
+    uart = rt_container_of(serial, struct _uart, serial);
+    FL_UART_WriteTXBuff(uart->config->InitTypeDef, c); //发送一个数据
     while (FL_SET != FL_UART_IsActiveFlag_TXShiftBuffEmpty(uart->config->InitTypeDef));
     return 1;
 }
@@ -204,7 +200,7 @@ static int uart_getc(struct rt_serial_device *serial)
     ch = -1;
     if (FL_SET == FL_UART_IsActiveFlag_RXBuffFull(uart->config->InitTypeDef))
     {
-		ch = FL_UART_ReadRXBuff(uart->config->InitTypeDef);//接收中断标志可通过读取rxreg寄存器清除
+        ch = FL_UART_ReadRXBuff(uart->config->InitTypeDef);//接收中断标志可通过读取rxreg寄存器清除
     }
     return ch;
 }
@@ -222,7 +218,7 @@ static void uart_isr(struct rt_serial_device *serial)
     uart = rt_container_of(serial, struct _uart, serial);
 
     /* UART in mode Receiver -------------------------------------------------*/
-    if((FL_ENABLE == FL_UART_IsEnabledIT_RXBuffFull(uart->config->InitTypeDef))
+    if ((FL_ENABLE == FL_UART_IsEnabledIT_RXBuffFull(uart->config->InitTypeDef))
             && (FL_SET == FL_UART_IsActiveFlag_RXBuffFull(uart->config->InitTypeDef)))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);

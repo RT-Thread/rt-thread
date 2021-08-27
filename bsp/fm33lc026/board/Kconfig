@@ -7,10 +7,6 @@ config SOC_FM33LC0XX
     select RT_USING_USER_MAIN
     default y
 
-menu "Onboard Peripheral Drivers"
-
-endmenu
-
 menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_UART
@@ -38,8 +34,5 @@ menu "On-chip Peripheral Drivers"
     
 endmenu
 
-menu "Board extended module Drivers"
-
-endmenu
 
 endmenu

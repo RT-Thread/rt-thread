@@ -125,6 +125,17 @@ Path:
 - bsp/essemi/es32f0654/libraries/CMSIS/Include
 - bsp/essemi/es8p508x/libraries/CMSIS
 
+###fm33lc026
+
+License: Mulan PSL v1
+
+Copyright: Copyright (c) [2019] [Fudan Microelectronics]
+
+Path:
+
+- bsp/fm33lc026\libraries\FM33LC0xx_FL_Driver
+- bsp/fm33lc026\libraries\FM
+
 ### frdm-k64f
 
 License: bsd-new

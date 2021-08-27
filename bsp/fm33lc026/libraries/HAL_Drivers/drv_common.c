@@ -6,13 +6,14 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-7      SummerGift   first version
- */
+ * 2021-08-27     Jiao         change to fm33
+*/
 
 #include "drv_common.h"
 #include "system_fm33lc0xx.h"
 
 #ifdef RT_USING_SERIAL
-#include "drv_usart.h"
+    #include "drv_usart.h"
 #endif
 
 #ifdef RT_USING_FINSH
@@ -27,7 +28,7 @@ FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
-	SystemCoreClockUpdate();
+    SystemCoreClockUpdate();
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
 }
@@ -61,7 +62,7 @@ void _Error_Handler(char *s, int num)
 {
     /* USER CODE BEGIN Error_Handler */
     /* User can add his own implementation to report the HAL error return state */
-    while(1)
+    while (1)
     {
     }
     /* USER CODE END Error_Handler */
@@ -78,10 +79,12 @@ void rt_hw_us_delay(rt_uint32_t us)
     start = SysTick->VAL;
     reload = SysTick->LOAD;
     us_tick = SystemCoreClock / 1000000UL;
-    do {
+    do
+    {
         now = SysTick->VAL;
         delta = start > now ? start - now : reload + start - now;
-    } while(delta < us_tick * us);
+    }
+    while (delta < us_tick * us);
 }
 
 /**
@@ -89,17 +92,17 @@ void rt_hw_us_delay(rt_uint32_t us)
  */
 RT_WEAK void rt_hw_board_init()
 {
-	void SelRCHFToPLL(uint32_t rchf, uint32_t clock);
+    void SelRCHFToPLL(uint32_t rchf, uint32_t clock);
 
-	SelRCHFToPLL(RCHF8M_TRIM,63);
+    SelRCHFToPLL(RCHF8M_TRIM, 63);
     rt_hw_systick_init();
-	
-extern int Image$$RW_IRAM1$$ZI$$Limit;
+
+    extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
 
     /* Heap initialization */
 #if defined(RT_USING_HEAP)
-    rt_system_heap_init((void *)HEAP_BEGIN, (void *)(0x20000000+0x6000));
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)(0x20000000 + 0x6000));
 #endif
 
     /* USART driver initialization is open by default */
@@ -117,4 +120,3 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
     rt_components_board_init();
 #endif
 }
-

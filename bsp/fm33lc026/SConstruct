@@ -47,11 +47,11 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-stm32_library = 'FM33LC0xx_FL_Driver'
-rtconfig.BSP_LIBRARY_TYPE = stm32_library
+fm33_library = 'FM33LC0xx_FL_Driver'
+rtconfig.BSP_LIBRARY_TYPE = fm33_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, stm32_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, fm33_library, 'SConscript')))
 
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))

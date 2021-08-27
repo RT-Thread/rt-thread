@@ -160,14 +160,12 @@
 
 /* games: games run on RT-Thread console */
 
-#define SOC_FAMILY_STM32
+#define SOC_FAMILY_FM33
 #define SOC_SERIES_FM33LC0XX
 
 /* Hardware Drivers Config */
 
 #define SOC_FM33LC0XX
-
-/* Onboard Peripheral Drivers */
 
 /* On-chip Peripheral Drivers */
 
@@ -175,8 +173,5 @@
 #define BSP_USING_UART0
 #define BSP_USING_UART1
 #define BSP_USING_UART4
-
-/* Board extended module Drivers */
-
 
 #endif
