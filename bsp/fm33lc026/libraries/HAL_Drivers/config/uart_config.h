@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-10-30     zylx         first version
+ * 2021-08-27     Jiao         first version
  */
 
 #ifndef __UART_CONFIG_H__

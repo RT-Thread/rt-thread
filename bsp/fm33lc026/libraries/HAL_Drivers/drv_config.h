@@ -7,7 +7,8 @@
  * Date           Author            Notes
  * 2018-10-30     SummerGift        first version
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
- */
+ * 2021-08-27     Jiao         first version
+*/
  
 #ifndef __DRV_CONFIG_H__
 #define __DRV_CONFIG_H__
@@ -19,12 +20,7 @@
 extern "C" {
 #endif
 
-#include "dma_config.h"
 #include "uart_config.h"
-#include "spi_config.h"
-#include "tim_config.h"
-#include "pwm_config.h"
-#include "adc_config.h"
 
 #ifdef __cplusplus
 }
