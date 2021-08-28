@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file      startup_stm32mp15xx.s
+  * @file      startup_stm32mp157c_cm4.s
   * @author    MCD Application Team
   * @brief     STM32MP15xx Devices vector table for GCC based toolchain. 
   *            This module performs:

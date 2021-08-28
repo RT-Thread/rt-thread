@@ -254,7 +254,8 @@ typedef struct
 #define EXTI_REG_SHIFT                      16u
 #define EXTI_REG1                           (0x00uL << EXTI_REG_SHIFT)
 #define EXTI_REG2                           (0x01uL << EXTI_REG_SHIFT)
-#define EXTI_REG_MASK                       (EXTI_REG1 | EXTI_REG2)
+#define EXTI_REG3                           (0x02uL << EXTI_REG_SHIFT)
+#define EXTI_REG_MASK                       (EXTI_REG1 | EXTI_REG2 | EXTI_REG3)
 #define EXTI_PIN_MASK                       0x0000001Fu
 
 /**

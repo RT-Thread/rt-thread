@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file      startup_stm32mp15xx.s
+  * @file      startup_stm32mp153c_cm4.s
   * @author    MCD Application Team
   * @brief     STM32MP15xx Devices vector table for GCC based toolchain. 
   *            This module performs:
@@ -252,7 +252,7 @@ g_pfnVectors:
   .word  HASH2_IRQHandler                  // Crypto Hash2 interrupt
   .word  I2C5_EV_IRQHandler                // I2C5 Event Interrupt
   .word  I2C5_ER_IRQHandler                // I2C5 Error Interrupt
-  .word  GPU_IRQHandler                    // GPU Global Interrupt
+  .word  0                                 // Reserved
   .word  DFSDM1_FLT0_IRQHandler            // DFSDM Filter0 Interrupt
   .word  DFSDM1_FLT1_IRQHandler            // DFSDM Filter1 Interrupt
   .word  DFSDM1_FLT2_IRQHandler            // DFSDM Filter2 Interrupt
@@ -266,7 +266,7 @@ g_pfnVectors:
   .word  MDIOS_IRQHandler                  // MDIOS global Interrupt
   .word  EXTI14_IRQHandler                 // EXTI Line14 interrupts through AIEC
   .word  MDMA_IRQHandler                   // MDMA global Interrupt
-  .word  DSI_IRQHandler                    // DSI global Interrupt
+  .word  0                                 // Reserved
   .word  SDMMC2_IRQHandler                 // SDMMC2 global Interrupt
   .word  HSEM_IT2_IRQHandler               // HSEM global Interrupt
   .word  DFSDM1_FLT5_IRQHandler            // DFSDM Filter5 Interrupt
@@ -665,9 +665,6 @@ g_pfnVectors:
   .weak      I2C5_ER_IRQHandler
   .thumb_set I2C5_ER_IRQHandler,Default_Handler
 
-  .weak      GPU_IRQHandler
-  .thumb_set GPU_IRQHandler,Default_Handler
-
   .weak      DFSDM1_FLT0_IRQHandler
   .thumb_set DFSDM1_FLT0_IRQHandler,Default_Handler
                                                
@@ -706,9 +703,6 @@ g_pfnVectors:
                                                  
   .weak      MDMA_IRQHandler                        
   .thumb_set MDMA_IRQHandler,Default_Handler
-                                                 
-  .weak      DSI_IRQHandler                         
-  .thumb_set DSI_IRQHandler,Default_Handler 
                                                 
   .weak      SDMMC2_IRQHandler                      
   .thumb_set SDMMC2_IRQHandler,Default_Handler

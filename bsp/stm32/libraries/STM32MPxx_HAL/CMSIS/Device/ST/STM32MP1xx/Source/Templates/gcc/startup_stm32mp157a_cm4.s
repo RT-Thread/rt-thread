@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file      startup_stm32mp15xx.s
+  * @file      startup_stm32mp157a_cm4.s
   * @author    MCD Application Team
   * @brief     STM32MP15xx Devices vector table for GCC based toolchain. 
   *            This module performs:
@@ -222,7 +222,7 @@ g_pfnVectors:
   .word  EXTI12_IRQHandler                 // EXTI Line12 interrupts through AIEC
   .word  EXTI13_IRQHandler                 // EXTI Line13 interrupts through AIEC
   .word  DCMI_IRQHandler                   // DCMI                            
-  .word  CRYP1_IRQHandler                  // Crypto1 global interrupt
+  .word  0                                 // Reserved
   .word  HASH1_IRQHandler                  // Crypto Hash1 interrupt
   .word  FPU_IRQHandler                    // FPU
   .word  UART7_IRQHandler                  // UART7
@@ -248,7 +248,7 @@ g_pfnVectors:
   .word  DMAMUX1_OVR_IRQHandler            // DMAMUX1 Overrun interrupt
   .word  IPCC_RX1_IRQHandler               // Mailbox RX1 Free interrupt
   .word  IPCC_TX1_IRQHandler               // Mailbox TX1 Free interrupt
-  .word  CRYP2_IRQHandler                  // Crypto2 global interrupt
+  .word  0                                 // Reserved
   .word  HASH2_IRQHandler                  // Crypto Hash2 interrupt
   .word  I2C5_EV_IRQHandler                // I2C5 Event Interrupt
   .word  I2C5_ER_IRQHandler                // I2C5 Error Interrupt
@@ -580,9 +580,6 @@ g_pfnVectors:
                                         
   .weak      DCMI_IRQHandler                     
   .thumb_set DCMI_IRQHandler,Default_Handler
-                                               
-  .weak      CRYP1_IRQHandler
-  .thumb_set CRYP1_IRQHandler,Default_Handler
 
   .weak      HASH1_IRQHandler
   .thumb_set HASH1_IRQHandler,Default_Handler
@@ -652,9 +649,6 @@ g_pfnVectors:
   
   .weak      IPCC_TX1_IRQHandler
   .thumb_set IPCC_TX1_IRQHandler,Default_Handler
-
-  .weak      CRYP2_IRQHandler
-  .thumb_set CRYP2_IRQHandler,Default_Handler
 
   .weak      HASH2_IRQHandler
   .thumb_set HASH2_IRQHandler,Default_Handler

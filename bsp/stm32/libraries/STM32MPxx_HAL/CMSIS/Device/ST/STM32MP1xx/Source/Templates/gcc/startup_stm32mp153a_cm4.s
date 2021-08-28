@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file      startup_stm32mp15xx.s
+  * @file      startup_stm32mp153a_cm4.s
   * @author    MCD Application Team
   * @brief     STM32MP15xx Devices vector table for GCC based toolchain. 
   *            This module performs:
@@ -222,7 +222,7 @@ g_pfnVectors:
   .word  EXTI12_IRQHandler                 // EXTI Line12 interrupts through AIEC
   .word  EXTI13_IRQHandler                 // EXTI Line13 interrupts through AIEC
   .word  DCMI_IRQHandler                   // DCMI                            
-  .word  CRYP1_IRQHandler                  // Crypto1 global interrupt
+  .word  0                                 // Reserved
   .word  HASH1_IRQHandler                  // Crypto Hash1 interrupt
   .word  FPU_IRQHandler                    // FPU
   .word  UART7_IRQHandler                  // UART7
@@ -248,11 +248,11 @@ g_pfnVectors:
   .word  DMAMUX1_OVR_IRQHandler            // DMAMUX1 Overrun interrupt
   .word  IPCC_RX1_IRQHandler               // Mailbox RX1 Free interrupt
   .word  IPCC_TX1_IRQHandler               // Mailbox TX1 Free interrupt
-  .word  CRYP2_IRQHandler                  // Crypto2 global interrupt
+  .word  0                                 // Reserved
   .word  HASH2_IRQHandler                  // Crypto Hash2 interrupt
   .word  I2C5_EV_IRQHandler                // I2C5 Event Interrupt
   .word  I2C5_ER_IRQHandler                // I2C5 Error Interrupt
-  .word  GPU_IRQHandler                    // GPU Global Interrupt
+  .word  0                                 // Reserved
   .word  DFSDM1_FLT0_IRQHandler            // DFSDM Filter0 Interrupt
   .word  DFSDM1_FLT1_IRQHandler            // DFSDM Filter1 Interrupt
   .word  DFSDM1_FLT2_IRQHandler            // DFSDM Filter2 Interrupt
@@ -266,7 +266,7 @@ g_pfnVectors:
   .word  MDIOS_IRQHandler                  // MDIOS global Interrupt
   .word  EXTI14_IRQHandler                 // EXTI Line14 interrupts through AIEC
   .word  MDMA_IRQHandler                   // MDMA global Interrupt
-  .word  DSI_IRQHandler                    // DSI global Interrupt
+  .word  0                                 // Reserved
   .word  SDMMC2_IRQHandler                 // SDMMC2 global Interrupt
   .word  HSEM_IT2_IRQHandler               // HSEM global Interrupt
   .word  DFSDM1_FLT5_IRQHandler            // DFSDM Filter5 Interrupt
@@ -580,9 +580,6 @@ g_pfnVectors:
                                         
   .weak      DCMI_IRQHandler                     
   .thumb_set DCMI_IRQHandler,Default_Handler
-                                               
-  .weak      CRYP1_IRQHandler
-  .thumb_set CRYP1_IRQHandler,Default_Handler
 
   .weak      HASH1_IRQHandler
   .thumb_set HASH1_IRQHandler,Default_Handler
@@ -653,9 +650,6 @@ g_pfnVectors:
   .weak      IPCC_TX1_IRQHandler
   .thumb_set IPCC_TX1_IRQHandler,Default_Handler
 
-  .weak      CRYP2_IRQHandler
-  .thumb_set CRYP2_IRQHandler,Default_Handler
-
   .weak      HASH2_IRQHandler
   .thumb_set HASH2_IRQHandler,Default_Handler
 
@@ -664,9 +658,6 @@ g_pfnVectors:
 
   .weak      I2C5_ER_IRQHandler
   .thumb_set I2C5_ER_IRQHandler,Default_Handler
-
-  .weak      GPU_IRQHandler
-  .thumb_set GPU_IRQHandler,Default_Handler
 
   .weak      DFSDM1_FLT0_IRQHandler
   .thumb_set DFSDM1_FLT0_IRQHandler,Default_Handler
@@ -706,9 +697,6 @@ g_pfnVectors:
                                                  
   .weak      MDMA_IRQHandler                        
   .thumb_set MDMA_IRQHandler,Default_Handler
-                                                 
-  .weak      DSI_IRQHandler                         
-  .thumb_set DSI_IRQHandler,Default_Handler 
                                                 
   .weak      SDMMC2_IRQHandler                      
   .thumb_set SDMMC2_IRQHandler,Default_Handler
