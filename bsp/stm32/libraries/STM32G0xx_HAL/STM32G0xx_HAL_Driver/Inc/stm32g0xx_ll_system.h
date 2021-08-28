@@ -72,8 +72,8 @@ extern "C" {
   */
 
 /** @defgroup SYSTEM_LL_EC_REMAP SYSCFG REMAP
-* @{
-*/
+  * @{
+  */
 #define LL_SYSCFG_REMAP_FLASH               0x00000000U                                           /*!< Main Flash memory mapped at 0x00000000 */
 #define LL_SYSCFG_REMAP_SYSTEMFLASH         SYSCFG_CFGR1_MEM_MODE_0                               /*!< System Flash memory mapped at 0x00000000 */
 #define LL_SYSCFG_REMAP_SRAM                (SYSCFG_CFGR1_MEM_MODE_1 | SYSCFG_CFGR1_MEM_MODE_0)   /*!< Embedded SRAM mapped at 0x00000000 */
@@ -82,8 +82,8 @@ extern "C" {
   */
 
 /** @defgroup SYSTEM_LL_EC_PIN_RMP SYSCFG PIN RMP
-* @{
-*/
+  * @{
+  */
 #define LL_SYSCFG_PIN_RMP_PA11              SYSCFG_CFGR1_PA11_RMP                           /*!< PA11 pad behaves as PA9 pin */
 #define LL_SYSCFG_PIN_RMP_PA12              SYSCFG_CFGR1_PA12_RMP                           /*!< PA12 pad behaves as PA10 pin */
 /**
@@ -101,7 +101,7 @@ extern "C" {
 #define LL_SYSCFG_IR_MOD_USART4      (SYSCFG_CFGR1_IR_MOD_1)                            /*!< 10: USART4 is selected as IRDA Modulation enveloppe source */
 #else  
 #define LL_SYSCFG_IR_MOD_USART2      (SYSCFG_CFGR1_IR_MOD_1)                            /*!< 10: USART2 is selected as IRDA Modulation enveloppe source */
-#endif
+#endif /* USART4 */
 /**
   * @}
   */
@@ -113,7 +113,7 @@ extern "C" {
 /**
   * @}
   */
-#endif
+#endif /* SYSCFG_CFGR1_IR_MOD */
 
 #if defined(SYSCFG_CFGR1_BOOSTEN)
 /** @defgroup SYSTEM_LL_EC_BOOSTEN SYSCFG I/O analog switch voltage booster enable
@@ -123,9 +123,9 @@ extern "C" {
 /**
   * @}
   */
-#endif
+#endif /* SYSCFG_CFGR1_BOOSTEN */
 
-#if defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
+#if defined(SYSCFG_CFGR1_UCPD1_STROBE) ||  defined(SYSCFG_CFGR1_UCPD2_STROBE)
 /** @defgroup SYSTEM_LL_EC_UCPD_DBATTDIS SYSCFG UCPD Dead Battery feature Disable
   * @{
   */
@@ -134,7 +134,7 @@ extern "C" {
 /**
   * @}
   */
-#endif
+#endif /* SYSCFG_CFGR1_UCPD1_STROBE) || SYSCFG_CFGR1_UCPD2_STROBE */
 
 /** @defgroup SYSTEM_LL_EC_I2C_FASTMODEPLUS SYSCFG I2C FASTMODEPLUS
   * @{
@@ -155,6 +155,11 @@ extern "C" {
 #if defined(SYSCFG_CFGR1_I2C_PA10_FMP)
 #define LL_SYSCFG_I2C_FASTMODEPLUS_PA10    SYSCFG_CFGR1_I2C_PA10_FMP /*!< Enable Fast Mode Plus on PA10 */
 #endif /*SYSCFG_CFGR1_I2C_PA10_FMP*/
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
+#if defined(SYSCFG_CFGR1_I2C3_FMP)
+#define LL_SYSCFG_I2C_FASTMODEPLUS_I2C3    SYSCFG_CFGR1_I2C3_FMP /*!< Enable I2C3 Fast mode plus  */
+#endif /*SYSCFG_CFGR1_I2C3_FMP*/
+#endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 /**
   * @}
   */
@@ -168,7 +173,7 @@ extern "C" {
 #define LL_SYSCFG_TIMBREAK_PVD             SYSCFG_CFGR2_PVDL           /*!< Enables and locks the PVD connection
                                                                        with TIM1/15/16/17 Break Input and also
                                                                        the PVDE and PLS bits of the Power Control Interface */
-#endif
+#endif /* PWR_PVD_SUPPORT */
 #define LL_SYSCFG_TIMBREAK_SRAM_PARITY     SYSCFG_CFGR2_SPL            /*!< Enables and locks the SRAM_PARITY error signal
                                                                                 with Break Input of TIM1/15/16/17 */
 #define LL_SYSCFG_TIMBREAK_LOCKUP          SYSCFG_CFGR2_CLL            /*!< Enables and locks the LOCKUP (Hardfault) output of
@@ -177,7 +182,7 @@ extern "C" {
   * @}
   */
 
-#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#if defined(SYSCFG_CDEN_SUPPORT)
 /** @defgroup SYSTEM_LL_EC_CLAMPING_DIODE SYSCFG CLAMPING DIODE
   * @{
   */  
@@ -192,7 +197,7 @@ extern "C" {
 /**
   * @}
   */
-#endif
+#endif /* SYSCFG_CDEN_SUPPORT */
 
 /** @defgroup SYSTEM_LL_EC_APB1_GRP1_STOP_IP  DBGMCU APB1 GRP1 STOP IP
   * @{
@@ -201,6 +206,9 @@ extern "C" {
 #define LL_DBGMCU_APB1_GRP1_TIM2_STOP      DBG_APB_FZ1_DBG_TIM2_STOP        /*!< TIM2 counter stopped when core is halted */
 #endif /*DBG_APB_FZ1_DBG_TIM2_STOP*/
 #define LL_DBGMCU_APB1_GRP1_TIM3_STOP      DBG_APB_FZ1_DBG_TIM3_STOP        /*!< TIM3 counter stopped when core is halted */
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
+#define LL_DBGMCU_APB1_GRP1_TIM4_STOP      DBG_APB_FZ1_DBG_TIM4_STOP        /*!< TIM4 counter stopped when core is halted */
+#endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 #if defined(DBG_APB_FZ1_DBG_TIM6_STOP)
 #define LL_DBGMCU_APB1_GRP1_TIM6_STOP      DBG_APB_FZ1_DBG_TIM6_STOP        /*!< TIM6 counter stopped when core is halted */
 #endif /*DBG_APB_FZ1_DBG_TIM6_STOP*/
@@ -211,6 +219,9 @@ extern "C" {
 #define LL_DBGMCU_APB1_GRP1_WWDG_STOP      DBG_APB_FZ1_DBG_WWDG_STOP        /*!< Debug Window Watchdog stopped when Core is halted */
 #define LL_DBGMCU_APB1_GRP1_IWDG_STOP      DBG_APB_FZ1_DBG_IWDG_STOP        /*!< Debug Independent Watchdog stopped when Core is halted */
 #define LL_DBGMCU_APB1_GRP1_I2C1_STOP      DBG_APB_FZ1_DBG_I2C1_SMBUS_TIMEOUT_STOP /*!< I2C1 SMBUS timeout mode stopped when Core is halted */
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
+#define LL_DBGMCU_APB1_GRP1_I2C2_STOP      DBG_APB_FZ1_DBG_I2C2_SMBUS_TIMEOUT_STOP /*!< I2C2 SMBUS timeout mode stopped when Core is halted */
+#endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 #if defined(DBG_APB_FZ1_DBG_LPTIM2_STOP)
 #define LL_DBGMCU_APB1_GRP1_LPTIM2_STOP    DBG_APB_FZ1_DBG_LPTIM2_STOP      /*!< LPTIM2 counter stopped when Core is halted */
 #endif /* DBG_APB_FZ1_DBG_LPTIM2_STOP */
@@ -422,7 +433,7 @@ __STATIC_INLINE void LL_SYSCFG_DisableAnalogBooster(void)
 {
   CLEAR_BIT(SYSCFG->CFGR1, SYSCFG_CFGR1_BOOSTEN);
 }
-#endif
+#endif /* SYSCFG_CFGR1_BOOSTEN */
 
 /**
   * @brief  Enable the I2C fast mode plus driving capability.
@@ -432,6 +443,7 @@ __STATIC_INLINE void LL_SYSCFG_DisableAnalogBooster(void)
   *         SYSCFG_CFGR1 I2C_FMP_PB9   LL_SYSCFG_EnableFastModePlus\n
   *         SYSCFG_CFGR1 I2C_FMP_I2C1  LL_SYSCFG_EnableFastModePlus\n
   *         SYSCFG_CFGR1 I2C_FMP_I2C2  LL_SYSCFG_EnableFastModePlus\n
+  *         SYSCFG_CFGR1 I2C_FMP_I2C3  LL_SYSCFG_EnableFastModePlus\n  
   *         SYSCFG_CFGR1 I2C_FMP_PA9   LL_SYSCFG_EnableFastModePlus\n
   *         SYSCFG_CFGR1 I2C_FMP_PA10  LL_SYSCFG_EnableFastModePlus
   * @param  ConfigFastModePlus This parameter can be a combination of the following values:
@@ -441,6 +453,7 @@ __STATIC_INLINE void LL_SYSCFG_DisableAnalogBooster(void)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_PB9
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C1 (*)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C2 (*)
+  *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C3 (*)  
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_PA9 (*)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_PA10 (*)
   *
@@ -460,6 +473,7 @@ __STATIC_INLINE void LL_SYSCFG_EnableFastModePlus(uint32_t ConfigFastModePlus)
   *         SYSCFG_CFGR1 I2C_FMP_PB9   LL_SYSCFG_DisableFastModePlus\n
   *         SYSCFG_CFGR1 I2C_FMP_I2C1  LL_SYSCFG_DisableFastModePlus\n
   *         SYSCFG_CFGR1 I2C_FMP_I2C2  LL_SYSCFG_DisableFastModePlus\n
+  *         SYSCFG_CFGR1 I2C_FMP_I2C3  LL_SYSCFG_DisableFastModePlus\n  
   *         SYSCFG_CFGR1 I2C_FMP_PA9   LL_SYSCFG_DisableFastModePlus\n
   *         SYSCFG_CFGR1 I2C_FMP_PA10  LL_SYSCFG_DisableFastModePlus
   * @param  ConfigFastModePlus This parameter can be a combination of the following values:
@@ -469,6 +483,7 @@ __STATIC_INLINE void LL_SYSCFG_EnableFastModePlus(uint32_t ConfigFastModePlus)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_PB9
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C1 (*)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C2 (*)
+  *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C3 (*)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_PA9 (*)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_PA10 (*)
   *
@@ -480,7 +495,7 @@ __STATIC_INLINE void LL_SYSCFG_DisableFastModePlus(uint32_t ConfigFastModePlus)
   CLEAR_BIT(SYSCFG->CFGR1, ConfigFastModePlus);
 }
 
-#if defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
+#if defined(SYSCFG_CFGR1_UCPD1_STROBE) || defined(SYSCFG_CFGR1_UCPD2_STROBE)
 /**
   * @brief  Disable dead battery behavior
   * @rmtoll SYSCFG_CFGR1 UCPD1_STROBE   LL_SYSCFG_DisableDBATT\n
@@ -495,22 +510,7 @@ __STATIC_INLINE void LL_SYSCFG_DisableDBATT(uint32_t ConfigDeadBattery)
 {
   SET_BIT(SYSCFG->CFGR1, ConfigDeadBattery);
 }
-
-/**
-  * @brief  Enable dead battery behavior
-  * @rmtoll SYSCFG_CFGR1 UCPD1_STROBE   LL_SYSCFG_EnableDBATT\n
-  *         SYSCFG_CFGR1 UCPD2_STROBE   LL_SYSCFG_EnableDBATT
-  * @param  ConfigDeadBattery This parameter can be a combination of the following values:
-  *         @arg @ref LL_SYSCFG_UCPD1_STROBE\n
-  *         @arg @ref LL_SYSCFG_UCPD2_STROBE
-  *         (*) value not defined in all devices
-  * @retval None
-  */
-__STATIC_INLINE void LL_SYSCFG_EnableDBATT(uint32_t ConfigDeadBattery)
-{
-  CLEAR_BIT(SYSCFG->CFGR1, ConfigDeadBattery);
-}
-#endif
+#endif /* SYSCFG_CFGR1_UCPD1_STROBE || SYSCFG_CFGR1_UCPD2_STROBE */
 
 #if defined(SYSCFG_ITLINE0_SR_EWDG)
 /**
@@ -524,7 +524,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_WWDG(void)
 }
 #endif /* SYSCFG_ITLINE0_SR_EWDG */
 
-#if defined(SYSCFG_ITLINE1_SR_PVDOUT)
+#if defined (PWR_PVD_SUPPORT)
 /**
   * @brief  Check if PVD supply monitoring interrupt occurred or not (EXTI line 16).
   * @rmtoll SYSCFG_ITLINE1 SR_PVDOUT     LL_SYSCFG_IsActiveFlag_PVDOUT
@@ -534,9 +534,21 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_PVDOUT(void)
 {
   return ((READ_BIT(SYSCFG->IT_LINE_SR[1], SYSCFG_ITLINE1_SR_PVDOUT) == (SYSCFG_ITLINE1_SR_PVDOUT)) ? 1UL : 0UL);
 }
-#endif /* SYSCFG_ITLINE1_SR_PVDOUT */
+#endif /* PWR_PVD_SUPPORT */
 
-#if defined(SYSCFG_ITLINE2_SR_RTC_WAKEUP)
+#if defined (PWR_PVM_SUPPORT)
+/**
+  * @brief  Check if VDDUSB supply monitoring interrupt occurred or not (EXTI line 34).
+  * @rmtoll SYSCFG_ITLINE1 SR_PVMOUT     LL_SYSCFG_IsActiveFlag_PVMOUT
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_PVMOUT(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[1], SYSCFG_ITLINE1_SR_PVMOUT) == (SYSCFG_ITLINE1_SR_PVMOUT)) ? 1UL : 0UL);
+}
+#endif /* PWR_PVM_SUPPORT */
+
+#if defined(SYSCFG_ITLINE2_SR_RTC)
 /**
   * @brief  Check if RTC Wake Up interrupt occurred or not (EXTI line 19).
   * @rmtoll SYSCFG_ITLINE2 SR_RTC_WAKEUP  LL_SYSCFG_IsActiveFlag_RTC_WAKEUP
@@ -544,9 +556,9 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_PVDOUT(void)
   */
 __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_RTC_WAKEUP(void)
 {
-  return ((READ_BIT(SYSCFG->IT_LINE_SR[2], SYSCFG_ITLINE2_SR_RTC_WAKEUP) == (SYSCFG_ITLINE2_SR_RTC_WAKEUP)) ? 1UL : 0UL);
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[2], SYSCFG_ITLINE2_SR_RTC) == (SYSCFG_ITLINE2_SR_RTC)) ? 1UL : 0UL);
 }
-#endif /* SYSCFG_ITLINE2_SR_RTC_WAKEUP */
+#endif /* SYSCFG_ITLINE2_SR_RTC */
 
 #if defined(SYSCFG_ITLINE2_SR_TAMPER)
 /**
@@ -596,6 +608,17 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_CLK_CTRL(void)
 }
 #endif /* SYSCFG_ITLINE4_SR_CLK_CTRL */
 
+#if defined(CRS)
+/**
+  * @brief  Check if Reset and clock control interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE4 SR_CRS   LL_SYSCFG_IsActiveFlag_CRS
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_CRS(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[4], SYSCFG_ITLINE4_SR_CRS) == (SYSCFG_ITLINE4_SR_CRS)) ? 1UL : 0UL);
+}
+#endif /* CRS */
 #if defined(SYSCFG_ITLINE5_SR_EXTI0)
 /**
   * @brief  Check if EXTI line 0 interrupt occurred or not.
@@ -812,6 +835,18 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_UCPD2(void)
 }
 #endif /* SYSCFG_ITLINE8_SR_UCPD2 */
 
+#if defined(SYSCFG_ITLINE8_SR_USB)
+/**
+  * @brief  Check if USB interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE8 SR_USB    LL_SYSCFG_IsActiveFlag_USB
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_USB(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[8], SYSCFG_ITLINE8_SR_USB) == (SYSCFG_ITLINE8_SR_USB)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE8_SR_USB */
+
 #if defined(SYSCFG_ITLINE9_SR_DMA1_CH1)
 /**
   * @brief  Check if DMA1 channel 1 interrupt occurred or not.
@@ -908,6 +943,66 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_DMAMUX(void)
 }
 #endif /* SYSCFG_ITLINE11_SR_DMAMUX */
 
+#if defined(SYSCFG_ITLINE11_SR_DMA2_CH1)
+/**
+  * @brief  Check if DMA2_CH1 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE11 SR_DMA2_CH1   LL_SYSCFG_IsActiveFlag_DMA2_CH1
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_DMA2_CH1(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[11], SYSCFG_ITLINE11_SR_DMA2_CH1) == (SYSCFG_ITLINE11_SR_DMA2_CH1)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE11_SR_DMA2_CH1 */
+
+#if defined(SYSCFG_ITLINE11_SR_DMA2_CH2)
+/**
+  * @brief  Check if DMA2_CH2 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE11 SR_DMA2_CH2   LL_SYSCFG_IsActiveFlag_DMA2_CH2
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_DMA2_CH2(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[11], SYSCFG_ITLINE11_SR_DMA2_CH2) == (SYSCFG_ITLINE11_SR_DMA2_CH2)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE11_SR_DMA2_CH2 */
+
+#if defined(SYSCFG_ITLINE11_SR_DMA2_CH3)
+/**
+  * @brief  Check if DMA2_CH3 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE11 SR_DMA2_CH3   LL_SYSCFG_IsActiveFlag_DMA2_CH3
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_DMA2_CH3(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[11], SYSCFG_ITLINE11_SR_DMA2_CH3) == (SYSCFG_ITLINE11_SR_DMA2_CH3)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE11_SR_DMA2_CH3 */
+
+#if defined(SYSCFG_ITLINE11_SR_DMA2_CH4)
+/**
+  * @brief  Check if DMA2_CH4 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE11 SR_DMA2_CH4   LL_SYSCFG_IsActiveFlag_DMA2_CH4
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_DMA2_CH4(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[11], SYSCFG_ITLINE11_SR_DMA2_CH4) == (SYSCFG_ITLINE11_SR_DMA2_CH4)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE11_SR_DMA2_CH4 */
+
+#if defined(SYSCFG_ITLINE11_SR_DMA2_CH5)
+/**
+  * @brief  Check if DMA2_CH5 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE11 SR_DMA2_CH5   LL_SYSCFG_IsActiveFlag_DMA2_CH5
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_DMA2_CH5(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[11], SYSCFG_ITLINE11_SR_DMA2_CH5) == (SYSCFG_ITLINE11_SR_DMA2_CH5)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE11_SR_DMA2_CH5 */
+
 #if defined(SYSCFG_ITLINE12_SR_ADC)
 /**
   * @brief  Check if ADC interrupt occurred or not.
@@ -943,6 +1038,18 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_COMP2(void)
   return ((READ_BIT(SYSCFG->IT_LINE_SR[12], SYSCFG_ITLINE12_SR_COMP2) == (SYSCFG_ITLINE12_SR_COMP2)) ? 1UL : 0UL);
 }
 #endif /* SYSCFG_ITLINE12_SR_COMP2 */
+
+#if defined(SYSCFG_ITLINE12_SR_COMP3)
+/**
+  * @brief  Check if Comparator 3 interrupt occurred or not (EXTI line 20).
+  * @rmtoll SYSCFG_ITLINE12 SR_COMP3      LL_SYSCFG_IsActiveFlag_COMP3
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_COMP3(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[12], SYSCFG_ITLINE12_SR_COMP3) == (SYSCFG_ITLINE12_SR_COMP3)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE12_SR_COMP3 */
 
 #if defined(SYSCFG_ITLINE13_SR_TIM1_BRK)
 /**
@@ -1027,6 +1134,18 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_TIM3(void)
   return ((READ_BIT(SYSCFG->IT_LINE_SR[16], SYSCFG_ITLINE16_SR_TIM3_GLB) == (SYSCFG_ITLINE16_SR_TIM3_GLB)) ? 1UL : 0UL);
 }
 #endif /* SYSCFG_ITLINE16_SR_TIM3_GLB */
+
+#if defined(SYSCFG_ITLINE16_SR_TIM4_GLB)
+/**
+  * @brief  Check if Timer 3 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE16 SR_TIM4_GLB   LL_SYSCFG_IsActiveFlag_TIM4
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_TIM4(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[16], SYSCFG_ITLINE16_SR_TIM4_GLB) == (SYSCFG_ITLINE16_SR_TIM4_GLB)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE16_SR_TIM4_GLB */
 
 #if defined(SYSCFG_ITLINE17_SR_DAC)
 /**
@@ -1124,6 +1243,29 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_TIM16(void)
 }
 #endif /* SYSCFG_ITLINE21_SR_TIM16_GLB */
 
+#if defined(SYSCFG_ITLINE21_SR_FDCAN1_IT0)
+/**
+  * @brief  Check if FDCAN1_IT0 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE21 SR_FDCAN1_IT0  LL_SYSCFG_IsActiveFlag_FDCAN1_IT0
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_FDCAN1_IT0(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[21], SYSCFG_ITLINE21_SR_FDCAN1_IT0) == (SYSCFG_ITLINE21_SR_FDCAN1_IT0)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE21_SR_FDCAN1_IT0 */
+#if defined(SYSCFG_ITLINE21_SR_FDCAN2_IT0)
+/**
+  * @brief  Check if FDCAN2_IT0 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE21 SR_FDCAN2_IT0  LL_SYSCFG_IsActiveFlag_FDCAN2_IT0
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_FDCAN2_IT0(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[21], SYSCFG_ITLINE21_SR_FDCAN2_IT0) == (SYSCFG_ITLINE21_SR_FDCAN2_IT0)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE21_SR_FDCAN2_IT0 */
+
 #if defined(SYSCFG_ITLINE22_SR_TIM17_GLB)
 /**
   * @brief  Check if Timer 17 interrupt occurred or not.
@@ -1135,6 +1277,29 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_TIM17(void)
   return ((READ_BIT(SYSCFG->IT_LINE_SR[22], SYSCFG_ITLINE22_SR_TIM17_GLB) == (SYSCFG_ITLINE22_SR_TIM17_GLB)) ? 1UL : 0UL);
 }
 #endif /* SYSCFG_ITLINE22_SR_TIM17_GLB */
+
+#if defined(SYSCFG_ITLINE22_SR_FDCAN1_IT1)
+/**
+  * @brief  Check if FDCAN1_IT1 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE22 SR_FDCAN1_IT1  LL_SYSCFG_IsActiveFlag_FDCAN1_IT1
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_FDCAN1_IT1(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[22], SYSCFG_ITLINE22_SR_FDCAN1_IT1) == (SYSCFG_ITLINE22_SR_FDCAN1_IT1)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE22_SR_FDCAN1_IT1 */
+#if defined(SYSCFG_ITLINE22_SR_FDCAN2_IT1)
+/**
+  * @brief  Check if FDCAN2_IT1 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE22 SR_FDCAN2_IT1  LL_SYSCFG_IsActiveFlag_FDCAN2_IT1
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_FDCAN2_IT1(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[22], SYSCFG_ITLINE22_SR_FDCAN2_IT1) == (SYSCFG_ITLINE22_SR_FDCAN2_IT1)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE22_SR_FDCAN2_IT1 */
 
 #if defined(SYSCFG_ITLINE23_SR_I2C1_GLB)
 /**
@@ -1160,6 +1325,18 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_I2C2(void)
 }
 #endif /* SYSCFG_ITLINE24_SR_I2C2_GLB */
 
+#if defined(SYSCFG_ITLINE24_SR_I2C3_GLB)
+/**
+  * @brief  Check if I2C3 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE24 SR_I2C3_GLB   LL_SYSCFG_IsActiveFlag_I2C3
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_I2C3(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[24], SYSCFG_ITLINE24_SR_I2C3_GLB) == (SYSCFG_ITLINE24_SR_I2C3_GLB)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE24_SR_I2C3_GLB */
+
 #if defined(SYSCFG_ITLINE25_SR_SPI1)
 /**
   * @brief  Check if SPI1 interrupt occurred or not.
@@ -1184,6 +1361,18 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_SPI2(void)
 }
 #endif /* SYSCFG_ITLINE26_SR_SPI2 */
 
+#if defined(SYSCFG_ITLINE26_SR_SPI3)
+/**
+  * @brief  Check if SPI3 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE26 SR_SPI3       LL_SYSCFG_IsActiveFlag_SPI3
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_SPI3(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[26], SYSCFG_ITLINE26_SR_SPI3) == (SYSCFG_ITLINE26_SR_SPI3)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE26_SR_SPI3 */
+
 #if defined(SYSCFG_ITLINE27_SR_USART1_GLB)
 /**
   * @brief  Check if USART1 interrupt occurred or not, combined with EXTI line 25.
@@ -1207,6 +1396,18 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_USART2(void)
   return ((READ_BIT(SYSCFG->IT_LINE_SR[28], SYSCFG_ITLINE28_SR_USART2_GLB) == (SYSCFG_ITLINE28_SR_USART2_GLB)) ? 1UL : 0UL);
 }
 #endif /* SYSCFG_ITLINE28_SR_USART2_GLB */
+
+#if defined(SYSCFG_ITLINE28_SR_LPUART2_GLB)
+/**
+  * @brief  Check if LPUART2 interrupt occurred or not, combined with EXTI line 26.
+  * @rmtoll SYSCFG_ITLINE28 SR_LPUART2_GLB  LL_SYSCFG_IsActiveFlag_LPUART2
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_LPUART2(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[28], SYSCFG_ITLINE28_SR_LPUART2_GLB) == (SYSCFG_ITLINE28_SR_LPUART2_GLB)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE28_SR_LPUART2_GLB */
 
 #if defined(SYSCFG_ITLINE29_SR_USART3_GLB)
 /**
@@ -1243,6 +1444,30 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_LPUART1(void)
   return ((READ_BIT(SYSCFG->IT_LINE_SR[29], SYSCFG_ITLINE29_SR_LPUART1_GLB) == (SYSCFG_ITLINE29_SR_LPUART1_GLB)) ? 1UL : 0UL);
 }
 #endif /* SYSCFG_ITLINE29_SR_LPUART1_GLB */
+
+#if defined(SYSCFG_ITLINE29_SR_USART5_GLB)
+/**
+  * @brief  Check if USART5 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE29 SR_USART5_GLB  LL_SYSCFG_IsActiveFlag_USART5
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_USART5(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[29], SYSCFG_ITLINE29_SR_USART5_GLB) == (SYSCFG_ITLINE29_SR_USART5_GLB)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE29_SR_USART5_GLB */
+
+#if defined(SYSCFG_ITLINE29_SR_USART6_GLB)
+/**
+  * @brief  Check if USART6 interrupt occurred or not.
+  * @rmtoll SYSCFG_ITLINE29 SR_USART6_GLB  LL_SYSCFG_IsActiveFlag_USART6
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_USART6(void)
+{
+  return ((READ_BIT(SYSCFG->IT_LINE_SR[29], SYSCFG_ITLINE29_SR_USART6_GLB) == (SYSCFG_ITLINE29_SR_USART6_GLB)) ? 1UL : 0UL);
+}
+#endif /* SYSCFG_ITLINE29_SR_USART6_GLB */
 
 #if defined(SYSCFG_ITLINE30_SR_CEC)
 /**
@@ -1284,7 +1509,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_RNG(void)
   * @brief  Set connections to TIM1/15/16/17 Break inputs
   * @rmtoll SYSCFG_CFGR2 CLL   LL_SYSCFG_SetTIMBreakInputs\n
   *         SYSCFG_CFGR2 SPL   LL_SYSCFG_SetTIMBreakInputs\n
-  *         SYSCFG_CFGR2 PVDL  LL_SYSCFG_SetTIMBreakInputs (*)\n
+  *         SYSCFG_CFGR2 PVDL  LL_SYSCFG_SetTIMBreakInputs\n
   *         SYSCFG_CFGR2 ECCL  LL_SYSCFG_GetTIMBreakInputs
   * @param  Break This parameter can be a combination of the following values:
   * @ifnot STM32G070xx
@@ -1310,7 +1535,7 @@ __STATIC_INLINE void LL_SYSCFG_SetTIMBreakInputs(uint32_t Break)
   * @brief  Get connections to TIM1/15/16/17 Break inputs
   * @rmtoll SYSCFG_CFGR2 CLL   LL_SYSCFG_GetTIMBreakInputs\n
   *         SYSCFG_CFGR2 SPL   LL_SYSCFG_GetTIMBreakInputs\n
-  *         SYSCFG_CFGR2 PVDL  LL_SYSCFG_GetTIMBreakInputs (*)\n
+  *         SYSCFG_CFGR2 PVDL  LL_SYSCFG_GetTIMBreakInputs\n
   *         SYSCFG_CFGR2 ECCL  LL_SYSCFG_GetTIMBreakInputs
   * @retval Returned value can be can be a combination of the following values:
   * @ifnot STM32G070xx
@@ -1351,7 +1576,7 @@ __STATIC_INLINE void LL_SYSCFG_ClearFlag_SP(void)
   SET_BIT(SYSCFG->CFGR2, SYSCFG_CFGR2_SPF);
 }
 
-#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx) 
+#if defined(SYSCFG_CDEN_SUPPORT)
 /**
   * @brief  Enable Clamping Diode on specific pin
   * @rmtoll SYSCFG_CFGR2 PA1_CDEN   LL_SYSCFG_EnableClampingDiode\n
@@ -1428,7 +1653,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsEnabledClampingDiode(uint32_t ConfigClampin
 {
   return ((READ_BIT(SYSCFG->CFGR2, ConfigClampingDiode) == (ConfigClampingDiode)) ? 1UL : 0UL);
 }
-#endif
+#endif /* SYSCFG_CDEN_SUPPORT */
 
 /**
   * @}
@@ -1504,23 +1729,29 @@ __STATIC_INLINE void LL_DBGMCU_DisableDBGStandbyMode(void)
   * @brief  Freeze APB1 peripherals (group1 peripherals)
   * @rmtoll DBG_APB_FZ1 DBG_TIM2_STOP           LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBG_APB_FZ1 DBG_TIM3_STOP           LL_DBGMCU_APB1_GRP1_FreezePeriph\n
+  *         DBG_APB_FZ1 DBG_TIM4_STOP           LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBG_APB_FZ1 DBG_TIM6_STOP           LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBG_APB_FZ1 DBG_TIM7_STOP           LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBG_APB_FZ1 DBG_RTC_STOP            LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBG_APB_FZ1 DBG_WWDG_STOP           LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBG_APB_FZ1 DBG_IWDG_STOP           LL_DBGMCU_APB1_GRP1_FreezePeriph\n
-  *         DBG_APB_FZ1 DBG_CAN_STOP  LL_DBGMCU_APB1_GRP1_FreezePeriph
+  *         DBG_APB_FZ1 DBG_I2C1_STOP           LL_DBGMCU_APB1_GRP1_FreezePeriph\n
+  *         DBG_APB_FZ1 DBG_I2C2_STOP           LL_DBGMCU_APB1_GRP1_FreezePeriph\n
+  *         DBG_APB_FZ1 DBG_LPTIM2_STOP         LL_DBGMCU_APB1_GRP1_FreezePeriph\n
+  *         DBG_APB_FZ1 DBG_LPTIM1_STOP         LL_DBGMCU_APB1_GRP1_FreezePeriph
   * @param  Periphs This parameter can be a combination of the following values:
-  * @ifnot STM32G070xx
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM2_STOP (*)
-  * @endif
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM3_STOP
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM4_STOP (*)
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM6_STOP (*)
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM7_STOP (*)
   *         @arg @ref LL_DBGMCU_APB1_GRP1_RTC_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_WWDG_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_IWDG_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C1_STOP
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C2_STOP (*)
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_LPTIM2_STOP (*)
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_LPTIM1_STOP (*)
   *
   *         (*) value not defined in all devices
   * @retval None
@@ -1534,24 +1765,29 @@ __STATIC_INLINE void LL_DBGMCU_APB1_GRP1_FreezePeriph(uint32_t Periphs)
   * @brief  Unfreeze APB1 peripherals (group1 peripherals)
   * @rmtoll DBG_APB_FZ1 DBG_TIM2_STOP           LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
   *         DBG_APB_FZ1 DBG_TIM3_STOP           LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
+  *         DBG_APB_FZ1 DBG_TIM4_STOP           LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
   *         DBG_APB_FZ1 DBG_TIM6_STOP           LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
   *         DBG_APB_FZ1 DBG_TIM7_STOP           LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
-  *         DBG_APB_FZ1 DBG_TIM14_STOP          LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
   *         DBG_APB_FZ1 DBG_RTC_STOP            LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
   *         DBG_APB_FZ1 DBG_WWDG_STOP           LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
   *         DBG_APB_FZ1 DBG_IWDG_STOP           LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
   *         DBG_APB_FZ1 DBG_I2C1_SMBUS_TIMEOUT  LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
+  *         DBG_APB_FZ1 DBG_I2C2_SMBUS_TIMEOUT  LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
+  *         DBG_APB_FZ1 DBG_LPTIM2_SMBUS_TIMEOUT  LL_DBGMCU_APB1_GRP1_UnFreezePeriph\n
+  *         DBG_APB_FZ1 DBG_LPTIM1_SMBUS_TIMEOUT  LL_DBGMCU_APB1_GRP1_UnFreezePeriph
   * @param  Periphs This parameter can be a combination of the following values:
-  * @ifnot STM32G070xx
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM2_STOP (*)
-  * @endif
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM3_STOP
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM4_STOP (*)
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM6_STOP (*)
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM7_STOP (*)
   *         @arg @ref LL_DBGMCU_APB1_GRP1_RTC_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_WWDG_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_IWDG_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C1_STOP
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C2_STOP (*)
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_LPTIM2_STOP (*)
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_LPTIM1_STOP (*)
   *
   *         (*) value not defined in all devices
   * @retval None
@@ -1700,6 +1936,11 @@ __STATIC_INLINE uint32_t LL_VREFBUF_GetTrimming(void)
 
 /**
   * @brief  Set the trimming code for VREFBUF calibration (Tune the internal reference buffer voltage)
+  * @note   VrefBuf voltage scale is calibrated in production for each device,
+  *         using voltage scale 1. This calibration value is loaded
+  *         as default trimming value at device power up.
+  *         This trimming value can be fine tuned for voltage scales 0 and 1
+  *         using this function.
   * @rmtoll VREFBUF_CCR  VREFBUF_CCR_TRIM          LL_VREFBUF_SetTrimming
   * @param  Value Between 0 and 0x3F
   * @retval None

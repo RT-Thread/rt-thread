@@ -19,10 +19,10 @@
   * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * This software component is licensed by ST under Apache License, Version 2.0,
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  *                        opensource.org/licenses/Apache-2.0
   *
   ******************************************************************************
   */
@@ -57,10 +57,19 @@
    application
   */
 
-#if !defined (STM32G071xx) && !defined (STM32G081xx) && !defined (STM32G070xx) && !defined (STM32G030xx) && !defined (STM32G031xx) && !defined (STM32G041xx)
+#if !defined (STM32G071xx) && !defined (STM32G081xx) && !defined (STM32G070xx) \
+ && !defined (STM32G030xx) && !defined (STM32G031xx) && !defined (STM32G041xx) \
+ && !defined (STM32G0B0xx) && !defined (STM32G0B1xx) && !defined (STM32G0C1xx) \
+ && !defined (STM32G050xx) && !defined (STM32G051xx) && !defined (STM32G061xx)
+  /* #define STM32G0B0xx */   /*!< STM32G0B0xx Devices */
+  /* #define STM32G0B1xx */   /*!< STM32G0B1xx Devices */
+  /* #define STM32G0C1xx */   /*!< STM32G0C1xx Devices */
   /* #define STM32G070xx */   /*!< STM32G070xx Devices */
   /* #define STM32G071xx */   /*!< STM32G071xx Devices */
   /* #define STM32G081xx */   /*!< STM32G081xx Devices */
+  /* #define STM32G050xx */   /*!< STM32G050xx Devices */
+  /* #define STM32G051xx */   /*!< STM32G051xx Devices */
+  /* #define STM32G061xx */   /*!< STM32G061xx Devices */
   /* #define STM32G030xx */   /*!< STM32G030xx Devices */
   /* #define STM32G031xx */   /*!< STM32G031xx Devices */
   /* #define STM32G041xx */   /*!< STM32G041xx Devices */
@@ -82,7 +91,7 @@
   * @brief CMSIS Device version number $VERSION$
   */
 #define __STM32G0_CMSIS_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define __STM32G0_CMSIS_VERSION_SUB1   (0x03U) /*!< [23:16] sub1 version */
+#define __STM32G0_CMSIS_VERSION_SUB1   (0x04U) /*!< [23:16] sub1 version */
 #define __STM32G0_CMSIS_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
 #define __STM32G0_CMSIS_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32G0_CMSIS_VERSION        ((__STM32G0_CMSIS_VERSION_MAIN << 24)\
@@ -98,7 +107,13 @@
   * @{
   */
 
-#if defined(STM32G071xx)
+#if defined(STM32G0B1xx)
+  #include "stm32g0b1xx.h"
+#elif defined(STM32G0C1xx)
+  #include "stm32g0c1xx.h"
+#elif defined(STM32G0B0xx)
+  #include "stm32g0b0xx.h"
+#elif defined(STM32G071xx)
   #include "stm32g071xx.h"
 #elif defined(STM32G081xx)
   #include "stm32g081xx.h"
@@ -110,6 +125,12 @@
   #include "stm32g041xx.h"
 #elif defined(STM32G030xx)
   #include "stm32g030xx.h"
+#elif defined(STM32G051xx)
+  #include "stm32g051xx.h"
+#elif defined(STM32G061xx)
+  #include "stm32g061xx.h"
+#elif defined(STM32G050xx)
+  #include "stm32g050xx.h"
 #else
  #error "Please select first the target STM32G0xx device used in your application (in stm32g0xx.h file)"
 #endif
