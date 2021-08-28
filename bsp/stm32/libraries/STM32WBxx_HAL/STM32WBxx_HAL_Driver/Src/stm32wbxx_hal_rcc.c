@@ -320,11 +320,6 @@ HAL_StatusTypeDef HAL_RCC_DeInit(void)
   CLEAR_BIT(RCC->CR, RCC_CR_HSION | RCC_CR_HSIKERON | RCC_CR_HSIASFS | RCC_CR_HSEON | RCC_CR_HSEPRE | RCC_CR_PLLON);
 #endif
 
-#if defined(RCC_CR_HSEBYP)
-  /* Reset HSEBYP bit once HSE is OFF */
-  LL_RCC_HSE_DisableBypass();
-#endif
-
   /* Get Start Tick*/
   tickstart = HAL_GetTick();
 
@@ -454,7 +449,8 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
         }
 
         /* Update the SystemCoreClock global variable */
-        SystemCoreClockUpdate();
+        SystemCoreClock = HAL_RCC_GetHCLKFreq();
+        
         if (HAL_InitTick(uwTickPrio) != HAL_OK)
         {
           return HAL_ERROR;
@@ -822,6 +818,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     }
 
   }
+#if defined(RCC_HSI48_SUPPORT)
   /*------------------------------ HSI48 Configuration -----------------------*/
   if (((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_HSI48) == RCC_OSCILLATORTYPE_HSI48)
   {
@@ -864,6 +861,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
       }
     }
   }
+#endif
   /*-------------------------------- PLL Configuration -----------------------*/
   /* Check the parameters */
   assert_param(IS_RCC_PLL(RCC_OscInitStruct->PLL.PLLState));
@@ -1261,7 +1259,8 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
   /*---------------------------------------------------------------------------*/
 
   /* Update the SystemCoreClock global variable */
-  SystemCoreClockUpdate();
+  SystemCoreClock = HAL_RCC_GetHCLKFreq();
+  
   /* Configure the source of time base considering new system clocks settings*/
   return HAL_InitTick(HAL_GetTickPrio());
 }
@@ -1530,25 +1529,17 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
 
   /* Set all possible values for the Oscillator type parameter ---------------*/
   RCC_OscInitStruct->OscillatorType = RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_MSI | \
-                                      RCC_OSCILLATORTYPE_LSE | RCC_OSCILLATORTYPE_LSI1 | RCC_OSCILLATORTYPE_LSI2 | RCC_OSCILLATORTYPE_HSI48;
+                                      RCC_OSCILLATORTYPE_LSE | RCC_OSCILLATORTYPE_LSI1 | RCC_OSCILLATORTYPE_LSI2;
 
+#if defined(RCC_HSI48_SUPPORT)
+  RCC_OscInitStruct->OscillatorType |= RCC_OSCILLATORTYPE_HSI48;
+#endif
 
   /* Get the HSE configuration -----------------------------------------------*/
-#if defined(RCC_CR_HSEBYP)
-  if ((RCC->CR & RCC_CR_HSEBYP) == RCC_CR_HSEBYP)
-  {
-    RCC_OscInitStruct->HSEState = RCC_HSE_BYPASS;
-  }
-  else if ((RCC->CR & RCC_CR_HSEON) == RCC_CR_HSEON)
-  {
-    RCC_OscInitStruct->HSEState = RCC_HSE_ON;
-  }
-#else
   if ((RCC->CR & RCC_CR_HSEON) == RCC_CR_HSEON)
   {
     RCC_OscInitStruct->HSEState = RCC_HSE_ON;
   }
-#endif
   else
   {
     RCC_OscInitStruct->HSEState = RCC_HSE_OFF;
@@ -1604,6 +1595,7 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     RCC_OscInitStruct->LSIState = RCC_LSI_OFF;
   }
 
+#if defined(RCC_HSI48_SUPPORT)
   /* Get the HSI48 configuration ---------------------------------------------*/
   if ((RCC->CRRCR & RCC_CRRCR_HSI48ON) == RCC_CRRCR_HSI48ON)
   {
@@ -1613,7 +1605,7 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   {
     RCC_OscInitStruct->HSI48State = RCC_HSI48_OFF;
   }
-
+#endif
 
   /* Get the PLL configuration -----------------------------------------------*/
   if ((RCC->CR & RCC_CR_PLLON) == RCC_CR_PLLON)
