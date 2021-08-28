@@ -28,7 +28,8 @@
   * @{
   */
 #ifdef HAL_SAI_MODULE_ENABLED
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
 
 /** @defgroup SAIEx SAIEx
   * @brief SAI Extended HAL module driver
@@ -124,7 +125,8 @@ HAL_StatusTypeDef HAL_SAIEx_ConfigPdmMicDelay(SAI_HandleTypeDef *hsai, SAIEx_Pdm
   * @}
   */
 
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || */
+/* STM32L4P5xx || STM32L4Q5xx */
 #endif /* HAL_SAI_MODULE_ENABLED */
 /**
   * @}

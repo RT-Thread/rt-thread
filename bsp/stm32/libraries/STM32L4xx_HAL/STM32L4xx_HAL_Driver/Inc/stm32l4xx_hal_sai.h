@@ -60,7 +60,8 @@ typedef enum
   */
 typedef void (*SAIcallback)(void);
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
 /** @defgroup SAI_PDM_Structure_definition SAI PDM Structure definition
   * @brief  SAI PDM Init structure definition
   * @{
@@ -76,7 +77,8 @@ typedef struct
 /**
   * @}
   */
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || */
+/* STM32L4P5xx || STM32L4Q5xx */
 
 /** @defgroup SAI_Init_Structure_definition SAI Init Structure definition
   * @brief  SAI Init Structure definition
@@ -129,10 +131,12 @@ typedef struct
                                      @note This parameter is used only if AudioFrequency is set to
                                            SAI_AUDIO_FREQUENCY_MCKDIV otherwise it is internally computed. */
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
   uint32_t MckOverSampling;     /*!< Specifies the master clock oversampling.
                                      This parameter can be a value of @ref SAI_Block_Mck_OverSampling */
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || */
+/* STM32L4P5xx || STM32L4Q5xx */
 
   uint32_t MonoStereoMode;      /*!< Specifies if the mono or stereo mode is selected.
                                      This parameter can be a value of @ref SAI_Mono_Stereo_Mode */
@@ -143,9 +147,11 @@ typedef struct
   uint32_t TriState;            /*!< Specifies the companding mode type.
                                      This parameter can be a value of @ref SAI_TRIState_Management */
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
   SAI_PdmInitTypeDef PdmInit;   /*!< Specifies the PDM configuration. */
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || */
+/* STM32L4P5xx || STM32L4Q5xx */
 
   /* This part of the structure is automatically filled if your are using the high level initialisation
      function HAL_SAI_InitProtocol */
@@ -168,6 +174,7 @@ typedef struct
 
 /** @defgroup SAI_Frame_Structure_definition SAI Frame Structure definition
   * @brief  SAI Frame Init structure definition
+  * @note   For SPDIF and AC97 protocol, these parameters are not used (set by hardware).
   * @{
   */
 typedef struct
@@ -200,6 +207,8 @@ typedef struct
 
 /** @defgroup SAI_Slot_Structure_definition SAI Slot Structure definition
   * @brief   SAI Block Slot Init Structure definition
+  * @note    For SPDIF protocol, these parameters are not used (set by hardware).
+  * @note    For AC97 protocol, only SlotActive parameter is used (the others are set by hardware).
   * @{
   */
 typedef struct
@@ -367,7 +376,8 @@ typedef void (*pSAI_CallbackTypeDef)(SAI_HandleTypeDef *hsai);
   * @}
   */
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
 /** @defgroup SAI_Block_Mck_OverSampling SAI Block Master Clock OverSampling
   * @{
   */
@@ -385,7 +395,8 @@ typedef void (*pSAI_CallbackTypeDef)(SAI_HandleTypeDef *hsai);
 /**
   * @}
   */
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || */
+/* STM32L4P5xx || STM32L4Q5xx */
 
 /** @defgroup SAI_Block_Mode SAI Block Mode
   * @{
@@ -464,11 +475,13 @@ typedef void (*pSAI_CallbackTypeDef)(SAI_HandleTypeDef *hsai);
   * @{
   */
 #define SAI_MASTERDIVIDER_ENABLE         0x00000000U
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
 #define SAI_MASTERDIVIDER_DISABLE        SAI_xCR1_NOMCK
 #else
 #define SAI_MASTERDIVIDER_DISABLE        SAI_xCR1_NODIV
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || */
+/* STM32L4P5xx || STM32L4Q5xx */
 /**
   * @}
   */
@@ -743,10 +756,12 @@ typedef void (*pSAI_CallbackTypeDef)(SAI_HandleTypeDef *hsai);
   * @}
   */
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
 /* Include SAI HAL Extension module */
 #include "stm32l4xx_hal_sai_ex.h"
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || */
+/* STM32L4P5xx || STM32L4Q5xx */
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup SAI_Exported_Functions
@@ -853,7 +868,8 @@ uint32_t HAL_SAI_GetError(SAI_HandleTypeDef *hsai);
                                        ((AUDIO) == SAI_AUDIO_FREQUENCY_16K)  || ((AUDIO) == SAI_AUDIO_FREQUENCY_11K) || \
                                        ((AUDIO) == SAI_AUDIO_FREQUENCY_8K)   || ((AUDIO) == SAI_AUDIO_FREQUENCY_MCKDIV))
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
 #define IS_SAI_BLOCK_MCK_OVERSAMPLING(VALUE) (((VALUE) == SAI_MCK_OVERSAMPLING_DISABLE) || \
                                               ((VALUE) == SAI_MCK_OVERSAMPLING_ENABLE))
 
@@ -861,7 +877,8 @@ uint32_t HAL_SAI_GetError(SAI_HandleTypeDef *hsai);
 
 #define IS_SAI_PDM_CLOCK_ENABLE(CLOCK) (((CLOCK) != 0U) && \
                                        (((CLOCK) & ~(SAI_PDM_CLOCK1_ENABLE | SAI_PDM_CLOCK2_ENABLE)) == 0U))
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || */
+/* STM32L4P5xx || STM32L4Q5xx */
 
 #define IS_SAI_BLOCK_MODE(MODE)  (((MODE) == SAI_MODEMASTER_TX) || \
                                   ((MODE) == SAI_MODEMASTER_RX) || \
@@ -938,11 +955,13 @@ uint32_t HAL_SAI_GetError(SAI_HandleTypeDef *hsai);
 #define IS_SAI_BLOCK_FS_DEFINITION(DEFINITION) (((DEFINITION) == SAI_FS_STARTFRAME) || \
                                                 ((DEFINITION) == SAI_FS_CHANNEL_IDENTIFICATION))
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
 #define IS_SAI_BLOCK_MASTER_DIVIDER(DIVIDER) ((DIVIDER) <= 63U)
 #else
 #define IS_SAI_BLOCK_MASTER_DIVIDER(DIVIDER) ((DIVIDER) <= 15U)
-#endif
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || */
+/* STM32L4P5xx || STM32L4Q5xx */
 
 #define IS_SAI_BLOCK_FRAME_LENGTH(LENGTH) ((8U <= (LENGTH)) && ((LENGTH) <= 256U))
 
