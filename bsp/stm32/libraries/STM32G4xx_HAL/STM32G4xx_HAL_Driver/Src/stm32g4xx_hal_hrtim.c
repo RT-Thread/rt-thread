@@ -793,6 +793,9 @@ HAL_StatusTypeDef HAL_HRTIM_DLLCalibrationStart(HRTIM_HandleTypeDef * hhrtim,
     SET_BIT(hhrtim->Instance->sCommonRegs.DLLCR, HRTIM_DLLCR_CAL);
   }
 
+  /* Set HRTIM state */
+  hhrtim->State = HAL_HRTIM_STATE_READY;
+
   return HAL_OK;
 }
 
@@ -842,6 +845,9 @@ HAL_StatusTypeDef HAL_HRTIM_DLLCalibrationStart_IT(HRTIM_HandleTypeDef * hhrtim,
     MODIFY_REG(hhrtim->Instance->sCommonRegs.DLLCR, HRTIM_DLLCR_CALRTE, CalibrationRate);
     SET_BIT(hhrtim->Instance->sCommonRegs.DLLCR, HRTIM_DLLCR_CAL);
   }
+
+  /* Set HRTIM state */
+  hhrtim->State = HAL_HRTIM_STATE_READY;
 
   return HAL_OK;
 }
@@ -1393,6 +1399,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOCChannelConfig(HRTIM_HandleTypeDef * hhrtim,
      return HAL_BUSY;
   }
 
+  /* Process Locked */
+  __HAL_LOCK(hhrtim);
+
   /* Set HRTIM state */
   hhrtim->State = HAL_HRTIM_STATE_BUSY;
 
@@ -1491,6 +1500,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOCChannelConfig(HRTIM_HandleTypeDef * hhrtim,
 
   default:
     {
+      OutputCfg.SetSource = HRTIM_OUTPUTSET_NONE;
+      OutputCfg.ResetSource = HRTIM_OUTPUTRESET_NONE;
+
       hhrtim->State = HAL_HRTIM_STATE_ERROR;
 
       /* Process Unlocked */
@@ -1512,6 +1524,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOCChannelConfig(HRTIM_HandleTypeDef * hhrtim,
 
   /* Set HRTIM state */
   hhrtim->State = HAL_HRTIM_STATE_READY;
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(hhrtim);
 
   return HAL_OK;
 }
@@ -2059,6 +2074,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimplePWMChannelConfig(HRTIM_HandleTypeDef * hhrtim,
     }
   default:
     {
+      OutputCfg.SetSource = HRTIM_OUTPUTSET_NONE;
+      OutputCfg.ResetSource = HRTIM_OUTPUTRESET_NONE;
+
       hhrtim->State = HAL_HRTIM_STATE_ERROR;
 
       /* Process Unlocked */
@@ -3422,6 +3440,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOnePulseChannelConfig(HRTIM_HandleTypeDef * hh
 
   default:
     {
+      OutputCfg.SetSource = HRTIM_OUTPUTSET_NONE;
+      OutputCfg.ResetSource = HRTIM_OUTPUTRESET_NONE;
+
       hhrtim->State = HAL_HRTIM_STATE_ERROR;
 
       /* Process Unlocked */
@@ -3888,6 +3909,7 @@ HAL_StatusTypeDef HAL_HRTIM_EventConfig(HRTIM_HandleTypeDef * hhrtim,
 {
   /* Check parameters */
   assert_param(IS_HRTIM_EVENT(Event));
+  assert_param(IS_HRTIM_EVENTSRC(Event, pEventCfg->Source));
   assert_param(IS_HRTIM_EVENTPOLARITY(pEventCfg->Sensitivity, pEventCfg->Polarity));
   assert_param(IS_HRTIM_EVENTSENSITIVITY(pEventCfg->Sensitivity));
   assert_param(IS_HRTIM_EVENTFASTMODE(Event, pEventCfg->FastMode));
@@ -9397,9 +9419,6 @@ static void HRTIM_TimingUnitWaveform_Control(HRTIM_HandleTypeDef * hhrtim,
                                              HRTIM_TimerCtlTypeDef * pTimerCtl)
 {
    uint32_t hrtim_timcr2;
-
-   /* UPDGAT bitfield must be reset before programming a new value */
-   hhrtim->Instance->sTimerxRegs[TimerIdx].TIMxCR &= ~(HRTIM_TIMCR_UPDGAT);
 
    /* Configure timing unit (Timer A to Timer F) */
    hrtim_timcr2 = hhrtim->Instance->sTimerxRegs[TimerIdx].TIMxCR2;

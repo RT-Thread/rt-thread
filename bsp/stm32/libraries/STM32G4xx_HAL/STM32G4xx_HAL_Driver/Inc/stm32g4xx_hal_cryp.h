@@ -64,9 +64,10 @@ typedef struct
   uint32_t *Header;                    /*!< used only in AES GCM and CCM Algorithm for authentication,
                                         GCM : also known as Additional Authentication Data
                                         CCM : named B1 composed of the associated data length and Associated Data. */
-  uint32_t HeaderSize;                 /*!< The size of header buffer in word  */
+  uint32_t HeaderSize;                 /*!< The size of header buffer */
   uint32_t *B0;                        /*!< B0 is first authentication block used only  in AES CCM mode */
-  uint32_t DataWidthUnit;              /*!< Data With Unit, this parameter can be value of @ref CRYP_Data_Width_Unit*/
+  uint32_t DataWidthUnit;              /*!< Payload Data Width Unit, this parameter can be value of @ref CRYP_Data_Width_Unit*/
+  uint32_t HeaderWidthUnit;            /*!< Header Width Unit, this parameter can be value of @ref CRYP_Header_Width_Unit*/
   uint32_t KeyIVConfigSkip;            /*!< CRYP peripheral Key and IV configuration skip, to config Key and Initialization
                                            Vector only once and to skip configuration for consecutive processings.
                                            This parameter can be a value of @ref CRYP_Configuration_Skip */
@@ -182,9 +183,11 @@ typedef struct
 
   uint32_t                    Key_saved[8];            /*!< copy of key registers */
 
-  uint32_t                    Size_saved;              /*!< copy of input buffer size */
+  uint16_t                    Size_saved;              /*!< copy of input buffer size */
 
   uint16_t                    CrypHeaderCount_saved;   /*!< copy of CRYP header data counter when processing is suspended */
+
+  uint32_t                    SizesSum_saved;          /*!< copy of SizesSum when processing is suspended */
 
   uint32_t                    ResumingFlag;            /*!< resumption flag to bypass steps already carried out */
 
@@ -258,6 +261,17 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef *hcryp);    /*!< point
 
 #define CRYP_DATAWIDTHUNIT_WORD   0x00000000U  /*!< By default, size unit is word */
 #define CRYP_DATAWIDTHUNIT_BYTE   0x00000001U  /*!< By default, size unit is byte */
+
+/**
+  * @}
+  */
+
+/** @defgroup CRYP_Header_Width_Unit CRYP Header Width Unit
+  * @{
+  */
+
+#define CRYP_HEADERWIDTHUNIT_WORD   0x00000000U  /*!< By default, header size unit is word */
+#define CRYP_HEADERWIDTHUNIT_BYTE   0x00000001U  /*!< By default, header size unit is byte */
 
 /**
   * @}
@@ -564,6 +578,13 @@ uint32_t HAL_CRYP_GetError(CRYP_HandleTypeDef *hcryp);
 
 #define IS_CRYP_INIT(CONFIG)(((CONFIG) == CRYP_KEYIVCONFIG_ALWAYS) || \
                              ((CONFIG) == CRYP_KEYIVCONFIG_ONCE))
+
+#define IS_CRYP_BUFFERSIZE(ALGO, DATAWIDTH, SIZE)                                             \
+       (((((ALGO) == CRYP_AES_CTR)) &&                                             \
+            ((((DATAWIDTH) == CRYP_DATAWIDTHUNIT_WORD) && (((SIZE) % 4U) == 0U))           || \
+             (((DATAWIDTH) == CRYP_DATAWIDTHUNIT_BYTE) && (((SIZE) % 16U) == 0U))))        || \
+         (((ALGO) == CRYP_AES_ECB) || ((ALGO) == CRYP_AES_CBC)                  || \
+          ((ALGO)== CRYP_AES_GCM_GMAC) || ((ALGO) == CRYP_AES_CCM)))
 
 /**
   * @}
