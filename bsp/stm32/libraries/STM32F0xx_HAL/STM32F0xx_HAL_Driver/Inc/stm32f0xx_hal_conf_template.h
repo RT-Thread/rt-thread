@@ -6,32 +6,16 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F0xx_HAL_CONF_H
@@ -59,6 +43,7 @@
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_FLASH_MODULE_ENABLED
 #define HAL_GPIO_MODULE_ENABLED
+#define HAL_EXTI_MODULE_ENABLED
 #define HAL_I2C_MODULE_ENABLED
 #define HAL_I2S_MODULE_ENABLED
 #define HAL_IRDA_MODULE_ENABLED
@@ -133,7 +118,7 @@
   * @brief Internal Low Speed oscillator (LSI) value.
   */
 #if !defined  (LSI_VALUE) 
-  #define LSI_VALUE            40000U    
+  #define LSI_VALUE            32000U    
 #endif /* LSI_VALUE */                   /*!< Value of the Internal Low Speed oscillator in Hz
                                              The real value may vary depending on the variations
                                              in voltage and temperature.  */
@@ -169,6 +154,25 @@
 #define  DATA_CACHE_ENABLE            0U
 #define  USE_SPI_CRC                  1U
 
+#define  USE_HAL_ADC_REGISTER_CALLBACKS         0U /* ADC register callback disabled       */
+#define  USE_HAL_CAN_REGISTER_CALLBACKS         0U /* CAN register callback disabled       */
+#define  USE_HAL_COMP_REGISTER_CALLBACKS        0U /* COMP register callback disabled      */
+#define  USE_HAL_CEC_REGISTER_CALLBACKS         0U /* CEC register callback disabled       */
+#define  USE_HAL_DAC_REGISTER_CALLBACKS         0U /* DAC register callback disabled       */
+#define  USE_HAL_I2C_REGISTER_CALLBACKS         0U /* I2C register callback disabled       */
+#define  USE_HAL_SMBUS_REGISTER_CALLBACKS       0U /* SMBUS register callback disabled     */
+#define  USE_HAL_UART_REGISTER_CALLBACKS        0U /* UART register callback disabled      */
+#define  USE_HAL_USART_REGISTER_CALLBACKS       0U /* USART register callback disabled     */
+#define  USE_HAL_IRDA_REGISTER_CALLBACKS        0U /* IRDA register callback disabled      */
+#define  USE_HAL_SMARTCARD_REGISTER_CALLBACKS   0U /* SMARTCARD register callback disabled */
+#define  USE_HAL_WWDG_REGISTER_CALLBACKS        0U /* WWDG register callback disabled      */
+#define  USE_HAL_RTC_REGISTER_CALLBACKS         0U /* RTC register callback disabled       */
+#define  USE_HAL_SPI_REGISTER_CALLBACKS         0U /* SPI register callback disabled       */
+#define  USE_HAL_I2S_REGISTER_CALLBACKS         0U /* I2S register callback disabled       */
+#define  USE_HAL_TIM_REGISTER_CALLBACKS         0U /* TIM register callback disabled       */
+#define  USE_HAL_TSC_REGISTER_CALLBACKS         0U /* TSC register callback disabled       */
+#define  USE_HAL_PCD_REGISTER_CALLBACKS         0U /* PCD register callback disabled       */
+
 /* ########################## Assert Selection ############################## */
 /**
   * @brief Uncomment the line below to expanse the "assert_param" macro in the 
@@ -188,6 +192,10 @@
 #ifdef HAL_GPIO_MODULE_ENABLED
  #include "stm32f0xx_hal_gpio.h"
 #endif /* HAL_GPIO_MODULE_ENABLED */
+
+#ifdef HAL_EXTI_MODULE_ENABLED
+  #include "stm32f0xx_hal_exti.h"
+#endif /* HAL_EXTI_MODULE_ENABLED */
 
 #ifdef HAL_DMA_MODULE_ENABLED
   #include "stm32f0xx_hal_dma.h"
@@ -295,9 +303,9 @@
   *         If expr is true, it returns no value.
   * @retval None
   */
-  #define assert_param(expr) ((expr) ? (void)0U : assert_failed((char *)__FILE__, __LINE__))
+  #define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
-  void assert_failed(char* file, uint32_t line);
+  void assert_failed(uint8_t* file, uint32_t line);
 #else
   #define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */    

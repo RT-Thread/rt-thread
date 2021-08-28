@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_HAL_DAC_H
-#define __STM32F0xx_HAL_DAC_H
+#ifndef STM32F0xx_HAL_DAC_H
+#define STM32F0xx_HAL_DAC_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -45,9 +29,7 @@
   * @{
   */
 
-#if defined(STM32F051x8) || defined(STM32F058xx) || \
-    defined(STM32F071xB) || defined(STM32F072xB) || defined(STM32F078xx) || \
-    defined(STM32F091xC) || defined(STM32F098xx)
+#if defined (DAC1)
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal_def.h"
@@ -78,7 +60,7 @@ typedef enum
 /** 
   * @brief  DAC handle Structure definition  
   */ 
-typedef struct
+typedef struct __DAC_HandleTypeDef
 {
   DAC_TypeDef                 *Instance;     /*!< Register base address             */
   
@@ -92,6 +74,20 @@ typedef struct
   
   __IO uint32_t               ErrorCode;     /*!< DAC Error code                    */
   
+#if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
+  void (* ConvCpltCallbackCh1)            (struct __DAC_HandleTypeDef *hdac);
+  void (* ConvHalfCpltCallbackCh1)        (struct __DAC_HandleTypeDef *hdac);
+  void (* ErrorCallbackCh1)               (struct __DAC_HandleTypeDef *hdac);
+  void (* DMAUnderrunCallbackCh1)         (struct __DAC_HandleTypeDef *hdac);
+  void (* ConvCpltCallbackCh2)            (struct __DAC_HandleTypeDef* hdac);
+  void (* ConvHalfCpltCallbackCh2)        (struct __DAC_HandleTypeDef* hdac);
+  void (* ErrorCallbackCh2)               (struct __DAC_HandleTypeDef* hdac);
+  void (* DMAUnderrunCallbackCh2)         (struct __DAC_HandleTypeDef* hdac); 
+
+  void (* MspInitCallback)                (struct __DAC_HandleTypeDef *hdac);
+  void (* MspDeInitCallback )             (struct __DAC_HandleTypeDef *hdac); 
+#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */ 
+
 }DAC_HandleTypeDef;
 
 /** 
@@ -106,6 +102,31 @@ typedef struct
                                    This parameter can be a value of @ref DAC_output_buffer */
   
 }DAC_ChannelConfTypeDef;
+
+#if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL DAC Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_DAC_CH1_COMPLETE_CB_ID                 = 0x00U,  /*!< DAC CH1 Complete Callback ID      */
+  HAL_DAC_CH1_HALF_COMPLETE_CB_ID            = 0x01U,  /*!< DAC CH1 half Complete Callback ID */
+  HAL_DAC_CH1_ERROR_ID                       = 0x02U,  /*!< DAC CH1 error Callback ID         */
+  HAL_DAC_CH1_UNDERRUN_CB_ID                 = 0x03U,  /*!< DAC CH1 underrun Callback ID      */
+  HAL_DAC_CH2_COMPLETE_CB_ID                 = 0x04U,  /*!< DAC CH2 Complete Callback ID      */
+  HAL_DAC_CH2_HALF_COMPLETE_CB_ID            = 0x05U,  /*!< DAC CH2 half Complete Callback ID */
+  HAL_DAC_CH2_ERROR_ID                       = 0x06U,  /*!< DAC CH2 error Callback ID         */
+  HAL_DAC_CH2_UNDERRUN_CB_ID                 = 0x07U,  /*!< DAC CH2 underrun Callback ID      */
+  HAL_DAC_MSPINIT_CB_ID                      = 0x08U,  /*!< DAC MspInit Callback ID           */
+  HAL_DAC_MSPDEINIT_CB_ID                    = 0x09U,  /*!< DAC MspDeInit Callback ID         */
+  HAL_DAC_ALL_CB_ID                          = 0x0AU   /*!< DAC All ID                        */
+} HAL_DAC_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL DAC Callback pointer definition
+  */
+typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
+#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 
 /**
   * @}
@@ -124,6 +145,10 @@ typedef struct
 #define  HAL_DAC_ERROR_DMAUNDERRUNCH1    0x01U    /*!< DAC channel1 DMA underrun error   */
 #define  HAL_DAC_ERROR_DMAUNDERRUNCH2    0x02U    /*!< DAC channel2 DMA underrun error   */
 #define  HAL_DAC_ERROR_DMA               0x04U    /*!< DMA error                         */   
+#define  HAL_DAC_ERROR_TIMEOUT           0x08U    /*!< Timeout error                     */
+#if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
+#define HAL_DAC_ERROR_INVALID_CALLBACK   0x10U    /*!< Invalid callback error            */
+#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -181,7 +206,15 @@ typedef struct
   * @param  __HANDLE__ specifies the DAC handle.
   * @retval None
   */
+#if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
+#define __HAL_DAC_RESET_HANDLE_STATE(__HANDLE__)           do {                                              \
+                                                                 (__HANDLE__)->State = HAL_DAC_STATE_RESET; \
+                                                                 (__HANDLE__)->MspInitCallback = NULL;       \
+                                                                 (__HANDLE__)->MspDeInitCallback = NULL;     \
+                                                               } while(0)
+#else
 #define __HAL_DAC_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_DAC_STATE_RESET)
+#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 
 /** @brief Enable the DAC channel
   * @param  __HANDLE__ specifies the DAC handle.
@@ -259,20 +292,16 @@ typedef struct
                                            ((STATE) == DAC_OUTPUTBUFFER_DISABLE))
 
 
-#if defined(STM32F071xB) || defined(STM32F072xB) || defined(STM32F078xx) || \
-    defined(STM32F091xC) || defined(STM32F098xx)
+#if defined(DAC_CHANNEL2_SUPPORT)
 
 #define IS_DAC_CHANNEL(CHANNEL) (((CHANNEL) == DAC_CHANNEL_1) || \
                                  ((CHANNEL) == DAC_CHANNEL_2))
 
-#endif /* STM32F071xB || STM32F072xB || STM32F078xx || */
-       /* STM32F091xC || STM32F098xx */
-
-#if defined(STM32F051x8) || defined(STM32F058xx)
+#else
 
 #define IS_DAC_CHANNEL(CHANNEL) (((CHANNEL) == DAC_CHANNEL_1))
 
-#endif  /* STM32F051x8 || STM32F058xx */ 
+#endif  /* DAC_CHANNEL2_SUPPORT */ 
 
 
 #define IS_DAC_ALIGN(ALIGN) (((ALIGN) == DAC_ALIGN_12B_R) || \
@@ -342,6 +371,13 @@ void HAL_DAC_ConvCpltCallbackCh1(DAC_HandleTypeDef* hdac);
 void HAL_DAC_ConvHalfCpltCallbackCh1(DAC_HandleTypeDef* hdac);
 void HAL_DAC_ErrorCallbackCh1(DAC_HandleTypeDef *hdac);
 void HAL_DAC_DMAUnderrunCallbackCh1(DAC_HandleTypeDef *hdac);
+
+#if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
+/* DAC callback registering/unregistering */
+HAL_StatusTypeDef     HAL_DAC_RegisterCallback (DAC_HandleTypeDef *hdac, HAL_DAC_CallbackIDTypeDef CallbackId, pDAC_CallbackTypeDef pCallback);
+HAL_StatusTypeDef     HAL_DAC_UnRegisterCallback (DAC_HandleTypeDef *hdac, HAL_DAC_CallbackIDTypeDef CallbackId);
+#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
+
 /**
   * @}
   */
@@ -376,9 +412,7 @@ uint32_t HAL_DAC_GetError(DAC_HandleTypeDef *hdac);
   * @}
   */
   
-#endif /* STM32F051x8 || STM32F058xx ||                */
-       /* STM32F071xB || STM32F072xB || STM32F078xx || */
-       /* STM32F091xC || STM32F098xx */
+#endif /* DAC1 */
   
 /**
   * @}
@@ -389,7 +423,7 @@ uint32_t HAL_DAC_GetError(DAC_HandleTypeDef *hdac);
 #endif 
   
 
-#endif /*__STM32F0xx_HAL_DAC_H */
+#endif /* STM32F0xx_HAL_DAC_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
