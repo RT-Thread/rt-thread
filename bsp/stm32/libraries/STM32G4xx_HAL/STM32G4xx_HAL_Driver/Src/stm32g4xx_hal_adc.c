@@ -325,9 +325,9 @@
 #define ADC_CFGR_FIELDS_1  ((ADC_CFGR_RES    | ADC_CFGR_ALIGN   |\
                              ADC_CFGR_CONT   | ADC_CFGR_OVRMOD  |\
                              ADC_CFGR_DISCEN | ADC_CFGR_DISCNUM |\
-                             ADC_CFGR_EXTEN  | ADC_CFGR_EXTSEL))   /*!< ADC_CFGR fields of parameters that can be updated 
+                             ADC_CFGR_EXTEN  | ADC_CFGR_EXTSEL))   /*!< ADC_CFGR fields of parameters that can be updated
                                                                         when no regular conversion is on-going */
-  
+
 /* Timeout values for ADC operations (enable settling time,                   */
 /*   disable settling time, ...).                                             */
 /*   Values defined to be higher than worst cases: low clock frequency,       */

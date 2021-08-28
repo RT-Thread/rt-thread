@@ -5,13 +5,13 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Release Notes for STM32G4xx HAL Drivers</title>
-  <style type="text/css">
+  <style>
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="../../_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="_htmresc/mini-st.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -25,7 +25,7 @@
 <h1 id="release-notes-for-stm32g4xx-hal-drivers"><small>Release Notes for</small> STM32G4xx HAL Drivers</h1>
 <p>Copyright © 2019 STMicroelectronics<br />
 </p>
-<a href="https://www.st.com" class="logo"><img src="../../_htmresc/st_logo.png" alt="ST logo" /></a>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo.png" alt="ST logo" /></a>
 </center>
 </div>
 </div>
@@ -46,10 +46,217 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section2" checked aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.1.0 / 28-June-2019</label>
+<input type="checkbox" id="collapse-section3" checked aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 14-February-2020</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
 <h3 id="maintenance-release">Maintenance Release</h3>
+<ul>
+<li><p>General updates to fix known defects and enhancements implementation</p></li>
+<li><p><strong>HAL/LL CRYP</strong> update</p>
+<ul>
+<li>Correct MISRA C:2012 warnings reported by rules 2.2_c, 10.1_R6, 10.3, 10.4_a, 10.6, 12.1, 13.5 15.7</li>
+<li>Perform a new check mechanism on the cryp buffer size in Encryption et Decryption API
+<ul>
+<li>Add IS_CRYP_BUFFERSIZE() macro</li>
+</ul></li>
+<li>Clean up the HAL_CRYP_Resume() API to avoid infinite loop due to an early interruption during resumption process
+<ul>
+<li>Remove __HAL_CRYP_ENABLE_IT() and __HAL_CRYP_ENABLE() API .</li>
+</ul></li>
+<li>Add new parameter in the CRYP_HandleTypeDef structure
+<ul>
+<li>Add SizesSum_saved to save the SizesSum when processing is suspended</li>
+<li>Update the HAL_CRYP_Suspend() and HAL_CRYP_Resume() API by adding this new parameter</li>
+</ul></li>
+<li>Add missing interruptions re-enabling operations following an all flags clear-up in the CRYP_PhaseProcessingResume() API</li>
+<li>Support AAD with all possible byte sizes, not only multiple of 4 bytes
+<ul>
+<li>Update CRYP_GCMCCM_SetHeaderPhase() API</li>
+<li>Add new parameter HeaderWidthUnit in the CRYP_ConfigTypeDef structure which contains the Cryp Header Width Unit</li>
+<li>Add new definition of the CRYP Header size Unit
+<ul>
+<li>CRYP_HEADERWIDTHUNIT_WORD</li>
+<li>CRYP_HEADERWIDTHUNIT_BYTE</li>
+</ul></li>
+</ul></li>
+<li>Support data encryption and decryption with length not only multiple of 16 bytes
+<ul>
+<li>Update IS_CRYP_BUFFERSIZE() macro</li>
+<li>Update AES functions : CRYP_AES_ProcessData() / CRYP_AES_IT() / CRYP_AESCCM_Process() / CRYP_AESGCM_Process_DMA()</li>
+<li>Update CRYP_GCMCCM_SetPayloadPhase_IT() API</li>
+</ul></li>
+</ul></li>
+<li><p><strong>HAL/LL FMAC</strong> update</p>
+<ul>
+<li>General updates to comply to internal coding rules.</li>
+</ul></li>
+<li><p><strong>HAL GPIO</strong> update</p>
+<ul>
+<li>Update the GPIO initialization sequence in HAL_GPIO_Init() API to avoid unwanted glitches on GPIO pins.</li>
+<li>Add missing GPIO Alternate Function definitions:
+<ul>
+<li>GPIO_AF2_TIM16, GPIO_AF9_TIM8, GPIO_AF11_TIM8, GPIO_AF12_TIM1.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>HAL HRTIM</strong> update</p>
+<ul>
+<li>Update HAL_HRTIM_WaveformCompareConfig() to clear HRTIM_TIMxCR.DELCMP bitfield when the auto-delayed protection mode is disabled.</li>
+<li>Correct some “HRTIM_OUTPUTSET_TIMxx” constant names which are not compliant with Timer Events Mapping specified in the reference manual
+<ul>
+<li>Remove HRTIM_OUTPUTSET_TIMCEV1_TIMACMP1, HRTIM_OUTPUTSET_TIMEEV5_TIMDCMP2 , HRTIM_OUTPUTRESET_TIMCEV1_TIMACMP1 and HRTIM_OUTPUTRESET_TIMEEV5_TIMDCMP2</li>
+<li>Add HRTIM_OUTPUTSET_TIMEEV5_TIMCCMP2 and HRTIM_OUTPUTSET_TIMCEV2_TIMACMP3 , HRTIM_OUTPUTRESET_TIMCEV2_TIMACMP3 and HRTIM_OUTPUTRESET_TIMEEV5_TIMCCMP2</li>
+<li>Update HRTIM_OUTPUTSET_TIMCEV2_TIMACMP2 and HRTIM_OUTPUTRESET_TIMCEV2_TIMACMP2 definitions</li>
+</ul></li>
+<li>Update HAL_HRTIM_DLLCalibrationStart() and HAL_HRTIM_DLLCalibrationStart_IT() API by setting HRTIM state ready to avoid some unstable behavior of the TIMER E.</li>
+<li>Add new check field in the IS_HRTIM_EVENTSRC() macro to check also on EVENT</li>
+<li>Add a new check in the HAL_HRTIM_EventConfig() API on event and event source thru the IS_HRTIM_EVENTSRC() macro</li>
+<li>Remove UPDGAT bits reset from the HRTIM_TimingUnitWaveform_Control() API</li>
+<li>Add a lock and unlock handle process in the HAL_HRTIM_SimpleOCChannelConfig() API</li>
+</ul></li>
+<li><p><strong>HAL I2C</strong> update</p>
+<ul>
+<li>Update HAL I2C processes to report ErrorCode when wrong I2C start conditionoccurs
+<ul>
+<li>Add new ErrorCode define: HAL_I2C_WRONG_START</li>
+<li>Set ErrorCode parameter in I2C handle to HAL_I2C_WRONG_START</li>
+</ul></li>
+<li>Update I2C_DMAAbort() APIs to fix hardfault issue when hdmatx and hdmarx parameters in i2c handle aren’t initialized (NULL pointer).
+<ul>
+<li>Add additional check on hi2c-&gt;hdmtx and hi2c-&gt;hdmarx before resetting DMA Tx/Rx complete callbacks</li>
+</ul></li>
+<li>Fix HAL I2C slave interrupt handling issue with I2C sequential transfers.
+<ul>
+<li>Update I2C_Slave_ISR_IT() and I2C_Slave_ISR_DMA() APIs to check on STOP condition and handle it before clearing the ADDR flag</li>
+</ul></li>
+</ul></li>
+<li><p><strong>HAL LPTIM</strong> update</p>
+<ul>
+<li>Add a polling mechanism to check on LPTIM_FLAG_XXOK flags in different API
+<ul>
+<li>Add LPTIM_WaitForFlag() API to wait for flag set.</li>
+<li>Perform new checks on HAL_LPTIM_STATE_TIMEOUT.</li>
+</ul></li>
+<li>Apply digital filter for external clock for all LPTIM clock source.
+<ul>
+<li>Update HAL_LPTIM_Init() API</li>
+</ul></li>
+<li>Correct the input1source and input2source selection
+<ul>
+<li>Update LL_LPTIM_SetInput1Src and LL_LPTIM_SetInput2Src
+<ul>
+<li>Remove WRITE_REG and replace it by MODIFY_REG</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><strong>HAL/LL RTC</strong> update</p>
+<ul>
+<li>Update API HAL_RTC_SetAlarm_IT() to allow changing alarm time “on the fly” simply by calling the API again.</li>
+<li>Update API LL_RTC_BKP_SetRegister() and API LL_RTC_BKP_GetRegister() to comply to rules 2.2 and 13.2 of MISRAC-2012.</li>
+</ul></li>
+<li><p><strong>HAL SPI</strong> update</p>
+<ul>
+<li>Update the “Rx DMA transfer complete callback” to disable the Tx DMA request only in case of full-duplex mode and not it in half-duplex mode.</li>
+</ul></li>
+<li><p><strong>HAL TIM</strong> update</p>
+<ul>
+<li>Update Encoder interface mode to keep TIM_CCER_CCxNP bits low
+<ul>
+<li>Add TIM_ENCODERINPUTPOLARITY_RISING and TIM_ENCODERINPUTPOLARITY_FALLING definitions to determine encoder input polarity.</li>
+<li>Add IS_TIM_ENCODERINPUT_POLARITY() macro to check the encoder input polarity.</li>
+<li>Update HAL_TIM_Encoder_Init() API
+<ul>
+<li>Replace IS_TIM_IC_POLARITY() macro by IS_TIM_ENCODERINPUT_POLARITY() macro.</li>
+</ul></li>
+</ul></li>
+<li>Provide new API to set and clear UIFREMAP
+<ul>
+<li>Add new definition for TIM Update Interrupt Flag Remap
+<ul>
+<li>TIM_UIFREMAP_DISABLE</li>
+<li>TIM_UIFREMAP_ENABLE</li>
+</ul></li>
+<li>Add new macro in HAL driver to enable and desable the Update Interrupt Flag Remap
+<ul>
+<li>__HAL_TIM_UIFREMAP_ENABLE()</li>
+<li>__HAL_TIM_UIFREMAP_DISABLE()/__HAL_TIM_GET_UIFCPY macro</li>
+</ul></li>
+<li>Add new mecanism to check whether the update interrupt flag (UIF) copy is set or not
+<ul>
+<li>Add the __HAL_TIM_GET_UIFCPY() macro in the HAL driver</li>
+<li>Add LL_TIM_IsActiveUIFCPY() API in the LL driver</li>
+</ul></li>
+<li>Add new macro to check on the Update Interrupt Flag Remap mode
+<ul>
+<li>IS_TIM_UIFREMAP_MODE()</li>
+</ul></li>
+</ul></li>
+<li>Remove useless TIM trigger selector</li>
+<li>Fix bug when using multiple DMA request to different channels of same timer
+<ul>
+<li>Introduce DMA burst state managment mechanism
+<ul>
+<li>Add a new stucture for DMA Burst States definition : HAL_TIM_DMABurstStateTypeDef</li>
+<li>Update __HAL_TIM_RESET_HANDLE_STATE to support DMABurstState</li>
+<li>Add a new API HAL_TIM_DMABurstState() to get the actual state of a DMA burst operation</li>
+<li>Add DMABurstState, the DMA burst operation state, in the TIM_HandleTypeDef structure</li>
+<li>Add new API TIM_DMAErrorCCxN() for TIM DMA error callback (complementary channel)</li>
+<li>Add new API TIM_DMADelayPulseNCplt() for TIM DMA Delay Pulse complete callback (complementary channel)</li>
+</ul></li>
+</ul></li>
+<li>Implement TIM channel state managment mechanism
+<ul>
+<li>Add new macro
+<ul>
+<li>TIM_CHANNEL_STATE_SET_ALL and TIM_CHANNEL_N_STATE_SET_ALL</li>
+<li>TIM_CHANNEL_STATE_SET and TIM_CHANNEL_N_STATE_SET</li>
+<li>TIM_CHANNEL_STATE_GET and TIM_CHANNEL_N_STATE_GET</li>
+</ul></li>
+<li>Add new API HAL_TIM_GetActiveChannel()</li>
+<li>Add new API HAL_TIM_GetChannelState() to get actual state of the TIM channel</li>
+<li>Add a new stucture for TIM channel States definition : HAL_TIM_ChannelStateTypeDef</li>
+<li>Update __HAL_TIM_RESET_HANDLE_STATE to support ChannelState and ChannelNState</li>
+<li>Add a new element in the TIM_HandleTypeDef structure : ChannelState to manage TIM channel operation stat.</li>
+<li>Add a new element in the TIM_HandleTypeDef structure : ChannelNState to manage TIM complementary channel operation state</li>
+</ul></li>
+</ul></li>
+<li><p><strong>HAL/LL USART</strong> update</p>
+<ul>
+<li>Add support to the Receiver Timeout Interrupt in the HAL_USART_IRQHandler</li>
+<li>Fix wrong value for SlaveMode field in USART handle after HAL_USARTEx_DisableSlaveMode() call
+<ul>
+<li>Set USART_SLAVEMODE_DISABLE instead of USART_SLAVEMODE_ENABLE</li>
+</ul></li>
+</ul></li>
+<li><p><strong>HAL USB</strong> update</p>
+<ul>
+<li>Improve USB endpoint out re-enabling with double-buffer mode.</li>
+</ul></li>
+<li><p><strong>LL UTILS</strong> update</p>
+<ul>
+<li>API UTILS_SetFlashLatency() renamed LL_SetFlashLatency() and set exportable.</li>
+<li>API LL_PLL_ConfigSystemClock_HSI() and API LL_PLL_ConfigSystemClock_HSE() updated to set back the AHB prescaler to 1 after it has been temporarily set to 2 to avoid undershoot when configuring PLL at high frequencies.</li>
+</ul></li>
+</ul>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<ul>
+<li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.32.3</li>
+<li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.27.1</li>
+<li>System Workbench STM32 (SW4STM32) toolchain V2.9.0</li>
+</ul>
+<h2 id="supported-devices">Supported Devices</h2>
+<ul>
+<li>STM32G431/41xx</li>
+<li>STM32G471xx</li>
+<li>STM32G473/<strong>83xx</strong></li>
+<li>STM32G474/84xx</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" checked aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 28-June-2019</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<h3 id="maintenance-release-1">Maintenance Release</h3>
 <p>Maintenance release of HAL (Hardware Abstraction Layer) and LL (Low layers) drivers to support STM32G431/41xx, STM32G471xx, STM32G473/83xx and STM32G474/84xx.</p>
 <h2 id="contents">Contents</h2>
 <table>
@@ -132,13 +339,13 @@
 </tr>
 </tbody>
 </table>
-<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25</li>
 <li>System Workbench STM32 (SW4STM32) toolchain V2.7.2</li>
 </ul>
-<h2 id="supported-devices">Supported Devices</h2>
+<h2 id="supported-devices-1">Supported Devices</h2>
 <ul>
 <li>STM32G431/41xx</li>
 <li>STM32G471xx</li>
@@ -150,16 +357,16 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 12-April-2019</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release of HAL (Hardware Abstraction Layer) and LL (Low layers) drivers to support STM32G431/41xx, STM32G471xx, STM32G473/83xx and STM32G474/84xx.</p>
-<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-2">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25</li>
 <li>System Workbench STM32 (SW4STM32) toolchain V2.7.2</li>
 </ul>
-<h2 id="supported-devices-1">Supported Devices</h2>
+<h2 id="supported-devices-2">Supported Devices</h2>
 <ul>
 <li>STM32G431/41xx</li>
 <li>STM32G471xx</li>
