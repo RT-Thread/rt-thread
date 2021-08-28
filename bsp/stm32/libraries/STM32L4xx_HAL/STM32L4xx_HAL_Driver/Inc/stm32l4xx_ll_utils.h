@@ -30,8 +30,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_LL_UTILS_H
-#define __STM32L4xx_LL_UTILS_H
+#ifndef STM32L4xx_LL_UTILS_H
+#define STM32L4xx_LL_UTILS_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -324,6 +324,6 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypa
 }
 #endif
 
-#endif /* __STM32L4xx_LL_UTILS_H */
+#endif /* STM32L4xx_LL_UTILS_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
