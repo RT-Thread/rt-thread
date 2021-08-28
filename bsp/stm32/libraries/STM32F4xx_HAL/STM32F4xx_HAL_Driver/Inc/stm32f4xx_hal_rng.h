@@ -22,7 +22,7 @@
 #define STM32F4xx_HAL_RNG_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
