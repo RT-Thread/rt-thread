@@ -25,7 +25,7 @@ static void (*rt_interrupt_leave_hook)(void);
  *
  * @brief This function set a hook function when the system enter a interrupt
  *
- * @note the hook function must be simple and never be blocked or suspend.
+ * @note The hook function must be simple and never be blocked or suspend.
  *
  * @param hook The function point to be called
  */
@@ -39,7 +39,7 @@ void rt_interrupt_enter_sethook(void (*hook)(void))
  *
  * @brief This function set a hook function when the system exit a interrupt.
  *
- * @note the hook function must be simple and never be blocked or suspend.
+ * @note The hook function must be simple and never be blocked or suspend.
  *
  * @param hook The function point to be called
  */
@@ -65,7 +65,7 @@ volatile rt_uint8_t rt_interrupt_nest = 0;
 /**
  * @brief This function will be invoked by BSP, when enter interrupt service routine
  *
- * @note please don't invoke this routine in application
+ * @note Please don't invoke this routine in application
  *
  * @see rt_interrupt_leave
  */
@@ -87,7 +87,7 @@ RTM_EXPORT(rt_interrupt_enter);
 /**
  * @brief This function will be invoked by BSP, when leave interrupt service routine
  *
- * @note please don't invoke this routine in application
+ * @note Please don't invoke this routine in application
  *
  * @see rt_interrupt_enter
  */
