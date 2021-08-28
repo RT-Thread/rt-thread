@@ -47,10 +47,10 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /**
- * @brief STM32H7xx HAL Driver version number V1.6.0
+ * @brief STM32H7xx HAL Driver version number V1.8.0
    */
 #define __STM32H7xx_HAL_VERSION_MAIN   (0x01UL) /*!< [31:24] main version */
-#define __STM32H7xx_HAL_VERSION_SUB1   (0x06UL) /*!< [23:16] sub1 version */
+#define __STM32H7xx_HAL_VERSION_SUB1   (0x08UL) /*!< [23:16] sub1 version */
 #define __STM32H7xx_HAL_VERSION_SUB2   (0x00UL) /*!< [15:8]  sub2 version */
 #define __STM32H7xx_HAL_VERSION_RC     (0x00UL) /*!< [7:0]  release candidate */
 #define __STM32H7xx_HAL_VERSION         ((__STM32H7xx_HAL_VERSION_MAIN << 24)\
@@ -134,6 +134,8 @@ HAL_TickFreqTypeDef uwTickFreq = HAL_TICK_FREQ_DEFAULT;  /* 1KHz */
 HAL_StatusTypeDef HAL_Init(void)
 {
 
+uint32_t common_system_clock;
+
 #if defined(DUAL_CORE) && defined(CORE_CM4)
    /* Configure Cortex-M4 Instruction cache through ART accelerator */
    __HAL_RCC_ART_CLK_ENABLE();                   /* Enable the Cortex-M4 ART Clock */
@@ -145,10 +147,24 @@ HAL_StatusTypeDef HAL_Init(void)
   HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* Update the SystemCoreClock global variable */
-  SystemCoreClock = HAL_RCC_GetSysClockFreq() >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_D1CPRE)>> RCC_D1CFGR_D1CPRE_Pos]) & 0x1FU);
+#if defined(RCC_D1CFGR_D1CPRE)
+  common_system_clock = HAL_RCC_GetSysClockFreq() >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_D1CPRE)>> RCC_D1CFGR_D1CPRE_Pos]) & 0x1FU);
+#else
+  common_system_clock = HAL_RCC_GetSysClockFreq() >> ((D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_CDCPRE)>> RCC_CDCFGR1_CDCPRE_Pos]) & 0x1FU);
+#endif
 
   /* Update the SystemD2Clock global variable */
-  SystemD2Clock = (SystemCoreClock >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
+#if defined(RCC_D1CFGR_HPRE)
+  SystemD2Clock = (common_system_clock >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
+#else
+  SystemD2Clock = (common_system_clock >> ((D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_HPRE)>> RCC_CDCFGR1_HPRE_Pos]) & 0x1FU));
+#endif
+
+#if defined(DUAL_CORE) && defined(CORE_CM4)
+  SystemCoreClock = SystemD2Clock;
+#else
+  SystemCoreClock = common_system_clock;
+#endif /* DUAL_CORE && CORE_CM4 */
 
   /* Use systick as time base source and configure 1ms tick (default clock after Reset is HSI) */
   if(HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK)
@@ -251,32 +267,11 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     return HAL_ERROR;
   }
 
-#if defined(DUAL_CORE)
-  if (HAL_GetCurrentCPUID() == CM7_CPUID)
-  {
-    /* Cortex-M7 detected */
-    /* Configure the SysTick to have interrupt in 1ms time basis*/
-    if (HAL_SYSTICK_Config(SystemCoreClock / (1000UL / (uint32_t)uwTickFreq)) > 0U)
-    {
-      return HAL_ERROR;
-    }
-  }
-  else
-  {
-    /* Cortex-M4 detected */
-    /* Configure the SysTick to have interrupt in 1ms time basis*/
-    if (HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / (1000UL / (uint32_t)uwTickFreq)) > 0U)
-    {
-      return HAL_ERROR;
-    }
-  }
-#else
   /* Configure the SysTick to have interrupt in 1ms time basis*/
   if (HAL_SYSTICK_Config(SystemCoreClock / (1000UL / (uint32_t)uwTickFreq)) > 0U)
   {
     return HAL_ERROR;
   }
-#endif
 
   /* Configure the SysTick IRQ priority */
   if (TickPriority < (1UL << __NVIC_PRIO_BITS))
@@ -361,14 +356,26 @@ uint32_t HAL_GetTickPrio(void)
 HAL_StatusTypeDef HAL_SetTickFreq(HAL_TickFreqTypeDef Freq)
 {
   HAL_StatusTypeDef status  = HAL_OK;
+  HAL_TickFreqTypeDef prevTickFreq;
+
   assert_param(IS_TICKFREQ(Freq));
 
   if (uwTickFreq != Freq)
   {
+
+    /* Back up uwTickFreq frequency */
+    prevTickFreq = uwTickFreq;
+
+    /* Update uwTickFreq global variable used by HAL_InitTick() */
     uwTickFreq = Freq;
 
     /* Apply the new tick Freq  */
     status = HAL_InitTick(uwTickPrio);
+    if (status != HAL_OK)
+    {
+      /* Restore previous tick frequency */
+      uwTickFreq = prevTickFreq;
+    }
   }
 
   return status;
@@ -581,6 +588,7 @@ void HAL_SYSCFG_DisableVREFBUF(void)
   CLEAR_BIT(VREFBUF->CSR, VREFBUF_CSR_ENVR);
 }
 
+#if defined(SYSCFG_PMCR_EPIS_SEL)
 /**
   * @brief  Ethernet PHY Interface Selection either MII or RMII
   * @param  SYSCFG_ETHInterface: Selects the Ethernet PHY interface
@@ -596,7 +604,7 @@ void HAL_SYSCFG_ETHInterfaceSelect(uint32_t SYSCFG_ETHInterface)
 
   MODIFY_REG(SYSCFG->PMCR, SYSCFG_PMCR_EPIS_SEL, (uint32_t)(SYSCFG_ETHInterface));
 }
-
+#endif /* SYSCFG_PMCR_EPIS_SEL */
 
 /**
   * @brief  Analog Switch control for dual analog pads.
@@ -628,7 +636,7 @@ void HAL_SYSCFG_AnalogSwitchConfig(uint32_t SYSCFG_AnalogSwitch , uint32_t SYSCF
   MODIFY_REG(SYSCFG->PMCR, (uint32_t) SYSCFG_AnalogSwitch, (uint32_t)(SYSCFG_SwitchState));
 }
 
-
+#if defined(SYSCFG_PMCR_BOOSTEN)
 /**
   * @brief  Enables the booster to reduce the total harmonic distortion of the analog
   *         switch when the supply voltage is lower than 2.7 V.
@@ -653,8 +661,9 @@ void HAL_SYSCFG_DisableBOOST(void)
 {
  CLEAR_BIT(SYSCFG->PMCR, SYSCFG_PMCR_BOOSTEN) ;
 }
+#endif /* SYSCFG_PMCR_BOOSTEN */
 
-
+#if defined (SYSCFG_UR2_BOOT_ADD0) ||  defined (SYSCFG_UR2_BCM7_ADD0)
 /**
   * @brief  BootCM7 address 0 configuration
   * @param  BootRegister :Specifies the Boot Address register (Address0 or Address1)
@@ -687,8 +696,8 @@ void HAL_SYSCFG_CM7BootAddConfig(uint32_t BootRegister, uint32_t BootAddress)
     MODIFY_REG(SYSCFG->UR3, SYSCFG_UR3_BOOT_ADD1, (BootAddress >> 16));
 #endif /*DUAL_CORE*/
   }
-
 }
+#endif /* SYSCFG_UR2_BOOT_ADD0 || SYSCFG_UR2_BCM7_ADD0 */
 
 #if defined(DUAL_CORE)
 /**
@@ -757,7 +766,6 @@ void HAL_SYSCFG_DisableCM4BOOT(void)
   CLEAR_BIT(SYSCFG->UR1, SYSCFG_UR1_BCM4);
 }
 #endif /*DUAL_CORE*/
-
 /**
   * @brief  Enables the I/O Compensation Cell.
   * @note   The I/O compensation cell can be used only when the device supply
@@ -790,7 +798,11 @@ void HAL_DisableCompensationCell(void)
   */
 void HAL_SYSCFG_EnableIOSpeedOptimize(void)
 {
+#if defined(SYSCFG_CCCSR_HSLV)
   SET_BIT(SYSCFG->CCCSR, SYSCFG_CCCSR_HSLV);
+#else
+  SET_BIT(SYSCFG->CCCSR, (SYSCFG_CCCSR_HSLV0| SYSCFG_CCCSR_HSLV1 | SYSCFG_CCCSR_HSLV2  | SYSCFG_CCCSR_HSLV3));
+#endif   /* SYSCFG_CCCSR_HSLV */
 }
 
 /**
@@ -802,7 +814,11 @@ void HAL_SYSCFG_EnableIOSpeedOptimize(void)
   */
 void HAL_SYSCFG_DisableIOSpeedOptimize(void)
 {
+#if defined(SYSCFG_CCCSR_HSLV)
   CLEAR_BIT(SYSCFG->CCCSR, SYSCFG_CCCSR_HSLV);
+#else
+  CLEAR_BIT(SYSCFG->CCCSR, (SYSCFG_CCCSR_HSLV0| SYSCFG_CCCSR_HSLV1 | SYSCFG_CCCSR_HSLV2  | SYSCFG_CCCSR_HSLV3));
+#endif   /* SYSCFG_CCCSR_HSLV */
 }
 
 /**
@@ -838,9 +854,28 @@ void HAL_SYSCFG_CompensationCodeConfig(uint32_t SYSCFG_PMOSCode, uint32_t SYSCFG
   MODIFY_REG(SYSCFG->CCCR, SYSCFG_CCCR_NCC|SYSCFG_CCCR_PCC, (((uint32_t)(SYSCFG_PMOSCode)<< 4)|(uint32_t)(SYSCFG_NMOSCode)) );
 }
 
+#if defined(SYSCFG_CCCR_NCC_MMC)
+/**
+  * @brief  Code selection for the I/O Compensation cell
+  * @param  SYSCFG_PMOSCode: VDDMMC PMOS compensation code
+  *         This code is applied to the I/O compensation cell when the CS bit of the
+  *          SYSCFG_CMPCR is set
+  * @param  SYSCFG_NMOSCode: VDDMMC NMOS compensation code
+  *         This code is applied to the I/O compensation cell when the CS bit of the
+  *          SYSCFG_CMPCR is set
+  * @retval None
+  */
+void HAL_SYSCFG_VDDMMC_CompensationCodeConfig(uint32_t SYSCFG_PMOSCode, uint32_t SYSCFG_NMOSCode )
+{
+  /* Check the parameter */
+  assert_param(IS_SYSCFG_CODE_CONFIG(SYSCFG_PMOSCode));
+  assert_param(IS_SYSCFG_CODE_CONFIG(SYSCFG_NMOSCode));
+  MODIFY_REG(SYSCFG->CCCR, (SYSCFG_CCCR_NCC_MMC | SYSCFG_CCCR_PCC_MMC), (((uint32_t)(SYSCFG_PMOSCode)<< 4)|(uint32_t)(SYSCFG_NMOSCode)) );
+}
+#endif /* SYSCFG_CCCR_NCC_MMC */
 
 /**
-  * @brief  Enable the Debug Module during Domain1 SLEEP mode
+  * @brief  Enable the Debug Module during Domain1/CDomain SLEEP mode
   * @retval None
   */
 void HAL_EnableDBGSleepMode(void)
@@ -849,7 +884,7 @@ void HAL_EnableDBGSleepMode(void)
 }
 
 /**
-  * @brief  Disable the Debug Module during Domain1 SLEEP mode
+  * @brief  Disable the Debug Module during Domain1/CDomain SLEEP mode
   * @retval None
   */
 void HAL_DisableDBGSleepMode(void)
@@ -857,8 +892,9 @@ void HAL_DisableDBGSleepMode(void)
   CLEAR_BIT(DBGMCU->CR, DBGMCU_CR_DBG_SLEEPD1);
 }
 
+
 /**
-  * @brief  Enable the Debug Module during Domain1 STOP mode
+  * @brief  Enable the Debug Module during Domain1/CDomain STOP mode
   * @retval None
   */
 void HAL_EnableDBGStopMode(void)
@@ -867,7 +903,7 @@ void HAL_EnableDBGStopMode(void)
 }
 
 /**
-  * @brief  Disable the Debug Module during Domain1 STOP mode
+  * @brief  Disable the Debug Module during Domain1/CDomain STOP mode
   * @retval None
   */
 void HAL_DisableDBGStopMode(void)
@@ -876,7 +912,7 @@ void HAL_DisableDBGStopMode(void)
 }
 
 /**
-  * @brief  Enable the Debug Module during Domain1 STANDBY mode
+  * @brief  Enable the Debug Module during Domain1/CDomain STANDBY mode
   * @retval None
   */
 void HAL_EnableDBGStandbyMode(void)
@@ -885,7 +921,7 @@ void HAL_EnableDBGStandbyMode(void)
 }
 
 /**
-  * @brief  Disable the Debug Module during Domain1 STANDBY mode
+  * @brief  Disable the Debug Module during Domain1/CDomain STANDBY mode
   * @retval None
   */
 void HAL_DisableDBGStandbyMode(void)
@@ -949,18 +985,16 @@ void HAL_DisableDomain2DBGStandbyMode(void)
 }
 #endif /*DUAL_CORE*/
 
-
 /**
-  * @brief  Enable the Debug Module during Domain3 STOP mode
+  * @brief  Enable the Debug Module during Domain3/SRDomain STOP mode
   * @retval None
   */
 void HAL_EnableDomain3DBGStopMode(void)
 {
   SET_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STOPD3);
 }
-
 /**
-  * @brief  Disable the Debug Module during Domain3 STOP mode
+  * @brief  Disable the Debug Module during Domain3/SRDomain STOP mode
   * @retval None
   */
 void HAL_DisableDomain3DBGStopMode(void)
@@ -969,7 +1003,7 @@ void HAL_DisableDomain3DBGStopMode(void)
 }
 
 /**
-  * @brief  Enable the Debug Module during Domain3 STANDBY mode
+  * @brief  Enable the Debug Module during Domain3/SRDomain STANDBY mode
   * @retval None
   */
 void HAL_EnableDomain3DBGStandbyMode(void)
@@ -978,7 +1012,7 @@ void HAL_EnableDomain3DBGStandbyMode(void)
 }
 
 /**
-  * @brief  Disable the Debug Module during Domain3 STANDBY mode
+  * @brief  Disable the Debug Module during Domain3/SRDomain STANDBY mode
   * @retval None
   */
 void HAL_DisableDomain3DBGStandbyMode(void)
@@ -1066,7 +1100,7 @@ void HAL_EXTI_D1_ClearFlag(uint32_t EXTI_Line)
 {
   /* Check the parameters */
  assert_param(IS_EXTI_D1_LINE(EXTI_Line));
- SET_BIT(*(__IO uint32_t *) (((uint32_t) &(EXTI_D1->PR1)) + ((EXTI_Line >> 5 ) * 0x10UL)), (uint32_t)(1UL << (EXTI_Line & 0x1FUL)));
+ WRITE_REG(*(__IO uint32_t *) (((uint32_t) &(EXTI_D1->PR1)) + ((EXTI_Line >> 5 ) * 0x10UL)), (uint32_t)(1UL << (EXTI_Line & 0x1FUL)));
 
 }
 
@@ -1081,7 +1115,7 @@ void HAL_EXTI_D2_ClearFlag(uint32_t EXTI_Line)
 {
   /* Check the parameters */
  assert_param(IS_EXTI_D2_LINE(EXTI_Line));
- SET_BIT(*(__IO uint32_t *) (((uint32_t) &(EXTI_D2->PR1)) + ((EXTI_Line >> 5 ) * 0x10UL)), (uint32_t)(1UL << (EXTI_Line & 0x1FUL)));
+ WRITE_REG(*(__IO uint32_t *) (((uint32_t) &(EXTI_D2->PR1)) + ((EXTI_Line >> 5 ) * 0x10UL)), (uint32_t)(1UL << (EXTI_Line & 0x1FUL)));
 }
 
 #endif /*DUAL_CORE*/

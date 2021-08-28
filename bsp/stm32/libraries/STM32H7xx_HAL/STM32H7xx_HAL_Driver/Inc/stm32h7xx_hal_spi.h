@@ -1059,7 +1059,7 @@ uint32_t             HAL_SPI_GetError(SPI_HandleTypeDef *hspi);
                                                     ((LENGTH) == SPI_CRC_LENGTH_5BIT)     || \
                                                     ((LENGTH) == SPI_CRC_LENGTH_4BIT))
 
-#define IS_SPI_CRC_POLYNOMIAL(POLYNOMIAL)          (((POLYNOMIAL) >= 0x1) && ((POLYNOMIAL) <= 0xFFFFFFFF))
+#define IS_SPI_CRC_POLYNOMIAL(POLYNOMIAL)           ((POLYNOMIAL) >= 0x1UL)
 
 #define IS_SPI_UNDERRUN_DETECTION(MODE)            (((MODE) == SPI_UNDERRUN_DETECT_BEGIN_DATA_FRAME) || \
                                                     ((MODE) == SPI_UNDERRUN_DETECT_END_DATA_FRAME)   || \
