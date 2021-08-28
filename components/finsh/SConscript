@@ -6,7 +6,7 @@ shell.c
 msh.c
 ''')
 
-if GetDepend('FINSH_USING_BUILT_IN_COMMANDS'):
+if GetDepend('MSH_USING_BUILT_IN_COMMANDS'):
     src += ['cmd.c']
 
 if GetDepend('RT_USING_DFS'):

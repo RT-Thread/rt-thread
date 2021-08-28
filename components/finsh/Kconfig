@@ -41,7 +41,7 @@ if RT_USING_MSH
         int "The command line size for shell"
         default 80
 
-    config FINSH_USING_BUILT_IN_COMMANDS
+    config MSH_USING_BUILT_IN_COMMANDS
         bool "Enable built-in commands, such as list_thread"
         default y
 
