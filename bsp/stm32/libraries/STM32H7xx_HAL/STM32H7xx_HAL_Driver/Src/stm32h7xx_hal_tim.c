@@ -2617,15 +2617,15 @@ HAL_StatusTypeDef HAL_TIM_Encoder_Init(TIM_HandleTypeDef *htim,  TIM_Encoder_Ini
   }
 
   /* Check the parameters */
+  assert_param(IS_TIM_ENCODER_INTERFACE_INSTANCE(htim->Instance));
   assert_param(IS_TIM_COUNTER_MODE(htim->Init.CounterMode));
   assert_param(IS_TIM_CLOCKDIVISION_DIV(htim->Init.ClockDivision));
   assert_param(IS_TIM_AUTORELOAD_PRELOAD(htim->Init.AutoReloadPreload));
-  assert_param(IS_TIM_CC2_INSTANCE(htim->Instance));
   assert_param(IS_TIM_ENCODER_MODE(sConfig->EncoderMode));
   assert_param(IS_TIM_IC_SELECTION(sConfig->IC1Selection));
   assert_param(IS_TIM_IC_SELECTION(sConfig->IC2Selection));
-  assert_param(IS_TIM_IC_POLARITY(sConfig->IC1Polarity));
-  assert_param(IS_TIM_IC_POLARITY(sConfig->IC2Polarity));
+  assert_param(IS_TIM_ENCODERINPUT_POLARITY(sConfig->IC1Polarity));
+  assert_param(IS_TIM_ENCODERINPUT_POLARITY(sConfig->IC2Polarity));
   assert_param(IS_TIM_IC_PRESCALER(sConfig->IC1Prescaler));
   assert_param(IS_TIM_IC_PRESCALER(sConfig->IC2Prescaler));
   assert_param(IS_TIM_IC_FILTER(sConfig->IC1Filter));
@@ -2783,7 +2783,7 @@ __weak void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef *htim)
 HAL_StatusTypeDef HAL_TIM_Encoder_Start(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   /* Check the parameters */
-  assert_param(IS_TIM_CC2_INSTANCE(htim->Instance));
+  assert_param(IS_TIM_ENCODER_INTERFACE_INSTANCE(htim->Instance));
 
   /* Enable the encoder interface channels */
   switch (Channel)
@@ -2827,7 +2827,7 @@ HAL_StatusTypeDef HAL_TIM_Encoder_Start(TIM_HandleTypeDef *htim, uint32_t Channe
 HAL_StatusTypeDef HAL_TIM_Encoder_Stop(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   /* Check the parameters */
-  assert_param(IS_TIM_CC2_INSTANCE(htim->Instance));
+  assert_param(IS_TIM_ENCODER_INTERFACE_INSTANCE(htim->Instance));
 
   /* Disable the Input Capture channels 1 and 2
     (in the EncoderInterface the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2) */
@@ -2873,7 +2873,7 @@ HAL_StatusTypeDef HAL_TIM_Encoder_Stop(TIM_HandleTypeDef *htim, uint32_t Channel
 HAL_StatusTypeDef HAL_TIM_Encoder_Start_IT(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   /* Check the parameters */
-  assert_param(IS_TIM_CC2_INSTANCE(htim->Instance));
+  assert_param(IS_TIM_ENCODER_INTERFACE_INSTANCE(htim->Instance));
 
   /* Enable the encoder interface channels */
   /* Enable the capture compare Interrupts 1 and/or 2 */
@@ -2923,7 +2923,7 @@ HAL_StatusTypeDef HAL_TIM_Encoder_Start_IT(TIM_HandleTypeDef *htim, uint32_t Cha
 HAL_StatusTypeDef HAL_TIM_Encoder_Stop_IT(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   /* Check the parameters */
-  assert_param(IS_TIM_CC2_INSTANCE(htim->Instance));
+  assert_param(IS_TIM_ENCODER_INTERFACE_INSTANCE(htim->Instance));
 
   /* Disable the Input Capture channels 1 and 2
     (in the EncoderInterface the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2) */
@@ -2978,7 +2978,7 @@ HAL_StatusTypeDef HAL_TIM_Encoder_Start_DMA(TIM_HandleTypeDef *htim, uint32_t Ch
                                             uint32_t *pData2, uint16_t Length)
 {
   /* Check the parameters */
-  assert_param(IS_TIM_DMA_CC_INSTANCE(htim->Instance));
+  assert_param(IS_TIM_ENCODER_INTERFACE_INSTANCE(htim->Instance));
 
   if (htim->State == HAL_TIM_STATE_BUSY)
   {
@@ -3112,7 +3112,7 @@ HAL_StatusTypeDef HAL_TIM_Encoder_Start_DMA(TIM_HandleTypeDef *htim, uint32_t Ch
 HAL_StatusTypeDef HAL_TIM_Encoder_Stop_DMA(TIM_HandleTypeDef *htim, uint32_t Channel)
 {
   /* Check the parameters */
-  assert_param(IS_TIM_DMA_CC_INSTANCE(htim->Instance));
+  assert_param(IS_TIM_ENCODER_INTERFACE_INSTANCE(htim->Instance));
 
   /* Disable the Input Capture channels 1 and 2
     (in the EncoderInterface the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2) */
@@ -6612,6 +6612,11 @@ static HAL_StatusTypeDef TIM_SlaveTimer_SetConfig(TIM_HandleTypeDef *htim,
     case TIM_TS_ITR6:
     case TIM_TS_ITR7:
     case TIM_TS_ITR8:
+    case TIM_TS_ITR9:
+    case TIM_TS_ITR10:
+    case TIM_TS_ITR11:
+    case TIM_TS_ITR12:
+    case TIM_TS_ITR13:
     {
       /* Check the parameter */
       assert_param(IS_TIM_CC2_INSTANCE(htim->Instance));
@@ -6906,11 +6911,19 @@ static void TIM_TI4_SetConfig(TIM_TypeDef *TIMx, uint32_t TIM_ICPolarity, uint32
   *            @arg TIM_TS_TI1FP1: Filtered Timer Input 1
   *            @arg TIM_TS_TI2FP2: Filtered Timer Input 2
   *            @arg TIM_TS_ETRF: External Trigger input
-  *            @arg TIM_TS_ITR4: Internal Trigger 4
+  *            @arg TIM_TS_ITR4: Internal Trigger 4  (*)
   *            @arg TIM_TS_ITR5: Internal Trigger 5
   *            @arg TIM_TS_ITR6: Internal Trigger 6
   *            @arg TIM_TS_ITR7: Internal Trigger 7
-  *            @arg TIM_TS_ITR8: Internal Trigger 8
+  *            @arg TIM_TS_ITR8: Internal Trigger 8  (*)
+  *            @arg TIM_TS_ITR9: Internal Trigger 9  (*)
+  *            @arg TIM_TS_ITR10: Internal Trigger 10 (*)
+  *            @arg TIM_TS_ITR11: Internal Trigger 11 (*)
+  *            @arg TIM_TS_ITR12: Internal Trigger 12 (*)
+  *            @arg TIM_TS_ITR13: Internal Trigger 13 (*)
+  *
+  *       (*)  Value not defined in all devices.
+  *
   * @retval None
   */
 static void TIM_ITRx_SetConfig(TIM_TypeDef *TIMx, uint32_t InputTriggerSource)

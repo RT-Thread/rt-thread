@@ -48,6 +48,19 @@
 #define IS_LL_RNG_CED(__MODE__) (((__MODE__) == LL_RNG_CED_ENABLE) || \
                                  ((__MODE__) == LL_RNG_CED_DISABLE))
 
+#if defined(RNG_CR_CONDRST)
+#define IS_LL_RNG_CLOCK_DIVIDER(__CLOCK_DIV__) ((__CLOCK_DIV__) <=0x0Fu)
+
+
+#define IS_LL_RNG_NIST_COMPLIANCE(__NIST_COMPLIANCE__) (((__NIST_COMPLIANCE__) == LL_RNG_NIST_COMPLIANT) || \
+                                                     ((__NIST_COMPLIANCE__) == LL_RNG_NOTNIST_COMPLIANT))
+
+#define IS_LL_RNG_CONFIG1 (__CONFIG1__) ((__CONFIG1__) <= 0x3FUL)
+
+#define IS_LL_RNG_CONFIG2 (__CONFIG2__) ((__CONFIG2__) <= 0x07UL)
+
+#define IS_LL_RNG_CONFIG3 (__CONFIG3__) ((__CONFIG3__) <= 0xFUL)
+#endif /* RNG_CR_CONDRST*/
 /**
   * @}
   */
@@ -96,8 +109,15 @@ ErrorStatus LL_RNG_Init(RNG_TypeDef *RNGx, LL_RNG_InitTypeDef *RNG_InitStruct)
   assert_param(IS_RNG_ALL_INSTANCE(RNGx));
   assert_param(IS_LL_RNG_CED(RNG_InitStruct->ClockErrorDetection));
 
+#if defined(RNG_CR_CONDRST)
+  /* Clock Error Detection Configuration when CONDRT bit is set to 1 */
+  MODIFY_REG(RNGx->CR, RNG_CR_CED | RNG_CR_CONDRST, RNG_InitStruct->ClockErrorDetection | RNG_CR_CONDRST);
+  /* Writing bits CONDRST=0*/
+  CLEAR_BIT(RNGx->CR, RNG_CR_CONDRST);
+#else
   /* Clock Error Detection configuration */
   MODIFY_REG(RNGx->CR, RNG_CR_CED, RNG_InitStruct->ClockErrorDetection);
+#endif /* RNG_CR_CONDRST */
 
   return (SUCCESS);
 }

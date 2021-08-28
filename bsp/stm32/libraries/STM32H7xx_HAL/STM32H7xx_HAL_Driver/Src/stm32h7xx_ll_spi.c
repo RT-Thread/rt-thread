@@ -433,6 +433,18 @@ void LL_SPI_StructInit(LL_SPI_InitTypeDef *SPI_InitStruct)
   SPI_InitStruct->CRCPoly           = 7UL;
 }
 
+/**
+  * @}
+  */
+  
+/**
+  * @}
+  */
+  
+/**
+  * @}
+  */
+
 /** @addtogroup I2S_LL
   * @{
   */
@@ -609,7 +621,18 @@ ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)
       }
 
       /* Get the I2S (SPI) source clock value */
+#if defined (SPI_SPI6I2S_SUPPORT)
+      if (SPIx == SPI6)
+      {
+        sourceclock = LL_RCC_GetSPIClockFreq(LL_RCC_SPI6_CLKSOURCE);
+      }
+      else
+      {
+        sourceclock = LL_RCC_GetSPIClockFreq(LL_RCC_SPI123_CLKSOURCE);
+      }
+#else
       sourceclock = LL_RCC_GetSPIClockFreq(LL_RCC_SPI123_CLKSOURCE);
+#endif
 
       /* Compute the Real divider depending on the MCLK output state with a fixed point */
       if (I2S_InitStruct->MCLKOutput == LL_I2S_MCLK_OUTPUT_ENABLE)
@@ -705,18 +728,7 @@ void LL_I2S_ConfigPrescaler(SPI_TypeDef *SPIx, uint32_t PrescalerLinear, uint32_
   * @}
   */
 
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 #endif /* defined(SPI1) || defined(SPI2) || defined(SPI3) || defined(SPI4) || defined(SPI5) || defined(SPI6) */
-
-/**
-  * @}
-  */
 
 /**
   * @}

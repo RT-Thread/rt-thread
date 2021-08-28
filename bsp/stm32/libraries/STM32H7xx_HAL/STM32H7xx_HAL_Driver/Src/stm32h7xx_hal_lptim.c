@@ -143,7 +143,7 @@
 
   @endverbatim
   ******************************************************************************
-    * @attention
+  * @attention
   *
   * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
   * All rights reserved.</center></h2>
@@ -174,8 +174,15 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
+/** @addtogroup LPTIM_Private_Constants
+  * @{
+  */
 #define TIMEOUT                                     1000UL /* Timeout is 1s */
+/**
+  * @}
+  */
+
+/* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 #if (USE_HAL_LPTIM_REGISTER_CALLBACKS == 1)
@@ -228,16 +235,19 @@ HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim)
 
   assert_param(IS_LPTIM_CLOCK_SOURCE(hlptim->Init.Clock.Source));
   assert_param(IS_LPTIM_CLOCK_PRESCALER(hlptim->Init.Clock.Prescaler));
-  if ((hlptim->Init.Clock.Source) == LPTIM_CLOCKSOURCE_ULPTIM)
+  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_ULPTIM)
   {
     assert_param(IS_LPTIM_CLOCK_POLARITY(hlptim->Init.UltraLowPowerClock.Polarity));
-    assert_param(IS_LPTIM_CLOCK_SAMPLE_TIME(hlptim->Init.UltraLowPowerClock.SampleTime));
   }
   assert_param(IS_LPTIM_TRG_SOURCE(hlptim->Init.Trigger.Source));
-  if ((hlptim->Init.Trigger.Source) != LPTIM_TRIGSOURCE_SOFTWARE)
+  if (hlptim->Init.Trigger.Source != LPTIM_TRIGSOURCE_SOFTWARE)
+  {
+    assert_param(IS_LPTIM_EXT_TRG_POLARITY(hlptim->Init.Trigger.ActiveEdge));
+  }
+  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC)
   {
     assert_param(IS_LPTIM_TRIG_SAMPLE_TIME(hlptim->Init.Trigger.SampleTime));
-    assert_param(IS_LPTIM_EXT_TRG_POLARITY(hlptim->Init.Trigger.ActiveEdge));
+    assert_param(IS_LPTIM_CLOCK_SAMPLE_TIME(hlptim->Init.UltraLowPowerClock.SampleTime));
   }
   assert_param(IS_LPTIM_OUTPUT_POLARITY(hlptim->Init.OutputPolarity));
   assert_param(IS_LPTIM_UPDATE_MODE(hlptim->Init.UpdateMode));
@@ -271,13 +281,17 @@ HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim)
   /* Get the LPTIMx CFGR value */
   tmpcfgr = hlptim->Instance->CFGR;
 
-  if (((hlptim->Init.Clock.Source) == LPTIM_CLOCKSOURCE_ULPTIM) || ((hlptim->Init.CounterSource) == LPTIM_COUNTERSOURCE_EXTERNAL))
+  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_ULPTIM)
   {
-    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_CKPOL | LPTIM_CFGR_CKFLT));
+    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_CKPOL));
   }
-  if ((hlptim->Init.Trigger.Source) != LPTIM_TRIGSOURCE_SOFTWARE)
+  if (hlptim->Init.Trigger.Source != LPTIM_TRIGSOURCE_SOFTWARE)
   {
-    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_TRGFLT | LPTIM_CFGR_TRIGSEL));
+    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_TRIGSEL));
+  }
+  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC)
+  {
+    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_TRGFLT | LPTIM_CFGR_CKFLT));
   }
 
   /* Clear CKSEL, CKPOL, PRESC, TRIGEN, TRGFLT, WAVPOL, PRELOAD & COUNTMODE bits */
@@ -291,25 +305,35 @@ HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim)
               hlptim->Init.UpdateMode      |
               hlptim->Init.CounterSource);
 
-  if (((hlptim->Init.Clock.Source) == LPTIM_CLOCKSOURCE_ULPTIM) || ((hlptim->Init.CounterSource) == LPTIM_COUNTERSOURCE_EXTERNAL))
+  /* Glitch filters for internal triggers and  external inputs are configured
+   * only if an internal clock source is provided to the LPTIM
+   */
+  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC)
   {
-    tmpcfgr |= (hlptim->Init.UltraLowPowerClock.Polarity |
+    tmpcfgr |= (hlptim->Init.Trigger.SampleTime |
                 hlptim->Init.UltraLowPowerClock.SampleTime);
   }
 
-  if ((hlptim->Init.Trigger.Source) != LPTIM_TRIGSOURCE_SOFTWARE)
+  /* Configure the active edge or edges used by the counter only if LPTIM is
+   * clocked by an external clock source
+   */
+  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_ULPTIM)
+  {
+    tmpcfgr |= (hlptim->Init.UltraLowPowerClock.Polarity);
+  }
+
+  if (hlptim->Init.Trigger.Source != LPTIM_TRIGSOURCE_SOFTWARE)
   {
     /* Enable External trigger and set the trigger source */
-    tmpcfgr |= (hlptim->Init.Trigger.Source     |
-                hlptim->Init.Trigger.ActiveEdge |
-                hlptim->Init.Trigger.SampleTime);
+    tmpcfgr |= (hlptim->Init.Trigger.Source |
+                hlptim->Init.Trigger.ActiveEdge);
   }
 
   /* Write to LPTIMx CFGR */
   hlptim->Instance->CFGR = tmpcfgr;
 
   /* Configure LPTIM input sources */
- if ((hlptim->Instance == LPTIM1)||(hlptim->Instance == LPTIM2))
+  if ((hlptim->Instance == LPTIM1) || (hlptim->Instance == LPTIM2))
   {
     /* Check LPTIM Input1 and Input2 sources */
     assert_param(IS_LPTIM_INPUT1_SOURCE(hlptim->Instance, hlptim->Init.Input1Source));
@@ -320,7 +344,7 @@ HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim)
   }
   else
   {
-    if(hlptim->Instance == LPTIM3)
+    if (hlptim->Instance == LPTIM3)
     {
       /* Check LPTIM3 Input1 source */
       assert_param(IS_LPTIM_INPUT1_SOURCE(hlptim->Instance, hlptim->Init.Input1Source));
@@ -2300,17 +2324,17 @@ static HAL_StatusTypeDef LPTIM_WaitForFlag(LPTIM_HandleTypeDef *hlptim, uint32_t
 {
   HAL_StatusTypeDef result = HAL_OK;
   uint32_t count = TIMEOUT * (SystemCoreClock / 20UL / 1000UL);
-    do
+  do
+  {
+    count--;
+    if (count == 0UL)
     {
-      count--;
-      if (count == 0UL)
-      {
-        result = HAL_TIMEOUT;
-      }
+      result = HAL_TIMEOUT;
     }
-    while((!(__HAL_LPTIM_GET_FLAG((hlptim), (flag)))) && (count != 0UL));
+  }
+  while ((!(__HAL_LPTIM_GET_FLAG((hlptim), (flag)))) && (count != 0UL));
 
-    return result;
+  return result;
 }
 
 /**
@@ -2337,29 +2361,29 @@ void LPTIM_Disable(LPTIM_HandleTypeDef *hlptim)
   /* Save LPTIM source clock */
   switch ((uint32_t)hlptim->Instance)
   {
-     case LPTIM1_BASE:
-       tmpclksource = __HAL_RCC_GET_LPTIM1_SOURCE();
-       break;
-     case LPTIM2_BASE:
-       tmpclksource = __HAL_RCC_GET_LPTIM2_SOURCE();
-       break;
+    case LPTIM1_BASE:
+      tmpclksource = __HAL_RCC_GET_LPTIM1_SOURCE();
+      break;
+    case LPTIM2_BASE:
+      tmpclksource = __HAL_RCC_GET_LPTIM2_SOURCE();
+      break;
 #if defined(LPTIM3)
-     case LPTIM3_BASE:
-       tmpclksource = __HAL_RCC_GET_LPTIM3_SOURCE();
-       break;
+    case LPTIM3_BASE:
+      tmpclksource = __HAL_RCC_GET_LPTIM3_SOURCE();
+      break;
 #endif /* LPTIM3 */
 #if defined(LPTIM4)
-     case LPTIM4_BASE:
-       tmpclksource = __HAL_RCC_GET_LPTIM4_SOURCE();
-       break;
+    case LPTIM4_BASE:
+      tmpclksource = __HAL_RCC_GET_LPTIM4_SOURCE();
+      break;
 #endif /* LPTIM4 */
 #if defined(LPTIM5)
-     case LPTIM5_BASE:
-       tmpclksource = __HAL_RCC_GET_LPTIM5_SOURCE();
-       break;
+    case LPTIM5_BASE:
+      tmpclksource = __HAL_RCC_GET_LPTIM5_SOURCE();
+      break;
 #endif /* LPTIM5 */
-     default:
-       break;
+    default:
+      break;
   }
 
   /* Save LPTIM configuration registers */
@@ -2372,34 +2396,34 @@ void LPTIM_Disable(LPTIM_HandleTypeDef *hlptim)
   /*********** Reset LPTIM ***********/
   switch ((uint32_t)hlptim->Instance)
   {
-     case LPTIM1_BASE:
-       __HAL_RCC_LPTIM1_FORCE_RESET();
-       __HAL_RCC_LPTIM1_RELEASE_RESET();
-       break;
-     case LPTIM2_BASE:
-       __HAL_RCC_LPTIM2_FORCE_RESET();
-       __HAL_RCC_LPTIM2_RELEASE_RESET();
-       break;
+    case LPTIM1_BASE:
+      __HAL_RCC_LPTIM1_FORCE_RESET();
+      __HAL_RCC_LPTIM1_RELEASE_RESET();
+      break;
+    case LPTIM2_BASE:
+      __HAL_RCC_LPTIM2_FORCE_RESET();
+      __HAL_RCC_LPTIM2_RELEASE_RESET();
+      break;
 #if defined(LPTIM3)
-     case LPTIM3_BASE:
-       __HAL_RCC_LPTIM3_FORCE_RESET();
-       __HAL_RCC_LPTIM3_RELEASE_RESET();
-       break;
+    case LPTIM3_BASE:
+      __HAL_RCC_LPTIM3_FORCE_RESET();
+      __HAL_RCC_LPTIM3_RELEASE_RESET();
+      break;
 #endif /* LPTIM3 */
 #if defined(LPTIM4)
-     case LPTIM4_BASE:
-       __HAL_RCC_LPTIM4_FORCE_RESET();
-       __HAL_RCC_LPTIM4_RELEASE_RESET();
-       break;
+    case LPTIM4_BASE:
+      __HAL_RCC_LPTIM4_FORCE_RESET();
+      __HAL_RCC_LPTIM4_RELEASE_RESET();
+      break;
 #endif /* LPTIM4 */
 #if defined(LPTIM5)
-     case LPTIM5_BASE:
-       __HAL_RCC_LPTIM5_FORCE_RESET();
-       __HAL_RCC_LPTIM5_RELEASE_RESET();
-       break;
+    case LPTIM5_BASE:
+      __HAL_RCC_LPTIM5_FORCE_RESET();
+      __HAL_RCC_LPTIM5_RELEASE_RESET();
+      break;
 #endif /* LPTIM5 */
-     default:
-       break;
+    default:
+      break;
   }
 
   /*********** Restore LPTIM Config ***********/
@@ -2408,29 +2432,29 @@ void LPTIM_Disable(LPTIM_HandleTypeDef *hlptim)
     /* Force LPTIM source kernel clock from APB */
     switch ((uint32_t)hlptim->Instance)
     {
-       case LPTIM1_BASE:
-         __HAL_RCC_LPTIM1_CONFIG(RCC_LPTIM1CLKSOURCE_D2PCLK1);
-         break;
-       case LPTIM2_BASE:
-         __HAL_RCC_LPTIM2_CONFIG(RCC_LPTIM2CLKSOURCE_D3PCLK1);
-         break;
+      case LPTIM1_BASE:
+        __HAL_RCC_LPTIM1_CONFIG(RCC_LPTIM1CLKSOURCE_D2PCLK1);
+        break;
+      case LPTIM2_BASE:
+        __HAL_RCC_LPTIM2_CONFIG(RCC_LPTIM2CLKSOURCE_D3PCLK1);
+        break;
 #if defined(LPTIM3)
-       case LPTIM3_BASE:
-         __HAL_RCC_LPTIM3_CONFIG(RCC_LPTIM3CLKSOURCE_D3PCLK1);
-         break;
+      case LPTIM3_BASE:
+        __HAL_RCC_LPTIM3_CONFIG(RCC_LPTIM3CLKSOURCE_D3PCLK1);
+        break;
 #endif /* LPTIM3 */
 #if defined(LPTIM4)
-       case LPTIM4_BASE:
-         __HAL_RCC_LPTIM4_CONFIG(RCC_LPTIM4CLKSOURCE_D3PCLK1);
-         break;
+      case LPTIM4_BASE:
+        __HAL_RCC_LPTIM4_CONFIG(RCC_LPTIM4CLKSOURCE_D3PCLK1);
+        break;
 #endif /* LPTIM4 */
 #if defined(LPTIM5)
-       case LPTIM5_BASE:
-         __HAL_RCC_LPTIM5_CONFIG(RCC_LPTIM5CLKSOURCE_D3PCLK1);
-         break;
+      case LPTIM5_BASE:
+        __HAL_RCC_LPTIM5_CONFIG(RCC_LPTIM5CLKSOURCE_D3PCLK1);
+        break;
 #endif /* LPTIM5 */
-       default:
-         break;
+      default:
+        break;
     }
 
     if (tmpCMP != 0UL)
@@ -2465,29 +2489,29 @@ void LPTIM_Disable(LPTIM_HandleTypeDef *hlptim)
     /* Restore LPTIM source kernel clock */
     switch ((uint32_t)hlptim->Instance)
     {
-       case LPTIM1_BASE:
-         __HAL_RCC_LPTIM1_CONFIG(tmpclksource);
-         break;
-       case LPTIM2_BASE:
-         __HAL_RCC_LPTIM2_CONFIG(tmpclksource);
-         break;
+      case LPTIM1_BASE:
+        __HAL_RCC_LPTIM1_CONFIG(tmpclksource);
+        break;
+      case LPTIM2_BASE:
+        __HAL_RCC_LPTIM2_CONFIG(tmpclksource);
+        break;
 #if defined(LPTIM3)
-       case LPTIM3_BASE:
-         __HAL_RCC_LPTIM3_CONFIG(tmpclksource);
-         break;
+      case LPTIM3_BASE:
+        __HAL_RCC_LPTIM3_CONFIG(tmpclksource);
+        break;
 #endif /* LPTIM3 */
 #if defined(LPTIM4)
-       case LPTIM4_BASE:
-         __HAL_RCC_LPTIM4_CONFIG(tmpclksource);
-         break;
+      case LPTIM4_BASE:
+        __HAL_RCC_LPTIM4_CONFIG(tmpclksource);
+        break;
 #endif /* LPTIM4 */
 #if defined(LPTIM5)
-       case LPTIM5_BASE:
-         __HAL_RCC_LPTIM5_CONFIG(tmpclksource);
-         break;
+      case LPTIM5_BASE:
+        __HAL_RCC_LPTIM5_CONFIG(tmpclksource);
+        break;
 #endif /* LPTIM5 */
-       default:
-         break;
+      default:
+        break;
     }
   }
 
