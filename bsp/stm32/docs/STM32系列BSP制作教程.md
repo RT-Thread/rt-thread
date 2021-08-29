@@ -117,6 +117,10 @@ BSP 的制作过程分为如下五个步骤：
 
 ![生成对应的配置代码](./figures/CubeMX_4.png)
 
+注意：在生成代码时，不要勾选以下选项（即：不让其生成单独的 .c/.h 驱动文件，直接全部更新到 rt-thread 要使用的 stm32xxx_hal_msp.c 文件中）
+
+![generate-code](figures/generate-code.png)
+
 最终 CubeMX 生成的工程目录结构如下图所示：
 
 ![CubeMX 图7](./figures/CubeMX_5.png)
