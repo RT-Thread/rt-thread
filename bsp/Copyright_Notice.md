@@ -144,6 +144,7 @@ bsp 列表：
 - gd32450z-eval
 - gd32e230k-start
 - gd32vf103v-eval
+- gd32105c-eval
 
 ------
 
@@ -155,6 +156,8 @@ Path:
 
 - bsp/gd32450z-eval/Libraries/GD32F4xx_standard_peripheral
 - bsp/gd32450z-eval/Libraries/GD32F4xx_usb_driver
+- bsp/gd32450z-eval/Libraries/GD32F4xx_usb_driver
+- bsp/gd32105c-eval/Libraries
 
 ------
 
