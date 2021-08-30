@@ -57,6 +57,9 @@
 /** @defgroup UARTEx_Private_Functions UARTEx Private Functions
   * @{
   */
+#if defined(USART_CR1_UESM)
+static void UARTEx_Wakeup_AddressConfig(UART_HandleTypeDef *huart, UART_WakeUpTypeDef WakeUpSelection);
+#endif /* USART_CR1_UESM */
 /**
   * @}
   */
@@ -144,7 +147,8 @@
   *       oversampling rate).
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_RS485Ex_Init(UART_HandleTypeDef *huart, uint32_t Polarity, uint32_t AssertionTime, uint32_t DeassertionTime)
+HAL_StatusTypeDef HAL_RS485Ex_Init(UART_HandleTypeDef *huart, uint32_t Polarity, uint32_t AssertionTime,
+                                   uint32_t DeassertionTime)
 {
   uint32_t temp;
 
@@ -224,42 +228,74 @@ HAL_StatusTypeDef HAL_RS485Ex_Init(UART_HandleTypeDef *huart, uint32_t Polarity,
   * @}
   */
 
-/** @defgroup UARTEx_Exported_Functions_Group2 IO operation functions
-  *  @brief Extended functions
-  *
-@verbatim
- ===============================================================================
-                      ##### IO operation functions #####
- ===============================================================================
-    This subsection provides a set of Wakeup and FIFO mode related callback functions.
-
-@endverbatim
-  * @{
-  */
-
-
-/**
-  * @}
-  */
 
 /** @defgroup UARTEx_Exported_Functions_Group3 Peripheral Control functions
   * @brief    Extended Peripheral Control functions
- *
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral Control functions #####
  ===============================================================================
     [..] This section provides the following functions:
+     (+) HAL_UARTEx_EnableClockStopMode() API enables the UART clock (HSI or LSE only) during stop mode
+     (+) HAL_UARTEx_DisableClockStopMode() API disables the above functionality
      (+) HAL_MultiProcessorEx_AddressLength_Set() API optionally sets the UART node address
          detection length to more than 4 bits for multiprocessor address mark wake up.
+#if defined(USART_CR1_UESM)
+     (+) HAL_UARTEx_StopModeWakeUpSourceConfig() API defines the wake-up from stop mode
+         trigger: address match, Start Bit detection or RXNE bit status.
+     (+) HAL_UARTEx_EnableStopMode() API enables the UART to wake up the MCU from stop mode
+     (+) HAL_UARTEx_DisableStopMode() API disables the above functionality
+#endif
 
 @endverbatim
   * @{
   */
 
+#if defined(USART_CR3_UCESM)
+/**
+  * @brief  Keep UART Clock enabled when in Stop Mode.
+  * @note   When the USART clock source is configured to be LSE or HSI, it is possible to keep enabled
+  *         this clock during STOP mode by setting the UCESM bit in USART_CR3 control register.
+  * @note   When LPUART is used to wakeup from stop with LSE is selected as LPUART clock source,
+  *         and desired baud rate is 9600 baud, the bit UCESM bit in LPUART_CR3 control register must be set.
+  * @param  huart UART handle.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_EnableClockStopMode(UART_HandleTypeDef *huart)
+{
+  /* Process Locked */
+  __HAL_LOCK(huart);
 
+  /* Set UCESM bit */
+  SET_BIT(huart->Instance->CR3, USART_CR3_UCESM);
 
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
 
+  return HAL_OK;
+}
+
+/**
+  * @brief  Disable UART Clock when in Stop Mode.
+  * @param  huart UART handle.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_DisableClockStopMode(UART_HandleTypeDef *huart)
+{
+  /* Process Locked */
+  __HAL_LOCK(huart);
+
+  /* Clear UCESM bit */
+  CLEAR_BIT(huart->Instance->CR3, USART_CR3_UCESM);
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
+
+  return HAL_OK;
+}
+
+#endif /* USART_CR3_UCESM */
 /**
   * @brief By default in multiprocessor mode, when the wake up method is set
   *        to address mark, the UART handles only 4-bit long addresses detection;
@@ -299,8 +335,108 @@ HAL_StatusTypeDef HAL_MultiProcessorEx_AddressLength_Set(UART_HandleTypeDef *hua
   return (UART_CheckIdleState(huart));
 }
 
+#if defined(USART_CR1_UESM)
+/**
+  * @brief Set Wakeup from Stop mode interrupt flag selection.
+  * @note It is the application responsibility to enable the interrupt used as
+  *       usart_wkup interrupt source before entering low-power mode.
+  * @param huart           UART handle.
+  * @param WakeUpSelection Address match, Start Bit detection or RXNE/RXFNE bit status.
+  *          This parameter can be one of the following values:
+  *          @arg @ref UART_WAKEUP_ON_ADDRESS
+  *          @arg @ref UART_WAKEUP_ON_STARTBIT
+  *          @arg @ref UART_WAKEUP_ON_READDATA_NONEMPTY
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_StopModeWakeUpSourceConfig(UART_HandleTypeDef *huart, UART_WakeUpTypeDef WakeUpSelection)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+  uint32_t tickstart;
 
+  /* check the wake-up from stop mode UART instance */
+  assert_param(IS_UART_WAKEUP_FROMSTOP_INSTANCE(huart->Instance));
+  /* check the wake-up selection parameter */
+  assert_param(IS_UART_WAKEUP_SELECTION(WakeUpSelection.WakeUpEvent));
 
+  /* Process Locked */
+  __HAL_LOCK(huart);
+
+  huart->gState = HAL_UART_STATE_BUSY;
+
+  /* Disable the Peripheral */
+  __HAL_UART_DISABLE(huart);
+
+  /* Set the wake-up selection scheme */
+  MODIFY_REG(huart->Instance->CR3, USART_CR3_WUS, WakeUpSelection.WakeUpEvent);
+
+  if (WakeUpSelection.WakeUpEvent == UART_WAKEUP_ON_ADDRESS)
+  {
+    UARTEx_Wakeup_AddressConfig(huart, WakeUpSelection);
+  }
+
+  /* Enable the Peripheral */
+  __HAL_UART_ENABLE(huart);
+
+  /* Init tickstart for timeout managment*/
+  tickstart = HAL_GetTick();
+
+  /* Wait until REACK flag is set */
+  if (UART_WaitOnFlagUntilTimeout(huart, USART_ISR_REACK, RESET, tickstart, HAL_UART_TIMEOUT_VALUE) != HAL_OK)
+  {
+    status = HAL_TIMEOUT;
+  }
+  else
+  {
+    /* Initialize the UART State */
+    huart->gState = HAL_UART_STATE_READY;
+  }
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
+
+  return status;
+}
+
+/**
+  * @brief Enable UART Stop Mode.
+  * @note The UART is able to wake up the MCU from Stop 1 mode as long as UART clock is HSI or LSE.
+  * @param huart UART handle.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_EnableStopMode(UART_HandleTypeDef *huart)
+{
+  /* Process Locked */
+  __HAL_LOCK(huart);
+
+  /* Set UESM bit */
+  SET_BIT(huart->Instance->CR1, USART_CR1_UESM);
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
+
+  return HAL_OK;
+}
+
+/**
+  * @brief Disable UART Stop Mode.
+  * @param huart UART handle.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_UARTEx_DisableStopMode(UART_HandleTypeDef *huart)
+{
+  /* Process Locked */
+  __HAL_LOCK(huart);
+
+  /* Clear UESM bit */
+  CLEAR_BIT(huart->Instance->CR1, USART_CR1_UESM);
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(huart);
+
+  return HAL_OK;
+}
+
+#endif /* USART_CR1_UESM */
 /**
   * @}
   */
@@ -312,6 +448,25 @@ HAL_StatusTypeDef HAL_MultiProcessorEx_AddressLength_Set(UART_HandleTypeDef *hua
 /** @addtogroup UARTEx_Private_Functions
   * @{
   */
+#if defined(USART_CR1_UESM)
+
+/**
+  * @brief Initialize the UART wake-up from stop mode parameters when triggered by address detection.
+  * @param huart           UART handle.
+  * @param WakeUpSelection UART wake up from stop mode parameters.
+  * @retval None
+  */
+static void UARTEx_Wakeup_AddressConfig(UART_HandleTypeDef *huart, UART_WakeUpTypeDef WakeUpSelection)
+{
+  assert_param(IS_UART_ADDRESSLENGTH_DETECT(WakeUpSelection.AddressLength));
+
+  /* Set the USART address length */
+  MODIFY_REG(huart->Instance->CR2, USART_CR2_ADDM7, WakeUpSelection.AddressLength);
+
+  /* Set the USART address node */
+  MODIFY_REG(huart->Instance->CR2, USART_CR2_ADD, ((uint32_t)WakeUpSelection.Address << UART_CR2_ADDRESS_LSB_POS));
+}
+#endif /* USART_CR1_UESM */
 
 /**
   * @}
