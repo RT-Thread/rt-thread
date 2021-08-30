@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F7xx_ADC_H
-#define __STM32F7xx_ADC_H
+#ifndef STM32F7xx_ADC_H
+#define STM32F7xx_ADC_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -416,8 +416,10 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define ADC_CHANNEL_17          ((uint32_t)(ADC_CR1_AWDCH_4 | ADC_CR1_AWDCH_0))
 #define ADC_CHANNEL_18          ((uint32_t)(ADC_CR1_AWDCH_4 | ADC_CR1_AWDCH_1))
 
+#define ADC_INTERNAL_NONE                  0x80000000U
 #define ADC_CHANNEL_VREFINT     ((uint32_t)ADC_CHANNEL_17)
 #define ADC_CHANNEL_VBAT        ((uint32_t)ADC_CHANNEL_18)
+#define ADC_CHANNEL_TEMPSENSOR  ((uint32_t)(ADC_CHANNEL_18 | 0x10000000U))
 /**
   * @}
   */ 
@@ -732,6 +734,10 @@ uint32_t HAL_ADC_GetError(ADC_HandleTypeDef *hadc);
   */
 #define ADC_CLEAR_ERRORCODE(__HANDLE__)                                        \
   ((__HANDLE__)->ErrorCode = HAL_ADC_ERROR_NONE)
+
+#define IS_ADC_CHANNEL(CHANNEL) (((CHANNEL) <= ADC_CHANNEL_18)          || \
+                                 ((CHANNEL) == ADC_CHANNEL_TEMPSENSOR)  || \
+                                 ((CHANNEL) == ADC_INTERNAL_NONE))
 #define IS_ADC_CLOCKPRESCALER(__ADC_CLOCK__)     (((__ADC_CLOCK__) == ADC_CLOCK_SYNC_PCLK_DIV2) || \
                                                   ((__ADC_CLOCK__) == ADC_CLOCK_SYNC_PCLK_DIV4) || \
                                                   ((__ADC_CLOCK__) == ADC_CLOCK_SYNC_PCLK_DIV6) || \
@@ -947,7 +953,7 @@ uint32_t HAL_ADC_GetError(ADC_HandleTypeDef *hadc);
 }
 #endif
 
-#endif /*__STM32F7xx_ADC_H */
+#endif /* STM32F7xx_ADC_H */
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
