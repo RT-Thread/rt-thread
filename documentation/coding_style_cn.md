@@ -10,9 +10,14 @@
 
 文件名称如果无特殊的需求(如果是引用其他地方，可以保留相应的名称)，请使用全小写的形式。另外为了避免文件名重名的问题，一些地方请尽量不要使用通用化、使用频率高的名称。
 
+设备驱动源码文件：`drv_class.c` 的命名方式，如：
+
+- drv_spi.c
+- drv_gpio.c
+
 ## 3.头文件定义
 
-C语言头文件为了避免多次重复包含，需要定义一个符号。这个符号的定义形式请采用如下的风格：
+C 语言头文件为了避免多次重复包含，需要定义一个符号。这个符号的定义形式请采用如下的风格：
 
 ```c
     #ifndef __FILE_H__
@@ -81,14 +86,67 @@ C语言头文件为了避免多次重复包含，需要定义一个符号。这�
 函数名称请使用小写英文的形式，单词之间使用 "_" 连接。提供给上层应用使用的 API接口，必须在相应的头文件中声明；如果函数入口参数是空，必须使用 void 作为入口参数，例如：
 
 ```c
-    rt_thread_t rt_thread_self(void);
+rt_thread_t rt_thread_self(void);
+```
+
+内部静态函数命名：以下划线开头，使用 `_class_method` 格式，不携带`_rt_`开头，如内核或驱动文件中的函数命名：
+
+```c
+/* IPC object init */
+static rt_err_t _ipc_object_init()
+
+/* UART driver ops */
+static rt_err_t _uart_configure()
+static rt_err_t _uart_control()                    
+```
+
+调用注册设备接口的函数命名：使用 `rt_hw_class_init()` 格式，举例：
+
+```c
+int rt_hw_uart_init(void)
+int rt_hw_spi_init(void)
 ```
 
 ## 8.注释编写
 
-请使用英文做为注释，使用中文注释将意味着在编写代码时需要来回不停的切换中英文输入法从而打断编写代码的思路。并且使用英文注释也能够比较好的与中国以外的技术者进行交流。
+请使用**英文**做为注释，使用中文注释将意味着在编写代码时需要来回不停的切换中英文输入法从而打断编写代码的思路。并且使用英文注释也能够比较好的与中国以外的技术者进行交流。
 
-源代码的注释不应该过多，更多的说明应该是代码做了什么，仅当个别关键点才需要一些相应提示性的注释以解释一段复杂的算法它是如何工作的。对语句的注释只能写在它的上方或右方，其他位置都是非法的。
+**语句注释**：
+
+源代码的注释不应该过多，更多的说明应该是代码做了什么，仅当个别关键点才需要一些相应提示性的注释以解释一段复杂的算法它是如何工作的。对语句的注释只能写在它的**上方或右方**，其他位置都是非法的。
+
+```c
+/* 你的英文注释 */
+```
+
+**函数注释**：
+
+- 以 `/**` 开头，以 `  */` 结尾，中间写入函数注释
+- 第一部分：一个段落介绍函数的作用
+- 第二部分：参数采用 @param + 参数 + 介绍参数 的方式
+- 第三部分：返回采用 @return + 返回值 + 介绍返回值 的方式
+- 以上每个部分之间空一行
+
+```C
+/**
+ * This function will initialize a semaphore and put it under control of
+ * resource management.
+ *
+ * @param sem the semaphore object
+ * @param name the name of semaphore
+ * @param value the initial value of semaphore
+ * @param flag the flag of semaphore
+ *
+ * @return the operation status, RT_EOK on successful
+ */
+rt_err_t rt_sem_init(rt_sem_t    sem,
+                     const char *name,
+                     rt_uint32_t value,
+                     rt_uint8_t  flag)
+{
+	....
+}
+```
 
 ## 9.缩进及分行
 
@@ -178,19 +236,20 @@ RT-Thread 内核采用了 C 语言对象化技术，命名表现形式是：对�
 结构体定义 rt_timer 代表了 timer 对象的类定义；
 
 ```c
-    rt_timer_t rt_timer_create(const char* name,
-        void (*timeout)(void* parameter), void* parameter,
-        rt_tick_t time, rt_uint8_t flag);
-    rt_err_t rt_timer_delete(rt_timer_t timer);
-    rt_err_t rt_timer_start(rt_timer_t timer);
-    rt_err_t rt_timer_stop(rt_timer_t timer);
+rt_timer_t rt_timer_create(const char* name,
+                           void (*timeout)(void* parameter), 
+                           void* parameter,
+                           rt_tick_t time, rt_uint8_t flag);
+rt_err_t rt_timer_delete(rt_timer_t timer);
+rt_err_t rt_timer_start(rt_timer_t timer);
+rt_err_t rt_timer_stop(rt_timer_t timer);
 ```
 
 rt_timer + 动词短语的形式表示能够应用于 timer 对象的方法。
 
 在创建一个新的对象时，应该思考好，对象的内存操作处理：是否允许一个静态对象存在，或仅仅支持从堆中动态分配的对象。
 
-## 14. 用 astyle 自动格式化代码
+## 14.用 astyle 自动格式化代码
 
     参数：--style=allman
           --indent=spaces=4
