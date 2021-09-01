@@ -15,7 +15,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <dirent.h>
 #include <sys/time.h>
 #include <rtdevice.h>
 
@@ -24,11 +24,11 @@ extern "C" {
 #endif
 
 #ifndef DFS_FILESYSTEMS_MAX
-#define DFS_FILESYSTEMS_MAX     2
+#define DFS_FILESYSTEMS_MAX     4
 #endif
 
 #ifndef DFS_FD_MAX
-#define DFS_FD_MAX              4
+#define DFS_FD_MAX              16
 #endif
 
 /*
@@ -39,7 +39,7 @@ extern "C" {
 #endif
 
 #ifndef DFS_PATH_MAX
-#define DFS_PATH_MAX             256
+#define DFS_PATH_MAX             DIRENT_NAME_MAX
 #endif
 
 #ifndef SECTOR_SIZE
@@ -65,8 +65,6 @@ extern "C" {
 #define DFS_F_DIRECTORY         0x02000000
 #define DFS_F_EOF               0x04000000
 #define DFS_F_ERR               0x08000000
-
-#include <dirent.h>
 
 struct statfs
 {
