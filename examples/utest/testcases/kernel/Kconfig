@@ -23,4 +23,8 @@ config UTEST_TIMER_TC
     bool "timer test"
     default n
 
+config UTEST_MESSAGEQUEUE_TC
+    bool "message queue test"
+    default n
+
 endmenu
