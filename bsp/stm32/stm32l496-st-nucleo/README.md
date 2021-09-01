@@ -83,7 +83,7 @@ They also feature standard and advanced communication interfaces.
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-144_BSP_Introduction](../docs/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32_Nucleo-144_BSP_Introduction](../docs/en/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
 | [STM32L496ZG ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32l496zg.html#documentation) |          STM32L496ZG datasheet and other resources           |
 
 

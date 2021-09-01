@@ -68,7 +68,7 @@ These features make the STM32F412xE/G microcontrollers suitable for a wide range
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-144_BSP_Introduction](../docs/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-144 boards (**Must-Read**) |
+| [STM32_Nucleo-144_BSP_Introduction](../docs/en/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-144 boards (**Must-Read**) |
 | [STM32F412ZG ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32f412zg.html#documentation) |          STM32F412ZG datasheet and other resources           |
 
 

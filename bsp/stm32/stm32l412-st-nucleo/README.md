@@ -79,7 +79,7 @@ The STM32L412xx family offers six packages from 32 to 64-pin packages.
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/en/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
 | [STM32L412RB ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32l412rb.html#documentation) |          STM32L412RB datasheet and other resources           |
 
 

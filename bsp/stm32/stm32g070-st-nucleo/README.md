@@ -52,7 +52,7 @@ The devices come in packages with 32 to 64 pins.
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/en/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
 | [STM32G070RB ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32g070rb.html#documentation) |          STM32G070RB datasheet and other resources           |
 
 

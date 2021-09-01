@@ -76,7 +76,7 @@ The ultra-low-power STM32L053x6/8 devices operate from a 1.8 to 3.6 V power supp
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/en/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
 | [STM32L053R8 ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32l053r8.html#documentation) |          STM32L053R8 datasheet and other resources           |
 
 

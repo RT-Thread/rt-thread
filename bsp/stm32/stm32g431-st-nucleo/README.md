@@ -88,7 +88,7 @@ The STM32G431x6/x8/xB family offers 9 packages from 32-pin to 100-pin.
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/en/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
 | [STM32G431RB ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32g431rb.html#documentation) |          STM32G431RB datasheet and other resources           |
 
 

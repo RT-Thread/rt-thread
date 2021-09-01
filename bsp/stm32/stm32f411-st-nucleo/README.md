@@ -60,7 +60,7 @@ These features make the STM32F411xC/xE microcontrollers suitable for a wide rang
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/en/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
 | [STM32F411RE ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32f411re.html#documentation) |          STM32F411RE datasheet and other resources           |
 
 

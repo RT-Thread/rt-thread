@@ -95,7 +95,7 @@ STM32H742xI/G and STM32H743xI/G devices incorporate high-speed embedded memories
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-144_BSP_Introduction](../docs/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-144 boards (**Must-Read**) |
+| [STM32_Nucleo-144_BSP_Introduction](../docs/en/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-144 boards (**Must-Read**) |
 | [STM32H743ZI ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32h743zi.html#documentation) |          STM32H743ZI datasheet and other resources           |
 
 

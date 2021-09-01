@@ -84,7 +84,7 @@ The STM32L476xx family offers six packages from 64-pin to 144-pin packages.
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/en/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
 | [STM32L476RG ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32l476rg.html#documentation) |          STM32L476RG datasheet and other resources           |
 
 

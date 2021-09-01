@@ -82,7 +82,7 @@ The STM32L433xx family offers eight packages from 48 to 100-pin packages.
 
 |                          Documents                           |                         Description                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/en/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
 | [STM32L433RC ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32l433rc.html#documentation) |          STM32L433RC datasheet and other resources           |
 
 
