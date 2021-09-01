@@ -44,11 +44,7 @@ typedef struct
 #ifndef HAVE_DIRENT_STRUCTURE
 #define HAVE_DIRENT_STRUCTURE
 
-#ifdef DFS_PATH_MAX
-#define DIRENT_NAME_MAX    DFS_PATH_MAX
-#else
 #define DIRENT_NAME_MAX    256
-#endif
 
 struct dirent
 {
