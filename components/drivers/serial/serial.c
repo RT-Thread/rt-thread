@@ -24,7 +24,8 @@
  * 2018-12-08     Ernest Chen  add DMA choice
  * 2020-09-14     WillianChan  add a line feed to the carriage return character
  *                             when using interrupt tx
- * 2020-12-14     Meco Man     add function of setting window's size(TIOCSWINSZ)
+ * 2020-12-14     Meco Man     implement function of setting window's size(TIOCSWINSZ)
+ * 2021-08-22     Meco Man     implement function of getting window's size(TIOCGWINSZ)
  */
 
 #include <rthw.h>
@@ -1122,13 +1123,83 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         case TIOCGWINSZ:
             {
                 struct winsize* p_winsize;
-
                 p_winsize = (struct winsize*)args;
-                /* TODO: get windows size from console */
-                p_winsize->ws_col = 80;
-                p_winsize->ws_row = 24;
-                p_winsize->ws_xpixel = 0;/*unused*/
-                p_winsize->ws_ypixel = 0;/*unused*/
+
+                if(rt_thread_self() != rt_thread_find("tshell"))
+                {
+                    /* only can be used in tshell thread; otherwise, return default size */
+                    p_winsize->ws_col = 80;
+                    p_winsize->ws_row = 24;
+                }
+                else
+                {
+                    #define _TIO_BUFLEN 20
+                    char _tio_buf[_TIO_BUFLEN];
+                    unsigned char cnt1, cnt2, cnt3, i;
+                    char row_s[4], col_s[4];
+                    char *p;
+
+                    rt_memset(_tio_buf, 0, _TIO_BUFLEN);
+
+                    /* send the command to terminal for getting the window size of the terminal */
+                    rt_kprintf("\033[18t");
+
+                    /* waiting for the response from the terminal */
+                    i = 0;
+                    while(i < _TIO_BUFLEN)
+                    {
+                        _tio_buf[i] = getchar();
+                        if(_tio_buf[i] != 't')
+                        {
+                            i ++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    if(i == _TIO_BUFLEN)
+                    {
+                        /* buffer overloaded, and return default size */
+                        p_winsize->ws_col = 80;
+                        p_winsize->ws_row = 24;
+                        break;
+                    }
+
+                    /* interpreting data eg: "\033[8;1;15t" which means row is 1 and col is 15 (unit: size of ONE character) */
+                    rt_memset(row_s,0,4);
+                    rt_memset(col_s,0,4);
+                    cnt1 = 0;
+                    while(_tio_buf[cnt1] != ';' && cnt1 < _TIO_BUFLEN)
+                    {
+                        cnt1++;
+                    }
+                    cnt2 = ++cnt1;
+                    while(_tio_buf[cnt2] != ';' && cnt2 < _TIO_BUFLEN)
+                    {
+                        cnt2++;
+                    }
+                    p = row_s;
+                    while(cnt1 < cnt2)
+                    {
+                        *p++ = _tio_buf[cnt1++];
+                    }
+                    p = col_s;
+                    cnt2++;
+                    cnt3 = rt_strlen(_tio_buf) - 1;
+                    while(cnt2 < cnt3)
+                    {
+                        *p++ = _tio_buf[cnt2++];
+                    }
+
+                    /* load the window size date */
+                    p_winsize->ws_col = atoi(col_s);
+                    p_winsize->ws_row = atoi(row_s);
+                #undef _TIO_BUFLEN
+                }
+
+                p_winsize->ws_xpixel = 0;/* unused */
+                p_winsize->ws_ypixel = 0;/* unused */
             }
             break;
 #endif /*RT_USING_POSIX_TERMIOS*/

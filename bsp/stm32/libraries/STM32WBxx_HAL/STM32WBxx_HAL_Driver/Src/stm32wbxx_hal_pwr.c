@@ -127,11 +127,13 @@ void HAL_PWR_DeInit(void)
   
   /* Clear all flags */
   LL_PWR_WriteReg(SCR,
-                    LL_PWR_SCR_CC2HF 
-                  | LL_PWR_SCR_C802AF
+                    LL_PWR_SCR_CC2HF
                   | LL_PWR_SCR_CBLEAF
                   | LL_PWR_SCR_CCRPEF
+#if defined(PWR_CR3_E802A)
+                  | LL_PWR_SCR_C802AF
                   | LL_PWR_SCR_C802WUF
+#endif
                   | LL_PWR_SCR_CBLEWUF
 #if defined(PWR_CR5_SMPSEN)
                   | LL_PWR_SCR_CBORHF
@@ -222,8 +224,9 @@ void HAL_PWR_DisableBkUpAccess(void)
       (+) Stop 1 mode: all clocks are stopped except LSI and LSE, main regulator off, low power regulator on.
       (+) Stop 2 mode: all clocks are stopped except LSI and LSE, main regulator off, low power regulator on, reduced set of waking up IPs compared to Stop 1 mode.
 
-      (+) Standby mode with SRAM2: all clocks are stopped except LSI and LSE, SRAM2 content preserved, main regulator off, low power regulator on. 
-      (+) Standby mode without SRAM2: all clocks are stopped except LSI and LSE, main and low power regulators off.
+      (+) Standby mode with SRAM2a: all clocks are stopped except LSI and LSE, SRAM2a content preserved, main regulator off, low power regulator on.
+          Note: On devices STM32WB15xx, STM32WB10xx, retention is extended to SRAM1, SRAM2a, SRAM2b.
+      (+) Standby mode without SRAM2a: all clocks are stopped except LSI and LSE, main and low power regulators off.
 
       (+) Shutdown mode: all clocks are stopped except LSE, main and low power regulators off.
 
@@ -266,6 +269,7 @@ void HAL_PWR_DisableBkUpAccess(void)
           The Stop 0, Stop 1 or Stop 2 modes are entered thru the following API's:
           (++) HAL_PWREx_EnterSTOP0Mode() for mode 0, HAL_PWREx_EnterSTOP1Mode() for mode 1, HAL_PWREx_EnterSTOP2Mode() for mode 2
                or for porting reasons HAL_PWR_EnterSTOPMode().
+               Note: Low power Stop2 mode is not available on devices STM32WB15xx, STM32WB10xx.
 
       (+) Regulator setting (applicable to HAL_PWR_EnterSTOPMode() only):
           (++) PWR_MAINREGULATOR_ON: Regulator in main mode (STOP0 mode)

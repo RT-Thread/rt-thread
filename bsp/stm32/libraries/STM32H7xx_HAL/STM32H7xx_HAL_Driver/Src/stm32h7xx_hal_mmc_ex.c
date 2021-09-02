@@ -86,7 +86,7 @@ HAL_StatusTypeDef HAL_MMCEx_ConfigDMAMultiBuffer(MMC_HandleTypeDef *hmmc, uint32
   {
     hmmc->Instance->IDMABASE0= (uint32_t) pDataBuffer0 ;
     hmmc->Instance->IDMABASE1= (uint32_t) pDataBuffer1 ;
-    hmmc->Instance->IDMABSIZE= (uint32_t) BufferSize;
+    hmmc->Instance->IDMABSIZE= (uint32_t) (MMC_BLOCKSIZE * BufferSize);
     
     return HAL_OK;
   }
@@ -153,8 +153,6 @@ HAL_StatusTypeDef HAL_MMCEx_ReadBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, ui
     
     hmmc->Instance->IDMACTRL = SDMMC_ENABLE_IDMA_DOUBLE_BUFF0; 
 
-     __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND | SDMMC_FLAG_IDMATE | SDMMC_FLAG_IDMABTC));
-   
     /* Read Blocks in DMA mode */
     hmmc->Context = (MMC_CONTEXT_READ_MULTIPLE_BLOCK | MMC_CONTEXT_DMA);
     
@@ -167,6 +165,8 @@ HAL_StatusTypeDef HAL_MMCEx_ReadBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, ui
       return HAL_ERROR;
     }
     
+    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND | SDMMC_FLAG_IDMATE | SDMMC_FLAG_IDMABTC));
+
     return HAL_OK;
   }
   else
@@ -232,8 +232,6 @@ HAL_StatusTypeDef HAL_MMCEx_WriteBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, u
     
     hmmc->Instance->IDMACTRL = SDMMC_ENABLE_IDMA_DOUBLE_BUFF0; 
  
-    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND | SDMMC_FLAG_IDMATE | SDMMC_FLAG_IDMABTC));
-   
     /* Write Blocks in DMA mode */
     hmmc->Context = (MMC_CONTEXT_WRITE_MULTIPLE_BLOCK | MMC_CONTEXT_DMA);
     
@@ -246,6 +244,8 @@ HAL_StatusTypeDef HAL_MMCEx_WriteBlocksDMAMultiBuffer(MMC_HandleTypeDef *hmmc, u
       return HAL_ERROR;
     }
     
+    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND | SDMMC_FLAG_IDMATE | SDMMC_FLAG_IDMABTC));
+
     return HAL_OK;
   }
   else

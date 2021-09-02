@@ -11,7 +11,7 @@
 
 #include <rtthread.h>
 
-#if defined(FINSH_USING_MSH) && defined(RT_USING_DFS)
+#if defined(RT_USING_FINSH) && defined(RT_USING_DFS)
 
 #include <finsh.h>
 #include "msh.h"
@@ -144,7 +144,7 @@ int msh_exec_script(const char *cmd_line, int size)
 }
 
 #ifdef DFS_USING_WORKDIR
-extern char working_directory[];
+    extern char working_directory[];
 #endif
 
 static int cmd_ls(int argc, char **argv)
@@ -614,19 +614,19 @@ static int cmd_tail(int argc, char **argv)
     rt_uint32_t required_lines = 0;
     rt_uint32_t after_xxx_line = 0;
 
-    if(argc < 2)
+    if (argc < 2)
     {
         rt_kprintf("Usage: tail [-n numbers] <filename>\n");
         return -1;
     }
-    else if(argc == 2)
+    else if (argc == 2)
     {
         required_lines = 10; /* default: 10 lines from tail */
         file_name = argv[1];
     }
-    else if(rt_strcmp(argv[1], "-n") == 0)
+    else if (rt_strcmp(argv[1], "-n") == 0)
     {
-        if(argv[2][0] != '+')
+        if (argv[2][0] != '+')
         {
             required_lines = atoi(argv[2]);
         }
@@ -659,9 +659,9 @@ static int cmd_tail(int argc, char **argv)
 
     rt_kprintf("\nTotal Number of lines:%d\n", total_lines);
 
-    if(after_xxx_line != 0)
+    if (after_xxx_line != 0)
     {
-        if(total_lines > after_xxx_line)
+        if (total_lines > after_xxx_line)
         {
             required_lines = total_lines - after_xxx_line;
         }
@@ -700,7 +700,7 @@ static int cmd_tail(int argc, char **argv)
     close(fd);
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_tail, tail, print the last N-lines data of the given file);
+MSH_CMD_EXPORT_ALIAS(cmd_tail, tail, print the last N - lines data of the given file);
 
-#endif /* defined(FINSH_USING_MSH) && defined(RT_USING_DFS) */
+#endif /* defined(RT_USING_FINSH) && defined(RT_USING_DFS) */
 

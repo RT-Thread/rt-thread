@@ -713,8 +713,8 @@ typedef struct
 
 /**
   * @brief  Enable the SDMMC device interrupt.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
-  * @param  __INTERRUPT__ : specifies the SDMMC interrupt sources to be enabled.
+  * @param  __INSTANCE__ Pointer to SDMMC register base
+  * @param  __INTERRUPT__ specifies the SDMMC interrupt sources to be enabled.
   *         This parameter can be one or a combination of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -745,8 +745,8 @@ typedef struct
 
 /**
   * @brief  Disable the SDMMC device interrupt.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
-  * @param  __INTERRUPT__ : specifies the SDMMC interrupt sources to be disabled.
+  * @param  __INSTANCE__ Pointer to SDMMC register base
+  * @param  __INTERRUPT__ specifies the SDMMC interrupt sources to be disabled.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -777,8 +777,8 @@ typedef struct
 
 /**
   * @brief  Checks whether the specified SDMMC flag is set or not.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __INSTANCE__ Pointer to SDMMC register base
+  * @param  __FLAG__ specifies the flag to check.
   *          This parameter can be one of the following values:
   *            @arg SDMMC_FLAG_CCRCFAIL:   Command response received (CRC check failed)
   *            @arg SDMMC_FLAG_DCRCFAIL:   Data block sent/received (CRC check failed)
@@ -816,8 +816,8 @@ typedef struct
 
 /**
   * @brief  Clears the SDMMC pending flags.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __INSTANCE__ Pointer to SDMMC register base
+  * @param  __FLAG__ specifies the flag to clear.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDMMC_FLAG_CCRCFAIL:   Command response received (CRC check failed)
   *            @arg SDMMC_FLAG_DCRCFAIL:   Data block sent/received (CRC check failed)
@@ -845,8 +845,8 @@ typedef struct
 
 /**
   * @brief  Checks whether the specified SDMMC interrupt has occurred or not.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
-  * @param  __INTERRUPT__: specifies the SDMMC interrupt source to check.
+  * @param  __INSTANCE__ Pointer to SDMMC register base
+  * @param  __INTERRUPT__ specifies the SDMMC interrupt source to check.
   *          This parameter can be one of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -877,8 +877,8 @@ typedef struct
 
 /**
   * @brief  Clears the SDMMC's interrupt pending bits.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
-  * @param  __INTERRUPT__: specifies the interrupt pending bit to clear.
+  * @param  __INSTANCE__ Pointer to SDMMC register base
+  * @param  __INTERRUPT__ specifies the interrupt pending bit to clear.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -905,84 +905,84 @@ typedef struct
 
 /**
   * @brief  Enable Start the SD I/O Read Wait operation.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_START_READWAIT_ENABLE(__INSTANCE__)  ((__INSTANCE__)->DCTRL |= SDMMC_DCTRL_RWSTART)
 
 /**
   * @brief  Disable Start the SD I/O Read Wait operations.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_START_READWAIT_DISABLE(__INSTANCE__)  ((__INSTANCE__)->DCTRL &= ~SDMMC_DCTRL_RWSTART)
 
 /**
   * @brief  Enable Start the SD I/O Read Wait operation.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_STOP_READWAIT_ENABLE(__INSTANCE__)  ((__INSTANCE__)->DCTRL |= SDMMC_DCTRL_RWSTOP)
 
 /**
   * @brief  Disable Stop the SD I/O Read Wait operations.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_STOP_READWAIT_DISABLE(__INSTANCE__)  ((__INSTANCE__)->DCTRL &= ~SDMMC_DCTRL_RWSTOP)
 
 /**
   * @brief  Enable the SD I/O Mode Operation.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_OPERATION_ENABLE(__INSTANCE__)  ((__INSTANCE__)->DCTRL |= SDMMC_DCTRL_SDIOEN)
 
 /**
   * @brief  Disable the SD I/O Mode Operation.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_OPERATION_DISABLE(__INSTANCE__)  ((__INSTANCE__)->DCTRL &= ~SDMMC_DCTRL_SDIOEN)
 
 /**
   * @brief  Enable the SD I/O Suspend command sending.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_SUSPEND_CMD_ENABLE(__INSTANCE__)  ((__INSTANCE__)->CMD |= SDMMC_CMD_CMDSUSPEND)
 
 /**
   * @brief  Disable the SD I/O Suspend command sending.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_SUSPEND_CMD_DISABLE(__INSTANCE__)  ((__INSTANCE__)->CMD &= ~SDMMC_CMD_CMDSUSPEND)
 
 /**
   * @brief  Enable the CMDTRANS mode.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_CMDTRANS_ENABLE(__INSTANCE__)  ((__INSTANCE__)->CMD |= SDMMC_CMD_CMDTRANS)
 
 /**
   * @brief  Disable the CMDTRANS mode.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_CMDTRANS_DISABLE(__INSTANCE__)  ((__INSTANCE__)->CMD &= ~SDMMC_CMD_CMDTRANS)
 
 /**
   * @brief  Enable the CMDSTOP mode.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_CMDSTOP_ENABLE(__INSTANCE__)  ((__INSTANCE__)->CMD |= SDMMC_CMD_CMDSTOP)
 
 /**
   * @brief  Disable the CMDSTOP mode.
-  * @param  __INSTANCE__ : Pointer to SDMMC register base
+  * @param  __INSTANCE__ Pointer to SDMMC register base
   * @retval None
   */
 #define __SDMMC_CMDSTOP_DISABLE(__INSTANCE__)  ((__INSTANCE__)->CMD &= ~SDMMC_CMD_CMDSTOP)

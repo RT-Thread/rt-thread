@@ -89,12 +89,12 @@
 
      *** Callback registration ***
      =============================================
-
+    [..]
      The compilation flag USE_HAL_SMBUS_REGISTER_CALLBACKS when set to 1
      allows the user to configure dynamically the driver callbacks.
      Use Functions @ref HAL_SMBUS_RegisterCallback() or @ref HAL_SMBUS_RegisterAddrCallback()
      to register an interrupt callback.
-
+    [..]
      Function @ref HAL_SMBUS_RegisterCallback() allows to register following callbacks:
        (+) MasterTxCpltCallback : callback for Master transmission end of transfer.
        (+) MasterRxCpltCallback : callback for Master reception end of transfer.
@@ -106,9 +106,9 @@
        (+) MspDeInitCallback    : callback for Msp DeInit.
      This function takes as parameters the HAL peripheral handle, the Callback ID
      and a pointer to the user callback function.
-
+    [..]
      For specific callback AddrCallback use dedicated register callbacks : @ref HAL_SMBUS_RegisterAddrCallback.
-
+    [..]
      Use function @ref HAL_SMBUS_UnRegisterCallback to reset a callback to the default
      weak function.
      @ref HAL_SMBUS_UnRegisterCallback takes as parameters the HAL peripheral handle,
@@ -122,9 +122,9 @@
        (+) ErrorCallback        : callback for error detection.
        (+) MspInitCallback      : callback for Msp Init.
        (+) MspDeInitCallback    : callback for Msp DeInit.
-
+    [..]
      For callback AddrCallback use dedicated register callbacks : @ref HAL_SMBUS_UnRegisterAddrCallback.
-
+    [..]
      By default, after the @ref HAL_SMBUS_Init() and when the state is @ref HAL_I2C_STATE_RESET
      all callbacks are set to the corresponding weak functions:
      examples @ref HAL_SMBUS_MasterTxCpltCallback(), @ref HAL_SMBUS_MasterRxCpltCallback().
@@ -133,7 +133,7 @@
      these callbacks are null (not registered beforehand).
      If MspInit or MspDeInit are not null, the @ref HAL_SMBUS_Init()/ @ref HAL_SMBUS_DeInit()
      keep and use the user MspInit/MspDeInit callbacks (registered beforehand) whatever the state.
-
+    [..]
      Callbacks can be registered/unregistered in @ref HAL_I2C_STATE_READY state only.
      Exception done MspInit/MspDeInit functions that can be registered/unregistered
      in @ref HAL_I2C_STATE_READY or @ref HAL_I2C_STATE_RESET state,
@@ -141,7 +141,7 @@
      Then, the user first registers the MspInit/MspDeInit user callbacks
      using @ref HAL_SMBUS_RegisterCallback() before calling @ref HAL_SMBUS_DeInit()
      or @ref HAL_SMBUS_Init() function.
-
+    [..]
      When the compilation flag USE_HAL_SMBUS_REGISTER_CALLBACKS is set to 0 or
      not defined, the callback registration feature is not available and all callbacks
      are set to the corresponding weak functions.
@@ -203,18 +203,18 @@
 /** @addtogroup SMBUS_Private_Functions SMBUS Private Functions
   * @{
   */
-static HAL_StatusTypeDef SMBUS_WaitOnFlagUntilTimeout(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t Flag, FlagStatus Status, uint32_t Timeout);
+static HAL_StatusTypeDef SMBUS_WaitOnFlagUntilTimeout(SMBUS_HandleTypeDef *hsmbus, uint32_t Flag, FlagStatus Status, uint32_t Timeout);
 
-static void SMBUS_Enable_IRQ(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t InterruptRequest);
-static void SMBUS_Disable_IRQ(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t InterruptRequest);
-static HAL_StatusTypeDef SMBUS_Master_ISR(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t StatusFlags);
-static HAL_StatusTypeDef SMBUS_Slave_ISR(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t StatusFlags);
+static void SMBUS_Enable_IRQ(SMBUS_HandleTypeDef *hsmbus, uint32_t InterruptRequest);
+static void SMBUS_Disable_IRQ(SMBUS_HandleTypeDef *hsmbus, uint32_t InterruptRequest);
+static HAL_StatusTypeDef SMBUS_Master_ISR(SMBUS_HandleTypeDef *hsmbus, uint32_t StatusFlags);
+static HAL_StatusTypeDef SMBUS_Slave_ISR(SMBUS_HandleTypeDef *hsmbus, uint32_t StatusFlags);
 
-static void SMBUS_ConvertOtherXferOptions(struct __SMBUS_HandleTypeDef *hsmbus);
+static void SMBUS_ConvertOtherXferOptions(SMBUS_HandleTypeDef *hsmbus);
 
-static void SMBUS_ITErrorHandler(struct __SMBUS_HandleTypeDef *hsmbus);
+static void SMBUS_ITErrorHandler(SMBUS_HandleTypeDef *hsmbus);
 
-static void SMBUS_TransferConfig(struct __SMBUS_HandleTypeDef *hsmbus,  uint16_t DevAddress, uint8_t Size, uint32_t Mode, uint32_t Request);
+static void SMBUS_TransferConfig(SMBUS_HandleTypeDef *hsmbus,  uint16_t DevAddress, uint8_t Size, uint32_t Mode, uint32_t Request);
 /**
   * @}
   */
@@ -1801,7 +1801,7 @@ uint32_t HAL_SMBUS_GetError(SMBUS_HandleTypeDef *hsmbus)
   * @param  StatusFlags Value of Interrupt Flags.
   * @retval HAL status
   */
-static HAL_StatusTypeDef SMBUS_Master_ISR(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t StatusFlags)
+static HAL_StatusTypeDef SMBUS_Master_ISR(SMBUS_HandleTypeDef *hsmbus, uint32_t StatusFlags)
 {
   uint16_t DevAddress;
 
@@ -2085,7 +2085,7 @@ static HAL_StatusTypeDef SMBUS_Master_ISR(struct __SMBUS_HandleTypeDef *hsmbus, 
   * @param  StatusFlags Value of Interrupt Flags.
   * @retval HAL status
   */
-static HAL_StatusTypeDef SMBUS_Slave_ISR(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t StatusFlags)
+static HAL_StatusTypeDef SMBUS_Slave_ISR(SMBUS_HandleTypeDef *hsmbus, uint32_t StatusFlags)
 {
   uint8_t TransferDirection;
   uint16_t SlaveAddrCode;
@@ -2341,7 +2341,7 @@ static HAL_StatusTypeDef SMBUS_Slave_ISR(struct __SMBUS_HandleTypeDef *hsmbus, u
   * @param  InterruptRequest Value of @ref SMBUS_Interrupt_configuration_definition.
   * @retval HAL status
   */
-static void SMBUS_Enable_IRQ(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t InterruptRequest)
+static void SMBUS_Enable_IRQ(SMBUS_HandleTypeDef *hsmbus, uint32_t InterruptRequest)
 {
   uint32_t tmpisr = 0UL;
 
@@ -2381,7 +2381,7 @@ static void SMBUS_Enable_IRQ(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t Inte
   * @param  InterruptRequest Value of @ref SMBUS_Interrupt_configuration_definition.
   * @retval HAL status
   */
-static void SMBUS_Disable_IRQ(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t InterruptRequest)
+static void SMBUS_Disable_IRQ(SMBUS_HandleTypeDef *hsmbus, uint32_t InterruptRequest)
 {
   uint32_t tmpisr = 0UL;
   uint32_t tmpstate = hsmbus->State;
@@ -2453,7 +2453,7 @@ static void SMBUS_Disable_IRQ(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t Int
   * @param  hsmbus SMBUS handle.
   * @retval None
   */
-static void SMBUS_ITErrorHandler(struct __SMBUS_HandleTypeDef *hsmbus)
+static void SMBUS_ITErrorHandler(SMBUS_HandleTypeDef *hsmbus)
 {
   uint32_t itflags   = READ_REG(hsmbus->Instance->ISR);
   uint32_t itsources = READ_REG(hsmbus->Instance->CR1);
@@ -2554,7 +2554,7 @@ static void SMBUS_ITErrorHandler(struct __SMBUS_HandleTypeDef *hsmbus)
   * @param  Timeout Timeout duration
   * @retval HAL status
   */
-static HAL_StatusTypeDef SMBUS_WaitOnFlagUntilTimeout(struct __SMBUS_HandleTypeDef *hsmbus, uint32_t Flag, FlagStatus Status, uint32_t Timeout)
+static HAL_StatusTypeDef SMBUS_WaitOnFlagUntilTimeout(SMBUS_HandleTypeDef *hsmbus, uint32_t Flag, FlagStatus Status, uint32_t Timeout)
 {
   uint32_t tickstart = HAL_GetTick();
 
@@ -2603,7 +2603,7 @@ static HAL_StatusTypeDef SMBUS_WaitOnFlagUntilTimeout(struct __SMBUS_HandleTypeD
   *     @arg @ref SMBUS_GENERATE_START_WRITE Generate Restart for write request.
   * @retval None
   */
-static void SMBUS_TransferConfig(struct __SMBUS_HandleTypeDef *hsmbus,  uint16_t DevAddress, uint8_t Size, uint32_t Mode, uint32_t Request)
+static void SMBUS_TransferConfig(SMBUS_HandleTypeDef *hsmbus,  uint16_t DevAddress, uint8_t Size, uint32_t Mode, uint32_t Request)
 {
   /* Check the parameters */
   assert_param(IS_SMBUS_ALL_INSTANCE(hsmbus->Instance));
@@ -2620,7 +2620,7 @@ static void SMBUS_TransferConfig(struct __SMBUS_HandleTypeDef *hsmbus,  uint16_t
   * @param  hsmbus SMBUS handle.
   * @retval None
   */
-static void SMBUS_ConvertOtherXferOptions(struct __SMBUS_HandleTypeDef *hsmbus)
+static void SMBUS_ConvertOtherXferOptions(SMBUS_HandleTypeDef *hsmbus)
 {
   /* if user set XferOptions to SMBUS_OTHER_FRAME_NO_PEC   */
   /* it request implicitly to generate a restart condition */

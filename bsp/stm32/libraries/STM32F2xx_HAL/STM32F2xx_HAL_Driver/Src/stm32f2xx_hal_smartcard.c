@@ -1566,7 +1566,7 @@ void HAL_SMARTCARD_IRQHandler(SMARTCARD_HandleTypeDef *hsc)
     }
 
     /* SMARTCARD Over-Run interrupt occurred -------------------------------*/
-    if(((isrflags & SMARTCARD_FLAG_ORE) != RESET) && ((cr3its & USART_CR3_EIE) != RESET))
+    if(((isrflags & SMARTCARD_FLAG_ORE) != RESET) && (((cr1its & USART_CR1_RXNEIE) != RESET) || ((cr3its & USART_CR3_EIE) != RESET)))
     {
       hsc->ErrorCode |= HAL_SMARTCARD_ERROR_ORE;
     }

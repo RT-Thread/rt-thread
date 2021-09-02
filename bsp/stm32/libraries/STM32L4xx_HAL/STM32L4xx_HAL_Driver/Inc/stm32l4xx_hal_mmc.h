@@ -136,11 +136,11 @@ typedef struct
 
   __IO uint32_t                ErrorCode;        /*!< MMC Card Error codes                 */
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
   DMA_HandleTypeDef            *hdmarx;          /*!< MMC Rx DMA handle parameters         */
 
   DMA_HandleTypeDef            *hdmatx;          /*!< MMC Tx DMA handle parameters         */
-#endif /* !STM32L4R5xx && !STM32L4R7xx && !STM32L4R9xx && !STM32L4S5xx && !STM32L4S7xx && !STM32L4S9xx */
+#endif /* !STM32L4P5xx && !STM32L4Q5xx && !STM32L4R5xx && !STM32L4R7xx && !STM32L4R9xx && !STM32L4S5xx && !STM32L4S7xx && !STM32L4S9xx */
 
   HAL_MMC_CardInfoTypeDef      MmcCard;          /*!< MMC Card information                 */
 
@@ -155,7 +155,7 @@ typedef struct
   void (* RxCpltCallback)                 (struct __MMC_HandleTypeDef *hmmc);
   void (* ErrorCallback)                  (struct __MMC_HandleTypeDef *hmmc);
   void (* AbortCpltCallback)              (struct __MMC_HandleTypeDef *hmmc);
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   void (* Read_DMADblBuf0CpltCallback)    (struct __MMC_HandleTypeDef *hmmc);
   void (* Read_DMADblBuf1CpltCallback)    (struct __MMC_HandleTypeDef *hmmc);
   void (* Write_DMADblBuf0CpltCallback)   (struct __MMC_HandleTypeDef *hmmc);
@@ -251,7 +251,7 @@ typedef enum
   HAL_MMC_RX_CPLT_CB_ID                 = 0x01U,  /*!< MMC Rx Complete Callback ID                     */
   HAL_MMC_ERROR_CB_ID                   = 0x02U,  /*!< MMC Error Callback ID                           */
   HAL_MMC_ABORT_CB_ID                   = 0x03U,  /*!< MMC Abort Callback ID                           */
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   HAL_MMC_READ_DMA_DBL_BUF0_CPLT_CB_ID  = 0x04U,  /*!< MMC Rx DMA Double Buffer 0 Complete Callback ID */
   HAL_MMC_READ_DMA_DBL_BUF1_CPLT_CB_ID  = 0x05U,  /*!< MMC Rx DMA Double Buffer 1 Complete Callback ID */
   HAL_MMC_WRITE_DMA_DBL_BUF0_CPLT_CB_ID = 0x06U,  /*!< MMC Tx DMA Double Buffer 0 Complete Callback ID */
@@ -394,7 +394,7 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 #define __HAL_MMC_RESET_HANDLE_STATE(__HANDLE__)           ((__HANDLE__)->State = HAL_MMC_STATE_RESET)
 #endif
  
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
 /**
   * @brief  Enable the MMC device.
   * @retval None
@@ -422,8 +422,8 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
  
 /**
   * @brief  Enable the MMC device interrupt.
-  * @param  __HANDLE__: MMC Handle
-  * @param  __INTERRUPT__: specifies the SDMMC interrupt sources to be enabled.
+  * @param  __HANDLE__ MMC Handle
+  * @param  __INTERRUPT__ specifies the SDMMC interrupt sources to be enabled.
   *         This parameter can be one or a combination of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -461,8 +461,8 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 
 /**
   * @brief  Disable the MMC device interrupt.
-  * @param  __HANDLE__: MMC Handle
-  * @param  __INTERRUPT__: specifies the SDMMC interrupt sources to be disabled.
+  * @param  __HANDLE__ MMC Handle
+  * @param  __INTERRUPT__ specifies the SDMMC interrupt sources to be disabled.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -500,8 +500,8 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 
 /**
   * @brief  Check whether the specified MMC flag is set or not.
-  * @param  __HANDLE__: MMC Handle
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __HANDLE__ MMC Handle
+  * @param  __FLAG__ specifies the flag to check.
   *          This parameter can be one of the following values:
   *            @arg SDMMC_FLAG_CCRCFAIL:   Command response received (CRC check failed)
   *            @arg SDMMC_FLAG_DCRCFAIL:   Data block sent/received (CRC check failed)
@@ -543,8 +543,8 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 
 /**
   * @brief  Clear the MMC's pending flags.
-  * @param  __HANDLE__: MMC Handle
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __HANDLE__ MMC Handle
+  * @param  __FLAG__ specifies the flag to clear.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDMMC_FLAG_CCRCFAIL:   Command response received (CRC check failed)
   *            @arg SDMMC_FLAG_DCRCFAIL:   Data block sent/received (CRC check failed)
@@ -572,8 +572,8 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 
 /**
   * @brief  Check whether the specified MMC interrupt has occurred or not.
-  * @param  __HANDLE__: MMC Handle
-  * @param  __INTERRUPT__: specifies the SDMMC interrupt source to check.
+  * @param  __HANDLE__ MMC Handle
+  * @param  __INTERRUPT__ specifies the SDMMC interrupt source to check.
   *          This parameter can be one of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -611,8 +611,8 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 
 /**
   * @brief  Clear the MMC's interrupt pending bits.
-  * @param  __HANDLE__: MMC Handle
-  * @param  __INTERRUPT__: specifies the interrupt pending bit to clear.
+  * @param  __HANDLE__ MMC Handle
+  * @param  __INTERRUPT__ specifies the interrupt pending bit to clear.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -645,7 +645,7 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
   * @}
   */
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 /* Include MMC HAL Extension module */
 #include "stm32l4xx_hal_mmc_ex.h"
 #endif
@@ -703,6 +703,9 @@ HAL_StatusTypeDef HAL_MMC_UnRegisterCallback(MMC_HandleTypeDef *hmmc, HAL_MMC_Ca
   * @{
   */
 HAL_StatusTypeDef HAL_MMC_ConfigWideBusOperation(MMC_HandleTypeDef *hmmc, uint32_t WideMode);
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+HAL_StatusTypeDef HAL_MMC_ConfigSpeedBusOperation(MMC_HandleTypeDef *hmmc, uint32_t SpeedMode);
+#endif
 /**
   * @}
   */
@@ -732,6 +735,10 @@ uint32_t HAL_MMC_GetError(MMC_HandleTypeDef *hmmc);
   */
 HAL_StatusTypeDef HAL_MMC_Abort(MMC_HandleTypeDef *hmmc);
 HAL_StatusTypeDef HAL_MMC_Abort_IT(MMC_HandleTypeDef *hmmc);
+/**
+  * @}
+  */
+
 /**
   * @}
   */
@@ -808,11 +815,11 @@ HAL_StatusTypeDef HAL_MMC_Abort_IT(MMC_HandleTypeDef *hmmc);
   * @}
   */
 
+#endif /* SDMMC1 */
+
 /**
   * @}
   */
-
-#endif /* SDMMC1 */
 
 #ifdef __cplusplus
 }

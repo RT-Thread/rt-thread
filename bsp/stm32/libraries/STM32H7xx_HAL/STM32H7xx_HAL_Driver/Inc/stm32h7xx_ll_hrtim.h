@@ -608,11 +608,6 @@ static const uint8_t REG_SHIFT_TAB_FLTxE[] =
   * @{
   * @brief Constants defining timer high-resolution clock prescaler ratio.
   */
-#define LL_HRTIM_PRESCALERRATIO_MUL32      0x00000000U              /*!< fHRCK: fHRTIM x 32 = 4.608 GHz - Resolution: 217 ps - Min PWM frequency: 70.3 kHz (fHRTIM=144MHz)      */
-#define LL_HRTIM_PRESCALERRATIO_MUL16      ((uint32_t)0x00000001U)  /*!< fHRCK: fHRTIM x 16 = 2.304 GHz - Resolution: 434 ps - Min PWM frequency: 35.1 KHz (fHRTIM=144MHz)      */
-#define LL_HRTIM_PRESCALERRATIO_MUL8       ((uint32_t)0x00000002U)  /*!< fHRCK: fHRTIM x 8 = 1.152 GHz - Resolution: 868 ps - Min PWM frequency: 17.6 kHz (fHRTIM=144MHz)      */
-#define LL_HRTIM_PRESCALERRATIO_MUL4       ((uint32_t)0x00000003U)  /*!< fHRCK: fHRTIM x 4 = 576 MHz - Resolution: 1.73 ns - Min PWM frequency: 8.8 kHz (fHRTIM=144MHz)      */
-#define LL_HRTIM_PRESCALERRATIO_MUL2       ((uint32_t)0x00000004U)  /*!< fHRCK: fHRTIM x 2 = 288 MHz - Resolution: 3.47 ns - Min PWM frequency: 4.4 kHz (fHRTIM=144MHz)      */
 #define LL_HRTIM_PRESCALERRATIO_DIV1       ((uint32_t)0x00000005U)  /*!< fHRCK: fHRTIM = 144 MHz - Resolution: 6.95 ns - Min PWM frequency: 2.2 kHz (fHRTIM=144MHz)      */
 #define LL_HRTIM_PRESCALERRATIO_DIV2       ((uint32_t)0x00000006U)  /*!< fHRCK: fHRTIM / 2 = 72 MHz - Resolution: 13.88 ns- Min PWM frequency: 1.1 kHz (fHRTIM=144MHz)      */
 #define LL_HRTIM_PRESCALERRATIO_DIV4       ((uint32_t)0x00000007U)  /*!< fHRCK: fHRTIM / 4 = 36 MHz - Resolution: 27.7 ns- Min PWM frequency: 550Hz (fHRTIM=144MHz)      */
@@ -2568,11 +2563,6 @@ __STATIC_INLINE uint32_t LL_HRTIM_TIM_IsCounterEnabled(HRTIM_TypeDef *HRTIMx, ui
   *         @arg @ref LL_HRTIM_TIMER_D
   *         @arg @ref LL_HRTIM_TIMER_E
   * @param  Prescaler This parameter can be one of the following values:
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL32
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL16
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL8
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL4
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL2
   *         @arg @ref LL_HRTIM_PRESCALERRATIO_DIV1
   *         @arg @ref LL_HRTIM_PRESCALERRATIO_DIV2
   *         @arg @ref LL_HRTIM_PRESCALERRATIO_DIV4
@@ -2598,11 +2588,6 @@ __STATIC_INLINE void LL_HRTIM_TIM_SetPrescaler(HRTIM_TypeDef *HRTIMx, uint32_t T
   *         @arg @ref LL_HRTIM_TIMER_D
   *         @arg @ref LL_HRTIM_TIMER_E
   * @retval Prescaler Returned value can be one of the following values:
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL32
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL16
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL8
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL4
-  *         @arg @ref LL_HRTIM_PRESCALERRATIO_MUL2
   *         @arg @ref LL_HRTIM_PRESCALERRATIO_DIV1
   *         @arg @ref LL_HRTIM_PRESCALERRATIO_DIV2
   *         @arg @ref LL_HRTIM_PRESCALERRATIO_DIV4
