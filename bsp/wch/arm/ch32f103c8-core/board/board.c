@@ -134,7 +134,7 @@ rt_uint32_t ch32f1_spi_clock_get(SPI_TypeDef *spix)
         return RCC_Clocks.PCLK1_Frequency;
     }
 
-    return RCC_Clocks.PCLK2_Frequency; 
+    return RCC_Clocks.PCLK2_Frequency;
 }
 
 void ch32f1_i2c_clock_and_io_init(I2C_TypeDef *i2cx)

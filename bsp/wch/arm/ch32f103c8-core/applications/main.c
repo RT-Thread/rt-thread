@@ -14,5 +14,5 @@
 
 int main(void)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
