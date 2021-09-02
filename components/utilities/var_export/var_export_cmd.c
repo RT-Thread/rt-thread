@@ -67,7 +67,7 @@ static int ve_find_module(int argc, char **argv)
         exporter = ve_iter_next(&iter);
         if (exporter == RT_NULL)
         {
-            return RT_EOK;
+            return -RT_ERROR;
         }
         else
         {
@@ -104,7 +104,7 @@ static int ve_find_value(int argc, char **argv)
         exporter = ve_iter_next(&iter);
         if (exporter == RT_NULL)
         {
-            return RT_EOK;
+            return -RT_ERROR;
         }
         else
         {

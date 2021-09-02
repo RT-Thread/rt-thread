@@ -69,6 +69,9 @@ int var_export_init(void)
     ve_exporter_table = (const ve_exporter_t *)ptr_begin;
     ve_exporter_num = (ptr_end - ptr_begin) / (sizeof(struct ve_exporter) / sizeof(unsigned int)) + 1;
 
+    /* check if the ve_exporter_num is out of bounds */
+    RT_ASSERT(ve_exporter_num < (sizeof(ve_exporter_tab) / sizeof(ve_exporter_t)));
+
     for (index_i = 0; index_i < ve_exporter_num; index_i++)
     {
         ve_exporter_tab[index_i] = ve_exporter_table[index_i];
