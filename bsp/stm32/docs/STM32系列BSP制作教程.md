@@ -30,25 +30,25 @@ BSP 框架结构如下图所示：
 
 制作一个 BSP 的过程就是构建一个新系统的过程，因此想要制作出好用的 BSP，要对 RT-Thread 系统的构建过程有一定了解，需要的知识准备如下所示：
 
-- 掌握  stm32 系列 BSP 的使用方法
+- 掌握  STM32 系列 BSP 的使用方法
 
   了解 BSP 的使用方法，可以阅读 [BSP 说明文档](../README.md) 中使用教程表格内的文档。了解外设驱动的添加方法可以参考《外设驱动添加指南》。
 
-- 了解 scons 工程构建方法
+- 了解 Scons 工程构建方法
 
-  RT-Thread 使用 scons 作为系统的构建工具，因此了解 scons 的常用命令对制作新 BSP 是基本要求。
+  RT-Thread 使用 Scons 作为系统的构建工具，因此了解 Scons 的常用命令对制作新 BSP 是基本要求。
 
 - 了解设备驱动框架
 
   在 RT-Thread 系统中，应用程序通过设备驱动框架来操作硬件，因此了解设备驱动框架，对添加 BSP 驱动是很重要的。
 
-- 了解 kconfig 语法
+- 了解 Kconfig 语法
 
-  RT-Thread 系统通过 menuconfig 的方式进行配置，而 menuconfig 中的选项是由 kconfig 文件决定的，因此想要对 RT-Thread 系统进行配置，需要对 kconfig 语法有一定了解。
+  RT-Thread 系统通过 menuconfig 的方式进行配置，而 menuconfig 中的选项是由 Kconfig 文件决定的，因此想要对 RT-Thread 系统进行配置，需要对 kconfig 语法有一定了解。
 
 - 熟悉 CubeMX 工具的使用
 
-  在新的 stm32 系列 BSP 中利用了 CubeMX 工具对底层硬件进行配置，因此需要了解 CubeMX 工具的使用方法。
+  在新的 STM32 系列 BSP 中利用了 CubeMX 工具对底层硬件进行配置，因此需要了解 CubeMX 工具的使用方法。
 
 ## 3. BSP 制作方法
 
