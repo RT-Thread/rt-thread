@@ -23,15 +23,9 @@ extern "C" {
 
 /* directory api*/
 int mkdir(const char *path, mode_t mode);
-DIR *opendir(const char *name);
-struct dirent *readdir(DIR *d);
-long telldir(DIR *d);
-void seekdir(DIR *d, off_t offset);
-void rewinddir(DIR *d);
-int closedir(DIR *d);
 
 /* file api*/
-int open(const char *file, int flags, ...);
+
 int close(int d);
 
 #if defined(RT_USING_NEWLIB) && defined(_EXFUN)
@@ -48,7 +42,6 @@ int unlink(const char *pathname);
 int stat(const char *file, struct stat *buf);
 int fstat(int fildes, struct stat *buf);
 int fsync(int fildes);
-int fcntl(int fildes, int cmd, ...);
 int ioctl(int fildes, int cmd, ...);
 int ftruncate(int fd, off_t length);
 
