@@ -22,7 +22,7 @@
 #define STM32L4xx_HAL_WWDG_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -64,7 +64,11 @@ typedef struct
 /**
   * @brief  WWDG handle Structure definition
   */
+#if (USE_HAL_WWDG_REGISTER_CALLBACKS == 1)
 typedef struct __WWDG_HandleTypeDef
+#else
+typedef struct
+#endif
 {
   WWDG_TypeDef      *Instance;  /*!< Register base address */
 
@@ -85,12 +89,12 @@ typedef enum
 {
   HAL_WWDG_EWI_CB_ID          = 0x00u,    /*!< WWDG EWI callback ID */
   HAL_WWDG_MSPINIT_CB_ID      = 0x01u,    /*!< WWDG MspInit callback ID */
-}HAL_WWDG_CallbackIDTypeDef;
+} HAL_WWDG_CallbackIDTypeDef;
 
 /**
   * @brief  HAL WWDG Callback pointer definition
   */
-typedef void (*pWWDG_CallbackTypeDef)(WWDG_HandleTypeDef * hppp); /*!< pointer to a WWDG common callback functions */
+typedef void (*pWWDG_CallbackTypeDef)(WWDG_HandleTypeDef *hppp);  /*!< pointer to a WWDG common callback functions */
 
 #endif
 /**
@@ -180,7 +184,7 @@ typedef void (*pWWDG_CallbackTypeDef)(WWDG_HandleTypeDef * hppp); /*!< pointer t
 
 /**
   * @brief  Enable the WWDG early wakeup interrupt.
-  * @param  __HANDLE__: WWDG handle
+  * @param  __HANDLE__ WWDG handle
   * @param  __INTERRUPT__  specifies the interrupt to enable.
   *         This parameter can be one of the following values:
   *            @arg WWDG_IT_EWI: Early wakeup interrupt
@@ -235,7 +239,8 @@ typedef void (*pWWDG_CallbackTypeDef)(WWDG_HandleTypeDef * hppp); /*!< pointer t
   *            @arg WWDG_IT_EWI: Early Wakeup Interrupt
   * @retval state of __INTERRUPT__ (TRUE or FALSE).
   */
-#define __HAL_WWDG_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CFR & (__INTERRUPT__)) == (__INTERRUPT__))
+#define __HAL_WWDG_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CFR\
+                                                              & (__INTERRUPT__)) == (__INTERRUPT__))
 
 /**
   * @}

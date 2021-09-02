@@ -80,7 +80,7 @@
   */
 
 /************************* Miscellaneous Configuration ************************/
-/*!< Uncomment the following line if you need to use initialized data in D2 domain SRAM  */
+/*!< Uncomment the following line if you need to use initialized data in D2 domain SRAM (AHB SRAM) */
 /* #define DATA_IN_D2_SRAM */
 
 /*!< Uncomment the following line if you need to relocate your vector Table in
@@ -160,6 +160,7 @@ void SystemInit (void)
   /* Reset HSEON, CSSON , CSION,RC48ON, CSIKERON PLL1ON, PLL2ON and PLL3ON bits */
   RCC->CR &= 0xEAF6ED7FU;
 
+#if defined(D3_SRAM_BASE)
   /* Reset D1CFGR register */
   RCC->D1CFGR = 0x00000000;
 
@@ -168,7 +169,16 @@ void SystemInit (void)
 
   /* Reset D3CFGR register */
   RCC->D3CFGR = 0x00000000;
+#else
+  /* Reset CDCFGR1 register */
+  RCC->CDCFGR1 = 0x00000000;
 
+  /* Reset CDCFGR2 register */
+  RCC->CDCFGR2 = 0x00000000;
+
+  /* Reset SRDCFGR register */
+  RCC->SRDCFGR = 0x00000000;
+#endif
   /* Reset PLLCKSELR register */
   RCC->PLLCKSELR = 0x00000000;
 
@@ -197,23 +207,32 @@ void SystemInit (void)
   /* Disable all interrupts */
   RCC->CIER = 0x00000000;
 
+#if (STM32H7_DEV_ID == 0x450UL)
+  /* single core line */
   if((DBGMCU->IDCODE & 0xFFFF0000U) < 0x20000000U)
   {
     /* if stm32h7 revY*/
     /* Change  the switch matrix read issuing capability to 1 for the AXI SRAM target (Target 7) */
     *((__IO uint32_t*)0x51008108) = 0x000000001U;
   }
+#endif
 
 #if defined (DATA_IN_D2_SRAM)
-  /* in case of initialized data in D2 SRAM , enable the D2 SRAM clock */
+  /* in case of initialized data in D2 SRAM (AHB SRAM), enable the D2 SRAM clock (AHB SRAM clock) */
+#if defined(RCC_AHB2ENR_D2SRAM3EN)
   RCC->AHB2ENR |= (RCC_AHB2ENR_D2SRAM1EN | RCC_AHB2ENR_D2SRAM2EN | RCC_AHB2ENR_D2SRAM3EN);
+#elif defined(RCC_AHB2ENR_D2SRAM2EN)
+  RCC->AHB2ENR |= (RCC_AHB2ENR_D2SRAM1EN | RCC_AHB2ENR_D2SRAM2EN);
+#else
+  RCC->AHB2ENR |= (RCC_AHB2ENR_AHBSRAM1EN | RCC_AHB2ENR_AHBSRAM2EN);
+#endif /* RCC_AHB2ENR_D2SRAM3EN */
   tmpreg = RCC->AHB2ENR;
   (void) tmpreg;
 #endif /* DATA_IN_D2_SRAM */
 
   /* Configure the Vector Table location add offset address ------------------*/
 #ifdef VECT_TAB_SRAM
-  SCB->VTOR = D1_AXISRAM_BASE  | VECT_TAB_OFFSET;       /* Vector Table Relocation in Internal SRAM */
+  SCB->VTOR = D1_AXISRAM_BASE  | VECT_TAB_OFFSET;       /* Vector Table Relocation in Internal AXI-RAM */
 #else
   SCB->VTOR = FLASH_BANK1_BASE | VECT_TAB_OFFSET;       /* Vector Table Relocation in Internal FLASH */
 #endif
@@ -328,6 +347,7 @@ void SystemCoreClockUpdate (void)
   }
 
   /* Compute SystemClock frequency --------------------------------------------------*/
+#if defined (RCC_D1CFGR_D1CPRE)
   tmp = D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_D1CPRE)>> RCC_D1CFGR_D1CPRE_Pos];
 
   /* SystemCoreClock frequency : CM7 CPU frequency  */
@@ -335,6 +355,13 @@ void SystemCoreClockUpdate (void)
 
   /* SystemD2Clock frequency : AXI and AHBs Clock frequency  */
   SystemD2Clock = (SystemCoreClock >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
+#else
+  tmp = D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_CDCPRE)>> RCC_CDCFGR1_CDCPRE_Pos];
+
+  SystemCoreClock >>= tmp;
+  /* SystemD2Clock frequency : AXI and AHBs Clock frequency  */
+  SystemD2Clock = (SystemCoreClock >> ((D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_HPRE)>> RCC_CDCFGR1_HPRE_Pos]) & 0x1FU));
+#endif
 }
 
 /**

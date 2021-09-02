@@ -90,9 +90,9 @@ extern FLASH_ProcessTypeDef pFlash;
 /**
   * @brief   Enable the Power down in Run Mode
   * @note    This function should be called and executed from SRAM memory
-  * @retval None
+  * @retval  HAL status
   */
-__RAM_FUNC HAL_FLASHEx_EnableRunPowerDown(void)
+__RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_EnableRunPowerDown(void)
 {
   /* Enable the Power Down in Run mode*/
   __HAL_FLASH_POWER_DOWN_ENABLE();
@@ -104,9 +104,9 @@ __RAM_FUNC HAL_FLASHEx_EnableRunPowerDown(void)
 /**
   * @brief   Disable the Power down in Run Mode
   * @note    This function should be called and executed from SRAM memory
-  * @retval None
+  * @retval  HAL status
   */
-__RAM_FUNC HAL_FLASHEx_DisableRunPowerDown(void)
+__RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_DisableRunPowerDown(void)
 {
   /* Disable the Power Down in Run mode*/
   __HAL_FLASH_POWER_DOWN_DISABLE();
@@ -114,7 +114,7 @@ __RAM_FUNC HAL_FLASHEx_DisableRunPowerDown(void)
   return HAL_OK;
 }
 
-#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 /**
   * @brief  Program the FLASH DBANK User Option Byte.
   *
@@ -123,14 +123,14 @@ __RAM_FUNC HAL_FLASHEx_DisableRunPowerDown(void)
   * @note   To modify the DBANK option byte, no PCROP region should be defined.
   *         To deactivate PCROP, user should perform RDP changing
   *
-  * @param  DBankConfig: The FLASH DBANK User Option Byte value.
+  * @param  DBankConfig The FLASH DBANK User Option Byte value.
   *          This parameter  can be one of the following values:
   *            @arg OB_DBANK_128_BITS: Single-bank with 128-bits data
   *            @arg OB_DBANK_64_BITS: Dual-bank with 64-bits data
   *
   * @retval HAL status
   */
-__RAM_FUNC HAL_FLASHEx_OB_DBankConfig(uint32_t DBankConfig)
+__RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_OB_DBankConfig(uint32_t DBankConfig)
 {
   register uint32_t count, reg;
   HAL_StatusTypeDef status = HAL_ERROR;

@@ -1586,10 +1586,11 @@ HAL_StatusTypeDef HAL_RTC_GetAlarm(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sA
   */
 void HAL_RTC_AlarmIRQHandler(RTC_HandleTypeDef* hrtc)
 {
-  if(__HAL_RTC_ALARM_GET_IT(hrtc, RTC_IT_ALRA))
+  /* Get the AlarmA interrupt source enable status */
+  if(__HAL_RTC_ALARM_GET_IT_SOURCE(hrtc, RTC_IT_ALRA) != (uint32_t)RESET)
   {
-    /* Get the status of the Interrupt */
-    if((uint32_t)(hrtc->Instance->CR & RTC_IT_ALRA) != (uint32_t)RESET)
+    /* Get the pending status of the AlarmA Interrupt */
+    if(__HAL_RTC_ALARM_GET_FLAG(hrtc, RTC_FLAG_ALRAF) != (uint32_t)RESET)
     {
       /* AlarmA callback */
     #if (USE_HAL_RTC_REGISTER_CALLBACKS == 1)
@@ -1598,15 +1599,16 @@ void HAL_RTC_AlarmIRQHandler(RTC_HandleTypeDef* hrtc)
       HAL_RTC_AlarmAEventCallback(hrtc);
     #endif /* USE_HAL_RTC_REGISTER_CALLBACKS */
 
-      /* Clear the Alarm interrupt pending bit */
+      /* Clear the AlarmA interrupt pending bit */
       __HAL_RTC_ALARM_CLEAR_FLAG(hrtc,RTC_FLAG_ALRAF);
     }
   }
 
-  if(__HAL_RTC_ALARM_GET_IT(hrtc, RTC_IT_ALRB))
+  /* Get the AlarmB interrupt source enable status */
+  if(__HAL_RTC_ALARM_GET_IT_SOURCE(hrtc, RTC_IT_ALRB) != (uint32_t)RESET)
   {
-    /* Get the status of the Interrupt */
-    if((uint32_t)(hrtc->Instance->CR & RTC_IT_ALRB) != (uint32_t)RESET)
+    /* Get the pending status of the AlarmB Interrupt */
+    if(__HAL_RTC_ALARM_GET_FLAG(hrtc, RTC_FLAG_ALRBF) != (uint32_t)RESET)
     {
       /* AlarmB callback */
     #if (USE_HAL_RTC_REGISTER_CALLBACKS == 1)
@@ -1615,7 +1617,7 @@ void HAL_RTC_AlarmIRQHandler(RTC_HandleTypeDef* hrtc)
       HAL_RTCEx_AlarmBEventCallback(hrtc);
     #endif /* USE_HAL_RTC_REGISTER_CALLBACKS */
 
-      /* Clear the Alarm interrupt pending bit */
+      /* Clear the AlarmB interrupt pending bit */
       __HAL_RTC_ALARM_CLEAR_FLAG(hrtc,RTC_FLAG_ALRBF);
     }
   }

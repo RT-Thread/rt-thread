@@ -194,27 +194,6 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 
     if (iocurrent != 0x00u)
     {
-      /*--------------------- GPIO Mode Configuration ------------------------*/
-      /* In case of Alternate function mode selection */
-      if((GPIO_Init->Mode == GPIO_MODE_AF_PP) || (GPIO_Init->Mode == GPIO_MODE_AF_OD))
-      {
-        /* Check the Alternate function parameters */
-        assert_param(IS_GPIO_AF_INSTANCE(GPIOx));
-        assert_param(IS_GPIO_AF(GPIO_Init->Alternate));
-
-        /* Configure Alternate function mapped with the current IO */
-        temp = GPIOx->AFR[position >> 3u];
-        temp &= ~(0xFu << ((position & 0x07u) * 4u));
-        temp |= ((GPIO_Init->Alternate) << ((position & 0x07u) * 4u));
-        GPIOx->AFR[position >> 3u] = temp;
-      }
-
-      /* Configure IO Direction mode (Input, Output, Alternate or Analog) */
-      temp = GPIOx->MODER;
-      temp &= ~(GPIO_MODER_MODE0 << (position * 2u));
-      temp |= ((GPIO_Init->Mode & GPIO_MODE) << (position * 2u));
-      GPIOx->MODER = temp;
-
       /* In case of Output or Alternate function mode selection */
       if((GPIO_Init->Mode == GPIO_MODE_OUTPUT_PP) || (GPIO_Init->Mode == GPIO_MODE_AF_PP) ||
          (GPIO_Init->Mode == GPIO_MODE_OUTPUT_OD) || (GPIO_Init->Mode == GPIO_MODE_AF_OD))
@@ -239,6 +218,27 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
       temp &= ~(GPIO_PUPDR_PUPD0 << (position * 2u));
       temp |= ((GPIO_Init->Pull) << (position * 2u));
       GPIOx->PUPDR = temp;
+
+      /*--------------------- GPIO Mode Configuration ------------------------*/
+      /* In case of Alternate function mode selection */
+      if((GPIO_Init->Mode == GPIO_MODE_AF_PP) || (GPIO_Init->Mode == GPIO_MODE_AF_OD))
+      {
+        /* Check the Alternate function parameters */
+        assert_param(IS_GPIO_AF_INSTANCE(GPIOx));
+        assert_param(IS_GPIO_AF(GPIO_Init->Alternate));
+
+        /* Configure Alternate function mapped with the current IO */
+        temp = GPIOx->AFR[position >> 3u];
+        temp &= ~(0xFu << ((position & 0x07u) * 4u));
+        temp |= ((GPIO_Init->Alternate) << ((position & 0x07u) * 4u));
+        GPIOx->AFR[position >> 3u] = temp;
+      }
+
+      /* Configure IO Direction mode (Input, Output, Alternate or Analog) */
+      temp = GPIOx->MODER;
+      temp &= ~(GPIO_MODER_MODE0 << (position * 2u));
+      temp |= ((GPIO_Init->Mode & GPIO_MODE) << (position * 2u));
+      GPIOx->MODER = temp;
 
       /*--------------------- EXTI Mode Configuration ------------------------*/
       /* Configure the External Interrupt or event for the current IO */
@@ -327,7 +327,7 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
         /* Clear EXTI line configuration */
         EXTI->IMR &= ~((uint32_t)iocurrent);
         EXTI->EMR &= ~((uint32_t)iocurrent);
-        
+
         /* Clear Rising Falling edge configuration */
         EXTI->RTSR &= ~((uint32_t)iocurrent);
         EXTI->FTSR &= ~((uint32_t)iocurrent);
@@ -342,16 +342,16 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
       GPIOx->MODER &= ~(GPIO_MODER_MODER0 << (position * 2u));
 
       /* Configure the default Alternate Function in current IO */
-      GPIOx->AFR[position >> 3u] &= ~(0xFu << ((uint32_t)(position & 0x07u) * 4u)) ;
-
-      /* Configure the default value for IO Speed */
-      GPIOx->OSPEEDR &= ~(GPIO_OSPEEDER_OSPEEDR0 << (position * 2u));
-
-      /* Configure the default value IO Output Type */
-      GPIOx->OTYPER  &= ~(GPIO_OTYPER_OT_0 << position) ;
+      GPIOx->AFR[position >> 3u] &= ~(0xFu << ((uint32_t)(position & 0x07u) * 4u));
 
       /* Deactivate the Pull-up and Pull-down resistor for the current IO */
       GPIOx->PUPDR &= ~(GPIO_PUPDR_PUPDR0 << (position * 2U));
+
+      /* Configure the default value IO Output Type */
+      GPIOx->OTYPER  &= ~(GPIO_OTYPER_OT_0 << position);
+
+      /* Configure the default value for IO Speed */
+      GPIOx->OSPEEDR &= ~(GPIO_OSPEEDER_OSPEEDR0 << (position * 2u));
     }
 
     position++;

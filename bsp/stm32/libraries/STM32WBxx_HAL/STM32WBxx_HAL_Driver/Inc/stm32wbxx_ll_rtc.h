@@ -334,14 +334,16 @@ typedef struct
   * @}
   */
 
+#if defined(RTC_OR_ALARMOUTTYPE)
 /** @defgroup RTC_LL_EC_ALARM_OUTPUTTYPE  ALARM OUTPUT TYPE
   * @{
   */
-#define LL_RTC_ALARM_OUTPUTTYPE_OPENDRAIN  0x00000000U                          /*!< RTC_ALARM, when mapped on PC13, is open-drain output */
+#define LL_RTC_ALARM_OUTPUTTYPE_OPENDRAIN  0x00000000U         /*!< RTC_ALARM, when mapped on PC13, is open-drain output */
 #define LL_RTC_ALARM_OUTPUTTYPE_PUSHPULL   RTC_OR_ALARMOUTTYPE /*!< RTC_ALARM, when mapped on PC13, is push-pull output */
 /**
   * @}
   */
+#endif
 
 /** @defgroup RTC_LL_EC_OUTPUTPOLARITY_PIN  OUTPUT POLARITY PIN
   * @{
@@ -830,6 +832,7 @@ __STATIC_INLINE uint32_t LL_RTC_GetAlarmOutEvent(RTC_TypeDef *RTCx)
   return (uint32_t)(READ_BIT(RTCx->CR, RTC_CR_OSEL));
 }
 
+#if defined(RTC_OR_ALARMOUTTYPE)
 /**
   * @brief  Set RTC_ALARM output type (ALARM in push-pull or open-drain output)
   * @note   Used only when RTC_ALARM is mapped on PC13
@@ -858,6 +861,7 @@ __STATIC_INLINE uint32_t LL_RTC_GetAlarmOutputType(RTC_TypeDef *RTCx)
 {
   return (uint32_t)(READ_BIT(RTCx->OR, RTC_OR_ALARMOUTTYPE));
 }
+#endif
 
 /**
   * @brief  Enable initialization mode

@@ -274,7 +274,7 @@
   *         parameters in the OPAMP_InitTypeDef and initialize the associated handle.
   * @note   If the selected opamp is locked, initialization can't be performed.
   *         To unlock the configuration, perform a system reset.
-  * @param  hopamp: OPAMP handle
+  * @param  hopamp OPAMP handle
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_OPAMP_Init(OPAMP_HandleTypeDef *hopamp)
@@ -438,7 +438,7 @@ HAL_StatusTypeDef HAL_OPAMP_Init(OPAMP_HandleTypeDef *hopamp)
   * @brief  DeInitialize the OPAMP peripheral.
   * @note   Deinitialization can be performed if the OPAMP configuration is locked.
   *         (the lock is SW in L4)
-  * @param  hopamp: OPAMP handle
+  * @param  hopamp OPAMP handle
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_OPAMP_DeInit(OPAMP_HandleTypeDef *hopamp)
@@ -488,7 +488,7 @@ HAL_StatusTypeDef HAL_OPAMP_DeInit(OPAMP_HandleTypeDef *hopamp)
 
 /**
   * @brief  Initialize the OPAMP MSP.
-  * @param  hopamp: OPAMP handle
+  * @param  hopamp OPAMP handle
   * @retval None
   */
 __weak void HAL_OPAMP_MspInit(OPAMP_HandleTypeDef *hopamp)
@@ -503,7 +503,7 @@ __weak void HAL_OPAMP_MspInit(OPAMP_HandleTypeDef *hopamp)
 
 /**
   * @brief  DeInitialize OPAMP MSP.
-  * @param  hopamp: OPAMP handle
+  * @param  hopamp OPAMP handle
   * @retval None
   */
 __weak void HAL_OPAMP_MspDeInit(OPAMP_HandleTypeDef *hopamp)
@@ -538,7 +538,7 @@ __weak void HAL_OPAMP_MspDeInit(OPAMP_HandleTypeDef *hopamp)
 
 /**
   * @brief  Start the OPAMP.
-  * @param  hopamp: OPAMP handle
+  * @param  hopamp OPAMP handle
   * @retval HAL status
   */
 
@@ -581,7 +581,7 @@ HAL_StatusTypeDef HAL_OPAMP_Start(OPAMP_HandleTypeDef *hopamp)
 
 /**
   * @brief  Stop the OPAMP.
-  * @param  hopamp: OPAMP handle
+  * @param  hopamp OPAMP handle
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_OPAMP_Stop(OPAMP_HandleTypeDef *hopamp)
@@ -864,7 +864,7 @@ HAL_StatusTypeDef HAL_OPAMP_SelfCalibrate(OPAMP_HandleTypeDef *hopamp)
   * @note   On STM32L4, HAL OPAMP lock is software lock only (in
   *         contrast of hardware lock available on some other STM32
   *         devices).
-  * @param  hopamp: OPAMP handle
+  * @param  hopamp OPAMP handle
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_OPAMP_Lock(OPAMP_HandleTypeDef *hopamp)

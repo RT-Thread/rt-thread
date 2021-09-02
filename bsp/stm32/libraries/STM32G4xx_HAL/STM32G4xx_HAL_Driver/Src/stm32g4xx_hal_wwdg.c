@@ -32,10 +32,10 @@
         (++) min time (mS) = 1000 * (Counter - Window) / WWDG clock
         (++) max time (mS) = 1000 * (Counter - 0x40) / WWDG clock
     (+) Typical values:
-        (++) Counter min (T[5;0] = 0x00) @56MHz (PCLK1) with zero prescaler:
-             max timeout before reset: ~73.14µs
-        (++) Counter max (T[5;0] = 0x3F) @56MHz (PCLK1) with prescaler dividing by 128:
-             max timeout before reset: ~599.18ms
+        (++) Counter min (T[5;0] = 0x00) @170MHz (PCLK1) with zero prescaler:
+             max timeout before reset: approximately 24.09µs
+        (++) Counter max (T[5;0] = 0x3F) @170MHz (PCLK1) with prescaler dividing by 128:
+             max timeout before reset: approximately 197.38ms
 
   ==============================================================================
                      ##### How to use this driver #####

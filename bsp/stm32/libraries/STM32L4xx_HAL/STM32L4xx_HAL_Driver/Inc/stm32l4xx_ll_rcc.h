@@ -5363,7 +5363,39 @@ __STATIC_INLINE void LL_RCC_PLLSAI2_DisableDomain_ADC(void)
   */
 #endif /* RCC_PLLSAI2_SUPPORT */
 
+#if defined(OCTOSPI1)
+/** @defgroup RCC_LL_EF_OCTOSPI OCTOSPI
+  * @{
+  */
 
+/**
+  * @brief  Configure OCTOSPI1 DQS delay
+  * @rmtoll DLYCFGR           OCTOSPI1_DLY     LL_RCC_OCTOSPI1_DelayConfig
+  * @param  Delay OCTOSPI1 DQS delay between 0 and 15
+  * @retval None
+  */
+__STATIC_INLINE void LL_RCC_OCTOSPI1_DelayConfig(uint32_t Delay)
+{
+  MODIFY_REG(RCC->DLYCFGR, RCC_DLYCFGR_OCTOSPI1_DLY, Delay);
+}
+
+#if defined(OCTOSPI2)
+/**
+  * @brief  Configure OCTOSPI2 DQS delay
+  * @rmtoll DLYCFGR           OCTOSPI2_DLY     LL_RCC_OCTOSPI2_DelayConfig
+  * @param  Delay OCTOSPI2 DQS delay between 0 and 15
+  * @retval None
+  */
+__STATIC_INLINE void LL_RCC_OCTOSPI2_DelayConfig(uint32_t Delay)
+{
+  MODIFY_REG(RCC->DLYCFGR, RCC_DLYCFGR_OCTOSPI2_DLY, (Delay << RCC_DLYCFGR_OCTOSPI2_DLY_Pos));
+}
+#endif /* OCTOSPI2 */
+
+/**
+  * @}
+  */
+#endif /* OCTOSPI1 */
 
 /** @defgroup RCC_LL_EF_FLAG_Management FLAG Management
   * @{

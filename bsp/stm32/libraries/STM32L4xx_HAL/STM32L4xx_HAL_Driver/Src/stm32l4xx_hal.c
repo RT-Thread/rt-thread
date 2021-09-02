@@ -52,7 +52,7 @@
  * @brief STM32L4xx HAL Driver version number
    */
 #define STM32L4XX_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define STM32L4XX_HAL_VERSION_SUB1   (0x0AU) /*!< [23:16] sub1 version */
+#define STM32L4XX_HAL_VERSION_SUB1   (0x0BU) /*!< [23:16] sub1 version */
 #define STM32L4XX_HAL_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
 #define STM32L4XX_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define STM32L4XX_HAL_VERSION        ((STM32L4XX_HAL_VERSION_MAIN  << 24U)\

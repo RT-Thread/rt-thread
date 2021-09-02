@@ -47,7 +47,7 @@
 
     [..] Default timeout value (necessary for IWDG_SR status register update):
          Constant LSI_VALUE is defined based on the nominal LSI clock frequency.
-         This frequency being subject to variations as mentioned above, the 
+         This frequency being subject to variations as mentioned above, the
          default timeout value (defined through constant HAL_IWDG_DEFAULT_TIMEOUT
          below) may become too short or too long.
          In such cases, this default timeout value can be tuned by redefining

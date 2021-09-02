@@ -218,7 +218,7 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     return ret;
 }
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 /**
  * get date and time or set (local timezone) [year month day hour min sec]
@@ -283,6 +283,6 @@ static void date(uint8_t argc, char **argv)
     }
 }
 MSH_CMD_EXPORT(date, get date and time or set (local timezone) [year month day hour min sec])
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */
 
 #endif /* RT_USING_RTC */

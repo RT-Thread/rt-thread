@@ -93,7 +93,7 @@
     [..]
       (+) A specific option field manage the different steps of a sequential transfer
       (+) Option field values are defined through @ref I2C_XFEROPTIONS and are listed below:
-      (++) I2C_FIRST_AND_LAST_FRAME: No sequential usage, functionnal is same as associated interfaces in no sequential mode
+      (++) I2C_FIRST_AND_LAST_FRAME: No sequential usage, functional is same as associated interfaces in no sequential mode
       (++) I2C_FIRST_FRAME: Sequential usage, this option allow to manage a sequence with start condition, address
                             and data to transfer without a final stop condition
       (++) I2C_FIRST_AND_NEXT_FRAME: Sequential usage (Master only), this option allow to manage a sequence with start condition, address
@@ -112,7 +112,7 @@
                               or HAL_I2C_Master_Seq_Receive_IT(option I2C_FIRST_AND_NEXT_FRAME then I2C_NEXT_FRAME)
                               or HAL_I2C_Master_Seq_Transmit_DMA(option I2C_FIRST_AND_NEXT_FRAME then I2C_NEXT_FRAME)
                               or HAL_I2C_Master_Seq_Receive_DMA(option I2C_FIRST_AND_NEXT_FRAME then I2C_NEXT_FRAME).
-                            Then usage of this option I2C_LAST_FRAME_NO_STOP at the last Transmit or Receive sequence permit to call the oposite interface Receive or Transmit
+                            Then usage of this option I2C_LAST_FRAME_NO_STOP at the last Transmit or Receive sequence permit to call the opposite interface Receive or Transmit
                               without stopping the communication and so generate a restart condition.
       (++) I2C_OTHER_FRAME: Sequential usage (Master only), this option allow to manage a restart condition after each call of the same master sequential
                             interface.
@@ -122,7 +122,7 @@
                               or HAL_I2C_Master_Seq_Receive_DMA(option I2C_FIRST_FRAME then I2C_OTHER_FRAME).
                             Then usage of this option I2C_OTHER_AND_LAST_FRAME at the last frame to help automatic generation of STOP condition.
 
-      (+) Differents sequential I2C interfaces are listed below:
+      (+) Different sequential I2C interfaces are listed below:
       (++) Sequential transmit in master I2C mode an amount of data in non-blocking mode using @ref HAL_I2C_Master_Seq_Transmit_IT()
             or using @ref HAL_I2C_Master_Seq_Transmit_DMA()
       (+++) At transmission end of current frame transfer, @ref HAL_I2C_MasterTxCpltCallback() is executed and user can
@@ -4835,7 +4835,7 @@ static HAL_StatusTypeDef I2C_Slave_ISR_IT(struct __I2C_HandleTypeDef *hi2c, uint
   {
     /* Write data to TXDR only if XferCount not reach "0" */
     /* A TXIS flag can be set, during STOP treatment      */
-    /* Check if all Datas have already been sent */
+    /* Check if all data have already been sent */
     /* If it is the case, this last write in TXDR is not sent, correspond to a dummy TXIS event */
     if (hi2c->XferCount > 0U)
     {
@@ -5719,7 +5719,7 @@ static void I2C_ITSlaveCplt(I2C_HandleTypeDef *hi2c, uint32_t ITFlags)
   }
   else if (hi2c->XferOptions != I2C_NO_OPTION_FRAME)
   {
-    /* Call the Sequential Complete callback, to inform upper layer of the end of Tranfer */
+    /* Call the Sequential Complete callback, to inform upper layer of the end of Transfer */
     I2C_ITSlaveSeqCplt(hi2c);
 
     hi2c->XferOptions = I2C_NO_OPTION_FRAME;
@@ -5856,7 +5856,7 @@ static void I2C_ITError(I2C_HandleTypeDef *hi2c, uint32_t ErrorCode)
     /* Disable all interrupts */
     I2C_Disable_IRQ(hi2c, I2C_XFER_LISTEN_IT | I2C_XFER_RX_IT | I2C_XFER_TX_IT);
 
-    /* If state is an abort treatment on goind, don't change state */
+    /* If state is an abort treatment on going, don't change state */
     /* This change will be do later */
     if (hi2c->State != HAL_I2C_STATE_ABORT)
     {
@@ -6570,7 +6570,7 @@ static void I2C_Disable_IRQ(I2C_HandleTypeDef *hi2c, uint16_t InterruptRequest)
 }
 
 /**
-  * @brief  Convert I2Cx OTHER_xxx XferOptions to functionnal XferOptions.
+  * @brief  Convert I2Cx OTHER_xxx XferOptions to functional XferOptions.
   * @param  hi2c I2C handle.
   * @retval None
   */
