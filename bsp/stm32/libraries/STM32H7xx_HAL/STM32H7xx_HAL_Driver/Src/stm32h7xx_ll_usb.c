@@ -289,6 +289,8 @@ HAL_StatusTypeDef USB_DevInit(USB_OTG_GlobalTypeDef *USBx, USB_OTG_CfgTypeDef cf
   /* VBUS Sensing setup */
   if (cfg.vbus_sensing_enable == 0U)
   {
+    USBx_DEVICE->DCTL |= USB_OTG_DCTL_SDIS;
+
     /* Deactivate VBUS Sensing B */
     USBx->GCCFG &= ~USB_OTG_GCCFG_VBDEN;
 
@@ -388,17 +390,6 @@ HAL_StatusTypeDef USB_DevInit(USB_OTG_GlobalTypeDef *USBx, USB_OTG_CfgTypeDef cf
   }
 
   USBx_DEVICE->DIEPMSK &= ~(USB_OTG_DIEPMSK_TXFURM);
-
-  if (cfg.dma_enable == 1U)
-  {
-    /*Set threshold parameters */
-    USBx_DEVICE->DTHRCTL = USB_OTG_DTHRCTL_TXTHRLEN_6 |
-                           USB_OTG_DTHRCTL_RXTHRLEN_6;
-
-    USBx_DEVICE->DTHRCTL |= USB_OTG_DTHRCTL_RXTHREN |
-                            USB_OTG_DTHRCTL_ISOTHREN |
-                            USB_OTG_DTHRCTL_NONISOTHREN;
-  }
 
   /* Disable all interrupts. */
   USBx->GINTMSK = 0U;
@@ -1227,13 +1218,9 @@ HAL_StatusTypeDef  USB_ActivateSetup(USB_OTG_GlobalTypeDef *USBx)
 {
   uint32_t USBx_BASE = (uint32_t)USBx;
 
-  /* Set the MPS of the IN EP based on the enumeration speed */
+  /* Set the MPS of the IN EP0 to 64 bytes */
   USBx_INEP(0U)->DIEPCTL &= ~USB_OTG_DIEPCTL_MPSIZ;
 
-  if ((USBx_DEVICE->DSTS & USB_OTG_DSTS_ENUMSPD) == DSTS_ENUMSPD_LS_PHY_6MHZ)
-  {
-    USBx_INEP(0U)->DIEPCTL |= 3U;
-  }
   USBx_DEVICE->DCTL |= USB_OTG_DCTL_CGINAK;
 
   return HAL_OK;

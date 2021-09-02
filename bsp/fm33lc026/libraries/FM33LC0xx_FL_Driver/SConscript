@@ -1,0 +1,49 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+CMSIS/system_fm33lc0xx.c
+Src/fm33lc0xx_fl_dma.c
+Src/fm33lc0xx_fl_crc.c
+Src/fm33lc0xx_fl_rcc.c
+Src/fm33lc0xx_fl_gpio.c
+""")
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['Src/fm33lc0xx_fl_uart.c']
+    src += ['Src/fm33lc0xx_fl_lpuart.c']
+
+if GetDepend(['RT_USING_I2C']):
+    src += ['Src/fm33lc0xx_fl_i2c.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['Src/fm33lc0xx_fl_spi.c']
+
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+    src += ['Src/fm33lc0xx_fl_atim.c']
+    src += ['Src/fm33lc0xx_fl_bstim32.c']
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['Src/fm33lc0xx_fl_adc.c']
+    
+if GetDepend(['RT_USING_RTC']):
+    src += ['Src/fm33lc0xx_fl_rtc.c']
+    
+if GetDepend(['RT_USING_WDT']):
+    src += ['Src/fm33lc0xx_fl_wwdt.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+    src += ['Src/fm33lc0xx_fl_flash.c']
+
+path = [cwd + '/CMSIS/Include', 
+    cwd + '/Inc']
+
+CPPDEFINES = ['USE_HAL_DRIVER']
+group = DefineGroup('FM33LC0xx_FL_Driver', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

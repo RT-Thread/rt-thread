@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2019 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -3180,15 +3180,14 @@ __STATIC_INLINE uint32_t LL_RTC_WAKEUP_GetAutoReload(RTC_TypeDef *RTCx)
   */
 __STATIC_INLINE void LL_RTC_BKP_SetRegister(RTC_TypeDef *RTCx, uint32_t BackupRegister, uint32_t Data)
 {
-  register uint32_t tmp = 0U;
+  register __IO uint32_t *tmp;
 
   UNUSED(RTCx);
 
-  tmp = (uint32_t)(&(TAMP->BKP0R));
-  tmp += (BackupRegister * 4U);
+  tmp = &(TAMP->BKP0R) + BackupRegister;
 
   /* Write the specified register */
-  *(__IO uint32_t *)tmp = (uint32_t)Data;
+  *tmp = Data;
 }
 
 /**
@@ -3205,15 +3204,14 @@ __STATIC_INLINE void LL_RTC_BKP_SetRegister(RTC_TypeDef *RTCx, uint32_t BackupRe
   */
 __STATIC_INLINE uint32_t LL_RTC_BKP_GetRegister(RTC_TypeDef *RTCx, uint32_t BackupRegister)
 {
-  register uint32_t tmp = 0U;
+  const register __IO uint32_t *tmp;
 
   UNUSED(RTCx);
 
-  tmp = (uint32_t)(&(TAMP->BKP0R));
-  tmp += (BackupRegister * 4U);
+  tmp = &(TAMP->BKP0R) + BackupRegister;
 
   /* Read the specified register */
-  return (*(__IO uint32_t *)tmp);
+  return *tmp;
 }
 
 /**

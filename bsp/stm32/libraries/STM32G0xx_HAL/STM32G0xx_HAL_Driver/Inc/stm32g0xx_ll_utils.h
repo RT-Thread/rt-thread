@@ -152,12 +152,33 @@ typedef struct
 /** @defgroup UTILS_EC_PACKAGETYPE PACKAGE TYPE
   * @{
   */
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
+#define LL_UTILS_PACKAGETYPE_QFP100         0x00000000U /*!< LQFP100  package type                               */
+#define LL_UTILS_PACKAGETYPE_QFN32_GP       0x00000001U /*!< LQFP32/UFQFPN32 General purpose (GP)                */
+#define LL_UTILS_PACKAGETYPE_QFN32_N        0x00000002U /*!< LQFP32/UFQFPN32 N-version                           */
+#define LL_UTILS_PACKAGETYPE_QFN48_GP       0x00000004U /*!< LQFP48/UFQPN48 General purpose (GP)                 */
+#define LL_UTILS_PACKAGETYPE_QFN48_N        0x00000005U /*!< LQFP48/UFQPN48 N-version                            */
+#define LL_UTILS_PACKAGETYPE_WLCSP52        0x00000006U /*!< WLCSP52                                             */
+#define LL_UTILS_PACKAGETYPE_QFN64_GP       0x00000007U /*!< LQFP64 General purpose (GP)                         */
+#define LL_UTILS_PACKAGETYPE_QFN64_N        0x00000008U /*!< LQFP64 N-version                                    */
+#define LL_UTILS_PACKAGETYPE_BGA64_N        0x0000000AU /*!< UFBGA64 N-version                                   */
+#define LL_UTILS_PACKAGETYPE_QFP80          0x0000000BU /*!< LQFP80  package type                                */
+#define LL_UTILS_PACKAGETYPE_BGA100         0x0000000CU /*!< UBGA100  package type                               */
+#elif defined(STM32G061xx) || defined(STM32G051xx) || defined(STM32G050xx) || defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#define LL_UTILS_PACKAGETYPE_SO8            0x00000001U /*!< SO8 package type                                    */
+#define LL_UTILS_PACKAGETYPE_WLCSP18        0x00000002U /*!< WLCSP18 package type                                */
+#define LL_UTILS_PACKAGETYPE_TSSOP20        0x00000003U /*!< TSSOP20 package type                                */
+#define LL_UTILS_PACKAGETYPE_QFP28          0x00000004U /*!< UFQFPN28 package type                               */
+#define LL_UTILS_PACKAGETYPE_QFN32          0x00000005U /*!< UFQFPN32 / LQFP32 package type                      */
+#define LL_UTILS_PACKAGETYPE_QFN48          0x00000007U /*!< UFQFPN48 / LQFP48 package type                      */
+#elif defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
 #define LL_UTILS_PACKAGETYPE_QFN28_GP       0x00000000U /*!< UFQFPN28 general purpose (GP) package type          */
 #define LL_UTILS_PACKAGETYPE_QFN28_PD       0x00000001U /*!< UFQFPN28 Power Delivery (PD)                        */
 #define LL_UTILS_PACKAGETYPE_QFN32_GP       0x00000004U /*!< UFQFPN32 / LQFP32 general purpose (GP) package type */
 #define LL_UTILS_PACKAGETYPE_QFN32_PD       0x00000005U /*!< UFQFPN32 / LQFP32 Power Delivery (PD) package type  */
 #define LL_UTILS_PACKAGETYPE_QFN48          0x00000008U /*!< UFQFPN48 / LQFP488 package type                     */
-#define LL_UTILS_PACKAGETYPE_QFP64          0x0000000CU /*!< LQPF648 package type                                */
+#define LL_UTILS_PACKAGETYPE_QFP64          0x0000000CU /*!< LQPF64 package type                                 */
+#endif
 /**
   * @}
   */
@@ -217,18 +238,43 @@ __STATIC_INLINE uint32_t LL_GetFlashSize(void)
 
 /**
   * @brief  Get Package type
-  * @retval Returned value can be one of the following values:
+  * @retval PKG[3:0]: Package type - This parameter can be a value of @ref UTILS_EC_PACKAGETYPE
+  * @if defined(STM32G0C1xx)
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFP100
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFN32_GP
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFN32_N
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFN48_GP
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFN48_N
+  *         @arg @ref LL_UTILS_PACKAGETYPE_WLCSP52
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFN64_GP
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFN64_N
+  *         @arg @ref LL_UTILS_PACKAGETYPE_BGA64_N
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFP80
+  *         @arg @ref LL_UTILS_PACKAGETYPE_BGA100
+  * @elif defined(STM32G061xx) || defined(STM32G041xx)
+  *         @arg @ref LL_UTILS_PACKAGETYPE_SO8
+  *         @arg @ref LL_UTILS_PACKAGETYPE_WLCSP18
+  *         @arg @ref LL_UTILS_PACKAGETYPE_TSSOP20
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFP28
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFN32
+  *         @arg @ref LL_UTILS_PACKAGETYPE_QFN48
+  * @elif defined(STM32G081xx)
   *         @arg @ref LL_UTILS_PACKAGETYPE_QFN28_GP
   *         @arg @ref LL_UTILS_PACKAGETYPE_QFN28_PD
   *         @arg @ref LL_UTILS_PACKAGETYPE_QFN32_GP
   *         @arg @ref LL_UTILS_PACKAGETYPE_QFN32_PD
   *         @arg @ref LL_UTILS_PACKAGETYPE_QFN48
   *         @arg @ref LL_UTILS_PACKAGETYPE_QFP64
+  * @endif
   *
   */
 __STATIC_INLINE uint32_t LL_GetPackageType(void)
 {
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
+  return (uint32_t)(READ_REG(*((uint32_t *)PACKAGE_BASE_ADDRESS)) & 0x1FU);
+#else
   return (uint32_t)(READ_REG(*((uint32_t *)PACKAGE_BASE_ADDRESS)) & 0xFU);
+#endif
 }
 
 /**
@@ -272,6 +318,7 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSI(LL_UTILS_PLLInitTypeDef *UTILS_PLLInitS
                                          LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
 ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypass,
                                          LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct, LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
+ErrorStatus LL_SetFlashLatency(uint32_t HCLKFrequency);
 
 /**
   * @}

@@ -116,11 +116,23 @@ typedef struct
 #define EXTI_LINE_18                        (EXTI_RESERVED | EXTI_REG1 | 0x12u)
 #endif
 #define EXTI_LINE_19                        (EXTI_DIRECT   | EXTI_REG1 | 0x13u)
+#if defined(COMP3)
+#define EXTI_LINE_20                        (EXTI_CONFIG   | EXTI_REG1 | 0x14u)
+#else
 #define EXTI_LINE_20                        (EXTI_RESERVED | EXTI_REG1 | 0x14u)
+#endif
 #define EXTI_LINE_21                        (EXTI_DIRECT   | EXTI_REG1 | 0x15u)
+#if defined(RCC_CCIPR_I2C2SEL)
+#define EXTI_LINE_22                        (EXTI_DIRECT   | EXTI_REG1 | 0x16u)
+#else
 #define EXTI_LINE_22                        (EXTI_RESERVED | EXTI_REG1 | 0x16u)
+#endif
 #define EXTI_LINE_23                        (EXTI_DIRECT   | EXTI_REG1 | 0x17u)
+#if defined(RCC_CCIPR_USART3SEL)
+#define EXTI_LINE_24                        (EXTI_DIRECT   | EXTI_REG1 | 0x18u)
+#else
 #define EXTI_LINE_24                        (EXTI_RESERVED | EXTI_REG1 | 0x18u)
+#endif
 #define EXTI_LINE_25                        (EXTI_DIRECT   | EXTI_REG1 | 0x19u)
 #if defined(RCC_CCIPR_USART2SEL)
 #define EXTI_LINE_26                        (EXTI_DIRECT   | EXTI_REG1 | 0x1Au)
@@ -150,9 +162,26 @@ typedef struct
 #define EXTI_LINE_31                        (EXTI_DIRECT   | EXTI_REG1 | 0x1Fu)
 #if defined(UCPD1)
 #define EXTI_LINE_32                        (EXTI_DIRECT   | EXTI_REG2 | 0x00u)
+#else
+#define EXTI_LINE_32                        (EXTI_RESERVED | EXTI_REG2 | 0x00u)
 #endif
 #if defined(UCPD2)
 #define EXTI_LINE_33                        (EXTI_DIRECT   | EXTI_REG2 | 0x01u)
+#else
+#define EXTI_LINE_33                        (EXTI_RESERVED | EXTI_REG2 | 0x01u)
+#endif
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx)
+#define EXTI_LINE_34                        (EXTI_CONFIG   | EXTI_REG2 | 0x02u)
+#else
+#define EXTI_LINE_34                        (EXTI_RESERVED | EXTI_REG2 | 0x02u)
+#endif
+#if defined(LPUART2)
+#define EXTI_LINE_35                        (EXTI_DIRECT   | EXTI_REG2 | 0x03u)
+#else
+#define EXTI_LINE_35                        (EXTI_RESERVED | EXTI_REG2 | 0x03u)
+#endif
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
+#define EXTI_LINE_36                        (EXTI_DIRECT | EXTI_REG2 | 0x04u)
 #endif
 /**
   * @}
@@ -187,6 +216,9 @@ typedef struct
 #define EXTI_GPIOB                          0x00000001u
 #define EXTI_GPIOC                          0x00000002u
 #define EXTI_GPIOD                          0x00000003u
+#if defined(GPIOE)
+#define EXTI_GPIOE                          0x00000004u
+#endif
 #define EXTI_GPIOF                          0x00000005u
 /**
   * @}
@@ -241,8 +273,16 @@ typedef struct
 /**
   * @brief  EXTI Line number
   */
-#if defined(EXTI_IMR2_IM33)
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx)
+#define EXTI_LINE_NB                        37uL
+#elif defined(STM32G0B0xx)
+#define EXTI_LINE_NB                        37uL
+#elif defined(STM32G081xx) || defined(STM32G071xx)
 #define EXTI_LINE_NB                        34uL
+#elif defined(STM32G070xx)
+#define EXTI_LINE_NB                        34uL
+#elif defined(STM32G041xx) || defined(STM32G031xx)
+#define EXTI_LINE_NB                        32uL
 #else
 #define EXTI_LINE_NB                        32uL
 #endif
@@ -255,28 +295,37 @@ typedef struct
 /** @defgroup EXTI_Private_Macros EXTI Private Macros
   * @{
   */
-#define IS_EXTI_LINE(__LINE__)          ((((__LINE__) & ~(EXTI_PROPERTY_MASK | EXTI_REG_MASK | EXTI_PIN_MASK)) == 0x00u) && \
-                                        ((((__LINE__) & EXTI_PROPERTY_MASK) == EXTI_DIRECT)   || \
-                                         (((__LINE__) & EXTI_PROPERTY_MASK) == EXTI_CONFIG)   || \
-                                         (((__LINE__) & EXTI_PROPERTY_MASK) == EXTI_GPIO))    && \
-                                         (((__LINE__) & (EXTI_REG_MASK | EXTI_PIN_MASK))      < \
+#define IS_EXTI_LINE(__EXTI_LINE__)     ((((__EXTI_LINE__) & ~(EXTI_PROPERTY_MASK | EXTI_REG_MASK | EXTI_PIN_MASK)) == 0x00u) && \
+                                        ((((__EXTI_LINE__) & EXTI_PROPERTY_MASK) == EXTI_DIRECT)   || \
+                                         (((__EXTI_LINE__) & EXTI_PROPERTY_MASK) == EXTI_CONFIG)   || \
+                                         (((__EXTI_LINE__) & EXTI_PROPERTY_MASK) == EXTI_GPIO))    && \
+                                         (((__EXTI_LINE__) & (EXTI_REG_MASK | EXTI_PIN_MASK))      < \
                                          (((EXTI_LINE_NB / 32u) << EXTI_REG_SHIFT) | (EXTI_LINE_NB % 32u))))
 
-#define IS_EXTI_MODE(__LINE__)          ((((__LINE__) & EXTI_MODE_MASK) != 0x00u) && \
-                                         (((__LINE__) & ~EXTI_MODE_MASK) == 0x00u))
+#define IS_EXTI_MODE(__MODE__)          ((((__MODE__) & EXTI_MODE_MASK) != 0x00u) && \
+                                         (((__MODE__) & ~EXTI_MODE_MASK) == 0x00u))
 
-#define IS_EXTI_TRIGGER(__LINE__)       (((__LINE__) & ~EXTI_TRIGGER_MASK) == 0x00u)
+#define IS_EXTI_TRIGGER(__EXTI_LINE__)  (((__EXTI_LINE__) & ~EXTI_TRIGGER_MASK) == 0x00u)
 
-#define IS_EXTI_PENDING_EDGE(__LINE__)  (((__LINE__) == EXTI_TRIGGER_RISING) || \
-                                         ((__LINE__) == EXTI_TRIGGER_FALLING))
+#define IS_EXTI_PENDING_EDGE(__EXTI_LINE__)  (((__EXTI_LINE__) == EXTI_TRIGGER_RISING) || \
+                                              ((__EXTI_LINE__) == EXTI_TRIGGER_FALLING))
 
-#define IS_EXTI_CONFIG_LINE(__LINE__)   (((__LINE__) & EXTI_CONFIG) != 0x00u)
+#define IS_EXTI_CONFIG_LINE(__EXTI_LINE__)   (((__EXTI_LINE__) & EXTI_CONFIG) != 0x00u)
 
+#if defined(GPIOE)
+#define IS_EXTI_GPIO_PORT(__PORT__)     (((__PORT__) == EXTI_GPIOA) || \
+                                         ((__PORT__) == EXTI_GPIOB) || \
+                                         ((__PORT__) == EXTI_GPIOC) || \
+                                         ((__PORT__) == EXTI_GPIOD) || \
+                                         ((__PORT__) == EXTI_GPIOE) || \
+                                         ((__PORT__) == EXTI_GPIOF))
+#else
 #define IS_EXTI_GPIO_PORT(__PORT__)     (((__PORT__) == EXTI_GPIOA) || \
                                          ((__PORT__) == EXTI_GPIOB) || \
                                          ((__PORT__) == EXTI_GPIOC) || \
                                          ((__PORT__) == EXTI_GPIOD) || \
                                          ((__PORT__) == EXTI_GPIOF))
+#endif
 
 #define IS_EXTI_GPIO_PIN(__PIN__)       ((__PIN__) < 16u)
 

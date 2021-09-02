@@ -281,7 +281,7 @@ void HAL_PWREx_DisableBLEActivityIT(void)
   CLEAR_BIT(PWR->CR3, PWR_CR3_EBLEA);
 }
 
-
+#if defined(PWR_CR3_E802A)
 /**
   * @brief Enable 802.15.4 Activity interrupt.
   * @retval None
@@ -299,6 +299,7 @@ void HAL_PWREx_Disable802ActivityIT(void)
 {
   CLEAR_BIT(PWR->CR3, PWR_CR3_E802A);
 }
+#endif
 
 /**
   * @brief Enable CPU2 on-Hold interrupt.
@@ -640,9 +641,11 @@ void HAL_PWREx_ReleaseCore(uint32_t CPU)
 
 /****************************************************************************/
 /**
-  * @brief Enable BKRAM content retention in Standby mode.
-  * @note  When RRS bit is set, SRAM is powered by the low-power regulator in
+  * @brief Enable SRAM2a content retention in Standby mode.
+  * @note  When RRS bit is set, SRAM2a is powered by the low-power regulator in
   *         Standby mode and its content is kept.
+  * @note   On devices STM32WB15xx, STM32WB10xx, retention is extended 
+  *         to SRAM1, SRAM2a and SRAM2b.
   * @retval None
   */
 void HAL_PWREx_EnableSRAMRetention(void)
@@ -651,9 +654,11 @@ void HAL_PWREx_EnableSRAMRetention(void)
 }
 
 /**
-  * @brief Disable BKRAM content retention in Standby mode.
-  * @note  When RRS bit is reset, SRAM is powered off in Standby mode
+  * @brief Disable SRAM2a content retention in Standby mode.
+  * @note  When RRS bit is reset, SRAM2a is powered off in Standby mode
   *        and its content is lost.
+  * @note   On devices STM32WB15xx, STM32WB10xx, retention is extended 
+  *         to SRAM1, SRAM2a and SRAM2b.
   * @retval None
   */
 void HAL_PWREx_DisableSRAMRetention(void)
@@ -678,7 +683,7 @@ void HAL_PWREx_EnableFlashPowerDown(uint32_t PowerMode)
   if((PowerMode & PWR_FLASHPD_LPRUN) != 0U)
   {
     /* Unlock bit FPDR */
-    WRITE_REG(PWR->CR1, 0x0000C1B0U);
+    WRITE_REG(PWR->CR1, 0x0000C1B0UL);
   }
 
   /* Set flash power down mode */
@@ -910,7 +915,7 @@ HAL_StatusTypeDef HAL_PWREx_ConfigSMPS(PWR_SMPSTypeDef *sConfigSMPS)
   *
   *         (1) SMPS operating mode step down or open depends on system low-power mode:
   *              - step down mode if system low power mode is run, LP run or stop,
-  *              - open mode if system low power mode is stop1, stop2, standby or shutdown
+  *              - open mode if system low power mode is Stop1, Stop2, Standby or Shutdown
   * @retval None
   */
 void HAL_PWREx_SMPS_SetMode(uint32_t OperatingMode)
@@ -924,7 +929,7 @@ void HAL_PWREx_SMPS_SetMode(uint32_t OperatingMode)
   *         requested operating mode can differ from effective low power mode.
   *         - dependency on system low-power mode:
   *           - step down mode if system low power mode is run, LP run or stop,
-  *           - open mode if system low power mode is stop1, stop2, standby or shutdown
+  *           - open mode if system low power mode is Stop1, Stop2, Standby or Shutdown
   *         - dependency on BOR level:
   *           - bypass mode if supply voltage drops below BOR level
   * @note   This functions check flags of SMPS operating modes step down
@@ -936,7 +941,7 @@ void HAL_PWREx_SMPS_SetMode(uint32_t OperatingMode)
   *
   *         (1) SMPS operating mode step down or open depends on system low-power mode:
   *              - step down mode if system low power mode is run, LP run or stop,
-  *              - open mode if system low power mode is stop1, stop2, standby or shutdown
+  *              - open mode if system low power mode is Stop1, Stop2, Standby or Shutdown
   */
 uint32_t HAL_PWREx_SMPS_GetEffectiveMode(void)
 {
@@ -1129,7 +1134,6 @@ void HAL_PWREx_EnterSTOP0Mode(uint8_t STOPEntry)
   CLEAR_BIT(SCB->SCR, ((uint32_t)SCB_SCR_SLEEPDEEP_Msk));
 }
 
-
 /**
   * @brief Enter Stop 1 mode.
   * @note  In Stop 1 mode, only low power voltage regulator is ON.
@@ -1182,7 +1186,7 @@ void HAL_PWREx_EnterSTOP1Mode(uint8_t STOPEntry)
   CLEAR_BIT(SCB->SCR, ((uint32_t)SCB_SCR_SLEEPDEEP_Msk));
 }
 
-
+#if defined(PWR_SUPPORT_STOP2)
 /**
   * @brief Enter Stop 2 mode.
   * @note  In Stop 2 mode, only low power voltage regulator is ON.
@@ -1244,10 +1248,7 @@ void HAL_PWREx_EnterSTOP2Mode(uint8_t STOPEntry)
   /* Reset SLEEPDEEP bit of Cortex System Control Register */
   CLEAR_BIT(SCB->SCR, ((uint32_t)SCB_SCR_SLEEPDEEP_Msk));
 }
-
-
-
-
+#endif
 
 /**
   * @brief Enter Shutdown mode. 

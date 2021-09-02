@@ -173,7 +173,7 @@ typedef enum
   *         This parameter can be GPIO_PIN_x where x can be(0..15)
   * @retval The new state of __EXTI_LINE__ (SET or RESET).
   */
-#define __HAL_GPIO_EXTI_GET_FLAG(__EXTI_LINE__) (EXTI_D1->PR1 & (__EXTI_LINE__))
+#define __HAL_GPIO_EXTI_GET_FLAG(__EXTI_LINE__) (EXTI->PR1 & (__EXTI_LINE__))
 
 /**
   * @brief  Clears the EXTI's line pending flags.
@@ -181,7 +181,7 @@ typedef enum
   *         This parameter can be any combination of GPIO_PIN_x where x can be (0..15)
   * @retval None
   */
-#define __HAL_GPIO_EXTI_CLEAR_FLAG(__EXTI_LINE__) (EXTI_D1->PR1 = (__EXTI_LINE__))
+#define __HAL_GPIO_EXTI_CLEAR_FLAG(__EXTI_LINE__) (EXTI->PR1 = (__EXTI_LINE__))
 
 /**
   * @brief  Checks whether the specified EXTI line is asserted or not.
@@ -189,7 +189,7 @@ typedef enum
   *          This parameter can be GPIO_PIN_x where x can be(0..15)
   * @retval The new state of __EXTI_LINE__ (SET or RESET).
   */
-#define __HAL_GPIO_EXTI_GET_IT(__EXTI_LINE__) (EXTI_D1->PR1 & (__EXTI_LINE__))
+#define __HAL_GPIO_EXTI_GET_IT(__EXTI_LINE__) (EXTI->PR1 & (__EXTI_LINE__))
 
 /**
   * @brief  Clears the EXTI's line pending bits.
@@ -197,7 +197,7 @@ typedef enum
   *          This parameter can be any combination of GPIO_PIN_x where x can be (0..15)
   * @retval None
   */
-#define __HAL_GPIO_EXTI_CLEAR_IT(__EXTI_LINE__) (EXTI_D1->PR1 = (__EXTI_LINE__))
+#define __HAL_GPIO_EXTI_CLEAR_IT(__EXTI_LINE__) (EXTI->PR1 = (__EXTI_LINE__))
 
 #if defined(DUAL_CORE)
 /**
@@ -206,7 +206,7 @@ typedef enum
   *         This parameter can be GPIO_PIN_x where x can be(0..15)
   * @retval The new state of __EXTI_LINE__ (SET or RESET).
   */
-#define __HAL_GPIO_EXTID2_GET_FLAG(__EXTI_LINE__) (EXTI_D2->PR1 & (__EXTI_LINE__))
+#define __HAL_GPIO_EXTID2_GET_FLAG(__EXTI_LINE__) (EXTI->C2PR1 & (__EXTI_LINE__))
 
 /**
   * @brief  Clears the EXTI's line pending flags.
@@ -214,7 +214,7 @@ typedef enum
   *         This parameter can be any combination of GPIO_PIN_x where x can be (0..15)
   * @retval None
   */
-#define __HAL_GPIO_EXTID2_CLEAR_FLAG(__EXTI_LINE__) (EXTI_D2->PR1 = (__EXTI_LINE__))
+#define __HAL_GPIO_EXTID2_CLEAR_FLAG(__EXTI_LINE__) (EXTI->C2PR1 = (__EXTI_LINE__))
 
 /**
   * @brief  Checks whether the specified EXTI line is asserted or not.
@@ -222,7 +222,7 @@ typedef enum
   *          This parameter can be GPIO_PIN_x where x can be(0..15)
   * @retval The new state of __EXTI_LINE__ (SET or RESET).
   */
-#define __HAL_GPIO_EXTID2_GET_IT(__EXTI_LINE__) (EXTI_D2->PR1 & (__EXTI_LINE__))
+#define __HAL_GPIO_EXTID2_GET_IT(__EXTI_LINE__) (EXTI->C2PR1 & (__EXTI_LINE__))
 
 /**
   * @brief  Clears the EXTI's line pending bits.
@@ -230,9 +230,9 @@ typedef enum
   *          This parameter can be any combination of GPIO_PIN_x where x can be (0..15)
   * @retval None
   */
-#define __HAL_GPIO_EXTID2_CLEAR_IT(__EXTI_LINE__) (EXTI_D2->PR1 = (__EXTI_LINE__))
-
+#define __HAL_GPIO_EXTID2_CLEAR_IT(__EXTI_LINE__) (EXTI->C2PR1 = (__EXTI_LINE__))
 #endif
+
 /**
   * @brief  Generates a Software interrupt on selected EXTI line.
   * @param  __EXTI_LINE__: specifies the EXTI line to check.
@@ -296,8 +296,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
   * @{
   */
 #define IS_GPIO_PIN_ACTION(ACTION) (((ACTION) == GPIO_PIN_RESET) || ((ACTION) == GPIO_PIN_SET))
-#define IS_GPIO_PIN(__PIN__)       ((((__PIN__) & GPIO_PIN_MASK) != 0x00U) &&\
-                                    (((__PIN__) & ~GPIO_PIN_MASK) == 0x00U))
+#define IS_GPIO_PIN(__PIN__)        ((((uint32_t)(__PIN__) & GPIO_PIN_MASK) != 0x00U) &&\
+                                     (((uint32_t)(__PIN__) & ~GPIO_PIN_MASK) == 0x00U))
 #define IS_GPIO_MODE(MODE) (((MODE) == GPIO_MODE_INPUT)              ||\
                             ((MODE) == GPIO_MODE_OUTPUT_PP)          ||\
                             ((MODE) == GPIO_MODE_OUTPUT_OD)          ||\

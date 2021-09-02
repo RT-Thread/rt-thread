@@ -290,7 +290,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   */
 
 /** @brief Reset OPAMP handle state.
-  * @param  __HANDLE__: OPAMP handle.
+  * @param  __HANDLE__ OPAMP handle.
   * @retval None
   */
 #if (USE_HAL_OPAMP_REGISTER_CALLBACKS == 1)
@@ -321,11 +321,13 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined(STM32L4S9xx)
 #define IS_OPAMP_INVERTING_INPUT_STANDALONE(INPUT) (((INPUT) == OPAMP_INVERTINGINPUT_IO0) || \
                                                     ((INPUT) == OPAMP_INVERTINGINPUT_IO1))
 #endif /* STM32L471xx STM32L475xx STM32L476xx STM32L485xx STM32L486xx  */
        /* STM32L496xx STM32L4A6xx                                      */
+       /* STM32L4P5xx STM32L4Q5xx                                      */
        /* STM32L4R5xx STM32L4R7xx STM32L4R9xx STM32L4S5xx  STM32L4S7xx STM32L4S9xx */
 
 #if defined (STM32L412xx) || defined (STM32L422xx) || \
@@ -344,6 +346,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
     defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx) || \
     defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined(STM32L4S9xx)
 #define IS_OPAMP_NONINVERTING_INPUT(INPUT) (((INPUT) == OPAMP_NONINVERTINGINPUT_IO0) || \
                                             ((INPUT) == OPAMP_NONINVERTINGINPUT_DAC_CH))
@@ -351,16 +354,19 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
        /* STM32L451xx STM32L452xx STM32L462xx */
        /* STM32L471xx STM32L475xx STM32L476xx STM32L485xx STM32L486xx  */
        /* STM32L496xx STM32L4A6xx                                      */
+       /* STM32L4P5xx STM32L4Q5xx                                      */
        /* STM32L4R5xx STM32L4R7xx STM32L4R9xx STM32L4S5xx  STM32L4S7xx STM32L4S9xx */
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined(STM32L4S9xx)
 #define IS_OPAMP_INVERTING_INPUT_PGA(INPUT) (((INPUT) == OPAMP_INVERTINGINPUT_IO0) || \
                                              ((INPUT) == OPAMP_INVERTINGINPUT_IO1) || \
                                              ((INPUT) == OPAMP_INVERTINGINPUT_CONNECT_NO))
 #endif /* STM32L471xx STM32L475xx STM32L476xx STM32L485xx STM32L486xx  */
        /* STM32L496xx STM32L4A6xx                                      */
+       /* STM32L4P5xx STM32L4Q5xx                                      */
        /* STM32L4R5xx STM32L4R7xx STM32L4R9xx STM32L4S5xx  STM32L4S7xx STM32L4S9xx */
 
 #if defined (STM32L412xx) || defined (STM32L422xx) || \

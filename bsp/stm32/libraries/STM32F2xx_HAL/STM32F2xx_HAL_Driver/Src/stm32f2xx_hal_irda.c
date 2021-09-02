@@ -1763,7 +1763,7 @@ void HAL_IRDA_IRQHandler(IRDA_HandleTypeDef *hirda)
     }
 
     /* IRDA Over-Run interrupt occurred -----------------------------------*/
-    if (((isrflags & USART_SR_ORE) != RESET) && ((cr3its & USART_CR3_EIE) != RESET))
+    if (((isrflags & USART_SR_ORE) != RESET) && (((cr1its & USART_CR1_RXNEIE) != RESET) || ((cr3its & USART_CR3_EIE) != RESET)))
     {
       hirda->ErrorCode |= HAL_IRDA_ERROR_ORE;
     }
