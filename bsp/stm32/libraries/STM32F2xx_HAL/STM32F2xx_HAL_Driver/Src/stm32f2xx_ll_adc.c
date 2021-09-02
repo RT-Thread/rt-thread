@@ -264,7 +264,9 @@
 
 #endif /* ADC_MULTIMODE_SUPPORT */
 
+#ifndef UNUSED
 #define UNUSED(x) ((void)(x))
+#endif
 
 /**
   * @}

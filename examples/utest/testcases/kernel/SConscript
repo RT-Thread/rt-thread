@@ -17,6 +17,9 @@ if GetDepend(['UTEST_SEMAPHORE_TC']):
 if GetDepend(['UTEST_EVENT_TC']):
     src += ['event_tc.c']
 
+if GetDepend(['UTEST_TIMER_TC']):
+    src += ['timer_tc.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('utestcases', src, depend = [], CPPPATH = CPPPATH)

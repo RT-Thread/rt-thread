@@ -46,12 +46,11 @@ extern "C" {
   * @{
   */
 #define USART_WORDLENGTH_7B                  ((uint32_t)USART_CR1_M1)   /*!< 7-bit long USART frame */
-#define USART_WORDLENGTH_8B                  0x00000000U                /*!< 8-bit long USART frame */
+#define USART_WORDLENGTH_8B                  (0x00000000U)              /*!< 8-bit long USART frame */
 #define USART_WORDLENGTH_9B                  ((uint32_t)USART_CR1_M0)   /*!< 9-bit long USART frame */
 /**
   * @}
   */
-
 
 
 /**
@@ -74,45 +73,44 @@ extern "C" {
   */
 #define USART_MASK_COMPUTATION(__HANDLE__)                            \
   do {                                                                \
-  if ((__HANDLE__)->Init.WordLength == USART_WORDLENGTH_9B)           \
-  {                                                                   \
-     if ((__HANDLE__)->Init.Parity == USART_PARITY_NONE)              \
-     {                                                                \
+    if ((__HANDLE__)->Init.WordLength == USART_WORDLENGTH_9B)         \
+    {                                                                 \
+      if ((__HANDLE__)->Init.Parity == USART_PARITY_NONE)             \
+      {                                                               \
         (__HANDLE__)->Mask = 0x01FFU;                                 \
-     }                                                                \
-     else                                                             \
-     {                                                                \
+      }                                                               \
+      else                                                            \
+      {                                                               \
         (__HANDLE__)->Mask = 0x00FFU;                                 \
-     }                                                                \
-  }                                                                   \
-  else if ((__HANDLE__)->Init.WordLength == USART_WORDLENGTH_8B)      \
-  {                                                                   \
-     if ((__HANDLE__)->Init.Parity == USART_PARITY_NONE)              \
-     {                                                                \
+      }                                                               \
+    }                                                                 \
+    else if ((__HANDLE__)->Init.WordLength == USART_WORDLENGTH_8B)    \
+    {                                                                 \
+      if ((__HANDLE__)->Init.Parity == USART_PARITY_NONE)             \
+      {                                                               \
         (__HANDLE__)->Mask = 0x00FFU;                                 \
-     }                                                                \
-     else                                                             \
-     {                                                                \
+      }                                                               \
+      else                                                            \
+      {                                                               \
         (__HANDLE__)->Mask = 0x007FU;                                 \
-     }                                                                \
-  }                                                                   \
-  else if ((__HANDLE__)->Init.WordLength == USART_WORDLENGTH_7B)      \
-  {                                                                   \
-     if ((__HANDLE__)->Init.Parity == USART_PARITY_NONE)              \
-     {                                                                \
+      }                                                               \
+    }                                                                 \
+    else if ((__HANDLE__)->Init.WordLength == USART_WORDLENGTH_7B)    \
+    {                                                                 \
+      if ((__HANDLE__)->Init.Parity == USART_PARITY_NONE)             \
+      {                                                               \
         (__HANDLE__)->Mask = 0x007FU;                                 \
-     }                                                                \
-     else                                                             \
-     {                                                                \
+      }                                                               \
+      else                                                            \
+      {                                                               \
         (__HANDLE__)->Mask = 0x003FU;                                 \
-     }                                                                \
-  }                                                                   \
-  else                                                                \
-  {                                                                   \
-    (__HANDLE__)->Mask = 0x0000U;                                     \
-  }                                                                   \
-} while(0U)
-
+      }                                                               \
+    }                                                                 \
+    else                                                              \
+    {                                                                 \
+      (__HANDLE__)->Mask = 0x0000U;                                   \
+    }                                                                 \
+  } while(0U)
 
 /**
   * @brief Ensure that USART frame length is valid.

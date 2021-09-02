@@ -222,7 +222,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2019 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -1198,7 +1198,7 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sA
               ((uint32_t)sAlarm->AlarmDateWeekDaySel) | \
               ((uint32_t)sAlarm->AlarmMask));
   }
-  else /* format BCD */
+  else /* Format BCD */
   {
     if (READ_BIT(RTC->CR, RTC_CR_FMT) != 0U)
     {
@@ -1420,6 +1420,7 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
               ((uint32_t)sAlarm->AlarmDateWeekDaySel) | \
               ((uint32_t)sAlarm->AlarmMask));
   }
+
   /* Configure the Alarm A or Alarm B Sub Second registers */
   subsecondtmpreg = (uint32_t)((uint32_t)(sAlarm->AlarmTime.SubSeconds) | (uint32_t)(sAlarm->AlarmSubSecondMask));
 
@@ -1430,7 +1431,8 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
   if (sAlarm->Alarm == RTC_ALARM_A)
   {
     /* Disable the Alarm A interrupt */
-    CLEAR_BIT(RTC->CR, RTC_CR_ALRAIE);
+    CLEAR_BIT(RTC->CR, (RTC_CR_ALRAE | RTC_CR_ALRAIE));
+
     /* Clear flag alarm A */
     WRITE_REG(RTC->SCR, RTC_SCR_CALRAF);
     __HAL_RTC_ALARM_EXTI_CLEAR_IT();
@@ -1462,7 +1464,8 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
   else
   {
     /* Disable the Alarm B interrupt */
-    CLEAR_BIT(RTC->CR, RTC_CR_ALRBIE);
+    CLEAR_BIT(RTC->CR, (RTC_CR_ALRBE | RTC_CR_ALRBIE));
+
     /* Clear flag alarm B */
     WRITE_REG(RTC->SCR, RTC_SCR_CALRBF);
     __HAL_RTC_ALARM_EXTI_CLEAR_IT();
@@ -1499,6 +1502,7 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
 
+  /* Change RTC state */
   hrtc->State = HAL_RTC_STATE_READY;
 
   /* Process Unlocked */

@@ -335,14 +335,22 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp)
               hcomp->Init.Mode                );
     
     /* Set parameters in COMP register */
-    /* Note: Update all bits except read-only, lock and enable bits */ 
+    /* Note: Update all bits except read-only, lock and enable bits */
+#if defined (COMP_CFGRx_INP2SEL)
     MODIFY_REG(hcomp->Instance->CFGR,
-               COMP_CFGRx_PWRMODE  | COMP_CFGRx_INMSEL   | COMP_CFGRx_INPSEL  |
+               COMP_CFGRx_PWRMODE  | COMP_CFGRx_INMSEL   | COMP_CFGRx_INPSEL  | 
+               COMP_CFGRx_INP2SEL  | COMP_CFGRx_WINMODE  | COMP_CFGRx_POLARITY | COMP_CFGRx_HYST    |
+               COMP_CFGRx_BLANKING | COMP_CFGRx_BRGEN    | COMP_CFGRx_SCALEN,
+               tmp_csr
+              );
+#else
+    MODIFY_REG(hcomp->Instance->CFGR,
+               COMP_CFGRx_PWRMODE  | COMP_CFGRx_INMSEL   | COMP_CFGRx_INPSEL  | 
                COMP_CFGRx_WINMODE  | COMP_CFGRx_POLARITY | COMP_CFGRx_HYST    |
                COMP_CFGRx_BLANKING | COMP_CFGRx_BRGEN    | COMP_CFGRx_SCALEN,
                tmp_csr
               );
-
+#endif
     /* Set window mode */
     /* Note: Window mode bit is located into 1 out of the 2 pairs of COMP     */
     /*       instances. Therefore, this function can update another COMP      */
@@ -398,40 +406,71 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp)
         CLEAR_BIT(EXTI->FTSR1, exti_line);
       }
      
-#if !defined (DUAL_CORE)     
+#if !defined (CORE_CM4)
       /* Clear COMP EXTI pending bit (if any) */
-      WRITE_REG(EXTI_D1->PR1, exti_line);
-      
+      WRITE_REG(EXTI->PR1, exti_line);
 
       /* Configure EXTI event mode */
       if((hcomp->Init.TriggerMode & COMP_EXTI_EVENT) != 0UL)
       {
-        SET_BIT(EXTI_D1->EMR1, exti_line);
+        SET_BIT(EXTI->EMR1, exti_line);
       }
       else
       {
-        CLEAR_BIT(EXTI_D1->EMR1, exti_line);
+        CLEAR_BIT(EXTI->EMR1, exti_line);
       }
       
        /* Configure EXTI interrupt mode */
       if((hcomp->Init.TriggerMode & COMP_EXTI_IT) != 0UL)
       {
-        SET_BIT(EXTI_D1->IMR1, exti_line);
+        SET_BIT(EXTI->IMR1, exti_line);
       }
       else
       {
-        CLEAR_BIT(EXTI_D1->IMR1, exti_line);
+        CLEAR_BIT(EXTI->IMR1, exti_line);
       }
     }
     else
     {
       /* Disable EXTI event mode */
-      CLEAR_BIT(EXTI_D1->EMR1, exti_line);
+      CLEAR_BIT(EXTI->EMR1, exti_line);
       
       /* Disable EXTI interrupt mode */
-      CLEAR_BIT(EXTI_D1->IMR1, exti_line);
-#endif	  
+      CLEAR_BIT(EXTI->IMR1, exti_line);
     }
+#else
+      /* Clear COMP EXTI pending bit (if any) */
+      WRITE_REG(EXTI->C2PR1, exti_line);
+
+      /* Configure EXTI event mode */
+      if((hcomp->Init.TriggerMode & COMP_EXTI_EVENT) != 0UL)
+      {
+        SET_BIT(EXTI->C2EMR1, exti_line);
+      }
+      else
+      {
+        CLEAR_BIT(EXTI->C2EMR1, exti_line);
+      }
+
+       /* Configure EXTI interrupt mode */
+      if((hcomp->Init.TriggerMode & COMP_EXTI_IT) != 0UL)
+      {
+        SET_BIT(EXTI->C2IMR1, exti_line);
+      }
+      else
+      {
+        CLEAR_BIT(EXTI->C2IMR1, exti_line);
+      }
+    }
+    else
+    {
+      /* Disable EXTI event mode */
+      CLEAR_BIT(EXTI->C2EMR1, exti_line);
+
+      /* Disable EXTI interrupt mode */
+      CLEAR_BIT(EXTI->C2IMR1, exti_line);
+    }
+#endif
     /* Set HAL COMP handle state */
     /* Note: Transition from state reset to state ready,                      */
     /*       otherwise (coming from state ready or busy) no state update.     */
@@ -864,9 +903,11 @@ HAL_StatusTypeDef HAL_COMP_Start_IT(COMP_HandleTypeDef *hcomp)
 HAL_StatusTypeDef HAL_COMP_Stop_IT(COMP_HandleTypeDef *hcomp)
 {  
   HAL_StatusTypeDef status;
-#if !defined (DUAL_CORE)   
   /* Disable the EXTI Line interrupt mode */
-   CLEAR_BIT(EXTI_D1->IMR1, COMP_GET_EXTI_LINE(hcomp->Instance));
+#if !defined (CORE_CM4)
+   CLEAR_BIT(EXTI->IMR1, COMP_GET_EXTI_LINE(hcomp->Instance));
+#else
+   CLEAR_BIT(EXTI->C2IMR1, COMP_GET_EXTI_LINE(hcomp->Instance));
 #endif   
   /* Disable the Interrupt comparator */
    CLEAR_BIT(hcomp->Instance->CFGR, COMP_CFGRx_ITEN);
@@ -893,7 +934,7 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
  if (HAL_GetCurrentCPUID() == CM7_CPUID)
  {
     /* Check COMP EXTI flag */
-    if(READ_BIT(EXTI_D1->PR1, exti_line) != 0UL)
+    if(READ_BIT(EXTI->PR1, exti_line) != 0UL)
     {    
        /* Check whether comparator is in independent or window mode */
         if(READ_BIT(COMP12_COMMON->CFGR, COMP_CFGRx_WINMODE) != 0UL)
@@ -905,12 +946,12 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
           /*       (low or high ) to the other "out of window" area (high or low).*/
           /*       Both flags must be cleared to call comparator trigger          */
           /*       callback is called once.                                       */
-          WRITE_REG(EXTI_D1->PR1, (COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2));
+          WRITE_REG(EXTI->PR1, (COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2));
         }
         else
         {
           /* Clear COMP EXTI line pending bit */
-          WRITE_REG(EXTI_D1->PR1, exti_line);
+          WRITE_REG(EXTI->PR1, exti_line);
         }
 
     /* COMP trigger user callback */
@@ -926,7 +967,7 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
  else
  {
     /* Check COMP EXTI flag */
-    if(READ_BIT(EXTI_D2->PR1, exti_line) != 0UL)
+    if(READ_BIT(EXTI->C2PR1, exti_line) != 0UL)
     {    
        /* Check whether comparator is in independent or window mode */
         if(READ_BIT(COMP12_COMMON->CFGR, COMP_CFGRx_WINMODE) != 0UL)
@@ -938,12 +979,12 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
           /*       (low or high ) to the other "out of window" area (high or low).*/
           /*       Both flags must be cleared to call comparator trigger          */
           /*       callback is called once.                                       */
-          WRITE_REG(EXTI_D2->PR1, (COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2));
+          WRITE_REG(EXTI->C2PR1, (COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2));
         }
         else
         {
           /* Clear COMP EXTI line pending bit */
-          WRITE_REG(EXTI_D2->PR1, exti_line);
+          WRITE_REG(EXTI->C2PR1, exti_line);
         }
 
     /* COMP trigger user callback */
@@ -958,7 +999,7 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
  } 
 #else
     /* Check COMP EXTI flag */
-    if(READ_BIT(EXTI_D1->PR1, exti_line) != 0UL)
+    if(READ_BIT(EXTI->PR1, exti_line) != 0UL)
     {    
        /* Check whether comparator is in independent or window mode */
         if(READ_BIT(COMP12_COMMON->CFGR, COMP_CFGRx_WINMODE) != 0UL)
@@ -970,12 +1011,12 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
           /*       (low or high ) to the other "out of window" area (high or low).*/
           /*       Both flags must be cleared to call comparator trigger          */
           /*       callback is called once.                                       */
-          WRITE_REG(EXTI_D1->PR1, (COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2));
+          WRITE_REG(EXTI->PR1, (COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2));
         }
         else
         {
           /* Clear COMP EXTI line pending bit */
-          WRITE_REG(EXTI_D1->PR1, exti_line);
+          WRITE_REG(EXTI->PR1, exti_line);
         }
 
     /* COMP trigger user callback */

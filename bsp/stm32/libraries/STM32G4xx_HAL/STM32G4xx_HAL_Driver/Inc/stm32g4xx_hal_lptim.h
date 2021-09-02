@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @brief   Header file of LPTIM HAL module.
   ******************************************************************************
-    * @attention
+  * @attention
   *
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
@@ -13,7 +13,8 @@
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
-  *  ******************************************************************************
+  *
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -411,6 +412,8 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @note   The following sequence is required to solve LPTIM disable HW limitation.
   *         Please check Errata Sheet ES0335 for more details under "MCU may remain
   *         stuck in LPTIM interrupt when entering Stop mode" section.
+  * @note   Please call @ref HAL_LPTIM_GetState() after a call to __HAL_LPTIM_DISABLE to
+  *         check for TIMEOUT.
   * @retval None
   */
 #define __HAL_LPTIM_DISABLE(__HANDLE__)   LPTIM_Disable(__HANDLE__)
@@ -447,6 +450,7 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @param  __HANDLE__ LPTIM handle
   * @param  __VALUE__ Autoreload value
   * @retval None
+  * @note   The ARR register can only be modified when the LPTIM instance is enabled.
   */
 #define __HAL_LPTIM_AUTORELOAD_SET(__HANDLE__ , __VALUE__)  ((__HANDLE__)->Instance->ARR =  (__VALUE__))
 
@@ -455,6 +459,7 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @param  __HANDLE__ LPTIM handle
   * @param  __VALUE__ Compare value
   * @retval None
+  * @note   The CMP register can only be modified when the LPTIM instance is enabled.
   */
 #define __HAL_LPTIM_COMPARE_SET(__HANDLE__ , __VALUE__)     ((__HANDLE__)->Instance->CMP =  (__VALUE__))
 
@@ -503,6 +508,7 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   *            @arg LPTIM_IT_ARRM    : Autoreload match Interrupt.
   *            @arg LPTIM_IT_CMPM    : Compare match Interrupt.
   * @retval None.
+  * @note   The LPTIM interrupts can only be enabled when the LPTIM instance is disabled.
   */
 #define __HAL_LPTIM_ENABLE_IT(__HANDLE__, __INTERRUPT__)    ((__HANDLE__)->Instance->IER  |= (__INTERRUPT__))
 
@@ -519,6 +525,7 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   *            @arg LPTIM_IT_ARRM    : Autoreload match Interrupt.
   *            @arg LPTIM_IT_CMPM    : Compare match Interrupt.
   * @retval None.
+  * @note   The LPTIM interrupts can only be disabled when the LPTIM instance is disabled.
   */
 #define __HAL_LPTIM_DISABLE_IT(__HANDLE__, __INTERRUPT__)   ((__HANDLE__)->Instance->IER  &= (~(__INTERRUPT__)))
 
@@ -572,6 +579,10 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @{
   */
 
+/** @addtogroup LPTIM_Exported_Functions_Group1
+ *  @brief    Initialization and Configuration functions.
+ * @{
+ */
 /* Initialization/de-initialization functions  ********************************/
 HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim);
 HAL_StatusTypeDef HAL_LPTIM_DeInit(LPTIM_HandleTypeDef *hlptim);
@@ -579,7 +590,14 @@ HAL_StatusTypeDef HAL_LPTIM_DeInit(LPTIM_HandleTypeDef *hlptim);
 /* MSP functions  *************************************************************/
 void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef *hlptim);
 void HAL_LPTIM_MspDeInit(LPTIM_HandleTypeDef *hlptim);
+/**
+  * @}
+  */
 
+/** @addtogroup LPTIM_Exported_Functions_Group2
+ *  @brief   Start-Stop operation functions.
+ * @{
+ */
 /* Start/Stop operation functions  *********************************************/
 /* ################################# PWM Mode ################################*/
 /* Blocking mode: Polling */
@@ -628,12 +646,26 @@ HAL_StatusTypeDef HAL_LPTIM_Counter_Stop(LPTIM_HandleTypeDef *hlptim);
 /* Non-Blocking mode: Interrupt */
 HAL_StatusTypeDef HAL_LPTIM_Counter_Start_IT(LPTIM_HandleTypeDef *hlptim, uint32_t Period);
 HAL_StatusTypeDef HAL_LPTIM_Counter_Stop_IT(LPTIM_HandleTypeDef *hlptim);
+/**
+  * @}
+  */
 
+/** @addtogroup LPTIM_Exported_Functions_Group3
+ *  @brief  Read operation functions.
+ * @{
+ */
 /* Reading operation functions ************************************************/
 uint32_t HAL_LPTIM_ReadCounter(LPTIM_HandleTypeDef *hlptim);
 uint32_t HAL_LPTIM_ReadAutoReload(LPTIM_HandleTypeDef *hlptim);
 uint32_t HAL_LPTIM_ReadCompare(LPTIM_HandleTypeDef *hlptim);
+/**
+  * @}
+  */
 
+/** @addtogroup LPTIM_Exported_Functions_Group4
+ *  @brief  LPTIM IRQ handler and callback functions.
+ * @{
+ */
 /* LPTIM IRQ functions  *******************************************************/
 void HAL_LPTIM_IRQHandler(LPTIM_HandleTypeDef *hlptim);
 
@@ -651,9 +683,19 @@ void HAL_LPTIM_DirectionDownCallback(LPTIM_HandleTypeDef *hlptim);
 HAL_StatusTypeDef HAL_LPTIM_RegisterCallback(LPTIM_HandleTypeDef *lphtim, HAL_LPTIM_CallbackIDTypeDef CallbackID, pLPTIM_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_LPTIM_UnRegisterCallback(LPTIM_HandleTypeDef *lphtim, HAL_LPTIM_CallbackIDTypeDef CallbackID);
 #endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */
+/**
+  * @}
+  */
 
+/** @addtogroup LPTIM_Group5
+ *  @brief   Peripheral State functions.
+ * @{
+ */
 /* Peripheral State functions  ************************************************/
 HAL_LPTIM_StateTypeDef HAL_LPTIM_GetState(LPTIM_HandleTypeDef *hlptim);
+/**
+  * @}
+  */
 
 /**
   * @}
@@ -745,7 +787,7 @@ HAL_LPTIM_StateTypeDef HAL_LPTIM_GetState(LPTIM_HandleTypeDef *hlptim);
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_7) || \
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_8) || \
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_9))
-#endif /* STM32G473xx || STM32G483xx ||STM32G474xx || STM32G484xx  */
+#endif /* STM32G473xx || STM32G483xx || STM32G474xx || STM32G484xx  */
 
 #define IS_LPTIM_EXT_TRG_POLARITY(__POLARITY__) (((__POLARITY__) == LPTIM_ACTIVEEDGE_RISING         ) || \
                                                  ((__POLARITY__) == LPTIM_ACTIVEEDGE_FALLING        ) || \
@@ -807,7 +849,7 @@ HAL_LPTIM_StateTypeDef HAL_LPTIM_GetState(LPTIM_HandleTypeDef *hlptim);
 /** @defgroup LPTIM_Private_Functions LPTIM Private Functions
   * @{
   */
-void LPTIM_Disable(LPTIM_HandleTypeDef *lptim);
+void LPTIM_Disable(LPTIM_HandleTypeDef *hlptim);
 /**
   * @}
   */

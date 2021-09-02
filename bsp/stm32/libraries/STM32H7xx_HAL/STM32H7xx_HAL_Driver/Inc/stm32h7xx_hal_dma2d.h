@@ -32,6 +32,8 @@
   * @{
   */
 
+#if defined (DMA2D)
+
 /** @addtogroup DMA2D DMA2D
   * @brief DMA2D HAL module driver
   * @{
@@ -78,7 +80,11 @@ typedef struct
                                                This parameter can be one value of @ref DMA2D_RB_Swap. */
 
 
+  uint32_t             BytesSwap;         /*!< Select byte regular mode or bytes swap mode (two by two).
+                                               This parameter can be one value of @ref DMA2D_Bytes_Swap. */
 
+  uint32_t             LineOffsetMode;    /*!< Configures how is expressed the line offset for the foreground, background and output.
+                                               This parameter can be one value of @ref DMA2D_Line_Offset_Mode. */
 
 } DMA2D_InitTypeDef;
 
@@ -199,7 +205,9 @@ typedef  void (*pDMA2D_CallbackTypeDef)(DMA2D_HandleTypeDef * hdma2d); /*!< Poin
 #define DMA2D_M2M                   0x00000000U                         /*!< DMA2D memory to memory transfer mode */
 #define DMA2D_M2M_PFC               DMA2D_CR_MODE_0                     /*!< DMA2D memory to memory with pixel format conversion transfer mode */
 #define DMA2D_M2M_BLEND             DMA2D_CR_MODE_1                     /*!< DMA2D memory to memory with blending transfer mode */
-#define DMA2D_R2M                   DMA2D_CR_MODE            /*!< DMA2D register to memory transfer mode */
+#define DMA2D_R2M                   (DMA2D_CR_MODE_1 | DMA2D_CR_MODE_0) /*!< DMA2D register to memory transfer mode */
+#define DMA2D_M2M_BLEND_FG          DMA2D_CR_MODE_2                     /*!< DMA2D memory to memory with blending transfer mode and fixed color FG */
+#define DMA2D_M2M_BLEND_BG          (DMA2D_CR_MODE_2 | DMA2D_CR_MODE_0) /*!< DMA2D memory to memory with blending transfer mode and fixed color BG */
 /**
   * @}
   */
@@ -266,7 +274,23 @@ typedef  void (*pDMA2D_CallbackTypeDef)(DMA2D_HandleTypeDef * hdma2d); /*!< Poin
 
 
 
+/** @defgroup DMA2D_Line_Offset_Mode DMA2D Line Offset Mode
+  * @{
+  */
+#define DMA2D_LOM_PIXELS            0x00000000U   /*!< Line offsets expressed in pixels */
+#define DMA2D_LOM_BYTES             DMA2D_CR_LOM  /*!< Line offsets expressed in bytes */
+/**
+  * @}
+  */
 
+/** @defgroup DMA2D_Bytes_Swap DMA2D Bytes Swap
+  * @{
+  */
+#define DMA2D_BYTES_REGULAR         0x00000000U      /*!< Bytes in regular order in output FIFO */
+#define DMA2D_BYTES_SWAP            DMA2D_OPFCCR_SB  /*!< Bytes are swapped two by two in output FIFO */
+/**
+  * @}
+  */
 
 /** @defgroup DMA2D_Chroma_Sub_Sampling DMA2D Chroma Sub Sampling
   * @{
@@ -486,6 +510,8 @@ HAL_StatusTypeDef HAL_DMA2D_Suspend(DMA2D_HandleTypeDef *hdma2d);
 HAL_StatusTypeDef HAL_DMA2D_Resume(DMA2D_HandleTypeDef *hdma2d);
 HAL_StatusTypeDef HAL_DMA2D_Abort(DMA2D_HandleTypeDef *hdma2d);
 HAL_StatusTypeDef HAL_DMA2D_EnableCLUT(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx);
+HAL_StatusTypeDef HAL_DMA2D_CLUTStartLoad(DMA2D_HandleTypeDef *hdma2d, DMA2D_CLUTCfgTypeDef *CLUTCfg, uint32_t LayerIdx);
+HAL_StatusTypeDef HAL_DMA2D_CLUTStartLoad_IT(DMA2D_HandleTypeDef *hdma2d, DMA2D_CLUTCfgTypeDef *CLUTCfg, uint32_t LayerIdx);
 HAL_StatusTypeDef HAL_DMA2D_CLUTLoad(DMA2D_HandleTypeDef *hdma2d, DMA2D_CLUTCfgTypeDef CLUTCfg, uint32_t LayerIdx);
 HAL_StatusTypeDef HAL_DMA2D_CLUTLoad_IT(DMA2D_HandleTypeDef *hdma2d, DMA2D_CLUTCfgTypeDef CLUTCfg, uint32_t LayerIdx);
 HAL_StatusTypeDef HAL_DMA2D_CLUTLoading_Abort(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx);
@@ -607,8 +633,9 @@ uint32_t               HAL_DMA2D_GetError(DMA2D_HandleTypeDef *hdma2d);
   */
 #define IS_DMA2D_LAYER(LAYER)                 (((LAYER) == DMA2D_BACKGROUND_LAYER) || ((LAYER) == DMA2D_FOREGROUND_LAYER))
 
-#define IS_DMA2D_MODE(MODE)                   (((MODE) == DMA2D_M2M)       || ((MODE) == DMA2D_M2M_PFC) || \
-                                               ((MODE) == DMA2D_M2M_BLEND) || ((MODE) == DMA2D_R2M))
+#define IS_DMA2D_MODE(MODE)                   (((MODE) == DMA2D_M2M)          || ((MODE) == DMA2D_M2M_PFC) || \
+                                               ((MODE) == DMA2D_M2M_BLEND)    || ((MODE) == DMA2D_R2M)     || \
+                                               ((MODE) == DMA2D_M2M_BLEND_FG) || ((MODE) == DMA2D_M2M_BLEND_BG))
 
 #define IS_DMA2D_CMODE(MODE_ARGB)             (((MODE_ARGB) == DMA2D_OUTPUT_ARGB8888) || ((MODE_ARGB) == DMA2D_OUTPUT_RGB888)   || \
                                                ((MODE_ARGB) == DMA2D_OUTPUT_RGB565)   || ((MODE_ARGB) == DMA2D_OUTPUT_ARGB1555) || \
@@ -636,7 +663,11 @@ uint32_t               HAL_DMA2D_GetError(DMA2D_HandleTypeDef *hdma2d);
 #define IS_DMA2D_RB_SWAP(RB_Swap) (((RB_Swap) == DMA2D_RB_REGULAR) || \
                                    ((RB_Swap) == DMA2D_RB_SWAP))
 
+#define IS_DMA2D_LOM_MODE(LOM)          (((LOM) == DMA2D_LOM_PIXELS) || \
+                                         ((LOM) == DMA2D_LOM_BYTES))
 
+#define IS_DMA2D_BYTES_SWAP(BYTES_SWAP) (((BYTES_SWAP) == DMA2D_BYTES_REGULAR) || \
+                                         ((BYTES_SWAP) == DMA2D_BYTES_SWAP))
 
 #define IS_DMA2D_CHROMA_SUB_SAMPLING(CSS) (((CSS) == DMA2D_NO_CSS)  || \
                                            ((CSS) == DMA2D_CSS_422) || \
@@ -659,10 +690,11 @@ uint32_t               HAL_DMA2D_GetError(DMA2D_HandleTypeDef *hdma2d);
   * @}
   */
 
+#endif /* defined (DMA2D) */
+
 /**
   * @}
   */
-
 
 #ifdef __cplusplus
 }

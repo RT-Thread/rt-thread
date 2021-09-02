@@ -1075,7 +1075,7 @@ const char *ulog_global_filter_kw_get(void)
     return ulog.filter.keyword;
 }
 
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
+#ifdef(RT_USING_FINSH)
 #include <finsh.h>
 
 static void _print_lvl_info(void)
@@ -1250,7 +1250,7 @@ static void ulog_filter(uint8_t argc, char **argv)
     }
 }
 MSH_CMD_EXPORT(ulog_filter, Show ulog filter settings);
-#endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
+#endif defined(RT_USING_FINSH)
 #endif /* ULOG_USING_FILTER */
 
 rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color)

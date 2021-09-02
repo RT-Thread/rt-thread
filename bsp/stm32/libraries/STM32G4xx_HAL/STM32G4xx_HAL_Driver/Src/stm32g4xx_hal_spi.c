@@ -2278,7 +2278,8 @@ HAL_StatusTypeDef HAL_SPI_Abort(SPI_HandleTypeDef *hspi)
         break;
       }
       count--;
-    } while (hspi->State != HAL_SPI_STATE_ABORT);
+    }
+    while (hspi->State != HAL_SPI_STATE_ABORT);
     /* Reset Timeout Counter */
     count = resetcount;
   }
@@ -2295,7 +2296,8 @@ HAL_StatusTypeDef HAL_SPI_Abort(SPI_HandleTypeDef *hspi)
         break;
       }
       count--;
-    } while (hspi->State != HAL_SPI_STATE_ABORT);
+    }
+    while (hspi->State != HAL_SPI_STATE_ABORT);
     /* Reset Timeout Counter */
     count = resetcount;
   }
@@ -2440,7 +2442,8 @@ HAL_StatusTypeDef HAL_SPI_Abort_IT(SPI_HandleTypeDef *hspi)
         break;
       }
       count--;
-    } while (hspi->State != HAL_SPI_STATE_ABORT);
+    }
+    while (hspi->State != HAL_SPI_STATE_ABORT);
     /* Reset Timeout Counter */
     count = resetcount;
   }
@@ -2457,7 +2460,8 @@ HAL_StatusTypeDef HAL_SPI_Abort_IT(SPI_HandleTypeDef *hspi)
         break;
       }
       count--;
-    } while (hspi->State != HAL_SPI_STATE_ABORT);
+    }
+    while (hspi->State != HAL_SPI_STATE_ABORT);
     /* Reset Timeout Counter */
     count = resetcount;
   }
@@ -3051,8 +3055,17 @@ static void SPI_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
     }
 #endif /* USE_SPI_CRC */
 
-    /* Disable Rx/Tx DMA Request (done by default to handle the case master rx direction 2 lines) */
-    CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN);
+    /* Check if we are in Master RX 2 line mode */
+    if ((hspi->Init.Direction == SPI_DIRECTION_2LINES) && (hspi->Init.Mode == SPI_MODE_MASTER))
+    {
+      /* Disable Rx/Tx DMA Request (done by default to handle the case master rx direction 2 lines) */
+      CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN);
+    }
+    else
+    {
+      /* Normal case */
+      CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_RXDMAEN);
+    }
 
     /* Check the end of the transaction */
     if (SPI_EndRxTransaction(hspi, SPI_DEFAULT_TIMEOUT, tickstart) != HAL_OK)
@@ -4171,7 +4184,8 @@ static void SPI_AbortRx_ISR(SPI_HandleTypeDef *hspi)
       break;
     }
     count--;
-  } while (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_RXNEIE));
+  }
+  while (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_RXNEIE));
 
   /* Control the BSY flag */
   if (SPI_WaitFlagStateUntilTimeout(hspi, SPI_FLAG_BSY, RESET, SPI_DEFAULT_TIMEOUT, HAL_GetTick()) != HAL_OK)
@@ -4212,7 +4226,8 @@ static void SPI_AbortTx_ISR(SPI_HandleTypeDef *hspi)
       break;
     }
     count--;
-  } while (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_TXEIE));
+  }
+  while (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_TXEIE));
 
   if (SPI_EndRxTxTransaction(hspi, SPI_DEFAULT_TIMEOUT, HAL_GetTick()) != HAL_OK)
   {
@@ -4243,7 +4258,8 @@ static void SPI_AbortTx_ISR(SPI_HandleTypeDef *hspi)
         break;
       }
       count--;
-    } while (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_RXNEIE));
+    }
+    while (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_RXNEIE));
 
     /* Control the BSY flag */
     if (SPI_WaitFlagStateUntilTimeout(hspi, SPI_FLAG_BSY, RESET, SPI_DEFAULT_TIMEOUT, HAL_GetTick()) != HAL_OK)

@@ -38,7 +38,6 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-
 /** @defgroup I2CEx_Exported_Constants I2C Extended Exported Constants
   * @{
   */
@@ -75,24 +74,51 @@ extern "C" {
   */
 
 /* Exported macro ------------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
+/** @defgroup I2CEx_Exported_Macros I2C Extended Exported Macros
+  * @{
+  */
 
+/**
+  * @}
+  */
+
+/* Exported functions --------------------------------------------------------*/
 /** @addtogroup I2CEx_Exported_Functions I2C Extended Exported Functions
   * @{
   */
 
-/** @addtogroup I2CEx_Exported_Functions_Group1 Extended features functions
-  * @brief    Extended features functions
+/** @addtogroup I2CEx_Exported_Functions_Group1 I2C Extended Filter Mode Functions
   * @{
   */
-
 /* Peripheral Control functions  ************************************************/
 HAL_StatusTypeDef HAL_I2CEx_ConfigAnalogFilter(I2C_HandleTypeDef *hi2c, uint32_t AnalogFilter);
 HAL_StatusTypeDef HAL_I2CEx_ConfigDigitalFilter(I2C_HandleTypeDef *hi2c, uint32_t DigitalFilter);
+/**
+  * @}
+  */
+
+/** @addtogroup I2CEx_Exported_Functions_Group2 I2C Extended WakeUp Mode Functions
+  * @{
+  */
 HAL_StatusTypeDef HAL_I2CEx_EnableWakeUp(I2C_HandleTypeDef *hi2c);
 HAL_StatusTypeDef HAL_I2CEx_DisableWakeUp(I2C_HandleTypeDef *hi2c);
+/**
+  * @}
+  */
+
+/** @addtogroup I2CEx_Exported_Functions_Group3 I2C Extended FastModePlus Functions
+  * @{
+  */
 void HAL_I2CEx_EnableFastModePlus(uint32_t ConfigFastModePlus);
 void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus);
+/**
+  * @}
+  */
+
+
+/**
+  * @}
+  */
 
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup I2CEx_Private_Constants I2C Extended Private Constants
@@ -118,9 +144,6 @@ void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus);
                                          (((__CONFIG__) & (I2C_FASTMODEPLUS_PB9))  == I2C_FASTMODEPLUS_PB9)     || \
                                          (((__CONFIG__) & (I2C_FASTMODEPLUS_I2C1)) == I2C_FASTMODEPLUS_I2C1)    || \
                                          (((__CONFIG__) & (I2C_FASTMODEPLUS_I2C3)) == I2C_FASTMODEPLUS_I2C3))
-
-
-
 /**
   * @}
   */
@@ -130,14 +153,6 @@ void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus);
   * @{
   */
 /* Private functions are defined in stm32wbxx_hal_i2c_ex.c file */
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
 /**
   * @}
   */

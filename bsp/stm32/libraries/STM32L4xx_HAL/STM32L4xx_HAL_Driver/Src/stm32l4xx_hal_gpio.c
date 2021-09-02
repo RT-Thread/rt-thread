@@ -164,8 +164,8 @@
 
 /**
   * @brief  Initialize the GPIOx peripheral according to the specified parameters in the GPIO_Init.
-  * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral for STM32L4 family
-  * @param  GPIO_Init: pointer to a GPIO_InitTypeDef structure that contains
+  * @param  GPIOx where x can be (A..H) to select the GPIO peripheral for STM32L4 family
+  * @param  GPIO_Init pointer to a GPIO_InitTypeDef structure that contains
   *         the configuration information for the specified GPIO peripheral.
   * @retval None
   */
@@ -303,8 +303,8 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 
 /**
   * @brief  De-initialize the GPIOx peripheral registers to their default reset values.
-  * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral for STM32L4 family
-  * @param  GPIO_Pin: specifies the port bit to be written.
+  * @param  GPIOx where x can be (A..H) to select the GPIO peripheral for STM32L4 family
+  * @param  GPIO_Pin specifies the port bit to be written.
   *         This parameter can be any combination of GPIO_Pin_x where x can be (0..15).
   * @retval None
   */
@@ -389,8 +389,8 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
 
 /**
   * @brief  Read the specified input port pin.
-  * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral for STM32L4 family
-  * @param  GPIO_Pin: specifies the port bit to read.
+  * @param  GPIOx where x can be (A..H) to select the GPIO peripheral for STM32L4 family
+  * @param  GPIO_Pin specifies the port bit to read.
   *         This parameter can be any combination of GPIO_Pin_x where x can be (0..15).
   * @retval The input port pin value.
   */
@@ -523,7 +523,7 @@ void HAL_GPIO_EXTI_IRQHandler(uint16_t GPIO_Pin)
 
 /**
   * @brief  EXTI line detection callback.
-  * @param  GPIO_Pin: Specifies the port pin connected to corresponding EXTI line.
+  * @param  GPIO_Pin Specifies the port pin connected to corresponding EXTI line.
   * @retval None
   */
 __weak void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
