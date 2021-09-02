@@ -326,6 +326,6 @@ __STATIC_INLINE uint32_t LL_WWDG_IsEnabledIT_EWKUP(WWDG_TypeDef *WWDGx)
 }
 #endif
 
-#endif /* __STM32G4xx_LL_WWDG_H */
+#endif /* STM32G4xx_LL_WWDG_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -22,7 +22,7 @@
 #define STM32F7xx_HAL_WWDG_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -89,12 +89,12 @@ typedef enum
 {
   HAL_WWDG_EWI_CB_ID          = 0x00u,    /*!< WWDG EWI callback ID */
   HAL_WWDG_MSPINIT_CB_ID      = 0x01u,    /*!< WWDG MspInit callback ID */
-}HAL_WWDG_CallbackIDTypeDef;
+} HAL_WWDG_CallbackIDTypeDef;
 
 /**
   * @brief  HAL WWDG Callback pointer definition
   */
-typedef void (*pWWDG_CallbackTypeDef)(WWDG_HandleTypeDef * hppp); /*!< pointer to a WWDG common callback functions */
+typedef void (*pWWDG_CallbackTypeDef)(WWDG_HandleTypeDef *hppp);  /*!< pointer to a WWDG common callback functions */
 
 #endif
 /**
@@ -239,7 +239,8 @@ typedef void (*pWWDG_CallbackTypeDef)(WWDG_HandleTypeDef * hppp); /*!< pointer t
   *            @arg WWDG_IT_EWI: Early Wakeup Interrupt
   * @retval state of __INTERRUPT__ (TRUE or FALSE).
   */
-#define __HAL_WWDG_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CFR & (__INTERRUPT__)) == (__INTERRUPT__))
+#define __HAL_WWDG_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CFR\
+                                                              & (__INTERRUPT__)) == (__INTERRUPT__))
 
 /**
   * @}
@@ -294,6 +295,6 @@ void                  HAL_WWDG_EarlyWakeupCallback(WWDG_HandleTypeDef *hwwdg);
 }
 #endif
 
-#endif /* __STM32F7xx_HAL_WWDG_H */
+#endif /* STM32F7xx_HAL_WWDG_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

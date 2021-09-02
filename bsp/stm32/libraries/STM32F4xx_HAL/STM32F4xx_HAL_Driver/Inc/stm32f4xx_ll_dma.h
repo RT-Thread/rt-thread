@@ -285,14 +285,24 @@ typedef struct
 /** @defgroup DMA_LL_EC_CHANNEL CHANNEL
   * @{
   */
-#define LL_DMA_CHANNEL_0                  0x00000000U                                                /* Select Channel0 of DMA Instance */
-#define LL_DMA_CHANNEL_1                  DMA_SxCR_CHSEL_0                                           /* Select Channel1 of DMA Instance */
-#define LL_DMA_CHANNEL_2                  DMA_SxCR_CHSEL_1                                           /* Select Channel2 of DMA Instance */
-#define LL_DMA_CHANNEL_3                  (DMA_SxCR_CHSEL_0 | DMA_SxCR_CHSEL_1)                      /* Select Channel3 of DMA Instance */
-#define LL_DMA_CHANNEL_4                  DMA_SxCR_CHSEL_2                                           /* Select Channel4 of DMA Instance */
-#define LL_DMA_CHANNEL_5                  (DMA_SxCR_CHSEL_2 | DMA_SxCR_CHSEL_0)                      /* Select Channel5 of DMA Instance */
-#define LL_DMA_CHANNEL_6                  (DMA_SxCR_CHSEL_2 | DMA_SxCR_CHSEL_1)                      /* Select Channel6 of DMA Instance */
-#define LL_DMA_CHANNEL_7                  (DMA_SxCR_CHSEL_2 | DMA_SxCR_CHSEL_1 | DMA_SxCR_CHSEL_0)   /* Select Channel7 of DMA Instance */
+#define LL_DMA_CHANNEL_0                  0x00000000U                                                                   /* Select Channel0 of DMA Instance */
+#define LL_DMA_CHANNEL_1                  DMA_SxCR_CHSEL_0                                                              /* Select Channel1 of DMA Instance */
+#define LL_DMA_CHANNEL_2                  DMA_SxCR_CHSEL_1                                                              /* Select Channel2 of DMA Instance */
+#define LL_DMA_CHANNEL_3                  (DMA_SxCR_CHSEL_0 | DMA_SxCR_CHSEL_1)                                         /* Select Channel3 of DMA Instance */
+#define LL_DMA_CHANNEL_4                  DMA_SxCR_CHSEL_2                                                              /* Select Channel4 of DMA Instance */
+#define LL_DMA_CHANNEL_5                  (DMA_SxCR_CHSEL_2 | DMA_SxCR_CHSEL_0)                                         /* Select Channel5 of DMA Instance */
+#define LL_DMA_CHANNEL_6                  (DMA_SxCR_CHSEL_2 | DMA_SxCR_CHSEL_1)                                         /* Select Channel6 of DMA Instance */
+#define LL_DMA_CHANNEL_7                  (DMA_SxCR_CHSEL_2 | DMA_SxCR_CHSEL_1 | DMA_SxCR_CHSEL_0)                      /* Select Channel7 of DMA Instance */
+#if defined (DMA_SxCR_CHSEL_3)
+#define LL_DMA_CHANNEL_8                  DMA_SxCR_CHSEL_3                                                              /* Select Channel8 of DMA Instance */
+#define LL_DMA_CHANNEL_9                  (DMA_SxCR_CHSEL_3 | DMA_SxCR_CHSEL_0)                                         /* Select Channel9 of DMA Instance */
+#define LL_DMA_CHANNEL_10                 (DMA_SxCR_CHSEL_3 | DMA_SxCR_CHSEL_1)                                         /* Select Channel10 of DMA Instance */
+#define LL_DMA_CHANNEL_11                 (DMA_SxCR_CHSEL_3 | DMA_SxCR_CHSEL_1 | DMA_SxCR_CHSEL_0)                      /* Select Channel11 of DMA Instance */
+#define LL_DMA_CHANNEL_12                 (DMA_SxCR_CHSEL_3 | DMA_SxCR_CHSEL_2)                                         /* Select Channel12 of DMA Instance */
+#define LL_DMA_CHANNEL_13                 (DMA_SxCR_CHSEL_3 | DMA_SxCR_CHSEL_2 | DMA_SxCR_CHSEL_0)                      /* Select Channel13 of DMA Instance */
+#define LL_DMA_CHANNEL_14                 (DMA_SxCR_CHSEL_3 | DMA_SxCR_CHSEL_2 | DMA_SxCR_CHSEL_1)                      /* Select Channel14 of DMA Instance */
+#define LL_DMA_CHANNEL_15                 (DMA_SxCR_CHSEL_3 | DMA_SxCR_CHSEL_2 | DMA_SxCR_CHSEL_1 | DMA_SxCR_CHSEL_0)   /* Select Channel15 of DMA Instance */
+#endif /* DMA_SxCR_CHSEL_3 */
 /**
   * @}
   */

@@ -1788,7 +1788,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
     }
 
     /* USART Over-Run interrupt occurred -----------------------------------*/
-    if (((isrflags & USART_SR_ORE) != RESET) && ((cr3its & USART_CR3_EIE) != RESET))
+    if (((isrflags & USART_SR_ORE) != RESET) && (((cr1its & USART_CR1_RXNEIE) != RESET) || ((cr3its & USART_CR3_EIE) != RESET)))
     {
       husart->ErrorCode |= HAL_USART_ERROR_ORE;
     }

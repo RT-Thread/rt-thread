@@ -81,11 +81,11 @@
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS Device version number V2.2.2
+  * @brief CMSIS Device version number V2.2.3
   */
 #define __STM32F2xx_CMSIS_VERSION_MAIN   (0x02U) /*!< [31:24] main version */
 #define __STM32F2xx_CMSIS_VERSION_SUB1   (0x02U) /*!< [23:16] sub1 version */
-#define __STM32F2xx_CMSIS_VERSION_SUB2   (0x02U) /*!< [15:8]  sub2 version */
+#define __STM32F2xx_CMSIS_VERSION_SUB2   (0x03U) /*!< [15:8]  sub2 version */
 #define __STM32F2xx_CMSIS_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32F2xx_CMSIS_VERSION        ((__STM32F2xx_CMSIS_VERSION_MAIN << 24)\
                                          |(__STM32F2xx_CMSIS_VERSION_SUB1 << 16)\

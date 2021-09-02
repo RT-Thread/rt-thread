@@ -172,8 +172,8 @@ typedef  uint32_t OPAMP_TrimmingValueTypeDef;
   */
 typedef enum
 {
-  HAL_OPAMP_MSP_INIT_CB_ID                     = 0x01UL,  /*!< OPAMP MspInit Callback ID           */
-  HAL_OPAMP_MSP_DEINIT_CB_ID                   = 0x02UL,  /*!< OPAMP MspDeInit Callback ID         */
+  HAL_OPAMP_MSPINIT_CB_ID                     = 0x01UL,  /*!< OPAMP MspInit Callback ID           */
+  HAL_OPAMP_MSPDEINIT_CB_ID                   = 0x02UL,  /*!< OPAMP MspDeInit Callback ID         */
   HAL_OPAMP_ALL_CB_ID                          = 0x03UL   /*!< OPAMP All ID                        */
 } HAL_OPAMP_CallbackIDTypeDef;
 

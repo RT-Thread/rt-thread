@@ -41,23 +41,6 @@
   * @{
   */
 
-#if defined(PWR_PVD_SUPPORT)
-/** @defgroup PWR_PVD_Mode_Mask PWR PVD Mode Mask
-  * @{
-  */
-#define PVD_MODE_IT           0x00010000U  /*!< Mask for interruption yielded
-                                                by PVD threshold crossing     */
-#define PVD_MODE_EVT          0x00020000U  /*!< Mask for event yielded
-                                                by PVD threshold crossing     */
-#define PVD_RISING_EDGE       0x00000001U  /*!< Mask for rising edge set as
-                                                PVD trigger                   */
-#define PVD_FALLING_EDGE      0x00000002U  /*!< Mask for falling edge set as
-                                                PVD trigger                   */
-/**
-  * @}
-  */
-#endif
-
 /**
   * @}
   */
@@ -108,17 +91,6 @@ void HAL_PWR_DeInit(void)
  ===============================================================================
 
     [..]
-     *** PVD configuration ***
-    =========================
-    [..]
-      (+) The PVD is used to monitor the VDD power supply by comparing it to a
-          threshold selected by the PVD Level (PVDRT[2:0] & PVDFT[2:0] bits in
-          PWR CR2 register).
-      (+) PVDO flag is available to indicate if VDD/VDDA is higher or lower
-          than the PVD threshold. This event is internally connected to the EXTI
-          line 16 and can generate an interrupt if enabled.
-      (+) The PVD is stopped in Standby & Shutdown mode.
-
     *** WakeUp pin configuration ***
     ================================
     [..]
@@ -232,7 +204,7 @@ void HAL_PWR_DeInit(void)
         cleared. SRAM and registers contents are lost except for backup domain
         registers.
       (+) Entry:
-          (++) The Shutdown mode is entered thru HAL_PWREx_EnterSHUTDOWNMode() API,
+          (++) The Shutdown mode is entered through HAL_PWREx_EnterSHUTDOWNMode() API,
                by setting SLEEPDEEP in Cortex control register.
       (+) Exit:
           (++) WKUP pin edge detection, RTC event (wakeup, alarm, timestamp),
@@ -269,96 +241,23 @@ void HAL_PWR_DisableBkUpAccess(void)
   CLEAR_BIT(PWR->CR1, PWR_CR1_DBP);
 }
 
-
-#if defined(PWR_PVD_SUPPORT)
-/**
-  * @brief  Configure the Power Voltage Detector (PVD).
-  * @param  sConfigPVD pointer to a PWR_PVDTypeDef structure that contains the
-            PVD configuration information: threshold levels, operating mode.
-  * @note   Refer to the electrical characteristics of your device datasheet for
-  *         more details about the voltage thresholds corresponding to each
-  *         detection level.
-  * @note   User should take care that rising threshold is higher than falling
-  *         one in order to avoid having always PVDO output set.
-  * @retval HAL_OK
-  */
-HAL_StatusTypeDef HAL_PWR_ConfigPVD(PWR_PVDTypeDef *sConfigPVD)
-{
-  /* Check the parameters */
-  assert_param(IS_PWR_PVD_LEVEL(sConfigPVD->PVDLevel));
-  assert_param(IS_PWR_PVD_MODE(sConfigPVD->Mode));
-
-  /* Set PVD level bits only according to PVDLevel value */
-  MODIFY_REG(PWR->CR2, (PWR_CR2_PVDFT | PWR_CR2_PVDRT), sConfigPVD->PVDLevel);
-
-  /* Clear any previous config, in case no event or IT mode is selected */
-  __HAL_PWR_PVD_EXTI_DISABLE_EVENT();
-  __HAL_PWR_PVD_EXTI_DISABLE_IT();
-  __HAL_PWR_PVD_EXTI_DISABLE_FALLING_EDGE();
-  __HAL_PWR_PVD_EXTI_DISABLE_RISING_EDGE();
-
-  /* Configure interrupt mode */
-  if((sConfigPVD->Mode & PVD_MODE_IT) == PVD_MODE_IT)
-  {
-    __HAL_PWR_PVD_EXTI_ENABLE_IT();
-  }
-
-  /* Configure event mode */
-  if((sConfigPVD->Mode & PVD_MODE_EVT) == PVD_MODE_EVT)
-  {
-    __HAL_PWR_PVD_EXTI_ENABLE_EVENT();
-  }
-
-  /* Configure the edge */
-  if((sConfigPVD->Mode & PVD_RISING_EDGE) == PVD_RISING_EDGE)
-  {
-    __HAL_PWR_PVD_EXTI_ENABLE_RISING_EDGE();
-  }
-
-  if((sConfigPVD->Mode & PVD_FALLING_EDGE) == PVD_FALLING_EDGE)
-  {
-    __HAL_PWR_PVD_EXTI_ENABLE_FALLING_EDGE();
-  }
-
-  return HAL_OK;
-}
-
-
-/**
-  * @brief  Enable the Power Voltage Detector (PVD).
-  * @retval None
-  */
-void HAL_PWR_EnablePVD(void)
-{
-  SET_BIT(PWR->CR2, PWR_CR2_PVDE);
-}
-
-
-/**
-  * @brief  Disable the Power Voltage Detector (PVD).
-  * @retval None
-  */
-void HAL_PWR_DisablePVD(void)
-{
-  CLEAR_BIT(PWR->CR2, PWR_CR2_PVDE);
-}
-#endif
-
 /**
   * @brief  Enable the WakeUp PINx functionality.
   * @param  WakeUpPinPolarity Specifies which Wake-Up pin to enable.
   *         This parameter can be one of the following legacy values which set
   *         the default polarity i.e. detection on high level (rising edge):
-  *           @arg @ref PWR_WAKEUP_PIN1, PWR_WAKEUP_PIN2, PWR_WAKEUP_PIN4,
-  *                PWR_WAKEUP_PIN5,PWR_WAKEUP_PIN6
+  *           @arg @ref PWR_WAKEUP_PIN1, PWR_WAKEUP_PIN2, PWR_WAKEUP_PIN3(*), 
+  *                     PWR_WAKEUP_PIN4, PWR_WAKEUP_PIN5(*),PWR_WAKEUP_PIN6
   *         or one of the following value where the user can explicitly specify
   *         the enabled pin and the chosen polarity:
   *           @arg @ref PWR_WAKEUP_PIN1_HIGH or PWR_WAKEUP_PIN1_LOW
   *           @arg @ref PWR_WAKEUP_PIN2_HIGH or PWR_WAKEUP_PIN2_LOW
+  *           @arg @ref PWR_WAKEUP_PIN3_HIGH or PWR_WAKEUP_PIN3_LOW (*)
   *           @arg @ref PWR_WAKEUP_PIN4_HIGH or PWR_WAKEUP_PIN4_LOW
-  *           @arg @ref PWR_WAKEUP_PIN5_HIGH or PWR_WAKEUP_PIN5_LOW
+  *           @arg @ref PWR_WAKEUP_PIN5_HIGH or PWR_WAKEUP_PIN5_LOW (*)
   *           @arg @ref PWR_WAKEUP_PIN6_HIGH or PWR_WAKEUP_PIN6_LOW
   * @note  PWR_WAKEUP_PINx and PWR_WAKEUP_PINx_HIGH are equivalent.
+  * @note (*) availability depends on devices
   * @retval None
   */
 void HAL_PWR_EnableWakeUpPin(uint32_t WakeUpPinPolarity)
@@ -378,8 +277,9 @@ void HAL_PWR_EnableWakeUpPin(uint32_t WakeUpPinPolarity)
   * @brief  Disable the WakeUp PINx functionality.
   * @param  WakeUpPinx Specifies the Power Wake-Up pin to disable.
   *         This parameter can be one of the following values:
-  *           @arg @ref PWR_WAKEUP_PIN1, PWR_WAKEUP_PIN2, PWR_WAKEUP_PIN4,
-  *                PWR_WAKEUP_PIN5,PWR_WAKEUP_PIN6
+  *           @arg @ref PWR_WAKEUP_PIN1, PWR_WAKEUP_PIN2,PWR_WAKEUP_PIN3(*),
+  *                     PWR_WAKEUP_PIN4,PWR_WAKEUP_PIN5(*),PWR_WAKEUP_PIN6
+  * @note (*) availability depends on devices
   * @retval None
   */
 void HAL_PWR_DisableWakeUpPin(uint32_t WakeUpPinx)
@@ -624,59 +524,6 @@ void HAL_PWR_DisableSEVOnPend(void)
   /* Clear SEVONPEND bit of Cortex System Control Register */
   CLEAR_BIT(SCB->SCR, ((uint32_t)SCB_SCR_SEVONPEND_Msk));
 }
-
-#if defined(PWR_PVD_SUPPORT)
-/**
-  * @brief  This function handles the PWR PVD interrupt request.
-  * @note   This API should be called under the PVD_IRQHandler().
-  * @retval None
-  */
-void HAL_PWR_PVD_IRQHandler(void)
-{
-  /* Check PWR exti Rising flag */
-  if(__HAL_PWR_PVD_EXTI_GET_RISING_FLAG() != 0x0U)
-  {
-    /* Clear PVD exti pending bit */
-    __HAL_PWR_PVD_EXTI_CLEAR_RISING_FLAG();
-
-    /* PWR PVD interrupt rising user callback */
-    HAL_PWR_PVD_Rising_Callback();
-  }
-
-  /* Check PWR exti fallling flag */
-  if(__HAL_PWR_PVD_EXTI_GET_FALLING_FLAG() != 0x0U)
-  {
-    /* Clear PVD exti pending bit */
-    __HAL_PWR_PVD_EXTI_CLEAR_FALLING_FLAG();
-
-    /* PWR PVD interrupt falling user callback */
-    HAL_PWR_PVD_Falling_Callback();
-  }
-}
-
-/**
-  * @brief  PWR PVD interrupt rising callback
-  * @retval None
-  */
-__weak void HAL_PWR_PVD_Rising_Callback(void)
-{
-  /* NOTE : This function should not be modified; when the callback is needed,
-            the HAL_PWR_PVD_Rising_Callback can be implemented in the user file
-  */
-}
-
-/**
-  * @brief  PWR PVD interrupt Falling callback
-  * @retval None
-  */
-__weak void HAL_PWR_PVD_Falling_Callback(void)
-{
-  /* NOTE : This function should not be modified; when the callback is needed,
-            the HAL_PWR_PVD_Falling_Callback can be implemented in the user file
-  */
-}
-
-#endif
 
 /**
   * @}

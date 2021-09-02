@@ -5,7 +5,6 @@ config SOC_STM32F407ZG
     select SOC_SERIES_STM32F4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select PKG_USING_RT_MEMCPY_CM
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -84,7 +83,6 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_DFS_ELMFAT
             select RT_USING_DFS_ROMFS
             select BSP_USING_FS
-            select RT_USING_SYSTEM_WORKQUEUE
             default n
 
         config SDIO_MAX_FREQ
@@ -104,7 +102,6 @@ menu "Onboard Peripheral Drivers"
             select FAL_USING_AUTO_INIT
             select FAL_PART_HAS_TABLE_CFG
             select PKG_USING_LITTLEFS
-            select RT_USING_SYSTEM_WORKQUEUE
             default n
 
     endmenu

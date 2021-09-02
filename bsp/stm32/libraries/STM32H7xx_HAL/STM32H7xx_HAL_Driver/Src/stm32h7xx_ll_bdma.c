@@ -32,7 +32,7 @@
   * @{
   */
 
-#if defined (BDMA)
+#if defined (BDMA) || defined (BDMA1) || defined (BDMA2)
 
 /** @addtogroup BDMA_LL
   * @{
@@ -46,44 +46,48 @@
   * @{
   */
 #define IS_LL_BDMA_DIRECTION(__VALUE__)          (((__VALUE__) == LL_BDMA_DIRECTION_PERIPH_TO_MEMORY) || \
-                                                 ((__VALUE__) == LL_BDMA_DIRECTION_MEMORY_TO_PERIPH) || \
-                                                 ((__VALUE__) == LL_BDMA_DIRECTION_MEMORY_TO_MEMORY))
+                                                  ((__VALUE__) == LL_BDMA_DIRECTION_MEMORY_TO_PERIPH) || \
+                                                  ((__VALUE__) == LL_BDMA_DIRECTION_MEMORY_TO_MEMORY))
 
 #define IS_LL_BDMA_MODE(__VALUE__)               (((__VALUE__) == LL_BDMA_MODE_NORMAL) || \
-                                                 ((__VALUE__) == LL_BDMA_MODE_CIRCULAR))
+                                                  ((__VALUE__) == LL_BDMA_MODE_CIRCULAR))
 
 #define IS_LL_BDMA_PERIPHINCMODE(__VALUE__)      (((__VALUE__) == LL_BDMA_PERIPH_INCREMENT) || \
-                                                 ((__VALUE__) == LL_BDMA_PERIPH_NOINCREMENT))
+                                                  ((__VALUE__) == LL_BDMA_PERIPH_NOINCREMENT))
 
 #define IS_LL_BDMA_MEMORYINCMODE(__VALUE__)      (((__VALUE__) == LL_BDMA_MEMORY_INCREMENT) || \
-                                                 ((__VALUE__) == LL_BDMA_MEMORY_NOINCREMENT))
+                                                  ((__VALUE__) == LL_BDMA_MEMORY_NOINCREMENT))
 
 #define IS_LL_BDMA_PERIPHDATASIZE(__VALUE__)     (((__VALUE__) == LL_BDMA_PDATAALIGN_BYTE)      || \
-                                                 ((__VALUE__) == LL_BDMA_PDATAALIGN_HALFWORD)  || \
-                                                 ((__VALUE__) == LL_BDMA_PDATAALIGN_WORD))
+                                                  ((__VALUE__) == LL_BDMA_PDATAALIGN_HALFWORD)  || \
+                                                  ((__VALUE__) == LL_BDMA_PDATAALIGN_WORD))
 
 #define IS_LL_BDMA_MEMORYDATASIZE(__VALUE__)     (((__VALUE__) == LL_BDMA_MDATAALIGN_BYTE)      || \
-                                                 ((__VALUE__) == LL_BDMA_MDATAALIGN_HALFWORD)  || \
-                                                 ((__VALUE__) == LL_BDMA_MDATAALIGN_WORD))
+                                                  ((__VALUE__) == LL_BDMA_MDATAALIGN_HALFWORD)  || \
+                                                  ((__VALUE__) == LL_BDMA_MDATAALIGN_WORD))
 
 #define IS_LL_BDMA_NBDATA(__VALUE__)             ((__VALUE__)  <= 0x0000FFFFU)
 
+#if defined(ADC3)
 #define IS_LL_BDMA_PERIPHREQUEST(__VALUE__)      ((__VALUE__) <= LL_DMAMUX2_REQ_ADC3)
+#else
+#define IS_LL_BDMA_PERIPHREQUEST(__VALUE__)      ((__VALUE__) <= LL_DMAMUX2_REQ_DFSDM2_FLT0)
+#endif /* ADC3 */
 
 #define IS_LL_BDMA_PRIORITY(__VALUE__)           (((__VALUE__) == LL_BDMA_PRIORITY_LOW)    || \
-                                                 ((__VALUE__) == LL_BDMA_PRIORITY_MEDIUM) || \
-                                                 ((__VALUE__) == LL_BDMA_PRIORITY_HIGH)   || \
-                                                 ((__VALUE__) == LL_BDMA_PRIORITY_VERYHIGH))
+                                                  ((__VALUE__) == LL_BDMA_PRIORITY_MEDIUM) || \
+                                                  ((__VALUE__) == LL_BDMA_PRIORITY_HIGH)   || \
+                                                  ((__VALUE__) == LL_BDMA_PRIORITY_VERYHIGH))
 
 #define IS_LL_BDMA_ALL_CHANNEL_INSTANCE(INSTANCE, CHANNEL)  ((((INSTANCE) == BDMA) && \
-                                                            (((CHANNEL) == LL_BDMA_CHANNEL_0)|| \
-                                                            ((CHANNEL) == LL_BDMA_CHANNEL_1) || \
-                                                            ((CHANNEL) == LL_BDMA_CHANNEL_2) || \
-                                                            ((CHANNEL) == LL_BDMA_CHANNEL_3) || \
-                                                            ((CHANNEL) == LL_BDMA_CHANNEL_4) || \
-                                                            ((CHANNEL) == LL_BDMA_CHANNEL_5) || \
-                                                            ((CHANNEL) == LL_BDMA_CHANNEL_6) || \
-                                                            ((CHANNEL) == LL_BDMA_CHANNEL_7))))
+                                                             (((CHANNEL) == LL_BDMA_CHANNEL_0) || \
+                                                              ((CHANNEL) == LL_BDMA_CHANNEL_1) || \
+                                                              ((CHANNEL) == LL_BDMA_CHANNEL_2) || \
+                                                              ((CHANNEL) == LL_BDMA_CHANNEL_3) || \
+                                                              ((CHANNEL) == LL_BDMA_CHANNEL_4) || \
+                                                              ((CHANNEL) == LL_BDMA_CHANNEL_5) || \
+                                                              ((CHANNEL) == LL_BDMA_CHANNEL_6) || \
+                                                              ((CHANNEL) == LL_BDMA_CHANNEL_7))))
 
 /**
   * @}
@@ -122,7 +126,7 @@ uint32_t LL_BDMA_DeInit(BDMA_TypeDef *BDMAx, uint32_t Channel)
   BDMA_Channel_TypeDef *tmp ;
   ErrorStatus status = SUCCESS;
 
-  /* Check the DMA Instance DMAx and Channel parameters*/
+  /* Check the DMA Instance DMAx and Channel parameters */
   assert_param(IS_LL_BDMA_ALL_CHANNEL_INSTANCE(BDMAx, Channel) || (Channel == LL_BDMA_CHANNEL_ALL));
 
   if (Channel == LL_BDMA_CHANNEL_ALL)
@@ -237,7 +241,7 @@ uint32_t LL_BDMA_DeInit(BDMA_TypeDef *BDMAx, uint32_t Channel)
   */
 uint32_t LL_BDMA_Init(BDMA_TypeDef *BDMAx, uint32_t Channel, LL_BDMA_InitTypeDef *BDMA_InitStruct)
 {
-  /* Check the DMA Instance DMAx and Channel parameters*/
+  /* Check the DMA Instance DMAx and Channel parameters */
   assert_param(IS_LL_BDMA_ALL_CHANNEL_INSTANCE(BDMAx, Channel));
 
   /* Check the DMA parameters from BDMA_InitStruct */
@@ -331,7 +335,7 @@ void LL_BDMA_StructInit(LL_BDMA_InitTypeDef *BDMA_InitStruct)
   * @}
   */
 
-#endif /* BDMA */
+#endif /* BDMA || BDMA1 || BDMA2 */
 
 /**
   * @}

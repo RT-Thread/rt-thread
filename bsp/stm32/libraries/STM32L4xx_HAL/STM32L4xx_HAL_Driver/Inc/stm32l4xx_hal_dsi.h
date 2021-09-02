@@ -923,7 +923,7 @@ typedef  void (*pDSI_CallbackTypeDef)(DSI_HandleTypeDef *hdsi);  /*!< pointer to
 
 /**
   * @brief Reset DSI handle state.
-  * @param  __HANDLE__: DSI handle
+  * @param  __HANDLE__ DSI handle
   * @retval None
   */
 #if (USE_HAL_DSI_REGISTER_CALLBACKS == 1)

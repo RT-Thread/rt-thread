@@ -398,11 +398,11 @@ HAL_StatusTypeDef HAL_TIMEx_HallSensor_Start_DMA(TIM_HandleTypeDef *htim, uint32
   /* Check the parameters */
   assert_param(IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE(htim->Instance));
 
-  if ((htim->State == HAL_TIM_STATE_BUSY))
+  if (htim->State == HAL_TIM_STATE_BUSY)
   {
     return HAL_BUSY;
   }
-  else if ((htim->State == HAL_TIM_STATE_READY))
+  else if (htim->State == HAL_TIM_STATE_READY)
   {
     if (((uint32_t)pData == 0U) && (Length > 0U))
     {
@@ -710,11 +710,11 @@ HAL_StatusTypeDef HAL_TIMEx_OCN_Start_DMA(TIM_HandleTypeDef *htim, uint32_t Chan
   /* Check the parameters */
   assert_param(IS_TIM_CCXN_INSTANCE(htim->Instance, Channel));
 
-  if ((htim->State == HAL_TIM_STATE_BUSY))
+  if (htim->State == HAL_TIM_STATE_BUSY)
   {
     return HAL_BUSY;
   }
-  else if ((htim->State == HAL_TIM_STATE_READY))
+  else if (htim->State == HAL_TIM_STATE_READY)
   {
     if (((uint32_t)pData == 0U) && (Length > 0U))
     {
@@ -1118,11 +1118,11 @@ HAL_StatusTypeDef HAL_TIMEx_PWMN_Start_DMA(TIM_HandleTypeDef *htim, uint32_t Cha
   /* Check the parameters */
   assert_param(IS_TIM_CCXN_INSTANCE(htim->Instance, Channel));
 
-  if ((htim->State == HAL_TIM_STATE_BUSY))
+  if (htim->State == HAL_TIM_STATE_BUSY)
   {
     return HAL_BUSY;
   }
-  else if ((htim->State == HAL_TIM_STATE_READY))
+  else if (htim->State == HAL_TIM_STATE_READY)
   {
     if (((uint32_t)pData == 0U) && (Length > 0U))
     {
@@ -1636,7 +1636,7 @@ HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
   uint32_t tmpsmcr;
 
   /* Check the parameters */
-  assert_param(IS_TIM_SYNCHRO_INSTANCE(htim->Instance));
+  assert_param(IS_TIM_MASTER_INSTANCE(htim->Instance));
   assert_param(IS_TIM_TRGO_SOURCE(sMasterConfig->MasterOutputTrigger));
   assert_param(IS_TIM_MSM_STATE(sMasterConfig->MasterSlaveMode));
 
@@ -1669,16 +1669,19 @@ HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
   /* Select the TRGO source */
   tmpcr2 |=  sMasterConfig->MasterOutputTrigger;
 
-  /* Reset the MSM Bit */
-  tmpsmcr &= ~TIM_SMCR_MSM;
-  /* Set master mode */
-  tmpsmcr |= sMasterConfig->MasterSlaveMode;
-
   /* Update TIMx CR2 */
   htim->Instance->CR2 = tmpcr2;
 
-  /* Update TIMx SMCR */
-  htim->Instance->SMCR = tmpsmcr;
+  if (IS_TIM_SLAVE_INSTANCE(htim->Instance))
+  {
+    /* Reset the MSM Bit */
+    tmpsmcr &= ~TIM_SMCR_MSM;
+    /* Set master mode */
+    tmpsmcr |= sMasterConfig->MasterSlaveMode;
+
+    /* Update TIMx SMCR */
+    htim->Instance->SMCR = tmpsmcr;
+  }
 
   /* Change the htim state */
   htim->State = HAL_TIM_STATE_READY;
@@ -1694,6 +1697,9 @@ HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
   * @param  htim TIM handle
   * @param  sBreakDeadTimeConfig pointer to a TIM_ConfigBreakDeadConfigTypeDef structure that
   *         contains the BDTR Register configuration  information for the TIM peripheral.
+  * @note   Interrupts can be generated when an active level is detected on the
+  *         break input, the break 2 input or the system break input. Break
+  *         interrupt can be enabled by calling the @ref __HAL_TIM_ENABLE_IT macro.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim,
@@ -1766,10 +1772,10 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakInput(TIM_HandleTypeDef *htim,
 
 {
   uint32_t tmporx;
-  uint32_t bkin_enable_mask = 0U;
-  uint32_t bkin_polarity_mask = 0U;
-  uint32_t bkin_enable_bitpos = 0U;
-  uint32_t bkin_polarity_bitpos = 0U;
+  uint32_t bkin_enable_mask;
+  uint32_t bkin_polarity_mask;
+  uint32_t bkin_enable_bitpos;
+  uint32_t bkin_polarity_bitpos;
 
   /* Check the parameters */
   assert_param(IS_TIM_BREAK_INSTANCE(htim->Instance));
@@ -1819,12 +1825,20 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakInput(TIM_HandleTypeDef *htim,
     {
       bkin_enable_mask = TIM1_OR2_BKDF1BK0E;
       bkin_enable_bitpos = 8U;
+      bkin_polarity_mask = 0U;
+      bkin_polarity_bitpos = 0U;
       break;
     }
 #endif /* DFSDM1_Channel0 */
 
     default:
+    {
+      bkin_enable_mask = 0U;
+      bkin_polarity_mask = 0U;
+      bkin_enable_bitpos = 0U;
+      bkin_polarity_bitpos = 0U;
       break;
+    }
   }
 
   switch (BreakInput)
@@ -2240,7 +2254,7 @@ __weak void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim)
 
 /**
   * @brief  Hall Break2 detection callback in non blocking mode
-  * @param  htim: TIM handle
+  * @param  htim TIM handle
   * @retval None
   */
 __weak void HAL_TIMEx_Break2Callback(TIM_HandleTypeDef *htim)

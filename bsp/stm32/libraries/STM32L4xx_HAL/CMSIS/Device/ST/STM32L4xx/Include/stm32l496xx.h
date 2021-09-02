@@ -1197,7 +1197,10 @@ typedef struct
 /** @addtogroup Peripheral_memory_map
   * @{
   */
-#define FLASH_BASE            (0x08000000UL) /*!< FLASH(up to 1 MB) base address */
+#define FLASH_BASE            (0x08000000UL) /*!< FLASH(up to 1 MB) base address   */
+#define FLASH_END             (0x080FFFFFUL) /*!< FLASH END address                */
+#define FLASH_BANK1_END       (0x0807FFFFUL) /*!< FLASH END address of bank1       */
+#define FLASH_BANK2_END       (0x080FFFFFUL) /*!< FLASH END address of bank2       */
 #define SRAM1_BASE            (0x20000000UL) /*!< SRAM1(up to 256 KB) base address */
 #define SRAM2_BASE            (0x10000000UL) /*!< SRAM2(64 KB) base address */
 #define PERIPH_BASE           (0x40000000UL) /*!< Peripheral base address */
@@ -1215,6 +1218,11 @@ typedef struct
 
 #define SRAM1_SIZE_MAX        (0x00040000UL) /*!< maximum SRAM1 size (up to 256 KBytes) */
 #define SRAM2_SIZE            (0x00010000UL) /*!< SRAM2 size (64 KBytes) */
+
+#define FLASH_SIZE_DATA_REGISTER ((uint32_t)0x1FFF75E0)
+
+#define FLASH_SIZE               (((((*((uint32_t *)FLASH_SIZE_DATA_REGISTER)) & (0x0000FFFFU))== 0x0000FFFFU)) ? (0x400U << 10U) : \
+                                  (((*((uint32_t *)FLASH_SIZE_DATA_REGISTER)) & (0x0000FFFFU)) << 10U))
 
 /*!< Peripheral memory map */
 #define APB1PERIPH_BASE        PERIPH_BASE
@@ -8432,9 +8440,6 @@ typedef struct
 #define FLASH_SR_BSY_Pos                  (16U)
 #define FLASH_SR_BSY_Msk                  (0x1UL << FLASH_SR_BSY_Pos)          /*!< 0x00010000 */
 #define FLASH_SR_BSY                      FLASH_SR_BSY_Msk
-#define FLASH_SR_PEMPTY_Pos               (17U)
-#define FLASH_SR_PEMPTY_Msk               (0x1UL << FLASH_SR_PEMPTY_Pos)       /*!< 0x00020000 */
-#define FLASH_SR_PEMPTY                   FLASH_SR_PEMPTY_Msk
 
 /*******************  Bits definition for FLASH_CR register  ******************/
 #define FLASH_CR_PG_Pos                   (0U)
@@ -12786,8 +12791,12 @@ typedef struct
 #define RTC_TAMPER1_SUPPORT
 #define RTC_TAMPER2_SUPPORT
 #define RTC_TAMPER3_SUPPORT
+
 #define RTC_WAKEUP_SUPPORT
 #define RTC_BACKUP_SUPPORT
+/******************** Number of backup registers ******************************/
+#define RTC_BKP_NUMBER                32U
+
 
 /********************  Bits definition for RTC_TR register  *******************/
 #define RTC_TR_PM_Pos                  (22U)
@@ -13543,9 +13552,6 @@ typedef struct
 #define RTC_BKP31R_Pos                 (0U)
 #define RTC_BKP31R_Msk                 (0xFFFFFFFFUL << RTC_BKP31R_Pos)        /*!< 0xFFFFFFFF */
 #define RTC_BKP31R                     RTC_BKP31R_Msk
-
-/******************** Number of backup registers ******************************/
-#define RTC_BKP_NUMBER                       32U
 
 /******************************************************************************/
 /*                                                                            */
@@ -19572,9 +19578,6 @@ typedef struct
                                                        ((INSTANCE) == TIM16) || \
                                                        ((INSTANCE) == TIM17))
 
-/****************** TIM Instances : supporting synchronization ****************/
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
-
 /****************** TIM Instances : supporting ADC triggering through TRGO2 ***/
 #define IS_TIM_TRGO2_INSTANCE(INSTANCE)    (((INSTANCE) == TIM1)    || \
                                             ((INSTANCE) == TIM8))
@@ -19692,6 +19695,7 @@ typedef struct
 #define ADC1_IRQn                      ADC1_2_IRQn
 #define TIM1_TRG_COM_IRQn              TIM1_TRG_COM_TIM17_IRQn
 #define TIM8_IRQn                      TIM8_UP_IRQn
+#define DCMI_PSSI_IRQn                 DCMI_IRQn
 #define HASH_RNG_IRQn                  RNG_IRQn
 #define HASH_CRS_IRQn                  CRS_IRQn
 #define DFSDM0_IRQn                    DFSDM1_FLT0_IRQn
@@ -19704,6 +19708,7 @@ typedef struct
 #define ADC1_IRQHandler                ADC1_2_IRQHandler
 #define TIM1_TRG_COM_IRQHandler        TIM1_TRG_COM_TIM17_IRQHandler
 #define TIM8_IRQHandler                TIM8_UP_IRQHandler
+#define DCMI_PSSI_IRQHandler           DCMI_IRQHandler
 #define HASH_RNG_IRQHandler            RNG_IRQHandler
 #define HASH_CRS_IRQHandler            CRS_IRQHandler
 #define DFSDM0_IRQHandler              DFSDM1_FLT0_IRQHandler

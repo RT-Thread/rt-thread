@@ -618,6 +618,9 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define ADC_CHANNEL_VBAT                   (LL_ADC_CHANNEL_VBAT)            /*!< ADC internal channel connected to Vbat/4: Vbat voltage through a divider ladder of factor 1/4 to have Vbat always below Vdda, channel specific to ADC3. */
 #define ADC_CHANNEL_DAC1CH1_ADC2           (LL_ADC_CHANNEL_DAC1CH1_ADC2)    /*!< ADC internal channel connected to DAC1 channel 1, channel specific to ADC2 */
 #define ADC_CHANNEL_DAC1CH2_ADC2           (LL_ADC_CHANNEL_DAC1CH2_ADC2)    /*!< ADC internal channel connected to DAC1 channel 2, channel specific to ADC2 */
+#if defined (LL_ADC_CHANNEL_DAC2CH1_ADC2)
+#define ADC_CHANNEL_DAC2CH1_ADC2           (LL_ADC_CHANNEL_DAC2CH1_ADC2)    /*!< ADC internal channel connected to DAC2 channel 1, channel specific to ADC2 */
+#endif
 /**
   * @}
   */
@@ -625,10 +628,10 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /** @defgroup ADC_ConversionDataManagement ADC Conversion Data Management
   * @{
   */
-#define ADC_CONVERSIONDATA_DR                  ((uint32_t)0x00000000)                            /*!< Regular Conversion data stored in DR register only  */
-#define ADC_CONVERSIONDATA_DFSDM               ((uint32_t)ADC_CFGR_DMNGT_1)                      /*!< DFSDM mode selected */
-#define ADC_CONVERSIONDATA_DMA_ONESHOT         ((uint32_t)ADC_CFGR_DMNGT_0)                      /*!< DMA one shot mode selected */
-#define ADC_CONVERSIONDATA_DMA_CIRCULAR        ((uint32_t)(ADC_CFGR_DMNGT_0 | ADC_CFGR_DMNGT_1)) /*!< DMA circular mode selected */
+#define ADC_CONVERSIONDATA_DR                  (0x00000000UL)                          /*!< Regular Conversion data stored in DR register only  */
+#define ADC_CONVERSIONDATA_DFSDM               (ADC_CFGR_DMNGT_1)                      /*!< DFSDM mode selected */
+#define ADC_CONVERSIONDATA_DMA_ONESHOT         (ADC_CFGR_DMNGT_0)                      /*!< DMA one shot mode selected */
+#define ADC_CONVERSIONDATA_DMA_CIRCULAR        (ADC_CFGR_DMNGT_0 | ADC_CFGR_DMNGT_1)   /*!< DMA circular mode selected */
 /**
   * @}
   */
@@ -832,10 +835,15 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @param __HANDLE__: ADC handle
   * @retval SET (clock mode is synchronous) or RESET (clock mode is asynchronous)
   */
+#if defined (ADC3)
 #define ADC_IS_SYNCHRONOUS_CLOCK_MODE(__HANDLE__)                                   \
        (((((__HANDLE__)->Instance) == ADC1) || (((__HANDLE__)->Instance) == ADC2))? \
      ((ADC12_COMMON->CCR & ADC_CCR_CKMODE) != 0UL)                              \
      :((((ADC3_COMMON)->CCR) & ADC_CCR_CKMODE) != 0UL))
+#else
+#define ADC_IS_SYNCHRONOUS_CLOCK_MODE(__HANDLE__)     ((ADC12_COMMON->CCR & ADC_CCR_CKMODE) != 0UL)
+
+#endif
 
 /**
   * @brief Simultaneously clear and set specific bits of the handle State.

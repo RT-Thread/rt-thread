@@ -942,7 +942,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     CLEAR_BIT(ADCx->OFR3, ADC_OFR3_OFFSET3_EN | ADC_OFR3_OFFSET3_CH | ADC_OFR3_OFFSET3 | ADC_OFR3_SATEN | ADC_OFR3_OFFSETPOS);
     /* Reset register OFR4 */
     CLEAR_BIT(ADCx->OFR4, ADC_OFR4_OFFSET4_EN | ADC_OFR4_OFFSET4_CH | ADC_OFR4_OFFSET4 | ADC_OFR4_SATEN | ADC_OFR4_OFFSETPOS);
-    
+
     /* Reset registers JDR1, JDR2, JDR3, JDR4 */
     /* Note: bits in access mode read only, no direct reset applicable */
 

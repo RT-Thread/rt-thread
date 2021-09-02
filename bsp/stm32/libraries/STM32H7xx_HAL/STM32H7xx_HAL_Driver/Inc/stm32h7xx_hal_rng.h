@@ -22,7 +22,7 @@
 #define STM32H7xx_HAL_RNG_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -176,7 +176,9 @@ typedef  void (*pRNG_ReadyDataCallbackTypeDef)(RNG_HandleTypeDef *hrng, uint32_t
 #define  HAL_RNG_ERROR_INVALID_CALLBACK 0x00000001U    /*!< Invalid Callback error  */
 #endif /* USE_HAL_RNG_REGISTER_CALLBACKS */
 #define  HAL_RNG_ERROR_TIMEOUT          0x00000002U    /*!< Timeout error        */
-
+#define  HAL_RNG_ERROR_BUSY             0x00000004U    /*!< Busy error        */
+#define  HAL_RNG_ERROR_SEED             0x00000008U    /*!< Seed error        */
+#define  HAL_RNG_ERROR_CLOCK            0x00000010U   /*!< Clock error        */
 /**
   * @}
   */
@@ -282,6 +284,10 @@ typedef  void (*pRNG_ReadyDataCallbackTypeDef)(RNG_HandleTypeDef *hrng, uint32_t
   * @}
   */
 
+#if defined (RNG_CR_CONDRST)
+/* Include HASH HAL Extended module */
+#include "stm32h7xx_hal_rng_ex.h"
+#endif  /* CONDRST */
 /* Exported functions --------------------------------------------------------*/
 /** @defgroup RNG_Exported_Functions RNG Exported Functions
   * @{

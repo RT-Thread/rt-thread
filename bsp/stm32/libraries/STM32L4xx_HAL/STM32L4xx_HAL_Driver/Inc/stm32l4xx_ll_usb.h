@@ -362,7 +362,6 @@ typedef struct
   */
 #define DSTS_ENUMSPD_HS_PHY_30MHZ_OR_60MHZ     (0U << 1)
 #define DSTS_ENUMSPD_FS_PHY_30MHZ_OR_60MHZ     (1U << 1)
-#define DSTS_ENUMSPD_LS_PHY_6MHZ               (2U << 1)
 #define DSTS_ENUMSPD_FS_PHY_48MHZ              (3U << 1)
 /**
   * @}
