@@ -216,6 +216,26 @@ Path:
 - bsp/hc32f4a0/Libraries/CMSIS
 - bsp/hc32f4a0/Libraries/HC32F4A0_StdPeriph_Driver
 
+### hk32
+
+License: free-unknown
+
+Copyright: Copyright (c) HKMicroChip
+
+Path:
+
+- bsp/hk32/libraries/HK32F0xx_StdPeriph_Driver
+
+------
+
+License: bsd-new
+
+Copyright: Copyright (c) 2009 - 2013 ARM LIMITED
+
+Path:
+
+- bsp/hk32/libraries/HK32F0xx_StdPeriph_Driver/CMSIS
+
 ### imx6sx
 
 License:  other-permissive
