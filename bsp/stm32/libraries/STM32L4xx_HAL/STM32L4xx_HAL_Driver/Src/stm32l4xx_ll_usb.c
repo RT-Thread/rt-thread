@@ -279,6 +279,8 @@ HAL_StatusTypeDef USB_DevInit(USB_OTG_GlobalTypeDef *USBx, USB_OTG_CfgTypeDef cf
   /* VBUS Sensing setup */
   if (cfg.vbus_sensing_enable == 0U)
   {
+    USBx_DEVICE->DCTL |= USB_OTG_DCTL_SDIS;
+
     /* Deactivate VBUS Sensing B */
     USBx->GCCFG &= ~USB_OTG_GCCFG_VBDEN;
 
@@ -574,6 +576,12 @@ HAL_StatusTypeDef USB_DeactivateEndpoint(USB_OTG_GlobalTypeDef *USBx, USB_OTG_EP
   /* Read DEPCTLn register */
   if (ep->is_in == 1U)
   {
+    if ((USBx_INEP(epnum)->DIEPCTL & USB_OTG_DIEPCTL_EPENA) == USB_OTG_DIEPCTL_EPENA)
+    {
+      USBx_INEP(epnum)->DIEPCTL |= USB_OTG_DIEPCTL_SNAK;
+      USBx_INEP(epnum)->DIEPCTL |= USB_OTG_DIEPCTL_EPDIS;
+    }
+
     USBx_DEVICE->DEACHMSK &= ~(USB_OTG_DAINTMSK_IEPM & (uint32_t)(1UL << (ep->num & EP_ADDR_MSK)));
     USBx_DEVICE->DAINTMSK &= ~(USB_OTG_DAINTMSK_IEPM & (uint32_t)(1UL << (ep->num & EP_ADDR_MSK)));
     USBx_INEP(epnum)->DIEPCTL &= ~(USB_OTG_DIEPCTL_USBAEP |
@@ -584,6 +592,12 @@ HAL_StatusTypeDef USB_DeactivateEndpoint(USB_OTG_GlobalTypeDef *USBx, USB_OTG_EP
   }
   else
   {
+    if ((USBx_OUTEP(epnum)->DOEPCTL & USB_OTG_DOEPCTL_EPENA) == USB_OTG_DOEPCTL_EPENA)
+    {
+      USBx_OUTEP(epnum)->DOEPCTL |= USB_OTG_DOEPCTL_SNAK;
+      USBx_OUTEP(epnum)->DOEPCTL |= USB_OTG_DOEPCTL_EPDIS;
+    }
+
     USBx_DEVICE->DEACHMSK &= ~(USB_OTG_DAINTMSK_OEPM & ((uint32_t)(1UL << (ep->num & EP_ADDR_MSK)) << 16));
     USBx_DEVICE->DAINTMSK &= ~(USB_OTG_DAINTMSK_OEPM & ((uint32_t)(1UL << (ep->num & EP_ADDR_MSK)) << 16));
     USBx_OUTEP(epnum)->DOEPCTL &= ~(USB_OTG_DOEPCTL_USBAEP |
@@ -609,11 +623,23 @@ HAL_StatusTypeDef USB_DeactivateDedicatedEndpoint(USB_OTG_GlobalTypeDef *USBx, U
   /* Read DEPCTLn register */
   if (ep->is_in == 1U)
   {
+    if ((USBx_INEP(epnum)->DIEPCTL & USB_OTG_DIEPCTL_EPENA) == USB_OTG_DIEPCTL_EPENA)
+    {
+      USBx_INEP(epnum)->DIEPCTL  |= USB_OTG_DIEPCTL_SNAK;
+      USBx_INEP(epnum)->DIEPCTL  |= USB_OTG_DIEPCTL_EPDIS;
+    }
+
     USBx_INEP(epnum)->DIEPCTL &= ~ USB_OTG_DIEPCTL_USBAEP;
     USBx_DEVICE->DAINTMSK &= ~(USB_OTG_DAINTMSK_IEPM & (uint32_t)(1UL << (ep->num & EP_ADDR_MSK)));
   }
   else
   {
+    if ((USBx_OUTEP(epnum)->DOEPCTL & USB_OTG_DOEPCTL_EPENA) == USB_OTG_DOEPCTL_EPENA)
+    {
+      USBx_OUTEP(epnum)->DOEPCTL  |= USB_OTG_DOEPCTL_SNAK;
+      USBx_OUTEP(epnum)->DOEPCTL  |= USB_OTG_DOEPCTL_EPDIS;
+    }
+
     USBx_OUTEP(epnum)->DOEPCTL &= ~USB_OTG_DOEPCTL_USBAEP;
     USBx_DEVICE->DAINTMSK &= ~(USB_OTG_DAINTMSK_OEPM & ((uint32_t)(1UL << (ep->num & EP_ADDR_MSK)) << 16));
   }
@@ -1110,13 +1136,9 @@ HAL_StatusTypeDef  USB_ActivateSetup(USB_OTG_GlobalTypeDef *USBx)
 {
   uint32_t USBx_BASE = (uint32_t)USBx;
 
-  /* Set the MPS of the IN EP based on the enumeration speed */
+  /* Set the MPS of the IN EP0 to 64 bytes */
   USBx_INEP(0U)->DIEPCTL &= ~USB_OTG_DIEPCTL_MPSIZ;
 
-  if ((USBx_DEVICE->DSTS & USB_OTG_DSTS_ENUMSPD) == DSTS_ENUMSPD_LS_PHY_6MHZ)
-  {
-    USBx_INEP(0U)->DIEPCTL |= 3U;
-  }
   USBx_DEVICE->DCTL |= USB_OTG_DCTL_CGINAK;
 
   return HAL_OK;
@@ -1708,7 +1730,6 @@ HAL_StatusTypeDef USB_StopHost(USB_OTG_GlobalTypeDef *USBx)
   uint32_t value;
   uint32_t i;
 
-
   (void)USB_DisableGlobalInt(USBx);
 
   /* Flush FIFO */
@@ -1747,6 +1768,7 @@ HAL_StatusTypeDef USB_StopHost(USB_OTG_GlobalTypeDef *USBx)
   /* Clear any pending Host interrupts */
   USBx_HOST->HAINT = 0xFFFFFFFFU;
   USBx->GINTSTS = 0xFFFFFFFFU;
+
   (void)USB_EnableGlobalInt(USBx);
 
   return HAL_OK;
@@ -1816,7 +1838,7 @@ HAL_StatusTypeDef USB_CoreInit(USB_TypeDef *USBx, USB_CfgTypeDef cfg)
   */
 HAL_StatusTypeDef USB_EnableGlobalInt(USB_TypeDef *USBx)
 {
-  uint16_t winterruptmask;
+  uint32_t winterruptmask;
 
   /* Set winterruptmask variable */
   winterruptmask = USB_CNTR_CTRM  | USB_CNTR_WKUPM |
@@ -1825,7 +1847,7 @@ HAL_StatusTypeDef USB_EnableGlobalInt(USB_TypeDef *USBx)
                    USB_CNTR_RESETM | USB_CNTR_L1REQM;
 
   /* Set interrupt mask */
-  USBx->CNTR |= winterruptmask;
+  USBx->CNTR |= (uint16_t)winterruptmask;
 
   return HAL_OK;
 }
@@ -1838,7 +1860,7 @@ HAL_StatusTypeDef USB_EnableGlobalInt(USB_TypeDef *USBx)
 */
 HAL_StatusTypeDef USB_DisableGlobalInt(USB_TypeDef *USBx)
 {
-  uint16_t winterruptmask;
+  uint32_t winterruptmask;
 
   /* Set winterruptmask variable */
   winterruptmask = USB_CNTR_CTRM  | USB_CNTR_WKUPM |
@@ -1847,7 +1869,7 @@ HAL_StatusTypeDef USB_DisableGlobalInt(USB_TypeDef *USBx)
                    USB_CNTR_RESETM | USB_CNTR_L1REQM;
 
   /* Clear interrupt mask */
-  USBx->CNTR &= ~winterruptmask;
+  USBx->CNTR &= (uint16_t)(~winterruptmask);
 
   return HAL_OK;
 }
@@ -1888,13 +1910,13 @@ HAL_StatusTypeDef USB_DevInit(USB_TypeDef *USBx, USB_CfgTypeDef cfg)
 
   /* Init Device */
   /*CNTR_FRES = 1*/
-  USBx->CNTR = USB_CNTR_FRES;
+  USBx->CNTR = (uint16_t)USB_CNTR_FRES;
 
   /*CNTR_FRES = 0*/
-  USBx->CNTR = 0;
+  USBx->CNTR = 0U;
 
   /*Clear pending interrupts*/
-  USBx->ISTR = 0;
+  USBx->ISTR = 0U;
 
   /*Set Btable Address*/
   USBx->BTABLE = BTABLE_ADDRESS;
@@ -2003,7 +2025,7 @@ HAL_StatusTypeDef USB_ActivateEndpoint(USB_TypeDef *USBx, USB_EPTypeDef *ep)
       break;
   }
 
-  PCD_SET_ENDPOINT(USBx, ep->num, wEpRegVal | USB_EP_CTR_RX | USB_EP_CTR_TX);
+  PCD_SET_ENDPOINT(USBx, ep->num, (wEpRegVal | USB_EP_CTR_RX | USB_EP_CTR_TX));
 
   PCD_SET_EP_ADDRESS(USBx, ep->num, ep->num);
 
@@ -2324,13 +2346,13 @@ HAL_StatusTypeDef USB_EPClearStall(USB_TypeDef *USBx, USB_EPTypeDef *ep)
 HAL_StatusTypeDef USB_StopDevice(USB_TypeDef *USBx)
 {
   /* disable all interrupts and force USB reset */
-  USBx->CNTR = USB_CNTR_FRES;
+  USBx->CNTR = (uint16_t)USB_CNTR_FRES;
 
   /* clear interrupt status register */
-  USBx->ISTR = 0;
+  USBx->ISTR = 0U;
 
   /* switch-off device */
-  USBx->CNTR = (USB_CNTR_FRES | USB_CNTR_PDWN);
+  USBx->CNTR = (uint16_t)(USB_CNTR_FRES | USB_CNTR_PDWN);
 
   return HAL_OK;
 }
@@ -2347,7 +2369,7 @@ HAL_StatusTypeDef  USB_SetDevAddress(USB_TypeDef *USBx, uint8_t address)
   if (address == 0U)
   {
     /* set device address and enable function */
-    USBx->DADDR = USB_DADDR_EF;
+    USBx->DADDR = (uint16_t)USB_DADDR_EF;
   }
 
   return HAL_OK;
@@ -2361,7 +2383,7 @@ HAL_StatusTypeDef  USB_SetDevAddress(USB_TypeDef *USBx, uint8_t address)
 HAL_StatusTypeDef  USB_DevConnect(USB_TypeDef *USBx)
 {
   /* Enabling DP Pull-UP bit to Connect internal PU resistor on USB DP line */
-  USBx->BCDR |= USB_BCDR_DPPU;
+  USBx->BCDR |= (uint16_t)USB_BCDR_DPPU;
 
   return HAL_OK;
 }
@@ -2504,7 +2526,7 @@ HAL_StatusTypeDef USB_EP0_OutStart(USB_TypeDef *USBx, uint8_t *psetup)
   */
 HAL_StatusTypeDef USB_ActivateRemoteWakeup(USB_TypeDef *USBx)
 {
-  USBx->CNTR |= USB_CNTR_RESUME;
+  USBx->CNTR |= (uint16_t)USB_CNTR_RESUME;
 
   return HAL_OK;
 }
@@ -2516,7 +2538,7 @@ HAL_StatusTypeDef USB_ActivateRemoteWakeup(USB_TypeDef *USBx)
   */
 HAL_StatusTypeDef USB_DeActivateRemoteWakeup(USB_TypeDef *USBx)
 {
-  USBx->CNTR &= ~(USB_CNTR_RESUME);
+  USBx->CNTR &= (uint16_t)(~USB_CNTR_RESUME);
   return HAL_OK;
 }
 
@@ -2533,16 +2555,16 @@ void USB_WritePMA(USB_TypeDef *USBx, uint8_t *pbUsrBuf, uint16_t wPMABufAddr, ui
   uint32_t n = ((uint32_t)wNBytes + 1U) >> 1;
   uint32_t BaseAddr = (uint32_t)USBx;
   uint32_t i, temp1, temp2;
-  uint16_t *pdwVal;
+  __IO uint16_t *pdwVal;
   uint8_t *pBuf = pbUsrBuf;
 
-  pdwVal = (uint16_t *)(BaseAddr + 0x400U + ((uint32_t)wPMABufAddr * PMA_ACCESS));
+  pdwVal = (__IO uint16_t *)(BaseAddr + 0x400U + ((uint32_t)wPMABufAddr * PMA_ACCESS));
 
   for (i = n; i != 0U; i--)
   {
-    temp1 = (uint16_t) * pBuf;
+    temp1 = *pBuf;
     pBuf++;
-    temp2 = temp1 | ((uint16_t)((uint16_t) * pBuf << 8));
+    temp2 = temp1 | ((uint16_t)((uint16_t) *pBuf << 8));
     *pdwVal = (uint16_t)temp2;
     pdwVal++;
 
@@ -2567,14 +2589,14 @@ void USB_ReadPMA(USB_TypeDef *USBx, uint8_t *pbUsrBuf, uint16_t wPMABufAddr, uin
   uint32_t n = (uint32_t)wNBytes >> 1;
   uint32_t BaseAddr = (uint32_t)USBx;
   uint32_t i, temp;
-  uint16_t *pdwVal;
+  __IO uint16_t *pdwVal;
   uint8_t *pBuf = pbUsrBuf;
 
-  pdwVal = (uint16_t *)(BaseAddr + 0x400U + ((uint32_t)wPMABufAddr * PMA_ACCESS));
+  pdwVal = (__IO uint16_t *)(BaseAddr + 0x400U + ((uint32_t)wPMABufAddr * PMA_ACCESS));
 
   for (i = n; i != 0U; i--)
   {
-    temp = *pdwVal;
+    temp = *(__IO uint16_t *)pdwVal;
     pdwVal++;
     *pBuf = (uint8_t)((temp >> 0) & 0xFFU);
     pBuf++;

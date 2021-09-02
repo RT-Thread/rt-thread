@@ -14,7 +14,6 @@
 /* definitions for libc if toolchain has no these definitions */
 #include "libc/libc_stat.h"
 #include "libc/libc_fcntl.h"
-#include "libc/libc_dirent.h"
 
 #ifndef RT_USING_LIBC
 #if defined(__ARMCC_VERSION) || defined(__IAR_SYSTEMS_ICC__)

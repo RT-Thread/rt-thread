@@ -2230,7 +2230,7 @@ static HAL_StatusTypeDef IRDA_SetConfig(IRDA_HandleTypeDef *hirda)
   uint32_t tmpreg;
   IRDA_ClockSourceTypeDef clocksource;
   HAL_StatusTypeDef ret               = HAL_OK;
-  const uint16_t IRDAPrescTable[12] = {1U, 2U, 4U, 6U, 8U, 10U, 12U, 16U, 32U, 64U, 128U, 256U};
+  static const uint16_t IRDAPrescTable[12] = {1U, 2U, 4U, 6U, 8U, 10U, 12U, 16U, 32U, 64U, 128U, 256U};
   uint32_t pclk;
 
   /* Check the communication parameters */

@@ -1130,7 +1130,7 @@ static void DMA_CalcDMAMUXChannelBaseAndMask(DMA_HandleTypeDef *hdma)
 
   channel_number = (((uint32_t)hdma->Instance & 0xFFU) - 8U) / 20U;
   hdma->DMAmuxChannelStatus = DMAMUX1_ChannelStatus;
-  hdma->DMAmuxChannelStatusMask = 1UL << (channel_number & 0x1CU);
+  hdma->DMAmuxChannelStatusMask = 1UL << (channel_number & 0x1FU);
 }
 
 /**

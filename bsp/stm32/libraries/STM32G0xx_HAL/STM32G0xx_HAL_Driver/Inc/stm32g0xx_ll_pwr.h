@@ -60,6 +60,9 @@ extern "C" {
 #define LL_PWR_SCR_CWUF6                   PWR_SCR_CWUF6
 #define LL_PWR_SCR_CWUF5                   PWR_SCR_CWUF5
 #define LL_PWR_SCR_CWUF4                   PWR_SCR_CWUF4
+#if defined(PWR_CR3_EWUP3)
+#define LL_PWR_SCR_CWUF3                   PWR_SCR_CWUF3
+#endif
 #define LL_PWR_SCR_CWUF2                   PWR_SCR_CWUF2
 #define LL_PWR_SCR_CWUF1                   PWR_SCR_CWUF1
 /**
@@ -75,6 +78,9 @@ extern "C" {
 #define LL_PWR_SR1_WUF6                    PWR_SR1_WUF6
 #define LL_PWR_SR1_WUF5                    PWR_SR1_WUF5
 #define LL_PWR_SR1_WUF4                    PWR_SR1_WUF4
+#if defined(PWR_CR3_EWUP3)
+#define LL_PWR_SR1_WUF3                    PWR_SR1_WUF3
+#endif
 #define LL_PWR_SR1_WUF2                    PWR_SR1_WUF2
 #define LL_PWR_SR1_WUF1                    PWR_SR1_WUF1
 #if defined(PWR_SR2_PVDO)
@@ -134,11 +140,24 @@ extern "C" {
   */
 #endif
 
+#if defined(PWR_PVM_SUPPORT)
+/** @defgroup PWR_LL_EC_PVM_IP PVM_IP
+  * @{
+  */
+#define LL_PWR_PVM_USB                  PWR_CR2_PVMEN_USB                           /*!< Peripheral Voltage Monitoring enable for USB peripheral: Enable to keep the USB peripheral voltage monitoring under control (power domain Vddio2) */
+/**
+  * @}
+  */
+#endif
+  
 /** @defgroup PWR_LL_EC_WAKEUP WAKEUP
   * @{
   */
 #define LL_PWR_WAKEUP_PIN1                 (PWR_CR3_EWUP1)
 #define LL_PWR_WAKEUP_PIN2                 (PWR_CR3_EWUP2)
+#if defined(PWR_CR3_EWUP3)
+#define LL_PWR_WAKEUP_PIN3                 (PWR_CR3_EWUP3)
+#endif
 #define LL_PWR_WAKEUP_PIN4                 (PWR_CR3_EWUP4)
 #if defined(PWR_CR3_EWUP5)
 #define LL_PWR_WAKEUP_PIN5                 (PWR_CR3_EWUP5)
@@ -434,6 +453,114 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnableFlashPowerDownInStop(void)
   return ((READ_BIT(PWR->CR1, PWR_CR1_FPD_STOP) == (PWR_CR1_FPD_STOP)) ? 1UL : 0UL);
 }
 
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx)
+/**
+  * @brief  Enable VDDIO2 supply
+  * @rmtoll CR2          IOSV          LL_PWR_EnableVddIO2
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableVddIO2(void)
+{
+  SET_BIT(PWR->CR2, PWR_CR2_IOSV);
+}
+
+/**
+  * @brief  Disable VDDIO2 supply
+  * @rmtoll CR2          IOSV          LL_PWR_DisableVddIO2
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableVddIO2(void)
+{
+  CLEAR_BIT(PWR->CR2, PWR_CR2_IOSV);
+}
+
+/**
+  * @brief  Check if VDDIO2 supply is enabled
+  * @rmtoll CR2          IOSV          LL_PWR_IsEnabledVddIO2
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledVddIO2(void)
+{
+  return ((READ_BIT(PWR->CR2, PWR_CR2_IOSV) == (PWR_CR2_IOSV)) ? 1UL : 0UL);
+}
+#endif
+
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx)
+/**
+  * @brief  Enable VDDUSB supply
+  * @rmtoll CR2          USV           LL_PWR_EnableVddUSB
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableVddUSB(void)
+{
+  SET_BIT(PWR->CR2, PWR_CR2_USV);
+}
+
+/**
+  * @brief  Disable VDDUSB supply
+  * @rmtoll CR2          USV           LL_PWR_DisableVddUSB
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableVddUSB(void)
+{
+  CLEAR_BIT(PWR->CR2, PWR_CR2_USV);
+}
+
+/**
+  * @brief  Check if VDDUSB supply is enabled
+  * @rmtoll CR2          USV           LL_PWR_IsEnabledVddUSB
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledVddUSB(void)
+{
+  return ((READ_BIT(PWR->CR2, PWR_CR2_USV) == (PWR_CR2_USV)) ? 1UL : 0UL);
+}
+#endif
+
+#if defined (PWR_PVM_SUPPORT)
+/**
+  * @brief  Enable the Power Voltage Monitoring on a peripheral
+  * @rmtoll CR2          PVMUSB         LL_PWR_EnablePVM
+  * @param  PeriphVoltage This parameter can be one of the following values:
+  *         @arg @ref LL_PWR_PVM_USB (*)
+  *
+  *         (*) value not defined in all devices
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnablePVM(uint32_t PeriphVoltage)
+{
+  SET_BIT(PWR->CR2, PeriphVoltage);
+}
+
+/**
+  * @brief  Disable the Power Voltage Monitoring on a peripheral
+  * @rmtoll CR2          PVMUSB         LL_PWR_DisablePVM
+  * @param  PeriphVoltage This parameter can be one of the following values:
+  *         @arg @ref LL_PWR_PVM_USB (*)
+  *
+  *         (*) value not defined in all devices
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisablePVM(uint32_t PeriphVoltage)
+{
+  CLEAR_BIT(PWR->CR2, PeriphVoltage);
+}
+
+/**
+  * @brief  Check if Power Voltage Monitoring is enabled on a peripheral
+  * @rmtoll CR2          PVMUSB         LL_PWR_IsEnabledPVM
+  * @param  PeriphVoltage This parameter can be one of the following values:
+  *         @arg @ref LL_PWR_PVM_USB (*)
+  *
+  *         (*) value not defined in all devices
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledPVM(uint32_t PeriphVoltage)
+{
+  return ((READ_BIT(PWR->CR2, PeriphVoltage) == (PeriphVoltage)) ? 1UL : 0UL);
+}
+#endif
+
 /**
   * @brief  Set Low-Power mode
   * @rmtoll CR1          LPMS          LL_PWR_SetPowerMode
@@ -694,16 +821,19 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnableLPMUResetSamplingMode(void)
   * @brief  Enable the WakeUp PINx functionality
   * @rmtoll CR3          EWUP1         LL_PWR_EnableWakeUpPin\n
   *         CR3          EWUP2         LL_PWR_EnableWakeUpPin\n
+  *         CR3          EWUP3         LL_PWR_EnableWakeUpPin\n
   *         CR3          EWUP4         LL_PWR_EnableWakeUpPin\n
   *         CR3          EWUP5         LL_PWR_EnableWakeUpPin\n
   *         CR3          EWUP6         LL_PWR_EnableWakeUpPin
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
   * @retval None
+  * @note (*) availability depends on devices
   */
 __STATIC_INLINE void LL_PWR_EnableWakeUpPin(uint32_t WakeUpPin)
 {
@@ -714,16 +844,19 @@ __STATIC_INLINE void LL_PWR_EnableWakeUpPin(uint32_t WakeUpPin)
   * @brief  Disable the WakeUp PINx functionality
   * @rmtoll CR3          EWUP1         LL_PWR_DisableWakeUpPin\n
   *         CR3          EWUP2         LL_PWR_DisableWakeUpPin\n
+  *         CR3          EWUP3         LL_PWR_DisableWakeUpPin\n
   *         CR3          EWUP4         LL_PWR_DisableWakeUpPin\n
   *         CR3          EWUP5         LL_PWR_DisableWakeUpPin\n
   *         CR3          EWUP6         LL_PWR_DisableWakeUpPin
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
   * @retval None
+  * @note (*) availability depends on devices
   */
 __STATIC_INLINE void LL_PWR_DisableWakeUpPin(uint32_t WakeUpPin)
 {
@@ -734,16 +867,19 @@ __STATIC_INLINE void LL_PWR_DisableWakeUpPin(uint32_t WakeUpPin)
   * @brief  Check if the WakeUp PINx functionality is enabled
   * @rmtoll CR3          EWUP1         LL_PWR_IsEnabledWakeUpPin\n
   *         CR3          EWUP2         LL_PWR_IsEnabledWakeUpPin\n
+  *         CR3          EWUP3         LL_PWR_IsEnabledWakeUpPin\n
   *         CR3          EWUP4         LL_PWR_IsEnabledWakeUpPin\n
   *         CR3          EWUP5         LL_PWR_IsEnabledWakeUpPin\n
   *         CR3          EWUP6         LL_PWR_IsEnabledWakeUpPin
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
   * @retval State of bit (1 or 0).
+  * @note (*) availability depends on devices
   */
 __STATIC_INLINE uint32_t LL_PWR_IsEnabledWakeUpPin(uint32_t WakeUpPin)
 {
@@ -809,16 +945,19 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledBatteryCharging(void)
   * @brief  Set the Wake-Up pin polarity low for the event detection
   * @rmtoll CR4          WP1           LL_PWR_SetWakeUpPinPolarityLow\n
   *         CR4          WP2           LL_PWR_SetWakeUpPinPolarityLow\n
+  *         CR4          WP3           LL_PWR_SetWakeUpPinPolarityLow\n
   *         CR4          WP4           LL_PWR_SetWakeUpPinPolarityLow\n
   *         CR4          WP5           LL_PWR_SetWakeUpPinPolarityLow\n
-  *         CR4          WP6           LL_PWR_SetWakeUpPinPolarityLow\n
+  *         CR4          WP6           LL_PWR_SetWakeUpPinPolarityLow
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
   * @retval None
+  * @note (*) availability depends on devices
   */
 __STATIC_INLINE void LL_PWR_SetWakeUpPinPolarityLow(uint32_t WakeUpPin)
 {
@@ -829,15 +968,18 @@ __STATIC_INLINE void LL_PWR_SetWakeUpPinPolarityLow(uint32_t WakeUpPin)
   * @brief  Set the Wake-Up pin polarity high for the event detection
   * @rmtoll CR4          WP1           LL_PWR_SetWakeUpPinPolarityHigh\n
   *         CR4          WP2           LL_PWR_SetWakeUpPinPolarityHigh\n
+  *         CR4          WP3           LL_PWR_SetWakeUpPinPolarityHigh\n
   *         CR4          WP4           LL_PWR_SetWakeUpPinPolarityHigh\n
   *         CR4          WP5           LL_PWR_SetWakeUpPinPolarityHigh\n
   *         CR4          WP6           LL_PWR_SetWakeUpPinPolarityHigh
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  * @note (*) availability depends on devices
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_SetWakeUpPinPolarityHigh(uint32_t WakeUpPin)
@@ -849,15 +991,18 @@ __STATIC_INLINE void LL_PWR_SetWakeUpPinPolarityHigh(uint32_t WakeUpPin)
   * @brief  Get the Wake-Up pin polarity for the event detection
   * @rmtoll CR4          WP1           LL_PWR_IsWakeUpPinPolarityLow\n
   *         CR4          WP2           LL_PWR_IsWakeUpPinPolarityLow\n
+  *         CR4          WP3           LL_PWR_IsWakeUpPinPolarityLow\n
   *         CR4          WP4           LL_PWR_IsWakeUpPinPolarityLow\n
   *         CR4          WP5           LL_PWR_IsWakeUpPinPolarityLow\n
   *         CR4          WP6           LL_PWR_IsWakeUpPinPolarityLow
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  * @note (*) availability depends on devices
   * @retval State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_PWR_IsWakeUpPinPolarityLow(uint32_t WakeUpPin)
@@ -871,12 +1016,14 @@ __STATIC_INLINE uint32_t LL_PWR_IsWakeUpPinPolarityLow(uint32_t WakeUpPin)
   *         PUCRB        PU0-15        LL_PWR_EnableGPIOPullUp\n
   *         PUCRC        PU0-15        LL_PWR_EnableGPIOPullUp\n
   *         PUCRD        PU0-15        LL_PWR_EnableGPIOPullUp\n
-  *         PUCRF        PU0-15        LL_PWR_EnableGPIOPullUp
+  *         PUCRE        PU0-15        LL_PWR_EnableGPIOPullUp\n
+  *         PUCRF        PU0-13        LL_PWR_EnableGPIOPullUp
   * @param  GPIO This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_A
   *         @arg @ref LL_PWR_GPIO_B
   *         @arg @ref LL_PWR_GPIO_C
   *         @arg @ref LL_PWR_GPIO_D
+  *         @arg @ref LL_PWR_GPIO_E (*)
   *         @arg @ref LL_PWR_GPIO_F
   * @param  GPIONumber This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_BIT_0
@@ -908,12 +1055,14 @@ __STATIC_INLINE void LL_PWR_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
   *         PUCRB        PU0-15        LL_PWR_DisableGPIOPullUp\n
   *         PUCRC        PU0-15        LL_PWR_DisableGPIOPullUp\n
   *         PUCRD        PU0-15        LL_PWR_DisableGPIOPullUp\n
-  *         PUCRF        PU0-15        LL_PWR_DisableGPIOPullUp
+  *         PUCRE        PU0-15        LL_PWR_DisableGPIOPullUp\n
+  *         PUCRF        PU0-13        LL_PWR_DisableGPIOPullUp
   * @param  GPIO This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_A
   *         @arg @ref LL_PWR_GPIO_B
   *         @arg @ref LL_PWR_GPIO_C
   *         @arg @ref LL_PWR_GPIO_D
+  *         @arg @ref LL_PWR_GPIO_E (*)
   *         @arg @ref LL_PWR_GPIO_F
   * @param  GPIONumber This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_BIT_0
@@ -945,12 +1094,14 @@ __STATIC_INLINE void LL_PWR_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber
   *         PUCRB        PU0-15        LL_PWR_IsEnabledGPIOPullUp\n
   *         PUCRC        PU0-15        LL_PWR_IsEnabledGPIOPullUp\n
   *         PUCRD        PU0-15        LL_PWR_IsEnabledGPIOPullUp\n
-  *         PUCRF        PU0-15        LL_PWR_IsEnabledGPIOPullUp
+  *         PUCRE        PU0-15        LL_PWR_IsEnabledGPIOPullUp\n
+  *         PUCRF        PU0-13        LL_PWR_IsEnabledGPIOPullUp
   * @param  GPIO This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_A
   *         @arg @ref LL_PWR_GPIO_B
   *         @arg @ref LL_PWR_GPIO_C
   *         @arg @ref LL_PWR_GPIO_D
+  *         @arg @ref LL_PWR_GPIO_E (*)
   *         @arg @ref LL_PWR_GPIO_F
   * @param  GPIONumber This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_BIT_0
@@ -982,12 +1133,14 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledGPIOPullUp(uint32_t GPIO, uint32_t GPIO
   *         PDCRB        PD0-15        LL_PWR_EnableGPIOPullDown\n
   *         PDCRC        PD0-15        LL_PWR_EnableGPIOPullDown\n
   *         PDCRD        PD0-15        LL_PWR_EnableGPIOPullDown\n
-  *         PDCRF        PD0-15        LL_PWR_EnableGPIOPullDown
+  *         PDCRE        PD0-15        LL_PWR_EnableGPIOPullDown\n
+  *         PDCRF        PD0-13        LL_PWR_EnableGPIOPullDown
   * @param  GPIO This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_A
   *         @arg @ref LL_PWR_GPIO_B
   *         @arg @ref LL_PWR_GPIO_C
   *         @arg @ref LL_PWR_GPIO_D
+  *         @arg @ref LL_PWR_GPIO_E (*)
   *         @arg @ref LL_PWR_GPIO_F
   * @param  GPIONumber This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_BIT_0
@@ -1019,12 +1172,14 @@ __STATIC_INLINE void LL_PWR_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumbe
   *         PDCRB        PD0-15        LL_PWR_DisableGPIOPullDown\n
   *         PDCRC        PD0-15        LL_PWR_DisableGPIOPullDown\n
   *         PDCRD        PD0-15        LL_PWR_DisableGPIOPullDown\n
-  *         PDCRF        PD0-15        LL_PWR_DisableGPIOPullDown
+  *         PDCRE        PD0-15        LL_PWR_DisableGPIOPullDown\n
+  *         PDCRF        PD0-13        LL_PWR_DisableGPIOPullDown
   * @param  GPIO This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_A
   *         @arg @ref LL_PWR_GPIO_B
   *         @arg @ref LL_PWR_GPIO_C
   *         @arg @ref LL_PWR_GPIO_D
+  *         @arg @ref LL_PWR_GPIO_E (*)
   *         @arg @ref LL_PWR_GPIO_F
   * @param  GPIONumber This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_BIT_0
@@ -1056,12 +1211,14 @@ __STATIC_INLINE void LL_PWR_DisableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumb
   *         PDCRB        PD0-15        LL_PWR_IsEnabledGPIOPullDown\n
   *         PDCRC        PD0-15        LL_PWR_IsEnabledGPIOPullDown\n
   *         PDCRD        PD0-15        LL_PWR_IsEnabledGPIOPullDown\n
-  *         PDCRF        PD0-15        LL_PWR_IsEnabledGPIOPullDown
+  *         PDCRE        PD0-15        LL_PWR_IsEnabledGPIOPullDown\n
+  *         PDCRF        PD0-13        LL_PWR_IsEnabledGPIOPullDown
   * @param  GPIO This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_A
   *         @arg @ref LL_PWR_GPIO_B
   *         @arg @ref LL_PWR_GPIO_C
   *         @arg @ref LL_PWR_GPIO_D
+  *         @arg @ref LL_PWR_GPIO_E (*)
   *         @arg @ref LL_PWR_GPIO_F
   * @param  GPIONumber This parameter can be one of the following values:
   *         @arg @ref LL_PWR_GPIO_BIT_0
@@ -1147,6 +1304,17 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_WU4(void)
   return ((READ_BIT(PWR->SR1, PWR_SR1_WUF4) == (PWR_SR1_WUF4)) ? 1UL : 0UL);
 }
 
+#if defined(PWR_CR3_EWUP3)
+/**
+  * @brief  Get Wake-up Flag 3
+  * @rmtoll SR1          WUF3          LL_PWR_IsActiveFlag_WU3
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_WU3(void)
+{
+  return ((READ_BIT(PWR->SR1, PWR_SR1_WUF3) == (PWR_SR1_WUF3)) ? 1UL : 0UL);
+}
+#endif
 
 /**
   * @brief  Get Wake-up Flag 2
@@ -1220,6 +1388,17 @@ __STATIC_INLINE void LL_PWR_ClearFlag_WU4(void)
   WRITE_REG(PWR->SCR, PWR_SCR_CWUF4);
 }
 
+#if defined(PWR_CR3_EWUP3)
+/**
+  * @brief  Clear Wake-up Flag 3
+  * @rmtoll SCR          CWUF3         LL_PWR_ClearFlag_WU3
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_ClearFlag_WU3(void)
+{
+  WRITE_REG(PWR->SCR, PWR_SCR_CWUF3);
+}
+#endif
 
 /**
   * @brief  Clear Wake-up Flag 2
@@ -1240,6 +1419,19 @@ __STATIC_INLINE void LL_PWR_ClearFlag_WU1(void)
 {
   WRITE_REG(PWR->SCR, PWR_SCR_CWUF1);
 }
+
+#if defined (PWR_PVM_SUPPORT)
+/**
+  * @brief  Indicate whether VDD voltage is below or above the selected PVD
+  *         threshold
+  * @rmtoll SR2          PVDMO_USB          LL_PWR_IsActiveFlag_PVMOUSB
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_PVMOUSB(void)
+{
+  return ((READ_BIT(PWR->SR2, PWR_SR2_PVMO_USB) == (PWR_SR2_PVMO_USB)) ? 1UL : 0UL);
+}
+#endif
 
 #if defined(PWR_SR2_PVDO)
 /**

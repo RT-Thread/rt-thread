@@ -338,7 +338,7 @@ __STATIC_INLINE void LL_CRC_FeedData16(CRC_TypeDef *CRCx, uint16_t InData)
 {
   __IO uint16_t *pReg;
 
-  pReg = (__IO uint16_t *)(__IO void *)(&CRCx->DR);
+  pReg = (__IO uint16_t *)(__IO void *)(&CRCx->DR);                             /* Derogation MisraC2012 R.11.5 */
   *pReg = InData;
 }
 

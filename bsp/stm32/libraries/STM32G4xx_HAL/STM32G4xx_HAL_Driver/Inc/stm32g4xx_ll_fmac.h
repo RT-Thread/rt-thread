@@ -38,20 +38,6 @@ extern "C" {
   * @{
   */
 
-/* Private variables ---------------------------------------------------------*/
-
-/* Private constants ---------------------------------------------------------*/
-
-/* Private macros ------------------------------------------------------------*/
-#if defined(USE_FULL_LL_DRIVER)
-/** @defgroup FMAC_LL_Private_Macros FMAC Private Macros
-  * @{
-  */
-/**
-  * @}
-  */
-#endif /*USE_FULL_LL_DRIVER*/
-
 /* Exported types ------------------------------------------------------------*/
 
 /* Exported constants --------------------------------------------------------*/
@@ -63,11 +49,11 @@ extern "C" {
   * @brief    Flag defines which can be used with LL_FMAC_ReadReg function
   * @{
   */
-#define LL_FMAC_SR_SAT                     FMAC_SR_SAT
-#define LL_FMAC_SR_UNFL                    FMAC_SR_UNFL
-#define LL_FMAC_SR_OVFL                    FMAC_SR_OVFL
-#define LL_FMAC_SR_X1FULL                  FMAC_SR_X1FULL
-#define LL_FMAC_SR_YEMPTY                  FMAC_SR_YEMPTY
+#define LL_FMAC_SR_SAT                     FMAC_SR_SAT    /*!< Saturation Error Flag (this helps in debugging a filter) */
+#define LL_FMAC_SR_UNFL                    FMAC_SR_UNFL   /*!< Underflow Error Flag */
+#define LL_FMAC_SR_OVFL                    FMAC_SR_OVFL   /*!< Overflow Error Flag */
+#define LL_FMAC_SR_X1FULL                  FMAC_SR_X1FULL /*!< X1 Buffer Full Flag */
+#define LL_FMAC_SR_YEMPTY                  FMAC_SR_YEMPTY /*!< Y Buffer Empty Flag */
 /**
   * @}
   */
@@ -76,11 +62,11 @@ extern "C" {
   * @brief    IT defines which can be used with LL_FMAC_ReadReg and LL_FMAC_WriteReg functions
   * @{
   */
-#define LL_FMAC_CR_SATIEN                  FMAC_CR_SATIEN
-#define LL_FMAC_CR_UNFLIEN                 FMAC_CR_UNFLIEN
-#define LL_FMAC_CR_OVFLIEN                 FMAC_CR_OVFLIEN
-#define LL_FMAC_CR_WIEN                    FMAC_CR_WIEN
-#define LL_FMAC_CR_RIEN                    FMAC_CR_RIEN
+#define LL_FMAC_CR_SATIEN                  FMAC_CR_SATIEN  /*!< Saturation Error Interrupt Enable (this helps in debugging a filter) */
+#define LL_FMAC_CR_UNFLIEN                 FMAC_CR_UNFLIEN /*!< Underflow Error Interrupt Enable */
+#define LL_FMAC_CR_OVFLIEN                 FMAC_CR_OVFLIEN /*!< Overflow Error Interrupt Enable */
+#define LL_FMAC_CR_WIEN                    FMAC_CR_WIEN    /*!< Write Interrupt Enable */
+#define LL_FMAC_CR_RIEN                    FMAC_CR_RIEN    /*!< Read Interrupt Enable */
 /**
   * @}
   */
@@ -89,10 +75,10 @@ extern "C" {
   * @brief    Watermark defines that can be used for buffer full (input) or buffer empty (output)
   * @{
   */
-#define LL_FMAC_WM_0_THRESHOLD_1           0x00000000UL /*!< Buffer full/empty flag set if there is less than 1 free/unread space. */
-#define LL_FMAC_WM_1_THRESHOLD_2           0x01000000UL /*!< Buffer full/empty flag set if there are less than 2 free/unread spaces. */
-#define LL_FMAC_WM_2_THRESHOLD_4           0x02000000UL /*!< Buffer full/empty flag set if there are less than 4 free/unread spaces. */
-#define LL_FMAC_WM_3_THRESHOLD_8           0x03000000UL /*!< Buffer full/empty flag set if there are less than 8 free/empty spaces. */
+#define LL_FMAC_WM_0_THRESHOLD_1           0x00000000U /*!< Buffer full/empty flag set if there is less than 1 free/unread space. */
+#define LL_FMAC_WM_1_THRESHOLD_2           0x01000000U /*!< Buffer full/empty flag set if there are less than 2 free/unread spaces. */
+#define LL_FMAC_WM_2_THRESHOLD_4           0x02000000U /*!< Buffer full/empty flag set if there are less than 4 free/unread spaces. */
+#define LL_FMAC_WM_3_THRESHOLD_8           0x03000000U /*!< Buffer full/empty flag set if there are less than 8 free/empty spaces. */
 /**
   * @}
   */
@@ -100,11 +86,20 @@ extern "C" {
 /** @defgroup FMAC_LL_EC_FUNC FMAC functions
   * @{
   */
-#define LL_FMAC_FUNC_LOAD_X1               ((uint32_t)(FMAC_PARAM_FUNC_0))                                         /*!< Load X1 buffer */
-#define LL_FMAC_FUNC_LOAD_X2               ((uint32_t)(FMAC_PARAM_FUNC_1))                                         /*!< Load X2 buffer */
-#define LL_FMAC_FUNC_LOAD_Y                ((uint32_t)(FMAC_PARAM_FUNC_1 | FMAC_PARAM_FUNC_0))                     /*!< Load Y buffer */
-#define LL_FMAC_FUNC_CONVO_FIR             ((uint32_t)(FMAC_PARAM_FUNC_3))                                         /*!< Convolution (FIR filter) */
-#define LL_FMAC_FUNC_IIR_DIRECT_FORM_1     ((uint32_t)(FMAC_PARAM_FUNC_3 | FMAC_PARAM_FUNC_0))                     /*!< IIR filter (direct form 1) */
+#define LL_FMAC_FUNC_LOAD_X1               (FMAC_PARAM_FUNC_0)                                         /*!< Load X1 buffer */
+#define LL_FMAC_FUNC_LOAD_X2               (FMAC_PARAM_FUNC_1)                                         /*!< Load X2 buffer */
+#define LL_FMAC_FUNC_LOAD_Y                (FMAC_PARAM_FUNC_1 | FMAC_PARAM_FUNC_0)                     /*!< Load Y buffer */
+#define LL_FMAC_FUNC_CONVO_FIR             (FMAC_PARAM_FUNC_3)                                         /*!< Convolution (FIR filter) */
+#define LL_FMAC_FUNC_IIR_DIRECT_FORM_1     (FMAC_PARAM_FUNC_3 | FMAC_PARAM_FUNC_0)                     /*!< IIR filter (direct form 1) */
+/**
+  * @}
+  */
+
+/** @defgroup FMAC_LL_EC_PROCESSING FMAC processing
+  * @{
+  */
+#define LL_FMAC_PROCESSING_STOP            0x00U /*!< Stop FMAC Processing */
+#define LL_FMAC_PROCESSING_START           0x01U /*!< Start FMAC Processing */
 /**
   * @}
   */
@@ -113,7 +108,8 @@ extern "C" {
   * @}
   */
 
-/* Exported macro ------------------------------------------------------------*/
+/* External variables --------------------------------------------------------*/
+/* Exported macros -----------------------------------------------------------*/
 /** @defgroup FMAC_LL_Exported_Macros FMAC Exported Macros
   * @{
   */
@@ -177,7 +173,7 @@ __STATIC_INLINE void LL_FMAC_SetX1FullWatermark(FMAC_TypeDef *FMACx, uint32_t Wa
   * @brief  Return X1 full watermark.
   * @rmtoll X1BUFCFG     FULL_WM       LL_FMAC_GetX1FullWatermark
   * @param  FMACx FMAC instance
-  * @retval Returned value can be one of the following values:
+  * @retval uint32_t Returned value can be one of the following values:
   *         @arg @ref LL_FMAC_WM_0_THRESHOLD_1
   *         @arg @ref LL_FMAC_WM_1_THRESHOLD_2
   *         @arg @ref LL_FMAC_WM_2_THRESHOLD_4
@@ -192,7 +188,8 @@ __STATIC_INLINE uint32_t LL_FMAC_GetX1FullWatermark(FMAC_TypeDef *FMACx)
   * @brief  Configure X1 buffer size.
   * @rmtoll X1BUFCFG     X1_BUF_SIZE   LL_FMAC_SetX1BufferSize
   * @param  FMACx FMAC instance
-  * @param  BufferSize 0x01 .. 0xFF: Number of 16-bit addresses allocated to the input buffer (including the optional "headroom").
+  * @param  BufferSize Number of 16-bit words allocated to the input buffer (including the optional "headroom").
+  *                    This parameter must be a number between Min_Data=0x01 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_SetX1BufferSize(FMAC_TypeDef *FMACx, uint8_t BufferSize)
@@ -204,7 +201,7 @@ __STATIC_INLINE void LL_FMAC_SetX1BufferSize(FMAC_TypeDef *FMACx, uint8_t Buffer
   * @brief  Return X1 buffer size.
   * @rmtoll X1BUFCFG     X1_BUF_SIZE   LL_FMAC_GetX1BufferSize
   * @param  FMACx FMAC instance
-  * @retval 0x01 .. 0xFF: Number of 16-bit addresses allocated to the input buffer (including the optional "headroom").
+  * @retval uint8_t Number of 16-bit words allocated to the input buffer (including the optional "headroom") (value between Min_Data=0x01 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetX1BufferSize(FMAC_TypeDef *FMACx)
 {
@@ -215,7 +212,8 @@ __STATIC_INLINE uint8_t LL_FMAC_GetX1BufferSize(FMAC_TypeDef *FMACx)
   * @brief  Configure X1 base.
   * @rmtoll X1BUFCFG     X1_BASE       LL_FMAC_SetX1Base
   * @param  FMACx FMAC instance
-  * @param  Base 0x00 .. 0xFF: Base address of the input buffer (X1) within the internal memory.
+  * @param  Base Base address of the input buffer (X1) within the internal memory.
+  *              This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_SetX1Base(FMAC_TypeDef *FMACx, uint8_t Base)
@@ -227,7 +225,7 @@ __STATIC_INLINE void LL_FMAC_SetX1Base(FMAC_TypeDef *FMACx, uint8_t Base)
   * @brief  Return X1 base.
   * @rmtoll X1BUFCFG     X1_BASE       LL_FMAC_GetX1Base
   * @param  FMACx FMAC instance
-  * @retval 0x00 .. 0xFF: Base address of the input buffer (X1) within the internal memory.
+  * @retval uint8_t Base address of the input buffer (X1) within the internal memory (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetX1Base(FMAC_TypeDef *FMACx)
 {
@@ -238,7 +236,8 @@ __STATIC_INLINE uint8_t LL_FMAC_GetX1Base(FMAC_TypeDef *FMACx)
   * @brief  Configure X2 buffer size.
   * @rmtoll X2BUFCFG     X2_BUF_SIZE   LL_FMAC_SetX2BufferSize
   * @param  FMACx FMAC instance
-  * @param  BufferSize 0x01 .. 0xFF: Number of 16-bit addresses allocated to the coefficient buffer.
+  * @param  BufferSize Number of 16-bit words allocated to the coefficient buffer.
+  *                    This parameter must be a number between Min_Data=0x01 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_SetX2BufferSize(FMAC_TypeDef *FMACx, uint8_t BufferSize)
@@ -250,7 +249,7 @@ __STATIC_INLINE void LL_FMAC_SetX2BufferSize(FMAC_TypeDef *FMACx, uint8_t Buffer
   * @brief  Return X2 buffer size.
   * @rmtoll X2BUFCFG     X2_BUF_SIZE   LL_FMAC_GetX2BufferSize
   * @param  FMACx FMAC instance
-  * @retval 0x01 .. 0xFF: Number of 16-bit addresses allocated to the coefficient buffer.
+  * @retval uint8_t Number of 16-bit words allocated to the coefficient buffer (value between Min_Data=0x01 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetX2BufferSize(FMAC_TypeDef *FMACx)
 {
@@ -261,7 +260,8 @@ __STATIC_INLINE uint8_t LL_FMAC_GetX2BufferSize(FMAC_TypeDef *FMACx)
   * @brief  Configure X2 base.
   * @rmtoll X2BUFCFG     X2_BASE       LL_FMAC_SetX2Base
   * @param  FMACx FMAC instance
-  * @param  Base 0x00 .. 0xFF: Base address of the coefficient buffer (X2) within the internal memory.
+  * @param  Base Base address of the coefficient buffer (X2) within the internal memory.
+  *              This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_SetX2Base(FMAC_TypeDef *FMACx, uint8_t Base)
@@ -273,7 +273,7 @@ __STATIC_INLINE void LL_FMAC_SetX2Base(FMAC_TypeDef *FMACx, uint8_t Base)
   * @brief  Return X2 base.
   * @rmtoll X2BUFCFG     X2_BASE       LL_FMAC_GetX2Base
   * @param  FMACx FMAC instance
-  * @retval 0x00 .. 0xFF: Base address of the coefficient buffer (X2) within the internal memory.
+  * @retval uint8_t Base address of the coefficient buffer (X2) within the internal memory (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetX2Base(FMAC_TypeDef *FMACx)
 {
@@ -300,7 +300,7 @@ __STATIC_INLINE void LL_FMAC_SetYEmptyWatermark(FMAC_TypeDef *FMACx, uint32_t Wa
   * @brief  Return Y empty watermark.
   * @rmtoll YBUFCFG      EMPTY_WM      LL_FMAC_GetYEmptyWatermark
   * @param  FMACx FMAC instance
-  * @retval Returned value can be one of the following values:
+  * @retval uint32_t Returned value can be one of the following values:
   *         @arg @ref LL_FMAC_WM_0_THRESHOLD_1
   *         @arg @ref LL_FMAC_WM_1_THRESHOLD_2
   *         @arg @ref LL_FMAC_WM_2_THRESHOLD_4
@@ -315,7 +315,8 @@ __STATIC_INLINE uint32_t LL_FMAC_GetYEmptyWatermark(FMAC_TypeDef *FMACx)
   * @brief  Configure Y buffer size.
   * @rmtoll YBUFCFG      Y_BUF_SIZE    LL_FMAC_SetYBufferSize
   * @param  FMACx FMAC instance
-  * @param  BufferSize 0x01 .. 0xFF: Number of 16-bit addresses allocated to the output buffer (including the optional "headroom").
+  * @param  BufferSize Number of 16-bit words allocated to the output buffer (including the optional "headroom").
+  *                    This parameter must be a number between Min_Data=0x01 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_SetYBufferSize(FMAC_TypeDef *FMACx, uint8_t BufferSize)
@@ -327,7 +328,7 @@ __STATIC_INLINE void LL_FMAC_SetYBufferSize(FMAC_TypeDef *FMACx, uint8_t BufferS
   * @brief  Return Y buffer size.
   * @rmtoll YBUFCFG      Y_BUF_SIZE    LL_FMAC_GetYBufferSize
   * @param  FMACx FMAC instance
-  * @retval 0x01 .. 0xFF: Number of 16-bit addresses allocated to the output buffer (including the optional "headroom").
+  * @retval uint8_t Number of 16-bit words allocated to the output buffer (including the optional "headroom" - value between Min_Data=0x01 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetYBufferSize(FMAC_TypeDef *FMACx)
 {
@@ -338,7 +339,8 @@ __STATIC_INLINE uint8_t LL_FMAC_GetYBufferSize(FMAC_TypeDef *FMACx)
   * @brief  Configure Y base.
   * @rmtoll YBUFCFG      Y_BASE        LL_FMAC_SetYBase
   * @param  FMACx FMAC instance
-  * @param  Base 0x00 .. 0xFF: Base address of the output buffer (Y) within the internal memory.
+  * @param  Base Base address of the output buffer (Y) within the internal memory.
+  *              This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_SetYBase(FMAC_TypeDef *FMACx, uint8_t Base)
@@ -350,7 +352,7 @@ __STATIC_INLINE void LL_FMAC_SetYBase(FMAC_TypeDef *FMACx, uint8_t Base)
   * @brief  Return Y base.
   * @rmtoll YBUFCFG      Y_BASE        LL_FMAC_GetYBase
   * @param  FMACx FMAC instance
-  * @retval 0x00 .. 0xFF: Base address of the output buffer (Y) within the internal memory.
+  * @retval uint8_t Base address of the output buffer (Y) within the internal memory (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetYBase(FMAC_TypeDef *FMACx)
 {
@@ -383,7 +385,7 @@ __STATIC_INLINE void LL_FMAC_DisableStart(FMAC_TypeDef *FMACx)
   * @brief  Check the state of FMAC processing.
   * @rmtoll PARAM        START         LL_FMAC_IsEnabledStart
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledStart(FMAC_TypeDef *FMACx)
 {
@@ -411,7 +413,7 @@ __STATIC_INLINE void LL_FMAC_SetFunction(FMAC_TypeDef *FMACx, uint32_t Function)
   * @brief  Return function.
   * @rmtoll PARAM        FUNC          LL_FMAC_GetFunction
   * @param  FMACx FMAC instance
-  * @retval Returned value can be one of the following values:
+  * @retval uint32_t Returned value can be one of the following values:
   *         @arg @ref LL_FMAC_FUNC_LOAD_X1
   *         @arg @ref LL_FMAC_FUNC_LOAD_X2
   *         @arg @ref LL_FMAC_FUNC_LOAD_Y
@@ -427,7 +429,8 @@ __STATIC_INLINE uint32_t LL_FMAC_GetFunction(FMAC_TypeDef *FMACx)
   * @brief  Configure input parameter R.
   * @rmtoll PARAM        R             LL_FMAC_SetParamR
   * @param  FMACx FMAC instance
-  * @param  Param 0x00 .. 0xFF: Parameter R (gain, etc.).
+  * @param  Param Parameter R (gain, etc.).
+  *               This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_SetParamR(FMAC_TypeDef *FMACx, uint8_t Param)
@@ -439,7 +442,7 @@ __STATIC_INLINE void LL_FMAC_SetParamR(FMAC_TypeDef *FMACx, uint8_t Param)
   * @brief  Return input parameter R.
   * @rmtoll PARAM        R             LL_FMAC_GetParamR
   * @param  FMACx FMAC instance
-  * @retval 0x00 .. 0xFF: Parameter R (gain, etc.).
+  * @retval uint8_t Parameter R (gain, etc.) (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetParamR(FMAC_TypeDef *FMACx)
 {
@@ -450,7 +453,8 @@ __STATIC_INLINE uint8_t LL_FMAC_GetParamR(FMAC_TypeDef *FMACx)
   * @brief  Configure input parameter Q.
   * @rmtoll PARAM        Q             LL_FMAC_SetParamQ
   * @param  FMACx FMAC instance
-  * @param  Param 0x00 .. 0xFF: Parameter Q (vector length, etc.).
+  * @param  Param Parameter Q (vector length, etc.).
+  *               This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_SetParamQ(FMAC_TypeDef *FMACx, uint8_t Param)
@@ -462,7 +466,7 @@ __STATIC_INLINE void LL_FMAC_SetParamQ(FMAC_TypeDef *FMACx, uint8_t Param)
   * @brief  Return input parameter Q.
   * @rmtoll PARAM        Q             LL_FMAC_GetParamQ
   * @param  FMACx FMAC instance
-  * @retval 0x00 .. 0xFF: Parameter Q (vector length, etc.).
+  * @retval uint8_t Parameter Q (vector length, etc.) (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetParamQ(FMAC_TypeDef *FMACx)
 {
@@ -473,23 +477,24 @@ __STATIC_INLINE uint8_t LL_FMAC_GetParamQ(FMAC_TypeDef *FMACx)
   * @brief  Configure input parameter P.
   * @rmtoll PARAM        P             LL_FMAC_SetParamP
   * @param  FMACx FMAC instance
-  * @param  Param 0x00 .. 0xFF: Parameter P (vector length, number of filter taps, etc.).
+  * @param  Param Parameter P (vector length, number of filter taps, etc.).
+  *               This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_SetParamP(FMAC_TypeDef *FMACx, uint8_t Param)
 {
-  MODIFY_REG(FMACx->PARAM, FMAC_PARAM_P, ((uint32_t)Param) << FMAC_PARAM_P_Pos);
+  MODIFY_REG(FMACx->PARAM, FMAC_PARAM_P, ((uint32_t)Param));
 }
 
 /**
   * @brief  Return input parameter P.
   * @rmtoll PARAM        P             LL_FMAC_GetParamP
   * @param  FMACx FMAC instance
-  * @retval 0x00 .. 0xFF: Parameter P (vector length, number of filter taps, etc.).
+  * @retval uint8_t Parameter P (vector length, number of filter taps, etc.) (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetParamP(FMAC_TypeDef *FMACx)
 {
-  return (uint8_t)(READ_BIT(FMACx->PARAM, FMAC_PARAM_P) >> FMAC_PARAM_P_Pos);
+  return (uint8_t)(READ_BIT(FMACx->PARAM, FMAC_PARAM_P));
 }
 
 /**
@@ -512,21 +517,10 @@ __STATIC_INLINE void LL_FMAC_EnableReset(FMAC_TypeDef *FMACx)
 }
 
 /**
-  * @brief  Interrupt the FMAC reset.
-  * @rmtoll CR           RESET         LL_FMAC_DisableReset
-  * @param  FMACx FMAC instance
-  * @retval None
-  */
-__STATIC_INLINE void LL_FMAC_DisableReset(FMAC_TypeDef *FMACx)
-{
-  CLEAR_BIT(FMACx->CR, FMAC_CR_RESET);
-}
-
-/**
   * @brief  Check the state of the FMAC reset.
   * @rmtoll CR           RESET         LL_FMAC_IsEnabledReset
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledReset(FMAC_TypeDef *FMACx)
 {
@@ -567,7 +561,7 @@ __STATIC_INLINE void LL_FMAC_DisableClipping(FMAC_TypeDef *FMACx)
   * @brief  Check Clipping State.
   * @rmtoll CR           CLIPEN        LL_FMAC_IsEnabledClipping
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledClipping(FMAC_TypeDef *FMACx)
 {
@@ -608,7 +602,7 @@ __STATIC_INLINE void LL_FMAC_DisableDMAReq_WRITE(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC DMA write channel request state.
   * @rmtoll CR           DMAWEN        LL_FMAC_IsEnabledDMAReq_WRITE
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledDMAReq_WRITE(FMAC_TypeDef *FMACx)
 {
@@ -641,7 +635,7 @@ __STATIC_INLINE void LL_FMAC_DisableDMAReq_READ(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC DMA read channel request state.
   * @rmtoll CR           DMAREN        LL_FMAC_IsEnabledDMAReq_READ
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledDMAReq_READ(FMAC_TypeDef *FMACx)
 {
@@ -682,7 +676,7 @@ __STATIC_INLINE void LL_FMAC_DisableIT_SAT(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC saturation error interrupt state.
   * @rmtoll CR           SATIEN        LL_FMAC_IsEnabledIT_SAT
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledIT_SAT(FMAC_TypeDef *FMACx)
 {
@@ -715,7 +709,7 @@ __STATIC_INLINE void LL_FMAC_DisableIT_UNFL(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC underflow error interrupt state.
   * @rmtoll CR           UNFLIEN       LL_FMAC_IsEnabledIT_UNFL
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledIT_UNFL(FMAC_TypeDef *FMACx)
 {
@@ -748,7 +742,7 @@ __STATIC_INLINE void LL_FMAC_DisableIT_OVFL(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC overflow error interrupt state.
   * @rmtoll CR           OVFLIEN       LL_FMAC_IsEnabledIT_OVFL
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledIT_OVFL(FMAC_TypeDef *FMACx)
 {
@@ -781,7 +775,7 @@ __STATIC_INLINE void LL_FMAC_DisableIT_WR(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC write interrupt state.
   * @rmtoll CR           WIEN          LL_FMAC_IsEnabledIT_WR
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledIT_WR(FMAC_TypeDef *FMACx)
 {
@@ -814,7 +808,7 @@ __STATIC_INLINE void LL_FMAC_DisableIT_RD(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC read interrupt state.
   * @rmtoll CR           RIEN          LL_FMAC_IsEnabledIT_RD
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsEnabledIT_RD(FMAC_TypeDef *FMACx)
 {
@@ -833,7 +827,7 @@ __STATIC_INLINE uint32_t LL_FMAC_IsEnabledIT_RD(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC saturation error flag state.
   * @rmtoll SR           SAT           LL_FMAC_IsActiveFlag_SAT
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_SAT(FMAC_TypeDef *FMACx)
 {
@@ -844,7 +838,7 @@ __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_SAT(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC underflow error flag state.
   * @rmtoll SR           UNFL          LL_FMAC_IsActiveFlag_UNFL
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_UNFL(FMAC_TypeDef *FMACx)
 {
@@ -855,7 +849,7 @@ __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_UNFL(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC overflow error flag state.
   * @rmtoll SR           OVFL          LL_FMAC_IsActiveFlag_OVFL
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_OVFL(FMAC_TypeDef *FMACx)
 {
@@ -866,7 +860,7 @@ __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_OVFL(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC X1 buffer full flag state.
   * @rmtoll SR           X1FULL        LL_FMAC_IsActiveFlag_X1FULL
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_X1FULL(FMAC_TypeDef *FMACx)
 {
@@ -877,7 +871,7 @@ __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_X1FULL(FMAC_TypeDef *FMACx)
   * @brief  Check FMAC Y buffer empty flag state.
   * @rmtoll SR           YEMPTY        LL_FMAC_IsActiveFlag_YEMPTY
   * @param  FMACx FMAC instance
-  * @retval State of bit (1 or 0).
+  * @retval uint32_t State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_YEMPTY(FMAC_TypeDef *FMACx)
 {
@@ -896,7 +890,8 @@ __STATIC_INLINE uint32_t LL_FMAC_IsActiveFlag_YEMPTY(FMAC_TypeDef *FMACx)
   * @brief  Write 16-bit input data for the FMAC processing.
   * @rmtoll WDATA        WDATA         LL_FMAC_WriteData
   * @param  FMACx FMAC instance
-  * @param  InData 0x0000 .. 0xFFFF: 16-bit value to be provided as input data for FMAC processing.
+  * @param  InData 16-bit value to be provided as input data for FMAC processing.
+  *                This parameter must be a number between Min_Data=0x0000 and Max_Data=0xFFFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_WriteData(FMAC_TypeDef *FMACx, uint16_t InData)
@@ -908,7 +903,7 @@ __STATIC_INLINE void LL_FMAC_WriteData(FMAC_TypeDef *FMACx, uint16_t InData)
   * @brief  Return 16-bit output data of FMAC processing.
   * @rmtoll RDATA        RDATA         LL_FMAC_ReadData
   * @param  FMACx FMAC instance
-  * @retval 0x0000 .. 0xFFFF: 16-bit output data of FMAC processing.
+  * @retval uint16_t 16-bit output data of FMAC processing (value between Min_Data=0x0000 and Max_Data=0xFFFF).
   */
 __STATIC_INLINE uint16_t LL_FMAC_ReadData(FMAC_TypeDef *FMACx)
 {
@@ -934,8 +929,10 @@ __STATIC_INLINE uint16_t LL_FMAC_ReadData(FMAC_TypeDef *FMACx)
   *         @arg @ref LL_FMAC_WM_1_THRESHOLD_2
   *         @arg @ref LL_FMAC_WM_2_THRESHOLD_4
   *         @arg @ref LL_FMAC_WM_3_THRESHOLD_8
-  * @param  Base 0x00 .. 0xFF: Base address of the input buffer (X1) within the internal memory.
-  * @param  BufferSize 0x01 .. 0xFF: Number of 16-bit addresses allocated to the input buffer (including the optional "headroom").
+  * @param  Base Base address of the input buffer (X1) within the internal memory.
+  *              This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
+  * @param  BufferSize Number of 16-bit words allocated to the input buffer (including the optional "headroom").
+  *                    This parameter must be a number between Min_Data=0x01 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_ConfigX1(FMAC_TypeDef *FMACx, uint32_t Watermark, uint8_t Base, uint8_t BufferSize)
@@ -949,8 +946,10 @@ __STATIC_INLINE void LL_FMAC_ConfigX1(FMAC_TypeDef *FMACx, uint32_t Watermark, u
   * @rmtoll X2BUFCFG     X2_BASE       LL_FMAC_ConfigX2\n
   *         X2BUFCFG     X2_BUF_SIZE   LL_FMAC_ConfigX2
   * @param  FMACx FMAC instance
-  * @param  Base 0x00 .. 0xFF: Base address of the coefficient buffer (X2) within the internal memory.
-  * @param  BufferSize 0x01 .. 0xFF: Number of 16-bit addresses allocated to the coefficient buffer.
+  * @param  Base Base address of the coefficient buffer (X2) within the internal memory.
+  *              This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
+  * @param  BufferSize Number of 16-bit words allocated to the coefficient buffer.
+  *                    This parameter must be a number between Min_Data=0x01 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_ConfigX2(FMAC_TypeDef *FMACx, uint8_t Base, uint8_t BufferSize)
@@ -970,8 +969,10 @@ __STATIC_INLINE void LL_FMAC_ConfigX2(FMAC_TypeDef *FMACx, uint8_t Base, uint8_t
   *         @arg @ref LL_FMAC_WM_1_THRESHOLD_2
   *         @arg @ref LL_FMAC_WM_2_THRESHOLD_4
   *         @arg @ref LL_FMAC_WM_3_THRESHOLD_8
-  * @param  Base 0x00 .. 0xFF: Base address of the output buffer (Y) within the internal memory.
-  * @param  BufferSize 0x01 .. 0xFF: Number of 16-bit addresses allocated to the output buffer (including the optional "headroom").
+  * @param  Base Base address of the output buffer (Y) within the internal memory.
+  *              This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
+  * @param  BufferSize Number of 16-bit words allocated to the output buffer (including the optional "headroom").
+  *                    This parameter must be a number between Min_Data=0x01 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_ConfigY(FMAC_TypeDef *FMACx, uint32_t Watermark, uint8_t Base, uint8_t BufferSize)
@@ -988,16 +989,21 @@ __STATIC_INLINE void LL_FMAC_ConfigY(FMAC_TypeDef *FMACx, uint32_t Watermark, ui
   *         PARAM        Q             LL_FMAC_ConfigFunc\n
   *         PARAM        R             LL_FMAC_ConfigFunc
   * @param  FMACx FMAC instance
-  * @param  Start 0x00 .. 0x01: Enable or disable FMAC processing.
+  * @param  Start This parameter can be one of the following values:
+  *         @arg @ref LL_FMAC_PROCESSING_STOP
+  *         @arg @ref LL_FMAC_PROCESSING_START
   * @param  Function This parameter can be one of the following values:
   *         @arg @ref LL_FMAC_FUNC_LOAD_X1
   *         @arg @ref LL_FMAC_FUNC_LOAD_X2
   *         @arg @ref LL_FMAC_FUNC_LOAD_Y
   *         @arg @ref LL_FMAC_FUNC_CONVO_FIR
   *         @arg @ref LL_FMAC_FUNC_IIR_DIRECT_FORM_1
-  * @param  ParamP 0x00 .. 0xFF: Parameter P (vector length, number of filter taps, etc.).
-  * @param  ParamQ 0x00 .. 0xFF: Parameter Q (vector length, etc.).
-  * @param  ParamR 0x00 .. 0xFF: Parameter R (gain, etc.).
+  * @param  ParamP Parameter P (vector length, number of filter taps, etc.).
+  *                This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
+  * @param  ParamQ Parameter Q (vector length, etc.).
+  *                This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
+  * @param  ParamR Parameter R (gain, etc.).
+  *                This parameter must be a value between Min_Data=0x00 and Max_Data=0xFF.
   * @retval None
   */
 __STATIC_INLINE void LL_FMAC_ConfigFunc(FMAC_TypeDef *FMACx, uint8_t Start, uint32_t Function, uint8_t ParamP,

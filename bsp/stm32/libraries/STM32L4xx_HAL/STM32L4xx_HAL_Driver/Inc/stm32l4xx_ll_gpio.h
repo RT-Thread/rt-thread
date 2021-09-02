@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_LL_GPIO_H
-#define __STM32L4xx_LL_GPIO_H
+#ifndef STM32L4xx_LL_GPIO_H
+#define STM32L4xx_LL_GPIO_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -1052,6 +1052,6 @@ void        LL_GPIO_StructInit(LL_GPIO_InitTypeDef *GPIO_InitStruct);
 }
 #endif
 
-#endif /* __STM32L4xx_LL_GPIO_H */
+#endif /* STM32L4xx_LL_GPIO_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

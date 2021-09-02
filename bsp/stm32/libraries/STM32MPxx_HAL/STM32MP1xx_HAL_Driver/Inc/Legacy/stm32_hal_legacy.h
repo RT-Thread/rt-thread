@@ -38,7 +38,6 @@
 #define AES_CLEARFLAG_CCF               CRYP_CLEARFLAG_CCF
 #define AES_CLEARFLAG_RDERR             CRYP_CLEARFLAG_RDERR
 #define AES_CLEARFLAG_WRERR             CRYP_CLEARFLAG_WRERR
-
 /**
   * @}
   */
@@ -315,6 +314,11 @@
 #if defined(STM32G0)
 #define DMA_REQUEST_DAC1_CHANNEL1                DMA_REQUEST_DAC1_CH1
 #define DMA_REQUEST_DAC1_CHANNEL2                DMA_REQUEST_DAC1_CH2
+#define DMA_REQUEST_TIM16_TRIG_COM               DMA_REQUEST_TIM16_COM
+#define DMA_REQUEST_TIM17_TRIG_COM               DMA_REQUEST_TIM17_COM
+
+#define LL_DMAMUX_REQ_TIM16_TRIG_COM             LL_DMAMUX_REQ_TIM16_COM
+#define LL_DMAMUX_REQ_TIM17_TRIG_COM             LL_DMAMUX_REQ_TIM17_COM
 #endif
 
 #if defined(STM32H7)
@@ -643,6 +647,10 @@
 #define HAL_HRTIM_ExternalEventCounterEnable    HAL_HRTIM_ExtEventCounterEnable
 #define HAL_HRTIM_ExternalEventCounterDisable   HAL_HRTIM_ExtEventCounterDisable
 #define HAL_HRTIM_ExternalEventCounterReset     HAL_HRTIM_ExtEventCounterReset
+#define HRTIM_TIMEEVENT_A                       HRTIM_EVENTCOUNTER_A
+#define HRTIM_TIMEEVENT_B                       HRTIM_EVENTCOUNTER_B
+#define HRTIM_TIMEEVENTRESETMODE_UNCONDITIONAL  HRTIM_EVENTCOUNTER_RSTMODE_UNCONDITIONAL
+#define HRTIM_TIMEEVENTRESETMODE_CONDITIONAL    HRTIM_EVENTCOUNTER_RSTMODE_CONDITIONAL
 #endif /* STM32G4 */
 
 #if defined(STM32H7)
@@ -887,7 +895,6 @@
 #define LPTIM_TRIGSAMPLETIME_2TRANSITION        LPTIM_TRIGSAMPLETIME_2TRANSITIONS
 #define LPTIM_TRIGSAMPLETIME_4TRANSITION        LPTIM_TRIGSAMPLETIME_4TRANSITIONS
 #define LPTIM_TRIGSAMPLETIME_8TRANSITION        LPTIM_TRIGSAMPLETIME_8TRANSITIONS
-
 /**
   * @}
   */
@@ -1014,7 +1021,7 @@
 /**
   * @}
   */
-
+  
 /** @defgroup HAL_RTC_Aliased_Defines HAL RTC Aliased Defines maintained for legacy purpose
   * @{
   */
@@ -1450,7 +1457,7 @@
 #define HASH_HMACKeyType_ShortKey  HASH_HMAC_KEYTYPE_SHORTKEY
 #define HASH_HMACKeyType_LongKey   HASH_HMAC_KEYTYPE_LONGKEY
 
-#if defined(STM32L4) || defined(STM32L5) || defined(STM32F4) || defined(STM32F7) || defined(STM32H7)
+#if defined(STM32L4) || defined(STM32L5) || defined(STM32F2) || defined(STM32F4) || defined(STM32F7) || defined(STM32H7)
 
 #define HAL_HASH_MD5_Accumulate                HAL_HASH_MD5_Accmlt
 #define HAL_HASH_MD5_Accumulate_End            HAL_HASH_MD5_Accmlt_End
@@ -1472,7 +1479,7 @@
 #define HAL_HASHEx_SHA256_Accumulate_IT        HAL_HASHEx_SHA256_Accmlt_IT
 #define HAL_HASHEx_SHA256_Accumulate_End_IT    HAL_HASHEx_SHA256_Accmlt_End_IT
 
-#endif  /* STM32L4 || STM32L5 || STM32F4 || STM32F7 || STM32H7 */
+#endif  /* STM32L4 || STM32L5 || STM32F2 || STM32F4 || STM32F7 || STM32H7 */
 /**
   * @}
   */
@@ -1531,18 +1538,18 @@
 
 #define HAL_I2CFastModePlusConfig(SYSCFG_I2CFastModePlus, cmd) (((cmd)==ENABLE)? HAL_I2CEx_EnableFastModePlus(SYSCFG_I2CFastModePlus): HAL_I2CEx_DisableFastModePlus(SYSCFG_I2CFastModePlus))
 
-#if defined(STM32H7) || defined(STM32WB) || defined(STM32G0) || defined(STM32F0) || defined(STM32F1) || defined(STM32F2) || defined(STM32F3) || defined(STM32F4) || defined(STM32F7) || defined(STM32L0) || defined(STM32L4) || defined(STM32L5) || defined(STM32G4)
+#if defined(STM32H7) || defined(STM32WB) || defined(STM32G0) || defined(STM32F0) || defined(STM32F1) || defined(STM32F2) || defined(STM32F3) || defined(STM32F4) || defined(STM32F7) || defined(STM32L0) || defined(STM32L4) || defined(STM32L5) || defined(STM32G4) || defined(STM32L1)
 #define HAL_I2C_Master_Sequential_Transmit_IT  HAL_I2C_Master_Seq_Transmit_IT
 #define HAL_I2C_Master_Sequential_Receive_IT   HAL_I2C_Master_Seq_Receive_IT
 #define HAL_I2C_Slave_Sequential_Transmit_IT   HAL_I2C_Slave_Seq_Transmit_IT
 #define HAL_I2C_Slave_Sequential_Receive_IT    HAL_I2C_Slave_Seq_Receive_IT
-#endif /* STM32H7 || STM32WB  || STM32G0 || STM32F0 || STM32F1 || STM32F2 || STM32F3 || STM32F4 || STM32F7 || STM32L0 || STM32L4 || STM32L5 || STM32G4 */
-#if defined(STM32H7) || defined(STM32WB) || defined(STM32G0) || defined(STM32F4) || defined(STM32F7) || defined(STM32L0) || defined(STM32L4) || defined(STM32L5) || defined(STM32G4)
+#endif /* STM32H7 || STM32WB  || STM32G0 || STM32F0 || STM32F1 || STM32F2 || STM32F3 || STM32F4 || STM32F7 || STM32L0 || STM32L4 || STM32L5 || STM32G4 || STM32L1 */
+#if defined(STM32H7) || defined(STM32WB) || defined(STM32G0) || defined(STM32F4) || defined(STM32F7) || defined(STM32L0) || defined(STM32L4) || defined(STM32L5) || defined(STM32G4)|| defined(STM32L1)
 #define HAL_I2C_Master_Sequential_Transmit_DMA HAL_I2C_Master_Seq_Transmit_DMA
 #define HAL_I2C_Master_Sequential_Receive_DMA  HAL_I2C_Master_Seq_Receive_DMA
 #define HAL_I2C_Slave_Sequential_Transmit_DMA  HAL_I2C_Slave_Seq_Transmit_DMA
 #define HAL_I2C_Slave_Sequential_Receive_DMA   HAL_I2C_Slave_Seq_Receive_DMA
-#endif /* STM32H7 || STM32WB  || STM32G0 || STM32F4 || STM32F7 || STM32L0 || STM32L4 || STM32L5 || STM32G4 */
+#endif /* STM32H7 || STM32WB  || STM32G0 || STM32F4 || STM32F7 || STM32L0 || STM32L4 || STM32L5 || STM32G4 || STM32L1 */
 
 #if defined(STM32F4)
 #define HAL_FMPI2C_Master_Sequential_Transmit_IT  HAL_FMPI2C_Master_Seq_Transmit_IT
@@ -3243,9 +3250,8 @@
 #define RCC_MCOSOURCE_PLLCLK_NODIV  RCC_MCO1SOURCE_PLLCLK
 #define RCC_MCOSOURCE_PLLCLK_DIV2   RCC_MCO1SOURCE_PLLCLK_DIV2
 
-#if defined(STM32L4)
+#if defined(STM32L4) || defined(STM32WB) || defined(STM32G0) || defined(STM32G4) || defined(STM32L5)
 #define RCC_RTCCLKSOURCE_NO_CLK     RCC_RTCCLKSOURCE_NONE
-#elif defined(STM32WB) || defined(STM32G0) || defined(STM32G4) || defined(STM32L5) || defined(STM32WL)
 #else
 #define RCC_RTCCLKSOURCE_NONE       RCC_RTCCLKSOURCE_NO_CLK
 #endif
@@ -3373,7 +3379,7 @@
 /** @defgroup HAL_RTC_Aliased_Macros HAL RTC Aliased Macros maintained for legacy purpose
   * @{
   */
-#if defined (STM32G0) || defined (STM32L5) || defined (STM32L412xx) || defined (STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32G4) || defined (STM32WL) || defined (STM32U5)
+#if defined (STM32G0) || defined (STM32L5) || defined (STM32L412xx) || defined (STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32G4)
 #else
 #define __HAL_RTC_CLEAR_FLAG                      __HAL_RTC_EXTI_CLEAR_FLAG
 #endif
@@ -3751,7 +3757,7 @@
 /** @defgroup HAL_QSPI_Aliased_Macros HAL QSPI Aliased Macros maintained for legacy purpose
   * @{
   */
-#if defined (STM32L4) || defined (STM32F4) || defined (STM32F7)
+#if defined (STM32L4) || defined (STM32F4) || defined (STM32F7) || defined(STM32H7)
 #define HAL_QPSI_TIMEOUT_DEFAULT_VALUE HAL_QSPI_TIMEOUT_DEFAULT_VALUE
 #endif /* STM32L4 || STM32F4 || STM32F7 */
 /**

@@ -86,21 +86,17 @@ extern "C" {
                 (((__SELECTION__) & RCC_PERIPHCLK_RTC)      == RCC_PERIPHCLK_RTC)     || \
                 (((__SELECTION__) & RCC_PERIPHCLK_RFWAKEUP) == RCC_PERIPHCLK_RFWAKEUP)|| \
                 (((__SELECTION__) & RCC_PERIPHCLK_SMPS)     == RCC_PERIPHCLK_SMPS))
-#elif defined(LPUART1) && defined(USB) && defined(RCC_SMPS_SUPPORT) && defined(SPI_I2S_SUPPORT)
+#elif defined(LPUART1)
 #define IS_RCC_PERIPHCLOCK(__SELECTION__)  \
                ((((__SELECTION__) & RCC_PERIPHCLK_USART1)   == RCC_PERIPHCLK_USART1)  || \
                 (((__SELECTION__) & RCC_PERIPHCLK_LPUART1)  == RCC_PERIPHCLK_LPUART1) || \
                 (((__SELECTION__) & RCC_PERIPHCLK_I2C1)     == RCC_PERIPHCLK_I2C1)    || \
-                (((__SELECTION__) & RCC_PERIPHCLK_I2C3)     == RCC_PERIPHCLK_I2C3)    || \
                 (((__SELECTION__) & RCC_PERIPHCLK_LPTIM1)   == RCC_PERIPHCLK_LPTIM1)  || \
                 (((__SELECTION__) & RCC_PERIPHCLK_LPTIM2)   == RCC_PERIPHCLK_LPTIM2)  || \
-                (((__SELECTION__) & RCC_PERIPHCLK_USB)      == RCC_PERIPHCLK_USB)     || \
                 (((__SELECTION__) & RCC_PERIPHCLK_RNG)      == RCC_PERIPHCLK_RNG)     || \
                 (((__SELECTION__) & RCC_PERIPHCLK_ADC)      == RCC_PERIPHCLK_ADC)     || \
                 (((__SELECTION__) & RCC_PERIPHCLK_RTC)      == RCC_PERIPHCLK_RTC)     || \
-                (((__SELECTION__) & RCC_PERIPHCLK_RFWAKEUP) == RCC_PERIPHCLK_RFWAKEUP)|| \
-                (((__SELECTION__) & RCC_PERIPHCLK_SMPS)     == RCC_PERIPHCLK_SMPS)    || \
-                (((__SELECTION__) & RCC_PERIPHCLK_I2S)     == RCC_PERIPHCLK_I2S))
+                (((__SELECTION__) & RCC_PERIPHCLK_RFWAKEUP) == RCC_PERIPHCLK_RFWAKEUP))
 #else
 #define IS_RCC_PERIPHCLOCK(__SELECTION__)  \
                ((((__SELECTION__) & RCC_PERIPHCLK_USART1)   == RCC_PERIPHCLK_USART1)  || \
@@ -159,6 +155,7 @@ extern "C" {
                 ((__SOURCE__) == RCC_LPTIM2CLKSOURCE_HSI)  || \
                 ((__SOURCE__) == RCC_LPTIM2CLKSOURCE_LSE))
 
+#if defined(RCC_HSI48_SUPPORT)
 #define IS_RCC_RNGCLKSOURCE(__SOURCE__)  \
                (((__SOURCE__) == RCC_RNGCLKSOURCE_HSI48)   || \
                 ((__SOURCE__) == RCC_RNGCLKSOURCE_PLL)     || \
@@ -166,6 +163,14 @@ extern "C" {
                 ((__SOURCE__) == RCC_RNGCLKSOURCE_CLK48)   || \
                 ((__SOURCE__) == RCC_RNGCLKSOURCE_LSI)     || \
                 ((__SOURCE__) == RCC_RNGCLKSOURCE_LSE))
+#else
+#define IS_RCC_RNGCLKSOURCE(__SOURCE__)  \
+               (((__SOURCE__) == RCC_RNGCLKSOURCE_PLL)     || \
+                ((__SOURCE__) == RCC_RNGCLKSOURCE_MSI)     || \
+                ((__SOURCE__) == RCC_RNGCLKSOURCE_CLK48)   || \
+                ((__SOURCE__) == RCC_RNGCLKSOURCE_LSI)     || \
+                ((__SOURCE__) == RCC_RNGCLKSOURCE_LSE))
+#endif
 
 #if defined(USB)
 #if defined(SAI1)
@@ -188,6 +193,12 @@ extern "C" {
                 ((__SOURCE__) == RCC_ADCCLKSOURCE_PLL)     || \
                 ((__SOURCE__) == RCC_ADCCLKSOURCE_PLLSAI1) || \
                 ((__SOURCE__) == RCC_ADCCLKSOURCE_SYSCLK))
+#elif defined(STM32WB15xx)
+#define IS_RCC_ADCCLKSOURCE(__SOURCE__)  \
+               (((__SOURCE__) == RCC_ADCCLKSOURCE_NONE) || \
+                ((__SOURCE__) == RCC_ADCCLKSOURCE_PLL)  || \
+                ((__SOURCE__) == RCC_ADCCLKSOURCE_HSI)  || \
+                ((__SOURCE__) == RCC_ADCCLKSOURCE_SYSCLK))
 #else
 #define IS_RCC_ADCCLKSOURCE(__SOURCE__)  \
                (((__SOURCE__) == RCC_ADCCLKSOURCE_NONE) || \
@@ -195,18 +206,10 @@ extern "C" {
                 ((__SOURCE__) == RCC_ADCCLKSOURCE_SYSCLK))
 #endif
 
-#if defined(STM32WB55xx) || defined (STM32WB5Mxx) || defined(STM32WB35xx) || defined (STM32WB15xx)
-#define IS_RCC_RFWKPCLKSOURCE(__SOURCE__)  \
-               (((__SOURCE__) == RCC_RFWKPCLKSOURCE_NONE) || \
-                ((__SOURCE__) == RCC_RFWKPCLKSOURCE_LSE) || \
-                ((__SOURCE__) == RCC_RFWKPCLKSOURCE_LSI) || \
-                ((__SOURCE__) == RCC_RFWKPCLKSOURCE_HSE_DIV1024))
-#else
 #define IS_RCC_RFWKPCLKSOURCE(__SOURCE__)  \
                (((__SOURCE__) == RCC_RFWKPCLKSOURCE_NONE) || \
                 ((__SOURCE__) == RCC_RFWKPCLKSOURCE_LSE) || \
                 ((__SOURCE__) == RCC_RFWKPCLKSOURCE_HSE_DIV1024))
-#endif
 
 #if defined(RCC_SMPS_SUPPORT)
 #define IS_RCC_SMPSCLKDIV(__DIV__)  \
@@ -221,13 +224,6 @@ extern "C" {
                 ((__SOURCE__) == RCC_SMPSCLKSOURCE_HSE))
 #endif
 
-#if defined(SPI_I2S_SUPPORT)
-#define IS_RCC_I2SCLKSOURCE(__SOURCE__)                    \
-               (((__SOURCE__) == RCC_I2SCLKSOURCE_NONE) || \
-                ((__SOURCE__) == RCC_I2SCLKSOURCE_HSI)  || \
-                ((__SOURCE__) == RCC_I2SCLKSOURCE_PLL)  || \
-                ((__SOURCE__) == RCC_I2SCLKSOURCE_PIN))
-#endif
 
 #if defined(SAI1)
 #define IS_RCC_PLLSAI1N_VALUE(__VALUE__)   ((6U <= (__VALUE__)) && ((__VALUE__) <= 127U))
@@ -364,10 +360,6 @@ typedef struct
                                         This parameter can be a value of @ref RCCEx_SMPS_Clock_Divider */
 #endif
 
-#if defined(SPI_I2S_SUPPORT)
-  uint32_t I2sClockSelection;      /*!< Specifies I2s clock source.
-                                        This parameter can be a value of @ref RCCEx_I2s_Clock_Source */
-#endif
 } RCC_PeriphCLKInitTypeDef;
 
 
@@ -478,9 +470,6 @@ typedef struct
 #define RCC_PERIPHCLK_RFWAKEUP         0x00001000U                    /*!< RF Wakeup Peripheral Clock Selection   */
 #if defined(RCC_SMPS_SUPPORT)
 #define RCC_PERIPHCLK_SMPS             0x00002000U                    /*!< SMPS Peripheral Clock Selection         */
-#endif
-#if defined(SPI_I2S_SUPPORT)
-#define RCC_PERIPHCLK_I2S              0x00004000U                    /*!< I2S Peripheral Clock Selection        */
 #endif
 /**
   * @}
@@ -602,6 +591,8 @@ typedef struct
 #define RCC_ADCCLKSOURCE_NONE          LL_RCC_ADC_CLKSOURCE_NONE      /*!< None clock selected as ADC clock        */
 #if defined(STM32WB55xx) || defined (STM32WB5Mxx) || defined(STM32WB35xx)
 #define RCC_ADCCLKSOURCE_PLLSAI1       LL_RCC_ADC_CLKSOURCE_PLLSAI1   /*!< PLLSAI1 "R" clock selected as ADC clock */
+#elif defined (STM32WB15xx)
+#define RCC_ADCCLKSOURCE_HSI           LL_RCC_ADC_CLKSOURCE_HSI       /*!< HSI clock selected as ADC clock */
 #endif
 #define RCC_ADCCLKSOURCE_PLL           LL_RCC_ADC_CLKSOURCE_PLL       /*!< PLL "P" clock selected as ADC clock     */
 #define RCC_ADCCLKSOURCE_SYSCLK        LL_RCC_ADC_CLKSOURCE_SYSCLK    /*!< SYSCLK clock selected as ADC clock      */
@@ -627,9 +618,6 @@ typedef struct
 
 #define RCC_RFWKPCLKSOURCE_NONE          LL_RCC_RFWKP_CLKSOURCE_NONE        /*!< None clock selected as RF system wakeup clock                */
 #define RCC_RFWKPCLKSOURCE_LSE           LL_RCC_RFWKP_CLKSOURCE_LSE         /*!< LSE clock selected as RF system wakeup clock                 */
-#if defined(STM32WB55xx) || defined (STM32WB5Mxx) || defined(STM32WB35xx) || defined (STM32WB15xx)
-#define RCC_RFWKPCLKSOURCE_LSI           LL_RCC_RFWKP_CLKSOURCE_LSI         /*!< LSI clock selected as RF system wakeup clock                 */
-#endif
 #define RCC_RFWKPCLKSOURCE_HSE_DIV1024   LL_RCC_RFWKP_CLKSOURCE_HSE_DIV1024 /*!< HSE clock divided by 1024 selected as RF system wakeup clock */
 
 /**
@@ -670,18 +658,6 @@ typedef struct
   */
 #endif
 
-#if defined(SPI_I2S_SUPPORT)
-/** @defgroup RCCEx_I2S_Clock_Source I2S Clock Source
-  * @{
-  */
-#define RCC_I2SCLKSOURCE_NONE       LL_RCC_I2S_CLKSOURCE_NONE      /*!< No clock selected as I2S clock        */
-#define RCC_I2SCLKSOURCE_PLL        LL_RCC_I2S_CLKSOURCE_PLL       /*!< PLL "Q" clock selected as I2S clock source */
-#define RCC_I2SCLKSOURCE_HSI        LL_RCC_I2S_CLKSOURCE_HSI       /*!< HSI clock selected as I2S clock */
-#define RCC_I2SCLKSOURCE_PIN        LL_RCC_I2S_CLKSOURCE_PIN       /*!< External clock selected as I2S clock */
-/**
-  * @}
-  */
-#endif
 
 /** @defgroup RCCEx_EXTI_LINE_LSECSS  RCC LSE CSS external interrupt line
   * @{
@@ -1220,9 +1196,7 @@ typedef struct
   *         This parameter can be one of the following values:
   *            @arg @ref RCC_RFWKPCLKSOURCE_NONE         No clock selected as RFWKP clock
   *            @arg @ref RCC_RFWKPCLKSOURCE_LSE          LSE Clock selected as RFWKP clock
-  *            @arg @ref RCC_RFWKPCLKSOURCE_LSI          LSI Clock selected as RFWKP clock (*)
   *            @arg @ref RCC_RFWKPCLKSOURCE_HSE_DIV1024  HSE div1024 Clock selected as RFWKP clock
-  * @note      (*) Value not defined for all devices
   * @retval None
   */
 #define __HAL_RCC_RFWAKEUP_CONFIG(__RFWKP_CLKSOURCE__)  LL_RCC_SetRFWKPClockSource(__RFWKP_CLKSOURCE__)
@@ -1231,9 +1205,7 @@ typedef struct
   *         This parameter can be one of the following values:
   *            @arg @ref RCC_RFWKPCLKSOURCE_NONE         No clock selected as RFWKP clock
   *            @arg @ref RCC_RFWKPCLKSOURCE_LSE          LSE Clock selected as RFWKP clock
-  *            @arg @ref RCC_RFWKPCLKSOURCE_LSI          LSI Clock selected as RFWKP clock (*)
   *            @arg @ref RCC_RFWKPCLKSOURCE_HSE_DIV1024  HSE div1024 Clock selected as RFWKP clock
-  * @note      (*) Value not defined for all devices
   */
 #define __HAL_RCC_GET_RFWAKEUP_SOURCE()  LL_RCC_GetRFWKPClockSource()
 
@@ -1297,27 +1269,6 @@ typedef struct
   * @{
   */
 
-#if defined(SPI_I2S_SUPPORT)
-/** @brief  Macro to configure the I2S clock (I2SCLK).
-  * @param  __I2S_CLKSOURCE__ specifies the I2S clock source.
-  *          This parameter can be one of the following values:
-  *            @arg @ref RCC_I2SCLKSOURCE_NONE          No clock selected as I2S clock
-  *            @arg @ref RCC_I2SCLKSOURCE_PLL           PLL "Q" selected as I2S clock
-  *            @arg @ref RCC_I2SCLKSOURCE_HSI           HSI selected as I2S clock
-  *            @arg @ref RCC_I2SCLKSOURCE_PIN           External clock selected as I2S clock
-  * @retval None
-  */
-#define __HAL_RCC_I2S_CONFIG(__I2S_CLKSOURCE__)  LL_RCC_SetI2SClockSource(__I2S_CLKSOURCE__)
-
-/** @brief  Macro to get the I2S clock source.
-  * @retval The clock source can be one of the following values:
-  *            @arg @ref RCC_I2SCLKSOURCE_NONE      No clock selected as I2S clock
-  *            @arg @ref RCC_I2SCLKSOURCE_PLL       PLL "Q" selected as I2S clock
-  *            @arg @ref RCC_I2SCLKSOURCE_HSI       HSI selected as I2S clock
-  *            @arg @ref RCC_I2SCLKSOURCE_PIN       External clock selected as I2S clock
-  */
-#define __HAL_RCC_GET_I2S_SOURCE()  LL_RCC_GetI2SClockSource(LL_RCC_I2S_CLKSOURCE)
-#endif
 
 #if defined(SAI1)
 /** @brief Enable PLLSAI1RDY interrupt.

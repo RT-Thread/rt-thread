@@ -8,7 +8,6 @@
   *           + Initialization and de-initialization functions
   *           + Peripheral Control functions
   *
-  *
   @verbatim
   =============================================================================
                ##### SMARTCARD peripheral extended features  #####
@@ -19,44 +18,23 @@
     (#) After having configured the SMARTCARD basic features with HAL_SMARTCARD_Init(),
         then program SMARTCARD advanced features if required (TX/RX pins swap, TimeOut,
         auto-retry counter,...) in the hsmartcard AdvancedInit structure.
-
-
-
   @endverbatim
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
-
+#if !defined(STM32F030x6) && !defined(STM32F030x8) && !defined(STM32F070x6) && !defined(STM32F070xB) && !defined(STM32F030xC)
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
-
-#if !defined(STM32F030x6) && !defined(STM32F030x8)&& !defined(STM32F070x6) && !defined(STM32F070xB) && !defined(STM32F030xC)
 
 /** @addtogroup STM32F0xx_HAL_Driver
   * @{
@@ -73,7 +51,6 @@
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
-
 /* Exported functions --------------------------------------------------------*/
 /** @defgroup SMARTCARDEx_Exported_Functions  SMARTCARD Extended Exported Functions
   * @{
@@ -97,8 +74,7 @@
   * @{
   */
 
-/**
-  * @brief Update on the fly the SMARTCARD block length in RTOR register.
+/** @brief Update on the fly the SMARTCARD block length in RTOR register.
   * @param hsmartcard Pointer to a SMARTCARD_HandleTypeDef structure that contains
   *                    the configuration information for the specified SMARTCARD module.
   * @param BlockLength SMARTCARD block length (8-bit long at most)
@@ -106,11 +82,10 @@
   */
 void HAL_SMARTCARDEx_BlockLength_Config(SMARTCARD_HandleTypeDef *hsmartcard, uint8_t BlockLength)
 {
-  MODIFY_REG(hsmartcard->Instance->RTOR, USART_RTOR_BLEN, ((uint32_t)BlockLength << SMARTCARD_RTOR_BLEN_LSB_POS));
+  MODIFY_REG(hsmartcard->Instance->RTOR, USART_RTOR_BLEN, ((uint32_t)BlockLength << USART_RTOR_BLEN_Pos));
 }
 
-/**
-  * @brief Update on the fly the receiver timeout value in RTOR register.
+/** @brief Update on the fly the receiver timeout value in RTOR register.
   * @param hsmartcard Pointer to a SMARTCARD_HandleTypeDef structure that contains
   *                    the configuration information for the specified SMARTCARD module.
   * @param TimeOutValue receiver timeout value in number of baud blocks. The timeout
@@ -123,16 +98,14 @@ void HAL_SMARTCARDEx_TimeOut_Config(SMARTCARD_HandleTypeDef *hsmartcard, uint32_
   MODIFY_REG(hsmartcard->Instance->RTOR, USART_RTOR_RTO, TimeOutValue);
 }
 
-/**
-  * @brief Enable the SMARTCARD receiver timeout feature.
+/** @brief Enable the SMARTCARD receiver timeout feature.
   * @param hsmartcard Pointer to a SMARTCARD_HandleTypeDef structure that contains
   *                    the configuration information for the specified SMARTCARD module.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_SMARTCARDEx_EnableReceiverTimeOut(SMARTCARD_HandleTypeDef *hsmartcard)
 {
-
-  if(hsmartcard->gState == HAL_SMARTCARD_STATE_READY)
+  if (hsmartcard->gState == HAL_SMARTCARD_STATE_READY)
   {
     /* Process Locked */
     __HAL_LOCK(hsmartcard);
@@ -155,16 +128,14 @@ HAL_StatusTypeDef HAL_SMARTCARDEx_EnableReceiverTimeOut(SMARTCARD_HandleTypeDef 
   }
 }
 
-/**
-  * @brief Disable the SMARTCARD receiver timeout feature.
+/** @brief Disable the SMARTCARD receiver timeout feature.
   * @param hsmartcard Pointer to a SMARTCARD_HandleTypeDef structure that contains
   *                    the configuration information for the specified SMARTCARD module.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_SMARTCARDEx_DisableReceiverTimeOut(SMARTCARD_HandleTypeDef *hsmartcard)
 {
-
-  if(hsmartcard->gState == HAL_SMARTCARD_STATE_READY)
+  if (hsmartcard->gState == HAL_SMARTCARD_STATE_READY)
   {
     /* Process Locked */
     __HAL_LOCK(hsmartcard);
@@ -191,6 +162,31 @@ HAL_StatusTypeDef HAL_SMARTCARDEx_DisableReceiverTimeOut(SMARTCARD_HandleTypeDef
   * @}
   */
 
+/** @defgroup SMARTCARDEx_Exported_Functions_Group2 Extended Peripheral IO operation functions
+  * @brief   SMARTCARD Transmit and Receive functions
+  *
+@verbatim
+ ===============================================================================
+                      ##### IO operation functions #####
+ ===============================================================================
+    [..]
+@endverbatim
+  * @{
+  */
+
+/**
+  * @}
+  */
+
+
+/**
+  * @}
+  */
+
+/** @defgroup SMARTCARDEx_Private_Functions  SMARTCARD Extended Private Functions
+  * @{
+  */
+
 /**
   * @}
   */
@@ -204,7 +200,5 @@ HAL_StatusTypeDef HAL_SMARTCARDEx_DisableReceiverTimeOut(SMARTCARD_HandleTypeDef
 /**
   * @}
   */
-
-#endif /* !defined(STM32F030x6) && !defined(STM32F030x8)&& !defined(STM32F070x6) && !defined(STM32F070xB) && !defined(STM32F030xC)  */
-
+#endif /* !defined(STM32F030x6) && !defined(STM32F030x8) && !defined(STM32F070x6) && !defined(STM32F070xB) && !defined(STM32F030xC)  */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

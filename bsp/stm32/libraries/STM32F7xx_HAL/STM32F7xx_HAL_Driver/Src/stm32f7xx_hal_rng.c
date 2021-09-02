@@ -532,8 +532,16 @@ HAL_StatusTypeDef HAL_RNG_UnRegisterReadyDataCallback(RNG_HandleTypeDef *hrng)
 
 /**
   * @brief  Generates a 32-bit random number.
-  * @note   Each time the random number data is read the RNG_FLAG_DRDY flag
-  *         is automatically cleared.
+  * @note   This function checks value of RNG_FLAG_DRDY flag to know if valid
+  *         random number is available in the DR register (RNG_FLAG_DRDY flag set 
+  *         whenever a random number is available through the RNG_DR register).
+  *         After transitioning from 0 to 1 (random number available), 
+  *         RNG_FLAG_DRDY flag remains high until output buffer becomes empty after reading 
+  *         four words from the RNG_DR register, i.e. further function calls 
+  *         will immediately return a new u32 random number (additional words are
+  *         available and can be read by the application, till RNG_FLAG_DRDY flag remains high).
+  * @note   When no more random number data is available in DR register, RNG_FLAG_DRDY
+  *         flag is automatically cleared.
   * @param  hrng pointer to a RNG_HandleTypeDef structure that contains
   *                the configuration information for RNG.
   * @param  random32bit pointer to generated random number variable if successful.
@@ -697,13 +705,13 @@ void HAL_RNG_IRQHandler(RNG_HandleTypeDef *hrng)
   if (__HAL_RNG_GET_IT(hrng, RNG_IT_CEI) != RESET)
   {
     /* Update the error code */
-    hrng->ErrorCode = HAL_RNG_ERROR_SEED;
+    hrng->ErrorCode = HAL_RNG_ERROR_CLOCK;
     rngclockerror = 1U;
   }
   else if (__HAL_RNG_GET_IT(hrng, RNG_IT_SEI) != RESET)
   {
     /* Update the error code */
-    hrng->ErrorCode = HAL_RNG_ERROR_CLOCK;
+    hrng->ErrorCode = HAL_RNG_ERROR_SEED;
     rngclockerror = 1U;
   }
   else
@@ -768,6 +776,11 @@ uint32_t HAL_RNG_ReadLastRandomNumber(RNG_HandleTypeDef *hrng)
 
 /**
   * @brief  Data Ready callback in non-blocking mode.
+  * @note   When RNG_FLAG_DRDY flag value is set, first random number has been read
+  *         from DR register in IRQ Handler and is provided as callback parameter.
+  *         Depending on valid data available in the conditioning output buffer,
+  *         additional words can be read by the application from DR register till 
+  *         DRDY bit remains high.
   * @param  hrng pointer to a RNG_HandleTypeDef structure that contains
   *                the configuration information for RNG.
   * @param  random32bit generated random number.

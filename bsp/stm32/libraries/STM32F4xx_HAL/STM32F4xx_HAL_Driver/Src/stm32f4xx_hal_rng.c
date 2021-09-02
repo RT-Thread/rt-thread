@@ -313,44 +313,44 @@ HAL_StatusTypeDef HAL_RNG_RegisterCallback(RNG_HandleTypeDef *hrng, HAL_RNG_Call
   {
     switch (CallbackID)
     {
-    case HAL_RNG_ERROR_CB_ID :
-      hrng->ErrorCallback = pCallback;
-      break;
+      case HAL_RNG_ERROR_CB_ID :
+        hrng->ErrorCallback = pCallback;
+        break;
 
-    case HAL_RNG_MSPINIT_CB_ID :
-      hrng->MspInitCallback = pCallback;
-      break;
+      case HAL_RNG_MSPINIT_CB_ID :
+        hrng->MspInitCallback = pCallback;
+        break;
 
-    case HAL_RNG_MSPDEINIT_CB_ID :
-      hrng->MspDeInitCallback = pCallback;
-      break;
+      case HAL_RNG_MSPDEINIT_CB_ID :
+        hrng->MspDeInitCallback = pCallback;
+        break;
 
-    default :
-      /* Update the error code */
-      hrng->ErrorCode = HAL_RNG_ERROR_INVALID_CALLBACK;
-     /* Return error status */
-      status =  HAL_ERROR;
-      break;
+      default :
+        /* Update the error code */
+        hrng->ErrorCode = HAL_RNG_ERROR_INVALID_CALLBACK;
+        /* Return error status */
+        status =  HAL_ERROR;
+        break;
     }
   }
   else if (HAL_RNG_STATE_RESET == hrng->State)
   {
     switch (CallbackID)
     {
-    case HAL_RNG_MSPINIT_CB_ID :
-      hrng->MspInitCallback = pCallback;
-      break;
+      case HAL_RNG_MSPINIT_CB_ID :
+        hrng->MspInitCallback = pCallback;
+        break;
 
-    case HAL_RNG_MSPDEINIT_CB_ID :
-      hrng->MspDeInitCallback = pCallback;
-      break;
+      case HAL_RNG_MSPDEINIT_CB_ID :
+        hrng->MspDeInitCallback = pCallback;
+        break;
 
-    default :
-      /* Update the error code */
-      hrng->ErrorCode = HAL_RNG_ERROR_INVALID_CALLBACK;
-     /* Return error status */
-      status =  HAL_ERROR;
-      break;
+      default :
+        /* Update the error code */
+        hrng->ErrorCode = HAL_RNG_ERROR_INVALID_CALLBACK;
+        /* Return error status */
+        status =  HAL_ERROR;
+        break;
     }
   }
   else
@@ -388,44 +388,44 @@ HAL_StatusTypeDef HAL_RNG_UnRegisterCallback(RNG_HandleTypeDef *hrng, HAL_RNG_Ca
   {
     switch (CallbackID)
     {
-    case HAL_RNG_ERROR_CB_ID :
-      hrng->ErrorCallback = HAL_RNG_ErrorCallback;          /* Legacy weak ErrorCallback  */
-      break;
+      case HAL_RNG_ERROR_CB_ID :
+        hrng->ErrorCallback = HAL_RNG_ErrorCallback;          /* Legacy weak ErrorCallback  */
+        break;
 
-    case HAL_RNG_MSPINIT_CB_ID :
-      hrng->MspInitCallback = HAL_RNG_MspInit;              /* Legacy weak MspInit  */
-      break;
+      case HAL_RNG_MSPINIT_CB_ID :
+        hrng->MspInitCallback = HAL_RNG_MspInit;              /* Legacy weak MspInit  */
+        break;
 
-    case HAL_RNG_MSPDEINIT_CB_ID :
-      hrng->MspDeInitCallback = HAL_RNG_MspDeInit;          /* Legacy weak MspDeInit  */
-      break;
+      case HAL_RNG_MSPDEINIT_CB_ID :
+        hrng->MspDeInitCallback = HAL_RNG_MspDeInit;          /* Legacy weak MspDeInit  */
+        break;
 
-    default :
-      /* Update the error code */
-      hrng->ErrorCode = HAL_RNG_ERROR_INVALID_CALLBACK;
-     /* Return error status */
-      status =  HAL_ERROR;
-      break;
+      default :
+        /* Update the error code */
+        hrng->ErrorCode = HAL_RNG_ERROR_INVALID_CALLBACK;
+        /* Return error status */
+        status =  HAL_ERROR;
+        break;
     }
   }
   else if (HAL_RNG_STATE_RESET == hrng->State)
   {
     switch (CallbackID)
     {
-    case HAL_RNG_MSPINIT_CB_ID :
-      hrng->MspInitCallback = HAL_RNG_MspInit;              /* Legacy weak MspInit  */
-      break;
+      case HAL_RNG_MSPINIT_CB_ID :
+        hrng->MspInitCallback = HAL_RNG_MspInit;              /* Legacy weak MspInit  */
+        break;
 
-    case HAL_RNG_MSPDEINIT_CB_ID :
-      hrng->MspDeInitCallback = HAL_RNG_MspDeInit;          /* Legacy weak MspInit  */
-      break;
+      case HAL_RNG_MSPDEINIT_CB_ID :
+        hrng->MspDeInitCallback = HAL_RNG_MspDeInit;          /* Legacy weak MspInit  */
+        break;
 
-    default :
-      /* Update the error code */
-      hrng->ErrorCode = HAL_RNG_ERROR_INVALID_CALLBACK;
-     /* Return error status */
-      status =  HAL_ERROR;
-      break;
+      default :
+        /* Update the error code */
+        hrng->ErrorCode = HAL_RNG_ERROR_INVALID_CALLBACK;
+        /* Return error status */
+        status =  HAL_ERROR;
+        break;
     }
   }
   else
@@ -631,7 +631,7 @@ HAL_StatusTypeDef HAL_RNG_GenerateRandomNumber_IT(RNG_HandleTypeDef *hrng)
   */
 uint32_t HAL_RNG_GetRandomNumber(RNG_HandleTypeDef *hrng)
 {
-  if(HAL_RNG_GenerateRandomNumber(hrng, &(hrng->RandomNumber)) == HAL_OK)
+  if (HAL_RNG_GenerateRandomNumber(hrng, &(hrng->RandomNumber)) == HAL_OK)
   {
     return hrng->RandomNumber;
   }
@@ -697,13 +697,13 @@ void HAL_RNG_IRQHandler(RNG_HandleTypeDef *hrng)
   if (__HAL_RNG_GET_IT(hrng, RNG_IT_CEI) != RESET)
   {
     /* Update the error code */
-    hrng->ErrorCode = HAL_RNG_ERROR_SEED;
+    hrng->ErrorCode = HAL_RNG_ERROR_CLOCK;
     rngclockerror = 1U;
   }
   else if (__HAL_RNG_GET_IT(hrng, RNG_IT_SEI) != RESET)
   {
     /* Update the error code */
-    hrng->ErrorCode = HAL_RNG_ERROR_CLOCK;
+    hrng->ErrorCode = HAL_RNG_ERROR_SEED;
     rngclockerror = 1U;
   }
   else

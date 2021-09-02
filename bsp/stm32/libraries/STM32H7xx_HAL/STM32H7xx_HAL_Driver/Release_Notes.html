@@ -11,7 +11,7 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="../../_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="_htmresc/mini-st.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -25,7 +25,7 @@
 <h1 id="release-notes-for-stm32h7xx-hal-drivers"><strong>Release Notes for STM32H7xx HAL Drivers</strong></h1>
 <p>Copyright © 2017 STMicroelectronics<br />
 </p>
-<a href="https://www.st.com" class="logo"><img src="../../_htmresc/st_logo.png" alt="ST logo" /></a>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo.png" alt="ST logo" /></a>
 </center>
 </div>
 </div>
@@ -38,9 +38,841 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history"><strong>Update History</strong></h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section7" checked aria-hidden="true"> <label for="collapse-section7" aria-hidden="true"><strong>V1.6.0 / 28-June-2019</strong></label>
+<input type="checkbox" id="collapse-section9" checked aria-hidden="true"> <label for="collapse-section9" aria-hidden="true"><strong>V1.8.0 / 14-February-2020</strong></label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and implementation enhancements</li>
+<li><strong>HAL</strong>: generic
+<ul>
+<li>stm32h7xx_hal.c:
+<ul>
+<li>Update HAL_Init implementation to reflect the current core clock in SystemCoreClock global variable (Corex-M7 or Corext-M4 clock depending of the current context in case of Dual Core)</li>
+<li>Update HAL_InitTick implementation to use SystemCoreClock global variable as it reflect now the current core clock (simplifying the implementation)</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL DAC</strong>:
+<ul>
+<li>stm32h7xx_hal_dac.c:
+<ul>
+<li>Update HAL_DAC_ConfigChannel function implemenation to fix the “DAC_ConnectOnChipPeripheral” check and settings</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL GPIO</strong>:
+<ul>
+<li>stm32h7xx_hal_gpio.h
+<ul>
+<li>Update IS_GPIO_PIN macro implementation with an explicit cast to avoid compilation warning on EWARM 8.30</li>
+</ul></li>
+<li>stm32h7xx_hal_gpio_ex.h
+<ul>
+<li>Remove useless GPIO_AF13_TIM8 define</li>
+<li>Update GPIOK_PIN_AVAILABLE define to consider missed GPIO Pin 2</li>
+</ul></li>
+<li>stm32h7xx_hal_gpio.c:
+<ul>
+<li>Update HAL_GPIO_Init and HAL_GPIO_DeInit functions implementation to avoid a glitch during GPIO initialization/de-initialization</li>
+</ul></li>
+<li>stm32h7xx_ll_gpio.c:
+<ul>
+<li>Update LL_GPIO_Init function implementation to avoid a glitch during GPIO initialization</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL HRTIM</strong>:
+<ul>
+<li>stm32h7xx_hal_hrtim.h
+<ul>
+<li>Remove HRTIM_PRESCALERRATIO_MUL2 to HRTIM_PRESCALERRATIO_MUL32 definition that are not supported on STM32H7 devices</li>
+</ul></li>
+<li>stm32h7xx_ll_hrtim.h
+<ul>
+<li>Remove LL_HRTIM_PRESCALERRATIO_MUL2 to LL_HRTIM_PRESCALERRATIO_MUL32 definition that are not supported on STM32H7 devices</li>
+</ul></li>
+<li>Note: Only Prescaler ratios 1/2/4 are supported for HRTIM on STM32H7 devices</li>
+</ul></li>
+<li><strong>HAL I2C</strong>:
+<ul>
+<li>stm32h7xx_hal_i2c.h
+<ul>
+<li>Updates to fix incorrectly enable interrupts in I2C_Enable_IRQ routine when InterruptRequest = I2C_XFER_CPLT_IT</li>
+<li>Updates to avoid HardFault in I2C_DMAAbort when DMA is not used for Tx or/and Rx</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL JPEG</strong>:
+<ul>
+<li>stm32h7xx_hal_jpeg.h: Minor update for STM32 coding rules compliance (one line per variable declaration, local variables naming …)</li>
+</ul></li>
+<li><strong>HAL/LL LPTIM</strong>:
+<ul>
+<li>stm32h7xx_hal_lptim.c:
+<ul>
+<li>Update HAL_LPTIM_Init implementation to configure digital filter for external clock when LPTIM is clocked by an internal clock source</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL MMC</strong>:
+<ul>
+<li>stm32h7xx_hal_mmc.c:
+<ul>
+<li>Update implementation to avoid setting the block size during every MMC card transaction (block size is set once in HAL_MMC_InitCard )</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL NAND</strong>:
+<ul>
+<li>stm32h7xx_hal_nand.h: Minor update to use UL/U suffix respectively instead of uint32_t/uint8_t cast</li>
+</ul></li>
+<li><strong>HAL NOR</strong>:
+<ul>
+<li>stm32h7xx_hal_nor.h: Minor update to remove useless U suffix following uint32_t/uint16_t/uint8_t cast</li>
+</ul></li>
+<li><strong>HAL OSPI</strong>: <strong>Add support of multiplexed mode feature</strong>
+<ul>
+<li>stm32h7xx_hal_ospi.h:
+<ul>
+<li>Update “OSPIM_CfgTypeDef” structure definition to add “Req2AckTime” allowing to set the “minimum switching duration” clock cycles when OSPI signals are multiplexed in the OSPI IO Manager</li>
+<li>Add IS_OSPIM_REQ2ACKTIME macro useful when the HAL assert is enabled and allowing to check the “Req2AckTime” value validity<br />
+</li>
+</ul></li>
+<li>stm32h7xx_hal_ospi.c:
+<ul>
+<li>Update “HAL_OSPIM_Config” implementation to support OSPI signals Mux using the OSPI IO Manager</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL PSSI</strong>:
+<ul>
+<li>stm32h7xx_hal_pssi.c:
+<ul>
+<li>Update HAL_PSSI_Transmit/HAL_PSSI_Receive implementation to fix warning on GCC compiler</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL QSPI</strong>:
+<ul>
+<li>stm32h7xx_hal_qspi.h:
+<ul>
+<li>Rename HAL_QPSI_TIMEOUT_DEFAULT_VALUE define to HAL_QSPI_TIMEOUT_DEFAULT_VALUE (typo fix). backward compatibility ensured through stm32_hal_legacy.h header file<br />
+</li>
+</ul></li>
+<li>stm32h7xx_hal_qspi.c:
+<ul>
+<li>Update HAL_QSPI_Init/HAL_QSPI_DeInit implementation to remove useless lock/unlock</li>
+<li>Update HAL_QSPI_IRQHandler implementation to optimize flags check</li>
+<li>Update HAL_QSPI_Transmit_DMA to:
+<ul>
+<li>Fix performance issue at high frequency by fixing wrong activation of TC interrupt</li>
+<li>Enabling QUADSPI_CR_DMAEN bit field: used only by the HAL_QSPI_IRQHandler to check if current Transmit is using DMA when IT occurs</li>
+</ul></li>
+<li>Update HAL_QSPI_Receive_DMA to enable QUADSPI_CR_DMAEN bit field: used only by the HAL_QSPI_IRQHandler to check if current Receive is using DMA when IT occurs</li>
+<li>Update HAL_QSPI_Abort to reset functional mode configuration to indirect write mode by default<br />
+</li>
+<li>Update HAL_QSPI_Abort_IT to call Abort Complete callback</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL RCC</strong>:
+<ul>
+<li>stm32h7xx_hal_rcc.h:
+<ul>
+<li>Delimit CRYP and HASH Clock enable/disable/reset/sleep macros with conditional define on respectively CRYP/HASH availability (through CMSIS device header files)</li>
+<li>Update __HAL_RCC_AHB3_FORCE_RESET macro implementation to avoid altering reserved bit 31.</li>
+</ul></li>
+<li>stm32h7xx_hal_rcc_ex.h:
+<ul>
+<li>Add definition of RCC_EXTI_LINE_LSECSS (EXTI IMR1 EXTI line 18)</li>
+<li>Add macros __HAL_RCC_LSECSS_EXTI_ENABLE_IT, __HAL_RCC_LSECSS_EXTI_DISABLE_IT, __HAL_RCC_LSECSS_EXTI_ENABLE_EVENT and __HAL_RCC_LSECSS_EXTI_DISABLE_EVENT</li>
+<li>Add macros __HAL_RCC_C2_LSECSS_EXTI_ENABLE_IT, __HAL_RCC_C2_LSECSS_EXTI_DISABLE_IT, __HAL_RCC_C2_LSECSS_EXTI_ENABLE_EVENT, __HAL_RCC_C2_LSECSS_EXTI_DISABLE_EVENT: for Dual Core lines allowing to control LSECSS EXTI Line for Coretx-M4.</li>
+<li>Add macros __HAL_RCC_LSECSS_EXTI_ENABLE_FALLING_EDGE, __HAL_RCC_LSECSS_EXTI_DISABLE_FALLING_EDGE, __HAL_RCC_LSECSS_EXTI_ENABLE_RISING_EDGE, __HAL_RCC_LSECSS_EXTI_DISABLE_RISING_EDGE, __HAL_RCC_LSECSS_EXTI_ENABLE_RISING_FALLING_EDGE, __HAL_RCC_LSECSS_EXTI_DISABLE_RISING_FALLING_EDGE, __HAL_RCC_LSECSS_EXTI_GET_FLAG and __HAL_RCC_LSECSS_EXTI_CLEAR_FLAG.</li>
+<li>Add macros __HAL_RCC_C2_LSECSS_EXTI_GET_FLAG and __HAL_RCC_C2_LSECSS_EXTI_CLEAR_FLAG for Dual Core lines allowing to get/clear LSECSS EXTI line on Coretx-M4.</li>
+<li>Add macro __HAL_RCC_LSECSS_EXTI_GENERATE_SWIT</li>
+<li>Add prototypes for new APIs HAL_RCCEx_EnableLSECSS_IT, HAL_RCCEx_LSECSS_IRQHandler and HAL_RCCEx_LSECSS_Callback.</li>
+</ul></li>
+<li>stm32h7xx_ll_rcc.h:
+<ul>
+<li>Update LL_RCC_CALC_SYSCLK_FREQ, LL_RCC_CALC_HCLK_FREQ, LL_RCC_CALC_PCLK1_FREQ, LL_RCC_CALC_PCLK2_FREQ, LL_RCC_CALC_PCLK3_FREQ and LL_RCC_CALC_PCLK4_FREQ macros implementation to avoid overflow (MISRA-C 2012 compliant)<br />
+</li>
+</ul></li>
+<li>stm32h7xx_hal_rcc.c:
+<ul>
+<li>Update HAL_RCC_DeInit, HAL_RCC_ClockConfig, HAL_RCC_GetHCLKFreq and HAL_RCC_GetPCLK1Freq to reflect the current core clock in SystemCoreClock global variable (Corex-M7 or Corext-M4 clock depending of the current context in case of Dual Core)</li>
+</ul></li>
+<li>stm32h7xx_hal_rcc_ex.c:
+<ul>
+<li>Update HAL_RCCEx_GetD1SysClockFreq to reflect the current core clock in SystemCoreClock global variable (Corex-M7 or Corext-M4 clock depending of the current context in case of Dual Core).</li>
+<li>Add HAL_RCCEx_EnableLSECSS_IT, HAL_RCCEx_LSECSS_IRQHandler and HAL_RCCEx_LSECSS_Callback APIs: allowing to handle LSECSS interrupt.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SD</strong>:
+<ul>
+<li>stm32h7xx_hal_sd.c:
+<ul>
+<li>Update HAL_SD_InitCard implementation to fix compilation issue when USE_SD_TRANSCEIVER is disabled and USE_SD_DIRPOL enabled</li>
+<li>Update implementation to avoid setting the block size during every SD card transaction (block size is set once in HAL_SD_InitCard, HAL_SD_GetCardStatus, HAL_SD_ConfigWideBusOperation)</li>
+</ul></li>
+<li>stm32h7xx_hal_sd_ex.c:
+<ul>
+<li>Update HAL_SDEx_ReadBlocksDMAMultiBuffer and HAL_SDEx_WriteBlocksDMAMultiBuffer to avoid setting the block size during every SD card transaction</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL TIM</strong>:
+<ul>
+<li>stm32h7xx_hal_tim.c: Minor fixes with the assert parameters checks</li>
+</ul></li>
+<li><strong>HAL/LL USART</strong>: Add RTO (Receive Time Out) flag support
+<ul>
+<li>stm32h7xx_hal_usart.h
+<ul>
+<li>Add HAL_USART_ERROR_RTO define to USART Error Definition section</li>
+<li>Add USART_FLAG_RTOF define to USART Flags section</li>
+<li>Add USART_CLEAR_RTOF define to USART Interruption Clear Flags section</li>
+</ul></li>
+<li>stm32h7xx_hal_usart.c: Update HAL_USART_IRQHandler to handle USART_ISR_RTOF flag and IT</li>
+<li>stm32h7xx_hal_usart_ex.c: Update HAL_USARTEx_DisableSlaveMode to fix typo in disabling salve mode</li>
+</ul></li>
+<li><strong>HAL/LL DMA</strong>: Add support for DMA_SxCR_TRBUFF
+<ul>
+<li>stm32h7xx_ll_dma.h
+<ul>
+<li>Add API “LL_DMA_EnableBufferableTransfer” allowing to enable bufferable transfer<br />
+</li>
+<li>Add API “LL_DMA_DisableBufferableTransfer” allowing to disable bufferable transfer</li>
+</ul></li>
+<li>stm32h7xx_hal_dma.c:
+<ul>
+<li>Add workaround to fix Errata 2.22: UART/USART- DMA transfer lock: DMA stream could be lock when transferring data to/from USART/UART
+<ul>
+<li>Enabling the DMA bufferable transfer when the request is from a UART/USART(DMA_SxCR_TRBUFF bit field)</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL TIM</strong>:
+<ul>
+<li>stm32h7xx_ll_tim.h
+<ul>
+<li>Parameter “RepetitionCounter” of “LL_TIM_InitTypeDef” is now of type “uint32_t” with possible values from 0 to 0xFFFF for advanced timers</li>
+</ul></li>
+</ul></li>
+<li><strong>LL FMC</strong>: (Core LL driver for HAL NAND, NOR, SDRAM, SRAM, not user LL driver)
+<ul>
+<li>stm32h7xx_ll_fmc.h: Minor update to remove useless U suffix following uint32_t cast</li>
+<li>stm32h7xx_ll_fmc.c:
+<ul>
+<li>Update FMC_NORSRAM_Init implemenation to fix compilation issue with MS Visual 2017</li>
+<li>Update FMC_NAND_CommonSpace_Timing_Init, FMC_NAND_AttributeSpace_Timing_Init, FMC_NAND_ECC_Enable, FMC_NAND_ECC_Disable and FMC_NAND_GetECC to fix GCC compiler warning due to unused parameter</li>
+</ul></li>
+</ul></li>
+<li><strong>LL UTIL</strong>:
+<ul>
+<li>stm32h7xx_ll_utils.h
+<ul>
+<li>Update numerical value of LL_UTILS_PACKAGETYPE_UFBGA176_LQFP176 to LL_UTILS_PACKAGETYPE_TFBGA225 definition to align with the Reference Manual</li>
+<li>Add LL_SetFlashLatency API.</li>
+</ul></li>
+<li>stm32h7xx_ll_utils.c
+<ul>
+<li>Add implementation of LL_SetFlashLatency API (static functions UTILS_CalculateFlashLatency and UTILS_SetFlashLatency removed and repalced by the user API LL_SetFlashLatency)</li>
+<li>Update LL_SetSystemCoreClock to keep only setting SystemCoreClock according to the current Core frequency (Corex-M7 or Coretx-M4 in case of Dual Core line).
+<ul>
+<li>SystemD2Clock reflecting the D2 domain frequency is now set within UTILS_EnablePLLAndSwitchSystem</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="true"><strong>V1.7.0 / 06-December-2019</strong></label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<ul>
+<li>Official release with support of STM32H7A3/B3xx/B0xx new devices<br />
+</li>
+<li>General updates to fix known defects and implementation enhancements</li>
+<li><strong>HAL</strong>: generic
+<ul>
+<li>stm32h7xx_hal.h:
+<ul>
+<li>Add __HAL_SYSCFG_FASTMODEPLUS_ENABLE and __HAL_SYSCFG_FASTMODEPLUS_DISABLE macros allowing to enable/disable the I2C Fast-mode Plus driving capability
+<ul>
+<li>This feature is available on STM32H7A3/B3xx/B0xx devices only</li>
+</ul></li>
+<li>Add HAL_SYSCFG_VDDMMC_CompensationCodeConfig API allowing to configure the VDDMMC compensation<br />
+</li>
+</ul></li>
+<li>stm32h7xx_hal_conf_template.h:
+<ul>
+<li>Add support for HAL DTS, GFXMMU, OSPI, PSSI (HAL modules enabling, header files inclusion and register callback activation)</li>
+</ul></li>
+<li>stm32h7xx_hal.c:
+<ul>
+<li>Update HAL_SetTickFreq API to restore current tick frequency when call to HAL_InitTick fails</li>
+<li>Add HAL_SYSCFG_VDDMMC_CompensationCodeConfig API implementation</li>
+<li>Fix HAL_EXTI_D1_ClearFlag and HAL_EXTI_D2_ClearFlag APIs implementation: using direct write operation (instead of read/modify/write)</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL ADC</strong>:
+<ul>
+<li>stm32h7xx_hal_adc.h:
+<ul>
+<li>Add ADC_CHANNEL_DAC2CH1_ADC2 definition for DAC2 to ADC connection (DAC2 available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>Update ADC_IS_SYNCHRONOUS_CLOCK_MODE macro implementation (ADC3 not available on STM32H7A3/B3xx/B0xx devices)</li>
+</ul></li>
+<li>stm32h7xx_hal_adc_ex.h:
+<ul>
+<li>ADC_IS_INDEPENDENT macro available only when device supports ADC3</li>
+<li>Update ADC_OFFSET_SHIFT_RESOLUTION , ADC_AWD1THRESHOLD_SHIFT_RESOLUTION and ADC_AWD23THRESHOLD_SHIFT_RESOLUTION macros implemenation to support STM32H7A3/B3xx/B0xx new devices<br />
+</li>
+<li>ADC3_COMMON_REGISTER macro available only when device supports ADC3</li>
+<li>Update ADC_MASTER_REGISTER macro to consider ADC3 when it is available only</li>
+<li>ADC3_NONMULTIMODE_OR_MULTIMODEMASTER macro available only when device supports ADC3</li>
+<li>Update ADC_INDEPENDENT_OR_NONMULTIMODEREGULAR_SLAVE and ADC_INDEPENDENT_OR_NONMULTIMODEINJECTED_SLAVE macro to consider ADC3 when it is available only</li>
+<li>Update ADC_TEMPERATURE_SENSOR_INSTANCE, ADC_BATTERY_VOLTAGE_INSTANCE and ADC_VREFINT_INSTANCE to consider ADC3 when it is available and if not ADC2 (case of STM32H7A3/B3xx/B0xx devices)</li>
+</ul></li>
+<li>stm32h7xx_ll_adc.h:
+<ul>
+<li>Adapt definition of LL_ADC_RESOLUTION_8B for STM32H7A3/B3xx/B0xx devices</li>
+<li>ADC3 definitions are conditionned by the ADC3 instance availability (according to CMSIS device mapping, ADC3 is not available on STM32H7A3/B3xx/B0xx devices)</li>
+<li>Add DAC2 LL_ADC_CHANNEL_DAC2CH1_ADC2 definition</li>
+</ul></li>
+<li>stm32h7xx_hal_adc.c:
+<ul>
+<li>Update HAL_ADC_Init implementation to consider STM32H7A3/B3xx/B0xx devices (ADC_VER_V5_3)</li>
+<li>Update HAL_ADC_Start_DMA to add configuration of Data transfer mode</li>
+<li>Update HAL_ADC_ConfigChannel implemenation to consider ADC3 when it is available only</li>
+<li>Update ADC_ConfigureBoostMode implemenation to consider frequency ranges for STM32H7A3/B3xx/B0xx devices (ADC_VER_V5_3)</li>
+</ul></li>
+<li>stm32h7xx_hal_adc_ex.c:
+<ul>
+<li>Update HAL_ADCEx_LinearCalibration_GetValue and HAL_ADCEx_LinearCalibration_SetValue APIs implementation to stop the Ongoing conversion, if any, before the calibration. In this case the convertion is retsored after the calibration</li>
+<li>Update HAL_ADCEx_LinearCalibration_FactorLoad API implementation to consider ADC2 and ADC3 in addition to ADC1</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL COMP</strong>:
+<ul>
+<li>stm32h7xx_hal_comp.h:
+<ul>
+<li>Add definition of COMP_INPUT_PLUS_DAC2_CH1 (DAC2 available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>Add definition of COMP_INPUT_MINUS_TPSENS_DAC2CH1 and COMP_INPUT_MINUS_VBAT_VDDAP (available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>Update IS_COMP_INPUT_PLUS and IS_COMP_INPUT_MINUS macros according to the new above defines</li>
+</ul></li>
+<li>stm32h7xx_hal_comp.c:
+<ul>
+<li>Update HAL_COMP_Init API implementation to
+<ul>
+<li>Support new inputs available on STM32H7A3/B3xx/B0xx devices</li>
+<li>Add EXTI configuration for Coretx-M7 and Coretx-M4 (in case of Dual Core device)</li>
+</ul></li>
+</ul></li>
+<li>stm32h7xx_ll_comp.h:
+<ul>
+<li>Add definition of LL_COMP_INPUT_MINUS_TPSENS_DAC2CH1 (DAC2 available on STM32H7A3/B3xx/B0xx devices only)<br />
+</li>
+<li>Add definition of LL_COMP_INPUT_MINUS_VBAT_VDDAP (DAC2 available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>Add definition of LL_COMP_AF_PA6 to LL_COMP_AF_PK2 Comparator output definitions</li>
+<li>Update LL_COMP_ConfigInputs, LL_COMP_SetInputPlus and LL_COMP_GetInputPlus APIs implementation with support of STM32H7A3/B3xx/B0xx devices</li>
+<li>Add LL_COMP_SetOutputAlternateFunction and LL_COMP_GetOutputAlternateFunction allowing to Set/Get the output alternate function in the Option register</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL CRYP</strong>:
+<ul>
+<li>stm32h7xx_hal_cryp.h:
+<ul>
+<li>Add KeyIVConfigSkip parameter to CRYP_ConfigTypeDef structure: allowing user to skip IV and key setting when processing large buffers by chunks</li>
+<li>Add definition of CRYP_KEYIVCONFIG_ALWAYS and CRYP_KEYIVCONFIG_ONCE used to fill KeyIVConfigSkip configuration parameter<br />
+</li>
+</ul></li>
+<li>stm32h7xx_hal_cryp.c:
+<ul>
+<li>Update HAL_CRYP_Encrypt/HAL_CRYP_Decrypt HAL_CRYP_Encrypt_IT/HAL_CRYP_Decrypt_IT and HAL_CRYP_Encrypt_DMA/HAL_CRYP_Decrypt_DMA APIs to support large buffers encryption/decryption by chunks without reconfiguring the Key or the Initialization Vector between each API call</li>
+<li>Update to support user input/output buffers size that is not multiple of 4 words (size of the CRYP peripheral FIFO)</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL DAC</strong>:
+<ul>
+<li>stm32h7xx_hal_dac.h:
+<ul>
+<li>Add support for DAC2 instance (available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>HAL_DAC_MSP_INIT_CB_ID and HAL_DAC_MSP_DEINIT_CB_ID callaback IDs respectively changed to HAL_DAC_MSPINIT_CB_ID and HAL_DAC_MSPDEINIT_CB_ID:
+<ul>
+<li>Backward compatibility ensured by the stm32_hal_legacy header file</li>
+</ul></li>
+<li>HRTIM tiggers definitions (DAC_TRIGGER_HR1_TRGO1 and DAC_TRIGGER_HR1_TRGO2) are available only for devices where the HRTIM peripheral is present
+<ul>
+<li>HRTIM peripheral not present on STM32H7A3/B3xx/B0xx devices</li>
+</ul></li>
+<li>DAC_TRIGGER_LP1_OUT and DAC_TRIGGER_LP2_OUT triggers defines renamed respectively to DAC_TRIGGER_LPTIM1_OUT and DAC_TRIGGER_LPTIM2_OUT
+<ul>
+<li>Backward compatibility ensured by the stm32_hal_legacy header file</li>
+</ul></li>
+<li>Add DAC_TRIGGER_LPTIM3_OUT trigger definition: available for DAC2 instance that is present on STM32H7A3/B3xx/B0xx devices only</li>
+<li>DAC_CHIPCONNECT_DISABLE and DAC_CHIPCONNECT_ENABLE definitions respectively changed to DAC_CHIPCONNECT_EXTERNAL and DAC_CHIPCONNECT_INTERNAL
+<ul>
+<li>Backward compatibility ensured by the stm32_hal_legacy header file</li>
+</ul></li>
+</ul></li>
+<li>stm32h7xx_hal_dac_ex.h:
+<ul>
+<li>Add support for DAC2 instance (available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>Update IS_DAC_TRIGGER macro implementation to consider HRTIM and DAC2 triggers when it is available</li>
+<li>Update IS_DAC_CHIP_CONNECTION macro implementation to consider new DAC_CHIPCONNECT_EXTERNAL and DAC_CHIPCONNECT_INTERNAL defines</li>
+<li>Add HAL_DACEx_DualStart, HAL_DACEx_DualStop, HAL_DACEx_DualStart_DMA, HAL_DACEx_DualStop_DMA, HAL_DACEx_DualSetValue and HAL_DACEx_DualGetValue APIs</li>
+</ul></li>
+<li>stm32h7xx_hal_dac.c:
+<ul>
+<li>Update HAL_DAC_ConfigChannel implementation to consider DAC_CHIPCONNECT_EXTERNAL and DAC_CHIPCONNECT_INTERNAL defines</li>
+</ul></li>
+<li>stm32h7xx_hal_dac_ex.c:
+<ul>
+<li>Add implemenation of HAL_DACEx_DualStart, HAL_DACEx_DualStop, HAL_DACEx_DualStart_DMA, HAL_DACEx_DualStop_DMA, HAL_DACEx_DualSetValue and HAL_DACEx_DualGetValue APIs</li>
+</ul></li>
+<li>stm32h7xx_ll_dac.h: Update to support STM32H7A3/B3xx/B0xx devices New DAC triggers</li>
+</ul></li>
+<li><strong>HAL DCMI</strong>:
+<ul>
+<li>stm32h7xx_hal_dcmi.h:
+<ul>
+<li>Add definition of DCMI_SyncUnmaskTypeDef structure used with new HAL_DCMI_ConfigSyncUnmask API</li>
+<li>Add HAL_DCMI_ConfigSyncUnmask API</li>
+</ul></li>
+<li>stm32h7xx_hal_dcmi.c:
+<ul>
+<li>Add implemenation HAL_DCMI_ConfigSyncUnmask API</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL DFSDM</strong>:
+<ul>
+<li>stm32h7xx_hal_dfsdm.h:
+<ul>
+<li>Add inclusion of stm32h7xx_hal_dfsdm_ex.h new file</li>
+</ul></li>
+<li>stm32h7xx_hal_dfsdm_ex.h:
+<ul>
+<li>New extension file with HAL_DFDSMEx_ChannelSetPulsesSkipping and HAL_DFDSMEx_ChannelGetPulsesSkipping APIs</li>
+</ul></li>
+<li>stm32h7xx_hal_dfsdm.c:
+<ul>
+<li>Add support of DFSDM2_Channel0 available on STM32H7A3/B3xx/B0xx devices</li>
+</ul></li>
+<li>stm32h7xx_hal_dfsdm_ex.c:
+<ul>
+<li>New extension file with HAL_DFDSMEx_ChannelSetPulsesSkipping and HAL_DFDSMEx_ChannelGetPulsesSkipping APIs implementation</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL DMA</strong>:
+<ul>
+<li>stm32h7xx_hal_dma.h:
+<ul>
+<li>Add PSSI, DAC2, UART9 and USART10 requests (PSSI and DAC2 peripherals available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>HRTIM, SAI3, SAI4, ADC3 requests are available only when these peripherals are present on the given device (through CMSIS device mapping)</li>
+<li>Update to support BDMA1 and BDMA2 available on STM32H7A3/B3xx/B0xx devices</li>
+</ul></li>
+<li>stm32h7xx_hal_dma_ex.h:
+<ul>
+<li>DMAMUX request generator defines HAL_DMAMUX2_REQ_GEN_LPTIM4_WKUP, HAL_DMAMUX2_REQ_GEN_LPTIM5_WKUP and ADC3 are available when LPTIM4, LPTIM5 and ADC3 are respectively available</li>
+</ul></li>
+<li>stm32h7xx_hal_dma.c/stm32h7xx_hal_dma_ex.c:
+<ul>
+<li>Update to support BDMA1 and BDMA2 available on STM32H7A3/B3xx/B0xx devices</li>
+</ul></li>
+<li>stm32h7xx_ll_bdma.h:
+<ul>
+<li>Add support for BDMA1 and BDMA2 available on STM32H7A3/B3xx/B0xx devices</li>
+</ul></li>
+<li>stm32h7xx_ll_dmamux.h:
+<ul>
+<li>Add Add PSSI, DAC2, UART9 and USART10 requests (PSSI and DAC2 peripherals available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>HRTIM, SAI3, SAI4, ADC3 requests are available only when these peripherals are present on the given device (through CMSIS device mapping)</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL DMA2D</strong>:
+<ul>
+<li>stm32h7xx_hal_dma2d.h:
+<ul>
+<li>Update DMA2D_InitTypeDef initialization structure with BytesSwap and LineOffsetMode allowing respectively to support byte swap and line offset modes</li>
+<li>Add DMA2D_M2M_BLEND_FG and DMA2D_M2M_BLEND_BG definitions allowing to support blending with fixed foreground/background colors</li>
+<li>Add DMA2D_LOM_PIXELS and DMA2D_LOM_BYTES definitions allowing to support Line Offset mode feature</li>
+<li>Add DMA2D_BYTES_REGULAR and DMA2D_BYTES_SWAP definitions allowing to support Byte Swap feature</li>
+<li>Add HAL_DMA2D_CLUTStartLoad and HAL_DMA2D_CLUTStartLoad_IT APIs: same as HAL_DMA2D_CLUTStartLoad/HAL_DMA2D_CLUTStartLoad_IT APIs but with the parameter CLUTCfg passed by address instead of variable</li>
+</ul></li>
+<li>stm32h7xx_hal_dma2d.c:
+<ul>
+<li>Update HAL_DMA2D_Init implementation to support byte swap and line offset modes</li>
+<li>Update HAL_DMA2D_BlendingStart and HAL_DMA2D_BlendingStart_IT to support blending with fixed foreground/background colors</li>
+<li>Add implementation of HAL_DMA2D_CLUTStartLoad and HAL_DMA2D_CLUTStartLoad_IT APIs</li>
+</ul></li>
+<li>stm32h7xx_ll_dma2d.h:
+<ul>
+<li>Update LL_DMA2D_InitTypeDef initialization structure with OutputSwapMode and LineOffsetMode allowing respectively to support byte swap and line offset modes<br />
+</li>
+<li>Add LL_DMA2D_MODE_M2M_BLEND_FIXED_COLOR_FG and LL_DMA2D_MODE_M2M_BLEND_FIXED_COLOR_BG definitions allowing to support blending with fixed foreground/background colors</li>
+<li>Add LL_DMA2D_SWAP_MODE_REGULAR and LL_DMA2D_SWAP_MODE_TWO_BY_TWO definitions allowing to support Byte Swap feature</li>
+<li>Add LL_DMA2D_LINE_OFFSET_PIXELS and LL_DMA2D_LINE_OFFSET_BYTES definitions allowing to support Line Offset mode feature</li>
+<li>Add LL_DMA2D_SetOutputSwapMode and LL_DMA2D_GetOutputSwapMode APIs</li>
+<li>Add LL_DMA2D_SetLineOffsetMode and LL_DMA2D_GetLineOffsetMode APIs</li>
+</ul></li>
+<li>stm32h7xx_ll_dma2d.c:
+<ul>
+<li>Update LL_DMA2D_StructInit API implementation to support byte swap and line offset modes</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL DTS</strong>:
+<ul>
+<li>Add New HAL DTS driver stm32h7xx_hal_dts.h/stm32h7xx_hal_dts.c (Digital Temperature Sensor). This peripheral is available on STM32H7A3/B3xx/B0xx devices only</li>
+</ul></li>
+<li><strong>HAL/LL EXTI</strong>:
+<ul>
+<li>Update to consider STM32H7A3/B3xx/B0xx devices EXTI lines</li>
+<li>Update EXTI Pend Clear Sources considering STM32H7A3/B3xx/B0xx devices: LPTIM2 and LPTIM3 used as SRD domain wakeup pend clear source versus LPTIM4/LPTIM5 in the legacy devices</li>
+</ul></li>
+<li><strong>HAL FLASH</strong>:
+<ul>
+<li>Update to consider Flash operations on STM32H7A3/B3xx/B0xx devices</li>
+</ul></li>
+<li><strong>HAL GFXMMU</strong>:
+<ul>
+<li>Add GFXMMU HAL driver stm32h7xx_hal_gfxmmu.h/stm32h7xx_hal_gfxmmu.c. This peripheral is available on STM32H7A3/B3xx/B0xx devices only</li>
+</ul></li>
+<li><strong>HAL GPIO</strong>:
+<ul>
+<li>Update GPIO Alternate functions definitions (in stm32h7xx_hal_gpio_ex.h file) for STM32H7A3/B3xx/B0xx devices</li>
+</ul></li>
+<li><strong>HAL HASH</strong>:
+<ul>
+<li>stm32h7xx_hal_hash.h:
+<ul>
+<li>Add IS_HASH_POLLING_MULTIBUFFER_SIZE macro to check that input data buffer size is valid for multi-buffer HASH</li>
+<li>Add HAL_HASH_SHA1_Accmlt_IT/HAL_HASH_SHA1_Accmlt_End_IT and HAL_HASH_MD5_Accmlt_IT/HAL_HASH_MD5_Accmlt_End_IT APIs</li>
+</ul></li>
+<li>stm32h7xx_hal_hash_ex.h:
+<ul>
+<li>Add HAL_HASHEx_SHA224_Accmlt/HAL_HASHEx_SHA224_Accmlt_End, HAL_HASHEx_SHA256_Accmlt/HAL_HASHEx_SHA256_Accmlt_End APIs</li>
+<li>Add HAL_HASHEx_SHA224_Accmlt_IT/HAL_HASHEx_SHA224_Accmlt_End_IT, HAL_HASHEx_SHA256_Accmlt_IT/HAL_HASHEx_SHA256_Accmlt_End_IT APIs</li>
+</ul></li>
+<li>stm32h7xx_hal_hash.c:
+<ul>
+<li>Add implementation of HAL_HASH_SHA1_Accmlt_IT/HAL_HASH_SHA1_Accmlt_End_IT and HAL_HASH_MD5_Accmlt_IT/HAL_HASH_MD5_Accmlt_End_IT APIs</li>
+</ul></li>
+<li>stm32h7xx_hal_hash_ex.c:
+<ul>
+<li>Add implementation of HAL_HASHEx_SHA224_Accmlt/HAL_HASHEx_SHA224_Accmlt_End, HAL_HASHEx_SHA256_Accmlt/HAL_HASHEx_SHA256_Accmlt_End APIs</li>
+<li>Add implementation of HAL_HASHEx_SHA224_Accmlt_IT/HAL_HASHEx_SHA224_Accmlt_End_IT, HAL_HASHEx_SHA256_Accmlt_IT/HAL_HASHEx_SHA256_Accmlt_End_IT APIs</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL I2S</strong>:
+<ul>
+<li>stm32h7xx_hal_i2s.h:
+<ul>
+<li>Add definition of HAL_I2S_ERROR_NO_OGT and HAL_I2S_ERROR_NOT_SUPPORTED errors<br />
+</li>
+</ul></li>
+<li>stm32h7xx_hal_i2s.c:
+<ul>
+<li>Add support of I2S mode on SPI6 peripheral (available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>Fix GCC compilation warning on HAL_I2S_Transmit/HAL_I2S_Receive due to 16 bits access on TXDR/RXDR 32 bits registers</li>
+<li>Update and fix HAL_I2S_DMAPause/HAL_I2S_DMAResume APIs</li>
+<li>Update HAL_I2S_IRQHandler APIs to handle I2S_FLAG_OVR, I2S_FLAG_UDR and I2S_FLAG_FRE error flags</li>
+</ul></li>
+<li>stm32h7xx_hal_i2s_ex.h/stm32h7xx_hal_i2s_ex.c : These files are empty as full duplex feature is not available in this release</li>
+</ul></li>
+<li><strong>HAL/LL LPTIM</strong>:
+<ul>
+<li>stm32h7xx_hal_lptim.h:
+<ul>
+<li>LPTIM_INPUT1SOURCE_SAI1_FSA and LPTIM_INPUT1SOURCE_SAI1_FSB replaced respectively by LPTIM_INPUT1SOURCE_SAI4_FSA and LPTIM_INPUT1SOURCE_SAI4_FSB to be aligned with the Reference Manual (<strong>Compatibility break</strong>)</li>
+</ul></li>
+<li>stm32h7xx_ll_lptim.h:
+<ul>
+<li>Add definition of LL_LPTIM_TRIG_SOURCE_LPTIM2 to LL_LPTIM_TRIG_SOURCE_DFSDM2_BRK trigger sources</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL MDMA</strong>:
+<ul>
+<li>stm32h7xx_hal_mdma.h:
+<ul>
+<li>Add definitions of OctoSPI peripheral requests when available (OctoSPI available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>Add definitions of DSI peripheral requests when available (DSI available on STM32H747/757 devices only)</li>
+<li>Add definitions of MDMA_REQUEST_SDMMC1_DMA_ENDBUFFER and MDMA_REQUEST_SDMMC1_COMMAND_END requests</li>
+<li>Delimit definition of LTDC, QUADSPI and JPEG requests by the peripherals availability</li>
+</ul></li>
+<li>stm32h7xx_hal_mdma.c:
+<ul>
+<li>Update HAL_MDMA_DeInit APIs implementation to avoid returning error when the MDMA state is busy: the MDMA will be deinitialized in any case when calling HAL_MDMA_DeInit</li>
+</ul></li>
+<li>stm32h7xx_ll_mdma.h:
+<ul>
+<li>Add definitions of OctoSPI peripheral requests when available (OctoSPI available on STM32H7A3/B3xx/B0xx devices only)</li>
+<li>Add definitions of DSI peripheral requests when available (DSI available on STM32H747/757 devices only)</li>
+<li>Add definitions of MDMA_REQUEST_SDMMC1_DMA_ENDBUFFER and MDMA_REQUEST_SDMMC1_COMMAND_END requests</li>
+<li>Delimit definition of LTDC, QUADSPI and JPEG requests by the peripherals availability</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL MMC</strong>:
+<ul>
+<li>stm32h7xx_hal_mmc_ex.h:
+<ul>
+<li>APIs HAL_MMCEx_Read_DMADoubleBuffer0CpltCallback, HAL_MMCEx_Read_DMADoubleBuffer1CpltCallback, HAL_MMCEx_Write_DMADoubleBuffer0CpltCallback and HAL_MMCEx_Write_DMADoubleBuffer1CpltCallback respectevely renamed to HAL_MMCEx_Read_DMADoubleBuf0CpltCallback, HAL_MMCEx_Read_DMADoubleBuf1CpltCallback, HAL_MMCEx_Write_DMADoubleBuf0CpltCallback and HAL_MMCEx_Write_DMADoubleBuf1CpltCallback:</li>
+<li>Backward compatibility ensured by the stm32_hal_legacy header file</li>
+</ul></li>
+<li>stm32h7xx_hal_mmc.c:
+<ul>
+<li>Fix HAL_MMC_ReadBlocks/HAL_MMC_WriteBlocks, HAL_MMC_ReadBlocks_IT/HAL_MMC_WriteBlocks_IT and HAL_MMC_ReadBlocks_DMA/HAL_MMC_WriteBlocks_DMA APIs implementation for DDR mode</li>
+</ul></li>
+<li>stm32h7xx_hal_mmc_ex.c:
+<ul>
+<li>Fix HAL_MMCEx_ConfigDMAMultiBuffer API implementation regarding DMA block size</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL OPAMP</strong>:
+<ul>
+<li>stm32h7xx_hal_opamp.h:
+<ul>
+<li>APIs HAL_OPAMP_MSP_INIT_CB_ID/HAL_OPAMP_MSP_DEINIT_CB_ID enumeration respectively renamed to HAL_OPAMP_MSPINIT_CB_ID/HAL_OPAMP_MSPDEINIT_CB_ID
+<ul>
+<li>Backward compatibility ensured by the stm32_hal_legacy header file</li>
+</ul></li>
+<li>Add definition of OPAMP_NONINVERTINGINPUT_DAC2_CH input trigger conditioned by the DAC2 peripheral availability (DAC2 peripheral available on STM32H7A3/B3xx/B0xx devices only)</li>
+</ul></li>
+<li>stm32h7xx_hal_opamp.c:
+<ul>
+<li>Update HAL_OPAMP_DeInit to disabled first the OPAMP before resetting the configuration</li>
+</ul></li>
+<li>stm32h7xx_ll_opamp.h:
+<ul>
+<li>Add definition of LL_OPAMP_INPUT_NONINVERT_DAC2 input trigger conditioned by the DAC2 peripheral availability (DAC2 peripheral available on STM32H7A3/B3xx/B0xx devices</li>
+</ul></li>
+</ul></li>
+<li><p><strong>HAL OSPI</strong>: New HAL driver stm32h7xx_hal_ospi.h/stm32h7xx_hal_ospi.c to handle OctoSPI peripheral (available on STM32H7A3/B3xx/B0xx devices only)</p></li>
+<li><p><strong>HAL OTFDEC</strong>: New HAL driver stm32h7xx_hal_otfdec.h/stm32h7xx_hal_otfdec.c to handle OTFDEC peripheral (available on STM32H7A3/B3xx/B0xx devices only)</p></li>
+<li><p><strong>HAL PSSI</strong>: New HAL driver stm32h7xx_hal_pssi.h/stm32h7xx_hal_pssi.c to handle PSSI peripheral (available on STM32H7A3/B3xx/B0xx devices only)</p></li>
+<li><strong>HAL/LL PWR</strong>: Update to handle STM32H7A3/B3xx/B0xx devices
+<ul>
+<li>2 power domains only (versus 3 in legacy STM32H7 devices)</li>
+<li>VOS0 voltage scalling management</li>
+<li>Wake up flag management</li>
+<li>STOP2 Low Power mode management</li>
+</ul></li>
+<li><strong>HAL RAMECC</strong>:
+<ul>
+<li>stm32h7xx_hal_ramecc.h:
+<ul>
+<li>Add definition of RAMECC Error Codes</li>
+<li>Add __HAL_RAMECC_GET_GLOBAL_IT_SOURCE, __HAL_RAMECC_GET_MONITOR_IT_SOURCE and __HAL_RAMECC_GET_IT_SOURCE macros</li>
+<li>Add HAL_RAMECC_IsECCSingleErrorDetected, HAL_RAMECC_IsECCDoubleErrorDetected APIs</li>
+</ul></li>
+<li>stm32h7xx_hal_ramecc.c:
+<ul>
+<li>Add error codes management</li>
+<li>Add HAL_RAMECC_IsECCSingleErrorDetected, HAL_RAMECC_IsECCDoubleErrorDetected APIs implementation</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL RCC</strong>:
+<ul>
+<li>stm32h7xx_hal_rcc.h: Update to support STM32H7A3/B3xx/B0xx devices</li>
+<li>Add OCTOSPI1/2, OCTOSPIM, OTFDEC1/2, GFXMMU peripherals clock enabling/disabling, force reset/release reset macros</li>
+<li>Update other peripherals clock macros according to the number of instance on STM32H7A3/B3xx/B0xx devices and on the legacy STM32H7 devices</li>
+<li>stm32h7xx_hal_rcc_ex.h: Update to support STM32H7A3/B3xx/B0xx devices
+<ul>
+<li>Update RCC_PeriphCLKInitTypeDef structure to handle OCTOSPI1/2, OCTOSPIM, OTFDEC1/2, GFXMMU peripherals clock settings</li>
+</ul></li>
+<li>Update other peripherals clock defines and macros according to the number of instance on STM32H7A3/B3xx/B0xx devices and on the legacy STM32H7 devices<br />
+</li>
+<li>stm32h7xx_hal_rcc.c:</li>
+<li>General update to support STM32H7A3/B3xx/B0xx devices clock configurations<br />
+</li>
+<li>Update HAL_RCC_DeInit to handle flash latency configuration in both cases: when increasing and decreasing latency.</li>
+<li>Update HAL_RCC_OscConfig to:
+<ul>
+<li>Allow only HSI calibration when HSI is used as system source clock (attempt to disable HSI will return error in this case)</li>
+<li>Allow reconfiguring the system clock with the same current config without returning error (useful when reconfiguring the system clock after low power mode wakeup)<br />
+</li>
+</ul></li>
+<li>stm32h7xx_hal_rcc_ex.c:</li>
+<li>General update to support STM32H7A3/B3xx/B0xx devices peripherals clock configurations</li>
+<li>Update HAL_RCCEx_GetPeriphCLKFreq to support SAI2/SAI3 and SPI6 peripherals</li>
+<li>stm32h7xx_ll_rcc.h: Update to support STM32H7A3/B3xx/B0xx devices
+<ul>
+<li>Add OCTOSPI1/2, OCTOSPIM, OTFDEC1/2, GFXMMU peripherals clock source definitions</li>
+</ul></li>
+<li>Update other peripherals clock source definitions according to the number of instance on STM32H7A3/B3xx/B0xx devices and on the legacy STM32H7 devices</li>
+</ul></li>
+<li><strong>HAL/LL RNG</strong>:
+<ul>
+<li>stm32h7xx_hal_rng.h: Update to support STM32H7A3/B3xx/B0xx devices</li>
+<li>Add definition of HAL_RNG_ERROR_BUSY, HAL_RNG_ERROR_SEED and HAL_RNG_ERROR_CLOCK error codes</li>
+<li>Add inclusion of stm32h7xx_hal_rng_ex.h extended RNG HAL driver</li>
+<li>stm32h7xx_hal_rng_ex.h:
+<ul>
+<li>New HAL extended HAL driver with support of support STM32H7A3/B3xx/B0xx devices RNG features</li>
+</ul></li>
+<li>stm32h7xx_hal_rng.c: Update to support STM32H7A3/B3xx/B0xx devices</li>
+<li>Update HAL_RNG_Init and HAL_RNG_DeInit APIs implementation to support STM32H7A3/B3xx/B0xx devices RNG configuration</li>
+<li>stm32h7xx_hal_rng_ex.c:
+<ul>
+<li>New HAL extended HAL RNG driver with support of support STM32H7A3/B3xx/B0xx devices RNG features</li>
+</ul></li>
+<li>stm32h7xx_ll_rng.h:
+<ul>
+<li>Add definition of LL_RNG_CLKDIV_BY_1 to LL_RNG_CLKDIV_BY_32768 RNG dividers</li>
+<li>Add new APIs support features available on STM32H7A3/B3xx/B0xx devices:
+<ul>
+<li>LL_RNG_EnableCondReset, LL_RNG_DisableCondReset and LL_RNG_IsEnabledCondReset</li>
+<li>LL_RNG_ConfigLock and LL_RNG_IsConfigLocked</li>
+<li>LL_RNG_EnableNistCompliance, LL_RNG_DisableNistCompliance and LL_RNG_IsEnabledNistCompliance</li>
+<li>LL_RNG_SetConfig1, LL_RNG_GetConfig1, LL_RNG_SetConfig2, LL_RNG_GetConfig2, LL_RNG_SetConfig3 and LL_RNG_GetConfig3</li>
+<li>LL_RNG_SetClockDivider and LL_RNG_GetClockDivider</li>
+<li>LL_RNG_SetHealthConfig and LL_RNG_GetHealthConfig</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><strong>HAL/LL RTC</strong>: Update to support STM32H7A3/B3xx/B0xx devices new RTC features</p></li>
+<li><strong>HAL SAI</strong>:
+<ul>
+<li>Update to support STM32H7A3/B3xx/B0xx devices SAI instances:
+<ul>
+<li>Only SAI2 and SAI3 instances are available on STM32H7A3/B3xx/B0xx devices</li>
+<li>SAI1/2/3/4 are available for legacy STM32H7 devices</li>
+<li>Usage of a giving SAI instance is conditioned with its presence on the given device (according to the CMSIS device memory mapping)</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SAI</strong>:
+<ul>
+<li>Update to support STM32H7A3/B3xx/B0xx devices SAI instances:</li>
+</ul></li>
+<li><strong>HAL SD</strong>:
+<ul>
+<li>stm32h7xx_hal_sd_ex.h:
+<ul>
+<li>rename HAL_SDEx_Read_DMADoubleBuffer0CpltCallback, HAL_SDEx_Read_DMADoubleBuffer1CpltCallback, HAL_SDEx_Write_DMADoubleBuffer0CpltCallback and HAL_SDEx_Write_DMADoubleBuffer1CpltCallback respectevely to HAL_SDEx_Read_DMADoubleBuf0CpltCallback, HAL_SDEx_Read_DMADoubleBuf1CpltCallback, HAL_SDEx_Write_DMADoubleBuf0CpltCallback and HAL_SDEx_Write_DMADoubleBuf1CpltCallback</li>
+<li>Backward compatibility ensured by the stm32_hal_legacy header file<br />
+</li>
+</ul></li>
+<li>stm32h7xx_hal_sd.c:
+<ul>
+<li>Fix HAL_SD_ReadBlocks_IT/HAL_SD_WriteBlocks_IT HAL_SD_ReadBlocks_DMA/HAL_SD_WriteBlocks_DMA APIs implementation to avoid losing data in read and dead lock in write</li>
+</ul></li>
+<li>stm32h7xx_hal_sd_ex.c:
+<ul>
+<li>Fix HAL_SDEx_ReadBlocksDMAMultiBuffer/HAL_SDEx_WriteBlocksDMAMultiBuffer APIs implementation to avoid losing data in read and dead lock in write</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL SPI</strong>:
+<ul>
+<li>stm32h7xx_hal_spi.c:
+<ul>
+<li>Fix GCC compilation warning on HAL_SPI_Transmit/HAL_SPI_Receive, HAL_SPI_Transmit_IT/HAL_SPI_Receive_IT and HAL_SPI_TransmitReceive/HAL_SPI_TransmitReceive_IT APIs due to 16 bits access on TXDR/RXDR 32 bits registers</li>
+<li>stm32h7xx_ll_spi.h:
+<ul>
+<li>Rename LL_SPI_SR_CRCERR define to LL_SPI_SR_CRCE to be aligned with the Reference Manual</li>
+<li>Update LL_SPI_TransmitData16 to fix GCC compilation warning</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SPI</strong>:
+<ul>
+<li>stm32h7xx_hal_spi.c:
+<ul>
+<li>Fix GCC compilation war</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL TIM</strong>:
+<ul>
+<li>stm32h7xx_hal_tim.h:
+<ul>
+<li>Add definition of TIM_UIFREMAP_DISABLE and TIM_UIFREMAP_ENABLE Interrupt Flag Remap</li>
+<li>Add definition of TIM_ENCODERINPUTPOLARITY_RISING and TIM_ENCODERINPUTPOLARITY_FALLING Encoder Input Polarity</li>
+<li>Add definition of TIM_TS_ITR9 to TIM_TS_ITR13 Trigger Selection</li>
+<li>Add __HAL_TIM_UIFREMAP_ENABLE, __HAL_TIM_UIFREMAP_DISABLE and __HAL_TIM_GET_UIFCPY macros</li>
+</ul></li>
+<li>stm32h7xx_hal_tim_ex.h:
+<ul>
+<li>Rename TIM_TIM1_ETR_ADC2_AWD1, TIM_TIM1_ETR_ADC2_AWD2 and TIM_TIM1_ETR_ADC2_AWD3 respectively to TIM_TIM1_ETR_ADC1_AWD1, TIM_TIM1_ETR_ADC1_AWD2 and TIM_TIM1_ETR_ADC1_AWD2 to be aligned with all STM32H7 devices Reference manuals (<strong>compatibility break</strong>)</li>
+</ul></li>
+<li>stm32h7xx_hal_tim.c:
+<ul>
+<li>Update TIM_SlaveTimer_SetConfig API implementation to handle TIM_TS_ITR9 to TIM_TS_ITR13 input triggers</li>
+</ul></li>
+</ul></li>
+<li><strong>LL BUS</strong>:
+<ul>
+<li>stm32h7xx_ll_bus.h: Update to support STM32H7A3/B3xx/B0xx devices peripherals</li>
+</ul></li>
+<li><strong>LL CRS</strong>:
+<ul>
+<li>stm32h7xx_ll_crs.h/stm32h7xx_ll_crs.c: New LL driver allowing to handle CRS (Clock Recovery System) module</li>
+</ul></li>
+<li><strong>LL SDMMC</strong> (LL core driver for HAL SD/MMC):
+<ul>
+<li>stm32h7xx_ll_sdmmc.c: Fix SDMMC_CmdStopTransfer implementation to ignore address Out Of Range error that is not relevant at end of memory</li>
+</ul></li>
+<li><strong>LL SYSTEM</strong>:
+<ul>
+<li>stm32h7xx_ll_system.h:
+<ul>
+<li>Update LL_SYSCFG_SetTIMBreakInputs and LL_SYSCFG_GetTIMBreakInputs APIs to support STM32H7A3/B3xx/B0xx devices break inputs</li>
+<li>Add LL_SYSCFG_EnableIOSpeedOptimization1/LL_SYSCFG_DisableIOSpeedOptimization1/LL_SYSCFG_IsEnabledIOSpeedOptimization1 APIs</li>
+<li>Add LL_SYSCFG_EnableIOSpeedOptimization2/LL_SYSCFG_DisableIOSpeedOptimization2, LL_SYSCFG_IsEnabledIOSpeedOptimization1 APIs</li>
+<li>Add LL_SYSCFG_EnableIOSpeedOptimization3/LL_SYSCFG_DisableIOSpeedOptimization3, LL_SYSCFG_IsEnabledIOSpeedOptimization3 APIs</li>
+<li>Add LL_SYSCFG_MMCGetCellCompensationCode/LL_SYSCFG_MMCSetPMOSCompensationCode/LL_SYSCFG_MMCSetPMOSCompensationCode APIs</li>
+<li>Add LL_SYSCFG_VDMMCSetNMOSCompensationCode/LL_SYSCFG_VDMMCGetNMOSCompensationCode APIs</li>
+</ul></li>
+</ul></li>
+<li><strong>LL UTILS</strong>:
+<ul>
+<li>stm32h7xx_ll_utils.h:
+<ul>
+<li>Add definition of STM32H7A3/B3xx/B0xx devices package types: LL_UTILS_PACKAGETYPE_LQFP64 to LL_UTILS_PACKAGETYPE_TFBGA225</li>
+<li>Update LL_GetPackageType API to support STM32H7A3/B3xx/B0xx devices package types</li>
+</ul></li>
+</ul></li>
+<li><strong>LL DELAY BLOCK</strong> (LL core driver for HAL SD):
+<ul>
+<li>stm32h7xx_ll_delayblock.h:
+<ul>
+<li>Add DLYB_MAX_SELECT definition used for delay block tuning</li>
+<li>Add DelayBlock_Configure use to configure the delay block</li>
+</ul></li>
+<li>stm32h7xx_ll_delayblock.c:
+<ul>
+<li>Add implemenation of DelayBlock_Configure function allowing to configure the delay block</li>
+<li>Rework DelayBlock_Enable function (delay block calibration procedure)</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li><strong>HAL I2S</strong>:
+<ul>
+<li>Full duplex Transmit/receive feature not available
+<ul>
+<li>stm32h7xx_hal_i2s_ex.h/stm32h7xx_hal_i2s_ex.c: These files are empty as full duplex feature is not available in this release</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL PSSI</strong>:
+<ul>
+<li>New PSSI driver provided supporting both modes : DMA mode recommended/ polling mode has hardware limitation confirmed and mentioned in the STM32H7A3/B3xx/B0xx erratasheet.</li>
+</ul></li>
+</ul>
+<h2 id="backward-compatibility">Backward compatibility</h2>
+<ul>
+<li><strong>HAL I2S</strong>:
+<ul>
+<li>stm32h7xx_hal_i2s_ex.h/stm32h7xx_hal_i2s_ex.c : These files are empty as full duplex feature is not available in this release</li>
+</ul></li>
+<li><strong>HAL LPTIM</strong>:
+<ul>
+<li>stm32h7xx_hal_lptim.h:
+<ul>
+<li>LPTIM_INPUT1SOURCE_SAI1_FSA and LPTIM_INPUT1SOURCE_SAI1_FSB replaced respectively by LPTIM_INPUT1SOURCE_SAI4_FSA and LPTIM_INPUT1SOURCE_SAI4_FSB to be aligned with the Reference manual</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL TIM</strong>:
+<ul>
+<li>stm32h7xx_hal_tim_ex.h:</li>
+<li>TIM_TIM1_ETR_ADC2_AWD1, TIM_TIM1_ETR_ADC2_AWD2 and TIM_TIM1_ETR_ADC2_AWD3 respectively to TIM_TIM1_ETR_ADC1_AWD1, TIM_TIM1_ETR_ADC1_AWD2 and TIM_TIM1_ETR_ADC1_AWD2 to be aligned with all STM32H7 devices Reference manuals</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true"><strong>V1.6.0 / 28-June-2019</strong></label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and implementation enhancements</li>
 <li><strong>HAL</strong>: generic
@@ -315,11 +1147,11 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="known-limitations">Known Limitations</h2>
+<h2 id="known-limitations-1">Known Limitations</h2>
 <ul>
 <li>None</li>
 </ul>
-<h2 id="backward-compatibility">Backward compatibility</h2>
+<h2 id="backward-compatibility-1">Backward compatibility</h2>
 <ul>
 <li><strong>HAL TIM</strong>:
 <ul>
@@ -337,7 +1169,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true"><strong>V1.5.0 / 05-April-2019</strong></label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and implementation enhancements</li>
 <li>Add support for VOS0 power regulator voltage scaling with 480MHz over clock</li>
@@ -807,7 +1639,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Update LL_Init1msTick and LL_SetSystemCoreClock description for <strong>DUAL CORE</strong> lines</li>
 </ul></li>
 </ul>
-<h2 id="known-limitations-1">Known Limitations</h2>
+<h2 id="known-limitations-2">Known Limitations</h2>
 <ul>
 <li><strong>HAL SD</strong>:
 <ul>
@@ -821,7 +1653,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Full duplex Transmit/receive feature not available</li>
 </ul></li>
 </ul>
-<h2 id="backward-compatibility-1">Backward compatibility</h2>
+<h2 id="backward-compatibility-2">Backward compatibility</h2>
 <ul>
 <li><strong>HAL ADC</strong>:
 <ul>
@@ -873,7 +1705,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true"><strong>V1.4.0 / 30-November-2018</strong></label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and implementation enhancements</li>
 <li>Add LL drivers : LL_ADC, LL_BDMA, LL_BUS, LL_COMP, LL_CORTEX, LL_CRC, LL_DAC, LL_DMA, LL_DMA2D, LL_DMAMUX, LL_EXTI, LL_GPIO, LL_HRTIM, LL_HSEM, LL_I2C, LL_IWDG, LL_LPTIM, LL_LPUART, LL_MDMA, LL_OPAMP,LL_PWR, LL_RCC, LL_RNG, LL_RTC, LL_SPI, LL_SWPMI, LL_SYSTEM, LL_TIM, LL_USART, LL_UTILS, LL_WWDG</li>
@@ -1142,7 +1974,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Protect the hcd driver to be used only if the USB_OTG_FS, USB_OTG_HS are enabled</li>
 </ul></li>
 </ul>
-<h2 id="known-limitations-2">Known Limitations</h2>
+<h2 id="known-limitations-3">Known Limitations</h2>
 <ul>
 <li><strong>HAL I2S</strong>:
 <ul>
@@ -1150,7 +1982,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>A new version of this driver will be available in next release with full features tested</li>
 </ul></li>
 </ul>
-<h2 id="backward-compatibility-2">Backward compatibility</h2>
+<h2 id="backward-compatibility-3">Backward compatibility</h2>
 <ul>
 <li><strong>HAL ADC</strong>:
 <ul>
@@ -1190,7 +2022,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true"><strong>V1.3.0 / 29-June-2018</strong></label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <ul>
 <li>Updates to fix known defects on HAL Cortex, HAL RCC and HAL SDMMC drivers</li>
 <li><strong>HAL Cortex</strong>: Driver update to support 16 MPU regions instead of 8. User can now select an MPU regions from MPU_REGION_NUMBER0 to MPU_REGION_NUMBER15</li>
@@ -1202,7 +2034,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true"><strong>V1.2.0 / 29-December-2017</strong></label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and enhancements implementation</li>
 <li><strong>HAL SPI</strong>: Driver reworked to fix critical issues</li>
@@ -1213,7 +2045,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true"><strong>V1.1.0 / 31-August-2017</strong></label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and enhancements implementation</li>
 <li><strong>HAL FLASH</strong>: Add Mass Erase for both banks</li>
@@ -1228,7 +2060,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true"><strong>V1.0.0 / 21-April-2017</strong></label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <ul>
 <li>First official release for STM32H743xx/753xx devices</li>
 </ul>

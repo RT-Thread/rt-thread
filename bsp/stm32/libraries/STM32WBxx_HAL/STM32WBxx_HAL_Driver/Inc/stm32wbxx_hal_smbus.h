@@ -65,7 +65,7 @@ typedef struct
   uint32_t OwnAddress2;            /*!< Specifies the second device own address if dual addressing mode is selected
                                      This parameter can be a 7-bit address. */
 
-  uint32_t OwnAddress2Masks;       /*!< Specifies the acknoledge mask address second device own address if dual addressing mode is selected
+  uint32_t OwnAddress2Masks;       /*!< Specifies the acknowledge mask address second device own address if dual addressing mode is selected
                                      This parameter can be a value of @ref SMBUS_own_address2_masks. */
 
   uint32_t GeneralCallMode;        /*!< Specifies if general call mode is selected.

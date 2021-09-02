@@ -96,31 +96,15 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -133,6 +117,13 @@
 /** @defgroup GPIO GPIO
   * @brief GPIO HAL module driver
   * @{
+  */
+
+/** MISRA C:2012 deviation rule has been granted for following rules:
+  * Rule-18.1_d - Medium: Array pointer `GPIOx' is accessed with index [..,..]
+  * which may be out of array bounds [..,UNKNOWN] in following APIs:
+  * HAL_GPIO_Init
+  * HAL_GPIO_DeInit
   */
 
 #ifdef HAL_GPIO_MODULE_ENABLED
@@ -185,118 +176,118 @@
   */
 void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 { 
-  uint32_t position = 0x00U;
-  uint32_t iocurrent = 0x00U;
-  uint32_t temp = 0x00U;
+  uint32_t position = 0x00u;
+  uint32_t iocurrent;
+  uint32_t temp;
 
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Init->Pin));
   assert_param(IS_GPIO_MODE(GPIO_Init->Mode));
-  assert_param(IS_GPIO_PULL(GPIO_Init->Pull)); 
+  assert_param(IS_GPIO_PULL(GPIO_Init->Pull));
 
   /* Configure the port pins */
-  while (((GPIO_Init->Pin) >> position) != RESET)
+  while (((GPIO_Init->Pin) >> position) != 0x00u)
   {
     /* Get current io position */
-    iocurrent = (GPIO_Init->Pin) & (1U << position);
-    
-    if(iocurrent)
+    iocurrent = (GPIO_Init->Pin) & (1uL << position);
+
+    if (iocurrent != 0x00u)
     {
       /*--------------------- GPIO Mode Configuration ------------------------*/
       /* In case of Alternate function mode selection */
-      if((GPIO_Init->Mode == GPIO_MODE_AF_PP) || (GPIO_Init->Mode == GPIO_MODE_AF_OD)) 
+      if((GPIO_Init->Mode == GPIO_MODE_AF_PP) || (GPIO_Init->Mode == GPIO_MODE_AF_OD))
       {
         /* Check the Alternate function parameters */
         assert_param(IS_GPIO_AF_INSTANCE(GPIOx));
         assert_param(IS_GPIO_AF(GPIO_Init->Alternate));
-        
-        /* Configure Alternate function mapped with the current IO */ 
-        temp = GPIOx->AFR[position >> 3];
-        CLEAR_BIT(temp, 0xFU << ((uint32_t)(position & 0x07U) * 4U)) ;      
-        SET_BIT(temp, (uint32_t)(GPIO_Init->Alternate) << (((uint32_t)position & 0x07U) * 4U));       
-        GPIOx->AFR[position >> 3U] = temp;
+
+        /* Configure Alternate function mapped with the current IO */
+        temp = GPIOx->AFR[position >> 3u];
+        temp &= ~(0xFu << ((position & 0x07u) * 4u));
+        temp |= ((GPIO_Init->Alternate) << ((position & 0x07u) * 4u));
+        GPIOx->AFR[position >> 3u] = temp;
       }
 
       /* Configure IO Direction mode (Input, Output, Alternate or Analog) */
       temp = GPIOx->MODER;
-      CLEAR_BIT(temp, GPIO_MODER_MODER0 << (position * 2U));   
-      SET_BIT(temp, (GPIO_Init->Mode & GPIO_MODE) << (position * 2U));
+      temp &= ~(GPIO_MODER_MODER0 << (position * 2u));
+      temp |= ((GPIO_Init->Mode & GPIO_MODE) << (position * 2u));
       GPIOx->MODER = temp;
 
       /* In case of Output or Alternate function mode selection */
-      if ((GPIO_Init->Mode == GPIO_MODE_OUTPUT_PP) || (GPIO_Init->Mode == GPIO_MODE_AF_PP) ||
-          (GPIO_Init->Mode == GPIO_MODE_OUTPUT_OD) || (GPIO_Init->Mode == GPIO_MODE_AF_OD))
+      if((GPIO_Init->Mode == GPIO_MODE_OUTPUT_PP) || (GPIO_Init->Mode == GPIO_MODE_AF_PP) ||
+         (GPIO_Init->Mode == GPIO_MODE_OUTPUT_OD) || (GPIO_Init->Mode == GPIO_MODE_AF_OD))
       {
         /* Check the Speed parameter */
         assert_param(IS_GPIO_SPEED(GPIO_Init->Speed));
         /* Configure the IO Speed */
-        temp = GPIOx->OSPEEDR; 
-        CLEAR_BIT(temp, GPIO_OSPEEDER_OSPEEDR0 << (position * 2U));
-        SET_BIT(temp, GPIO_Init->Speed << (position * 2U));
+        temp = GPIOx->OSPEEDR;
+        temp &= ~(GPIO_OSPEEDER_OSPEEDR0 << (position * 2u));
+        temp |= (GPIO_Init->Speed << (position * 2u));
         GPIOx->OSPEEDR = temp;
 
         /* Configure the IO Output Type */
         temp = GPIOx->OTYPER;
-        CLEAR_BIT(temp, GPIO_OTYPER_OT_0 << position) ;
-        SET_BIT(temp, ((GPIO_Init->Mode & GPIO_OUTPUT_TYPE) >> 4U) << position);
+        temp &= ~(GPIO_OTYPER_OT_0 << position) ;
+        temp |= (((GPIO_Init->Mode & GPIO_OUTPUT_TYPE) >> 4u) << position);
         GPIOx->OTYPER = temp;
       }
 
       /* Activate the Pull-up or Pull down resistor for the current IO */
       temp = GPIOx->PUPDR;
-      CLEAR_BIT(temp, GPIO_PUPDR_PUPDR0 << (position * 2U));
-      SET_BIT(temp, (GPIO_Init->Pull) << (position * 2U));
+      temp &= ~(GPIO_PUPDR_PUPDR0 << (position * 2u));
+      temp |= ((GPIO_Init->Pull) << (position * 2u));
       GPIOx->PUPDR = temp;
 
       /*--------------------- EXTI Mode Configuration ------------------------*/
       /* Configure the External Interrupt or event for the current IO */
-      if((GPIO_Init->Mode & EXTI_MODE) == EXTI_MODE) 
+      if((GPIO_Init->Mode & EXTI_MODE) == EXTI_MODE)
       {
         /* Enable SYSCFG Clock */
         __HAL_RCC_SYSCFG_CLK_ENABLE();
-  
-        temp = SYSCFG->EXTICR[position >> 2];
-        CLEAR_BIT(temp, (0x0FU) << (4U * (position & 0x03U)));
-        SET_BIT(temp, (GPIO_GET_INDEX(GPIOx)) << (4U * (position & 0x03U)));
-        SYSCFG->EXTICR[position >> 2] = temp;
-                  
+
+        temp = SYSCFG->EXTICR[position >> 2u];
+        temp &= ~(0x0FuL << (4u * (position & 0x03u)));
+        temp |= (GPIO_GET_INDEX(GPIOx) << (4u * (position & 0x03u)));
+        SYSCFG->EXTICR[position >> 2u] = temp;
+
         /* Clear EXTI line configuration */
         temp = EXTI->IMR;
-        CLEAR_BIT(temp, (uint32_t)iocurrent);
+        temp &= ~(iocurrent);
         if((GPIO_Init->Mode & GPIO_MODE_IT) == GPIO_MODE_IT)
         {
-          SET_BIT(temp, iocurrent); 
+          temp |= iocurrent;
         }
         EXTI->IMR = temp;
 
         temp = EXTI->EMR;
-        CLEAR_BIT(temp, (uint32_t)iocurrent);      
+        temp &= ~(iocurrent);
         if((GPIO_Init->Mode & GPIO_MODE_EVT) == GPIO_MODE_EVT)
-        { 
-          SET_BIT(temp, iocurrent); 
+        {
+          temp |= iocurrent;
         }
         EXTI->EMR = temp;
-  
+
         /* Clear Rising Falling edge configuration */
         temp = EXTI->RTSR;
-        CLEAR_BIT(temp, (uint32_t)iocurrent); 
+        temp &= ~(iocurrent);
         if((GPIO_Init->Mode & RISING_EDGE) == RISING_EDGE)
         {
-          SET_BIT(temp, iocurrent); 
+          temp |= iocurrent;
         }
         EXTI->RTSR = temp;
 
         temp = EXTI->FTSR;
-        CLEAR_BIT(temp, (uint32_t)iocurrent); 
+        temp &= ~(iocurrent);
         if((GPIO_Init->Mode & FALLING_EDGE) == FALLING_EDGE)
         {
-          SET_BIT(temp, iocurrent); 
+          temp |= iocurrent;
         }
         EXTI->FTSR = temp;
       }
     }
-    
+
     position++;
   } 
 }
@@ -310,58 +301,59 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
   */
 void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
 {
-  uint32_t position = 0x00U;
-  uint32_t iocurrent = 0x00U;
-  uint32_t tmp = 0x00U;
+  uint32_t position = 0x00u;
+  uint32_t iocurrent;
+  uint32_t tmp;
 
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Pin));
 
   /* Configure the port pins */
-  while ((GPIO_Pin >> position) != RESET)
+  while ((GPIO_Pin >> position) != 0x00u)
   {
     /* Get current io position */
-    iocurrent = GPIO_Pin & (1U << position);
+    iocurrent = (GPIO_Pin) & (1uL << position);
 
-    if (iocurrent)
+    if (iocurrent != 0x00u)
     {
-      /*------------------------- GPIO Mode Configuration --------------------*/
-      /* Configure IO Direction in Input Floting Mode */
-      CLEAR_BIT(GPIOx->MODER, GPIO_MODER_MODER0 << (position * 2U)); 
-  
-      /* Configure the default Alternate Function in current IO */ 
-      CLEAR_BIT(GPIOx->AFR[position >> 3U], 0xFU << ((uint32_t)(position & 0x07U) * 4U)) ;
-  
-      /* Configure the default value for IO Speed */
-      CLEAR_BIT(GPIOx->OSPEEDR, GPIO_OSPEEDER_OSPEEDR0 << (position * 2U));
-                  
-      /* Configure the default value IO Output Type */
-      CLEAR_BIT(GPIOx->OTYPER, GPIO_OTYPER_OT_0 << position) ;
-  
-      /* Deactivate the Pull-up oand Pull-down resistor for the current IO */
-      CLEAR_BIT(GPIOx->PUPDR, GPIO_PUPDR_PUPDR0 << (position * 2U));
-
       /*------------------------- EXTI Mode Configuration --------------------*/
       /* Clear the External Interrupt or Event for the current IO */
-      
-      tmp = SYSCFG->EXTICR[position >> 2U];
-      tmp &= ((0x0FU) << (4U * (position & 0x03U)));
-      if(tmp == (GPIO_GET_INDEX(GPIOx) << (4U * (position & 0x03U))))
+
+      tmp = SYSCFG->EXTICR[position >> 2u];
+      tmp &= (0x0FuL << (4u * (position & 0x03u)));
+      if (tmp == (GPIO_GET_INDEX(GPIOx) << (4u * (position & 0x03u))))
       {
-        tmp = (0x0FU) << (4U * (position & 0x03U));
-        CLEAR_BIT(SYSCFG->EXTICR[position >> 2U], tmp);
-        
         /* Clear EXTI line configuration */
-        CLEAR_BIT(EXTI->IMR, (uint32_t)iocurrent);
-        CLEAR_BIT(EXTI->EMR, (uint32_t)iocurrent);
+        EXTI->IMR &= ~((uint32_t)iocurrent);
+        EXTI->EMR &= ~((uint32_t)iocurrent);
         
         /* Clear Rising Falling edge configuration */
-        CLEAR_BIT(EXTI->RTSR, (uint32_t)iocurrent);
-        CLEAR_BIT(EXTI->FTSR, (uint32_t)iocurrent);
+        EXTI->RTSR &= ~((uint32_t)iocurrent);
+        EXTI->FTSR &= ~((uint32_t)iocurrent);
+
+        /* Configure the External Interrupt or event for the current IO */
+        tmp = 0x0FuL << (4u * (position & 0x03u));
+        SYSCFG->EXTICR[position >> 2u] &= ~tmp;
       }
+
+      /*------------------------- GPIO Mode Configuration --------------------*/
+      /* Configure IO Direction in Input Floating Mode */
+      GPIOx->MODER &= ~(GPIO_MODER_MODER0 << (position * 2u));
+
+      /* Configure the default Alternate Function in current IO */
+      GPIOx->AFR[position >> 3u] &= ~(0xFu << ((uint32_t)(position & 0x07u) * 4u)) ;
+
+      /* Configure the default value for IO Speed */
+      GPIOx->OSPEEDR &= ~(GPIO_OSPEEDER_OSPEEDR0 << (position * 2u));
+
+      /* Configure the default value IO Output Type */
+      GPIOx->OTYPER  &= ~(GPIO_OTYPER_OT_0 << position) ;
+
+      /* Deactivate the Pull-up and Pull-down resistor for the current IO */
+      GPIOx->PUPDR &= ~(GPIO_PUPDR_PUPDR0 << (position * 2U));
     }
-    
+
     position++;
   }
 }
@@ -449,7 +441,14 @@ void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
   /* Check the parameters */
   assert_param(IS_GPIO_PIN(GPIO_Pin));
 
-  GPIOx->ODR ^= GPIO_Pin;
+  if ((GPIOx->ODR & GPIO_Pin) != 0X00u)
+  {
+    GPIOx->BSRR = (uint32_t)GPIO_Pin << GPIO_NUMBER;
+  }
+  else
+  {
+    GPIOx->BSRR = (uint32_t)GPIO_Pin;
+  }
 }
 
 /**
@@ -479,10 +478,11 @@ HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
   GPIOx->LCKR = GPIO_Pin;
   /* Set LCKx bit(s): LCKK='1' + LCK[15-0] */
   GPIOx->LCKR = tmp;
-  /* Read LCKK bit*/
+  /* Read LCKK register. This read is mandatory to complete key lock sequence */
   tmp = GPIOx->LCKR;
 
-  if((GPIOx->LCKR & GPIO_LCKR_LCKK) != RESET)
+  /* read again in order to confirm lock is active */
+ if((GPIOx->LCKR & GPIO_LCKR_LCKK) != 0x00u)
   {
     return HAL_OK;
   }
@@ -500,7 +500,7 @@ HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 void HAL_GPIO_EXTI_IRQHandler(uint16_t GPIO_Pin)
 {
   /* EXTI line interrupt detected */
-  if(__HAL_GPIO_EXTI_GET_IT(GPIO_Pin) != RESET) 
+  if(__HAL_GPIO_EXTI_GET_IT(GPIO_Pin) != 0x00u)
   { 
     __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
     HAL_GPIO_EXTI_Callback(GPIO_Pin);

@@ -1854,7 +1854,7 @@ static HAL_StatusTypeDef SMBUS_Master_ISR(SMBUS_HandleTypeDef *hsmbus, uint32_t 
       /* Process Unlocked */
       __HAL_UNLOCK(hsmbus);
 
-      /* REenable the selected SMBUS peripheral */
+      /* Re-enable the selected SMBUS peripheral */
       __HAL_SMBUS_ENABLE(hsmbus);
 
       /* Call the corresponding callback to inform upper layer of End of Transfer */
@@ -2616,7 +2616,7 @@ static void SMBUS_TransferConfig(SMBUS_HandleTypeDef *hsmbus,  uint16_t DevAddre
 }
 
 /**
-  * @brief  Convert SMBUSx OTHER_xxx XferOptions to functionnal XferOptions.
+  * @brief  Convert SMBUSx OTHER_xxx XferOptions to functional XferOptions.
   * @param  hsmbus SMBUS handle.
   * @retval None
   */

@@ -209,7 +209,9 @@ void rt_hw_console_output(const char *str)
 RT_SECTION(".irq.err")
 void exception_isr(void)
 {
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     extern long list_thread(void);
+#endif
     sys_error_hook(1);
 
 #ifdef RT_USING_CONSOLE
