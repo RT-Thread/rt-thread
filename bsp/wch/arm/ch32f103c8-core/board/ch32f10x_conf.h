@@ -4,8 +4,8 @@
 * Version            : V1.0.0
 * Date               : 2019/10/15
 * Description        : Library configuration file.
-*******************************************************************************/ 
-#ifndef __CH32F10x_CONF_H 
+*******************************************************************************/
+#ifndef __CH32F10x_CONF_H
 #define __CH32F10x_CONF_H
 
 #include "ch32f10x_adc.h"
@@ -27,7 +27,7 @@
 #include "ch32f10x_tim.h"
 #include "ch32f10x_usart.h"
 #include "ch32f10x_wwdg.h"
-#include "ch32f10x_misc.h" 
+#include "ch32f10x_misc.h"
 
 
 #endif /* __CH32F10x_CONF_H */
