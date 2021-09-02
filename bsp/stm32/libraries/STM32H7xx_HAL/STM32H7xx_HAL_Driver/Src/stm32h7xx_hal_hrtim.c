@@ -363,6 +363,7 @@
 
 #ifdef HAL_HRTIM_MODULE_ENABLED
 
+#if defined(HRTIM1)
 
 /** @defgroup HRTIM HRTIM
   * @brief HRTIM HAL module driver
@@ -1315,6 +1316,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOCChannelConfig(HRTIM_HandleTypeDef * hhrtim,
 
   default:
     {
+      OutputCfg.SetSource = HRTIM_OUTPUTSET_NONE;
+      OutputCfg.ResetSource = HRTIM_OUTPUTRESET_NONE;
+
       hhrtim->State = HAL_HRTIM_STATE_ERROR;
 
       /* Process Unlocked */
@@ -1860,6 +1864,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimplePWMChannelConfig(HRTIM_HandleTypeDef * hhrtim,
     }
   default:
     {
+      OutputCfg.SetSource = HRTIM_OUTPUTSET_NONE;
+      OutputCfg.ResetSource = HRTIM_OUTPUTRESET_NONE;
+
       hhrtim->State = HAL_HRTIM_STATE_ERROR;
 
       /* Process Unlocked */
@@ -3185,6 +3192,9 @@ HAL_StatusTypeDef HAL_HRTIM_SimpleOnePulseChannelConfig(HRTIM_HandleTypeDef * hh
 
   default:
     {
+      OutputCfg.SetSource = HRTIM_OUTPUTSET_NONE;
+      OutputCfg.ResetSource = HRTIM_OUTPUTRESET_NONE;
+
       hhrtim->State = HAL_HRTIM_STATE_ERROR;
 
       /* Process Unlocked */
@@ -3634,8 +3644,8 @@ HAL_StatusTypeDef HAL_HRTIM_EventConfig(HRTIM_HandleTypeDef * hhrtim,
                                         HRTIM_EventCfgTypeDef* pEventCfg)
 {
   /* Check parameters */
-  assert_param(IS_HRTIM_EVENTSRC(pEventCfg->Source));
   assert_param(IS_HRTIM_EVENT(Event));
+  assert_param(IS_HRTIM_EVENTSRC(pEventCfg->Source));
   assert_param(IS_HRTIM_EVENTPOLARITY(pEventCfg->Sensitivity, pEventCfg->Polarity));
   assert_param(IS_HRTIM_EVENTSENSITIVITY(pEventCfg->Sensitivity));
   assert_param(IS_HRTIM_EVENTFASTMODE(Event, pEventCfg->FastMode));
@@ -9256,6 +9266,7 @@ static void HRTIM_BurstDMACplt(DMA_HandleTypeDef *hdma)
   * @}
   */
 
+#endif /* HRTIM1 */
 
 #endif /* HAL_HRTIM_MODULE_ENABLED */
 

@@ -370,12 +370,12 @@ typedef struct
   * @{
   */
 #define LL_MDMA_DEST_BURST_SINGLE        0x00000000U                               /*!< Single transfer */
-#define LL_MDMA_DEST_BURST_2BEATS        MDMA_CTCR_DBURST_0                        /*!< Burst 2 beats */
-#define LL_MDMA_DEST_BURST_4BEATS        MDMA_CTCR_DBURST_1                        /*!< Burst 4 beats */
-#define LL_MDMA_DEST_BURST_8BEATS       (MDMA_CTCR_DBURST_0 | MDMA_CTCR_DBURST_1)  /*!< Burst 8 beats */
-#define LL_MDMA_DEST_BURST_16BEATS       MDMA_CTCR_DBURST_2                        /*!< Burst 16 beats */
-#define LL_MDMA_DEST_BURST_32BEATS      (MDMA_CTCR_DBURST_0 | MDMA_CTCR_DBURST_2)  /*!< Burst 32 beats */
-#define LL_MDMA_DEST_BURST_64BEATS      (MDMA_CTCR_DBURST_1 | MDMA_CTCR_DBURST_2)  /*!< Burst 64 beats */
+#define LL_MDMA_DEST_BURST_2BEATS        MDMA_CTCR_DBURST_0                        /*!< Burst 2 beats   */
+#define LL_MDMA_DEST_BURST_4BEATS        MDMA_CTCR_DBURST_1                        /*!< Burst 4 beats   */
+#define LL_MDMA_DEST_BURST_8BEATS       (MDMA_CTCR_DBURST_0 | MDMA_CTCR_DBURST_1)  /*!< Burst 8 beats   */
+#define LL_MDMA_DEST_BURST_16BEATS       MDMA_CTCR_DBURST_2                        /*!< Burst 16 beats  */
+#define LL_MDMA_DEST_BURST_32BEATS      (MDMA_CTCR_DBURST_0 | MDMA_CTCR_DBURST_2)  /*!< Burst 32 beats  */
+#define LL_MDMA_DEST_BURST_64BEATS      (MDMA_CTCR_DBURST_1 | MDMA_CTCR_DBURST_2)  /*!< Burst 64 beats  */
 #define LL_MDMA_DEST_BURST_128BEATS     (MDMA_CTCR_DBURST)                         /*!< Burst 128 beats */
 /**
   * @}
@@ -385,12 +385,12 @@ typedef struct
   * @{
   */
 #define LL_MDMA_SRC_BURST_SINGLE        0x00000000U                                /*!< Single transfer */
-#define LL_MDMA_SRC_BURST_2BEATS        MDMA_CTCR_SBURST_0                         /*!< Burst 2 beats */
-#define LL_MDMA_SRC_BURST_4BEATS        MDMA_CTCR_SBURST_1                         /*!< Burst 4 beats */
-#define LL_MDMA_SRC_BURST_8BEATS       (MDMA_CTCR_SBURST_0 | MDMA_CTCR_SBURST_1)   /*!< Burst 8 beats */
-#define LL_MDMA_SRC_BURST_16BEATS       MDMA_CTCR_SBURST_2                         /*!< Burst 16 beats */
-#define LL_MDMA_SRC_BURST_32BEATS      (MDMA_CTCR_SBURST_0 | MDMA_CTCR_SBURST_2)   /*!< Burst 32 beats */
-#define LL_MDMA_SRC_BURST_64BEATS      (MDMA_CTCR_SBURST_1 | MDMA_CTCR_SBURST_2)   /*!< Burst 64 beats */
+#define LL_MDMA_SRC_BURST_2BEATS        MDMA_CTCR_SBURST_0                         /*!< Burst 2 beats   */
+#define LL_MDMA_SRC_BURST_4BEATS        MDMA_CTCR_SBURST_1                         /*!< Burst 4 beats   */
+#define LL_MDMA_SRC_BURST_8BEATS       (MDMA_CTCR_SBURST_0 | MDMA_CTCR_SBURST_1)   /*!< Burst 8 beats   */
+#define LL_MDMA_SRC_BURST_16BEATS       MDMA_CTCR_SBURST_2                         /*!< Burst 16 beats  */
+#define LL_MDMA_SRC_BURST_32BEATS      (MDMA_CTCR_SBURST_0 | MDMA_CTCR_SBURST_2)   /*!< Burst 32 beats  */
+#define LL_MDMA_SRC_BURST_64BEATS      (MDMA_CTCR_SBURST_1 | MDMA_CTCR_SBURST_2)   /*!< Burst 64 beats  */
 #define LL_MDMA_SRC_BURST_128BEATS      MDMA_CTCR_SBURST                           /*!< Burst 128 beats */
 /**
   * @}
@@ -421,9 +421,9 @@ typedef struct
 /** @defgroup MDMA_LL_EC_DEST_DATA_SIZE Destination Data Size
   * @{
   */
-#define LL_MDMA_DEST_DATA_SIZE_BYTE       0x00000000U                            /*!< Destination data size is Byte */
-#define LL_MDMA_DEST_DATA_SIZE_HALFWORD   MDMA_CTCR_DSIZE_0                      /*!< Destination data size is half word */
-#define LL_MDMA_DEST_DATA_SIZE_WORD       MDMA_CTCR_DSIZE_1                      /*!< Destination data size is word */
+#define LL_MDMA_DEST_DATA_SIZE_BYTE       0x00000000U                            /*!< Destination data size is Byte        */
+#define LL_MDMA_DEST_DATA_SIZE_HALFWORD   MDMA_CTCR_DSIZE_0                      /*!< Destination data size is half word   */
+#define LL_MDMA_DEST_DATA_SIZE_WORD       MDMA_CTCR_DSIZE_1                      /*!< Destination data size is word        */
 #define LL_MDMA_DEST_DATA_SIZE_DOUBLEWORD MDMA_CTCR_DSIZE                        /*!< Destination data size is double word */
 /**
   * @}
@@ -432,9 +432,9 @@ typedef struct
 /** @defgroup MDMA_LL_EC_SRC_DATA_SIZE Source Data Size
   * @{
   */
-#define LL_MDMA_SRC_DATA_SIZE_BYTE       0x00000000U                            /*!< Source data size is Byte */
-#define LL_MDMA_SRC_DATA_SIZE_HALFWORD   MDMA_CTCR_SSIZE_0                      /*!< Source data size is half word */
-#define LL_MDMA_SRC_DATA_SIZE_WORD       MDMA_CTCR_SSIZE_1                      /*!< Source data size is word */
+#define LL_MDMA_SRC_DATA_SIZE_BYTE       0x00000000U                            /*!< Source data size is Byte        */
+#define LL_MDMA_SRC_DATA_SIZE_HALFWORD   MDMA_CTCR_SSIZE_0                      /*!< Source data size is half word   */
+#define LL_MDMA_SRC_DATA_SIZE_WORD       MDMA_CTCR_SSIZE_1                      /*!< Source data size is word        */
 #define LL_MDMA_SRC_DATA_SIZE_DOUBLEWORD MDMA_CTCR_SSIZE                        /*!< Source data size is double word */
 /**
   * @}
@@ -463,8 +463,8 @@ typedef struct
 /** @defgroup MDMA_LL_EC_BLK_RPT_DEST_ADDR_UPDATE_MODE Block Repeat Destination address Update Mode
   * @{
   */
-#define LL_MDMA_BLK_RPT_DEST_ADDR_INCREMENT   0x00000000U                       /*!< Destination address pointer is incremented after each block transfer by Destination Update Value*/
-#define LL_MDMA_BLK_RPT_DEST_ADDR_DECREMENT   MDMA_CBNDTR_BRDUM                 /*!< Destination address pointer is decremented after each block transfer by Destination Update Value*/
+#define LL_MDMA_BLK_RPT_DEST_ADDR_INCREMENT   0x00000000U                       /*!< Destination address pointer is incremented after each block transfer by Destination Update Value */
+#define LL_MDMA_BLK_RPT_DEST_ADDR_DECREMENT   MDMA_CBNDTR_BRDUM                 /*!< Destination address pointer is decremented after each block transfer by Destination Update Value */
 /**
   * @}
   */
@@ -472,8 +472,8 @@ typedef struct
 /** @defgroup MDMA_LL_EC_SRC_BLK_RPT_ADDR_UPDATE_MODE Source Block Repeat address Update Mode
   * @{
   */
-#define LL_MDMA_BLK_RPT_SRC_ADDR_INCREMENT   0x00000000U                        /*!< Source address pointer is incremented after each block transfer by Source Update Value*/
-#define LL_MDMA_BLK_RPT_SRC_ADDR_DECREMENT   MDMA_CBNDTR_BRSUM                  /*!< Source address pointer is decremented after each block transfer by Source Update Value*/
+#define LL_MDMA_BLK_RPT_SRC_ADDR_INCREMENT   0x00000000U                        /*!< Source address pointer is incremented after each block transfer by Source Update Value */
+#define LL_MDMA_BLK_RPT_SRC_ADDR_DECREMENT   MDMA_CBNDTR_BRSUM                  /*!< Source address pointer is decremented after each block transfer by Source Update Value */
 /**
   * @}
   */
@@ -515,19 +515,38 @@ typedef struct
 #define LL_MDMA_REQ_DMA2_STREAM5_TC          0x0000000DU    /*!< MDMA HW Trigger (request) is DMA2 Stream 5 Transfer Complete Flag   */
 #define LL_MDMA_REQ_DMA2_STREAM6_TC          0x0000000EU    /*!< MDMA HW Trigger (request) is DMA2 Stream 6 Transfer Complete Flag   */
 #define LL_MDMA_REQ_DMA2_STREAM7_TC          0x0000000FU    /*!< MDMA HW Trigger (request) is DMA2 Stream 7 Transfer Complete Flag   */
+#if defined (LTDC)
 #define LL_MDMA_REQ_LTDC_LINE_IT             0x00000010U    /*!< MDMA HW Trigger (request) is LTDC Line interrupt Flag               */
+#endif /* LTDC */
+#if defined (JPEG)
 #define LL_MDMA_REQ_JPEG_INFIFO_TH           0x00000011U    /*!< MDMA HW Trigger (request) is JPEG Input FIFO threshold Flag         */
 #define LL_MDMA_REQ_JPEG_INFIFO_NF           0x00000012U    /*!< MDMA HW Trigger (request) is JPEG Input FIFO not full Flag          */
 #define LL_MDMA_REQ_JPEG_OUTFIFO_TH          0x00000013U    /*!< MDMA HW Trigger (request) is JPEG Output FIFO threshold Flag        */
 #define LL_MDMA_REQ_JPEG_OUTFIFO_NE          0x00000014U    /*!< MDMA HW Trigger (request) is JPEG Output FIFO not empty Flag        */
 #define LL_MDMA_REQ_JPEG_END_CONVERSION      0x00000015U    /*!< MDMA HW Trigger (request) is JPEG End of conversion Flag            */
+#endif /* JPEG */
+#if defined (QUADSPI)
 #define LL_MDMA_REQ_QUADSPI_FIFO_TH          0x00000016U    /*!< MDMA HW Trigger (request) is QSPI FIFO threshold Flag               */
 #define LL_MDMA_REQ_QUADSPI_TC               0x00000017U    /*!< MDMA HW Trigger (request) is QSPI Transfer complete Flag            */
+#endif /* QUADSPI */
+#if defined (OCTOSPI1)
+#define LL_MDMA_REQ_OCTOSPI1_FIFO_TH         0x00000016U    /*!< MDMA HW Trigger (request) is OCTOSPI1 FIFO threshold Flag           */
+#define LL_MDMA_REQ_OCTOSPI1_TC              0x00000017U    /*!< MDMA HW Trigger (request) is OCTOSPI1 Transfer complete Flag        */
+#endif /* OCTOSPI1 */
 #define LL_MDMA_REQ_DMA2D_CLUT_TC            0x00000018U    /*!< MDMA HW Trigger (request) is DMA2D CLUT Transfer Complete Flag      */
 #define LL_MDMA_REQ_DMA2D_TC                 0x00000019U    /*!< MDMA HW Trigger (request) is DMA2D Transfer Complete Flag           */
 #define LL_MDMA_REQ_DMA2D_TW                 0x0000001AU    /*!< MDMA HW Trigger (request) is DMA2D Transfer Watermark Flag          */
+#if defined (DSI)
+#define LL_MDMA_REQ_DSI_TEARING_EFFECT       0x0000001BU    /*!< MDMA HW Trigger (request) is DSI Tearing Effect Flag                */
+#define LL_MDMA_REQ_DSI_END_REFRESH          0x0000001CU    /*!< MDMA HW Trigger (request) is DSI End of refresh  Flag               */
+#endif /* DSI */
 #define LL_MDMA_REQ_SDMMC1_END_DATA          0x0000001DU    /*!< MDMA HW Trigger (request) is SDMMC1 End of Data Flag                */
-
+#define LL_MDMA_REQ_SDMMC1_DMA_ENDBUFFER     0x0000001EU    /*!< MDMA HW Trigger (request) is SDMMC1 Internal DMA buffer End Flag : This trigger is available starting from STM32H7 Rev.B devices */
+#define LL_MDMA_REQ_SDMMC1_COMMAND_END       0x0000001FU    /*!< MDMA HW Trigger (request) is SDMMC1 Command End Flag : This trigger is available starting from STM32H7 Rev.B devices */
+#if defined (OCTOSPI2)
+#define LL_MDMA_REQ_OCTOSPI2_FIFO_TH         0x00000020U    /*!< MDMA HW Trigger (request) is OCTOSPI2 FIFO threshold Flag           */
+#define LL_MDMA_REQ_OCTOSPI2_TC              0x00000021U    /*!< MDMA HW Trigger (request) is OCTOSPI2 Transfer complete Flag        */
+#endif /* OCTOSPI2 */
 /**
   * @}
   */
@@ -589,16 +608,16 @@ typedef struct
   * @retval LL_MDMA_CHANNEL_y
   */
 #define LL_MDMA_GET_CHANNEL(__CHANNEL_INSTANCE__)   \
-(((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel0)) ? LL_MDMA_CHANNEL_0 : \
- ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel1)) ? LL_MDMA_CHANNEL_1 : \
- ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel2)) ? LL_MDMA_CHANNEL_2 : \
- ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel3)) ? LL_MDMA_CHANNEL_3 : \
- ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel4)) ? LL_MDMA_CHANNEL_4 : \
- ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel5)) ? LL_MDMA_CHANNEL_5 : \
- ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel6)) ? LL_MDMA_CHANNEL_6 : \
- ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel7)) ? LL_MDMA_CHANNEL_7 : \
- ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel8)) ? LL_MDMA_CHANNEL_8 : \
- ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel9)) ? LL_MDMA_CHANNEL_9 : \
+(((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel0 )) ? LL_MDMA_CHANNEL_0  : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel1 )) ? LL_MDMA_CHANNEL_1  : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel2 )) ? LL_MDMA_CHANNEL_2  : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel3 )) ? LL_MDMA_CHANNEL_3  : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel4 )) ? LL_MDMA_CHANNEL_4  : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel5 )) ? LL_MDMA_CHANNEL_5  : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel6 )) ? LL_MDMA_CHANNEL_6  : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel7 )) ? LL_MDMA_CHANNEL_7  : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel8 )) ? LL_MDMA_CHANNEL_8  : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel9 )) ? LL_MDMA_CHANNEL_9  : \
  ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel10)) ? LL_MDMA_CHANNEL_10 : \
  ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel11)) ? LL_MDMA_CHANNEL_11 : \
  ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)MDMA_Channel12)) ? LL_MDMA_CHANNEL_12 : \
@@ -613,16 +632,16 @@ typedef struct
   * @retval MDMAx_Channely
   */
 #define LL_MDMA_GET_CHANNEL_INSTANCE(__MDMA_INSTANCE__, __CHANNEL__)   \
-(((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_0 )) ? MDMA_Channel0 : \
- ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_1 )) ? MDMA_Channel1 : \
- ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_2 )) ? MDMA_Channel2 : \
- ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_3 )) ? MDMA_Channel3 : \
- ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_4 )) ? MDMA_Channel4 : \
- ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_5 )) ? MDMA_Channel5 : \
- ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_6 )) ? MDMA_Channel6 : \
- ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_7 )) ? MDMA_Channel7 : \
- ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_8 )) ? MDMA_Channel8 : \
- ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_9 )) ? MDMA_Channel9 : \
+(((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_0 )) ? MDMA_Channel0  : \
+ ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_1 )) ? MDMA_Channel1  : \
+ ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_2 )) ? MDMA_Channel2  : \
+ ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_3 )) ? MDMA_Channel3  : \
+ ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_4 )) ? MDMA_Channel4  : \
+ ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_5 )) ? MDMA_Channel5  : \
+ ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_6 )) ? MDMA_Channel6  : \
+ ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_7 )) ? MDMA_Channel7  : \
+ ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_8 )) ? MDMA_Channel8  : \
+ ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_9 )) ? MDMA_Channel9  : \
  ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_10)) ? MDMA_Channel10 : \
  ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_11)) ? MDMA_Channel11 : \
  ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_MDMA_CHANNEL_12)) ? MDMA_Channel12 : \
@@ -3067,18 +3086,27 @@ __STATIC_INLINE uint32_t LL_MDMA_GetSrcBusSelection(MDMA_TypeDef *MDMAx, uint32_
   *         @arg @ref LL_MDMA_REQ_DMA2_STREAM5_TC
   *         @arg @ref LL_MDMA_REQ_DMA2_STREAM6_TC
   *         @arg @ref LL_MDMA_REQ_DMA2_STREAM7_TC
-  *         @arg @ref LL_MDMA_REQ_LTDC_LINE_IT
-  *         @arg @ref LL_MDMA_REQ_JPEG_INFIFO_TH
-  *         @arg @ref LL_MDMA_REQ_JPEG_INFIFO_NF
-  *         @arg @ref LL_MDMA_REQ_JPEG_OUTFIFO_TH
-  *         @arg @ref LL_MDMA_REQ_JPEG_OUTFIFO_NE
-  *         @arg @ref LL_MDMA_REQ_JPEG_END_CONVERSION
-  *         @arg @ref LL_MDMA_REQ_QUADSPI_FIFO_TH
-  *         @arg @ref LL_MDMA_REQ_QUADSPI_TC
+  *         @arg @ref LL_MDMA_REQ_LTDC_LINE_IT (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_INFIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_INFIFO_NF (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_OUTFIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_OUTFIFO_NE (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_END_CONVERSION (*)
+  *         @arg @ref LL_MDMA_REQ_QUADSPI_FIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_QUADSPI_TC (*)
+  *         @arg @ref LL_MDMA_REQ_OCTOSPI1_FIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_OCTOSPI1_TC (*)
   *         @arg @ref LL_MDMA_REQ_DMA2D_CLUT_TC
   *         @arg @ref LL_MDMA_REQ_DMA2D_TC
   *         @arg @ref LL_MDMA_REQ_DMA2D_TW
+  *         @arg @ref LL_MDMA_REQ_DSI_TEARING_EFFECT (*)
+  *         @arg @ref LL_MDMA_REQ_DSI_END_REFRESH (*)
   *         @arg @ref LL_MDMA_REQ_SDMMC1_END_DATA
+  *         @arg @ref LL_MDMA_REQ_SDMMC1_DMA_ENDBUFFER (*)
+  *         @arg @ref LL_MDMA_REQ_SDMMC1_COMMAND_END (*)
+  *         @arg @ref LL_MDMA_REQ_OCTOSPI2_FIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_OCTOSPI2_TC (*)
+  * @note   (*) Availability depends on devices.
   * @retval None
   */
 __STATIC_INLINE void LL_MDMA_SetHWTrigger(MDMA_TypeDef *MDMAx, uint32_t Channel, uint32_t HWRequest)
@@ -3126,18 +3154,27 @@ __STATIC_INLINE void LL_MDMA_SetHWTrigger(MDMA_TypeDef *MDMAx, uint32_t Channel,
   *         @arg @ref LL_MDMA_REQ_DMA2_STREAM5_TC
   *         @arg @ref LL_MDMA_REQ_DMA2_STREAM6_TC
   *         @arg @ref LL_MDMA_REQ_DMA2_STREAM7_TC
-  *         @arg @ref LL_MDMA_REQ_LTDC_LINE_IT
-  *         @arg @ref LL_MDMA_REQ_JPEG_INFIFO_TH
-  *         @arg @ref LL_MDMA_REQ_JPEG_INFIFO_NF
-  *         @arg @ref LL_MDMA_REQ_JPEG_OUTFIFO_TH
-  *         @arg @ref LL_MDMA_REQ_JPEG_OUTFIFO_NE
-  *         @arg @ref LL_MDMA_REQ_JPEG_END_CONVERSION
-  *         @arg @ref LL_MDMA_REQ_QUADSPI_FIFO_TH
-  *         @arg @ref LL_MDMA_REQ_QUADSPI_TC
+  *         @arg @ref LL_MDMA_REQ_LTDC_LINE_IT (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_INFIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_INFIFO_NF (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_OUTFIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_OUTFIFO_NE (*)
+  *         @arg @ref LL_MDMA_REQ_JPEG_END_CONVERSION (*)
+  *         @arg @ref LL_MDMA_REQ_QUADSPI_FIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_QUADSPI_TC (*)
+  *         @arg @ref LL_MDMA_REQ_OCTOSPI1_FIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_OCTOSPI1_TC (*)
   *         @arg @ref LL_MDMA_REQ_DMA2D_CLUT_TC
   *         @arg @ref LL_MDMA_REQ_DMA2D_TC
   *         @arg @ref LL_MDMA_REQ_DMA2D_TW
+  *         @arg @ref LL_MDMA_REQ_DSI_TEARING_EFFECT (*)
+  *         @arg @ref LL_MDMA_REQ_DSI_END_REFRESH (*)
   *         @arg @ref LL_MDMA_REQ_SDMMC1_END_DATA
+  *         @arg @ref LL_MDMA_REQ_SDMMC1_DMA_ENDBUFFER (*)
+  *         @arg @ref LL_MDMA_REQ_SDMMC1_COMMAND_END (*)
+  *         @arg @ref LL_MDMA_REQ_OCTOSPI2_FIFO_TH (*)
+  *         @arg @ref LL_MDMA_REQ_OCTOSPI2_TC (*)
+  * @note   (*) Availability depends on devices.
   * @retval None
   */
 __STATIC_INLINE uint32_t LL_MDMA_GetHWTrigger(MDMA_TypeDef *MDMAx, uint32_t Channel)

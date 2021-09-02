@@ -175,16 +175,19 @@ HAL_StatusTypeDef HAL_DMAEx_MultiBufferStart(DMA_HandleTypeDef *hdma, uint32_t S
         *ifcRegister_Base = (BDMA_ISR_GIF0) << (hdma->StreamIndex & 0x1FU);
       }
 
-      /* Configure the source, destination address and the data length */
-      DMA_MultiBufferSetConfig(hdma, SrcAddress, DstAddress, DataLength);
-
-      /* Clear the DMAMUX synchro overrun flag */
-      hdma->DMAmuxChannelStatus->CFR = hdma->DMAmuxChannelStatusMask;
-
-      if(hdma->DMAmuxRequestGen != 0U)
+      if(IS_DMA_DMAMUX_ALL_INSTANCE(hdma->Instance) != 0U) /* No DMAMUX available for BDMA1 */
       {
-        /* Clear the DMAMUX request generator overrun flag */
-        hdma->DMAmuxRequestGenStatus->RGCFR = hdma->DMAmuxRequestGenStatusMask;
+        /* Configure the source, destination address and the data length */
+        DMA_MultiBufferSetConfig(hdma, SrcAddress, DstAddress, DataLength);
+
+        /* Clear the DMAMUX synchro overrun flag */
+        hdma->DMAmuxChannelStatus->CFR = hdma->DMAmuxChannelStatusMask;
+
+        if(hdma->DMAmuxRequestGen != 0U)
+        {
+          /* Clear the DMAMUX request generator overrun flag */
+          hdma->DMAmuxRequestGenStatus->RGCFR = hdma->DMAmuxRequestGenStatusMask;
+        }
       }
 
       /* Enable the peripheral */
@@ -271,13 +274,16 @@ HAL_StatusTypeDef HAL_DMAEx_MultiBufferStart_IT(DMA_HandleTypeDef *hdma, uint32_
     /* Configure the source, destination address and the data length */
     DMA_MultiBufferSetConfig(hdma, SrcAddress, DstAddress, DataLength);
 
-    /* Clear the DMAMUX synchro overrun flag */
-    hdma->DMAmuxChannelStatus->CFR = hdma->DMAmuxChannelStatusMask;
-
-    if(hdma->DMAmuxRequestGen != 0U)
+    if(IS_DMA_DMAMUX_ALL_INSTANCE(hdma->Instance) != 0U) /* No DMAMUX available for BDMA1 */
     {
-      /* Clear the DMAMUX request generator overrun flag */
-      hdma->DMAmuxRequestGenStatus->RGCFR = hdma->DMAmuxRequestGenStatusMask;
+      /* Clear the DMAMUX synchro overrun flag */
+      hdma->DMAmuxChannelStatus->CFR = hdma->DMAmuxChannelStatusMask;
+
+      if(hdma->DMAmuxRequestGen != 0U)
+      {
+        /* Clear the DMAMUX request generator overrun flag */
+        hdma->DMAmuxRequestGenStatus->RGCFR = hdma->DMAmuxRequestGenStatusMask;
+      }
     }
 
     if(IS_DMA_STREAM_INSTANCE(hdma->Instance) != 0U) /* DMA1 or DMA2 instance */
@@ -304,18 +310,21 @@ HAL_StatusTypeDef HAL_DMAEx_MultiBufferStart_IT(DMA_HandleTypeDef *hdma, uint32_
       }
     }
 
-    /* Check if DMAMUX Synchronization is enabled*/
-    if((hdma->DMAmuxChannel->CCR & DMAMUX_CxCR_SE) != 0U)
+    if(IS_DMA_DMAMUX_ALL_INSTANCE(hdma->Instance) != 0U) /* No DMAMUX available for BDMA1 */
     {
-      /* Enable DMAMUX sync overrun IT*/
-      hdma->DMAmuxChannel->CCR |= DMAMUX_CxCR_SOIE;
-    }
+      /* Check if DMAMUX Synchronization is enabled*/
+      if((hdma->DMAmuxChannel->CCR & DMAMUX_CxCR_SE) != 0U)
+      {
+        /* Enable DMAMUX sync overrun IT*/
+        hdma->DMAmuxChannel->CCR |= DMAMUX_CxCR_SOIE;
+      }
 
-    if(hdma->DMAmuxRequestGen != 0U)
-    {
-      /* if using DMAMUX request generator, enable the DMAMUX request generator overrun IT*/
-      /* enable the request gen overrun IT*/
-      hdma->DMAmuxRequestGen->RGCR |= DMAMUX_RGxCR_OIE;
+      if(hdma->DMAmuxRequestGen != 0U)
+      {
+        /* if using DMAMUX request generator, enable the DMAMUX request generator overrun IT*/
+        /* enable the request gen overrun IT*/
+        hdma->DMAmuxRequestGen->RGCR |= DMAMUX_RGxCR_OIE;
+      }
     }
 
     /* Enable the peripheral */

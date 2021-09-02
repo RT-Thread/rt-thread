@@ -436,12 +436,18 @@ typedef void (*pSAI_CallbackTypeDef)(SAI_HandleTypeDef *hsai);
 /** @defgroup SAI_Block_Synchronization SAI Block Synchronization
   * @{
   */
-#define SAI_ASYNCHRONOUS              0U /*!< Asynchronous */
-#define SAI_SYNCHRONOUS               1U /*!< Synchronous with other block of same SAI */
-#define SAI_SYNCHRONOUS_EXT_SAI1      2U /*!< Synchronous with other SAI, SAI1 */
-#define SAI_SYNCHRONOUS_EXT_SAI2      3U /*!< Synchronous with other SAI, SAI2 */
-#define SAI_SYNCHRONOUS_EXT_SAI3      4U /*!< Synchronous with other SAI, SAI3 */
-#define SAI_SYNCHRONOUS_EXT_SAI4      5U /*!< Synchronous with other SAI, SAI4 */
+#define SAI_ASYNCHRONOUS                  0U /*!< Asynchronous */
+#define SAI_SYNCHRONOUS                   1U /*!< Synchronous with other block of same SAI */
+#define SAI_SYNCHRONOUS_EXT_SAI1          2U /*!< Synchronous with other SAI, SAI1 */
+#if defined(SAI2)
+#define SAI_SYNCHRONOUS_EXT_SAI2          3U /*!< Synchronous with other SAI, SAI2 */
+#endif /* SAI2 */
+#if defined(SAI3)
+#define SAI_SYNCHRONOUS_EXT_SAI3          4U /*!< Synchronous with other SAI, SAI3 */
+#endif /* SAI3 */
+#if defined(SAI4)
+#define SAI_SYNCHRONOUS_EXT_SAI4          5U /*!< Synchronous with other SAI, SAI4 */
+#endif /* SAI4 */
 /**
   * @}
   */
@@ -871,13 +877,24 @@ uint32_t HAL_SAI_GetError(SAI_HandleTypeDef *hsai);
 
 #define IS_SAI_BLOCK_CLOCK_STROBING(CLOCK) (((CLOCK) == SAI_CLOCKSTROBING_FALLINGEDGE) || \
                                             ((CLOCK) == SAI_CLOCKSTROBING_RISINGEDGE))
-
-#define IS_SAI_BLOCK_SYNCHRO(SYNCHRO) (((SYNCHRO) == SAI_ASYNCHRONOUS)         || \
-                                       ((SYNCHRO) == SAI_SYNCHRONOUS)          || \
-                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI1) || \
-                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI2) || \
-                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI3) || \
+#if defined(SAI2) && defined(SAI3) && defined(SAI4)
+#define IS_SAI_BLOCK_SYNCHRO(SYNCHRO) (((SYNCHRO) == SAI_ASYNCHRONOUS)          || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS)           || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI1)  || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI2)  || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI3)  || \
                                        ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI4))
+#elif defined(SAI2)
+#define IS_SAI_BLOCK_SYNCHRO(SYNCHRO) (((SYNCHRO) == SAI_ASYNCHRONOUS)          || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS)           || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI1)  || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI2))
+#else
+#define IS_SAI_BLOCK_SYNCHRO(SYNCHRO) (((SYNCHRO) == SAI_ASYNCHRONOUS)          || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS)           || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI1)  || \
+                                       ((SYNCHRO) == SAI_SYNCHRONOUS_EXT_SAI4))
+#endif
 
 #define IS_SAI_BLOCK_MCK_OUTPUT(VALUE) (((VALUE) == SAI_MCK_OUTPUT_ENABLE) || \
                                         ((VALUE) == SAI_MCK_OUTPUT_DISABLE))

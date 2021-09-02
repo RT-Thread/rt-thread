@@ -6,7 +6,8 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -27,7 +28,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_ll_fmc.h"
-
 
 /** @addtogroup STM32H7xx_HAL_Driver
   * @{
@@ -245,29 +245,29 @@ HAL_NOR_StatusTypeDef HAL_NOR_GetStatus(NOR_HandleTypeDef *hnor, uint32_t Addres
   * @{
   */
 /* NOR device IDs addresses */
-#define MC_ADDRESS               ((uint16_t)0x0000U)
-#define DEVICE_CODE1_ADDR        ((uint16_t)0x0001U)
-#define DEVICE_CODE2_ADDR        ((uint16_t)0x000EU)
-#define DEVICE_CODE3_ADDR        ((uint16_t)0x000FU)
+#define MC_ADDRESS               ((uint16_t)0x0000)
+#define DEVICE_CODE1_ADDR        ((uint16_t)0x0001)
+#define DEVICE_CODE2_ADDR        ((uint16_t)0x000E)
+#define DEVICE_CODE3_ADDR        ((uint16_t)0x000F)
 
 /* NOR CFI IDs addresses */
-#define CFI1_ADDRESS             ((uint16_t)0x61U)
-#define CFI2_ADDRESS             ((uint16_t)0x62U)
-#define CFI3_ADDRESS             ((uint16_t)0x63U)
-#define CFI4_ADDRESS             ((uint16_t)0x64U)
+#define CFI1_ADDRESS             ((uint16_t)0x61)
+#define CFI2_ADDRESS             ((uint16_t)0x62)
+#define CFI3_ADDRESS             ((uint16_t)0x63)
+#define CFI4_ADDRESS             ((uint16_t)0x64)
 
 /* NOR operation wait timeout */
-#define NOR_TMEOUT               ((uint16_t)0xFFFFU)
+#define NOR_TMEOUT               ((uint16_t)0xFFFF)
 
 /* NOR memory data width */
-#define NOR_MEMORY_8B            ((uint8_t)0x0U)
-#define NOR_MEMORY_16B           ((uint8_t)0x1U)
+#define NOR_MEMORY_8B            ((uint8_t)0x0)
+#define NOR_MEMORY_16B           ((uint8_t)0x1)
 
 /* NOR memory device read/write start address */
-#define NOR_MEMORY_ADRESS1       ((uint32_t)0x60000000U)
-#define NOR_MEMORY_ADRESS2       ((uint32_t)0x64000000U)
-#define NOR_MEMORY_ADRESS3       ((uint32_t)0x68000000U)
-#define NOR_MEMORY_ADRESS4       ((uint32_t)0x6C000000U)
+#define NOR_MEMORY_ADRESS1       ((uint32_t)0x60000000)
+#define NOR_MEMORY_ADRESS2       ((uint32_t)0x64000000)
+#define NOR_MEMORY_ADRESS3       ((uint32_t)0x68000000)
+#define NOR_MEMORY_ADRESS4       ((uint32_t)0x6C000000)
 /**
   * @}
   */

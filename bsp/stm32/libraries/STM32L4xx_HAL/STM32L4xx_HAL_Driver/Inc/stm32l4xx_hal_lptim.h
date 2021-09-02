@@ -42,7 +42,8 @@ extern "C" {
 /** @defgroup LPTIM_Exported_Types LPTIM Exported Types
   * @{
   */
-#define LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT  EXTI_IMR2_IM32  /*!< External interrupt line 32 Connected to the LPTIM EXTI Line */
+#define LPTIM_EXTI_LINE_LPTIM1  EXTI_IMR2_IM32  /*!< External interrupt line 32 Connected to the LPTIM1 EXTI Line */
+#define LPTIM_EXTI_LINE_LPTIM2  EXTI_IMR2_IM33  /*!< External interrupt line 33 Connected to the LPTIM2 EXTI Line */
 
 /**
   * @brief  LPTIM Clock configuration definition
@@ -130,7 +131,6 @@ typedef struct
                                                           LPTIM_UPDATE_ENDOFPERIOD otherwise unpredictable bahavior may occur.
                                                     This parameter must be a number between Min_Data = 0x00 and Max_Data = 0xFF. */
 #endif
-
 } LPTIM_InitTypeDef;
 
 /**
@@ -175,9 +175,9 @@ typedef struct
   void (* DirectionUpCallback)(struct __LPTIM_HandleTypeDef *hlptim);        /*!< Up-counting direction change Callback        */
   void (* DirectionDownCallback)(struct __LPTIM_HandleTypeDef *hlptim);      /*!< Down-counting direction change Callback      */
 #if defined(LPTIM_RCR_REP)
-  void (* UpdateEventCallback)(struct __LPTIM_HandleTypeDef *hlptim);        /*!< Repetition counter underflow Callback        */
-  void (* RepCounterWriteCallback)(struct __LPTIM_HandleTypeDef *hlptim);    /*!< Repetition counter successful write Callback */
-#endif /* LPTIM_RCR_REP */
+  void (* UpdateEventCallback)(struct __LPTIM_HandleTypeDef *hlptim);        /*!< Update event detection Callback              */
+  void (* RepCounterWriteCallback)(struct __LPTIM_HandleTypeDef *hlptim);    /*!< Repetition counter register write complete Callback */
+#endif
 #endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */
 } LPTIM_HandleTypeDef;
 
@@ -197,9 +197,9 @@ typedef enum
   HAL_LPTIM_DIRECTION_UP_CB_ID     = 0x07U,    /*!< Up-counting direction change Callback ID         */
   HAL_LPTIM_DIRECTION_DOWN_CB_ID   = 0x08U,    /*!< Down-counting direction change Callback ID       */
 #if defined(LPTIM_RCR_REP)
-  HAL_LPTIM_UPDATE_EVENT_CB_ID     = 0x09U,    /*!< Repetition counter underflow Callback ID         */
-  HAL_LPTIM_REPETITION_WRITE_CB_ID = 0x0AU,    /*!< Repetition counter successful write Callback ID  */
-#endif /* LPTIM_RCR_REP */
+  HAL_LPTIM_UPDATE_EVENT_CB_ID      = 0x09U,   /*!< Update event detection Callback ID               */
+  HAL_LPTIM_REP_COUNTER_WRITE_CB_ID = 0x0AU,   /*!< Repetition counter register write complete Callback ID */
+#endif
 } HAL_LPTIM_CallbackIDTypeDef;
 
 /**
@@ -354,6 +354,7 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
 /** @defgroup LPTIM_Flag_Definition LPTIM Flags Definition
   * @{
   */
+
 #if defined(LPTIM_RCR_REP)
 #define LPTIM_FLAG_REPOK                         LPTIM_ISR_REPOK
 #define LPTIM_FLAG_UPDATE                        LPTIM_ISR_UE
@@ -423,6 +424,8 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @note   The following sequence is required to solve LPTIM disable HW limitation.
   *         Please check Errata Sheet ES0335 for more details under "MCU may remain
   *         stuck in LPTIM interrupt when entering Stop mode" section.
+  * @note   Please call @ref HAL_LPTIM_GetState() after a call to __HAL_LPTIM_DISABLE to
+  *         check for TIMEOUT.
   * @retval None
   */
 #define __HAL_LPTIM_DISABLE(__HANDLE__)   LPTIM_Disable(__HANDLE__)
@@ -445,6 +448,7 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @param  __HANDLE__ LPTIM handle
   * @param  __VALUE__ Autoreload value
   * @retval None
+  * @note   The ARR register can only be modified when the LPTIM instance is enabled.
   */
 #define __HAL_LPTIM_AUTORELOAD_SET(__HANDLE__ , __VALUE__)  ((__HANDLE__)->Instance->ARR =  (__VALUE__))
 
@@ -453,6 +457,7 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @param  __HANDLE__ LPTIM handle
   * @param  __VALUE__ Compare value
   * @retval None
+  * @note   The CMP register can only be modified when the LPTIM instance is enabled.
   */
 #define __HAL_LPTIM_COMPARE_SET(__HANDLE__ , __VALUE__)     ((__HANDLE__)->Instance->CMP =  (__VALUE__))
 
@@ -463,16 +468,13 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @param  __VALUE__ Repetition value
   * @retval None
   */
-#define __HAL_LPTIM_REPETITIONCOUNTER_SET(__HANDLE__ , __VALUE__) \
-  do {                                                            \
-       (__HANDLE__)->Instance->RCR =  (__VALUE__);                \
-       (__HANDLE__)->Init.RepetitionCounter = (__VALUE__);        \
-  } while(0)
+#define __HAL_LPTIM_REPETITIONCOUNTER_SET(__HANDLE__ , __VALUE__)  ((__HANDLE__)->Instance->RCR =  (__VALUE__))
 
 /**
   * @brief  Return the current Repetition value.
   * @param  __HANDLE__ LPTIM handle
   * @retval Repetition register value
+  * @note   The RCR register can only be modified when the LPTIM instance is enabled.
   */
 #define __HAL_LPTIM_REPETITIONCOUNTER_GET(__HANDLE__)  ((__HANDLE__)->Instance->RCR)
 #endif
@@ -518,8 +520,8 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @param  __HANDLE__ LPTIM handle.
   * @param  __INTERRUPT__ LPTIM interrupt to set.
   *            This parameter can be a value of:
-  *            @arg LPTIM_IT_REPOK   : Repetition register update Interrupt (when available).
-  *            @arg LPTIM_IT_UPDATE  : Update event Interrupt (when available).
+  *            @arg LPTIM_IT_REPOK   : Repetition register update OK Interrupt (when available).
+  *            @arg LPTIM_IT_UPDATE  : Update event register Interrupt (when available).
   *            @arg LPTIM_IT_DOWN    : Counter direction change up Interrupt.
   *            @arg LPTIM_IT_UP      : Counter direction change down to up Interrupt.
   *            @arg LPTIM_IT_ARROK   : Autoreload register update OK Interrupt.
@@ -528,6 +530,7 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   *            @arg LPTIM_IT_ARRM    : Autoreload match Interrupt.
   *            @arg LPTIM_IT_CMPM    : Compare match Interrupt.
   * @retval None.
+  * @note   The LPTIM interrupts can only be enabled when the LPTIM instance is disabled.
   */
 #define __HAL_LPTIM_ENABLE_IT(__HANDLE__, __INTERRUPT__)    ((__HANDLE__)->Instance->IER  |= (__INTERRUPT__))
 
@@ -536,6 +539,8 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @param  __HANDLE__ LPTIM handle.
   * @param  __INTERRUPT__ LPTIM interrupt to set.
   *            This parameter can be a value of:
+  *            @arg LPTIM_IT_REPOK   : Repetition register update OK Interrupt (when available).
+  *            @arg LPTIM_IT_UPDATE  : Update event register Interrupt (when available).
   *            @arg LPTIM_IT_DOWN    : Counter direction change up Interrupt.
   *            @arg LPTIM_IT_UP      : Counter direction change down to up Interrupt.
   *            @arg LPTIM_IT_ARROK   : Autoreload register update OK Interrupt.
@@ -544,6 +549,7 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   *            @arg LPTIM_IT_ARRM    : Autoreload match Interrupt.
   *            @arg LPTIM_IT_CMPM    : Compare match Interrupt.
   * @retval None.
+  * @note   The LPTIM interrupts can only be disabled when the LPTIM instance is disabled.
   */
 #define __HAL_LPTIM_DISABLE_IT(__HANDLE__, __INTERRUPT__)   ((__HANDLE__)->Instance->IER  &= (~(__INTERRUPT__)))
 
@@ -552,6 +558,8 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @param  __HANDLE__ LPTIM handle.
   * @param  __INTERRUPT__ LPTIM interrupt to check.
   *            This parameter can be a value of:
+  *            @arg LPTIM_IT_REPOK   : Repetition register update OK Interrupt (when available).
+  *            @arg LPTIM_IT_UPDATE  : Update event register Interrupt (when available).
   *            @arg LPTIM_IT_DOWN    : Counter direction change up Interrupt.
   *            @arg LPTIM_IT_UP      : Counter direction change down to up Interrupt.
   *            @arg LPTIM_IT_ARROK   : Autoreload register update OK Interrupt.
@@ -565,28 +573,54 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
 #define __HAL_LPTIM_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->IER & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
 /**
-  * @brief  Enable interrupt on the LPTIM Wake-up Timer associated Exti line.
+  * @brief  Enable the LPTIM1 EXTI line in interrupt mode.
   * @retval None
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_IT()       (EXTI->IMR2 |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
+#define __HAL_LPTIM_LPTIM1_EXTI_ENABLE_IT()            (EXTI->IMR2 |= LPTIM_EXTI_LINE_LPTIM1)
 
 /**
-  * @brief  Disable interrupt on the LPTIM Wake-up Timer associated Exti line.
+  * @brief  Disable the LPTIM1 EXTI line in interrupt mode.
   * @retval None
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_IT()      (EXTI->IMR2 &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
+#define __HAL_LPTIM_LPTIM1_EXTI_DISABLE_IT()           (EXTI->IMR2 &= ~(LPTIM_EXTI_LINE_LPTIM1))
+
 
 /**
-  * @brief  Enable event on the LPTIM Wake-up Timer associated Exti line.
-  * @retval None.
+  * @brief  Enable the LPTIM1 EXTI line in event mode.
+  * @retval None
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_EVENT()    (EXTI->EMR2 |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
+#define __HAL_LPTIM_LPTIM1_EXTI_ENABLE_EVENT()         (EXTI->EMR2 |= LPTIM_EXTI_LINE_LPTIM1)
 
 /**
-  * @brief  Disable event on the LPTIM Wake-up Timer associated Exti line.
-  * @retval None.
+  * @brief  Disable the LPTIM1 EXTI line in event mode.
+  * @retval None
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_EVENT()   (EXTI->EMR2 &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
+#define __HAL_LPTIM_LPTIM1_EXTI_DISABLE_EVENT()        (EXTI->EMR2 &= ~(LPTIM_EXTI_LINE_LPTIM1))
+
+/**
+  * @brief  Enable the LPTIM2 EXTI line in interrupt mode.
+  * @retval None
+  */
+#define __HAL_LPTIM_LPTIM2_EXTI_ENABLE_IT()            (EXTI->IMR2 |= LPTIM_EXTI_LINE_LPTIM2)
+
+/**
+  * @brief  Disable the LPTIM2 EXTI line in interrupt mode.
+  * @retval None
+  */
+#define __HAL_LPTIM_LPTIM2_EXTI_DISABLE_IT()           (EXTI->IMR2 &= ~(LPTIM_EXTI_LINE_LPTIM2))
+
+
+/**
+  * @brief  Enable the LPTIM2 EXTI line in event mode.
+  * @retval None
+  */
+#define __HAL_LPTIM_LPTIM2_EXTI_ENABLE_EVENT()         (EXTI->EMR2 |= LPTIM_EXTI_LINE_LPTIM2)
+
+/**
+  * @brief  Disable the LPTIM2 EXTI line in event mode.
+  * @retval None
+  */
+#define __HAL_LPTIM_LPTIM2_EXTI_DISABLE_EVENT()        (EXTI->EMR2 &= ~(LPTIM_EXTI_LINE_LPTIM2))
 
 /**
   * @}
@@ -597,6 +631,10 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @{
   */
 
+/** @addtogroup LPTIM_Exported_Functions_Group1
+ *  @brief    Initialization and Configuration functions.
+ * @{
+ */
 /* Initialization/de-initialization functions  ********************************/
 HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim);
 HAL_StatusTypeDef HAL_LPTIM_DeInit(LPTIM_HandleTypeDef *hlptim);
@@ -604,7 +642,14 @@ HAL_StatusTypeDef HAL_LPTIM_DeInit(LPTIM_HandleTypeDef *hlptim);
 /* MSP functions  *************************************************************/
 void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef *hlptim);
 void HAL_LPTIM_MspDeInit(LPTIM_HandleTypeDef *hlptim);
+/**
+  * @}
+  */
 
+/** @addtogroup LPTIM_Exported_Functions_Group2
+ *  @brief   Start-Stop operation functions.
+ * @{
+ */
 /* Start/Stop operation functions  *********************************************/
 /* ################################# PWM Mode ################################*/
 /* Blocking mode: Polling */
@@ -653,12 +698,26 @@ HAL_StatusTypeDef HAL_LPTIM_Counter_Stop(LPTIM_HandleTypeDef *hlptim);
 /* Non-Blocking mode: Interrupt */
 HAL_StatusTypeDef HAL_LPTIM_Counter_Start_IT(LPTIM_HandleTypeDef *hlptim, uint32_t Period);
 HAL_StatusTypeDef HAL_LPTIM_Counter_Stop_IT(LPTIM_HandleTypeDef *hlptim);
+/**
+  * @}
+  */
 
+/** @addtogroup LPTIM_Exported_Functions_Group3
+ *  @brief  Read operation functions.
+ * @{
+ */
 /* Reading operation functions ************************************************/
 uint32_t HAL_LPTIM_ReadCounter(LPTIM_HandleTypeDef *hlptim);
 uint32_t HAL_LPTIM_ReadAutoReload(LPTIM_HandleTypeDef *hlptim);
 uint32_t HAL_LPTIM_ReadCompare(LPTIM_HandleTypeDef *hlptim);
+/**
+  * @}
+  */
 
+/** @addtogroup LPTIM_Exported_Functions_Group4
+ *  @brief  LPTIM IRQ handler and callback functions.
+ * @{
+ */
 /* LPTIM IRQ functions  *******************************************************/
 void HAL_LPTIM_IRQHandler(LPTIM_HandleTypeDef *hlptim);
 
@@ -673,16 +732,26 @@ void HAL_LPTIM_DirectionDownCallback(LPTIM_HandleTypeDef *hlptim);
 #if defined(LPTIM_RCR_REP)
 void HAL_LPTIM_UpdateEventCallback(LPTIM_HandleTypeDef *hlptim);
 void HAL_LPTIM_RepCounterWriteCallback(LPTIM_HandleTypeDef *hlptim);
-#endif /* LPTIM_RCR_REP */
+#endif
 
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_LPTIM_REGISTER_CALLBACKS == 1)
 HAL_StatusTypeDef HAL_LPTIM_RegisterCallback(LPTIM_HandleTypeDef *lphtim, HAL_LPTIM_CallbackIDTypeDef CallbackID, pLPTIM_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_LPTIM_UnRegisterCallback(LPTIM_HandleTypeDef *lphtim, HAL_LPTIM_CallbackIDTypeDef CallbackID);
 #endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */
+/**
+  * @}
+  */
 
+/** @addtogroup LPTIM_Group5
+ *  @brief   Peripheral State functions.
+ * @{
+ */
 /* Peripheral State functions  ************************************************/
 HAL_LPTIM_StateTypeDef HAL_LPTIM_GetState(LPTIM_HandleTypeDef *hlptim);
+/**
+  * @}
+  */
 
 /**
   * @}
@@ -808,7 +877,7 @@ HAL_LPTIM_StateTypeDef HAL_LPTIM_GetState(LPTIM_HandleTypeDef *hlptim);
 /** @defgroup LPTIM_Private_Functions LPTIM Private Functions
   * @{
   */
-void LPTIM_Disable(LPTIM_HandleTypeDef *lptim);
+void LPTIM_Disable(LPTIM_HandleTypeDef *hlptim);
 /**
   * @}
   */

@@ -46,23 +46,23 @@
   */
 
 #define IS_LL_MDMA_ALL_CHANNEL_INSTANCE(INSTANCE, CHANNEL) (((INSTANCE) == MDMA) && \
-                                                           (((CHANNEL) == LL_MDMA_CHANNEL_0) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_1) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_2) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_3) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_4) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_5) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_6) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_7) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_8) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_9) || \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_10)|| \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_11)|| \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_12)|| \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_13)|| \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_14)|| \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_15)|| \
-                                                            ((CHANNEL) == LL_MDMA_CHANNEL_ALL)))
+                                                            (((CHANNEL) == LL_MDMA_CHANNEL_0) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_1) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_2) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_3) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_4) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_5) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_6) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_7) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_8) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_9) || \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_10)|| \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_11)|| \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_12)|| \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_13)|| \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_14)|| \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_15)|| \
+                                                             ((CHANNEL) == LL_MDMA_CHANNEL_ALL)))
 
 #define IS_LL_MDMA_BLK_DATALENGTH(__VALUE__)              ((__VALUE__)  <= 0x00010000U)
 
@@ -100,7 +100,7 @@
 #define IS_LL_MDMA_PACKMODE(__VALUE__)                    (((__VALUE__) == LL_MDMA_PACK_DISABLE) || \
                                                            ((__VALUE__) == LL_MDMA_PACK_ENABLE))
 
-#define IS_LL_MDMA_BUFFER_XFERLENGTH(__VALUE__)               ((__VALUE__)  <= 0x0000007FU)
+#define IS_LL_MDMA_BUFFER_XFERLENGTH(__VALUE__)           ((__VALUE__)  <= 0x0000007FU)
 
 #define IS_LL_MDMA_DESTBURST(__VALUE__)                   (((__VALUE__) == LL_MDMA_DEST_BURST_SINGLE) || \
                                                            ((__VALUE__) == LL_MDMA_DEST_BURST_2BEATS) || \
@@ -152,47 +152,143 @@
                                                            ((__VALUE__) == LL_MDMA_BLK_RPT_DEST_ADDR_DECREMENT))
 
 
-#define IS_LL_MDMA_BLKRPT_SRC_ADDRUPDATEMODE(__VALUE__)  (((__VALUE__) == LL_MDMA_BLK_RPT_SRC_ADDR_INCREMENT) || \
-                                                          ((__VALUE__) == LL_MDMA_BLK_RPT_SRC_ADDR_DECREMENT))
+#define IS_LL_MDMA_BLKRPT_SRC_ADDRUPDATEMODE(__VALUE__)   (((__VALUE__) == LL_MDMA_BLK_RPT_SRC_ADDR_INCREMENT) || \
+                                                           ((__VALUE__) == LL_MDMA_BLK_RPT_SRC_ADDR_DECREMENT))
 
-#define IS_LL_MDMA_BLKRPT_DEST_ADDRUPDATEVAL(__VALUE__)  ((__VALUE__)  <= 0x0000FFFFU)
+#define IS_LL_MDMA_BLKRPT_DEST_ADDRUPDATEVAL(__VALUE__)   ((__VALUE__)  <= 0x0000FFFFU)
 
-#define IS_LL_MDMA_BLKRPT_SRC_ADDRUPDATEVAL(__VALUE__)   ((__VALUE__)  <= 0x0000FFFFU)
+#define IS_LL_MDMA_BLKRPT_SRC_ADDRUPDATEVAL(__VALUE__)    ((__VALUE__)  <= 0x0000FFFFU)
 
-#define IS_LL_MDMA_DEST_BUS(__VALUE__)            (((__VALUE__) == LL_MDMA_DEST_BUS_SYSTEM_AXI) || \
-                                                          ((__VALUE__) == LL_MDMA_DEST_BUS_AHB_TCM))
+#define IS_LL_MDMA_DEST_BUS(__VALUE__)                    (((__VALUE__) == LL_MDMA_DEST_BUS_SYSTEM_AXI) || \
+                                                           ((__VALUE__) == LL_MDMA_DEST_BUS_AHB_TCM))
 
-#define IS_LL_MDMA_SRC_BUS(__VALUE__)             (((__VALUE__) == LL_MDMA_SRC_BUS_SYSTEM_AXI) || \
-                                                          ((__VALUE__) == LL_MDMA_SRC_BUS_AHB_TCM))
+#define IS_LL_MDMA_SRC_BUS(__VALUE__)                     (((__VALUE__) == LL_MDMA_SRC_BUS_SYSTEM_AXI) || \
+                                                           ((__VALUE__) == LL_MDMA_SRC_BUS_AHB_TCM))
+#if defined (QUADSPI) && defined (JPEG) && defined (DSI) /* STM32H747/57 devices */
+#define IS_LL_MDMA_HWTRIGGER(__VALUE__)                   (((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM0_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM1_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM2_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM3_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM4_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM5_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM6_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM7_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM0_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM1_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM2_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM3_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM4_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM5_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM6_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM7_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_LTDC_LINE_IT)         || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_INFIFO_TH)       || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_INFIFO_NF)       || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_OUTFIFO_TH)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_OUTFIFO_NE)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_END_CONVERSION)  || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_QUADSPI_FIFO_TH)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_QUADSPI_TC)           || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_CLUT_TC)        || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_TC)             || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_TW)             || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DSI_TEARING_EFFECT)   || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DSI_END_REFRESH)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_END_DATA)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_DMA_ENDBUFFER) || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_COMMAND_END))
+#elif defined (QUADSPI) && defined (JPEG) /* STM32H743/53/45/55 devices */
+#define IS_LL_MDMA_HWTRIGGER(__VALUE__)                   (((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM0_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM1_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM2_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM3_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM4_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM5_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM6_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM7_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM0_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM1_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM2_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM3_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM4_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM5_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM6_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM7_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_LTDC_LINE_IT)         || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_INFIFO_TH)       || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_INFIFO_NF)       || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_OUTFIFO_TH)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_OUTFIFO_NE)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_END_CONVERSION)  || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_QUADSPI_FIFO_TH)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_QUADSPI_TC)           || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_CLUT_TC)        || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_TC)             || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_TW)             || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_END_DATA)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_DMA_ENDBUFFER) || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_COMMAND_END))
+#elif defined (QUADSPI) /* STM32H742 devices */
+#define IS_LL_MDMA_HWTRIGGER(__VALUE__)                   (((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM0_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM1_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM2_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM3_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM4_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM5_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM6_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM7_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM0_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM1_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM2_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM3_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM4_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM5_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM6_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM7_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_QUADSPI_FIFO_TH)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_QUADSPI_TC)           || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_CLUT_TC)        || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_TC)             || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_TW)             || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_END_DATA)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_DMA_ENDBUFFER) || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_COMMAND_END))
 
-#define IS_LL_MDMA_HWTRIGGER(__VALUE__)       (((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM0_TC)                 || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM1_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM2_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM3_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM4_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM5_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM6_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM7_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM0_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM1_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM2_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM3_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM4_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM5_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM6_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM7_TC)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_LTDC_LINE_IT)         || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_JPEG_INFIFO_TH)       || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_JPEG_INFIFO_NF)       || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_JPEG_OUTFIFO_TH)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_JPEG_OUTFIFO_NE)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_JPEG_END_CONVERSION)  || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_QUADSPI_FIFO_TH)      || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_QUADSPI_TC)           || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2D_CLUT_TC)        || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2D_TC)             || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_DMA2D_TW)             || \
-                                                          ((__VALUE__) == LL_MDMA_REQ_SDMMC1_END_DATA))
+#else /* STM32H7A3/B3 devices */
+#define IS_LL_MDMA_HWTRIGGER(__VALUE__)                   (((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM0_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM1_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM2_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM3_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM4_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM5_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM6_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA1_STREAM7_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM0_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM1_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM2_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM3_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM4_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM5_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM6_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2_STREAM7_TC)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_LTDC_LINE_IT)         || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_INFIFO_TH)       || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_INFIFO_NF)       || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_OUTFIFO_TH)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_OUTFIFO_NE)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_JPEG_END_CONVERSION)  || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_OCTOSPI1_FIFO_TH)     || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_OCTOSPI1_TC)          || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_CLUT_TC)        || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_TC)             || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_DMA2D_TW)             || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_END_DATA)      || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_DMA_ENDBUFFER) || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_SDMMC1_COMMAND_END)   || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_OCTOSPI2_FIFO_TH)     || \
+                                                           ((__VALUE__) == LL_MDMA_REQ_OCTOSPI2_TC))
+
+#endif /* QUADSPI && JPEG && DSI */
 /**
   * @}
   */
@@ -387,7 +483,7 @@ uint32_t LL_MDMA_Init(MDMA_TypeDef *MDMAx, uint32_t Channel, LL_MDMA_InitTypeDef
   LL_MDMA_ConfigTransfer(MDMAx, Channel, MDMA_InitStruct->BufferableWriteMode | \
                                          MDMA_InitStruct->RequestMode         | \
                                          MDMA_InitStruct->TriggerMode         | \
-                                         MDMA_InitStruct->PaddingAlignment   | \
+                                         MDMA_InitStruct->PaddingAlignment    | \
                                          MDMA_InitStruct->PackMode            | \
                                          MDMA_InitStruct->DestBurst           | \
                                          MDMA_InitStruct->SrctBurst           | \
@@ -482,7 +578,7 @@ void LL_MDMA_StructInit(LL_MDMA_InitTypeDef *MDMA_InitStruct)
   MDMA_InitStruct->BufferableWriteMode            = LL_MDMA_BUFF_WRITE_DISABLE;
   MDMA_InitStruct->RequestMode                    = LL_MDMA_REQUEST_MODE_HW;
   MDMA_InitStruct->TriggerMode                    = LL_MDMA_BUFFER_TRANSFER;
-  MDMA_InitStruct->PaddingAlignment              = LL_MDMA_DATAALIGN_RIGHT;
+  MDMA_InitStruct->PaddingAlignment               = LL_MDMA_DATAALIGN_RIGHT;
   MDMA_InitStruct->PackMode                       = LL_MDMA_PACK_DISABLE;
   MDMA_InitStruct->BufferTransferLength           = 0x00000000U;
   MDMA_InitStruct->DestBurst                      = LL_MDMA_DEST_BURST_SINGLE;
@@ -563,7 +659,7 @@ void LL_MDMA_CreateLinkNode(LL_MDMA_InitTypeDef *MDMA_InitStruct, LL_MDMA_LinkNo
   pNode->CTCR =  MDMA_InitStruct->BufferableWriteMode | \
                  MDMA_InitStruct->RequestMode         | \
                  MDMA_InitStruct->TriggerMode         | \
-                 MDMA_InitStruct->PaddingAlignment   | \
+                 MDMA_InitStruct->PaddingAlignment    | \
                  MDMA_InitStruct->PackMode            | \
                  MDMA_InitStruct->DestBurst           | \
                  MDMA_InitStruct->SrctBurst           | \

@@ -112,6 +112,7 @@ FLASH_ProcessTypeDef pFlash  = {.Lock = HAL_UNLOCKED, \
                                 .ErrorCode = HAL_FLASH_ERROR_NONE, \
                                 .ProcedureOnGoing = FLASH_TYPENONE, \
                                 .Address = 0U, \
+                                .Banks = 0U, \
                                 .Page = 0U, \
                                 .NbPagesToErase = 0U
                                };
@@ -166,7 +167,6 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t Address, uint
 
   /* Check the parameters */
   assert_param(IS_FLASH_TYPEPROGRAM(TypeProgram));
-  assert_param(IS_FLASH_PROGRAM_ADDRESS(Address));
 
   /* Process Locked */
   __HAL_LOCK(&pFlash);
@@ -227,7 +227,6 @@ HAL_StatusTypeDef HAL_FLASH_Program_IT(uint32_t TypeProgram, uint32_t Address, u
 
   /* Check the parameters */
   assert_param(IS_FLASH_TYPEPROGRAM(TypeProgram));
-  assert_param(IS_FLASH_PROGRAM_ADDRESS(Address));
 
   /* Process Locked */
   __HAL_LOCK(&pFlash);
@@ -250,7 +249,7 @@ HAL_StatusTypeDef HAL_FLASH_Program_IT(uint32_t TypeProgram, uint32_t Address, u
     pFlash.Address = Address;
 
     /* Enable End of Operation and Error interrupts */
-    __HAL_FLASH_ENABLE_IT(FLASH_IT_EOP | FLASH_IT_OPERR | FLASH_IT_ECCC);
+    FLASH->CR |= FLASH_CR_EOPIE | FLASH_CR_ERRIE;
 
     if (TypeProgram == FLASH_TYPEPROGRAM_DOUBLEWORD)
     {
@@ -280,31 +279,34 @@ HAL_StatusTypeDef HAL_FLASH_Program_IT(uint32_t TypeProgram, uint32_t Address, u
   */
 void HAL_FLASH_IRQHandler(void)
 {
-  uint32_t param = 0xFFFFFFFFU;
+  uint32_t param;
   uint32_t error;
 
-  /* Save flash errors. Only ECC detection can be checked here as ECCC
-     generates NMI */
-  error = (FLASH->SR & FLASH_FLAG_SR_ERROR);
-  error |= (FLASH->ECCR & FLASH_FLAG_ECCC);
-
-  CLEAR_BIT(FLASH->CR, pFlash.ProcedureOnGoing);
+  /* Save flash errors. */
+  error = (FLASH->SR & FLASH_SR_ERRORS);
 
   /* A] Set parameter for user or error callbacks */
   /* check operation was a program or erase */
-  if ((pFlash.ProcedureOnGoing & (FLASH_TYPEPROGRAM_DOUBLEWORD | FLASH_TYPEPROGRAM_FAST)) != 0x00U)
+  if ((pFlash.ProcedureOnGoing & FLASH_TYPEERASE_MASS) != 0x00U)
   {
-    /* return adress being programmed */
-    param = pFlash.Address;
-  }
-  else if ((pFlash.ProcedureOnGoing & (FLASH_TYPEERASE_MASS | FLASH_TYPEERASE_PAGES)) != 0x00U)
-  {
-    /* return page number being erased (0 for mass erase) */
-    param = pFlash.Page;
+    /* return bank number */
+    param = pFlash.Banks;
   }
   else
   {
-    /* Nothing to do */
+    /* Clear operation only for page erase or program */
+    CLEAR_BIT(FLASH->CR, pFlash.ProcedureOnGoing);
+
+    if ((pFlash.ProcedureOnGoing & (FLASH_TYPEPROGRAM_DOUBLEWORD | FLASH_TYPEPROGRAM_FAST)) != 0x00U)
+    {
+      /* return address being programmed */
+      param = pFlash.Address;
+    }
+    else
+    {
+      /* return page number being erased */
+      param = pFlash.Page;
+    }
   }
 
   /* B] Check errors */
@@ -314,7 +316,7 @@ void HAL_FLASH_IRQHandler(void)
     pFlash.ErrorCode |= error;
 
     /* clear error flags */
-    __HAL_FLASH_CLEAR_FLAG(error);
+    FLASH->SR = FLASH_SR_ERRORS;
 
     /*Stop the procedure ongoing*/
     pFlash.ProcedureOnGoing = FLASH_TYPENONE;
@@ -324,10 +326,10 @@ void HAL_FLASH_IRQHandler(void)
   }
 
   /* C] Check FLASH End of Operation flag */
-  if (__HAL_FLASH_GET_FLAG(FLASH_FLAG_EOP) != 0x00U)
+  if ((FLASH->SR & FLASH_SR_EOP) != 0x00U)
   {
     /* Clear FLASH End of Operation pending bit */
-    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP);
+    FLASH->SR = FLASH_SR_EOP;
 
     if (pFlash.ProcedureOnGoing == FLASH_TYPEERASE_PAGES)
     {
@@ -339,7 +341,7 @@ void HAL_FLASH_IRQHandler(void)
       {
         /* Increment page number */
         pFlash.Page++;
-        FLASH_PageErase(pFlash.Page);
+        FLASH_PageErase(pFlash.Banks, pFlash.Page);
       }
       else
       {
@@ -360,7 +362,7 @@ void HAL_FLASH_IRQHandler(void)
   if (pFlash.ProcedureOnGoing == FLASH_TYPENONE)
   {
     /* Disable End of Operation and Error interrupts */
-    __HAL_FLASH_DISABLE_IT(FLASH_IT_EOP | FLASH_IT_OPERR | FLASH_IT_ECCC);
+    FLASH->CR &= ~(FLASH_CR_EOPIE | FLASH_CR_ERRIE);
 
     /* Process Unlocked */
     __HAL_UNLOCK(&pFlash);
@@ -546,17 +548,17 @@ HAL_StatusTypeDef HAL_FLASH_OB_Launch(void)
   * @brief  Get the specific FLASH error flag.
   * @retval FLASH_ErrorCode The returned value can be
   *            @arg @ref HAL_FLASH_ERROR_NONE No error set
-  *            @arg @ref HAL_FLASH_ERROR_OP FLASH Operation error
-  *            @arg @ref HAL_FLASH_ERROR_PROG FLASH Programming error
-  *            @arg @ref HAL_FLASH_ERROR_WRP FLASH Write protection error
-  *            @arg @ref HAL_FLASH_ERROR_PGA FLASH Programming alignment error
-  *            @arg @ref HAL_FLASH_ERROR_SIZ FLASH Size error
-  *            @arg @ref HAL_FLASH_ERROR_PGS FLASH Programming sequence error
-  *            @arg @ref HAL_FLASH_ERROR_MIS FLASH Fast programming data miss error
-  *            @arg @ref HAL_FLASH_ERROR_FAST FLASH Fast programming error
-  *            @arg @ref HAL_FLASH_ERROR_RD FLASH Read Protection error (PCROP)(*)
-  *            @arg @ref HAL_FLASH_ERROR_OPTV FLASH Option validity error
-  *            @arg @ref HAL_FLASH_ERROR_ECCD FLASH two ECC errors have been detected
+  *            @arg @ref HAL_FLASH_ERROR_OP Operation error
+  *            @arg @ref HAL_FLASH_ERROR_PROG Programming error
+  *            @arg @ref HAL_FLASH_ERROR_WRP Write protection error
+  *            @arg @ref HAL_FLASH_ERROR_PGA Programming alignment error
+  *            @arg @ref HAL_FLASH_ERROR_SIZ Size error
+  *            @arg @ref HAL_FLASH_ERROR_PGS Programming sequence error
+  *            @arg @ref HAL_FLASH_ERROR_MIS Fast programming data miss error
+  *            @arg @ref HAL_FLASH_ERROR_FAST Fast programming error
+  *            @arg @ref HAL_FLASH_ERROR_RD Read Protection error (PCROP)(*)
+  *            @arg @ref HAL_FLASH_ERROR_OPTV Option validity error
+  *            @arg @ref HAL_FLASH_ERROR_ECCD two ECC errors have been detected
   * @note (*) availability depends on devices
   */
 uint32_t HAL_FLASH_GetError(void)
@@ -586,14 +588,19 @@ uint32_t HAL_FLASH_GetError(void)
 HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout)
 {
   uint32_t error;
-  uint32_t eccerr;
   /* Wait for the FLASH operation to complete by polling on BUSY flag to be reset.
      Even if the FLASH operation fails, the BUSY flag will be reset and an error
      flag will be set */
   uint32_t timeout = HAL_GetTick() + Timeout;
 
   /* Wait if any operation is ongoing */
-  while (__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY) != 0x00U)
+#if defined(FLASH_DBANK_SUPPORT)
+  error = (FLASH_SR_BSY1 | FLASH_SR_BSY2);
+#else
+  error = FLASH_SR_BSY1;
+#endif
+
+  while ((FLASH->SR & error) != 0x00U)
   {
     if (HAL_GetTick() >= timeout)
     {
@@ -601,34 +608,23 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout)
     }
   }
 
-  /* check flash errors. Only ECC correction can be checked here as ECCD
-      generates NMI */
-  error = (FLASH->SR & FLASH_FLAG_SR_ERROR);
+  /* check flash errors */
+  error = (FLASH->SR & FLASH_SR_ERRORS);
 
   /* Clear SR register */
-  FLASH->SR = FLASH_FLAG_SR_CLEAR;
-
-  /* Update error with ECC error value */
-  eccerr = (FLASH->ECCR & FLASH_FLAG_ECCC);
-
-  if(eccerr != 0x00u)
-  {
-    FLASH->ECCR |= eccerr;
-    error |= eccerr;
-  }
+  FLASH->SR = FLASH_SR_CLEAR;
 
   if (error != 0x00U)
   {
     /*Save the error code*/
     pFlash.ErrorCode = error;
-
     return HAL_ERROR;
   }
 
   /* Wait for control register to be written */
   timeout = HAL_GetTick() + Timeout;
 
-  while (__HAL_FLASH_GET_FLAG(FLASH_FLAG_CFGBSY) != 0x00U)
+  while ((FLASH->SR & FLASH_SR_CFGBSY) != 0x00U)
   {
     if (HAL_GetTick() >= timeout)
     {
@@ -693,7 +689,12 @@ static __RAM_FUNC void FLASH_Program_Fast(uint32_t Address, uint32_t DataAddress
   /* wait for BSY1 in order to be sure that flash operation is ended befoire
      allowing prefetch in flash. Timeout does not return status, as it will
      be anyway done later */
+
+#if defined(FLASH_DBANK_SUPPORT)
+  while ((FLASH->SR & (FLASH_SR_BSY1 | FLASH_SR_BSY2)) != 0x00U)
+#else
   while ((FLASH->SR & FLASH_SR_BSY1) != 0x00U)
+#endif
   {
   }
 
