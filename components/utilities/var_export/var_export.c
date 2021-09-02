@@ -30,8 +30,6 @@ RT_SECTION("2.""VarExpTab") = {"ve_end", "ve_end", 2};
 
 /* for MS VC++ compiler */
 #if defined(_MSC_VER)
-static ve_exporter_t ve_exporter_tab[2048];
-
 #pragma section("VarExpTab$a", read)
 __declspec(allocate("VarExpTab$a"))
 RT_USED const struct ve_exporter __ve_table_start = { "ve_start", "ve_start", 0};
@@ -59,6 +57,9 @@ int var_export_init(void)
 #elif defined (_MSC_VER)                            /* for MS VC++ compiler */
     unsigned int *ptr_begin = (unsigned int *)&__ve_table_start;
     unsigned int *ptr_end = (unsigned int *)&__ve_table_end;
+    static ve_exporter_t ve_exporter_tab[2048];
+    ve_exporter_t ve_exporter_temp;
+    int index_i, index_j, index_min;
 
     /* past the three members in first ptr_begin */
     ptr_begin += (sizeof(struct ve_exporter) / sizeof(unsigned int));
@@ -67,8 +68,6 @@ int var_export_init(void)
 
     ve_exporter_table = (const ve_exporter_t *)ptr_begin;
     ve_exporter_num = (ptr_end - ptr_begin) / (sizeof(struct ve_exporter) / sizeof(unsigned int)) + 1;
-
-    int index_i, index_j, index_min;
 
     for (index_i = 0; index_i < ve_exporter_num; index_i++)
     {
@@ -81,16 +80,18 @@ int var_export_init(void)
 
         for (index_j = index_i + 1; index_j < ve_exporter_num; index_j++)
         {
-            if (rt_strcmp(ve_exporter_tab[index_j].module, ve_exporter_tab[index_min].module) < 0)
+            if (rt_strcmp(ve_exporter_tab[index_j].module, ve_exporter_tab[index_min].module) < 0 &&
+                rt_strcmp(ve_exporter_tab[index_j].identifier, ve_exporter_tab[index_min].identifier) < 0)
             {
                 index_min = index_j;
-                ve_exporter_t ve_exporter_temp[1] = {ve_exporter_tab[index_min]};
+                ve_exporter_temp = ve_exporter_tab[index_min];
                 ve_exporter_tab[index_min] = ve_exporter_tab[index_i];
-                ve_exporter_tab[index_i] = ve_exporter_temp[0];
+                ve_exporter_tab[index_i] = ve_exporter_temp;
             }
         }
     }
-#endif
+    ve_exporter_table = ve_exporter_tab;
+#endif /* __CC_ARM || __CLANG_ARM */
 
     return ve_exporter_num;
 }
@@ -99,11 +100,7 @@ INIT_PREV_EXPORT(var_export_init);
 /* initialize module */
 int ve_module_init(ve_module_t *mod, const char *module)
 {
-#if defined(_MSC_VER)
-    const ve_exporter_t *exporter = ve_exporter_tab;
-#else
     const ve_exporter_t *exporter = ve_exporter_table;
-#endif
     rt_bool_t first_exist = RT_FALSE;
     rt_size_t found_index;
 
@@ -155,13 +152,8 @@ const ve_exporter_t *ve_iter_next(ve_iterator_t *iter)
 /* binary search based on identifier */
 static const ve_exporter_t *ve_binary_search(ve_module_t *mod, const char *identifier)
 {
-#if defined(_MSC_VER)
-    rt_size_t ve_low_num = mod->begin - ve_exporter_tab;
-    rt_size_t ve_high_num = mod->end - ve_exporter_tab;
-#else
     rt_size_t ve_low_num = mod->begin - ve_exporter_table;
     rt_size_t ve_high_num = mod->end - ve_exporter_table;
-#endif
     rt_size_t ve_mid_num;
     int strcmp_rst;
 
