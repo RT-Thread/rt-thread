@@ -16,7 +16,7 @@
   *                      before branch to main program. This call is made inside
   *                      the "startup_stm32h7xx.s" file.
   *
-  *      - SystemCoreClock variable: Contains the core clock (HCLK), it can be used
+  *      - SystemCoreClock variable: Contains the core clock, it can be used
   *                                  by the user application to setup the SysTick
   *                                  timer or configure other parameters.
   *
@@ -272,6 +272,7 @@ void SystemInit (void)
 void SystemCoreClockUpdate (void)
 {
   uint32_t pllp, pllsource, pllm, pllfracen, hsivalue, tmp;
+  uint32_t common_system_clock;
   float_t fracn1, pllvco;
 
   /* Get SYSCLK source -------------------------------------------------------*/
@@ -279,16 +280,15 @@ void SystemCoreClockUpdate (void)
   switch (RCC->CFGR & RCC_CFGR_SWS)
   {
   case RCC_CFGR_SWS_HSI:  /* HSI used as system clock source */
-   SystemCoreClock = (uint32_t) (HSI_VALUE >> ((RCC->CR & RCC_CR_HSIDIV)>> 3));
-
+    common_system_clock = (uint32_t) (HSI_VALUE >> ((RCC->CR & RCC_CR_HSIDIV)>> 3));
     break;
 
   case RCC_CFGR_SWS_CSI:  /* CSI used as system clock  source */
-    SystemCoreClock = CSI_VALUE;
+    common_system_clock = CSI_VALUE;
     break;
 
   case RCC_CFGR_SWS_HSE:  /* HSE used as system clock  source */
-    SystemCoreClock = HSE_VALUE;
+    common_system_clock = HSE_VALUE;
     break;
 
   case RCC_CFGR_SWS_PLL1:  /* PLL1 used as system clock  source */
@@ -325,28 +325,33 @@ void SystemCoreClockUpdate (void)
         break;
       }
       pllp = (((RCC->PLL1DIVR & RCC_PLL1DIVR_P1) >>9) + 1U ) ;
-      SystemCoreClock =  (uint32_t)(float_t)(pllvco/(float_t)pllp);
+      common_system_clock =  (uint32_t)(float_t)(pllvco/(float_t)pllp);
     }
     else
     {
-      SystemCoreClock = 0U;
+      common_system_clock = 0U;
     }
     break;
 
   default:
-    SystemCoreClock = CSI_VALUE;
+    common_system_clock = CSI_VALUE;
     break;
   }
 
   /* Compute SystemClock frequency --------------------------------------------------*/
   tmp = D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_D1CPRE)>> RCC_D1CFGR_D1CPRE_Pos];
 
-  /* SystemCoreClock frequency : CM7 CPU frequency  */
-  SystemCoreClock >>= tmp;
+  /* common_system_clock frequency : CM7 CPU frequency  */
+  common_system_clock >>= tmp;
 
   /* SystemD2Clock frequency : CM4 CPU, AXI and AHBs Clock frequency  */
-  SystemD2Clock = (SystemCoreClock >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
+  SystemD2Clock = (common_system_clock >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
 
+#if defined(DUAL_CORE) && defined(CORE_CM4)
+  SystemCoreClock = SystemD2Clock;
+#else
+  SystemCoreClock = common_system_clock;
+#endif /* DUAL_CORE && CORE_CM4 */
 }
 
 /**

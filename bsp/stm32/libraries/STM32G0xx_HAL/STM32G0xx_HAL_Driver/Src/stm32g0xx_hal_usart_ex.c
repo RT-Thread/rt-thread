@@ -243,7 +243,7 @@ HAL_StatusTypeDef HAL_USARTEx_DisableSlaveMode(USART_HandleTypeDef *husart)
   /* Restore USART configuration */
   WRITE_REG(husart->Instance->CR1, tmpcr1);
 
-  husart->SlaveMode = USART_SLAVEMODE_ENABLE;
+  husart->SlaveMode = USART_SLAVEMODE_DISABLE;
 
   husart->State = HAL_USART_STATE_READY;
 

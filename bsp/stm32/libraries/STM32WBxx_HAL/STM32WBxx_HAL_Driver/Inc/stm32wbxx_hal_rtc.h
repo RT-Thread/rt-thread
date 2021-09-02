@@ -81,6 +81,7 @@ typedef struct
                                  This parameter can be a value of @ref RTC_Output_Polarity_Definitions */
 
   uint32_t OutPutType;      /*!< Specifies the RTC Output Pin mode.
+                                 This parameter is dedicated to the PC13 configuration.
                                  This parameter can be a value of @ref RTC_Output_Type_ALARM_OUT */
 }RTC_InitTypeDef;
 
@@ -264,8 +265,9 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
   * @{
   */
 #define RTC_OUTPUT_TYPE_OPENDRAIN      ((uint32_t)0x00000000U)
+#if defined(RTC_OR_ALARMOUTTYPE)
 #define RTC_OUTPUT_TYPE_PUSHPULL       ((uint32_t)RTC_OR_ALARMOUTTYPE)
-
+#endif
 /**
   * @}
   */
@@ -868,8 +870,12 @@ HAL_RTCStateTypeDef HAL_RTC_GetState(RTC_HandleTypeDef *hrtc);
 #define IS_RTC_OUTPUT_POL(POL) (((POL) == RTC_OUTPUT_POLARITY_HIGH) || \
                                 ((POL) == RTC_OUTPUT_POLARITY_LOW))
 
+#if defined(RTC_OUTPUT_TYPE_PUSHPULL)
 #define IS_RTC_OUTPUT_TYPE(TYPE) (((TYPE) == RTC_OUTPUT_TYPE_OPENDRAIN) || \
                                   ((TYPE) == RTC_OUTPUT_TYPE_PUSHPULL))
+#else
+#define IS_RTC_OUTPUT_TYPE(TYPE) ((TYPE) == RTC_OUTPUT_TYPE_OPENDRAIN)
+#endif
 
 #define IS_RTC_OUTPUT_REMAP(REMAP)   (((REMAP) == RTC_OUTPUT_REMAP_NONE) || \
                                       ((REMAP) == RTC_OUTPUT_REMAP_POS1))

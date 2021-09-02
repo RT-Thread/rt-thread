@@ -8847,19 +8847,19 @@ typedef struct
 #define TAMP_CR2_TAMP3TRG            TAMP_CR2_TAMP3TRG_Msk
 
 /********************  Bits definition for TAMP_FLTCR register  ***************/
-#define TAMP_FLTCR_TAMPFREQ_0        ((uint32_t)0x00000001)
-#define TAMP_FLTCR_TAMPFREQ_1        ((uint32_t)0x00000002)
-#define TAMP_FLTCR_TAMPFREQ_2        ((uint32_t)0x00000004)
+#define TAMP_FLTCR_TAMPFREQ_0        (0x00000001UL)
+#define TAMP_FLTCR_TAMPFREQ_1        (0x00000002UL)
+#define TAMP_FLTCR_TAMPFREQ_2        (0x00000004UL)
 #define TAMP_FLTCR_TAMPFREQ_Pos      (0U)
 #define TAMP_FLTCR_TAMPFREQ_Msk      (0x7UL << TAMP_FLTCR_TAMPFREQ_Pos)        /*!< 0x00000007 */
 #define TAMP_FLTCR_TAMPFREQ          TAMP_FLTCR_TAMPFREQ_Msk
-#define TAMP_FLTCR_TAMPFLT_0         ((uint32_t)0x00000008)
-#define TAMP_FLTCR_TAMPFLT_1         ((uint32_t)0x00000010)
+#define TAMP_FLTCR_TAMPFLT_0         (0x00000008UL)
+#define TAMP_FLTCR_TAMPFLT_1         (0x00000010UL)
 #define TAMP_FLTCR_TAMPFLT_Pos       (3U)
 #define TAMP_FLTCR_TAMPFLT_Msk       (0x3UL << TAMP_FLTCR_TAMPFLT_Pos)         /*!< 0x00000018 */
 #define TAMP_FLTCR_TAMPFLT           TAMP_FLTCR_TAMPFLT_Msk
-#define TAMP_FLTCR_TAMPPRCH_0        ((uint32_t)0x00000020)
-#define TAMP_FLTCR_TAMPPRCH_1        ((uint32_t)0x00000040)
+#define TAMP_FLTCR_TAMPPRCH_0        (0x00000020UL)
+#define TAMP_FLTCR_TAMPPRCH_1        (0x00000040UL)
 #define TAMP_FLTCR_TAMPPRCH_Pos      (5U)
 #define TAMP_FLTCR_TAMPPRCH_Msk      (0x3UL << TAMP_FLTCR_TAMPPRCH_Pos)        /*!< 0x00000060 */
 #define TAMP_FLTCR_TAMPPRCH          TAMP_FLTCR_TAMPPRCH_Msk
@@ -9903,35 +9903,35 @@ typedef struct
 
 /******************  Bit definition for SYSCFG_SWPR register  ****************/
 #define SYSCFG_SWPR_PAGE0_Pos          (0U)
-#define SYSCFG_SWPR_PAGE0_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE0_Pos)       /*!< 0x00000001 */
-#define SYSCFG_SWPR_PAGE0              (uint32_t)(SYSCFG_SWPR_PAGE0_Msk)                  /*!< CCMSRAM  Write protection page 0 */
+#define SYSCFG_SWPR_PAGE0_Msk          (0x1UL << SYSCFG_SWPR_PAGE0_Pos)       /*!< 0x00000001 */
+#define SYSCFG_SWPR_PAGE0              (SYSCFG_SWPR_PAGE0_Msk)                /*!< CCMSRAM  Write protection page 0 */
 #define SYSCFG_SWPR_PAGE1_Pos          (1U)
-#define SYSCFG_SWPR_PAGE1_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE1_Pos)       /*!< 0x00000002 */
-#define SYSCFG_SWPR_PAGE1              (uint32_t)(SYSCFG_SWPR_PAGE1_Msk)                  /*!< CCMSRAM  Write protection page 1 */
+#define SYSCFG_SWPR_PAGE1_Msk          (0x1UL << SYSCFG_SWPR_PAGE1_Pos)       /*!< 0x00000002 */
+#define SYSCFG_SWPR_PAGE1              (SYSCFG_SWPR_PAGE1_Msk)                /*!< CCMSRAM  Write protection page 1 */
 #define SYSCFG_SWPR_PAGE2_Pos          (2U)
-#define SYSCFG_SWPR_PAGE2_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE2_Pos)       /*!< 0x00000004 */
-#define SYSCFG_SWPR_PAGE2              (uint32_t)(SYSCFG_SWPR_PAGE2_Msk)                  /*!< CCMSRAM  Write protection page 2 */
+#define SYSCFG_SWPR_PAGE2_Msk          (0x1UL << SYSCFG_SWPR_PAGE2_Pos)       /*!< 0x00000004 */
+#define SYSCFG_SWPR_PAGE2              (SYSCFG_SWPR_PAGE2_Msk)                /*!< CCMSRAM  Write protection page 2 */
 #define SYSCFG_SWPR_PAGE3_Pos          (3U)
-#define SYSCFG_SWPR_PAGE3_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE3_Pos)       /*!< 0x00000008 */
-#define SYSCFG_SWPR_PAGE3              (uint32_t)(SYSCFG_SWPR_PAGE3_Msk)                  /*!< CCMSRAM  Write protection page 3 */
+#define SYSCFG_SWPR_PAGE3_Msk          (0x1UL << SYSCFG_SWPR_PAGE3_Pos)       /*!< 0x00000008 */
+#define SYSCFG_SWPR_PAGE3              (SYSCFG_SWPR_PAGE3_Msk)                /*!< CCMSRAM  Write protection page 3 */
 #define SYSCFG_SWPR_PAGE4_Pos          (4U)
-#define SYSCFG_SWPR_PAGE4_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE4_Pos)       /*!< 0x00000010 */
-#define SYSCFG_SWPR_PAGE4              (uint32_t)(SYSCFG_SWPR_PAGE4_Msk)                  /*!< CCMSRAM  Write protection page 4 */
+#define SYSCFG_SWPR_PAGE4_Msk          (0x1UL << SYSCFG_SWPR_PAGE4_Pos)       /*!< 0x00000010 */
+#define SYSCFG_SWPR_PAGE4              (SYSCFG_SWPR_PAGE4_Msk)                /*!< CCMSRAM  Write protection page 4 */
 #define SYSCFG_SWPR_PAGE5_Pos          (5U)
-#define SYSCFG_SWPR_PAGE5_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE5_Pos)       /*!< 0x00000020 */
-#define SYSCFG_SWPR_PAGE5              (uint32_t)(SYSCFG_SWPR_PAGE5_Msk)                  /*!< CCMSRAM  Write protection page 5 */
+#define SYSCFG_SWPR_PAGE5_Msk          (0x1UL << SYSCFG_SWPR_PAGE5_Pos)       /*!< 0x00000020 */
+#define SYSCFG_SWPR_PAGE5              (SYSCFG_SWPR_PAGE5_Msk)                /*!< CCMSRAM  Write protection page 5 */
 #define SYSCFG_SWPR_PAGE6_Pos          (6U)
-#define SYSCFG_SWPR_PAGE6_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE6_Pos)       /*!< 0x00000040 */
-#define SYSCFG_SWPR_PAGE6              (uint32_t)(SYSCFG_SWPR_PAGE6_Msk)                  /*!< CCMSRAM  Write protection page 6 */
+#define SYSCFG_SWPR_PAGE6_Msk          (0x1UL << SYSCFG_SWPR_PAGE6_Pos)       /*!< 0x00000040 */
+#define SYSCFG_SWPR_PAGE6              (SYSCFG_SWPR_PAGE6_Msk)                /*!< CCMSRAM  Write protection page 6 */
 #define SYSCFG_SWPR_PAGE7_Pos          (7U)
-#define SYSCFG_SWPR_PAGE7_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE7_Pos)       /*!< 0x00000080 */
-#define SYSCFG_SWPR_PAGE7              (uint32_t)(SYSCFG_SWPR_PAGE7_Msk)                  /*!< CCMSRAM  Write protection page 7 */
+#define SYSCFG_SWPR_PAGE7_Msk          (0x1UL << SYSCFG_SWPR_PAGE7_Pos)       /*!< 0x00000080 */
+#define SYSCFG_SWPR_PAGE7              (SYSCFG_SWPR_PAGE7_Msk)                /*!< CCMSRAM  Write protection page 7 */
 #define SYSCFG_SWPR_PAGE8_Pos          (8U)
-#define SYSCFG_SWPR_PAGE8_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE8_Pos)       /*!< 0x00000100 */
-#define SYSCFG_SWPR_PAGE8              (uint32_t)(SYSCFG_SWPR_PAGE8_Msk)                  /*!< CCMSRAM  Write protection page 8 */
+#define SYSCFG_SWPR_PAGE8_Msk          (0x1UL << SYSCFG_SWPR_PAGE8_Pos)       /*!< 0x00000100 */
+#define SYSCFG_SWPR_PAGE8              (SYSCFG_SWPR_PAGE8_Msk)                /*!< CCMSRAM  Write protection page 8 */
 #define SYSCFG_SWPR_PAGE9_Pos          (9U)
-#define SYSCFG_SWPR_PAGE9_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE9_Pos)       /*!< 0x00000200 */
-#define SYSCFG_SWPR_PAGE9              (uint32_t)(SYSCFG_SWPR_PAGE9_Msk)                  /*!< CCMSRAM  Write protection page 9 */
+#define SYSCFG_SWPR_PAGE9_Msk          (0x1UL << SYSCFG_SWPR_PAGE9_Pos)       /*!< 0x00000200 */
+#define SYSCFG_SWPR_PAGE9              (SYSCFG_SWPR_PAGE9_Msk)                /*!< CCMSRAM  Write protection page 9 */
 /******************  Bit definition for SYSCFG_SKR register  ****************/
 #define SYSCFG_SKR_KEY_Pos              (0U)
 #define SYSCFG_SKR_KEY_Msk              (0xFFUL << SYSCFG_SKR_KEY_Pos)         /*!< 0x000000FF */
@@ -12977,9 +12977,6 @@ typedef struct
                                                        ((INSTANCE) == TIM15) || \
                                                        ((INSTANCE) == TIM16) || \
                                                        ((INSTANCE) == TIM17))
-
-/****************** TIM Instances : supporting synchronization ****************/
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
 
 /****************** TIM Instances : supporting ADC triggering through TRGO2 ***/
 #define IS_TIM_TRGO2_INSTANCE(INSTANCE)    (((INSTANCE) == TIM1)    || \

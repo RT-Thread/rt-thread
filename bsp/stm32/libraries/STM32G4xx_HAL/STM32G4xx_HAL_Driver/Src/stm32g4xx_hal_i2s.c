@@ -261,7 +261,7 @@ HAL_StatusTypeDef HAL_I2S_Init(I2S_HandleTypeDef *hi2s)
   uint32_t i2sodd;
   uint32_t packetlength;
   uint32_t tmp;
-  uint32_t i2sclk;
+  uint32_t i2sclk = 0U;
 
   /* Check the I2S handle allocation */
   if (hi2s == NULL)

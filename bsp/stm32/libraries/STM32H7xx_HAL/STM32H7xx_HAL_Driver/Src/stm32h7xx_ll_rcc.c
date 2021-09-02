@@ -56,10 +56,16 @@ const uint8_t LL_RCC_PrescTable[16] = {0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7,
                                             || ((__VALUE__) == LL_RCC_LPTIM2_CLKSOURCE)  \
                                             || ((__VALUE__) == LL_RCC_LPTIM345_CLKSOURCE))
 
+#if defined(LL_RCC_SAI4A_CLKSOURCE)
 #define IS_LL_RCC_SAI_CLKSOURCE(__VALUE__)    (((__VALUE__) == LL_RCC_SAI1_CLKSOURCE) \
                                             || ((__VALUE__) == LL_RCC_SAI23_CLKSOURCE) \
                                             || ((__VALUE__) == LL_RCC_SAI4A_CLKSOURCE) \
                                             || ((__VALUE__) == LL_RCC_SAI4B_CLKSOURCE))
+#else
+#define IS_LL_RCC_SAI_CLKSOURCE(__VALUE__)    (((__VALUE__) == LL_RCC_SAI1_CLKSOURCE) \
+                                            || ((__VALUE__) == LL_RCC_SAI2A_CLKSOURCE) \
+                                            || ((__VALUE__) == LL_RCC_SAI2B_CLKSOURCE))
+#endif /* LL_RCC_SAI4A_CLKSOURCE */
 
 #define IS_LL_RCC_SPI_CLKSOURCE(__VALUE__)    (((__VALUE__) == LL_RCC_SPI123_CLKSOURCE) \
                                             || ((__VALUE__) == LL_RCC_SPI45_CLKSOURCE) \
@@ -135,6 +141,7 @@ void LL_RCC_DeInit(void)
   while(LL_RCC_PLL3_IsReady() != 0U)
   {}
 
+#if defined(RCC_D1CFGR_HPRE)
   /* Reset D1CFGR register */
   CLEAR_REG(RCC->D1CFGR);
 
@@ -143,6 +150,17 @@ void LL_RCC_DeInit(void)
 
   /* Reset D3CFGR register */
   CLEAR_REG(RCC->D3CFGR);
+#else
+  /* Reset CDCFGR1 register */
+  CLEAR_REG(RCC->CDCFGR1);
+
+  /* Reset CDCFGR2 register */
+  CLEAR_REG(RCC->CDCFGR2);
+
+  /* Reset SRDCFGR register */
+  CLEAR_REG(RCC->SRDCFGR);
+
+#endif /* RCC_D1CFGR_HPRE */
 
   /* Reset PLLCKSELR register to default value */
   RCC->PLLCKSELR= RCC_PLLCKSELR_DIVM1_5|RCC_PLLCKSELR_DIVM2_5|RCC_PLLCKSELR_DIVM3_5;
@@ -243,6 +261,7 @@ void LL_RCC_GetSystemClocksFreq(LL_RCC_ClocksTypeDef *RCC_Clocks)
 
 /**
   * @brief  Return PLL1 clocks frequencies
+  * @note   LL_RCC_PERIPH_FREQUENCY_NO returned for non activated output or oscillator not ready
   * @retval None
   */
 void LL_RCC_GetPLL1ClockFreq(LL_PLL_ClocksTypeDef *PLL_Clocks)
@@ -316,6 +335,7 @@ void LL_RCC_GetPLL1ClockFreq(LL_PLL_ClocksTypeDef *PLL_Clocks)
 
 /**
   * @brief  Return PLL2 clocks frequencies
+  * @note   LL_RCC_PERIPH_FREQUENCY_NO returned for non activated output or oscillator not ready
   * @retval None
   */
 void LL_RCC_GetPLL2ClockFreq(LL_PLL_ClocksTypeDef *PLL_Clocks)
@@ -389,6 +409,7 @@ void LL_RCC_GetPLL2ClockFreq(LL_PLL_ClocksTypeDef *PLL_Clocks)
 
 /**
   * @brief  Return PLL3 clocks frequencies
+  * @note   LL_RCC_PERIPH_FREQUENCY_NO returned for non activated output or oscillator not ready
   * @retval None
   */
 void LL_RCC_GetPLL3ClockFreq(LL_PLL_ClocksTypeDef *PLL_Clocks)
@@ -765,11 +786,15 @@ uint32_t LL_RCC_GetLPTIMClockFreq(uint32_t LPTIMxSource)
   * @brief  Return SAIx clock frequency
   * @param  SAIxSource This parameter can be one of the following values:
   *         @arg @ref LL_RCC_SAI1_CLKSOURCE
-  *         @arg @ref LL_RCC_SAI23_CLKSOURCE
-  *         @arg @ref LL_RCC_SAI4A_CLKSOURCE
-  *         @arg @ref LL_RCC_SAI4B_CLKSOURCE
+  *         @arg @ref LL_RCC_SAI23_CLKSOURCE (*)
+  *         @arg @ref LL_RCC_SAI2A_CLKSOURCE (*)
+  *         @arg @ref LL_RCC_SAI2B_CLKSOURCE (*)
+  *         @arg @ref LL_RCC_SAI4A_CLKSOURCE (*)
+  *         @arg @ref LL_RCC_SAI4B_CLKSOURCE (*)
   * @retval SAI clock frequency (in Hz)
   *         - @ref  LL_RCC_PERIPH_FREQUENCY_NO indicates that oscillator is not ready
+  *
+  * (*) : Available on some STM32H7 lines only.
   */
 uint32_t LL_RCC_GetSAIClockFreq(uint32_t SAIxSource)
 {
@@ -782,9 +807,17 @@ uint32_t LL_RCC_GetSAIClockFreq(uint32_t SAIxSource)
   switch (LL_RCC_GetSAIClockSource(SAIxSource))
   {
     case LL_RCC_SAI1_CLKSOURCE_PLL1Q:
+#if defined(SAI3)
     case LL_RCC_SAI23_CLKSOURCE_PLL1Q:
+#endif /* SAI3 */
+#if defined (RCC_CDCCIP1R_SAI2ASEL) || defined(RCC_CDCCIP1R_SAI2BSEL)
+    case LL_RCC_SAI2A_CLKSOURCE_PLL1Q:
+    case LL_RCC_SAI2B_CLKSOURCE_PLL1Q:
+#endif /* (RCC_CDCCIP1R_SAI2ASEL) || (RCC_CDCCIP1R_SAI2BSEL) */
+#if defined(SAI4_Block_A) || defined(SAI4_Block_B)
     case LL_RCC_SAI4A_CLKSOURCE_PLL1Q:
     case LL_RCC_SAI4B_CLKSOURCE_PLL1Q:
+#endif /* (SAI4_Block_A) || (SAI4_Block_B) */
       if (LL_RCC_PLL1_IsReady() != 0U)
       {
         LL_RCC_GetPLL1ClockFreq(&PLL_Clocks);
@@ -793,9 +826,17 @@ uint32_t LL_RCC_GetSAIClockFreq(uint32_t SAIxSource)
       break;
 
     case LL_RCC_SAI1_CLKSOURCE_PLL2P:
+#if defined(SAI3)
     case LL_RCC_SAI23_CLKSOURCE_PLL2P:
+#endif /* SAI3 */
+#if defined (RCC_CDCCIP1R_SAI2ASEL) || defined(RCC_CDCCIP1R_SAI2BSEL)
+    case LL_RCC_SAI2A_CLKSOURCE_PLL2P:
+    case LL_RCC_SAI2B_CLKSOURCE_PLL2P:
+#endif /* (RCC_CDCCIP1R_SAI2ASEL) || (RCC_CDCCIP1R_SAI2BSEL) */
+#if defined(SAI4_Block_A) || defined(SAI4_Block_B)
     case LL_RCC_SAI4A_CLKSOURCE_PLL2P:
     case LL_RCC_SAI4B_CLKSOURCE_PLL2P:
+#endif /* (SAI2_Block_A_BASE) || (SAI2_Block_B_BASE) */
       if (LL_RCC_PLL2_IsReady() != 0U)
       {
         LL_RCC_GetPLL2ClockFreq(&PLL_Clocks);
@@ -804,9 +845,17 @@ uint32_t LL_RCC_GetSAIClockFreq(uint32_t SAIxSource)
       break;
 
     case LL_RCC_SAI1_CLKSOURCE_PLL3P:
+#if defined(SAI3)
     case LL_RCC_SAI23_CLKSOURCE_PLL3P:
+#endif /* SAI3 */
+#if defined (RCC_CDCCIP1R_SAI2ASEL) || defined(RCC_CDCCIP1R_SAI2BSEL)
+    case LL_RCC_SAI2A_CLKSOURCE_PLL3P:
+    case LL_RCC_SAI2B_CLKSOURCE_PLL3P:
+#endif /* (RCC_CDCCIP1R_SAI2ASEL) || (RCC_CDCCIP1R_SAI2BSEL) */
+#if defined(SAI4_Block_A) || defined(SAI4_Block_B)
     case LL_RCC_SAI4A_CLKSOURCE_PLL3P:
     case LL_RCC_SAI4B_CLKSOURCE_PLL3P:
+#endif /* (SAI2_Block_A_BASE) || (SAI2_Block_B_BASE) */
       if (LL_RCC_PLL3_IsReady() != 0U)
       {
         LL_RCC_GetPLL3ClockFreq(&PLL_Clocks);
@@ -815,18 +864,35 @@ uint32_t LL_RCC_GetSAIClockFreq(uint32_t SAIxSource)
       break;
 
     case LL_RCC_SAI1_CLKSOURCE_I2S_CKIN:
+#if defined(SAI3)
     case LL_RCC_SAI23_CLKSOURCE_I2S_CKIN:
+#endif /* SAI3 */
+#if defined (RCC_CDCCIP1R_SAI2ASEL) || defined(RCC_CDCCIP1R_SAI2BSEL)
+    case LL_RCC_SAI2A_CLKSOURCE_I2S_CKIN:
+    case LL_RCC_SAI2B_CLKSOURCE_I2S_CKIN:
+#endif /* (RCC_CDCCIP1R_SAI2ASEL) || (RCC_CDCCIP1R_SAI2BSEL) */
+#if defined(SAI4_Block_A) || defined(SAI4_Block_B)
     case LL_RCC_SAI4A_CLKSOURCE_I2S_CKIN:
     case LL_RCC_SAI4B_CLKSOURCE_I2S_CKIN:
+#endif /* (SAI2_Block_A_BASE) || (SAI2_Block_B_BASE) */
       sai_frequency = EXTERNAL_CLOCK_VALUE;
       break;
 
     case LL_RCC_SAI1_CLKSOURCE_CLKP:
+#if defined(SAI3)
     case LL_RCC_SAI23_CLKSOURCE_CLKP:
+#endif /* SAI3 */
+#if defined (RCC_CDCCIP1R_SAI2ASEL) || defined(RCC_CDCCIP1R_SAI2BSEL)
+    case LL_RCC_SAI2A_CLKSOURCE_CLKP:
+    case LL_RCC_SAI2B_CLKSOURCE_CLKP:
+#endif /* (RCC_CDCCIP1R_SAI2ASEL) || (RCC_CDCCIP1R_SAI2BSEL) */
+#if defined(SAI4_Block_A) || defined(SAI4_Block_B)
     case LL_RCC_SAI4A_CLKSOURCE_CLKP:
     case LL_RCC_SAI4B_CLKSOURCE_CLKP:
+#endif /* (SAI2_Block_A_BASE) || (SAI2_Block_B_BASE) */
       sai_frequency = LL_RCC_GetCLKPClockFreq(LL_RCC_CLKP_CLKSOURCE);
       break;
+
     default:
       /* Kernel clock disabled */
       break;
@@ -1083,6 +1149,38 @@ uint32_t LL_RCC_GetDFSDMClockFreq(uint32_t DFSDMxSource)
   return dfsdm_frequency;
 }
 
+#if defined(DFSDM2_BASE)
+/**
+  * @brief  Return DFSDM clock frequency
+  * @param  DFSDMxSource This parameter can be one of the following values:
+  *         @arg @ref LL_RCC_DFSDM2_CLKSOURCE
+  * @retval DFSDM clock frequency (in Hz)
+  *         - @ref  LL_RCC_PERIPH_FREQUENCY_NO indicates that oscillator is not ready
+  */
+uint32_t LL_RCC_GetDFSDM2ClockFreq(uint32_t DFSDMxSource)
+{
+  uint32_t dfsdm_frequency = LL_RCC_PERIPH_FREQUENCY_NO;
+
+
+  switch (LL_RCC_GetDFSDM2ClockSource(DFSDMxSource))
+  {
+
+    case LL_RCC_DFSDM2_CLKSOURCE_SYSCLK:
+      dfsdm_frequency = RCC_GetSystemClockFreq();
+      break;
+
+    case LL_RCC_DFSDM2_CLKSOURCE_PCLK4:
+      dfsdm_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      break;
+
+    default:
+      /* Nothing to do */
+      break;
+  }
+
+  return dfsdm_frequency;
+}
+#endif /* DFSDM2_BASE */
 
 #if defined(DSI)
 /**
@@ -1218,6 +1316,9 @@ uint32_t LL_RCC_GetSPIClockFreq(uint32_t SPIxSource)
       break;
 
     case LL_RCC_SPI123_CLKSOURCE_I2S_CKIN:
+#if defined(LL_RCC_SPI6_CLKSOURCE_I2S_CKIN)
+    case LL_RCC_SPI6_CLKSOURCE_I2S_CKIN:
+#endif /* LL_RCC_SPI6_CLKSOURCE_I2S_CKIN */
       spi_frequency = EXTERNAL_CLOCK_VALUE;
       break;
 
@@ -1406,6 +1507,7 @@ uint32_t LL_RCC_GetFMCClockFreq(uint32_t FMCxSource)
   return fmc_frequency;
 }
 
+#if defined(QUADSPI)
 /**
   * @brief  Return QSPI clock frequency
   * @param  QSPIxSource This parameter can be one of the following values:
@@ -1451,6 +1553,56 @@ uint32_t LL_RCC_GetQSPIClockFreq(uint32_t QSPIxSource)
 
   return qspi_frequency;
 }
+#endif /* QUADSPI */
+
+#if defined(OCTOSPI1) || defined(OCTOSPI2)
+/**
+  * @brief  Return OSPI clock frequency
+  * @param  QSPIxSource This parameter can be one of the following values:
+  *         @arg @ref LL_RCC_OSPI_CLKSOURCE
+  * @retval OSPI clock frequency (in Hz)
+  *         - @ref  LL_RCC_PERIPH_FREQUENCY_NO indicates that oscillator is not ready
+  */
+
+uint32_t LL_RCC_GetOSPIClockFreq(uint32_t OSPIxSource)
+{
+  uint32_t ospi_frequency = LL_RCC_PERIPH_FREQUENCY_NO;
+  LL_PLL_ClocksTypeDef PLL_Clocks;
+
+  switch (LL_RCC_GetOSPIClockSource(OSPIxSource))
+  {
+    case LL_RCC_OSPI_CLKSOURCE_HCLK:
+      ospi_frequency = RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler()));
+      break;
+
+    case LL_RCC_OSPI_CLKSOURCE_PLL1Q:
+      if (LL_RCC_PLL1_IsReady() != 0U)
+      {
+        LL_RCC_GetPLL1ClockFreq(&PLL_Clocks);
+        ospi_frequency = PLL_Clocks.PLL_Q_Frequency;
+      }
+      break;
+
+    case LL_RCC_OSPI_CLKSOURCE_PLL2R:
+      if (LL_RCC_PLL2_IsReady() != 0U)
+      {
+        LL_RCC_GetPLL2ClockFreq(&PLL_Clocks);
+        ospi_frequency = PLL_Clocks.PLL_R_Frequency;
+      }
+      break;
+
+    case LL_RCC_OSPI_CLKSOURCE_CLKP:
+      ospi_frequency = LL_RCC_GetCLKPClockFreq(LL_RCC_CLKP_CLKSOURCE);
+      break;
+
+    default:
+      /* Nothing to do */
+      break;
+  }
+
+  return ospi_frequency;
+}
+#endif /* defined(OCTOSPI1) || defined(OCTOSPI2) */
 
 /**
   * @brief  Return CLKP clock frequency

@@ -12,24 +12,23 @@
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_HAL_NOR_H
-#define __STM32L4xx_HAL_NOR_H
+#ifndef STM32L4xx_HAL_NOR_H
+#define STM32L4xx_HAL_NOR_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
-#if defined(FMC_BANK1)
+#if defined FMC_BANK1
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_ll_fmc.h"
-
 
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
@@ -54,7 +53,7 @@ typedef enum
   HAL_NOR_STATE_BUSY              = 0x02U,  /*!< NOR internal processing is ongoing   */
   HAL_NOR_STATE_ERROR             = 0x03U,  /*!< NOR error state                      */
   HAL_NOR_STATE_PROTECTED         = 0x04U   /*!< NOR NORSRAM device write protected   */
-}HAL_NOR_StateTypeDef;
+} HAL_NOR_StateTypeDef;
 
 /**
   * @brief  FMC NOR Status typedef
@@ -65,7 +64,7 @@ typedef enum
   HAL_NOR_STATUS_ONGOING,
   HAL_NOR_STATUS_ERROR,
   HAL_NOR_STATUS_TIMEOUT
-}HAL_NOR_StatusTypeDef;
+} HAL_NOR_StatusTypeDef;
 
 /**
   * @brief  FMC NOR ID typedef
@@ -81,8 +80,8 @@ typedef struct
   uint16_t Device_Code3;       /*!< Defines the device's codes used to identify the memory.
                                     These codes can be accessed by performing read operations with specific
                                     control signals and addresses set.They can also be accessed by issuing
-                                    an Auto Select command.                                                   */
-}NOR_IDTypeDef;
+                                    an Auto Select command                                                   */
+} NOR_IDTypeDef;
 
 /**
   * @brief  FMC NOR CFI typedef
@@ -100,12 +99,17 @@ typedef struct
   uint16_t CFI_3;
 
   uint16_t CFI_4;
-}NOR_CFITypeDef;
+} NOR_CFITypeDef;
 
 /**
   * @brief  NOR handle Structure definition
   */
+#if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
+typedef struct __NOR_HandleTypeDef
+#else
 typedef struct
+#endif /* USE_HAL_NOR_REGISTER_CALLBACKS  */
+
 {
   FMC_NORSRAM_TypeDef           *Instance;    /*!< Register base address                        */
 
@@ -116,7 +120,28 @@ typedef struct
   HAL_LockTypeDef               Lock;         /*!< NOR locking object                           */
 
   __IO HAL_NOR_StateTypeDef     State;        /*!< NOR device access state                      */
-}NOR_HandleTypeDef;
+
+#if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
+  void  (* MspInitCallback)        ( struct __NOR_HandleTypeDef * hnor);    /*!< NOR Msp Init callback              */
+  void  (* MspDeInitCallback)      ( struct __NOR_HandleTypeDef * hnor);    /*!< NOR Msp DeInit callback            */
+#endif
+} NOR_HandleTypeDef;
+
+#if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL NOR Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_NOR_MSP_INIT_CB_ID       = 0x00U,  /*!< NOR MspInit Callback ID          */
+  HAL_NOR_MSP_DEINIT_CB_ID     = 0x01U   /*!< NOR MspDeInit Callback ID        */
+}HAL_NOR_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL NOR Callback pointer definition
+  */
+typedef void (*pNOR_CallbackTypeDef)(NOR_HandleTypeDef *hnor);
+#endif
 /**
   * @}
   */
@@ -130,7 +155,15 @@ typedef struct
   * @param  __HANDLE__ specifies the NOR handle.
   * @retval None
   */
+#if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
+#define __HAL_NOR_RESET_HANDLE_STATE(__HANDLE__)          do {                                             \
+                                                               (__HANDLE__)->State = HAL_NOR_STATE_RESET;  \
+                                                               (__HANDLE__)->MspInitCallback = NULL;       \
+                                                               (__HANDLE__)->MspDeInitCallback = NULL;     \
+                                                             } while(0)
+#else
 #define __HAL_NOR_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_NOR_STATE_RESET)
+#endif
 /**
   * @}
   */
@@ -170,6 +203,12 @@ HAL_StatusTypeDef HAL_NOR_ProgramBuffer(NOR_HandleTypeDef *hnor, uint32_t uwAddr
 HAL_StatusTypeDef HAL_NOR_Erase_Block(NOR_HandleTypeDef *hnor, uint32_t BlockAddress, uint32_t Address);
 HAL_StatusTypeDef HAL_NOR_Erase_Chip(NOR_HandleTypeDef *hnor, uint32_t Address);
 HAL_StatusTypeDef HAL_NOR_Read_CFI(NOR_HandleTypeDef *hnor, NOR_CFITypeDef *pNOR_CFI);
+
+#if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
+/* NOR callback registering/unregistering */
+HAL_StatusTypeDef HAL_NOR_RegisterCallback(NOR_HandleTypeDef *hnor, HAL_NOR_CallbackIDTypeDef CallbackId, pNOR_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_NOR_UnRegisterCallback(NOR_HandleTypeDef *hnor, HAL_NOR_CallbackIDTypeDef CallbackId);
+#endif
 /**
   * @}
   */
@@ -190,7 +229,7 @@ HAL_StatusTypeDef HAL_NOR_WriteOperation_Disable(NOR_HandleTypeDef *hnor);
   */
 
 /* NOR State functions ********************************************************/
-HAL_NOR_StateTypeDef HAL_NOR_GetState(NOR_HandleTypeDef *hnor);
+HAL_NOR_StateTypeDef  HAL_NOR_GetState(NOR_HandleTypeDef *hnor);
 HAL_NOR_StatusTypeDef HAL_NOR_GetStatus(NOR_HandleTypeDef *hnor, uint32_t Address, uint32_t Timeout);
 /**
   * @}
@@ -247,7 +286,7 @@ HAL_NOR_StatusTypeDef HAL_NOR_GetStatus(NOR_HandleTypeDef *hnor, uint32_t Addres
   */
 #define NOR_ADDR_SHIFT(__NOR_ADDRESS, __NOR_MEMORY_WIDTH_, __ADDRESS__)         \
               ((uint32_t)(((__NOR_MEMORY_WIDTH_) == NOR_MEMORY_16B)?            \
-              ((uint32_t)((__NOR_ADDRESS) + (2 * (__ADDRESS__)))):              \
+              ((uint32_t)((__NOR_ADDRESS) + (2U * (__ADDRESS__)))):              \
               ((uint32_t)((__NOR_ADDRESS) + (__ADDRESS__)))))
 
 /**
@@ -279,6 +318,6 @@ HAL_NOR_StatusTypeDef HAL_NOR_GetStatus(NOR_HandleTypeDef *hnor, uint32_t Addres
 }
 #endif
 
-#endif /* __STM32L4xx_HAL_NOR_H */
+#endif /* STM32L4xx_HAL_NOR_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

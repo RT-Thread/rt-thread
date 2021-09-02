@@ -32,7 +32,7 @@ extern "C" {
   * @{
   */
 
-#if defined(PWR)
+#if defined (PWR)
 
 /** @defgroup PWR_LL PWR
   * @{
@@ -69,16 +69,16 @@ extern "C" {
   * @brief    Flags defines which can be used with LL_PWR_WriteReg function
   * @{
   */
-#define LL_PWR_FLAG_CPU_CSSF          PWR_CPUCR_CSSF      /*!< Clear CPU STANDBY, STOP and HOLD flags */
+#define LL_PWR_FLAG_CPU_CSSF          PWR_CPUCR_CSSF      /*!< Clear flags for CPU  */
 #if defined (DUAL_CORE)
-#define LL_PWR_FLAG_CPU2_CSSF         PWR_CPU2CR_CSSF     /*!< Clear CPU2 STANDBY, STOP and HOLD flags */
+#define LL_PWR_FLAG_CPU2_CSSF         PWR_CPU2CR_CSSF     /*!< Clear flags for CPU2 */
 #endif /* DUAL_CORE */
-#define LL_PWR_FLAG_WKUPCR_WKUPC6     PWR_WKUPCR_WKUPC6   /*!< Clear WKUP pin 6 */
-#define LL_PWR_FLAG_WKUPCR_WKUPC5     PWR_WKUPCR_WKUPC5   /*!< Clear WKUP pin 5 */
-#define LL_PWR_FLAG_WKUPCR_WKUPC4     PWR_WKUPCR_WKUPC4   /*!< Clear WKUP pin 4 */
-#define LL_PWR_FLAG_WKUPCR_WKUPC3     PWR_WKUPCR_WKUPC3   /*!< Clear WKUP pin 3 */
-#define LL_PWR_FLAG_WKUPCR_WKUPC2     PWR_WKUPCR_WKUPC2   /*!< Clear WKUP pin 2 */
-#define LL_PWR_FLAG_WKUPCR_WKUPC1     PWR_WKUPCR_WKUPC1   /*!< Clear WKUP pin 1 */
+#define LL_PWR_FLAG_WKUPCR_WKUPC6     PWR_WKUPCR_WKUPC6   /*!< Clear PC1 WKUP flag  */
+#define LL_PWR_FLAG_WKUPCR_WKUPC5     PWR_WKUPCR_WKUPC5   /*!< Clear PI11 WKUP flag */
+#define LL_PWR_FLAG_WKUPCR_WKUPC4     PWR_WKUPCR_WKUPC4   /*!< Clear PC13 WKUP flag */
+#define LL_PWR_FLAG_WKUPCR_WKUPC3     PWR_WKUPCR_WKUPC3   /*!< Clear PI8 WKUP flag  */
+#define LL_PWR_FLAG_WKUPCR_WKUPC2     PWR_WKUPCR_WKUPC2   /*!< Clear PA2 WKUP flag  */
+#define LL_PWR_FLAG_WKUPCR_WKUPC1     PWR_WKUPCR_WKUPC1   /*!< Clear PA0 WKUP flag  */
 /**
   * @}
   */
@@ -87,44 +87,55 @@ extern "C" {
   * @brief    Flags defines which can be used with LL_PWR_ReadReg function
   * @{
   */
-#define LL_PWR_FLAG_AVDO              PWR_CSR1_AVDO       /*!< Analog Voltage Detect Output */
-#define LL_PWR_FLAG_PVDO              PWR_CSR1_PVDO       /*!< Power voltage detector output flag */
-#define LL_PWR_FLAG_ACTVOS            PWR_CSR1_ACTVOS     /*!< Current actual used VOS for VDD11 Voltage Scaling */
-#define LL_PWR_FLAG_ACTVOSRDY         PWR_CSR1_ACTVOSRDY  /*!< Ready bit for current actual used VOS for VDD11 Voltage Scaling */
+#define LL_PWR_FLAG_AVDO              PWR_CSR1_AVDO       /*!< Analog voltage detector output on VDDA flag                          */
+#define LL_PWR_FLAG_PVDO              PWR_CSR1_PVDO       /*!< Programmable voltage detect output flag                              */
+#define LL_PWR_FLAG_ACTVOS            PWR_CSR1_ACTVOS     /*!< Current VOS applied for VCORE voltage scaling flag                   */
+#define LL_PWR_FLAG_ACTVOSRDY         PWR_CSR1_ACTVOSRDY  /*!< Ready bit for current actual used VOS for VCORE voltage scaling flag */
+#if defined (PWR_CSR1_MMCVDO)
+#define LL_PWR_FLAG_MMCVDO            PWR_CSR1_MMCVDO     /*!< Voltage detector output on VDDMMC flag                               */
+#endif /* PWR_CSR1_MMCVDO */
 
 #define LL_PWR_FLAG_TEMPH             PWR_CR2_TEMPH       /*!< Temperature high threshold flag */
-#define LL_PWR_FLAG_TEMPL             PWR_CR2_TEMPL       /*!< Temperature low threshold flag */
-#define LL_PWR_FLAG_VBATH             PWR_CR2_VBATH       /*!< VBAT high threshold flag */
-#define LL_PWR_FLAG_VBATL             PWR_CR2_VBATL       /*!< VBAT low threshold flag */
-#define LL_PWR_FLAG_BRRDY             PWR_CR2_BRRDY       /*!< Backup Regulator ready flag */
+#define LL_PWR_FLAG_TEMPL             PWR_CR2_TEMPL       /*!< Temperature low threshold flag  */
+#define LL_PWR_FLAG_VBATH             PWR_CR2_VBATH       /*!< VBAT high threshold flag        */
+#define LL_PWR_FLAG_VBATL             PWR_CR2_VBATL       /*!< VBAT low threshold flag         */
+#define LL_PWR_FLAG_BRRDY             PWR_CR2_BRRDY       /*!< Backup Regulator ready flag     */
 
-#define LL_PWR_FLAG_USBRDY            PWR_CR3_USB33RDY    /*!< USB supply ready flag */
+#define LL_PWR_FLAG_USBRDY            PWR_CR3_USB33RDY    /*!< USB supply ready flag           */
 #define LL_PWR_FLAG_SMPSEXTRDY        PWR_CR3_SMPSEXTRDY  /*!< SMPS External supply ready flag */
 
-#define LL_PWR_FLAG_CPU_SBF_D2        PWR_CPUCR_SBF_D2    /*!< D2 domain DSTANDBY Flag */
-#define LL_PWR_FLAG_CPU_SBF_D1        PWR_CPUCR_SBF_D1    /*!< D1 domain DSTANDBY Flag */
-#define LL_PWR_FLAG_CPU_SBF           PWR_CPUCR_SBF       /*!< System STANDBY Flag */
-#define LL_PWR_FLAG_CPU_STOPF         PWR_CPUCR_STOPF     /*!< STOP Flag */
+#if defined (PWR_CPUCR_SBF_D2)
+#define LL_PWR_FLAG_CPU_SBF_D2        PWR_CPUCR_SBF_D2    /*!< D2 domain DSTANDBY Flag  */
+#endif /* PWR_CPUCR_SBF_D2 */
+#if defined (PWR_CPUCR_SBF_D1)
+#define LL_PWR_FLAG_CPU_SBF_D1        PWR_CPUCR_SBF_D1    /*!< D1 domain DSTANDBY Flag  */
+#endif /* PWR_CPUCR_SBF_D1 */
+#define LL_PWR_FLAG_CPU_SBF           PWR_CPUCR_SBF       /*!< System STANDBY Flag      */
+#define LL_PWR_FLAG_CPU_STOPF         PWR_CPUCR_STOPF     /*!< STOP Flag                */
 #if defined (DUAL_CORE)
 #define LL_PWR_FLAG_CPU_HOLD2F        PWR_CPUCR_HOLD2F    /*!< CPU2 in hold wakeup flag */
 #endif /* DUAL_CORE */
 
 #if defined (DUAL_CORE)
-#define LL_PWR_FLAG_CPU2_SBF_D2       PWR_CPU2CR_SBF_D2   /*!< D2 domain DSTANDBY Flag */
-#define LL_PWR_FLAG_CPU2_SBF_D1       PWR_CPU2CR_SBF_D1   /*!< D1 domain DSTANDBY Flag */
-#define LL_PWR_FLAG_CPU2_SBF          PWR_CPU2CR_SBF      /*!< System STANDBY Flag */
-#define LL_PWR_FLAG_CPU2_STOPF        PWR_CPU2CR_STOPF    /*!< STOP Flag */
+#define LL_PWR_FLAG_CPU2_SBF_D2       PWR_CPU2CR_SBF_D2   /*!< D2 domain DSTANDBY Flag  */
+#define LL_PWR_FLAG_CPU2_SBF_D1       PWR_CPU2CR_SBF_D1   /*!< D1 domain DSTANDBY Flag  */
+#define LL_PWR_FLAG_CPU2_SBF          PWR_CPU2CR_SBF      /*!< System STANDBY Flag      */
+#define LL_PWR_FLAG_CPU2_STOPF        PWR_CPU2CR_STOPF    /*!< STOP Flag                */
 #define LL_PWR_FLAG_CPU2_HOLD1F       PWR_CPU2CR_HOLD1F   /*!< CPU1 in hold wakeup flag */
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_PDDS_D2)
 #define LL_PWR_D3CR_VOSRDY            PWR_D3CR_VOSRDY     /*!< Voltage scaling ready flag */
+#else
+#define LL_PWR_SRDCR_VOSRDY           PWR_SRDCR_VOSRDY    /*!< Voltage scaling ready flag */
+#endif /* PWR_CPUCR_PDDS_D2 */
 
-#define LL_PWR_WKUPFR_WKUPF6          PWR_WKUPFR_WKUPF6   /*!< Wakeup Pin Flag 6 */
-#define LL_PWR_WKUPFR_WKUPF5          PWR_WKUPFR_WKUPF5   /*!< Wakeup Pin Flag 5 */
-#define LL_PWR_WKUPFR_WKUPF4          PWR_WKUPFR_WKUPF4   /*!< Wakeup Pin Flag 4 */
-#define LL_PWR_WKUPFR_WKUPF3          PWR_WKUPFR_WKUPF3   /*!< Wakeup Pin Flag 3 */
-#define LL_PWR_WKUPFR_WKUPF2          PWR_WKUPFR_WKUPF2   /*!< Wakeup Pin Flag 2 */
-#define LL_PWR_WKUPFR_WKUPF1          PWR_WKUPFR_WKUPF1   /*!< Wakeup Pin Flag 1 */
+#define LL_PWR_WKUPFR_WKUPF6          PWR_WKUPFR_WKUPF6   /*!< Wakeup flag on PC1  */
+#define LL_PWR_WKUPFR_WKUPF5          PWR_WKUPFR_WKUPF5   /*!< Wakeup flag on PI11 */
+#define LL_PWR_WKUPFR_WKUPF4          PWR_WKUPFR_WKUPF4   /*!< Wakeup flag on PC13 */
+#define LL_PWR_WKUPFR_WKUPF3          PWR_WKUPFR_WKUPF3   /*!< Wakeup flag on PI8  */
+#define LL_PWR_WKUPFR_WKUPF2          PWR_WKUPFR_WKUPF2   /*!< Wakeup flag on PA2  */
+#define LL_PWR_WKUPFR_WKUPF1          PWR_WKUPFR_WKUPF1   /*!< Wakeup flag on PA0  */
 /**
   * @}
   */
@@ -132,22 +143,37 @@ extern "C" {
 /** @defgroup PWR_LL_EC_MODE_PWR Power mode
   * @{
   */
-#define LL_PWR_CPU_MODE_D1STOP        0x00000000U           /*!< Enter D1 domain to Stop mode when the CPU enters deepsleep */
-#define LL_PWR_CPU_MODE_D1STANDBY     PWR_CPUCR_PDDS_D1     /*!< Enter D1 domain to Standby mode when the CPU enters deepsleep */
-#define LL_PWR_CPU_MODE_D2STOP        0x00000000U           /*!< Enter Stop mode when the CPU enters deepsleep */
-#define LL_PWR_CPU_MODE_D2STANDBY     PWR_CPUCR_PDDS_D2     /*!< Enter D3 domain to Standby mode when the CPU enters deepsleep */
-#define LL_PWR_CPU_MODE_D3STOP        0x00000000U           /*!< Enter Stop mode when the CPU enters deepsleep */
-#define LL_PWR_CPU_MODE_D3STANDBY     PWR_CPUCR_PDDS_D3     /*!< Enter D3 domain to Standby mode when the CPU enter deepsleep */
-#define LL_PWR_CPU_MODE_D3RUN         PWR_CPUCR_RUN_D3      /*!< Keep system D3 domain in RUN mode when the CPU enter deepsleep */
+#if defined (PWR_CPUCR_PDDS_D2)
+#define LL_PWR_CPU_MODE_D1STOP        0x00000000U           /*!< Enter D1 domain to Stop mode when the CPU enters deepsleep       */
+#define LL_PWR_CPU_MODE_D1STANDBY     PWR_CPUCR_PDDS_D1     /*!< Enter D1 domain to Standby mode when the CPU enters deepsleep    */
+#else
+#define LL_PWR_CPU_MODE_CDSTOP        0x00000000U           /*!< Enter CD domain to Stop mode when the CPU enters deepsleep       */
+#define LL_PWR_CPU_MODE_CDSTOP2       PWR_CPUCR_RETDS_CD    /*!< Enter CD domain to Stop2 mode when the CPU enters deepsleep      */
+#endif /* PWR_CPUCR_PDDS_D2 */
+
+#if defined (PWR_CPUCR_PDDS_D2)
+#define LL_PWR_CPU_MODE_D2STOP        0x00000000U           /*!< Enter D2 domain to Stop mode when the CPU enters deepsleep       */
+#define LL_PWR_CPU_MODE_D2STANDBY     PWR_CPUCR_PDDS_D2     /*!< Enter D2 domain to Standby mode when the CPU enters deepsleep    */
+#endif /* PWR_CPUCR_PDDS_D2 */
+
+#if defined (PWR_CPUCR_PDDS_D2)
+#define LL_PWR_CPU_MODE_D3RUN         PWR_CPUCR_RUN_D3      /*!< Keep system D3 domain in Run mode when the CPU enter deepsleep   */
+#define LL_PWR_CPU_MODE_D3STOP        0x00000000U           /*!< Enter D3 domain to Stop mode when the CPU enters deepsleep       */
+#define LL_PWR_CPU_MODE_D3STANDBY     PWR_CPUCR_PDDS_D3     /*!< Enter D3 domain to Standby mode when the CPU enters deepsleep    */
+#else
+#define LL_PWR_CPU_MODE_SRDRUN        PWR_CPUCR_RUN_SRD     /*!< Keep system SRD domain in Run mode when the CPU enter deepsleep  */
+#define LL_PWR_CPU_MODE_SRDSTOP       0x00000000U           /*!< Enter SRD domain to Stop mode when the CPU enters deepsleep      */
+#define LL_PWR_CPU_MODE_SRDSTANDBY    PWR_CPUCR_PDDS_SRD    /*!< Enter SRD domain to Standby mode when the CPU enters deepsleep   */
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
-#define LL_PWR_CPU2_MODE_D1STOP       0x00000000U           /*!< Enter D1 domain to Stop mode when the CPU2 enters deepsleep */
-#define LL_PWR_CPU2_MODE_D1STANDBY    PWR_CPU2CR_PDDS_D1    /*!< Enter D1 domain to Standby mode when the CPU2 enters deepsleep */
-#define LL_PWR_CPU2_MODE_D2STOP       0x00000000U           /*!< Enter Stop mode when the CPU2 enters deepsleep */
-#define LL_PWR_CPU2_MODE_D2STANDBY    PWR_CPU2CR_PDDS_D2    /*!< Enter D3 domain to Standby mode when the CPU2 enters deepsleep */
-#define LL_PWR_CPU2_MODE_D3STOP       0x00000000U           /*!< Enter Stop mode when the CPU2 enters deepsleep */
-#define LL_PWR_CPU2_MODE_D3STANDBY    PWR_CPU2CR_PDDS_D3    /*!< Enter D3 domain to Standby mode when the CPU2 enter deepsleep */
-#define LL_PWR_CPU2_MODE_D3RUN        PWR_CPU2CR_RUN_D3     /*!< Keep system D3 domain in RUN mode when the CPU2 enter deepsleep */
+#define LL_PWR_CPU2_MODE_D1STOP       0x00000000U           /*!< Enter D1 domain to Stop mode when the CPU2 enters deepsleep      */
+#define LL_PWR_CPU2_MODE_D1STANDBY    PWR_CPU2CR_PDDS_D1    /*!< Enter D1 domain to Standby mode when the CPU2 enters deepsleep   */
+#define LL_PWR_CPU2_MODE_D2STOP       0x00000000U           /*!< Enter D2 domain to Stop mode when the CPU2 enters deepsleep      */
+#define LL_PWR_CPU2_MODE_D2STANDBY    PWR_CPU2CR_PDDS_D2    /*!< Enter D2 domain to Standby mode when the CPU2 enters deepsleep   */
+#define LL_PWR_CPU2_MODE_D3RUN        PWR_CPU2CR_RUN_D3     /*!< Keep system D3 domain in RUN mode when the CPU2 enter deepsleep  */
+#define LL_PWR_CPU2_MODE_D3STOP       0x00000000U           /*!< Enter D3 domain to Stop mode when the CPU2 enters deepsleep      */
+#define LL_PWR_CPU2_MODE_D3STANDBY    PWR_CPU2CR_PDDS_D3    /*!< Enter D3 domain to Standby mode when the CPU2 enter deepsleep    */
 #endif /* DUAL_CORE */
 /**
   * @}
@@ -156,9 +182,17 @@ extern "C" {
 /** @defgroup PWR_LL_EC_REGU_VOLTAGE Run mode Regulator Voltage Scaling
   * @{
   */
-#define LL_PWR_REGU_VOLTAGE_SCALE3      PWR_D3CR_VOS_0                    /* Select voltage scale 3 */
-#define LL_PWR_REGU_VOLTAGE_SCALE2      PWR_D3CR_VOS_1                    /* Select voltage scale 2 */
-#define LL_PWR_REGU_VOLTAGE_SCALE1      (PWR_D3CR_VOS_0 | PWR_D3CR_VOS_1) /* Select voltage scale 1 */
+#if defined (PWR_CPUCR_PDDS_D2)
+#define LL_PWR_REGU_VOLTAGE_SCALE3      PWR_D3CR_VOS_0                    /*!< Select voltage scale 3 */
+#define LL_PWR_REGU_VOLTAGE_SCALE2      PWR_D3CR_VOS_1                    /*!< Select voltage scale 2 */
+#define LL_PWR_REGU_VOLTAGE_SCALE1      (PWR_D3CR_VOS_0 | PWR_D3CR_VOS_1) /*!< Select voltage scale 1 */
+#define LL_PWR_REGU_VOLTAGE_SCALE0      (PWR_D3CR_VOS_0 | PWR_D3CR_VOS_1) /*!< Select voltage scale 0 */
+#else
+#define LL_PWR_REGU_VOLTAGE_SCALE3      0x00000000U                       /*!< Select voltage scale 3 */
+#define LL_PWR_REGU_VOLTAGE_SCALE2      PWR_D3CR_VOS_0                    /*!< Select voltage scale 2 */
+#define LL_PWR_REGU_VOLTAGE_SCALE1      PWR_D3CR_VOS_1                    /*!< Select voltage scale 1 */
+#define LL_PWR_REGU_VOLTAGE_SCALE0      (PWR_D3CR_VOS_0 | PWR_D3CR_VOS_1) /*!< Select voltage scale 0 */
+#endif /* PWR_CPUCR_PDDS_D2 */
 /**
   * @}
   */
@@ -166,9 +200,9 @@ extern "C" {
 /** @defgroup PWR_LL_EC_STOP_MODE_REGU_VOLTAGE Stop mode Regulator Voltage Scaling
   * @{
   */
-#define LL_PWR_REGU_VOLTAGE_SVOS_SCALE5   PWR_CR1_SVOS_0                    /* Select voltage scale 5 when system enters STOP mode */
-#define LL_PWR_REGU_VOLTAGE_SVOS_SCALE4   PWR_CR1_SVOS_1                    /* Select voltage scale 4 when system enters STOP mode */
-#define LL_PWR_REGU_VOLTAGE_SVOS_SCALE3   (PWR_CR1_SVOS_0 | PWR_CR1_SVOS_1) /* Select voltage scale 3 when system enters STOP mode */
+#define LL_PWR_REGU_VOLTAGE_SVOS_SCALE5   PWR_CR1_SVOS_0                    /*!< Select voltage scale 5 when system enters STOP mode */
+#define LL_PWR_REGU_VOLTAGE_SVOS_SCALE4   PWR_CR1_SVOS_1                    /*!< Select voltage scale 4 when system enters STOP mode */
+#define LL_PWR_REGU_VOLTAGE_SVOS_SCALE3   (PWR_CR1_SVOS_0 | PWR_CR1_SVOS_1) /*!< Select voltage scale 3 when system enters STOP mode */
 /**
   * @}
   */
@@ -176,7 +210,7 @@ extern "C" {
 /** @defgroup PWR_LL_EC_REGU_MODE_DS_MODE  Regulator Mode In Deep Sleep Mode
   * @{
   */
-#define LL_PWR_REGU_DSMODE_MAIN           0x00000000U   /*!< Voltage Regulator in main mode during deepsleep mode */
+#define LL_PWR_REGU_DSMODE_MAIN           0x00000000U   /*!< Voltage Regulator in main mode during deepsleep mode      */
 #define LL_PWR_REGU_DSMODE_LOW_POWER      PWR_CR1_LPDS  /*!< Voltage Regulator in low-power mode during deepsleep mode */
 /**
   * @}
@@ -212,7 +246,7 @@ extern "C" {
 /** @defgroup PWR_LL_EC_BATT_CHARG_RESISTOR Battery Charge Resistor
   * @{
   */
-#define LL_PWR_BATT_CHARG_RESISTOR_5K     0x00000000U   /*!< Charge the Battery through a 5 kO resistor  */
+#define LL_PWR_BATT_CHARG_RESISTOR_5K     0x00000000U   /*!< Charge the Battery through a 5 kO resistor    */
 #define LL_PWR_BATT_CHARGRESISTOR_1_5K    PWR_CR3_VBRS  /*!< Charge the Battery through a 1.5 kO resistor  */
 /**
   * @}
@@ -223,10 +257,10 @@ extern "C" {
   */
 #define LL_PWR_WAKEUP_PIN1    PWR_WKUPEPR_WKUPEN1  /*!< Wake-Up pin 1 : PA0  */
 #define LL_PWR_WAKEUP_PIN2    PWR_WKUPEPR_WKUPEN2  /*!< Wake-Up pin 2 : PA2  */
-#define LL_PWR_WAKEUP_PIN3    PWR_WKUPEPR_WKUPEN3  /*!< Wake-Up pin 3 : PC1  */
+#define LL_PWR_WAKEUP_PIN3    PWR_WKUPEPR_WKUPEN3  /*!< Wake-Up pin 3 : PI8  */
 #define LL_PWR_WAKEUP_PIN4    PWR_WKUPEPR_WKUPEN4  /*!< Wake-Up pin 4 : PC13 */
-#define LL_PWR_WAKEUP_PIN5    PWR_WKUPEPR_WKUPEN5  /*!< Wake-Up pin 5 : PI8  */
-#define LL_PWR_WAKEUP_PIN6    PWR_WKUPEPR_WKUPEN6  /*!< Wake-Up pin 6 : PI11 */
+#define LL_PWR_WAKEUP_PIN5    PWR_WKUPEPR_WKUPEN5  /*!< Wake-Up pin 5 : PI11 */
+#define LL_PWR_WAKEUP_PIN6    PWR_WKUPEPR_WKUPEN6  /*!< Wake-Up pin 6 : PC1  */
 /**
   * @}
   */
@@ -234,8 +268,8 @@ extern "C" {
 /** @defgroup PWR_LL_EC_WAKEUP_PIN_PULL  Wakeup Pins pull configuration
   * @{
   */
-#define LL_PWR_WAKEUP_PIN_NOPULL      0x00000000UL   /*!< Configure Wake-Up pin in no pull */
-#define LL_PWR_WAKEUP_PIN_PULLUP      0x00000001UL   /*!< Configure Wake-Up pin in pull Up */
+#define LL_PWR_WAKEUP_PIN_NOPULL      0x00000000UL   /*!< Configure Wake-Up pin in no pull   */
+#define LL_PWR_WAKEUP_PIN_PULLUP      0x00000001UL   /*!< Configure Wake-Up pin in pull Up   */
 #define LL_PWR_WAKEUP_PIN_PULLDOWN    0x00000002UL   /*!< Configure Wake-Up pin in pull Down */
 /**
   * @}
@@ -244,17 +278,17 @@ extern "C" {
 /** @defgroup PWR_LL_EC_SUPPLY_PWR Power supply source configuration
   * @{
   */
-#define LL_PWR_LDO_SUPPLY                     PWR_CR3_LDOEN   /* Core domains are suppplied from the LDO */
-#if defined (SMPS)
-#define LL_PWR_DIRECT_SMPS_SUPPLY             PWR_CR3_SMPSEN  /* Core domains are suppplied from the SMPS */
-#define LL_PWR_SMPS_1V8_SUPPLIES_LDO          (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /* The SMPS 1.8V output supplies the LDO which supplies the Core domains */
-#define LL_PWR_SMPS_2V5_SUPPLIES_LDO          (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /* The SMPS 2.5V output supplies the LDO which supplies the Core domains */
-#define LL_PWR_SMPS_1V8_SUPPLIES_EXT_AND_LDO  (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /* The SMPS 1.8V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
-#define LL_PWR_SMPS_2V5_SUPPLIES_EXT_AND_LDO  (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /* The SMPS 2.5V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
-#define LL_PWR_SMPS_1V8_SUPPLIES_EXT          (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /* The SMPS 1.8V output supplies an external source which supplies the Core domains */
-#define LL_PWR_SMPS_2V5_SUPPLIES_EXT          (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /* The SMPS 2.5V output supplies an external source which supplies the Core domains */
+#define LL_PWR_LDO_SUPPLY                     PWR_CR3_LDOEN                                                               /*!< Core domains are suppplied from the LDO                                                                     */
+#if defined (SMPS)                                                                                                                                                                                                                       
+#define LL_PWR_DIRECT_SMPS_SUPPLY             PWR_CR3_SMPSEN                                                              /*!< Core domains are suppplied from the SMPS                                                                    */
+#define LL_PWR_SMPS_1V8_SUPPLIES_LDO          (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)                      /*!< The SMPS 1.8V output supplies the LDO which supplies the Core domains                                       */
+#define LL_PWR_SMPS_2V5_SUPPLIES_LDO          (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)                      /*!< The SMPS 2.5V output supplies the LDO which supplies the Core domains                                       */
+#define LL_PWR_SMPS_1V8_SUPPLIES_EXT_AND_LDO  (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 1.8V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
+#define LL_PWR_SMPS_2V5_SUPPLIES_EXT_AND_LDO  (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 2.5V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
+#define LL_PWR_SMPS_1V8_SUPPLIES_EXT          (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /*!< The SMPS 1.8V output supplies an external source which supplies the Core domains                            */
+#define LL_PWR_SMPS_2V5_SUPPLIES_EXT          (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /*!< The SMPS 2.5V output supplies an external source which supplies the Core domains                            */
 #endif /* SMPS */
-#define LL_PWR_EXTERNAL_SOURCE_SUPPLY         PWR_CR3_BYPASS  /* The SMPS and the LDO are Bypassed. The Core domains are supplied from an external source */
+#define LL_PWR_EXTERNAL_SOURCE_SUPPLY         PWR_CR3_BYPASS                                                              /*!< The SMPS and the LDO are Bypassed. The Core domains are supplied from an external source                    */
 /**
   * @}
   */
@@ -453,6 +487,70 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledFlashPowerDown(void)
   return ((READ_BIT(PWR->CR1, PWR_CR1_FLPS) == (PWR_CR1_FLPS)) ? 1UL : 0UL);
 }
 
+#if defined (PWR_CR1_BOOSTE)
+/**
+  * @brief  Enable the Analog Voltage Booster (VDDA)
+  * @rmtoll CR1    BOOSTE     LL_PWR_EnableAnalogBooster
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableAnalogBooster(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_BOOSTE);
+}
+
+/**
+  * @brief  Disable the Analog Voltage Booster (VDDA)
+  * @rmtoll CR1    BOOSTE     LL_PWR_DisableAnalogBooster
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableAnalogBooster(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_BOOSTE);
+}
+
+/**
+  * @brief  Check if the Analog Voltage Booster (VDDA) is enabled
+  * @rmtoll CR1    BOOSTE     LL_PWR_IsEnabledAnalogBooster
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledAnalogBooster(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_BOOSTE) == (PWR_CR1_BOOSTE)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_BOOSTE */
+
+#if defined (PWR_CR1_AVD_READY)
+/**
+  * @brief  Enable the Analog Voltage Ready to isolate the BOOST IP untill VDDA will be ready
+  * @rmtoll CR1    AVD_READY  LL_PWR_EnableAnalogVoltageReady
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableAnalogVoltageReady(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_AVD_READY);
+}
+
+/**
+  * @brief  Disable the Analog Voltage Ready (VDDA)
+  * @rmtoll CR1    AVD_READY  LL_PWR_DisableAnalogVoltageReady
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableAnalogVoltageReady(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_AVD_READY);
+}
+
+/**
+  * @brief  Check if the Analog Voltage Booster (VDDA) is enabled
+  * @rmtoll CR1    AVD_READY  LL_PWR_IsEnabledAnalogVoltageReady
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledAnalogVoltageReady(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_AVD_READY) == (PWR_CR1_AVD_READY)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_AVD_READY */
+
 /**
   * @brief  Set the internal Regulator output voltage in STOP mode
   * @rmtoll CR1    SVOS       LL_PWR_SetStopModeRegulVoltageScaling
@@ -538,6 +636,262 @@ __STATIC_INLINE uint32_t LL_PWR_GetAVDLevel(void)
 {
   return (uint32_t)(READ_BIT(PWR->CR1, PWR_CR1_ALS));
 }
+
+#if defined (PWR_CR1_AXIRAM1SO)
+/**
+  * @brief  Enable the AXI RAM1 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AXIRAM1SO     LL_PWR_EnableAXIRAM1ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableAXIRAM1ShutOff(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_AXIRAM1SO);
+}
+
+/**
+  * @brief  Disable the AXI RAM1 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AXIRAM1SO     LL_PWR_DisableAXIRAM1ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableAXIRAM1ShutOff(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_AXIRAM1SO);
+}
+
+/**
+  * @brief  Check if the AXI RAM1 shut-off in DStop/DStop2 mode is enabled
+  * @rmtoll CR1    AXIRAM1SO     LL_PWR_IsEnabledAXIRAM1ShutOff
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledAXIRAM1ShutOff(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_AXIRAM1SO) == (PWR_CR1_AXIRAM1SO)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_AXIRAM1SO */
+
+#if defined (PWR_CR1_AXIRAM2SO)
+/**
+  * @brief  Enable the AXI RAM2 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AXIRAM2SO     LL_PWR_EnableAXIRAM2ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableAXIRAM2ShutOff(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_AXIRAM2SO);
+}
+
+/**
+  * @brief  Disable the AXI RAM2 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AXIRAM2SO     LL_PWR_DisableAXIRAM2ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableAXIRAM2ShutOff(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_AXIRAM2SO);
+}
+
+/**
+  * @brief  Check if the AXI RAM2 shut-off in DStop/DStop2 mode is enabled
+  * @rmtoll CR1    AXIRAM2SO     LL_PWR_IsEnabledAXIRAM2ShutOff
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledAXIRAM2ShutOff(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_AXIRAM2SO) == (PWR_CR1_AXIRAM2SO)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_AXIRAM2SO */
+
+#if defined (PWR_CR1_AXIRAM3SO)
+/**
+  * @brief  Enable the AXI RAM3 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AXIRAM3SO     LL_PWR_EnableAXIRAM3ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableAXIRAM3ShutOff(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_AXIRAM3SO);
+}
+
+/**
+  * @brief  Disable the AXI RAM3 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AXIRAM3SO     LL_PWR_DisableAXIRAM3ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableAXIRAM3ShutOff(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_AXIRAM3SO);
+}
+
+/**
+  * @brief  Check if the AXI RAM3 shut-off in DStop/DStop2 mode is enabled
+  * @rmtoll CR1    AXIRAM3SO     LL_PWR_IsEnabledAXIRAM3ShutOff
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledAXIRAM3ShutOff(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_AXIRAM3SO) == (PWR_CR1_AXIRAM3SO)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_AXIRAM3SO */
+
+#if defined (PWR_CR1_AHBRAM1SO)
+/**
+  * @brief  Enable the AHB RAM1 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AHBRAM1SO     LL_PWR_EnableAHBRAM1ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableAHBRAM1ShutOff(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_AHBRAM1SO);
+}
+
+/**
+  * @brief  Disable the AHB RAM1 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AHBRAM1SO     LL_PWR_DisableAHBRAM1ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableAHBRAM1ShutOff(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_AHBRAM1SO);
+}
+
+/**
+  * @brief  Check if the AHB RAM1 shut-off in DStop/DStop2 mode is enabled
+  * @rmtoll CR1    AHBRAM1SO     LL_PWR_IsEnabledAHBRAM1ShutOff
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledAHBRAM1ShutOff(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_AHBRAM1SO) == (PWR_CR1_AHBRAM1SO)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_AHBRAM1SO */
+
+#if defined (PWR_CR1_AHBRAM2SO)
+/**
+  * @brief  Enable the AHB RAM2 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AHBRAM2SO     LL_PWR_EnableAHBRAM2ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableAHBRAM2ShutOff(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_AHBRAM2SO);
+}
+
+/**
+  * @brief  Disable the AHB RAM2 shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    AHBRAM2SO     LL_PWR_DisableAHBRAM2ShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableAHBRAM2ShutOff(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_AHBRAM2SO);
+}
+
+/**
+  * @brief  Check if the AHB RAM2 shut-off in DStop/DStop2 mode is enabled
+  * @rmtoll CR1    AHBRAM2SO     LL_PWR_IsEnabledAHBRAM2ShutOff
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledAHBRAM2ShutOff(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_AHBRAM2SO) == (PWR_CR1_AHBRAM2SO)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_AHBRAM2SO */
+
+#if defined (PWR_CR1_ITCMSO)
+/**
+  * @brief  Enable the ITCM shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    ITCMSO     LL_PWR_EnableITCMSOShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableITCMSOShutOff(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_ITCMSO);
+}
+
+/**
+  * @brief  Disable the ITCM shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    ITCMSO     LL_PWR_DisableITCMSOShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableITCMSOShutOff(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_ITCMSO);
+}
+
+/**
+  * @brief  Check if the ITCM shut-off in DStop/DStop2 mode is enabled
+  * @rmtoll CR1    ITCMSO     LL_PWR_IsEnabledITCMShutOff
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledITCMShutOff(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_ITCMSO) == (PWR_CR1_ITCMSO)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_ITCMSO */
+
+#if defined (PWR_CR1_HSITFSO)
+/**
+  * @brief  Enable the USB and FDCAN shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    HSITFSO     LL_PWR_EnableHSITFShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableHSITFShutOff(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_HSITFSO);
+}
+
+/**
+  * @brief  Disable the USB and FDCAN shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    HSITFSO     LL_PWR_DisableHSITFShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableHSITFShutOff(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_HSITFSO);
+}
+
+/**
+  * @brief  Check if the USB and FDCAN shut-off in DStop/DStop2 mode is enabled
+  * @rmtoll CR1    HSITFSO     LL_PWR_IsEnabledHSITFShutOff
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledHSITFShutOff(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_HSITFSO) == (PWR_CR1_HSITFSO)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_HSITFSO */
+
+#if defined (PWR_CR1_SRDRAMSO)
+/**
+  * @brief  Enable the SRD AHB RAM shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    SRDRAMSO     LL_PWR_EnableSRDRAMShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_EnableSRDRAMShutOff(void)
+{
+  SET_BIT(PWR->CR1, PWR_CR1_SRDRAMSO);
+}
+
+/**
+  * @brief  Disable the SRD AHB RAM shut-off in DStop/DStop2 mode
+  * @rmtoll CR1    SRDRAMSO     LL_PWR_DisableSRDRAMShutOff
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_DisableSRDRAMShutOff(void)
+{
+  CLEAR_BIT(PWR->CR1, PWR_CR1_SRDRAMSO);
+}
+
+/**
+  * @brief  Check if the SRD AHB RAM shut-off in DStop/DStop2 mode is enabled
+  * @rmtoll CR1    SRDRAMSO     LL_PWR_IsEnabledSRDRAMShutOff
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledSRDRAMShutOff(void)
+{
+  return ((READ_BIT(PWR->CR1, PWR_CR1_SRDRAMSO) == (PWR_CR1_SRDRAMSO)) ? 1UL : 0UL);
+}
+#endif /* PWR_CR1_SRDRAMSO */
 
 /**
   * @brief  Enable Backup Regulator
@@ -645,9 +999,9 @@ __STATIC_INLINE void LL_PWR_ConfigSupply(uint32_t SupplySource)
   /* Set the power supply configuration */
   MODIFY_REG(PWR->CR3, (PWR_CR3_SCUEN | PWR_CR3_LDOEN | PWR_CR3_BYPASS), SupplySource);
 }
-#endif /* SMPS */
+#endif /* defined (SMPS) */
 
-#if defined(SMPS)
+#if defined (SMPS)
 /**
   * @brief  Get the PWR supply
   * @rmtoll CR3          BYPASS          LL_PWR_GetSupply
@@ -671,9 +1025,7 @@ __STATIC_INLINE uint32_t LL_PWR_GetSupply(void)
   /* Get the power supply configuration */
   return(uint32_t)(READ_BIT(PWR->CR3, (PWR_CR3_SMPSLEVEL | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN | PWR_CR3_BYPASS)));
 }
-
 #else
-
 /**
   * @brief  Get the PWR supply
   * @rmtoll CR3          BYPASS          LL_PWR_GetSupply
@@ -688,7 +1040,7 @@ __STATIC_INLINE uint32_t LL_PWR_GetSupply(void)
   /* Get the power supply configuration */
   return(uint32_t)(READ_BIT(PWR->CR3, (PWR_CR3_SCUEN | PWR_CR3_LDOEN | PWR_CR3_BYPASS)));
 }
-#endif /* SMPS */
+#endif /* defined (SMPS) */
 
 /**
   * @brief  Enable battery charging
@@ -805,9 +1157,10 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledUSBVoltageDetector(void)
   return ((READ_BIT(PWR->CR3, PWR_CR3_USB33DEN) == (PWR_CR3_USB33DEN)) ? 1UL : 0UL);
 }
 
+#if defined (PWR_CPUCR_PDDS_D2)
 /**
   * @brief  Set the D1 domain Power Down mode when the CPU enters deepsleep
-  * @rmtoll CPUCR     PDDS_D1       LL_PWR_CPU_SetD1PowerMode\n
+  * @rmtoll CPUCR     PDDS_D1       LL_PWR_CPU_SetD1PowerMode
   * @param  PDMode This parameter can be one of the following values:
   *         @arg @ref LL_PWR_CPU_MODE_D1STOP
   *         @arg @ref LL_PWR_CPU_MODE_D1STANDBY
@@ -817,11 +1170,25 @@ __STATIC_INLINE void LL_PWR_CPU_SetD1PowerMode(uint32_t PDMode)
 {
   MODIFY_REG(PWR->CPUCR, PWR_CPUCR_PDDS_D1, PDMode);
 }
+#else
+/**
+  * @brief  Set the CPU domain Power Down mode when the CPU enters deepsleep
+  * @rmtoll CPUCR     RETDS_CD       LL_PWR_CPU_SetCDPowerMode
+  * @param  PDMode This parameter can be one of the following values:
+  *         @arg @ref LL_PWR_CPU_MODE_CDSTOP
+  *         @arg @ref LL_PWR_CPU_MODE_CDSTOP2
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_CPU_SetCDPowerMode(uint32_t PDMode)
+{
+  MODIFY_REG(PWR->CPUCR, PWR_CPUCR_RETDS_CD, PDMode);
+}
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
 /**
   * @brief  Set the D1 domain Power Down mode when the CPU2 enters deepsleep
-  * @rmtoll CPU2CR     PDDS_D1       LL_PWR_CPU2_SetD1PowerMode\n
+  * @rmtoll CPU2CR     PDDS_D1       LL_PWR_CPU2_SetD1PowerMode
   * @param  PDMode This parameter can be one of the following values:
   *         @arg @ref LL_PWR_CPU2_MODE_D1STOP
   *         @arg @ref LL_PWR_CPU2_MODE_D1STANDBY
@@ -833,9 +1200,10 @@ __STATIC_INLINE void LL_PWR_CPU2_SetD1PowerMode(uint32_t PDMode)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_PDDS_D2)
 /**
   * @brief  Get the D1 Domain Power Down mode when the CPU enters deepsleep
-  * @rmtoll CPUCR     PDDS_D1       LL_PWR_CPU_GetD1PowerMode\n
+  * @rmtoll CPUCR     PDDS_D1       LL_PWR_CPU_GetD1PowerMode
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_PWR_CPU_MODE_D1STOP
   *         @arg @ref LL_PWR_CPU_MODE_D1STANDBY
@@ -844,11 +1212,24 @@ __STATIC_INLINE uint32_t LL_PWR_CPU_GetD1PowerMode(void)
 {
   return (uint32_t)(READ_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_D1));
 }
+#else
+/**
+  * @brief  Get the CD Domain Power Down mode when the CPU enters deepsleep
+  * @rmtoll CPUCR     RETDS_CD       LL_PWR_CPU_GetCDPowerMode
+  * @retval Returned value can be one of the following values:
+  *         @arg @ref LL_PWR_CPU_MODE_CDSTOP
+  *         @arg @ref LL_PWR_CPU_MODE_CDSTOP2
+  */
+__STATIC_INLINE uint32_t LL_PWR_CPU_GetCDPowerMode(void)
+{
+  return (uint32_t)(READ_BIT(PWR->CPUCR, PWR_CPUCR_RETDS_CD));
+}
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
 /**
   * @brief  Get the D1 Domain Power Down mode when the CPU2 enters deepsleep
-  * @rmtoll CPU2CR     PDDS_D1       LL_PWR_CPU2_GetD1PowerMode\n
+  * @rmtoll CPU2CR     PDDS_D1       LL_PWR_CPU2_GetD1PowerMode
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_PWR_CPU2_MODE_D1STOP
   *         @arg @ref LL_PWR_CPU2_MODE_D1STANDBY
@@ -859,9 +1240,10 @@ __STATIC_INLINE uint32_t LL_PWR_CPU2_GetD1PowerMode(void)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_PDDS_D2)
 /**
   * @brief  Set the D2 domain Power Down mode when the CPU enters deepsleep
-  * @rmtoll CPUCR     PDDS_D2       LL_PWR_CPU_SetD2PowerMode\n
+  * @rmtoll CPUCR     PDDS_D2       LL_PWR_CPU_SetD2PowerMode
   * @param  PDMode This parameter can be one of the following values:
   *         @arg @ref LL_PWR_CPU_MODE_D2STOP
   *         @arg @ref LL_PWR_CPU_MODE_D2STANDBY
@@ -871,11 +1253,12 @@ __STATIC_INLINE void LL_PWR_CPU_SetD2PowerMode(uint32_t PDMode)
 {
   MODIFY_REG(PWR->CPUCR, PWR_CPUCR_PDDS_D2, PDMode);
 }
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
 /**
   * @brief  Set the D2 domain Power Down mode when the CPU2 enters deepsleep
-  * @rmtoll CPU2CR     PDDS_D2       LL_PWR_CPU2_SetD2PowerMode\n
+  * @rmtoll CPU2CR     PDDS_D2       LL_PWR_CPU2_SetD2PowerMode
   * @param  PDMode This parameter can be one of the following values:
   *         @arg @ref LL_PWR_CPU2_MODE_D2STOP
   *         @arg @ref LL_PWR_CPU2_MODE_D2STANDBY
@@ -887,9 +1270,10 @@ __STATIC_INLINE void LL_PWR_CPU2_SetD2PowerMode(uint32_t PDMode)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_PDDS_D2)
 /**
   * @brief  Get the D2 Domain Power Down mode when the CPU enters deepsleep
-  * @rmtoll CPUCR     PDDS_D2       LL_PWR_CPU_GetD2PowerMode\n
+  * @rmtoll CPUCR     PDDS_D2       LL_PWR_CPU_GetD2PowerMode
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_PWR_CPU_MODE_D2STOP
   *         @arg @ref LL_PWR_CPU_MODE_D2STANDBY
@@ -898,11 +1282,12 @@ __STATIC_INLINE uint32_t LL_PWR_CPU_GetD2PowerMode(void)
 {
   return (uint32_t)(READ_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_D2));
 }
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
 /**
   * @brief  Get the D2 Domain Power Down mode when the CPU2 enters deepsleep
-  * @rmtoll CPU2CR     PDDS_D2       LL_PWR_CPU2_GetD2PowerMode\n
+  * @rmtoll CPU2CR     PDDS_D2       LL_PWR_CPU2_GetD2PowerMode
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_PWR_CPU2_MODE_D2STOP
   *         @arg @ref LL_PWR_CPU2_MODE_D2STANDBY
@@ -913,9 +1298,10 @@ __STATIC_INLINE uint32_t LL_PWR_CPU2_GetD2PowerMode(void)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_PDDS_D2)
 /**
   * @brief  Set the D3 domain Power Down mode when the CPU enters deepsleep
-  * @rmtoll CPUCR     PDDS_D3       LL_PWR_CPU_SetD3PowerMode\n
+  * @rmtoll CPUCR     PDDS_D3       LL_PWR_CPU_SetD3PowerMode
   * @param  PDMode This parameter can be one of the following values:
   *         @arg @ref LL_PWR_CPU_MODE_D3STOP
   *         @arg @ref LL_PWR_CPU_MODE_D3STANDBY
@@ -925,11 +1311,25 @@ __STATIC_INLINE void LL_PWR_CPU_SetD3PowerMode(uint32_t PDMode)
 {
   MODIFY_REG(PWR->CPUCR, PWR_CPUCR_PDDS_D3 , PDMode);
 }
+#else
+/**
+  * @brief  Set the SRD domain Power Down mode when the CPU enters deepsleep
+  * @rmtoll CPUCR     PDDS_SRD       LL_PWR_CPU_SetSRDPowerMode
+  * @param  PDMode This parameter can be one of the following values:
+  *         @arg @ref LL_PWR_CPU_MODE_SRDSTOP
+  *         @arg @ref LL_PWR_CPU_MODE_SRDSTANDBY
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_CPU_SetSRDPowerMode(uint32_t PDMode)
+{
+  MODIFY_REG(PWR->CPUCR, PWR_CPUCR_PDDS_SRD , PDMode);
+}
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
 /**
   * @brief  Set the D3 domain Power Down mode when the CPU2 enters deepsleep
-  * @rmtoll CPU2CR     PDDS_D3       LL_PWR_CPU2_SetD3PowerMode\n
+  * @rmtoll CPU2CR     PDDS_D3       LL_PWR_CPU2_SetD3PowerMode
   * @param  PDMode This parameter can be one of the following values:
   *         @arg @ref LL_PWR_CPU2_MODE_D3STOP
   *         @arg @ref LL_PWR_CPU2_MODE_D3STANDBY
@@ -941,9 +1341,10 @@ __STATIC_INLINE void LL_PWR_CPU2_SetD3PowerMode(uint32_t PDMode)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_PDDS_D3)
 /**
   * @brief  Get the D3 Domain Power Down mode when the CPU enters deepsleep
-  * @rmtoll CPUCR     PDDS_D3       LL_PWR_CPU_GetD3PowerMode\n
+  * @rmtoll CPUCR     PDDS_D3       LL_PWR_CPU_GetD3PowerMode
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_PWR_CPU_MODE_D3STOP
   *         @arg @ref LL_PWR_CPU_MODE_D3STANDBY
@@ -952,11 +1353,24 @@ __STATIC_INLINE uint32_t LL_PWR_CPU_GetD3PowerMode(void)
 {
   return (uint32_t)(READ_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_D3));
 }
+#else
+/**
+  * @brief  Get the SRD Domain Power Down mode when the CPU enters deepsleep
+  * @rmtoll CPUCR     PDDS_SRD       LL_PWR_CPU_GetSRDPowerMode
+  * @retval Returned value can be one of the following values:
+  *         @arg @ref LL_PWR_CPU_MODE_SRDSTOP
+  *         @arg @ref LL_PWR_CPU_MODE_SRDSTANDBY
+  */
+__STATIC_INLINE uint32_t LL_PWR_CPU_GetSRDPowerMode(void)
+{
+  return (uint32_t)(READ_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_SRD));
+}
+#endif /* PWR_CPUCR_PDDS_D3 */
 
 #if defined (DUAL_CORE)
 /**
   * @brief  Get the D3 Domain Power Down mode when the CPU2 enters deepsleep
-  * @rmtoll CPU2CR     PDDS_D3       LL_PWR_CPU2_GetD3PowerMode\n
+  * @rmtoll CPU2CR     PDDS_D3       LL_PWR_CPU2_GetD3PowerMode
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_PWR_CPU2_MODE_D3STOP
   *         @arg @ref LL_PWR_CPU2_MODE_D3STANDBY
@@ -970,7 +1384,7 @@ __STATIC_INLINE uint32_t LL_PWR_CPU2_GetD3PowerMode(void)
 #if defined (DUAL_CORE)
 /**
   * @brief  Hold the CPU1 and allocated peripherals when exiting from STOP mode
-  * @rmtoll CPU2CR     HOLD1       LL_PWR_HoldCPU1\n
+  * @rmtoll CPU2CR     HOLD1       LL_PWR_HoldCPU1
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_HoldCPU1(void)
@@ -980,7 +1394,7 @@ __STATIC_INLINE void LL_PWR_HoldCPU1(void)
 
 /**
   * @brief  Release the CPU1 and allocated peripherals
-  * @rmtoll CPU2CR     HOLD1       LL_PWR_ReleaseCPU1\n
+  * @rmtoll CPU2CR     HOLD1       LL_PWR_ReleaseCPU1
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_ReleaseCPU1(void)
@@ -990,7 +1404,7 @@ __STATIC_INLINE void LL_PWR_ReleaseCPU1(void)
 
 /**
   * @brief  Ckeck if the CPU1 and allocated peripherals are held
-  * @rmtoll CPU2CR     HOLD1       LL_PWR_IsCPU1Held\n
+  * @rmtoll CPU2CR     HOLD1       LL_PWR_IsCPU1Held
   * @retval State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_PWR_IsCPU1Held(void)
@@ -1000,7 +1414,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsCPU1Held(void)
 
 /**
   * @brief  Hold the CPU2 and allocated peripherals when exiting from STOP mode
-  * @rmtoll CPUCR     HOLD2       LL_PWR_HoldCPU2\n
+  * @rmtoll CPUCR     HOLD2       LL_PWR_HoldCPU2
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_HoldCPU2(void)
@@ -1010,7 +1424,7 @@ __STATIC_INLINE void LL_PWR_HoldCPU2(void)
 
 /**
   * @brief  Release the CPU2 and allocated peripherals
-  * @rmtoll CPUCR     HOLD2       LL_PWR_ReleaseCPU2\n
+  * @rmtoll CPUCR     HOLD2       LL_PWR_ReleaseCPU2
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_ReleaseCPU2(void)
@@ -1020,7 +1434,7 @@ __STATIC_INLINE void LL_PWR_ReleaseCPU2(void)
 
 /**
   * @brief  Ckeck if the CPU2 and allocated peripherals are held
-  * @rmtoll CPUCR     HOLD2       LL_PWR_IsCPU2Held\n
+  * @rmtoll CPUCR     HOLD2       LL_PWR_IsCPU2Held
   * @retval State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_PWR_IsCPU2Held(void)
@@ -1029,20 +1443,32 @@ __STATIC_INLINE uint32_t LL_PWR_IsCPU2Held(void)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_PDDS_D2)
 /**
   * @brief  D3 domain remains in Run mode regardless of CPU subsystem modes
-  * @rmtoll CPUCR     RUN_D3       LL_PWR_CPU_EnableD3RunInLowPowerMode\n
+  * @rmtoll CPUCR     RUN_D3       LL_PWR_CPU_EnableD3RunInLowPowerMode
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_CPU_EnableD3RunInLowPowerMode(void)
 {
   SET_BIT(PWR->CPUCR, PWR_CPUCR_RUN_D3);
 }
+#else
+/**
+  * @brief  SRD domain remains in Run mode regardless of CPU subsystem modes
+  * @rmtoll CPUCR     RUN_SRD      LL_PWR_CPU_EnableSRDRunInLowPowerMode
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_CPU_EnableSRDRunInLowPowerMode(void)
+{
+  SET_BIT(PWR->CPUCR, PWR_CPUCR_RUN_SRD);
+}
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
 /**
   * @brief  D3 domain remains in Run mode regardless of CPU2 subsystem modes
-  * @rmtoll CPU2CR     RUN_D3       LL_PWR_CPU2_EnableD3RunInLowPowerMode\n
+  * @rmtoll CPU2CR     RUN_D3       LL_PWR_CPU2_EnableD3RunInLowPowerMode
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_CPU2_EnableD3RunInLowPowerMode(void)
@@ -1051,20 +1477,32 @@ __STATIC_INLINE void LL_PWR_CPU2_EnableD3RunInLowPowerMode(void)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_PDDS_D2)
 /**
   * @brief  D3 domain follows CPU subsystem modes
-  * @rmtoll CPUCR     RUN_D3       LL_PWR_CPU_DisableD3RunInLowPowerMode\n
+  * @rmtoll CPUCR     RUN_D3       LL_PWR_CPU_DisableD3RunInLowPowerMode
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_CPU_DisableD3RunInLowPowerMode(void)
 {
   CLEAR_BIT(PWR->CPUCR, PWR_CPUCR_RUN_D3);
 }
+#else
+/**
+  * @brief  SRD domain follows CPU subsystem modes
+  * @rmtoll CPUCR     RUN_SRD      LL_PWR_CPU_DisableSRDRunInLowPowerMode
+  * @retval None
+  */
+__STATIC_INLINE void LL_PWR_CPU_DisableSRDRunInLowPowerMode(void)
+{
+  CLEAR_BIT(PWR->CPUCR, PWR_CPUCR_RUN_SRD);
+}
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
 /**
   * @brief  D3 domain follows CPU2 subsystem modes
-  * @rmtoll CPU2CR     RUN_D3       LL_PWR_CPU2_DisableD3RunInLowPowerMode\n
+  * @rmtoll CPU2CR     RUN_D3       LL_PWR_CPU2_DisableD3RunInLowPowerMode
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_CPU2_DisableD3RunInLowPowerMode(void)
@@ -1073,20 +1511,32 @@ __STATIC_INLINE void LL_PWR_CPU2_DisableD3RunInLowPowerMode(void)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_PDDS_D2)
 /**
   * @brief  Check if D3 is kept in Run mode when CPU enters low power mode
-  * @rmtoll CPUCR     RUN_D3    LL_PWR_CPU_IsEnabledD3RunInLowPowerMode\n
+  * @rmtoll CPUCR     RUN_D3    LL_PWR_CPU_IsEnabledD3RunInLowPowerMode
   * @retval State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_PWR_CPU_IsEnabledD3RunInLowPowerMode(void)
 {
   return ((READ_BIT(PWR->CPUCR, PWR_CPUCR_RUN_D3) == (PWR_CPUCR_RUN_D3)) ? 1UL : 0UL);
 }
+#else
+/**
+  * @brief  Check if SRD is kept in Run mode when CPU enters low power mode
+  * @rmtoll CPUCR     RUN_SRD    LL_PWR_CPU_IsEnabledSRDRunInLowPowerMode
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_CPU_IsEnabledSRDRunInLowPowerMode(void)
+{
+  return ((READ_BIT(PWR->CPUCR, PWR_CPUCR_RUN_SRD) == (PWR_CPUCR_RUN_SRD)) ? 1UL : 0UL);
+}
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
 /**
   * @brief  Check if D3 is kept in Run mode when CPU2 enters low power mode
-  * @rmtoll CPU2CR     RUN_D3    LL_PWR_CPU2_IsEnabledD3RunInLowPowerMode\n
+  * @rmtoll CPU2CR     RUN_D3    LL_PWR_CPU2_IsEnabledD3RunInLowPowerMode
   * @retval State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_PWR_CPU2_IsEnabledD3RunInLowPowerMode(void)
@@ -1099,27 +1549,41 @@ __STATIC_INLINE uint32_t LL_PWR_CPU2_IsEnabledD3RunInLowPowerMode(void)
   * @brief  Set the main internal Regulator output voltage
   * @rmtoll D3CR    VOS       LL_PWR_SetRegulVoltageScaling
   * @param  VoltageScaling This parameter can be one of the following values:
+  *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE0
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE1
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE2
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE3
+  * @note   For all H7 lines except STM32H7Axxx and STM32H7Bxxx lines, VOS0 
+  *         is applied when PWR_D3CR_VOS[1:0] = 0b11 and  SYSCFG_PWRCR_ODEN = 0b1.
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_SetRegulVoltageScaling(uint32_t VoltageScaling)
 {
+#if defined (PWR_CPUCR_PDDS_D2)
   MODIFY_REG(PWR->D3CR, PWR_D3CR_VOS, VoltageScaling);
+#else
+  MODIFY_REG(PWR->SRDCR, PWR_SRDCR_VOS, VoltageScaling);
+#endif /* PWR_CPUCR_PDDS_D2 */
 }
 
 /**
   * @brief  Get the main internal Regulator output voltage
   * @rmtoll D3CR    VOS       LL_PWR_GetRegulVoltageScaling
+  * @note   For all H7 lines except STM32H7Axxx and STM32H7Bxxx lines, checking 
+  *         VOS0 need the check of PWR_D3CR_VOS[1:0] field and SYSCFG_PWRCR_ODEN bit.
   * @retval Returned value can be one of the following values:
+  *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE0
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE1
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE2
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE3
   */
 __STATIC_INLINE uint32_t LL_PWR_GetRegulVoltageScaling(void)
 {
+#if defined (PWR_CPUCR_PDDS_D2)
   return (uint32_t)(READ_BIT(PWR->D3CR, PWR_D3CR_VOS));
+#else
+  return (uint32_t)(READ_BIT(PWR->SRDCR, PWR_SRDCR_VOS));
+#endif /* PWR_CPUCR_PDDS_D2 */
 }
 
 /**
@@ -1391,6 +1855,18 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_AVDO(void)
   return ((READ_BIT(PWR->CSR1, PWR_CSR1_AVDO) == (PWR_CSR1_AVDO)) ? 1UL : 0UL);
 }
 
+#if defined (PWR_CSR1_MMCVDO)
+/**
+  * @brief  Indicate whether VDDMMC voltage is below 1V2
+  * @rmtoll CSR1   MMCVDO     LL_PWR_IsActiveFlag_MMCVDO
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_MMCVDO(void)
+{
+  return ((READ_BIT(PWR->CSR1, PWR_CSR1_MMCVDO) == (PWR_CSR1_MMCVDO)) ? 1UL : 0UL);
+}
+#endif /* PWR_CSR1_MMCVDO */
+
 /**
   * @brief  Get Backup Regulator ready Flag
   * @rmtoll CR2   BRRDY       LL_PWR_IsActiveFlag_BRR
@@ -1529,6 +2005,7 @@ __STATIC_INLINE uint32_t LL_PWR_CPU2_IsActiveFlag_SB(void)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_SBF_D1)
 /**
   * @brief  Get CPU D1 Domain Standby Flag
   * @rmtoll CPUCR   SBF_D1       LL_PWR_CPU_IsActiveFlag_SB_D1
@@ -1538,6 +2015,7 @@ __STATIC_INLINE uint32_t LL_PWR_CPU_IsActiveFlag_SB_D1(void)
 {
   return ((READ_BIT(PWR->CPUCR, PWR_CPUCR_SBF_D1) == (PWR_CPUCR_SBF_D1)) ? 1UL : 0UL);
 }
+#endif /* PWR_CPUCR_SBF_D1 */
 
 #if defined (DUAL_CORE)
 /**
@@ -1551,6 +2029,7 @@ __STATIC_INLINE uint32_t LL_PWR_CPU2_IsActiveFlag_SB_D1(void)
 }
 #endif /* DUAL_CORE */
 
+#if defined (PWR_CPUCR_SBF_D2)
 /**
   * @brief  Get CPU D2 Domain Standby Flag
   * @rmtoll CPUCR   SBF_D2       LL_PWR_CPU_IsActiveFlag_SB_D2
@@ -1560,6 +2039,7 @@ __STATIC_INLINE uint32_t LL_PWR_CPU_IsActiveFlag_SB_D2(void)
 {
   return ((READ_BIT(PWR->CPUCR, PWR_CPUCR_SBF_D2) == (PWR_CPUCR_SBF_D2)) ? 1UL : 0UL);
 }
+#endif /* PWR_CPUCR_SBF_D2 */
 
 #if defined (DUAL_CORE)
 /**
@@ -1573,6 +2053,7 @@ __STATIC_INLINE uint32_t LL_PWR_CPU2_IsActiveFlag_SB_D2(void)
 }
 #endif /* DUAL_CORE */
 
+
 /**
   * @brief  Indicate whether the Regulator is ready in the selected voltage range
   *         or if its output voltage is still changing to the required voltage level
@@ -1581,7 +2062,11 @@ __STATIC_INLINE uint32_t LL_PWR_CPU2_IsActiveFlag_SB_D2(void)
   */
 __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_VOS(void)
 {
+#if defined (PWR_CPUCR_PDDS_D2)
   return ((READ_BIT(PWR->D3CR, PWR_D3CR_VOSRDY) == (PWR_D3CR_VOSRDY)) ? 1UL : 0UL);
+#else
+  return ((READ_BIT(PWR->SRDCR, PWR_SRDCR_VOSRDY) == (PWR_SRDCR_VOSRDY)) ? 1UL : 0UL);
+#endif /* PWR_CPUCR_PDDS_D2 */
 }
 
 /**
@@ -1726,7 +2211,7 @@ __STATIC_INLINE void LL_PWR_ClearFlag_WU1(void)
   WRITE_REG(PWR->WKUPCR, PWR_WKUPCR_WKUPC1);
 }
 
-#if defined(USE_FULL_LL_DRIVER)
+#if defined (USE_FULL_LL_DRIVER)
 /** @defgroup PWR_LL_EF_Init De-initialization function
   * @{
   */
@@ -1734,7 +2219,7 @@ ErrorStatus LL_PWR_DeInit(void);
 /**
   * @}
   */
-#endif /* USE_FULL_LL_DRIVER */
+#endif /* defined (USE_FULL_LL_DRIVER) */
 
 
 /**
@@ -1749,7 +2234,7 @@ ErrorStatus LL_PWR_DeInit(void);
   * @}
   */
 
-#endif /* defined(PWR) */
+#endif /* defined (PWR) */
 
 /**
   * @}

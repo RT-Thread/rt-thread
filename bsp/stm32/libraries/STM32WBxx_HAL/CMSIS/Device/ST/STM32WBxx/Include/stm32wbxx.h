@@ -19,10 +19,10 @@
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
+  * This software component is licensed by ST under Apache License, Version 2.0,
   * the "License"; You may not use this file except in compliance with the 
   * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  *                        opensource.org/licenses/Apache-2.0
   *
   ******************************************************************************
   */
@@ -69,7 +69,7 @@
   * @brief CMSIS Device version number
   */
 #define __STM32WBxx_CMSIS_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define __STM32WBxx_CMSIS_VERSION_SUB1   (0x06U) /*!< [23:16] sub1 version */
+#define __STM32WBxx_CMSIS_VERSION_SUB1   (0x08U) /*!< [23:16] sub1 version */
 #define __STM32WBxx_CMSIS_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
 #define __STM32WBxx_CMSIS_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32WBxx_CMSIS_DEVICE_VERSION        ((__STM32WBxx_CMSIS_VERSION_MAIN << 24)\
@@ -95,6 +95,10 @@
   #include "stm32wb35xx.h"
 #elif defined(STM32WB30xx)
   #include "stm32wb30xx.h"
+#elif defined(STM32WB15xx)
+  #include "stm32wb15xx.h"
+#elif defined(STM32WB10xx)
+  #include "stm32wb10xx.h"
 #else
  #error "Please select first the target STM32WBxx device used in your application, for instance xxx (in stm32wbxx.h file)"
 #endif

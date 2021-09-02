@@ -228,6 +228,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 #if (USE_HAL_USART_REGISTER_CALLBACKS == 1)
 #define HAL_USART_ERROR_INVALID_CALLBACK ((uint32_t)0x00000040U)    /*!< Invalid Callback error    */
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
+#define  HAL_USART_ERROR_RTO              ((uint32_t)0x00000080U)    /*!< Receiver Timeout error  */
 /**
   * @}
   */
@@ -352,6 +353,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 #define USART_FLAG_UDR                      USART_ISR_UDR           /*!< SPI slave underrun error flag              */
 #define USART_FLAG_TXE                      USART_ISR_TXE_TXFNF     /*!< USART transmit data register empty         */
 #define USART_FLAG_TXFNF                    USART_ISR_TXE_TXFNF     /*!< USART TXFIFO not full                      */
+#define USART_FLAG_RTOF                     USART_ISR_RTOF          /*!< USART receiver timeout flag                */
 #define USART_FLAG_TC                       USART_ISR_TC            /*!< USART transmission complete                */
 #define USART_FLAG_RXNE                     USART_ISR_RXNE_RXFNE    /*!< USART read data register not empty         */
 #define USART_FLAG_RXFNE                    USART_ISR_RXNE_RXFNE    /*!< USART RXFIFO not empty                     */
@@ -406,6 +408,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 #define USART_CLEAR_TCF                       USART_ICR_TCCF            /*!< Transmission Complete Clear Flag    */
 #define USART_CLEAR_UDRF                      USART_ICR_UDRCF           /*!< SPI slave underrun error Clear Flag */
 #define USART_CLEAR_TXFECF                    USART_ICR_TXFECF          /*!< TXFIFO Empty Clear Flag             */
+#define USART_CLEAR_RTOF                      USART_ICR_RTOCF           /*!< USART receiver timeout clear flag  */
 /**
   * @}
   */
@@ -462,6 +465,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_FLAG_TC    Transmission Complete flag
   *            @arg @ref USART_FLAG_RXNE  Receive data register not empty flag
   *            @arg @ref USART_FLAG_RXFNE RXFIFO not empty flag
+  *            @arg @ref USART_FLAG_RTOF  Receiver Timeout flag
   *            @arg @ref USART_FLAG_IDLE  Idle Line detection flag
   *            @arg @ref USART_FLAG_ORE   OverRun Error flag
   *            @arg @ref USART_FLAG_NE    Noise Error flag
@@ -482,6 +486,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_CLEAR_IDLEF    IDLE line detected Clear Flag
   *            @arg @ref USART_CLEAR_TXFECF   TXFIFO empty clear Flag
   *            @arg @ref USART_CLEAR_TCF      Transmission Complete Clear Flag
+  *            @arg @ref USART_CLEAR_RTOF     Receiver Timeout clear flag
   *            @arg @ref USART_CLEAR_UDRF     SPI slave underrun error Clear Flag
   * @retval None
   */
@@ -632,6 +637,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   *            @arg @ref USART_CLEAR_NEF      Noise detected Clear Flag
   *            @arg @ref USART_CLEAR_OREF     Overrun Error Clear Flag
   *            @arg @ref USART_CLEAR_IDLEF    IDLE line detected Clear Flag
+  *            @arg @ref USART_CLEAR_RTOF     Receiver timeout clear flag
   *            @arg @ref USART_CLEAR_TXFECF   TXFIFO empty clear Flag
   *            @arg @ref USART_CLEAR_TCF      Transmission Complete Clear Flag
   * @retval None

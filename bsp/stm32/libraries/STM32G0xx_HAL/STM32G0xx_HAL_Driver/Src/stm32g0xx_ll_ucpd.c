@@ -94,7 +94,7 @@ ErrorStatus LL_UCPD_DeInit(UCPD_TypeDef *UCPDx)
     /* Release reset of ucpd clock */
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_UCPD1);
 
-    /* Disbale ucpd clock */
+    /* Disable ucpd clock */
     LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_UCPD1);
 
     status = SUCCESS;
@@ -107,7 +107,7 @@ ErrorStatus LL_UCPD_DeInit(UCPD_TypeDef *UCPDx)
     /* Release reset of ucpd clock */
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_UCPD2);
 
-    /* Disbale ucpd clock */
+    /* Disable ucpd clock */
     LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_UCPD2);
 
     status = SUCCESS;
@@ -160,10 +160,10 @@ ErrorStatus LL_UCPD_Init(UCPD_TypeDef *UCPDx, LL_UCPD_InitTypeDef *UCPD_InitStru
 void LL_UCPD_StructInit(LL_UCPD_InitTypeDef *UCPD_InitStruct)
 {
   /* Set UCPD_InitStruct fields to default values */
-  UCPD_InitStruct->psc_ucpdclk  = LL_UCPD_PSC_DIV1;
+  UCPD_InitStruct->psc_ucpdclk  = LL_UCPD_PSC_DIV2;
   UCPD_InitStruct->transwin     = 0x7;   /* Divide by 8                     */
   UCPD_InitStruct->IfrGap       = 0x10;  /* Divide by 17                    */
-  UCPD_InitStruct->HbitClockDiv = 0x19;  /* Divide by 26 to produce HBITCLK */
+  UCPD_InitStruct->HbitClockDiv = 0x0D;  /* Divide by 14 to produce HBITCLK */
 }
 
 /**

@@ -6,7 +6,8 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -211,7 +212,6 @@ void               HAL_NAND_ITCallback(NAND_HandleTypeDef *hnand);
   */
 
 /* IO operation functions  ****************************************************/
-
 HAL_StatusTypeDef  HAL_NAND_Reset(NAND_HandleTypeDef *hnand);
 
 HAL_StatusTypeDef  HAL_NAND_Read_Page_8b(NAND_HandleTypeDef *hnand, NAND_AddressTypeDef *pAddress, uint8_t *pBuffer, uint32_t NumPageToRead);
@@ -264,39 +264,40 @@ uint32_t              HAL_NAND_Read_Status(NAND_HandleTypeDef *hnand);
 /**
   * @}
   */
+
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup NAND_Private_Constants NAND Private Constants
   * @{
   */
-#define NAND_DEVICE                ((uint32_t)0x80000000U)
-#define NAND_WRITE_TIMEOUT         ((uint32_t)0x01000000U)
+#define NAND_DEVICE                0x80000000UL
+#define NAND_WRITE_TIMEOUT         0x01000000UL
 
-#define CMD_AREA                   ((uint32_t)(1UL<<16U))  /* A16 = CLE high */
-#define ADDR_AREA                  ((uint32_t)(1UL<<17U))  /* A17 = ALE high */
+#define CMD_AREA                   (1UL<<16U)  /* A16 = CLE high */
+#define ADDR_AREA                  (1UL<<17U)  /* A17 = ALE high */
 
-#define NAND_CMD_AREA_A            ((uint8_t)0x00U)
-#define NAND_CMD_AREA_B            ((uint8_t)0x01U)
-#define NAND_CMD_AREA_C            ((uint8_t)0x50U)
-#define NAND_CMD_AREA_TRUE1        ((uint8_t)0x30U)
+#define NAND_CMD_AREA_A            0x00U
+#define NAND_CMD_AREA_B            0x01U
+#define NAND_CMD_AREA_C            0x50U
+#define NAND_CMD_AREA_TRUE1        0x30U
 
-#define NAND_CMD_WRITE0            ((uint8_t)0x80U)
-#define NAND_CMD_WRITE_TRUE1       ((uint8_t)0x10U)
-#define NAND_CMD_ERASE0            ((uint8_t)0x60U)
-#define NAND_CMD_ERASE1            ((uint8_t)0xD0U)
-#define NAND_CMD_READID            ((uint8_t)0x90U)
-#define NAND_CMD_STATUS            ((uint8_t)0x70U)
-#define NAND_CMD_LOCK_STATUS       ((uint8_t)0x7AU)
-#define NAND_CMD_RESET             ((uint8_t)0xFFU)
+#define NAND_CMD_WRITE0            0x80U
+#define NAND_CMD_WRITE_TRUE1       0x10U
+#define NAND_CMD_ERASE0            0x60U
+#define NAND_CMD_ERASE1            0xD0U
+#define NAND_CMD_READID            0x90U
+#define NAND_CMD_STATUS            0x70U
+#define NAND_CMD_LOCK_STATUS       0x7AU
+#define NAND_CMD_RESET             0xFFU
 
 /* NAND memory status */
-#define NAND_VALID_ADDRESS         ((uint32_t)0x00000100U)
-#define NAND_INVALID_ADDRESS       ((uint32_t)0x00000200U)
-#define NAND_TIMEOUT_ERROR         ((uint32_t)0x00000400U)
-#define NAND_BUSY                  ((uint32_t)0x00000000U)
-#define NAND_ERROR                 ((uint32_t)0x00000001U)
-#define NAND_READY                 ((uint32_t)0x00000040U)
+#define NAND_VALID_ADDRESS         0x00000100UL
+#define NAND_INVALID_ADDRESS       0x00000200UL
+#define NAND_TIMEOUT_ERROR         0x00000400UL
+#define NAND_BUSY                  0x00000000UL
+#define NAND_ERROR                 0x00000001UL
+#define NAND_READY                 0x00000040UL
 /**
   * @}
   */
@@ -315,6 +316,11 @@ uint32_t              HAL_NAND_Read_Status(NAND_HandleTypeDef *hnand);
 #define ARRAY_ADDRESS(__ADDRESS__ , __HANDLE__) ((__ADDRESS__)->Page + \
                          (((__ADDRESS__)->Block + (((__ADDRESS__)->Plane) * ((__HANDLE__)->Config.PlaneSize)))* ((__HANDLE__)->Config.BlockSize)))
 
+/**
+  * @brief  NAND memory Column address computation.
+  * @param  __HANDLE__ NAND handle.
+  * @retval NAND Raw address value
+  */
 #define COLUMN_ADDRESS( __HANDLE__) ((__HANDLE__)->Config.PageSize)
 
 /**
@@ -332,7 +338,7 @@ uint32_t              HAL_NAND_Read_Status(NAND_HandleTypeDef *hnand);
   * @param  __ADDRESS__ NAND memory address.
   * @retval NAND Column address cycling value.
   */
-#define COLUMN_1ST_CYCLE(__ADDRESS__)       (uint8_t)(__ADDRESS__)              /* 1st Column addressing cycle */
+#define COLUMN_1ST_CYCLE(__ADDRESS__)       (uint8_t)((__ADDRESS__) & 0xFFU)    /* 1st Column addressing cycle */
 #define COLUMN_2ND_CYCLE(__ADDRESS__)       (uint8_t)((__ADDRESS__) >> 8)       /* 2nd Column addressing cycle */
 
 /**
