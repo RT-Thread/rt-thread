@@ -22,4 +22,3 @@ dir_path:
 - bsp/stm32/libraries/STM32MPxx_HAL
 - bsp/stm32/libraries/STM32WBxx_HAL
 - bsp/stm32/libraries/STM32H7xx_HAL
-- bsp/hk32/libraries
