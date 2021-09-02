@@ -4,7 +4,7 @@
 
 ## MCU: STM32F746ZG @216MHz, 1MB FLASH,  320KB RAM
 
-he STM32 Nucleo-144 board provides an affordable and flexible way for  users to try out new concepts and build prototypes by choosing from the  various combinations of performance and power consumption features,  provided by the STM32 microcontroller. For the compatible boards, the  internal or external SMPS significantly reduces power consumption in Run mode. 
+The STM32 Nucleo-144 board provides an affordable and flexible way for  users to try out new concepts and build prototypes by choosing from the  various combinations of performance and power consumption features,  provided by the STM32 microcontroller. For the compatible boards, the  internal or external SMPS significantly reduces power consumption in Run mode. 
 
 ![board](figures/en.high-perf_nucleo-144_mbed.jpg)
 
@@ -49,7 +49,6 @@ The STM32 Nucleo-144 board comes with the STM32 comprehensive free  software lib
 > ouxiaolong@bruceou.cn
 >
 > https://github.com/Ouxiaolong/
-
 
 
 
