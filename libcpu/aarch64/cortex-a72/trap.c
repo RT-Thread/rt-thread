@@ -14,7 +14,7 @@
 #include "armv8.h"
 
 extern struct rt_thread *rt_current_thread;
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
 extern long list_thread(void);
 #endif
 
@@ -50,7 +50,7 @@ void rt_hw_trap_error(struct rt_hw_exp_stack *regs)
 {
     rt_kprintf("error exception:\n");
     rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
