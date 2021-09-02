@@ -730,13 +730,15 @@ int memheaptrace(void)
     if (count > 0)
     {
         int index;
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         extern int list_memheap(void);
+#endif
 
         heaps = (struct rt_memheap **)rt_malloc(sizeof(struct rt_memheap *) * count);
         if (heaps == RT_NULL) return 0;
-
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         list_memheap();
-
+#endif
         rt_kprintf("memheap header size: %d\n", RT_MEMHEAP_SIZE);
         count = rt_object_get_pointers(RT_Object_Class_MemHeap, (rt_object_t *)heaps, count);
         for (index = 0; index < count; index++)
