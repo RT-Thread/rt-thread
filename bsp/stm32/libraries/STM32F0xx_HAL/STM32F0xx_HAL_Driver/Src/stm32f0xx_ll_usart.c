@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -38,17 +22,17 @@
 #include "stm32f0xx_ll_usart.h"
 #include "stm32f0xx_ll_rcc.h"
 #include "stm32f0xx_ll_bus.h"
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 #include "stm32_assert.h"
 #else
 #define assert_param(expr) ((void)0U)
-#endif
+#endif /* USE_FULL_ASSERT */
 
 /** @addtogroup STM32F0xx_LL_Driver
   * @{
   */
 
-#if defined (USART1) || defined (USART2) || defined (USART3) || defined (USART4) || defined (USART5) || defined (USART6) || defined (USART7) || defined (USART8)
+#if defined (USART1) || defined (USART2) || defined (USART3) || defined (UART4) || defined (UART5) || defined (USART6) || defined (USART7) || defined (USART8)
 
 /** @addtogroup USART_LL
   * @{
@@ -57,15 +41,6 @@
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
-/** @addtogroup USART_LL_Private_Constants
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-
 /* Private macros ------------------------------------------------------------*/
 /** @addtogroup USART_LL_Private_Macros
   * @{
@@ -82,52 +57,52 @@
 #define IS_LL_USART_BRR_MAX(__VALUE__) ((__VALUE__) <= 0x0000FFFFU)
 
 #define IS_LL_USART_DIRECTION(__VALUE__) (((__VALUE__) == LL_USART_DIRECTION_NONE) \
-                                       || ((__VALUE__) == LL_USART_DIRECTION_RX) \
-                                       || ((__VALUE__) == LL_USART_DIRECTION_TX) \
-                                       || ((__VALUE__) == LL_USART_DIRECTION_TX_RX))
+                                          || ((__VALUE__) == LL_USART_DIRECTION_RX) \
+                                          || ((__VALUE__) == LL_USART_DIRECTION_TX) \
+                                          || ((__VALUE__) == LL_USART_DIRECTION_TX_RX))
 
 #define IS_LL_USART_PARITY(__VALUE__) (((__VALUE__) == LL_USART_PARITY_NONE) \
-                                    || ((__VALUE__) == LL_USART_PARITY_EVEN) \
-                                    || ((__VALUE__) == LL_USART_PARITY_ODD))
+                                       || ((__VALUE__) == LL_USART_PARITY_EVEN) \
+                                       || ((__VALUE__) == LL_USART_PARITY_ODD))
 
 #if defined(USART_7BITS_SUPPORT)
 #define IS_LL_USART_DATAWIDTH(__VALUE__) (((__VALUE__) == LL_USART_DATAWIDTH_7B) \
-                                       || ((__VALUE__) == LL_USART_DATAWIDTH_8B) \
-                                       || ((__VALUE__) == LL_USART_DATAWIDTH_9B))
+                                          || ((__VALUE__) == LL_USART_DATAWIDTH_8B) \
+                                          || ((__VALUE__) == LL_USART_DATAWIDTH_9B))
 #else
 #define IS_LL_USART_DATAWIDTH(__VALUE__) (((__VALUE__) == LL_USART_DATAWIDTH_8B) \
                                        || ((__VALUE__) == LL_USART_DATAWIDTH_9B))
-#endif
+#endif /* USART_7BITS_SUPPORT */
 
 #define IS_LL_USART_OVERSAMPLING(__VALUE__) (((__VALUE__) == LL_USART_OVERSAMPLING_16) \
-                                          || ((__VALUE__) == LL_USART_OVERSAMPLING_8))
+                                             || ((__VALUE__) == LL_USART_OVERSAMPLING_8))
 
 #define IS_LL_USART_LASTBITCLKOUTPUT(__VALUE__) (((__VALUE__) == LL_USART_LASTCLKPULSE_NO_OUTPUT) \
-                                              || ((__VALUE__) == LL_USART_LASTCLKPULSE_OUTPUT))
+                                                 || ((__VALUE__) == LL_USART_LASTCLKPULSE_OUTPUT))
 
 #define IS_LL_USART_CLOCKPHASE(__VALUE__) (((__VALUE__) == LL_USART_PHASE_1EDGE) \
-                                        || ((__VALUE__) == LL_USART_PHASE_2EDGE))
+                                           || ((__VALUE__) == LL_USART_PHASE_2EDGE))
 
 #define IS_LL_USART_CLOCKPOLARITY(__VALUE__) (((__VALUE__) == LL_USART_POLARITY_LOW) \
-                                           || ((__VALUE__) == LL_USART_POLARITY_HIGH))
+                                              || ((__VALUE__) == LL_USART_POLARITY_HIGH))
 
 #define IS_LL_USART_CLOCKOUTPUT(__VALUE__) (((__VALUE__) == LL_USART_CLOCK_DISABLE) \
-                                         || ((__VALUE__) == LL_USART_CLOCK_ENABLE))
+                                            || ((__VALUE__) == LL_USART_CLOCK_ENABLE))
 
 #if defined(USART_SMARTCARD_SUPPORT)
 #define IS_LL_USART_STOPBITS(__VALUE__) (((__VALUE__) == LL_USART_STOPBITS_0_5) \
-                                      || ((__VALUE__) == LL_USART_STOPBITS_1) \
-                                      || ((__VALUE__) == LL_USART_STOPBITS_1_5) \
-                                      || ((__VALUE__) == LL_USART_STOPBITS_2))
+                                         || ((__VALUE__) == LL_USART_STOPBITS_1) \
+                                         || ((__VALUE__) == LL_USART_STOPBITS_1_5) \
+                                         || ((__VALUE__) == LL_USART_STOPBITS_2))
 #else
 #define IS_LL_USART_STOPBITS(__VALUE__) (((__VALUE__) == LL_USART_STOPBITS_1) \
-                                      || ((__VALUE__) == LL_USART_STOPBITS_2))
+                                         || ((__VALUE__) == LL_USART_STOPBITS_2))
 #endif
 
 #define IS_LL_USART_HWCONTROL(__VALUE__) (((__VALUE__) == LL_USART_HWCONTROL_NONE) \
-                                       || ((__VALUE__) == LL_USART_HWCONTROL_RTS) \
-                                       || ((__VALUE__) == LL_USART_HWCONTROL_CTS) \
-                                       || ((__VALUE__) == LL_USART_HWCONTROL_RTS_CTS))
+                                          || ((__VALUE__) == LL_USART_HWCONTROL_RTS) \
+                                          || ((__VALUE__) == LL_USART_HWCONTROL_CTS) \
+                                          || ((__VALUE__) == LL_USART_HWCONTROL_RTS_CTS))
 
 /**
   * @}
@@ -248,7 +223,7 @@ ErrorStatus LL_USART_DeInit(USART_TypeDef *USARTx)
   * @brief  Initialize USART registers according to the specified
   *         parameters in USART_InitStruct.
   * @note   As some bits in USART configuration registers can only be written when the USART is disabled (USART_CR1_UE bit =0),
-  *         USART IP should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+  *         USART Peripheral should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
   * @note   Baud rate value stored in USART_InitStruct BaudRate field, should be valid (different from 0).
   * @param  USARTx USART Instance
   * @param  USART_InitStruct pointer to a LL_USART_InitTypeDef structure
@@ -261,9 +236,9 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 {
   ErrorStatus status = ERROR;
   uint32_t periphclk = LL_RCC_PERIPH_FREQUENCY_NO;
-#if defined(STM32F030x8) || defined(STM32F030xC) || defined(STM32F042x6) || defined(STM32F048xx) || defined(STM32F051x8) || defined(STM32F058xx) || defined(STM32F070x6) || defined(STM32F070xB) || defined(STM32F071xB) || defined(STM32F072xB) || defined(STM32F078xx) || defined(STM32F091xC) || defined(STM32F098xx)
+#if defined(USART2)||defined(USART3)||defined(USART4)
   LL_RCC_ClocksTypeDef RCC_Clocks;
-#endif
+#endif /* USART2 ||USART3 || USART4 */
 
   /* Check the parameters */
   assert_param(IS_UART_INSTANCE(USARTx));
@@ -315,7 +290,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 #if defined(USART2)
     else if (USARTx == USART2)
     {
-#if defined (RCC_CFGR3_USART2SW)
+#if defined(RCC_CFGR3_USART2SW)
       periphclk = LL_RCC_GetUSARTClockFreq(LL_RCC_USART2_CLKSOURCE);
 #else
       /* USART2 clock is PCLK */
@@ -327,7 +302,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 #if defined(USART3)
     else if (USARTx == USART3)
     {
-#if defined (RCC_CFGR3_USART3SW)
+#if defined(RCC_CFGR3_USART3SW)
       periphclk = LL_RCC_GetUSARTClockFreq(LL_RCC_USART3_CLKSOURCE);
 #else
       /* USART3 clock is PCLK */
@@ -339,7 +314,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 #if defined(USART4)
     else if (USARTx == USART4)
     {
-      /* USART4 clock is PCLK */
+      /* USART4 clock is PCLK1 */
       LL_RCC_GetSystemClocksFreq(&RCC_Clocks);
       periphclk = RCC_Clocks.PCLK1_Frequency;
     }
@@ -347,7 +322,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 #if defined(USART5)
     else if (USARTx == USART5)
     {
-      /* USART5 clock is PCLK */
+      /* USART5 clock is PCLK1 */
       LL_RCC_GetSystemClocksFreq(&RCC_Clocks);
       periphclk = RCC_Clocks.PCLK1_Frequency;
     }
@@ -397,7 +372,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
       /* Check BRR is greater than or equal to 16d */
       assert_param(IS_LL_USART_BRR_MIN(USARTx->BRR));
 
-      /* Check BRR is greater than or equal to 16d */
+      /* Check BRR is lower than or equal to 0xFFFF */
       assert_param(IS_LL_USART_BRR_MAX(USARTx->BRR));
     }
   }
@@ -409,7 +384,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 /**
   * @brief Set each @ref LL_USART_InitTypeDef field to default value.
   * @param USART_InitStruct pointer to a @ref LL_USART_InitTypeDef structure
-  *                          whose fields will be set to default values.
+  *                         whose fields will be set to default values.
   * @retval None
   */
 
@@ -429,7 +404,7 @@ void LL_USART_StructInit(LL_USART_InitTypeDef *USART_InitStruct)
   * @brief  Initialize USART Clock related settings according to the
   *         specified parameters in the USART_ClockInitStruct.
   * @note   As some bits in USART configuration registers can only be written when the USART is disabled (USART_CR1_UE bit =0),
-  *         USART IP should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+  *         USART Peripheral should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
   * @param  USARTx USART Instance
   * @param  USART_ClockInitStruct pointer to a @ref LL_USART_ClockInitTypeDef structure
   *         that contains the Clock configuration information for the specified USART peripheral.
@@ -493,7 +468,7 @@ ErrorStatus LL_USART_ClockInit(USART_TypeDef *USARTx, LL_USART_ClockInitTypeDef 
 /**
   * @brief Set each field of a @ref LL_USART_ClockInitTypeDef type structure to default value.
   * @param USART_ClockInitStruct pointer to a @ref LL_USART_ClockInitTypeDef structure
-  *                               whose fields will be set to default values.
+  *                              whose fields will be set to default values.
   * @retval None
   */
 void LL_USART_ClockStructInit(LL_USART_ClockInitTypeDef *USART_ClockInitStruct)
@@ -517,7 +492,7 @@ void LL_USART_ClockStructInit(LL_USART_ClockInitTypeDef *USART_ClockInitStruct)
   * @}
   */
 
-#endif /* USART1 || USART2|| USART3 || USART4 || USART5 || USART6 || USART7 || USART8 */
+#endif /* USART1 || USART2 || USART3 || UART4 || UART5 || USART6 || USART7 || USART8 */
 
 /**
   * @}

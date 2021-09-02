@@ -119,7 +119,7 @@ typedef struct
 
 /**
   * @brief  Reload IWDG counter with value defined in the reload register
-  *         (write access to IWDG_PR, IWDG_RLR & IWDG_WINR registers disabled).
+  *         (write access to IWDG_PR, IWDG_RLR and IWDG_WINR registers disabled).
   * @param  __HANDLE__  IWDG handle
   * @retval None
   */
@@ -218,6 +218,7 @@ HAL_StatusTypeDef HAL_IWDG_Refresh(IWDG_HandleTypeDef *hiwdg);
   * @retval None
   */
 #define IS_IWDG_WINDOW(__WINDOW__)            ((__WINDOW__) <= IWDG_WINR_WIN)
+
 
 /**
   * @}

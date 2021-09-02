@@ -46,7 +46,7 @@ extern "C" {
   * @{
   */
 #define USART_WORDLENGTH_7B                  ((uint32_t)USART_CR1_M1)   /*!< 7-bit long USART frame */
-#define USART_WORDLENGTH_8B                  0x00000000U                /*!< 8-bit long USART frame */
+#define USART_WORDLENGTH_8B                  (0x00000000U)              /*!< 8-bit long USART frame */
 #define USART_WORDLENGTH_9B                  ((uint32_t)USART_CR1_M0)   /*!< 9-bit long USART frame */
 /**
   * @}
@@ -168,7 +168,6 @@ extern "C" {
       (__HANDLE__)->Mask = 0x0000U;                                   \
     }                                                                 \
   } while(0U)
-
 
 /**
   * @brief Ensure that USART frame length is valid.

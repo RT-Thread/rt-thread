@@ -161,13 +161,15 @@
              HSE and PLL.
              The AHB clock (HCLK) is derived from System core clock through configurable
              pre-scaler and used to clock the CPU, memory and peripherals mapped
-             on AHB and APB bus of the 3 Domains (D1, D2, D3) through configurable pre-scalers
+             on AHB and APB bus of the 3 Domains (D1, D2, D3)* through configurable pre-scalers
              and used to clock the peripherals mapped on these buses. You can use
              "HAL_RCC_GetSysClockFreq()" function to retrieve system clock frequency.
 
          -@- All the peripheral clocks are derived from the System clock (SYSCLK) except those
              with dual clock domain where kernel source clock could be selected through
              RCC_D1CCIPR,RCC_D2CCIP1R,RCC_D2CCIP2R and RCC_D3CCIPR registers.
+
+     (*) : 2 Domains (CD and SRD) for stm32h7a3xx and stm32h7b3xx family lines.
 @endverbatim
   * @{
   */
@@ -188,6 +190,22 @@
 HAL_StatusTypeDef HAL_RCC_DeInit(void)
 {
   uint32_t tickstart;
+
+        /* Increasing the CPU frequency */
+  if(FLASH_LATENCY_DEFAULT  > __HAL_FLASH_GET_LATENCY())
+  {
+    /* Program the new number of wait states to the LATENCY bits in the FLASH_ACR register */
+    __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_DEFAULT);
+
+    /* Check that the new number of wait states is taken into account to access the Flash
+    memory by reading the FLASH_ACR register */
+    if(__HAL_FLASH_GET_LATENCY() != FLASH_LATENCY_DEFAULT)
+    {
+      return HAL_ERROR;
+    }
+
+  }
+
 
   /* Get Start Tick */
   tickstart = HAL_GetTick();
@@ -210,8 +228,9 @@ HAL_StatusTypeDef HAL_RCC_DeInit(void)
   /* Reset CFGR register */
   CLEAR_REG(RCC->CFGR);
 
-  /* Update the SystemCoreClock global variable */
+  /* Update the SystemCoreClock and SystemD2Clock global variables */
   SystemCoreClock = HSI_VALUE;
+  SystemD2Clock = HSI_VALUE;
 
   /* Adapt Systick interrupt period */
   if(HAL_InitTick(uwTickPrio) != HAL_OK)
@@ -292,6 +311,7 @@ HAL_StatusTypeDef HAL_RCC_DeInit(void)
     }
   }
 
+#if defined(RCC_D1CFGR_HPRE)
   /* Reset D1CFGR register */
   CLEAR_REG(RCC->D1CFGR);
 
@@ -300,6 +320,16 @@ HAL_StatusTypeDef HAL_RCC_DeInit(void)
 
   /* Reset D3CFGR register */
   CLEAR_REG(RCC->D3CFGR);
+#else
+  /* Reset CDCFGR1 register */
+  CLEAR_REG(RCC->CDCFGR1);
+
+  /* Reset CDCFGR2 register */
+  CLEAR_REG(RCC->CDCFGR2);
+
+  /* Reset SRDCFGR register */
+  CLEAR_REG(RCC->SRDCFGR);
+#endif
 
   /* Reset PLLCKSELR register to default value */
   RCC->PLLCKSELR= RCC_PLLCKSELR_DIVM1_5|RCC_PLLCKSELR_DIVM2_5|RCC_PLLCKSELR_DIVM3_5;
@@ -337,6 +367,21 @@ HAL_StatusTypeDef HAL_RCC_DeInit(void)
   /* Reset all RSR flags */
   SET_BIT(RCC->RSR, RCC_RSR_RMVF);
 
+      /* Decreasing the number of wait states because of lower CPU frequency */
+  if(FLASH_LATENCY_DEFAULT  < __HAL_FLASH_GET_LATENCY())
+  {
+    /* Program the new number of wait states to the LATENCY bits in the FLASH_ACR register */
+    __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_DEFAULT);
+
+    /* Check that the new number of wait states is taken into account to access the Flash
+    memory by reading the FLASH_ACR register */
+    if(__HAL_FLASH_GET_LATENCY() != FLASH_LATENCY_DEFAULT)
+    {
+      return HAL_ERROR;
+    }
+
+}
+
   return HAL_OK;
 }
 
@@ -357,6 +402,7 @@ HAL_StatusTypeDef HAL_RCC_DeInit(void)
 __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
 {
   uint32_t tickstart;
+  uint32_t temp1_pllckcfg, temp2_pllckcfg;
 
     /* Check Null pointer */
   if(RCC_OscInitStruct == NULL)
@@ -407,7 +453,7 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
         /* Get Start Tick*/
         tickstart = HAL_GetTick();
 
-        /* Wait till HSE is bypassed or disabled */
+        /* Wait till HSE is disabled */
         while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) != 0U)
         {
           if((uint32_t) (HAL_GetTick() - tickstart ) > HSE_TIMEOUT_VALUE)
@@ -425,12 +471,12 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
     assert_param(IS_RCC_HSI(RCC_OscInitStruct->HSIState));
     assert_param(IS_RCC_HSICALIBRATION_VALUE(RCC_OscInitStruct->HSICalibrationValue));
 
-    /* When the HSI is used as system clock it will not disabled */
+    /* When the HSI is used as system clock it will not be disabled */
     const uint32_t temp_sysclksrc = __HAL_RCC_GET_SYSCLK_SOURCE();
     const uint32_t temp_pllckselr = RCC->PLLCKSELR;
     if((temp_sysclksrc == RCC_CFGR_SWS_HSI) || ((temp_sysclksrc == RCC_CFGR_SWS_PLL1) && ((temp_pllckselr & RCC_PLLCKSELR_PLLSRC) == RCC_PLLCKSELR_PLLSRC_HSI)))
     {
-      /* When HSI is used as system clock it will not disabled */
+      /* When HSI is used as system clock it will not be disabled */
       if((__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY) != 0U) && (RCC_OscInitStruct->HSIState == RCC_HSI_OFF))
       {
         return HAL_ERROR;
@@ -438,20 +484,6 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
       /* Otherwise, just the calibration is allowed */
       else
       {
-      /* Enable the Internal High Speed oscillator (HSI, HSIDIV2,HSIDIV4, or HSIDIV8) */
-        __HAL_RCC_HSI_CONFIG(RCC_OscInitStruct->HSIState);
-
-        /* Get Start Tick*/
-        tickstart = HAL_GetTick();
-
-        /* Wait till HSI is ready */
-        while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY) == 0U)
-        {
-          if((uint32_t) (HAL_GetTick() - tickstart ) > HSI_TIMEOUT_VALUE)
-          {
-            return HAL_TIMEOUT;
-          }
-        }
         /* Adjusts the Internal High Speed oscillator (HSI) calibration value.*/
         __HAL_RCC_HSI_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSICalibrationValue);
       }
@@ -488,7 +520,7 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
         /* Get Start Tick*/
         tickstart = HAL_GetTick();
 
-        /* Wait till HSI is ready */
+        /* Wait till HSI is disabled */
         while(__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY) != 0U)
         {
           if((HAL_GetTick() - tickstart ) > HSI_TIMEOUT_VALUE)
@@ -554,7 +586,7 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
         /* Get Start Tick*/
         tickstart = HAL_GetTick();
 
-        /* Wait till CSI is ready */
+        /* Wait till CSI is disabled */
         while(__HAL_RCC_GET_FLAG(RCC_FLAG_CSIRDY) != 0U)
         {
           if((HAL_GetTick() - tickstart ) > CSI_TIMEOUT_VALUE)
@@ -692,7 +724,7 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
       /* Get Start Tick*/
       tickstart = HAL_GetTick();
 
-      /* Wait till LSE is ready */
+      /* Wait till LSE is disabled */
       while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) != 0U)
       {
         if((HAL_GetTick() - tickstart ) > RCC_LSE_TIMEOUT_VALUE)
@@ -727,7 +759,7 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
         /* Get Start Tick*/
         tickstart = HAL_GetTick();
 
-        /* Wait till PLL is ready */
+        /* Wait till PLL is disabled */
         while(__HAL_RCC_GET_FLAG(RCC_FLAG_PLLRDY) != 0U)
         {
           if((HAL_GetTick() - tickstart ) > PLL_TIMEOUT_VALUE)
@@ -747,7 +779,7 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
          /* Disable PLLFRACN . */
          __HAL_RCC_PLLFRACN_DISABLE();
 
-         /* Configure PLL  PLL1FRACN */
+         /* Configure PLL PLL1FRACN */
          __HAL_RCC_PLLFRACN_CONFIG(RCC_OscInitStruct->PLL.PLLFRACN);
 
         /* Select PLL1 input reference frequency range: VCI */
@@ -791,7 +823,7 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
         /* Get Start Tick*/
         tickstart = HAL_GetTick();
 
-        /* Wait till PLL is ready */
+        /* Wait till PLL is disabled */
         while(__HAL_RCC_GET_FLAG(RCC_FLAG_PLLRDY) != 0U)
         {
           if((HAL_GetTick() - tickstart ) > PLL_TIMEOUT_VALUE)
@@ -803,7 +835,19 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
     }
     else
     {
-      return HAL_ERROR;
+      /* Do not return HAL_ERROR if request repeats the current configuration */
+      temp1_pllckcfg = RCC->PLLCKSELR;
+      temp2_pllckcfg = RCC->PLL1DIVR;
+      if(((RCC_OscInitStruct->PLL.PLLState) == RCC_PLL_OFF) ||
+	 (READ_BIT(temp1_pllckcfg, RCC_PLLCKSELR_PLLSRC) != RCC_OscInitStruct->PLL.PLLSource) ||
+         ((READ_BIT(temp1_pllckcfg, RCC_PLLCKSELR_DIVM1) >> RCC_PLLCKSELR_DIVM1_Pos) != RCC_OscInitStruct->PLL.PLLM) ||
+         (READ_BIT(temp2_pllckcfg, RCC_PLL1DIVR_N1) != (RCC_OscInitStruct->PLL.PLLN - 1U)) ||
+         ((READ_BIT(temp2_pllckcfg, RCC_PLL1DIVR_P1) >> RCC_PLL1DIVR_P1_Pos) != (RCC_OscInitStruct->PLL.PLLP - 1U)) ||
+         ((READ_BIT(temp2_pllckcfg, RCC_PLL1DIVR_Q1) >> RCC_PLL1DIVR_Q1_Pos) != (RCC_OscInitStruct->PLL.PLLQ - 1U)) ||
+         ((READ_BIT(temp2_pllckcfg, RCC_PLL1DIVR_R1) >> RCC_PLL1DIVR_R1_Pos) != (RCC_OscInitStruct->PLL.PLLR - 1U)))
+      {
+        return HAL_ERROR;
+      }
     }
   }
   return HAL_OK;
@@ -816,7 +860,7 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
   *         contains the configuration information for the RCC peripheral.
   * @param  FLatency: FLASH Latency, this parameter depend on device selected
   *
-  * @note   The SystemCoreClock CMSIS variable is used to store System Clock Frequency
+  * @note   The SystemCoreClock CMSIS variable is used to store System Core Clock Frequency
   *         and updated by HAL_InitTick() function called within this function
   *
   * @note   The HSI is used (enabled by hardware) as system clock source after
@@ -839,6 +883,7 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
 {
   HAL_StatusTypeDef halstatus;
   uint32_t tickstart;
+  uint32_t common_system_clock;
 
    /* Check Null pointer */
   if(RCC_ClkInitStruct == NULL)
@@ -870,55 +915,95 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
   }
 
   /* Increasing the BUS frequency divider */
-  /*-------------------------- D1PCLK1 Configuration ---------------------------*/
+  /*-------------------------- D1PCLK1/CDPCLK1 Configuration ---------------------------*/
   if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_D1PCLK1) == RCC_CLOCKTYPE_D1PCLK1)
   {
+#if defined (RCC_D1CFGR_D1PPRE)
     if((RCC_ClkInitStruct->APB3CLKDivider) > (RCC->D1CFGR & RCC_D1CFGR_D1PPRE))
     {
       assert_param(IS_RCC_D1PCLK1(RCC_ClkInitStruct->APB3CLKDivider));
       MODIFY_REG(RCC->D1CFGR, RCC_D1CFGR_D1PPRE, RCC_ClkInitStruct->APB3CLKDivider);
     }
+#else
+    if((RCC_ClkInitStruct->APB3CLKDivider) > (RCC->CDCFGR1 & RCC_CDCFGR1_CDPPRE))
+    {
+      assert_param(IS_RCC_CDPCLK1(RCC_ClkInitStruct->APB3CLKDivider));
+      MODIFY_REG(RCC->CDCFGR1, RCC_CDCFGR1_CDPPRE, RCC_ClkInitStruct->APB3CLKDivider);
+    }
+#endif
   }
 
   /*-------------------------- PCLK1 Configuration ---------------------------*/
   if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_PCLK1) == RCC_CLOCKTYPE_PCLK1)
   {
+#if defined (RCC_D2CFGR_D2PPRE1)
     if((RCC_ClkInitStruct->APB1CLKDivider) > (RCC->D2CFGR & RCC_D2CFGR_D2PPRE1))
     {
       assert_param(IS_RCC_PCLK1(RCC_ClkInitStruct->APB1CLKDivider));
       MODIFY_REG(RCC->D2CFGR, RCC_D2CFGR_D2PPRE1, (RCC_ClkInitStruct->APB1CLKDivider));
     }
+#else
+    if((RCC_ClkInitStruct->APB1CLKDivider) > (RCC->CDCFGR2 & RCC_CDCFGR2_CDPPRE1))
+    {
+      assert_param(IS_RCC_PCLK1(RCC_ClkInitStruct->APB1CLKDivider));
+      MODIFY_REG(RCC->CDCFGR2, RCC_CDCFGR2_CDPPRE1, (RCC_ClkInitStruct->APB1CLKDivider));
   }
-
+#endif
+    }
   /*-------------------------- PCLK2 Configuration ---------------------------*/
   if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_PCLK2) == RCC_CLOCKTYPE_PCLK2)
   {
+#if defined(RCC_D2CFGR_D2PPRE2)
     if((RCC_ClkInitStruct->APB2CLKDivider) > (RCC->D2CFGR & RCC_D2CFGR_D2PPRE2))
     {
       assert_param(IS_RCC_PCLK2(RCC_ClkInitStruct->APB2CLKDivider));
       MODIFY_REG(RCC->D2CFGR, RCC_D2CFGR_D2PPRE2, (RCC_ClkInitStruct->APB2CLKDivider));
     }
+#else
+     if((RCC_ClkInitStruct->APB2CLKDivider) > (RCC->CDCFGR2 & RCC_CDCFGR2_CDPPRE2))
+    {
+      assert_param(IS_RCC_PCLK2(RCC_ClkInitStruct->APB2CLKDivider));
+      MODIFY_REG(RCC->CDCFGR2, RCC_CDCFGR2_CDPPRE2, (RCC_ClkInitStruct->APB2CLKDivider));
+    }
+#endif
   }
 
   /*-------------------------- D3PCLK1 Configuration ---------------------------*/
   if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_D3PCLK1) == RCC_CLOCKTYPE_D3PCLK1)
   {
+#if defined(RCC_D3CFGR_D3PPRE)
     if((RCC_ClkInitStruct->APB4CLKDivider) > (RCC->D3CFGR & RCC_D3CFGR_D3PPRE))
     {
       assert_param(IS_RCC_D3PCLK1(RCC_ClkInitStruct->APB4CLKDivider));
       MODIFY_REG(RCC->D3CFGR, RCC_D3CFGR_D3PPRE, (RCC_ClkInitStruct->APB4CLKDivider) );
     }
+#else
+    if((RCC_ClkInitStruct->APB4CLKDivider) > (RCC->SRDCFGR & RCC_SRDCFGR_SRDPPRE))
+    {
+      assert_param(IS_RCC_D3PCLK1(RCC_ClkInitStruct->APB4CLKDivider));
+      MODIFY_REG(RCC->SRDCFGR, RCC_SRDCFGR_SRDPPRE, (RCC_ClkInitStruct->APB4CLKDivider) );
+    }
+#endif
   }
 
    /*-------------------------- HCLK Configuration --------------------------*/
   if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_HCLK) == RCC_CLOCKTYPE_HCLK)
   {
+#if defined (RCC_D1CFGR_HPRE)
     if((RCC_ClkInitStruct->AHBCLKDivider) > (RCC->D1CFGR & RCC_D1CFGR_HPRE))
     {
       /* Set the new HCLK clock divider */
       assert_param(IS_RCC_HCLK(RCC_ClkInitStruct->AHBCLKDivider));
       MODIFY_REG(RCC->D1CFGR, RCC_D1CFGR_HPRE, RCC_ClkInitStruct->AHBCLKDivider);
     }
+#else
+        if((RCC_ClkInitStruct->AHBCLKDivider) > (RCC->CDCFGR1 & RCC_CDCFGR1_HPRE))
+    {
+      /* Set the new HCLK clock divider */
+      assert_param(IS_RCC_HCLK(RCC_ClkInitStruct->AHBCLKDivider));
+      MODIFY_REG(RCC->CDCFGR1, RCC_CDCFGR1_HPRE, RCC_ClkInitStruct->AHBCLKDivider);
+    }
+#endif
   }
 
     /*------------------------- SYSCLK Configuration -------------------------*/
@@ -926,7 +1011,11 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
     {
       assert_param(IS_RCC_SYSCLK(RCC_ClkInitStruct->SYSCLKDivider));
       assert_param(IS_RCC_SYSCLKSOURCE(RCC_ClkInitStruct->SYSCLKSource));
+#if defined(RCC_D1CFGR_D1CPRE)
       MODIFY_REG(RCC->D1CFGR, RCC_D1CFGR_D1CPRE, RCC_ClkInitStruct->SYSCLKDivider);
+#else
+      MODIFY_REG(RCC->CDCFGR1, RCC_CDCFGR1_CDCPRE, RCC_ClkInitStruct->SYSCLKDivider);
+#endif
       /* HSE is selected as System Clock Source */
       if(RCC_ClkInitStruct->SYSCLKSource == RCC_SYSCLKSOURCE_HSE)
       {
@@ -982,12 +1071,21 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
    /*-------------------------- HCLK Configuration --------------------------*/
   if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_HCLK) == RCC_CLOCKTYPE_HCLK)
   {
+#if defined(RCC_D1CFGR_HPRE)
     if((RCC_ClkInitStruct->AHBCLKDivider) < (RCC->D1CFGR & RCC_D1CFGR_HPRE))
     {
       /* Set the new HCLK clock divider */
       assert_param(IS_RCC_HCLK(RCC_ClkInitStruct->AHBCLKDivider));
       MODIFY_REG(RCC->D1CFGR, RCC_D1CFGR_HPRE, RCC_ClkInitStruct->AHBCLKDivider);
     }
+#else
+    if((RCC_ClkInitStruct->AHBCLKDivider) < (RCC->CDCFGR1 & RCC_CDCFGR1_HPRE))
+    {
+      /* Set the new HCLK clock divider */
+      assert_param(IS_RCC_HCLK(RCC_ClkInitStruct->AHBCLKDivider));
+      MODIFY_REG(RCC->CDCFGR1, RCC_CDCFGR1_HPRE, RCC_ClkInitStruct->AHBCLKDivider);
+    }
+#endif
   }
 
   /* Decreasing the number of wait states because of lower CPU frequency */
@@ -1004,48 +1102,96 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
     }
  }
 
-  /*-------------------------- D1PCLK1 Configuration ---------------------------*/
+  /*-------------------------- D1PCLK1/CDPCLK Configuration ---------------------------*/
  if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_D1PCLK1) == RCC_CLOCKTYPE_D1PCLK1)
  {
+#if defined(RCC_D1CFGR_D1PPRE)
    if((RCC_ClkInitStruct->APB3CLKDivider) < (RCC->D1CFGR & RCC_D1CFGR_D1PPRE))
    {
      assert_param(IS_RCC_D1PCLK1(RCC_ClkInitStruct->APB3CLKDivider));
      MODIFY_REG(RCC->D1CFGR, RCC_D1CFGR_D1PPRE, RCC_ClkInitStruct->APB3CLKDivider);
    }
+#else
+   if((RCC_ClkInitStruct->APB3CLKDivider) < (RCC->CDCFGR1 & RCC_CDCFGR1_CDPPRE))
+   {
+     assert_param(IS_RCC_CDPCLK1(RCC_ClkInitStruct->APB3CLKDivider));
+     MODIFY_REG(RCC->CDCFGR1, RCC_CDCFGR1_CDPPRE, RCC_ClkInitStruct->APB3CLKDivider);
+   }
+#endif
  }
 
   /*-------------------------- PCLK1 Configuration ---------------------------*/
  if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_PCLK1) == RCC_CLOCKTYPE_PCLK1)
  {
+#if defined(RCC_D2CFGR_D2PPRE1)
    if((RCC_ClkInitStruct->APB1CLKDivider) < (RCC->D2CFGR & RCC_D2CFGR_D2PPRE1))
    {
      assert_param(IS_RCC_PCLK1(RCC_ClkInitStruct->APB1CLKDivider));
      MODIFY_REG(RCC->D2CFGR, RCC_D2CFGR_D2PPRE1, (RCC_ClkInitStruct->APB1CLKDivider));
    }
+#else
+   if((RCC_ClkInitStruct->APB1CLKDivider) < (RCC->CDCFGR2 & RCC_CDCFGR2_CDPPRE1))
+   {
+     assert_param(IS_RCC_PCLK1(RCC_ClkInitStruct->APB1CLKDivider));
+     MODIFY_REG(RCC->CDCFGR2, RCC_CDCFGR2_CDPPRE1, (RCC_ClkInitStruct->APB1CLKDivider));
+   }
+#endif
  }
 
   /*-------------------------- PCLK2 Configuration ---------------------------*/
  if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_PCLK2) == RCC_CLOCKTYPE_PCLK2)
  {
+#if defined (RCC_D2CFGR_D2PPRE2)
    if((RCC_ClkInitStruct->APB2CLKDivider) < (RCC->D2CFGR & RCC_D2CFGR_D2PPRE2))
    {
      assert_param(IS_RCC_PCLK2(RCC_ClkInitStruct->APB2CLKDivider));
      MODIFY_REG(RCC->D2CFGR, RCC_D2CFGR_D2PPRE2, (RCC_ClkInitStruct->APB2CLKDivider));
    }
+#else
+   if((RCC_ClkInitStruct->APB2CLKDivider) < (RCC->CDCFGR2 & RCC_CDCFGR2_CDPPRE2))
+   {
+     assert_param(IS_RCC_PCLK2(RCC_ClkInitStruct->APB2CLKDivider));
+     MODIFY_REG(RCC->CDCFGR2, RCC_CDCFGR2_CDPPRE2, (RCC_ClkInitStruct->APB2CLKDivider));
+   }
+#endif
  }
 
-  /*-------------------------- D3PCLK1 Configuration ---------------------------*/
+  /*-------------------------- D3PCLK1/SRDPCLK1 Configuration ---------------------------*/
  if(((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_D3PCLK1) == RCC_CLOCKTYPE_D3PCLK1)
  {
+#if defined(RCC_D3CFGR_D3PPRE)
    if((RCC_ClkInitStruct->APB4CLKDivider) < (RCC->D3CFGR & RCC_D3CFGR_D3PPRE))
    {
      assert_param(IS_RCC_D3PCLK1(RCC_ClkInitStruct->APB4CLKDivider));
      MODIFY_REG(RCC->D3CFGR, RCC_D3CFGR_D3PPRE, (RCC_ClkInitStruct->APB4CLKDivider) );
    }
+#else
+   if((RCC_ClkInitStruct->APB4CLKDivider) < (RCC->SRDCFGR & RCC_SRDCFGR_SRDPPRE))
+   {
+     assert_param(IS_RCC_SRDPCLK1(RCC_ClkInitStruct->APB4CLKDivider));
+     MODIFY_REG(RCC->SRDCFGR, RCC_SRDCFGR_SRDPPRE, (RCC_ClkInitStruct->APB4CLKDivider) );
+   }
+#endif
  }
 
   /* Update the SystemCoreClock global variable */
-  SystemCoreClock = HAL_RCC_GetSysClockFreq() >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_D1CPRE)>> RCC_D1CFGR_D1CPRE_Pos]) & 0x1FU);
+#if defined(RCC_D1CFGR_D1CPRE)
+  common_system_clock = HAL_RCC_GetSysClockFreq() >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_D1CPRE)>> RCC_D1CFGR_D1CPRE_Pos]) & 0x1FU);
+#else
+  common_system_clock = HAL_RCC_GetSysClockFreq() >> ((D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_CDCPRE)>> RCC_CDCFGR1_CDCPRE_Pos]) & 0x1FU);
+#endif
+
+#if defined(RCC_D1CFGR_HPRE)
+  SystemD2Clock = (common_system_clock >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
+#else
+  SystemD2Clock = (common_system_clock >> ((D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_HPRE)>> RCC_CDCFGR1_HPRE_Pos]) & 0x1FU));
+#endif
+
+#if defined(DUAL_CORE) && defined(CORE_CM4)
+  SystemCoreClock = SystemD2Clock;
+#else
+  SystemCoreClock = common_system_clock;
+#endif /* DUAL_CORE && CORE_CM4 */
 
   /* Configure the source of time base considering new system clocks settings*/
   halstatus = HAL_InitTick (uwTickPrio);
@@ -1298,7 +1444,26 @@ uint32_t HAL_RCC_GetSysClockFreq(void)
   */
 uint32_t HAL_RCC_GetHCLKFreq(void)
 {
-  SystemD2Clock = (HAL_RCCEx_GetD1SysClockFreq() >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
+uint32_t common_system_clock;
+
+#if defined(RCC_D1CFGR_D1CPRE)
+  common_system_clock = HAL_RCC_GetSysClockFreq() >> (D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_D1CPRE)>> RCC_D1CFGR_D1CPRE_Pos] & 0x1FU);
+#else
+  common_system_clock = HAL_RCC_GetSysClockFreq() >> (D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_CDCPRE)>> RCC_CDCFGR1_CDCPRE_Pos] & 0x1FU);
+#endif
+
+#if defined(RCC_D1CFGR_HPRE)
+  SystemD2Clock = (common_system_clock >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
+#else
+  SystemD2Clock = (common_system_clock >> ((D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_HPRE)>> RCC_CDCFGR1_HPRE_Pos]) & 0x1FU));
+#endif
+
+#if defined(DUAL_CORE) && defined(CORE_CM4)
+  SystemCoreClock = SystemD2Clock;
+#else
+  SystemCoreClock = common_system_clock;
+#endif /* DUAL_CORE && CORE_CM4 */
+
   return SystemD2Clock;
 }
 
@@ -1311,8 +1476,13 @@ uint32_t HAL_RCC_GetHCLKFreq(void)
   */
 uint32_t HAL_RCC_GetPCLK1Freq(void)
 {
+#if defined (RCC_D2CFGR_D2PPRE1)
   /* Get HCLK source and Compute PCLK1 frequency ---------------------------*/
   return (HAL_RCC_GetHCLKFreq() >> ((D1CorePrescTable[(RCC->D2CFGR & RCC_D2CFGR_D2PPRE1)>> RCC_D2CFGR_D2PPRE1_Pos]) & 0x1FU));
+#else
+ /* Get HCLK source and Compute PCLK1 frequency ---------------------------*/
+  return (HAL_RCC_GetHCLKFreq() >> ((D1CorePrescTable[(RCC->CDCFGR2 & RCC_CDCFGR2_CDPPRE1)>> RCC_CDCFGR2_CDPPRE1_Pos]) & 0x1FU));
+#endif
 }
 
 
@@ -1325,7 +1495,11 @@ uint32_t HAL_RCC_GetPCLK1Freq(void)
 uint32_t HAL_RCC_GetPCLK2Freq(void)
 {
   /* Get HCLK source and Compute PCLK1 frequency ---------------------------*/
+#if defined(RCC_D2CFGR_D2PPRE2)
   return (HAL_RCC_GetHCLKFreq() >> ((D1CorePrescTable[(RCC->D2CFGR & RCC_D2CFGR_D2PPRE2)>> RCC_D2CFGR_D2PPRE2_Pos]) & 0x1FU));
+#else
+  return (HAL_RCC_GetHCLKFreq() >> ((D1CorePrescTable[(RCC->CDCFGR2 & RCC_CDCFGR2_CDPPRE2)>> RCC_CDCFGR2_CDPPRE2_Pos]) & 0x1FU));
+#endif
 }
 
 /**
@@ -1342,6 +1516,24 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
                                       RCC_OSCILLATORTYPE_LSE | RCC_OSCILLATORTYPE_LSI| RCC_OSCILLATORTYPE_HSI48;
 
   /* Get the HSE configuration -----------------------------------------------*/
+#if defined(RCC_CR_HSEEXT)
+  if((RCC->CR &(RCC_CR_HSEBYP | RCC_CR_HSEEXT)) == RCC_CR_HSEBYP)
+  {
+    RCC_OscInitStruct->HSEState = RCC_HSE_BYPASS;
+  }
+  else if((RCC->CR &(RCC_CR_HSEBYP | RCC_CR_HSEEXT)) == (RCC_CR_HSEBYP | RCC_CR_HSEEXT))
+  {
+    RCC_OscInitStruct->HSEState = RCC_HSE_BYPASS_DIGITAL;
+  }
+  else if((RCC->CR &RCC_CR_HSEON) == RCC_CR_HSEON)
+  {
+    RCC_OscInitStruct->HSEState = RCC_HSE_ON;
+  }
+  else
+  {
+    RCC_OscInitStruct->HSEState = RCC_HSE_OFF;
+  }
+#else
   if((RCC->CR &RCC_CR_HSEBYP) == RCC_CR_HSEBYP)
   {
     RCC_OscInitStruct->HSEState = RCC_HSE_BYPASS;
@@ -1354,6 +1546,7 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   {
     RCC_OscInitStruct->HSEState = RCC_HSE_OFF;
   }
+#endif /* RCC_CR_HSEEXT */
 
    /* Get the CSI configuration -----------------------------------------------*/
   if((RCC->CR &RCC_CR_CSION) == RCC_CR_CSION)
@@ -1365,6 +1558,7 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     RCC_OscInitStruct->CSIState = RCC_CSI_OFF;
   }
 
+#if defined(RCC_VER_X)
   if(HAL_GetREVID() <= REV_ID_Y)
   {
     RCC_OscInitStruct->CSICalibrationValue = (uint32_t)(READ_BIT(RCC->HSICFGR, HAL_RCC_REV_Y_CSITRIM_Msk) >> HAL_RCC_REV_Y_CSITRIM_Pos);
@@ -1373,6 +1567,9 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   {
     RCC_OscInitStruct->CSICalibrationValue = (uint32_t)(READ_BIT(RCC->CSICFGR, RCC_CSICFGR_CSITRIM) >> RCC_CSICFGR_CSITRIM_Pos);
   }
+#else
+ RCC_OscInitStruct->CSICalibrationValue = (uint32_t)(READ_BIT(RCC->CSICFGR, RCC_CSICFGR_CSITRIM) >> RCC_CSICFGR_CSITRIM_Pos);
+#endif /*RCC_VER_X*/
 
   /* Get the HSI configuration -----------------------------------------------*/
   if((RCC->CR &RCC_CR_HSION) == RCC_CR_HSION)
@@ -1384,6 +1581,7 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     RCC_OscInitStruct->HSIState = RCC_HSI_OFF;
   }
 
+#if defined(RCC_VER_X)
   if(HAL_GetREVID() <= REV_ID_Y)
   {
     RCC_OscInitStruct->HSICalibrationValue = (uint32_t)(READ_BIT(RCC->HSICFGR, HAL_RCC_REV_Y_HSITRIM_Msk) >> HAL_RCC_REV_Y_HSITRIM_Pos);
@@ -1392,8 +1590,29 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   {
     RCC_OscInitStruct->HSICalibrationValue = (uint32_t)(READ_BIT(RCC->HSICFGR, RCC_HSICFGR_HSITRIM) >> RCC_HSICFGR_HSITRIM_Pos);
   }
+#else
+    RCC_OscInitStruct->HSICalibrationValue = (uint32_t)(READ_BIT(RCC->HSICFGR, RCC_HSICFGR_HSITRIM) >> RCC_HSICFGR_HSITRIM_Pos);
+#endif /*RCC_VER_X*/
 
   /* Get the LSE configuration -----------------------------------------------*/
+#if defined(RCC_BDCR_LSEEXT)
+  if((RCC->BDCR &(RCC_BDCR_LSEBYP|RCC_BDCR_LSEEXT)) == RCC_BDCR_LSEBYP)
+  {
+    RCC_OscInitStruct->LSEState = RCC_LSE_BYPASS;
+  }
+  else if((RCC->BDCR &(RCC_BDCR_LSEBYP|RCC_BDCR_LSEEXT)) == (RCC_BDCR_LSEBYP|RCC_BDCR_LSEEXT))
+  {
+    RCC_OscInitStruct->LSEState = RCC_LSE_BYPASS_DIGITAL;
+  }
+  else if((RCC->BDCR &RCC_BDCR_LSEON) == RCC_BDCR_LSEON)
+  {
+    RCC_OscInitStruct->LSEState = RCC_LSE_ON;
+  }
+  else
+  {
+    RCC_OscInitStruct->LSEState = RCC_LSE_OFF;
+  }
+#else
   if((RCC->BDCR &RCC_BDCR_LSEBYP) == RCC_BDCR_LSEBYP)
   {
     RCC_OscInitStruct->LSEState = RCC_LSE_BYPASS;
@@ -1406,6 +1625,7 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   {
     RCC_OscInitStruct->LSEState = RCC_LSE_OFF;
   }
+#endif /* RCC_BDCR_LSEEXT */
 
   /* Get the LSI configuration -----------------------------------------------*/
   if((RCC->CSR &RCC_CSR_LSION) == RCC_CSR_LSION)
@@ -1464,6 +1684,7 @@ void HAL_RCC_GetClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, uint32_t *pF
   /* Get the SYSCLK configuration --------------------------------------------*/
   RCC_ClkInitStruct->SYSCLKSource = (uint32_t)(RCC->CFGR & RCC_CFGR_SW);
 
+#if defined(RCC_D1CFGR_D1CPRE)
   /* Get the SYSCLK configuration ----------------------------------------------*/
   RCC_ClkInitStruct->SYSCLKDivider = (uint32_t)(RCC->D1CFGR & RCC_D1CFGR_D1CPRE);
 
@@ -1481,7 +1702,25 @@ void HAL_RCC_GetClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, uint32_t *pF
 
   /* Get the APB4 configuration ----------------------------------------------*/
   RCC_ClkInitStruct->APB4CLKDivider = (uint32_t)(RCC->D3CFGR & RCC_D3CFGR_D3PPRE);
+#else
+  /* Get the SYSCLK configuration ----------------------------------------------*/
+  RCC_ClkInitStruct->SYSCLKDivider = (uint32_t)(RCC->CDCFGR1 & RCC_CDCFGR1_CDCPRE);
 
+  /* Get the D1HCLK configuration ----------------------------------------------*/
+  RCC_ClkInitStruct->AHBCLKDivider = (uint32_t)(RCC->CDCFGR1 & RCC_CDCFGR1_HPRE);
+
+  /* Get the APB3 configuration ----------------------------------------------*/
+  RCC_ClkInitStruct->APB3CLKDivider = (uint32_t)(RCC->CDCFGR1 & RCC_CDCFGR1_CDPPRE);
+
+  /* Get the APB1 configuration ----------------------------------------------*/
+  RCC_ClkInitStruct->APB1CLKDivider = (uint32_t)(RCC->CDCFGR2 & RCC_CDCFGR2_CDPPRE1);
+
+  /* Get the APB2 configuration ----------------------------------------------*/
+  RCC_ClkInitStruct->APB2CLKDivider = (uint32_t)(RCC->CDCFGR2 & RCC_CDCFGR2_CDPPRE2);
+
+  /* Get the APB4 configuration ----------------------------------------------*/
+  RCC_ClkInitStruct->APB4CLKDivider = (uint32_t)(RCC->SRDCFGR & RCC_SRDCFGR_SRDPPRE);
+#endif
 
   /* Get the Flash Wait State (Latency) configuration ------------------------*/
   *pFLatency = (uint32_t)(FLASH->ACR & FLASH_ACR_LATENCY);

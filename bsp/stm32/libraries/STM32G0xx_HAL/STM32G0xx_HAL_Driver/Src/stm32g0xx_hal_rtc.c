@@ -105,12 +105,11 @@
     (+) WakeUpTimerEventCallback     :  RTC WakeUpTimer Event callback.
     (+) Tamper1EventCallback         :  RTC Tamper1Event callback.
     (+) Tamper2EventCallback         :  RTC Tamper2Event callback.
-    (+) InternalTamper1EventCallback :  RTC Internal Tamper 1 Event callback.
+    (+) Tamper3EventCallback         :  RTC Tamper3Event callback. (*)
     (+) InternalTamper3EventCallback :  RTC Internal Tamper 3 Event callback.
     (+) InternalTamper4EventCallback :  RTC Internal Tamper 4 Event callback.
     (+) InternalTamper5EventCallback :  RTC Internal Tamper 5 Event callback.
     (+) InternalTamper6EventCallback :  RTC Internal Tamper 6 Event callback.
-    (+) InternalTamper7EventCallback :  RTC Internal Tamper 7 Event callback.
     (+) MspInitCallback              :  RTC MspInit.
     (+) MspDeInitCallback            :  RTC MspDeInit.
   This function takes as parameters the HAL peripheral handle, the Callback ID
@@ -127,12 +126,11 @@
     (+) WakeUpTimerEventCallback     : RTC WakeUpTimer Event callback.
     (+) Tamper1EventCallback         : RTC Tamper 1 Event callback.
     (+) Tamper2EventCallback         : RTC Tamper 2 Event callback.
-    (+) InternalTamper1EventCallback : RTC Internal Tamper 1 Event callback.
+    (+) Tamper3EventCallback         : RTC Tamper 3 Event callback.(*)
     (+) InternalTamper3EventCallback : RTC Internal Tamper 3 Event callback.
     (+) InternalTamper4EventCallback : RTC Internal Tamper 4 Event callback.
     (+) InternalTamper5EventCallback : RTC Internal Tamper 5 Event callback.
     (+) InternalTamper6EventCallback : RTC Internal Tamper 6 Event callback.
-    (+) InternalTamper7EventCallback : RTC Internal Tamper 7 Event callback.
     (+) MspInitCallback              : RTC MspInit callback.
     (+) MspDeInitCallback            : RTC MspDeInit callback.
 
@@ -274,6 +272,9 @@ HAL_StatusTypeDef HAL_RTC_Init(RTC_HandleTypeDef *hrtc)
     hrtc->WakeUpTimerEventCallback     =  HAL_RTCEx_WakeUpTimerEventCallback; /* Legacy weak WakeUpTimerEventCallback */
     hrtc->Tamper1EventCallback         =  HAL_RTCEx_Tamper1EventCallback;     /* Legacy weak Tamper1EventCallback     */
     hrtc->Tamper2EventCallback         =  HAL_RTCEx_Tamper2EventCallback;     /* Legacy weak Tamper2EventCallback     */
+#if defined(TAMP_CR1_TAMP3E)
+    hrtc->Tamper3EventCallback         =  HAL_RTCEx_Tamper3EventCallback;     /* Legacy weak Tamper3EventCallback     */    
+#endif
     hrtc->InternalTamper3EventCallback =  HAL_RTCEx_InternalTamper3EventCallback;   /*!< Legacy weak InternalTamper3EventCallback */
     hrtc->InternalTamper4EventCallback =  HAL_RTCEx_InternalTamper4EventCallback;   /*!< Legacy weak InternalTamper4EventCallback */
     hrtc->InternalTamper5EventCallback =  HAL_RTCEx_InternalTamper5EventCallback;   /*!< Legacy weak InternalTamper5EventCallback */
@@ -439,6 +440,7 @@ HAL_StatusTypeDef HAL_RTC_DeInit(RTC_HandleTypeDef *hrtc)
   *          @arg @ref HAL_RTC_WAKEUPTIMER_EVENT_CB_ID      WakeUp Timer Event Callback ID
   *          @arg @ref HAL_RTC_TAMPER1_EVENT_CB_ID          Tamper 1 Callback ID
   *          @arg @ref HAL_RTC_TAMPER2_EVENT_CB_ID          Tamper 2 Callback ID
+  *          @arg @ref HAL_RTC_TAMPER3_EVENT_CB_ID          Tamper 3 Callback ID (*)
   *          @arg @ref HAL_RTC_INTERNAL_TAMPER3_EVENT_CB_ID Internal Tamper 3 Callback ID
   *          @arg @ref HAL_RTC_INTERNAL_TAMPER4_EVENT_CB_ID Internal Tamper 4 Callback ID
   *          @arg @ref HAL_RTC_INTERNAL_TAMPER5_EVENT_CB_ID Internal Tamper 5 Callback ID
@@ -488,6 +490,11 @@ HAL_StatusTypeDef HAL_RTC_RegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_Call
       hrtc->Tamper2EventCallback = pCallback;
       break;
 
+#if defined(TAMP_CR1_TAMP3E)
+    case HAL_RTC_TAMPER3_EVENT_CB_ID :
+      hrtc->Tamper3EventCallback = pCallback;
+      break;
+#endif
 
     case HAL_RTC_INTERNAL_TAMPER3_EVENT_CB_ID :
       hrtc->InternalTamper3EventCallback = pCallback;
@@ -504,7 +511,6 @@ HAL_StatusTypeDef HAL_RTC_RegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_Call
     case HAL_RTC_INTERNAL_TAMPER6_EVENT_CB_ID :
        hrtc->InternalTamper6EventCallback = pCallback;
       break;
-
 
    case HAL_RTC_MSPINIT_CB_ID :
       hrtc->MspInitCallback = pCallback;
@@ -562,6 +568,7 @@ HAL_StatusTypeDef HAL_RTC_RegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_Call
   *          @arg @ref HAL_RTC_WAKEUPTIMER_EVENT_CB_ID      WakeUp Timer Event Callback ID
   *          @arg @ref HAL_RTC_TAMPER1_EVENT_CB_ID          Tamper 1 Callback ID
   *          @arg @ref HAL_RTC_TAMPER2_EVENT_CB_ID          Tamper 2 Callback ID
+  *          @arg @ref HAL_RTC_TAMPER3_EVENT_CB_ID          Tamper 3 Callback ID (*)
   *          @arg @ref HAL_RTC_INTERNAL_TAMPER3_EVENT_CB_ID Internal Tamper 3 Callback ID
   *          @arg @ref HAL_RTC_INTERNAL_TAMPER4_EVENT_CB_ID Internal Tamper 4 Callback ID
   *          @arg @ref HAL_RTC_INTERNAL_TAMPER5_EVENT_CB_ID Internal Tamper 5 Callback ID
@@ -605,6 +612,11 @@ HAL_StatusTypeDef HAL_RTC_UnRegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_Ca
       hrtc->Tamper2EventCallback = HAL_RTCEx_Tamper2EventCallback;         /* Legacy weak Tamper2EventCallback         */
       break;
 
+#if defined(TAMP_CR1_TAMP3E)
+    case HAL_RTC_TAMPER3_EVENT_CB_ID :
+      hrtc->Tamper3EventCallback = HAL_RTCEx_Tamper3EventCallback;         /* Legacy weak Tamper3EventCallback         */
+      break;
+#endif
 
     case HAL_RTC_INTERNAL_TAMPER3_EVENT_CB_ID :
       hrtc->InternalTamper3EventCallback = HAL_RTCEx_InternalTamper3EventCallback;        /* Legacy weak InternalTamper3EventCallback         */
@@ -1496,7 +1508,7 @@ HAL_StatusTypeDef HAL_RTC_GetAlarm(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sA
     sAlarm->AlarmTime.Hours = (uint8_t)((tmpreg & (RTC_ALRMAR_HT | RTC_ALRMAR_HU)) >> RTC_ALRMAR_HU_Pos);
     sAlarm->AlarmTime.Minutes = (uint8_t)((tmpreg & (RTC_ALRMAR_MNT | RTC_ALRMAR_MNU)) >> RTC_ALRMAR_MNU_Pos);
     sAlarm->AlarmTime.Seconds = (uint8_t)((tmpreg & (RTC_ALRMAR_ST | RTC_ALRMAR_SU)) >> RTC_ALRMAR_SU_Pos);
-    sAlarm->AlarmTime.TimeFormat = (uint8_t)((tmpreg & RTC_ALRMAR_PM) >> RTC_ALRMAR_SU_Pos);
+    sAlarm->AlarmTime.TimeFormat = (uint8_t)((tmpreg & RTC_ALRMAR_PM) >> RTC_ALRMAR_PM_Pos);
     sAlarm->AlarmTime.SubSeconds = (uint32_t) subsecondtmpreg;
     sAlarm->AlarmDateWeekDay = (uint8_t)((tmpreg & (RTC_ALRMAR_DT | RTC_ALRMAR_DU)) >> RTC_ALRMAR_DU_Pos);
     sAlarm->AlarmDateWeekDaySel = (uint32_t)(tmpreg & RTC_ALRMAR_WDSEL);

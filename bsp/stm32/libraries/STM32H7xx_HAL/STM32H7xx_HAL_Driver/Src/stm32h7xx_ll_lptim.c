@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @brief   LPTIM LL module driver.
   ******************************************************************************
-    * @attention
+  * @attention
   *
   * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
   * All rights reserved.</center></h2>
@@ -199,14 +199,6 @@ ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef *LPTIMx, LL_LPTIM_InitTypeDef *LPTIM_Ini
 }
 
 /**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
   * @brief  Disable the LPTIM instance
   * @rmtoll CR           ENABLE        LL_LPTIM_Disable
   * @param  LPTIMx Low-Power Timer instance
@@ -234,25 +226,25 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
   /* Save LPTIM source clock */
   switch ((uint32_t)LPTIMx)
   {
-     case LPTIM1_BASE:
-       tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE);
-       break;
-     case LPTIM2_BASE:
-       tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE);
-       break;
+    case LPTIM1_BASE:
+      tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE);
+      break;
+    case LPTIM2_BASE:
+      tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE);
+      break;
 #if defined(LPTIM3)&&defined(LPTIM4)&&defined(LPTIM5)
-     case LPTIM3_BASE:
-     case LPTIM4_BASE:
-     case LPTIM5_BASE:
-       tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM345_CLKSOURCE);
-       break;
+    case LPTIM3_BASE:
+    case LPTIM4_BASE:
+    case LPTIM5_BASE:
+      tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM345_CLKSOURCE);
+      break;
 #elif defined(LPTIM3)
-     case LPTIM3_BASE:
-       tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM3_CLKSOURCE);
-       break;
+    case LPTIM3_BASE:
+      tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM3_CLKSOURCE);
+      break;
 #endif /* LPTIM3 && LPTIM4 && LPTIM5 */
-     default:
-       break;
+    default:
+      break;
   }
 
   /* Save LPTIM configuration registers */
@@ -273,25 +265,25 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
     /* Force LPTIM source kernel clock from APB */
     switch ((uint32_t)LPTIMx)
     {
-       case LPTIM1_BASE:
-         LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE_PCLK1);
-         break;
-       case LPTIM2_BASE:
-         LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE_PCLK4);
-         break;
+      case LPTIM1_BASE:
+        LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE_PCLK1);
+        break;
+      case LPTIM2_BASE:
+        LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE_PCLK4);
+        break;
 #if defined(LPTIM3)&&defined(LPTIM4)&&defined(LPTIM5)
-       case LPTIM3_BASE:
-       case LPTIM4_BASE:
-       case LPTIM5_BASE:
-         LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM345_CLKSOURCE_PCLK4);
-         break;
+      case LPTIM3_BASE:
+      case LPTIM4_BASE:
+      case LPTIM5_BASE:
+        LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM345_CLKSOURCE_PCLK4);
+        break;
 #elif defined(LPTIM3)
-     case LPTIM3_BASE:
-       LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM3_CLKSOURCE_PCLK4);
-       break;
+      case LPTIM3_BASE:
+        LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM3_CLKSOURCE_PCLK4);
+        break;
 #endif /* LPTIM3 && LPTIM4 && LPTIM5*/
-       default:
-         break;
+      default:
+        break;
     }
 
     if (tmpCMP != 0UL)
@@ -304,7 +296,8 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
       do
       {
         rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
-      } while (((LL_LPTIM_IsActiveFlag_CMPOK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+      }
+      while (((LL_LPTIM_IsActiveFlag_CMPOK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
 
       LL_LPTIM_ClearFlag_CMPOK(LPTIMx);
     }
@@ -319,10 +312,12 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
       do
       {
         rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
-      } while (((LL_LPTIM_IsActiveFlag_ARROK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+      }
+      while (((LL_LPTIM_IsActiveFlag_ARROK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
 
       LL_LPTIM_ClearFlag_ARROK(LPTIMx);
     }
+
 
     /* Restore LPTIM source kernel clock */
     LL_RCC_SetLPTIMClockSource(tmpclksource);
@@ -336,6 +331,14 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
 
   __enable_irq();
 }
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /**
   * @}

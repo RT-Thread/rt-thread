@@ -111,8 +111,6 @@ HAL_StatusTypeDef HAL_CRC_Init(CRC_HandleTypeDef *hcrc)
     HAL_CRC_MspInit(hcrc);
   }
 
-  hcrc->State = HAL_CRC_STATE_BUSY;
-
   /* Change CRC peripheral state */
   hcrc->State = HAL_CRC_STATE_READY;
 
