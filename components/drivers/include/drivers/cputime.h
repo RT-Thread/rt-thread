@@ -11,17 +11,19 @@
 #ifndef CPUTIME_H__
 #define CPUTIME_H__
 
+#include <rtdef.h>
+
 struct rt_clock_cputime_ops
 {
     float    (*cputime_getres) (void);
-    uint32_t (*cputime_gettime)(void);
+    rt_uint32_t (*cputime_gettime)(void);
 };
 
 float    clock_cpu_getres(void);
-uint32_t clock_cpu_gettime(void);
+rt_uint32_t clock_cpu_gettime(void);
 
-uint32_t clock_cpu_microsecond(uint32_t cpu_tick);
-uint32_t clock_cpu_millisecond(uint32_t cpu_tick);
+rt_uint32_t clock_cpu_microsecond(rt_uint32_t cpu_tick);
+rt_uint32_t clock_cpu_millisecond(rt_uint32_t cpu_tick);
 
 int clock_cpu_setops(const struct rt_clock_cputime_ops *ops);
 

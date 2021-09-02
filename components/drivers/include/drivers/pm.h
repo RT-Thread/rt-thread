@@ -196,9 +196,9 @@ void rt_pm_default_set(rt_uint8_t sleep_mode);
 void rt_system_pm_init(const struct rt_pm_ops *ops,
                        rt_uint8_t              timer_mask,
                        void                 *user_data);
-void rt_pm_module_request(uint8_t module_id, rt_uint8_t sleep_mode);
-void rt_pm_module_release(uint8_t module_id, rt_uint8_t sleep_mode);
-void rt_pm_module_release_all(uint8_t module_id, rt_uint8_t sleep_mode);
+void rt_pm_module_request(rt_uint8_t module_id, rt_uint8_t sleep_mode);
+void rt_pm_module_release(rt_uint8_t module_id, rt_uint8_t sleep_mode);
+void rt_pm_module_release_all(rt_uint8_t module_id, rt_uint8_t sleep_mode);
 void rt_pm_module_delay_sleep(rt_uint8_t module_id, rt_tick_t timeout);
 rt_uint32_t rt_pm_module_get_status(void);
 rt_uint8_t rt_pm_get_sleep_mode(void);

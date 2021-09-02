@@ -9,6 +9,7 @@
  * 2020-03-19     WangHuachen  first version
  * 2021-05-10     WangHuachen  add more functions
  */
+#include <stdint.h>
 #include <rthw.h>
 #include <rtdef.h>
 

@@ -62,12 +62,12 @@ rt_err_t rt_hw_phy_register(struct rt_phy_device *phy, const char *name)
 #ifdef RT_USING_DEVICE_OPS
     device->ops = phy_ops;
 #else
-    device->init = NULL;
-    device->open = NULL;
-    device->close = NULL;
+    device->init = RT_NULL;
+    device->open = RT_NULL;
+    device->close = RT_NULL;
     device->read = phy_device_read;
     device->write = phy_device_write;
-    device->control = NULL;
+    device->control = RT_NULL;
 #endif
     device->user_data = phy;
 
