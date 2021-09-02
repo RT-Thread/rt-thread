@@ -17,6 +17,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <rtdevice.h>
 

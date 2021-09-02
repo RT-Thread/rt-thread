@@ -16,13 +16,12 @@
 #define __DFS_POSIX_H__
 
 #include <dfs_file.h>
+#include <sys/stat.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* directory api*/
-int mkdir(const char *path, mode_t mode);
 
 /* file api*/
 
@@ -39,10 +38,7 @@ int write(int fd, const void *buf, size_t len);
 off_t lseek(int fd, off_t offset, int whence);
 int rename(const char *from, const char *to);
 int unlink(const char *pathname);
-int stat(const char *file, struct stat *buf);
-int fstat(int fildes, struct stat *buf);
 int fsync(int fildes);
-int ioctl(int fildes, int cmd, ...);
 int ftruncate(int fd, off_t length);
 
 /* directory api*/
@@ -55,7 +51,6 @@ int statfs(const char *path, struct statfs *buf);
 
 int access(const char *path, int amode);
 int pipe(int fildes[2]);
-int mkfifo(const char *path, mode_t mode);
 
 #ifdef __cplusplus
 }

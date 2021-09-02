@@ -579,6 +579,9 @@
 #ifndef LWIP_SOCKET
 #define LWIP_SOCKET                     1
 #endif
+#ifdef LWIP_SOCKET
+#include <fcntl.h>
+#endif
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.

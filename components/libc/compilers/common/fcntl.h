@@ -5,9 +5,10 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2021-09-02     Meco Man     First version
  */
-#ifndef FCNTL_H__
-#define FCNTL_H__
+#ifndef __FCNTL_H__
+#define __FCNTL_H__
 
 #include <sys/types.h>
 
@@ -24,9 +25,7 @@
 #define O_NOCTTY       0400
 #define O_TRUNC       01000
 #define O_APPEND      02000
-#ifndef O_NONBLOCK
 #define O_NONBLOCK    04000
-#endif
 #define O_DSYNC      010000
 #define O_SYNC     04010000
 #define O_RSYNC    04010000
@@ -38,13 +37,9 @@
 #define O_DIRECT     040000
 #define O_LARGEFILE 0100000
 #define O_NOATIME  01000000
-#ifndef O_PATH
 #define O_PATH    010000000
-#endif
 #define O_TMPFILE 020200000
-#ifndef O_NDELAY
 #define O_NDELAY O_NONBLOCK
-#endif
 #define O_SEARCH  O_PATH
 #define O_EXEC    O_PATH
 
