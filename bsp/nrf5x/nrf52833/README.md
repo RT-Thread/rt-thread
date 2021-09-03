@@ -1,4 +1,4 @@
-# nRF52840-PCA10056 BSP说明
+# nRF52833-PCA10010 BSP说明
 
 ## 简介
 
@@ -18,7 +18,7 @@ PCA10100-nRF52833是Nordic 官方的开发板，搭载nRF52833 芯片，基于AR
 
 PCA10100-nRF52833 开发板常用 **板载资源** 如下：
 
-- MCU：NRF52840，主频 64MHz，512KB FLASH ，128kB RAM
+- MCU：NRF52833，主频 64MHz，512KB FLASH ，128kB RAM
 - MCU 外设: GPIO, UART, SPI, I2C(TWI), RTC,TIMER,NFC,QSPI,PWM,ADC,USB,I2S
 - 板载设
   - LED：4个，USB communication (LD1), user LED (LD2), power LED (LD3) 。
