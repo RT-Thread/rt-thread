@@ -429,6 +429,8 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
  */
 rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size)
 {
+    rt_size_t len;
+
     RT_ASSERT(buf);
 
     if (client == RT_NULL)
@@ -443,7 +445,7 @@ rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size
 
     rt_mutex_take(client->lock, RT_WAITING_FOREVER);
 
-    rt_size_t len = at_utils_send(client->device, 0, buf, size);
+    len = at_utils_send(client->device, 0, buf, size);
 
     rt_mutex_release(client->lock);
 
@@ -495,9 +497,11 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_i
 
     while (1)
     {
+        rt_size_t read_len;
+
         rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
 
-        rt_size_t read_len = rt_device_read(client->device, 0, buf + len, size);
+        read_len = rt_device_read(client->device, 0, buf + len, size);
         if(read_len > 0)
         {
             len += read_len;
