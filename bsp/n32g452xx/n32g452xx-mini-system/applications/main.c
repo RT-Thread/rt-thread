@@ -10,7 +10,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-/* defined the LED1 pin: PA8 */
+/* defined the LED1 pin: PB5 */
 #define LED1_PIN    57
 
 int main(void)
