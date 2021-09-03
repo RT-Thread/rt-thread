@@ -48,9 +48,10 @@ rt_int8_t rt_tz_is_dst(void);
 #ifndef _TIMEVAL_DEFINED
 #define _TIMEVAL_DEFINED
 #if !(defined(_WIN32))
-struct timeval {
-    long    tv_sec;     /* seconds */
-    long    tv_usec;    /* and microseconds */
+struct timeval
+{
+    time_t      tv_sec;     /* seconds */
+    suseconds_t tv_usec;    /* and microseconds */
 };
 #endif
 #endif /* _TIMEVAL_DEFINED */
