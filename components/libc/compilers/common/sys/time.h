@@ -45,6 +45,9 @@ rt_int8_t rt_tz_is_dst(void);
  * Structure returned by gettimeofday(2) system call,
  * and used in other calls.
  */
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/
+#include <sys/_timeval.h>
+#endif
 #ifndef _TIMEVAL_DEFINED
 #define _TIMEVAL_DEFINED
 #if !(defined(_WIN32))

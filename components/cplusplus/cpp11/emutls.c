@@ -55,7 +55,7 @@ static __inline void *emutls_memalign_alloc(size_t align, size_t size) {
         abort();
     base = (void*)(((uintptr_t)(object + EXTRA_ALIGN_PTR_BYTES))
                    & ~(uintptr_t)(align - 1));
-    
+
     ((void**)base)[-1] = object;
 #endif
     return base;
@@ -78,7 +78,7 @@ static __inline void *emutls_allocate_object(__emutls_control *control) {
     COMPILE_TIME_ASSERT(sizeof(size_t) == sizeof(gcc_word));
     COMPILE_TIME_ASSERT(sizeof(uintptr_t) == sizeof(gcc_pointer));
     COMPILE_TIME_ASSERT(sizeof(uintptr_t) == sizeof(void*));
-    
+
     size_t size = control->size;
     size_t align = control->align;
     if (align < sizeof(void*))
@@ -86,7 +86,7 @@ static __inline void *emutls_allocate_object(__emutls_control *control) {
     /* Make sure that align is power of 2. */
     if ((align & (align - 1)) != 0)
         abort();
-    
+
     void* base = emutls_memalign_alloc(align, size);
     if (control->value)
         memcpy(base, control->value, size);
