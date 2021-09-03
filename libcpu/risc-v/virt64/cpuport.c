@@ -11,7 +11,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
+#include <stddef.h>
 #include "cpuport.h"
 #include "stack.h"
 
