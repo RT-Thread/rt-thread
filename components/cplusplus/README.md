@@ -37,14 +37,14 @@ please add following string in your ld link script:
     ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-
+    
         /* This is used by the startup in order to initialize the .data secion */
         _sidata = .;
     } > CODE
     __exidx_end = .;
     
     /* .data section which is used for initialized data */
-
+    
     // in your .data section
     PROVIDE(__dtors_start__ = .);
     KEEP(*(SORT(.dtors.*)))
@@ -52,3 +52,32 @@ please add following string in your ld link script:
     PROVIDE(__dtors_end__ = .);
     
     . = ALIGN(4);
+
+## How To Use
+
+1. Enable c++11 support for rt-thread
+
+   ![](figures/Snipaste_2021-09-02_16-00-09.png)
+
+2. Download toolchain GCC 10.2.1:
+
+   ```shell
+   gcc version 10.2.1 20201103 (release) (GNU Arm Embedded Toolchain 10-2020-q4-major)
+   ```
+
+3. Delete the following files:
+
+   ```shell
+   rm -f toolchain/arm-none-eabi/include/c++/10.2.1/thread
+   rm -f toolchain/arm-none-eabi/include/c++/10.2.1/mutex
+   rm -f toolchain/arm-none-eabi/include/c++/10.2.1/condition_variable
+   rm -f toolchain/arm-none-eabi/include/c++/10.2.1/future
+   rm -f toolchain/arm-none-eabi/include/pthread.h
+   ```
+
+4. Clear the contents of the following files and keep them to prevent compilation failures:
+
+   ```shell
+   toolchain/arm-none-eabi/include/sys/_pthreadtypes.h
+   ```
+
