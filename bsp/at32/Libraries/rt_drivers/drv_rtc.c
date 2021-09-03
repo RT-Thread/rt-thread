@@ -148,7 +148,7 @@ static rt_err_t rt_rtc_config(void)
     return RT_EOK;
 }
 
-static rt_err_t at32_rtc_init(void)
+static rt_err_t _rtc_init(void)
 {
 #if defined (SOC_SERIES_AT32F415)
     RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_PWR, ENABLE);
@@ -173,7 +173,7 @@ static rt_err_t at32_rtc_init(void)
     return RT_EOK;
 }
 
-static rt_err_t at32_rtc_get_secs(void *args)
+static rt_err_t _rtc_get_secs(void *args)
 {
     *(rt_uint32_t *)args = get_rtc_timestamp();
     LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
@@ -181,7 +181,7 @@ static rt_err_t at32_rtc_get_secs(void *args)
     return RT_EOK;
 }
 
-static rt_err_t at32_rtc_set_secs(void *args)
+static rt_err_t _rtc_set_secs(void *args)
 {
     rt_err_t result = RT_EOK;
 
@@ -194,11 +194,11 @@ static rt_err_t at32_rtc_set_secs(void *args)
     return result;
 }
 
-static const struct rt_rtc_ops at32_rtc_ops =
+static const struct rt_rtc_ops _rtc_ops =
 {
-    at32_rtc_init,
-    at32_rtc_get_secs,
-    at32_rtc_set_secs,
+    _rtc_init,
+    _rtc_get_secs,
+    _rtc_set_secs,
     RT_NULL,
     RT_NULL,
     RT_NULL,
@@ -210,7 +210,7 @@ static rt_rtc_dev_t at32_rtc_dev;
 int rt_hw_rtc_init(void)
 {
     rt_err_t result;
-    at32_rtc_dev.ops = &at32_rtc_ops;
+    at32_rtc_dev.ops = &_rtc_ops;
     result = rt_hw_rtc_register(&at32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR,RT_NULL);
     if (result != RT_EOK)
     {
