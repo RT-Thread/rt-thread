@@ -1,23 +1,21 @@
-# C++ 11 support for RT-Thread
+# cpp 11 support for rt-thread
 
-This is the C++ 11 component in RT-Thread RTOS. In order to support C++ language, this component
-implement a basic environment, such as new/delete operators.
+这是 RT-Thread 中的 c++ 11 组件。 为了支持c++语言，此组件实现一个基本的环境，比如 new/delete 操作符。
 
-## How To Use
+## 如何使用
 
-Note that using C++ 11 in rt-thread requires modifying some of the files in the toolchain. Before modifying the tool, back up the tool chain.  
+请注意，在 RT-Thread 中使用 C++ 11，需要修改工具链中的部分文件。请在修改之前，备份好工具链。
 
-1. Enable c++11 support
-
+1. 使能 c++11
    ![](figures/Snipaste_2021-09-02_16-00-09.png)
 
-2. Download toolchain GCC 10.2.1:
+2. 下载 GCC 工具链
 
    ```shell
    gcc version 10.2.1 20201103 (release) (GNU Arm Embedded Toolchain 10-2020-q4-major)
    ```
 
-3. Delete the following files:
+3. 删除下面的文件
 
    ```shell
    rm -f toolchain/arm-none-eabi/include/c++/10.2.1/thread
@@ -27,13 +25,13 @@ Note that using C++ 11 in rt-thread requires modifying some of the files in the 
    rm -f toolchain/arm-none-eabi/include/pthread.h
    ```
 
-4. Clear the contents of the following files and keep them to prevent compilation failures:
+4. 请清除下面文件的内容，保留文件避免编译失败
 
    ```shell
    toolchain/arm-none-eabi/include/sys/_pthreadtypes.h
    ```
-   
-5. Update `rtconfig.py` file. add compilation parameters:
+
+5. 更新 `rtconfig.py` 文件，添加 c++ 编译参数:
 
    ```shell
    CXXFLAGS = CFLAGS  + ' -std=c++14 -fabi-version=0 -MMD -MP -MF'

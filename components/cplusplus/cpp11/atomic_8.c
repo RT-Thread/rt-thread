@@ -1,6 +1,12 @@
-//
-// Created by peterfan on 2021/4/27.
-//
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2021-04-27     peterfan     Add copyright header.
+ */
 
 #include <rthw.h>
 #include <stdint.h>
@@ -10,7 +16,6 @@
 // override gcc builtin atomic function for std::atomic<int64_t>, std::atomic<uint64_t>
 // @see https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
 //
-
 uint64_t __atomic_load_8(volatile void *ptr, int memorder)
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
@@ -81,4 +86,3 @@ __atomic_fetch_op_8(sub, -)
 __atomic_fetch_op_8( and, &)
 __atomic_fetch_op_8( or, |)
 __atomic_fetch_op_8(xor, ^)
-

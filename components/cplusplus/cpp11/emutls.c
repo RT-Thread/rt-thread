@@ -1,4 +1,12 @@
-//https://opensource.apple.com/source/clang/clang-800.0.38/src/projects/compiler-rt/lib/builtins/emutls.c.auto.html
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2021-04-27     peterfan     Add copyright header.
+ */
 
 /* ===---------- emutls.c - Implements __emutls_get_address ---------------===
  *
@@ -9,6 +17,7 @@
  *
  * ===----------------------------------------------------------------------===
  */
+
 #include <pthread.h>
 #include <stdint.h>
 #include <stdlib.h>
