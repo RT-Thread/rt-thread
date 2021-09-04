@@ -188,15 +188,15 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                     data = *send_ptr++;
                 }
 
-                // Todo: replace register read/write by gd32f3 lib
-                //Wait until the transmit buffer is empty
+                /* Todo: replace register read/write by gd32f3 lib */
+                /* Wait until the transmit buffer is empty */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
-                // Send the byte
+                /* Send the byte */
                 spi_i2s_data_transmit(spi_periph, data);
 
-                //Wait until a data is received
+                /* Wait until a data is received */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
-                // Get the received data
+                /* Get the received data */
                 data = spi_i2s_data_receive(spi_periph);
 
                 if(recv_ptr != RT_NULL)
@@ -221,14 +221,14 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                     data = *send_ptr++;
                 }
 
-                //Wait until the transmit buffer is empty
+                /*Wait until the transmit buffer is empty */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
-                // Send the byte
+                /* Send the byte */
                 spi_i2s_data_transmit(spi_periph, data);
 
-                //Wait until a data is received
+                /*Wait until a data is received */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
-                // Get the received data
+                /* Get the received data */
                 data = spi_i2s_data_receive(spi_periph);
 
                 if(recv_ptr != RT_NULL)

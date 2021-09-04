@@ -12,4 +12,4 @@
 #define gd32F30X_SPI_H_INCLUDED
 
 
-#endif // gd32F30X_SPI_H_INCLUDED
+#endif /* gd32F30X_SPI_H_INCLUDED */
