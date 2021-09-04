@@ -13,6 +13,7 @@
 
 #include <rtdevice.h>
 #include <rthw.h>
+#include <stdint.h>
 
 struct tm4c123_pwm
 {
@@ -25,8 +26,8 @@ struct tm4c123_pwm_config
 {
     rt_uint8_t channel;
     char *name;
-    rt_uint32_t   counterMode;
-    rt_uint32_t   syncMode;
+    uint32_t   counterMode;
+    uint32_t   syncMode;
 };
 
 int rt_hw_pwm_init(void);

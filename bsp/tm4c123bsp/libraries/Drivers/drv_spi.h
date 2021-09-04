@@ -11,21 +11,22 @@
 #ifndef __DRV_SPI_H__
 #define __DRV_SPI_H__
 
+#include <stdint.h>
 #include <rtdevice.h>
 #include <rthw.h>
 #include "drivers/spi.h"
 
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t portindex, rt_uint32_t  cs_gpiobase, rt_uint32_t cs_gpio_pin);
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint32_t portindex, uint32_t  cs_gpiobase, uint32_t cs_gpio_pin);
 
 struct tm4c123_hw_spi_cs
 {
-    rt_uint32_t portbase;
-    rt_uint32_t GPIO_Pin;
+    uint32_t portbase;
+    uint32_t GPIO_Pin;
 };
 
 struct tm4c123_spi_config
 {
-    rt_uint32_t   base;
+    uint32_t   base;
     char         *bus_name;
 };
 
@@ -39,7 +40,7 @@ struct tm4c123_spi
 
 struct tm4c123_spi_device
 {
-    rt_uint32_t pin;
+    uint32_t pin;
     char *bus_name;
     char *device_name;
 };

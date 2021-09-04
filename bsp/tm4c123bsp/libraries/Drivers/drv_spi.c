@@ -9,7 +9,6 @@
  */
 
 #include "drv_spi.h"
-#include <stdint.h>
 #include <stdbool.h>
 #include "inc/hw_memmap.h"
 #include "driverlib/ssi.h"
@@ -71,10 +70,10 @@ static rt_err_t tm4c123_spi_configure(struct tm4c123_spi *spi_drv, struct rt_spi
     RT_ASSERT(spi_drv != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
-    rt_uint32_t ui32Protocol, ui32Mode;
-    rt_uint32_t ui32BitRate = (rt_uint32_t)cfg->max_hz;
-    rt_uint32_t ui32DataWidth = (rt_uint32_t)cfg->data_width;
-    rt_uint32_t pui32DataRx[1];
+    uint32_t ui32Protocol, ui32Mode;
+    uint32_t ui32BitRate = (uint32_t)cfg->max_hz;
+    uint32_t ui32DataWidth = (uint32_t)cfg->data_width;
+    uint32_t pui32DataRx[1];
     rt_uint8_t   ui8Protocol = 0;
 
     if (cfg->mode & RT_SPI_SLAVE)
@@ -139,13 +138,13 @@ static rt_err_t tm4c123_spi_configure(struct tm4c123_spi *spi_drv, struct rt_spi
     return RT_EOK;
 }
 
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
 
     rt_size_t message_length;
     rt_uint8_t *recv_buf;
     const rt_uint8_t *send_buf;
-    rt_uint32_t  ReadData = 0;
+    uint32_t  ReadData = 0;
     int    i = 0;
 
     RT_ASSERT(device != RT_NULL);
@@ -164,8 +163,8 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     LOG_D("%s transfer prepare and start", spi_drv->config->bus_name);
     LOG_D("%s sendbuf: %X, recvbuf: %X, length: %d",
           spi_drv->config->bus_name,
-          (rt_uint32_t)message->send_buf,
-          (rt_uint32_t)message->recv_buf, message->length);
+          (uint32_t)message->send_buf,
+          (uint32_t)message->recv_buf, message->length);
 
     message_length = message->length;
     recv_buf = message->recv_buf;
@@ -175,7 +174,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     {
         for (i = 0; i < message_length; i++)
         {
-            SSIDataPut(spi_drv->config->base, (rt_uint32_t)send_buf[i]);
+            SSIDataPut(spi_drv->config->base, (uint32_t)send_buf[i]);
             while (SSIBusy(spi_drv->config->base))
             {
             }
@@ -188,7 +187,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     {
         for (i = 0; i < message_length; i++)
         {
-            SSIDataPut(spi_drv->config->base, (rt_uint32_t)send_buf[i]);
+            SSIDataPut(spi_drv->config->base, (uint32_t)send_buf[i]);
             while (SSIBusy(spi_drv->config->base))
             {
             }
@@ -199,7 +198,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     {
         for (i = 0; i < message_length; i++)
         {
-            SSIDataPut(spi_drv->config->base, (rt_uint32_t)0xff);
+            SSIDataPut(spi_drv->config->base, (uint32_t)0xff);
             while (SSIBusy(spi_drv->config->base))
             {
             }
@@ -259,7 +258,7 @@ static int rt_hw_spi_bus_init(void)
 /**
   * Attach the spi device to SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t portindex, rt_uint32_t cs_gpiobase, rt_uint32_t cs_gpio_pin)
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint32_t portindex, uint32_t cs_gpiobase, uint32_t cs_gpio_pin)
 {
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
