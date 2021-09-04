@@ -27,4 +27,8 @@ config UTEST_MESSAGEQUEUE_TC
     bool "message queue test"
     default n
 
+config UTEST_SIGNAL_TC
+    bool "signal test"
+    default n
+
 endmenu
