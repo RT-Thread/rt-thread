@@ -219,7 +219,7 @@ const struct pin_index *get_pin(rt_uint8_t pin)
     return index;
 };
 
-void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     const struct pin_index *index;
     rt_uint32_t pin_mode;
@@ -262,7 +262,7 @@ void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     gpio_init(index->gpio_periph, pin_mode, GPIO_OSPEED_50MHZ, index->pin);
 }
 
-void gd32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
     const struct pin_index *index;
 
@@ -275,7 +275,7 @@ void gd32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     gpio_bit_write(index->gpio_periph, index->pin, (bit_status)value);
 }
 
-int gd32_pin_read(rt_device_t dev, rt_base_t pin)
+static int _pin_read(rt_device_t dev, rt_base_t pin)
 {
     int value;
     const struct pin_index *index;
@@ -315,7 +315,7 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint32_t pinbit)
     }
     return &pin_irq_map[mapindex];
 };
-rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
+static rt_err_t _pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                               rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
     const struct pin_index *index;
@@ -355,7 +355,7 @@ rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
     return RT_EOK;
 }
-rt_err_t gd32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t _pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -386,7 +386,7 @@ rt_err_t gd32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 
     return RT_EOK;
 }
-rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
 {
     const struct pin_index *index;
     const struct pin_irq_map *irqmap;
@@ -462,12 +462,12 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
 }
 const static struct rt_pin_ops _gd32_pin_ops =
 {
-    gd32_pin_mode,
-    gd32_pin_write,
-    gd32_pin_read,
-    gd32_pin_attach_irq,
-    gd32_pin_detach_irq,
-    gd32_pin_irq_enable,
+    _pin_mode,
+    _pin_write,
+    _pin_read,
+    _pin_attach_irq,
+    _pin_detach_irq,
+    _pin_irq_enable,
     RT_NULL,
 };
 
