@@ -304,7 +304,7 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     NVIC_EnableIRQ(uart->irqn);
 }
 
-static rt_err_t gd32_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct gd32_uart *uart;
 
@@ -358,7 +358,7 @@ static rt_err_t gd32_configure(struct rt_serial_device *serial, struct serial_co
     return RT_EOK;
 }
 
-static rt_err_t gd32_control(struct rt_serial_device *serial, int cmd, void *arg)
+static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct gd32_uart *uart;
 
@@ -385,7 +385,7 @@ static rt_err_t gd32_control(struct rt_serial_device *serial, int cmd, void *arg
     return RT_EOK;
 }
 
-static int gd32_putc(struct rt_serial_device *serial, char ch)
+static int _uart_putc(struct rt_serial_device *serial, char ch)
 {
     struct gd32_uart *uart;
 
@@ -395,10 +395,10 @@ static int gd32_putc(struct rt_serial_device *serial, char ch)
     usart_data_transmit(uart->uart_periph, ch);
     while((usart_flag_get(uart->uart_periph, USART_FLAG_TC) == RESET));
 
-    return 1;
+    return RT_EOK;
 }
 
-static int gd32_getc(struct rt_serial_device *serial)
+static int _uart_getc(struct rt_serial_device *serial)
 {
     int ch;
     struct gd32_uart *uart;
@@ -435,10 +435,10 @@ static void uart_isr(struct rt_serial_device *serial)
 
 static const struct rt_uart_ops gd32_uart_ops =
 {
-    gd32_configure,
-    gd32_control,
-    gd32_putc,
-    gd32_getc,
+    _uart_configure,
+    _uart_control,
+    _uart_putc,
+    _uart_getc,
 };
 
 int gd32_hw_usart_init(void)
@@ -446,6 +446,7 @@ int gd32_hw_usart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
 
+      int result;
 
     for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
@@ -453,13 +454,14 @@ int gd32_hw_usart_init(void)
         uarts[i].serial->config = config;
 
         /* register UART1 device */
-        rt_hw_serial_register(uarts[i].serial,
+        result = rt_hw_serial_register(uarts[i].serial,
                               uarts[i].device_name,
                               RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                               (void *)&uarts[i]);
+              RT_ASSERT(result == RT_EOK);
     }
 
-    return 0;
+    return result;
 }
 INIT_BOARD_EXPORT(gd32_hw_usart_init);
 #endif
