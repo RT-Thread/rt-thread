@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：信号量实现生产者消费者间的互斥
  *
  * 在这个程序中，会创建两个线程，一个是生成者线程worker一个是消费者线程thread
@@ -200,7 +209,7 @@ int semaphore_buffer_worker_init()
     rb_init(&working_rb, working_buffer, BUFFER_SIZE);
 
     /* 创建信号量 */
-    sem = rt_sem_create("sem", 1, RT_IPC_FLAG_FIFO);
+    sem = rt_sem_create("sem", 1, RT_IPC_FLAG_PRIO);
     if (sem == RT_NULL)
     {
         tc_stat(TC_STAT_END | TC_STAT_FAILED);

@@ -86,7 +86,7 @@ typedef struct
   *             01 : Abort (Abort user request on going)
   *             10 : Timeout
   *             11 : Error
-  *          b5     IP initilisation status
+  *          b5     IP initialisation status
   *             0  : Reset (IP not initialized)
   *             1  : Init done (IP initialized and ready to use. HAL SMBUS Init function called)
   *          b4     (not used)
@@ -609,7 +609,7 @@ void HAL_SMBUS_AbortCpltCallback(SMBUS_HandleTypeDef *hsmbus);
   * @}
   */
 
-/** @addtogroup SMBUS_Exported_Functions_Group3 Peripheral State and Errors functions
+/** @addtogroup SMBUS_Exported_Functions_Group3 Peripheral State, Mode and Error functions
   * @{
   */
 

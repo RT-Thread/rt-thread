@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -77,6 +77,8 @@ static void rt_touch_irq_enable(rt_touch_t touch)
     {
         rt_pin_irq_enable(touch->config.irq_pin.pin, RT_TRUE);
     }
+#else
+    touch->ops->touch_control(touch, RT_TOUCH_CTRL_ENABLE_INT, RT_NULL);
 #endif
 }
 
@@ -88,6 +90,8 @@ static void rt_touch_irq_disable(rt_touch_t touch)
     {
         rt_pin_irq_enable(touch->config.irq_pin.pin, RT_FALSE);
     }
+#else
+    touch->ops->touch_control(touch, RT_TOUCH_CTRL_DISABLE_INT, RT_NULL);
 #endif
 }
 
@@ -144,28 +148,6 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
 
     switch (cmd)
     {
-    case RT_TOUCH_CTRL_GET_ID:
-        if (args)
-        {
-            result = touch->ops->touch_control(touch, RT_TOUCH_CTRL_GET_ID, args);
-        }
-        else
-        {
-            result = -RT_ERROR;
-        }
-
-        break;
-    case RT_TOUCH_CTRL_GET_INFO:
-        if (args)
-        {
-            result = touch->ops->touch_control(touch, RT_TOUCH_CTRL_GET_INFO, args);
-        }
-        else
-        {
-            result = -RT_ERROR;
-        }
-
-        break;
     case RT_TOUCH_CTRL_SET_MODE:
         result = touch->ops->touch_control(touch, RT_TOUCH_CTRL_SET_MODE, args);
 
@@ -206,8 +188,11 @@ static rt_err_t rt_touch_control(rt_device_t dev, int cmd, void *args)
     case RT_TOUCH_CTRL_ENABLE_INT:
         rt_touch_irq_enable(touch);
         break;
+
+    case RT_TOUCH_CTRL_GET_ID:
+    case RT_TOUCH_CTRL_GET_INFO:
     default:
-        return -RT_ERROR;
+        return touch->ops->touch_control(touch, cmd, args);
     }
 
     return result;

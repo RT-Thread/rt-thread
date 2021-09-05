@@ -1,4 +1,12 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+/*
  * 程序清单：事件例程
  *
  * 这个程序会创建3个动态线程及初始化一个静态事件对象
@@ -75,7 +83,7 @@ static void thread3_entry(void *param)
 int event_simple_init()
 {
     /* 初始化事件对象 */
-    rt_event_init(&event, "event", RT_IPC_FLAG_FIFO);
+    rt_event_init(&event, "event", RT_IPC_FLAG_PRIO);
 
     /* 创建线程1 */
     tid1 = rt_thread_create("t1",

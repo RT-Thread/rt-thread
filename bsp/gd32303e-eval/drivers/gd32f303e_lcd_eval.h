@@ -155,7 +155,7 @@
 
 /* char format struct definitions */
 typedef struct
-{   
+{
     uint16_t font;              /*!< the type of font */
     uint16_t direction;         /*!< the direction of char */
     uint16_t char_color;        /*!< the color of char */

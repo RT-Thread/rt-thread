@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
- * 2108-05-24     ChenYong     Add socket abstraction layer
+ * 2018-05-24     ChenYong     Add socket abstraction layer
  */
 
 #ifndef NETDB_H__

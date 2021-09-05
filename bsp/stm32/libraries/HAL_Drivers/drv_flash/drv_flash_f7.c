@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,7 @@
  * 2018-12-5      SummerGift   first version
  * 2019-3-2       jinsheng     add Macro judgment
  * 2020-1-6       duminmin     support single bank mode
+ * 2021-8-11      CX           fix the sector calculation error bug
  */
 
 #include "board.h"
@@ -43,7 +44,7 @@
 static rt_uint32_t GetSector(rt_uint32_t Address)
 {
     uint32_t sector = 0;
-  
+
 #if defined (FLASH_OPTCR_nDBANK)
     FLASH_OBProgramInitTypeDef OBInit;
     uint32_t nbank = 0;
@@ -53,7 +54,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     nbank = ((OBInit.USERConfig & 0x20000000U) >> 29);
     //1:single bank mode
     if (1 == nbank)
-    {  
+    {
         if ((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
         {
             sector = FLASH_SECTOR_0;
@@ -98,7 +99,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
         {
             sector = FLASH_SECTOR_10;
         }
-        else 
+        else
         {
             sector = FLASH_SECTOR_11;
         }
@@ -153,7 +154,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_10;
     }
-    else 
+    else
     {
         sector = FLASH_SECTOR_11;
     }
@@ -280,7 +281,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
     /* Get the 1st sector to erase */
     FirstSector = GetSector(addr);
     /* Get the number of sector to erase from 1st sector*/
-    NbOfSectors = GetSector(addr + size) - FirstSector + 1;
+    NbOfSectors = GetSector(addr + size - 1) - FirstSector + 1;
     /* Fill EraseInit structure*/
     EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
     EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;

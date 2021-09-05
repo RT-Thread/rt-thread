@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -54,7 +54,7 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block))
 }
 
 /**@}*/
-#endif
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup MM
@@ -290,7 +290,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mp_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will allocate a block from memory pool
@@ -451,5 +451,4 @@ RTM_EXPORT(rt_mp_free);
 
 /**@}*/
 
-#endif
-
+#endif /* RT_USING_MEMPOOL */

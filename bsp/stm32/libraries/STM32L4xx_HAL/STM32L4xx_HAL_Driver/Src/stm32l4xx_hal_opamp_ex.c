@@ -51,6 +51,7 @@
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 
 /** @addtogroup OPAMPEx_Exported_Functions_Group1
@@ -390,7 +391,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
 /**
   * @brief  Unlock the selected OPAMP configuration.
   * @note   This function must be called only when OPAMP is in state "locked".
-  * @param  hopamp: OPAMP handle
+  * @param  hopamp OPAMP handle
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_OPAMPEx_Unlock(OPAMP_HandleTypeDef* hopamp)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -61,7 +61,7 @@
 /* some statistical variable */
 #ifdef RT_MEM_STATS
 static rt_size_t used_mem, max_mem;
-#endif
+#endif /* RT_MEM_STATS */
 
 #ifdef RT_USING_HOOK
 static void (*rt_malloc_hook)(void *ptr, rt_size_t size);
@@ -99,7 +99,7 @@ RTM_EXPORT(rt_free_sethook);
 
 /**@}*/
 
-#endif
+#endif /* RT_USING_HOOK */
 
 /*
  * slab allocator implementation
@@ -363,7 +363,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     npages  = limsize / RT_MM_PAGE_SIZE;
 
     /* initialize heap semaphore */
-    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_PRIO);
 
     RT_DEBUG_LOG(RT_DEBUG_SLAB, ("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n",
                                  heap_start, heap_end, limsize, npages));
@@ -516,7 +516,7 @@ void *rt_malloc(rt_size_t size)
         used_mem += size;
         if (used_mem > max_mem)
             max_mem = used_mem;
-#endif
+#endif /* RT_MEM_STATS */
         goto done;
     }
 
@@ -540,7 +540,7 @@ void *rt_malloc(rt_size_t size)
     {
         RT_ASSERT(z->z_nfree > 0);
 
-        /* Remove us from the zone_array[] when we become empty */
+        /* Remove us from the zone_array[] when we become full */
         if (--z->z_nfree == 0)
         {
             zone_array[zi] = z->z_next;
@@ -571,7 +571,7 @@ void *rt_malloc(rt_size_t size)
         used_mem += z->z_chunksize;
         if (used_mem > max_mem)
             max_mem = used_mem;
-#endif
+#endif /* RT_MEM_STATS */
 
         goto done;
     }
@@ -655,7 +655,7 @@ void *rt_malloc(rt_size_t size)
         used_mem += z->z_chunksize;
         if (used_mem > max_mem)
             max_mem = used_mem;
-#endif
+#endif /* RT_MEM_STATS */
     }
 
 done:
@@ -790,7 +790,7 @@ void rt_free(void *ptr)
                       (rt_ubase_t)addr,
                       ((rt_ubase_t)(addr) - heap_start) >> RT_MM_PAGE_BITS));
     }
-#endif
+#endif /* RT_DEBUG_SLAB */
 
     kup = btokup((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK);
     /* release large allocation */
@@ -806,7 +806,7 @@ void rt_free(void *ptr)
 
 #ifdef RT_MEM_STATS
         used_mem -= size * RT_MM_PAGE_SIZE;
-#endif
+#endif /* RT_MEM_STATS */
         rt_sem_release(&heap_sem);
 
         RT_DEBUG_LOG(RT_DEBUG_SLAB,
@@ -833,7 +833,7 @@ void rt_free(void *ptr)
 
 #ifdef RT_MEM_STATS
     used_mem -= z->z_chunksize;
-#endif
+#endif /* RT_MEM_STATS */
 
     /*
      * Bump the number of free chunks.  If it becomes non-zero the zone
@@ -929,9 +929,9 @@ void list_mem(void)
     rt_kprintf("maximum allocated memory: %d\n", max_mem);
 }
 FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)
-#endif
-#endif
+#endif /* RT_USING_FINSH */
+#endif /* RT_MEM_STATS */
 
 /**@}*/
 
-#endif
+#endif /* defined (RT_USING_HEAP) && defined (RT_USING_SLAB) */

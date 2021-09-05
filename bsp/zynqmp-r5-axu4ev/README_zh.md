@@ -32,6 +32,7 @@ AXU4EV-E 开发板是 芯驿电子科技（上海）有限公司 推出的一款
 | UART              |     支持     | UART0                            |
 | TIMER     |     支持     |     TTC0提供系统时钟         |
 | EMMC | 支持 | SD0控制器 |
+| EMAC | 支持 | e0网卡 |
 
 ## 使用说明
 
@@ -107,16 +108,22 @@ msh />
 
 此 BSP 默认开启了 EMMC 驱动和 DFS 文件系统，如果需要使用文件系统可以自行格式化并挂载。
 
+此 BSP 默认开启并配置了网卡驱动及lwip协议栈，相关配置需要注意如下几点：
+
+1. 注意将`RT_LWIP_PBUF_NUM`至少设置为256
+2. 注意将`RT_LWIP_MEM_ALIGNMENT`设置为32。若使用RTT中lwip 2.0.2以外的版本时，由于其他版本未使用该宏，需要手动修改`lwipopts.h`中的`MEM_ALIGNMENT`宏。
+
 
 ## 板级移植
 
 如果需要将BSP移植到其他 XILINX Zynq UltraScale+ MPSoCs 开发平台的开发板上也比较方便，主要修改的地方有以下几点：
 
-1. 内存： 如果 DDR memory 小于 2G，需要修改`zynqmp-r5.ld`链接文件中的`psu_r5_ddr_0_MEM_0` 
+1. 内存： 如果 DDR memory 小于 2G，需要修改`zynqmp-r5.ld`链接文件中的`psu_r5_ddr_0_MEM_0` 以及`board.h`中的`HEAP_END`
 2. 主频： `xparameters.h`中的`XPAR_CPU_CORTEXR5_0_CPU_CLK_FREQ_HZ`
 3. 串口引脚和频率：`drv_uart.c`中的`rxmio`, `txmio` 和`xparameters.h`中的`XPAR_PSU_UART_0_UART_CLK_FREQ_HZ`
 4. 定时器频率：`xparameters.h`中的`XPAR_PSU_TTC_0_TTC_CLK_FREQ_HZ` 
 5. SD控制器：`drv_sdcard.c`中的块设备驱动初始化
+6. 网卡驱动：若使用的PHY芯片不在驱动支持范围内，可能需要在`xemacpsif_physpeed.c`中实现相应芯片的速率识别函数，可参考ALINX的相应教程。
 
 以上需要修改的`xparameters.h`中的参数宏定义不需要手动修改，可以直接将Xilinx Vitis中产生的开发板的`xparameters.h`文件复制过来即可。
 

@@ -118,6 +118,10 @@ typedef struct
 
   uint32_t  xfer_count;      /*!< Partial transfer length in case of multi packet transfer                  */
 
+  uint32_t  xfer_len_db;      /*!< double buffer transfer length used with bulk double buffer in           */
+
+  uint8_t   xfer_fill_db;     /*!< double buffer Need to Fill new buffer  used with bulk_in                */
+
 } USB_EPTypeDef;
 
 
@@ -131,10 +135,10 @@ typedef struct
 /** @defgroup USB_LL_EP0_MPS USB Low Layer EP0 MPS
   * @{
   */
-#define DEP0CTL_MPS_64                         0U
-#define DEP0CTL_MPS_32                         1U
-#define DEP0CTL_MPS_16                         2U
-#define DEP0CTL_MPS_8                          3U
+#define EP_MPS_64                              0U
+#define EP_MPS_32                              1U
+#define EP_MPS_16                              2U
+#define EP_MPS_8                               3U
 /**
   * @}
   */
@@ -183,32 +187,28 @@ HAL_StatusTypeDef USB_DevInit(USB_TypeDef *USBx, USB_CfgTypeDef cfg);
 HAL_StatusTypeDef USB_EnableGlobalInt(USB_TypeDef *USBx);
 HAL_StatusTypeDef USB_DisableGlobalInt(USB_TypeDef *USBx);
 HAL_StatusTypeDef USB_SetCurrentMode(USB_TypeDef *USBx, USB_ModeTypeDef mode);
-HAL_StatusTypeDef USB_SetDevSpeed(USB_TypeDef *USBx, uint8_t speed);
-HAL_StatusTypeDef USB_FlushRxFifo(USB_TypeDef *USBx);
-HAL_StatusTypeDef USB_FlushTxFifo(USB_TypeDef *USBx, uint32_t num);
+
+#if defined (HAL_PCD_MODULE_ENABLED)
 HAL_StatusTypeDef USB_ActivateEndpoint(USB_TypeDef *USBx, USB_EPTypeDef *ep);
 HAL_StatusTypeDef USB_DeactivateEndpoint(USB_TypeDef *USBx, USB_EPTypeDef *ep);
 HAL_StatusTypeDef USB_EPStartXfer(USB_TypeDef *USBx, USB_EPTypeDef *ep);
-HAL_StatusTypeDef USB_WritePacket(USB_TypeDef *USBx, uint8_t *src, uint8_t ch_ep_num, uint16_t len);
-void             *USB_ReadPacket(USB_TypeDef *USBx, uint8_t *dest, uint16_t len);
 HAL_StatusTypeDef USB_EPSetStall(USB_TypeDef *USBx, USB_EPTypeDef *ep);
 HAL_StatusTypeDef USB_EPClearStall(USB_TypeDef *USBx, USB_EPTypeDef *ep);
+#endif
+
 HAL_StatusTypeDef USB_SetDevAddress(USB_TypeDef *USBx, uint8_t address);
 HAL_StatusTypeDef USB_DevConnect(USB_TypeDef *USBx);
 HAL_StatusTypeDef USB_DevDisconnect(USB_TypeDef *USBx);
 HAL_StatusTypeDef USB_StopDevice(USB_TypeDef *USBx);
-HAL_StatusTypeDef USB_EP0_OutStart(USB_TypeDef *USBx, uint8_t *psetup);
 uint32_t          USB_ReadInterrupts(USB_TypeDef *USBx);
-uint32_t          USB_ReadDevAllOutEpInterrupt(USB_TypeDef *USBx);
-uint32_t          USB_ReadDevOutEPInterrupt(USB_TypeDef *USBx, uint8_t epnum);
-uint32_t          USB_ReadDevAllInEpInterrupt(USB_TypeDef *USBx);
-uint32_t          USB_ReadDevInEPInterrupt(USB_TypeDef *USBx, uint8_t epnum);
-void              USB_ClearInterrupts(USB_TypeDef *USBx, uint32_t interrupt);
-
 HAL_StatusTypeDef USB_ActivateRemoteWakeup(USB_TypeDef *USBx);
 HAL_StatusTypeDef USB_DeActivateRemoteWakeup(USB_TypeDef *USBx);
-void USB_WritePMA(USB_TypeDef  *USBx, uint8_t *pbUsrBuf, uint16_t wPMABufAddr, uint16_t wNBytes);
-void USB_ReadPMA(USB_TypeDef  *USBx, uint8_t *pbUsrBuf, uint16_t wPMABufAddr, uint16_t wNBytes);
+
+void              USB_WritePMA(USB_TypeDef *USBx, uint8_t *pbUsrBuf,
+                               uint16_t wPMABufAddr, uint16_t wNBytes);
+
+void              USB_ReadPMA(USB_TypeDef *USBx, uint8_t *pbUsrBuf,
+                              uint16_t wPMABufAddr, uint16_t wNBytes);
 
 /**
   * @}

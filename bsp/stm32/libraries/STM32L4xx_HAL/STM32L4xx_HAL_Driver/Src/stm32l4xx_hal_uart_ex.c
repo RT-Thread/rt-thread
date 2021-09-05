@@ -344,8 +344,6 @@ __weak void HAL_UARTEx_TxFifoEmptyCallback(UART_HandleTypeDef *huart)
   * @{
   */
 
-
-
 #if defined(USART_CR3_UCESM)
 /**
   * @brief  Keep UART Clock enabled when in Stop Mode.
@@ -388,8 +386,8 @@ HAL_StatusTypeDef HAL_UARTEx_DisableClockStopMode(UART_HandleTypeDef *huart)
 
   return HAL_OK;
 }
-#endif /* USART_CR3_UCESM */
 
+#endif /* USART_CR3_UCESM */
 /**
   * @brief By default in multiprocessor mode, when the wake up method is set
   *        to address mark, the UART handles only 4-bit long addresses detection;
@@ -706,8 +704,8 @@ HAL_StatusTypeDef HAL_UARTEx_SetRxFifoThreshold(UART_HandleTypeDef *huart, uint3
 
   return HAL_OK;
 }
-#endif /* USART_CR1_FIFOEN */
 
+#endif /* USART_CR1_FIFOEN */
 /**
   * @}
   */

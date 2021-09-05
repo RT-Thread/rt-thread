@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,17 +14,6 @@
 #include <board.h>
 
 #ifdef RT_USING_SMP
-
-int rt_hw_cpu_id(void)
-{
-    int cpu_id;
-    __asm__ volatile (
-            "mrc p15, 0, %0, c0, c0, 5"
-            :"=r"(cpu_id)
-            );
-    cpu_id &= 0xf;
-    return cpu_id;
-};
 
 void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock)
 {
@@ -85,5 +74,22 @@ RT_WEAK void rt_hw_cpu_shutdown()
         RT_ASSERT(0);
     }
 }
+
+#ifdef RT_USING_CPU_FFS
+/**
+ * This function finds the first bit set (beginning with the least significant bit)
+ * in value and return the index of that bit.
+ *
+ * Bits are numbered starting at 1 (the least significant bit).  A return value of
+ * zero from any of these functions means that the argument was zero.
+ *
+ * @return return the index of the first bit set. If value is 0, then this function
+ * shall return 0.
+ */
+int __rt_ffs(int value)
+{
+    return __builtin_ffs(value);
+}
+#endif
 
 /*@}*/

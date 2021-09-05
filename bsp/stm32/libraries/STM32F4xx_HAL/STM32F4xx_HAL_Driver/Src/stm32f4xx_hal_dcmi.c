@@ -813,6 +813,37 @@ HAL_StatusTypeDef HAL_DCMI_EnableCrop(DCMI_HandleTypeDef *hdcmi)
 }
 
 /**
+  * @brief  Set embedded synchronization delimiters unmasks.
+  * @param  hdcmi pointer to a DCMI_HandleTypeDef structure that contains
+  *               the configuration information for DCMI.
+  * @param  SyncUnmask pointer to a DCMI_SyncUnmaskTypeDef structure that contains
+  *                    the embedded synchronization delimiters unmasks.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef  HAL_DCMI_ConfigSyncUnmask(DCMI_HandleTypeDef *hdcmi, DCMI_SyncUnmaskTypeDef *SyncUnmask)
+{
+  /* Process Locked */
+  __HAL_LOCK(hdcmi);
+
+  /* Lock the DCMI peripheral state */
+  hdcmi->State = HAL_DCMI_STATE_BUSY;
+
+  /* Write DCMI embedded synchronization unmask register */
+  hdcmi->Instance->ESUR = (((uint32_t)SyncUnmask->FrameStartUnmask) |\
+                           ((uint32_t)SyncUnmask->LineStartUnmask << DCMI_ESUR_LSU_Pos)|\
+                           ((uint32_t)SyncUnmask->LineEndUnmask << DCMI_ESUR_LEU_Pos)|\
+                           ((uint32_t)SyncUnmask->FrameEndUnmask << DCMI_ESUR_FEU_Pos));
+
+  /* Change the DCMI state*/
+  hdcmi->State = HAL_DCMI_STATE_READY;
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(hdcmi);
+
+  return HAL_OK;
+}
+
+/**
   * @}
   */
 

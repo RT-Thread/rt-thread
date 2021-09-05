@@ -51,6 +51,14 @@ def TargetMakefile(env):
     if 'CXXFLAGS' in dir(rtconfig):
         make.write('CXXFLAGS :=%s' % (rtconfig.CXXFLAGS))
         make.write('\n')
+    if env.has_key('LIBS'):
+        make.write('EXTERN_LIB := ')
+        for tlib in env['LIBS']:
+            make.write('-l%s ' % (tlib))
+        if env.has_key('LIBPATH'):
+            for tlibpath in env['LIBPATH']:
+                make.write('-L%s ' % (tlibpath))
+        make.write('\n')
 
     make.write('\n')
 

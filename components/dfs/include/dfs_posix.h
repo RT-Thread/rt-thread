@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,14 +20,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef struct
-{
-    int fd;     /* directory file */
-    char buf[512];
-    int num;
-    int cur;
-} DIR;
 
 /* directory api*/
 int mkdir(const char *path, mode_t mode);

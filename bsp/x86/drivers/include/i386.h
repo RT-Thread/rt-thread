@@ -44,9 +44,9 @@ static __inline unsigned int inl(int port)
 
 static __inline void insl(int port, void *addr, int cnt)
 {
-    __asm __volatile("cld\n\trepne\n\tinsl"			:
-             "=D" (addr), "=c" (cnt)		:
-             "d" (port), "0" (addr), "1" (cnt)	:
+    __asm __volatile("cld\n\trepne\n\tinsl"         :
+             "=D" (addr), "=c" (cnt)        :
+             "d" (port), "0" (addr), "1" (cnt)  :
              "memory", "cc");
 }
 

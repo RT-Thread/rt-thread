@@ -720,7 +720,7 @@ uint32_t HAL_SMARTCARD_GetError(SMARTCARD_HandleTypeDef *hsc);
 
 #define SMARTCARD_DIV(__PCLK__, __BAUD__)                (((__PCLK__)*25U)/(4U*(__BAUD__)))
 #define SMARTCARD_DIVMANT(__PCLK__, __BAUD__)            (SMARTCARD_DIV((__PCLK__), (__BAUD__))/100U)
-#define SMARTCARD_DIVFRAQ(__PCLK__, __BAUD__)            (((SMARTCARD_DIV((__PCLK__), (__BAUD__)) - (SMARTCARD_DIVMANT((__PCLK__), (__BAUD__)) * 100U)) * 16U + 50U) / 100U)
+#define SMARTCARD_DIVFRAQ(__PCLK__, __BAUD__)            ((((SMARTCARD_DIV((__PCLK__), (__BAUD__)) - (SMARTCARD_DIVMANT((__PCLK__), (__BAUD__)) * 100U)) * 16U) + 50U) / 100U)
 /* SMARTCARD BRR = mantissa + overflow + fraction
             = (SMARTCARD DIVMANT << 4) + (SMARTCARD DIVFRAQ & 0xF0) + (SMARTCARD DIVFRAQ & 0x0FU) */
 #define SMARTCARD_BRR(__PCLK__, __BAUD__)       (((SMARTCARD_DIVMANT((__PCLK__), (__BAUD__)) << 4U) + \

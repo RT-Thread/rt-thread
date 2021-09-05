@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -186,7 +186,7 @@ int sem_init(sem_t *sem, int pshared, unsigned int value)
 
     rt_snprintf(name, sizeof(name), "psem%02d", psem_number++);
     sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_FIFO);
-    if (sem == RT_NULL)
+    if (sem->sem == RT_NULL)
     {
         rt_set_errno(ENOMEM);
 
@@ -319,7 +319,7 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout)
         return EINVAL;
 
     /* calculate os tick */
-    tick = clock_time_to_tick(abs_timeout);
+    tick = rt_timespec_to_tick(abs_timeout);
 
     result = rt_sem_take(sem->sem, tick);
     if (result == -RT_ETIMEOUT)

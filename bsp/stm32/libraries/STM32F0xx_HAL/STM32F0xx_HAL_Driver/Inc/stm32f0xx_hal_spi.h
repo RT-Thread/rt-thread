@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_HAL_SPI_H
-#define __STM32F0xx_HAL_SPI_H
+#ifndef STM32F0xx_HAL_SPI_H
+#define STM32F0xx_HAL_SPI_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -163,8 +147,46 @@ typedef struct __SPI_HandleTypeDef
 
   __IO uint32_t              ErrorCode;      /*!< SPI Error code                           */
 
+#if (USE_HAL_SPI_REGISTER_CALLBACKS == 1U)
+  void (* TxCpltCallback)(struct __SPI_HandleTypeDef *hspi);             /*!< SPI Tx Completed callback          */
+  void (* RxCpltCallback)(struct __SPI_HandleTypeDef *hspi);             /*!< SPI Rx Completed callback          */
+  void (* TxRxCpltCallback)(struct __SPI_HandleTypeDef *hspi);           /*!< SPI TxRx Completed callback        */
+  void (* TxHalfCpltCallback)(struct __SPI_HandleTypeDef *hspi);         /*!< SPI Tx Half Completed callback     */
+  void (* RxHalfCpltCallback)(struct __SPI_HandleTypeDef *hspi);         /*!< SPI Rx Half Completed callback     */
+  void (* TxRxHalfCpltCallback)(struct __SPI_HandleTypeDef *hspi);       /*!< SPI TxRx Half Completed callback   */
+  void (* ErrorCallback)(struct __SPI_HandleTypeDef *hspi);              /*!< SPI Error callback                 */
+  void (* AbortCpltCallback)(struct __SPI_HandleTypeDef *hspi);          /*!< SPI Abort callback                 */
+  void (* MspInitCallback)(struct __SPI_HandleTypeDef *hspi);            /*!< SPI Msp Init callback              */
+  void (* MspDeInitCallback)(struct __SPI_HandleTypeDef *hspi);          /*!< SPI Msp DeInit callback            */
+
+#endif  /* USE_HAL_SPI_REGISTER_CALLBACKS */
 } SPI_HandleTypeDef;
 
+#if (USE_HAL_SPI_REGISTER_CALLBACKS == 1U)
+/**
+  * @brief  HAL SPI Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_SPI_TX_COMPLETE_CB_ID             = 0x00U,    /*!< SPI Tx Completed callback ID         */
+  HAL_SPI_RX_COMPLETE_CB_ID             = 0x01U,    /*!< SPI Rx Completed callback ID         */
+  HAL_SPI_TX_RX_COMPLETE_CB_ID          = 0x02U,    /*!< SPI TxRx Completed callback ID       */
+  HAL_SPI_TX_HALF_COMPLETE_CB_ID        = 0x03U,    /*!< SPI Tx Half Completed callback ID    */
+  HAL_SPI_RX_HALF_COMPLETE_CB_ID        = 0x04U,    /*!< SPI Rx Half Completed callback ID    */
+  HAL_SPI_TX_RX_HALF_COMPLETE_CB_ID     = 0x05U,    /*!< SPI TxRx Half Completed callback ID  */
+  HAL_SPI_ERROR_CB_ID                   = 0x06U,    /*!< SPI Error callback ID                */
+  HAL_SPI_ABORT_CB_ID                   = 0x07U,    /*!< SPI Abort callback ID                */
+  HAL_SPI_MSPINIT_CB_ID                 = 0x08U,    /*!< SPI Msp Init callback ID             */
+  HAL_SPI_MSPDEINIT_CB_ID               = 0x09U     /*!< SPI Msp DeInit callback ID           */
+
+} HAL_SPI_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL SPI Callback pointer definition
+  */
+typedef  void (*pSPI_CallbackTypeDef)(SPI_HandleTypeDef *hspi); /*!< pointer to an SPI callback function */
+
+#endif /* USE_HAL_SPI_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -185,6 +207,9 @@ typedef struct __SPI_HandleTypeDef
 #define HAL_SPI_ERROR_DMA               (0x00000010U)   /*!< DMA transfer error                     */
 #define HAL_SPI_ERROR_FLAG              (0x00000020U)   /*!< Error on RXNE/TXE/BSY/FTLVL/FRLVL Flag */
 #define HAL_SPI_ERROR_ABORT             (0x00000040U)   /*!< Error during SPI Abort procedure       */
+#if (USE_HAL_SPI_REGISTER_CALLBACKS == 1U)
+#define HAL_SPI_ERROR_INVALID_CALLBACK  (0x00000080U)   /*!< Invalid Callback error                 */
+#endif /* USE_HAL_SPI_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -326,13 +351,12 @@ typedef struct __SPI_HandleTypeDef
   * This parameter can be one of the following values:
   *     SPI_RXFIFO_THRESHOLD or SPI_RXFIFO_THRESHOLD_QF :
   *          RXNE event is generated if the FIFO
-  *          level is greater or equal to 1/2(16-bits).
+  *          level is greater or equal to 1/4(8-bits).
   *     SPI_RXFIFO_THRESHOLD_HF: RXNE event is generated if the FIFO
-  *          level is greater or equal to 1/4(8 bits). */
+  *          level is greater or equal to 1/2(16 bits). */
 #define SPI_RXFIFO_THRESHOLD            SPI_CR2_FRXTH
 #define SPI_RXFIFO_THRESHOLD_QF         SPI_CR2_FRXTH
 #define SPI_RXFIFO_THRESHOLD_HF         (0x00000000U)
-
 /**
   * @}
   */
@@ -359,6 +383,8 @@ typedef struct __SPI_HandleTypeDef
 #define SPI_FLAG_FRE                    SPI_SR_FRE    /* SPI Error flag: TI mode frame format error flag */
 #define SPI_FLAG_FTLVL                  SPI_SR_FTLVL  /* SPI fifo transmission level                     */
 #define SPI_FLAG_FRLVL                  SPI_SR_FRLVL  /* SPI fifo reception level                        */
+#define SPI_FLAG_MASK                   (SPI_SR_RXNE | SPI_SR_TXE | SPI_SR_BSY | SPI_SR_CRCERR\
+                                         | SPI_SR_MODF | SPI_SR_OVR | SPI_SR_FRE | SPI_SR_FTLVL | SPI_SR_FRLVL)
 /**
   * @}
   */
@@ -400,7 +426,15 @@ typedef struct __SPI_HandleTypeDef
   *         This parameter can be SPI where x: 1, 2, or 3 to select the SPI peripheral.
   * @retval None
   */
+#if (USE_HAL_SPI_REGISTER_CALLBACKS == 1U)
+#define __HAL_SPI_RESET_HANDLE_STATE(__HANDLE__)                do{                                                  \
+                                                                    (__HANDLE__)->State = HAL_SPI_STATE_RESET;       \
+                                                                    (__HANDLE__)->MspInitCallback = NULL;            \
+                                                                    (__HANDLE__)->MspDeInitCallback = NULL;          \
+                                                                  } while(0)
+#else
 #define __HAL_SPI_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_SPI_STATE_RESET)
+#endif /* USE_HAL_SPI_REGISTER_CALLBACKS */
 
 /** @brief  Enable the specified SPI interrupts.
   * @param  __HANDLE__ specifies the SPI Handle.
@@ -436,7 +470,8 @@ typedef struct __SPI_HandleTypeDef
   *            @arg SPI_IT_ERR: Error interrupt enable
   * @retval The new state of __IT__ (TRUE or FALSE).
   */
-#define __HAL_SPI_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->CR2 & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
+#define __HAL_SPI_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->CR2\
+                                                              & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
 /** @brief  Check whether the specified SPI flag is set or not.
   * @param  __HANDLE__ specifies the SPI Handle.
@@ -496,9 +531,9 @@ typedef struct __SPI_HandleTypeDef
   */
 #define __HAL_SPI_CLEAR_FREFLAG(__HANDLE__)        \
   do{                                              \
-  __IO uint32_t tmpreg_fre = 0x00U;                \
-  tmpreg_fre = (__HANDLE__)->Instance->SR;         \
-  UNUSED(tmpreg_fre);                              \
+    __IO uint32_t tmpreg_fre = 0x00U;              \
+    tmpreg_fre = (__HANDLE__)->Instance->SR;       \
+    UNUSED(tmpreg_fre);                            \
   }while(0U)
 
 /** @brief  Enable the SPI peripheral.
@@ -546,72 +581,181 @@ typedef struct __SPI_HandleTypeDef
 #define SPI_RESET_CRC(__HANDLE__) do{CLEAR_BIT((__HANDLE__)->Instance->CR1, SPI_CR1_CRCEN);\
                                        SET_BIT((__HANDLE__)->Instance->CR1, SPI_CR1_CRCEN);}while(0U)
 
-#define IS_SPI_MODE(MODE) (((MODE) == SPI_MODE_SLAVE) || \
-                           ((MODE) == SPI_MODE_MASTER))
+/** @brief  Check whether the specified SPI flag is set or not.
+  * @param  __SR__  copy of SPI SR regsiter.
+  * @param  __FLAG__ specifies the flag to check.
+  *         This parameter can be one of the following values:
+  *            @arg SPI_FLAG_RXNE: Receive buffer not empty flag
+  *            @arg SPI_FLAG_TXE: Transmit buffer empty flag
+  *            @arg SPI_FLAG_CRCERR: CRC error flag
+  *            @arg SPI_FLAG_MODF: Mode fault flag
+  *            @arg SPI_FLAG_OVR: Overrun flag
+  *            @arg SPI_FLAG_BSY: Busy flag
+  *            @arg SPI_FLAG_FRE: Frame format error flag
+  *            @arg SPI_FLAG_FTLVL: SPI fifo transmission level
+  *            @arg SPI_FLAG_FRLVL: SPI fifo reception level
+  * @retval SET or RESET.
+  */
+#define SPI_CHECK_FLAG(__SR__, __FLAG__)         ((((__SR__) & ((__FLAG__) & SPI_FLAG_MASK)) == ((__FLAG__) & SPI_FLAG_MASK)) ? SET : RESET)
 
-#define IS_SPI_DIRECTION(MODE) (((MODE) == SPI_DIRECTION_2LINES)        || \
-                                ((MODE) == SPI_DIRECTION_2LINES_RXONLY) || \
-                                ((MODE) == SPI_DIRECTION_1LINE))
+/** @brief  Check whether the specified SPI Interrupt is set or not.
+  * @param  __CR2__  copy of SPI CR2 regsiter.
+  * @param  __INTERRUPT__ specifies the SPI interrupt source to check.
+  *         This parameter can be one of the following values:
+  *            @arg SPI_IT_TXE: Tx buffer empty interrupt enable
+  *            @arg SPI_IT_RXNE: RX buffer not empty interrupt enable
+  *            @arg SPI_IT_ERR: Error interrupt enable
+  * @retval SET or RESET.
+  */
+#define SPI_CHECK_IT_SOURCE(__CR2__, __INTERRUPT__)      ((((__CR2__) & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
-#define IS_SPI_DIRECTION_2LINES(MODE) ((MODE) == SPI_DIRECTION_2LINES)
+/** @brief  Checks if SPI Mode parameter is in allowed range.
+  * @param  __MODE__ specifies the SPI Mode.
+  *         This parameter can be a value of @ref SPI_Mode
+  * @retval None
+  */
+#define IS_SPI_MODE(__MODE__) (((__MODE__) == SPI_MODE_SLAVE) || \
+                               ((__MODE__) == SPI_MODE_MASTER))
 
-#define IS_SPI_DIRECTION_2LINES_OR_1LINE(MODE) (((MODE) == SPI_DIRECTION_2LINES) || \
-                                                ((MODE) == SPI_DIRECTION_1LINE))
+/** @brief  Checks if SPI Direction Mode parameter is in allowed range.
+  * @param  __MODE__ specifies the SPI Direction Mode.
+  *         This parameter can be a value of @ref SPI_Direction
+  * @retval None
+  */
+#define IS_SPI_DIRECTION(__MODE__) (((__MODE__) == SPI_DIRECTION_2LINES)        || \
+                                    ((__MODE__) == SPI_DIRECTION_2LINES_RXONLY) || \
+                                    ((__MODE__) == SPI_DIRECTION_1LINE))
 
-#define IS_SPI_DATASIZE(DATASIZE) (((DATASIZE) == SPI_DATASIZE_16BIT) || \
-                                   ((DATASIZE) == SPI_DATASIZE_15BIT) || \
-                                   ((DATASIZE) == SPI_DATASIZE_14BIT) || \
-                                   ((DATASIZE) == SPI_DATASIZE_13BIT) || \
-                                   ((DATASIZE) == SPI_DATASIZE_12BIT) || \
-                                   ((DATASIZE) == SPI_DATASIZE_11BIT) || \
-                                   ((DATASIZE) == SPI_DATASIZE_10BIT) || \
-                                   ((DATASIZE) == SPI_DATASIZE_9BIT)  || \
-                                   ((DATASIZE) == SPI_DATASIZE_8BIT)  || \
-                                   ((DATASIZE) == SPI_DATASIZE_7BIT)  || \
-                                   ((DATASIZE) == SPI_DATASIZE_6BIT)  || \
-                                   ((DATASIZE) == SPI_DATASIZE_5BIT)  || \
-                                   ((DATASIZE) == SPI_DATASIZE_4BIT))
+/** @brief  Checks if SPI Direction Mode parameter is 2 lines.
+  * @param  __MODE__ specifies the SPI Direction Mode.
+  * @retval None
+  */
+#define IS_SPI_DIRECTION_2LINES(__MODE__) ((__MODE__) == SPI_DIRECTION_2LINES)
 
-#define IS_SPI_CPOL(CPOL) (((CPOL) == SPI_POLARITY_LOW) || \
-                           ((CPOL) == SPI_POLARITY_HIGH))
+/** @brief  Checks if SPI Direction Mode parameter is 1 or 2 lines.
+  * @param  __MODE__ specifies the SPI Direction Mode.
+  * @retval None
+  */
+#define IS_SPI_DIRECTION_2LINES_OR_1LINE(__MODE__) (((__MODE__) == SPI_DIRECTION_2LINES) || \
+                                                    ((__MODE__) == SPI_DIRECTION_1LINE))
 
-#define IS_SPI_CPHA(CPHA) (((CPHA) == SPI_PHASE_1EDGE) || \
-                           ((CPHA) == SPI_PHASE_2EDGE))
+/** @brief  Checks if SPI Data Size parameter is in allowed range.
+  * @param  __DATASIZE__ specifies the SPI Data Size.
+  *         This parameter can be a value of @ref SPI_Data_Size
+  * @retval None
+  */
+#define IS_SPI_DATASIZE(__DATASIZE__) (((__DATASIZE__) == SPI_DATASIZE_16BIT) || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_15BIT) || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_14BIT) || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_13BIT) || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_12BIT) || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_11BIT) || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_10BIT) || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_9BIT)  || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_8BIT)  || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_7BIT)  || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_6BIT)  || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_5BIT)  || \
+                                       ((__DATASIZE__) == SPI_DATASIZE_4BIT))
 
-#define IS_SPI_NSS(NSS) (((NSS) == SPI_NSS_SOFT)       || \
-                         ((NSS) == SPI_NSS_HARD_INPUT) || \
-                         ((NSS) == SPI_NSS_HARD_OUTPUT))
+/** @brief  Checks if SPI Serial clock steady state parameter is in allowed range.
+  * @param  __CPOL__ specifies the SPI serial clock steady state.
+  *         This parameter can be a value of @ref SPI_Clock_Polarity
+  * @retval None
+  */
+#define IS_SPI_CPOL(__CPOL__) (((__CPOL__) == SPI_POLARITY_LOW) || \
+                               ((__CPOL__) == SPI_POLARITY_HIGH))
 
-#define IS_SPI_NSSP(NSSP) (((NSSP) == SPI_NSS_PULSE_ENABLE) || \
-                           ((NSSP) == SPI_NSS_PULSE_DISABLE))
+/** @brief  Checks if SPI Clock Phase parameter is in allowed range.
+  * @param  __CPHA__ specifies the SPI Clock Phase.
+  *         This parameter can be a value of @ref SPI_Clock_Phase
+  * @retval None
+  */
+#define IS_SPI_CPHA(__CPHA__) (((__CPHA__) == SPI_PHASE_1EDGE) || \
+                               ((__CPHA__) == SPI_PHASE_2EDGE))
 
-#define IS_SPI_BAUDRATE_PRESCALER(PRESCALER) (((PRESCALER) == SPI_BAUDRATEPRESCALER_2)   || \
-                                              ((PRESCALER) == SPI_BAUDRATEPRESCALER_4)   || \
-                                              ((PRESCALER) == SPI_BAUDRATEPRESCALER_8)   || \
-                                              ((PRESCALER) == SPI_BAUDRATEPRESCALER_16)  || \
-                                              ((PRESCALER) == SPI_BAUDRATEPRESCALER_32)  || \
-                                              ((PRESCALER) == SPI_BAUDRATEPRESCALER_64)  || \
-                                              ((PRESCALER) == SPI_BAUDRATEPRESCALER_128) || \
-                                              ((PRESCALER) == SPI_BAUDRATEPRESCALER_256))
+/** @brief  Checks if SPI Slave Select parameter is in allowed range.
+  * @param  __NSS__ specifies the SPI Slave Select management parameter.
+  *         This parameter can be a value of @ref SPI_Slave_Select_management
+  * @retval None
+  */
+#define IS_SPI_NSS(__NSS__) (((__NSS__) == SPI_NSS_SOFT)       || \
+                             ((__NSS__) == SPI_NSS_HARD_INPUT) || \
+                             ((__NSS__) == SPI_NSS_HARD_OUTPUT))
 
-#define IS_SPI_FIRST_BIT(BIT) (((BIT) == SPI_FIRSTBIT_MSB) || \
-                               ((BIT) == SPI_FIRSTBIT_LSB))
+/** @brief  Checks if SPI NSS Pulse parameter is in allowed range.
+  * @param  __NSSP__ specifies the SPI NSS Pulse Mode parameter.
+  *         This parameter can be a value of @ref SPI_NSSP_Mode
+  * @retval None
+  */
+#define IS_SPI_NSSP(__NSSP__) (((__NSSP__) == SPI_NSS_PULSE_ENABLE) || \
+                               ((__NSSP__) == SPI_NSS_PULSE_DISABLE))
 
-#define IS_SPI_TIMODE(MODE) (((MODE) == SPI_TIMODE_DISABLE) || \
-                             ((MODE) == SPI_TIMODE_ENABLE))
+/** @brief  Checks if SPI Baudrate prescaler parameter is in allowed range.
+  * @param  __PRESCALER__ specifies the SPI Baudrate prescaler.
+  *         This parameter can be a value of @ref SPI_BaudRate_Prescaler
+  * @retval None
+  */
+#define IS_SPI_BAUDRATE_PRESCALER(__PRESCALER__) (((__PRESCALER__) == SPI_BAUDRATEPRESCALER_2)   || \
+                                                  ((__PRESCALER__) == SPI_BAUDRATEPRESCALER_4)   || \
+                                                  ((__PRESCALER__) == SPI_BAUDRATEPRESCALER_8)   || \
+                                                  ((__PRESCALER__) == SPI_BAUDRATEPRESCALER_16)  || \
+                                                  ((__PRESCALER__) == SPI_BAUDRATEPRESCALER_32)  || \
+                                                  ((__PRESCALER__) == SPI_BAUDRATEPRESCALER_64)  || \
+                                                  ((__PRESCALER__) == SPI_BAUDRATEPRESCALER_128) || \
+                                                  ((__PRESCALER__) == SPI_BAUDRATEPRESCALER_256))
 
-#define IS_SPI_CRC_CALCULATION(CALCULATION) (((CALCULATION) == SPI_CRCCALCULATION_DISABLE) || \
-                                             ((CALCULATION) == SPI_CRCCALCULATION_ENABLE))
+/** @brief  Checks if SPI MSB LSB transmission parameter is in allowed range.
+  * @param  __BIT__ specifies the SPI MSB LSB transmission (whether data transfer starts from MSB or LSB bit).
+  *         This parameter can be a value of @ref SPI_MSB_LSB_transmission
+  * @retval None
+  */
+#define IS_SPI_FIRST_BIT(__BIT__) (((__BIT__) == SPI_FIRSTBIT_MSB) || \
+                                   ((__BIT__) == SPI_FIRSTBIT_LSB))
 
-#define IS_SPI_CRC_LENGTH(LENGTH) (((LENGTH) == SPI_CRC_LENGTH_DATASIZE) ||\
-                                   ((LENGTH) == SPI_CRC_LENGTH_8BIT)  ||   \
-                                   ((LENGTH) == SPI_CRC_LENGTH_16BIT))
+/** @brief  Checks if SPI TI mode parameter is in allowed range.
+  * @param  __MODE__ specifies the SPI TI mode.
+  *         This parameter can be a value of @ref SPI_TI_mode
+  * @retval None
+  */
+#define IS_SPI_TIMODE(__MODE__) (((__MODE__) == SPI_TIMODE_DISABLE) || \
+                                 ((__MODE__) == SPI_TIMODE_ENABLE))
 
-#define IS_SPI_CRC_POLYNOMIAL(POLYNOMIAL) (((POLYNOMIAL) >= 0x1U) && ((POLYNOMIAL) <= 0xFFFFU) && (((POLYNOMIAL)&0x1U) != 0U))
+/** @brief  Checks if SPI CRC calculation enabled state is in allowed range.
+  * @param  __CALCULATION__ specifies the SPI CRC calculation enable state.
+  *         This parameter can be a value of @ref SPI_CRC_Calculation
+  * @retval None
+  */
+#define IS_SPI_CRC_CALCULATION(__CALCULATION__) (((__CALCULATION__) == SPI_CRCCALCULATION_DISABLE) || \
+                                                 ((__CALCULATION__) == SPI_CRCCALCULATION_ENABLE))
 
-#define IS_SPI_DMA_HANDLE(HANDLE) ((HANDLE) != NULL)
+/** @brief  Checks if SPI CRC length is in allowed range.
+  * @param  __LENGTH__ specifies the SPI CRC length.
+  *         This parameter can be a value of @ref SPI_CRC_length
+  * @retval None
+  */
+#define IS_SPI_CRC_LENGTH(__LENGTH__) (((__LENGTH__) == SPI_CRC_LENGTH_DATASIZE) ||\
+                                       ((__LENGTH__) == SPI_CRC_LENGTH_8BIT)  ||   \
+                                       ((__LENGTH__) == SPI_CRC_LENGTH_16BIT))
 
-#define IS_SPI_16BIT_ALIGNED_ADDRESS(DATA) (((uint32_t)(DATA) % 2U) == 0U)
+/** @brief  Checks if SPI polynomial value to be used for the CRC calculation, is in allowed range.
+  * @param  __POLYNOMIAL__ specifies the SPI polynomial value to be used for the CRC calculation.
+  *         This parameter must be a number between Min_Data = 0 and Max_Data = 65535
+  * @retval None
+  */
+#define IS_SPI_CRC_POLYNOMIAL(__POLYNOMIAL__) (((__POLYNOMIAL__) >= 0x1U) && ((__POLYNOMIAL__) <= 0xFFFFU) && (((__POLYNOMIAL__)&0x1U) != 0U))
+
+/** @brief  Checks if DMA handle is valid.
+  * @param  __HANDLE__ specifies a DMA Handle.
+  * @retval None
+  */
+#define IS_SPI_DMA_HANDLE(__HANDLE__) ((__HANDLE__) != NULL)
+
+/** @brief  Checks if a data address is 16bit aligned.
+  * @param  __DATA__ specifies a data address.
+  * @retval None
+  */
+#define IS_SPI_16BIT_ALIGNED_ADDRESS(__DATA__) (((uint32_t)(__DATA__) % 2U) == 0U)
 
 /**
   * @}
@@ -633,6 +777,12 @@ HAL_StatusTypeDef HAL_SPI_Init(SPI_HandleTypeDef *hspi);
 HAL_StatusTypeDef HAL_SPI_DeInit(SPI_HandleTypeDef *hspi);
 void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi);
 void HAL_SPI_MspDeInit(SPI_HandleTypeDef *hspi);
+
+/* Callbacks Register/UnRegister functions  ***********************************/
+#if (USE_HAL_SPI_REGISTER_CALLBACKS == 1U)
+HAL_StatusTypeDef HAL_SPI_RegisterCallback(SPI_HandleTypeDef *hspi, HAL_SPI_CallbackIDTypeDef CallbackID, pSPI_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_SPI_UnRegisterCallback(SPI_HandleTypeDef *hspi, HAL_SPI_CallbackIDTypeDef CallbackID);
+#endif /* USE_HAL_SPI_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -699,6 +849,6 @@ uint32_t             HAL_SPI_GetError(SPI_HandleTypeDef *hspi);
 }
 #endif
 
-#endif /* __STM32F0xx_HAL_SPI_H */
+#endif /* STM32F0xx_HAL_SPI_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,11 +9,10 @@
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
  * 2014-08-03     bernard      If using msh, use system() implementation
  *                             in msh.
- * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when 
+ * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when
  *                             RT_USING_DFS is not defined
  * 2020-02-13     Meco Man     re-implement exit() and abort()
  * 2020-02-14     Meco Man     implement _sys_tmpnam()
- * 2020-02-25     Meco Man     add multithreaded protection
  */
 
 #include <string.h>
@@ -41,36 +40,6 @@ __asm(".global __use_no_semihosting\n\t");
 const char __stdin_name[]  = "STDIN";
 const char __stdout_name[] = "STDOUT";
 const char __stderr_name[] = "STDERR";
-
-#ifdef RT_USING_HEAP
-int _mutex_initialize(rt_mutex_t *m)
-{
-    *m = rt_mutex_create("_mutex_", RT_IPC_FLAG_PRIO);
-    if(*m == RT_NULL)
-    {
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
-}
-
-void _mutex_acquire(rt_mutex_t *m)
-{
-    rt_mutex_take(*m, RT_WAITING_FOREVER);
-}
-
-void _mutex_release(rt_mutex_t *m)
-{
-    rt_mutex_release(*m);
-}
-
-void _mutex_free(rt_mutex_t *m)
-{
-    rt_mutex_delete(*m);
-}
-#endif
 
 /**
  * required by fopen() and freopen().
@@ -333,7 +302,7 @@ int remove(const char *filename)
 #endif
 }
 
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
+#if defined(RT_USING_FINSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
 /* use system(const char *string) implementation in the msh */
 #else
 int system(const char *string)
@@ -346,7 +315,7 @@ int system(const char *string)
 #ifdef __MICROLIB
 #include <stdio.h>
 
-int fputc(int c, FILE *f) 
+int fputc(int c, FILE *f)
 {
     char ch[2] = {0};
 
@@ -355,7 +324,7 @@ int fputc(int c, FILE *f)
     return 1;
 }
 
-int fgetc(FILE *f) 
+int fgetc(FILE *f)
 {
 #ifdef RT_USING_POSIX
     char ch;

@@ -41,6 +41,23 @@
   * @{
   */
 
+#if defined(PWR_PVD_SUPPORT)
+/** @defgroup PWR_PVD_Mode_Mask PWR PVD Mode Mask
+  * @{
+  */
+#define PVD_MODE_IT           0x00010000U  /*!< Mask for interruption yielded
+                                                by PVD threshold crossing     */
+#define PVD_MODE_EVT          0x00020000U  /*!< Mask for event yielded
+                                                by PVD threshold crossing     */
+#define PVD_RISING_EDGE       0x00000001U  /*!< Mask for rising edge set as
+                                                PVD trigger                   */
+#define PVD_FALLING_EDGE      0x00000002U  /*!< Mask for falling edge set as
+                                                PVD trigger                   */
+/**
+  * @}
+  */
+#endif
+
 /** @defgroup PWREx_TimeOut_Value  PWREx Flag Setting Time Out Value
   * @{
   */
@@ -83,6 +100,20 @@
   ##### Extended Peripheral Initialization and de-initialization functions #####
  ===============================================================================
     [..]
+     *** PVD configuration ***
+    =========================
+    [..]
+      (+) The PVD is used to monitor the VDD power supply by comparing it to a
+          threshold selected by the PVD Level (PVDRT[2:0] & PVDFT[2:0] bits in
+          PWR CR2 register).
+      (+) PVDO flag is available to indicate if VDD/VDDA is higher or lower
+          than the PVD threshold. This event is internally connected to the EXTI
+          line 16 and can generate an interrupt if enabled.
+      (+) The PVD is stopped in Standby & Shutdown mode.
+
+     *** PVM configuration ***
+    =========================
+    [..]
 
 @endverbatim
   * @{
@@ -90,7 +121,7 @@
 
 /**
   * @brief  Enable battery charging.
-  * @note   When VDD is present, charge the external battery on VBAT thru an
+  * @note   When VDD is present, charge the external battery on VBAT through an
   *         internal resistor.
   * @param  ResistorSelection specifies the resistor impedance.
   *         This parameter can be one of the following values:
@@ -142,7 +173,208 @@ void HAL_PWREx_DisablePORMonitorSampling(void)
 }
 #endif
 
+#if defined(PWR_PVD_SUPPORT)
+/**
+  * @brief  Configure the Power Voltage Detector (PVD).
+  * @param  sConfigPVD pointer to a PWR_PVDTypeDef structure that contains the
+            PVD configuration information: threshold levels, operating mode.
+  * @note   Refer to the electrical characteristics of your device datasheet for
+  *         more details about the voltage thresholds corresponding to each
+  *         detection level.
+  * @note   User should take care that rising threshold is higher than falling
+  *         one in order to avoid having always PVDO output set.
+  * @retval HAL_OK
+  */
+HAL_StatusTypeDef HAL_PWREx_ConfigPVD(PWR_PVDTypeDef *sConfigPVD)
+{
+  /* Check the parameters */
+  assert_param(IS_PWR_PVD_LEVEL(sConfigPVD->PVDLevel));
+  assert_param(IS_PWR_PVD_MODE(sConfigPVD->Mode));
 
+  /* Set PVD level bits only according to PVDLevel value */
+  MODIFY_REG(PWR->CR2, (PWR_CR2_PVDFT | PWR_CR2_PVDRT), sConfigPVD->PVDLevel);
+
+  /* Clear any previous config, in case no event or IT mode is selected */
+  __HAL_PWR_PVD_EXTI_DISABLE_EVENT();
+  __HAL_PWR_PVD_EXTI_DISABLE_IT();
+  __HAL_PWR_PVD_EXTI_DISABLE_FALLING_EDGE();
+  __HAL_PWR_PVD_EXTI_DISABLE_RISING_EDGE();
+
+  /* Configure interrupt mode */
+  if((sConfigPVD->Mode & PVD_MODE_IT) == PVD_MODE_IT)
+  {
+    __HAL_PWR_PVD_EXTI_ENABLE_IT();
+  }
+
+  /* Configure event mode */
+  if((sConfigPVD->Mode & PVD_MODE_EVT) == PVD_MODE_EVT)
+  {
+    __HAL_PWR_PVD_EXTI_ENABLE_EVENT();
+  }
+
+  /* Configure the edge */
+  if((sConfigPVD->Mode & PVD_RISING_EDGE) == PVD_RISING_EDGE)
+  {
+    __HAL_PWR_PVD_EXTI_ENABLE_RISING_EDGE();
+  }
+
+  if((sConfigPVD->Mode & PVD_FALLING_EDGE) == PVD_FALLING_EDGE)
+  {
+    __HAL_PWR_PVD_EXTI_ENABLE_FALLING_EDGE();
+  }
+
+  return HAL_OK;
+}
+
+
+/**
+  * @brief  Enable the Power Voltage Detector (PVD).
+  * @retval None
+  */
+void HAL_PWREx_EnablePVD(void)
+{
+  SET_BIT(PWR->CR2, PWR_CR2_PVDE);
+}
+
+
+/**
+  * @brief  Disable the Power Voltage Detector (PVD).
+  * @retval None
+  */
+void HAL_PWREx_DisablePVD(void)
+{
+  CLEAR_BIT(PWR->CR2, PWR_CR2_PVDE);
+}
+#endif
+
+#if defined(PWR_PVM_SUPPORT)
+/**
+  * @brief Enable VDDUSB supply.
+  * @note  Remove VDDUSB electrical and logical isolation, once VDDUSB supply is present.
+  * @retval None
+  */
+void HAL_PWREx_EnableVddUSB(void)
+{
+  SET_BIT(PWR->CR2, PWR_CR2_USV);
+}
+
+/**
+  * @brief Disable VDDUSB supply.
+  * @retval None
+  */
+void HAL_PWREx_DisableVddUSB(void)
+{
+  CLEAR_BIT(PWR->CR2, PWR_CR2_USV);
+}
+#endif
+
+#if defined(PWR_CR2_IOSV)
+/**
+  * @brief Enable VDDIO2 supply.
+  * @note  Remove VDDIO2 electrical and logical isolation, once VDDIO2 supply is present.
+  * @retval None
+  */
+void HAL_PWREx_EnableVddIO2(void)
+{
+  SET_BIT(PWR->CR2, PWR_CR2_IOSV);
+}
+
+
+/**
+  * @brief Disable VDDIO2 supply.
+  * @retval None
+  */
+void HAL_PWREx_DisableVddIO2(void)
+{
+  CLEAR_BIT(PWR->CR2, PWR_CR2_IOSV);
+}
+#endif /* PWR_CR2_IOSV */
+
+#if defined (PWR_PVM_SUPPORT)
+/**
+  * @brief Enable the Power Voltage Monitoring for USB peripheral (power domain Vddio2)
+  * @retval None
+  */
+void HAL_PWREx_EnablePVMUSB(void)
+{
+  SET_BIT(PWR->CR2, PWR_PVM_USB);
+}
+
+/**
+  * @brief Disable the Power Voltage Monitoring for USB peripheral (power domain Vddio2)
+  * @retval None
+  */
+void HAL_PWREx_DisablePVMUSB(void)
+{
+  CLEAR_BIT(PWR->CR2, PWR_PVM_USB);
+}
+#endif
+
+#if defined(PWR_PVM_SUPPORT)
+/**
+  * @brief Configure the Peripheral Voltage Monitoring (PVM).
+  * @param sConfigPVM: pointer to a PWR_PVMTypeDef structure that contains the
+  *        PVM configuration information.
+  * @note The API configures a single PVM according to the information contained
+  *       in the input structure. To configure several PVMs, the API must be singly
+  *       called for each PVM used.
+  * @note Refer to the electrical characteristics of your device datasheet for
+  *         more details about the voltage thresholds corresponding to each
+  *         detection level and to each monitored supply.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_PWREx_ConfigPVM(PWR_PVMTypeDef *sConfigPVM)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  /* Check the parameters */
+  assert_param(IS_PWR_PVM_TYPE(sConfigPVM->PVMType));
+  assert_param(IS_PWR_PVM_MODE(sConfigPVM->Mode));
+
+  /* Configure EXTI 34 interrupts if so required:
+     scan through PVMType to detect which PVMx is set and
+     configure the corresponding EXTI line accordingly. */
+  switch (sConfigPVM->PVMType)
+  {
+    case PWR_PVM_USB:
+      /* Clear any previous config. Keep it clear if no event or IT mode is selected */
+      __HAL_PWR_PVM_EXTI_DISABLE_EVENT();
+      __HAL_PWR_PVM_EXTI_DISABLE_IT();
+      __HAL_PWR_PVM_EXTI_DISABLE_FALLING_EDGE();
+      __HAL_PWR_PVM_EXTI_DISABLE_RISING_EDGE();
+
+      /* Configure interrupt mode */
+      if((sConfigPVM->Mode & PVM_MODE_IT) == PVM_MODE_IT)
+      {
+        __HAL_PWR_PVM_EXTI_ENABLE_IT();
+      }
+
+      /* Configure event mode */
+      if((sConfigPVM->Mode & PVM_MODE_EVT) == PVM_MODE_EVT)
+      {
+        __HAL_PWR_PVM_EXTI_ENABLE_EVENT();
+      }
+
+      /* Configure the edge */
+      if((sConfigPVM->Mode & PVM_RISING_EDGE) == PVM_RISING_EDGE)
+      {
+        __HAL_PWR_PVM_EXTI_ENABLE_RISING_EDGE();
+      }
+
+      if((sConfigPVM->Mode & PVM_FALLING_EDGE) == PVM_FALLING_EDGE)
+      {
+        __HAL_PWR_PVM_EXTI_ENABLE_FALLING_EDGE();
+      }
+      break;
+
+    default:
+      status = HAL_ERROR;
+      break;
+  }
+
+  return status;
+}
+#endif
 /**
   * @brief  Enable Internal Wake-up Line.
   * @retval None
@@ -152,7 +384,6 @@ void HAL_PWREx_EnableInternalWakeUpLine(void)
   SET_BIT(PWR->CR3, PWR_CR3_EIWUL);
 }
 
-
 /**
   * @brief  Disable Internal Wake-up Line.
   * @retval None
@@ -161,7 +392,6 @@ void HAL_PWREx_DisableInternalWakeUpLine(void)
 {
   CLEAR_BIT(PWR->CR3, PWR_CR3_EIWUL);
 }
-
 
 /**
   * @brief  Enable GPIO pull-up state in Standby and Shutdown modes.
@@ -211,6 +441,12 @@ HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
        CLEAR_BIT(PWR->PDCRD, GPIONumber);
        break;
 
+#if defined(GPI0E)
+    case PWR_GPIO_E:
+       SET_BIT(PWR->PUCRE, GPIONumber);
+       CLEAR_BIT(PWR->PDCRE, GPIONumber);
+       break;
+#endif
     case PWR_GPIO_F:
        SET_BIT(PWR->PUCRF, GPIONumber);
        CLEAR_BIT(PWR->PDCRF, GPIONumber);
@@ -263,6 +499,11 @@ HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber
       CLEAR_BIT(PWR->PUCRD, GPIONumber);
       break;
 
+#if defined(GPI0E)
+    case PWR_GPIO_E:
+      CLEAR_BIT(PWR->PUCRE, GPIONumber);
+      break;
+#endif
     case PWR_GPIO_F:
       CLEAR_BIT(PWR->PUCRF, GPIONumber);
       break;
@@ -324,6 +565,12 @@ HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumbe
        CLEAR_BIT(PWR->PUCRD, GPIONumber);
        break;
 
+#if defined(GPIOE)
+    case PWR_GPIO_E:
+       SET_BIT(PWR->PDCRE, GPIONumber);
+       CLEAR_BIT(PWR->PUCRE, GPIONumber);
+       break;
+#endif
     case PWR_GPIO_F:
        SET_BIT(PWR->PDCRF, GPIONumber);
        CLEAR_BIT(PWR->PUCRF, GPIONumber);
@@ -376,6 +623,11 @@ HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumb
       CLEAR_BIT(PWR->PDCRD, GPIONumber);
       break;
 
+#if defined(GPIOE)
+    case PWR_GPIO_E:
+      CLEAR_BIT(PWR->PDCRE, GPIONumber);
+      break;
+#endif
     case PWR_GPIO_F:
       CLEAR_BIT(PWR->PDCRF, GPIONumber);
       break;
@@ -478,7 +730,9 @@ void HAL_PWREx_DisableFlashPowerDown(uint32_t PowerMode)
 
 /**
   * @brief   Return Voltage Scaling Range.
-  * @retval  VOS bit field : PWR_REGULATOR_VOLTAGE_RANGE1 or PWR_REGULATOR_VOLTAGE_RANGE2
+  * @retval  VOS bit field:
+  *         @arg @ref PWR_REGULATOR_VOLTAGE_SCALE1
+  *         @arg @ref PWR_REGULATOR_VOLTAGE_SCALE2
   */
 uint32_t HAL_PWREx_GetVoltageRange(void)
 {
@@ -620,6 +874,129 @@ void HAL_PWREx_EnterSHUTDOWNMode(void)
   /* Request Wait For Interrupt */
   __WFI();
 }
+#endif
+
+#if defined(PWR_PVD_SUPPORT) && defined(PWR_PVM_SUPPORT)
+/**
+  * @brief  This function handles the PWR PVD interrupt request.
+  * @note   This API should be called under the PVD_IRQHandler().
+  * @retval None
+  */
+void HAL_PWREx_PVD_PVM_IRQHandler(void)
+{
+  /* Check PWR PVD exti Rising flag */
+  if(__HAL_PWR_PVD_EXTI_GET_RISING_FLAG() != 0x0U)
+  {
+    /* Clear PVD exti pending bit */
+    __HAL_PWR_PVD_EXTI_CLEAR_RISING_FLAG();
+
+    /* PWR PVD interrupt rising user callback */
+    HAL_PWREx_PVD_PVM_Rising_Callback();
+  }
+
+  /* Check PWR exti fallling flag */
+  if(__HAL_PWR_PVD_EXTI_GET_FALLING_FLAG() != 0x0U)
+  {
+    /* Clear PVD exti pending bit */
+    __HAL_PWR_PVD_EXTI_CLEAR_FALLING_FLAG();
+
+    /* PWR PVD interrupt falling user callback */
+    HAL_PWREx_PVD_PVM_Falling_Callback();
+  }
+  
+  /* Check PWR PVM exti Rising flag */
+  if(__HAL_PWR_PVM_EXTI_GET_RISING_FLAG() != 0x0U)
+  {
+    /* Clear PVM exti pending bit */
+    __HAL_PWR_PVM_EXTI_CLEAR_RISING_FLAG();
+
+    /* PWR PVD PVM interrupt rising user callback */
+    HAL_PWREx_PVD_PVM_Rising_Callback();
+  }
+
+  /* Check PWR PVM exti fallling flag */
+  if(__HAL_PWR_PVM_EXTI_GET_FALLING_FLAG() != 0x0U)
+  {
+    /* Clear PVM exti pending bit */
+    __HAL_PWR_PVM_EXTI_CLEAR_FALLING_FLAG();
+
+    /* PWR PVM interrupt falling user callback */
+    HAL_PWREx_PVD_PVM_Falling_Callback();
+  }
+}
+
+/**
+  * @brief  PWR PVD interrupt rising callback
+  * @retval None
+  */
+__weak void HAL_PWREx_PVD_PVM_Rising_Callback(void)
+{
+  /* NOTE : This function should not be modified; when the callback is needed,
+            the HAL_PWR_PVD_Rising_Callback can be implemented in the user file
+  */
+}
+
+/**
+  * @brief  PWR PVD interrupt Falling callback
+  * @retval None
+  */
+__weak void HAL_PWREx_PVD_PVM_Falling_Callback(void)
+{
+  /* NOTE : This function should not be modified; when the callback is needed,
+            the HAL_PWR_PVD_Falling_Callback can be implemented in the user file
+  */
+}
+#elif defined(PWR_PVD_SUPPORT)
+/**
+  * @brief  This function handles the PWR PVD interrupt request.
+  * @note   This API should be called under the PVD_IRQHandler().
+  * @retval None
+  */
+void HAL_PWREx_PVD_IRQHandler(void)
+{
+  /* Check PWR exti Rising flag */
+  if(__HAL_PWR_PVD_EXTI_GET_RISING_FLAG() != 0x0U)
+  {
+    /* Clear PVD exti pending bit */
+    __HAL_PWR_PVD_EXTI_CLEAR_RISING_FLAG();
+
+    /* PWR PVD interrupt rising user callback */
+    HAL_PWREx_PVD_Rising_Callback();
+  }
+
+  /* Check PWR exti fallling flag */
+  if(__HAL_PWR_PVD_EXTI_GET_FALLING_FLAG() != 0x0U)
+  {
+    /* Clear PVD exti pending bit */
+    __HAL_PWR_PVD_EXTI_CLEAR_FALLING_FLAG();
+
+    /* PWR PVD interrupt falling user callback */
+    HAL_PWREx_PVD_Falling_Callback();
+  }
+}
+
+/**
+  * @brief  PWR PVD interrupt rising callback
+  * @retval None
+  */
+__weak void HAL_PWREx_PVD_Rising_Callback(void)
+{
+  /* NOTE : This function should not be modified; when the callback is needed,
+            the HAL_PWR_PVD_Rising_Callback can be implemented in the user file
+  */
+}
+
+/**
+  * @brief  PWR PVD interrupt Falling callback
+  * @retval None
+  */
+__weak void HAL_PWREx_PVD_Falling_Callback(void)
+{
+  /* NOTE : This function should not be modified; when the callback is needed,
+            the HAL_PWR_PVD_Falling_Callback can be implemented in the user file
+  */
+}
+
 #endif
 
 /**

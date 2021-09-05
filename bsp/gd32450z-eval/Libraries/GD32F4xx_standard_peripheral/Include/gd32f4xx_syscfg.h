@@ -1,12 +1,37 @@
 /*!
-    \file  gd32f4xx_syscfg.h
-    \brief definitions for the SYSCFG
+    \file    gd32f4xx_syscfg.h
+    \brief   definitions for the SYSCFG
+
+    \version 2016-08-15, V1.0.0, firmware for GD32F4xx
+    \version 2018-12-12, V2.0.0, firmware for GD32F4xx
+    \version 2020-09-30, V2.1.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (C) 2016 GigaDevice
+    Copyright (c) 2020, GigaDevice Semiconductor Inc.
 
-    2016-08-15, V1.0.0, firmware for GD32F4xx
+    Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice, this
+       list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
+       specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+OF SUCH DAMAGE.
 */
 
 #ifndef GD32F4XX_SYSCFG_H
@@ -85,13 +110,13 @@
 #define EXTISS3                             ((uint8_t)0x03U)          /*!< EXTI source select GPIOx pin 12~15 */
 
 /* EXTI source select mask bits definition */
-#define EXTI_SS_MASK                        BITS(0,3)
+#define EXTI_SS_MASK                        BITS(0,3)                 /*!< EXTI source select mask */
 
 /* EXTI source select jumping step definition */
-#define EXTI_SS_JSTEP                       ((uint8_t)(0x04U))
+#define EXTI_SS_JSTEP                       ((uint8_t)(0x04U))        /*!< EXTI source select jumping step */
 
 /* EXTI source select moving step definition */
-#define EXTI_SS_MSTEP(pin)                  (EXTI_SS_JSTEP*((pin)%EXTI_SS_JSTEP))
+#define EXTI_SS_MSTEP(pin)                  (EXTI_SS_JSTEP*((pin)%EXTI_SS_JSTEP))   /*!< EXTI source select moving step */
 
 /* EXTI source port definitions */
 #define EXTI_SOURCE_GPIOA                   ((uint8_t)0x00U)          /*!< EXTI GPIOA configuration */
@@ -123,35 +148,33 @@
 #define EXTI_SOURCE_PIN15                   ((uint8_t)0x0FU)          /*!< EXTI GPIO pin15 configuration */
 
 /* ethernet PHY selection */
-#define SYSCFG_ENET_PHY_MII                 ((uint32_t)0x00000000U)
-#define SYSCFG_ENET_PHY_RMII                ((uint32_t)0x00800000U)
+#define SYSCFG_ENET_PHY_MII                 ((uint32_t)0x00000000U)   /*!< MII is selected for the Ethernet MAC */
+#define SYSCFG_ENET_PHY_RMII                ((uint32_t)0x00800000U)   /*!< RMII is selected for the Ethernet MAC */
 
 /* I/O compensation cell enable/disable */
-#define SYSCFG_COMPENSATION_ENABLE          ((uint32_t)0x00000001U)
-#define SYSCFG_COMPENSATION_DISABLE         ((uint32_t)0x00000000U)
+#define SYSCFG_COMPENSATION_ENABLE          ((uint32_t)0x00000001U)   /*!< I/O compensation cell enable */
+#define SYSCFG_COMPENSATION_DISABLE         ((uint32_t)0x00000000U)   /*!< I/O compensation cell disable */
 
 /* function declarations */
+/* initialization functions */
 /* deinit syscfg module */
 void syscfg_deinit(void);
 
+/* function configuration */
 /* configure the boot mode */
 void syscfg_bootmode_config(uint8_t syscfg_bootmode);
-
-/* FMC memory mapping swap */
+/* configure FMC memory mapping swap */
 void syscfg_fmc_swap_config(uint32_t syscfg_fmc_swap);
-
 /* configure the EXMC swap */
-void syscfg_exmc_swap_config(uint32_t syscfg_exmc_swap); 
-
+void syscfg_exmc_swap_config(uint32_t syscfg_exmc_swap);
 /* configure the GPIO pin as EXTI Line */
 void syscfg_exti_line_config(uint8_t exti_port, uint8_t exti_pin);
-
 /* configure the PHY interface for the ethernet MAC */
 void syscfg_enet_phy_interface_config(uint32_t syscfg_enet_phy_interface);
-
 /* configure the I/O compensation cell */
-void syscfg_compensation_config(uint32_t syscfg_compensation); 
+void syscfg_compensation_config(uint32_t syscfg_compensation);
 
+/* interrupt & flag functions */
 /* check the I/O compensation cell is ready or not */
 FlagStatus syscfg_flag_get(void);
 

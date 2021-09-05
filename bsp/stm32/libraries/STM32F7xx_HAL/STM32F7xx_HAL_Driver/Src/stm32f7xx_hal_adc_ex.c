@@ -5,7 +5,7 @@
   * @brief   This file provides firmware functions to manage the following 
   *          functionalities of the ADC extension peripheral:
   *           + Extended features functions
-  *         
+  *
   @verbatim
   ==============================================================================
                     ##### How to use this driver #####
@@ -15,8 +15,8 @@
        (##) Enable the ADC interface clock using __HAL_RCC_ADC_CLK_ENABLE()
        (##) ADC pins configuration
              (+++) Enable the clock for the ADC GPIOs using the following function:
-                   __HAL_RCC_GPIOx_CLK_ENABLE()  
-             (+++) Configure these ADC pins in analog mode using HAL_GPIO_Init() 
+                   __HAL_RCC_GPIOx_CLK_ENABLE()
+             (+++) Configure these ADC pins in analog mode using HAL_GPIO_Init()
        (##) In case of using interrupts (e.g. HAL_ADC_Start_IT())
              (+++) Configure the ADC interrupt priority using HAL_NVIC_SetPriority()
              (+++) Enable the ADC IRQ handler using HAL_NVIC_EnableIRQ()
@@ -29,57 +29,45 @@
                  using  __HAL_LINKDMA()
              (+++) Configure the priority and enable the NVIC for the transfer complete
                  interrupt on the two DMA Streams. The output stream should have higher
-                 priority than the input stream.                  
-     (#) Configure the ADC Prescaler, conversion resolution and data alignment 
-         using the HAL_ADC_Init() function. 
-  
+                 priority than the input stream.
+     (#) Configure the ADC Prescaler, conversion resolution and data alignment
+         using the HAL_ADC_Init() function.
+
      (#) Configure the ADC Injected channels group features, use HAL_ADC_Init()
          and HAL_ADC_ConfigChannel() functions.
-         
-     (#) Three operation modes are available within this driver :     
-  
+
+     (#) Three operation modes are available within this driver :
+
      *** Polling mode IO operation ***
      =================================
-     [..]    
-       (+) Start the ADC peripheral using HAL_ADCEx_InjectedStart() 
+     [..]
+       (+) Start the ADC peripheral using HAL_ADCEx_InjectedStart()
        (+) Wait for end of conversion using HAL_ADCEx_InjectedPollForConversion(), at this stage
-           user can specify the value of timeout according to his end application      
+           user can specify the value of timeout according to his end application
        (+) To read the ADC converted values, use the HAL_ADCEx_InjectedGetValue() function.
        (+) Stop the ADC peripheral using HAL_ADCEx_InjectedStop()
-  
-     *** Interrupt mode IO operation ***    
+
+     *** Interrupt mode IO operation ***
      ===================================
-     [..]    
-       (+) Start the ADC peripheral using HAL_ADCEx_InjectedStart_IT() 
+     [..]
+       (+) Start the ADC peripheral using HAL_ADCEx_InjectedStart_IT()
        (+) Use HAL_ADC_IRQHandler() called under ADC_IRQHandler() Interrupt subroutine
-       (+) At ADC end of conversion HAL_ADCEx_InjectedConvCpltCallback() function is executed and user can 
+       (+) At ADC end of conversion HAL_ADCEx_InjectedConvCpltCallback() function is executed and user can
             add his own code by customization of function pointer HAL_ADCEx_InjectedConvCpltCallback 
        (+) In case of ADC Error, HAL_ADCEx_InjectedErrorCallback() function is executed and user can 
             add his own code by customization of function pointer HAL_ADCEx_InjectedErrorCallback
        (+) Stop the ADC peripheral using HAL_ADCEx_InjectedStop_IT()
-       
-            
-     *** DMA mode IO operation ***    
-     ==============================
-     [..]    
-       (+) Start the ADC peripheral using HAL_ADCEx_InjectedStart_DMA(), at this stage the user specify the length 
-           of data to be transferred at each end of conversion 
-       (+) At The end of data transfer ba HAL_ADCEx_InjectedConvCpltCallback() function is executed and user can 
-            add his own code by customization of function pointer HAL_ADCEx_InjectedConvCpltCallback 
-       (+) In case of transfer Error, HAL_ADCEx_InjectedErrorCallback() function is executed and user can 
-            add his own code by customization of function pointer HAL_ADCEx_InjectedErrorCallback
-        (+) Stop the ADC peripheral using HAL_ADCEx_InjectedStop_DMA()
-        
+
      *** Multi mode ADCs Regular channels configuration ***
      ======================================================
-     [..]        
-       (+) Select the Multi mode ADC regular channels features (dual or triple mode)  
-          and configure the DMA mode using HAL_ADCEx_MultiModeConfigChannel() functions. 
-       (+) Start the ADC peripheral using HAL_ADCEx_MultiModeStart_DMA(), at this stage the user specify the length 
-           of data to be transferred at each end of conversion           
+     [..]
+       (+) Select the Multi mode ADC regular channels features (dual or triple mode)
+          and configure the DMA mode using HAL_ADCEx_MultiModeConfigChannel() functions.
+       (+) Start the ADC peripheral using HAL_ADCEx_MultiModeStart_DMA(), at this stage the user specify the length
+           of data to be transferred at each end of conversion
        (+) Read the ADCs converted values using the HAL_ADCEx_MultiModeGetValue() function.
-  
-  
+
+
     @endverbatim
   ******************************************************************************
   * @attention
@@ -93,7 +81,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"

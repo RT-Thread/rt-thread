@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -89,7 +89,7 @@ void lcd_write_data(rt_uint8_t data)
 }
 
 /*Ser rotation of the screen - changes x0 and y0*/
-static inline void lcd_set_rotation(uint8_t rotation) 
+static inline void lcd_set_rotation(uint8_t rotation)
 {
     writeCommand(lcd_dev, 0x36);
     rt_thread_mdelay(100);
@@ -134,7 +134,7 @@ static inline void lcd_set_rotation(uint8_t rotation)
         lcd_write_data(0x01);
         lcd_write_data(0xE0);
     }
-    
+
     if((rotation == SCREEN_HORIZONTAL_1) || (rotation == SCREEN_HORIZONTAL_2))
     {
         lcd_write_commmand(0x2B);
@@ -177,7 +177,7 @@ static inline void fast_send_data(void)
     rt_sem_release(&lcd_spi_lock);
 }
 
-static inline void lcd_show(void) 
+static inline void lcd_show(void)
 {
 
     lcd_write_commmand(0x2C); // Memory write?
@@ -188,11 +188,11 @@ static inline void lcd_show(void)
     fast_send_data();
 #else
     int i, j;
-    for (i = 0 ; i < 30  ; i ++) 
+    for (i = 0 ; i < 30  ; i ++)
     {
         uint16_t *tx_data = (uint16_t*)&send_buffer[5120* i];
         int32_t data_sz = 5120;
-        for( j=0; j<data_sz; j++)  
+        for( j=0; j<data_sz; j++)
         {
             writeData16(tx_data[j]);
         }
@@ -331,7 +331,7 @@ rt_err_t ili9486_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops ili9486_ops = 
+const static struct rt_device_ops ili9486_ops =
 {
     RT_NULL,
     ili9486_open,

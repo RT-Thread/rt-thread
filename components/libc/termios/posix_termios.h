@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,8 +10,8 @@
 #ifndef TERMIOS_H__
 #define TERMIOS_H__
 
-#include <rtthread.h>
 #include <sys/types.h>
+#include <sys/ioctl.h>
 
 #ifdef __cplusplus
 extern "C" {

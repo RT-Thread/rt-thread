@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -17,6 +17,7 @@
  * 2013-05-24     Bernard      fix the rt_memheap_realloc issue.
  * 2013-07-11     Grissiom     fix the memory block splitting issue.
  * 2013-07-15     Grissiom     optimize rt_memheap_realloc
+ * 2021-06-03     Flybreak     Fix the crash problem after opening Oz optimization on ac6.
  */
 
 #include <rthw.h>
@@ -35,6 +36,45 @@
 
 #define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
 #define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
+#define MEMITEM(ptr)            (struct rt_memheap_item*)((rt_uint8_t*)ptr - RT_MEMHEAP_SIZE)
+
+#ifdef RT_USING_MEMTRACE
+rt_inline void rt_memheap_setname(struct rt_memheap_item *item, const char *name)
+{
+    int index;
+    rt_uint8_t *ptr;
+
+    ptr = (rt_uint8_t *) & (item->next_free);
+    for (index = 0; index < sizeof(void *); index ++)
+    {
+        if (name[index] == '\0') break;
+        ptr[index] = name[index];
+    }
+    if (name[index] == '\0') ptr[index] = '\0';
+    else
+    {
+        ptr = (rt_uint8_t *) & (item->prev_free);
+        for (index = 0; index < sizeof(void *) && (index + sizeof(void *)) < RT_NAME_MAX; index ++)
+        {
+            if (name[sizeof(void *) + index] == '\0') break;
+            ptr[index] = name[sizeof(void *) + index];
+        }
+
+        if (name[sizeof(void *) + index] == '\0') ptr[index] = '\0';
+    }
+}
+
+void rt_mem_set_tag(void *ptr, const char *name)
+{
+    struct rt_memheap_item *item;
+
+    if (ptr && name)
+    {
+        item = MEMITEM(ptr);
+        rt_memheap_setname(item, name);
+    }
+}
+#endif /* RT_USING_MEMTRACE */
 
 /*
  * The initialized memory pool will be:
@@ -66,7 +106,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
 
     /* initialize the free list header */
     item            = &(memheap->free_header);
-    item->magic     = RT_MEMHEAP_MAGIC;
+    item->magic     = (RT_MEMHEAP_MAGIC | RT_MEMHEAP_FREED);
     item->pool_ptr  = memheap;
     item->next      = RT_NULL;
     item->prev      = RT_NULL;
@@ -78,12 +118,16 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
 
     /* initialize the first big memory block */
     item            = (struct rt_memheap_item *)start_addr;
-    item->magic     = RT_MEMHEAP_MAGIC;
+    item->magic     = (RT_MEMHEAP_MAGIC | RT_MEMHEAP_FREED);
     item->pool_ptr  = memheap;
     item->next      = RT_NULL;
     item->prev      = RT_NULL;
     item->next_free = item;
     item->prev_free = item;
+
+#ifdef RT_USING_MEMTRACE
+    rt_memset(item->owner_thread_name, ' ', sizeof(item->owner_thread_name));
+#endif /* RT_USING_MEMTRACE */
 
     item->next = (struct rt_memheap_item *)
                  ((rt_uint8_t *)item + memheap->available_size + RT_MEMHEAP_SIZE);
@@ -103,7 +147,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
      */
     item = item->next;
     /* it's a used memory block */
-    item->magic     = RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED;
+    item->magic     = (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED);
     item->pool_ptr  = memheap;
     item->next      = (struct rt_memheap_item *)start_addr;
     item->prev      = (struct rt_memheap_item *)start_addr;
@@ -111,7 +155,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
     item->next_free = item->prev_free = RT_NULL;
 
     /* initialize semaphore lock */
-    rt_sem_init(&(memheap->lock), name, 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&(memheap->lock), name, 1, RT_IPC_FLAG_PRIO);
 
     RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
                  ("memory heap: start addr 0x%08x, size %d, free list header 0x%08x\n",
@@ -126,7 +170,7 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
     RT_ASSERT(heap);
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
     RT_ASSERT(rt_object_is_systemobject(&heap->parent));
-    
+
     rt_sem_detach(&heap->lock);
     rt_object_detach(&(heap->parent));
 
@@ -201,10 +245,14 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
                               new_ptr));
 
                 /* mark the new block as a memory block and freed. */
-                new_ptr->magic = RT_MEMHEAP_MAGIC;
+                new_ptr->magic = (RT_MEMHEAP_MAGIC | RT_MEMHEAP_FREED);
 
                 /* put the pool pointer into the new block. */
                 new_ptr->pool_ptr = heap;
+
+#ifdef RT_USING_MEMTRACE
+                rt_memset(new_ptr->owner_thread_name, ' ', sizeof(new_ptr->owner_thread_name));
+#endif /* RT_USING_MEMTRACE */
 
                 /* break down the block list */
                 new_ptr->prev          = header_ptr;
@@ -255,7 +303,14 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
             }
 
             /* Mark the allocated block as not available. */
-            header_ptr->magic |= RT_MEMHEAP_USED;
+            header_ptr->magic = (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED);
+
+#ifdef RT_USING_MEMTRACE
+            if (rt_thread_self())
+                rt_memcpy(header_ptr->owner_thread_name, rt_thread_self()->name, sizeof(header_ptr->owner_thread_name));
+            else
+                rt_memcpy(header_ptr->owner_thread_name, "NONE", sizeof(header_ptr->owner_thread_name));
+#endif /* RT_USING_MEMTRACE */
 
             /* release lock */
             rt_sem_release(&(heap->lock));
@@ -315,7 +370,8 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     if (newsize > oldsize)
     {
         void *new_ptr;
-        struct rt_memheap_item *next_ptr;
+        /* Fix the crash problem after opening Oz optimization on ac6  */
+        volatile struct rt_memheap_item *next_ptr;
 
         /* lock memheap */
         result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
@@ -376,21 +432,25 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
                               next_ptr->prev));
 
                 /* mark the new block as a memory block and freed. */
-                next_ptr->magic = RT_MEMHEAP_MAGIC;
+                next_ptr->magic = (RT_MEMHEAP_MAGIC | RT_MEMHEAP_FREED);
 
                 /* put the pool pointer into the new block. */
                 next_ptr->pool_ptr = heap;
 
+#ifdef RT_USING_MEMTRACE
+                rt_memset((void *)next_ptr->owner_thread_name, ' ', sizeof(next_ptr->owner_thread_name));
+#endif /* RT_USING_MEMTRACE */
+
                 next_ptr->prev          = header_ptr;
                 next_ptr->next          = header_ptr->next;
-                header_ptr->next->prev = next_ptr;
-                header_ptr->next       = next_ptr;
+                header_ptr->next->prev = (struct rt_memheap_item *)next_ptr;
+                header_ptr->next       = (struct rt_memheap_item *)next_ptr;
 
                 /* insert next_ptr to free list */
                 next_ptr->next_free = heap->free_list->next_free;
                 next_ptr->prev_free = heap->free_list;
-                heap->free_list->next_free->prev_free = next_ptr;
-                heap->free_list->next_free            = next_ptr;
+                heap->free_list->next_free->prev_free = (struct rt_memheap_item *)next_ptr;
+                heap->free_list->next_free            = (struct rt_memheap_item *)next_ptr;
                 RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("new ptr: next_free 0x%08x, prev_free 0x%08x",
                                                 next_ptr->next_free,
                                                 next_ptr->prev_free));
@@ -441,9 +501,13 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
                   new_ptr));
 
     /* mark the new block as a memory block and freed. */
-    new_ptr->magic = RT_MEMHEAP_MAGIC;
+    new_ptr->magic = (RT_MEMHEAP_MAGIC | RT_MEMHEAP_FREED);
     /* put the pool pointer into the new block. */
     new_ptr->pool_ptr = heap;
+
+#ifdef RT_USING_MEMTRACE
+    rt_memset(new_ptr->owner_thread_name, ' ', sizeof(new_ptr->owner_thread_name));
+#endif /* RT_USING_MEMTRACE */
 
     /* break down the block list */
     new_ptr->prev          = header_ptr;
@@ -512,8 +576,12 @@ void rt_memheap_free(void *ptr)
                                     ptr, header_ptr));
 
     /* check magic */
-    RT_ASSERT((header_ptr->magic & RT_MEMHEAP_MASK) == RT_MEMHEAP_MAGIC);
-    RT_ASSERT(header_ptr->magic & RT_MEMHEAP_USED);
+    if (header_ptr->magic != (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED))
+    {
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("bad magic:0x%08x @ memheap\n",
+                                        header_ptr->magic));
+    }
+    RT_ASSERT(header_ptr->magic == (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED));
     /* check whether this block of memory has been over-written. */
     RT_ASSERT((header_ptr->next->magic & RT_MEMHEAP_MASK) == RT_MEMHEAP_MAGIC);
 
@@ -533,9 +601,9 @@ void rt_memheap_free(void *ptr)
     }
 
     /* Mark the memory as available. */
-    header_ptr->magic &= ~RT_MEMHEAP_USED;
+    header_ptr->magic = (RT_MEMHEAP_MAGIC | RT_MEMHEAP_FREED);
     /* Adjust the available number of bytes. */
-    heap->available_size = heap->available_size + MEMITEM_SIZE(header_ptr);
+    heap->available_size += MEMITEM_SIZE(header_ptr);
 
     /* Determine if the block can be merged with the previous neighbor. */
     if (!RT_MEMHEAP_IS_USED(header_ptr->prev))
@@ -544,7 +612,7 @@ void rt_memheap_free(void *ptr)
                                         header_ptr->prev));
 
         /* adjust the available number of bytes. */
-        heap->available_size = heap->available_size + RT_MEMHEAP_SIZE;
+        heap->available_size += RT_MEMHEAP_SIZE;
 
         /* yes, merge block with previous neighbor. */
         (header_ptr->prev)->next = header_ptr->next;
@@ -560,7 +628,7 @@ void rt_memheap_free(void *ptr)
     if (!RT_MEMHEAP_IS_USED(header_ptr->next))
     {
         /* adjust the available number of bytes. */
-        heap->available_size = heap->available_size + RT_MEMHEAP_SIZE;
+        heap->available_size += RT_MEMHEAP_SIZE;
 
         /* merge block with next neighbor. */
         new_ptr = header_ptr->next;
@@ -590,16 +658,109 @@ void rt_memheap_free(void *ptr)
                       header_ptr->next_free, header_ptr->prev_free));
     }
 
+#ifdef RT_USING_MEMTRACE
+    rt_memset(header_ptr->owner_thread_name, ' ', sizeof(header_ptr->owner_thread_name));
+#endif /* RT_USING_MEMTRACE */
+
     /* release lock */
     rt_sem_release(&(heap->lock));
 }
 RTM_EXPORT(rt_memheap_free);
+
+#ifdef RT_USING_FINSH
+static void _memheap_dump_tag(struct rt_memheap_item *item)
+{
+    rt_uint8_t name[2 * sizeof(void *)];
+    rt_uint8_t *ptr;
+
+    ptr = (rt_uint8_t *) & (item->next_free);
+    rt_memcpy(name, ptr, sizeof(void *));
+    ptr = (rt_uint8_t *) & (item->prev_free);
+    rt_memcpy(&name[sizeof(void *)], ptr, sizeof(void *));
+
+    rt_kprintf("%.*s", 2 * sizeof(void *), name);
+}
+
+int rt_memheap_dump(struct rt_memheap *heap)
+{
+    struct rt_memheap_item *item, *end;
+
+    if (heap == RT_NULL) return 0;
+    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
+
+    rt_kprintf("\n[%.*s] [0x%08x - 0x%08x]->\n", RT_NAME_MAX, heap->parent.name,
+               (rt_ubase_t)heap->start_addr, (rt_ubase_t)heap->start_addr + heap->pool_size);
+    rt_kprintf("------------------------------\n");
+
+    /* lock memheap */
+    rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+    item = heap->block_list;
+
+    end = (struct rt_memheap_item *)((rt_uint8_t *)heap->start_addr + heap->pool_size - RT_MEMHEAP_SIZE);
+
+    /* for each memory block */
+    while ((rt_ubase_t)item < ((rt_ubase_t)end))
+    {
+        if (RT_MEMHEAP_IS_USED(item) && ((item->magic & RT_MEMHEAP_MASK) != RT_MEMHEAP_MAGIC))
+            rt_kprintf("0x%08x", item + 1);
+
+        if (item->magic == (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED))
+        {
+            rt_kprintf("0x%08x: %-8d ",     item + 1, MEMITEM_SIZE(item));
+            _memheap_dump_tag(item);
+            rt_kprintf("\n");
+        }
+        else
+        {
+            rt_kprintf("0x%08x: %-8d <F>\n", item + 1, MEMITEM_SIZE(item));
+        }
+
+        item = item->next;
+    }
+    rt_sem_release(&(heap->lock));
+
+    return 0;
+}
+
+int memheaptrace(void)
+{
+    int count = rt_object_get_length(RT_Object_Class_MemHeap);
+    struct rt_memheap **heaps;
+
+    if (count > 0)
+    {
+        int index;
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+        extern int list_memheap(void);
+#endif
+
+        heaps = (struct rt_memheap **)rt_malloc(sizeof(struct rt_memheap *) * count);
+        if (heaps == RT_NULL) return 0;
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+        list_memheap();
+#endif
+        rt_kprintf("memheap header size: %d\n", RT_MEMHEAP_SIZE);
+        count = rt_object_get_pointers(RT_Object_Class_MemHeap, (rt_object_t *)heaps, count);
+        for (index = 0; index < count; index++)
+        {
+            rt_memheap_dump(heaps[index]);
+        }
+
+        rt_free(heaps);
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT(memheaptrace, dump memory trace information);
+#endif /* RT_USING_FINSH */
 
 #ifdef RT_USING_MEMHEAP_AS_HEAP
 static struct rt_memheap _heap;
 
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
+    RT_ASSERT((rt_uint32_t)end_addr > (rt_uint32_t)begin_addr);
+
     /* initialize a default heap in the system */
     rt_memheap_init(&_heap,
                     "heap",
@@ -642,6 +803,24 @@ void *rt_malloc(rt_size_t size)
                 break;
         }
     }
+
+
+#ifdef RT_USING_MEMTRACE
+    if (ptr == RT_NULL)
+    {
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("malloc[%d] => NULL", size));
+    }
+    else
+    {
+        struct rt_memheap_item *item = MEMITEM(ptr);
+        if (rt_thread_self())
+            rt_memheap_setname(item, rt_thread_self()->name);
+        else
+            rt_memheap_setname(item, "<null>");
+
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("malloc => 0x%08x : %d", ptr, size));
+    }
+#endif /* RT_USING_MEMTRACE */
 
     return ptr;
 }
@@ -691,6 +870,24 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         }
     }
 
+#ifdef RT_USING_MEMTRACE
+    if (new_ptr == RT_NULL)
+    {
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("realloc[%d] => NULL", newsize));
+    }
+    else
+    {
+        struct rt_memheap_item *item = MEMITEM(new_ptr);
+        if (rt_thread_self())
+            rt_memheap_setname(item, rt_thread_self()->name);
+        else
+            rt_memheap_setname(item, "<null>");
+
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("realloc => 0x%08x : %d",
+                                        new_ptr, newsize));
+    }
+#endif /* RT_USING_MEMTRACE */
+
     return new_ptr;
 }
 RTM_EXPORT(rt_realloc);
@@ -707,6 +904,19 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
         /* clean memory */
         rt_memset(ptr, 0, total_size);
     }
+
+#ifdef RT_USING_MEMTRACE
+    if (ptr == RT_NULL)
+    {
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("calloc[%d x %d] => NULL",
+                                        count, size));
+    }
+    else
+    {
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("calloc => 0x%08x : %d",
+                                        ptr, count * size));
+    }
+#endif /* RT_USING_MEMTRACE */
 
     return ptr;
 }
@@ -726,6 +936,80 @@ void rt_memory_info(rt_uint32_t *total,
         *max_used = _heap.max_used_size;
 }
 
-#endif
+#endif /* RT_USING_MEMHEAP_AS_HEAP */
 
-#endif
+#ifdef RT_USING_MEMTRACE
+
+void dump_used_memheap(struct rt_memheap *mh)
+{
+    struct rt_memheap_item *header_ptr;
+    rt_uint32_t block_size;
+
+
+    rt_kprintf("\nmemory heap address:\n");
+    rt_kprintf("heap_ptr: 0x%08x\n", mh->start_addr);
+    rt_kprintf("free    : 0x%08x\n", mh->available_size);
+    rt_kprintf("max_used: 0x%08x\n", mh->max_used_size);
+    rt_kprintf("size    : 0x%08x\n", mh->pool_size);
+
+    rt_kprintf("\n--memory used information --\n");
+
+    header_ptr = mh->block_list;
+    while (header_ptr->next != mh->block_list)
+    {
+        if ((header_ptr->magic & RT_MEMHEAP_MASK) != RT_MEMHEAP_MAGIC)
+        {
+            rt_kprintf("[0x%08x - incorrect magic: 0x%08x\n", header_ptr, header_ptr->magic);
+            break;
+        }
+
+        /* get current memory block size */
+        block_size = MEMITEM_SIZE(header_ptr);
+        if (block_size < 0)
+            break;
+
+        if (RT_MEMHEAP_IS_USED(header_ptr))
+        {
+            /* dump information */
+            rt_kprintf("[0x%08x - %d - %c%c%c%c] used\n", header_ptr, block_size,
+                       header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
+                       header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
+        }
+        else
+        {
+            /* dump information */
+            rt_kprintf("[0x%08x - %d - %c%c%c%c] free\n", header_ptr, block_size,
+                       header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
+                       header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
+        }
+
+        /* move to next used memory block */
+        header_ptr = header_ptr->next;
+    }
+}
+
+void memtrace_heap()
+{
+    struct rt_object_information *info;
+    struct rt_list_node *list;
+    struct rt_memheap *mh;
+    struct rt_list_node *node;
+
+    info = rt_object_get_information(RT_Object_Class_MemHeap);
+    list = &info->object_list;
+
+    for (node = list->next; node != list; node = node->next)
+    {
+        mh = (struct rt_memheap *)rt_list_entry(node, struct rt_object, list);
+        dump_used_memheap(mh);
+    }
+}
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+MSH_CMD_EXPORT(memtrace_heap, dump memory trace for heap);
+#endif /* RT_USING_FINSH */
+
+#endif /* RT_USING_MEMTRACE */
+
+#endif /* RT_USING_MEMHEAP */

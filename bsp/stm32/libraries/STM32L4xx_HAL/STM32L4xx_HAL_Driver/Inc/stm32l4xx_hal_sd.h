@@ -107,11 +107,11 @@ typedef struct
 
   uint32_t LogBlockSize;                 /*!< Specifies logical block size in bytes           */
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 
   uint32_t CardSpeed;                    /*!< Specifies the card Speed                        */
 
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 }HAL_SD_CardInfoTypeDef;
 
 /**
@@ -143,13 +143,13 @@ typedef struct
 
   __IO uint32_t                ErrorCode;        /*!< SD Card Error codes                 */
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
 
   DMA_HandleTypeDef            *hdmatx;          /*!< SD Tx DMA handle parameters         */
 
   DMA_HandleTypeDef            *hdmarx;          /*!< SD Rx DMA handle parameters         */
 
-#endif /* !STM32L4R5xx && !STM32L4R7xx && !STM32L4R9xx && !STM32L4S5xx && !STM32L4S7xx && !STM32L4S9xx */
+#endif /* !STM32L4P5xx && !STM32L4Q5xx && !STM32L4R5xx && !STM32L4R7xx && !STM32L4R9xx && !STM32L4S5xx && !STM32L4S7xx && !STM32L4S9xx */
   HAL_SD_CardInfoTypeDef       SdCard;           /*!< SD Card information                 */
 
   uint32_t                     CSD[4];           /*!< SD card specific data table         */
@@ -161,7 +161,7 @@ typedef struct
   void (* RxCpltCallback)                 (struct __SD_HandleTypeDef *hsd);
   void (* ErrorCallback)                  (struct __SD_HandleTypeDef *hsd);
   void (* AbortCpltCallback)              (struct __SD_HandleTypeDef *hsd);
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   void (* Read_DMADblBuf0CpltCallback)    (struct __SD_HandleTypeDef *hsd);
   void (* Read_DMADblBuf1CpltCallback)    (struct __SD_HandleTypeDef *hsd);
   void (* Write_DMADblBuf0CpltCallback)   (struct __SD_HandleTypeDef *hsd);
@@ -262,7 +262,7 @@ typedef struct
   __IO uint16_t EraseSize;              /*!< Determines the number of AUs to be erased in one operation */
   __IO uint8_t  EraseTimeout;           /*!< Determines the timeout for any number of AU erase          */
   __IO uint8_t  EraseOffset;            /*!< Carries information about the erase offset                 */
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   __IO uint8_t  UhsSpeedGrade;          /*!< Carries information about the speed grade of UHS card      */
   __IO uint8_t  UhsAllocationUnitSize;  /*!< Carries information about the UHS card's allocation unit size  */
   __IO uint8_t  VideoSpeedClass;        /*!< Carries information about the Video Speed Class of UHS card    */
@@ -282,7 +282,7 @@ typedef enum
   HAL_SD_RX_CPLT_CB_ID                 = 0x01U,  /*!< SD Rx Complete Callback ID                     */
   HAL_SD_ERROR_CB_ID                   = 0x02U,  /*!< SD Error Callback ID                           */
   HAL_SD_ABORT_CB_ID                   = 0x03U,  /*!< SD Abort Callback ID                           */
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   HAL_SD_READ_DMA_DBL_BUF0_CPLT_CB_ID  = 0x04U,  /*!< SD Rx DMA Double Buffer 0 Complete Callback ID */
   HAL_SD_READ_DMA_DBL_BUF1_CPLT_CB_ID  = 0x05U,  /*!< SD Rx DMA Double Buffer 1 Complete Callback ID */
   HAL_SD_WRITE_DMA_DBL_BUF0_CPLT_CB_ID = 0x06U,  /*!< SD Tx DMA Double Buffer 0 Complete Callback ID */
@@ -300,7 +300,7 @@ typedef enum
   * @{
   */
 typedef void (*pSD_CallbackTypeDef)           (SD_HandleTypeDef *hsd);
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
 #endif
 /**
@@ -383,12 +383,12 @@ typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
 /** @defgroup SD_Exported_Constansts_Group3 SD Supported Memory Cards
   * @{
   */
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 #define CARD_NORMAL_SPEED        ((uint32_t)0x00000000U)    /*!< Normal Speed Card <12.5Mo/s , Spec Version 1.01    */
 #define CARD_HIGH_SPEED          ((uint32_t)0x00000100U)    /*!< High Speed Card <25Mo/s , Spec version 2.00        */
 #define CARD_ULTRA_HIGH_SPEED    ((uint32_t)0x00000200U)    /*!< UHS-I SD Card <50Mo/s for SDR50, DDR5 Cards
                                                                  and <104Mo/s for SDR104, Spec version 3.01          */
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 #define CARD_SDSC                  ((uint32_t)0x00000000U)  /*!< SD Standard Capacity <2Go                          */
 #define CARD_SDHC_SDXC             ((uint32_t)0x00000001U)  /*!< SD High Capacity <32Go, SD Extended Capacity <2To  */
@@ -430,7 +430,7 @@ typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
 #define __HAL_SD_RESET_HANDLE_STATE(__HANDLE__)           ((__HANDLE__)->State = HAL_SD_STATE_RESET)
 #endif /* USE_HAL_SD_REGISTER_CALLBACKS */
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
 /**
   * @brief  Enable the SD device.
   * @retval None
@@ -454,12 +454,12 @@ typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
   * @retval None
   */
 #define __HAL_SD_DMA_DISABLE(__HANDLE__)  __SDMMC_DMA_DISABLE((__HANDLE__)->Instance)
-#endif /* !STM32L4R5xx && !STM32L4R7xx && !STM32L4R9xx && !STM32L4S5xx && !STM32L4S7xx && !STM32L4S9xx */
+#endif /* !STM32L4P5xx && !STM32L4Q5xx && !STM32L4R5xx && !STM32L4R7xx && !STM32L4R9xx && !STM32L4S5xx && !STM32L4S7xx && !STM32L4S9xx */
 
 /**
   * @brief  Enable the SD device interrupt.
-  * @param  __HANDLE__: SD Handle
-  * @param  __INTERRUPT__: specifies the SDMMC interrupt sources to be enabled.
+  * @param  __HANDLE__ SD Handle
+  * @param  __INTERRUPT__ specifies the SDMMC interrupt sources to be enabled.
   *         This parameter can be one or a combination of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -497,8 +497,8 @@ typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
 
 /**
   * @brief  Disable the SD device interrupt.
-  * @param  __HANDLE__: SD Handle
-  * @param  __INTERRUPT__: specifies the SDMMC interrupt sources to be disabled.
+  * @param  __HANDLE__ SD Handle
+  * @param  __INTERRUPT__ specifies the SDMMC interrupt sources to be disabled.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -536,8 +536,8 @@ typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
 
 /**
   * @brief  Check whether the specified SD flag is set or not.
-  * @param  __HANDLE__: SD Handle
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __HANDLE__ SD Handle
+  * @param  __FLAG__ specifies the flag to check.
   *          This parameter can be one of the following values:
   *            @arg SDMMC_FLAG_CCRCFAIL:   Command response received (CRC check failed)
   *            @arg SDMMC_FLAG_DCRCFAIL:   Data block sent/received (CRC check failed)
@@ -579,8 +579,8 @@ typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
 
 /**
   * @brief  Clear the SD's pending flags.
-  * @param  __HANDLE__: SD Handle
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __HANDLE__ SD Handle
+  * @param  __FLAG__ specifies the flag to clear.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDMMC_FLAG_CCRCFAIL:   Command response received (CRC check failed)
   *            @arg SDMMC_FLAG_DCRCFAIL:   Data block sent/received (CRC check failed)
@@ -608,8 +608,8 @@ typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
 
 /**
   * @brief  Check whether the specified SD interrupt has occurred or not.
-  * @param  __HANDLE__: SD Handle
-  * @param  __INTERRUPT__: specifies the SDMMC interrupt source to check.
+  * @param  __HANDLE__ SD Handle
+  * @param  __INTERRUPT__ specifies the SDMMC interrupt source to check.
   *          This parameter can be one of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -647,8 +647,8 @@ typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
 
 /**
   * @brief  Clear the SD's interrupt pending bits.
-  * @param  __HANDLE__: SD Handle
-  * @param  __INTERRUPT__: specifies the interrupt pending bit to clear.
+  * @param  __HANDLE__ SD Handle
+  * @param  __INTERRUPT__ specifies the interrupt pending bit to clear.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDMMC_IT_CCRCFAIL:   Command response received (CRC check failed) interrupt
   *            @arg SDMMC_IT_DCRCFAIL:   Data block sent/received (CRC check failed) interrupt
@@ -677,10 +677,10 @@ typedef void (*pSD_TransceiverCallbackTypeDef)(FlagStatus status);
   * @}
   */
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 /* Include SD HAL Extension module */
 #include "stm32l4xx_hal_sd_ex.h"
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 /* Exported functions --------------------------------------------------------*/
 /** @defgroup SD_Exported_Functions SD Exported Functions
@@ -726,7 +726,7 @@ void              HAL_SD_AbortCallback  (SD_HandleTypeDef *hsd);
 HAL_StatusTypeDef HAL_SD_RegisterCallback  (SD_HandleTypeDef *hsd, HAL_SD_CallbackIDTypeDef CallbackID, pSD_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_SD_UnRegisterCallback(SD_HandleTypeDef *hsd, HAL_SD_CallbackIDTypeDef CallbackID);
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 HAL_StatusTypeDef HAL_SD_RegisterTransceiverCallback  (SD_HandleTypeDef *hsd, pSD_TransceiverCallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_SD_UnRegisterTransceiverCallback(SD_HandleTypeDef *hsd);
 #endif

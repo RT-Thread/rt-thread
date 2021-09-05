@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,10 +20,10 @@
 
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
-#endif
+#endif /* RT_USING_MODULE */
 
 /*
- * define object_info for the number of rt_object_container items.
+ * define object_info for the number of _object_container items.
  */
 enum rt_object_info_type
 {
@@ -60,8 +60,9 @@ enum rt_object_info_type
 };
 
 #define _OBJ_CONTAINER_LIST_INIT(c)     \
-    {&(rt_object_container[c].object_list), &(rt_object_container[c].object_list)}
-static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] =
+    {&(_object_container[c].object_list), &(_object_container[c].object_list)}
+
+static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
 {
     /* initialize object container - thread */
     {RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Thread), sizeof(struct rt_thread)},
@@ -189,7 +190,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 }
 
 /**@}*/
-#endif
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup KernelObject
@@ -200,7 +201,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 /**
  * This function will return the specified type of object information.
  *
- * @param type the type of object, which can be 
+ * @param type the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  *
  * @return the object type information or RT_NULL
@@ -211,7 +212,7 @@ rt_object_get_information(enum rt_object_class_type type)
     int index;
 
     for (index = 0; index < RT_Object_Info_Unknown; index ++)
-        if (rt_object_container[index].type == type) return &rt_object_container[index];
+        if (_object_container[index].type == type) return &_object_container[index];
 
     return RT_NULL;
 }
@@ -220,7 +221,7 @@ RTM_EXPORT(rt_object_get_information);
 /**
  * This function will return the length of object list in object container.
  *
- * @param type the type of object, which can be 
+ * @param type the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  * @return the length of object list
  */
@@ -247,10 +248,10 @@ int rt_object_get_length(enum rt_object_class_type type)
 RTM_EXPORT(rt_object_get_length);
 
 /**
- * This function will copy the object pointer of the specified type, 
+ * This function will copy the object pointer of the specified type,
  * with the maximum size specified by maxlen.
  *
- * @param type the type of object, which can be 
+ * @param type the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  * @param pointers the pointers will be saved to
  * @param maxlen the maximum number of pointers can be saved
@@ -305,7 +306,7 @@ void rt_object_init(struct rt_object         *object,
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
-#endif
+#endif /* RT_USING_MODULE */
 
     /* get object information */
     information = rt_object_get_information(type);
@@ -349,7 +350,7 @@ void rt_object_init(struct rt_object         *object,
         object->module_id = (void *)module;
     }
     else
-#endif
+#endif /* RT_USING_MODULE */
     {
         /* insert object into information object list */
         rt_list_insert_after(&(information->object_list), &(object->list));
@@ -403,7 +404,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
-#endif
+#endif /* RT_USING_MODULE */
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -444,7 +445,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
         object->module_id = (void *)module;
     }
     else
-#endif
+#endif /* RT_USING_MODULE */
     {
         /* insert object into information object list */
         rt_list_insert_after(&(information->object_list), &(object->list));
@@ -487,7 +488,7 @@ void rt_object_delete(rt_object_t object)
     /* free the memory of object */
     RT_KERNEL_FREE(object);
 }
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will judge the object is system object or not.

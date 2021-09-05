@@ -13,7 +13,7 @@
 #define __DRV_EBI_H___
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 #define MAX_BANK    EBI_BANK2
 

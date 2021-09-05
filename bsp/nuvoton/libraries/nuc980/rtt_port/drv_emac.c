@@ -17,7 +17,7 @@
 #if defined(RT_USING_LWIP)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <netif/ethernetif.h>
 #include <netif/etharp.h>
 #include <lwip/icmp.h>
@@ -117,7 +117,7 @@ static struct nu_emac nu_emac_arr[] =
         .name           =  "e1",
         .memmgr.psEmac  = (EMAC_T *)EMC1_BA,
         .irqn_tx        =  IRQ_EMC1_TX,
-        .irqn_rx        =  IRQ_EMC1_RX
+        .irqn_rx        =  IRQ_EMC1_RX,
         .rstidx         =  EMAC1RST,
         .clkidx         =  EMAC1CKEN,
     },

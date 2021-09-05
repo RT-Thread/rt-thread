@@ -19,7 +19,6 @@
 #include "raspi4.h"
 #include "drv_eth.h"
 
-//#define ETH_RX_POLL
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
@@ -29,6 +28,7 @@ static int link_speed = 0;
 static int link_flag = 0;
 
 #define RECV_CACHE_BUF          (1024)
+#define SEND_CACHE_BUF          (1024)
 #define SEND_DATA_NO_CACHE      (0x08200000)
 #define RECV_DATA_NO_CACHE      (0x08400000)
 #define DMA_DISC_ADDR_SIZE      (4 * 1024 *1024)
@@ -82,7 +82,6 @@ static inline void write32(void *addr, rt_uint32_t value)
 
 static void eth_rx_irq(int irq, void *param)
 {
-#ifndef ETH_RX_POLL
     rt_uint32_t val = 0;
     val = read32(MAC_REG + GENET_INTRL2_CPU_STAT);
     val &= ~read32(MAC_REG + GENET_INTRL2_CPU_STAT_MASK);
@@ -94,11 +93,8 @@ static void eth_rx_irq(int irq, void *param)
 
     if (val & GENET_IRQ_TXDMA_DONE)
     {
-        //todo
+        rt_sem_release(&sem_lock);
     }
-#else
-    eth_device_ready(&eth_dev.parent);
-#endif
 }
 
 /* We only support RGMII (as used on the RPi4). */
@@ -399,7 +395,7 @@ static int bcmgenet_gmac_eth_start(void)
 
     index_flag = read32(MAC_REG + RDMA_PROD_INDEX);
 
-    rx_index = index_flag % 256;
+    rx_index = index_flag % RX_DESCS;
 
     write32(MAC_REG + RDMA_CONS_INDEX, index_flag);
     write32(MAC_REG + RDMA_PROD_INDEX, index_flag);
@@ -423,17 +419,16 @@ static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
     void* desc_base;
     rt_uint32_t length = 0, addr = 0;
     rt_uint32_t prod_index = read32(MAC_REG + RDMA_PROD_INDEX);
-    //get next
     if(prod_index == index_flag)
     {
         cur_recv_cnt = index_flag;
         index_flag = 0x7fffffff;
-        //no buff
+        /* no buff */
         return 0;
     }
     else
     {
-        if(prev_recv_cnt == prod_index)
+        if(prev_recv_cnt == prod_index & 0xffff)
         {
             return 0;
         }
@@ -446,10 +441,11 @@ static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
         * This would actually not be needed if we don't program
         * RBUF_ALIGN_2B
         */
+        rt_hw_cpu_dcache_invalidate(addr,length);
         *packetp = (rt_uint8_t *)(addr + RX_BUF_OFFSET);
 
         rx_index = rx_index + 1;
-        if(rx_index >= 256)
+        if(rx_index >= RX_DESCS)
         {
             rx_index = 0;
         }
@@ -480,7 +476,8 @@ static int bcmgenet_gmac_eth_send(void *packet, int length)
     len_stat |= 0x3F << DMA_TX_QTAG_SHIFT;
     len_stat |= DMA_TX_APPEND_CRC | DMA_SOP | DMA_EOP;
 
-    write32((desc_base + DMA_DESC_ADDRESS_LO), SEND_DATA_NO_CACHE);
+    rt_hw_cpu_dcache_clean((void*)packet, length);
+    write32((desc_base + DMA_DESC_ADDRESS_LO), packet);
     write32((desc_base + DMA_DESC_ADDRESS_HI), 0);
     write32((desc_base + DMA_DESC_LENGTH_STATUS), len_stat);
 
@@ -493,24 +490,14 @@ static int bcmgenet_gmac_eth_send(void *packet, int length)
         prod_index = 0;
     }
 
-    if (tx_index == 256)
+    if (tx_index >= TX_DESCS)
     {
         tx_index = 0;
     }
 
     /* Start Transmisson */
     write32(MAC_REG + TDMA_PROD_INDEX, prod_index);
-
-    do
-    {
-        cons = read32(MAC_REG + TDMA_CONS_INDEX);
-    } while ((cons & 0xffff) < prod_index && --tries);
-
-    if (!tries)
-    {
-        rt_kprintf("send err! tries is %d\n", tries);
-        return -1;
-    }
+    rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
     return 0;
 }
 
@@ -556,19 +543,8 @@ static void link_task_entry(void *param)
     }
 
     bcmgenet_gmac_eth_start();
-    //irq or poll
-#ifdef ETH_RX_POLL
-    rt_timer_init(&dev->rx_poll_timer, "rx_poll_timer",
-                  eth_rx_irq,
-                  NULL,
-                  1,
-                  RT_TIMER_FLAG_PERIODIC);
-
-    rt_timer_start(&dev->rx_poll_timer);
-#else
     rt_hw_interrupt_install(ETH_IRQ, eth_rx_irq, NULL, "eth_irq");
     rt_hw_interrupt_umask(ETH_IRQ);
-#endif
     link_flag = 1;
 }
 
@@ -633,36 +609,33 @@ static rt_err_t bcmgenet_eth_control(rt_device_t dev, int cmd, void *args)
 
 rt_err_t rt_eth_tx(rt_device_t device, struct pbuf *p)
 {
-    rt_uint32_t sendbuf = (rt_uint32_t)SEND_DATA_NO_CACHE;
+    rt_uint32_t sendbuf = (rt_uint32_t)SEND_DATA_NO_CACHE + (rt_uint32_t)(tx_index * SEND_CACHE_BUF);
     /* lock eth device */
     if (link_flag == 1)
     {
-        rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
         pbuf_copy_partial(p, (void *)&send_cache_pbuf[0], p->tot_len, 0);
         rt_memcpy((void *)sendbuf, send_cache_pbuf, p->tot_len);
-
         bcmgenet_gmac_eth_send((void *)sendbuf, p->tot_len);
-        rt_sem_release(&sem_lock);
     }
     return RT_EOK;
 }
 
-char recv_data[RX_BUF_LENGTH];
 struct pbuf *rt_eth_rx(rt_device_t device)
 {
     int recv_len = 0;
-    rt_uint32_t addr_point[8];
+    rt_uint8_t *addr_point = RT_NULL;
     struct pbuf *pbuf = RT_NULL;
     if (link_flag == 1)
     {
-        rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
-        recv_len = bcmgenet_gmac_eth_recv((rt_uint8_t **)&addr_point[0]);
+        recv_len = bcmgenet_gmac_eth_recv((rt_uint8_t **)&addr_point);
         if (recv_len > 0)
         {
             pbuf = pbuf_alloc(PBUF_LINK, recv_len, PBUF_RAM);
-            rt_memcpy(pbuf->payload, (char *)addr_point[0], recv_len);
+            if(pbuf)
+            {
+                rt_memcpy(pbuf->payload, addr_point, recv_len);
+            }
         }
-        rt_sem_release(&sem_lock);
     }
     return pbuf;
 }
@@ -670,13 +643,12 @@ struct pbuf *rt_eth_rx(rt_device_t device)
 int rt_hw_eth_init(void)
 {
     rt_uint8_t mac_addr[6];
-    
-    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem_lock, "eth_send_lock", TX_DESCS, RT_IPC_FLAG_FIFO);
     rt_sem_init(&link_ack, "link_ack", 0, RT_IPC_FLAG_FIFO);
 
     memset(&eth_dev, 0, sizeof(eth_dev));
-    memset((void *)SEND_DATA_NO_CACHE, 0, sizeof(DMA_DISC_ADDR_SIZE));
-    memset((void *)RECV_DATA_NO_CACHE, 0, sizeof(DMA_DISC_ADDR_SIZE));
+    memset((void *)SEND_DATA_NO_CACHE, 0, DMA_DISC_ADDR_SIZE);
+    memset((void *)RECV_DATA_NO_CACHE, 0, DMA_DISC_ADDR_SIZE);
     bcm271x_mbox_hardware_get_mac_address(&mac_addr[0]);
 
     eth_dev.iobase = MAC_REG;

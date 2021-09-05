@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-03-29 	  quanzhao 	   the first version
+ * 2019-03-29     quanzhao     the first version
  */
 #include <rthw.h>
 #include <rtdef.h>
@@ -58,6 +58,37 @@ void rt_hw_cpu_dcache_invalidate(void *addr, int size)
     asm volatile ("dsb":::"memory");
 }
 
+void rt_hw_cpu_dcache_inv_range(void *addr, int size)
+{
+    rt_uint32_t line_size = rt_cpu_dcache_line_size();
+    rt_uint32_t start_addr = (rt_uint32_t)addr;
+    rt_uint32_t end_addr = (rt_uint32_t)addr + size;
+
+    asm volatile ("dmb":::"memory");
+
+    if ((start_addr & (line_size - 1)) != 0)
+    {
+        start_addr &= ~(line_size - 1);
+        asm volatile ("mcr p15, 0, %0, c7, c14, 1" :: "r"(start_addr));
+        start_addr += line_size;
+        asm volatile ("dsb":::"memory");
+    }
+
+    if ((end_addr & (line_size - 1)) != 0)
+    {
+        end_addr &= ~(line_size - 1);
+        asm volatile ("mcr p15, 0, %0, c7, c14, 1" :: "r"(end_addr));
+        asm volatile ("dsb":::"memory");
+    }
+
+    while (start_addr < end_addr)
+    {
+        asm volatile ("mcr p15, 0, %0, c7, c6, 1" :: "r"(start_addr));  /* dcimvac */
+        start_addr += line_size;
+    }
+    asm volatile ("dsb":::"memory");
+}
+
 void rt_hw_cpu_dcache_clean(void *addr, int size)
 {
     rt_uint32_t line_size = rt_cpu_dcache_line_size();
@@ -70,6 +101,23 @@ void rt_hw_cpu_dcache_clean(void *addr, int size)
     while (start_addr < end_addr)
     {
         asm volatile ("mcr p15, 0, %0, c7, c10, 1" :: "r"(start_addr)); /* dccmvac */
+        start_addr += line_size;
+    }
+    asm volatile ("dsb":::"memory");
+}
+
+void rt_hw_cpu_dcache_clean_inv(void *addr, int size)
+{
+    rt_uint32_t line_size = rt_cpu_dcache_line_size();
+    rt_uint32_t start_addr = (rt_uint32_t)addr;
+    rt_uint32_t end_addr = (rt_uint32_t) addr + size + line_size - 1;
+
+    asm volatile ("dmb":::"memory");
+    start_addr &= ~(line_size-1);
+    end_addr &= ~(line_size-1);
+    while (start_addr < end_addr)
+    {
+        asm volatile ("mcr p15, 0, %0, c7, c14, 1" :: "r"(start_addr));
         start_addr += line_size;
     }
     asm volatile ("dsb":::"memory");

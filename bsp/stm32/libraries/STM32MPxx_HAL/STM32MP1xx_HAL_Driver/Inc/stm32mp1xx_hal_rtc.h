@@ -702,8 +702,6 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef *hrtc);  /*!< pointer to
 
 #elif defined(CORE_CA7)
 
-#else /* !CORE_CA7 */
-
 #define __HAL_RTC_ALARM_EXTI_ENABLE_IT()            (EXTI_C1->IMR1 |= RTC_EXTI_LINE_ALARM_EVENT)
 
 /**
@@ -723,6 +721,8 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef *hrtc);  /*!< pointer to
   * @retval None
   */
 #define __HAL_RTC_ALARM_EXTI_DISABLE_EVENT()         (EXTI_C1->EMR1 &= ~(RTC_EXTI_LINE_ALARM_EVENT))
+
+#else /* !CORE_CA7 */
 
 #error Please #define CORE_CM4 or CORE_CA7
 

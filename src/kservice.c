@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,6 +17,7 @@
  * 2013-06-24     Bernard      remove rt_kprintf if RT_USING_CONSOLE is not defined.
  * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
  * 2015-07-06     Bernard      Add rt_assert_handler routine.
+ * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  */
 
 #include <rtthread.h>
@@ -24,7 +25,7 @@
 
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
-#endif
+#endif /* RT_USING_MODULE */
 
 /* use precision */
 #define RT_PRINTF_PRECISION
@@ -125,7 +126,7 @@ RTM_EXPORT(_rt_errno);
  */
 RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 {
-#ifdef RT_USING_TINY_SIZE
+#ifdef RT_KSERVICE_USING_TINY_SIZE
     char *xs = (char *)s;
 
     while (count--)
@@ -146,10 +147,10 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
-        /* If we get this far, we know that n is large and m is word-aligned. */
+        /* If we get this far, we know that count is large and s is word-aligned. */
         aligned_addr = (unsigned long *)s;
 
-        /* Store D into each char sized location in BUFFER so that
+        /* Store d into each char sized location in buffer so that
          * we can set large blocks quickly.
          */
         if (LBLOCKSIZE == 4)
@@ -193,10 +194,11 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #undef LBLOCKSIZE
 #undef UNALIGNED
 #undef TOO_SMALL
-#endif
+#endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memset);
 
+#ifndef RT_USING_ASM_MEMCPY
 /**
  * This function will copy memory content from source address to destination
  * address.
@@ -207,9 +209,9 @@ RTM_EXPORT(rt_memset);
  *
  * @return the address of destination memory
  */
-RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
-#ifdef RT_USING_TINY_SIZE
+#ifdef RT_KSERVICE_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
     rt_ubase_t len;
 
@@ -276,9 +278,12 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #undef BIGBLOCKSIZE
 #undef LITTLEBLOCKSIZE
 #undef TOO_SMALL
-#endif
+#endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memcpy);
+#endif /* RT_USING_ASM_MEMCPY */
+
+#ifndef RT_KSERVICE_USING_STDLIB
 
 /**
  * This function will move memory content from source address to destination
@@ -456,7 +461,7 @@ RTM_EXPORT(rt_strncmp);
 rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
     while (*cs && *cs == *ct)
-    {        
+    {
         cs++;
         ct++;
     }
@@ -506,6 +511,8 @@ rt_size_t rt_strlen(const char *s)
 }
 RTM_EXPORT(rt_strlen);
 
+#endif /* RT_KSERVICE_USING_STDLIB */
+
 #ifdef RT_USING_HEAP
 /**
  * This function will duplicate a string.
@@ -527,10 +534,10 @@ char *rt_strdup(const char *s)
     return tmp;
 }
 RTM_EXPORT(rt_strdup);
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#ifdef __ARMCC_VERSION
 char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 #endif
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will show the version of rt-thread rtos
@@ -586,7 +593,7 @@ rt_inline int divide(long *n, int base)
 
     return res;
 }
-#endif
+#endif /* RT_PRINTF_LONGLONG */
 
 rt_inline int skip_atoi(const char **s)
 {
@@ -612,7 +619,7 @@ static char *print_number(char *buf,
                           long long  num,
 #else
                           long  num,
-#endif
+#endif /* RT_PRINTF_LONGLONG */
                           int   base,
                           int   s,
                           int   precision,
@@ -624,18 +631,18 @@ static char *print_number(char *buf,
                           long long  num,
 #else
                           long  num,
-#endif
+#endif /* RT_PRINTF_LONGLONG */
                           int   base,
                           int   s,
                           int   type)
-#endif
+#endif /* RT_PRINTF_PRECISION */
 {
     char c, sign;
 #ifdef RT_PRINTF_LONGLONG
     char tmp[32];
 #else
     char tmp[16];
-#endif
+#endif /* RT_PRINTF_LONGLONG */
     int precision_bak = precision;
     const char *digits;
     static const char small_digits[] = "0123456789abcdef";
@@ -674,7 +681,7 @@ static char *print_number(char *buf,
         else if (base == 8)
             size--;
     }
-#endif
+#endif /* RT_PRINTF_SPECIAL */
 
     i = 0;
     if (num == 0)
@@ -691,7 +698,7 @@ static char *print_number(char *buf,
     size -= precision;
 #else
     size -= i;
-#endif
+#endif /* RT_PRINTF_PRECISION */
 
     if (!(type & (ZEROPAD | LEFT)))
     {
@@ -737,7 +744,7 @@ static char *print_number(char *buf,
             ++ buf;
         }
     }
-#endif
+#endif /* RT_PRINTF_SPECIAL */
 
     /* no align to the left */
     if (!(type & LEFT))
@@ -757,7 +764,7 @@ static char *print_number(char *buf,
             *buf = '0';
         ++ buf;
     }
-#endif
+#endif /* RT_PRINTF_PRECISION */
 
     /* put number in the temporary buffer */
     while (i-- > 0 && (precision_bak != 0))
@@ -786,7 +793,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
     unsigned long long num;
 #else
     rt_uint32_t num;
-#endif
+#endif /* RT_PRINTF_LONGLONG */
     int i, len;
     char *str, *end, c;
     const char *s;
@@ -798,7 +805,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
 
 #ifdef RT_PRINTF_PRECISION
     int precision;      /* min. # of digits for integers and max for a string */
-#endif
+#endif /* RT_PRINTF_PRECISION */
 
     str = buf;
     end = buf + size;
@@ -865,14 +872,14 @@ rt_int32_t rt_vsnprintf(char       *buf,
             }
             if (precision < 0) precision = 0;
         }
-#endif
+#endif /* RT_PRINTF_PRECISION */
         /* get the conversion qualifier */
         qualifier = 0;
 #ifdef RT_PRINTF_LONGLONG
         if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
 #else
         if (*fmt == 'h' || *fmt == 'l')
-#endif
+#endif /* RT_PRINTF_LONGLONG */
         {
             qualifier = *fmt;
             ++ fmt;
@@ -882,7 +889,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
                 qualifier = 'L';
                 ++ fmt;
             }
-#endif
+#endif /* RT_PRINTF_LONGLONG */
         }
 
         /* the default base */
@@ -917,10 +924,10 @@ rt_int32_t rt_vsnprintf(char       *buf,
             s = va_arg(args, char *);
             if (!s) s = "(NULL)";
 
-            len = rt_strlen(s);
+            for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
 #ifdef RT_PRINTF_PRECISION
             if (precision > 0 && len > precision) len = precision;
-#endif
+#endif /* RT_PRINTF_PRECISION */
 
             if (!(flags & LEFT))
             {
@@ -959,7 +966,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             str = print_number(str, end,
                                (long)va_arg(args, void *),
                                16, field_width, flags);
-#endif
+#endif /* RT_PRINTF_PRECISION */
             continue;
 
         case '%':
@@ -1005,7 +1012,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
         else if (qualifier == 'l')
 #else
         if (qualifier == 'l')
-#endif
+#endif /* RT_PRINTF_LONGLONG */
         {
             num = va_arg(args, rt_uint32_t);
             if (flags & SIGN) num = (rt_int32_t)num;
@@ -1024,7 +1031,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
         str = print_number(str, end, num, base, field_width, precision, flags);
 #else
         str = print_number(str, end, num, base, field_width, flags);
-#endif
+#endif /* RT_PRINTF_PRECISION */
     }
 
     if (size > 0)
@@ -1127,10 +1134,10 @@ rt_device_t rt_console_set_device(const char *name)
 
     /* find new console device */
     new_device = rt_device_find(name);
-    
+
     /* check whether it's a same device */
     if (new_device == old_device) return RT_NULL;
-    
+
     if (new_device != RT_NULL)
     {
         if (_console_device != RT_NULL)
@@ -1147,7 +1154,7 @@ rt_device_t rt_console_set_device(const char *name)
     return old_device;
 }
 RTM_EXPORT(rt_console_set_device);
-#endif
+#endif /* RT_USING_DEVICE */
 
 RT_WEAK void rt_hw_console_output(const char *str)
 {
@@ -1171,15 +1178,11 @@ void rt_kputs(const char *str)
     }
     else
     {
-        rt_uint16_t old_flag = _console_device->open_flag;
-
-        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
         rt_device_write(_console_device, 0, str, rt_strlen(str));
-        _console_device->open_flag = old_flag;
     }
 #else
     rt_hw_console_output(str);
-#endif
+#endif /* RT_USING_DEVICE */
 }
 
 /**
@@ -1209,19 +1212,15 @@ RT_WEAK void rt_kprintf(const char *fmt, ...)
     }
     else
     {
-        rt_uint16_t old_flag = _console_device->open_flag;
-
-        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
         rt_device_write(_console_device, 0, rt_log_buf, length);
-        _console_device->open_flag = old_flag;
     }
 #else
     rt_hw_console_output(rt_log_buf);
-#endif
+#endif /* RT_USING_DEVICE */
     va_end(args);
 }
 RTM_EXPORT(rt_kprintf);
-#endif
+#endif /* RT_USING_CONSOLE */
 
 #ifdef RT_USING_HEAP
 /**
@@ -1233,7 +1232,7 @@ RTM_EXPORT(rt_kprintf);
  *
  * @return the allocated memory block on successful, otherwise returns RT_NULL
  */
-void *rt_malloc_align(rt_size_t size, rt_size_t align)
+RT_WEAK void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
     void *ptr;
     void *align_ptr;
@@ -1279,7 +1278,7 @@ RTM_EXPORT(rt_malloc_align);
  *
  * @param ptr the memory block pointer
  */
-void rt_free_align(void *ptr)
+RT_WEAK void rt_free_align(void *ptr)
 {
     void *real_ptr;
 
@@ -1287,7 +1286,7 @@ void rt_free_align(void *ptr)
     rt_free(real_ptr);
 }
 RTM_EXPORT(rt_free_align);
-#endif
+#endif /* RT_USING_HEAP */
 
 #ifndef RT_USING_CPU_FFS
 const rt_uint8_t __lowest_bit_bitmap[] =
@@ -1335,7 +1334,7 @@ int __rt_ffs(int value)
 
     return __lowest_bit_bitmap[(value & 0xff000000) >> 24] + 25;
 }
-#endif
+#endif /* RT_USING_CPU_FFS */
 
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */
@@ -1372,7 +1371,7 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
             dlmodule_exit(-1);
         }
         else
-#endif
+#endif /*RT_USING_MODULE*/
         {
             rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
             while (dummy == 0);

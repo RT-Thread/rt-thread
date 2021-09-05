@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：动态信号量
  *
  * 这个例子中将创建一个动态信号量（初始值为0 ）及一个动态线程，在这个动态线程中
@@ -69,7 +78,7 @@ static void thread_entry(void* parameter)
 int semaphore_dynamic_init()
 {
     /* 创建一个信号量，初始值是0 */
-    sem = rt_sem_create("sem", 0, RT_IPC_FLAG_FIFO);
+    sem = rt_sem_create("sem", 0, RT_IPC_FLAG_PRIO);
     if (sem == RT_NULL)
     {
         tc_stat(TC_STAT_END | TC_STAT_FAILED);

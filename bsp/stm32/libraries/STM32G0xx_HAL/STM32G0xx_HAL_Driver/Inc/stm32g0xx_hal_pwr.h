@@ -42,20 +42,6 @@
   * @{
   */
 
-#if defined(PWR_PVD_SUPPORT)
-/**
-  * @brief  PWR PVD configuration structure definition
-  */
-typedef struct
-{
-  uint32_t PVDLevel;    /*!< PVDLevel: Specifies the PVD detection level.
-                              This parameter can be a value or a combination of
-                              @ref PWR_PVD_detection_level. */
-
-  uint32_t Mode;        /*!< Mode: Specifies the operating mode for the selected pins.
-                              This parameter can be a value of @ref PWR_PVD_Mode. */
-}PWR_PVDTypeDef;
-#endif
 /**
   * @}
   */
@@ -65,78 +51,24 @@ typedef struct
   * @{
   */
 
-#if defined(PWR_PVD_SUPPORT)
-/** @defgroup PWR_PVD_detection_level  Programmable Voltage Detection levels
-  * @note   see datasheet for selection voltage value
-  * @{
-  */
-#define PWR_PVDLEVEL_RISING_0               (0x00000000u)                                           /*!< PVD threshold level 0 for rising detection */
-#define PWR_PVDLEVEL_RISING_1               (PWR_CR2_PVDRT_0)                                       /*!< PVD threshold level 1 for rising detection */
-#define PWR_PVDLEVEL_RISING_2               (PWR_CR2_PVDRT_1)                                       /*!< PVD threshold level 2 for rising detection */
-#define PWR_PVDLEVEL_RISING_3               (PWR_CR2_PVDRT_0 | PWR_CR2_PVDRT_1)                     /*!< PVD threshold level 3 for rising detection */
-#define PWR_PVDLEVEL_RISING_4               (PWR_CR2_PVDRT_2)                                       /*!< PVD threshold level 4 for rising detection */
-#define PWR_PVDLEVEL_RISING_5               (PWR_CR2_PVDRT_2 | PWR_CR2_PVDRT_0)                     /*!< PVD threshold level 5 for rising detection */
-#define PWR_PVDLEVEL_RISING_6               (PWR_CR2_PVDRT_2 | PWR_CR2_PVDRT_1)                     /*!< PVD threshold level 6 for rising detection */
-#define PWR_PVDLEVEL_FALLING_0              (0x00000000u)                                           /*!< PVD threshold level 0 for falling detection */
-#define PWR_PVDLEVEL_FALLING_1              (PWR_CR2_PVDFT_0)                                       /*!< PVD threshold level 1 for falling detection */
-#define PWR_PVDLEVEL_FALLING_2              (PWR_CR2_PVDFT_1)                                       /*!< PVD threshold level 2 for falling detection */
-#define PWR_PVDLEVEL_FALLING_3              (PWR_CR2_PVDFT_0 | PWR_CR2_PVDFT_1)                     /*!< PVD threshold level 3 for falling detection */
-#define PWR_PVDLEVEL_FALLING_4              (PWR_CR2_PVDFT_2)                                       /*!< PVD threshold level 4 for falling detection */
-#define PWR_PVDLEVEL_FALLING_5              (PWR_CR2_PVDFT_2 | PWR_CR2_PVDFT_0)                     /*!< PVD threshold level 5 for falling detection */
-#define PWR_PVDLEVEL_FALLING_6              (PWR_CR2_PVDFT_2 | PWR_CR2_PVDFT_1)                     /*!< PVD threshold level 6 for falling detection */
-#define PWR_PVDLEVEL_0                      (PWR_PVDLEVEL_RISING_0 | PWR_PVDLEVEL_FALLING_0)        /*!< same PVD threshold level 0 on rising & falling */
-#define PWR_PVDLEVEL_1                      (PWR_PVDLEVEL_RISING_1 | PWR_PVDLEVEL_FALLING_1)        /*!< same PVD threshold level 1 on rising & falling */
-#define PWR_PVDLEVEL_2                      (PWR_PVDLEVEL_RISING_2 | PWR_PVDLEVEL_FALLING_2)        /*!< same PVD threshold level 2 on rising & falling */
-#define PWR_PVDLEVEL_3                      (PWR_PVDLEVEL_RISING_3 | PWR_PVDLEVEL_FALLING_3)        /*!< same PVD threshold level 3 on rising & falling */
-#define PWR_PVDLEVEL_4                      (PWR_PVDLEVEL_RISING_4 | PWR_PVDLEVEL_FALLING_4)        /*!< same PVD threshold level 4 on rising & falling */
-#define PWR_PVDLEVEL_5                      (PWR_PVDLEVEL_RISING_5 | PWR_PVDLEVEL_FALLING_5)        /*!< same PVD threshold level 5 on rising & falling */
-#define PWR_PVDLEVEL_6                      (PWR_PVDLEVEL_RISING_6 | PWR_PVDLEVEL_FALLING_6)        /*!< same PVD threshold level 6 on rising & falling */
-#define PWR_PVDLEVEL_7                      (PWR_CR2_PVDRT_2 | PWR_CR2_PVDRT_1 | PWR_CR2_PVDRT_0)   /*!< External input analog voltage (compared internally to VREFINT) */
-/**
-  * @}
-  */
-
-/** @defgroup PWR_PVD_Mode  PWR PVD interrupt and event mode
-  * @{
-  */
-#define PWR_PVD_MODE_NORMAL                 (0x00000000u)  /*!< basic mode is used */
-#define PWR_PVD_MODE_IT_RISING              (0x00010001u)  /*!< External Interrupt Mode with Rising edge trigger detection */
-#define PWR_PVD_MODE_IT_FALLING             (0x00010002u)  /*!< External Interrupt Mode with Falling edge trigger detection */
-#define PWR_PVD_MODE_IT_RISING_FALLING      (0x00010003u)  /*!< External Interrupt Mode with Rising/Falling edge trigger detection */
-#define PWR_PVD_MODE_EVENT_RISING           (0x00020001u)  /*!< Event Mode with Rising edge trigger detection */
-#define PWR_PVD_MODE_EVENT_FALLING          (0x00020002u)  /*!< Event Mode with Falling edge trigger detection */
-#define PWR_PVD_MODE_EVENT_RISING_FALLING   (0x00020003u)  /*!< Event Mode with Rising/Falling edge trigger detection */
-/**
-  * @}
-  */
-
-/** @defgroup PWR_PVD_EXTI_LINE  PWR PVD external interrupt line
-  * @{
-  */
-#define PWR_EXTI_LINE_PVD                   (EXTI_IMR1_IM16)  /*!< External interrupt line 16 connected to PVD */
-/**
-  * @}
-  */
-
-/** @defgroup PWR_PVD_EVENT_LINE  PWR PVD event line
-  * @{
-  */
-#define PWR_EVENT_LINE_PVD                  (EXTI_EMR1_EM16)  /*!< Event line 16 connected to PVD */
-/**
-  * @}
-  */
-#endif
-
 /** @defgroup PWR_WakeUp_Pins  PWR WakeUp pins
   * @{
   */
 #define PWR_WAKEUP_PIN1                     PWR_CR3_EWUP1  /*!< Wakeup pin 1 (with high level detection) */
 #define PWR_WAKEUP_PIN2                     PWR_CR3_EWUP2  /*!< Wakeup pin 2 (with high level detection) */
+#if defined(PWR_CR3_EWUP3)
+#define PWR_WAKEUP_PIN3                     PWR_CR3_EWUP3  /*!< Wakeup pin 3 (with high level detection) */
+#endif
 #define PWR_WAKEUP_PIN4                     PWR_CR3_EWUP4  /*!< Wakeup pin 4 (with high level detection) */
+#if defined(PWR_CR3_EWUP5)
 #define PWR_WAKEUP_PIN5                     PWR_CR3_EWUP5  /*!< Wakeup pin 5 (with high level detection) */
+#endif
 #define PWR_WAKEUP_PIN6                     PWR_CR3_EWUP6  /*!< Wakeup pin 6 (with high level detection) */
 #define PWR_WAKEUP_PIN1_HIGH                PWR_CR3_EWUP1  /*!< Wakeup pin 1 (with high level detection) */
 #define PWR_WAKEUP_PIN2_HIGH                PWR_CR3_EWUP2  /*!< Wakeup pin 2 (with high level detection) */
+#if defined(PWR_CR3_EWUP3)
+#define PWR_WAKEUP_PIN3_HIGH                PWR_CR3_EWUP3  /*!< Wakeup pin 3 (with high level detection) */
+#endif
 #define PWR_WAKEUP_PIN4_HIGH                PWR_CR3_EWUP4  /*!< Wakeup pin 4 (with high level detection) */
 #if defined(PWR_CR3_EWUP5)
 #define PWR_WAKEUP_PIN5_HIGH                PWR_CR3_EWUP5  /*!< Wakeup pin 5 (with high level detection) */
@@ -144,6 +76,9 @@ typedef struct
 #define PWR_WAKEUP_PIN6_HIGH                PWR_CR3_EWUP6  /*!< Wakeup pin 6 (with high level detection) */
 #define PWR_WAKEUP_PIN1_LOW                 ((PWR_CR4_WP1 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP1) /*!< Wakeup pin 1 (with low level detection) */
 #define PWR_WAKEUP_PIN2_LOW                 ((PWR_CR4_WP2 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP2) /*!< Wakeup pin 2 (with low level detection) */
+#if defined(PWR_CR3_EWUP3)
+#define PWR_WAKEUP_PIN3_LOW                 ((PWR_CR4_WP3 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP3) /*!< Wakeup pin 3 (with low level detection) */
+#endif
 #define PWR_WAKEUP_PIN4_LOW                 ((PWR_CR4_WP4 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP4) /*!< Wakeup pin 4 (with low level detection) */
 #if defined(PWR_CR3_EWUP5)
 #define PWR_WAKEUP_PIN5_LOW                 ((PWR_CR4_WP5 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP5) /*!< Wakeup pin 5 (with low level detection) */
@@ -193,8 +128,7 @@ typedef struct
   * @}
   */
 
-
-/** @defgroup PWREx_Flag  PWR Status Flags
+/** @defgroup PWR_Flag  PWR Status Flags
   * @brief  Elements values convention: 0000 00XX 000Y YYYYb
   *           - Y YYYY  : Flag position in the XX register (5 bits)
   *           - XX  : Status register (2 bits)
@@ -206,6 +140,9 @@ typedef struct
   */
 #define PWR_FLAG_WUF1                       (0x00010000u | PWR_SR1_WUF1)      /*!< Wakeup event on wakeup pin 1 */
 #define PWR_FLAG_WUF2                       (0x00010000u | PWR_SR1_WUF2)      /*!< Wakeup event on wakeup pin 2 */
+#if defined(PWR_CR3_EWUP3)
+#define PWR_FLAG_WUF3                       (0x00010000u | PWR_SR1_WUF3)      /*!< Wakeup event on wakeup pin 3 */
+#endif
 #define PWR_FLAG_WUF4                       (0x00010000u | PWR_SR1_WUF4)      /*!< Wakeup event on wakeup pin 4 */
 #if defined(PWR_CR3_EWUP5)
 #define PWR_FLAG_WUF5                       (0x00010000u | PWR_SR1_WUF5)      /*!< Wakeup event on wakeup pin 5 */
@@ -220,10 +157,14 @@ typedef struct
 #if defined(PWR_PVD_SUPPORT)
 #define PWR_FLAG_PVDO                       (0x00020000u | PWR_SR2_PVDO)      /*!< Power Voltage Detector output */
 #endif
+#if defined(PWR_PVM_SUPPORT)
+#define PWR_FLAG_PVMO_USB                   (0x00020000u | PWR_SR2_PVMO_USB)  /*!< Power Voltage Monitoring output */
+#endif
+
 /**
   * @}
   */
-
+  
 /**
   * @}
   */
@@ -239,10 +180,12 @@ typedef struct
   *                  was received from the WKUP pin 1.
   *            @arg PWR_FLAG_WUF2: Wake Up Flag 2. Indicates that a wakeup event
   *                  was received from the WKUP pin 2.
+  *            @arg PWR_FLAG_WUF3: Wake Up Flag 3. Indicates that a wakeup event
+  *                  was received from the WKUP pin 3. (*)
   *            @arg PWR_FLAG_WUF4: Wake Up Flag 4. Indicates that a wakeup event
   *                  was received from the WKUP pin 4.
   *            @arg PWR_FLAG_WUF5: Wake Up Flag 5. Indicates that a wakeup event
-  *                  was received from the WKUP pin 5.
+  *                  was received from the WKUP pin 5. (*)
   *            @arg PWR_FLAG_WUF6: Wake Up Flag 6. Indicates that a wakeup event
   *                  was received from the WKUP pin 6.
   *            @arg PWR_FLAG_SB: StandBy Flag. Indicates that the system
@@ -273,10 +216,12 @@ typedef struct
   *                  was received from the WKUP pin 1.
   *            @arg PWR_FLAG_WUF2: Wake Up Flag 2. Indicates that a wakeup event
   *                  was received from the WKUP pin 2.
+  *            @arg PWR_FLAG_WUF3: Wake Up Flag 3. Indicates that a wakeup event
+  *                  was received from the WKUP pin 3. (*)
   *            @arg PWR_FLAG_WUF4: Wake Up Flag 4. Indicates that a wakeup event
   *                  was received from the WKUP pin 4.
   *            @arg PWR_FLAG_WUF5: Wake Up Flag 5. Indicates that a wakeup event
-  *                  was received from the WKUP pin 5.
+  *                  was received from the WKUP pin 5. (*)
   *            @arg PWR_FLAG_WUF6: Wake Up Flag 6. Indicates that a wakeup event
   *                  was received from the WKUP pin 6.
   *            @arg PWR_FLAG_WUF: Encompasses all Wake Up Flags.
@@ -286,112 +231,12 @@ typedef struct
   */
 #define __HAL_PWR_CLEAR_FLAG(__FLAG__)      (PWR->SCR = (__FLAG__))
 
-#if defined(PWR_PVD_SUPPORT)
-/**
-  * @brief Enable the PVD Extended Interrupt Line.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_ENABLE_IT()            SET_BIT(EXTI->IMR1, PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief Disable the PVD Extended Interrupt Line.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_DISABLE_IT()           CLEAR_BIT(EXTI->IMR1, PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief Enable the PVD Event Line.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_ENABLE_EVENT()         SET_BIT(EXTI->EMR1, PWR_EVENT_LINE_PVD)
-
-/**
-  * @brief Disable the PVD Event Line.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_DISABLE_EVENT()        CLEAR_BIT(EXTI->EMR1, PWR_EVENT_LINE_PVD)
-
-/**
-  * @brief Enable the PVD Extended Interrupt Rising Trigger.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_ENABLE_RISING_EDGE()   SET_BIT(EXTI->RTSR1, PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief Disable the PVD Extended Interrupt Rising Trigger.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_DISABLE_RISING_EDGE()  CLEAR_BIT(EXTI->RTSR1, PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief Enable the PVD Extended Interrupt Falling Trigger.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_ENABLE_FALLING_EDGE()  SET_BIT(EXTI->FTSR1, PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief Disable the PVD Extended Interrupt Falling Trigger.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_DISABLE_FALLING_EDGE() CLEAR_BIT(EXTI->FTSR1, PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief  Enable the PVD Extended Interrupt Rising & Falling Trigger.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_ENABLE_RISING_FALLING_EDGE()  \
-  do {                                                   \
-    __HAL_PWR_PVD_EXTI_ENABLE_RISING_EDGE();             \
-    __HAL_PWR_PVD_EXTI_ENABLE_FALLING_EDGE();            \
-  } while(0U)
-
-/**
-  * @brief Disable the PVD Extended Interrupt Rising & Falling Trigger.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_DISABLE_RISING_FALLING_EDGE()  \
-  do {                                                    \
-    __HAL_PWR_PVD_EXTI_DISABLE_RISING_EDGE();             \
-    __HAL_PWR_PVD_EXTI_DISABLE_FALLING_EDGE();            \
-  } while(0U)
-
-/**
-  * @brief  Generate a Software interrupt on selected EXTI line.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_GENERATE_SWIT()        SET_BIT(EXTI->SWIER1, PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief Check whether or not the PVD EXTI interrupt Rising flag is set.
-  * @retval EXTI PVD Line Status.
-  */
-#define __HAL_PWR_PVD_EXTI_GET_RISING_FLAG()      (EXTI->RPR1 & PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief Check whether or not the PVD EXTI interrupt Falling flag is set.
-  * @retval EXTI PVD Line Status.
-  */
-#define __HAL_PWR_PVD_EXTI_GET_FALLING_FLAG()     (EXTI->FPR1 & PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief Clear the PVD EXTI interrupt Rising flag.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_CLEAR_RISING_FLAG()    WRITE_REG(EXTI->RPR1, PWR_EXTI_LINE_PVD)
-
-/**
-  * @brief Clear the PVD EXTI interrupt Falling flag.
-  * @retval None
-  */
-#define __HAL_PWR_PVD_EXTI_CLEAR_FALLING_FLAG()   WRITE_REG(EXTI->FPR1, PWR_EXTI_LINE_PVD)
-#endif
-
 /**
   * @}
   */
 
 /* Private constants-------------------------------------------------------*/
-/** @defgroup PWREx_WUP_Polarity Shift to apply to retrieve polarity information from PWR_WAKEUP_PINy_xxx constants
+/** @defgroup PWR_WUP_Polarity Shift to apply to retrieve polarity information from PWR_WAKEUP_PINy_xxx constants
   * @{
   */
 #define PWR_WUP_POLARITY_SHIFT              0x08u   /*!< Internal constant used to retrieve wakeup pin polariry */
@@ -403,17 +248,7 @@ typedef struct
 /** @defgroup PWR_Private_Macros  PWR Private Macros
   * @{
   */
-#if defined(PWR_PVD_SUPPORT)
-#define IS_PWR_PVD_LEVEL(LEVEL)                   (((LEVEL) & ~(PWR_CR2_PVDRT | PWR_CR2_PVDFT)) == 0x00000000u)
 
-#define IS_PWR_PVD_MODE(MODE)                     (((MODE) == PWR_PVD_MODE_NORMAL)              || \
-                                                   ((MODE) == PWR_PVD_MODE_IT_RISING)           || \
-                                                   ((MODE) == PWR_PVD_MODE_IT_FALLING)          || \
-                                                   ((MODE) == PWR_PVD_MODE_IT_RISING_FALLING)   || \
-                                                   ((MODE) == PWR_PVD_MODE_EVENT_RISING)        || \
-                                                   ((MODE) == PWR_PVD_MODE_EVENT_FALLING)       || \
-                                                   ((MODE) == PWR_PVD_MODE_EVENT_RISING_FALLING))
-#endif
 #define IS_PWR_WAKEUP_PIN(PIN)                    ((((PIN) & ((PWR_CR4_WP << 8U) | (PWR_CR3_EWUP))) != 0x00000000u) && \
                                                    (((PIN) & ~((PWR_CR4_WP << 8U) | (PWR_CR3_EWUP))) == 0x00000000u))
 
@@ -453,11 +288,7 @@ void              HAL_PWR_DeInit(void);
 /* Peripheral Control functions  ************************************************/
 void              HAL_PWR_EnableBkUpAccess(void);
 void              HAL_PWR_DisableBkUpAccess(void);
-#if defined(PWR_PVD_SUPPORT)
-HAL_StatusTypeDef HAL_PWR_ConfigPVD(PWR_PVDTypeDef *sConfigPVD);
-void              HAL_PWR_EnablePVD(void);
-void              HAL_PWR_DisablePVD(void);
-#endif
+
 /* WakeUp pins configuration functions ****************************************/
 void              HAL_PWR_EnableWakeUpPin(uint32_t WakeUpPinPolarity);
 void              HAL_PWR_DisableWakeUpPin(uint32_t WakeUpPinx);
@@ -470,11 +301,7 @@ void              HAL_PWR_EnableSleepOnExit(void);
 void              HAL_PWR_DisableSleepOnExit(void);
 void              HAL_PWR_EnableSEVOnPend(void);
 void              HAL_PWR_DisableSEVOnPend(void);
-#if defined(PWR_PVD_SUPPORT)
-void              HAL_PWR_PVD_IRQHandler(void);
-void              HAL_PWR_PVD_Rising_Callback(void);
-void              HAL_PWR_PVD_Falling_Callback(void);
-#endif
+
 /**
   * @}
   */

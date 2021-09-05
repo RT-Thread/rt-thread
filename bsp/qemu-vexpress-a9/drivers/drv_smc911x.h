@@ -1,402 +1,342 @@
 /*
- * SMSC LAN9[12]1[567] Network driver
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * (c) 2007 Pengutronix, Sascha Hauer <s.hauer@pengutronix.de>
+ * SPDX-License-Identifier: Apache-2.0
  *
- * SPDX-License-Identifier: GPL-2.0+
+ * Change Logs:
+ * Date           Author       Notes
+ * 2021-04-21
  */
 
-#ifndef _SMC911X_H_
-#define _SMC911X_H_
 
-#include <stdint.h>
+/*  $NetBSD: lan9118reg.h,v 1.3 2010/09/27 12:29:03 kiyohara Exp $  */
+/*
+ * Copyright (c) 2008 KIYOHARA Takashi
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef _LAN9118REG_H_
+#define _LAN9118REG_H_
+
 
 #define CONFIG_SMC911X_32_BIT
 
-/* Below are the register offsets and bit definitions
- * of the Lan911x memory space
- */
-#define RX_DATA_FIFO                    0x00
+#define LAN9118_IOSIZE   0x100
 
-#define TX_DATA_FIFO                    0x20
-#define TX_CMD_A_INT_ON_COMP            0x80000000
-#define TX_CMD_A_INT_BUF_END_ALGN       0x03000000
-#define TX_CMD_A_INT_4_BYTE_ALGN        0x00000000
-#define TX_CMD_A_INT_16_BYTE_ALGN       0x01000000
-#define TX_CMD_A_INT_32_BYTE_ALGN       0x02000000
-#define TX_CMD_A_INT_DATA_OFFSET        0x001F0000
-#define TX_CMD_A_INT_FIRST_SEG          0x00002000
-#define TX_CMD_A_INT_LAST_SEG           0x00001000
-#define TX_CMD_A_BUF_SIZE               0x000007FF
-#define TX_CMD_B_PKT_TAG                0xFFFF0000
-#define TX_CMD_B_ADD_CRC_DISABLE        0x00002000
-#define TX_CMD_B_DISABLE_PADDING        0x00001000
-#define TX_CMD_B_PKT_BYTE_LENGTH        0x000007FF
+#define LAN9118_ID_89218 0x218a
+#define LAN9118_ID_9115  0x0115
+#define LAN9118_ID_9116  0x0116
+#define LAN9118_ID_9117  0x0117
+#define LAN9118_ID_9118  0x0118
+#define LAN9218_ID_9215  0x115a
+#define LAN9218_ID_9216  0x116a
+#define LAN9218_ID_9217  0x117a
+#define LAN9218_ID_9218  0x118a
 
-#define RX_STATUS_FIFO              0x40
-#define RX_STS_PKT_LEN              0x3FFF0000
-#define RX_STS_ES                   0x00008000
-#define RX_STS_BCST                 0x00002000
-#define RX_STS_LEN_ERR              0x00001000
-#define RX_STS_RUNT_ERR             0x00000800
-#define RX_STS_MCAST                0x00000400
-#define RX_STS_TOO_LONG             0x00000080
-#define RX_STS_COLL                 0x00000040
-#define RX_STS_ETH_TYPE             0x00000020
-#define RX_STS_WDOG_TMT             0x00000010
-#define RX_STS_MII_ERR              0x00000008
-#define RX_STS_DRIBBLING            0x00000004
-#define RX_STS_CRC_ERR              0x00000002
-#define RX_STATUS_FIFO_PEEK         0x44
-#define TX_STATUS_FIFO              0x48
-#define TX_STS_TAG                  0xFFFF0000
-#define TX_STS_ES                   0x00008000
-#define TX_STS_LOC                  0x00000800
-#define TX_STS_NO_CARR              0x00000400
-#define TX_STS_LATE_COLL            0x00000200
-#define TX_STS_MANY_COLL            0x00000100
-#define TX_STS_COLL_CNT             0x00000078
-#define TX_STS_MANY_DEFER           0x00000004
-#define TX_STS_UNDERRUN             0x00000002
-#define TX_STS_DEFERRED             0x00000001
-#define TX_STATUS_FIFO_PEEK         0x4C
-#define ID_REV                      0x50
-#define ID_REV_CHIP_ID              0xFFFF0000  /* RO */
-#define ID_REV_REV_ID               0x0000FFFF  /* RO */
+#define LAN9210_ID_9210  0x9210
+#define LAN9210_ID_9211  0x9211
+#define LAN9220_ID_9220  0x9220
+#define LAN9220_ID_9221  0x9221
 
-#define INT_CFG                     0x54
-#define INT_CFG_INT_DEAS            0xFF000000  /* R/W */
-#define INT_CFG_INT_DEAS_CLR        0x00004000
-#define INT_CFG_INT_DEAS_STS        0x00002000
-#define INT_CFG_IRQ_INT             0x00001000  /* RO */
-#define INT_CFG_IRQ_EN              0x00000100  /* R/W */
-/* R/W Not Affected by SW Reset */
-#define INT_CFG_IRQ_POL             0x00000010
-/* R/W Not Affected by SW Reset */
-#define INT_CFG_IRQ_TYPE            0x00000001
+#define IS_LAN9118(id)  ((id) >= LAN9118_ID_9115 && (id) <= LAN9118_ID_9118)
+#define IS_LAN9218(id)  ((id) >= LAN9218_ID_9215 && (id) <= LAN9218_ID_9218)
 
-#define INT_STS                     0x58
-#define INT_STS_SW_INT              0x80000000  /* R/WC */
-#define INT_STS_TXSTOP_INT          0x02000000  /* R/WC */
-#define INT_STS_RXSTOP_INT          0x01000000  /* R/WC */
-#define INT_STS_RXDFH_INT           0x00800000  /* R/WC */
-#define INT_STS_RXDF_INT            0x00400000  /* R/WC */
-#define INT_STS_TX_IOC              0x00200000  /* R/WC */
-#define INT_STS_RXD_INT             0x00100000  /* R/WC */
-#define INT_STS_GPT_INT             0x00080000  /* R/WC */
-#define INT_STS_PHY_INT             0x00040000  /* RO */
-#define INT_STS_PME_INT             0x00020000  /* R/WC */
-#define INT_STS_TXSO                0x00010000  /* R/WC */
-#define INT_STS_RWT                 0x00008000  /* R/WC */
-#define INT_STS_RXE                 0x00004000  /* R/WC */
-#define INT_STS_TXE                 0x00002000  /* R/WC */
-/*#define   INT_STS_ERX     0x00001000*/  /* R/WC */
-#define INT_STS_TDFU                0x00000800  /* R/WC */
-#define INT_STS_TDFO                0x00000400  /* R/WC */
-#define INT_STS_TDFA                0x00000200  /* R/WC */
-#define INT_STS_TSFF                0x00000100  /* R/WC */
-#define INT_STS_TSFL                0x00000080  /* R/WC */
-/*#define   INT_STS_RXDF        0x00000040*/  /* R/WC */
-#define INT_STS_RDFO                0x00000040  /* R/WC */
-#define INT_STS_RDFL                0x00000020  /* R/WC */
-#define INT_STS_RSFF                0x00000010  /* R/WC */
-#define INT_STS_RSFL                0x00000008  /* R/WC */
-#define INT_STS_GPIO2_INT           0x00000004  /* R/WC */
-#define INT_STS_GPIO1_INT           0x00000002  /* R/WC */
-#define INT_STS_GPIO0_INT           0x00000001  /* R/WC */
-#define INT_EN                      0x5C
-#define INT_EN_SW_INT_EN            0x80000000  /* R/W */
-#define INT_EN_TXSTOP_INT_EN        0x02000000  /* R/W */
-#define INT_EN_RXSTOP_INT_EN        0x01000000  /* R/W */
-#define INT_EN_RXDFH_INT_EN         0x00800000  /* R/W */
-/*#define   INT_EN_RXDF_INT_EN      0x00400000*/  /* R/W */
-#define INT_EN_TIOC_INT_EN          0x00200000  /* R/W */
-#define INT_EN_RXD_INT_EN           0x00100000  /* R/W */
-#define INT_EN_GPT_INT_EN           0x00080000  /* R/W */
-#define INT_EN_PHY_INT_EN           0x00040000  /* R/W */
-#define INT_EN_PME_INT_EN           0x00020000  /* R/W */
-#define INT_EN_TXSO_EN              0x00010000  /* R/W */
-#define INT_EN_RWT_EN               0x00008000  /* R/W */
-#define INT_EN_RXE_EN               0x00004000  /* R/W */
-#define INT_EN_TXE_EN               0x00002000  /* R/W */
-/*#define   INT_EN_ERX_EN           0x00001000*/  /* R/W */
-#define INT_EN_TDFU_EN              0x00000800  /* R/W */
-#define INT_EN_TDFO_EN              0x00000400  /* R/W */
-#define INT_EN_TDFA_EN              0x00000200  /* R/W */
-#define INT_EN_TSFF_EN              0x00000100  /* R/W */
-#define INT_EN_TSFL_EN              0x00000080  /* R/W */
-/*#define   INT_EN_RXDF_EN          0x00000040*/  /* R/W */
-#define INT_EN_RDFO_EN              0x00000040  /* R/W */
-#define INT_EN_RDFL_EN              0x00000020  /* R/W */
-#define INT_EN_RSFF_EN              0x00000010  /* R/W */
-#define INT_EN_RSFL_EN              0x00000008  /* R/W */
-#define INT_EN_GPIO2_INT            0x00000004  /* R/W */
-#define INT_EN_GPIO1_INT            0x00000002  /* R/W */
-#define INT_EN_GPIO0_INT            0x00000001  /* R/W */
-
-#define BYTE_TEST                   0x64
-#define FIFO_INT                    0x68
-#define FIFO_INT_TX_AVAIL_LEVEL     0xFF000000  /* R/W */
-#define FIFO_INT_TX_STS_LEVEL       0x00FF0000  /* R/W */
-#define FIFO_INT_RX_AVAIL_LEVEL     0x0000FF00  /* R/W */
-#define FIFO_INT_RX_STS_LEVEL       0x000000FF  /* R/W */
-
-#define RX_CFG                      0x6C
-#define RX_CFG_RX_END_ALGN          0xC0000000  /* R/W */
-#define     RX_CFG_RX_END_ALGN4     0x00000000  /* R/W */
-#define     RX_CFG_RX_END_ALGN16    0x40000000  /* R/W */
-#define     RX_CFG_RX_END_ALGN32    0x80000000  /* R/W */
-#define RX_CFG_RX_DMA_CNT           0x0FFF0000  /* R/W */
-#define RX_CFG_RX_DUMP              0x00008000  /* R/W */
-#define RX_CFG_RXDOFF               0x00001F00  /* R/W */
-/*#define   RX_CFG_RXBAD            0x00000001*/  /* R/W */
-
-#define TX_CFG                      0x70
-/*#define   TX_CFG_TX_DMA_LVL       0xE0000000*/     /* R/W */
-/* R/W Self Clearing */
-/*#define   TX_CFG_TX_DMA_CNT       0x0FFF0000*/
-#define TX_CFG_TXS_DUMP             0x00008000  /* Self Clearing */
-#define TX_CFG_TXD_DUMP             0x00004000  /* Self Clearing */
-#define TX_CFG_TXSAO                0x00000004  /* R/W */
-#define TX_CFG_TX_ON                0x00000002  /* R/W */
-#define TX_CFG_STOP_TX              0x00000001  /* Self Clearing */
-
-#define HW_CFG                      0x74
-#define HW_CFG_TTM                  0x00200000  /* R/W */
-#define HW_CFG_SF                   0x00100000  /* R/W */
-#define HW_CFG_TX_FIF_SZ            0x000F0000  /* R/W */
-#define HW_CFG_TR                   0x00003000  /* R/W */
-#define HW_CFG_PHY_CLK_SEL          0x00000060  /* R/W */
-#define HW_CFG_PHY_CLK_SEL_INT_PHY  0x00000000 /* R/W */
-#define HW_CFG_PHY_CLK_SEL_EXT_PHY  0x00000020 /* R/W */
-#define HW_CFG_PHY_CLK_SEL_CLK_DIS  0x00000040 /* R/W */
-#define HW_CFG_SMI_SEL              0x00000010  /* R/W */
-#define HW_CFG_EXT_PHY_DET          0x00000008  /* RO */
-#define HW_CFG_EXT_PHY_EN           0x00000004  /* R/W */
-#define HW_CFG_32_16_BIT_MODE       0x00000004  /* RO */
-#define HW_CFG_SRST_TO              0x00000002  /* RO */
-#define HW_CFG_SRST                 0x00000001  /* Self Clearing */
-
-#define RX_DP_CTRL                  0x78
-#define RX_DP_CTRL_RX_FFWD          0x80000000  /* R/W */
-#define RX_DP_CTRL_FFWD_BUSY        0x80000000  /* RO */
-
-#define RX_FIFO_INF                 0x7C
-#define  RX_FIFO_INF_RXSUSED        0x00FF0000  /* RO */
-#define  RX_FIFO_INF_RXDUSED        0x0000FFFF  /* RO */
-
-#define TX_FIFO_INF                 0x80
-#define TX_FIFO_INF_TSUSED          0x00FF0000  /* RO */
-#define TX_FIFO_INF_TDFREE          0x0000FFFF  /* RO */
-
-#define PMT_CTRL                    0x84
-#define PMT_CTRL_PM_MODE            0x00003000  /* Self Clearing */
-#define PMT_CTRL_PHY_RST            0x00000400  /* Self Clearing */
-#define PMT_CTRL_WOL_EN             0x00000200  /* R/W */
-#define PMT_CTRL_ED_EN              0x00000100  /* R/W */
-/* R/W Not Affected by SW Reset */
-#define PMT_CTRL_PME_TYPE           0x00000040
-#define PMT_CTRL_WUPS               0x00000030  /* R/WC */
-#define PMT_CTRL_WUPS_NOWAKE        0x00000000  /* R/WC */
-#define PMT_CTRL_WUPS_ED            0x00000010  /* R/WC */
-#define PMT_CTRL_WUPS_WOL           0x00000020  /* R/WC */
-#define PMT_CTRL_WUPS_MULTI         0x00000030  /* R/WC */
-#define PMT_CTRL_PME_IND            0x00000008  /* R/W */
-#define PMT_CTRL_PME_POL            0x00000004  /* R/W */
-/* R/W Not Affected by SW Reset */
-#define PMT_CTRL_PME_EN             0x00000002
-#define PMT_CTRL_READY              0x00000001  /* RO */
-
-#define GPIO_CFG                    0x88
-#define GPIO_CFG_LED3_EN            0x40000000  /* R/W */
-#define GPIO_CFG_LED2_EN            0x20000000  /* R/W */
-#define GPIO_CFG_LED1_EN            0x10000000  /* R/W */
-#define GPIO_CFG_GPIO2_INT_POL      0x04000000  /* R/W */
-#define GPIO_CFG_GPIO1_INT_POL      0x02000000  /* R/W */
-#define GPIO_CFG_GPIO0_INT_POL      0x01000000  /* R/W */
-#define GPIO_CFG_EEPR_EN            0x00700000  /* R/W */
-#define GPIO_CFG_GPIOBUF2           0x00040000  /* R/W */
-#define GPIO_CFG_GPIOBUF1           0x00020000  /* R/W */
-#define GPIO_CFG_GPIOBUF0           0x00010000  /* R/W */
-#define GPIO_CFG_GPIODIR2           0x00000400  /* R/W */
-#define GPIO_CFG_GPIODIR1           0x00000200  /* R/W */
-#define GPIO_CFG_GPIODIR0           0x00000100  /* R/W */
-#define GPIO_CFG_GPIOD4             0x00000010  /* R/W */
-#define GPIO_CFG_GPIOD3             0x00000008  /* R/W */
-#define GPIO_CFG_GPIOD2             0x00000004  /* R/W */
-#define GPIO_CFG_GPIOD1             0x00000002  /* R/W */
-#define GPIO_CFG_GPIOD0             0x00000001  /* R/W */
-
-#define GPT_CFG                     0x8C
-#define GPT_CFG_TIMER_EN            0x20000000  /* R/W */
-#define GPT_CFG_GPT_LOAD            0x0000FFFF  /* R/W */
-
-#define GPT_CNT                     0x90
-#define GPT_CNT_GPT_CNT             0x0000FFFF  /* RO */
-
-#define ENDIAN                      0x98
-#define FREE_RUN                    0x9C
-#define RX_DROP                     0xA0
-#define MAC_CSR_CMD                 0xA4
-#define  MAC_CSR_CMD_CSR_BUSY       0x80000000  /* Self Clearing */
-#define  MAC_CSR_CMD_R_NOT_W        0x40000000  /* R/W */
-#define  MAC_CSR_CMD_CSR_ADDR       0x000000FF  /* R/W */
-
-#define MAC_CSR_DATA                0xA8
-#define AFC_CFG                     0xAC
-#define     AFC_CFG_AFC_HI          0x00FF0000  /* R/W */
-#define     AFC_CFG_AFC_LO          0x0000FF00  /* R/W */
-#define     AFC_CFG_BACK_DUR        0x000000F0  /* R/W */
-#define     AFC_CFG_FCMULT          0x00000008  /* R/W */
-#define     AFC_CFG_FCBRD           0x00000004  /* R/W */
-#define     AFC_CFG_FCADD           0x00000002  /* R/W */
-#define     AFC_CFG_FCANY           0x00000001  /* R/W */
-
-#define E2P_CMD                     0xB0
-#define     E2P_CMD_EPC_BUSY        0x80000000  /* Self Clearing */
-#define     E2P_CMD_EPC_CMD         0x70000000  /* R/W */
-#define     E2P_CMD_EPC_CMD_READ    0x00000000  /* R/W */
-#define     E2P_CMD_EPC_CMD_EWDS    0x10000000  /* R/W */
-#define     E2P_CMD_EPC_CMD_EWEN    0x20000000  /* R/W */
-#define     E2P_CMD_EPC_CMD_WRITE   0x30000000  /* R/W */
-#define     E2P_CMD_EPC_CMD_WRAL    0x40000000  /* R/W */
-#define     E2P_CMD_EPC_CMD_ERASE   0x50000000  /* R/W */
-#define     E2P_CMD_EPC_CMD_ERAL    0x60000000  /* R/W */
-#define     E2P_CMD_EPC_CMD_RELOAD  0x70000000  /* R/W */
-#define     E2P_CMD_EPC_TIMEOUT     0x00000200  /* RO */
-#define     E2P_CMD_MAC_ADDR_LOADED 0x00000100  /* RO */
-#define     E2P_CMD_EPC_ADDR        0x000000FF  /* R/W */
-
-#define E2P_DATA                0xB4
-#define E2P_DATA_EEPROM_DATA    0x000000FF  /* R/W */
-/* end of LAN register offsets and bit definitions */
-
-/* MAC Control and Status registers */
-#define MAC_CR                  0x01  /* R/W */
-
-/* MAC_CR - MAC Control Register */
-#define MAC_CR_RXALL            0x80000000
-/* TODO: delete this bit? It is not described in the data sheet. */
-#define MAC_CR_HBDIS            0x10000000
-#define MAC_CR_RCVOWN           0x00800000
-#define MAC_CR_LOOPBK           0x00200000
-#define MAC_CR_FDPX             0x00100000
-#define MAC_CR_MCPAS            0x00080000
-#define MAC_CR_PRMS             0x00040000
-#define MAC_CR_INVFILT          0x00020000
-#define MAC_CR_PASSBAD          0x00010000
-#define MAC_CR_HFILT            0x00008000
-#define MAC_CR_HPFILT           0x00002000
-#define MAC_CR_LCOLL            0x00001000
-#define MAC_CR_BCAST            0x00000800
-#define MAC_CR_DISRTY           0x00000400
-#define MAC_CR_PADSTR           0x00000100
-#define MAC_CR_BOLMT_MASK       0x000000C0
-#define MAC_CR_DFCHK            0x00000020
-#define MAC_CR_TXEN             0x00000008
-#define MAC_CR_RXEN             0x00000004
-
-#define ADDRH                   0x02      /* R/W mask 0x0000FFFFUL */
-#define ADDRL                   0x03      /* R/W mask 0xFFFFFFFFUL */
-#define HASHH                   0x04      /* R/W */
-#define HASHL                   0x05      /* R/W */
-
-#define MII_ACC                 0x06      /* R/W */
-#define MII_ACC_PHY_ADDR        0x0000F800
-#define MII_ACC_MIIRINDA        0x000007C0
-#define MII_ACC_MII_WRITE       0x00000002
-#define MII_ACC_MII_BUSY        0x00000001
-
-#define MII_DATA            0x07      /* R/W mask 0x0000FFFFUL */
-
-#define FLOW                0x08      /* R/W */
-#define FLOW_FCPT           0xFFFF0000
-#define FLOW_FCPASS         0x00000004
-#define FLOW_FCEN           0x00000002
-#define FLOW_FCBSY          0x00000001
-
-#define VLAN1               0x09      /* R/W mask 0x0000FFFFUL */
-#define VLAN1_VTI1          0x0000ffff
-
-#define VLAN2               0x0A      /* R/W mask 0x0000FFFFUL */
-#define VLAN2_VTI2          0x0000ffff
-
-#define WUFF                0x0B      /* WO */
-
-#define WUCSR               0x0C      /* R/W */
-#define WUCSR_GUE           0x00000200
-#define WUCSR_WUFR          0x00000040
-#define WUCSR_MPR           0x00000020
-#define WUCSR_WAKE_EN       0x00000004
-#define WUCSR_MPEN          0x00000002
-
-/* Chip ID values */
-#define CHIP_89218  0x218a
-#define CHIP_9115   0x115
-#define CHIP_9116   0x116
-#define CHIP_9117   0x117
-#define CHIP_9118   0x118
-#define CHIP_9211   0x9211
-#define CHIP_9215   0x115a
-#define CHIP_9216   0x116a
-#define CHIP_9217   0x117a
-#define CHIP_9218   0x118a
-#define CHIP_9220   0x9220
-#define CHIP_9221   0x9221
+#define LAN9118_IPHY_ADDR   0x01    /* Internal PHY Address */
 
 
-/* Generic MII registers. */
+#define LAN9118_RXDFIFOP    0x00    /* RX Data FIFO Port */
+#define LAN9118_RXDFIFOAP   0x04    /* RX Data FIFO Alias Ports */
+#define LAN9118_TXDFIFOP    0x20    /* TX Data FIFO Port */
+#define LAN9118_TXDFIFOAP   0x24    /* TX Data FIFO Alias Ports */
+#define LAN9118_RXSFIFOP    0x40    /* RX Status FIFO Port */
+#define LAN9118_RXSFIFOPEEK 0x44    /* RX Status FIFO PEEK */
+#define LAN9118_TXSFIFOP    0x48    /* TX Status FIFO Port */
+#define LAN9118_TXSFIFOPEEK 0x4c    /* TX Status FIFO PEEK */
 
-#define MII_BMCR        0x00    /* Basic mode control register */
-#define MII_BMSR        0x01    /* Basic mode status register  */
-#define MII_PHYSID1     0x02    /* PHYS ID 1               */
-#define MII_PHYSID2     0x03    /* PHYS ID 2               */
-#define MII_ADVERTISE   0x04    /* Advertisement control reg   */
-#define MII_LPA         0x05    /* Link partner ability reg    */
-#define MII_EXPANSION   0x06    /* Expansion register          */
-#define MII_CTRL1000    0x09    /* 1000BASE-T control          */
-#define MII_STAT1000    0x0a    /* 1000BASE-T status           */
-#define MII_ESTATUS     0x0f    /* Extended Status */
-#define MII_DCOUNTER    0x12    /* Disconnect counter          */
-#define MII_FCSCOUNTER  0x13    /* False carrier counter       */
-#define MII_NWAYTEST    0x14    /* N-way auto-neg test reg     */
-#define MII_RERRCOUNTER 0x15    /* Receive error counter       */
-#define MII_SREVISION   0x16    /* Silicon revision        */
-#define MII_RESV1       0x17    /* Reserved...             */
-#define MII_LBRERROR    0x18    /* Lpback, rx, bypass error    */
-#define MII_PHYADDR     0x19    /* PHY address             */
-#define MII_RESV2       0x1a    /* Reserved...             */
-#define MII_TPISTATUS   0x1b    /* TPI status for 10mbps       */
-#define MII_NCONFIG     0x1c    /* Network interface config    */
+/* System Control and Status Registers */
+#define LAN9118_ID_REV                      0x50    /* Chip ID and Revision */
+#define LAN9118_ID_REV_ID(x)                (((x) >> 16) & 0xffff)
+#define LAN9118_ID_REV_REV(x)               ((x) & 0xffff)
+#define LAN9118_IRQ_CFG                     0x54    /* Main Interrupt Configuration */
+#define LAN9118_IRQ_CFG_INT_DEAS(t)         ((t) << 24) /* Intr Deassert Interval */
+#define LAN9118_IRQ_CFG_INT_DEAS_CLR        (1 << 14)   /* Intr Deass Intrval clr */
+#define LAN9118_IRQ_CFG_INT_DEAS_STS        (1 << 13)   /* Intr Deassert Status */
+#define LAN9118_IRQ_CFG_IRQ_INT             (1 << 12)   /* Master Interrupt */
+#define LAN9118_IRQ_CFG_IRQ_EN              (1 << 8)    /* IRQ Enable */
+#define LAN9118_IRQ_CFG_IRQ_POL             (1 << 4)    /* IRQ Polarity */
+#define LAN9118_IRQ_CFG_IRQ_TYPE            (1 << 0)    /* IRQ Buffer Type */
+#define LAN9118_INT_STS                     0x58    /* Interrupt Status */
+#define LAN9118_INT_EN                      0x5c    /* Interrupt Enable Register */
+#define LAN9118_INT_SW_INT                  (1 << 31) /* Software Interrupt */
+#define LAN9118_INT_TXSTOP_INT              (1 << 25) /* TX Stopped */
+#define LAN9118_INT_RXSTOP_INT              (1 << 24) /* RX Stopped */
+#define LAN9118_INT_RXDFH_INT               (1 << 23) /* RX Drppd Frm Cnt Halfway */
+#define LAN9118_INT_TX_IOC                  (1 << 21) /* TX IOC Interrupt */
+#define LAN9118_INT_RXD_INT                 (1 << 20) /* RX DMA Interrupt */
+#define LAN9118_INT_GPT_INT                 (1 << 19) /* GP Timer */
+#define LAN9118_INT_PHY_INT                 (1 << 18) /* PHY */
+#define LAN9118_INT_PME_INT                 (1 << 17) /* Power Management Event */
+#define LAN9118_INT_TXSO                    (1 << 16) /* TX Status FIFO Overflow */
+#define LAN9118_INT_RWT                     (1 << 15) /* Rcv Watchdog Time-out */
+#define LAN9118_INT_RXE                     (1 << 14) /* Receive Error */
+#define LAN9118_INT_TXE                     (1 << 13) /* Transmitter Error */
+#define LAN9118_INT_TDFO                    (1 << 10) /* TX Data FIFO Overrun */
+#define LAN9118_INT_TDFA                    (1 << 9)  /* TX Data FIFO Available */
+#define LAN9118_INT_TSFF                    (1 << 8)  /* TX Status FIFO Full */
+#define LAN9118_INT_TSFL                    (1 << 7)  /* TX Status FIFO Level */
+#define LAN9118_INT_RXDF_INT                (1 << 6)  /* RX Dropped Frame Intr */
+#define LAN9118_INT_RSFF                    (1 << 4)  /* RX Status FIFO Full */
+#define LAN9118_INT_RSFL                    (1 << 3)  /* RX Status FIFO Level */
+#define LAN9118_INT_GPIOX_INT(x)            (1 << (x)) /* GPIO[2:0] */
+/*              0x60       Reserved for future use */
+#define LAN9118_BYTE_TEST                   0x64    /* Read-only byte order testing reg */
+#define LAN9118_BYTE_TEST_VALUE             0x87654321
+#define LAN9118_FIFO_INT                    0x68    /* FIFO Level Interrupt */
+#define LAN9118_FIFO_INT_TXDAL(x)           ((x) << 24) /* TX Data Available Lvl */
+#define LAN9118_FIFO_INT_TXSL(x)            ((x) << 16) /* TX Status Level */
+#define LAN9118_FIFO_INT_RXSL(x)            ((x) << 0)  /* RX Status Level */
+#define LAN9118_RX_CFG                      0x6c    /* Receive Configuration */
+#define LAN9118_RX_CFG_RXEA_4B              (0 << 30) /* RX End Alignment: 4 Byte */
+#define LAN9118_RX_CFG_RXEA_16B             (1 << 30) /*                  16 Byte */
+#define LAN9118_RX_CFG_RXEA_32B             (2 << 30) /*                  32 Byte */
+#define LAN9118_RX_CFG_RX_DMA_CNT(x)        ((x) << 16) /* RX DMA Count */
+#define LAN9118_RX_CFG_RX_DUMP              (1 << 15)   /* Force RX Discard */
+#define LAN9118_RX_CFG_RXDOFF(x)            ((x) << 8)  /* RX Data Offset */
+#define LAN9118_TX_CFG                      0x70    /* Transmit Configuration */
+#define LAN9118_TX_CFG_TXS_DUMP             (1 << 15) /* Force TX Status Discard */
+#define LAN9118_TX_CFG_TXD_DUMP             (1 << 14) /* Force TX Data Discard */
+#define LAN9118_TX_CFG_TXSAO                (1 << 2)  /* TX Status Allow Overrun */
+#define LAN9118_TX_CFG_TX_ON                (1 << 1)  /* Transmitter Enable */
+#define LAN9118_TX_CFG_STOP_TX              (1 << 0)  /* Stop Transmitter */
+#define LAN9118_HW_CFG                      0x74    /* Hardware Configuration */
+#define LAN9118_HW_CFG_MBO                  (1 << 20)/* Must Be One */
+#define LAN9118_HW_CFG_TX_FIF_MASK          (0xf << 16) /* TX FIFO Size */
+#define LAN9118_HW_CFG_TX_FIF_SZ(sz)        ((sz) << 16)
+#define LAN9118_HW_CFG_PHY_CLK_SEL_MASK     (3 << 5) /* PHY Clock Select */
+#define LAN9118_HW_CFG_PHY_CLK_SEL_IPHY     (0 << 5) /*   Internal PHY */
+#define LAN9118_HW_CFG_PHY_CLK_SEL_EMII     (1 << 5) /*   External MII Port */
+#define LAN9118_HW_CFG_PHY_CLK_SEL_CD       (2 << 5) /*   Clock Disabled */
+#define LAN9118_HW_CFG_SMI_SEL              (1 << 4) /* Serial Mgmt Interface Sel */
+#define LAN9118_HW_CFG_EXT_PHY_DET          (1 << 3) /* External PHY Detect */
+#define LAN9118_HW_CFG_EXT_PHY_EN           (1 << 2) /* External PHY Enable */
+#define LAN9118_HW_CFG_SRST_TO              (1 << 1) /* Soft Reset Timeout */
+#define LAN9118_HW_CFG_SRST                 (1 << 0) /* Soft Reset */
+#define LAN9118_RX_DP_CTL                   0x78    /* RX Datapath Control */
+#define LAN9118_RX_DP_CTL_RX_FFWD           (1 << 31)/* RX Data FIFO Fast Forward */
+#define LAN9118_RX_FIFO_INF                 0x7c    /* Receive FIFO Information */
+#define LAN9118_RX_FIFO_INF_RXSUSED(x)      (((x) >> 16) & 0xff) /*Sts Used Space*/
+#define LAN9118_RX_FIFO_INF_RXDUSED(x)      ((x) & 0xffff)  /*Data FIFO Used Space*/
+#define LAN9118_TX_FIFO_INF                 0x80    /* Transmit FIFO Information */
+#define LAN9118_TX_FIFO_INF_TXSUSED(x)      (((x) >> 16) & 0xff) /*Sts Used Space*/
+#define LAN9118_TX_FIFO_INF_TDFREE(x)       ((x) & 0xffff) /*Data FIFO Free Space*/
+#define LAN9118_PMT_CTRL                    0x84    /* Power Management Control */
+#define LAN9118_PMT_CTRL_PM_MODE_MASK       (3 << 12)
+#define LAN9118_PMT_CTRL_PM_MODE_D0         (0 << 12)
+#define LAN9118_PMT_CTRL_PM_MODE_D1         (1 << 12)
+#define LAN9118_PMT_CTRL_PM_MODE_D2         (2 << 12)
+#define LAN9118_PMT_CTRL_PHY_RST            (1 << 10) /* PHY Reset */
+#define LAN9118_PMT_CTRL_WOL_EN             (1 << 9)  /* Wake-On-LAN Enable */
+#define LAN9118_PMT_CTRL_ED_EN              (1 << 8)  /* Energy-Detect Enable */
+#define LAN9118_PMT_CTRL_PME_TYPE           (1 << 6)  /* PME Buffer Type */
+#define LAN9118_PMT_CTRL_WUPS_NWUED         (0 << 4) /* WAKE-UP Status: No Event */
+#define LAN9118_PMT_CTRL_WUPS_ED            (1 << 4) /* WAKE-UP Status: Energy */
+#define LAN9118_PMT_CTRL_WUPS_WUD           (2 << 4) /* WAKE-UP Status: Wake-up */
+#define LAN9118_PMT_CTRL_PME_IND            (1 << 3)  /* PME indication */
+#define LAN9118_PMT_CTRL_PME_POL            (1 << 2)  /* PME Polarity */
+#define LAN9118_PMT_CTRL_PME_EN             (1 << 1)  /* PME Enable */
+#define LAN9118_PMT_CTRL_READY              (1 << 0)  /* Device Ready */
+#define LAN9118_GPIO_CFG                    0x88    /* General Purpose IO Configuration */
+#define LAN9118_GPIO_CFG_LEDX_EN(x)         (1 << ((x) + 28))  /* LED[3:1] enable */
+#define LAN9118_GPIO_CFG_GPIO_INT_POL(p)    (1 << ((p) + 24)) /* Intr Polarity */
+#define LAN9118_GPIO_CFG_EEPR_EN            (7 << 20)          /* EEPROM Enable */
+#define LAN9118_GPIO_CFG_GPIOBUFN(n)        (1 << ((n) + 16))  /* Buffer Type */
+#define LAN9118_GPIO_CFG_GPDIRN(n)          (1 << ((n) + 8))   /* Direction */
+#define LAN9118_GPIO_CFG_GPODN(n)           (1 << (n)) /* GPIO Data (3,4 is WO) */
+#define LAN9118_GPT_CFG                     0x8c    /* General Purpose Timer Config */
+#define LAN9118_GPT_CNT                     0x90    /* General Purpose Timer Count */
+/*              0x94       Reserved for future use */
+#define LAN9118_WORD_SWAP                   0x98    /* WORD SWAP Register */
+#define LAN9118_FREE_RUN                    0x9c    /* Free Run Counter */
+#define LAN9118_RX_DROP                     0xa0    /* RX Drop Frame Counter */
+#define LAN9118_MAC_CSR_CMD                 0xa4    /* MAC CSR Synchronizer Command */
+#define LAN9118_MAC_CSR_CMD_BUSY            (1 << 31)
+#define LAN9118_MAC_CSR_CMD_W               (0 << 30)
+#define LAN9118_MAC_CSR_CMD_R               (1 << 30)
+#define LAN9118_MAC_CSR_CMD_ADDRESS(a)      ((a) & 0xff)
+#define LAN9118_MAC_CSR_DATA                0xa8    /* MAC CSR Synchronizer Data */
+#define LAN9118_AFC_CFG                     0xac    /* Automatic Flow Control Config */
+#define LAN9118_AFC_CFG_AFC_HI(x)           ((x) << 16)
+#define LAN9118_AFC_CFG_AFC_LO(x)           ((x) << 8)
+#define LAN9118_AFC_CFG_BACK_DUR(x)         ((x) << 4)
+#define LAN9118_AFC_CFG_FCMULT              (1 << 3) /* Flow Control on Multicast */
+#define LAN9118_AFC_CFG_FCBRD               (1 << 2) /* Flow Control on Broadcast */
+#define LAN9118_AFC_CFG_FCADD               (1 << 1) /* Flow Control on Addr Dec */
+#define LAN9118_AFC_CFG_FCANY               (1 << 0) /* Flow Control on Any Frame */
+#define LAN9118_E2P_CMD                     0xb0    /* EEPROM command */
+#define LAN9118_E2P_CMD_EPCB                (1 << 31) /* EPC Busy */
+#define LAN9118_E2P_CMD_EPCC_READ           (0 << 28) /* EPC Command: READ */
+#define LAN9118_E2P_CMD_EPCC_EWDS           (1 << 28) /*              EWDS */
+#define LAN9118_E2P_CMD_EPCC_EWEN           (2 << 28) /*              EWEN */
+#define LAN9118_E2P_CMD_EPCC_WRITE          (3 << 28) /*              WRITE */
+#define LAN9118_E2P_CMD_EPCC_WRAL           (4 << 28) /*              WRAL */
+#define LAN9118_E2P_CMD_EPCC_ERASE          (5 << 28) /*              ERASE */
+#define LAN9118_E2P_CMD_EPCC_ERAL           (6 << 28) /*              ERAL */
+#define LAN9118_E2P_CMD_EPCC_RELOAD         (7 << 28) /*              Reload */
+#define LAN9118_E2P_CMD_EPCTO               (1 << 9)  /* EPC Time-out */
+#define LAN9118_E2P_CMD_MACAL               (1 << 8)  /* MAC Address Loaded */
+#define LAN9118_E2P_CMD_EPCA(a)             ((a) & 0xff) /* EPC Address */
+#define LAN9118_E2P_DATA                    0xb4    /* EEPROM Data */
+/*              0xb8 - 0xfc Reserved for future use */
+
+/* MAC Control and Status Registers */
+#define LAN9118_MAC_CR              0x1 /* MAC Control Register */
+#define LAN9118_MAC_CR_RXALL        (1 << 31) /* Receive All Mode */
+#define LAN9118_MAC_CR_RCVOWN       (1 << 23) /* Disable Receive Own */
+#define LAN9118_MAC_CR_LOOPBK       (1 << 21) /* Loopback operation Mode */
+#define LAN9118_MAC_CR_FDPX         (1 << 20) /* Full Duplex Mode */
+#define LAN9118_MAC_CR_MCPAS        (1 << 19) /* Pass All Multicast */
+#define LAN9118_MAC_CR_PRMS         (1 << 18) /* Promiscuous Mode */
+#define LAN9118_MAC_CR_INVFILT      (1 << 17) /* Inverse filtering */
+#define LAN9118_MAC_CR_PASSBAD      (1 << 16) /* Pass Bad Frames */
+#define LAN9118_MAC_CR_HO           (1 << 15) /* Hash Only Filtering mode */
+#define LAN9118_MAC_CR_HPFILT       (1 << 13) /* Hash/Perfect Flt Mode */
+#define LAN9118_MAC_CR_LCOLL        (1 << 12) /* Late Collision Control */
+#define LAN9118_MAC_CR_BCAST        (1 << 11) /* Disable Broardcast Frms */
+#define LAN9118_MAC_CR_DISRTY       (1 << 10) /* Disable Retry */
+#define LAN9118_MAC_CR_PADSTR       (1 << 8)  /* Automatic Pad String */
+#define LAN9118_MAC_CR_BOLMT        (1 << 7)  /* BackOff Limit */
+#define LAN9118_MAC_CR_DFCHK        (1 << 5)  /* Deferral Check */
+#define LAN9118_MAC_CR_TXEN         (1 << 3)  /* Transmitter enable */
+#define LAN9118_MAC_CR_RXEN         (1 << 2)  /* Receiver enable */
+#define LAN9118_ADDRH               0x2 /* MAC Address High */
+#define LAN9118_ADDRL               0x3 /* MAC Address Low */
+#define LAN9118_HASHH               0x4 /* Multicast Hash Table High */
+#define LAN9118_HASHL               0x5 /* Multicast Hash Table Low */
+#define LAN9118_MII_ACC             0x6 /* MII Access */
+#define LAN9118_MII_ACC_PHYA(a)     ((a) << 11) /* PHY Address */
+#define LAN9118_MII_ACC_MIIRINDA(i) ((i) << 6)  /* MII Register Index */
+#define LAN9118_MII_ACC_MIIWNR      (1 << 1)    /* MII Write */
+#define LAN9118_MII_ACC_MIIBZY      (1 << 0)    /* MII Busy */
+#define LAN9118_MII_DATA            0x7 /* MII Data */
+#define LAN9118_FLOW                0x8 /* Flow Control */
+#define LAN9118_FLOW_FCPT(t)        ((t) << 16) /* Pause Time */
+#define LAN9118_FLOW_FCPASS         (1 << 2)    /* Pass Control Frame */
+#define LAN9118_FLOW_FCEN           (1 << 1)    /* Flow Control Enable */
+#define LAN9118_FLOW_FCBUSY         (1 << 0)    /* Flow Control Busy */
+#define LAN9118_VLAN1               0x9 /* VLAN1 Tag */
+#define LAN9118_VLAN2               0xa /* VLAN2 Tag */
+#define LAN9118_WUFF                0xb /* Wake-up Frame Filter */
+#define LAN9118_WUCSR               0xc /* Wake-up Control and Status */
+
+/* PHY Registers */
+#define LAN9118_MCSR                0x11    /* Mode Control/Status Register */
+#define LAN9118_MCSR_EDPWRDOWN      (1 << 13) /* Energy Detect Power Down */
+#define LAN9118_MCSR_ENERGYON       (1 << 1)
+#define LAN9118_SMR                 0x12    /* Special Modes Register */
+#define LAN9118_SMR_PHYAD           (0x01)
+#define LAN9118_SCSI                0x1b    /* Special Control/Status Indications */
+#define LAN9118_SCSI_VCOOFF_LP      (1 << 10)
+#define LAN9118_SCSI_XPOL           (1 << 4)  /* Polarity state */
+#define LAN9118_ISR                 0x1d    /* Interrupt Source Register */
+#define LAN9118_IMR                 0x1e    /* Interrupt Mask Register */
+#define LAN9118_I_ENERGYON          (1 << 7)
+#define LAN9118_I_AUTONEGOCOMPL     (1 << 6)
+#define LAN9118_I_REMOTEFAULT       (1 << 5)
+#define LAN9118_I_LINKDOWN          (1 << 4)
+#define LAN9118_I_AUTONEGOLPACK     (1 << 3) /* AutoNego LP Acknowledge */
+#define LAN9118_I_PDF               (1 << 2) /* Parallel Detection Fault */
+#define LAN9118_I_AUTONEGOPR        (1 << 1) /* AutoNego Page Received */
+#define LAN9118_PHYSCSR             0x1f    /* PHY Special Control/Status Reg */
+#define LAN9118_PHYSCSR_AUTODONE    (1 << 12) /* AutoNego done indication */
+#define LAN9118_PHYSCSR_SI_10       (1 << 2)  /* Speed Indication */
+#define LAN9118_PHYSCSR_SI_100      (2 << 2)
+#define LAN9118_PHYSCSR_SI_FDX      (4 << 2)
+
+
+/* TX Command 'A' Format */
+#define LAN9118_TXC_A_IC        (1 << 31) /* Interrupt on Completion */
+#define LAN9118_TXC_A_BEA_4B    (0 << 24) /* Buffer End Alignment: 4B */
+#define LAN9118_TXC_A_BEA_16B   (1 << 24) /*                      16B */
+#define LAN9118_TXC_A_BEA_32B   (2 << 24) /*                      32B */
+#define LAN9118_TXC_A_DSO(x)    ((x) << 16) /*Data Start Offset: bytes*/
+#define LAN9118_TXC_A_FS        (1 << 13) /* First Segment */
+#define LAN9118_TXC_A_LS        (1 << 12) /* Last Segment */
+#define LAN9118_TXC_A_BS(x)     ((x) << 0) /* Buffer Size */
+
+/* TX Command 'B' Format */
+#define LAN9118_TXC_B_PT(x)     ((x) << 16) /* Packet Tag */
+#define LAN9118_TXC_B_ACRCD     (1 << 13)  /* Add CRC Disable */
+#define LAN9118_TXC_B_DEFP      (1 << 12)  /* Dis Ether Frame Padding */
+#define LAN9118_TXC_B_PL(x)     ((x) << 0) /* Packet Length */
+
+/* TX Status Format */
+#define LAN9118_TXS_PKTTAG(x)   (((x) >> 16) & 0xff) /* Packet Tag */
+#define LAN9118_TXS_ES          (1 << 15)   /* Error Status */
+#define LAN9118_TXS_LOC         (1 << 11)   /* Loss Of Carrier */
+#define LAN9118_TXS_NC          (1 << 10)   /* No Carrier */
+#define LAN9118_TXS_LCOL        (1 << 9)    /* Late Collision */
+#define LAN9118_TXS_ECOL        (1 << 8)    /* Excessive Collision*/
+#define LAN9118_TXS_COLCNT(x)   (((x) >> 3) & 0xf) /* Collision Count */
+#define LAN9118_TXS_ED          (1 << 2)    /* Excessive Deferral */
+#define LAN9118_TXS_DEFERRED    (1 << 0)    /* Deferred */
+
+/* RX Status Format */
+#define LAN9118_RXS_FILTFAIL    (1 << 30) /* Filtering Fail */
+#define LAN9118_RXS_PKTLEN(x)   (((x) >> 16) & 0x3fff) /* Packet Len */
+#define LAN9118_RXS_ES          (1 << 15) /* Error Status */
+#define LAN9118_RXS_BCF         (1 << 13) /* Broadcast Frame */
+#define LAN9118_RXS_LENERR      (1 << 12) /* Length Error */
+#define LAN9118_RXS_RUNTF       (1 << 11) /* Runt Frame */
+#define LAN9118_RXS_MCF         (1 << 10) /* Multicast Frame */
+#define LAN9118_RXS_FTL         (1 << 7)  /* Frame Too Long */
+#define LAN9118_RXS_COLS        (1 << 6)  /* Collision Seen */
+#define LAN9118_RXS_FT          (1 << 5)  /* Frame Type */
+#define LAN9118_RXS_RWTO        (1 << 4)  /* Rcv Watchdog time-out */
+#define LAN9118_RXS_MIIERR      (1 << 3)  /* MII Error */
+#define LAN9118_RXS_DBIT        (1 << 2)  /* Drabbling Bit */
+#define LAN9118_RXS_CRCERR      (1 << 1)  /* CRC Error */
 
 /* Basic mode control register. */
-#define BMCR_RESV       0x003f  /* Unused...               */
-#define BMCR_SPEED1000  0x0040  /* MSB of Speed (1000)         */
-#define BMCR_CTST       0x0080  /* Collision test          */
-#define BMCR_FULLDPLX   0x0100  /* Full duplex             */
-#define BMCR_ANRESTART  0x0200  /* Auto negotiation restart    */
-#define BMCR_ISOLATE    0x0400  /* Disconnect DP83840 from MII */
-#define BMCR_PDOWN      0x0800  /* Powerdown the DP83840       */
-#define BMCR_ANENABLE   0x1000  /* Enable auto negotiation     */
-#define BMCR_SPEED100   0x2000  /* Select 100Mbps          */
-#define BMCR_LOOPBACK   0x4000  /* TXD loopback bits           */
-#define BMCR_RESET      0x8000  /* Reset the DP83840           */
+#define LAN9118_BMCR_ANRESTART      0x0200  /* Auto negotiation restart  */
+#define LAN9118_BMCR_ANENABLE       0x1000  /* Enable auto negotiation   */
+#define LAN9118_BMCR_RESET          0x8000  /* Reset the DP83840     */
+#define LAN9118_BMSR_LSTATUS        0x0004  /* Link status    */
 
-/* Basic mode status register. */
-#define BMSR_ERCAP      0x0001  /* Ext-reg capability          */
-#define BMSR_JCD        0x0002  /* Jabber detected         */
-#define BMSR_LSTATUS    0x0004  /* Link status             */
-#define BMSR_ANEGCAPABLE    0x0008  /* Able to do auto-negotiation */
-#define BMSR_RFAULT     0x0010  /* Remote fault detected       */
-#define BMSR_ANEGCOMPLETE   0x0020  /* Auto-negotiation complete   */
-#define BMSR_RESV       0x00c0  /* Unused...               */
-#define BMSR_ESTATEN    0x0100  /* Extended Status in R15 */
-#define BMSR_100HALF2   0x0200  /* Can do 100BASE-T2 HDX */
-#define BMSR_100FULL2   0x0400  /* Can do 100BASE-T2 FDX */
-#define BMSR_10HALF     0x0800  /* Can do 10mbps, half-duplex  */
-#define BMSR_10FULL     0x1000  /* Can do 10mbps, full-duplex  */
-#define BMSR_100HALF    0x2000  /* Can do 100mbps, half-duplex */
-#define BMSR_100FULL    0x4000  /* Can do 100mbps, full-duplex */
-#define BMSR_100BASE4   0x8000  /* Can do 100mbps, 4k packets  */
+/* Generic MII registers. */
+#define LAN9118_MII_BMCR            0x00  /* Basic mode control register */
+#define LAN9118_MII_BMSR            0x01  /* Basic mode status register  */
+#define LAN9118_MII_ADVERTISE       0x04  /* Advertisement control register */
 
-#endif
+#define LAN9118_GPT_CFG_TIMER_EN    0x20000000  /* R/W */
+
+#define LAN9118_RX_STS_PKT_LEN      0x3FFF0000
+#define LAN9118_TX_STS_UNDERRUN     0x00000002
+
+#define LAN9118_HW_CFG_SF           0x00100000  /* R/W */
+
+#define LAN9118_INT_STS_RSFL        0x00000008  /* R/WC */
+#define LAN9118_INT_EN_RDFL_EN      0x00000020  /* R/W */
+#define LAN9118_MAC_CR_HBDIS        0x10000000
+
+#endif  /* _LAN9118REG_H_ */

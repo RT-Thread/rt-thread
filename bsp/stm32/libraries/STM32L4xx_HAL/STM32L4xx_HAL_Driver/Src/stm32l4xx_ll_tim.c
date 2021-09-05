@@ -701,9 +701,9 @@ void LL_TIM_BDTR_StructInit(LL_TIM_BDTR_InitTypeDef *TIM_BDTRInitStruct)
   *  and DTG[7:0] can be write-locked depending on the LOCK configuration, it
   *  can be necessary to configure all of them during the first write access to
   *  the TIMx_BDTR register.
-  * @note Macro @ref IS_TIM_BREAK_INSTANCE(TIMx) can be used to check whether or not
+  * @note Macro IS_TIM_BREAK_INSTANCE(TIMx) can be used to check whether or not
   *       a timer instance provides a break input.
-  * @note Macro @ref IS_TIM_BKIN2_INSTANCE(TIMx) can be used to check whether or not
+  * @note Macro IS_TIM_BKIN2_INSTANCE(TIMx) can be used to check whether or not
   *       a timer instance provides a second break input.
   * @param  TIMx Timer Instance
   * @param  TIM_BDTRInitStruct pointer to a @ref LL_TIM_BDTR_InitTypeDef structure (Break and Dead Time configuration data structure)

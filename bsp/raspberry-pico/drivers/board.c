@@ -16,8 +16,6 @@
 #include "board.h"
 #include "hardware/structs/systick.h"
 
-uint8_t heap[1024 * 80];
-
 void isr_systick(void)
 {
     /* enter interrupt */
@@ -45,10 +43,24 @@ uint32_t systick_config(uint32_t ticks)
 
 void rt_hw_board_init()
 {
+    rt_system_heap_init(HEAP_BEGIN, HEAP_END);
+
+    alarm_pool_init_default();
+
+    // Start and end points of the constructor list,
+    // defined by the linker script.
+    extern void (*__init_array_start)();
+    extern void (*__init_array_end)();
+
+    // Call each function in the list.
+    // We have to take the address of the symbols, as __init_array_start *is*
+    // the first function pointer, not the address of it.
+    for (void (**p)() = &__init_array_start; p < &__init_array_end; ++p) {
+        (*p)();
+    }
+
     /* Configure the SysTick */
     systick_config(frequency_count_khz(CLOCKS_FC0_SRC_VALUE_ROSC_CLKSRC)*10000/RT_TICK_PER_SECOND);
-
-    rt_system_heap_init(heap, (uint8_t *)heap + sizeof(heap));
 
     stdio_init_all();
     rt_hw_uart_init();

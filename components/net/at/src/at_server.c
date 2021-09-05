@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -38,6 +38,10 @@ static at_server_t at_server_local = RT_NULL;
 static at_cmd_t cmd_table = RT_NULL;
 static rt_size_t cmd_num;
 
+extern rt_size_t at_utils_send(rt_device_t dev,
+                               rt_off_t    pos,
+                               const void *buffer,
+                               rt_size_t   size);
 extern void at_vprintf(rt_device_t device, const char *format, va_list args);
 extern void at_vprintfln(rt_device_t device, const char *format, va_list args);
 
@@ -187,7 +191,7 @@ rt_size_t at_server_send(at_server_t server, const char *buf, rt_size_t size)
         return 0;
     }
 
-    return rt_device_write(server->device, 0, buf, size);
+    return at_utils_send(server->device, 0, buf, size);
 }
 
 /**
@@ -412,7 +416,7 @@ static rt_err_t at_cmd_get_name(const char *cmd_buffer, char *cmd_name)
     return -RT_ERROR;
 }
 
-static rt_err_t at_server_gerchar(at_server_t server, char *ch, rt_int32_t timeout)
+static rt_err_t at_server_getchar(at_server_t server, char *ch, rt_int32_t timeout)
 {
     rt_err_t result = RT_EOK;
 
@@ -595,7 +599,7 @@ int at_server_init(void)
         goto __exit;
     }
 
-    at_server_local->get_char = at_server_gerchar;
+    at_server_local->get_char = at_server_getchar;
     memcpy(at_server_local->end_mark, AT_CMD_END_MARK, sizeof(AT_CMD_END_MARK));
 
     at_server_local->parser_entry = server_parser;

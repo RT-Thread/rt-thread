@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：动态定时器例程
  *
  * 这个例程会创建1个动态周期型定时器对象，然后控制它进行定时时间长度的更改。
@@ -14,7 +23,7 @@ static rt_uint8_t count;
 static void timeout1(void* parameter)
 {
     rt_tick_t timeout = 50;
-    
+
     rt_kprintf("periodic timer is timeout\n");
 
     count ++;

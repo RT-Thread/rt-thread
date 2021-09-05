@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ *2021-06-10      xiaoyu       implement rt_hw_us_delay()
  */
 
 #include <rthw.h>
@@ -117,3 +118,19 @@ void rt_hw_cpu_reset(void)
 }
 
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);
+
+/**
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t usec)
+{
+    rt_uint32_t cycle = read_cycle();
+    rt_uint32_t nop_all = usec * sysctl_clock_get_freq(SYSCTL_CLOCK_CPU) / 1000000UL;
+    while (1)
+    {
+       if(read_cycle() - cycle >= nop_all)
+            break;
+    }
+}

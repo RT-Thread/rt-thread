@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,6 @@
 
 #include <rtthread.h>
 
-rt_bool_t msh_is_used(void);
 int msh_exec(char *cmd, rt_size_t length);
 void msh_auto_complete(char *prefix);
 

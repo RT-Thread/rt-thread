@@ -195,6 +195,10 @@ typedef struct
 #define LL_OPAMP_INPUT_NONINVERT_DAC         OPAMP_CSR_VPSEL_0     /*!< OPAMP non inverting input connected internally to DAC channel
                                                                         (DAC1_CH1 for OPAMP1, DAC1_CH2  for OPAMP2)
                                                                         Note: On this STM32 serie, all OPAMPx are not available on all devices. Refer to device datasheet for more details */
+#if defined(DAC2)
+#define LL_OPAMP_INPUT_NONINVERT_DAC2        OPAMP_CSR_VPSEL_1     /*!< OPAMP non inverting input connected internally to DAC2 channel
+                                                                        (DAC3 only for OPAMP2)*/
+#endif /* DAC2 */
 
 /**
   * @}
@@ -516,6 +520,7 @@ __STATIC_INLINE uint32_t LL_OPAMP_GetPowerMode(OPAMP_TypeDef *OPAMPx)
   * @param  InputNonInverting This parameter can be one of the following values:
   *         @arg @ref LL_OPAMP_INPUT_NONINVERT_IO0
   *         @arg @ref LL_OPAMP_INPUT_NONINVERT_DAC
+  *         @arg @ref LL_OPAMP_INPUT_NONINVERT_DAC2 (Only for OPAMP2)
   * @retval None
   */
 __STATIC_INLINE void LL_OPAMP_SetInputNonInverting(OPAMP_TypeDef *OPAMPx, uint32_t InputNonInverting)
@@ -530,6 +535,7 @@ __STATIC_INLINE void LL_OPAMP_SetInputNonInverting(OPAMP_TypeDef *OPAMPx, uint32
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_OPAMP_INPUT_NONINVERT_IO0
   *         @arg @ref LL_OPAMP_INPUT_NONINVERT_DAC
+  *         @arg @ref LL_OPAMP_INPUT_NONINVERT_DAC2 (Only for OPAMP2)
   */
 __STATIC_INLINE uint32_t LL_OPAMP_GetInputNonInverting(OPAMP_TypeDef *OPAMPx)
 {

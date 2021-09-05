@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,7 +21,7 @@
 struct mcu_pwm
 {
     struct rt_device_pwm pwm_device;
-    
+
     nrfx_pwm_t *pwm_handle;
     nrf_pwm_values_individual_t m_demo1_seq_values;
     nrf_pwm_sequence_t m_demo1_seq;
