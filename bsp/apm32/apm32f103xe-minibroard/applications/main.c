@@ -12,12 +12,12 @@
 #include <rtdevice.h>
 #include <board.h>
 
-/* defined the LED0 pin: PC0 */
+/* defined the LED2 pin: PE6 */
 #define LED2_PIN    GET_PIN(E, 6)
 
 int main(void)
 {
-    /* set LED0 pin mode to output */
+    /* set LED2 pin mode to output */
     rt_pin_mode(LED2_PIN, PIN_MODE_OUTPUT);
 
     while (1)
