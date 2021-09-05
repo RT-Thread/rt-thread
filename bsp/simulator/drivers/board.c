@@ -84,7 +84,7 @@ void rt_hw_exit(void)
 #if defined(RT_USING_FINSH)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt - thread);
-FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, __cmd_quit, exit rt-thread);
+MSH_CMD_EXPORT_ALIAS(rt_hw_exit, quit, exit rt-thread);
 #endif /* RT_USING_FINSH */
 
 /**

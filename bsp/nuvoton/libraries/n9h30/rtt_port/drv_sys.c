@@ -271,7 +271,6 @@ E_SYS_USB0_ID nu_sys_usb0_role(void)
 #ifdef RT_USING_FINSH
 
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_cpu_reset, reset, restart the system);
 
 #ifdef FINSH_USING_MSH
 int cmd_reset(int argc, char **argv)
@@ -279,15 +278,14 @@ int cmd_reset(int argc, char **argv)
     rt_hw_cpu_reset();
     return 0;
 }
+MSH_CMD_EXPORT_ALIAS(cmd_reset, reset, restart the system);
 
 int cmd_shutdown(int argc, char **argv)
 {
     rt_hw_cpu_shutdown();
     return 0;
 }
-
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_reset, __cmd_reset, restart the system.);
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_shutdown, __cmd_shutdown, shutdown the system.);
+MSH_CMD_EXPORT_ALIAS(cmd_shutdown, shutdown, shutdown the system);
 
 int nu_clocks(int argc, char **argv)
 {
