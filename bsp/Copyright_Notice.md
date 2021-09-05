@@ -697,6 +697,16 @@ Path:
 - bsp/swm320/libraries/CMSIS
 - bsp/swm320-lq100/Libraries/CMSIS/CoreSupport
 
+### tae32f5300
+
+License: BSD 3-Clause
+
+Copyright (c) 2020 Tai-Action.
+
+Path:
+
+- bsp/tae32f5300/Libraries/TAE32F53xx_StdPeriph_Driver
+
 ### tm4c
 
 License: unknown-license-reference(bsd-new)
@@ -747,4 +757,3 @@ Copyright: Copyright (c) 2014 - 2020 Xilinx, Inc.
 Path:
 
 - bsp/zynqmp-r5-axu4ev/drivers/Zynq_HAL_Driver
-
