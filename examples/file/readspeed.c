@@ -81,5 +81,5 @@ static void cmd_readspeed(int argc, char *argv[])
     }
     readspeed(filename, block_size);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_readspeed, __cmd_readspeed, test file system read speed);
+MSH_CMD_EXPORT_ALIAS(cmd_readspeed, readspeed, test file system read speed);
 #endif /* RT_USING_FINSH */

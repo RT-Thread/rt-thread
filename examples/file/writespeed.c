@@ -92,5 +92,5 @@ static void cmd_writespeed(int argc, char *argv[])
     }
     writespeed(filename, length, block_size);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_writespeed, __cmd_writespeed, test file system write speed);
+MSH_CMD_EXPORT_ALIAS(cmd_writespeed, writespeed, test file system write speed);
 #endif /* RT_USING_FINSH */
