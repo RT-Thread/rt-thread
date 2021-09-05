@@ -162,5 +162,5 @@ static void cmd_readwrite(int argc, char *argv[])
     }
     readwrite(filename);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_readwrite, __cmd_readwrite, perform file read and write test);
+MSH_CMD_EXPORT_ALIAS(cmd_readwrite, readwrite, perform file read and write test);
 #endif /* RT_USING_FINSH */
