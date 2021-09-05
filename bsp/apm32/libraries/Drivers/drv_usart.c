@@ -14,8 +14,8 @@
 
 #ifdef RT_USING_SERIAL
 #if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2)
-#error "Please define at least one BSP_USING_UARTx"
-/* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
+    #error "Please define at least one BSP_USING_UARTx"
+    /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
 /* stm32 config class */
@@ -40,18 +40,22 @@ enum
 static struct apm32_usart usart_config[] =
 {
 #ifdef BSP_USING_UART1
-        { "uart1",
+    {
+        "uart1",
         USART1,
-        USART1_IRQn, },
+        USART1_IRQn,
+    },
 #endif
 #ifdef BSP_USING_UART2
-        { "uart2",
+    {
+        "uart2",
         USART2,
-        USART2_IRQn, },
+        USART2_IRQn,
+    },
 #endif
 };
 
-static rt_err_t apm32_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     USART_Config_T USART_ConfigStruct;
     RT_ASSERT(serial != RT_NULL);
@@ -60,7 +64,7 @@ static rt_err_t apm32_configure(struct rt_serial_device *serial, struct serial_c
     struct apm32_usart *usart_instance = (struct apm32_usart *) serial->parent.user_data;
 
     apm32_usart_init();
-    
+
     USART_ConfigStruct.baudRate = cfg->baud_rate;;
     USART_ConfigStruct.hardwareFlow = USART_HARDWARE_FLOW_NONE;
     USART_ConfigStruct.mode = USART_MODE_TX_RX;
@@ -113,14 +117,14 @@ static rt_err_t apm32_configure(struct rt_serial_device *serial, struct serial_c
 
     USART_Config(usart_instance->usartx, &USART_ConfigStruct);
     USART_Enable(usart_instance->usartx);
-    
+
     return RT_EOK;
 }
 
-static rt_err_t apm32_control(struct rt_serial_device *serial, int cmd, void *arg)
+static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct apm32_usart *usart;
-    
+
     RT_ASSERT(serial != RT_NULL);
 
     usart = (struct apm32_usart *) serial->parent.user_data;
@@ -130,10 +134,10 @@ static rt_err_t apm32_control(struct rt_serial_device *serial, int cmd, void *ar
     {
     /* disable interrupt */
     case RT_DEVICE_CTRL_CLR_INT:
-        
+
         /* disable rx irq */
         NVIC_DisableIRQRequest(usart->irq_type);
-    
+
         /* disable interrupt */
         USART_DisableInterrupt(usart->usartx, USART_INT_RXBNE);
 
@@ -143,7 +147,7 @@ static rt_err_t apm32_control(struct rt_serial_device *serial, int cmd, void *ar
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         NVIC_EnableIRQRequest(usart->irq_type, 1, 0);
-    
+
         /* enable interrupt */
         USART_EnableInterrupt(usart->usartx, USART_INT_RXBNE);
         break;
@@ -152,29 +156,29 @@ static rt_err_t apm32_control(struct rt_serial_device *serial, int cmd, void *ar
     return RT_EOK;
 }
 
-static int apm32_putc(struct rt_serial_device *serial, char c)
+static int _uart_putc(struct rt_serial_device *serial, char c)
 {
     struct apm32_usart *usart;
     RT_ASSERT(serial != RT_NULL);
 
     usart = (struct apm32_usart *) serial->parent.user_data;
-    
+
     RT_ASSERT(usart != RT_NULL);
-    
+
     USART_TxData(usart->usartx, (uint8_t) c);
-    
+
     while (USART_ReadStatusFlag(usart->usartx, USART_FLAG_TXC) == RESET);
-    
+
     return 1;
 }
 
-static int apm32_getc(struct rt_serial_device *serial)
+static int _uart_getc(struct rt_serial_device *serial)
 {
     int ch;
     struct apm32_usart *usart;
     RT_ASSERT(serial != RT_NULL);
     usart = (struct apm32_usart *) serial->parent.user_data;
-    
+
     RT_ASSERT(usart != RT_NULL);
 
     ch = -1;
@@ -197,7 +201,7 @@ static void usart_isr(struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(serial != RT_NULL);
     usart = (struct apm32_usart *) serial->parent.user_data;
-    
+
     RT_ASSERT(usart != RT_NULL);
 
     /* UART in mode Receiver -------------------------------------------------*/
@@ -211,15 +215,18 @@ static void usart_isr(struct rt_serial_device *serial)
 
     else
     {
-        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_CTS) != RESET) {
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_CTS) != RESET)
+        {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_CTS);
         }
 
-        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_LBD) != RESET) {
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_LBD) != RESET)
+        {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_LBD);
         }
 
-        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_TXBE) != RESET) {
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_TXBE) != RESET)
+        {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_TXBE);
         }
     }
@@ -258,10 +265,10 @@ void USART2_IRQHandler(void)
 
 static const struct rt_uart_ops apm32_usart_ops =
 {
-    .configure = apm32_configure,
-    .control = apm32_control,
-    .putc = apm32_putc,
-    .getc = apm32_getc,
+    .configure = _uart_configure,
+    .control = _uart_control,
+    .putc = _uart_putc,
+    .getc = _uart_getc,
     .dma_transmit = RT_NULL
 };
 
@@ -274,15 +281,16 @@ int rt_hw_usart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     rt_err_t result = 0;
 
-    for (index = 0; index < obj_num; index++) {
+    for (index = 0; index < obj_num; index++)
+    {
         usart_config[index].serial.ops = &apm32_usart_ops;
         usart_config[index].serial.config = config;
 
         /* register USART device */
         result = rt_hw_serial_register(&usart_config[index].serial,
-                usart_config[index].name,
-                RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX
-                        | RT_DEVICE_FLAG_INT_TX, &usart_config[index]);
+                                       usart_config[index].name,
+                                       RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX
+                                       | RT_DEVICE_FLAG_INT_TX, &usart_config[index]);
         RT_ASSERT(result == RT_EOK);
     }
 
