@@ -19,12 +19,12 @@
 
 #define RT_USING_CPP_EXCEPTION
 
-inline void throw_system_error(int err, const char* what_msg)
+inline void throw_system_error(int err, const char *what_msg)
 {
 #ifdef RT_USING_CPP_EXCEPTION
     throw std::system_error(std::error_code(err, std::system_category()), what_msg);
 #else
-   (void)err;
+    (void)err;
     (void)what_msg;
     ::abort();
 #endif
@@ -47,13 +47,13 @@ public:
 class real_time_clock
 {
 public:
-      typedef std::chrono::nanoseconds 				duration;
-      typedef duration::rep	  				rep;
-      typedef duration::period	  				period;
-      typedef std::chrono::time_point<real_time_clock, duration> 	time_point;
+    typedef std::chrono::nanoseconds duration;
+    typedef duration::rep rep;
+    typedef duration::period period;
+    typedef std::chrono::time_point<real_time_clock, duration> time_point;
 
-      static constexpr bool is_steady = true;
+    static constexpr bool is_steady = true;
 
-      static time_point
-      now() noexcept;
+    static time_point
+    now() noexcept;
 };

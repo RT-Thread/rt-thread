@@ -82,13 +82,13 @@ namespace std
         _m_thr = id();
     }
 
-// TODO: not yet actually implemented.
-// The standard states that the returned value should only be considered a hint.
-unsigned thread::hardware_concurrency() noexcept 
-{
-    int __n = _RT_NPROCS;
-    if (__n < 0)
-        __n = 0;
-    return __n;
-        }
+    // TODO: not yet actually implemented.
+    // The standard states that the returned value should only be considered a hint.
+    unsigned thread::hardware_concurrency() noexcept 
+    {   
+        int __n = _RT_NPROCS;
+        if (__n < 0)
+            __n = 0;
+        return __n;
+    }
 }

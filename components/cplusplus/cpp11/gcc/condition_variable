@@ -4,8 +4,6 @@
 #error "C++ version lower than C++11"
 #endif
 
-//#if defined(RT_USING_LIBC) && defined(RT_USING_PTHREADS)
-
 #include <pthread.h>
 
 #include <system_error>
@@ -17,24 +15,24 @@
 #include "__utils.h"
 #include "mutex"
 
-#define  rt_cpp_cond_var pthread_cond_t 
+#define rt_cpp_cond_var pthread_cond_t
 
 namespace std
 {
 
-    enum class cv_status 
+    enum class cv_status
     {
         no_timeout,
         timeout
     };
 
-    class condition_variable 
+    class condition_variable
     {
     public:
-        typedef rt_cpp_cond_var* native_handle_type;
+        typedef rt_cpp_cond_var *native_handle_type;
 
-        condition_variable(const condition_variable&) = delete;
-        condition_variable& operator=(const condition_variable&) = delete;
+        condition_variable(const condition_variable &) = delete;
+        condition_variable &operator=(const condition_variable &) = delete;
 
         condition_variable() = default;
 
@@ -43,8 +41,8 @@ namespace std
             pthread_cond_destroy(&_m_cond);
         }
 
-        void wait(unique_lock<mutex>& lock);
-    
+        void wait(unique_lock<mutex> &lock);
+
         void notify_one() noexcept
         {
             pthread_cond_signal(&_m_cond);
@@ -54,26 +52,26 @@ namespace std
         {
             pthread_cond_broadcast(&_m_cond);
         }
-        
+
         template <class Predicate>
-        void wait(unique_lock<mutex>& lock, Predicate pred)
+        void wait(unique_lock<mutex> &lock, Predicate pred)
         {
             while (!pred())
                 wait(lock);
         }
 
         template <class Clock, class Duration>
-        cv_status wait_until(unique_lock<mutex>& lock,
-                            const chrono::time_point<Clock, Duration>& abs_time)
+        cv_status wait_until(unique_lock<mutex> &lock,
+                             const chrono::time_point<Clock, Duration> &abs_time)
         {
             if (!lock.owns_lock())
-                throw_system_error((int)errc::operation_not_permitted, 
-                                    "condition_variable::wailt_until: waiting on unlocked lock");
+                throw_system_error((int)errc::operation_not_permitted,
+                                   "condition_variable::wailt_until: waiting on unlocked lock");
             auto secs = chrono::time_point_cast<chrono::seconds>(abs_time);
             auto nano_secs = chrono::duration_cast<chrono::nanoseconds>(abs_time - secs);
 
-            struct timespec c_abs_time = { static_cast<time_t>(secs.time_since_epoch().count()),
-                                           static_cast<long>(nano_secs.count()) };
+            struct timespec c_abs_time = {static_cast<time_t>(secs.time_since_epoch().count()),
+                                          static_cast<long>(nano_secs.count())};
 
             pthread_cond_timedwait(&_m_cond, lock.mutex()->native_handle(), &c_abs_time);
 
@@ -81,9 +79,9 @@ namespace std
         }
 
         template <class Clock, class Duration, class Predicate>
-            bool wait_until(unique_lock<mutex>& lock,
-                            const chrono::time_point<Clock, Duration>& abs_time,
-                            Predicate pred)
+        bool wait_until(unique_lock<mutex> &lock,
+                        const chrono::time_point<Clock, Duration> &abs_time,
+                        Predicate pred)
         {
             while (!pred())
                 if (wait_until(lock, abs_time) == cv_status::timeout)
@@ -92,22 +90,20 @@ namespace std
         }
 
         template <class Rep, class Period>
-        cv_status wait_for(unique_lock<mutex>& lock,
-                            const chrono::duration<Rep, Period>& rel_time)
+        cv_status wait_for(unique_lock<mutex> &lock,
+                           const chrono::duration<Rep, Period> &rel_time)
         {
             return wait_until(lock, real_time_clock::now() + rel_time);
         }
-                            
 
         template <class Rep, class Period, class Predicate>
-        bool wait_for(unique_lock<mutex>& lock,
-                    const chrono::duration<Rep, Period>& rel_time,
-                    Predicate pred)
+        bool wait_for(unique_lock<mutex> &lock,
+                      const chrono::duration<Rep, Period> &rel_time,
+                      Predicate pred)
         {
             return wait_until(lock, real_time_clock::now() + rel_time, std::move(pred));
         }
-    
-        
+
         native_handle_type native_handle()
         {
             return &_m_cond;
@@ -118,36 +114,40 @@ namespace std
     };
 
     // Lockable is only required to have `lock()` and `unlock()`
-    class condition_variable_any 
+    class condition_variable_any
     {
     private:
         condition_variable _m_cond;
         shared_ptr<mutex> _m_mtx;
 
         // so that Lockable automatically unlocks when waiting and locks after waiting
-        template<class Lockable>
+        template <class Lockable>
         struct unlocker
         {
-            Lockable& _m_lock;
+            Lockable &_m_lock;
 
-            explicit unlocker(Lockable& lk)
+            explicit unlocker(Lockable &lk)
                 : _m_lock(lk)
-            { _m_lock.unlock(); }
+            {
+                _m_lock.unlock();
+            }
 
             ~unlocker()
-            { _m_lock.lock(); }
+            {
+                _m_lock.lock();
+            }
 
-            unlocker(const unlocker&) = delete;
-            unlocker& operator=(const unlocker&) = delete;
-        };         
+            unlocker(const unlocker &) = delete;
+            unlocker &operator=(const unlocker &) = delete;
+        };
 
     public:
-        condition_variable_any() : _m_mtx(std::make_shared<mutex>()) { }
+        condition_variable_any() : _m_mtx(std::make_shared<mutex>()) {}
         ~condition_variable_any() = default;
 
-        condition_variable_any(const condition_variable_any&) = delete;
-        condition_variable_any& operator=(const condition_variable_any&) = delete;
-    
+        condition_variable_any(const condition_variable_any &) = delete;
+        condition_variable_any &operator=(const condition_variable_any &) = delete;
+
         void notify_one() noexcept
         {
             lock_guard<mutex> lk(*_m_mtx);
@@ -161,7 +161,7 @@ namespace std
         }
 
         template <class Lock>
-        void wait(Lock& lock)
+        void wait(Lock &lock)
         {
             shared_ptr<mutex> mut = _m_mtx;
             unique_lock<mutex> lk(*mut);
@@ -172,15 +172,15 @@ namespace std
         } // mut.unlock(); lock.lock();
 
         template <class Lock, class Predicate>
-        void wait(Lock& lock, Predicate pred)
+        void wait(Lock &lock, Predicate pred)
         {
             while (!pred())
                 wait(lock);
         }
 
         template <class Lock, class Clock, class Duration>
-        cv_status wait_until(Lock& lock,
-                            const chrono::time_point<Clock, Duration>& abs_time)
+        cv_status wait_until(Lock &lock,
+                             const chrono::time_point<Clock, Duration> &abs_time)
         {
             shared_ptr<mutex> mut = _m_mtx;
             unique_lock<mutex> lk(*mut);
@@ -191,8 +191,8 @@ namespace std
         }
 
         template <class Lock, class Clock, class Duration, class Predicate>
-        bool wait_until(Lock& lock,
-                        const chrono::time_point<Clock, Duration>& abs_time,
+        bool wait_until(Lock &lock,
+                        const chrono::time_point<Clock, Duration> &abs_time,
                         Predicate pred)
         {
             while (!pred())
@@ -202,35 +202,21 @@ namespace std
         }
 
         template <class Lock, class Rep, class Period>
-        cv_status wait_for(Lock& lock,
-                            const chrono::duration<Rep, Period>& rel_time)
+        cv_status wait_for(Lock &lock,
+                           const chrono::duration<Rep, Period> &rel_time)
         {
             return wait_until(lock, real_time_clock::now() + rel_time);
         }
 
         template <class Lock, class Rep, class Period, class Predicate>
-        bool wait_for(Lock& lock,
-                    const chrono::duration<Rep, Period>& rel_time,
-                    Predicate pred)
+        bool wait_for(Lock &lock,
+                      const chrono::duration<Rep, Period> &rel_time,
+                      Predicate pred)
         {
             return wait_until(lock, real_time_clock::now() + rel_time, std::move(pred));
         }
+    };
 
-        
-};
- 
-    void notify_all_at_thread_exit(condition_variable& cond, unique_lock<mutex> lk);
- 
-    
+    void notify_all_at_thread_exit(condition_variable &cond, unique_lock<mutex> lk);
+
 } // namespace std
-
-
-
-
-
-
-
-
-
-
-//#endif // (RT_USING_LIBC) && (RT_USING_PTHREADS)

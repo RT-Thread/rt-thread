@@ -1,6 +1,24 @@
 # cpp 11 support for rt-thread
 
-这是 RT-Thread 中的 c++ 11 组件。 为了支持c++语言，此组件实现一个基本的环境，比如 new/delete 操作符。
+## 特性
+
+下面是 RT-Thread 支持的 C++ 11 特性。
+
+### 类
+
+RT-Thread c++ 11 支持的类.
+
+### gcc
+
+- tick_clock
+- real_time_clock
+
+### armclang
+
+- arm_tpl_mutex_type
+- arm_tpl_mutex_struct
+- arm_tpl_thread_struct
+- arm_tpl_cv
 
 ## 如何使用
 

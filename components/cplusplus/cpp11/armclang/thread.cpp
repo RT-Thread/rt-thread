@@ -13,11 +13,6 @@
 #include <cstdio>
 #include <pthread.h>
 
-extern "C" int pthread_key_create(pthread_key_t *key, void (*destructor)(void*));
-extern "C" int pthread_key_delete(pthread_key_t key);
-extern "C" void *pthread_getspecific(pthread_key_t key);
-extern "C" int pthread_setspecific(pthread_key_t key, const void *value);
-
 extern "C" int __ARM_TPL_thread_create(__ARM_TPL_thread_t *__t,
                                        void *(*__func)(void *),
                                        void *__arg)
@@ -78,15 +73,7 @@ extern "C" void __ARM_TPL_thread_yield()
 extern "C" int __ARM_TPL_thread_nanosleep(const __ARM_TPL_timespec_t *__req,
         __ARM_TPL_timespec_t *__rem)
 {
-    rt_tick_t tick = __req->tv_sec * RT_TICK_PER_SECOND + (__req->tv_nsec * RT_TICK_PER_SECOND) / 1000000000;
-    rt_thread_delay(tick);
-    // FIXME
-    if (__rem != nullptr)
-    {
-        __rem->tv_sec = 0;
-        __rem->tv_nsec = 0;
-    }
-    return 0;
+    return nanosleep(__req, rem);
 }
 
 extern "C" unsigned __ARM_TPL_thread_hw_concurrency()

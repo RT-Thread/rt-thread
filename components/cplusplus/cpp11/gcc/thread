@@ -235,11 +235,5 @@ namespace std
                 sleep_for(abs_time - now);
         }
 
-        
     }
-
-    
-
 }
-
-//#endif // (RT_USING_LIBC) && (RT_USING_PTHREADS)

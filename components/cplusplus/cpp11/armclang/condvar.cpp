@@ -59,7 +59,7 @@ void arm_tpl_cv::wait(rt_mutex_t lock, bool recursive)
 
 int arm_tpl_cv::timedwait(rt_mutex_t lock, bool recursive, unsigned int timeout_ms)
 {
-    int toBeReturned = 0;
+    int result = 0;
     while (rt_mutex_take(x, ARM_TPL_MAX_DELAY) != 0);
     rt_sem_release(s);
     rt_mutex_release(x);
@@ -73,9 +73,9 @@ int arm_tpl_cv::timedwait(rt_mutex_t lock, bool recursive, unsigned int timeout_
         if (rt_sem_take(h, 0) != 0)
         {
             if (rt_sem_take(s, 0) != 0)
-                toBeReturned = -1;
+                result = -1;
             else
-                toBeReturned = 1;
+                result = 1;
         }
         rt_mutex_release(x);
     }
@@ -83,7 +83,7 @@ int arm_tpl_cv::timedwait(rt_mutex_t lock, bool recursive, unsigned int timeout_
         while (rt_mutex_take(lock, ARM_TPL_MAX_DELAY) != 0);
     else
         while (rt_mutex_take(lock, ARM_TPL_MAX_DELAY) != 0);
-    return toBeReturned;
+    return result;
 }
 
 void arm_tpl_cv::signal()
@@ -133,8 +133,7 @@ extern "C" int __ARM_TPL_condvar_wait(__ARM_TPL_condvar_t *__cv, __ARM_TPL_mutex
     return 0;
 }
 
-extern "C"
-int __ARM_TPL_condvar_timedwait(__ARM_TPL_condvar_t *__cv,
+extern "C" int __ARM_TPL_condvar_timedwait(__ARM_TPL_condvar_t *__cv,
                                 __ARM_TPL_mutex_t *__m,
                                 __ARM_TPL_timespec_t *__ts)
 {

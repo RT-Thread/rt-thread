@@ -1,7 +1,24 @@
 # C++ 11 support for RT-Thread
 
-This is the C++ 11 component in RT-Thread RTOS. In order to support C++ language, this component
-implement a basic environment, such as new/delete operators.
+## Features
+
+Here are some features about rt-thread c++11
+
+### class
+
+RT-Thread support class list.
+
+### gcc
+
+- tick_clock
+- real_time_clock
+
+### armclang
+
+- arm_tpl_mutex_type
+- arm_tpl_mutex_struct
+- arm_tpl_thread_struct
+- arm_tpl_cv
 
 ## How To Use
 

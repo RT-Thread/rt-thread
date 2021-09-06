@@ -12,10 +12,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-//
-// override gcc builtin atomic function for std::atomic<int64_t>, std::atomic<uint64_t>
-// @see https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
-//
+/*
+* override gcc builtin atomic function for std::atomic<int64_t>, std::atomic<uint64_t>
+* @see https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
+*/
 uint64_t __atomic_load_8(volatile void *ptr, int memorder)
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
