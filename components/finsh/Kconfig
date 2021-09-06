@@ -11,6 +11,10 @@ config RT_USING_MSH
 
 if RT_USING_MSH
 
+    config FINSH_USING_MSH
+        bool
+        default y
+
     config FINSH_THREAD_NAME
         string "The msh thread name"
         default "tshell"
