@@ -5,12 +5,12 @@
  *
  * Change Logs:
  * Date           Author          Notes
- * 2021-09-2      lizhengyang     first version
+ * 2021-09-02      lizhengyang     first version
  */
-#include "hc32_ddl.h"
+#include "board.h"
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "drv_gpio.h"
+
 
 /* defined the LED1 pin: PE0 */
 #define LED1_PIN                 GET_PIN(E,0)

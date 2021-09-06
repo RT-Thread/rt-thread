@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author          Notes
- * 2021-09-2      lizhengyang     first version
+ * 2021-09-02      lizhengyang     first version
  */
 #ifndef __DRV_GPIO_H__
 #define __DRV_GPIO_H__
@@ -146,6 +146,5 @@
 #endif /* EXINT15_IRQ_CONFIG */
 
 #endif
-
-extern void Led_Init(void);
 #endif
+
