@@ -2,23 +2,17 @@
 
 ## Features
 
-Here are some features about rt-thread c++11
+Here are some features about rt-thread c++11 threading futures.
 
-### class
+- Atomic.
+- Conditional variables.
 
-RT-Thread support class list.
+- Clocks.
+- Future.
+- Mutexes.
+- Threads.
+- TLS.
 
-### gcc
-
-- tick_clock
-- real_time_clock
-
-### armclang
-
-- arm_tpl_mutex_type
-- arm_tpl_mutex_struct
-- arm_tpl_thread_struct
-- arm_tpl_cv
 
 ## How To Use
 

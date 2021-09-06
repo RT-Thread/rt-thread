@@ -2,23 +2,16 @@
 
 ## 特性
 
-下面是 RT-Thread 支持的 C++ 11 特性。
+下面是 RT-Thread 支持的 C++ 11 线程特性。
 
-### 类
+- Atomic.
+- Conditional variables.
 
-RT-Thread c++ 11 支持的类.
-
-### gcc
-
-- tick_clock
-- real_time_clock
-
-### armclang
-
-- arm_tpl_mutex_type
-- arm_tpl_mutex_struct
-- arm_tpl_thread_struct
-- arm_tpl_cv
+- Clocks.
+- Future.
+- Mutexes.
+- Threads.
+- TLS.
 
 ## 如何使用
 
