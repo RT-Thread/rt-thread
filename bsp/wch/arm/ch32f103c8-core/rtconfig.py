@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m0plus -mthumb -ffunction-sections -fdata-sections'
+    DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
@@ -114,7 +114,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --no_clustering'
     CFLAGS += ' --no_scheduling'
     CFLAGS += ' --endian=little'
-    CFLAGS += ' --cpu=Cortex-M0'
+    CFLAGS += ' --cpu=Cortex-M3'
     CFLAGS += ' -e'
     CFLAGS += ' --fpu=None'
     CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
@@ -124,7 +124,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -s+'
     AFLAGS += ' -w+'
     AFLAGS += ' -r'
-    AFLAGS += ' --cpu Cortex-M0'
+    AFLAGS += ' --cpu Cortex-M3'
     AFLAGS += ' --fpu None'
     AFLAGS += ' -S'
 
