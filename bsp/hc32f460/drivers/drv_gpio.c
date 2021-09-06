@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author          Notes
- * 2021-09-2      lizhengyang     first version
+ * 2021-09-02      lizhengyang     first version
  */
 
 #include <rtthread.h>
@@ -484,5 +484,5 @@ int rt_hw_pin_init(void)
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 #endif  /* RT_USING_PIN */
-#include "drv_gpio.h"
+
 

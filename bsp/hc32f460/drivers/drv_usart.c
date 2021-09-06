@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author          Notes
- * 2021-09-2      lizhengyang     first version
+ * 2021-09-02      lizhengyang     first version
  */
 #include <rtdevice.h>
 #include <rthw.h>
