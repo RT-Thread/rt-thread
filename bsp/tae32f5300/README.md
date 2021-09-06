@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-![image-20210905115438031](.\figures\开发板图片.png)
+![image-20210905115438031](.\figures\TAE32_EVBorad.png)
 
 TAE32F5300_EVAL_BOARD 是珠海泰为官方推出的开发板，搭载 TAE32F5300 芯片，基于 ARM Cortex-M3 内核，最高主频 90 MHz，内置硬件加速器（ERPU），具有丰富的板载资源，包括 can 收发电路、485 收发电路，音频输入接口、USB 接口、LED、按键等。
 

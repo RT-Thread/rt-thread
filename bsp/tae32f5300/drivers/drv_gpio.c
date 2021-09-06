@@ -32,7 +32,7 @@ struct pin_index
     uint32_t pin;
 };
 
-static const struct pin_index tae32_pin_map[] =
+static const struct pin_index _pin_map[] =
 {
     TAE32_PIN_DEFAULT,
     TAE32_PIN_DEFAULT,
@@ -91,9 +91,9 @@ const struct pin_index *get_pin(uint8_t pin)
 {
     const struct pin_index *index;
 
-    if (pin < ITEM_NUM(tae32_pin_map))
+    if (pin < ITEM_NUM(_pin_map))
     {
-        index = &tae32_pin_map[pin];
+        index = &_pin_map[pin];
         if (index->gpio == 0)
             index = RT_NULL;
     }
@@ -104,7 +104,7 @@ const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
-void tae32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
     const struct pin_index *index;
 
@@ -123,7 +123,7 @@ void tae32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-int tae32_pin_read(rt_device_t dev, rt_base_t pin)
+int _pin_read(rt_device_t dev, rt_base_t pin)
 {
     int value;
     const struct pin_index *index;
@@ -145,7 +145,7 @@ int tae32_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-void tae32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     const struct pin_index *index;
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -192,31 +192,31 @@ void tae32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     LL_GPIO_Init(index->gpio, &GPIO_InitStructure);
 }
 
-rt_err_t tae32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
+rt_err_t _pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                               rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
     return -RT_ERROR;
 }
 
-rt_err_t tae32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t _pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
     return -RT_ERROR;
 }
 
-rt_err_t tae32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
+rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin,
                               rt_uint32_t enabled)
 {
     return -RT_ERROR;
 }
 
-const static struct rt_pin_ops _tae32_pin_ops =
+const static struct rt_pin_ops _pin_ops =
 {
-    tae32_pin_mode,
-    tae32_pin_write,
-    tae32_pin_read,
-    tae32_pin_attach_irq,
-    tae32_pin_detach_irq,
-    tae32_pin_irq_enable,
+    _pin_mode,
+    _pin_write,
+    _pin_read,
+    _pin_attach_irq,
+    _pin_detach_irq,
+    _pin_irq_enable,
     RT_NULL,
 };
 
@@ -224,7 +224,7 @@ int rt_hw_pin_init(void)
 {
     int result;
 
-    result = rt_device_pin_register("pin", &_tae32_pin_ops, RT_NULL);
+    result = rt_device_pin_register("pin", &_pin_ops, RT_NULL);
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);

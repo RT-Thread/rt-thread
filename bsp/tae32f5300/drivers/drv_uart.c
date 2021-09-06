@@ -34,7 +34,7 @@ static void uart_init(void)
     __LL_UART_RxDatAvl_INT_En(UART0);
 }
 
-static rt_err_t tae32_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct tae32_uart *uart;
     UART_InitTypeDef UART_InitStructure;
@@ -56,7 +56,7 @@ static rt_err_t tae32_uart_configure(struct rt_serial_device *serial, struct ser
     return RT_EOK;
 }
 
-static rt_err_t tae32_uart_control(struct rt_serial_device *serial, int cmd, void *arg)
+static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct tae32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
@@ -78,7 +78,7 @@ static rt_err_t tae32_uart_control(struct rt_serial_device *serial, int cmd, voi
     return RT_EOK;
 }
 
-static int tae32_uart_putc(struct rt_serial_device *serial, char c)
+static int _uart_putc(struct rt_serial_device *serial, char c)
 {
     struct tae32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
@@ -88,7 +88,7 @@ static int tae32_uart_putc(struct rt_serial_device *serial, char c)
     return 1;
 }
 
-static int tae32_uart_getc(struct rt_serial_device *serial)
+static int _uart_getc(struct rt_serial_device *serial)
 {
     int ch;
     struct tae32_uart *uart;
@@ -106,12 +106,12 @@ static int tae32_uart_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-static const struct rt_uart_ops tae32_uart_ops =
+static const struct rt_uart_ops _uart_ops =
 {
-    tae32_uart_configure,
-    tae32_uart_control,
-    tae32_uart_putc,
-    tae32_uart_getc,
+    _uart_configure,
+    _uart_control,
+    _uart_putc,
+    _uart_getc,
 };
 
 #if defined(BSP_USING_UART0)
@@ -169,7 +169,7 @@ int rt_hw_uart_init(void)
     uart->uart = UART0;
     uart->irq = UART0_IRQn;
     config.baud_rate = BAUD_RATE_115200;
-    serial0.ops = &tae32_uart_ops;
+    serial0.ops = &_uart_ops;
     serial0.config = config;
     uart_init();
 
@@ -184,7 +184,7 @@ int rt_hw_uart_init(void)
     uart->uart = UART1;
     uart->irq = UART1_IRQn;
     config.baud_rate = BAUD_RATE_115200;
-    serial2.ops = &tae32_uart_ops;
+    serial2.ops = &_uart_ops;
     serial2.config = config;
     /* register UART1 device */
     rt_hw_serial_register(&serial1, "uart1",

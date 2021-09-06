@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-8-29      qinweizhong  add support for tae32
+ * 2021-09-05      qinweizhong  add support for tae32
  */
 #include "rtthread.h"
 #include "board.h"
@@ -23,7 +23,7 @@ int main(void)
         rt_thread_mdelay(500);
         rt_pin_write(LED_PIN, PIN_LOW);
         rt_thread_mdelay(500);
-		
-		rt_kprintf("count %d\r\n",count);
+
+        rt_kprintf("count %d\r\n", count);
     }
 }
