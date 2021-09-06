@@ -31,4 +31,8 @@ config UTEST_SIGNAL_TC
     bool "signal test"
     default n
 
+config UTEST_MUTEX_TC
+    bool "mutex test"
+    default n
+
 endmenu
