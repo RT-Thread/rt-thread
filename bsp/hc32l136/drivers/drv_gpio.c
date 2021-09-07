@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2020, Huada Semiconductor Co., Ltd.
+ * Copyright (C) 2021, Huada Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-8-19     pjq          first version
+ * 2021-08-19     pjq          first version
  */
 
 #include <rtthread.h>
@@ -125,75 +125,7 @@ void Gpio_IRQHandler(uint8_t u8Param)
     rt_interrupt_leave();  
 }
 
-//void PORTA_IRQHandler(void)
-//{
-//    en_gpio_pin_t i;
-//    
-//    rt_interrupt_enter();
-//    for (i=GpioPin0; i<=GpioPin15; i++)
-//    {
-//        if(TRUE == Gpio_GetIrqStatus(GpioPortA, i))
-//        {
-//            Gpio_ClearIrq(GpioPortA, i);
-//            pin_irq_handler(GpioPortA, i);
-//        }
-
-//    }
-//    rt_interrupt_leave();   
-//}
-
-//void PORTB_IRQHandler(void)
-//{
-//    en_gpio_pin_t i;
-//    
-//    rt_interrupt_enter();
-//    for (i=GpioPin0; i<=GpioPin15; i++)
-//    {
-//        if(TRUE == Gpio_GetIrqStatus(GpioPortB, i))
-//        {
-//            Gpio_ClearIrq(GpioPortB, i);
-//            pin_irq_handler(GpioPortB, i);
-//        }
-
-//    }
-//    rt_interrupt_leave();
-//}     
-
-//void PORTC_IRQHandler(void)
-//{
-//    en_gpio_pin_t i;
-//    
-//    rt_interrupt_enter();
-//    for (i=GpioPin0; i<=GpioPin15; i++)
-//    {
-//        if(TRUE == Gpio_GetIrqStatus(GpioPortC, i))
-//        {
-//            Gpio_ClearIrq(GpioPortC, i);
-//            pin_irq_handler(GpioPortC, i);
-//        }
-
-//    }
-//    rt_interrupt_leave();
-//}   
-
-//void PORTD_IRQHandler(void)
-//{
-//    en_gpio_pin_t i;
-//    
-//    rt_interrupt_enter();
-//    for (i=GpioPin0; i<=GpioPin15; i++)
-//    {
-//        if(TRUE == Gpio_GetIrqStatus(GpioPortD, i))
-//        {
-//            Gpio_ClearIrq(GpioPortD, i);
-//            pin_irq_handler(GpioPortD, i);
-//        }
-
-//    }
-//    rt_interrupt_leave();    
-//}   
-
-static void hc32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
     uint8_t  gpio_port;
     uint16_t gpio_pin;
@@ -213,7 +145,7 @@ static void hc32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-static int hc32_pin_read(rt_device_t dev, rt_base_t pin)
+static int _pin_read(rt_device_t dev, rt_base_t pin)
 {
     uint8_t  gpio_port;
     uint16_t gpio_pin;
@@ -236,7 +168,7 @@ static int hc32_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-static void hc32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     uint8_t  gpio_port;
     uint16_t gpio_pin;
@@ -290,7 +222,7 @@ static void hc32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     Gpio_Init((en_gpio_port_t)gpio_port, (en_gpio_pin_t)gpio_pin, &pstcGpioCfg);
 }
 
-static rt_err_t hc32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
+static rt_err_t _pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
@@ -325,7 +257,7 @@ static rt_err_t hc32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t hc32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t _pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -351,7 +283,7 @@ static rt_err_t hc32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t hc32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
 {
     rt_base_t level;
     en_gpio_port_t gpio_port;
@@ -428,21 +360,21 @@ static rt_err_t hc32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
     return RT_EOK;
 }
 
-static const struct rt_pin_ops pin_ops =
+static const struct rt_pin_ops _pin_ops =
 {
-    hc32_pin_mode,
-    hc32_pin_write,
-    hc32_pin_read,
-    hc32_pin_attach_irq,
-    hc32_pin_detach_irq,
-    hc32_pin_irq_enable,
+    _pin_mode,
+    _pin_write,
+    _pin_read,
+    _pin_attach_irq,
+    _pin_detach_irq,
+    _pin_irq_enable,
 };
 
 int rt_hw_pin_init(void)
 {
     Sysctrl_SetPeripheralGate(SysctrlPeripheralGpio, TRUE);
     
-    return rt_device_pin_register("pin", &pin_ops, RT_NULL);
+    return rt_device_pin_register("pin", &_pin_ops, RT_NULL);
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 

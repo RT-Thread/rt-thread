@@ -1,12 +1,11 @@
 /*
- * Copyright (C) 2020, Huada Semiconductor Co., Ltd.
+ * Copyright (C) 2021, Huada Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-10-30     CDT          first version
- * 2021-01-18     CDT          MOdify SRAM_SIZE
+ * 2021-08-19     pjq          first version
  */
 
 #ifndef __BOARD_H__
@@ -35,7 +34,6 @@ extern int __bss_end;
 #endif
 
 #ifdef __ICCARM__
-// Use *.icf ram symbal, to avoid hardcode.
 #define HEAP_END                SRAM_END
 #else
 #define HEAP_END                SRAM_END
