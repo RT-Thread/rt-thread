@@ -8,7 +8,7 @@ config SOC_STM32L432KC
     default y
 
 menu "Onboard Peripheral Drivers"
-	config BSP_USING_STLINK_TO_USART
+    config BSP_USING_STLINK_TO_USART
         bool "Enable STLINK TO USART (uart2)"
         select BSP_USING_UART
         select BSP_USING_UART2
@@ -22,7 +22,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
-	menuconfig BSP_USING_UART
+    menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
         select RT_USING_SERIAL
@@ -36,7 +36,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
         endif
-    
+
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
@@ -63,7 +63,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

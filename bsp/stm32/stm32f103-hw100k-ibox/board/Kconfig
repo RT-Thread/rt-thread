@@ -217,7 +217,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

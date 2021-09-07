@@ -15,7 +15,7 @@ menu "Hardware Drivers Config"
                 bool "Enabel UART 0"
                 default y
             endif
-            
+
         menuconfig BSP_USING_GIC
             bool "Enable GIC"
             select RT_USING_GIC
@@ -69,7 +69,7 @@ menu "Hardware Drivers Config"
                 select RT_USING_ALARM
                 default n
         endif
-        
+
         menuconfig BSP_USING_SDIO
             bool "Enable SDIO"
             select RT_USING_SDIO

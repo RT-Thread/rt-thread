@@ -56,7 +56,7 @@ menu "Hardware Drivers Config"
 
         choice
             prompt "Select FS/HS USB Ports"
- 
+
             config BOARD_USING_HSUSBD
                 select BSP_USING_HSUSBD
                 bool "Enable HSUSBD(over USB2.0)"

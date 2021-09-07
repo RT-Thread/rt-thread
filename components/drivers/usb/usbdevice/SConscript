@@ -8,28 +8,28 @@ core/usbdevice.c
 """)
 
 if GetDepend('RT_USB_DEVICE_CDC'):
-	src += Glob('class/cdc_vcom.c')
-	
+    src += Glob('class/cdc_vcom.c')
+
 if GetDepend('RT_USB_DEVICE_HID'):
     src += Glob('class/hid.c')
 
 if GetDepend('RT_USB_DEVICE_MSTORAGE'):
-	src += Glob('class/mstorage.c')
+    src += Glob('class/mstorage.c')
 
 if GetDepend('RT_USB_DEVICE_ECM'):
-	src += Glob('class/ecm.c')
+    src += Glob('class/ecm.c')
 
 if GetDepend('RT_USB_DEVICE_RNDIS'):
-	src += Glob('class/rndis.c')
+    src += Glob('class/rndis.c')
 
 if GetDepend('RT_USB_DEVICE_WINUSB'):
-	src += Glob('class/winusb.c')
-	
+    src += Glob('class/winusb.c')
+
 if GetDepend('RT_USB_DEVICE_AUDIO_MIC'):
-	src += Glob('class/audio_mic.c')
+    src += Glob('class/audio_mic.c')
 
 if GetDepend('RT_USB_DEVICE_AUDIO_SPEAKER'):
-	src += Glob('class/audio_speaker.c')
+    src += Glob('class/audio_speaker.c')
 
 CPPPATH = [cwd]
 

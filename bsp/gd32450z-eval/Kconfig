@@ -9,7 +9,7 @@ config RTT_DIR
     string
     option env="RTT_ROOT"
     default "../.."
-    
+
 # you can change the RTT_ROOT default: "rt-thread"
 # example : default "F:/git_repositories/rt-thread"
 
@@ -22,14 +22,14 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 config SOC_GD32450Z
-    bool 
+    bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
 
 config BSP_USING_SDRAM
     bool "Using sdram"
-    default y 
+    default y
 
 config BSP_USING_UART0
     bool "using uart0"

@@ -63,7 +63,7 @@ if GetDepend(['RT_USING_AUDIO']):
 
 if GetDepend(['BSP_USING_LTDC']):
     src += ['MIMXRT1064/drivers/']
-    
+
 if GetDepend(["BSP_USING_LCD"]):
     src += ['MIMXRT1064/drivers/fsl_elcdif.c']
 

@@ -31,10 +31,10 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
-        endif   
+        endif
 
     source "../libraries/HAL_Drivers/Kconfig"
-      
+
 endmenu
 
 menu "Board extended module Drivers"

@@ -20,28 +20,28 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SRAM
         select BSP_USING_GFXMMU
         default n
-		
+
     menu "Enable Touch"
-        
+
         config BSP_USING_TOUCH
             bool "Enable Touch drivers"
             select BSP_USING_I2C1
-            default n          
-            if BSP_USING_TOUCH       
+            default n
+            if BSP_USING_TOUCH
                 config BSP_TOUCH_INT_PIN
                     int "Touch interrupt pin"
                     default 34
                     config BSP_I2C1_NAME
                     string "I2C1 Name for Touch"
-                    default i2c1			
+                    default i2c1
             endif
 
         config TOUCH_IC_FT3X67
         bool "FT3X67"
         depends on BSP_USING_TOUCH
         default n
-		
-    endmenu		
+
+    endmenu
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -60,12 +60,12 @@ menu "On-chip Peripheral Drivers"
             bool "Enable UART3"
             default y
         endif
-    
+
     config BSP_USING_SRAM
         bool "Enable SRAM"
         select BSP_USING_FMC
         default n
-		
+
     menuconfig BSP_USING_I2C1
     bool "Enable I2C1 BUS (software simulation)"
         default n
@@ -91,7 +91,7 @@ menu "On-chip Peripheral Drivers"
         bool
         default n
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

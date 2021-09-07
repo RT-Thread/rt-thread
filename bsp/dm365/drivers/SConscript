@@ -12,19 +12,19 @@ davinci_serial.c
 """)
 
 if GetDepend('RT_USING_GPIO_DEVICE'):
-	src += ['gpio.c']
+    src += ['gpio.c']
 
 if GetDepend('RT_USING_I2C_CONTROL'):
-	src += ['i2c-davinci.c']
+    src += ['i2c-davinci.c']
 
 if GetDepend('RT_USING_SDIO_CONTROL'):
-	src += ['mmcsd.c']
+    src += ['mmcsd.c']
 
 if GetDepend('RT_USING_SPI_CONTROL'):
-	src += ['spi-davinci.c']
+    src += ['spi-davinci.c']
 
 if GetDepend('RT_USING_EMAC'):
-	src += ['davinci_emac.c']
+    src += ['davinci_emac.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

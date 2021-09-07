@@ -53,12 +53,12 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
-                
+
             config BSP_UART1_TX_USING_DMA
                 bool "Enable UART1 TX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
-                
+
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default n
@@ -67,7 +67,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART5 RX DMA"
                 depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
                 default n
-                
+
             config BSP_UART5_TX_USING_DMA
                 bool "Enable UART5 TX DMA"
                 depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
@@ -75,11 +75,11 @@ menu "On-chip Peripheral Drivers"
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

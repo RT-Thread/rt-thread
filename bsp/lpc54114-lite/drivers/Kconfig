@@ -1,5 +1,5 @@
 # LPC54110 bsp Config
-menu "LPC54110 Bsp Config" 
+menu "LPC54110 Bsp Config"
 
     menu "Select uart drivers"
         config BSP_USING_UART0

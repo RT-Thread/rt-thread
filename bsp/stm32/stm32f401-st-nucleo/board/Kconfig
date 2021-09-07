@@ -32,7 +32,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
         endif
-		
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
@@ -46,7 +46,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -71,11 +71,11 @@ menu "On-chip Peripheral Drivers"
                 default 16
         endif
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

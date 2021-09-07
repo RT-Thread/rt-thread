@@ -37,7 +37,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
-            
+
             config BSP_USING_LPUART1
                 bool "Enable LPUART1"
                 default n
@@ -66,7 +66,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -75,7 +75,7 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
-        
+
 
     menuconfig BSP_USING_I2C
         bool "Enable I2C BUS"
@@ -88,7 +88,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C1 BUS (software simulation)"
                 default y
                 if BSP_USING_I2C1
-                    comment "Notice: PB8 --> 24; PB9 --> 25" 
+                    comment "Notice: PB8 --> 24; PB9 --> 25"
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 scl pin number"
                         range 1 143
@@ -103,7 +103,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C3 BUS (software simulation)"
                 default y
                 if BSP_USING_I2C3
-                    comment "Notice: PB13 --> 29; PAB6 -->30" 
+                    comment "Notice: PB13 --> 29; PAB6 -->30"
                     config BSP_I2C3_SCL_PIN
                         int "i2c3 scl pin number"
                         range 1 143
@@ -158,7 +158,7 @@ menu "On-chip Peripheral Drivers"
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"
-      
+
 endmenu
 
 menu "Board extended module Drivers"

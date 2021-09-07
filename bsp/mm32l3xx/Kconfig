@@ -20,7 +20,7 @@ source "$PKGS_DIR/Kconfig"
 source "drivers/Kconfig"
 
 config SOC_MM32L373
-    bool 
+    bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

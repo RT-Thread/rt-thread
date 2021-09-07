@@ -22,7 +22,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         default y
         if BSP_USING_UART
-		
+
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default y
@@ -40,7 +40,7 @@ menu "On-chip Peripheral Drivers"
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"
-      
+
 endmenu
 
 menu "Board extended module Drivers"

@@ -70,7 +70,7 @@ menu "PWM Drivers"
     config BSP_USING_AD16C4T0_PWM
         bool "Register pwm0"
         select RT_USING_PWM
-        default n 
+        default n
 
     config BSP_USING_GP16C4T0_PWM
         bool "Register pwm1"

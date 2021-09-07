@@ -28,7 +28,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
         default n
-    
+
     config BSP_USING_SPI_LCD
         bool "Enable LCD (spi3)"
         select BSP_USING_SPI
@@ -52,7 +52,7 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_MPU6XXX
         select PKG_USING_MPU6XXX_LATEST_VERSION
         default n
-        
+
     config BSP_USING_AHT10
         bool "Enable aht10 (i2c4)"
         select BSP_USING_I2C
@@ -224,7 +224,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -233,19 +233,19 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
                 default n
@@ -254,7 +254,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI3 TX DMA"
                 depends on BSP_USING_SPI3
                 default n
-                
+
             config BSP_SPI3_RX_USING_DMA
                 bool "Enable SPI3 RX DMA"
                 depends on BSP_USING_SPI3
@@ -283,7 +283,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C3 BUS (software simulation)"
                 default y
                 if BSP_USING_I2C3
-                    comment "Notice: PC0 --> 32; PC1 --> 33" 
+                    comment "Notice: PC0 --> 32; PC1 --> 33"
                     config BSP_I2C3_SCL_PIN
                         int "i2c3 scl pin number"
                         range 1 176
@@ -298,7 +298,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C4 BUS (AHT10)"
                 default n
                 if BSP_USING_I2C4
-                    comment "Notice: PC1 --> 33; PD6 --> 54" 
+                    comment "Notice: PC1 --> 33; PD6 --> 54"
                     config BSP_I2C4_SCL_PIN
                         int "i2c4 scl pin number"
                         range 1 176
@@ -362,7 +362,7 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_PWM4_CH2
                     bool "Enable PWM4 channel2"
                     default n
-            
+
                 config BSP_USING_PWM4_CH3
                     bool "Enable PWM4 channel3"
                     default n
@@ -429,9 +429,9 @@ menu "On-chip Peripheral Drivers"
             help
             BSP_USING_STM32_SDIO use drv_sdio_adapter.c,and
             BSP_USING_SDIO use drv_sdio.c
-   
+
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

@@ -51,12 +51,12 @@ menu "Onboard Peripheral Drivers"
             string "the uart name for rs485"
             default "uart3"
         endif
-    
+
     config BSP_USING_GBE
         bool "Enable Ethernet"
         default n
         select RT_USING_LWIP
-        
+
     config BSP_USING_SDMMC
         bool "Enable SDMMC (sd card or sdio wifi)"
         default n
@@ -257,7 +257,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C4 BUS (software simulation)"
                 default n
                 if BSP_USING_I2C4
-                    comment "Notice: PD12 --> 60; PF15 --> 95" 
+                    comment "Notice: PD12 --> 60; PF15 --> 95"
                     config BSP_I2C4_SCL_PIN
                         int "i2c4 scl pin number"
                         range 1 191

@@ -1,7 +1,7 @@
 from building import *
 
 cwd = GetCurrentDir()
-src	= Glob('*.c') + Glob('iomux/*.c')
+src = Glob('*.c') + Glob('iomux/*.c')
 
 CPPPATH = [cwd, cwd + '/iomux']
 

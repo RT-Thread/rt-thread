@@ -13,13 +13,13 @@ if GetDepend(['BSP_USING_EMAC']):
 
 if GetDepend(['BSP_USING_HWTIMER0']):
     src += ['drv_hwtimer.c']
-	
+
 if GetDepend(['BSP_USING_LED']):
     src += ['drv_led.c']
 
 if GetDepend(['BSP_USING_SDRAM']):
     src += ['drv_sdram.c']
-	
+
 if GetDepend('BSP_USING_UART0') or GetDepend('BSP_USING_UART2'):
     src += ['drv_uart.c']
 

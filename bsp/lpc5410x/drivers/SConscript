@@ -8,7 +8,7 @@ src = Glob('*.c')
 
 # remove no need file.
 if GetDepend('RT_USING_LWIP') == False:
-	SrcRemove(src, 'drv_emac.c')
+    SrcRemove(src, 'drv_emac.c')
 
 CPPPATH = [cwd]
 

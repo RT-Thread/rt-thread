@@ -78,7 +78,7 @@ menu "On-chip Peripheral Drivers"
             config LCD_WIDTH
                 int "width"
                 default 480
-            
+
             config LCD_HEIGHT
                 int "height"
                 default 272
@@ -112,24 +112,24 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Onboard Peripheral Drivers"
-    
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
 
     menuconfig BSP_USING_ETH
-	bool "Enable Ethernet"
-	select RT_USING_NETDEV
-	default n
-    
+    bool "Enable Ethernet"
+    select RT_USING_NETDEV
+    default n
 
-	if BSP_USING_ETH
-		config BSP_USING_PHY
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
             select RT_USING_PHY
-			bool "Enable ethernet phy"
-			default y
+            bool "Enable ethernet phy"
+            default y
 
-	    if BSP_USING_PHY
+        if BSP_USING_PHY
             config PHY_DEVICE_ADDRESS
                 int "Specify address of phy device"
                 default 2
@@ -146,7 +146,7 @@ menu "Onboard Peripheral Drivers"
                 config PHY_RESET_PIN
                     int "indicate pin of reset"
                     default 9
-                
+
                 config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
                     bool "Enable the PHY ksz8081 RMII50M mode"
                     depends on PHY_USING_KSZ8081
@@ -154,7 +154,7 @@ menu "Onboard Peripheral Drivers"
             endif
 
         endif
-	endif
+    endif
 endmenu
 
 menu "Board extended module Drivers"

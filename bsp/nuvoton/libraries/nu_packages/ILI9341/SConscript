@@ -19,4 +19,4 @@ if GetDepend('NU_PKG_USING_ILI9341'):
     group = DefineGroup('nu_pkgs_ili9341', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
-    
+

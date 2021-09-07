@@ -10,7 +10,7 @@ src = Split("""
 Nuvoton/M031/Source/system_M031Series.c
 """)
 
-# add for startup script 
+# add for startup script
 if rtconfig.CROSS_TOOL == 'gcc':
     src = src + ['Nuvoton/M031/Source/GCC/startup_M031Series.S']
 elif rtconfig.CROSS_TOOL == 'keil':

@@ -46,8 +46,8 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-				
-			config BSP_USING_LPUART1
+
+            config BSP_USING_LPUART1
                 bool "Enable LPUART1"
                 default n
 
@@ -64,10 +64,10 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_USBD
         bool "Enable OTGFS as USB device"
         select RT_USING_USB_DEVICE
-        default n 
-   
+        default n
+
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 endmenu

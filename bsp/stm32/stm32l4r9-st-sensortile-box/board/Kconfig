@@ -24,15 +24,15 @@ menu "On-chip Peripheral Drivers"
             bool "Enable UART1"
             default y
         endif
-        
+
     config BSP_USING_USBD
         bool "Enable Full-Speed USB Device Controller(USBD)"
         select RT_USING_USB_DEVICE
         default y
-        
-        
+
+
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 endmenu

@@ -10,7 +10,7 @@ src = Split("""
 nrf51822/Source/templates/system_nrf51.c
 """)
 
-#add for Startup script 
+#add for Startup script
 if rtconfig.CROSS_TOOL == 'gcc':
      src = src + ['nrf51822/Source/templates/arm/arm_startup_nrf51.s']
 elif rtconfig.CROSS_TOOL == 'keil':

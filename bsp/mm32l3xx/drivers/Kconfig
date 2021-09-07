@@ -6,18 +6,18 @@ menu "Hardware Drivers Config"
                 bool "Enable GPIO"
                 select RT_USING_PIN
                 default n
-        endmenu 
+        endmenu
         menu "UART Drivers"
             config BSP_USING_UART1
                 bool "Enable UART1 PA9/10(T/R)"
                 select RT_USING_SERIAL
                 default n
-        
+
             config BSP_USING_UART2
                 bool "Enable UART2 PA2/3(T/R)"
                 select RT_USING_SERIAL
                 default y
-        endmenu 
+        endmenu
     endmenu
-        
+
 endmenu

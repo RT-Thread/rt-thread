@@ -1,13 +1,13 @@
 '''
- : Copyright (c) 2020 Phytium Information Technology, Inc. 
- 
+ : Copyright (c) 2020 Phytium Information Technology, Inc.
+
 SPDX-License-Identifier: Apache-2.0.
 
 Date: 2021-05-24 14:30:13
 LastEditTime: 2021-05-26 14:58:34
-Description:  This files is for 
+Description:  This files is for
 
-Modify History: 
+Modify History:
  Ver   Who        Date         Changes
 ----- ------     --------    --------------------------------------
 '''
@@ -100,7 +100,7 @@ if GetDepend(['BSP_USE_QSPI']):
     src += ['bsp/ft_qspi/qspi_hw.c']
     src += ['bsp/ft_qspi/ft_qspi.c']
     src += ['bsp/ft_qspi/qspi_sinit.c']
-    
+
 if GetDepend(['BSP_USE_SPI']):
     src += ['bsp/ft_spi/ft_spi.c']
     src += ['bsp/ft_spi/ft_spi_irq.c']

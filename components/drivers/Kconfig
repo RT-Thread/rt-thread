@@ -8,7 +8,7 @@ if RT_USING_DEVICE_IPC
     config RT_PIPE_BUFSZ
         int "Set pipe buffer size"
         default 512
-    
+
     config RT_USING_SYSTEM_WORKQUEUE
         bool "Using system default workqueue"
         default n
@@ -126,7 +126,7 @@ config RT_USING_ADC
 config RT_USING_DAC
     bool "Using DAC device drivers"
     default n
-    
+
 config RT_USING_PWM
     bool "Using PWM device drivers"
     default n
@@ -196,7 +196,7 @@ config RT_USING_SPI
     bool "Using SPI Bus/Device device drivers"
     default n
 
-    if RT_USING_SPI  
+    if RT_USING_SPI
         config RT_USING_QSPI
             bool "Enable QSPI mode"
             default n
@@ -220,7 +220,7 @@ config RT_USING_SPI
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
-                
+
                 config RT_SFUD_USING_QSPI
                 bool "Using QSPI mode support"
                 select RT_USING_QSPI
@@ -256,7 +256,7 @@ config RT_USING_WDT
 config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
-    
+
     if RT_USING_AUDIO
         config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
             int "Replay memory pool block size"

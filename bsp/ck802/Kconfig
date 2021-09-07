@@ -31,6 +31,6 @@ if RT_USING_SERIAL
 
     config RT_USING_UART1
         bool "Using uart1"
-        default y 
+        default y
 
 endif

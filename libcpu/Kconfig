@@ -101,10 +101,10 @@ config ARCH_MIPS
 
 config ARCH_MIPS64
     bool
-	select ARCH_CPU_64BIT
-	
+    select ARCH_CPU_64BIT
+
 config ARCH_CPU_64BIT
-		bool
+        bool
 
 config ARCH_MIPS_XBURST
     bool

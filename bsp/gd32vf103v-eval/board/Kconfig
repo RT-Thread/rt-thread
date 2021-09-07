@@ -29,7 +29,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART0
                 bool "Enable USART0"
                 default y
-        endif    
+        endif
 
 endmenu
 
