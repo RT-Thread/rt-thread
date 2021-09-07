@@ -201,6 +201,7 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     struct addrinfo hint, *res = RT_NULL;
     struct sockaddr_in *h = RT_NULL;
     struct in_addr ina;
+    struct sockaddr_in local;
     
     RT_ASSERT(netif);
     RT_ASSERT(host);
@@ -226,6 +227,12 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     {
         return -RT_ERROR;
     }
+
+    local.sin_len = sizeof(local);
+    local.sin_family = AF_INET;
+    local.sin_port = 0;
+    local.sin_addr.s_addr = (netif->ip_addr.addr);
+    lwip_bind(s, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
 
     lwip_setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &recv_timeout, sizeof(recv_timeout));
 

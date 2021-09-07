@@ -779,6 +779,30 @@ void ppp_trace(int level, const char *format, ...)
 }
 #endif
 
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src)
+{
+    struct netif *netif;
+
+    /* iterate through netifs */
+    for (netif = netif_list; netif != NULL; netif = netif->next)
+    {
+    /* is the netif up, does it have a link and a valid address? */
+    if (netif_is_up(netif) && netif_is_link_up(netif) && !ip4_addr_isany_val(*netif_ip4_addr(netif)))
+    {
+    /* gateway matches on a non broadcast interface? (i.e. peer in a point to point interface) */
+    if (src != NULL)
+    {
+        if (ip4_addr_cmp(src, netif_ip4_addr(netif)))
+        {
+            return netif;
+        }
+    }
+    }
+  }
+  netif = netif_default;
+  return netif;
+}
+
 /*
  * export bsd socket symbol for RT-Thread Application Module
  */
