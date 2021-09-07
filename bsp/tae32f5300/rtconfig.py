@@ -5,24 +5,13 @@ ARCH='arm'
 CPU='cortex-m3'
 CROSS_TOOL='keil'
 
-print "############rtconfig##############"
-
-if os.getenv('RTT_CC'):
-    CROSS_TOOL = os.getenv('RTT_CC')
-
-print "CROSS_TOOL: " + CROSS_TOOL
+print("############rtconfig##############")
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
-if  CROSS_TOOL == 'gcc':
-    PLATFORM    = 'gcc'
-    EXEC_PATH   = r'E:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
-elif CROSS_TOOL == 'keil':
+if CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = r'D:\Keil_v5'
-elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
-    EXEC_PATH   = r'D:\03_software\Program Files\IAR Systems\Embedded Workbench 7.5'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -30,35 +19,7 @@ if os.getenv('RTT_EXEC_PATH'):
 BUILD = 'debug'
 MCU_TYPE = 'TAE32F53xx'
 
-if PLATFORM == 'gcc':
-    # toolchains
-    PREFIX = 'arm-none-eabi-'
-    CC = PREFIX + 'gcc'
-    AS = PREFIX + 'gcc'
-    AR = PREFIX + 'ar'
-    LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'elf'
-    SIZE = PREFIX + 'size'
-    OBJDUMP = PREFIX + 'objdump'
-    OBJCPY = PREFIX + 'objcopy'
-
-    DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections -Wall'
-    CFLAGS = DEVICE + ' -std=c99'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
-
-    CPATH = ''
-    LPATH = ''
-
-    if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2'
-        AFLAGS += ' -gdwarf-2'
-    else:
-        CFLAGS += ' -O2'
-
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-
-elif PLATFORM == 'armcc':
+if PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
     AS = 'armasm'
@@ -86,51 +47,3 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -O2'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
-
-elif PLATFORM == 'iar':
-    # toolchains
-    CC = 'iccarm'
-    AS = 'iasmarm'
-    AR = 'iarchive'
-    LINK = 'ilinkarm'
-    TARGET_EXT = 'out'
-
-    DEVICE = '-Dewarm' # + ' -D' + PART_TYPE
-
-    CFLAGS = DEVICE
-    CFLAGS += ' --diag_suppress Pa050'
-    CFLAGS += ' --no_cse' 
-    CFLAGS += ' --no_unroll' 
-    CFLAGS += ' --no_inline' 
-    CFLAGS += ' --no_code_motion' 
-    CFLAGS += ' --no_tbaa' 
-    CFLAGS += ' --no_clustering' 
-    CFLAGS += ' --no_scheduling' 
-
-    CFLAGS += ' --endian=little' 
-    CFLAGS += ' --cpu=Cortex-M3' 
-    CFLAGS += ' -e' 
-
-    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
-    CFLAGS += ' --silent'
-        
-    AFLAGS = DEVICE
-    AFLAGS += ' -s+' 
-    AFLAGS += ' -w+' 
-    AFLAGS += ' -r' 
-    AFLAGS += ' --cpu ' + CPU
-
-    AFLAGS += ' -S'
-
-    if BUILD == 'debug':
-        CFLAGS += ' --debug'
-        CFLAGS += ' -On'
-    else:
-        CFLAGS += ' -Oh'
-
-    LFLAGS = ' --config "drivers/linker_scripts/link.icf"'
-    LFLAGS += ' --entry __iar_program_start'    
-    #LFLAGS += ' --silent'
-
-    EXEC_PATH = EXEC_PATH + '/arm/bin/'
-    POST_ACTION = ''
