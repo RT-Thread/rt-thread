@@ -647,4 +647,5 @@
 #endif
 
 
+#define LWIP_HOOK_IP4_ROUTE_SRC(dest, src)  lwip_ip4_route_src(dest, src)
 #endif /* __LWIPOPTS_H__ */
