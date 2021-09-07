@@ -777,7 +777,7 @@ void rt_alarm_dump(void)
     rt_kprintf("+----+---------------------+------+------+----+\n");
 }
 
-FINSH_FUNCTION_EXPORT_ALIAS(rt_alarm_dump, __cmd_alarm_dump, dump alarm info);
+MSH_CMD_EXPORT_ALIAS(rt_alarm_dump, rt_alarm_dump, dump alarm info);
 
 /** \brief initialize alarm service system
  *
