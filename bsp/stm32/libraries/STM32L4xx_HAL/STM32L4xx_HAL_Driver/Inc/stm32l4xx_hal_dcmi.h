@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_HAL_DCMI_H
-#define __STM32L4xx_HAL_DCMI_H
+#ifndef STM32L4xx_HAL_DCMI_H
+#define STM32L4xx_HAL_DCMI_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -672,6 +672,6 @@ uint32_t              HAL_DCMI_GetError(DCMI_HandleTypeDef *hdcmi);
 }
 #endif
 
-#endif /* __STM32L4xx_HAL_DCMI_H */
+#endif /* STM32L4xx_HAL_DCMI_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

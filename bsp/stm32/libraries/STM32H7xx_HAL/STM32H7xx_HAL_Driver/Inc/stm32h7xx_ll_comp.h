@@ -109,7 +109,7 @@ typedef struct
 /** @defgroup COMP_LL_EC_COMMON_WINDOWMODE Comparator common modes - Window mode
   * @{
   */
-#define LL_COMP_WINDOWMODE_DISABLE                 (0x00000000UL)           /*!< Window mode disable: Comparators 1 and 2 are independent */
+#define LL_COMP_WINDOWMODE_DISABLE                 (0x00000000UL)          /*!< Window mode disable: Comparators 1 and 2 are independent */
 #define LL_COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON (COMP_CFGRx_WINMODE)    /*!< Window mode enable: Comparators instances pair COMP1 and COMP2 have their input plus connected together. The common input is COMP1 input plus (COMP2 input plus is no more accessible). */
 /**
   * @}
@@ -118,7 +118,7 @@ typedef struct
 /** @defgroup COMP_LL_EC_POWERMODE Comparator modes - Power mode
   * @{
   */
-#define LL_COMP_POWERMODE_HIGHSPEED     (0x00000000UL)                                 /*!< COMP power mode to high speed */
+#define LL_COMP_POWERMODE_HIGHSPEED     (0x00000000UL)                                /*!< COMP power mode to high speed */
 #define LL_COMP_POWERMODE_MEDIUMSPEED   (COMP_CFGRx_PWRMODE_0)                        /*!< COMP power mode to medium speed */
 #define LL_COMP_POWERMODE_ULTRALOWPOWER (COMP_CFGRx_PWRMODE_1 | COMP_CFGRx_PWRMODE_0) /*!< COMP power mode to ultra-low power */
 /**
@@ -129,7 +129,10 @@ typedef struct
   * @{
   */
 #define LL_COMP_INPUT_PLUS_IO1          (0x00000000UL)                           /*!< Comparator input plus connected to IO1 (pin PB0 for COMP1, pin PE9 for COMP2) */
-#define LL_COMP_INPUT_PLUS_IO2          (COMP_CFGRx_INPSEL)                     /*!< Comparator input plus connected to IO2 (pin PB2 for COMP1, pin PE11 for COMP2) */
+#define LL_COMP_INPUT_PLUS_IO2          (COMP_CFGRx_INPSEL)                      /*!< Comparator input plus connected to IO2 (pin PB2 for COMP1, pin PE11 for COMP2) */
+#if defined (COMP_CFGRx_INP2SEL)
+#define LL_COMP_INPUT_PLUS_DAC2_CH1     (COMP_CFGRx_INP2SEL)                     /*!< Comparator input plus 2 connected to (DAC2_CH1 for COMP1)                      */
+#endif
 /**
   * @}
   */
@@ -137,14 +140,18 @@ typedef struct
 /** @defgroup COMP_LL_EC_INPUT_MINUS Comparator inputs - Input minus (input inverting) selection
   * @{
   */
-#define LL_COMP_INPUT_MINUS_1_4VREFINT  (                                                            COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)        /*!< Comparator input minus connected to 1/4 VrefInt  */
-#define LL_COMP_INPUT_MINUS_1_2VREFINT  (                                        COMP_CFGRx_INMSEL_0 | COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)        /*!< Comparator input minus connected to 1/2 VrefInt  */
-#define LL_COMP_INPUT_MINUS_3_4VREFINT  (                    COMP_CFGRx_INMSEL_1                     | COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)        /*!< Comparator input minus connected to 3/4 VrefInt  */
-#define LL_COMP_INPUT_MINUS_VREFINT     (                    COMP_CFGRx_INMSEL_1 | COMP_CFGRx_INMSEL_0 | COMP_CFGRx_SCALEN                 )        /*!< Comparator input minus connected to VrefInt */
-#define LL_COMP_INPUT_MINUS_DAC1_CH1    (COMP_CFGRx_INMSEL_2                                        )                                           /*!< Comparator input minus connected to DAC1 channel 1 (DAC_OUT1)  */
-#define LL_COMP_INPUT_MINUS_DAC1_CH2    (COMP_CFGRx_INMSEL_2                     | COMP_CFGRx_INMSEL_0)                                           /*!< Comparator input minus connected to DAC1 channel 2 (DAC_OUT2)  */
-#define LL_COMP_INPUT_MINUS_IO1         (COMP_CFGRx_INMSEL_2 | COMP_CFGRx_INMSEL_1                    )                                           /*!< Comparator input minus connected to IO1 (pin PB1 for COMP1, pin PE10 for COMP2) */
-#define LL_COMP_INPUT_MINUS_IO2         (COMP_CFGRx_INMSEL_2 | COMP_CFGRx_INMSEL_1 | COMP_CFGRx_INMSEL_0)                                         /*!< Comparator input minus connected to IO2 (pin PC4 for COMP1, pin PE7 for COMP2) */
+#define LL_COMP_INPUT_MINUS_1_4VREFINT      (                                                                                        COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)   /*!< Comparator input minus connected to 1/4 VrefInt  */
+#define LL_COMP_INPUT_MINUS_1_2VREFINT      (                                                                  COMP_CFGRx_INMSEL_0 | COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)   /*!< Comparator input minus connected to 1/2 VrefInt  */
+#define LL_COMP_INPUT_MINUS_3_4VREFINT      (                                            COMP_CFGRx_INMSEL_1                       | COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)   /*!< Comparator input minus connected to 3/4 VrefInt  */
+#define LL_COMP_INPUT_MINUS_VREFINT         (                                            COMP_CFGRx_INMSEL_1 | COMP_CFGRx_INMSEL_0 | COMP_CFGRx_SCALEN                   )   /*!< Comparator input minus connected to VrefInt */
+#define LL_COMP_INPUT_MINUS_DAC1_CH1        (                      COMP_CFGRx_INMSEL_2                                                                                   )   /*!< Comparator input minus connected to DAC1 channel 1 (DAC_OUT1)  */
+#define LL_COMP_INPUT_MINUS_DAC1_CH2        (                      COMP_CFGRx_INMSEL_2                       | COMP_CFGRx_INMSEL_0                                       )   /*!< Comparator input minus connected to DAC1 channel 2 (DAC_OUT2)  */
+#define LL_COMP_INPUT_MINUS_IO1             (                      COMP_CFGRx_INMSEL_2 | COMP_CFGRx_INMSEL_1                                                             )   /*!< Comparator input minus connected to IO1 (pin PB1 for COMP1, pin PE10 for COMP2) */
+#define LL_COMP_INPUT_MINUS_IO2             (                      COMP_CFGRx_INMSEL_2 | COMP_CFGRx_INMSEL_1 | COMP_CFGRx_INMSEL_0                                       )   /*!< Comparator input minus connected to IO2 (pin PC4 for COMP1, pin PE7 for COMP2) */
+#if defined (COMP_CFGRx_INMSEL_3)
+#define LL_COMP_INPUT_MINUS_TPSENS_DAC2CH1  (COMP_CFGRx_INMSEL_3                                                                                                         )   /*!< Comparator input minus connected to  (temp sensor which is exist in ADC for COMP1, DAC2_CH1 for COMP2) */
+#define LL_COMP_INPUT_MINUS_VBAT_VDDAP      (COMP_CFGRx_INMSEL_3                                             | COMP_CFGRx_INMSEL_0                                       )   /*!< Comparator input minus connected to  (VBAT/4 for COMP1, VDDAP for COMP2) */
+#endif
 /**
   * @}
   */
@@ -152,10 +159,10 @@ typedef struct
 /** @defgroup COMP_LL_EC_INPUT_HYSTERESIS Comparator input - Hysteresis
   * @{
   */
-#define LL_COMP_HYSTERESIS_NONE         (0x00000000UL)                           /*!< No hysteresis */
-#define LL_COMP_HYSTERESIS_LOW          (                  COMP_CFGRx_HYST_0)   /*!< Hysteresis level low */
-#define LL_COMP_HYSTERESIS_MEDIUM       (COMP_CFGRx_HYST_1                  )   /*!< Hysteresis level medium */
-#define LL_COMP_HYSTERESIS_HIGH         (COMP_CFGRx_HYST_1 | COMP_CFGRx_HYST_0) /*!< Hysteresis level high */
+#define LL_COMP_HYSTERESIS_NONE         (0x00000000UL)                            /*!< No hysteresis */
+#define LL_COMP_HYSTERESIS_LOW          (                    COMP_CFGRx_HYST_0)   /*!< Hysteresis level low */
+#define LL_COMP_HYSTERESIS_MEDIUM       (COMP_CFGRx_HYST_1                    )   /*!< Hysteresis level medium */
+#define LL_COMP_HYSTERESIS_HIGH         (COMP_CFGRx_HYST_1 | COMP_CFGRx_HYST_0)   /*!< Hysteresis level high */
 /**
   * @}
   */
@@ -163,7 +170,7 @@ typedef struct
 /** @defgroup COMP_LL_EC_OUTPUT_POLARITY Comparator output - Output polarity
   * @{
   */
-#define LL_COMP_OUTPUTPOL_NONINVERTED   (0x00000000UL)           /*!< COMP output polarity is not inverted: comparator output is high when the plus (non-inverting) input is at a higher voltage than the minus (inverting) input */
+#define LL_COMP_OUTPUTPOL_NONINVERTED   (0x00000000UL)          /*!< COMP output polarity is not inverted: comparator output is high when the plus (non-inverting) input is at a higher voltage than the minus (inverting) input */
 #define LL_COMP_OUTPUTPOL_INVERTED      (COMP_CFGRx_POLARITY)   /*!< COMP output polarity is inverted: comparator output is low when the plus (non-inverting) input is at a lower voltage than the minus (inverting) input */
 /**
   * @}
@@ -172,11 +179,11 @@ typedef struct
 /** @defgroup COMP_LL_EC_OUTPUT_BLANKING_SOURCE Comparator output - Blanking source
   * @{
   */
-#define LL_COMP_BLANKINGSRC_NONE            (0x00000000UL)           /*!<Comparator output without blanking */
-#define LL_COMP_BLANKINGSRC_TIM1_OC5  (COMP_CFGRx_BLANKING_0)   /*!< Comparator output blanking source TIM1 OC5 (common to all COMP instances: COMP1, COMP2) */
-#define LL_COMP_BLANKINGSRC_TIM2_OC3  (COMP_CFGRx_BLANKING_1)   /*!< Comparator output blanking source TIM2 OC3 (common to all COMP instances: COMP1, COMP2) */
-#define LL_COMP_BLANKINGSRC_TIM3_OC3  (COMP_CFGRx_BLANKING_0 |COMP_CFGRx_BLANKING_1)   /*!< Comparator output blanking source TIM3 OC3 (common to all COMP instances: COMP1, COMP2) */
-#define LL_COMP_BLANKINGSRC_TIM3_OC4  (COMP_CFGRx_BLANKING_2)   /*!< Comparator output blanking source TIM3 OC4 (common to all COMP instances: COMP1, COMP2) */
+#define LL_COMP_BLANKINGSRC_NONE      (0x00000000UL)                                  /*!<Comparator output without blanking */
+#define LL_COMP_BLANKINGSRC_TIM1_OC5  (COMP_CFGRx_BLANKING_0)                         /*!< Comparator output blanking source TIM1 OC5 (common to all COMP instances: COMP1, COMP2) */
+#define LL_COMP_BLANKINGSRC_TIM2_OC3  (COMP_CFGRx_BLANKING_1)                         /*!< Comparator output blanking source TIM2 OC3 (common to all COMP instances: COMP1, COMP2) */
+#define LL_COMP_BLANKINGSRC_TIM3_OC3  (COMP_CFGRx_BLANKING_0 |COMP_CFGRx_BLANKING_1)  /*!< Comparator output blanking source TIM3 OC3 (common to all COMP instances: COMP1, COMP2) */
+#define LL_COMP_BLANKINGSRC_TIM3_OC4  (COMP_CFGRx_BLANKING_2)                         /*!< Comparator output blanking source TIM3 OC4 (common to all COMP instances: COMP1, COMP2) */
 #define LL_COMP_BLANKINGSRC_TIM8_OC5  (COMP_CFGRx_BLANKING_2|COMP_CFGRx_BLANKING_0)   /*!< Comparator output blanking source TIM8 OC5 (common to all COMP instances: COMP1, COMP2) */
 #define LL_COMP_BLANKINGSRC_TIM15_OC1 (COMP_CFGRx_BLANKING_2|COMP_CFGRx_BLANKING_1)   /*!< Comparator output blanking source TIM15 OC1 (common to all COMP instances: COMP1, COMP2) */
 /**
@@ -188,6 +195,23 @@ typedef struct
   */
 #define LL_COMP_OUTPUT_LEVEL_LOW        (0x00000000UL)           /*!< Comparator output level low (if the polarity is not inverted, otherwise to be complemented) */
 #define LL_COMP_OUTPUT_LEVEL_HIGH       (0x00000001UL)           /*!< Comparator output level high (if the polarity is not inverted, otherwise to be complemented) */
+/**
+  * @}
+  */
+/** @defgroup COMP_LL_EC_OUTPUT_BKIN_TIMER Comparator output - Output to BKIN timer
+  * @{
+  */
+#define LL_COMP_AF_PA6          COMP_OR_AFOPA6       /*!< Comparator Alternate Function PA6 source selected to timer BKIN input  */
+#define LL_COMP_AF_PA8          COMP_OR_AFOPA8       /*!< Comparator Alternate Function PA8 source selected to timer BKIN input  */
+#define LL_COMP_AF_PB12         COMP_OR_AFOPB12      /*!< Comparator Alternate Function PB12 source selected to timer BKIN input */
+#define LL_COMP_AF_PE6          COMP_OR_AFOPE6       /*!< Comparator Alternate Function PE6 source selected to timer BKIN input  */
+#define LL_COMP_AF_PE15         COMP_OR_AFOPE15      /*!< Comparator Alternate Function PE15 source selected to timer BKIN input */
+#define LL_COMP_AF_PG2          COMP_OR_AFOPG2       /*!< Comparator Alternate Function PG2 source selected to timer BKIN input  */
+#define LL_COMP_AF_PG3          COMP_OR_AFOPG3       /*!< Comparator Alternate Function PG3 source selected to timer BKIN input  */
+#define LL_COMP_AF_PG4          COMP_OR_AFOPG4       /*!< Comparator Alternate Function PG4 source selected to timer BKIN input  */
+#define LL_COMP_AF_PI1          COMP_OR_AFOPI1       /*!< Comparator Alternate Function PI1 source selected to timer BKIN input  */
+#define LL_COMP_AF_PI4          COMP_OR_AFOPI4       /*!< Comparator Alternate Function PI4 source selected to timer BKIN input  */
+#define LL_COMP_AF_PK2          COMP_OR_AFOPK2       /*!< Comparator Alternate Function PK2 source selected to timer BKIN input  */
 /**
   * @}
   */
@@ -393,16 +417,32 @@ __STATIC_INLINE uint32_t LL_COMP_GetPowerMode(COMP_TypeDef *COMPx)
   *         @arg @ref LL_COMP_INPUT_MINUS_DAC1_CH2 
   *         @arg @ref LL_COMP_INPUT_MINUS_IO1
   *         @arg @ref LL_COMP_INPUT_MINUS_IO2
+#if defined (COMP_CFGRx_INMSEL_3)
+  *         @arg @ref LL_COMP_INPUT_MINUS_TPSENS_DAC2CH1
+  *         @arg @ref LL_COMP_INPUT_MINUS_VBAT_VDDAP
+#endif
   * @param  InputPlus This parameter can be one of the following values:
   *         @arg @ref LL_COMP_INPUT_PLUS_IO1
   *         @arg @ref LL_COMP_INPUT_PLUS_IO2
+#if defined (COMP_CFGRx_INP2SEL)
+  *         @arg @ref LL_COMP_INPUT_PLUS_DAC2_CH1
+#endif
   * @retval None
   */
 __STATIC_INLINE void LL_COMP_ConfigInputs(COMP_TypeDef *COMPx, uint32_t InputMinus, uint32_t InputPlus)
 {
+#if defined (COMP_CFGRx_INP2SEL)
   MODIFY_REG(COMPx->CFGR,
-             COMP_CFGRx_INMSEL | COMP_CFGRx_INPSEL | COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN,
+             COMP_CFGRx_INMSEL | COMP_CFGRx_INPSEL | 
+             COMP_CFGRx_INP2SEL | 
+             COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN,
              InputMinus | InputPlus);
+#else
+  MODIFY_REG(COMPx->CFGR,
+             COMP_CFGRx_INMSEL | COMP_CFGRx_INPSEL | 
+             COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN,
+             InputMinus | InputPlus);
+#endif
 }
 
 /**
@@ -415,11 +455,18 @@ __STATIC_INLINE void LL_COMP_ConfigInputs(COMP_TypeDef *COMPx, uint32_t InputMin
   * @param  InputPlus This parameter can be one of the following values:
   *         @arg @ref LL_COMP_INPUT_PLUS_IO1
   *         @arg @ref LL_COMP_INPUT_PLUS_IO2
+#if defined (COMP_CFGRx_INP2SEL)
+  *         @arg @ref LL_COMP_INPUT_PLUS_DAC2_CH1
+#endif
   * @retval None
   */
 __STATIC_INLINE void LL_COMP_SetInputPlus(COMP_TypeDef *COMPx, uint32_t InputPlus)
 {
-  MODIFY_REG(COMPx->CFGR, COMP_CFGRx_INPSEL, InputPlus);
+#if defined (COMP_CFGRx_INP2SEL)
+  MODIFY_REG(COMPx->CFGR, COMP_CFGRx_INPSEL | COMP_CFGRx_INP2SEL , InputPlus);
+#else
+  MODIFY_REG(COMPx->CFGR, COMP_CFGRx_INPSEL , InputPlus);
+#endif
 }
 
 /**
@@ -432,10 +479,17 @@ __STATIC_INLINE void LL_COMP_SetInputPlus(COMP_TypeDef *COMPx, uint32_t InputPlu
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_COMP_INPUT_PLUS_IO1
   *         @arg @ref LL_COMP_INPUT_PLUS_IO2
+#if defined (COMP_CFGRx_INP2SEL)
+  *         @arg @ref LL_COMP_INPUT_PLUS_DAC2_CH1
+#endif
   */
 __STATIC_INLINE uint32_t LL_COMP_GetInputPlus(COMP_TypeDef *COMPx)
 {
+#if defined (COMP_CFGRx_INP2SEL)
+  return (uint32_t)(READ_BIT(COMPx->CFGR, COMP_CFGRx_INPSEL | COMP_CFGRx_INP2SEL));
+#else
   return (uint32_t)(READ_BIT(COMPx->CFGR, COMP_CFGRx_INPSEL));
+#endif
 }
 
 /**
@@ -468,6 +522,10 @@ __STATIC_INLINE uint32_t LL_COMP_GetInputPlus(COMP_TypeDef *COMPx)
   *         @arg @ref LL_COMP_INPUT_MINUS_DAC1_CH2
   *         @arg @ref LL_COMP_INPUT_MINUS_IO1
   *         @arg @ref LL_COMP_INPUT_MINUS_IO2
+#if defined (COMP_CFGRx_INMSEL_3)
+  *         @arg @ref LL_COMP_INPUT_MINUS_TPSENS_DAC2CH1
+  *         @arg @ref LL_COMP_INPUT_MINUS_VBAT_VDDAP
+#endif
   * @retval None
   */
 __STATIC_INLINE void LL_COMP_SetInputMinus(COMP_TypeDef *COMPx, uint32_t InputMinus)
@@ -493,6 +551,10 @@ __STATIC_INLINE void LL_COMP_SetInputMinus(COMP_TypeDef *COMPx, uint32_t InputMi
   *         @arg @ref LL_COMP_INPUT_MINUS_DAC1_CH2  
   *         @arg @ref LL_COMP_INPUT_MINUS_IO1
   *         @arg @ref LL_COMP_INPUT_MINUS_IO2
+#if defined (COMP_CFGRx_INMSEL_3)
+  *         @arg @ref LL_COMP_INPUT_MINUS_TPSENS_DAC2CH1
+  *         @arg @ref LL_COMP_INPUT_MINUS_VBAT_VDDAP
+#endif
   */
 __STATIC_INLINE uint32_t LL_COMP_GetInputMinus(COMP_TypeDef *COMPx)
 {
@@ -608,6 +670,52 @@ __STATIC_INLINE void LL_COMP_SetOutputBlankingSource(COMP_TypeDef *COMPx, uint32
 __STATIC_INLINE uint32_t LL_COMP_GetOutputBlankingSource(COMP_TypeDef *COMPx)
 {
   return (uint32_t)(READ_BIT(COMPx->CFGR, COMP_CFGRx_BLANKING));
+}
+
+/** @brief  Set the output alternate function in the Option register
+  *         in order to be used with the alternate function
+  *         of the timer break input.
+  * @rmtoll OR    AFOP       COMP_LL_EC_OUTPUT_BKIN_TIMER
+  * @param  COMPx specifies the instance.
+  * @param  CompAFx specifies the Alternate Function source selection.
+  *          This parameter can be one of the following values:
+  *            @arg @ref LL_COMP_AF_PA6
+  *            @arg @ref LL_COMP_AF_PA8
+  *            @arg @ref LL_COMP_AF_PB12
+  *            @arg @ref LL_COMP_AF_PE6
+  *            @arg @ref LL_COMP_AF_PE15
+  *            @arg @ref LL_COMP_AF_PG2
+  *            @arg @ref LL_COMP_AF_PG3
+  *            @arg @ref LL_COMP_AF_PG4
+  *            @arg @ref LL_COMP_AF_PI1
+  *            @arg @ref LL_COMP_AF_PI4
+  *            @arg @ref LL_COMP_AF_PK2
+  * @retval None
+  */
+__STATIC_INLINE void LL_COMP_SetOutputAlternateFunction(COMP_TypeDef *COMPx, uint32_t CompAFx)
+{
+  MODIFY_REG(COMP12->OR, 0x7FFUL, (COMPx == COMP1) ? ((~CompAFx) & 0x7FFUL) : CompAFx);
+}
+
+/** @brief  Get the output alternate function from the Option register.
+  * @rmtoll OR     AFOP       COMP_LL_EC_OUTPUT_BKIN_TIMER
+  * @param  COMPx specifies the Comparator instance.
+  * @retval Returned value can be one of the following values:
+  *            @arg @ref LL_COMP_AF_PA6
+  *            @arg @ref LL_COMP_AF_PA8
+  *            @arg @ref LL_COMP_AF_PB12
+  *            @arg @ref LL_COMP_AF_PE6
+  *            @arg @ref LL_COMP_AF_PE15
+  *            @arg @ref LL_COMP_AF_PG2
+  *            @arg @ref LL_COMP_AF_PG3
+  *            @arg @ref LL_COMP_AF_PG4
+  *            @arg @ref LL_COMP_AF_PI1
+  *            @arg @ref LL_COMP_AF_PI4
+  *            @arg @ref LL_COMP_AF_PK2
+  */
+__STATIC_INLINE uint32_t LL_COMP_GetOutputAlternateFunction(COMP_TypeDef *COMPx )
+{
+  return (uint32_t) ((COMPx == COMP1) ? ((~COMP12->OR) & 0x7FFUL) : (COMP12->OR &  0x7FFUL));
 }
 
 /**

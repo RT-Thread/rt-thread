@@ -69,9 +69,9 @@ typedef struct
 /** @defgroup UARTEx_Word_Length UARTEx Word Length
   * @{
   */
-#define UART_WORDLENGTH_7B                  USART_CR1_M1   /*!< 7-bit long UART frame */
-#define UART_WORDLENGTH_8B                  0x00000000U    /*!< 8-bit long UART frame */
-#define UART_WORDLENGTH_9B                  USART_CR1_M0   /*!< 9-bit long UART frame */
+#define UART_WORDLENGTH_7B          USART_CR1_M1   /*!< 7-bit long UART frame */
+#define UART_WORDLENGTH_8B          0x00000000U    /*!< 8-bit long UART frame */
+#define UART_WORDLENGTH_9B          USART_CR1_M0   /*!< 9-bit long UART frame */
 /**
   * @}
   */
@@ -79,8 +79,8 @@ typedef struct
 /** @defgroup UARTEx_WakeUp_Address_Length UARTEx WakeUp Address Length
   * @{
   */
-#define UART_ADDRESS_DETECT_4B              0x00000000U      /*!< 4-bit long wake-up address */
-#define UART_ADDRESS_DETECT_7B              USART_CR2_ADDM7  /*!< 7-bit long wake-up address */
+#define UART_ADDRESS_DETECT_4B      0x00000000U      /*!< 4-bit long wake-up address */
+#define UART_ADDRESS_DETECT_7B      USART_CR2_ADDM7  /*!< 7-bit long wake-up address */
 /**
   * @}
   */
@@ -90,8 +90,8 @@ typedef struct
   * @brief    UART FIFO mode
   * @{
   */
-#define UART_FIFOMODE_DISABLE        0x00000000U       /*!< FIFO mode disable */
-#define UART_FIFOMODE_ENABLE         USART_CR1_FIFOEN  /*!< FIFO mode enable  */
+#define UART_FIFOMODE_DISABLE       0x00000000U       /*!< FIFO mode disable */
+#define UART_FIFOMODE_ENABLE        USART_CR1_FIFOEN  /*!< FIFO mode enable  */
 /**
   * @}
   */
@@ -123,8 +123,8 @@ typedef struct
 /**
   * @}
   */
-#endif /* USART_CR1_FIFOEN */
 
+#endif /* USART_CR1_FIFOEN */
 /**
   * @}
   */
@@ -170,11 +170,14 @@ void HAL_UARTEx_TxFifoEmptyCallback(UART_HandleTypeDef *huart);
 HAL_StatusTypeDef HAL_UARTEx_StopModeWakeUpSourceConfig(UART_HandleTypeDef *huart, UART_WakeUpTypeDef WakeUpSelection);
 HAL_StatusTypeDef HAL_UARTEx_EnableStopMode(UART_HandleTypeDef *huart);
 HAL_StatusTypeDef HAL_UARTEx_DisableStopMode(UART_HandleTypeDef *huart);
+
 #if defined(USART_CR3_UCESM)
 HAL_StatusTypeDef HAL_UARTEx_EnableClockStopMode(UART_HandleTypeDef *huart);
 HAL_StatusTypeDef HAL_UARTEx_DisableClockStopMode(UART_HandleTypeDef *huart);
+
 #endif /* USART_CR3_UCESM */
 HAL_StatusTypeDef HAL_MultiProcessorEx_AddressLength_Set(UART_HandleTypeDef *huart, uint32_t AddressLength);
+
 #if defined(USART_CR1_FIFOEN)
 HAL_StatusTypeDef HAL_UARTEx_EnableFifoMode(UART_HandleTypeDef *huart);
 HAL_StatusTypeDef HAL_UARTEx_DisableFifoMode(UART_HandleTypeDef *huart);
@@ -202,6 +205,7 @@ HAL_StatusTypeDef HAL_UARTEx_SetRxFifoThreshold(UART_HandleTypeDef *huart, uint3
   */
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) \
     || defined (STM32L496xx) || defined (STM32L4A6xx) \
+    || defined (STM32L4P5xx) || defined (STM32L4Q5xx) \
     || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 #define UART_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)       \
   do {                                                        \
@@ -615,6 +619,7 @@ HAL_StatusTypeDef HAL_UARTEx_SetRxFifoThreshold(UART_HandleTypeDef *huart, uint3
   } while(0U)
 #endif /* STM32L471xx ||  STM32L475xx ||  STM32L476xx ||  STM32L485xx ||  STM32L486xx ||
         * STM32L496xx ||  STM32L4A6xx ||
+        * STM32L4P5xx ||  STM32L4Q5xx ||
         * STM32L4R5xx ||  STM32L4R7xx ||  STM32L4R9xx ||  STM32L4S5xx ||  STM32L4S7xx ||  STM32L4S9xx
         */
 
@@ -709,8 +714,8 @@ HAL_StatusTypeDef HAL_UARTEx_SetRxFifoThreshold(UART_HandleTypeDef *huart, uint3
                                                  ((__THRESHOLD__) == UART_RXFIFO_THRESHOLD_3_4) || \
                                                  ((__THRESHOLD__) == UART_RXFIFO_THRESHOLD_7_8) || \
                                                  ((__THRESHOLD__) == UART_RXFIFO_THRESHOLD_8_8))
-#endif /* USART_CR1_FIFOEN */
 
+#endif /* USART_CR1_FIFOEN */
 /**
   * @}
   */

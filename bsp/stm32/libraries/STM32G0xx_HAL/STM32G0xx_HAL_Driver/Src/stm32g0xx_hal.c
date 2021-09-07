@@ -53,10 +53,10 @@
   * @{
   */
 /**
- * @brief STM32G0xx HAL Driver version number
-   */
+  * @brief STM32G0xx HAL Driver version number
+  */
 #define __STM32G0xx_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define __STM32G0xx_HAL_VERSION_SUB1   (0x03U) /*!< [23:16] sub1 version */
+#define __STM32G0xx_HAL_VERSION_SUB1   (0x04U) /*!< [23:16] sub1 version */
 #define __STM32G0xx_HAL_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
 #define __STM32G0xx_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32G0xx_HAL_VERSION         ((__STM32G0xx_HAL_VERSION_MAIN << 24U)\
@@ -79,7 +79,7 @@
   */
 __IO uint32_t uwTick;
 uint32_t uwTickPrio = (1UL << __NVIC_PRIO_BITS); /* Invalid PRIO */
-uint32_t uwTickFreq = HAL_TICK_FREQ_DEFAULT;  /* 1KHz */
+HAL_TickFreqTypeDef uwTickFreq = HAL_TICK_FREQ_DEFAULT;  /* 1KHz */
 /**
   * @}
   */
@@ -241,10 +241,11 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
   HAL_StatusTypeDef  status = HAL_OK;
 
-  if (uwTickFreq != 0U)
+  /* Check uwTickFreq for MisraC 2012 (even if uwTickFreq is a enum type that doesn't take the value zero)*/ 
+  if ((uint32_t)uwTickFreq != 0U)
   {
     /*Configure the SysTick to have interrupt in 1ms time basis*/
-    if (HAL_SYSTICK_Config(SystemCoreClock / (1000U /uwTickFreq)) == 0U)
+    if (HAL_SYSTICK_Config(SystemCoreClock / (1000U /(uint32_t)uwTickFreq)) == 0U)
     {
       /* Configure the SysTick IRQ priority */
       if (TickPriority < (1UL << __NVIC_PRIO_BITS))
@@ -306,7 +307,7 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   */
 __weak void HAL_IncTick(void)
 {
-  uwTick += uwTickFreq;
+  uwTick += (uint32_t)uwTickFreq;
 }
 
 /**
@@ -333,18 +334,26 @@ uint32_t HAL_GetTickPrio(void)
   * @brief Set new tick Freq.
   * @retval status
   */
-HAL_StatusTypeDef HAL_SetTickFreq(uint32_t Freq)
+HAL_StatusTypeDef HAL_SetTickFreq(HAL_TickFreqTypeDef Freq)
 {
   HAL_StatusTypeDef status  = HAL_OK;
+  HAL_TickFreqTypeDef prevTickFreq;
   assert_param(IS_TICKFREQ(Freq));
 
   if (uwTickFreq != Freq)
   {
+    /* Back up uwTickFreq frequency */
+    prevTickFreq = uwTickFreq;
+
+    /* Update uwTickFreq global variable used by HAL_InitTick() */
+    uwTickFreq = Freq;
+
     /* Apply the new tick Freq  */
     status = HAL_InitTick(uwTickPrio);
-    if (status == HAL_OK)
+    if (status != HAL_OK)
     {
-      uwTickFreq = Freq;
+      /* Restore previous tick frequency */
+      uwTickFreq = prevTickFreq;
     }
   }
 
@@ -355,7 +364,7 @@ HAL_StatusTypeDef HAL_SetTickFreq(uint32_t Freq)
   * @brief return tick frequency.
   * @retval tick period in Hz
   */
-uint32_t HAL_GetTickFreq(void)
+HAL_TickFreqTypeDef HAL_GetTickFreq(void)
 {
   return uwTickFreq;
 }
@@ -584,6 +593,11 @@ void HAL_SYSCFG_VREFBUF_HighImpedanceConfig(uint32_t Mode)
 
 /**
   * @brief  Tune the Internal Voltage Reference buffer (VREFBUF).
+  * @note   VrefBuf voltage scale is calibrated in production for each device,
+  *         using voltage scale 1. This calibration value is loaded
+  *         as default trimming value at device power up.
+  *         This trimming value can be fine tuned for voltage scales 0 and 1
+  *         using this function.
   * @retval None
   */
 void HAL_SYSCFG_VREFBUF_TrimmingConfig(uint32_t TrimmingValue)
@@ -678,7 +692,7 @@ void HAL_SYSCFG_DisableRemap(uint32_t PinRemap)
   CLEAR_BIT(SYSCFG->CFGR1, PinRemap);
 }
 
-#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#if defined(SYSCFG_CDEN_SUPPORT)
 /**
   * @brief  Enable Clamping Diode on specified IO
   * @param  PinConfig specifies on which pins clamping Diode has to be enabled
@@ -706,7 +720,7 @@ void HAL_SYSCFG_DisableClampingDiode(uint32_t PinConfig)
   assert_param(IS_SYSCFG_CLAMPINGDIODE(PinConfig));
   CLEAR_BIT(SYSCFG->CFGR2, PinConfig);
 }
-#endif
+#endif /* SYSCFG_CDEN_SUPPORT */
 
 #if defined (SYSCFG_CFGR1_UCPD1_STROBE) || defined (SYSCFG_CFGR1_UCPD2_STROBE)
 /**

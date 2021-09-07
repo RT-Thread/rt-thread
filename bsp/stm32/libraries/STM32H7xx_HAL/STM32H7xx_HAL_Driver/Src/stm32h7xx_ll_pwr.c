@@ -17,7 +17,7 @@
   ******************************************************************************
   */
 
-#if defined(USE_FULL_LL_DRIVER)
+#if defined (USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_ll_pwr.h"
@@ -26,7 +26,7 @@
   * @{
   */
 
-#if defined(PWR)
+#if defined (PWR)
 
 /** @defgroup PWR_LL PWR
   * @{
@@ -72,11 +72,11 @@ ErrorStatus LL_PWR_DeInit(void)
 /**
   * @}
   */
-#endif /* defined(PWR) */
+#endif /* defined (PWR) */
 /**
   * @}
   */
 
-#endif /* USE_FULL_LL_DRIVER */
+#endif /* defined (USE_FULL_LL_DRIVER) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

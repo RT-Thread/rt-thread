@@ -180,6 +180,7 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
       /* If the erase operation is completed, disable the MER1 and MER2 Bits */
       CLEAR_BIT(FLASH->CR, (FLASH_CR_MER1 | FLASH_CR_MER2));
@@ -224,7 +225,7 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t
 
 /**
   * @brief  Perform a mass erase or erase the specified FLASH memory pages with interrupt enabled.
-  * @param  pEraseInit: pointer to an FLASH_EraseInitTypeDef structure that
+  * @param  pEraseInit pointer to an FLASH_EraseInitTypeDef structure that
   *         contains the configuration information for the erasing.
   *
   * @retval HAL Status
@@ -296,7 +297,7 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase_IT(FLASH_EraseInitTypeDef *pEraseInit)
 
 /**
   * @brief  Program Option bytes.
-  * @param  pOBInit: pointer to an FLASH_OBInitStruct structure that
+  * @param  pOBInit pointer to an FLASH_OBInitStruct structure that
   *         contains the configuration information for the programming.
   *
   * @retval HAL Status
@@ -365,7 +366,7 @@ HAL_StatusTypeDef HAL_FLASHEx_OBProgram(FLASH_OBProgramInitTypeDef *pOBInit)
 
 /**
   * @brief  Get the Option bytes configuration.
-  * @param  pOBInit: pointer to an FLASH_OBInitStruct structure that contains the
+  * @param  pOBInit pointer to an FLASH_OBInitStruct structure that contains the
   *                  configuration information.
   * @note   The fields pOBInit->WRPArea and pOBInit->PCROPConfig should indicate
   *         which area is requested for the WRP and PCROP, else no information will be returned
@@ -378,6 +379,7 @@ void HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit)
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   if((pOBInit->WRPArea == OB_WRPAREA_BANK1_AREAA) || (pOBInit->WRPArea == OB_WRPAREA_BANK1_AREAB) ||
      (pOBInit->WRPArea == OB_WRPAREA_BANK2_AREAA) || (pOBInit->WRPArea == OB_WRPAREA_BANK2_AREAB))
@@ -398,6 +400,7 @@ void HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit)
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   if((pOBInit->PCROPConfig == FLASH_BANK_1) || (pOBInit->PCROPConfig == FLASH_BANK_2))
 #else
@@ -433,7 +436,7 @@ void HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit)
 /**
   * @brief  Configuration of the LVE pin of the Flash (managed by power controller
   *         or forced to low in order to use an external SMPS)
-  * @param  ConfigLVE: Configuration of the LVE pin,
+  * @param  ConfigLVE Configuration of the LVE pin,
   *              This parameter can be one of the following values:
   *                @arg FLASH_LVE_PIN_CTRL: LVE FLASH pin controlled by power controller
   *                @arg FLASH_LVE_PIN_FORCED: LVE FLASH pin enforced to low (external SMPS used)
@@ -499,7 +502,7 @@ HAL_StatusTypeDef HAL_FLASHEx_ConfigLVEPin(uint32_t ConfigLVE)
   */
 /**
   * @brief  Mass erase of FLASH memory.
-  * @param  Banks: Banks to be erased
+  * @param  Banks Banks to be erased
   *          This parameter can be one of the following values:
   *            @arg FLASH_BANK_1: Bank1 to be erased
   *            @arg FLASH_BANK_2: Bank2 to be erased
@@ -508,7 +511,7 @@ HAL_StatusTypeDef HAL_FLASHEx_ConfigLVEPin(uint32_t ConfigLVE)
   */
 static void FLASH_MassErase(uint32_t Banks)
 {
-#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   if (READ_BIT(FLASH->OPTR, FLASH_OPTR_DBANK) != 0U)
 #endif
   {
@@ -523,6 +526,7 @@ static void FLASH_MassErase(uint32_t Banks)
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
     /* Set the Mass Erase Bit for the bank 2 if requested */
     if((Banks & FLASH_BANK_2) != 0U)
@@ -531,7 +535,7 @@ static void FLASH_MassErase(uint32_t Banks)
     }
 #endif
   }
-#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   else
   {
     SET_BIT(FLASH->CR, (FLASH_CR_MER1 | FLASH_CR_MER2));
@@ -544,9 +548,9 @@ static void FLASH_MassErase(uint32_t Banks)
 
 /**
   * @brief  Erase the specified FLASH memory page.
-  * @param  Page: FLASH page to erase
+  * @param  Page FLASH page to erase
   *         This parameter must be a value between 0 and (max number of pages in the bank - 1)
-  * @param  Banks: Bank(s) where the page will be erased
+  * @param  Banks Bank(s) where the page will be erased
   *          This parameter can be one of the following values:
   *            @arg FLASH_BANK_1: Page in bank 1 to be erased
   *            @arg FLASH_BANK_2: Page in bank 2 to be erased
@@ -559,8 +563,9 @@ void FLASH_PageErase(uint32_t Page, uint32_t Banks)
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
-#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   if(READ_BIT(FLASH->OPTR, FLASH_OPTR_DBANK) == 0U)
   {
     CLEAR_BIT(FLASH->CR, FLASH_CR_BKER);
@@ -634,17 +639,17 @@ void FLASH_FlushCaches(void)
   * @note   To validate the WRP options, the option bytes must be reloaded
   *         through the call of the HAL_FLASH_OB_Launch() function.
   *
-  * @param  WRPArea: specifies the area to be configured.
+  * @param  WRPArea specifies the area to be configured.
   *          This parameter can be one of the following values:
   *            @arg OB_WRPAREA_BANK1_AREAA: Flash Bank 1 Area A
   *            @arg OB_WRPAREA_BANK1_AREAB: Flash Bank 1 Area B
   *            @arg OB_WRPAREA_BANK2_AREAA: Flash Bank 2 Area A  (don't apply for STM32L43x/STM32L44x devices)
   *            @arg OB_WRPAREA_BANK2_AREAB: Flash Bank 2 Area B  (don't apply for STM32L43x/STM32L44x devices)
   *
-  * @param  WRPStartOffset: specifies the start page of the write protected area
+  * @param  WRPStartOffset specifies the start page of the write protected area
   *          This parameter can be page number between 0 and (max number of pages in the bank - 1)
   *
-  * @param  WRDPEndOffset: specifies the end page of the write protected area
+  * @param  WRDPEndOffset specifies the end page of the write protected area
   *          This parameter can be page number between WRPStartOffset and (max number of pages in the bank - 1)
   *
   * @retval HAL Status
@@ -676,6 +681,7 @@ static HAL_StatusTypeDef FLASH_OB_WRPConfig(uint32_t WRPArea, uint32_t WRPStartO
     }
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
     else if(WRPArea == OB_WRPAREA_BANK2_AREAA)
     {
@@ -716,7 +722,7 @@ static HAL_StatusTypeDef FLASH_OB_WRPConfig(uint32_t WRPArea, uint32_t WRPStartO
   * @note   !!! Warning : When enabling OB_RDP level 2 it's no more possible
   *         to go back to level 1 or 0 !!!
   *
-  * @param  RDPLevel: specifies the read protection level.
+  * @param  RDPLevel specifies the read protection level.
   *         This parameter can be one of the following values:
   *            @arg OB_RDP_LEVEL_0: No protection
   *            @arg OB_RDP_LEVEL_1: Read protection of the memory
@@ -760,8 +766,8 @@ static HAL_StatusTypeDef FLASH_OB_RDPConfig(uint32_t RDPLevel)
   * @note   To validate the user option bytes, the option bytes must be reloaded
   *         through the call of the HAL_FLASH_OB_Launch() function.
   *
-  * @param  UserType: The FLASH User Option Bytes to be modified
-  * @param  UserConfig: The FLASH User Option Bytes values:
+  * @param  UserType The FLASH User Option Bytes to be modified
+  * @param  UserConfig The FLASH User Option Bytes values:
   *         BOR_LEV(Bit8-10), nRST_STOP(Bit12), nRST_STDBY(Bit13), IWDG_SW(Bit16),
   *         IWDG_STOP(Bit17), IWDG_STDBY(Bit18), WWDG_SW(Bit19), BFB2(Bit20),
   *         DUALBANK(Bit21), nBOOT1(Bit23), SRAM2_PE(Bit24) and SRAM2_RST(Bit25).
@@ -864,6 +870,7 @@ static HAL_StatusTypeDef FLASH_OB_UserConfig(uint32_t UserType, uint32_t UserCon
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
     if((UserType & OB_USER_BFB2) != 0U)
     {
@@ -877,7 +884,7 @@ static HAL_StatusTypeDef FLASH_OB_UserConfig(uint32_t UserType, uint32_t UserCon
 
     if((UserType & OB_USER_DUALBANK) != 0U)
     {
-#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
       /* DUALBANK option byte should be modified */
       assert_param(IS_OB_USER_DUALBANK(UserConfig & FLASH_OPTR_DB1M));
 
@@ -928,6 +935,7 @@ static HAL_StatusTypeDef FLASH_OB_UserConfig(uint32_t UserType, uint32_t UserCon
 #if defined (STM32L412xx) || defined (STM32L422xx) || defined (STM32L431xx) || defined (STM32L432xx) || defined (STM32L433xx) || \
     defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
     if((UserType & OB_USER_nSWBOOT0) != 0U)
     {
@@ -974,14 +982,14 @@ static HAL_StatusTypeDef FLASH_OB_UserConfig(uint32_t UserType, uint32_t UserCon
   * @note   To validate the PCROP options, the option bytes must be reloaded
   *         through the call of the HAL_FLASH_OB_Launch() function.
   *
-  * @param  PCROPConfig: specifies the configuration (Bank to be configured and PCROP_RDP option).
+  * @param  PCROPConfig specifies the configuration (Bank to be configured and PCROP_RDP option).
   *          This parameter must be a combination of FLASH_BANK_1 or FLASH_BANK_2
   *          with OB_PCROP_RDP_NOT_ERASE or OB_PCROP_RDP_ERASE
   *
-  * @param  PCROPStartAddr: specifies the start address of the Proprietary code readout protection
+  * @param  PCROPStartAddr specifies the start address of the Proprietary code readout protection
   *          This parameter can be an address between begin and end of the bank
   *
-  * @param  PCROPEndAddr: specifies the end address of the Proprietary code readout protection
+  * @param  PCROPEndAddr specifies the end address of the Proprietary code readout protection
   *          This parameter can be an address between PCROPStartAddr and end of the bank
   *
   * @retval HAL Status
@@ -993,6 +1001,7 @@ static HAL_StatusTypeDef FLASH_OB_PCROPConfig(uint32_t PCROPConfig, uint32_t PCR
   uint32_t bank1_addr;
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   uint32_t bank2_addr;
 #endif
@@ -1010,6 +1019,7 @@ static HAL_StatusTypeDef FLASH_OB_PCROPConfig(uint32_t PCROPConfig, uint32_t PCR
   {
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
     /* Get the information about the bank swapping */
     if (READ_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_FB_MODE) == 0U)
@@ -1026,7 +1036,7 @@ static HAL_StatusTypeDef FLASH_OB_PCROPConfig(uint32_t PCROPConfig, uint32_t PCR
     bank1_addr = FLASH_BASE;
 #endif
 
-#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
     if (READ_BIT(FLASH->OPTR, FLASH_OPTR_DBANK) == 0U)
     {
       /* Configure the Proprietary code readout protection */
@@ -1065,6 +1075,7 @@ static HAL_StatusTypeDef FLASH_OB_PCROPConfig(uint32_t PCROPConfig, uint32_t PCR
       }
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
       else if((PCROPConfig & FLASH_BANK_BOTH) == FLASH_BANK_2)
       {
@@ -1129,6 +1140,7 @@ static void FLASH_OB_GetWRP(uint32_t WRPArea, uint32_t * WRPStartOffset, uint32_
   }
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   else if(WRPArea == OB_WRPAREA_BANK2_AREAA)
   {
@@ -1210,12 +1222,14 @@ static void FLASH_OB_GetPCROP(uint32_t * PCROPConfig, uint32_t * PCROPStartAddr,
   uint32_t bank1_addr;
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   uint32_t bank2_addr;
 #endif
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   /* Get the information about the bank swapping */
   if (READ_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_FB_MODE) == 0U)
@@ -1232,7 +1246,7 @@ static void FLASH_OB_GetPCROP(uint32_t * PCROPConfig, uint32_t * PCROPStartAddr,
   bank1_addr = FLASH_BASE;
 #endif
 
-#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   if (READ_BIT(FLASH->OPTR, FLASH_OPTR_DBANK) == 0U)
   {
     if(((*PCROPConfig) & FLASH_BANK_BOTH) == FLASH_BANK_1)
@@ -1269,6 +1283,7 @@ static void FLASH_OB_GetPCROP(uint32_t * PCROPConfig, uint32_t * PCROPStartAddr,
     }
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
     else if(((*PCROPConfig) & FLASH_BANK_BOTH) == FLASH_BANK_2)
     {

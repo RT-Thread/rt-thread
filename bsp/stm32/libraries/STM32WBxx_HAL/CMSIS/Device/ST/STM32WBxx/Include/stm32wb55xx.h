@@ -17,10 +17,10 @@
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
+  * This software component is licensed by ST under Apache License, Version 2.0,
   * the "License"; You may not use this file except in compliance with the 
   * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  *                        opensource.org/licenses/Apache-2.0
   *
   ******************************************************************************
   */
@@ -7325,9 +7325,6 @@ typedef struct
 #define RCC_CR_HSERDY_Pos                    (17U)                             
 #define RCC_CR_HSERDY_Msk                    (0x1UL << RCC_CR_HSERDY_Pos)      /*!< 0x00020000 */
 #define RCC_CR_HSERDY                        RCC_CR_HSERDY_Msk                 /*!< External High Speed oscillator (HSE) clock ready */
-#define RCC_CR_HSEBYP_Pos                    (18U)                             
-#define RCC_CR_HSEBYP_Msk                    (0x1UL << RCC_CR_HSEBYP_Pos)      /*!< 0x00040000 */
-#define RCC_CR_HSEBYP                        RCC_CR_HSEBYP_Msk                 /*!< External High Speed oscillator (HSE) clock bypass */
 #define RCC_CR_CSSON_Pos                     (19U)                             
 #define RCC_CR_CSSON_Msk                     (0x1UL << RCC_CR_CSSON_Pos)       /*!< 0x00080000 */
 #define RCC_CR_CSSON                         RCC_CR_CSSON_Msk                  /*!< HSE Clock Security System enable */

@@ -37,9 +37,15 @@
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
+/** @defgroup SAIEx_Private_Defines SAIEx Extended Private Defines
+  * @{
+  */
 #define SAI_PDM_DELAY_MASK          0x77U
 #define SAI_PDM_DELAY_OFFSET        8U
 #define SAI_PDM_RIGHT_DELAY_OFFSET  4U
+/**
+  * @}
+  */
 
 /* Private macros ------------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -71,12 +77,18 @@
 HAL_StatusTypeDef HAL_SAIEx_ConfigPdmMicDelay(SAI_HandleTypeDef *hsai, SAIEx_PdmMicDelayParamTypeDef *pdmMicDelay)
 {
   HAL_StatusTypeDef status = HAL_OK;
+  uint32_t offset;
   SAI_TypeDef *SaiBaseAddress;
 
+#if defined(SAI4)
   /* Get the SAI base address according to the SAI handle */
   SaiBaseAddress = (hsai->Instance == SAI1_Block_A) ? SAI1 : \
                    ((hsai->Instance == SAI4_Block_A) ? SAI4 : \
                      NULL);
+#else
+  /* Get the SAI base address according to the SAI handle */
+  SaiBaseAddress = (hsai->Instance == SAI1_Block_A) ? SAI1 : NULL;
+#endif
 
   /* Check that SAI sub-block is SAI sub-block A */
   if (SaiBaseAddress == NULL)
@@ -90,15 +102,17 @@ HAL_StatusTypeDef HAL_SAIEx_ConfigPdmMicDelay(SAI_HandleTypeDef *hsai, SAIEx_Pdm
     assert_param(IS_SAI_PDM_MIC_DELAY(pdmMicDelay->LeftDelay));
     assert_param(IS_SAI_PDM_MIC_DELAY(pdmMicDelay->RightDelay));
 
-    /* Check SAI state */
-    if (hsai->State != HAL_SAI_STATE_RESET)
+    /* Compute offset on PDMDLY register according mic pair number */
+    offset = SAI_PDM_DELAY_OFFSET * (pdmMicDelay->MicPair - 1U);
+
+    /* Check SAI state and offset */
+    if ((hsai->State != HAL_SAI_STATE_RESET) && (offset <= 24U))
     {
       /* Reset current delays for specified microphone */
-      SaiBaseAddress->PDMDLY &= ~(SAI_PDM_DELAY_MASK << (SAI_PDM_DELAY_OFFSET * (pdmMicDelay->MicPair - 1)));
+      SaiBaseAddress->PDMDLY &= ~(SAI_PDM_DELAY_MASK << offset);
 
       /* Apply new microphone delays */
-      SaiBaseAddress->PDMDLY |= (((pdmMicDelay->RightDelay << SAI_PDM_RIGHT_DELAY_OFFSET) | pdmMicDelay->LeftDelay) << \
-                                 (SAI_PDM_DELAY_OFFSET * (pdmMicDelay->MicPair - 1)));
+      SaiBaseAddress->PDMDLY |= (((pdmMicDelay->RightDelay << SAI_PDM_RIGHT_DELAY_OFFSET) | pdmMicDelay->LeftDelay) << offset);
     }
     else
     {

@@ -132,12 +132,13 @@
 
     *** Callback registration ***
     =============================
-
+    [..]
     The compilation define USE_HAL_SAI_REGISTER_CALLBACKS when set to 1
     allows the user to configure dynamically the driver callbacks.
-    Use functions @ref HAL_SAI_RegisterCallback() to register a user callback.
+    Use functions HAL_SAI_RegisterCallback() to register a user callback.
 
-    Function @ref HAL_SAI_RegisterCallback() allows to register following callbacks:
+    [..]
+    Function HAL_SAI_RegisterCallback() allows to register following callbacks:
       (+) RxCpltCallback     : SAI receive complete.
       (+) RxHalfCpltCallback : SAI receive half complete.
       (+) TxCpltCallback     : SAI transmit complete.
@@ -145,13 +146,16 @@
       (+) ErrorCallback      : SAI error.
       (+) MspInitCallback    : SAI MspInit.
       (+) MspDeInitCallback  : SAI MspDeInit.
+    [..]
     This function takes as parameters the HAL peripheral handle, the callback ID
     and a pointer to the user callback function.
 
-    Use function @ref HAL_SAI_UnRegisterCallback() to reset a callback to the default
+    [..]
+    Use function HAL_SAI_UnRegisterCallback() to reset a callback to the default
     weak (surcharged) function.
-    @ref HAL_SAI_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+    HAL_SAI_UnRegisterCallback() takes as parameters the HAL peripheral handle,
     and the callback ID.
+    [..]
     This function allows to reset following callbacks:
       (+) RxCpltCallback     : SAI receive complete.
       (+) RxHalfCpltCallback : SAI receive half complete.
@@ -161,23 +165,26 @@
       (+) MspInitCallback    : SAI MspInit.
       (+) MspDeInitCallback  : SAI MspDeInit.
 
-    By default, after the @ref HAL_SAI_Init and if the state is HAL_SAI_STATE_RESET
+    [..]
+    By default, after the HAL_SAI_Init and if the state is HAL_SAI_STATE_RESET
     all callbacks are reset to the corresponding legacy weak (surcharged) functions:
-    examples @ref HAL_SAI_RxCpltCallback(), @ref HAL_SAI_ErrorCallback().
+    examples HAL_SAI_RxCpltCallback(), HAL_SAI_ErrorCallback().
     Exception done for MspInit and MspDeInit callbacks that are respectively
-    reset to the legacy weak (surcharged) functions in the @ref HAL_SAI_Init
-    and @ref  HAL_SAI_DeInit only when these callbacks are null (not registered beforehand).
-    If not, MspInit or MspDeInit are not null, the @ref HAL_SAI_Init and @ref HAL_SAI_DeInit
+    reset to the legacy weak (surcharged) functions in the HAL_SAI_Init
+    and HAL_SAI_DeInit only when these callbacks are null (not registered beforehand).
+    If not, MspInit or MspDeInit are not null, the HAL_SAI_Init and HAL_SAI_DeInit
     keep and use the user MspInit/MspDeInit callbacks (registered beforehand).
 
+    [..]
     Callbacks can be registered/unregistered in READY state only.
     Exception done for MspInit/MspDeInit callbacks that can be registered/unregistered
     in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
     during the Init/DeInit.
     In that case first register the MspInit/MspDeInit user callbacks
-    using @ref HAL_SAI_RegisterCallback before calling @ref HAL_SAI_DeInit
-    or @ref HAL_SAI_Init function.
+    using HAL_SAI_RegisterCallback before calling HAL_SAI_DeInit
+    or HAL_SAI_Init function.
 
+    [..]
     When the compilation define USE_HAL_SAI_REGISTER_CALLBACKS is set to 0 or
     not defined, the callback registering feature is not available
     and weak (surcharged) callbacks are used.
@@ -228,7 +235,6 @@ typedef enum {
 /** @defgroup SAI_Private_Constants  SAI Private Constants
   * @{
   */
-#define SAI_FIFO_SIZE         8
 #define SAI_DEFAULT_TIMEOUT   4 /* 4ms */
 /**
   * @}
@@ -507,6 +513,8 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
       hsai->Init.Mckdiv+= 1;
     }
   }
+  /* Check the SAI Block master clock divider parameter */
+  assert_param(IS_SAI_BLOCK_MASTER_DIVIDER(hsai->Init.Mckdiv));
 
   /* Compute CKSTR bits of SAI CR1 according ClockStrobing and AudioMode */
   if((hsai->Init.AudioMode == SAI_MODEMASTER_TX) || (hsai->Init.AudioMode == SAI_MODESLAVE_TX))
@@ -2344,7 +2352,7 @@ static void SAI_DMATxCplt(DMA_HandleTypeDef *hdma)
 {
   SAI_HandleTypeDef* hsai = (SAI_HandleTypeDef*)((DMA_HandleTypeDef* )hdma)->Parent;
 
-  if((hdma->Instance->CR & DMA_SxCR_CIRC) == 0)
+  if (hdma->Init.Mode != DMA_CIRCULAR)
   {
     hsai->XferCount = 0;
 
@@ -2390,7 +2398,7 @@ static void SAI_DMARxCplt(DMA_HandleTypeDef *hdma)
 {
   SAI_HandleTypeDef* hsai = ( SAI_HandleTypeDef* )((DMA_HandleTypeDef* )hdma)->Parent;
 
- if((hdma->Instance->CR & DMA_SxCR_CIRC) == 0)
+  if (hdma->Init.Mode != DMA_CIRCULAR)
   {
     /* Disable Rx DMA Request */
     hsai->Instance->CR1 &= (uint32_t)(~SAI_xCR1_DMAEN);

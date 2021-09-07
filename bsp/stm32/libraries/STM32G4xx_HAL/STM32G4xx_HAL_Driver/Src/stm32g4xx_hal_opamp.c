@@ -1048,8 +1048,8 @@ OPAMP_TrimmingValueTypeDef HAL_OPAMP_GetTrimOffset(OPAMP_HandleTypeDef *hopamp, 
   * @param hopamp : OPAMP handle
   * @param CallbackID : ID of the callback to be registered
   *        This parameter can be one of the following values:
-  *          @arg @ref HAL_OPAMP_MSP_INIT_CB_ID       OPAMP MspInit callback ID
-  *          @arg @ref HAL_OPAMP_MSP_DEINIT_CB_ID     OPAMP MspDeInit callback ID
+  *          @arg @ref HAL_OPAMP_MSPINIT_CB_ID       OPAMP MspInit callback ID
+  *          @arg @ref HAL_OPAMP_MSPDEINIT_CB_ID     OPAMP MspDeInit callback ID
   * @param pCallback : pointer to the Callback function
   * @retval status
   */
@@ -1070,10 +1070,10 @@ HAL_StatusTypeDef HAL_OPAMP_RegisterCallback(OPAMP_HandleTypeDef *hopamp, HAL_OP
   {
     switch (CallbackId)
     {
-      case HAL_OPAMP_MSP_INIT_CB_ID :
+      case HAL_OPAMP_MSPINIT_CB_ID :
         hopamp->MspInitCallback = pCallback;
         break;
-      case HAL_OPAMP_MSP_DEINIT_CB_ID :
+      case HAL_OPAMP_MSPDEINIT_CB_ID :
         hopamp->MspDeInitCallback = pCallback;
         break;
       default :
@@ -1086,10 +1086,10 @@ HAL_StatusTypeDef HAL_OPAMP_RegisterCallback(OPAMP_HandleTypeDef *hopamp, HAL_OP
   {
     switch (CallbackId)
     {
-      case HAL_OPAMP_MSP_INIT_CB_ID :
+      case HAL_OPAMP_MSPINIT_CB_ID :
         hopamp->MspInitCallback = pCallback;
         break;
-      case HAL_OPAMP_MSP_DEINIT_CB_ID :
+      case HAL_OPAMP_MSPDEINIT_CB_ID :
         hopamp->MspDeInitCallback = pCallback;
         break;
       default :
@@ -1115,8 +1115,8 @@ HAL_StatusTypeDef HAL_OPAMP_RegisterCallback(OPAMP_HandleTypeDef *hopamp, HAL_OP
   * @param hopamp : OPAMP handle
   * @param CallbackID : ID of the callback to be unregistered
   *        This parameter can be one of the following values:
-  *          @arg @ref HAL_OPAMP_MSP_INIT_CB_ID              OPAMP MSP Init Callback ID
-  *          @arg @ref HAL_OPAMP_MSP_DEINIT_CB_ID            OPAMP MSP DeInit Callback ID
+  *          @arg @ref HAL_OPAMP_MSPINIT_CB_ID              OPAMP MSP Init Callback ID
+  *          @arg @ref HAL_OPAMP_MSPDEINIT_CB_ID            OPAMP MSP DeInit Callback ID
   *          @arg @ref HAL_OPAMP_ALL_CB_ID                   OPAMP All Callbacks
   * @retval status
   */
@@ -1132,10 +1132,10 @@ HAL_StatusTypeDef HAL_OPAMP_UnRegisterCallback(OPAMP_HandleTypeDef *hopamp, HAL_
   {
     switch (CallbackId)
     {
-      case HAL_OPAMP_MSP_INIT_CB_ID :
+      case HAL_OPAMP_MSPINIT_CB_ID :
         hopamp->MspInitCallback = HAL_OPAMP_MspInit;
         break;
-      case HAL_OPAMP_MSP_DEINIT_CB_ID :
+      case HAL_OPAMP_MSPDEINIT_CB_ID :
         hopamp->MspDeInitCallback = HAL_OPAMP_MspDeInit;
         break;
       case HAL_OPAMP_ALL_CB_ID :
@@ -1152,10 +1152,10 @@ HAL_StatusTypeDef HAL_OPAMP_UnRegisterCallback(OPAMP_HandleTypeDef *hopamp, HAL_
   {
     switch (CallbackId)
     {
-      case HAL_OPAMP_MSP_INIT_CB_ID :
+      case HAL_OPAMP_MSPINIT_CB_ID :
         hopamp->MspInitCallback = HAL_OPAMP_MspInit;
         break;
-      case HAL_OPAMP_MSP_DEINIT_CB_ID :
+      case HAL_OPAMP_MSPDEINIT_CB_ID :
         hopamp->MspDeInitCallback = HAL_OPAMP_MspDeInit;
         break;
       default :

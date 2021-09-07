@@ -756,7 +756,11 @@ typedef struct
 #define LL_ADC_RESOLUTION_14B              (                                ADC_CFGR_RES_0) /*!< ADC resolution 12 bits */
 #define LL_ADC_RESOLUTION_12B              (               ADC_CFGR_RES_1                 ) /*!< ADC resolution 12 bits */
 #define LL_ADC_RESOLUTION_10B              (               ADC_CFGR_RES_1 | ADC_CFGR_RES_0) /*!< ADC resolution 10 bits */
+#if defined (ADC_VER_V5_3)
+#define LL_ADC_RESOLUTION_8B               (ADC_CFGR_RES_2|ADC_CFGR_RES_1 | ADC_CFGR_RES_0) /*!< ADC resolution  8 bits */
+#else
 #define LL_ADC_RESOLUTION_8B               (ADC_CFGR_RES_2                                ) /*!< ADC resolution  8 bits */
+#endif
 /**
   * @}
   */
@@ -854,11 +858,23 @@ typedef struct
 #define LL_ADC_CHANNEL_17                  (ADC_CHANNEL_17_NUMBER | ADC_CHANNEL_17_SMP | ADC_CHANNEL_17_BITFIELD) /*!< ADC external channel (channel connected to GPIO pin) ADCx_IN17 */
 #define LL_ADC_CHANNEL_18                  (ADC_CHANNEL_18_NUMBER | ADC_CHANNEL_18_SMP | ADC_CHANNEL_18_BITFIELD) /*!< ADC external channel (channel connected to GPIO pin) ADCx_IN18 */
 #define LL_ADC_CHANNEL_19                  (ADC_CHANNEL_19_NUMBER | ADC_CHANNEL_19_SMP | ADC_CHANNEL_19_BITFIELD) /*!< ADC external channel (channel connected to GPIO pin) ADCx_IN19 */
+#if defined(ADC3)
+/*!< ADC3 is defined only in the case of STM32H7XX */
 #define LL_ADC_CHANNEL_VREFINT             (LL_ADC_CHANNEL_19 | ADC_CHANNEL_ID_INTERNAL_CH) /*!< ADC internal channel connected to VrefInt: Internal voltage reference. On STM32H7, ADC channel available only on ADC instance: ADC3. */
 #define LL_ADC_CHANNEL_TEMPSENSOR          (LL_ADC_CHANNEL_18 | ADC_CHANNEL_ID_INTERNAL_CH) /*!< ADC internal channel connected to Temperature sensor. On STM32H7, ADC channel available only on ADC instance: ADC3. */
 #define LL_ADC_CHANNEL_VBAT                (LL_ADC_CHANNEL_17 | ADC_CHANNEL_ID_INTERNAL_CH) /*!< ADC internal channel connected to Vbat/3: Vbat voltage through a divider ladder of factor 1/4 to have Vbat always below Vdda. On STM32H7, ADC channel available only on ADC instance: ADC3. */
+#else
+/*!< Specific define for STM32H7A3xx and STM32HB3xx varieties of STM32H7XXX */
+#define LL_ADC_CHANNEL_VREFINT             (LL_ADC_CHANNEL_19 | ADC_CHANNEL_ID_INTERNAL_CH) /*!< ADC internal channel connected to VrefInt: Internal voltage reference. On STM32H7, ADC channel available only on ADC instance: ADC2. */
+#define LL_ADC_CHANNEL_TEMPSENSOR          (LL_ADC_CHANNEL_18 | ADC_CHANNEL_ID_INTERNAL_CH) /*!< ADC internal channel connected to Temperature sensor. On STM32H7, ADC channel available only on ADC instance: ADC2. */
+#define LL_ADC_CHANNEL_VBAT                (LL_ADC_CHANNEL_14 | ADC_CHANNEL_ID_INTERNAL_CH) /*!< ADC internal channel connected to Vbat/3: Vbat voltage through a divider ladder of factor 1/4 to have Vbat always below Vdda. On STM32H7, ADC channel available only on ADC instance: ADC2. */
+#endif
 #define LL_ADC_CHANNEL_DAC1CH1_ADC2        (LL_ADC_CHANNEL_16 | ADC_CHANNEL_ID_INTERNAL_CH) /*!< ADC internal channel connected to DAC1 channel 1, channel specific to ADC2 */
 #define LL_ADC_CHANNEL_DAC1CH2_ADC2        (LL_ADC_CHANNEL_17 | ADC_CHANNEL_ID_INTERNAL_CH) /*!< ADC internal channel connected to DAC1 channel 2, channel specific to ADC2 */
+#if defined(DAC2)
+/*!< Specific define for STM32H7A3xx and STM32HB3xx varieties of STM32H7XXX */
+#define LL_ADC_CHANNEL_DAC2CH1_ADC2        (LL_ADC_CHANNEL_15 | ADC_CHANNEL_ID_INTERNAL_CH) /*!< ADC internal channel connected to DAC2 channel 1, channel specific to ADC2 */
+#endif
 /**
   * @}
   */
@@ -1673,6 +1689,7 @@ typedef struct
   * @retval Value "0" if the internal channel selected is not available on the ADC instance selected.
   *         Value "1" if the internal channel selected is available on the ADC instance selected.
   */
+#if defined(ADC3)
 #define __LL_ADC_IS_CHANNEL_INTERNAL_AVAILABLE(__ADC_INSTANCE__, __CHANNEL__)  \
   ((((__ADC_INSTANCE__) == ADC2)                                               \
     &&(                                                                        \
@@ -1689,7 +1706,19 @@ typedef struct
       )                                                                        \
    )                                                                           \
   )
-
+#else
+#define __LL_ADC_IS_CHANNEL_INTERNAL_AVAILABLE(__ADC_INSTANCE__, __CHANNEL__)  \
+  ((((__ADC_INSTANCE__) == ADC2)                                               \
+    &&(                                                                        \
+       ((__CHANNEL__) == LL_ADC_CHANNEL_DAC1CH1_ADC2) ||                       \
+       ((__CHANNEL__) == LL_ADC_CHANNEL_DAC1CH2_ADC2) ||                       \
+       ((__CHANNEL__) == LL_ADC_CHANNEL_TEMPSENSOR)   ||                       \
+       ((__CHANNEL__) == LL_ADC_CHANNEL_VBAT)         ||                       \
+       ((__CHANNEL__) == LL_ADC_CHANNEL_VREFINT)                               \
+      )                                                                        \
+   )                                                                           \
+  )
+#endif
 
 /**
   * @brief  Helper macro to define ADC analog watchdog parameter:
@@ -1941,6 +1970,7 @@ typedef struct
   * @param  __ADCx__ ADC instance
   * @retval ADC common register instance
   */
+#if defined(ADC3_COMMON)
 #define __LL_ADC_COMMON_INSTANCE(__ADCx__)                                     \
   ((((__ADCx__) == ADC1) || ((__ADCx__) == ADC2))                              \
     ? (                                                                        \
@@ -1951,6 +1981,9 @@ typedef struct
        (ADC3_COMMON)                                                           \
       )                                                                        \
   )
+#else
+#define __LL_ADC_COMMON_INSTANCE(__ADCx__)   (ADC12_COMMON)
+#endif
 
 /**
   * @brief  Helper macro to check if all ADC instances sharing the same
@@ -2569,6 +2602,9 @@ __STATIC_INLINE uint32_t LL_ADC_GetCalibrationLinearFactor(ADC_TypeDef *ADCx, ui
   */
 __STATIC_INLINE void LL_ADC_SetResolution(ADC_TypeDef *ADCx, uint32_t Resolution)
 {
+#if defined (ADC_VER_V5_3)
+  MODIFY_REG(ADCx->CFGR, ADC_CFGR_RES, Resolution);
+#else
   if((DBGMCU->IDCODE & 0x30000000UL) == 0x10000000UL) /* Rev.Y */
   {
     MODIFY_REG(ADCx->CFGR, ADC_CFGR_RES, Resolution);
@@ -2584,6 +2620,7 @@ __STATIC_INLINE void LL_ADC_SetResolution(ADC_TypeDef *ADCx, uint32_t Resolution
       MODIFY_REG(ADCx->CFGR, ADC_CFGR_RES, Resolution);
     }
   }
+#endif /* ADC_VER_V5_3*/
 }
 
 /**
@@ -2601,6 +2638,9 @@ __STATIC_INLINE void LL_ADC_SetResolution(ADC_TypeDef *ADCx, uint32_t Resolution
   */
 __STATIC_INLINE uint32_t LL_ADC_GetResolution(ADC_TypeDef *ADCx)
 {
+#if defined (ADC_VER_V5_3)
+    return (uint32_t)(READ_BIT(ADCx->CFGR, ADC_CFGR_RES));
+#else
   if((DBGMCU->IDCODE & 0x30000000UL) == 0x10000000UL) /* Rev.Y */
   {
     return (uint32_t)(READ_BIT(ADCx->CFGR, ADC_CFGR_RES));
@@ -2616,6 +2656,7 @@ __STATIC_INLINE uint32_t LL_ADC_GetResolution(ADC_TypeDef *ADCx)
       return (uint32_t)(READ_BIT(ADCx->CFGR, ADC_CFGR_RES));
     }
   }
+#endif /* ADC_VER_V5_3 */
 }
 
 /**
@@ -3563,7 +3604,11 @@ __STATIC_INLINE uint32_t LL_ADC_REG_GetContinuousMode(ADC_TypeDef *ADCx)
   *            - Transfered to DFSDM data register
   * @rmtoll CFGR     DMNGT           LL_ADC_REG_SetDataTransferMode
   * @param  ADCx ADC instance
-  * @param  DataTransferMode Select Data Management configuration
+  * @param  DataTransferMode This parameter can be one of the following values:
+  *         @arg @ref LL_ADC_REG_DR_TRANSFER
+  *         @arg @ref LL_ADC_REG_DMA_TRANSFER_LIMITED
+  *         @arg @ref LL_ADC_REG_DMA_TRANSFER_UNLIMITED
+  *         @arg @ref LL_ADC_REG_DFSDM_TRANSFER
   * @retval None
   */
 __STATIC_INLINE void LL_ADC_REG_SetDataTransferMode(ADC_TypeDef *ADCx, uint32_t DataTransferMode)

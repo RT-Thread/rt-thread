@@ -75,6 +75,7 @@ typedef struct
   uint32_t UserConfig;             /*!< Value of the user option byte (used for OPTIONBYTE_USER).
                                         This parameter can be a combination of the values of
                                             @ref FLASH_OB_USER_AGC_TRIM, @ref FLASH_OB_USER_BOR_LEVEL
+                                            @ref FLASH_OB_USER_RESET_CONFIG(*), @ref FLASH_OB_USER_INPUT_RESET_HOLDER(*)
                                             @ref FLASH_OB_USER_nRST_STOP, @ref FLASH_OB_USER_nRST_STANDBY,
                                             @ref FLASH_OB_USER_nRST_SHUTDOWN, @ref FLASH_OB_USER_IWDG_SW,
                                             @ref FLASH_OB_USER_IWDG_STOP, @ref FLASH_OB_USER_IWDG_STANDBY,
@@ -280,6 +281,9 @@ typedef struct
 #define OB_USER_nRST_STOP               FLASH_OPTR_nRST_STOP  /*!< Reset generated when entering the stop mode */
 #define OB_USER_nRST_STDBY              FLASH_OPTR_nRST_STDBY /*!< Reset generated when entering the standby mode */
 #define OB_USER_nRST_SHDW               FLASH_OPTR_nRST_SHDW  /*!< Reset generated when entering the shutdown mode */
+#if defined(FLASH_OPTR_IRHEN)
+#define OB_USER_INPUT_RESET_HOLDER      FLASH_OPTR_IRHEN      /*!< Internal reset holder enable */
+#endif
 #define OB_USER_IWDG_SW                 FLASH_OPTR_IWDG_SW    /*!< Independent watchdog selection */
 #define OB_USER_IWDG_STOP               FLASH_OPTR_IWDG_STOP  /*!< Independent watchdog counter freeze in stop mode */
 #define OB_USER_IWDG_STDBY              FLASH_OPTR_IWDG_STDBY /*!< Independent watchdog counter freeze in standby mode */
@@ -289,12 +293,24 @@ typedef struct
 #define OB_USER_SRAM2RST                FLASH_OPTR_SRAM2RST   /*!< SRAM2 erase when system reset */
 #define OB_USER_nSWBOOT0                FLASH_OPTR_nSWBOOT0   /*!< Software BOOT0 */
 #define OB_USER_nBOOT0                  FLASH_OPTR_nBOOT0     /*!< nBOOT0 option bit */
+#if defined(FLASH_OPTR_nRST_MODE)
+#define OB_USER_NRST_MODE               FLASH_OPTR_nRST_MODE  /*!< Reset pin configuration */
+#endif
 #define OB_USER_AGC_TRIM                FLASH_OPTR_AGC_TRIM   /*!< Automatic Gain Control Trimming */
+#if defined(FLASH_OPTR_IRHEN) && defined(FLASH_OPTR_nRST_MODE)
+#define OB_USER_ALL                     (OB_USER_BOR_LEV    | OB_USER_nRST_STOP | OB_USER_nRST_STDBY | \
+                                         OB_USER_nRST_SHDW  | OB_USER_IWDG_SW   | OB_USER_IWDG_STOP  | \
+                                         OB_USER_IWDG_STDBY | OB_USER_WWDG_SW   | OB_USER_nBOOT1     | \
+                                         OB_USER_SRAM2PE    | OB_USER_SRAM2RST  | OB_USER_nSWBOOT0   | \
+                                         OB_USER_nBOOT0     | OB_USER_AGC_TRIM  | OB_USER_NRST_MODE  | \
+                                         OB_USER_INPUT_RESET_HOLDER)   /*!< all option bits */
+#else
 #define OB_USER_ALL                     (OB_USER_BOR_LEV    | OB_USER_nRST_STOP | OB_USER_nRST_STDBY | \
                                          OB_USER_nRST_SHDW  | OB_USER_IWDG_SW   | OB_USER_IWDG_STOP  | \
                                          OB_USER_IWDG_STDBY | OB_USER_WWDG_SW   | OB_USER_nBOOT1     | \
                                          OB_USER_SRAM2PE    | OB_USER_SRAM2RST  | OB_USER_nSWBOOT0   | \
                                          OB_USER_nBOOT0     | OB_USER_AGC_TRIM)   /*!< all option bits */
+#endif
 
 /**
   * @}
@@ -435,6 +451,29 @@ typedef struct
   * @}
   */
 
+#if defined(FLASH_OPTR_nRST_MODE)
+/** @defgroup FLASH_OB_USER_RESET_CONFIG FLASH Option Bytes User reset config bit
+  * @{
+  */
+#define OB_RESET_MODE_INPUT_ONLY        FLASH_OPTR_nRST_MODE_0  /*!< Reset pin is in Reset input mode only */
+#define OB_RESET_MODE_GPIO              FLASH_OPTR_nRST_MODE_1  /*!< Reset pin is in GPIO normal mode only */
+#define OB_RESET_MODE_INPUT_OUTPUT      (FLASH_OPTR_nRST_MODE_0 | FLASH_OPTR_nRST_MODE_1)  /*!< Reset pin is in Reset input and output mode */
+/**
+  * @}
+  */
+#endif
+
+#if defined(FLASH_OPTR_IRHEN)
+/** @defgroup FLASH_OB_USER_INPUT_RESET_HOLDER FLASH Option Bytes User input reset holder bit
+  * @{
+  */
+#define OB_IRH_ENABLE                   0x00000000U           /*!< Internal Reset handler enable */
+#define OB_IRH_DISABLE                  FLASH_OPTR_IRHEN      /*!< Internal Reset handler disable */
+/**
+  * @}
+  */
+#endif
+
 /** @defgroup FLASH_OB_PCROP_ZONE FLASH PCROP ZONE
   * @{
   */
@@ -526,6 +565,7 @@ typedef struct
 #define SRAM2B_START_SECURE_ADDR_1       (SRAM2B_BASE + 0x0400U)  /*  When in secure mode (SRAM2B_BASE + 0x0400) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_START_SECURE_ADDR_2       (SRAM2B_BASE + 0x0800U)  /*  When in secure mode (SRAM2B_BASE + 0x0800) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_START_SECURE_ADDR_3       (SRAM2B_BASE + 0x0C00U)  /*  When in secure mode (SRAM2B_BASE + 0x0C00) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
+#if !defined(STM32WB15xx)
 #define SRAM2B_START_SECURE_ADDR_4       (SRAM2B_BASE + 0x1000U)  /*  When in secure mode (SRAM2B_BASE + 0x1000) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_START_SECURE_ADDR_5       (SRAM2B_BASE + 0x1400U)  /*  When in secure mode (SRAM2B_BASE + 0x1400) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_START_SECURE_ADDR_6       (SRAM2B_BASE + 0x1800U)  /*  When in secure mode (SRAM2B_BASE + 0x1800) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
@@ -555,6 +595,9 @@ typedef struct
 #define SRAM2B_START_SECURE_ADDR_30      (SRAM2B_BASE + 0x7800U)  /*  When in secure mode (SRAM2B_BASE + 0x7800) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_START_SECURE_ADDR_31      (SRAM2B_BASE + 0x7C00U)  /*  When in secure mode (SRAM2B_BASE + 0x7C00) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_FULL_UNSECURE             (SRAM2B_BASE + 0x8000U)  /*  The RAM2B is accessible to M0 Plus and M4                                  */
+#else
+#define SRAM2B_FULL_UNSECURE             (SRAM2B_BASE + 0x0C00U)  /*  The RAM2B is accessible to M0 Plus and M4                                  */
+#endif
 
 /**
   * @}
@@ -813,12 +856,21 @@ HAL_StatusTypeDef  FLASH_WaitForLastOperation(uint32_t Timeout);
 #define FLASH_END_ADDR                          (FLASH_BASE + FLASH_SIZE - 1U)
 
 #define FLASH_BANK_SIZE                         FLASH_SIZE   /*!< FLASH Bank Size */
+#if defined(STM32WB15xx)
+#define FLASH_PAGE_SIZE                         0x00000800U  /*!< FLASH Page Size, 2 KBytes */
+#else
 #define FLASH_PAGE_SIZE                         0x00001000U  /*!< FLASH Page Size, 4 KBytes */
+#endif
 #define FLASH_PAGE_NB                           (FLASH_SIZE / FLASH_PAGE_SIZE)
 #define FLASH_TIMEOUT_VALUE                     1000U        /*!< FLASH Execution Timeout, 1 s */
 
+#if defined(STM32WB15xx)
+#define FLASH_PCROP_GRANULARITY_OFFSET          10U                                      /*!< FLASH Code Readout Protection granularity offset */
+#define FLASH_PCROP_GRANULARITY                 (1UL << FLASH_PCROP_GRANULARITY_OFFSET)  /*!< FLASH Code Readout Protection granularity, 1 KBytes */
+#else
 #define FLASH_PCROP_GRANULARITY_OFFSET          11U                                      /*!< FLASH Code Readout Protection granularity offset */
 #define FLASH_PCROP_GRANULARITY                 (1UL << FLASH_PCROP_GRANULARITY_OFFSET)  /*!< FLASH Code Readout Protection granularity, 2 KBytes */
+#endif
 
 #define FLASH_TYPENONE                          0x00000000U                                /*!< No Programmation Procedure On Going */
 /**
@@ -857,7 +909,7 @@ HAL_StatusTypeDef  FLASH_WaitForLastOperation(uint32_t Timeout);
 #define IS_FLASH_TYPEPROGRAM(__VALUE__)             (((__VALUE__) == FLASH_TYPEPROGRAM_DOUBLEWORD) || \
                                                      ((__VALUE__) == FLASH_TYPEPROGRAM_FAST))
 
-#define IS_OB_SFSA_START_ADDR(__VALUE__)            (((__VALUE__) >= FLASH_BASE) && ((__VALUE__) <= FLASH_END_ADDR) && (((__VALUE__) & ~(uint32_t)0xFFFU) == (__VALUE__)))
+#define IS_OB_SFSA_START_ADDR(__VALUE__)            (((__VALUE__) >= FLASH_BASE) && ((__VALUE__) <= FLASH_END_ADDR) && (((__VALUE__) & ~(uint32_t)(FLASH_PAGE_SIZE - 1U)) == (__VALUE__)))
 #define IS_OB_SBRSA_START_ADDR(__VALUE__)           (((__VALUE__) >= SRAM2A_BASE) && ((__VALUE__) <= (SRAM2A_BASE + SRAM2A_SIZE - 1U)) && (((__VALUE__) & ~0x3FFU) == (__VALUE__)))
 #define IS_OB_SNBRSA_START_ADDR(__VALUE__)          (((__VALUE__) >= SRAM2B_BASE) && ((__VALUE__) <= (SRAM2B_BASE + SRAM2B_SIZE - 1U)) && (((__VALUE__) & ~0x3FFU) == (__VALUE__)))
 #define IS_OB_SECURE_MODE(__VALUE__)                (((__VALUE__) == SYSTEM_IN_SECURE_MODE) || ((__VALUE__) == SYSTEM_NOT_IN_SECURE_MODE))

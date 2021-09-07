@@ -33,6 +33,7 @@ extern "C" {
   */
 
 #if defined (WWDG)
+
 /** @defgroup WWDG_LL WWDG
   * @{
   */
@@ -57,8 +58,8 @@ extern "C" {
   */
 
 /** @defgroup WWDG_LL_EC_PRESCALER  PRESCALER
-* @{
-*/
+  * @{
+  */
 #define LL_WWDG_PRESCALER_1                 0x00000000u                                               /*!< WWDG counter clock = (PCLK1/4096)/1 */
 #define LL_WWDG_PRESCALER_2                 WWDG_CFR_WDGTB_0                                          /*!< WWDG counter clock = (PCLK1/4096)/2 */
 #define LL_WWDG_PRESCALER_4                 WWDG_CFR_WDGTB_1                                          /*!< WWDG counter clock = (PCLK1/4096)/4 */

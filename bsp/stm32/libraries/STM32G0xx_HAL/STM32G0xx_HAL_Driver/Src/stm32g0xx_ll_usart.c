@@ -32,7 +32,7 @@
   * @{
   */
 
-#if defined (USART1) || defined (USART2) || defined (USART3) || defined (USART4)
+#if defined (USART1) || defined (USART2) || defined (USART3) || defined (USART4) || defined (USART5) || defined (USART6)
 
 /** @addtogroup USART_LL
   * @{
@@ -172,6 +172,26 @@ ErrorStatus LL_USART_DeInit(USART_TypeDef *USARTx)
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_USART4);
   }
 #endif /* USART4 */
+#if defined(USART5)
+  else if (USARTx == USART5)
+  {
+    /* Force reset of USART clock */
+    LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_USART5);
+
+    /* Release reset of USART clock */
+    LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_USART5);
+  }
+#endif /* USART5 */
+#if defined(USART6)
+  else if (USARTx == USART6)
+  {
+    /* Force reset of USART clock */
+    LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_USART6);
+
+    /* Release reset of USART clock */
+    LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_USART6);
+  }
+#endif /* USART6 */
   else
   {
     status = ERROR;
@@ -197,7 +217,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 {
   ErrorStatus status = ERROR;
   uint32_t periphclk = LL_RCC_PERIPH_FREQUENCY_NO;
-#if !defined(RCC_CCIPR_USART3SEL)&&!defined(RCC_CCIPR_USART4SEL)||!defined(RCC_CCIPR_USART2SEL)
+#if !defined(RCC_CCIPR_USART3SEL)&&!defined(RCC_CCIPR_USART4SEL)||!defined(RCC_CCIPR_USART2SEL) ||!defined(RCC_CCIPR_USART5SEL) ||!defined(RCC_CCIPR_USART6SEL)
   LL_RCC_ClocksTypeDef RCC_Clocks;
 #endif /* !RCC_CCIPR_USART3SEL && !RCC_CCIPR_USART4SEL || !RCC_CCIPR_USART2SEL */
 
@@ -283,6 +303,22 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 #endif /* RCC_CCIPR_USART4SEL */
     }
 #endif /* USART4 */
+#if defined(USART5)
+    else if (USARTx == USART5)
+    {
+      /* USART5 clock is PCLK1 */
+      LL_RCC_GetSystemClocksFreq(&RCC_Clocks);
+      periphclk = RCC_Clocks.PCLK1_Frequency;
+    }
+#endif /* USART5 */
+#if defined(USART6)
+    else if (USARTx == USART6)
+    {
+      /* USART6 clock is PCLK1 */
+      LL_RCC_GetSystemClocksFreq(&RCC_Clocks);
+      periphclk = RCC_Clocks.PCLK1_Frequency;
+    }
+#endif /* USART6 */
     else
     {
       /* Nothing to do, as error code is already assigned to ERROR value */
@@ -433,7 +469,7 @@ void LL_USART_ClockStructInit(LL_USART_ClockInitTypeDef *USART_ClockInitStruct)
   * @}
   */
 
-#endif /* USART1 || USART2 || USART3 || USART4 */
+#endif /* USART1 || USART2 || USART3 || USART4 || USART5 || USART6 */
 
 /**
   * @}

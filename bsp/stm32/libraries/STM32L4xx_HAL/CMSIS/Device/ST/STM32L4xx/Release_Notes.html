@@ -11,7 +11,7 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="../../../../../_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="_htmresc/mini-st.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -30,8 +30,8 @@
 </div>
 </div>
 <h1 id="license">License</h1>
-<p>Licensed by ST under Apache-2.0 license (the "License"). You may not use this package except in compliance with the License. You may obtain a copy of the License at:</p>
-<p><a href="../../../LICENSE.txt">Apache License v2.0</a></p>
+<p>Licensed by ST under BSD 3-Clause license (the "License"). You may not use this package except in compliance with the License. You may obtain a copy of the License at:</p>
+<p><a href="https://opensource.org/licenses/BSD-3-Clause">https://opensource.org/licenses/BSD-3-Clause</a></p>
 <h1 id="purpose">Purpose</h1>
 <p>This driver provides the CMSIS device for the stm32l4xx products. This covers</p>
 <ul>
@@ -40,6 +40,7 @@
 <li>STM32L451xx/STM32L452xx/STM32L462xx devices</li>
 <li>STM32L471xx/STM32L475xx/STM32L476xx/STM32L485xx/STM32L486xx devices</li>
 <li>STM32L496xx/STM32L4A6xx devices</li>
+<li>STM32L4P5xx/STM32L4Q5xx devices</li>
 <li>STM32L4R5xx/STM32L4R7xx/STM32L4R9xx/STM32L4S5xx/STM32L4S7xx and STM32L4S9xx devices</li>
 </ul>
 <p>This driver is composed of the descriptions of the registers under “Include” directory.</p>
@@ -53,9 +54,63 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section20" checked aria-hidden="true"> <label for="collapse-section20" aria-hidden="true">V1.5.1 / 03-April-2019</label>
+<input type="checkbox" id="collapse-section21" checked aria-hidden="true"> <label for="collapse-section21" aria-hidden="true">V1.6.0 / 22-November-2019</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>Add the support of <strong>STM32L4P5xx/STM32L4Q5xx</strong> devices
+<ul>
+<li>Add stm32l4p5xx.h and stm32l4q5xx.h device description files</li>
+<li>Add startup files startup_stm32l4p5xx.s and stm32l4q5xx.s for EWARM, MDK-ARM and CubeIDE toolchains<br />
+</li>
+<li>Add EWARM associated linker files for execution from internal RAM or internal FLASH<br />
+</li>
+<li>stm32l4xx.h
+<ul>
+<li>Add the following device defines:
+<ul>
+<li>“#define STM32L4P5xx” for all STM32L4P5xx devices</li>
+<li>“#define STM32L4Q5xx” for all STM32L4Q5xx devices</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>All gcc startup files
+<ul>
+<li>Remove reference to Atollic IDE in comments</li>
+</ul></li>
+<li>stm32l412xx.h and stm32l422xx.h
+<ul>
+<li>Remove RTC_ICSR_ALRAWF and RTC_ICSR_ALRBWF bits definition (not applicable to these devices)</li>
+<li>Correct RTC_WUTR_WUTOCLR_Msk definition comment</li>
+</ul></li>
+<li>gcc startup_stm32l412xx.s and startup_stm32l422xx.s files
+<ul>
+<li>Add missing USB_IRQHander definition</li>
+</ul></li>
+<li>stm32l4r5xx.h, stm32l4r7xx.h, stm32l4r9xx.h, stm32l4s5xx.h, stm32l4s7xx.h and stm32l4s9xx.h
+<ul>
+<li>Add RCC_DLYCFGR register definition</li>
+<li>Swap I2C4_EV_IRQn and I2C4_ER_IRQn definitions to be aligned with startup files</li>
+</ul></li>
+<li>stm32l496xx.h and stm32l4a6xx.h
+<ul>
+<li>Remove PEMPTY bit definition (not applicable to these devices)</li>
+</ul></li>
+<li>All MDK-ARM start-up files
+<ul>
+<li>Move back the start tag of the configuration wizard to make sure STMicroelectronics copyright section doesn’t interfere with the configuration annotation parser</li>
+</ul></li>
+<li>All stm32l4XXxx.h device description files
+<ul>
+<li>Remove IS_TIM_SYNCHRO_INSTANCE macro</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section20" aria-hidden="true"> <label for="collapse-section20" aria-hidden="true">V1.5.1 / 03-April-2019</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <ul>
 <li>stm32l412xx.h, stm32l422xx.h, stm32l431xx.h, stm32l432xx.h, stm32l433xx.h, stm32l442xx.h, stm32l443xx.h, stm32l451xx.h, stm32l452xx.h, stm32l462xx.h and stm32l471xx.h
 <ul>
@@ -96,7 +151,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section19" aria-hidden="true"> <label for="collapse-section19" aria-hidden="true">V1.5.0 / 27-July-2018</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <ul>
 <li><span style="font-size: 10pt; font-family: Verdana;">Add </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l412xx.h and <span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l422xx.h</span><span style="font-size: 10pt; font-family: Verdana;">device description files</span></li>
 <li><span style="font-size: 10pt; font-family: Verdana;">Add startup files</span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;">stm32l412xx.s</span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l422xx.s</span><span style="font-size: 10pt; font-family: Verdana;">for EWARM, MDK-ARM and SW4STM32 toolchains</span></li>
@@ -129,7 +184,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.4.3 / 30-April-2018</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">All </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device description files</span></p>
 <ul>
@@ -152,7 +207,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.4.2 / 22-December-2017</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <ul>
 <li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">SPI_TypeDef cleanup of Reserved fields.</span></li>
 </ul>
@@ -161,7 +216,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.4.1 / 6-October-2017</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h and stm32l4s5xx.h description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
 <ul>
 <li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Remove LTDC peripheral definitions as LTDC not available on STM32L4R5xx/STM32L4S5xx devices</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span></li>
@@ -171,13 +226,12 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.4.0 / 25-August-2017</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">Add the support of </span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R5xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R7xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R9xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4S5xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4S7xx/STM32L4S9xx</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span> devices</span></p>
 <ul>
 <li><span style="font-size: 10pt; font-family: Verdana;">Add </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h, <span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r7xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r9xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s7xx.h<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s9xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
-<li><span style="font-size: 10pt; font-family: Verdana;">Add startup files startup_stm32l4r5xx.s, startup_stm32l4r7xx.s, startup_stm32l4r9xx.s, startup_stm32l4s5xx.s, startup_stm32l4s7xx.s and stm32l4s9xx.s for EWARM, MDK-ARM and SW4STM32 toolchains</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><br />
-</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add startup files startup_stm32l4r5xx.s, startup_stm32l4r7xx.s, startup_stm32l4r9xx.s, startup_stm32l4s5xx.s, startup_stm32l4s7xx.s and stm32l4s9xx.s for EWARM, MDK-ARM and SW4STM32 toolchains</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span></li>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">Add EWARM associated linker files for execution from internal RAM or internal FLASH</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span></p></li>
 <li><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
 <ul>
@@ -209,7 +263,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">V1.3.2 / 16-June-2017</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l451xx.h, stm32l452xx.h, stm32l462xx.h description files</span></p>
 <ul>
@@ -236,7 +290,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">V1.3.1 / 21-April-2017</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l496xx.h and stm32l4a6xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
 <ul>
@@ -255,7 +309,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="true">V1.3.0 / 17-February-2017</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">Add the support of <span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L496xx/STM32L4A6xx</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span> devices</span></p>
 <ul>
@@ -282,7 +336,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="true">V1.2.0 / 28-October-2016</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">Add the support of <span style="font-weight: bold;">STM32L451xx/STM32L452xx/STM32L462xx</span> devices</span></p>
 <ul>
@@ -316,7 +370,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="true">V1.1.2 / 12-September-2016</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Fix DAC_SR_BWST1 bit definition</span></p></li>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">Fix SDMMC_DCTRL_DBLOCKSIZE_2 and SDMMC_DCTRL_DBLOCKSIZE_3 bits definition</span></p></li>
@@ -332,7 +386,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="true">V1.1.1 / 29-April-2016</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">All device register description files enriched with _Pos and _Msk defines to be used with _VAL2FLD(field, value) and _FLD2VAL(field, value) from CMSIS Core (previous defines are kept for compatibility)</span></p></li>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
@@ -388,7 +442,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="true">V1.1.0 / 26-February-2016</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">Add the support of <span style="font-weight: bold;">STM32L431xx/STM32L432xx/STM32L433xx/STM32L442xx/STM32L443xx</span> devices</span></p>
 <ul>
@@ -422,7 +476,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section15" aria-hidden="true"> <label for="collapse-section15" aria-hidden="true">V1.0.3 / 29-January-2016</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
 <ul>
@@ -446,7 +500,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section16" aria-hidden="true"> <label for="collapse-section16" aria-hidden="true">V1.0.2 / 25-November-2015</label>
 <div>
-<h2 id="main-changes-14">Main Changes</h2>
+<h2 id="main-changes-15">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
 <ul>
@@ -483,7 +537,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section17" aria-hidden="true"> <label for="collapse-section17" aria-hidden="true">V1.0.1 / 16-September-2015</label>
 <div>
-<h2 id="main-changes-15">Main Changes</h2>
+<h2 id="main-changes-16">Main Changes</h2>
 <ul>
 <li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">description files</span></p>
 <ul>
@@ -515,7 +569,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section18" aria-hidden="true"> <label for="collapse-section18" aria-hidden="true">V1.0.0 / 26-June-2015</label>
 <div>
-<h2 id="main-changes-16">Main Changes</h2>
+<h2 id="main-changes-17">Main Changes</h2>
 <ul>
 <li><span style="font-size: 10pt; font-family: Verdana;">First official release for </span><span style="font-size: 10pt; font-family: Verdana; font-style: italic; font-weight: bold;">STM32L471xx, STM32L475xx, STM32L476xx, STM32L485xx and STM32L486xx devices</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"><br />
 </span></span></li>
@@ -525,7 +579,8 @@
 </div>
 </div>
 <footer class="sticky">
-For complete documentation on <mark>STM32 Microcontrollers</mark> , visit: <a href="http://www.st.com/STM32">http://www.st.com/STM32</a>
+<p>For complete documentation on <mark>STM32 Microcontrollers</mark> , visit: <a href="http://www.st.com/STM32">http://www.st.com/STM32</a></p>
+<p>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</p>
 </footer>
 </body>
 </html>
