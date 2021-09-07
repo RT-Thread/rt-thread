@@ -2,7 +2,6 @@ import os
 import sys
 import rtconfig
 
-print "############sconstruct##############"
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
@@ -38,8 +37,6 @@ Export('RTT_ROOT')
 Export('rtconfig')
 
 # prepare building environment
-print "######################env:"
-print env 
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # make a building
