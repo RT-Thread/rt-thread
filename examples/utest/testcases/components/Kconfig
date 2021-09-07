@@ -1,0 +1,8 @@
+menu "Kernel Testcase"
+
+config UTEST_CPLUPLUS11_TC
+    bool "cpluplus11 test"
+    default y
+    depends on RT_USING_CPLUSPLUS11
+
+endmenu
