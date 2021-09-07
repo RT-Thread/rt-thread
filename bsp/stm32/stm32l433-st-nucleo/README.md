@@ -1,6 +1,6 @@
 # STM32L433-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32L433RC @80MHz, 256KB FLASH,  64KB RAM
 
@@ -97,6 +97,6 @@ The STM32L433xx family offers eight packages from 48 to 100-pin packages.
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

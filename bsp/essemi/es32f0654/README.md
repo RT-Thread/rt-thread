@@ -106,7 +106,7 @@ msh >
 
     ![driver_sample](figures/d_ex.jpg)
 
-    
+
 
 3. 输入`pkgs --update`命令更新软件包。
 
@@ -116,7 +116,7 @@ msh >
 
 ## 4. 联系人信息
 
-- [liuhongyan](https://gitee.com/liuhongyan98) 
+- [liuhongyan](https://gitee.com/liuhongyan98)
 
 ## 5. 参考
 

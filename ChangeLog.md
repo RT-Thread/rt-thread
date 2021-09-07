@@ -68,7 +68,7 @@ Change log since v4.0.2
   * [wlan] Add raw frame send interface and Management frame filter interface
   * [Sensor] Add vendor info and sensor types for cmd
   * [Sensor] Support custom commands for rt_sensor_control
-  * [sensor] Support TOF sensor class 
+  * [sensor] Support TOF sensor class
   * [SFUD] Update the 'sf bench' command.
   * [spi] Fix "response+1" causing hard fault of unaligned access to SPI memory of STM32 HAL library
   * [RTC] Optimize RTC alarm function, add alarm function for SOFT_RTC
@@ -195,7 +195,7 @@ Change log since v4.0.2
 * Add C++ support for eclipse target
 * Keep user's lib configuration while running --target=eclipse
 * Add Libraries when perform `scons --dist`
-* Update tools/building.py and add `tackanalysis` option 
+* Update tools/building.py and add `tackanalysis` option
 * Improve the logic of generating `rtconfig.h` files in scons with command `scons --menuconfig`
 * Fix makeimg.py wrong on linux
 * Add Studio IDE dist feature for stm32 BSP
@@ -297,7 +297,7 @@ Change log since v4.0.1
 * The porting of loongson 1B and 1C CPU are combined into one GS232 porting;
 * Add support for RISC-V Hummingbird processor porting;
 * The context switch exit operation of risc-v is forced back to machine mode;
-* Fix the issue of switch interruption during TI C28x DSP porting; 
+* Fix the issue of switch interruption during TI C28x DSP porting;
 * Add _ffs like implementation in the TI C28x DSP porting;
 * Unify the .data .bss section to 8bytes alignment in GCC tool chain;
 * The es32f0334 BSP is moved to `bsp/essemi/es32f0334`;
@@ -344,7 +344,7 @@ Change log since v4.0.1
   * Add pulse encoding driver;
   * Optimize hardware timer driver;
   * Add support for UART 7/8 in serial driver;
-  * Optimize WDT driver; 
+  * Optimize WDT driver;
 
 ## Tools
 
@@ -358,7 +358,7 @@ Change log since v4.0.1
 
 * Fix the `rt_tick_from_millisecond()` compilation warning issue;
 * Remove unnecessary code that disable interrupt several times during startup initialization;
-* Fix the issue that the system object is not detached when handling defunct threads. 
+* Fix the issue that the system object is not detached when handling defunct threads.
 * Add the value checking of semaphore (the maximum value of semaphore is up to 65535)
 * Fix the 64-bit issue in kservice.c
 * Add the checking and assertion of re-initialization of object.
@@ -468,7 +468,7 @@ Change log since v4.0.1
 * When formatting the file system, adds FM_SFD option to create a volume in SFD format for FatFs; (HubretXie)
 * Add file system handle pointer in `struct dfs_fd' structure;
 * Fix stdio fd issue when POSIX api is used; (gbcwbz)
-* Fix the `fd_is_open()` issue: when the sub-path is the same in different mounted filesystem. 
+* Fix the `fd_is_open()` issue: when the sub-path is the same in different mounted filesystem.
 * Change the critical lock/unlock to dfs_lock/unlock in `getcwd()` function of DFS (the critical lock/unlock is different in SMP environment);
 * Rewrite `list_thread/list_*` implementation of finsh cmd to avoid multi-core competition case;
 * Fix the `aio_result` issue, which is returned by `aio_read_work` in AIO; (fullhan)
@@ -790,7 +790,7 @@ Tools
     #include <rtdbg.h>
 ```
 
-When close the DBG_ENABLE definition, the debug log will be closed. Otherwise, the `dbg_log(level, fmt, ...)` can be used to print debug information. 
+When close the DBG_ENABLE definition, the debug log will be closed. Otherwise, the `dbg_log(level, fmt, ...)` can be used to print debug information.
 
 DBG_SECTION_NAME - The prefix information for each log line;
 DBG_LEVEL - The debug log level;
@@ -877,7 +877,7 @@ DBG_COLOR - Whether use color log in console.
 * Fix the filesystem_operation_table issue.
 * Enhance USB stack for USB slave (HID/ECM/RNDIS/WINUSB or composite device);
 * Enhance USB stack for USB host (HID/MSC etc);
-* Fix memory leak issue when close a pipe.  
+* Fix memory leak issue when close a pipe.
 * Fix the romfs open issue;
 * Add SoftAP device in Wi-Fi framework;
 * Re-order the lwIP/ETH initialization;
@@ -1081,7 +1081,7 @@ RT-Thread v2.0.1是2.0这个系列的bug修正版，而v2.1.0 alpha则是当前�
 
 发布时间:2014/11/4
 
-随着RT-Thread功能越来越多，如何发布版本也成为一件头疼的事情，因为需要仔细对比最近三个月来的修改记录。这次的发布距离上一次beta版本依然是三个月的时间，但按照发布计划已然推迟了一个月进行发布。 
+随着RT-Thread功能越来越多，如何发布版本也成为一件头疼的事情，因为需要仔细对比最近三个月来的修改记录。这次的发布距离上一次beta版本依然是三个月的时间，但按照发布计划已然推迟了一个月进行发布。
 
 在这三个月中，开源社区上也发生了很多有趣的事情：
 

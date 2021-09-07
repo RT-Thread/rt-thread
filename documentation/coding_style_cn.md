@@ -97,7 +97,7 @@ static rt_err_t _ipc_object_init()
 
 /* UART driver ops */
 static rt_err_t _uart_configure()
-static rt_err_t _uart_control()                    
+static rt_err_t _uart_control()
 ```
 
 调用注册设备接口的函数命名：使用 `rt_hw_class_init()` 格式，举例：
@@ -173,7 +173,7 @@ int rt_hw_spi_init(void)
  */
 rt_err_t rt_event_init(rt_event_t event, const char *name, rt_uint8_t flag)
 {
-   ... 
+   ...
 }
 ```
 
@@ -265,7 +265,7 @@ RT-Thread 内核采用了 C 语言对象化技术，命名表现形式是：对�
 
 ```c
 rt_timer_t rt_timer_create(const char* name,
-                           void (*timeout)(void* parameter), 
+                           void (*timeout)(void* parameter),
                            void* parameter,
                            rt_tick_t time, rt_uint8_t flag);
 rt_err_t rt_timer_delete(rt_timer_t timer);

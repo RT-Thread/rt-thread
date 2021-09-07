@@ -22,14 +22,14 @@
 
 - MCU：STM32L4R9，主频 120MHz，2048KB FLASH ，640KB RAM
 - 常用外设
-  - 状态指示灯：2个，LED1（PB5）LED 2(PF2) 
+  - 状态指示灯：2个，LED1（PB5）LED 2(PF2)
   - UART1: RX(PA9) TX(PA10)
   - 按键：1个，USER_PB1（PG1）
   - 板载 BLE 模组SPBTLE-1S（SPI/UART)
   - 温度传感器STTS751(I2C3_SDA PG8  I2C3_SCL PG7 )
   - 温湿度HTS221 压力传感器LPS22HH   I2C3_SDA(PB7) I2C3_SCL(PB6)
   - 加速度LIS2DW12  CS_ACC(PE11)
-  - 
+  -
 - 常用接口：SD 卡接口、USB OTG Micro USB 接口
 - 调试接口，ST-LINK Micro USB 接口
 开发板更多详细信息请参考 ST 的 [STM32L4R9ZI-MKSBOX1V1](https://www.st.com/zh/evaluation-tools/steval-mksbox1v1.html)介绍。

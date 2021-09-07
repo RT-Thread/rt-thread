@@ -15,7 +15,7 @@ High-performance ARM Cortex-M4 Processor
     Floating point unit
     Memory protection unit
     Wake-up interrupt controller with 32 interrupts
-    
+
 Ultra-low power memory:
     Up to 1 MB of flash memory for code/data
     Up to 256 KB of low leakage RAM for code/data

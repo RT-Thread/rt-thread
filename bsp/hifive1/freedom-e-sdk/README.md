@@ -1,10 +1,10 @@
 # README #
 
-This repository, maintained by SiFive, Inc, makes it easy to get started developing software for the Freedom E RISC-V platform. 
+This repository, maintained by SiFive, Inc, makes it easy to get started developing software for the Freedom E RISC-V platform.
 
 ### Contents ###
 
-* RISC-V Software Toolchain 
+* RISC-V Software Toolchain
 * RISC-V Debugging Toolchain
 * Board Support Packages for FE310 and Development Kits
 * A Few Example Programs
@@ -28,7 +28,7 @@ make help
 
 Ubuntu packages needed:
 
-	$ sudo apt-get install autoconf automake libmpc-dev libmpfr-dev libgmp-dev gawk bison flex texinfo libtool libusb-1.0-0-dev make g++ pkg-config libexpat1-dev zlib1g-dev  
+    $ sudo apt-get install autoconf automake libmpc-dev libmpfr-dev libgmp-dev gawk bison flex texinfo libtool libusb-1.0-0-dev make g++ pkg-config libexpat1-dev zlib1g-dev
 
 Next, build the tools:
 

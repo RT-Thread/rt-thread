@@ -8,13 +8,13 @@ The Pico SDK  is designed to provide an API and programming environment that is 
 A single program runs on the device at a time and starts with a conventional `main()` method. Standard C/C++ libraries are supported along with
 C level libraries/APIs for accessing all of the RP2040's hardware include PIO (Programmable IO)
 
-Additionally the Pico SDK provides higher level libraries for dealing with timers, synchronization, USB (TinyUSB) and multi-core programming 
+Additionally the Pico SDK provides higher level libraries for dealing with timers, synchronization, USB (TinyUSB) and multi-core programming
 along with various utilities.
 
 The Pico SDK can be used to build anything from simple applications, full fledged runtime environments such as MicroPython, to low level software
 such as RP2040's on chip bootrom itself.
 
-Additional libraries/APIs that are not yet ready for inclusion in the Pico SDK can be found in [pico-extras](https://github.com/raspberrypi/pico-extras).   
+Additional libraries/APIs that are not yet ready for inclusion in the Pico SDK can be found in [pico-extras](https://github.com/raspberrypi/pico-extras).
 
 # Documentation
 
@@ -41,7 +41,7 @@ instructions for other platforms, and just in general, we recommend you see [Pic
    sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi
    ```
 1. Set up your project to point to use the Pico SDK
-   
+
    * By cloning the Pico SDK locally (most common)
       1. `git clone` this Pico SDK repository
       1. Copy [pico_sdk_import.cmake](https://github.com/raspberrypi/pico-sdk/blob/master/external/pico_sdk_import.cmake)
@@ -147,7 +147,7 @@ for more information)
    pico_add_extra_outputs(hello_world)
    ```
 
-   Note this example uses the default UART for _stdout_; 
+   Note this example uses the default UART for _stdout_;
    if you want ot use the default USB see the [hello-usb](https://github.com/raspberrypi/pico-examples/tree/master/hello_world/usb) example.
 
 

@@ -1,6 +1,6 @@
 # STM32L053-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32L053R8 @32MHz, 64KB FLASH,  8KB RAM
 
@@ -91,6 +91,6 @@ The ultra-low-power STM32L053x6/8 devices operate from a 1.8 to 3.6 V power supp
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

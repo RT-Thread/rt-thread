@@ -39,7 +39,7 @@ Support GCC, MDK5, IAR IDE/compilers. More information of these compiler version
 | IAR        | 8.32                                 |
 | GCC        | GCC 6.3.1 20170620 (Need update env) |
 
-Notice: 
+Notice:
 (1) Please install Nu-Link_Keil_Driver or Nu-Link_IAR_Driver for development.
 
 ## 3. Program firmware

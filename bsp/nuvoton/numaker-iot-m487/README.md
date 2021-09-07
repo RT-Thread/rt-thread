@@ -1,4 +1,4 @@
-﻿# NuMaker-IoT-M487
+# NuMaker-IoT-M487
 ## 1. Introduction
 NuMaker-IoT-M487 provides multiple networking, interfaces, audio recording, playback functions, and flexible extended data storage. Whether you need a sensor node or a light-weight gateway, the NuMaker-IoT-M487 is an ideal choice for IoT applications.
 
@@ -77,3 +77,4 @@ You can use Tera Term terminate emulator (or other software) to type commands of
   [1]: https://direct.nuvoton.com/en/numaker-iot-m487
   [2]: https://www.nuvoton.com/resource-download.jsp?tp_GUID=HL0320180905131830
   [3]: https://www.nuvoton.com/resource-download.jsp?tp_GUID=DA05-M480
+0

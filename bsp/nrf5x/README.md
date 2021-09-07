@@ -24,17 +24,17 @@ Nordic nRF5x系列BSP 目前支持情况如下：
 - 支持nimble的软件包及对应的sample
 - 官方softdevice的sample和RT-THREAD驱动框架结合。
 
-  
+
 
 ### 目录结构
 
 ```
 nrf5x
-├───docs 
+├───docs
 │   └───images                      // nrf5x文档使用图片
 │   └───nRF5x系列BSP制作教程.md
 ├───libraries                       // nrf5x系列支持BSP
-│   └───drivers                     // nRF5x 系列设备通用驱动文件 
+│   └───drivers                     // nRF5x 系列设备通用驱动文件
 │   └───templates                   // 通用设备 BSP 工程模板
 │   │   └───nrf52x                  // nrf52x 系列 BSP 工程模板
 │   │   └───nrf5x_board_kconfig     // 通用 BSP 工程配置文件
@@ -85,7 +85,7 @@ nrf5x
 
 ![image-20201017190301705](docs/images/softdevice_2.png)
 
-- 保存配置，然后`pkgs --update`, 执行`scons --target=mdk5`  
+- 保存配置，然后`pkgs --update`, 执行`scons --target=mdk5`
 - 打开keil 工程，softdevice的工程需要烧入官方的协议栈，所以先要烧入softdevice(如果之前已经烧入SDK16.0的softdevice，可以不用执行这一步)，点击softdevice工程，烧入即可
 
 ![image-20201017192453525](docs/images/image-20201017192453525.png)
@@ -115,7 +115,7 @@ nrf5x
 - 进入Controller Configuration 选择nrf52840
 - 进入Bluetooth Samples 选择ble beacon sample
 - 执行`pkgs --update` 下载需要的软件包
-- 执行`scons --target=mdk5` 
+- 执行`scons --target=mdk5`
 - 打开keil工程，勾选GNU extensions
 
 ![screen2021-08-19_100407](docs/images/screen2021-08-19_100407.jpg)

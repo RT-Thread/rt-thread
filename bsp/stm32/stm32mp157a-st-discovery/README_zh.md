@@ -18,7 +18,7 @@ STM32MP157A-DK1 是 ST 推出的一款基于双 Cortex-A7  + Cortex-M4 内核的
 
 开发板外观如下图所示：
 
-​											![board](figures/board.png)
+​                                           ![board](figures/board.png)
 
 该开发板常用 **板载资源** 如下：
 
@@ -175,7 +175,7 @@ dac1 channel 1 disable success
 
 1. 下载程序前，将开发板设置为 "Engineering Mode" 模式。 在 DK1 开发板上，将底下的BOOT开关设成 BOOT0=0，BOOT2=1状态，就进入"Engineering Mode"，如下图所示：
 
-   ​																<img src="figures\boot_switch.png" alt="boot_switch" style="zoom:50%;" />
+   ​                                                                <img src="figures\boot_switch.png" alt="boot_switch" style="zoom:50%;" />
 
 2. 再次烧写程序时，需要复位开发板。
 
@@ -183,5 +183,5 @@ dac1 channel 1 disable success
 
 维护人:
 
-- [liukang](https://github.com/thread-liu) 
+- [liukang](https://github.com/thread-liu)
 

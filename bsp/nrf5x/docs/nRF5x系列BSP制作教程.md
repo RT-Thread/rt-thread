@@ -38,23 +38,23 @@
 
 ### 修改芯片类型
 
-打开board/Kconfig找到SOC_NRF52840 
+打开board/Kconfig找到SOC_NRF52840
 
 SOC_NRF52840 要改成你对应的芯片类型，例如SOC_NRF51822 这个时候要确认[nrfx](https://github.com/xckhmf/nrfx)软件包中的SConscript中有对应的配置选项，没用的话，可以pr到对应的软件包
 
 ```
 elif GetDepend('SOC_NRF51822') == True:
-	define += ['NRF51822_XXAA']
-	src += ['./mdk/system_nrf51.c']
-	
-	if rtconfig.PLATFORM == 'armcc':
-		src += ['./mdk/arm_startup_nrf51.s']
-		
-	if rtconfig.PLATFORM == 'gcc':
-		src += ['./mdk/gcc_startup_nrf51.S']
-		
-	if rtconfig.PLATFORM == 'iar':
-		D_SRC += ['./mdk/iar_startup_nrf51.s']
+    define += ['NRF51822_XXAA']
+    src += ['./mdk/system_nrf51.c']
+
+    if rtconfig.PLATFORM == 'armcc':
+        src += ['./mdk/arm_startup_nrf51.s']
+
+    if rtconfig.PLATFORM == 'gcc':
+        src += ['./mdk/gcc_startup_nrf51.S']
+
+    if rtconfig.PLATFORM == 'iar':
+        D_SRC += ['./mdk/iar_startup_nrf51.s']
 ```
 
 ### 修改templete.uvprojx模板

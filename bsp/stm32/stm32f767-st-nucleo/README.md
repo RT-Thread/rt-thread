@@ -1,6 +1,6 @@
 # STM32F767-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32F767ZI @216MHz, 2MB FLASH,  512KB RAM
 
@@ -90,6 +90,6 @@ These features make the STM32F765xx, STM32F767xx, STM32F768Ax and STM32F769xx mi
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

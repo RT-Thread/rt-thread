@@ -1,7 +1,7 @@
-﻿# NuMaker-PFM-M487
+# NuMaker-PFM-M487
 
 ## 1. Introduction
-NuMaker-PFM-M487 provides multiple networking, interfaces, audio recording, playback functions, and flexible extended data storage. 
+NuMaker-PFM-M487 provides multiple networking, interfaces, audio recording, playback functions, and flexible extended data storage.
 
 [![NuMaker-PFM-M487](https://i.imgur.com/k8krqTW.png "NuMaker-PFM-M487")](https://i.imgur.com/k8krqTW.png "NuMaker-PFM-M487")
 
@@ -74,3 +74,4 @@ You can use Tera Term terminate emulator (or other software) to type commands of
   [1]: https://direct.nuvoton.com/en/numaker-pfm-m487
   [2]: https://www.nuvoton.com/resource-download.jsp?tp_GUID=HL0120180420145943
   [3]: https://www.nuvoton.com/resource-download.jsp?tp_GUID=DA05-M480
+0

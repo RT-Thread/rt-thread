@@ -46,7 +46,7 @@
 * 在 `src/arch/sys_arch.c` 中增加新添加的内存堆函数
 
   对内存堆的新增加的 mem_overflow_check_raw 与 mem_overflow_init_raw 函数予以实现
-  
+
 * 在 `src/arch/cc.h` 中增加对 lwIP 使用的标准错误代码宏的处理，不再使用 lwIP 内置的错误宏
 
 

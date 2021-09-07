@@ -1,6 +1,6 @@
 # STM32L476-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32L476RG @80MHz, 1024KB FLASH, 128KB RAM
 
@@ -99,6 +99,6 @@ The STM32L476xx family offers six packages from 64-pin to 144-pin packages.
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

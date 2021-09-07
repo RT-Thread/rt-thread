@@ -1,4 +1,4 @@
-﻿# NuMaker-M032KI
+# NuMaker-M032KI
 
 ## 1. Introduction
 
@@ -70,3 +70,4 @@ You can use Tera Term terminate emulator (or other software) to type commands of
 * [Board Introduction](https://www.nuvoton.com/board/numaker-m032ki/?index=2)
 * [Download Board Schematics](https://www.nuvoton.com/resource-download.jsp?tp_GUID=UG0120191106152943)
 * [Download MCU TRM](https://www.nuvoton.com/resource-download.jsp?tp_GUID=DA05-M031)
+)

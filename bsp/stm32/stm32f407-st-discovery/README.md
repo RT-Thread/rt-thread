@@ -26,7 +26,7 @@ STM32F4DISCOVERY 是 ST 推出的一款基于 ARM Cortex-M4 内核的开发板�
 - 常用外设
   - LED：4个用户 LEDs， LD3（orange，PD13），LD4(green，PD12)，LD5 (red,PD14) and LD6 (blue，PD15)。
   - 按键，2个，Reset 和 User。
-- 调试接口，板载 ST-LINK/V2调试器，使用SWD调试模式。	
+- 调试接口，板载 ST-LINK/V2调试器，使用SWD调试模式。
 
 开发板更多详细信息请参考 ST 官方 [STM32F4DISCOVERY开发板介绍](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/stm32f4discovery.html)。
 
@@ -103,4 +103,4 @@ msh >
 
 维护人:
 
-- [misonyo](https://github.com/misonyo) 
+- [misonyo](https://github.com/misonyo)

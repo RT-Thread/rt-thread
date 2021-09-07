@@ -37,7 +37,7 @@ SmartFusion2 内部框图
 
 ### 4. 使用说明
 
-#### 4.1 FPGA 工程设计 
+#### 4.1 FPGA 工程设计
 
 FPGA 部分使用 SmartDesign 图形化设计，不需要写 HDL 代码，时钟来自外部 50M 晶体输入，PLL 倍频 100M 提供给 MCU 使用，顶层配置如下图所示：
 
@@ -87,7 +87,7 @@ msh >
 
 - FPGA 开发环境基于 Libero V11.8.2.4，向上兼容，不支持低版本 IDE。
 - ARM 开发环境基于 Keil MDK 5.26，如果使用SoftConsole IDE ，需要修改 `libcpu` 内的文件。
-- 调试内部 ARM 核，需要把 JTAG_SEL 拉低，否则调试器连接不上。 
+- 调试内部 ARM 核，需要把 JTAG_SEL 拉低，否则调试器连接不上。
 - 使用 SoftConsole 开发环境可以直接使用官方的 Flash Pro 调试器进行 ARM 程序的调试。
 - 内核时钟需要和 FPGA 中 MSS 配置的对应，Libero 自动生成的时钟文件，可以直接替换`bsp\smartfusion2\libraries\sys_config`文件夹下的文件 。
 

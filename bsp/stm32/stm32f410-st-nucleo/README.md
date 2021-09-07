@@ -1,6 +1,6 @@
 # STM32F410-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32F410RB @100MHz, 128KB FLASH,  32KB RAM
 
@@ -73,7 +73,7 @@ All devices offer one 12-bit ADC, one 12-bit DAC, a low-power RTC, three general
 
 ## Maintained By
 
-[tanglj86](https://github.com/tanglj86/rt-thread)  
+[tanglj86](https://github.com/tanglj86/rt-thread)
 
 tanglj86@gmail.com
 
@@ -83,6 +83,6 @@ tanglj86@gmail.com
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

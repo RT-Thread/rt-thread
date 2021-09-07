@@ -1,6 +1,6 @@
 # STM32L412-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32L412RB @80MHz, 128KB FLASH,  40KB RAM
 
@@ -94,6 +94,6 @@ The STM32L412xx family offers six packages from 32 to 64-pin packages.
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

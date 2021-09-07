@@ -26,11 +26,11 @@ please add following string in your ld link script:
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array))
     PROVIDE(__ctors_end__ = .);
-    
+
     . = ALIGN(4);
-    
+
     // as a standalone section if you use ARM target.
-    
+
     /* The .ARM.exidx section is used for C++ exception handling. */
     /* .ARM.exidx is sorted, so has to go in its own output section.  */
     __exidx_start = .;
@@ -42,7 +42,7 @@ please add following string in your ld link script:
         _sidata = .;
     } > CODE
     __exidx_end = .;
-    
+
     /* .data section which is used for initialized data */
 
     // in your .data section
@@ -50,5 +50,5 @@ please add following string in your ld link script:
     KEEP(*(SORT(.dtors.*)))
     KEEP(*(.dtors))
     PROVIDE(__dtors_end__ = .);
-    
+
     . = ALIGN(4);

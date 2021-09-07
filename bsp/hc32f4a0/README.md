@@ -92,7 +92,7 @@ USB 虚拟 COM 端口默认连接串口 1，在终端工具里打开相应的串
 - RT -     Thread Operating System
  / | \     4.0.3 build Dec 22 2020
  2006 - 2020 Copyright by rt-thread team
-Os is Start!!! 
+Os is Start!!!
 msh >
 ```
 

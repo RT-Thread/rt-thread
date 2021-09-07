@@ -25,7 +25,7 @@ nrf51822 开发板常用 **板载资源** 如下：
 - 板载外设
   - LED墙：25个，矩阵控制。
   - 按键：3个，2个USER and 1个RESET 。
-  - 三轴加速度传感器:   LSM303AGR 
+  - 三轴加速度传感器:   LSM303AGR
   - CMSIS-DAP: KL26Z调试器
 - 调试接口：板载CMSIS-DAP 调试器。
 

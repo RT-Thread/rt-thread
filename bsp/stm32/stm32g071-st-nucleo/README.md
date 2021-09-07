@@ -1,6 +1,6 @@
 # STM32G071-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32G071RB @64MHz, 128KB FLASH,  36KB RAM
 
@@ -75,6 +75,6 @@ The devices come in packages with 28 to 64 pins.
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

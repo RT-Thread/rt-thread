@@ -23,14 +23,14 @@ CY8CKIT-062-BLE PSoC6 BLE Pioneer Kit 是赛普拉斯推出的一款32位双核C
 该开发板常用 **板载资源** 如下：
 
 - MCU：CY8C6347BZI-BLD53，Cortex-M4主频 150MHz，Cortex-M0主频 100MHz，1 MB 应用闪存，32 KB EEPROM 区域和32 KB 安全闪存 ，288 KB 集成SRAM
-	    MCU手册更多详细信息请参考文档 https://www.cypress.com/file/457541/download
-		
+        MCU手册更多详细信息请参考文档 https://www.cypress.com/file/457541/download
+
 - 开发环境：ModusToolbox 2.0
-		PSoC® Creator™ 下载链接 https://www.cypress.com/products/modustoolbox-software-environment
-		
+        PSoC® Creator™ 下载链接 https://www.cypress.com/products/modustoolbox-software-environment
+
 - 开发板：CY8CKIT-062-BLE PSoC 6 BLE Pioneer Kit
-		开发板更多详细信息请参考文档 https://www.cypress.com/file/390496/download
-		
+        开发板更多详细信息请参考文档 https://www.cypress.com/file/390496/download
+
 
 ## 外设支持
 
@@ -59,14 +59,14 @@ CY8CKIT-062-BLE PSoC6 BLE Pioneer Kit 是赛普拉斯推出的一款32位双核C
 
 #### 编译下载
 1, 安装ModusToolbox 2.0时请使用默认路径
- 
+
 2, 打开ModusToolbox 2.0时workspace选择工程所在目录下（例如workspace: C:\Git\rt-thread\bsp\cypress）
 
 3, 在Project Explorer的空白处右键，点击import，General->Existing Projects into Workspace ->next，点击Browse选择
    此BSP所在目录加载工程->Finish
 
 4, 下载lib：在左下角Quick Panel的Tools栏，点击library Manager-> BSPs下面勾选CY8CKIT-062-BLE (若已勾选可以不用再选)
-			-> Libraries里PSoC6 Base Libraries下面全部勾选core-lib,psoc6cm0p,psoc6hal,psoc6make,psoc6pdl -> 点击apply 进行下载
+            -> Libraries里PSoC6 Base Libraries下面全部勾选core-lib,psoc6cm0p,psoc6hal,psoc6make,psoc6pdl -> 点击apply 进行下载
 
 5, 编译此工程
 
@@ -89,7 +89,7 @@ CY8CKIT-062-BLE PSoC6 BLE Pioneer Kit 是赛普拉斯推出的一款32位双核C
 hello rt-thread
 msh >hello rt-thread
 hello rt-thread
-```                                  
+```
 
 ## 联系人信息
 

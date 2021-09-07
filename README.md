@@ -11,9 +11,9 @@
 
 # Introduction
 
-RT-Thread was born in 2006, it is an open source, neutral, and community-based real-time operating system (RTOS). 
+RT-Thread was born in 2006, it is an open source, neutral, and community-based real-time operating system (RTOS).
 
-RT-Thread is mainly written in C language, easy to understand and easy to port(can be quickly port to a wide range of mainstream MCUs and module chips). It applies object-oriented programming methods to real-time system design, making the code elegant, structured, modular, and very tailorable. 
+RT-Thread is mainly written in C language, easy to understand and easy to port(can be quickly port to a wide range of mainstream MCUs and module chips). It applies object-oriented programming methods to real-time system design, making the code elegant, structured, modular, and very tailorable.
 
 RT-Thread has Standard version and Nano version. For resource-constrained microcontroller (MCU) systems, the NANO kernel version that requires only 3KB Flash and 1.2KB RAM memory resources can be tailored  with easy-to-use tools; And for resource-rich IoT devices, RT-Thread can use the on-line software package management tool, together with system configuration tools, to achieve intuitive and rapid modular cutting, seamlessly import rich software packages, thus achieving complex functions like Android's graphical interface and touch sliding effects, smart voice interaction effects, and so on.
 
@@ -29,23 +29,23 @@ It includes:
 
 - Kernel layer: RT-Thread kernel, the core part of RT-Thread, includes the implementation of objects in the kernel system, such as multi-threading and its scheduling, semaphore, mailbox, message queue, memory management, timer, etc.; libcpu/BSP (Chip Migration Related Files/Board Support Package) is closely related to hardware and consists of peripheral drivers and CPU porting.
 
-- Components and Service Layer: Components are based on upper-level software on top of the RT-Thread kernel, such as virtual file systems, FinSH command-line interfaces, network frameworks, device frameworks, and more. Its modular design allows for high internal cohesion inside the components and low coupling between components. 
-  
-- RT-Thread software package: A general-purpose software component running on the RT-Thread IoT operating system platform for different application areas, consisting of description information, source code or library files. RT-Thread provides an open package platform with officially available or developer-supplied packages that provide developers with a choice of reusable packages that are an important part of the RT-Thread ecosystem. The package ecosystem is critical to the choice of an operating system because these packages are highly reusable and modular, making it easy for application developers to build the system they want in the shortest amount of time. RT-Thread supports more than 180 software packages. 
+- Components and Service Layer: Components are based on upper-level software on top of the RT-Thread kernel, such as virtual file systems, FinSH command-line interfaces, network frameworks, device frameworks, and more. Its modular design allows for high internal cohesion inside the components and low coupling between components.
+
+- RT-Thread software package: A general-purpose software component running on the RT-Thread IoT operating system platform for different application areas, consisting of description information, source code or library files. RT-Thread provides an open package platform with officially available or developer-supplied packages that provide developers with a choice of reusable packages that are an important part of the RT-Thread ecosystem. The package ecosystem is critical to the choice of an operating system because these packages are highly reusable and modular, making it easy for application developers to build the system they want in the shortest amount of time. RT-Thread supports more than 180 software packages.
 
 ## RT-Thread Features
 
-- Designed for resource-constrained devices, the minimum kernel requires only 1.2KB of RAM and 3 KB of Flash.                                                                                                              
+- Designed for resource-constrained devices, the minimum kernel requires only 1.2KB of RAM and 3 KB of Flash.
 
-- Has rich components and a prosperous and fast growing package ecosystem.                                                              
+- Has rich components and a prosperous and fast growing package ecosystem.
 
-- Elegant code style, easy to use, read and master.                                                                                                                                                                             
+- Elegant code style, easy to use, read and master.
 
-- High Scalability. RT-Thread has high-quality scalable software architecture, loose coupling, modularity, is easy to tailor and expand.                                                                                                                                                                           
+- High Scalability. RT-Thread has high-quality scalable software architecture, loose coupling, modularity, is easy to tailor and expand.
 
-- Supports high-performance applications.                                                                                                                    
+- Supports high-performance applications.
 
-- Supports cross-platform and a wide range of chips.                                                                                                          
+- Supports cross-platform and a wide range of chips.
 
 ## Code Catalogue
 
@@ -105,7 +105,7 @@ Use Python-based [scons](http://www.scons.org/) for command-line builds.
 
 RT-Thread Studio Demonstration:
 
-![studio](./documentation/figures/studio.gif)                                                 
+![studio](./documentation/figures/studio.gif)
 
 ## Getting Started
 
@@ -118,11 +118,11 @@ RT-Thread BSP can be compiled directly and downloaded to the corresponding devel
 ## Documentation
 
 [RT-Thread Programming Guide](https://github.com/RT-Thread/rtthread-manual-doc) | [RT-Thread Supported Chips & Boards](https://www.rt-thread.io/board.html) |
-[RT-Thread Software Package](https://github.com/RT-Thread/packages) | [RT-Thread Studio](https://www.rt-thread.io/studio.html) 
+[RT-Thread Software Package](https://github.com/RT-Thread/packages) | [RT-Thread Studio](https://www.rt-thread.io/studio.html)
 
 ## Sample
 
-[Kernel Sample](https://github.com/RT-Thread-packages/kernel-sample) | [Device Sample Code](https://github.com/RT-Thread-packages/peripheral-sample) | [File System Sample Code](https://github.com/RT-Thread-packages/filesystem-sample ) | [Network Sample Code](https://github.com/RT-Thread-packages/network-sample ) | 
+[Kernel Sample](https://github.com/RT-Thread-packages/kernel-sample) | [Device Sample Code](https://github.com/RT-Thread-packages/peripheral-sample) | [File System Sample Code](https://github.com/RT-Thread-packages/filesystem-sample ) | [Network Sample Code](https://github.com/RT-Thread-packages/network-sample ) |
 
 [Based on the STM32L475 IoT Board SDK](https://github.com/RT-Thread/IoT_Board) | [Based on the W601 IoT Board SDK](https://github.com/RT-Thread/W601_IoT_Board)
 

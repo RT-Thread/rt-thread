@@ -1,4 +1,4 @@
-# Raspberry PI 3B 32 BSP (Board Support Package) Execution Instruction 
+# Raspberry PI 3B 32 BSP (Board Support Package) Execution Instruction
 
 [中文页](README_zh.md) |
 
@@ -54,7 +54,7 @@ If everything goes well, a new 'rtthread.elf' and 'kernel7.img' file will be gen
 - Step 1: Install the eclipse plugin 'cdt'.
 - Step 2: Open eclipse cdt and set workspace, and set the workspace to 'rt-thread/bsp/raspberry-pi/raspi3-32'.
 - Step 3: Import the project by selecting 'General->Existing Projects into Workspace' and then 'Browse ...'. Noted that the compiling only supports scons now.
-  
+
 
 ## **Running**
 

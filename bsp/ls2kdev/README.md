@@ -27,8 +27,8 @@
 
 ```python
 if  CROSS_TOOL == 'gcc':
-	PLATFORM    = 'gcc'
-	EXEC_PATH   = "/opt/mips-2015.05-19-mips-sde-elf-i686-pc-linux-gnu/mips-2015.05/bin/"
+    PLATFORM    = 'gcc'
+    EXEC_PATH   = "/opt/mips-2015.05-19-mips-sde-elf-i686-pc-linux-gnu/mips-2015.05/bin/"
 ```
 
 如果不想修改`rtconfig.py`可以尝试第二种办法：
@@ -56,7 +56,7 @@ rt-thread固件目前在龙芯派上推荐使用[pmon][3]通过tftp的方式下�
 需要让开发板和主机处于同一网段，利用pmon的tftp进行固件传输。首先查看主机的ip地址，如果`ifconfig`查看ip是`192.168.12.35`。输入以下指令开始运行。
 
 ```
-ifaddr syn0 192.168.12.100 
+ifaddr syn0 192.168.12.100
 load tftp://192.168.12.35/rtthread.elf;
 g
 ```
@@ -66,13 +66,13 @@ g
 而后可以看到rtthread程序正常的运行。
 
 ```
-   zero      at       v0       v1       a0       a1       a2       a3   
+   zero      at       v0       v1       a0       a1       a2       a3
  00000000 00000000 00000000 00000000 00000003 aafffea8 8f800000 8f1371d0
-    t0       t1       t2       t3       t4       t5       t6       t7   
+    t0       t1       t2       t3       t4       t5       t6       t7
  00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-    s0       s1       s2       s3       s4       s5       s6       s7   
+    s0       s1       s2       s3       s4       s5       s6       s7
  00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-    t8       t9       k0       k1       gp       sp       s8       ra   
+    t8       t9       k0       k1       gp       sp       s8       ra
  00000000 00000000 00000000 00000000 00000000 aafffe88 00000000 8f0b1418
 Current SR: 0x10008080
 
@@ -116,8 +116,8 @@ title   TFTPBOOT
 
 ```
 RT-Thread online packages  --->
-	 			system packages  --->
-	 				lwext4: an excellent choice of ext2/3/4 filesystem for microcontrollers
+                system packages  --->
+                    lwext4: an excellent choice of ext2/3/4 filesystem for microcontrollers
 ```
 
 然后输入下面的命令更新软件包

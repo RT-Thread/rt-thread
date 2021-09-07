@@ -31,7 +31,7 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
     scons --menuconfig
     source ~/.env/env.sh
     pkgs --upgrade
-    
+
 ```
 3) 编译安装下载工具
 ```

@@ -79,9 +79,9 @@ KEY FEATURES
 - MCU：STM32F103C8T6 @72MHz, 64KB FLASH (can be extended to 128KB) , 20KB RAM
 
 - Peripherals
-  
+
   - LED：PC13
-  
+
 - Debug IO interface type: ST-LINK V2 (SWD)
 
 
@@ -97,7 +97,7 @@ This BSP provides MDK4, MDK5, and IAR projects for developers and it supports th
 
 ### 3.1 Use ST-LINK Debugger to connect the Blue Pill Board
 
-ST-LINK driver: 
+ST-LINK driver:
 
 > https://www.st.com/en/development-tools/stsw-link009.html
 
@@ -159,7 +159,7 @@ You can use other USB to UART adapters to replace FTDI adapter.
 
 - Compile and download the program to the board
 
-You can also follow this video to configurate *Blue Pill BSP* Keil5 project: 
+You can also follow this video to configurate *Blue Pill BSP* Keil5 project:
 
 > https://www.youtube.com/watch?v=0PwBBYXQ08g&t
 
@@ -181,7 +181,7 @@ msh >
 
 
 
-### 3.6 Terminal tool - PuTTy 
+### 3.6 Terminal tool - PuTTy
 
 If you have no terminal tool software available, you can download *PuTTy*:
 
@@ -290,9 +290,9 @@ vconsole_switch(dev);
 
 
 
-**Step 5: Download the new program to your blue pill board.** 
+**Step 5: Download the new program to your blue pill board.**
 
-Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1) device in your computer. Then, you can use the USB instead of the UART-USB adapter as a console and send commands through USB cable. If you reset or reboot the blue pill board, you'll still need to re-plug the USB cable. 
+Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1) device in your computer. Then, you can use the USB instead of the UART-USB adapter as a console and send commands through USB cable. If you reset or reboot the blue pill board, you'll still need to re-plug the USB cable.
 
 
 
@@ -317,5 +317,5 @@ According to ST official datasheet, STM32F103C8 has 64KB of Flash. However, STM3
 
 [Meco Man](https://github.com/mysterywolf) @ RT-Thread Community
 
-jiantingman@foxmail.com 
+jiantingman@foxmail.com
 

@@ -144,4 +144,4 @@ You can use Tera Term terminate emulator (or other software) to type commands of
   [3]: http://www.nuvoton.com/resource-download.jsp?tp_GUID=UG0520190311115040
   [4]: https://www.nuvoton.com/resource-download.jsp?tp_GUID=DA05-NUC980-1
   [5]: https://github.com/OpenNuvoton/NUC980_NuWriter
-  
+

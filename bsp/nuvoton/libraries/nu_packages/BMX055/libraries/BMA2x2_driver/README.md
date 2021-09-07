@@ -10,25 +10,25 @@
 - This package contains the Bosch Sensortec MEMS accelerometer sensor driver (sensor API)
 - The sensor driver package includes bma2x2.h, bma2x2.c and bma2x2_support.c files
 - BMA2x2 sensor driver supports the following Bosch MEMS sensors
-	* BMA280
-	* BMA255
-	* BMA253
-	* BMA250E
-	* BMA22E
-	* BMA220
-	* BMI055 - Combination of bma2x2 + bmg160 APIs
-	* BMX055 - Combination of bma2x2 + bmg160 + bmm050 APIs
-	* BMC150 - Combination of bma2x2 + bmm050 APIs
-	* BMC056 - Combination of bma2x2 + bmm050 APIs
+    * BMA280
+    * BMA255
+    * BMA253
+    * BMA250E
+    * BMA22E
+    * BMA220
+    * BMI055 - Combination of bma2x2 + bmg160 APIs
+    * BMX055 - Combination of bma2x2 + bmg160 + bmm050 APIs
+    * BMC150 - Combination of bma2x2 + bmm050 APIs
+    * BMC056 - Combination of bma2x2 + bmm050 APIs
 
 ### Version<a name=ver></a>
 - Version of bma2x2 sensor driver is:
 
-Driver files     | Version 
+Driver files     | Version
 -----------------|---------
-bma2x2.c 	 |  2.0.7  
-bma2x2.h 	 |  2.0.7  
-bma2x2_support.c |  1.0.4  
+bma2x2.c     |  2.0.7
+bma2x2.h     |  2.0.7
+bma2x2_support.c |  1.0.4
 
 ### Integration details<a name=integration></a>
 - Integrate bma2x2.h and bma2x2.c file in to your project.

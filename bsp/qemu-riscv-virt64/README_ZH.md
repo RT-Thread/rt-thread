@@ -65,7 +65,7 @@ scons --menuconfig
 ```
 选择如下：
 ```
-RISCV qemu virt64 configs  ---> 
+RISCV qemu virt64 configs  --->
     [*] RT-Thread run in riscv smode
 ```
 保存后，重新`scons`编译即可。

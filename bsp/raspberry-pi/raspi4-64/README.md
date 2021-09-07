@@ -49,7 +49,7 @@ Linux下推荐使用[gcc工具][2]。Linux版本下gcc版本可采用`gcc-arm-8.
 
 ```
 PLATFORM    = 'gcc'
-EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'  
+EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'
 ```
 
 直接进入`bsp\raspberry-pi\raspi4-64`，输入scons编译即可。

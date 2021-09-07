@@ -1,6 +1,6 @@
 # STM32L496-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32L496ZG @80MHz, 1024KB FLASH, 320KB RAM
 
@@ -98,6 +98,6 @@ They also feature standard and advanced communication interfaces.
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

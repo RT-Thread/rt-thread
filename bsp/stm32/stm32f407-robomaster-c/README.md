@@ -31,7 +31,7 @@ Robomaster 开发板C型 是大疆创新科技有限公司推出的一款基于 
 
 开发板的用户手册：[RoboMaster 开发板 C 型用户手册.pdf](https://rm-static.djicdn.com/tem/35228/RoboMaster%20%20%E5%BC%80%E5%8F%91%E6%9D%BF%20C%20%E5%9E%8B%E7%94%A8%E6%88%B7%E6%89%8B%E5%86%8C.pdf)
 
-开发板更多详细信息请参考 RoboMaster官网：[RoboMaster开发板 C 型](https://www.robomaster.com/zh-CN/products/components/general/development-board-type-c/info) 
+开发板更多详细信息请参考 RoboMaster官网：[RoboMaster开发板 C 型](https://www.robomaster.com/zh-CN/products/components/general/development-board-type-c/info)
 
 ## 外设支持
 
@@ -71,7 +71,7 @@ Robomaster 开发板C型 是大疆创新科技有限公司推出的一款基于 
 
 #### 硬件连接
 
-将准备好的 ST-Link/JLink/DapLink 与开发板连接，开发板上的调试接口为 MX1.25 4Pin。C板上没有电源指示灯，供电可以选用：调试接口的 3.3V 输入，micro USB 接口供电，XT30 电源输入。 
+将准备好的 ST-Link/JLink/DapLink 与开发板连接，开发板上的调试接口为 MX1.25 4Pin。C板上没有电源指示灯，供电可以选用：调试接口的 3.3V 输入，micro USB 接口供电，XT30 电源输入。
 
 #### 编译下载
 

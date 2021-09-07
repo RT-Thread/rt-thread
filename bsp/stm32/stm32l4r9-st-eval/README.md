@@ -34,15 +34,15 @@
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设**      		| **支持情况** 	| **备注**                              		|
-| :-----------------	| :----------: 	| :-----------------------------------------|
-| 板载 ST-LINK 转串口 	|     支持     	| PB10 PB11 USART3                      	|
-| LCD            		|     支持     	| DSI mode round lcd                        |
-| TOUCH            		|     支持     	| touch for round lcd                       |
-| SRAM              	|     支持     	|                              				|
-| **片上外设**     		| **支持情况** 	| **备注**                              		|
-| GPIO              	|     支持     	| 											|
-| UART              	|     支持     	| USART3                             		|
+| **板载外设**              | **支持情况**  | **备注**                                    |
+| :-----------------    | :----------:  | :-----------------------------------------|
+| 板载 ST-LINK 转串口    |     支持        | PB10 PB11 USART3                          |
+| LCD                   |     支持        | DSI mode round lcd                        |
+| TOUCH                 |     支持        | touch for round lcd                       |
+| SRAM                  |     支持        |                                           |
+| **片上外设**          | **支持情况**  | **备注**                                    |
+| GPIO                  |     支持        |                                           |
+| UART                  |     支持        | USART3                                    |
 
 
 
@@ -110,8 +110,8 @@ msh >
 
  ```
       RAM1 (rw) : ORIGIN = 0x20000000, LENGTH =  192k /* 192K sram 用于程序定义全局变量 静态变量存放*/
-      RAM2 (rw) : ORIGIN = 0x10000000, LENGTH =   64k /* 64K sram  用于程序定义全局变量 静态变量存放 */ 
-      RAM3 (rw) : ORIGIN = 0x20040000, LENGTH =  384k /* 384K sram 用于heap空间*/ 
+      RAM2 (rw) : ORIGIN = 0x10000000, LENGTH =   64k /* 64K sram  用于程序定义全局变量 静态变量存放 */
+      RAM3 (rw) : ORIGIN = 0x20040000, LENGTH =  384k /* 384K sram 用于heap空间*/
  ```
 
 

@@ -1,6 +1,6 @@
 # STM32F413-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32F413ZH @100MHz, 1.5 MB FLASH,  320KB RAM
 
@@ -83,6 +83,6 @@ They also feature standard and advanced communication interfaces.
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

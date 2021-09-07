@@ -67,9 +67,9 @@ JuiceVm 虚拟机是 juice 开发的一款 Risc-V 64bit ima 虚拟机，Risc-V 6
 ##### toolchain 下载
 - 到 xpack-dev-tools 下载 [点击跳转](https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/tag/v8.3.0-2.1)
   ```
-  wget https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v8.3.0-2.1/xpack-riscv-none-embed-gcc-8.3.0-2.1-linux-x64.tar.gz 
+  wget https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v8.3.0-2.1/xpack-riscv-none-embed-gcc-8.3.0-2.1-linux-x64.tar.gz
   ```
-- 解压到/opt目录下 
+- 解压到/opt目录下
   ```
   tar vxf xpack-riscv-none-embed-gcc-8.3.0-2.1-linux-x64.tar.gz -C /opt
   ```
@@ -90,22 +90,22 @@ https://whycan.com/files/members/1390/juice_vm_release_for_Linux_57ba985a.zip
 
 ```c
 global_vm_log_init output_mode_sel: 0  JUICE_VM_LOG_MAX_NUM:600
-      gg ,ggg,         gg      ,a8a,     ,gggg,   ,ggggggg, ,ggg,         ,g,ggg, ,ggg,_,ggg,  
-     dP8dP  Y8a        88     ,8   8,  ,88   Y8b,dP      Y8dP  Y8a       ,8dP  Y8dP  Y88P  Y8b 
-    dP YYb, `88        88     d8   8b d8      `Yd8'    a  YYb, `88       d8Yb, `88'  `88'  `88 
-   ,8  `8`   88        88     88   88d8'   8b  d88      Y8P'`   88       88 `   88    88    88 
-   I8   Yb   88        88     88   8,8I     Y88P`8baaaa         88       88     88    88    88 
-   `8b, `8,  88        88     Y8   8I8'        ,d8P             I8       8I     88    88    88 
-    ` Y88888 88        88     `8, ,8d8         d8               `8,     ,8'     88    88    88 
-         Y8  88        888888   8,8 Y8,        Y8,               Y8,   ,8P      88    88    88 
+      gg ,ggg,         gg      ,a8a,     ,gggg,   ,ggggggg, ,ggg,         ,g,ggg, ,ggg,_,ggg,
+     dP8dP  Y8a        88     ,8   8,  ,88   Y8b,dP      Y8dP  Y8a       ,8dP  Y8dP  Y88P  Y8b
+    dP YYb, `88        88     d8   8b d8      `Yd8'    a  YYb, `88       d8Yb, `88'  `88'  `88
+   ,8  `8`   88        88     88   88d8'   8b  d88      Y8P'`   88       88 `   88    88    88
+   I8   Yb   88        88     88   8,8I     Y88P`8baaaa         88       88     88    88    88
+   `8b, `8,  88        88     Y8   8I8'        ,d8P             I8       8I     88    88    88
+    ` Y88888 88        88     `8, ,8d8         d8               `8,     ,8'     88    88    88
+         Y8  88        888888   8,8 Y8,        Y8,               Y8,   ,8P      88    88    88
          ,88,Y8b,____,d88`8b,  ,d8b,`Yba,,_____`Yba,,_____,       Yb,_,dP       88    88    Y8,
      ,ad88888  Y888888P Y8  Y88P   Y8 ` Y8888888 ` Y8888888         Y8P         88    88    `Y8
-   ,dP '   Yb                                                                                  
-  ,8'      I8                                                                                  
- ,8'       I8                                                                                  
- I8,      ,8'                                                                                  
- `Y8,___,d8'                                                                                   
-    Y888P                                                                                      
+   ,dP '   Yb
+  ,8'      I8
+ ,8'       I8
+ I8,      ,8'
+ `Y8,___,d8'
+    Y888P
  email:                                                                       juicemail@163.com
 version:57ba985a 57ba985a Fri, 23 Apr 2021 17:22:20 +0800 xiaoxiaohuixxh feat(Rt-thread): uart port pass
 firm_addr:./rtthread.bin

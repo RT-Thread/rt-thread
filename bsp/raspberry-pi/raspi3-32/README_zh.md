@@ -59,7 +59,7 @@ scons
 kernel7.img即是要cp到raspberry SD卡中根目录的文件
 
 ### 2.1 eclipse 编码环境 ###
-第一步： 安装 eclipse cdt 
+第一步： 安装 eclipse cdt
 第二步： 打开 eclipse cdt 设置workspace ,推荐设置于xxx\xxx\rt-thread\bsp
 第三步： Import 工程 General-> Existing Peojects into Workspace 然后 Browse.. 你的raspi3目录，点击Finish
 

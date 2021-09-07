@@ -49,8 +49,8 @@ GoKit V2.1 是机智云 (GizWits) 推出的一款基于 ARM Cortex-M3 内核的�
 | RTC               |   暂不支持   |                                       |
 | PWM               |   暂不支持   |                                       |
 | USB Device        |   暂不支持   |                                       |
-| USB Host          |   暂不支持   | 		                               |
-| IWG               |   暂不支持   | 		                               |
+| USB Host          |   暂不支持   |                                       |
+| IWG               |   暂不支持   |                                       |
 | **扩展模块**      | **支持情况** | **备注**                              |
 |   gokit v2.3      |   暂不支持   |                                       |
 

@@ -76,7 +76,7 @@ set path=%path%;F:\FreedomStudio\SiFive\riscv64-unknown-elf-gcc-20171231-x86_64-
 
 ### 导入工程
 
-在菜单栏点击 `File->Import` 
+在菜单栏点击 `File->Import`
 
 ![1538297215062](figures/import.png)
 

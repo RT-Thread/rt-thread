@@ -7,7 +7,7 @@ The document will be wroten in Chinese firstly. At least when RT-Thread 1.2.0 ha
 1. RT-Thread Kernel (The basic facilities in RTOS)
 2. How to port RT-Thread in a new architecture.
 3. RT-Thread components.
-4. How to debug in RT-Thread. 
+4. How to debug in RT-Thread.
 
 ## Other codes changes in planning ##
 
@@ -17,7 +17,7 @@ The document will be wroten in Chinese firstly. At least when RT-Thread 1.2.0 ha
   * USB host and device driver;
 
 - Other BSP.
-  * welcome contributions. 
+  * welcome contributions.
 
 ### New features on Components ###
 
@@ -27,10 +27,10 @@ The document will be wroten in Chinese firstly. At least when RT-Thread 1.2.0 ha
   * The APIs are like *BSD, but implement in RT-Thread
 
 - finsh shell
-  * implement a UNIX style shell, and this shell can execute application module. 
+  * implement a UNIX style shell, and this shell can execute application module.
 
 - device file system
-  * implement select[4] API for device object in RT-Thread. 
+  * implement select[4] API for device object in RT-Thread.
 
 - lwIP TCP/IP stack
   * enable IPv6 feature[5].

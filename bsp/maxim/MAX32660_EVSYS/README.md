@@ -36,7 +36,7 @@
 
 - MPU
 
-- SPI 2个  Master/Slave 
+- SPI 2个  Master/Slave
 
 - I2S  Master/Slave
 
@@ -44,11 +44,11 @@
 
 - 3个 32bit  Timer
 
-- Watchdog 
+- Watchdog
 
 - RTC
 
-  
+
 
 ## 开发板介绍
 

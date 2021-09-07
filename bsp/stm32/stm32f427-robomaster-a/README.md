@@ -26,7 +26,7 @@ RoboMaster开发板套件是一款面向机器人DIY的开源主控套件。开�
 - 常用外设
   - LED：2个，D10（红色，PE11），D9（绿色，PE14）
   - 按键：1个，KEY（PB2）
-- 常用接口：SD 卡接口 OLED接口 
+- 常用接口：SD 卡接口 OLED接口
 - 调试接口，标准 JTAG/SWD
 
 开发板更多详细信息请参考 RoboMaster官网 [RoboMaster A板开发板介绍](https://www.robomaster.com/zh-CN/products/components/general/development-board)。

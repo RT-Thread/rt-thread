@@ -1,6 +1,6 @@
 # STM32F072-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32F072RB @48MHz, 128KB FLASH,  16KB RAM
 
@@ -105,6 +105,6 @@ iuzxhl@qq.com
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

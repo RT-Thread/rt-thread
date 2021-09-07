@@ -76,7 +76,7 @@ AXU4EV-E 开发板是 芯驿电子科技（上海）有限公司 推出的一款
    ```
     bootgen -image ./output.bif -arch zynqmp -o ./BOOT.bin -w on
    ```
-   
+
    其中 output.bif 文件可以是：
    ```
    //arch = zynqmp; split = false; format = BIN
@@ -86,7 +86,7 @@ AXU4EV-E 开发板是 芯驿电子科技（上海）有限公司 推出的一款
         [destination_cpu = r5-0, exception_level = el-3]./rtthread-zynqmp-r5.elf
    }
    ```
-   
+
 4. 根据 ALINX 提供的文档将 BOOT.bin 放进SD卡或烧录到 QSPI FLASH 中，通过拨码开关设置启动方式，然后连接电源即可启动。
 
 
@@ -121,7 +121,7 @@ msh />
 1. 内存： 如果 DDR memory 小于 2G，需要修改`zynqmp-r5.ld`链接文件中的`psu_r5_ddr_0_MEM_0` 以及`board.h`中的`HEAP_END`
 2. 主频： `xparameters.h`中的`XPAR_CPU_CORTEXR5_0_CPU_CLK_FREQ_HZ`
 3. 串口引脚和频率：`drv_uart.c`中的`rxmio`, `txmio` 和`xparameters.h`中的`XPAR_PSU_UART_0_UART_CLK_FREQ_HZ`
-4. 定时器频率：`xparameters.h`中的`XPAR_PSU_TTC_0_TTC_CLK_FREQ_HZ` 
+4. 定时器频率：`xparameters.h`中的`XPAR_PSU_TTC_0_TTC_CLK_FREQ_HZ`
 5. SD控制器：`drv_sdcard.c`中的块设备驱动初始化
 6. 网卡驱动：若使用的PHY芯片不在驱动支持范围内，可能需要在`xemacpsif_physpeed.c`中实现相应芯片的速率识别函数，可参考ALINX的相应教程。
 

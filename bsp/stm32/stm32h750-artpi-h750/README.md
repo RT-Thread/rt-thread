@@ -113,7 +113,7 @@ msh >
 
     PI9  ------> USART4_RX
 
-    PA0 ------> USART4_TX 
+    PA0 ------> USART4_TX
 
 ## 联系人信息
 

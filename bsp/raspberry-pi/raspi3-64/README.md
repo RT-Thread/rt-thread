@@ -1,4 +1,4 @@
-# Raspberry PI 3–64 BSP (Board Support Package) Execution Instruction 
+# Raspberry PI 3–64 BSP (Board Support Package) Execution Instruction
 
 [中文页](README_zh.md) |
 
@@ -12,7 +12,7 @@ This document records the execution instruction of the BSP (board support packag
 
 It's recommended to use the [env tool ](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md)to compile the Raspberry PI 3–64 BSP on Windows. Firstly, download the compiler GCC on Windows, from the official ARM website. You can refer to [Here](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads).
 
-Here we choose the version "[gcc-arm-8.3–2019.03-i686-mingw32-aarch64-elf]. 
+Here we choose the version "[gcc-arm-8.3–2019.03-i686-mingw32-aarch64-elf].
 
 Unzip the compressed package to the local directory, like "E:/env/tools/gnu_gcc/arm_gcc".
 

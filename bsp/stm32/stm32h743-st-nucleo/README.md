@@ -1,6 +1,6 @@
 # STM32H743-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32H743ZI @480MHz, 2MB FLASH,  1MB RAM
 
@@ -110,6 +110,6 @@ STM32H742xI/G and STM32H743xI/G devices incorporate high-speed embedded memories
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

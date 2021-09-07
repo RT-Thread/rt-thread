@@ -1,6 +1,6 @@
 # STM32L010-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32L010RB @32MHz, 128KB FLASH,  20KB RAM
 
@@ -72,6 +72,6 @@
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

@@ -17,7 +17,7 @@ Choose one (Mandatory):
 - [ ] This PR is for a code-review and is intended to get feedback.
 - [ ] This PR is mature, and ready to be integrated into the repo.
 
-### Code Quality：
+### Code Quality:
 
 As part of this pull request, I've considered the following:
 

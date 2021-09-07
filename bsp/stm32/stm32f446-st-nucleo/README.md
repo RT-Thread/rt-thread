@@ -1,6 +1,6 @@
 # STM32F446-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32F446ZE @180MHz, 512KB FLASH,  128KB RAM
 
@@ -79,6 +79,6 @@ qihengchuan8888@163.com
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

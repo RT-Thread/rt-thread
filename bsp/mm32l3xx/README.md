@@ -14,7 +14,7 @@ MM32 MiniBoard Rev.D2 是为了用户快速上手、了解学习MM32系列MCU的
 
 开发板外观如下图所示：
 
-MM32 MiniBoard Rev.D2 
+MM32 MiniBoard Rev.D2
 
 ![MM32 MiniBoard Rev.D2](figures/MM32%20MiniBoard%20Rev.D2_1.jpg)
 

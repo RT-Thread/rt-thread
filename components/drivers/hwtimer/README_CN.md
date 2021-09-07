@@ -4,7 +4,7 @@
 
 * 时间测量
 * 周期或单次执行回调函数
-  
+
 ## 编译
 
 1. 在rtconfig.h添加 `#define RT_USING_HWTIMER`
@@ -25,7 +25,7 @@
 
 ### 操作接口
 
-``` 
+```
 struct rt_hwtimer_ops
 {
     void (*init)(struct rt_hwtimer_device *timer, rt_uint32_t state);
@@ -36,7 +36,7 @@ struct rt_hwtimer_ops
 };
 ```
 
-* init - state <1 打开设备 0 关闭设备> 
+* init - state <1 打开设备 0 关闭设备>
 * start - cnt <超时值> - mode <单次/周期>
 * stop - <停止计数>
 * count_get - <读取计数器值>
@@ -47,10 +47,10 @@ struct rt_hwtimer_ops
 ```
 struct rt_hwtimer_info
 {
-    rt_int32_t maxfreq;   
-    rt_int32_t minfreq;    
-    rt_uint32_t maxcnt;     
-    rt_uint8_t  cntmode;  
+    rt_int32_t maxfreq;
+    rt_int32_t minfreq;
+    rt_uint32_t maxcnt;
+    rt_uint8_t  cntmode;
  };
 ```
 
@@ -58,7 +58,7 @@ struct rt_hwtimer_info
 * minfreq <设备支持的最小计数频率>
 * maxcnt  <计数器最大计数值>
 * cntmode <递增计数/递减计数>
-  
+
 ### 注册设备
 
 ```
@@ -80,7 +80,7 @@ int stm32_hwtimer_init(void)
 void timer_irq_handler(void)
 {
     //其它操作
-    
+
     rt_device_hwtimer_isr(&_timer0);
 }
 ```

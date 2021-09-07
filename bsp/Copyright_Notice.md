@@ -601,7 +601,7 @@ License: 未注明
 
 Copyright: Copyright, 2011. Renesas Electronics Corporation and Renesas Solutions Corporation
 
-Path: 
+Path:
 
 - bsp/rx/RPDL
 

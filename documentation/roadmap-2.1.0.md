@@ -8,7 +8,7 @@ So more representatives mentioned below are my (Bernard) personal point of view:
 
 2. In embedded system salon which is held in Shanghai China, December of last year, developer Weety mentioned POSIX compatibility issue, which leading to not easy to port some Linux software to RT-Thread. The main problem here is that the BSD socket interface is entirely in lwIP protocol stack, while the file system interface of RT-Thread is another one. Therefore, RT-Thread has no unified select/read/write/poll function on socket/file descriptor/device; Another implicit problem is, POSIX implementation is not completed standard. There may be some pits inside. This issue is a big problem, since we chose the open source system, then he/she must also take into account the open source ecosystem as well. There are many open source resources you can use or re-use. Therefore, RT-Thread also need to be more open attitude to solve this problem so that it can be more open, to enhance the affinity of the POSIX standard itself. Similarly, it should be better supported for some of the C ++ standard. RT-Thread will be more POSIX, more open. RT-Thread is there, and how to create a better application, it's up to the user's innovation.
 
-3. Some rich feature SoC, such as the number of new pop package ARM9 (With built-in SDRAM/DDR), Cortex-A7/8/9, MIPS32/64, or even x86, these SoC will be certainly and gradually evolved into the RT-Thread target hardware platform, but the work should be heavier. If the above No.2 POSIX issue resolved, it's possible to support them. The primary working is the driver implementation, and then integrated with POSIX interface, it will be easier to port other components. 
+3. Some rich feature SoC, such as the number of new pop package ARM9 (With built-in SDRAM/DDR), Cortex-A7/8/9, MIPS32/64, or even x86, these SoC will be certainly and gradually evolved into the RT-Thread target hardware platform, but the work should be heavier. If the above No.2 POSIX issue resolved, it's possible to support them. The primary working is the driver implementation, and then integrated with POSIX interface, it will be easier to port other components.
 
 From my side of the energy can put into it, I should be focusing my working on the building up the platform, so that RT-Thread can be more POSIX, more standardized, more open and easy to use. The current planning point is to release RT-Thread v2.1.0 alpha version on the end of Q1 2015. This version should include dfs_lwIP file system interface, and then make sure the branch direction.
 
@@ -32,7 +32,7 @@ The others, the following list are some thought but no obligation feature list, 
 
 * POSIX-related
   - Implement dfs_lwIP file system interface for DFS fd/lwIP socket interface. To implement select/poll interface before DFS;
-  - More better integration between DFS and device file system interface(devfs). 
+  - More better integration between DFS and device file system interface(devfs).
   - Add more POSIX interfaces, including but not limited to aio, signal and other functions etc;
   - Improve DeviceDriver framework for device interfaces (rt_device_*). Application layer uses rt_device_* and devfs interface, firmware/driver developer uses device driver framework interface.
 

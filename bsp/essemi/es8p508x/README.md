@@ -83,7 +83,7 @@ msh />
 
 ## 4. 联系人信息
 
-- [wangyongquan](https://github.com/wangyq2018) 
+- [wangyongquan](https://github.com/wangyq2018)
 
 ## 5. 参考
 

@@ -18,7 +18,7 @@
 
 | IDE/编译器 | 已测试版本 |
 | -- | -- |
-| MDK5(ARM Compiler 5) | MDK5.31 | 
+| MDK5(ARM Compiler 5) | MDK5.31 |
 
 ## 3. 烧写及仿真
 

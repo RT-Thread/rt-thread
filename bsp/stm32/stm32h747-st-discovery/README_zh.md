@@ -100,7 +100,7 @@ msh >
 
     PA9     ------> USART1_TX
 
-    PA10   ------> USART1_RX 
+    PA10   ------> USART1_RX
 
 ## 联系人信息
 

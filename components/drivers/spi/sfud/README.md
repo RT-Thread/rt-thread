@@ -23,7 +23,7 @@
 
 ## 2、SFUD 如何使用
 
-### 2.1 已支持 Flash 
+### 2.1 已支持 Flash
 
 下表为所有已在 Demo 平台上进行过真机测试过的 Flash。显示为 **不支持** SFDP 标准的 Flash 已经在 Flash 参数信息表中定义，更多不支持 SFDP 标准的 Flash 需要大家以后 **共同来完善和维护**  **([Github](https://github.com/armink/SFUD)|[OSChina](http://git.oschina.net/armink/SFUD)|[Coding](https://coding.net/u/armink/p/SFUD/git))** 。
 
@@ -269,7 +269,7 @@ enum {
 
 移植文件位于 `/sfud/port/sfud_port.c` ，文件中的 `sfud_err sfud_spi_port_init(sfud_flash *flash)` 方法是库提供的移植方法，在里面完成各个设备 SPI 读写驱动（必选）、重试次数（必选）、重试接口（可选）及 SPI 锁（可选）的配置。更加详细的移植内容，可以参考 demo 中的各个平台的移植文件。
 
-### 2.5 添加库目前不支持的 Flash 
+### 2.5 添加库目前不支持的 Flash
 
 这里需要修改 `/sfud/inc/sfdu_flash_def.h` ，所有已经支持的 Flash 见 `SFUD_FLASH_CHIP_TABLE` 宏定义，需要提前准备的 Flash 参数内容分别为：| 名称 | 制造商 ID | 类型 ID | 容量 ID | 容量 | 写模式  | 擦除粒度（擦除的最小单位） | 擦除粒度对应的命令 | 。这里以添加 兆易创新 ( GigaDevice ) 的 `GD25Q64B` Flash 来举例。
 

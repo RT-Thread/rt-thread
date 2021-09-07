@@ -1,6 +1,6 @@
 # STM32G431-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32G431RB @170MHz, 128KB FLASH,  32KB RAM
 
@@ -103,6 +103,6 @@ The STM32G431x6/x8/xB family offers 9 packages from 32-pin to 100-pin.
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

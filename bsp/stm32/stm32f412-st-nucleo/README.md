@@ -1,6 +1,6 @@
 # STM32F412-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32F412ZG @100MHz, 1024KB FLASH,  256KB RAM
 
@@ -83,6 +83,6 @@ These features make the STM32F412xE/G microcontrollers suitable for a wide range
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

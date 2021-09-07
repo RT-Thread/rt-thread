@@ -34,8 +34,8 @@ scons
 首先需要准备一张空的32GB以下的SD卡，如果不想自己制作启动固件，可以直接从百度网盘上下载boot的固件。
 
 ```
-链接：https://pan.baidu.com/s/1PxgvXAChUIOgueNXhgMs8w 
-提取码：pioj 
+链接：https://pan.baidu.com/s/1PxgvXAChUIOgueNXhgMs8w
+提取码：pioj
 ```
 
 解压后将sd目录下的文件拷贝到sd卡即可。以后每次编译后，将生成的kernel7.img进行替换即可。上电后可以看到程序正常运行。

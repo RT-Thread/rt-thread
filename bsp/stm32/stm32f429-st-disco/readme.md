@@ -2,7 +2,7 @@
 
 ## 1. 简介
 
-STM32F429I-DISCOVERY 开发板使用高性能 MCU STM32F429，可以用于实现高级图形用户界面。  
+STM32F429I-DISCOVERY 开发板使用高性能 MCU STM32F429，可以用于实现高级图形用户界面。
 本 BSP 兼容 STM32F429I-DISCO 和 STM32F429I-DISC1 两个版本的 DISCOVERY 开发板。
 
 核心板板载主要资源如下：
@@ -35,9 +35,9 @@ STM32F429-DISCO 板级包支持 MDK4﹑MDK5﹑IAR 开发环境和 GCC 编译器�
 
 供电方式：使用 Mini USB 线连接电脑和板子的 USB ST-LINK 口。
 
-串口连接：STM32F429I-DISC1 版本的开发板的板载调试器为 ST-LINK/V2-B，支持 VCP 虚拟串口，所以可以直接使用虚拟串口输出默认控制台设备 USART1。 
+串口连接：STM32F429I-DISC1 版本的开发板的板载调试器为 ST-LINK/V2-B，支持 VCP 虚拟串口，所以可以直接使用虚拟串口输出默认控制台设备 USART1。
 
-老版本的 STM32F429I-DISCO 开发板需要从板子上的引脚外接串口，并更改控制台设备到相应 USART。 
+老版本的 STM32F429I-DISCO 开发板需要从板子上的引脚外接串口，并更改控制台设备到相应 USART。
 
 在PC上使用终端软件以115200-N-8-1的配置方式连接到对应的COM设备上。
 

@@ -20,7 +20,7 @@ GD32E230K-START板级包支持 MDK5，以下是具体版本信息：
 
 | IDE/编译器 | 已测试版本 |
 | -- | -- |
-| MDK5(ARM Compiler 6) | MDK5.27 | 
+| MDK5(ARM Compiler 6) | MDK5.27 |
 
 ## 3. 烧写及执行
 

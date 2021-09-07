@@ -1,6 +1,6 @@
 # STM32F411-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
 ## MCU: STM32F411RE @100MHz, 512KB FLASH,  128KB RAM
 
@@ -77,6 +77,6 @@ misonyo@foxmail.com
 
 Meco Man @ RT-Thread Community
 
-> jiantingman@foxmail.com 
+> jiantingman@foxmail.com
 >
 > https://github.com/mysterywolf

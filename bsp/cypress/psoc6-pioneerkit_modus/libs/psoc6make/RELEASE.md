@@ -1,6 +1,6 @@
 ### PSoC 6 GNU make Build System 1.0
 This repo provides the build recipe make files and scripts for building and programming PSoC 6 applications. Builds can be run either through a command-line interface (CLI) or through the ModusToolbox Integrated Devlopment Environment (IDE).
- 
+
 ### What's Included?
 The this release of the PSoC 6 GNU make Build System includes complete support for building, programming, and debugging PSoC 6 application projects. It is expected that a code example contains a top level make file for itself and references a Board Support Package (BSP) that defines specifics items, like the PSoC 6 part, for the target board. This includes the following:
 * Supported operations:

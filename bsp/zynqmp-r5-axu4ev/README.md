@@ -68,7 +68,7 @@ This BSP only support the GCC development environment. Here's an example to intr
    ```
     bootgen -image ./output.bif -arch zynqmp -o ./BOOT.bin -w on
    ```
-   
+
    And the outpu.bif file could be：
    ```
    //arch = zynqmp; split = false; format = BIN
@@ -78,7 +78,7 @@ This BSP only support the GCC development environment. Here's an example to intr
         [destination_cpu = r5-0, exception_level = el-3]./rtthread-zynqmp-r5.elf
    }
    ```
-   
+
 4. According to the document provided by Alinx, put BOOT.bin into SD card or burn to QSPI flash, set the startup mode through dial switch, and then connect the power supply to start.
 
 
@@ -110,7 +110,7 @@ This BSP is enabled and configured with net interface driver and LwIP protocol s
 
 If you need to ported the BSP to another development board of Xilinx Zynq UltraScale+ MPSOC development platform, it is also convenient. The main modifications are as follows:
 
-1. Memory: `psu_r5_ddr_0_MEM_0` in `zynqmp-r5.ld`  and `HEAP_END` in `board.h ` (if DDR memory is less than 2G) 
+1. Memory: `psu_r5_ddr_0_MEM_0` in `zynqmp-r5.ld`  and `HEAP_END` in `board.h ` (if DDR memory is less than 2G)
 2. Main Frequency: `XPAR_CPU_CORTEXR5_0_CPU_CLK_FREQ_HZ` in `zynqmp-r5.h`
 3. Pin and Frequency of Serial Port: `rxmio`, `txmio` and `XPAR_PSU_UART_0_UART_CLK_FREQ_HZ` in `drv_uart.c`
 4. Timer Frequency: `XPAR_PSU_TTC_0_TTC_CLK_FREQ_HZ` in `drv_timer.c`

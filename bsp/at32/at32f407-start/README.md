@@ -145,4 +145,4 @@ AT32F407使用Ethernet且PHY时钟由MCO输出提供时，主频最好采用200M
 
 维护人:
 
-- [sheltonyu](https://github.com/sheltonyu) 
+- [sheltonyu](https://github.com/sheltonyu)
