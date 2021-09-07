@@ -146,11 +146,13 @@ struct rt_sdio_device_id
 struct rt_sdio_driver
 {
     char *name;
-    rt_int32_t (*probe)(struct rt_mmcsd_card *card);
-    rt_int32_t (*remove)(struct rt_mmcsd_card *card);
+    rt_int32_t (*probe)(struct rt_sdio_function *func, struct rt_sdio_device_id *id);
+    rt_int32_t (*remove)(struct rt_sdio_function *func);
     struct rt_sdio_device_id *id;
 };
 
+#define sdio_claim_host(func)   mmcsd_host_lock(func->card->host)
+#define sdio_release_host(func) mmcsd_host_unlock(func->card->host)
 rt_int32_t sdio_io_send_op_cond(struct rt_mmcsd_host *host,
                                 rt_uint32_t           ocr,
                                 rt_uint32_t          *cmd5_resp);
