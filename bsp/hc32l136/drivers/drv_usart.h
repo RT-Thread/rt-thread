@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2020, Huada Semiconductor Co., Ltd.
+ * Copyright (C) 2021, Huada Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-10-30     CDT          first version
+ * 2021-08-19     pjq          first version
  */
  
 

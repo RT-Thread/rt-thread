@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2020, Huada Semiconductor Co., Ltd.
+ * Copyright (C) 2021, Huada Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-10-30     CDT          first version
+ * 2021-09-07     PJQ          first version
  */
 
 
@@ -61,7 +61,6 @@ void key_handler(void *param)
  ******************************************************************************/
 int32_t main(void)
 {
-    //rt_kprintf("Os is Start!!! \n");
     rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
     rt_pin_attach_irq(KEY_PIN, PIN_IRQ_MODE_FALLING, key_handler, RT_NULL);
     rt_pin_irq_enable(KEY_PIN, PIN_IRQ_ENABLE);

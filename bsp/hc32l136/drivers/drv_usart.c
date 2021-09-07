@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2020, Huada Semiconductor Co., Ltd.
+ * Copyright (C) 2021, Huada Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-10-30     CDT          first version
+ * 2021-08-19     pjq          first version
  */
 
 /*******************************************************************************
@@ -30,9 +30,7 @@
 /* HC32 config Rx timeout */
 struct hc32_uart_rxto
 {
-    //M4_TMR0_TypeDef *TMR0_Instance;
     rt_uint32_t     channel;
-
     rt_size_t       timeout_bits;
 };
 
@@ -41,7 +39,6 @@ struct uart_index
 {
     rt_uint8_t index;
     rt_uint8_t idx;
-    //M0P_UART_TypeDef *Instance;
 };
 
 /* HC32 UART irq handler */
@@ -52,7 +49,6 @@ struct uart_irq_handler
     void (*rx_irq_handler)(void);
     void (*cts_irq_handler)(void);
     void (*pei_irq_handler)(void);
-//    void (*dma_rx_irq_handler)(void);
 };
 
 /*******************************************************************************
@@ -216,8 +212,8 @@ static rt_err_t hc32_configure(struct rt_serial_device *serial,
     stcConfig.pstcIrqCb = &stcUartIrqCb;
     stcConfig.bTouchNvic = TRUE;
 
-    stcConfig.enRunMode = UartMode3;//模式3
-    stcMulti.enMulti_mode = UartNormal;//正常工作模式
+    stcConfig.enRunMode = UartMode3;
+    stcMulti.enMulti_mode = UartNormal;
 
     if(BIT_ORDER_LSB == cfg->bit_order)
     {
@@ -589,7 +585,6 @@ int hc32_hw_uart_init(void)
     hc32_uart_get_dma_config();
 
     Sysctrl_SetPeripheralGate(SysctrlPeripheralGpio,TRUE);
-    //Sysctrl_SetPeripheralGate(SysctrlPeripheralDma,TRUE);
 #ifdef BSP_USING_UART0
     Sysctrl_SetPeripheralGate(SysctrlPeripheralUart0,TRUE);
 #endif
