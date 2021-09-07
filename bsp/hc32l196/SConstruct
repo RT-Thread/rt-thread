@@ -7,7 +7,7 @@ if os.getenv('RTT_ROOT'):
 else:
     RTT_ROOT = os.path.normpath(os.getcwd() + '/../..')
 
-print "RTT_ROOT: " + RTT_ROOT
+print("RTT_ROOT: " + RTT_ROOT)
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 try:
