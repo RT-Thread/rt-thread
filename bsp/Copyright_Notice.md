@@ -216,6 +216,18 @@ Path:
 - bsp/hc32f4a0/Libraries/CMSIS
 - bsp/hc32f4a0/Libraries/HC32F4A0_StdPeriph_Driver
 
+### hc32f460
+
+License: bsd-new
+
+Copyright: Copyright (c) 2020, Huada Semiconductor Co., Ltd.
+
+Path:
+
+- bsp/hc32f460/Libraries/CMSIS
+- bsp/hc32f460/Libraries/HC32F460_StdPeriph_Driver
+
+
 ### hk32
 
 License: free-unknown
