@@ -208,7 +208,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest = 'target',
                       type = 'string',
-                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake/mdk5-ac6')
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake/mdk-ac6')
     AddOption('--stackanalysis',
                 dest = 'stackanalysis',
                 action = 'store_true',
@@ -841,7 +841,7 @@ def GenTargetProject(program = None):
         from keil import MDK5Project
         MDK5Project('project.uvprojx', Projects)
 
-    if GetOption('target') == 'mdk5-ac6':
+    if GetOption('target') == 'mdk-ac6':
         from keil import MDK5Project
         MDK5Project('project.uvprojx', Projects, ac6=True)
 
