@@ -171,8 +171,8 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-#define SOC_SERIES_GD32F1
-#define SOC_GD32103C
+#define SOC_SERIES_V85XX
+#define SOC_V85XX
 
 /* On-chip Peripheral Drivers */
 

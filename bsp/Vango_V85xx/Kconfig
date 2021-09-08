@@ -21,15 +21,15 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
-config SOC_SERIES_GD32F1
+config SOC_SERIES_V85XX
     bool
     default y
 
-config SOC_GD32103C
+config SOC_V85XX
     bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select SOC_SERIES_GD32F1
+    select SOC_SERIES_V85XX
     default y
 
 menu "On-chip Peripheral Drivers"
