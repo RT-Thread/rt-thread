@@ -12,6 +12,11 @@ VANGOV85XX-EVAL是-杭州万高科技推出的一款基于V85XX的评估板，�
 | 片内SRAM  | 32K           |
 | 片内FLASH | 256K          |
 
+## 数据手册
+
+[产品页面](http://www.vangotech.com/product.php?areas=0&bigs=1&smalls=4&id=14)
+[datasheet](http://www.vangotech.com/uploadpic/162798006058.pdf)
+
 ## 编译说明
 
 VANGOV85XX-EVAL板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以下是具体版本信息：
