@@ -819,9 +819,9 @@ static rt_int32_t sdio_register_card(struct rt_mmcsd_card *card)
         num = sdio_match_card(card, sd->drv->id);
         if (num)
         {
-
+            mmcsd_host_unlock(card->host);
             sd->drv->probe(card->sdio_function[num], sd->drv->id);
-
+            mmcsd_host_lock(card->host);
         }
     }
 
