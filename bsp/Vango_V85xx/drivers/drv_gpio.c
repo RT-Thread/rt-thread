@@ -8,6 +8,7 @@
  * 2020-12-27     iysheng           first version
  * 2021-01-01     iysheng           support exti interrupt
  * 2021-09-07     FuC               Suit for Vango V85xx
+ * 2021-09-09     ZhuXW             Fixing GPIO interrupt ...
  */
 
 #include <board.h>
@@ -15,50 +16,24 @@
 
 #ifdef RT_USING_PIN
 
-#if defined(GPIOG)
-#define __GD32_PORT_MAX 7u
-#elif defined(GPIOF)
-#define __GD32_PORT_MAX 6u
+#if defined(GPIOF)
+#define __V85XX_PORT_MAX 6u
 #elif defined(GPIOE)
-#define __GD32_PORT_MAX 5u
+#define __V85XX_PORT_MAX 5u
 #elif defined(GPIOD)
-#define __GD32_PORT_MAX 4u
+#define __V85XX_PORT_MAX 4u
 #elif defined(GPIOC)
-#define __GD32_PORT_MAX 3u
+#define __V85XX_PORT_MAX 3u
 #elif defined(GPIOB)
-#define __GD32_PORT_MAX 2u
+#define __V85XX_PORT_MAX 2u
 #elif defined(GPIOA)
-#define __GD32_PORT_MAX 1u
+#define __V85XX_PORT_MAX 1u
 #else
-#define __GD32_PORT_MAX 0u
-#error Unsupported GD32 GPIO peripheral.
+#define __V85XX_PORT_MAX 0u
+#error Unsupported V85XX GPIO peripheral.
 #endif
 
-#define PIN_GDPORT_MAX __GD32_PORT_MAX
-
-// static const struct pin_irq_map pin_irq_map[] =
-// {
-// #if defined(SOC_SERIES_GD32F1)
-//     {GPIO_Pin_0, EXTI0_IRQn},
-//     {GPIO_Pin_1, EXTI1_IRQn},
-//     {GPIO_Pin_2, EXTI2_IRQn},
-//     {GPIO_Pin_3, EXTI3_IRQn},
-//     {GPIO_Pin_4, EXTI4_IRQn},
-//     {GPIO_Pin_5, EXTI9_5_IRQn},
-//     {GPIO_Pin_6, EXTI9_5_IRQn},
-//     {GPIO_Pin_7, EXTI9_5_IRQn},
-//     {GPIO_Pin_8, EXTI9_5_IRQn},
-//     {GPIO_Pin_9, EXTI9_5_IRQn},
-//     {GPIO_Pin_10, EXTI15_10_IRQn},
-//     {GPIO_Pin_11, EXTI15_10_IRQn},
-//     {GPIO_Pin_12, EXTI15_10_IRQn},
-//     {GPIO_Pin_13, EXTI15_10_IRQn},
-//     {GPIO_Pin_14, EXTI15_10_IRQn},
-//     {GPIO_Pin_15, EXTI15_10_IRQn},
-// #else
-// #error "Unsupported soc series"
-// #endif
-// };
+#define PIN_GDPORT_MAX __V85XX_PORT_MAX
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 {
@@ -100,7 +75,7 @@ static rt_base_t v85xx_pin_get(const char *name)
         return -RT_EINVAL;
     }
 
-    if ((name[1] >= 'A') && (name[1] <= 'Z'))
+    if ((name[1] >= 'A') && (name[1] <= 'F'))
     {
         hw_port_num = (int)(name[1] - 'A');
     }
@@ -161,7 +136,6 @@ static void v85xx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
     /* Configure GPIO_InitStructure */
     GPIO_InitStruct.GPIO_Pin  = PIN_GDPIN(pin);
-    // GPIO_InitStruct.GPIO_Speed = GPIO_SPEED_2MHZ;
     GPIO_InitStruct.GPIO_Mode = GPIO_Mode_INPUT;
 
     switch (mode)
@@ -201,12 +175,64 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
     return -1;
 }
 
+
+static rt_err_t v85xx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
+                    rt_uint32_t mode, void (*hdr)(void *args), void *args)
+{
+    rt_base_t level;
+    rt_int32_t irqindex = -1;
+
+    if (PIN_PORT(pin) >= PIN_GDPORT_MAX)
+    {
+        return -RT_ENOSYS;
+    }
+
+    irqindex = bit2bitno(PIN_GDPIN(pin));
+
+    level = rt_hw_interrupt_disable();
+    if (pin_irq_hdr_tab[irqindex].pin == pin &&
+        pin_irq_hdr_tab[irqindex].hdr == hdr &&
+        pin_irq_hdr_tab[irqindex].mode == mode &&
+        pin_irq_hdr_tab[irqindex].args == args)
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EOK;
+    }
+    if (pin_irq_hdr_tab[irqindex].pin != -1)
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EBUSY;
+    }
+    pin_irq_hdr_tab[irqindex].pin = pin;
+    pin_irq_hdr_tab[irqindex].hdr = hdr;
+    pin_irq_hdr_tab[irqindex].mode = mode;
+    pin_irq_hdr_tab[irqindex].args = args;
+    rt_hw_interrupt_enable(level);
+
+    return RT_EOK;
+}
+static rt_err_t v85xx_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+{
+
+    return RT_EOK;
+}
+static rt_err_t v85xx_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+{
+
+    return RT_EOK;
+}
+
+
+
 const static struct rt_pin_ops _v85xx_pin_ops =
 {
     v85xx_pin_mode,
     v85xx_pin_write,
     v85xx_pin_read,
-    // v85xx_pin_get,
+    v85xx_pin_attach_irq,
+    v85xx_pin_detach_irq,
+    v85xx_pin_irq_enable,
+    v85xx_pin_get,
 };
 
 rt_inline void pin_irq_hdr(int irqno)
@@ -217,86 +243,12 @@ rt_inline void pin_irq_hdr(int irqno)
     }
 }
 
-// /**
-//   * @brief  This function handles EXTI interrupt request.
-//   * @param  gpio_pin: Specifies the pins connected EXTI line
-//   * @retval none
-//   */
-// void v85xx_pin_exti_irqhandler(uint16_t gpio_pin)
-// {
-//     if (SET == EXTI_GetIntBitState(gpio_pin))
-//     {
-//         EXTI_ClearIntBitState(gpio_pin);
-//         pin_irq_hdr(bit2bitno(gpio_pin));
-//     }
-// }
-
-// void EXTI0_IRQHandler(void)
-// {
-//     rt_interrupt_enter();
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_0);
-//     rt_interrupt_leave();
-// }
-
-// void EXTI1_IRQHandler(void)
-// {
-//     rt_interrupt_enter();
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_1);
-//     rt_interrupt_leave();
-// }
-
-// void EXTI2_IRQHandler(void)
-// {
-//     rt_interrupt_enter();
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_2);
-//     rt_interrupt_leave();
-// }
-
-// void EXTI3_IRQHandler(void)
-// {
-//     rt_interrupt_enter();
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_3);
-//     rt_interrupt_leave();
-// }
-
-// void EXTI4_IRQHandler(void)
-// {
-//     rt_interrupt_enter();
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_4);
-//     rt_interrupt_leave();
-// }
-
-// void EXTI5_9_IRQHandler(void)
-// {
-//     rt_interrupt_enter();
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_5);
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_6);
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_7);
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_8);
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_9);
-//     rt_interrupt_leave();
-// }
-
-// void EXTI10_15_IRQHandler(void)
-// {
-//     rt_interrupt_enter();
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_10);
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_11);
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_12);
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_13);
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_14);
-//     v85xx_pin_exti_irqhandler(GPIO_Pin_15);
-//     rt_interrupt_leave();
-// }
-
 int rt_hw_pin_init(void)
 {
   GPIO_InitType GPIO_InitStruct;
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_INPUT;
   GPIO_InitStruct.GPIO_Pin = GPIO_Pin_All;
-#if defined(GPIOG)
-    GPIOBToF_Init(GPIOG, &GPIO_InitStruct);
-#endif
+
 #if defined(GPIOF)
     GPIOBToF_Init(GPIOF, &GPIO_InitStruct);
 #endif
@@ -315,7 +267,7 @@ int rt_hw_pin_init(void)
 #if defined(GPIOA)
     GPIOA_Init(GPIOA, &GPIO_InitStruct);
 #endif
-    GPIOBToF_Init(GPIOB, &GPIO_InitStruct);
+
     return rt_device_pin_register("pin", &_v85xx_pin_ops, RT_NULL);
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
