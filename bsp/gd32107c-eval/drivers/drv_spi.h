@@ -8,8 +8,8 @@
  * 2021-08-23     lianzhian        first implementation.
  */
 
-#ifndef gd32F30X_SPI_H_INCLUDED
-#define gd32F30X_SPI_H_INCLUDED
+#ifndef __DRV_SPI_H__
+#define __DRV_SPI_H__
 
 
-#endif /* gd32F30X_SPI_H_INCLUDED */
+#endif /* __DRV_SPI_H__ */
