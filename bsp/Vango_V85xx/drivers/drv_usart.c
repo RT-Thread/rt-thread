@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2021-01-04     iysheng           first version
+ * 2021-09-07     FuC               Suit for Vango V85XX
  */
 
 #include <target.h>
@@ -109,9 +110,6 @@ static const struct V85xx_uart uarts[] = {
     {
         UART0,                             /* uart peripheral index */
         UART0_IRQn,                        /* uart iqrn */
-        // // RCU_UART0, RCU_GPIOA, RCU_GPIOA,   /* periph clock, tx gpio clock, rt gpio clock */
-        // GPIOA, GPIOA,                       /* tx port, tx alternate, tx pin */
-        // GPIO_PIN_9, GPIO_PIN_10,            /* rx port, rx alternate, rx pin */
         &serial0,
         "uart0",
     },
@@ -121,9 +119,6 @@ static const struct V85xx_uart uarts[] = {
     {
         UART1,                             /* uart peripheral index */
         UART1_IRQn,                        /* uart iqrn */
-        // RCU_UART1, RCU_GPIOA, RCU_GPIOA,   /* periph clock, tx gpio clock, rt gpio clock */
-        // GPIOA, GPIOA,                       /* tx port, tx alternate, tx pin */
-        // GPIO_PIN_2, GPIO_PIN_3,             /* rx port, rx alternate, rx pin */
         &serial1,
         "uart1",
     },
@@ -133,9 +128,6 @@ static const struct V85xx_uart uarts[] = {
     {
         UART2,                             /* uart peripheral index */
         UART2_IRQn,                        /* uart iqrn */
-        // RCU_UART2, RCU_GPIOB, RCU_GPIOB,   /* periph clock, tx gpio clock, rt gpio clock */
-        // GPIOB, GPIOB,                       /* tx port, tx alternate, tx pin */
-        // GPIO_PIN_10, GPIO_PIN_11,           /* rx port, rx alternate, rx pin */
         &serial2,
         "uart2",
     },
@@ -145,9 +137,6 @@ static const struct V85xx_uart uarts[] = {
     {
         UART3,                              /* uart peripheral index */
         UART3_IRQn,                         /* uart iqrn */
-        // RCU_UART3, RCU_GPIOC, RCU_GPIOC,    /* periph clock, tx gpio clock, rt gpio clock */
-        // GPIOC, GPIOC,                       /* tx port, tx alternate, tx pin */
-        // GPIO_PIN_10, GPIO_PIN_11,           /* rx port, rx alternate, rx pin */
         &serial3,
         "uart3",
     },
@@ -157,9 +146,6 @@ static const struct V85xx_uart uarts[] = {
     {
         UART4,                              /* uart peripheral index */
         UART4_IRQn,                         /* uart iqrn */
-        // RCU_UART4, RCU_GPIOC, RCU_GPIOD,    /* periph clock, tx gpio clock, rt gpio clock */
-        // GPIOC, GPIOD,                       /* tx port, tx alternate, tx pin */
-        // GPIO_PIN_12, GPIO_PIN_2,            /* rx port, rx alternate, rx pin */
         &serial4,
         "uart4",
     },
@@ -191,15 +177,6 @@ static rt_err_t V85xx_configure(struct rt_serial_device *serial, struct serial_c
         break;
     }
 
-    // switch (cfg->stop_bits) {
-    // case STOP_BITS_2:
-    //     UART_InitParaStruct.UART_STBits = UART_STBITS_2;
-    //     break;
-    // default:
-    //     UART_InitParaStruct.UART_STBits = UART_STBITS_1;
-    //     break;
-    // }
-
     switch (cfg->parity) {
     case PARITY_ODD:
         UART_InitParaStruct.Parity = UART_PARITY_ODD;
@@ -212,7 +189,6 @@ static rt_err_t V85xx_configure(struct rt_serial_device *serial, struct serial_c
         break;
     }
 
-    // UART_InitParaStruct.UART_HardwareFlowControl = UART_HARDWAREFLOWCONTROL_NONE;
     UART_InitParaStruct.Mode = UART_MODE_RX | UART_MODE_TX;
     UART_Init(UARTx, &UART_InitParaStruct);
     UART_Cmd(UARTx, UART_InitParaStruct.Mode, ENABLE);
