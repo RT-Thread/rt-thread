@@ -28,7 +28,7 @@ extern "C" {
 #define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
 #define PIN_NO(pin) ((uint8_t)((pin) & 0xFu))
 
-#define PIN_GDPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (0x400u * PIN_PORT(pin))))
+#define PIN_GDPORT(pin) ((GPIO_TypeDef *)(GPIOB_BASE + (0x400u * PIN_PORT(pin))))
 #define PIN_GDPIN(pin) ((uint16_t)(1u << PIN_NO(pin)))
 
 struct pin_irq_map
