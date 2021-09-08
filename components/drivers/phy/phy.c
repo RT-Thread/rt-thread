@@ -12,6 +12,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <stddef.h>
 
 #define DBG_TAG "PHY"
 #define DBG_LVL DBG_INFO
@@ -62,12 +63,12 @@ rt_err_t rt_hw_phy_register(struct rt_phy_device *phy, const char *name)
 #ifdef RT_USING_DEVICE_OPS
     device->ops = phy_ops;
 #else
-    device->init = RT_NULL;
-    device->open = RT_NULL;
-    device->close = RT_NULL;
+    device->init = NULL;
+    device->open = NULL;
+    device->close = NULL;
     device->read = phy_device_read;
     device->write = phy_device_write;
-    device->control = RT_NULL;
+    device->control = NULL;
 #endif
     device->user_data = phy;
 

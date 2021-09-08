@@ -15,6 +15,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <drivers/pm.h>
+#include <stdint.h>
 
 #ifdef RT_USING_PM
 
@@ -382,7 +383,7 @@ void rt_pm_release_all(rt_uint8_t mode)
  * @param module_id the application or device module id
  * @param mode the system power sleep mode
  */
-void rt_pm_module_request(rt_uint8_t module_id, rt_uint8_t mode)
+void rt_pm_module_request(uint8_t module_id, rt_uint8_t mode)
 {
     rt_base_t level;
     struct rt_pm *pm;
@@ -413,7 +414,7 @@ void rt_pm_module_request(rt_uint8_t module_id, rt_uint8_t mode)
  * @param mode the system power sleep mode
  *
  */
-void rt_pm_module_release(rt_uint8_t module_id, rt_uint8_t mode)
+void rt_pm_module_release(uint8_t module_id, rt_uint8_t mode)
 {
     rt_ubase_t level;
     struct rt_pm *pm;
@@ -445,7 +446,7 @@ void rt_pm_module_release(rt_uint8_t module_id, rt_uint8_t mode)
  * @param mode the system power sleep mode
  *
  */
-void rt_pm_module_release_all(rt_uint8_t module_id, rt_uint8_t mode)
+void rt_pm_module_release_all(uint8_t module_id, rt_uint8_t mode)
 {
     rt_ubase_t level;
     struct rt_pm *pm;

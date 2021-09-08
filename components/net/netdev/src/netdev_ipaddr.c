@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <netdev_ipaddr.h>
+#include <stddef.h>
 
 /* Here for now until needed in other places in lwIP */
 #ifndef isprint
@@ -210,13 +211,13 @@ char *netdev_ip4addr_ntoa_r(const ip4_addr_t *addr, char *buf, int buflen)
         {
             if (len++ >= buflen)
             {
-                return RT_NULL;
+                return NULL;
             }
             *rp++ = inv[i];
         }
         if (len++ >= buflen)
         {
-            return RT_NULL;
+            return NULL;
         }
         *rp++ = '.';
         ap++;
@@ -556,11 +557,11 @@ netdev_inet_ntop(int af, const void *src, char *dst, int32_t size)
 #define AF_INET         2
 #define AF_INET6        10
 
-    const char *ret = RT_NULL;
+    const char *ret = NULL;
     int size_int = (int)size;
     if (size_int < 0)
     {
-        return RT_NULL;
+        return NULL;
     }
     switch (af)
     {

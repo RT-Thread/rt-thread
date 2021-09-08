@@ -12,6 +12,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
+#include <stddef.h>
 #include "board.h"      // CPU_CLOCK
 #include "drv_uart.h"
 
@@ -145,7 +146,7 @@ int rt_hw_uart_init(void)
 
     serial.ops    = &lpc_uart_ops;
     serial.config = config;
-    serial.parent.user_data = RT_NULL;
+    serial.parent.user_data = NULL;
 
     /*
      * Initialize UART pin connect
@@ -168,7 +169,7 @@ int rt_hw_uart_init(void)
     /* register UART device */
     ret = rt_hw_serial_register(&serial, "uart",
                                 RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
-                                RT_NULL);
+                                NULL);
 
     return ret;
 }

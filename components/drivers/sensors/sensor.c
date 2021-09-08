@@ -311,7 +311,7 @@ static rt_size_t rt_sensor_read(rt_device_t dev, rt_off_t pos, void *buf, rt_siz
         if (sensor->ops->fetch_data !=  RT_NULL)
         {
             result = sensor->ops->fetch_data(sensor, buf, len);
-        }
+        }        
     }
 
     if (sensor->module)
@@ -359,7 +359,7 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
         {
             sensor->config.range = (rt_int32_t)args;
             LOG_D("set range %d", sensor->config.range);
-        }
+        }    
         break;
     case RT_SENSOR_CTRL_SET_ODR:
         /* Configuration data output rate */
