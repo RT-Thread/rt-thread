@@ -12,7 +12,7 @@ HAL_Driver/Src/HAL_ADC.c
 HAL_Driver/Src/HAL_GPIO.c
 HAL_Driver/Src/HAL_WDT.c
 HAL_Driver/Src/HAL_IWDT.c
-HAL_Driver/Src/HAL_Uart.c
+HAL_Driver/Src/HAL_UART.c
 HAL_Driver/Src/HAL_TIMER.c
 HAL_Driver/Src/HAL_EXTI.c
 """)
