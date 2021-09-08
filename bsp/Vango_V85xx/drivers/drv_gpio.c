@@ -206,7 +206,7 @@ const static struct rt_pin_ops _v85xx_pin_ops =
     v85xx_pin_mode,
     v85xx_pin_write,
     v85xx_pin_read,
-    v85xx_pin_get,
+    // v85xx_pin_get,
 };
 
 rt_inline void pin_irq_hdr(int irqno)
