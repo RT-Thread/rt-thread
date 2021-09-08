@@ -154,7 +154,7 @@ static void test_static_mutex_release(void)
         return;
     }
 
-    /* startup thread adn take mutex second */
+    /* startup thread and take mutex second */
     rt_thread_startup(tid);
 
     /* let system schedule */
@@ -290,7 +290,7 @@ static void test_static_pri_reverse(void)
         return;
     }
 
-    /* 创建线程 1 */
+    /* thread1 */
     tid1 = rt_thread_create("thread1",
                             static_thread1_entry,
                             &static_mutex,
@@ -300,7 +300,7 @@ static void test_static_pri_reverse(void)
     if (tid1 != RT_NULL)
         rt_thread_startup(tid1);
 
-    /* 创建线程 2 */
+    /* thread2 */
     tid2 = rt_thread_create("thread2",
                             static_thread2_entry,
                             &static_mutex,
@@ -310,7 +310,7 @@ static void test_static_pri_reverse(void)
     if (tid2 != RT_NULL)
         rt_thread_startup(tid2);
 
-    /* 创建线程 3 */
+    /* thread3 */
     tid3 = rt_thread_create("thread3",
                             static_thread3_entry,
                             &static_mutex,
@@ -467,7 +467,7 @@ static void test_dynamic_mutex_release(void)
         return;
     }
 
-    /* startup thread adn take mutex second */
+    /* startup thread and take mutex second */
     rt_thread_startup(tid);
 
     /* let system schedule */
@@ -599,7 +599,7 @@ static void test_dynamic_pri_reverse(void)
         return;
     }
 
-    /* 创建线程 1 */
+    /* thread1 */
     tid1 = rt_thread_create("thread1",
                             dynamic_thread1_entry,
                             dynamic_mutex,
@@ -609,7 +609,7 @@ static void test_dynamic_pri_reverse(void)
     if (tid1 != RT_NULL)
         rt_thread_startup(tid1);
 
-    /* 创建线程 2 */
+    /* thread2 */
     tid2 = rt_thread_create("thread2",
                             dynamic_thread2_entry,
                             dynamic_mutex,
@@ -619,7 +619,7 @@ static void test_dynamic_pri_reverse(void)
     if (tid2 != RT_NULL)
         rt_thread_startup(tid2);
 
-    /* 创建线程 3 */
+    /* thread3 */
     tid3 = rt_thread_create("thread3",
                             dynamic_thread3_entry,
                             dynamic_mutex,
