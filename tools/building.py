@@ -208,7 +208,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest = 'target',
                       type = 'string',
-                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake/mdk5-ac6')
     AddOption('--stackanalysis',
                 dest = 'stackanalysis',
                 action = 'store_true',
@@ -259,6 +259,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'ses' : ('gcc', 'gcc'),
                 'cmake':('gcc', 'gcc'),
                 'cmake-armclang':('keil', 'armclang'),
+                'mdk5-ac6': ('keil', 'armclang'),
                 'codelite' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -839,6 +840,10 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'mdk5':
         from keil import MDK5Project
         MDK5Project('project.uvprojx', Projects)
+
+    if GetOption('target') == 'mdk5-ac6':
+        from keil import MDK5Project
+        MDK5Project('project.uvprojx', Projects, ac6=True)
 
     if GetOption('target') == 'iar':
         from iar import IARProject

@@ -182,7 +182,7 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
     return group
 
 # The common part of making MDK4/5 project 
-def MDK45Project(tree, target, script):
+def MDK45Project(tree, target, script, ac6=False):
     project_path = os.path.dirname(os.path.abspath(target))
 
     root = tree.getroot()
@@ -194,6 +194,11 @@ def MDK45Project(tree, target, script):
     LINKFLAGS = ''
     CCFLAGS = ''
     ProjectFiles = []
+
+    if ac6:
+        ac6_node = tree.find('Targets/Target/uAC6')
+        if ac6_node is not None:
+            ac6_node.text = '1'
 
     # add group
     groups = tree.find('Targets/Target/Groups')
@@ -292,11 +297,11 @@ def MDK4Project(target, script):
         import shutil
         shutil.copy2('template.uvopt', 'project.uvopt')
 
-def MDK5Project(target, script):
+def MDK5Project(target, script, ac6=False):
 
     template_tree = etree.parse('template.uvprojx')
 
-    MDK45Project(template_tree, target, script)
+    MDK45Project(template_tree, target, script, ac6)
 
     # remove project.uvopt file
     project_uvopt = os.path.abspath(target).replace('uvprojx', 'uvoptx')
