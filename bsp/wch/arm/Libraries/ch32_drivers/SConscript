@@ -29,6 +29,9 @@ if  GetDepend('SOC_ARM_SERIES_CH32F103'):
     if GetDepend(['RT_USING_WDT', 'BSP_USING_IWDT']):
         src += ['drv_iwdt_ch32f10x.c']
 
+    if GetDepend(['RT_USING_HWTIMER', 'BSP_USING_HWTIMER']):
+        src += ['drv_hwtimer_ch32f10x.c']
+
 src += ['drv_common.c']
 
 path =  [cwd]

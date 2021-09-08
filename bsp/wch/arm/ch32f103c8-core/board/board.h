@@ -50,6 +50,9 @@ void ch32f1_spi_clock_and_io_init(SPI_TypeDef* spix);
 rt_uint32_t ch32f1_spi_clock_get(SPI_TypeDef* spix);
 void ch32f1_i2c_clock_and_io_init(I2C_TypeDef* i2cx);
 void ch32f1_i2c_config(I2C_TypeDef* i2cx);
+void ch32f1_hwtimer_clock_init(TIM_TypeDef *timx);
+rt_uint32_t ch32f1_hwtimer_clock_get(TIM_TypeDef *timx);
+struct rt_hwtimer_info* ch32f1_hwtimer_info_config_get(TIM_TypeDef *timx);
 
 
 

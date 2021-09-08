@@ -200,4 +200,95 @@ void ch32f1_i2c_config(I2C_TypeDef *i2cx)
     }
 }
 
+void ch32f1_hwtimer_clock_init(TIM_TypeDef *timx)
+{
+    if (timx == TIM1)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
+    }
 
+    if (timx == TIM2)
+    {
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+    }
+
+    if (timx == TIM3)
+    {
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+    }
+
+    if (timx == TIM4)
+    {
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+    }
+}
+
+rt_uint32_t ch32f1_hwtimer_clock_get(TIM_TypeDef *timx)
+{
+    RCC_ClocksTypeDef RCC_Clocks;
+
+    RCC_GetClocksFreq(&RCC_Clocks);
+
+    /*tim1~4 all in HCLK*/
+    return RCC_Clocks.HCLK_Frequency;
+}
+
+struct rt_hwtimer_info hwtimer_info1 =
+    {
+        .maxfreq = 1000000,
+        .minfreq = 2000,
+        .maxcnt = 0xFFFF,
+        .cntmode = HWTIMER_CNTMODE_UP,
+
+};
+
+struct rt_hwtimer_info hwtimer_info2 =
+    {
+        .maxfreq = 1000000,
+        .minfreq = 2000,
+        .maxcnt = 0xFFFF,
+        .cntmode = HWTIMER_CNTMODE_UP,
+
+};
+
+struct rt_hwtimer_info hwtimer_info3 =
+    {
+        .maxfreq = 1000000,
+        .minfreq = 2000,
+        .maxcnt = 0xFFFF,
+        .cntmode = HWTIMER_CNTMODE_UP,
+
+};
+
+struct rt_hwtimer_info hwtimer_info4 =
+    {
+        .maxfreq = 1000000,
+        .minfreq = 2000,
+        .maxcnt = 0xFFFF,
+        .cntmode = HWTIMER_CNTMODE_UP,
+
+};
+
+struct rt_hwtimer_info *ch32f1_hwtimer_info_config_get(TIM_TypeDef *timx)
+{
+    struct rt_hwtimer_info *info = RT_NULL;
+
+    if (timx == TIM1)
+    {
+        info = &hwtimer_info1;
+    }
+    else if (timx == TIM2)
+    {
+        info = &hwtimer_info2;
+    }
+    else if (timx == TIM3)
+    {
+        info = &hwtimer_info3;
+    }
+    else if (timx == TIM4)
+    {
+        info = &hwtimer_info4;
+    }
+
+    return info;
+}
