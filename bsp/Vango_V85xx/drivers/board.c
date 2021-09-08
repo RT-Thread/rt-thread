@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author            Notes
  * 2021-01-04     iysheng           first version
+ * 2021-09-07     idk500            suit for Vango V85xx
+ * 2021-09-08     ZhuXW             add delay function
  */
 
 #include <stdint.h>
@@ -75,4 +77,33 @@ void rt_hw_board_init()
 #endif
 }
 
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t ticks;
+    rt_uint32_t told, tnow, tcnt = 0;
+    rt_uint32_t reload = SysTick->LOAD;
+
+    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    told = SysTick->VAL;
+    while (1)
+    {
+        tnow = SysTick->VAL;
+        if (tnow != told)
+        {
+            if (tnow < told)
+            {
+                tcnt += told - tnow;
+            }
+            else
+            {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+            if (tcnt >= ticks)
+            {
+                break;
+            }
+        }
+    }
+}
 /*@}*/
