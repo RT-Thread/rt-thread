@@ -749,9 +749,12 @@ HAL_StatusTypeDef HAL_USART_UnRegisterCallback(USART_HandleTypeDef *husart, HAL_
 
 /**
   * @brief  Simplex send an amount of data in blocking mode.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 provided through pTxData.
   * @param  husart USART handle.
-  * @param  pTxData Pointer to data buffer.
-  * @param  Size Amount of data to be sent.
+  * @param  pTxData Pointer to data buffer (u8 or u16 data elements).
+  * @param  Size Amount of data elements (u8 or u16) to be sent.
   * @param  Timeout Timeout duration.
   * @retval HAL status
   */
@@ -842,10 +845,13 @@ HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, uint8_t *pTxDa
 
 /**
   * @brief Receive an amount of data in blocking mode.
-  * @note To receive synchronous data, dummy data are simultaneously transmitted.
+  * @note   To receive synchronous data, dummy data are simultaneously transmitted.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the received data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 available through pRxData.
   * @param husart USART handle.
-  * @param pRxData Pointer to data buffer.
-  * @param Size Amount of data to be received.
+  * @param pRxData Pointer to data buffer (u8 or u16 data elements).
+  * @param Size Amount of data elements (u8 or u16) to be received.
   * @param Timeout Timeout duration.
   * @retval HAL status
   */
@@ -955,10 +961,13 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
 
 /**
   * @brief Full-Duplex Send and Receive an amount of data in blocking mode.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
+  *         of u16 available through pTxData and through pRxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to TX data buffer.
-  * @param  pRxData pointer to RX data buffer.
-  * @param  Size amount of data to be sent (same amount to be received).
+  * @param  pTxData pointer to TX data buffer (u8 or u16 data elements).
+  * @param  pRxData pointer to RX data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be sent (same amount to be received).
   * @param  Timeout Timeout duration.
   * @retval HAL status
   */
@@ -1105,9 +1114,12 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
 
 /**
   * @brief  Send an amount of data in interrupt mode.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 provided through pTxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to data buffer.
-  * @param  Size amount of data to be sent.
+  * @param  pTxData pointer to data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be sent.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_Transmit_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint16_t Size)
@@ -1186,10 +1198,13 @@ HAL_StatusTypeDef HAL_USART_Transmit_IT(USART_HandleTypeDef *husart, uint8_t *pT
 
 /**
   * @brief Receive an amount of data in interrupt mode.
-  * @note  To receive synchronous data, dummy data are simultaneously transmitted.
+  * @note   To receive synchronous data, dummy data are simultaneously transmitted.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the received data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 available through pRxData.
   * @param  husart USART handle.
-  * @param  pRxData pointer to data buffer.
-  * @param  Size amount of data to be received.
+  * @param  pRxData pointer to data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be received.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRxData, uint16_t Size)
@@ -1299,10 +1314,13 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
 
 /**
   * @brief Full-Duplex Send and Receive an amount of data in interrupt mode.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
+  *         of u16 available through pTxData and through pRxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to TX data buffer.
-  * @param  pRxData pointer to RX data buffer.
-  * @param  Size amount of data to be sent (same amount to be received).
+  * @param  pTxData pointer to TX data buffer (u8 or u16 data elements).
+  * @param  pRxData pointer to RX data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be sent (same amount to be received).
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
@@ -1405,9 +1423,12 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint
 
 /**
   * @brief Send an amount of data in DMA mode.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 provided through pTxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to data buffer.
-  * @param  Size amount of data to be sent.
+  * @param  pTxData pointer to data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be sent.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint16_t Size)
@@ -1486,10 +1507,13 @@ HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *p
   * @brief Receive an amount of data in DMA mode.
   * @note   When the USART parity is enabled (PCE = 1), the received data contain
   *         the parity bit (MSB position).
-  * @note The USART DMA transmit channel must be configured in order to generate the clock for the slave.
+  * @note   The USART DMA transmit channel must be configured in order to generate the clock for the slave.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the received data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 available through pRxData.
   * @param  husart USART handle.
-  * @param  pRxData pointer to data buffer.
-  * @param  Size amount of data to be received.
+  * @param  pRxData pointer to data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be received.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pRxData, uint16_t Size)
@@ -1602,10 +1626,13 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
 /**
   * @brief Full-Duplex Transmit Receive an amount of data in non-blocking mode.
   * @note   When the USART parity is enabled (PCE = 1) the data received contain the parity bit.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
+  *         of u16 available through pTxData and through pRxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to TX data buffer.
-  * @param  pRxData pointer to RX data buffer.
-  * @param  Size amount of data to be received/sent.
+  * @param  pTxData pointer to TX data buffer (u8 or u16 data elements).
+  * @param  pRxData pointer to RX data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be received/sent.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
@@ -2918,6 +2945,7 @@ static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart)
   HAL_StatusTypeDef ret                = HAL_OK;
   uint16_t brrtemp;
   uint32_t usartdiv                    = 0x00000000;
+  uint32_t pclk;
 
   /* Check the parameters */
   assert_param(IS_USART_POLARITY(husart->Init.CLKPolarity));
@@ -2968,17 +2996,19 @@ static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart)
   switch (clocksource)
   {
     case USART_CLOCKSOURCE_PCLK1:
+      pclk = HAL_RCC_GetPCLK1Freq();
 #if defined(USART_PRESC_PRESCALER)
-      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetPCLK1Freq(), husart->Init.BaudRate, husart->Init.ClockPrescaler));
+      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(pclk, husart->Init.BaudRate, husart->Init.ClockPrescaler));
 #else
-      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetPCLK1Freq(), husart->Init.BaudRate));
+      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(pclk, husart->Init.BaudRate));
 #endif /* USART_PRESC_PRESCALER */
       break;
     case USART_CLOCKSOURCE_PCLK2:
+      pclk = HAL_RCC_GetPCLK2Freq();
 #if defined(USART_PRESC_PRESCALER)
-      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetPCLK2Freq(), husart->Init.BaudRate, husart->Init.ClockPrescaler));
+      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(pclk, husart->Init.BaudRate, husart->Init.ClockPrescaler));
 #else
-      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetPCLK2Freq(), husart->Init.BaudRate));
+      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(pclk, husart->Init.BaudRate));
 #endif /* USART_PRESC_PRESCALER */
       break;
     case USART_CLOCKSOURCE_HSI:
@@ -2989,10 +3019,11 @@ static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart)
 #endif /* USART_PRESC_PRESCALER */
       break;
     case USART_CLOCKSOURCE_SYSCLK:
+      pclk = HAL_RCC_GetSysClockFreq();
 #if defined(USART_PRESC_PRESCALER)
-      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetSysClockFreq(), husart->Init.BaudRate, husart->Init.ClockPrescaler));
+      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(pclk, husart->Init.BaudRate, husart->Init.ClockPrescaler));
 #else
-      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetSysClockFreq(), husart->Init.BaudRate));
+      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(pclk, husart->Init.BaudRate));
 #endif /* USART_PRESC_PRESCALER */
       break;
     case USART_CLOCKSOURCE_LSE:

@@ -574,6 +574,13 @@ HAL_StatusTypeDef HAL_ADC_Init(ADC_HandleTypeDef *hadc)
     /*  - overrun                                  Init.Overrun               */
     /*  - discontinuous mode                       Init.DiscontinuousConvMode */
     /*  - discontinuous mode channel count         Init.NbrOfDiscConversion   */
+#if defined(ADC_VER_V5_3)
+      tmpCFGR  = (ADC_CFGR_CONTINUOUS((uint32_t)hadc->Init.ContinuousConvMode)          |
+                  hadc->Init.Overrun                                                    |
+                  hadc->Init.Resolution                                                 |
+                  ADC_CFGR_REG_DISCONTINUOUS((uint32_t)hadc->Init.DiscontinuousConvMode) );
+
+#else
     if((HAL_GetREVID() > REV_ID_Y) && (ADC_RESOLUTION_8B == hadc->Init.Resolution))
     {
       /* for STM32H7 silicon rev.B and above , ADC_CFGR_RES value for 8bits resolution is : b111 */
@@ -590,6 +597,7 @@ HAL_StatusTypeDef HAL_ADC_Init(ADC_HandleTypeDef *hadc)
                   ADC_CFGR_REG_DISCONTINUOUS((uint32_t)hadc->Init.DiscontinuousConvMode) );
     }
 
+#endif /* ADC_VER_V5_3 */
 
     if (hadc->Init.DiscontinuousConvMode == ENABLE)
     {
@@ -2026,6 +2034,8 @@ HAL_StatusTypeDef HAL_ADC_Start_DMA(ADC_HandleTypeDef *hadc, uint32_t *pData, ui
            ADC_IT_OVR is enabled. */
         __HAL_ADC_ENABLE_IT(hadc, ADC_IT_OVR);
 
+        /* Enable ADC DMA  mode*/
+        LL_ADC_REG_SetDataTransferMode(hadc->Instance, (uint32_t)hadc->Init.ConversionDataManagement);
 
         /* Start the DMA channel */
         tmp_hal_status = HAL_DMA_Start_IT(hadc->DMA_Handle, (uint32_t)&hadc->Instance->DR, (uint32_t)pData, Length);
@@ -2675,11 +2685,13 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef *hadc, ADC_ChannelConf
     {
       assert_param(IS_ADC2_DIFF_CHANNEL(sConfig->Channel));
     }
+#if defined(ADC3)
     /* ADC3 is not available on some STM32H7 products */
     if (hadc->Instance == ADC3)
     {
       assert_param(IS_ADC3_DIFF_CHANNEL(sConfig->Channel));
     }
+#endif
   }
 
   /* Process locked */
@@ -3630,6 +3642,26 @@ void ADC_ConfigureBoostMode(ADC_HandleTypeDef* hadc)
     }
   }
 
+#if defined(ADC_VER_V5_3)
+  freq /= 2U;
+
+  if (freq <= 6250000UL)
+  {
+    MODIFY_REG(hadc->Instance->CR, ADC_CR_BOOST, 0UL);
+  }
+  else if(freq <= 12500000UL)
+  {
+    MODIFY_REG(hadc->Instance->CR, ADC_CR_BOOST, ADC_CR_BOOST_0);
+  }
+  else if(freq <= 25000000UL)
+  {
+    MODIFY_REG(hadc->Instance->CR, ADC_CR_BOOST, ADC_CR_BOOST_1);
+  }
+  else /* if(freq > 25000000UL) */
+  {
+    MODIFY_REG(hadc->Instance->CR, ADC_CR_BOOST, ADC_CR_BOOST_1 | ADC_CR_BOOST_0);
+  }
+#else
   if(HAL_GetREVID() <= REV_ID_Y) /* STM32H7 silicon Rev.Y */
   {
     if(freq > 20000000UL)
@@ -3649,11 +3681,11 @@ void ADC_ConfigureBoostMode(ADC_HandleTypeDef* hadc)
     {
       MODIFY_REG(hadc->Instance->CR, ADC_CR_BOOST, 0UL);
     }
-    else if((freq > 6250000UL) && (freq <= 12500000UL))
+    else if(freq <= 12500000UL)
     {
       MODIFY_REG(hadc->Instance->CR, ADC_CR_BOOST, ADC_CR_BOOST_0);
     }
-    else if((freq > 12500000UL) && (freq <= 25000000UL))
+    else if(freq <= 25000000UL)
     {
       MODIFY_REG(hadc->Instance->CR, ADC_CR_BOOST, ADC_CR_BOOST_1);
     }
@@ -3662,6 +3694,7 @@ void ADC_ConfigureBoostMode(ADC_HandleTypeDef* hadc)
       MODIFY_REG(hadc->Instance->CR, ADC_CR_BOOST, ADC_CR_BOOST_1 | ADC_CR_BOOST_0);
     }
   }
+#endif /* ADC_VER_V5_3 */
 }
 
 /**

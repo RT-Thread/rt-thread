@@ -2651,7 +2651,8 @@ __STATIC_INLINE void LL_USART_ConfigAsyncMode(USART_TypeDef *USARTx)
 {
   /* In Asynchronous mode, the following bits must be kept cleared:
   - LINEN, CLKEN bits in the USART_CR2 register,
-  - SCEN, IREN and HDSEL bits in the USART_CR3 register.*/
+  - SCEN, IREN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN | USART_CR2_CLKEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_IREN | USART_CR3_HDSEL));
 }
@@ -2687,7 +2688,8 @@ __STATIC_INLINE void LL_USART_ConfigSyncMode(USART_TypeDef *USARTx)
 {
   /* In Synchronous mode, the following bits must be kept cleared:
   - LINEN bit in the USART_CR2 register,
-  - SCEN, IREN and HDSEL bits in the USART_CR3 register.*/
+  - SCEN, IREN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_IREN | USART_CR3_HDSEL));
   /* set the UART/USART in Synchronous mode */
@@ -2727,7 +2729,8 @@ __STATIC_INLINE void LL_USART_ConfigLINMode(USART_TypeDef *USARTx)
 {
   /* In LIN mode, the following bits must be kept cleared:
   - STOP and CLKEN bits in the USART_CR2 register,
-  - IREN, SCEN and HDSEL bits in the USART_CR3 register.*/
+  - IREN, SCEN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_CLKEN | USART_CR2_STOP));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_IREN | USART_CR3_SCEN | USART_CR3_HDSEL));
   /* Set the UART/USART in LIN mode */
@@ -2765,7 +2768,8 @@ __STATIC_INLINE void LL_USART_ConfigHalfDuplexMode(USART_TypeDef *USARTx)
 {
   /* In Half Duplex mode, the following bits must be kept cleared:
   - LINEN and CLKEN bits in the USART_CR2 register,
-  - SCEN and IREN bits in the USART_CR3 register.*/
+  - SCEN and IREN bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN | USART_CR2_CLKEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_IREN));
   /* set the UART/USART in Half Duplex mode */
@@ -2805,7 +2809,8 @@ __STATIC_INLINE void LL_USART_ConfigSmartcardMode(USART_TypeDef *USARTx)
 {
   /* In Smartcard mode, the following bits must be kept cleared:
   - LINEN bit in the USART_CR2 register,
-  - IREN and HDSEL bits in the USART_CR3 register.*/
+  - IREN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_IREN | USART_CR3_HDSEL));
   /* Configure Stop bits to 1.5 bits */
@@ -2848,7 +2853,8 @@ __STATIC_INLINE void LL_USART_ConfigIrdaMode(USART_TypeDef *USARTx)
 {
   /* In IRDA mode, the following bits must be kept cleared:
   - LINEN, STOP and CLKEN bits in the USART_CR2 register,
-  - SCEN and HDSEL bits in the USART_CR3 register.*/
+  - SCEN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN | USART_CR2_CLKEN | USART_CR2_STOP));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_HDSEL));
   /* set the UART/USART in IRDA mode */
@@ -2886,7 +2892,8 @@ __STATIC_INLINE void LL_USART_ConfigMultiProcessMode(USART_TypeDef *USARTx)
 {
   /* In Multi Processor mode, the following bits must be kept cleared:
   - LINEN and CLKEN bits in the USART_CR2 register,
-  - IREN, SCEN and HDSEL bits in the USART_CR3 register.*/
+  - IREN, SCEN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN | USART_CR2_CLKEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN));
 }

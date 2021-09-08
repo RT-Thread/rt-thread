@@ -49,7 +49,7 @@
                by calling the customized HAL_USART_MspInit(&husart) API.
 
     [..]
-     (@) To configure and enable/disable the USART to wake up the MCU from stop mode, resort to UART API's
+     (@) To configure and enable/disable the USART to wake up the MCU from stop mode, resort to USART API's
         HAL_UARTEx_StopModeWakeUpSourceConfig(), HAL_UARTEx_EnableStopMode() and
         HAL_UARTEx_DisableStopMode() in casting the USART handle to UART type UART_HandleTypeDef.
 
@@ -529,9 +529,9 @@ HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_US
 }
 
 /**
-  * @brief  Unregister an UART Callback
-  *         UART callaback is redirected to the weak predefined callback
-  * @param  husart uart handle
+  * @brief  Unregister an USART Callback
+  *         USART callaback is redirected to the weak predefined callback
+  * @param  husart usart handle
   * @param  CallbackID ID of the callback to be unregistered
   *         This parameter can be one of the following values:
   *           @arg @ref HAL_USART_TX_HALFCOMPLETE_CB_ID Tx Half Complete Callback ID
@@ -732,7 +732,7 @@ HAL_StatusTypeDef HAL_USART_UnRegisterCallback(USART_HandleTypeDef *husart, HAL_
 
 /**
   * @brief  Simplex send an amount of data in blocking mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 provided through pTxData.
   * @param  husart USART handle.
@@ -830,7 +830,7 @@ HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, uint8_t *pTxDa
 /**
   * @brief Receive an amount of data in blocking mode.
   * @note   To receive synchronous data, dummy data are simultaneously transmitted.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the received data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 available through pRxData.
   * @param husart USART handle.
@@ -942,7 +942,7 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
 
 /**
   * @brief Full-Duplex Send and Receive an amount of data in blocking mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
   *         of u16 available through pTxData and through pRxData.
   * @param  husart USART handle.
@@ -1091,7 +1091,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
 
 /**
   * @brief  Send an amount of data in interrupt mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 provided through pTxData.
   * @param  husart USART handle.
@@ -1175,7 +1175,7 @@ HAL_StatusTypeDef HAL_USART_Transmit_IT(USART_HandleTypeDef *husart, uint8_t *pT
 /**
   * @brief Receive an amount of data in interrupt mode.
   * @note   To receive synchronous data, dummy data are simultaneously transmitted.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the received data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 available through pRxData.
   * @param  husart USART handle.
@@ -1279,7 +1279,7 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
 
 /**
   * @brief Full-Duplex Send and Receive an amount of data in interrupt mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
   *         of u16 available through pTxData and through pRxData.
   * @param  husart USART handle.
@@ -1377,7 +1377,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint
 
 /**
   * @brief Send an amount of data in DMA mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 provided through pTxData.
   * @param  husart USART handle.
@@ -1463,7 +1463,7 @@ HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *p
   * @note   When the USART parity is enabled (PCE = 1), the received data contain
   *         the parity bit (MSB position).
   * @note   The USART DMA transmit channel must be configured in order to generate the clock for the slave.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the received data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 available through pRxData.
   * @param  husart USART handle.
@@ -1580,7 +1580,7 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
 /**
   * @brief Full-Duplex Transmit Receive an amount of data in non-blocking mode.
   * @note   When the USART parity is enabled (PCE = 1) the data received contain the parity bit.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
   *         of u16 available through pTxData and through pRxData.
   * @param  husart USART handle.

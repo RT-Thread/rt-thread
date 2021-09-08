@@ -138,7 +138,7 @@ typedef struct __USART_HandleTypeDef
 
   uint16_t                      NbTxDataToProcess;       /*!< Number of data to process during TX ISR execution */
 
-  uint32_t                      SlaveMode;               /*!< Enable/Disable UART SPI Slave Mode. This parameter can be a value
+  uint32_t                      SlaveMode;               /*!< Enable/Disable USART SPI Slave Mode. This parameter can be a value
                                                               of @ref USARTEx_Slave_Mode */
 
   uint32_t                      FifoMode;                /*!< Specifies if the FIFO mode will be used. This parameter can be a value
@@ -700,7 +700,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 /** @brief  BRR division operation to set BRR register in 8-bit oversampling mode.
   * @param  __PCLK__ USART clock.
   * @param  __BAUD__ Baud rate set by the user.
-  * @param  __CLOCKPRESCALER__ UART prescaler value.
+  * @param  __CLOCKPRESCALER__ USART prescaler value.
   * @retval Division result
   */
 #define USART_DIV_SAMPLING8(__PCLK__, __BAUD__, __CLOCKPRESCALER__)   (((((__PCLK__)/USART_GET_DIV_FACTOR(__CLOCKPRESCALER__))*2U)\
@@ -711,7 +711,90 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
   * @param  __CLOCKSOURCE__ output variable.
   * @retval the USART clocking source, written in __CLOCKSOURCE__.
   */
-#if defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
+#define USART_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)       \
+  do {                                                         \
+    if((__HANDLE__)->Instance == USART1)                       \
+    {                                                          \
+      switch(__HAL_RCC_GET_USART1_SOURCE())                    \
+      {                                                        \
+        case RCC_USART1CLKSOURCE_PCLK1:                        \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_PCLK1;         \
+          break;                                               \
+        case RCC_USART1CLKSOURCE_HSI:                          \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_HSI;           \
+          break;                                               \
+        case RCC_USART1CLKSOURCE_SYSCLK:                       \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_SYSCLK;        \
+          break;                                               \
+        case RCC_USART1CLKSOURCE_LSE:                          \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_LSE;           \
+          break;                                               \
+        default:                                               \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_UNDEFINED;     \
+          break;                                               \
+      }                                                        \
+    }                                                          \
+    else if((__HANDLE__)->Instance == USART2)                  \
+    {                                                          \
+      switch(__HAL_RCC_GET_USART2_SOURCE())                    \
+      {                                                        \
+        case RCC_USART2CLKSOURCE_PCLK1:                        \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_PCLK1;         \
+          break;                                               \
+        case RCC_USART2CLKSOURCE_HSI:                          \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_HSI;           \
+          break;                                               \
+        case RCC_USART2CLKSOURCE_SYSCLK:                       \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_SYSCLK;        \
+          break;                                               \
+        case RCC_USART2CLKSOURCE_LSE:                          \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_LSE;           \
+          break;                                               \
+        default:                                               \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_UNDEFINED;     \
+          break;                                               \
+      }                                                        \
+    }                                                          \
+    else if((__HANDLE__)->Instance == USART3)                  \
+    {                                                          \
+      switch(__HAL_RCC_GET_USART3_SOURCE())                    \
+      {                                                        \
+        case RCC_USART3CLKSOURCE_PCLK1:                        \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_PCLK1;         \
+          break;                                               \
+        case RCC_USART3CLKSOURCE_HSI:                          \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_HSI;           \
+          break;                                               \
+        case RCC_USART3CLKSOURCE_SYSCLK:                       \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_SYSCLK;        \
+          break;                                               \
+        case RCC_USART3CLKSOURCE_LSE:                          \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_LSE;           \
+          break;                                               \
+        default:                                               \
+          (__CLOCKSOURCE__) = USART_CLOCKSOURCE_UNDEFINED;     \
+          break;                                               \
+      }                                                        \
+    }                                                          \
+    else if((__HANDLE__)->Instance == USART4)                  \
+    {                                                          \
+      (__CLOCKSOURCE__) = USART_CLOCKSOURCE_PCLK1;             \
+    }                                                          \
+    else if((__HANDLE__)->Instance == USART5)                  \
+    {                                                          \
+      (__CLOCKSOURCE__) = USART_CLOCKSOURCE_PCLK1;             \
+    }                                                          \
+    else if((__HANDLE__)->Instance == USART6)                  \
+    {                                                          \
+      (__CLOCKSOURCE__) = USART_CLOCKSOURCE_PCLK1;             \
+    }                                                          \
+    else                                                       \
+    {                                                          \
+      (__CLOCKSOURCE__) = USART_CLOCKSOURCE_UNDEFINED;         \
+    }                                                          \
+  } while(0U)
+#elif defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
 #define USART_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)       \
   do {                                                         \
     if((__HANDLE__)->Instance == USART1)                       \
@@ -769,7 +852,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
       (__CLOCKSOURCE__) = USART_CLOCKSOURCE_UNDEFINED;         \
     }                                                          \
   } while(0U)
-#elif defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#else
 #define USART_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)       \
   do {                                                         \
     if((__HANDLE__)->Instance == USART1)                       \
@@ -802,7 +885,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
       (__CLOCKSOURCE__) = USART_CLOCKSOURCE_UNDEFINED;         \
     }                                                          \
   } while(0U)
-#endif /* STM32G081xx || STM32G071xx || STM32G070xx */
+#endif
 
 /** @brief  Check USART Baud rate.
   * @param  __BAUDRATE__ Baudrate specified by the user.

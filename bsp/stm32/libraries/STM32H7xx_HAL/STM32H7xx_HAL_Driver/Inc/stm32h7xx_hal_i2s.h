@@ -178,16 +178,18 @@ typedef  void (*pI2S_CallbackTypeDef)(I2S_HandleTypeDef *hi2s); /*!< pointer to 
   */
 /** @defgroup I2S_Error I2S Error
   * @{
-  */
-#define HAL_I2S_ERROR_NONE               (0x00000000UL)  /*!< No error                    */
-#define HAL_I2S_ERROR_TIMEOUT            (0x00000001UL)  /*!< Timeout error               */
-#define HAL_I2S_ERROR_OVR                (0x00000002UL)  /*!< OVR error                   */
-#define HAL_I2S_ERROR_UDR                (0x00000004UL)  /*!< UDR error                   */
-#define HAL_I2S_ERROR_DMA                (0x00000008UL)  /*!< DMA transfer error          */
-#define HAL_I2S_ERROR_PRESCALER          (0x00000010UL)  /*!< Prescaler Calculation error */
-#define HAL_I2S_ERROR_FRE                (0x00000020UL)  /*!< FRE error                   */
+  */ 
+#define HAL_I2S_ERROR_NONE               (0x00000000UL)  /*!< No error                          */
+#define HAL_I2S_ERROR_TIMEOUT            (0x00000001UL)  /*!< Timeout error                     */
+#define HAL_I2S_ERROR_OVR                (0x00000002UL)  /*!< OVR error                         */
+#define HAL_I2S_ERROR_UDR                (0x00000004UL)  /*!< UDR error                         */
+#define HAL_I2S_ERROR_DMA                (0x00000008UL)  /*!< DMA transfer error                */
+#define HAL_I2S_ERROR_PRESCALER          (0x00000010UL)  /*!< Prescaler Calculation error       */
+#define HAL_I2S_ERROR_FRE                (0x00000020UL)  /*!< FRE error                         */
+#define HAL_I2S_ERROR_NO_OGT             (0x00000040UL)  /*!< No On Going Transfer error        */
+#define HAL_I2S_ERROR_NOT_SUPPORTED      (0x00000080UL)  /*!< Requested operation not supported */
 #if (USE_HAL_I2S_REGISTER_CALLBACKS == 1UL)
-#define HAL_I2S_ERROR_INVALID_CALLBACK   (0x00000040UL)  /*!< Invalid Callback error      */
+#define HAL_I2S_ERROR_INVALID_CALLBACK   (0x00000100UL)  /*!< Invalid Callback error      */
 #endif /* USE_HAL_I2S_REGISTER_CALLBACKS */
 /**
   * @}
@@ -375,7 +377,7 @@ typedef  void (*pI2S_CallbackTypeDef)(I2S_HandleTypeDef *hi2s); /*!< pointer to 
   *            @arg I2S_IT_ERR : Error interrupt enable
   * @retval None
   */
-#define __HAL_I2S_ENABLE_IT(__HANDLE__, __INTERRUPT__)    (SET_BIT((__HANDLE__)->Instance->IER,(__INTERRUPT__)))
+#define __HAL_I2S_ENABLE_IT(__HANDLE__, __INTERRUPT__)    ((__HANDLE__)->Instance->IER |= (__INTERRUPT__))
 
 /** @brief  Disable the specified I2S interrupts.
   * @param  __HANDLE__ specifies the I2S Handle.
@@ -390,7 +392,7 @@ typedef  void (*pI2S_CallbackTypeDef)(I2S_HandleTypeDef *hi2s); /*!< pointer to 
   *            @arg I2S_IT_ERR : Error interrupt enable
   * @retval None
   */
-#define __HAL_I2S_DISABLE_IT(__HANDLE__, __INTERRUPT__) (CLEAR_BIT((__HANDLE__)->Instance->IER,(__INTERRUPT__)))
+#define __HAL_I2S_DISABLE_IT(__HANDLE__, __INTERRUPT__) ((__HANDLE__)->Instance->IER &= (~(__INTERRUPT__)))
 
 /** @brief  Check if the specified I2S interrupt source is enabled or disabled.
   * @param  __HANDLE__ specifies the I2S Handle.

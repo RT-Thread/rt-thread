@@ -34,6 +34,7 @@
  * 2019-12-20     Bernard      change version number to v4.0.3
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  * 2020-10-23     Meco Man     define maximum value of ipc type
+ * 2021-03-19     Meco Man     add security devices
  * 2021-05-10     armink       change version number to v4.0.4
  */
 
@@ -276,7 +277,6 @@ typedef int (*init_fn_t)(void);
 /* define these to empty, even if not include finsh.h file */
 #define FINSH_FUNCTION_EXPORT(name, desc)
 #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
-#define FINSH_VAR_EXPORT(name, type, desc)
 
 #define MSH_CMD_EXPORT(command, desc)
 #define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
@@ -920,6 +920,7 @@ enum rt_device_class_type
     RT_Device_Class_Sensor,                             /**< Sensor device */
     RT_Device_Class_Touch,                              /**< Touch device */
     RT_Device_Class_PHY,                                /**< PHY device */
+    RT_Device_Class_Security,                           /**< Security device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 

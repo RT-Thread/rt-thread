@@ -91,11 +91,11 @@
 
      The compilation flag USE_HAL_COMP_REGISTER_CALLBACKS, when set to 1,
      allows the user to configure dynamically the driver callbacks.
-     Use Functions @ref HAL_COMP_RegisterCallback()
+     Use Functions HAL_COMP_RegisterCallback()
      to register an interrupt callback.
     [..]
 
-     Function @ref HAL_COMP_RegisterCallback() allows to register following callbacks:
+     Function HAL_COMP_RegisterCallback() allows to register following callbacks:
        (+) TriggerCallback       : callback for COMP trigger.
        (+) MspInitCallback       : callback for Msp Init.
        (+) MspDeInitCallback     : callback for Msp DeInit.
@@ -103,11 +103,11 @@
      and a pointer to the user callback function.
     [..]
 
-     Use function @ref HAL_COMP_UnRegisterCallback to reset a callback to the default
+     Use function HAL_COMP_UnRegisterCallback to reset a callback to the default
      weak function.
     [..]
 
-     @ref HAL_COMP_UnRegisterCallback takes as parameters the HAL peripheral handle,
+     HAL_COMP_UnRegisterCallback takes as parameters the HAL peripheral handle,
      and the Callback ID.
      This function allows to reset following callbacks:
        (+) TriggerCallback       : callback for COMP trigger.
@@ -115,27 +115,27 @@
        (+) MspDeInitCallback     : callback for Msp DeInit.
      [..]
 
-     By default, after the @ref HAL_COMP_Init() and when the state is @ref HAL_COMP_STATE_RESET
+     By default, after the HAL_COMP_Init() and when the state is HAL_COMP_STATE_RESET
      all callbacks are set to the corresponding weak functions:
-     example @ref HAL_COMP_TriggerCallback().
+     example HAL_COMP_TriggerCallback().
      Exception done for MspInit and MspDeInit functions that are
-     reset to the legacy weak functions in the @ref HAL_COMP_Init()/ @ref HAL_COMP_DeInit() only when
+     reset to the legacy weak functions in the HAL_COMP_Init()/ HAL_COMP_DeInit() only when
      these callbacks are null (not registered beforehand).
     [..]
 
-     If MspInit or MspDeInit are not null, the @ref HAL_COMP_Init()/ @ref HAL_COMP_DeInit()
+     If MspInit or MspDeInit are not null, the HAL_COMP_Init()/ HAL_COMP_DeInit()
      keep and use the user MspInit/MspDeInit callbacks (registered beforehand) whatever the state.
      [..]
 
-     Callbacks can be registered/unregistered in @ref HAL_COMP_STATE_READY state only.
+     Callbacks can be registered/unregistered in HAL_COMP_STATE_READY state only.
      Exception done MspInit/MspDeInit functions that can be registered/unregistered
-     in @ref HAL_COMP_STATE_READY or @ref HAL_COMP_STATE_RESET state,
+     in HAL_COMP_STATE_READY or HAL_COMP_STATE_RESET state,
      thus registered (user) MspInit/DeInit callbacks can be used during the Init/DeInit.
     [..]
 
      Then, the user first registers the MspInit/MspDeInit user callbacks
-     using @ref HAL_COMP_RegisterCallback() before calling @ref HAL_COMP_DeInit()
-     or @ref HAL_COMP_Init() function.
+     using HAL_COMP_RegisterCallback() before calling HAL_COMP_DeInit()
+     or HAL_COMP_Init() function.
      [..]
 
      When the compilation flag USE_HAL_COMP_REGISTER_CALLBACKS is set to 0 or
@@ -237,6 +237,10 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp)
   uint32_t comp_voltage_scaler_initialized; /* Value "0" if comparator voltage scaler is not initialized */
   __IO uint32_t wait_loop_index = 0UL;
   HAL_StatusTypeDef status = HAL_OK;
+#if defined(COMP3)
+  __IO uint32_t * comp_common_odd;
+  __IO uint32_t * comp_common_even;
+#endif
 
   /* Check the COMP handle allocation and lock status */
   if(hcomp == NULL)
@@ -258,7 +262,7 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp)
     assert_param(IS_COMP_HYSTERESIS(hcomp->Init.Hysteresis));
     assert_param(IS_COMP_BLANKINGSRC_INSTANCE(hcomp->Instance, hcomp->Init.BlankingSrce));
     assert_param(IS_COMP_TRIGGERMODE(hcomp->Init.TriggerMode));
-    assert_param(IS_COMP_WINDOWMODE(hcomp->Init.WindowMode));
+    assert_param(IS_COMP_WINDOWMODE(hcomp->Instance, hcomp->Init.WindowMode));
     if(hcomp->Init.WindowMode != COMP_WINDOWMODE_DISABLE)
     {
       assert_param(IS_COMP_WINDOWOUTPUT(hcomp->Init.WindowOutput));
@@ -321,6 +325,64 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp)
     /* Note: Window mode bit is located into 1 out of the 2 pairs of COMP     */
     /*       instances. Therefore, this function can update another COMP      */
     /*       instance that the one currently selected.                        */
+#if defined(COMP3)
+    if(hcomp->Instance == COMP3)
+    {
+      /* Note: Exception for STM32G0 devices featuring ADC3 instance: in common   */
+      /*       group of COMP2 and COMP3, instances odd and even are inverted.     */
+      /*       Perform switch of parameter selected.                              */
+      comp_common_odd = &(COMP23_COMMON->CSR_EVEN);
+      comp_common_even = &(COMP23_COMMON->CSR_ODD);
+    }
+    else
+    {
+      comp_common_odd = &(COMP12_COMMON->CSR_ODD);
+      comp_common_even = &(COMP12_COMMON->CSR_EVEN);
+    }
+    
+    if(hcomp->Init.WindowMode == COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON)
+    {
+      CLEAR_BIT(*comp_common_odd, COMP_CSR_WINMODE);
+      SET_BIT(*comp_common_even, COMP_CSR_WINMODE);
+    }
+    else if(hcomp->Init.WindowMode == COMP_WINDOWMODE_COMP2_INPUT_PLUS_COMMON)
+    {
+      SET_BIT(*comp_common_odd, COMP_CSR_WINMODE);
+      CLEAR_BIT(*comp_common_even, COMP_CSR_WINMODE);
+    }
+    else
+    {
+      CLEAR_BIT(*comp_common_odd, COMP_CSR_WINMODE);
+      CLEAR_BIT(*comp_common_even, COMP_CSR_WINMODE);
+    }
+
+    /* Set window mode output */
+    /* Note: Window mode mode output can also be used when window mode        */
+    /*       is disabled, to use comparators in independent mode with their   */
+    /*       output connected through exclusive-or circuitry.                 */
+    switch (hcomp->Init.WindowOutput)
+    {
+      case COMP_WINDOWOUTPUT_COMP1: /* idem COMP_WINDOWOUTPUT_COMP3 (same literal value) */
+        SET_BIT(*comp_common_odd, COMP_CSR_WINOUT);
+        CLEAR_BIT(*comp_common_even, COMP_CSR_WINOUT);
+        break;
+
+      case COMP_WINDOWOUTPUT_COMP2:
+        CLEAR_BIT(*comp_common_odd, COMP_CSR_WINOUT);
+        SET_BIT(*comp_common_even, COMP_CSR_WINOUT);
+        break;
+
+      case COMP_WINDOWOUTPUT_BOTH:
+        SET_BIT(*comp_common_odd, COMP_CSR_WINOUT);
+        SET_BIT(*comp_common_even, COMP_CSR_WINOUT);
+        break;
+
+      default: /* COMP_WINDOWOUTPUT_EACH_COMP */
+        CLEAR_BIT(*comp_common_odd, COMP_CSR_WINOUT);
+        CLEAR_BIT(*comp_common_even, COMP_CSR_WINOUT);
+        break;
+    }
+#else
     if(hcomp->Init.WindowMode == COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON)
     {
       CLEAR_BIT(COMP12_COMMON->CSR_ODD, COMP_CSR_WINMODE);
@@ -363,6 +425,7 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp)
         CLEAR_BIT(COMP12_COMMON->CSR_EVEN, COMP_CSR_WINOUT);
         break;
     }
+#endif
 
     /* Delay for COMP scaler bridge voltage stabilization */
     /* Apply the delay if voltage scaler bridge is required and not already enabled */
@@ -814,15 +877,43 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
 {
   /* Get the EXTI line corresponding to the selected COMP instance */
   uint32_t exti_line = COMP_GET_EXTI_LINE(hcomp->Instance);
-  uint32_t comparator_window_mode_odd = READ_BIT(COMP12_COMMON->CSR_ODD, COMP_CSR_WINMODE);
-  uint32_t comparator_window_mode_even = READ_BIT(COMP12_COMMON->CSR_EVEN, COMP_CSR_WINMODE);
+  uint32_t comparator_window_mode;
+  uint32_t comparator_window_exti_lines;
+  
+#if defined(COMP3)
+  if(hcomp->Instance == COMP3)
+  {
+    /* Case of window mode with COMP2 and COMP3 */
+    comparator_window_mode = READ_BIT(COMP23_COMMON->CSR_EVEN, COMP_CSR_WINMODE);
+    comparator_window_exti_lines = (COMP_EXTI_LINE_COMP2 | COMP_EXTI_LINE_COMP3);
+  }
+  else
+  {
+    comparator_window_mode = READ_BIT(COMP23_COMMON->CSR_EVEN, COMP_CSR_WINMODE);
+    if( (hcomp->Instance == COMP2) && (comparator_window_mode != 0UL))
+    {
+      /* Case of window mode with COMP2 and COMP3 */
+      comparator_window_exti_lines = (COMP_EXTI_LINE_COMP2 | COMP_EXTI_LINE_COMP3);
+    }
+    else
+    {
+      /* Case of window mode with COMP1 and COMP2 */
+      comparator_window_mode = READ_BIT(COMP12_COMMON->CSR_ODD, COMP_CSR_WINMODE);
+      comparator_window_mode |= READ_BIT(COMP12_COMMON->CSR_EVEN, COMP_CSR_WINMODE);
+      comparator_window_exti_lines = (COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2);
+    }
+  }
+#else
+    comparator_window_mode = READ_BIT(COMP12_COMMON->CSR_ODD, COMP_CSR_WINMODE);
+    comparator_window_mode |= READ_BIT(COMP12_COMMON->CSR_EVEN, COMP_CSR_WINMODE);
+    comparator_window_exti_lines = (COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2);
+#endif
 
   /* Check COMP EXTI flag */
   if(LL_EXTI_IsActiveRisingFlag_0_31(exti_line) != 0UL)
   {
     /* Check whether comparator is in independent or window mode */
-    if(   (comparator_window_mode_odd != 0UL)
-       || (comparator_window_mode_even != 0UL))
+    if(comparator_window_mode != 0UL)
     {
       /* Clear COMP EXTI line pending bit of the pair of comparators          */
       /* in window mode.                                                      */
@@ -831,7 +922,7 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
       /*       (low or high ) to the other "out of window" area (high or low).*/
       /*       Both flags must be cleared to call comparator trigger          */
       /*       callback is called once.                                       */
-      LL_EXTI_ClearRisingFlag_0_31((COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2));
+      LL_EXTI_ClearRisingFlag_0_31(comparator_window_exti_lines);
     }
     else
     {
@@ -849,8 +940,7 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
   else if(LL_EXTI_IsActiveFallingFlag_0_31(exti_line) != 0UL)
   {
     /* Check whether comparator is in independent or window mode */
-    if(   (comparator_window_mode_odd != 0UL)
-       || (comparator_window_mode_even != 0UL))
+    if(comparator_window_mode != 0UL)
     {
       /* Clear COMP EXTI line pending bit of the pair of comparators          */
       /* in window mode.                                                      */
@@ -859,7 +949,7 @@ void HAL_COMP_IRQHandler(COMP_HandleTypeDef *hcomp)
       /*       (low or high ) to the other "out of window" area (high or low).*/
       /*       Both flags must be cleared to call comparator trigger          */
       /*       callback is called once.                                       */
-      LL_EXTI_ClearFallingFlag_0_31((COMP_EXTI_LINE_COMP1 | COMP_EXTI_LINE_COMP2));
+      LL_EXTI_ClearFallingFlag_0_31(comparator_window_exti_lines);
     }
     else
     {

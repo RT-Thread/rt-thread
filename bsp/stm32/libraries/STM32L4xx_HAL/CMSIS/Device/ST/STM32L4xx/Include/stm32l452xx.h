@@ -976,6 +976,8 @@ typedef struct
   * @{
   */
 #define FLASH_BASE            (0x08000000UL) /*!< FLASH(up to 512 KB) base address */
+#define FLASH_END             (0x0807FFFFUL) /*!< FLASH END address                */
+#define FLASH_BANK1_END       (0x0807FFFFUL) /*!< FLASH END address of bank1       */
 #define SRAM1_BASE            (0x20000000UL) /*!< SRAM1(up to 128 KB) base address */
 #define SRAM2_BASE            (0x10000000UL) /*!< SRAM2(32 KB) base address */
 #define PERIPH_BASE           (0x40000000UL) /*!< Peripheral base address */
@@ -991,6 +993,11 @@ typedef struct
 
 #define SRAM1_SIZE_MAX        (0x00020000UL) /*!< maximum SRAM1 size (up to 128 KBytes) */
 #define SRAM2_SIZE            (0x00008000UL) /*!< SRAM2 size (32 KBytes) */
+
+#define FLASH_SIZE_DATA_REGISTER ((uint32_t)0x1FFF75E0)
+
+#define FLASH_SIZE               (((((*((uint32_t *)FLASH_SIZE_DATA_REGISTER)) & (0x0000FFFFU)) == 0x0000FFFFU)) ? (0x200U << 10U) : \
+                                  (((*((uint32_t *)FLASH_SIZE_DATA_REGISTER)) & (0x0000FFFFU)) << 10U))
 
 /*!< Peripheral memory map */
 #define APB1PERIPH_BASE        PERIPH_BASE
@@ -10598,8 +10605,12 @@ typedef struct
 #define RTC_TAMPER1_SUPPORT
 #define RTC_TAMPER2_SUPPORT
 #define RTC_TAMPER3_SUPPORT
+
 #define RTC_WAKEUP_SUPPORT
 #define RTC_BACKUP_SUPPORT
+/******************** Number of backup registers ******************************/
+#define RTC_BKP_NUMBER                32U
+
 
 /********************  Bits definition for RTC_TR register  *******************/
 #define RTC_TR_PM_Pos                  (22U)
@@ -11355,9 +11366,6 @@ typedef struct
 #define RTC_BKP31R_Pos                 (0U)
 #define RTC_BKP31R_Msk                 (0xFFFFFFFFUL << RTC_BKP31R_Pos)        /*!< 0xFFFFFFFF */
 #define RTC_BKP31R                     RTC_BKP31R_Msk
-
-/******************** Number of backup registers ******************************/
-#define RTC_BKP_NUMBER                       32U
 
 /******************************************************************************/
 /*                                                                            */
@@ -15919,9 +15927,6 @@ typedef struct
 #define IS_TIM_REPETITION_COUNTER_INSTANCE(INSTANCE)  (((INSTANCE) == TIM1)  || \
                                                        ((INSTANCE) == TIM15) || \
                                                        ((INSTANCE) == TIM16))
-
-/****************** TIM Instances : supporting synchronization ****************/
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
 
 /****************** TIM Instances : supporting ADC triggering through TRGO2 ***/
 #define IS_TIM_TRGO2_INSTANCE(INSTANCE)    ((INSTANCE) == TIM1)
