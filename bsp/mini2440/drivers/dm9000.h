@@ -1,20 +1,20 @@
 #ifndef __DM9000_H__
 #define __DM9000_H__
 
-#define DM9000_IO_BASE      0x20000300
-#define DM9000_DATA_BASE    0x20000304
+#define DM9000_IO_BASE		0x20000300
+#define DM9000_DATA_BASE	0x20000304
 
-#define DM9000_IO           (*((volatile rt_uint16_t *) DM9000_IO_BASE))    // CMD = 0
-#define DM9000_DATA         (*((volatile rt_uint16_t *) DM9000_DATA_BASE))  // CMD = 1
+#define DM9000_IO 			(*((volatile rt_uint16_t *) DM9000_IO_BASE))    // CMD = 0
+#define DM9000_DATA 		(*((volatile rt_uint16_t *) DM9000_DATA_BASE))  // CMD = 1
 
-#define DM9000_inb(r)       (*(volatile rt_uint8_t  *)r)
-#define DM9000_outb(r, d)   (*(volatile rt_uint8_t  *)r = d)
-#define DM9000_inw(r)       (*(volatile rt_uint16_t *)r)
-#define DM9000_outw(r, d)   (*(volatile rt_uint16_t *)r = d)
+#define DM9000_inb(r) 		(*(volatile rt_uint8_t  *)r)
+#define DM9000_outb(r, d) 	(*(volatile rt_uint8_t  *)r = d)
+#define DM9000_inw(r) 		(*(volatile rt_uint16_t *)r)
+#define DM9000_outw(r, d) 	(*(volatile rt_uint16_t *)r = d)
 
-#define DM9000_ID           0x90000A46  /* DM9000 ID */
-#define DM9000_PKT_MAX      1536        /* Received packet max size */
-#define DM9000_PKT_RDY      0x01        /* Packet ready to receive */
+#define DM9000_ID		    0x90000A46  /* DM9000 ID */
+#define DM9000_PKT_MAX		1536	    /* Received packet max size */
+#define DM9000_PKT_RDY		0x01	    /* Packet ready to receive */
 
 #define DM9000_NCR          0x00
 #define DM9000_NSR          0x01
@@ -49,13 +49,13 @@
 #define DM9000_PIDH         0x2B
 
 #define DM9000_CHIPR        0x2C
-#define DM9000_TCR2         0x2D
-#define DM9000_OTCR         0x2E
+#define DM9000_TCR2			0x2D
+#define DM9000_OTCR			0x2E
 #define DM9000_SMCR         0x2F
 
-#define DM9000_ETCR         0x30    /* early transmit control/status register */
-#define DM9000_CSCR         0x31    /* check sum control register */
-#define DM9000_RCSSR        0x32    /* receive check sum status register */
+#define DM9000_ETCR			0x30	/* early transmit control/status register */
+#define DM9000_CSCR			0x31	/* check sum control register */
+#define DM9000_RCSSR		0x32	/* receive check sum status register */
 
 #define DM9000_MRCMDX       0xF0
 #define DM9000_MRCMD        0xF2

@@ -18,7 +18,7 @@ struct calibration_data
 struct rt_touch_event
 {
     rt_uint16_t x;
-    rt_uint16_t y;
+    rt_uint16_t y;  
     int pressed;
 };
 
