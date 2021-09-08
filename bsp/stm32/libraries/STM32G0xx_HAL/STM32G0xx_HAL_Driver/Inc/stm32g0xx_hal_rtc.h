@@ -195,6 +195,9 @@ typedef struct
 
   void  (* Tamper2EventCallback)     ( struct __RTC_HandleTypeDef * hrtc);           /*!< RTC Tamper 2 Event callback           */
 
+#if defined(TAMP_CR1_TAMP3E)  
+  void  (* Tamper3EventCallback)     ( struct __RTC_HandleTypeDef * hrtc);           /*!< RTC Tamper 3 Event callback           */  
+#endif
 
   void  (* InternalTamper3EventCallback)     ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC Internal Tamper 3 Event callback  */
 
@@ -215,7 +218,7 @@ typedef struct
 
 #if (USE_HAL_RTC_REGISTER_CALLBACKS == 1)
 /**
-  * @brief  HAL LPTIM Callback ID enumeration definition
+  * @brief  HAL RTC Callback ID enumeration definition
   */
 typedef enum
 {
@@ -225,6 +228,9 @@ typedef enum
   HAL_RTC_WAKEUPTIMER_EVENT_CB_ID       = 0x03U,    /*!< RTC WakeUp Timer Event Callback ID */
   HAL_RTC_TAMPER1_EVENT_CB_ID           = 0x04U,    /*!< RTC Tamper 1 Callback ID           */
   HAL_RTC_TAMPER2_EVENT_CB_ID           = 0x05U,    /*!< RTC Tamper 2 Callback ID           */
+#if defined(TAMP_CR1_TAMP3E)
+  HAL_RTC_TAMPER3_EVENT_CB_ID           = 0x06U,    /*!< RTC Tamper 3 Callback ID           */
+#endif
   HAL_RTC_INTERNAL_TAMPER3_EVENT_CB_ID  = 0x09U,    /*!< RTC Internal Tamper 3 Callback ID  */
   HAL_RTC_INTERNAL_TAMPER4_EVENT_CB_ID  = 0x0AU,    /*!< RTC Internal Tamper 4 Callback ID  */
   HAL_RTC_INTERNAL_TAMPER5_EVENT_CB_ID  = 0x0BU,    /*!< RTC Internal Tamper 5 Callback ID  */
@@ -308,8 +314,8 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
 /** @defgroup RTC_AM_PM_Definitions RTC AM PM Definitions
   * @{
   */
-#define RTC_HOURFORMAT12_AM                 ((uint8_t)0x00U)
-#define RTC_HOURFORMAT12_PM                 ((uint8_t)0x40U)
+#define RTC_HOURFORMAT12_AM                 0x0u
+#define RTC_HOURFORMAT12_PM                 0x1u
 /**
   * @}
   */
@@ -739,7 +745,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc);
 #if (USE_HAL_RTC_REGISTER_CALLBACKS == 1)
 HAL_StatusTypeDef HAL_RTC_RegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_CallbackIDTypeDef CallbackID, pRTC_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_RTC_UnRegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_CallbackIDTypeDef CallbackID);
-#endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */
+#endif /* USE_HAL_RTC_REGISTER_CALLBACKS */
 
 /**
   * @}

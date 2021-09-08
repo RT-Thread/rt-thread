@@ -21,14 +21,6 @@
 extern "C" {
 #endif
 
-typedef struct
-{
-    int fd;     /* directory file */
-    char buf[512];
-    int num;
-    int cur;
-} DIR;
-
 /* directory api*/
 int mkdir(const char *path, mode_t mode);
 DIR *opendir(const char *name);

@@ -14,28 +14,28 @@
   ==============================================================================
                         ##### FMC peripheral features #####
   ==============================================================================
-    [..] The Flexible memory controller (FMC) includes following memory controllers:
-         (+) The NOR/PSRAM memory controller
-         (+) The NAND memory controller
+  [..] The Flexible memory controller (FMC) includes following memory controllers:
+       (+) The NOR/PSRAM memory controller
+	   (+) The NAND memory controller
 
-    [..] The FMC functional block makes the interface with synchronous and asynchronous static
-         memories. Its main purposes are:
+  [..] The FMC functional block makes the interface with synchronous and asynchronous static
+       memories. Its main purposes are:
        (+) to translate AHB transactions into the appropriate external device protocol
        (+) to meet the access time requirements of the external memory devices
 
-    [..] All external memories share the addresses, data and control signals with the controller.
-         Each external device is accessed by means of a unique Chip Select. The FMC performs
-         only one access at a time to an external device.
-         The main features of the FMC controller are the following:
-          (+) Interface with static-memory mapped devices including:
+  [..] All external memories share the addresses, data and control signals with the controller.
+       Each external device is accessed by means of a unique Chip Select. The FMC performs
+       only one access at a time to an external device.
+       The main features of the FMC controller are the following:
+        (+) Interface with static-memory mapped devices including:
            (++) Static random access memory (SRAM)
            (++) Read-only memory (ROM)
            (++) NOR Flash memory/OneNAND Flash memory
            (++) PSRAM (4 memory banks)
            (++) Two banks of NAND Flash memory with ECC hardware to check up to 8 Kbytes of
                 data
-          (+) Independent Chip Select control for each memory bank
-          (+) Independent configuration for each memory bank
+        (+) Independent Chip Select control for each memory bank
+        (+) Independent configuration for each memory bank
 
   @endverbatim
   ******************************************************************************
@@ -47,7 +47,7 @@
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -58,14 +58,13 @@
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
   */
+#if ((defined HAL_NOR_MODULE_ENABLED || defined HAL_SRAM_MODULE_ENABLED) || defined HAL_NAND_MODULE_ENABLED )
 
-#if defined(HAL_SRAM_MODULE_ENABLED) || defined(HAL_NOR_MODULE_ENABLED) || defined(HAL_PCCARD_MODULE_ENABLED) || defined(HAL_NAND_MODULE_ENABLED)
-
-/** @defgroup FMC_LL FMC Low Layer
+/** @defgroup FMC_LL  FMC Low Layer
   * @brief FMC driver modules
   * @{
   */
-
+	
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 
@@ -75,76 +74,45 @@
 
 /* ----------------------- FMC registers bit mask --------------------------- */
 
-#if defined(FMC_BANK1)
+#if defined FMC_BANK1
 /* --- BCR Register ---*/
 /* BCR register clear mask */
-#if defined(FMC_BCRx_NBLSET)
-#if defined(FMC_BCR1_WFDIS)
-#define BCR_CLEAR_MASK                  ((uint32_t)(FMC_BCRx_MBKEN   | FMC_BCRx_MUXEN     |\
-                                                    FMC_BCRx_MTYP    | FMC_BCRx_MWID      |\
-                                                    FMC_BCRx_FACCEN  | FMC_BCRx_BURSTEN   |\
-                                                    FMC_BCRx_WAITPOL | FMC_BCRx_WAITCFG   |\
-                                                    FMC_BCRx_WREN    | FMC_BCRx_WAITEN    |\
-                                                    FMC_BCRx_EXTMOD  | FMC_BCRx_ASYNCWAIT |\
-                                                    FMC_BCRx_CPSIZE  | FMC_BCRx_CBURSTRW  |\
-                                                    FMC_BCR1_CCLKEN  | FMC_BCR1_WFDIS     |\
-                                                    FMC_BCRx_NBLSET))
-#else
-#define BCR_CLEAR_MASK                  ((uint32_t)(FMC_BCRx_MBKEN   | FMC_BCRx_MUXEN     |\
-                                                    FMC_BCRx_MTYP    | FMC_BCRx_MWID      |\
-                                                    FMC_BCRx_FACCEN  | FMC_BCRx_BURSTEN   |\
-                                                    FMC_BCRx_WAITPOL | FMC_BCRx_WAITCFG   |\
-                                                    FMC_BCRx_WREN    | FMC_BCRx_WAITEN    |\
-                                                    FMC_BCRx_EXTMOD  | FMC_BCRx_ASYNCWAIT |\
-                                                    FMC_BCRx_CPSIZE  | FMC_BCRx_CBURSTRW  |\
-                                                    FMC_BCR1_CCLKEN  | FMC_BCRx_NBLSET))
-#endif /* FMC_BCR1_WFDIS */
-#else
-#if defined(FMC_BCR1_WFDIS)
-#define BCR_CLEAR_MASK                  ((uint32_t)(FMC_BCRx_MBKEN   | FMC_BCRx_MUXEN     |\
-                                                    FMC_BCRx_MTYP    | FMC_BCRx_MWID      |\
-                                                    FMC_BCRx_FACCEN  | FMC_BCRx_BURSTEN   |\
-                                                    FMC_BCRx_WAITPOL | FMC_BCRx_WAITCFG   |\
-                                                    FMC_BCRx_WREN    | FMC_BCRx_WAITEN    |\
-                                                    FMC_BCRx_EXTMOD  | FMC_BCRx_ASYNCWAIT |\
-                                                    FMC_BCRx_CPSIZE  | FMC_BCRx_CBURSTRW  |\
-                                                    FMC_BCR1_CCLKEN  | FMC_BCR1_WFDIS))
-#else
-#define BCR_CLEAR_MASK                  ((uint32_t)(FMC_BCRx_MBKEN   | FMC_BCRx_MUXEN     |\
-                                                    FMC_BCRx_MTYP    | FMC_BCRx_MWID      |\
-                                                    FMC_BCRx_FACCEN  | FMC_BCRx_BURSTEN   |\
-                                                    FMC_BCRx_WAITPOL | FMC_BCRx_WAITCFG   |\
-                                                    FMC_BCRx_WREN    | FMC_BCRx_WAITEN    |\
-                                                    FMC_BCRx_EXTMOD  | FMC_BCRx_ASYNCWAIT |\
-                                                    FMC_BCRx_CPSIZE  | FMC_BCRx_CBURSTRW  |\
-                                                    FMC_BCR1_CCLKEN))
-#endif /* FMC_BCR1_WFDIS */
-#endif /* FMC_BCRx_NBLSET */
 
 /* --- BTR Register ---*/
 /* BTR register clear mask */
 #if defined(FMC_BTRx_DATAHLD)
-#define BTR_CLEAR_MASK                  ((uint32_t)(FMC_BTRx_ADDSET | FMC_BTRx_ADDHLD  |\
-                                                    FMC_BTRx_DATAST | FMC_BTRx_BUSTURN |\
-                                                    FMC_BTRx_CLKDIV | FMC_BTRx_DATLAT  |\
-                                                    FMC_BTRx_ACCMOD | FMC_BTRx_DATAHLD))
+#define BTR_CLEAR_MASK    ((uint32_t)(FMC_BTRx_ADDSET | FMC_BTRx_ADDHLD  |\
+                                      FMC_BTRx_DATAST | FMC_BTRx_BUSTURN |\
+                                      FMC_BTRx_CLKDIV | FMC_BTRx_DATLAT  |\
+                                      FMC_BTRx_ACCMOD | FMC_BTRx_DATAHLD))
 #else
-#define BTR_CLEAR_MASK                  ((uint32_t)(FMC_BTRx_ADDSET | FMC_BTRx_ADDHLD  |\
-                                                    FMC_BTRx_DATAST | FMC_BTRx_BUSTURN |\
-                                                    FMC_BTRx_CLKDIV | FMC_BTRx_DATLAT  |\
-                                                    FMC_BTRx_ACCMOD))
+#define BTR_CLEAR_MASK    ((uint32_t)(FMC_BTRx_ADDSET | FMC_BTRx_ADDHLD  |\
+                                      FMC_BTRx_DATAST | FMC_BTRx_BUSTURN |\
+                                      FMC_BTRx_CLKDIV | FMC_BTRx_DATLAT  |\
+                                      FMC_BTRx_ACCMOD))
 #endif /* FMC_BTRx_DATAHLD */
 
 /* --- BWTR Register ---*/
 /* BWTR register clear mask */
 #if defined(FMC_BWTRx_DATAHLD)
-#define BWTR_CLEAR_MASK                ((uint32_t)(FMC_BWTRx_ADDSET | FMC_BWTRx_ADDHLD  |\
-                                                   FMC_BWTRx_DATAST | FMC_BWTRx_BUSTURN |\
-                                                   FMC_BWTRx_ACCMOD | FMC_BWTRx_DATAHLD))
+#if defined(FMC_BWTRx_BUSTURN)
+#define BWTR_CLEAR_MASK   ((uint32_t)(FMC_BWTRx_ADDSET | FMC_BWTRx_ADDHLD  |\
+                                      FMC_BWTRx_DATAST | FMC_BWTRx_BUSTURN |\
+                                      FMC_BWTRx_ACCMOD | FMC_BWTRx_DATAHLD))
 #else
-#define BWTR_CLEAR_MASK                ((uint32_t)(FMC_BWTRx_ADDSET | FMC_BWTRx_ADDHLD  |\
-                                                   FMC_BWTRx_DATAST | FMC_BWTRx_BUSTURN |\
-                                                   FMC_BWTRx_ACCMOD))
+#define BWTR_CLEAR_MASK   ((uint32_t)(FMC_BWTRx_ADDSET | FMC_BWTRx_ADDHLD  |\
+                                      FMC_BWTRx_DATAST | FMC_BWTRx_ACCMOD  |\
+                                      FMC_BWTRx_DATAHLD))
+#endif /* FMC_BWTRx_BUSTURN */
+#else
+#if defined(FMC_BWTRx_BUSTURN)
+#define BWTR_CLEAR_MASK   ((uint32_t)(FMC_BWTRx_ADDSET | FMC_BWTRx_ADDHLD  |\
+                                      FMC_BWTRx_DATAST | FMC_BWTRx_BUSTURN |\
+                                      FMC_BWTRx_ACCMOD))
+#else
+#define BWTR_CLEAR_MASK   ((uint32_t)(FMC_BWTRx_ADDSET | FMC_BWTRx_ADDHLD  |\
+                                      FMC_BWTRx_DATAST | FMC_BWTRx_ACCMOD))
+#endif /* FMC_BWTRx_BUSTURN */
 #endif /* FMC_BWTRx_DATAHLD */
 #endif /* FMC_BANK1 */
 #if defined(FMC_BANK3)
@@ -155,7 +123,6 @@
                                       FMC_PCR_PTYP    | FMC_PCR_PWID   | \
                                       FMC_PCR_ECCEN   | FMC_PCR_TCLR   | \
                                       FMC_PCR_TAR     | FMC_PCR_ECCPS))
-
 /* --- PMEM Register ---*/
 /* PMEM register clear mask */
 #define PMEM_CLEAR_MASK   ((uint32_t)(FMC_PMEM_MEMSET  | FMC_PMEM_MEMWAIT |\
@@ -181,10 +148,10 @@
   * @{
   */
 
-#if defined(FMC_BANK1)
+#if defined FMC_BANK1
 
 /** @defgroup FMC_LL_Exported_Functions_NORSRAM FMC Low Layer NOR SRAM Exported Functions
-  * @brief    NORSRAM Controller functions
+  * @brief  NORSRAM Controller functions
   *
   @verbatim
   ==============================================================================
@@ -234,6 +201,8 @@
 HAL_StatusTypeDef  FMC_NORSRAM_Init(FMC_NORSRAM_TypeDef *Device, FMC_NORSRAM_InitTypeDef *Init)
 {
   uint32_t flashaccess;
+  uint32_t btcr_reg;
+  uint32_t mask;
 
   /* Check the parameters */
   assert_param(IS_FMC_NORSRAM_DEVICE(Device));
@@ -257,6 +226,9 @@ HAL_StatusTypeDef  FMC_NORSRAM_Init(FMC_NORSRAM_TypeDef *Device, FMC_NORSRAM_Ini
 #if defined(FMC_BCRx_NBLSET)
   assert_param(IS_FMC_NBL_SETUPTIME(Init->NBLSetupTime));
 #endif /* FMC_BCRx_NBLSET */
+#if defined(FMC_PCSCNTR_CSCOUNT)
+  assert_param(IS_FUNCTIONAL_STATE(Init->MaxChipSelectPulse));
+#endif /* FMC_PCSCNTR_CSCOUNT */
 
   /* Disable NORSRAM Device */
   __FMC_NORSRAM_DISABLE(Device, Init->NSBank);
@@ -271,44 +243,104 @@ HAL_StatusTypeDef  FMC_NORSRAM_Init(FMC_NORSRAM_TypeDef *Device, FMC_NORSRAM_Ini
     flashaccess = FMC_NORSRAM_FLASH_ACCESS_DISABLE;
   }
 
-  MODIFY_REG(Device->BTCR[Init->NSBank], BCR_CLEAR_MASK, (flashaccess              |
-                                                          Init->DataAddressMux     |
-                                                          Init->MemoryType         |
-                                                          Init->MemoryDataWidth    |
-                                                          Init->BurstAccessMode    |
-                                                          Init->WaitSignalPolarity |
-                                                          Init->WaitSignalActive   |
-                                                          Init->WriteOperation     |
-                                                          Init->WaitSignal         |
-                                                          Init->ExtendedMode       |
-                                                          Init->AsynchronousWait   |
-                                                          Init->WriteBurst         |
-                                                          Init->ContinuousClock    |
+  btcr_reg = (flashaccess                   | \
+              Init->DataAddressMux          | \
+              Init->MemoryType              | \
+              Init->MemoryDataWidth         | \
+              Init->BurstAccessMode         | \
+              Init->WaitSignalPolarity      | \
+              Init->WaitSignalActive        | \
+              Init->WriteOperation          | \
+              Init->WaitSignal              | \
+              Init->ExtendedMode            | \
+              Init->AsynchronousWait        | \
+              Init->WriteBurst);
+
+  btcr_reg |= Init->ContinuousClock;
 #if defined(FMC_BCR1_WFDIS)
-                                                          Init->WriteFifo          |
+  btcr_reg |= Init->WriteFifo;
 #endif /* FMC_BCR1_WFDIS */
 #if defined(FMC_BCRx_NBLSET)
-                                                          Init->NBLSetupTime       |
+  btcr_reg |= Init->NBLSetupTime;
 #endif /* FMC_BCRx_NBLSET */
-                                                          Init->PageSize));
+  btcr_reg |= Init->PageSize;
+
+  mask = (FMC_BCRx_MBKEN                |
+          FMC_BCRx_MUXEN                |
+          FMC_BCRx_MTYP                 |
+          FMC_BCRx_MWID                 |
+          FMC_BCRx_FACCEN               |
+          FMC_BCRx_BURSTEN              |
+          FMC_BCRx_WAITPOL              |
+          FMC_BCRx_WAITCFG              |
+          FMC_BCRx_WREN                 |
+          FMC_BCRx_WAITEN               |
+          FMC_BCRx_EXTMOD               |
+          FMC_BCRx_ASYNCWAIT            |
+          FMC_BCRx_CBURSTRW);
+
+  mask |= FMC_BCR1_CCLKEN;
+#if defined(FMC_BCR1_WFDIS)
+  mask |= FMC_BCR1_WFDIS;
+#endif /* FMC_BCR1_WFDIS */
+#if defined(FMC_BCRx_NBLSET)
+  mask |= FMC_BCRx_NBLSET;
+#endif /* FMC_BCRx_NBLSET */
+  mask |= FMC_BCRx_CPSIZE;
+
+  MODIFY_REG(Device->BTCR[Init->NSBank], mask, btcr_reg);
 
   /* Configure synchronous mode when Continuous clock is enabled for bank2..4 */
   if ((Init->ContinuousClock == FMC_CONTINUOUS_CLOCK_SYNC_ASYNC) && (Init->NSBank != FMC_NORSRAM_BANK1))
   {
     MODIFY_REG(Device->BTCR[FMC_NORSRAM_BANK1], FMC_BCR1_CCLKEN, Init->ContinuousClock);
   }
-
 #if defined(FMC_BCR1_WFDIS)
+
   if (Init->NSBank != FMC_NORSRAM_BANK1)
   {
     /* Configure Write FIFO mode when Write Fifo is enabled for bank2..4 */
     SET_BIT(Device->BTCR[FMC_NORSRAM_BANK1], (uint32_t)(Init->WriteFifo));
   }
 #endif /* FMC_BCR1_WFDIS */
+#if defined(FMC_PCSCNTR_CSCOUNT)
+
+  /* Check PSRAM chip select counter state */
+  if(Init->MaxChipSelectPulse == ENABLE)
+  {
+    /* Check the parameters */
+    assert_param(IS_FMC_MAX_CHIP_SELECT_PULSE_TIME(Init->MaxChipSelectPulseTime));
+
+    /* Configure PSRAM chip select counter value */
+    MODIFY_REG(Device->PCSCNTR, FMC_PCSCNTR_CSCOUNT, (uint32_t)(Init->MaxChipSelectPulseTime));
+
+    /* Enable PSRAM chip select counter for the bank */
+    switch (Init->NSBank)
+    {
+      case FMC_NORSRAM_BANK1 :
+        SET_BIT(Device->PCSCNTR, FMC_PCSCNTR_CNTB1EN);
+        break;
+
+      case FMC_NORSRAM_BANK2 :
+        SET_BIT(Device->PCSCNTR, FMC_PCSCNTR_CNTB2EN);
+        break;
+
+      case FMC_NORSRAM_BANK3 :
+        SET_BIT(Device->PCSCNTR, FMC_PCSCNTR_CNTB3EN);
+        break;
+
+      case FMC_NORSRAM_BANK4 :
+        SET_BIT(Device->PCSCNTR, FMC_PCSCNTR_CNTB4EN);
+        break;
+
+      default :
+        break;
+    }
+  }
+#endif /* FMC_PCSCNTR_CSCOUNT */
 
   return HAL_OK;
 }
-
 
 /**
   * @brief  DeInitialize the FMC_NORSRAM peripheral
@@ -339,12 +371,36 @@ HAL_StatusTypeDef FMC_NORSRAM_DeInit(FMC_NORSRAM_TypeDef *Device, FMC_NORSRAM_EX
     Device->BTCR[Bank] = 0x000030D2U;
   }
 
-  Device->BTCR[Bank + 1] = 0x0FFFFFFFU;
+  Device->BTCR[Bank + 1U] = 0x0FFFFFFFU;
   ExDevice->BWTR[Bank]   = 0x0FFFFFFFU;
+#if defined(FMC_PCSCNTR_CSCOUNT)
+
+  /* De-initialize PSRAM chip select counter */
+    switch (Bank)
+    {
+      case FMC_NORSRAM_BANK1 :
+        CLEAR_BIT(Device->PCSCNTR, FMC_PCSCNTR_CNTB1EN);
+        break;
+
+      case FMC_NORSRAM_BANK2 :
+        CLEAR_BIT(Device->PCSCNTR, FMC_PCSCNTR_CNTB2EN);
+        break;
+
+      case FMC_NORSRAM_BANK3 :
+        CLEAR_BIT(Device->PCSCNTR, FMC_PCSCNTR_CNTB3EN);
+        break;
+
+      case FMC_NORSRAM_BANK4 :
+        CLEAR_BIT(Device->PCSCNTR, FMC_PCSCNTR_CNTB4EN);
+        break;
+
+      default :
+        break;
+    }
+#endif /* FMC_PCSCNTR_CSCOUNT */
 
   return HAL_OK;
 }
-
 
 /**
   * @brief  Initialize the FMC_NORSRAM Timing according to the specified
@@ -356,7 +412,7 @@ HAL_StatusTypeDef FMC_NORSRAM_DeInit(FMC_NORSRAM_TypeDef *Device, FMC_NORSRAM_EX
   */
 HAL_StatusTypeDef FMC_NORSRAM_Timing_Init(FMC_NORSRAM_TypeDef *Device, FMC_NORSRAM_TimingTypeDef *Timing, uint32_t Bank)
 {
-  uint32_t tmpr = 0;
+  uint32_t tmpr;
 
   /* Check the parameters */
   assert_param(IS_FMC_NORSRAM_DEVICE(Device));
@@ -373,23 +429,23 @@ HAL_StatusTypeDef FMC_NORSRAM_Timing_Init(FMC_NORSRAM_TypeDef *Device, FMC_NORSR
   assert_param(IS_FMC_NORSRAM_BANK(Bank));
 
   /* Set FMC_NORSRAM device timing parameters */
-  MODIFY_REG(Device->BTCR[Bank + 1], BTR_CLEAR_MASK, (Timing->AddressSetupTime                                             |
-                        ((Timing->AddressHoldTime)        << FMC_BTRx_ADDHLD_Pos)        |
-                        ((Timing->DataSetupTime)          << FMC_BTRx_DATAST_Pos)        |
+  MODIFY_REG(Device->BTCR[Bank + 1U], BTR_CLEAR_MASK, (Timing->AddressSetupTime                                  |
+                                                      ((Timing->AddressHoldTime)        << FMC_BTRx_ADDHLD_Pos)  |
+                                                      ((Timing->DataSetupTime)          << FMC_BTRx_DATAST_Pos)  |
 #if defined(FMC_BTRx_DATAHLD)
-                        ((Timing->DataHoldTime)           << FMC_BTRx_DATAHLD_Pos)       |
+                                                      ((Timing->DataHoldTime)           << FMC_BTRx_DATAHLD_Pos) |
 #endif /* FMC_BTRx_DATAHLD */
-                        ((Timing->BusTurnAroundDuration)  << FMC_BTRx_BUSTURN_Pos)       |
-                        (((Timing->CLKDivision) - 1)      << FMC_BTRx_CLKDIV_Pos)        |
-                        (((Timing->DataLatency) - 2)      << FMC_BTRx_DATLAT_Pos)        |
-                        (Timing->AccessMode)));
+                                                      ((Timing->BusTurnAroundDuration)  << FMC_BTRx_BUSTURN_Pos) |
+                                                      (((Timing->CLKDivision) - 1U)     << FMC_BTRx_CLKDIV_Pos)  |
+                                                      (((Timing->DataLatency) - 2U)     << FMC_BTRx_DATLAT_Pos)  |
+                                                      (Timing->AccessMode)));
 
   /* Configure Clock division value (in NORSRAM bank 1) when continuous clock is enabled */
   if (HAL_IS_BIT_SET(Device->BTCR[FMC_NORSRAM_BANK1], FMC_BCR1_CCLKEN))
   {
-    tmpr = (uint32_t)(Device->BTCR[FMC_NORSRAM_BANK1 + 1] & ~(((uint32_t)0x0F) << FMC_BTRx_CLKDIV_Pos));
-    tmpr |= (uint32_t)(((Timing->CLKDivision) - 1) << FMC_BTRx_CLKDIV_Pos);
-    MODIFY_REG(Device->BTCR[FMC_NORSRAM_BANK1 + 1], FMC_BTRx_CLKDIV, tmpr);
+    tmpr = (uint32_t)(Device->BTCR[FMC_NORSRAM_BANK1 + 1U] & ~(((uint32_t)0x0F) << FMC_BTRx_CLKDIV_Pos));
+    tmpr |= (uint32_t)(((Timing->CLKDivision) - 1U) << FMC_BTRx_CLKDIV_Pos);
+    MODIFY_REG(Device->BTCR[FMC_NORSRAM_BANK1 + 1U], FMC_BTRx_CLKDIV, tmpr);
   }
 
   return HAL_OK;
@@ -407,7 +463,7 @@ HAL_StatusTypeDef FMC_NORSRAM_Timing_Init(FMC_NORSRAM_TypeDef *Device, FMC_NORSR
   *            @arg FMC_EXTENDED_MODE_ENABLE
   * @retval HAL status
   */
-HAL_StatusTypeDef  FMC_NORSRAM_Extended_Timing_Init(FMC_NORSRAM_EXTENDED_TypeDef *Device, FMC_NORSRAM_TimingTypeDef *Timing, uint32_t Bank, uint32_t ExtendedMode)
+HAL_StatusTypeDef FMC_NORSRAM_Extended_Timing_Init(FMC_NORSRAM_EXTENDED_TypeDef *Device, FMC_NORSRAM_TimingTypeDef *Timing, uint32_t Bank, uint32_t ExtendedMode)
 {
   /* Check the parameters */
   assert_param(IS_FMC_EXTENDED_MODE(ExtendedMode));
@@ -423,19 +479,25 @@ HAL_StatusTypeDef  FMC_NORSRAM_Extended_Timing_Init(FMC_NORSRAM_EXTENDED_TypeDef
 #if defined(FMC_BTRx_DATAHLD)
     assert_param(IS_FMC_DATAHOLD_DURATION(Timing->DataHoldTime));
 #endif /* FMC_BTRx_DATAHLD */
+#if defined(FMC_BWTRx_BUSTURN)
     assert_param(IS_FMC_TURNAROUND_TIME(Timing->BusTurnAroundDuration));
+#endif /* FMC_BWTRx_BUSTURN */
     assert_param(IS_FMC_ACCESS_MODE(Timing->AccessMode));
     assert_param(IS_FMC_NORSRAM_BANK(Bank));
 
     /* Set NORSRAM device timing register for write configuration, if extended mode is used */
-    MODIFY_REG(Device->BWTR[Bank], BWTR_CLEAR_MASK, (Timing->AddressSetupTime                                              |
-                          ((Timing->AddressHoldTime)        << FMC_BWTRx_ADDHLD_Pos)  |
-                          ((Timing->DataSetupTime)          << FMC_BWTRx_DATAST_Pos)  |
+    MODIFY_REG(Device->BWTR[Bank], BWTR_CLEAR_MASK, (Timing->AddressSetupTime                                    |
+                                                     ((Timing->AddressHoldTime)        << FMC_BWTRx_ADDHLD_Pos)  |
+                                                     ((Timing->DataSetupTime)          << FMC_BWTRx_DATAST_Pos)  |
 #if defined(FMC_BTRx_DATAHLD)
-                          ((Timing->DataHoldTime)           << FMC_BWTRx_DATAHLD_Pos) |
+                                                     ((Timing->DataHoldTime)           << FMC_BWTRx_DATAHLD_Pos) |
 #endif /* FMC_BTRx_DATAHLD */
-                          Timing->AccessMode                                          |
-                          ((Timing->BusTurnAroundDuration)  << FMC_BWTRx_BUSTURN_Pos)));
+#if defined(FMC_BWTRx_BUSTURN)
+                                                     Timing->AccessMode                                          |
+                                                     ((Timing->BusTurnAroundDuration)  << FMC_BWTRx_BUSTURN_Pos)));
+#else
+                                                     Timing->AccessMode));
+#endif /* FMC_BWTRx_BUSTURN */
   }
   else
   {
@@ -572,13 +634,13 @@ HAL_StatusTypeDef FMC_NAND_Init(FMC_NAND_TypeDef *Device, FMC_NAND_InitTypeDef *
   assert_param(IS_FMC_TAR_TIME(Init->TARSetupTime));
 
   /* NAND bank 3 registers configuration */
-  MODIFY_REG(Device->PCR, PCR_CLEAR_MASK, (Init->Waitfeature                           |
-                                           FMC_PCR_MEMORY_TYPE_NAND                    |
-                                           Init->MemoryDataWidth                       |
-                                           Init->EccComputation                        |
-                                           Init->ECCPageSize                           |
-                                           ((Init->TCLRSetupTime) << FMC_PCR_TCLR_Pos) |
-                                           ((Init->TARSetupTime) << FMC_PCR_TAR_Pos)));
+  MODIFY_REG(Device->PCR, PCR_CLEAR_MASK, (Init->Waitfeature                            |
+                                           FMC_PCR_MEMORY_TYPE_NAND                     |
+                                           Init->MemoryDataWidth                        |
+                                           Init->EccComputation                         |
+                                           Init->ECCPageSize                            |
+                                           ((Init->TCLRSetupTime) << FMC_PCR_TCLR_Pos)  |
+                                           ((Init->TARSetupTime)  << FMC_PCR_TAR_Pos)));
 
   return HAL_OK;
 }
@@ -599,6 +661,7 @@ HAL_StatusTypeDef FMC_NAND_CommonSpace_Timing_Init(FMC_NAND_TypeDef *Device, FMC
   assert_param(IS_FMC_WAIT_TIME(Timing->WaitSetupTime));
   assert_param(IS_FMC_HOLD_TIME(Timing->HoldSetupTime));
   assert_param(IS_FMC_HIZ_TIME(Timing->HiZSetupTime));
+  assert_param(IS_FMC_NAND_BANK(Bank));
 
   /* Prevent unused argument(s) compilation warning if no assert_param check */
   UNUSED(Bank);
@@ -607,7 +670,7 @@ HAL_StatusTypeDef FMC_NAND_CommonSpace_Timing_Init(FMC_NAND_TypeDef *Device, FMC
   MODIFY_REG(Device->PMEM, PMEM_CLEAR_MASK, (Timing->SetupTime                                 |
                                              ((Timing->WaitSetupTime) << FMC_PMEM_MEMWAIT_Pos) |
                                              ((Timing->HoldSetupTime) << FMC_PMEM_MEMHOLD_Pos) |
-                                             ((Timing->HiZSetupTime) << FMC_PMEM_MEMHIZ_Pos)));
+                                             ((Timing->HiZSetupTime)  << FMC_PMEM_MEMHIZ_Pos)));
 
   return HAL_OK;
 }
@@ -628,6 +691,7 @@ HAL_StatusTypeDef FMC_NAND_AttributeSpace_Timing_Init(FMC_NAND_TypeDef *Device, 
   assert_param(IS_FMC_WAIT_TIME(Timing->WaitSetupTime));
   assert_param(IS_FMC_HOLD_TIME(Timing->HoldSetupTime));
   assert_param(IS_FMC_HIZ_TIME(Timing->HiZSetupTime));
+  assert_param(IS_FMC_NAND_BANK(Bank));
 
   /* Prevent unused argument(s) compilation warning if no assert_param check */
   UNUSED(Bank);
@@ -636,7 +700,7 @@ HAL_StatusTypeDef FMC_NAND_AttributeSpace_Timing_Init(FMC_NAND_TypeDef *Device, 
   MODIFY_REG(Device->PATT, PATT_CLEAR_MASK, (Timing->SetupTime                                 |
                                              ((Timing->WaitSetupTime) << FMC_PATT_ATTWAIT_Pos) |
                                              ((Timing->HoldSetupTime) << FMC_PATT_ATTHOLD_Pos) |
-                                             ((Timing->HiZSetupTime) << FMC_PATT_ATTHIZ_Pos)));
+                                             ((Timing->HiZSetupTime)  << FMC_PATT_ATTHIZ_Pos)));
 
   return HAL_OK;
 }
@@ -651,19 +715,20 @@ HAL_StatusTypeDef FMC_NAND_DeInit(FMC_NAND_TypeDef *Device, uint32_t Bank)
 {
   /* Check the parameters */
   assert_param(IS_FMC_NAND_DEVICE(Device));
+  assert_param(IS_FMC_NAND_BANK(Bank));
 
+  /* Disable the NAND Bank */
+  __FMC_NAND_DISABLE(Device, Bank);
+
+  /* De-initialize the NAND Bank */
   /* Prevent unused argument(s) compilation warning if no assert_param check */
   UNUSED(Bank);
 
-  /* Disable the NAND Bank */
-  __FMC_NAND_DISABLE(Device);
-
-  /* De-initialize the NAND Bank */
   /* Set the FMC_NAND_BANK3 registers to their reset values */
-  WRITE_REG(Device->PCR,  0x00000018);
-  WRITE_REG(Device->SR,   0x00000040);
-  WRITE_REG(Device->PMEM, 0xFCFCFCFC);
-  WRITE_REG(Device->PATT, 0xFCFCFCFC);
+  WRITE_REG(Device->PCR,  0x00000018U);
+  WRITE_REG(Device->SR,   0x00000040U);
+  WRITE_REG(Device->PMEM, 0xFCFCFCFCU);
+  WRITE_REG(Device->PATT, 0xFCFCFCFCU);
 
   return HAL_OK;
 }
@@ -673,8 +738,8 @@ HAL_StatusTypeDef FMC_NAND_DeInit(FMC_NAND_TypeDef *Device, uint32_t Bank)
   */
 
 /** @defgroup HAL_FMC_NAND_Group2 Peripheral Control functions
- *  @brief   management functions
- *
+  *  @brief   management functions
+  *
 @verbatim
   ==============================================================================
                        ##### FMC_NAND Control functions #####
@@ -698,11 +763,12 @@ HAL_StatusTypeDef FMC_NAND_ECC_Enable(FMC_NAND_TypeDef *Device, uint32_t Bank)
 {
   /* Check the parameters */
   assert_param(IS_FMC_NAND_DEVICE(Device));
+  assert_param(IS_FMC_NAND_BANK(Bank));
 
+  /* Enable ECC feature */
   /* Prevent unused argument(s) compilation warning if no assert_param check */
   UNUSED(Bank);
 
-  /* Enable ECC feature */
   SET_BIT(Device->PCR, FMC_PCR_ECCEN);
 
   return HAL_OK;
@@ -719,11 +785,12 @@ HAL_StatusTypeDef FMC_NAND_ECC_Disable(FMC_NAND_TypeDef *Device, uint32_t Bank)
 {
   /* Check the parameters */
   assert_param(IS_FMC_NAND_DEVICE(Device));
+  assert_param(IS_FMC_NAND_BANK(Bank));
 
+  /* Disable ECC feature */
   /* Prevent unused argument(s) compilation warning if no assert_param check */
   UNUSED(Bank);
 
-  /* Disable ECC feature */
   CLEAR_BIT(Device->PCR, FMC_PCR_ECCEN);
 
   return HAL_OK;
@@ -739,13 +806,11 @@ HAL_StatusTypeDef FMC_NAND_ECC_Disable(FMC_NAND_TypeDef *Device, uint32_t Bank)
   */
 HAL_StatusTypeDef FMC_NAND_GetECC(FMC_NAND_TypeDef *Device, uint32_t *ECCval, uint32_t Bank, uint32_t Timeout)
 {
-  uint32_t tickstart = 0;
+  uint32_t tickstart;
 
   /* Check the parameters */
   assert_param(IS_FMC_NAND_DEVICE(Device));
-
-  /* Prevent unused argument(s) compilation warning if no assert_param check */
-  UNUSED(Bank);
+  assert_param(IS_FMC_NAND_BANK(Bank));
 
   /* Get tick */
   tickstart = HAL_GetTick();
@@ -756,12 +821,15 @@ HAL_StatusTypeDef FMC_NAND_GetECC(FMC_NAND_TypeDef *Device, uint32_t *ECCval, ui
     /* Check for the Timeout */
     if (Timeout != HAL_MAX_DELAY)
     {
-      if ((Timeout == 0) || ((HAL_GetTick() - tickstart) > Timeout))
+      if (((HAL_GetTick() - tickstart) > Timeout) || (Timeout == 0U))
       {
         return HAL_TIMEOUT;
       }
     }
   }
+
+  /* Prevent unused argument(s) compilation warning if no assert_param check */
+  UNUSED(Bank);
 
   /* Get the ECCR register value */
   *ECCval = (uint32_t)Device->ECCR;
@@ -784,7 +852,7 @@ HAL_StatusTypeDef FMC_NAND_GetECC(FMC_NAND_TypeDef *Device, uint32_t *ECCval, ui
   * @}
   */
 
-#endif /* defined(HAL_SRAM_MODULE_ENABLED) || defined(HAL_NOR_MODULE_ENABLED) || defined(HAL_PCCARD_MODULE_ENABLED) || defined(HAL_NAND_MODULE_ENABLED) */
+#endif /* HAL_NOR_MODULE_ENABLED */
 /**
   * @}
   */

@@ -134,6 +134,8 @@ jobs:
          - {RTT_BSP: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "raspberry-pico", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "raspberry-pi/raspi4-32", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm"}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python

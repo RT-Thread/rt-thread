@@ -213,8 +213,8 @@ static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_
 /**
   * @brief  Initializes the SDMMC according to the specified
   *         parameters in the SDMMC_InitTypeDef and create the associated handle.
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  Init: SDMMC initialization structure
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  Init SDMMC initialization structure
   * @retval HAL status
   */
 HAL_StatusTypeDef SDMMC_Init(SDMMC_TypeDef *SDMMCx, SDMMC_InitTypeDef Init)
@@ -224,16 +224,16 @@ HAL_StatusTypeDef SDMMC_Init(SDMMC_TypeDef *SDMMCx, SDMMC_InitTypeDef Init)
   /* Check the parameters */
   assert_param(IS_SDMMC_ALL_INSTANCE(SDMMCx));
   assert_param(IS_SDMMC_CLOCK_EDGE(Init.ClockEdge));
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
   assert_param(IS_SDMMC_CLOCK_BYPASS(Init.ClockBypass));
-#endif /* !STM32L4R5xx && !STM32L4R7xx && !STM32L4R9xx && !STM32L4S5xx && !STM32L4S7xx && !STM32L4S9xx */
+#endif /* !STM32L4P5xx && !STM32L4Q5xx && !STM32L4R5xx && !STM32L4R7xx && !STM32L4R9xx && !STM32L4S5xx && !STM32L4S7xx && !STM32L4S9xx */
   assert_param(IS_SDMMC_CLOCK_POWER_SAVE(Init.ClockPowerSave));
   assert_param(IS_SDMMC_BUS_WIDE(Init.BusWide));
   assert_param(IS_SDMMC_HARDWARE_FLOW_CONTROL(Init.HardwareFlowControl));
   assert_param(IS_SDMMC_CLKDIV(Init.ClockDiv));
 
   /* Set SDMMC configuration parameters */
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
   tmpreg |= Init.ClockBypass;
 #endif
   tmpreg |= (Init.ClockEdge           |\
@@ -271,7 +271,7 @@ HAL_StatusTypeDef SDMMC_Init(SDMMC_TypeDef *SDMMCx, SDMMC_InitTypeDef Init)
 
 /**
   * @brief  Read data (word) from Rx FIFO in blocking mode (polling)
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_ReadFIFO(SDMMC_TypeDef *SDMMCx)
@@ -282,8 +282,8 @@ uint32_t SDMMC_ReadFIFO(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Write data (word) to Tx FIFO in blocking mode (polling)
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  pWriteData: pointer to data to write
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  pWriteData pointer to data to write
   * @retval HAL status
   */
 HAL_StatusTypeDef SDMMC_WriteFIFO(SDMMC_TypeDef *SDMMCx, uint32_t *pWriteData)
@@ -315,17 +315,17 @@ HAL_StatusTypeDef SDMMC_WriteFIFO(SDMMC_TypeDef *SDMMCx, uint32_t *pWriteData)
 
 /**
   * @brief  Set SDMMC Power state to ON.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 HAL_StatusTypeDef SDMMC_PowerState_ON(SDMMC_TypeDef *SDMMCx)
 {
   /* Set power state to ON */
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   SDMMCx->POWER |= SDMMC_POWER_PWRCTRL;
 #else
   SDMMCx->POWER = SDMMC_POWER_PWRCTRL;
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
   /* 1ms: required power up waiting time before starting the SD initialization
   sequence */
@@ -334,10 +334,10 @@ HAL_StatusTypeDef SDMMC_PowerState_ON(SDMMC_TypeDef *SDMMCx)
   return HAL_OK;
 }
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 /**
   * @brief  Set SDMMC Power state to Power-Cycle.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 HAL_StatusTypeDef SDMMC_PowerState_Cycle(SDMMC_TypeDef *SDMMCx)
@@ -347,28 +347,28 @@ HAL_StatusTypeDef SDMMC_PowerState_Cycle(SDMMC_TypeDef *SDMMCx)
 
   return HAL_OK;
 }
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 /**
   * @brief  Set SDMMC Power state to OFF.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 HAL_StatusTypeDef SDMMC_PowerState_OFF(SDMMC_TypeDef *SDMMCx)
 {
   /* Set power state to OFF */
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   SDMMCx->POWER &= ~(SDMMC_POWER_PWRCTRL);
 #else
   SDMMCx->POWER = (uint32_t)0x00000000;
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
   return HAL_OK;
 }
 
 /**
   * @brief  Get SDMMC Power state.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval Power status of the controller. The returned value can be one of the
   *         following values:
   *            - 0x00: Power OFF
@@ -383,8 +383,8 @@ uint32_t SDMMC_GetPowerState(SDMMC_TypeDef *SDMMCx)
 /**
   * @brief  Configure the SDMMC command path according to the specified parameters in
   *         SDMMC_CmdInitTypeDef structure and send the command
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  Command: pointer to a SDMMC_CmdInitTypeDef structure that contains
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  Command pointer to a SDMMC_CmdInitTypeDef structure that contains
   *         the configuration information for the SDMMC command
   * @retval HAL status
   */
@@ -415,7 +415,7 @@ HAL_StatusTypeDef SDMMC_SendCommand(SDMMC_TypeDef *SDMMCx, SDMMC_CmdInitTypeDef 
 
 /**
   * @brief  Return the command index of last command for which response received
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval Command index of the last command response received
   */
 uint8_t SDMMC_GetCommandResponse(SDMMC_TypeDef *SDMMCx)
@@ -426,8 +426,8 @@ uint8_t SDMMC_GetCommandResponse(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Return the response received from the card for the last command
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  Response: Specifies the SDMMC response register.
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  Response Specifies the SDMMC response register.
   *          This parameter can be one of the following values:
   *            @arg SDMMC_RESP1: Response Register 1
   *            @arg SDMMC_RESP2: Response Register 2
@@ -451,7 +451,7 @@ uint32_t SDMMC_GetResponse(SDMMC_TypeDef *SDMMCx, uint32_t Response)
 /**
   * @brief  Configure the SDMMC data path according to the specified
   *         parameters in the SDMMC_DataInitTypeDef.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @param  Data : pointer to a SDMMC_DataInitTypeDef structure
   *         that contains the configuration information for the SDMMC data.
   * @retval HAL status
@@ -488,7 +488,7 @@ HAL_StatusTypeDef SDMMC_ConfigData(SDMMC_TypeDef *SDMMCx, SDMMC_DataInitTypeDef*
 
 /**
   * @brief  Returns number of remaining data bytes to be transferred.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval Number of remaining data bytes to be transferred
   */
 uint32_t SDMMC_GetDataCounter(SDMMC_TypeDef *SDMMCx)
@@ -498,7 +498,7 @@ uint32_t SDMMC_GetDataCounter(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Get the FIFO data
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval Data received
   */
 uint32_t SDMMC_GetFIFOCount(SDMMC_TypeDef *SDMMCx)
@@ -508,8 +508,8 @@ uint32_t SDMMC_GetFIFOCount(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Sets one of the two options of inserting read wait interval.
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  SDMMC_ReadWaitMode: SDMMC Read Wait operation mode.
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  SDMMC_ReadWaitMode SDMMC Read Wait operation mode.
   *          This parameter can be:
   *            @arg SDMMC_READ_WAIT_MODE_CLK: Read Wait control by stopping SDMMCCLK
   *            @arg SDMMC_READ_WAIT_MODE_DATA2: Read Wait control using SDMMC_DATA2
@@ -547,7 +547,7 @@ HAL_StatusTypeDef SDMMC_SetSDMMCReadWaitMode(SDMMC_TypeDef *SDMMCx, uint32_t SDM
 
 /**
   * @brief  Send the Data Block Lenght command and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdBlockLength(SDMMC_TypeDef *SDMMCx, uint32_t BlockSize)
@@ -571,7 +571,7 @@ uint32_t SDMMC_CmdBlockLength(SDMMC_TypeDef *SDMMCx, uint32_t BlockSize)
 
 /**
   * @brief  Send the Read Single Block command and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdReadSingleBlock(SDMMC_TypeDef *SDMMCx, uint32_t ReadAdd)
@@ -595,7 +595,7 @@ uint32_t SDMMC_CmdReadSingleBlock(SDMMC_TypeDef *SDMMCx, uint32_t ReadAdd)
 
 /**
   * @brief  Send the Read Multi Block command and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdReadMultiBlock(SDMMC_TypeDef *SDMMCx, uint32_t ReadAdd)
@@ -619,7 +619,7 @@ uint32_t SDMMC_CmdReadMultiBlock(SDMMC_TypeDef *SDMMCx, uint32_t ReadAdd)
 
 /**
   * @brief  Send the Write Single Block command and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdWriteSingleBlock(SDMMC_TypeDef *SDMMCx, uint32_t WriteAdd)
@@ -643,7 +643,7 @@ uint32_t SDMMC_CmdWriteSingleBlock(SDMMC_TypeDef *SDMMCx, uint32_t WriteAdd)
 
 /**
   * @brief  Send the Write Multi Block command and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdWriteMultiBlock(SDMMC_TypeDef *SDMMCx, uint32_t WriteAdd)
@@ -667,7 +667,7 @@ uint32_t SDMMC_CmdWriteMultiBlock(SDMMC_TypeDef *SDMMCx, uint32_t WriteAdd)
 
 /**
   * @brief  Send the Start Address Erase command for SD and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdSDEraseStartAdd(SDMMC_TypeDef *SDMMCx, uint32_t StartAdd)
@@ -691,7 +691,7 @@ uint32_t SDMMC_CmdSDEraseStartAdd(SDMMC_TypeDef *SDMMCx, uint32_t StartAdd)
 
 /**
   * @brief  Send the End Address Erase command for SD and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdSDEraseEndAdd(SDMMC_TypeDef *SDMMCx, uint32_t EndAdd)
@@ -715,7 +715,7 @@ uint32_t SDMMC_CmdSDEraseEndAdd(SDMMC_TypeDef *SDMMCx, uint32_t EndAdd)
 
 /**
   * @brief  Send the Start Address Erase command and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdEraseStartAdd(SDMMC_TypeDef *SDMMCx, uint32_t StartAdd)
@@ -739,7 +739,7 @@ uint32_t SDMMC_CmdEraseStartAdd(SDMMC_TypeDef *SDMMCx, uint32_t StartAdd)
 
 /**
   * @brief  Send the End Address Erase command and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdEraseEndAdd(SDMMC_TypeDef *SDMMCx, uint32_t EndAdd)
@@ -763,7 +763,7 @@ uint32_t SDMMC_CmdEraseEndAdd(SDMMC_TypeDef *SDMMCx, uint32_t EndAdd)
 
 /**
   * @brief  Send the Erase command and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdErase(SDMMC_TypeDef *SDMMCx)
@@ -787,7 +787,7 @@ uint32_t SDMMC_CmdErase(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Send the Stop Transfer command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdStopTransfer(SDMMC_TypeDef *SDMMCx)
@@ -802,27 +802,27 @@ uint32_t SDMMC_CmdStopTransfer(SDMMC_TypeDef *SDMMCx)
   sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
   sdmmc_cmdinit.CPSM             = SDMMC_CPSM_ENABLE;
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   __SDMMC_CMDSTOP_ENABLE(SDMMCx);
   __SDMMC_CMDTRANS_DISABLE(SDMMCx);
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
   (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
 
   /* Check for error conditions */
   errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_STOP_TRANSMISSION, SDMMC_STOPTRANSFERTIMEOUT);
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   __SDMMC_CMDSTOP_DISABLE(SDMMCx);
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
   return errorstate;
 }
 
 /**
   * @brief  Send the Select Deselect command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  addr: Address of the card to be selected
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  addr Address of the card to be selected
   * @retval HAL status
   */
 uint32_t SDMMC_CmdSelDesel(SDMMC_TypeDef *SDMMCx, uint64_t Addr)
@@ -846,7 +846,7 @@ uint32_t SDMMC_CmdSelDesel(SDMMC_TypeDef *SDMMCx, uint64_t Addr)
 
 /**
   * @brief  Send the Go Idle State command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdGoIdleState(SDMMC_TypeDef *SDMMCx)
@@ -869,7 +869,7 @@ uint32_t SDMMC_CmdGoIdleState(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Send the Operating Condition command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdOperCond(SDMMC_TypeDef *SDMMCx)
@@ -899,8 +899,8 @@ uint32_t SDMMC_CmdOperCond(SDMMC_TypeDef *SDMMCx)
   * @brief  Send the Application command to verify that that the next command
   *         is an application specific com-mand rather than a standard command
   *         and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  Argument: Command Argument
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  Argument Command Argument
   * @retval HAL status
   */
 uint32_t SDMMC_CmdAppCommand(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
@@ -927,8 +927,8 @@ uint32_t SDMMC_CmdAppCommand(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
 /**
   * @brief  Send the command asking the accessed card to send its operating
   *         condition register (OCR)
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  Argument: Command Argument
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  Argument Command Argument
   * @retval HAL status
   */
 uint32_t SDMMC_CmdAppOperCommand(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
@@ -936,11 +936,11 @@ uint32_t SDMMC_CmdAppOperCommand(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
   SDMMC_CmdInitTypeDef  sdmmc_cmdinit;
   uint32_t errorstate;
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   sdmmc_cmdinit.Argument         = Argument;
 #else
   sdmmc_cmdinit.Argument         = SDMMC_VOLTAGE_WINDOW_SD | Argument;
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
   sdmmc_cmdinit.CmdIndex         = SDMMC_CMD_SD_APP_OP_COND;
   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
   sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
@@ -955,8 +955,8 @@ uint32_t SDMMC_CmdAppOperCommand(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
 
 /**
   * @brief  Send the Bus Width command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  BusWidth: BusWidth
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  BusWidth BusWidth
   * @retval HAL status
   */
 uint32_t SDMMC_CmdBusWidth(SDMMC_TypeDef *SDMMCx, uint32_t BusWidth)
@@ -979,7 +979,7 @@ uint32_t SDMMC_CmdBusWidth(SDMMC_TypeDef *SDMMCx, uint32_t BusWidth)
 
 /**
   * @brief  Send the Send SCR command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdSendSCR(SDMMC_TypeDef *SDMMCx)
@@ -1003,7 +1003,7 @@ uint32_t SDMMC_CmdSendSCR(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Send the Send CID command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdSendCID(SDMMC_TypeDef *SDMMCx)
@@ -1027,8 +1027,8 @@ uint32_t SDMMC_CmdSendCID(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Send the Send CSD command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  Argument: Command Argument
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  Argument Command Argument
   * @retval HAL status
   */
 uint32_t SDMMC_CmdSendCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
@@ -1052,8 +1052,8 @@ uint32_t SDMMC_CmdSendCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
 
 /**
   * @brief  Send the Send CSD command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  pRCA: Card RCA
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  pRCA Card RCA
   * @retval HAL status
   */
 uint32_t SDMMC_CmdSetRelAdd(SDMMC_TypeDef *SDMMCx, uint16_t *pRCA)
@@ -1077,8 +1077,8 @@ uint32_t SDMMC_CmdSetRelAdd(SDMMC_TypeDef *SDMMCx, uint16_t *pRCA)
 
 /**
   * @brief  Send the Status command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  Argument: Command Argument
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  Argument Command Argument
   * @retval HAL status
   */
 uint32_t SDMMC_CmdSendStatus(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
@@ -1101,7 +1101,7 @@ uint32_t SDMMC_CmdSendStatus(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
 
 /**
   * @brief  Send the Status register command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @retval HAL status
   */
 uint32_t SDMMC_CmdStatusRegister(SDMMC_TypeDef *SDMMCx)
@@ -1125,7 +1125,7 @@ uint32_t SDMMC_CmdStatusRegister(SDMMC_TypeDef *SDMMCx)
 /**
   * @brief  Sends host capacity support information and activates the card's
   *         initialization process. Send SDMMC_CMD_SEND_OP_COND command
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @parame Argument: Argument used for the command
   * @retval HAL status
   */
@@ -1149,7 +1149,7 @@ uint32_t SDMMC_CmdOpCondition(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
 
 /**
   * @brief  Checks switchable function and switch card function. SDMMC_CMD_HS_SWITCH comand
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
   * @parame Argument: Argument used for the command
   * @retval HAL status
   */
@@ -1173,7 +1173,7 @@ uint32_t SDMMC_CmdSwitch(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
   return errorstate;
 }
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 /**
   * @brief  Send the command asking the accessed card to send its operating
   *         condition register (OCR)
@@ -1197,11 +1197,12 @@ uint32_t SDMMC_CmdVoltageSwitch(SDMMC_TypeDef *SDMMCx)
 
   return errorstate;
 }
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 /**
   * @brief  Send the Send EXT_CSD command and check the response.
-  * @param  SDMMCx: Pointer to SDMMC register base
-  * @param  Argument: Command Argument
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  Argument Command Argument
   * @retval HAL status
   */
 uint32_t SDMMC_CmdSendEXTCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
@@ -1222,7 +1223,6 @@ uint32_t SDMMC_CmdSendEXTCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
 
   return errorstate;
 }
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 /**
   * @}
@@ -1235,7 +1235,7 @@ uint32_t SDMMC_CmdSendEXTCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
 
 /**
   * @brief  Checks for error conditions for CMD0.
-  * @param  hsd: SD handle
+  * @param  hsd SD handle
   * @retval SD Card error state
   */
 static uint32_t SDMMC_GetCmdError(SDMMC_TypeDef *SDMMCx)
@@ -1261,8 +1261,8 @@ static uint32_t SDMMC_GetCmdError(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Checks for error conditions for R1 response.
-  * @param  hsd: SD handle
-  * @param  SD_CMD: The sent command index
+  * @param  hsd SD handle
+  * @param  SD_CMD The sent command index
   * @retval SD Card error state
   */
 static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_t Timeout)
@@ -1281,13 +1281,13 @@ static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_
       return SDMMC_ERROR_TIMEOUT;
     }
     sta_reg = SDMMCx->STA;
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   }while(((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT | SDMMC_FLAG_BUSYD0END)) == 0U) ||
          ((sta_reg & SDMMC_FLAG_CMDACT) != 0U ));
 #else
   }while(((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT)) == 0U) ||
          ((sta_reg & SDMMC_FLAG_CMDACT) != 0U ));
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
   if(__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
   {
@@ -1402,7 +1402,7 @@ static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_
 
 /**
   * @brief  Checks for error conditions for R2 (CID or CSD) response.
-  * @param  hsd: SD handle
+  * @param  hsd SD handle
   * @retval SD Card error state
   */
 static uint32_t SDMMC_GetCmdResp2(SDMMC_TypeDef *SDMMCx)
@@ -1446,7 +1446,7 @@ static uint32_t SDMMC_GetCmdResp2(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Checks for error conditions for R3 (OCR) response.
-  * @param  hsd: SD handle
+  * @param  hsd SD handle
   * @retval SD Card error state
   */
 static uint32_t SDMMC_GetCmdResp3(SDMMC_TypeDef *SDMMCx)
@@ -1483,9 +1483,9 @@ static uint32_t SDMMC_GetCmdResp3(SDMMC_TypeDef *SDMMCx)
 
 /**
   * @brief  Checks for error conditions for R6 (RCA) response.
-  * @param  hsd: SD handle
-  * @param  SD_CMD: The sent command index
-  * @param  pRCA: Pointer to the variable that will contain the SD card relative
+  * @param  hsd SD handle
+  * @param  SD_CMD The sent command index
+  * @param  pRCA Pointer to the variable that will contain the SD card relative
   *         address RCA
   * @retval SD Card error state
   */
@@ -1559,7 +1559,7 @@ static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_
 
 /**
   * @brief  Checks for error conditions for R7 response.
-  * @param  hsd: SD handle
+  * @param  hsd SD handle
   * @retval SD Card error state
   */
 static uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx)

@@ -66,8 +66,6 @@ static void tftp_server(uint8_t argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT(tftp_server, start tftp server.);
 
-#if defined(FINSH_USING_MSH)
 MSH_CMD_EXPORT(tftp_server, start tftp server.);
-#endif /* defined(FINSH_USING_MSH) */
 
 #endif /* defined(RT_USING_FINSH) */

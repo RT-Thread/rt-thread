@@ -38,26 +38,23 @@ extern "C" {
   */
 
 /* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-
-/** @defgroup HAL_Exported_Constants HAL Exported Constants
-  * @{
-  */
-
 /** @defgroup HAL_TICK_FREQ Tick Frequency
   * @{
   */
-#define  HAL_TICK_FREQ_10HZ         100U
-#define  HAL_TICK_FREQ_100HZ        10U
-#define  HAL_TICK_FREQ_1KHZ         1U
-#define  HAL_TICK_FREQ_DEFAULT      HAL_TICK_FREQ_1KHZ
-
+typedef enum
+{
+  HAL_TICK_FREQ_10HZ         = 100U,
+  HAL_TICK_FREQ_100HZ        = 10U,
+  HAL_TICK_FREQ_1KHZ         = 1U,
+  HAL_TICK_FREQ_DEFAULT      = HAL_TICK_FREQ_1KHZ
+} HAL_TickFreqTypeDef;
 /**
   * @}
   */
 
-/**
-  * @}
+/* Exported constants --------------------------------------------------------*/
+/** @defgroup HAL_Exported_Constants HAL Exported Constants
+  * @{
   */
 
 /** @defgroup SYSCFG_Exported_Constants SYSCFG Exported Constants
@@ -81,14 +78,14 @@ extern "C" {
 #define SYSCFG_BREAK_SP                SYSCFG_CFGR2_SPL    /*!< Enables and locks the SRAM Parity error signal with Break Input of TIM1/15/16/17 */
 #if defined(SYSCFG_CFGR2_PVDL)
 #define SYSCFG_BREAK_PVD               SYSCFG_CFGR2_PVDL   /*!< Enables and locks the PVD connection with TIM1/15/16/17 Break Input and also the PVDE and PLS bits of the Power Control Interface */
-#endif
+#endif /* SYSCFG_CFGR2_PVDL */
 #define SYSCFG_BREAK_LOCKUP            SYSCFG_CFGR2_CLL    /*!< Enables and locks the LOCKUP output of CortexM0+ with Break Input of TIM1/15/16/17 */
 #define SYSCFG_BREAK_ECC               SYSCFG_CFGR2_ECCL   /*!< Enables and locks the ECC of CortexM0+ with Break Input of TIM1/15/16/17 */
 /**
   * @}
   */
 
-#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#if defined(SYSCFG_CDEN_SUPPORT)
 /** @defgroup SYSCFG_ClampingDiode Clamping Diode
   * @{
   */
@@ -104,7 +101,7 @@ extern "C" {
 /**
   * @}
   */
-#endif
+#endif /* SYSCFG_CDEN_SUPPORT */
 
 /** @defgroup HAL_Pin_remapping Pin remapping
   * @{
@@ -121,11 +118,11 @@ extern "C" {
   */
 #define HAL_SYSCFG_IRDA_ENV_SEL_TIM16     (SYSCFG_CFGR1_IR_MOD_0 & SYSCFG_CFGR1_IR_MOD_1)    /*!< 00: Timer16 is selected as IR Modulation envelope source */
 #define HAL_SYSCFG_IRDA_ENV_SEL_USART1    (SYSCFG_CFGR1_IR_MOD_0)                            /*!< 01: USART1 is selected as IR Modulation envelope source */
-#if defined (STM32G081xx) || defined (STM32G071xx) || defined (STM32G070xx)
+#if defined(USART4)
 #define HAL_SYSCFG_IRDA_ENV_SEL_USART4    (SYSCFG_CFGR1_IR_MOD_1)                            /*!< 10: USART4 is selected as IR Modulation envelope source */
-#elif defined (STM32G041xx) || defined (STM32G031xx) || defined (STM32G030xx)
+#else
 #define HAL_SYSCFG_IRDA_ENV_SEL_USART2    (SYSCFG_CFGR1_IR_MOD_1)                            /*!< 10: USART2 is selected as IR Modulation envelope source */
-#endif
+#endif /* USART4 */
 
 /**
   * @}
@@ -190,20 +187,23 @@ extern "C" {
   */
 #define SYSCFG_FASTMODEPLUS_I2C1       SYSCFG_CFGR1_I2C1_FMP /*!< Enable Fast mode Plus on I2C1 */
 #define SYSCFG_FASTMODEPLUS_I2C2       SYSCFG_CFGR1_I2C2_FMP /*!< Enable Fast mode Plus on I2C2 */
+#if  defined (I2C3)
+#define SYSCFG_FASTMODEPLUS_I2C3       SYSCFG_CFGR1_I2C3_FMP /*!< Enable Fast mode Plus on I2C3 */  
+#endif /* I2C3 */
 
 /**
  * @}
  */
-#if defined (STM32G081xx) || defined (STM32G071xx) || defined (STM32G070xx)
+#if defined (SYSCFG_CFGR1_UCPD1_STROBE) || defined (SYSCFG_CFGR1_UCPD2_STROBE)
 /** @defgroup SYSCFG_UCPDx_STROBE SYSCFG Dead Battery feature configuration
   * @{
   */
 #define SYSCFG_UCPD1_STROBE          SYSCFG_CFGR1_UCPD1_STROBE /*!< UCPD1 Dead battery sw configuration */
 #define SYSCFG_UCPD2_STROBE          SYSCFG_CFGR1_UCPD2_STROBE /*!< UCPD2 Dead battery sw configuration */
-#endif
 /**
   * @}
   */
+#endif /* SYSCFG_CFGR1_UCPD1_STROBE) || SYSCFG_CFGR1_UCPD2_STROBE */
 
 /** @defgroup HAL_ISR_Wrapper HAL ISR Wrapper
   * @brief ISR Wrapper
@@ -242,15 +242,21 @@ extern "C" {
 #define HAL_SYSCFG_ITLINE30                          0x0000001EU /*!< Internal define for macro handling */
 #define HAL_SYSCFG_ITLINE31                          0x0000001FU /*!< Internal define for macro handling */
 
-#define HAL_ITLINE_WWDG           ((HAL_SYSCFG_ITLINE0 << 0x18U) | SYSCFG_ITLINE0_SR_WWDG)          /*!< WWDG has expired .... */
-#if defined (SYSCFG_ITLINE1_SR_PVDOUT)
+#define HAL_ITLINE_WWDG           ((HAL_SYSCFG_ITLINE0 << 0x18U) | SYSCFG_ITLINE0_SR_EWDG)          /*!< WWDG has expired .... */
+#if defined (PWR_PVD_SUPPORT)
 #define HAL_ITLINE_PVDOUT         ((HAL_SYSCFG_ITLINE1 << 0x18U) | SYSCFG_ITLINE1_SR_PVDOUT)        /*!< Power voltage detection Interrupt .... */
-#endif
+#endif /* PWR_PVD_SUPPORT */
+#if defined (PWR_PVM_SUPPORT)
+#define HAL_ITLINE_PVMOUT         ((HAL_SYSCFG_ITLINE1 << 0x18U) | SYSCFG_ITLINE1_SR_PVMOUT)        /*!< Power voltage monitor Interrupt .... */
+#endif /* PWR_PVM_SUPPORT */
 #define HAL_ITLINE_RTC            ((HAL_SYSCFG_ITLINE2 << 0x18U) | SYSCFG_ITLINE2_SR_RTC)           /*!< RTC -> exti[19] Interrupt */
 #define HAL_ITLINE_TAMPER         ((HAL_SYSCFG_ITLINE2 << 0x18U) | SYSCFG_ITLINE2_SR_TAMPER)        /*!< TAMPER -> exti[21] interrupt .... */
 #define HAL_ITLINE_FLASH_ECC      ((HAL_SYSCFG_ITLINE3 << 0x18U) | SYSCFG_ITLINE3_SR_FLASH_ECC)     /*!< Flash ECC Interrupt */
 #define HAL_ITLINE_FLASH_ITF      ((HAL_SYSCFG_ITLINE3 << 0x18U) | SYSCFG_ITLINE3_SR_FLASH_ITF)     /*!< Flash ITF Interrupt */
 #define HAL_ITLINE_CLK_CTRL       ((HAL_SYSCFG_ITLINE4 << 0x18U) | SYSCFG_ITLINE4_SR_CLK_CTRL)      /*!< CLK Control Interrupt */
+#if defined (CRS)
+#define HAL_ITLINE_CRS            ((HAL_SYSCFG_ITLINE4 << 0x18U) | SYSCFG_ITLINE4_SR_CRS)           /*!< CRS Interrupt */
+#endif /*CRS  */
 #define HAL_ITLINE_EXTI0          ((HAL_SYSCFG_ITLINE5 << 0x18U) | SYSCFG_ITLINE5_SR_EXTI0)         /*!< External Interrupt 0 */
 #define HAL_ITLINE_EXTI1          ((HAL_SYSCFG_ITLINE5 << 0x18U) | SYSCFG_ITLINE5_SR_EXTI1)         /*!< External Interrupt 1 */
 #define HAL_ITLINE_EXTI2          ((HAL_SYSCFG_ITLINE6 << 0x18U) | SYSCFG_ITLINE6_SR_EXTI2)         /*!< External Interrupt 2 */
@@ -269,27 +275,40 @@ extern "C" {
 #define HAL_ITLINE_EXTI15         ((HAL_SYSCFG_ITLINE7 << 0x18U) | SYSCFG_ITLINE7_SR_EXTI15)        /*!< EXTI15 Interrupt */
 #if defined (UCPD1)
 #define HAL_ITLINE_UCPD1          ((HAL_SYSCFG_ITLINE8 << 0x18U) | SYSCFG_ITLINE8_SR_UCPD1)         /*!< UCPD1 Interrupt */
-#endif
+#endif /* UCPD1 */
 #if defined (UCPD2)
 #define HAL_ITLINE_UCPD2          ((HAL_SYSCFG_ITLINE8 << 0x18U) | SYSCFG_ITLINE8_SR_UCPD2)         /*!< UCPD2 Interrupt */
-#endif
+#endif /* UCPD2 */
+#if defined (STM32G0C1xx) || defined (STM32G0B1xx) || defined (STM32G0B0xx)
+#define HAL_ITLINE_USB            ((HAL_SYSCFG_ITLINE8 << 0x18U) | SYSCFG_ITLINE8_SR_USB)           /*!< USB Interrupt */
+#endif /* STM32G0C1xx) || STM32G0B1xx) || STM32G0B0xx */
 #define HAL_ITLINE_DMA1_CH1       ((HAL_SYSCFG_ITLINE9 << 0x18U) | SYSCFG_ITLINE9_SR_DMA1_CH1)      /*!< DMA1 Channel 1 Interrupt */
 #define HAL_ITLINE_DMA1_CH2       ((HAL_SYSCFG_ITLINE10 << 0x18U) | SYSCFG_ITLINE10_SR_DMA1_CH2)    /*!< DMA1 Channel 2 Interrupt */
 #define HAL_ITLINE_DMA1_CH3       ((HAL_SYSCFG_ITLINE10 << 0x18U) | SYSCFG_ITLINE10_SR_DMA1_CH3)    /*!< DMA1 Channel 3 Interrupt */
-#define HAL_ITLINE_DMAMUX         ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMAMUX)      /*!< DMAMUX Interrupt */
+#define HAL_ITLINE_DMAMUX1        ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMAMUX1)     /*!< DMAMUX1 Interrupt */
 #define HAL_ITLINE_DMA1_CH4       ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMA1_CH4)    /*!< DMA1 Channel 4 Interrupt */
 #define HAL_ITLINE_DMA1_CH5       ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMA1_CH5)    /*!< DMA1 Channel 5 Interrupt */
-#if defined (STM32G081xx) || defined (STM32G071xx) || defined (STM32G070xx)
+#if defined(DMA1_Channel7)
 #define HAL_ITLINE_DMA1_CH6       ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMA1_CH6)    /*!< DMA1 Channel 6 Interrupt */
 #define HAL_ITLINE_DMA1_CH7       ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMA1_CH7)    /*!< DMA1 Channel 7 Interrupt */
-#endif
+#endif /* DMA1_Channel7 */
+#if defined (DMA2)
+#define HAL_ITLINE_DMA2_CH1       ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMA2_CH1)    /*!< DMA2 Channel 1 Interrupt */
+#define HAL_ITLINE_DMA2_CH2       ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMA2_CH2)    /*!< DMA2 Channel 2 Interrupt */
+#define HAL_ITLINE_DMA2_CH3       ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMA2_CH3)    /*!< DMA2 Channel 3 Interrupt */
+#define HAL_ITLINE_DMA2_CH4       ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMA2_CH4)    /*!< DMA2 Channel 4 Interrupt */
+#define HAL_ITLINE_DMA2_CH5       ((HAL_SYSCFG_ITLINE11 << 0x18U) | SYSCFG_ITLINE11_SR_DMA2_CH5)    /*!< DMA2 Channel 5 Interrupt */
+#endif /* DMA2 */
 #define HAL_ITLINE_ADC            ((HAL_SYSCFG_ITLINE12 << 0x18U) | SYSCFG_ITLINE12_SR_ADC)         /*!< ADC Interrupt */
 #if defined (COMP1)
 #define HAL_ITLINE_COMP1          ((HAL_SYSCFG_ITLINE12 << 0x18U) | SYSCFG_ITLINE12_SR_COMP1)       /*!< COMP1 Interrupt -> exti[17] */
-#endif
+#endif /* COMP1 */
 #if defined (COMP2)
 #define HAL_ITLINE_COMP2          ((HAL_SYSCFG_ITLINE12 << 0x18U) | SYSCFG_ITLINE12_SR_COMP2)       /*!< COMP2 Interrupt -> exti[18] */
-#endif
+#endif /* COMP2 */
+#if defined (COMP3)
+#define HAL_ITLINE_COMP3          ((HAL_SYSCFG_ITLINE12 << 0x18U) | SYSCFG_ITLINE12_SR_COMP3)       /*!< COMP3 Interrupt -> exti[1x] */
+#endif /* COMP3 */
 #define HAL_ITLINE_TIM1_BRK       ((HAL_SYSCFG_ITLINE13 << 0x18U) | SYSCFG_ITLINE13_SR_TIM1_BRK)    /*!< TIM1 BRK Interrupt */
 #define HAL_ITLINE_TIM1_UPD       ((HAL_SYSCFG_ITLINE13 << 0x18U) | SYSCFG_ITLINE13_SR_TIM1_UPD)    /*!< TIM1 UPD Interrupt */
 #define HAL_ITLINE_TIM1_TRG       ((HAL_SYSCFG_ITLINE13 << 0x18U) | SYSCFG_ITLINE13_SR_TIM1_TRG)    /*!< TIM1 TRG Interrupt */
@@ -297,53 +316,83 @@ extern "C" {
 #define HAL_ITLINE_TIM1_CC        ((HAL_SYSCFG_ITLINE14 << 0x18U) | SYSCFG_ITLINE14_SR_TIM1_CC)     /*!< TIM1 CC Interrupt */
 #if defined (TIM2)
 #define HAL_ITLINE_TIM2           ((HAL_SYSCFG_ITLINE15 << 0x18U) | SYSCFG_ITLINE15_SR_TIM2_GLB)    /*!< TIM2 Interrupt */
-#endif
+#endif /* TIM2 */
 #define HAL_ITLINE_TIM3           ((HAL_SYSCFG_ITLINE16 << 0x18U) | SYSCFG_ITLINE16_SR_TIM3_GLB)    /*!< TIM3 Interrupt */
+#if defined (TIM4)
+#define HAL_ITLINE_TIM4           ((HAL_SYSCFG_ITLINE16 << 0x18U) | SYSCFG_ITLINE16_SR_TIM4_GLB)    /*!< TIM4 Interrupt */
+#endif /* TIM4 */
 #if defined(TIM6)
 #define HAL_ITLINE_TIM6           ((HAL_SYSCFG_ITLINE17 << 0x18U) | SYSCFG_ITLINE17_SR_TIM6_GLB)    /*!< TIM6 Interrupt */
-#endif
+#endif /* TIM6 */
 #if defined(DAC1)
-#define HAL_ITLINE_DAC            ((HAL_SYSCFG_ITLINE17 << 0x18U) | SYSCFG_ITLINE17_SR_DAC_GLB)     /*!< DAC Interrupt */
-#endif
+#define HAL_ITLINE_DAC            ((HAL_SYSCFG_ITLINE17 << 0x18U) | SYSCFG_ITLINE17_SR_DAC)         /*!< DAC Interrupt */
+#endif /* DAC1 */
 #if defined(LPTIM1)
 #define HAL_ITLINE_LPTIM1         ((HAL_SYSCFG_ITLINE17 << 0x18U) | SYSCFG_ITLINE17_SR_LPTIM1_GLB)  /*!< LPTIM1 Interrupt -> exti[29] */
-#endif
-#if defined(TIM6)
+#endif /* LPTIM1 */
+#if defined(TIM7)
 #define HAL_ITLINE_TIM7           ((HAL_SYSCFG_ITLINE18 << 0x18U) | SYSCFG_ITLINE18_SR_TIM7_GLB)    /*!< TIM7 Interrupt */
-#endif
+#endif /* TIM7 */
 #if defined(LPTIM2)
 #define HAL_ITLINE_LPTIM2         ((HAL_SYSCFG_ITLINE18 << 0x18U) | SYSCFG_ITLINE18_SR_LPTIM2_GLB)  /*!< LPTIM2 Interrupt -> exti[30] */
-#endif
+#endif /* LPTIM2 */
 #define HAL_ITLINE_TIM14          ((HAL_SYSCFG_ITLINE19 << 0x18U) | SYSCFG_ITLINE19_SR_TIM14_GLB)   /*!< TIM14 Interrupt */
 #if defined(TIM15)
 #define HAL_ITLINE_TIM15          ((HAL_SYSCFG_ITLINE20 << 0x18U) | SYSCFG_ITLINE20_SR_TIM15_GLB)   /*!< TIM15 Interrupt */
-#endif
+#endif /* TIM15 */
 #define HAL_ITLINE_TIM16          ((HAL_SYSCFG_ITLINE21 << 0x18U) | SYSCFG_ITLINE21_SR_TIM16_GLB)   /*!< TIM16 Interrupt */
+#if defined (FDCAN1) || defined (FDCAN2)
+#define HAL_ITLINE_FDCAN1_IT0     ((HAL_SYSCFG_ITLINE21 << 0x18U) | SYSCFG_ITLINE21_SR_FDCAN1_IT0)  /*!< FDCAN1_IT0 Interrupt */
+#define HAL_ITLINE_FDCAN2_IT0     ((HAL_SYSCFG_ITLINE21 << 0x18U) | SYSCFG_ITLINE21_SR_FDCAN2_IT0)  /*!< FDCAN2_IT0 Interrupt */
+#endif /* FDCAN1 || FDCAN2 */
 #define HAL_ITLINE_TIM17          ((HAL_SYSCFG_ITLINE22 << 0x18U) | SYSCFG_ITLINE22_SR_TIM17_GLB)   /*!< TIM17 Interrupt */
+#if defined (FDCAN1) || defined (FDCAN2)
+#define HAL_ITLINE_FDCAN1_IT1     ((HAL_SYSCFG_ITLINE22 << 0x18U) | SYSCFG_ITLINE22_SR_FDCAN1_IT1)  /*!< FDCAN1_IT1 Interrupt */
+#define HAL_ITLINE_FDCAN2_IT1     ((HAL_SYSCFG_ITLINE22 << 0x18U) | SYSCFG_ITLINE22_SR_FDCAN2_IT1)  /*!< FDCAN2_IT1 Interrupt */
+#endif /* FDCAN1 || FDCAN2 */
 #define HAL_ITLINE_I2C1           ((HAL_SYSCFG_ITLINE23 << 0x18U) | SYSCFG_ITLINE23_SR_I2C1_GLB)    /*!< I2C1 Interrupt -> exti[23] */
-#define HAL_ITLINE_I2C2           ((HAL_SYSCFG_ITLINE24 << 0x18U) | SYSCFG_ITLINE24_SR_I2C2_GLB)    /*!< I2C2 Interrupt */
+#define HAL_ITLINE_I2C2           ((HAL_SYSCFG_ITLINE24 << 0x18U) | SYSCFG_ITLINE24_SR_I2C2_GLB)    /*!< I2C2 Interrupt -> exti[24] */
+#if defined (I2C3)
+#define HAL_ITLINE_I2C3           ((HAL_SYSCFG_ITLINE24 << 0x18U) | SYSCFG_ITLINE24_SR_I2C3_GLB)    /*!< I2C3 Interrupt -> exti[22] */
+#endif /* I2C3 */
 #define HAL_ITLINE_SPI1           ((HAL_SYSCFG_ITLINE25 << 0x18U) | SYSCFG_ITLINE25_SR_SPI1)        /*!< SPI1 Interrupt  */
 #define HAL_ITLINE_SPI2           ((HAL_SYSCFG_ITLINE26 << 0x18U) | SYSCFG_ITLINE26_SR_SPI2)        /*!< SPI2 Interrupt */
+#if defined (SPI3)
+#define HAL_ITLINE_SPI3           ((HAL_SYSCFG_ITLINE26 << 0x18U) | SYSCFG_ITLINE26_SR_SPI3)        /*!< SPI3 Interrupt */
+#endif /* SPI3 */
 #define HAL_ITLINE_USART1         ((HAL_SYSCFG_ITLINE27 << 0x18U) | SYSCFG_ITLINE27_SR_USART1_GLB)  /*!< USART1 GLB Interrupt -> exti[25] */
 #define HAL_ITLINE_USART2         ((HAL_SYSCFG_ITLINE28 << 0x18U) | SYSCFG_ITLINE28_SR_USART2_GLB)  /*!< USART2 GLB Interrupt -> exti[26] */
+#if defined (LPUART2)
+#define HAL_ITLINE_LPUART2        ((HAL_SYSCFG_ITLINE28 << 0x18U) | SYSCFG_ITLINE28_SR_LPUART2_GLB)  /*!< LPUART2 GLB Interrupt -> exti[26] */
+#endif /* LPUART2 */
 #if defined(USART3)
 #define HAL_ITLINE_USART3         ((HAL_SYSCFG_ITLINE29 << 0x18U) | SYSCFG_ITLINE29_SR_USART3_GLB)  /*!< USART3 Interrupt .... */
-#endif
+#endif /* USART3 */
 #if defined(USART4)
 #define HAL_ITLINE_USART4         ((HAL_SYSCFG_ITLINE29 << 0x18U) | SYSCFG_ITLINE29_SR_USART4_GLB)  /*!< USART4 Interrupt .... */
-#endif
+#endif /* USART4 */
 #if defined (LPUART1)
 #define HAL_ITLINE_LPUART1        ((HAL_SYSCFG_ITLINE29 << 0x18U) | SYSCFG_ITLINE29_SR_LPUART1_GLB) /*!< LPUART1 Interrupt -> exti[28]*/
-#endif
+#endif /* LPUART1 */
+#if defined (USART5)
+#define HAL_ITLINE_USART5         ((HAL_SYSCFG_ITLINE29 << 0x18U) | SYSCFG_ITLINE29_SR_USART5_GLB)  /*!< USART5 Interrupt .... */
+#endif /* USART5 */
+#if defined (USART6)
+#define HAL_ITLINE_USART6         ((HAL_SYSCFG_ITLINE29 << 0x18U) | SYSCFG_ITLINE29_SR_USART6_GLB)  /*!< USART6 Interrupt .... */
+#endif /* USART6 */
 #if defined (CEC)
 #define HAL_ITLINE_CEC            ((HAL_SYSCFG_ITLINE30 << 0x18U) | SYSCFG_ITLINE30_SR_CEC)         /*!< CEC Interrupt -> exti[27] */
-#endif
+#endif /* CEC */
 #if defined (RNG)
 #define HAL_ITLINE_RNG            ((HAL_SYSCFG_ITLINE31 << 0x18U) | SYSCFG_ITLINE31_SR_RNG)         /*!< RNG Interrupt */
-#endif
+#endif /* RNG */
 #if defined (AES)
 #define HAL_ITLINE_AES            ((HAL_SYSCFG_ITLINE31 << 0x18U) | SYSCFG_ITLINE31_SR_AES)         /*!< AES Interrupt */
-#endif
+#endif /* AES */
+/**
+  * @}
+  */
+
 /**
   * @}
   */
@@ -366,78 +415,88 @@ extern "C" {
 #if defined(DBG_APB_FZ1_DBG_TIM2_STOP)
 #define __HAL_DBGMCU_FREEZE_TIM2()           SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM2_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM2()         CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM2_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_TIM2_STOP */
 
 #if defined(DBG_APB_FZ1_DBG_TIM3_STOP)
 #define __HAL_DBGMCU_FREEZE_TIM3()           SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM3_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM3()         CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM3_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_TIM3_STOP */
+
+#if defined(DBG_APB_FZ1_DBG_TIM4_STOP)
+#define __HAL_DBGMCU_FREEZE_TIM4()           SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM4_STOP)
+#define __HAL_DBGMCU_UNFREEZE_TIM4()         CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM4_STOP)
+#endif /* DBG_APB_FZ1_DBG_TIM4_STOP */
 
 #if defined(DBG_APB_FZ1_DBG_TIM6_STOP)
 #define __HAL_DBGMCU_FREEZE_TIM6()           SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM6_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM6()         CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM6_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_TIM6_STOP */
 
 #if defined(DBG_APB_FZ1_DBG_TIM7_STOP)
 #define __HAL_DBGMCU_FREEZE_TIM7()           SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM7_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM7()         CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_TIM7_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_TIM7_STOP */
 
 #if defined(DBG_APB_FZ1_DBG_RTC_STOP)
 #define __HAL_DBGMCU_FREEZE_RTC()            SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_RTC_STOP)
 #define __HAL_DBGMCU_UNFREEZE_RTC()          CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_RTC_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_RTC_STOP */
 
 #if defined(DBG_APB_FZ1_DBG_WWDG_STOP)
 #define __HAL_DBGMCU_FREEZE_WWDG()           SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_WWDG_STOP)
 #define __HAL_DBGMCU_UNFREEZE_WWDG()         CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_WWDG_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_WWDG_STOP */
 
 #if defined(DBG_APB_FZ1_DBG_IWDG_STOP)
 #define __HAL_DBGMCU_FREEZE_IWDG()           SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_IWDG_STOP)
 #define __HAL_DBGMCU_UNFREEZE_IWDG()         CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_IWDG_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_IWDG_STOP */
 
 #if defined(DBG_APB_FZ1_DBG_I2C1_SMBUS_TIMEOUT_STOP)
 #define __HAL_DBGMCU_FREEZE_I2C1_TIMEOUT()   SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_I2C1_SMBUS_TIMEOUT_STOP)
 #define __HAL_DBGMCU_UNFREEZE_I2C1_TIMEOUT() CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_I2C1_SMBUS_TIMEOUT_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_I2C1_SMBUS_TIMEOUT_STOP */
+
+#if defined(DBG_APB_FZ1_DBG_I2C2_SMBUS_TIMEOUT_STOP)
+#define __HAL_DBGMCU_FREEZE_I2C2_TIMEOUT()   SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_I2C2_SMBUS_TIMEOUT_STOP)
+#define __HAL_DBGMCU_UNFREEZE_I2C2_TIMEOUT() CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_I2C2_SMBUS_TIMEOUT_STOP)
+#endif /* DBG_APB_FZ1_DBG_I2C2_SMBUS_TIMEOUT_STOP */
 
 #if defined(DBG_APB_FZ1_DBG_LPTIM1_STOP)
 #define __HAL_DBGMCU_FREEZE_LPTIM1()         SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_LPTIM1_STOP)
 #define __HAL_DBGMCU_UNFREEZE_LPTIM1()       CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_LPTIM1_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_LPTIM1_STOP */
 
 #if defined(DBG_APB_FZ1_DBG_LPTIM2_STOP)
 #define __HAL_DBGMCU_FREEZE_LPTIM2()         SET_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_LPTIM2_STOP)
 #define __HAL_DBGMCU_UNFREEZE_LPTIM2()       CLEAR_BIT(DBG->APBFZ1, DBG_APB_FZ1_DBG_LPTIM2_STOP)
-#endif
+#endif /* DBG_APB_FZ1_DBG_LPTIM2_STOP */
 
 #if defined(DBG_APB_FZ2_DBG_TIM1_STOP)
 #define __HAL_DBGMCU_FREEZE_TIM1()           SET_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM1_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM1()         CLEAR_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM1_STOP)
-#endif
+#endif /* DBG_APB_FZ2_DBG_TIM1_STOP */
 
 #if defined(DBG_APB_FZ2_DBG_TIM14_STOP)
 #define __HAL_DBGMCU_FREEZE_TIM14()          SET_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM14_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM14()        CLEAR_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM14_STOP)
-#endif
+#endif /* DBG_APB_FZ2_DBG_TIM14_STOP */
 
 #if defined(DBG_APB_FZ2_DBG_TIM15_STOP)
 #define __HAL_DBGMCU_FREEZE_TIM15()          SET_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM15_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM15()        CLEAR_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM15_STOP)
-#endif
+#endif /* DBG_APB_FZ2_DBG_TIM15_STOP */
 
 #if defined(DBG_APB_FZ2_DBG_TIM16_STOP)
 #define __HAL_DBGMCU_FREEZE_TIM16()          SET_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM16_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM16()        CLEAR_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM16_STOP)
-#endif
+#endif /* DBG_APB_FZ2_DBG_TIM16_STOP */
 
 #if defined(DBG_APB_FZ2_DBG_TIM17_STOP)
 #define __HAL_DBGMCU_FREEZE_TIM17()          SET_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM17_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM17()        CLEAR_BIT(DBG->APBFZ2, DBG_APB_FZ2_DBG_TIM17_STOP)
-#endif
-
+#endif /* DBG_APB_FZ2_DBG_TIM17_STOP */
+    
 /**
   * @}
   */
@@ -446,9 +505,15 @@ extern "C" {
   * @{
   */
 
+/**
+  * @brief ISR wrapper check
+  * @note Allow to determine interrupt source per line.
+  */
+#define __HAL_GET_PENDING_IT(__SOURCE__)     (SYSCFG->IT_LINE_SR[((__SOURCE__) >> 0x18U)] & ((__SOURCE__) & 0x00FFFFFF))
+    
 /** @brief  Main Flash memory mapped at 0x00000000
   */
-#define __HAL_SYSCFG_REMAPMEMORY_FLASH()       CLEAR_BIT(SYSCFG->CFGR1, SYSCFG_CFGR1_MEM_MODE)
+#define __HAL_SYSCFG_REMAPMEMORY_FLASH()     CLEAR_BIT(SYSCFG->CFGR1, SYSCFG_CFGR1_MEM_MODE)
 
 /** @brief  System Flash memory mapped at 0x00000000
   */
@@ -456,7 +521,8 @@ extern "C" {
 
 /** @brief  Embedded SRAM mapped at 0x00000000
   */
-#define __HAL_SYSCFG_REMAPMEMORY_SRAM()        MODIFY_REG(SYSCFG->CFGR1, SYSCFG_CFGR1_MEM_MODE, (SYSCFG_CFGR1_MEM_MODE_1|SYSCFG_CFGR1_MEM_MODE_0))
+#define __HAL_SYSCFG_REMAPMEMORY_SRAM() \
+  MODIFY_REG(SYSCFG->CFGR1, SYSCFG_CFGR1_MEM_MODE, (SYSCFG_CFGR1_MEM_MODE_1|SYSCFG_CFGR1_MEM_MODE_0))
 
 /**
   * @brief  Return the boot mode as configured by user.
@@ -484,7 +550,7 @@ extern "C" {
   * @note   The selected configuration is locked and can be unlocked only by system reset
   */
 #define __HAL_SYSCFG_BREAK_PVD_LOCK()           SET_BIT(SYSCFG->CFGR2, SYSCFG_CFGR2_PVDL)
-#endif
+#endif /* SYSCFG_CFGR2_PVDL */
 
 /** @brief  SYSCFG Break SRAM PARITY lock
   *         Enables and locks the SRAM_PARITY error signal with Break Input of TIMER1/15/16/17
@@ -513,7 +579,7 @@ extern "C" {
                                                                 CLEAR_BIT(SYSCFG->CFGR1, (__FASTMODEPLUS__));\
                                                                }while(0U)
 
-#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#if defined(SYSCFG_CDEN_SUPPORT)
 /** @brief  Clamping Diode on specific pins enable/disable macros
   * @param __PIN__ This parameter can be a combination of values @ref SYSCFG_ClampingDiode
   */
@@ -524,12 +590,13 @@ extern "C" {
 #define __HAL_SYSCFG_CLAMPINGDIODE_DISABLE(__PIN__) do {assert_param(IS_SYSCFG_CLAMPINGDIODE((__PIN__)));\
                                                                 CLEAR_BIT(SYSCFG->CFGR2, (__PIN__));\
                                                                }while(0U)
-#endif
+#endif /* SYSCFG_CDEN_SUPPORT */
 
 /** @brief  ISR wrapper check
   * @note Allow to determine interrupt source per line.
   */
-#define __HAL_SYSCFG_GET_PENDING_IT(__SOURCE__)       (SYSCFG->IT_LINE_SR[((__SOURCE__) >> 0x18U)] & ((__SOURCE__) & 0x00FFFFFFU))
+#define __HAL_SYSCFG_GET_PENDING_IT(__SOURCE__)  \
+  (SYSCFG->IT_LINE_SR[((__SOURCE__) >> 0x18U)] & ((__SOURCE__) & 0x00FFFFFFU))
 
 /** @brief  selection of the modulation envelope signal macro, using bits [7:6] of SYSCFG_CFGR1 register
   * @param __SOURCE__ This parameter can be a value of @ref HAL_IR_ENV_SEL
@@ -589,9 +656,9 @@ extern "C" {
 #define IS_SYSCFG_BREAK_CONFIG(__CONFIG__) (((__CONFIG__) == SYSCFG_BREAK_SP)        || \
                                             ((__CONFIG__) == SYSCFG_BREAK_ECC)       || \
                                             ((__CONFIG__) == SYSCFG_BREAK_LOCKUP))
-#endif
+#endif /* PWR_PVD_SUPPORT */
 
-#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#if defined(SYSCFG_CDEN_SUPPORT)
 #define IS_SYSCFG_CLAMPINGDIODE(__PIN__) ((((__PIN__) & SYSCFG_CDEN_PA1)  == SYSCFG_CDEN_PA1)  || \
                                           (((__PIN__) & SYSCFG_CDEN_PA3)  == SYSCFG_CDEN_PA3)  || \
                                           (((__PIN__) & SYSCFG_CDEN_PA5)  == SYSCFG_CDEN_PA5)  || \
@@ -600,17 +667,17 @@ extern "C" {
                                           (((__PIN__) & SYSCFG_CDEN_PB0)  == SYSCFG_CDEN_PB0)  || \
                                           (((__PIN__) & SYSCFG_CDEN_PB1)  == SYSCFG_CDEN_PB1)  || \
                                           (((__PIN__) & SYSCFG_CDEN_PB2)  == SYSCFG_CDEN_PB2))
-#endif
+#endif /* SYSCFG_CDEN_SUPPORT */
 
-#if defined (STM32G081xx) || defined (STM32G071xx) || defined (STM32G070xx)
+#if defined (USART4)
 #define IS_HAL_SYSCFG_IRDA_ENV_SEL(SEL)   (((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_TIM16)   || \
                                            ((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_USART1)  || \
                                            ((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_USART4))
-#elif defined (STM32G041xx) || defined (STM32G031xx) || defined (STM32G030xx)
+#else
 #define IS_HAL_SYSCFG_IRDA_ENV_SEL(SEL)   (((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_TIM16)   || \
                                            ((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_USART1)  || \
                                            ((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_USART2))
-#endif
+#endif /* USART4 */
 #define IS_HAL_SYSCFG_IRDA_POL_SEL(SEL)   (((SEL) == HAL_SYSCFG_IRDA_POLARITY_NOT_INVERTED)   || \
                                            ((SEL) == HAL_SYSCFG_IRDA_POLARITY_INVERTED))
 
@@ -618,7 +685,7 @@ extern "C" {
 #define IS_SYSCFG_DBATT_CONFIG(__CONFIG__) (((__CONFIG__) == SYSCFG_UCPD1_STROBE) || \
                                             ((__CONFIG__) == SYSCFG_UCPD2_STROBE) || \
                                             ((__CONFIG__) == (SYSCFG_UCPD1_STROBE | SYSCFG_UCPD2_STROBE)))
-#endif
+#endif /* SYSCFG_CFGR1_UCPD1_STROBE || SYSCFG_CFGR1_UCPD2_STROBE */
 #if defined(VREFBUF)
 #define IS_SYSCFG_VREFBUF_VOLTAGE_SCALE(__SCALE__)  (((__SCALE__) == SYSCFG_VREFBUF_VOLTAGE_SCALE0) || \
                                                      ((__SCALE__) == SYSCFG_VREFBUF_VOLTAGE_SCALE1))
@@ -682,8 +749,8 @@ void HAL_IncTick(void);
 void HAL_Delay(uint32_t Delay);
 uint32_t HAL_GetTick(void);
 uint32_t HAL_GetTickPrio(void);
-HAL_StatusTypeDef HAL_SetTickFreq(uint32_t Freq);
-uint32_t HAL_GetTickFreq(void);
+HAL_StatusTypeDef HAL_SetTickFreq(HAL_TickFreqTypeDef Freq);
+HAL_TickFreqTypeDef HAL_GetTickFreq(void);
 void HAL_SuspendTick(void);
 void HAL_ResumeTick(void);
 uint32_t HAL_GetHalVersion(void);
@@ -717,7 +784,7 @@ void HAL_DBGMCU_DisableDBGStandbyMode(void);
   */
 extern __IO uint32_t uwTick;
 extern uint32_t uwTickPrio;
-extern uint32_t uwTickFreq;
+extern HAL_TickFreqTypeDef uwTickFreq;
 /**
   * @}
   */
@@ -740,13 +807,13 @@ void HAL_SYSCFG_EnableIOAnalogSwitchBooster(void);
 void HAL_SYSCFG_DisableIOAnalogSwitchBooster(void);
 void HAL_SYSCFG_EnableRemap(uint32_t PinRemap);
 void HAL_SYSCFG_DisableRemap(uint32_t PinRemap);
-#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#if defined(SYSCFG_CDEN_SUPPORT)
 void HAL_SYSCFG_EnableClampingDiode(uint32_t PinConfig);
 void HAL_SYSCFG_DisableClampingDiode(uint32_t PinConfig);
-#endif
+#endif /* SYSCFG_CDEN_SUPPORT */
 #if defined (SYSCFG_CFGR1_UCPD1_STROBE) || defined (SYSCFG_CFGR1_UCPD2_STROBE)
 void HAL_SYSCFG_StrobeDBattpinsConfig(uint32_t ConfigDeadBattery);
-#endif
+#endif /* SYSCFG_CFGR1_UCPD1_STROBE || SYSCFG_CFGR1_UCPD2_STROBE */
 /**
   * @}
   */

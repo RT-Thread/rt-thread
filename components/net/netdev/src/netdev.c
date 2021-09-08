@@ -1047,7 +1047,7 @@ int netdev_ifconfig(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(netdev_ifconfig, __cmd_ifconfig, list the information of all network interfaces);
+MSH_CMD_EXPORT_ALIAS(netdev_ifconfig, ifconfig, list the information of all network interfaces);
 #endif /* NETDEV_USING_IFCONFIG */
 
 #ifdef NETDEV_USING_PING
@@ -1152,7 +1152,7 @@ int netdev_ping(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(netdev_ping, __cmd_ping, ping network host);
+MSH_CMD_EXPORT_ALIAS(netdev_ping, ping, ping network host);
 #endif /* NETDEV_USING_IFCONFIG */
 
 static void netdev_list_dns(void)
@@ -1222,8 +1222,7 @@ int netdev_dns(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(netdev_dns, __cmd_dns, list and set the information of dns);
-
+MSH_CMD_EXPORT_ALIAS(netdev_dns, dns, list and set the information of dns);
 #ifdef NETDEV_USING_NETSTAT
 static void netdev_cmd_netstat(void)
 {
@@ -1270,7 +1269,7 @@ int netdev_netstat(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(netdev_netstat, __cmd_netstat, list the information of TCP / IP);
+MSH_CMD_EXPORT_ALIAS(netdev_netstat, netstat, list the information of TCP / IP);
 #endif /* NETDEV_USING_NETSTAT */
 
 #endif /* RT_USING_FINSH */

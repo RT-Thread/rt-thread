@@ -578,7 +578,7 @@ typedef struct
 
 #if defined (DAC_CR_HFSEL) /* High frequency interface mode */
 
-/** @defgroup DAC_LL_EF_Configuration Configuration of DAC instance
+/** @defgroup DAC_LL_EF_High_Frequency_Configuration High Frequency Configuration of DAC instance
   * @{
   */
 /**

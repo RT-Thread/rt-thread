@@ -51,7 +51,7 @@ typedef struct
 
   uint32_t WindowMode;         /*!< Set window mode of a pair of comparators instances
                                     (2 consecutive instances odd and even COMP<x> and COMP<x+1>).
-                                    Note: HAL COMP driver allows to set window mode from any COMP instance of the pair of COMP instances composing window mode.
+                                    Note: HAL COMP driver allows to set window mode from any COMP instance of the pair of COMP instances composing window mode, except for window mode with COMP2 and COMP3 (for devices featuring COMP3): it must be set from COMP3 instance.
                                     This parameter can be a value of @ref COMP_WindowMode */
 
   uint32_t WindowOutput;       /*!< Set window mode output.
@@ -160,7 +160,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   */
 #define COMP_WINDOWMODE_DISABLE                 (0x00000000UL)         /*!< Window mode disable: Comparators instances pair COMP1 and COMP2 are independent */
 #define COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON (COMP_CSR_WINMODE)     /*!< Window mode enable: Comparators instances pair COMP1 and COMP2 have their input plus connected together. The common input is COMP1 input plus (COMP2 input plus is no more accessible). */
-#define COMP_WINDOWMODE_COMP2_INPUT_PLUS_COMMON (COMP_CSR_WINMODE | COMP_WINDOWMODE_COMP2) /*!< Window mode enable: Comparators instances pair COMP1 and COMP2 have their input plus connected together. The common input is COMP2 input plus (COMP1 input plus is no more accessible). */
+#define COMP_WINDOWMODE_COMP2_INPUT_PLUS_COMMON (COMP_CSR_WINMODE | COMP_WINDOWMODE_COMP2) /*!< Window mode enable: if used from COMP1 or COMP2 instance, comparators instances pair COMP1 and COMP2 have their input plus connected together, the common input is COMP2 input plus (COMP1 input plus is no more accessible). If used from COMP3 instance (when available), comparators instances pair COMP2 and COMP3 have their input plus connected together, the common input is COMP2 input plus (COMP3 input plus is no more accessible). */
 /**
   * @}
   */
@@ -171,7 +171,10 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #define COMP_WINDOWOUTPUT_EACH_COMP             (0x00000000UL)                            /*!< Window output default mode: Comparators output are indicating each their own state. To know window mode state: each comparator output must be read, if "((COMPx exclusive or COMPy) == 1)" then monitored signal is within comparators window.  */
 #define COMP_WINDOWOUTPUT_COMP1                 (COMP_CSR_WINOUT)                         /*!< Window output synthetized on COMP1 output: COMP1 output is no more indicating its own state, but global window mode state (logical high means monitored signal is within comparators window). */
 #define COMP_WINDOWOUTPUT_COMP2                 (COMP_CSR_WINOUT | COMP_WINDOWMODE_COMP2) /*!< Window output synthetized on COMP2 output: COMP2 output is no more indicating its own state, but global window mode state (logical high means monitored signal is within comparators window). */
-#define COMP_WINDOWOUTPUT_BOTH                  (0x00000001UL)                            /*!< Window output synthetized on both COMP1 and COMP2 output: COMP1 and COMP2 outputs are no more indicating their own state, but global window mode state (logical high means monitored signal is within comparators window). This is a specific configuraton (technically possible but not relevant from application point of view: 2 comparators output used for the same signal level), standard configuraton for window mode is one of the 3 settings above. */
+#if defined(COMP3)
+#define COMP_WINDOWOUTPUT_COMP3                 (COMP_CSR_WINOUT)                         /*!< Window output synthetized on COMP3 output: COMP3 output is no more indicating its own state, but global window mode state (logical high means monitored signal is within comparators window). */
+#endif
+#define COMP_WINDOWOUTPUT_BOTH                  (0x00000001UL)                            /*!< Window output synthetized on both comparators output of pair of comparator selected (COMP1 and COMP2, or COMP2 and COMP3 for devices featuring COMP3 instance): both comparators outputs are no more indicating their own state, but global window mode state (logical high means monitored signal is within comparators window). This is a specific configuration (technically possible but not relevant from application point of view: 2 comparators output used for the same signal level), standard configuration for window mode is one of the settings above. */
 /**
   * @}
   */
@@ -191,9 +194,9 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /** @defgroup COMP_InputPlus COMP input plus (non-inverting input)
   * @{
   */
-#define COMP_INPUT_PLUS_IO1            (0x00000000UL)         /*!< Comparator input plus connected to IO1 (pin PC5 for COMP1, pin PB4 for COMP2) */
-#define COMP_INPUT_PLUS_IO2            (COMP_CSR_INPSEL_0)    /*!< Comparator input plus connected to IO2 (pin PB2 for COMP1, pin PB6 for COMP2) */
-#define COMP_INPUT_PLUS_IO3            (COMP_CSR_INPSEL_1)    /*!< Comparator input plus connected to IO3 (pin PA1 for COMP1, pin PA3 for COMP2) */
+#define COMP_INPUT_PLUS_IO1            (0x00000000UL)         /*!< Comparator input plus connected to IO1 (pin PC5 for COMP1, pin PB4 for COMP2, pin PB0 for COMP3 (for devices featuring COMP3 instance)) */
+#define COMP_INPUT_PLUS_IO2            (COMP_CSR_INPSEL_0)    /*!< Comparator input plus connected to IO2 (pin PB2 for COMP1, pin PB6 for COMP2, pin PC1 for COMP3 (for devices featuring COMP3 instance)) */
+#define COMP_INPUT_PLUS_IO3            (COMP_CSR_INPSEL_1)    /*!< Comparator input plus connected to IO3 (pin PA1 for COMP1, pin PA3 for COMP2, pin PE7 for COMP3 (for devices featuring COMP3 instance)) */
 /**
   * @}
   */
@@ -207,9 +210,9 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #define COMP_INPUT_MINUS_VREFINT       (                                        COMP_CSR_INMSEL_1 | COMP_CSR_INMSEL_0) /*!< Comparator input minus connected to VrefInt */
 #define COMP_INPUT_MINUS_DAC1_CH1      (                    COMP_CSR_INMSEL_2                                        ) /*!< Comparator input minus connected to DAC1 channel 1 (DAC_OUT1)  */
 #define COMP_INPUT_MINUS_DAC1_CH2      (                    COMP_CSR_INMSEL_2                     | COMP_CSR_INMSEL_0) /*!< Comparator input minus connected to DAC1 channel 2 (DAC_OUT2)  */
-#define COMP_INPUT_MINUS_IO1           (                    COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_1                    ) /*!< Comparator input minus connected to IO1 (pin PA9 for COMP1, pin PB3 for COMP2) */
-#define COMP_INPUT_MINUS_IO2           (                    COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_1 | COMP_CSR_INMSEL_0) /*!< Comparator input minus connected to IO2 (pin PC4 for COMP1, pin PB7 for COMP2) */
-#define COMP_INPUT_MINUS_IO3           (COMP_CSR_INMSEL_3                                                            ) /*!< Comparator input minus connected to IO3 (pin PA0 for COMP1, pin PA2 for COMP2) */
+#define COMP_INPUT_MINUS_IO1           (                    COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_1                    ) /*!< Comparator input minus connected to IO1 (pin PB1 for COMP1, pin PB3 for COMP2, pin PB2 for COMP3 (for devices featuring COMP3 instance)) */
+#define COMP_INPUT_MINUS_IO2           (                    COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_1 | COMP_CSR_INMSEL_0) /*!< Comparator input minus connected to IO2 (pin PC4 for COMP1, pin PB7 for COMP2, pin PC0 for COMP3 (for devices featuring COMP3 instance)) */
+#define COMP_INPUT_MINUS_IO3           (COMP_CSR_INMSEL_3                                                            ) /*!< Comparator input minus connected to IO3 (pin PA0 for COMP1, pin PA2 for COMP2, pin PE8 for COMP3 (for devices featuring COMP3 instance)) */
 /**
   * @}
   */
@@ -239,11 +242,11 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   */
 #define COMP_BLANKINGSRC_NONE            (0x00000000UL)          /*!<Comparator output without blanking */
 /* Note: Output blanking source common to all COMP instances */
-#define COMP_BLANKINGSRC_TIM1_OC4        (COMP_CSR_BLANKING_0)   /*!< Comparator output blanking source TIM1 OC4 (common to all COMP instances: COMP1, COMP2) */
-#define COMP_BLANKINGSRC_TIM1_OC5        (COMP_CSR_BLANKING_1)   /*!< Comparator output blanking source TIM1 OC5 (common to all COMP instances: COMP1, COMP2) */
-#define COMP_BLANKINGSRC_TIM2_OC3        (COMP_CSR_BLANKING_2)   /*!< Comparator output blanking source TIM2 OC3 (common to all COMP instances: COMP1, COMP2) */
-#define COMP_BLANKINGSRC_TIM3_OC3        (COMP_CSR_BLANKING_3)   /*!< Comparator output blanking source TIM3 OC3 (common to all COMP instances: COMP1, COMP2) */
-#define COMP_BLANKINGSRC_TIM15_OC2       (COMP_CSR_BLANKING_4)   /*!< Comparator output blanking source TIM15 OC2 (common to all COMP instances: COMP1, COMP2) */
+#define COMP_BLANKINGSRC_TIM1_OC4        (COMP_CSR_BLANKING_0)   /*!< Comparator output blanking source TIM1 OC4 (common to all COMP instances: COMP1, COMP2, COMP3 (when available)) */
+#define COMP_BLANKINGSRC_TIM1_OC5        (COMP_CSR_BLANKING_1)   /*!< Comparator output blanking source TIM1 OC5 (common to all COMP instances: COMP1, COMP2, COMP3 (when available)) */
+#define COMP_BLANKINGSRC_TIM2_OC3        (COMP_CSR_BLANKING_2)   /*!< Comparator output blanking source TIM2 OC3 (common to all COMP instances: COMP1, COMP2, COMP3 (when available)) */
+#define COMP_BLANKINGSRC_TIM3_OC3        (COMP_CSR_BLANKING_3)   /*!< Comparator output blanking source TIM3 OC3 (common to all COMP instances: COMP1, COMP2, COMP3 (when available)) */
+#define COMP_BLANKINGSRC_TIM15_OC2       (COMP_CSR_BLANKING_4)   /*!< Comparator output blanking source TIM15 OC2 (common to all COMP instances: COMP1, COMP2, COMP3 (when available)) */
 /**
   * @}
   */
@@ -546,6 +549,102 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #define __HAL_COMP_COMP2_EXTI_CLEAR_FALLING_FLAG()    LL_EXTI_ClearFallingFlag_0_31(COMP_EXTI_LINE_COMP2)
 
 /**
+  * @brief  Enable the COMP3 EXTI line rising edge trigger.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_ENABLE_RISING_EDGE()    LL_EXTI_EnableRisingTrig_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Disable the COMP3 EXTI line rising edge trigger.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_DISABLE_RISING_EDGE()   LL_EXTI_DisableRisingTrig_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Enable the COMP3 EXTI line falling edge trigger.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_ENABLE_FALLING_EDGE()   LL_EXTI_EnableFallingTrig_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Disable the COMP3 EXTI line falling edge trigger.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_DISABLE_FALLING_EDGE()  LL_EXTI_DisableFallingTrig_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Enable the COMP3 EXTI line rising & falling edge trigger.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_ENABLE_RISING_FALLING_EDGE()   do { \
+                                                               LL_EXTI_EnableRisingTrig_0_31(COMP_EXTI_LINE_COMP3); \
+                                                               LL_EXTI_EnableFallingTrig_0_31(COMP_EXTI_LINE_COMP3); \
+                                                             } while(0)
+
+/**
+  * @brief  Disable the COMP3 EXTI line rising & falling edge trigger.
+  * @retval None
+  */                                         
+#define __HAL_COMP_COMP3_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
+                                                               LL_EXTI_DisableRisingTrig_0_31(COMP_EXTI_LINE_COMP3); \
+                                                               LL_EXTI_DisableFallingTrig_0_31(COMP_EXTI_LINE_COMP3); \
+                                                             } while(0)
+
+/**
+  * @brief  Enable the COMP3 EXTI line in interrupt mode.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_ENABLE_IT()             LL_EXTI_EnableIT_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Disable the COMP3 EXTI line in interrupt mode.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_DISABLE_IT()            LL_EXTI_DisableIT_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Generate a software interrupt on the COMP3 EXTI line.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_GENERATE_SWIT()         LL_EXTI_GenerateSWI_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Enable the COMP3 EXTI line in event mode.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_ENABLE_EVENT()          LL_EXTI_EnableEvent_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Disable the COMP3 EXTI line in event mode.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_DISABLE_EVENT()         LL_EXTI_DisableEvent_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Check whether the COMP3 EXTI line rising flag is set.
+  * @retval RESET or SET
+  */
+#define __HAL_COMP_COMP3_EXTI_GET_RISING_FLAG()       LL_EXTI_IsActiveRisingFlag_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Clear the COMP3 EXTI rising flag.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_CLEAR_RISING_FLAG()     LL_EXTI_ClearRisingFlag_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Check whether the COMP3 EXTI line falling flag is set.
+  * @retval RESET or SET
+  */
+#define __HAL_COMP_COMP3_EXTI_GET_FALLING_FLAG()      LL_EXTI_IsActiveFallingFlag_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
+  * @brief  Clear the COMP3 EXTI falling flag.
+  * @retval None
+  */
+#define __HAL_COMP_COMP3_EXTI_CLEAR_FALLING_FLAG()    LL_EXTI_ClearFallingFlag_0_31(COMP_EXTI_LINE_COMP3)
+
+/**
   * @}
   */
 
@@ -573,6 +672,9 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   */
 #define COMP_EXTI_LINE_COMP1           (EXTI_IMR1_IM17)  /*!< EXTI line 17 connected to COMP1 output */
 #define COMP_EXTI_LINE_COMP2           (EXTI_IMR1_IM18)  /*!< EXTI line 18 connected to COMP2 output */
+#if defined(COMP3)
+#define COMP_EXTI_LINE_COMP3           (EXTI_IMR1_IM20)  /*!< EXTI line 20 connected to COMP3 output */
+#endif
 /**
   * @}
   */
@@ -605,18 +707,38 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @param  __INSTANCE__  specifies the COMP instance.
   * @retval value of @ref COMP_ExtiLine
   */
+#if defined(COMP3)
+#define COMP_GET_EXTI_LINE(__INSTANCE__)    (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1  \
+                                             :((__INSTANCE__) == COMP2) ? COMP_EXTI_LINE_COMP2 \
+                                             : COMP_EXTI_LINE_COMP3)
+#else
 #define COMP_GET_EXTI_LINE(__INSTANCE__)    (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1  \
                                              : COMP_EXTI_LINE_COMP2)
+#endif
 /**
   * @}
   */
 
-/** @defgroup COMP_IS_COMP_Definitions COMP private macros to check input parameters
+/** @defgroup COMP_IS_COMP_Private_Definitions COMP private macros to check input parameters
   * @{
   */
-#define IS_COMP_WINDOWMODE(__WINDOWMODE__)  (((__WINDOWMODE__) == COMP_WINDOWMODE_DISABLE)                || \
-                                             ((__WINDOWMODE__) == COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON)|| \
-                                             ((__WINDOWMODE__) == COMP_WINDOWMODE_COMP2_INPUT_PLUS_COMMON)  )
+#if defined(COMP3)
+#define IS_COMP_WINDOWMODE(__INSTANCE__, __WINDOWMODE__) \
+(((__INSTANCE__) == COMP3) \
+  ? \
+  (((__WINDOWMODE__) == COMP_WINDOWMODE_DISABLE)                ||  \
+   ((__WINDOWMODE__) == COMP_WINDOWMODE_COMP2_INPUT_PLUS_COMMON)  ) \
+  :\
+  (((__WINDOWMODE__) == COMP_WINDOWMODE_DISABLE)                ||  \
+   ((__WINDOWMODE__) == COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON)||  \
+   ((__WINDOWMODE__) == COMP_WINDOWMODE_COMP2_INPUT_PLUS_COMMON)  ) \
+)
+#else
+#define IS_COMP_WINDOWMODE(__INSTANCE__, __WINDOWMODE__) \
+(((__WINDOWMODE__) == COMP_WINDOWMODE_DISABLE)                || \
+ ((__WINDOWMODE__) == COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON)|| \
+ ((__WINDOWMODE__) == COMP_WINDOWMODE_COMP2_INPUT_PLUS_COMMON)  )
+#endif
 
 #define IS_COMP_WINDOWOUTPUT(__WINDOWOUTPUT__) (((__WINDOWOUTPUT__) == COMP_WINDOWOUTPUT_EACH_COMP) || \
                                                 ((__WINDOWOUTPUT__) == COMP_WINDOWOUTPUT_COMP1)     || \

@@ -343,11 +343,13 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
   }
   else
   {
+#if defined (ADC3)
     /* Force reset of ADC clock (core clock) */
     LL_AHB4_GRP1_ForceReset(LL_AHB4_GRP1_PERIPH_ADC3);
 
     /* Release reset of ADC clock (core clock) */
     LL_AHB4_GRP1_ReleaseReset(LL_AHB4_GRP1_PERIPH_ADC3);
+#endif
   }
 
   return SUCCESS;

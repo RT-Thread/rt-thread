@@ -206,6 +206,20 @@ void *rt_signal_check(void* context)
 }
 #endif /* RT_USING_SMP */
 
+/**
+ * @brief    This function will install a processing function to a specific
+ *           signal and return the old processing function of this signal.
+ *
+ * @note     This function needs to be used in conjunction with the
+ *           rt_signal_unmask() function to make the signal effective.
+ *
+ * @see      rt_signal_unmask()
+ *
+ * @param    signo is a specific signal value (range: 0 ~ RT_SIG_MAX).
+ *
+ * @return   Return the old processing function of this signal. ONLY When the
+ *           return value is SIG_ERR, the operation is failed.
+ */
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
 {
     rt_base_t level;
@@ -233,6 +247,17 @@ rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
     return old;
 }
 
+/**
+ * @brief    This function will block the specified signal.
+ *
+ * @note     This function will block the specified signal, even if the
+ *           rt_thread_kill() function is called to send this signal to
+ *           the current thread, it will no longer take effect.
+ *
+ * @see      rt_thread_kill()
+ *
+ * @param    signo is a specific signal value (range: 0 ~ RT_SIG_MAX).
+ */
 void rt_signal_mask(int signo)
 {
     rt_base_t level;
@@ -245,6 +270,17 @@ void rt_signal_mask(int signo)
     rt_hw_interrupt_enable(level);
 }
 
+/**
+ * @brief    This function will unblock the specified signal.
+ *
+ * @note     This function will unblock the specified signal. After calling
+ *           the rt_thread_kill() function to send this signal to the current
+ *           thread, it will take effect.
+ *
+ * @see      rt_thread_kill()
+ *
+ * @param    signo is a specific signal value (range: 0 ~ RT_SIG_MAX).
+ */
 void rt_signal_unmask(int signo)
 {
     rt_base_t level;
@@ -266,6 +302,20 @@ void rt_signal_unmask(int signo)
     }
 }
 
+/**
+ * @brief    This function will wait for the arrival of the set signal. If it does not wait for this signal, the thread will be
+ *           suspended until it waits for this signal or the waiting time exceeds the specified timeout: timeout.
+ *
+ * @param    set is the set of signal values to be waited for. Use the function
+ *           sigaddset() to add the signal.
+ *
+ * @param    si is a pointer to the received signal info. If you don't care about this value, you can use RT_NULL to set.
+ *
+ * @param    timeout is a timeout period (unit: an OS tick).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the signal wait failed.
+ */
 int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
 {
     int ret = RT_EOK;
@@ -497,6 +547,16 @@ void rt_thread_free_sig(rt_thread_t tid)
     }
 }
 
+/**
+ * @brief    This function can be used to send any signal to any thread.
+ *
+ * @param    tid is a pointer to the thread that receives the signal.
+ *
+ * @param    sig is a specific signal value (range: 0 ~ RT_SIG_MAX).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the signal send failed.
+ */
 int rt_thread_kill(rt_thread_t tid, int sig)
 {
     siginfo_t si;

@@ -131,6 +131,7 @@
       
      *** Callback functions ***
      ==============================
+     [..]
       (@) Callback functions must be implemented in user program:
       (+@) HAL_ADC_ErrorCallback()
       (+@) HAL_ADC_LevelOutOfWindowCallback() (callback of analog watchdog)
@@ -1631,23 +1632,23 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef* hadc, ADC_ChannelConf
   
   /* Process locked */
   __HAL_LOCK(hadc);
-			
-	/* if ADC_Channel_10 ... ADC_Channel_18 is selected */
-	if (sConfig->Channel > ADC_CHANNEL_9)
-	{
-		/* Clear the old sample time */
-		hadc->Instance->SMPR1 &= ~ADC_SMPR1(ADC_SMPR1_SMP10, sConfig->Channel);
+  
+  /* if ADC_Channel_10 ... ADC_Channel_18 is selected */
+  if ((sConfig->Channel > ADC_CHANNEL_9) && (sConfig->Channel != ADC_INTERNAL_NONE))
+  {
+    /* Clear the old sample time */
+    hadc->Instance->SMPR1 &= ~ADC_SMPR1(ADC_SMPR1_SMP10, sConfig->Channel);
 
-		if (sConfig->Channel == ADC_CHANNEL_TEMPSENSOR)
-		{
-			/* Set the new sample time */
-			hadc->Instance->SMPR1 |= ADC_SMPR1(sConfig->SamplingTime, ADC_CHANNEL_18);
-		}
-	  else
-	  {	
-		  /* Set the new sample time */
-		  hadc->Instance->SMPR1 |= ADC_SMPR1(sConfig->SamplingTime, sConfig->Channel);
-	  }
+    if (sConfig->Channel == ADC_CHANNEL_TEMPSENSOR)
+    {
+      /* Set the new sample time */
+      hadc->Instance->SMPR1 |= ADC_SMPR1(sConfig->SamplingTime, ADC_CHANNEL_18);
+    }
+    else
+    {
+      /* Set the new sample time */
+      hadc->Instance->SMPR1 |= ADC_SMPR1(sConfig->SamplingTime, sConfig->Channel);
+    }
   }
   else /* ADC_Channel include in ADC_Channel_[0..9] */
   {
@@ -1686,6 +1687,13 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef* hadc, ADC_ChannelConf
     hadc->Instance->SQR1 |= ADC_SQR1_RK(sConfig->Channel, sConfig->Rank);
   }
   
+  /* if no internal channel selected */
+  if ((hadc->Instance == ADC1) && (sConfig->Channel == ADC_INTERNAL_NONE))
+  {
+    /* Disable the VBAT & TSVREFE channel*/
+    ADC->CCR &= ~(ADC_CCR_VBATE | ADC_CCR_TSVREFE);
+  }
+
   /* if ADC1 Channel_18 is selected enable VBAT Channel */
   if ((hadc->Instance == ADC1) && (sConfig->Channel == ADC_CHANNEL_VBAT))
   {

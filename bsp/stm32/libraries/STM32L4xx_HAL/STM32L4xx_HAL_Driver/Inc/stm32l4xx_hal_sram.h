@@ -12,20 +12,20 @@
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_HAL_SRAM_H
-#define __STM32L4xx_HAL_SRAM_H
+#ifndef STM32L4xx_HAL_SRAM_H
+#define STM32L4xx_HAL_SRAM_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
-#if defined(FMC_BANK1)
+#if defined FMC_BANK1
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_ll_fmc.h"
@@ -52,12 +52,17 @@ typedef enum
   HAL_SRAM_STATE_BUSY      = 0x02U,  /*!< SRAM internal process is ongoing               */
   HAL_SRAM_STATE_ERROR     = 0x03U,  /*!< SRAM error state                               */
   HAL_SRAM_STATE_PROTECTED = 0x04U   /*!< SRAM peripheral NORSRAM device write protected */
-}HAL_SRAM_StateTypeDef;
+
+} HAL_SRAM_StateTypeDef;
 
 /**
   * @brief  SRAM handle Structure definition
   */
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+typedef struct __SRAM_HandleTypeDef
+#else
 typedef struct
+#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */	
 {
   FMC_NORSRAM_TypeDef           *Instance;  /*!< Register base address                        */
 
@@ -70,8 +75,33 @@ typedef struct
   __IO HAL_SRAM_StateTypeDef    State;      /*!< SRAM device access state                     */
 
   DMA_HandleTypeDef             *hdma;      /*!< Pointer DMA handler                          */
-}SRAM_HandleTypeDef;
 
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+  void  (* MspInitCallback)        ( struct __SRAM_HandleTypeDef * hsram);    /*!< SRAM Msp Init callback              */
+  void  (* MspDeInitCallback)      ( struct __SRAM_HandleTypeDef * hsram);    /*!< SRAM Msp DeInit callback            */
+  void  (* DmaXferCpltCallback)    ( DMA_HandleTypeDef * hdma);               /*!< SRAM DMA Xfer Complete callback     */
+  void  (* DmaXferErrorCallback)   ( DMA_HandleTypeDef * hdma);               /*!< SRAM DMA Xfer Error callback        */
+#endif
+} SRAM_HandleTypeDef;
+
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL SRAM Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_SRAM_MSP_INIT_CB_ID       = 0x00U,  /*!< SRAM MspInit Callback ID           */
+  HAL_SRAM_MSP_DEINIT_CB_ID     = 0x01U,  /*!< SRAM MspDeInit Callback ID         */
+  HAL_SRAM_DMA_XFER_CPLT_CB_ID  = 0x02U,  /*!< SRAM DMA Xfer Complete Callback ID */
+  HAL_SRAM_DMA_XFER_ERR_CB_ID   = 0x03U   /*!< SRAM DMA Xfer Complete Callback ID */
+}HAL_SRAM_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL SRAM Callback pointer definition
+  */
+typedef void (*pSRAM_CallbackTypeDef)(SRAM_HandleTypeDef *hsram);
+typedef void (*pSRAM_DmaCallbackTypeDef)(DMA_HandleTypeDef *hdma);
+#endif
 /**
   * @}
   */
@@ -87,7 +117,15 @@ typedef struct
   * @param  __HANDLE__ SRAM handle
   * @retval None
   */
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+#define __HAL_SRAM_RESET_HANDLE_STATE(__HANDLE__)         do {                                             \
+                                                               (__HANDLE__)->State = HAL_SRAM_STATE_RESET; \
+                                                               (__HANDLE__)->MspInitCallback = NULL;       \
+                                                               (__HANDLE__)->MspDeInitCallback = NULL;     \
+                                                             } while(0)
+#else
 #define __HAL_SRAM_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_SRAM_STATE_RESET)
+#endif
 
 /**
   * @}
@@ -105,8 +143,8 @@ typedef struct
 /* Initialization/de-initialization functions  ********************************/
 HAL_StatusTypeDef HAL_SRAM_Init(SRAM_HandleTypeDef *hsram, FMC_NORSRAM_TimingTypeDef *Timing, FMC_NORSRAM_TimingTypeDef *ExtTiming);
 HAL_StatusTypeDef HAL_SRAM_DeInit(SRAM_HandleTypeDef *hsram);
-void              HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram);
-void              HAL_SRAM_MspDeInit(SRAM_HandleTypeDef *hsram);
+void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram);
+void HAL_SRAM_MspDeInit(SRAM_HandleTypeDef *hsram);
 
 /**
   * @}
@@ -128,6 +166,13 @@ HAL_StatusTypeDef HAL_SRAM_Write_DMA(SRAM_HandleTypeDef *hsram, uint32_t *pAddre
 
 void HAL_SRAM_DMA_XferCpltCallback(DMA_HandleTypeDef *hdma);
 void HAL_SRAM_DMA_XferErrorCallback(DMA_HandleTypeDef *hdma);
+
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+/* SRAM callback registering/unregistering */
+HAL_StatusTypeDef HAL_SRAM_RegisterCallback(SRAM_HandleTypeDef *hsram, HAL_SRAM_CallbackIDTypeDef CallbackId, pSRAM_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_SRAM_UnRegisterCallback(SRAM_HandleTypeDef *hsram, HAL_SRAM_CallbackIDTypeDef CallbackId);
+HAL_StatusTypeDef HAL_SRAM_RegisterDmaCallback(SRAM_HandleTypeDef *hsram, HAL_SRAM_CallbackIDTypeDef CallbackId, pSRAM_DmaCallbackTypeDef pCallback);
+#endif
 
 /**
   * @}
@@ -174,6 +219,6 @@ HAL_SRAM_StateTypeDef HAL_SRAM_GetState(SRAM_HandleTypeDef *hsram);
 }
 #endif
 
-#endif /* __STM32L4xx_HAL_SRAM_H */
+#endif /* STM32L4xx_HAL_SRAM_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
