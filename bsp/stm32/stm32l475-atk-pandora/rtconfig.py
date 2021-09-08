@@ -28,6 +28,9 @@ elif CROSS_TOOL == 'iar':
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
+if os.getenv('RTT_PLATFORM'):
+    PLATFORM = os.getenv('RTT_PLATFORM')
+
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
