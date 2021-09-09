@@ -779,3 +779,21 @@ Copyright: Copyright (c) 2014 - 2020 Xilinx, Inc.
 Path:
 
 - bsp/zynqmp-r5-axu4ev/drivers/Zynq_HAL_Driver
+
+### n32
+
+License: 未注明
+
+Copyright: Copyright (c) 2019, Nations Technologies Inc.
+
+Path:
+
+- bsp/n32g452xx/n32g452xx-mini-system/board/msp
+
+License: bsd-new
+
+Copyright: Copyright (c) 2010-2015 ARM Limited
+
+Path:
+
+- bsp/n32g452xx/Libraries/N32_Std_Driver/CMSIS
