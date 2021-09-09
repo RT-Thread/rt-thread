@@ -105,7 +105,8 @@ void UART4_IRQHandler(void)
 }
 #endif /* BSP_USING_UART4 */
 
-static const struct V85xx_uart uarts[] = {
+static const struct V85xx_uart uarts[] = 
+{
 #ifdef BSP_USING_UART0
     {
         UART0,                             /* uart peripheral index */
@@ -167,7 +168,8 @@ static rt_err_t V85xx_configure(struct rt_serial_device *serial, struct serial_c
     UARTx = (UART_TypeDef *)uart->uart_periph;
     UART_InitParaStruct.Baudrate = cfg->baud_rate;
 
-    switch (cfg->data_bits) {
+    switch (cfg->data_bits)
+    {
     case DATA_BITS_9:
         UART_InitParaStruct.WordLen = UART_WORDLEN_9B;
         break;
@@ -177,7 +179,8 @@ static rt_err_t V85xx_configure(struct rt_serial_device *serial, struct serial_c
         break;
     }
 
-    switch (cfg->parity) {
+    switch (cfg->parity)
+    {
     case PARITY_ODD:
         UART_InitParaStruct.Parity = UART_PARITY_ODD;
         break;
@@ -205,7 +208,8 @@ static rt_err_t V85xx_control(struct rt_serial_device *serial, int cmd, void *ar
     uart = (struct V85xx_uart *)serial->parent.user_data;
     UARTx = (UART_TypeDef *)uart->uart_periph;
 
-    switch (cmd) {
+    switch (cmd)
+    {
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
         NVIC_DisableIRQ(uart->irqn);
@@ -263,14 +267,16 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     if ((UART_GetINTStatus((UART_TypeDef *)uart->uart_periph, UART_INTSTS_RX) != RESET) &&
-            (UART_GetFlag((UART_TypeDef *)uart->uart_periph, UART_FLAG_RXPE) != RESET)) {
+            (UART_GetFlag((UART_TypeDef *)uart->uart_periph, UART_FLAG_RXPE) != RESET)) 
+    {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
         /* Clear RXNE interrupt flag */
         UART_ClearINTStatus(uart->uart_periph, UART_INTSTS_RX);
     }
 }
 
-static const struct rt_uart_ops V85xx_uart_ops = {
+static const struct rt_uart_ops V85xx_uart_ops = 
+{
     V85xx_configure,
     V85xx_control,
     V85xx_putc,
@@ -283,7 +289,8 @@ int V85xx_hw_usart_init(void)
     int i;
 
 
-    for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++) {
+    for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++) 
+    {
         uarts[i].serial->ops    = &V85xx_uart_ops;
         uarts[i].serial->config = config;
 
