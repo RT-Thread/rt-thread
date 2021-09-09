@@ -29,6 +29,9 @@ if GetDepend(['UTEST_SIGNAL_TC']):
 if GetDepend(['UTEST_MUTEX_TC']):
     src += ['mutex_tc.c']
 
+if GetDepend(['UTEST_MAILBOX_TC']):
+    src += ['mailbox_tc.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('utestcases', src, depend = [], CPPPATH = CPPPATH)
