@@ -13,7 +13,6 @@
 
 #include <rtconfig.h>
 #include "ACM32Fxx_HAL.h"
-#include "led.h"
 
 /*-------------------------- UART CONFIG BEGIN --------------------------*/
 
