@@ -73,17 +73,16 @@ static void ch32f1_hwtimer_init(struct rt_hwtimer_device *device, rt_uint32_t st
 
     if (state)
     {
-        ch32f1_hwtimer_clock_init(hwtimer_dev->periph);
+        ch32f1_tim_clock_init(hwtimer_dev->periph);
 
         hwtimer_info = ch32f1_hwtimer_info_config_get(hwtimer_dev->periph);
 
-        clk = ch32f1_hwtimer_clock_get(hwtimer_dev->periph);
+        clk = ch32f1_tim_clock_get(hwtimer_dev->periph);
 
         prescaler_value = (rt_uint16_t)(clk / hwtimer_info->minfreq) - 1;
 
         /*
-        * set interrupt callback one or each time need total time =
-        *  (cnt + 1) * (1 / (clk/(prescaler_value + 1) ) )
+        * (1 / freq) = (cnt + 1) * (1 / (clk/(prescaler_value + 1) ) )
         */
 
         TIM_TimeBaseInitType.TIM_Period = hwtimer_info->maxcnt - 1;
@@ -132,8 +131,7 @@ static rt_err_t ch32f1_hwtimer_start(struct rt_hwtimer_device *device, rt_uint32
     hwtimer_dev = (struct hwtimer_device *)device;
 
     /*
-    * interrupt callback one or each time need total time =
-    *  (cnt + 1) * (1 / (clk/(prescaler_value + 1) ) )
+    * (1 / freq) = (cnt + 1) * (1 / (clk/(prescaler_value + 1) ) )
     */
 
     TIM_SetCounter(hwtimer_dev->periph, 0);
@@ -197,15 +195,14 @@ static rt_err_t ch32f1_hwtimer_control(struct rt_hwtimer_device *device, rt_uint
         rt_uint16_t prescaler_value = 0;
 
         /*
-        *set interrupt callback one or each time need total time =
-        *  (cnt + 1) * (1 / (clk/(prescaler_value + 1) ) )
+        * (1 / freq) = (cnt + 1) * (1 / (clk/(prescaler_value + 1) ) )
         */
         if (arg != RT_NULL)
         {
 
             freq = *((rt_uint32_t *)arg);
 
-            clk = ch32f1_hwtimer_clock_get(hwtimer_dev->periph);
+            clk = ch32f1_tim_clock_get(hwtimer_dev->periph);
 
             prescaler_value = (rt_uint16_t)(clk / freq) - 1;
 
@@ -369,4 +366,3 @@ void TIM4_IRQHandler(void)
 #endif
 
 #endif /* BSP_USING_HWTIMER */
-
