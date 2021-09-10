@@ -618,11 +618,11 @@ RTM_EXPORT(rt_free);
 
 #ifdef RT_MEM_STATS
 /**
-* @brief This function will caculate the total memory, the used memory, and 
+* @brief This function will caculate the total memory, the used memory, and
 *        the max used memory.
 *
 * @param total is a pointer to get the total size of the memory.
-* 
+*
 * @param used is a pointer to get the size of memory used.
 *
 * @param max_used is a pointer to get the maximum memory used.

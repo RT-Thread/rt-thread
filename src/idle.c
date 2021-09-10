@@ -167,7 +167,7 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
 
 /**
  * @brief Dequeue a thread from defunct queue.
- * 
+ *
  * @note It must be called between rt_hw_interrupt_disable and rt_hw_interrupt_enable.
  */
 rt_thread_t rt_thread_defunct_dequeue(void)
