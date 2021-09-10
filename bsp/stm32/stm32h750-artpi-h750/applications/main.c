@@ -28,3 +28,12 @@ int main(void)
         rt_thread_mdelay(500);
     }
 }
+
+#include "stm32h7xx.h"
+static int vtor_config(void)
+{
+    /* Vector Table Relocation in Internal QSPI_FLASH */
+    SCB->VTOR = QSPI_BASE;
+    return 0;
+}
+INIT_BOARD_EXPORT(vtor_config);
