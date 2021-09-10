@@ -133,19 +133,30 @@ ald_status_t ald_adc_init(adc_handle_t *hperh)
 
 	MODIFY_REG(hperh->perh->CON1, ADC_CON1_CM_MSK, hperh->init.cont << ADC_CON1_CM_POS);
 	MODIFY_REG(hperh->perh->CON0, ADC_CON0_SCANEN_MSK, hperh->init.scan << ADC_CON0_SCANEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_GAINCALEN_MSK, DISABLE << ADC_CCR_GAINCALEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_OFFCALEN_MSK, DISABLE << ADC_CCR_OFFCALEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_DIFFEN_MSK, DISABLE << ADC_CCR_DIFFEN_POS);
+	
+	ADC0->CCR = 0;
+	MODIFY_REG(ADC0->CCR, ADC_CCR_GAINCALEN_MSK, DISABLE << ADC_CCR_GAINCALEN_POS);
+	MODIFY_REG(ADC0->CCR, ADC_CCR_OFFCALEN_MSK, DISABLE << ADC_CCR_OFFCALEN_POS);
 	/* if the ADC clock less than 1MHz,PWRMOD should be disable*/
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_PWRMODSEL_MSK, DISABLE << ADC_CCR_PWRMODSEL_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VRBUFEN_MSK, ENABLE << ADC_CCR_VRBUFEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VCMBUFEN_MSK, ENABLE << ADC_CCR_VCMBUFEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VREFEN_MSK, ENABLE << ADC_CCR_VREFEN_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_IREFEN_MSK, ENABLE << ADC_CCR_IREFEN_POS);
+	MODIFY_REG(ADC0->CCR, ADC_CCR_PWRMODSEL_MSK, DISABLE << ADC_CCR_PWRMODSEL_POS);
+	MODIFY_REG(ADC0->CCR, ADC_CCR_VRBUFEN_MSK, ENABLE << ADC_CCR_VRBUFEN_POS);
+	MODIFY_REG(ADC0->CCR, ADC_CCR_VCMBUFEN_MSK, ENABLE << ADC_CCR_VCMBUFEN_POS);
+	MODIFY_REG(ADC0->CCR, ADC_CCR_VREFEN_MSK, ENABLE << ADC_CCR_VREFEN_POS);
+	MODIFY_REG(ADC0->CCR, ADC_CCR_IREFEN_MSK, ENABLE << ADC_CCR_IREFEN_POS);
+	MODIFY_REG(ADC0->CCR, ADC_CCR_VRNSEL_MSK, hperh->init.n_ref << ADC_CCR_VRNSEL_POS);
+	MODIFY_REG(ADC0->CCR, ADC_CCR_VRPSEL_MSK, hperh->init.p_ref << ADC_CCR_VRPSEL_POSS);
+
+	if (hperh->perh == ADC1)
+		ADC1->CCR = ADC0->CCR;
+	
+	MODIFY_REG(hperh->perh->CCR, ADC_CCR_DIFFEN_MSK, DISABLE << ADC_CCR_DIFFEN_POS);
 	MODIFY_REG(hperh->perh->CCR, ADC_CCR_CKDIV_MSK, hperh->init.div << ADC_CCR_CKDIV_POSS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VRNSEL_MSK, hperh->init.n_ref << ADC_CCR_VRNSEL_POS);
-	MODIFY_REG(hperh->perh->CCR, ADC_CCR_VRPSEL_MSK, hperh->init.p_ref << ADC_CCR_VRPSEL_POSS);
-	MODIFY_REG(hperh->perh->CON1, ADC_CON1_NCHESEL_MSK, hperh->init.nche_sel << ADC_CON1_NCHESEL_POS);
+	/* Enable adc calibration */
+	SET_BIT(ADC0->CCR, ADC_CCR_TRMEN_MSK);
+	SET_BIT(ADC1->CCR, ADC_CCR_TRMEN_MSK);
+
+	
+MODIFY_REG(hperh->perh->CON1, ADC_CON1_NCHESEL_MSK, hperh->init.nche_sel << ADC_CON1_NCHESEL_POS);
 	ald_adc_interrupt_config(hperh, ADC_IT_OVR, ENABLE);
 	ADC_ENABLE(hperh);
 
@@ -430,113 +441,6 @@ static void adc_dma_timer_trigger_cplt(void *arg)
 }
 
 /**
-  * @brief  Config Timer trigger adc function
-  * @param  config: Pointer to a adc_timer_config_t structure that
-  *         contains the configuration information for the specified function.
-  * @retval Status, see @ref ald_status_t.
-  */
-ald_status_t ald_adc_timer_trigger_adc_by_dma(adc_timer_config_t *config)
-{
-	config->h_pis.perh               = PIS;
-	config->h_pis.init.producer_clk  = PIS_CLK_PCLK1;
-	config->h_pis.init.producer_edge = PIS_EDGE_NONE;
-	config->h_pis.init.consumer_clk  = PIS_CLK_PCLK2;
-
-	#if defined(ES32F36xx)
-	if (config->p_timer == AD16C4T0)
-		config->h_pis.init.producer_src  = PIS_TIMER0_UPDATA;
-	else if (config->p_timer == AD16C4T1)
-		config->h_pis.init.producer_src  = PIS_TIMER1_UPDATA;
-	else if (config->p_timer == GP32C4T0)
-		config->h_pis.init.producer_src  = PIS_TIMER2_UPDATA;
-	else if (config->p_timer == GP32C4T1)
-		config->h_pis.init.producer_src  = PIS_TIMER3_UPDATA;
-	else
-		return ERROR;
-	#elif defined(ES32F39xx) || defined(ES32F336x)
-	if (config->p_timer == GP16C4T0)
-		config->h_pis.init.producer_src  = PIS_TIMER0_UPDATA;
-	else if (config->p_timer == GP16C4T1)
-		config->h_pis.init.producer_src  = PIS_TIMER1_UPDATA;
-	else if (config->p_timer == GP32C4T0)
-		config->h_pis.init.producer_src  = PIS_TIMER2_UPDATA;
-	else if (config->p_timer == GP32C4T1)
-		config->h_pis.init.producer_src  = PIS_TIMER3_UPDATA;
-	else
-		return ERROR;
-	#endif
-
-	if (config->p_adc == ADC0)
-		config->h_pis.init.consumer_trig = PIS_CH6_ADC0_NORMAL;
-	else
-		return ERROR;
-
-	ald_pis_create(&config->h_pis);
-
-	/* Initialize TIMER0 */
-	config->h_timer.perh           = config->p_timer;
-	config->h_timer.init.prescaler = 0;
-	config->h_timer.init.mode      = TIMER_CNT_MODE_UP;
-	config->h_timer.init.period    = ((ald_cmu_get_pclk1_clock() / 1000000) * config->time);
-	config->h_timer.init.clk_div   = TIMER_CLOCK_DIV1;
-	config->h_timer.init.re_cnt    = 0;
-	ald_timer_base_init(&config->h_timer);
-
-	config->h_adc.perh            = config->p_adc;
-	config->h_adc.init.align      = ADC_DATAALIGN_RIGHT;
-	config->h_adc.init.scan       = DISABLE;
-	config->h_adc.init.cont       = DISABLE;
-	config->h_adc.init.nch_nr     = ADC_NCH_NR_1;
-	config->h_adc.init.disc       = ADC_ALL_DISABLE;
-	config->h_adc.init.disc_nr    = ADC_DISC_NR_1;
-	config->h_adc.init.data_bit   = ADC_CONV_BIT_12;
-	config->h_adc.init.div        = ADC_CKDIV_128;
-	config->h_adc.init.nche_sel   = ADC_NCHESEL_MODE_ONE;
-	config->h_adc.init.n_ref      = config->n_ref;
-	config->h_adc.init.p_ref      = config->p_ref;
-	config->h_adc.normal_cplt_cbk = config->cplt_cbk;
-	config->h_adc.insert_cplt_cbk = NULL;
-	config->h_adc.wdg_cbk         = NULL;
-	config->h_adc.error_cbk       = NULL;
-	config->h_adc.ovr_cbk         = NULL;
-	ald_adc_init(&config->h_adc);
-
-
-
-	config->h_adc.perh->CON1 |= 0x10000000;
-	config->config.ch   = config->adc_ch;
-	config->config.idx  = ADC_NCH_IDX_1;
-	config->config.samp = ADC_SAMPLETIME_4;
- 	ald_adc_normal_channel_config(&config->h_adc, &config->config);
-
-	config->h_dma.cplt_cbk = adc_dma_timer_trigger_cplt;
-	config->h_dma.cplt_arg = config;
-	config->h_dma.err_cbk  = adc_dma_error;
-	config->h_dma.err_arg  = &config->h_adc;
-
-	ald_dma_config_struct(&config->h_dma.config);
-	config->h_dma.perh              = DMA0;
-	config->h_dma.config.src        = (void *)&config->h_adc.perh->NCHDR;
-	config->h_dma.config.dst        = (void *)config->buf;
-	config->h_dma.config.size       = config->size;
-	config->h_dma.config.data_width = DMA_DATA_SIZE_HALFWORD;
-	config->h_dma.config.src_inc    = DMA_DATA_INC_NONE;
-	config->h_dma.config.dst_inc    = DMA_DATA_INC_HALFWORD;
-	config->h_dma.config.msel       = config->p_adc == ADC0 ? DMA_MSEL_ADC0 : DMA_MSEL_ADC1;
-	config->h_dma.config.msigsel    = DMA_MSIGSEL_ADC;
-	config->h_dma.config.burst      = ENABLE;
-	config->h_dma.config.channel    = config->dma_ch;
-	ald_dma_config_basic(&config->h_dma);
-
-	SET_BIT(config->h_adc.perh->CON1, ADC_CON1_DMA_MSK);
-	ADC_ENABLE(&config->h_adc);
-	ald_timer_base_start(&config->h_timer);
-
-	return OK;
-}
-
-
-/**
   * @brief  Config timer trigger adc insert channel conversion.
   * @param  config: Pointer to a adc_timer_config_t structure that
   *         contains the configuration information for the specified function.
@@ -607,13 +511,121 @@ ald_status_t ald_adc_timer_trigger_insert(adc_timer_config_t *config)
 	config->h_adc.error_cbk       = NULL;
 	config->h_adc.ovr_cbk         = NULL;
 	ald_adc_init(&config->h_adc);
+	
+	config->h_adc.perh->CON1   |= 0x00100000;   /* rising edge trigger insert channel convert */
+	config->i_config.ch         = config->adc_ch;
+	config->i_config.idx        = ADC_ICH_IDX_1;
+	config->i_config.samp       = ADC_SAMPLETIME_4;
+	config->i_config.nr         = ADC_ICH_NR_1;
+	config->i_config.auto_m     = DISABLE;
+	ald_adc_insert_channel_config(&config->h_adc, &config->i_config);
+	
+	ADC_ENABLE(&config->h_adc);
+	ald_timer_base_start(&config->h_timer);
+	
+	return OK;
+}
 
-	config->h_adc.perh->CON1 |= 0x00100000;	/* rising edge trigger insert channel convert */
-	config->i_config.ch       = config->adc_ch;
-	config->i_config.idx      = ADC_ICH_IDX_1;
-	config->i_config.samp     = ADC_SAMPLETIME_4;
-	config->i_config.auto_m   = DISABLE;
- 	ald_adc_insert_channel_config(&config->h_adc, &config->i_config);
+
+
+/**
+  * @brief  Config Timer trigger adc function
+  * @param  config: Pointer to a adc_timer_config_t structure that
+  *         contains the configuration information for the specified function.
+  * @retval Status, see @ref ald_status_t.
+  */
+ald_status_t ald_adc_timer_trigger_adc_by_dma(adc_timer_config_t *config)
+{
+	config->h_pis.perh               = PIS;
+	config->h_pis.init.producer_clk  = PIS_CLK_PCLK1;
+	config->h_pis.init.producer_edge = PIS_EDGE_NONE;
+	config->h_pis.init.consumer_clk  = PIS_CLK_PCLK2;
+
+	#if defined(ES32F36xx)
+	if (config->p_timer == AD16C4T0)
+		config->h_pis.init.producer_src  = PIS_TIMER0_UPDATA;
+	else if (config->p_timer == AD16C4T1)
+		config->h_pis.init.producer_src  = PIS_TIMER1_UPDATA;
+	else if (config->p_timer == GP32C4T0)
+		config->h_pis.init.producer_src  = PIS_TIMER2_UPDATA;
+	else if (config->p_timer == GP32C4T1)
+		config->h_pis.init.producer_src  = PIS_TIMER3_UPDATA;
+	else
+		return ERROR;
+	#elif defined(ES32F39xx) || defined(ES32F336x)
+	if (config->p_timer == GP16C4T0)
+		config->h_pis.init.producer_src  = PIS_TIMER0_UPDATA;
+	else if (config->p_timer == GP16C4T1)
+		config->h_pis.init.producer_src  = PIS_TIMER1_UPDATA;
+	else if (config->p_timer == GP32C4T0)
+		config->h_pis.init.producer_src  = PIS_TIMER2_UPDATA;
+	else if (config->p_timer == GP32C4T1)
+		config->h_pis.init.producer_src  = PIS_TIMER3_UPDATA;
+	else
+		return ERROR;
+	#endif
+
+	if (config->p_adc == ADC0)
+		config->h_pis.init.consumer_trig = PIS_CH6_ADC0_NORMAL;
+	else
+		return ERROR;
+
+	ald_pis_create(&config->h_pis);
+
+	/* Initialize TIMER */
+	config->h_timer.perh           = config->p_timer;
+	config->h_timer.init.prescaler = 0;
+	config->h_timer.init.mode      = TIMER_CNT_MODE_UP;
+	config->h_timer.init.period    = ((ald_cmu_get_pclk1_clock() / 1000000) * config->time);
+	config->h_timer.init.clk_div   = TIMER_CLOCK_DIV1;
+	config->h_timer.init.re_cnt    = 0;
+	ald_timer_base_init(&config->h_timer);
+
+	config->h_adc.perh            = config->p_adc;
+	config->h_adc.init.align      = ADC_DATAALIGN_RIGHT;
+	config->h_adc.init.scan       = DISABLE;
+	config->h_adc.init.cont       = DISABLE;
+	config->h_adc.init.nch_nr     = ADC_NCH_NR_1;
+	config->h_adc.init.disc       = ADC_ALL_DISABLE;
+	config->h_adc.init.disc_nr    = ADC_DISC_NR_1;
+	config->h_adc.init.data_bit   = ADC_CONV_BIT_12;
+	config->h_adc.init.div        = ADC_CKDIV_128;
+	config->h_adc.init.nche_sel   = ADC_NCHESEL_MODE_ONE;
+	config->h_adc.init.n_ref      = config->n_ref;
+	config->h_adc.init.p_ref      = config->p_ref;
+	config->h_adc.normal_cplt_cbk = config->cplt_cbk;
+	config->h_adc.insert_cplt_cbk = NULL;
+	config->h_adc.wdg_cbk         = NULL;
+	config->h_adc.error_cbk       = NULL;
+	config->h_adc.ovr_cbk         = NULL;
+	ald_adc_init(&config->h_adc);
+
+	config->h_adc.perh->CON1 |= 0x10000000;
+	config->config.ch   = config->adc_ch;
+	config->config.idx  = ADC_NCH_IDX_1;
+	config->config.samp = ADC_SAMPLETIME_4;
+ 	ald_adc_normal_channel_config(&config->h_adc, &config->config);
+
+	config->h_dma.cplt_cbk = adc_dma_timer_trigger_cplt;
+	config->h_dma.cplt_arg = config;
+	config->h_dma.err_cbk  = adc_dma_error;
+	config->h_dma.err_arg  = &config->h_adc;
+
+	ald_dma_config_struct(&config->h_dma.config);
+	config->h_dma.perh              = DMA0;
+	config->h_dma.config.src        = (void *)&config->h_adc.perh->NCHDR;
+	config->h_dma.config.dst        = (void *)config->buf;
+	config->h_dma.config.size       = config->size;
+	config->h_dma.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	config->h_dma.config.src_inc    = DMA_DATA_INC_NONE;
+	config->h_dma.config.dst_inc    = DMA_DATA_INC_HALFWORD;
+	config->h_dma.config.msel       = config->p_adc == ADC0 ? DMA_MSEL_ADC0 : DMA_MSEL_ADC1;
+	config->h_dma.config.msigsel    = DMA_MSIGSEL_ADC;
+	config->h_dma.config.burst      = ENABLE;
+	config->h_dma.config.channel    = config->dma_ch;
+	ald_dma_config_basic(&config->h_dma);
+
+	SET_BIT(config->h_adc.perh->CON1, ADC_CON1_DMA_MSK);
 	ADC_ENABLE(&config->h_adc);
 	ald_timer_base_start(&config->h_timer);
 

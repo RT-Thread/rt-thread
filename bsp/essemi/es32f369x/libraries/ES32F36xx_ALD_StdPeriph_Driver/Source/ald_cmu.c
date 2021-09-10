@@ -290,12 +290,11 @@ ald_status_t ald_cmu_clock_config_default(void)
 		return ERROR;
 	}
 
-	WRITE_REG(CMU->CFGR, 0x0);
-	CLEAR_BIT(CMU->CFGR, CMU_CFGR_HRCFST_MSK);	/* Select 24Mhz */
+	WRITE_REG(CMU->CFGR, 0x4000000);	/* Select 24MHz */
 
 	tmp = READ_REG(CMU->CLKENR);
-	/* Enable HRC/LRC/LOSC */
-	SET_BIT(tmp, CMU_CLKENR_HRCEN_MSK | CMU_CLKENR_LRCEN_MSK | CMU_CLKENR_LOSCEN_MSK);
+	/* Enable HRC/LRC */
+	SET_BIT(tmp, CMU_CLKENR_HRCEN_MSK | CMU_CLKENR_LRCEN_MSK);
 	WRITE_REG(CMU->CLKENR, tmp);
 	/* Reset LRC */
 	for (cnt = 0; cnt < 10000; ++cnt);

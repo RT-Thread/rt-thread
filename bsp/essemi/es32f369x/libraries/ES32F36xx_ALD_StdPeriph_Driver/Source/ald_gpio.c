@@ -415,9 +415,9 @@ void ald_gpio_write_pin(GPIO_TypeDef *GPIOx, uint16_t pin, uint8_t val)
 	assert_param(IS_GPIO_PIN(pin));
 
 	if ((val & (0x01)) == 0x00)
-		CLEAR_BIT(GPIOx->DOUT, pin);
+		GPIOx->BSRR = pin << 16U;
 	else
-		SET_BIT(GPIOx->DOUT, pin);
+		GPIOx->BSRR = pin;
 
 	return;
 }
