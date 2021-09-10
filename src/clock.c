@@ -46,7 +46,7 @@ RTM_EXPORT(rt_tick_get);
 
 /**
  * @brief    This function will set current tick
- * 
+ *
  * @param    tick is the value that you will set.
  */
 void rt_tick_set(rt_tick_t tick)
@@ -129,11 +129,11 @@ RTM_EXPORT(rt_tick_from_millisecond);
 
 /**
  * @brief    This function will return the passed millisecond from boot.
- * 
+ *
  * @note     When the value of RT_TICK_PER_SECOND is lower than 1000 or
  *           is not an integral multiple of 1000, this function will not
  *           provide the correct 1ms-based tick.
- * 
+ *
  * @return   Return passed millisecond from boot
  */
 RT_WEAK rt_tick_t rt_tick_get_millisecond(void)

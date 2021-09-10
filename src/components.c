@@ -199,7 +199,7 @@ void main_thread_entry(void *parameter)
 
 /**
  * @brief  This function will create and start the main thread, but this thread
- *         will not run until the scheduler starts. 
+ *         will not run until the scheduler starts.
  */
 void rt_application_init(void)
 {
