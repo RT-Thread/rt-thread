@@ -418,14 +418,14 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         }
         /* clear TIR */
         h_can->perh->TxMailBox[box_num].TXID &= CAN_TXID0_TXMREQ_MSK;
-        /* Set up the Id */
+        /* Set up the Id */               
         if (RT_CAN_STDID == pmsg->ide)
-        {
-            h_can->perh->TxMailBox[box_num].TXID |= (txheader.std << CAN_TXID0_STDID_POSS) | txheader.rtr;
+        {                            
+            h_can->perh->TxMailBox[box_num].TXID |= (txheader.std << CAN_TXID0_STDID_POSS) | (txheader.rtr << CAN_TXID0_RTR_POS);
         }
         else
         {
-            h_can->perh->TxMailBox[box_num].TXID |= (txheader.ext << CAN_TXID0_EXID_POSS) | txheader.type | txheader.rtr;
+            h_can->perh->TxMailBox[box_num].TXID |= (txheader.ext << CAN_TXID0_EXID_POSS) | (txheader.type << CAN_TXID0_IDE_POS) | (txheader.rtr << CAN_TXID0_RTR_POS);
         }
         /* Set up the DLC */
         h_can->perh->TxMailBox[box_num].TXFCON = pmsg->len & 0x0FU;

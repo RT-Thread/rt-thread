@@ -25,6 +25,8 @@
 #define DRV_GPIO_H__
 
 #include "es_conf_info_gpio.h"
+                            
+#define GET_PIN(port,pin)  (ES_PIN_GPIO_##port##_##pin)
 
 int rt_hw_pin_init(void);
 
