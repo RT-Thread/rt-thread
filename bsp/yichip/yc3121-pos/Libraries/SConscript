@@ -1,0 +1,17 @@
+from building import *
+import rtconfig
+cwd     = GetCurrentDir()
+src	= Glob('sdk/*.c')
+CPPPATH = [cwd + '/sdk', cwd + '/core', cwd]
+
+src += Glob('core/*.c')
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += ['startup/flash_start_gcc.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+	src += ['startup/startup.s', 'startup/flash_start.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += ['startup/flash_start_iar.s']
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
