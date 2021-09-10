@@ -18,10 +18,11 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <stdlib.h>
+#include <stdlib.h>  
+#include "drv_gpio.h"
 
 /* PIN脚编号，查看驱动文件drv_gpio.c确定 */
-#define LED_PIN_NUM    19     /*PF1*/
+#define LED_PIN_NUM    GET_PIN( F , 1 )
 static int pin_num;
 
 static void led_entry(void *parameter)

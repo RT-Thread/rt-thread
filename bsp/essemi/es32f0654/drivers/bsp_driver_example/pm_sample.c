@@ -30,11 +30,12 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include "drv_gpio.h"
 
 
 #ifdef RT_USING_PM
 #define PM_NAME       "pm"      /* 设备名称 */
-#define WAKE_UP_PIN     19      /* 唤醒源 */
+#define WAKE_UP_PIN     GET_PIN(F,0)      /* 唤醒源 */
 #define SLEEP_TIMES     12      /* 进入睡眠次数，轮流进入不同的睡眠模式，包括无睡眠模式 */
 
 

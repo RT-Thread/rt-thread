@@ -12,16 +12,28 @@
  * 例程导出了 uart_sample 命令到控制终端
  * 命令调用格式：uart_sample uart2
  * 命令解释：命令第二个参数是要使用的串口设备名称，为空则使用默认的串口设备
- * 程序功能：通过串口输出字符串"hello RT-Thread!"，然后错位输出输入的字符
+ * 程序功能：通过串口输出字符串"hello RT-Thread!"，然后根据例子类型，处理输入数据，然后输出
 */
 
 #include <rtthread.h>
 
-#define SAMPLE_UART_NAME       "uart2"      /* 串口设备名称 */
+/* UART_SAMPLE_TYPE = 1,错位输出
+                    = 2 接收到固定格式之后输出
+*/
+#define UART_SAMPLE_TYPE       1
+
+#if (UART_SAMPLE_TYPE == 2)
+
+#define SAMPLE_UART_RXBUF_SIZE       256      /* 接收缓存大小 */ 
+#define SAMPLE_UART_END_SRTING       "\r\n"   /* 结尾固定格式 */
+
+#endif
+
+#define SAMPLE_UART_NAME       "uart0"      /* 串口设备名称 */
 
 /* 用于接收消息的信号量 */
 static struct rt_semaphore rx_sem;
-static rt_device_t serial;
+static rt_device_t serial;        
 
 /* 接收数据回调函数 */
 static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
@@ -33,7 +45,8 @@ static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
 }
 
 static void serial_thread_entry(void *parameter)
-{
+{      
+#if (UART_SAMPLE_TYPE == 1)
     char ch;
 
     while (1)
@@ -48,6 +61,42 @@ static void serial_thread_entry(void *parameter)
         ch = ch + 1;
         rt_device_write(serial, 0, &ch, 1);
     }
+#endif
+ 
+#if (UART_SAMPLE_TYPE == 2)
+     char rx_buf[SAMPLE_UART_RXBUF_SIZE],*end = SAMPLE_UART_END_SRTING;   /*rx_buf[]:接收缓存，可修改大小        end[]:固定的结束格式（可修改，不可包含'\0'）*/
+     uint32_t rx_index = 0;                /*接收数据的索引  */
+     uint32_t end_len = rt_strlen(end);    /*固定的结束格式的长度*/
+   
+     while(1)
+     {
+        
+        /* 从串口读取一个字节的数据，没有读取到则等待接收信号量 */
+        while (rt_device_read(serial, -1, (rx_buf + rx_index), 1) != 1)
+        {   
+            /* 阻塞等待接收信号量，等到信号量后再次读取数据 */
+            rt_sem_take(&rx_sem, RT_WAITING_FOREVER);
+        }
+         
+        rx_index++; 
+        if(rx_index >= SAMPLE_UART_RXBUF_SIZE)
+        {
+            rt_kprintf("rx_buf over!\r\n");   /*范围越界*/
+        }
+            
+        /*判断是否固定的结尾格式*/ 
+        if((rx_index >= end_len)&&\
+            ((rt_strncmp(end,(rx_buf + rx_index - end_len),end_len)) == 0))
+        {
+            rt_device_write(serial, 0, rx_buf, rx_index);
+            rx_index = 0;   
+        }
+        
+     }
+     
+    
+#endif    
+    
 }
 
 static int uart_sample(int argc, char *argv[])

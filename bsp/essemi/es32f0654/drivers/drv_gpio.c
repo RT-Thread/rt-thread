@@ -314,12 +314,18 @@ void es32f0_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint16_t gpio_pin)
 {
-    rt_int32_t mapindex = gpio_pin & 0x00FF;
-    if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
+    uint8_t map_index = 0U;
+    
+    while(gpio_pin >> (++map_index))
+    {
+    }
+    map_index--;
+    
+    if (map_index >= ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
     }
-    return &pin_irq_map[mapindex];
+    return &pin_irq_map[map_index];
 };
 
 rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_int32_t pin,

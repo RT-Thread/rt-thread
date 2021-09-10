@@ -16,16 +16,17 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include "drv_gpio.h"
 
 /* 引脚编号，通过查看驱动文件drv_gpio.c确定 */
 #ifndef BEEP_PIN_NUM
-    #define BEEP_PIN_NUM            40  /* PB9 */
+    #define BEEP_PIN_NUM            GET_PIN(B,9)  /* PB9 */
 #endif
 #ifndef KEY0_PIN_NUM
-    #define KEY0_PIN_NUM            18  /* PF0 */
+    #define KEY0_PIN_NUM            GET_PIN(F,0)  /* PF0 */
 #endif
 #ifndef KEY1_PIN_NUM
-    #define KEY1_PIN_NUM            19  /* PF1 */
+    #define KEY1_PIN_NUM            GET_PIN(F,1)  /* PF1 */
 #endif
 
 void beep_on(void *args)
