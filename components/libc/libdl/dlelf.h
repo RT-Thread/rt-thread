@@ -28,12 +28,7 @@ typedef rt_int32_t	            Elf64_Sword;
 typedef rt_uint32_t	            Elf64_Word;
 typedef rt_uint64_t	            Elf64_Xword;
 typedef rt_int64_t	            Elf64_Sxword;
-typedef uint16_t                Elf64_Section;
-
-
-
-
-
+typedef rt_uint16_t             Elf64_Section;
 
 /* e_ident[] magic number */
 #define ELFMAG0                 0x7f           /* e_ident[EI_MAG0] */

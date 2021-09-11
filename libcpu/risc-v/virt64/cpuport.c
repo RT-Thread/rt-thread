@@ -9,12 +9,12 @@
  * 2021-02-11     lizhirui     add gp support
  */
 
+#include <stddef.h>
 #include <rthw.h>
 #include <rtthread.h>
 
 #include "cpuport.h"
 #include "stack.h"
-
 
 /**
  * @brief from thread used interrupt context switch
