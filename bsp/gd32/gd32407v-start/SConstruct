@@ -47,11 +47,11 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-stm32_library = 'GD32F4xx_HAL'
-rtconfig.BSP_LIBRARY_TYPE = stm32_library
+gd32_library = 'GD32F4xx_HAL'
+rtconfig.BSP_LIBRARY_TYPE = gd32_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, stm32_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, gd32_library, 'SConscript')))
 
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
