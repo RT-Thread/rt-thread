@@ -130,7 +130,7 @@ RTM_EXPORT(rt_tick_from_millisecond);
 /**
  * @brief    This function will return the passed millisecond from boot.
  *
- * @note     When the value of RT_TICK_PER_SECOND is lower than 1000 or
+ * @note     if the value of RT_TICK_PER_SECOND is lower than 1000 or
  *           is not an integral multiple of 1000, this function will not
  *           provide the correct 1ms-based tick.
  *

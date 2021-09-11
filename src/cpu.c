@@ -69,7 +69,6 @@ static void _cpu_preempt_enable(void)
  * @brief   Initialize a static spinlock object.
  *
  * @param   lock is a pointer to the spinlock to initialize.
- *            It is assumed that storage for the spinlock will be allocated in your application.
  */
 void rt_spin_lock_init(struct rt_spinlock *lock)
 {

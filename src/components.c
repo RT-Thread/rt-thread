@@ -78,7 +78,9 @@ static int rti_end(void)
 INIT_EXPORT(rti_end, "6.end");
 
 /**
- * @brief  RT-Thread Components Initialization for board.
+ * @brief  Onboard components initialization. In this function, the board-level
+ *         initialization function will be called to complete the initialization
+ *         of the on-board peripherals.
  */
 void rt_components_board_init(void)
 {
@@ -225,9 +227,8 @@ void rt_application_init(void)
 }
 
 /**
- * @brief  RT-Thread startup function. This function will call all levels of initialization
- *         functions to complete the initialization of the system, and finally start the
- *         scheduler.
+ * @brief  This function will call all levels of initialization functions to complete
+ *         the initialization of the system, and finally start the scheduler.
  */
 int rtthread_startup(void)
 {
