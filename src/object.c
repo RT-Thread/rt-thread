@@ -123,7 +123,7 @@ void (*rt_object_put_hook)(struct rt_object *object);
  * @brief This function will set a hook function, which will be invoked when object
  *        attaches to kernel object system.
  *
- * @param hook the hook function.
+ * @param hook is the hook function.
  */
 void rt_object_attach_sethook(void (*hook)(struct rt_object *object))
 {
@@ -134,7 +134,7 @@ void rt_object_attach_sethook(void (*hook)(struct rt_object *object))
  * @brief This function will set a hook function, which will be invoked when object
  *        detaches from kernel object system.
  *
- * @param hook the hook function
+ * @param hook is the hook function
  */
 void rt_object_detach_sethook(void (*hook)(struct rt_object *object))
 {
@@ -152,7 +152,7 @@ void rt_object_detach_sethook(void (*hook)(struct rt_object *object))
  *            mailbox - mail is received by thread
  *            message queue - message is received by thread
  *
- * @param hook the hook function.
+ * @param hook is the hook function.
  */
 void rt_object_trytake_sethook(void (*hook)(struct rt_object *object))
 {
@@ -182,7 +182,7 @@ void rt_object_take_sethook(void (*hook)(struct rt_object *object))
  * @brief This function will set a hook function, which will be invoked when object
  *        is put to kernel object system.
  *
- * @param hook the hook function
+ * @param hook is the hook function
  */
 void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 {
@@ -201,7 +201,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 /**
  * @brief This function will return the specified type of object information.
  *
- * @param type the type of object, which can be
+ * @param type is the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  *
  * @return the object type information or RT_NULL
@@ -221,7 +221,7 @@ RTM_EXPORT(rt_object_get_information);
 /**
  * @brief This function will return the length of object list in object container.
  *
- * @param type the type of object, which can be
+ * @param type is the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  *
  * @return the length of object list
@@ -252,14 +252,14 @@ RTM_EXPORT(rt_object_get_length);
  * @brief This function will copy the object pointer of the specified type,
  *        with the maximum size specified by maxlen.
  *
- * @param type the type of object, which can be
+ * @param type is the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  *
- * @param pointers the pointers will be saved to
+ * @param pointers is the pointer will be saved to.
  *
- * @param maxlen the maximum number of pointers can be saved
+ * @param maxlen is the maximum number of pointers can be saved.
  *
- * @return the copied number of object pointers
+ * @return the copied number of object pointers.
  */
 int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers, int maxlen)
 {
@@ -296,11 +296,11 @@ RTM_EXPORT(rt_object_get_pointers);
  * @brief This function will initialize an object and add it to object system
  *        management.
  *
- * @param object the specified object to be initialized.
+ * @param object is the specified object to be initialized.
  *
- * @param type the object type.
+ * @param type is the object type.
  *
- * @param name the object name. In system, the object's name must be unique.
+ * @param name is the object name. In system, the object's name must be unique.
  */
 void rt_object_init(struct rt_object         *object,
                     enum rt_object_class_type type,
@@ -397,9 +397,9 @@ void rt_object_detach(rt_object_t object)
 /**
  * @brief This function will allocate an object from object system.
  *
- * @param type the type of object
+ * @param type is the type of object.
  *
- * @param name the object name. In system, the object's name must be unique.
+ * @param name is the object name. In system, the object's name must be unique.
  *
  * @return object
  */
@@ -467,7 +467,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 /**
  * @brief This function will delete an object and release object memory.
  *
- * @param object the specified object to be deleted.
+ * @param object is the specified object to be deleted.
  */
 void rt_object_delete(rt_object_t object)
 {
@@ -502,7 +502,7 @@ void rt_object_delete(rt_object_t object)
  * @note  Normally, the system object is a static object and the type
  *        of object set to RT_Object_Class_Static.
  *
- * @param object the specified object to be judged.
+ * @param object is the specified object to be judged.
  *
  * @return RT_TRUE if a system object, RT_FALSE for others.
  */
@@ -521,7 +521,7 @@ rt_bool_t rt_object_is_systemobject(rt_object_t object)
  * @brief This function will return the type of object without
  *        RT_Object_Class_Static flag.
  *
- * @param object the specified object to be get type.
+ * @param object is the specified object to be get type.
  *
  * @return the type of object.
  */
@@ -537,9 +537,9 @@ rt_uint8_t rt_object_get_type(rt_object_t object)
  * @brief This function will find specified name object from object
  *        container.
  *
- * @param name the specified name of object.
+ * @param name is the specified name of object.
  *
- * @param type the type of object
+ * @param type is the type of object
  *
  * @return the found object or RT_NULL if there is no this object
  * in object container.

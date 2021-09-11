@@ -266,7 +266,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
  *
  * @param size is the minimum size of the requested block in bytes.
  *
- * @return pointer to allocated memory or NULL if no free memory was found.
+ * @return the pointer to allocated memory or NULL if no free memory was found.
  */
 void *rt_malloc(rt_size_t size)
 {
@@ -410,11 +410,11 @@ void *rt_malloc(rt_size_t size)
 RTM_EXPORT(rt_malloc);
 
 /**
- * @brief This function will change the previously allocated memory block.
+ * @brief This function will change the size of previously allocated memory block.
  *
- * @param rmem pointer to memory allocated by rt_malloc.
+ * @param rmem is the pointer to memory allocated by rt_malloc.
  *
- * @param newsize the required new size.
+ * @param newsize is the required new size.
  *
  * @return the changed memory block address.
  */
@@ -517,15 +517,15 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 RTM_EXPORT(rt_realloc);
 
 /**
- * @brief This function will contiguously allocate enough space for count objects
- *        that are size bytes of memory each and returns a pointer to the allocated
- *        memory.
+ * @brief  This function will contiguously allocate enough space for count objects
+ *         that are size bytes of memory each and returns a pointer to the allocated
+ *         memory.
  *
- * @note The allocated memory is filled with bytes of value zero.
+ * @note   The allocated memory is filled with bytes of value zero.
  *
- * @param count number of objects to allocate.
+ * @param  count is the number of objects to allocate.
  *
- * @param size size of the objects to allocate.
+ * @param  size is the size of one object to allocate.
  *
  * @return pointer to allocated memory / NULL pointer if there is an error.
  */
@@ -548,7 +548,7 @@ RTM_EXPORT(rt_calloc);
  * @brief This function will release the previously allocated memory block by
  *        rt_malloc. The released memory block is taken back to system heap.
  *
- * @param rmem the address of memory which will be released
+ * @param rmem the address of memory which will be released.
  */
 void rt_free(void *rmem)
 {
