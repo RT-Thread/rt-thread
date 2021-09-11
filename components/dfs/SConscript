@@ -11,7 +11,7 @@ cwd = GetCurrentDir()
 CPPPATH = [cwd + "/include"]
 
 if GetDepend('RT_USING_POSIX'):
-    src += ['src/poll.c', 'src/select.c']
+    src += ['src/dfs_poll.c', 'src/dfs_select.c']
 
 group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH)
 
