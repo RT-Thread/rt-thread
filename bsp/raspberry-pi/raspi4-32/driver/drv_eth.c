@@ -9,9 +9,12 @@
  * 2020-10-30     bigmagic       first version
  */
 
-#include <rthw.h>
 #include <stdint.h>
+
+#include <rthw.h>
 #include <rtthread.h>
+#include "board.h"
+
 #include <lwip/sys.h>
 #include <netif/ethernetif.h>
 
@@ -72,12 +75,12 @@ static struct rt_semaphore link_ack;
 
 static inline rt_uint32_t read32(void *addr)
 {
-    return (*((volatile unsigned int*)(addr)));
+    return (*((volatile unsigned int *)(addr)));
 }
 
 static inline void write32(void *addr, rt_uint32_t value)
 {
-    (*((volatile unsigned int*)(addr))) = value;
+    (*((volatile unsigned int *)(addr))) = value;
 }
 
 static void eth_rx_irq(int irq, void *param)
@@ -380,7 +383,7 @@ static int bcmgenet_gmac_eth_start(void)
 
     /* Update MAC registers based on PHY property */
     ret = bcmgenet_adjust_link();
-    if(ret)
+    if (ret)
     {
         rt_kprintf("bcmgenet: adjust PHY link failed: %d\n", ret);
         return ret;
@@ -416,10 +419,10 @@ static rt_uint32_t prev_recv_cnt = 0;
 static rt_uint32_t cur_recv_cnt = 0;
 static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
 {
-    void* desc_base;
+    void *desc_base;
     rt_uint32_t length = 0, addr = 0;
     rt_uint32_t prod_index = read32(MAC_REG + RDMA_PROD_INDEX);
-    if(prod_index == index_flag)
+    if (prod_index == index_flag)
     {
         cur_recv_cnt = index_flag;
         index_flag = 0x7fffffff;
@@ -428,7 +431,7 @@ static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
     }
     else
     {
-        if(prev_recv_cnt == prod_index & 0xffff)
+        if (prev_recv_cnt == (prod_index & 0xffff))
         {
             return 0;
         }
@@ -437,15 +440,16 @@ static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
         length = read32(desc_base + DMA_DESC_LENGTH_STATUS);
         length = (length >> DMA_BUFLENGTH_SHIFT) & DMA_BUFLENGTH_MASK;
         addr = read32(desc_base + DMA_DESC_ADDRESS_LO);
+
         /* To cater for the IP headepr alignment the hardware does.
-        * This would actually not be needed if we don't program
-        * RBUF_ALIGN_2B
-        */
-        rt_hw_cpu_dcache_invalidate(addr,length);
+            * This would actually not be needed if we don't program
+            * RBUF_ALIGN_2B
+            */
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, (void *) addr, length);
         *packetp = (rt_uint8_t *)(addr + RX_BUF_OFFSET);
 
         rx_index = rx_index + 1;
-        if(rx_index >= RX_DESCS)
+        if (rx_index >= RX_DESCS)
         {
             rx_index = 0;
         }
@@ -453,7 +457,7 @@ static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
 
         cur_recv_cnt = cur_recv_cnt + 1;
 
-        if(cur_recv_cnt > 0xffff)
+        if (cur_recv_cnt > 0xffff)
         {
             cur_recv_cnt = 0;
         }
@@ -468,16 +472,16 @@ static int bcmgenet_gmac_eth_send(void *packet, int length)
     void *desc_base = (TX_DESC_BASE + tx_index * DMA_DESC_SIZE);
     rt_uint32_t len_stat = length << DMA_BUFLENGTH_SHIFT;
 
-    rt_uint32_t prod_index, cons;
-    rt_uint32_t tries = 100;
+    rt_uint32_t prod_index;
 
     prod_index = read32(MAC_REG + TDMA_PROD_INDEX);
 
     len_stat |= 0x3F << DMA_TX_QTAG_SHIFT;
     len_stat |= DMA_TX_APPEND_CRC | DMA_SOP | DMA_EOP;
 
-    rt_hw_cpu_dcache_clean((void*)packet, length);
-    write32((desc_base + DMA_DESC_ADDRESS_LO), packet);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)packet, length);
+
+    write32((desc_base + DMA_DESC_ADDRESS_LO), (rt_uint32_t)packet);
     write32((desc_base + DMA_DESC_ADDRESS_HI), 0);
     write32((desc_base + DMA_DESC_LENGTH_STATUS), len_stat);
 
@@ -631,7 +635,7 @@ struct pbuf *rt_eth_rx(rt_device_t device)
         if (recv_len > 0)
         {
             pbuf = pbuf_alloc(PBUF_LINK, recv_len, PBUF_RAM);
-            if(pbuf)
+            if (pbuf)
             {
                 rt_memcpy(pbuf->payload, addr_point, recv_len);
             }
