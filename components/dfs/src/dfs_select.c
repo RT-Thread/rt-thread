@@ -11,7 +11,7 @@
 #include <dfs_fs.h>
 #include <dfs_posix.h>
 
-#include <dfs_poll.h>
+#include <poll.h>
 #include <dfs_select.h>
 
 #ifdef RT_USING_POSIX
