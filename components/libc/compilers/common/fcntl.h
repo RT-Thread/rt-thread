@@ -5,44 +5,17 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-02-07     Bernard      Add O_DIRECTORY definition in NEWLIB mode.
- * 2018-02-09     Bernard      Add O_BINARY definition
+ * 2021-09-02     Meco Man     First version
  */
+#ifndef __FCNTL_H__
+#define __FCNTL_H__
 
-#ifndef LIBC_FCNTL_H__
-#define LIBC_FCNTL_H__
-
-#if defined(RT_USING_NEWLIB) || defined(_WIN32) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
-#include <fcntl.h>
-
-#ifndef O_NONBLOCK
-#define O_NONBLOCK   0x4000
-#endif
+#include <sys/types.h>
 
 #if defined(_WIN32)
 #define O_ACCMODE   (_O_RDONLY | _O_WRONLY | _O_RDWR)
 #endif
 
-#ifndef F_GETFL
-#define F_GETFL  3
-#endif
-#ifndef F_SETFL
-#define F_SETFL  4
-#endif
-
-#ifndef O_DIRECTORY
-#define O_DIRECTORY 0x200000
-#endif
-
-#ifndef O_BINARY
-#ifdef  _O_BINARY
-#define O_BINARY _O_BINARY
-#else
-#define O_BINARY         0
-#endif
-#endif
-
-#else
 #define O_RDONLY         00
 #define O_WRONLY         01
 #define O_RDWR           02
@@ -60,7 +33,6 @@
 #define O_DIRECTORY 0200000
 #define O_NOFOLLOW  0400000
 #define O_CLOEXEC  02000000
-
 #define O_ASYNC      020000
 #define O_DIRECT     040000
 #define O_LARGEFILE 0100000
@@ -68,7 +40,6 @@
 #define O_PATH    010000000
 #define O_TMPFILE 020200000
 #define O_NDELAY O_NONBLOCK
-
 #define O_SEARCH  O_PATH
 #define O_EXEC    O_PATH
 
@@ -93,6 +64,9 @@
 #define F_GETOWN_EX 16
 
 #define F_GETOWNER_UIDS 17
-#endif
+
+int open(const char *file, int flags, ...);
+int fcntl(int fildes, int cmd, ...);
+int creat(const char *, mode_t);
 
 #endif
