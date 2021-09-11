@@ -1146,9 +1146,6 @@ struct rt_device_graphic_ops
 /**@}*/
 #endif
 
-/* definitions for libc */
-#include "rtlibc.h"
-
 #ifdef __cplusplus
 }
 #endif
