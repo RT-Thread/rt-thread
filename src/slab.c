@@ -277,9 +277,9 @@ void *rt_page_alloc(rt_size_t npages)
 /**
  * @brief Free memory by page.
  *
- * @param addr the head address of first page.
+ * @param addr is the head address of first page.
  *
- * @param npages the number of pages.
+ * @param npages is the number of pages.
  */
 void rt_page_free(void *addr, rt_size_t npages)
 {
@@ -482,7 +482,7 @@ rt_inline int zoneindex(rt_size_t *bytes)
  *         - the nbytes is less than zero.
  *         - there is no nbytes sized memory valid in system.
  *
- * @param size the size of memory to be allocated.
+ * @param size is the size of memory to be allocated.
  *
  * @return the allocated memory.
  */
@@ -681,9 +681,9 @@ RTM_EXPORT(rt_malloc);
 /**
  * @brief This function will change the size of previously allocated memory block.
  *
- * @param ptr the previously allocated memory block.
+ * @param ptr is the previously allocated memory block.
  *
- * @param size the new size of memory block.
+ * @param size is the new size of memory block.
  *
  * @return the allocated memory.
  */
@@ -754,9 +754,9 @@ RTM_EXPORT(rt_realloc);
  *
  * @note The allocated memory is filled with bytes of value zero.
  *
- * @param count number of objects to allocate.
+ * @param count is the number of objects to allocate.
  *
- * @param size size of the objects to allocate.
+ * @param size is the size of the objects to allocate.
  *
  * @return pointer to allocated memory / NULL pointer if there is an error.
  */
@@ -780,7 +780,7 @@ RTM_EXPORT(rt_calloc);
  *
  * @note The released memory block is taken back to system heap.
  *
- * @param ptr the address of memory which will be released
+ * @param ptr is the address of memory which will be released
  */
 void rt_free(void *ptr)
 {

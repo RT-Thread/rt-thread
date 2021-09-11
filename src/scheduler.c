@@ -61,7 +61,7 @@ static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
  * @brief This function will set a hook function, which will be invoked when thread
  *        switch happens.
  *
- * @param hook the hook function.
+ * @param hook is the hook function.
  */
 void rt_scheduler_sethook(void (*hook)(struct rt_thread *from, struct rt_thread *to))
 {
@@ -72,7 +72,7 @@ void rt_scheduler_sethook(void (*hook)(struct rt_thread *from, struct rt_thread 
  * @brief This function will set a hook function, which will be invoked when context
  *        switch happens.
  *
- * @param hook the hook function.
+ * @param hook is the hook function.
  */
 void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 {
@@ -235,9 +235,8 @@ void rt_system_scheduler_init(void)
 }
 
 /**
- * @ingroup SystemInit
- * This function will startup scheduler. It will select one thread
- * with the highest priority level, then switch to it.
+ * @brief This function will startup the scheduler. It will select one thread
+ *        with the highest priority level, then switch to it.
  */
 void rt_system_scheduler_start(void)
 {
@@ -276,9 +275,9 @@ void rt_system_scheduler_start(void)
 /**
  * @brief This function will handle IPI interrupt and do a scheduling in system.
  *
- * @param vector the number of IPI interrupt for system scheduling.
+ * @param vector is the number of IPI interrupt for system scheduling.
  *
- * @param param use RT_NULL.
+ * @param param is not used, and can be set to RT_NULL.
  *
  * @note this function should be invoke or register as ISR in BSP.
  */
@@ -411,8 +410,8 @@ __exit:
 }
 #else
 /**
- * @brief This function will perform one schedule. It will select one thread
- *        with the highest priority level, and switch to it immediately.
+ * @brief This function will perform scheduling once. It will select one thread
+ *        with the highest priority, and switch to it immediately.
  */
 void rt_schedule(void)
 {
@@ -540,7 +539,7 @@ __exit:
 #endif /* RT_USING_SMP */
 
 /**
- * @brief This function checks if a scheduling is needed after IRQ context. If yes,
+ * @brief This function checks whether a scheduling is needed after an IRQ context switching. If yes,
  *        it will select one thread with the highest priority level, and then switch
  *        to it.
  */
@@ -636,12 +635,12 @@ void rt_scheduler_do_irq_switch(void *context)
 #endif /* RT_USING_SMP */
 
 /**
- * @brief This function will insert a thread to system ready queue. The state of
- *        thread will be set as READY and remove from suspend queue.
+ * @brief This function will insert a thread to the system ready queue. The state of
+ *        thread will be set as READY and the thread will be removed from suspend queue.
  *
- * @param thread the thread to be inserted
+ * @param thread is the thread to be inserted.
  *
- * @note Please do not invoke this function in user application.
+ * @note  Please do not invoke this function in user application.
  */
 #ifdef RT_USING_SMP
 void rt_schedule_insert_thread(struct rt_thread *thread)
@@ -746,12 +745,12 @@ __exit:
 }
 #endif /* RT_USING_SMP */
 
-/*
- * This function will remove a thread from system ready queue.
+/**
+ * @brief This function will remove a thread from system ready queue.
  *
- * @param thread the thread to be removed
+ * @param thread is the thread to be removed.
  *
- * @note Please do not invoke this function in user application.
+ * @note  Please do not invoke this function in user application.
  */
 #ifdef RT_USING_SMP
 void rt_schedule_remove_thread(struct rt_thread *thread)
