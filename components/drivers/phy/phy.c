@@ -8,7 +8,7 @@
  * Date           Author        Notes
  * 2020-09-27     wangqiang     first version
  */
-
+#include <stddef.h>
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
