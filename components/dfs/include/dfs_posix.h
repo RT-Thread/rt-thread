@@ -16,44 +16,9 @@
 #define __DFS_POSIX_H__
 
 #include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h> /* rename() */
 #include <sys/stat.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-/* file api*/
-
-int close(int d);
-
-#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
-_READ_WRITE_RETURN_TYPE _EXFUN(read, (int __fd, void *__buf, size_t __nbyte));
-_READ_WRITE_RETURN_TYPE _EXFUN(write, (int __fd, const void *__buf, size_t __nbyte));
-#else
-int read(int fd, void *buf, size_t len);
-int write(int fd, const void *buf, size_t len);
-#endif
-
-off_t lseek(int fd, off_t offset, int whence);
-int rename(const char *from, const char *to);
-int unlink(const char *pathname);
-int fsync(int fildes);
-int ftruncate(int fd, off_t length);
-
-/* directory api*/
-int rmdir(const char *path);
-int chdir(const char *path);
-char *getcwd(char *buf, size_t size);
-
-/* file system api */
-int statfs(const char *path, struct statfs *buf);
-
-int access(const char *path, int amode);
-int pipe(int fildes[2]);
-
-#ifdef __cplusplus
-}
-#endif
+#include <sys/statfs.h> /* statfs() */
 
 #endif
