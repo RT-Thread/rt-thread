@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2006-2021, RT-Thread Development Team
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -208,5 +208,5 @@ int rt_hw_uart_init(void)
 
     return RT_EOK;
 }
-
 INIT_BOARD_EXPORT(rt_hw_uart_init);
+
