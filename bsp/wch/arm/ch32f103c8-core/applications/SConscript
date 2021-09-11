@@ -1,0 +1,17 @@
+# RT-Thread building script for component
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+main.c
+""")
+
+CPPPATH = [cwd, str(Dir('#'))]
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
