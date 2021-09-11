@@ -63,7 +63,7 @@ struct pt_regs {
      * so it should be a part of pt_regs */
     struct mips_fpu_struct fpu;
 #endif
-} __aligned(8);
+} __attribute__((aligned(8)));
 #endif
 
 /* Note: For call stack o32 ABI has 0x8 shadowsoace Here  */

@@ -223,7 +223,7 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 /**
  * get date and time or set (local timezone) [year month day hour min sec]
  */
-static void date(uint8_t argc, char **argv)
+static void date(int argc, char **argv)
 {
     if (argc == 1)
     {
@@ -235,8 +235,9 @@ static void date(uint8_t argc, char **argv)
     else if (argc >= 7)
     {
         /* set time and date */
-        uint16_t year;
-        uint8_t month, day, hour, min, sec;
+        rt_uint16_t year;
+        rt_uint8_t month, day, hour, min, sec;
+
         year = atoi(argv[1]);
         month = atoi(argv[2]);
         day = atoi(argv[3]);
