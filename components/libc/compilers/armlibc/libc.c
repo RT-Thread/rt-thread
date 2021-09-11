@@ -7,11 +7,8 @@
  * Date           Author       Notes
  * 2017/10/15     bernard      the first version
  */
-#include <stdio.h>
-#include <stdlib.h>
-
+#include <fcntl.h>
 #include <rtthread.h>
-
 #include "libc.h"
 
 #ifdef RT_USING_PTHREADS
