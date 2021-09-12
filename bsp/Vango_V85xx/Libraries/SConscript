@@ -15,7 +15,7 @@ src += [cwd + '/CMSIS/Vango/V85xx/Source/lib_LoadNVR.c']
 #add for startup script
 if rtconfig.CROSS_TOOL == 'gcc':
     src += [cwd + '/CMSIS/Vango/V85xx/Source/GCC/startup_target.S']
-if rtconfig.CROSS_TOOL == 'mdk5':
+if rtconfig.CROSS_TOOL == 'keil':
     src += [cwd + '/CMSIS/Vango/V85xx/Source/Keil5/startup_target.S']
 
 path = [
