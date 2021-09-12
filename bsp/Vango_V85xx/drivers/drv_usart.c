@@ -7,6 +7,7 @@
  * Date           Author            Notes
  * 2021-01-04     iysheng           first version
  * 2021-09-07     FuC               Suit for Vango V85XX
+ * 2021·09-12     ZhuXW             fix UART5
  */
 
 #include <target.h>
@@ -17,7 +18,7 @@
 
 #if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1) && \
     !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) && \
-    !defined(BSP_USING_UART4)
+    !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5)
     #error "Please define at least one UARTx"
 
 #endif
@@ -105,6 +106,21 @@ void UART4_IRQHandler(void)
 }
 #endif /* BSP_USING_UART4 */
 
+#if defined(BSP_USING_UART5)
+struct rt_serial_device serial5;
+
+void UART5_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&serial5);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_UART4 */
+
 static const struct V85xx_uart uarts[] = 
 {
 #ifdef BSP_USING_UART0
@@ -149,6 +165,15 @@ static const struct V85xx_uart uarts[] =
         UART4_IRQn,                         /* uart iqrn */
         &serial4,
         "uart4",
+    },
+#endif
+
+#ifdef BSP_USING_UART5
+    {
+        UART5,                              /* uart peripheral index */
+        UART5_IRQn,                         /* uart iqrn */
+        &serial5,
+        "uart5",
     },
 #endif
 };
@@ -214,13 +239,13 @@ static rt_err_t V85xx_control(struct rt_serial_device *serial, int cmd, void *ar
         /* disable rx irq */
         NVIC_DisableIRQ(uart->irqn);
         /* disable interrupt */
-        UART_INTConfig(UARTx, UART_INT_RXPE, DISABLE);
+        UART_INTConfig(UARTx, UART_INT_RX, DISABLE);
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         NVIC_EnableIRQ(uart->irqn);
         /* enable interrupt */
-        UART_INTConfig(UARTx, UART_INT_RXPE, ENABLE);
+        UART_INTConfig(UARTx, UART_INT_RX, ENABLE);
         break;
     }
 
@@ -234,10 +259,9 @@ static int V85xx_putc(struct rt_serial_device *serial, char ch)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct V85xx_uart *)serial->parent.user_data;
 
-
     UART_SendData((UART_TypeDef *)uart->uart_periph, ch);
-    while ((UART_GetFlag(uart->uart_periph, UART_FLAG_TXDONE) == RESET));
-
+    while ((UART_GetFlag((UART_TypeDef *)uart->uart_periph, UART_FLAG_TXDONE) == RESET));
+    UART_ClearFlag((UART_TypeDef *)uart->uart_periph, UART_FLAG_TXDONE);
     return 1;
 }
 
@@ -250,8 +274,8 @@ static int V85xx_getc(struct rt_serial_device *serial)
     uart = (struct V85xx_uart *)serial->parent.user_data;
 
     ch = -1;
-    if (UART_GetFlag(uart->uart_periph, UART_FLAG_RXFULL) != RESET)
-        ch = UART_ReceiveData(uart->uart_periph);
+    if (UART_GetFlag((UART_TypeDef *)uart->uart_periph, UART_FLAG_RXFULL) != RESET)
+        ch = UART_ReceiveData((UART_TypeDef *)uart->uart_periph);
     return ch;
 }
 
@@ -267,11 +291,11 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     if ((UART_GetINTStatus((UART_TypeDef *)uart->uart_periph, UART_INTSTS_RX) != RESET) &&
-            (UART_GetFlag((UART_TypeDef *)uart->uart_periph, UART_FLAG_RXPE) != RESET)) 
+            (UART_GetFlag((UART_TypeDef *)uart->uart_periph, UART_FLAG_RXFULL) != RESET)) 
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
         /* Clear RXNE interrupt flag */
-        UART_ClearINTStatus(uart->uart_periph, UART_INTSTS_RX);
+        UART_ClearINTStatus((UART_TypeDef *)uart->uart_periph, UART_INTSTS_RX);
     }
 }
 
