@@ -23,7 +23,7 @@ extern "C" {
 
 #define __V85XX_PORT(port)  GPIO##port##_BASE
 
-#define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__V85XX_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x0400UL) )) + PIN)
+#define GET_PIN(PORTx,PIN) (__V85XX_PORT(PORTx)==GPIOA_BASE) ? (rt_base_t)(0 + PIN):(rt_base_t)((16 * ( ((rt_base_t)__V85XX_PORT(PORTx) - (rt_base_t)GPIOB_BASE)/(0x0400UL) +1)) + PIN)
 
 #define PIN_NUM(port, no) (((((port) & 0xFu) << 4) | ((no) & 0xFu)))
 #define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
