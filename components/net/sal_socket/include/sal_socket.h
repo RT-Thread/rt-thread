@@ -11,6 +11,7 @@
 #ifndef SAL_SOCKET_H__
 #define SAL_SOCKET_H__
 
+#include <stddef.h>
 #include <arpa/inet.h>
 
 #ifdef __cplusplus

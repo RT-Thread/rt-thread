@@ -11,7 +11,7 @@
 #include <at.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <stdint.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
