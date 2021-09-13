@@ -327,9 +327,9 @@ typedef struct
 #define SYS_PLLCR_OFF_Pos 2
 #define SYS_PLLCR_OFF_Msk (0x01 << SYS_PLLCR_OFF_Pos)
 
-#define SYS_PLLDIV_FBDIV_Pos 0 //PLL FeedBack分频寄存器                           \
-                               //VCO输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV \
-                               //PLL输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV / OUTDIV = VCO输出频率 / OUTDIV
+#define SYS_PLLDIV_FBDIV_Pos 0 /*   PLL FeedBack分频寄存器                           \
+                                    VCO输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV \
+                                    PLL输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV / OUTDIV = VCO输出频率 / OUTDIV   */
 #define SYS_PLLDIV_FBDIV_Msk (0x1FF << SYS_PLLDIV_FBDIV_Pos)
 #define SYS_PLLDIV_ADDIV_Pos 9 //ADC时钟基（即VCO输出分频后的时钟）经ADDIV分频后作为ADC的转换时钟
 #define SYS_PLLDIV_ADDIV_Msk (0x1F << SYS_PLLDIV_ADDIV_Pos)
@@ -364,8 +364,8 @@ typedef struct
 
 typedef struct
 {
-    __IO uint32_t PORTA_SEL; //给PORTA_SEL[2n+2:2n]赋相应的值，将PORTA.PINn引脚配置成GPIO、模拟、数字等功能
-                             //当赋值为PORTA_PINn_FUNMUX时，PORTA.PINn引脚可通过PORTA_MUX寄存器连接到各种数字外设
+    __IO uint32_t PORTA_SEL; /*给PORTA_SEL[2n+2:2n]赋相应的值，将PORTA.PINn引脚配置成GPIO、模拟、数字等功能
+                             当赋值为PORTA_PINn_FUNMUX时，PORTA.PINn引脚可通过PORTA_MUX寄存器连接到各种数字外设 */
     __IO uint32_t PORTB_SEL;
 
     __IO uint32_t PORTC_SEL;
@@ -1182,447 +1182,6 @@ typedef struct
     __IO uint32_t INTCLR; //写1清除中断标志，只对边沿触发中断有用
 } GPIO_TypeDef;
 
-#define GPIO_DATA_PIN0_Pos 0
-#define GPIO_DATA_PIN0_Msk (0x01 << GPIO_DATA_PIN0_Pos)
-#define GPIO_DATA_PIN1_Pos 1
-#define GPIO_DATA_PIN1_Msk (0x01 << GPIO_DATA_PIN1_Pos)
-#define GPIO_DATA_PIN2_Pos 2
-#define GPIO_DATA_PIN2_Msk (0x01 << GPIO_DATA_PIN2_Pos)
-#define GPIO_DATA_PIN3_Pos 3
-#define GPIO_DATA_PIN3_Msk (0x01 << GPIO_DATA_PIN3_Pos)
-#define GPIO_DATA_PIN4_Pos 4
-#define GPIO_DATA_PIN4_Msk (0x01 << GPIO_DATA_PIN4_Pos)
-#define GPIO_DATA_PIN5_Pos 5
-#define GPIO_DATA_PIN5_Msk (0x01 << GPIO_DATA_PIN5_Pos)
-#define GPIO_DATA_PIN6_Pos 6
-#define GPIO_DATA_PIN6_Msk (0x01 << GPIO_DATA_PIN6_Pos)
-#define GPIO_DATA_PIN7_Pos 7
-#define GPIO_DATA_PIN7_Msk (0x01 << GPIO_DATA_PIN7_Pos)
-#define GPIO_DATA_PIN8_Pos 8
-#define GPIO_DATA_PIN8_Msk (0x01 << GPIO_DATA_PIN8_Pos)
-#define GPIO_DATA_PIN9_Pos 9
-#define GPIO_DATA_PIN9_Msk (0x01 << GPIO_DATA_PIN9_Pos)
-#define GPIO_DATA_PIN10_Pos 10
-#define GPIO_DATA_PIN10_Msk (0x01 << GPIO_DATA_PIN10_Pos)
-#define GPIO_DATA_PIN11_Pos 11
-#define GPIO_DATA_PIN11_Msk (0x01 << GPIO_DATA_PIN11_Pos)
-#define GPIO_DATA_PIN12_Pos 12
-#define GPIO_DATA_PIN12_Msk (0x01 << GPIO_DATA_PIN12_Pos)
-#define GPIO_DATA_PIN13_Pos 13
-#define GPIO_DATA_PIN13_Msk (0x01 << GPIO_DATA_PIN13_Pos)
-#define GPIO_DATA_PIN14_Pos 14
-#define GPIO_DATA_PIN14_Msk (0x01 << GPIO_DATA_PIN14_Pos)
-#define GPIO_DATA_PIN15_Pos 15
-#define GPIO_DATA_PIN15_Msk (0x01 << GPIO_DATA_PIN15_Pos)
-#define GPIO_DATA_PIN16_Pos 16
-#define GPIO_DATA_PIN16_Msk (0x01 << GPIO_DATA_PIN16_Pos)
-#define GPIO_DATA_PIN17_Pos 17
-#define GPIO_DATA_PIN17_Msk (0x01 << GPIO_DATA_PIN17_Pos)
-#define GPIO_DATA_PIN18_Pos 18
-#define GPIO_DATA_PIN18_Msk (0x01 << GPIO_DATA_PIN18_Pos)
-#define GPIO_DATA_PIN19_Pos 19
-#define GPIO_DATA_PIN19_Msk (0x01 << GPIO_DATA_PIN19_Pos)
-#define GPIO_DATA_PIN20_Pos 20
-#define GPIO_DATA_PIN20_Msk (0x01 << GPIO_DATA_PIN20_Pos)
-#define GPIO_DATA_PIN21_Pos 21
-#define GPIO_DATA_PIN21_Msk (0x01 << GPIO_DATA_PIN21_Pos)
-#define GPIO_DATA_PIN22_Pos 22
-#define GPIO_DATA_PIN22_Msk (0x01 << GPIO_DATA_PIN22_Pos)
-#define GPIO_DATA_PIN23_Pos 23
-#define GPIO_DATA_PIN23_Msk (0x01 << GPIO_DATA_PIN23_Pos)
-
-#define GPIO_DIR_PIN0_Pos 0
-#define GPIO_DIR_PIN0_Msk (0x01 << GPIO_DIR_PIN0_Pos)
-#define GPIO_DIR_PIN1_Pos 1
-#define GPIO_DIR_PIN1_Msk (0x01 << GPIO_DIR_PIN1_Pos)
-#define GPIO_DIR_PIN2_Pos 2
-#define GPIO_DIR_PIN2_Msk (0x01 << GPIO_DIR_PIN2_Pos)
-#define GPIO_DIR_PIN3_Pos 3
-#define GPIO_DIR_PIN3_Msk (0x01 << GPIO_DIR_PIN3_Pos)
-#define GPIO_DIR_PIN4_Pos 4
-#define GPIO_DIR_PIN4_Msk (0x01 << GPIO_DIR_PIN4_Pos)
-#define GPIO_DIR_PIN5_Pos 5
-#define GPIO_DIR_PIN5_Msk (0x01 << GPIO_DIR_PIN5_Pos)
-#define GPIO_DIR_PIN6_Pos 6
-#define GPIO_DIR_PIN6_Msk (0x01 << GPIO_DIR_PIN6_Pos)
-#define GPIO_DIR_PIN7_Pos 7
-#define GPIO_DIR_PIN7_Msk (0x01 << GPIO_DIR_PIN7_Pos)
-#define GPIO_DIR_PIN8_Pos 8
-#define GPIO_DIR_PIN8_Msk (0x01 << GPIO_DIR_PIN8_Pos)
-#define GPIO_DIR_PIN9_Pos 9
-#define GPIO_DIR_PIN9_Msk (0x01 << GPIO_DIR_PIN9_Pos)
-#define GPIO_DIR_PIN10_Pos 10
-#define GPIO_DIR_PIN10_Msk (0x01 << GPIO_DIR_PIN10_Pos)
-#define GPIO_DIR_PIN11_Pos 11
-#define GPIO_DIR_PIN11_Msk (0x01 << GPIO_DIR_PIN11_Pos)
-#define GPIO_DIR_PIN12_Pos 12
-#define GPIO_DIR_PIN12_Msk (0x01 << GPIO_DIR_PIN12_Pos)
-#define GPIO_DIR_PIN13_Pos 13
-#define GPIO_DIR_PIN13_Msk (0x01 << GPIO_DIR_PIN13_Pos)
-#define GPIO_DIR_PIN14_Pos 14
-#define GPIO_DIR_PIN14_Msk (0x01 << GPIO_DIR_PIN14_Pos)
-#define GPIO_DIR_PIN15_Pos 15
-#define GPIO_DIR_PIN15_Msk (0x01 << GPIO_DIR_PIN15_Pos)
-#define GPIO_DIR_PIN16_Pos 16
-#define GPIO_DIR_PIN16_Msk (0x01 << GPIO_DIR_PIN16_Pos)
-#define GPIO_DIR_PIN17_Pos 17
-#define GPIO_DIR_PIN17_Msk (0x01 << GPIO_DIR_PIN17_Pos)
-#define GPIO_DIR_PIN18_Pos 18
-#define GPIO_DIR_PIN18_Msk (0x01 << GPIO_DIR_PIN18_Pos)
-#define GPIO_DIR_PIN19_Pos 19
-#define GPIO_DIR_PIN19_Msk (0x01 << GPIO_DIR_PIN19_Pos)
-#define GPIO_DIR_PIN20_Pos 20
-#define GPIO_DIR_PIN20_Msk (0x01 << GPIO_DIR_PIN20_Pos)
-#define GPIO_DIR_PIN21_Pos 21
-#define GPIO_DIR_PIN21_Msk (0x01 << GPIO_DIR_PIN21_Pos)
-#define GPIO_DIR_PIN22_Pos 22
-#define GPIO_DIR_PIN22_Msk (0x01 << GPIO_DIR_PIN22_Pos)
-#define GPIO_DIR_PIN23_Pos 23
-#define GPIO_DIR_PIN23_Msk (0x01 << GPIO_DIR_PIN23_Pos)
-
-#define GPIO_INTLVLTRG_PIN0_Pos 0
-#define GPIO_INTLVLTRG_PIN0_Msk (0x01 << GPIO_INTLVLTRG_PIN0_Pos)
-#define GPIO_INTLVLTRG_PIN1_Pos 1
-#define GPIO_INTLVLTRG_PIN1_Msk (0x01 << GPIO_INTLVLTRG_PIN1_Pos)
-#define GPIO_INTLVLTRG_PIN2_Pos 2
-#define GPIO_INTLVLTRG_PIN2_Msk (0x01 << GPIO_INTLVLTRG_PIN2_Pos)
-#define GPIO_INTLVLTRG_PIN3_Pos 3
-#define GPIO_INTLVLTRG_PIN3_Msk (0x01 << GPIO_INTLVLTRG_PIN3_Pos)
-#define GPIO_INTLVLTRG_PIN4_Pos 4
-#define GPIO_INTLVLTRG_PIN4_Msk (0x01 << GPIO_INTLVLTRG_PIN4_Pos)
-#define GPIO_INTLVLTRG_PIN5_Pos 5
-#define GPIO_INTLVLTRG_PIN5_Msk (0x01 << GPIO_INTLVLTRG_PIN5_Pos)
-#define GPIO_INTLVLTRG_PIN6_Pos 6
-#define GPIO_INTLVLTRG_PIN6_Msk (0x01 << GPIO_INTLVLTRG_PIN6_Pos)
-#define GPIO_INTLVLTRG_PIN7_Pos 7
-#define GPIO_INTLVLTRG_PIN7_Msk (0x01 << GPIO_INTLVLTRG_PIN7_Pos)
-#define GPIO_INTLVLTRG_PIN8_Pos 8
-#define GPIO_INTLVLTRG_PIN8_Msk (0x01 << GPIO_INTLVLTRG_PIN8_Pos)
-#define GPIO_INTLVLTRG_PIN9_Pos 9
-#define GPIO_INTLVLTRG_PIN9_Msk (0x01 << GPIO_INTLVLTRG_PIN9_Pos)
-#define GPIO_INTLVLTRG_PIN10_Pos 10
-#define GPIO_INTLVLTRG_PIN10_Msk (0x01 << GPIO_INTLVLTRG_PIN10_Pos)
-#define GPIO_INTLVLTRG_PIN11_Pos 11
-#define GPIO_INTLVLTRG_PIN11_Msk (0x01 << GPIO_INTLVLTRG_PIN11_Pos)
-#define GPIO_INTLVLTRG_PIN12_Pos 12
-#define GPIO_INTLVLTRG_PIN12_Msk (0x01 << GPIO_INTLVLTRG_PIN12_Pos)
-#define GPIO_INTLVLTRG_PIN13_Pos 13
-#define GPIO_INTLVLTRG_PIN13_Msk (0x01 << GPIO_INTLVLTRG_PIN13_Pos)
-#define GPIO_INTLVLTRG_PIN14_Pos 14
-#define GPIO_INTLVLTRG_PIN14_Msk (0x01 << GPIO_INTLVLTRG_PIN14_Pos)
-#define GPIO_INTLVLTRG_PIN15_Pos 15
-#define GPIO_INTLVLTRG_PIN15_Msk (0x01 << GPIO_INTLVLTRG_PIN15_Pos)
-#define GPIO_INTLVLTRG_PIN16_Pos 16
-#define GPIO_INTLVLTRG_PIN16_Msk (0x01 << GPIO_INTLVLTRG_PIN16_Pos)
-#define GPIO_INTLVLTRG_PIN17_Pos 17
-#define GPIO_INTLVLTRG_PIN17_Msk (0x01 << GPIO_INTLVLTRG_PIN17_Pos)
-#define GPIO_INTLVLTRG_PIN18_Pos 18
-#define GPIO_INTLVLTRG_PIN18_Msk (0x01 << GPIO_INTLVLTRG_PIN18_Pos)
-#define GPIO_INTLVLTRG_PIN19_Pos 19
-#define GPIO_INTLVLTRG_PIN19_Msk (0x01 << GPIO_INTLVLTRG_PIN19_Pos)
-#define GPIO_INTLVLTRG_PIN20_Pos 20
-#define GPIO_INTLVLTRG_PIN20_Msk (0x01 << GPIO_INTLVLTRG_PIN20_Pos)
-#define GPIO_INTLVLTRG_PIN21_Pos 21
-#define GPIO_INTLVLTRG_PIN21_Msk (0x01 << GPIO_INTLVLTRG_PIN21_Pos)
-#define GPIO_INTLVLTRG_PIN22_Pos 22
-#define GPIO_INTLVLTRG_PIN22_Msk (0x01 << GPIO_INTLVLTRG_PIN22_Pos)
-#define GPIO_INTLVLTRG_PIN23_Pos 23
-#define GPIO_INTLVLTRG_PIN23_Msk (0x01 << GPIO_INTLVLTRG_PIN23_Pos)
-
-#define GPIO_INTBE_PIN0_Pos 0
-#define GPIO_INTBE_PIN0_Msk (0x01 << GPIO_INTBE_PIN0_Pos)
-#define GPIO_INTBE_PIN1_Pos 1
-#define GPIO_INTBE_PIN1_Msk (0x01 << GPIO_INTBE_PIN1_Pos)
-#define GPIO_INTBE_PIN2_Pos 2
-#define GPIO_INTBE_PIN2_Msk (0x01 << GPIO_INTBE_PIN2_Pos)
-#define GPIO_INTBE_PIN3_Pos 3
-#define GPIO_INTBE_PIN3_Msk (0x01 << GPIO_INTBE_PIN3_Pos)
-#define GPIO_INTBE_PIN4_Pos 4
-#define GPIO_INTBE_PIN4_Msk (0x01 << GPIO_INTBE_PIN4_Pos)
-#define GPIO_INTBE_PIN5_Pos 5
-#define GPIO_INTBE_PIN5_Msk (0x01 << GPIO_INTBE_PIN5_Pos)
-#define GPIO_INTBE_PIN6_Pos 6
-#define GPIO_INTBE_PIN6_Msk (0x01 << GPIO_INTBE_PIN6_Pos)
-#define GPIO_INTBE_PIN7_Pos 7
-#define GPIO_INTBE_PIN7_Msk (0x01 << GPIO_INTBE_PIN7_Pos)
-#define GPIO_INTBE_PIN8_Pos 8
-#define GPIO_INTBE_PIN8_Msk (0x01 << GPIO_INTBE_PIN8_Pos)
-#define GPIO_INTBE_PIN9_Pos 9
-#define GPIO_INTBE_PIN9_Msk (0x01 << GPIO_INTBE_PIN9_Pos)
-#define GPIO_INTBE_PIN10_Pos 10
-#define GPIO_INTBE_PIN10_Msk (0x01 << GPIO_INTBE_PIN10_Pos)
-#define GPIO_INTBE_PIN11_Pos 11
-#define GPIO_INTBE_PIN11_Msk (0x01 << GPIO_INTBE_PIN11_Pos)
-#define GPIO_INTBE_PIN12_Pos 12
-#define GPIO_INTBE_PIN12_Msk (0x01 << GPIO_INTBE_PIN12_Pos)
-#define GPIO_INTBE_PIN13_Pos 13
-#define GPIO_INTBE_PIN13_Msk (0x01 << GPIO_INTBE_PIN13_Pos)
-#define GPIO_INTBE_PIN14_Pos 14
-#define GPIO_INTBE_PIN14_Msk (0x01 << GPIO_INTBE_PIN14_Pos)
-#define GPIO_INTBE_PIN15_Pos 15
-#define GPIO_INTBE_PIN15_Msk (0x01 << GPIO_INTBE_PIN15_Pos)
-#define GPIO_INTBE_PIN16_Pos 16
-#define GPIO_INTBE_PIN16_Msk (0x01 << GPIO_INTBE_PIN16_Pos)
-#define GPIO_INTBE_PIN17_Pos 17
-#define GPIO_INTBE_PIN17_Msk (0x01 << GPIO_INTBE_PIN17_Pos)
-#define GPIO_INTBE_PIN18_Pos 18
-#define GPIO_INTBE_PIN18_Msk (0x01 << GPIO_INTBE_PIN18_Pos)
-#define GPIO_INTBE_PIN19_Pos 19
-#define GPIO_INTBE_PIN19_Msk (0x01 << GPIO_INTBE_PIN19_Pos)
-#define GPIO_INTBE_PIN20_Pos 20
-#define GPIO_INTBE_PIN20_Msk (0x01 << GPIO_INTBE_PIN20_Pos)
-#define GPIO_INTBE_PIN21_Pos 21
-#define GPIO_INTBE_PIN21_Msk (0x01 << GPIO_INTBE_PIN21_Pos)
-#define GPIO_INTBE_PIN22_Pos 22
-#define GPIO_INTBE_PIN22_Msk (0x01 << GPIO_INTBE_PIN22_Pos)
-#define GPIO_INTBE_PIN23_Pos 23
-#define GPIO_INTBE_PIN23_Msk (0x01 << GPIO_INTBE_PIN23_Pos)
-
-#define GPIO_INTRISEEN_PIN0_Pos 0
-#define GPIO_INTRISEEN_PIN0_Msk (0x01 << GPIO_INTRISEEN_PIN0_Pos)
-#define GPIO_INTRISEEN_PIN1_Pos 1
-#define GPIO_INTRISEEN_PIN1_Msk (0x01 << GPIO_INTRISEEN_PIN1_Pos)
-#define GPIO_INTRISEEN_PIN2_Pos 2
-#define GPIO_INTRISEEN_PIN2_Msk (0x01 << GPIO_INTRISEEN_PIN2_Pos)
-#define GPIO_INTRISEEN_PIN3_Pos 3
-#define GPIO_INTRISEEN_PIN3_Msk (0x01 << GPIO_INTRISEEN_PIN3_Pos)
-#define GPIO_INTRISEEN_PIN4_Pos 4
-#define GPIO_INTRISEEN_PIN4_Msk (0x01 << GPIO_INTRISEEN_PIN4_Pos)
-#define GPIO_INTRISEEN_PIN5_Pos 5
-#define GPIO_INTRISEEN_PIN5_Msk (0x01 << GPIO_INTRISEEN_PIN5_Pos)
-#define GPIO_INTRISEEN_PIN6_Pos 6
-#define GPIO_INTRISEEN_PIN6_Msk (0x01 << GPIO_INTRISEEN_PIN6_Pos)
-#define GPIO_INTRISEEN_PIN7_Pos 7
-#define GPIO_INTRISEEN_PIN7_Msk (0x01 << GPIO_INTRISEEN_PIN7_Pos)
-#define GPIO_INTRISEEN_PIN8_Pos 8
-#define GPIO_INTRISEEN_PIN8_Msk (0x01 << GPIO_INTRISEEN_PIN8_Pos)
-#define GPIO_INTRISEEN_PIN9_Pos 9
-#define GPIO_INTRISEEN_PIN9_Msk (0x01 << GPIO_INTRISEEN_PIN9_Pos)
-#define GPIO_INTRISEEN_PIN10_Pos 10
-#define GPIO_INTRISEEN_PIN10_Msk (0x01 << GPIO_INTRISEEN_PIN10_Pos)
-#define GPIO_INTRISEEN_PIN11_Pos 11
-#define GPIO_INTRISEEN_PIN11_Msk (0x01 << GPIO_INTRISEEN_PIN11_Pos)
-#define GPIO_INTRISEEN_PIN12_Pos 12
-#define GPIO_INTRISEEN_PIN12_Msk (0x01 << GPIO_INTRISEEN_PIN12_Pos)
-#define GPIO_INTRISEEN_PIN13_Pos 13
-#define GPIO_INTRISEEN_PIN13_Msk (0x01 << GPIO_INTRISEEN_PIN13_Pos)
-#define GPIO_INTRISEEN_PIN14_Pos 14
-#define GPIO_INTRISEEN_PIN14_Msk (0x01 << GPIO_INTRISEEN_PIN14_Pos)
-#define GPIO_INTRISEEN_PIN15_Pos 15
-#define GPIO_INTRISEEN_PIN15_Msk (0x01 << GPIO_INTRISEEN_PIN15_Pos)
-#define GPIO_INTRISEEN_PIN16_Pos 16
-#define GPIO_INTRISEEN_PIN16_Msk (0x01 << GPIO_INTRISEEN_PIN16_Pos)
-#define GPIO_INTRISEEN_PIN17_Pos 17
-#define GPIO_INTRISEEN_PIN17_Msk (0x01 << GPIO_INTRISEEN_PIN17_Pos)
-#define GPIO_INTRISEEN_PIN18_Pos 18
-#define GPIO_INTRISEEN_PIN18_Msk (0x01 << GPIO_INTRISEEN_PIN18_Pos)
-#define GPIO_INTRISEEN_PIN19_Pos 19
-#define GPIO_INTRISEEN_PIN19_Msk (0x01 << GPIO_INTRISEEN_PIN19_Pos)
-#define GPIO_INTRISEEN_PIN20_Pos 20
-#define GPIO_INTRISEEN_PIN20_Msk (0x01 << GPIO_INTRISEEN_PIN20_Pos)
-#define GPIO_INTRISEEN_PIN21_Pos 21
-#define GPIO_INTRISEEN_PIN21_Msk (0x01 << GPIO_INTRISEEN_PIN21_Pos)
-#define GPIO_INTRISEEN_PIN22_Pos 22
-#define GPIO_INTRISEEN_PIN22_Msk (0x01 << GPIO_INTRISEEN_PIN22_Pos)
-#define GPIO_INTRISEEN_PIN23_Pos 23
-#define GPIO_INTRISEEN_PIN23_Msk (0x01 << GPIO_INTRISEEN_PIN23_Pos)
-
-#define GPIO_INTEN_PIN0_Pos 0
-#define GPIO_INTEN_PIN0_Msk (0x01 << GPIO_INTEN_PIN0_Pos)
-#define GPIO_INTEN_PIN1_Pos 1
-#define GPIO_INTEN_PIN1_Msk (0x01 << GPIO_INTEN_PIN1_Pos)
-#define GPIO_INTEN_PIN2_Pos 2
-#define GPIO_INTEN_PIN2_Msk (0x01 << GPIO_INTEN_PIN2_Pos)
-#define GPIO_INTEN_PIN3_Pos 3
-#define GPIO_INTEN_PIN3_Msk (0x01 << GPIO_INTEN_PIN3_Pos)
-#define GPIO_INTEN_PIN4_Pos 4
-#define GPIO_INTEN_PIN4_Msk (0x01 << GPIO_INTEN_PIN4_Pos)
-#define GPIO_INTEN_PIN5_Pos 5
-#define GPIO_INTEN_PIN5_Msk (0x01 << GPIO_INTEN_PIN5_Pos)
-#define GPIO_INTEN_PIN6_Pos 6
-#define GPIO_INTEN_PIN6_Msk (0x01 << GPIO_INTEN_PIN6_Pos)
-#define GPIO_INTEN_PIN7_Pos 7
-#define GPIO_INTEN_PIN7_Msk (0x01 << GPIO_INTEN_PIN7_Pos)
-#define GPIO_INTEN_PIN8_Pos 8
-#define GPIO_INTEN_PIN8_Msk (0x01 << GPIO_INTEN_PIN8_Pos)
-#define GPIO_INTEN_PIN9_Pos 9
-#define GPIO_INTEN_PIN9_Msk (0x01 << GPIO_INTEN_PIN9_Pos)
-#define GPIO_INTEN_PIN10_Pos 10
-#define GPIO_INTEN_PIN10_Msk (0x01 << GPIO_INTEN_PIN10_Pos)
-#define GPIO_INTEN_PIN11_Pos 11
-#define GPIO_INTEN_PIN11_Msk (0x01 << GPIO_INTEN_PIN11_Pos)
-#define GPIO_INTEN_PIN12_Pos 12
-#define GPIO_INTEN_PIN12_Msk (0x01 << GPIO_INTEN_PIN12_Pos)
-#define GPIO_INTEN_PIN13_Pos 13
-#define GPIO_INTEN_PIN13_Msk (0x01 << GPIO_INTEN_PIN13_Pos)
-#define GPIO_INTEN_PIN14_Pos 14
-#define GPIO_INTEN_PIN14_Msk (0x01 << GPIO_INTEN_PIN14_Pos)
-#define GPIO_INTEN_PIN15_Pos 15
-#define GPIO_INTEN_PIN15_Msk (0x01 << GPIO_INTEN_PIN15_Pos)
-#define GPIO_INTEN_PIN16_Pos 16
-#define GPIO_INTEN_PIN16_Msk (0x01 << GPIO_INTEN_PIN16_Pos)
-#define GPIO_INTEN_PIN17_Pos 17
-#define GPIO_INTEN_PIN17_Msk (0x01 << GPIO_INTEN_PIN17_Pos)
-#define GPIO_INTEN_PIN18_Pos 18
-#define GPIO_INTEN_PIN18_Msk (0x01 << GPIO_INTEN_PIN18_Pos)
-#define GPIO_INTEN_PIN19_Pos 19
-#define GPIO_INTEN_PIN19_Msk (0x01 << GPIO_INTEN_PIN19_Pos)
-#define GPIO_INTEN_PIN20_Pos 20
-#define GPIO_INTEN_PIN20_Msk (0x01 << GPIO_INTEN_PIN20_Pos)
-#define GPIO_INTEN_PIN21_Pos 21
-#define GPIO_INTEN_PIN21_Msk (0x01 << GPIO_INTEN_PIN21_Pos)
-#define GPIO_INTEN_PIN22_Pos 22
-#define GPIO_INTEN_PIN22_Msk (0x01 << GPIO_INTEN_PIN22_Pos)
-#define GPIO_INTEN_PIN23_Pos 23
-#define GPIO_INTEN_PIN23_Msk (0x01 << GPIO_INTEN_PIN23_Pos)
-
-#define GPIO_INTRAWSTAT_PIN0_Pos 0
-#define GPIO_INTRAWSTAT_PIN0_Msk (0x01 << GPIO_INTRAWSTAT_PIN0_Pos)
-#define GPIO_INTRAWSTAT_PIN1_Pos 1
-#define GPIO_INTRAWSTAT_PIN1_Msk (0x01 << GPIO_INTRAWSTAT_PIN1_Pos)
-#define GPIO_INTRAWSTAT_PIN2_Pos 2
-#define GPIO_INTRAWSTAT_PIN2_Msk (0x01 << GPIO_INTRAWSTAT_PIN2_Pos)
-#define GPIO_INTRAWSTAT_PIN3_Pos 3
-#define GPIO_INTRAWSTAT_PIN3_Msk (0x01 << GPIO_INTRAWSTAT_PIN3_Pos)
-#define GPIO_INTRAWSTAT_PIN4_Pos 4
-#define GPIO_INTRAWSTAT_PIN4_Msk (0x01 << GPIO_INTRAWSTAT_PIN4_Pos)
-#define GPIO_INTRAWSTAT_PIN5_Pos 5
-#define GPIO_INTRAWSTAT_PIN5_Msk (0x01 << GPIO_INTRAWSTAT_PIN5_Pos)
-#define GPIO_INTRAWSTAT_PIN6_Pos 6
-#define GPIO_INTRAWSTAT_PIN6_Msk (0x01 << GPIO_INTRAWSTAT_PIN6_Pos)
-#define GPIO_INTRAWSTAT_PIN7_Pos 7
-#define GPIO_INTRAWSTAT_PIN7_Msk (0x01 << GPIO_INTRAWSTAT_PIN7_Pos)
-#define GPIO_INTRAWSTAT_PIN8_Pos 8
-#define GPIO_INTRAWSTAT_PIN8_Msk (0x01 << GPIO_INTRAWSTAT_PIN8_Pos)
-#define GPIO_INTRAWSTAT_PIN9_Pos 9
-#define GPIO_INTRAWSTAT_PIN9_Msk (0x01 << GPIO_INTRAWSTAT_PIN9_Pos)
-#define GPIO_INTRAWSTAT_PIN10_Pos 10
-#define GPIO_INTRAWSTAT_PIN10_Msk (0x01 << GPIO_INTRAWSTAT_PIN10_Pos)
-#define GPIO_INTRAWSTAT_PIN11_Pos 11
-#define GPIO_INTRAWSTAT_PIN11_Msk (0x01 << GPIO_INTRAWSTAT_PIN11_Pos)
-#define GPIO_INTRAWSTAT_PIN12_Pos 12
-#define GPIO_INTRAWSTAT_PIN12_Msk (0x01 << GPIO_INTRAWSTAT_PIN12_Pos)
-#define GPIO_INTRAWSTAT_PIN13_Pos 13
-#define GPIO_INTRAWSTAT_PIN13_Msk (0x01 << GPIO_INTRAWSTAT_PIN13_Pos)
-#define GPIO_INTRAWSTAT_PIN14_Pos 14
-#define GPIO_INTRAWSTAT_PIN14_Msk (0x01 << GPIO_INTRAWSTAT_PIN14_Pos)
-#define GPIO_INTRAWSTAT_PIN15_Pos 15
-#define GPIO_INTRAWSTAT_PIN15_Msk (0x01 << GPIO_INTRAWSTAT_PIN15_Pos)
-#define GPIO_INTRAWSTAT_PIN16_Pos 16
-#define GPIO_INTRAWSTAT_PIN16_Msk (0x01 << GPIO_INTRAWSTAT_PIN16_Pos)
-#define GPIO_INTRAWSTAT_PIN17_Pos 17
-#define GPIO_INTRAWSTAT_PIN17_Msk (0x01 << GPIO_INTRAWSTAT_PIN17_Pos)
-#define GPIO_INTRAWSTAT_PIN18_Pos 18
-#define GPIO_INTRAWSTAT_PIN18_Msk (0x01 << GPIO_INTRAWSTAT_PIN18_Pos)
-#define GPIO_INTRAWSTAT_PIN19_Pos 19
-#define GPIO_INTRAWSTAT_PIN19_Msk (0x01 << GPIO_INTRAWSTAT_PIN19_Pos)
-#define GPIO_INTRAWSTAT_PIN20_Pos 20
-#define GPIO_INTRAWSTAT_PIN20_Msk (0x01 << GPIO_INTRAWSTAT_PIN20_Pos)
-#define GPIO_INTRAWSTAT_PIN21_Pos 21
-#define GPIO_INTRAWSTAT_PIN21_Msk (0x01 << GPIO_INTRAWSTAT_PIN21_Pos)
-#define GPIO_INTRAWSTAT_PIN22_Pos 22
-#define GPIO_INTRAWSTAT_PIN22_Msk (0x01 << GPIO_INTRAWSTAT_PIN22_Pos)
-#define GPIO_INTRAWSTAT_PIN23_Pos 23
-#define GPIO_INTRAWSTAT_PIN23_Msk (0x01 << GPIO_INTRAWSTAT_PIN23_Pos)
-
-#define GPIO_INTSTAT_PIN0_Pos 0
-#define GPIO_INTSTAT_PIN0_Msk (0x01 << GPIO_INTSTAT_PIN0_Pos)
-#define GPIO_INTSTAT_PIN1_Pos 1
-#define GPIO_INTSTAT_PIN1_Msk (0x01 << GPIO_INTSTAT_PIN1_Pos)
-#define GPIO_INTSTAT_PIN2_Pos 2
-#define GPIO_INTSTAT_PIN2_Msk (0x01 << GPIO_INTSTAT_PIN2_Pos)
-#define GPIO_INTSTAT_PIN3_Pos 3
-#define GPIO_INTSTAT_PIN3_Msk (0x01 << GPIO_INTSTAT_PIN3_Pos)
-#define GPIO_INTSTAT_PIN4_Pos 4
-#define GPIO_INTSTAT_PIN4_Msk (0x01 << GPIO_INTSTAT_PIN4_Pos)
-#define GPIO_INTSTAT_PIN5_Pos 5
-#define GPIO_INTSTAT_PIN5_Msk (0x01 << GPIO_INTSTAT_PIN5_Pos)
-#define GPIO_INTSTAT_PIN6_Pos 6
-#define GPIO_INTSTAT_PIN6_Msk (0x01 << GPIO_INTSTAT_PIN6_Pos)
-#define GPIO_INTSTAT_PIN7_Pos 7
-#define GPIO_INTSTAT_PIN7_Msk (0x01 << GPIO_INTSTAT_PIN7_Pos)
-#define GPIO_INTSTAT_PIN8_Pos 8
-#define GPIO_INTSTAT_PIN8_Msk (0x01 << GPIO_INTSTAT_PIN8_Pos)
-#define GPIO_INTSTAT_PIN9_Pos 9
-#define GPIO_INTSTAT_PIN9_Msk (0x01 << GPIO_INTSTAT_PIN9_Pos)
-#define GPIO_INTSTAT_PIN10_Pos 10
-#define GPIO_INTSTAT_PIN10_Msk (0x01 << GPIO_INTSTAT_PIN10_Pos)
-#define GPIO_INTSTAT_PIN11_Pos 11
-#define GPIO_INTSTAT_PIN11_Msk (0x01 << GPIO_INTSTAT_PIN11_Pos)
-#define GPIO_INTSTAT_PIN12_Pos 12
-#define GPIO_INTSTAT_PIN12_Msk (0x01 << GPIO_INTSTAT_PIN12_Pos)
-#define GPIO_INTSTAT_PIN13_Pos 13
-#define GPIO_INTSTAT_PIN13_Msk (0x01 << GPIO_INTSTAT_PIN13_Pos)
-#define GPIO_INTSTAT_PIN14_Pos 14
-#define GPIO_INTSTAT_PIN14_Msk (0x01 << GPIO_INTSTAT_PIN14_Pos)
-#define GPIO_INTSTAT_PIN15_Pos 15
-#define GPIO_INTSTAT_PIN15_Msk (0x01 << GPIO_INTSTAT_PIN15_Pos)
-#define GPIO_INTSTAT_PIN16_Pos 16
-#define GPIO_INTSTAT_PIN16_Msk (0x01 << GPIO_INTSTAT_PIN16_Pos)
-#define GPIO_INTSTAT_PIN17_Pos 17
-#define GPIO_INTSTAT_PIN17_Msk (0x01 << GPIO_INTSTAT_PIN17_Pos)
-#define GPIO_INTSTAT_PIN18_Pos 18
-#define GPIO_INTSTAT_PIN18_Msk (0x01 << GPIO_INTSTAT_PIN18_Pos)
-#define GPIO_INTSTAT_PIN19_Pos 19
-#define GPIO_INTSTAT_PIN19_Msk (0x01 << GPIO_INTSTAT_PIN19_Pos)
-#define GPIO_INTSTAT_PIN20_Pos 20
-#define GPIO_INTSTAT_PIN20_Msk (0x01 << GPIO_INTSTAT_PIN20_Pos)
-#define GPIO_INTSTAT_PIN21_Pos 21
-#define GPIO_INTSTAT_PIN21_Msk (0x01 << GPIO_INTSTAT_PIN21_Pos)
-#define GPIO_INTSTAT_PIN22_Pos 22
-#define GPIO_INTSTAT_PIN22_Msk (0x01 << GPIO_INTSTAT_PIN22_Pos)
-#define GPIO_INTSTAT_PIN23_Pos 23
-#define GPIO_INTSTAT_PIN23_Msk (0x01 << GPIO_INTSTAT_PIN23_Pos)
-
-#define GPIO_INTCLR_PIN0_Pos 0
-#define GPIO_INTCLR_PIN0_Msk (0x01 << GPIO_INTCLR_PIN0_Pos)
-#define GPIO_INTCLR_PIN1_Pos 1
-#define GPIO_INTCLR_PIN1_Msk (0x01 << GPIO_INTCLR_PIN1_Pos)
-#define GPIO_INTCLR_PIN2_Pos 2
-#define GPIO_INTCLR_PIN2_Msk (0x01 << GPIO_INTCLR_PIN2_Pos)
-#define GPIO_INTCLR_PIN3_Pos 3
-#define GPIO_INTCLR_PIN3_Msk (0x01 << GPIO_INTCLR_PIN3_Pos)
-#define GPIO_INTCLR_PIN4_Pos 4
-#define GPIO_INTCLR_PIN4_Msk (0x01 << GPIO_INTCLR_PIN4_Pos)
-#define GPIO_INTCLR_PIN5_Pos 5
-#define GPIO_INTCLR_PIN5_Msk (0x01 << GPIO_INTCLR_PIN5_Pos)
-#define GPIO_INTCLR_PIN6_Pos 6
-#define GPIO_INTCLR_PIN6_Msk (0x01 << GPIO_INTCLR_PIN6_Pos)
-#define GPIO_INTCLR_PIN7_Pos 7
-#define GPIO_INTCLR_PIN7_Msk (0x01 << GPIO_INTCLR_PIN7_Pos)
-#define GPIO_INTCLR_PIN8_Pos 8
-#define GPIO_INTCLR_PIN8_Msk (0x01 << GPIO_INTCLR_PIN8_Pos)
-#define GPIO_INTCLR_PIN9_Pos 9
-#define GPIO_INTCLR_PIN9_Msk (0x01 << GPIO_INTCLR_PIN9_Pos)
-#define GPIO_INTCLR_PIN10_Pos 10
-#define GPIO_INTCLR_PIN10_Msk (0x01 << GPIO_INTCLR_PIN10_Pos)
-#define GPIO_INTCLR_PIN11_Pos 11
-#define GPIO_INTCLR_PIN11_Msk (0x01 << GPIO_INTCLR_PIN11_Pos)
-#define GPIO_INTCLR_PIN12_Pos 12
-#define GPIO_INTCLR_PIN12_Msk (0x01 << GPIO_INTCLR_PIN12_Pos)
-#define GPIO_INTCLR_PIN13_Pos 13
-#define GPIO_INTCLR_PIN13_Msk (0x01 << GPIO_INTCLR_PIN13_Pos)
-#define GPIO_INTCLR_PIN14_Pos 14
-#define GPIO_INTCLR_PIN14_Msk (0x01 << GPIO_INTCLR_PIN14_Pos)
-#define GPIO_INTCLR_PIN15_Pos 15
-#define GPIO_INTCLR_PIN15_Msk (0x01 << GPIO_INTCLR_PIN15_Pos)
-#define GPIO_INTCLR_PIN16_Pos 16
-#define GPIO_INTCLR_PIN16_Msk (0x01 << GPIO_INTCLR_PIN16_Pos)
-#define GPIO_INTCLR_PIN17_Pos 17
-#define GPIO_INTCLR_PIN17_Msk (0x01 << GPIO_INTCLR_PIN17_Pos)
-#define GPIO_INTCLR_PIN18_Pos 18
-#define GPIO_INTCLR_PIN18_Msk (0x01 << GPIO_INTCLR_PIN18_Pos)
-#define GPIO_INTCLR_PIN19_Pos 19
-#define GPIO_INTCLR_PIN19_Msk (0x01 << GPIO_INTCLR_PIN19_Pos)
-#define GPIO_INTCLR_PIN20_Pos 20
-#define GPIO_INTCLR_PIN20_Msk (0x01 << GPIO_INTCLR_PIN20_Pos)
-#define GPIO_INTCLR_PIN21_Pos 21
-#define GPIO_INTCLR_PIN21_Msk (0x01 << GPIO_INTCLR_PIN21_Pos)
-#define GPIO_INTCLR_PIN22_Pos 22
-#define GPIO_INTCLR_PIN22_Msk (0x01 << GPIO_INTCLR_PIN22_Pos)
-#define GPIO_INTCLR_PIN23_Pos 23
-#define GPIO_INTCLR_PIN23_Msk (0x01 << GPIO_INTCLR_PIN23_Pos)
-
 typedef struct
 {
     __IO uint32_t LDVAL; //定时器加载值，使能后定时器从此数值开始向下递减计数
@@ -1790,10 +1349,10 @@ typedef struct
 #define UART_BAUD_RXIF_Msk (0x01 << UART_BAUD_RXIF_Pos)
 #define UART_BAUD_ABREN_Pos 23 //Auto Baudrate Enable，写1启动自动波特率校准，完成后自动清零
 #define UART_BAUD_ABREN_Msk (0x01 << UART_BAUD_ABREN_Pos)
-#define UART_BAUD_ABRBIT_Pos 24 //Auto Baudrate Bit，用于计算波特率的检测位长，0 1位，通过测起始位           脉宽计算波特率，要求发送端发送0xFF \
+#define UART_BAUD_ABRBIT_Pos 24 /*Auto Baudrate Bit，用于计算波特率的检测位长，0 1位，通过测起始位           脉宽计算波特率，要求发送端发送0xFF \
                                 //                                             1 2位，通过测起始位加1位数据位脉宽计算波特率，要求发送端发送0xFE          \
                                 //                                             1 4位，通过测起始位加3位数据位脉宽计算波特率，要求发送端发送0xF8          \
-                                //                                             1 8位，通过测起始位加7位数据位脉宽计算波特率，要求发送端发送0x80
+                                //                                             1 8位，通过测起始位加7位数据位脉宽计算波特率，要求发送端发送0x80 */
 #define UART_BAUD_ABRBIT_Msk (0x03 << UART_BAUD_ABRBIT_Pos)
 #define UART_BAUD_ABRERR_Pos 26 //Auto Baudrate Error，0 自动波特率校准成功     1 自动波特率校准失败
 #define UART_BAUD_ABRERR_Msk (0x01 << UART_BAUD_ABRERR_Pos)
@@ -2724,22 +2283,12 @@ typedef struct
             uint32_t RESERVED[5];
         } FILTER;
 
-        union
+        struct
         { //在正常工作模式下可读写，复位时不可访问
-            struct
-            {
-                __O uint32_t INFO;
+            __IO uint32_t INFO;
 
-                __O uint32_t DATA[12];
-            } TXFRAME;
-
-            struct
-            {
-                __I uint32_t INFO;
-
-                __I uint32_t DATA[12];
-            } RXFRAME;
-        };
+            __IO uint32_t DATA[12];
+        } FRAME;
     };
 
     __I uint32_t RMCNT; //Receive Message Count
@@ -2877,11 +2426,11 @@ typedef struct
 #define LCD_START_BURST_Pos 2
 #define LCD_START_BURST_Msk (0x01 << LCD_START_BURST_Pos)
 
-#define LCD_CR0_VPIX_Pos 0 //当portrait为0时，表示垂直方向的像素个数，0表示1个，最大为767 \
-                           //当portrait为1时，表示水平方向的像素个数，0表示1个，最大为767
+#define LCD_CR0_VPIX_Pos 0 /*当portrait为0时，表示垂直方向的像素个数，0表示1个，最大为767 \
+                           //当portrait为1时，表示水平方向的像素个数，0表示1个，最大为767 */
 #define LCD_CR0_VPIX_Msk (0x3FF << LCD_CR0_VPIX_Pos)
-#define LCD_CR0_HPIX_Pos 10 //当portrait为0时，表示水平方向的像素个数，0表示1个，最大为1023 \
-                            //当portrait为1时，表示垂直方向的像素个数，0表示1个，最大为1023
+#define LCD_CR0_HPIX_Pos 10 /*当portrait为0时，表示水平方向的像素个数，0表示1个，最大为1023 \
+                            //当portrait为1时，表示垂直方向的像素个数，0表示1个，最大为1023 */
 #define LCD_CR0_HPIX_Msk (0x3FF << LCD_CR0_HPIX_Pos)
 #define LCD_CR0_DCLK_Pos 20 //0 DOTCLK一直翻转    1 DOTCLK在空闲时停在1
 #define LCD_CR0_DCLK_Msk (0x01 << LCD_CR0_DCLK_Pos)
@@ -3121,7 +2670,7 @@ typedef struct
 {
     __IO uint32_t DATA;
     __IO uint32_t ADDR;
-    __IO uint32_t ERASE;
+    __IO uint32_t SWM_ERASE;
     __IO uint32_t CACHE;
     __IO uint32_t CFG0;
     __IO uint32_t CFG1;
@@ -3376,8 +2925,8 @@ typedef struct
 #define RTC_TRIM_DEC_Pos 8
 #define RTC_TRIM_DEC_Msk (0x01 << RTC_TRIM_DEC_Pos)
 
-#define RTC_TRIMM_CYCLE_Pos 0 //用于计数周期微调，如果INC为1，则第n个计数周期调整为(32768±ADJ)+1,否则调整为(32768±ADJ)-1 \
-                              //cycles=0时，不进行微调整；cycles=1，则n为2；cycles=7，则n为8；以此类推
+#define RTC_TRIMM_CYCLE_Pos 0 /* 用于计数周期微调，如果INC为1，则第n个计数周期调整为(32768±ADJ)+1,否则调整为(32768±ADJ)-1 \
+                              //cycles=0时，不进行微调整；cycles=1，则n为2；cycles=7，则n为8；以此类推 */
 #define RTC_TRIMM_CYCLE_Msk (0x07 << RTC_TRIMM_CYCLE_Pos)
 #define RTC_TRIMM_INC_Pos 3
 #define RTC_TRIMM_INC_Msk (0x01 << RTC_TRIMM_INC_Pos)

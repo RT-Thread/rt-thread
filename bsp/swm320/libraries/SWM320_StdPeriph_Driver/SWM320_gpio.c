@@ -23,8 +23,8 @@
 
 /****************************************************************************************************************************************** 
 * 函数名称: GPIO_Init()
-* 功能说明:	引脚初始化，包含引脚方向、上拉电阻、下拉电阻、开漏输出
-* 输    入: GPIO_TypeDef * GPIOx	    指定GPIO端口，有效值包括GPIOA、GPIOB、GPIOC、GPIOM、GPION、GPIOP	
+* 功能说明:	引脚初始化，包含引脚方向、上拉电阻、下拉电阻
+* 输    入: GPIO_TypeDef * GPIOx	    指定GPIO端口，有效值包括GPIOA、GPIOB、GPIOC、GPIOM、GPION、GPIOP
 *			uint32_t n		       指定GPIO引脚，有效值包括PIN0、PIN1、PIN2、... ... PIN22、PIN23
 *			uint32_t dir	       引脚方向，0 输入        1 输出
 *			uint32_t pull_up	   上拉电阻，0 关闭上拉    1 开启上拉

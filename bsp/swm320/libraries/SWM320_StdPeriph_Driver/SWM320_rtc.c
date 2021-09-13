@@ -53,7 +53,7 @@ void RTC_Init(RTC_TypeDef *RTCx, RTC_InitStructure *initStruct)
     RTCx->MONDAY = (calcWeekDay(initStruct->Year, initStruct->Month, initStruct->Date) << RTC_MONDAY_DAY_Pos) |
                    (initStruct->Month << RTC_MONDAY_MON_Pos);
 
-    RTCx->YEAR = initStruct->Year - 1901;
+    RTCx->YEAR = initStruct->Year;
 
     RTCx->LOAD = 1 << RTC_LOAD_TIME_Pos;
 
@@ -105,7 +105,7 @@ void RTC_Stop(RTC_TypeDef *RTCx)
 ******************************************************************************************************************************************/
 void RTC_GetDateTime(RTC_TypeDef *RTCx, RTC_DateTime *dateTime)
 {
-    dateTime->Year = RTCx->YEAR + 1901;
+    dateTime->Year = RTCx->YEAR;
     dateTime->Month = (RTCx->MONDAY & RTC_MONDAY_MON_Msk) >> RTC_MONDAY_MON_Pos;
     dateTime->Date = (RTCx->DATHUR & RTC_DATHUR_DATE_Msk) >> RTC_DATHUR_DATE_Pos;
     dateTime->Day = 1 << ((RTCx->MONDAY & RTC_MONDAY_DAY_Msk) >> RTC_MONDAY_DAY_Pos);

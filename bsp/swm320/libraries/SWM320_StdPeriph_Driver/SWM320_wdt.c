@@ -28,7 +28,7 @@
 *			uint32_t peroid			取值0--4294967295，单位为单片机系统时钟周期
 *			uint32_t mode			WDT_MODE_RESET 超时产生复位    WDT_MODE_INTERRUPT 超时产生中断
 * 输    出: 无
-* 注意事项: 复位使能时中断不起作用，因为计数周期结束时芯片直接复位了，无法响应中断
+* 注意事项: 无
 ******************************************************************************************************************************************/
 void WDT_Init(WDT_TypeDef *WDTx, uint32_t peroid, uint32_t mode)
 {
@@ -36,16 +36,18 @@ void WDT_Init(WDT_TypeDef *WDTx, uint32_t peroid, uint32_t mode)
 
     WDT_Stop(WDTx); //设置前先关闭
 
-    WDTx->LOAD = peroid;
-
     if (mode == WDT_MODE_RESET)
     {
+        WDTx->LOAD = peroid / 2; //第一个计数周期置位中断标志、第二个计数周期将芯片复位
+
         NVIC_DisableIRQ(WDT_IRQn);
 
         WDTx->CR |= (1 << WDT_CR_RSTEN_Pos);
     }
     else //mode == WDT_MODE_INTERRUPT
     {
+        WDTx->LOAD = peroid;
+
         NVIC_EnableIRQ(WDT_IRQn);
 
         WDTx->CR &= ~(1 << WDT_CR_RSTEN_Pos);

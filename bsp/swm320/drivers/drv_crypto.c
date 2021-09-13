@@ -21,11 +21,6 @@ struct swm_hwcrypto_device
 
 #ifdef BSP_USING_CRC
 
-struct hash_ctx_des
-{
-    struct swm_crc_cfg contex;
-};
-
 static struct hwcrypto_crc_cfg crc_backup_cfg;
 
 static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, rt_size_t length)
@@ -108,6 +103,7 @@ static const struct hwcrypto_crc_ops crc_ops =
     {
         .update = _crc_update,
 };
+#endif /* BSP_USING_CRC */
 
 static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
 {
@@ -170,7 +166,7 @@ static rt_err_t _crypto_clone(struct rt_hwcrypto_ctx *des, const struct rt_hwcry
     case HWCRYPTO_TYPE_CRC:
         if (des->contex && src->contex)
         {
-            rt_memcpy(des->contex, src->contex, sizeof(struct hash_ctx_des));
+            rt_memcpy(des->contex, src->contex, sizeof(struct swm_crc_cfg));
         }
         break;
 #endif /* BSP_USING_CRC */
@@ -226,5 +222,5 @@ int rt_hw_crypto_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_crypto_init);
 
-#endif /* BSP_USING_WDT */
-#endif /* RT_USING_WDT */
+
+#endif /* RT_USING_HWCRYPTO */
