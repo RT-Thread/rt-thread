@@ -12,6 +12,7 @@
 #define __SYS_TYPES_H__
 
 #include <stdint.h>
+#include <stddef.h>
 
 typedef int32_t          clockid_t;
 typedef int32_t          key_t;         /* Used for interprocess communication. */
