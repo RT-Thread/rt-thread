@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -65,13 +65,13 @@ static int adc_vol_sample(int argc, char *argv[])
     }
 
     ret = rt_adc_enable(adc_dev, ADC_DEV_CHANNEL);
-    
+
     value = rt_adc_read(adc_dev, ADC_DEV_CHANNEL);
     rt_kprintf("the value is :%d,", value);
-    
+
     vol = value * REFER_VOLTAGE / CONVERT_BITS;
     rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
-    
+
     ret = rt_adc_disable(adc_dev, ADC_DEV_CHANNEL);
 
     return ret;

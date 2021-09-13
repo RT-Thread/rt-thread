@@ -105,11 +105,11 @@ typedef enum IRQn
 #endif
 
 #include <stdio.h>
-#include "core_cm4.h" /* Cortex-M0 processor and core peripherals		     */
+#include "core_cm4.h" /* Cortex-M0 processor and core peripherals            */
 #include "system_SWM320.h"
 
 /******************************************************************************/
-/*				Device Specific Peripheral registers structures			 */
+/*              Device Specific Peripheral registers structures          */
 /******************************************************************************/
 typedef struct
 {
@@ -181,11 +181,11 @@ typedef struct
     __IO uint32_t ADC1IN7;
 } SYS_TypeDef;
 
-#define SYS_CLKSEL_LFCK_Pos 0 //Low Frequency Clock Source	0 LRC	1 PLL
+#define SYS_CLKSEL_LFCK_Pos 0 //Low Frequency Clock Source  0 LRC   1 PLL
 #define SYS_CLKSEL_LFCK_Msk (0x01 << SYS_CLKSEL_LFCK_Pos)
-#define SYS_CLKSEL_HFCK_Pos 1 //High Frequency Clock Source	0 HRC	1 XTAL
+#define SYS_CLKSEL_HFCK_Pos 1 //High Frequency Clock Source 0 HRC   1 XTAL
 #define SYS_CLKSEL_HFCK_Msk (0x01 << SYS_CLKSEL_HFCK_Pos)
-#define SYS_CLKSEL_SYS_Pos 2 //系统时钟选择	0 LFCK	1 HFCK
+#define SYS_CLKSEL_SYS_Pos 2 //系统时钟选择   0 LFCK  1 HFCK
 #define SYS_CLKSEL_SYS_Msk (0x01 << SYS_CLKSEL_SYS_Pos)
 
 #define SYS_CLKDIV_SYS_Pos 0 //系统时钟分频  0 1分频    1 2分频
@@ -312,7 +312,7 @@ typedef struct
 #define SYS_LRCTRIM1_U_Pos 0 //LRC U调控制位
 #define SYS_LRCTRIM1_U_Msk (0x7FFF << SYS_LRCTRIM1_U_Pos)
 
-#define SYS_HRCCR_DBL_Pos 0 //Double Frequency	0 20MHz	1 40MHz
+#define SYS_HRCCR_DBL_Pos 0 //Double Frequency  0 20MHz 1 40MHz
 #define SYS_HRCCR_DBL_Msk (0x01 << SYS_HRCCR_DBL_Pos)
 #define SYS_HRCCR_OFF_Pos 1 //High speed RC Off
 #define SYS_HRCCR_OFF_Msk (0x01 << SYS_HRCCR_OFF_Pos)
@@ -1165,17 +1165,17 @@ typedef struct
 #define PIN23 23
 #define PIN24 24
 
-    __IO uint32_t DIR; //0 输入	1 输出
+    __IO uint32_t DIR; //0 输入   1 输出
 
-    __IO uint32_t INTLVLTRG; //Interrupt Level Trigger  1 电平触发中断	0 边沿触发中断
+    __IO uint32_t INTLVLTRG; //Interrupt Level Trigger  1 电平触发中断    0 边沿触发中断
 
     __IO uint32_t INTBE; //Both Edge，当INTLVLTRG设为边沿触发中断时，此位置1表示上升沿和下降沿都触发中断，置0时触发边沿由INTRISEEN选择
 
-    __IO uint32_t INTRISEEN; //Interrupt Rise Edge Enable   1 上升沿/高电平触发中断	0 下降沿/低电平触发中断
+    __IO uint32_t INTRISEEN; //Interrupt Rise Edge Enable   1 上升沿/高电平触发中断   0 下降沿/低电平触发中断
 
-    __IO uint32_t INTEN; //1 中断使能	0 中断禁止
+    __IO uint32_t INTEN; //1 中断使能   0 中断禁止
 
-    __IO uint32_t INTRAWSTAT; //中断检测单元是否检测到了触发中断的条件 1 检测到了中断触发条件	0 没有检测到中断触发条件
+    __IO uint32_t INTRAWSTAT; //中断检测单元是否检测到了触发中断的条件 1 检测到了中断触发条件    0 没有检测到中断触发条件
 
     __IO uint32_t INTSTAT; //INTSTAT.PIN0 = INTRAWSTAT.PIN0 & INTEN.PIN0
 
@@ -1193,7 +1193,7 @@ typedef struct
 
 #define TIMR_CTRL_EN_Pos 0 //此位赋1导致TIMR从LDVAL开始向下递减计数
 #define TIMR_CTRL_EN_Msk (0x01 << TIMR_CTRL_EN_Pos)
-#define TIMR_CTRL_CLKSRC_Pos 1 //时钟源：0 内部系统时钟	1 外部引脚脉冲计数
+#define TIMR_CTRL_CLKSRC_Pos 1 //时钟源：0 内部系统时钟   1 外部引脚脉冲计数
 #define TIMR_CTRL_CLKSRC_Msk (0x01 << TIMR_CTRL_CLKSRC_Pos)
 #define TIMR_CTRL_CASCADE_Pos 2 //1 TIMRx的计数时钟为TIMRx-1的溢出信号
 #define TIMR_CTRL_CASCADE_Msk (0x01 << TIMR_CTRL_CASCADE_Pos)
@@ -1215,9 +1215,9 @@ typedef struct
 
 #define TIMRG_PCTRL_EN_Pos 0 //开始测量脉宽，脉宽内32位计数器从0开始向上计数
 #define TIMRG_PCTRL_EN_Msk (0x01 << TIMRG_PCTRL_EN_Pos)
-#define TIMRG_PCTRL_HIGH_Pos 1 //0 测量低电平长度	1 测量高电平长度
+#define TIMRG_PCTRL_HIGH_Pos 1 //0 测量低电平长度  1 测量高电平长度
 #define TIMRG_PCTRL_HIGH_Msk (0x01 << TIMRG_PCTRL_HIGH_Pos)
-#define TIMRG_PCTRL_CLKSRC_Pos 2 //时钟源：0 内部系统时钟	1 脉宽测量模块变成一个计数器，不再具有脉宽测量功能
+#define TIMRG_PCTRL_CLKSRC_Pos 2 //时钟源：0 内部系统时钟 1 脉宽测量模块变成一个计数器，不再具有脉宽测量功能
 #define TIMRG_PCTRL_CLKSRC_Msk (0x01 << TIMRG_PCTRL_CLKSRC_Pos)
 
 #define TIMRG_IE_TIMR0_Pos 0
@@ -1290,7 +1290,7 @@ typedef struct
 #define UART_DATA_PAERR_Pos 10 //Parity Error
 #define UART_DATA_PAERR_Msk (0x01 << UART_DATA_PAERR_Pos)
 
-#define UART_CTRL_TXIDLE_Pos 0 //TX IDLE: 0 正在发送数据	1 空闲状态，没有数据发送
+#define UART_CTRL_TXIDLE_Pos 0 //TX IDLE: 0 正在发送数据  1 空闲状态，没有数据发送
 #define UART_CTRL_TXIDLE_Msk (0x01 << UART_CTRL_TXIDLE_Pos)
 #define UART_CTRL_TXFF_Pos 1 //TX FIFO Full
 #define UART_CTRL_TXFF_Msk (0x01 << UART_CTRL_TXFF_Pos)
@@ -1414,19 +1414,19 @@ typedef struct
 #define SPI_CTRL_EN_Msk (0x01 << SPI_CTRL_EN_Pos)
 #define SPI_CTRL_SIZE_Pos 4 //Data Size Select, 取值3--15，表示4--16位
 #define SPI_CTRL_SIZE_Msk (0x0F << SPI_CTRL_SIZE_Pos)
-#define SPI_CTRL_CPHA_Pos 8 //0 在SCLK的第一个跳变沿采样数据	1 在SCLK的第二个跳变沿采样数据
+#define SPI_CTRL_CPHA_Pos 8 //0 在SCLK的第一个跳变沿采样数据    1 在SCLK的第二个跳变沿采样数据
 #define SPI_CTRL_CPHA_Msk (0x01 << SPI_CTRL_CPHA_Pos)
-#define SPI_CTRL_CPOL_Pos 9 //0 空闲状态下SCLK为低电平		  1 空闲状态下SCLK为高电平
+#define SPI_CTRL_CPOL_Pos 9 //0 空闲状态下SCLK为低电平         1 空闲状态下SCLK为高电平
 #define SPI_CTRL_CPOL_Msk (0x01 << SPI_CTRL_CPOL_Pos)
-#define SPI_CTRL_FFS_Pos 10 //Frame Format Select, 0 SPI	1 TI SSI	2 SPI	3 SPI
+#define SPI_CTRL_FFS_Pos 10 //Frame Format Select, 0 SPI    1 TI SSI    2 SPI   3 SPI
 #define SPI_CTRL_FFS_Msk (0x03 << SPI_CTRL_FFS_Pos)
-#define SPI_CTRL_MSTR_Pos 12 //Master, 1 主模式	0 从模式
+#define SPI_CTRL_MSTR_Pos 12 //Master, 1 主模式    0 从模式
 #define SPI_CTRL_MSTR_Msk (0x01 << SPI_CTRL_MSTR_Pos)
 #define SPI_CTRL_FAST_Pos 13 //1 SPI工作时钟 = SYS_Freq/2    0 SPI工作时钟由SPI->CTRL.CLKDIV设置
 #define SPI_CTRL_FAST_Msk (0x01 << SPI_CTRL_FAST_Pos)
 #define SPI_CTRL_FILTE_Pos 16 //1 对SPI输入信号进行去抖操作    0 对SPI输入信号不进行去抖操作
 #define SPI_CTRL_FILTE_Msk (0x01 << SPI_CTRL_FILTE_Pos)
-#define SPI_CTRL_SSN_H_Pos 17 //0 传输过程中SSN始终为0    	 1 传输过程中每字符之间会将SSN拉高半个SCLK周期
+#define SPI_CTRL_SSN_H_Pos 17 //0 传输过程中SSN始终为0       1 传输过程中每字符之间会将SSN拉高半个SCLK周期
 #define SPI_CTRL_SSN_H_Msk (0x01 << SPI_CTRL_SSN_H_Pos)
 #define SPI_CTRL_TFCLR_Pos 24 //TX FIFO Clear
 #define SPI_CTRL_TFCLR_Msk (0x01 << SPI_CTRL_TFCLR_Pos)
@@ -1445,9 +1445,9 @@ typedef struct
 #define SPI_STAT_RFF_Msk (0x01 << SPI_STAT_RFF_Pos)
 #define SPI_STAT_RFOVF_Pos 5 //接收FIFO Overflow
 #define SPI_STAT_RFOVF_Msk (0x01 << SPI_STAT_RFOVF_Pos)
-#define SPI_STAT_TFLVL_Pos 6 //发送FIFO中数据个数， 0 TFNF=0时表示FIFO内有8个数据，TFNF=1时表示FIFO内有0个数据	1--7 FIFO内有1--7个数据
+#define SPI_STAT_TFLVL_Pos 6 //发送FIFO中数据个数， 0 TFNF=0时表示FIFO内有8个数据，TFNF=1时表示FIFO内有0个数据   1--7 FIFO内有1--7个数据
 #define SPI_STAT_TFLVL_Msk (0x07 << SPI_STAT_TFLVL_Pos)
-#define SPI_STAT_RFLVL_Pos 9 //接收FIFO中数据个数， 0 RFF=1时表示FIFO内有8个数据， RFF=0时表示FIFO内有0个数据	1--7 FIFO内有1--7个数据
+#define SPI_STAT_RFLVL_Pos 9 //接收FIFO中数据个数， 0 RFF=1时表示FIFO内有8个数据， RFF=0时表示FIFO内有0个数据    1--7 FIFO内有1--7个数据
 #define SPI_STAT_RFLVL_Msk (0x07 << SPI_STAT_RFLVL_Pos)
 #define SPI_STAT_BUSY_Pos 15
 #define SPI_STAT_BUSY_Msk (0x01 << SPI_STAT_BUSY_Pos)
@@ -1506,21 +1506,21 @@ typedef struct
 #define I2C_CTRL_EN_Pos 7
 #define I2C_CTRL_EN_Msk (0x01 << I2C_CTRL_EN_Pos)
 
-#define I2C_MSTCMD_IF_Pos 0 //1 有等待处理的中断，写1清零	有两种情况下此位硬件置位：1、一个字节传输完成  2、总线访问权丢失
+#define I2C_MSTCMD_IF_Pos 0 //1 有等待处理的中断，写1清零   有两种情况下此位硬件置位：1、一个字节传输完成  2、总线访问权丢失
 #define I2C_MSTCMD_IF_Msk (0x01 << I2C_MSTCMD_IF_Pos)
 #define I2C_MSTCMD_TIP_Pos 1 //Transmission In Process
 #define I2C_MSTCMD_TIP_Msk (0x01 << I2C_MSTCMD_TIP_Pos)
-#define I2C_MSTCMD_ACK_Pos 3 //接收模式下，0 向发送端反馈ACK	1 向发送端反馈NACK
+#define I2C_MSTCMD_ACK_Pos 3 //接收模式下，0 向发送端反馈ACK    1 向发送端反馈NACK
 #define I2C_MSTCMD_ACK_Msk (0x01 << I2C_MSTCMD_ACK_Pos)
-#define I2C_MSTCMD_WR_Pos 4 //	  向Slave写数据时，把这一位写1，自动清零
+#define I2C_MSTCMD_WR_Pos 4 //    向Slave写数据时，把这一位写1，自动清零
 #define I2C_MSTCMD_WR_Msk (0x01 << I2C_MSTCMD_WR_Pos)
-#define I2C_MSTCMD_RD_Pos 5 //写：从Slave读数据时，把这一位写1，自动清零	读：当I2C模块失去总线的访问权时硬件置1
+#define I2C_MSTCMD_RD_Pos 5 //写：从Slave读数据时，把这一位写1，自动清零  读：当I2C模块失去总线的访问权时硬件置1
 #define I2C_MSTCMD_RD_Msk (0x01 << I2C_MSTCMD_RD_Pos)
 #define I2C_MSTCMD_BUSY_Pos 6 //读：当检测到START之后，这一位变1；当检测到STOP之后，这一位变0
 #define I2C_MSTCMD_BUSY_Msk (0x01 << I2C_MSTCMD_BUSY_Pos)
 #define I2C_MSTCMD_STO_Pos 6 //写：产生STOP，自动清零
 #define I2C_MSTCMD_STO_Msk (0x01 << I2C_MSTCMD_STO_Pos)
-#define I2C_MSTCMD_RXACK_Pos 7 //读：接收到的Slave的ACK位，0 收到ACK	1 收到NACK
+#define I2C_MSTCMD_RXACK_Pos 7 //读：接收到的Slave的ACK位，0 收到ACK   1 收到NACK
 #define I2C_MSTCMD_RXACK_Msk (0x01 << I2C_MSTCMD_RXACK_Pos)
 #define I2C_MSTCMD_STA_Pos 7 //写：产生START，自动清零
 #define I2C_MSTCMD_STA_Msk (0x01 << I2C_MSTCMD_STA_Pos)
@@ -1609,13 +1609,13 @@ typedef struct
 #define ADC_CTRL_CH6_Msk (0x01 << ADC_CTRL_CH6_Pos)
 #define ADC_CTRL_CH7_Pos 7
 #define ADC_CTRL_CH7_Msk (0x01 << ADC_CTRL_CH7_Pos)
-#define ADC_CTRL_AVG_Pos 8 //0 1次采样	  1 2次采样取平均值	  3 4次采样取平均值	  7 8次采样取平均值	  15 16次采样取平均值
+#define ADC_CTRL_AVG_Pos 8 //0 1次采样   1 2次采样取平均值      3 4次采样取平均值      7 8次采样取平均值      15 16次采样取平均值
 #define ADC_CTRL_AVG_Msk (0x0F << ADC_CTRL_AVG_Pos)
 #define ADC_CTRL_EN_Pos 12
 #define ADC_CTRL_EN_Msk (0x01 << ADC_CTRL_EN_Pos)
 #define ADC_CTRL_CONT_Pos 13                          //Continuous conversion，只在软件启动模式下有效，0 单次转换，转换完成后START位自动清除停止转换
 #define ADC_CTRL_CONT_Msk (0x01 << ADC_CTRL_CONT_Pos) //   1 连续转换，启动后一直采样、转换，直到软件清除START位
-#define ADC_CTRL_TRIG_Pos 14                          //转换触发方式：0 软件启动转换	  1 PWM触发
+#define ADC_CTRL_TRIG_Pos 14                          //转换触发方式：0 软件启动转换   1 PWM触发
 #define ADC_CTRL_TRIG_Msk (0x01 << ADC_CTRL_TRIG_Pos)
 #define ADC_CTRL_CLKSRC_Pos 15 //0 VCO    1 HRC
 #define ADC_CTRL_CLKSRC_Msk (0x01 << ADC_CTRL_CLKSRC_Pos)
@@ -1780,7 +1780,7 @@ typedef struct
 #define ADC_CTRL2_PGAGAIN_Pos 3 //0 25.1dB    1 21.6dB    2 11.1dB    3 3.5dB    4 0dB(1.8V)    5 -2.9dB    6 -5.3dB
 #define ADC_CTRL2_PGAGAIN_Msk (0x07 << ADC_CTRL2_PGAGAIN_Pos)
 #define ADC_CTRL2_REFPOUT_Pos 23 //1 ADC 内部 1.2V REFP电压输出到外部REFP引脚，用于测量，或在需要1.2V外部REFP时节省成本
-#define ADC_CTRL2_REFPOUT_Msk		(0x01 << ADC_CTRL2_REFPOUT_Pos
+#define ADC_CTRL2_REFPOUT_Msk       (0x01 << ADC_CTRL2_REFPOUT_Pos
 #define ADC_CTRL2_CLKDIV_Pos 24 //时钟分频，只在时钟源为HRC时有效
 #define ADC_CTRL2_CLKDIV_Msk (0x1F << ADC_CTRL2_CLKDIV_Pos)
 #define ADC_CTRL2_PGAVCM_Pos 29
@@ -2235,7 +2235,7 @@ typedef struct
 #define DMA_CR_AUTORE_Pos 18 //Auto Restart, 通道在传输完成后，是否自动重新启动
 #define DMA_CR_AUTORE_Msk (0x01 << DMA_CR_AUTORE_Pos)
 
-#define DMA_AM_SRCAM_Pos 0 //Address Mode	0 地址固定    1 地址递增    2 scatter gather模式
+#define DMA_AM_SRCAM_Pos 0 //Address Mode   0 地址固定    1 地址递增    2 scatter gather模式
 #define DMA_AM_SRCAM_Msk (0x03 << DMA_AM_SRCAM_Pos)
 #define DMA_AM_DSTAM_Pos 8
 #define DMA_AM_DSTAM_Msk (0x03 << DMA_AM_DSTAM_Pos)
@@ -2950,7 +2950,7 @@ typedef struct
 #define WDT_CR_RSTEN_Msk (0x01 << WDT_CR_RSTEN_Pos)
 
 /******************************************************************************/
-/*						 Peripheral memory map							  */
+/*                       Peripheral memory map                            */
 /******************************************************************************/
 #define RAM_BASE 0x20000000
 #define AHB_BASE 0x40000000
@@ -3026,7 +3026,7 @@ typedef struct
 #define CAN_BASE (APB_BASE + 0x20000)
 
 /******************************************************************************/
-/*						 Peripheral declaration							 */
+/*                       Peripheral declaration                          */
 /******************************************************************************/
 #define SYS ((SYS_TypeDef *)SYS_BASE)
 
