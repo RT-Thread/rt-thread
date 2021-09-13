@@ -1289,6 +1289,37 @@ RTM_EXPORT(rt_free_align);
 #endif /* RT_USING_HEAP */
 
 #ifndef RT_USING_CPU_FFS
+#ifdef RT_USING_TINY_FFS
+const rt_uint8_t __lowest_bit_bitmap[] =
+{
+    /* 0    1   2   3   4   5   6   #7 */
+       0,   1,  2,  27, 3,  24, 28, 32,
+    /* 8    9   10  11  12  13  #14  15 */
+       4,   17, 25, 31, 29, 12, 32,  14,
+    /* 16   17  18  #19  20  21  22  23 */
+       5,   8,  18, 32,  26, 23, 32, 16,
+    /* 24   25  26  27  #28  29  30  31 */
+       30,  11, 13, 7,  32,  22, 15, 10,
+    /* 32   33  34  35  36 */
+       6,   21, 9,  20, 19
+};
+
+/**
+ * This function finds the first bit set (beginning with the least significant bit)
+ * in value and return the index of that bit.
+ *
+ * Bits are numbered starting at 1 (the least significant bit).  A return value of
+ * zero from any of these functions means that the argument was zero.
+ *
+ * @return return the index of the first bit set. If value is 0, then this function
+ * shall return 0.
+ */
+int __rt_ffs(int value)
+{
+    rt_uint32_t result = (rt_uint32_t)value;
+    return __lowest_bit_bitmap[ (result & (result - 1) ^ result) % 37];
+}
+#else
 const rt_uint8_t __lowest_bit_bitmap[] =
 {
     /* 00 */ 0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
@@ -1334,6 +1365,7 @@ int __rt_ffs(int value)
 
     return __lowest_bit_bitmap[(value & 0xff000000) >> 24] + 25;
 }
+#endif /* RT_USING_TINY_FFS */
 #endif /* RT_USING_CPU_FFS */
 
 #ifdef RT_DEBUG
