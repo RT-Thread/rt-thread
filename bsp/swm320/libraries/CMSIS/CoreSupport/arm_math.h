@@ -2,12 +2,12 @@
 * Copyright (C) 2010-2014 ARM Limited. All rights reserved.
 *
 * $Date:        12. March 2014
-* $Revision: 	V1.4.4
+* $Revision:    V1.4.4
 *
-* Project: 	    CMSIS DSP Library
-* Title:	    arm_math.h
+* Project:      CMSIS DSP Library
+* Title:        arm_math.h
 *
-* Description:	Public header file for CMSIS DSP Library
+* Description:  Public header file for CMSIS DSP Library
 *
 * Target Processor: Cortex-M7/Cortex-M4/Cortex-M3/Cortex-M0
 *
@@ -134,7 +134,7 @@
    * <hr>
    * CMSIS-DSP in ARM::CMSIS Pack
    * -----------------------------
-   * 
+   *
    * The following files relevant to CMSIS-DSP are present in the <b>ARM::CMSIS</b> Pack directories:
    * |File/Folder                   |Content                                                                 |
    * |------------------------------|------------------------------------------------------------------------|
@@ -142,7 +142,7 @@
    * |\b CMSIS\\DSP_Lib             | Software license agreement (license.txt)                               |
    * |\b CMSIS\\DSP_Lib\\Examples   | Example projects demonstrating the usage of the library functions      |
    * |\b CMSIS\\DSP_Lib\\Source     | Source files for rebuilding the library                                |
-   * 
+   *
    * <hr>
    * Revision History of CMSIS-DSP
    * ------------
@@ -347,7 +347,7 @@ extern "C"
 #else
 #define ALIGN4 __align(4)
 #endif
-#endif /*	#ifndef UNALIGNED_SUPPORT_DISABLE	*/
+#endif /*   #ifndef UNALIGNED_SUPPORT_DISABLE   */
 
     /**
    * @brief Error status returned by some functions in the library.
@@ -1187,11 +1187,11 @@ extern "C"
     /**
    * @brief  Initialization function for the Q31 FIR filter.
    * @param[in,out] *S points to an instance of the Q31 FIR structure.
-   * @param[in] 	numTaps  Number of filter coefficients in the filter.
-   * @param[in] 	*pCoeffs points to the filter coefficients.
-   * @param[in] 	*pState points to the state buffer.
-   * @param[in] 	blockSize number of samples that are processed at a time.
-   * @return 		none.
+   * @param[in]     numTaps  Number of filter coefficients in the filter.
+   * @param[in]     *pCoeffs points to the filter coefficients.
+   * @param[in]     *pState points to the state buffer.
+   * @param[in]     blockSize number of samples that are processed at a time.
+   * @return        none.
    */
     void arm_fir_init_q31(
         arm_fir_instance_q31 *S,
@@ -1217,11 +1217,11 @@ extern "C"
     /**
    * @brief  Initialization function for the floating-point FIR filter.
    * @param[in,out] *S points to an instance of the floating-point FIR filter structure.
-   * @param[in] 	numTaps  Number of filter coefficients in the filter.
-   * @param[in] 	*pCoeffs points to the filter coefficients.
-   * @param[in] 	*pState points to the state buffer.
-   * @param[in] 	blockSize number of samples that are processed at a time.
-   * @return    	none.
+   * @param[in]     numTaps  Number of filter coefficients in the filter.
+   * @param[in]     *pCoeffs points to the filter coefficients.
+   * @param[in]     *pState points to the state buffer.
+   * @param[in]     blockSize number of samples that are processed at a time.
+   * @return        none.
    */
     void arm_fir_init_f32(
         arm_fir_instance_f32 *S,
@@ -1524,7 +1524,7 @@ extern "C"
    * @brief Floating-point matrix transpose.
    * @param[in]  *pSrc points to the input matrix
    * @param[out] *pDst points to the output matrix
-   * @return 	The function returns either  <code>ARM_MATH_SIZE_MISMATCH</code>
+   * @return    The function returns either  <code>ARM_MATH_SIZE_MISMATCH</code>
    * or <code>ARM_MATH_SUCCESS</code> based on the outcome of size checking.
    */
 
@@ -1536,7 +1536,7 @@ extern "C"
    * @brief Q15 matrix transpose.
    * @param[in]  *pSrc points to the input matrix
    * @param[out] *pDst points to the output matrix
-   * @return 	The function returns either  <code>ARM_MATH_SIZE_MISMATCH</code>
+   * @return    The function returns either  <code>ARM_MATH_SIZE_MISMATCH</code>
    * or <code>ARM_MATH_SUCCESS</code> based on the outcome of size checking.
    */
 
@@ -1548,7 +1548,7 @@ extern "C"
    * @brief Q31 matrix transpose.
    * @param[in]  *pSrc points to the input matrix
    * @param[out] *pDst points to the output matrix
-   * @return 	The function returns either  <code>ARM_MATH_SIZE_MISMATCH</code>
+   * @return    The function returns either  <code>ARM_MATH_SIZE_MISMATCH</code>
    * or <code>ARM_MATH_SUCCESS</code> based on the outcome of size checking.
    */
 
@@ -1575,7 +1575,7 @@ extern "C"
    * @param[in]       *pSrcA points to the first input matrix structure
    * @param[in]       *pSrcB points to the second input matrix structure
    * @param[out]      *pDst points to output matrix structure
-   * @param[in]		 *pState points to the array for storing intermediate results
+   * @param[in]      *pState points to the array for storing intermediate results
    * @return     The function returns either
    * <code>ARM_MATH_SIZE_MISMATCH</code> or <code>ARM_MATH_SUCCESS</code> based on the outcome of size checking.
    */
@@ -1591,7 +1591,7 @@ extern "C"
    * @param[in]       *pSrcA  points to the first input matrix structure
    * @param[in]       *pSrcB  points to the second input matrix structure
    * @param[out]      *pDst   points to output matrix structure
-   * @param[in]		  *pState points to the array for storing intermediate results
+   * @param[in]       *pState points to the array for storing intermediate results
    * @return     The function returns either
    * <code>ARM_MATH_SIZE_MISMATCH</code> or <code>ARM_MATH_SUCCESS</code> based on the outcome of size checking.
    */
@@ -1723,7 +1723,7 @@ extern "C"
    * @param[in,out] *S             points to an instance of the floating-point matrix structure.
    * @param[in]     nRows          number of rows in the matrix.
    * @param[in]     nColumns       number of columns in the matrix.
-   * @param[in]     *pData	       points to the matrix data array.
+   * @param[in]     *pData         points to the matrix data array.
    * @return        none
    */
 
@@ -1738,7 +1738,7 @@ extern "C"
    * @param[in,out] *S             points to an instance of the floating-point matrix structure.
    * @param[in]     nRows          number of rows in the matrix.
    * @param[in]     nColumns       number of columns in the matrix.
-   * @param[in]     *pData	       points to the matrix data array.
+   * @param[in]     *pData         points to the matrix data array.
    * @return        none
    */
 
@@ -1753,7 +1753,7 @@ extern "C"
    * @param[in,out] *S             points to an instance of the floating-point matrix structure.
    * @param[in]     nRows          number of rows in the matrix.
    * @param[in]     nColumns       number of columns in the matrix.
-   * @param[in]     *pData	       points to the matrix data array.
+   * @param[in]     *pData         points to the matrix data array.
    * @return        none
    */
 
@@ -2321,7 +2321,7 @@ extern "C"
    * @param[in]     N          length of the DCT4.
    * @param[in]     Nby2       half of the length of the DCT4.
    * @param[in]     normalize  normalizing factor.
-   * @return		arm_status function returns ARM_MATH_SUCCESS if initialization is successful or ARM_MATH_ARGUMENT_ERROR if <code>fftLenReal</code> is not a supported transform length.
+   * @return        arm_status function returns ARM_MATH_SUCCESS if initialization is successful or ARM_MATH_ARGUMENT_ERROR if <code>fftLenReal</code> is not a supported transform length.
    */
 
     arm_status arm_dct4_init_f32(
@@ -2368,7 +2368,7 @@ extern "C"
    * @param[in]     N          length of the DCT4.
    * @param[in]     Nby2       half of the length of the DCT4.
    * @param[in]     normalize  normalizing factor.
-   * @return		arm_status function returns ARM_MATH_SUCCESS if initialization is successful or ARM_MATH_ARGUMENT_ERROR if <code>N</code> is not a supported transform length.
+   * @return        arm_status function returns ARM_MATH_SUCCESS if initialization is successful or ARM_MATH_ARGUMENT_ERROR if <code>N</code> is not a supported transform length.
    */
 
     arm_status arm_dct4_init_q31(
@@ -2415,7 +2415,7 @@ extern "C"
    * @param[in]     N          length of the DCT4.
    * @param[in]     Nby2       half of the length of the DCT4.
    * @param[in]     normalize  normalizing factor.
-   * @return		arm_status function returns ARM_MATH_SUCCESS if initialization is successful or ARM_MATH_ARGUMENT_ERROR if <code>N</code> is not a supported transform length.
+   * @return        arm_status function returns ARM_MATH_SUCCESS if initialization is successful or ARM_MATH_ARGUMENT_ERROR if <code>N</code> is not a supported transform length.
    */
 
     arm_status arm_dct4_init_q15(
@@ -5355,8 +5355,8 @@ extern "C"
    * @brief Floating-point Park transform
    * @param[in]       Ialpha input two-phase vector coordinate alpha
    * @param[in]       Ibeta  input two-phase vector coordinate beta
-   * @param[out]      *pId   points to output	rotor reference frame d
-   * @param[out]      *pIq   points to output	rotor reference frame q
+   * @param[out]      *pId   points to output   rotor reference frame d
+   * @param[out]      *pIq   points to output   rotor reference frame q
    * @param[in]       sinVal sine value of rotation angle theta
    * @param[in]       cosVal cosine value of rotation angle theta
    * @return none.
@@ -5496,7 +5496,7 @@ extern "C"
     }
 
     /**
-   * @brief  Inverse Park transform for	Q31 version
+   * @brief  Inverse Park transform for Q31 version
    * @param[in]       Id        input coordinate of rotor reference frame d
    * @param[in]       Iq        input coordinate of rotor reference frame q
    * @param[out]      *pIalpha  points to output two-phase orthogonal vector axis alpha

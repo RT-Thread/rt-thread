@@ -1,18 +1,18 @@
-/****************************************************************************************************************************************** 
-* 文件名称:	system_SWM320.c
-* 功能说明:	SWM320单片机的时钟设置
-* 技术支持:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
+/******************************************************************************************************************************************
+* 文件名称: system_SWM320.c
+* 功能说明: SWM320单片机的时钟设置
+* 技术支持: http://www.synwit.com.cn/e/tool/gbook/?bid=1
 * 注意事项:
-* 版本日期: V1.1.0		2017年10月25日
-* 升级记录: 
+* 版本日期: V1.1.0      2017年10月25日
+* 升级记录:
 *
 *
 *******************************************************************************************************************************************
 * @attention
 *
-* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS WITH CODING INFORMATION 
-* REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME. AS A RESULT, SYNWIT SHALL NOT BE HELD LIABLE 
-* FOR ANY DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE CONTENT 
+* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS WITH CODING INFORMATION
+* REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME. AS A RESULT, SYNWIT SHALL NOT BE HELD LIABLE
+* FOR ANY DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE CONTENT
 * OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING INFORMATION CONTAINED HEREIN IN CONN-
 * -ECTION WITH THEIR PRODUCTS.
 *
@@ -43,7 +43,7 @@
 
 /********************************** PLL 设定 **********************************************
  * VCO输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV
- * PLL输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV / OUTDIV = VCO输出频率 / OUTDIV    
+ * PLL输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV / OUTDIV = VCO输出频率 / OUTDIV
  * 注意：VCO输出频率需要在 [600MHz, 1200MHz] 之间
  *****************************************************************************************/
 #define SYS_PLL_SRC SYS_CLK_20MHz //可取值SYS_CLK_20MHz、SYS_CLK_XTAL
@@ -61,12 +61,12 @@
 uint32_t SystemCoreClock = __HSI;         //System Clock Frequency (Core Clock)
 uint32_t CyclesPerUs = (__HSI / 1000000); //Cycles per micro second
 
-/****************************************************************************************************************************************** 
-* 函数名称: 
+/******************************************************************************************************************************************
+* 函数名称:
 * 功能说明: This function is used to update the variable SystemCoreClock and must be called whenever the core clock is changed
-* 输    入: 
-* 输    出: 
-* 注意事项: 
+* 输    入:
+* 输    出:
+* 注意事项:
 ******************************************************************************************************************************************/
 void SystemCoreClockUpdate(void)
 {
@@ -115,12 +115,12 @@ void SystemCoreClockUpdate(void)
     CyclesPerUs = SystemCoreClock / 1000000;
 }
 
-/****************************************************************************************************************************************** 
-* 函数名称: 
+/******************************************************************************************************************************************
+* 函数名称:
 * 功能说明: The necessary initializaiton of systerm
-* 输    入: 
-* 输    出: 
-* 注意事项: 
+* 输    入:
+* 输    出:
+* 注意事项:
 ******************************************************************************************************************************************/
 void SystemInit(void)
 {
