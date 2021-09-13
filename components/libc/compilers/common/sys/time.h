@@ -8,8 +8,8 @@
  * 2020-09-07     Meco Man     combine gcc armcc iccarm
  * 2021-02-12     Meco Man     move all definitions located in <clock_time.h> to this file
  */
-#ifndef _SYS_TIME_H_
-#define _SYS_TIME_H_
+#ifndef __SYS_TIME_H__
+#define __SYS_TIME_H__
 
 #include <rtconfig.h>
 #include <rtdef.h>
@@ -73,7 +73,7 @@ struct timespec {
 };
 #endif
 
-/* posix clock and timer */
+/* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
 #define NANOSECOND_PER_SECOND   1000000000UL

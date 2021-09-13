@@ -13,7 +13,7 @@
 #include <lwp_mem.h>
 #include <lwp_syscall.h>
 
-#include <dfs_poll.h>
+#include <poll.h>
 #include <dfs_select.h>
 
 #if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
