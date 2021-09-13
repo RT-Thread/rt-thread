@@ -12,6 +12,7 @@
 #define __SYS_SELECT_H__
 
 #include <rtconfig.h>
+#include <sys/time.h>
 #include <sys/types.h>
 
 #ifndef  FD_SETSIZE
@@ -45,5 +46,7 @@ typedef struct _types_fd_set {
 #define FD_ISSET(n, p)  ((p)->fds_bits[(n)/NFDBITS] & (1L << ((n) % NFDBITS)))
 #define FD_ZERO(p)      memset((void*)(p), 0, sizeof(*(p)))
 #endif /* _SYS_TYPES_FD_SET */
+
+int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
 
 #endif /* __SYS_SELECT_H__ */
