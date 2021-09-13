@@ -126,32 +126,32 @@ void CAN_Transmit(CAN_TypeDef *CANx, uint32_t format, uint32_t id, uint8_t data[
 
     if (format == CAN_FRAME_STD)
     {
-        CANx->TXFRAME.INFO = (0 << CAN_INFO_FF_Pos) |
-                             (0 << CAN_INFO_RTR_Pos) |
-                             (size << CAN_INFO_DLC_Pos);
+        CANx->FRAME.INFO = (0 << CAN_INFO_FF_Pos) |
+                           (0 << CAN_INFO_RTR_Pos) |
+                           (size << CAN_INFO_DLC_Pos);
 
-        CANx->TXFRAME.DATA[0] = id >> 3;
-        CANx->TXFRAME.DATA[1] = id << 5;
+        CANx->FRAME.DATA[0] = id >> 3;
+        CANx->FRAME.DATA[1] = id << 5;
 
         for (i = 0; i < size; i++)
         {
-            CANx->TXFRAME.DATA[i + 2] = data[i];
+            CANx->FRAME.DATA[i + 2] = data[i];
         }
     }
     else //if(format == CAN_FRAME_EXT)
     {
-        CANx->TXFRAME.INFO = (1 << CAN_INFO_FF_Pos) |
-                             (0 << CAN_INFO_RTR_Pos) |
-                             (size << CAN_INFO_DLC_Pos);
+        CANx->FRAME.INFO = (1 << CAN_INFO_FF_Pos) |
+                           (0 << CAN_INFO_RTR_Pos) |
+                           (size << CAN_INFO_DLC_Pos);
 
-        CANx->TXFRAME.DATA[0] = id >> 21;
-        CANx->TXFRAME.DATA[1] = id >> 13;
-        CANx->TXFRAME.DATA[2] = id >> 5;
-        CANx->TXFRAME.DATA[3] = id << 3;
+        CANx->FRAME.DATA[0] = id >> 21;
+        CANx->FRAME.DATA[1] = id >> 13;
+        CANx->FRAME.DATA[2] = id >> 5;
+        CANx->FRAME.DATA[3] = id << 3;
 
         for (i = 0; i < size; i++)
         {
-            CANx->TXFRAME.DATA[i + 4] = data[i];
+            CANx->FRAME.DATA[i + 4] = data[i];
         }
     }
 
@@ -186,23 +186,23 @@ void CAN_TransmitRequest(CAN_TypeDef *CANx, uint32_t format, uint32_t id, uint32
 {
     if (format == CAN_FRAME_STD)
     {
-        CANx->TXFRAME.INFO = (0 << CAN_INFO_FF_Pos) |
-                             (1 << CAN_INFO_RTR_Pos) |
-                             (0 << CAN_INFO_DLC_Pos);
+        CANx->FRAME.INFO = (0 << CAN_INFO_FF_Pos) |
+                           (1 << CAN_INFO_RTR_Pos) |
+                           (0 << CAN_INFO_DLC_Pos);
 
-        CANx->TXFRAME.DATA[0] = id >> 3;
-        CANx->TXFRAME.DATA[1] = id << 5;
+        CANx->FRAME.DATA[0] = id >> 3;
+        CANx->FRAME.DATA[1] = id << 5;
     }
     else //if(format == CAN_FRAME_EXT)
     {
-        CANx->TXFRAME.INFO = (1 << CAN_INFO_FF_Pos) |
-                             (1 << CAN_INFO_RTR_Pos) |
-                             (0 << CAN_INFO_DLC_Pos);
+        CANx->FRAME.INFO = (1 << CAN_INFO_FF_Pos) |
+                           (1 << CAN_INFO_RTR_Pos) |
+                           (0 << CAN_INFO_DLC_Pos);
 
-        CANx->TXFRAME.DATA[0] = id >> 21;
-        CANx->TXFRAME.DATA[1] = id >> 13;
-        CANx->TXFRAME.DATA[2] = id >> 5;
-        CANx->TXFRAME.DATA[3] = id << 3;
+        CANx->FRAME.DATA[0] = id >> 21;
+        CANx->FRAME.DATA[1] = id >> 13;
+        CANx->FRAME.DATA[2] = id >> 5;
+        CANx->FRAME.DATA[3] = id << 3;
     }
 
     if (once == 0)
@@ -226,27 +226,27 @@ void CAN_TransmitRequest(CAN_TypeDef *CANx, uint32_t format, uint32_t id, uint32
 void CAN_Receive(CAN_TypeDef *CANx, CAN_RXMessage *msg)
 {
     uint32_t i;
-    msg->format = (CANx->RXFRAME.INFO & CAN_INFO_FF_Msk) >> CAN_INFO_FF_Pos;
+    msg->format = (CANx->FRAME.INFO & CAN_INFO_FF_Msk) >> CAN_INFO_FF_Pos;
 
-    msg->remote = (CANx->RXFRAME.INFO & CAN_INFO_RTR_Msk) >> CAN_INFO_RTR_Pos;
-    msg->size = (CANx->RXFRAME.INFO & CAN_INFO_DLC_Msk) >> CAN_INFO_DLC_Pos;
+    msg->remote = (CANx->FRAME.INFO & CAN_INFO_RTR_Msk) >> CAN_INFO_RTR_Pos;
+    msg->size = (CANx->FRAME.INFO & CAN_INFO_DLC_Msk) >> CAN_INFO_DLC_Pos;
 
     if (msg->format == CAN_FRAME_STD)
     {
-        msg->id = (CANx->RXFRAME.DATA[0] << 3) | (CANx->RXFRAME.DATA[1] >> 5);
+        msg->id = (CANx->FRAME.DATA[0] << 3) | (CANx->FRAME.DATA[1] >> 5);
 
         for (i = 0; i < msg->size; i++)
         {
-            msg->data[i] = CANx->RXFRAME.DATA[i + 2];
+            msg->data[i] = CANx->FRAME.DATA[i + 2];
         }
     }
     else //if(msg->format == CAN_FRAME_EXT)
     {
-        msg->id = (CANx->RXFRAME.DATA[0] << 21) | (CANx->RXFRAME.DATA[1] << 13) | (CANx->RXFRAME.DATA[2] << 5) | (CANx->RXFRAME.DATA[3] >> 3);
+        msg->id = (CANx->FRAME.DATA[0] << 21) | (CANx->FRAME.DATA[1] << 13) | (CANx->FRAME.DATA[2] << 5) | (CANx->FRAME.DATA[3] >> 3);
 
         for (i = 0; i < msg->size; i++)
         {
-            msg->data[i] = CANx->RXFRAME.DATA[i + 4];
+            msg->data[i] = CANx->FRAME.DATA[i + 4];
         }
     }
 
