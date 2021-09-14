@@ -173,7 +173,6 @@ void rt_thread_idle_init(void);
 rt_err_t rt_thread_idle_sethook(void (*hook)(void));
 rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif
-void rt_thread_idle_excute(void);
 rt_thread_t rt_thread_idle_gethandler(void);
 
 /*
@@ -192,6 +191,7 @@ rt_uint16_t rt_critical_level(void);
 
 #ifdef RT_USING_HOOK
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
+void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid));
 #endif
 
 #ifdef RT_USING_SMP
@@ -333,6 +333,7 @@ rt_err_t rt_mutex_delete(rt_mutex_t mutex);
 #endif
 
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time);
+rt_err_t rt_mutex_trytake(rt_mutex_t mutex);
 rt_err_t rt_mutex_release(rt_mutex_t mutex);
 rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg);
 #endif
@@ -411,6 +412,10 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
                     rt_int32_t timeout);
 rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg);
 #endif
+
+/* defunct */
+void rt_thread_defunct_enqueue(rt_thread_t thread);
+rt_thread_t rt_thread_defunct_dequeue(void);
 
 /*
  * spinlock
@@ -540,7 +545,6 @@ rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
 rt_int32_t rt_sprintf(char *buf, const char *format, ...);
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
-rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...);
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
@@ -585,7 +589,7 @@ rt_size_t rt_strlen(const char *src);
 #endif /*RT_KSERVICE_USING_STDLIB*/
 
 char *rt_strdup(const char *s);
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#ifdef __ARMCC_VERSION
 /* lack strdup interface */
 char* strdup(const char* str);
 #endif
@@ -600,7 +604,7 @@ void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
 #endif /* RT_DEBUG */
 
 #ifdef RT_USING_FINSH
-#include <finsh_api.h>
+#include <finsh.h>
 #endif
 
 /**@}*/

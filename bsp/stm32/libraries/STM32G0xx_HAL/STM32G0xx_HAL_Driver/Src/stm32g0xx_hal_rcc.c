@@ -18,8 +18,8 @@
       D-Cache and I-Cache are disabled, and all peripherals are off except internal
       SRAM, Flash and JTAG.
 
-      (+) There is no prescaler on High speed (AHB) and Low speed (APB) busses:
-          all peripherals mapped on these busses are running at HSI speed.
+      (+) There is no prescaler on High speed (AHB) and Low speed (APB) buses:
+          all peripherals mapped on these buses are running at HSI speed.
       (+) The clock for all peripherals is switched off, except the SRAM and FLASH.
       (+) All GPIOs are in analog mode, except the JTAG pins which
           are assigned to be used for debug purpose.
@@ -29,7 +29,7 @@
       (+) Configure the clock source to be used to drive the System clock
           (if the application needs higher frequency/performance)
       (+) Configure the System clock frequency and Flash settings
-      (+) Configure the AHB and APB busses prescalers
+      (+) Configure the AHB and APB buses prescalers
       (+) Enable the clock for the peripheral(s) to be used
       (+) Configure the clock source(s) for peripherals which clocks are not
           derived from the System clock (RTC, ADC, RNG, HSTIM)
@@ -66,12 +66,16 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /** @defgroup RCC_Private_Constants RCC Private Constants
- * @{
- */
+  * @{
+  */
 #define HSE_TIMEOUT_VALUE          HSE_STARTUP_TIMEOUT
 #define HSI_TIMEOUT_VALUE          (2U)    /* 2 ms (minimum Tick + 1) */
 #define LSI_TIMEOUT_VALUE          (2U)    /* 2 ms (minimum Tick + 1) */
 #define PLL_TIMEOUT_VALUE          (2U)    /* 2 ms (minimum Tick + 1) */
+
+#if defined(RCC_HSI48_SUPPORT)
+#define HSI48_TIMEOUT_VALUE        (2U)    /* 2 ms (minimum Tick + 1) */
+#endif /* RCC_HSI48_SUPPORT */
 #define CLOCKSWITCH_TIMEOUT_VALUE  (5000U) /* 5 s    */
 
 #define PLLSOURCE_NONE             (0U)
@@ -86,6 +90,12 @@
 #define MCO1_CLK_ENABLE()     __HAL_RCC_GPIOA_CLK_ENABLE()
 #define MCO1_GPIO_PORT        GPIOA
 #define MCO1_PIN              GPIO_PIN_8
+
+#if defined(RCC_MCO2_SUPPORT)
+#define MCO2_CLK_ENABLE()    __HAL_RCC_GPIOA_CLK_ENABLE()
+#define MCO2_GPIO_PORT        GPIOA
+#define MCO2_PIN              GPIO_PIN_10
+#endif /* RCC_MCO2_SUPPORT */
 
 #define RCC_PLL_OSCSOURCE_CONFIG(__HAL_RCC_PLLSOURCE__) \
             (MODIFY_REG(RCC->PLLCFGR, RCC_PLLCFGR_PLLSRC, (uint32_t)(__HAL_RCC_PLLSOURCE__)))
@@ -118,7 +128,7 @@
  ===============================================================================
     [..]
       This section provides functions allowing to configure the internal and external oscillators
-      (HSE, HSI, LSE, LSI, PLL, CSS and MCO) and the System busses clocks (SYSCLK, AHB, APB)
+      (HSE, HSI, LSE, LSI, PLL, CSS and MCO) and the System buses clocks (SYSCLK, AHB, APB)
 
     [..] Internal/external clock and PLL configuration
          (+) HSI (high-speed internal): 16 MHz factory-trimmed RC used directly or through
@@ -143,17 +153,19 @@
              if enabled. The interrupt is linked to the Cortex-M0+ NMI (Non-Maskable Interrupt)
              exception vector.
 
-         (+) MCO (microcontroller clock output): used to output LSI, HSI, LSE, HSE or
-             main PLL clock (through a configurable prescaler) on PA8 pin.
+         (+) MCOx (microcontroller clock output):
+             (++) MCO1 used to output LSI, HSI48(*), HSI, LSE, HSE or main PLL clock (through a configurable prescaler) on PA8 pin.
+             (++) MCO2(*) used to output LSI, HSI48(*), HSI, LSE, HSE, main PLLR clock, PLLQ clock, PLLP clock, RTC clock or RTC_Wakeup (through a configurable prescaler) on PA10 pin.
+                 (*) available on certain devices only
 
-    [..] System, AHB and APB busses clocks configuration
+    [..] System, AHB and APB buses clocks configuration
          (+) Several clock sources can be used to drive the System clock (SYSCLK): HSI,
              HSE, LSI, LSE and main PLL.
              The AHB clock (HCLK) is derived from System clock through configurable
              prescaler and used to clock the CPU, memory and peripherals mapped
              on AHB bus (DMA, GPIO...).and APB (PCLK1) clock is derived
              from AHB clock through configurable prescalers and used to clock
-             the peripherals mapped on these busses. You can use
+             the peripherals mapped on these buses. You can use
              "@ref HAL_RCC_GetSysClockFreq()" function to retrieve the frequencies of these clocks.
 
          -@- All the peripheral clocks are derived from the System clock (SYSCLK) except:
@@ -322,7 +334,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     temp_pllckcfg = __HAL_RCC_GET_PLL_OSCSOURCE();
 
     /* When the HSE is used as system clock or clock source for PLL in these cases it is not allowed to be disabled */
-    if (((temp_sysclksrc == RCC_CFGR_SWS_PLL) && (temp_pllckcfg == RCC_PLLSOURCE_HSE)) || (temp_sysclksrc == RCC_CFGR_SWS_HSE))
+    if (((temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (temp_pllckcfg == RCC_PLLSOURCE_HSE)) || (temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_HSE))
     {
       if ((READ_BIT(RCC->CR, RCC_CR_HSERDY) != 0U) && (RCC_OscInitStruct->HSEState == RCC_HSE_OFF))
       {
@@ -376,7 +388,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     /* Check if HSI16 is used as system clock or as PLL source when PLL is selected as system clock */
     temp_sysclksrc = __HAL_RCC_GET_SYSCLK_SOURCE();
     temp_pllckcfg = __HAL_RCC_GET_PLL_OSCSOURCE();
-    if (((temp_sysclksrc == RCC_CFGR_SWS_PLL) && (temp_pllckcfg == RCC_PLLSOURCE_HSI)) || (temp_sysclksrc == RCC_CFGR_SWS_HSI))
+    if (((temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (temp_pllckcfg == RCC_PLLSOURCE_HSI)) || (temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_HSI))
     {
       /* When HSI is used as system clock or as PLL input clock it can not be disabled */
       if ((READ_BIT(RCC->CR, RCC_CR_HSIRDY) != 0U) && (RCC_OscInitStruct->HSIState == RCC_HSI_OFF))
@@ -389,7 +401,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
         /* Adjusts the Internal High Speed oscillator (HSI) calibration value.*/
         __HAL_RCC_HSI_CALIBRATIONVALUE_ADJUST(RCC_OscInitStruct->HSICalibrationValue);
 
-        if (temp_sysclksrc == RCC_CFGR_SWS_HSI)
+        if (temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_HSI)
         {
           /* Adjust the HSI16 division factor */
           __HAL_RCC_HSI_CONFIG(RCC_OscInitStruct->HSIDiv);
@@ -457,7 +469,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     assert_param(IS_RCC_LSI(RCC_OscInitStruct->LSIState));
 
     /* Check if LSI is used as system clock */
-    if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_CFGR_SWS_LSI)
+    if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_LSI)
     {
       /* When LSI is used as system clock it will not be disabled */
       if ((((RCC->CSR) & RCC_CSR_LSIRDY) != 0U) && (RCC_OscInitStruct->LSIState == RCC_LSI_OFF))
@@ -513,7 +525,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     assert_param(IS_RCC_LSE(RCC_OscInitStruct->LSEState));
 
     /* When the LSE is used as system clock, it is not allowed disable it */
-    if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_CFGR_SWS_LSE)
+    if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_LSE)
     {
       if ((((RCC->BDCR) & RCC_BDCR_LSERDY) != 0U) && (RCC_OscInitStruct->LSEState == RCC_LSE_OFF))
       {
@@ -587,6 +599,50 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
       }
     }
   }
+#if defined(RCC_HSI48_SUPPORT)
+  /*------------------------------ HSI48 Configuration -----------------------*/
+  if (((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_HSI48) == RCC_OSCILLATORTYPE_HSI48)
+  {
+    /* Check the parameters */
+    assert_param(IS_RCC_HSI48(RCC_OscInitStruct->HSI48State));
+
+    /* Check the LSI State */
+    if (RCC_OscInitStruct->HSI48State != RCC_HSI48_OFF)
+    {
+      /* Enable the Internal Low Speed oscillator (HSI48). */
+      __HAL_RCC_HSI48_ENABLE();
+
+      /* Get Start Tick*/
+      tickstart = HAL_GetTick();
+
+      /* Wait till HSI48 is ready */
+      while (READ_BIT(RCC->CR, RCC_CR_HSI48RDY) == 0U)
+      {
+        if ((HAL_GetTick() - tickstart) > HSI48_TIMEOUT_VALUE)
+        {
+          return HAL_TIMEOUT;
+        }
+      }
+    }
+    else
+    {
+      /* Disable the Internal Low Speed oscillator (HSI48). */
+      __HAL_RCC_HSI48_DISABLE();
+
+      /* Get Start Tick*/
+      tickstart = HAL_GetTick();
+
+      /* Wait till HSI48 is disabled */
+      while (READ_BIT(RCC->CR, RCC_CR_HSI48RDY) != 0U)
+      {
+        if ((HAL_GetTick() - tickstart) > HSI48_TIMEOUT_VALUE)
+        {
+          return HAL_TIMEOUT;
+        }
+      }
+    }
+  }
+#endif /* RCC_HSI48_SUPPORT */
   /*-------------------------------- PLL Configuration -----------------------*/
   /* Check the parameters */
   assert_param(IS_RCC_PLL(RCC_OscInitStruct->PLL.PLLState));
@@ -594,7 +650,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   if (RCC_OscInitStruct->PLL.PLLState != RCC_PLL_NONE)
   {
     /* Check if the PLL is used as system clock or not */
-    if (__HAL_RCC_GET_SYSCLK_SOURCE() != RCC_CFGR_SWS_PLL)
+    if (__HAL_RCC_GET_SYSCLK_SOURCE() != RCC_SYSCLKSOURCE_STATUS_PLLCLK)
     {
       if (RCC_OscInitStruct->PLL.PLLState == RCC_PLL_ON)
       {
@@ -605,7 +661,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
         assert_param(IS_RCC_PLLP_VALUE(RCC_OscInitStruct->PLL.PLLP));
 #if defined(RCC_PLLQ_SUPPORT)
         assert_param(IS_RCC_PLLQ_VALUE(RCC_OscInitStruct->PLL.PLLQ));
-#endif
+#endif /* RCC_PLLQ_SUPPORT */
         assert_param(IS_RCC_PLLR_VALUE(RCC_OscInitStruct->PLL.PLLR));
 
         /* Disable the main PLL. */
@@ -630,7 +686,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
                              RCC_OscInitStruct->PLL.PLLP,
 #if defined(RCC_PLLQ_SUPPORT)
                              RCC_OscInitStruct->PLL.PLLQ,
-#endif
+#endif /* RCC_PLLQ_SUPPORT */
                              RCC_OscInitStruct->PLL.PLLR);
 
         /* Enable the main PLL. */
@@ -663,7 +719,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
         __HAL_RCC_PLLCLKOUT_DISABLE(RCC_PLLCFGR_PLLPEN | RCC_PLLCFGR_PLLQEN | RCC_PLLCFGR_PLLREN);
 #else
         __HAL_RCC_PLLCLKOUT_DISABLE(RCC_PLLCFGR_PLLPEN | RCC_PLLCFGR_PLLREN);
-#endif
+#endif /* RCC_PLLQ_SUPPORT */
 
         /* Get Start Tick*/
         tickstart = HAL_GetTick();
@@ -681,22 +737,22 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     else
     {
       /* Check if there is a request to disable the PLL used as System clock source */
-      if((RCC_OscInitStruct->PLL.PLLState) == RCC_PLL_OFF)
+      if ((RCC_OscInitStruct->PLL.PLLState) == RCC_PLL_OFF)
       {
         return HAL_ERROR;
       }
       else
-      {   
+      {
         /* Do not return HAL_ERROR if request repeats the current configuration */
         temp_pllckcfg = RCC->PLLCFGR;
-        if((READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLSRC) != RCC_OscInitStruct->PLL.PLLSource) ||
-           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLM) != RCC_OscInitStruct->PLL.PLLM) ||
-           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLN) != (RCC_OscInitStruct->PLL.PLLN << RCC_PLLCFGR_PLLN_Pos)) ||
-           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLP) != RCC_OscInitStruct->PLL.PLLP) ||
+        if ((READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLSRC) != RCC_OscInitStruct->PLL.PLLSource) ||
+            (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLM) != RCC_OscInitStruct->PLL.PLLM) ||
+            (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLN) != (RCC_OscInitStruct->PLL.PLLN << RCC_PLLCFGR_PLLN_Pos)) ||
+            (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLP) != RCC_OscInitStruct->PLL.PLLP) ||
 #if defined (RCC_PLLQ_SUPPORT)
-           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLQ) != RCC_OscInitStruct->PLL.PLLQ) ||
-#endif
-           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLR) != RCC_OscInitStruct->PLL.PLLR))
+            (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLQ) != RCC_OscInitStruct->PLL.PLLQ) ||
+#endif /* RCC_PLLQ_SUPPORT */
+            (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLR) != RCC_OscInitStruct->PLL.PLLR))
         {
           return HAL_ERROR;
         }
@@ -707,7 +763,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
 }
 
 /**
-  * @brief  Initialize the CPU, AHB and APB busses clocks according to the specified
+  * @brief  Initialize the CPU, AHB and APB buses clocks according to the specified
   *         parameters in the RCC_ClkInitStruct.
   * @param  RCC_ClkInitStruct  pointer to a @ref RCC_ClkInitTypeDef structure that
   *         contains the configuration information for the RCC peripheral.
@@ -898,8 +954,8 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
   */
 
 /** @defgroup RCC_Exported_Functions_Group2 Peripheral Control functions
- *  @brief   RCC clocks control functions
- *
+  *  @brief   RCC clocks control functions
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral Control functions #####
@@ -907,7 +963,7 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
     [..]
     This subsection provides a set of functions allowing to:
 
-    (+) Ouput clock to MCO pin.
+    (+) Output clock to MCO pin.
     (+) Retrieve current clock frequencies.
     (+) Enable the Clock Security System.
 
@@ -916,30 +972,61 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
   */
 
 /**
-  * @brief  Select the clock source to output on MCO pin(PA8).
-  * @note   PA8 should be configured in alternate function mode.
+  * @brief  Select the clock source to output on MCO1 pin(PA8) or MC02 pin (PA10)(*).
+  * @note   PA8, PA10(*) should be configured in alternate function mode.
   * @param  RCC_MCOx  specifies the output direction for the clock source.
   *          For STM32G0xx family this parameter can have only one value:
   *            @arg @ref RCC_MCO1  Clock source to output on MCO1 pin(PA8).
+  *            @arg @ref RCC_MCO2  Clock source to output on MCO2 pin(PA10)(*).
   * @param  RCC_MCOSource  specifies the clock source to output.
   *          This parameter can be one of the following values:
   *            @arg @ref RCC_MCO1SOURCE_NOCLOCK  MCO output disabled, no clock on MCO
-  *            @arg @ref RCC_MCO1SOURCE_SYSCLK  system  clock selected as MCO source
-  *            @arg @ref RCC_MCO1SOURCE_HSI  HSI clock selected as MCO source
-  *            @arg @ref RCC_MCO1SOURCE_HSE  HSE clock selected as MCO sourcee
-  *            @arg @ref RCC_MCO1SOURCE_PLLCLK  main PLL clock selected as MCO source
-  *            @arg @ref RCC_MCO1SOURCE_LSI  LSI clock selected as MCO source
-  *            @arg @ref RCC_MCO1SOURCE_LSE  LSE clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_SYSCLK   system  clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_HSI48    HSI48 clock selected as MCO source for devices with HSI48(*)
+  *            @arg @ref RCC_MCO1SOURCE_HSI      HSI clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_HSE      HSE clock selected as MCO sourcee
+  *            @arg @ref RCC_MCO1SOURCE_PLLCLK   main PLLR clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_LSI      LSI clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_LSE      LSE clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_PLLPCLK  PLLP clock selected as MCO1 source(*)
+  *            @arg @ref RCC_MCO1SOURCE_PLLQCLK  PLLQ clock selected as MCO1 source(*)
+  *            @arg @ref RCC_MCO1SOURCE_RTCCLK   RTC clock selected as MCO1 source(*)
+  *            @arg @ref RCC_MCO1SOURCE_RTC_WKUP RTC_Wakeup selected as MCO1 source(*)  
+  *            @arg @ref RCC_MCO2SOURCE_NOCLOCK  MCO2 output disabled, no clock on MCO2(*)
+  *            @arg @ref RCC_MCO2SOURCE_SYSCLK   system  clock selected as MCO2 source(*)
+  *            @arg @ref RCC_MCO2SOURCE_HSI48    HSI48 clock selected as MCO2 source for devices with HSI48(*)
+  *            @arg @ref RCC_MCO2SOURCE_HSI      HSI clock selected as MCO2 source(*)
+  *            @arg @ref RCC_MCO2SOURCE_HSE      HSE clock selected as MCO2 source(*)
+  *            @arg @ref RCC_MCO2SOURCE_PLLCLK   main PLLR clock selected as MCO2 source(*)
+  *            @arg @ref RCC_MCO2SOURCE_LSI      LSI clock selected as MCO2 source(*)
+  *            @arg @ref RCC_MCO2SOURCE_LSE      LSE clock selected as MCO2 source(*)
+  *            @arg @ref RCC_MCO2SOURCE_PLLPCLK  PLLP clock selected as MCO2 source(*)
+  *            @arg @ref RCC_MCO2SOURCE_PLLQCLK  PLLQ clock selected as MCO2 source(*)
+  *            @arg @ref RCC_MCO2SOURCE_RTCCLK   RTC clock selected as MCO2 source(*)
+  *            @arg @ref RCC_MCO2SOURCE_RTC_WKUP RTC_Wakeup selected as MCO2 source(*)
   * @param  RCC_MCODiv  specifies the MCO prescaler.
   *          This parameter can be one of the following values:
-  *            @arg @ref RCC_MCODIV_1  no division applied to MCO clock
-  *            @arg @ref RCC_MCODIV_2  division by 2 applied to MCO clock
-  *            @arg @ref RCC_MCODIV_4  division by 4 applied to MCO clock
-  *            @arg @ref RCC_MCODIV_8  division by 8 applied to MCO clock
-  *            @arg @ref RCC_MCODIV_16  division by 16 applied to MCO clock
-  *            @arg @ref RCC_MCODIV_32  division by 32 applied to MCO clock
-  *            @arg @ref RCC_MCODIV_64  division by 64 applied to MCO clock
-  *            @arg @ref RCC_MCODIV_128  division by 128 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_1     no division applied to MCO clock
+  *            @arg @ref RCC_MCODIV_2     division by 2 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_4     division by 4 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_8     division by 8 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_16    division by 16 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_32    division by 32 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_64    division by 64 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_128   division by 128 applied to MCO clock
+  *            @arg @ref RCC_MCO2DIV_1    no division applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_2    division by 2 applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_4    division by 4 applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_8    division by 8 applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_16   division by 16 applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_32   division by 32 applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_64   division by 64 applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_128  division by 128 applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_256  division by 256 applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_512  division by 512 applied to MCO2 clock(*)
+  *            @arg @ref RCC_MCO2DIV_1024 division by 1024 applied to MCO2 clock(*)
+  *
+  * (*) Feature not available on all devices of the family
   * @retval None
   */
 void HAL_RCC_MCOConfig(uint32_t RCC_MCOx, uint32_t RCC_MCOSource, uint32_t RCC_MCODiv)
@@ -948,25 +1035,40 @@ void HAL_RCC_MCOConfig(uint32_t RCC_MCOx, uint32_t RCC_MCOSource, uint32_t RCC_M
 
   /* Check the parameters */
   assert_param(IS_RCC_MCO(RCC_MCOx));
-  assert_param(IS_RCC_MCODIV(RCC_MCODiv));
-  assert_param(IS_RCC_MCO1SOURCE(RCC_MCOSource));
 
-  /* Prevent unused argument(s) compilation warning if no assert_param check */
-  UNUSED(RCC_MCOx);
+  /* Common GPIO init parameters */
+  GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Pull      = GPIO_NOPULL;
 
-  /* MCO Clock Enable */
-  MCO1_CLK_ENABLE();
-
-  /* Configue the MCO1 pin in alternate function mode */
-  GPIO_InitStruct.Pin = MCO1_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
-  HAL_GPIO_Init(MCO1_GPIO_PORT, &GPIO_InitStruct);
-
-  /* Mask MCOSEL[] and MCOPRE[] bits then set MCO1 clock source and prescaler */
-  MODIFY_REG(RCC->CFGR, (RCC_CFGR_MCOSEL | RCC_CFGR_MCOPRE), (RCC_MCOSource | RCC_MCODiv));
+  if (RCC_MCOx == RCC_MCO1)
+  {
+    assert_param(IS_RCC_MCODIV(RCC_MCODiv));
+    assert_param(IS_RCC_MCO1SOURCE(RCC_MCOSource));
+    /* MCO1 Clock Enable */
+    MCO1_CLK_ENABLE();
+    /* Configure the MCO1 pin in alternate function mode */
+    GPIO_InitStruct.Pin = MCO1_PIN;
+    GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
+    HAL_GPIO_Init(MCO1_GPIO_PORT, &GPIO_InitStruct);
+    /* Mask MCOSEL[] and MCOPRE[] bits then set MCO clock source and prescaler */
+    MODIFY_REG(RCC->CFGR, (RCC_CFGR_MCOSEL | RCC_CFGR_MCOPRE), (RCC_MCOSource | RCC_MCODiv));
+  }
+#if defined(RCC_MCO2_SUPPORT)
+  else if (RCC_MCOx == RCC_MCO2)
+  {
+    assert_param(IS_RCC_MCO2DIV(RCC_MCODiv));
+    assert_param(IS_RCC_MCO2SOURCE(RCC_MCOSource));
+    /* MCO2 Clock Enable */
+    MCO2_CLK_ENABLE();
+    /* Configure the MCO2 pin in alternate function mode */
+    GPIO_InitStruct.Pin       = MCO2_PIN;
+    GPIO_InitStruct.Alternate = GPIO_AF3_MCO2;
+    HAL_GPIO_Init(MCO2_GPIO_PORT, &GPIO_InitStruct);
+    /* Mask MCOSEL[] and MCOPRE[] bits then set MCO clock source and prescaler */
+    MODIFY_REG(RCC->CFGR, (RCC_CFGR_MCO2SEL | RCC_CFGR_MCO2PRE), (RCC_MCOSource | RCC_MCODiv));
+  }
+#endif /* RCC_MCO2_SUPPORT */
 }
 
 /**
@@ -1010,7 +1112,7 @@ uint32_t HAL_RCC_GetSysClockFreq(void)
   uint32_t pllvco, pllsource, pllr, pllm, hsidiv;
   uint32_t sysclockfreq;
 
-  if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_CFGR_SWS_HSI)
+  if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_HSI)
   {
     /* HSISYS can be derived for HSI16 */
     hsidiv = (1UL << ((READ_BIT(RCC->CR, RCC_CR_HSIDIV)) >> RCC_CR_HSIDIV_Pos));
@@ -1018,12 +1120,12 @@ uint32_t HAL_RCC_GetSysClockFreq(void)
     /* HSI used as system clock source */
     sysclockfreq = (HSI_VALUE / hsidiv);
   }
-  else if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_CFGR_SWS_HSE)
+  else if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_HSE)
   {
     /* HSE used as system clock source */
     sysclockfreq = HSE_VALUE;
   }
-  else if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_CFGR_SWS_PLL)
+  else if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_PLLCLK)
   {
     /* PLL used as system clock  source */
 
@@ -1036,7 +1138,7 @@ uint32_t HAL_RCC_GetSysClockFreq(void)
     switch (pllsource)
     {
       case RCC_PLLSOURCE_HSE:  /* HSE used as PLL clock source */
-        pllvco =  (HSE_VALUE / pllm) * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos);
+        pllvco = (HSE_VALUE / pllm) * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos);
         break;
 
       case RCC_PLLSOURCE_HSI:  /* HSI16 used as PLL clock source */
@@ -1047,12 +1149,12 @@ uint32_t HAL_RCC_GetSysClockFreq(void)
     pllr = (((RCC->PLLCFGR & RCC_PLLCFGR_PLLR) >> RCC_PLLCFGR_PLLR_Pos) + 1U);
     sysclockfreq = pllvco / pllr;
   }
-  else if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_CFGR_SWS_LSE)
+  else if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_LSE)
   {
     /* LSE used as system clock source */
     sysclockfreq = LSE_VALUE;
   }
-  else if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_CFGR_SWS_LSI)
+  else if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_LSI)
   {
     /* LSI used as system clock source */
     sysclockfreq = LSI_VALUE;
@@ -1103,8 +1205,13 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   assert_param(RCC_OscInitStruct != (void *)NULL);
 
   /* Set all possible values for the Oscillator type parameter ---------------*/
+#if defined(RCC_HSI48_SUPPORT)
+  RCC_OscInitStruct->OscillatorType = RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_HSI | \
+                                      RCC_OSCILLATORTYPE_LSE | RCC_OSCILLATORTYPE_LSI | RCC_OSCILLATORTYPE_HSI48;
+#else
   RCC_OscInitStruct->OscillatorType = RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_HSI | \
                                       RCC_OSCILLATORTYPE_LSE | RCC_OSCILLATORTYPE_LSI;
+#endif /* RCC_HSI48_SUPPORT */
 
   /* Get the HSE configuration -----------------------------------------------*/
   if ((RCC->CR & RCC_CR_HSEBYP) == RCC_CR_HSEBYP)
@@ -1157,6 +1264,17 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     RCC_OscInitStruct->LSIState = RCC_LSI_OFF;
   }
 
+#if defined(RCC_HSI48_SUPPORT)
+  /* Get the HSI48 configuration ---------------------------------------------*/
+  if (READ_BIT(RCC->CR, RCC_CR_HSI48ON) == RCC_CR_HSI48ON)
+  {
+    RCC_OscInitStruct->HSI48State = RCC_HSI48_ON;
+  }
+  else
+  {
+    RCC_OscInitStruct->HSI48State = RCC_HSI48_OFF;
+  }
+#endif /* RCC_HSI48_SUPPORT */
 
   /* Get the PLL configuration -----------------------------------------------*/
   if ((RCC->CR & RCC_CR_PLLON) == RCC_CR_PLLON)
@@ -1173,7 +1291,7 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   RCC_OscInitStruct->PLL.PLLP = (RCC->PLLCFGR & RCC_PLLCFGR_PLLP);
 #if defined(RCC_PLLQ_SUPPORT)
   RCC_OscInitStruct->PLL.PLLQ = (RCC->PLLCFGR & RCC_PLLCFGR_PLLQ);
-#endif
+#endif /* RCC_PLLQ_SUPPORT */
   RCC_OscInitStruct->PLL.PLLR = (RCC->PLLCFGR & RCC_PLLCFGR_PLLR);
 }
 

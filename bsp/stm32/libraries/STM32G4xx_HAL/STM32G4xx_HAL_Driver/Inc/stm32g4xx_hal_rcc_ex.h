@@ -1355,6 +1355,7 @@ void              HAL_RCCEx_CRS_ErrorCallback(uint32_t Error);
                 (((__SELECTION__) & RCC_PERIPHCLK_LPTIM1)      == RCC_PERIPHCLK_LPTIM1)  || \
                 (((__SELECTION__) & RCC_PERIPHCLK_SAI1)        == RCC_PERIPHCLK_SAI1)    || \
                 (((__SELECTION__) & RCC_PERIPHCLK_I2S)         == RCC_PERIPHCLK_I2S)     || \
+                (((__SELECTION__) & RCC_PERIPHCLK_FDCAN)       == RCC_PERIPHCLK_FDCAN)   || \
                 (((__SELECTION__) & RCC_PERIPHCLK_USB)         == RCC_PERIPHCLK_USB)     || \
                 (((__SELECTION__) & RCC_PERIPHCLK_RNG)         == RCC_PERIPHCLK_RNG)     || \
                 (((__SELECTION__) & RCC_PERIPHCLK_ADC12)       == RCC_PERIPHCLK_ADC12)   || \

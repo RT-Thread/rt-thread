@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    stm32g4xx_ll_fmac.c
   * @author  MCD Application Team
-  * @brief   FMAC LL module driver.
+  * @brief   Header for stm32g4xx_ll_fmac.c module
   ******************************************************************************
   * @attention
   *
@@ -37,41 +37,13 @@
   * @{
   */
 
-/* Private types -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private constants ---------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private defines -----------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
-/** @addtogroup FMAC_LL_Private_Macros
-  * @{
-  */
-
-/** @brief  Check if the watermark value is a valid one.
-  * @param  __VALUE__ Watermak value.
-  * @retval SET (__VALUE__ is a valid value) or RESET (__VALUE__ is invalid)
-  */
-#define IS_LL_FMAC_WM(__VALUE__) (((__VALUE__) == LL_FMAC_WM_0_THRESHOLD_1) \
-                                  || ((__VALUE__) == LL_FMAC_WM_1_THRESHOLD_2) \
-                                  || ((__VALUE__) == LL_FMAC_WM_2_THRESHOLD_4) \
-                                  || ((__VALUE__) == LL_FMAC_WM_3_THRESHOLD_8))
-
-/** @brief  Check if the function ID is a valid one.
-  * @param  __VALUE__ Function ID.
-  * @retval SET (__VALUE__ is a valid value) or RESET (__VALUE__ is invalid)
-  */
-#define IS_LL_FMAC_FUNC(__VALUE__) (((__VALUE__) == LL_FMAC_FUNC_LOAD_X1) \
-                                    || ((__VALUE__) == LL_FMAC_FUNC_LOAD_X2) \
-                                    || ((__VALUE__) == LL_FMAC_FUNC_LOAD_Y) \
-                                    || ((__VALUE__) == LL_FMAC_FUNC_CONVO_FIR) \
-                                    || ((__VALUE__) == LL_FMAC_FUNC_IIR_DIRECT_FORM_1))
-
-
-/**
-  * @}
-  */
-
+/* Private variables ---------------------------------------------------------*/
+/* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
-
-/* Exported functions --------------------------------------------------------*/
+/* Functions Definition ------------------------------------------------------*/
 /** @addtogroup FMAC_LL_Exported_Functions
   * @{
   */
@@ -83,7 +55,7 @@
 /**
   * @brief  Initialize FMAC peripheral registers to their default reset values.
   * @param  FMACx FMAC Instance
-  * @retval An ErrorStatus enumeration value:
+  * @retval ErrorStatus enumeration value:
   *          - SUCCESS: FMAC registers are initialized
   *          - ERROR: FMAC registers are not initialized
   */

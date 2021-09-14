@@ -21,6 +21,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_ll_lptim.h"
 #include "stm32g0xx_ll_bus.h"
+#include "stm32g0xx_ll_rcc.h"
+
 
 #ifdef  USE_FULL_ASSERT
 #include "stm32_assert.h"
@@ -68,6 +70,13 @@
 
 
 /* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/** @defgroup LPTIM_Private_Functions LPTIM Private Functions
+  * @{
+  */
+/**
+  * @}
+  */
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup LPTIM_LL_Exported_Functions
   * @{
@@ -149,7 +158,7 @@ ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef *LPTIMx, LL_LPTIM_InitTypeDef *LPTIM_Ini
   /* The LPTIMx_CFGR register must only be modified when the LPTIM is disabled
      (ENABLE bit is reset to 0).
   */
-  if (LL_LPTIM_IsEnabled(LPTIMx) == 1U)
+  if (LL_LPTIM_IsEnabled(LPTIMx) == 1UL)
   {
     result = ERROR;
   }
@@ -168,6 +177,122 @@ ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef *LPTIMx, LL_LPTIM_InitTypeDef *LPTIM_Ini
   }
 
   return result;
+}
+
+/**
+  * @brief  Disable the LPTIM instance
+  * @rmtoll CR           ENABLE        LL_LPTIM_Disable
+  * @param  LPTIMx Low-Power Timer instance
+  * @note   The following sequence is required to solve LPTIM disable HW limitation.
+  *         Please check Errata Sheet ES0335 for more details under "MCU may remain
+  *         stuck in LPTIM interrupt when entering Stop mode" section.
+  * @retval None
+  */
+void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
+{
+  LL_RCC_ClocksTypeDef rcc_clock;
+  uint32_t tmpclksource = 0;
+  uint32_t tmpIER;
+  uint32_t tmpCFGR;
+  uint32_t tmpCMP;
+  uint32_t tmpARR;
+  uint32_t tmpCFGR2;
+
+  /* Check the parameters */
+  assert_param(IS_LPTIM_INSTANCE(LPTIMx));
+
+  __disable_irq();
+
+  /********** Save LPTIM Config *********/
+  /* Save LPTIM source clock */
+  switch ((uint32_t)LPTIMx)
+  {
+    case LPTIM1_BASE:
+      tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE);
+      break;
+#if defined(LPTIM2)
+    case LPTIM2_BASE:
+      tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE);
+      break;
+#endif /* LPTIM2 */
+    default:
+      break;
+  }
+
+  /* Save LPTIM configuration registers */
+  tmpIER = LPTIMx->IER;
+  tmpCFGR = LPTIMx->CFGR;
+  tmpCMP = LPTIMx->CMP;
+  tmpARR = LPTIMx->ARR;
+  tmpCFGR2 = LPTIMx->CFGR2;
+
+  /************* Reset LPTIM ************/
+  (void)LL_LPTIM_DeInit(LPTIMx);
+
+  /********* Restore LPTIM Config *******/
+  LL_RCC_GetSystemClocksFreq(&rcc_clock);
+
+  if ((tmpCMP != 0UL) || (tmpARR != 0UL))
+  {
+    /* Force LPTIM source kernel clock from APB */
+    switch ((uint32_t)LPTIMx)
+    {
+      case LPTIM1_BASE:
+        LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE_PCLK1);
+        break;
+#if defined(LPTIM2)
+      case LPTIM2_BASE:
+        LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE_PCLK1);
+        break;
+#endif /* LPTIM2 */
+      default:
+        break;
+    }
+
+    if (tmpCMP != 0UL)
+    {
+      /* Restore CMP and ARR registers (LPTIM should be enabled first) */
+      LPTIMx->CR |= LPTIM_CR_ENABLE;
+      LPTIMx->CMP = tmpCMP;
+
+      /* Polling on CMP write ok status after above restore operation */
+      do
+      {
+        rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
+      }
+      while (((LL_LPTIM_IsActiveFlag_CMPOK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+
+      LL_LPTIM_ClearFlag_CMPOK(LPTIMx);
+    }
+
+    if (tmpARR != 0UL)
+    {
+      LPTIMx->CR |= LPTIM_CR_ENABLE;
+      LPTIMx->ARR = tmpARR;
+
+      LL_RCC_GetSystemClocksFreq(&rcc_clock);
+      /* Polling on ARR write ok status after above restore operation */
+      do
+      {
+        rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
+      }
+      while (((LL_LPTIM_IsActiveFlag_ARROK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+
+      LL_LPTIM_ClearFlag_ARROK(LPTIMx);
+    }
+
+
+    /* Restore LPTIM source kernel clock */
+    LL_RCC_SetLPTIMClockSource(tmpclksource);
+  }
+
+  /* Restore configuration registers (LPTIM should be disabled first) */
+  LPTIMx->CR &= ~(LPTIM_CR_ENABLE);
+  LPTIMx->IER = tmpIER;
+  LPTIMx->CFGR = tmpCFGR;
+  LPTIMx->CFGR2 = tmpCFGR2;
+
+  __enable_irq();
 }
 
 /**

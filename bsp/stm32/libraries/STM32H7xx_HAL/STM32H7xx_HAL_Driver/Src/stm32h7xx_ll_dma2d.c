@@ -55,9 +55,11 @@
 /** @addtogroup DMA2D_LL_Private_Macros
   * @{
   */
-#define IS_LL_DMA2D_MODE(MODE)          (((MODE) == LL_DMA2D_MODE_M2M)       || \
-                                         ((MODE) == LL_DMA2D_MODE_M2M_PFC)   || \
-                                         ((MODE) == LL_DMA2D_MODE_M2M_BLEND) || \
+#define IS_LL_DMA2D_MODE(MODE)          (((MODE) == LL_DMA2D_MODE_M2M)                      || \
+                                         ((MODE) == LL_DMA2D_MODE_M2M_PFC)                  || \
+                                         ((MODE) == LL_DMA2D_MODE_M2M_BLEND)                || \
+                                         ((MODE) == LL_DMA2D_MODE_M2M_BLEND_FIXED_COLOR_FG) || \
+                                         ((MODE) == LL_DMA2D_MODE_M2M_BLEND_FIXED_COLOR_BG) || \
                                          ((MODE) == LL_DMA2D_MODE_R2M))
 
 #define IS_LL_DMA2D_OCMODE(MODE_ARGB)   (((MODE_ARGB) == LL_DMA2D_OUTPUT_MODE_ARGB8888) || \
@@ -71,12 +73,16 @@
 #define IS_LL_DMA2D_BLUE(BLUE)          ((BLUE)  <= LL_DMA2D_COLOR)
 #define IS_LL_DMA2D_ALPHA(ALPHA)        ((ALPHA) <= LL_DMA2D_COLOR)
 
+#define IS_LL_DMA2D_OFFSET_MODE(MODE)   (((MODE) == LL_DMA2D_LINE_OFFSET_PIXELS) || \
+                                         ((MODE) == LL_DMA2D_LINE_OFFSET_BYTES))
 
 #define IS_LL_DMA2D_OFFSET(OFFSET)      ((OFFSET) <= LL_DMA2D_OFFSET_MAX)
 
 #define IS_LL_DMA2D_LINE(LINES)         ((LINES)  <= LL_DMA2D_NUMBEROFLINES)
 #define IS_LL_DMA2D_PIXEL(PIXELS)       ((PIXELS) <= LL_DMA2D_NUMBEROFPIXELS)
 
+#define IS_LL_DMA2D_SWAP_MODE(MODE)     (((MODE) == LL_DMA2D_SWAP_MODE_REGULAR) || \
+                                         ((MODE) == LL_DMA2D_SWAP_MODE_TWO_BY_TWO))
 
 #define IS_LL_DMA2D_ALPHAINV(ALPHA)     (((ALPHA) == LL_DMA2D_ALPHA_REGULAR) || \
                                          ((ALPHA) == LL_DMA2D_ALPHA_INVERTED))
@@ -183,6 +189,8 @@ ErrorStatus LL_DMA2D_Init(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_InitTypeDef *DMA2D_Ini
   assert_param(IS_LL_DMA2D_RED(DMA2D_InitStruct->OutputRed));
   assert_param(IS_LL_DMA2D_BLUE(DMA2D_InitStruct->OutputBlue));
   assert_param(IS_LL_DMA2D_ALPHA(DMA2D_InitStruct->OutputAlpha));
+  assert_param(IS_LL_DMA2D_SWAP_MODE(DMA2D_InitStruct->OutputSwapMode));
+  assert_param(IS_LL_DMA2D_OFFSET_MODE(DMA2D_InitStruct->LineOffsetMode));
   assert_param(IS_LL_DMA2D_OFFSET(DMA2D_InitStruct->LineOffset));
   assert_param(IS_LL_DMA2D_ALPHAINV(DMA2D_InitStruct->AlphaInversionMode));
   assert_param(IS_LL_DMA2D_RBSWAP(DMA2D_InitStruct->RBSwapMode));
@@ -194,12 +202,15 @@ ErrorStatus LL_DMA2D_Init(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_InitTypeDef *DMA2D_Ini
   if ((tmp == 0U) && (tmp1 == 0U) && (tmp2 == 0U))
   {
     /* DMA2D CR register configuration -------------------------------------------*/
-    LL_DMA2D_SetMode(DMA2Dx, DMA2D_InitStruct->Mode);
+    MODIFY_REG(DMA2Dx->CR, (DMA2D_CR_MODE | DMA2D_CR_LOM), \
+               (DMA2D_InitStruct->Mode | DMA2D_InitStruct->LineOffsetMode));
 
     /* DMA2D OPFCCR register configuration ---------------------------------------*/
     regMask = DMA2D_OPFCCR_CM;
     regValue = DMA2D_InitStruct->ColorMode;
 
+    regMask |= DMA2D_OPFCCR_SB;
+    regValue |= DMA2D_InitStruct->OutputSwapMode;
 
     regMask |= (DMA2D_OPFCCR_RBS | DMA2D_OPFCCR_AI);
     regValue |= (DMA2D_InitStruct->AlphaInversionMode | DMA2D_InitStruct->RBSwapMode);
@@ -244,12 +255,14 @@ void LL_DMA2D_StructInit(LL_DMA2D_InitTypeDef *DMA2D_InitStruct)
   DMA2D_InitStruct->ColorMode           = LL_DMA2D_OUTPUT_MODE_ARGB8888;
   DMA2D_InitStruct->NbrOfLines          = 0x0U;
   DMA2D_InitStruct->NbrOfPixelsPerLines = 0x0U;
+  DMA2D_InitStruct->LineOffsetMode      = LL_DMA2D_LINE_OFFSET_PIXELS;
   DMA2D_InitStruct->LineOffset          = 0x0U;
   DMA2D_InitStruct->OutputBlue          = 0x0U;
   DMA2D_InitStruct->OutputGreen         = 0x0U;
   DMA2D_InitStruct->OutputRed           = 0x0U;
   DMA2D_InitStruct->OutputAlpha         = 0x0U;
   DMA2D_InitStruct->OutputMemoryAddress = 0x0U;
+  DMA2D_InitStruct->OutputSwapMode      = LL_DMA2D_SWAP_MODE_REGULAR;
   DMA2D_InitStruct->AlphaInversionMode  = LL_DMA2D_ALPHA_REGULAR;
   DMA2D_InitStruct->RBSwapMode          = LL_DMA2D_RB_MODE_REGULAR;
 }

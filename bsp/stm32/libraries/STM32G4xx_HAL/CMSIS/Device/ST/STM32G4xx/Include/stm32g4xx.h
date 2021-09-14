@@ -58,7 +58,7 @@
   */
 
 #if !defined (STM32G431xx) && !defined (STM32G441xx) && \
-    !defined (STM32G471xx) && !defined (STM32G473xx) && !defined (STM32G474xx) && !defined (STM32G483xx) && !defined (STM32G484xx) && !defined (STM32GBK1CB)
+    !defined (STM32G471xx) && !defined (STM32G473xx) && !defined (STM32G474xx) && !defined (STM32G484xx) && !defined (STM32GBK1CB)
   /* #define STM32G431xx */   /*!< STM32G431xx Devices */
   /* #define STM32G441xx */   /*!< STM32G441xx Devices */
   /* #define STM32G471xx */   /*!< STM32G471xx Devices */
@@ -82,11 +82,11 @@
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS Device version number $VERSION$
+  * @brief CMSIS Device version number V1.1.1
   */
 #define __STM32G4_CMSIS_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define __STM32G4_CMSIS_VERSION_SUB1   (0x01U) /*!< [23:16] sub1 version */
-#define __STM32G4_CMSIS_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
+#define __STM32G4_CMSIS_VERSION_SUB2   (0x01U) /*!< [15:8]  sub2 version */
 #define __STM32G4_CMSIS_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32G4_CMSIS_VERSION        ((__STM32G4_CMSIS_VERSION_MAIN << 24)\
                                        |(__STM32G4_CMSIS_VERSION_SUB1 << 16)\

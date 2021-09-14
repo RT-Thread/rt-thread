@@ -81,6 +81,7 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
@@ -90,7 +91,7 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_LIBC_FIXED_TIMEZONE 8
+#define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* Network */
 
@@ -145,6 +146,8 @@
 
 /* system packages */
 
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
@@ -173,6 +176,7 @@
 
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_UART0_FIFO_SIZE 10
 
 /* Board extended module Drivers */
 

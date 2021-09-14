@@ -9,14 +9,8 @@
  */
 
 #include <stdint.h>
-#include <stdio.h>
-
 #include <rthw.h>
-#include <rtdevice.h>
-#include <rtthread.h>
-
 #include <dfs_posix.h>
-
 #include "posix_aio.h"
 
 struct rt_workqueue* aio_queue = NULL;

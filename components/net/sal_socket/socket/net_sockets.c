@@ -11,9 +11,9 @@
 
 #include <dfs.h>
 #include <dfs_file.h>
-#include <dfs_poll.h>
+#include <poll.h>
 #include <dfs_net.h>
-
+#include <sys/errno.h>
 #include <sys/socket.h>
 
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen)

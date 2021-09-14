@@ -34,8 +34,8 @@ SECTIONS
     } > init
 
     .ram1 __ram1_vma : {
-        . = ALIGN(4);
         /* section information for initial */
+        . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
@@ -75,7 +75,6 @@ SECTIONS
         KEEP(*(.vector))
         *(.irq.cache)
         *(.irq*)
-        *components*src**.o (.text* .rodata*)
         *ab32vg1_hal**.o (.text* .rodata*)
         *drv_gpio.o (.text* .rodata*)
         *drv_usart.o (.rodata*)

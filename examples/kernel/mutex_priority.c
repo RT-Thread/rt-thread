@@ -281,7 +281,7 @@ static void thread29_entry(void* parameter)
 static int mutex_simple_init()
 {
     /* 创建互斥锁 */
-    mutex = rt_mutex_create("mutex", RT_IPC_FLAG_FIFO);
+    mutex = rt_mutex_create("mutex", RT_IPC_FLAG_PRIO);
     if (mutex == RT_NULL)
     {
         tc_stat(TC_STAT_END | TC_STAT_FAILED);

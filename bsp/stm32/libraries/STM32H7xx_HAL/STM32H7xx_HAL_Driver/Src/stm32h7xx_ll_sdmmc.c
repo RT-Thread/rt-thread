@@ -777,6 +777,12 @@ uint32_t SDMMC_CmdStopTransfer(SDMMC_TypeDef *SDMMCx)
 
   __SDMMC_CMDSTOP_DISABLE(SDMMCx);
 
+  /* Ignore Address Out Of Range Error, Not relevant at end of memory */
+  if (errorstate == SDMMC_ERROR_ADDR_OUT_OF_RANGE)
+  {
+    errorstate = SDMMC_ERROR_NONE;
+  }
+
   return errorstate;
 }
 

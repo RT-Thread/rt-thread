@@ -91,20 +91,27 @@
 
   *** Callback registration ***
   =============================================
+
+  [..]
   When The compilation define USE_HAL_RTC_REGISTER_CALLBACKS is set to 0 or
   not defined, the callback registration feature is not available and all callbacks
   are set to the corresponding weak functions. This is the recommended configuration
   in order to optimize memory/code consumption footprint/performances.
 
+  [..]
   The compilation define  USE_RTC_REGISTER_CALLBACKS when set to 1
   allows the user to configure dynamically the driver callbacks.
   Use Function @ref HAL_RTC_RegisterCallback() to register an interrupt callback.
 
+  [..]
   Function @ref HAL_RTC_RegisterCallback() allows to register following callbacks:
     (+) AlarmAEventCallback          : RTC Alarm A Event callback.
     (+) AlarmBEventCallback          : RTC Alarm B Event callback.
     (+) TimeStampEventCallback       : RTC TimeStamp Event callback.
     (+) WakeUpTimerEventCallback     : RTC WakeUpTimer Event callback.
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+    (+) SSRUEventCallback            : RTC SSRU Event callback.
+#endif
     (+) Tamper1EventCallback         : RTC Tamper 1 Event callback.
     (+) Tamper2EventCallback         : RTC Tamper 2 Event callback.
     (+) Tamper3EventCallback         : RTC Tamper 3 Event callback.
@@ -113,6 +120,7 @@
   This function takes as parameters the HAL peripheral handle, the Callback ID
   and a pointer to the user callback function.
 
+  [..]
   Use function @ref HAL_RTC_UnRegisterCallback() to reset a callback to the default
   weak function.
   @ref HAL_RTC_UnRegisterCallback() takes as parameters the HAL peripheral handle,
@@ -122,12 +130,16 @@
     (+) AlarmBEventCallback          : RTC Alarm B Event callback.
     (+) TimeStampEventCallback       : RTC TimeStamp Event callback.
     (+) WakeUpTimerEventCallback     : RTC WakeUpTimer Event callback.
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+    (+) SSRUEventCallback            : RTC SSRU Event callback.
+#endif
     (+) Tamper1EventCallback         : RTC Tamper 1 Event callback.
     (+) Tamper2EventCallback         : RTC Tamper 2 Event callback.
     (+) Tamper3EventCallback         : RTC Tamper 3 Event callback.
     (+) MspInitCallback              : RTC MspInit callback.
     (+) MspDeInitCallback            : RTC MspDeInit callback.
 
+  [..]
   By default, after the @ref HAL_RTC_Init() and when the state is HAL_RTC_STATE_RESET,
   all callbacks are set to the corresponding weak functions :
   examples @ref AlarmAEventCallback(), @ref TimeStampEventCallback().
@@ -137,6 +149,7 @@
   If not, MspInit or MspDeInit are not null, @ref HAL_RTC_Init()/@ref HAL_RTC_DeInit()
   keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
 
+  [..]
   Callbacks can be registered/unregistered in HAL_RTC_STATE_READY state only.
   Exception done MspInit/MspDeInit that can be registered/unregistered
   in HAL_RTC_STATE_READY or HAL_RTC_STATE_RESET state,
@@ -145,6 +158,7 @@
   using @ref HAL_RTC_RegisterCallback() before calling @ref HAL_RTC_DeInit()
   or @ref HAL_RTC_Init() function.
 
+  [..]
   When The compilation define USE_HAL_RTC_REGISTER_CALLBACKS is set to 0 or
   not defined, the callback registration feature is not available and all callbacks
   are set to the corresponding weak functions.
@@ -245,8 +259,13 @@ HAL_StatusTypeDef HAL_RTC_Init(RTC_HandleTypeDef *hrtc)
     assert_param(IS_RTC_OUTPUT_REMAP(hrtc->Init.OutPutRemap));
     assert_param(IS_RTC_OUTPUT_POL(hrtc->Init.OutPutPolarity));
     assert_param(IS_RTC_OUTPUT_TYPE(hrtc->Init.OutPutType));
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
     assert_param(IS_RTC_OUTPUT_PULLUP(hrtc->Init.OutPutPullUp));
+#endif
+
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+    assert_param(IS_RTC_BINARY_MODE(hrtc->Init.BinMode));
+    assert_param(IS_RTC_BINARY_MIX_BCDU(hrtc->Init.BinMixBcdU));
 #endif
 
 #if (USE_HAL_RTC_REGISTER_CALLBACKS == 1)
@@ -258,6 +277,10 @@ HAL_StatusTypeDef HAL_RTC_Init(RTC_HandleTypeDef *hrtc)
       hrtc->AlarmBEventCallback          =  HAL_RTCEx_AlarmBEventCallback;           /* Legacy weak AlarmBEventCallback      */
       hrtc->TimeStampEventCallback       =  HAL_RTCEx_TimeStampEventCallback;        /* Legacy weak TimeStampEventCallback   */
       hrtc->WakeUpTimerEventCallback     =  HAL_RTCEx_WakeUpTimerEventCallback;      /* Legacy weak WakeUpTimerEventCallback */
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+      hrtc->SSRUEventCallback            =  HAL_RTCEx_SSRUEventCallback;             /* Legacy weak SSRUEventCallback */
+#endif
+
 #if defined(RTC_TAMPER1_SUPPORT)
       hrtc->Tamper1EventCallback         =  HAL_RTCEx_Tamper1EventCallback;          /* Legacy weak Tamper1EventCallback     */
 #endif /* RTC_TAMPER1_SUPPORT */
@@ -289,7 +312,7 @@ HAL_StatusTypeDef HAL_RTC_Init(RTC_HandleTypeDef *hrtc)
     }
 #endif /* #if (USE_HAL_RTC_REGISTER_CALLBACKS == 1) */
 
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
     /* Process TAMP ip offset from RTC one */
     hrtc->TampOffset = (TAMP_BASE - RTC_BASE);
 #endif
@@ -304,7 +327,7 @@ HAL_StatusTypeDef HAL_RTC_Init(RTC_HandleTypeDef *hrtc)
 
     if (status == HAL_OK)
     {
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
       /* Clear RTC_CR FMT, OSEL, POL and TAMPOE Bits */
       hrtc->Instance->CR &= ~(RTC_CR_FMT | RTC_CR_POL | RTC_CR_OSEL | RTC_CR_TAMPOE);
 #else
@@ -318,12 +341,17 @@ HAL_StatusTypeDef HAL_RTC_Init(RTC_HandleTypeDef *hrtc)
       hrtc->Instance->PRER = (hrtc->Init.SynchPrediv);
       hrtc->Instance->PRER |= (hrtc->Init.AsynchPrediv << RTC_PRER_PREDIV_A_Pos);
 
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+      /* Configure the Binary mode */
+      MODIFY_REG(RTC->ICSR, RTC_ICSR_BIN | RTC_ICSR_BCDU, hrtc->Init.BinMode | hrtc->Init.BinMixBcdU);
+#endif
+
       /* Exit Initialization mode */
       status = RTC_ExitInitMode(hrtc);
 
       if (status == HAL_OK)
       {
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
         hrtc->Instance->CR &= ~(RTC_CR_TAMPALRM_PU | RTC_CR_TAMPALRM_TYPE | RTC_CR_OUT2EN);
         hrtc->Instance->CR |= (hrtc->Init.OutPutPullUp | hrtc->Init.OutPutType | hrtc->Init.OutPutRemap);
 #else
@@ -334,10 +362,7 @@ HAL_StatusTypeDef HAL_RTC_Init(RTC_HandleTypeDef *hrtc)
         /* Enable the write protection for RTC registers */
         __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
 
-        if (status == HAL_OK)
-        {
           hrtc->State = HAL_RTC_STATE_READY;
-        }
       }
     }
   }
@@ -392,7 +417,7 @@ HAL_StatusTypeDef HAL_RTC_DeInit(RTC_HandleTypeDef *hrtc)
 
       if (status == HAL_OK)
       {
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
         /* Reset TAMP registers */
         ((TAMP_TypeDef *)((uint32_t)hrtc->Instance + hrtc->TampOffset))->CR1 = 0xFFFF0000U;
         ((TAMP_TypeDef *)((uint32_t)hrtc->Instance + hrtc->TampOffset))->CR2 = 0x00000000U;
@@ -482,6 +507,12 @@ HAL_StatusTypeDef HAL_RTC_RegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_Call
         hrtc->WakeUpTimerEventCallback = pCallback;
         break;
 
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+      case HAL_RTC_SSRU_EVENT_CB_ID :
+        hrtc->SSRUEventCallback = pCallback;
+        break;
+#endif
+
 #if defined(RTC_TAMPER1_SUPPORT)
       case HAL_RTC_TAMPER1_EVENT_CB_ID :
         hrtc->Tamper1EventCallback = pCallback;
@@ -551,6 +582,9 @@ HAL_StatusTypeDef HAL_RTC_RegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_Call
   *          @arg @ref HAL_RTC_ALARM_A_EVENT_CB_ID          Alarm A Event Callback ID
   *          @arg @ref HAL_RTC_ALARM_B_EVENT_CB_ID          Alarm B Event Callback ID
   *          @arg @ref HAL_RTC_TIMESTAMP_EVENT_CB_ID        TimeStamp Event Callback ID
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+  *          @arg @ref HAL_RTC_SSRU_EVENT_CB_ID             SSRU Callback ID
+#endif
   *          @arg @ref HAL_RTC_WAKEUPTIMER_EVENT_CB_ID      WakeUp Timer Event Callback ID
   *          @arg @ref HAL_RTC_TAMPER1_EVENT_CB_ID          Tamper 1 Callback ID
   *          @arg @ref HAL_RTC_TAMPER2_EVENT_CB_ID          Tamper 2 Callback ID
@@ -585,6 +619,12 @@ HAL_StatusTypeDef HAL_RTC_UnRegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_Ca
       case HAL_RTC_WAKEUPTIMER_EVENT_CB_ID :
         hrtc->WakeUpTimerEventCallback = HAL_RTCEx_WakeUpTimerEventCallback; /* Legacy weak WakeUpTimerEventCallback */
         break;
+
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+      case HAL_RTC_SSRU_EVENT_CB_ID :
+        hrtc->SSRUEventCallback = HAL_RTCEx_SSRUEventCallback;               /* Legacy weak SSRUEventCallback */
+        break;
+#endif
 
 #if defined(RTC_TAMPER1_SUPPORT)
       case HAL_RTC_TAMPER1_EVENT_CB_ID :
@@ -694,6 +734,700 @@ __weak void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc)
 @endverbatim
   * @{
   */
+
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+/**
+  * @brief  Set RTC current time.
+  * @param  hrtc RTC handle
+  * @param  sTime Pointer to Time structure
+  *          if Binary mode is RTC_BINARY_ONLY, this parameter is not used and RTC_SSR will be automatically reset to 0xFFFFFFFF
+             else sTime->SubSeconds is not used and RTC_SSR will be automatically reset to the A 7-bit async prescaler (RTC_PRER_PREDIV_A)
+  * @param  Format Format of sTime->Hours, sTime->Minutes and sTime->Seconds.
+  *          if Binary mode is RTC_BINARY_ONLY, this parameter is not used
+  *          else this parameter can be one of the following values
+  *             @arg RTC_FORMAT_BIN: Binary format
+  *             @arg RTC_FORMAT_BCD: BCD format
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)
+{
+  uint32_t tmpreg;
+  HAL_StatusTypeDef status;
+
+#ifdef USE_FULL_ASSERT
+  /* Check the parameters depending of the Binary mode with 32-bit free-running counter configuration. */
+  if (READ_BIT(RTC->ICSR, RTC_ICSR_BIN) == RTC_BINARY_NONE)
+  {
+    /* Check the parameters */
+    assert_param(IS_RTC_FORMAT(Format));
+    assert_param(IS_RTC_DAYLIGHT_SAVING(sTime->DayLightSaving));
+    assert_param(IS_RTC_STORE_OPERATION(sTime->StoreOperation));
+  }
+#endif
+
+  /* Process Locked */
+  __HAL_LOCK(hrtc);
+
+  hrtc->State = HAL_RTC_STATE_BUSY;
+
+  /* Disable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+
+  /* Enter Initialization mode */
+  status = RTC_EnterInitMode(hrtc);
+  if (status == HAL_OK)
+  {
+    /* Check Binary mode ((32-bit free-running counter) */
+    if (READ_BIT(RTC->ICSR, RTC_ICSR_BIN) != RTC_BINARY_ONLY)
+    {
+      if (Format == RTC_FORMAT_BIN)
+      {
+        if (READ_BIT(RTC->CR, RTC_CR_FMT) != 0U)
+        {
+          assert_param(IS_RTC_HOUR12(sTime->Hours));
+          assert_param(IS_RTC_HOURFORMAT12(sTime->TimeFormat));
+        }
+        else
+        {
+          sTime->TimeFormat = 0x00U;
+          assert_param(IS_RTC_HOUR24(sTime->Hours));
+        }
+        assert_param(IS_RTC_MINUTES(sTime->Minutes));
+        assert_param(IS_RTC_SECONDS(sTime->Seconds));
+
+        tmpreg = (uint32_t)(((uint32_t)RTC_ByteToBcd2(sTime->Hours) << RTC_TR_HU_Pos) | \
+                            ((uint32_t)RTC_ByteToBcd2(sTime->Minutes) << RTC_TR_MNU_Pos) | \
+                            ((uint32_t)RTC_ByteToBcd2(sTime->Seconds) << RTC_TR_SU_Pos) | \
+                            (((uint32_t)sTime->TimeFormat) << RTC_TR_PM_Pos));
+
+      }
+      else
+      {
+        if (READ_BIT(RTC->CR, RTC_CR_FMT) != 0U)
+        {
+          assert_param(IS_RTC_HOUR12(RTC_Bcd2ToByte(sTime->Hours)));
+          assert_param(IS_RTC_HOURFORMAT12(sTime->TimeFormat));
+        }
+        else
+        {
+          sTime->TimeFormat = 0x00U;
+          assert_param(IS_RTC_HOUR24(RTC_Bcd2ToByte(sTime->Hours)));
+        }
+        assert_param(IS_RTC_MINUTES(RTC_Bcd2ToByte(sTime->Minutes)));
+        assert_param(IS_RTC_SECONDS(RTC_Bcd2ToByte(sTime->Seconds)));
+        tmpreg = (((uint32_t)(sTime->Hours) << RTC_TR_HU_Pos) | \
+                  ((uint32_t)(sTime->Minutes) << RTC_TR_MNU_Pos) | \
+                  ((uint32_t)(sTime->Seconds) << RTC_TR_SU_Pos) | \
+                  ((uint32_t)(sTime->TimeFormat) << RTC_TR_PM_Pos));
+      }
+
+      /* Set the RTC_TR register */
+      WRITE_REG(RTC->TR, (tmpreg & RTC_TR_RESERVED_MASK));
+
+      /* Clear the bits to be configured */
+      CLEAR_BIT(RTC->CR, RTC_CR_BKP);
+
+      /* Configure the RTC_CR register */
+      SET_BIT(RTC->CR, (sTime->DayLightSaving | sTime->StoreOperation));
+    }
+  }
+
+  /* Exit Initialization mode */
+  status = RTC_ExitInitMode(hrtc);
+
+
+  /* Enable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+
+  if (status == HAL_OK)
+  {
+    hrtc->State = HAL_RTC_STATE_READY;
+  }
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(hrtc);
+
+  return status;
+}
+
+/**
+  * @brief  Get RTC current time.
+  * @note  You can use SubSeconds and SecondFraction (sTime structure fields returned) to convert SubSeconds
+  *        value in second fraction ratio with time unit following generic formula:
+  *        Second fraction ratio * time_unit= [(SecondFraction-SubSeconds)/(SecondFraction+1)] * time_unit
+  *        This conversion can be performed only if no shift operation is pending (ie. SHFP=0) when PREDIV_S >= SS
+  * @note  You must call HAL_RTC_GetDate() after HAL_RTC_GetTime() to unlock the values
+  *        in the higher-order calendar shadow registers to ensure consistency between the time and date values.
+  *        Reading RTC current time locks the values in calendar shadow registers until Current date is read
+  *        to ensure consistency between the time and date values.
+  * @param  hrtc RTC handle
+  * @param  sTime
+  *          if Binary mode is RTC_BINARY_ONLY, sTime->SubSeconds only is updated
+  *          else
+  *             Pointer to Time structure with Hours, Minutes and Seconds fields returned
+*               with input format (BIN or BCD), also SubSeconds field returning the
+*               RTC_SSR register content and SecondFraction field the Synchronous pre-scaler
+*               factor to be used for second fraction ratio computation.
+  * @param  Format Format of sTime->Hours, sTime->Minutes and sTime->Seconds.
+  *          if Binary mode is RTC_BINARY_ONLY, this parameter is not used
+  *          else this parameter can be one of the following values:
+  *            @arg RTC_FORMAT_BIN: Binary format
+  *            @arg RTC_FORMAT_BCD: BCD format
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)
+{
+  uint32_t tmpreg;
+
+  UNUSED(hrtc);
+  /* Get subseconds structure field from the corresponding register*/
+  sTime->SubSeconds = READ_REG(RTC->SSR);
+
+  if (READ_BIT(RTC->ICSR, RTC_ICSR_BIN) != RTC_BINARY_ONLY)
+  {
+    /* Check the parameters */
+    assert_param(IS_RTC_FORMAT(Format));
+
+    /* Get SecondFraction structure field from the corresponding register field*/
+    sTime->SecondFraction = (uint32_t)(READ_REG(RTC->PRER) & RTC_PRER_PREDIV_S);
+
+    /* Get the TR register */
+    tmpreg = (uint32_t)(READ_REG(RTC->TR) & RTC_TR_RESERVED_MASK);
+
+    /* Fill the structure fields with the read parameters */
+    sTime->Hours = (uint8_t)((tmpreg & (RTC_TR_HT | RTC_TR_HU)) >> RTC_TR_HU_Pos);
+    sTime->Minutes = (uint8_t)((tmpreg & (RTC_TR_MNT | RTC_TR_MNU)) >> RTC_TR_MNU_Pos);
+    sTime->Seconds = (uint8_t)((tmpreg & (RTC_TR_ST | RTC_TR_SU)) >> RTC_TR_SU_Pos);
+    sTime->TimeFormat = (uint8_t)((tmpreg & (RTC_TR_PM)) >> RTC_TR_PM_Pos);
+
+    /* Check the input parameters format */
+    if (Format == RTC_FORMAT_BIN)
+    {
+      /* Convert the time structure parameters to Binary format */
+      sTime->Hours = (uint8_t)RTC_Bcd2ToByte(sTime->Hours);
+      sTime->Minutes = (uint8_t)RTC_Bcd2ToByte(sTime->Minutes);
+      sTime->Seconds = (uint8_t)RTC_Bcd2ToByte(sTime->Seconds);
+    }
+  }
+
+  return HAL_OK;
+}
+
+/**
+  * @brief  Set RTC current date.
+  * @param  hrtc RTC handle
+  * @param  sDate Pointer to date structure
+  * @param  Format Format of sDate->Year, sDate->Month and sDate->Weekday.
+  *          This parameter can be one of the following values:
+  *            @arg RTC_FORMAT_BIN: Binary format
+  *            @arg RTC_FORMAT_BCD: BCD format
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_RTC_SetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format)
+{
+  uint32_t datetmpreg;
+  HAL_StatusTypeDef status;
+
+  /* Check the parameters */
+  assert_param(IS_RTC_FORMAT(Format));
+
+  /* Process Locked */
+  __HAL_LOCK(hrtc);
+
+  hrtc->State = HAL_RTC_STATE_BUSY;
+
+  if ((Format == RTC_FORMAT_BIN) && ((sDate->Month & 0x10U) == 0x10U))
+  {
+    sDate->Month = (uint8_t)((sDate->Month & (uint8_t)~(0x10U)) + (uint8_t)0x0AU);
+  }
+
+  assert_param(IS_RTC_WEEKDAY(sDate->WeekDay));
+
+  if (Format == RTC_FORMAT_BIN)
+  {
+    assert_param(IS_RTC_YEAR(sDate->Year));
+    assert_param(IS_RTC_MONTH(sDate->Month));
+    assert_param(IS_RTC_DATE(sDate->Date));
+
+    datetmpreg = (((uint32_t)RTC_ByteToBcd2(sDate->Year) << RTC_DR_YU_Pos) | \
+                  ((uint32_t)RTC_ByteToBcd2(sDate->Month) << RTC_DR_MU_Pos) | \
+                  ((uint32_t)RTC_ByteToBcd2(sDate->Date) << RTC_DR_DU_Pos) | \
+                  ((uint32_t)sDate->WeekDay << RTC_DR_WDU_Pos));
+  }
+  else
+  {
+    assert_param(IS_RTC_YEAR(RTC_Bcd2ToByte(sDate->Year)));
+    assert_param(IS_RTC_MONTH(RTC_Bcd2ToByte(sDate->Month)));
+    assert_param(IS_RTC_DATE(RTC_Bcd2ToByte(sDate->Date)));
+
+    datetmpreg = ((((uint32_t)sDate->Year) << RTC_DR_YU_Pos) | \
+                  (((uint32_t)sDate->Month) << RTC_DR_MU_Pos) | \
+                  (((uint32_t)sDate->Date) << RTC_DR_DU_Pos) | \
+                  (((uint32_t)sDate->WeekDay) << RTC_DR_WDU_Pos));
+  }
+
+  /* Disable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+
+  /* Enter Initialization mode */
+  status = RTC_EnterInitMode(hrtc);
+  if (status == HAL_OK)
+  {
+    /* Set the RTC_DR register */
+    WRITE_REG(RTC->DR, (uint32_t)(datetmpreg & RTC_DR_RESERVED_MASK));
+
+    /* Exit Initialization mode */
+    status = RTC_ExitInitMode(hrtc);
+  }
+
+  /* Enable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+
+  if (status == HAL_OK)
+  {
+    hrtc->State = HAL_RTC_STATE_READY ;
+  }
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(hrtc);
+
+  return status;
+}
+
+/**
+  * @brief  Get RTC current date.
+  * @note  You must call HAL_RTC_GetDate() after HAL_RTC_GetTime() to unlock the values
+  *        in the higher-order calendar shadow registers to ensure consistency between the time and date values.
+  *        Reading RTC current time locks the values in calendar shadow registers until Current date is read.
+  * @param  hrtc RTC handle
+  * @param  sDate Pointer to Date structure
+  * @param  Format Format of sDate->Year, sDate->Month and sDate->Weekday.
+  *          This parameter can be one of the following values:
+  *            @arg RTC_FORMAT_BIN: Binary format
+  *            @arg RTC_FORMAT_BCD: BCD format
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_RTC_GetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format)
+{
+  uint32_t datetmpreg;
+
+  UNUSED(hrtc);
+  /* Check the parameters */
+  assert_param(IS_RTC_FORMAT(Format));
+
+  /* Get the DR register */
+  datetmpreg = (uint32_t)(READ_REG(RTC->DR) & RTC_DR_RESERVED_MASK);
+
+  /* Fill the structure fields with the read parameters */
+  sDate->Year = (uint8_t)((datetmpreg & (RTC_DR_YT | RTC_DR_YU)) >> RTC_DR_YU_Pos);
+  sDate->Month = (uint8_t)((datetmpreg & (RTC_DR_MT | RTC_DR_MU)) >> RTC_DR_MU_Pos);
+  sDate->Date = (uint8_t)((datetmpreg & (RTC_DR_DT | RTC_DR_DU)) >> RTC_DR_DU_Pos);
+  sDate->WeekDay = (uint8_t)((datetmpreg & (RTC_DR_WDU)) >> RTC_DR_WDU_Pos);
+
+  /* Check the input parameters format */
+  if (Format == RTC_FORMAT_BIN)
+  {
+    /* Convert the date structure parameters to Binary format */
+    sDate->Year = (uint8_t)RTC_Bcd2ToByte(sDate->Year);
+    sDate->Month = (uint8_t)RTC_Bcd2ToByte(sDate->Month);
+    sDate->Date = (uint8_t)RTC_Bcd2ToByte(sDate->Date);
+  }
+  return HAL_OK;
+}
+
+/**
+  * @}
+  */
+
+/** @addtogroup RTC_Exported_Functions_Group3
+ *  @brief   RTC Alarm functions
+ *
+@verbatim
+ ===============================================================================
+                 ##### RTC Alarm functions #####
+ ===============================================================================
+
+ [..] This section provides functions allowing to configure Alarm feature
+
+@endverbatim
+  * @{
+  */
+/**
+  * @brief  Set the specified RTC Alarm.
+  * @param  hrtc RTC handle
+  * @param  sAlarm Pointer to Alarm structure
+  *          if Binary mode is RTC_BINARY_ONLY, 3 fields only are used
+  *             sAlarm->AlarmTime.SubSeconds
+  *             sAlarm->AlarmSubSecondMask
+  *             sAlarm->BinaryAutoClr
+  * @param  Format of the entered parameters.
+  *          if Binary mode is RTC_BINARY_ONLY, this parameter is not used
+  *          else this parameter can be one of the following values
+  *             @arg RTC_FORMAT_BIN: Binary format
+  *             @arg RTC_FORMAT_BCD: BCD format
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_RTC_SetAlarm(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sAlarm, uint32_t Format)
+{
+  uint32_t tmpreg = 0, binaryMode;
+
+  __HAL_LOCK(hrtc);
+  hrtc->State = HAL_RTC_STATE_BUSY;
+
+#ifdef  USE_FULL_ASSERT
+  /* Check the parameters depending of the Binary mode (32-bit free-running counter configuration). */
+  if (READ_BIT(RTC->ICSR, RTC_ICSR_BIN) == RTC_BINARY_NONE)
+  {
+    assert_param(IS_RTC_FORMAT(Format));
+    assert_param(IS_RTC_ALARM(sAlarm->Alarm));
+    assert_param(IS_RTC_ALARM_MASK(sAlarm->AlarmMask));
+    assert_param(IS_RTC_ALARM_DATE_WEEKDAY_SEL(sAlarm->AlarmDateWeekDaySel));
+    assert_param(IS_RTC_ALARM_SUB_SECOND_VALUE(sAlarm->AlarmTime.SubSeconds));
+    assert_param(IS_RTC_ALARM_SUB_SECOND_MASK(sAlarm->AlarmSubSecondMask));
+  }
+  else if (READ_BIT(RTC->ICSR, RTC_ICSR_BIN) == RTC_BINARY_ONLY)
+  {
+    assert_param(IS_RTC_ALARM_SUB_SECOND_BINARY_MASK(sAlarm->AlarmSubSecondMask));
+    assert_param(IS_RTC_ALARMSUBSECONDBIN_AUTOCLR(sAlarm->BinaryAutoClr));
+  }
+  else /* RTC_BINARY_MIX */
+  {
+    assert_param(IS_RTC_FORMAT(Format));
+    assert_param(IS_RTC_ALARM(sAlarm->Alarm));
+    assert_param(IS_RTC_ALARM_MASK(sAlarm->AlarmMask));
+    assert_param(IS_RTC_ALARM_DATE_WEEKDAY_SEL(sAlarm->AlarmDateWeekDaySel));
+    /* In Binary Mix Mode, the RTC can not generate an alarm on a match involving all calendar items + the upper SSR bits */
+    assert_param((sAlarm->AlarmSubSecondMask >> RTC_ALRMASSR_MASKSS_Pos) <= (8U + (READ_BIT(RTC->ICSR, RTC_ICSR_BCDU) >> RTC_ICSR_BCDU_Pos)));
+  }
+#endif
+
+  /* Get Binary mode (32-bit free-running counter configuration) */
+  binaryMode = READ_BIT(RTC->ICSR, RTC_ICSR_BIN);
+
+  if (binaryMode != RTC_BINARY_ONLY)
+  {
+    if (Format == RTC_FORMAT_BIN)
+    {
+      if (READ_BIT(RTC->CR, RTC_CR_FMT) != 0U)
+      {
+        assert_param(IS_RTC_HOUR12(sAlarm->AlarmTime.Hours));
+        assert_param(IS_RTC_HOURFORMAT12(sAlarm->AlarmTime.TimeFormat));
+      }
+      else
+      {
+        sAlarm->AlarmTime.TimeFormat = 0x00U;
+        assert_param(IS_RTC_HOUR24(sAlarm->AlarmTime.Hours));
+      }
+      assert_param(IS_RTC_MINUTES(sAlarm->AlarmTime.Minutes));
+      assert_param(IS_RTC_SECONDS(sAlarm->AlarmTime.Seconds));
+
+      if (sAlarm->AlarmDateWeekDaySel == RTC_ALARMDATEWEEKDAYSEL_DATE)
+      {
+        assert_param(IS_RTC_ALARM_DATE_WEEKDAY_DATE(sAlarm->AlarmDateWeekDay));
+      }
+      else
+      {
+        assert_param(IS_RTC_ALARM_DATE_WEEKDAY_WEEKDAY(sAlarm->AlarmDateWeekDay));
+      }
+      tmpreg = (((uint32_t)RTC_ByteToBcd2(sAlarm->AlarmTime.Hours) << RTC_ALRMAR_HU_Pos) | \
+                ((uint32_t)RTC_ByteToBcd2(sAlarm->AlarmTime.Minutes) << RTC_ALRMAR_MNU_Pos) | \
+                ((uint32_t)RTC_ByteToBcd2(sAlarm->AlarmTime.Seconds) << RTC_ALRMAR_SU_Pos) | \
+                ((uint32_t)(sAlarm->AlarmTime.TimeFormat) << RTC_ALRMAR_PM_Pos) | \
+                ((uint32_t)RTC_ByteToBcd2(sAlarm->AlarmDateWeekDay) << RTC_ALRMAR_DU_Pos) | \
+                ((uint32_t)sAlarm->AlarmDateWeekDaySel) | \
+                ((uint32_t)sAlarm->AlarmMask));
+    }
+    else /* format BCD */
+    {
+      if (READ_BIT(RTC->CR, RTC_CR_FMT) != 0U)
+      {
+        assert_param(IS_RTC_HOUR12(RTC_Bcd2ToByte(sAlarm->AlarmTime.Hours)));
+        assert_param(IS_RTC_HOURFORMAT12(sAlarm->AlarmTime.TimeFormat));
+      }
+      else
+      {
+        sAlarm->AlarmTime.TimeFormat = 0x00U;
+        assert_param(IS_RTC_HOUR24(RTC_Bcd2ToByte(sAlarm->AlarmTime.Hours)));
+      }
+
+      assert_param(IS_RTC_MINUTES(RTC_Bcd2ToByte(sAlarm->AlarmTime.Minutes)));
+      assert_param(IS_RTC_SECONDS(RTC_Bcd2ToByte(sAlarm->AlarmTime.Seconds)));
+
+#ifdef  USE_FULL_ASSERT
+      if (sAlarm->AlarmDateWeekDaySel == RTC_ALARMDATEWEEKDAYSEL_DATE)
+      {
+        assert_param(IS_RTC_ALARM_DATE_WEEKDAY_DATE(RTC_Bcd2ToByte(sAlarm->AlarmDateWeekDay)));
+      }
+      else
+      {
+        assert_param(IS_RTC_ALARM_DATE_WEEKDAY_WEEKDAY(RTC_Bcd2ToByte(sAlarm->AlarmDateWeekDay)));
+      }
+
+#endif /* USE_FULL_ASSERT */
+      tmpreg = (((uint32_t)(sAlarm->AlarmTime.Hours) << RTC_ALRMAR_HU_Pos) | \
+                ((uint32_t)(sAlarm->AlarmTime.Minutes) << RTC_ALRMAR_MNU_Pos) | \
+                ((uint32_t)(sAlarm->AlarmTime.Seconds) << RTC_ALRMAR_SU_Pos) | \
+                ((uint32_t)(sAlarm->AlarmTime.TimeFormat) << RTC_ALRMAR_PM_Pos) | \
+                ((uint32_t)(sAlarm->AlarmDateWeekDay) << RTC_ALRMAR_DU_Pos) | \
+                ((uint32_t)sAlarm->AlarmDateWeekDaySel) | \
+                ((uint32_t)sAlarm->AlarmMask));
+    }
+  }
+
+  /* Disable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+
+  /* Configure the Alarm register */
+  if (sAlarm->Alarm == RTC_ALARM_A)
+  {
+    /* Disable the Alarm A interrupt */
+    /* In case of interrupt mode is used, the interrupt source must disabled */
+    CLEAR_BIT(RTC->CR, (RTC_CR_ALRAE | RTC_CR_ALRAIE));
+
+    /* Clear flag alarm A */
+    WRITE_REG(RTC->SCR, RTC_SCR_CALRAF);
+
+    if (binaryMode == RTC_BINARY_ONLY)
+    {
+      WRITE_REG(RTC->ALRMASSR, sAlarm->AlarmSubSecondMask | sAlarm->BinaryAutoClr);
+    }
+    else
+    {
+      WRITE_REG(RTC->ALRMAR, tmpreg);
+      WRITE_REG(RTC->ALRMASSR, sAlarm->AlarmSubSecondMask);
+    }
+
+    WRITE_REG(RTC->ALRABINR, sAlarm->AlarmTime.SubSeconds);
+
+    /* Configure the Alarm state: Enable Alarm */
+    SET_BIT(RTC->CR, RTC_CR_ALRAE);
+  }
+  else
+  {
+    /* Disable the Alarm B interrupt */
+    /* In case of interrupt mode is used, the interrupt source must disabled */
+    CLEAR_BIT(RTC->CR, (RTC_CR_ALRBE | RTC_CR_ALRBIE));
+
+    /* Clear flag alarm B */
+    WRITE_REG(RTC->SCR, RTC_SCR_CALRBF);
+
+    if (binaryMode == RTC_BINARY_ONLY)
+    {
+      WRITE_REG(RTC->ALRMBSSR, sAlarm->AlarmSubSecondMask | sAlarm->BinaryAutoClr);
+    }
+    else
+    {
+      WRITE_REG(RTC->ALRMBR, tmpreg);
+      WRITE_REG(RTC->ALRMBSSR,  sAlarm->AlarmSubSecondMask);
+    }
+
+    WRITE_REG(RTC->ALRBBINR, sAlarm->AlarmTime.SubSeconds);
+
+    /* Configure the Alarm state: Enable Alarm */
+    SET_BIT(RTC->CR, RTC_CR_ALRBE);
+  }
+
+  /* Enable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+
+  /* Change RTC state */
+  hrtc->State = HAL_RTC_STATE_READY;
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(hrtc);
+
+  return HAL_OK;
+}
+
+/**
+  * @brief  Set the specified RTC Alarm with Interrupt.
+  * @param  hrtc RTC handle
+  * @param  sAlarm Pointer to Alarm structure
+  *          if Binary mode is RTC_BINARY_ONLY, 3 fields only are used
+  *             sAlarm->AlarmTime.SubSeconds
+  *             sAlarm->AlarmSubSecondMask
+  *             sAlarm->BinaryAutoClr
+  * @param  Format Specifies the format of the entered parameters.
+  *          if Binary mode is RTC_BINARY_ONLY, this parameter is not used
+  *          else this parameter can be one of the following values
+  *             @arg RTC_FORMAT_BIN: Binary format
+  *             @arg RTC_FORMAT_BCD: BCD format
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sAlarm, uint32_t Format)
+{
+  uint32_t tmpreg = 0, binaryMode;
+
+  /* Process Locked */
+  __HAL_LOCK(hrtc);
+  hrtc->State = HAL_RTC_STATE_BUSY;
+
+#ifdef  USE_FULL_ASSERT
+  /* Check the parameters depending of the Binary mode (32-bit free-running counter configuration). */
+  if (READ_BIT(RTC->ICSR, RTC_ICSR_BIN) == RTC_BINARY_NONE)
+  {
+    assert_param(IS_RTC_FORMAT(Format));
+    assert_param(IS_RTC_ALARM(sAlarm->Alarm));
+    assert_param(IS_RTC_ALARM_MASK(sAlarm->AlarmMask));
+    assert_param(IS_RTC_ALARM_DATE_WEEKDAY_SEL(sAlarm->AlarmDateWeekDaySel));
+    assert_param(IS_RTC_ALARM_SUB_SECOND_VALUE(sAlarm->AlarmTime.SubSeconds));
+    assert_param(IS_RTC_ALARM_SUB_SECOND_MASK(sAlarm->AlarmSubSecondMask));
+  }
+  else if (READ_BIT(RTC->ICSR, RTC_ICSR_BIN) == RTC_BINARY_ONLY)
+  {
+    assert_param(IS_RTC_ALARM_SUB_SECOND_BINARY_MASK(sAlarm->AlarmSubSecondMask));
+    assert_param(IS_RTC_ALARMSUBSECONDBIN_AUTOCLR(sAlarm->BinaryAutoClr));
+  }
+  else /* RTC_BINARY_MIX */
+  {
+    assert_param(IS_RTC_FORMAT(Format));
+    assert_param(IS_RTC_ALARM(sAlarm->Alarm));
+    assert_param(IS_RTC_ALARM_MASK(sAlarm->AlarmMask));
+    assert_param(IS_RTC_ALARM_DATE_WEEKDAY_SEL(sAlarm->AlarmDateWeekDaySel));
+    /* In Binary Mix Mode, the RTC can not generate an alarm on a match involving all calendar items + the upper SSR bits */
+    assert_param((sAlarm->AlarmSubSecondMask >> RTC_ALRMASSR_MASKSS_Pos) <= (8U + (READ_BIT(RTC->ICSR, RTC_ICSR_BCDU) >> RTC_ICSR_BCDU_Pos)));
+  }
+#endif
+
+  /* Get Binary mode (32-bit free-running counter configuration) */
+  binaryMode = READ_BIT(RTC->ICSR, RTC_ICSR_BIN);
+
+  if (binaryMode != RTC_BINARY_ONLY)
+  {
+    if (Format == RTC_FORMAT_BIN)
+    {
+      if (READ_BIT(RTC->CR, RTC_CR_FMT) != 0U)
+      {
+        assert_param(IS_RTC_HOUR12(sAlarm->AlarmTime.Hours));
+        assert_param(IS_RTC_HOURFORMAT12(sAlarm->AlarmTime.TimeFormat));
+      }
+      else
+      {
+        sAlarm->AlarmTime.TimeFormat = 0x00U;
+        assert_param(IS_RTC_HOUR24(sAlarm->AlarmTime.Hours));
+      }
+      assert_param(IS_RTC_MINUTES(sAlarm->AlarmTime.Minutes));
+      assert_param(IS_RTC_SECONDS(sAlarm->AlarmTime.Seconds));
+
+      if (sAlarm->AlarmDateWeekDaySel == RTC_ALARMDATEWEEKDAYSEL_DATE)
+      {
+        assert_param(IS_RTC_ALARM_DATE_WEEKDAY_DATE(sAlarm->AlarmDateWeekDay));
+      }
+      else
+      {
+        assert_param(IS_RTC_ALARM_DATE_WEEKDAY_WEEKDAY(sAlarm->AlarmDateWeekDay));
+      }
+      tmpreg = (((uint32_t)RTC_ByteToBcd2(sAlarm->AlarmTime.Hours) << RTC_ALRMAR_HU_Pos) | \
+                ((uint32_t)RTC_ByteToBcd2(sAlarm->AlarmTime.Minutes) << RTC_ALRMAR_MNU_Pos) | \
+                ((uint32_t)RTC_ByteToBcd2(sAlarm->AlarmTime.Seconds) << RTC_ALRMAR_SU_Pos) | \
+                ((uint32_t)(sAlarm->AlarmTime.TimeFormat) << RTC_ALRMAR_PM_Pos) | \
+                ((uint32_t)RTC_ByteToBcd2(sAlarm->AlarmDateWeekDay) << RTC_ALRMAR_DU_Pos) | \
+                ((uint32_t)sAlarm->AlarmDateWeekDaySel) | \
+                ((uint32_t)sAlarm->AlarmMask));
+    }
+    else /* Format BCD */
+    {
+      if (READ_BIT(RTC->CR, RTC_CR_FMT) != 0U)
+      {
+        assert_param(IS_RTC_HOUR12(RTC_Bcd2ToByte(sAlarm->AlarmTime.Hours)));
+        assert_param(IS_RTC_HOURFORMAT12(sAlarm->AlarmTime.TimeFormat));
+      }
+      else
+      {
+        sAlarm->AlarmTime.TimeFormat = 0x00U;
+        assert_param(IS_RTC_HOUR24(RTC_Bcd2ToByte(sAlarm->AlarmTime.Hours)));
+      }
+
+      assert_param(IS_RTC_MINUTES(RTC_Bcd2ToByte(sAlarm->AlarmTime.Minutes)));
+      assert_param(IS_RTC_SECONDS(RTC_Bcd2ToByte(sAlarm->AlarmTime.Seconds)));
+
+#ifdef  USE_FULL_ASSERT
+      if (sAlarm->AlarmDateWeekDaySel == RTC_ALARMDATEWEEKDAYSEL_DATE)
+      {
+        assert_param(IS_RTC_ALARM_DATE_WEEKDAY_DATE(RTC_Bcd2ToByte(sAlarm->AlarmDateWeekDay)));
+      }
+      else
+      {
+        assert_param(IS_RTC_ALARM_DATE_WEEKDAY_WEEKDAY(RTC_Bcd2ToByte(sAlarm->AlarmDateWeekDay)));
+      }
+
+#endif /* USE_FULL_ASSERT */
+      tmpreg = (((uint32_t)(sAlarm->AlarmTime.Hours) << RTC_ALRMAR_HU_Pos) | \
+                ((uint32_t)(sAlarm->AlarmTime.Minutes) << RTC_ALRMAR_MNU_Pos) | \
+                ((uint32_t)(sAlarm->AlarmTime.Seconds) << RTC_ALRMAR_SU_Pos) | \
+                ((uint32_t)(sAlarm->AlarmTime.TimeFormat) << RTC_ALRMAR_PM_Pos) | \
+                ((uint32_t)(sAlarm->AlarmDateWeekDay) << RTC_ALRMAR_DU_Pos) | \
+                ((uint32_t)sAlarm->AlarmDateWeekDaySel) | \
+                ((uint32_t)sAlarm->AlarmMask));
+
+    }
+  }
+
+  /* Disable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+
+  /* Configure the Alarm register */
+  if (sAlarm->Alarm == RTC_ALARM_A)
+  {
+    /* Disable the Alarm A interrupt */
+    CLEAR_BIT(RTC->CR, RTC_CR_ALRAE | RTC_CR_ALRAIE);
+    /* Clear flag alarm A */
+    WRITE_REG(RTC->SCR, RTC_SCR_CALRAF);
+
+    if (binaryMode == RTC_BINARY_ONLY)
+    {
+      RTC->ALRMASSR = sAlarm->AlarmSubSecondMask | sAlarm->BinaryAutoClr;
+    }
+    else
+    {
+      WRITE_REG(RTC->ALRMAR, tmpreg);
+      WRITE_REG(RTC->ALRMASSR, sAlarm->AlarmSubSecondMask);
+    }
+
+    WRITE_REG(RTC->ALRABINR, sAlarm->AlarmTime.SubSeconds);
+
+    /* Configure the Alarm interrupt */
+    SET_BIT(RTC->CR, RTC_CR_ALRAE | RTC_CR_ALRAIE);
+  }
+  else
+  {
+    /* Disable the Alarm B interrupt */
+    CLEAR_BIT(RTC->CR, RTC_CR_ALRBE | RTC_CR_ALRBIE);
+    /* Clear flag alarm B */
+    WRITE_REG(RTC->SCR, RTC_SCR_CALRBF);
+
+    if (binaryMode == RTC_BINARY_ONLY)
+    {
+      WRITE_REG(RTC->ALRMBSSR, sAlarm->AlarmSubSecondMask | sAlarm->BinaryAutoClr);
+    }
+    else
+    {
+      WRITE_REG(RTC->ALRMBR, tmpreg);
+      WRITE_REG(RTC->ALRMBSSR, sAlarm->AlarmSubSecondMask);
+    }
+
+    WRITE_REG(RTC->ALRBBINR, sAlarm->AlarmTime.SubSeconds);
+
+    /* Configure the Alarm interrupt */
+    SET_BIT(RTC->CR, RTC_CR_ALRBE | RTC_CR_ALRBIE);
+  }
+
+  /* RTC Alarm Interrupt Configuration: EXTI configuration */
+  __HAL_RTC_ALARM_EXTI_ENABLE_IT();
+  __HAL_RTC_ALARM_EXTI_ENABLE_RISING_EDGE();
+
+  /* Enable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+
+  hrtc->State = HAL_RTC_STATE_READY;
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(hrtc);
+
+  return HAL_OK;
+}
+
+#else /* #if defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
 /**
   * @brief  Set RTC current time.
@@ -1363,6 +2097,8 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
   return HAL_OK;
 }
 
+#endif /* #if defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
+
 /**
   * @brief  Deactivate the specified RTC Alarm.
   * @param  hrtc RTC handle
@@ -1531,7 +2267,7 @@ void HAL_RTC_AlarmIRQHandler(RTC_HandleTypeDef *hrtc)
   /* Clear the EXTI's line Flag for RTC Alarm */
   __HAL_RTC_ALARM_EXTI_CLEAR_FLAG();
 
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
   /* Get interrupt status */
   uint32_t tmp = hrtc->Instance->MISR;
 
@@ -1561,7 +2297,7 @@ void HAL_RTC_AlarmIRQHandler(RTC_HandleTypeDef *hrtc)
 #endif
   }
 
-#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#else /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
   /* Get the AlarmA interrupt source enable status */
   if (__HAL_RTC_ALARM_GET_IT_SOURCE(hrtc, RTC_IT_ALRA) != 0U)
@@ -1596,7 +2332,7 @@ void HAL_RTC_AlarmIRQHandler(RTC_HandleTypeDef *hrtc)
 #endif
     }
   }
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
   /* Change RTC state */
   hrtc->State = HAL_RTC_STATE_READY;
@@ -1687,7 +2423,7 @@ HAL_StatusTypeDef HAL_RTC_WaitForSynchro(RTC_HandleTypeDef *hrtc)
   uint32_t tickstart;
 
   /* Clear RSF flag */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
   hrtc->Instance->ICSR &= (uint32_t)RTC_RSF_MASK;
 #else
   hrtc->Instance->ISR &= (uint32_t)RTC_RSF_MASK;
@@ -1696,7 +2432,7 @@ HAL_StatusTypeDef HAL_RTC_WaitForSynchro(RTC_HandleTypeDef *hrtc)
   tickstart = HAL_GetTick();
 
   /* Wait the registers to be synchronised */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
   while ((hrtc->Instance->ICSR & RTC_ICSR_RSF) == 0U)
 #else
   while ((hrtc->Instance->ISR & RTC_ISR_RSF) == 0U)
@@ -1764,7 +2500,7 @@ HAL_StatusTypeDef RTC_EnterInitMode(RTC_HandleTypeDef *hrtc)
   HAL_StatusTypeDef status = HAL_OK;
 
   /* Check if the Initialization mode is set */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
   if ((hrtc->Instance->ICSR & RTC_ICSR_INITF) == 0U)
   {
     /* Set the Initialization mode */
@@ -1781,7 +2517,7 @@ HAL_StatusTypeDef RTC_EnterInitMode(RTC_HandleTypeDef *hrtc)
       }
     }
   }
-#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#else /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
   if ((hrtc->Instance->ISR & RTC_ISR_INITF) == 0U)
   {
     /* Set the Initialization mode */
@@ -1798,7 +2534,7 @@ HAL_StatusTypeDef RTC_EnterInitMode(RTC_HandleTypeDef *hrtc)
       }
     }
   }
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
   return status;
 }
@@ -1813,7 +2549,7 @@ HAL_StatusTypeDef RTC_ExitInitMode(RTC_HandleTypeDef *hrtc)
   HAL_StatusTypeDef status = HAL_OK;
 
   /* Exit Initialization mode */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined(STM32L4P5xx) || defined(STM32L4Q5xx)
   CLEAR_BIT(RTC->ICSR, RTC_ICSR_INIT);
 #else
   /* Exit Initialization mode */
