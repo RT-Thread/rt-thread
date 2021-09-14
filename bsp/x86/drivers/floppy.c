@@ -357,7 +357,7 @@ void rt_floppy_init(void)
     device->read = rt_floppy_read;
     device->write = rt_floppy_write;
     device->control = rt_floppy_control;
-    device->user_data = NULL;
+    device->user_data = RT_NULL;
 
     rt_device_register(device, "floppy",
                        RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
