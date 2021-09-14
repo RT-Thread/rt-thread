@@ -92,7 +92,7 @@
 
      *** Callback registration ***
      =============================================
-
+    [..]
      The compilation flag USE_HAL_SMBUS_REGISTER_CALLBACKS when set to 1
      allows the user to configure dynamically the driver callbacks.
      Use Functions @ref HAL_SMBUS_RegisterCallback() or @ref HAL_SMBUS_RegisterXXXCallback()
@@ -110,9 +110,9 @@
        (+) MspDeInitCallback    : callback for Msp DeInit.
      This function takes as parameters the HAL peripheral handle, the Callback ID
      and a pointer to the user callback function.
-
+    [..]
      For specific callback AddrCallback use dedicated register callbacks : @ref HAL_SMBUS_RegisterAddrCallback().
-
+    [..]
      Use function @ref HAL_SMBUS_UnRegisterCallback to reset a callback to the default
      weak function.
      @ref HAL_SMBUS_UnRegisterCallback takes as parameters the HAL peripheral handle,
@@ -127,9 +127,9 @@
        (+) AbortCpltCallback    : callback for abort completion process.
        (+) MspInitCallback      : callback for Msp Init.
        (+) MspDeInitCallback    : callback for Msp DeInit.
-
+    [..]
      For callback AddrCallback use dedicated register callbacks : @ref HAL_SMBUS_UnRegisterAddrCallback().
-
+    [..]
      By default, after the @ref HAL_SMBUS_Init() and when the state is @ref HAL_SMBUS_STATE_RESET
      all callbacks are set to the corresponding weak functions:
      examples @ref HAL_SMBUS_MasterTxCpltCallback(), @ref HAL_SMBUS_MasterRxCpltCallback().
@@ -138,7 +138,7 @@
      these callbacks are null (not registered beforehand).
      If MspInit or MspDeInit are not null, the @ref HAL_SMBUS_Init()/ @ref HAL_SMBUS_DeInit()
      keep and use the user MspInit/MspDeInit callbacks (registered beforehand) whatever the state.
-
+    [..]
      Callbacks can be registered/unregistered in @ref HAL_SMBUS_STATE_READY state only.
      Exception done MspInit/MspDeInit functions that can be registered/unregistered
      in @ref HAL_SMBUS_STATE_READY or @ref HAL_SMBUS_STATE_RESET state,
@@ -146,7 +146,7 @@
      Then, the user first registers the MspInit/MspDeInit user callbacks
      using @ref HAL_SMBUS_RegisterCallback() before calling @ref HAL_SMBUS_DeInit()
      or @ref HAL_SMBUS_Init() function.
-
+    [..]
      When the compilation flag USE_HAL_SMBUS_REGISTER_CALLBACKS is set to 0 or
      not defined, the callback registration feature is not available and all callbacks
      are set to the corresponding weak functions.
@@ -1925,14 +1925,12 @@ static HAL_StatusTypeDef SMBUS_MasterTransmit_TXE(SMBUS_HandleTypeDef *hsmbus)
 {
   /* Declaration of temporary variables to prevent undefined behavior of volatile usage */
   uint32_t CurrentState       = hsmbus->State;
-  uint32_t CurrentMode        = hsmbus->Mode;
   uint32_t CurrentXferOptions = hsmbus->XferOptions;
 
   if ((hsmbus->XferSize == 0U) && (CurrentState == HAL_SMBUS_STATE_BUSY_TX))
   {
     /* Call TxCpltCallback() directly if no stop mode is set */
-    if (((CurrentXferOptions != SMBUS_FIRST_AND_LAST_FRAME_NO_PEC) || (CurrentXferOptions != SMBUS_FIRST_AND_LAST_FRAME_WITH_PEC)) && \
-        ((CurrentXferOptions != SMBUS_LAST_FRAME_NO_PEC) || (CurrentXferOptions != SMBUS_LAST_FRAME_WITH_PEC)) && (CurrentXferOptions != SMBUS_NO_OPTION_FRAME))
+    if (((CurrentXferOptions == SMBUS_FIRST_FRAME) || (CurrentXferOptions == SMBUS_NEXT_FRAME)) && (CurrentXferOptions != SMBUS_NO_OPTION_FRAME))
     {
       __HAL_SMBUS_DISABLE_IT(hsmbus, SMBUS_IT_EVT | SMBUS_IT_BUF | SMBUS_IT_ERR);
 
@@ -2017,7 +2015,7 @@ static HAL_StatusTypeDef SMBUS_MasterTransmit_BTF(SMBUS_HandleTypeDef *hsmbus)
     else
     {
       /* Call TxCpltCallback() directly if no stop mode is set */
-      if (((CurrentXferOptions != SMBUS_FIRST_AND_LAST_FRAME_NO_PEC) || (CurrentXferOptions != SMBUS_FIRST_AND_LAST_FRAME_WITH_PEC)) && ((CurrentXferOptions != SMBUS_LAST_FRAME_NO_PEC) || (CurrentXferOptions != SMBUS_LAST_FRAME_WITH_PEC)) && (CurrentXferOptions != SMBUS_NO_OPTION_FRAME))
+      if (((CurrentXferOptions == SMBUS_FIRST_FRAME) || (CurrentXferOptions == SMBUS_NEXT_FRAME)) && (CurrentXferOptions != SMBUS_NO_OPTION_FRAME))
       {
         __HAL_SMBUS_DISABLE_IT(hsmbus, SMBUS_IT_EVT | SMBUS_IT_BUF | SMBUS_IT_ERR);
 
@@ -2166,7 +2164,7 @@ static HAL_StatusTypeDef SMBUS_MasterReceive_BTF(SMBUS_HandleTypeDef *hsmbus)
   else if (hsmbus->XferCount == 2U)
   {
     /* Prepare next transfer or stop current transfer */
-    if ((CurrentXferOptions == SMBUS_NEXT_FRAME) || (CurrentXferOptions == SMBUS_FIRST_FRAME) || (CurrentXferOptions == SMBUS_LAST_FRAME_NO_PEC))
+    if ((CurrentXferOptions == SMBUS_NEXT_FRAME) || (CurrentXferOptions == SMBUS_FIRST_FRAME))
     {
       /* Disable Acknowledge */
       CLEAR_BIT(hsmbus->Instance->CR1, I2C_CR1_ACK);
@@ -2268,8 +2266,6 @@ static HAL_StatusTypeDef SMBUS_Master_ADD10(SMBUS_HandleTypeDef *hsmbus)
 static HAL_StatusTypeDef SMBUS_Master_ADDR(SMBUS_HandleTypeDef *hsmbus)
 {
   /* Declaration of temporary variable to prevent undefined behavior of volatile usage */
-  uint32_t CurrentMode        = hsmbus->Mode;
-  uint32_t CurrentXferOptions = hsmbus->XferOptions;
   uint32_t Prev_State         = hsmbus->PreviousState;
 
   if (hsmbus->State == HAL_SMBUS_STATE_BUSY_RX)
@@ -2711,7 +2707,6 @@ static void SMBUS_ITError(SMBUS_HandleTypeDef *hsmbus)
     }
 
     /* Call user error callback */
-    HAL_SMBUS_ErrorCallback(hsmbus);
 #if (USE_HAL_SMBUS_REGISTER_CALLBACKS == 1)
     hsmbus->ErrorCallback(hsmbus);
 #else

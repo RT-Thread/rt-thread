@@ -25,7 +25,7 @@
 
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
-#endif
+#endif /* RT_USING_MODULE */
 
 /* use precision */
 #define RT_PRINTF_PRECISION
@@ -43,8 +43,8 @@ static volatile int __rt_errno;
 static rt_device_t _console_device = RT_NULL;
 #endif
 
-/*
- * This function will get errno
+/**
+ * This function gets the global errno for the current thread.
  *
  * @return errno
  */
@@ -66,10 +66,10 @@ rt_err_t rt_get_errno(void)
 }
 RTM_EXPORT(rt_get_errno);
 
-/*
- * This function will set errno
+/**
+ * This function sets the global errno for the current thread.
  *
- * @param error the errno shall be set
+ * @param error is the errno shall be set.
  */
 void rt_set_errno(rt_err_t error)
 {
@@ -96,9 +96,9 @@ void rt_set_errno(rt_err_t error)
 RTM_EXPORT(rt_set_errno);
 
 /**
- * This function returns errno.
+ * This function returns the address of the current thread errno.
  *
- * @return the errno in the system
+ * @return The errno address.
  */
 int *_rt_errno(void)
 {
@@ -116,13 +116,16 @@ int *_rt_errno(void)
 RTM_EXPORT(_rt_errno);
 
 /**
- * This function will set the content of memory to specified value
+ * This function will set the content of memory to specified value.
  *
- * @param s the address of source memory
- * @param c the value shall be set in content
- * @param count the copied length
+ * @param  s is the address of source memory, point to the memory block to be filled.
  *
- * @return the address of source memory
+ * @param  c is the value to be set. The value is passed in int form, but the function
+ *         uses the unsigned character form of the value when filling the memory block.
+ *
+ * @param  count number of bytes to be set.
+ *
+ * @return The address of source memory.
  */
 RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 {
@@ -194,21 +197,23 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #undef LBLOCKSIZE
 #undef UNALIGNED
 #undef TOO_SMALL
-#endif
+#endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memset);
 
+#ifndef RT_USING_ASM_MEMCPY
 /**
- * This function will copy memory content from source address to destination
- * address.
+ * This function will copy memory content from source address to destination address.
  *
- * @param dst the address of destination memory
- * @param src  the address of source memory
- * @param count the copied length
+ * @param  dst is the address of destination memory, points to the copied content.
  *
- * @return the address of destination memory
+ * @param  src  is the address of source memory, pointing to the data source to be copied.
+ *
+ * @param  count is the copied length.
+ *
+ * @return The address of destination memory
  */
-RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
@@ -277,21 +282,25 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #undef BIGBLOCKSIZE
 #undef LITTLEBLOCKSIZE
 #undef TOO_SMALL
-#endif
+#endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memcpy);
+#endif /* RT_USING_ASM_MEMCPY */
 
 #ifndef RT_KSERVICE_USING_STDLIB
 
 /**
  * This function will move memory content from source address to destination
- * address.
+ * address. If the destination memory does not overlap with the source memory,
+ * the function is the same as memcpy().
  *
- * @param dest the address of destination memory
- * @param src  the address of source memory
- * @param n the copied length
+ * @param  dst is the address of destination memory, points to the copied content.
  *
- * @return the address of destination memory
+ * @param  src is the address of source memory, point to the data source to be copied.
+ *
+ * @param  count is the copied length.
+ *
+ * @return The address of destination memory.
  */
 void *rt_memmove(void *dest, const void *src, rt_ubase_t n)
 {
@@ -316,13 +325,18 @@ void *rt_memmove(void *dest, const void *src, rt_ubase_t n)
 RTM_EXPORT(rt_memmove);
 
 /**
- * This function will compare two areas of memory
+ * This function will compare two areas of memory.
  *
- * @param cs one area of memory
- * @param ct another area of memory
- * @param count the size of the area
+ * @param  cs is a block of memory.
  *
- * @return the result
+ * @param  ct is another block of memory.
+ *
+ * @param  count is the size of the area.
+ *
+ * @return Compare the results:
+ *         If the result < 0, cs is smaller than ct.
+ *         If the result > 0, cs is greater than ct.
+ *         If the result = 0, cs is equal to ct.
  */
 RT_WEAK rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
 {
@@ -338,12 +352,14 @@ RT_WEAK rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
 RTM_EXPORT(rt_memcmp);
 
 /**
- * This function will return the first occurrence of a string.
+ * This function will return the first occurrence of a string, without the
+ * terminator '\0'.
  *
- * @param s1 the source string
- * @param s2 the find string
+ * @param  s1 is the source string.
  *
- * @return the first occurrence of a s2 in s1, or RT_NULL if no found.
+ * @param  s2 is the find string.
+ *
+ * @return The first occurrence of a s2 in s1, or RT_NULL if no found.
  */
 char *rt_strstr(const char *s1, const char *s2)
 {
@@ -368,10 +384,14 @@ RTM_EXPORT(rt_strstr);
 /**
  * This function will compare two strings while ignoring differences in case
  *
- * @param a the string to be compared
- * @param b the string to be compared
+ * @param  a is the string to be compared.
  *
- * @return the result
+ * @param  b is the string to be compared.
+ *
+ * @return Compare the results:
+ *         If the result < 0, a is smaller than a.
+ *         If the result > 0, a is greater than a.
+ *         If the result = 0, a is equal to a.
  */
 rt_int32_t rt_strcasecmp(const char *a, const char *b)
 {
@@ -395,11 +415,13 @@ RTM_EXPORT(rt_strcasecmp);
 /**
  * This function will copy string no more than n bytes.
  *
- * @param dst the string to copy
- * @param src the string to be copied
- * @param n the maximum copied length
+ * @param  dst points to the address used to store the copied content.
  *
- * @return the result
+ * @param  src is the string to be copied.
+ *
+ * @param  n is the maximum copied length.
+ *
+ * @return The address where the copied content is stored.
  */
 char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
 {
@@ -425,13 +447,18 @@ char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
 RTM_EXPORT(rt_strncpy);
 
 /**
- * This function will compare two strings with specified maximum length
+ * This function will compare two strings with specified maximum length.
  *
- * @param cs the string to be compared
- * @param ct the string to be compared
- * @param count the maximum compare length
+ * @param  cs is the string to be compared.
  *
- * @return the result
+ * @param  ct is the string to be compared.
+ *
+ * @param  count is the maximum compare length.
+ *
+ * @return Compare the results:
+ *         If the result < 0, cs is smaller than ct.
+ *         If the result > 0, cs is greater than ct.
+ *         If the result = 0, cs is equal to ct.
  */
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count)
 {
@@ -449,12 +476,16 @@ rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count)
 RTM_EXPORT(rt_strncmp);
 
 /**
- * This function will compare two strings without specified length
+ * This function will compare two strings without specified length.
  *
- * @param cs the string to be compared
- * @param ct the string to be compared
+ * @param  cs is the string to be compared.
  *
- * @return the result
+ * @param  ct is the string to be compared.
+ *
+ * @return Compare the results:
+ *         If the result < 0, cs is smaller than ct.
+ *         If the result > 0, cs is greater than ct.
+ *         If the result = 0, cs is equal to ct.
  */
 rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
@@ -475,9 +506,11 @@ RTM_EXPORT(rt_strcmp);
  * first maxlen characters in the string pointed to by s and never
  * beyond s+maxlen.
  *
- * @param s the string
- * @param maxlen the max size
- * @return the length of string
+ * @param  s is the string.
+ *
+ * @param  maxlen is the max size.
+ *
+ * @return The length of string.
  */
 rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
 {
@@ -494,9 +527,9 @@ RTM_EXPORT(rt_strnlen);
  * This function will return the length of a string, which terminate will
  * null character.
  *
- * @param s the string
+ * @param  s is the string
  *
- * @return the length of string
+ * @return The length of string.
  */
 rt_size_t rt_strlen(const char *s)
 {
@@ -509,15 +542,15 @@ rt_size_t rt_strlen(const char *s)
 }
 RTM_EXPORT(rt_strlen);
 
-#endif /*RT_KSERVICE_USING_STDLIB*/
+#endif /* RT_KSERVICE_USING_STDLIB */
 
 #ifdef RT_USING_HEAP
 /**
  * This function will duplicate a string.
  *
- * @param s the string to be duplicated
+ * @param  s is the string to be duplicated.
  *
- * @return the duplicated string pointer
+ * @return The string address of the copy.
  */
 char *rt_strdup(const char *s)
 {
@@ -532,10 +565,10 @@ char *rt_strdup(const char *s)
     return tmp;
 }
 RTM_EXPORT(rt_strdup);
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#ifdef __ARMCC_VERSION
 char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 #endif
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will show the version of rt-thread rtos
@@ -554,6 +587,13 @@ RTM_EXPORT(rt_show_version);
 #define _ISDIGIT(c)  ((unsigned)((c) - '0') < 10)
 
 #ifdef RT_PRINTF_LONGLONG
+/**
+ * This function will duplicate a string.
+ *
+ * @param  s the string to be duplicated
+ *
+ * @return the duplicated string pointer
+ */
 rt_inline int divide(long long *n, int base)
 {
     int res;
@@ -591,7 +631,7 @@ rt_inline int divide(long *n, int base)
 
     return res;
 }
-#endif
+#endif /* RT_PRINTF_LONGLONG */
 
 rt_inline int skip_atoi(const char **s)
 {
@@ -617,7 +657,7 @@ static char *print_number(char *buf,
                           long long  num,
 #else
                           long  num,
-#endif
+#endif /* RT_PRINTF_LONGLONG */
                           int   base,
                           int   s,
                           int   precision,
@@ -629,18 +669,18 @@ static char *print_number(char *buf,
                           long long  num,
 #else
                           long  num,
-#endif
+#endif /* RT_PRINTF_LONGLONG */
                           int   base,
                           int   s,
                           int   type)
-#endif
+#endif /* RT_PRINTF_PRECISION */
 {
     char c, sign;
 #ifdef RT_PRINTF_LONGLONG
     char tmp[32];
 #else
     char tmp[16];
-#endif
+#endif /* RT_PRINTF_LONGLONG */
     int precision_bak = precision;
     const char *digits;
     static const char small_digits[] = "0123456789abcdef";
@@ -679,7 +719,7 @@ static char *print_number(char *buf,
         else if (base == 8)
             size--;
     }
-#endif
+#endif /* RT_PRINTF_SPECIAL */
 
     i = 0;
     if (num == 0)
@@ -696,7 +736,7 @@ static char *print_number(char *buf,
     size -= precision;
 #else
     size -= i;
-#endif
+#endif /* RT_PRINTF_PRECISION */
 
     if (!(type & (ZEROPAD | LEFT)))
     {
@@ -742,7 +782,7 @@ static char *print_number(char *buf,
             ++ buf;
         }
     }
-#endif
+#endif /* RT_PRINTF_SPECIAL */
 
     /* no align to the left */
     if (!(type & LEFT))
@@ -762,7 +802,7 @@ static char *print_number(char *buf,
             *buf = '0';
         ++ buf;
     }
-#endif
+#endif /* RT_PRINTF_PRECISION */
 
     /* put number in the temporary buffer */
     while (i-- > 0 && (precision_bak != 0))
@@ -782,6 +822,19 @@ static char *print_number(char *buf,
     return buf;
 }
 
+/**
+ * This function will fill a formatted string to buffer.
+ *
+ * @param  buf is the buffer to save formatted string.
+ *
+ * @param  size is the size of buffer.
+ *
+ * @param  fmt is the format parameters.
+ *
+ * @param  args is a list of variable parameters.
+ *
+ * @return The number of characters actually written to buffer.
+ */
 rt_int32_t rt_vsnprintf(char       *buf,
                         rt_size_t   size,
                         const char *fmt,
@@ -791,7 +844,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
     unsigned long long num;
 #else
     rt_uint32_t num;
-#endif
+#endif /* RT_PRINTF_LONGLONG */
     int i, len;
     char *str, *end, c;
     const char *s;
@@ -803,7 +856,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
 
 #ifdef RT_PRINTF_PRECISION
     int precision;      /* min. # of digits for integers and max for a string */
-#endif
+#endif /* RT_PRINTF_PRECISION */
 
     str = buf;
     end = buf + size;
@@ -870,14 +923,14 @@ rt_int32_t rt_vsnprintf(char       *buf,
             }
             if (precision < 0) precision = 0;
         }
-#endif
+#endif /* RT_PRINTF_PRECISION */
         /* get the conversion qualifier */
         qualifier = 0;
 #ifdef RT_PRINTF_LONGLONG
         if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
 #else
         if (*fmt == 'h' || *fmt == 'l')
-#endif
+#endif /* RT_PRINTF_LONGLONG */
         {
             qualifier = *fmt;
             ++ fmt;
@@ -887,7 +940,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
                 qualifier = 'L';
                 ++ fmt;
             }
-#endif
+#endif /* RT_PRINTF_LONGLONG */
         }
 
         /* the default base */
@@ -925,7 +978,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
 #ifdef RT_PRINTF_PRECISION
             if (precision > 0 && len > precision) len = precision;
-#endif
+#endif /* RT_PRINTF_PRECISION */
 
             if (!(flags & LEFT))
             {
@@ -964,7 +1017,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             str = print_number(str, end,
                                (long)va_arg(args, void *),
                                16, field_width, flags);
-#endif
+#endif /* RT_PRINTF_PRECISION */
             continue;
 
         case '%':
@@ -1010,7 +1063,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
         else if (qualifier == 'l')
 #else
         if (qualifier == 'l')
-#endif
+#endif /* RT_PRINTF_LONGLONG */
         {
             num = va_arg(args, rt_uint32_t);
             if (flags & SIGN) num = (rt_int32_t)num;
@@ -1029,7 +1082,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
         str = print_number(str, end, num, base, field_width, precision, flags);
 #else
         str = print_number(str, end, num, base, field_width, flags);
-#endif
+#endif /* RT_PRINTF_PRECISION */
     }
 
     if (size > 0)
@@ -1049,11 +1102,15 @@ rt_int32_t rt_vsnprintf(char       *buf,
 RTM_EXPORT(rt_vsnprintf);
 
 /**
- * This function will fill a formatted string to buffer
+ * This function will fill a formatted string to buffer.
  *
- * @param buf the buffer to save formatted string
- * @param size the size of buffer
- * @param fmt the format
+ * @param  buf is the buffer to save formatted string.
+ *
+ * @param  size is the size of buffer.
+ *
+ * @param  fmt is the format parameters.
+ *
+ * @return The number of characters actually written to buffer.
  */
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...)
 {
@@ -1069,11 +1126,15 @@ rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...)
 RTM_EXPORT(rt_snprintf);
 
 /**
- * This function will fill a formatted string to buffer
+ * This function will fill a formatted string to buffer.
  *
- * @param buf the buffer to save formatted string
- * @param arg_ptr the arg_ptr
- * @param format the format
+ * @param  buf is the buffer to save formatted string.
+ *
+ * @param  format is the format parameters.
+ *
+ * @param  arg_ptr is a list of variable parameters.
+ *
+ * @return The number of characters actually written to buffer.
  */
 rt_int32_t rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
 {
@@ -1084,8 +1145,11 @@ RTM_EXPORT(rt_vsprintf);
 /**
  * This function will fill a formatted string to buffer
  *
- * @param buf the buffer to save formatted string
- * @param format the format
+ * @param  buf the buffer to save formatted string.
+ *
+ * @param  format is the format parameters.
+ *
+ * @return The number of characters actually written to buffer.
  */
 rt_int32_t rt_sprintf(char *buf, const char *format, ...)
 {
@@ -1106,7 +1170,7 @@ RTM_EXPORT(rt_sprintf);
 /**
  * This function returns the device using in console.
  *
- * @return the device using in console or RT_NULL
+ * @return Returns the console device pointer or RT_NULL.
  */
 rt_device_t rt_console_get_device(void)
 {
@@ -1119,7 +1183,7 @@ RTM_EXPORT(rt_console_get_device);
  * After set a device to console, all output of rt_kprintf will be
  * redirected to this new device.
  *
- * @param name the name of new console device
+ * @param  name is the name of new console device.
  *
  * @return the old console device handler on successful, or RT_NULL on failure.
  */
@@ -1152,7 +1216,7 @@ rt_device_t rt_console_set_device(const char *name)
     return old_device;
 }
 RTM_EXPORT(rt_console_set_device);
-#endif
+#endif /* RT_USING_DEVICE */
 
 RT_WEAK void rt_hw_console_output(const char *str)
 {
@@ -1163,7 +1227,7 @@ RTM_EXPORT(rt_hw_console_output);
 /**
  * This function will put string to the console.
  *
- * @param str the string output to the console.
+ * @param str is the string output to the console.
  */
 void rt_kputs(const char *str)
 {
@@ -1176,21 +1240,17 @@ void rt_kputs(const char *str)
     }
     else
     {
-        rt_uint16_t old_flag = _console_device->open_flag;
-
-        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
         rt_device_write(_console_device, 0, str, rt_strlen(str));
-        _console_device->open_flag = old_flag;
     }
 #else
     rt_hw_console_output(str);
-#endif
+#endif /* RT_USING_DEVICE */
 }
 
 /**
- * This function will print a formatted string on system console
+ * This function will print a formatted string on system console.
  *
- * @param fmt the format
+ * @param fmt is the format parameters.
  */
 RT_WEAK void rt_kprintf(const char *fmt, ...)
 {
@@ -1214,31 +1274,29 @@ RT_WEAK void rt_kprintf(const char *fmt, ...)
     }
     else
     {
-        rt_uint16_t old_flag = _console_device->open_flag;
-
-        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
         rt_device_write(_console_device, 0, rt_log_buf, length);
-        _console_device->open_flag = old_flag;
     }
 #else
     rt_hw_console_output(rt_log_buf);
-#endif
+#endif /* RT_USING_DEVICE */
     va_end(args);
 }
 RTM_EXPORT(rt_kprintf);
-#endif
+#endif /* RT_USING_CONSOLE */
 
 #ifdef RT_USING_HEAP
 /**
  * This function allocates a memory block, which address is aligned to the
  * specified alignment size.
  *
- * @param size the allocated memory block size
- * @param align the alignment size
+ * @param  size is the allocated memory block size.
  *
- * @return the allocated memory block on successful, otherwise returns RT_NULL
+ * @param  align is the alignment size.
+ *
+ * @return The memory block address was returned successfully, otherwise it was
+ *         returned empty RT_NULL.
  */
-void *rt_malloc_align(rt_size_t size, rt_size_t align)
+RT_WEAK void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
     void *ptr;
     void *align_ptr;
@@ -1282,9 +1340,9 @@ RTM_EXPORT(rt_malloc_align);
  * This function release the memory block, which is allocated by
  * rt_malloc_align function and address is aligned.
  *
- * @param ptr the memory block pointer
+ * @param ptr is the memory block pointer.
  */
-void rt_free_align(void *ptr)
+RT_WEAK void rt_free_align(void *ptr)
 {
     void *real_ptr;
 
@@ -1292,7 +1350,7 @@ void rt_free_align(void *ptr)
     rt_free(real_ptr);
 }
 RTM_EXPORT(rt_free_align);
-#endif
+#endif /* RT_USING_HEAP */
 
 #ifndef RT_USING_CPU_FFS
 const rt_uint8_t __lowest_bit_bitmap[] =
@@ -1322,8 +1380,8 @@ const rt_uint8_t __lowest_bit_bitmap[] =
  * Bits are numbered starting at 1 (the least significant bit).  A return value of
  * zero from any of these functions means that the argument was zero.
  *
- * @return return the index of the first bit set. If value is 0, then this function
- * shall return 0.
+ * @return Return the index of the first bit set. If value is 0, then this function
+ *         shall return 0.
  */
 int __rt_ffs(int value)
 {
@@ -1340,7 +1398,7 @@ int __rt_ffs(int value)
 
     return __lowest_bit_bitmap[(value & 0xff000000) >> 24] + 25;
 }
-#endif
+#endif /* RT_USING_CPU_FFS */
 
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */
@@ -1350,7 +1408,7 @@ void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
 /**
  * This function will set a hook function to RT_ASSERT(EX). It will run when the expression is false.
  *
- * @param hook the hook function
+ * @param hook is the hook function.
  */
 void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line))
 {
@@ -1360,9 +1418,11 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
 /**
  * The RT_ASSERT function.
  *
- * @param ex the assertion condition string
- * @param func the function name when assertion.
- * @param line the file line number when assertion.
+ * @param ex is the assertion condition string.
+ *
+ * @param func is the function name when assertion.
+ *
+ * @param line is the file line number when assertion.
  */
 void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
 {
@@ -1377,7 +1437,7 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
             dlmodule_exit(-1);
         }
         else
-#endif
+#endif /*RT_USING_MODULE*/
         {
             rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
             while (dummy == 0);

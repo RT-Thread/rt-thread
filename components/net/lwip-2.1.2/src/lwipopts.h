@@ -3,8 +3,7 @@
 
 #include <rtconfig.h>
 
-#define ERRNO                       1
-
+#define LWIP_ERRNO_STDINCLUDE
 #define LWIP_SOCKET_SELECT 1
 #define LWIP_SOCKET_POLL 1
 
@@ -243,9 +242,16 @@
 #endif
 
 /* ---------- Memory options ---------- */
+#ifdef RT_USING_ASM_MEMCPY
+#define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
+#else
+#define MEMCPY(dst,src,len)             memcpy(dst,src,len)
+#endif /* RT_USING_ASM_MEMCPY */
+#define SMEMCPY(dst,src,len)            MEMCPY(dst,src,len)
+
 #define MEM_ALIGNMENT               4
-#define MEMP_OVERFLOW_CHECK         1 ////
-#define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1 ////
+#define MEMP_OVERFLOW_CHECK         1
+#define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1
 //#define MEM_LIBC_MALLOC             1
 //#define MEM_USE_POOLS               1
 //#define MEMP_USE_CUSTOM_POOLS       1
@@ -573,6 +579,7 @@
 #ifndef LWIP_SOCKET
 #define LWIP_SOCKET                     1
 #endif
+#include <fcntl.h>
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.

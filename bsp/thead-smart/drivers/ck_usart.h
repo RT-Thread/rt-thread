@@ -19,11 +19,11 @@
 extern "C" {
 #endif
 
-#define BAUDRATE_DEFAULT	19200
+#define BAUDRATE_DEFAULT    19200
 #define UART_BUSY_TIMEOUT       1000000
 #define UART_RECEIVE_TIMEOUT    1000
 #define UART_TRANSMIT_TIMEOUT   1000
-#define UART_MAX_FIFO	        0x10
+#define UART_MAX_FIFO           0x10
 /* UART register bit definitions */
 
 #define USR_UART_BUSY           0x01
@@ -64,13 +64,13 @@ extern "C" {
 
 typedef struct
 {
-    union 
+    union
     {
         __IM uint32_t RBR;           /* Offset: 0x000 (R/ )  Receive buffer register */
         __OM uint32_t THR;           /* Offset: 0x000 ( /W)  Transmission hold register */
         __IOM uint32_t DLL;          /* Offset: 0x000 (R/W)  Clock frequency division low section register */
     };
-    union 
+    union
     {
         __IOM uint32_t DLH;          /* Offset: 0x004 (R/W)  Clock frequency division high section register */
         __IOM uint32_t IER;          /* Offset: 0x004 (R/W)  Interrupt enable register */

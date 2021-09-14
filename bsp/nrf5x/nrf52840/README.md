@@ -2,7 +2,22 @@
 
 ## 简介
 
-该文件夹主要存放所有主芯片为nRF52840的板级支持包。目前默认支持的开发板是官方[PCA10056](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-DK)
+该文件夹主要存放所有主芯片为nRF52840的板级支持包。
+
+目前支持的开发板如下
+
+| 支持开发板型号                                               | 开发板上外设                | 备注                                |
+| ------------------------------------------------------------ | --------------------------- | ----------------------------------- |
+| [PCA10056](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-DK) | QSPI FLASH, 4 button，4 LED | UART0                               |
+| [ARDUINO NANO 33 BLE](https://store.arduino.cc/usa/nano-33-ble-sense-with-headers) | 3 LED                       | 需要连接jlink shell采用RTT 方式交互 |
+|                                                              |                             |                                     |
+
+相关开发板资料原理图整理在[BSP_BOARD_NRF52840](https://github.com/supperthomas/BSP_BOARD_NRF52840)
+
+选择开发板请使用`menuconfig` -> `Hardware Driver Config` -> `Select Bsp board`
+
+选择对应的开发板
+
 本文主要内容如下：
 
 - 开发板资源介绍

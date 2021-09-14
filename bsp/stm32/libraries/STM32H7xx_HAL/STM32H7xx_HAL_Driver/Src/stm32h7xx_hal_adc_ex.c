@@ -226,22 +226,35 @@ uint32_t HAL_ADCEx_Calibration_GetValue(ADC_HandleTypeDef *hadc, uint32_t Single
 HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_GetValue(ADC_HandleTypeDef* hadc, uint32_t* LinearCalib_Buffer)
 {
   uint32_t cnt;
-  HAL_StatusTypeDef tmp_hal_status;
-
+  HAL_StatusTypeDef tmp_hal_status = HAL_OK;
+  uint32_t temp_REG_IsConversionOngoing = 0UL;
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
-
+  
   /* Enable the ADC ADEN = 1 to be able to read the linear calibration factor */
-  tmp_hal_status = ADC_Enable(hadc);
-
+  if(LL_ADC_IsEnabled(hadc->Instance) == 0UL) 
+  {
+    tmp_hal_status = ADC_Enable(hadc);
+  }
+  
   if (tmp_hal_status == HAL_OK)
   {
-   for(cnt = ADC_LINEAR_CALIB_REG_COUNT; cnt > 0UL; cnt--)
+    if(LL_ADC_REG_IsConversionOngoing(hadc->Instance) != 0UL)
+    {
+      LL_ADC_REG_StopConversion(hadc->Instance);
+      temp_REG_IsConversionOngoing = 1UL;
+    }
+    for(cnt = ADC_LINEAR_CALIB_REG_COUNT; cnt > 0UL; cnt--)
     {
       LinearCalib_Buffer[cnt-1U]=LL_ADC_GetCalibrationLinearFactor(hadc->Instance, ADC_CR_LINCALRDYW6 >> (ADC_LINEAR_CALIB_REG_COUNT-cnt));
     }
+    if(temp_REG_IsConversionOngoing != 0UL)
+    {
+      LL_ADC_REG_StartConversion(hadc->Instance);
+    }
   }
-
+  
   return tmp_hal_status;
 }
 
@@ -310,6 +323,7 @@ HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_SetValue(ADC_HandleTypeDef *hadc, 
 {
   uint32_t cnt;
   __IO uint32_t wait_loop_index = 0;
+  uint32_t temp_REG_IsConversionOngoing = 0UL;
 
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
@@ -357,6 +371,8 @@ HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_SetValue(ADC_HandleTypeDef *hadc, 
     return  HAL_ERROR;
   }
 /* Enable the ADC peripheral */
+   if(LL_ADC_IsEnabled(hadc->Instance) == 0UL)  /* Enable the ADC if it is disabled */
+    {
     if (ADC_Enable(hadc) != HAL_OK)
     {
       return  HAL_ERROR;
@@ -369,9 +385,24 @@ HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_SetValue(ADC_HandleTypeDef *hadc, 
       }
       (void)ADC_Disable(hadc);
     }
+    }else /* ADC is already enabled, so no need to enable it but need to stop conversion */
+    {
+       if(LL_ADC_REG_IsConversionOngoing(hadc->Instance) != 0UL)
+        {
+          LL_ADC_REG_StopConversion(hadc->Instance);
+          temp_REG_IsConversionOngoing = 1UL;
+         }
+       for(cnt = ADC_LINEAR_CALIB_REG_COUNT; cnt > 0UL ; cnt--)
+         {
+           LL_ADC_SetCalibrationLinearFactor(hadc->Instance, ADC_CR_LINCALRDYW6 >> (ADC_LINEAR_CALIB_REG_COUNT-cnt), LinearCalib_Buffer[cnt-1U]);
+         }
+       if(temp_REG_IsConversionOngoing != 0UL)
+         {
+           LL_ADC_REG_StartConversion(hadc->Instance);
+         }
+    }
   return HAL_OK;
 }
-
 
 /**
   * @brief  Load the calibration factor from engi bytes
@@ -381,18 +412,27 @@ HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_SetValue(ADC_HandleTypeDef *hadc, 
 HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_FactorLoad(ADC_HandleTypeDef *hadc)
 {
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
-  uint32_t cnt;
+  uint32_t cnt, FactorOffset;
   uint32_t LinearCalib_Buffer[ADC_LINEAR_CALIB_REG_COUNT];
-
+  
   /* Linearity calibration is retrieved from engi bytes
      read values from registers and put them to the CALFACT2 register */
   /* If needed linearity calibration can be done in runtime using
      LL_ADC_GetCalibrationLinearFactor()                             */
-
-
+   if(hadc->Instance == ADC1)
+   {
+    FactorOffset = 0UL;
+   }else if(hadc->Instance == ADC2)
+   {
+    FactorOffset = 8UL;
+   }else  /*Case ADC3*/
+    {
+     FactorOffset = 16UL;
+    } 
+ 
   for (cnt = 0UL; cnt < ADC_LINEAR_CALIB_REG_COUNT; cnt++)
   {
-    LinearCalib_Buffer[cnt] = *(uint32_t*)(ADC_LINEAR_CALIB_REG_1_ADDR + cnt);
+    LinearCalib_Buffer[cnt] = *(uint32_t*)(ADC_LINEAR_CALIB_REG_1_ADDR + FactorOffset + cnt);
   }
   if (HAL_ADCEx_LinearCalibration_SetValue(hadc,(uint32_t*)LinearCalib_Buffer) != HAL_OK)
   {
@@ -401,7 +441,6 @@ HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_FactorLoad(ADC_HandleTypeDef *hadc
 
    return tmp_hal_status;
 }
-
 
 /**
   * @brief  Enable ADC, start conversion of injected group.
@@ -1792,10 +1831,12 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc, ADC_I
     {
       assert_param(IS_ADC2_DIFF_CHANNEL(sConfigInjected->InjectedChannel));
     }
+#if defined (ADC3)
     if (hadc->Instance == ADC3)
     {
       assert_param(IS_ADC3_DIFF_CHANNEL(sConfigInjected->InjectedChannel));
     }
+#endif
   }
 
   /* Process locked */

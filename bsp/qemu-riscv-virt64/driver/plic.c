@@ -7,7 +7,8 @@
  * Date           Author       Notes
  * 2021-05-20     bigmagic     first version
  */
-#include "rtthread.h"
+#include <rtthread.h>
+#include <stdint.h>
 #include "plic.h"
 #include <riscv_io.h>
 #include "encoding.h"

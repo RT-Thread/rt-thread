@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_LL_CRC_H
-#define __STM32F0xx_LL_CRC_H
+#ifndef STM32F0xx_LL_CRC_H
+#define STM32F0xx_LL_CRC_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,7 +49,7 @@ extern "C" {
   * @{
   */
 
-#if  defined(CRC_PROG_POLYNOMIAL_SUPPORT)
+#if defined(CRC_POL_POL)
 /** @defgroup CRC_LL_EC_POLYLENGTH Polynomial length
   * @{
   */
@@ -76,7 +60,7 @@ extern "C" {
 /**
   * @}
   */
-#endif
+#endif /* CRC_POL_POL */
 
 /** @defgroup CRC_LL_EC_INDATA_REVERSE Input Data Reverse
   * @{
@@ -98,7 +82,7 @@ extern "C" {
   * @}
   */
 
-#if  defined(CRC_PROG_POLYNOMIAL_SUPPORT)
+#if defined(CRC_POL_POL)
 /** @defgroup CRC_LL_EC_Default_Polynomial_Value    Default CRC generating polynomial value
   * @brief    Normal representation of this polynomial value is
   *           X^32 + X^26 + X^23 + X^22 + X^16 + X^12 + X^11 + X^10 +X^8 + X^7 + X^5 + X^4 + X^2 + X + 1 .
@@ -108,7 +92,7 @@ extern "C" {
 /**
   * @}
   */
-#endif
+#endif /* CRC_POL_POL */
 
 /** @defgroup CRC_LL_EC_Default_InitValue    Default CRC computation initialization value
   * @{
@@ -138,7 +122,7 @@ extern "C" {
   * @param  __VALUE__ Value to be written in the register
   * @retval None
   */
-#define LL_CRC_WriteReg(__INSTANCE__, __REG__, __VALUE__) WRITE_REG(__INSTANCE__->__REG__, (__VALUE__))
+#define LL_CRC_WriteReg(__INSTANCE__, __REG__, __VALUE__) WRITE_REG(__INSTANCE__->__REG__, __VALUE__)
 
 /**
   * @brief  Read a value in CRC register
@@ -179,11 +163,9 @@ __STATIC_INLINE void LL_CRC_ResetCRCCalculationUnit(CRC_TypeDef *CRCx)
   SET_BIT(CRCx->CR, CRC_CR_RESET);
 }
 
-#if  defined(CRC_PROG_POLYNOMIAL_SUPPORT)
+#if defined(CRC_POL_POL)
 /**
   * @brief  Configure size of the polynomial.
-  * @note   This function is available only on devices supporting
-  *         Programmable Polynomial feature.
   * @rmtoll CR           POLYSIZE      LL_CRC_SetPolynomialSize
   * @param  CRCx CRC Instance
   * @param  PolySize This parameter can be one of the following values:
@@ -200,8 +182,6 @@ __STATIC_INLINE void LL_CRC_SetPolynomialSize(CRC_TypeDef *CRCx, uint32_t PolySi
 
 /**
   * @brief  Return size of the polynomial.
-  * @note   This function is available only on devices supporting
-  *         Programmable Polynomial feature.
   * @rmtoll CR           POLYSIZE      LL_CRC_GetPolynomialSize
   * @param  CRCx CRC Instance
   * @retval Returned value can be one of the following values:
@@ -214,7 +194,7 @@ __STATIC_INLINE uint32_t LL_CRC_GetPolynomialSize(CRC_TypeDef *CRCx)
 {
   return (uint32_t)(READ_BIT(CRCx->CR, CRC_CR_POLYSIZE));
 }
-#endif
+#endif /* CRC_POL_POL */
 
 /**
   * @brief  Configure the reversal of the bit order of the input data
@@ -302,12 +282,10 @@ __STATIC_INLINE uint32_t LL_CRC_GetInitialData(CRC_TypeDef *CRCx)
   return (uint32_t)(READ_REG(CRCx->INIT));
 }
 
-#if  defined(CRC_PROG_POLYNOMIAL_SUPPORT)
+#if defined(CRC_POL_POL)
 /**
   * @brief  Initialize the Programmable polynomial value
   *         (coefficients of the polynomial to be used for CRC calculation).
-  * @note   This function is available only on devices supporting
-  *         Programmable Polynomial feature.
   * @note   LL_CRC_DEFAULT_CRC32_POLY could be used as value for PolynomCoef parameter.
   * @note   Please check Reference Manual and existing Errata Sheets,
   *         regarding possible limitations for Polynomial values usage.
@@ -324,8 +302,6 @@ __STATIC_INLINE void LL_CRC_SetPolynomialCoef(CRC_TypeDef *CRCx, uint32_t Polyno
 
 /**
   * @brief  Return current Programmable polynomial value
-  * @note   This function is available only on devices supporting
-  *         Programmable Polynomial feature.
   * @note   Please check Reference Manual and existing Errata Sheets,
   *         regarding possible limitations for Polynomial values usage.
   *         For example, for a polynomial of degree 7, X^7 + X^6 + X^5 + X^2 + 1 is written 0x65
@@ -337,7 +313,7 @@ __STATIC_INLINE uint32_t LL_CRC_GetPolynomialCoef(CRC_TypeDef *CRCx)
 {
   return (uint32_t)(READ_REG(CRCx->POL));
 }
-#endif
+#endif /* CRC_POL_POL */
 
 /**
   * @}
@@ -368,7 +344,10 @@ __STATIC_INLINE void LL_CRC_FeedData32(CRC_TypeDef *CRCx, uint32_t InData)
   */
 __STATIC_INLINE void LL_CRC_FeedData16(CRC_TypeDef *CRCx, uint16_t InData)
 {
-  *(uint16_t __IO *)(&CRCx->DR) = (uint16_t) InData;
+  __IO uint16_t *pReg;
+
+  pReg = (__IO uint16_t *)(__IO void *)(&CRCx->DR);                             /* Derogation MisraC2012 R.11.5 */
+  *pReg = InData;
 }
 
 /**
@@ -394,12 +373,10 @@ __STATIC_INLINE uint32_t LL_CRC_ReadData32(CRC_TypeDef *CRCx)
   return (uint32_t)(READ_REG(CRCx->DR));
 }
 
-#if  defined(CRC_PROG_POLYNOMIAL_SUPPORT)
+#if defined(CRC_POL_POL)
 /**
   * @brief  Return current CRC calculation result. 16 bits value is returned.
   * @note   This function is expected to be used in a 16 bits CRC polynomial size context.
-  * @note   This function is available only on devices supporting
-  *         Programmable Polynomial feature.
   * @rmtoll DR           DR            LL_CRC_ReadData16
   * @param  CRCx CRC Instance
   * @retval Current CRC calculation result as stored in CRC_DR register (16 bits).
@@ -412,8 +389,6 @@ __STATIC_INLINE uint16_t LL_CRC_ReadData16(CRC_TypeDef *CRCx)
 /**
   * @brief  Return current CRC calculation result. 8 bits value is returned.
   * @note   This function is expected to be used in a 8 bits CRC polynomial size context.
-  * @note   This function is available only on devices supporting
-  *         Programmable Polynomial feature.
   * @rmtoll DR           DR            LL_CRC_ReadData8
   * @param  CRCx CRC Instance
   * @retval Current CRC calculation result as stored in CRC_DR register (8 bits).
@@ -426,8 +401,6 @@ __STATIC_INLINE uint8_t LL_CRC_ReadData8(CRC_TypeDef *CRCx)
 /**
   * @brief  Return current CRC calculation result. 7 bits value is returned.
   * @note   This function is expected to be used in a 7 bits CRC polynomial size context.
-  * @note   This function is available only on devices supporting
-  *         Programmable Polynomial feature.
   * @rmtoll DR           DR            LL_CRC_ReadData7
   * @param  CRCx CRC Instance
   * @retval Current CRC calculation result as stored in CRC_DR register (7 bits).
@@ -436,7 +409,7 @@ __STATIC_INLINE uint8_t LL_CRC_ReadData7(CRC_TypeDef *CRCx)
 {
   return (uint8_t)(READ_REG(CRCx->DR) & 0x7FU);
 }
-#endif
+#endif /* CRC_POL_POL */
 
 /**
   * @brief  Return data stored in the Independent Data(IDR) register.
@@ -455,7 +428,7 @@ __STATIC_INLINE uint32_t LL_CRC_Read_IDR(CRC_TypeDef *CRCx)
   * @note   This register can be used as a temporary storage location for one byte.
   * @rmtoll IDR          IDR           LL_CRC_Write_IDR
   * @param  CRCx CRC Instance
-  * @param  InData value to be stored in CRC_IDR register (8-bit) between between Min_Data=0 and Max_Data=0xFF
+  * @param  InData value to be stored in CRC_IDR register (8-bit) between Min_Data=0 and Max_Data=0xFF
   * @retval None
   */
 __STATIC_INLINE void LL_CRC_Write_IDR(CRC_TypeDef *CRCx, uint32_t InData)
@@ -496,6 +469,6 @@ ErrorStatus LL_CRC_DeInit(CRC_TypeDef *CRCx);
 }
 #endif
 
-#endif /* __STM32F0xx_LL_CRC_H */
+#endif /* STM32F0xx_LL_CRC_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

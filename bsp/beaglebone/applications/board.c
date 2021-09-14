@@ -163,5 +163,4 @@ void rt_hw_cpu_reset(void)
     REG32(PRM_DEVICE(prcm_base)) = 0x1;
     RT_ASSERT(0);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reboot the cpu);
-FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_cpu_reset, __cmd_reboot, reboot the cpu);
+MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reboot the cpu);

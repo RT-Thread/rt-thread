@@ -11,6 +11,10 @@
 #ifndef POSIX_AIO_H__
 #define POSIX_AIO_H__
 
+#include <stdio.h>
+#include <sys/signal.h>
+#include <rtdevice.h>
+
 struct aiocb
 {
     int aio_fildes;         /* File descriptor. */

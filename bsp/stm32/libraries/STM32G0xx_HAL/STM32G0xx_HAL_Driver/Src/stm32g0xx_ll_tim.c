@@ -32,7 +32,7 @@
   * @{
   */
 
-#if defined (TIM1) || defined (TIM2) || defined (TIM3) ||  defined (TIM14) ||  defined (TIM15) || defined (TIM16) || defined (TIM17) || defined (TIM6) || defined (TIM7)
+#if defined (TIM1) || defined (TIM2) || defined (TIM3) || defined (TIM4) ||  defined (TIM14) ||  defined (TIM15) || defined (TIM16) || defined (TIM17) || defined (TIM6) || defined (TIM7)
 
 /** @addtogroup TIM_LL
   * @{
@@ -246,6 +246,13 @@ ErrorStatus LL_TIM_DeInit(TIM_TypeDef *TIMx)
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_TIM3);
   }
 #endif
+#if defined(TIM4)
+  else if (TIMx == TIM4)
+  {
+    LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_TIM4);
+    LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_TIM4);
+  }
+#endif
 #if defined(TIM6)
   else if (TIMx == TIM6)
   {
@@ -305,7 +312,7 @@ void LL_TIM_StructInit(LL_TIM_InitTypeDef *TIM_InitStruct)
   TIM_InitStruct->CounterMode       = LL_TIM_COUNTERMODE_UP;
   TIM_InitStruct->Autoreload        = 0xFFFFFFFFU;
   TIM_InitStruct->ClockDivision     = LL_TIM_CLOCKDIVISION_DIV1;
-  TIM_InitStruct->RepetitionCounter = (uint8_t)0x00;
+  TIM_InitStruct->RepetitionCounter = 0x00000000U;
 }
 
 /**
@@ -1342,7 +1349,7 @@ static ErrorStatus IC4Config(TIM_TypeDef *TIMx, LL_TIM_IC_InitTypeDef *TIM_ICIni
   * @}
   */
 
-#endif /* TIM1 || TIM2 || TIM3 ||  TIM14 || TIM15 || TIM16 || TIM17 || TIM6 || TIM7 */
+#endif /* TIM1 || TIM2 || TIM3 || TIM4 || TIM14 || TIM15 || TIM16 || TIM17 || TIM6 || TIM7 */
 
 /**
   * @}

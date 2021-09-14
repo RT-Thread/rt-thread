@@ -25,7 +25,7 @@
 #include "stm32_assert.h"
 #else
 #define assert_param(expr) ((void)0U)
-#endif
+#endif  /* USE_FULL_ASSERT */
 
 /** @addtogroup STM32F4xx_LL_Driver
   * @{
@@ -160,9 +160,12 @@ ErrorStatus LL_DMA2D_DeInit(DMA2D_TypeDef *DMA2Dx)
 ErrorStatus LL_DMA2D_Init(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_InitTypeDef *DMA2D_InitStruct)
 {
   ErrorStatus status = ERROR;
-  LL_DMA2D_ColorTypeDef DMA2D_ColorStruct;
-  uint32_t tmp, tmp1, tmp2;
-  uint32_t regMask, regValue;
+  LL_DMA2D_ColorTypeDef dma2d_colorstruct;
+  uint32_t tmp;
+  uint32_t tmp1;
+  uint32_t tmp2;
+  uint32_t regMask;
+  uint32_t regValue;
 
   /* Check the parameters */
   assert_param(IS_DMA2D_ALL_INSTANCE(DMA2Dx));
@@ -204,12 +207,12 @@ ErrorStatus LL_DMA2D_Init(DMA2D_TypeDef *DMA2Dx, LL_DMA2D_InitTypeDef *DMA2D_Ini
     LL_DMA2D_SetOutputMemAddr(DMA2Dx, DMA2D_InitStruct->OutputMemoryAddress);
 
     /* DMA2D OCOLR register configuration ------------------------------------------*/
-    DMA2D_ColorStruct.ColorMode   = DMA2D_InitStruct->ColorMode;
-    DMA2D_ColorStruct.OutputBlue  = DMA2D_InitStruct->OutputBlue;
-    DMA2D_ColorStruct.OutputGreen = DMA2D_InitStruct->OutputGreen;
-    DMA2D_ColorStruct.OutputRed   = DMA2D_InitStruct->OutputRed;
-    DMA2D_ColorStruct.OutputAlpha = DMA2D_InitStruct->OutputAlpha;
-    LL_DMA2D_ConfigOutputColor(DMA2Dx, &DMA2D_ColorStruct);
+    dma2d_colorstruct.ColorMode   = DMA2D_InitStruct->ColorMode;
+    dma2d_colorstruct.OutputBlue  = DMA2D_InitStruct->OutputBlue;
+    dma2d_colorstruct.OutputGreen = DMA2D_InitStruct->OutputGreen;
+    dma2d_colorstruct.OutputRed   = DMA2D_InitStruct->OutputRed;
+    dma2d_colorstruct.OutputAlpha = DMA2D_InitStruct->OutputAlpha;
+    LL_DMA2D_ConfigOutputColor(DMA2Dx, &dma2d_colorstruct);
 
     status = SUCCESS;
   }

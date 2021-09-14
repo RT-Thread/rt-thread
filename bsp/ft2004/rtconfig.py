@@ -36,7 +36,7 @@ if PLATFORM == 'gcc':
 
     
     DEVICE = ' -march=armv8-a  -mfpu=vfpv4-d16 -ftree-vectorize -ffast-math -mfloat-abi=soft --specs=nano.specs --specs=nosys.specs -fno-builtin '
-    # DEVICE = ' -march=armv7-a  -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=hard'
+
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c'+ DEVICE + ' -fsingle-precision-constant  -fno-builtin -x assembler-with-cpp -D__ASSEMBLY__'    
     LINK_SCRIPT = 'ft_aarch32.lds'

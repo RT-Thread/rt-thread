@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 
-#ifdef BSP_USING_SDIO
+#if defined (BSP_USING_SDCARD)
 
 #include <dfs_elm.h>
 #include <dfs_fs.h>
@@ -58,4 +58,23 @@ int ab32_sdcard_mount(void)
     return RT_EOK;
 }
 INIT_APP_EXPORT(ab32_sdcard_mount);
+#elif defined (RT_USING_DFS_ROMFS)
+
+#include <dfs_fs.h>
+#include "dfs_romfs.h"
+
+int ab32_romfs_mount(void)
+{
+    if (dfs_mount(RT_NULL, "/", "rom", 0, &(romfs_root)) == 0)
+    {
+        rt_kprintf("ROM file system initializated!\n");
+    }
+    else
+    {
+        rt_kprintf("ROM file system initializate failed!\n");
+    }
+
+    return 0;
+}
+INIT_ENV_EXPORT(ab32_romfs_mount);
 #endif

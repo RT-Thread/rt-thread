@@ -15,6 +15,7 @@
 #ifndef __PM_H__
 #define __PM_H__
 
+#include <stdint.h>
 #include <rtthread.h>
 
 #ifndef PM_HAS_CUSTOM_CONFIG

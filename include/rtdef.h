@@ -34,6 +34,7 @@
  * 2019-12-20     Bernard      change version number to v4.0.3
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  * 2020-10-23     Meco Man     define maximum value of ipc type
+ * 2021-03-19     Meco Man     add security devices
  * 2021-05-10     armink       change version number to v4.0.4
  */
 
@@ -276,7 +277,6 @@ typedef int (*init_fn_t)(void);
 /* define these to empty, even if not include finsh.h file */
 #define FINSH_FUNCTION_EXPORT(name, desc)
 #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
-#define FINSH_VAR_EXPORT(name, type, desc)
 
 #define MSH_CMD_EXPORT(command, desc)
 #define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
@@ -510,7 +510,7 @@ typedef struct rt_timer *rt_timer_t;
  * @addtogroup Signal
  */
 #ifdef RT_USING_SIGNALS
-#include <libc/libc_signal.h>
+#include <sys/signal.h>
 typedef unsigned long rt_sigset_t;
 typedef void (*rt_sighandler_t)(int signo);
 typedef siginfo_t rt_siginfo_t;
@@ -565,6 +565,10 @@ typedef siginfo_t rt_siginfo_t;
 
 #ifndef RT_SCHEDULE_IPI
 #define RT_SCHEDULE_IPI                 0
+#endif
+
+#ifndef RT_STOP_IPI
+#define RT_STOP_IPI                     1
 #endif
 
 /**
@@ -658,6 +662,10 @@ struct rt_thread
 
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
+
+#ifdef RT_USING_CPU_USAGE
+    rt_uint64_t  duration_tick;                          /**< cpu usage tick */
+#endif
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 
@@ -900,6 +908,7 @@ enum rt_device_class_type
     RT_Device_Class_I2CBUS,                             /**< I2C bus device */
     RT_Device_Class_USBDevice,                          /**< USB slave device */
     RT_Device_Class_USBHost,                            /**< USB host bus */
+    RT_Device_Class_USBOTG,                             /**< USB OTG bus */
     RT_Device_Class_SPIBUS,                             /**< SPI bus device */
     RT_Device_Class_SPIDevice,                          /**< SPI device */
     RT_Device_Class_SDIO,                               /**< SDIO bus device */
@@ -911,6 +920,7 @@ enum rt_device_class_type
     RT_Device_Class_Sensor,                             /**< Sensor device */
     RT_Device_Class_Touch,                              /**< Touch device */
     RT_Device_Class_PHY,                                /**< PHY device */
+    RT_Device_Class_Security,                           /**< Security device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 
@@ -963,12 +973,6 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x13            /**< block device : enter/exit auto refresh mode */
 #define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
-#define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get second time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set second time */
-#define RT_DEVICE_CTRL_RTC_GET_TIME_US  0x12            /**< get microsecond time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME_US  0x13            /**< set microsecond time */
-#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x14            /**< get alarm */
-#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x15            /**< set alarm */
 
 typedef struct rt_device *rt_device_t;
 
@@ -1141,9 +1145,6 @@ struct rt_device_graphic_ops
 
 /**@}*/
 #endif
-
-/* definitions for libc */
-#include "rtlibc.h"
 
 #ifdef __cplusplus
 }

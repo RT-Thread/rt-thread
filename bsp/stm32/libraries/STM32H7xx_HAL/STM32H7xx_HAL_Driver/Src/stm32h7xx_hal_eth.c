@@ -149,12 +149,14 @@
 /** @addtogroup STM32H7xx_HAL_Driver
   * @{
   */
+#ifdef HAL_ETH_MODULE_ENABLED
+
+#if defined(ETH)
 
 /** @defgroup ETH ETH
   * @brief ETH HAL module driver
   * @{
   */
-#ifdef HAL_ETH_MODULE_ENABLED
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -2980,10 +2982,14 @@ static void ETH_InitCallbacksToDefault(ETH_HandleTypeDef *heth)
 }
 #endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
 
-#endif /* HAL_ETH_MODULE_ENABLED */
+
 /**
   * @}
   */
+
+#endif /* ETH */
+
+#endif /* HAL_ETH_MODULE_ENABLED */
 
 /**
   * @}

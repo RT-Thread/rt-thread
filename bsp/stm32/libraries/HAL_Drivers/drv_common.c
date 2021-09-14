@@ -12,7 +12,11 @@
 #include "board.h"
 
 #ifdef RT_USING_SERIAL
+#ifdef RT_USING_SERIAL_V2
+#include "drv_usart_v2.h"
+#else
 #include "drv_usart.h"
+#endif
 #endif
 
 #ifdef RT_USING_FINSH
@@ -21,7 +25,7 @@ static void reboot(uint8_t argc, char **argv)
 {
     rt_hw_cpu_reset();
 }
-FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
+MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
 
 /* SysTick configuration */
@@ -113,16 +117,32 @@ void _Error_Handler(char *s, int num)
  */
 void rt_hw_us_delay(rt_uint32_t us)
 {
-    rt_uint32_t start, now, delta, reload, us_tick;
-    start = SysTick->VAL;
-    reload = SysTick->LOAD;
-    us_tick = SystemCoreClock / 1000000UL;
-    do
+    rt_uint32_t ticks;
+    rt_uint32_t told, tnow, tcnt = 0;
+    rt_uint32_t reload = SysTick->LOAD;
+
+    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    told = SysTick->VAL;
+    while (1)
     {
-        now = SysTick->VAL;
-        delta = start >= now ? start - now : reload + start - now;
+        tnow = SysTick->VAL;
+        if (tnow != told)
+        {
+            if (tnow < told)
+            {
+                tcnt += told - tnow;
+            }
+            else
+            {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+            if (tcnt >= ticks)
+            {
+                break;
+            }
+        }
     }
-    while (delta < us_tick * us);
 }
 
 /**
