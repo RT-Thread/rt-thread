@@ -93,7 +93,7 @@
   - 32K片内时钟源
   - 2～32MHz片外晶振
 
-芯片更多详细信息请参考[华芯微特技术支持][http://www.synwit.cn/support-1/3.html]。
+芯片更多详细信息请参考[华芯微特技术支持](http://www.synwit.cn/support-1/3.html)。
 
 ## 编译说明
 
