@@ -282,6 +282,7 @@ rt_int32_t sdio_io_rw_extended_block(struct rt_sdio_function *func,
         }
     }
 
+    /* Write the remainder using byte mode. */
     while (left_size > 0)
     {
         len = MIN(left_size, sdio_max_block_size(func));
@@ -792,6 +793,7 @@ static rt_int32_t sdio_set_bus_wide(struct rt_mmcsd_card *card)
 
 static rt_int32_t sdio_register_card(struct rt_mmcsd_card *card)
 {
+    rt_uint8_t num;
     struct sdio_card *sc;
     struct sdio_driver *sd;
     rt_list_t *l;
@@ -814,9 +816,12 @@ static rt_int32_t sdio_register_card(struct rt_mmcsd_card *card)
     for (l = (&sdio_drivers)->next; l != &sdio_drivers; l = l->next)
     {
         sd = (struct sdio_driver *)rt_list_entry(l, struct sdio_driver, list);
-        if (sdio_match_card(card, sd->drv->id))
+        num = sdio_match_card(card, sd->drv->id);
+        if (num)
         {
-            sd->drv->probe(card);
+            mmcsd_host_unlock(card->host);
+            sd->drv->probe(card->sdio_function[num], sd->drv->id);
+            mmcsd_host_lock(card->host);
         }
     }
 
@@ -992,8 +997,10 @@ rt_int32_t init_sdio(struct rt_mmcsd_host *host, rt_uint32_t ocr)
     return 0;
 
 remove_card:
+  if(host->card != RT_NULL) {
     rt_free(host->card);
     host->card = RT_NULL;
+  }
 err:
 
     LOG_E("init SDIO card failed");
@@ -1073,6 +1080,8 @@ static rt_int32_t sdio_irq_thread_create(struct rt_mmcsd_card *card)
         {
             rt_thread_startup(host->sdio_irq_thread);
         }
+        if (host->flags & MMCSD_SUP_SDIO_IRQ)
+          host->ops->enable_sdio_irq(host, 1);
     }
 
     return 0;
@@ -1322,8 +1331,9 @@ rt_inline rt_int32_t sdio_match_card(struct rt_mmcsd_card           *card,
 }
 
 
-static struct rt_mmcsd_card *sdio_match_driver(struct rt_sdio_device_id *id)
+static struct rt_sdio_function *sdio_match_driver(struct rt_sdio_device_id *id)
 {
+    rt_uint8_t num;
     rt_list_t *l;
     struct sdio_card *sc;
     struct rt_mmcsd_card *card;
@@ -1333,9 +1343,10 @@ static struct rt_mmcsd_card *sdio_match_driver(struct rt_sdio_device_id *id)
         sc = (struct sdio_card *)rt_list_entry(l, struct sdio_card, list);
         card = sc->card;
 
-        if (sdio_match_card(card, id))
+        num = sdio_match_card(card, id);
+        if (num)
         {
-            return card;
+            return card->sdio_function[num];
         }
     }
 
@@ -1345,7 +1356,7 @@ static struct rt_mmcsd_card *sdio_match_driver(struct rt_sdio_device_id *id)
 rt_int32_t sdio_register_driver(struct rt_sdio_driver *driver)
 {
     struct sdio_driver *sd;
-    struct rt_mmcsd_card *card;
+    struct rt_sdio_function *func;
 
     sd = rt_malloc(sizeof(struct sdio_driver));
     if (sd == RT_NULL)
@@ -1360,10 +1371,10 @@ rt_int32_t sdio_register_driver(struct rt_sdio_driver *driver)
 
     if (!rt_list_isempty(&sdio_cards))
     {
-        card = sdio_match_driver(driver->id);
-        if (card != RT_NULL)
+        func = sdio_match_driver(driver->id);
+        if (func != RT_NULL)
         {
-            return driver->probe(card);
+            return driver->probe(func, driver->id);
         }
     }
 
@@ -1374,7 +1385,7 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
 {
     rt_list_t *l;
     struct sdio_driver *sd = RT_NULL;
-    struct rt_mmcsd_card *card;
+    struct rt_sdio_function *func;
 
     for (l = (&sdio_drivers)->next; l != &sdio_drivers; l = l->next)
     {
@@ -1393,10 +1404,10 @@ rt_int32_t sdio_unregister_driver(struct rt_sdio_driver *driver)
 
     if (!rt_list_isempty(&sdio_cards))
     {
-        card = sdio_match_driver(driver->id);
-        if (card != RT_NULL)
+        func = sdio_match_driver(driver->id);
+        if (func != RT_NULL)
         {
-            driver->remove(card);
+            driver->remove(func);
             rt_list_remove(&sd->list);
             rt_free(sd);
         }
