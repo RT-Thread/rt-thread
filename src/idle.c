@@ -68,14 +68,13 @@ static struct rt_semaphore system_sem;
 static void (*idle_hook_list[RT_IDLE_HOOK_LIST_SIZE])(void);
 
 /**
- * @ingroup Hook
- * This function sets a hook function to idle thread loop. When the system performs
- * idle loop, this hook function should be invoked.
+ * @brief This function sets a hook function to idle thread loop. When the system performs
+ *        idle loop, this hook function should be invoked.
  *
- * @param hook the specified hook function
+ * @param hook the specified hook function.
  *
- * @return RT_EOK: set OK
- *         -RT_EFULL: hook list is full
+ * @return RT_EOK: set OK.
+ *         -RT_EFULL: hook list is full.
  *
  * @note the hook function must be simple and never be blocked or suspend.
  */
@@ -104,12 +103,12 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 }
 
 /**
- * delete the idle hook on hook list
+ * @brief delete the idle hook on hook list.
  *
- * @param hook the specified hook function
+ * @param hook the specified hook function.
  *
- * @return RT_EOK: delete OK
- *         -RT_ENOSYS: hook was not found
+ * @return RT_EOK: delete OK.
+ *         -RT_ENOSYS: hook was not found.
  */
 rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 {
@@ -153,8 +152,10 @@ rt_inline int _idle_has_defunct_thread(void)
 }
 #endif /* RT_USING_MODULE */
 
-/* enqueue a thread to defunct queue
- * it must be called between rt_hw_interrupt_disable and rt_hw_interrupt_enable
+/**
+ * @brief Enqueue a thread to defunct queue.
+ *
+ * @note It must be called between rt_hw_interrupt_disable and rt_hw_interrupt_enable
  */
 void rt_thread_defunct_enqueue(rt_thread_t thread)
 {
@@ -164,8 +165,10 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
 #endif
 }
 
-/* dequeue a thread from defunct queue
- * it must be called between rt_hw_interrupt_disable and rt_hw_interrupt_enable
+/**
+ * @brief Dequeue a thread from defunct queue.
+ *
+ * @note It must be called between rt_hw_interrupt_disable and rt_hw_interrupt_enable.
  */
 rt_thread_t rt_thread_defunct_dequeue(void)
 {
@@ -183,9 +186,7 @@ rt_thread_t rt_thread_defunct_dequeue(void)
 }
 
 /**
- * @ingroup Thread
- *
- * This function will perform system background job when system idle.
+ * @brief This function will perform system background job when system idle.
  */
 static void rt_defunct_execute(void)
 {
@@ -316,9 +317,7 @@ static void rt_thread_system_entry(void *parameter)
 #endif
 
 /**
- * @ingroup SystemInit
- *
- * This function will initialize idle thread, then start it.
+ * @brief This function will initialize idle thread, then start it.
  *
  * @note this function must be invoked when system init.
  */
@@ -365,10 +364,7 @@ void rt_thread_idle_init(void)
 }
 
 /**
- * @ingroup Thread
- *
- * This function will get the handler of the idle thread.
- *
+ * @brief This function will get the handler of the idle thread.
  */
 rt_thread_t rt_thread_idle_gethandler(void)
 {
