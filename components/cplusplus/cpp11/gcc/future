@@ -1,0 +1,336 @@
+#pragma once
+
+#if __cplusplus < 201103L
+#error "C++ version lower than C++11"
+#endif
+
+#include <mutex>
+#include <condition_variable>
+#include <memory>
+#include <chrono>
+#include <cassert>
+
+namespace std {
+
+enum class future_status {
+    ready,
+    timeout,
+    deferred
+};
+
+namespace detail {
+
+class shared_state_base {
+protected:
+    typedef void (*deleter_fn)(void *v);
+
+    using scoped_lock = std::lock_guard<std::mutex>;
+    using unique_lock = std::unique_lock<std::mutex>;
+public:
+    explicit shared_state_base(deleter_fn d) : v_(nullptr), d_(d), valid_(true) {}
+
+    ~shared_state_base() { d_(v_); }
+
+    shared_state_base(shared_state_base &&other) = delete;
+
+    shared_state_base(const shared_state_base &other) = delete;
+
+    shared_state_base &operator=(shared_state_base &&other) = delete;
+
+    shared_state_base &operator=(const shared_state_base &other) = delete;
+
+    void wait() {
+        unique_lock lock(m_);
+        c_.wait(lock, [this] { return has_value(); });
+    }
+
+    template <class Rep, class Period>
+    std::future_status
+    wait_for(const std::chrono::duration<Rep, Period> &rel_time) {
+        unique_lock lock(m_);
+        if (c_.wait_for(lock, rel_time, [this] { return has_value(); })) {
+            return std::future_status::ready;
+        }
+        return std::future_status::timeout;
+    }
+
+    template <class Clock, class Duration>
+    std::future_status
+    wait_until(const std::chrono::time_point<Clock, Duration> &abs_time) {
+        unique_lock lock(m_);
+        if (c_.wait_until(lock, abs_time, [this] { return has_value(); })) {
+            return std::future_status::ready;
+        }
+        return std::future_status::timeout;
+    }
+
+protected:
+    bool has_value() { return v_ != nullptr; }
+
+protected:
+    std::mutex m_;
+    std::condition_variable c_;
+    void *v_;
+    deleter_fn d_;
+    bool valid_;
+};
+
+
+template <typename R>
+class shared_state: public shared_state_base {
+public:
+    shared_state() :shared_state_base(default_deleter_) {}
+
+    ~shared_state() {}
+
+    R &get() {
+        wait();
+        scoped_lock lock(m_);
+        assert(valid_);
+        valid_ = false;
+        return *(static_cast<R *>(v_));
+    }
+
+    void set(const R &v) {
+        scoped_lock lock(m_);
+        assert(!has_value());
+        v_ = new R(v);
+        valid_ = true;
+        c_.notify_one();
+    }
+
+    void set(R &&v) {
+        scoped_lock lock(m_);
+        assert(!has_value());
+        v_ = new R(std::move(v));
+        valid_ = true;
+        c_.notify_one();
+    }
+
+    bool valid() {
+        scoped_lock lock(m_);
+        return valid_;
+    }
+
+private:
+    static void default_deleter_(void *v) { delete static_cast<R *>(v); }
+};
+
+} // namespace detail
+
+template <typename R>
+class shared_future {
+};
+
+
+template <typename R>
+class future {
+    using state_type = std::shared_ptr<detail::shared_state<R>>;
+public:
+    future() {}
+
+    explicit future(const state_type &state) : state_(state) {}
+
+    future(future &&other) noexcept: state_(std::move(other.state_)) {
+        other.state_.reset();
+    }
+
+    future(const future &other) = delete;
+
+    ~future() {}
+
+    future &operator=(future &&other) noexcept {
+        if (&other != this) {
+            state_ = std::move(other.state_);
+            other.state_.reset();
+        }
+        return *this;
+    }
+
+    future &operator=(const future &other) = delete;
+
+    void swap(future &other) noexcept {
+        std::swap(state_, other.state_);
+    }
+
+    std::shared_future<R> share() noexcept { return std::shared_future<R>(); }
+
+    R get() { return state_->get(); }
+
+    bool valid() const noexcept { return state_->valid(); }
+
+    void wait() const { state_->wait(); }
+
+    template <class Rep, class Period>
+    std::future_status
+    wait_for(const std::chrono::duration<Rep, Period> &rel_time) const {
+        return state_->wait_for(rel_time);
+    }
+
+    template <class Clock, class Duration>
+    std::future_status
+    wait_until(const std::chrono::time_point<Clock, Duration> &abs_time) const {
+        return state_->wait_until(abs_time);
+    }
+
+private:
+    state_type state_;
+};
+
+
+template <>
+class future<void> {
+    using state_type = std::shared_ptr<detail::shared_state<int>>;
+public:
+    future() {}
+
+    explicit future(const state_type &state) : state_(state) {}
+
+    future(future &&other) noexcept: state_(std::move(other.state_)) {
+        other.state_.reset();
+    }
+
+    future(const future &other) = delete;
+
+    ~future() {}
+
+    future &operator=(future &&other) noexcept {
+        if (&other != this) {
+            state_ = std::move(other.state_);
+            other.state_.reset();
+        }
+        return *this;
+    }
+
+    future &operator=(const future &other) = delete;
+
+    void swap(future &other) noexcept {
+        std::swap(state_, other.state_);
+    }
+
+    std::shared_future<void> share() noexcept { return std::shared_future<void>(); }
+
+    void get() { state_->get(); }
+
+    bool valid() const noexcept { return state_->valid(); }
+
+    void wait() const { state_->wait(); }
+
+    template <class Rep, class Period>
+    std::future_status
+    wait_for(const std::chrono::duration<Rep, Period> &rel_time) const {
+        return state_->wait_for(rel_time);
+    }
+
+    template <class Clock, class Duration>
+    std::future_status
+    wait_until(const std::chrono::time_point<Clock, Duration> &abs_time) const {
+        return state_->wait_until(abs_time);
+    }
+
+private:
+    state_type state_;
+};
+
+
+template <typename R>
+class promise {
+    using state_type = std::shared_ptr<detail::shared_state<R>>;
+public:
+    promise() : state_(new detail::shared_state<R>()) {}
+
+    promise(promise &&other) noexcept: state_(std::move(other.state_)) {
+        other.state_.reset();
+    }
+
+    promise(const promise &other) = delete;
+
+    ~promise() {}
+
+    promise &operator=(promise &&other) noexcept {
+        if (&other != this) {
+            state_ = std::move(other.state_);
+            other.state_.reset();
+        }
+        return *this;
+    }
+
+    promise &operator=(const promise &other) = delete;
+
+    void swap(promise &other) noexcept {
+        std::swap(state_, other.state_);
+    }
+
+    std::future<R> get_future() { return std::future<R>(state_); }
+
+    void set_value(const R &value) { state_->set(value); }
+
+    void set_value(R &&value) { state_->set(std::move(value)); }
+
+    void set_value_at_thread_exit(const R &value);
+
+    void set_value_at_thread_exit(R &&value);
+
+    void set_exception(std::exception_ptr p);
+
+    void set_exception_at_thread_exit(std::exception_ptr p);
+
+private:
+    state_type state_;
+};
+
+
+template <>
+class promise<void> {
+    using state_type = std::shared_ptr<detail::shared_state<int>>;
+public:
+    promise() : state_(new detail::shared_state<int>()) {}
+
+    promise(promise &&other) noexcept: state_(std::move(other.state_)) {
+        other.state_.reset();
+    }
+
+    promise(const promise &other) = delete;
+
+    ~promise() {}
+
+    promise &operator=(promise &&other) noexcept {
+        if (&other != this) {
+            state_ = std::move(other.state_);
+            other.state_.reset();
+        }
+        return *this;
+    }
+
+    promise &operator=(const promise &other) = delete;
+
+    void swap(promise &other) noexcept {
+        std::swap(state_, other.state_);
+    }
+
+    std::future<void> get_future() { return std::future<void>(state_); }
+
+    void set_value() { state_->set(0); }
+
+    void set_value_at_thread_exit();
+
+    void set_exception(std::exception_ptr p);
+
+    void set_exception_at_thread_exit(std::exception_ptr p);
+
+private:
+    state_type state_;
+};
+
+
+template <class R>
+void swap(std::future<R> &lhs, std::future<R> &rhs) noexcept {
+    lhs.swap(rhs);
+}
+
+template <class R>
+void swap(std::promise<R> &lhs, std::promise<R> &rhs) noexcept {
+    lhs.swap(rhs);
+}
+
+} // namespace std
