@@ -12,8 +12,8 @@
 #define __SYS_SELECT_H__
 
 #include <rtconfig.h>
-#include <sys/time.h>
 #include <sys/types.h>
+#include <sys/time.h>
 
 #ifndef  FD_SETSIZE
 #define  FD_SETSIZE  32
