@@ -239,6 +239,9 @@ RTM_EXPORT(mktime);
 
 char* asctime_r(const struct tm *t, char *buf)
 {
+    RT_ASSERT(rt_strlen(days) > (t->tm_wday << 2));
+    RT_ASSERT(rt_strlen(months) > (t->tm_mon << 2));
+
     /* "Wed Jun 30 21:49:08 1993\n" */
     *(int*) buf = *(int*) (days + (t->tm_wday << 2));
     *(int*) (buf + 4) = *(int*) (months + (t->tm_mon << 2));
