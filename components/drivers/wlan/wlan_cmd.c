@@ -213,7 +213,7 @@ static int wifi_scan(int argc, char *argv[])
             case SECURITY_WPS_SECURE:
                 security = "WPS_SECURE";
                 break;
-			case SECURITY_WPA_MIXED_PSK:
+            case SECURITY_WPA_MIXED_PSK:
                 security = "WPA_MIXED_PSK";
                 break;
             default:

@@ -102,7 +102,7 @@ typedef enum
     SECURITY_WEP_SHARED     = (WEP_ENABLED | SHARED_ENABLED),                   /* WEP Security with shared authentication */
     SECURITY_WPA_TKIP_PSK   = (WPA_SECURITY  | TKIP_ENABLED),                   /* WPA Security with TKIP                  */
     SECURITY_WPA_AES_PSK    = (WPA_SECURITY  | AES_ENABLED),                    /* WPA Security with AES                   */
-	SECURITY_WPA_MIXED_PSK  = (WPA_SECURITY | AES_ENABLED | TKIP_ENABLED),		/* WPA Security with AES & TKIP           */
+    SECURITY_WPA_MIXED_PSK  = (WPA_SECURITY | AES_ENABLED | TKIP_ENABLED),		/* WPA Security with AES & TKIP           */
     SECURITY_WPA2_AES_PSK   = (WPA2_SECURITY | AES_ENABLED),                    /* WPA2 Security with AES                  */
     SECURITY_WPA2_TKIP_PSK  = (WPA2_SECURITY | TKIP_ENABLED),                   /* WPA2 Security with TKIP                 */
     SECURITY_WPA2_MIXED_PSK = (WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED),     /* WPA2 Security with AES & TKIP           */
