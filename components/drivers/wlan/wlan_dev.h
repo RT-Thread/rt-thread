@@ -63,14 +63,15 @@ typedef enum
     RT_WLAN_DEV_EVT_MAX,
 } rt_wlan_dev_event_t;
 
-#define SHARED_ENABLED  0x00008000
-#define WPA_SECURITY    0x00200000
-#define WPA2_SECURITY   0x00400000
-#define WPS_ENABLED     0x10000000
-#define WEP_ENABLED     0x0001
-#define TKIP_ENABLED    0x0002
-#define AES_ENABLED     0x0004
-#define WSEC_SWFLAG     0x0008
+#define SHARED_ENABLED  		0x00008000
+#define WPA_SECURITY    		0x00200000
+#define WPA2_SECURITY   		0x00400000
+#define WPS_ENABLED     		0x10000000
+#define WEP_ENABLED     		0x0001
+#define TKIP_ENABLED    		0x0002
+#define AES_ENABLED     		0x0004
+#define AES_AND_TKIP_ENABLED	0X0006
+#define WSEC_SWFLAG     		0x0008
 
 #define RT_WLAN_FLAG_STA_ONLY    (0x1 << 0)
 #define RT_WLAN_FLAG_AP_ONLY     (0x1 << 1)
@@ -101,6 +102,7 @@ typedef enum
     SECURITY_WEP_SHARED     = (WEP_ENABLED | SHARED_ENABLED),                   /* WEP Security with shared authentication */
     SECURITY_WPA_TKIP_PSK   = (WPA_SECURITY  | TKIP_ENABLED),                   /* WPA Security with TKIP                  */
     SECURITY_WPA_AES_PSK    = (WPA_SECURITY  | AES_ENABLED),                    /* WPA Security with AES                   */
+	SECURITY_WPA_MIXED_PSK  = (WPA_SECURITY | AES_ENABLED | TKIP_ENABLED),		/* WPA Security with AES & TKIP           */
     SECURITY_WPA2_AES_PSK   = (WPA2_SECURITY | AES_ENABLED),                    /* WPA2 Security with AES                  */
     SECURITY_WPA2_TKIP_PSK  = (WPA2_SECURITY | TKIP_ENABLED),                   /* WPA2 Security with TKIP                 */
     SECURITY_WPA2_MIXED_PSK = (WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED),     /* WPA2 Security with AES & TKIP           */
