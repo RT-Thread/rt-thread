@@ -134,9 +134,6 @@ int dfs_device_fs_open(struct dfs_fd *file)
         struct device_dirent *root_dirent;
         rt_uint32_t count = 0;
 
-        /* lock scheduler */
-        rt_enter_critical();
-
         /* traverse device object */
         information = rt_object_get_information(RT_Object_Class_Device);
         RT_ASSERT(information != RT_NULL);
@@ -147,6 +144,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
 
         root_dirent = (struct device_dirent *)rt_malloc(sizeof(struct device_dirent) +
                       count * sizeof(rt_device_t));
+
         if (root_dirent != RT_NULL)
         {
             root_dirent->devices = (rt_device_t *)(root_dirent + 1);
@@ -161,7 +159,6 @@ int dfs_device_fs_open(struct dfs_fd *file)
                 count ++;
             }
         }
-        rt_exit_critical();
 
         /* set data */
         file->data = root_dirent;

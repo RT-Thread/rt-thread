@@ -22,7 +22,6 @@ rt_inline rt_err_t _workqueue_work_completion(struct rt_workqueue *queue)
 {
     rt_err_t result;
 
-    rt_enter_critical();
     while (1)
     {
         /* try to take condition semaphore */
@@ -44,7 +43,6 @@ rt_inline rt_err_t _workqueue_work_completion(struct rt_workqueue *queue)
             break;
         }
     }
-    rt_exit_critical();
 
     return result;
 }

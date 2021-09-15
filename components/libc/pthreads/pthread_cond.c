@@ -130,7 +130,6 @@ int pthread_cond_broadcast(pthread_cond_t *cond)
     if (cond->attr == -1)
         pthread_cond_init(cond, RT_NULL);
 
-    rt_enter_critical();
     while (1)
     {
         /* try to take condition semaphore */
@@ -148,12 +147,9 @@ int pthread_cond_broadcast(pthread_cond_t *cond)
         }
         else
         {
-            rt_exit_critical();
-
             return EINVAL;
         }
     }
-    rt_exit_critical();
 
     return 0;
 }

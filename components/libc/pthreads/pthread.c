@@ -308,7 +308,6 @@ int pthread_detach(pthread_t thread)
         goto __exit;
     }
 
-    rt_enter_critical();
     if (ptd->attr.detachstate == PTHREAD_CREATE_DETACHED)
     {
         /* The implementation has detected that the value specified by thread does not refer
@@ -357,7 +356,6 @@ int pthread_detach(pthread_t thread)
     }
 
 __exit:
-    rt_exit_critical();
     return ret;
 }
 RTM_EXPORT(pthread_detach);
