@@ -8,11 +8,16 @@ cwd   = GetCurrentDir()
 CPPPATH = [cwd]
 group = []
 
-# There is no 'sys/select.h' in these bsp's gcc toolchain; thus, we need to copy this file from 'nogcc/sys/select.h'
-if GetDepend('SOC_LS1B') or GetDepend('SOC_LS1C300'):
-    copy("../../nogcc/sys/select.h", "sys/select.h")
-    if GetDepend('RT_USING_LIBC'):
-        src += Glob('*.c')
-    group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH)
+if rtconfig.PLATFORM == 'gcc':
+    if GetDepend('SOC_LS1B') or GetDepend('SOC_LS1C300'):
+        try:
+            # There is no 'sys/select.h' in these bsp's gcc toolchain; thus, we need to copy this file from 'nogcc/sys/select.h'
+            copy("../../nogcc/sys/select.h", "./sys/select.h")
+        except:
+            pass
+        if GetDepend('RT_USING_LIBC'):
+            src += Glob('*.c')
+
+        group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH)
 
 Return('group')
