@@ -226,10 +226,36 @@ void ch32f1_tim_clock_init(TIM_TypeDef *timx)
 rt_uint32_t ch32f1_tim_clock_get(TIM_TypeDef *timx)
 {
     RCC_ClocksTypeDef RCC_Clocks;
+    rt_uint32_t ppre1;//APB1 DIV
+    rt_uint32_t ppre2;//APB2 DIV
 
     RCC_GetClocksFreq(&RCC_Clocks);
 
-    /*tim1~4 all in HCLK*/
+    //[10:8]:PPRE1
+    ppre1 = (RCC->CFGR0 >> 8) & 0x7;
+    //[13:11]:PPRE2
+    ppre2 = (RCC->CFGR0 >> 11) & 0x7;
+
+    if(timx == TIM1)
+    {
+        //TIM1:APB2_DIV
+        //PPRE2: 0xx, DIV = 1; 100, DIV = 2...; when DIV > 1,  hardware auto complete: HCLK * 2
+        if(ppre2 >= 4 )
+        {
+            return RCC_Clocks.HCLK_Frequency * 2;
+        }
+    }
+    else
+    {
+        //TIM2~4 APB1_DIV
+        //PPRE1: 0xx, DIV = 1; 100, DIV = 2...; when DIV > 1,  hardware auto complete: HCLK * 2
+        if(ppre1 >= 4 )
+        {
+            return RCC_Clocks.HCLK_Frequency * 2;
+        }
+    }
+
+
     return RCC_Clocks.HCLK_Frequency;
 }
 
