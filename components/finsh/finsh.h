@@ -116,15 +116,25 @@ typedef long (*syscall_func)(void);
 #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
 
 /**
- * @ingroup finsh
+ * @ingroup msh
  *
  * This macro exports a command to module shell.
  *
- * @param command the name of command.
- * @param desc the description of command, which will show in help.
+ * @param command is the name of the command.
+ * @param desc is the description of the command, which will show in help list.
  */
 #define MSH_CMD_EXPORT(command, desc)   \
     MSH_FUNCTION_EXPORT_CMD(command, command, desc)
+
+/**
+ * @ingroup msh
+ *
+ * This macro exports a command with alias to module shell.
+ *
+ * @param command is the name of the command.
+ * @param alias is the alias of the command.
+ * @param desc is the description of the command, which will show in help list.
+ */
 #define MSH_CMD_EXPORT_ALIAS(command, alias, desc)  \
     MSH_FUNCTION_EXPORT_CMD(command, alias, desc)
 

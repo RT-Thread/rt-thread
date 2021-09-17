@@ -108,12 +108,14 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_UART0
                     config BSP_UART0_RX_PIN
                         int "uart0 rx pin number"
-                        range 0 31
-                        default 8
+                        range 0 64
+                        default 8 if BSP_BOARD_PCA_10056
+                        default 42 if BSP_BOARD_ARDUINO_NANO_33_BLE
                     config BSP_UART0_TX_PIN
                         int "uart0 tx pin number"
-                        range 0 31
-                        default 6
+                        range 0 64
+                        default 6 if BSP_BOARD_PCA_10056
+                        default 35 if BSP_BOARD_ARDUINO_NANO_33_BLE
                 endif
         endif
         if BSP_USING_UART&&NRFX_USING_UARTE

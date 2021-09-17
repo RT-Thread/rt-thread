@@ -1075,7 +1075,7 @@ const char *ulog_global_filter_kw_get(void)
     return ulog.filter.keyword;
 }
 
-#ifdef(RT_USING_FINSH)
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 
 static void _print_lvl_info(void)

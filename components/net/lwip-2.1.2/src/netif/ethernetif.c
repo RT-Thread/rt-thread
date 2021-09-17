@@ -39,6 +39,7 @@
  * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
  * 2016-08-18     Bernard      port to lwIP 2.0.0
  * 2018-11-02     MurphyZhao   port to lwIP 2.1.0
+ * 2021-09-07     Grissiom     fix eth_tx_msg ack bug
  */
 
 #include "lwip/opt.h"
@@ -57,6 +58,8 @@
 #include "netif/ethernetif.h"
 
 #include "lwip/inet.h"
+
+#include <ipc/completion.h>
 
 #if LWIP_IPV6
 #include "lwip/ethip6.h"
@@ -79,6 +82,7 @@ struct eth_tx_msg
 {
     struct netif    *netif;
     struct pbuf     *buf;
+    struct rt_completion ack;
 };
 
 static struct rt_mailbox eth_tx_thread_mb;
@@ -387,18 +391,17 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 {
 #ifndef LWIP_NO_TX_THREAD
     struct eth_tx_msg msg;
-    struct eth_device* enetif;
 
     RT_ASSERT(netif != RT_NULL);
-    enetif = (struct eth_device*)netif->state;
 
     /* send a message to eth tx thread */
     msg.netif = netif;
     msg.buf   = p;
+    rt_completion_init(&msg.ack);
     if (rt_mb_send(&eth_tx_thread_mb, (rt_uint32_t) &msg) == RT_EOK)
     {
         /* waiting for ack */
-        rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
+        rt_completion_wait(&msg.ack, RT_WAITING_FOREVER);
     }
 #else
     struct eth_device* enetif;
@@ -519,7 +522,6 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     dev->parent.type = RT_Device_Class_NetIf;
     /* register to RT-Thread device manager */
     rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
-    rt_sem_init(&(dev->tx_ack), name, 0, RT_IPC_FLAG_FIFO);
 
     /* set name */
     netif->name[0] = name[0];
@@ -595,7 +597,6 @@ void eth_device_deinit(struct eth_device *dev)
 #endif
     rt_device_close(&(dev->parent));
     rt_device_unregister(&(dev->parent));
-    rt_sem_detach(&(dev->tx_ack));
     rt_free(netif);
 }
 
@@ -673,7 +674,7 @@ static void eth_tx_thread_entry(void* parameter)
             }
 
             /* send ACK */
-            rt_sem_release(&(enetif->tx_ack));
+            rt_completion_done(&msg->ack);
         }
     }
 }

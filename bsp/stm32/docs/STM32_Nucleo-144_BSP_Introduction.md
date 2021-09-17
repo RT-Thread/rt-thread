@@ -14,7 +14,7 @@ By reading the ***Quickly Get Started*** section developers can quickly get thei
 
 ## Resources Introduction
 
-[<img src="figures/stm32-nucleo-144.png" alt="board" style="zoom:50%;" />](figures/stm32-nucleo-144.jpg) 
+[<img src="figures_en/stm32-nucleo-144.png" alt="board" style="zoom:50%;" />](figures/stm32-nucleo-144.jpg) 
 
 ### Description 
 
@@ -52,7 +52,7 @@ The STM32 Nucleo-144 board provides an affordable and flexible way for users to 
 
 This BSP provides MDK4, MDK5, and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
-![nucleo144_layout](figures/nucleo144_layout.jpg)
+![nucleo144_layout](figures_en/nucleo144_layout.jpg)
 
 ### Hardware connection
 

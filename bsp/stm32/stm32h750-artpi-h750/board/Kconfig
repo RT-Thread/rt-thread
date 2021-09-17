@@ -9,12 +9,12 @@ config SOC_STM32H750XB
 
 menu "Onboard Peripheral Drivers"
 
-    config BSP_USING_QSPI_FLASH
-        bool "Enable QSPI FLASH (W25Q64)"
-        select BSP_USING_QSPI
-        select RT_USING_SFUD
-        select RT_SFUD_USING_QSPI
+    config BSP_USING_USB_TO_USART
+        bool "Enable Debuger USART (uart4)"
+        select BSP_USING_UART
+        select BSP_USING_UART4
         default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -26,27 +26,96 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_UART
         bool "Enable UART"
-        default y
+        default n
         select RT_USING_SERIAL
+        select RT_SERIAL_USING_DMA
         if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART1_TX_USING_DMA
+                bool "Enable UART1 TX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+                
             config BSP_USING_UART3
                 bool "Enable UART3"
-                default y
-
+                default n
+                
             config BSP_USING_UART4
                 bool "Enable UART4"
-                default y
+                default n
+                
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
         endif
 
-
-
-    config BSP_USING_SDIO
-        bool "Enable SDIO"
-        select RT_USING_SDIO
-        select RT_USING_DFS
+    config BSP_USING_ONCHIP_RTC
+        bool "Enable Onchip RTC"
+        select RT_USING_RTC
         default n
 
-
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS (software simulation)"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C1
+                bool "Enable I2C1 BUS (software simulation)"
+                default n
+                select RT_USING_I2C
+                select RT_USING_I2C_BITOPS
+                select RT_USING_PIN
+                if BSP_USING_I2C1
+                    comment "Notice: PB6 --> 22; PB7 --> 23" 
+                    config BSP_I2C1_SCL_PIN
+                        int "I2C1 scl pin number"
+                        range 0 175
+                        default 22
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 0 175
+                        default 23
+                endif
+            menuconfig BSP_USING_I2C2
+                bool "Enable I2C2 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C2
+                    comment "Notice: PH13 --> 125; PH15 --> 127"
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 scl pin number"
+                        range 1 176
+                        default 127
+                    config BSP_I2C2_SDA_PIN
+                        int "I2C2 sda pin number"
+                        range 0 175
+                        default 125
+                endif
+            menuconfig BSP_USING_I2C3
+                bool "Enable I2C3 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C3
+                    comment "Notice: PH12 --> 124; PH11 --> 123"
+                    config BSP_I2C3_SCL_PIN
+                        int "i2c3 scl pin number"
+                        range 0 175
+                        default 123
+                    config BSP_I2C3_SDA_PIN
+                        int "I2C3 sda pin number"
+                        range 0 175
+                        default 124
+                endif
+        endif
+        
     source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
