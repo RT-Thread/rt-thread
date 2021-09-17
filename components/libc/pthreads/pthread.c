@@ -61,7 +61,7 @@ pthread_t _pthread_data_create(void)
 
     memset(ptd, 0x0, sizeof(_pthread_data_t));
     ptd->canceled = 0;
-    ptd->cancelstate = PTHREAD_CANCEL_ENABLE;
+    ptd->cancelstate = PTHREAD_CANCEL_DISABLE;
     ptd->canceltype = PTHREAD_CANCEL_DEFERRED;
     ptd->magic = PTHREAD_MAGIC;
 
