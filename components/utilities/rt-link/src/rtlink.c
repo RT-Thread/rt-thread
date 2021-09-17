@@ -447,6 +447,7 @@ static void _long_handle_second(struct rt_link_frame *receive_frame, rt_uint8_t 
             ack_mask |= ack_mask << rt_link_utils_num1(RT_LINK_ACK_MAX);
         }
 
+
         /* receive a complete package */
         if (rt_link_utils_num1(rt_link_scb->rx_record.long_count) == rt_link_scb->rx_record.total)
         {
@@ -474,13 +475,27 @@ static void _long_handle_second(struct rt_link_frame *receive_frame, rt_uint8_t 
             {
                 rt_link_scb->channel[serve].upload_callback(data, size);
             }
+
         }
-        else if (rt_link_hw_recv_len(rt_link_scb->rx_buffer) < (receive_frame->data_len % RT_LINK_MAX_DATA_LENGTH))
+        else 
         {
-            rt_int32_t timeout = RT_LINK_LONG_FRAME_TIMEOUT;
-            rt_timer_control(&rt_link_scb->longframetimer, RT_TIMER_CTRL_SET_TIME, &timeout);
-            rt_timer_start(&rt_link_scb->longframetimer);
+            rt_uint32_t next_frame_data_len = (receive_frame->extend.parameter - (receive_frame->data_len + offset));
+            if(next_frame_data_len % RT_LINK_MAX_DATA_LENGTH )
+            {
+                next_frame_data_len += RT_LINK_HEAD_LENGTH + RT_LINK_MAX_EXTEND_LENGTH + RT_LINK_CRC_LENGTH;
+            }
+            else
+            {
+                next_frame_data_len = RT_LINK_HEAD_LENGTH + RT_LINK_MAX_EXTEND_LENGTH + RT_LINK_MAX_DATA_LENGTH + RT_LINK_CRC_LENGTH;
+            }
+            if (rt_link_hw_recv_len(rt_link_scb->rx_buffer) < next_frame_data_len)
+            {
+                rt_int32_t timeout = RT_LINK_LONG_FRAME_TIMEOUT;
+                rt_timer_control(&rt_link_scb->longframetimer, RT_TIMER_CTRL_SET_TIME, &timeout);
+                rt_timer_start(&rt_link_scb->longframetimer);
+            }
         }
+
     }
 }
 
