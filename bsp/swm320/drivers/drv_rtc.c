@@ -10,6 +10,7 @@
  */
 
 #include "drv_rtc.h"
+#include <sys/time.h>
 
 #ifdef RT_USING_RTC
 #ifdef BSP_USING_RTC
@@ -17,8 +18,6 @@
 //#define DRV_DEBUG
 #define LOG_TAG "drv.rtc"
 #include <drv_log.h>
-
-static struct rt_device rtc_device;
 
 static uint32_t calcWeekDay(uint32_t year, uint32_t month, uint32_t date)
 {
@@ -55,8 +54,8 @@ static time_t swm_get_rtc_time_stamp(void)
     tm_new.tm_min = get_datetime.Minute;
     tm_new.tm_hour = get_datetime.Hour;
     tm_new.tm_mday = get_datetime.Date;
-    tm_new.tm_mon = get_datetime.Month - 1;
-    tm_new.tm_year = get_datetime.Year - 1900;
+    tm_new.tm_mon = get_datetime.Month;
+    tm_new.tm_year = get_datetime.Year;
 
     LOG_D("get rtc time.");
     return mktime(&tm_new);
@@ -72,9 +71,9 @@ static rt_err_t swm_set_rtc_time_stamp(time_t time_stamp)
     set_datetime.Minute = p_tm->tm_min;
     set_datetime.Hour = p_tm->tm_hour;
     set_datetime.Date = p_tm->tm_mday;
-    set_datetime.Month = p_tm->tm_mon + 1;
-    set_datetime.Year = p_tm->tm_year + 1900;
-    //    datetime.Day = p_tm->tm_wday;
+    set_datetime.Month = p_tm->tm_mon;
+    set_datetime.Year = p_tm->tm_year;
+    // set_datetime.Day = p_tm->tm_wday;
 
     RTC_Stop(RTC);
     while (RTC->CFGABLE == 0)
@@ -86,7 +85,7 @@ static rt_err_t swm_set_rtc_time_stamp(time_t time_stamp)
     RTC->MONDAY = (calcWeekDay(set_datetime.Year, set_datetime.Month, set_datetime.Date)
                    << RTC_MONDAY_DAY_Pos) |
                   ((set_datetime.Month) << RTC_MONDAY_MON_Pos);
-    RTC->YEAR = set_datetime.Year - 1901;
+    RTC->YEAR = set_datetime.Year;
     RTC->LOAD = 1 << RTC_LOAD_TIME_Pos;
     RTC_Start(RTC);
 
@@ -94,43 +93,7 @@ static rt_err_t swm_set_rtc_time_stamp(time_t time_stamp)
     return RT_EOK;
 }
 
-static rt_err_t swm_rtc_control(rt_device_t rtc_device, int cmd, void *args)
-{
-    rt_err_t result = RT_EOK;
-    RT_ASSERT(rtc_device != RT_NULL);
-
-    switch (cmd)
-    {
-    case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(rt_uint32_t *)args = swm_get_rtc_time_stamp();
-        LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
-        break;
-    case RT_DEVICE_CTRL_RTC_SET_TIME:
-        if (swm_set_rtc_time_stamp(*(rt_uint32_t *)args))
-        {
-            result = -RT_ERROR;
-        }
-        LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
-        break;
-    default:
-        break;
-    }
-
-    return result;
-}
-
-#ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops swm_rtc_ops =
-    {
-        RT_NULL,
-        RT_NULL,
-        RT_NULL,
-        RT_NULL,
-        RT_NULL,
-        swm_rtc_control};
-#endif
-
-static void swm_rtc_init(void)
+static rt_err_t swm_rtc_init(void)
 {
     RTC_InitStructure rtc_initstruct;
 
@@ -144,37 +107,50 @@ static void swm_rtc_init(void)
     rtc_initstruct.MinuteIEn = 0;
     RTC_Init(RTC, &rtc_initstruct);
     RTC_Start(RTC);
+
+    return RT_EOK;
 }
 
-static rt_err_t rt_hw_rtc_register(rt_device_t rtc_device, const char *name, rt_uint32_t flag)
+static rt_err_t swm_rtc_get_secs(void *args)
 {
-    RT_ASSERT(rtc_device != RT_NULL);
+    *(rt_uint32_t *)args = swm_get_rtc_time_stamp();
+    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
 
-    swm_rtc_init();
-
-#ifdef RT_USING_DEVICE_OPS
-    rtc_device->ops = &swm_rtc_ops;
-#else
-    rtc_device->init = RT_NULL;
-    rtc_device->open = RT_NULL;
-    rtc_device->close = RT_NULL;
-    rtc_device->read = RT_NULL;
-    rtc_device->write = RT_NULL;
-    rtc_device->control = swm_rtc_control;
-#endif
-    rtc_device->type = RT_Device_Class_RTC;
-    rtc_device->rx_indicate = RT_NULL;
-    rtc_device->tx_complete = RT_NULL;
-    rtc_device->user_data = RT_NULL;
-
-    /* register a character device */
-    return rt_device_register(rtc_device, name, flag);
+    return RT_EOK;
 }
+
+static rt_err_t swm_rtc_set_secs(void *args)
+{
+    rt_err_t result = RT_EOK;
+
+    if (swm_set_rtc_time_stamp(*(rt_uint32_t *)args))
+    {
+        result = -RT_ERROR;
+    }
+    LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
+
+    return result;
+}
+
+static const struct rt_rtc_ops swm_rtc_ops =
+{
+    swm_rtc_init,
+    swm_rtc_get_secs,
+    swm_rtc_set_secs,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+};
+
+static rt_rtc_dev_t swm_rtc_device;
 
 int rt_hw_rtc_init(void)
 {
     rt_err_t result;
-    result = rt_hw_rtc_register(&rtc_device, "rtc", RT_DEVICE_FLAG_RDWR);
+
+    swm_rtc_device.ops = &swm_rtc_ops;
+    result = rt_hw_rtc_register(&swm_rtc_device, "rtc", RT_DEVICE_FLAG_RDWR,RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);
