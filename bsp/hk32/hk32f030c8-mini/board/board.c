@@ -21,7 +21,7 @@ static void reboot(uint8_t argc, char **argv)
 {
     rt_hw_cpu_reset();
 }
-FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
+MSH_CMD_EXPORT(reboot, reboot system);
 #endif /* RT_USING_FINSH */
 
 /** System Clock Configuration
