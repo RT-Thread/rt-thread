@@ -79,7 +79,7 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     GPIOA5_Handler
                 DCD     GPIOA6_Handler
                 DCD     GPIOA7_Handler
-                DCD     GPIOB0_Handler
+				DCD     GPIOB0_Handler
                 DCD     GPIOB1_Handler
                 DCD     GPIOB2_Handler
                 DCD     GPIOB3_Handler
@@ -157,262 +157,262 @@ Reset_Handler    PROC
 ; Dummy Exception Handlers (infinite loops which can be modified)
 
 NMI_Handler     PROC
-                EXPORT  NMI_Handler                [WEAK]
+                EXPORT  NMI_Handler             [WEAK]
                 B       .
                 ENDP
 
 HardFault_Handler PROC
-                EXPORT  HardFault_Handler          [WEAK]
+                EXPORT  HardFault_Handler       [WEAK]
                 B       .
                 ENDP
 
 MemManage_Handler PROC
-                EXPORT  MemManage_Handler          [WEAK]
+                EXPORT  MemManage_Handler       [WEAK]
                 B       .
                 ENDP
 
 BusFault_Handler PROC
-                EXPORT  BusFault_Handler           [WEAK]
+                EXPORT  BusFault_Handler        [WEAK]
                 B       .
                 ENDP
 
 UsageFault_Handler PROC
-                EXPORT  UsageFault_Handler         [WEAK]
+                EXPORT  UsageFault_Handler      [WEAK]
                 B       .
                 ENDP
 
 SVC_Handler     PROC
-                EXPORT  SVC_Handler                [WEAK]
+                EXPORT  SVC_Handler             [WEAK]
                 B       .
                 ENDP
 
 DebugMon_Handler PROC
-                EXPORT  DebugMon_Handler           [WEAK]
+                EXPORT  DebugMon_Handler        [WEAK]
                 B       .
                 ENDP
 
 PendSV_Handler  PROC
-                EXPORT  PendSV_Handler             [WEAK]
+                EXPORT  PendSV_Handler          [WEAK]
                 B       .
                 ENDP
 
 SysTick_Handler PROC
-                EXPORT  SysTick_Handler            [WEAK]
+                EXPORT  SysTick_Handler         [WEAK]
                 B       .
                 ENDP
 
 GPIOA0_Handler PROC
-                EXPORT  GPIOA0_Handler            [WEAK]
+                EXPORT  GPIOA0_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOA1_Handler PROC
-                EXPORT  GPIOA1_Handler            [WEAK]
+                EXPORT  GPIOA1_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOA2_Handler PROC
-                EXPORT  GPIOA2_Handler            [WEAK]
+                EXPORT  GPIOA2_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOA3_Handler PROC
-                EXPORT  GPIOA3_Handler            [WEAK]
+                EXPORT  GPIOA3_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOA4_Handler PROC
-                EXPORT  GPIOA4_Handler            [WEAK]
+                EXPORT  GPIOA4_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOA5_Handler PROC
-                EXPORT  GPIOA5_Handler            [WEAK]
+                EXPORT  GPIOA5_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOA6_Handler PROC
-                EXPORT  GPIOA6_Handler            [WEAK]
+                EXPORT  GPIOA6_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOA7_Handler PROC
-                EXPORT  GPIOA7_Handler            [WEAK]
+                EXPORT  GPIOA7_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOB0_Handler PROC
-                EXPORT  GPIOB0_Handler            [WEAK]
+                EXPORT  GPIOB0_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOB1_Handler PROC
-                EXPORT  GPIOB1_Handler            [WEAK]
+                EXPORT  GPIOB1_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOB2_Handler PROC
-                EXPORT  GPIOB2_Handler            [WEAK]
+                EXPORT  GPIOB2_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOB3_Handler PROC
-                EXPORT  GPIOB3_Handler            [WEAK]
+                EXPORT  GPIOB3_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOB4_Handler PROC
-                EXPORT  GPIOB4_Handler            [WEAK]
+                EXPORT  GPIOB4_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOB5_Handler PROC
-                EXPORT  GPIOB5_Handler            [WEAK]
+                EXPORT  GPIOB5_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOB6_Handler PROC
-                EXPORT  GPIOB6_Handler            [WEAK]
+                EXPORT  GPIOB6_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOB7_Handler PROC
-                EXPORT  GPIOB7_Handler            [WEAK]
+                EXPORT  GPIOB7_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOC0_Handler PROC
-                EXPORT  GPIOC0_Handler            [WEAK]
+                EXPORT  GPIOC0_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOC1_Handler PROC
-                EXPORT  GPIOC1_Handler            [WEAK]
+                EXPORT  GPIOC1_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOC2_Handler PROC
-                EXPORT  GPIOC2_Handler            [WEAK]
+                EXPORT  GPIOC2_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOC3_Handler PROC
-                EXPORT  GPIOC3_Handler            [WEAK]
+                EXPORT  GPIOC3_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOC4_Handler PROC
-                EXPORT  GPIOC4_Handler            [WEAK]
+                EXPORT  GPIOC4_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOC5_Handler PROC
-                EXPORT  GPIOC5_Handler            [WEAK]
+                EXPORT  GPIOC5_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOC6_Handler PROC
-                EXPORT  GPIOC6_Handler            [WEAK]
+                EXPORT  GPIOC6_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOC7_Handler PROC
-                EXPORT  GPIOC7_Handler            [WEAK]
+                EXPORT  GPIOC7_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOM0_Handler PROC
-                EXPORT  GPIOM0_Handler            [WEAK]
+                EXPORT  GPIOM0_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOM1_Handler PROC
-                EXPORT  GPIOM1_Handler            [WEAK]
+                EXPORT  GPIOM1_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOM2_Handler PROC
-                EXPORT  GPIOM2_Handler            [WEAK]
+                EXPORT  GPIOM2_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOM3_Handler PROC
-                EXPORT  GPIOM3_Handler            [WEAK]
+                EXPORT  GPIOM3_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOM4_Handler PROC
-                EXPORT  GPIOM4_Handler            [WEAK]
+                EXPORT  GPIOM4_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOM5_Handler PROC
-                EXPORT  GPIOM5_Handler            [WEAK]
+                EXPORT  GPIOM5_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOM6_Handler PROC
-                EXPORT  GPIOM6_Handler            [WEAK]
+                EXPORT  GPIOM6_Handler          [WEAK]
                 B       .
                 ENDP
 
 GPIOM7_Handler PROC
-                EXPORT  GPIOM7_Handler            [WEAK]
+                EXPORT  GPIOM7_Handler          [WEAK]
                 B       .
                 ENDP
 
 DMA_Handler PROC
-                EXPORT  DMA_Handler            [WEAK]
+                EXPORT  DMA_Handler             [WEAK]
                 B       .
                 ENDP
 
 LCD_Handler PROC
-                EXPORT  LCD_Handler            [WEAK]
+                EXPORT  LCD_Handler             [WEAK]
                 B       .
                 ENDP
 
 NORFLC_Handler PROC
-                EXPORT  NORFLC_Handler            [WEAK]
+                EXPORT  NORFLC_Handler          [WEAK]
                 B       .
                 ENDP
 
 CAN_Handler PROC
-                EXPORT  CAN_Handler            [WEAK]
+                EXPORT  CAN_Handler             [WEAK]
                 B       .
                 ENDP
 
 PULSE_Handler PROC
-                EXPORT  PULSE_Handler          [WEAK]
+                EXPORT  PULSE_Handler           [WEAK]
                 B       .
                 ENDP
 
 WDT_Handler PROC
-                EXPORT  WDT_Handler            [WEAK]
+                EXPORT  WDT_Handler             [WEAK]
                 B       .
                 ENDP
 
 PWM_Handler PROC
-                EXPORT  PWM_Handler            [WEAK]
+                EXPORT  PWM_Handler             [WEAK]
                 B       .
                 ENDP
 
 UART0_Handler PROC
-                EXPORT  UART0_Handler            [WEAK]
+                EXPORT  UART0_Handler           [WEAK]
                 B       .
                 ENDP
 
 UART1_Handler PROC
-                EXPORT  UART1_Handler            [WEAK]
+                EXPORT  UART1_Handler           [WEAK]
                 B       .
                 ENDP
 
 UART2_Handler PROC
-                EXPORT  UART2_Handler            [WEAK]
+                EXPORT  UART2_Handler           [WEAK]
                 B       .
                 ENDP
 
 UART3_Handler PROC
-                EXPORT  UART3_Handler            [WEAK]
+                EXPORT  UART3_Handler           [WEAK]
                 B       .
                 ENDP
 
@@ -437,12 +437,12 @@ ADC0_Handler PROC
                 ENDP
 
 RTC_Handler PROC
-                EXPORT  RTC_Handler            [WEAK]
+                EXPORT  RTC_Handler             [WEAK]
                 B       .
                 ENDP
 
 BOD_Handler PROC
-                EXPORT  BOD_Handler            [WEAK]
+                EXPORT  BOD_Handler             [WEAK]
                 B       .
                 ENDP
 
@@ -452,32 +452,32 @@ SDIO_Handler PROC
                 ENDP
 
 GPIOA_Handler PROC
-                EXPORT  GPIOA_Handler            [WEAK]
+                EXPORT  GPIOA_Handler           [WEAK]
                 B       .
                 ENDP
 
 GPIOB_Handler PROC
-                EXPORT  GPIOB_Handler            [WEAK]
+                EXPORT  GPIOB_Handler           [WEAK]
                 B       .
                 ENDP
 
 GPIOC_Handler PROC
-                EXPORT  GPIOC_Handler            [WEAK]
+                EXPORT  GPIOC_Handler           [WEAK]
                 B       .
                 ENDP
 
 GPIOM_Handler PROC
-                EXPORT  GPIOM_Handler            [WEAK]
+                EXPORT  GPIOM_Handler           [WEAK]
                 B       .
                 ENDP
 
 GPION_Handler PROC
-                EXPORT  GPION_Handler            [WEAK]
+                EXPORT  GPION_Handler           [WEAK]
                 B       .
                 ENDP
 
 GPIOP_Handler PROC
-                EXPORT  GPIOP_Handler            [WEAK]
+                EXPORT  GPIOP_Handler           [WEAK]
                 B       .
                 ENDP
 
@@ -487,7 +487,7 @@ ADC1_Handler PROC
                 ENDP
 
 FPU_Handler PROC
-                EXPORT  FPU_Handler            [WEAK]
+                EXPORT  FPU_Handler             [WEAK]
                 B       .
                 ENDP
 
