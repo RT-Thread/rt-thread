@@ -10,6 +10,16 @@ The peripheral library or firmware library of the chip manufacturer is authorize
 
 ## BSP's License and Coyright:
 
+### acm32f0x0-nucleo
+
+License:  bsd-new
+
+Copyright: Copyright (c) 2021, AisinoChip
+
+Path:
+
+- bsp/acm32f0x0-nucleo/libraries
+
 ### apollo2
 
 License:  bsd-new

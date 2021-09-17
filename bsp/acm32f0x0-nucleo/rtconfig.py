@@ -20,7 +20,7 @@ if  CROSS_TOOL == 'gcc':
     EXEC_PATH   = r'C:\Users\XXYYZZ'
 elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
-    EXEC_PATH   = r'C:/Keil_v5'
+    EXEC_PATH   = r'D:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iar'
     EXEC_PATH   = r'D:/Program Files (x86)/IAR Systems/Embedded Workbench 8.2'
@@ -43,16 +43,16 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -Dgcc'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -g -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T drivers/linker_scripts/link.lds'
 
     CPATH = ''
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2 -g'
+        CFLAGS += ' -Os -gdwarf-2 -g'
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
@@ -70,10 +70,11 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cpu Cortex-M0 '
-    CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
+    DEVICE = ' --cpu ' + CPU
+    CFLAGS = '-c ' + DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
+    LFLAGS = DEVICE + ' --scatter "drivers/linker_scripts/link.sct" --info sizes --info totals --info unused --info veneers --list rtthread.map --strict'
+
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 
@@ -89,7 +90,7 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -O2'
 
     CXXFLAGS = CFLAGS
-    CFLAGS += ' -std=c99'
+    CFLAGS += ' --c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
@@ -113,10 +114,10 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --no_tbaa'
     CFLAGS += ' --no_clustering'
     CFLAGS += ' --no_scheduling'
+    CFLAGS += ' --debug'
     CFLAGS += ' --endian=little'
-    CFLAGS += ' --cpu=Cortex-M0'
+    CFLAGS += ' --cpu=' + CPU
     CFLAGS += ' -e'
-    CFLAGS += ' --fpu=None'
     CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
     CFLAGS += ' --silent'
 
@@ -124,8 +125,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -s+'
     AFLAGS += ' -w+'
     AFLAGS += ' -r'
-    AFLAGS += ' --cpu Cortex-M0'
-    AFLAGS += ' --fpu None'
+    AFLAGS += ' --cpu ' + CPU
     AFLAGS += ' -S'
 
     if BUILD == 'debug':
@@ -134,10 +134,9 @@ elif PLATFORM == 'iar':
     else:
         CFLAGS += ' -Oh'
 
-    LFLAGS = ' --config "board/linker_scripts/link.icf"'
-    LFLAGS += ' --entry __iar_program_start'
-
     CXXFLAGS = CFLAGS
+    LFLAGS = ' --config "drivers/linker_scripts/link.icf"'
+    LFLAGS += ' --entry __iar_program_start'
 
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
