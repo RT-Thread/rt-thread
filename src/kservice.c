@@ -294,11 +294,11 @@ RTM_EXPORT(rt_memcpy);
  * address. If the destination memory does not overlap with the source memory,
  * the function is the same as memcpy().
  *
- * @param  dst is the address of destination memory, points to the copied content.
+ * @param  dest is the address of destination memory, points to the copied content.
  *
  * @param  src is the address of source memory, point to the data source to be copied.
  *
- * @param  count is the copied length.
+ * @param  n is the copied length.
  *
  * @return The address of destination memory.
  */
@@ -590,9 +590,11 @@ RTM_EXPORT(rt_show_version);
 /**
  * This function will duplicate a string.
  *
- * @param  s the string to be duplicated
+ * @param  n is the string to be duplicated.
  *
- * @return the duplicated string pointer
+ * @param  base is support divide instructions value.
+ *
+ * @return the duplicated string pointer.
  */
 rt_inline int divide(long long *n, int base)
 {
@@ -1418,7 +1420,7 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
 /**
  * The RT_ASSERT function.
  *
- * @param ex is the assertion condition string.
+ * @param ex_string is the assertion condition string.
  *
  * @param func is the function name when assertion.
  *

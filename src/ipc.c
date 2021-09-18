@@ -1234,10 +1234,6 @@ RTM_EXPORT(rt_mutex_control);
  *
  * @param    name is a pointer to the name that given to the event.
  *
- * @param    value is the initial value for the event.
- *           If want to share resources, you should initialize the value as the number of available resources.
- *           If want to signal the occurrence of an event, you should initialize the value as 0.
- *
  * @param    flag is the event flag, which determines the queuing way of how multiple threads wait
  *           when the event is not available.
  *           The event flag can be ONE of the following values:
@@ -1740,9 +1736,6 @@ RTM_EXPORT(rt_event_control);
  *           It is assumed that storage for the mailbox will be allocated in your application.
  *
  * @param    name is a pointer to the name that given to the mailbox.
- *
- * @param    msgpoll is a pointer to the starting address of the memory space you allocated for the mailbox in advance.
- *           In other words, msgpoll is a pointer to the mailbox buffer of the starting address.
  *
  * @param    size is the maximum number of mails in the mailbox.
  *           For example, when the mailbox buffer capacity is N, size is N/4.
