@@ -217,6 +217,8 @@ void *rt_signal_check(void* context)
  *
  * @param    signo is a specific signal value (range: 0 ~ RT_SIG_MAX).
  *
+ * @param    handler is sets the processing of signal value.
+ *
  * @return   Return the old processing function of this signal. ONLY When the
  *           return value is SIG_ERR, the operation is failed.
  */
