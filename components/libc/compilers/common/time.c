@@ -199,7 +199,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
 
-    r->tm_isdst = rt_tz_is_dst();
+    r->tm_isdst = tz_is_dst();
     return r;
 }
 RTM_EXPORT(gmtime_r);
@@ -215,7 +215,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
 
-    local_tz = *t + rt_tz_get() * 3600;
+    local_tz = *t + tz_get() * 3600;
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -232,7 +232,7 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
 
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * rt_tz_get();
+    timestamp = timestamp - 3600 * tz_get();
     return timestamp;
 }
 RTM_EXPORT(mktime);
@@ -423,7 +423,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     if(tz != RT_NULL)
     {
         tz->tz_dsttime = DST_NONE;
-        tz->tz_minuteswest = -(rt_tz_get() * 60);
+        tz->tz_minuteswest = -(tz_get() * 60);
     }
 
     if (tv != RT_NULL && get_timeval(tv) == RT_EOK)
@@ -446,7 +446,6 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
      * Thus, the following is purely of historic interest.
      */
     if (tv != RT_NULL
-        && tv->tv_sec >= 0
         && tv->tv_usec >= 0
         && set_timeval((struct timeval *)tv) == RT_EOK)
     {
@@ -676,22 +675,22 @@ RTM_EXPORT(rt_timespec_to_tick);
 #define RT_LIBC_DEFAULT_TIMEZONE    8
 #endif
 
-static volatile rt_int8_t rt_current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
+static volatile int8_t _current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
 
-void rt_tz_set(rt_int8_t tz)
+void tz_set(int8_t tz)
 {
     register rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_current_timezone = tz;
+    _current_timezone = tz;
     rt_hw_interrupt_enable(level);
 }
 
-rt_int8_t rt_tz_get(void)
+int8_t tz_get(void)
 {
-    return rt_current_timezone;
+    return _current_timezone;
 }
 
-rt_int8_t rt_tz_is_dst(void)
+int8_t tz_is_dst(void)
 {
     return 0;
 }
