@@ -1058,7 +1058,7 @@ void rt_memory_info(rt_uint32_t *total,
 /**
  * @brief  This function will print the used memheap infomation.
  *
- * @param  memheap is a pointer of the memheap object.
+ * @param  mh is a pointer of the memheap object.
  */
 void dump_used_memheap(struct rt_memheap *mh)
 {
