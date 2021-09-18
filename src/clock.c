@@ -33,9 +33,9 @@ static volatile rt_tick_t rt_tick = 0;
 /**@{*/
 
 /**
- * @brief    This function will return current tick from operating system startup
+ * @brief    This function will return current tick from operating system startup.
  *
- * @return   Return current tick
+ * @return   Return current tick.
  */
 rt_tick_t rt_tick_get(void)
 {
@@ -45,7 +45,7 @@ rt_tick_t rt_tick_get(void)
 RTM_EXPORT(rt_tick_get);
 
 /**
- * @brief    This function will set current tick
+ * @brief    This function will set current tick.
  *
  * @param    tick is the value that you will set.
  */
@@ -101,12 +101,12 @@ void rt_tick_increase(void)
 /**
  * @brief    This function will calculate the tick from millisecond.
  *
- * @param    ms is the specified millisecond
+ * @param    ms is the specified millisecond.
  *              - Negative Number wait forever
  *              - Zero not wait
  *              - Max 0x7fffffff
  *
- * @return   Return the calculated tick
+ * @return   Return the calculated tick.
  */
 rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
 {
@@ -134,7 +134,7 @@ RTM_EXPORT(rt_tick_from_millisecond);
  *           is not an integral multiple of 1000, this function will not
  *           provide the correct 1ms-based tick.
  *
- * @return   Return passed millisecond from boot
+ * @return   Return passed millisecond from boot.
  */
 RT_WEAK rt_tick_t rt_tick_get_millisecond(void)
 {
