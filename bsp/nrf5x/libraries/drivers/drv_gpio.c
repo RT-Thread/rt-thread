@@ -446,8 +446,6 @@ void button_4_callback(void *args)
 
 void gpio_sample(void)
 {
-    rt_err_t err_code;
-
     rt_pin_mode(DK_BOARD_LED_1, PIN_MODE_OUTPUT);
     rt_pin_mode(DK_BOARD_LED_2, PIN_MODE_OUTPUT);
     rt_pin_mode(DK_BOARD_LED_3, PIN_MODE_OUTPUT);
@@ -458,19 +456,19 @@ void gpio_sample(void)
     rt_pin_write(DK_BOARD_LED_3, PIN_HIGH);
     rt_pin_write(DK_BOARD_LED_4, PIN_HIGH);
 
-    err_code =  rt_pin_attach_irq(DK_BOARD_BUTTON_1, PIN_IRQ_MODE_FALLING,
+    rt_pin_attach_irq(DK_BOARD_BUTTON_1, PIN_IRQ_MODE_FALLING,
                                     button_1_callback, (void*) true); //true: hi_accuracy(IN_EVENT),false: lo_accuracy(PORT_EVENT)
     rt_pin_irq_enable(DK_BOARD_BUTTON_1, PIN_IRQ_ENABLE);
 
-    err_code =  rt_pin_attach_irq(DK_BOARD_BUTTON_2, PIN_IRQ_MODE_FALLING,
+    rt_pin_attach_irq(DK_BOARD_BUTTON_2, PIN_IRQ_MODE_FALLING,
                                     button_2_callback, (void*) true); //true: hi_accuracy(IN_EVENT),false: lo_accuracy(PORT_EVENT)
     rt_pin_irq_enable(DK_BOARD_BUTTON_2, PIN_IRQ_ENABLE);
 
-    err_code =  rt_pin_attach_irq(DK_BOARD_BUTTON_3, PIN_IRQ_MODE_FALLING,
+    rt_pin_attach_irq(DK_BOARD_BUTTON_3, PIN_IRQ_MODE_FALLING,
                                     button_3_callback, (void*) true); //true: hi_accuracy(IN_EVENT),false: lo_accuracy(PORT_EVENT)
     rt_pin_irq_enable(DK_BOARD_BUTTON_3, PIN_IRQ_ENABLE);
 
-    err_code =  rt_pin_attach_irq(DK_BOARD_BUTTON_4, PIN_IRQ_MODE_FALLING,
+    rt_pin_attach_irq(DK_BOARD_BUTTON_4, PIN_IRQ_MODE_FALLING,
                                     button_4_callback, (void*) false); //true: hi_accuracy(IN_EVENT),false: lo_accuracy(PORT_EVENT)
     rt_pin_irq_enable(DK_BOARD_BUTTON_4, PIN_IRQ_ENABLE);
 }
