@@ -104,7 +104,7 @@ Reset_Handler:
   INIT_BSS _sMB_MEM2, _eMB_MEM2
 
 /* Call static constructors */
-  bl __libc_init_array
+/*    bl __libc_init_array */
 /* Call the application s entry point.*/
 	bl	entry
   bx  lr

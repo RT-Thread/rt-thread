@@ -91,7 +91,7 @@ LoopFillZerobss:
  // ldr r0, =SystemInit
  // blx r0
 /* Call static constructors */
- bl __libc_init_array
+/*    bl __libc_init_array */
  // ldr r0, =__libc_init_array
  // blx r0
 /* Call the application's entry point.*/
