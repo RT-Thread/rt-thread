@@ -641,11 +641,6 @@
               <FileType>1</FileType>
               <FilePath>Libraries\sdk\yc_systick.c</FilePath>
             </File>
-            <File>
-              <FileName>bt_code_boot.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\core\bt_code_boot.c</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>

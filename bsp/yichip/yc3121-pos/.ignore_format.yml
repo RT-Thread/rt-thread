@@ -3,23 +3,7 @@
 # If you need to exclude a file, add the path to the file in file_path.
 
 file_path:
-- Libraries/core/board_config.h
-- Libraries/core/misc.c
-- Libraries/core/misc.h
-- Libraries/core/rom_api.h
-- Libraries/core/system.c
-- Libraries/core/system.h
-- Libraries/core/type.h
-- Libraries/core/yc3121.h
-- Libraries/sdk/yc_dma.c
-- Libraries/sdk/yc_dma.h
-- Libraries/sdk/yc_gpio.c
-- Libraries/sdk/yc_gpio.h
-- Libraries/sdk/yc_systick.c
-- Libraries/sdk/yc_uart.c
-- Libraries/sdk/yc_uart.h
+
 
 dir_path:
-- Libraries/core
-- Libraries/sdk
-- Libraries/startup
+- Libraries

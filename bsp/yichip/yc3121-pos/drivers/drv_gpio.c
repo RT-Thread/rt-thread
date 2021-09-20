@@ -13,6 +13,8 @@
 #include <board.h>
 #include <rthw.h>
 
+#define PIN_MAX_NUM     (48)
+
 typedef void (*pin_callback_t)(void *args);
 struct pin
 {
@@ -24,6 +26,59 @@ struct pin
     void *callback_args;
 };
 typedef struct pin pin_t;
+
+
+struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
+{
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+};
 
 static void yc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
@@ -78,33 +133,42 @@ static rt_err_t yc_pin_attach_irq(struct rt_device *device,
                                   pin_callback_t cb,
                                   void *args)
 {
-    pin_t *index;
+    rt_int32_t index = -1;
     rt_base_t level;
-    if (index == RT_NULL)
+    if (pin >= PIN_MAX_NUM)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
-    level = rt_hw_interrupt_disable();
-    index->callback = cb;
-    index->callback_args = args;
-    index->irq_mode = mode;
 
+    index = pin;
+    level = rt_hw_interrupt_disable();
+
+    pin_irq_hdr_tab[index].pin = pin;
+    pin_irq_hdr_tab[index].hdr = cb;
+    pin_irq_hdr_tab[index].mode = mode;
+    pin_irq_hdr_tab[index].args = args;
     rt_hw_interrupt_enable(level);
+
     return RT_EOK;
 }
 
 static rt_err_t yc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
-    pin_t *index;
+    rt_int32_t index = -1;
     rt_base_t level;
-    if (index == RT_NULL)
+    if (pin >= PIN_MAX_NUM)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
+
+    index = pin;
     level = rt_hw_interrupt_disable();
-    index->callback = 0;
-    index->callback_args = 0;
-    index->irq_mode = 0;
+
+    pin_irq_hdr_tab[index].pin = -1;
+    pin_irq_hdr_tab[index].hdr = RT_NULL;
+    pin_irq_hdr_tab[index].mode = 0;
+    pin_irq_hdr_tab[index].args = RT_NULL;
+
     rt_hw_interrupt_enable(level);
     return RT_EOK;
 }
@@ -113,15 +177,18 @@ static rt_err_t yc_pin_irq_enable(struct rt_device *device,
                                   rt_base_t pin,
                                   rt_uint32_t enabled)
 {
-    pin_t *index;
+    rt_int32_t index;
     rt_base_t level = 0;
-    if (index == RT_NULL)
+    if (pin >= PIN_MAX_NUM)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
+
+    index = pin;
+
     if (enabled == PIN_IRQ_ENABLE)
     {
-        switch (index->irq_mode)
+        switch (pin_irq_hdr_tab[index].mode)
         {
         case PIN_IRQ_MODE_RISING:
 
@@ -134,11 +201,11 @@ static rt_err_t yc_pin_irq_enable(struct rt_device *device,
             break;
         case PIN_IRQ_MODE_HIGH_LEVEL:
             GPIO_CONFIG(pin) = PULL_DOWN;
-            GPIO_TRIG_MODE(pin/16) &= (1 << (pin % 16));
+            GPIO_TRIG_MODE(pin / 16) &= (1 << (pin % 16));
             break;
         case PIN_IRQ_MODE_LOW_LEVEL:
             GPIO_CONFIG(pin) = PULL_UP;
-            GPIO_TRIG_MODE(pin/16) |= (1 << (pin % 16));
+            GPIO_TRIG_MODE(pin / 16) |= (1 << (pin % 16));
             break;
         default:
             rt_hw_interrupt_enable(level);
@@ -146,13 +213,13 @@ static rt_err_t yc_pin_irq_enable(struct rt_device *device,
         }
 
         level = rt_hw_interrupt_disable();
-        NVIC_EnableIRQ(index->irq);
+        NVIC_EnableIRQ(GPIO_IRQn);
         GPIO_INTR_EN(pin / 16) |= (1 << (pin % 16));
         rt_hw_interrupt_enable(level);
     }
     else if (enabled == PIN_IRQ_DISABLE)
     {
-        NVIC_DisableIRQ(index->irq);
+        NVIC_DisableIRQ(GPIO_IRQn);
         GPIO_INTR_EN(pin / 16) &= ~(1 << (pin % 16));
     }
     else
@@ -163,14 +230,14 @@ static rt_err_t yc_pin_irq_enable(struct rt_device *device,
 }
 
 const static struct rt_pin_ops yc3121_pin_ops =
-    {
-        yc_pin_mode,
-        yc_pin_write,
-        yc_pin_read,
-        yc_pin_attach_irq,
-        yc_pin_detach_irq,
-        yc_pin_irq_enable,
-        RT_NULL,
+{
+    yc_pin_mode,
+    yc_pin_write,
+    yc_pin_read,
+    yc_pin_attach_irq,
+    yc_pin_detach_irq,
+    yc_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)
@@ -181,19 +248,20 @@ int rt_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
-void GPIOA_Handler(void)
+void GPIO_IRQHandler(void)
 {
     int i;
 
-    /* enter interrupt */
     rt_interrupt_enter();
-
-    for (i = 0; i < 48; i++)
+    for (i = 0; i < PIN_MAX_NUM; i++)
     {
-        // if(GPIO_IN(pin / 16) & (1 << (pin % 16)))
-
+        if ((GPIO_TRIG_MODE(i / 16) & (1 << (i % 16))) == (GPIO_IN(i / 16) & (1 << (i % 16))))
+        {
+            if (pin_irq_hdr_tab[i].hdr)
+            {
+                pin_irq_hdr_tab[i].hdr(pin_irq_hdr_tab[i].args);
+            }
+        }
     }
-
-    /* leave interrupt */
     rt_interrupt_leave();
 }
