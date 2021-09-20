@@ -191,4 +191,3 @@ int rt_hw_uart_init(void)
 #endif /* BSP_USING_UART1 */
     return 0;
 }
-INIT_BOARD_EXPORT(rt_hw_uart_init);
