@@ -158,6 +158,48 @@ const struct pin_index *get_pin(rt_uint8_t pin)
 
 static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
+#ifdef SOC_SERIES_GD32F2
+    const struct pin_index *index = RT_NULL;
+    rt_uint32_t pin_mode = 0;
+
+    index = get_pin(pin);
+    if (index == RT_NULL)
+    {
+        return;
+    }
+
+    /* GPIO Periph clock enable */
+    rcu_periph_clock_enable(index->clk);
+    pin_mode = GPIO_MODE_OUT_PP;
+
+    switch(mode)
+    {
+    case PIN_MODE_OUTPUT:
+        /* output setting */
+        pin_mode = GPIO_MODE_OUT_PP;
+        break;
+    case PIN_MODE_OUTPUT_OD:
+        /* output setting: od. */
+        pin_mode = GPIO_MODE_OUT_OD;
+        break;
+    case PIN_MODE_INPUT:
+        /* input setting: not pull. */
+        pin_mode = GPIO_MODE_IN_FLOATING;
+        break;
+    case PIN_MODE_INPUT_PULLUP:
+        /* input setting: pull up. */
+        pin_mode = GPIO_MODE_IPU;
+        break;
+    case PIN_MODE_INPUT_PULLDOWN:
+        /* input setting: pull down. */
+        pin_mode = GPIO_MODE_IPD;
+        break;
+    default:
+        break;
+    }
+
+    gpio_init(index->gpio_periph, pin_mode, GPIO_OSPEED_50MHZ, index->pin);
+#elif defined(SOC_SERIES_GD32F4)
     const struct pin_index *index = RT_NULL;
     rt_uint32_t pin_mode = 0, pin_pupd = 0, pin_odpp = 0;
 
@@ -209,6 +251,9 @@ static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     {
         gpio_output_options_set(index->gpio_periph, pin_odpp, GPIO_OSPEED_50MHZ, index->pin);
     }
+#else
+#error "Please do _pin_mode function"
+#endif
 }
 
 static void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
@@ -384,14 +429,19 @@ static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint
                 return -RT_EINVAL;
         }
 
+#ifdef SOC_SERIES_GD32F4
         rcu_periph_clock_enable(RCU_SYSCFG);
+#endif
 
         /* enable and set interrupt priority */
         nvic_irq_enable(irqmap->irqno, 5U, 0U);
 
+#ifdef SOC_SERIES_GD32F2
+        gpio_exti_source_select(index->port_src, index->pin_src);
+#elif defined(SOC_SERIES_GD32F4)
         /* connect EXTI line to  GPIO pin */
         syscfg_exti_line_config(index->port_src, index->pin_src);
-
+#endif
         /* configure EXTI line */
         exti_init((exti_line_enum)(index->pin), EXTI_INTERRUPT, trigger_mode);
         exti_interrupt_flag_clear((exti_line_enum)(index->pin));

@@ -15,6 +15,15 @@ config PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
  
+menuconfig SOC_SERIES_GD32F4
+    bool "gd32f4xx series chip"
+#    if SOC_SERIES_GD32F2
+#        config SOC_GD32205Rx
+#            bool "GD32F205Rx chip"
+#            select RT_USING_COMPONENTS_INIT
+#            select RT_USING_USER_MAIN
+#            default y
+#    endif
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "../libraries/Kconfig"

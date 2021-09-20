@@ -29,14 +29,6 @@ struct gd32_uart
     uint32_t uart_periph;           //Todo: 3bits
     IRQn_Type irqn;                 //Todo: 7bits
     rcu_periph_enum per_clk;        //Todo: 5bits
-    rcu_periph_enum tx_gpio_clk;    //Todo: 5bits
-    rcu_periph_enum rx_gpio_clk;    //Todo: 5bits
-    uint32_t tx_port;               //Todo: 4bits
-    uint16_t tx_af;                 //Todo: 4bits
-    uint16_t tx_pin;                //Todo: 4bits
-    uint32_t rx_port;               //Todo: 4bits
-    uint16_t rx_af;                 //Todo: 4bits
-    uint16_t rx_pin;                //Todo: 4bits
 
     struct rt_serial_device * serial;
     char *device_name;
@@ -176,9 +168,7 @@ static const struct gd32_uart uarts[] = {
     {
         USART0,                                 // uart peripheral index
         USART0_IRQn,                            // uart iqrn
-        RCU_USART0, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_AF_7, GPIO_PIN_9,           // tx port, tx alternate, tx pin
-        GPIOA, GPIO_AF_7, GPIO_PIN_10,          // rx port, rx alternate, rx pin
+        RCU_USART0,
         &serial0,
         "uart0",
     },
@@ -188,9 +178,7 @@ static const struct gd32_uart uarts[] = {
     {
         USART1,                                 // uart peripheral index
         USART1_IRQn,                            // uart iqrn
-        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_AF_7, GPIO_PIN_2,           // tx port, tx alternate, tx pin
-        GPIOA, GPIO_AF_7, GPIO_PIN_3,           // rx port, rx alternate, rx pin
+        RCU_USART1,
         &serial1,
         "uart1",
     },
@@ -200,9 +188,7 @@ static const struct gd32_uart uarts[] = {
     {
         USART2,                                 // uart peripheral index
         USART2_IRQn,                            // uart iqrn
-        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_AF_7, GPIO_PIN_10,          // tx port, tx alternate, tx pin
-        GPIOB, GPIO_AF_7, GPIO_PIN_11,          // rx port, rx alternate, rx pin
+        RCU_USART2,
         &serial2,
         "uart2",
     },
@@ -212,9 +198,7 @@ static const struct gd32_uart uarts[] = {
     {
         UART3,                                 // uart peripheral index
         UART3_IRQn,                            // uart iqrn
-        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_AF_8, GPIO_PIN_10,         // tx port, tx alternate, tx pin
-        GPIOC, GPIO_AF_8, GPIO_PIN_11,         // rx port, rx alternate, rx pin
+        RCU_UART3,
         &serial3,
         "uart3",
     },
@@ -224,9 +208,7 @@ static const struct gd32_uart uarts[] = {
     {
         UART4,                                 // uart peripheral index
         UART4_IRQn,                            // uart iqrn
-        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_AF_8, GPIO_PIN_12,         // tx port, tx alternate, tx pin
-        GPIOD, GPIO_AF_8, GPIO_PIN_2,          // rx port, rx alternate, rx pin
+        RCU_UART4,
         &serial4,
         "uart4",
     },
@@ -236,9 +218,7 @@ static const struct gd32_uart uarts[] = {
     {
         USART5,                                 // uart peripheral index
         USART5_IRQn,                            // uart iqrn
-        RCU_USART5, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_AF_8, GPIO_PIN_6,           // tx port, tx alternate, tx pin
-        GPIOC, GPIO_AF_8, GPIO_PIN_7,           // rx port, rx alternate, rx pin
+        RCU_USART5,
         &serial5,
         "uart5",
     },
@@ -248,9 +228,7 @@ static const struct gd32_uart uarts[] = {
     {
         UART6,                                 // uart peripheral index
         UART6_IRQn,                            // uart iqrn
-        RCU_UART6, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOE, GPIO_AF_8, GPIO_PIN_7,          // tx port, tx alternate, tx pin
-        GPIOE, GPIO_AF_8, GPIO_PIN_8,          // rx port, rx alternate, rx pin
+        RCU_UART6,
         &serial6,
         "uart6",
     },
@@ -260,49 +238,12 @@ static const struct gd32_uart uarts[] = {
     {
         UART7,                                 // uart peripheral index
         UART7_IRQn,                            // uart iqrn
-        RCU_UART7, RCU_GPIOE, RCU_GPIOE,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOE, GPIO_AF_8, GPIO_PIN_0,          // tx port, tx alternate, tx pin
-        GPIOE, GPIO_AF_8, GPIO_PIN_1,          // rx port, rx alternate, rx pin
+        RCU_UART7,
         &serial7,
         "uart7",
     },
     #endif
 };
-
-
-/**
-* @brief UART MSP Initialization
-*        This function configures the hardware resources used in this example:
-*           - Peripheral's clock enable
-*           - Peripheral's GPIO Configuration
-*           - NVIC configuration for UART interrupt request enable
-* @param huart: UART handle pointer
-* @retval None
-*/
-void gd32_uart_gpio_init(struct gd32_uart *uart)
-{
-    /* enable USART clock */
-    rcu_periph_clock_enable(uart->tx_gpio_clk);
-    rcu_periph_clock_enable(uart->rx_gpio_clk);
-    rcu_periph_clock_enable(uart->per_clk);
-
-    /* connect port to USARTx_Tx */
-    gpio_af_set(uart->tx_port, uart->tx_af, uart->tx_pin);
-
-    /* connect port to USARTx_Rx */
-    gpio_af_set(uart->rx_port, uart->rx_af, uart->rx_pin);
-
-    /* configure USART Tx as alternate function push-pull */
-    gpio_mode_set(uart->tx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, uart->tx_pin);
-    gpio_output_options_set(uart->tx_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, uart->tx_pin);
-
-    /* configure USART Rx as alternate function push-pull */
-    gpio_mode_set(uart->rx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, uart->rx_pin);
-    gpio_output_options_set(uart->rx_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, uart->rx_pin);
-
-    NVIC_SetPriority(uart->irqn, 0);
-    NVIC_EnableIRQ(uart->irqn);
-}
 
 static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
@@ -313,7 +254,10 @@ static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_c
 
     uart = (struct gd32_uart *)serial->parent.user_data;
 
-    gd32_uart_gpio_init(uart);
+    rcu_periph_clock_enable(uart->per_clk);
+
+    NVIC_SetPriority(uart->irqn, 0);
+    NVIC_EnableIRQ(uart->irqn);
 
     usart_baudrate_set(uart->uart_periph, cfg->baud_rate);
 

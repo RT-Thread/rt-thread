@@ -1,0 +1,40 @@
+mainmenu "RT-Thread Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../../.."
+
+# you can change the RTT_ROOT default: "rt-thread"
+# example : default "F:/git_repositories/rt-thread"
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "$BSP_DIR/../libraries/Kconfig"
+
+if SOC_SERIES_GD32F2
+    config SOC_GD32205Rx
+        bool "GD32F205Rx chip"
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        default y
+endif
+
+config BSP_USING_UART0
+    bool "using uart0"
+    select RT_USING_SERIAL
+    default n
+config BSP_USING_UART1
+    bool "using uart1"
+    select RT_USING_SERIAL
+    default n

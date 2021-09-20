@@ -2,6 +2,11 @@ config SOC_FAMILY_GD32
     bool
 
 config SOC_SERIES_GD32F4
-    bool
+    bool "gd32f4xx serise chip"
     select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_GD32
+
+config SOC_SERIES_GD32F2
+    bool "gd32f2xx serise chip"
+    select ARCH_ARM_CORTEX_M3
     select SOC_FAMILY_GD32

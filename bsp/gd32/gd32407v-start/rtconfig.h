@@ -43,6 +43,10 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x40004
+#define ARCH_ARM
+#define RT_USING_CPU_FFS
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M4
 
 /* RT-Thread Components */
 
@@ -57,16 +61,17 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define RT_USING_MSH
+#define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_CMD_SIZE 80
-#define FINSH_USING_MSH
-#define FINSH_USING_MSH_DEFAULT
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -146,16 +151,8 @@
 
 /* system packages */
 
-/* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* Micrium: Micrium software products porting for RT-Thread */
-
 
 /* peripheral libraries and drivers */
-
-
-/* AI packages */
 
 
 /* miscellaneous packages */
@@ -163,10 +160,22 @@
 
 /* samples: kernel and components samples */
 
+#define SOC_FAMILY_GD32
+#define SOC_SERIES_GD32F4
 
-/* entertainment: terminal games and other interesting software packages */
+/* Hardware Drivers Config */
 
 #define SOC_GD32407V
+
+/* Onboard Peripheral Drivers */
+
+/* On-chip Peripheral Drivers */
+
+#define BSP_USING_GPIO
+#define BSP_USING_UART
 #define BSP_USING_UART1
+
+/* Board extended module Drivers */
+
 
 #endif

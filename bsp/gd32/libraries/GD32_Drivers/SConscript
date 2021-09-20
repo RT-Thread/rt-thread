@@ -8,6 +8,13 @@ cwd = GetCurrentDir()
 src = Split("""
 """)
 
+# Add soc depend pinmux driver
+if GetDepend('SOC_SERIES_GD32F2'):
+    src += ['_gd32f2xx_pinmux.c']
+
+if GetDepend('SOC_SERIES_GD32F4'):
+    src += ['_gd32f4xx_pinmux.c']
+
 # add pin drivers.
 if GetDepend('RT_USING_PIN'):
     src += ['drv_gpio.c']

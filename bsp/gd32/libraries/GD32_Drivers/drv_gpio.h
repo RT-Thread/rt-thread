@@ -29,10 +29,17 @@ extern "C" {
 
 #define __GD32_PORT(port)  GPIO##port##_BASE
 
+#ifdef SOC_SERIES_GD32F2
+#define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,      \
+                                    GPIO##port, GPIO_PIN_##pin, \
+                                    GPIO_PORT_SOURCE_GPIO##port,     \
+                                    GPIO_PIN_SOURCE_##pin}
+#elif defined(SOC_SERIES_GD32F4)
 #define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,      \
                                     GPIO##port, GPIO_PIN_##pin, \
                                     EXTI_SOURCE_GPIO##port,     \
                                     EXTI_SOURCE_PIN##pin}
+#endif
 #define GD32_PIN_DEFAULT            {-1, (rcu_periph_enum)0, 0, 0, 0, 0}
 
 #define GET_PIN(PORTx, PIN) (rt_base_t)((16 * ( ((rt_base_t)__GD32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x0400UL) )) + PIN)
