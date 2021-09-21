@@ -25,14 +25,15 @@ size_t __read(int handle, unsigned char *buf, size_t len)
     if (handle == _LLIO_STDIN)
     {
 #ifdef RT_USING_POSIX
-        return libc_stdio_read(buf, len);
+        return read(STDIN_FILENO, buf, len);
 #else
         return _LLIO_ERROR;
 #endif
     }
-
-    if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
+    else if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
+    {
         return _LLIO_ERROR;
+    }
 
 #ifndef RT_USING_DFS
     return _LLIO_ERROR;

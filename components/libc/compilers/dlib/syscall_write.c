@@ -30,19 +30,24 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
 #else
 
 #ifdef RT_USING_POSIX
-        return libc_stdio_write((void*)buf, len);
+        return write(STDOUT_FILENO, (void*)buf, len);
 #else
         rt_device_t console_device;
 
         console_device = rt_console_get_device();
-        if (console_device != 0) rt_device_write(console_device, 0, buf, len);
+        if (console_device != 0)
+        {
+            rt_device_write(console_device, 0, buf, len);
+        }
 
         return len;
 #endif
 #endif
     }
-
-    if (handle == _LLIO_STDIN) return _LLIO_ERROR;
+    else if (handle == _LLIO_STDIN)
+    {
+        return _LLIO_ERROR;
+    }
 
 #ifndef RT_USING_DFS
     return _LLIO_ERROR;
