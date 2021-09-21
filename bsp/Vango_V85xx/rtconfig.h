@@ -179,5 +179,7 @@
 
 #define BSP_USING_UART
 #define BSP_USING_UART2
+#define RT_USING_SPI1
+#define RT_USING_SPI2
 
 #endif
