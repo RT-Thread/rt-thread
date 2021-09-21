@@ -30,6 +30,9 @@ if GetDepend('RT_USING_RTC'):
 if GetDepend('RT_USING_WDT'):
     src += ['drv_iwdt.c']
 
+if GetDepend('RT_USING_SPI'):
+    src += ['drv_spi.c']
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
