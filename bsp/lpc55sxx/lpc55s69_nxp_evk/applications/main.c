@@ -8,7 +8,7 @@
  * Date           Author       Notes
  * 2019-10-24     Magicoe      first version
  * 2020-01-10     Kevin/Karl   Add PS demo
- * 2020-09-21     supperthomas fix the main.c 
+ * 2020-09-21     supperthomas fix the main.c
  *
  */
 
