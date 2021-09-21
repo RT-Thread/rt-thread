@@ -15,6 +15,7 @@
 #include <target.h>
 
 #include "drv_gpio.h"
+#include "drv_spi.h"
 
 /* Internal SRAM memory size[Kbytes] <8-64>, Default: 32*/
 #define V85XX_SRAM_SIZE         32
