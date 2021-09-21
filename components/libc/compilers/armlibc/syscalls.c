@@ -146,16 +146,17 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
     if (fh == STDIN)
     {
 #ifdef RT_USING_POSIX
-        size = libc_stdio_read(buf, len);
+        size = read(STDIN_FILENO, buf, len);
         return len - size;
 #else
         /* no stdin */
         return -1;
 #endif
     }
-
-    if ((fh == STDOUT) || (fh == STDERR))
+    else if ((fh == STDOUT) || (fh == STDERR))
+    {
         return -1;
+    }
 
 #ifndef RT_USING_DFS
     return 0;
@@ -185,7 +186,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         return 0;
 #else
 #ifdef RT_USING_POSIX
-        size = libc_stdio_write(buf, len);
+        size = write(STDOUT_FILENO, buf, len);
         return len - size;
 #else
         if (rt_console_get_device())
@@ -198,8 +199,10 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 #endif
 #endif
     }
-
-    if (fh == STDIN) return -1;
+    else if (fh == STDIN)
+    {
+        return -1;
+    }
 
 #ifndef RT_USING_DFS
     return 0;
