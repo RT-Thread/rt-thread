@@ -22,13 +22,6 @@
 #error "Please define at least one SPIx"
 #endif
 
-/* #define DEBUG */
-#ifdef DEBUG
-#define DEBUG_PRINTF(...)   rt_kprintf(__VA_ARGS__)
-#else
-#define DEBUG_PRINTF(...)
-#endif
-
 /* private rt-thread spi ops function */
 static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configuration* configuration);
 static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* message);
@@ -199,7 +192,7 @@ int v85xx_hw_spi_init(void)
 
     result = rt_spi_bus_register(&spi_bus0, "spi1", &v85xx_spi_ops);
 
-    #endif
+#endif
 
 #ifdef RT_USING_SPI2
     static struct rt_spi_bus spi_bus1;

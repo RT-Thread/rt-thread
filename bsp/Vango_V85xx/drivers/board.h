@@ -32,7 +32,13 @@ extern int __bss_end;
 #define HEAP_BEGIN      ((void *)&__bss_end)
 #endif
 
-
 #define HEAP_END          V85XX_SRAM_END
+
+/* #define DEBUG */
+#ifdef DEBUG
+#define DEBUG_PRINTF(...)   rt_kprintf(__VA_ARGS__)
+#else
+#define DEBUG_PRINTF(...)
+#endif
 
 #endif
