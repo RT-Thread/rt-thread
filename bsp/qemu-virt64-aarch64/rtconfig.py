@@ -2,7 +2,7 @@ import os
 
 # toolchains options
 ARCH        ='aarch64'
-CPU         ='cortex-a53'
+CPU         ='cortex-a'
 CROSS_TOOL  ='gcc'
 
 if os.getenv('RTT_ROOT'):
