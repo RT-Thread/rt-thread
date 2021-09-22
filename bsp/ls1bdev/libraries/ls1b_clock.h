@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     ÇÚÎª±¾       first version
+ * 2017-09-06     å‹¤ä¸ºæœ¬       first version
  */
 
 
@@ -15,37 +15,37 @@
 
 
 /*
- * »ñÈ¡PLLÆµÂÊ
- * @ret PLLÆµÂÊ
+ * è·å–PLLé¢‘ç‡
+ * @ret PLLé¢‘ç‡
  */
 unsigned long clk_get_pll_rate(void);
 
 
 /*
- * »ñÈ¡CPUÆµÂÊ
- * @ret CPUÆµÂÊ
+ * è·å–CPUé¢‘ç‡
+ * @ret CPUé¢‘ç‡
  */
 unsigned long clk_get_cpu_rate(void);
 
 
 
 /*
- * »ñÈ¡DDRÆµÂÊ
- * @ret DDRÆµÂÊ
+ * è·å–DDRé¢‘ç‡
+ * @ret DDRé¢‘ç‡
  */
 unsigned long clk_get_ddr_rate(void);
 
 
 /*
- * »ñÈ¡APBÆµÂÊ
- * @ret APBÆµÂÊ
+ * è·å–APBé¢‘ç‡
+ * @ret APBé¢‘ç‡
  */
 unsigned long clk_get_apb_rate(void);
 
 
 /*
- * »ñÈ¡DCÆµÂÊ
- * @ret DCÆµÂÊ
+ * è·å–DCé¢‘ç‡
+ * @ret DCé¢‘ç‡
  */
 unsigned long clk_get_dc_rate(void);
 

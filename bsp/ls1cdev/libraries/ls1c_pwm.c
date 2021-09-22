@@ -1,14 +1,14 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     ÇÚÎª±¾       first version
+ * 2017-09-06     å‹¤ä¸ºæœ¬       first version
  */
 
-// ·â×°Ó²¼şpwm½Ó¿Ú
+// å°è£…ç¡¬ä»¶pwmæ¥å£
 
 #include "ls1c_public.h"
 #include "ls1c_pin.h"
@@ -16,18 +16,18 @@
 #include "ls1c_clock.h"
 #include "ls1c_regs.h"
 
-// pwmµÄ×î´óÖÜÆÚ
-#define PWM_MAX_PERIOD                  (0xFFFFFF)      // ¼ÆÊıÆ÷µÄÖµ
+// pwmçš„æœ€å¤§å‘¨æœŸ
+#define PWM_MAX_PERIOD                  (0xFFFFFF)      // è®¡æ•°å™¨çš„å€¼
 
 /*
- * ¸ù¾İgpio»ñÈ¡ÏàÓ¦pwmµÄ»ùµØÖ·
- * @gpio pwmÒı½Å
- * @ret pwm»ùµØÖ·
+ * æ ¹æ®gpioè·å–ç›¸åº”pwmçš„åŸºåœ°å€
+ * @gpio pwmå¼•è„š
+ * @ret pwmåŸºåœ°å€
  */
 unsigned int pwm_get_reg_base(unsigned int gpio)
 {
     unsigned int reg_base = 0;
-    
+
     switch (gpio)
     {
         case LS1C_PWM0_GPIO06:
@@ -56,14 +56,14 @@ unsigned int pwm_get_reg_base(unsigned int gpio)
 
 
 /*
- * ½ûÖ¹pwm
- * @pwm_info PWMnµÄÏêÏ¸ĞÅÏ¢
+ * ç¦æ­¢pwm
+ * @pwm_info PWMnçš„è¯¦ç»†ä¿¡æ¯
  */
 void pwm_disable(pwm_info_t *pwm_info)
 {
     unsigned int pwm_reg_base = 0;
-    
-    // ¼ì²éÈë²Î
+
+    // æ£€æŸ¥å…¥å‚
     if (NULL == pwm_info)
     {
         return ;
@@ -78,27 +78,27 @@ void pwm_disable(pwm_info_t *pwm_info)
 
 
 /*
- * Ê¹ÄÜPWM
- * @pwm_info PWMnµÄÏêÏ¸ĞÅÏ¢
+ * ä½¿èƒ½PWM
+ * @pwm_info PWMnçš„è¯¦ç»†ä¿¡æ¯
  */
 void pwm_enable(pwm_info_t *pwm_info)
 {
     unsigned int pwm_reg_base = 0;
     unsigned int ctrl = 0;
 
-    // ¼ì²éÈë²Î
+    // æ£€æŸ¥å…¥å‚
     if (NULL == pwm_info)
     {
         return ;
     }
 
-    // »ñÈ¡»ùµØÖ·
+    // è·å–åŸºåœ°å€
     pwm_reg_base = pwm_get_reg_base(pwm_info->gpio);
 
-    // ÇåÁã¼ÆÊıÆ÷
+    // æ¸…é›¶è®¡æ•°å™¨
     reg_write_32(0, (volatile unsigned int *)(pwm_reg_base + LS1C_PWM_CNTR));
 
-    // ÉèÖÃ¿ØÖÆ¼Ä´æÆ÷
+    // è®¾ç½®æ§åˆ¶å¯„å­˜å™¨
     ctrl = (0 << LS1C_PWM_INT_LRC_EN)
            | (0 << LS1C_PWM_INT_HRC_EN)
            | (0 << LS1C_PWM_CNTR_RST)
@@ -106,73 +106,73 @@ void pwm_enable(pwm_info_t *pwm_info)
            | (0 << LS1C_PWM_INTEN)
            | (0 << LS1C_PWM_OE)
            | (1 << LS1C_PWM_CNT_EN);
-    if (PWM_MODE_PULSE == pwm_info->mode)     // µ¥Âö³å
+    if (PWM_MODE_PULSE == pwm_info->mode)     // å•è„‰å†²
     {
         ctrl |= (1 << LS1C_PWM_SINGLE);
     }
-    else                            // Á¬ĞøÂö³å
+    else                            // è¿ç»­è„‰å†²
     {
         ctrl &= ~(1 << LS1C_PWM_SINGLE);
     }
     reg_write_32(ctrl, (volatile unsigned int *)(pwm_reg_base + LS1C_PWM_CTRL));
-    
+
     return ;
 }
 
 
 
 /*
- * ³õÊ¼»¯PWMn
- * @pwm_info PWMnµÄÏêÏ¸ĞÅÏ¢
+ * åˆå§‹åŒ–PWMn
+ * @pwm_info PWMnçš„è¯¦ç»†ä¿¡æ¯
  */
 void pwm_init(pwm_info_t *pwm_info)
 {
     unsigned int gpio;
-    unsigned long pwm_clk = 0;          // pwmÄ£¿éµÄÊ±ÖÓÆµÂÊ
+    unsigned long pwm_clk = 0;          // pwmæ¨¡å—çš„æ—¶é’Ÿé¢‘ç‡
     unsigned long tmp = 0;
     unsigned int pwm_reg_base = 0;
     unsigned long period = 0;
-    
-    // ÅĞ¶ÏÈë²Î
+
+    // åˆ¤æ–­å…¥å‚
     if (NULL == pwm_info)
     {
-        // Èë²Î·Ç·¨£¬ÔòÖ±½Ó·µ»Ø
+        // å…¥å‚éæ³•ï¼Œåˆ™ç›´æ¥è¿”å›
         return ;
     }
     gpio = pwm_info->gpio;
 
-    // ÅäÖÃÏàÓ¦Òı½ÅÓÃ×÷pwm£¬¶ø·Çgpio
+    // é…ç½®ç›¸åº”å¼•è„šç”¨ä½œpwmï¼Œè€Œégpio
     pin_set_purpose(gpio, PIN_PURPOSE_OTHER);
 
-    // ¸´ÓÃ
+    // å¤ç”¨
     switch (gpio)
     {
-        // ²»ĞèÒª¸´ÓÃ
+        // ä¸éœ€è¦å¤ç”¨
         case LS1C_PWM0_GPIO06:
         case LS1C_PWM1_GPIO92:
             break;
 
-        case LS1C_PWM0_GPIO04:          // gpio04µÄµÚÈı¸´ÓÃ
+        case LS1C_PWM0_GPIO04:          // gpio04çš„ç¬¬ä¸‰å¤ç”¨
             pin_set_remap(LS1C_PWM0_GPIO04, PIN_REMAP_THIRD);
             break;
 
-        case LS1C_PWM1_GPIO05:          // gpio05µÄµÚÈı¸´ÓÃ
+        case LS1C_PWM1_GPIO05:          // gpio05çš„ç¬¬ä¸‰å¤ç”¨
             pin_set_remap(LS1C_PWM1_GPIO05, PIN_REMAP_THIRD);
             break;
 
-        case LS1C_PWM2_GPIO52:          // gpio52µÄµÚËÄ¸´ÓÃ
+        case LS1C_PWM2_GPIO52:          // gpio52çš„ç¬¬å››å¤ç”¨
             pin_set_remap(LS1C_PWM2_GPIO52, PIN_REMAP_FOURTH);
             break;
 
-        case LS1C_PWM2_GPIO46:          // gpio46µÄµÚËÄ¸´ÓÃ
+        case LS1C_PWM2_GPIO46:          // gpio46çš„ç¬¬å››å¤ç”¨
             pin_set_remap(LS1C_PWM2_GPIO46, PIN_REMAP_FOURTH);
             break;
 
-        case LS1C_PWM3_GPIO47:          // gpio47µÄµÚËÄ¸´ÓÃ
+        case LS1C_PWM3_GPIO47:          // gpio47çš„ç¬¬å››å¤ç”¨
             pin_set_remap(LS1C_PWM3_GPIO47, PIN_REMAP_FOURTH);
             break;
 
-        case LS1C_PWM3_GPIO53:          // gpio53µÄµÚËÄ¸´ÓÃ
+        case LS1C_PWM3_GPIO53:          // gpio53çš„ç¬¬å››å¤ç”¨
             pin_set_remap(LS1C_PWM3_GPIO53, PIN_REMAP_FOURTH);
             break;
 
@@ -180,22 +180,22 @@ void pwm_init(pwm_info_t *pwm_info)
             break;
     }
 
-    // ¸ù¾İÕ¼¿Õ±ÈºÍpwmÖÜÆÚ¼ÆËã¼Ä´æÆ÷HRCºÍLRCµÄÖµ
-    // Á½¸ö64Î»ÊıÏà³Ë£¬Ö»ÄÜµÃµ½µÍ32Î»£¬linuxÏÂÈ´¿ÉÒÔµÃµ½64Î»½á¹û£¬
-    // Ôİ²»Çå³şÔ­Òò£¬ÓÃ¸¡µãÔËËã´úÌæ
+    // æ ¹æ®å ç©ºæ¯”å’Œpwmå‘¨æœŸè®¡ç®—å¯„å­˜å™¨HRCå’ŒLRCçš„å€¼
+    // ä¸¤ä¸ª64ä½æ•°ç›¸ä¹˜ï¼Œåªèƒ½å¾—åˆ°ä½32ä½ï¼Œlinuxä¸‹å´å¯ä»¥å¾—åˆ°64ä½ç»“æœï¼Œ
+    // æš‚ä¸æ¸…æ¥šåŸå› ï¼Œç”¨æµ®ç‚¹è¿ç®—ä»£æ›¿
     pwm_clk = clk_get_apb_rate();
     period = (1.0 * pwm_clk * pwm_info->period_ns) / 1000000000;
-    period = MIN(period, PWM_MAX_PERIOD);       // ÏŞÖÆÖÜÆÚ²»ÄÜ³¬¹ı×î´óÖµ
+    period = MIN(period, PWM_MAX_PERIOD);       // é™åˆ¶å‘¨æœŸä¸èƒ½è¶…è¿‡æœ€å¤§å€¼
     tmp = period - (period * pwm_info->duty);
-    
-    // Ğ´¼Ä´æÆ÷HRCºÍLRC
+
+    // å†™å¯„å­˜å™¨HRCå’ŒLRC
     pwm_reg_base = pwm_get_reg_base(gpio);
     reg_write_32(--tmp, (volatile unsigned int *)(pwm_reg_base + LS1C_PWM_HRC));
     reg_write_32(--period, (volatile unsigned int *)(pwm_reg_base + LS1C_PWM_LRC));
 
-    // Ğ´Ö÷¼ÆÊıÆ÷
+    // å†™ä¸»è®¡æ•°å™¨
     pwm_enable(pwm_info);
-    
+
     return ;
 }
 

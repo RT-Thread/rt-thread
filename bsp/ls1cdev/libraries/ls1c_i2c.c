@@ -1,14 +1,14 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     ÇÚÎª±¾       first version
+ * 2017-09-06     å‹¤ä¸ºæœ¬       first version
  */
 
-// ·â×°Ó²¼şi2c½Ó¿Ú
+// å°è£…ç¡¬ä»¶i2cæ¥å£
 
 
 #include "ls1c_public.h"
@@ -20,47 +20,47 @@
 
 
 /*
- * I2C¸÷¸ö¼Ä´æÆ÷Ïà¶Ô»ùµØÖ·µÄÆ«ÒÆ
- * ·¢ËÍÊı¾İ¼Ä´æÆ÷ºÍ½ÓÊÕÊı¾İ¼Ä´æÆ÷µÄÆ«ÒÆÊÇÏàÍ¬µÄ
- * ÃüÁî¼Ä´æÆ÷ºÍ×´Ì¬¼Ä´æÆ÷µÄÆ«ÒÆÊÇÏàÍ¬µÄ£¬²»Í¬µÄÊÇÃüÁî¼Ä´æÆ÷Ö»Ğ´£¬×´Ì¬¼Ä´æÆ÷Ö»¶Á
+ * I2Cå„ä¸ªå¯„å­˜å™¨ç›¸å¯¹åŸºåœ°å€çš„åç§»
+ * å‘é€æ•°æ®å¯„å­˜å™¨å’Œæ¥æ”¶æ•°æ®å¯„å­˜å™¨çš„åç§»æ˜¯ç›¸åŒçš„
+ * å‘½ä»¤å¯„å­˜å™¨å’ŒçŠ¶æ€å¯„å­˜å™¨çš„åç§»æ˜¯ç›¸åŒçš„ï¼Œä¸åŒçš„æ˜¯å‘½ä»¤å¯„å­˜å™¨åªå†™ï¼ŒçŠ¶æ€å¯„å­˜å™¨åªè¯»
  */
-#define LS1C_I2C_PRER_LOW_OFFSET            (0)     // ·ÖÆµËø´æÆ÷µÍ×Ö½Ú¼Ä´æÆ÷Æ«ÒÆ
-#define LS1C_I2C_PRER_HIGH_OFFSET           (1)     // ·ÖÆµËø´æÆ÷¸ß×Ö½Ú¼Ä´æÆ÷Æ«ÒÆ
-#define LS1C_I2C_CONTROL_OFFSET             (2)     // ¿ØÖÆ¼Ä´æÆ÷Æ«ÒÆ
-#define LS1C_I2C_DATA_OFFSET                (3)     // ·¢ËÍÊı¾İ¼Ä´æÆ÷ºÍ½ÓÊÕÊı¾İ¼Ä´æÆ÷µÄÆ«ÒÆÊÇÏàÍ¬µÄ
-#define LS1C_I2C_CMD_OFFSET                 (4)     // ÃüÁî¼Ä´æÆ÷Æ«ÒÆ£¬Ö»Ğ´
-#define LS1C_I2C_STATUS_OFFSET              (4)     // ×´Ì¬¼Ä´æÆ÷Æ«ÒÆ£¬Ö»¶Á
+#define LS1C_I2C_PRER_LOW_OFFSET            (0)     // åˆ†é¢‘é”å­˜å™¨ä½å­—èŠ‚å¯„å­˜å™¨åç§»
+#define LS1C_I2C_PRER_HIGH_OFFSET           (1)     // åˆ†é¢‘é”å­˜å™¨é«˜å­—èŠ‚å¯„å­˜å™¨åç§»
+#define LS1C_I2C_CONTROL_OFFSET             (2)     // æ§åˆ¶å¯„å­˜å™¨åç§»
+#define LS1C_I2C_DATA_OFFSET                (3)     // å‘é€æ•°æ®å¯„å­˜å™¨å’Œæ¥æ”¶æ•°æ®å¯„å­˜å™¨çš„åç§»æ˜¯ç›¸åŒçš„
+#define LS1C_I2C_CMD_OFFSET                 (4)     // å‘½ä»¤å¯„å­˜å™¨åç§»ï¼Œåªå†™
+#define LS1C_I2C_STATUS_OFFSET              (4)     // çŠ¶æ€å¯„å­˜å™¨åç§»ï¼Œåªè¯»
 
 
-// ¿ØÖÆ¼Ä´æÆ÷µÄÎ»Óò
-#define LS1C_I2C_CONTROL_EN                 (0x80)  // i2cÄ£¿éÊ¹ÄÜ
-#define LS1C_I2C_CONTROL_IEN                (0x40)  // ÖĞ¶ÏÊ¹ÄÜ
+// æ§åˆ¶å¯„å­˜å™¨çš„ä½åŸŸ
+#define LS1C_I2C_CONTROL_EN                 (0x80)  // i2cæ¨¡å—ä½¿èƒ½
+#define LS1C_I2C_CONTROL_IEN                (0x40)  // ä¸­æ–­ä½¿èƒ½
 
-// ÃüÁî¼Ä´æÆ÷µÄÎ»Óò
-#define LS1C_I2C_CMD_START                  (0x90)  // ²úÉúSTARTĞÅºÅ
-#define LS1C_I2C_CMD_STOP                   (0x40)  // ²úÉúSTOPĞÅºÅ
-#define LS1C_I2C_CMD_READ                   (0x20)  // ²úÉú¶ÁĞÅºÅ£¬¼´²úÉúACKĞÅºÅ
-#define LS1C_I2C_CMD_WRITE                  (0x10)  // ²úÉúĞ´ĞÅºÅ
-#define LS1C_I2C_CMD_READ_ACK               (0x20)  // ²úÉúACKĞÅºÅ£¬Óë¶ÁĞÅºÅÏàÍ¬
-#define LS1C_I2C_CMD_READ_NACK              (0x28)  // ²úÉúNACKĞÅºÅ
-#define LS1C_I2C_CMD_IACK                   (0x00)  // ²úÉúÖĞ¶ÏÓ¦´ğĞÅºÅ
+// å‘½ä»¤å¯„å­˜å™¨çš„ä½åŸŸ
+#define LS1C_I2C_CMD_START                  (0x90)  // äº§ç”ŸSTARTä¿¡å·
+#define LS1C_I2C_CMD_STOP                   (0x40)  // äº§ç”ŸSTOPä¿¡å·
+#define LS1C_I2C_CMD_READ                   (0x20)  // äº§ç”Ÿè¯»ä¿¡å·ï¼Œå³äº§ç”ŸACKä¿¡å·
+#define LS1C_I2C_CMD_WRITE                  (0x10)  // äº§ç”Ÿå†™ä¿¡å·
+#define LS1C_I2C_CMD_READ_ACK               (0x20)  // äº§ç”ŸACKä¿¡å·ï¼Œä¸è¯»ä¿¡å·ç›¸åŒ
+#define LS1C_I2C_CMD_READ_NACK              (0x28)  // äº§ç”ŸNACKä¿¡å·
+#define LS1C_I2C_CMD_IACK                   (0x00)  // äº§ç”Ÿä¸­æ–­åº”ç­”ä¿¡å·
 
-// ×´Ì¬¼Ä´æÆ÷µÄÎ»Óò
-#define LS1C_I2C_STATUS_IF                  (0x01)  // ÖĞ¶Ï±êÖ¾Î»
-#define LS1C_I2C_STATUS_TIP                 (0x02)  // Ö¸Ê¾´«ÊäµÄ¹ı³Ì¡£1£¬ÕıÔÚ´«Êä£»0£¬´«ÊäÍê³É
-#define LS1C_I2C_STATUS_ARBLOST             (0x20)  // I2CºËÊ§È¥I2C×ÜÏßµÄ¿ØÖÆÈ¨
-#define LS1C_I2C_STATUS_BUSY                (0x40)  // I2C×ÜÏßÃ¦±êÖ¾
-#define LS1C_I2C_STATUS_NACK                (0x80)  // Ó¦´ğÎ»±êÖ¾¡£1£¬Ã»ÊÕµ½Ó¦´ğÎ»£»0£¬ÊÕµ½Ó¦´ğÎ»
+// çŠ¶æ€å¯„å­˜å™¨çš„ä½åŸŸ
+#define LS1C_I2C_STATUS_IF                  (0x01)  // ä¸­æ–­æ ‡å¿—ä½
+#define LS1C_I2C_STATUS_TIP                 (0x02)  // æŒ‡ç¤ºä¼ è¾“çš„è¿‡ç¨‹ã€‚1ï¼Œæ­£åœ¨ä¼ è¾“ï¼›0ï¼Œä¼ è¾“å®Œæˆ
+#define LS1C_I2C_STATUS_ARBLOST             (0x20)  // I2Cæ ¸å¤±å»I2Cæ€»çº¿çš„æ§åˆ¶æƒ
+#define LS1C_I2C_STATUS_BUSY                (0x40)  // I2Cæ€»çº¿å¿™æ ‡å¿—
+#define LS1C_I2C_STATUS_NACK                (0x80)  // åº”ç­”ä½æ ‡å¿—ã€‚1ï¼Œæ²¡æ”¶åˆ°åº”ç­”ä½ï¼›0ï¼Œæ”¶åˆ°åº”ç­”ä½
 
 
 /*
- * »ñÈ¡Ö¸¶¨i2cÄ£¿éµÄ»ùµØÖ·
- * @I2Cx I2CÄ£¿éµÄ±àºÅ
+ * è·å–æŒ‡å®ši2cæ¨¡å—çš„åŸºåœ°å€
+ * @I2Cx I2Cæ¨¡å—çš„ç¼–å·
  */
 void *i2c_get_base(ls1c_i2c_t I2Cx)
 {
     void *base = NULL;
-    
+
     switch (I2Cx)
     {
         case LS1C_I2C_0:
@@ -85,9 +85,9 @@ void *i2c_get_base(ls1c_i2c_t I2Cx)
 
 
 /*
- * ÏòÃüÁî¼Ä´æÆ÷Ğ´ÃüÁî
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
- * @cmd ÃüÁî
+ * å‘å‘½ä»¤å¯„å­˜å™¨å†™å‘½ä»¤
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
+ * @cmd å‘½ä»¤
  */
 void i2c_cmd(ls1c_i2c_info_t *i2c_info_p, unsigned char cmd)
 {
@@ -100,8 +100,8 @@ void i2c_cmd(ls1c_i2c_info_t *i2c_info_p, unsigned char cmd)
 
 
 /*
- * Ö´ĞĞSTARTÃüÁî£¬·¢ËÍSTARTĞÅºÅ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * æ‰§è¡ŒSTARTå‘½ä»¤ï¼Œå‘é€STARTä¿¡å·
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  */
 void i2c_cmd_start(ls1c_i2c_info_t *i2c_info_p)
 {
@@ -111,8 +111,8 @@ void i2c_cmd_start(ls1c_i2c_info_t *i2c_info_p)
 
 
 /*
- * Ö´ĞĞSTOPÃüÁî£¬·¢ËÍSTOPĞÅºÅ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * æ‰§è¡ŒSTOPå‘½ä»¤ï¼Œå‘é€STOPä¿¡å·
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  */
 void i2c_cmd_stop(ls1c_i2c_info_t *i2c_info_p)
 {
@@ -122,8 +122,8 @@ void i2c_cmd_stop(ls1c_i2c_info_t *i2c_info_p)
 
 
 /*
- * Ö´ĞĞĞ´ÃüÁî
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * æ‰§è¡Œå†™å‘½ä»¤
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  */
 void i2c_cmd_write(ls1c_i2c_info_t *i2c_info_p)
 {
@@ -133,8 +133,8 @@ void i2c_cmd_write(ls1c_i2c_info_t *i2c_info_p)
 
 
 /*
- * Ö´ĞĞ¶ÁackÃüÁî£¬·¢ËÍ¶ÁackĞÅºÅ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * æ‰§è¡Œè¯»ackå‘½ä»¤ï¼Œå‘é€è¯»ackä¿¡å·
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  */
 void i2c_cmd_read_ack(ls1c_i2c_info_t *i2c_info_p)
 {
@@ -144,8 +144,8 @@ void i2c_cmd_read_ack(ls1c_i2c_info_t *i2c_info_p)
 
 
 /*
- * Ö´ĞĞ¶ÁnackÃüÁî,·¢ËÍ¶ÁnackĞÅºÅ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * æ‰§è¡Œè¯»nackå‘½ä»¤,å‘é€è¯»nackä¿¡å·
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  */
 void i2c_cmd_read_nack(ls1c_i2c_info_t *i2c_info_p)
 {
@@ -155,8 +155,8 @@ void i2c_cmd_read_nack(ls1c_i2c_info_t *i2c_info_p)
 
 
 /*
- * ·¢ËÍÖĞ¶ÏÓ¦´ğĞÅºÅ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * å‘é€ä¸­æ–­åº”ç­”ä¿¡å·
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  */
 void i2c_cmd_iack(ls1c_i2c_info_t *i2c_info_p)
 {
@@ -166,9 +166,9 @@ void i2c_cmd_iack(ls1c_i2c_info_t *i2c_info_p)
 
 
 /*
- * »ñÈ¡×´Ì¬¼Ä´æÆ÷µÄÖµ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
- * @ret ×´Ì¬¼Ä´æÆ÷µÄÖµ
+ * è·å–çŠ¶æ€å¯„å­˜å™¨çš„å€¼
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
+ * @ret çŠ¶æ€å¯„å­˜å™¨çš„å€¼
  */
 unsigned char i2c_get_status(ls1c_i2c_info_t *i2c_info_p)
 {
@@ -181,8 +181,8 @@ unsigned char i2c_get_status(ls1c_i2c_info_t *i2c_info_p)
 /*
  * Poll the i2c status register until the specified bit is set.
  * Returns 0 if timed out (100 msec).
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
- * @bit ¼Ä´æÆ÷µÄÄ³Ò»Î»
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
+ * @bit å¯„å­˜å™¨çš„æŸä¸€ä½
  * @ret true or false
  */
 int i2c_poll_status(ls1c_i2c_info_t *i2c_info_p, unsigned long bit)
@@ -198,8 +198,8 @@ int i2c_poll_status(ls1c_i2c_info_t *i2c_info_p, unsigned long bit)
 
 
 /*
- * ³õÊ¼»¯Ö¸¶¨i2cÄ£¿é
- * @i2c_info_p Ä³¸öi2cÄ£¿éµÄĞÅÏ¢
+ * åˆå§‹åŒ–æŒ‡å®ši2cæ¨¡å—
+ * @i2c_info_p æŸä¸ªi2cæ¨¡å—çš„ä¿¡æ¯
  */
 void i2c_init(ls1c_i2c_info_t *i2c_info_p)
 {
@@ -212,14 +212,14 @@ void i2c_init(ls1c_i2c_info_t *i2c_info_p)
     ctrl = ctrl & ~(LS1C_I2C_CONTROL_EN | LS1C_I2C_CONTROL_IEN);
     reg_write_8(ctrl, i2c_base + LS1C_I2C_CONTROL_OFFSET);
 
-    // ÉèÖÃÊ±ÖÓ
-    i2c_clock = MIN(i2c_clock, LS1C_I2C_CLOCK_MAX);     // ÏŞÖÆÔÚ×î´óÔÊĞí·¶Î§ÄÚ
+    // è®¾ç½®æ—¶é’Ÿ
+    i2c_clock = MIN(i2c_clock, LS1C_I2C_CLOCK_MAX);     // é™åˆ¶åœ¨æœ€å¤§å…è®¸èŒƒå›´å†…
     prescale = clk_get_apb_rate();
     prescale = (prescale / (5 * i2c_clock)) - 1;
     reg_write_8(prescale & 0xff, i2c_base + LS1C_I2C_PRER_LOW_OFFSET);
     reg_write_8(prescale >> 8, i2c_base + LS1C_I2C_PRER_HIGH_OFFSET);
-    
-    // Ê¹ÄÜ
+
+    // ä½¿èƒ½
     i2c_cmd_iack(i2c_info_p);
     ctrl = ctrl | LS1C_I2C_CONTROL_EN;
     reg_write_8(ctrl, i2c_base + LS1C_I2C_CONTROL_OFFSET);
@@ -229,14 +229,14 @@ void i2c_init(ls1c_i2c_info_t *i2c_info_p)
 
 
 /*
- * (ÔÙ·¢ËÍÒ»¸ö×Ö½ÚÊı¾İÖ®ºó)½ÓÊÕ´Ó»ú·¢ËÍµÄACKĞÅºÅ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * (å†å‘é€ä¸€ä¸ªå­—èŠ‚æ•°æ®ä¹‹å)æ¥æ”¶ä»æœºå‘é€çš„ACKä¿¡å·
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  * @ret LS1C_I2C_ACK or LS1C_I2C_NACK
  */
 ls1c_i2c_ack_t i2c_receive_ack(ls1c_i2c_info_t *i2c_info_p)
 {
     ls1c_i2c_ack_t ret = LS1C_I2C_NACK;
-    
+
     if (LS1C_I2C_STATUS_NACK & i2c_get_status(i2c_info_p))
     {
         ret = LS1C_I2C_NACK;
@@ -251,10 +251,10 @@ ls1c_i2c_ack_t i2c_receive_ack(ls1c_i2c_info_t *i2c_info_p)
 
 
 /*
- * ½ÓÊÕÊı¾İ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
- * @buf Êı¾İ»º´æ
- * @len ´ı½ÓÊÕÊı¾İµÄ³¤¶È
+ * æ¥æ”¶æ•°æ®
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
+ * @buf æ•°æ®ç¼“å­˜
+ * @len å¾…æ¥æ”¶æ•°æ®çš„é•¿åº¦
  */
 ls1c_i2c_ret_t i2c_receive_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *buf, int len)
 {
@@ -263,17 +263,17 @@ ls1c_i2c_ret_t i2c_receive_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *buf,
 
     for (i=0; i<len; i++)
     {
-        // ¿ªÊ¼½ÓÊÕ
+        // å¼€å§‹æ¥æ”¶
         if (i != (len - 1))
             i2c_cmd_read_ack(i2c_info_p);
-        else 
+        else
             i2c_cmd_read_nack(i2c_info_p);
 
-        // µÈ´ı£¬Ö±µ½½ÓÊÕÍê³É
+        // ç­‰å¾…ï¼Œç›´åˆ°æ¥æ”¶å®Œæˆ
         if (!i2c_poll_status(i2c_info_p, LS1C_I2C_STATUS_TIP))
             return LS1C_I2C_RET_TIMEOUT;
 
-        // ¶ÁÈ¡Êı¾İ£¬²¢±£´æ
+        // è¯»å–æ•°æ®ï¼Œå¹¶ä¿å­˜
         *buf++ = reg_read_8(i2c_base + LS1C_I2C_DATA_OFFSET);
     }
 
@@ -282,30 +282,30 @@ ls1c_i2c_ret_t i2c_receive_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *buf,
 
 
 /*
- * ·¢ËÍSTARTĞÅºÅºÍµØÖ·
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
- * @slave_addr ´Ó»úµØÖ·
- * @direction Êı¾İ´«Êä·½Ïò(¶Á¡¢Ğ´)
+ * å‘é€STARTä¿¡å·å’Œåœ°å€
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
+ * @slave_addr ä»æœºåœ°å€
+ * @direction æ•°æ®ä¼ è¾“æ–¹å‘(è¯»ã€å†™)
  */
-ls1c_i2c_ret_t i2c_send_start_and_addr(ls1c_i2c_info_t *i2c_info_p, 
+ls1c_i2c_ret_t i2c_send_start_and_addr(ls1c_i2c_info_t *i2c_info_p,
                                        unsigned char slave_addr,
                                        ls1c_i2c_direction_t direction)
 {
     void *i2c_base = i2c_get_base(i2c_info_p->I2Cx);
     unsigned char data = 0;
-    
-    // µÈ´ıi2c×ÜÏß¿ÕÏĞ
+
+    // ç­‰å¾…i2cæ€»çº¿ç©ºé—²
     if (!i2c_poll_status(i2c_info_p, LS1C_I2C_STATUS_BUSY))
         return LS1C_I2C_RET_TIMEOUT;
 
-    // Ìî³äµØÖ·µ½Êı¾İ¼Ä´æÆ÷
+    // å¡«å……åœ°å€åˆ°æ•°æ®å¯„å­˜å™¨
     data = (slave_addr << 1) | ((LS1C_I2C_DIRECTION_READ == direction) ? 1 : 0);
     reg_write_8(data , i2c_base + LS1C_I2C_DATA_OFFSET);
 
-    // ¿ªÊ¼·¢ËÍ
+    // å¼€å§‹å‘é€
     i2c_cmd_start(i2c_info_p);
 
-    // µÈ´ı£¬Ö±µ½·¢ËÍÍê³É
+    // ç­‰å¾…ï¼Œç›´åˆ°å‘é€å®Œæˆ
     if (!i2c_poll_status(i2c_info_p, LS1C_I2C_STATUS_TIP))
         return LS1C_I2C_RET_TIMEOUT;
 
@@ -314,10 +314,10 @@ ls1c_i2c_ret_t i2c_send_start_and_addr(ls1c_i2c_info_t *i2c_info_p,
 
 
 /*
- * ·¢ËÍÊı¾İ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
- * @data ´ı·¢ËÍµÄÊı¾İ
- * @len ´ı·¢ËÍÊı¾İµÄ³¤¶È
+ * å‘é€æ•°æ®
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
+ * @data å¾…å‘é€çš„æ•°æ®
+ * @len å¾…å‘é€æ•°æ®çš„é•¿åº¦
  */
 ls1c_i2c_ret_t i2c_send_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *data, int len)
 {
@@ -326,17 +326,17 @@ ls1c_i2c_ret_t i2c_send_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *data, i
 
     for (i=0; i<len; i++)
     {
-        // ½«Ò»¸ö×Ö½ÚÊı¾İĞ´ÈëÊı¾İ¼Ä´æÆ÷
+        // å°†ä¸€ä¸ªå­—èŠ‚æ•°æ®å†™å…¥æ•°æ®å¯„å­˜å™¨
         reg_write_8(*data++, i2c_base + LS1C_I2C_DATA_OFFSET);
 
-        // ¿ªÊ¼·¢ËÍ
+        // å¼€å§‹å‘é€
         reg_write_8(LS1C_I2C_CMD_WRITE, i2c_base + LS1C_I2C_CMD_OFFSET);
 
-        // µÈ´ı£¬Ö±µ½·¢ËÍÍê³É
+        // ç­‰å¾…ï¼Œç›´åˆ°å‘é€å®Œæˆ
         if (!i2c_poll_status(i2c_info_p, LS1C_I2C_STATUS_TIP))
             return LS1C_I2C_RET_TIMEOUT;
 
-        // ¶ÁÈ¡Ó¦´ğĞÅºÅ
+        // è¯»å–åº”ç­”ä¿¡å·
         if (LS1C_I2C_ACK != i2c_receive_ack(i2c_info_p))
             return len;
     }
@@ -347,8 +347,8 @@ ls1c_i2c_ret_t i2c_send_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *data, i
 
 
 /*
- * ·¢ËÍSTOPĞÅºÅ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * å‘é€STOPä¿¡å·
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  */
 void i2c_send_stop(ls1c_i2c_info_t *i2c_info_p)
 {

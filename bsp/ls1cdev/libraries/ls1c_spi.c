@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -53,7 +53,7 @@ void *ls1c_spi_get_base(unsigned char SPIx)
 void ls1c_spi_print_all_regs_info(void *spi_base)
 {
     printf("[%s] SPCR=0x%x, SPSR=0x%x, SPER=0x%x, SFC_PARAM=0x%x, SFC_SOFTCS=0x%x, SFC_TIMING=0x%x\r\n",
-              __FUNCTION__, 
+              __FUNCTION__,
               reg_read_8(spi_base + LS1C_SPI_SPCR_OFFSET),
               reg_read_8(spi_base + LS1C_SPI_SPSR_OFFSET),
               reg_read_8(spi_base + LS1C_SPI_SPER_OFFSET),
@@ -121,8 +121,8 @@ unsigned int ls1c_spi_get_div(unsigned int max_speed_hz)
             }
             break;
     }
-/*    
-    printf("[%s] clk=%ld, max_speed_hz=%d, div_tmp=%d, bit=%d\r\n", 
+/*
+    printf("[%s] clk=%ld, max_speed_hz=%d, div_tmp=%d, bit=%d\r\n",
               __FUNCTION__, clk, max_speed_hz, div_tmp, bit);
 */
     return div_tmp;
@@ -169,15 +169,15 @@ void ls1c_spi_set_mode(void *spi_base, unsigned char cpol, unsigned char cpha)
     unsigned char val = 0;
 
     val = reg_read_8(spi_base + LS1C_SPI_SPCR_OFFSET);
-    
+
     // 设置时钟极性--cpol
     val &= (~LS1C_SPI_SPCR_CPOL_MASK);                  // cpol清0
     val |= (cpol << LS1C_SPI_SPCR_CPOL_BIT);            // 写入新的cpol
-    
+
     // 设置时钟相位--cpha
     val &= (~LS1C_SPI_SPCR_CPHA_MASK);                  // cpha清0
     val |= (cpha << LS1C_SPI_SPCR_CPHA_BIT);            // 写入新的cpha
-    
+
     reg_write_8(val, spi_base + LS1C_SPI_SPCR_OFFSET);
 
     return ;
@@ -195,7 +195,7 @@ void ls1c_spi_set_cs(void *spi_base, unsigned char cs, int new_status)
     unsigned char val = 0;
 
     val = reg_read_8(spi_base + LS1C_SPI_SFC_SOFTCS_OFFSET);
-    val |= 0x01 << cs ; //对应的csen=1  
+    val |= 0x01 << cs ; //对应的csen=1
     if (new_status)         // cs = 1
     {
         val |= (0x10 << cs);            // 指定csn=1
@@ -223,7 +223,7 @@ void ls1c_spi_wait_txrx_done(void *spi_base)
         if (LS1C_SPI_SPSR_SPIF_MASK & reg_read_8(spi_base + LS1C_SPI_SPSR_OFFSET))
             break;
     }
-    
+
     return ;
 }
 

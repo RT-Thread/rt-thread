@@ -1,51 +1,51 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     ÇÚÎª±¾       first version
+ * 2017-09-06     å‹¤ä¸ºæœ¬       first version
  */
 
-// Òý½Å¹¦ÄÜ(ÆÕÍ¨gpio£¬pwm£¬¸´ÓÃµÈ)Ïà¹Ø½Ó¿Ú
+// å¼•è„šåŠŸèƒ½(æ™®é€šgpioï¼Œpwmï¼Œå¤ç”¨ç­‰)ç›¸å…³æŽ¥å£
 
 #ifndef __OPENLOONGSON_PIN_H
 #define __OPENLOONGSON_PIN_H
 
 
-// Òý½ÅÓÃÍ¾
+// å¼•è„šç”¨é€”
 typedef enum
 {
-    PIN_PURPOSE_GPIO = 0,               // Òý½ÅÓÃ×÷ÆÕÍ¨gpio
-    PIN_PURPOSE_OTHER,                  // Òý½ÅÓÃ×÷ÆäËü¹¦ÄÜ(·Çgpio)
+    PIN_PURPOSE_GPIO = 0,               // å¼•è„šç”¨ä½œæ™®é€šgpio
+    PIN_PURPOSE_OTHER,                  // å¼•è„šç”¨ä½œå…¶å®ƒåŠŸèƒ½(éžgpio)
 }pin_purpose_t;
 
 
-// Òý½Å¸´ÓÃ
+// å¼•è„šå¤ç”¨
 typedef enum
 {
-    PIN_REMAP_FIRST = 0,                // µÚÒ»¸´ÓÃ
-    PIN_REMAP_SECOND,                   // µÚ¶þ¸´ÓÃ
-    PIN_REMAP_THIRD,                    // µÚÈý¸´ÓÃ
-    PIN_REMAP_FOURTH,                   // µÚËÄ¸´ÓÃ
-    PIN_REMAP_FIFTH,                    // µÚÎå¸´ÓÃ
-    PIN_REMAP_DEFAULT,                //È±Ê¡¸´ÓÃ
+    PIN_REMAP_FIRST = 0,                // ç¬¬ä¸€å¤ç”¨
+    PIN_REMAP_SECOND,                   // ç¬¬äºŒå¤ç”¨
+    PIN_REMAP_THIRD,                    // ç¬¬ä¸‰å¤ç”¨
+    PIN_REMAP_FOURTH,                   // ç¬¬å››å¤ç”¨
+    PIN_REMAP_FIFTH,                    // ç¬¬äº”å¤ç”¨
+    PIN_REMAP_DEFAULT,                //ç¼ºçœå¤ç”¨
 }pin_remap_t;
 
 
 /*
- * °ÑÖ¸¶¨pinÉèÖÃÎªÖ¸¶¨ÓÃÍ¾(ÆÕÍ¨gpio£¬·Çgpio)
- * @gpio gpioÒý½Å±àºÅ
- * @purpose ÓÃÍ¾
+ * æŠŠæŒ‡å®špinè®¾ç½®ä¸ºæŒ‡å®šç”¨é€”(æ™®é€šgpioï¼Œéžgpio)
+ * @gpio gpioå¼•è„šç¼–å·
+ * @purpose ç”¨é€”
  */
 void pin_set_purpose(unsigned int gpio, pin_purpose_t purpose);
 
 
 /*
- * ÉèÖÃÖ¸¶¨pinÎªµÚn¸´ÓÃ
- * @gpio gpio±àºÅ
- * @remap µÚn¸´ÓÃ
+ * è®¾ç½®æŒ‡å®špinä¸ºç¬¬nå¤ç”¨
+ * @gpio gpioç¼–å·
+ * @remap ç¬¬nå¤ç”¨
  */
 void pin_set_remap(unsigned int gpio, pin_remap_t remap);
 

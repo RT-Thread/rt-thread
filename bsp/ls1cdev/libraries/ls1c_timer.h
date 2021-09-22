@@ -1,5 +1,5 @@
  /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  *                             first version
  */
-// Ó²¼ş¶¨Ê±Æ÷Í·ÎÄ¼ş
+// ç¡¬ä»¶å®šæ—¶å™¨å¤´æ–‡ä»¶
 
 
 #ifndef __OPENLOONGSON_TIMER_H
@@ -17,72 +17,72 @@
 #include "ls1c_public.h"
 
 
-// Ó²¼ş¶¨Ê±Æ÷
+// ç¡¬ä»¶å®šæ—¶å™¨
 typedef enum
 {
-    TIMER_PWM0,                     // PWM0ÓÃ×÷Ó²¼ş¶¨Ê±Æ÷
-    TIMER_PWM1,                     // PWM1ÓÃ×÷Ó²¼ş¶¨Ê±Æ÷
-    TIMER_PWM2,                     // PWM2ÓÃ×÷Ó²¼ş¶¨Ê±Æ÷
-    TIMER_PWM3                      // PWM3ÓÃ×÷Ó²¼ş¶¨Ê±Æ÷
+    TIMER_PWM0,                     // PWM0ç”¨ä½œç¡¬ä»¶å®šæ—¶å™¨
+    TIMER_PWM1,                     // PWM1ç”¨ä½œç¡¬ä»¶å®šæ—¶å™¨
+    TIMER_PWM2,                     // PWM2ç”¨ä½œç¡¬ä»¶å®šæ—¶å™¨
+    TIMER_PWM3                      // PWM3ç”¨ä½œç¡¬ä»¶å®šæ—¶å™¨
 }ls1c_timer_t;
 
 
-// Ó²¼ş¶¨Ê±Æ÷ĞÅÏ¢
+// ç¡¬ä»¶å®šæ—¶å™¨ä¿¡æ¯
 typedef struct
 {
-    ls1c_timer_t timer;                  // Ó²¼ş¶¨Ê±Æ÷
-    unsigned long time_ns;          // µÍ¶¨Ê±Ê±¼ä
-    unsigned long time_h_ns;          // ¸ß¶¨Ê±Ê±¼ä
+    ls1c_timer_t timer;                  // ç¡¬ä»¶å®šæ—¶å™¨
+    unsigned long time_ns;          // ä½å®šæ—¶æ—¶é—´
+    unsigned long time_h_ns;          // é«˜å®šæ—¶æ—¶é—´
 }timer_info_t;
 
 /*
- * ³õÊ¼»¯¶¨Ê±Æ÷£¬²¢¿ªÊ¼¶¨Ê±
- * @timer_info ¶¨Ê±Æ÷ºÍ¶¨Ê±Ê±¼äĞÅÏ¢
+ * åˆå§‹åŒ–å®šæ—¶å™¨ï¼Œå¹¶å¼€å§‹å®šæ—¶
+ * @timer_info å®šæ—¶å™¨å’Œå®šæ—¶æ—¶é—´ä¿¡æ¯
  */
 void timer_init(timer_info_t *timer_info);
 
 /*
- * ÅĞ¶ÏÖ¸¶¨¶¨Ê±Æ÷ÊÇ·ñ³¬Ê±
- * @timer_info ¶¨Ê±Æ÷
+ * åˆ¤æ–­æŒ‡å®šå®šæ—¶å™¨æ˜¯å¦è¶…æ—¶
+ * @timer_info å®šæ—¶å™¨
  * @ret TRUE or FALSE
  */
 BOOL timer_is_time_out(timer_info_t *timer_info);
 
 /*
- * Í£Ö¹¶¨Ê±Æ÷
- * @timer_info ¶¨Ê±Æ÷
+ * åœæ­¢å®šæ—¶å™¨
+ * @timer_info å®šæ—¶å™¨
  */
 void timer_stop(timer_info_t *timer_info);
 
 /*
- * »ñÈ¡¶¨Ê±Æ÷´Ó³õÊ¼»¯µ½ÏÖÔÚµÄÊ±¼ä(ÊµÏÖ¼ÆÊ±¹¦ÄÜ)£¬µ¥Î»ns
- * @timer_info Ó²¼ş¶¨Ê±Æ÷
- * @ret Ê±¼ä£¬µ¥Î»ns
+ * è·å–å®šæ—¶å™¨ä»åˆå§‹åŒ–åˆ°ç°åœ¨çš„æ—¶é—´(å®ç°è®¡æ—¶åŠŸèƒ½)ï¼Œå•ä½ns
+ * @timer_info ç¡¬ä»¶å®šæ—¶å™¨
+ * @ret æ—¶é—´ï¼Œå•ä½ns
  */
 unsigned long timer_get_time_ns(timer_info_t *timer_info);
 
 /*
- * ´òÓ¡timerÏà¹Ø¼Ä´æÆ÷µÄÖµ
- * @timer_info Ó²¼ş¶¨Ê±Æ÷
+ * æ‰“å°timerç›¸å…³å¯„å­˜å™¨çš„å€¼
+ * @timer_info ç¡¬ä»¶å®šæ—¶å™¨
  */
 void timer_print_regs(timer_info_t *timer_info);
 
 /*
- * ¶¨Ê±Æ÷ÖĞ¶ÏÇå
- * @timer_info ¶¨Ê±Æ÷ĞÅÏ¢
+ * å®šæ—¶å™¨ä¸­æ–­æ¸…
+ * @timer_info å®šæ—¶å™¨ä¿¡æ¯
  */
 void timer_int_clr(timer_info_t *timer_info);
 
 /*
- * ¶¨Ê±Æ÷¼ÆÊıÇå
- * @timer_info ¶¨Ê±Æ÷ĞÅÏ¢
+ * å®šæ—¶å™¨è®¡æ•°æ¸…
+ * @timer_info å®šæ—¶å™¨ä¿¡æ¯
  */
 void timer_cnt_clr(timer_info_t *timer_info);
 
 /*
- * ³õÊ¼»¯¶¨Ê±Æ÷£¬²¢¿ªÊ¼ÖĞ¶Ï¶¨Ê±
- * @timer_info ¶¨Ê±Æ÷ºÍ¶¨Ê±Ê±¼äĞÅÏ¢
- * @hrc ¸ßÖĞ¶Ï lrc µÍÖĞ¶Ï Îª1´ò¿ª£¬Îª0¹Ø±Õ
+ * åˆå§‹åŒ–å®šæ—¶å™¨ï¼Œå¹¶å¼€å§‹ä¸­æ–­å®šæ—¶
+ * @timer_info å®šæ—¶å™¨å’Œå®šæ—¶æ—¶é—´ä¿¡æ¯
+ * @hrc é«˜ä¸­æ–­ lrc ä½ä¸­æ–­ ä¸º1æ‰“å¼€ï¼Œä¸º0å…³é—­
 */
 void timer_int_init(timer_info_t *timer_info, int hrc, int lrc);
 #endif

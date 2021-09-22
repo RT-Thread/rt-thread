@@ -15,4 +15,4 @@
 
 int rt_i2c_init(void);
 
-#endif 
+#endif

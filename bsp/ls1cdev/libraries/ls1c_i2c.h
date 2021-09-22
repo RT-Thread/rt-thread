@@ -1,27 +1,27 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     ÇÚÎª±¾       first version
+ * 2017-09-06     å‹¤ä¸ºæœ¬       first version
  */
 
 
-// Ó²¼şi2c½Ó¿ÚµÄÍ·ÎÄ¼ş
+// ç¡¬ä»¶i2cæ¥å£çš„å¤´æ–‡ä»¶
 
 #ifndef __OPENLOONGSON_I2C_H
 #define __OPENLOONGSON_I2C_H
 
 
 
-// I2CµÄÊ±ÖÓÆµÂÊ
-#define LS1C_I2C_CLOCK_DEFAULT              (100000)  // Hz. Ä¬ÈÏÆµÂÊ
+// I2Cçš„æ—¶é’Ÿé¢‘ç‡
+#define LS1C_I2C_CLOCK_DEFAULT              (100000)  // Hz. é»˜è®¤é¢‘ç‡
 #define LS1C_I2C_CLOCK_MAX                  (400000)  // Hz, max 400 Kbits/sec
 
 
-// I2CÄ£¿é±àºÅ
+// I2Cæ¨¡å—ç¼–å·
 typedef enum
 {
     LS1C_I2C_0 = 0,
@@ -30,87 +30,87 @@ typedef enum
 }ls1c_i2c_t;
 
 
-// I2CÊı¾İ´«Êä·½Ïò
+// I2Cæ•°æ®ä¼ è¾“æ–¹å‘
 typedef enum
 {
-    LS1C_I2C_DIRECTION_WRITE = 0,       // Ö÷»úÏò´Ó»úĞ´ĞÅÏ¢
-    LS1C_I2C_DIRECTION_READ,            // Ö÷»úÏò´Ó»ú¶ÁĞÅÏ¢
+    LS1C_I2C_DIRECTION_WRITE = 0,       // ä¸»æœºå‘ä»æœºå†™ä¿¡æ¯
+    LS1C_I2C_DIRECTION_READ,            // ä¸»æœºå‘ä»æœºè¯»ä¿¡æ¯
 }ls1c_i2c_direction_t;
 
 
-// Ó²¼şI2CĞÅÏ¢
+// ç¡¬ä»¶I2Cä¿¡æ¯
 typedef struct
 {
-    ls1c_i2c_t I2Cx;                    // i2cÄ£¿é±àºÅ
-    unsigned long clock;                // i2cÊ±ÖÓÆµÂÊ£¬µ¥Î»hz
+    ls1c_i2c_t I2Cx;                    // i2cæ¨¡å—ç¼–å·
+    unsigned long clock;                // i2cæ—¶é’Ÿé¢‘ç‡ï¼Œå•ä½hz
 }ls1c_i2c_info_t;
 
 
-// I2CÓ¦´ğ
+// I2Cåº”ç­”
 typedef enum
 {
-    LS1C_I2C_ACK = 0,                   // ÊÕµ½Ó¦´ğ
-    LS1C_I2C_NACK = 1,                  // Ã»ÊÕµ½Ó¦´ğ
+    LS1C_I2C_ACK = 0,                   // æ”¶åˆ°åº”ç­”
+    LS1C_I2C_NACK = 1,                  // æ²¡æ”¶åˆ°åº”ç­”
 }ls1c_i2c_ack_t;
 
 
-// º¯Êı·µ»ØÖµ
+// å‡½æ•°è¿”å›å€¼
 typedef enum
 {
     LS1C_I2C_RET_OK = 0,                // OK
-    LS1C_I2C_RET_TIMEOUT,               // ³¬Ê±
+    LS1C_I2C_RET_TIMEOUT,               // è¶…æ—¶
 }ls1c_i2c_ret_t;
 
 
 
 /*
- * ³õÊ¼»¯Ö¸¶¨i2cÄ£¿é
- * @i2c_info_p Ä³¸öi2cÄ£¿éµÄĞÅÏ¢
+ * åˆå§‹åŒ–æŒ‡å®ši2cæ¨¡å—
+ * @i2c_info_p æŸä¸ªi2cæ¨¡å—çš„ä¿¡æ¯
  */
 void i2c_init(ls1c_i2c_info_t *i2c_info_p);
 
 
 /*
- * (ÔÙ·¢ËÍÒ»¸ö×Ö½ÚÊı¾İÖ®ºó)½ÓÊÕ´Ó»ú·¢ËÍµÄACKĞÅºÅ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * (å†å‘é€ä¸€ä¸ªå­—èŠ‚æ•°æ®ä¹‹å)æ¥æ”¶ä»æœºå‘é€çš„ACKä¿¡å·
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  * @ret LS1C_I2C_ACK or LS1C_I2C_NACK
  */
 ls1c_i2c_ack_t i2c_receive_ack(ls1c_i2c_info_t *i2c_info_p);
 
 
 /*
- * ½ÓÊÕÊı¾İ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
- * @buf Êı¾İ»º´æ
- * @len ´ı½ÓÊÕÊı¾İµÄ³¤¶È
+ * æ¥æ”¶æ•°æ®
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
+ * @buf æ•°æ®ç¼“å­˜
+ * @len å¾…æ¥æ”¶æ•°æ®çš„é•¿åº¦
  */
 ls1c_i2c_ret_t i2c_receive_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *buf, int len);
 
 
 
 /*
- * ·¢ËÍSTARTĞÅºÅºÍµØÖ·
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
- * @slave_addr ´Ó»úµØÖ·
- * @direction Êı¾İ´«Êä·½Ïò(¶Á¡¢Ğ´)
+ * å‘é€STARTä¿¡å·å’Œåœ°å€
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
+ * @slave_addr ä»æœºåœ°å€
+ * @direction æ•°æ®ä¼ è¾“æ–¹å‘(è¯»ã€å†™)
  */
-ls1c_i2c_ret_t i2c_send_start_and_addr(ls1c_i2c_info_t *i2c_info_p, 
+ls1c_i2c_ret_t i2c_send_start_and_addr(ls1c_i2c_info_t *i2c_info_p,
                                        unsigned char slave_addr,
                                        ls1c_i2c_direction_t direction);
 
 
 /*
- * ·¢ËÍÊı¾İ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
- * @data ´ı·¢ËÍµÄÊı¾İ
- * @len ´ı·¢ËÍÊı¾İµÄ³¤¶È
+ * å‘é€æ•°æ®
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
+ * @data å¾…å‘é€çš„æ•°æ®
+ * @len å¾…å‘é€æ•°æ®çš„é•¿åº¦
  */
 ls1c_i2c_ret_t i2c_send_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *data, int len);
 
 
 /*
- * ·¢ËÍSTOPĞÅºÅ
- * @i2c_info_p i2cÄ£¿éĞÅÏ¢
+ * å‘é€STOPä¿¡å·
+ * @i2c_info_p i2cæ¨¡å—ä¿¡æ¯
  */
 void i2c_send_stop(ls1c_i2c_info_t *i2c_info_p);
 

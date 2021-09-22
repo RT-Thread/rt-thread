@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     ÇÚÎª±¾       first version
+ * 2017-09-06     å‹¤ä¸ºæœ¬       first version
  */
 
 
@@ -13,71 +13,71 @@
 #define __OPENLOONGSON_PWM_H
 
 
-// pwmÒı½Å¶¨Òå
-#define LS1C_PWM0_GPIO06                    (6)         // gpio06ÓÃ×÷pwm0
-#define LS1C_PWM0_GPIO04                    (4)         // gpio04¸´ÓÃÎªpwm0
-#define LS1C_PWM1_GPIO92                    (92)        // gpio92ÓÃ×÷pwm1
-#define LS1C_PWM1_GPIO05                    (5)         // gpio05¸´ÓÃÎªpwm1
-#define LS1C_PWM2_GPIO52                    (52)        // gpio52¸´ÓÃÎªpwm2
-#define LS1C_PWM2_GPIO46                    (46)        // gpio46¸´ÓÃÎªpwm2
-#define LS1C_PWM3_GPIO47                    (47)        // gpio47¸´ÓÃÎªpwm3
-#define LS1C_PWM3_GPIO53                    (53)        // gpio53¸´ÓÃÎªpwm3
-// ...»¹ÓĞÒ»Ğ©gpio¿ÉÒÔ¸´ÓÃÎªgpioµÄ£¬ÓĞĞèÒª¿ÉÒÔ×Ô¼ºÌí¼Ó
+// pwmå¼•è„šå®šä¹‰
+#define LS1C_PWM0_GPIO06                    (6)         // gpio06ç”¨ä½œpwm0
+#define LS1C_PWM0_GPIO04                    (4)         // gpio04å¤ç”¨ä¸ºpwm0
+#define LS1C_PWM1_GPIO92                    (92)        // gpio92ç”¨ä½œpwm1
+#define LS1C_PWM1_GPIO05                    (5)         // gpio05å¤ç”¨ä¸ºpwm1
+#define LS1C_PWM2_GPIO52                    (52)        // gpio52å¤ç”¨ä¸ºpwm2
+#define LS1C_PWM2_GPIO46                    (46)        // gpio46å¤ç”¨ä¸ºpwm2
+#define LS1C_PWM3_GPIO47                    (47)        // gpio47å¤ç”¨ä¸ºpwm3
+#define LS1C_PWM3_GPIO53                    (53)        // gpio53å¤ç”¨ä¸ºpwm3
+// ...è¿˜æœ‰ä¸€äº›gpioå¯ä»¥å¤ç”¨ä¸ºgpioçš„ï¼Œæœ‰éœ€è¦å¯ä»¥è‡ªå·±æ·»åŠ 
 
 
 
-// pwm¿ØÖÆ¼Ä´æÆ÷µÄÃ¿¸öbit
-#define LS1C_PWM_INT_LRC_EN                 (11)        // µÍÂö³å¼ÆÊıÆ÷ÖĞ¶ÏÊ¹ÄÜ
-#define LS1C_PWM_INT_HRC_EN                 (10)        // ¸ßÂö³å¼ÆÊıÆ÷ÖĞ¶ÏÊ¹ÄÜ
-#define LS1C_PWM_CNTR_RST                   (7)         // Ê¹ÄÜCNTR¼ÆÊıÆ÷ÇåÁã
-#define LS1C_PWM_INT_SR                     (6)         // ÖĞ¶Ï×´Ì¬Î»
-#define LS1C_PWM_INTEN                      (5)         // ÖĞ¶ÏÊ¹ÄÜÎ»
-#define LS1C_PWM_SINGLE                     (4)         // µ¥Âö³å¿ØÖÆÎ»
-#define LS1C_PWM_OE                         (3)         // Âö³åÊä³öÊ¹ÄÜ
-#define LS1C_PWM_CNT_EN                     (0)         // Ö÷¼ÆÊıÆ÷Ê¹ÄÜ
+// pwmæ§åˆ¶å¯„å­˜å™¨çš„æ¯ä¸ªbit
+#define LS1C_PWM_INT_LRC_EN                 (11)        // ä½è„‰å†²è®¡æ•°å™¨ä¸­æ–­ä½¿èƒ½
+#define LS1C_PWM_INT_HRC_EN                 (10)        // é«˜è„‰å†²è®¡æ•°å™¨ä¸­æ–­ä½¿èƒ½
+#define LS1C_PWM_CNTR_RST                   (7)         // ä½¿èƒ½CNTRè®¡æ•°å™¨æ¸…é›¶
+#define LS1C_PWM_INT_SR                     (6)         // ä¸­æ–­çŠ¶æ€ä½
+#define LS1C_PWM_INTEN                      (5)         // ä¸­æ–­ä½¿èƒ½ä½
+#define LS1C_PWM_SINGLE                     (4)         // å•è„‰å†²æ§åˆ¶ä½
+#define LS1C_PWM_OE                         (3)         // è„‰å†²è¾“å‡ºä½¿èƒ½
+#define LS1C_PWM_CNT_EN                     (0)         // ä¸»è®¡æ•°å™¨ä½¿èƒ½
 
 
-// Ó²¼şpwm¹¤×÷Ä£Ê½
+// ç¡¬ä»¶pwmå·¥ä½œæ¨¡å¼
 enum
 {
-    // Õı³£Ä£Ê½--Á¬ĞøÊä³öpwm²¨ĞÎ
+    // æ­£å¸¸æ¨¡å¼--è¿ç»­è¾“å‡ºpwmæ³¢å½¢
     PWM_MODE_NORMAL = 0,
-    
-    // µ¥Âö³åÄ£Ê½£¬Ã¿´Îµ÷ÓÃÖ»·¢ËÍÒ»¸öÂö³å£¬µ÷ÓÃ¼ä¸ô±ØĞë´óÓÚpwmÖÜÆÚ
+
+    // å•è„‰å†²æ¨¡å¼ï¼Œæ¯æ¬¡è°ƒç”¨åªå‘é€ä¸€ä¸ªè„‰å†²ï¼Œè°ƒç”¨é—´éš”å¿…é¡»å¤§äºpwmå‘¨æœŸ
     PWM_MODE_PULSE
 };
 
 
-// Ó²¼şpwmĞÅÏ¢
+// ç¡¬ä»¶pwmä¿¡æ¯
 typedef struct
 {
-    unsigned int gpio;                      // PWMnËùÔÚµÄgpio
-    unsigned int mode;                      // ¹¤×÷Ä£Ê½(µ¥Âö³å¡¢Á¬ĞøÂö³å)
-    float duty;                             // pwmµÄÕ¼¿Õ±È
-    unsigned long period_ns;                // pwmÖÜÆÚ(µ¥Î»ns)
+    unsigned int gpio;                      // PWMnæ‰€åœ¨çš„gpio
+    unsigned int mode;                      // å·¥ä½œæ¨¡å¼(å•è„‰å†²ã€è¿ç»­è„‰å†²)
+    float duty;                             // pwmçš„å ç©ºæ¯”
+    unsigned long period_ns;                // pwmå‘¨æœŸ(å•ä½ns)
 }pwm_info_t;
 
 
 
 
 /*
- * ³õÊ¼»¯PWMn
- * @pwm_info PWMnµÄÏêÏ¸ĞÅÏ¢
+ * åˆå§‹åŒ–PWMn
+ * @pwm_info PWMnçš„è¯¦ç»†ä¿¡æ¯
  */
 void pwm_init(pwm_info_t *pwm_info);
 
 
 /*
- * ½ûÖ¹pwm
- * @pwm_info PWMnµÄÏêÏ¸ĞÅÏ¢
+ * ç¦æ­¢pwm
+ * @pwm_info PWMnçš„è¯¦ç»†ä¿¡æ¯
  */
 void pwm_disable(pwm_info_t *pwm_info);
 
 
 
 /*
- * Ê¹ÄÜPWM
- * @pwm_info PWMnµÄÏêÏ¸ĞÅÏ¢
+ * ä½¿èƒ½PWM
+ * @pwm_info PWMnçš„è¯¦ç»†ä¿¡æ¯
  */
 void pwm_enable(pwm_info_t *pwm_info);
 

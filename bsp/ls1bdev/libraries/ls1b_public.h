@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,17 +19,17 @@
 
 // pmon提供的打印函数，见main()函数
 struct callvectors {
-	int     (*open) (char *, int, int);
-	int     (*close) (int);
-	int     (*read) (int, void *, int);
-	int     (*write) (int, void *, int);
-	long long   (*lseek) (int, long long, int);
-	int     (*printf) (const char *, ...);
-	void    (*cacheflush) (void);
-	char    *(*gets) (char *);
+    int     (*open) (char *, int, int);
+    int     (*close) (int);
+    int     (*read) (int, void *, int);
+    int     (*write) (int, void *, int);
+    long long   (*lseek) (int, long long, int);
+    int     (*printf) (const char *, ...);
+    void    (*cacheflush) (void);
+    char    *(*gets) (char *);
 };
-#define	myprintf (*callvec->printf)
-#define	mygets   (*callvec->gets)
+#define myprintf (*callvec->printf)
+#define mygets   (*callvec->gets)
 extern struct callvectors *callvec;
 
 
@@ -40,7 +40,7 @@ extern struct callvectors *callvec;
 
 typedef enum
 {
-    FALSE=0, 
+    FALSE=0,
     TRUE=1
 }BOOL;
 

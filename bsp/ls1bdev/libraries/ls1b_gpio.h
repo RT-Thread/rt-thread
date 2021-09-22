@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,15 +40,15 @@ typedef enum{
 
 typedef enum {
     // 上升沿触发
-	IRQ_TYPE_EDGE_RISING	= 0x00000001,
-	// 下降沿触发
-	IRQ_TYPE_EDGE_FALLING	= 0x00000002,
-	IRQ_TYPE_EDGE_BOTH	= (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING),
-	// 高电平触发
-	IRQ_TYPE_LEVEL_HIGH	= 0x00000004,
-	// 低电平触发
-	IRQ_TYPE_LEVEL_LOW	= 0x00000008,
-	IRQ_TYPE_LEVEL_MASK	= (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH),	
+    IRQ_TYPE_EDGE_RISING    = 0x00000001,
+    // 下降沿触发
+    IRQ_TYPE_EDGE_FALLING   = 0x00000002,
+    IRQ_TYPE_EDGE_BOTH  = (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING),
+    // 高电平触发
+    IRQ_TYPE_LEVEL_HIGH = 0x00000004,
+    // 低电平触发
+    IRQ_TYPE_LEVEL_LOW  = 0x00000008,
+    IRQ_TYPE_LEVEL_MASK = (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH),
 }gpio_irq_type_t;
 
 

@@ -13,7 +13,7 @@
 
 //#define GMAC_DEBUG
 #include <rtthread.h>
-#ifdef GMAC_DEBUG    
+#ifdef GMAC_DEBUG
 #define DEBUG_MES    rt_kprintf
 #else
 #define DEBUG_MES(...)

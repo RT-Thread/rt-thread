@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     ÇÚÎª±¾       first version
+ * 2017-09-06     å‹¤ä¸ºæœ¬       first version
  */
 
 
@@ -15,22 +15,22 @@
 
 
 /*
- * ÑÓÊ±Ö¸¶¨Ê±¼ä£¬µ¥Î»ms
- * @j ÑÓÊ±Ê±¼ä£¬µ¥Î»ms
+ * å»¶æ—¶æŒ‡å®šæ—¶é—´ï¼Œå•ä½ms
+ * @j å»¶æ—¶æ—¶é—´ï¼Œå•ä½ms
  */
 void delay_ms(int j);
 
 
 /*
- * ÑÓÊ±Ö¸¶¨Ê±¼ä£¬µ¥Î»us
- * @n ÑÓÊ±Ê±¼ä£¬µ¥Î»us
+ * å»¶æ—¶æŒ‡å®šæ—¶é—´ï¼Œå•ä½us
+ * @n å»¶æ—¶æ—¶é—´ï¼Œå•ä½us
  */
 void delay_us(int n);
 
 
 /*
- * ÑÓÊ±Ö¸¶¨Ê±¼ä£¬µ¥Î»s
- * @i ÑÓÊ±Ê±¼ä£¬µ¥Î»s
+ * å»¶æ—¶æŒ‡å®šæ—¶é—´ï¼Œå•ä½s
+ * @i å»¶æ—¶æ—¶é—´ï¼Œå•ä½s
  */
 void delay_s(int i);
 

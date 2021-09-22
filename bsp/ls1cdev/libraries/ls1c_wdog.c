@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,13 +22,13 @@
 static unsigned int WDT_timer = 0;
 
 /* 暂时为空 */
-unsigned int Wdog_Init(void)              
+unsigned int Wdog_Init(void)
 {
     return 0;
 }
 
 /* 配置看门狗使能寄存器(WDT_EN) */
-unsigned int Wdog_Enable(void)       
+unsigned int Wdog_Enable(void)
 {
     unsigned int ctrl;
     ctrl = (WDT_EN);
@@ -39,7 +39,7 @@ unsigned int Wdog_Enable(void)
 }
 
 /* 配置看门狗失能寄存器(WDT_EN) */
-unsigned int Wdog_Disable(void)           
+unsigned int Wdog_Disable(void)
 {
     unsigned int ctrl;
     ctrl = (WDT_EN);
@@ -49,7 +49,7 @@ unsigned int Wdog_Disable(void)
 }
 
 /* 配置看门狗设置寄存器 (WDT_SET) */
-unsigned int Wdog_Set(void)               
+unsigned int Wdog_Set(void)
 {
     unsigned int ctrl;
     ctrl = (WDT_SET);
@@ -59,7 +59,7 @@ unsigned int Wdog_Set(void)
 }
 
 /* 配置看门狗设置寄存器 (WDT_SET) */
-unsigned int Wdog_Reset(void)             
+unsigned int Wdog_Reset(void)
 {
     unsigned int ctrl;
     ctrl = (WDT_SET);
@@ -69,7 +69,7 @@ unsigned int Wdog_Reset(void)
 }
 
 /* 获得看门狗计数器(WDT_timer) 的值*/
-unsigned int Wdog_GetValue(void)          
+unsigned int Wdog_GetValue(void)
 {
     unsigned int cnt;
     cnt = (WDT_TIMER);
@@ -77,7 +77,7 @@ unsigned int Wdog_GetValue(void)
 }
 
 /* 配置看门狗计数器(WDT_timer)的值*/
-unsigned int Wdog_LoadValue(unsigned int cnt)    
+unsigned int Wdog_LoadValue(unsigned int cnt)
 {
     WDT_TIMER = cnt;
     WDT_timer = cnt;
@@ -85,7 +85,7 @@ unsigned int Wdog_LoadValue(unsigned int cnt)
 }
 
 /* 获得看门狗计数器设定值 */
-unsigned int Wdog_GetPreValue(void)    
+unsigned int Wdog_GetPreValue(void)
 {
     return WDT_timer;
 }

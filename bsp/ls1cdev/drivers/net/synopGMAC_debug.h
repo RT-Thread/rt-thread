@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,8 +14,8 @@
 
 //#define GMAC_DEBUG
 #include <rtthread.h>
-#ifdef GMAC_DEBUG	
-#define DEBUG_MES	rt_kprintf
+#ifdef GMAC_DEBUG
+#define DEBUG_MES   rt_kprintf
 #else
 #define DEBUG_MES(...)
 #endif
