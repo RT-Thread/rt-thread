@@ -7,6 +7,7 @@
  * Date           Author         Notes
  * 2019-07-29     zdzn           first version
  * 2021-07-31     GuEe-GUI       config the memory/io address map
+ * 2021-09-11     GuEe-GUI       remove do-while in rt_hw_timer_isr
  */
 
 #include <rthw.h>
@@ -18,38 +19,34 @@
 
 void rt_hw_vector_init(void);
 
-static uint64_t tickval = 0;
+static uint64_t timer_val;
+static uint64_t timer_step;
 
 void rt_hw_timer_isr(int vector, void *parameter)
 {
-    uint64_t cntvct_el0;
-
-    do
-    {
-        tickval += 0xF424;
-        __asm__ volatile ("msr CNTV_CVAL_EL0, %0"::"r"(tickval));
-        __asm__ volatile ("mrs %0, CNTVCT_EL0":"=r"(cntvct_el0));
-    }
-    while (cntvct_el0 >= tickval);
+    timer_val += timer_step;
+    __asm__ volatile ("msr CNTV_CVAL_EL0, %0"::"r"(timer_val));
+    __asm__ volatile ("isb":::"memory");
 
     rt_tick_increase();
 }
 
-int rt_hw_timer_init()
+int rt_hw_timer_init(void)
 {
-    uint64_t val;
-
     rt_hw_interrupt_install(27, rt_hw_timer_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(27);
 
-    val = 0;
-    __asm__ volatile ("msr CNTV_CTL_EL0, %0"::"r"(val));
-    val = 0x03B9ACA0;
-    __asm__ volatile ("msr CNTFRQ_EL0, %0"::"r"(val));
-    tickval += 0xF424;
-    __asm__ volatile ("msr CNTV_CVAL_EL0, %0"::"r"(tickval));
-    val = 1;
-    __asm__ volatile ("msr CNTV_CTL_EL0, %0"::"r"(val));
+    __asm__ volatile ("msr CNTV_CTL_EL0, %0"::"r"(0));
+
+    __asm__ volatile ("isb 0xf":::"memory");
+    __asm__ volatile ("mrs %0, CNTFRQ_EL0" : "=r" (timer_step));
+    timer_step /= RT_TICK_PER_SECOND;
+    timer_val = timer_step;
+    __asm__ volatile ("dsb 0xf":::"memory");
+
+    __asm__ volatile ("msr CNTV_CVAL_EL0, %0"::"r"(timer_val));
+    __asm__ volatile ("msr CNTV_CTL_EL0, %0"::"r"(1));
+
     return 0;
 }
 
@@ -73,6 +70,8 @@ void rt_hw_board_init(void)
     cont >>= 21;
     /* memory location */
     armv8_map_2M(0x40000000, 0x40000000, cont, MEM_ATTR_MEMORY);
+    /* virtio blk0 */
+    armv8_map_2M(VIRTIO_MMIO_BLK0_BASE, VIRTIO_MMIO_BLK0_BASE, 0x1, MEM_ATTR_IO);
     /* uart location*/
     armv8_map_2M(PL011_UART0_BASE, PL011_UART0_BASE, 0x1, MEM_ATTR_IO);
     /* gic location*/
