@@ -292,3 +292,145 @@ struct rt_hwtimer_info *ch32f1_hwtimer_info_config_get(TIM_TypeDef *timx)
 
     return info;
 }
+
+void ch32f1_pwm_io_init(TIM_TypeDef *timx, rt_uint8_t channel)
+{
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+    if (timx == TIM1)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+        if (channel == TIM_Channel_1)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_2)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_3)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_4)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+    }
+
+    if (timx == TIM2)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+        if (channel == TIM_Channel_1)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_2)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_3)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_4)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+    }
+
+    if (timx == TIM3)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+        if (channel == TIM_Channel_1)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_2)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOA, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_3)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_4)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
+        }
+    }
+
+    if (timx == TIM4)
+    {
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+        if (channel == TIM_Channel_1)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_2)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_3)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
+        }
+        if (channel == TIM_Channel_4)
+        {
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
+        }
+    }
+}
