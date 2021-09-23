@@ -1,0 +1,24 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path =  [cwd]
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/APM32F10x_Library/Device/Geehy/APM32F10x/Source/ARM/startup_apm32f10x_hd.s']
+
+# You can select chips from the list above
+CPPDEFINES = ['APM32F103xE']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')
