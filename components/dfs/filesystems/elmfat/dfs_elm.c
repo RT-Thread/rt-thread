@@ -945,7 +945,7 @@ DWORD get_fattime(void)
 {
     DWORD fat_time = 0;
 
-#ifdef RT_LIBC_USING_TIME
+#if defined(RT_LIBC_USING_TIME) || defined(RT_USING_LIBC)
     time_t now;
     struct tm *p_tm;
     struct tm tm_now;
@@ -968,7 +968,7 @@ DWORD get_fattime(void)
                (DWORD)tm_now.tm_hour        << 11 |
                (DWORD)tm_now.tm_min         <<  5 |
                (DWORD)tm_now.tm_sec / 2 ;
-#endif /* RT_USING_LIBC  */
+#endif /* defined(RT_LIBC_USING_TIME) || defined(RT_USING_LIBC) */
 
     return fat_time;
 }
