@@ -303,6 +303,7 @@ void _system(const char *s)
 void __libc_init_array(void)
 {
     /* we not use __libc init_aray to initialize C++ objects */
+    /* __libc_init_array is ARM code, not Thumb; it will cause hardfault. */
 }
 
 mode_t umask(mode_t mask)
