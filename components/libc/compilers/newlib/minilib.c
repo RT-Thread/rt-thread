@@ -64,3 +64,9 @@ void * _sbrk_r(struct _reent *ptr, ptrdiff_t incr)
     return RT_NULL;
 }
 #endif /*RT_USING_HEAP*/
+
+void __libc_init_array(void)
+{
+    /* we not use __libc init_aray to initialize C++ objects */
+    /* __libc_init_array is ARM code, not Thumb; it will cause hardfault. */
+}
