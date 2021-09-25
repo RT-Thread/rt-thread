@@ -7,6 +7,8 @@ LIBS = []
 LIBPATH = []
 CPPPATH = [cwd]
 
+CPPDEFINES = ['_CRT_DECLARE_NONSTDC_NAMES=0'] # avoid to conflict with the inherent STDC in VS
+
 # remove no need file.
 if GetDepend('PKG_USING_GUIENGINE') == False:
     SrcRemove(src, 'sdl_fb.c')
@@ -30,6 +32,6 @@ if sys.platform[0:5]=="linux": #check whether under linux
     SrcRemove(src, ['module_win32.c', 'dfs_win32.c'])
 
 group = DefineGroup('Drivers', src, depend = [''],
-                    CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH)
+                    CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')
