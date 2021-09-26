@@ -20,48 +20,24 @@
 #include <rtdbg.h>
 
 #ifdef RT_USING_HEAP /* Memory routine */
-void *_malloc_r (struct _reent *ptr, size_t size)
+void *malloc(size_t size)
 {
-    void* result;
-
-    result = (void*)rt_malloc (size);
-    if (result == RT_NULL)
-    {
-        ptr->_errno = ENOMEM;
-    }
-
-    return result;
+    return rt_malloc(size);
 }
 
-void *_realloc_r (struct _reent *ptr, void *old, size_t newlen)
+void *realloc(void *old, size_t newlen)
 {
-    void* result;
-
-    result = (void*)rt_realloc (old, newlen);
-    if (result == RT_NULL)
-    {
-        ptr->_errno = ENOMEM;
-    }
-
-    return result;
+    return rt_realloc(old, newlen);
 }
 
-void *_calloc_r (struct _reent *ptr, size_t size, size_t len)
+void *calloc(size_t size, size_t len)
 {
-    void* result;
-
-    result = (void*)rt_calloc (size, len);
-    if (result == RT_NULL)
-    {
-        ptr->_errno = ENOMEM;
-    }
-
-    return result;
+    return rt_calloc(size, len);
 }
 
-void _free_r (struct _reent *ptr, void *addr)
+void free(void *addr)
 {
-    rt_free (addr);
+    rt_free(addr);
 }
 
 #else
