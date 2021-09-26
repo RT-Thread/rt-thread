@@ -28,7 +28,9 @@
 #endif /* RT_USING_MODULE */
 
 /* use precision */
-#define RT_PRINTF_PRECISION
+#ifndef RT_KSERVICE_USING_PRINTF_PRECISION
+#define RT_KSERVICE_USING_PRINTF_PRECISION
+#endif
 
 /**
  * @addtogroup KernelService
@@ -201,7 +203,7 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 }
 RTM_EXPORT(rt_memset);
 
-#ifndef RT_USING_ASM_MEMCPY
+#ifndef RT_KSERVICE_USING_ASM_MEMCPY
 /**
  * This function will copy memory content from source address to destination address.
  *
@@ -285,7 +287,7 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memcpy);
-#endif /* RT_USING_ASM_MEMCPY */
+#endif /* RT_KSERVICE_USING_ASM_MEMCPY */
 
 #ifndef RT_KSERVICE_USING_STDLIB
 
@@ -586,7 +588,7 @@ RTM_EXPORT(rt_show_version);
 /* private function */
 #define _ISDIGIT(c)  ((unsigned)((c) - '0') < 10)
 
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KSERVICE_USING_PRINTF_LONGLONG
 /**
  * This function will duplicate a string.
  *
@@ -633,7 +635,7 @@ rt_inline int divide(long *n, int base)
 
     return res;
 }
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KSERVICE_USING_PRINTF_LONGLONG */
 
 rt_inline int skip_atoi(const char **s)
 {
@@ -652,14 +654,14 @@ rt_inline int skip_atoi(const char **s)
 #define SPECIAL     (1 << 5)    /* 0x */
 #define LARGE       (1 << 6)    /* use 'ABCDEF' instead of 'abcdef' */
 
-#ifdef RT_PRINTF_PRECISION
+#ifdef RT_KSERVICE_USING_PRINTF_PRECISION
 static char *print_number(char *buf,
                           char *end,
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KSERVICE_USING_PRINTF_LONGLONG
                           long long  num,
 #else
                           long  num,
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KSERVICE_USING_PRINTF_LONGLONG */
                           int   base,
                           int   s,
                           int   precision,
@@ -667,22 +669,22 @@ static char *print_number(char *buf,
 #else
 static char *print_number(char *buf,
                           char *end,
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KSERVICE_USING_PRINTF_LONGLONG
                           long long  num,
 #else
                           long  num,
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KSERVICE_USING_PRINTF_LONGLONG */
                           int   base,
                           int   s,
                           int   type)
-#endif /* RT_PRINTF_PRECISION */
+#endif /* RT_KSERVICE_USING_PRINTF_PRECISION */
 {
     char c, sign;
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KSERVICE_USING_PRINTF_LONGLONG
     char tmp[32];
 #else
     char tmp[16];
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KSERVICE_USING_PRINTF_LONGLONG */
     int precision_bak = precision;
     const char *digits;
     static const char small_digits[] = "0123456789abcdef";
@@ -732,13 +734,13 @@ static char *print_number(char *buf,
             tmp[i++] = digits[divide(&num, base)];
     }
 
-#ifdef RT_PRINTF_PRECISION
+#ifdef RT_KSERVICE_USING_PRINTF_PRECISION
     if (i > precision)
         precision = i;
     size -= precision;
 #else
     size -= i;
-#endif /* RT_PRINTF_PRECISION */
+#endif /* RT_KSERVICE_USING_PRINTF_PRECISION */
 
     if (!(type & (ZEROPAD | LEFT)))
     {
@@ -797,14 +799,14 @@ static char *print_number(char *buf,
         }
     }
 
-#ifdef RT_PRINTF_PRECISION
+#ifdef RT_KSERVICE_USING_PRINTF_PRECISION
     while (i < precision--)
     {
         if (buf < end)
             *buf = '0';
         ++ buf;
     }
-#endif /* RT_PRINTF_PRECISION */
+#endif /* RT_KSERVICE_USING_PRINTF_PRECISION */
 
     /* put number in the temporary buffer */
     while (i-- > 0 && (precision_bak != 0))
@@ -842,11 +844,11 @@ rt_int32_t rt_vsnprintf(char       *buf,
                         const char *fmt,
                         va_list     args)
 {
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KSERVICE_USING_PRINTF_LONGLONG
     unsigned long long num;
 #else
     rt_uint32_t num;
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KSERVICE_USING_PRINTF_LONGLONG */
     int i, len;
     char *str, *end, c;
     const char *s;
@@ -856,9 +858,9 @@ rt_int32_t rt_vsnprintf(char       *buf,
     rt_uint8_t qualifier;       /* 'h', 'l', or 'L' for integer fields */
     rt_int32_t field_width;     /* width of output field */
 
-#ifdef RT_PRINTF_PRECISION
+#ifdef RT_KSERVICE_USING_PRINTF_PRECISION
     int precision;      /* min. # of digits for integers and max for a string */
-#endif /* RT_PRINTF_PRECISION */
+#endif /* RT_KSERVICE_USING_PRINTF_PRECISION */
 
     str = buf;
     end = buf + size;
@@ -910,7 +912,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             }
         }
 
-#ifdef RT_PRINTF_PRECISION
+#ifdef RT_KSERVICE_USING_PRINTF_PRECISION
         /* get the precision */
         precision = -1;
         if (*fmt == '.')
@@ -925,24 +927,24 @@ rt_int32_t rt_vsnprintf(char       *buf,
             }
             if (precision < 0) precision = 0;
         }
-#endif /* RT_PRINTF_PRECISION */
+#endif /* RT_KSERVICE_USING_PRINTF_PRECISION */
         /* get the conversion qualifier */
         qualifier = 0;
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KSERVICE_USING_PRINTF_LONGLONG
         if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
 #else
         if (*fmt == 'h' || *fmt == 'l')
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KSERVICE_USING_PRINTF_LONGLONG */
         {
             qualifier = *fmt;
             ++ fmt;
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KSERVICE_USING_PRINTF_LONGLONG
             if (qualifier == 'l' && *fmt == 'l')
             {
                 qualifier = 'L';
                 ++ fmt;
             }
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KSERVICE_USING_PRINTF_LONGLONG */
         }
 
         /* the default base */
@@ -978,9 +980,9 @@ rt_int32_t rt_vsnprintf(char       *buf,
             if (!s) s = "(NULL)";
 
             for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
-#ifdef RT_PRINTF_PRECISION
+#ifdef RT_KSERVICE_USING_PRINTF_PRECISION
             if (precision > 0 && len > precision) len = precision;
-#endif /* RT_PRINTF_PRECISION */
+#endif /* RT_KSERVICE_USING_PRINTF_PRECISION */
 
             if (!(flags & LEFT))
             {
@@ -1011,7 +1013,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
                 field_width = sizeof(void *) << 1;
                 flags |= ZEROPAD;
             }
-#ifdef RT_PRINTF_PRECISION
+#ifdef RT_KSERVICE_USING_PRINTF_PRECISION
             str = print_number(str, end,
                                (long)va_arg(args, void *),
                                16, field_width, precision, flags);
@@ -1019,7 +1021,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             str = print_number(str, end,
                                (long)va_arg(args, void *),
                                16, field_width, flags);
-#endif /* RT_PRINTF_PRECISION */
+#endif /* RT_KSERVICE_USING_PRINTF_PRECISION */
             continue;
 
         case '%':
@@ -1060,12 +1062,12 @@ rt_int32_t rt_vsnprintf(char       *buf,
             continue;
         }
 
-#ifdef RT_PRINTF_LONGLONG
+#ifdef RT_KSERVICE_USING_PRINTF_LONGLONG
         if (qualifier == 'L') num = va_arg(args, long long);
         else if (qualifier == 'l')
 #else
         if (qualifier == 'l')
-#endif /* RT_PRINTF_LONGLONG */
+#endif /* RT_KSERVICE_USING_PRINTF_LONGLONG */
         {
             num = va_arg(args, rt_uint32_t);
             if (flags & SIGN) num = (rt_int32_t)num;
@@ -1080,11 +1082,11 @@ rt_int32_t rt_vsnprintf(char       *buf,
             num = va_arg(args, rt_uint32_t);
             if (flags & SIGN) num = (rt_int32_t)num;
         }
-#ifdef RT_PRINTF_PRECISION
+#ifdef RT_KSERVICE_USING_PRINTF_PRECISION
         str = print_number(str, end, num, base, field_width, precision, flags);
 #else
         str = print_number(str, end, num, base, field_width, flags);
-#endif /* RT_PRINTF_PRECISION */
+#endif /* RT_KSERVICE_USING_PRINTF_PRECISION */
     }
 
     if (size > 0)
