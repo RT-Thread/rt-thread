@@ -85,16 +85,13 @@ void __libc_init_array(void)
 #ifdef RT_USING_LIBC
 #include <reent.h>
 #include <stdio.h>
+#include "libc.h"
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 #endif
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif
-
-#define DBG_TAG    "newlib.syscalls"
-#define DBG_LVL    DBG_INFO
-#include <rtdbg.h>
 
 /* Reentrant versions of system calls.  */
 
