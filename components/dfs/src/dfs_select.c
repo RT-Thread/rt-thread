@@ -12,7 +12,7 @@
 #include <dfs_posix.h>
 
 #include <poll.h>
-#include <dfs_select.h>
+#include <sys/select.h>
 
 #ifdef RT_USING_POSIX
 
