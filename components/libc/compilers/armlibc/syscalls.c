@@ -152,8 +152,8 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 #ifdef RT_USING_POSIX
         if (libc_stdio_get_console() < 0)
         {
-            LOG_E("invoke standard output before initializing libc");
-            return -1;
+            LOG_W("Do not invoke standard output before initializing libc");
+            return 0;
         }
         size = read(STDIN_FILENO, buf, len);
         return len - size;
@@ -197,8 +197,8 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 #ifdef RT_USING_POSIX
         if (libc_stdio_get_console() < 0)
         {
-            LOG_E("invoke standard input before initializing libc");
-            return -1;
+            LOG_W("Do not invoke standard input before initializing libc");
+            return 0;
         }
         size = write(STDOUT_FILENO, buf, len);
         return len - size;

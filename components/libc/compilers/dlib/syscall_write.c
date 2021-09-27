@@ -36,8 +36,8 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
 #ifdef RT_USING_POSIX
         if (libc_stdio_get_console() < 0)
         {
-            LOG_E("invoke standard output before initializing libc");
-            return _LLIO_ERROR;
+            LOG_W("Do not invoke standard output before initializing libc");
+            return 0;
         }
         return write(STDOUT_FILENO, (void*)buf, len);
 #else
