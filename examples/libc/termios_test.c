@@ -16,7 +16,7 @@
 
 #if defined (RT_USING_POSIX)
     #include <dfs_posix.h>
-    #include <dfs_select.h>
+    #include <sys/select.h>
     #if defined (RT_USING_POSIX_TERMIOS)
         #include <termios.h>
     #else

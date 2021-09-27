@@ -14,7 +14,7 @@
 #include <lwp_syscall.h>
 
 #include <poll.h>
-#include <dfs_select.h>
+#include <sys/select.h>
 
 #if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
 #include <sys/socket.h>
