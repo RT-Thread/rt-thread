@@ -51,3 +51,4 @@ msh />
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0 |
+| VIRTIO BLK | 支持 | VIRTIO BLK0 |

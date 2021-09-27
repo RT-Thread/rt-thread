@@ -12,6 +12,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <board.h>
+#include <stddef.h>
 
 #include "cache.h"
 #include "mips_mmu.h"
