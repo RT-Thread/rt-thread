@@ -12,17 +12,82 @@
  */
 
 #include <reent.h>
-#include <sys/errno.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/time.h>
-
 #include <rtthread.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <sys/errno.h>
 
+#define DBG_TAG    "newlib.syscalls"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
+#ifdef RT_USING_HEAP /* Memory routine */
+void *_malloc_r (struct _reent *ptr, size_t size)
+{
+    void* result;
+
+    result = (void*)rt_malloc (size);
+    if (result == RT_NULL)
+    {
+        ptr->_errno = ENOMEM;
+    }
+
+    return result;
+}
+
+void *_realloc_r (struct _reent *ptr, void *old, size_t newlen)
+{
+    void* result;
+
+    result = (void*)rt_realloc (old, newlen);
+    if (result == RT_NULL)
+    {
+        ptr->_errno = ENOMEM;
+    }
+
+    return result;
+}
+
+void *_calloc_r (struct _reent *ptr, size_t size, size_t len)
+{
+    void* result;
+
+    result = (void*)rt_calloc (size, len);
+    if (result == RT_NULL)
+    {
+        ptr->_errno = ENOMEM;
+    }
+
+    return result;
+}
+
+void _free_r (struct _reent *ptr, void *addr)
+{
+    rt_free (addr);
+}
+
+#else
+void *
+_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
+{
+    LOG_E("Please enable RT_USING_HEAP or RT_USING_LIBC");
+    RT_ASSERT(0);
+    return RT_NULL;
+}
+#endif /*RT_USING_HEAP*/
+
+void __libc_init_array(void)
+{
+    /* we not use __libc init_aray to initialize C++ objects */
+    /* __libc_init_array is ARM code, not Thumb; it will cause a hardfault. */
+}
+
+#ifdef RT_USING_LIBC
+#include <reent.h>
+#include <stdio.h>
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 #endif
-
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif
@@ -246,58 +311,11 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 #endif
 }
 
-#ifdef RT_USING_HEAP /* Memory routine */
-void *_malloc_r (struct _reent *ptr, size_t size)
+void _system(const char *s)
 {
-    void* result;
-
-    result = (void*)rt_malloc (size);
-    if (result == RT_NULL)
-    {
-        ptr->_errno = ENOMEM;
-    }
-
-    return result;
+    extern int __rt_libc_system(const char *string);
+    __rt_libc_system(s);
 }
-
-void *_realloc_r (struct _reent *ptr, void *old, size_t newlen)
-{
-    void* result;
-
-    result = (void*)rt_realloc (old, newlen);
-    if (result == RT_NULL)
-    {
-        ptr->_errno = ENOMEM;
-    }
-
-    return result;
-}
-
-void *_calloc_r (struct _reent *ptr, size_t size, size_t len)
-{
-    void* result;
-
-    result = (void*)rt_calloc (size, len);
-    if (result == RT_NULL)
-    {
-        ptr->_errno = ENOMEM;
-    }
-
-    return result;
-}
-
-void _free_r (struct _reent *ptr, void *addr)
-{
-    rt_free (addr);
-}
-
-#else
-void *
-_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
-{
-    return RT_NULL;
-}
-#endif /*RT_USING_HEAP*/
 
 /* for exit() and abort() */
 __attribute__ ((noreturn)) void _exit (int status)
@@ -305,17 +323,6 @@ __attribute__ ((noreturn)) void _exit (int status)
     extern void __rt_libc_exit(int status);
     __rt_libc_exit(status);
     while(1);
-}
-
-void _system(const char *s)
-{
-    extern int __rt_libc_system(const char *string);
-    __rt_libc_system(s);
-}
-
-void __libc_init_array(void)
-{
-    /* we not use __libc init_aray to initialize C++ objects */
 }
 
 mode_t umask(mode_t mask)
@@ -333,3 +340,5 @@ These functions are implemented and replaced by the 'common/time.c' file
 int _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp);
 _CLOCK_T_  _times_r(struct _reent *ptr, struct tms *ptms);
 */
+
+#endif /* RT_USING_LIBC */

@@ -50,3 +50,4 @@ msh />
 | Driver | Condition | Remark |
 | ------ | --------- | ------ |
 | UART   | Support   | UART0  |
+| VIRTIO BLK | Support | VIRTIO BLK0 |

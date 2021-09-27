@@ -56,7 +56,7 @@ if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_lptim.c']
 
-if GetDepend(['BSP_USING_ETH']):
+if GetDepend(['BSP_USING_ETH']) or GetDepend(['BSP_USING_ETH_H750']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth_ex.c']
 
