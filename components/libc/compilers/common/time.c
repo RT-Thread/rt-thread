@@ -29,7 +29,7 @@
 #include <rtdevice.h>
 #endif
 
-#define DBG_TAG    "TIME"
+#define DBG_TAG    "time"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
@@ -239,6 +239,29 @@ RTM_EXPORT(mktime);
 
 char* asctime_r(const struct tm *t, char *buf)
 {
+    /* Checking input validity */
+    if (rt_strlen(days) <= (t->tm_wday << 2) || rt_strlen(months) <= (t->tm_mon << 2))
+    {
+        LOG_W("asctime_r: the input parameters exceeded the limit, please check it.");
+        *(int*) buf = *(int*) days;
+        *(int*) (buf + 4) = *(int*) months;
+        num2str(buf + 8, t->tm_mday);
+        if (buf[8] == '0')
+            buf[8] = ' ';
+        buf[10] = ' ';
+        num2str(buf + 11, t->tm_hour);
+        buf[13] = ':';
+        num2str(buf + 14, t->tm_min);
+        buf[16] = ':';
+        num2str(buf + 17, t->tm_sec);
+        buf[19] = ' ';
+        num2str(buf + 20, 2000 / 100);
+        num2str(buf + 22, 2000 % 100);
+        buf[24] = '\n';
+        buf[25] = '\0';
+        return buf;
+    }
+
     /* "Wed Jun 30 21:49:08 1993\n" */
     *(int*) buf = *(int*) (days + (t->tm_wday << 2));
     *(int*) (buf + 4) = *(int*) (months + (t->tm_mon << 2));
