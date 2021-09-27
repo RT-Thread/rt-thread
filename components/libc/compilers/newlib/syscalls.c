@@ -12,8 +12,9 @@
  */
 
 #include <reent.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/time.h>
 
 #include <rtthread.h>
@@ -219,7 +220,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
-    if (fileno(stdout) == fd)
+    if (STDOUT_FILENO == fd)
     {
         rt_device_t console;
 
