@@ -15,6 +15,10 @@
 #include <yfuns.h>
 #include "libc.h"
 
+#define DBG_TAG    "dlib.syscall_read"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #pragma module_name = "?__read"
 size_t __read(int handle, unsigned char *buf, size_t len)
 {
@@ -25,6 +29,11 @@ size_t __read(int handle, unsigned char *buf, size_t len)
     if (handle == _LLIO_STDIN)
     {
 #ifdef RT_USING_POSIX
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_E("invoke standard input before initializing libc");
+            return _LLIO_ERROR;
+        }
         return read(STDIN_FILENO, buf, len);
 #else
         return _LLIO_ERROR;

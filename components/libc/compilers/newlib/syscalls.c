@@ -26,6 +26,10 @@
 #include <dlmodule.h>
 #endif
 
+#define DBG_TAG    "newlib.syscalls"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 /* Reentrant versions of system calls.  */
 
 #ifndef _REENT_ONLY
@@ -155,7 +159,11 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
     return -1;
 #else
     _ssize_t rc;
-
+    if (libc_stdio_get_console() < 0 && fd == STDIN_FILENO)
+    {
+        LOG_E("invoke standard input before initializing libc");
+        return -1;
+    }
     rc = read(fd, buf, nbytes);
     return rc;
 #endif
@@ -227,7 +235,11 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 #endif /*RT_USING_DEVICE*/
 #else
     _ssize_t rc;
-
+    if (libc_stdio_get_console() < 0 && fd == STDOUT_FILENO)
+    {
+        LOG_E("invoke standard output before initializing libc");
+        return -1;
+    }
     rc = write(fd, buf, nbytes);
     return rc;
 #endif
