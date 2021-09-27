@@ -24,7 +24,7 @@ static struct rt_memheap system_heap;
 #endif
 
 /**
-  * @brief  Perform the SDRAM exernal memory inialization sequence
+  * @brief
   * @param  hsdram: SDRAM handle
   * @param  Command: Pointer to SDRAM command structure
   * @retval None
@@ -51,7 +51,7 @@ static void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM
 
     /* Insert 100 ms delay */
     /* interrupt is not enable, just to delay some time. */
-    for (tmpmrd = 0; tmpmrd < 0xffffff; tmpmrd ++)
+    for (tmpmrd = 0; tmpmrd < 0xffff; tmpmrd ++)
         ;
 
     /* Configure a PALL (precharge all) command */

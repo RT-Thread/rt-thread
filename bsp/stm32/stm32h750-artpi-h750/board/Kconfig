@@ -15,6 +15,51 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART4
         default n
 
+    config BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH (spi1)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select PKG_USING_FAL
+        select FAL_USING_SFUD_PORT
+        select RT_USING_SFUD
+        default n
+        
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (w25q64 qspi)"
+        select BSP_USING_QSPI
+        select FAL_USING_SFUD_PORT
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
+
+    menuconfig BSP_USING_FS
+        bool "Enable filesystem"
+        select RT_USING_DFS
+        select RT_USING_DFS_ROMFS
+        default n
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FS
+                bool "Enable SDCARD filesystem"
+                select BSP_USING_SDIO_ARTPI
+                select BSP_USING_SDIO1
+                select RT_USING_DFS_ELMFAT
+                default n        
+            config BSP_USING_SPI_FLASH_FS
+                bool "Enable SPI FLASH filesystem"
+                select BSP_USING_SPI_FLASH
+                select RT_USING_MTD_NOR
+                select PKG_USING_LITTLEFS
+                default n
+        endif
+
+    config BSP_USING_WIFI
+        bool "Enable wifi (AP6212)"
+        select ART_PI_USING_WIFI_6212_LIB
+        select BSP_USING_SPI_FLASH
+        select RT_USING_WIFI
+        select RT_USING_SAL
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -116,11 +161,110 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
         
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+        endif
+        
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_GPIO
+        select BSP_USING_SDRAM
+        select RT_USING_MEMHEAP
+        default n
+
+    menuconfig BSP_USING_SDIO_ARTPI
+        bool "Enable SDIO"
+        default n
+        select RT_USING_SDIO
+        if BSP_USING_SDIO_ARTPI
+            config BSP_USING_SDIO1
+                bool "Enable SDIO1"
+                default n
+            config BSP_USING_SDIO2
+                bool "Enable SDIO2"
+                default n
+        endif
+
+    config BSP_USING_USBD
+        bool "Enable USB Device"
+        select RT_USING_USB_DEVICE
+        default n
+
+    menuconfig BSP_USING_USBH
+        bool "Enable USB Host"
+        select RT_USING_USB_HOST
+        default n
+        if BSP_USING_USBH
+            menuconfig RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                select RT_USING_DFS
+                select RT_USING_DFS_ELMFAT
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                        string "Udisk mount dir"
+                        default "/"
+                endif
+        endif
+        
+    menuconfig BSP_USING_ETH_H750
+        bool "Enable Ethernet"
+        default n        
+        select RT_USING_LWIP
+        if BSP_USING_ETH_H750
+            config ETH_RESET_PIN
+                string "ETH RESET PIN"
+                default "PA.3"
+        endif
+        if BSP_USING_ETH_H750
+            choice
+                prompt "Choose ETH PHY"
+                default PHY_USING_LAN8720A
+                        config PHY_USING_LAN8720A
+                    bool "USING LAN8720A"
+                    default n
+            endchoice
+        endif
+
+    config BSP_USING_LTDC
+        bool
+        default n        
     source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
 
-menu "Board extended module Drivers"
+menu "External Libraries"
+
+    config ART_PI_USING_WIFI_6212_LIB
+        bool "Using Wifi(AP6212) Library"
+        select PKG_USING_EASYFLASH        
+        select BSP_USING_SDIO_ARTPI
+        select BSP_USING_SDIO2
+        select RT_USING_LWIP
+        select RT_USING_WIFI
+        default n
 
 endmenu
 
