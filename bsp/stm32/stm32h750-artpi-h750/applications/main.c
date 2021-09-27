@@ -15,10 +15,20 @@
 /* defined the LED0 pin: PI8 */
 #define LED0_PIN    GET_PIN(I, 8)
 
+#ifdef RT_USING_WIFI
+    extern void wlan_autoconnect_init(void);
+#endif
+
 int main(void)
 {
     /* set LED0 pin mode to output */
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
+    #ifdef RT_USING_WIFI
+    /* init Wi-Fi auto connect feature */
+    wlan_autoconnect_init();
+    /* enable auto reconnect on WLAN device */
+    rt_wlan_config_autoreconnect(RT_TRUE);
+    #endif
 
     while (1)
     {
