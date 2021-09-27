@@ -25,6 +25,10 @@
 #include <dfs_posix.h>
 #endif
 
+#define DBG_TAG    "armlibc.syscalls"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #ifdef __CLANG_ARM
 __asm(".global __use_no_semihosting\n\t");
 #else
@@ -146,6 +150,11 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
     if (fh == STDIN)
     {
 #ifdef RT_USING_POSIX
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_E("invoke standard output before initializing libc");
+            return -1;
+        }
         size = read(STDIN_FILENO, buf, len);
         return len - size;
 #else
@@ -186,6 +195,11 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         return 0;
 #else
 #ifdef RT_USING_POSIX
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_E("invoke standard input before initializing libc");
+            return -1;
+        }
         size = write(STDOUT_FILENO, buf, len);
         return len - size;
 #else
