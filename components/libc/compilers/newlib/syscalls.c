@@ -11,8 +11,10 @@
  * 2020-02-24     Meco Man     fix bug of _isatty_r()
  */
 
+#include <reent.h>
 #include <rtthread.h>
 #include <stddef.h>
+#include <unistd.h>
 #include <sys/errno.h>
 
 #define DBG_TAG    "newlib.syscalls"
@@ -89,6 +91,10 @@ void __libc_init_array(void)
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif
+
+#define DBG_TAG    "newlib.syscalls"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 /* Reentrant versions of system calls.  */
 
@@ -219,7 +225,11 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
     return -1;
 #else
     _ssize_t rc;
-
+    if (libc_stdio_get_console() < 0 && fd == STDIN_FILENO)
+    {
+        LOG_W("Do not invoke standard input before initializing libc");
+        return 0;
+    }
     rc = read(fd, buf, nbytes);
     return rc;
 #endif
@@ -275,7 +285,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
-    if (fileno(stdout) == fd)
+    if (STDOUT_FILENO == fd)
     {
         rt_device_t console;
 
@@ -291,7 +301,11 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 #endif /*RT_USING_DEVICE*/
 #else
     _ssize_t rc;
-
+    if (libc_stdio_get_console() < 0 && fd == STDOUT_FILENO)
+    {
+        LOG_W("Do not invoke standard output before initializing libc");
+        return 0;
+    }
     rc = write(fd, buf, nbytes);
     return rc;
 #endif
