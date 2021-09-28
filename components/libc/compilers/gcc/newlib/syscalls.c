@@ -102,10 +102,6 @@ int *__errno ()
 }
 #endif
 
-int _getpid_r(struct _reent *ptr)
-{
-    return 0;
-}
 
 int _close_r(struct _reent *ptr, int fd)
 {
@@ -327,6 +323,8 @@ int flock(int fd, int operation)
 }
 
 /*
+_getpid_r has implemented in common/unistd.c
+
 These functions are implemented and replaced by the 'common/time.c' file
 int _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp);
 _CLOCK_T_  _times_r(struct _reent *ptr, struct tms *ptms);
