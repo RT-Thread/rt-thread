@@ -1,0 +1,23 @@
+import os
+import rtconfig
+from building import *
+
+cwd = GetCurrentDir()
+
+path =  []
+
+src = Split('''
+board.c
+''')
+
+if GetDepend('BSP_USING_DEBUG_UART'):
+    src += ['drv_uart_no_device.c']
+
+src += ['startup_gcc.S']
+
+path +=  [cwd]
+
+CPPDEFINES = []
+
+group = DefineGroup('board', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

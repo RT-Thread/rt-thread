@@ -1,0 +1,3 @@
+config BSP_USING_DEBUG_UART
+    bool "Enable DEBUG UART"
+    default n
