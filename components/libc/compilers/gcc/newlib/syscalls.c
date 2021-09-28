@@ -308,12 +308,6 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 #endif
 }
 
-void _system(const char *s)
-{
-    extern int __rt_libc_system(const char *string);
-    __rt_libc_system(s);
-}
-
 /* for exit() and abort() */
 __attribute__ ((noreturn)) void _exit (int status)
 {

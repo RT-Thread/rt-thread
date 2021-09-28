@@ -25,11 +25,21 @@ void __rt_libc_exit(int status)
     }
 }
 
-int __rt_libc_system(const char *string)
-{
 #ifdef RT_USING_MSH
+int system(const char *command)
+{
     extern int msh_exec(char *cmd, rt_size_t length);
-    msh_exec((char*)string, rt_strlen(string));
-#endif
-    return 0;
+
+    int ret = -RT_ENOMEM;
+    char *cmd = rt_strdup(command);
+
+    if (cmd)
+    {
+        ret = msh_exec(cmd, rt_strlen(cmd));
+        rt_free(cmd);
+    }
+
+    return ret;
 }
+RTM_EXPORT(system);
+#endif
