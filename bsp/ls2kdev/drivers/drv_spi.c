@@ -15,6 +15,7 @@
 /*@{*/
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <ctype.h>
 #include <stdint.h>
 #include <rtthread.h>
