@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,6 +34,10 @@ extern "C" {
 #define _PRODUCT_ID                 0x0001
 #endif
 
+#ifndef MAX_INTF_STR
+#define MAX_INTF_STR 20
+#endif
+
 #define USB_BCD_DEVICE              0x0200   /* USB Specification Release Number in Binary-Coded Decimal */
 #define USB_BCD_VERSION             0x0200   /* USB 2.0 */
 #define EP0_IN_ADDR                 0x80
@@ -62,12 +66,12 @@ struct ufunction;
 struct udevice;
 struct uendpoint;
 
-typedef enum 
+typedef enum
 {
     /* request to read full count */
     UIO_REQUEST_READ_FULL,
     /* request to read any count */
-    UIO_REQUEST_READ_BEST,  
+    UIO_REQUEST_READ_BEST,
     /* request to write full count */
     UIO_REQUEST_WRITE,
 }UIO_REQUEST_TYPE;
@@ -85,7 +89,7 @@ struct udcd_ops
     rt_size_t (*ep_write)(rt_uint8_t address, void *buffer, rt_size_t size);
     rt_err_t (*ep0_send_status)(void);
     rt_err_t (*suspend)(void);
-    rt_err_t (*wakeup)(void);    
+    rt_err_t (*wakeup)(void);
 };
 
 struct ep_id
@@ -193,7 +197,7 @@ struct udevice
     struct usb_qualifier_descriptor * dev_qualifier;
     usb_os_comp_id_desc_t    os_comp_id_desc;
     const char** str;
-
+    const char *str_intf[MAX_INTF_STR];
     udevice_state_t state;
     rt_list_t cfg_list;
     uconfig_t curr_cfg;
@@ -215,10 +219,10 @@ enum udev_msg_type
     USB_MSG_SETUP_NOTIFY,
     USB_MSG_DATA_NOTIFY,
     USB_MSG_EP0_OUT,
-    USB_MSG_EP_CLEAR_FEATURE,        
+    USB_MSG_EP_CLEAR_FEATURE,
     USB_MSG_SOF,
     USB_MSG_RESET,
-    USB_MSG_PLUG_IN,    
+    USB_MSG_PLUG_IN,
     /* we don't need to add a "PLUG_IN" event because after the cable is
      * plugged in(before any SETUP) the classed have nothing to do. If the host
      * is ready, it will send RESET and we will have USB_MSG_RESET. So, a RESET
@@ -260,6 +264,7 @@ rt_err_t rt_usbd_event_signal(struct udev_msg* msg);
 rt_err_t rt_usbd_device_set_controller(udevice_t device, udcd_t dcd);
 rt_err_t rt_usbd_device_set_descriptor(udevice_t device, udev_desc_t dev_desc);
 rt_err_t rt_usbd_device_set_string(udevice_t device, const char** ustring);
+rt_err_t rt_usbd_device_set_interface_string(udevice_t device, int index, const char* string);
 rt_err_t rt_usbd_device_set_qualifier(udevice_t device, struct usb_qualifier_descriptor* qualifier);
 rt_err_t rt_usbd_device_set_os_comp_id_desc(udevice_t device, usb_os_comp_id_desc_t os_comp_id_desc);
 rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg);
@@ -279,7 +284,7 @@ uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value, ufunction_t *
 uep_t rt_usbd_find_endpoint(udevice_t device, ufunction_t* pfunc, rt_uint8_t ep_addr);
 rt_size_t rt_usbd_io_request(udevice_t device, uep_t ep, uio_request_t req);
 rt_size_t rt_usbd_ep0_write(udevice_t device, void *buffer, rt_size_t size);
-rt_size_t rt_usbd_ep0_read(udevice_t device, void *buffer, rt_size_t size, 
+rt_size_t rt_usbd_ep0_read(udevice_t device, void *buffer, rt_size_t size,
     rt_err_t (*rx_ind)(udevice_t device, rt_size_t size));
 
 int rt_usbd_vcom_class_register(void);
@@ -396,7 +401,7 @@ rt_inline rt_err_t dcd_ep0_send_status(udcd_t dcd)
 }
 
 rt_inline rt_err_t dcd_ep_set_stall(udcd_t dcd, rt_uint8_t address)
-{    
+{
     RT_ASSERT(dcd != RT_NULL);
     RT_ASSERT(dcd->ops != RT_NULL);
     RT_ASSERT(dcd->ops->ep_set_stall != RT_NULL);

@@ -111,7 +111,7 @@ typedef struct
 } SMARTCARD_InitTypeDef;
 
 /**
-  * @brief  SMARTCARD advanced features initalization structure definition
+  * @brief  SMARTCARD advanced features initialization structure definition
   */
 typedef struct
 {
@@ -439,7 +439,7 @@ typedef enum
   * @}
   */
 
-/** @defgroup SMARTCARD_ClockPrescaler  Clock Prescaler
+/** @defgroup SMARTCARD_ClockPrescaler  SMARTCARD Clock Prescaler
   * @{
   */
 #define SMARTCARD_PRESCALER_DIV1    0x00000000U  /*!< fclk_pres = fclk     */
@@ -822,7 +822,78 @@ typedef enum
   * @param  __CLOCKSOURCE__ output variable.
   * @retval the SMARTCARD clocking source, written in __CLOCKSOURCE__.
   */
-#if defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
+#define SMARTCARD_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)   \
+  do {                                                         \
+    if((__HANDLE__)->Instance == USART1)                       \
+    {                                                          \
+      switch(__HAL_RCC_GET_USART1_SOURCE())                    \
+      {                                                        \
+        case RCC_USART1CLKSOURCE_PCLK1:                        \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;     \
+          break;                                               \
+        case RCC_USART1CLKSOURCE_HSI:                          \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_HSI;       \
+          break;                                               \
+        case RCC_USART1CLKSOURCE_SYSCLK:                       \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_SYSCLK;    \
+          break;                                               \
+        case RCC_USART1CLKSOURCE_LSE:                          \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_LSE;       \
+          break;                                               \
+        default:                                               \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED; \
+          break;                                               \
+      }                                                        \
+    }                                                          \
+    else if((__HANDLE__)->Instance == USART2)                  \
+    {                                                          \
+      switch(__HAL_RCC_GET_USART2_SOURCE())                    \
+      {                                                        \
+        case RCC_USART2CLKSOURCE_PCLK1:                        \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;     \
+          break;                                               \
+        case RCC_USART2CLKSOURCE_HSI:                          \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_HSI;       \
+          break;                                               \
+        case RCC_USART2CLKSOURCE_SYSCLK:                       \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_SYSCLK;    \
+          break;                                               \
+        case RCC_USART2CLKSOURCE_LSE:                          \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_LSE;       \
+          break;                                               \
+        default:                                               \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED; \
+          break;                                               \
+      }                                                        \
+    }                                                          \
+    else if((__HANDLE__)->Instance == USART3)                  \
+    {                                                          \
+      switch(__HAL_RCC_GET_USART2_SOURCE())                    \
+      {                                                        \
+        case RCC_USART3CLKSOURCE_PCLK1:                        \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;     \
+          break;                                               \
+        case RCC_USART3CLKSOURCE_HSI:                          \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_HSI;       \
+          break;                                               \
+        case RCC_USART3CLKSOURCE_SYSCLK:                       \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_SYSCLK;    \
+          break;                                               \
+        case RCC_USART3CLKSOURCE_LSE:                          \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_LSE;       \
+          break;                                               \
+        default:                                               \
+          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED; \
+          break;                                               \
+      }                                                        \
+    }                                                          \
+    else                                                       \
+    {                                                          \
+      (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED;     \
+    }                                                          \
+  } while(0U)
+#elif defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
 #define SMARTCARD_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)   \
   do {                                                         \
     if((__HANDLE__)->Instance == USART1)                       \
@@ -872,7 +943,7 @@ typedef enum
       (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED;     \
     }                                                          \
   } while(0U)
-#elif defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#else
 #define SMARTCARD_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)   \
   do {                                                         \
     if((__HANDLE__)->Instance == USART1)                       \
@@ -896,16 +967,12 @@ typedef enum
           break;                                               \
       }                                                        \
     }                                                          \
-    else if((__HANDLE__)->Instance == USART2)                  \
-    {                                                          \
-      (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;         \
-    }                                                          \
     else                                                       \
     {                                                          \
       (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED;     \
     }                                                          \
   } while(0U)
-#endif /* STM32G081xx || STM32G071xx || STM32G070xx */
+#endif
 
 /** @brief  Check the Baud rate range.
   * @note   The maximum Baud Rate is derived from the maximum clock on G0 (64 MHz)

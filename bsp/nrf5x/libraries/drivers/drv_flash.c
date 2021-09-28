@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -129,7 +129,7 @@ int mcu_flash_write(rt_uint32_t addr, const uint8_t *buf, size_t size)
  */
 int mcu_flash_erase(rt_uint32_t addr, size_t size)
 {
-    nrfx_err_t result = RT_EOK;
+    nrfx_err_t result = NRFX_SUCCESS;
 
     uint32_t FirstPage = 0, NbOfPages = 0;
 

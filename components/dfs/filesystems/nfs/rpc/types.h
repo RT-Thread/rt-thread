@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -47,29 +47,13 @@
 
 #include <string.h>
 #include <stdint.h>
-
-#ifndef RT_USING_MINILIBC
-typedef unsigned int u_int;
-typedef unsigned char u_char;
-typedef unsigned long u_long;
-#else
 #include <sys/types.h>
-#include <stdint.h>
-#endif
 
 typedef long long   int64_t;
 typedef unsigned long long uint64_t;
 
 typedef int bool_t;
 typedef int enum_t;
-
-#ifndef RT_USING_NEWLIB
-typedef unsigned long dev_t;
-#endif
-
-#if !defined(RT_USING_NEWLIB) && !defined(RT_USING_MINILIBC)
-typedef rt_int32_t  ssize_t;
-#endif
 
 /* This needs to be changed to uint32_t in the future */
 typedef unsigned long rpcprog_t;

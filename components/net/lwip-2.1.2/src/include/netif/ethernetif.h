@@ -22,11 +22,11 @@ struct eth_device
 
     /* network interface for lwip */
     struct netif *netif;
-    struct rt_semaphore tx_ack;
 
     rt_uint16_t flags;
     rt_uint8_t  link_changed;
     rt_uint8_t  link_status;
+    rt_uint8_t  rx_notice;
 
     /* eth device interface */
     struct pbuf* (*eth_rx)(rt_device_t dev);

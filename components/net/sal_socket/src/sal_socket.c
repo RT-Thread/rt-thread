@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -165,7 +165,6 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
     struct netdev *netdev = (struct netdev *)work_data;
     socklen_t addr_len = sizeof(struct sockaddr_in);
     char send_data[SAL_INTERNET_BUFF_LEN], recv_data = 0;
-    struct rt_delayed_work *delay_work = (struct rt_delayed_work *)work;
 
     const char month[][SAL_INTERNET_MONTH_LEN] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     char date[SAL_INTERNET_DATE_LEN];
@@ -176,7 +175,7 @@ static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 
     if (work)
     {
-        rt_free(delay_work);
+        rt_free(work);
     }
 
     /* get network interface socket operations */
@@ -261,12 +260,12 @@ __exit:
     if (result > 0)
     {
         LOG_D("Set network interface device(%s) internet status up.", netdev->name);
-        netdev->flags |= NETDEV_FLAG_INTERNET_UP;
+        netdev_low_level_set_internet_status(netdev, RT_TRUE);
     }
     else
     {
         LOG_D("Set network interface device(%s) internet status down.", netdev->name);
-        netdev->flags &= ~NETDEV_FLAG_INTERNET_UP;
+        netdev_low_level_set_internet_status(netdev, RT_FALSE);
     }
 
     if (sockfd >= 0)
@@ -287,18 +286,18 @@ int sal_check_netdev_internet_up(struct netdev *netdev)
 
 #ifdef SAL_INTERNET_CHECK
     /* workqueue for network connect */
-    struct rt_delayed_work *net_work = RT_NULL;
+    struct rt_work *net_work = RT_NULL;
 
 
-    net_work = (struct rt_delayed_work *)rt_calloc(1, sizeof(struct rt_delayed_work));
+    net_work = (struct rt_work *)rt_calloc(1, sizeof(struct rt_work));
     if (net_work == RT_NULL)
     {
         LOG_W("No memory for network interface device(%s) delay work.", netdev->name);
         return -1;
     }
 
-    rt_delayed_work_init(net_work, check_netdev_internet_up_work, (void *)netdev);
-    rt_work_submit(&(net_work->work), RT_TICK_PER_SECOND);
+    rt_work_init(net_work, check_netdev_internet_up_work, (void *)netdev);
+    rt_work_submit(net_work, RT_TICK_PER_SECOND);
 #endif /* SAL_INTERNET_CHECK */
     return 0;
 }
@@ -620,6 +619,8 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
             return -1;
         }
 
+        /* new socket create by accept should have the same netdev with server*/
+        new_sock->netdev = sock->netdev;
         /* socket structure user_data used to store the acquired new socket */
         new_sock->user_data = (void *) new_socket;
 
@@ -1174,4 +1175,3 @@ void sal_freeaddrinfo(struct addrinfo *ai)
         pf->netdb_ops->freeaddrinfo(ai);
     }
 }
-

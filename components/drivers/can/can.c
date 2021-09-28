@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -966,6 +966,5 @@ int cmd_canstat(int argc, void **argv)
     }
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_canstat, __cmd_canstat, Stat Can Device Status.);
+MSH_CMD_EXPORT_ALIAS(cmd_canstat, canstat, stat can device status);
 #endif
-

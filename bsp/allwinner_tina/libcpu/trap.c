@@ -1,21 +1,7 @@
 /*
- * File      : trap.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -29,7 +15,7 @@
 #define INT_FIQ     0x01
 
 extern struct rt_thread *rt_current_thread;
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
 extern long list_thread(void);
 #endif
 
@@ -103,7 +89,7 @@ void rt_hw_trap_udef(struct rt_hw_register *regs)
     rt_kprintf("undefined instruction\n");
     rt_kprintf("thread - %s stack:\n", rt_current_thread->name);
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
@@ -155,7 +141,7 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
     rt_kprintf("prefetch abort\n");
     rt_kprintf("thread - %s stack:\n", RT_NAME_MAX, rt_current_thread->name);
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
@@ -183,7 +169,7 @@ void rt_hw_trap_dabt(struct rt_hw_register *regs)
     rt_kprintf("data abort\n");
     rt_kprintf("thread - %s stack:\n", RT_NAME_MAX, rt_current_thread->name);
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 
 #ifndef RT_SIG_INFO_MAX
 #define RT_SIG_INFO_MAX 32
-#endif
+#endif /* RT_SIG_INFO_MAX */
 
 #define DBG_TAG     "SIGN"
 #define DBG_LVL     DBG_WARNING
@@ -35,7 +35,7 @@ struct siginfo_node
     struct rt_slist_node list;
 };
 
-static struct rt_mempool *_rt_siginfo_pool;
+static struct rt_mempool *_siginfo_pool;
 static void _signal_deliver(rt_thread_t tid);
 void rt_thread_handle_sig(rt_bool_t clean_state);
 
@@ -67,7 +67,7 @@ static void _signal_entry(void *parameter)
     /* return to thread */
     tid->sp = tid->sig_ret;
     tid->sig_ret = RT_NULL;
-#endif
+#endif /* RT_USING_SMP */
 
     LOG_D("switch back to: 0x%08x\n", tid->sp);
     tid->stat &= ~RT_THREAD_STAT_SIGNAL;
@@ -76,7 +76,7 @@ static void _signal_entry(void *parameter)
     rt_hw_context_switch_to((rt_base_t)&parameter, tid);
 #else
     rt_hw_context_switch_to((rt_ubase_t)&(tid->sp));
-#endif /*RT_USING_SMP*/
+#endif /* RT_USING_SMP */
 }
 
 /*
@@ -153,7 +153,7 @@ static void _signal_deliver(rt_thread_t tid)
             tid->sig_ret = tid->sp;
             tid->sp = rt_hw_stack_init((void *)_signal_entry, RT_NULL,
                                        (void *)((char *)tid->sig_ret - 32), RT_NULL);
-#endif
+#endif /* RT_USING_SMP */
 
             rt_hw_interrupt_enable(level);
             LOG_D("signal stack pointer @ 0x%08x", tid->sp);
@@ -204,8 +204,24 @@ void *rt_signal_check(void* context)
     rt_hw_interrupt_enable(level);
     return context;
 }
-#endif
+#endif /* RT_USING_SMP */
 
+/**
+ * @brief    This function will install a processing function to a specific
+ *           signal and return the old processing function of this signal.
+ *
+ * @note     This function needs to be used in conjunction with the
+ *           rt_signal_unmask() function to make the signal effective.
+ *
+ * @see      rt_signal_unmask()
+ *
+ * @param    signo is a specific signal value (range: 0 ~ RT_SIG_MAX).
+ *
+ * @param    handler is sets the processing of signal value.
+ *
+ * @return   Return the old processing function of this signal. ONLY When the
+ *           return value is SIG_ERR, the operation is failed.
+ */
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
 {
     rt_base_t level;
@@ -233,6 +249,17 @@ rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
     return old;
 }
 
+/**
+ * @brief    This function will block the specified signal.
+ *
+ * @note     This function will block the specified signal, even if the
+ *           rt_thread_kill() function is called to send this signal to
+ *           the current thread, it will no longer take effect.
+ *
+ * @see      rt_thread_kill()
+ *
+ * @param    signo is a specific signal value (range: 0 ~ RT_SIG_MAX).
+ */
 void rt_signal_mask(int signo)
 {
     rt_base_t level;
@@ -245,6 +272,17 @@ void rt_signal_mask(int signo)
     rt_hw_interrupt_enable(level);
 }
 
+/**
+ * @brief    This function will unblock the specified signal.
+ *
+ * @note     This function will unblock the specified signal. After calling
+ *           the rt_thread_kill() function to send this signal to the current
+ *           thread, it will take effect.
+ *
+ * @see      rt_thread_kill()
+ *
+ * @param    signo is a specific signal value (range: 0 ~ RT_SIG_MAX).
+ */
 void rt_signal_unmask(int signo)
 {
     rt_base_t level;
@@ -266,6 +304,20 @@ void rt_signal_unmask(int signo)
     }
 }
 
+/**
+ * @brief    This function will wait for the arrival of the set signal. If it does not wait for this signal, the thread will be
+ *           suspended until it waits for this signal or the waiting time exceeds the specified timeout: timeout.
+ *
+ * @param    set is the set of signal values to be waited for. Use the function
+ *           sigaddset() to add the signal.
+ *
+ * @param    si is a pointer to the received signal info. If you don't care about this value, you can use RT_NULL to set.
+ *
+ * @param    timeout is a timeout period (unit: an OS tick).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the signal wait failed.
+ */
 int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
 {
     int ret = RT_EOK;
@@ -497,6 +549,16 @@ void rt_thread_free_sig(rt_thread_t tid)
     }
 }
 
+/**
+ * @brief    This function can be used to send any signal to any thread.
+ *
+ * @param    tid is a pointer to the thread that receives the signal.
+ *
+ * @param    sig is a specific signal value (range: 0 ~ RT_SIG_MAX).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the signal send failed.
+ */
 int rt_thread_kill(rt_thread_t tid, int sig)
 {
     siginfo_t si;
@@ -538,7 +600,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     }
     rt_hw_interrupt_enable(level);
 
-    si_node = (struct siginfo_node *) rt_mp_alloc(_rt_siginfo_pool, 0);
+    si_node = (struct siginfo_node *) rt_mp_alloc(_siginfo_pool, 0);
     if (si_node)
     {
         rt_slist_init(&(si_node->list));
@@ -576,8 +638,8 @@ int rt_thread_kill(rt_thread_t tid, int sig)
 
 int rt_system_signal_init(void)
 {
-    _rt_siginfo_pool = rt_mp_create("signal", RT_SIG_INFO_MAX, sizeof(struct siginfo_node));
-    if (_rt_siginfo_pool == RT_NULL)
+    _siginfo_pool = rt_mp_create("signal", RT_SIG_INFO_MAX, sizeof(struct siginfo_node));
+    if (_siginfo_pool == RT_NULL)
     {
         LOG_E("create memory pool for signal info failed.");
         RT_ASSERT(0);
@@ -586,4 +648,4 @@ int rt_system_signal_init(void)
     return 0;
 }
 
-#endif
+#endif /* RT_USING_SIGNALS */

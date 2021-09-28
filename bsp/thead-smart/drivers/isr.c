@@ -25,7 +25,7 @@ extern void systick_handler(void);
 extern void xPortSysTickHandler(void);
 extern void OSTimeTick(void);
 
-#define  ATTRIBUTE_ISR
+#define  ATTRIBUTE_ISR __attribute__ ((interrupt ("machine")))
 
 #define readl(addr) \
     ({ unsigned int __v = (*(volatile unsigned int *) (addr)); __v; })
@@ -37,14 +37,14 @@ extern void OSTimeTick(void);
 #endif
 
 
-void __attribute__((isr)) SysTick_Handler(void)
+ATTRIBUTE_ISR void SysTick_Handler(void)
 {
 #if(CONFIG_KERNEL_RTTHREAD == 1)
     CSI_INTRPT_ENTER();
 #endif
 
     csi_coret_config(drv_get_sys_freq() / CONFIG_SYSTICK_HZ, CORET_IRQn);
-    
+
 #if defined(CONFIG_KERNEL_RHINO)
     systick_handler();
 #elif defined(CONFIG_KERNEL_FREERTOS)

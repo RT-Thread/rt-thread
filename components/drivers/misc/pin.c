@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -47,7 +47,7 @@ static rt_size_t _pin_write(rt_device_t dev, rt_off_t pos, const void *buffer, r
     return size;
 }
 
-static rt_err_t  _pin_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t _pin_control(rt_device_t dev, int cmd, void *args)
 {
     struct rt_device_pin_mode *mode;
     struct rt_device_pin *pin = (struct rt_device_pin *)dev;
@@ -111,6 +111,7 @@ rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
     }
     return -RT_ENOSYS;
 }
+
 rt_err_t rt_pin_detach_irq(rt_int32_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
@@ -146,7 +147,7 @@ void rt_pin_write(rt_base_t pin, rt_base_t value)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_write, pinWrite, write value to hardware pin);
 
-int  rt_pin_read(rt_base_t pin)
+int rt_pin_read(rt_base_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     return _hw_pin.ops->pin_read(&_hw_pin.parent, pin);
@@ -157,7 +158,7 @@ rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     RT_ASSERT(name[0] == 'P');
-    
+
     if(_hw_pin.ops->pin_get == RT_NULL)
     {
         return -RT_ENOSYS;
@@ -166,4 +167,3 @@ rt_base_t rt_pin_get(const char *name)
     return _hw_pin.ops->pin_get(name);
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_get, pinGet, get pin number from hardware pin);
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -54,7 +54,7 @@ static int _pm_device_suspend(rt_uint8_t mode)
         {
             ret = _pm.device_pm[index].ops->suspend(_pm.device_pm[index].device, mode);
             if(ret != RT_EOK)
-                break; 
+                break;
         }
     }
 
@@ -836,12 +836,10 @@ rt_uint32_t rt_pm_module_get_status(void)
     rt_uint32_t req_status = 0x00;
     pm = &_pm;
 
-    for (index = 0; index < 32; index ++)
+    for (index = 0; index < PM_MODULE_MAX_ID; index ++)
     {
         if (pm->module_status[index].req_status == 0x01)
             req_status |= 1<<index;
-        if (index >= PM_MODULE_MAX_ID)
-            break;
     }
 
     return req_status;

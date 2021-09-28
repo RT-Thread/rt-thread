@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,6 +9,7 @@
  * 2108-05-24     ChenYong     Add socket abstraction layer
  */
 
+#include <stddef.h>
 #include <rtthread.h>
 
 #include <netdb.h>

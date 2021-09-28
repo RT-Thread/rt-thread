@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -52,7 +52,6 @@
 
 #ifndef RT_USING_MEMHEAP_AS_HEAP
 
-/* #define RT_MEM_DEBUG */
 #define RT_MEM_STATS
 
 #if defined (RT_USING_HEAP) && defined (RT_USING_SMALL_MEM)
@@ -67,10 +66,10 @@ static void (*rt_free_hook)(void *ptr);
 /**@{*/
 
 /**
- * This function will set a hook function, which will be invoked when a memory
- * block is allocated from heap memory.
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is allocated from heap memory.
  *
- * @param hook the hook function
+ * @param hook the hook function.
  */
 void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
 {
@@ -78,8 +77,8 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
 }
 
 /**
- * This function will set a hook function, which will be invoked when a memory
- * block is released to heap memory.
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is released to heap memory.
  *
  * @param hook the hook function
  */
@@ -90,7 +89,7 @@ void rt_free_sethook(void (*hook)(void *ptr))
 
 /**@}*/
 
-#endif
+#endif /* RT_USING_HOOK */
 
 #define HEAP_MAGIC 0x1ea0
 struct heap_mem
@@ -100,7 +99,7 @@ struct heap_mem
     rt_uint16_t used;
 #ifdef ARCH_CPU_64BIT
     rt_uint32_t resv;
-#endif
+#endif /* ARCH_CPU_64BIT */
 
     rt_size_t next, prev;
 
@@ -109,8 +108,8 @@ struct heap_mem
     rt_uint8_t thread[8];
 #else
     rt_uint8_t thread[4];   /* thread name */
-#endif
-#endif
+#endif /* ARCH_CPU_64BIT */
+#endif /* RT_USING_MEMTRACE */
 };
 
 /** pointer to the heap: for alignment, heap_ptr is now a pointer instead of an array */
@@ -123,7 +122,7 @@ static struct heap_mem *heap_end;
 #define MIN_SIZE 24
 #else
 #define MIN_SIZE 12
-#endif
+#endif /* ARCH_CPU_64BIT */
 
 #define MIN_SIZE_ALIGNED     RT_ALIGN(MIN_SIZE, RT_ALIGN_SIZE)
 #define SIZEOF_STRUCT_MEM    RT_ALIGN(sizeof(struct heap_mem), RT_ALIGN_SIZE)
@@ -135,7 +134,8 @@ static rt_size_t mem_size_aligned;
 
 #ifdef RT_MEM_STATS
 static rt_size_t used_mem, max_mem;
-#endif
+#endif /* RT_MEM_STATS */
+
 #ifdef RT_USING_MEMTRACE
 rt_inline void rt_mem_setname(struct heap_mem *mem, const char *name)
 {
@@ -151,7 +151,7 @@ rt_inline void rt_mem_setname(struct heap_mem *mem, const char *name)
         mem->thread[index] = ' ';
     }
 }
-#endif
+#endif /* RT_USING_MEMTRACE */
 
 static void plug_holes(struct heap_mem *mem)
 {
@@ -194,11 +194,10 @@ static void plug_holes(struct heap_mem *mem)
 }
 
 /**
- * @ingroup SystemInit
- *
- * This function will initialize system heap memory.
+ * @brief This function will initialize system heap memory.
  *
  * @param begin_addr the beginning address of system heap memory.
+ *
  * @param end_addr the end address of system heap memory.
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr)
@@ -238,7 +237,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     mem->used  = 0;
 #ifdef RT_USING_MEMTRACE
     rt_mem_setname(mem, "INIT");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     /* initialize the end of the heap */
     heap_end        = (struct heap_mem *)&heap_ptr[mem->next];
@@ -248,9 +247,9 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     heap_end->prev  = mem_size_aligned + SIZEOF_STRUCT_MEM;
 #ifdef RT_USING_MEMTRACE
     rt_mem_setname(heap_end, "INIT");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
-    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_PRIO);
 
     /* initialize the lowest-free pointer to the start of the heap */
     lfree = (struct heap_mem *)heap_ptr;
@@ -263,11 +262,11 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 /**@{*/
 
 /**
- * Allocate a block of memory with a minimum of 'size' bytes.
+ * @brief Allocate a block of memory with a minimum of 'size' bytes.
  *
  * @param size is the minimum size of the requested block in bytes.
  *
- * @return pointer to allocated memory or NULL if no free memory was found.
+ * @return the pointer to allocated memory or NULL if no free memory was found.
  */
 void *rt_malloc(rt_size_t size)
 {
@@ -336,7 +335,7 @@ void *rt_malloc(rt_size_t size)
                 mem2->prev = ptr;
 #ifdef RT_USING_MEMTRACE
                 rt_mem_setname(mem2, "    ");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
                 /* and insert it between mem and mem->next */
                 mem->next = ptr2;
@@ -350,7 +349,7 @@ void *rt_malloc(rt_size_t size)
                 used_mem += (size + SIZEOF_STRUCT_MEM);
                 if (max_mem < used_mem)
                     max_mem = used_mem;
-#endif
+#endif /* RT_MEM_STATS */
             }
             else
             {
@@ -366,7 +365,7 @@ void *rt_malloc(rt_size_t size)
                 used_mem += mem->next - ((rt_uint8_t *)mem - heap_ptr);
                 if (max_mem < used_mem)
                     max_mem = used_mem;
-#endif
+#endif /* RT_MEM_STATS */
             }
             /* set memory block magic */
             mem->magic = HEAP_MAGIC;
@@ -375,7 +374,7 @@ void *rt_malloc(rt_size_t size)
                 rt_mem_setname(mem, rt_thread_self()->name);
             else
                 rt_mem_setname(mem, "NONE");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
             if (mem == lfree)
             {
@@ -411,12 +410,13 @@ void *rt_malloc(rt_size_t size)
 RTM_EXPORT(rt_malloc);
 
 /**
- * This function will change the previously allocated memory block.
+ * @brief This function will change the size of previously allocated memory block.
  *
- * @param rmem pointer to memory allocated by rt_malloc
- * @param newsize the required new size
+ * @param rmem is the pointer to memory allocated by rt_malloc.
  *
- * @return the changed memory block address
+ * @param newsize is the required new size.
+ *
+ * @return the changed memory block address.
  */
 void *rt_realloc(void *rmem, rt_size_t newsize)
 {
@@ -473,7 +473,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         /* split memory block */
 #ifdef RT_MEM_STATS
         used_mem -= (size - newsize);
-#endif
+#endif /* RT_MEM_STATS */
 
         ptr2 = ptr + SIZEOF_STRUCT_MEM + newsize;
         mem2 = (struct heap_mem *)&heap_ptr[ptr2];
@@ -483,13 +483,13 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         mem2->prev = ptr;
 #ifdef RT_USING_MEMTRACE
         rt_mem_setname(mem2, "    ");
-#endif
+#endif /* RT_USING_MEMTRACE */
         mem->next = ptr2;
         if (mem2->next != mem_size_aligned + SIZEOF_STRUCT_MEM)
         {
             ((struct heap_mem *)&heap_ptr[mem2->next])->prev = ptr2;
         }
-        
+
         if (mem2 < lfree)
         {
             /* the splited struct is now the lowest */
@@ -517,16 +517,17 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 RTM_EXPORT(rt_realloc);
 
 /**
- * This function will contiguously allocate enough space for count objects
- * that are size bytes of memory each and returns a pointer to the allocated
- * memory.
+ * @brief  This function will contiguously allocate enough space for count objects
+ *         that are size bytes of memory each and returns a pointer to the allocated
+ *         memory.
  *
- * The allocated memory is filled with bytes of value zero.
+ * @note   The allocated memory is filled with bytes of value zero.
  *
- * @param count number of objects to allocate
- * @param size size of the objects to allocate
+ * @param  count is the number of objects to allocate.
  *
- * @return pointer to allocated memory / NULL pointer if there is an error
+ * @param  size is the size of one object to allocate.
+ *
+ * @return pointer to allocated memory / NULL pointer if there is an error.
  */
 void *rt_calloc(rt_size_t count, rt_size_t size)
 {
@@ -544,10 +545,10 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 RTM_EXPORT(rt_calloc);
 
 /**
- * This function will release the previously allocated memory block by
- * rt_malloc. The released memory block is taken back to system heap.
+ * @brief This function will release the previously allocated memory block by
+ *        rt_malloc. The released memory block is taken back to system heap.
  *
- * @param rmem the address of memory which will be released
+ * @param rmem the address of memory which will be released.
  */
 void rt_free(void *rmem)
 {
@@ -597,7 +598,7 @@ void rt_free(void *rmem)
     mem->magic = HEAP_MAGIC;
 #ifdef RT_USING_MEMTRACE
     rt_mem_setname(mem, "    ");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     if (mem < lfree)
     {
@@ -607,7 +608,7 @@ void rt_free(void *rmem)
 
 #ifdef RT_MEM_STATS
     used_mem -= (mem->next - ((rt_uint8_t *)mem - heap_ptr));
-#endif
+#endif /* RT_MEM_STATS */
 
     /* finally, see if prev or next are free also */
     plug_holes(mem);
@@ -616,6 +617,16 @@ void rt_free(void *rmem)
 RTM_EXPORT(rt_free);
 
 #ifdef RT_MEM_STATS
+/**
+* @brief This function will caculate the total memory, the used memory, and
+*        the max used memory.
+*
+* @param total is a pointer to get the total size of the memory.
+*
+* @param used is a pointer to get the size of memory used.
+*
+* @param max_used is a pointer to get the maximum memory used.
+*/
 void rt_memory_info(rt_uint32_t *total,
                     rt_uint32_t *used,
                     rt_uint32_t *max_used)
@@ -706,12 +717,12 @@ int memtrace(int argc, char **argv)
     return 0;
 }
 MSH_CMD_EXPORT(memtrace, dump memory trace information);
-#endif /* end of RT_USING_MEMTRACE */
-#endif /* end of RT_USING_FINSH    */
+#endif /* RT_USING_MEMTRACE */
+#endif /* RT_USING_FINSH */
 
-#endif
+#endif /* defined (RT_USING_HEAP) && defined (RT_USING_SMALL_MEM) */
 
 /**@}*/
 
-#endif /* end of RT_USING_HEAP */
-#endif /* end of RT_USING_MEMHEAP_AS_HEAP */
+#endif /* RT_MEM_STATS */
+#endif /* RT_USING_MEMHEAP_AS_HEAP */

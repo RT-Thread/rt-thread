@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,13 +46,4 @@ int libc_stdio_get_console(void) {
     return std_fd;
 }
 
-int libc_stdio_read(void *buffer, size_t size)
-{
-    return read(std_fd, buffer, size);
-}
-
-int libc_stdio_write(const void *buffer, size_t size)
-{
-    return write(std_fd, buffer, size);
-}
 #endif

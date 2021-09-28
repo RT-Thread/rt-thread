@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,8 @@
 
 #ifndef CPUTIME_H__
 #define CPUTIME_H__
+
+#include <stdint.h>
 
 struct rt_clock_cputime_ops
 {

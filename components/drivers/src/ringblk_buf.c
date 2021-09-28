@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -44,32 +44,34 @@ void rt_rbb_init(rt_rbb_t rbb, rt_uint8_t *buf, rt_size_t buf_size, rt_rbb_blk_t
 }
 RTM_EXPORT(rt_rbb_init);
 
+#ifdef RT_USING_HEAP
+
 /**
  * ring block buffer object create
  *
  * @param buf_size buffer size
  * @param blk_max_num max block number
  *
- * @return != NULL: ring block buffer object
- *            NULL: create failed
+ * @return != RT_NULL: ring block buffer object
+ *            RT_NULL: create failed
  */
 rt_rbb_t rt_rbb_create(rt_size_t buf_size, rt_size_t blk_max_num)
 {
-    rt_rbb_t rbb = NULL;
+    rt_rbb_t rbb = RT_NULL;
     rt_uint8_t *buf;
     rt_rbb_blk_t blk_set;
 
     rbb = (rt_rbb_t)rt_malloc(sizeof(struct rt_rbb));
     if (!rbb)
     {
-        return NULL;
+        return RT_NULL;
     }
 
     buf = (rt_uint8_t *)rt_malloc(buf_size);
     if (!buf)
     {
         rt_free(rbb);
-        return NULL;
+        return RT_NULL;
     }
 
     blk_set = (rt_rbb_blk_t)rt_malloc(sizeof(struct rt_rbb_blk) * blk_max_num);
@@ -77,7 +79,7 @@ rt_rbb_t rt_rbb_create(rt_size_t buf_size, rt_size_t blk_max_num)
     {
         rt_free(buf);
         rt_free(rbb);
-        return NULL;
+        return RT_NULL;
     }
 
     rt_rbb_init(rbb, buf, buf_size, blk_set, blk_max_num);
@@ -102,6 +104,8 @@ void rt_rbb_destroy(rt_rbb_t rbb)
 }
 RTM_EXPORT(rt_rbb_destroy);
 
+#endif
+
 static rt_rbb_blk_t find_empty_blk_in_set(rt_rbb_t rbb)
 {
     rt_size_t i;
@@ -116,7 +120,7 @@ static rt_rbb_blk_t find_empty_blk_in_set(rt_rbb_t rbb)
         }
     }
 
-    return NULL;
+    return RT_NULL;
 }
 
 /**
@@ -127,14 +131,14 @@ static rt_rbb_blk_t find_empty_blk_in_set(rt_rbb_t rbb)
  *
  * @note When your application need align access, please make the blk_szie is aligned.
  *
- * @return != NULL: allocated block
- *            NULL: allocate failed
+ * @return != RT_NULL: allocated block
+ *            RT_NULL: allocate failed
  */
 rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
 {
     rt_base_t level;
     rt_size_t empty1 = 0, empty2 = 0;
-    rt_rbb_blk_t head, tail, new_rbb = NULL;
+    rt_rbb_blk_t head, tail, new_rbb = RT_NULL;
 
     RT_ASSERT(rbb);
     RT_ASSERT(blk_size < (1L << 24));
@@ -178,7 +182,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
                 else
                 {
                     /* no space */
-                    new_rbb = NULL;
+                    new_rbb = RT_NULL;
                 }
             }
             else
@@ -202,7 +206,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
                 else
                 {
                     /* no space */
-                    new_rbb = NULL;
+                    new_rbb = RT_NULL;
                 }
             }
         }
@@ -217,7 +221,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
     }
     else
     {
-        new_rbb = NULL;
+        new_rbb = RT_NULL;
     }
 
     rt_hw_interrupt_enable(level);
@@ -245,13 +249,13 @@ RTM_EXPORT(rt_rbb_blk_put);
  *
  * @param rbb ring block buffer object
  *
- * @return != NULL: block
- *            NULL: get failed
+ * @return != RT_NULL: block
+ *            RT_NULL: get failed
  */
 rt_rbb_blk_t rt_rbb_blk_get(rt_rbb_t rbb)
 {
     rt_base_t level;
-    rt_rbb_blk_t block = NULL;
+    rt_rbb_blk_t block = RT_NULL;
     rt_slist_t *node;
 
     RT_ASSERT(rbb);
@@ -271,7 +275,7 @@ rt_rbb_blk_t rt_rbb_blk_get(rt_rbb_t rbb)
         }
     }
     /* not found */
-    block = NULL;
+    block = RT_NULL;
 
 __exit:
 
@@ -364,7 +368,7 @@ rt_size_t rt_rbb_blk_queue_get(rt_rbb_t rbb, rt_size_t queue_data_len, rt_rbb_bl
     rt_base_t level;
     rt_size_t data_total_size = 0;
     rt_slist_t *node;
-    rt_rbb_blk_t last_block = NULL, block;
+    rt_rbb_blk_t last_block = RT_NULL, block;
 
     RT_ASSERT(rbb);
     RT_ASSERT(blk_queue);
@@ -388,7 +392,7 @@ rt_size_t rt_rbb_blk_queue_get(rt_rbb_t rbb, rt_size_t queue_data_len, rt_rbb_bl
             else
             {
                 /* the first block must be put status */
-                last_block = NULL;
+                last_block = RT_NULL;
                 continue;
             }
         }
@@ -493,7 +497,7 @@ rt_size_t rt_rbb_next_blk_queue_len(rt_rbb_t rbb)
     rt_base_t level;
     rt_size_t data_len = 0;
     rt_slist_t *node;
-    rt_rbb_blk_t last_block = NULL, block;
+    rt_rbb_blk_t last_block = RT_NULL, block;
 
     RT_ASSERT(rbb);
 
@@ -510,7 +514,7 @@ rt_size_t rt_rbb_next_blk_queue_len(rt_rbb_t rbb)
             if (last_block->status != RT_RBB_BLK_PUT)
             {
                 /* the first block must be put status */
-                last_block = NULL;
+                last_block = RT_NULL;
                 continue;
             }
         }

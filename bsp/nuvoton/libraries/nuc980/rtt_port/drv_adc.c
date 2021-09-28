@@ -14,7 +14,7 @@
 #if defined(BSP_USING_ADC)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_sys.h>
 
 /* Private define ---------------------------------------------------------------*/

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,11 +11,10 @@
  * 2019-09-03     xiaofan      optimize link change detection process
  */
 
-#include "board.h"
 #include "drv_config.h"
-#include <netif/ethernetif.h>
-#include "lwipopts.h"
 #include "drv_eth.h"
+#include <netif/ethernetif.h>
+#include <lwipopts.h>
 
 /*
 * Emac driver uses CubeMX tool to generate emac and phy's configuration,
@@ -42,9 +41,9 @@ struct rt_stm32_eth
     /* interface address info, hw address */
     rt_uint8_t  dev_addr[MAX_ADDR_LEN];
     /* ETH_Speed */
-    uint32_t    ETH_Speed;
+    rt_uint32_t    ETH_Speed;
     /* ETH_Duplex_Mode */
-    uint32_t    ETH_Mode;
+    rt_uint32_t    ETH_Mode;
 };
 
 static ETH_DMADescTypeDef *DMARxDscrTab, *DMATxDscrTab;
@@ -168,8 +167,14 @@ static rt_err_t rt_stm32_eth_control(rt_device_t dev, int cmd, void *args)
     {
     case NIOCTL_GADDR:
         /* get mac address */
-        if (args) rt_memcpy(args, stm32_eth_device.dev_addr, 6);
-        else return -RT_ERROR;
+        if (args)
+        {
+            SMEMCPY(args, stm32_eth_device.dev_addr, 6);
+        }
+        else
+        {
+            return -RT_ERROR;
+        }
         break;
 
     default :
@@ -215,7 +220,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
         while ((byteslefttocopy + bufferoffset) > ETH_TX_BUF_SIZE)
         {
             /* Copy data to Tx buffer*/
-            memcpy((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), (ETH_TX_BUF_SIZE - bufferoffset));
+            SMEMCPY((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), (ETH_TX_BUF_SIZE - bufferoffset));
 
             /* Point to next descriptor */
             DmaTxDesc = (ETH_DMADescTypeDef *)(DmaTxDesc->Buffer2NextDescAddr);
@@ -237,7 +242,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
         }
 
         /* Copy the remaining bytes */
-        memcpy((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), byteslefttocopy);
+        SMEMCPY((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), byteslefttocopy);
         bufferoffset = bufferoffset + byteslefttocopy;
         framelength = framelength + byteslefttocopy;
     }
@@ -328,7 +333,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
             while ((byteslefttocopy + bufferoffset) > ETH_RX_BUF_SIZE)
             {
                 /* Copy data to pbuf */
-                memcpy((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), (ETH_RX_BUF_SIZE - bufferoffset));
+                SMEMCPY((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), (ETH_RX_BUF_SIZE - bufferoffset));
 
                 /* Point to next descriptor */
                 dmarxdesc = (ETH_DMADescTypeDef *)(dmarxdesc->Buffer2NextDescAddr);
@@ -339,7 +344,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
                 bufferoffset = 0;
             }
             /* Copy remaining data in pbuf */
-            memcpy((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), byteslefttocopy);
+            SMEMCPY((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), byteslefttocopy);
             bufferoffset = bufferoffset + byteslefttocopy;
         }
     }
@@ -386,7 +391,9 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
     rt_err_t result;
     result = eth_device_ready(&(stm32_eth_device.parent));
     if (result != RT_EOK)
+    {
         LOG_I("RxCpltCallback err = %d", result);
+    }
 }
 
 void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)

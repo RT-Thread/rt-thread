@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020-2021, Bluetrum Development Team
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -496,6 +496,7 @@ static rt_int32_t rthw_sd_detect(struct rt_mmcsd_host *host)
   * @param  host  rt_mmcsd_host
   * @retval None
   */
+RT_SECTION(".irq.sdio")
 void rthw_sdio_irq_process(struct rt_mmcsd_host *host)
 {
     int complete = 0;
@@ -616,6 +617,7 @@ static rt_err_t _dma_rxconfig(rt_uint32_t *dst, int Size)
     return RT_EOK;
 }
 
+RT_SECTION(".irq.sdio")
 void sdio_isr(int vector, void *param)
 {
     /* enter interrupt */

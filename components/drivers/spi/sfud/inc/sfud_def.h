@@ -118,11 +118,11 @@ if (!(EXPR))                                                                   \
 #define SFUD_CMD_READ_DATA                             0x03
 #endif
 
-#ifndef SFUD_CMD_DUAL_OUTPUT_READ_DATA 
+#ifndef SFUD_CMD_DUAL_OUTPUT_READ_DATA
 #define SFUD_CMD_DUAL_OUTPUT_READ_DATA                 0x3B
 #endif
 
-#ifndef SFUD_CMD_DUAL_IO_READ_DATA 
+#ifndef SFUD_CMD_DUAL_IO_READ_DATA
 #define SFUD_CMD_DUAL_IO_READ_DATA                     0xBB
 #endif
 

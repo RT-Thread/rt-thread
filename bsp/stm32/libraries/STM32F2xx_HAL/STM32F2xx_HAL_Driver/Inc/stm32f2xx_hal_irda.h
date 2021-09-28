@@ -646,7 +646,7 @@ uint32_t HAL_IRDA_GetError(IRDA_HandleTypeDef *hirda);
 
 #define IRDA_DIVMANT(_PCLK_, _BAUD_)  (IRDA_DIV((_PCLK_), (_BAUD_))/100U)
 
-#define IRDA_DIVFRAQ(_PCLK_, _BAUD_)  (((IRDA_DIV((_PCLK_), (_BAUD_)) - (IRDA_DIVMANT((_PCLK_), (_BAUD_)) * 100U)) * 16U + 50U) / 100U)
+#define IRDA_DIVFRAQ(_PCLK_, _BAUD_)  ((((IRDA_DIV((_PCLK_), (_BAUD_)) - (IRDA_DIVMANT((_PCLK_), (_BAUD_)) * 100U)) * 16U) + 50U) / 100U)
 
 /* UART BRR = mantissa + overflow + fraction
             = (UART DIVMANT << 4) + (UART DIVFRAQ & 0xF0) + (UART DIVFRAQ & 0x0FU) */

@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：内存池例程
  *
  * 这个程序会创建一个静态的内存池对象，2个动态线程。两个线程会试图分别从内存池中获得

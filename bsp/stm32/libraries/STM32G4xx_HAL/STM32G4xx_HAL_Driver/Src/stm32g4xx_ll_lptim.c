@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @brief   LPTIM LL module driver.
   ******************************************************************************
-    * @attention
+  * @attention
   *
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
@@ -13,7 +13,8 @@
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
-  *  ******************************************************************************
+  *
+  ******************************************************************************
   */
 #if defined(USE_FULL_LL_DRIVER)
 
@@ -172,14 +173,6 @@ ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef *LPTIMx, LL_LPTIM_InitTypeDef *LPTIM_Ini
 }
 
 /**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
   * @brief  Disable the LPTIM instance
   * @rmtoll CR           ENABLE        LL_LPTIM_Disable
   * @param  LPTIMx Low-Power Timer instance
@@ -207,11 +200,11 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
   /* Save LPTIM source clock */
   switch ((uint32_t)LPTIMx)
   {
-     case LPTIM1_BASE:
-       tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE);
-       break;
-     default:
-       break;
+    case LPTIM1_BASE:
+      tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE);
+      break;
+    default:
+      break;
   }
 
   /* Save LPTIM configuration registers */
@@ -232,11 +225,11 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
     /* Force LPTIM source kernel clock from APB */
     switch ((uint32_t)LPTIMx)
     {
-       case LPTIM1_BASE:
-         LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE_PCLK1);
-         break;
-       default:
-         break;
+      case LPTIM1_BASE:
+        LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE_PCLK1);
+        break;
+      default:
+        break;
     }
 
     if (tmpCMP != 0UL)
@@ -249,7 +242,8 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
       do
       {
         rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
-      } while (((LL_LPTIM_IsActiveFlag_CMPOK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+      }
+      while (((LL_LPTIM_IsActiveFlag_CMPOK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
 
       LL_LPTIM_ClearFlag_CMPOK(LPTIMx);
     }
@@ -264,10 +258,12 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
       do
       {
         rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
-      } while (((LL_LPTIM_IsActiveFlag_ARROK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+      }
+      while (((LL_LPTIM_IsActiveFlag_ARROK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
 
       LL_LPTIM_ClearFlag_ARROK(LPTIMx);
     }
+
 
     /* Restore LPTIM source kernel clock */
     LL_RCC_SetLPTIMClockSource(tmpclksource);
@@ -281,6 +277,14 @@ void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
 
   __enable_irq();
 }
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /**
   * @}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -101,6 +101,23 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_13, EXTI13_IRQn},
     {GPIO_PIN_14, EXTI14_IRQn},
     {GPIO_PIN_15, EXTI15_IRQn},
+#elif defined(SOC_SERIES_STM32F3)
+    {GPIO_PIN_0, EXTI0_IRQn},
+    {GPIO_PIN_1, EXTI1_IRQn},
+    {GPIO_PIN_2, EXTI2_TSC_IRQn},
+    {GPIO_PIN_3, EXTI3_IRQn},
+    {GPIO_PIN_4, EXTI4_IRQn},
+    {GPIO_PIN_5, EXTI9_5_IRQn},
+    {GPIO_PIN_6, EXTI9_5_IRQn},
+    {GPIO_PIN_7, EXTI9_5_IRQn},
+    {GPIO_PIN_8, EXTI9_5_IRQn},
+    {GPIO_PIN_9, EXTI9_5_IRQn},
+    {GPIO_PIN_10, EXTI15_10_IRQn},
+    {GPIO_PIN_11, EXTI15_10_IRQn},
+    {GPIO_PIN_12, EXTI15_10_IRQn},
+    {GPIO_PIN_13, EXTI15_10_IRQn},
+    {GPIO_PIN_14, EXTI15_10_IRQn},
+    {GPIO_PIN_15, EXTI15_10_IRQn},
 #else
     {GPIO_PIN_0, EXTI0_IRQn},
     {GPIO_PIN_1, EXTI1_IRQn},

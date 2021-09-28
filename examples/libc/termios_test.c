@@ -1,8 +1,11 @@
 /*
- * termios_test.c
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  Created on: 2017-12-06
- *      Author: JasonJia
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-12-06     JasonJia     first version
  */
 
 #include <rtthread.h>
@@ -13,7 +16,7 @@
 
 #if defined (RT_USING_POSIX)
     #include <dfs_posix.h>
-    #include <dfs_select.h>
+    #include <sys/select.h>
     #if defined (RT_USING_POSIX_TERMIOS)
         #include <termios.h>
     #else
@@ -353,8 +356,8 @@ int termios_test(int argc, char **argv)
 
 #ifdef RT_USING_FINSH
     #include <finsh.h>
-    #ifdef FINSH_USING_MSH
+    #ifdef RT_USING_FINSH
         MSH_CMD_EXPORT_ALIAS(termios_test, termtest, e.g: termtest /dev/uart4 115200);
-    #endif /* FINSH_USING_MSH */
+    #endif /* RT_USING_FINSH */
 #endif /* RT_USING_FINSH */
 

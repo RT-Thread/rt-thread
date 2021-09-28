@@ -1,0 +1,11 @@
+LR_IROM1 0x00000000 0x800000  {    ; load region size_region
+    ER_IROM1 0x00000000 0x800000  {  ; load address = execution address
+        *.o (RESET, +First)
+        *(InRoot$$Sections)
+        .ANY (+RO)
+    }
+    RW_RAM1 +0  {  ; RW_RAM1 start address is after ER_ROM1
+        .ANY (+RW +ZI)
+    }
+}
+

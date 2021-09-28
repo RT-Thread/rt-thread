@@ -1,11 +1,7 @@
 /*
- * File      : usart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -37,7 +33,7 @@
 struct gd32_uart
 {
     uint32_t uart_periph;           //Todo: 3bits
-    IRQn_Type irqn;                 //Todo: 7bits    
+    IRQn_Type irqn;                 //Todo: 7bits
     rcu_periph_enum per_clk;        //Todo: 5bits
     rcu_periph_enum tx_gpio_clk;    //Todo: 5bits
     rcu_periph_enum rx_gpio_clk;    //Todo: 5bits
@@ -48,7 +44,7 @@ struct gd32_uart
     uint16_t rx_af;                 //Todo: 4bits
     uint16_t rx_pin;                //Todo: 4bits
 
-    struct rt_serial_device * serial;    
+    struct rt_serial_device * serial;
     char *device_name;
 };
 
@@ -193,7 +189,7 @@ static const struct gd32_uart uarts[] = {
         "uart0",
     },
     #endif
-    
+
     #ifdef BSP_USING_UART1
     {
         USART1,                                 // uart peripheral index
@@ -205,7 +201,7 @@ static const struct gd32_uart uarts[] = {
         "uart1",
     },
     #endif
-    
+
     #ifdef BSP_USING_UART2
     {
         USART2,                                 // uart peripheral index
@@ -217,7 +213,7 @@ static const struct gd32_uart uarts[] = {
         "uart2",
     },
     #endif
-    
+
     #ifdef BSP_USING_UART3
     {
         UART3,                                 // uart peripheral index
@@ -229,7 +225,7 @@ static const struct gd32_uart uarts[] = {
         "uart3",
     },
     #endif
-    
+
     #ifdef BSP_USING_UART4
     {
         UART4,                                 // uart peripheral index
@@ -253,7 +249,7 @@ static const struct gd32_uart uarts[] = {
         "uart5",
     },
     #endif
-    
+
     #ifdef BSP_USING_UART6
     {
         UART6,                                 // uart peripheral index
@@ -309,7 +305,7 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     /* configure USART Rx as alternate function push-pull */
     gpio_mode_set(uart->rx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, uart->rx_pin);
     gpio_output_options_set(uart->rx_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, uart->rx_pin);
-    
+
     NVIC_SetPriority(uart->irqn, 0);
     NVIC_EnableIRQ(uart->irqn);
 }
@@ -322,9 +318,9 @@ static rt_err_t gd32_configure(struct rt_serial_device *serial, struct serial_co
     RT_ASSERT(cfg != RT_NULL);
 
     uart = (struct gd32_uart *)serial->parent.user_data;
-    
+
     gd32_uart_gpio_init(uart);
-    
+
     usart_baudrate_set(uart->uart_periph, cfg->baud_rate);
 
     switch (cfg->data_bits)
@@ -381,14 +377,14 @@ static rt_err_t gd32_control(struct rt_serial_device *serial, int cmd, void *arg
         /* disable rx irq */
         NVIC_DisableIRQ(uart->irqn);
         /* disable interrupt */
-        usart_interrupt_disable(uart->uart_periph, USART_INTEN_RBNEIE);
+        usart_interrupt_disable(uart->uart_periph, USART_INT_RBNE);
 
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         NVIC_EnableIRQ(uart->irqn);
         /* enable interrupt */
-        usart_interrupt_enable(uart->uart_periph, USART_INTEN_RBNEIE);
+        usart_interrupt_enable(uart->uart_periph, USART_INT_RBNE);
         break;
     }
 
@@ -404,7 +400,7 @@ static int gd32_putc(struct rt_serial_device *serial, char ch)
 
     usart_data_transmit(uart->uart_periph, ch);
     while((usart_flag_get(uart->uart_periph, USART_FLAG_TC) == RESET));
-    
+
     return 1;
 }
 
@@ -434,7 +430,7 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     /* UART in mode Receiver -------------------------------------------------*/
-    if ((usart_interrupt_flag_get(uart->uart_periph, USART_INT_RBNEIE) != RESET) &&
+    if ((usart_interrupt_flag_get(uart->uart_periph, USART_INT_FLAG_RBNE) != RESET) &&
             (usart_flag_get(uart->uart_periph, USART_FLAG_RBNE) != RESET))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
@@ -456,7 +452,7 @@ int gd32_hw_usart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
 
-    
+
     for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
         uarts[i].serial->ops    = &gd32_uart_ops;

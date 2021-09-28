@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,6 +11,7 @@
 #ifndef __DRV_PWM_H__
 #define __DRV_PWM_H__
 
+#include <stdint.h>
 #include<rtdevice.h>
 #include<rthw.h>
 

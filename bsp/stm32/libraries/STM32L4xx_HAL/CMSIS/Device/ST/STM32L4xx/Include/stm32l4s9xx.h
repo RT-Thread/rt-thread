@@ -158,8 +158,8 @@ typedef enum
   RNG_IRQn                    = 80,     /*!< RNG global interrupt                                              */
   FPU_IRQn                    = 81,     /*!< FPU global interrupt                                              */
   HASH_CRS_IRQn               = 82,     /*!< HASH and CRS interrupt                                            */
-  I2C4_EV_IRQn                = 83,     /*!< I2C4 Event interrupt                                              */
-  I2C4_ER_IRQn                = 84,     /*!< I2C4 Error interrupt                                              */
+  I2C4_ER_IRQn                = 83,     /*!< I2C4 Error interrupt                                              */
+  I2C4_EV_IRQn                = 84,     /*!< I2C4 Event interrupt                                              */
   DCMI_IRQn                   = 85,     /*!< DCMI global interrupt                                             */
   DMA2D_IRQn                  = 90,     /*!< DMA2D global interrupt                                            */
   LTDC_IRQn                   = 91,     /*!< LTDC global Interrupt                                             */
@@ -986,6 +986,8 @@ typedef struct
   __IO uint32_t CSR;         /*!< RCC clock control & status register,                                     Address offset: 0x94 */
   __IO uint32_t CRRCR;       /*!< RCC clock recovery RC register,                                          Address offset: 0x98 */
   __IO uint32_t CCIPR2;      /*!< RCC peripherals independent clock configuration register 2,              Address offset: 0x9C */
+  uint32_t      RESERVED8;   /*!< Reserved,                                                                Address offset: 0xA0 */
+  __IO uint32_t DLYCFGR;     /*!< RCC peripheral OCTOSPI delay configuration register,                     Address offset: 0xA4 */
 } RCC_TypeDef;
 
 /**
@@ -1432,7 +1434,10 @@ typedef struct
 /** @addtogroup Peripheral_memory_map
   * @{
   */
-#define FLASH_BASE            (0x08000000UL) /*!< FLASH(up to 2 MB) base address */
+#define FLASH_BASE            (0x08000000UL) /*!< FLASH(up to 2 MB) base address   */
+#define FLASH_END             (0x081FFFFFUL) /*!< FLASH END address                */
+#define FLASH_BANK1_END       (0x080FFFFFUL) /*!< FLASH END address of bank1       */
+#define FLASH_BANK2_END       (0x081FFFFFUL) /*!< FLASH END address of bank2       */
 #define SRAM1_BASE            (0x20000000UL) /*!< SRAM1(up to 192 KB) base address */
 #define SRAM2_BASE            (0x10000000UL) /*!< SRAM2(64 KB) base address */
 #define SRAM3_BASE            (0x20040000UL) /*!< SRAM3(384 KB) base address */
@@ -1459,6 +1464,11 @@ typedef struct
 #define SRAM1_SIZE_MAX        (0x00030000UL) /*!< maximum SRAM1 size (up to 192 KBytes) */
 #define SRAM2_SIZE            (0x00010000UL) /*!< SRAM2 size (64 KBytes) */
 #define SRAM3_SIZE            (0x00060000UL) /*!< SRAM3 size (384 KBytes) */
+
+#define FLASH_SIZE_DATA_REGISTER ((uint32_t)0x1FFF75E0)
+
+#define FLASH_SIZE               (((((*((uint32_t *)FLASH_SIZE_DATA_REGISTER)) & (0x0000FFFFU)) == 0x0000FFFFU)) ? (0x800U << 10U) : \
+                                  (((*((uint32_t *)FLASH_SIZE_DATA_REGISTER)) & (0x0000FFFFU)) << 10U))
 
 /*!< Peripheral memory map */
 #define APB1PERIPH_BASE        PERIPH_BASE
@@ -16951,6 +16961,23 @@ typedef struct
 #define RCC_CCIPR2_OSPISEL_0                 (0x1UL << RCC_CCIPR2_OSPISEL_Pos) /*!< 0x00100000 */
 #define RCC_CCIPR2_OSPISEL_1                 (0x2UL << RCC_CCIPR2_OSPISEL_Pos) /*!< 0x00200000 */
 
+/********************  Bit definition for RCC_DLYCFGR register  ******************/
+#define RCC_DLYCFGR_OCTOSPI1_DLY_Pos         (0U)
+#define RCC_DLYCFGR_OCTOSPI1_DLY_Msk         (0xFUL << RCC_DLYCFGR_OCTOSPI1_DLY_Pos) /*!< 0x0000000F */
+#define RCC_DLYCFGR_OCTOSPI1_DLY             RCC_DLYCFGR_OCTOSPI1_DLY_Msk
+#define RCC_DLYCFGR_OCTOSPI1_DLY_0           (0x1UL << RCC_DLYCFGR_OCTOSPI1_DLY_Pos) /*!< 0x00000001 */
+#define RCC_DLYCFGR_OCTOSPI1_DLY_1           (0x2UL << RCC_DLYCFGR_OCTOSPI1_DLY_Pos) /*!< 0x00000002 */
+#define RCC_DLYCFGR_OCTOSPI1_DLY_2           (0x4UL << RCC_DLYCFGR_OCTOSPI1_DLY_Pos) /*!< 0x00000004 */
+#define RCC_DLYCFGR_OCTOSPI1_DLY_3           (0x8UL << RCC_DLYCFGR_OCTOSPI1_DLY_Pos) /*!< 0x00000008 */
+
+#define RCC_DLYCFGR_OCTOSPI2_DLY_Pos         (4U)
+#define RCC_DLYCFGR_OCTOSPI2_DLY_Msk         (0xFUL << RCC_DLYCFGR_OCTOSPI2_DLY_Pos) /*!< 0x000000F0 */
+#define RCC_DLYCFGR_OCTOSPI2_DLY             RCC_DLYCFGR_OCTOSPI2_DLY_Msk
+#define RCC_DLYCFGR_OCTOSPI2_DLY_0           (0x1UL << RCC_DLYCFGR_OCTOSPI2_DLY_Pos) /*!< 0x00000010 */
+#define RCC_DLYCFGR_OCTOSPI2_DLY_1           (0x2UL << RCC_DLYCFGR_OCTOSPI2_DLY_Pos) /*!< 0x00000020 */
+#define RCC_DLYCFGR_OCTOSPI2_DLY_2           (0x4UL << RCC_DLYCFGR_OCTOSPI2_DLY_Pos) /*!< 0x00000040 */
+#define RCC_DLYCFGR_OCTOSPI2_DLY_3           (0x8UL << RCC_DLYCFGR_OCTOSPI2_DLY_Pos) /*!< 0x00000080 */
+
 /******************************************************************************/
 /*                                                                            */
 /*                                    RNG                                     */
@@ -16995,8 +17022,12 @@ typedef struct
 #define RTC_TAMPER1_SUPPORT
 #define RTC_TAMPER2_SUPPORT
 #define RTC_TAMPER3_SUPPORT
+
 #define RTC_WAKEUP_SUPPORT
 #define RTC_BACKUP_SUPPORT
+/******************** Number of backup registers ******************************/
+#define RTC_BKP_NUMBER                32U
+
 
 /********************  Bits definition for RTC_TR register  *******************/
 #define RTC_TR_PM_Pos                  (22U)
@@ -17752,9 +17783,6 @@ typedef struct
 #define RTC_BKP31R_Pos                 (0U)
 #define RTC_BKP31R_Msk                 (0xFFFFFFFFUL << RTC_BKP31R_Pos)        /*!< 0xFFFFFFFF */
 #define RTC_BKP31R                     RTC_BKP31R_Msk
-
-/******************** Number of backup registers ******************************/
-#define RTC_BKP_NUMBER                       32U
 
 /******************************************************************************/
 /*                                                                            */
@@ -23904,9 +23932,6 @@ typedef struct
                                                        ((INSTANCE) == TIM16) || \
                                                        ((INSTANCE) == TIM17))
 
-/****************** TIM Instances : supporting synchronization ****************/
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
-
 /****************** TIM Instances : supporting ADC triggering through TRGO2 ***/
 #define IS_TIM_TRGO2_INSTANCE(INSTANCE)    (((INSTANCE) == TIM1)    || \
                                             ((INSTANCE) == TIM8))
@@ -24038,6 +24063,7 @@ typedef struct
 #define TIM1_TRG_COM_IRQn              TIM1_TRG_COM_TIM17_IRQn
 #define TIM8_IRQn                      TIM8_UP_IRQn
 #define HASH_RNG_IRQn                  RNG_IRQn
+#define DCMI_PSSI_IRQn                 DCMI_IRQn
 #define CRS_IRQn                       HASH_CRS_IRQn
 #define DFSDM0_IRQn                    DFSDM1_FLT0_IRQn
 #define DFSDM1_IRQn                    DFSDM1_FLT1_IRQn
@@ -24050,6 +24076,7 @@ typedef struct
 #define TIM1_TRG_COM_IRQHandler        TIM1_TRG_COM_TIM17_IRQHandler
 #define TIM8_IRQHandler                TIM8_UP_IRQHandler
 #define HASH_RNG_IRQHandler            RNG_IRQHandler
+#define DCMI_PSSI_IRQHandler           DCMI_IRQHandler
 #define CRS_IRQHandler                 HASH_CRS_IRQHandler
 #define DFSDM0_IRQHandler              DFSDM1_FLT0_IRQHandler
 #define DFSDM1_IRQHandler              DFSDM1_FLT1_IRQHandler

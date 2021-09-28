@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,7 +9,7 @@
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
  * 2014-08-03     bernard      If using msh, use system() implementation
  *                             in msh.
- * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when 
+ * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when
  *                             RT_USING_DFS is not defined
  * 2020-02-13     Meco Man     re-implement exit() and abort()
  * 2020-02-14     Meco Man     implement _sys_tmpnam()
@@ -24,6 +24,10 @@
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 #endif
+
+#define DBG_TAG    "armlibc.syscalls"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 #ifdef __CLANG_ARM
 __asm(".global __use_no_semihosting\n\t");
@@ -146,16 +150,22 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
     if (fh == STDIN)
     {
 #ifdef RT_USING_POSIX
-        size = libc_stdio_read(buf, len);
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_W("Do not invoke standard output before initializing libc");
+            return 0;
+        }
+        size = read(STDIN_FILENO, buf, len);
         return len - size;
 #else
         /* no stdin */
         return -1;
 #endif
     }
-
-    if ((fh == STDOUT) || (fh == STDERR))
+    else if ((fh == STDOUT) || (fh == STDERR))
+    {
         return -1;
+    }
 
 #ifndef RT_USING_DFS
     return 0;
@@ -185,7 +195,12 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         return 0;
 #else
 #ifdef RT_USING_POSIX
-        size = libc_stdio_write(buf, len);
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_W("Do not invoke standard input before initializing libc");
+            return 0;
+        }
+        size = write(STDOUT_FILENO, buf, len);
         return len - size;
 #else
         if (rt_console_get_device())
@@ -198,8 +213,10 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 #endif
 #endif
     }
-
-    if (fh == STDIN) return -1;
+    else if (fh == STDIN)
+    {
+        return -1;
+    }
 
 #ifndef RT_USING_DFS
     return 0;
@@ -302,7 +319,7 @@ int remove(const char *filename)
 #endif
 }
 
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
+#if defined(RT_USING_FINSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
 /* use system(const char *string) implementation in the msh */
 #else
 int system(const char *string)
@@ -315,7 +332,7 @@ int system(const char *string)
 #ifdef __MICROLIB
 #include <stdio.h>
 
-int fputc(int c, FILE *f) 
+int fputc(int c, FILE *f)
 {
     char ch[2] = {0};
 
@@ -324,7 +341,7 @@ int fputc(int c, FILE *f)
     return 1;
 }
 
-int fgetc(FILE *f) 
+int fgetc(FILE *f)
 {
 #ifdef RT_USING_POSIX
     char ch;

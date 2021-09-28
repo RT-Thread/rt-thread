@@ -18,10 +18,14 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+
+#ifdef RT_USING_ADC
+
 #define ADC_DEV_NAME        "adc0"      /* ADC 设备名称 */
 #define ADC_DEV_CHANNEL     5           /* ADC 通道 5 PA1*/
 #define REFER_VOLTAGE       330         /* 参考电压 3.3V,数据精度乘以100保留2位小数*/
 #define CONVERT_BITS        (1 << 12)   /* 转换位数为12位 */
+
 
 static int adc_vol_sample(int argc, char *argv[])
 {
@@ -55,3 +59,5 @@ static int adc_vol_sample(int argc, char *argv[])
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(adc_vol_sample, adc voltage convert sample);
+
+#endif

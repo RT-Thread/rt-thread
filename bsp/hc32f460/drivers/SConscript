@@ -1,0 +1,21 @@
+
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split('''
+drv_irq.c
+''')
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+ 
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['drv_usart.c']
+
+
+CPPPATH = [cwd]
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -96,6 +96,10 @@ msh >
 
 本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
 
+
+
+5. USBD CDC使用，参考文章[STM32L496 USB CDC适配](https://club.rt-thread.org/ask/article/2959.html)
+
 ## 注意事项
 
 - 开机时如果不能打印 RT-Thread 版本信息，请重新选择 PC 端串口调试软件的串口号或将 BSP 中串口的 GPIO 速率调低

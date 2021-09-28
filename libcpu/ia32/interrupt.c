@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2015/9/15      Bernard      Update to new interrupt framework.
  */
- 
+
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -74,7 +74,7 @@ void rt_hw_isr(int vector)
 void rt_hw_interrupt_init(void)
 {
     int idx;
-    
+
     rt_hw_idt_init();
     rt_hw_pic_init();
 

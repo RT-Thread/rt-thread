@@ -14,13 +14,11 @@ if RT_USING_DFS
 
     config DFS_FILESYSTEMS_MAX
         int "The maximal number of mounted file system"
-        default 4 if RT_USING_DFS_NFS
-        default 2
+        default 4
 
     config DFS_FILESYSTEM_TYPES_MAX
         int "The maximal number of file system type"
-        default 4 if RT_USING_DFS_NFS
-        default 2
+        default 4
 
     config DFS_FD_MAX
         int "The maximal number of opened files"
@@ -115,7 +113,7 @@ if RT_USING_DFS
             int "Maximum sector size to be handled."
             default 512
             help
-                if you use some spi nor flash for fatfs, please set this the erase sector size, for example 4096.
+                If you use some spi nor flash for fatfs, please set this the erase sector size, for example 4096.
 
         config RT_DFS_ELM_USE_ERASE
             bool "Enable sector erase feature"
@@ -124,6 +122,12 @@ if RT_USING_DFS
         config RT_DFS_ELM_REENTRANT
             bool "Enable the reentrancy (thread safe) of the FatFs module"
             default y
+
+        config RT_DFS_ELM_MUTEX_TIMEOUT
+            int "Timeout of thread-safe protection mutex"
+            range 0 1000000
+            default 3000
+            depends on RT_DFS_ELM_REENTRANT
         endmenu
     endif
 
@@ -138,43 +142,6 @@ if RT_USING_DFS
     config RT_USING_DFS_RAMFS
         bool "Enable RAM file system"
         select RT_USING_MEMHEAP
-        default n
-
-    config RT_USING_DFS_UFFS
-        bool "Enable UFFS file system: Ultra-low-cost Flash File System"
-        select RT_USING_MTD_NAND
-        default n
-
-    if RT_USING_DFS_UFFS
-        choice
-            prompt "UFFS ECC mode"
-            default RT_UFFS_ECC_MODE_1
-
-            config RT_UFFS_ECC_MODE_0
-                bool "0: Do not use ECC"
-
-            config RT_UFFS_ECC_MODE_1
-                bool "1: UFFS calculate the ECC"
-
-            config RT_UFFS_ECC_MODE_2
-                bool "2: Flash driver(or by hardware) calculate the ECC"
-
-            config RT_UFFS_ECC_MODE_3
-                bool "3: Hardware calculate the ECC and automatically write to spare."
-        endchoice
-
-        config RT_UFFS_ECC_MODE
-            int
-            default 0 if RT_UFFS_ECC_MODE_0
-            default 1 if RT_UFFS_ECC_MODE_1
-            default 2 if RT_UFFS_ECC_MODE_2
-            default 3 if RT_UFFS_ECC_MODE_3
-
-    endif
-
-    config RT_USING_DFS_JFFS2
-        bool "Enable JFFS2 file system"
-        select RT_USING_MTD_NOR
         default n
 
     config RT_USING_DFS_NFS

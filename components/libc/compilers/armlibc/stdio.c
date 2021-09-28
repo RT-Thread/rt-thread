@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,6 +21,7 @@
 #define STDIO_DEVICE_NAME_MAX   32
 
 static int std_fd = -1;
+
 int libc_stdio_set_console(const char* device_name, int mode)
 {
     int fd;
@@ -47,29 +48,4 @@ int libc_stdio_get_console(void)
     return std_fd;
 }
 
-int libc_stdio_read(void *buffer, size_t size)
-{
-    if (std_fd >= 0)
-    {
-        return read(std_fd, buffer, size);
-    }
-    else
-    {
-        rt_kprintf("Illegal stdio input!\n");
-        return 0;
-    }
-}
-
-int libc_stdio_write(const void *buffer, size_t size)
-{
-    if (std_fd >= 0)
-    {
-        return write(std_fd, buffer, size);
-    }
-    else
-    {
-        rt_kprintf("Illegal stdio output!\n");
-        return size;
-    }
-}
 #endif

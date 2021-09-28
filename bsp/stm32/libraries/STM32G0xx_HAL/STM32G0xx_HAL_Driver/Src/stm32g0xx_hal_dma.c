@@ -3,8 +3,8 @@
   * @file    stm32g0xx_hal_dma.c
   * @author  MCD Application Team
   * @brief   DMA HAL module driver.
-  *         This file provides firmware functions to manage the following
-  *         functionalities of the Direct Memory Access (DMA) peripheral:
+  *          This file provides firmware functions to manage the following
+  *          functionalities of the Direct Memory Access (DMA) peripheral:
   *           + Initialization and de-initialization functions
   *           + IO operation functions
   *           + Peripheral State and errors functions
@@ -23,9 +23,10 @@
        Circular or Normal mode, Channel Priority level, Source and Destination Increment mode
        using HAL_DMA_Init() function.
 
-       Prior to HAL_DMA_Init the CLK shall be enabled for both DMA & DMAMUX
+       Prior to HAL_DMA_Init the peripheral clock shall be enabled for both DMA & DMAMUX
        thanks to:
-       DMA1   :       __HAL_RCC_DMA1_CLK_ENABLE();
+      (##) DMA1 or DMA2: __HAL_RCC_DMA1_CLK_ENABLE() or  __HAL_RCC_DMA2_CLK_ENABLE();
+      (##) DMAMUX1:      __HAL_RCC_DMAMUX1_CLK_ENABLE();
 
    (#) Use HAL_DMA_GetState() function to return the DMA state and HAL_DMA_GetError() in case of error
        detection.
@@ -33,31 +34,31 @@
    (#) Use HAL_DMA_Abort() function to abort the current transfer
 
      -@-   In Memory-to-Memory transfer mode, Circular mode is not allowed.
+
      *** Polling mode IO operation ***
      =================================
-    [..]
-          (+) Use HAL_DMA_Start() to start DMA transfer after the configuration of Source
-              address and destination address and the Length of data to be transferred
-          (+) Use HAL_DMA_PollForTransfer() to poll for the end of current transfer, in this
-              case a fixed Timeout can be configured by User depending from his application.
+     [..]
+       (+) Use HAL_DMA_Start() to start DMA transfer after the configuration of Source
+           address and destination address and the Length of data to be transferred
+       (+) Use HAL_DMA_PollForTransfer() to poll for the end of current transfer, in this
+           case a fixed Timeout can be configured by User depending from his application.
 
      *** Interrupt mode IO operation ***
      ===================================
-    [..]
-          (+) Configure the DMA interrupt priority using HAL_NVIC_SetPriority()
-          (+) Enable the DMA IRQ handler using HAL_NVIC_EnableIRQ()
-          (+) Use HAL_DMA_Start_IT() to start DMA transfer after the configuration of
-              Source address and destination address and the Length of data to be transferred.
-              In this case the DMA interrupt is configured
-          (+) Use HAL_DMA_IRQHandler() called under DMA_IRQHandler() Interrupt subroutine
-          (+) At the end of data transfer HAL_DMA_IRQHandler() function is executed and user can
-              add his own function by customization of function pointer XferCpltCallback and
-              XferErrorCallback (i.e. a member of DMA handle structure).
+     [..]
+       (+) Configure the DMA interrupt priority using HAL_NVIC_SetPriority()
+       (+) Enable the DMA IRQ handler using HAL_NVIC_EnableIRQ()
+       (+) Use HAL_DMA_Start_IT() to start DMA transfer after the configuration of
+           Source address and destination address and the Length of data to be transferred.
+           In this case the DMA interrupt is configured
+       (+) Use HAL_DMA_IRQHandler() called under DMA_IRQHandler() Interrupt subroutine
+       (+) At the end of data transfer HAL_DMA_IRQHandler() function is executed and user can
+              add his own function to register callbacks with HAL_DMA_RegisterCallback().
 
      *** DMA HAL driver macros list ***
      =============================================
-      [..]
-       Below the list of most used macros in DMA HAL driver.
+     [..]
+       Below the list of macros in DMA HAL driver.
 
        (+) __HAL_DMA_ENABLE: Enable the specified DMA Channel.
        (+) __HAL_DMA_DISABLE: Disable the specified DMA Channel.
@@ -65,7 +66,7 @@
        (+) __HAL_DMA_CLEAR_FLAG: Clear the DMA Channel pending flags.
        (+) __HAL_DMA_ENABLE_IT: Enable the specified DMA Channel interrupts.
        (+) __HAL_DMA_DISABLE_IT: Disable the specified DMA Channel interrupts.
-       (+) __HAL_DMA_GET_IT_SOURCE: Check whether the specified DMA Channel interrupt has occurred or not.
+       (+) __HAL_DMA_GET_IT_SOURCE: Check whether the specified DMA Channel interrupt is enabled or not.
 
      [..]
       (@) You can refer to the DMA HAL driver header file for more useful macros
@@ -74,11 +75,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -142,10 +143,10 @@ static void DMA_CalcDMAMUXRequestGenBaseAndMask(DMA_HandleTypeDef *hdma);
   */
 
 /**
-  * @brief  Initialize the DMA according to the specified
-  *         parameters in the DMA_InitTypeDef and initialize the associated handle.
-  * @param  hdma  Pointer to a DMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified DMA Channel.
+  * @brief Initialize the DMA according to the specified
+  *        parameters in the DMA_InitTypeDef and initialize the associated handle.
+  * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
+  *             the configuration information for the specified DMA Channel.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
@@ -166,8 +167,25 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
   assert_param(IS_DMA_MODE(hdma->Init.Mode));
   assert_param(IS_DMA_PRIORITY(hdma->Init.Priority));
 
-  /* calculation of the channel index */
+  assert_param(IS_DMA_ALL_REQUEST(hdma->Init.Request));
+
+  /* Compute the channel index */
+#if defined(DMA2)
+  if ((uint32_t)(hdma->Instance) < (uint32_t)(DMA2_Channel1))
+  {
+    /* DMA1 */
+    hdma->ChannelIndex = (((uint32_t)hdma->Instance - (uint32_t)DMA1_Channel1) / ((uint32_t)DMA1_Channel2 - (uint32_t)DMA1_Channel1)) << 2U;
+    hdma->DmaBaseAddress = DMA1;
+  }
+  else
+  {
+    /* DMA2 */
+    hdma->ChannelIndex = (((uint32_t)hdma->Instance - (uint32_t)DMA2_Channel1) / ((uint32_t)DMA2_Channel2 - (uint32_t)DMA2_Channel1)) << 2U;
+    hdma->DmaBaseAddress = DMA2;
+  }
+#else
   hdma->ChannelIndex = (((uint32_t)hdma->Instance - (uint32_t)DMA1_Channel1) / ((uint32_t)DMA1_Channel2 - (uint32_t)DMA1_Channel1)) << 2U;
+#endif
 
   /* Change DMA peripheral state */
   hdma->State = HAL_DMA_STATE_BUSY;
@@ -224,7 +242,7 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
   hdma->ErrorCode = HAL_DMA_ERROR_NONE;
 
   /* Initialize the DMA state*/
-  hdma->State  = HAL_DMA_STATE_READY;
+  hdma->State = HAL_DMA_STATE_READY;
 
   /* Release Lock */
   __HAL_UNLOCK(hdma);
@@ -233,9 +251,9 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
 }
 
 /**
-  * @brief  DeInitialize the DMA peripheral.
-  * @param  hdma  pointer to a DMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified DMA Channel.
+  * @brief DeInitialize the DMA peripheral.
+  * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
+  *             the configuration information for the specified DMA Channel.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_DMA_DeInit(DMA_HandleTypeDef *hdma)
@@ -252,14 +270,33 @@ HAL_StatusTypeDef HAL_DMA_DeInit(DMA_HandleTypeDef *hdma)
   /* Disable the selected DMA Channelx */
   __HAL_DMA_DISABLE(hdma);
 
-  /* calculation of the channel index */
+  /* Compute the channel index */
+#if defined(DMA2)
+  if ((uint32_t)(hdma->Instance) < (uint32_t)(DMA2_Channel1))
+  {
+    /* DMA1 */
+    hdma->ChannelIndex = (((uint32_t)hdma->Instance - (uint32_t)DMA1_Channel1) / ((uint32_t)DMA1_Channel2 - (uint32_t)DMA1_Channel1)) << 2U;
+    hdma->DmaBaseAddress = DMA1;
+  }
+  else
+  {
+    /* DMA2 */
+    hdma->ChannelIndex = (((uint32_t)hdma->Instance - (uint32_t)DMA2_Channel1) / ((uint32_t)DMA2_Channel2 - (uint32_t)DMA2_Channel1)) << 2U;
+    hdma->DmaBaseAddress = DMA2;
+  }
+#else
   hdma->ChannelIndex = (((uint32_t)hdma->Instance - (uint32_t)DMA1_Channel1) / ((uint32_t)DMA1_Channel2 - (uint32_t)DMA1_Channel1)) << 2U;
+#endif
 
   /* Reset DMA Channel control register */
-  hdma->Instance->CCR  = 0U;
+  hdma->Instance->CCR = 0U;
 
   /* Clear all flags */
-  __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_GI1 << (hdma->ChannelIndex & 0x1cU)));
+#if defined(DMA2)
+  hdma->DmaBaseAddress->IFCR = (DMA_ISR_GIF1 << (hdma->ChannelIndex & 0x1CU));
+#else
+  __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_GI1 << (hdma->ChannelIndex & 0x1CU)));
+#endif
 
   /* Initialize parameters for DMAMUX channel :
      DMAmuxChannel, DMAmuxChannelStatus and DMAmuxChannelStatusMask */
@@ -287,15 +324,15 @@ HAL_StatusTypeDef HAL_DMA_DeInit(DMA_HandleTypeDef *hdma)
     hdma->DMAmuxRequestGenStatus->RGCFR = hdma->DMAmuxRequestGenStatusMask;
   }
 
+  hdma->DMAmuxRequestGen = 0U;
+  hdma->DMAmuxRequestGenStatus = 0U;
+  hdma->DMAmuxRequestGenStatusMask = 0U;
+
   /* Clean callbacks */
   hdma->XferCpltCallback = NULL;
   hdma->XferHalfCpltCallback = NULL;
   hdma->XferErrorCallback = NULL;
   hdma->XferAbortCallback = NULL;
-
-  hdma->DMAmuxRequestGen = 0U;
-  hdma->DMAmuxRequestGenStatus = 0U;
-  hdma->DMAmuxRequestGenStatusMask = 0U;
 
   /* Initialize the error code */
   hdma->ErrorCode = HAL_DMA_ERROR_NONE;
@@ -327,15 +364,16 @@ HAL_StatusTypeDef HAL_DMA_DeInit(DMA_HandleTypeDef *hdma)
       (+) Abort DMA transfer
       (+) Poll for transfer complete
       (+) Handle DMA interrupt request
+      (+) Register and Unregister DMA callbacks
 
 @endverbatim
   * @{
   */
 
 /**
-  * @brief  Start the DMA Transfer.
+  * @brief Start the DMA Transfer.
   * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified DMA Channel.
+  *             the configuration information for the specified DMA Channel.
   * @param SrcAddress The source memory Buffer address
   * @param DstAddress The destination memory Buffer address
   * @param DataLength The length of data to be transferred from source to destination
@@ -351,10 +389,12 @@ HAL_StatusTypeDef HAL_DMA_Start(DMA_HandleTypeDef *hdma, uint32_t SrcAddress, ui
   /* Process locked */
   __HAL_LOCK(hdma);
 
-  if (HAL_DMA_STATE_READY == hdma->State)
+  if (hdma->State == HAL_DMA_STATE_READY)
   {
     /* Change DMA peripheral state */
     hdma->State = HAL_DMA_STATE_BUSY;
+
+    /* Initialize the error code */
     hdma->ErrorCode = HAL_DMA_ERROR_NONE;
 
     /* Disable the peripheral */
@@ -368,21 +408,23 @@ HAL_StatusTypeDef HAL_DMA_Start(DMA_HandleTypeDef *hdma, uint32_t SrcAddress, ui
   }
   else
   {
+    /* Change the error code */
+    hdma->ErrorCode = HAL_DMA_ERROR_BUSY;
+
     /* Process Unlocked */
     __HAL_UNLOCK(hdma);
-    status = HAL_BUSY;
-  }
 
-  /* Process locked */
-  __HAL_UNLOCK(hdma);
+    /* Return error status */
+    status = HAL_ERROR;
+  }
 
   return status;
 }
 
 /**
-  * @brief  Start the DMA Transfer with interrupt enabled.
+  * @brief Start the DMA Transfer with interrupt enabled.
   * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified DMA Channel.
+  *             the configuration information for the specified DMA Channel.
   * @param SrcAddress The source memory Buffer address
   * @param DstAddress The destination memory Buffer address
   * @param DataLength The length of data to be transferred from source to destination
@@ -398,7 +440,7 @@ HAL_StatusTypeDef HAL_DMA_Start_IT(DMA_HandleTypeDef *hdma, uint32_t SrcAddress,
   /* Process locked */
   __HAL_LOCK(hdma);
 
-  if (HAL_DMA_STATE_READY == hdma->State)
+  if (hdma->State == HAL_DMA_STATE_READY)
   {
     /* Change DMA peripheral state */
     hdma->State = HAL_DMA_STATE_BUSY;
@@ -442,24 +484,24 @@ HAL_StatusTypeDef HAL_DMA_Start_IT(DMA_HandleTypeDef *hdma, uint32_t SrcAddress,
   }
   else
   {
+    /* Change the error code */
+    hdma->ErrorCode = HAL_DMA_ERROR_BUSY;
+
     /* Process Unlocked */
     __HAL_UNLOCK(hdma);
 
-    /* Remain BUSY */
-    status = HAL_BUSY;
+    /* Return error status */
+    status = HAL_ERROR;
   }
-
-  /* Process unlocked */
-  __HAL_UNLOCK(hdma);
 
   return status;
 }
 
 /**
-  * @brief  Abort the DMA Transfer.
+  * @brief Abort the DMA Transfer.
   * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified DMA Channel.
-    * @retval HAL status
+  *             the configuration information for the specified DMA Channel.
+  * @retval HAL status
   */
 HAL_StatusTypeDef HAL_DMA_Abort(DMA_HandleTypeDef *hdma)
 {
@@ -470,7 +512,7 @@ HAL_StatusTypeDef HAL_DMA_Abort(DMA_HandleTypeDef *hdma)
   }
 
   /* Check the DMA peripheral state */
-  if(hdma->State != HAL_DMA_STATE_BUSY)
+  if (hdma->State != HAL_DMA_STATE_BUSY)
   {
     hdma->ErrorCode = HAL_DMA_ERROR_NO_XFER;
 
@@ -491,7 +533,11 @@ HAL_StatusTypeDef HAL_DMA_Abort(DMA_HandleTypeDef *hdma)
     __HAL_DMA_DISABLE(hdma);
 
     /* Clear all flags */
-    __HAL_DMA_CLEAR_FLAG(hdma, ((DMA_FLAG_GI1) << (hdma->ChannelIndex  & 0x1cU)));
+#if defined(DMA2)
+    hdma->DmaBaseAddress->IFCR = (DMA_ISR_GIF1 << (hdma->ChannelIndex & 0x1CU));
+#else
+    __HAL_DMA_CLEAR_FLAG(hdma, ((DMA_FLAG_GI1) << (hdma->ChannelIndex  & 0x1CU)));
+#endif
 
     /* Clear the DMAMUX synchro overrun flag */
     hdma->DMAmuxChannelStatus->CFR = hdma->DMAmuxChannelStatusMask;
@@ -517,20 +563,16 @@ HAL_StatusTypeDef HAL_DMA_Abort(DMA_HandleTypeDef *hdma)
 }
 
 /**
-  * @brief  Aborts the DMA Transfer in Interrupt mode.
-  * @param  hdma    pointer to a DMA_HandleTypeDef structure that contains
-  *                 the configuration information for the specified DMA Stream.
+  * @brief Aborts the DMA Transfer in Interrupt mode.
+  * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
+  *             the configuration information for the specified DMA Channel.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_DMA_Abort_IT(DMA_HandleTypeDef *hdma)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
-  /* Process Unlocked/locked */
-  __HAL_UNLOCK(hdma);
-  __HAL_LOCK(hdma);
-
-  if (HAL_DMA_STATE_BUSY != hdma->State)
+  if (hdma->State != HAL_DMA_STATE_BUSY)
   {
     /* no transfer ongoing */
     hdma->ErrorCode = HAL_DMA_ERROR_NO_XFER;
@@ -549,7 +591,11 @@ HAL_StatusTypeDef HAL_DMA_Abort_IT(DMA_HandleTypeDef *hdma)
     hdma->DMAmuxChannel->CCR &= ~DMAMUX_CxCR_SOIE;
 
     /* Clear all flags */
-    __HAL_DMA_CLEAR_FLAG(hdma, ((DMA_FLAG_GI1) << (hdma->ChannelIndex & 0x1cU)));
+#if defined(DMA2)
+    hdma->DmaBaseAddress->IFCR = (DMA_ISR_GIF1 << (hdma->ChannelIndex & 0x1CU));
+#else
+    __HAL_DMA_CLEAR_FLAG(hdma, ((DMA_FLAG_GI1) << (hdma->ChannelIndex & 0x1CU)));
+#endif
 
     /* Clear the DMAMUX synchro overrun flag */
     hdma->DMAmuxChannelStatus->CFR = hdma->DMAmuxChannelStatusMask;
@@ -580,9 +626,9 @@ HAL_StatusTypeDef HAL_DMA_Abort_IT(DMA_HandleTypeDef *hdma)
 }
 
 /**
-  * @brief  Polling for transfer complete.
+  * @brief Polling for transfer complete.
   * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
-  *                  the configuration information for the specified DMA Channel.
+  *             the configuration information for the specified DMA Channel.
   * @param CompleteLevel Specifies the DMA level complete.
   * @param Timeout Timeout duration.
   * @retval HAL status
@@ -592,10 +638,7 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
   uint32_t temp;
   uint32_t tickstart;
 
-  /* Process unlocked */
-  __HAL_UNLOCK(hdma);
-
-  if (HAL_DMA_STATE_BUSY != hdma->State)
+  if (hdma->State != HAL_DMA_STATE_BUSY)
   {
     /* no transfer ongoing */
     hdma->ErrorCode = HAL_DMA_ERROR_NO_XFER;
@@ -614,25 +657,26 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
   if (HAL_DMA_FULL_TRANSFER == CompleteLevel)
   {
     /* Transfer Complete flag */
-    temp = DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1cU);
+    temp = DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1CU);
   }
   else
   {
     /* Half Transfer Complete flag */
-    temp = DMA_FLAG_HT1 << (hdma->ChannelIndex  & 0x1cU);
+    temp = DMA_FLAG_HT1 << (hdma->ChannelIndex & 0x1CU);
   }
 
   /* Get tick */
   tickstart = HAL_GetTick();
 
-  while (0U == __HAL_DMA_GET_FLAG(hdma, temp))
+#if defined(DMA2)
+  while ((hdma->DmaBaseAddress->ISR & temp) == 0U)
   {
-    if (0U != __HAL_DMA_GET_FLAG(hdma, (DMA_FLAG_TE1 << (hdma->ChannelIndex & 0x1cU))))
+    if ((hdma->DmaBaseAddress->ISR & (DMA_FLAG_TE1 << (hdma->ChannelIndex & 0x1CU))) != 0U)
     {
       /* When a DMA transfer error occurs */
       /* A hardware clear of its EN bits is performed */
       /* Clear all flags */
-      __HAL_DMA_CLEAR_FLAG(hdma, ((DMA_FLAG_GI1) << (hdma->ChannelIndex & 0x1cU)));
+      hdma->DmaBaseAddress->IFCR = (DMA_ISR_GIF1 << (hdma->ChannelIndex & 0x1CU));
 
       /* Update error code */
       hdma->ErrorCode = HAL_DMA_ERROR_TE;
@@ -645,10 +689,32 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
 
       return HAL_ERROR;
     }
+#else
+  while (0U == __HAL_DMA_GET_FLAG(hdma, temp))
+  {
+    if (0U != __HAL_DMA_GET_FLAG(hdma, (DMA_FLAG_TE1 << (hdma->ChannelIndex & 0x1CU))))
+    {
+      /* When a DMA transfer error occurs */
+      /* A hardware clear of its EN bits is performed */
+      /* Clear all flags */
+      __HAL_DMA_CLEAR_FLAG(hdma, ((DMA_FLAG_GI1) << (hdma->ChannelIndex & 0x1CU)));
+
+      /* Update error code */
+      hdma->ErrorCode = HAL_DMA_ERROR_TE;
+
+      /* Change the DMA state */
+      hdma->State = HAL_DMA_STATE_READY;
+
+      /* Process Unlocked */
+      __HAL_UNLOCK(hdma);
+
+      return HAL_ERROR;
+    }
+#endif
     /* Check for the Timeout */
     if (Timeout != HAL_MAX_DELAY)
     {
-      if(((HAL_GetTick() - tickstart ) > Timeout)||(Timeout == 0U))
+      if (((HAL_GetTick() - tickstart) > Timeout) || (Timeout == 0U))
       {
         /* Update error code */
         hdma->ErrorCode = HAL_DMA_ERROR_TIMEOUT;
@@ -694,7 +760,14 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
   if (HAL_DMA_FULL_TRANSFER == CompleteLevel)
   {
     /* Clear the transfer complete flag */
-    __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1cU)));
+#if defined(DMA2)
+    hdma->DmaBaseAddress->IFCR = (DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1CU));
+#else
+    __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1CU)));
+#endif
+
+    /* Process unlocked */
+    __HAL_UNLOCK(hdma);
 
     /* The selected Channelx EN bit is cleared (DMA is disabled and
     all transfers are complete) */
@@ -703,74 +776,83 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
   else
   {
     /* Clear the half transfer complete flag */
-    __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_HT1 << (hdma->ChannelIndex & 0x1cU)));
+#if defined(DMA2)
+    hdma->DmaBaseAddress->IFCR = (DMA_FLAG_HT1 << (hdma->ChannelIndex & 0x1CU));
+#else
+    __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_HT1 << (hdma->ChannelIndex & 0x1CU)));
+#endif
   }
-
-  /* Process unlocked */
-  __HAL_UNLOCK(hdma);
 
   return HAL_OK;
 }
 
 /**
-  * @brief  Handle DMA interrupt request.
-  * @param  hdma: pointer to a DMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified DMA Channel.
+  * @brief Handle DMA interrupt request.
+  * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
+  *             the configuration information for the specified DMA Channel.
   * @retval None
   */
 void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
 {
+#if defined(DMA2)
+  uint32_t flag_it = hdma->DmaBaseAddress->ISR;
+#else
   uint32_t flag_it = DMA1->ISR;
+#endif
   uint32_t source_it = hdma->Instance->CCR;
 
   /* Half Transfer Complete Interrupt management ******************************/
-  if (((flag_it & (DMA_FLAG_HT1 << (hdma->ChannelIndex & 0x1cU))) != 0U) && ((source_it & DMA_IT_HT) != 0U))
+  if (((flag_it & (DMA_FLAG_HT1 << (hdma->ChannelIndex & 0x1CU))) != 0U) && ((source_it & DMA_IT_HT) != 0U))
   {
-    /* Disable the half transfer interrupt if the DMA mode is not CIRCULAR */
-    if ((hdma->Instance->CCR & DMA_CCR_CIRC) == 0U)
-    {
-      /* Disable the half transfer interrupt */
-      __HAL_DMA_DISABLE_IT(hdma, DMA_IT_HT);
-    }
-    /* Clear the half transfer complete flag */
-    __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_HT1 << (hdma->ChannelIndex & 0x1cU)));
+      /* Disable the half transfer interrupt if the DMA mode is not CIRCULAR */
+      if ((hdma->Instance->CCR & DMA_CCR_CIRC) == 0U)
+      {
+        /* Disable the half transfer interrupt */
+        __HAL_DMA_DISABLE_IT(hdma, DMA_IT_HT);
+      }
+      /* Clear the half transfer complete flag */
+#if defined(DMA2)
+      hdma->DmaBaseAddress->IFCR = DMA_ISR_HTIF1 << (hdma->ChannelIndex & 0x1CU);
+#else
+      __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_HT1 << (hdma->ChannelIndex & 0x1CU)));
+#endif
 
-    /* DMA peripheral state is not updated in Half Transfer */
-    /* but in Transfer Complete case */
+      /* DMA peripheral state is not updated in Half Transfer */
+      /* but in Transfer Complete case */
 
-    if (hdma->XferHalfCpltCallback != NULL)
-    {
-      /* Half transfer callback */
-      hdma->XferHalfCpltCallback(hdma);
-    }
+      if (hdma->XferHalfCpltCallback != NULL)
+      {
+        /* Half transfer callback */
+        hdma->XferHalfCpltCallback(hdma);
+      }
   }
 
   /* Transfer Complete Interrupt management ***********************************/
-  else if ((0U != (flag_it & (DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1cU)))) && (0U != (source_it & DMA_IT_TC)))
+  else if ((0U != (flag_it & (DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1CU)))) && (0U != (source_it & DMA_IT_TC)))
   {
-    if ((hdma->Instance->CCR & DMA_CCR_CIRC) == 0U)
-    {
-      /* Disable the transfer complete and error interrupt */
-      __HAL_DMA_DISABLE_IT(hdma, DMA_IT_TE | DMA_IT_TC);
+      if ((hdma->Instance->CCR & DMA_CCR_CIRC) == 0U)
+      {
+        /* Disable the transfer complete and error interrupt */
+        __HAL_DMA_DISABLE_IT(hdma, DMA_IT_TE | DMA_IT_TC);
 
-      /* Change the DMA state */
-      hdma->State = HAL_DMA_STATE_READY;
-    }
-    /* Clear the transfer complete flag */
-    __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1cU)));
+        /* Change the DMA state */
+        hdma->State = HAL_DMA_STATE_READY;
+      }
+      /* Clear the transfer complete flag */
+      __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1CU)));
 
-    /* Process Unlocked */
-    __HAL_UNLOCK(hdma);
+      /* Process Unlocked */
+      __HAL_UNLOCK(hdma);
 
-    if (hdma->XferCpltCallback != NULL)
-    {
-      /* Transfer complete callback */
-      hdma->XferCpltCallback(hdma);
-    }
+      if (hdma->XferCpltCallback != NULL)
+      {
+        /* Transfer complete callback */
+        hdma->XferCpltCallback(hdma);
+      }
   }
 
   /* Transfer Error Interrupt management **************************************/
-  else if (((flag_it & (DMA_FLAG_TE1 << (hdma->ChannelIndex & 0x1cU)))!= 0U) && ((source_it & DMA_IT_TE) != 0U))
+  else if (((flag_it & (DMA_FLAG_TE1 << (hdma->ChannelIndex & 0x1CU))) != 0U) && ((source_it & DMA_IT_TE) != 0U))
   {
     /* When a DMA transfer error occurs */
     /* A hardware clear of its EN bits is performed */
@@ -778,7 +860,11 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
     __HAL_DMA_DISABLE_IT(hdma, (DMA_IT_TC | DMA_IT_HT | DMA_IT_TE));
 
     /* Clear all flags */
-    __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_GI1 << (hdma->ChannelIndex& 0x1cU)));
+#if defined(DMA2)
+    hdma->DmaBaseAddress->IFCR = (DMA_ISR_GIF1 << (hdma->ChannelIndex & 0x1CU));
+#else
+    __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_GI1 << (hdma->ChannelIndex & 0x1CU)));
+#endif
 
     /* Update error code */
     hdma->ErrorCode = HAL_DMA_ERROR_TE;
@@ -803,13 +889,13 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
 }
 
 /**
-  * @brief  Register callbacks
-  * @param  hdma                  pointer to a DMA_HandleTypeDef structure that contains
-  *                               the configuration information for the specified DMA Stream.
-  * @param  CallbackID            User Callback identifer
-  *                               a HAL_DMA_CallbackIDTypeDef ENUM as parameter.
-  * @param  pCallback             pointer to private callbacsk function which has pointer to
-  *                               a DMA_HandleTypeDef structure as parameter.
+  * @brief Register callbacks
+  * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
+  *             the configuration information for the specified DMA Channel.
+  * @param CallbackID User Callback identifier
+  *                   a HAL_DMA_CallbackIDTypeDef ENUM as parameter.
+  * @param pCallback Pointer to private callbacsk function which has pointer to
+  *                  a DMA_HandleTypeDef structure as parameter.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_DMA_RegisterCallback(DMA_HandleTypeDef *hdma, HAL_DMA_CallbackIDTypeDef CallbackID, void (* pCallback)(DMA_HandleTypeDef *_hdma))
@@ -819,7 +905,7 @@ HAL_StatusTypeDef HAL_DMA_RegisterCallback(DMA_HandleTypeDef *hdma, HAL_DMA_Call
   /* Process locked */
   __HAL_LOCK(hdma);
 
-  if (HAL_DMA_STATE_READY == hdma->State)
+  if (hdma->State == HAL_DMA_STATE_READY)
   {
     switch (CallbackID)
     {
@@ -856,11 +942,11 @@ HAL_StatusTypeDef HAL_DMA_RegisterCallback(DMA_HandleTypeDef *hdma, HAL_DMA_Call
 }
 
 /**
-  * @brief  UnRegister callbacks
-  * @param  hdma                  pointer to a DMA_HandleTypeDef structure that contains
-  *                               the configuration information for the specified DMA Stream.
-  * @param  CallbackID            User Callback identifer
-  *                               a HAL_DMA_CallbackIDTypeDef ENUM as parameter.
+  * @brief UnRegister callbacks
+  * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
+  *             the configuration information for the specified DMA Channel.
+  * @param CallbackID User Callback identifier
+  *                   a HAL_DMA_CallbackIDTypeDef ENUM as parameter.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_DMA_UnRegisterCallback(DMA_HandleTypeDef *hdma, HAL_DMA_CallbackIDTypeDef CallbackID)
@@ -870,7 +956,7 @@ HAL_StatusTypeDef HAL_DMA_UnRegisterCallback(DMA_HandleTypeDef *hdma, HAL_DMA_Ca
   /* Process locked */
   __HAL_LOCK(hdma);
 
-  if (HAL_DMA_STATE_READY == hdma->State)
+  if (hdma->State == HAL_DMA_STATE_READY)
   {
     switch (CallbackID)
     {
@@ -936,9 +1022,9 @@ HAL_StatusTypeDef HAL_DMA_UnRegisterCallback(DMA_HandleTypeDef *hdma, HAL_DMA_Ca
   */
 
 /**
-  * @brief  Return the DMA hande state.
+  * @brief Return the DMA handle state.
   * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified DMA Channel.
+  *             the configuration information for the specified DMA Channel.
   * @retval HAL state
   */
 HAL_DMA_StateTypeDef HAL_DMA_GetState(DMA_HandleTypeDef *hdma)
@@ -948,13 +1034,14 @@ HAL_DMA_StateTypeDef HAL_DMA_GetState(DMA_HandleTypeDef *hdma)
 }
 
 /**
-  * @brief  Return the DMA error code.
-  * @param  hdma Pointer to a DMA_HandleTypeDef structure that contains
-  *              the configuration information for the specified DMA Channel.
+  * @brief Return the DMA error code.
+  * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
+  *             the configuration information for the specified DMA Channel.
   * @retval DMA Error Code
   */
 uint32_t HAL_DMA_GetError(DMA_HandleTypeDef *hdma)
 {
+  /* Return the DMA error code */
   return hdma->ErrorCode;
 }
 
@@ -971,9 +1058,9 @@ uint32_t HAL_DMA_GetError(DMA_HandleTypeDef *hdma)
   */
 
 /**
-  * @brief  Sets the DMA Transfer parameter.
+  * @brief Sets the DMA Transfer parameter.
   * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
-  *                     the configuration information for the specified DMA Channel.
+  *             the configuration information for the specified DMA Channel.
   * @param SrcAddress The source memory Buffer address
   * @param DstAddress The destination memory Buffer address
   * @param DataLength The length of data to be transferred from source to destination
@@ -991,12 +1078,16 @@ static void DMA_SetConfig(DMA_HandleTypeDef *hdma, uint32_t SrcAddress, uint32_t
   }
 
   /* Clear all flags */
-  __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_GI1 << (hdma->ChannelIndex & 0x1cU)));
+#if defined(DMA2)
+  hdma->DmaBaseAddress->IFCR = (DMA_ISR_GIF1 << (hdma->ChannelIndex & 0x1CU));
+#else
+  __HAL_DMA_CLEAR_FLAG(hdma, (DMA_FLAG_GI1 << (hdma->ChannelIndex & 0x1CU)));
+#endif
 
   /* Configure DMA Channel data length */
   hdma->Instance->CNDTR = DataLength;
 
-  /* Peripheral to Memory */
+  /* Memory to Peripheral */
   if ((hdma->Init.Direction) == DMA_MEMORY_TO_PERIPH)
   {
     /* Configure DMA Channel destination address */
@@ -1005,7 +1096,7 @@ static void DMA_SetConfig(DMA_HandleTypeDef *hdma, uint32_t SrcAddress, uint32_t
     /* Configure DMA Channel source address */
     hdma->Instance->CMAR = SrcAddress;
   }
-  /* Memory to Peripheral */
+  /* Peripheral to Memory */
   else
   {
     /* Configure DMA Channel source address */
@@ -1017,25 +1108,54 @@ static void DMA_SetConfig(DMA_HandleTypeDef *hdma, uint32_t SrcAddress, uint32_t
 }
 
 /**
-  * @brief  Updates the DMA handle with the DMAMUX  channel and status mask depending on stream number
-  * @param  hdma Pointer to a DMA_HandleTypeDef structure that contains
-  *                     the configuration information for the specified DMA Stream.
+  * @brief Updates the DMA handle with the DMAMUX  channel and status mask depending on channel number
+  * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
+  *             the configuration information for the specified DMA Channel.
   * @retval None
   */
 static void DMA_CalcDMAMUXChannelBaseAndMask(DMA_HandleTypeDef *hdma)
 {
   uint32_t channel_number;
 
-  channel_number = (((uint32_t)hdma->Instance & 0xFFU) - 8U) / 20U;
+#if defined(DMA2)
+  /* check if instance is not outside the DMA channel range */
+  if ((uint32_t)hdma->Instance < (uint32_t)DMA2_Channel1)
+  {
+    /* DMA1 */
+    /* Associate a DMA Channel to a DMAMUX channel */
+    hdma->DMAmuxChannel = (DMAMUX1_Channel0 + (hdma->ChannelIndex >> 2U));
+
+    /* Prepare channel_number used for DMAmuxChannelStatusMask computation */
+    channel_number = (((uint32_t)hdma->Instance & 0xFFU) - 8U) / 20U;
+  }
+  else
+  {
+    /* DMA2 */
+    /* Associate a DMA Channel to a DMAMUX channel */
+    hdma->DMAmuxChannel = (DMAMUX1_Channel7 + (hdma->ChannelIndex >> 2U));
+
+    /* Prepare channel_number used for DMAmuxChannelStatusMask computation */
+    channel_number = (((((uint32_t)hdma->Instance & 0xFFU) - 8U) / 20U) + 7U);
+  }
+#else
+  /* Associate a DMA Channel to a DMAMUX channel */
   hdma->DMAmuxChannel = (DMAMUX_Channel_TypeDef *)(uint32_t)((uint32_t)DMAMUX1_Channel0 + ((hdma->ChannelIndex >> 2U) * ((uint32_t)DMAMUX1_Channel1 - (uint32_t)DMAMUX1_Channel0)));
+
+  /* Prepare channel_number used for DMAmuxChannelStatusMask computation */
+  channel_number = (((uint32_t)hdma->Instance & 0xFFU) - 8U) / 20U;
+#endif
+
+  /* Initialize the field DMAmuxChannelStatus to DMAMUX1_ChannelStatus base */
   hdma->DMAmuxChannelStatus = DMAMUX1_ChannelStatus;
-  hdma->DMAmuxChannelStatusMask = 1UL << (channel_number & 0x1cU);
+
+  /* Initialize the field DMAmuxChannelStatusMask with the corresponding index of the DMAMUX channel selected for the current ChannelIndex */
+  hdma->DMAmuxChannelStatusMask = 1UL << (channel_number & 0x1FU);
 }
 
 /**
-  * @brief  Updates the DMA handle with the DMAMUX  request generator params
-  * @param  hdma Pointer to a DMA_HandleTypeDef structure that contains
-  *                     the configuration information for the specified DMA Stream.
+  * @brief Updates the DMA handle with the DMAMUX  request generator params
+  * @param hdma Pointer to a DMA_HandleTypeDef structure that contains
+  *             the configuration information for the specified DMA Channel.
   * @retval None
   */
 
@@ -1048,7 +1168,7 @@ static void DMA_CalcDMAMUXRequestGenBaseAndMask(DMA_HandleTypeDef *hdma)
 
   hdma->DMAmuxRequestGenStatus = DMAMUX1_RequestGenStatus;
 
-  /* here "Request" is either DMA_REQUEST_GENERATOR0 to 4, i.e. <= 4*/
+  /* here "Request" is either DMA_REQUEST_GENERATOR0 to DMA_REQUEST_GENERATOR3, i.e. <= 4*/
   hdma->DMAmuxRequestGenStatusMask = 1UL << ((request - 1U) & 0x3U);
 }
 

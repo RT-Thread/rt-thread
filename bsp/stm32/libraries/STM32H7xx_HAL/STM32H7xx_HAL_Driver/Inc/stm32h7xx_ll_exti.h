@@ -136,8 +136,12 @@ typedef struct
 #define LL_EXTI_LINE_41                EXTI_IMR2_IM41          /*!< Extended line 41 */
 #define LL_EXTI_LINE_42                EXTI_IMR2_IM42          /*!< Extended line 42 */
 #define LL_EXTI_LINE_43                EXTI_IMR2_IM43          /*!< Extended line 43 */
+#if defined(USB2_OTG_FS)
 #define LL_EXTI_LINE_44                EXTI_IMR2_IM44          /*!< Extended line 44 */
+#endif /* USB2_OTG_FS */
+#if defined(DSI)
 #define LL_EXTI_LINE_46                EXTI_IMR2_IM46          /*!< Extended line 46 */
+#endif /* DSI */
 #define LL_EXTI_LINE_47                EXTI_IMR2_IM47          /*!< Extended line 47 */
 #define LL_EXTI_LINE_48                EXTI_IMR2_IM48          /*!< Extended line 48 */
 #define LL_EXTI_LINE_49                EXTI_IMR2_IM49          /*!< Extended line 49 */
@@ -168,17 +172,28 @@ typedef struct
 #define LL_EXTI_LINE_72                EXTI_IMR3_IM72          /*!< Extended line 72 */
 #define LL_EXTI_LINE_73                EXTI_IMR3_IM73          /*!< Extended line 73 */
 #define LL_EXTI_LINE_74                EXTI_IMR3_IM74          /*!< Extended line 74 */
+#if defined(ADC3)
 #define LL_EXTI_LINE_75                EXTI_IMR3_IM75          /*!< Extended line 75 */
+#endif /* ADC3 */
+#if defined(SAI4)
 #define LL_EXTI_LINE_76                EXTI_IMR3_IM76          /*!< Extended line 76 */
+#endif /* SAI4 */
+#if defined(DUAL_CORE)
 #define LL_EXTI_LINE_77                EXTI_IMR3_IM77          /*!< Extended line 77 */
 #define LL_EXTI_LINE_78                EXTI_IMR3_IM78          /*!< Extended line 78 */
 #define LL_EXTI_LINE_79                EXTI_IMR3_IM79          /*!< Extended line 79 */
 #define LL_EXTI_LINE_80                EXTI_IMR3_IM80          /*!< Extended line 80 */
 #define LL_EXTI_LINE_82                EXTI_IMR3_IM82          /*!< Extended line 82 */
 #define LL_EXTI_LINE_84                EXTI_IMR3_IM84          /*!< Extended line 84 */
+#endif /* DUAL_CORE */
 #define LL_EXTI_LINE_85                EXTI_IMR3_IM85          /*!< Extended line 85 */
+#if defined(ETH)
 #define LL_EXTI_LINE_86                EXTI_IMR3_IM86          /*!< Extended line 86 */
+#endif /* ETH */
 #define LL_EXTI_LINE_87                EXTI_IMR3_IM87          /*!< Extended line 87 */
+#if defined(DTS)
+#define LL_EXTI_LINE_88                EXTI_IMR3_IM88          /*!< Extended line 87 */
+#endif /* DTS */
 #define LL_EXTI_LINE_ALL_64_95         EXTI_IMR3_IM            /*!< All Extended line not reserved*/
 
 
@@ -231,9 +246,16 @@ typedef struct
   */
 #define LL_EXTI_D3_PEND_CLR_DMACH6      ((uint8_t)0x00U) /*!< DMA ch6 event selected as D3 domain pendclear source */
 #define LL_EXTI_D3_PEND_CLR_DMACH7      ((uint8_t)0x01U) /*!< DMA ch7 event selected as D3 domain pendclear source */
+#if defined (LPTIM4)
 #define LL_EXTI_D3_PEND_CLR_LPTIM4      ((uint8_t)0x02U) /*!< LPTIM4 out selected as D3 domain pendclear source */
-#define LL_EXTI_D3_PEND_CLR_LPTIM5      ((uint8_t)0x03U) /*!< LPTIM4 out selected as D3 domain pendclear source */
-
+#else
+#define LL_EXTI_D3_PEND_CLR_LPTIM2      ((uint8_t)0x02U) /*!< LPTIM2 out selected as D3 domain pendclear source */
+#endif /*LPTIM4*/
+#if defined (LPTIM5)
+#define LL_EXTI_D3_PEND_CLR_LPTIM5      ((uint8_t)0x03U) /*!< LPTIM5 out selected as D3 domain pendclear source */
+#else
+#define LL_EXTI_D3_PEND_CLR_LPTIM3      ((uint8_t)0x02U) /*!< LPTIM3 out selected as D3 domain pendclear source */
+#endif /*LPTIM5*/
 /**
   * @}
   */

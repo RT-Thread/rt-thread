@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,45 +15,76 @@
 
 #ifdef RT_USING_POSIX_TERMIOS
 #include "termios.h"
-
 int isatty(int fd)
 {
     struct termios ts;
-    return(tcgetattr(fd,&ts) != -1);/*true if no error (is a tty)*/
+    return(tcgetattr(fd, &ts) != -1); /*true if no error (is a tty)*/
 }
-RTM_EXPORT(isatty);
+#else
+int isatty(int fd)
+{
+    if (fd >=0 && fd < 3)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 #endif
+RTM_EXPORT(isatty);
 
 char *ttyname(int fd)
 {
-    return "/dev/tty0"; /*TODO: need to add more specific*/
+    return "/dev/tty"; /* TODO: need to add more specific */
 }
 RTM_EXPORT(ttyname);
 
 unsigned int sleep(unsigned int seconds)
 {
-    rt_tick_t delta_tick;
+    if (rt_thread_self() != RT_NULL)
+    {
+        rt_thread_delay(seconds * RT_TICK_PER_SECOND);
+    }
+    else /* scheduler has not run yet */
+    {
+        while(seconds > 0)
+        {
+            rt_hw_us_delay(1000000u);
+            seconds --;
+        }
+    }
 
-    delta_tick = rt_tick_get();
-    rt_thread_delay(seconds * RT_TICK_PER_SECOND);
-    delta_tick = rt_tick_get() - delta_tick;
-
-    return seconds - delta_tick/RT_TICK_PER_SECOND;
+    return 0;
 }
 RTM_EXPORT(sleep);
 
 int usleep(useconds_t usec)
 {
-    rt_thread_mdelay(usec / 1000u);
+    if (rt_thread_self() != RT_NULL)
+    {
+        rt_thread_mdelay(usec / 1000u);
+    }
+    else  /* scheduler has not run yet */
+    {
+        rt_hw_us_delay(usec / 1000u);
+    }
     rt_hw_us_delay(usec % 1000u);
+
     return 0;
 }
 RTM_EXPORT(usleep);
 
-pid_t getpid(void)
+pid_t gettid(void)
 {
     /*TODO*/
     return 0;
+}
+
+pid_t getpid(void)
+{
+    return gettid();
 }
 RTM_EXPORT(getpid);
 

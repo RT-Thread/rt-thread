@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
 #include "tc_comm.h"
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -16,7 +25,6 @@ static const char* _tc_current;
 static void (*_tc_cleanup)(void) = RT_NULL;
 
 static rt_uint32_t _tc_scale = 1;
-FINSH_VAR_EXPORT(_tc_scale, finsh_type_int, the testcase timer timeout scale)
 
 static rt_uint32_t _tc_loop;
 
@@ -26,7 +34,7 @@ void tc_thread_entry(void* parameter)
     struct finsh_syscall* index;
 
     /* create tc semaphore */
-    rt_sem_init(&_tc_sem, "tc", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&_tc_sem, "tc", 0, RT_IPC_FLAG_PRIO);
 
     do {
         for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))

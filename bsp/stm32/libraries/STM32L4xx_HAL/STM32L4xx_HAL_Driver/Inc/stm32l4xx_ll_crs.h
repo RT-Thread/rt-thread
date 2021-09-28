@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_LL_CRS_H
-#define __STM32L4xx_LL_CRS_H
+#ifndef STM32L4xx_LL_CRS_H
+#define STM32L4xx_LL_CRS_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -783,6 +783,6 @@ ErrorStatus LL_CRS_DeInit(void);
 }
 #endif
 
-#endif /* __STM32L4xx_LL_CRS_H */
+#endif /* STM32L4xx_LL_CRS_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

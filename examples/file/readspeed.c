@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,9 +46,9 @@ void readspeed(const char* filename, int block_size)
     }
     tick = rt_tick_get() - tick;
 
-	/* close file and release memory */
+    /* close file and release memory */
     close(fd);
-	rt_free(buff_ptr);
+    rt_free(buff_ptr);
 
     /* calculate read speed */
     rt_kprintf("File read speed: %d byte/s\n", total_length /tick * RT_TICK_PER_SECOND);
@@ -58,7 +58,6 @@ void readspeed(const char* filename, int block_size)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(readspeed, perform file read test);
 
-#ifdef FINSH_USING_MSH
 static void cmd_readspeed(int argc, char *argv[])
 {
     char* filename;
@@ -82,6 +81,5 @@ static void cmd_readspeed(int argc, char *argv[])
     }
     readspeed(filename, block_size);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_readspeed, __cmd_readspeed, test file system read speed);
-#endif /* FINSH_USING_MSH */
+MSH_CMD_EXPORT_ALIAS(cmd_readspeed, readspeed, test file system read speed);
 #endif /* RT_USING_FINSH */

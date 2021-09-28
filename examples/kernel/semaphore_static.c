@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：静态信号量
  *
  * 这个例子中将创建一个静态信号量（初始值为0 ）及一个静态线程，在这个静态线程中
@@ -72,7 +81,7 @@ int semaphore_static_init(void)
     rt_err_t result;
 
     /* 初始化信号量，初始值是0 */
-    result = rt_sem_init(&sem, "sem", 0, RT_IPC_FLAG_FIFO);
+    result = rt_sem_init(&sem, "sem", 0, RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
         tc_stat(TC_STAT_END | TC_STAT_FAILED);

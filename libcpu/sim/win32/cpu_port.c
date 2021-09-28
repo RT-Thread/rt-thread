@@ -5,7 +5,7 @@
 * Version : V1.00.00
 *
 * By      : prife
-* Version : V1.00.01 
+* Version : V1.00.01
 ************************************************************************************************************************
 */
 
@@ -47,10 +47,10 @@ const DWORD MS_VC_EXCEPTION=0x406D1388;
 #pragma pack(push,8)
 typedef struct tagTHREADNAME_INFO
 {
-	DWORD dwType; // Must be 0x1000.
-	LPCSTR szName; // Pointer to name (in user addr space).
-	DWORD dwThreadID; // Thread ID (-1=caller thread).
-	DWORD dwFlags; // Reserved for future use, must be zero.
+    DWORD dwType; // Must be 0x1000.
+    LPCSTR szName; // Pointer to name (in user addr space).
+    DWORD dwThreadID; // Thread ID (-1=caller thread).
+    DWORD dwFlags; // Reserved for future use, must be zero.
 } THREADNAME_INFO;
 #pragma pack(pop)
 
@@ -115,19 +115,19 @@ static DWORD WINAPI ThreadforKeyGet(LPVOID lpParam);
 static void SetThreadName(DWORD dwThreadID, char* threadName)
 {
 #if defined(_MSC_VER)
-	THREADNAME_INFO info;
-	info.dwType = 0x1000;
-	info.szName = threadName;
-	info.dwThreadID = dwThreadID;
-	info.dwFlags = 0;
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = threadName;
+    info.dwThreadID = dwThreadID;
+    info.dwFlags = 0;
 
-	__try
-	{
-		RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info );
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-	}
+    __try
+    {
+        RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info );
+    }
+    __except(EXCEPTION_EXECUTE_HANDLER)
+    {
+    }
 #endif
 }
 
@@ -144,15 +144,15 @@ static void SetThreadName(DWORD dwThreadID, char* threadName)
 
 static DWORD WINAPI thread_run( LPVOID lpThreadParameter )
 {
-	rt_thread_t tid = rt_thread_self();
-	win_thread_t  *pWinThread = (win_thread_t *)lpThreadParameter;
+    rt_thread_t tid = rt_thread_self();
+    win_thread_t  *pWinThread = (win_thread_t *)lpThreadParameter;
 
-	SetThreadName(GetCurrentThreadId(), tid->name);
+    SetThreadName(GetCurrentThreadId(), tid->name);
 
-	pWinThread->Entry(pWinThread->Param);
+    pWinThread->Entry(pWinThread->Param);
 
-	pWinThread->Exit();
-	return 0;	
+    pWinThread->Exit();
+    return 0;
 }
 
 rt_uint8_t* rt_hw_stack_init(void *pEntry,void *pParam,rt_uint8_t *pStackAddr,void *pExit)
@@ -261,7 +261,7 @@ void rt_hw_context_switch_interrupt(rt_uint32_t from,
 
     rt_interrupt_to_thread = *((rt_uint32_t *)(to));
 
-	//trigger YIELD exception(cause context switch)
+    //trigger YIELD exception(cause context switch)
     TriggerSimulateInterrupt(CPU_INTERRUPT_YIELD);
 } /*** rt_hw_context_switch_interrupt ***/
 
@@ -312,7 +312,7 @@ void rt_hw_context_switch(rt_uint32_t from,
 */
 void rt_hw_context_switch_to(rt_uint32_t to)
 {
-	//set to thread
+    //set to thread
     rt_interrupt_to_thread = *((rt_uint32_t *)(to));
 
     //clear from thread
@@ -699,3 +699,14 @@ rt_uint32_t YieldInterruptHandle(void)
 
     return 0;
 } /*** YieldInterruptHandle ***/
+
+/* system entry */
+extern int rtthread_startup(void);
+int wmain(int argc, char* argv[])
+{
+    /* disable interrupt first */
+    rt_hw_interrupt_disable();
+    /* startup RT-Thread RTOS */
+    rtthread_startup();
+}
+#pragma comment(linker, "/subsystem:console /entry:wmainCRTStartup")

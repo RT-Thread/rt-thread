@@ -138,7 +138,7 @@ typedef struct __USART_HandleTypeDef
 
   uint16_t                      NbTxDataToProcess;       /*!< Number of data to process during TX ISR execution */
 
-  uint32_t                      SlaveMode;               /*!< Enable/Disable UART SPI Slave Mode. This parameter can be a value
+  uint32_t                      SlaveMode;               /*!< Enable/Disable USART SPI Slave Mode. This parameter can be a value
                                                               of @ref USARTEx_Slave_Mode */
 
   uint32_t                      FifoMode;                /*!< Specifies if the FIFO mode will be used. This parameter can be a value
@@ -697,7 +697,7 @@ typedef  void (*pUSART_CallbackTypeDef)(USART_HandleTypeDef *husart);  /*!< poin
 /** @brief  BRR division operation to set BRR register in 8-bit oversampling mode.
   * @param  __PCLK__ USART clock.
   * @param  __BAUD__ Baud rate set by the user.
-  * @param  __CLOCKPRESCALER__ UART prescaler value.
+  * @param  __CLOCKPRESCALER__ USART prescaler value.
   * @retval Division result
   */
 #define USART_DIV_SAMPLING8(__PCLK__, __BAUD__, __CLOCKPRESCALER__)   (((((__PCLK__)/USART_GET_DIV_FACTOR(__CLOCKPRESCALER__))*2U) + ((__BAUD__)/2U)) / (__BAUD__))

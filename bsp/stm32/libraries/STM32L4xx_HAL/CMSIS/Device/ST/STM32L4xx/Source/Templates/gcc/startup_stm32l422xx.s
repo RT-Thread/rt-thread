@@ -60,7 +60,7 @@ defined in linker script */
 	.weak	Reset_Handler
 	.type	Reset_Handler, %function
 Reset_Handler:
-  ldr   sp, =_estack    /* Atollic update: set stack pointer */
+  ldr   sp, =_estack    /* Set stack pointer */
 
 /* Copy the data segment initializers from flash to SRAM */
   movs	r1, #0
@@ -93,13 +93,10 @@ LoopFillZerobss:
 /* Call the clock system intitialization function.*/
     bl  SystemInit
 /* Call static constructors */
-/*    bl __libc_init_array */
+    bl __libc_init_array
 /* Call the application's entry point.*/
-    bl  entry
-
-LoopForever:
-    b LoopForever
-    
+  bl  entry
+  bx  lr   
 .size	Reset_Handler, .-Reset_Handler
 
 /**
@@ -211,7 +208,7 @@ g_pfnVectors:
 	.word	COMP_IRQHandler
 	.word	LPTIM1_IRQHandler
 	.word	LPTIM2_IRQHandler
-	.word	0
+	.word	USB_IRQHandler
 	.word	DMA2_Channel6_IRQHandler
 	.word	DMA2_Channel7_IRQHandler
 	.word	LPUART1_IRQHandler
@@ -398,6 +395,9 @@ g_pfnVectors:
 	
 	.weak	LPTIM2_IRQHandler
 	.thumb_set LPTIM2_IRQHandler,Default_Handler	
+	
+	.weak	USB_IRQHandler
+	.thumb_set USB_IRQHandler,Default_Handler	
 	
 	.weak	DMA2_Channel6_IRQHandler
 	.thumb_set DMA2_Channel6_IRQHandler,Default_Handler	

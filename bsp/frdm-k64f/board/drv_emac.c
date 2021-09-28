@@ -1,7 +1,8 @@
 /*
  * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2015-07-15     Bernard      The first version
@@ -33,7 +34,7 @@
 #define DEBUG_PRINTF(...)
 #endif
 
-#define MAX_ADDR_LEN                6    
+#define MAX_ADDR_LEN                6
 #define ENET_RX_RING_LEN            (16)
 #define ENET_TX_RING_LEN            (8)
 
@@ -45,17 +46,17 @@
 #define ENET_RXBUFF_SIZE            (ENET_FRAME_MAX_FRAMELEN)
 #define ENET_TXBUFF_SIZE            (ENET_FRAME_MAX_FRAMELEN)
 #define ENET_ETH_MAX_FLEN           (1522) // recommended size for a VLAN frame
-    
+
 struct emac_device
 {
     /* inherit from Ethernet device */
     struct eth_device parent;
-    
-	ALIGN(64) enet_rx_bd_struct_t RxBuffDescrip[ENET_RX_RING_LEN];
-	ALIGN(64) enet_tx_bd_struct_t TxBuffDescrip[ENET_TX_RING_LEN];
-	ALIGN(64) uint8_t RxDataBuff[ENET_RX_RING_LEN * ENET_ALIGN(ENET_RXBUFF_SIZE)];
-	ALIGN(64) uint8_t TxDataBuff[ENET_TX_RING_LEN * ENET_ALIGN(ENET_TXBUFF_SIZE)];
-    
+
+    ALIGN(64) enet_rx_bd_struct_t RxBuffDescrip[ENET_RX_RING_LEN];
+    ALIGN(64) enet_tx_bd_struct_t TxBuffDescrip[ENET_TX_RING_LEN];
+    ALIGN(64) uint8_t RxDataBuff[ENET_RX_RING_LEN * ENET_ALIGN(ENET_RXBUFF_SIZE)];
+    ALIGN(64) uint8_t TxDataBuff[ENET_TX_RING_LEN * ENET_ALIGN(ENET_TXBUFF_SIZE)];
+
     enet_handle_t enet_handle;
     rt_uint8_t  dev_addr[MAX_ADDR_LEN];         /* MAC address  */
     struct rt_semaphore tx_wait;
@@ -112,7 +113,7 @@ static void setup_enet_clock_init(void)
 {
     CLOCK_EnableClock(kCLOCK_PortC);
     CLOCK_EnableClock(kCLOCK_PortB);
-    
+
     /* Select the Ethernet timestamp clock source */
     CLOCK_SetEnetTime0Clock(0x2);
 }
@@ -120,7 +121,7 @@ static void setup_enet_clock_init(void)
 static void enet_mac_rx_isr(struct emac_device* emac)
 {
     rt_err_t result;
-    
+
     result = eth_device_ready(&(_emac.parent));
     if( result != RT_EOK )
     {
@@ -136,7 +137,7 @@ static void enet_mac_tx_isr(struct emac_device* emac)
 static void ethernet_callback(ENET_Type *base, enet_handle_t *handle, enet_event_t event, void *param)
 {
     struct emac_device* emac = param;
-    
+
     switch (event)
     {
       case kENET_RxEvent:
@@ -154,7 +155,7 @@ static rt_err_t k64_emac_init(rt_device_t dev)
 {
     struct emac_device* emac = K64_EMAC_DEVICE(dev);
     enet_handle_t * enet_handle = &emac->enet_handle;
-    
+
     bool link = false;
     uint32_t phyAddr = 0;
     phy_speed_t phy_speed;
@@ -167,7 +168,7 @@ static rt_err_t k64_emac_init(rt_device_t dev)
     setup_enet_clock_init();
     /* enable iomux and clock */
     setup_k64_io_enet();
-    
+
     /* prepare the buffer configuration. */
     buffCfg.rxBdNumber = ENET_RX_RING_LEN;                     /* Receive buffer descriptor number. */
     buffCfg.txBdNumber = ENET_TX_RING_LEN;                     /* Transmit buffer descriptor number. */
@@ -177,12 +178,12 @@ static rt_err_t k64_emac_init(rt_device_t dev)
     buffCfg.txBdStartAddrAlign = emac->TxBuffDescrip; /* Aligned transmit buffer descriptor start address. */
     buffCfg.rxBufferAlign = emac->RxDataBuff; /* Receive data buffer start address. */
     buffCfg.txBufferAlign = emac->TxDataBuff; /* Transmit data buffer start address. */
-    
+
     sysClock = CLOCK_GetFreq(kCLOCK_CoreSysClk);
     DEBUG_PRINTF("sysClock: %d\n", sysClock);
-    
+
     ENET_GetDefaultConfig(&config);
-    
+
     PHY_Init(ENET, 0, CLOCK_GetFreq(kCLOCK_CoreSysClk));
     if (PHY_GetLinkStatus(ENET, phyAddr, &link) == kStatus_Success)
     {
@@ -191,7 +192,7 @@ static rt_err_t k64_emac_init(rt_device_t dev)
             DEBUG_PRINTF("phy link up\n");
             /* Get link information from PHY */
             PHY_GetLinkSpeedDuplex(ENET, phyAddr, &phy_speed, &phy_duplex);
-            
+
             /* Change the MII speed and duplex for actual link status. */
             config.miiSpeed = (enet_mii_speed_t)phy_speed;
             config.miiDuplex = (enet_mii_duplex_t)phy_duplex;
@@ -205,7 +206,7 @@ static rt_err_t k64_emac_init(rt_device_t dev)
         config.macSpecialConfig = kENET_ControlFlowControlEnable;
         config.txAccelerConfig = 0;
         config.rxAccelerConfig = kENET_RxAccelMacCheckEnabled;
-        
+
         ENET_Init(ENET, enet_handle, &config, &buffCfg, emac->dev_addr, sysClock);
         ENET_SetCallback(enet_handle, ethernet_callback, emac);
         ENET_ActiveRead(ENET);
@@ -214,7 +215,7 @@ static rt_err_t k64_emac_init(rt_device_t dev)
     {
         DEBUG_PRINTF("read phy failed\n");
     }
-    
+
     return RT_EOK;
 }
 
@@ -244,7 +245,7 @@ static rt_err_t k64_emac_control(rt_device_t dev, int cmd, void *args)
 {
     struct emac_device *emac;
 
-	DEBUG_PRINTF("k64_emac_control\n");
+    DEBUG_PRINTF("k64_emac_control\n");
 
     emac = K64_EMAC_DEVICE(dev);
     RT_ASSERT(emac != RT_NULL);
@@ -270,14 +271,14 @@ static rt_err_t k64_emac_tx(rt_device_t dev, struct pbuf* p)
 
     struct emac_device *emac = K64_EMAC_DEVICE(dev);
     enet_handle_t * enet_handle = &emac->enet_handle;
-    
+
     RT_ASSERT(p != NULL);
 
-	DEBUG_PRINTF("k64_emac_tx: %d\n", p->len);
+    DEBUG_PRINTF("k64_emac_tx: %d\n", p->len);
 
     emac = K64_EMAC_DEVICE(dev);
     RT_ASSERT(emac != RT_NULL);
-    
+
 #ifdef DRV_EMAC_RX_DUMP
     {
         int i;
@@ -290,10 +291,10 @@ static rt_err_t k64_emac_tx(rt_device_t dev, struct pbuf* p)
                 DEBUG_PRINTF("\n");
         }
         DEBUG_PRINTF("\n");
-    }    
+    }
 
 #endif
-    
+
     do
     {
         result = ENET_SendFrame(ENET, enet_handle, p->payload, p->len);
@@ -313,17 +314,17 @@ struct pbuf *k64_emac_rx(rt_device_t dev)
     uint32_t length = 0;
     status_t status;
     enet_data_error_stats_t eErrStatic;
-        
+
     struct pbuf* p = RT_NULL;
     struct emac_device *emac = K64_EMAC_DEVICE(dev);
     enet_handle_t * enet_handle = &emac->enet_handle;
 
     RT_ASSERT(emac != RT_NULL);
     DEBUG_PRINTF("k64_emac_rx\n");
-    
+
     /* Get the Frame size */
     status = ENET_GetRxFrameSize(enet_handle, &length);
-    
+
     if (status == kStatus_ENET_RxFrameError)
     {
         /* Update the received buffer when error happened. */
@@ -331,19 +332,19 @@ struct pbuf *k64_emac_rx(rt_device_t dev)
         ENET_GetRxErrBeforeReadFrame(enet_handle, &eErrStatic);
         /* update the receive buffer. */
         ENET_ReadFrame(ENET, enet_handle, NULL, 0);
-        
+
         DEBUG_PRINTF("receive frame faild\n");
-        
+
         return p;
     }
-    
+
     /* Call ENET_ReadFrame when there is a received frame. */
     if (length != 0)
     {
         /* Received valid frame. Deliver the rx buffer with the size equal to length. */
         p = pbuf_alloc(PBUF_RAW, length, PBUF_POOL);
     }
-    
+
     if (p != NULL)
     {
         status = ENET_ReadFrame(ENET, enet_handle, p->payload, length);
@@ -370,7 +371,7 @@ struct pbuf *k64_emac_rx(rt_device_t dev)
             pbuf_free(p);
         }
     }
- 
+
     return p;
 }
 
@@ -397,7 +398,7 @@ int drv_emac_hw_init(void)
 
     /* init tx semaphore */
     rt_sem_init(&_emac.tx_wait, "tx_wait", ENET_TX_RING_LEN - 1, RT_IPC_FLAG_FIFO);
-    
+
     /* register ETH device */
     eth_device_init(&(_emac.parent), "e0");
 
@@ -409,15 +410,15 @@ INIT_DEVICE_EXPORT(drv_emac_hw_init);
 
 long k64_dump_tx_bd(void)
 {
-	int i;
+    int i;
 
-	enet_tx_bd_struct_t *txbd = _emac.TxBuffDescrip;
+    enet_tx_bd_struct_t *txbd = _emac.TxBuffDescrip;
 
-	for (i = 0; i < ENET_RX_RING_LEN; i++)
-	{
-		DEBUG_PRINTF("status: %04X,  length: %04X, data: %08X\n", txbd[i].control, txbd[i].length, (uint32_t)txbd[i].buffer);
-	}
-    
+    for (i = 0; i < ENET_RX_RING_LEN; i++)
+    {
+        DEBUG_PRINTF("status: %04X,  length: %04X, data: %08X\n", txbd[i].control, txbd[i].length, (uint32_t)txbd[i].buffer);
+    }
+
     return 0;
 }
 FINSH_FUNCTION_EXPORT(k64_dump_tx_bd, dump all receive buffer descriptor);
@@ -425,21 +426,21 @@ MSH_CMD_EXPORT(k64_dump_tx_bd, dump all receive buffer descriptor);
 
 long k64_dump_rx_bd(void)
 {
-	int i;
-	enet_rx_bd_struct_t *rxbd = _emac.RxBuffDescrip;
+    int i;
+    enet_rx_bd_struct_t *rxbd = _emac.RxBuffDescrip;
 
-	for (i = 0; i < ENET_RX_RING_LEN; i++)
-	{
-		DEBUG_PRINTF("bd:%08X, ", (void *)&rxbd[i]);
-		//rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, (void *)&rxbd[i], sizeof(enet_rx_bd_struct_t));
-		DEBUG_PRINTF("status:%04X,  length:%04X, data:%08X ", rxbd[i].control, rxbd[i].length, (uint32_t)rxbd[i].buffer);
+    for (i = 0; i < ENET_RX_RING_LEN; i++)
+    {
+        DEBUG_PRINTF("bd:%08X, ", (void *)&rxbd[i]);
+        //rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, (void *)&rxbd[i], sizeof(enet_rx_bd_struct_t));
+        DEBUG_PRINTF("status:%04X,  length:%04X, data:%08X ", rxbd[i].control, rxbd[i].length, (uint32_t)rxbd[i].buffer);
 #ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
-		DEBUG_PRINTF("ce:%04X/%04X/%04X ", rxbd[i].controlExtend0, rxbd[i].controlExtend1, rxbd[i].controlExtend2);
-		DEBUG_PRINTF("crc:%04X, len:%04X, type:%04X, ts:%04X", rxbd[i].payloadCheckSum, rxbd[i].headerLength, rxbd[i].protocolTyte, rxbd[i].timestamp);
+        DEBUG_PRINTF("ce:%04X/%04X/%04X ", rxbd[i].controlExtend0, rxbd[i].controlExtend1, rxbd[i].controlExtend2);
+        DEBUG_PRINTF("crc:%04X, len:%04X, type:%04X, ts:%04X", rxbd[i].payloadCheckSum, rxbd[i].headerLength, rxbd[i].protocolTyte, rxbd[i].timestamp);
 #endif
-		DEBUG_PRINTF("\n");
-	}
-    
+        DEBUG_PRINTF("\n");
+    }
+
     return 0;
 }
 FINSH_FUNCTION_EXPORT(k64_dump_rx_bd, dump all receive buffer descriptor);
