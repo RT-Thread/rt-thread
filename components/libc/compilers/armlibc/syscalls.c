@@ -319,16 +319,6 @@ int remove(const char *filename)
 #endif
 }
 
-#if defined(RT_USING_FINSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
-/* use system(const char *string) implementation in the msh */
-#else
-int system(const char *string)
-{
-    extern int __rt_libc_system(const char *string);
-    return __rt_libc_system(string);
-}
-#endif
-
 #ifdef __MICROLIB
 #include <stdio.h>
 

@@ -85,16 +85,13 @@ void __libc_init_array(void)
 #ifdef RT_USING_LIBC
 #include <reent.h>
 #include <stdio.h>
+#include "libc.h"
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 #endif
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif
-
-#define DBG_TAG    "newlib.syscalls"
-#define DBG_LVL    DBG_INFO
-#include <rtdbg.h>
 
 /* Reentrant versions of system calls.  */
 
@@ -309,12 +306,6 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
     rc = write(fd, buf, nbytes);
     return rc;
 #endif
-}
-
-void _system(const char *s)
-{
-    extern int __rt_libc_system(const char *string);
-    __rt_libc_system(s);
 }
 
 /* for exit() and abort() */
