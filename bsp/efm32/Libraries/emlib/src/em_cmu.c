@@ -1377,14 +1377,14 @@ void CMU_ClockSelectSet(CMU_Clock_TypeDef clock, CMU_Select_TypeDef ref)
       /* frequencies above 32MHz */
       if(SystemHFXOClockGet() > CMU_MAX_FREQ_HFLE)
       {
-        CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_HFXOBUFCUR_MASK) | 
-          CMU_CTRL_HFXOBUFCUR_BOOSTABOVE32MHZ | 
+        CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_HFXOBUFCUR_MASK) |
+          CMU_CTRL_HFXOBUFCUR_BOOSTABOVE32MHZ |
           /* Must have HFLE enabled to access some LE peripherals >=32MHz */
           CMU_CTRL_HFLE;
       } else {
         /* This can happen if the user configures the EFM32_HFXO_FREQ to */
         /* use another oscillator frequency */
-        CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_HFXOBUFCUR_MASK) | 
+        CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_HFXOBUFCUR_MASK) |
           CMU_CTRL_HFXOBUFCUR_BOOSTUPTO32MHZ;
       }
 #endif
@@ -1475,7 +1475,7 @@ void CMU_ClockSelectSet(CMU_Clock_TypeDef clock, CMU_Select_TypeDef ref)
         BITBAND_Peripheral(&(CMU->CTRL), _CMU_CTRL_HFLE_SHIFT, 1);
 
         /* Enable DIV4 factor for peripheral clock */
-        BITBAND_Peripheral(&(CMU->HFCORECLKDIV), 
+        BITBAND_Peripheral(&(CMU->HFCORECLKDIV),
                            _CMU_HFCORECLKDIV_HFCORECLKLEDIV_SHIFT, 1);
       }
 #endif

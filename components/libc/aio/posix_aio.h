@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,10 @@
 
 #ifndef POSIX_AIO_H__
 #define POSIX_AIO_H__
+
+#include <stdio.h>
+#include <sys/signal.h>
+#include <rtdevice.h>
 
 struct aiocb
 {

@@ -33,7 +33,7 @@ extern "C" {
   * @{
   */
 
-#if defined (BDMA)
+#if defined (BDMA) || defined (BDMA1) || defined (BDMA2)
 
 /** @defgroup BDMA_LL BDMA
   * @{
@@ -141,7 +141,7 @@ typedef struct
 /**
   * @}
   */
-#endif /*USE_FULL_LL_DRIVER*/
+#endif /* USE_FULL_LL_DRIVER */
 
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup BDMA_LL_Exported_Constants BDMA Exported Constants
@@ -237,7 +237,7 @@ typedef struct
 /** @defgroup BDMA_LL_EC_CHANNEL CHANNEL
   * @{
   */
-#define LL_BDMA_CHANNEL_0                  0x00000000U /*!< DMA Channel 0 */
+#define LL_BDMA_CHANNEL_0                  0x00000000U /*!< DMA Channel 0  */
 #define LL_BDMA_CHANNEL_1                  0x00000001U /*!< BDMA Channel 1 */
 #define LL_BDMA_CHANNEL_2                  0x00000002U /*!< BDMA Channel 2 */
 #define LL_BDMA_CHANNEL_3                  0x00000003U /*!< BDMA Channel 3 */
@@ -255,9 +255,9 @@ typedef struct
 /** @defgroup BDMA_LL_EC_DIRECTION Transfer Direction
   * @{
   */
-#define LL_BDMA_DIRECTION_PERIPH_TO_MEMORY 0x00000000U             /*!< Peripheral to memory direction */
-#define LL_BDMA_DIRECTION_MEMORY_TO_PERIPH BDMA_CCR_DIR             /*!< Memory to peripheral direction */
-#define LL_BDMA_DIRECTION_MEMORY_TO_MEMORY BDMA_CCR_MEM2MEM         /*!< Memory to memory direction     */
+#define LL_BDMA_DIRECTION_PERIPH_TO_MEMORY 0x00000000U              /*!< Peripheral to memory direction       */
+#define LL_BDMA_DIRECTION_MEMORY_TO_PERIPH BDMA_CCR_DIR             /*!< Memory to peripheral direction       */
+#define LL_BDMA_DIRECTION_MEMORY_TO_MEMORY BDMA_CCR_MEM2MEM         /*!< Memory to memory direction           */
 /**
   * @}
   */
@@ -265,8 +265,8 @@ typedef struct
 /** @defgroup BDMA_LL_EC_MODE Transfer mode
   * @{
   */
-#define LL_BDMA_MODE_NORMAL                0x00000000U             /*!< Normal Mode                  */
-#define LL_BDMA_MODE_CIRCULAR              BDMA_CCR_CIRC            /*!< Circular Mode                */
+#define LL_BDMA_MODE_NORMAL                0x00000000U              /*!< Normal Mode                          */
+#define LL_BDMA_MODE_CIRCULAR              BDMA_CCR_CIRC            /*!< Circular Mode                        */
 /**
   * @}
   */
@@ -274,8 +274,8 @@ typedef struct
 /** @defgroup DMA_LL_EC_DOUBLEBUFFER_MODE DOUBLE BUFFER MODE
   * @{
   */
-#define LL_BDMA_DOUBLEBUFFER_MODE_DISABLE  0x00000000U               /*!< Disable double buffering mode */
-#define LL_BDMA_DOUBLEBUFFER_MODE_ENABLE   BDMA_CCR_DBM              /*!< Enable double buffering mode  */
+#define LL_BDMA_DOUBLEBUFFER_MODE_DISABLE  0x00000000U              /*!< Disable double buffering mode        */
+#define LL_BDMA_DOUBLEBUFFER_MODE_ENABLE   BDMA_CCR_DBM             /*!< Enable double buffering mode         */
 /**
   * @}
   */
@@ -283,8 +283,8 @@ typedef struct
 /** @defgroup BDMA_LL_EC_PERIPH Peripheral increment mode
   * @{
   */
-#define LL_BDMA_PERIPH_INCREMENT           BDMA_CCR_PINC            /*!< Peripheral increment mode Enable */
-#define LL_BDMA_PERIPH_NOINCREMENT         0x00000000U             /*!< Peripheral increment mode Disable */
+#define LL_BDMA_PERIPH_INCREMENT           BDMA_CCR_PINC            /*!< Peripheral increment mode Enable     */
+#define LL_BDMA_PERIPH_NOINCREMENT         0x00000000U              /*!< Peripheral increment mode Disable    */
 /**
   * @}
   */
@@ -292,8 +292,8 @@ typedef struct
 /** @defgroup BDMA_LL_EC_MEMORY Memory increment mode
   * @{
   */
-#define LL_BDMA_MEMORY_INCREMENT           BDMA_CCR_MINC            /*!< Memory increment mode Enable  */
-#define LL_BDMA_MEMORY_NOINCREMENT         0x00000000U             /*!< Memory increment mode Disable */
+#define LL_BDMA_MEMORY_INCREMENT           BDMA_CCR_MINC            /*!< Memory increment mode Enable         */
+#define LL_BDMA_MEMORY_NOINCREMENT         0x00000000U              /*!< Memory increment mode Disable        */
 /**
   * @}
   */
@@ -301,7 +301,7 @@ typedef struct
 /** @defgroup BDMA_LL_EC_PDATAALIGN Peripheral data alignment
   * @{
   */
-#define LL_BDMA_PDATAALIGN_BYTE            0x00000000U             /*!< Peripheral data alignment : Byte     */
+#define LL_BDMA_PDATAALIGN_BYTE            0x00000000U              /*!< Peripheral data alignment : Byte     */
 #define LL_BDMA_PDATAALIGN_HALFWORD        BDMA_CCR_PSIZE_0         /*!< Peripheral data alignment : HalfWord */
 #define LL_BDMA_PDATAALIGN_WORD            BDMA_CCR_PSIZE_1         /*!< Peripheral data alignment : Word     */
 /**
@@ -311,9 +311,9 @@ typedef struct
 /** @defgroup BDMA_LL_EC_MDATAALIGN Memory data alignment
   * @{
   */
-#define LL_BDMA_MDATAALIGN_BYTE            0x00000000U             /*!< Memory data alignment : Byte     */
-#define LL_BDMA_MDATAALIGN_HALFWORD        BDMA_CCR_MSIZE_0         /*!< Memory data alignment : HalfWord */
-#define LL_BDMA_MDATAALIGN_WORD            BDMA_CCR_MSIZE_1         /*!< Memory data alignment : Word     */
+#define LL_BDMA_MDATAALIGN_BYTE            0x00000000U              /*!< Memory data alignment : Byte         */
+#define LL_BDMA_MDATAALIGN_HALFWORD        BDMA_CCR_MSIZE_0         /*!< Memory data alignment : HalfWord     */
+#define LL_BDMA_MDATAALIGN_WORD            BDMA_CCR_MSIZE_1         /*!< Memory data alignment : Word         */
 /**
   * @}
   */
@@ -321,10 +321,10 @@ typedef struct
 /** @defgroup BDMA_LL_EC_PRIORITY Transfer Priority level
   * @{
   */
-#define LL_BDMA_PRIORITY_LOW               0x00000000U             /*!< Priority level : Low       */
-#define LL_BDMA_PRIORITY_MEDIUM            BDMA_CCR_PL_0            /*!< Priority level : Medium    */
-#define LL_BDMA_PRIORITY_HIGH              BDMA_CCR_PL_1            /*!< Priority level : High      */
-#define LL_BDMA_PRIORITY_VERYHIGH          BDMA_CCR_PL              /*!< Priority level : Very_High */
+#define LL_BDMA_PRIORITY_LOW               0x00000000U              /*!< Priority level : Low                 */
+#define LL_BDMA_PRIORITY_MEDIUM            BDMA_CCR_PL_0            /*!< Priority level : Medium              */
+#define LL_BDMA_PRIORITY_HIGH              BDMA_CCR_PL_1            /*!< Priority level : High                */
+#define LL_BDMA_PRIORITY_VERYHIGH          BDMA_CCR_PL              /*!< Priority level : Very_High           */
 /**
   * @}
   */
@@ -332,8 +332,8 @@ typedef struct
 /** @defgroup DMA_LL_EC_CURRENTTARGETMEM CURRENTTARGETMEM
   * @{
   */
-#define LL_BDMA_CURRENTTARGETMEM0          0x00000000U                             /*!< Set CurrentTarget Memory to Memory 0  */
-#define LL_BDMA_CURRENTTARGETMEM1          BDMA_CCR_CT                             /*!< Set CurrentTarget Memory to Memory 1  */
+#define LL_BDMA_CURRENTTARGETMEM0          0x00000000U              /*!< Set CurrentTarget Memory to Memory 0 */
+#define LL_BDMA_CURRENTTARGETMEM1          BDMA_CCR_CT              /*!< Set CurrentTarget Memory to Memory 1 */
 /**
   * @}
   */
@@ -374,14 +374,38 @@ typedef struct
   * @param  __CHANNEL_INSTANCE__ BDMAx_Channely
   * @retval BDMAx
   */
+#if defined (BDMA1)
+#define __LL_BDMA_GET_INSTANCE(__CHANNEL_INSTANCE__) \
+(((uint32_t)(__CHANNEL_INSTANCE__) < LL_BDMA_CHANNEL_0) ? BDMA1 : BDMA)
+#else
 #define __LL_BDMA_GET_INSTANCE(__CHANNEL_INSTANCE__)  (BDMA)
+#endif /* BDMA1 */
 
 /**
   * @brief  Convert BDMAx_Channely into LL_BDMA_CHANNEL_y
   * @param  __CHANNEL_INSTANCE__ BDMAx_Channely
   * @retval LL_BDMA_CHANNEL_y
   */
-#define __LL_BDMA_GET_CHANNEL(__CHANNEL_INSTANCE__)   \
+#if defined (BDMA1)
+#define __LL_BDMA_GET_CHANNEL(__CHANNEL_INSTANCE__) \
+(((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel0))  ? LL_BDMA_CHANNEL_0 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA1_Channel0)) ? LL_BDMA_CHANNEL_0 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel1))  ? LL_BDMA_CHANNEL_1 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA1_Channel1)) ? LL_BDMA_CHANNEL_1 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel2))  ? LL_BDMA_CHANNEL_2 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA1_Channel2)) ? LL_BDMA_CHANNEL_2 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel3))  ? LL_BDMA_CHANNEL_3 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA1_Channel3)) ? LL_BDMA_CHANNEL_3 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel4))  ? LL_BDMA_CHANNEL_4 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA1_Channel4)) ? LL_BDMA_CHANNEL_4 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel5))  ? LL_BDMA_CHANNEL_5 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA1_Channel5)) ? LL_BDMA_CHANNEL_5 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel6))  ? LL_BDMA_CHANNEL_6 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA1_Channel6)) ? LL_BDMA_CHANNEL_6 : \
+ ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel7))  ? LL_BDMA_CHANNEL_7 : \
+LL_BDMA_CHANNEL_7)
+#else
+#define __LL_BDMA_GET_CHANNEL(__CHANNEL_INSTANCE__) \
 (((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel0)) ? LL_BDMA_CHANNEL_0 : \
  ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel1)) ? LL_BDMA_CHANNEL_1 : \
  ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel2)) ? LL_BDMA_CHANNEL_2 : \
@@ -390,6 +414,7 @@ typedef struct
  ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel5)) ? LL_BDMA_CHANNEL_5 : \
  ((uint32_t)(__CHANNEL_INSTANCE__) == ((uint32_t)BDMA_Channel6)) ? LL_BDMA_CHANNEL_6 : \
  LL_BDMA_CHANNEL_7)
+#endif /* BDMA1 */
 
 /**
   * @brief  Convert BDMA Instance BDMAx and LL_BDMA_CHANNEL_y into BDMAx_Channely
@@ -397,6 +422,25 @@ typedef struct
   * @param  __CHANNEL__ LL_BDMA_CHANNEL_y
   * @retval BDMAx_Channely
   */
+#if defined (BDMA1)
+#define __LL_BDMA_GET_CHANNEL_INSTANCE(__BDMA_INSTANCE__, __CHANNEL__)   \
+((((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA))  && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_0))) ? BDMA_Channel0  : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA1)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_0))) ? BDMA1_Channel0 : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA))  && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_1))) ? BDMA_Channel1  : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA1)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_1))) ? BDMA1_Channel1 : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA))  && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_2))) ? BDMA_Channel2  : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA1)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_2))) ? BDMA1_Channel2 : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA))  && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_3))) ? BDMA_Channel3  : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA1)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_3))) ? BDMA1_Channel3 : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA))  && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_4))) ? BDMA_Channel4  : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA1)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_4))) ? BDMA1_Channel4 : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA))  && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_5))) ? BDMA_Channel5  : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA1)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_5))) ? BDMA1_Channel5 : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA))  && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_6))) ? BDMA_Channel6  : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA1)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_6))) ? BDMA1_Channel6 : \
+ (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA))  && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_7))) ? BDMA_Channel7  : \
+ BDMA1_Channel7)
+#else
 #define __LL_BDMA_GET_CHANNEL_INSTANCE(__BDMA_INSTANCE__, __CHANNEL__)   \
 ((((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_0))) ? BDMA_Channel0 : \
  (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_1))) ? BDMA_Channel1 : \
@@ -406,8 +450,7 @@ typedef struct
  (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_5))) ? BDMA_Channel5 : \
  (((uint32_t)(__BDMA_INSTANCE__) == ((uint32_t)BDMA)) && ((uint32_t)(__CHANNEL__) == ((uint32_t)LL_BDMA_CHANNEL_6))) ? BDMA_Channel6 : \
  BDMA_Channel7)
-
-
+#endif /* BDMA1 */
 /**
   * @}
   */
@@ -1354,9 +1397,12 @@ __STATIC_INLINE uint32_t LL_BDMA_GetMemory1Address(BDMA_TypeDef *BDMAx, uint32_t
   *         @arg @ref LL_DMAMUX2_REQ_SPI6_TX
   *         @arg @ref LL_DMAMUX2_REQ_I2C4_RX
   *         @arg @ref LL_DMAMUX2_REQ_I2C4_TX
-  *         @arg @ref LL_DMAMUX2_REQ_SAI4_A
-  *         @arg @ref LL_DMAMUX2_REQ_SAI4_B
-  *         @arg @ref LL_DMAMUX2_REQ_ADC3
+  *         @arg @ref LL_DMAMUX2_REQ_SAI4_A (*)
+  *         @arg @ref LL_DMAMUX2_REQ_SAI4_B (*)
+  *         @arg @ref LL_DMAMUX2_REQ_ADC3 (*)
+  *         @arg @ref LL_DMAMUX2_REQ_DAC3 (*)
+  *         @arg @ref LL_DMAMUX2_REQ_DFSDM2_FLT0 (*)
+  * @note   (*) Availability depends on devices.
   * @retval None
   */
 __STATIC_INLINE void LL_BDMA_SetPeriphRequest(BDMA_TypeDef *BDMAx, uint32_t Channel, uint32_t Request)
@@ -1395,9 +1441,12 @@ __STATIC_INLINE void LL_BDMA_SetPeriphRequest(BDMA_TypeDef *BDMAx, uint32_t Chan
   *         @arg @ref LL_DMAMUX2_REQ_SPI6_TX
   *         @arg @ref LL_DMAMUX2_REQ_I2C4_RX
   *         @arg @ref LL_DMAMUX2_REQ_I2C4_TX
-  *         @arg @ref LL_DMAMUX2_REQ_SAI4_A
-  *         @arg @ref LL_DMAMUX2_REQ_SAI4_B
-  *         @arg @ref LL_DMAMUX2_REQ_ADC3
+  *         @arg @ref LL_DMAMUX2_REQ_SAI4_A (*)
+  *         @arg @ref LL_DMAMUX2_REQ_SAI4_B (*)
+  *         @arg @ref LL_DMAMUX2_REQ_ADC3 (*)
+  *         @arg @ref LL_DMAMUX2_REQ_DAC3 (*)
+  *         @arg @ref LL_DMAMUX2_REQ_DFSDM2_FLT0 (*)
+  * @note   (*) Availability depends on devices.
   */
 __STATIC_INLINE uint32_t LL_BDMA_GetPeriphRequest(BDMA_TypeDef *BDMAx, uint32_t Channel)
 {
@@ -1598,6 +1647,7 @@ __STATIC_INLINE uint32_t LL_BDMA_IsActiveFlag_HT0(BDMA_TypeDef *BDMAx)
 {
   return ((READ_BIT(BDMAx->ISR, BDMA_ISR_HTIF0) == (BDMA_ISR_HTIF0)) ? 1UL : 0UL);
 }
+
 /**
   * @brief  Get Channel 1 half transfer flag.
   * @rmtoll ISR          HTIF1         LL_BDMA_IsActiveFlag_HT1
@@ -1773,6 +1823,7 @@ __STATIC_INLINE void LL_BDMA_ClearFlag_GI0(BDMA_TypeDef *BDMAx)
 {
   WRITE_REG(BDMAx->IFCR, BDMA_IFCR_CGIF0);
 }
+
 /**
   * @brief  Clear Channel 1 global interrupt flag.
   * @rmtoll IFCR         CGIF1         LL_BDMA_ClearFlag_GI1
@@ -1860,6 +1911,7 @@ __STATIC_INLINE void LL_BDMA_ClearFlag_TC0(BDMA_TypeDef *BDMAx)
 {
   WRITE_REG(BDMAx->IFCR, BDMA_IFCR_CTCIF0);
 }
+
 /**
   * @brief  Clear Channel 1  transfer complete flag.
   * @rmtoll IFCR         CTCIF1        LL_BDMA_ClearFlag_TC1
@@ -1947,6 +1999,7 @@ __STATIC_INLINE void LL_BDMA_ClearFlag_HT0(BDMA_TypeDef *BDMAx)
 {
   WRITE_REG(BDMAx->IFCR, BDMA_IFCR_CHTIF0);
 }
+
 /**
   * @brief  Clear Channel 1  half transfer flag.
   * @rmtoll IFCR         CHTIF1        LL_BDMA_ClearFlag_HT1
@@ -2343,7 +2396,7 @@ void LL_BDMA_StructInit(LL_BDMA_InitTypeDef *BDMA_InitStruct);
   * @}
   */
 
-#endif /* BDMA */
+#endif /* BDMA || BDMA1 || BDMA2 */
 
 /**
   * @}

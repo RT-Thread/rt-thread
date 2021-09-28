@@ -1,5 +1,5 @@
 #ifndef __DRV_LCD_FONT_H__
-#define __DRV_LCD_FONT_H__ 	   
+#define __DRV_LCD_FONT_H__
 #include <stdint.h>
 /* DejaVu Sans Mono */
 /*

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020-2021, Bluetrum Development Team
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -45,7 +45,7 @@ static rt_err_t ab32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
 {
     RT_ASSERT(device != RT_NULL);
 
-    hal_adc_enable(enabled);    
+    hal_adc_enable(enabled);
 
     return RT_EOK;
 }
@@ -53,7 +53,7 @@ static rt_err_t ab32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
 static rt_uint32_t ab32_adc_get_channel(rt_uint32_t channel)
 {
     rt_uint32_t ab32_channel = 0;
-    
+
     switch (channel)
     {
     case  0:

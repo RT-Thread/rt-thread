@@ -39,6 +39,7 @@
  * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
  * 2016-08-18     Bernard      port to lwIP 2.0.0
  * 2018-11-02     MurphyZhao   port to lwIP 2.1.0
+ * 2021-09-07     Grissiom     fix eth_tx_msg ack bug
  */
 
 #include "lwip/opt.h"
@@ -57,6 +58,8 @@
 #include "netif/ethernetif.h"
 
 #include "lwip/inet.h"
+
+#include <ipc/completion.h>
 
 #if LWIP_IPV6
 #include "lwip/ethip6.h"
@@ -79,6 +82,7 @@ struct eth_tx_msg
 {
     struct netif    *netif;
     struct pbuf     *buf;
+    struct rt_completion ack;
 };
 
 static struct rt_mailbox eth_tx_thread_mb;
@@ -208,14 +212,14 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     {
         return -RT_ERROR;
     }
-    rt_memcpy(&h, &res->ai_addr, sizeof(struct sockaddr_in *));
-    rt_memcpy(&ina, &h->sin_addr, sizeof(ina));
+    SMEMCPY(&h, &res->ai_addr, sizeof(struct sockaddr_in *));
+    SMEMCPY(&ina, &h->sin_addr, sizeof(ina));
     lwip_freeaddrinfo(res);
     if (inet_aton(inet_ntoa(ina), &target_addr) == 0)
     {
         return -RT_ERROR;
     }
-    rt_memcpy(&(ping_resp->ip_addr), &target_addr, sizeof(ip_addr_t));
+    SMEMCPY(&(ping_resp->ip_addr), &target_addr, sizeof(ip_addr_t));
     
     /* new a socket */
     if ((s = lwip_socket(AF_INET, SOCK_RAW, IP_PROTO_ICMP)) < 0)
@@ -338,7 +342,7 @@ static int netdev_add(struct netif *lwip_netif)
     netdev->mtu = lwip_netif->mtu;
     netdev->ops = &lwip_netdev_ops;
     netdev->hwaddr_len =  lwip_netif->hwaddr_len;
-    rt_memcpy(netdev->hwaddr, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
+    SMEMCPY(netdev->hwaddr, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
     netdev->ip_addr = lwip_netif->ip_addr;
     netdev->gw = lwip_netif->gw;
     netdev->netmask = lwip_netif->netmask;
@@ -387,18 +391,17 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 {
 #ifndef LWIP_NO_TX_THREAD
     struct eth_tx_msg msg;
-    struct eth_device* enetif;
 
     RT_ASSERT(netif != RT_NULL);
-    enetif = (struct eth_device*)netif->state;
 
     /* send a message to eth tx thread */
     msg.netif = netif;
     msg.buf   = p;
+    rt_completion_init(&msg.ack);
     if (rt_mb_send(&eth_tx_thread_mb, (rt_uint32_t) &msg) == RT_EOK)
     {
         /* waiting for ack */
-        rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
+        rt_completion_wait(&msg.ack, RT_WAITING_FOREVER);
     }
 #else
     struct eth_device* enetif;
@@ -514,10 +517,11 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     dev->flags = flags;
     /* link changed status of device */
     dev->link_changed = 0x00;
+    /* avoid send the same mail to mailbox */
+    dev->rx_notice = 0x00;
     dev->parent.type = RT_Device_Class_NetIf;
     /* register to RT-Thread device manager */
     rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
-    rt_sem_init(&(dev->tx_ack), name, 0, RT_IPC_FLAG_FIFO);
 
     /* set name */
     netif->name[0] = name[0];
@@ -593,7 +597,6 @@ void eth_device_deinit(struct eth_device *dev)
 #endif
     rt_device_close(&(dev->parent));
     rt_device_unregister(&(dev->parent));
-    rt_sem_detach(&(dev->tx_ack));
     rt_free(netif);
 }
 
@@ -601,10 +604,18 @@ void eth_device_deinit(struct eth_device *dev)
 rt_err_t eth_device_ready(struct eth_device* dev)
 {
     if (dev->netif)
+    {
+        if(dev->rx_notice == RT_FALSE)
+        {
+            dev->rx_notice = RT_TRUE;
+            return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+        }
+        else
+            return RT_EOK;
         /* post message to Ethernet thread */
-        return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+    }
     else
-        return ERR_OK; /* netif is not initialized yet, just return. */
+        return -RT_ERROR; /* netif is not initialized yet, just return. */
 }
 
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
@@ -663,7 +674,7 @@ static void eth_tx_thread_entry(void* parameter)
             }
 
             /* send ACK */
-            rt_sem_release(&(enetif->tx_ack));
+            rt_completion_done(&msg->ack);
         }
     }
 }
@@ -679,6 +690,7 @@ static void eth_rx_thread_entry(void* parameter)
     {
         if (rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t *)&device, RT_WAITING_FOREVER) == RT_EOK)
         {
+            rt_base_t level;
             struct pbuf *p;
 
             /* check link status */
@@ -697,6 +709,11 @@ static void eth_rx_thread_entry(void* parameter)
                 else
                     netifapi_netif_set_link_down(device->netif);
             }
+
+            level = rt_hw_interrupt_disable();
+            /* 'rx_notice' will be modify in the interrupt or here */
+            device->rx_notice = RT_FALSE;
+            rt_hw_interrupt_enable(level);
 
             /* receive all of buffer */
             while (1)

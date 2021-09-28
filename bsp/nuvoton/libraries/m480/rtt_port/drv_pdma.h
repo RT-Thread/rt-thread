@@ -15,7 +15,7 @@
 
 #include <rtconfig.h>
 #include <rtthread.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 #ifndef NU_PDMA_SGTBL_POOL_SIZE
     #define NU_PDMA_SGTBL_POOL_SIZE (16)

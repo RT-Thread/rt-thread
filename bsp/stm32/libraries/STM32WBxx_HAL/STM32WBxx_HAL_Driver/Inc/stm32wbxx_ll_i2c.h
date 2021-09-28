@@ -1163,7 +1163,7 @@ __STATIC_INLINE void LL_I2C_SetSMBusTimeoutB(I2C_TypeDef *I2Cx, uint32_t Timeout
 }
 
 /**
-  * @brief  Get the SMBus Extented Cumulative Clock TimeoutB setting.
+  * @brief  Get the SMBus Extended Cumulative Clock TimeoutB setting.
   * @note   Macro IS_SMBUS_ALL_INSTANCE(I2Cx) can be used to check whether or not
   *         SMBus feature is supported by the I2Cx Instance.
   * @rmtoll TIMEOUTR     TIMEOUTB      LL_I2C_GetSMBusTimeoutB

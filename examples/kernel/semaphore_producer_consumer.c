@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：生产者消费者例子
  *
  * 这个例子中将创建两个线程用于实现生产者消费者问题
@@ -89,9 +98,9 @@ void consumer_thread_entry(void* parameter)
 int semaphore_producer_consumer_init()
 {
     /* 初始化3个信号量 */
-    rt_sem_init(&sem_lock , "lock",     1,      RT_IPC_FLAG_FIFO);
-    rt_sem_init(&sem_empty, "empty",    MAXSEM, RT_IPC_FLAG_FIFO);
-    rt_sem_init(&sem_full , "full",     0,      RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem_lock , "lock",     1,      RT_IPC_FLAG_PRIO);
+    rt_sem_init(&sem_empty, "empty",    MAXSEM, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&sem_full , "full",     0,      RT_IPC_FLAG_PRIO);
 
     /* 创建线程1 */
     producer_tid = rt_thread_create("producer",

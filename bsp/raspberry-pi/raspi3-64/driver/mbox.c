@@ -1,6 +1,6 @@
 /*
  * File      : mbox.c
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -41,7 +41,7 @@ int mbox_call(unsigned char ch, int mmu_enable)
         /* is it a response to our message? */
         if (r == *MBOX_READ){
             /* is it a valid successful response? */
-        //	rt_kprintf("mbox: %x, %x, %x, %x, %x, %x, %x, %x\n", mbox[0], mbox[1], mbox[2], mbox[3], mbox[4], mbox[5], mbox[6], mbox[7]);
+        //  rt_kprintf("mbox: %x, %x, %x, %x, %x, %x, %x, %x\n", mbox[0], mbox[1], mbox[2], mbox[3], mbox[4], mbox[5], mbox[6], mbox[7]);
             return mbox[1] == MBOX_RESPONSE;
         }
     }
@@ -52,12 +52,12 @@ int bcm283x_mbox_hardware_get_model(void)
 {
     mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
-    
+
     mbox[2] = MBOX_TAG_HARDWARE_GET_MODEL;
     mbox[3] = 4;                            // buffer size
     mbox[4] = 0;                            // len
 
-    mbox[5] = 0;                            
+    mbox[5] = 0;
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -70,12 +70,12 @@ int bcm283x_mbox_hardware_get_revison(void)
 {
     mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
-    
-    mbox[2] = MBOX_TAG_HARDWARE_GET_REV;   
+
+    mbox[2] = MBOX_TAG_HARDWARE_GET_REV;
     mbox[3] = 4;                            // buffer size
     mbox[4] = 0;                            // len
 
-    mbox[5] = 0;                    
+    mbox[5] = 0;
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -88,12 +88,12 @@ int bcm283x_mbox_hardware_get_mac_address(uint8_t * mac)
 {
     mbox[0] = 8*4;                                 // length of the message
     mbox[1] = MBOX_REQUEST;                        // this is a request message
-    
-    mbox[2] = MBOX_TAG_HARDWARE_GET_MAC_ADDRESS;   
+
+    mbox[2] = MBOX_TAG_HARDWARE_GET_MAC_ADDRESS;
     mbox[3] = 6;                                   // buffer size
     mbox[4] = 0;                                   // len
 
-    mbox[5] = 0;                    
+    mbox[5] = 0;
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -114,12 +114,12 @@ int bcm283x_mbox_hardware_get_serial(rt_uint64_t* sn)
 {
     mbox[0] = 8*4;                              // length of the message
     mbox[1] = MBOX_REQUEST;                     // this is a request message
-    
-    mbox[2] = MBOX_TAG_HARDWARE_GET_SERIAL;    
+
+    mbox[2] = MBOX_TAG_HARDWARE_GET_SERIAL;
     mbox[3] = 8;                                // buffer size
     mbox[4] = 0;                                // len
 
-    mbox[5] = 0;                    
+    mbox[5] = 0;
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -134,12 +134,12 @@ int bcm283x_mbox_hardware_get_arm_memory(rt_uint32_t * base, rt_uint32_t * size)
 {
     mbox[0] = 8*4;                                  // length of the message
     mbox[1] = MBOX_REQUEST;                         // this is a request message
-    
-    mbox[2] = MBOX_TAG_HARDWARE_GET_ARM_MEMORY;   
+
+    mbox[2] = MBOX_TAG_HARDWARE_GET_ARM_MEMORY;
     mbox[3] = 8;                                    // buffer size
     mbox[4] = 0;                                    // len
 
-    mbox[5] = 0;                    
+    mbox[5] = 0;
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -147,7 +147,7 @@ int bcm283x_mbox_hardware_get_arm_memory(rt_uint32_t * base, rt_uint32_t * size)
 
     *base = mbox[5];
     *size = mbox[6];
-    
+
     return 0;
 
 }
@@ -156,12 +156,12 @@ int bcm283x_mbox_hardware_get_vc_memory(rt_uint32_t * base, rt_uint32_t * size)
 {
     mbox[0] = 8*4;                               // length of the message
     mbox[1] = MBOX_REQUEST;                      // this is a request message
-    
+
     mbox[2] = MBOX_TAG_HARDWARE_GET_VC_MEMORY;
     mbox[3] = 8;                                 // buffer size
     mbox[4] = 0;                                 // len
 
-    mbox[5] = 0;                    
+    mbox[5] = 0;
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -169,7 +169,7 @@ int bcm283x_mbox_hardware_get_vc_memory(rt_uint32_t * base, rt_uint32_t * size)
 
     *base = mbox[5];
     *size = mbox[6];
-    
+
     return 0;
 }
 
@@ -177,8 +177,8 @@ int bcm283x_mbox_clock_get_turbo(void)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-    
-    mbox[2] = MBOX_TAG_CLOCK_GET_TURBO; 
+
+    mbox[2] = MBOX_TAG_CLOCK_GET_TURBO;
     mbox[3] = 8;                        // buffer size
     mbox[4] = 4;                        // len
 
@@ -200,8 +200,8 @@ int bcm283x_mbox_clock_set_turbo(int level)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-    
-    mbox[2] = MBOX_TAG_CLOCK_SET_TURBO;  
+
+    mbox[2] = MBOX_TAG_CLOCK_SET_TURBO;
     mbox[3] = 8;                        // buffer size
     mbox[4] = 8;                        // len
 
@@ -223,7 +223,7 @@ int bcm283x_mbox_clock_get_state(int id)
 {
     mbox[0] = 8*4;                       // length of the message
     mbox[1] = MBOX_REQUEST;              // this is a request message
-    
+
     mbox[2] = MBOX_TAG_CLOCK_GET_STATE;
     mbox[3] = 8;                         // buffer size
     mbox[4] = 4;                         // len
@@ -246,7 +246,7 @@ int bcm283x_mbox_clock_set_state(int id, int state)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-    
+
     mbox[2] = MBOX_TAG_CLOCK_SET_STATE;
     mbox[3] = 8;                        // buffer size
     mbox[4] = 8;                        // len
@@ -269,8 +269,8 @@ int bcm283x_mbox_clock_get_rate(int id)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-    
-    mbox[2] = MBOX_TAG_CLOCK_GET_RATE; 
+
+    mbox[2] = MBOX_TAG_CLOCK_GET_RATE;
     mbox[3] = 8;                        // buffer size
     mbox[4] = 4;                        // len
 
@@ -292,7 +292,7 @@ int bcm283x_mbox_clock_set_rate(int id, int rate)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-    
+
     mbox[2] = MBOX_TAG_CLOCK_SET_RATE;
     mbox[3] = 8;                        // buffer size
     mbox[4] = 8;                        // len
@@ -315,7 +315,7 @@ int bcm283x_mbox_clock_get_max_rate(int id)
 {
     mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
-    
+
     mbox[2] = MBOX_TAG_CLOCK_GET_MAX_RATE;
     mbox[3] = 8;                            // buffer size
     mbox[4] = 4;                            // len
@@ -338,8 +338,8 @@ int bcm283x_mbox_clock_get_min_rate(int id)
 {
     mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
-    
-    mbox[2] = MBOX_TAG_CLOCK_GET_MIN_RATE; 
+
+    mbox[2] = MBOX_TAG_CLOCK_GET_MIN_RATE;
     mbox[3] = 8;                            // buffer size
     mbox[4] = 4;                            // len
 
@@ -361,7 +361,7 @@ int bcm283x_mbox_power_get_state(int id)
 {
     mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
-    
+
     mbox[2] = MBOX_TAG_POWER_GET_STATE;
     mbox[3] = 8;                    // buffer size
     mbox[4] = 4;                    // len
@@ -384,7 +384,7 @@ int bcm283x_mbox_power_set_state(int id, int state)
 {
     mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
-    
+
     mbox[2] = MBOX_TAG_POWER_SET_STATE;
     mbox[3] = 8;                    // buffer size
     mbox[4] = 8;                    // len
@@ -407,7 +407,7 @@ int bcm283x_mbox_temp_get(void)
 {
     mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
-    
+
     mbox[2] = MBOX_TAG_TEMP_GET;
     mbox[3] = 8;                    // buffer size
     mbox[4] = 4;                    // len
@@ -430,7 +430,7 @@ int bcm283x_mbox_temp_get_max(void)
 {
     mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
-    
+
     mbox[2] = MBOX_TAG_TEMP_GET_MAX;
     mbox[3] = 8;                    // buffer size
     mbox[4] = 4;                    // len

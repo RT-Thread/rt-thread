@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,6 +9,7 @@
  */
 
 #include <stdint.h>
+#include <string.h>
 #include <rtdevice.h>
 #include "spi_flash.h"
 #include "spi_flash_sfud.h"
@@ -508,7 +509,7 @@ __error:
     return RT_NULL;
 }
 
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
+#if defined(RT_USING_FINSH)
 
 #include <finsh.h>
 
@@ -773,6 +774,6 @@ static void sf(uint8_t argc, char **argv) {
     }
 }
 MSH_CMD_EXPORT(sf, SPI Flash operate.);
-#endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
+#endif /* defined(RT_USING_FINSH) */
 
 #endif /* RT_USING_SFUD */

@@ -323,9 +323,9 @@
 #define ADC_CFGR_FIELDS_1  ((ADC_CFGR_RES    | ADC_CFGR_ALIGN   |\
                              ADC_CFGR_CONT   | ADC_CFGR_OVRMOD  |\
                              ADC_CFGR_DISCEN | ADC_CFGR_DISCNUM |\
-                             ADC_CFGR_EXTEN  | ADC_CFGR_EXTSEL))   /*!< ADC_CFGR fields of parameters that can be updated 
+                             ADC_CFGR_EXTEN  | ADC_CFGR_EXTSEL))   /*!< ADC_CFGR fields of parameters that can be updated
                                                                         when no regular conversion is on-going */
-  
+
 /* Timeout values for ADC operations (enable settling time,                   */
 /*   disable settling time, ...).                                             */
 /*   Values defined to be higher than worst cases: low clock frequency,       */
@@ -2756,7 +2756,7 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef *hadc, ADC_ChannelConf
       }
     }
     #endif
-    
+
     /* Set ADC group regular sequence: channel on the selected scan sequence rank */
     LL_ADC_REG_SetSequencerRanks(hadc->Instance, sConfig->Rank, sConfig->Channel);
 
@@ -3031,13 +3031,13 @@ HAL_StatusTypeDef HAL_ADC_AnalogWDGConfig(ADC_HandleTypeDef *hadc, ADC_AnalogWDG
 
       /* Shift the offset in function of the selected ADC resolution:         */
       /* Thresholds have to be left-aligned on bit 11, the LSB (right bits)   */
-      /* are set to 0                                                         */ 
+      /* are set to 0                                                         */
       tmpAWDHighThresholdShifted = ADC_AWD1THRESHOLD_SHIFT_RESOLUTION(hadc, AnalogWDGConfig->HighThreshold);
       tmpAWDLowThresholdShifted  = ADC_AWD1THRESHOLD_SHIFT_RESOLUTION(hadc, AnalogWDGConfig->LowThreshold);
-      
+
       /* Set ADC analog watchdog thresholds value of both thresholds high and low */
       LL_ADC_ConfigAnalogWDThresholds(hadc->Instance, AnalogWDGConfig->WatchdogNumber, tmpAWDHighThresholdShifted, tmpAWDLowThresholdShifted);
-      
+
       /* Update state, clear previous result related to AWD1 */
       CLEAR_BIT(hadc->State, HAL_ADC_STATE_AWD1);
 
@@ -3092,10 +3092,10 @@ HAL_StatusTypeDef HAL_ADC_AnalogWDGConfig(ADC_HandleTypeDef *hadc, ADC_AnalogWDG
       /* have to be left-aligned on bit 7, the LSB (right bits) are set to 0  */
       tmpAWDHighThresholdShifted = ADC_AWD23THRESHOLD_SHIFT_RESOLUTION(hadc, AnalogWDGConfig->HighThreshold);
       tmpAWDLowThresholdShifted  = ADC_AWD23THRESHOLD_SHIFT_RESOLUTION(hadc, AnalogWDGConfig->LowThreshold);
-      
+
       /* Set ADC analog watchdog thresholds value of both thresholds high and low */
       LL_ADC_ConfigAnalogWDThresholds(hadc->Instance, AnalogWDGConfig->WatchdogNumber, tmpAWDHighThresholdShifted, tmpAWDLowThresholdShifted);
-      
+
       if (AnalogWDGConfig->WatchdogNumber == ADC_ANALOGWATCHDOG_2)
       {
         /* Update state, clear previous result related to AWD2 */
@@ -3148,7 +3148,7 @@ HAL_StatusTypeDef HAL_ADC_AnalogWDGConfig(ADC_HandleTypeDef *hadc, ADC_AnalogWDG
   {
     /* Update ADC state machine to error */
     SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
-    
+
     tmp_hal_status = HAL_ERROR;
   }
   /* Process unlocked */

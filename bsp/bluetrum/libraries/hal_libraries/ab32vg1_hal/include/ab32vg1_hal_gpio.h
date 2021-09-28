@@ -13,7 +13,7 @@ struct gpio_init
 {
     uint8_t  pin;
     uint8_t  dir;
-    uint8_t  de;      
+    uint8_t  de;
     uint8_t  pull;
     uint32_t alternate;
     uint32_t af_con;        /*!< Alternate function control

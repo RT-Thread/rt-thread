@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,7 @@
  */
 
 #include <string.h>
+#include <sys/signal.h>
 #include "mqueue.h"
 #include "pthread_internal.h"
 
@@ -243,7 +244,7 @@ ssize_t mq_timedreceive(mqd_t                  mqdes,
         return -1;
     }
 
-    tick = clock_time_to_tick(abs_timeout);
+    tick = rt_timespec_to_tick(abs_timeout);
 
     result = rt_mq_recv(mqdes->mq, msg_ptr, msg_len, tick);
     if (result == RT_EOK)

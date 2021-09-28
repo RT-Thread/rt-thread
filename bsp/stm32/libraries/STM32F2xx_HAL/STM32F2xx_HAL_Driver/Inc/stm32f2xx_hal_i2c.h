@@ -170,6 +170,7 @@ typedef enum
 #define HAL_I2C_ERROR_TIMEOUT           0x00000020U    /*!< Timeout Error         */
 #define HAL_I2C_ERROR_SIZE              0x00000040U    /*!< Size Management error */
 #define HAL_I2C_ERROR_DMA_PARAM         0x00000080U    /*!< DMA Parameter Error   */
+#define HAL_I2C_WRONG_START             0x00000200U    /*!< Wrong start Error     */
 #if (USE_HAL_I2C_REGISTER_CALLBACKS == 1)
 #define HAL_I2C_ERROR_INVALID_CALLBACK  0x00000100U    /*!< Invalid Callback error */
 #endif /* USE_HAL_I2C_REGISTER_CALLBACKS */

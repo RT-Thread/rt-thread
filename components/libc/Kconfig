@@ -16,31 +16,34 @@ endif
 
 if RT_USING_LIBC && RT_USING_DFS
     config RT_USING_POSIX
-        bool "Enable POSIX layer for poll/select, stdin etc"
+        bool "Enable POSIX layer for compatibility with UNIX APIs, poll/select etc"
         select RT_USING_DFS_DEVFS
         default y
 
     if RT_USING_POSIX
-    config RT_USING_POSIX_MMAP
-        bool "Enable mmap() API"
-        default n
+        config RT_USING_POSIX_MMAP
+            bool "Enable mmap() API"
+            default n
 
-    config RT_USING_POSIX_TERMIOS
-        bool "Enable termios APIs"
-        default n
+        config RT_USING_POSIX_TERMIOS
+            bool "Enable termios APIs"
+            default n
 
-    config RT_USING_POSIX_GETLINE
-        bool "Enable getline()/getdelim() APIs"
-        default n
+        config RT_USING_POSIX_GETLINE
+            bool "Enable getline()/getdelim() APIs"
+            default n
 
-    config RT_USING_POSIX_AIO
-        bool "Enable AIO"
-        default n
+        config RT_USING_POSIX_AIO
+            bool "Enable AIO"
+            default n
     endif
 
 endif
 
 if RT_USING_LIBC
+    config RT_LIBC_USING_TIME
+        default y
+
     config RT_USING_MODULE
         bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
         default n
@@ -54,9 +57,15 @@ if RT_USING_LIBC
 endif
 
 if RT_USING_LIBC != y
-        config RT_LIBC_USING_TIME
-        bool "Enable TIME FUNCTIONS WITHOUT COMPILER'S LIBC"
-        default y
+    config RT_LIBC_USING_TIME
+    bool "Enable time functions without compiler's libc"
+    default y
 endif
+
+config RT_LIBC_DEFAULT_TIMEZONE
+    depends on (RT_LIBC_USING_TIME || RT_USING_LIBC)
+    int "Set the default time zone (UTC+)"
+    range -12 12
+    default 8
 
 endmenu

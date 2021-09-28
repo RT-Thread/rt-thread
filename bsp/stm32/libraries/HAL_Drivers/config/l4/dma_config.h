@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -127,6 +127,17 @@ extern "C" {
 #endif
 
 /* DMA1 channel7 */
+#if defined(BSP_UART2_TX_USING_DMA) && !defined(UART2_TX_DMA_INSTANCE)
+#define UART2_DMA_TX_IRQHandler         DMA1_Channel7_IRQHandler
+#define UART2_TX_DMA_RCC                RCC_AHB1ENR_DMA1EN
+#define UART2_TX_DMA_INSTANCE           DMA1_Channel7
+#if defined(DMAMUX1) /* for L4+ */
+#define UART2_TX_DMA_REQUEST            DMA_REQUEST_USART2_TX
+#else /* for L4 */
+#define UART2_TX_DMA_REQUEST            DMA_REQUEST_2
+#endif /* DMAMUX1 */
+#define UART2_TX_DMA_IRQ                DMA1_Channel7_IRQn
+#endif
 
 /* DMA2 channel1 */
 #if defined(BSP_UART5_TX_USING_DMA) && !defined(UART5_TX_DMA_INSTANCE)

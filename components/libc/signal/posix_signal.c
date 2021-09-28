@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,12 +7,15 @@
  * Date           Author       Notes
  * 2017/10/1      Bernard      The first version
  */
+
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <time.h>
+#include <sys/time.h>
+#include <sys/errno.h>
 
 #include "posix_signal.h"
+
 #define sig_valid(sig_no)   (sig_no >= 0 && sig_no < RT_SIG_MAX)
 
 void (*signal(int sig, void (*func)(int))) (int)
@@ -78,13 +81,10 @@ int sigtimedwait(const sigset_t *set, siginfo_t *info,
     int ret  = 0;
     int tick = RT_WAITING_FOREVER;
 
-#ifdef RT_USING_PTHREADS
     if (timeout)
     {
-        extern int clock_time_to_tick(const struct timespec *time);
-        tick = clock_time_to_tick(timeout);
+        tick = rt_timespec_to_tick(timeout);
     }
-#endif
 
     ret = rt_signal_wait(set, info, tick);
     if (ret == 0) return 0;

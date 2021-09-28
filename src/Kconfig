@@ -98,6 +98,11 @@ config IDLE_THREAD_STACK_SIZE
     int "The stack size of idle thread"
     default 256
 
+config SYSTEM_THREAD_STACK_SIZE
+    int "The stack size of system thread (for defunct etc.)"
+    depends on RT_USING_SMP
+    default IDLE_THREAD_STACK_SIZE
+
 config RT_USING_TIMER_SOFT
     bool "Enable software timer with a timer thread"
     default y
@@ -115,6 +120,22 @@ config RT_TIMER_THREAD_STACK_SIZE
     default 512
 
 endif
+
+menu "kservice optimization"
+
+config RT_KSERVICE_USING_STDLIB
+    bool "Enable kservice to use standard C library"
+    default n
+
+config RT_KSERVICE_USING_TINY_SIZE
+    bool "Enable kservice to use tiny size"
+    default n
+
+config RT_USING_ASM_MEMCPY
+    bool
+    default n
+
+endmenu
 
 menuconfig RT_DEBUG
     bool "Enable debugging features"
@@ -247,11 +268,18 @@ menu "Memory Management"
         help
             Using static memory fixed partition
 
-    config RT_USING_MEMHEAP
+    menuconfig RT_USING_MEMHEAP
         bool "Using memory heap object"
         default n
-        help
-            Using memory heap object to manage dynamic memory heap.
+
+        if RT_USING_MEMHEAP
+
+            if RT_USING_MEMHEAP_AS_HEAP
+            config RT_USING_MEMHEAP_AUTO_BINDING
+                bool "Use all of memheap objects as heap"
+                default y
+            endif
+        endif
 
     choice
         prompt "Dynamic Memory Management"
@@ -268,7 +296,7 @@ menu "Memory Management"
 
         if RT_USING_MEMHEAP
         config RT_USING_MEMHEAP_AS_HEAP
-            bool "Use all of memheap objects as heap"
+            bool "Use memheap objects as heap"
         endif
 
         config RT_USING_USERHEAP
@@ -284,21 +312,19 @@ menu "Memory Management"
 
     endchoice
 
-    if RT_USING_SMALL_MEM
-        config RT_USING_MEMTRACE
-            bool "Enable memory trace"
-            default n
-            help
-                When enable RT_USING_MEMTRACE with shell, developer can call cmd:
-                1. memtrace
-                   to dump memory block information.
-                2. memcheck
-                   to check memory block to avoid memory overwritten.
+    config RT_USING_MEMTRACE
+        bool "Enable memory trace"
+        default n
+        help
+            When enable RT_USING_MEMTRACE with shell, developer can call cmd:
+            1. memtrace
+                to dump memory block information.
+            2. memcheck
+                to check memory block to avoid memory overwritten.
 
-                And developer also can call memcheck() in each of scheduling
-                to check memory block to find which thread has wrongly modified
-                memory.
-    endif
+            And developer also can call memcheck() in each of scheduling
+            to check memory block to find which thread has wrongly modified
+            memory.
 
     config RT_USING_HEAP
         bool
@@ -337,13 +363,17 @@ menu "Kernel Device Object"
         config RT_CONSOLE_DEVICE_NAME
             string "the device name for console"
             default "uart"
+
+        config RT_PRINTF_LONGLONG
+            bool "rt_kprintf support long long"
+            default n
     endif
 
 endmenu
 
 config RT_VER_NUM
     hex
-    default 0x40003
+    default 0x40004
     help
         RT-Thread version number
 

@@ -1,6 +1,6 @@
 /*
  * File      : rsapi.h
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -118,6 +118,7 @@ typedef enum
 #define BSC2_BASE_OFFSET (0x805000)
 
 /* IRQ */
+#define MAX_HANDLERS       72
 #define IRQ_SYSTEM_TIMER_0 0
 #define IRQ_SYSTEM_TIMER_1  1
 #define IRQ_SYSTEM_TIMER_2 2

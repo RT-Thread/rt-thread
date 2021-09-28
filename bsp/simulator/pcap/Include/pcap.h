@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 1993, 1994, 1995, 1996, 1997
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -12,8 +12,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the Computer Systems
- *	Engineering Group at Lawrence Berkeley Laboratory.
+ *  This product includes software developed by the Computer Systems
+ *  Engineering Group at Lawrence Berkeley Laboratory.
  * 4. Neither the name of the University nor of the Laboratory may be used
  *    to endorse or promote products derived from this software without
  *    specific prior written permission.

@@ -1,21 +1,7 @@
 /*
- * File      : ili9341.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -26,16 +12,16 @@
 
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 
-/** 
-  * @brief ILI9341 chip IDs  
-  */ 
+/**
+  * @brief ILI9341 chip IDs
+  */
 #define ILI9341_ID                  0x9341
 
-/** 
-  * @brief  ILI9341 Registers  
+/**
+  * @brief  ILI9341 Registers
   */
 
 /* Level 1 Commands */
@@ -57,32 +43,32 @@
 #define LCD_GAMMA               0x26   /* Gamma register */
 #define LCD_DISPLAY_OFF         0x28   /* Display off register */
 #define LCD_DISPLAY_ON          0x29   /* Display on register */
-#define LCD_COLUMN_ADDR         0x2A   /* Colomn address register */ 
-#define LCD_PAGE_ADDR           0x2B   /* Page address register */ 
-#define LCD_GRAM                0x2C   /* GRAM register */   
-#define LCD_RGBSET              0x2D   /* Color SET */   
-#define LCD_RAMRD               0x2E   /* Memory Read */   
-#define LCD_PLTAR               0x30   /* Partial Area */   
-#define LCD_VSCRDEF             0x33   /* Vertical Scrolling Definition */   
-#define LCD_TEOFF               0x34   /* Tearing Effect Line OFF */   
-#define LCD_TEON                0x35   /* Tearing Effect Line ON */   
+#define LCD_COLUMN_ADDR         0x2A   /* Colomn address register */
+#define LCD_PAGE_ADDR           0x2B   /* Page address register */
+#define LCD_GRAM                0x2C   /* GRAM register */
+#define LCD_RGBSET              0x2D   /* Color SET */
+#define LCD_RAMRD               0x2E   /* Memory Read */
+#define LCD_PLTAR               0x30   /* Partial Area */
+#define LCD_VSCRDEF             0x33   /* Vertical Scrolling Definition */
+#define LCD_TEOFF               0x34   /* Tearing Effect Line OFF */
+#define LCD_TEON                0x35   /* Tearing Effect Line ON */
 #define LCD_MAC                 0x36   /* Memory Access Control register*/
-#define LCD_VSCRSADD            0x37   /* Vertical Scrolling Start Address */   
-#define LCD_IDMOFF              0x38   /* Idle Mode OFF */   
-#define LCD_IDMON               0x39   /* Idle Mode ON */   
+#define LCD_VSCRSADD            0x37   /* Vertical Scrolling Start Address */
+#define LCD_IDMOFF              0x38   /* Idle Mode OFF */
+#define LCD_IDMON               0x39   /* Idle Mode ON */
 #define LCD_PIXEL_FORMAT        0x3A   /* Pixel Format register */
-#define LCD_WRITE_MEM_CONTINUE  0x3C   /* Write Memory Continue */   
-#define LCD_READ_MEM_CONTINUE   0x3E   /* Read Memory Continue */   
-#define LCD_SET_TEAR_SCANLINE   0x44   /* Set Tear Scanline */   
-#define LCD_GET_SCANLINE        0x45   /* Get Scanline */   
+#define LCD_WRITE_MEM_CONTINUE  0x3C   /* Write Memory Continue */
+#define LCD_READ_MEM_CONTINUE   0x3E   /* Read Memory Continue */
+#define LCD_SET_TEAR_SCANLINE   0x44   /* Set Tear Scanline */
+#define LCD_GET_SCANLINE        0x45   /* Get Scanline */
 #define LCD_WDB                 0x51   /* Write Brightness Display register */
-#define LCD_RDDISBV             0x52   /* Read Display Brightness */   
+#define LCD_RDDISBV             0x52   /* Read Display Brightness */
 #define LCD_WCD                 0x53   /* Write Control Display register*/
-#define LCD_RDCTRLD             0x54   /* Read CTRL Display */   
-#define LCD_WRCABC              0x55   /* Write Content Adaptive Brightness Control */   
-#define LCD_RDCABC              0x56   /* Read Content Adaptive Brightness Control */   
-#define LCD_WRITE_CABC          0x5E   /* Write CABC Minimum Brightness */   
-#define LCD_READ_CABC           0x5F   /* Read CABC Minimum Brightness */   
+#define LCD_RDCTRLD             0x54   /* Read CTRL Display */
+#define LCD_WRCABC              0x55   /* Write Content Adaptive Brightness Control */
+#define LCD_RDCABC              0x56   /* Read Content Adaptive Brightness Control */
+#define LCD_WRITE_CABC          0x5E   /* Write CABC Minimum Brightness */
+#define LCD_READ_CABC           0x5F   /* Read CABC Minimum Brightness */
 #define LCD_READ_ID1            0xDA   /* Read ID1 */
 #define LCD_READ_ID2            0xDB   /* Read ID2 */
 #define LCD_READ_ID3            0xDC   /* Read ID3 */
@@ -129,13 +115,13 @@
 /* Size of read registers */
 #define LCD_READ_ID4_SIZE        3      /* Size of Read ID4 */
 
-  
+
 /** @defgroup ILI9341_Exported_Functions
   * @{
-  */ 
+  */
 int ili9341_hw_init(void);
 
-      
+
 #ifdef __cplusplus
 }
 #endif

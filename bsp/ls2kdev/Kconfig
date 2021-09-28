@@ -22,6 +22,10 @@ source "$RTT_DIR/Kconfig"
 source "$RTT_DIR/libcpu/mips/common/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
+config SOC_LS
+    bool
+    default y
+
 config SOC_LS2K1000
     bool
     select ARCH_MIPS64

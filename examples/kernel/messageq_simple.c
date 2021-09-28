@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：消息队列例程
  *
  * 这个程序会创建3个动态线程，一个线程会从消息队列中收取消息；一个线程会定时给消
@@ -89,7 +98,7 @@ int messageq_simple_init()
                &msg_pool[0],        /* 内存池指向msg_pool */
                128 - sizeof(void*), /* 每个消息的大小是 128 - void* */
                sizeof(msg_pool),    /* 内存池的大小是msg_pool的大小 */
-               RT_IPC_FLAG_FIFO);   /* 如果有多个线程等待，按照先来先得到的方法分配消息 */
+               RT_IPC_FLAG_PRIO);   /* 如果有多个线程等待，按照优先级由高到低的方法分配消息 */
 
     /* 创建线程1 */
     tid1 = rt_thread_create("t1",

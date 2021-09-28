@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 /* The classic producer-consumer example, implemented with semaphores.
    All integers between 0 and 9999 should be printed exactly twice,
    once to the right of the arrow and once to the left. */

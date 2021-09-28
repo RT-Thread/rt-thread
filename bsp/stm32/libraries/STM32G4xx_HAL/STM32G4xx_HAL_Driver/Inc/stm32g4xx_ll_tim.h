@@ -126,47 +126,8 @@ static const uint8_t SHIFT_TAB_OISx[] =
 #define TIM_POSITION_BRK_SOURCE            (POSITION_VAL(Source) & 0x1FUL)
 
 /* Generic bit definitions for TIMx_AF1 register */
-#define TIMx_AF1_BKINE     TIM1_AF1_BKINE     /*!< BRK BKIN input enable */
-#define TIMx_AF1_BKCOMP1E  TIM1_AF1_BKCMP1E   /*!< BRK COMP1 enable */
-#define TIMx_AF1_BKCOMP2E  TIM1_AF1_BKCMP2E   /*!< BRK COMP2 enable */
-#define TIMx_AF1_BKCOMP3E  TIM1_AF1_BKCMP3E   /*!< BRK COMP3 enable */
-#define TIMx_AF1_BKCOMP4E  TIM1_AF1_BKCMP4E   /*!< BRK COMP4 enable */
-#if defined(COMP5)
-#define TIMx_AF1_BKCOMP5E  TIM1_AF1_BKCMP5E   /*!< BRK COMP5 enable */
-#endif /* COMP5 */
-#if defined(COMP6)
-#define TIMx_AF1_BKCOMP6E  TIM1_AF1_BKCMP6E   /*!< BRK COMP6 enable */
-#endif /* COMP6 */
-#if defined(COMP7)
-#define TIMx_AF1_BKCOMP7E  TIM1_AF1_BKCMP7E   /*!< BRK COMP7 enable */
-#endif /* COMP7 */
 #define TIMx_AF1_BKINP     TIM1_AF1_BKINP     /*!< BRK BKIN input polarity */
-#define TIMx_AF1_BKCOMP1P  TIM1_AF1_BKCMP1P   /*!< BRK COMP1 input polarity */
-#define TIMx_AF1_BKCOMP2P  TIM1_AF1_BKCMP2P   /*!< BRK COMP2 input polarity */
-#define TIMx_AF1_BKCOMP3P  TIM1_AF1_BKCMP3P   /*!< BRK COMP3 input polarity */
-#define TIMx_AF1_BKCOMP4P  TIM1_AF1_BKCMP4P   /*!< BRK COMP4 input polarity */
 #define TIMx_AF1_ETRSEL    TIM1_AF1_ETRSEL    /*!< TIMx ETR source selection */
-
-/* Generic bit definitions for TIMx_AF2 register */
-#define TIMx_AF2_BK2INE    TIM1_AF2_BK2INE      /*!< BRK2 BKIN2 input enable */
-#define TIMx_AF2_BK2COMP1E TIM1_AF2_BK2CMP1E    /*!< BRK2 COMP1 enable */
-#define TIMx_AF2_BK2COMP2E TIM1_AF2_BK2CMP2E    /*!< BRK2 COMP2 enable */
-#define TIMx_AF2_BK2COMP3E TIM1_AF2_BK2CMP3E    /*!< BRK2 COMP3 enable */
-#define TIMx_AF2_BK2COMP4E TIM1_AF2_BK2CMP4E    /*!< BRK2 COMP4 enable */
-#if defined(COMP5)
-#define TIMx_AF2_BK2COMP5E TIM1_AF2_BK2CMP5E    /*!< BRK2 COMP5 enable */
-#endif /* COMP5 */
-#if defined(COMP6)
-#define TIMx_AF2_BK2COMP6E TIM1_AF2_BK2CMP6E    /*!< BRK2 COMP6 enable */
-#endif /* COMP6 */
-#if defined(COMP7)
-#define TIMx_AF2_BK2COMP7E TIM1_AF2_BK2CMP7E    /*!< BRK2 COMP7 enable */
-#endif /* COMP7 */
-#define TIMx_AF2_BK2INP    TIM1_AF2_BK2INP      /*!< BRK2 BKIN2 input polarity */
-#define TIMx_AF2_BK2COMP1P TIM1_AF2_BK2CMP1P    /*!< BRK2 COMP1 input polarity */
-#define TIMx_AF2_BK2COMP2P TIM1_AF2_BK2CMP2P    /*!< BRK2 COMP2 input polarity */
-#define TIMx_AF2_BK2COMP3P TIM1_AF2_BK2CMP3P    /*!< BRK2 COMP3 input polarity */
-#define TIMx_AF2_BK2COMP4P TIM1_AF2_BK2CMP4P    /*!< BRK2 COMP4 input polarity */
 
 
 /* Mask used to set the TDG[x:0] of the DTG bits of the TIMx_BDTR register */
@@ -273,13 +234,14 @@ typedef struct
 
                                    This feature can be modified afterwards using unitary function @ref LL_TIM_SetClockDivision().*/
 
-  uint8_t RepetitionCounter;  /*!< Specifies the repetition counter value. Each time the RCR downcounter
+  uint32_t RepetitionCounter;  /*!< Specifies the repetition counter value. Each time the RCR downcounter
                                    reaches zero, an update event is generated and counting restarts
                                    from the RCR value (N).
                                    This means in PWM mode that (N+1) corresponds to:
                                       - the number of PWM periods in edge-aligned mode
                                       - the number of half PWM period in center-aligned mode
-                                   This parameter must be a number between 0x00 and 0xFF.
+                                   GP timers: this parameter must be a number between Min_Data = 0x00 and Max_Data = 0xFF.
+                                   Advanced timers: this parameter must be a number between Min_Data = 0x0000 and Max_Data = 0xFFFF.
 
                                    This feature can be modified afterwards using unitary function @ref LL_TIM_SetRepetitionCounter().*/
 } LL_TIM_InitTypeDef;
@@ -2318,7 +2280,7 @@ __STATIC_INLINE uint32_t LL_TIM_GetAutoReload(TIM_TypeDef *TIMx)
   *       whether or not a timer instance supports a repetition counter.
   * @rmtoll RCR          REP           LL_TIM_SetRepetitionCounter
   * @param  TIMx Timer instance
-  * @param  RepetitionCounter between Min_Data=0 and Max_Data=255
+  * @param  RepetitionCounter between Min_Data=0 and Max_Data=255 or 65535 for advanced timer.
   * @retval None
   */
 __STATIC_INLINE void LL_TIM_SetRepetitionCounter(TIM_TypeDef *TIMx, uint32_t RepetitionCounter)
@@ -2360,6 +2322,16 @@ __STATIC_INLINE void LL_TIM_EnableUIFRemap(TIM_TypeDef *TIMx)
 __STATIC_INLINE void LL_TIM_DisableUIFRemap(TIM_TypeDef *TIMx)
 {
   CLEAR_BIT(TIMx->CR1, TIM_CR1_UIFREMAP);
+}
+
+/**
+  * @brief  Indicate whether update interrupt flag (UIF) copy is set.
+  * @param  Counter Counter value
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_TIM_IsActiveUIFCPY(uint32_t Counter)
+{
+  return (((Counter & TIM_CNT_UIFCPY) == (TIM_CNT_UIFCPY)) ? 1UL : 0UL);
 }
 
 /**

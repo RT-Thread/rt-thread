@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -43,7 +43,7 @@ static wwdt_config_t WWDT1_config =
     /* No warning is provided */
     .warningValue = 0,
     /* Set clock frequency. */
-    .clockFreq_Hz = 0U, 
+    .clockFreq_Hz = 0U,
 };
 
 void WDT_BOD_IRQHandler(void)
@@ -109,9 +109,9 @@ static rt_err_t lpc_wwdt_init(rt_watchdog_t *wdt)
     SYSCON->CLOCK_CTRL |= SYSCON_CLOCK_CTRL_FRO1MHZ_CLK_ENA_MASK;
     /* Set clock divider for WWDT clock source. */
     CLOCK_SetClkDiv(kCLOCK_DivWdtClk, 1U, true);
-    
+
     WWDT_GetDefaultConfig(&WWDT1_config);
-    
+
     /*
      * Set watchdog feed time constant to approximately 4s
      * Set watchdog warning time to 512 ticks after feed time constant
@@ -125,7 +125,7 @@ static rt_err_t lpc_wwdt_init(rt_watchdog_t *wdt)
     WWDT1_config.enableWatchdogReset = true;
     /* Setup watchdog clock frequency(Hz). */
     WWDT1_config.clockFreq_Hz = CLOCK_GetFreq(kCLOCK_WdtClk);
-    
+
     WWDT_Init(base, &WWDT1_config);
     lpc_wwdt_close(wdt);
 
@@ -175,11 +175,11 @@ static rt_err_t lpc_wwdt_control(rt_watchdog_t *wdt, int cmd, void *args)
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
     {
         RT_ASSERT(*(uint16_t *)args != 0);
-        
+
         WWDT1_config.timeoutValue = (CLOCK_GetFreq(kCLOCK_WdtClk) / 4) * (*(uint16_t *)args) * 2;
         WWDT1_config.warningValue = 512;
         WWDT1_config.windowValue  = (CLOCK_GetFreq(kCLOCK_WdtClk) / 4) * (*(uint16_t *)args) * 2 / 4;
-        
+
         base->TC = WWDT_TC_COUNT(WWDT1_config.timeoutValue);
         base->WINDOW  = WWDT_WINDOW_WINDOW(WWDT1_config.windowValue);
         base->WARNINT = WWDT_WARNINT_WARNINT(WWDT1_config.warningValue);

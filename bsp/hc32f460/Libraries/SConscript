@@ -1,0 +1,47 @@
+# RT-Thread building script for bridge
+
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+CMSIS/Device/HDSC/HC32F460/Source/system_hc32f460.c
+HC32F460_StdPeriph_Driver/src/hc32f460_clk.c
+HC32F460_StdPeriph_Driver/src/hc32f460_efm.c
+HC32F460_StdPeriph_Driver/src/hc32f460_gpio.c
+HC32F460_StdPeriph_Driver/src/hc32f460_icg.c
+HC32F460_StdPeriph_Driver/src/hc32f460_interrupts.c
+HC32F460_StdPeriph_Driver/src/hc32f460_pwc.c
+HC32F460_StdPeriph_Driver/src/hc32f460_sram.c
+HC32F460_StdPeriph_Driver/src/hc32f460_utility.c
+HC32F460_StdPeriph_Driver/src/hc32f460_exint_nmi_swi.c
+""")
+
+#src += Glob('HC32F460_StdPeriph_Driver/src/*.c')
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['HC32F460_StdPeriph_Driver/src/hc32f460_usart.c']
+   
+#add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    src = src + ['CMSIS/Device/HDSC/HC32F460/Source/GCC/startup_hc32f460.S']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src = src + ['CMSIS/Device/HDSC/HC32F460/Source/ARM/startup_hc32f460.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = src + ['CMSIS/Device/HDSC/HC32F460/Source/IAR/startup_hc32f460.s']
+
+#add headfile script 
+path = [cwd + '/CMSIS/Include', 
+    cwd + '/CMSIS/Device/HDSC/HC32F460/Include',
+    cwd + '/HC32F460_StdPeriph_Driver/inc']
+
+
+CPPDEFINES = ['USE_DEVICE_DRIVER_LIB', rtconfig.MCU_TYPE, '__DEBUG']
+
+group = DefineGroup('HC32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

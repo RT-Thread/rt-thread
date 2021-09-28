@@ -58,10 +58,23 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_LWIP
         
     config BSP_USING_SDMMC
-        bool "Enable SDMMC (SD card)"
+        bool "Enable SDMMC (sd card or sdio wifi)"
+        default n
         select RT_USING_SDIO
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
+        if BSP_USING_SDMMC
+            config BSP_USING_SDIO1
+                bool "Enable SDIO1 (sd card)"
+                default n
+            config BSP_USING_SDIO2
+                select BSP_USING_RTC
+                bool "Enable SDIO2 (sdio wifi)"
+                default n
+        endif
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
         default n
 
     menuconfig BSP_USING_AUDIO

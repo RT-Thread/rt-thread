@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
  * 2012-04-25     weety         first version
+ * 2021-04-20     RiceChen      added support for bus control api
  */
 
 #include <rtdevice.h>
@@ -70,6 +71,26 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
         rt_mutex_take(&bus->lock, RT_WAITING_FOREVER);
         ret = bus->ops->master_xfer(bus, msgs, num);
         rt_mutex_release(&bus->lock);
+
+        return ret;
+    }
+    else
+    {
+        LOG_E("I2C bus operation not supported");
+
+        return 0;
+    }
+}
+
+rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
+                        rt_uint32_t               cmd,
+                        rt_uint32_t               arg)
+{
+    rt_err_t ret;
+
+    if(bus->ops->i2c_bus_control)
+    {
+        ret = bus->ops->i2c_bus_control(bus, cmd, arg);
 
         return ret;
     }

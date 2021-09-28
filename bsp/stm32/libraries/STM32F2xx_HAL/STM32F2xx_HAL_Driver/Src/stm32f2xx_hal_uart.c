@@ -1039,6 +1039,10 @@ HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, u
 
     huart->TxXferSize = Size;
     huart->TxXferCount = Size;
+
+    /* Process Unlocked */
+    __HAL_UNLOCK(huart);
+
     while (huart->TxXferCount > 0U)
     {
       huart->TxXferCount--;
@@ -1076,9 +1080,6 @@ HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, u
 
     /* At end of Tx process, restore huart->gState to Ready */
     huart->gState = HAL_UART_STATE_READY;
-
-    /* Process Unlocked */
-    __HAL_UNLOCK(huart);
 
     return HAL_OK;
   }
@@ -1125,6 +1126,9 @@ HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, ui
     huart->RxXferSize = Size;
     huart->RxXferCount = Size;
 
+    /* Process Unlocked */
+    __HAL_UNLOCK(huart);
+
     /* Check the remain data to be received */
     while (huart->RxXferCount > 0U)
     {
@@ -1168,9 +1172,6 @@ HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, ui
 
     /* At end of Rx process, restore huart->RxState to Ready */
     huart->RxState = HAL_UART_STATE_READY;
-
-    /* Process Unlocked */
-    __HAL_UNLOCK(huart);
 
     return HAL_OK;
   }
@@ -2051,7 +2052,7 @@ void HAL_UART_IRQHandler(UART_HandleTypeDef *huart)
     }
 
     /* UART Over-Run interrupt occurred --------------------------------------*/
-    if (((isrflags & USART_SR_ORE) != RESET) && ((cr3its & USART_CR3_EIE) != RESET))
+    if (((isrflags & USART_SR_ORE) != RESET) && (((cr1its & USART_CR1_RXNEIE) != RESET) || ((cr3its & USART_CR3_EIE) != RESET)))
     {
       huart->ErrorCode |= HAL_UART_ERROR_ORE;
     }

@@ -223,12 +223,12 @@
 
      *** Callback registration ***
      =============================================
-
+    [..]
      The compilation flag USE_HAL_I2C_REGISTER_CALLBACKS when set to 1
      allows the user to configure dynamically the driver callbacks.
      Use Functions @ref HAL_I2C_RegisterCallback() or @ref HAL_I2C_RegisterAddrCallback()
      to register an interrupt callback.
-
+    [..]
      Function @ref HAL_I2C_RegisterCallback() allows to register following callbacks:
        (+) MasterTxCpltCallback : callback for Master transmission end of transfer.
        (+) MasterRxCpltCallback : callback for Master reception end of transfer.
@@ -243,9 +243,9 @@
        (+) MspDeInitCallback    : callback for Msp DeInit.
      This function takes as parameters the HAL peripheral handle, the Callback ID
      and a pointer to the user callback function.
-
+    [..]
      For specific callback AddrCallback use dedicated register callbacks : @ref HAL_I2C_RegisterAddrCallback().
-
+    [..]
      Use function @ref HAL_I2C_UnRegisterCallback to reset a callback to the default
      weak function.
      @ref HAL_I2C_UnRegisterCallback takes as parameters the HAL peripheral handle,
@@ -262,9 +262,9 @@
        (+) AbortCpltCallback    : callback for abort completion process.
        (+) MspInitCallback      : callback for Msp Init.
        (+) MspDeInitCallback    : callback for Msp DeInit.
-
+    [..]
      For callback AddrCallback use dedicated register callbacks : @ref HAL_I2C_UnRegisterAddrCallback().
-
+    [..]
      By default, after the @ref HAL_I2C_Init() and when the state is @ref HAL_I2C_STATE_RESET
      all callbacks are set to the corresponding weak functions:
      examples @ref HAL_I2C_MasterTxCpltCallback(), @ref HAL_I2C_MasterRxCpltCallback().
@@ -273,7 +273,7 @@
      these callbacks are null (not registered beforehand).
      If MspInit or MspDeInit are not null, the @ref HAL_I2C_Init()/ @ref HAL_I2C_DeInit()
      keep and use the user MspInit/MspDeInit callbacks (registered beforehand) whatever the state.
-
+    [..]
      Callbacks can be registered/unregistered in @ref HAL_I2C_STATE_READY state only.
      Exception done MspInit/MspDeInit functions that can be registered/unregistered
      in @ref HAL_I2C_STATE_READY or @ref HAL_I2C_STATE_RESET state,
@@ -281,7 +281,7 @@
      Then, the user first registers the MspInit/MspDeInit user callbacks
      using @ref HAL_I2C_RegisterCallback() before calling @ref HAL_I2C_DeInit()
      or @ref HAL_I2C_Init() function.
-
+    [..]
      When the compilation flag USE_HAL_I2C_REGISTER_CALLBACKS is set to 0 or
      not defined, the callback registration feature is not available and all callbacks
      are set to the corresponding weak functions.
@@ -4737,6 +4737,13 @@ static HAL_StatusTypeDef I2C_Slave_ISR_IT(struct __I2C_HandleTypeDef *hi2c, uint
   /* Process locked */
   __HAL_LOCK(hi2c);
 
+  /* Check if STOPF is set */
+  if ((I2C_CHECK_FLAG(tmpITFlags, I2C_FLAG_STOPF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_STOPI) != RESET))
+  {
+    /* Call I2C Slave complete process */
+    I2C_ITSlaveCplt(hi2c, tmpITFlags);
+  }
+
   if ((I2C_CHECK_FLAG(tmpITFlags, I2C_FLAG_AF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_NACKI) != RESET))
   {
     /* Check that I2C transfer finished */
@@ -4788,9 +4795,6 @@ static HAL_StatusTypeDef I2C_Slave_ISR_IT(struct __I2C_HandleTypeDef *hi2c, uint
   {
     if (hi2c->XferCount > 0U)
     {
-      /* Remove RXNE flag on temporary variable as read done */
-      tmpITFlags &= ~I2C_FLAG_RXNE;
-
       /* Read data from RXDR */
       *hi2c->pBuffPtr = (uint8_t)hi2c->Instance->RXDR;
 
@@ -4842,13 +4846,6 @@ static HAL_StatusTypeDef I2C_Slave_ISR_IT(struct __I2C_HandleTypeDef *hi2c, uint
   else
   {
     /* Nothing to do */
-  }
-
-  /* Check if STOPF is set */
-  if ((I2C_CHECK_FLAG(tmpITFlags, I2C_FLAG_STOPF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_STOPI) != RESET))
-  {
-    /* Call I2C Slave complete process */
-    I2C_ITSlaveCplt(hi2c, tmpITFlags);
   }
 
   /* Process Unlocked */
@@ -5008,6 +5005,13 @@ static HAL_StatusTypeDef I2C_Slave_ISR_DMA(struct __I2C_HandleTypeDef *hi2c, uin
   /* Process locked */
   __HAL_LOCK(hi2c);
 
+  /* Check if STOPF is set */
+  if ((I2C_CHECK_FLAG(ITFlags, I2C_FLAG_STOPF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_STOPI) != RESET))
+  {
+    /* Call I2C Slave complete process */
+    I2C_ITSlaveCplt(hi2c, ITFlags);
+  }
+
   if ((I2C_CHECK_FLAG(ITFlags, I2C_FLAG_AF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_NACKI) != RESET))
   {
     /* Check that I2C transfer finished */
@@ -5091,11 +5095,6 @@ static HAL_StatusTypeDef I2C_Slave_ISR_DMA(struct __I2C_HandleTypeDef *hi2c, uin
   else if ((I2C_CHECK_FLAG(ITFlags, I2C_FLAG_ADDR) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_ADDRI) != RESET))
   {
     I2C_ITAddrCplt(hi2c, ITFlags);
-  }
-  else if ((I2C_CHECK_FLAG(ITFlags, I2C_FLAG_STOPF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_STOPI) != RESET))
-  {
-    /* Call I2C Slave complete process */
-    I2C_ITSlaveCplt(hi2c, ITFlags);
   }
   else
   {

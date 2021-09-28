@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,6 +14,10 @@
 #endif
 #include <yfuns.h>
 #include "libc.h"
+
+#define DBG_TAG    "dlib.syscall_write"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 #pragma module_name = "?__write"
 
@@ -30,19 +34,29 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
 #else
 
 #ifdef RT_USING_POSIX
-        return libc_stdio_write((void*)buf, len);
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_W("Do not invoke standard output before initializing libc");
+            return 0;
+        }
+        return write(STDOUT_FILENO, (void*)buf, len);
 #else
         rt_device_t console_device;
 
         console_device = rt_console_get_device();
-        if (console_device != 0) rt_device_write(console_device, 0, buf, len);
+        if (console_device != 0)
+        {
+            rt_device_write(console_device, 0, buf, len);
+        }
 
         return len;
 #endif
 #endif
     }
-
-    if (handle == _LLIO_STDIN) return _LLIO_ERROR;
+    else if (handle == _LLIO_STDIN)
+    {
+        return _LLIO_ERROR;
+    }
 
 #ifndef RT_USING_DFS
     return _LLIO_ERROR;

@@ -1,10 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2021-08-01     Meco Man     remove rt_delayed_work_init() and rt_delayed_work structure
+ * 2021-08-14     Jackistang   add comments for rt_work_init()
  */
 #ifndef WORKQUEUE_H__
 #define WORKQUEUE_H__
@@ -29,6 +31,7 @@ enum
 struct rt_workqueue
 {
     rt_list_t      work_list;
+    rt_list_t      delayed_list;
     struct rt_work *work_current; /* current work */
 
     struct rt_semaphore sem;
@@ -47,11 +50,6 @@ struct rt_work
     struct rt_workqueue *workqueue;
 };
 
-struct rt_delayed_work
-{
-    struct rt_work work;
-};
-
 #ifdef RT_USING_HEAP
 /**
  * WorkQueue for DeviceDriver
@@ -62,12 +60,21 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work);
 rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *work, rt_tick_t time);
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work);
 rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_work *work);
+rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue);
+rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *work);
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time);
 rt_err_t rt_work_cancel(struct rt_work *work);
-#endif
+#endif /* RT_USING_SYSTEM_WORKQUEUE */
 
+/**
+ * @brief Initialize a work item, binding with a callback function.
+ *
+ * @param work          A pointer to the work item object.
+ * @param work_func     A callback function that will be called when this work item is executed.
+ * @param work_data     A user data passed to the callback function as the second parameter.
+ */
 rt_inline void rt_work_init(struct rt_work *work, void (*work_func)(struct rt_work *work, void *work_data),
                             void *work_data)
 {
@@ -79,10 +86,6 @@ rt_inline void rt_work_init(struct rt_work *work, void (*work_func)(struct rt_wo
     work->type = 0;
 }
 
-void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct rt_work *work,
-                          void *work_data), void *work_data);
-
-int rt_work_sys_workqueue_init(void);
-#endif
+#endif /* RT_USING_HEAP */
 
 #endif

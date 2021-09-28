@@ -17,6 +17,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_COM2
         bool "Enable COM2 (uart2 pin conflict with Ethernet and PWM)"
+        depends on (!BSP_USING_ETH && !BSP_USING_PWM)
         select BSP_USING_UART
         select BSP_USING_UART2
         default n
@@ -45,15 +46,24 @@ menu "Onboard Peripheral Drivers"
         bool "Enable I2C EEPROM (i2c1)"
         select BSP_USING_I2C1
         default n
-
-    config PHY_USING_LAN8720A
-        bool
     
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
         select RT_USING_LWIP
-        select PHY_USING_LAN8720A
+        select RT_LWIP_USING_HW_CHECKSUM
+
+    config BSP_USING_ETH_SAL
+        bool "Enable Ethernet with SAL"
+        depends on BSP_USING_ETH
+        default y
+        select RT_USING_SAL
+        select SAL_USING_POSIX
+
+    config PHY_USING_LAN8720A
+        bool
+        depends on BSP_USING_ETH
+        default y
 
     config BSP_USING_MPU6050
         bool "Enable MPU6050 (i2c1)"
@@ -61,18 +71,40 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
 
-    config BSP_USING_SDCARD
-        bool "Enable SDCARD (sdio)"
-        select BSP_USING_SDIO
-        select RT_USING_DFS
-        select RT_USING_DFS_ELMFAT
-        default n
-    if BSP_USING_SDCARD
-    config SDIO_MAX_FREQ
-        int "sdio max freq"
-        range 0 24000000
-        default 1000000
-    endif
+    menu "Enable File System"
+        config BSP_USING_FS
+            bool
+            default n
+
+        config BSP_USING_SDCARD_FATFS
+            bool "Enable SDCARD (FATFS)"
+            select BSP_USING_SDIO
+            select RT_USING_DFS
+            select RT_USING_DFS_ELMFAT
+            select RT_USING_DFS_ROMFS
+            select BSP_USING_FS
+            default n
+
+        config SDIO_MAX_FREQ
+            int "sdio max freq"
+            range 0 24000000
+            depends on BSP_USING_SDCARD
+            default 1000000
+
+        config BSP_USING_SPI_FLASH_LITTLEFS
+            bool "Enable SPI-FLASH (LittleFS)"
+            select RT_USING_DFS
+            select RT_USING_DFS_ROMFS
+            select RT_USING_MTD_NOR
+            select BSP_USING_SPI_FLASH            
+            select BSP_USING_FS
+            select PKG_USING_FAL
+            select FAL_USING_AUTO_INIT
+            select FAL_PART_HAS_TABLE_CFG
+            select PKG_USING_LITTLEFS
+            default n
+
+    endmenu
 
 endmenu
 
@@ -286,7 +318,6 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
         if BSP_USING_ONCHIP_RTC
             choice
@@ -355,6 +386,34 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Board extended module Drivers"
+
+    menuconfig BSP_USING_AT_ESP8266
+        bool "Enable ESP8266(AT Command, COM3)"
+        default n
+        select BSP_USING_COM3
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP8266
+        select AT_DEVICE_ESP8266_SAMPLE
+
+        if BSP_USING_AT_ESP8266
+
+            config ESP8266_SAMPLE_WIFI_SSID
+                string "WIFI ssid"
+                default "rtthread"
+
+            config ESP8266_SAMPLE_WIFI_PASSWORD
+                string "WIFI password"
+                default "12345678"
+
+            config ESP8266_SAMPLE_CLIENT_NAME
+                string "AT client device name (Must be 'uart3')"
+                default "uart3"
+
+            config ESP8266_SAMPLE_RECV_BUFF_LEN
+                int "The maximum length of receive line buffer"
+                default 512
+
+        endif
 
 endmenu
 

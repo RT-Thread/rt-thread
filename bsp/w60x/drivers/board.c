@@ -98,14 +98,14 @@ void disp_version_info(void)
 
 void wm_gpio_config(void)
 {
-	/* must call first */
-	wm_gpio_af_disable();
+    /* must call first */
+    wm_gpio_af_disable();
 
-	/*MASTER SPI configuratioin*/
-	wm_spi_cs_config(WM_IO_PA_02);
-	wm_spi_ck_config(WM_IO_PA_11);
-	wm_spi_di_config(WM_IO_PA_03);
-	wm_spi_do_config(WM_IO_PA_09);
+    /*MASTER SPI configuratioin*/
+    wm_spi_cs_config(WM_IO_PA_02);
+    wm_spi_ck_config(WM_IO_PA_11);
+    wm_spi_di_config(WM_IO_PA_03);
+    wm_spi_do_config(WM_IO_PA_09);
 }
 
 static int wm_infsl_init(void)
@@ -255,7 +255,7 @@ static void reboot(uint8_t argc, char **argv)
 {
     rt_hw_cpu_reset();
 }
-FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
+MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
 
 /*@}*/

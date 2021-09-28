@@ -1,7 +1,19 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: Apache-2.0 
+ *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -11,14 +23,16 @@
  * 程序清单：这是一个 I2C 设备使用例程
  * 例程导出了 i2c_io_sample 命令到控制终端
  * 命令调用格式：i2c_io_sample
- * 命令解释：使用默认的I2C总线设备
+ * 命令解释：使用默认的I2C总线设备i2c0
  * 程序功能：通过 I2C 设备接收数据并打印，然后将接收的字符加1输出。
 */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define I2C_BUS_NAME          "i2c1"  /* I2C总线设备名称 */
+#ifdef RT_USING_I2C
+
+#define I2C_BUS_NAME          "i2c0"  /* I2C总线设备名称 */
 #define SLAVE_ADDR                  0x2D    /* 从机地址 */
 #define STR_LEN                       16    /* 接收发送的数据长度 */
 
@@ -95,3 +109,5 @@ static void i2c_io_sample(int argc, char *argv[])
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(i2c_io_sample, i2c io sample);
+
+#endif

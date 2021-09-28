@@ -37,7 +37,7 @@
 
 #define USART_NULL_PARAM_CHK(para) HANDLE_PARAM_CHK(para, ERR_USART(DRV_ERROR_PARAMETER))
 
-typedef struct 
+typedef struct
 {
     uint32_t base;
     uint32_t irq;
@@ -59,7 +59,7 @@ extern int32_t target_usart_init(int32_t idx, uint32_t *base, uint32_t *irq, voi
 
 static ck_usart_priv_t usart_instance[CONFIG_USART_NUM];
 
-static const usart_capabilities_t usart_capabilities = 
+static const usart_capabilities_t usart_capabilities =
 {
     .asynchronous = 1,          /* supports USART (Asynchronous) mode */
     .synchronous_master = 0,    /* supports Synchronous Master mode */
@@ -86,10 +86,10 @@ int32_t csi_usart_config_baudrate(usart_handle_t handle, uint32_t baud)
     /* baudrate=(seriak clock freq)/(16*divisor); algorithm :rounding*/
     uint32_t divisor = ((drv_get_usart_freq(usart_priv->idx)  * 10) / baud) >> 4;
 
-    if ((divisor % 10) >= 5) 
+    if ((divisor % 10) >= 5)
     {
         divisor = (divisor / 10) + 1;
-    } else 
+    } else
     {
         divisor = divisor / 10;
     }
@@ -117,7 +117,7 @@ int32_t csi_usart_config_mode(usart_handle_t handle, usart_mode_e mode)
 {
     USART_NULL_PARAM_CHK(handle);
 
-    if (mode == USART_MODE_ASYNCHRONOUS) 
+    if (mode == USART_MODE_ASYNCHRONOUS)
     {
         return 0;
     }
@@ -139,7 +139,7 @@ int32_t csi_usart_config_parity(usart_handle_t handle, usart_parity_e parity)
 
     WAIT_USART_IDLE(addr);
 
-    switch (parity) 
+    switch (parity)
     {
         case USART_PARITY_NONE:
             /*CLear the PEN bit(LCR[3]) to disable parity.*/
@@ -179,7 +179,7 @@ int32_t csi_usart_config_stopbits(usart_handle_t handle, usart_stop_bits_e stopb
 
     WAIT_USART_IDLE(addr);
 
-    switch (stopbit) 
+    switch (stopbit)
     {
         case USART_STOP_BITS_1:
             /* Clear the STOP bit to set 1 stop bit*/
@@ -223,7 +223,7 @@ int32_t csi_usart_config_databits(usart_handle_t handle, usart_data_bits_e datab
      *       11 -- 8 bits
      */
 
-    switch (databits) 
+    switch (databits)
     {
         case USART_DATA_BITS_5:
             addr->LCR &= LCR_WORD_SIZE_5;
@@ -312,7 +312,7 @@ int csi_uart_getchar(usart_handle_t handle)
 
     if (addr->LSR & LSR_DATA_READY)
     {
-    	ch = addr->RBR & 0xff;
+        ch = addr->RBR & 0xff;
     }
 
     return ch;
@@ -332,11 +332,11 @@ int32_t csi_usart_putchar(usart_handle_t handle, uint8_t ch)
     ck_usart_reg_t *addr = (ck_usart_reg_t *)(usart_priv->base);
     uint32_t timecount = 0;
 
-    while ((!(addr->LSR & DW_LSR_TRANS_EMPTY))) 
+    while ((!(addr->LSR & DW_LSR_TRANS_EMPTY)))
     {
         timecount++;
 
-        if (timecount >= UART_BUSY_TIMEOUT) 
+        if (timecount >= UART_BUSY_TIMEOUT)
         {
             return ERR_USART(DRV_ERROR_TIMEOUT);
         }
@@ -354,7 +354,7 @@ int32_t csi_usart_putchar(usart_handle_t handle, uint8_t ch)
 */
 void ck_usart_intr_threshold_empty(int32_t idx, ck_usart_priv_t *usart_priv)
 {
-    if (usart_priv->tx_total_num == 0) 
+    if (usart_priv->tx_total_num == 0)
     {
         return;
     }
@@ -362,7 +362,7 @@ void ck_usart_intr_threshold_empty(int32_t idx, ck_usart_priv_t *usart_priv)
     volatile int i = 500;
     ck_usart_reg_t *addr = (ck_usart_reg_t *)(usart_priv->base);
 
-    if (usart_priv->tx_cnt >= usart_priv->tx_total_num) 
+    if (usart_priv->tx_cnt >= usart_priv->tx_total_num)
     {
         addr->IER &= (~IER_THRE_INT_ENABLE);
         usart_priv->last_tx_num = usart_priv->tx_total_num;
@@ -379,11 +379,11 @@ void ck_usart_intr_threshold_empty(int32_t idx, ck_usart_priv_t *usart_priv)
         usart_priv->tx_buf = NULL;
         usart_priv->tx_total_num = 0;
 
-        if (usart_priv->cb_event) 
+        if (usart_priv->cb_event)
         {
             usart_priv->cb_event(idx, USART_EVENT_SEND_COMPLETE);
         }
-    } else 
+    } else
     {
         /* fix hardware bug */
         while (addr->USR & USR_UART_BUSY);
@@ -411,7 +411,7 @@ static void ck_usart_intr_recv_data(int32_t idx, ck_usart_priv_t *usart_priv)
     usart_priv->rx_cnt++;
     usart_priv->rx_buf++;
 
-    if (usart_priv->rx_cnt >= usart_priv->rx_total_num) 
+    if (usart_priv->rx_cnt >= usart_priv->rx_total_num)
     {
         usart_priv->last_rx_num = usart_priv->rx_total_num;
         usart_priv->rx_cnt = 0;
@@ -419,7 +419,7 @@ static void ck_usart_intr_recv_data(int32_t idx, ck_usart_priv_t *usart_priv)
         usart_priv->rx_busy = 0;
         usart_priv->rx_total_num = 0;
 
-        if (usart_priv->cb_event) 
+        if (usart_priv->cb_event)
         {
             usart_priv->cb_event(idx, USART_EVENT_RECEIVE_COMPLETE);
         }
@@ -440,14 +440,14 @@ static void ck_usart_intr_recv_line(int32_t idx, ck_usart_priv_t *usart_priv)
 
     uint32_t timecount = 0;
 
-    while (addr->LSR & 0x1) 
+    while (addr->LSR & 0x1)
     {
         addr->RBR;
         timecount++;
 
-        if (timecount >= UART_BUSY_TIMEOUT) 
+        if (timecount >= UART_BUSY_TIMEOUT)
         {
-            if (usart_priv->cb_event) 
+            if (usart_priv->cb_event)
             {
                 usart_priv->cb_event(idx, USART_EVENT_RX_TIMEOUT);
             }
@@ -459,9 +459,9 @@ static void ck_usart_intr_recv_line(int32_t idx, ck_usart_priv_t *usart_priv)
     /** Break Interrupt bit. This is used to indicate the detection of a
       * break sequence on the serial input data.
       */
-    if (lsr_stat & DW_LSR_BI) 
+    if (lsr_stat & DW_LSR_BI)
     {
-        if (usart_priv->cb_event) 
+        if (usart_priv->cb_event)
         {
             usart_priv->cb_event(idx, USART_EVENT_RX_BREAK);
         }
@@ -473,9 +473,9 @@ static void ck_usart_intr_recv_line(int32_t idx, ck_usart_priv_t *usart_priv)
       * framing error in the receiver. A framing error occurs when the receiver
       * does not detect a valid STOP bit in the received data.
       */
-    if (lsr_stat & DW_LSR_FE) 
+    if (lsr_stat & DW_LSR_FE)
     {
-        if (usart_priv->cb_event) 
+        if (usart_priv->cb_event)
         {
             usart_priv->cb_event(idx, USART_EVENT_RX_FRAMING_ERROR);
         }
@@ -487,9 +487,9 @@ static void ck_usart_intr_recv_line(int32_t idx, ck_usart_priv_t *usart_priv)
       * framing error in the receiver. A framing error occurs when the
       * receiver does not detect a valid STOP bit in the received data.
       */
-    if (lsr_stat & DW_LSR_PE) 
+    if (lsr_stat & DW_LSR_PE)
     {
-        if (usart_priv->cb_event) 
+        if (usart_priv->cb_event)
         {
             usart_priv->cb_event(idx, USART_EVENT_RX_PARITY_ERROR);
         }
@@ -500,9 +500,9 @@ static void ck_usart_intr_recv_line(int32_t idx, ck_usart_priv_t *usart_priv)
     /** Overrun error bit. This is used to indicate the occurrence of an overrun error.
       * This occurs if a new data character was received before the previous data was read.
       */
-    if (lsr_stat & DW_LSR_OE) 
+    if (lsr_stat & DW_LSR_OE)
     {
-        if (usart_priv->cb_event) 
+        if (usart_priv->cb_event)
         {
             usart_priv->cb_event(idx, USART_EVENT_RX_OVERFLOW);
         }
@@ -516,29 +516,29 @@ static void ck_usart_intr_recv_line(int32_t idx, ck_usart_priv_t *usart_priv)
 */
 static void ck_usart_intr_char_timeout(int32_t idx, ck_usart_priv_t *usart_priv)
 {
-    if ((usart_priv->rx_total_num != 0) && (usart_priv->rx_buf != NULL)) 
+    if ((usart_priv->rx_total_num != 0) && (usart_priv->rx_buf != NULL))
     {
         ck_usart_intr_recv_data(idx, usart_priv);
         return;
     }
 
-    if (usart_priv->cb_event) 
+    if (usart_priv->cb_event)
     {
         usart_priv->cb_event(idx, USART_EVENT_RECEIVED);
-    } else 
+    } else
     {
         ck_usart_reg_t *addr = (ck_usart_reg_t *)(usart_priv->base);
 
         uint32_t timecount = 0;
 
-        while (addr->LSR & 0x1) 
+        while (addr->LSR & 0x1)
         {
             addr->RBR;
             timecount++;
 
-            if (timecount >= UART_BUSY_TIMEOUT) 
+            if (timecount >= UART_BUSY_TIMEOUT)
             {
-                if (usart_priv->cb_event) 
+                if (usart_priv->cb_event)
                 {
                     usart_priv->cb_event(idx, USART_EVENT_RX_TIMEOUT);
                 }
@@ -560,7 +560,7 @@ void ck_usart_irqhandler(int32_t idx)
 
     uint8_t intr_state = addr->IIR & 0xf;
 
-    switch (intr_state) 
+    switch (intr_state)
     {
         case DW_IIR_THR_EMPTY:       /* interrupt source:transmitter holding register empty */
             ck_usart_intr_threshold_empty(idx, usart_priv);
@@ -591,7 +591,7 @@ void ck_usart_irqhandler(int32_t idx)
 */
 usart_capabilities_t csi_usart_get_capabilities(int32_t idx)
 {
-    if (idx < 0 || idx >= CONFIG_USART_NUM) 
+    if (idx < 0 || idx >= CONFIG_USART_NUM)
     {
         usart_capabilities_t ret;
         memset(&ret, 0, sizeof(usart_capabilities_t));
@@ -615,7 +615,7 @@ usart_handle_t csi_usart_initialize(int32_t idx, usart_event_cb_t cb_event)
 
     int32_t ret = target_usart_init(idx, &base, &irq, &handler);
 
-    if (ret < 0 || ret >= CONFIG_USART_NUM) 
+    if (ret < 0 || ret >= CONFIG_USART_NUM)
     {
         return NULL;
     }
@@ -675,7 +675,7 @@ int32_t csi_usart_config(usart_handle_t handle,
     /* control the data_bit of the usart*/
     ret = csi_usart_config_baudrate(handle, baud);
 
-    if (ret < 0) 
+    if (ret < 0)
     {
         return ret;
     }
@@ -683,7 +683,7 @@ int32_t csi_usart_config(usart_handle_t handle,
     /* control mode of the usart*/
     ret = csi_usart_config_mode(handle, mode);
 
-    if (ret < 0) 
+    if (ret < 0)
     {
         return ret;
     }
@@ -691,7 +691,7 @@ int32_t csi_usart_config(usart_handle_t handle,
     /* control the parity of the usart*/
     ret = csi_usart_config_parity(handle, parity);
 
-    if (ret < 0) 
+    if (ret < 0)
     {
         return ret;
     }
@@ -699,14 +699,14 @@ int32_t csi_usart_config(usart_handle_t handle,
     /* control the stopbit of the usart*/
     ret = csi_usart_config_stopbits(handle, stopbits);
 
-    if (ret < 0) 
+    if (ret < 0)
     {
         return ret;
     }
 
     ret = csi_usart_config_databits(handle, bits);
 
-    if (ret < 0) 
+    if (ret < 0)
     {
         return ret;
     }
@@ -729,7 +729,7 @@ int32_t csi_usart_send(usart_handle_t handle, const void *data, uint32_t num)
     USART_NULL_PARAM_CHK(handle);
     USART_NULL_PARAM_CHK(data);
 
-    if (num == 0) 
+    if (num == 0)
     {
         return ERR_USART(DRV_ERROR_PARAMETER);
     }
@@ -811,12 +811,12 @@ int32_t csi_usart_receive_query(usart_handle_t handle, void *data, uint32_t num)
     int32_t recv_num = 0;
     uint8_t *dest = (uint8_t *)data;
 
-    while (addr->LSR & 0x1) 
+    while (addr->LSR & 0x1)
     {
         *dest++ = addr->RBR;
         recv_num++;
 
-        if (recv_num >= num) 
+        if (recv_num >= num)
         {
             break;
         }
@@ -876,7 +876,7 @@ usart_status_t csi_usart_get_status(usart_handle_t handle)
 
     memset(&usart_status, 0, sizeof(usart_status_t));
 
-    if (handle == NULL) 
+    if (handle == NULL)
     {
         return usart_status;
     }
@@ -888,17 +888,17 @@ usart_status_t csi_usart_get_status(usart_handle_t handle)
     usart_status.tx_busy = usart_priv->tx_busy;
     usart_status.rx_busy = usart_priv->rx_busy;
 
-    if (line_status_reg & DW_LSR_BI) 
+    if (line_status_reg & DW_LSR_BI)
     {
         usart_status.rx_break = 1;
     }
 
-    if (line_status_reg & DW_LSR_FE) 
+    if (line_status_reg & DW_LSR_FE)
     {
         usart_status.rx_framing_error = 1;
     }
 
-    if (line_status_reg & DW_LSR_PE) 
+    if (line_status_reg & DW_LSR_PE)
     {
         usart_status.rx_parity_error = 1;
     }
@@ -961,26 +961,26 @@ int32_t csi_usart_flush(usart_handle_t handle, usart_flush_type_e type)
     uint32_t timecount = 0;
 
     if (type == USART_FLUSH_WRITE) {
-        while ((!(addr->LSR & DW_LSR_TEMT))) 
+        while ((!(addr->LSR & DW_LSR_TEMT)))
         {
             timecount++;
 
-            if (timecount >= UART_BUSY_TIMEOUT) 
+            if (timecount >= UART_BUSY_TIMEOUT)
             {
                 return ERR_USART(DRV_ERROR_TIMEOUT);
             }
         }
-    } else if (type == USART_FLUSH_READ) 
+    } else if (type == USART_FLUSH_READ)
     {
         while (addr->LSR & 0x1) {
             timecount++;
 
-            if (timecount >= UART_BUSY_TIMEOUT) 
+            if (timecount >= UART_BUSY_TIMEOUT)
             {
                 return ERR_USART(DRV_ERROR_TIMEOUT);
             }
         }
-    } else 
+    } else
     {
         return ERR_USART(DRV_ERROR_PARAMETER);
     }
@@ -1002,16 +1002,16 @@ int32_t csi_usart_set_interrupt(usart_handle_t handle, usart_intr_type_e type, i
     ck_usart_priv_t *usart_priv = handle;
     ck_usart_reg_t *addr = (ck_usart_reg_t *)(usart_priv->base);
 
-    switch (type) 
+    switch (type)
     {
         case USART_INTR_WRITE:
-            if (flag == 0) 
+            if (flag == 0)
             {
                 addr->IER &= ~IER_THRE_INT_ENABLE;
-            } else if (flag == 1) 
+            } else if (flag == 1)
             {
                 addr->IER |= IER_THRE_INT_ENABLE;
-            } else 
+            } else
             {
                 return ERR_USART(DRV_ERROR_PARAMETER);
             }
@@ -1019,13 +1019,13 @@ int32_t csi_usart_set_interrupt(usart_handle_t handle, usart_intr_type_e type, i
             break;
 
         case USART_INTR_READ:
-            if (flag == 0) 
+            if (flag == 0)
             {
                 addr->IER &= ~IER_RDA_INT_ENABLE;
-            } else if (flag == 1) 
+            } else if (flag == 1)
             {
                 addr->IER |= IER_RDA_INT_ENABLE;
-            } else 
+            } else
             {
                 return ERR_USART(DRV_ERROR_PARAMETER);
             }
@@ -1051,10 +1051,10 @@ uint32_t csi_usart_get_tx_count(usart_handle_t handle)
 
     ck_usart_priv_t *usart_priv = handle;
 
-    if (usart_priv->tx_busy) 
+    if (usart_priv->tx_busy)
     {
         return usart_priv->tx_cnt;
-    } else 
+    } else
     {
         return usart_priv->last_tx_num;
     }
@@ -1070,10 +1070,10 @@ uint32_t csi_usart_get_rx_count(usart_handle_t handle)
     USART_NULL_PARAM_CHK(handle);
     ck_usart_priv_t *usart_priv = handle;
 
-    if (usart_priv->rx_busy) 
+    if (usart_priv->rx_busy)
     {
         return usart_priv->rx_cnt;
-    } else 
+    } else
     {
         return usart_priv->last_rx_num;
     }
@@ -1102,7 +1102,7 @@ int32_t csi_usart_config_flowctrl(usart_handle_t handle,
 {
     USART_NULL_PARAM_CHK(handle);
 
-    switch (flowctrl_type) 
+    switch (flowctrl_type)
     {
         case USART_FLOWCTRL_CTS:
             return ERR_USART(DRV_ERROR_UNSUPPORTED);

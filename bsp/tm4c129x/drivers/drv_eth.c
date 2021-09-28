@@ -1,11 +1,7 @@
 /*
- * File      : drv_eth.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009-2013 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -93,9 +89,11 @@
 #define PHY_PHYS_ADDR 0
 #endif
 
+#if 1
 #ifndef EMAC_PHY_CONFIG
 #define EMAC_PHY_CONFIG (EMAC_PHY_TYPE_INTERNAL | EMAC_PHY_INT_MDIX_EN |      \
                          EMAC_PHY_AN_100B_T_FULL_DUPLEX)
+#endif
 #endif
 
 /**
@@ -145,6 +143,11 @@ extern void lwIPHostGetTime(u32_t *time_s, u32_t *time_ns);
 #include <netif/ethernetif.h>
 #include "lwipopts.h"
 #include "drv_eth.h"
+
+/* Define those to better describe your network interface. */
+#define IFNAME0 't'
+#define IFNAME1 'i'
+
 
 /**
  * A structure used to keep track of driver state and error counts.
@@ -238,6 +241,13 @@ volatile uint32_t g_ui32NormalInts;
 volatile uint32_t g_ui32AbnormalInts;
 
 /**
+ * Status flag for EEE link established
+ */
+#if EEE_SUPPORT
+volatile bool g_bEEELinkActive;
+#endif
+
+/**
  * A macro which determines whether a pointer is within the SRAM address
  * space and, hence, points to a buffer that the Ethernet MAC can directly
  * DMA from.
@@ -246,7 +256,7 @@ volatile uint32_t g_ui32AbnormalInts;
                                     ((uint32_t)(ptr) < 0x20070000))
 
 
-typedef struct 
+typedef struct
 {
     /* inherit from ethernet device */
     struct eth_device parent;
@@ -254,7 +264,7 @@ typedef struct
     /* for rx_thread async get pbuf */
     rt_mailbox_t rx_pbuf_mb;
 } net_device;
-typedef net_device* net_device_t; 
+typedef net_device* net_device_t;
 
 static char               rx_pbuf_mb_pool[8*4];
 static struct rt_mailbox  eth_rx_pbuf_mb;
@@ -339,8 +349,34 @@ tivaif_hwinit(struct netif *psNetif)
 {
   uint16_t ui16Val;
 
+  /* clear the EEE Link Active flag */
+#if EEE_SUPPORT
+  g_bEEELinkActive = false;
+#endif
+
+  /* Set MAC hardware address length */
+  psNetif->hwaddr_len = ETHARP_HWADDR_LEN;
+
+  /* Set MAC hardware address */
+  EMACAddrGet(EMAC0_BASE, 0, &(psNetif->hwaddr[0]));
+
+  /* Maximum transfer unit */
+  psNetif->mtu = 1500;
+
+  /* Device capabilities */
+  psNetif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+
   /* Initialize the DMA descriptors. */
   InitDMADescriptors();
+
+#if defined(EMAC_PHY_IS_EXT_MII) || defined(EMAC_PHY_IS_EXT_RMII)
+  /* If PHY is external then reset the PHY before configuring it */
+  EMACPHYWrite(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMCR,
+          EPHY_BMCR_MIIRESET);
+
+  while((EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMCR) &
+          EPHY_BMCR_MIIRESET) == EPHY_BMCR_MIIRESET);
+#endif
 
   /* Clear any stray PHY interrupts that may be set. */
   ui16Val = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_MISR1);
@@ -402,8 +438,13 @@ tivaif_hwinit(struct netif *psNetif)
   IntMasterEnable();
 
   /* Tell the PHY to start an auto-negotiation cycle. */
+#if defined(EMAC_PHY_IS_EXT_MII) || defined(EMAC_PHY_IS_EXT_RMII)
+  EMACPHYWrite(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMCR, (EPHY_BMCR_SPEED |
+               EPHY_BMCR_DUPLEXM | EPHY_BMCR_ANEN | EPHY_BMCR_RESTARTAN));
+#else
   EMACPHYWrite(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMCR, (EPHY_BMCR_ANEN |
                EPHY_BMCR_RESTARTAN));
+#endif
 }
 
 #ifdef DEBUG
@@ -488,15 +529,15 @@ tivaif_check_pbuf(struct pbuf *p)
                     tivaif_trace_pbuf("Copied:", pBuf);
 #endif
                     DRIVER_STATS_INC(TXCopyCount);
-
-                    /* Reduce the reference count on the original pbuf since
-                     * we're not going to hold on to it after returning from
-                     * tivaif_transmit.  Note that we already bumped
-                     * the reference count at the top of tivaif_transmit.
-                     */
-                    pbuf_free(p);
                 }
             }
+
+            /* Reduce the reference count on the original pbuf since we're not
+             * going to hold on to it after returning from tivaif_transmit.
+             * Note that we already bumped the reference count at the top of
+             * tivaif_transmit.
+             */
+            pbuf_free(p);
 
             /* Send back the new pbuf pointer or NULL if an error occurred. */
             return(pBuf);
@@ -570,14 +611,14 @@ tivaif_transmit(net_device_t dev, struct pbuf *p)
   /* Get our state data from the netif structure we were passed. */
   //pIF = (tStellarisIF *)psNetif->state;
   pIF = dev->dma_if;
-  
+
   /* Make sure that the transmit descriptors are not all in use */
   pDesc = &(pIF->pTxDescList->pDescriptors[pIF->pTxDescList->ui32Write]);
   if(pDesc->pBuf)
   {
       /**
        * The current write descriptor has a pbuf attached to it so this
-       * implies that the ring is fui32l. Reject this transmit request with a
+       * implies that the ring is full. Reject this transmit request with a
        * memory error since we can't satisfy it just now.
        */
       pbuf_free(p);
@@ -634,13 +675,8 @@ tivaif_transmit(net_device_t dev, struct pbuf *p)
           pDesc->Desc.ui32CtrlStatus = 0;
       }
 
-#ifdef RT_LWIP_USING_HW_CHECKSUM
       pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_IP_ALL_CKHSUMS |
                                      DES0_TX_CTRL_CHAINED);
-#else
-      pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_NO_CHKSUM |
-                                     DES0_TX_CTRL_CHAINED);
-#endif
 
       /* Decrement our descriptor counter, move on to the next buffer in the
        * pbuf chain. */
@@ -765,7 +801,7 @@ tivaif_receive(net_device_t dev)
 {
   tDescriptorList *pDescList;
   tStellarisIF *pIF;
-  struct pbuf *pBuf;
+  static struct pbuf *pBuf = NULL;
   uint32_t ui32DescEnd;
 
   /* Get a pointer to our state data */
@@ -777,10 +813,10 @@ tivaif_receive(net_device_t dev)
   /* Start with a NULL pbuf so that we don't try to link chain the first
    * time round.
    */
-  pBuf = NULL;
+  //pBuf = NULL;
 
   /* Determine where we start and end our walk of the descriptor list */
-   ui32DescEnd = pDescList->ui32Read ? (pDescList->ui32Read - 1) : (pDescList->ui32NumDescs - 1);
+  ui32DescEnd = pDescList->ui32Read ? (pDescList->ui32Read - 1) : (pDescList->ui32NumDescs - 1);
 
   /* Step through the descriptors that are marked for CPU attention. */
   while(pDescList->ui32Read != ui32DescEnd)
@@ -820,7 +856,7 @@ tivaif_receive(net_device_t dev)
           if(pBuf)
           {
               /* Link this pbuf to the last one we looked at since this buffer
-               * is a continuation of an existing frame (split across mui32tiple
+               * is a continuation of an existing frame (split across multiple
                * pbufs).  Note that we use pbuf_cat() here rather than
                * pbuf_chain() since we don't want to increase the reference
                * count of either pbuf - we only want to link them together.
@@ -847,6 +883,7 @@ tivaif_receive(net_device_t dev)
                   pbuf_free(pBuf);
                   LINK_STATS_INC(link.drop);
                   DRIVER_STATS_INC(RXPacketErrCount);
+                  pBuf = NULL;
               }
               else
               {
@@ -864,13 +901,11 @@ tivaif_receive(net_device_t dev)
 
 #if NO_SYS
                   if(ethernet_input(pBuf, psNetif) != RT_EOK)
-                  {
 #else
-                  //if(tcpip_input(pBuf, psNetif) != RT_EOK)
-                  if((rt_mb_send(dev->rx_pbuf_mb, (rt_uint32_t)pBuf) != RT_EOK) ||
-                    (eth_device_ready(&(dev->parent)) != RT_EOK))
-                  {
+                  //if(tcpip_input(pBuf, psNetif) != ERR_OK)
+                  if(rt_mb_send(dev->rx_pbuf_mb, (rt_uint32_t)pBuf) != RT_EOK)
 #endif
+                  {
                       /* drop the packet */
                       LWIP_DEBUGF(NETIF_DEBUG, ("tivaif_input: input error\n"));
                       pbuf_free(pBuf);
@@ -947,6 +982,9 @@ void
 tivaif_process_phy_interrupt(net_device_t dev)
 {
     uint16_t ui16Val, ui16Status;
+#if EEE_SUPPORT
+    uint16_t ui16EEEStatus;
+#endif
     uint32_t ui32Config, ui32Mode, ui32RxMaxFrameSize;
 
     /* Read the PHY interrupt status.  This clears all interrupt sources.
@@ -955,12 +993,15 @@ tivaif_process_phy_interrupt(net_device_t dev)
      */
     ui16Val = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_MISR1);
 
-    /* 
-     * Dummy read PHY REG EPHY_BMSR, it will force update the EPHY_STS register
-     */
-        EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMSR);
     /* Read the current PHY status. */
     ui16Status = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_STS);
+
+    /* If EEE mode support is requested then read the value of the Link
+     * partners status
+     */
+#if EEE_SUPPORT
+    ui16EEEStatus = EMACPHYMMDRead(EMAC0_BASE, PHY_PHYS_ADDR, 0x703D);
+#endif
 
     /* Has the link status changed? */
     if(ui16Val & EPHY_MISR1_LINKSTAT)
@@ -976,6 +1017,19 @@ tivaif_process_phy_interrupt(net_device_t dev)
             eth_device_linkchange(&(dev->parent), RT_TRUE);
 #endif
 
+            /* if the link has been advertised as EEE capable then configure
+             * the MAC register for LPI timers and manually set the PHY link
+             * status bit
+             */
+#if EEE_SUPPORT
+            if(ui16EEEStatus & 0x2)
+            {
+                EMACLPIConfig(EMAC0_BASE, true, 1000, 36);
+                EMACLPILinkSet(EMAC0_BASE);
+                g_bEEELinkActive = true;
+            }
+#endif
+
             /* In this case we drop through since we may need to reconfigure
              * the MAC depending upon the speed and half/fui32l-duplex settings.
              */
@@ -988,6 +1042,16 @@ tivaif_process_phy_interrupt(net_device_t dev)
 #else
             //tcpip_callback((tcpip_callback_fn)netif_set_link_down, psNetif);
             eth_device_linkchange(&(dev->parent), RT_FALSE);
+#endif
+
+            /* if the link has been advertised as EEE capable then clear the
+             * MAC register LPI timers and manually clear the PHY link status
+             * bit
+             */
+#if EEE_SUPPORT
+            g_bEEELinkActive = false;
+            EMACLPILinkClear(EMAC0_BASE);
+            EMACLPIConfig(EMAC0_BASE, false, 1000, 0);
 #endif
         }
     }
@@ -1065,11 +1129,17 @@ tivaif_interrupt(net_device_t dev, uint32_t ui32Status)
    */
   if(ui32Status & EMAC_INT_TRANSMIT)
   {
+#if EEE_SUPPORT
+      if(g_bEEELinkActive)
+      {
+          EMACLPIEnter(EMAC0_BASE);
+      }
+#endif
       tivaif_process_transmit(dev->dma_if);
   }
 
   /**
-   * Process the receive DMA list and pass all successfui32ly received packets
+   * Process the receive DMA list and pass all successfully received packets
    * up the stack.  We also call this function in cases where the receiver has
    * stalled due to missing buffers since the receive function will attempt to
    * allocate new pbufs for descriptor entries which have none.
@@ -1170,38 +1240,38 @@ void lwIPEthernetIntHandler(void)
 }
 
 
-// OUI:00-12-37 (hex) Texas Instruments, only for test 
+// OUI:00-12-37 (hex) Texas Instruments, only for test
 static int tiva_eth_mac_addr_init(void)
 {
-    int retVal =0; 
+    int retVal =0;
     uint32_t ulUser[2];
     uint8_t mac_addr[6];
-    
+
     MAP_FlashUserGet(&ulUser[0], &ulUser[1]);
     if((ulUser[0] == 0xffffffff) || (ulUser[1] == 0xffffffff))
     {
         rt_kprintf("Fail to get mac address from eeprom.\n");
         rt_kprintf("Using default mac address\n");
-        // OUI:00-12-37 (hex) Texas Instruments, only for test 
-        // Configure the hardware MAC address 
+        // OUI:00-12-37 (hex) Texas Instruments, only for test
+        // Configure the hardware MAC address
         ulUser[0] = 0x00371200;
         ulUser[1] = 0x00563412;
-        //FlashUserSet(ulUser0, ulUser1); 
+        //FlashUserSet(ulUser0, ulUser1);
         retVal =-1;
     }
-    
-    
+
+
     //Convert the 24/24 split MAC address from NV ram into a 32/16 split MAC
     //address needed to program the hardware registers, then program the MAC
     //address into the Ethernet Controller registers.
-    
+
     mac_addr[0] = ((ulUser[0] >>  0) & 0xff);
     mac_addr[1] = ((ulUser[0] >>  8) & 0xff);
     mac_addr[2] = ((ulUser[0] >> 16) & 0xff);
     mac_addr[3] = ((ulUser[1] >>  0) & 0xff);
     mac_addr[4] = ((ulUser[1] >>  8) & 0xff);
     mac_addr[5] = ((ulUser[1] >> 16) & 0xff);
-    
+
     //
     // Program the hardware with its MAC address (for filtering).
     //
@@ -1219,7 +1289,7 @@ static int tiva_eth_mac_addr_init(void)
     MAP_GPIOPinConfigure(GPIO_PF4_EN0LED1);
     GPIOPinTypeEthernetLED(GPIO_PORTF_BASE, GPIO_PIN_0);
     GPIOPinTypeEthernetLED(GPIO_PORTF_BASE, GPIO_PIN_4);
-    
+
     //
     // Enable the ethernet peripheral.
     //
@@ -1288,7 +1358,7 @@ static int tiva_eth_mac_addr_init(void)
                        EMAC_MODE_TX_STORE_FORWARD |
                        EMAC_MODE_TX_THRESHOLD_64_BYTES |
                        EMAC_MODE_RX_THRESHOLD_64_BYTES), 0);
-           
+
     EMACIntRegister(EMAC0_BASE, lwIPEthernetIntHandler);
 
 }
@@ -1297,7 +1367,7 @@ static rt_err_t eth_dev_init(rt_device_t device)
 {
     net_device_t net_dev = (net_device_t)device;
     struct netif *psNetif = (net_dev->parent.netif);
-    
+
     LWIP_ASSERT("psNetif != NULL", (psNetif != NULL));
 
 #if LWIP_NETIF_HOSTNAME
@@ -1311,7 +1381,7 @@ static rt_err_t eth_dev_init(rt_device_t device)
    * of bits per second.
    */
   //NETIF_INIT_SNMP(psNetif, snmp_ifType_ethernet_csmacd, 1000000);
-  
+
   net_dev->dma_if = &g_StellarisIFData;
 
   /* Remember our MAC address. */
@@ -1329,9 +1399,9 @@ static rt_err_t eth_dev_control(rt_device_t dev, int cmd, void *args)
     {
     case NIOCTL_GADDR:
         /* get mac address */
-        if(args) 
+        if(args)
             MAP_EMACAddrGet(EMAC0_BASE, 0, (uint8_t*)args);
-        else 
+        else
             return -RT_ERROR;
         break;
 
@@ -1379,7 +1449,7 @@ static struct pbuf* eth_dev_rx(rt_device_t dev)
     rt_uint32_t temp =0;
     net_device_t net_dev = (net_device_t)dev;
     result = rt_mb_recv(net_dev->rx_pbuf_mb, (rt_ubase_t *)&temp, RT_WAITING_NO);
-    
+
     return (result == RT_EOK)? (struct pbuf*)temp : RT_NULL;
 }
 
@@ -1388,7 +1458,7 @@ int rt_hw_tiva_eth_init(void)
     rt_err_t result;
 
     /* Clock GPIO and etc */
-    tiva_eth_lowlevel_init(); 
+    tiva_eth_lowlevel_init();
     tiva_eth_mac_addr_init();
 
     /* init rt-thread device interface */
@@ -1400,14 +1470,14 @@ int rt_hw_tiva_eth_init(void)
     eth_dev->parent.parent.control  = eth_dev_control;
     eth_dev->parent.eth_rx          = eth_dev_rx;
     eth_dev->parent.eth_tx          = eth_dev_tx;
-    
+
     result = rt_mb_init(&eth_rx_pbuf_mb, "epbuf",
                         &rx_pbuf_mb_pool[0], sizeof(rx_pbuf_mb_pool)/4,
                         RT_IPC_FLAG_FIFO);
     RT_ASSERT(result == RT_EOK);
     eth_dev->rx_pbuf_mb = &eth_rx_pbuf_mb;
-    
-    
+
+
     result = eth_device_init(&(eth_dev->parent), "e0");
     return result;
 }
@@ -1433,13 +1503,13 @@ void PHY_Write(uint8_t addr , uint16_t data)
 }
 FINSH_FUNCTION_EXPORT(PHY_Write, (add, data));
 
-void PHY_SetAdd(uint8_t addr0, uint8_t addr1, uint8_t addr2, 
+void PHY_SetAdd(uint8_t addr0, uint8_t addr1, uint8_t addr2,
                 uint8_t addr3, uint8_t addr4, uint8_t addr5)
 {
     uint32_t ulUser[2];
     ulUser[0] = (((addr2<<8)|addr1)<<8)|addr0;
     ulUser[1] = (((addr5<<8)|addr4)<<8)|addr3;
-    
+
     MAP_FlashUserSet(ulUser[0], ulUser[1]);
     MAP_FlashUserSave();
     rt_kprintf("Save to EEPROM. please reboot.");

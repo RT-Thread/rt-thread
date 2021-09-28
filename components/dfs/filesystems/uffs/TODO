@@ -1,5 +1,0 @@
-TODO list for v1.3:
-
-* New API: int uffs_SkipObject(uffs_Object *obj, int size);
-* Introduce buffer group
-* Interface to Linux MTD

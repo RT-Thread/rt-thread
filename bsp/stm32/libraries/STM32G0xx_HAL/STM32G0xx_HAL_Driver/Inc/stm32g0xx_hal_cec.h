@@ -121,7 +121,7 @@ typedef struct
   *          b6  Error information
   *             0  : No Error
   *             1  : Error
-  *          b5     CEC peripheral initilisation status
+  *          b5     CEC peripheral initialization status
   *             0  : Reset (peripheral not initialized)
   *             1  : Init done (peripheral initialized. HAL CEC Init function already called)
   *          b4-b3  (not used)
@@ -138,7 +138,7 @@ typedef struct
   *          RxState value coding follow below described bitmap :
   *          b7-b6  (not used)
   *             xx : Should be set to 00
-  *          b5     CEC peripheral initilisation status
+  *          b5     CEC peripheral initialization status
   *             0  : Reset (peripheral not initialized)
   *             1  : Init done (peripheral initialized)
   *          b4-b2  (not used)

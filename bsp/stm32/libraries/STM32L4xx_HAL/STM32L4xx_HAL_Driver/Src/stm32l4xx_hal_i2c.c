@@ -4737,6 +4737,13 @@ static HAL_StatusTypeDef I2C_Slave_ISR_IT(struct __I2C_HandleTypeDef *hi2c, uint
   /* Process locked */
   __HAL_LOCK(hi2c);
 
+  /* Check if STOPF is set */
+  if ((I2C_CHECK_FLAG(tmpITFlags, I2C_FLAG_STOPF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_STOPI) != RESET))
+  {
+    /* Call I2C Slave complete process */
+    I2C_ITSlaveCplt(hi2c, tmpITFlags);
+  }
+
   if ((I2C_CHECK_FLAG(tmpITFlags, I2C_FLAG_AF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_NACKI) != RESET))
   {
     /* Check that I2C transfer finished */
@@ -4788,9 +4795,6 @@ static HAL_StatusTypeDef I2C_Slave_ISR_IT(struct __I2C_HandleTypeDef *hi2c, uint
   {
     if (hi2c->XferCount > 0U)
     {
-      /* Remove RXNE flag on temporary variable as read done */
-      tmpITFlags &= ~I2C_FLAG_RXNE;
-
       /* Read data from RXDR */
       *hi2c->pBuffPtr = (uint8_t)hi2c->Instance->RXDR;
 
@@ -4842,13 +4846,6 @@ static HAL_StatusTypeDef I2C_Slave_ISR_IT(struct __I2C_HandleTypeDef *hi2c, uint
   else
   {
     /* Nothing to do */
-  }
-
-  /* Check if STOPF is set */
-  if ((I2C_CHECK_FLAG(tmpITFlags, I2C_FLAG_STOPF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_STOPI) != RESET))
-  {
-    /* Call I2C Slave complete process */
-    I2C_ITSlaveCplt(hi2c, tmpITFlags);
   }
 
   /* Process Unlocked */
@@ -5008,6 +5005,13 @@ static HAL_StatusTypeDef I2C_Slave_ISR_DMA(struct __I2C_HandleTypeDef *hi2c, uin
   /* Process locked */
   __HAL_LOCK(hi2c);
 
+  /* Check if STOPF is set */
+  if ((I2C_CHECK_FLAG(ITFlags, I2C_FLAG_STOPF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_STOPI) != RESET))
+  {
+    /* Call I2C Slave complete process */
+    I2C_ITSlaveCplt(hi2c, ITFlags);
+  }
+
   if ((I2C_CHECK_FLAG(ITFlags, I2C_FLAG_AF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_NACKI) != RESET))
   {
     /* Check that I2C transfer finished */
@@ -5091,11 +5095,6 @@ static HAL_StatusTypeDef I2C_Slave_ISR_DMA(struct __I2C_HandleTypeDef *hi2c, uin
   else if ((I2C_CHECK_FLAG(ITFlags, I2C_FLAG_ADDR) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_ADDRI) != RESET))
   {
     I2C_ITAddrCplt(hi2c, ITFlags);
-  }
-  else if ((I2C_CHECK_FLAG(ITFlags, I2C_FLAG_STOPF) != RESET) && (I2C_CHECK_IT_SOURCE(ITSources, I2C_IT_STOPI) != RESET))
-  {
-    /* Call I2C Slave complete process */
-    I2C_ITSlaveCplt(hi2c, ITFlags);
   }
   else
   {

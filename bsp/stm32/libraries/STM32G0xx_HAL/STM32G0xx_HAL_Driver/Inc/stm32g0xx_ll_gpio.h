@@ -196,6 +196,11 @@ typedef struct
 #define LL_GPIO_AF_5                       (0x0000005U) /*!< Select alternate function 5 */
 #define LL_GPIO_AF_6                       (0x0000006U) /*!< Select alternate function 6 */
 #define LL_GPIO_AF_7                       (0x0000007U) /*!< Select alternate function 7 */
+#if defined(STM32G0B0xx) || defined(STM32G0B1xx) || defined (STM32G0C1xx)
+#define LL_GPIO_AF_8                       (0x0000008U) /*!< Select alternate function 8 */
+#define LL_GPIO_AF_9                       (0x0000009U) /*!< Select alternate function 9 */
+#define LL_GPIO_AF_10                      (0x000000AU) /*!< Select alternate function 10 */
+#endif
 /**
   * @}
   */
@@ -910,8 +915,10 @@ __STATIC_INLINE void LL_GPIO_ResetOutputPin(GPIO_TypeDef *GPIOx, uint32_t PinMas
   */
 __STATIC_INLINE void LL_GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint32_t PinMask)
 {
-  WRITE_REG(GPIOx->ODR, READ_REG(GPIOx->ODR) ^ PinMask);
+  uint32_t odr = READ_REG(GPIOx->ODR);
+  WRITE_REG(GPIOx->BSRR, ((odr & PinMask) << 16u) | (~odr & PinMask));
 }
+
 
 /**
   * @}

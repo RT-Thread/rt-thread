@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,12 +23,12 @@ typedef uint32_t id_t;          /* may contain pid, uid or gid */
 /*
  * Process priority specifications to get/setpriority.
  */
-#define	PRIO_MIN	    (-20)
-#define	PRIO_MAX	    20
+#define PRIO_MIN        (-20)
+#define PRIO_MAX        20
 
-#define	PRIO_PROCESS	0       /* only support lwp process */
-#define	PRIO_PGRP	    1
-#define	PRIO_USER	    2
+#define PRIO_PROCESS    0       /* only support lwp process */
+#define PRIO_PGRP       1
+#define PRIO_USER       2
 
 #ifndef TIMEVAL_TO_TIMESPEC
 #define TIMEVAL_TO_TIMESPEC(tv, ts) {                   \

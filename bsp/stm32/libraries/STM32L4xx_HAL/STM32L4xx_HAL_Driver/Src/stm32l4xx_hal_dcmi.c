@@ -1066,7 +1066,7 @@ uint32_t HAL_DCMI_GetError(DCMI_HandleTypeDef *hdcmi)
   * @brief DCMI Callback registering
   * @param hdcmi        dcmi handle
   * @param CallbackID   dcmi Callback ID
-  * @param hdcmi        pointer to dcmi Callback function
+  * @param pCallback    pointer to dcmi Callback function
   * @retval status
   */
 HAL_StatusTypeDef HAL_DCMI_RegisterCallback(DCMI_HandleTypeDef *hdcmi, HAL_DCMI_CallbackIDTypeDef CallbackID, pDCMI_CallbackTypeDef pCallback)

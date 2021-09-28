@@ -15,6 +15,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART1
         default y
 
+    config BSP_USING_KEY
+        bool "Enable onboard keys"
+        select RT_USING_PIN
+        select RT_USING_TIMER_SOFT
+        select PKG_USING_MULTIBUTTON
+        default n
+
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI FLASH (W25Q128 qspi1)"
         select BSP_USING_QSPI
@@ -71,7 +78,35 @@ menu "Onboard Peripheral Drivers"
             bool "Enable Audio Record"
             default n
         endif
-        
+
+    menuconfig BSP_USING_USB_AUDIO
+        bool "Enable USB Audio"
+        select RT_USB_DEVICE_AUDIO
+        select BSP_USING_USBD
+        select BSP_USBD_EP_ISOC
+        select BSP_USING_AUDIO
+        default n
+
+        if BSP_USING_USB_AUDIO
+            config BSP_USING_USB_AUDIO_SPEAKER
+            bool "Enable USB Audio Spearker"
+            select RT_USB_DEVICE_AUDIO_SPEAKER
+            select BSP_USING_AUDIO_PLAY
+            default y
+
+            config BSP_USING_USB_AUDIO_MIC
+            bool "Enable USB Audio Mic"
+            select RT_USB_DEVICE_AUDIO_MIC
+            select BSP_USING_AUDIO_RECORD
+            default n
+
+            config _BSP_USB_DEVICE_COMPOSITE
+            bool
+            select RT_USB_DEVICE_COMPOSITE
+            default y
+            depends on BSP_USING_USB_AUDIO_SPEAKER && BSP_USING_USB_AUDIO_MIC
+        endif
+
     config BSP_USING_WIFI
             bool "Enable WiFi (AP6181)"
             select PKG_USING_WLAN_WICED
@@ -117,23 +152,59 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
-            config BSP_USING_UART1
-                bool "Enable UART1"
+            menuconfig BSP_USING_UART1
+                bool "Enable UART1 (Debugger)"
                 default y
+                if BSP_USING_UART1
+                    config BSP_UART1_RX_USING_DMA
+                        bool "Enable UART1 RX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
 
-            config BSP_UART1_RX_USING_DMA
-                bool "Enable UART1 RX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default n
+                    config BSP_UART1_TX_USING_DMA
+                        bool "Enable UART1 TX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
 
-            config BSP_USING_UART2
+                    config BSP_UART1_RX_BUFSIZE
+                        int "Set UART1 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART1_TX_BUFSIZE
+                        int "Set UART1 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+
+            menuconfig BSP_USING_UART2
                 bool "Enable UART2"
                 default n
+                if BSP_USING_UART2
+                    config BSP_UART2_RX_USING_DMA
+                        bool "Enable UART2 RX DMA"
+                        depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                        default n
 
-            config BSP_UART2_RX_USING_DMA
-                bool "Enable UART2 RX DMA"
-                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
-                default n
+                    config BSP_UART2_TX_USING_DMA
+                        bool "Enable UART2 TX DMA"
+                        depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                        default n
+
+                    config BSP_UART2_RX_BUFSIZE
+                        int "Set UART2 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART2_TX_BUFSIZE
+                        int "Set UART2 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+                endif
         endif
 
     config BSP_USING_ON_CHIP_FLASH
@@ -321,7 +392,6 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
         if BSP_USING_ONCHIP_RTC
             choice
@@ -345,6 +415,11 @@ menu "On-chip Peripheral Drivers"
         bool "Enable OTGFS as USB device"
         select RT_USING_USB_DEVICE
         default n
+
+    config BSP_USBD_EP_ISOC
+        bool
+        default n
+        depends on BSP_USING_USBD
 
     config BSP_USING_STM32_SDIO
             bool "Enable SDIO"

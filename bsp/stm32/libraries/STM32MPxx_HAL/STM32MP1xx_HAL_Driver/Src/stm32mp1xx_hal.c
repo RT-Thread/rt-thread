@@ -54,7 +54,7 @@
  * @brief STM32MP1xx HAL Driver version number
    */
 #define __STM32MP1xx_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define __STM32MP1xx_HAL_VERSION_SUB1   (0x02U) /*!< [23:16] sub1 version */
+#define __STM32MP1xx_HAL_VERSION_SUB1   (0x03U) /*!< [23:16] sub1 version */
 #define __STM32MP1xx_HAL_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
 #define __STM32MP1xx_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32MP1xx_HAL_VERSION         ((__STM32MP1xx_HAL_VERSION_MAIN << 24)\
@@ -292,17 +292,15 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     return HAL_ERROR;
   }
   /* Configure the SysTick IRQ priority */
-//  if (TickPriority < (1UL << __NVIC_PRIO_BITS))
-//  {
-//    HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
-//    uwTickPrio = TickPriority;
-//  }
-//  else
-//  {
-//    return HAL_ERROR;
-//  }
+  if (TickPriority < (1UL << __NVIC_PRIO_BITS))
+  {
     HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
     uwTickPrio = TickPriority;
+  }
+  else
+  {
+    return HAL_ERROR;
+  }
 #endif /* CORE_CM4 */
 
 

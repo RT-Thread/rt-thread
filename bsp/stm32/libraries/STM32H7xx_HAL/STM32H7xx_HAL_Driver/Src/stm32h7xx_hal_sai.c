@@ -392,10 +392,15 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
   assert_param(IS_SAI_BLOCK_FIRST_BIT(hsai->Init.FirstBit));
   assert_param(IS_SAI_BLOCK_CLOCK_STROBING(hsai->Init.ClockStrobing));
   assert_param(IS_SAI_BLOCK_SYNCHRO(hsai->Init.Synchro));
+#if defined(SAI_VER_V2_X) 
+  /* SAI Peripheral version depends on STM32H7 device revision ID */
   if (HAL_GetREVID() >= REV_ID_B) /* STM32H7xx Rev.B and above */
   {
     assert_param(IS_SAI_BLOCK_MCK_OUTPUT(hsai->Init.MckOutput));
   }
+#else /* SAI_VER_V2_1 */
+  assert_param(IS_SAI_BLOCK_MCK_OUTPUT(hsai->Init.MckOutput));
+#endif /* SAI_VER_V2_X */
   assert_param(IS_SAI_BLOCK_OUTPUT_DRIVE(hsai->Init.OutputDrive));
   assert_param(IS_SAI_BLOCK_NODIVIDER(hsai->Init.NoDivider));
   assert_param(IS_SAI_BLOCK_FIFO_THRESHOLD(hsai->Init.FIFOThreshold));
@@ -425,12 +430,21 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
     assert_param(IS_SAI_PDM_MIC_PAIRS_NUMBER(hsai->Init.PdmInit.MicPairsNbr));
     assert_param(IS_SAI_PDM_CLOCK_ENABLE(hsai->Init.PdmInit.ClockEnable));
     /* Check that SAI sub-block is SAI1 or SAI4 sub-block A, in master RX mode with free protocol */
+#if defined(SAI4)
     if (((hsai->Instance != SAI1_Block_A) && (hsai->Instance != SAI4_Block_A)) ||
+         (hsai->Init.AudioMode != SAI_MODEMASTER_RX) ||
+         (hsai->Init.Protocol != SAI_FREE_PROTOCOL))
+    {
+      return HAL_ERROR;
+    }
+#else
+    if ((hsai->Instance != SAI1_Block_A) ||
         (hsai->Init.AudioMode != SAI_MODEMASTER_RX) ||
         (hsai->Init.Protocol != SAI_FREE_PROTOCOL))
     {
       return HAL_ERROR;
     }
+#endif /* SAI4 */
   }
 
   /* Get the SAI base address according to the SAI handle */
@@ -438,17 +452,27 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
   {
     SaiBaseAddress = SAI1;
   }
+#if defined(SAI2)
   else if ((hsai->Instance == SAI2_Block_A) || (hsai->Instance == SAI2_Block_B))
   {
     SaiBaseAddress = SAI2;
   }
+#endif /* SAI2 */
+#if defined(SAI3)
   else if ((hsai->Instance == SAI3_Block_A) || (hsai->Instance == SAI3_Block_B))
   {
     SaiBaseAddress = SAI3;
   }
-  else
+#endif /* SAI3 */
+#if defined(SAI4)
+  else if ((hsai->Instance == SAI4_Block_A) || (hsai->Instance == SAI4_Block_B))
   {
     SaiBaseAddress = SAI4;
+  }
+#endif /* SAI4 */
+  else
+  {
+    return HAL_ERROR;
   }
 
   if (hsai->State == HAL_SAI_STATE_RESET)
@@ -513,18 +537,24 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
     case SAI_SYNCHRONOUS_EXT_SAI1 :
       syncen_bits = SAI_xCR1_SYNCEN_1;
       break;
+#if defined(SAI2)
     case SAI_SYNCHRONOUS_EXT_SAI2 :
       syncen_bits = SAI_xCR1_SYNCEN_1;
       tmpregisterGCR |= SAI_GCR_SYNCIN_0;
       break;
+#endif /* SAI2 */
+#if defined(SAI3)
     case SAI_SYNCHRONOUS_EXT_SAI3 :
       syncen_bits = SAI_xCR1_SYNCEN_1;
       tmpregisterGCR |= SAI_GCR_SYNCIN_1;
       break;
+#endif /* SAI3 */
+#if defined(SAI4)
     case SAI_SYNCHRONOUS_EXT_SAI4 :
       syncen_bits = SAI_xCR1_SYNCEN_1;
       tmpregisterGCR |= (SAI_GCR_SYNCIN_1 | SAI_GCR_SYNCIN_0);
       break;
+#endif /* SAI4 */
     default:
       syncen_bits = 0;
       break;
@@ -543,14 +573,32 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
     {
       freq = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SAI1);
     }
+
+#if defined(SAI2)
+#if defined(RCC_PERIPHCLK_SAI2)
     if ((hsai->Instance == SAI2_Block_A) || (hsai->Instance == SAI2_Block_B))
     {
       freq = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SAI2);
     }
+#else
+    if (hsai->Instance == SAI2_Block_A)
+    {
+      freq = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SAI2A);
+    }
+    if (hsai->Instance == SAI2_Block_B)
+    {
+      freq = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SAI2B);
+    }
+#endif /* RCC_PERIPHCLK_SAI2 */
+#endif /* SAI2 */
+
+#if defined(SAI3)
     if ((hsai->Instance == SAI3_Block_A) || (hsai->Instance == SAI3_Block_B))
     {
       freq = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SAI3);
     }
+#endif /* SAI3 */
+#if defined(SAI4)
     if (hsai->Instance == SAI4_Block_A)
     {
       freq = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SAI4A);
@@ -559,6 +607,7 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
     {
       freq = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SAI4B);
     }
+#endif /* SAI4 */
 
     /* Configure Master Clock Divider using the following formula :
        - If NODIV = 1 :
@@ -602,6 +651,8 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
 
   /* SAI Block Configuration -------------------------------------------------*/
   /* SAI CR1 Configuration */
+#if defined(SAI_VER_V2_X) /* SAI Peripheral version depends on STM32H7 device revision ID */
+
   if (HAL_GetREVID() >= REV_ID_B) /* STM32H7xx Rev.B and above */
   {
     hsai->Instance->CR1 &= ~(SAI_xCR1_MODE | SAI_xCR1_PRTCFG |  SAI_xCR1_DS |      \
@@ -631,6 +682,20 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
                             hsai->Init.NoDivider | (hsai->Init.Mckdiv << 20) |     \
                             hsai->Init.MckOverSampling);
   }
+#else /* SAI_VER_V2_1*/
+  hsai->Instance->CR1 &= ~(SAI_xCR1_MODE | SAI_xCR1_PRTCFG |  SAI_xCR1_DS |      \
+                           SAI_xCR1_LSBFIRST | SAI_xCR1_CKSTR | SAI_xCR1_SYNCEN | \
+                           SAI_xCR1_MONO | SAI_xCR1_OUTDRIV  | SAI_xCR1_DMAEN |  \
+                           SAI_xCR1_NODIV | SAI_xCR1_MCKDIV | SAI_xCR1_OSR |     \
+                           SAI_xCR1_MCKEN);
+
+  hsai->Instance->CR1 |= (hsai->Init.AudioMode | hsai->Init.Protocol |           \
+                          hsai->Init.DataSize | hsai->Init.FirstBit  |           \
+                          ckstr_bits | syncen_bits |                             \
+                          hsai->Init.MonoStereoMode | hsai->Init.OutputDrive |   \
+                          hsai->Init.NoDivider | (hsai->Init.Mckdiv << 20) |     \
+                          hsai->Init.MckOverSampling | hsai->Init.MckOutput);
+#endif /* SAI_VER_V2_X */
 
   /* SAI CR2 Configuration */
   hsai->Instance->CR2 &= ~(SAI_xCR2_FTH | SAI_xCR2_FFLUSH | SAI_xCR2_COMP | SAI_xCR2_CPL);
@@ -654,7 +719,11 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
                            (hsai->SlotInit.SlotActive << 16) | ((hsai->SlotInit.SlotNumber - 1U) <<  8);
 
   /* SAI PDM Configuration ---------------------------------------------------*/
+#if defined(SAI4)
   if ((hsai->Instance == SAI1_Block_A) || (hsai->Instance == SAI4_Block_A))
+#else
+  if (hsai->Instance == SAI1_Block_A)
+#endif /* SAI4 */
   {
     /* Disable PDM interface */
     SaiBaseAddress->PDMCR &= ~(SAI_PDMCR_PDMEN);
@@ -717,10 +786,18 @@ HAL_StatusTypeDef HAL_SAI_DeInit(SAI_HandleTypeDef *hsai)
   SET_BIT(hsai->Instance->CR2, SAI_xCR2_FFLUSH);
 
   /* Disable SAI PDM interface */
+#if defined(SAI4)
   if ((hsai->Instance == SAI1_Block_A) || (hsai->Instance == SAI4_Block_A))
+#else
+  if (hsai->Instance == SAI1_Block_A)
+#endif /* SAI4 */
   {
     /* Get the SAI base address according to the SAI handle */
+#if defined(SAI4)
     SaiBaseAddress = (hsai->Instance == SAI1_Block_A) ? SAI1 : SAI4;
+#else
+    SaiBaseAddress = SAI1;
+#endif /* SAI4 */
 
     /* Reset PDM delays */
     SaiBaseAddress->PDMDLY = 0U;
@@ -1664,18 +1741,18 @@ HAL_StatusTypeDef HAL_SAI_Receive_DMA(SAI_HandleTypeDef *hsai, uint8_t *pData, u
       return  HAL_ERROR;
     }
 
+    /* Enable the interrupts for error handling */
+    __HAL_SAI_ENABLE_IT(hsai, SAI_InterruptFlag(hsai, SAI_MODE_DMA));
+
+    /* Enable SAI Rx DMA Request */
+    hsai->Instance->CR1 |= SAI_xCR1_DMAEN;
+
     /* Check if the SAI is already enabled */
     if ((hsai->Instance->CR1 & SAI_xCR1_SAIEN) == 0U)
     {
       /* Enable SAI peripheral */
       __HAL_SAI_ENABLE(hsai);
     }
-
-    /* Enable the interrupts for error handling */
-    __HAL_SAI_ENABLE_IT(hsai, SAI_InterruptFlag(hsai, SAI_MODE_DMA));
-
-    /* Enable SAI Rx DMA Request */
-    hsai->Instance->CR1 |= SAI_xCR1_DMAEN;
 
     /* Process Unlocked */
     __HAL_UNLOCK(hsai);
@@ -1819,6 +1896,9 @@ void HAL_SAI_IRQHandler(SAI_HandleTypeDef *hsai)
     /* SAI AFSDET interrupt occurred ----------------------------------*/
     else if (((itflags & SAI_FLAG_AFSDET) == SAI_FLAG_AFSDET) && ((itsources & SAI_IT_AFSDET) == SAI_IT_AFSDET))
     {
+      /* Clear the SAI AFSDET flag */
+      __HAL_SAI_CLEAR_FLAG(hsai, SAI_FLAG_AFSDET);
+
       /* Change the SAI error code */
       hsai->ErrorCode |= HAL_SAI_ERROR_AFSDET;
 
@@ -1882,6 +1962,9 @@ void HAL_SAI_IRQHandler(SAI_HandleTypeDef *hsai)
     /* SAI LFSDET interrupt occurred ----------------------------------*/
     else if (((itflags & SAI_FLAG_LFSDET) == SAI_FLAG_LFSDET) && ((itsources & SAI_IT_LFSDET) == SAI_IT_LFSDET))
     {
+      /* Clear the SAI LFSDET flag */
+      __HAL_SAI_CLEAR_FLAG(hsai, SAI_FLAG_LFSDET);
+
       /* Change the SAI error code */
       hsai->ErrorCode |= HAL_SAI_ERROR_LFSDET;
 
@@ -1945,6 +2028,9 @@ void HAL_SAI_IRQHandler(SAI_HandleTypeDef *hsai)
     /* SAI WCKCFG interrupt occurred ----------------------------------*/
     else if (((itflags & SAI_FLAG_WCKCFG) == SAI_FLAG_WCKCFG) && ((itsources & SAI_IT_WCKCFG) == SAI_IT_WCKCFG))
     {
+      /* Clear the SAI WCKCFG flag */
+      __HAL_SAI_CLEAR_FLAG(hsai, SAI_FLAG_WCKCFG);
+
       /* Change the SAI error code */
       hsai->ErrorCode |= HAL_SAI_ERROR_WCKCFG;
 
@@ -2205,20 +2291,16 @@ static HAL_StatusTypeDef SAI_InitI2S(SAI_HandleTypeDef *hsai, uint32_t protocol,
     return HAL_ERROR;
   }
 
-  switch (protocol)
+  if (protocol == SAI_I2S_STANDARD)
   {
-    case SAI_I2S_STANDARD :
       hsai->FrameInit.FSPolarity = SAI_FS_ACTIVE_LOW;
       hsai->FrameInit.FSOffset   = SAI_FS_BEFOREFIRSTBIT;
-      break;
-    case SAI_I2S_MSBJUSTIFIED :
-    case SAI_I2S_LSBJUSTIFIED :
+  }
+  else
+  {
+     /* SAI_I2S_MSBJUSTIFIED or SAI_I2S_LSBJUSTIFIED */
       hsai->FrameInit.FSPolarity = SAI_FS_ACTIVE_HIGH;
       hsai->FrameInit.FSOffset   = SAI_FS_FIRSTBIT;
-      break;
-    default :
-      status = HAL_ERROR;
-      break;
   }
 
   /* Frame definition */
@@ -2300,17 +2382,14 @@ static HAL_StatusTypeDef SAI_InitPCM(SAI_HandleTypeDef *hsai, uint32_t protocol,
   hsai->SlotInit.SlotNumber      = nbslot;
   hsai->SlotInit.SlotActive      = SAI_SLOTACTIVE_ALL;
 
-  switch (protocol)
+  if (protocol == SAI_PCM_SHORT)
   {
-    case SAI_PCM_SHORT :
       hsai->FrameInit.ActiveFrameLength = 1;
-      break;
-    case SAI_PCM_LONG :
+  }
+  else
+  {
+    /* SAI_PCM_LONG */
       hsai->FrameInit.ActiveFrameLength = 13;
-      break;
-    default :
-      status = HAL_ERROR;
-      break;
   }
 
   switch (datasize)

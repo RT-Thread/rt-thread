@@ -3,17 +3,11 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-a'
-CROSS_TOOL='gcc'
-
-if os.getenv('RTT_CC'):
-    CROSS_TOOL = os.getenv('RTT_CC')
+CROSS_TOOL=os.getenv('RTT_CC') or 'gcc'
 
 # only support GNU GCC compiler.
 PLATFORM  = 'gcc'
-EXEC_PATH = '/usr/bin'
-
-if os.getenv('RTT_EXEC_PATH'):
-    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+EXEC_PATH = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
 
 BUILD = 'debug'
 
@@ -33,8 +27,8 @@ if PLATFORM == 'gcc':
     DEVICE = ' -march=armv7-a -mtune=cortex-a9 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=softfp'
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    LINK_SCRIPT = 'imx6.lds'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-imx6.map,-cref,-u,system_vectors'+\
+    LINK_SCRIPT = 'link.lds'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors'+\
                       ' -T %s' % LINK_SCRIPT
 
     CPATH = ''

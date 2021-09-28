@@ -95,7 +95,8 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -505,7 +506,6 @@ HAL_StatusTypeDef  HAL_NAND_ConfigDevice(NAND_HandleTypeDef *hnand, NAND_DeviceC
   return HAL_OK;
 }
 
-
 /**
   * @brief  Read Page(s) from NAND memory block (8-bits addressing)
   * @param  hnand pointer to a NAND_HandleTypeDef structure that contains
@@ -658,7 +658,6 @@ HAL_StatusTypeDef HAL_NAND_Read_Page_8b(NAND_HandleTypeDef *hnand, NAND_AddressT
   }
 
   return HAL_OK;
-
 }
 
 /**
@@ -2139,7 +2138,7 @@ uint32_t HAL_NAND_Read_Status(NAND_HandleTypeDef *hnand)
   UNUSED(hnand);
 
   /* Identify the device address */
-  DeviceAddress = NAND_DEVICE;
+    DeviceAddress = NAND_DEVICE;
 
   /* Send Read status operation command */
   *(__IO uint8_t *)((uint32_t)(DeviceAddress | CMD_AREA)) = NAND_CMD_STATUS;

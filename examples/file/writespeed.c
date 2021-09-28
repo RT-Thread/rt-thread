@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -66,7 +66,6 @@ void writespeed(const char* filename, int total_length, int block_size)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(writespeed, perform file write test);
 
-#ifdef FINSH_USING_MSH
 static void cmd_writespeed(int argc, char *argv[])
 {
     char* filename;
@@ -93,6 +92,5 @@ static void cmd_writespeed(int argc, char *argv[])
     }
     writespeed(filename, length, block_size);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_writespeed, __cmd_writespeed, test file system write speed);
-#endif /* FINSH_USING_MSH */
+MSH_CMD_EXPORT_ALIAS(cmd_writespeed, writespeed, test file system write speed);
 #endif /* RT_USING_FINSH */

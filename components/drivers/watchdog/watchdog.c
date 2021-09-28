@@ -1,6 +1,6 @@
 /*
- * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
- * 
+ * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -65,7 +65,7 @@ static rt_err_t rt_watchdog_control(struct rt_device *dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops wdt_ops = 
+const static struct rt_device_ops wdt_ops =
 {
     rt_watchdog_init,
     rt_watchdog_open,
@@ -89,7 +89,7 @@ rt_err_t rt_hw_watchdog_register(struct rt_watchdog_device *wtd,
 
     device = &(wtd->parent);
 
-    device->type        = RT_Device_Class_Miscellaneous;
+    device->type        = RT_Device_Class_Security;
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -161,7 +161,7 @@ int pthread_attr_getguardsize(pthread_attr_t const *attr, size_t *guard_size);
 int pthread_attr_setscope(pthread_attr_t *attr, int scope);
 int pthread_attr_getscope(pthread_attr_t const *attr);
 int pthread_system_init(void);
-int pthread_create (pthread_t *tid, const pthread_attr_t *attr, 
+int pthread_create (pthread_t *tid, const pthread_attr_t *attr,
     void *(*start) (void *), void *arg);
 
 int pthread_detach (pthread_t thread);
@@ -264,6 +264,11 @@ int pthread_barrier_init(pthread_barrier_t           *barrier,
                          unsigned                     count);
 
 int pthread_barrier_wait(pthread_barrier_t *barrier);
+
+int pthread_setspecific(pthread_key_t key, const void *value);
+void *pthread_getspecific(pthread_key_t key);
+int pthread_key_create(pthread_key_t *key, void (*destructor)(void *));
+int pthread_key_delete(pthread_key_t key);
 
 #ifdef __cplusplus
 }

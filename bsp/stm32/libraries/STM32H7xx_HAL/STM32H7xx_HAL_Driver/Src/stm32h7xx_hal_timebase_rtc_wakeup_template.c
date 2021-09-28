@@ -171,7 +171,11 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
       __HAL_RTC_WAKEUPTIMER_DISABLE_IT(&hRTC_Handle,RTC_IT_WUT);
 
       /* Wait till RTC WUTWF flag is set  */
+#if defined(RTC_ICSR_WUTWF)
+      while(READ_BIT(hRTC_Handle.Instance->ICSR, RTC_FLAG_WUTWF) == 0U)
+#else
       while(__HAL_RTC_WAKEUPTIMER_GET_FLAG(&hRTC_Handle, RTC_FLAG_WUTWF) == (uint32_t)RESET)
+#endif  /* RTC_ICSR_WUTWF */
       {
         if(counter++ == (SystemCoreClock /48U))
         {
@@ -208,9 +212,19 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
       /* Enable the write protection for RTC registers */
       __HAL_RTC_WRITEPROTECTION_ENABLE(&hRTC_Handle);
 
-      HAL_NVIC_SetPriority(RTC_WKUP_IRQn, TickPriority, 0U);
-      HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
-      return HAL_OK;
+      /* Configure the HAL Tick IRQ priority */
+      if (TickPriority < (1UL << __NVIC_PRIO_BITS))
+      {
+        HAL_NVIC_SetPriority(RTC_WKUP_IRQn, TickPriority, 0U);
+        HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
+
+        uwTickPrio = TickPriority;
+        return HAL_OK;
+      }
+      else
+      {
+        return HAL_ERROR;
+      }
     }
   }
   return HAL_ERROR;

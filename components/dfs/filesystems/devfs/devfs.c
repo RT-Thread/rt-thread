@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -271,7 +271,7 @@ int dfs_device_fs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t co
     if (count == 0)
         return -EINVAL;
 
-    for (index = 0; index < count && index + root_dirent->read_index < root_dirent->device_count; 
+    for (index = 0; index < count && index + root_dirent->read_index < root_dirent->device_count;
         index ++)
     {
         object = (rt_object_t)root_dirent->devices[root_dirent->read_index + index];
@@ -313,15 +313,13 @@ static const struct dfs_filesystem_ops _device_fs =
     "devfs",
     DFS_FS_FLAG_DEFAULT,
     &_device_fops,
-
     dfs_device_fs_mount,
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-
-    RT_NULL,
+    RT_NULL, /*unmount*/
+    RT_NULL, /*mkfs*/
+    RT_NULL, /*statfs*/
+    RT_NULL, /*unlink*/
     dfs_device_fs_stat,
-    RT_NULL,
+    RT_NULL, /*rename*/
 };
 
 int devfs_init(void)

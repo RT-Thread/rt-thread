@@ -1248,7 +1248,7 @@ static const uint32_t REG_MASK_TAB_CPT[] =
 #define LL_HRTIM_EEFLTR_WINDOWINGCMP2                   (HRTIM_EEFR1_EE1FLTR_3 | HRTIM_EEFR1_EE1FLTR_2 | HRTIM_EEFR1_EE1FLTR_0)   /*!< Windowing from counter reset/roll-over to Compare 2U */
 #define LL_HRTIM_EEFLTR_WINDOWINGCMP3                   (HRTIM_EEFR1_EE1FLTR_3 | HRTIM_EEFR1_EE1FLTR_2 | HRTIM_EEFR1_EE1FLTR_1)   /*!< Windowing from counter reset/roll-over to Compare 3U */
 #define LL_HRTIM_EEFLTR_WINDOWINGTIM                    (HRTIM_EEFR1_EE1FLTR_3 | HRTIM_EEFR1_EE1FLTR_2 | HRTIM_EEFR1_EE1FLTR_1\
-                                                         | HRTIM_EEFR1_EE1FLTR_0)   /*!< Windowing from another timing unit: TIMWIN source */
+                                                                                                       | HRTIM_EEFR1_EE1FLTR_0)   /*!< Windowing from another timing unit: TIMWIN source */
 /**
   * @}
   */
@@ -1379,9 +1379,8 @@ static const uint32_t REG_MASK_TAB_CPT[] =
 #define LL_HRTIM_OUTPUTSET_MASTERCMP2          (HRTIM_SET1R_MSTCMP2)   /*!< Master Timer compare 2 event forces an output level transision */
 #define LL_HRTIM_OUTPUTSET_MASTERCMP3          (HRTIM_SET1R_MSTCMP3)   /*!< Master Timer compare 3 event forces an output level transision */
 #define LL_HRTIM_OUTPUTSET_MASTERCMP4          (HRTIM_SET1R_MSTCMP4)   /*!< Master Timer compare 4 event forces an output level transision */
-
 /* Timer Events mapping for Timer A */
-#define LL_HRTIM_OUTPUTSET_TIMAEV1_TIMBCMP1    (HRTIM_SET1R_TIMEVNT1)  /*!< Timer event 1 forces the output to its ictive state */
+#define LL_HRTIM_OUTPUTSET_TIMAEV1_TIMBCMP1    (HRTIM_SET1R_TIMEVNT1)  /*!< Timer event 1 forces the output to its active state */
 #define LL_HRTIM_OUTPUTSET_TIMAEV2_TIMBCMP2    (HRTIM_SET1R_TIMEVNT2)  /*!< Timer event 2 forces the output to its active state */
 #define LL_HRTIM_OUTPUTSET_TIMAEV3_TIMFCMP4    (HRTIM_SET1R_TIMEVNT3)  /*!< Timer event 3 forces the output to its active state */
 #define LL_HRTIM_OUTPUTSET_TIMAEV4_TIMCCMP2    (HRTIM_SET1R_TIMEVNT4)  /*!< Timer event 4 forces the output to its active state */
@@ -8038,7 +8037,7 @@ __STATIC_INLINE uint32_t LL_HRTIM_CHP_GetPulseWidth(HRTIM_TypeDef *HRTIMx, uint3
   *         @arg @ref LL_HRTIM_OUTPUTSET_EEV_9
   *         @arg @ref LL_HRTIM_OUTPUTSET_EEV_10
   *         @arg @ref LL_HRTIM_OUTPUTSET_UPDATE
-  *        (source = TIMy and destination = TIMx, Compare Unit = CMPz).
+  *         (source = TIMy and destination = TIMx, Compare Unit = CMPz).
   * @retval None
   */
 __STATIC_INLINE void LL_HRTIM_OUT_SetOutputSetSrc(HRTIM_TypeDef *HRTIMx, uint32_t Output, uint32_t SetSrc)
@@ -8544,7 +8543,7 @@ __STATIC_INLINE void LL_HRTIM_OUT_SetOutputResetSrc(HRTIM_TypeDef *HRTIMx, uint3
   *         @arg @ref LL_HRTIM_OUTPUTRESET_EEV_9
   *         @arg @ref LL_HRTIM_OUTPUTRESET_EEV_10
   *         @arg @ref LL_HRTIM_OUTPUTRESET_UPDATE
-  *        (source = TIMy and destination = TIMx, Compare Unit = CMPz).
+  *         (source = TIMy and destination = TIMx, Compare Unit = CMPz).
   */
 __STATIC_INLINE uint32_t LL_HRTIM_OUT_GetOutputResetSrc(HRTIM_TypeDef *HRTIMx, uint32_t Output)
 {

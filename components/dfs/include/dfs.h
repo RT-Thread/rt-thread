@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,17 +15,23 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <time.h>
-#include <rtthread.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
+#include <sys/time.h>
 #include <rtdevice.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef DFS_FILESYSTEMS_MAX
-#define DFS_FILESYSTEMS_MAX     2
+#define DFS_FILESYSTEMS_MAX     4
 #endif
 
 #ifndef DFS_FD_MAX
-#define DFS_FD_MAX              4
+#define DFS_FD_MAX              16
 #endif
 
 /*
@@ -36,7 +42,7 @@
 #endif
 
 #ifndef DFS_PATH_MAX
-#define DFS_PATH_MAX             256
+#define DFS_PATH_MAX             DIRENT_NAME_MAX
 #endif
 
 #ifndef SECTOR_SIZE
@@ -62,25 +68,6 @@
 #define DFS_F_DIRECTORY         0x02000000
 #define DFS_F_EOF               0x04000000
 #define DFS_F_ERR               0x08000000
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-struct statfs
-{
-    size_t f_bsize;   /* block size */
-    size_t f_blocks;  /* total data blocks in file system */
-    size_t f_bfree;   /* free blocks in file system */
-};
-
-struct dirent
-{
-    uint8_t d_type;           /* The type of the file */
-    uint8_t d_namlen;         /* The length of the not including the terminating null file name */
-    uint16_t d_reclen;        /* length of this record */
-    char d_name[DFS_PATH_MAX];   /* The null-terminated file name */
-};
 
 struct dfs_fdtable
 {

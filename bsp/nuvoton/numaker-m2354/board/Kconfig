@@ -1,0 +1,71 @@
+menu "Hardware Drivers Config"
+
+    menu "On-chip Peripheral Drivers"
+        source "$BSP_DIR/../libraries/m2354/rtt_port/Kconfig"
+    endmenu
+
+    menu "On-board Peripheral Drivers"
+
+        config BSP_USING_NULINKME
+            bool "Enable UART0 for RTT Console.(uart0)"
+            select BSP_USING_UART
+            select BSP_USING_UART0
+            default y
+        config BOARD_USING_ESP8266
+            bool "ESP8266 Wi-Fi module supporting(over uart4)"
+            select BSP_USING_UART
+            select BSP_USING_UART4
+            select BSP_USING_UART4_RX_DMA
+            select BSP_USING_UART4_TX_DMA
+            select PKG_USING_AT_DEVICE
+            select AT_DEVICE_USING_ESP8266
+            select AT_DEVICE_ESP8266_INIT_ASYN
+            default n
+
+        config BOARD_USING_STORAGE_SDCARD
+            bool "SDCARD supporting.(over sdh0)"
+            select BSP_USING_SDH
+            select BSP_USING_SDH0
+            default n
+
+        choice
+            prompt "Select FS USB Ports"
+
+            config BOARD_USING_USBD
+                select BSP_USING_USBD
+                bool "Enable USBD(over USB1.1)"
+                help
+                    Choose this option if you need USBD function mode.
+
+            config BOARD_USING_USBH
+                select BSP_USING_USBH
+                bool "Enable USBH(over USB1.1)"
+                help
+                    Choose this option if you need USBH function mode.
+
+            config BOARD_USING_OTG
+                select BSP_USING_OTG
+                bool "Enable OTG(over USB1.1)"
+                help
+                    Choose this option if you need OTG function mode.
+
+            config BOARD_USING_USB_NONE
+                select BSP_USING_USB_NONE
+                bool "Disable USB1.1 port"
+                help
+                    Choose this option if you need not USB function.
+
+        endchoice
+
+
+    endmenu
+
+    menu "Board extended module drivers"
+        config BOARD_USING_SEGMENT_LCD
+            bool "Segment LCD supporting.(over lcd)"
+            select BSP_USING_SLCD
+            default n
+
+    endmenu
+
+endmenu

@@ -1,11 +1,7 @@
 /*
- * File      : module.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -130,7 +126,7 @@ void rt_module_unload_sethook(void (*hook)(rt_module_t module))
  */
 int rt_system_module_init(void)
 {
-	return 0;
+    return 0;
 }
 
 /**
@@ -240,9 +236,9 @@ rt_module_t rt_module_open(const char *path)
     struct dfs_filesystem *fs;
     appentry_t fptr;
     HINSTANCE hinstlib;
-	rt_module_t module;
+    rt_module_t module;
 
-	char * winpath = RT_NULL;
+    char * winpath = RT_NULL;
     char * name = RT_NULL;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -353,60 +349,60 @@ FINSH_FUNCTION_EXPORT_ALIAS(rt_module_open, exec, exec module from a file);
 #define RT_MODULE_ARG_MAX    8
 static int _rt_module_split_arg(char* cmd, rt_size_t length, char* argv[])
 {
-	int argc = 0;
-	char *ptr = cmd;
+    int argc = 0;
+    char *ptr = cmd;
 
-	while ((ptr - cmd) < length)
-	{
-		/* strip bank and tab */
-		while ((*ptr == ' ' || *ptr == '\t') && (ptr -cmd)< length)
-			*ptr++ = '\0';
-		/* check whether it's the end of line */
-		if ((ptr - cmd)>= length) break;
+    while ((ptr - cmd) < length)
+    {
+        /* strip bank and tab */
+        while ((*ptr == ' ' || *ptr == '\t') && (ptr -cmd)< length)
+            *ptr++ = '\0';
+        /* check whether it's the end of line */
+        if ((ptr - cmd)>= length) break;
 
-		/* handle string with quote */
-		if (*ptr == '"')
-		{
-			argv[argc++] = ++ptr;
+        /* handle string with quote */
+        if (*ptr == '"')
+        {
+            argv[argc++] = ++ptr;
 
-			/* skip this string */
-			while (*ptr != '"' && (ptr-cmd) < length)
-				if (*ptr ++ == '\\')  ptr ++;
-			if ((ptr - cmd) >= length) break;
+            /* skip this string */
+            while (*ptr != '"' && (ptr-cmd) < length)
+                if (*ptr ++ == '\\')  ptr ++;
+            if ((ptr - cmd) >= length) break;
 
-			/* skip '"' */
-			*ptr ++ = '\0';
-		}
-		else
-		{
-			argv[argc++] = ptr;
-			while ((*ptr != ' ' && *ptr != '\t') && (ptr - cmd) < length)
-				ptr ++;
-		}
+            /* skip '"' */
+            *ptr ++ = '\0';
+        }
+        else
+        {
+            argv[argc++] = ptr;
+            while ((*ptr != ' ' && *ptr != '\t') && (ptr - cmd) < length)
+                ptr ++;
+        }
 
-		if (argc >= RT_MODULE_ARG_MAX) break;
-	}
+        if (argc >= RT_MODULE_ARG_MAX) break;
+    }
 
-	return argc;
+    return argc;
 }
 
 /* module main thread entry */
 static void module_main_entry(void* parameter)
 {
-	int argc;
-	char *argv[RT_MODULE_ARG_MAX];
-	typedef int (*main_func_t)(int argc, char** argv);
+    int argc;
+    char *argv[RT_MODULE_ARG_MAX];
+    typedef int (*main_func_t)(int argc, char** argv);
 
-	rt_module_t module = (rt_module_t) parameter;
-	if (module == RT_NULL || module->module_cmd_line == RT_NULL) return;
+    rt_module_t module = (rt_module_t) parameter;
+    if (module == RT_NULL || module->module_cmd_line == RT_NULL) return;
 
-	rt_memset(argv, 0x00, sizeof(argv));
-	argc = _rt_module_split_arg((char*)module->module_cmd_line, module->module_cmd_size, argv);
-	if (argc == 0) return ;
+    rt_memset(argv, 0x00, sizeof(argv));
+    argc = _rt_module_split_arg((char*)module->module_cmd_line, module->module_cmd_size, argv);
+    if (argc == 0) return ;
 
-	/* do the main function */
-	((main_func_t)module->module_entry)(argc, argv);
-	return;
+    /* do the main function */
+    ((main_func_t)module->module_entry)(argc, argv);
+    return;
 }
 
 /**
@@ -423,25 +419,25 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int line_
     struct dfs_filesystem *fs;
     appentry_t fptr;
     HINSTANCE hinstlib;
-	rt_module_t module;
+    rt_module_t module;
 
-	char * winpath = RT_NULL;
+    char * winpath = RT_NULL;
     char * name = RT_NULL;
-	char *full_path = RT_NULL;
+    char *full_path = RT_NULL;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* check parameters */
     RT_ASSERT(path != RT_NULL);
 
-	if (*path != '/')
-	{
-		full_path = dfs_normalize_path(RT_NULL, path);
-	}
-	else
-	{
-		full_path = (const char*)path;
-	}
+    if (*path != '/')
+    {
+        full_path = dfs_normalize_path(RT_NULL, path);
+    }
+    else
+    {
+        full_path = (const char*)path;
+    }
 
     /* app module should only in DFS_WIN32 */
     fs = dfs_filesystem_lookup(full_path);
@@ -456,14 +452,14 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int line_
     if ((winpath = dfs_win32_dirdup((char *)full_path)) == RT_NULL)
     {
         rt_kprintf("out of memory, exit", path);
-		goto __exit;
+        goto __exit;
     }
 
     hinstlib = LoadLibrary(winpath);
     if (hinstlib == NULL)
     {
         rt_kprintf("error: unable to open %s\n", winpath);
-		goto __exit;
+        goto __exit;
     }
 
     fptr = (appentry_t)GetProcAddress(hinstlib, "main");
@@ -471,21 +467,21 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int line_
     {
         rt_kprintf("error: unable to find function in %s\n", winpath);
         FreeLibrary(hinstlib);
-		goto __exit;
+        goto __exit;
     }
 
-	/* release winpath */
-	rt_free(winpath);
+    /* release winpath */
+    rt_free(winpath);
 
     /* get the name of the module */
     name = _module_name(path);
 
     /* allocate module */
     module = (struct rt_module *)rt_object_allocate(RT_Object_Class_Module, name);
-    if (!module) 
-	{
-		goto __exit;
-	}
+    if (!module)
+    {
+        goto __exit;
+    }
 
     module->nref = 0;
     module->module_entry = fptr;
@@ -498,11 +494,11 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int line_
 
     if (module->module_entry != 0)
     {
-		/* set module argument */
-		module->module_cmd_line = (rt_uint8_t*)rt_malloc(line_size + 1);
-		rt_memcpy(module->module_cmd_line, cmd_line, line_size);
-		module->module_cmd_line[line_size] = '\0';
-		module->module_cmd_size = line_size;
+        /* set module argument */
+        module->module_cmd_line = (rt_uint8_t*)rt_malloc(line_size + 1);
+        rt_memcpy(module->module_cmd_line, cmd_line, line_size);
+        module->module_cmd_line[line_size] = '\0';
+        module->module_cmd_size = line_size;
 
 #ifdef RT_USING_SLAB
         /* init module memory allocator */
@@ -514,10 +510,10 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int line_
         module->page_cnt = 0;
 #endif
 
-		/* create module thread */
-		module->module_thread =	rt_thread_create(name,
-			module_main_entry, module,
-			2048, RT_THREAD_PRIORITY_MAX - 2, 10);
+        /* create module thread */
+        module->module_thread = rt_thread_create(name,
+            module_main_entry, module,
+            2048, RT_THREAD_PRIORITY_MAX - 2, 10);
 
         /* set module id */
         module->module_thread->module_id = (void *)module;
@@ -543,11 +539,11 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int line_
     return module;
 
 __exit:
-	if (full_path != path) rt_free(full_path);
-	if (name != RT_NULL)   rt_free(full_path);
-	if (winpath != RT_NULL)rt_free(winpath);
+    if (full_path != path) rt_free(full_path);
+    if (name != RT_NULL)   rt_free(full_path);
+    if (winpath != RT_NULL)rt_free(winpath);
 
-	return RT_NULL;
+    return RT_NULL;
     /* FreeLibrary(hinstlib); */
 }
 
