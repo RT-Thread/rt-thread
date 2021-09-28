@@ -43,3 +43,27 @@ int system(const char *command)
 }
 RTM_EXPORT(system);
 #endif
+
+int putenv(char *string)
+{
+    return 0;
+}
+RTM_EXPORT(putenv);
+
+int setenv(const char *name, const char *value, int overwrite)
+{
+    return 0;
+}
+RTM_EXPORT(setenv);
+
+int unsetenv(const char *name)
+{
+    return 0;
+}
+RTM_EXPORT(unsetenv);
+
+char *getenv(const char *name)
+{
+    return 0;
+}
+RTM_EXPORT(getenv);
