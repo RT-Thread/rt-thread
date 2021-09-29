@@ -15,12 +15,12 @@
 
 #include <rtdef.h>
 
-#define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get second time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set second time */
-#define RT_DEVICE_CTRL_RTC_GET_TIME_US  0x12            /**< get microsecond time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME_US  0x13            /**< set microsecond time */
-#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x14            /**< get alarm */
-#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x15            /**< set alarm */
+#define RT_DEVICE_CTRL_RTC_GET_TIME     0x20            /**< get second time */
+#define RT_DEVICE_CTRL_RTC_SET_TIME     0x21            /**< set second time */
+#define RT_DEVICE_CTRL_RTC_GET_TIMEVAL  0x22            /**< get timeval for gettimeofday */
+#define RT_DEVICE_CTRL_RTC_SET_TIMEVAL  0x23            /**< set timeval for gettimeofday */
+#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x24            /**< get alarm */
+#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x25            /**< set alarm */
 
 struct rt_rtc_ops
 {
