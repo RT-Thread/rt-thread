@@ -268,6 +268,8 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     }
 #endif /* ULOG_USING_COLOR */
 
+    log_buf[log_len] = '\0';
+
 #ifdef ULOG_OUTPUT_TIME
     /* add time info */
     {
@@ -288,7 +290,7 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
             {
                 long old_usec = now.tv_usec;
                 /* delay some time for wait microseconds changed */
-                rt_thread_delay(2);
+                rt_thread_mdelay(10);
                 gettimeofday(&now, NULL);
                 check_usec_support = RT_TRUE;
                 /* the microseconds is not equal between two gettimeofday calls */
