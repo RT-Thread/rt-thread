@@ -38,7 +38,7 @@ RT_WEAK void HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegiste
     return;
 }
 
-static time_t get_rtc_timestamp(void)
+static void get_rtc_timeval(struct timeval *tv)
 {
     RTC_TimeTypeDef RTC_TimeStruct = {0};
     RTC_DateTypeDef RTC_DateStruct = {0};
@@ -54,8 +54,11 @@ static time_t get_rtc_timestamp(void)
     tm_new.tm_mon  = RTC_DateStruct.Month - 1;
     tm_new.tm_year = RTC_DateStruct.Year + 100;
 
-    LOG_D("get rtc time.");
-    return timegm(&tm_new);
+    tv->tv_sec = timegm(&tm_new);
+
+#if defined(SOC_SERIES_STM32H7)
+    tv->tv_usec = (255.0 - RTC_TimeStruct.SubSeconds * 1.0) / 256.0 * 1000.0 * 1000.0;
+#endif
 }
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
@@ -243,7 +246,9 @@ RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI1;
 
 static rt_err_t stm32_rtc_get_secs(void *args)
 {
-    *(rt_uint32_t *)args = get_rtc_timestamp();
+    struct timeval tv;
+    get_rtc_timeval(&tv);
+    *(rt_uint32_t *) args = tv.tv_sec;
     LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
 
     return RT_EOK;
@@ -262,6 +267,13 @@ static rt_err_t stm32_rtc_set_secs(void *args)
     return result;
 }
 
+static rt_err_t stm32_rtc_get_timeval(void *args)
+{
+    get_rtc_timeval((struct timeval *) args);
+
+    return RT_EOK;
+}
+
 static const struct rt_rtc_ops stm32_rtc_ops =
 {
     stm32_rtc_init,
@@ -269,7 +281,7 @@ static const struct rt_rtc_ops stm32_rtc_ops =
     stm32_rtc_set_secs,
     RT_NULL,
     RT_NULL,
-    RT_NULL,
+    stm32_rtc_get_timeval,
     RT_NULL,
 };
 
