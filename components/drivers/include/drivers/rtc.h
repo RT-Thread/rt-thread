@@ -29,8 +29,8 @@ struct rt_rtc_ops
     rt_err_t (*set_secs)(void *arg);
     rt_err_t (*get_alarm)(void *arg);
     rt_err_t (*set_alarm)(void *arg);
-    rt_err_t (*get_usecs)(void *arg);
-    rt_err_t (*set_usecs)(void *arg);
+    rt_err_t (*get_timeval)(void *arg);
+    rt_err_t (*set_timeval)(void *arg);
 };
 
 typedef struct rt_rtc_device
