@@ -101,7 +101,7 @@ static rt_err_t get_timeval(struct timeval *tv)
         if (rt_device_open(device, 0) == RT_EOK)
         {
             rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &tv->tv_sec);
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME_US, &tv->tv_usec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIMEVAL, tv);
             rt_device_close(device);
         }
     }
@@ -147,7 +147,7 @@ static int set_timeval(struct timeval *tv)
         if (rt_device_open(device, 0) == RT_EOK)
         {
             rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &tv->tv_sec);
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME_US, &tv->tv_usec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIMEVAL, tv);
             rt_device_close(device);
         }
     }
