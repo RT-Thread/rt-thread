@@ -69,7 +69,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_LTDC
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC
                               |RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_USART1
                               |RCC_PERIPHCLK_SPI2|RCC_PERIPHCLK_QSPI
                               |RCC_PERIPHCLK_FMC;
@@ -86,7 +86,6 @@ void SystemClock_Config(void)
   PeriphClkInitStruct.Spi123ClockSelection = RCC_SPI123CLKSOURCE_PLL;
   PeriphClkInitStruct.Usart234578ClockSelection = RCC_USART234578CLKSOURCE_D2PCLK1;
   PeriphClkInitStruct.Usart16ClockSelection = RCC_USART16CLKSOURCE_D2PCLK2;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
