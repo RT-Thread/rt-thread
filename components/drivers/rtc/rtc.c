@@ -71,11 +71,11 @@ static rt_err_t rt_rtc_control(struct rt_device *dev, int cmd, void *args)
         case RT_DEVICE_CTRL_RTC_SET_TIME:
             ret = TRY_DO_RTC_FUNC(rtc_device, set_secs, args);
             break;
-        case RT_DEVICE_CTRL_RTC_GET_TIME_US:
-            ret = TRY_DO_RTC_FUNC(rtc_device, get_usecs, args);
+        case RT_DEVICE_CTRL_RTC_GET_TIMEVAL:
+            ret = TRY_DO_RTC_FUNC(rtc_device, get_timeval, args);
             break;
-        case RT_DEVICE_CTRL_RTC_SET_TIME_US:
-            ret = TRY_DO_RTC_FUNC(rtc_device, set_usecs, args);
+        case RT_DEVICE_CTRL_RTC_SET_TIMEVAL:
+            ret = TRY_DO_RTC_FUNC(rtc_device, set_timeval, args);
             break;
         case RT_DEVICE_CTRL_RTC_GET_ALARM:
             ret = TRY_DO_RTC_FUNC(rtc_device, get_alarm, args);
