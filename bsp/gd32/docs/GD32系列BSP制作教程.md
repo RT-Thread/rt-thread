@@ -6,7 +6,7 @@ BSP 框架结构如下图所示：
 
 ![BSP 框架图](./figures/frame.png)
 
-GD32的BSP架构主要分为三个部分：libraries、tools和具体的Boards，其中libraries包含了GD32的通用库，包括每个系列的HAL以及适配RT-Thread的drivers；tools是生成工程的Python脚本工具；另外就是Boards文件，当然这里的Boards有很多，我这里值列举了GD32407V-START。
+GD32的BSP架构主要分为三个部分：libraries、tools和具体的Boards，其中libraries包含了GD32的通用库，包括每个系列的Firmware Library以及适配RT-Thread的drivers；tools是生成工程的Python脚本工具；另外就是Boards文件，当然这里的Boards有很多，我这里值列举了GD32407V-START。
 
 
 
@@ -190,14 +190,14 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-gd32_library = 'GD32F4xx_HAL'
+gd32_library = 'GD32F4xx_Firmware_Library'
 rtconfig.BSP_LIBRARY_TYPE = gd32_library
 
 # include libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, gd32_library, 'SConscript')))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'Drivers', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)
@@ -690,7 +690,7 @@ menu "On-chip Peripheral Drivers"
                 range 1 216
                 default 25
         endif
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "../libraries/Drivers/Kconfig"
 
 endmenu
 
@@ -726,11 +726,11 @@ path =  [cwd]
 startup_path_prefix = SDK_LIB
 
 if rtconfig.CROSS_TOOL == 'gcc':
-    src += [startup_path_prefix + '/GD32F4xx_HAL/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f4xx.S']
+    src += [startup_path_prefix + '/GD32F4xx_Firmware_Library/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f4xx.s']
 elif rtconfig.CROSS_TOOL == 'keil':
-    src += [startup_path_prefix + '/GD32F4xx_HAL/CMSIS/GD/GD32F4xx/Source/ARM/startup_gd32f4xx.s']
+    src += [startup_path_prefix + '/GD32F4xx_Firmware_Library/CMSIS/GD/GD32F4xx/Source/ARM/startup_gd32f4xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    src += [startup_path_prefix + '/GD32F4xx_HAL/CMSIS/GD/GD32F4xx/Source/IAR/startup_gd32f4xx.s']
+    src += [startup_path_prefix + '/GD32F4xx_Firmware_Library/CMSIS/GD/GD32F4xx/Source/IAR/startup_gd32f4xx.s']
     
 CPPDEFINES = ['GD32F407xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
@@ -833,8 +833,6 @@ int main(void)
 ### 3.3 使用GD-Link 下载调试GD32
 
 前面使用ENV和MDK成功编译可BSP，那么接下来就是下载调试环节，下载需要下载器，而GD32部分开发板自带GD-link，可以用开发板上自带的GD-link调试仿真代码，不带的可外接GD-link模块，还是很方便的。具体操作方法如下。
-
-
 
 1.第一次使用GD-link插入电脑后，会自动安装驱动。
 
