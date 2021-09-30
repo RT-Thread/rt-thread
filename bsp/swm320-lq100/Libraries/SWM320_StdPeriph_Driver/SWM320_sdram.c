@@ -1,10 +1,10 @@
 /******************************************************************************************************************************************
-* ÎÄ¼þÃû³Æ: SWM320_sdram.c
-* ¹¦ÄÜËµÃ÷: SWM320µ¥Æ¬»úµÄSDRAMÇý¶¯³ÌÐò
-* ¼¼ÊõÖ§³Ö: http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî:
-* °æ±¾ÈÕÆÚ: V1.1.0      2017Äê10ÔÂ25ÈÕ
-* Éý¼¶¼ÇÂ¼:
+* æ–‡ä»¶åç§°: SWM320_sdram.c
+* åŠŸèƒ½è¯´æ˜Ž: SWM320å•ç‰‡æœºçš„SDRAMé©±åŠ¨ç¨‹åº
+* æŠ€æœ¯æ”¯æŒ: http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹:
+* ç‰ˆæœ¬æ—¥æœŸ: V1.1.0      2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•:
 *
 *
 *******************************************************************************************************************************************
@@ -22,37 +22,95 @@
 #include "SWM320_sdram.h"
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: SDRAM_Init()
-* ¹¦ÄÜËµÃ÷: SDRAM¿ØÖÆÆ÷³õÊ¼»¯
-* Êä    Èë: SDRAM_InitStructure * initStruct    °üº¬NOR Flash¿ØÖÆÆ÷Ïà¹ØÉè¶¨ÖµµÄ½á¹¹Ìå
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: SDRAM_Init()
+* åŠŸèƒ½è¯´æ˜Ž: SDRAMæŽ§åˆ¶å™¨åˆå§‹åŒ–
+* è¾“    å…¥: SDRAM_InitStructure * initStruct    åŒ…å« SDRAM æŽ§åˆ¶å™¨ç›¸å…³è®¾å®šå€¼çš„ç»“æž„ä½“
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void SDRAM_Init(SDRAM_InitStructure *initStruct)
 {
+    uint32_t row_n;
+
     SYS->CLKEN |= (1 << SYS_CLKEN_SDRAM_Pos);
 
     SYS->CLKDIV &= ~SYS_CLKDIV_SDRAM_Msk;
-    SYS->CLKDIV |= (1 << SYS_CLKDIV_SDRAM_Pos);     //2·ÖÆµ
+    SYS->CLKDIV |= (1 << SYS_CLKDIV_SDRAM_Pos); //2åˆ†é¢‘
 
-    SDRAMC->CR0 = (2 << SDRAMC_CR0_BURSTLEN_Pos) |  //2 Burst LengthÎª4
-                  (2 << SDRAMC_CR0_CASDELAY_Pos);
+    SDRAMC->CR0 = (2 << SDRAMC_CR0_BURSTLEN_Pos) | //2 Burst Lengthä¸º4
+                  (initStruct->CASLatency << SDRAMC_CR0_CASDELAY_Pos);
 
     SDRAMC->CR1 = (initStruct->CellSize << SDRAMC_CR1_CELLSIZE_Pos) |
-                  ((initStruct->CellWidth == 16 ? 0 : 1) << SDRAMC_CR1_CELL32BIT_Pos) |
+                  (initStruct->CellWidth << SDRAMC_CR1_CELL32BIT_Pos) |
                   (initStruct->CellBank << SDRAMC_CR1_BANK_Pos) |
-                  ((initStruct->DataWidth == 16 ? 0 : 1) << SDRAMC_CR1_32BIT_Pos) |
-                  (7 << SDRAMC_CR1_TMRD_Pos) |
-                  (3 << SDRAMC_CR1_TRRD_Pos) |
-                  (7 << SDRAMC_CR1_TRAS_Pos) |
-                  (8 << SDRAMC_CR1_TRC_Pos) |
-                  (3 << SDRAMC_CR1_TRCD_Pos) |
-                  (3 << SDRAMC_CR1_TRP_Pos);
+                  (0 << SDRAMC_CR1_32BIT_Pos) |
+                  (initStruct->TimeTMRD << SDRAMC_CR1_TMRD_Pos) |
+                  (initStruct->TimeTRRD << SDRAMC_CR1_TRRD_Pos) |
+                  (initStruct->TimeTRAS << SDRAMC_CR1_TRAS_Pos) |
+                  (initStruct->TimeTRC << SDRAMC_CR1_TRC_Pos) |
+                  (initStruct->TimeTRCD << SDRAMC_CR1_TRCD_Pos) |
+                  (initStruct->TimeTRP << SDRAMC_CR1_TRP_Pos);
 
     SDRAMC->LATCH = 0x02;
 
-    SDRAMC->REFRESH = (1 << SDRAMC_REFRESH_EN_Pos) |
-                      (0x0FA << SDRAMC_REFRESH_RATE_Pos);
+    switch (initStruct->CellSize)
+    {
+    case SDRAM_CELLSIZE_16Mb:
+        row_n = 11;
+        break;
+    case SDRAM_CELLSIZE_64Mb:
+        row_n = 12;
+        break;
+    case SDRAM_CELLSIZE_128Mb:
+        row_n = 12;
+        break;
+    case SDRAM_CELLSIZE_256Mb:
+        row_n = 13;
+        break;
+    default:
+        row_n = 13;
+        break;
+    }
 
-    while (SDRAMC->REFDONE == 0);
+    SDRAMC->REFRESH = (1 << SDRAMC_REFRESH_EN_Pos) |
+                      (((SystemCoreClock / 2) / 1000 * 64 / (1 << row_n)) << SDRAMC_REFRESH_RATE_Pos);
+
+    while (SDRAMC->REFDONE == 0)
+        ;
+}
+
+/******************************************************************************************************************************************
+* å‡½æ•°åç§°: SDRAM_Enable()
+* åŠŸèƒ½è¯´æ˜Ž: SDRAMä½¿èƒ½ï¼Œä½¿èƒ½åŽå¯è¯»å†™SDRAM
+* è¾“    å…¥: æ— 
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
+******************************************************************************************************************************************/
+void SDRAM_Enable(void)
+{
+    uint32_t i;
+
+    SYS->CLKEN |= (1 << SYS_CLKEN_SDRAM_Pos);
+    SDRAMC->REFRESH |= (1 << SDRAMC_REFRESH_EN_Pos);
+
+    for (i = 0; i < 100; i++)
+        __NOP();
+}
+
+/******************************************************************************************************************************************
+* å‡½æ•°åç§°: SDRAM_Disable()
+* åŠŸèƒ½è¯´æ˜Ž: SDRAMç¦èƒ½ï¼Œç¦èƒ½åŽSDRAMé¢—ç²’è¿›å…¥ä½ŽåŠŸè€—æ¨¡å¼ã€å¹¶è‡ªåˆ·æ–°ï¼Œä¸å¯è¯»å†™
+* è¾“    å…¥: æ— 
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
+******************************************************************************************************************************************/
+void SDRAM_Disable(void)
+{
+    uint32_t i;
+
+    SYS->CLKEN |= (1 << SYS_CLKEN_SDRAM_Pos);
+    SDRAMC->REFRESH &= ~(1 << SDRAMC_REFRESH_EN_Pos);
+
+    for (i = 0; i < 100; i++)
+        __NOP();
 }

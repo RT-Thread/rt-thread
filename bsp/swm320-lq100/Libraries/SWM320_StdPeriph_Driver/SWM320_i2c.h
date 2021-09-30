@@ -3,25 +3,29 @@
 
 typedef struct
 {
-    uint8_t  Master;        //1 Ö÷»úÄ£Ê½
-    uint8_t  Addr7b;        //1 7Î»µØÖ·     0 10Î»µØÖ·
+    uint8_t Master; //1 ä¸»æœºæ¨¡å¼
+    uint8_t Addr7b; //1 7ä½åœ°å€     0 10ä½åœ°å€
 
-    uint32_t MstClk;        //Ö÷»ú´«ÊäÊ±ÖÓÆµÂÊ
-    uint8_t  MstIEn;        //Ö÷»úÄ£Ê½ÖĞ¶ÏÊ¹ÄÜ
+    uint32_t MstClk; //ä¸»æœºä¼ è¾“æ—¶é’Ÿé¢‘ç‡
+    uint8_t MstIEn;  //ä¸»æœºæ¨¡å¼ä¸­æ–­ä½¿èƒ½
 
-    uint16_t SlvAddr;       //´Ó»úµØÖ·
-    uint8_t  SlvRxEndIEn;   //´Ó»ú½ÓÊÕÍê³ÉÖĞ¶ÏÊ¹ÄÜ
-    uint8_t  SlvTxEndIEn;   //´Ó»ú·¢ËÍÍê³ÉÖĞ¶ÏÊ¹ÄÜ
-    uint8_t  SlvSTADetIEn;  //´Ó»ú¼ì²âµ½ÆğÊ¼ÖĞ¶ÏÊ¹ÄÜ
-    uint8_t  SlvSTODetIEn;  //´Ó»ú¼ì²âµ½ÖÕÖ¹ÖĞ¶ÏÊ¹ÄÜ
-    uint8_t  SlvRdReqIEn;   //´Ó»ú½ÓÊÕµ½¶ÁÇëÇóÖĞ¶ÏÊ¹ÄÜ
-    uint8_t  SlvWrReqIEn;   //´Ó»ú½ÓÊÕµ½Ğ´ÇëÇóÖĞ¶ÏÊ¹ÄÜ
+    uint16_t SlvAddr;     //ä»æœºåœ°å€
+    uint8_t SlvRxEndIEn;  //ä»æœºæ¥æ”¶å®Œæˆä¸­æ–­ä½¿èƒ½
+    uint8_t SlvTxEndIEn;  //ä»æœºå‘é€å®Œæˆä¸­æ–­ä½¿èƒ½
+    uint8_t SlvSTADetIEn; //ä»æœºæ£€æµ‹åˆ°èµ·å§‹ä¸­æ–­ä½¿èƒ½
+    uint8_t SlvSTODetIEn; //ä»æœºæ£€æµ‹åˆ°ç»ˆæ­¢ä¸­æ–­ä½¿èƒ½
+    uint8_t SlvRdReqIEn;  //ä»æœºæ¥æ”¶åˆ°è¯»è¯·æ±‚ä¸­æ–­ä½¿èƒ½
+    uint8_t SlvWrReqIEn;  //ä»æœºæ¥æ”¶åˆ°å†™è¯·æ±‚ä¸­æ–­ä½¿èƒ½
 } I2C_InitStructure;
-
 
 void I2C_Init(I2C_TypeDef *I2Cx, I2C_InitStructure *initStruct);
 
 void I2C_Open(I2C_TypeDef *I2Cx);
 void I2C_Close(I2C_TypeDef *I2Cx);
+
+uint8_t I2C_Start(I2C_TypeDef *I2Cx, uint8_t addr);
+void I2C_Stop(I2C_TypeDef *I2Cx);
+uint8_t I2C_Write(I2C_TypeDef *I2Cx, uint8_t data);
+uint8_t I2C_Read(I2C_TypeDef *I2Cx, uint8_t ack);
 
 #endif //__SWM320_I2C_H__
