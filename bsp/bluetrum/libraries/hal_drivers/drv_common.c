@@ -19,27 +19,27 @@ void uart1_irq_process(void);
 RT_SECTION(".irq.uart")
 void uart0_irq_post(void)
 {
-    uint8_t mq_msg = MSG_UART0_IRQ;
+    rt_uint8_t mq_msg = MSG_UART0_IRQ;
     rt_mq_send(drv_mq, &mq_msg, 1);
 }
 
 RT_SECTION(".irq.uart")
 void uart1_irq_post(void)
 {
-    uint8_t mq_msg = MSG_UART1_IRQ;
+    rt_uint8_t mq_msg = MSG_UART1_IRQ;
     rt_mq_send(drv_mq, &mq_msg, 1);
 }
 
 RT_SECTION(".irq.uart")
 void uart2_irq_post(void)
 {
-    uint8_t mq_msg = MSG_UART2_IRQ;
+    rt_uint8_t mq_msg = MSG_UART2_IRQ;
     rt_mq_send(drv_mq, &mq_msg, 1);
 }
 
 static void drv_thread_entry(void *parameter)
 {
-    uint8_t mq_msg = 0;
+    rt_uint8_t mq_msg = 0;
     while (1) {
         rt_mq_recv(drv_mq, &mq_msg, 1, RT_WAITING_FOREVER);
         switch (mq_msg) {

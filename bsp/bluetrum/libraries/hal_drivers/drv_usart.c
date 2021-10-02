@@ -324,7 +324,7 @@ int rt_hw_usart_init(void)
                                        | RT_DEVICE_FLAG_INT_RX
                                        | RT_DEVICE_FLAG_INT_TX
                                        | uart_obj[i].uart_dma_flag
-                                       , NULL);
+                                       , RT_NULL);
         RT_ASSERT(result == RT_EOK);
     }
 
