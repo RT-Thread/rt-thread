@@ -321,7 +321,7 @@ static const struct uart_index uart_clock_map[] =
 #endif
 #ifdef BSP_USING_UART10
     {9, M4_USART10},
-#endif	
+#endif
 };
 
 static const struct uart_irq_handler uart_irq_handlers[sizeof(uart_obj) / sizeof(uart_obj[0])];
