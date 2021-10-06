@@ -1,0 +1,54 @@
+menu "Hardware Drivers Config"
+
+    config SOC_SERIES_R7FA6M4AF
+        bool
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        default y
+
+    menu "Onboard Peripheral Drivers"
+
+    endmenu
+
+    menu "On-chip Peripheral Drivers"
+
+        menuconfig BSP_USING_UART
+            bool "Enable UART"
+            default y
+            select RT_USING_SERIAL
+            select RT_USING_SERIAL_V2
+            if BSP_USING_UART
+                menuconfig BSP_USING_UART7
+                    bool "Enable UART7 (Console)"
+                    default y
+                    if BSP_USING_UART7
+                        config BSP_UART7_RX_USING_DMA
+                            bool "Enable UART7 RX DMA"
+                            depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART7_TX_USING_DMA
+                            bool "Enable UART7 TX DMA"
+                            depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART7_RX_BUFSIZE
+                            int "Set UART7 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART7_TX_BUFSIZE
+                            int "Set UART7 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+            endif
+
+    endmenu
+
+    menu "Board extended module Drivers"
+
+    endmenu
+endmenu
