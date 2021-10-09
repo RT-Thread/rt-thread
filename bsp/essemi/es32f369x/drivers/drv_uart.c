@@ -198,8 +198,8 @@ static rt_err_t es32f3x_configure(struct rt_serial_device *serial, struct serial
     gpio_initstructure.mode = GPIO_MODE_OUTPUT;
     gpio_initstructure.odos = GPIO_PUSH_PULL;
     gpio_initstructure.pupd = GPIO_PUSH_UP;
-    gpio_initstructure.podrv = GPIO_OUT_DRIVE_1;
-    gpio_initstructure.nodrv = GPIO_OUT_DRIVE_1;
+    gpio_initstructure.podrv = GPIO_OUT_DRIVE_6;
+    gpio_initstructure.nodrv = GPIO_OUT_DRIVE_6;
     gpio_initstructure.flt  = GPIO_FILTER_DISABLE;
     gpio_initstructure.type = GPIO_TYPE_TTL;
 

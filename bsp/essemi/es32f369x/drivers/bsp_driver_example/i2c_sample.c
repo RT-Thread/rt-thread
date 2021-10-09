@@ -64,8 +64,6 @@ static void i2c_io_sample(int argc, char *argv[])
         temp_msg.flags = RT_I2C_RD;             /* I2C读 */
         s_stat = rt_i2c_transfer(i2c_bus,&temp_msg,num_msg);   /* 传输消息 */
         
-        rt_thread_mdelay(400); 
-        
         if( s_stat == num_msg )
         {
             rt_kprintf("receive successful. \n receive messege : %s \n:",buffer);
@@ -86,8 +84,6 @@ static void i2c_io_sample(int argc, char *argv[])
     
         temp_msg.flags = RT_I2C_WR;             /* I2C写 */
         s_stat = rt_i2c_transfer(i2c_bus,&temp_msg,num_msg);   /* 传输一条 */
-        
-        rt_thread_mdelay(400);
         
         if( s_stat == num_msg )
         {

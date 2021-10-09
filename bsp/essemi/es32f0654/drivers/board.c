@@ -127,6 +127,8 @@ void  SysTick_Configuration(void)
 {
     /* ticks = sysclk / RT_TICK_PER_SECOND */
     SysTick_Config(ald_cmu_get_sys_clock() / RT_TICK_PER_SECOND);
+    
+    __systick_interval = 1;
 }
 
 /**

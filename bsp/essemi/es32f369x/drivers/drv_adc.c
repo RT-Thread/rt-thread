@@ -68,8 +68,8 @@ static adc_channel_t es32f3_adc_get_channel(rt_uint32_t channel)
     gpio_initstruct.mode = GPIO_MODE_INPUT;
     gpio_initstruct.pupd = GPIO_FLOATING; 
     gpio_initstruct.odos = GPIO_OPEN_DRAIN; 
-    gpio_initstruct.podrv = GPIO_OUT_DRIVE_1;
-    gpio_initstruct.nodrv = GPIO_OUT_DRIVE_1;
+    gpio_initstruct.podrv = GPIO_OUT_DRIVE_6;
+    gpio_initstruct.nodrv = GPIO_OUT_DRIVE_6;
     gpio_initstruct.flt  = GPIO_FILTER_DISABLE;
     gpio_initstruct.type = GPIO_TYPE_CMOS;
     gpio_initstruct.func = GPIO_FUNC_0;

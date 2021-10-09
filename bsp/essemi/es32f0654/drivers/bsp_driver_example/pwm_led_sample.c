@@ -16,13 +16,13 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-
+#include "drv_gpio.h"
 
 #ifdef RT_USING_PWM
 
-#define LED_PIN_NUM         16      /* LED PIN脚编号，查看驱动文件drv_gpio.c确定 */
+#define LED_PIN_NUM         GET_PIN(A,2)      /* LED PIN脚编号，查看驱动文件drv_gpio.c确定 */
 #define PWM_DEV_NAME        "pwm1"  /* PWM设备名称 */
-#define PWM_DEV_CHANNEL     1       /* PA8 PWM通道 */
+#define PWM_DEV_CHANNEL     1       /* PWM通道 */
 
 struct rt_device_pwm *pwm_dev;      /* PWM设备句柄 */
 
