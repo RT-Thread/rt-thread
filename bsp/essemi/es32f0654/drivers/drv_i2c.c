@@ -54,16 +54,16 @@ static void _i2c_init(void)
     gpio_instruct.func = GPIO_FUNC_5;
 
 #ifdef BSP_USING_I2C0
-    
-#if  defined(ES_I2C0_SCL_GPIO_FUNC)&&defined(ES_I2C0_SCL_GPIO_PORT)&&defined(ES_I2C0_SCL_GPIO_PIN)     
+
+#if  defined(ES_I2C0_SCL_GPIO_FUNC)&&defined(ES_I2C0_SCL_GPIO_PORT)&&defined(ES_I2C0_SCL_GPIO_PIN)
     gpio_instruct.func = ES_I2C0_SCL_GPIO_FUNC;
     ald_gpio_init(ES_I2C0_SCL_GPIO_PORT, ES_I2C0_SCL_GPIO_PIN, &gpio_instruct);
-#endif                            
-             
+#endif
+
 #if  defined(ES_I2C0_SDA_GPIO_FUNC)&&defined(ES_I2C0_SDA_GPIO_PORT)&&defined(ES_I2C0_SDA_GPIO_PIN)
     gpio_instruct.func = ES_I2C0_SDA_GPIO_FUNC;
-    ald_gpio_init(ES_I2C0_SDA_GPIO_PORT, ES_I2C0_SDA_GPIO_PIN, &gpio_instruct); 
-#endif                            
+    ald_gpio_init(ES_I2C0_SDA_GPIO_PORT, ES_I2C0_SDA_GPIO_PIN, &gpio_instruct);
+#endif
 
     /* Initialize I2C Function */
     _h_i2c0.perh = I2C0;
@@ -76,33 +76,33 @@ static void _i2c_init(void)
 
     ald_i2c_reset(&_h_i2c0);
     ald_i2c_init(&_h_i2c0);
-               
+
 #endif
 
 #ifdef BSP_USING_I2C1
 
-#if  defined(ES_I2C1_SCL_GPIO_FUNC)&&defined(ES_I2C1_SCL_GPIO_PORT)&&defined(ES_I2C1_SCL_GPIO_PIN)    
+#if  defined(ES_I2C1_SCL_GPIO_FUNC)&&defined(ES_I2C1_SCL_GPIO_PORT)&&defined(ES_I2C1_SCL_GPIO_PIN)
     gpio_instruct.func = ES_I2C1_SCL_GPIO_FUNC;
     ald_gpio_init(ES_I2C1_SCL_GPIO_PORT, ES_I2C1_SCL_GPIO_PIN, &gpio_instruct);
-#endif          
-                                                               
-#if  defined(ES_I2C1_SDA_GPIO_FUNC)&&defined(ES_I2C1_SDA_GPIO_PORT)&&defined(ES_I2C1_SDA_GPIO_PIN)   
+#endif
+
+#if  defined(ES_I2C1_SDA_GPIO_FUNC)&&defined(ES_I2C1_SDA_GPIO_PORT)&&defined(ES_I2C1_SDA_GPIO_PIN)
     gpio_instruct.func = ES_I2C1_SDA_GPIO_FUNC;
     ald_gpio_init(ES_I2C1_SDA_GPIO_PORT, ES_I2C1_SDA_GPIO_PIN, &gpio_instruct);
-#endif         
+#endif
 
     /* Initialize i2c function */
     _h_i2c1.perh = I2C1;
-    _h_i2c1.init.duty         = I2C_DUTYCYCLE_2; 
+    _h_i2c1.init.duty         = I2C_DUTYCYCLE_2;
     _h_i2c1.init.clk_speed    = ES_I2C1_CLK_SPEED;
     _h_i2c1.init.own_addr1    = ES_I2C1_OWN_ADDR1;
     _h_i2c1.init.addr_mode    = ES_I2C1_ADDR_MODE;
     _h_i2c1.init.general_call = ES_I2C1_GENERAL_CALL;
     _h_i2c1.init.no_stretch   = ES_I2C1_STRETCH;
-    
+
     ald_i2c_reset(&_h_i2c1);
     ald_i2c_init(&_h_i2c1);
-     
+
 #endif
 }
 
