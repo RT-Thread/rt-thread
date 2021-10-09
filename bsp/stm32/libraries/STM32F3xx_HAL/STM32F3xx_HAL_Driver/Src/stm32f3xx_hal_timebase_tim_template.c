@@ -1,13 +1,13 @@
 /**
   ******************************************************************************
-  * @file    stm32f3xx_hal_timebase_tim_template.c
+  * @file    stm32f3xx_hal_timebase_tim_template.c 
   * @brief   HAL time base based on the hardware TIM Template.
-  *
+  *    
   *          This file override the native HAL time base functions (defined as weak)
   *          the TIM time base:
   *           + Intializes the TIM peripheral generate a Period elapsed Event each 1ms
   *           + HAL_IncTick is called inside HAL_TIM_PeriodElapsedCallback ie each 1ms
-  *
+  * 
   ******************************************************************************
   * @attention
   *
@@ -31,7 +31,7 @@
 
 /** @addtogroup HAL_TimeBase_TIM
   * @{
-  */
+  */ 
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -43,11 +43,11 @@ void TIM6_DAC_IRQHandler(void);
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  This function configures the TIM6 as a time base source.
-  *         The time source is configured  to have 1ms time base with a dedicated
-  *         Tick interrupt priority.
+  * @brief  This function configures the TIM6 as a time base source. 
+  *         The time source is configured  to have 1ms time base with a dedicated 
+  *         Tick interrupt priority. 
   * @note   This function is called  automatically at the beginning of program after
-  *         reset by HAL_Init() or at any time when clock is configured, by HAL_RCC_ClockConfig().
+  *         reset by HAL_Init() or at any time when clock is configured, by HAL_RCC_ClockConfig(). 
   * @param  TickPriority Tick interrupt priority.
   * @retval HAL status
   */
@@ -170,10 +170,10 @@ void TIM6_DAC_IRQHandler(void)
 
 /**
   * @}
-  */
+  */ 
 
 /**
   * @}
-  */
+  */ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

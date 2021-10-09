@@ -454,7 +454,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 
   /*-------------------------------------- PLLI2S Configuration ---------------------------------*/
   /* PLLI2S is configured when a peripheral will use it as source clock : SAI1, SAI2, I2S or SPDIF-RX */
-  if((plli2sused == 1) || (PeriphClkInit->PeriphClockSelection == RCC_PERIPHCLK_PLLI2S))
+  if((plli2sused == 1) || ((PeriphClkInit->PeriphClockSelection & RCC_PERIPHCLK_PLLI2S) == RCC_PERIPHCLK_PLLI2S))
   {
     /* Disable the PLLI2S */
     __HAL_RCC_PLLI2S_DISABLE();
@@ -1105,7 +1105,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 
   /*-------------------------------------- PLLI2S Configuration ---------------------------------*/
   /* PLLI2S is configured when a peripheral will use it as source clock : SAI1, SAI2 or I2S */
-  if((plli2sused == 1) || (PeriphClkInit->PeriphClockSelection == RCC_PERIPHCLK_PLLI2S))
+  if((plli2sused == 1) || ((PeriphClkInit->PeriphClockSelection & RCC_PERIPHCLK_PLLI2S) == RCC_PERIPHCLK_PLLI2S))
   {
     /* Disable the PLLI2S */
     __HAL_RCC_PLLI2S_DISABLE();

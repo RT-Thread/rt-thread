@@ -638,7 +638,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup RTCEx_Tamper_DetectionOutput_Definitions RTC Tamper Detection Ouput Definitions
+/** @defgroup RTCEx_Tamper_DetectionOutput_Definitions RTC Tamper Detection Output Definitions
   * @{
   */
 #if defined(RTC_CR_TAMPOE)
@@ -729,6 +729,14 @@ typedef struct
 #define RTC_ATAMP_6                       5u   /*!< Tamper 6 */
 #define RTC_ATAMP_7                       6u   /*!< Tamper 7 */
 #define RTC_ATAMP_8                       7u   /*!< Tamper 8 */
+/**
+  * @}
+  */
+
+/** @defgroup RTCEx_MonotonicCounter_Instance  RTCEx Monotonic Counter Instance Definition
+  * @{
+  */
+#define RTC_MONOTONIC_COUNTER_1           0u   /*!< Monotonic counter 1 */
 /**
   * @}
   */
@@ -1412,10 +1420,6 @@ typedef struct
 #define __HAL_RTC_SHIFT_GET_FLAG(__HANDLE__, __FLAG__)         (((((__HANDLE__)->Instance->ISR)  & (__FLAG__)) != 0U) ? 1U : 0U)
 #endif /* RTC_ISR_SHPF */
 
-/**
-  * @}
-  */
-
 /* ========================================================================== */
 /*               ##### RTC Wake-up Interrupt exported macros #####            */
 /* ========================================================================== */
@@ -1639,10 +1643,6 @@ typedef struct
 #define __HAL_RTC_TAMPER_TIMESTAMP_EXTI_DISABLE_EVENT()   (EXTI->EMR1    &= ~(RTC_EXTI_LINE_TAMPER_TIMESTAMP_EVENT))
 #endif /* EXTI_D1 */
 
-/**
-  * @}
-  */
-
 #if defined(DUAL_CORE)
 /**
   * @brief  Enable interrupt on the RTC Tamper and Timestamp associated D2 Exti line.
@@ -1840,6 +1840,10 @@ HAL_StatusTypeDef HAL_RTCEx_SetActiveSeed(RTC_HandleTypeDef *hrtc, uint32_t *pSe
 HAL_StatusTypeDef HAL_RTCEx_DeactivateActiveTampers(RTC_HandleTypeDef *hrtc);
 #endif /* TAMP_ATCR1_TAMP1AM */
 
+/**
+  * @}
+  */
+
 /* ========================================================================== */
 /*                   ##### RTC Wake-up exported functions #####               */
 /* ========================================================================== */
@@ -1893,8 +1897,8 @@ HAL_StatusTypeDef HAL_RTCEx_DeactivateRefClock(RTC_HandleTypeDef *hrtc);
 HAL_StatusTypeDef HAL_RTCEx_EnableBypassShadow(RTC_HandleTypeDef *hrtc);
 HAL_StatusTypeDef HAL_RTCEx_DisableBypassShadow(RTC_HandleTypeDef *hrtc);
 #if defined(TAMP_COUNTR)
-HAL_StatusTypeDef HAL_RTCEx_MonotonicCounterIncrement(RTC_HandleTypeDef *hrtc);
-HAL_StatusTypeDef HAL_RTCEx_MonotonicCounterGet(RTC_HandleTypeDef *hrtc, uint32_t *Counter);
+HAL_StatusTypeDef HAL_RTCEx_MonotonicCounterIncrement(RTC_HandleTypeDef *hrtc,  uint32_t Instance);
+HAL_StatusTypeDef HAL_RTCEx_MonotonicCounterGet(RTC_HandleTypeDef *hrtc, uint32_t *Counter,  uint32_t Instance);
 #endif /* TAMP_COUNTR */
 /**
   * @}

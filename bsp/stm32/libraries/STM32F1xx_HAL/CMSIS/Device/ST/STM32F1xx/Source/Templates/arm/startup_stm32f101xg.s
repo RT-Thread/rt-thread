@@ -93,7 +93,7 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     DMA1_Channel5_IRQHandler      ; DMA1 Channel 5
                 DCD     DMA1_Channel6_IRQHandler      ; DMA1 Channel 6
                 DCD     DMA1_Channel7_IRQHandler      ; DMA1 Channel 7
-                DCD     ADC1_2_IRQHandler             ; ADC1_2
+                DCD     ADC1_IRQHandler               ; ADC1
                 DCD     0                          ; Reserved
                 DCD     0                          ; Reserved
                 DCD     0                          ; Reserved
@@ -216,7 +216,7 @@ Default_Handler PROC
                 EXPORT  DMA1_Channel5_IRQHandler      [WEAK]
                 EXPORT  DMA1_Channel6_IRQHandler      [WEAK]
                 EXPORT  DMA1_Channel7_IRQHandler      [WEAK]
-                EXPORT  ADC1_2_IRQHandler             [WEAK]
+                EXPORT  ADC1_IRQHandler               [WEAK]
                 EXPORT  EXTI9_5_IRQHandler            [WEAK]
                 EXPORT  TIM9_IRQHandler               [WEAK]
                 EXPORT  TIM10_IRQHandler              [WEAK]
@@ -268,7 +268,7 @@ DMA1_Channel4_IRQHandler
 DMA1_Channel5_IRQHandler
 DMA1_Channel6_IRQHandler
 DMA1_Channel7_IRQHandler
-ADC1_2_IRQHandler
+ADC1_IRQHandler
 EXTI9_5_IRQHandler
 TIM9_IRQHandler
 TIM10_IRQHandler

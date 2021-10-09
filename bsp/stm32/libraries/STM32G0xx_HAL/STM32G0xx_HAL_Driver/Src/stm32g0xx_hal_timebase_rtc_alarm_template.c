@@ -82,7 +82,7 @@
 /* HSE Freq as RTCCLK = 8 MHz / 32 = 250 kHz */
 #define RTC_ASYNCH_PREDIV                   0x07u   /* (8 - 1) */
 #define RTC_SYNCH_PREDIV                    0x7A11u /* (31250 -1) */
-#endif
+#endif /* RTC_CLOCK_SOURCE_LSE */
 
 
 /* Private macro -------------------------------------------------------------*/
@@ -143,7 +143,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     if ((PeriphClkInitStruct.RTCClockSelection == RCC_RTCCLKSOURCE_HSE_DIV32) && (__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) != 0x00u))
 #else
 #error Please select the RTC Clock source
-#endif
+#endif /* RTC_CLOCK_SOURCE_LSE */
     {
       /* Do nothing */
     }
@@ -167,7 +167,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
       RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
       RCC_OscInitStruct.HSEState = RCC_HSE_ON;
       PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_HSE_DIV32;
-#endif
+#endif /* RTC_CLOCK_SOURCE_LSE */
 
       /* Configure oscillator */
       status = HAL_RCC_OscConfig(&RCC_OscInitStruct);
@@ -254,7 +254,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
         /* When RTCCLK is around 32 kHz, need to mask Subsecond register bit 12 to 11
           to have 10 Hhz interrupt */
         alarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_SS14_11;
-#endif
+#endif /* RTC_CLOCK_SOURCE_HSE */
       }
       alarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
       alarm.AlarmDateWeekDay = RTC_WEEKDAY_MONDAY;

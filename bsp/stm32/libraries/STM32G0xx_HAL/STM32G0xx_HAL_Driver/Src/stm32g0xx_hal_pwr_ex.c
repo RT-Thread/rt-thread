@@ -11,11 +11,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -56,7 +56,7 @@
 /**
   * @}
   */
-#endif
+#endif /* PWR_PVD_SUPPORT */
 
 /** @defgroup PWREx_TimeOut_Value  PWREx Flag Setting Time Out Value
   * @{
@@ -171,7 +171,7 @@ void HAL_PWREx_DisablePORMonitorSampling(void)
 {
   PWR->CR3 &= ~PWR_CR3_ENB_ULP;
 }
-#endif
+#endif /* PWR_CR3_ENB_ULP */
 
 #if defined(PWR_PVD_SUPPORT)
 /**
@@ -201,24 +201,24 @@ HAL_StatusTypeDef HAL_PWREx_ConfigPVD(PWR_PVDTypeDef *sConfigPVD)
   __HAL_PWR_PVD_EXTI_DISABLE_RISING_EDGE();
 
   /* Configure interrupt mode */
-  if((sConfigPVD->Mode & PVD_MODE_IT) == PVD_MODE_IT)
+  if ((sConfigPVD->Mode & PVD_MODE_IT) == PVD_MODE_IT)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_IT();
   }
 
   /* Configure event mode */
-  if((sConfigPVD->Mode & PVD_MODE_EVT) == PVD_MODE_EVT)
+  if ((sConfigPVD->Mode & PVD_MODE_EVT) == PVD_MODE_EVT)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_EVENT();
   }
 
   /* Configure the edge */
-  if((sConfigPVD->Mode & PVD_RISING_EDGE) == PVD_RISING_EDGE)
+  if ((sConfigPVD->Mode & PVD_RISING_EDGE) == PVD_RISING_EDGE)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_RISING_EDGE();
   }
 
-  if((sConfigPVD->Mode & PVD_FALLING_EDGE) == PVD_FALLING_EDGE)
+  if ((sConfigPVD->Mode & PVD_FALLING_EDGE) == PVD_FALLING_EDGE)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_FALLING_EDGE();
   }
@@ -245,7 +245,7 @@ void HAL_PWREx_DisablePVD(void)
 {
   CLEAR_BIT(PWR->CR2, PWR_CR2_PVDE);
 }
-#endif
+#endif /* PWR_PVD_SUPPORT */
 
 #if defined(PWR_PVM_SUPPORT)
 /**
@@ -266,7 +266,7 @@ void HAL_PWREx_DisableVddUSB(void)
 {
   CLEAR_BIT(PWR->CR2, PWR_CR2_USV);
 }
-#endif
+#endif /* PWR_PVM_SUPPORT */
 
 #if defined(PWR_CR2_IOSV)
 /**
@@ -308,7 +308,7 @@ void HAL_PWREx_DisablePVMUSB(void)
 {
   CLEAR_BIT(PWR->CR2, PWR_PVM_USB);
 }
-#endif
+#endif /* PWR_PVM_SUPPORT */
 
 #if defined(PWR_PVM_SUPPORT)
 /**
@@ -344,24 +344,24 @@ HAL_StatusTypeDef HAL_PWREx_ConfigPVM(PWR_PVMTypeDef *sConfigPVM)
       __HAL_PWR_PVM_EXTI_DISABLE_RISING_EDGE();
 
       /* Configure interrupt mode */
-      if((sConfigPVM->Mode & PVM_MODE_IT) == PVM_MODE_IT)
+      if ((sConfigPVM->Mode & PVM_MODE_IT) == PVM_MODE_IT)
       {
         __HAL_PWR_PVM_EXTI_ENABLE_IT();
       }
 
       /* Configure event mode */
-      if((sConfigPVM->Mode & PVM_MODE_EVT) == PVM_MODE_EVT)
+      if ((sConfigPVM->Mode & PVM_MODE_EVT) == PVM_MODE_EVT)
       {
         __HAL_PWR_PVM_EXTI_ENABLE_EVENT();
       }
 
       /* Configure the edge */
-      if((sConfigPVM->Mode & PVM_RISING_EDGE) == PVM_RISING_EDGE)
+      if ((sConfigPVM->Mode & PVM_RISING_EDGE) == PVM_RISING_EDGE)
       {
         __HAL_PWR_PVM_EXTI_ENABLE_RISING_EDGE();
       }
 
-      if((sConfigPVM->Mode & PVM_FALLING_EDGE) == PVM_FALLING_EDGE)
+      if ((sConfigPVM->Mode & PVM_FALLING_EDGE) == PVM_FALLING_EDGE)
       {
         __HAL_PWR_PVM_EXTI_ENABLE_FALLING_EDGE();
       }
@@ -374,7 +374,7 @@ HAL_StatusTypeDef HAL_PWREx_ConfigPVM(PWR_PVMTypeDef *sConfigPVM)
 
   return status;
 }
-#endif
+#endif /* PWR_PVM_SUPPORT */
 /**
   * @brief  Enable Internal Wake-up Line.
   * @retval None
@@ -422,35 +422,35 @@ HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
   switch (GPIO)
   {
     case PWR_GPIO_A:
-       SET_BIT(PWR->PUCRA, (GPIONumber & ~PWR_GPIO_BIT_14));
-       CLEAR_BIT(PWR->PDCRA, (GPIONumber & ~PWR_GPIO_BIT_13));
-       break;
+      SET_BIT(PWR->PUCRA, (GPIONumber & ~PWR_GPIO_BIT_14));
+      CLEAR_BIT(PWR->PDCRA, (GPIONumber & ~PWR_GPIO_BIT_13));
+      break;
 
     case PWR_GPIO_B:
-       SET_BIT(PWR->PUCRB, GPIONumber);
-       CLEAR_BIT(PWR->PDCRB, GPIONumber);
-       break;
+      SET_BIT(PWR->PUCRB, GPIONumber);
+      CLEAR_BIT(PWR->PDCRB, GPIONumber);
+      break;
 
     case PWR_GPIO_C:
-       SET_BIT(PWR->PUCRC, GPIONumber);
-       CLEAR_BIT(PWR->PDCRC, GPIONumber);
-       break;
+      SET_BIT(PWR->PUCRC, GPIONumber);
+      CLEAR_BIT(PWR->PDCRC, GPIONumber);
+      break;
 
     case PWR_GPIO_D:
-       SET_BIT(PWR->PUCRD, GPIONumber);
-       CLEAR_BIT(PWR->PDCRD, GPIONumber);
-       break;
+      SET_BIT(PWR->PUCRD, GPIONumber);
+      CLEAR_BIT(PWR->PDCRD, GPIONumber);
+      break;
 
 #if defined(GPI0E)
     case PWR_GPIO_E:
-       SET_BIT(PWR->PUCRE, GPIONumber);
-       CLEAR_BIT(PWR->PDCRE, GPIONumber);
-       break;
-#endif
+      SET_BIT(PWR->PUCRE, GPIONumber);
+      CLEAR_BIT(PWR->PDCRE, GPIONumber);
+      break;
+#endif /* GPI0E */
     case PWR_GPIO_F:
-       SET_BIT(PWR->PUCRF, GPIONumber);
-       CLEAR_BIT(PWR->PDCRF, GPIONumber);
-       break;
+      SET_BIT(PWR->PUCRF, GPIONumber);
+      CLEAR_BIT(PWR->PDCRF, GPIONumber);
+      break;
 
     default:
       status = HAL_ERROR;
@@ -503,14 +503,14 @@ HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber
     case PWR_GPIO_E:
       CLEAR_BIT(PWR->PUCRE, GPIONumber);
       break;
-#endif
+#endif /* GPI0E */
     case PWR_GPIO_F:
       CLEAR_BIT(PWR->PUCRF, GPIONumber);
       break;
 
     default:
-       status = HAL_ERROR;
-       break;
+      status = HAL_ERROR;
+      break;
   }
 
   return status;
@@ -546,35 +546,35 @@ HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumbe
   switch (GPIO)
   {
     case PWR_GPIO_A:
-       SET_BIT(PWR->PDCRA, (GPIONumber & ~PWR_GPIO_BIT_13));
-       CLEAR_BIT(PWR->PUCRA, (GPIONumber & ~PWR_GPIO_BIT_14));
-       break;
+      SET_BIT(PWR->PDCRA, (GPIONumber & ~PWR_GPIO_BIT_13));
+      CLEAR_BIT(PWR->PUCRA, (GPIONumber & ~PWR_GPIO_BIT_14));
+      break;
 
     case PWR_GPIO_B:
-       SET_BIT(PWR->PDCRB, GPIONumber);
-       CLEAR_BIT(PWR->PUCRB, GPIONumber);
-       break;
+      SET_BIT(PWR->PDCRB, GPIONumber);
+      CLEAR_BIT(PWR->PUCRB, GPIONumber);
+      break;
 
     case PWR_GPIO_C:
-       SET_BIT(PWR->PDCRC, GPIONumber);
-       CLEAR_BIT(PWR->PUCRC, GPIONumber);
-       break;
+      SET_BIT(PWR->PDCRC, GPIONumber);
+      CLEAR_BIT(PWR->PUCRC, GPIONumber);
+      break;
 
     case PWR_GPIO_D:
-       SET_BIT(PWR->PDCRD, GPIONumber);
-       CLEAR_BIT(PWR->PUCRD, GPIONumber);
-       break;
+      SET_BIT(PWR->PDCRD, GPIONumber);
+      CLEAR_BIT(PWR->PUCRD, GPIONumber);
+      break;
 
 #if defined(GPIOE)
     case PWR_GPIO_E:
-       SET_BIT(PWR->PDCRE, GPIONumber);
-       CLEAR_BIT(PWR->PUCRE, GPIONumber);
-       break;
-#endif
+      SET_BIT(PWR->PDCRE, GPIONumber);
+      CLEAR_BIT(PWR->PUCRE, GPIONumber);
+      break;
+#endif /* GPI0E */
     case PWR_GPIO_F:
-       SET_BIT(PWR->PDCRF, GPIONumber);
-       CLEAR_BIT(PWR->PUCRF, GPIONumber);
-       break;
+      SET_BIT(PWR->PDCRF, GPIONumber);
+      CLEAR_BIT(PWR->PUCRF, GPIONumber);
+      break;
 
     default:
       status = HAL_ERROR;
@@ -627,7 +627,7 @@ HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumb
     case PWR_GPIO_E:
       CLEAR_BIT(PWR->PDCRE, GPIONumber);
       break;
-#endif
+#endif /* GPI0E */
     case PWR_GPIO_F:
       CLEAR_BIT(PWR->PDCRF, GPIONumber);
       break;
@@ -690,7 +690,7 @@ void HAL_PWREx_DisableSRAMRetention(void)
 {
   CLEAR_BIT(PWR->CR3, PWR_CR3_RRS);
 }
-#endif
+#endif /* PWR_CR3_RRS */
 
 /**
   * @brief  Enable Flash Power Down.
@@ -770,15 +770,15 @@ HAL_StatusTypeDef HAL_PWREx_ControlVoltageScaling(uint32_t VoltageScaling)
   MODIFY_REG(PWR->CR1, PWR_CR1_VOS, VoltageScaling);
 
   /* In case of Range 1 selected, we need to ensure that main regulator reaches new value */
-  if(VoltageScaling == PWR_REGULATOR_VOLTAGE_SCALE1)
+  if (VoltageScaling == PWR_REGULATOR_VOLTAGE_SCALE1)
   {
     /* Set timeout value */
-    wait_loop_index = ((PWR_VOSF_SETTING_DELAY_6_US * SystemCoreClock ) / 1000000U) + 1U;
+    wait_loop_index = ((PWR_VOSF_SETTING_DELAY_6_US * SystemCoreClock) / 1000000U) + 1U;
 
     /* Wait until VOSF is reset */
-    while(HAL_IS_BIT_SET(PWR->SR2, PWR_SR2_VOSF))
+    while (HAL_IS_BIT_SET(PWR->SR2, PWR_SR2_VOSF))
     {
-      if(wait_loop_index != 0U)
+      if (wait_loop_index != 0U)
       {
         wait_loop_index--;
       }
@@ -818,15 +818,15 @@ void HAL_PWREx_EnableLowPowerRunMode(void)
   */
 HAL_StatusTypeDef HAL_PWREx_DisableLowPowerRunMode(void)
 {
-  uint32_t wait_loop_index = ((PWR_REGLPF_SETTING_DELAY_6_US * SystemCoreClock ) / 1000000U) + 1U;
+  uint32_t wait_loop_index = ((PWR_REGLPF_SETTING_DELAY_6_US * SystemCoreClock) / 1000000U) + 1U;
 
   /* Clear LPR bit */
   CLEAR_BIT(PWR->CR1, PWR_CR1_LPR);
 
   /* Wait until REGLPF is reset */
-  while(HAL_IS_BIT_SET(PWR->SR2, PWR_SR2_REGLPF))
+  while (HAL_IS_BIT_SET(PWR->SR2, PWR_SR2_REGLPF))
   {
-    if(wait_loop_index != 0U)
+    if (wait_loop_index != 0U)
     {
       wait_loop_index--;
     }
@@ -869,12 +869,12 @@ void HAL_PWREx_EnterSHUTDOWNMode(void)
   /* This option is used to ensure that store operations are completed */
 #if defined ( __CC_ARM)
   __force_stores();
-#endif
+#endif /* __CC_ARM */
 
   /* Request Wait For Interrupt */
   __WFI();
 }
-#endif
+#endif /* PWR_SHDW_SUPPORT */
 
 #if defined(PWR_PVD_SUPPORT) && defined(PWR_PVM_SUPPORT)
 /**
@@ -885,7 +885,7 @@ void HAL_PWREx_EnterSHUTDOWNMode(void)
 void HAL_PWREx_PVD_PVM_IRQHandler(void)
 {
   /* Check PWR PVD exti Rising flag */
-  if(__HAL_PWR_PVD_EXTI_GET_RISING_FLAG() != 0x0U)
+  if (__HAL_PWR_PVD_EXTI_GET_RISING_FLAG() != 0x0U)
   {
     /* Clear PVD exti pending bit */
     __HAL_PWR_PVD_EXTI_CLEAR_RISING_FLAG();
@@ -895,7 +895,7 @@ void HAL_PWREx_PVD_PVM_IRQHandler(void)
   }
 
   /* Check PWR exti fallling flag */
-  if(__HAL_PWR_PVD_EXTI_GET_FALLING_FLAG() != 0x0U)
+  if (__HAL_PWR_PVD_EXTI_GET_FALLING_FLAG() != 0x0U)
   {
     /* Clear PVD exti pending bit */
     __HAL_PWR_PVD_EXTI_CLEAR_FALLING_FLAG();
@@ -903,9 +903,9 @@ void HAL_PWREx_PVD_PVM_IRQHandler(void)
     /* PWR PVD interrupt falling user callback */
     HAL_PWREx_PVD_PVM_Falling_Callback();
   }
-  
+
   /* Check PWR PVM exti Rising flag */
-  if(__HAL_PWR_PVM_EXTI_GET_RISING_FLAG() != 0x0U)
+  if (__HAL_PWR_PVM_EXTI_GET_RISING_FLAG() != 0x0U)
   {
     /* Clear PVM exti pending bit */
     __HAL_PWR_PVM_EXTI_CLEAR_RISING_FLAG();
@@ -915,7 +915,7 @@ void HAL_PWREx_PVD_PVM_IRQHandler(void)
   }
 
   /* Check PWR PVM exti fallling flag */
-  if(__HAL_PWR_PVM_EXTI_GET_FALLING_FLAG() != 0x0U)
+  if (__HAL_PWR_PVM_EXTI_GET_FALLING_FLAG() != 0x0U)
   {
     /* Clear PVM exti pending bit */
     __HAL_PWR_PVM_EXTI_CLEAR_FALLING_FLAG();
@@ -955,7 +955,7 @@ __weak void HAL_PWREx_PVD_PVM_Falling_Callback(void)
 void HAL_PWREx_PVD_IRQHandler(void)
 {
   /* Check PWR exti Rising flag */
-  if(__HAL_PWR_PVD_EXTI_GET_RISING_FLAG() != 0x0U)
+  if (__HAL_PWR_PVD_EXTI_GET_RISING_FLAG() != 0x0U)
   {
     /* Clear PVD exti pending bit */
     __HAL_PWR_PVD_EXTI_CLEAR_RISING_FLAG();
@@ -965,7 +965,7 @@ void HAL_PWREx_PVD_IRQHandler(void)
   }
 
   /* Check PWR exti fallling flag */
-  if(__HAL_PWR_PVD_EXTI_GET_FALLING_FLAG() != 0x0U)
+  if (__HAL_PWR_PVD_EXTI_GET_FALLING_FLAG() != 0x0U)
   {
     /* Clear PVD exti pending bit */
     __HAL_PWR_PVD_EXTI_CLEAR_FALLING_FLAG();
@@ -997,7 +997,7 @@ __weak void HAL_PWREx_PVD_Falling_Callback(void)
   */
 }
 
-#endif
+#endif /* PWR_PVD_SUPPORT && PWR_PVM_SUPPORT */
 
 /**
   * @}

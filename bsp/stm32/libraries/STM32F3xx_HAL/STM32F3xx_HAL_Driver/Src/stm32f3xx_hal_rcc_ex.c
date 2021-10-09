@@ -3,10 +3,10 @@
   * @file    stm32f3xx_hal_rcc_ex.c
   * @author  MCD Application Team
   * @brief   Extended RCC HAL module driver.
-  *          This file provides firmware functions to manage the following
+  *          This file provides firmware functions to manage the following 
   *          functionalities RCC extension peripheral:
   *           + Extended Peripheral Control functions
-  *
+  *  
   ******************************************************************************
   * @attention
   *
@@ -19,7 +19,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */
+  */ 
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
@@ -66,22 +66,22 @@ static uint32_t RCC_GetPLLCLKFreq(void);
   * @{
   */
 
-/** @defgroup RCCEx_Exported_Functions_Group1 Extended Peripheral Control functions
+/** @defgroup RCCEx_Exported_Functions_Group1 Extended Peripheral Control functions 
   * @brief    Extended Peripheral Control functions
   *
-@verbatim
+@verbatim   
  ===============================================================================
                 ##### Extended Peripheral Control functions  #####
- ===============================================================================
+ ===============================================================================  
     [..]
-    This subsection provides a set of functions allowing to control the RCC Clocks
+    This subsection provides a set of functions allowing to control the RCC Clocks 
     frequencies.
-    [..]
+    [..] 
     (@) Important note: Care must be taken when HAL_RCCEx_PeriphCLKConfig() is used to
-        select the RTC clock source; in this case the Backup domain will be reset in
-        order to modify the RTC Clock source, as consequence RTC registers (including
+        select the RTC clock source; in this case the Backup domain will be reset in  
+        order to modify the RTC Clock source, as consequence RTC registers (including 
         the backup registers) are set to their reset values.
-
+      
 @endverbatim
   * @{
   */
@@ -93,12 +93,12 @@ static uint32_t RCC_GetPLLCLKFreq(void);
   *         contains the configuration information for the Extended Peripherals clocks
   *         (ADC, CEC, I2C, I2S, SDADC, HRTIM, TIM, USART, RTC and USB).
   *
-  * @note   Care must be taken when HAL_RCCEx_PeriphCLKConfig() is used to select
-  *         the RTC clock source; in this case the Backup domain will be reset in
-  *         order to modify the RTC Clock source, as consequence RTC registers (including
+  * @note   Care must be taken when HAL_RCCEx_PeriphCLKConfig() is used to select 
+  *         the RTC clock source; in this case the Backup domain will be reset in  
+  *         order to modify the RTC Clock source, as consequence RTC registers (including 
   *         the backup registers) and RCC_BDCR register are set to their reset values.
   *
-  * @note   When the TIMx clock source is APB clock, so the TIMx clock is APB clock or
+  * @note   When the TIMx clock source is APB clock, so the TIMx clock is APB clock or 
   *         APB clock x 2 depending on the APB prescaler.
   *         When the TIMx clock source is PLL clock, so the TIMx clock is PLL clock x 2.
   *
@@ -109,10 +109,10 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
   uint32_t tickstart = 0U;
   uint32_t temp_reg = 0U;
   FlagStatus       pwrclkchanged = RESET;
-
+    
   /* Check the parameters */
   assert_param(IS_RCC_PERIPHCLOCK(PeriphClkInit->PeriphClockSelection));
-
+  
   /*---------------------------- RTC configuration -------------------------------*/
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_RTC) == (RCC_PERIPHCLK_RTC))
   {
@@ -120,7 +120,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
     assert_param(IS_RCC_RTCCLKSOURCE(PeriphClkInit->RTCClockSelection));
 
 
-    /* As soon as function is called to change RTC clock source, activation of the
+    /* As soon as function is called to change RTC clock source, activation of the 
        power domain is done. */
     /* Requires to enable write access to Backup Domain of necessary */
     if(__HAL_RCC_PWR_IS_CLK_DISABLED())
@@ -128,15 +128,15 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
       __HAL_RCC_PWR_CLK_ENABLE();
       pwrclkchanged = SET;
     }
-
+    
     if(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
     {
       /* Enable write access to Backup domain */
       SET_BIT(PWR->CR, PWR_CR_DBP);
-
+      
       /* Wait for Backup domain Write protection disable */
       tickstart = HAL_GetTick();
-
+      
       while(HAL_IS_BIT_CLR(PWR->CR, PWR_CR_DBP))
       {
           if((HAL_GetTick() - tickstart) > RCC_DBP_TIMEOUT_VALUE)
@@ -145,8 +145,8 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
         }
       }
     }
-
-    /* Reset the Backup domain only if the RTC Clock source selection is modified from reset value */
+    
+    /* Reset the Backup domain only if the RTC Clock source selection is modified from reset value */ 
     temp_reg = (RCC->BDCR & RCC_BDCR_RTCSEL);
     if((temp_reg != 0x00000000U) && (temp_reg != (PeriphClkInit->RTCClockSelection & RCC_BDCR_RTCSEL)))
     {
@@ -157,24 +157,24 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
       __HAL_RCC_BACKUPRESET_RELEASE();
       /* Restore the Content of BDCR register */
       RCC->BDCR = temp_reg;
-
+    
       /* Wait for LSERDY if LSE was enabled */
       if (HAL_IS_BIT_SET(temp_reg, RCC_BDCR_LSEON))
       {
         /* Get Start Tick */
         tickstart = HAL_GetTick();
-
-        /* Wait till LSE is ready */
+        
+        /* Wait till LSE is ready */  
         while(__HAL_RCC_GET_FLAG(RCC_FLAG_LSERDY) == RESET)
         {
             if((HAL_GetTick() - tickstart) > RCC_LSE_TIMEOUT_VALUE)
           {
             return HAL_TIMEOUT;
-          }
-        }
+          }      
+        }  
       }
     }
-    __HAL_RCC_RTC_CONFIG(PeriphClkInit->RTCClockSelection);
+    __HAL_RCC_RTC_CONFIG(PeriphClkInit->RTCClockSelection); 
 
     /* Require to disable power clock if necessary */
     if(pwrclkchanged == SET)
@@ -188,41 +188,41 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
   {
     /* Check the parameters */
     assert_param(IS_RCC_USART1CLKSOURCE(PeriphClkInit->Usart1ClockSelection));
-
+    
     /* Configure the USART1 clock source */
     __HAL_RCC_USART1_CONFIG(PeriphClkInit->Usart1ClockSelection);
   }
 
 #if defined(RCC_CFGR3_USART2SW)
-  /*----------------------------- USART2 Configuration --------------------------*/
+  /*----------------------------- USART2 Configuration --------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_USART2) == RCC_PERIPHCLK_USART2)
   {
     /* Check the parameters */
     assert_param(IS_RCC_USART2CLKSOURCE(PeriphClkInit->Usart2ClockSelection));
-
+    
     /* Configure the USART2 clock source */
     __HAL_RCC_USART2_CONFIG(PeriphClkInit->Usart2ClockSelection);
   }
 #endif /* RCC_CFGR3_USART2SW */
 
 #if defined(RCC_CFGR3_USART3SW)
-  /*------------------------------ USART3 Configuration ------------------------*/
+  /*------------------------------ USART3 Configuration ------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_USART3) == RCC_PERIPHCLK_USART3)
   {
     /* Check the parameters */
     assert_param(IS_RCC_USART3CLKSOURCE(PeriphClkInit->Usart3ClockSelection));
-
+    
     /* Configure the USART3 clock source */
     __HAL_RCC_USART3_CONFIG(PeriphClkInit->Usart3ClockSelection);
   }
 #endif /* RCC_CFGR3_USART3SW */
 
-  /*------------------------------ I2C1 Configuration ------------------------*/
+  /*------------------------------ I2C1 Configuration ------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_I2C1) == RCC_PERIPHCLK_I2C1)
   {
     /* Check the parameters */
     assert_param(IS_RCC_I2C1CLKSOURCE(PeriphClkInit->I2c1ClockSelection));
-
+    
     /* Configure the I2C1 clock source */
     __HAL_RCC_I2C1_CONFIG(PeriphClkInit->I2c1ClockSelection);
   }
@@ -231,12 +231,12 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
  || defined(STM32F302xC) || defined(STM32F303xC)\
  || defined(STM32F302x8)                        \
  || defined(STM32F373xC)
-  /*------------------------------ USB Configuration ------------------------*/
+  /*------------------------------ USB Configuration ------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_USB) == RCC_PERIPHCLK_USB)
   {
     /* Check the parameters */
     assert_param(IS_RCC_USBCLKSOURCE(PeriphClkInit->USBClockSelection));
-
+    
     /* Configure the USB clock source */
     __HAL_RCC_USB_CONFIG(PeriphClkInit->USBClockSelection);
   }
@@ -251,12 +251,12 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
  || defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)\
  || defined(STM32F373xC) || defined(STM32F378xx)
 
-  /*------------------------------ I2C2 Configuration ------------------------*/
+  /*------------------------------ I2C2 Configuration ------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_I2C2) == RCC_PERIPHCLK_I2C2)
   {
     /* Check the parameters */
     assert_param(IS_RCC_I2C2CLKSOURCE(PeriphClkInit->I2c2ClockSelection));
-
+    
     /* Configure the I2C2 clock source */
     __HAL_RCC_I2C2_CONFIG(PeriphClkInit->I2c2ClockSelection);
   }
@@ -265,41 +265,41 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
        /* STM32F301x8 || STM32F302x8 || STM32F318xx || */
        /* STM32F373xC || STM32F378xx                   */
-
+  
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)\
  || defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 
-  /*------------------------------ I2C3 Configuration ------------------------*/
+  /*------------------------------ I2C3 Configuration ------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_I2C3) == RCC_PERIPHCLK_I2C3)
   {
     /* Check the parameters */
     assert_param(IS_RCC_I2C3CLKSOURCE(PeriphClkInit->I2c3ClockSelection));
-
+    
     /* Configure the I2C3 clock source */
     __HAL_RCC_I2C3_CONFIG(PeriphClkInit->I2c3ClockSelection);
   }
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
        /* STM32F301x8 || STM32F302x8 || STM32F318xx    */
-
+  
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)\
  || defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx)
 
-  /*------------------------------ UART4 Configuration ------------------------*/
+  /*------------------------------ UART4 Configuration ------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_UART4) == RCC_PERIPHCLK_UART4)
   {
     /* Check the parameters */
     assert_param(IS_RCC_UART4CLKSOURCE(PeriphClkInit->Uart4ClockSelection));
-
+    
     /* Configure the UART4 clock source */
     __HAL_RCC_UART4_CONFIG(PeriphClkInit->Uart4ClockSelection);
   }
 
-  /*------------------------------ UART5 Configuration ------------------------*/
+  /*------------------------------ UART5 Configuration ------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_UART5) == RCC_PERIPHCLK_UART5)
   {
     /* Check the parameters */
     assert_param(IS_RCC_UART5CLKSOURCE(PeriphClkInit->Uart5ClockSelection));
-
+    
     /* Configure the UART5 clock source */
     __HAL_RCC_UART5_CONFIG(PeriphClkInit->Uart5ClockSelection);
   }
@@ -310,12 +310,12 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)\
  || defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx)\
  || defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
-  /*------------------------------ I2S Configuration ------------------------*/
+  /*------------------------------ I2S Configuration ------------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_I2S) == RCC_PERIPHCLK_I2S)
   {
     /* Check the parameters */
     assert_param(IS_RCC_I2SCLKSOURCE(PeriphClkInit->I2sClockSelection));
-
+    
     /* Configure the I2S clock source */
     __HAL_RCC_I2S_CONFIG(PeriphClkInit->I2sClockSelection);
   }
@@ -323,48 +323,48 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
        /* STM32F301x8 || STM32F302x8 || STM32F318xx    */
-
+  
 #if defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
-
-  /*------------------------------ ADC1 clock Configuration ------------------*/
+      
+  /*------------------------------ ADC1 clock Configuration ------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_ADC1) == RCC_PERIPHCLK_ADC1)
   {
     /* Check the parameters */
     assert_param(IS_RCC_ADC1PLLCLK_DIV(PeriphClkInit->Adc1ClockSelection));
-
+    
     /* Configure the ADC1 clock source */
     __HAL_RCC_ADC1_CONFIG(PeriphClkInit->Adc1ClockSelection);
   }
 
 #endif /* STM32F301x8 || STM32F302x8 || STM32F318xx */
-
+  
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)\
  || defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx)\
  || defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx)
-
-  /*------------------------------ ADC1 & ADC2 clock Configuration -------------*/
+      
+  /*------------------------------ ADC1 & ADC2 clock Configuration -------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_ADC12) == RCC_PERIPHCLK_ADC12)
   {
     /* Check the parameters */
     assert_param(IS_RCC_ADC12PLLCLK_DIV(PeriphClkInit->Adc12ClockSelection));
-
+    
     /* Configure the ADC12 clock source */
     __HAL_RCC_ADC12_CONFIG(PeriphClkInit->Adc12ClockSelection);
   }
 
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
-       /* STM32F303x8 || STM32F334x8 || STM32F328xx    */
-
+       /* STM32F303x8 || STM32F334x8 || STM32F328xx    */    
+  
 #if defined(STM32F303xE) || defined(STM32F398xx)\
  || defined(STM32F303xC) || defined(STM32F358xx)
 
-  /*------------------------------ ADC3 & ADC4 clock Configuration -------------*/
+  /*------------------------------ ADC3 & ADC4 clock Configuration -------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_ADC34) == RCC_PERIPHCLK_ADC34)
   {
     /* Check the parameters */
     assert_param(IS_RCC_ADC34PLLCLK_DIV(PeriphClkInit->Adc34ClockSelection));
-
+    
     /* Configure the ADC34 clock source */
     __HAL_RCC_ADC34_CONFIG(PeriphClkInit->Adc34ClockSelection);
   }
@@ -373,13 +373,13 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
        /* STM32F303xC || STM32F358xx    */
 
 #if defined(STM32F373xC) || defined(STM32F378xx)
-
-  /*------------------------------ ADC1 clock Configuration ------------------*/
+      
+  /*------------------------------ ADC1 clock Configuration ------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_ADC1) == RCC_PERIPHCLK_ADC1)
   {
     /* Check the parameters */
     assert_param(IS_RCC_ADC1PCLK2_DIV(PeriphClkInit->Adc1ClockSelection));
-
+    
     /* Configure the ADC1 clock source */
     __HAL_RCC_ADC1_CONFIG(PeriphClkInit->Adc1ClockSelection);
   }
@@ -391,12 +391,12 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
  || defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx)\
  || defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 
-  /*------------------------------ TIM1 clock Configuration ----------------*/
+  /*------------------------------ TIM1 clock Configuration ----------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM1) == RCC_PERIPHCLK_TIM1)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM1CLKSOURCE(PeriphClkInit->Tim1ClockSelection));
-
+    
     /* Configure the TIM1 clock source */
     __HAL_RCC_TIM1_CONFIG(PeriphClkInit->Tim1ClockSelection);
   }
@@ -405,16 +405,16 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
        /* STM32F303x8 || STM32F334x8 || STM32F328xx || */
        /* STM32F301x8 || STM32F302x8 || STM32F318xx    */
-
+  
 #if defined(STM32F303xE) || defined(STM32F398xx)\
  || defined(STM32F303xC) || defined(STM32F358xx)
 
-  /*------------------------------ TIM8 clock Configuration ----------------*/
+  /*------------------------------ TIM8 clock Configuration ----------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM8) == RCC_PERIPHCLK_TIM8)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM8CLKSOURCE(PeriphClkInit->Tim8ClockSelection));
-
+    
     /* Configure the TIM8 clock source */
     __HAL_RCC_TIM8_CONFIG(PeriphClkInit->Tim8ClockSelection);
   }
@@ -424,32 +424,32 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 
 #if defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 
-  /*------------------------------ TIM15 clock Configuration ----------------*/
+  /*------------------------------ TIM15 clock Configuration ----------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM15) == RCC_PERIPHCLK_TIM15)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM15CLKSOURCE(PeriphClkInit->Tim15ClockSelection));
-
+    
     /* Configure the TIM15 clock source */
     __HAL_RCC_TIM15_CONFIG(PeriphClkInit->Tim15ClockSelection);
   }
 
-  /*------------------------------ TIM16 clock Configuration ----------------*/
+  /*------------------------------ TIM16 clock Configuration ----------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM16) == RCC_PERIPHCLK_TIM16)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM16CLKSOURCE(PeriphClkInit->Tim16ClockSelection));
-
+    
     /* Configure the TIM16 clock source */
     __HAL_RCC_TIM16_CONFIG(PeriphClkInit->Tim16ClockSelection);
   }
 
-  /*------------------------------ TIM17 clock Configuration ----------------*/
+  /*------------------------------ TIM17 clock Configuration ----------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM17) == RCC_PERIPHCLK_TIM17)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM17CLKSOURCE(PeriphClkInit->Tim17ClockSelection));
-
+    
     /* Configure the TIM17 clock source */
     __HAL_RCC_TIM17_CONFIG(PeriphClkInit->Tim17ClockSelection);
   }
@@ -458,12 +458,12 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 
 #if defined(STM32F334x8)
 
-  /*------------------------------ HRTIM1 clock Configuration ----------------*/
+  /*------------------------------ HRTIM1 clock Configuration ----------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_HRTIM1) == RCC_PERIPHCLK_HRTIM1)
   {
     /* Check the parameters */
     assert_param(IS_RCC_HRTIM1CLKSOURCE(PeriphClkInit->Hrtim1ClockSelection));
-
+    
     /* Configure the HRTIM1 clock source */
     __HAL_RCC_HRTIM1_CONFIG(PeriphClkInit->Hrtim1ClockSelection);
   }
@@ -471,96 +471,96 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 #endif /* STM32F334x8 */
 
 #if defined(STM32F373xC) || defined(STM32F378xx)
-
-  /*------------------------------ SDADC clock Configuration -------------------*/
+  
+  /*------------------------------ SDADC clock Configuration -------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_SDADC) == RCC_PERIPHCLK_SDADC)
   {
     /* Check the parameters */
     assert_param(IS_RCC_SDADCSYSCLK_DIV(PeriphClkInit->SdadcClockSelection));
-
+    
     /* Configure the SDADC clock prescaler */
     __HAL_RCC_SDADC_CONFIG(PeriphClkInit->SdadcClockSelection);
   }
 
-  /*------------------------------ CEC clock Configuration -------------------*/
+  /*------------------------------ CEC clock Configuration -------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_CEC) == RCC_PERIPHCLK_CEC)
   {
     /* Check the parameters */
     assert_param(IS_RCC_CECCLKSOURCE(PeriphClkInit->CecClockSelection));
-
+    
     /* Configure the CEC clock source */
     __HAL_RCC_CEC_CONFIG(PeriphClkInit->CecClockSelection);
   }
 
 #endif /* STM32F373xC || STM32F378xx */
-
+  
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)
-
-  /*------------------------------ TIM2 clock Configuration -------------------*/
+  
+  /*------------------------------ TIM2 clock Configuration -------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM2) == RCC_PERIPHCLK_TIM2)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM2CLKSOURCE(PeriphClkInit->Tim2ClockSelection));
-
+    
     /* Configure the CEC clock source */
     __HAL_RCC_TIM2_CONFIG(PeriphClkInit->Tim2ClockSelection);
   }
 
-  /*------------------------------ TIM3 clock Configuration -------------------*/
+  /*------------------------------ TIM3 clock Configuration -------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM34) == RCC_PERIPHCLK_TIM34)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM3CLKSOURCE(PeriphClkInit->Tim34ClockSelection));
-
+    
     /* Configure the CEC clock source */
     __HAL_RCC_TIM34_CONFIG(PeriphClkInit->Tim34ClockSelection);
   }
 
-  /*------------------------------ TIM15 clock Configuration ------------------*/
+  /*------------------------------ TIM15 clock Configuration ------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM15) == RCC_PERIPHCLK_TIM15)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM15CLKSOURCE(PeriphClkInit->Tim15ClockSelection));
-
+    
     /* Configure the CEC clock source */
     __HAL_RCC_TIM15_CONFIG(PeriphClkInit->Tim15ClockSelection);
   }
 
-  /*------------------------------ TIM16 clock Configuration ------------------*/
+  /*------------------------------ TIM16 clock Configuration ------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM16) == RCC_PERIPHCLK_TIM16)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM16CLKSOURCE(PeriphClkInit->Tim16ClockSelection));
-
+    
     /* Configure the CEC clock source */
     __HAL_RCC_TIM16_CONFIG(PeriphClkInit->Tim16ClockSelection);
   }
 
-  /*------------------------------ TIM17 clock Configuration ------------------*/
+  /*------------------------------ TIM17 clock Configuration ------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM17) == RCC_PERIPHCLK_TIM17)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM17CLKSOURCE(PeriphClkInit->Tim17ClockSelection));
-
+    
     /* Configure the CEC clock source */
     __HAL_RCC_TIM17_CONFIG(PeriphClkInit->Tim17ClockSelection);
   }
 
-#endif /* STM32F302xE || STM32F303xE || STM32F398xx */
+#endif /* STM32F302xE || STM32F303xE || STM32F398xx */  
 
 #if defined(STM32F303xE) || defined(STM32F398xx)
-  /*------------------------------ TIM20 clock Configuration ------------------*/
+  /*------------------------------ TIM20 clock Configuration ------------------*/ 
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_TIM20) == RCC_PERIPHCLK_TIM20)
   {
     /* Check the parameters */
     assert_param(IS_RCC_TIM20CLKSOURCE(PeriphClkInit->Tim20ClockSelection));
-
+    
     /* Configure the CEC clock source */
     __HAL_RCC_TIM20_CONFIG(PeriphClkInit->Tim20ClockSelection);
   }
-#endif /* STM32F303xE || STM32F398xx */
+#endif /* STM32F303xE || STM32F398xx */  
 
-
+  
   return HAL_OK;
 }
 
@@ -583,7 +583,7 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
   PeriphClkInit->PeriphClockSelection = RCC_PERIPHCLK_USART1 | \
                                         RCC_PERIPHCLK_I2C1   | RCC_PERIPHCLK_RTC;
 #endif /* RCC_CFGR3_USART2SW && RCC_CFGR3_USART3SW */
-
+  
   /* Get the RTC configuration --------------------------------------------*/
   PeriphClkInit->RTCClockSelection = __HAL_RCC_GET_RTC_SOURCE();
   /* Get the USART1 clock configuration --------------------------------------------*/
@@ -626,7 +626,7 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
        /* STM32F301x8 || STM32F302x8 || STM32F318xx || */
        /* STM32F373xC || STM32F378xx                   */
-
+  
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)\
     || defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 
@@ -636,7 +636,7 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
 
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
        /* STM32F301x8 || STM32F302x8 || STM32F318xx    */
-
+  
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx)\
     || defined(STM32F302xC) || defined(STM32F303xC) ||defined(STM32F358xx)
 
@@ -660,10 +660,10 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
        /* STM32F301x8 || STM32F302x8 || STM32F318xx || */
-
+  
 #if defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)\
     || defined(STM32F373xC) || defined(STM32F378xx)
-
+      
   PeriphClkInit->PeriphClockSelection |= RCC_PERIPHCLK_ADC1;
   /* Get the ADC1 clock configuration -----------------------------------------*/
   PeriphClkInit->Adc1ClockSelection = __HAL_RCC_GET_ADC1_SOURCE();
@@ -706,7 +706,7 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
        /* STM32F303x8 || STM32F334x8 || STM32F328xx || */
        /* STM32F301x8 || STM32F302x8 || STM32F318xx    */
-
+  
 #if defined(STM32F303xE) || defined(STM32F398xx)\
     || defined(STM32F303xC) || defined(STM32F358xx)
 
@@ -772,7 +772,7 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
   PeriphClkInit->Tim17ClockSelection = __HAL_RCC_GET_TIM17_SOURCE();
 
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx */
-
+  
 #if defined (STM32F303xE) || defined(STM32F398xx)
   PeriphClkInit->PeriphClockSelection |= RCC_PERIPHCLK_TIM20;
   /* Get the TIM20 clock configuration -----------------------------------------*/
@@ -958,7 +958,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
 
   /* Check the parameters */
   assert_param(IS_RCC_PERIPHCLOCK(PeriphClk));
-
+  
   switch (PeriphClk)
   {
   case RCC_PERIPHCLK_RTC:
@@ -1505,7 +1505,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
       break;
     }
 #endif /* RCC_CFGR3_CECSW */
-  default:
+  default: 
     {
       break;
     }
@@ -1570,11 +1570,11 @@ static uint32_t RCC_GetPLLCLKFreq(void)
   */
 
 #endif /* RCC_CFGR2_ADC1PRES || RCC_CFGR2_ADCPRExx || RCC_CFGR3_TIMxSW || RCC_CFGR3_HRTIM1SW || RCC_CFGR_USBPRE */
-
+  
 /**
   * @}
   */
-
+  
 #endif /* HAL_RCC_MODULE_ENABLED */
 
 /**

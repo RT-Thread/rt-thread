@@ -1075,7 +1075,7 @@ __STATIC_INLINE uint32_t LL_SPI_DMA_GetRegAddr(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint8_t LL_SPI_ReceiveData8(SPI_TypeDef *SPIx)
 {
-  return (uint8_t)(READ_REG(SPIx->DR));
+  return (*((__IO uint8_t *)&SPIx->DR));
 }
 
 /**

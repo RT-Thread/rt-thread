@@ -11,27 +11,21 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="_htmresc/mini-st_2020.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <link rel="icon" type="image/x-icon" href="_htmresc/favicon.png" />
 </head>
 <body>
 <div class="row">
 <div class="col-sm-12 col-lg-4">
-<div class="card fluid">
-<div class="sectione dark">
 <center>
-<h1 id="release-notes-for-stm32wbxx-hal-drivers"><small>Release Notes for</small> STM32WBxx HAL Drivers</h1>
-<p>Copyright © 2019 STMicroelectronics<br />
-</p>
-<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo.png" alt="ST logo" /></a>
+<h1 id="release-notes-for">Release Notes for</h1>
+<h1 id="stm32wbxx-hal-drivers"><mark>STM32WBxx HAL Drivers</mark></h1>
+<p>Copyright © 2019 STMicroelectronics</p>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo_2020.png" alt="ST logo" /></a>
 </center>
-</div>
-</div>
-<h1 id="license">License</h1>
-<p>This software component is licensed by ST under BSD 3-Clause license, the “License”; You may not use this component except in compliance with the License. You may obtain a copy of the License at:</p>
-<p><a href="https://opensource.org/licenses/BSD-3-Clause">https://opensource.org/licenses/BSD-3-Clause</a></p>
 <h1 id="purpose">Purpose</h1>
 <p>The STM32Cube HAL and LL, an STM32 abstraction layer embedded software, ensure maximized portability across STM32 portfolio.</p>
 <p>The Portable APIs layer provides a generic, multi instanced and simple set of APIs to interact with the upper layer (application, libraries and stacks). It is composed of native and extended APIs set. It is directly built around a generic architecture and allows the build-upon layers, like the middleware layer, to implement its functions without knowing in-depth the used STM32 device. This improves the library code reusability and guarantees an easy portability on other devices and STM32 families.</p>
@@ -46,9 +40,134 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section9" checked aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">v1.8.0 / 12-February-2021</label>
+<input type="checkbox" id="collapse-section10" checked aria-hidden="true"> <label for="collapse-section10" aria-hidden="true">V1.9.0 / 24-June-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>Maintenance release of <strong>HAL and Low Layer</strong> drivers to include latest corrections</li>
+<li>Update of HAL SMBUS driver to introduce fast mode and fast mode plus
+<ul>
+<li>Add extension files stm32wbxx_hal_smbus_ex.h/.c for new APIs:
+<ul>
+<li><em>HAL_SMBUSEx_EnableFastModePlus()</em></li>
+<li><em>HAL_SMBUSEx_DisableFastModePlus()</em></li>
+</ul></li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<h2 id="contents">Contents</h2>
+<h3 id="hal-drivers-updates"><strong>HAL Drivers</strong> updates</h3>
+<ul>
+<li><strong>HAL CORTEX</strong> driver
+<ul>
+<li>Disable the smallest MPU region sizes (32B, 64B, 128B) within M0+ context</li>
+</ul></li>
+<li><strong>HAL CRYP</strong> driver
+<ul>
+<li>Update HAL_CRYP_InCpltCallback() API to fix an incorrect condition call at resumption time</li>
+<li>Update CRYP_AESCCM_Process_IT() to fix incorrect CCM header length management when data are fed to the peripheral under interrupt</li>
+</ul></li>
+<li><strong>HAL EXTI</strong> driver
+<ul>
+<li>Update HAL_EXTI_GetConfigLine() to set default configuration value of Trigger and GPIOSel before checking each corresponding register</li>
+</ul></li>
+<li><strong>HAL FLASH</strong> driver
+<ul>
+<li>Add new __HAL_FLASH_ECC_CPUID() macro to get the Bus-ID of the CPU access causing the ECC failure</li>
+</ul></li>
+<li><strong>HAL GPIO</strong> driver
+<ul>
+<li>Update HAL_GPIO_Init() function to avoid the configuration of PUPDR register when Analog mode is selected</li>
+</ul></li>
+<li><strong>HAL I2C</strong> driver
+<ul>
+<li>Updated I2C_IsAcknowledgeFailed() to avoid keeping I2C in busy state if NACK is received after transmitting register address</li>
+</ul></li>
+<li><strong>HAL IWDG</strong> driver
+<ul>
+<li>Add LSI startup time in default IWDG timeout calculation (HAL_IWDG_DEFAULT_TIMEOUT)</li>
+<li>Update HAL_IWDG_Init() API in order to fix HAL_GetTick() timeout vulnerability issue</li>
+</ul></li>
+<li><strong>HAL RCC</strong> driver
+<ul>
+<li>Update definition of IS_RCC_OSCILLATORTYPE() macro</li>
+<li>Update IS_RCC_PERIPHCLOCK() macro definition depending on targeted derivative</li>
+<li>Add new API HAL_RCC_GetResetSource() to get all reset sources and clear flags for next reset</li>
+</ul></li>
+<li><strong>HAL RTC</strong> driver
+<ul>
+<li>Add new API HAL_RTC_DST_Add1Hour() to add 1 hour without going through the initialization procedure</li>
+<li>Add new API HAL_RTC_DST_Sub1Hour() to subtract 1 hour without going through the initialization procedure</li>
+<li>Add new API HAL_RTC_DST_SetStoreOperation() to memorize the Daylight Saving Time status without going through the initialization procedure</li>
+<li>Add new API HAL_RTC_DST_ClearStoreOperation() to clear the Daylight Saving Time status without going through the initialization procedure</li>
+<li>Add new API HAL_RTC_DST_ReadStoreOperation() to read the Daylight Saving Time status</li>
+<li>Fields DayLightSaving and StoreOperation in RTC_TimeTypeDef structure are deprecated</li>
+</ul></li>
+<li><strong>HAL RNG</strong> driver
+<ul>
+<li>Update timeout mechanism to avoid false timeout detection in case of preemption</li>
+</ul></li>
+<li><strong>HAL SMBUS</strong> driver
+<ul>
+<li>Add support for Fast Mode Plus to be SMBUS Rev3 compliant.
+<ul>
+<li>Add HAL_SMBUSEx_EnableFastModePlus() and HAL_SMBUSEx_DisableFastModePlus() APIs to manage Fm+.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SPI</strong> driver
+<ul>
+<li>Update in SPI_WaitFifoStateUntilTimeout() to fix code optimization issue</li>
+<li>Update to fix MISRA-C 2012 Rule-13.2 issue</li>
+</ul></li>
+<li><strong>HAL UART</strong> driver
+<ul>
+<li>Fix erroneous UART’s handle state in case of error returned after DMA reception start within UART_Start_Receive_DMA()</li>
+<li>Update UART ReceptionType management in case of ReceptionToIdle API are called from RxEvent callback</li>
+<li>Handling of UART concurrent register access in case of race condition between Tx and Rx transfers</li>
+</ul></li>
+<li><strong>HAL USB</strong> driver
+<ul>
+<li>Add fix transfer complete for IN Interrupt transaction in single buffer mode</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<h3 id="ll-drivers-updates"><strong>LL Drivers</strong> updates</h3>
+<ul>
+<li><strong>LL DMA</strong> driver
+<ul>
+<li>Update LL_DMA_ClearFlag_GIx() functions description to inform use not to clear GIx when channel is ON</li>
+</ul></li>
+<li><strong>LL RTC</strong> driver
+<ul>
+<li>Fix race condition in LL_RTC_WaitForSynchro() function</li>
+<li>Fix wrong reference of RTC instance in LL_RTC_TIME_Init() and LL_RTC_DATE_Init() functions</li>
+</ul></li>
+<li><strong>LL SPI</strong> driver
+<ul>
+<li>Update LL_SPI_TransmitData8() to avoid casting the result to 8 bits</li>
+<li>Updated to set the FRXTH bit for 8bit data for LL_SPI_Init() API</li>
+</ul></li>
+<li><strong>LL LPUART</strong> driver
+<ul>
+<li>Handling of UART concurrent register access in case of race condition between Tx and Rx transfers</li>
+</ul></li>
+<li><strong>LL USART</strong> driver
+<ul>
+<li>Handling of UART concurrent register access in case of race condition between Tx and Rx transfers</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<h2 id="backward-compatibility">Backward Compatibility</h2>
+<p>This release is compatible with the previous versions.</p>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">v1.8.0 / 12-February-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <h3 id="add-support-for-stm32wb15xx-and-stm32wb10xx">Add support for STM32WB15xx and STM32WB10xx</h3>
 <table>
 <thead>
@@ -184,14 +303,14 @@
 </tr>
 </tbody>
 </table>
-<h2 id="backward-compatibility">Backward Compatibility</h2>
+<h2 id="backward-compatibility-1">Backward Compatibility</h2>
 <p>This release is compatible with the previous versions.</p>
 </div>
 </div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section8"  aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">v1.7.0 / 30-October-2020</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <h3 id="maitenance-release">Maitenance release</h3>
 <p>All peripheral</p>
 <table>
@@ -264,14 +383,14 @@
 </tr>
 </tbody>
 </table>
-<h2 id="backward-compatibility-1">Backward Compatibility</h2>
+<h2 id="backward-compatibility-2">Backward Compatibility</h2>
 <p>This release is compatible with the previous versions.</p>
 </div>
 </div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">v1.6.0 / 05-June-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <h3 id="maitenance-release-1">Maitenance release</h3>
 <p>All peripheral</p>
 <table>
@@ -376,14 +495,14 @@
 </tr>
 </tbody>
 </table>
-<h2 id="backward-compatibility-2">Backward Compatibility</h2>
+<h2 id="backward-compatibility-3">Backward Compatibility</h2>
 <p>This release is compatible with the previous versions.</p>
 </div>
 </div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">v1.5.0 / 12-February-2020</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <h3 id="introduction-of-stm32wb5m-stm32wb35xx-and-stm32wb30xx-product">Introduction of STM32WB5M, STM32WB35xx and STM32WB30xx product</h3>
 <p>This release introduce the support of STM32WB5Mxx, STM32WB35xx product and its value line STM32WB30xx.</p>
 <p>Added features:</p>
@@ -428,14 +547,14 @@
 </tr>
 </tbody>
 </table>
-<h2 id="backward-compatibility-3">Backward Compatibility</h2>
+<h2 id="backward-compatibility-4">Backward Compatibility</h2>
 <p>This release is compatible with the previous versions.</p>
 </div>
 </div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section5"  aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">v1.4.0 / 15-December-2019</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <h3 id="maitenance-release-2">Maitenance release</h3>
 <table>
 <thead>
@@ -479,7 +598,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="backward-compatibility-4">Backward Compatibility</h2>
+<h2 id="backward-compatibility-5">Backward Compatibility</h2>
 <p>This release is compatible with the previous versions.</p>
 <h2 id="dependencies">Dependencies</h2>
 <p>This software release is compatible with:</p>
@@ -489,7 +608,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">v1.3.0 / 11-September-2019</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <h3 id="maitenance-release-3">Maitenance release</h3>
 <table>
 <thead>
@@ -561,7 +680,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="backward-compatibility-5">Backward Compatibility</h2>
+<h2 id="backward-compatibility-6">Backward Compatibility</h2>
 <p>This release is compatible with the previous versions.</p>
 <h2 id="dependencies-1">Dependencies</h2>
 <p>This software release is compatible with:</p>
@@ -571,7 +690,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.2.0 / 26-June-2019</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <h3 id="stm32wb50xx-introduction-and-maintenance-release">STM32WB50xx introduction and maintenance release</h3>
 <p>First release for STM32WBxx HAL drivers introducing <strong>stm32wb50xx</strong> devices.</p>
 <table>
@@ -640,7 +759,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="backward-compatibility-6">Backward Compatibility</h2>
+<h2 id="backward-compatibility-7">Backward Compatibility</h2>
 <p>This release is compatible with the previous versions.</p>
 <h2 id="dependencies-2">Dependencies</h2>
 <p>This software release is compatible with:</p>
@@ -650,7 +769,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <h3 id="maintenance-release">Maintenance release</h3>
 <p>Maintenance release of HAL and Low layers drivers supporting STM32WB55xx devices.</p>
 <table>
@@ -704,7 +823,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="backward-compatibility-7">Backward Compatibility</h2>
+<h2 id="backward-compatibility-8">Backward Compatibility</h2>
 <p>This release is compatible with the previous versions.</p>
 <h2 id="dependencies-3">Dependencies</h2>
 <p>This software release is compatible with:</p>
@@ -714,7 +833,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1"  aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release of HAL (Hardware Abstraction Layer) and LL (Low layers) drivers to support STM32WB55xx.</p>
 </div>

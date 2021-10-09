@@ -1607,6 +1607,10 @@ __STATIC_INLINE uint32_t LL_DMA_IsActiveFlag_TE7(DMA_TypeDef *DMAx)
 
 /**
   * @brief  Clear Channel 1 global interrupt flag.
+  * @note Do not Clear Channel 1 global interrupt flag when the channel in ON.
+    Instead clear specific flags transfer complete, half transfer & transfer
+    error flag with LL_DMA_ClearFlag_TC1, LL_DMA_ClearFlag_HT1,
+    LL_DMA_ClearFlag_TE1. bug id 2.4.1 in Product Errata Sheet.
   * @rmtoll IFCR         CGIF1         LL_DMA_ClearFlag_GI1
   * @param  DMAx DMAx Instance
   * @retval None
@@ -1618,6 +1622,10 @@ __STATIC_INLINE void LL_DMA_ClearFlag_GI1(DMA_TypeDef *DMAx)
 
 /**
   * @brief  Clear Channel 2 global interrupt flag.
+  * @note Do not Clear Channel 2 global interrupt flag when the channel in ON.
+    Instead clear specific flags transfer complete, half transfer & transfer
+    error flag with LL_DMA_ClearFlag_TC2, LL_DMA_ClearFlag_HT2,
+    LL_DMA_ClearFlag_TE2. bug id 2.4.1 in Product Errata Sheet.
   * @rmtoll IFCR         CGIF2         LL_DMA_ClearFlag_GI2
   * @param  DMAx DMAx Instance
   * @retval None
@@ -1629,6 +1637,10 @@ __STATIC_INLINE void LL_DMA_ClearFlag_GI2(DMA_TypeDef *DMAx)
 
 /**
   * @brief  Clear Channel 3 global interrupt flag.
+  * @note Do not Clear Channel 3 global interrupt flag when the channel in ON.
+    Instead clear specific flags transfer complete, half transfer & transfer
+    error flag with LL_DMA_ClearFlag_TC3, LL_DMA_ClearFlag_HT3,
+    LL_DMA_ClearFlag_TE3. bug id 2.4.1 in Product Errata Sheet.
   * @rmtoll IFCR         CGIF3         LL_DMA_ClearFlag_GI3
   * @param  DMAx DMAx Instance
   * @retval None
@@ -1640,6 +1652,10 @@ __STATIC_INLINE void LL_DMA_ClearFlag_GI3(DMA_TypeDef *DMAx)
 
 /**
   * @brief  Clear Channel 4 global interrupt flag.
+  * @note Do not Clear Channel 4 global interrupt flag when the channel in ON.
+    Instead clear specific flags transfer complete, half transfer & transfer
+    error flag with LL_DMA_ClearFlag_TC4, LL_DMA_ClearFlag_HT4,
+    LL_DMA_ClearFlag_TE4. bug id 2.4.1 in Product Errata Sheet.
   * @rmtoll IFCR         CGIF4         LL_DMA_ClearFlag_GI4
   * @param  DMAx DMAx Instance
   * @retval None
@@ -1651,6 +1667,10 @@ __STATIC_INLINE void LL_DMA_ClearFlag_GI4(DMA_TypeDef *DMAx)
 
 /**
   * @brief  Clear Channel 5 global interrupt flag.
+  * @note Do not Clear Channel 5 global interrupt flag when the channel in ON.
+    Instead clear specific flags transfer complete, half transfer & transfer
+    error flag with LL_DMA_ClearFlag_TC5, LL_DMA_ClearFlag_HT5,
+    LL_DMA_ClearFlag_TE5. bug id 2.4.1 in Product Errata Sheet.
   * @rmtoll IFCR         CGIF5         LL_DMA_ClearFlag_GI5
   * @param  DMAx DMAx Instance
   * @retval None
@@ -1662,6 +1682,10 @@ __STATIC_INLINE void LL_DMA_ClearFlag_GI5(DMA_TypeDef *DMAx)
 
 /**
   * @brief  Clear Channel 6 global interrupt flag.
+  * @note Do not Clear Channel 6 global interrupt flag when the channel in ON.
+    Instead clear specific flags transfer complete, half transfer & transfer
+    error flag with LL_DMA_ClearFlag_TC6, LL_DMA_ClearFlag_HT6,
+    LL_DMA_ClearFlag_TE6. bug id 2.4.1 in Product Errata Sheet.
   * @rmtoll IFCR         CGIF6         LL_DMA_ClearFlag_GI6
   * @param  DMAx DMAx Instance
   * @retval None
@@ -1673,6 +1697,10 @@ __STATIC_INLINE void LL_DMA_ClearFlag_GI6(DMA_TypeDef *DMAx)
 
 /**
   * @brief  Clear Channel 7 global interrupt flag.
+  * @note Do not Clear Channel 7 global interrupt flag when the channel in ON.
+    Instead clear specific flags transfer complete, half transfer & transfer
+    error flag with LL_DMA_ClearFlag_TC7, LL_DMA_ClearFlag_HT7,
+    LL_DMA_ClearFlag_TE7. bug id 2.4.1 in Product Errata Sheet.
   * @rmtoll IFCR         CGIF7         LL_DMA_ClearFlag_GI7
   * @param  DMAx DMAx Instance
   * @retval None

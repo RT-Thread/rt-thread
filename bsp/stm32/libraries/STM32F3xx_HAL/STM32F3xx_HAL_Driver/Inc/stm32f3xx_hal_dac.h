@@ -27,7 +27,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal_def.h"
-
+   
 /** @addtogroup STM32F3xx_HAL_Driver
   * @{
   */
@@ -42,9 +42,9 @@
   * @{
   */
 
-/**
-  * @brief  HAL State structures definition
-  */
+/** 
+  * @brief  HAL State structures definition  
+  */ 
 typedef enum
 {
   HAL_DAC_STATE_RESET             = 0x00U,  /*!< DAC not yet initialized or disabled  */
@@ -52,44 +52,44 @@ typedef enum
   HAL_DAC_STATE_BUSY              = 0x02U,  /*!< DAC internal processing is ongoing   */
   HAL_DAC_STATE_TIMEOUT           = 0x03U,  /*!< DAC timeout state                    */
   HAL_DAC_STATE_ERROR             = 0x04U   /*!< DAC error state                      */
-
+ 
 }HAL_DAC_StateTypeDef;
-
-/**
-  * @brief   DAC Configuration regular Channel structure definition
-  */
+   
+/** 
+  * @brief   DAC Configuration regular Channel structure definition  
+  */ 
 typedef struct
 {
   uint32_t DAC_Trigger;                 /*!< Specifies the external trigger for the selected DAC channel.
                                         This parameter can be a value of @ref DACEx_trigger_selection */
-
+  
   uint32_t DAC_OutputBuffer;            /*!< Specifies whether the DAC channel output buffer is enabled or disabled.
-                                        This parameter can be a value of @ref DAC_output_buffer
-                                        For a given DAC channel, is this paramater applies then DAC_OutputSwitch
+                                        This parameter can be a value of @ref DAC_output_buffer 
+                                        For a given DAC channel, is this paramater applies then DAC_OutputSwitch 
                                         does not apply */
-
+  
   uint32_t DAC_OutputSwitch;            /*!< Specifies whether the DAC channel output switch is enabled or disabled.
-                                        This parameter can be a value of @ref DAC_OutputSwitch
-                                        For a given DAC channel, is this paramater applies then DAC_OutputBuffer
+                                        This parameter can be a value of @ref DAC_OutputSwitch 
+                                        For a given DAC channel, is this paramater applies then DAC_OutputBuffer 
                                         does not apply */
-
+  
 }DAC_ChannelConfTypeDef;
 
-/**
-  * @brief  DAC handle Structure definition
-  */
+/** 
+  * @brief  DAC handle Structure definition  
+  */ 
 typedef struct __DAC_HandleTypeDef
 {
   DAC_TypeDef                 *Instance;      /*!< Register base address             */
-
+  
   __IO HAL_DAC_StateTypeDef   State;          /*!< DAC communication state           */
 
   HAL_LockTypeDef             Lock;          /*!< DAC locking object                */
-
+  
   DMA_HandleTypeDef           *DMA_Handle1;  /*!< Pointer DMA handler for channel 1U */
-
-  DMA_HandleTypeDef           *DMA_Handle2;  /*!< Pointer DMA handler for channel 2U */
-
+  
+  DMA_HandleTypeDef           *DMA_Handle2;  /*!< Pointer DMA handler for channel 2U */ 
+  
   __IO uint32_t               ErrorCode;     /*!< DAC Error code                    */
 
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
@@ -100,10 +100,10 @@ typedef struct __DAC_HandleTypeDef
   void (* ConvCpltCallbackCh2)            (struct __DAC_HandleTypeDef* hdac);
   void (* ConvHalfCpltCallbackCh2)        (struct __DAC_HandleTypeDef* hdac);
   void (* ErrorCallbackCh2)               (struct __DAC_HandleTypeDef* hdac);
-  void (* DMAUnderrunCallbackCh2)         (struct __DAC_HandleTypeDef* hdac);
+  void (* DMAUnderrunCallbackCh2)         (struct __DAC_HandleTypeDef* hdac); 
 
   void (* MspInitCallback)                (struct __DAC_HandleTypeDef *hdac);
-  void (* MspDeInitCallback )             (struct __DAC_HandleTypeDef *hdac);
+  void (* MspDeInitCallback )             (struct __DAC_HandleTypeDef *hdac); 
 #endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 
 }DAC_HandleTypeDef;
@@ -125,8 +125,8 @@ typedef enum
   HAL_DAC_MSP_INIT_CB_ID                     = 0x08U,  /*!< DAC MspInit Callback ID           */
   HAL_DAC_MSP_DEINIT_CB_ID                   = 0x09U,  /*!< DAC MspDeInit Callback ID         */
   HAL_DAC_ALL_CB_ID                          = 0x0AU   /*!< DAC All ID                        */
-}HAL_DAC_CallbackIDTypeDef;
-
+}HAL_DAC_CallbackIDTypeDef;                            
+                                                       
 /**
   * @brief  HAL DAC Callback pointer definition
   */
@@ -151,7 +151,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 #define  HAL_DAC_ERROR_DMA               0x04U    /*!< DMA error                         */
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
 #define HAL_DAC_ERROR_INVALID_CALLBACK   0x10U    /*!< Invalid callback error            */
-#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
+#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */  
 /**
   * @}
   */
@@ -223,18 +223,18 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 
 /** @defgroup DAC_flags_definition DAC flags definition
   * @{
-  */
+  */ 
 #define DAC_FLAG_DMAUDR1                   ((uint32_t)DAC_SR_DMAUDR1)
-#define DAC_FLAG_DMAUDR2                   ((uint32_t)DAC_SR_DMAUDR2)
+#define DAC_FLAG_DMAUDR2                   ((uint32_t)DAC_SR_DMAUDR2)   
 /**
   * @}
   */
 
 /** @defgroup DAC_interrupts_definition DAC interrupts definition
   * @{
-  */
+  */ 
 #define DAC_IT_DMAUDR1                   ((uint32_t)DAC_CR_DMAUDRIE1)
-#define DAC_IT_DMAUDR2                   ((uint32_t)DAC_CR_DMAUDRIE2)
+#define DAC_IT_DMAUDR2                   ((uint32_t)DAC_CR_DMAUDRIE2) 
 
 /**
   * @}
@@ -279,7 +279,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   */
 #define __HAL_DAC_DISABLE(__HANDLE__, __DAC_Channel__) \
 ((__HANDLE__)->Instance->CR &=  ~(DAC_CR_EN1 << (__DAC_Channel__)))
-
+ 
 /** @brief Set DHR12R1 alignment
   * @param  __ALIGNMENT__ specifies the DAC alignment
   * @retval None
@@ -395,7 +395,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
                              ((ALIGN) == DAC_ALIGN_12B_L) || \
                              ((ALIGN) == DAC_ALIGN_8B_R))
 
-#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0U)
+#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0U) 
 
 
 
@@ -405,9 +405,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 
 
 /* Include DAC HAL Extended module */
-#include "stm32f3xx_hal_dac_ex.h"
+#include "stm32f3xx_hal_dac_ex.h" 
 
-/* Exported functions --------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/  
 
 /** @addtogroup DAC_Exported_Functions
   * @{
@@ -416,7 +416,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @addtogroup DAC_Exported_Functions_Group1
   * @{
   */
-/* Initialization and de-initialization functions *****************************/
+/* Initialization and de-initialization functions *****************************/ 
 HAL_StatusTypeDef HAL_DAC_Init(DAC_HandleTypeDef* hdac);
 HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef* hdac);
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac);
@@ -452,7 +452,7 @@ HAL_StatusTypeDef     HAL_DAC_UnRegisterCallback (DAC_HandleTypeDef *hdac, HAL_D
 /**
   * @}
   */
-
+  
 /** @addtogroup DAC_Exported_Functions_Group3
   * @{
   */
@@ -485,7 +485,7 @@ uint32_t HAL_DAC_GetError(DAC_HandleTypeDef *hdac);
 /**
   * @}
   */
-
+  
 #ifdef __cplusplus
 }
 #endif

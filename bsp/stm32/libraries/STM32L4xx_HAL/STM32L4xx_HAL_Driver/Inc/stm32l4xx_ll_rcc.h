@@ -1268,7 +1268,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLM_DIV_16 (*)
   *
   *         (*) value not defined in all devices.
-  * @param  __PLLN__ Between 8 and 86
+  * @param  __PLLN__ Between 8 and 86 or 127 depending on devices
   * @param  __PLLR__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLR_DIV_2
   *         @arg @ref LL_RCC_PLLR_DIV_4
@@ -1305,7 +1305,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLM_DIV_16 (*)
   *
   *         (*) value not defined in all devices.
-  * @param  __PLLN__ Between 8 and 86
+  * @param  __PLLN__ Between 8 and 86 or 127 depending on devices
   * @param  __PLLP__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLP_DIV_2
   *         @arg @ref LL_RCC_PLLP_DIV_3
@@ -1393,7 +1393,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLM_DIV_16 (*)
   *
   *         (*) value not defined in all devices.
-  * @param  __PLLN__ Between 8 and 86
+  * @param  __PLLN__ Between 8 and 86 or 127 depending on devices
   * @param  __PLLQ__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLQ_DIV_2
   *         @arg @ref LL_RCC_PLLQ_DIV_4
@@ -1428,7 +1428,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_16
-  * @param  __PLLSAI1N__ Between 8 and 86
+  * @param  __PLLSAI1N__ Between 8 and 86 or 127 depending on devices
   * @param  __PLLSAI1P__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1P_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1P_DIV_3
@@ -1481,7 +1481,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLM_DIV_6
   *         @arg @ref LL_RCC_PLLM_DIV_7
   *         @arg @ref LL_RCC_PLLM_DIV_8
-  * @param  __PLLSAI1N__ Between 8 and 86
+  * @param  __PLLSAI1N__ Between 8 and 86 or 127 depending on devices
   * @param  __PLLSAI1P__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1P_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1P_DIV_3
@@ -1569,7 +1569,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_16
-  * @param  __PLLSAI1N__ Between 8 and 86
+  * @param  __PLLSAI1N__ Between 8 and 86 or 127 depending on devices
   * @param  __PLLSAI1Q__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1Q_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1Q_DIV_4
@@ -1633,7 +1633,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_16
-  * @param  __PLLSAI1N__ Between 8 and 86
+  * @param  __PLLSAI1N__ Between 8 and 86 or 127 depending on devices
   * @param  __PLLSAI1R__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1R_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1R_DIV_4
@@ -1698,7 +1698,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_16
-  * @param  __PLLSAI2N__ Between 8 and 86
+  * @param  __PLLSAI2N__ Between 8 and 86 or 127 depending on devices
   * @param  __PLLSAI2P__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI2P_DIV_2
   *         @arg @ref LL_RCC_PLLSAI2P_DIV_3
@@ -1751,7 +1751,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLM_DIV_6
   *         @arg @ref LL_RCC_PLLM_DIV_7
   *         @arg @ref LL_RCC_PLLM_DIV_8
-  * @param  __PLLSAI2N__ Between 8 and 86
+  * @param  __PLLSAI2N__ Between 8 and 86 or 127 depending on devices
   * @param  __PLLSAI2P__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI2P_DIV_2
   *         @arg @ref LL_RCC_PLLSAI2P_DIV_3
@@ -1839,7 +1839,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_16
-  * @param  __PLLSAI2N__ Between 8 and 86
+  * @param  __PLLSAI2N__ Between 8 and 127
   * @param  __PLLSAI2R__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI2R_DIV_2
   *         @arg @ref LL_RCC_PLLSAI2R_DIV_4
@@ -1907,7 +1907,7 @@ typedef struct
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_16
-  * @param  __PLLSAI2N__ Between 8 and 86
+  * @param  __PLLSAI2N__ Between 8 and 127
   * @param  __PLLSAI2Q__ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI2Q_DIV_2
   *         @arg @ref LL_RCC_PLLSAI2Q_DIV_4
@@ -2181,10 +2181,11 @@ __STATIC_INLINE uint32_t LL_RCC_HSI_GetCalibration(void)
 /**
   * @brief  Set HSI Calibration trimming
   * @note user-programmable trimming value that is added to the HSICAL
-  * @note Default value is 16, which, when added to the HSICAL value,
-  *       should trim the HSI to 16 MHz +/- 1 %
+  * @note Default value is 16 on STM32L43x/STM32L44x/STM32L47x/STM32L48x or 64 on other devices,
+  *       which, when added to the HSICAL value, should trim the HSI to 16 MHz +/- 1 %
   * @rmtoll ICSCR        HSITRIM       LL_RCC_HSI_SetCalibTrimming
-  * @param  Value Between Min_Data = 0 and Max_Data = 31
+  * @param  Value Between Min_Data = 0 and Max_Data = 31 on STM32L43x/STM32L44x/STM32L47x/STM32L48x or
+  *               between Min_Data = 0 and Max_Data = 127 on other devices
   * @retval None
   */
 __STATIC_INLINE void LL_RCC_HSI_SetCalibTrimming(uint32_t Value)
@@ -2195,7 +2196,8 @@ __STATIC_INLINE void LL_RCC_HSI_SetCalibTrimming(uint32_t Value)
 /**
   * @brief  Get HSI Calibration trimming
   * @rmtoll ICSCR        HSITRIM       LL_RCC_HSI_GetCalibTrimming
-  * @retval Between Min_Data = 0 and Max_Data = 31
+  * @retval Between Min_Data = 0 and Max_Data = 31 on STM32L43x/STM32L44x/STM32L47x/STM32L48x or
+  *         between Min_Data = 0 and Max_Data = 127 on other devices
   */
 __STATIC_INLINE uint32_t LL_RCC_HSI_GetCalibTrimming(void)
 {
@@ -3787,7 +3789,7 @@ __STATIC_INLINE uint32_t LL_RCC_PLL_IsReady(void)
   *         @arg @ref LL_RCC_PLLM_DIV_16 (*)
   *
   *         (*) value not defined in all devices.
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLR This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLR_DIV_2
   *         @arg @ref LL_RCC_PLLR_DIV_4
@@ -3837,7 +3839,7 @@ __STATIC_INLINE void LL_RCC_PLL_ConfigDomain_SYS(uint32_t Source, uint32_t PLLM,
   *         @arg @ref LL_RCC_PLLM_DIV_16 (*)
   *
   *         (*) value not defined in all devices.
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLP This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLP_DIV_2
   *         @arg @ref LL_RCC_PLLP_DIV_3
@@ -3949,7 +3951,7 @@ __STATIC_INLINE void LL_RCC_PLL_ConfigDomain_SAI(uint32_t Source, uint32_t PLLM,
   *         @arg @ref LL_RCC_PLLM_DIV_16 (*)
   *
   *         (*) value not defined in all devices.
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLQ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLQ_DIV_2
   *         @arg @ref LL_RCC_PLLQ_DIV_4
@@ -3995,7 +3997,7 @@ __STATIC_INLINE uint32_t LL_RCC_PLL_GetMainSource(void)
 /**
   * @brief  Get Main PLL multiplication factor for VCO
   * @rmtoll PLLCFGR      PLLN          LL_RCC_PLL_GetN
-  * @retval Between 8 and 86
+  * @retval Between 8 and 86 or 127 depending on devices
   */
 __STATIC_INLINE uint32_t LL_RCC_PLL_GetN(void)
 {
@@ -4263,7 +4265,7 @@ __STATIC_INLINE uint32_t LL_RCC_PLLSAI1_IsReady(void)
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_16
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLQ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1Q_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1Q_DIV_4
@@ -4302,7 +4304,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI1_ConfigDomain_48M(uint32_t Source, uint32_t P
   *         @arg @ref LL_RCC_PLLM_DIV_6
   *         @arg @ref LL_RCC_PLLM_DIV_7
   *         @arg @ref LL_RCC_PLLM_DIV_8
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLQ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1Q_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1Q_DIV_4
@@ -4349,7 +4351,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI1_ConfigDomain_48M(uint32_t Source, uint32_t P
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_16
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLP This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1P_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1P_DIV_3
@@ -4414,7 +4416,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI1_ConfigDomain_SAI(uint32_t Source, uint32_t P
   *         @arg @ref LL_RCC_PLLM_DIV_6
   *         @arg @ref LL_RCC_PLLM_DIV_7
   *         @arg @ref LL_RCC_PLLM_DIV_8
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLP This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1P_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1P_DIV_3
@@ -4524,7 +4526,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI1_ConfigDomain_SAI(uint32_t Source, uint32_t P
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI1M_DIV_16
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLR This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1R_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1R_DIV_4
@@ -4563,7 +4565,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI1_ConfigDomain_ADC(uint32_t Source, uint32_t P
   *         @arg @ref LL_RCC_PLLM_DIV_6
   *         @arg @ref LL_RCC_PLLM_DIV_7
   *         @arg @ref LL_RCC_PLLM_DIV_8
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLR This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI1R_DIV_2
   *         @arg @ref LL_RCC_PLLSAI1R_DIV_4
@@ -4581,7 +4583,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI1_ConfigDomain_ADC(uint32_t Source, uint32_t P
 /**
   * @brief  Get SAI1PLL multiplication factor for VCO
   * @rmtoll PLLSAI1CFGR  PLLSAI1N      LL_RCC_PLLSAI1_GetN
-  * @retval Between 8 and 86
+  * @retval Between 8 and 86 or 127 depending on devices
   */
 __STATIC_INLINE uint32_t LL_RCC_PLLSAI1_GetN(void)
 {
@@ -4840,7 +4842,7 @@ __STATIC_INLINE uint32_t LL_RCC_PLLSAI2_IsReady(void)
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_16
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLP This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI2P_DIV_2
   *         @arg @ref LL_RCC_PLLSAI2P_DIV_3
@@ -4905,7 +4907,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI2_ConfigDomain_SAI(uint32_t Source, uint32_t P
   *         @arg @ref LL_RCC_PLLM_DIV_6
   *         @arg @ref LL_RCC_PLLM_DIV_7
   *         @arg @ref LL_RCC_PLLM_DIV_8
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 86 or 127 depending on devices
   * @param  PLLP This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI2P_DIV_2
   *         @arg @ref LL_RCC_PLLSAI2P_DIV_3
@@ -5014,7 +5016,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI2_ConfigDomain_SAI(uint32_t Source, uint32_t P
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_16
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 127
   * @param  PLLQ This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI2Q_DIV_2
   *         @arg @ref LL_RCC_PLLSAI2Q_DIV_4
@@ -5063,7 +5065,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI2_ConfigDomain_DSI(uint32_t Source, uint32_t P
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_14
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_15
   *         @arg @ref LL_RCC_PLLSAI2M_DIV_16
-  * @param  PLLN Between 8 and 86
+  * @param  PLLN Between 8 and 127
   * @param  PLLR This parameter can be one of the following values:
   *         @arg @ref LL_RCC_PLLSAI2R_DIV_2
   *         @arg @ref LL_RCC_PLLSAI2R_DIV_4
@@ -5126,7 +5128,7 @@ __STATIC_INLINE void LL_RCC_PLLSAI2_ConfigDomain_ADC(uint32_t Source, uint32_t P
 /**
   * @brief  Get SAI2PLL multiplication factor for VCO
   * @rmtoll PLLSAI2CFGR  PLLSAI2N      LL_RCC_PLLSAI2_GetN
-  * @retval Between 8 and 86
+  * @retval Between 8 and 86 or 127 depending on devices
   */
 __STATIC_INLINE uint32_t LL_RCC_PLLSAI2_GetN(void)
 {

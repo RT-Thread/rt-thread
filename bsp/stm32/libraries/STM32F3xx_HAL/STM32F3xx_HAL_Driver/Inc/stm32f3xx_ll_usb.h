@@ -60,12 +60,13 @@ typedef struct
                                          This parameter must be a number between Min_Data = 1 and Max_Data = 15 */
 
   uint32_t speed;                   /*!< USB Core speed.
-                                         This parameter can be any value of @ref USB_Core_Speed                 */
+                                         This parameter can be any value of @ref PCD_Speed/HCD_Speed
+                                                                                 (HCD_SPEED_xxx, HCD_SPEED_xxx) */
 
   uint32_t ep0_mps;                 /*!< Set the Endpoint 0 Max Packet size.                                    */
 
   uint32_t phy_itface;              /*!< Select the used PHY interface.
-                                         This parameter can be any value of @ref USB_Core_PHY                   */
+                                         This parameter can be any value of @ref PCD_PHY_Module/HCD_PHY_Module  */
 
   uint32_t Sof_enable;              /*!< Enable or disable the output of the SOF signal.                        */
 
@@ -198,11 +199,15 @@ HAL_StatusTypeDef USB_DevInit(USB_TypeDef *USBx, USB_CfgTypeDef cfg);
 HAL_StatusTypeDef USB_EnableGlobalInt(USB_TypeDef *USBx);
 HAL_StatusTypeDef USB_DisableGlobalInt(USB_TypeDef *USBx);
 HAL_StatusTypeDef USB_SetCurrentMode(USB_TypeDef *USBx, USB_ModeTypeDef mode);
+
+#if defined (HAL_PCD_MODULE_ENABLED)
 HAL_StatusTypeDef USB_ActivateEndpoint(USB_TypeDef *USBx, USB_EPTypeDef *ep);
 HAL_StatusTypeDef USB_DeactivateEndpoint(USB_TypeDef *USBx, USB_EPTypeDef *ep);
 HAL_StatusTypeDef USB_EPStartXfer(USB_TypeDef *USBx, USB_EPTypeDef *ep);
 HAL_StatusTypeDef USB_EPSetStall(USB_TypeDef *USBx, USB_EPTypeDef *ep);
 HAL_StatusTypeDef USB_EPClearStall(USB_TypeDef *USBx, USB_EPTypeDef *ep);
+#endif /* defined (HAL_PCD_MODULE_ENABLED) */
+
 HAL_StatusTypeDef USB_SetDevAddress(USB_TypeDef *USBx, uint8_t address);
 HAL_StatusTypeDef USB_DevConnect(USB_TypeDef *USBx);
 HAL_StatusTypeDef USB_DevDisconnect(USB_TypeDef *USBx);

@@ -103,7 +103,7 @@ typedef enum
 typedef struct __COMP_HandleTypeDef
 #else
 typedef struct
-#endif
+#endif /* USE_HAL_COMP_REGISTER_CALLBACKS */
 {
   COMP_TypeDef       *Instance;       /*!< Register base address    */
   COMP_InitTypeDef   Init;            /*!< COMP required parameters */
@@ -173,7 +173,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #define COMP_WINDOWOUTPUT_COMP2                 (COMP_CSR_WINOUT | COMP_WINDOWMODE_COMP2) /*!< Window output synthetized on COMP2 output: COMP2 output is no more indicating its own state, but global window mode state (logical high means monitored signal is within comparators window). */
 #if defined(COMP3)
 #define COMP_WINDOWOUTPUT_COMP3                 (COMP_CSR_WINOUT)                         /*!< Window output synthetized on COMP3 output: COMP3 output is no more indicating its own state, but global window mode state (logical high means monitored signal is within comparators window). */
-#endif
+#endif /* COMP3 */
 #define COMP_WINDOWOUTPUT_BOTH                  (0x00000001UL)                            /*!< Window output synthetized on both comparators output of pair of comparator selected (COMP1 and COMP2, or COMP2 and COMP3 for devices featuring COMP3 instance): both comparators outputs are no more indicating their own state, but global window mode state (logical high means monitored signal is within comparators window). This is a specific configuration (technically possible but not relevant from application point of view: 2 comparators output used for the same signal level), standard configuration for window mode is one of the settings above. */
 /**
   * @}
@@ -307,7 +307,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
                                                     } while(0)
 #else
 #define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_COMP_STATE_RESET)
-#endif
+#endif /* USE_HAL_COMP_REGISTER_CALLBACKS */
 
 /**
   * @brief Clear COMP error code (set it to no error code "HAL_COMP_ERROR_NONE").
@@ -674,7 +674,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #define COMP_EXTI_LINE_COMP2           (EXTI_IMR1_IM18)  /*!< EXTI line 18 connected to COMP2 output */
 #if defined(COMP3)
 #define COMP_EXTI_LINE_COMP3           (EXTI_IMR1_IM20)  /*!< EXTI line 20 connected to COMP3 output */
-#endif
+#endif /* COMP3 */
 /**
   * @}
   */
@@ -714,7 +714,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #else
 #define COMP_GET_EXTI_LINE(__INSTANCE__)    (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1  \
                                              : COMP_EXTI_LINE_COMP2)
-#endif
+#endif /* COMP3 */
 /**
   * @}
   */
@@ -738,7 +738,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 (((__WINDOWMODE__) == COMP_WINDOWMODE_DISABLE)                || \
  ((__WINDOWMODE__) == COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON)|| \
  ((__WINDOWMODE__) == COMP_WINDOWMODE_COMP2_INPUT_PLUS_COMMON)  )
-#endif
+#endif /* COMP3 */
 
 #define IS_COMP_WINDOWOUTPUT(__WINDOWOUTPUT__) (((__WINDOWOUTPUT__) == COMP_WINDOWOUTPUT_EACH_COMP) || \
                                                 ((__WINDOWOUTPUT__) == COMP_WINDOWOUTPUT_COMP1)     || \

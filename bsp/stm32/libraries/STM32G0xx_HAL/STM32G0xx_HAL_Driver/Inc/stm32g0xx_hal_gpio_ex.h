@@ -186,7 +186,7 @@ extern "C" {
 
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x0A)
 
-#endif
+#endif /* STM32G0C1xx || STM32G0B1xx */
 
 #if defined (STM32G0B0xx)
 /*------------------------- STM32G0B0xx ------------------------*/
@@ -297,7 +297,7 @@ extern "C" {
 
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x09)
 
-#endif
+#endif /* STM32G0B0xx */
 
 
 #if defined (STM32G081xx) || defined (STM32G071xx)
@@ -810,7 +810,7 @@ extern "C" {
                                       ((__GPIOx__) == (GPIOB))? 1uL :\
                                       ((__GPIOx__) == (GPIOC))? 2uL :\
                                       ((__GPIOx__) == (GPIOD))? 3uL : 5uL)
-#endif
+#endif /* GPIOE */
 
 /**
   * @}

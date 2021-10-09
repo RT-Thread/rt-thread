@@ -39,7 +39,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -58,8 +58,7 @@
   */
 
 #ifdef HAL_HCD_MODULE_ENABLED
-
-
+#if defined (USB_DRD_FS)
 
 /** @defgroup HCD HCD
   * @brief HCD HAL module driver
@@ -191,9 +190,9 @@ HAL_StatusTypeDef HAL_HCD_Init(HCD_HandleTypeDef *hhcd)
   *          This parameter can be a value from 0 to 255
   * @param  speed Current device speed.
   *          This parameter can be one of these values:
-  *            HCD_SPEED_HIGH High speed mode,
-  *            HCD_SPEED_FULL Full speed mode,
-  *            HCD_SPEED_LOW Low speed mode
+  *            HCD_DEVICE_SPEED_HIGH High speed mode,
+  *            HCD_DEVICE_SPEED_FULL Full speed mode,
+  *            HCD_DEVICE_SPEED_LOW Low speed mode
   * @param  ep_type Endpoint Type.
   *          This parameter can be one of these values:
   *            USBH_EP_CONTROL Control type,
@@ -601,6 +600,12 @@ void HAL_HCD_IRQHandler(HCD_HandleTypeDef *hhcd)
   uint8_t phy_chnum;
   uint8_t chnum;
   uint32_t epch_reg;
+
+  /* check if this is an USB pending IT */
+  if ((SYSCFG->IT_LINE_SR[8] & (0x1U << 2)) == 0U)
+  {
+    return;
+  }
 
   /* Port Change Detected (Connection/Disconnection) */
   if (__HAL_HCD_GET_FLAG(hhcd, USB_ISTR_DCON))
@@ -1354,7 +1359,10 @@ uint32_t HAL_HCD_GetCurrentFrame(HCD_HandleTypeDef *hhcd)
 /**
   * @brief  Return the Host enumeration speed.
   * @param  hhcd HCD handle
-  * @retval Enumeration speed
+  * @retval speed : Device speed after Host enumeration
+  *          This parameter can be one of these values:
+  *            @arg HCD_DEVICE_SPEED_FULL: Full speed mode
+  *            @arg HCD_DEVICE_SPEED_LOW: Low speed mode
   */
 uint32_t HAL_HCD_GetCurrentSpeed(HCD_HandleTypeDef *hhcd)
 {
@@ -2492,7 +2500,7 @@ static HAL_StatusTypeDef  HAL_HCD_PMAFree(HCD_HandleTypeDef *hhcd, uint32_t pma_
 /**
   * @}
   */
-
+#endif /* defined (USB_DRD_FS) */
 #endif /* HAL_HCD_MODULE_ENABLED */
 
 /**

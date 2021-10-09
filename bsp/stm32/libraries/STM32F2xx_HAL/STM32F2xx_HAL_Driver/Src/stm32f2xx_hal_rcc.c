@@ -616,11 +616,12 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
         }
 
         /* Configure the main PLL clock source, multiplication and division factors. */
-        WRITE_REG(RCC->PLLCFGR, (RCC_OscInitStruct->PLL.PLLSource                                              | \
-                                RCC_OscInitStruct->PLL.PLLM                                                    | \
-                                (RCC_OscInitStruct->PLL.PLLN << POSITION_VAL(RCC_PLLCFGR_PLLN))                | \
-                                (((RCC_OscInitStruct->PLL.PLLP >> 1U) - 1U) << POSITION_VAL(RCC_PLLCFGR_PLLP)) | \
-                                (RCC_OscInitStruct->PLL.PLLQ << POSITION_VAL(RCC_PLLCFGR_PLLQ))));
+        __HAL_RCC_PLL_CONFIG(RCC_OscInitStruct->PLL.PLLSource,
+                             RCC_OscInitStruct->PLL.PLLM,
+                             RCC_OscInitStruct->PLL.PLLN,
+                             RCC_OscInitStruct->PLL.PLLP,
+                             RCC_OscInitStruct->PLL.PLLQ);
+
         /* Enable the main PLL. */
         __HAL_RCC_PLL_ENABLE();
 
