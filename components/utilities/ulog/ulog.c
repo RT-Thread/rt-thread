@@ -1250,7 +1250,7 @@ static void ulog_filter(uint8_t argc, char **argv)
     }
 }
 MSH_CMD_EXPORT(ulog_filter, Show ulog filter settings);
-#endif defined(RT_USING_FINSH)
+#endif /* RT_USING_FINSH */
 #endif /* ULOG_USING_FILTER */
 
 rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color)
