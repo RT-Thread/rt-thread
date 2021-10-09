@@ -49,8 +49,8 @@ static void _i2c_init(void)
     gpio_instruct.mode = GPIO_MODE_OUTPUT;
     gpio_instruct.odos = GPIO_OPEN_DRAIN;
     gpio_instruct.pupd = GPIO_PUSH_UP;
-    gpio_instruct.podrv = GPIO_OUT_DRIVE_1;
-    gpio_instruct.nodrv = GPIO_OUT_DRIVE_0_1;
+    gpio_instruct.podrv = GPIO_OUT_DRIVE_6;
+    gpio_instruct.nodrv = GPIO_OUT_DRIVE_6;
     gpio_instruct.flt  = GPIO_FILTER_DISABLE;
     gpio_instruct.type = GPIO_TYPE_CMOS;
     
@@ -83,9 +83,9 @@ static void _i2c_init(void)
 
 #ifdef BSP_USING_I2C1  
 
-#if  defined(ES_I2C1_SDA_GPIO_FUNC)&&defined(ES_I2C1_SDA_GPIO_PORT)&&defined(ES_I2C1_SDA_GPIO_PIN)    
-    gpio_instruct.func = ES_I2C1_SDA_GPIO_FUNC;
-    ald_gpio_init(ES_I2C1_SDA_GPIO_PORT, ES_I2C1_SDA_GPIO_PIN, &gpio_instruct);
+#if  defined(ES_I2C1_SCL_GPIO_FUNC)&&defined(ES_I2C1_SCL_GPIO_PORT)&&defined(ES_I2C1_SCL_GPIO_PIN)    
+    gpio_instruct.func = ES_I2C1_SCL_GPIO_FUNC;
+    ald_gpio_init(ES_I2C1_SCL_GPIO_PORT, ES_I2C1_SCL_GPIO_PIN, &gpio_instruct);
 #endif          
                                                                
 #if  defined(ES_I2C1_SDA_GPIO_FUNC)&&defined(ES_I2C1_SDA_GPIO_PORT)&&defined(ES_I2C1_SDA_GPIO_PIN)   
