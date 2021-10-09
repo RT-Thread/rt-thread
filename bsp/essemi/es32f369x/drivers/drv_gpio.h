@@ -17,15 +17,15 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2020-01-14     wangyq        the first version   
- * 2021-04-20     liuhy         the second version  
+ * 2020-01-14     wangyq        the first version
+ * 2021-04-20     liuhy         the second version
  */
 
 #ifndef DRV_GPIO_H__
 #define DRV_GPIO_H__
 
 #include "es_conf_info_gpio.h"
-                            
+
 #define GET_PIN(port,pin)  (ES_PIN_GPIO_##port##_##pin)
 
 int rt_hw_pin_init(void);
