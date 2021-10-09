@@ -41,6 +41,9 @@ if RT_USING_LIBC && RT_USING_DFS
 endif
 
 if RT_USING_LIBC
+    config RT_LIBC_USING_TIME
+        default y
+
     config RT_USING_MODULE
         bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
         default n

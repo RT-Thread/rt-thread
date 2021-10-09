@@ -16,6 +16,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <sys/time.h>
 #include <rtdevice.h>
 
@@ -65,13 +68,6 @@ extern "C" {
 #define DFS_F_DIRECTORY         0x02000000
 #define DFS_F_EOF               0x04000000
 #define DFS_F_ERR               0x08000000
-
-struct statfs
-{
-    size_t f_bsize;   /* block size */
-    size_t f_blocks;  /* total data blocks in file system */
-    size_t f_bfree;   /* free blocks in file system */
-};
 
 struct dfs_fdtable
 {

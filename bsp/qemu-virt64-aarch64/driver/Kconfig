@@ -15,11 +15,17 @@ menu "AARCH64 qemu virt64 configs"
             default y
         endif
 
-    config BSP_USING_GIC
-    bool
-    default y
+    menuconfig BSP_USING_VIRTIO_BLK
+        bool "Using VirtIO BLK"
+        default y
 
-    config BSP_USING_GIC390
+        if BSP_USING_VIRTIO_BLK
+            config RT_USING_VIRTIO_BLK0
+            bool "Enabel VirtIO BLK 0"
+            default y
+        endif
+
+    config BSP_USING_GIC
     bool
     default y
 endmenu

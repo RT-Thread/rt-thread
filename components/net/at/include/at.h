@@ -12,6 +12,7 @@
 #ifndef __AT_H__
 #define __AT_H__
 
+#include <stddef.h>
 #include <rtthread.h>
 
 #ifdef __cplusplus
