@@ -28,6 +28,8 @@ static void reboot(uint8_t argc, char **argv)
 MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
 
+static uint32_t sysTickMillisecond = 1;
+
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
@@ -42,6 +44,10 @@ void rt_hw_systick_init(void)
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 #endif
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
+
+    sysTickMillisecond = 1000u / RT_TICK_PER_SECOND;
+    if(sysTickMillisecond == 0)
+        sysTickMillisecond = 1;
 }
 
 /**
@@ -53,7 +59,9 @@ void SysTick_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    HAL_IncTick();
+    if(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+        HAL_IncTick();
+
     rt_tick_increase();
 
     /* leave interrupt */
@@ -62,7 +70,15 @@ void SysTick_Handler(void)
 
 uint32_t HAL_GetTick(void)
 {
-    return rt_tick_get_millisecond();
+    if(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+        HAL_IncTick();
+
+    return uwTick;
+}
+
+void HAL_IncTick(void)
+{
+    uwTick += sysTickMillisecond;
 }
 
 void HAL_SuspendTick(void)
@@ -163,12 +179,12 @@ RT_WEAK void rt_hw_board_init()
     /* HAL_Init() function is called at the beginning of the program */
     HAL_Init();
 
-    /* enable interrupt */
-    __set_PRIMASK(0);
+    rt_hw_systick_init();
+
     /* System clock initialization */
     SystemClock_Config();
-    /* disable interrupt */
-    __set_PRIMASK(1);
+
+    SystemCoreClockUpdate();
 
     rt_hw_systick_init();
 
