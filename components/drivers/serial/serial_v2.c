@@ -18,7 +18,7 @@
 
 #ifdef RT_USING_POSIX
 #include <dfs_posix.h>
-#include <dfs_poll.h>
+#include <poll.h>
 #include <sys/ioctl.h>
 
 #ifdef getc

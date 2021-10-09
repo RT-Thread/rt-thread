@@ -38,7 +38,7 @@
 
 #ifdef RT_USING_POSIX
 #include <dfs_posix.h>
-#include <dfs_poll.h>
+#include <poll.h>
 #include <sys/ioctl.h>
 
 #ifdef RT_USING_POSIX_TERMIOS
@@ -1112,6 +1112,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
         case TCXONC:
             break;
+#endif /*RT_USING_POSIX_TERMIOS*/
         case TIOCSWINSZ:
             {
                 struct winsize* p_winsize;
@@ -1202,7 +1203,6 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 p_winsize->ws_ypixel = 0;/* unused */
             }
             break;
-#endif /*RT_USING_POSIX_TERMIOS*/
         case FIONREAD:
             {
                 rt_size_t recved = 0;

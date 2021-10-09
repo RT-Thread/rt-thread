@@ -33,9 +33,9 @@ static volatile rt_tick_t rt_tick = 0;
 /**@{*/
 
 /**
- * This function will return current tick from operating system startup
+ * @brief    This function will return current tick from operating system startup.
  *
- * @return current tick
+ * @return   Return current tick.
  */
 rt_tick_t rt_tick_get(void)
 {
@@ -45,7 +45,9 @@ rt_tick_t rt_tick_get(void)
 RTM_EXPORT(rt_tick_get);
 
 /**
- * This function will set current tick
+ * @brief    This function will set current tick.
+ *
+ * @param    tick is the value that you will set.
  */
 void rt_tick_set(rt_tick_t tick)
 {
@@ -57,8 +59,8 @@ void rt_tick_set(rt_tick_t tick)
 }
 
 /**
- * This function will notify kernel there is one tick passed. Normally,
- * this function is invoked by clock ISR.
+ * @brief    This function will notify kernel there is one tick passed.
+ *           Normally, this function is invoked by clock ISR.
  */
 void rt_tick_increase(void)
 {
@@ -97,14 +99,14 @@ void rt_tick_increase(void)
 }
 
 /**
- * This function will calculate the tick from millisecond.
+ * @brief    This function will calculate the tick from millisecond.
  *
- * @param ms the specified millisecond
- *           - Negative Number wait forever
- *           - Zero not wait
- *           - Max 0x7fffffff
+ * @param    ms is the specified millisecond.
+ *              - Negative Number wait forever
+ *              - Zero not wait
+ *              - Max 0x7fffffff
  *
- * @return the calculated tick
+ * @return   Return the calculated tick.
  */
 rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
 {
@@ -126,9 +128,13 @@ rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
 RTM_EXPORT(rt_tick_from_millisecond);
 
 /**
- * This function will provide the passed millisecond from boot.
+ * @brief    This function will return the passed millisecond from boot.
  *
- * @return passed millisecond from boot
+ * @note     if the value of RT_TICK_PER_SECOND is lower than 1000 or
+ *           is not an integral multiple of 1000, this function will not
+ *           provide the correct 1ms-based tick.
+ *
+ * @return   Return passed millisecond from boot.
  */
 RT_WEAK rt_tick_t rt_tick_get_millisecond(void)
 {

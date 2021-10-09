@@ -71,11 +71,11 @@ static rt_err_t rt_rtc_control(struct rt_device *dev, int cmd, void *args)
         case RT_DEVICE_CTRL_RTC_SET_TIME:
             ret = TRY_DO_RTC_FUNC(rtc_device, set_secs, args);
             break;
-        case RT_DEVICE_CTRL_RTC_GET_TIME_US:
-            ret = TRY_DO_RTC_FUNC(rtc_device, get_usecs, args);
+        case RT_DEVICE_CTRL_RTC_GET_TIMEVAL:
+            ret = TRY_DO_RTC_FUNC(rtc_device, get_timeval, args);
             break;
-        case RT_DEVICE_CTRL_RTC_SET_TIME_US:
-            ret = TRY_DO_RTC_FUNC(rtc_device, set_usecs, args);
+        case RT_DEVICE_CTRL_RTC_SET_TIMEVAL:
+            ret = TRY_DO_RTC_FUNC(rtc_device, set_timeval, args);
             break;
         case RT_DEVICE_CTRL_RTC_GET_ALARM:
             ret = TRY_DO_RTC_FUNC(rtc_device, get_alarm, args);
@@ -223,7 +223,7 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 /**
  * get date and time or set (local timezone) [year month day hour min sec]
  */
-static void date(uint8_t argc, char **argv)
+static void date(int argc, char **argv)
 {
     if (argc == 1)
     {
@@ -235,8 +235,9 @@ static void date(uint8_t argc, char **argv)
     else if (argc >= 7)
     {
         /* set time and date */
-        uint16_t year;
-        uint8_t month, day, hour, min, sec;
+        rt_uint16_t year;
+        rt_uint8_t month, day, hour, min, sec;
+
         year = atoi(argv[1]);
         month = atoi(argv[2]);
         day = atoi(argv[3]);

@@ -39,6 +39,13 @@
 #define MEMITEM(ptr)            (struct rt_memheap_item*)((rt_uint8_t*)ptr - RT_MEMHEAP_SIZE)
 
 #ifdef RT_USING_MEMTRACE
+/**
+ * @brief This function will set a new name for memheap.
+ *
+ * @param item is a pointer point to a memheap object.
+ *
+ * @param name is the new name to be set.
+ */
 rt_inline void rt_memheap_setname(struct rt_memheap_item *item, const char *name)
 {
     int index;
@@ -64,6 +71,13 @@ rt_inline void rt_memheap_setname(struct rt_memheap_item *item, const char *name
     }
 }
 
+/**
+ * @brief This function will set a new name for memheap.
+ *
+ * @param ptr is a pointer point to a memheap object.
+ *
+ * @param name is the new name to be set.
+ */
 void rt_mem_set_tag(void *ptr, const char *name)
 {
     struct rt_memheap_item *item;
@@ -76,16 +90,28 @@ void rt_mem_set_tag(void *ptr, const char *name)
 }
 #endif /* RT_USING_MEMTRACE */
 
-/*
- * The initialized memory pool will be:
- * +-----------------------------------+--------------------------+
- * | whole freed memory block          | Used Memory Block Tailer |
- * +-----------------------------------+--------------------------+
+/**
+ * @brief   This function initializes a piece of memory called memheap.
  *
- * block_list --> whole freed memory block
+ * @note    The initialized memory pool will be:
+ *          +-----------------------------------+--------------------------+
+ *          | whole freed memory block          | Used Memory Block Tailer |
+ *          +-----------------------------------+--------------------------+
  *
- * The length of Used Memory Block Tailer is 0,
- * which is prevents block merging across list
+ *          block_list --> whole freed memory block
+ *
+ *          The length of Used Memory Block Tailer is 0,
+ *          which is prevents block merging across list
+ *
+ * @param   memheap is a pointer of the memheap object.
+ *
+ * @param   name is the name of the memheap.
+ *
+ * @param   start_addr is the start address of the memheap.
+ *
+ * @param   size is the size of the memheap.
+ *
+ * @return  RT_EOK
  */
 rt_err_t rt_memheap_init(struct rt_memheap *memheap,
                          const char        *name,
@@ -165,6 +191,13 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
 }
 RTM_EXPORT(rt_memheap_init);
 
+/**
+ * @brief   This function will remove a memheap from the system.
+ *
+ * @param   heap is a pointer of memheap object.
+ *
+ * @return  RT_EOK
+ */
 rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 {
     RT_ASSERT(heap);
@@ -179,6 +212,15 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 }
 RTM_EXPORT(rt_memheap_detach);
 
+/**
+ * @brief  Allocate a block of memory with a minimum of 'size' bytes on memheap.
+ *
+ * @param   heap is a pointer for memheap object.
+ *
+ * @param   size is the minimum size of the requested block in bytes.
+ *
+ * @return  the pointer to allocated memory or NULL if no free memory was found.
+ */
 void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 {
     rt_err_t result;
@@ -336,6 +378,18 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 }
 RTM_EXPORT(rt_memheap_alloc);
 
+/**
+ * @brief This function will change the size of previously allocated memory block.
+ *
+ * @param heap is a pointer to the memheap object, which will reallocate
+ *             memory from the block
+ *
+ * @param ptr is a pointer to start address of memory.
+ *
+ * @param newsize is the required new size.
+ *
+ * @return the changed memory block address.
+ */
 void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
 {
     rt_err_t result;
@@ -556,6 +610,12 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
 }
 RTM_EXPORT(rt_memheap_realloc);
 
+/**
+ * @brief This function will release the allocated memory block by
+ *        rt_malloc. The released memory block is taken back to system heap.
+ *
+ * @param ptr the address of memory which will be released.
+ */
 void rt_memheap_free(void *ptr)
 {
     rt_err_t result;
@@ -680,7 +740,13 @@ static void _memheap_dump_tag(struct rt_memheap_item *item)
 
     rt_kprintf("%.*s", 2 * sizeof(void *), name);
 }
-
+/**
+ * @brief   This function will print the memheap infomation.
+ *
+ * @param   heap is the pointer  to the memheap to get information.
+ *
+ * @return  0
+ */
 int rt_memheap_dump(struct rt_memheap *heap)
 {
     struct rt_memheap_item *item, *end;
@@ -757,6 +823,13 @@ MSH_CMD_EXPORT(memheaptrace, dump memory trace information);
 #ifdef RT_USING_MEMHEAP_AS_HEAP
 static struct rt_memheap _heap;
 
+/**
+ * @brief   This function initializes a heap for system.
+ *
+ * @param   begin_addr is the start address of the memory.
+ *
+ * @param   end_addr is the end address of the memory.
+ */
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
     RT_ASSERT((rt_uint32_t)end_addr > (rt_uint32_t)begin_addr);
@@ -768,12 +841,18 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
                     (rt_uint32_t)end_addr - (rt_uint32_t)begin_addr);
 }
 
+/**
+ * @brief Allocate a block of memory with a minimum of 'size' bytes.
+ *
+ * @param size is the minimum size of the requested block in bytes.
+ */
 void *rt_malloc(rt_size_t size)
 {
     void *ptr;
 
     /* try to allocate in system heap */
     ptr = rt_memheap_alloc(&_heap, size);
+#ifdef RT_USING_MEMHEAP_AUTO_BINDING
     if (ptr == RT_NULL)
     {
         struct rt_object *object;
@@ -803,7 +882,7 @@ void *rt_malloc(rt_size_t size)
                 break;
         }
     }
-
+#endif /* RT_USING_MEMHEAP_AUTO_BINDING */
 
 #ifdef RT_USING_MEMTRACE
     if (ptr == RT_NULL)
@@ -826,12 +905,27 @@ void *rt_malloc(rt_size_t size)
 }
 RTM_EXPORT(rt_malloc);
 
+/**
+ * @brief This function will release the previously allocated memory block by
+ *        rt_malloc. The released memory block is taken back to system heap.
+ *
+ * @param rmem the address of memory which will be released.
+ */
 void rt_free(void *rmem)
 {
     rt_memheap_free(rmem);
 }
 RTM_EXPORT(rt_free);
 
+/**
+ * @brief This function will change the size of previously allocated memory block.
+ *
+ * @param rmem is the pointer to memory allocated by rt_malloc.
+ *
+ * @param newsize is the required new size.
+ *
+ * @return the changed memory block address.
+ */
 void *rt_realloc(void *rmem, rt_size_t newsize)
 {
     void *new_ptr;
@@ -892,6 +986,19 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 }
 RTM_EXPORT(rt_realloc);
 
+/**
+ * @brief  This function will contiguously allocate enough space for count objects
+ *         that are size bytes of memory each and returns a pointer to the allocated
+ *         memory.
+ *
+ * @note   The allocated memory is filled with bytes of value zero.
+ *
+ * @param  count is the number of objects to allocate.
+ *
+ * @param  size is the size of one object to allocate.
+ *
+ * @return pointer to allocated memory pointer.
+ */
 void *rt_calloc(rt_size_t count, rt_size_t size)
 {
     void *ptr;
@@ -922,6 +1029,16 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 }
 RTM_EXPORT(rt_calloc);
 
+/**
+* @brief This function will caculate the total memory, the used memory, and
+*        the max used memory.
+*
+* @param total is a pointer to get the total size of the memory.
+*
+* @param used is a pointer to get the size of memory used.
+*
+* @param max_used is a pointer to get the maximum memory used.
+*/
 void rt_memory_info(rt_uint32_t *total,
                     rt_uint32_t *used,
                     rt_uint32_t *max_used)
@@ -940,11 +1057,15 @@ void rt_memory_info(rt_uint32_t *total,
 
 #ifdef RT_USING_MEMTRACE
 
+/**
+ * @brief  This function will print the used memheap infomation.
+ *
+ * @param  mh is a pointer of the memheap object.
+ */
 void dump_used_memheap(struct rt_memheap *mh)
 {
     struct rt_memheap_item *header_ptr;
     rt_uint32_t block_size;
-
 
     rt_kprintf("\nmemory heap address:\n");
     rt_kprintf("heap_ptr: 0x%08x\n", mh->start_addr);

@@ -29,6 +29,7 @@ jobs:
       fail-fast: false
       matrix:
        legs:
+         - {RTT_BSP: "acm32f0x0-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "CME_M7", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apollo2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -58,6 +59,7 @@ jobs:
          - {RTT_BSP: "lpc54114-lite", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "ls1bdev", RTT_TOOL_CHAIN: "sourcery-mips"}
          - {RTT_BSP: "ls1cdev", RTT_TOOL_CHAIN: "sourcery-mips"}
+         - {RTT_BSP: "ls2kdev", RTT_TOOL_CHAIN: "sourcery-mips"}
          - {RTT_BSP: "mb9bf500r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mb9bf506r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -136,6 +138,7 @@ jobs:
          - {RTT_BSP: "raspberry-pi/raspi4-32", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "bluetrum/ab32vg1-ab-prougen", RTT_TOOL_CHAIN: "sourcery-riscv"}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python

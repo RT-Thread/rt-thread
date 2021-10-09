@@ -966,13 +966,13 @@ enum rt_device_class_type
 /**
  * special device commands
  */
-#define RT_DEVICE_CTRL_CHAR_STREAM      0x10            /**< stream mode on char device */
-#define RT_DEVICE_CTRL_BLK_GETGEOME     0x10            /**< get geometry information   */
-#define RT_DEVICE_CTRL_BLK_SYNC         0x11            /**< flush data to block device */
-#define RT_DEVICE_CTRL_BLK_ERASE        0x12            /**< erase block on block device */
-#define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x13            /**< block device : enter/exit auto refresh mode */
-#define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
-#define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
+#define RT_DEVICE_CTRL_CHAR_STREAM      0x20            /**< stream mode on char device */
+#define RT_DEVICE_CTRL_BLK_GETGEOME     0x20            /**< get geometry information   */
+#define RT_DEVICE_CTRL_BLK_SYNC         0x21            /**< flush data to block device */
+#define RT_DEVICE_CTRL_BLK_ERASE        0x22            /**< erase block on block device */
+#define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x23            /**< block device : enter/exit auto refresh mode */
+#define RT_DEVICE_CTRL_NETIF_GETMAC     0x20            /**< get mac address */
+#define RT_DEVICE_CTRL_MTD_FORMAT       0x20            /**< format a MTD device */
 
 typedef struct rt_device *rt_device_t;
 
@@ -1145,9 +1145,6 @@ struct rt_device_graphic_ops
 
 /**@}*/
 #endif
-
-/* definitions for libc */
-#include "rtlibc.h"
 
 #ifdef __cplusplus
 }

@@ -235,4 +235,6 @@ struct winsize {
 #define SIOCDEVPRIVATE      0x89F0
 #define SIOCPROTOPRIVATE    0x89E0
 
+int ioctl(int fildes, int cmd, ...);
+
 #endif

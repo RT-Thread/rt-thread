@@ -1,36 +1,36 @@
-/****************************************************************************************************************************************** 
+/******************************************************************************************************************************************
 * 文件名称: SWM320_port.c
-* 功能说明:	SWM320单片机的端口引脚功能选择库函数
-* 技术支持:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* 功能说明: SWM320单片机的端口引脚功能选择库函数
+* 技术支持: http://www.synwit.com.cn/e/tool/gbook/?bid=1
 * 注意事项:
-* 版本日期: V1.1.0		2017年10月25日
-* 升级记录: 
+* 版本日期: V1.1.0      2017年10月25日
+* 升级记录:
 *
 *
 *******************************************************************************************************************************************
 * @attention
 *
-* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS WITH CODING INFORMATION 
-* REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME. AS A RESULT, SYNWIT SHALL NOT BE HELD LIABLE 
-* FOR ANY DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE CONTENT 
+* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS WITH CODING INFORMATION
+* REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME. AS A RESULT, SYNWIT SHALL NOT BE HELD LIABLE
+* FOR ANY DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE CONTENT
 * OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING INFORMATION CONTAINED HEREIN IN CONN-
 * -ECTION WITH THEIR PRODUCTS.
 *
-* COPYRIGHT 2012 Synwit Technology 
+* COPYRIGHT 2012 Synwit Technology
 *******************************************************************************************************************************************/
 #include "SWM320.h"
 #include "SWM320_port.h"
 
-/****************************************************************************************************************************************** 
+/******************************************************************************************************************************************
 * 函数名称: PORT_Init()
-* 功能说明:	端口引脚功能选择，可用的功能见"SWM320_port.h"文件
-* 输    入: uint32_t PORTx	   		指定PORT端口，有效值包括PORTA、PORTB、PORTC、PORTM、PORTN、PORTP
-*			uint32_t n		   		指定PORT引脚，有效值包括PIN0、PIN1、PIN2、... ... PIN22、PIN23
-*			uint32_t func	   		指定端口引脚要设定的功能，其可取值见"SWM320_port.h"文件
-*			uint32_t digit_in_en   	数字输入使能
+* 功能说明: 端口引脚功能选择，可用的功能见"SWM320_port.h"文件
+* 输    入: uint32_t PORTx            指定PORT端口，有效值包括PORTA、PORTB、PORTC、PORTM、PORTN、PORTP
+*           uint32_t n              指定PORT引脚，有效值包括PIN0、PIN1、PIN2、... ... PIN22、PIN23
+*           uint32_t func           指定端口引脚要设定的功能，其可取值见"SWM320_port.h"文件
+*           uint32_t digit_in_en    数字输入使能
 * 输    出: 无
 * 注意事项: 当引脚标号n为偶数时，func取值只能是FUNMUX0开头的，如FUNMUX0_UART0_RXD
-*			当引脚标号n为奇数时，func取值只能是FUNMUX1开头的，如FUNMUX1_UART0_TXD
+*           当引脚标号n为奇数时，func取值只能是FUNMUX1开头的，如FUNMUX1_UART0_TXD
 ******************************************************************************************************************************************/
 void PORT_Init(uint32_t PORTx, uint32_t n, uint32_t func, uint32_t digit_in_en)
 {

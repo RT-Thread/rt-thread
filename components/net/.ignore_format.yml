@@ -1,0 +1,9 @@
+# files format check exclude path, please follow the instructions below to modify;
+# If you need to exclude an entire folder, add the folder path in dir_path;
+# If you need to exclude a file, add the path to the file in file_path.
+
+dir_path:
+- lwip-1.4.1
+- lwip-2.0.2
+- lwip-2.0.3
+- lwip-2.1.2

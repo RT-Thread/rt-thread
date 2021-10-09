@@ -11,6 +11,11 @@
 #ifndef _ULOG_DEF_H_
 #define _ULOG_DEF_H_
 
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <rtdef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

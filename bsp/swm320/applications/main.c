@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,7 +10,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define LED_PIN 21
+#define LED_PIN 32
 
 int main(void)
 {
@@ -29,7 +29,7 @@ int main(void)
 }
 
 // #ifdef RT_USING_PIN
-// #define KEY1_PIN 25
+// #define KEY1_PIN 31
 // void key1_cb(void *args)
 // {
 //     rt_kprintf("key1 irq!\n");
@@ -46,7 +46,7 @@ int main(void)
 // #endif
 
 #ifdef RT_USING_ADC
-#define ADC_DEV_NAME "adc0"
+#define ADC_DEV_NAME "adc1"
 #define ADC_DEV_CHANNEL 0
 #define REFER_VOLTAGE 330
 #define CONVERT_BITS (1 << 12)
@@ -64,16 +64,15 @@ static int adc_vol_sample(int argc, char *argv[])
         return RT_ERROR;
     }
 
-    while (1)
-    {
-        ret = rt_adc_enable(adc_dev, ADC_DEV_CHANNEL);
-        value = rt_adc_read(adc_dev, ADC_DEV_CHANNEL);
-        rt_kprintf("the value is :%d,", value);
-        vol = value * REFER_VOLTAGE / CONVERT_BITS;
-        rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
-        rt_thread_mdelay(500);
-        ret = rt_adc_disable(adc_dev, ADC_DEV_CHANNEL);
-    }
+    ret = rt_adc_enable(adc_dev, ADC_DEV_CHANNEL);
+
+    value = rt_adc_read(adc_dev, ADC_DEV_CHANNEL);
+    rt_kprintf("the value is :%d,", value);
+
+    vol = value * REFER_VOLTAGE / CONVERT_BITS;
+    rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
+
+    ret = rt_adc_disable(adc_dev, ADC_DEV_CHANNEL);
 
     return ret;
 }
@@ -143,17 +142,17 @@ MSH_CMD_EXPORT(hwtimer_sample, hwtimer sample);
 #endif
 
 #ifdef RT_USING_PWM
-#define PWM_DEV_NAME "pwm0" /* PWM???? */
-#define PWM_DEV_CHANNEL 0   /* PWM?? */
+#define PWM_DEV_NAME "pwm0" /* PWM设备名称 */
+#define PWM_DEV_CHANNEL 0   /* PWM通道 */
 
-struct rt_device_pwm *pwm_dev; /* PWM???? */
+struct rt_device_pwm *pwm_dev; /* PWM设备句柄 */
 
 static int pwm_sample(int argc, char *argv[])
 {
     rt_uint32_t period, pulse;
 
-    period = 500000; /* ???0.5ms,?????ns */
-    pulse = 250000;  /* PWM?????,?????ns */
+    period = 500000; /* 周期为0.5ms,单位为纳秒ns */
+    pulse = 250000;  /* PWM脉冲宽度值,单位为纳秒ns */
 
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
     if (pwm_dev == RT_NULL)
@@ -170,26 +169,27 @@ MSH_CMD_EXPORT(pwm_sample, pwm sample);
 #endif
 
 #ifdef RT_USING_RTC
+#include <time.h>
 static int rtc_sample(int argc, char *argv[])
 {
     rt_err_t ret = RT_EOK;
     time_t now;
 
-    ret = set_date(2020, 6, 15);
+    ret = set_date(2020, 2, 28);
     if (ret != RT_EOK)
     {
         rt_kprintf("set RTC date failed\n");
         return ret;
     }
 
-    ret = set_time(11, 15, 50);
+    ret = set_time(23, 59, 55);
     if (ret != RT_EOK)
     {
         rt_kprintf("set RTC time failed\n");
         return ret;
     }
 
-    rt_thread_mdelay(3000);
+    //rt_thread_mdelay(3000);
     now = time(RT_NULL);
     rt_kprintf("%s\n", ctime(&now));
 
@@ -205,7 +205,7 @@ static rt_device_t wdg_dev;
 
 static void idle_hook(void)
 {
-    rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, NULL);
+    rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, RT_NULL);
     rt_kprintf("feed the dog!\n ");
 }
 
@@ -264,7 +264,7 @@ MSH_CMD_EXPORT(wdt_sample, wdt sample);
 
 static int rt_hw_spi_flash_init(void)
 {
-    rt_hw_spi_device_attach("spi0", "spi00", GPIOA, PIN12);
+    rt_hw_spi_device_attach("spi0", "spi00", GPIOP, PIN22);
 
     if (RT_NULL == rt_sfud_flash_probe(W25Q_FLASH_NAME, W25Q_SPI_DEVICE_NAME))
     {
@@ -273,7 +273,6 @@ static int rt_hw_spi_flash_init(void)
 
     return RT_EOK;
 }
-/* ???????? */
 INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init);
 
 static void spi_w25q_sample(int argc, char *argv[])
@@ -292,12 +291,12 @@ static void spi_w25q_sample(int argc, char *argv[])
         rt_strncpy(name, W25Q_SPI_DEVICE_NAME, RT_NAME_MAX);
     }
 
-    /* ?? spi ???????? */
+    /* 查找 spi 设备获取设备句柄 */
     spi_dev_w25q = (struct rt_spi_device *)rt_device_find(name);
     struct rt_spi_configuration cfg;
     cfg.data_width = 8;
     cfg.mode = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB;
-    cfg.max_hz = 20 * 1000 * 1000; /* 20M */
+    cfg.max_hz = 30 * 1000 * 1000; /* 20M */
 
     rt_spi_configure(spi_dev_w25q, &cfg);
     if (!spi_dev_w25q)
@@ -306,11 +305,11 @@ static void spi_w25q_sample(int argc, char *argv[])
     }
     else
     {
-        /* ??1:?? rt_spi_send_then_recv()??????ID */
+        /* 方式1：使用 rt_spi_send_then_recv()发送命令读取ID */
         rt_spi_send_then_recv(spi_dev_w25q, &w25x_read_id, 1, id, 5);
         rt_kprintf("use rt_spi_send_then_recv() read w25q ID is:%x%x\n", id[3], id[4]);
 
-        /* ??2:?? rt_spi_transfer_message()??????ID */
+        /* 方式2：使用 rt_spi_transfer_message()发送命令读取ID */
         struct rt_spi_message msg1, msg2;
 
         msg1.send_buf = &w25x_read_id;
@@ -352,7 +351,6 @@ static void spi_flash_elmfat_sample(void)
 
     rt_kprintf("Write string '%s' to /user/test.txt.\n", str);
 
-    /* ????????????,??????????????*/
     fd = open("/user/test.txt", O_WRONLY | O_CREAT);
     if (fd >= 0)
     {
@@ -362,7 +360,6 @@ static void spi_flash_elmfat_sample(void)
         close(fd);
     }
 
-    /* ????????? */
     fd = open("/user/test.txt", O_RDONLY);
     if (fd >= 0)
     {
@@ -397,7 +394,7 @@ MSH_CMD_EXPORT(spi_w25q_sample, spi w25q sample);
 //{
 //    int fd, size;
 //    struct statfs elm_stat;
-//    char str[] = "elmfat mount to sdcard.\r\n", buf[80];
+//    char str[] = "elmfat mount to sdcard.", buf[80];
 
 //    if (dfs_mkfs("elm", SDCARD_NAME) == 0)
 //        rt_kprintf("make elmfat filesystem success.\n");
