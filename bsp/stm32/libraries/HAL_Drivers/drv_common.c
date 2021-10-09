@@ -28,6 +28,7 @@ static void reboot(uint8_t argc, char **argv)
 MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
 
+extern __IO uint32_t uwTick;
 static uint32_t sysTickMillisecond = 1;
 
 /* SysTick configuration */
