@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the License); you may
  * not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2019-01-23     wangyq        the first version
- * 2019-11-01     wangyq        update libraries 
+ * 2019-11-01     wangyq        update libraries
  * 2021-04-20     liuhy         the second version
  */
 
@@ -55,57 +55,57 @@ void NVIC_Configuration(void)
  *******************************************************************************/
 void  SystemClock_Config(void)
 {
-	SYSCFG_UNLOCK();
-#if  ES_CMU_LRC_EN   
+    SYSCFG_UNLOCK();
+#if  ES_CMU_LRC_EN
     SET_BIT(CMU->CLKENR, CMU_CLKENR_LRCEN_MSK);
 #else
     CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_LRCEN_MSK);
-#endif  /*ES_CMU_LRC_EN*/  
- 
-#if ES_CMU_LOSC_EN 
+#endif  /*ES_CMU_LRC_EN*/
+
+#if ES_CMU_LOSC_EN
     SET_BIT(CMU->CLKENR, CMU_CLKENR_LOSCEN_MSK);
 #else
     CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_LOSCEN_MSK);
-#endif  /*ES_CMU_LOSC_EN*/    
-    
-#if ES_CMU_HRC_EN     
+#endif  /*ES_CMU_LOSC_EN*/
+
+#if ES_CMU_HRC_EN
     SET_BIT(CMU->CLKENR, CMU_CLKENR_HRCEN_MSK);
 #else
     CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_HRCEN_MSK);
-#endif  /*ES_CMU_HRC_EN*/    
-    
-#if ES_CMU_HOSC_EN     
+#endif  /*ES_CMU_HRC_EN*/
+
+#if ES_CMU_HOSC_EN
     SET_BIT(CMU->CLKENR, CMU_CLKENR_HOSCEN_MSK);
 #else
     CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_HOSCEN_MSK);
-#endif  /*ES_CMU_HOSC_EN*/    
+#endif  /*ES_CMU_HOSC_EN*/
 
-	SYSCFG_LOCK();
+    SYSCFG_LOCK();
 
-#if  ES_CMU_PLL1_EN   
+#if  ES_CMU_PLL1_EN
     /*PLL的源必须是4M*/
     ald_cmu_pll1_config(ES_PLL1_REFER_CLK, ES_PLL1_OUT_CLK);
-    
+
     #if ES_CMU_PLL1_SAFE_EN
         ald_cmu_pll_safe_config(ENABLE);
     #else
         ald_cmu_pll_safe_config(DISABLE);
     #endif
-    
+
 #else
     CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_PLL1EN_MSK);
-#endif  /*ES_CMU_PLL1_EN*/ 
-    
+#endif  /*ES_CMU_PLL1_EN*/
+
     ald_cmu_clock_config(ES_SYS_CLK_SOURSE, ES_SYS_CLK);
-    
+
     ald_cmu_div_config(CMU_SYS,ES_CMU_SYS_DIV);
     ald_cmu_div_config(CMU_HCLK_1,ES_CMU_HCLK_1_DIV);
     ald_cmu_div_config(CMU_PCLK_1,ES_CMU_PCLK_1_DIV);
     ald_cmu_div_config(CMU_PCLK_2,ES_CMU_PCLK_2_DIV);
-    
+
     ald_cmu_perh_clock_config(CMU_PERH_ALL, ENABLE);
-    
-/*低功耗时钟使能*/    
+
+/*低功耗时钟使能*/
 #ifdef RT_USING_PM
         SYSCFG_UNLOCK();
         SET_BIT(CMU->LPENR, CMU_LPENR_LRCEN_MSK);
@@ -127,7 +127,7 @@ void  SysTick_Configuration(void)
 {
     /* ticks = sysclk / RT_TICK_PER_SECOND */
     SysTick_Config(ald_cmu_get_sys_clock() / RT_TICK_PER_SECOND);
-    
+
     __systick_interval = 1;
 }
 
