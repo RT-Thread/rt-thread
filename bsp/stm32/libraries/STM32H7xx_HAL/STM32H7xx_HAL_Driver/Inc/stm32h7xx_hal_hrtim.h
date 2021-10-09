@@ -946,7 +946,7 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
   * @{
   * @brief Constants defining the polarity of a timer output
   */
-#define HRTIM_OUTPUTPOLARITY_HIGH    (0x00000000U)           /*!< Output is acitve HIGH */
+#define HRTIM_OUTPUTPOLARITY_HIGH    (0x00000000U)           /*!< Output is active HIGH */
 #define HRTIM_OUTPUTPOLARITY_LOW     (HRTIM_OUTR_POL1)       /*!< Output is active LOW */
 /**
   * @}

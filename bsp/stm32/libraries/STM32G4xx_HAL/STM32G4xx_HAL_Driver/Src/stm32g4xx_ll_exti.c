@@ -117,7 +117,7 @@ uint32_t LL_EXTI_DeInit(void)
   * @param  EXTI_InitStruct pointer to a @ref LL_EXTI_InitTypeDef structure.
   * @retval An ErrorStatus enumeration value:
   *          - 0x00: EXTI registers are initialized
-  *          - any other calue : wrong configuration
+  *          - any other value : wrong configuration
   */
 uint32_t LL_EXTI_Init(LL_EXTI_InitTypeDef *EXTI_InitStruct)
 {

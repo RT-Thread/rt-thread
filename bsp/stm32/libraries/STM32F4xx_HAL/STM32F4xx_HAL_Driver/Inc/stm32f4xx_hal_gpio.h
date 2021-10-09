@@ -107,30 +107,29 @@ typedef enum
   */
 
 /** @defgroup GPIO_mode_define GPIO mode define
-  * @brief GPIO Configuration Mode 
-  *        Elements values convention: 0xX0yz00YZ
-  *           - X  : GPIO mode or EXTI Mode
-  *           - y  : External IT or Event trigger detection 
-  *           - z  : IO configuration on External IT or Event
-  *           - Y  : Output type (Push Pull or Open Drain)
-  *           - Z  : IO Direction mode (Input, Output, Alternate or Analog)
+  * @brief GPIO Configuration Mode
+  *        Elements values convention: 0x00WX00YZ
+  *           - W  : EXTI trigger detection on 3 bits
+  *           - X  : EXTI mode (IT or Event) on 2 bits
+  *           - Y  : Output type (Push Pull or Open Drain) on 1 bit
+  *           - Z  : GPIO mode (Input, Output, Alternate or Analog) on 2 bits
   * @{
-  */
-#define  GPIO_MODE_INPUT                        MODE_INPUT                                               /*!< Input Floating Mode                   */
-#define  GPIO_MODE_OUTPUT_PP                    (MODE_PP | MODE_OUTPUT)                                  /*!< Output Push Pull Mode                 */
-#define  GPIO_MODE_OUTPUT_OD                    (MODE_OD | MODE_OUTPUT)                                  /*!< Output Open Drain Mode                */
-#define  GPIO_MODE_AF_PP                        (MODE_PP | MODE_AF)                                      /*!< Alternate Function Push Pull Mode     */
-#define  GPIO_MODE_AF_OD                        (MODE_OD | MODE_AF)                                      /*!< Alternate Function Open Drain Mode    */
+  */ 
+#define  GPIO_MODE_INPUT                        MODE_INPUT                                                  /*!< Input Floating Mode                   */
+#define  GPIO_MODE_OUTPUT_PP                    (MODE_OUTPUT | OUTPUT_PP)                                   /*!< Output Push Pull Mode                 */
+#define  GPIO_MODE_OUTPUT_OD                    (MODE_OUTPUT | OUTPUT_OD)                                   /*!< Output Open Drain Mode                */
+#define  GPIO_MODE_AF_PP                        (MODE_AF | OUTPUT_PP)                                       /*!< Alternate Function Push Pull Mode     */
+#define  GPIO_MODE_AF_OD                        (MODE_AF | OUTPUT_OD)                                       /*!< Alternate Function Open Drain Mode    */
 
-#define  GPIO_MODE_ANALOG                       MODE_ANALOG                                              /*!< Analog Mode  */
-
-#define  GPIO_MODE_IT_RISING                    (EXTI_MODE | GPIO_MODE_IT | RISING_EDGE)                 /*!< External Interrupt Mode with Rising edge trigger detection          */
-#define  GPIO_MODE_IT_FALLING                   (EXTI_MODE | GPIO_MODE_IT               | FALLING_EDGE)  /*!< External Interrupt Mode with Falling edge trigger detection         */
-#define  GPIO_MODE_IT_RISING_FALLING            (EXTI_MODE | GPIO_MODE_IT | RISING_EDGE | FALLING_EDGE)  /*!< External Interrupt Mode with Rising/Falling edge trigger detection  */
-
-#define  GPIO_MODE_EVT_RISING                   (EXTI_MODE | GPIO_MODE_EVT | RISING_EDGE)                /*!< External Event Mode with Rising edge trigger detection               */
-#define  GPIO_MODE_EVT_FALLING                  (EXTI_MODE | GPIO_MODE_EVT               | FALLING_EDGE) /*!< External Event Mode with Falling edge trigger detection              */
-#define  GPIO_MODE_EVT_RISING_FALLING           (EXTI_MODE | GPIO_MODE_EVT | RISING_EDGE | FALLING_EDGE) /*!< External Event Mode with Rising/Falling edge trigger detection       */
+#define  GPIO_MODE_ANALOG                       MODE_ANALOG                                                 /*!< Analog Mode  */
+    
+#define  GPIO_MODE_IT_RISING                    (MODE_INPUT | EXTI_IT | TRIGGER_RISING)                     /*!< External Interrupt Mode with Rising edge trigger detection          */
+#define  GPIO_MODE_IT_FALLING                   (MODE_INPUT | EXTI_IT | TRIGGER_FALLING)                    /*!< External Interrupt Mode with Falling edge trigger detection         */
+#define  GPIO_MODE_IT_RISING_FALLING            (MODE_INPUT | EXTI_IT | TRIGGER_RISING | TRIGGER_FALLING)   /*!< External Interrupt Mode with Rising/Falling edge trigger detection  */
+ 
+#define  GPIO_MODE_EVT_RISING                   (MODE_INPUT | EXTI_EVT | TRIGGER_RISING)                     /*!< External Event Mode with Rising edge trigger detection             */
+#define  GPIO_MODE_EVT_FALLING                  (MODE_INPUT | EXTI_EVT | TRIGGER_FALLING)                    /*!< External Event Mode with Falling edge trigger detection            */
+#define  GPIO_MODE_EVT_RISING_FALLING           (MODE_INPUT | EXTI_EVT | TRIGGER_RISING | TRIGGER_FALLING)   /*!< External Event Mode with Rising/Falling edge trigger detection     */
 
 /**
   * @}
@@ -253,21 +252,24 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 /** @defgroup GPIO_Private_Constants GPIO Private Constants
   * @{
   */
-#define GPIO_MODE             0x00000003U
-#define EXTI_MODE             0x10000000U
-#define GPIO_MODE_IT          0x00010000U
-#define GPIO_MODE_EVT         0x00020000U
-#define RISING_EDGE           0x00100000U
-#define FALLING_EDGE          0x00200000U
-#define GPIO_OUTPUT_TYPE      0x00000010U
-
-#define  MODE_INPUT           0x00000000U           /*!< Input Mode                   */
-#define  MODE_OUTPUT          0x00000001U           /*!< Output Mode                  */
-#define  MODE_AF              0x00000002U           /*!< Alternate Function Mode      */
-#define  MODE_ANALOG          0x00000003U           /*!< Analog Mode                  */
-
-#define  MODE_PP              0x00000000U           /*!< Push Pull Mode               */
-#define  MODE_OD              0x00000010U           /*!< Open Drain Mode              */
+#define GPIO_MODE_Pos                           0U
+#define GPIO_MODE                               (0x3UL << GPIO_MODE_Pos)
+#define MODE_INPUT                              (0x0UL << GPIO_MODE_Pos)
+#define MODE_OUTPUT                             (0x1UL << GPIO_MODE_Pos)
+#define MODE_AF                                 (0x2UL << GPIO_MODE_Pos)
+#define MODE_ANALOG                             (0x3UL << GPIO_MODE_Pos)
+#define OUTPUT_TYPE_Pos                         4U
+#define OUTPUT_TYPE                             (0x1UL << OUTPUT_TYPE_Pos)
+#define OUTPUT_PP                               (0x0UL << OUTPUT_TYPE_Pos)
+#define OUTPUT_OD                               (0x1UL << OUTPUT_TYPE_Pos)
+#define EXTI_MODE_Pos                           16U
+#define EXTI_MODE                               (0x3UL << EXTI_MODE_Pos)
+#define EXTI_IT                                 (0x1UL << EXTI_MODE_Pos)
+#define EXTI_EVT                                (0x2UL << EXTI_MODE_Pos)
+#define TRIGGER_MODE_Pos                         20U
+#define TRIGGER_MODE                            (0x7UL << TRIGGER_MODE_Pos)
+#define TRIGGER_RISING                          (0x1UL << TRIGGER_MODE_Pos)
+#define TRIGGER_FALLING                         (0x2UL << TRIGGER_MODE_Pos)
 
 /**
   * @}

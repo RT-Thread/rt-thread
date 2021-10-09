@@ -95,8 +95,14 @@ LoopFillZerobss:
  // ldr r0, =__libc_init_array
  // blx r0
 /* Call the application's entry point.*/
-  bl entry
-  bx lr
+  bl main
+  //ldr r0, =main
+  //blx r0
+
+LoopForever:
+    b LoopForever
+
+
 .size Reset_Handler, .-Reset_Handler
 
 /**

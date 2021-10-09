@@ -635,7 +635,7 @@ typedef struct
   __IO uint32_t  CBRUR;     /*!< MDMA channel x Block Repeat address Update register,  Address offset: 0x60 */
   __IO uint32_t  CLAR;      /*!< MDMA channel x Link Address register,                 Address offset: 0x64 */
   __IO uint32_t  CTBR;      /*!< MDMA channel x Trigger and Bus selection Register,    Address offset: 0x68 */
-  uint32_t       RESERVED0; /*!< Reserved, 0x68                                                             */
+  uint32_t       RESERVED0; /*!< Reserved, 0x6C                                                             */
   __IO uint32_t  CMAR;      /*!< MDMA channel x Mask address register,                 Address offset: 0x70 */
   __IO uint32_t  CMDR;      /*!< MDMA channel x Mask Data register,                    Address offset: 0x74 */
 }MDMA_Channel_TypeDef;
@@ -884,6 +884,15 @@ __IO uint32_t IMR3;                /*!< EXTI Interrupt mask register,           
 __IO uint32_t EMR3;                /*!< EXTI Event mask register,                        Address offset: 0xA4 */
 __IO uint32_t PR3;                 /*!< EXTI Pending register,                           Address offset: 0xA8 */
 }EXTI_TypeDef;
+
+/**
+  * @brief This structure registers corresponds to EXTI_Typdef CPU1/CPU2 registers subset (IMRx, EMRx and PRx), allowing to define EXTI_D1/EXTI_D2
+  *        with rapid/common access to these IMRx, EMRx, PRx registers for CPU1 and CPU2.
+  *        Note that EXTI_D1 and EXTI_D2 bases addresses are calculated to point to CPUx first register:
+  *           IMR1   in case of EXTI_D1 that is addressing CPU1 (Coretx-M7)
+  *           C2IMR1 in case of EXTI_D2 that is addressing CPU2 (Coretx-M4)
+  *        Note: EXTI_D2 and corresponding C2IMRx, C2EMRx and C2PRx registers are available for Dual Core devices only
+  */
 
 typedef struct
 {
@@ -1728,7 +1737,7 @@ typedef struct
 {
   __IO uint32_t MCR;            /*!< HRTIM Master Timer control register,                     Address offset: 0x00 */
   __IO uint32_t MISR;           /*!< HRTIM Master Timer interrupt status register,            Address offset: 0x04 */
-  __IO uint32_t MICR;           /*!< HRTIM Master Timer interupt clear register,              Address offset: 0x08 */
+  __IO uint32_t MICR;           /*!< HRTIM Master Timer interrupt clear register,             Address offset: 0x08 */
   __IO uint32_t MDIER;          /*!< HRTIM Master Timer DMA/interrupt enable register         Address offset: 0x0C */
   __IO uint32_t MCNTR;          /*!< HRTIM Master Timer counter register,                     Address offset: 0x10 */
   __IO uint32_t MPER;           /*!< HRTIM Master Timer period register,                      Address offset: 0x14 */
@@ -2032,6 +2041,90 @@ typedef struct
   * @}
   */
 
+
+/**
+  * @brief Global Programmer View
+  */
+
+typedef struct
+{
+  uint32_t      RESERVED0[2036];     /*!< Reserved,                                                                           Address offset: 0x00-0x1FCC     */
+  __IO uint32_t AXI_PERIPH_ID_4;     /*!< AXI interconnect - peripheral ID4 register,                                         Address offset: 0x1FD0          */
+  uint32_t      AXI_PERIPH_ID_5;     /*!< Reserved,                                                                           Address offset: 0x1FD4          */
+  uint32_t      AXI_PERIPH_ID_6;     /*!< Reserved,                                                                           Address offset: 0x1FD8          */
+  uint32_t      AXI_PERIPH_ID_7;     /*!< Reserved,                                                                           Address offset: 0x1FDC          */
+  __IO uint32_t AXI_PERIPH_ID_0;     /*!< AXI interconnect - peripheral ID0 register,                                         Address offset: 0x1FE0          */
+  __IO uint32_t AXI_PERIPH_ID_1;     /*!< AXI interconnect - peripheral ID1 register,                                         Address offset: 0x1FE4          */
+  __IO uint32_t AXI_PERIPH_ID_2;     /*!< AXI interconnect - peripheral ID2 register,                                         Address offset: 0x1FE8          */
+  __IO uint32_t AXI_PERIPH_ID_3;     /*!< AXI interconnect - peripheral ID3 register,                                         Address offset: 0x1FEC          */
+  __IO uint32_t AXI_COMP_ID_0;       /*!< AXI interconnect - component ID0 register,                                          Address offset: 0x1FF0          */
+  __IO uint32_t AXI_COMP_ID_1;       /*!< AXI interconnect - component ID1 register,                                          Address offset: 0x1FF4          */
+  __IO uint32_t AXI_COMP_ID_2;       /*!< AXI interconnect - component ID2 register,                                          Address offset: 0x1FF8          */
+  __IO uint32_t AXI_COMP_ID_3;       /*!< AXI interconnect - component ID3 register,                                          Address offset: 0x1FFC          */
+  uint32_t      RESERVED1[2];        /*!< Reserved,                                                                           Address offset: 0x2000-0x2004   */
+  __IO uint32_t AXI_TARG1_FN_MOD_ISS_BM;  /*!< AXI interconnect - TARG 1 bus matrix issuing functionality register,           Address offset: 0x2008          */
+  uint32_t      RESERVED2[6];        /*!< Reserved,                                                                           Address offset: 0x200C-0x2020   */
+  __IO uint32_t AXI_TARG1_FN_MOD2;   /*!< AXI interconnect - TARG 1 bus matrix functionality 2 register,                      Address offset: 0x2024          */
+  uint32_t      RESERVED3;           /*!< Reserved,                                                                           Address offset: 0x2028          */
+  __IO uint32_t AXI_TARG1_FN_MOD_LB; /*!< AXI interconnect - TARG 1 long burst functionality modification register,           Address offset: 0x202C          */
+  uint32_t      RESERVED4[54];       /*!< Reserved,                                                                           Address offset: 0x2030-0x2104   */
+  __IO uint32_t AXI_TARG1_FN_MOD;    /*!< AXI interconnect - TARG 1 issuing functionality modification register,              Address offset: 0x2108          */
+  uint32_t      RESERVED5[959];      /*!< Reserved,                                                                           Address offset: 0x210C-0x3004   */
+  __IO uint32_t AXI_TARG2_FN_MOD_ISS_BM;  /*!< AXI interconnect - TARG 2 bus matrix issuing functionality register,           Address offset: 0x3008          */
+  uint32_t      RESERVED6[6];        /*!< Reserved,                                                                           Address offset: 0x300C-0x3020   */
+  __IO uint32_t AXI_TARG2_FN_MOD2;   /*!< AXI interconnect - TARG 2 bus matrix functionality 2 register,                      Address offset: 0x3024          */
+  uint32_t      RESERVED7;           /*!< Reserved,                                                                           Address offset: 0x3028          */
+  __IO uint32_t AXI_TARG2_FN_MOD_LB; /*!< AXI interconnect - TARG 2 long burst functionality modification register,           Address offset: 0x302C          */
+  uint32_t      RESERVED8[54];       /*!< Reserved,                                                                           Address offset: 0x3030-0x3104   */
+  __IO uint32_t AXI_TARG2_FN_MOD;    /*!< AXI interconnect - TARG 2 issuing functionality modification register,              Address offset: 0x3108          */
+  uint32_t      RESERVED9[959];      /*!< Reserved,                                                                           Address offset: 0x310C-0x4004   */
+  __IO uint32_t AXI_TARG3_FN_MOD_ISS_BM;   /*!< AXI interconnect - TARG 3 bus matrix issuing functionality register,          Address offset: 0x4008          */
+  uint32_t      RESERVED10[1023];    /*!< Reserved,                                                                           Address offset: 0x400C-0x5004   */
+  __IO uint32_t AXI_TARG4_FN_MOD_ISS_BM;  /*!< AXI interconnect - TARG 4 bus matrix issuing functionality register,           Address offset: 0x5008          */
+  uint32_t      RESERVED11[1023];    /*!< Reserved,                                                                           Address offset: 0x500C-0x6004   */
+  __IO uint32_t AXI_TARG5_FN_MOD_ISS_BM;  /*!< AXI interconnect - TARG 5 bus matrix issuing functionality register,           Address offset: 0x6008          */
+  uint32_t      RESERVED12[1023];    /*!< Reserved,                                                                           Address offset: 0x600C-0x7004   */
+  __IO uint32_t AXI_TARG6_FN_MOD_ISS_BM;  /*!< AXI interconnect - TARG 6 bus matrix issuing functionality register,           Address offset: 0x7008          */
+  uint32_t      RESERVED13[1023];    /*!< Reserved,                                                                           Address offset: 0x700C-0x8004   */
+  __IO uint32_t AXI_TARG7_FN_MOD_ISS_BM;  /*!< AXI interconnect - TARG 7 bus matrix issuing functionality register,           Address offset: 0x8008          */
+  uint32_t      RESERVED14[6];       /*!< Reserved,                                                                           Address offset: 0x800C-0x8020   */
+  __IO uint32_t AXI_TARG7_FN_MOD2;   /*!< AXI interconnect - TARG 7 bus matrix functionality 2 register,                      Address offset: 0x8024          */
+  uint32_t      RESERVED15;          /*!< Reserved,                                                                           Address offset: 0x8028          */
+  __IO uint32_t AXI_TARG7_FN_MOD_LB; /*!< AXI interconnect - TARG 7 long burst functionality modification register,           Address offset: 0x802C          */
+  uint32_t      RESERVED16[54];      /*!< Reserved,                                                                           Address offset: 0x8030-0x8104   */
+  __IO uint32_t AXI_TARG7_FN_MOD;    /*!< AXI interconnect - TARG 7 issuing functionality modification register,              Address offset: 0x8108          */
+  uint32_t      RESERVED17[59334];    /*!< Reserved,                                                                          Address offset: 0x810C-0x42020  */
+  __IO uint32_t AXI_INI1_FN_MOD2;    /*!< AXI interconnect - INI 1 functionality modification 2 register,                     Address offset: 0x42024         */
+  __IO uint32_t AXI_INI1_FN_MOD_AHB; /*!< AXI interconnect - INI 1 AHB functionality modification register,                   Address offset: 0x42028         */
+  uint32_t      RESERVED18[53];      /*!< Reserved,                                                                           Address offset: 0x4202C-0x420FC */
+  __IO uint32_t AXI_INI1_READ_QOS;   /*!< AXI interconnect - INI 1 read QoS register,                                         Address offset: 0x42100         */
+  __IO uint32_t AXI_INI1_WRITE_QOS;  /*!< AXI interconnect - INI 1 write QoS register,                                        Address offset: 0x42104         */
+  __IO uint32_t AXI_INI1_FN_MOD;     /*!< AXI interconnect - INI 1 issuing functionality modification register,               Address offset: 0x42108         */
+  uint32_t      RESERVED19[1021];    /*!< Reserved,                                                                           Address offset: 0x4210C-0x430FC */
+  __IO uint32_t AXI_INI2_READ_QOS;   /*!< AXI interconnect - INI 2 read QoS register,                                         Address offset: 0x43100         */
+  __IO uint32_t AXI_INI2_WRITE_QOS;  /*!< AXI interconnect - INI 2 write QoS register,                                        Address offset: 0x43104         */
+  __IO uint32_t AXI_INI2_FN_MOD;     /*!< AXI interconnect - INI 2 issuing functionality modification register,               Address offset: 0x43108         */
+  uint32_t      RESERVED20[966];     /*!< Reserved,                                                                           Address offset: 0x4310C-0x44020 */
+  __IO uint32_t AXI_INI3_FN_MOD2;    /*!< AXI interconnect - INI 3 functionality modification 2 register,                     Address offset: 0x44024         */
+  __IO uint32_t AXI_INI3_FN_MOD_AHB; /*!< AXI interconnect - INI 3 AHB functionality modification register,                   Address offset: 0x44028         */
+  uint32_t      RESERVED21[53];      /*!< Reserved,                                                                           Address offset: 0x4402C-0x440FC */
+  __IO uint32_t AXI_INI3_READ_QOS;   /*!< AXI interconnect - INI 3 read QoS register,                                         Address offset: 0x44100         */
+  __IO uint32_t AXI_INI3_WRITE_QOS;  /*!< AXI interconnect - INI 3 write QoS register,                                        Address offset: 0x44104         */
+  __IO uint32_t AXI_INI3_FN_MOD;     /*!< AXI interconnect - INI 3 issuing functionality modification register,               Address offset: 0x44108         */
+  uint32_t      RESERVED22[1021];    /*!< Reserved,                                                                           Address offset: 0x4410C-0x450FC */
+  __IO uint32_t AXI_INI4_READ_QOS;   /*!< AXI interconnect - INI 4 read QoS register,                                         Address offset: 0x45100         */
+  __IO uint32_t AXI_INI4_WRITE_QOS;  /*!< AXI interconnect - INI 4 write QoS register,                                        Address offset: 0x45104         */
+  __IO uint32_t AXI_INI4_FN_MOD;     /*!< AXI interconnect - INI 4 issuing functionality modification register,               Address offset: 0x45108         */
+  uint32_t      RESERVED23[1021];    /*!< Reserved,                                                                           Address offset: 0x4510C-0x460FC */
+  __IO uint32_t AXI_INI5_READ_QOS;   /*!< AXI interconnect - INI 5 read QoS register,                                         Address offset: 0x46100         */
+  __IO uint32_t AXI_INI5_WRITE_QOS;  /*!< AXI interconnect - INI 5 write QoS register,                                        Address offset: 0x46104         */
+  __IO uint32_t AXI_INI5_FN_MOD;     /*!< AXI interconnect - INI 5 issuing functionality modification register,               Address offset: 0x46108         */
+  uint32_t      RESERVED24[1021];    /*!< Reserved,                                                                           Address offset: 0x4610C-0x470FC */
+  __IO uint32_t AXI_INI6_READ_QOS;   /*!< AXI interconnect - INI 6 read QoS register,                                         Address offset: 0x47100         */
+  __IO uint32_t AXI_INI6_WRITE_QOS;  /*!< AXI interconnect - INI 6 write QoS register,                                        Address offset: 0x47104         */
+  __IO uint32_t AXI_INI6_FN_MOD;     /*!< AXI interconnect - INI 6 issuing functionality modification register,               Address offset: 0x47108         */
+
+} GPV_TypeDef;
 
 /** @addtogroup Peripheral_memory_map
   * @{
@@ -2390,6 +2483,9 @@ typedef struct
 #define RAMECC3_Monitor2_BASE (RAMECC3_BASE + 0x40UL)
 
 
+
+#define GPV_BASE       (PERIPH_BASE + 0x11000000UL)   /*!<  GPV_BASE       (PERIPH_BASE + 0x11000000UL)                    */
+
 /**
   * @}
   */
@@ -2682,6 +2778,8 @@ typedef struct
 #define USB_OTG_HS_PERIPH_BASE       USB1_OTG_HS_PERIPH_BASE
 #define USB_OTG_FS                   USB2_OTG_FS
 #define USB_OTG_FS_PERIPH_BASE       USB2_OTG_FS_PERIPH_BASE
+
+#define GPV                ((GPV_TypeDef *) GPV_BASE)
 
 /**
   * @}
@@ -3155,7 +3253,7 @@ typedef struct
 /********************  Bit definition for ADC_SQR1 register  ********************/
 #define ADC_SQR1_L_Pos                    (0U)
 #define ADC_SQR1_L_Msk                    (0xFUL << ADC_SQR1_L_Pos)            /*!< 0x0000000F */
-#define ADC_SQR1_L                        ADC_SQR1_L_Msk                       /*!< ADC regular channel sequence lenght */
+#define ADC_SQR1_L                        ADC_SQR1_L_Msk                       /*!< ADC regular channel sequence length */
 #define ADC_SQR1_L_0                      (0x1UL << ADC_SQR1_L_Pos)             /*!< 0x00000001 */
 #define ADC_SQR1_L_1                      (0x2UL << ADC_SQR1_L_Pos)             /*!< 0x00000002 */
 #define ADC_SQR1_L_2                      (0x4UL << ADC_SQR1_L_Pos)             /*!< 0x00000004 */
@@ -4035,7 +4133,7 @@ typedef struct
 /*****************  Bit definition for FDCAN_ENDN register  *******************/
 #define FDCAN_ENDN_ETV_Pos        (0U)
 #define FDCAN_ENDN_ETV_Msk        (0xFFFFFFFFUL << FDCAN_ENDN_ETV_Pos)         /*!< 0xFFFFFFFF */
-#define FDCAN_ENDN_ETV            FDCAN_ENDN_ETV_Msk                           /*!<Endiannes Test Value                    */
+#define FDCAN_ENDN_ETV            FDCAN_ENDN_ETV_Msk                           /*!<Endianness Test Value                   */
 
 /*****************  Bit definition for FDCAN_DBTP register  *******************/
 #define FDCAN_DBTP_DSJW_Pos       (0U)
@@ -4162,7 +4260,7 @@ typedef struct
 
 /*****************  Bit definition for FDCAN_ECR register  *********************/
 #define FDCAN_ECR_TEC_Pos         (0U)
-#define FDCAN_ECR_TEC_Msk         (0xFUL << FDCAN_ECR_TEC_Pos)                 /*!< 0x0000000F */
+#define FDCAN_ECR_TEC_Msk         (0xFFUL << FDCAN_ECR_TEC_Pos)                 /*!< 0x000000FF */
 #define FDCAN_ECR_TEC             FDCAN_ECR_TEC_Msk                            /*!<Transmit Error Counter                   */
 #define FDCAN_ECR_REC_Pos         (8U)
 #define FDCAN_ECR_REC_Msk         (0x7FUL << FDCAN_ECR_REC_Pos)                /*!< 0x00007F00 */
@@ -10745,12 +10843,16 @@ typedef struct
 /*
 * @brief FLASH Global Defines
 */
+#define FLASH_SIZE_DATA_REGISTER             0x1FF1E880U
 #define FLASH_SECTOR_TOTAL                   1U                    /* 1 sector */
 #define FLASH_SECTOR_SIZE                    0x00020000UL          /* 128 KB */
-#define FLASH_SIZE                           FLASH_SECTOR_SIZE     /* 128 KB */
+#define FLASH_SIZE                           ((((*((uint16_t *)FLASH_SIZE_DATA_REGISTER)) == 0xFFFFU)) ? 0x20000U : \
+                                             ((((*((uint16_t *)FLASH_SIZE_DATA_REGISTER)) == 0x0000U)) ? 0x20000U : \
+                                             (((uint32_t)(*((uint16_t *)FLASH_SIZE_DATA_REGISTER)) & (0x0FFFU)) << 10U)))  /* 128 KB */
 #define FLASH_BANK_SIZE                      FLASH_SIZE            /* 128 KB */
 #define FLASH_LATENCY_DEFAULT                FLASH_ACR_LATENCY_7WS /* FLASH Seven Latency cycles */
 #define FLASH_NB_32BITWORD_IN_FLASHWORD      8U                    /* 256 bits */
+
 
 /*******************  Bits definition for FLASH_ACR register  **********************/
 #define FLASH_ACR_LATENCY_Pos                (0U)
@@ -10949,9 +11051,6 @@ typedef struct
 #define FLASH_OPTCR_OPTCHANGEERRIE_Pos       (30U)
 #define FLASH_OPTCR_OPTCHANGEERRIE_Msk       (0x1UL << FLASH_OPTCR_OPTCHANGEERRIE_Pos) /*!< 0x40000000 */
 #define FLASH_OPTCR_OPTCHANGEERRIE           FLASH_OPTCR_OPTCHANGEERRIE_Msk            /*!< Option byte change error interrupt enable bit */
-#define FLASH_OPTCR_SWAP_BANK_Pos            (31U)
-#define FLASH_OPTCR_SWAP_BANK_Msk            (0x1UL << FLASH_OPTCR_SWAP_BANK_Pos) /*!< 0x80000000 */
-#define FLASH_OPTCR_SWAP_BANK                FLASH_OPTCR_SWAP_BANK_Msk            /*!< Bank swapping option configuration bit */
 
 /*******************  Bits definition for FLASH_OPTSR register  ***************/
 #define FLASH_OPTSR_OPT_BUSY_Pos             (0U)
@@ -10994,9 +11093,6 @@ typedef struct
 #define FLASH_OPTSR_OPTCHANGEERR_Pos         (30U)
 #define FLASH_OPTSR_OPTCHANGEERR_Msk         (0x1UL << FLASH_OPTSR_OPTCHANGEERR_Pos) /*!< 0x40000000 */
 #define FLASH_OPTSR_OPTCHANGEERR             FLASH_OPTSR_OPTCHANGEERR_Msk            /*!< Option byte change error flag */
-#define FLASH_OPTSR_SWAP_BANK_OPT_Pos        (31U)
-#define FLASH_OPTSR_SWAP_BANK_OPT_Msk        (0x1UL << FLASH_OPTSR_SWAP_BANK_OPT_Pos) /*!< 0x80000000 */
-#define FLASH_OPTSR_SWAP_BANK_OPT            FLASH_OPTSR_SWAP_BANK_OPT_Msk            /*!< Bank swapping option status bit */
 
 /*******************  Bits definition for FLASH_OPTCCR register  *******************/
 #define FLASH_OPTCCR_CLR_OPTCHANGEERR_Pos    (30U)
@@ -11095,7 +11191,7 @@ typedef struct
 /******************  Bit definition for FMC_BCR1 register  *******************/
 #define FMC_BCR1_CCLKEN_Pos        (20U)
 #define FMC_BCR1_CCLKEN_Msk        (0x1UL << FMC_BCR1_CCLKEN_Pos)              /*!< 0x00100000 */
-#define FMC_BCR1_CCLKEN            FMC_BCR1_CCLKEN_Msk                         /*!<Continous clock enable     */
+#define FMC_BCR1_CCLKEN            FMC_BCR1_CCLKEN_Msk                         /*!<Continuous clock enable     */
 #define FMC_BCR1_WFDIS_Pos         (21U)
 #define FMC_BCR1_WFDIS_Msk         (0x1UL << FMC_BCR1_WFDIS_Pos)               /*!< 0x00200000 */
 #define FMC_BCR1_WFDIS             FMC_BCR1_WFDIS_Msk                          /*!<Write FIFO Disable         */
@@ -11575,7 +11671,7 @@ typedef struct
 
 #define FMC_SDRTR_REIE_Pos         (14U)
 #define FMC_SDRTR_REIE_Msk         (0x1UL << FMC_SDRTR_REIE_Pos)               /*!< 0x00004000 */
-#define FMC_SDRTR_REIE             FMC_SDRTR_REIE_Msk                          /*!<RES interupt enable */
+#define FMC_SDRTR_REIE             FMC_SDRTR_REIE_Msk                          /*!<RES interrupt enable */
 
 /******************  Bit definition for FMC_SDSR register  ******************/
 #define FMC_SDSR_RE_Pos            (0U)
@@ -13431,7 +13527,7 @@ typedef struct
 
 #define LTDC_AWCR_AAH_Pos            (0U)
 #define LTDC_AWCR_AAH_Msk            (0x7FFUL << LTDC_AWCR_AAH_Pos)            /*!< 0x000007FF */
-#define LTDC_AWCR_AAH                LTDC_AWCR_AAH_Msk                         /*!< Accumulated Active heigh */
+#define LTDC_AWCR_AAH                LTDC_AWCR_AAH_Msk                         /*!< Accumulated Active height */
 #define LTDC_AWCR_AAW_Pos            (16U)
 #define LTDC_AWCR_AAW_Msk            (0xFFFUL << LTDC_AWCR_AAW_Pos)            /*!< 0x0FFF0000 */
 #define LTDC_AWCR_AAW                LTDC_AWCR_AAW_Msk                         /*!< Accumulated Active Width */
@@ -13440,7 +13536,7 @@ typedef struct
 
 #define LTDC_TWCR_TOTALH_Pos         (0U)
 #define LTDC_TWCR_TOTALH_Msk         (0x7FFUL << LTDC_TWCR_TOTALH_Pos)         /*!< 0x000007FF */
-#define LTDC_TWCR_TOTALH             LTDC_TWCR_TOTALH_Msk                      /*!< Total Heigh */
+#define LTDC_TWCR_TOTALH             LTDC_TWCR_TOTALH_Msk                      /*!< Total height */
 #define LTDC_TWCR_TOTALW_Pos         (16U)
 #define LTDC_TWCR_TOTALW_Msk         (0xFFFUL << LTDC_TWCR_TOTALW_Pos)         /*!< 0x0FFF0000 */
 #define LTDC_TWCR_TOTALW             LTDC_TWCR_TOTALW_Msk                      /*!< Total Width */
@@ -13759,7 +13855,7 @@ typedef struct
 #define MDMA_CISR_TCIF            MDMA_CISR_TCIF_Msk                           /*!< Channel x buffer transfer complete interrupt flag */
 #define MDMA_CISR_CRQA_Pos        (16U)
 #define MDMA_CISR_CRQA_Msk        (0x1UL << MDMA_CISR_CRQA_Pos)                /*!< 0x00010000 */
-#define MDMA_CISR_CRQA            MDMA_CISR_CRQA_Msk                           /*!< Channel x ReQest Active flag */
+#define MDMA_CISR_CRQA            MDMA_CISR_CRQA_Msk                           /*!< Channel x request Active flag */
 
 /********************  Bit definition for MDMA_CxIFCR register  ****************/
 #define MDMA_CIFCR_CTEIF_Pos      (0U)
@@ -13824,13 +13920,13 @@ typedef struct
 #define MDMA_CCR_PL_1             (0x2UL << MDMA_CCR_PL_Pos)                    /*!< 0x00000080 */
 #define MDMA_CCR_BEX_Pos          (12U)
 #define MDMA_CCR_BEX_Msk          (0x1UL << MDMA_CCR_BEX_Pos)                  /*!< 0x00001000 */
-#define MDMA_CCR_BEX              MDMA_CCR_BEX_Msk                             /*!< Byte Endianess eXchange */
+#define MDMA_CCR_BEX              MDMA_CCR_BEX_Msk                             /*!< Byte Endianness eXchange */
 #define MDMA_CCR_HEX_Pos          (13U)
 #define MDMA_CCR_HEX_Msk          (0x1UL << MDMA_CCR_HEX_Pos)                  /*!< 0x00002000 */
-#define MDMA_CCR_HEX              MDMA_CCR_HEX_Msk                             /*!< Half word Endianess eXchange */
+#define MDMA_CCR_HEX              MDMA_CCR_HEX_Msk                             /*!< Half word Endianness eXchange */
 #define MDMA_CCR_WEX_Pos          (14U)
 #define MDMA_CCR_WEX_Msk          (0x1UL << MDMA_CCR_WEX_Pos)                  /*!< 0x00004000 */
-#define MDMA_CCR_WEX              MDMA_CCR_WEX_Msk                             /*!< Word Endianess eXchange */
+#define MDMA_CCR_WEX              MDMA_CCR_WEX_Msk                             /*!< Word Endianness eXchange */
 #define MDMA_CCR_SWRQ_Pos         (16U)
 #define MDMA_CCR_SWRQ_Msk         (0x1UL << MDMA_CCR_SWRQ_Pos)                 /*!< 0x00010000 */
 #define MDMA_CCR_SWRQ             MDMA_CCR_SWRQ_Msk                            /*!< SW ReQuest */
@@ -13886,7 +13982,7 @@ typedef struct
 #define MDMA_CTCR_PKE             MDMA_CTCR_PKE_Msk                            /*!< PacK Enable */
 #define MDMA_CTCR_PAM_Pos         (26U)
 #define MDMA_CTCR_PAM_Msk         (0x3UL << MDMA_CTCR_PAM_Pos)                 /*!< 0x0C000000 */
-#define MDMA_CTCR_PAM             MDMA_CTCR_PAM_Msk                            /*!< Padding/Alignement Mode */
+#define MDMA_CTCR_PAM             MDMA_CTCR_PAM_Msk                            /*!< Padding/Alignment Mode */
 #define MDMA_CTCR_PAM_0           (0x1UL << MDMA_CTCR_PAM_Pos)                  /*!< 0x4000000 */
 #define MDMA_CTCR_PAM_1           (0x2UL << MDMA_CTCR_PAM_Pos)                  /*!< 0x8000000 */
 #define MDMA_CTCR_TRGM_Pos        (28U)
@@ -18681,7 +18777,7 @@ typedef struct
 #define QUADSPI_CR_ABORT                 QUADSPI_CR_ABORT_Msk                  /*!< Abort request */
 #define QUADSPI_CR_DMAEN_Pos             (2U)
 #define QUADSPI_CR_DMAEN_Msk             (0x1UL << QUADSPI_CR_DMAEN_Pos)       /*!< 0x00000004 */
-#define QUADSPI_CR_DMAEN                 QUADSPI_CR_DMAEN_Msk                  /*!< DMA Enable */
+#define QUADSPI_CR_DMAEN                 QUADSPI_CR_DMAEN_Msk                  /*!< Reserved: needed for softawre compatibility (DMA Enable) */
 #define QUADSPI_CR_TCEN_Pos              (3U)
 #define QUADSPI_CR_TCEN_Msk              (0x1UL << QUADSPI_CR_TCEN_Pos)        /*!< 0x00000008 */
 #define QUADSPI_CR_TCEN                  QUADSPI_CR_TCEN_Msk                   /*!< Timeout Counter Enable */
@@ -21222,7 +21318,7 @@ typedef struct
 /*******************  Bit definition for SWPMI_RDR register  ********************/
 #define SWPMI_RDR_RD_Pos         (0U)
 #define SWPMI_RDR_RD_Msk         (0xFFFFFFFFUL << SWPMI_RDR_RD_Pos)            /*!< 0xFFFFFFFF */
-#define SWPMI_RDR_RD             SWPMI_RDR_RD_Msk                              /*!<Recive Data Register           */
+#define SWPMI_RDR_RD             SWPMI_RDR_RD_Msk                              /*!<Receive Data Register           */
 
 
 /*******************  Bit definition for SWPMI_OR register  ********************/
@@ -21309,12 +21405,6 @@ typedef struct
 #define DBGMCU_CR_DBG_STANDBYD1_Pos       (2U)
 #define DBGMCU_CR_DBG_STANDBYD1_Msk       (0x1UL << DBGMCU_CR_DBG_STANDBYD1_Pos) /*!< 0x00000004 */
 #define DBGMCU_CR_DBG_STANDBYD1           DBGMCU_CR_DBG_STANDBYD1_Msk
-#define DBGMCU_CR_DBG_STOPD3_Pos          (7U)
-#define DBGMCU_CR_DBG_STOPD3_Msk          (0x1UL << DBGMCU_CR_DBG_STOPD3_Pos)  /*!< 0x00000080 */
-#define DBGMCU_CR_DBG_STOPD3              DBGMCU_CR_DBG_STOPD3_Msk
-#define DBGMCU_CR_DBG_STANDBYD3_Pos       (8U)
-#define DBGMCU_CR_DBG_STANDBYD3_Msk       (0x1UL << DBGMCU_CR_DBG_STANDBYD3_Pos) /*!< 0x00000100 */
-#define DBGMCU_CR_DBG_STANDBYD3           DBGMCU_CR_DBG_STANDBYD3_Msk
 #define DBGMCU_CR_DBG_TRACECKEN_Pos       (20U)
 #define DBGMCU_CR_DBG_TRACECKEN_Msk       (0x1UL << DBGMCU_CR_DBG_TRACECKEN_Pos) /*!< 0x00100000 */
 #define DBGMCU_CR_DBG_TRACECKEN           DBGMCU_CR_DBG_TRACECKEN_Msk
@@ -23177,7 +23267,7 @@ typedef struct
 /**** Bit definition for Common HRTIM Timer Burst mode control register ********/
 #define HRTIM_BMCR_BME_Pos            (0U)
 #define HRTIM_BMCR_BME_Msk            (0x1UL << HRTIM_BMCR_BME_Pos)            /*!< 0x00000001 */
-#define HRTIM_BMCR_BME                HRTIM_BMCR_BME_Msk                       /*!< Burst mode enbale */
+#define HRTIM_BMCR_BME                HRTIM_BMCR_BME_Msk                       /*!< Burst mode enable */
 #define HRTIM_BMCR_BMOM_Pos           (1U)
 #define HRTIM_BMCR_BMOM_Msk           (0x1UL << HRTIM_BMCR_BMOM_Pos)           /*!< 0x00000002 */
 #define HRTIM_BMCR_BMOM               HRTIM_BMCR_BMOM_Msk                      /*!< Burst mode operating mode */
@@ -25918,14 +26008,16 @@ typedef struct
                                        ((INSTANCE) == I2C2) || \
                                        ((INSTANCE) == I2C3) || \
                                        ((INSTANCE) == I2C4))
-/************** I2C Instances : wakeup capability from stop modes *************/
-#define IS_I2C_WAKEUP_FROMSTOP_INSTANCE(INSTANCE) IS_I2C_ALL_INSTANCE(INSTANCE)
 
 /****************************** SMBUS Instances *******************************/
 #define IS_SMBUS_ALL_INSTANCE(INSTANCE) (((INSTANCE) == I2C1) || \
                                          ((INSTANCE) == I2C2) || \
                                          ((INSTANCE) == I2C3) || \
                                          ((INSTANCE) == I2C4))
+
+/************** I2C Instances : wakeup capability from stop modes *************/
+#define IS_I2C_WAKEUP_FROMSTOP_INSTANCE(INSTANCE) IS_I2C_ALL_INSTANCE(INSTANCE)
+
 /******************************** I2S Instances *******************************/
 #define IS_I2S_ALL_INSTANCE(INSTANCE)   (((INSTANCE) == SPI1) || \
                                          ((INSTANCE) == SPI2) || \
@@ -25943,9 +26035,6 @@ typedef struct
 /****************************** SDMMC Instances *********************************/
 #define IS_SDMMC_ALL_INSTANCE(_INSTANCE_) (((_INSTANCE_) == SDMMC1) || \
                                            ((_INSTANCE_) == SDMMC2))
-
-/******************************** SMBUS Instances *****************************/
-#define IS_SMBUS_INSTANCE(INSTANCE)  ((INSTANCE) == I2C1)
 
 /******************************** SPI Instances *******************************/
 #define IS_SPI_ALL_INSTANCE(INSTANCE) (((INSTANCE) == SPI1) || \
@@ -26125,6 +26214,7 @@ typedef struct
                                             ((INSTANCE) == TIM6)   || \
                                             ((INSTANCE) == TIM7)   || \
                                             ((INSTANCE) == TIM8)   || \
+                                            ((INSTANCE) == TIM12)  || \
                                             ((INSTANCE) == TIM15))
 
 /****** TIM Instances : Salve mode available (TIMx_SMCR.TS available )*********/

@@ -49,7 +49,7 @@
 
 /** @defgroup PCDEx_Exported_Functions_Group1 Peripheral Control functions
   * @brief    PCDEx control functions
- *
+  *
 @verbatim
  ===============================================================================
                  ##### Extended features functions #####
@@ -260,7 +260,7 @@ HAL_StatusTypeDef HAL_PCDEx_ActivateBCD(PCD_HandleTypeDef *hpcd)
   USBx->GCCFG &= ~(USB_OTG_GCCFG_PDEN);
   USBx->GCCFG &= ~(USB_OTG_GCCFG_SDEN);
 
-  /* Power Down USB tranceiver  */
+  /* Power Down USB transceiver  */
   USBx->GCCFG &= ~(USB_OTG_GCCFG_PWRDWN);
 
   /* Enable Battery charging */
@@ -310,10 +310,8 @@ HAL_StatusTypeDef HAL_PCDEx_DeActivateBCD(PCD_HandleTypeDef *hpcd)
   * @retval HAL status
   */
 
-HAL_StatusTypeDef  HAL_PCDEx_PMAConfig(PCD_HandleTypeDef *hpcd,
-                                       uint16_t ep_addr,
-                                       uint16_t ep_kind,
-                                       uint32_t pmaadress)
+HAL_StatusTypeDef  HAL_PCDEx_PMAConfig(PCD_HandleTypeDef *hpcd, uint16_t ep_addr,
+                                       uint16_t ep_kind, uint32_t pmaadress)
 {
   PCD_EPTypeDef *ep;
 

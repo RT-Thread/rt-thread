@@ -462,7 +462,7 @@ uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
   */
 
 /** @brief  Check whether the specified SPI flag is set or not.
-  * @param  __SR__  copy of I2S SR regsiter.
+  * @param  __SR__  copy of I2S SR register.
   * @param  __FLAG__ specifies the flag to check.
   *         This parameter can be one of the following values:
   *            @arg I2S_FLAG_RXNE: Receive buffer not empty flag
@@ -477,7 +477,7 @@ uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
                                                     & ((__FLAG__) & I2S_FLAG_MASK)) == ((__FLAG__) & I2S_FLAG_MASK)) ? SET : RESET)
 
 /** @brief  Check whether the specified SPI Interrupt is set or not.
-  * @param  __CR2__  copy of I2S CR2 regsiter.
+  * @param  __CR2__  copy of I2S CR2 register.
   * @param  __INTERRUPT__ specifies the SPI interrupt source to check.
   *         This parameter can be one of the following values:
   *            @arg I2S_IT_TXE: Tx buffer empty interrupt enable

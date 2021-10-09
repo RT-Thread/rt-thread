@@ -112,12 +112,11 @@ typedef struct
                                  with [1 Sec / SecondFraction +1] granularity.
                                  This field will be used only by HAL_RTC_GetTime function */
 
-  uint32_t DayLightSaving;  /*!< Specifies RTC_DayLightSaveOperation: the value of hour adjustment.
-                                 This parameter can be a value of @ref RTC_DayLightSaving_Definitions */
+  uint32_t DayLightSaving;  /*!< This interface is deprecated. To manage Daylight Saving Time,
+                                 please use HAL_RTC_DST_xxx functions */
 
-  uint32_t StoreOperation;  /*!< Specifies RTC_StoreOperation value to be written in the BKP bit
-                                 in CR register to store the operation.
-                                 This parameter can be a value of @ref RTC_StoreOperation_Definitions */
+  uint32_t StoreOperation;  /*!< This interface is deprecated. To manage Daylight Saving Time,
+                                 please use HAL_RTC_DST_xxx functions */
 }RTC_TimeTypeDef;
 
 /**
@@ -170,7 +169,7 @@ typedef struct
 typedef struct __RTC_HandleTypeDef
 #else
 typedef struct
-#endif
+#endif /* USE_HAL_RTC_REGISTER_CALLBACKS */
 {
   RTC_TypeDef               *Instance;  /*!< Register base address    */
 
@@ -197,7 +196,7 @@ typedef struct
 
 #if defined(TAMP_CR1_TAMP3E)  
   void  (* Tamper3EventCallback)     ( struct __RTC_HandleTypeDef * hrtc);           /*!< RTC Tamper 3 Event callback           */  
-#endif
+#endif /* TAMP_CR1_TAMP3E */
 
   void  (* InternalTamper3EventCallback)     ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC Internal Tamper 3 Event callback  */
 
@@ -230,7 +229,7 @@ typedef enum
   HAL_RTC_TAMPER2_EVENT_CB_ID           = 0x05U,    /*!< RTC Tamper 2 Callback ID           */
 #if defined(TAMP_CR1_TAMP3E)
   HAL_RTC_TAMPER3_EVENT_CB_ID           = 0x06U,    /*!< RTC Tamper 3 Callback ID           */
-#endif
+#endif /* TAMP_CR1_TAMP3E */
   HAL_RTC_INTERNAL_TAMPER3_EVENT_CB_ID  = 0x09U,    /*!< RTC Internal Tamper 3 Callback ID  */
   HAL_RTC_INTERNAL_TAMPER4_EVENT_CB_ID  = 0x0AU,    /*!< RTC Internal Tamper 4 Callback ID  */
   HAL_RTC_INTERNAL_TAMPER5_EVENT_CB_ID  = 0x0BU,    /*!< RTC Internal Tamper 5 Callback ID  */
@@ -566,6 +565,8 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
 
 /**
   * @brief  Add 1 hour (summer time change).
+  * @note   This interface is deprecated.
+  *         To manage Daylight Saving Time, please use HAL_RTC_DST_xxx functions
   * @param  __HANDLE__ specifies the RTC handle.
   * @param  __BKP__ Backup
   *         This parameter can be:
@@ -583,6 +584,8 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
 
 /**
   * @brief  Subtract 1 hour (winter time change).
+  * @note   This interface is deprecated. 
+  *         To manage Daylight Saving Time, please use HAL_RTC_DST_xxx functions
   * @param  __HANDLE__ specifies the RTC handle.
   * @param  __BKP__ Backup
   *         This parameter can be:
@@ -759,6 +762,11 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
 HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format);
 HAL_StatusTypeDef HAL_RTC_SetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format);
 HAL_StatusTypeDef HAL_RTC_GetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format);
+void              HAL_RTC_DST_Add1Hour(RTC_HandleTypeDef *hrtc);
+void              HAL_RTC_DST_Sub1Hour(RTC_HandleTypeDef *hrtc);
+void              HAL_RTC_DST_SetStoreOperation(RTC_HandleTypeDef *hrtc);
+void              HAL_RTC_DST_ClearStoreOperation(RTC_HandleTypeDef *hrtc);
+uint32_t          HAL_RTC_DST_ReadStoreOperation(RTC_HandleTypeDef *hrtc);
 /**
   * @}
   */

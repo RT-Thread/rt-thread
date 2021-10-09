@@ -1,11 +1,11 @@
 /**************************************************************************//**
  * @file     cmsis_armclang.h
  * @brief    CMSIS compiler armclang (Arm Compiler 6) header file
- * @version  V5.0.4
- * @date     10. January 2018
+ * @version  V5.2.0
+ * @date     08. May 2019
  ******************************************************************************/
 /*
- * Copyright (c) 2009-2018 Arm Limited. All rights reserved.
+ * Copyright (c) 2009-2019 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -43,9 +43,9 @@
 #ifndef   __STATIC_INLINE
   #define __STATIC_INLINE                        static __inline
 #endif
-#ifndef   __STATIC_FORCEINLINE                 
+#ifndef   __STATIC_FORCEINLINE
   #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static __inline
-#endif                                           
+#endif
 #ifndef   __NO_RETURN
   #define __NO_RETURN                            __attribute__((__noreturn__))
 #endif
@@ -110,7 +110,31 @@
 #ifndef   __RESTRICT
   #define __RESTRICT                             __restrict
 #endif
+#ifndef   __COMPILER_BARRIER
+  #define __COMPILER_BARRIER()                   __ASM volatile("":::"memory")
+#endif
 
+/* #########################  Startup and Lowlevel Init  ######################## */
+
+#ifndef __PROGRAM_START
+#define __PROGRAM_START           __main
+#endif
+
+#ifndef __INITIAL_SP
+#define __INITIAL_SP              Image$$ARM_LIB_STACK$$ZI$$Limit
+#endif
+
+#ifndef __STACK_LIMIT
+#define __STACK_LIMIT             Image$$ARM_LIB_STACK$$ZI$$Base
+#endif
+
+#ifndef __VECTOR_TABLE
+#define __VECTOR_TABLE            __Vectors
+#endif
+
+#ifndef __VECTOR_TABLE_ATTRIBUTE
+#define __VECTOR_TABLE_ATTRIBUTE  __attribute((used, section("RESET")))
+#endif
 
 /* ###########################  Core Function Access  ########################### */
 /** \ingroup  CMSIS_Core_FunctionInterface
@@ -781,9 +805,11 @@ __STATIC_FORCEINLINE void __TZ_set_MSPLIM_NS(uint32_t MainStackPtrLimit)
  * Otherwise, use general registers, specified by constraint "r" */
 #if defined (__thumb__) && !defined (__thumb2__)
 #define __CMSIS_GCC_OUT_REG(r) "=l" (r)
+#define __CMSIS_GCC_RW_REG(r) "+l" (r)
 #define __CMSIS_GCC_USE_REG(r) "l" (r)
 #else
 #define __CMSIS_GCC_OUT_REG(r) "=r" (r)
+#define __CMSIS_GCC_RW_REG(r) "+r" (r)
 #define __CMSIS_GCC_USE_REG(r) "r" (r)
 #endif
 
@@ -821,14 +847,14 @@ __STATIC_FORCEINLINE void __TZ_set_MSPLIM_NS(uint32_t MainStackPtrLimit)
            so that all instructions following the ISB are fetched from cache or memory,
            after the instruction has been completed.
  */
-#define __ISB()        __builtin_arm_isb(0xF);
+#define __ISB()        __builtin_arm_isb(0xF)
 
 /**
   \brief   Data Synchronization Barrier
   \details Acts as a special kind of Data Memory Barrier.
            It completes when all explicit memory accesses before this instruction complete.
  */
-#define __DSB()        __builtin_arm_dsb(0xF);
+#define __DSB()        __builtin_arm_dsb(0xF)
 
 
 /**
@@ -836,7 +862,7 @@ __STATIC_FORCEINLINE void __TZ_set_MSPLIM_NS(uint32_t MainStackPtrLimit)
   \details Ensures the apparent order of the explicit memory operations before
            and after the instruction, without ensuring their completion.
  */
-#define __DMB()        __builtin_arm_dmb(0xF);
+#define __DMB()        __builtin_arm_dmb(0xF)
 
 
 /**
@@ -908,7 +934,23 @@ __STATIC_FORCEINLINE uint32_t __ROR(uint32_t op1, uint32_t op2)
   \param [in]  value  Value to count the leading zeros
   \return             number of leading zeros in value
  */
-#define __CLZ             (uint8_t)__builtin_clz
+__STATIC_FORCEINLINE uint8_t __CLZ(uint32_t value)
+{
+  /* Even though __builtin_clz produces a CLZ instruction on ARM, formally
+     __builtin_clz(0) is undefined behaviour, so handle this case specially.
+     This guarantees ARM-compatible results if happening to compile on a non-ARM
+     target, and ensures the compiler doesn't decide to activate any
+     optimisations using the logic "value was passed to __builtin_clz, so it
+     is non-zero".
+     ARM Compiler 6.10 and possibly earlier will optimise this test away, leaving a
+     single CLZ instruction.
+   */
+  if (value == 0U)
+  {
+    return 32U;
+  }
+  return __builtin_clz(value);
+}
 
 
 #if ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
@@ -1321,532 +1363,65 @@ __STATIC_FORCEINLINE void __STL(uint32_t value, volatile uint32_t *ptr)
 
 #if (defined (__ARM_FEATURE_DSP) && (__ARM_FEATURE_DSP == 1))
 
-__STATIC_FORCEINLINE uint32_t __SADD8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("sadd8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __QADD8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("qadd8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SHADD8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("shadd8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UADD8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uadd8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UQADD8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uqadd8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UHADD8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uhadd8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-
-__STATIC_FORCEINLINE uint32_t __SSUB8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("ssub8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __QSUB8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("qsub8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SHSUB8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("shsub8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __USUB8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("usub8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UQSUB8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uqsub8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UHSUB8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uhsub8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-
-__STATIC_FORCEINLINE uint32_t __SADD16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("sadd16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __QADD16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("qadd16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SHADD16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("shadd16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UADD16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uadd16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UQADD16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uqadd16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UHADD16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uhadd16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SSUB16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("ssub16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __QSUB16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("qsub16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SHSUB16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("shsub16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __USUB16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("usub16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UQSUB16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uqsub16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UHSUB16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uhsub16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SASX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("sasx %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __QASX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("qasx %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SHASX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("shasx %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UASX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uasx %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UQASX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uqasx %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UHASX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uhasx %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SSAX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("ssax %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __QSAX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("qsax %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SHSAX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("shsax %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __USAX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("usax %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UQSAX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uqsax %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UHSAX(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uhsax %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __USAD8(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("usad8 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __USADA8(uint32_t op1, uint32_t op2, uint32_t op3)
-{
-  uint32_t result;
-
-  __ASM volatile ("usada8 %0, %1, %2, %3" : "=r" (result) : "r" (op1), "r" (op2), "r" (op3) );
-  return(result);
-}
-
-#define __SSAT16(ARG1,ARG2) \
-({                          \
-  int32_t __RES, __ARG1 = (ARG1); \
-  __ASM ("ssat16 %0, %1, %2" : "=r" (__RES) :  "I" (ARG2), "r" (__ARG1) ); \
-  __RES; \
- })
-
-#define __USAT16(ARG1,ARG2) \
-({                          \
-  uint32_t __RES, __ARG1 = (ARG1); \
-  __ASM ("usat16 %0, %1, %2" : "=r" (__RES) :  "I" (ARG2), "r" (__ARG1) ); \
-  __RES; \
- })
-
-__STATIC_FORCEINLINE uint32_t __UXTB16(uint32_t op1)
-{
-  uint32_t result;
-
-  __ASM volatile ("uxtb16 %0, %1" : "=r" (result) : "r" (op1));
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __UXTAB16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("uxtab16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SXTB16(uint32_t op1)
-{
-  uint32_t result;
-
-  __ASM volatile ("sxtb16 %0, %1" : "=r" (result) : "r" (op1));
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SXTAB16(uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("sxtab16 %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SMUAD  (uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("smuad %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SMUADX (uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("smuadx %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SMLAD (uint32_t op1, uint32_t op2, uint32_t op3)
-{
-  uint32_t result;
-
-  __ASM volatile ("smlad %0, %1, %2, %3" : "=r" (result) : "r" (op1), "r" (op2), "r" (op3) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SMLADX (uint32_t op1, uint32_t op2, uint32_t op3)
-{
-  uint32_t result;
-
-  __ASM volatile ("smladx %0, %1, %2, %3" : "=r" (result) : "r" (op1), "r" (op2), "r" (op3) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint64_t __SMLALD (uint32_t op1, uint32_t op2, uint64_t acc)
-{
-  union llreg_u{
-    uint32_t w32[2];
-    uint64_t w64;
-  } llr;
-  llr.w64 = acc;
-
-#ifndef __ARMEB__   /* Little endian */
-  __ASM volatile ("smlald %0, %1, %2, %3" : "=r" (llr.w32[0]), "=r" (llr.w32[1]): "r" (op1), "r" (op2) , "0" (llr.w32[0]), "1" (llr.w32[1]) );
-#else               /* Big endian */
-  __ASM volatile ("smlald %0, %1, %2, %3" : "=r" (llr.w32[1]), "=r" (llr.w32[0]): "r" (op1), "r" (op2) , "0" (llr.w32[1]), "1" (llr.w32[0]) );
-#endif
-
-  return(llr.w64);
-}
-
-__STATIC_FORCEINLINE uint64_t __SMLALDX (uint32_t op1, uint32_t op2, uint64_t acc)
-{
-  union llreg_u{
-    uint32_t w32[2];
-    uint64_t w64;
-  } llr;
-  llr.w64 = acc;
-
-#ifndef __ARMEB__   /* Little endian */
-  __ASM volatile ("smlaldx %0, %1, %2, %3" : "=r" (llr.w32[0]), "=r" (llr.w32[1]): "r" (op1), "r" (op2) , "0" (llr.w32[0]), "1" (llr.w32[1]) );
-#else               /* Big endian */
-  __ASM volatile ("smlaldx %0, %1, %2, %3" : "=r" (llr.w32[1]), "=r" (llr.w32[0]): "r" (op1), "r" (op2) , "0" (llr.w32[1]), "1" (llr.w32[0]) );
-#endif
-
-  return(llr.w64);
-}
-
-__STATIC_FORCEINLINE uint32_t __SMUSD  (uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("smusd %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SMUSDX (uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("smusdx %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SMLSD (uint32_t op1, uint32_t op2, uint32_t op3)
-{
-  uint32_t result;
-
-  __ASM volatile ("smlsd %0, %1, %2, %3" : "=r" (result) : "r" (op1), "r" (op2), "r" (op3) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint32_t __SMLSDX (uint32_t op1, uint32_t op2, uint32_t op3)
-{
-  uint32_t result;
-
-  __ASM volatile ("smlsdx %0, %1, %2, %3" : "=r" (result) : "r" (op1), "r" (op2), "r" (op3) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE uint64_t __SMLSLD (uint32_t op1, uint32_t op2, uint64_t acc)
-{
-  union llreg_u{
-    uint32_t w32[2];
-    uint64_t w64;
-  } llr;
-  llr.w64 = acc;
-
-#ifndef __ARMEB__   /* Little endian */
-  __ASM volatile ("smlsld %0, %1, %2, %3" : "=r" (llr.w32[0]), "=r" (llr.w32[1]): "r" (op1), "r" (op2) , "0" (llr.w32[0]), "1" (llr.w32[1]) );
-#else               /* Big endian */
-  __ASM volatile ("smlsld %0, %1, %2, %3" : "=r" (llr.w32[1]), "=r" (llr.w32[0]): "r" (op1), "r" (op2) , "0" (llr.w32[1]), "1" (llr.w32[0]) );
-#endif
-
-  return(llr.w64);
-}
-
-__STATIC_FORCEINLINE uint64_t __SMLSLDX (uint32_t op1, uint32_t op2, uint64_t acc)
-{
-  union llreg_u{
-    uint32_t w32[2];
-    uint64_t w64;
-  } llr;
-  llr.w64 = acc;
-
-#ifndef __ARMEB__   /* Little endian */
-  __ASM volatile ("smlsldx %0, %1, %2, %3" : "=r" (llr.w32[0]), "=r" (llr.w32[1]): "r" (op1), "r" (op2) , "0" (llr.w32[0]), "1" (llr.w32[1]) );
-#else               /* Big endian */
-  __ASM volatile ("smlsldx %0, %1, %2, %3" : "=r" (llr.w32[1]), "=r" (llr.w32[0]): "r" (op1), "r" (op2) , "0" (llr.w32[1]), "1" (llr.w32[0]) );
-#endif
-
-  return(llr.w64);
-}
-
-__STATIC_FORCEINLINE uint32_t __SEL  (uint32_t op1, uint32_t op2)
-{
-  uint32_t result;
-
-  __ASM volatile ("sel %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE  int32_t __QADD( int32_t op1,  int32_t op2)
-{
-  int32_t result;
-
-  __ASM volatile ("qadd %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-__STATIC_FORCEINLINE  int32_t __QSUB( int32_t op1,  int32_t op2)
-{
-  int32_t result;
-
-  __ASM volatile ("qsub %0, %1, %2" : "=r" (result) : "r" (op1), "r" (op2) );
-  return(result);
-}
-
-#if 0
-#define __PKHBT(ARG1,ARG2,ARG3) \
-({                          \
-  uint32_t __RES, __ARG1 = (ARG1), __ARG2 = (ARG2); \
-  __ASM ("pkhbt %0, %1, %2, lsl %3" : "=r" (__RES) :  "r" (__ARG1), "r" (__ARG2), "I" (ARG3)  ); \
-  __RES; \
- })
-
-#define __PKHTB(ARG1,ARG2,ARG3) \
-({                          \
-  uint32_t __RES, __ARG1 = (ARG1), __ARG2 = (ARG2); \
-  if (ARG3 == 0) \
-    __ASM ("pkhtb %0, %1, %2" : "=r" (__RES) :  "r" (__ARG1), "r" (__ARG2)  ); \
-  else \
-    __ASM ("pkhtb %0, %1, %2, asr %3" : "=r" (__RES) :  "r" (__ARG1), "r" (__ARG2), "I" (ARG3)  ); \
-  __RES; \
- })
-#endif
+#define     __SADD8                 __builtin_arm_sadd8
+#define     __QADD8                 __builtin_arm_qadd8
+#define     __SHADD8                __builtin_arm_shadd8
+#define     __UADD8                 __builtin_arm_uadd8
+#define     __UQADD8                __builtin_arm_uqadd8
+#define     __UHADD8                __builtin_arm_uhadd8
+#define     __SSUB8                 __builtin_arm_ssub8
+#define     __QSUB8                 __builtin_arm_qsub8
+#define     __SHSUB8                __builtin_arm_shsub8
+#define     __USUB8                 __builtin_arm_usub8
+#define     __UQSUB8                __builtin_arm_uqsub8
+#define     __UHSUB8                __builtin_arm_uhsub8
+#define     __SADD16                __builtin_arm_sadd16
+#define     __QADD16                __builtin_arm_qadd16
+#define     __SHADD16               __builtin_arm_shadd16
+#define     __UADD16                __builtin_arm_uadd16
+#define     __UQADD16               __builtin_arm_uqadd16
+#define     __UHADD16               __builtin_arm_uhadd16
+#define     __SSUB16                __builtin_arm_ssub16
+#define     __QSUB16                __builtin_arm_qsub16
+#define     __SHSUB16               __builtin_arm_shsub16
+#define     __USUB16                __builtin_arm_usub16
+#define     __UQSUB16               __builtin_arm_uqsub16
+#define     __UHSUB16               __builtin_arm_uhsub16
+#define     __SASX                  __builtin_arm_sasx
+#define     __QASX                  __builtin_arm_qasx
+#define     __SHASX                 __builtin_arm_shasx
+#define     __UASX                  __builtin_arm_uasx
+#define     __UQASX                 __builtin_arm_uqasx
+#define     __UHASX                 __builtin_arm_uhasx
+#define     __SSAX                  __builtin_arm_ssax
+#define     __QSAX                  __builtin_arm_qsax
+#define     __SHSAX                 __builtin_arm_shsax
+#define     __USAX                  __builtin_arm_usax
+#define     __UQSAX                 __builtin_arm_uqsax
+#define     __UHSAX                 __builtin_arm_uhsax
+#define     __USAD8                 __builtin_arm_usad8
+#define     __USADA8                __builtin_arm_usada8
+#define     __SSAT16                __builtin_arm_ssat16
+#define     __USAT16                __builtin_arm_usat16
+#define     __UXTB16                __builtin_arm_uxtb16
+#define     __UXTAB16               __builtin_arm_uxtab16
+#define     __SXTB16                __builtin_arm_sxtb16
+#define     __SXTAB16               __builtin_arm_sxtab16
+#define     __SMUAD                 __builtin_arm_smuad
+#define     __SMUADX                __builtin_arm_smuadx
+#define     __SMLAD                 __builtin_arm_smlad
+#define     __SMLADX                __builtin_arm_smladx
+#define     __SMLALD                __builtin_arm_smlald
+#define     __SMLALDX               __builtin_arm_smlaldx
+#define     __SMUSD                 __builtin_arm_smusd
+#define     __SMUSDX                __builtin_arm_smusdx
+#define     __SMLSD                 __builtin_arm_smlsd
+#define     __SMLSDX                __builtin_arm_smlsdx
+#define     __SMLSLD                __builtin_arm_smlsld
+#define     __SMLSLDX               __builtin_arm_smlsldx
+#define     __SEL                   __builtin_arm_sel
+#define     __QADD                  __builtin_arm_qadd
+#define     __QSUB                  __builtin_arm_qsub
 
 #define __PKHBT(ARG1,ARG2,ARG3)          ( ((((uint32_t)(ARG1))          ) & 0x0000FFFFUL) |  \
                                            ((((uint32_t)(ARG2)) << (ARG3)) & 0xFFFF0000UL)  )

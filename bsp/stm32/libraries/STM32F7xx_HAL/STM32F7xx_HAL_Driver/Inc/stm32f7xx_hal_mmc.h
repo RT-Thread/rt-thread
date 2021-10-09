@@ -54,7 +54,7 @@ typedef enum
   HAL_MMC_STATE_BUSY                   = 0x00000003U,  /*!< MMC process ongoing                  */
   HAL_MMC_STATE_PROGRAMMING            = 0x00000004U,  /*!< MMC Programming State                */
   HAL_MMC_STATE_RECEIVING              = 0x00000005U,  /*!< MMC Receinving State                 */
-  HAL_MMC_STATE_TRANSFER               = 0x00000006U,  /*!< MMC Transfert State                  */
+  HAL_MMC_STATE_TRANSFER               = 0x00000006U,  /*!< MMC Transfer State                  */
   HAL_MMC_STATE_ERROR                  = 0x0000000FU   /*!< MMC is in error state                */
 }HAL_MMC_StateTypeDef;
 /** 

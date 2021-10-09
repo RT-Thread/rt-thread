@@ -44,32 +44,32 @@
   */
 #if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
 #define IS_LL_RCC_USART_CLKSOURCE(__VALUE__)  (((__VALUE__) == LL_RCC_USART1_CLKSOURCE) \
-                                            || ((__VALUE__) == LL_RCC_USART2_CLKSOURCE) \
-                                            || ((__VALUE__) == LL_RCC_USART3_CLKSOURCE))
+                                               || ((__VALUE__) == LL_RCC_USART2_CLKSOURCE) \
+                                               || ((__VALUE__) == LL_RCC_USART3_CLKSOURCE))
 #elif defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
 #define IS_LL_RCC_USART_CLKSOURCE(__VALUE__)  (((__VALUE__) == LL_RCC_USART1_CLKSOURCE) \
-                                            || ((__VALUE__) == LL_RCC_USART2_CLKSOURCE))
+                                               || ((__VALUE__) == LL_RCC_USART2_CLKSOURCE))
 #else
 #define IS_LL_RCC_USART_CLKSOURCE(__VALUE__)  ((__VALUE__) == LL_RCC_USART1_CLKSOURCE)
 #endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 
 #if defined(LPUART1) && defined(LPUART2)
 #define IS_LL_RCC_LPUART_CLKSOURCE(__VALUE__)  (((__VALUE__) == LL_RCC_LPUART1_CLKSOURCE) \
-                                             || ((__VALUE__) == LL_RCC_LPUART2_CLKSOURCE))
+                                                || ((__VALUE__) == LL_RCC_LPUART2_CLKSOURCE))
 #elif defined(LPUART1)
 #define IS_LL_RCC_LPUART_CLKSOURCE(__VALUE__)   ((__VALUE__) == LL_RCC_LPUART1_CLKSOURCE)
 #endif /* LPUART1 && LPUART2 */
 
 #if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
 #define IS_LL_RCC_I2C_CLKSOURCE(__VALUE__)  (((__VALUE__) == LL_RCC_I2C1_CLKSOURCE) \
-                                          || ((__VALUE__) == LL_RCC_I2C2_CLKSOURCE))
+                                             || ((__VALUE__) == LL_RCC_I2C2_CLKSOURCE))
 #else
 #define IS_LL_RCC_I2C_CLKSOURCE(__VALUE__)   ((__VALUE__) == LL_RCC_I2C1_CLKSOURCE)
 #endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 
 #if defined(LPTIM1) || defined(LPTIM2)
 #define IS_LL_RCC_LPTIM_CLKSOURCE(__VALUE__)  (((__VALUE__) == LL_RCC_LPTIM1_CLKSOURCE) \
-                                            || ((__VALUE__) == LL_RCC_LPTIM2_CLKSOURCE))
+                                               || ((__VALUE__) == LL_RCC_LPTIM2_CLKSOURCE))
 #endif /* LPTIM1 || LPTIM2 */
 
 #if defined(RNG)
@@ -80,7 +80,7 @@
 
 #if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
 #define IS_LL_RCC_I2S_CLKSOURCE(__VALUE__)  (((__VALUE__) == LL_RCC_I2S1_CLKSOURCE) \
-                                          || ((__VALUE__) == LL_RCC_I2S2_CLKSOURCE))
+                                             || ((__VALUE__) == LL_RCC_I2S2_CLKSOURCE))
 #else
 #define IS_LL_RCC_I2S_CLKSOURCE(__VALUE__)  (((__VALUE__) == LL_RCC_I2S1_CLKSOURCE))
 #endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
@@ -99,7 +99,7 @@
 
 #if defined(RCC_CCIPR_TIM1SEL) && defined(RCC_CCIPR_TIM15SEL)
 #define IS_LL_RCC_TIM_CLKSOURCE(__VALUE__)    (((__VALUE__) == LL_RCC_TIM1_CLKSOURCE) \
-                                            || ((__VALUE__) == LL_RCC_TIM15_CLKSOURCE))
+                                               || ((__VALUE__) == LL_RCC_TIM15_CLKSOURCE))
 #elif defined(RCC_CCIPR_TIM1SEL)
 #define IS_LL_RCC_TIM_CLKSOURCE(__VALUE__)    (((__VALUE__) == LL_RCC_TIM1_CLKSOURCE))
 #endif /* RCC_CCIPR_TIM1SEL */
@@ -114,20 +114,28 @@
 /** @defgroup RCC_LL_Private_Functions RCC Private functions
   * @{
   */
-uint32_t RCC_GetSystemClockFreq(void);
-uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency);
-uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency);
-uint32_t RCC_PLL_GetFreqDomain_SYS(void);
-uint32_t RCC_PLL_GetFreqDomain_ADC(void);
-uint32_t RCC_PLL_GetFreqDomain_I2S1(void);
+static uint32_t RCC_GetSystemClockFreq(void);
+static uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency);
+static uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency);
+static uint32_t RCC_PLL_GetFreqDomain_SYS(void);
+static uint32_t RCC_PLL_GetFreqDomain_ADC(void);
+static uint32_t RCC_PLL_GetFreqDomain_I2S1(void);
 #if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
-uint32_t RCC_PLL_GetFreqDomain_I2S2(void);
-uint32_t RCC_PLL_GetFreqDomain_USB(void);
-uint32_t RCC_PLL_GetFreqDomain_FDCAN(void);
+static uint32_t RCC_PLL_GetFreqDomain_I2S2(void);
+static uint32_t RCC_PLL_GetFreqDomain_USB(void);
 #endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
-uint32_t RCC_PLL_GetFreqDomain_RNG(void);
-uint32_t RCC_PLL_GetFreqDomain_TIM1(void);
-uint32_t RCC_PLL_GetFreqDomain_TIM15(void);
+#if defined(FDCAN1) || defined(FDCAN2)
+static uint32_t RCC_PLL_GetFreqDomain_FDCAN(void);
+#endif /* FDCAN1 || FDCAN2 */
+#if defined(RNG)
+static uint32_t RCC_PLL_GetFreqDomain_RNG(void);
+#endif /* RNG */
+#if defined(RCC_PLLQ_SUPPORT) && defined(RCC_CCIPR_TIM1SEL)
+static uint32_t RCC_PLL_GetFreqDomain_TIM1(void);
+#endif /* RCC_PLLQ_SUPPORT && RCC_CCIPR_TIM1SEL */
+#if defined(RCC_CCIPR_TIM15SEL)
+static uint32_t RCC_PLL_GetFreqDomain_TIM15(void);
+#endif /* RCC_CCIPR_TIM15SEL */
 /**
   * @}
   */
@@ -413,6 +421,7 @@ uint32_t LL_RCC_GetI2CClockFreq(uint32_t I2CxSource)
 #endif /* RCC_CCIPR_I2C2SEL */
   else
   {
+    /* nothing to do */
   }
 
   return i2c_frequency;
@@ -513,7 +522,7 @@ uint32_t LL_RCC_GetLPUARTClockFreq(uint32_t LPUARTxSource)
   if (LPUARTxSource == LL_RCC_LPUART1_CLKSOURCE)
   {
     /* LPUART1CLK clock frequency */
-    switch (LL_RCC_GetLPUARTClockSource(LPUARTxSource))     
+    switch (LL_RCC_GetLPUARTClockSource(LPUARTxSource))
     {
       case LL_RCC_LPUART1_CLKSOURCE_SYSCLK: /* LPUART1 Clock is System Clock */
         lpuart_frequency = RCC_GetSystemClockFreq();
@@ -572,7 +581,7 @@ uint32_t LL_RCC_GetLPUARTClockFreq(uint32_t LPUARTxSource)
 #endif /* LPUART2 */
   else
   {
-  }  
+  }
 
   return lpuart_frequency;
 }
@@ -1004,7 +1013,7 @@ uint32_t LL_RCC_GetUSBClockFreq(uint32_t USBxSource)
   * @brief  Return SYSTEM clock frequency
   * @retval SYSTEM clock frequency (in Hz)
   */
-uint32_t RCC_GetSystemClockFreq(void)
+static uint32_t RCC_GetSystemClockFreq(void)
 {
   uint32_t frequency;
   uint32_t hsidiv;
@@ -1035,7 +1044,7 @@ uint32_t RCC_GetSystemClockFreq(void)
   * @param  SYSCLK_Frequency SYSCLK clock frequency
   * @retval HCLK clock frequency (in Hz)
   */
-uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency)
+static uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency)
 {
   /* HCLK clock frequency */
   return __LL_RCC_CALC_HCLK_FREQ(SYSCLK_Frequency, LL_RCC_GetAHBPrescaler());
@@ -1046,7 +1055,7 @@ uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency)
   * @param  HCLK_Frequency HCLK clock frequency
   * @retval PCLK1 clock frequency (in Hz)
   */
-uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)
+static uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)
 {
   /* PCLK1 clock frequency */
   return __LL_RCC_CALC_PCLK1_FREQ(HCLK_Frequency, LL_RCC_GetAPB1Prescaler());
@@ -1055,7 +1064,7 @@ uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)
   * @brief  Return PLL clock frequency used for system domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_SYS(void)
+static uint32_t RCC_PLL_GetFreqDomain_SYS(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1086,7 +1095,7 @@ uint32_t RCC_PLL_GetFreqDomain_SYS(void)
   * @brief  Return PLL clock frequency used for ADC domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_ADC(void)
+static uint32_t RCC_PLL_GetFreqDomain_ADC(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1116,7 +1125,7 @@ uint32_t RCC_PLL_GetFreqDomain_ADC(void)
   * @brief  Return PLL clock frequency used for FDCAN domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_FDCAN(void)
+static uint32_t RCC_PLL_GetFreqDomain_FDCAN(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1147,7 +1156,7 @@ uint32_t RCC_PLL_GetFreqDomain_FDCAN(void)
   * @brief  Return PLL clock frequency used for I2S1 domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_I2S1(void)
+static uint32_t RCC_PLL_GetFreqDomain_I2S1(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1177,7 +1186,7 @@ uint32_t RCC_PLL_GetFreqDomain_I2S1(void)
   * @brief  Return PLL clock frequency used for I2S2 domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_I2S2(void)
+static uint32_t RCC_PLL_GetFreqDomain_I2S2(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1208,7 +1217,7 @@ uint32_t RCC_PLL_GetFreqDomain_I2S2(void)
   * @brief  Return PLL clock frequency used for RNG domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_RNG(void)
+static uint32_t RCC_PLL_GetFreqDomain_RNG(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1240,7 +1249,7 @@ uint32_t RCC_PLL_GetFreqDomain_RNG(void)
   * @brief  Return PLL clock frequency used for USB domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_USB(void)
+static uint32_t RCC_PLL_GetFreqDomain_USB(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1267,12 +1276,12 @@ uint32_t RCC_PLL_GetFreqDomain_USB(void)
 }
 #endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 
-#if defined(RCC_PLLQ_SUPPORT)
+#if defined(RCC_PLLQ_SUPPORT) && defined(RCC_CCIPR_TIM1SEL)
 /**
   * @brief  Return PLL clock frequency used for TIM1 domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_TIM1(void)
+static uint32_t RCC_PLL_GetFreqDomain_TIM1(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1299,12 +1308,12 @@ uint32_t RCC_PLL_GetFreqDomain_TIM1(void)
 }
 #endif /* RCC_PLLQ_SUPPORT */
 
-#if defined(RCC_PLLQ_SUPPORT) && defined(TIM15)
+#if defined(RCC_CCIPR_TIM15SEL)
 /**
   * @brief  Return PLL clock frequency used for TIM15 domain
   * @retval PLL clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_TIM15(void)
+static uint32_t RCC_PLL_GetFreqDomain_TIM15(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1329,7 +1338,7 @@ uint32_t RCC_PLL_GetFreqDomain_TIM15(void)
   return __LL_RCC_CALC_PLLCLK_TIM15_FREQ(pllinputfreq, LL_RCC_PLL_GetDivider(),
                                          LL_RCC_PLL_GetN(), LL_RCC_PLL_GetQ());
 }
-#endif /* RCC_PLLQ_SUPPORT && TIM15 */
+#endif /* RCC_CCIPR_TIM15SEL */
 /**
   * @}
   */

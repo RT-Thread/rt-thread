@@ -197,8 +197,8 @@ static HAL_StatusTypeDef LPTIM_WaitForFlag(LPTIM_HandleTypeDef *hlptim, uint32_t
   */
 
 /** @defgroup LPTIM_Exported_Functions_Group1 Initialization/de-initialization functions
- *  @brief    Initialization and Configuration functions.
- *
+  *  @brief    Initialization and Configuration functions.
+  *
 @verbatim
   ==============================================================================
               ##### Initialization and de-initialization functions #####
@@ -235,19 +235,17 @@ HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim)
 
   assert_param(IS_LPTIM_CLOCK_SOURCE(hlptim->Init.Clock.Source));
   assert_param(IS_LPTIM_CLOCK_PRESCALER(hlptim->Init.Clock.Prescaler));
-  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_ULPTIM)
+  if ((hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_ULPTIM) 
+   || (hlptim->Init.CounterSource == LPTIM_COUNTERSOURCE_EXTERNAL))
   {
     assert_param(IS_LPTIM_CLOCK_POLARITY(hlptim->Init.UltraLowPowerClock.Polarity));
+    assert_param(IS_LPTIM_CLOCK_SAMPLE_TIME(hlptim->Init.UltraLowPowerClock.SampleTime));
   }
   assert_param(IS_LPTIM_TRG_SOURCE(hlptim->Init.Trigger.Source));
   if (hlptim->Init.Trigger.Source != LPTIM_TRIGSOURCE_SOFTWARE)
   {
     assert_param(IS_LPTIM_EXT_TRG_POLARITY(hlptim->Init.Trigger.ActiveEdge));
-  }
-  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC)
-  {
     assert_param(IS_LPTIM_TRIG_SAMPLE_TIME(hlptim->Init.Trigger.SampleTime));
-    assert_param(IS_LPTIM_CLOCK_SAMPLE_TIME(hlptim->Init.UltraLowPowerClock.SampleTime));
   }
   assert_param(IS_LPTIM_OUTPUT_POLARITY(hlptim->Init.OutputPolarity));
   assert_param(IS_LPTIM_UPDATE_MODE(hlptim->Init.UpdateMode));
@@ -281,21 +279,18 @@ HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim)
   /* Get the LPTIMx CFGR value */
   tmpcfgr = hlptim->Instance->CFGR;
 
-  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_ULPTIM)
+  if ((hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_ULPTIM) 
+   || (hlptim->Init.CounterSource == LPTIM_COUNTERSOURCE_EXTERNAL))
   {
-    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_CKPOL));
+    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_CKPOL | LPTIM_CFGR_CKFLT));
   }
   if (hlptim->Init.Trigger.Source != LPTIM_TRIGSOURCE_SOFTWARE)
   {
-    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_TRIGSEL));
-  }
-  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC)
-  {
-    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_TRGFLT | LPTIM_CFGR_CKFLT));
+    tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_TRGFLT | LPTIM_CFGR_TRIGSEL));
   }
 
-  /* Clear CKSEL, CKPOL, PRESC, TRIGEN, TRGFLT, WAVPOL, PRELOAD & COUNTMODE bits */
-  tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_CKSEL | LPTIM_CFGR_CKPOL | LPTIM_CFGR_TRIGEN | LPTIM_CFGR_PRELOAD |
+  /* Clear CKSEL, PRESC, TRIGEN, TRGFLT, WAVPOL, PRELOAD & COUNTMODE bits */
+  tmpcfgr &= (uint32_t)(~(LPTIM_CFGR_CKSEL | LPTIM_CFGR_TRIGEN | LPTIM_CFGR_PRELOAD |
                           LPTIM_CFGR_WAVPOL | LPTIM_CFGR_PRESC | LPTIM_CFGR_COUNTMODE));
 
   /* Set initialization parameters */
@@ -314,19 +309,21 @@ HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim)
                 hlptim->Init.UltraLowPowerClock.SampleTime);
   }
 
-  /* Configure the active edge or edges used by the counter only if LPTIM is
-   * clocked by an external clock source
-   */
-  if (hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_ULPTIM)
+  /* Configure LPTIM external clock polarity and digital filter */
+  if ((hlptim->Init.Clock.Source == LPTIM_CLOCKSOURCE_ULPTIM) 
+   || (hlptim->Init.CounterSource == LPTIM_COUNTERSOURCE_EXTERNAL))
   {
-    tmpcfgr |= (hlptim->Init.UltraLowPowerClock.Polarity);
+    tmpcfgr |= (hlptim->Init.UltraLowPowerClock.Polarity |
+                hlptim->Init.UltraLowPowerClock.SampleTime);
   }
 
+  /* Configure LPTIM external trigger */
   if (hlptim->Init.Trigger.Source != LPTIM_TRIGSOURCE_SOFTWARE)
   {
     /* Enable External trigger and set the trigger source */
-    tmpcfgr |= (hlptim->Init.Trigger.Source |
-                hlptim->Init.Trigger.ActiveEdge);
+    tmpcfgr |= (hlptim->Init.Trigger.Source     |
+                hlptim->Init.Trigger.ActiveEdge |
+                hlptim->Init.Trigger.SampleTime);
   }
 
   /* Write to LPTIMx CFGR */
@@ -443,8 +440,8 @@ __weak void HAL_LPTIM_MspDeInit(LPTIM_HandleTypeDef *hlptim)
   */
 
 /** @defgroup LPTIM_Exported_Functions_Group2 LPTIM Start-Stop operation functions
- *  @brief   Start-Stop operation functions.
- *
+  *  @brief   Start-Stop operation functions.
+  *
 @verbatim
   ==============================================================================
                 ##### LPTIM Start Stop operation functions #####
@@ -1563,7 +1560,8 @@ HAL_StatusTypeDef HAL_LPTIM_Counter_Start(LPTIM_HandleTypeDef *hlptim, uint32_t 
   hlptim->State = HAL_LPTIM_STATE_BUSY;
 
   /* If clock source is not ULPTIM clock and counter source is external, then it must not be prescaled */
-  if ((hlptim->Init.Clock.Source != LPTIM_CLOCKSOURCE_ULPTIM) && (hlptim->Init.CounterSource == LPTIM_COUNTERSOURCE_EXTERNAL))
+  if ((hlptim->Init.Clock.Source != LPTIM_CLOCKSOURCE_ULPTIM)
+      && (hlptim->Init.CounterSource == LPTIM_COUNTERSOURCE_EXTERNAL))
   {
     /* Check if clock is prescaled */
     assert_param(IS_LPTIM_CLOCK_PRESCALERDIV1(hlptim->Init.Clock.Prescaler));
@@ -1641,7 +1639,8 @@ HAL_StatusTypeDef HAL_LPTIM_Counter_Start_IT(LPTIM_HandleTypeDef *hlptim, uint32
   hlptim->State = HAL_LPTIM_STATE_BUSY;
 
   /* If clock source is not ULPTIM clock and counter source is external, then it must not be prescaled */
-  if ((hlptim->Init.Clock.Source != LPTIM_CLOCKSOURCE_ULPTIM) && (hlptim->Init.CounterSource == LPTIM_COUNTERSOURCE_EXTERNAL))
+  if ((hlptim->Init.Clock.Source != LPTIM_CLOCKSOURCE_ULPTIM)
+      && (hlptim->Init.CounterSource == LPTIM_COUNTERSOURCE_EXTERNAL))
   {
     /* Check if clock is prescaled */
     assert_param(IS_LPTIM_CLOCK_PRESCALERDIV1(hlptim->Init.Clock.Prescaler));
@@ -1729,8 +1728,8 @@ HAL_StatusTypeDef HAL_LPTIM_Counter_Stop_IT(LPTIM_HandleTypeDef *hlptim)
   */
 
 /** @defgroup LPTIM_Exported_Functions_Group3 LPTIM Read operation functions
- *  @brief  Read operation functions.
- *
+  *  @brief  Read operation functions.
+  *
 @verbatim
   ==============================================================================
                   ##### LPTIM Read operation functions #####
@@ -1787,8 +1786,8 @@ uint32_t HAL_LPTIM_ReadCompare(LPTIM_HandleTypeDef *hlptim)
   */
 
 /** @defgroup LPTIM_Exported_Functions_Group4 LPTIM IRQ handler and callbacks
- *  @brief  LPTIM  IRQ handler.
- *
+  *  @brief  LPTIM  IRQ handler.
+  *
 @verbatim
   ==============================================================================
                       ##### LPTIM IRQ handler and callbacks  #####
@@ -2255,8 +2254,8 @@ HAL_StatusTypeDef HAL_LPTIM_UnRegisterCallback(LPTIM_HandleTypeDef        *hlpti
   */
 
 /** @defgroup LPTIM_Group5 Peripheral State functions
- *  @brief   Peripheral State functions.
- *
+  *  @brief   Peripheral State functions.
+  *
 @verbatim
   ==============================================================================
                       ##### Peripheral State functions #####
@@ -2331,8 +2330,7 @@ static HAL_StatusTypeDef LPTIM_WaitForFlag(LPTIM_HandleTypeDef *hlptim, uint32_t
     {
       result = HAL_TIMEOUT;
     }
-  }
-  while ((!(__HAL_LPTIM_GET_FLAG((hlptim), (flag)))) && (count != 0UL));
+  } while ((!(__HAL_LPTIM_GET_FLAG((hlptim), (flag)))) && (count != 0UL));
 
   return result;
 }

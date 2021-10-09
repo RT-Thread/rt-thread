@@ -44,33 +44,26 @@ extern "C" {
   * @{
   */
 /* Array used to get the USART prescaler division decimal values versus @ref USART_LL_EC_PRESCALER values */
-static const uint16_t USART_PRESCALER_TAB[] =
+static const uint32_t USART_PRESCALER_TAB[] =
 {
-  (uint16_t)1,
-  (uint16_t)2,
-  (uint16_t)4,
-  (uint16_t)6,
-  (uint16_t)8,
-  (uint16_t)10,
-  (uint16_t)12,
-  (uint16_t)16,
-  (uint16_t)32,
-  (uint16_t)64,
-  (uint16_t)128,
-  (uint16_t)256
+  1UL,
+  2UL,
+  4UL,
+  6UL,
+  8UL,
+  10UL,
+  12UL,
+  16UL,
+  32UL,
+  64UL,
+  128UL,
+  256UL
 };
 /**
   * @}
   */
 
 /* Private constants ---------------------------------------------------------*/
-/** @defgroup USART_LL_Private_Constants USART Private Constants
-  * @{
-  */
-/**
-  * @}
-  */
-
 /* Private macros ------------------------------------------------------------*/
 #if defined(USE_FULL_LL_DRIVER)
 /** @defgroup USART_LL_Private_Macros USART Private Macros
@@ -95,41 +88,49 @@ typedef struct
   uint32_t PrescalerValue;            /*!< Specifies the Prescaler to compute the communication baud rate.
                                            This parameter can be a value of @ref USART_LL_EC_PRESCALER.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_USART_SetPrescaler().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_USART_SetPrescaler().*/
 
   uint32_t BaudRate;                  /*!< This field defines expected Usart communication baud rate.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_USART_SetBaudRate().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_USART_SetBaudRate().*/
 
   uint32_t DataWidth;                 /*!< Specifies the number of data bits transmitted or received in a frame.
                                            This parameter can be a value of @ref USART_LL_EC_DATAWIDTH.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_USART_SetDataWidth().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_USART_SetDataWidth().*/
 
   uint32_t StopBits;                  /*!< Specifies the number of stop bits transmitted.
                                            This parameter can be a value of @ref USART_LL_EC_STOPBITS.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_USART_SetStopBitsLength().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_USART_SetStopBitsLength().*/
 
   uint32_t Parity;                    /*!< Specifies the parity mode.
                                            This parameter can be a value of @ref USART_LL_EC_PARITY.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_USART_SetParity().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_USART_SetParity().*/
 
   uint32_t TransferDirection;         /*!< Specifies whether the Receive and/or Transmit mode is enabled or disabled.
                                            This parameter can be a value of @ref USART_LL_EC_DIRECTION.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_USART_SetTransferDirection().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_USART_SetTransferDirection().*/
 
   uint32_t HardwareFlowControl;       /*!< Specifies whether the hardware flow control mode is enabled or disabled.
                                            This parameter can be a value of @ref USART_LL_EC_HWCONTROL.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_USART_SetHWFlowCtrl().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_USART_SetHWFlowCtrl().*/
 
   uint32_t OverSampling;              /*!< Specifies whether USART oversampling mode is 16 or 8.
                                            This parameter can be a value of @ref USART_LL_EC_OVERSAMPLING.
 
-                                           This feature can be modified afterwards using unitary function @ref LL_USART_SetOverSampling().*/
+                                           This feature can be modified afterwards using unitary
+                                           function @ref LL_USART_SetOverSampling().*/
 
 } LL_USART_InitTypeDef;
 
@@ -148,20 +149,23 @@ typedef struct
   uint32_t ClockPolarity;             /*!< Specifies the steady state of the serial clock.
                                            This parameter can be a value of @ref USART_LL_EC_POLARITY.
 
-                                           USART HW configuration can be modified afterwards using unitary functions @ref LL_USART_SetClockPolarity().
+                                           USART HW configuration can be modified afterwards using unitary
+                                           functions @ref LL_USART_SetClockPolarity().
                                            For more details, refer to description of this function. */
 
   uint32_t ClockPhase;                /*!< Specifies the clock transition on which the bit capture is made.
                                            This parameter can be a value of @ref USART_LL_EC_PHASE.
 
-                                           USART HW configuration can be modified afterwards using unitary functions @ref LL_USART_SetClockPhase().
+                                           USART HW configuration can be modified afterwards using unitary
+                                           functions @ref LL_USART_SetClockPhase().
                                            For more details, refer to description of this function. */
 
   uint32_t LastBitClockPulse;         /*!< Specifies whether the clock pulse corresponding to the last transmitted
                                            data bit (MSB) has to be output on the SCLK pin in synchronous mode.
                                            This parameter can be a value of @ref USART_LL_EC_LASTCLKPULSE.
 
-                                           USART HW configuration can be modified afterwards using unitary functions @ref LL_USART_SetLastClkPulseOutput().
+                                           USART HW configuration can be modified afterwards using unitary
+                                           functions @ref LL_USART_SetLastClkPulseOutput().
                                            For more details, refer to description of this function. */
 
 } LL_USART_ClockInitTypeDef;
@@ -364,18 +368,18 @@ typedef struct
 /** @defgroup USART_LL_EC_PRESCALER Clock Source Prescaler
   * @{
   */
-#define LL_USART_PRESCALER_DIV1                 0x00000000U                                                                   /*!< Input clock not devided   */
-#define LL_USART_PRESCALER_DIV2                 (USART_PRESC_PRESCALER_0)                                                     /*!< Input clock devided by 2  */
-#define LL_USART_PRESCALER_DIV4                 (USART_PRESC_PRESCALER_1)                                                     /*!< Input clock devided by 4  */
-#define LL_USART_PRESCALER_DIV6                 (USART_PRESC_PRESCALER_1 | USART_PRESC_PRESCALER_0)                           /*!< Input clock devided by 6  */
-#define LL_USART_PRESCALER_DIV8                 (USART_PRESC_PRESCALER_2)                                                     /*!< Input clock devided by 8  */
-#define LL_USART_PRESCALER_DIV10                (USART_PRESC_PRESCALER_2 | USART_PRESC_PRESCALER_0)                           /*!< Input clock devided by 10 */
-#define LL_USART_PRESCALER_DIV12                (USART_PRESC_PRESCALER_2 | USART_PRESC_PRESCALER_1)                           /*!< Input clock devided by 12 */
-#define LL_USART_PRESCALER_DIV16                (USART_PRESC_PRESCALER_2 | USART_PRESC_PRESCALER_1 | USART_PRESC_PRESCALER_0) /*!< Input clock devided by 16 */
-#define LL_USART_PRESCALER_DIV32                (USART_PRESC_PRESCALER_3)                                                     /*!< Input clock devided by 32 */
-#define LL_USART_PRESCALER_DIV64                (USART_PRESC_PRESCALER_3 | USART_PRESC_PRESCALER_0)                           /*!< Input clock devided by 64 */
-#define LL_USART_PRESCALER_DIV128               (USART_PRESC_PRESCALER_3 | USART_PRESC_PRESCALER_1)                           /*!< Input clock devided by 128 */
-#define LL_USART_PRESCALER_DIV256               (USART_PRESC_PRESCALER_3 | USART_PRESC_PRESCALER_1 | USART_PRESC_PRESCALER_0) /*!< Input clock devided by 256 */
+#define LL_USART_PRESCALER_DIV1                 0x00000000U                                                                   /*!< Input clock not divided   */
+#define LL_USART_PRESCALER_DIV2                 (USART_PRESC_PRESCALER_0)                                                     /*!< Input clock divided by 2  */
+#define LL_USART_PRESCALER_DIV4                 (USART_PRESC_PRESCALER_1)                                                     /*!< Input clock divided by 4  */
+#define LL_USART_PRESCALER_DIV6                 (USART_PRESC_PRESCALER_1 | USART_PRESC_PRESCALER_0)                           /*!< Input clock divided by 6  */
+#define LL_USART_PRESCALER_DIV8                 (USART_PRESC_PRESCALER_2)                                                     /*!< Input clock divided by 8  */
+#define LL_USART_PRESCALER_DIV10                (USART_PRESC_PRESCALER_2 | USART_PRESC_PRESCALER_0)                           /*!< Input clock divided by 10 */
+#define LL_USART_PRESCALER_DIV12                (USART_PRESC_PRESCALER_2 | USART_PRESC_PRESCALER_1)                           /*!< Input clock divided by 12 */
+#define LL_USART_PRESCALER_DIV16                (USART_PRESC_PRESCALER_2 | USART_PRESC_PRESCALER_1 | USART_PRESC_PRESCALER_0) /*!< Input clock divided by 16 */
+#define LL_USART_PRESCALER_DIV32                (USART_PRESC_PRESCALER_3)                                                     /*!< Input clock divided by 32 */
+#define LL_USART_PRESCALER_DIV64                (USART_PRESC_PRESCALER_3 | USART_PRESC_PRESCALER_0)                           /*!< Input clock divided by 64 */
+#define LL_USART_PRESCALER_DIV128               (USART_PRESC_PRESCALER_3 | USART_PRESC_PRESCALER_1)                           /*!< Input clock divided by 128 */
+#define LL_USART_PRESCALER_DIV256               (USART_PRESC_PRESCALER_3 | USART_PRESC_PRESCALER_1 | USART_PRESC_PRESCALER_0) /*!< Input clock divided by 256 */
 /**
   * @}
   */
@@ -570,7 +574,9 @@ typedef struct
   * @param  __BAUDRATE__ Baud rate value to achieve
   * @retval USARTDIV value to be used for BRR register filling in OverSampling_8 case
   */
-#define __LL_USART_DIV_SAMPLING8(__PERIPHCLK__, __PRESCALER__, __BAUDRATE__) (((((__PERIPHCLK__)/(uint32_t)(USART_PRESCALER_TAB[(__PRESCALER__)]))*2U) + ((__BAUDRATE__)/2U))/(__BAUDRATE__))
+#define __LL_USART_DIV_SAMPLING8(__PERIPHCLK__, __PRESCALER__, __BAUDRATE__) \
+  (((((__PERIPHCLK__)/(USART_PRESCALER_TAB[(__PRESCALER__)]))*2U)\
+    + ((__BAUDRATE__)/2U))/(__BAUDRATE__))
 
 /**
   * @brief  Compute USARTDIV value according to Peripheral Clock and
@@ -592,7 +598,9 @@ typedef struct
   * @param  __BAUDRATE__ Baud rate value to achieve
   * @retval USARTDIV value to be used for BRR register filling in OverSampling_16 case
   */
-#define __LL_USART_DIV_SAMPLING16(__PERIPHCLK__, __PRESCALER__, __BAUDRATE__) ((((__PERIPHCLK__)/(uint32_t)(USART_PRESCALER_TAB[(__PRESCALER__)])) + ((__BAUDRATE__)/2U))/(__BAUDRATE__))
+#define __LL_USART_DIV_SAMPLING16(__PERIPHCLK__, __PRESCALER__, __BAUDRATE__) \
+  ((((__PERIPHCLK__)/(USART_PRESCALER_TAB[(__PRESCALER__)]))\
+    + ((__BAUDRATE__)/2U))/(__BAUDRATE__))
 
 /**
   * @}
@@ -790,7 +798,8 @@ __STATIC_INLINE uint32_t LL_USART_GetRXFIFOThreshold(USART_TypeDef *USARTx)
   */
 __STATIC_INLINE void LL_USART_ConfigFIFOsThreshold(USART_TypeDef *USARTx, uint32_t TXThreshold, uint32_t RXThreshold)
 {
-  MODIFY_REG(USARTx->CR3, USART_CR3_TXFTCFG | USART_CR3_RXFTCFG, (TXThreshold << USART_CR3_TXFTCFG_Pos) | (RXThreshold << USART_CR3_RXFTCFG_Pos));
+  MODIFY_REG(USARTx->CR3, USART_CR3_TXFTCFG | USART_CR3_RXFTCFG, (TXThreshold << USART_CR3_TXFTCFG_Pos) |
+             (RXThreshold << USART_CR3_RXFTCFG_Pos));
 }
 
 /**
@@ -1864,22 +1873,31 @@ __STATIC_INLINE uint32_t LL_USART_GetWKUPType(USART_TypeDef *USARTx)
   * @param  BaudRate Baud Rate
   * @retval None
   */
-__STATIC_INLINE void LL_USART_SetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t PrescalerValue, uint32_t OverSampling,
+__STATIC_INLINE void LL_USART_SetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t PrescalerValue,
+                                          uint32_t OverSampling,
                                           uint32_t BaudRate)
 {
-  register uint32_t usartdiv;
-  register uint32_t brrtemp;
+  uint32_t usartdiv;
+  uint32_t brrtemp;
 
-  if (OverSampling == LL_USART_OVERSAMPLING_8)
+  if (PrescalerValue > LL_USART_PRESCALER_DIV256)
   {
-    usartdiv = (uint16_t)(__LL_USART_DIV_SAMPLING8(PeriphClk, (uint16_t)PrescalerValue, BaudRate));
+    /* Do not overstep the size of USART_PRESCALER_TAB */
+  }
+  else if (BaudRate == 0U)
+  {
+    /* Can Not divide per 0 */
+  }
+  else if (OverSampling == LL_USART_OVERSAMPLING_8)
+  {
+    usartdiv = (uint16_t)(__LL_USART_DIV_SAMPLING8(PeriphClk, (uint8_t)PrescalerValue, BaudRate));
     brrtemp = usartdiv & 0xFFF0U;
     brrtemp |= (uint16_t)((usartdiv & (uint16_t)0x000FU) >> 1U);
     USARTx->BRR = brrtemp;
   }
   else
   {
-    USARTx->BRR = (uint16_t)(__LL_USART_DIV_SAMPLING16(PeriphClk, (uint16_t)PrescalerValue, BaudRate));
+    USARTx->BRR = (uint16_t)(__LL_USART_DIV_SAMPLING16(PeriphClk, (uint8_t)PrescalerValue, BaudRate));
   }
 }
 
@@ -1909,11 +1927,12 @@ __STATIC_INLINE void LL_USART_SetBaudRate(USART_TypeDef *USARTx, uint32_t Periph
   *         @arg @ref LL_USART_OVERSAMPLING_8
   * @retval Baud Rate
   */
-__STATIC_INLINE uint32_t LL_USART_GetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t PrescalerValue, uint32_t OverSampling)
+__STATIC_INLINE uint32_t LL_USART_GetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t PrescalerValue,
+                                              uint32_t OverSampling)
 {
-  register uint32_t usartdiv;
-  register uint32_t brrresult = 0x0U;
-  register uint32_t periphclkpresc = (uint32_t)(PeriphClk / (uint32_t)(USART_PRESCALER_TAB[(uint16_t)PrescalerValue]));
+  uint32_t usartdiv;
+  uint32_t brrresult = 0x0U;
+  uint32_t periphclkpresc = (uint32_t)(PeriphClk / (USART_PRESCALER_TAB[(uint8_t)PrescalerValue]));
 
   usartdiv = USARTx->BRR;
 
@@ -2650,7 +2669,8 @@ __STATIC_INLINE void LL_USART_ConfigAsyncMode(USART_TypeDef *USARTx)
 {
   /* In Asynchronous mode, the following bits must be kept cleared:
   - LINEN, CLKEN bits in the USART_CR2 register,
-  - SCEN, IREN and HDSEL bits in the USART_CR3 register.*/
+  - SCEN, IREN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN | USART_CR2_CLKEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_IREN | USART_CR3_HDSEL));
 }
@@ -2686,7 +2706,8 @@ __STATIC_INLINE void LL_USART_ConfigSyncMode(USART_TypeDef *USARTx)
 {
   /* In Synchronous mode, the following bits must be kept cleared:
   - LINEN bit in the USART_CR2 register,
-  - SCEN, IREN and HDSEL bits in the USART_CR3 register.*/
+  - SCEN, IREN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_IREN | USART_CR3_HDSEL));
   /* set the UART/USART in Synchronous mode */
@@ -2726,7 +2747,8 @@ __STATIC_INLINE void LL_USART_ConfigLINMode(USART_TypeDef *USARTx)
 {
   /* In LIN mode, the following bits must be kept cleared:
   - STOP and CLKEN bits in the USART_CR2 register,
-  - IREN, SCEN and HDSEL bits in the USART_CR3 register.*/
+  - IREN, SCEN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_CLKEN | USART_CR2_STOP));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_IREN | USART_CR3_SCEN | USART_CR3_HDSEL));
   /* Set the UART/USART in LIN mode */
@@ -2764,7 +2786,8 @@ __STATIC_INLINE void LL_USART_ConfigHalfDuplexMode(USART_TypeDef *USARTx)
 {
   /* In Half Duplex mode, the following bits must be kept cleared:
   - LINEN and CLKEN bits in the USART_CR2 register,
-  - SCEN and IREN bits in the USART_CR3 register.*/
+  - SCEN and IREN bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN | USART_CR2_CLKEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_IREN));
   /* set the UART/USART in Half Duplex mode */
@@ -2804,7 +2827,8 @@ __STATIC_INLINE void LL_USART_ConfigSmartcardMode(USART_TypeDef *USARTx)
 {
   /* In Smartcard mode, the following bits must be kept cleared:
   - LINEN bit in the USART_CR2 register,
-  - IREN and HDSEL bits in the USART_CR3 register.*/
+  - IREN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_IREN | USART_CR3_HDSEL));
   /* Configure Stop bits to 1.5 bits */
@@ -2847,7 +2871,8 @@ __STATIC_INLINE void LL_USART_ConfigIrdaMode(USART_TypeDef *USARTx)
 {
   /* In IRDA mode, the following bits must be kept cleared:
   - LINEN, STOP and CLKEN bits in the USART_CR2 register,
-  - SCEN and HDSEL bits in the USART_CR3 register.*/
+  - SCEN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN | USART_CR2_CLKEN | USART_CR2_STOP));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_HDSEL));
   /* set the UART/USART in IRDA mode */
@@ -2885,7 +2910,8 @@ __STATIC_INLINE void LL_USART_ConfigMultiProcessMode(USART_TypeDef *USARTx)
 {
   /* In Multi Processor mode, the following bits must be kept cleared:
   - LINEN and CLKEN bits in the USART_CR2 register,
-  - IREN, SCEN and HDSEL bits in the USART_CR3 register.*/
+  - IREN, SCEN and HDSEL bits in the USART_CR3 register.
+  */
   CLEAR_BIT(USARTx->CR2, (USART_CR2_LINEN | USART_CR2_CLKEN));
   CLEAR_BIT(USARTx->CR3, (USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN));
 }
@@ -3264,7 +3290,7 @@ __STATIC_INLINE void LL_USART_ClearFlag_FE(USART_TypeDef *USARTx)
 
 /**
   * @brief  Clear Noise Error detected Flag
-  * @rmtoll ICR          NECF           LL_USART_ClearFlag_NE
+  * @rmtoll ICR          NECF          LL_USART_ClearFlag_NE
   * @param  USARTx USART Instance
   * @retval None
   */
@@ -4195,17 +4221,17 @@ __STATIC_INLINE uint32_t LL_USART_IsEnabledDMADeactOnRxErr(USART_TypeDef *USARTx
   */
 __STATIC_INLINE uint32_t LL_USART_DMA_GetRegAddr(USART_TypeDef *USARTx, uint32_t Direction)
 {
-  register uint32_t data_reg_addr;
+  uint32_t data_reg_addr;
 
   if (Direction == LL_USART_DMA_REG_DATA_TRANSMIT)
   {
     /* return address of TDR register */
-    data_reg_addr = (uint32_t) & (USARTx->TDR);
+    data_reg_addr = (uint32_t) &(USARTx->TDR);
   }
   else
   {
     /* return address of RDR register */
-    data_reg_addr = (uint32_t) & (USARTx->RDR);
+    data_reg_addr = (uint32_t) &(USARTx->RDR);
   }
 
   return data_reg_addr;
@@ -4227,7 +4253,7 @@ __STATIC_INLINE uint32_t LL_USART_DMA_GetRegAddr(USART_TypeDef *USARTx, uint32_t
   */
 __STATIC_INLINE uint8_t LL_USART_ReceiveData8(USART_TypeDef *USARTx)
 {
-  return (uint8_t)(READ_BIT(USARTx->RDR, USART_RDR_RDR));
+  return (uint8_t)(READ_BIT(USARTx->RDR, USART_RDR_RDR) & 0xFFU);
 }
 
 /**

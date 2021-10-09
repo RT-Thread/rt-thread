@@ -307,7 +307,7 @@ __STATIC_INLINE void LL_AHB1_GRP1_DisableClock(uint32_t Periphs)
   *         AHBRSTR      CRCRST        LL_AHB1_GRP1_ForceReset\n
   *         AHBRSTR      AESRST        LL_AHB1_GRP1_ForceReset\n
   *         AHBRSTR      RNGRST        LL_AHB1_GRP1_ForceReset
-* @param  Periphs This parameter can be a combination of the following values:
+  * @param  Periphs This parameter can be a combination of the following values:
   *         @arg @ref LL_AHB1_GRP1_PERIPH_ALL
   *         @arg @ref LL_AHB1_GRP1_PERIPH_DMA1
   *         @arg @ref LL_AHB1_GRP1_PERIPH_FLASH

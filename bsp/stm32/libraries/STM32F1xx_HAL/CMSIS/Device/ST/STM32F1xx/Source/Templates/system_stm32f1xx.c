@@ -89,12 +89,31 @@
 /* #define DATA_IN_ExtSRAM */
 #endif /* STM32F100xE || STM32F101xE || STM32F101xG || STM32F103xE || STM32F103xG */
 
-/*!< Uncomment the following line if you need to relocate your vector Table in
-     Internal SRAM. */ 
-/* #define VECT_TAB_SRAM */
-#define VECT_TAB_OFFSET  0x00000000U /*!< Vector Table base offset field. 
-                                  This value must be a multiple of 0x200. */
+/* Note: Following vector table addresses must be defined in line with linker
+         configuration. */
+/*!< Uncomment the following line if you need to relocate the vector table
+     anywhere in Flash or Sram, else the vector table is kept at the automatic
+     remap of boot address selected */
+/* #define USER_VECT_TAB_ADDRESS */
 
+#if defined(USER_VECT_TAB_ADDRESS)
+/*!< Uncomment the following line if you need to relocate your vector Table
+     in Sram else user remap will be done in Flash. */
+/* #define VECT_TAB_SRAM */
+#if defined(VECT_TAB_SRAM)
+#define VECT_TAB_BASE_ADDRESS   SRAM_BASE       /*!< Vector Table base address field.
+                                                     This value must be a multiple of 0x200. */
+#define VECT_TAB_OFFSET         0x00000000U     /*!< Vector Table base offset field.
+                                                     This value must be a multiple of 0x200. */
+#else
+#define VECT_TAB_BASE_ADDRESS   FLASH_BASE      /*!< Vector Table base address field.
+                                                     This value must be a multiple of 0x200. */
+#define VECT_TAB_OFFSET         0x00000000U     /*!< Vector Table base offset field.
+                                                     This value must be a multiple of 0x200. */
+#endif /* VECT_TAB_SRAM */
+#endif /* USER_VECT_TAB_ADDRESS */
+
+/******************************************************************************/
 
 /**
   * @}
@@ -156,57 +175,16 @@ const uint8_t APBPrescTable[8U] =  {0, 0, 0, 0, 1, 2, 3, 4};
   */
 void SystemInit (void)
 {
-  /* Reset the RCC clock configuration to the default reset state(for debug purpose) */
-  /* Set HSION bit */
-  RCC->CR |= 0x00000001U;
-
-  /* Reset SW, HPRE, PPRE1, PPRE2, ADCPRE and MCO bits */
-#if !defined(STM32F105xC) && !defined(STM32F107xC)
-  RCC->CFGR &= 0xF8FF0000U;
-#else
-  RCC->CFGR &= 0xF0FF0000U;
-#endif /* STM32F105xC */   
-  
-  /* Reset HSEON, CSSON and PLLON bits */
-  RCC->CR &= 0xFEF6FFFFU;
-
-  /* Reset HSEBYP bit */
-  RCC->CR &= 0xFFFBFFFFU;
-
-  /* Reset PLLSRC, PLLXTPRE, PLLMUL and USBPRE/OTGFSPRE bits */
-  RCC->CFGR &= 0xFF80FFFFU;
-
-#if defined(STM32F105xC) || defined(STM32F107xC)
-  /* Reset PLL2ON and PLL3ON bits */
-  RCC->CR &= 0xEBFFFFFFU;
-
-  /* Disable all interrupts and clear pending bits  */
-  RCC->CIR = 0x00FF0000U;
-
-  /* Reset CFGR2 register */
-  RCC->CFGR2 = 0x00000000U;
-#elif defined(STM32F100xB) || defined(STM32F100xE)
-  /* Disable all interrupts and clear pending bits  */
-  RCC->CIR = 0x009F0000U;
-
-  /* Reset CFGR2 register */
-  RCC->CFGR2 = 0x00000000U;      
-#else
-  /* Disable all interrupts and clear pending bits  */
-  RCC->CIR = 0x009F0000U;
-#endif /* STM32F105xC */
-    
 #if defined(STM32F100xE) || defined(STM32F101xE) || defined(STM32F101xG) || defined(STM32F103xE) || defined(STM32F103xG)
   #ifdef DATA_IN_ExtSRAM
     SystemInit_ExtMemCtl(); 
   #endif /* DATA_IN_ExtSRAM */
 #endif 
 
-#ifdef VECT_TAB_SRAM
-  SCB->VTOR = SRAM_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM. */
-#else
-  SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH. */
-#endif 
+  /* Configure the Vector Table location -------------------------------------*/
+#if defined(USER_VECT_TAB_ADDRESS)
+  SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM. */
+#endif /* USER_VECT_TAB_ADDRESS */
 }
 
 /**

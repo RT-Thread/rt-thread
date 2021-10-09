@@ -65,6 +65,7 @@ typedef struct
   uint32_t HeaderSize;                /*!< The size of header buffer in word  */
   uint32_t *B0;                       /*!< B0 is first authentication block used only  in AES CCM mode */
   uint32_t DataWidthUnit;              /*!< Data With Unit, this parameter can be value of @ref CRYP_Data_Width_Unit*/
+  uint32_t HeaderWidthUnit;            /*!< Header Width Unit, this parameter can be value of @ref CRYP_Header_Width_Unit*/
   uint32_t KeyIVConfigSkip;            /*!< CRYP peripheral Key and IV configuration skip, to config Key and Initialization
                                            Vector only once and to skip configuration for consecutive processings.
                                            This parameter can be a value of @ref CRYP_Configuration_Skip */
@@ -214,6 +215,17 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef *hcryp);    /*!< point
   * @}
   */
 
+/** @defgroup CRYP_Header_Width_Unit CRYP Header Width Unit
+  * @{
+  */
+
+#define CRYP_HEADERWIDTHUNIT_WORD   0x00000000U  /*!< By default, header size unit is word */
+#define CRYP_HEADERWIDTHUNIT_BYTE   0x00000001U  /*!< By default, header size unit is byte */
+
+/**
+  * @}
+  */
+  
 /** @defgroup CRYP_Algorithm_Mode CRYP Algorithm Mode
   * @{
   */

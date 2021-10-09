@@ -60,12 +60,13 @@ typedef struct
                                          This parameter must be a number between Min_Data = 1 and Max_Data = 15 */
 
   uint32_t speed;                   /*!< USB Core speed.
-                                         This parameter can be any value of @ref USB_Core_Speed                 */
+                                         This parameter can be any value of @ref PCD_Speed/HCD_Speed
+                                                                                 (HCD_SPEED_xxx, HCD_SPEED_xxx) */
 
   uint32_t ep0_mps;                 /*!< Set the Endpoint 0 Max Packet size.                                    */
 
   uint32_t phy_itface;              /*!< Select the used PHY interface.
-                                         This parameter can be any value of @ref USB_Core_PHY                   */
+                                         This parameter can be any value of @ref PCD_PHY_Module/HCD_PHY_Module  */
 
   uint32_t Sof_enable;              /*!< Enable or disable the output of the SOF signal.                        */
 

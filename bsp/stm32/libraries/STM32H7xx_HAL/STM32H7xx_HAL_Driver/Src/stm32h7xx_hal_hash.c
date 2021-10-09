@@ -34,7 +34,7 @@
             (+++) Associate the initialized DMA handle to the HASH DMA handle
                 using  __HAL_LINKDMA()
             (+++) Configure the priority and enable the NVIC for the transfer complete
-                interrupt on the DMA Stream: use
+                interrupt on the DMA stream: use
                  HAL_NVIC_SetPriority() and
                  HAL_NVIC_EnableIRQ()
 
@@ -71,10 +71,10 @@
              well the computed digest.
 
         (##) In DMA mode, multi-buffer HASH and HMAC processing are possible.
-              (+++) HASH processing: once initialization is done, MDMAT bit must be set thru __HAL_HASH_SET_MDMAT() macro.
-             From that point, each buffer can be fed to the Peripheral thru HAL_HASH_xxx_Start_DMA() API.
+              (+++) HASH processing: once initialization is done, MDMAT bit must be set through __HAL_HASH_SET_MDMAT() macro.
+             From that point, each buffer can be fed to the Peripheral through HAL_HASH_xxx_Start_DMA() API.
              Before entering the last buffer, reset the MDMAT bit with __HAL_HASH_RESET_MDMAT()
-             macro then wrap-up the HASH processing in feeding the last input buffer thru the
+             macro then wrap-up the HASH processing in feeding the last input buffer through the
              same API HAL_HASH_xxx_Start_DMA(). The digest can then be retrieved with a call to
              API HAL_HASH_xxx_Finish().
              (+++) HMAC processing (requires to resort to extended functions):
@@ -483,7 +483,7 @@ __weak void HAL_HASH_MspDeInit(HASH_HandleTypeDef *hhash)
   * @brief  Input data transfer complete call back.
   * @note   HAL_HASH_InCpltCallback() is called when the complete input message
   *         has been fed to the Peripheral. This API is invoked only when input data are
-  *         entered under interruption or thru DMA.
+  *         entered under interruption or through DMA.
   * @note   In case of HASH or HMAC multi-buffer DMA feeding case (MDMAT bit set),
   *         HAL_HASH_InCpltCallback() is called at the end of each buffer feeding
   *         to the Peripheral.
@@ -1729,10 +1729,10 @@ static void HASH_DMAXferCplt(DMA_HandleTypeDef *hdma)
     /* Configure the Number of valid bits in last word of the message */
     __HAL_HASH_SET_NBVALIDBITS(buffersize);
 
-      /* Set the HASH DMA transfert completion call back */
+      /* Set the HASH DMA transfer completion call back */
       hhash->hdmain->XferCpltCallback = HASH_DMAXferCplt;
 
-      /* Enable the DMA In DMA Stream */
+      /* Enable the DMA In DMA stream */
     status = HAL_DMA_Start_IT(hhash->hdmain, inputaddr, (uint32_t)&HASH->DIN, (((buffersize %4U)!=0U) ? ((buffersize+(4U-(buffersize %4U)))/4U):(buffersize/4U)));
 
     /* Enable DMA requests */
@@ -2074,7 +2074,7 @@ static HAL_StatusTypeDef HASH_IT(HASH_HandleTypeDef *hhash)
         return HAL_OK;
       }
 
-      /* Enter input data in the Peripheral thru HASH_Write_Block_Data() call and
+      /* Enter input data in the Peripheral through HASH_Write_Block_Data() call and
         check whether the digest calculation has been triggered */
       if (HASH_Write_Block_Data(hhash) == HASH_DIGEST_CALCULATION_STARTED)
       {
@@ -3006,7 +3006,7 @@ if((State_tmp == HAL_HASH_STATE_READY) || (State_tmp == HAL_HASH_STATE_SUSPENDED
 
     }
 
-    /* Set the HASH DMA transfert complete callback */
+    /* Set the HASH DMA transfer complete callback */
     hhash->hdmain->XferCpltCallback = HASH_DMAXferCplt;
     /* Set the DMA error callback */
     hhash->hdmain->XferErrorCallback = HASH_DMAError;
@@ -3014,7 +3014,7 @@ if((State_tmp == HAL_HASH_STATE_READY) || (State_tmp == HAL_HASH_STATE_SUSPENDED
     /* Store number of words already pushed to manage proper DMA processing suspension */
     hhash->NbWordsAlreadyPushed = HASH_NBW_PUSHED();
 
-    /* Enable the DMA In DMA Stream */
+    /* Enable the DMA In DMA stream */
     status = HAL_DMA_Start_IT(hhash->hdmain, inputaddr, (uint32_t)&HASH->DIN, (((inputSize %4U)!=0U) ? ((inputSize+(4U-(inputSize %4U)))/4U):(inputSize/4U)));
 
     /* Enable DMA requests */
@@ -3395,7 +3395,7 @@ if((State_tmp == HAL_HASH_STATE_READY) || (State_tmp == HAL_HASH_STATE_SUSPENDED
     }
 
 
-    /* Set the HASH DMA transfert complete callback */
+    /* Set the HASH DMA transfer complete callback */
     hhash->hdmain->XferCpltCallback = HASH_DMAXferCplt;
     /* Set the DMA error callback */
     hhash->hdmain->XferErrorCallback = HASH_DMAError;
@@ -3403,7 +3403,7 @@ if((State_tmp == HAL_HASH_STATE_READY) || (State_tmp == HAL_HASH_STATE_SUSPENDED
     /* Store number of words already pushed to manage proper DMA processing suspension */
     hhash->NbWordsAlreadyPushed = HASH_NBW_PUSHED();
 
-    /* Enable the DMA In DMA Stream */
+    /* Enable the DMA In DMA stream */
     status = HAL_DMA_Start_IT(hhash->hdmain, inputaddr, (uint32_t)&HASH->DIN, (((inputSize %4U)!=0U) ? ((inputSize+(4U-(inputSize %4U)))/4U):(inputSize/4U)));
     /* Enable DMA requests */
     SET_BIT(HASH->CR, HASH_CR_DMAE);

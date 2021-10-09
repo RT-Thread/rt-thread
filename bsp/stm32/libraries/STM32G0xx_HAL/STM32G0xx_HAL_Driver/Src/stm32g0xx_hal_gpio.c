@@ -123,17 +123,9 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private defines ------------------------------------------------------------*/
-/** @defgroup GPIO_Private_Constants GPIO Private Constants
+/** @addtogroup GPIO_Private_Constants
   * @{
   */
-#define GPIO_MODE             (0x00000003u)
-#define EXTI_MODE             (0x10000000u)
-#define GPIO_MODE_IT          (0x00010000u)
-#define GPIO_MODE_EVT         (0x00020000u)
-#define RISING_EDGE           (0x00100000u)
-#define FALLING_EDGE          (0x00200000u)
-#define GPIO_OUTPUT_TYPE      (0x00000010u)
-
 #define GPIO_NUMBER           (16u)
 /**
   * @}
@@ -177,7 +169,6 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
   assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Init->Pin));
   assert_param(IS_GPIO_MODE(GPIO_Init->Mode));
-  assert_param(IS_GPIO_PULL(GPIO_Init->Pull));
 
   /* Configure the port pins */
   while (((GPIO_Init->Pin) >> position) != 0x00u)
@@ -189,11 +180,11 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
     {
       /*--------------------- GPIO Mode Configuration ------------------------*/
       /* In case of Output or Alternate function mode selection */
-      if ((GPIO_Init->Mode == GPIO_MODE_OUTPUT_PP) || (GPIO_Init->Mode == GPIO_MODE_AF_PP) ||
-          (GPIO_Init->Mode == GPIO_MODE_OUTPUT_OD) || (GPIO_Init->Mode == GPIO_MODE_AF_OD))
+      if (((GPIO_Init->Mode & GPIO_MODE) == MODE_OUTPUT) || ((GPIO_Init->Mode & GPIO_MODE) == MODE_AF))
       {
         /* Check the Speed parameter */
         assert_param(IS_GPIO_SPEED(GPIO_Init->Speed));
+
         /* Configure the IO Speed */
         temp = GPIOx->OSPEEDR;
         temp &= ~(GPIO_OSPEEDR_OSPEED0 << (position * 2u));
@@ -203,18 +194,24 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
         /* Configure the IO Output Type */
         temp = GPIOx->OTYPER;
         temp &= ~(GPIO_OTYPER_OT0 << position) ;
-        temp |= (((GPIO_Init->Mode & GPIO_OUTPUT_TYPE) >> 4u) << position);
+        temp |= (((GPIO_Init->Mode & OUTPUT_TYPE) >> OUTPUT_TYPE_Pos) << position);
         GPIOx->OTYPER = temp;
       }
 
-      /* Activate the Pull-up or Pull down resistor for the current IO */
-      temp = GPIOx->PUPDR;
-      temp &= ~(GPIO_PUPDR_PUPD0 << (position * 2u));
-      temp |= ((GPIO_Init->Pull) << (position * 2u));
-      GPIOx->PUPDR = temp;
+      if ((GPIO_Init->Mode & GPIO_MODE) != MODE_ANALOG)
+      {
+        /* Check the Pull parameter */
+        assert_param(IS_GPIO_PULL(GPIO_Init->Pull));
+
+        /* Activate the Pull-up or Pull down resistor for the current IO */
+        temp = GPIOx->PUPDR;
+        temp &= ~(GPIO_PUPDR_PUPD0 << (position * 2u));
+        temp |= ((GPIO_Init->Pull) << (position * 2u));
+        GPIOx->PUPDR = temp;
+      }
 
       /* In case of Alternate function mode selection */
-      if ((GPIO_Init->Mode == GPIO_MODE_AF_PP) || (GPIO_Init->Mode == GPIO_MODE_AF_OD))
+      if ((GPIO_Init->Mode & GPIO_MODE) == MODE_AF)
       {
         /* Check the Alternate function parameters */
         assert_param(IS_GPIO_AF_INSTANCE(GPIOx));
@@ -235,7 +232,7 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 
       /*--------------------- EXTI Mode Configuration ------------------------*/
       /* Configure the External Interrupt or event for the current IO */
-      if ((GPIO_Init->Mode & EXTI_MODE) == EXTI_MODE)
+      if ((GPIO_Init->Mode & EXTI_MODE) != 0x00u)
       {
         temp = EXTI->EXTICR[position >> 2u];
         temp &= ~(0x0FuL << (8u * (position & 0x03u)));
@@ -245,7 +242,7 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
         /* Clear EXTI line configuration */
         temp = EXTI->IMR1;
         temp &= ~(iocurrent);
-        if ((GPIO_Init->Mode & GPIO_MODE_IT) == GPIO_MODE_IT)
+        if ((GPIO_Init->Mode & EXTI_IT) != 0x00u)
         {
           temp |= iocurrent;
         }
@@ -253,7 +250,7 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 
         temp = EXTI->EMR1;
         temp &= ~(iocurrent);
-        if ((GPIO_Init->Mode & GPIO_MODE_EVT) == GPIO_MODE_EVT)
+        if ((GPIO_Init->Mode & EXTI_EVT) != 0x00u)
         {
           temp |= iocurrent;
         }
@@ -262,7 +259,7 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
         /* Clear Rising Falling edge configuration */
         temp = EXTI->RTSR1;
         temp &= ~(iocurrent);
-        if ((GPIO_Init->Mode & RISING_EDGE) == RISING_EDGE)
+        if ((GPIO_Init->Mode & TRIGGER_RISING) != 0x00u)
         {
           temp |= iocurrent;
         }
@@ -270,7 +267,7 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 
         temp = EXTI->FTSR1;
         temp &= ~(iocurrent);
-        if ((GPIO_Init->Mode & FALLING_EDGE) == FALLING_EDGE)
+        if ((GPIO_Init->Mode & TRIGGER_FALLING) != 0x00u)
         {
           temp |= iocurrent;
         }

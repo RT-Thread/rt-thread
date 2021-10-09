@@ -53,11 +53,11 @@
   * @{
   */
 /**
- * @brief STM32F1xx HAL Driver version number V1.1.4
+ * @brief STM32F1xx HAL Driver version number V1.1.8
    */
 #define __STM32F1xx_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define __STM32F1xx_HAL_VERSION_SUB1   (0x01U) /*!< [23:16] sub1 version */
-#define __STM32F1xx_HAL_VERSION_SUB2   (0x04U) /*!< [15:8]  sub2 version */
+#define __STM32F1xx_HAL_VERSION_SUB2   (0x08U) /*!< [15:8]  sub2 version */
 #define __STM32F1xx_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32F1xx_HAL_VERSION         ((__STM32F1xx_HAL_VERSION_MAIN << 24)\
                                         |(__STM32F1xx_HAL_VERSION_SUB1 << 16)\
@@ -322,15 +322,25 @@ uint32_t HAL_GetTickPrio(void)
 HAL_StatusTypeDef HAL_SetTickFreq(HAL_TickFreqTypeDef Freq)
 {
   HAL_StatusTypeDef status  = HAL_OK;
+  HAL_TickFreqTypeDef prevTickFreq;
+
   assert_param(IS_TICKFREQ(Freq));
 
   if (uwTickFreq != Freq)
   {
+    /* Back up uwTickFreq frequency */
+    prevTickFreq = uwTickFreq;
+
+    /* Update uwTickFreq global variable used by HAL_InitTick() */
+    uwTickFreq = Freq;
+
     /* Apply the new tick Freq  */
     status = HAL_InitTick(uwTickPrio);
-    if (status == HAL_OK)
+
+    if (status != HAL_OK)
     {
-      uwTickFreq = Freq;
+      /* Restore previous tick frequency */
+      uwTickFreq = prevTickFreq;
     }
   }
 

@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -103,12 +103,13 @@ typedef struct
                                          This parameter must be a number between Min_Data = 1 and Max_Data = 15 */
 
   uint32_t speed;                   /*!< USB Core speed.
-                                         This parameter can be any value of @ref USB_Core_Speed                 */
+                                         This parameter can be any value of @ref PCD_Speed/HCD_Speed
+                                                                                 (HCD_SPEED_xxx, HCD_SPEED_xxx) */
 
   uint32_t ep0_mps;                 /*!< Set the Endpoint 0 Max Packet size.                                    */
 
   uint32_t phy_itface;              /*!< Select the used PHY interface.
-                                         This parameter can be any value of @ref USB_Core_PHY                   */
+                                         This parameter can be any value of @ref PCD_PHY_Module/HCD_PHY_Module  */
 
   uint32_t Sof_enable;              /*!< Enable or disable the output of the SOF signal.                        */
 
@@ -137,7 +138,7 @@ typedef struct
                                        This parameter must be a number between Min_Data = 0 and Max_Data = 1    */
 
   uint8_t   type;                 /*!< Endpoint type
-                                       This parameter can be any value of @ref USB_EP_Type_                     */
+                                       This parameter can be any value of @ref USB_LL_EP_Type                   */
 
   uint16_t  pmaadress;            /*!< PMA Address
                                        This parameter can be any value between Min_addr = 0 and Max_addr = 1K    */
@@ -185,11 +186,12 @@ typedef struct
   uint8_t   ch_dir;             /*!< channel direction
                                      This parameter store the physical channel direction IN/OUT/BIDIR           */
 
-  uint8_t   speed;              /*!< USB Host speed.
-                                     This parameter can be any value of @ref USB_Core_Speed_                    */
+  uint8_t   speed;              /*!< USB Host Channel speed.
+                                     This parameter can be any value of @ref HCD_Device_Speed:
+                                                                             (HCD_DEVICE_SPEED_xxx)             */
 
   uint8_t   ep_type;            /*!< Endpoint Type.
-                                     This parameter can be any value of @ref USB_EP_Type_                       */
+                                     This parameter can be any value of @ref USB_LL_EP_Type                     */
 
   uint16_t  max_packet;         /*!< Endpoint Max packet size.
                                      This parameter must be a number between Min_Data = 0 and Max_Data = 64KB   */
@@ -323,7 +325,8 @@ typedef struct
 
 
 /*Set Channel/Endpoint to the USB Register */
-#define USB_DRD_SET_CHEP(USBx, bEpChNum, wRegValue)  (*(__IO uint32_t *)(&(USBx)->CHEP0R + (bEpChNum)) = (uint32_t)(wRegValue))
+#define USB_DRD_SET_CHEP(USBx, bEpChNum, wRegValue)  (*(__IO uint32_t *)\
+                                                      (&(USBx)->CHEP0R + (bEpChNum)) = (uint32_t)(wRegValue))
 
 /*Get Channel/Endpoint from the USB Register */
 #define USB_DRD_GET_CHEP(USBx, bEpChNum)             (*(__IO uint32_t *)(&(USBx)->CHEP0R + (bEpChNum)))
@@ -464,8 +467,11 @@ typedef struct
   * @param  bEpChNum Endpoint Number.
   * @retval status
   */
-#define USB_DRD_GET_CHEP_TX_STATUS(USBx, bEpChNum)     ((uint16_t)USB_DRD_GET_CHEP((USBx), (bEpChNum)) & USB_DRD_CHEP_TX_STTX)
-#define USB_DRD_GET_CHEP_RX_STATUS(USBx, bEpChNum)     ((uint16_t)USB_DRD_GET_CHEP((USBx), (bEpChNum)) & USB_DRD_CHEP_RX_STRX)
+#define USB_DRD_GET_CHEP_TX_STATUS(USBx, bEpChNum)     ((uint16_t)USB_DRD_GET_CHEP((USBx), (bEpChNum))\
+                                                        & USB_DRD_CHEP_TX_STTX)
+
+#define USB_DRD_GET_CHEP_RX_STATUS(USBx, bEpChNum)     ((uint16_t)USB_DRD_GET_CHEP((USBx), (bEpChNum))\
+                                                        & USB_DRD_CHEP_RX_STRX)
 
 
 /**
@@ -695,8 +701,11 @@ typedef struct
   } while(0)
 
 
-#define USB_DRD_SET_CHEP_RX_DBUF0_CNT(USBx, bEpChNum, wCount)      USB_DRD_SET_CHEP_CNT_RX_REG(((USB_DRD_PMA_BUFF + (bEpChNum))->TXBD), (wCount))
-#define USB_DRD_SET_CHEP_RX_CNT(USBx, bEpChNum, wCount)            USB_DRD_SET_CHEP_CNT_RX_REG(((USB_DRD_PMA_BUFF + (bEpChNum))->RXBD), (wCount))
+#define USB_DRD_SET_CHEP_RX_DBUF0_CNT(USBx, bEpChNum, wCount)      USB_DRD_SET_CHEP_CNT_RX_REG(((USB_DRD_PMA_BUFF\
+                                                                   + (bEpChNum))->TXBD), (wCount))
+
+#define USB_DRD_SET_CHEP_RX_CNT(USBx, bEpChNum, wCount)            USB_DRD_SET_CHEP_CNT_RX_REG(((USB_DRD_PMA_BUFF\
+                                                                   + (bEpChNum))->RXBD), (wCount))
 
 
 /**
@@ -824,7 +833,7 @@ HAL_StatusTypeDef USB_DeactivateEndpoint(USB_DRD_TypeDef *USBx, USB_DRD_EPTypeDe
 HAL_StatusTypeDef USB_EPStartXfer(USB_DRD_TypeDef *USBx, USB_DRD_EPTypeDef *ep);
 HAL_StatusTypeDef USB_EPSetStall(USB_DRD_TypeDef *USBx, USB_DRD_EPTypeDef *ep);
 HAL_StatusTypeDef USB_EPClearStall(USB_DRD_TypeDef *USBx, USB_DRD_EPTypeDef *ep);
-#endif
+#endif /* HAL_PCD_MODULE_ENABLED */
 
 HAL_StatusTypeDef USB_SetDevAddress(USB_DRD_TypeDef *USBx, uint8_t address);
 HAL_StatusTypeDef USB_DevConnect(USB_DRD_TypeDef *USBx);

@@ -243,7 +243,8 @@ static void USART_DMAAbortOnError(DMA_HandleTypeDef *hdma);
 static void USART_DMATxAbortCallback(DMA_HandleTypeDef *hdma);
 static void USART_DMARxAbortCallback(DMA_HandleTypeDef *hdma);
 
-static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status, uint32_t Tickstart, uint32_t Timeout);
+static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status,
+                                                      uint32_t Tickstart, uint32_t Timeout);
 /**
   * @}
   */
@@ -440,7 +441,8 @@ __weak void HAL_USART_MspDeInit(USART_HandleTypeDef *husart)
   * @param  pCallback pointer to the Callback function
   * @retval HAL status
 +  */
-HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_USART_CallbackIDTypeDef CallbackID, pUSART_CallbackTypeDef pCallback)
+HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_USART_CallbackIDTypeDef CallbackID,
+                                             pUSART_CallbackTypeDef pCallback)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
@@ -934,7 +936,8 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
   * @param  Timeout Timeout duration
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout)
+HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                            uint16_t Size, uint32_t Timeout)
 {
   uint8_t  *prxdata8bits;
   uint16_t *prxdata16bits;
@@ -1011,14 +1014,14 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
         else
         {
           husart->Instance->DR = (uint8_t)(*ptxdata8bits & (uint8_t)0xFF);
-          ptxdata8bits++; 
+          ptxdata8bits++;
         }
 
         husart->TxXferCount--;
       }
 
       if (husart->RxXferCount > 0U)
-      {  
+      {
         /* Wait for RXNE Flag */
         if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_RXNE, RESET, tickstart, Timeout) != HAL_OK)
         {
@@ -1176,7 +1179,8 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
   * @param  Size    Amount of data elements (u8 or u16) to be sent (same amount to be received).
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,  uint16_t Size)
+HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                               uint16_t Size)
 {
   if (husart->State == HAL_USART_STATE_READY)
   {
@@ -1393,7 +1397,8 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
   * @note   When the USART parity is enabled (PCE = 1) the data received contain the parity bit.
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size)
+HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                                uint16_t Size)
 {
   uint32_t *tmp;
 
@@ -1576,7 +1581,7 @@ HAL_StatusTypeDef HAL_USART_DMAStop(USART_HandleTypeDef *husart)
   *           - Set handle State to READY
   * @note   This procedure is executed in blocking mode : when exiting function, Abort is considered as completed.
   * @retval HAL status
-*/
+  */
 HAL_StatusTypeDef HAL_USART_Abort(USART_HandleTypeDef *husart)
 {
   /* Disable TXEIE, TCIE, RXNE, PE and ERR (Frame error, noise error, overrun error) interrupts */
@@ -1642,7 +1647,7 @@ HAL_StatusTypeDef HAL_USART_Abort(USART_HandleTypeDef *husart)
   * @note   This procedure is executed in Interrupt mode, meaning that abort procedure could be
   *         considered as completed only when user abort complete callback is executed (not when exiting function).
   * @retval HAL status
-*/
+  */
 HAL_StatusTypeDef HAL_USART_Abort_IT(USART_HandleTypeDef *husart)
 {
   uint32_t AbortCplt = 0x01U;
@@ -2295,7 +2300,8 @@ static void USART_DMAError(DMA_HandleTypeDef *hdma)
   * @param  Timeout Timeout duration.
   * @retval HAL status
   */
-static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status, uint32_t Tickstart, uint32_t Timeout)
+static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status,
+                                                      uint32_t Tickstart, uint32_t Timeout)
 {
   /* Wait until flag is set */
   while ((__HAL_USART_GET_FLAG(husart, Flag) ? SET : RESET) == Status)
@@ -2557,7 +2563,7 @@ static HAL_StatusTypeDef USART_Receive_IT(USART_HandleTypeDef *husart)
       pdata8bits = (uint8_t *) husart->pRxBuffPtr;
       pdata16bits  = NULL;
 
-      if ((husart->Init.WordLength == UART_WORDLENGTH_9B) || ((husart->Init.WordLength == UART_WORDLENGTH_8B) && (husart->Init.Parity == UART_PARITY_NONE)))
+      if ((husart->Init.WordLength == USART_WORDLENGTH_9B) || ((husart->Init.WordLength == USART_WORDLENGTH_8B) && (husart->Init.Parity == USART_PARITY_NONE)))
       {
         *pdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x00FF);
       }
@@ -2653,16 +2659,16 @@ static HAL_StatusTypeDef USART_TransmitReceive_IT(USART_HandleTypeDef *husart)
       {
         if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
         {
-           pdata8bits  = NULL;
-           pdata16bits = (uint16_t *) husart->pRxBuffPtr;
-           *pdata16bits = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
-           husart->pRxBuffPtr += 2U;
+          pdata8bits  = NULL;
+          pdata16bits = (uint16_t *) husart->pRxBuffPtr;
+          *pdata16bits = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
+          husart->pRxBuffPtr += 2U;
         }
         else
         {
           pdata8bits = (uint8_t *) husart->pRxBuffPtr;
           pdata16bits  = NULL;
-          if ((husart->Init.WordLength == UART_WORDLENGTH_9B) || ((husart->Init.WordLength == UART_WORDLENGTH_8B) && (husart->Init.Parity == UART_PARITY_NONE)))
+          if ((husart->Init.WordLength == USART_WORDLENGTH_9B) || ((husart->Init.WordLength == USART_WORDLENGTH_8B) && (husart->Init.Parity == USART_PARITY_NONE)))
           {
             *pdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x00FF);
           }
