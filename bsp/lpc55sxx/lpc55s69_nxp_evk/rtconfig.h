@@ -108,22 +108,12 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-#define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 512
-#define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 1024
-#define RT_MMCSD_THREAD_PREORITY 22
-#define RT_MMCSD_MAX_PARTITION 16
 
 /* Using USB */
 
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
-#define RT_USING_POSIX
-#define RT_LIBC_USING_TIME
-#define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* Network */
 
@@ -212,7 +202,6 @@
 #define BSP_USING_UART
 #define BSP_USING_UART0
 #define HW_UART0_BAUDRATE_115200
-#define BSP_USING_SDIO
 
 /* Onboard Peripheral Drivers */
 
