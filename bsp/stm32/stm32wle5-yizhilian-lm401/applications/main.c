@@ -5,14 +5,14 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-09-09     forest-rain   first version
+ * 2021-10-10     CaocoWang   first version
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
 
-/* STM32WL55JC_NUCLEO Color led  */
+/* LM401_LoraWan Color led  */
 #define LED_BLUE_PIN       GET_PIN(B,5)  /* defined the LED_BLUE pin: PB5 */
 #define LED_GREEN_PIN      GET_PIN(B,4)
 #define LED_RED_PIN        GET_PIN(B,3)

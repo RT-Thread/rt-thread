@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-07-05      forest-rain   first version
+ * 2021-10-10     CaoCoWang   first version
  */
 
 #ifndef __BOARD_H__
