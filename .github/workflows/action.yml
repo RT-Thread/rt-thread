@@ -35,7 +35,6 @@ jobs:
          - {RTT_BSP: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "efm32", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
