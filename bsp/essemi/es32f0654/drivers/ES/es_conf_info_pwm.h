@@ -37,7 +37,7 @@
 #define  ES_C_PWM_OC_MODE_PWM2     TIMER_OC_MODE_PWM2
 
 
-    
+
 /* PWM 配置 */
 
 
@@ -50,23 +50,23 @@
 
 #ifndef ES_PWM_OC_POLARITY
 #define ES_PWM_OC_POLARITY   ES_C_PWM_OC_POL_HIGH
-#endif    
-#ifndef ES_PWM_OC_MODE 
+#endif
+#ifndef ES_PWM_OC_MODE
 #define ES_PWM_OC_MODE       ES_C_PWM_OC_MODE_PWM2
 #endif
 
 #ifndef  ES_DEVICE_NAME_AD16C4T0_PWM
 #define  ES_DEVICE_NAME_AD16C4T0_PWM     "pwm0"
-#endif          
+#endif
 #ifndef  ES_DEVICE_NAME_GP16C4T0_PWM
 #define  ES_DEVICE_NAME_GP16C4T0_PWM     "pwm1"
-#endif              
+#endif
 #ifndef  ES_DEVICE_NAME_GP16C2T0_PWM
 #define  ES_DEVICE_NAME_GP16C2T0_PWM     "pwm2"
-#endif              
+#endif
 #ifndef  ES_DEVICE_NAME_GP16C2T1_PWM
 #define  ES_DEVICE_NAME_GP16C2T1_PWM     "pwm3"
-#endif              
+#endif
 
 
 #endif

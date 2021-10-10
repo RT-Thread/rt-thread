@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the License); you may
  * not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2019-01-23     wangyq        the first version 
+ * 2019-01-23     wangyq        the first version
  * 2021-04-20     liuhy         the second version
  */
 

@@ -18,7 +18,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2019-01-23     wangyq        the first version
- * 2021-04-20     liuhy         the second version  
+ * 2021-04-20     liuhy         the second version
  */
 
 #ifndef DRV_GPIO_H__
