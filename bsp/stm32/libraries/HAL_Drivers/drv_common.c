@@ -34,16 +34,8 @@ static uint32_t sysTickMillisecond = 1;
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
-#if defined (SOC_SERIES_STM32H7)
-    HAL_SYSTICK_Config((HAL_RCCEx_GetD1SysClockFreq()) / RT_TICK_PER_SECOND);
-#elif defined (SOC_SERIES_STM32MP1)
-    HAL_SYSTICK_Config(HAL_RCC_GetSystemCoreClockFreq() / RT_TICK_PER_SECOND);
-#else
-    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);
-#endif
-#if !defined (SOC_SERIES_STM32MP1)
-    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-#endif
+    HAL_SYSTICK_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
 
     sysTickMillisecond = 1000u / RT_TICK_PER_SECOND;
@@ -108,6 +100,8 @@ void HAL_Delay(__IO uint32_t Delay)
 /* re-implement tick interface for STM32 HAL */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
+    rt_hw_systick_init();
+
     /* Return function status */
     return HAL_OK;
 }
@@ -180,14 +174,8 @@ RT_WEAK void rt_hw_board_init()
     /* HAL_Init() function is called at the beginning of the program */
     HAL_Init();
 
-    rt_hw_systick_init();
-
     /* System clock initialization */
     SystemClock_Config();
-
-    SystemCoreClockUpdate();
-
-    rt_hw_systick_init();
 
     /* Heap initialization */
 #if defined(RT_USING_HEAP)
