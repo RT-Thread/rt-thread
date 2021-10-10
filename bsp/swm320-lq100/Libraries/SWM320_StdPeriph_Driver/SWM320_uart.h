@@ -5,62 +5,59 @@ typedef struct
 {
     uint32_t Baudrate;
 
-    uint8_t  DataBits;          //Êı¾İÎ»Î»Êı£¬¿ÉÈ¡ÖµUART_DATA_8BIT¡¢UART_DATA_9BIT
+    uint8_t DataBits; //æ•°æ®ä½ä½æ•°ï¼Œå¯å–å€¼UART_DATA_8BITã€UART_DATA_9BIT
 
-    uint8_t  Parity;            //ÆæÅ¼Ğ£ÑéÎ»£¬¿ÉÈ¡ÖµUART_PARITY_NONE¡¢UART_PARITY_ODD¡¢UART_PARITY_EVEN¡¢UART_PARITY_ONE¡¢UART_PARITY_ZERO
+    uint8_t Parity; //å¥‡å¶æ ¡éªŒä½ï¼Œå¯å–å€¼UART_PARITY_NONEã€UART_PARITY_ODDã€UART_PARITY_EVENã€UART_PARITY_ONEã€UART_PARITY_ZERO
 
-    uint8_t  StopBits;          //Í£Ö¹Î»Î»Êı£¬¿ÉÈ¡ÖµUART_STOP_1BIT¡¢UART_STOP_2BIT
+    uint8_t StopBits; //åœæ­¢ä½ä½æ•°ï¼Œå¯å–å€¼UART_STOP_1BITã€UART_STOP_2BIT
 
-    uint8_t  RXThreshold;       //È¡Öµ0--7
-    uint8_t  RXThresholdIEn;    //µ±RX FIFOÖĞÊı¾İ¸öÊı >= RXThresholdÊ±´¥·¢ÖĞ¶Ï
+    uint8_t RXThreshold;    //å–å€¼0--7
+    uint8_t RXThresholdIEn; //å½“RX FIFOä¸­æ•°æ®ä¸ªæ•° >  RXThresholdæ—¶è§¦å‘ä¸­æ–­
 
-    uint8_t  TXThreshold;       //È¡Öµ0--7
-    uint8_t  TXThresholdIEn;    //µ±TX FIFOÖĞÊı¾İ¸öÊı <= TXThresholdÊ±´¥·¢ÖĞ¶Ï
+    uint8_t TXThreshold;    //å–å€¼0--7
+    uint8_t TXThresholdIEn; //å½“TX FIFOä¸­æ•°æ®ä¸ªæ•° <= TXThresholdæ—¶è§¦å‘ä¸­æ–­
 
-    uint8_t  TimeoutTime;       //³¬Ê±Ê±³¤ = TimeoutTime/(Baudrate/10) Ãë
-    uint8_t  TimeoutIEn;        //³¬Ê±ÖĞ¶Ï£¬³¬¹ı TimeoutTime/(Baudrate/10) ÃëÃ»ÓĞÔÚRXÏßÉÏ½ÓÊÕµ½Êı¾İÊ±´¥·¢ÖĞ¶Ï
+    uint8_t TimeoutTime; //è¶…æ—¶æ—¶é•¿ = TimeoutTime/(Baudrate/10) ç§’
+    uint8_t TimeoutIEn;  //è¶…æ—¶ä¸­æ–­ï¼ŒRX FIFOéç©ºï¼Œä¸”è¶…è¿‡ TimeoutTime/(Baudrate/10) ç§’æ²¡æœ‰åœ¨RXçº¿ä¸Šæ¥æ”¶åˆ°æ•°æ®æ—¶è§¦å‘ä¸­æ–­
 } UART_InitStructure;
 
+#define UART_DATA_8BIT 0
+#define UART_DATA_9BIT 1
 
-#define UART_DATA_8BIT      0
-#define UART_DATA_9BIT      1
+#define UART_PARITY_NONE 0
+#define UART_PARITY_ODD 1
+#define UART_PARITY_EVEN 3
+#define UART_PARITY_ONE 5
+#define UART_PARITY_ZERO 7
 
-#define UART_PARITY_NONE    0
-#define UART_PARITY_ODD     1
-#define UART_PARITY_EVEN    3
-#define UART_PARITY_ONE     5
-#define UART_PARITY_ZERO    7
+#define UART_STOP_1BIT 0
+#define UART_STOP_2BIT 1
 
-#define UART_STOP_1BIT      0
-#define UART_STOP_2BIT      1
+#define UART_RTS_1BYTE 0
+#define UART_RTS_2BYTE 1
+#define UART_RTS_4BYTE 2
+#define UART_RTS_6BYTE 3
 
-#define UART_RTS_1BYTE      0
-#define UART_RTS_2BYTE      1
-#define UART_RTS_4BYTE      2
-#define UART_RTS_6BYTE      3
+#define UART_ABR_RES_OK 1
+#define UART_ABR_RES_ERR 2
 
-#define UART_ABR_RES_OK     1
-#define UART_ABR_RES_ERR    2
+#define UART_ERR_FRAME 1
+#define UART_ERR_PARITY 2
+#define UART_ERR_NOISE 3
 
-#define UART_ERR_FRAME      1
-#define UART_ERR_PARITY     2
-#define UART_ERR_NOISE      3
-
-
-void UART_Init(UART_TypeDef *UARTx, UART_InitStructure *initStruct);    //UART´®¿Ú³õÊ¼»¯
+void UART_Init(UART_TypeDef *UARTx, UART_InitStructure *initStruct); //UARTä¸²å£åˆå§‹åŒ–
 void UART_Open(UART_TypeDef *UARTx);
 void UART_Close(UART_TypeDef *UARTx);
 
-void UART_WriteByte(UART_TypeDef *UARTx, uint8_t data);                 //·¢ËÍÒ»¸ö×Ö½ÚÊı¾İ
-uint32_t UART_ReadByte(UART_TypeDef *UARTx, uint32_t *data);            //¶ÁÈ¡Ò»¸ö×Ö½ÚÊı¾İ£¬²¢Ö¸³öÊı¾İÊÇ·ñValid
+void UART_WriteByte(UART_TypeDef *UARTx, uint32_t data);     //å‘é€ä¸€ä¸ªå­—èŠ‚æ•°æ®
+uint32_t UART_ReadByte(UART_TypeDef *UARTx, uint32_t *data); //è¯»å–ä¸€ä¸ªå­—èŠ‚æ•°æ®ï¼Œå¹¶æŒ‡å‡ºæ•°æ®æ˜¯å¦Valid
 
 uint32_t UART_IsTXBusy(UART_TypeDef *UARTx);
-uint32_t UART_IsRXFIFOEmpty(UART_TypeDef *UARTx);                       //½ÓÊÕFIFOÊÇ·ñ¿Õ£¬Èç¹û²»¿ÕÔò¿ÉÒÔ¼ÌĞøUART_ReadByte()
-uint32_t UART_IsTXFIFOFull(UART_TypeDef *UARTx);                        //·¢ËÍFIFOÊÇ·ñÂú£¬Èç¹û²»ÂúÔò¿ÉÒÔ¼ÌĞøUART_WriteByte()
+uint32_t UART_IsRXFIFOEmpty(UART_TypeDef *UARTx); //æ¥æ”¶FIFOæ˜¯å¦ç©ºï¼Œå¦‚æœä¸ç©ºåˆ™å¯ä»¥ç»§ç»­UART_ReadByte()
+uint32_t UART_IsTXFIFOFull(UART_TypeDef *UARTx);  //å‘é€FIFOæ˜¯å¦æ»¡ï¼Œå¦‚æœä¸æ»¡åˆ™å¯ä»¥ç»§ç»­UART_WriteByte()
 
-
-void UART_SetBaudrate(UART_TypeDef *UARTx, uint32_t baudrate);          //ÉèÖÃ²¨ÌØÂÊ
-uint32_t UART_GetBaudrate(UART_TypeDef *UARTx);                         //»ñÈ¡µ±Ç°Ê¹ÓÃµÄ²¨ÌØÂÊ
+void UART_SetBaudrate(UART_TypeDef *UARTx, uint32_t baudrate); //è®¾ç½®æ³¢ç‰¹ç‡
+uint32_t UART_GetBaudrate(UART_TypeDef *UARTx);                //è·å–å½“å‰ä½¿ç”¨çš„æ³¢ç‰¹ç‡
 
 void UART_CTSConfig(UART_TypeDef *UARTx, uint32_t enable, uint32_t polarity);
 uint32_t UART_CTSLineState(UART_TypeDef *UARTx);
@@ -76,7 +73,6 @@ uint32_t UART_LINIsGenerated(UART_TypeDef *UARTx);
 void UART_ABRStart(UART_TypeDef *UARTx, uint32_t detectChar);
 uint32_t UART_ABRIsDone(UART_TypeDef *UARTx);
 
-
 void UART_INTRXThresholdEn(UART_TypeDef *UARTx);
 void UART_INTRXThresholdDis(UART_TypeDef *UARTx);
 uint32_t UART_INTRXThresholdStat(UART_TypeDef *UARTx);
@@ -90,6 +86,5 @@ uint32_t UART_INTTimeoutStat(UART_TypeDef *UARTx);
 void UART_INTTXDoneEn(UART_TypeDef *UARTx);
 void UART_INTTXDoneDis(UART_TypeDef *UARTx);
 uint32_t UART_INTTXDoneStat(UART_TypeDef *UARTx);
-
 
 #endif //__SWM320_UART_H__
