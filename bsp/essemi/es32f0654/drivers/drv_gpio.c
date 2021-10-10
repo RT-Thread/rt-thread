@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the License); you may
  * not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2019-01-23     wangyq        the first version
- * 2019-11-01     wangyq        update libraries 
+ * 2019-11-01     wangyq        update libraries
  * 2021-04-20     liuhy         the second version
  */
 
@@ -79,143 +79,143 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 RT_WEAK void irq_pin0_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 0\r\n");
-}      
+}
 #endif
 
-#ifdef ES_CONF_EXTI_IRQ_1 
+#ifdef ES_CONF_EXTI_IRQ_1
 
 RT_WEAK void irq_pin1_callback(void* arg)
 {
     rt_kprintf("\r\nEXTI 1\r\n");
-}      
-  
+}
+
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_2
-  
+
    RT_WEAK void irq_pin2_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 2\r\n"); 
-}   
+    rt_kprintf("\r\nEXTI 2\r\n");
+}
 
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_3
-  
+
 RT_WEAK void irq_pin3_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 3\r\n"); 
-}      
-  
-#endif  
+    rt_kprintf("\r\nEXTI 3\r\n");
+}
+
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_4
-  
+
 RT_WEAK void irq_pin4_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 4\r\n"); 
-}     
-  
-#endif    
+    rt_kprintf("\r\nEXTI 4\r\n");
+}
+
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_5
-  
+
 RT_WEAK void irq_pin5_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 5\r\n"); 
-}      
-  
-#endif    
+    rt_kprintf("\r\nEXTI 5\r\n");
+}
+
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_6
-  
+
 RT_WEAK void irq_pin6_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 6\r\n"); 
-}     
-  
-#endif    
-    
+    rt_kprintf("\r\nEXTI 6\r\n");
+}
+
+#endif
+
 #ifdef ES_CONF_EXTI_IRQ_7
-  
+
 RT_WEAK void irq_pin7_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 7\r\n"); 
-}      
-  
-#endif    
+    rt_kprintf("\r\nEXTI 7\r\n");
+}
+
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_8
-  
+
 RT_WEAK void irq_pin8_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 8\r\n"); 
-}     
-  
-#endif    
-   
+    rt_kprintf("\r\nEXTI 8\r\n");
+}
+
+#endif
+
 #ifdef ES_CONF_EXTI_IRQ_9
-  
+
 RT_WEAK void irq_pin9_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 9\r\n"); 
-}     
-  
-#endif    
+    rt_kprintf("\r\nEXTI 9\r\n");
+}
+
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_10
-  
+
 RT_WEAK void irq_pin10_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 10\r\n"); 
-}    
-  
-#endif    
- 
+    rt_kprintf("\r\nEXTI 10\r\n");
+}
+
+#endif
+
 #ifdef ES_CONF_EXTI_IRQ_11
-  
+
 RT_WEAK void irq_pin11_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 11\r\n"); 
-}    
-  
-#endif    
+    rt_kprintf("\r\nEXTI 11\r\n");
+}
+
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_12
-  
+
 RT_WEAK void irq_pin12_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 12\r\n"); 
-}    
-  
-#endif    
+    rt_kprintf("\r\nEXTI 12\r\n");
+}
+
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_13
-  
+
 RT_WEAK void irq_pin13_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 13\r\n"); 
-}   
-  
-#endif    
-  
+    rt_kprintf("\r\nEXTI 13\r\n");
+}
+
+#endif
+
 #ifdef ES_CONF_EXTI_IRQ_14
-  
+
 RT_WEAK void irq_pin14_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 14\r\n"); 
-}    
-  
-#endif    
+    rt_kprintf("\r\nEXTI 14\r\n");
+}
+
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_15
-  
+
 RT_WEAK void irq_pin15_callback(void* arg)
 {
-    rt_kprintf("\r\nEXTI 15\r\n"); 
-}    
-  
-#endif    
+    rt_kprintf("\r\nEXTI 15\r\n");
+}
+
+#endif
 
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
@@ -315,12 +315,12 @@ void es32f0_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint16_t gpio_pin)
 {
     uint8_t map_index = 0U;
-    
+
     while(gpio_pin >> (++map_index))
     {
     }
     map_index--;
-    
+
     if (map_index >= ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
@@ -563,16 +563,16 @@ void EXTI12_15_Handler(void)
 int rt_hw_pin_init(void)
 {
     int result;
-   
+
 
 #ifdef   ES_INIT_GPIOS
-                                                              
+
     rt_size_t i,gpio_conf_num = sizeof(gpio_conf_all) / sizeof(gpio_conf_t);
 
-#endif       
+#endif
 
     ald_cmu_perh_clock_config(CMU_PERH_GPIO, ENABLE);
-    
+
     result = rt_device_pin_register(ES_DEVICE_NAME_PIN, &_es32f0_pin_ops, RT_NULL);
 
     if(result != RT_EOK)return result;
@@ -582,20 +582,20 @@ int rt_hw_pin_init(void)
        for(i = 0;i < gpio_conf_num;i++)
     {
         rt_pin_mode( gpio_conf_all[i].pin,gpio_conf_all[i].pin_mode);
-    
+
         if((gpio_conf_all[i].pin_mode == ES_C_GPIO_MODE_OUTPUT)||(gpio_conf_all[i].pin_mode == ES_C_GPIO_MODE_OUTPUT_OD))
         rt_pin_write(gpio_conf_all[i].pin,gpio_conf_all[i].pin_level);
-        
+
         if(!gpio_conf_all[i].irq_en)continue;
-        
+
         rt_pin_attach_irq(gpio_conf_all[i].pin, gpio_conf_all[i].irq_mode, gpio_conf_all[i].callback, RT_NULL);
         rt_pin_irq_enable(gpio_conf_all[i].pin, gpio_conf_all[i].irq_en);
     }
-    
-#endif        
-    
 
-    
+#endif
+
+
+
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);

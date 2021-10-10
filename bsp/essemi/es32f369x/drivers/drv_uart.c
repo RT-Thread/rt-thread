@@ -17,7 +17,7 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2020-01-14     wangyq        the first version   
+ * 2020-01-14     wangyq        the first version
  * 2021-04-20     liuhy         the second version
  */
 
@@ -211,7 +211,7 @@ static rt_err_t es32f3x_configure(struct rt_serial_device *serial, struct serial
         ald_gpio_init(ES_UART0_TX_GPIO_PORT, ES_UART0_TX_GPIO_PIN, &gpio_initstructure);
 #endif
 
-#if  defined(ES_UART0_RX_GPIO_FUNC)&&defined(ES_UART0_RX_GPIO_PORT)&&defined(ES_UART0_RX_GPIO_PIN)        
+#if  defined(ES_UART0_RX_GPIO_FUNC)&&defined(ES_UART0_RX_GPIO_PORT)&&defined(ES_UART0_RX_GPIO_PIN)
         /* Initialize rx pin ,the same as txpin except mode */
         gpio_initstructure.mode = GPIO_MODE_INPUT;
         gpio_initstructure.func = ES_UART0_RX_GPIO_FUNC;
@@ -219,18 +219,18 @@ static rt_err_t es32f3x_configure(struct rt_serial_device *serial, struct serial
 #endif
         ald_cmu_perh_clock_config(CMU_PERH_UART0, ENABLE);
     }
-    
+
 #endif /* uart0 gpio init */
-                                 
+
 #ifdef BSP_USING_UART1
     if(uart == (&uart1))
     {
-#if  defined(ES_UART1_TX_GPIO_FUNC)&&defined(ES_UART1_TX_GPIO_PORT)&&defined(ES_UART1_TX_GPIO_PIN)  
+#if  defined(ES_UART1_TX_GPIO_FUNC)&&defined(ES_UART1_TX_GPIO_PORT)&&defined(ES_UART1_TX_GPIO_PIN)
         gpio_initstructure.func = ES_UART1_TX_GPIO_FUNC;
         ald_gpio_init(ES_UART1_TX_GPIO_PORT, ES_UART1_TX_GPIO_PIN, &gpio_initstructure);
 #endif
 
-#if  defined(ES_UART1_RX_GPIO_FUNC)&&defined(ES_UART1_RX_GPIO_PORT)&&defined(ES_UART1_RX_GPIO_PIN) 
+#if  defined(ES_UART1_RX_GPIO_FUNC)&&defined(ES_UART1_RX_GPIO_PORT)&&defined(ES_UART1_RX_GPIO_PIN)
         /* Initialize rx pin ,the same as txpin except mode */
         gpio_initstructure.mode = GPIO_MODE_INPUT;
         gpio_initstructure.func = ES_UART1_RX_GPIO_FUNC;
@@ -240,7 +240,7 @@ static rt_err_t es32f3x_configure(struct rt_serial_device *serial, struct serial
         ald_cmu_perh_clock_config(CMU_PERH_UART1, ENABLE);
     }
 #endif /* uart1 gpio init */
-                               
+
 #ifdef BSP_USING_UART2
     if(uart == (&uart2))
     {
@@ -259,11 +259,11 @@ static rt_err_t es32f3x_configure(struct rt_serial_device *serial, struct serial
         ald_cmu_perh_clock_config(CMU_PERH_UART2, ENABLE);
     }
 #endif /* uart2 gpio init */
-                                 
+
 #ifdef BSP_USING_UART3
     if(uart == (&uart3))
     {
-#if  defined(ES_UART3_TX_GPIO_FUNC)&&defined(ES_UART3_TX_GPIO_PORT)&&defined(ES_UART3_TX_GPIO_PIN)   
+#if  defined(ES_UART3_TX_GPIO_FUNC)&&defined(ES_UART3_TX_GPIO_PORT)&&defined(ES_UART3_TX_GPIO_PIN)
         gpio_initstructure.func = ES_UART3_TX_GPIO_FUNC;
         ald_gpio_init(ES_UART3_TX_GPIO_PORT, ES_UART3_TX_GPIO_PIN, &gpio_initstructure);
 #endif
@@ -275,38 +275,38 @@ static rt_err_t es32f3x_configure(struct rt_serial_device *serial, struct serial
         ald_gpio_init(ES_UART3_RX_GPIO_PORT, ES_UART3_RX_GPIO_PIN, &gpio_initstructure);
 #endif
 
-        ald_cmu_perh_clock_config(CMU_PERH_UART3, ENABLE);   
+        ald_cmu_perh_clock_config(CMU_PERH_UART3, ENABLE);
     }
 #endif /* uart3 gpio init */
-                                  
+
 #ifdef BSP_USING_UART4
     if(uart == (&uart4))
     {
-#if  defined(ES_UART4_TX_GPIO_FUNC)&&defined(ES_UART4_TX_GPIO_PORT)&&defined(ES_UART4_TX_GPIO_PIN)   
+#if  defined(ES_UART4_TX_GPIO_FUNC)&&defined(ES_UART4_TX_GPIO_PORT)&&defined(ES_UART4_TX_GPIO_PIN)
         gpio_initstructure.func = ES_UART4_TX_GPIO_FUNC;
         ald_gpio_init(ES_UART4_TX_GPIO_PORT, ES_UART4_TX_GPIO_PIN, &gpio_initstructure);
 #endif
 
-#if  defined(ES_UART4_RX_GPIO_FUNC)&&defined(ES_UART4_RX_GPIO_PORT)&&defined(ES_UART4_RX_GPIO_PIN)  
+#if  defined(ES_UART4_RX_GPIO_FUNC)&&defined(ES_UART4_RX_GPIO_PORT)&&defined(ES_UART4_RX_GPIO_PIN)
         /* Initialize rx pin ,the same as txpin except mode */
         gpio_initstructure.mode = GPIO_MODE_INPUT;
         gpio_initstructure.func = ES_UART4_RX_GPIO_FUNC;
         ald_gpio_init(ES_UART4_RX_GPIO_PORT, ES_UART4_RX_GPIO_PIN, &gpio_initstructure);
 #endif
 
-        ald_cmu_perh_clock_config(CMU_PERH_UART4, ENABLE); 
+        ald_cmu_perh_clock_config(CMU_PERH_UART4, ENABLE);
     }
 #endif /* uart4 gpio init */
-                                 
+
 #ifdef BSP_USING_UART5
     if(uart == (&uart5))
     {
-#if  defined(ES_UART5_TX_GPIO_FUNC)&&defined(ES_UART5_TX_GPIO_PORT)&&defined(ES_UART5_TX_GPIO_PIN)   
+#if  defined(ES_UART5_TX_GPIO_FUNC)&&defined(ES_UART5_TX_GPIO_PORT)&&defined(ES_UART5_TX_GPIO_PIN)
         gpio_initstructure.func = ES_UART5_TX_GPIO_FUNC;
         ald_gpio_init(ES_UART5_TX_GPIO_PORT, ES_UART5_TX_GPIO_PIN, &gpio_initstructure);
 #endif
 
-#if  defined(ES_UART5_RX_GPIO_FUNC)&&defined(ES_UART5_RX_GPIO_PORT)&&defined(ES_UART5_RX_GPIO_PIN)  
+#if  defined(ES_UART5_RX_GPIO_FUNC)&&defined(ES_UART5_RX_GPIO_PORT)&&defined(ES_UART5_RX_GPIO_PIN)
         /* Initialize rx pin ,the same as txpin except mode */
         gpio_initstructure.mode = GPIO_MODE_INPUT;
         gpio_initstructure.func = ES_UART5_RX_GPIO_FUNC;
@@ -324,7 +324,7 @@ static rt_err_t es32f3x_configure(struct rt_serial_device *serial, struct serial
     uart->huart.init.baud        = cfg->baud_rate;
     uart->huart.init.word_length = (uart_word_length_t)(8 - cfg->data_bits);
     uart->huart.init.parity = (uart_parity_t)(cfg->parity == PARITY_EVEN ? UART_PARITY_EVEN : cfg->parity);
-    uart->huart.init.fctl        = UART_HW_FLOW_CTL_DISABLE; 
+    uart->huart.init.fctl        = UART_HW_FLOW_CTL_DISABLE;
     uart->huart.init.stop_bits        = UART_STOP_BITS_1;
     ald_uart_init(&uart->huart);
 
