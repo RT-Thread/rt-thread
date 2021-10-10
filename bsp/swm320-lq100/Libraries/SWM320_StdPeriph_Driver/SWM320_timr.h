@@ -1,23 +1,29 @@
 #ifndef __SWM320_TIMR_H__
 #define __SWM320_TIMR_H__
 
-#define TIMR_MODE_TIMER     0
-#define TIMR_MODE_COUNTER   1
+#define TIMR_MODE_TIMER 0
+#define TIMR_MODE_COUNTER 1
 
-void TIMR_Init(TIMR_TypeDef *TIMRx, uint32_t mode, uint32_t period, uint32_t int_en);   //¶¨Ê±Æ÷/¼ÆÊıÆ÷³õÊ¼»¯
-void TIMR_Start(TIMR_TypeDef *TIMRx);                           //Æô¶¯¶¨Ê±Æ÷£¬´Ó³õÊ¼Öµ¿ªÊ¼¼ÆÊ±/¼ÆÊı
-void TIMR_Stop(TIMR_TypeDef *TIMRx);                            //Í£Ö¹¶¨Ê±Æ÷
-void TIMR_Halt(TIMR_TypeDef *TIMRx);                            //ÔİÍ£¶¨Ê±Æ÷£¬¼ÆÊıÖµ±£³Ö²»±ä
-void TIMR_Resume(TIMR_TypeDef *TIMRx);                          //»Ö¸´¶¨Ê±Æ÷£¬´ÓÔİÍ£´¦¼ÌĞø¼ÆÊı
+void TIMR_Init(TIMR_TypeDef *TIMRx, uint32_t mode, uint32_t period, uint32_t int_en); //å®šæ—¶å™¨/è®¡æ•°å™¨åˆå§‹åŒ–
+void TIMR_Start(TIMR_TypeDef *TIMRx);                                                 //å¯åŠ¨å®šæ—¶å™¨ï¼Œä»åˆå§‹å€¼å¼€å§‹è®¡æ—¶/è®¡æ•°
+void TIMR_Stop(TIMR_TypeDef *TIMRx);                                                  //åœæ­¢å®šæ—¶å™¨
+void TIMR_Halt(TIMR_TypeDef *TIMRx);                                                  //æš‚åœå®šæ—¶å™¨ï¼Œè®¡æ•°å€¼ä¿æŒä¸å˜
+void TIMR_Resume(TIMR_TypeDef *TIMRx);                                                //æ¢å¤å®šæ—¶å™¨ï¼Œä»æš‚åœå¤„ç»§ç»­è®¡æ•°
 
-void TIMR_SetPeriod(TIMR_TypeDef *TIMRx, uint32_t period);      //ÉèÖÃ¶¨Ê±/¼ÆÊıÖÜÆÚ
-uint32_t TIMR_GetPeriod(TIMR_TypeDef *TIMRx);                   //»ñÈ¡¶¨Ê±/¼ÆÊıÖÜÆÚ
-uint32_t TIMR_GetCurValue(TIMR_TypeDef *TIMRx);                 //»ñÈ¡µ±Ç°¼ÆÊıÖµ
+void TIMR_SetPeriod(TIMR_TypeDef *TIMRx, uint32_t period); //è®¾ç½®å®šæ—¶/è®¡æ•°å‘¨æœŸ
+uint32_t TIMR_GetPeriod(TIMR_TypeDef *TIMRx);              //è·å–å®šæ—¶/è®¡æ•°å‘¨æœŸ
+uint32_t TIMR_GetCurValue(TIMR_TypeDef *TIMRx);            //è·å–å½“å‰è®¡æ•°å€¼
 
-void TIMR_INTEn(TIMR_TypeDef *TIMRx);                           //Ê¹ÄÜÖĞ¶Ï
-void TIMR_INTDis(TIMR_TypeDef *TIMRx);                          //½ûÄÜÖĞ¶Ï
-void TIMR_INTClr(TIMR_TypeDef *TIMRx);                          //Çå³ıÖĞ¶Ï±êÖ¾
-uint32_t TIMR_INTStat(TIMR_TypeDef *TIMRx);                     //»ñÈ¡ÖĞ¶Ï×´Ì¬
+void TIMR_INTEn(TIMR_TypeDef *TIMRx);       //ä½¿èƒ½ä¸­æ–­
+void TIMR_INTDis(TIMR_TypeDef *TIMRx);      //ç¦èƒ½ä¸­æ–­
+void TIMR_INTClr(TIMR_TypeDef *TIMRx);      //æ¸…é™¤ä¸­æ–­æ ‡å¿—
+uint32_t TIMR_INTStat(TIMR_TypeDef *TIMRx); //è·å–ä¸­æ–­çŠ¶æ€
 
+#define PULSE_LOW 0
+#define PULSE_HIGH 1
+
+void Pulse_Init(uint32_t pulse, uint32_t int_en);
+void Pulse_Start(void);
+uint32_t Pulse_Done(void);
 
 #endif //__SWM320_TIMR_H__

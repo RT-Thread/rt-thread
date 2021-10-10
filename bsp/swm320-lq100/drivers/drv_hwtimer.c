@@ -6,257 +6,251 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-10    Zohar_Lee    first version
+ * 2020-07-10    lik          format file
  */
 
-#include <rthw.h>
-#include <rtthread.h>
-#include <rtdevice.h>
-#include <board.h>
+#include "drv_hwtimer.h"
 
-#define SWM320_HWTIMER_DEVICE(hwtimer) (struct swm320_hwtimer_dev *)(hwtimer)
+#ifdef RT_USING_HWTIMER
+#ifdef BSP_USING_TIM
 
-struct swm320_hwtimer_dev
+enum
 {
-    rt_hwtimer_t parent;
-    TIMR_TypeDef *hwtimer_periph;
+#ifdef BSP_USING_TIM0
+    TIM0_INDEX,
+#endif
+#ifdef BSP_USING_TIM1
+    TIM1_INDEX,
+#endif
+#ifdef BSP_USING_TIM2
+    TIM2_INDEX,
+#endif
+#ifdef BSP_USING_TIM3
+    TIM3_INDEX,
+#endif
+#ifdef BSP_USING_TIM4
+    TIM4_INDEX,
+#endif
+#ifdef BSP_USING_TIM5
+    TIM5_INDEX,
+#endif
 };
 
-#ifdef BSP_USING_HWTIMER0
-static struct swm320_hwtimer_dev hwtimer0;
-
-void TIMR0_Handler(void)
-{
-    TIMR_INTClr(TIMR0);
-    rt_device_hwtimer_isr(&hwtimer0.parent);
-    
-    if (HWTIMER_MODE_ONESHOT == hwtimer0.parent.mode)
+static struct swm_hwtimer_cfg hwtimer_cfg[] =
     {
-        TIMR_Stop(hwtimer0.hwtimer_periph);
-    }  
-}
-#endif //BSP_USING_HWTIMER0
-
-#ifdef BSP_USING_HWTIMER1
-static struct swm320_hwtimer_dev hwtimer1;
-
-void TIMR1_Handler(void)
-{
-    TIMR_INTClr(TIMR1);
-    rt_device_hwtimer_isr(&hwtimer1.parent);
-
-    if (HWTIMER_MODE_ONESHOT == hwtimer1.parent.mode)
-    {
-        TIMR_Stop(hwtimer1.hwtimer_periph);
-    } 
-}
-#endif //BSP_USING_HWTIMER1
-
-#ifdef BSP_USING_HWTIMER2
-static struct swm320_hwtimer_dev hwtimer2;
-
-void TIMR2_Handler(void)
-{
-    TIMR_INTClr(TIMR2);
-    rt_device_hwtimer_isr(&hwtimer2.parent);
-    
-    if (HWTIMER_MODE_ONESHOT == hwtimer2.parent.mode)
-    {
-        TIMR_Stop(hwtimer2.hwtimer_periph);
-    } 
-}
-#endif //BSP_USING_HWTIMER2
-
-#ifdef BSP_USING_HWTIMER3
-static struct swm320_hwtimer_dev hwtimer3;
-
-void TIMR3_Handler(void)
-{
-    TIMR_INTClr(TIMR3);
-    rt_device_hwtimer_isr(&hwtimer3.parent);
-    
-    if (HWTIMER_MODE_ONESHOT == hwtimer3.parent.mode)
-    {
-        TIMR_Stop(hwtimer3.hwtimer_periph);
-    }
-}
-#endif //BSP_USING_HWTIMER3
-
-#ifdef BSP_USING_HWTIMER4
-static struct swm320_hwtimer_dev hwtimer4;
-
-void TIMR4_Handler(void)
-{
-    TIMR_INTClr(TIMR4);
-    rt_device_hwtimer_isr(&hwtimer4.parent);
-    
-    if (HWTIMER_MODE_ONESHOT == hwtimer4.parent.mode)
-    {
-        TIMR_Stop(hwtimer4.hwtimer_periph);
-    }
-}
-#endif //BSP_USING_HWTIMER4
-
-#ifdef BSP_USING_HWTIMER5
-static struct swm320_hwtimer_dev hwtimer5;
-
-void TIMR5_Handler(void)
-{
-    TIMR_INTClr(TIMR5);
-    rt_device_hwtimer_isr(&hwtimer5.parent);
-    
-    if (HWTIMER_MODE_ONESHOT == hwtimer5.parent.mode)
-    {
-        TIMR_Stop(hwtimer5.hwtimer_periph);
-    }
-}
-#endif //BSP_USING_HWTIMER5
-
-static struct rt_hwtimer_info swm320_hwtimer_info =
-{
-    120000000,  /*时钟源为系统时钟*/
-    120000000, 
-    4294967295, /*32位计数器，2的32次方*/
-    HWTIMER_CNTMODE_DW
+#ifdef BSP_USING_TIM0
+        TIM0_CFG,
+#endif
+#ifdef BSP_USING_TIM1
+        TIM1_CFG,
+#endif
+#ifdef BSP_USING_TIM2
+        TIM2_CFG,
+#endif
+#ifdef BSP_USING_TIM3
+        TIM3_CFG,
+#endif
+#ifdef BSP_USING_TIM4
+        TIM4_CFG,
+#endif
+#ifdef BSP_USING_TIM5
+        TIM5_CFG,
+#endif
 };
 
-static void swm320_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
+static struct swm_hwtimer hwtimer_drv[sizeof(hwtimer_cfg) / sizeof(hwtimer_cfg[0])] = {0};
+
+static void swm_timer_init(struct rt_hwtimer_device *timer_device, rt_uint32_t state)
 {
-    struct swm320_hwtimer_dev *hwtimer = SWM320_HWTIMER_DEVICE(timer->parent.user_data);
+    struct swm_hwtimer_cfg *cfg = RT_NULL;
+    RT_ASSERT(timer_device != RT_NULL);
 
-    RT_ASSERT(hwtimer != RT_NULL);
-
-    if (1 == state)
+    if (state)
     {
-        TIMR_Init(hwtimer->hwtimer_periph,
-                  TIMR_MODE_TIMER,
-                  SystemCoreClock,
-                  1);
+        cfg = timer_device->parent.user_data;
+        TIMR_Init(cfg->TIMRx, TIMR_MODE_TIMER, SystemCoreClock, 1);
+        timer_device->freq = SystemCoreClock;
     }
-    hwtimer->parent.freq = SystemCoreClock;
-    swm320_hwtimer_info.maxfreq = SystemCoreClock;
-    swm320_hwtimer_info.minfreq = SystemCoreClock;
 }
 
-static rt_err_t swm320_hwtimer_start(rt_hwtimer_t *timer,
-                                     rt_uint32_t cnt,
-                                     rt_hwtimer_mode_t mode)
+static rt_err_t swm_timer_start(rt_hwtimer_t *timer_device, rt_uint32_t cnt, rt_hwtimer_mode_t opmode)
 {
-    struct swm320_hwtimer_dev *hwtimer = SWM320_HWTIMER_DEVICE(timer->parent.user_data);
+    rt_err_t result = RT_EOK;
+    struct swm_hwtimer_cfg *cfg = RT_NULL;
+    RT_ASSERT(timer_device != RT_NULL);
+    cfg = timer_device->parent.user_data;
 
-    RT_ASSERT(hwtimer != RT_NULL);
+    if (opmode == HWTIMER_MODE_ONESHOT)
+    {
+        /* set timer to single mode */
+        timer_device->mode = HWTIMER_MODE_ONESHOT;
+    }
+    else
+    {
+        timer_device->mode = HWTIMER_MODE_PERIOD;
+    }
+    TIMR_SetPeriod(cfg->TIMRx, cnt);
+    TIMR_Stop(cfg->TIMRx);
+    TIMR_Start(cfg->TIMRx);
 
-    TIMR_SetPeriod(hwtimer->hwtimer_periph, cnt);
-    TIMR_Start(hwtimer->hwtimer_periph);
-
-    return RT_EOK;
+    return result;
 }
 
-static void swm320_hwtimer_stop(rt_hwtimer_t *timer)
+static void swm_timer_stop(rt_hwtimer_t *timer_device)
 {
-    struct swm320_hwtimer_dev *hwtimer = SWM320_HWTIMER_DEVICE(timer->parent.user_data);
+    struct swm_hwtimer_cfg *cfg = RT_NULL;
+    RT_ASSERT(timer_device != RT_NULL);
+    cfg = timer_device->parent.user_data;
 
-    RT_ASSERT(hwtimer != RT_NULL);
-
-    TIMR_Stop(hwtimer->hwtimer_periph);
+    /* stop timer */
+    TIMR_Stop(cfg->TIMRx);
 }
 
-static rt_uint32_t swm320_hwtimer_count_get(rt_hwtimer_t *timer)
+static rt_uint32_t swm_timer_count_get(rt_hwtimer_t *timer_device)
 {
-    struct swm320_hwtimer_dev *hwtimer = SWM320_HWTIMER_DEVICE(timer->parent.user_data);
-    uint32_t hwtimer_count = 0;
+    struct swm_hwtimer_cfg *cfg = RT_NULL;
+    RT_ASSERT(timer_device != RT_NULL);
+    cfg = timer_device->parent.user_data;
 
-    RT_ASSERT(hwtimer != RT_NULL);
-
-    hwtimer_count = TIMR_GetCurValue(hwtimer->hwtimer_periph);
-
-    return hwtimer_count;
+    return TIMR_GetCurValue(cfg->TIMRx);
 }
 
-static rt_err_t swm320_hwtimer_control(rt_hwtimer_t *timer,
-                                       rt_uint32_t cmd,
-                                       void *args)
+static rt_err_t swm_timer_ctrl(rt_hwtimer_t *timer_device, rt_uint32_t cmd, void *args)
 {
-    rt_err_t ret = RT_EOK;
-    rt_uint32_t freq = 0;
-    struct swm320_hwtimer_dev *hwtimer = SWM320_HWTIMER_DEVICE(timer->parent.user_data);
-
-    RT_ASSERT(hwtimer != RT_NULL);
+    struct swm_hwtimer_cfg *cfg = RT_NULL;
+    rt_err_t result = RT_EOK;
+    RT_ASSERT(timer_device != RT_NULL);
+    RT_ASSERT(args != RT_NULL);
+    cfg = timer_device->parent.user_data;
 
     switch (cmd)
     {
     case HWTIMER_CTRL_FREQ_SET:
-        freq = *(rt_uint32_t*)args;
-        if (freq != SystemCoreClock)
-        {
-            ret = RT_EINVAL;
-        }
-        break;
-    case HWTIMER_CTRL_STOP:
-        TIMR_Stop(hwtimer->hwtimer_periph);
-        break;
+    {
+        rt_uint32_t freq;
+        freq = *(rt_uint32_t *)args;
+
+        TIMR_Init(cfg->TIMRx, TIMR_MODE_TIMER, SystemCoreClock / freq, 1);
+    }
+    break;
     default:
-        ret = RT_EINVAL;
-        break;
+    {
+        result = -RT_ENOSYS;
+    }
+    break;
     }
 
-    return ret;
+    return result;
 }
 
-static struct rt_hwtimer_ops swm320_hwtimer_ops =
+static const struct rt_hwtimer_info _info = TIM_DEV_INFO_CONFIG;
+
+static struct rt_hwtimer_ops swm_hwtimer_ops =
+    {
+        .init = swm_timer_init,
+        .start = swm_timer_start,
+        .stop = swm_timer_stop,
+        .count_get = swm_timer_count_get,
+        .control = swm_timer_ctrl};
+
+void rt_hw_hwtimer_isr(rt_hwtimer_t *timer_device)
 {
-    swm320_hwtimer_init,
-    swm320_hwtimer_start,
-    swm320_hwtimer_stop,
-    swm320_hwtimer_count_get,
-    swm320_hwtimer_control
-};
+    struct swm_hwtimer_cfg *cfg = RT_NULL;
+    RT_ASSERT(timer_device != RT_NULL);
+    cfg = timer_device->parent.user_data;
 
-int rt_hw_hwtimer_init(void)
+    TIMR_INTClr(cfg->TIMRx);
+    rt_device_hwtimer_isr(timer_device);
+}
+#ifdef BSP_USING_TIM0
+void TIMR0_Handler(void)
 {
-    rt_err_t ret = RT_EOK;
+    /* enter interrupt */
+    rt_interrupt_enter();
+    rt_hw_hwtimer_isr(&(hwtimer_drv[TIM0_INDEX].time_device));
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif //BSP_USING_TIM0
 
-#ifdef BSP_USING_HWTIMER0
-    hwtimer0.hwtimer_periph = TIMR0;
-    hwtimer0.parent.info = &swm320_hwtimer_info;
-    hwtimer0.parent.ops = &swm320_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&hwtimer0.parent, "timer0", &hwtimer0);
-#endif //BSP_USING_HWTIMER0
+#ifdef BSP_USING_TIM1
+void TIMR1_Handler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    rt_hw_hwtimer_isr(&(hwtimer_drv[TIM1_INDEX].time_device));
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif //BSP_USING_TIM1
 
-#ifdef BSP_USING_HWTIMER1
-    hwtimer1.hwtimer_periph = TIMR1;
-    hwtimer1.parent.info = &swm320_hwtimer_info;
-    hwtimer1.parent.ops = &swm320_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&hwtimer1.parent, "timer1", &hwtimer1);
-#endif //BSP_USING_HWTIMER1
+#ifdef BSP_USING_TIM2
+void TIMR2_Handler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    rt_hw_hwtimer_isr(&(hwtimer_drv[TIM2_INDEX].time_device));
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif //BSP_USING_TIM2
 
-#ifdef BSP_USING_HWTIMER2
-    hwtimer2.hwtimer_periph = TIMR2;
-    hwtimer2.parent.info = &swm320_hwtimer_info;
-    hwtimer2.parent.ops = &swm320_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&hwtimer2.parent, "timer2", &hwtimer2);
-#endif //BSP_USING_HWTIMER2
+#ifdef BSP_USING_TIM3
+void TIMR3_Handler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    rt_hw_hwtimer_isr(&(hwtimer_drv[TIM3_INDEX].time_device));
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif //BSP_USING_TIM3
 
-#ifdef BSP_USING_HWTIMER3
-    hwtimer3.hwtimer_periph = TIMR3;
-    hwtimer3.parent.info = &swm320_hwtimer_info;
-    hwtimer3.parent.ops = &swm320_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&hwtimer3.parent, "timer3", &hwtimer3);
-#endif //BSP_USING_HWTIMER3
+#ifdef BSP_USING_TIM4
+void TIMR4_Handler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    rt_hw_hwtimer_isr(&(hwtimer_drv[TIM4_INDEX].time_device));
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif //BSP_USING_TIM4
 
-#ifdef BSP_USING_HWTIMER4
-    hwtimer4.hwtimer_periph = TIMR4;
-    hwtimer4.parent.info = &swm320_hwtimer_info;
-    hwtimer4.parent.ops = &swm320_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&hwtimer4.parent, "timer4", &hwtimer4);
-#endif //BSP_USING_HWTIMER4
+#ifdef BSP_USING_TIM5
+void TIMR5_Handler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    rt_hw_hwtimer_isr(&(hwtimer_drv[TIM5_INDEX].time_device));
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif //BSP_USING_TIM5
 
-#ifdef BSP_USING_HWTIMER5
-    hwtimer5.hwtimer_periph = TIMR5;
-    hwtimer5.parent.info = &swm320_hwtimer_info;
-    hwtimer5.parent.ops = &swm320_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&hwtimer5.parent, "timer5", &hwtimer5);
-#endif //BSP_USING_HWTIMER5
+static int rt_hw_hwtimer_init(void)
+{
+    int i = 0;
+    int result = RT_EOK;
 
-    return ret;
+    for (i = 0; i < sizeof(hwtimer_cfg) / sizeof(hwtimer_cfg[0]); i++)
+    {
+        hwtimer_drv[i].cfg = &hwtimer_cfg[i];
+        hwtimer_drv[i].time_device.info = &_info;
+        hwtimer_drv[i].time_device.ops = &swm_hwtimer_ops;
+        if (rt_device_hwtimer_register(&hwtimer_drv[i].time_device, hwtimer_drv[i].cfg->name, hwtimer_drv[i].cfg) == RT_EOK)
+        {
+            ;
+        }
+        else
+        {
+            result = -RT_ERROR;
+        }
+    }
+
+    return result;
 }
 INIT_BOARD_EXPORT(rt_hw_hwtimer_init);
+
+#endif /* BSP_USING_TIM */
+#endif /* RT_USING_HWTIMER */
