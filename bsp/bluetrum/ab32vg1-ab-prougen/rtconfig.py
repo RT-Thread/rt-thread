@@ -38,9 +38,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    # DEVICE  = ' -mcmodel=medany -march=rv32imc -mabi=ilp32 -fsingle-precision-constant'
     DEVICE  = ' -mcmodel=medany -march=rv32imc -mabi=ilp32 -msave-restore'
-    # CFLAGS  = DEVICE + ' -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields'
     CFLAGS = DEVICE + ' -D_USE_LONG_TIME_T'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds'
