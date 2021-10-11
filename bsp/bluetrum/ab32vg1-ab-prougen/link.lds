@@ -46,6 +46,12 @@ SECTIONS
         KEEP (*(.init_array*))
         PROVIDE(__ctors_end__ = .);
 
+        /* section information for at server */
+        . = ALIGN(4);
+        __rtatcmdtab_start = .;
+        KEEP(*(RtAtCmdTab))
+        __rtatcmdtab_end = .;
+
         . = ALIGN(4);
         *save-restore.o (.text* .rodata*)
         *libcpu*cpu*context_gcc.o (.text* .rodata*)
