@@ -26,7 +26,12 @@ SECTIONS
         __vsymtab_start = .;
         KEEP(*(VSymTab))
         __vsymtab_end = .;
+
+        /* section information for var export */
         . = ALIGN(4);
+        __ve_table_start = .;
+        KEEP(*(SORT(*.VarExpTab.*)))
+        __ve_table_end = .;
 
         /* section information for modules */
         . = ALIGN(4);
