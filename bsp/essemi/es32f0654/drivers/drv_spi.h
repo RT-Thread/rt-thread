@@ -17,7 +17,7 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2019-01-24     wangyq        the first version  
+ * 2019-01-24     wangyq        the first version
  * 2021-04-20     liuhy         the second version
  */
 
@@ -27,7 +27,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <rtdevice.h>
-                      
+
 #include "es_conf_info_spi.h"
 
 struct es32f0_hw_spi_cs
