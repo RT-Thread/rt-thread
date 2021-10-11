@@ -98,6 +98,9 @@ static rt_uint32_t n32_adc_get_channel(rt_uint32_t channel)
         case 17:
             n32_channel = ADC_CH_17;
             break;
+        case 18:
+            n32_channel = ADC_CH_18;
+            break;
     }
 
     return n32_channel;
@@ -123,6 +126,12 @@ static rt_err_t n32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 
     /* ADCx regular channels configuration */
     ADC_ConfigRegularChannel(n32_adc_handler, n32_adc_get_channel(channel), 1, ADC_SAMP_TIME_28CYCLES5);
+
+    if (((n32_adc_handler == ADC2) || (n32_adc_handler == ADC2))
+        && ((n32_adc_get_channel(channel) == ADC_CH_16) || (n32_adc_get_channel(channel) == ADC_CH_18)))
+    {
+        ADC_EnableTempSensorVrefint(ENABLE);
+    }
 
     /* Enable ADCx */
     ADC_Enable(n32_adc_handler, ENABLE);
