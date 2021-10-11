@@ -59,16 +59,17 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define RT_USING_MSH
+#define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_CMD_SIZE 80
-#define FINSH_USING_MSH
-#define FINSH_USING_MSH_DEFAULT
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -91,6 +92,7 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* Network */
@@ -141,6 +143,9 @@
 /* multimedia packages */
 
 
+/* U8G2: a monochrome graphic library */
+
+
 /* tools packages */
 
 
@@ -159,7 +164,6 @@
 
 
 /* miscellaneous packages */
-
 
 /* samples: kernel and components samples */
 

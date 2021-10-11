@@ -2,6 +2,7 @@ menu "Hardware Drivers Config"
 
 config SOC_N32G452XX
     bool
+    select SOC_SERIES_N32G452XX
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
