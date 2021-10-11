@@ -1,28 +1,16 @@
-# STM32F407 探索者开发板 BSP 说明
+# STM32F407 -develop说明
 
 ## 简介
 
-本文档为 RT-Thread 开发团队为 STM32F407 探索者开发板提供的 BSP (板级支持包) 说明。
 
-主要内容如下：
-
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
-
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
 
 ## 开发板介绍
 
-探索者 STM32F407 是正点原子推出的一款基于 ARM Cortex-M4 内核的开发板，最高主频为 168Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32F407 的芯片性能。
 
-开发板外观如下图所示：
-
-![board](figures/board.png)
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32F407ZGT6，主频 168MHz，1024KB FLASH ，192KB RAM
+- MCU：STM32F407ZGT6，主频 168MHz，512KB FLASH ，192KB RAM
 - 外部 RAM：IS62WV51216（1MB）
 - 外部 FLASH：W25Q128（SPI，16MB）
 - 常用外设

@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <board.h>
 #define DBG_TAG     "MAIN"
-#define DBG_LVL     DBG_WARNING
+#define DBG_LVL     DBG_LOG
 #include <rtdbg.h>
 
 /* defined the LED0 pin: PF9 */
@@ -29,7 +29,7 @@ int main(void)
     {
         rt_pin_write(LED0_PIN, PIN_HIGH);
         rt_thread_mdelay(500);
-				LOG_D("hello rt-thread!/n");
+				LOG_D("hello rt-thread!\n");
         rt_pin_write(LED0_PIN, PIN_LOW);
         rt_thread_mdelay(500);
     }
