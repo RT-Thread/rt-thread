@@ -41,10 +41,10 @@
 #define NO_KEY      (0u)
 
 struct ab32_irrx_data{
-    uint16_t cnt;                            //ir data bit counter
-    uint16_t rpt_cnt;                        //ir repeat counter
-    uint16_t addr;                           //address,  inverted address   Extended NEC: 16bits address
-    uint16_t cmd;                            //command,  inverted command
+    rt_uint16_t cnt;                            //ir data bit counter
+    rt_uint16_t rpt_cnt;                        //ir repeat counter
+    rt_uint16_t addr;                           //address,  inverted address   Extended NEC: 16bits address
+    rt_uint16_t cmd;                            //command,  inverted command
 };
 typedef struct ab32_irrx_data *ab32_irrx_data_t;
 
@@ -58,7 +58,7 @@ static struct ab32_irrx_data _irrx = {0};
  * @param cmd  inverted command
  */
 RT_SECTION(".irq.irrx")
-uint8_t ab32_get_irkey(uint16_t *addr, uint16_t *cmd)
+rt_uint8_t ab32_get_irkey(rt_uint16_t *addr, rt_uint16_t *cmd)
 {
     if (_irrx.cnt != 32) {
         return NO_KEY;
@@ -90,8 +90,8 @@ static void irrx_isr(int vector, void *param)
     //IR RX data finish interrupt
     if (IRRXCON & BIT(16)) {
         IRRXCPND = BIT(16);
-        _irrx.addr = (uint16_t)IRRXDAT;
-        _irrx.cmd = (uint16_t)(IRRXDAT >> 16);
+        _irrx.addr = (rt_uint16_t)IRRXDAT;
+        _irrx.cmd = (rt_uint16_t)(IRRXDAT >> 16);
         _irrx.cnt = 32;
     }
 
