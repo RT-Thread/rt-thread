@@ -95,7 +95,7 @@ LoopFillZerobss:
  // ldr r0, =__libc_init_array
  // blx r0
 /* Call the application's entry point.*/
-  bl main
+  bl entry
   //ldr r0, =main
   //blx r0
 
