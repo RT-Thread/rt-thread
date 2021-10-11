@@ -293,9 +293,9 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
     {
-        if(device->config.mode & RT_SPI_CS_HIGH)
+        if (device->config.mode & RT_SPI_CS_HIGH)
             HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_SET);
-	    else
+        else
             HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_RESET);
     }
 
@@ -390,7 +390,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
     {
-        if(device->config.mode & RT_SPI_CS_HIGH)
+        if (device->config.mode & RT_SPI_CS_HIGH)
             HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_RESET);
         else
             HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_SET);
