@@ -20,12 +20,12 @@ ALIGN(RT_ALIGN_SIZE)
 static char thread2_stack[1024];
 static struct rt_thread thread2;
 #ifdef RT_USING_HEAP
-static rt_thread_t tid1 = RT_NULL;
-static rt_thread_t tid3 = RT_NULL;
-static rt_thread_t tid4 = RT_NULL;
-static rt_thread_t tid5 = RT_NULL;
-static rt_thread_t tid6 = RT_NULL;
-static rt_thread_t tid7 = RT_NULL;
+    static rt_thread_t tid1 = RT_NULL;
+    static rt_thread_t tid3 = RT_NULL;
+    static rt_thread_t tid4 = RT_NULL;
+    static rt_thread_t tid5 = RT_NULL;
+    static rt_thread_t tid6 = RT_NULL;
+    static rt_thread_t tid7 = RT_NULL;
 #endif /* RT_USING_HEAP */
 
 static rt_uint32_t tid3_delay_pass_flag = 0;
@@ -35,16 +35,16 @@ static rt_uint32_t tid6_finish_flag = 0;
 static rt_uint32_t thread5_source = 0;
 
 #ifndef RT_USING_SMP
-static rt_uint32_t thread_yield_flag = 0;
+    static rt_uint32_t thread_yield_flag = 0;
 #endif
 static rt_uint32_t entry_idle_hook_times = 0;
 static rt_thread_t __current_thread;
 static rt_uint8_t change_priority;
 static rt_uint32_t count = 0;
 
-void thread1_entry(void* param)
+void thread1_entry(void *param)
 {
-    while(1);
+    while (1);
 }
 
 static void test_dynamic_thread(void)
@@ -53,22 +53,22 @@ static void test_dynamic_thread(void)
     rt_err_t ret_delete = -RT_ERROR;
 
     tid1 = rt_thread_create("thread1",
-                            thread1_entry, 
-                            (void*)1,
+                            thread1_entry,
+                            (void *)1,
                             THREAD_STACK_SIZE,
-                            __current_thread->current_priority + 1, 
+                            __current_thread->current_priority + 1,
                             THREAD_TIMESLICE - 5);
     if (tid1 == RT_NULL)
     {
         uassert_false(tid1 == RT_NULL);
-        goto __exit; 
+        goto __exit;
     }
 
     ret_startup = rt_thread_startup(tid1);
-    if(ret_startup != RT_EOK)
+    if (ret_startup != RT_EOK)
     {
-        uassert_false(ret_startup != RT_EOK); 
-        goto __exit; 
+        uassert_false(ret_startup != RT_EOK);
+        goto __exit;
     }
 
     ret_delete = rt_thread_delete(tid1);
@@ -88,9 +88,9 @@ __exit:
     return;
 }
 
-void thread2_entry(void* param)
+void thread2_entry(void *param)
 {
-    while(1);
+    while (1);
 }
 
 static void test_static_thread(void)
@@ -100,13 +100,13 @@ static void test_static_thread(void)
     rt_err_t ret_detach = - RT_ERROR;
 
     ret_init = rt_thread_init(&thread2,
-                            "thread2",
-                            thread2_entry,
-                            (void*)2,
-                            &thread2_stack[0],
-                            sizeof(thread2_stack),
-                            __current_thread->current_priority + 1, 
-                            THREAD_TIMESLICE);
+                              "thread2",
+                              thread2_entry,
+                              (void *)2,
+                              &thread2_stack[0],
+                              sizeof(thread2_stack),
+                              __current_thread->current_priority + 1,
+                              THREAD_TIMESLICE);
     if (ret_init != RT_EOK)
     {
         uassert_false(ret_init != RT_EOK);
@@ -168,7 +168,7 @@ static void test_thread_delay(void)
         uassert_false(tid3 == RT_NULL);
         goto __exit;
     }
-    
+
     ret_startup = rt_thread_startup(tid3);
     if (ret_startup != RT_EOK)
     {
@@ -176,7 +176,7 @@ static void test_thread_delay(void)
         uassert_false(1);
         goto __exit;
     }
-    
+
     while (tid3_finish_flag != 1);
     uassert_true(tid3_delay_pass_flag == 1);
 
@@ -374,7 +374,7 @@ static void test_thread_priority(void)
 {
     rt_err_t ret_startup = -RT_ERROR;
     rt_thread_t tid8 = RT_NULL;
-    
+
     tid8 = rt_thread_create("thread8",
                             thread8_entry,
                             RT_NULL,
@@ -389,9 +389,9 @@ static void test_thread_priority(void)
     }
     count = 0;
     ret_startup = rt_thread_startup(tid8);
-    if(ret_startup != RT_EOK)
+    if (ret_startup != RT_EOK)
     {
-        uassert_false(ret_startup != RT_EOK); 
+        uassert_false(ret_startup != RT_EOK);
         return ;
     }
     uassert_true(count == 10);
@@ -458,7 +458,7 @@ static void test_delay_until(void)
 #ifndef RT_USING_SMP
 static volatile rt_uint32_t yield_count;
 
-static void test_thread_yield_inc_entry(void* parameter)
+static void test_thread_yield_inc_entry(void *parameter)
 {
     rt_uint32_t loop = 0;
 
@@ -471,7 +471,7 @@ static void test_thread_yield_inc_entry(void* parameter)
     }
 }
 
-static void test_thread_yield_entry(void* parameter)
+static void test_thread_yield_entry(void *parameter)
 {
     rt_err_t ret_startup = -RT_ERROR;
 
@@ -480,7 +480,7 @@ static void test_thread_yield_entry(void* parameter)
     rt_uint32_t count_before;
 
     tid = rt_thread_create("inc", test_thread_yield_inc_entry, RT_NULL,
-            2048, 1, 10);
+                           2048, 1, 10);
     if (!tid)
     {
         LOG_E("rt_thread_create failed!");
@@ -520,7 +520,7 @@ void test_thread_yield_nosmp(void)
     yield_count = 0;
 
     tid = rt_thread_create("chkcnt", test_thread_yield_entry, RT_NULL,
-            2048, 1, 10);
+                           2048, 1, 10);
     if (!tid)
     {
         LOG_E("rt_thread_create failed!");
@@ -541,22 +541,23 @@ void test_thread_yield_nosmp(void)
 static rt_uint32_t thread9_count = 0;
 static void thread9_entry(void *parameter)
 {
-    while(1)
+    while (1)
     {
         thread9_count ++;
     }
 
 }
-static void test_thread_suspend(void){
+static void test_thread_suspend(void)
+{
     static rt_thread_t tid;
     rt_err_t ret_startup = -RT_ERROR;
     uint32_t count_before_suspend, count_before_resume, count_after_resume;
     tid = rt_thread_create("thread9",
-                            thread9_entry,
-                            RT_NULL,
-                            THREAD_STACK_SIZE,
-                            __current_thread->current_priority + 1,
-                            THREAD_TIMESLICE);
+                           thread9_entry,
+                           RT_NULL,
+                           THREAD_STACK_SIZE,
+                           __current_thread->current_priority + 1,
+                           THREAD_TIMESLICE);
     if (tid == RT_NULL)
     {
         LOG_E("rt_thread_create failed!");
