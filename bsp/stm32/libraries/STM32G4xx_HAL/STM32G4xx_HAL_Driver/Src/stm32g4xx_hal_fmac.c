@@ -213,6 +213,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g4xx_hal.h"
 
+#if defined(FMAC)
 #ifdef HAL_FMAC_MODULE_ENABLED
 
 /** @addtogroup STM32G4xx_HAL_Driver
@@ -430,13 +431,13 @@ HAL_StatusTypeDef HAL_FMAC_Init(FMAC_HandleTypeDef *hfmac)
   FMAC_ResetDataPointers(hfmac);
 
   /* Reset FMAC unit (internal pointers) */
-  if (FMAC_Reset(hfmac) == HAL_TIMEOUT)
+  if (FMAC_Reset(hfmac) == HAL_ERROR)
   {
     /* Update FMAC error code and FMAC peripheral state */
     hfmac->ErrorCode |= HAL_FMAC_ERROR_RESET;
     hfmac->State = HAL_FMAC_STATE_TIMEOUT;
 
-    status = HAL_TIMEOUT;
+    status = HAL_ERROR;
   }
   else
   {
@@ -688,39 +689,42 @@ HAL_StatusTypeDef HAL_FMAC_UnRegisterCallback(FMAC_HandleTypeDef *hfmac, HAL_FMA
     switch (CallbackID)
     {
       case HAL_FMAC_ERROR_CB_ID :
-        hfmac->ErrorCallback = HAL_FMAC_ErrorCallback;                             /* Legacy weak ErrorCallback               */
+        hfmac->ErrorCallback = HAL_FMAC_ErrorCallback;                             /* Legacy weak ErrorCallback       */
         break;
 
       case HAL_FMAC_HALF_GET_DATA_CB_ID :
-        hfmac->HalfGetDataCallback = HAL_FMAC_HalfGetDataCallback;                 /* Legacy weak HalfGetDataCallback         */
+        hfmac->HalfGetDataCallback = HAL_FMAC_HalfGetDataCallback;                 /* Legacy weak HalfGetDataCallback */
         break;
 
       case HAL_FMAC_GET_DATA_CB_ID :
-        hfmac->GetDataCallback = HAL_FMAC_GetDataCallback;                         /* Legacy weak GetDataCallback             */
+        hfmac->GetDataCallback = HAL_FMAC_GetDataCallback;                         /* Legacy weak GetDataCallback     */
         break;
 
       case HAL_FMAC_HALF_OUTPUT_DATA_READY_CB_ID :
-        hfmac->HalfOutputDataReadyCallback = HAL_FMAC_HalfOutputDataReadyCallback; /* Legacy weak HalfOutputDataReadyCallback */
+        hfmac->HalfOutputDataReadyCallback = HAL_FMAC_HalfOutputDataReadyCallback; /* Legacy weak
+                                                                                      HalfOutputDataReadyCallback     */
         break;
 
       case HAL_FMAC_OUTPUT_DATA_READY_CB_ID :
-        hfmac->OutputDataReadyCallback = HAL_FMAC_OutputDataReadyCallback;         /* Legacy weak OutputDataReadyCallback     */
+        hfmac->OutputDataReadyCallback = HAL_FMAC_OutputDataReadyCallback;         /* Legacy weak
+                                                                                      OutputDataReadyCallback         */
         break;
 
       case HAL_FMAC_FILTER_CONFIG_CB_ID :
-        hfmac->FilterConfigCallback = HAL_FMAC_FilterConfigCallback;               /* Legacy weak FilterConfigCallback        */
+        hfmac->FilterConfigCallback = HAL_FMAC_FilterConfigCallback;               /* Legacy weak
+                                                                                      FilterConfigCallback            */
         break;
 
       case HAL_FMAC_FILTER_PRELOAD_CB_ID :
-        hfmac->FilterPreloadCallback = HAL_FMAC_FilterPreloadCallback;             /* Legacy weak FilterPreloadCallback       */
+        hfmac->FilterPreloadCallback = HAL_FMAC_FilterPreloadCallback;             /* Legacy weak FilterPreloadCallba */
         break;
 
       case HAL_FMAC_MSPINIT_CB_ID :
-        hfmac->MspInitCallback = HAL_FMAC_MspInit;                                 /* Legacy weak MspInitCallback             */
+        hfmac->MspInitCallback = HAL_FMAC_MspInit;                                 /* Legacy weak MspInitCallback     */
         break;
 
       case HAL_FMAC_MSPDEINIT_CB_ID :
-        hfmac->MspDeInitCallback = HAL_FMAC_MspDeInit;                             /* Legacy weak MspDeInitCallback           */
+        hfmac->MspDeInitCallback = HAL_FMAC_MspDeInit;                             /* Legacy weak MspDeInitCallback   */
         break;
 
       default :
@@ -955,7 +959,7 @@ HAL_StatusTypeDef HAL_FMAC_FilterStart(FMAC_HandleTypeDef *hfmac, int16_t *pOutp
   }
   else
   {
-    status = HAL_BUSY;
+    status = HAL_ERROR;
   }
 
   return status;
@@ -999,7 +1003,7 @@ HAL_StatusTypeDef HAL_FMAC_AppendFilterData(FMAC_HandleTypeDef *hfmac, int16_t *
   /* Check whether the previous input vector has been handled */
   if ((hfmac->pInputSize != NULL) && (hfmac->InputCurrentSize < * (hfmac->pInputSize)))
   {
-    return HAL_BUSY;
+    return HAL_ERROR;
   }
 
   /* Check that FMAC was initialized and that no writing is already ongoing */
@@ -1010,7 +1014,7 @@ HAL_StatusTypeDef HAL_FMAC_AppendFilterData(FMAC_HandleTypeDef *hfmac, int16_t *
   }
   else
   {
-    status = HAL_BUSY;
+    status = HAL_ERROR;
   }
 
   return status;
@@ -1055,7 +1059,7 @@ HAL_StatusTypeDef HAL_FMAC_ConfigFilterOutputBuffer(FMAC_HandleTypeDef *hfmac, i
   /* Check whether the previous output vector has been handled */
   if ((hfmac->pOutputSize != NULL) && (hfmac->OutputCurrentSize < * (hfmac->pOutputSize)))
   {
-    return HAL_BUSY;
+    return HAL_ERROR;
   }
 
   /* Check that FMAC was initialized and that not reading is already ongoing */
@@ -1066,7 +1070,7 @@ HAL_StatusTypeDef HAL_FMAC_ConfigFilterOutputBuffer(FMAC_HandleTypeDef *hfmac, i
   }
   else
   {
-    status = HAL_BUSY;
+    status = HAL_ERROR;
   }
 
   return status;
@@ -1185,7 +1189,7 @@ HAL_StatusTypeDef HAL_FMAC_PollFilterData(FMAC_HandleTypeDef *hfmac, uint32_t Ti
     if ((HAL_GetTick() - tickstart) >= Timeout)
     {
       hfmac->ErrorCode |= HAL_FMAC_ERROR_TIMEOUT;
-      status = HAL_TIMEOUT;
+      status = HAL_ERROR;
     }
     else
     {
@@ -1194,7 +1198,7 @@ HAL_StatusTypeDef HAL_FMAC_PollFilterData(FMAC_HandleTypeDef *hfmac, uint32_t Ti
   }
   else
   {
-    status = HAL_BUSY;
+    status = HAL_ERROR;
   }
 
   return status;
@@ -1233,12 +1237,12 @@ HAL_StatusTypeDef HAL_FMAC_FilterStop(FMAC_HandleTypeDef *hfmac)
     }
 
     /* Reset FMAC unit (internal pointers) */
-    if (FMAC_Reset(hfmac) == HAL_TIMEOUT)
+    if (FMAC_Reset(hfmac) == HAL_ERROR)
     {
       /* Update FMAC error code and FMAC peripheral state */
       hfmac->ErrorCode = HAL_FMAC_ERROR_RESET;
       hfmac->State = HAL_FMAC_STATE_TIMEOUT;
-      status = HAL_TIMEOUT;
+      status = HAL_ERROR;
     }
     else
     {
@@ -1253,7 +1257,7 @@ HAL_StatusTypeDef HAL_FMAC_FilterStop(FMAC_HandleTypeDef *hfmac)
   }
   else
   {
-    status = HAL_BUSY;
+    status = HAL_ERROR;
   }
 
   return status;
@@ -1589,7 +1593,7 @@ static HAL_StatusTypeDef FMAC_Reset(FMAC_HandleTypeDef *hfmac)
     if ((HAL_GetTick() - tickstart) > HAL_FMAC_RESET_TIMEOUT_VALUE)
     {
       hfmac->ErrorCode |= HAL_FMAC_ERROR_TIMEOUT;
-      return HAL_TIMEOUT;
+      return HAL_ERROR;
     }
   }
 
@@ -1674,7 +1678,7 @@ static HAL_StatusTypeDef FMAC_FilterConfig(FMAC_HandleTypeDef *hfmac, FMAC_Filte
   /* Check handle state is ready */
   if (hfmac->State != HAL_FMAC_STATE_READY)
   {
-    return HAL_BUSY;
+    return HAL_ERROR;
   }
 
   /* Change the FMAC state */
@@ -1692,7 +1696,8 @@ static HAL_StatusTypeDef FMAC_FilterConfig(FMAC_HandleTypeDef *hfmac, FMAC_Filte
     MODIFY_REG(hfmac->Instance->X1BUFCFG,                                                                   \
                (FMAC_X1BUFCFG_X1_BASE | FMAC_X1BUFCFG_X1_BUF_SIZE),                                         \
                (((((uint32_t)(pConfig->InputBaseAddress)) << FMAC_X1BUFCFG_X1_BASE_Pos)     & FMAC_X1BUFCFG_X1_BASE) | \
-                ((((uint32_t)(pConfig->InputBufferSize))  << FMAC_X1BUFCFG_X1_BUF_SIZE_Pos) & FMAC_X1BUFCFG_X1_BUF_SIZE)));
+                ((((uint32_t)(pConfig->InputBufferSize))  << FMAC_X1BUFCFG_X1_BUF_SIZE_Pos) & \
+                 FMAC_X1BUFCFG_X1_BUF_SIZE)));
   }
 
   /* FMAC_X1BUFCFG: Configure the input threshold if valid when compared to the configured X1 size */
@@ -1712,7 +1717,8 @@ static HAL_StatusTypeDef FMAC_FilterConfig(FMAC_HandleTypeDef *hfmac, FMAC_Filte
     MODIFY_REG(hfmac->Instance->X2BUFCFG,                                                                   \
                (FMAC_X2BUFCFG_X2_BASE | FMAC_X2BUFCFG_X2_BUF_SIZE),                                         \
                (((((uint32_t)(pConfig->CoeffBaseAddress)) << FMAC_X2BUFCFG_X2_BASE_Pos)     & FMAC_X2BUFCFG_X2_BASE) | \
-                ((((uint32_t)(pConfig->CoeffBufferSize))  << FMAC_X2BUFCFG_X2_BUF_SIZE_Pos) & FMAC_X2BUFCFG_X2_BUF_SIZE)));
+                ((((uint32_t)(pConfig->CoeffBufferSize))  << FMAC_X2BUFCFG_X2_BUF_SIZE_Pos) &\
+                 FMAC_X2BUFCFG_X2_BUF_SIZE)));
   }
 
   /* FMAC_YBUFCFG: Configure the output buffer within the internal memory if required */
@@ -1758,7 +1764,8 @@ static HAL_StatusTypeDef FMAC_FilterConfig(FMAC_HandleTypeDef *hfmac, FMAC_Filte
   x2size = FMAC_GET_X2_SIZE(hfmac);
 #endif /* USE_FULL_ASSERT */
   assert_param(((pConfig->Filter == FMAC_FUNC_CONVO_FIR) && (x2size >= pConfig->P)) || \
-               ((pConfig->Filter == FMAC_FUNC_IIR_DIRECT_FORM_1) && (x2size >= ((uint32_t)pConfig->P + (uint32_t)pConfig->Q))));
+               ((pConfig->Filter == FMAC_FUNC_IIR_DIRECT_FORM_1) && \
+                (x2size >= ((uint32_t)pConfig->P + (uint32_t)pConfig->Q))));
 
   /* Build the PARAM value that will be used when starting the filter */
   hfmac->FilterParam = (FMAC_PARAM_START | pConfig->Filter |                   \
@@ -1805,7 +1812,7 @@ static HAL_StatusTypeDef FMAC_FilterConfig(FMAC_HandleTypeDef *hfmac, FMAC_Filte
       {
         hfmac->ErrorCode |= HAL_FMAC_ERROR_TIMEOUT;
         hfmac->State = HAL_FMAC_STATE_TIMEOUT;
-        return HAL_TIMEOUT;
+        return HAL_ERROR;
       }
 
       /* Change the FMAC state */
@@ -1888,7 +1895,7 @@ static HAL_StatusTypeDef FMAC_FilterPreload(FMAC_HandleTypeDef *hfmac, int16_t *
   /* Check handle state is ready */
   if (hfmac->State != HAL_FMAC_STATE_READY)
   {
-    return HAL_BUSY;
+    return HAL_ERROR;
   }
 
   /* Change the FMAC state */
@@ -1914,7 +1921,7 @@ static HAL_StatusTypeDef FMAC_FilterPreload(FMAC_HandleTypeDef *hfmac, int16_t *
       {
         hfmac->ErrorCode |= HAL_FMAC_ERROR_TIMEOUT;
         hfmac->State = HAL_FMAC_STATE_TIMEOUT;
-        return HAL_TIMEOUT;
+        return HAL_ERROR;
       }
     }
     else
@@ -1950,7 +1957,7 @@ static HAL_StatusTypeDef FMAC_FilterPreload(FMAC_HandleTypeDef *hfmac, int16_t *
       {
         hfmac->ErrorCode |= HAL_FMAC_ERROR_TIMEOUT;
         hfmac->State = HAL_FMAC_STATE_TIMEOUT;
-        return HAL_TIMEOUT;
+        return HAL_ERROR;
       }
     }
     else
@@ -2035,7 +2042,7 @@ static HAL_StatusTypeDef FMAC_WaitOnStartUntilTimeout(FMAC_HandleTypeDef *hfmac,
     {
       hfmac->ErrorCode |= HAL_FMAC_ERROR_TIMEOUT;
 
-      return HAL_TIMEOUT;
+      return HAL_ERROR;
     }
   }
   return HAL_OK;
@@ -2532,5 +2539,6 @@ static void FMAC_DMAError(DMA_HandleTypeDef *hdma)
   */
 
 #endif /* HAL_FMAC_MODULE_ENABLED */
+#endif /* FMAC */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

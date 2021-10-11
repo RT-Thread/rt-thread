@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -22,7 +22,7 @@
 #define STM32G0xx_HAL_PWR_EX_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -54,8 +54,8 @@ typedef struct
 
   uint32_t Mode;      /*!< Mode: Specifies the operating mode for the selected pins.
                            This parameter can be a value of @ref PWREx_PVM_Mode. */
-}PWR_PVMTypeDef;
-#endif
+} PWR_PVMTypeDef;
+#endif /* PWR_PVM_SUPPORT */
 
 #if defined(PWR_PVD_SUPPORT)
 /**
@@ -69,8 +69,8 @@ typedef struct
 
   uint32_t Mode;        /*!< Mode: Specifies the operating mode for the selected pins.
                               This parameter can be a value of @ref PWR_PVD_Mode. */
-}PWR_PVDTypeDef;
-#endif
+} PWR_PVDTypeDef;
+#endif /* PWR_PVD_SUPPORT */
 
 /**
   * @}
@@ -139,7 +139,7 @@ typedef struct
 /**
   * @}
   */
-#endif
+#endif /* PWR_PVD_SUPPORT */
 
 #if defined(PWR_PVM_SUPPORT)
 /** @defgroup PWREx_PVM_Type Peripheral Voltage Monitoring type
@@ -177,7 +177,7 @@ typedef struct
 /**
   * @}
   */
-#endif
+#endif /* PWR_PVM_SUPPORT */
 
 /** @defgroup PWREx_VBAT_Battery_Charging_Selection  PWR battery charging resistor selection
   * @{
@@ -221,7 +221,7 @@ typedef struct
 #define PWR_GPIO_D                          (0x00000003u)  /*!< GPIO port D */
 #if defined (GPIOE)
 #define PWR_GPIO_E                          (0x00000004u)  /*!< GPIO port E */
-#endif
+#endif /* GPIOE */
 #define PWR_GPIO_F                          (0x00000005u)  /*!< GPIO port F */
 /**
   * @}
@@ -258,7 +258,7 @@ typedef struct
   */
 #if defined(PWR_PVM_SUPPORT)
 #define PWR_FLAG_PVMOUSB                    (0x00020000u | PWR_SR2_PVMO_USB)   /*!< USB Peripheral Voltage Monitoring output */
-#endif
+#endif /* PWR_PVM_SUPPORT */
 /**
   * @}
   */
@@ -369,7 +369,7 @@ typedef struct
   * @retval None
   */
 #define __HAL_PWR_PVD_EXTI_CLEAR_FALLING_FLAG()   WRITE_REG(EXTI->FPR1, PWR_EXTI_LINE_PVD)
-#endif
+#endif /* PWR_PVD_SUPPORT */
 
 #if defined(PWR_PVM_SUPPORT)
 /**
@@ -469,7 +469,7 @@ typedef struct
   * @retval None
   */
 #define __HAL_PWR_PVM_EXTI_CLEAR_FALLING_FLAG()   WRITE_REG(EXTI->FPR2, PWR_EXTI_LINE_PVM)
-#endif
+#endif /* PWR_PVM_SUPPORT */
 /**
   * @}
   */
@@ -516,7 +516,7 @@ typedef struct
                                              ((__GPIO__) == PWR_GPIO_C) || \
                                              ((__GPIO__) == PWR_GPIO_D) || \
                                              ((__GPIO__) == PWR_GPIO_F))
-#endif
+#endif /* GPIOE */
 
 #define IS_PWR_FLASH_POWERDOWN(__MODE__)    ((((__MODE__) & (PWR_FLASHPD_LPRUN | PWR_FLASHPD_LPSLEEP | PWR_FLASHPD_STOP)) != 0x00u) && \
                                              (((__MODE__) & ~(PWR_FLASHPD_LPRUN | PWR_FLASHPD_LPSLEEP | PWR_FLASHPD_STOP)) == 0x00u))
@@ -534,7 +534,7 @@ typedef struct
                                                    ((MODE) == PWR_PVD_MODE_EVENT_RISING)        || \
                                                    ((MODE) == PWR_PVD_MODE_EVENT_FALLING)       || \
                                                    ((MODE) == PWR_PVD_MODE_EVENT_RISING_FALLING))
-#endif
+#endif /* PWR_PVD_SUPPORT */
 
 #if defined(PWR_PVM_SUPPORT)
 #define IS_PWR_PVM_TYPE(TYPE) ((TYPE) == PWR_PVM_USB)
@@ -546,7 +546,7 @@ typedef struct
                                 ((MODE) == PWR_PVM_MODE_EVENT_RISING)        ||\
                                 ((MODE) == PWR_PVM_MODE_EVENT_FALLING)       ||\
                                 ((MODE) == PWR_PVM_MODE_EVENT_RISING_FALLING))
-#endif
+#endif /* PWR_PVM_SUPPORT */
 /**
   * @}
   */
@@ -566,7 +566,7 @@ void              HAL_PWREx_DisableBatteryCharging(void);
 #if defined(PWR_CR3_ENB_ULP)
 void              HAL_PWREx_EnablePORMonitorSampling(void);
 void              HAL_PWREx_DisablePORMonitorSampling(void);
-#endif
+#endif /* PWR_CR3_ENB_ULP */
 void              HAL_PWREx_EnableInternalWakeUpLine(void);
 void              HAL_PWREx_DisableInternalWakeUpLine(void);
 HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber);
@@ -578,7 +578,7 @@ void              HAL_PWREx_DisablePullUpPullDownConfig(void);
 #if defined(PWR_CR3_RRS)
 void              HAL_PWREx_EnableSRAMRetention(void);
 void              HAL_PWREx_DisableSRAMRetention(void);
-#endif
+#endif /* PWR_CR3_RRS */
 void              HAL_PWREx_EnableFlashPowerDown(uint32_t PowerMode);
 void              HAL_PWREx_DisableFlashPowerDown(uint32_t PowerMode);
 uint32_t          HAL_PWREx_GetVoltageRange(void);
@@ -588,7 +588,7 @@ HAL_StatusTypeDef HAL_PWREx_ControlVoltageScaling(uint32_t VoltageScaling);
 HAL_StatusTypeDef HAL_PWREx_ConfigPVD(PWR_PVDTypeDef *sConfigPVD);
 void              HAL_PWREx_EnablePVD(void);
 void              HAL_PWREx_DisablePVD(void);
-#endif
+#endif /* PWR_PVD_SUPPORT */
 #if defined(PWR_PVM_SUPPORT)
 /* Power voltage monitoring configuration functions ***************************/
 void HAL_PWREx_EnableVddIO2(void);
@@ -598,14 +598,14 @@ void HAL_PWREx_DisableVddUSB(void);
 void HAL_PWREx_EnablePVMUSB(void);
 void HAL_PWREx_DisablePVMUSB(void);
 HAL_StatusTypeDef HAL_PWREx_ConfigPVM(PWR_PVMTypeDef *sConfigPVM);
-#endif
+#endif /* PWR_PVM_SUPPORT */
 
 /* Low Power modes configuration functions ************************************/
 void              HAL_PWREx_EnableLowPowerRunMode(void);
 HAL_StatusTypeDef HAL_PWREx_DisableLowPowerRunMode(void);
 #if defined(PWR_SHDW_SUPPORT)
 void              HAL_PWREx_EnterSHUTDOWNMode(void);
-#endif
+#endif /* PWR_SHDW_SUPPORT */
 
 #if defined(PWR_PVD_SUPPORT) && defined(PWR_PVM_SUPPORT)
 void              HAL_PWREx_PVD_PVM_IRQHandler(void);
@@ -615,7 +615,7 @@ void              HAL_PWREx_PVD_PVM_Falling_Callback(void);
 void              HAL_PWREx_PVD_IRQHandler(void);
 void              HAL_PWREx_PVD_Rising_Callback(void);
 void              HAL_PWREx_PVD_Falling_Callback(void);
-#endif
+#endif /* PWR_PVD_SUPPORT && PWR_PVM_SUPPORT */
 
 /**
   * @}

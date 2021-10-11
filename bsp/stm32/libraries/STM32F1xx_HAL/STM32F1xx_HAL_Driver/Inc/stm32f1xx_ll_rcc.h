@@ -1520,8 +1520,8 @@ __STATIC_INLINE void LL_RCC_PLL_SetMainSource(uint32_t PLLSource)
 __STATIC_INLINE uint32_t LL_RCC_PLL_GetMainSource(void)
 {
 #if defined(RCC_CFGR2_PREDIV1SRC)
-  register uint32_t pllsrc = READ_BIT(RCC->CFGR, RCC_CFGR_PLLSRC);
-  register uint32_t predivsrc = (uint32_t)(READ_BIT(RCC->CFGR2, RCC_CFGR2_PREDIV1SRC) << 4U);
+  uint32_t pllsrc = READ_BIT(RCC->CFGR, RCC_CFGR_PLLSRC);
+  uint32_t predivsrc = (uint32_t)(READ_BIT(RCC->CFGR2, RCC_CFGR2_PREDIV1SRC) << 4U);
   return (uint32_t)(pllsrc | predivsrc);
 #else
   return (uint32_t)(READ_BIT(RCC->CFGR, RCC_CFGR_PLLSRC));

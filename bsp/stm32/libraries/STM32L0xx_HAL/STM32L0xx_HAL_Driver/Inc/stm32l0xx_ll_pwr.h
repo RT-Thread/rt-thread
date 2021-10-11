@@ -379,6 +379,9 @@ __STATIC_INLINE uint32_t LL_PWR_GetRegulModeDS(void)
   *         before setting MODE_STOP. If the regulator remains in "main mode",   
   *         it consumes more power without providing any additional feature. 
   *         In MODE_STANDBY the regulator is automatically off.
+  * @note   It is forbidden to configure both EN_VREFINT=1 and ULP=1 if the device is
+  *         in Stop mode or in Sleep/Low-power sleep mode. If the device is not in 
+  *         low-power mode, VREFINT is always enabled whatever the state of EN_VREFINT and ULP
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_SetPowerMode(uint32_t PDMode)

@@ -49,14 +49,14 @@
   */   
 typedef enum
 {
-  HAL_SD_STATE_RESET                  = ((uint32_t)0x00000000U),  /*!< SD not yet initialized or disabled  */
-  HAL_SD_STATE_READY                  = ((uint32_t)0x00000001U),  /*!< SD initialized and ready for use    */
-  HAL_SD_STATE_TIMEOUT                = ((uint32_t)0x00000002U),  /*!< SD Timeout state                    */
-  HAL_SD_STATE_BUSY                   = ((uint32_t)0x00000003U),  /*!< SD process ongoing                  */
-  HAL_SD_STATE_PROGRAMMING            = ((uint32_t)0x00000004U),  /*!< SD Programming State                */
-  HAL_SD_STATE_RECEIVING              = ((uint32_t)0x00000005U),  /*!< SD Receiving State                  */
-  HAL_SD_STATE_TRANSFER               = ((uint32_t)0x00000006U),  /*!< SD Transfert State                  */
-  HAL_SD_STATE_ERROR                  = ((uint32_t)0x0000000FU)   /*!< SD is in error state                */
+  HAL_SD_STATE_RESET                  = 0x00000000U,  /*!< SD not yet initialized or disabled  */
+  HAL_SD_STATE_READY                  = 0x00000001U,  /*!< SD initialized and ready for use    */
+  HAL_SD_STATE_TIMEOUT                = 0x00000002U,  /*!< SD Timeout state                    */
+  HAL_SD_STATE_BUSY                   = 0x00000003U,  /*!< SD process ongoing                  */
+  HAL_SD_STATE_PROGRAMMING            = 0x00000004U,  /*!< SD Programming State                */
+  HAL_SD_STATE_RECEIVING              = 0x00000005U,  /*!< SD Receiving State                  */
+  HAL_SD_STATE_TRANSFER               = 0x00000006U,  /*!< SD Transfer State                  */
+  HAL_SD_STATE_ERROR                  = 0x0000000FU   /*!< SD is in error state                */
 }HAL_SD_StateTypeDef;
 /** 
   * @}
@@ -287,7 +287,7 @@ typedef void (*pSD_CallbackTypeDef)           (SD_HandleTypeDef *hsd);
   * @{
   */
 
-#define BLOCKSIZE   ((uint32_t)512U) /*!< Block size is 512 bytes */
+#define BLOCKSIZE   512U /*!< Block size is 512 bytes */
 
 /** @defgroup SD_Exported_Constansts_Group1 SD Error status enumeration Structure definition 
   * @{
@@ -339,13 +339,13 @@ typedef void (*pSD_CallbackTypeDef)           (SD_HandleTypeDef *hsd);
 /** @defgroup SD_Exported_Constansts_Group2 SD context enumeration
   * @{
   */ 
-#define SD_CONTEXT_NONE                 ((uint32_t)0x00000000U)  /*!< None                             */
-#define SD_CONTEXT_READ_SINGLE_BLOCK    ((uint32_t)0x00000001U)  /*!< Read single block operation      */
-#define SD_CONTEXT_READ_MULTIPLE_BLOCK  ((uint32_t)0x00000002U)  /*!< Read multiple blocks operation   */
-#define SD_CONTEXT_WRITE_SINGLE_BLOCK   ((uint32_t)0x00000010U)  /*!< Write single block operation     */
-#define SD_CONTEXT_WRITE_MULTIPLE_BLOCK ((uint32_t)0x00000020U)  /*!< Write multiple blocks operation  */
-#define SD_CONTEXT_IT                   ((uint32_t)0x00000008U)  /*!< Process in Interrupt mode        */
-#define SD_CONTEXT_DMA                  ((uint32_t)0x00000080U)  /*!< Process in DMA mode              */
+#define SD_CONTEXT_NONE                            0x00000000U   /*!< None                             */
+#define SD_CONTEXT_READ_SINGLE_BLOCK               0x00000001U   /*!< Read single block operation      */
+#define SD_CONTEXT_READ_MULTIPLE_BLOCK             0x00000002U   /*!< Read multiple blocks operation   */
+#define SD_CONTEXT_WRITE_SINGLE_BLOCK              0x00000010U   /*!< Write single block operation     */
+#define SD_CONTEXT_WRITE_MULTIPLE_BLOCK            0x00000020U   /*!< Write multiple blocks operation  */
+#define SD_CONTEXT_IT                              0x00000008U   /*!< Process in Interrupt mode        */
+#define SD_CONTEXT_DMA                             0x00000080U   /*!< Process in DMA mode              */
 
 /**
   * @}
@@ -354,9 +354,9 @@ typedef void (*pSD_CallbackTypeDef)           (SD_HandleTypeDef *hsd);
 /** @defgroup SD_Exported_Constansts_Group3 SD Supported Memory Cards
   * @{
   */
-#define CARD_SDSC                  ((uint32_t)0x00000000U)  /*!< SD Standard Capacity <2Go                          */
-#define CARD_SDHC_SDXC             ((uint32_t)0x00000001U)  /*!< SD High Capacity <32Go, SD Extended Capacity <2To  */
-#define CARD_SECURED               ((uint32_t)0x00000003U)
+#define CARD_SDSC                  0x00000000U  /*!< SD Standard Capacity <2Go                          */
+#define CARD_SDHC_SDXC             0x00000001U  /*!< SD High Capacity <32Go, SD Extended Capacity <2To  */
+#define CARD_SECURED               0x00000003U
     
 /**
   * @}
@@ -365,8 +365,8 @@ typedef void (*pSD_CallbackTypeDef)           (SD_HandleTypeDef *hsd);
 /** @defgroup SD_Exported_Constansts_Group4 SD Supported Version
   * @{
   */
-#define CARD_V1_X                  ((uint32_t)0x00000000U)
-#define CARD_V2_X                  ((uint32_t)0x00000001U)
+#define CARD_V1_X                  0x00000000U
+#define CARD_V2_X                  0x00000001U
 /**
   * @}
   */
@@ -638,7 +638,6 @@ HAL_StatusTypeDef HAL_SD_UnRegisterCallback(SD_HandleTypeDef *hsd, HAL_SD_Callba
   * @{
   */
 HAL_StatusTypeDef HAL_SD_ConfigWideBusOperation(SD_HandleTypeDef *hsd, uint32_t WideMode);
-HAL_StatusTypeDef HAL_SD_ConfigSpeedBusOperation(SD_HandleTypeDef *hsd, uint32_t SpeedMode);
 /**
   * @}
   */

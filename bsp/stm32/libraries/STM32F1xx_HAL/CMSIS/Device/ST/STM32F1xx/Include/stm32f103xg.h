@@ -923,7 +923,15 @@ typedef struct
 /** @addtogroup Exported_constants
   * @{
   */
-  
+
+  /** @addtogroup Hardware_Constant_Definition
+    * @{
+    */
+#define LSI_STARTUP_TIME                85U /*!< LSI Maximum startup time in us */
+  /**
+    * @}
+    */
+
   /** @addtogroup Peripheral_Registers_Bits_Definition
   * @{
   */
@@ -10652,7 +10660,6 @@ typedef struct
 #define SPI_I2SCFGR_I2SMOD_Pos              (11U)                              
 #define SPI_I2SCFGR_I2SMOD_Msk              (0x1UL << SPI_I2SCFGR_I2SMOD_Pos)   /*!< 0x00000800 */
 #define SPI_I2SCFGR_I2SMOD                  SPI_I2SCFGR_I2SMOD_Msk             /*!< I2S mode selection */
-
 /******************  Bit definition for SPI_I2SPR register  *******************/
 #define SPI_I2SPR_I2SDIV_Pos                (0U)                               
 #define SPI_I2SPR_I2SDIV_Msk                (0xFFUL << SPI_I2SPR_I2SDIV_Pos)    /*!< 0x000000FF */
@@ -11642,8 +11649,6 @@ typedef struct
    ((INSTANCE) == TIM9)    || \
    ((INSTANCE) == TIM12))
 
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
-
 #define IS_TIM_DMABURST_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM8)    || \
@@ -11878,11 +11883,11 @@ typedef struct
 #define ADC1_IRQn               ADC1_2_IRQn
 #define DMA2_Channel4_IRQn      DMA2_Channel4_5_IRQn
 #define TIM9_IRQn               TIM1_BRK_TIM9_IRQn
-#define TIM1_BRK_TIM15_IRQn     TIM1_BRK_TIM9_IRQn
 #define TIM1_BRK_IRQn           TIM1_BRK_TIM9_IRQn
+#define TIM1_BRK_TIM15_IRQn     TIM1_BRK_TIM9_IRQn
+#define TIM1_TRG_COM_TIM17_IRQn TIM1_TRG_COM_TIM11_IRQn
 #define TIM1_TRG_COM_IRQn       TIM1_TRG_COM_TIM11_IRQn
 #define TIM11_IRQn              TIM1_TRG_COM_TIM11_IRQn
-#define TIM1_TRG_COM_TIM17_IRQn TIM1_TRG_COM_TIM11_IRQn
 #define TIM10_IRQn              TIM1_UP_TIM10_IRQn
 #define TIM1_UP_IRQn            TIM1_UP_TIM10_IRQn
 #define TIM1_UP_TIM16_IRQn      TIM1_UP_TIM10_IRQn
@@ -11891,25 +11896,25 @@ typedef struct
 #define TIM8_BRK_IRQn           TIM8_BRK_TIM12_IRQn
 #define TIM14_IRQn              TIM8_TRG_COM_TIM14_IRQn
 #define TIM8_TRG_COM_IRQn       TIM8_TRG_COM_TIM14_IRQn
-#define TIM8_UP_IRQn            TIM8_UP_TIM13_IRQn
 #define TIM13_IRQn              TIM8_UP_TIM13_IRQn
+#define TIM8_UP_IRQn            TIM8_UP_TIM13_IRQn
 #define CEC_IRQn                USBWakeUp_IRQn
 #define OTG_FS_WKUP_IRQn        USBWakeUp_IRQn
 #define CAN1_TX_IRQn            USB_HP_CAN1_TX_IRQn
 #define USB_HP_IRQn             USB_HP_CAN1_TX_IRQn
-#define USB_LP_IRQn             USB_LP_CAN1_RX0_IRQn
 #define CAN1_RX0_IRQn           USB_LP_CAN1_RX0_IRQn
+#define USB_LP_IRQn             USB_LP_CAN1_RX0_IRQn
 
 
 /* Aliases for __IRQHandler */
 #define ADC1_IRQHandler               ADC1_2_IRQHandler
 #define DMA2_Channel4_IRQHandler      DMA2_Channel4_5_IRQHandler
 #define TIM9_IRQHandler               TIM1_BRK_TIM9_IRQHandler
-#define TIM1_BRK_TIM15_IRQHandler     TIM1_BRK_TIM9_IRQHandler
 #define TIM1_BRK_IRQHandler           TIM1_BRK_TIM9_IRQHandler
+#define TIM1_BRK_TIM15_IRQHandler     TIM1_BRK_TIM9_IRQHandler
+#define TIM1_TRG_COM_TIM17_IRQHandler TIM1_TRG_COM_TIM11_IRQHandler
 #define TIM1_TRG_COM_IRQHandler       TIM1_TRG_COM_TIM11_IRQHandler
 #define TIM11_IRQHandler              TIM1_TRG_COM_TIM11_IRQHandler
-#define TIM1_TRG_COM_TIM17_IRQHandler TIM1_TRG_COM_TIM11_IRQHandler
 #define TIM10_IRQHandler              TIM1_UP_TIM10_IRQHandler
 #define TIM1_UP_IRQHandler            TIM1_UP_TIM10_IRQHandler
 #define TIM1_UP_TIM16_IRQHandler      TIM1_UP_TIM10_IRQHandler
@@ -11918,14 +11923,14 @@ typedef struct
 #define TIM8_BRK_IRQHandler           TIM8_BRK_TIM12_IRQHandler
 #define TIM14_IRQHandler              TIM8_TRG_COM_TIM14_IRQHandler
 #define TIM8_TRG_COM_IRQHandler       TIM8_TRG_COM_TIM14_IRQHandler
-#define TIM8_UP_IRQHandler            TIM8_UP_TIM13_IRQHandler
 #define TIM13_IRQHandler              TIM8_UP_TIM13_IRQHandler
+#define TIM8_UP_IRQHandler            TIM8_UP_TIM13_IRQHandler
 #define CEC_IRQHandler                USBWakeUp_IRQHandler
 #define OTG_FS_WKUP_IRQHandler        USBWakeUp_IRQHandler
 #define CAN1_TX_IRQHandler            USB_HP_CAN1_TX_IRQHandler
 #define USB_HP_IRQHandler             USB_HP_CAN1_TX_IRQHandler
-#define USB_LP_IRQHandler             USB_LP_CAN1_RX0_IRQHandler
 #define CAN1_RX0_IRQHandler           USB_LP_CAN1_RX0_IRQHandler
+#define USB_LP_IRQHandler             USB_LP_CAN1_RX0_IRQHandler
 
 
 /**

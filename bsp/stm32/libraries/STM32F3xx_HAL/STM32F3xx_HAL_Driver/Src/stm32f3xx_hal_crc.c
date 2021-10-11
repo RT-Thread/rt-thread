@@ -62,8 +62,8 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /** @defgroup CRC_Private_Functions CRC Private Functions
- * @{
- */
+  * @{
+  */
 static uint32_t CRC_Handle_8(CRC_HandleTypeDef *hcrc, uint8_t pBuffer[], uint32_t BufferLength);
 static uint32_t CRC_Handle_16(CRC_HandleTypeDef *hcrc, uint16_t pBuffer[], uint32_t BufferLength);
 /**
@@ -77,8 +77,8 @@ static uint32_t CRC_Handle_16(CRC_HandleTypeDef *hcrc, uint16_t pBuffer[], uint3
   */
 
 /** @defgroup CRC_Exported_Functions_Group1 Initialization and de-initialization functions
- *  @brief    Initialization and Configuration functions.
- *
+  *  @brief    Initialization and Configuration functions.
+  *
 @verbatim
  ===============================================================================
             ##### Initialization and de-initialization functions #####
@@ -250,8 +250,8 @@ __weak void HAL_CRC_MspDeInit(CRC_HandleTypeDef *hcrc)
   */
 
 /** @defgroup CRC_Exported_Functions_Group2 Peripheral Control functions
- *  @brief    management functions.
- *
+  *  @brief    management functions.
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral Control functions #####
@@ -385,8 +385,8 @@ uint32_t HAL_CRC_Calculate(CRC_HandleTypeDef *hcrc, uint32_t pBuffer[], uint32_t
   */
 
 /** @defgroup CRC_Exported_Functions_Group3 Peripheral State functions
- *  @brief    Peripheral State functions.
- *
+  *  @brief    Peripheral State functions.
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral State functions #####
@@ -418,8 +418,8 @@ HAL_CRC_StateTypeDef HAL_CRC_GetState(CRC_HandleTypeDef *hcrc)
   */
 
 /** @addtogroup CRC_Private_Functions
- * @{
- */
+  * @{
+  */
 
 /**
   * @brief  Enter 8-bit input data to the CRC calculator.

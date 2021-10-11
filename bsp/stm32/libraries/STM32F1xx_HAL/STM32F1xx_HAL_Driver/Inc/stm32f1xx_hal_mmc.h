@@ -48,14 +48,14 @@
   */   
 typedef enum
 {
-  HAL_MMC_STATE_RESET                  = ((uint32_t)0x00000000U),  /*!< MMC not yet initialized or disabled  */
-  HAL_MMC_STATE_READY                  = ((uint32_t)0x00000001U),  /*!< MMC initialized and ready for use    */
-  HAL_MMC_STATE_TIMEOUT                = ((uint32_t)0x00000002U),  /*!< MMC Timeout state                    */
-  HAL_MMC_STATE_BUSY                   = ((uint32_t)0x00000003U),  /*!< MMC process ongoing                  */
-  HAL_MMC_STATE_PROGRAMMING            = ((uint32_t)0x00000004U),  /*!< MMC Programming State                */
-  HAL_MMC_STATE_RECEIVING              = ((uint32_t)0x00000005U),  /*!< MMC Receinving State                 */
-  HAL_MMC_STATE_TRANSFER               = ((uint32_t)0x00000006U),  /*!< MMC Transfert State                  */
-  HAL_MMC_STATE_ERROR                  = ((uint32_t)0x0000000FU)   /*!< MMC is in error state                */
+  HAL_MMC_STATE_RESET                  = 0x00000000U,  /*!< MMC not yet initialized or disabled  */
+  HAL_MMC_STATE_READY                  = 0x00000001U,  /*!< MMC initialized and ready for use    */
+  HAL_MMC_STATE_TIMEOUT                = 0x00000002U,  /*!< MMC Timeout state                    */
+  HAL_MMC_STATE_BUSY                   = 0x00000003U,  /*!< MMC process ongoing                  */
+  HAL_MMC_STATE_PROGRAMMING            = 0x00000004U,  /*!< MMC Programming State                */
+  HAL_MMC_STATE_RECEIVING              = 0x00000005U,  /*!< MMC Receinving State                 */
+  HAL_MMC_STATE_TRANSFER               = 0x00000006U,  /*!< MMC Transfer State                  */
+  HAL_MMC_STATE_ERROR                  = 0x0000000FU   /*!< MMC is in error state                */
 }HAL_MMC_StateTypeDef;
 /** 
   * @}
@@ -264,7 +264,7 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
   * @{
   */
 
-#define MMC_BLOCKSIZE   ((uint32_t)512U) /*!< Block size is 512 bytes */
+#define MMC_BLOCKSIZE              512U  /*!< Block size is 512 bytes */
 
 /** @defgroup MMC_Exported_Constansts_Group1 MMC Error status enumeration Structure definition 
   * @{
@@ -316,13 +316,13 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 /** @defgroup MMC_Exported_Constansts_Group2 MMC context enumeration
   * @{
   */ 
-#define   MMC_CONTEXT_NONE                 ((uint32_t)0x00000000U)  /*!< None                             */
-#define   MMC_CONTEXT_READ_SINGLE_BLOCK    ((uint32_t)0x00000001U)  /*!< Read single block operation      */
-#define   MMC_CONTEXT_READ_MULTIPLE_BLOCK  ((uint32_t)0x00000002U)  /*!< Read multiple blocks operation   */
-#define   MMC_CONTEXT_WRITE_SINGLE_BLOCK   ((uint32_t)0x00000010U)  /*!< Write single block operation     */
-#define   MMC_CONTEXT_WRITE_MULTIPLE_BLOCK ((uint32_t)0x00000020U)  /*!< Write multiple blocks operation  */
-#define   MMC_CONTEXT_IT                   ((uint32_t)0x00000008U)  /*!< Process in Interrupt mode        */
-#define   MMC_CONTEXT_DMA                  ((uint32_t)0x00000080U)  /*!< Process in DMA mode              */
+#define   MMC_CONTEXT_NONE                            0x00000000U   /*!< None                             */
+#define   MMC_CONTEXT_READ_SINGLE_BLOCK               0x00000001U   /*!< Read single block operation      */
+#define   MMC_CONTEXT_READ_MULTIPLE_BLOCK             0x00000002U   /*!< Read multiple blocks operation   */
+#define   MMC_CONTEXT_WRITE_SINGLE_BLOCK              0x00000010U   /*!< Write single block operation     */
+#define   MMC_CONTEXT_WRITE_MULTIPLE_BLOCK            0x00000020U   /*!< Write multiple blocks operation  */
+#define   MMC_CONTEXT_IT                              0x00000008U   /*!< Process in Interrupt mode        */
+#define   MMC_CONTEXT_DMA                             0x00000080U   /*!< Process in DMA mode              */
 
 /**
   * @}
@@ -346,8 +346,8 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 /** @defgroup MMC_Exported_Constansts_Group4 MMC Memory Cards
   * @{
   */
-#define  MMC_LOW_CAPACITY_CARD     ((uint32_t)0x00000000U)   /*!< MMC Card Capacity <=2Gbytes   */
-#define  MMC_HIGH_CAPACITY_CARD    ((uint32_t)0x00000001U)   /*!< MMC Card Capacity >2Gbytes and <2Tbytes   */
+#define  MMC_LOW_CAPACITY_CARD                0x00000000U    /*!< MMC Card Capacity <=2Gbytes   */
+#define  MMC_HIGH_CAPACITY_CARD               0x00000001U    /*!< MMC Card Capacity >2Gbytes and <2Tbytes   */
 
 /**
   * @}

@@ -136,7 +136,7 @@ typedef struct __DMA_HandleTypeDef
 #if defined(DMA2)
   DMA_TypeDef            *DmaBaseAddress;                             /*!< DMA Channel Base Address              */
 
-#endif
+#endif /* DMA2 */
   uint32_t                        ChannelIndex;                       /*!< DMA Channel Index                     */
 
   DMAMUX_Channel_TypeDef           *DMAmuxChannel;                    /*!< Register base address                 */
@@ -190,11 +190,11 @@ typedef struct __DMA_HandleTypeDef
 #if defined(AES)
 #define DMA_REQUEST_AES_IN           LL_DMAMUX_REQ_AES_IN         /*!< DMAMUX AES_IN request      */
 #define DMA_REQUEST_AES_OUT          LL_DMAMUX_REQ_AES_OUT        /*!< DMAMUX AES_OUT request     */
-#endif
+#endif /* AES */
 #if defined(DAC1)
 #define DMA_REQUEST_DAC1_CH1         LL_DMAMUX_REQ_DAC1_CH1       /*!< DMAMUX DAC_CH1 request     */
 #define DMA_REQUEST_DAC1_CH2         LL_DMAMUX_REQ_DAC1_CH2       /*!< DMAMUX DAC_CH2 request     */
-#endif
+#endif /* DAC1 */
 #define DMA_REQUEST_I2C1_RX          LL_DMAMUX_REQ_I2C1_RX        /*!< DMAMUX I2C1 RX request     */
 #define DMA_REQUEST_I2C1_TX          LL_DMAMUX_REQ_I2C1_TX        /*!< DMAMUX I2C1 TX request     */
 #define DMA_REQUEST_I2C2_RX          LL_DMAMUX_REQ_I2C2_RX        /*!< DMAMUX I2C2 RX request     */
@@ -202,7 +202,7 @@ typedef struct __DMA_HandleTypeDef
 #if defined(LPUART1)
 #define DMA_REQUEST_LPUART1_RX       LL_DMAMUX_REQ_LPUART1_RX     /*!< DMAMUX LPUART1 RX request  */
 #define DMA_REQUEST_LPUART1_TX       LL_DMAMUX_REQ_LPUART1_TX     /*!< DMAMUX LPUART1 TX request  */
-#endif
+#endif /* LPUART1 */
 #define DMA_REQUEST_SPI1_RX          LL_DMAMUX_REQ_SPI1_RX        /*!< DMAMUX SPI1 RX request     */
 #define DMA_REQUEST_SPI1_TX          LL_DMAMUX_REQ_SPI1_TX        /*!< DMAMUX SPI1 TX request     */
 #define DMA_REQUEST_SPI2_RX          LL_DMAMUX_REQ_SPI2_RX        /*!< DMAMUX SPI2 RX request     */
@@ -220,7 +220,7 @@ typedef struct __DMA_HandleTypeDef
 #define DMA_REQUEST_TIM2_CH4         LL_DMAMUX_REQ_TIM2_CH4       /*!< DMAMUX TIM2 CH4 request    */
 #define DMA_REQUEST_TIM2_TRIG        LL_DMAMUX_REQ_TIM2_TRIG      /*!< DMAMUX TIM2 TRIG request   */
 #define DMA_REQUEST_TIM2_UP          LL_DMAMUX_REQ_TIM2_UP        /*!< DMAMUX TIM2 UP request     */
-#endif
+#endif /* TIM2 */
 #define DMA_REQUEST_TIM3_CH1         LL_DMAMUX_REQ_TIM3_CH1       /*!< DMAMUX TIM3 CH1 request    */
 #define DMA_REQUEST_TIM3_CH2         LL_DMAMUX_REQ_TIM3_CH2       /*!< DMAMUX TIM3 CH2 request    */
 #define DMA_REQUEST_TIM3_CH3         LL_DMAMUX_REQ_TIM3_CH3       /*!< DMAMUX TIM3 CH3 request    */
@@ -229,16 +229,16 @@ typedef struct __DMA_HandleTypeDef
 #define DMA_REQUEST_TIM3_UP          LL_DMAMUX_REQ_TIM3_UP        /*!< DMAMUX TIM3 UP request     */
 #if defined(TIM6)
 #define DMA_REQUEST_TIM6_UP          LL_DMAMUX_REQ_TIM6_UP        /*!< DMAMUX TIM6 UP request     */
-#endif
+#endif /* TIM6 */
 #if defined(TIM7)
 #define DMA_REQUEST_TIM7_UP          LL_DMAMUX_REQ_TIM7_UP        /*!< DMAMUX TIM7 UP request     */
-#endif
+#endif /* TIM7 */
 #if defined(TIM15)
 #define DMA_REQUEST_TIM15_CH1        LL_DMAMUX_REQ_TIM15_CH1      /*!< DMAMUX TIM15 CH1 request   */
 #define DMA_REQUEST_TIM15_CH2        LL_DMAMUX_REQ_TIM15_CH2      /*!< DMAMUX TIM15 CH2 request   */
 #define DMA_REQUEST_TIM15_TRIG_COM   LL_DMAMUX_REQ_TIM15_TRIG_COM /*!< DMAMUX TIM15 TRIG COM request */
 #define DMA_REQUEST_TIM15_UP         LL_DMAMUX_REQ_TIM15_UP       /*!< DMAMUX TIM15 UP request    */
-#endif
+#endif /* TIM15 */
 #define DMA_REQUEST_TIM16_CH1        LL_DMAMUX_REQ_TIM16_CH1      /*!< DMAMUX TIM16 CH1 request   */
 #define DMA_REQUEST_TIM16_COM        LL_DMAMUX_REQ_TIM16_COM      /*!< DMAMUX TIM16 COM request   */
 #define DMA_REQUEST_TIM16_UP         LL_DMAMUX_REQ_TIM16_UP       /*!< DMAMUX TIM16 UP request    */
@@ -252,34 +252,34 @@ typedef struct __DMA_HandleTypeDef
 #if defined(USART3)
 #define DMA_REQUEST_USART3_RX        LL_DMAMUX_REQ_USART3_RX      /*!< DMAMUX USART3 RX request  */
 #define DMA_REQUEST_USART3_TX        LL_DMAMUX_REQ_USART3_TX      /*!< DMAMUX USART3 TX request  */
-#endif
+#endif /* USART3 */
 #if defined(USART4)
 #define DMA_REQUEST_USART4_RX        LL_DMAMUX_REQ_USART4_RX      /*!< DMAMUX USART4 RX request  */
 #define DMA_REQUEST_USART4_TX        LL_DMAMUX_REQ_USART4_TX      /*!< DMAMUX USART4 TX request  */
-#endif
+#endif /* USART4 */
 #if defined(UCPD1)
 #define DMA_REQUEST_UCPD1_RX         LL_DMAMUX_REQ_UCPD1_RX       /*!< DMAMUX UCPD1 RX request  */
 #define DMA_REQUEST_UCPD1_TX         LL_DMAMUX_REQ_UCPD1_TX       /*!< DMAMUX UCPD1 TX request  */
-#endif
+#endif/* UCPD1 */
 #if defined(UCPD2)
 #define DMA_REQUEST_UCPD2_RX         LL_DMAMUX_REQ_UCPD2_RX       /*!< DMAMUX UCPD2 RX request  */
 #define DMA_REQUEST_UCPD2_TX         LL_DMAMUX_REQ_UCPD2_TX       /*!< DMAMUX UCPD2 TX request  */
-#endif
+#endif /* UCPD2 */
                                           
 #if defined(I2C3)
 #define DMA_REQUEST_I2C3_RX          LL_DMAMUX_REQ_I2C3_RX        /*!< DMAMUX I2C3 RX request  */
 #define DMA_REQUEST_I2C3_TX          LL_DMAMUX_REQ_I2C3_TX        /*!< DMAMUX I2C3 TX request  */
-#endif
+#endif /* I2C3 */
 
 #if defined(LPUART2)
 #define DMA_REQUEST_LPUART2_RX       LL_DMAMUX_REQ_LPUART2_RX     /*!< DMAMUX LPUART2 RX request  */
 #define DMA_REQUEST_LPUART2_TX       LL_DMAMUX_REQ_LPUART2_TX     /*!< DMAMUX LPUART2 TX request  */
-#endif
+#endif /* LPUART2 */
 
 #if defined(SPI3)
 #define DMA_REQUEST_SPI3_RX          LL_DMAMUX_REQ_SPI3_RX        /*!< DMAMUX SPI3 RX request     */
 #define DMA_REQUEST_SPI3_TX          LL_DMAMUX_REQ_SPI3_TX        /*!< DMAMUX SPI3 TX request     */
-#endif
+#endif /* SPI3 */
 
 #if defined(TIM4)
 #define DMA_REQUEST_TIM4_CH1         LL_DMAMUX_REQ_TIM4_CH1       /*!< DMAMUX TIM4 CH1 request    */
@@ -288,17 +288,17 @@ typedef struct __DMA_HandleTypeDef
 #define DMA_REQUEST_TIM4_CH4         LL_DMAMUX_REQ_TIM4_CH4       /*!< DMAMUX TIM4 CH4 request    */
 #define DMA_REQUEST_TIM4_TRIG        LL_DMAMUX_REQ_TIM4_TRIG      /*!< DMAMUX TIM4 TRIG request   */
 #define DMA_REQUEST_TIM4_UP          LL_DMAMUX_REQ_TIM4_UP        /*!< DMAMUX TIM4 UP request     */
-#endif
+#endif /* TIM4 */
 
 #if defined(USART5)
 #define DMA_REQUEST_USART5_RX        LL_DMAMUX_REQ_USART5_RX      /*!< DMAMUX USART5 RX request  */
 #define DMA_REQUEST_USART5_TX        LL_DMAMUX_REQ_USART5_TX      /*!< DMAMUX USART5 TX request  */
-#endif
+#endif /* USART5 */
 
 #if defined(USART6)
 #define DMA_REQUEST_USART6_RX        LL_DMAMUX_REQ_USART6_RX      /*!< DMAMUX USART6 RX request  */
 #define DMA_REQUEST_USART6_TX        LL_DMAMUX_REQ_USART6_TX      /*!< DMAMUX USART6 TX request  */
-#endif
+#endif /* USART6 */
 
 
 #define DMA_MAX_REQUEST              LL_DMAMUX_MAX_REQ
@@ -391,36 +391,36 @@ typedef struct __DMA_HandleTypeDef
 
 #define DMA_FLAG_GI1                 DMA_ISR_GIF1                       /*!< Global Interrupt flag for Channel 1  */
 #define DMA_FLAG_TC1                 DMA_ISR_TCIF1                      /*!< Transfer Complete flag for Channel 1 */
-#define DMA_FLAG_HT1                 DMA_ISR_HTIF1                      /*!< Half Transfer flag for Channel 1      */
-#define DMA_FLAG_TE1                 DMA_ISR_TEIF1                      /*!< Transfer Error flag for Channel 1     */
+#define DMA_FLAG_HT1                 DMA_ISR_HTIF1                      /*!< Half Transfer flag for Channel 1     */
+#define DMA_FLAG_TE1                 DMA_ISR_TEIF1                      /*!< Transfer Error flag for Channel 1    */
 #define DMA_FLAG_GI2                 DMA_ISR_GIF2                       /*!< Global Interrupt flag for Channel 2  */
 #define DMA_FLAG_TC2                 DMA_ISR_TCIF2                      /*!< Transfer Complete flag for Channel 2 */
-#define DMA_FLAG_HT2                 DMA_ISR_HTIF2                      /*!< Half Transfer flag for Channel 2      */
-#define DMA_FLAG_TE2                 DMA_ISR_TEIF2                      /*!< Transfer Error flag for Channel 2     */
+#define DMA_FLAG_HT2                 DMA_ISR_HTIF2                      /*!< Half Transfer flag for Channel 2     */
+#define DMA_FLAG_TE2                 DMA_ISR_TEIF2                      /*!< Transfer Error flag for Channel 2    */
 #define DMA_FLAG_GI3                 DMA_ISR_GIF3                       /*!< Global Interrupt flag for Channel 3  */
 #define DMA_FLAG_TC3                 DMA_ISR_TCIF3                      /*!< Transfer Complete flag for Channel 3 */
-#define DMA_FLAG_HT3                 DMA_ISR_HTIF3                      /*!< Half Transfer flag for Channel 3      */
-#define DMA_FLAG_TE3                 DMA_ISR_TEIF3                      /*!< Transfer Error flag for Channel 3     */
+#define DMA_FLAG_HT3                 DMA_ISR_HTIF3                      /*!< Half Transfer flag for Channel 3     */
+#define DMA_FLAG_TE3                 DMA_ISR_TEIF3                      /*!< Transfer Error flag for Channel 3    */
 #define DMA_FLAG_GI4                 DMA_ISR_GIF4                       /*!< Global Interrupt flag for Channel 4  */
 #define DMA_FLAG_TC4                 DMA_ISR_TCIF4                      /*!< Transfer Complete flag for Channel 4 */
-#define DMA_FLAG_HT4                 DMA_ISR_HTIF4                      /*!< Half Transfer flag for Channel 4      */
-#define DMA_FLAG_TE4                 DMA_ISR_TEIF4                      /*!< Transfer Error flag for Channel 4     */
+#define DMA_FLAG_HT4                 DMA_ISR_HTIF4                      /*!< Half Transfer flag for Channel 4     */
+#define DMA_FLAG_TE4                 DMA_ISR_TEIF4                      /*!< Transfer Error flag for Channel 4    */
 #define DMA_FLAG_GI5                 DMA_ISR_GIF5                       /*!< Global Interrupt flag for Channel 5  */
 #define DMA_FLAG_TC5                 DMA_ISR_TCIF5                      /*!< Transfer Complete flag for Channel 5 */
-#define DMA_FLAG_HT5                 DMA_ISR_HTIF5                      /*!< Half Transfer flag for Channel 5      */
-#define DMA_FLAG_TE5                 DMA_ISR_TEIF5                      /*!< Transfer Error for Channel 5          */
+#define DMA_FLAG_HT5                 DMA_ISR_HTIF5                      /*!< Half Transfer flag for Channel 5     */
+#define DMA_FLAG_TE5                 DMA_ISR_TEIF5                      /*!< Transfer Error for Channel 5         */
 #if defined(DMA1_Channel6)
 #define DMA_FLAG_GI6                 DMA_ISR_GIF6                       /*!< Global Interrupt flag for Channel 6  */
 #define DMA_FLAG_TC6                 DMA_ISR_TCIF6                      /*!< Transfer Complete flag for Channel 6 */
-#define DMA_FLAG_HT6                 DMA_ISR_HTIF6                      /*!< Half Transfer flag for Channel 6      */
-#define DMA_FLAG_TE6                 DMA_ISR_TEIF6                      /*!< Transfer Error flag for Channel 6     */
-#endif
+#define DMA_FLAG_HT6                 DMA_ISR_HTIF6                      /*!< Half Transfer flag for Channel 6     */
+#define DMA_FLAG_TE6                 DMA_ISR_TEIF6                      /*!< Transfer Error flag for Channel 6    */
+#endif /* DMA1_Channel6 */
 #if defined(DMA1_Channel7)
 #define DMA_FLAG_GI7                 DMA_ISR_GIF7                       /*!< Global Interrupt flag for Channel 7  */
 #define DMA_FLAG_TC7                 DMA_ISR_TCIF7                      /*!< Transfer Complete flag for Channel 7 */
-#define DMA_FLAG_HT7                 DMA_ISR_HTIF7                      /*!< Half Transfer flag for Channel 7      */
-#define DMA_FLAG_TE7                 DMA_ISR_TEIF7                      /*!< Transfer Error flag for Channel 7     */
-#endif
+#define DMA_FLAG_HT7                 DMA_ISR_HTIF7                      /*!< Half Transfer flag for Channel 7     */
+#define DMA_FLAG_TE7                 DMA_ISR_TEIF7                      /*!< Transfer Error flag for Channel 7    */
+#endif /* DMA1_Channel7 */
 /**
   * @}
   */
@@ -490,7 +490,7 @@ typedef struct __DMA_HandleTypeDef
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Channel3))? DMA_FLAG_TC3 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Channel4))? DMA_FLAG_TC4 :\
    DMA_FLAG_TC5)
-#endif
+#endif /* DMA1_Channel8 */
 #endif /* DMA2 */
 
 /**
@@ -529,7 +529,7 @@ typedef struct __DMA_HandleTypeDef
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Channel3))? DMA_FLAG_HT3 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Channel4))? DMA_FLAG_HT4 :\
    DMA_FLAG_HT5)
-#endif
+#endif /* DMA1_Channel8 */
 #endif /* DMA2 */
 
 /**
@@ -568,7 +568,7 @@ typedef struct __DMA_HandleTypeDef
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Channel3))? DMA_FLAG_TE3 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Channel4))? DMA_FLAG_TE4 :\
    DMA_FLAG_TE5)
-#endif
+#endif /* DMA1_Channel8 */
 #endif /* DMA2 */
 
 /**
@@ -607,7 +607,7 @@ typedef struct __DMA_HandleTypeDef
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Channel3))? DMA_FLAG_GI3 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Channel4))? DMA_FLAG_GI4 :\
    DMA_FLAG_GI5)
-#endif
+#endif /* DMA1_Channel8 */
 #endif /* DMA2 */
 
 /**

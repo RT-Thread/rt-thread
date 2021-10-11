@@ -39,8 +39,8 @@
     *** How to configure Systick using CORTEX HAL driver ***
     ========================================================
     [..]
-    Setup SysTick Timer for time base
-
+    Setup SysTick Timer for time base 
+           
    (+) The HAL_SYSTICK_Config()function calls the SysTick_Config() function which
        is a CMSIS function that:
         (++) Configures the SysTick Reload register with value passed as function parameter.
@@ -49,14 +49,14 @@
         (++) Configures the SysTick Counter clock source to be Core Clock Source (HCLK).
         (++) Enables the SysTick Interrupt.
         (++) Starts the SysTick Counter.
-
+    
    (+) You can change the SysTick Clock source to be HCLK_Div8 by calling the macro
        __HAL_CORTEX_SYSTICKCLK_CONFIG(SYSTICK_CLKSOURCE_HCLK_DIV8) just after the
        HAL_SYSTICK_Config() function call. The __HAL_CORTEX_SYSTICKCLK_CONFIG() macro is defined
        inside the stm32f3xx_hal_cortex.h file.
 
    (+) You can change the SysTick IRQ priority by calling the
-       HAL_NVIC_SetPriority(SysTick_IRQn,...) function just after the HAL_SYSTICK_Config() function
+       HAL_NVIC_SetPriority(SysTick_IRQn,...) function just after the HAL_SYSTICK_Config() function 
        call. The HAL_NVIC_SetPriority() call the NVIC_SetPriority() function which is a CMSIS function.
 
    (+) To adjust the SysTick time base, use the following formula:
@@ -191,13 +191,13 @@ void HAL_NVIC_SetPriorityGrouping(uint32_t PriorityGroup)
 void HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority)
 {
   uint32_t prioritygroup = 0x00U;
-
+  
   /* Check the parameters */
   assert_param(IS_NVIC_SUB_PRIORITY(SubPriority));
   assert_param(IS_NVIC_PREEMPTION_PRIORITY(PreemptPriority));
-
+  
   prioritygroup = NVIC_GetPriorityGrouping();
-
+  
   NVIC_SetPriority(IRQn, NVIC_EncodePriority(prioritygroup, PreemptPriority, SubPriority));
 }
 
@@ -214,7 +214,7 @@ void HAL_NVIC_EnableIRQ(IRQn_Type IRQn)
 {
   /* Check the parameters */
   assert_param(IS_NVIC_DEVICE_IRQ(IRQn));
-
+  
   /* Enable interrupt */
   NVIC_EnableIRQ(IRQn);
 }
@@ -230,7 +230,7 @@ void HAL_NVIC_DisableIRQ(IRQn_Type IRQn)
 {
   /* Check the parameters */
   assert_param(IS_NVIC_DEVICE_IRQ(IRQn));
-
+  
   /* Disable interrupt */
   NVIC_DisableIRQ(IRQn);
 }
@@ -277,24 +277,24 @@ uint32_t HAL_SYSTICK_Config(uint32_t TicksNumb)
   */
 
 #if (__MPU_PRESENT == 1U)
-
+	
 /**
-  * @brief  Disables the MPU also clears the HFNMIENA bit (ARM recommendation)
+  * @brief  Disables the MPU also clears the HFNMIENA bit (ARM recommendation) 
   * @retval None
   */
 void HAL_MPU_Disable(void)
 {
   /* Disable fault exceptions */
   SCB->SHCSR &= ~SCB_SHCSR_MEMFAULTENA_Msk;
-
+  
   /* Disable the MPU */
   MPU->CTRL = 0U;
 }
 
 /**
   * @brief  Enables the MPU
-  * @param  MPU_Control Specifies the control mode of the MPU during hard fault,
-  *          NMI, FAULTMASK and privileged access to the default memory
+  * @param  MPU_Control Specifies the control mode of the MPU during hard fault, 
+  *          NMI, FAULTMASK and privileged access to the default memory 
   *          This parameter can be one of the following values:
   *            @arg MPU_HFNMI_PRIVDEF_NONE
   *            @arg MPU_HARDFAULT_NMI
@@ -306,12 +306,12 @@ void HAL_MPU_Enable(uint32_t MPU_Control)
 {
   /* Enable the MPU */
   MPU->CTRL   = MPU_Control | MPU_CTRL_ENABLE_Msk;
-
+  
   /* Enable fault exceptions */
   SCB->SHCSR |= SCB_SHCSR_MEMFAULTENA_Msk;
 }
-
-    /**
+	
+	/**
   * @brief  Initializes and configures the Region and the memory to be protected.
   * @param  MPU_Init Pointer to a MPU_Region_InitTypeDef structure that contains
   *                the initialization and configuration information.
@@ -337,7 +337,7 @@ void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init)
     assert_param(IS_MPU_ACCESS_BUFFERABLE(MPU_Init->IsBufferable));
     assert_param(IS_MPU_SUB_REGION_DISABLE(MPU_Init->SubRegionDisable));
     assert_param(IS_MPU_REGION_SIZE(MPU_Init->Size));
-
+    
     MPU->RBAR = MPU_Init->BaseAddress;
     MPU->RASR = ((uint32_t)MPU_Init->DisableExec             << MPU_RASR_XN_Pos)   |
                 ((uint32_t)MPU_Init->AccessPermission        << MPU_RASR_AP_Pos)   |

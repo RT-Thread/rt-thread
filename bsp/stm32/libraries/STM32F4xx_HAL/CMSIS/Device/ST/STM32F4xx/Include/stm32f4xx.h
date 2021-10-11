@@ -106,16 +106,16 @@
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS version number V2.6.6
+  * @brief CMSIS version number V2.6.7
   */
 #define __STM32F4xx_CMSIS_VERSION_MAIN   (0x02U) /*!< [31:24] main version */
 #define __STM32F4xx_CMSIS_VERSION_SUB1   (0x06U) /*!< [23:16] sub1 version */
-#define __STM32F4xx_CMSIS_VERSION_SUB2   (0x06U) /*!< [15:8]  sub2 version */
+#define __STM32F4xx_CMSIS_VERSION_SUB2   (0x07U) /*!< [15:8]  sub2 version */
 #define __STM32F4xx_CMSIS_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32F4xx_CMSIS_VERSION        ((__STM32F4xx_CMSIS_VERSION_MAIN << 24)\
                                          |(__STM32F4xx_CMSIS_VERSION_SUB1 << 16)\
                                          |(__STM32F4xx_CMSIS_VERSION_SUB2 << 8 )\
-                                         |(__STM32F4xx_CMSIS_VERSION))
+                                         |(__STM32F4xx_CMSIS_VERSION_RC))
 
 /**
   * @}
@@ -225,6 +225,60 @@ typedef enum
 
 #define POSITION_VAL(VAL)     (__CLZ(__RBIT(VAL))) 
 
+/* Use of CMSIS compiler intrinsics for register exclusive access */
+/* Atomic 32-bit register access macro to set one or several bits */
+#define ATOMIC_SET_BIT(REG, BIT)                             \
+  do {                                                       \
+    uint32_t val;                                            \
+    do {                                                     \
+      val = __LDREXW((__IO uint32_t *)&(REG)) | (BIT);       \
+    } while ((__STREXW(val,(__IO uint32_t *)&(REG))) != 0U); \
+  } while(0)
+
+/* Atomic 32-bit register access macro to clear one or several bits */
+#define ATOMIC_CLEAR_BIT(REG, BIT)                           \
+  do {                                                       \
+    uint32_t val;                                            \
+    do {                                                     \
+      val = __LDREXW((__IO uint32_t *)&(REG)) & ~(BIT);      \
+    } while ((__STREXW(val,(__IO uint32_t *)&(REG))) != 0U); \
+  } while(0)
+
+/* Atomic 32-bit register access macro to clear and set one or several bits */
+#define ATOMIC_MODIFY_REG(REG, CLEARMSK, SETMASK)                          \
+  do {                                                                     \
+    uint32_t val;                                                          \
+    do {                                                                   \
+      val = (__LDREXW((__IO uint32_t *)&(REG)) & ~(CLEARMSK)) | (SETMASK); \
+    } while ((__STREXW(val,(__IO uint32_t *)&(REG))) != 0U);               \
+  } while(0)
+
+/* Atomic 16-bit register access macro to set one or several bits */
+#define ATOMIC_SETH_BIT(REG, BIT)                            \
+  do {                                                       \
+    uint16_t val;                                            \
+    do {                                                     \
+      val = __LDREXH((__IO uint16_t *)&(REG)) | (BIT);       \
+    } while ((__STREXH(val,(__IO uint16_t *)&(REG))) != 0U); \
+  } while(0)
+
+/* Atomic 16-bit register access macro to clear one or several bits */
+#define ATOMIC_CLEARH_BIT(REG, BIT)                          \
+  do {                                                       \
+    uint16_t val;                                            \
+    do {                                                     \
+      val = __LDREXH((__IO uint16_t *)&(REG)) & ~(BIT);      \
+    } while ((__STREXH(val,(__IO uint16_t *)&(REG))) != 0U); \
+  } while(0)
+
+/* Atomic 16-bit register access macro to clear and set one or several bits */
+#define ATOMIC_MODIFYH_REG(REG, CLEARMSK, SETMASK)                         \
+  do {                                                                     \
+    uint16_t val;                                                          \
+    do {                                                                   \
+      val = (__LDREXH((__IO uint16_t *)&(REG)) & ~(CLEARMSK)) | (SETMASK); \
+    } while ((__STREXH(val,(__IO uint16_t *)&(REG))) != 0U);               \
+  } while(0)
 
 /**
   * @}

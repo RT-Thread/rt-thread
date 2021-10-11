@@ -346,7 +346,7 @@ typedef struct
                             ADC_CFGR_AUTDLY  | ADC_CFGR_CONT    | ADC_CFGR_OVRMOD  |\
                             ADC_CFGR_EXTEN   | ADC_CFGR_EXTSEL  | ADC_CFGR_ALIGN   |\
                             ADC_CFGR_RES     | ADC_CFGR_DMACFG  | ADC_CFGR_DMAEN   )
-#endif
+#endif /* ADC_CFGR_DFSDMCFG */
 /**
   * @}
   */
@@ -364,7 +364,7 @@ typedef struct
                              ADC_SMPR1_SMP6 | ADC_SMPR1_SMP5 | ADC_SMPR1_SMP4 |\
                              ADC_SMPR1_SMP3 | ADC_SMPR1_SMP2 | ADC_SMPR1_SMP1 |\
                              ADC_SMPR1_SMP0)
-#endif
+#endif /* ADC_SMPR1_SMPPLUS */
 /**
   * @}
   */
@@ -378,7 +378,7 @@ typedef struct
 #define ADC_CFGR_FIELDS_2  ((ADC_CFGR_DMACFG | ADC_CFGR_AUTDLY | ADC_CFGR_DFSDMCFG))
 #else
 #define ADC_CFGR_FIELDS_2  ((ADC_CFGR_DMACFG | ADC_CFGR_AUTDLY))
-#endif
+#endif /* ADC_CFGR_DFSDMCFG */
 /**
   * @}
   */
@@ -388,11 +388,11 @@ typedef struct
   * @{
   */
 #define ADC_DFSDM_MODE_DISABLE     (0x00000000UL)                     /*!< ADC conversions are not transferred by DFSDM. */
-#define ADC_DFSDM_MODE_ENABLE      (LL_ADC_REG_DFSDM_TRANSFER_ENABLE) /*!< ADC conversion data are transfered to DFSDM for post processing. The ADC conversion data format must be 16-bit signed and right aligned, refer to reference manual. DFSDM transfer cannot be used if DMA transfer is enabled. */
+#define ADC_DFSDM_MODE_ENABLE      (LL_ADC_REG_DFSDM_TRANSFER_ENABLE) /*!< ADC conversion data are transferred to DFSDM for post processing. The ADC conversion data format must be 16-bit signed and right aligned, refer to reference manual. DFSDM transfer cannot be used if DMA transfer is enabled. */
 /**
   * @}
   */
-#endif
+#endif /* ADC_CFGR_DFSDMCFG */
 
 /**
   * @}
@@ -415,7 +415,7 @@ typedef struct
   *         Usage of this macro is not the Standard way of multimode
   *         configuration and can lead to have HAL ADC handles status
   *         misaligned. Usage of this macro must be limited to cases
-  *         mentionned above.
+  *         mentioned above.
   * @param __HANDLE__ ADC handle.
   * @retval None
   */
@@ -450,8 +450,8 @@ typedef struct
   * @retval SET (conversion is on going) or RESET (no conversion is on going).
   */
 #define ADC_IS_CONVERSION_ONGOING_REGULAR_INJECTED(__HANDLE__)                       \
-       (( (((__HANDLE__)->Instance->CR) & (ADC_CR_ADSTART | ADC_CR_JADSTART)) == 0UL \
-        ) ? RESET : SET)
+  (( (((__HANDLE__)->Instance->CR) & (ADC_CR_ADSTART | ADC_CR_JADSTART)) == 0UL \
+   ) ? RESET : SET)
 
 /**
   * @brief Check if conversion is on going on injected group.
@@ -471,15 +471,15 @@ typedef struct
 #define ADC_IS_INDEPENDENT(__HANDLE__)    \
   ( ( ( ((__HANDLE__)->Instance) == ADC3) \
     )?                                    \
-     SET                                  \
-     :                                    \
-     RESET                                \
+    SET                                   \
+    :                                     \
+    RESET                                 \
   )
 #elif defined (STM32L431xx) || defined (STM32L432xx) || defined (STM32L433xx) || defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 #define ADC_IS_INDEPENDENT(__HANDLE__)   (SET)
 #elif defined (STM32L412xx) || defined (STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define ADC_IS_INDEPENDENT(__HANDLE__)   (RESET)
-#endif
+#endif /* (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || defined (STM32L496xx) || defined (STM32L4A6xx) */
 
 /**
   * @brief Set the selected injected Channel rank.
@@ -487,7 +487,8 @@ typedef struct
   * @param __RANKNB__ Rank number.
   * @retval None
   */
-#define ADC_JSQR_RK(__CHANNELNB__, __RANKNB__) ((((__CHANNELNB__) & ADC_CHANNEL_ID_NUMBER_MASK) >> ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS) << ((__RANKNB__) & ADC_INJ_RANK_ID_JSQR_MASK))
+#define ADC_JSQR_RK(__CHANNELNB__, __RANKNB__) ((((__CHANNELNB__)\
+                                                  & ADC_CHANNEL_ID_NUMBER_MASK) >> ADC_CHANNEL_ID_NUMBER_BITOFFSET_POS) << ((__RANKNB__) & ADC_INJ_RANK_ID_JSQR_MASK))
 
 /**
   * @brief Configure ADC injected context queue
@@ -557,7 +558,8 @@ typedef struct
   * @param __CALIBRATION_FACTOR__ Calibration factor value.
   * @retval None
   */
-#define ADC_CALFACT_DIFF_SET(__CALIBRATION_FACTOR__) (((__CALIBRATION_FACTOR__) & (ADC_CALFACT_CALFACT_D_Pos >> ADC_CALFACT_CALFACT_D_Pos) ) << ADC_CALFACT_CALFACT_D_Pos)
+#define ADC_CALFACT_DIFF_SET(__CALIBRATION_FACTOR__) (((__CALIBRATION_FACTOR__)\
+                                                       & (ADC_CALFACT_CALFACT_D_Pos >> ADC_CALFACT_CALFACT_D_Pos) ) << ADC_CALFACT_CALFACT_D_Pos)
 
 /**
   * @brief Calibration factor in differential mode to be retrieved from calibration register.
@@ -678,8 +680,9 @@ typedef struct
 #define ADC_TEMPERATURE_SENSOR_INSTANCE(__HANDLE__)  (((__HANDLE__)->Instance) == ADC1)
 #elif defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || defined (STM32L496xx) || defined (STM32L4A6xx)
 /*  The temperature sensor measurement path (channel 17) is available on ADC1 and ADC3 */
-#define ADC_TEMPERATURE_SENSOR_INSTANCE(__HANDLE__)  ((((__HANDLE__)->Instance) == ADC1) || (((__HANDLE__)->Instance) == ADC3))
-#endif
+#define ADC_TEMPERATURE_SENSOR_INSTANCE(__HANDLE__)  ((((__HANDLE__)->Instance) == ADC1)\
+                                                      || (((__HANDLE__)->Instance) == ADC3))
+#endif /* (STM32L412xx) || defined (STM32L422xx) || defined (STM32L431xx) || defined (STM32L432xx) || defined (STM32L433xx) || defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx) */
 
 /**
   * @brief Verify the ADC instance connected to the battery voltage VBAT.
@@ -691,8 +694,9 @@ typedef struct
 #define ADC_BATTERY_VOLTAGE_INSTANCE(__HANDLE__)  (((__HANDLE__)->Instance) == ADC1)
 #elif defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || defined (STM32L496xx) || defined (STM32L4A6xx)
 /*  The battery voltage measurement path (channel 18) is available on ADC1 and ADC3 */
-#define ADC_BATTERY_VOLTAGE_INSTANCE(__HANDLE__)  ((((__HANDLE__)->Instance) == ADC1) || (((__HANDLE__)->Instance) == ADC3))
-#endif
+#define ADC_BATTERY_VOLTAGE_INSTANCE(__HANDLE__)  ((((__HANDLE__)->Instance) == ADC1)\
+                                                   || (((__HANDLE__)->Instance) == ADC3))
+#endif /* (STM32L412xx) || defined (STM32L422xx) || defined (STM32L431xx) || defined (STM32L432xx) || defined (STM32L433xx) || defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx) */
 
 /**
   * @brief Verify the ADC instance connected to the internal voltage reference VREFINT.
@@ -725,171 +729,171 @@ typedef struct
   */
 #if defined (STM32L431xx) || defined (STM32L432xx) || defined (STM32L433xx) || defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 #define IS_ADC_CHANNEL(__HANDLE__, __CHANNEL__) ((((__HANDLE__)->Instance) == ADC1)  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_4)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_5)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_6)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_13)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_14)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_15)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_16)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_17)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_18)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_VREFINT)     || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_VBAT)        || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_DAC1CH1)     || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_DAC1CH2)))
+                                                 (((__CHANNEL__) == ADC_CHANNEL_1)           || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_2)           || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_3)           || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_4)           || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_5)           || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_6)           || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_7)           || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_8)           || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_9)           || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_10)          || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_11)          || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_12)          || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_13)          || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_14)          || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_15)          || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_16)          || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_17)          || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_18)          || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_VREFINT)     || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_VBAT)        || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_DAC1CH1)     || \
+                                                  ((__CHANNEL__) == ADC_CHANNEL_DAC1CH2)))
 #elif defined (STM32L412xx) || defined (STM32L422xx)
 #define IS_ADC_CHANNEL(__HANDLE__, __CHANNEL__)  (((((__HANDLE__)->Instance) == ADC1)  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_4)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_5)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_6)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_13)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_14)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_15)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_16)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_VREFINT)     || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_VBAT)))      || \
-                                                        ((((__HANDLE__)->Instance) == ADC2)  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_4)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_13)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_14)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_15)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_16)  )))
+                                                   (((__CHANNEL__) == ADC_CHANNEL_1)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_2)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_3)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_4)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_5)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_6)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_7)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_8)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_9)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_10)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_11)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_12)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_13)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_14)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_15)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_16)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_VREFINT)     || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_VBAT)))      || \
+                                                  ((((__HANDLE__)->Instance) == ADC2)  && \
+                                                   (((__CHANNEL__) == ADC_CHANNEL_1)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_2)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_3)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_4)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_7)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_8)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_9)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_10)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_11)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_12)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_13)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_14)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_15)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_16)  )))
 #elif defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define IS_ADC_CHANNEL(__HANDLE__, __CHANNEL__)  (((((__HANDLE__)->Instance) == ADC1)  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_4)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_5)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_6)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_13)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_14)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_15)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_16)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_17)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_18)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_VREFINT)     || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_VBAT)))      || \
-                                                        ((((__HANDLE__)->Instance) == ADC2)  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_4)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_5)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_6)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_13)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_14)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_15)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_16)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_17)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_18)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_DAC1CH1_ADC2)|| \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_DAC1CH2_ADC2)  )))
+                                                   (((__CHANNEL__) == ADC_CHANNEL_1)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_2)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_3)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_4)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_5)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_6)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_7)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_8)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_9)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_10)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_11)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_12)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_13)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_14)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_15)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_16)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_17)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_18)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_VREFINT)     || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_VBAT)))      || \
+                                                  ((((__HANDLE__)->Instance) == ADC2)  && \
+                                                   (((__CHANNEL__) == ADC_CHANNEL_1)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_2)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_3)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_4)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_5)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_6)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_7)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_8)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_9)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_10)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_11)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_12)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_13)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_14)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_15)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_16)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_17)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_18)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_DAC1CH1_ADC2)|| \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_DAC1CH2_ADC2)  )))
 #elif defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || defined (STM32L496xx) || defined (STM32L4A6xx)
 #define IS_ADC_CHANNEL(__HANDLE__, __CHANNEL__)  (((((__HANDLE__)->Instance) == ADC1)  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_4)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_5)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_6)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_13)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_14)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_15)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_16)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_VREFINT)     || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_VBAT)))      || \
-                                                        ((((__HANDLE__)->Instance) == ADC2)  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_4)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_5)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_6)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_13)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_14)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_15)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_16)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_17)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_18)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_DAC1CH1_ADC2)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_DAC1CH2_ADC2))) || \
-                                                        ((((__HANDLE__)->Instance) == ADC3)  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_4)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_6)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)           || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_13)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_14)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_15)          || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_VBAT)        || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_DAC1CH1_ADC3) || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_DAC1CH2_ADC3)  )))
-#endif
+                                                   (((__CHANNEL__) == ADC_CHANNEL_1)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_2)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_3)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_4)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_5)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_6)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_7)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_8)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_9)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_10)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_11)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_12)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_13)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_14)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_15)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_16)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_VREFINT)     || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_VBAT)))      || \
+                                                  ((((__HANDLE__)->Instance) == ADC2)  && \
+                                                   (((__CHANNEL__) == ADC_CHANNEL_1)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_2)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_3)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_4)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_5)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_6)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_7)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_8)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_9)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_10)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_11)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_12)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_13)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_14)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_15)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_16)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_17)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_18)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_DAC1CH1_ADC2)   || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_DAC1CH2_ADC2))) || \
+                                                  ((((__HANDLE__)->Instance) == ADC3)  && \
+                                                   (((__CHANNEL__) == ADC_CHANNEL_1)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_2)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_3)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_4)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_6)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_7)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_8)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_9)           || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_10)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_11)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_12)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_13)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_14)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_15)          || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_TEMPSENSOR)  || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_VBAT)        || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_DAC1CH1_ADC3) || \
+                                                    ((__CHANNEL__) == ADC_CHANNEL_DAC1CH2_ADC3)  )))
+#endif /* (STM32L431xx) || defined (STM32L432xx) || defined (STM32L433xx) || defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx) */
 
 /**
   * @brief Verify the ADC channel setting in differential mode.
@@ -914,39 +918,39 @@ typedef struct
                                                       ((__CHANNEL__) == ADC_CHANNEL_14)     || \
                                                       ((__CHANNEL__) == ADC_CHANNEL_15)       )
 #elif defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || defined (STM32L496xx) || defined (STM32L4A6xx)
-    /* For ADC1 and ADC2, channels 1 to 15 are available in differential mode,
-                          channels 0, 16 to 18 can be only used in single-ended mode.
-       For ADC3, channels 1 to 3 and 6 to 12 are available in differential mode,
-                 channels 4, 5 and 13 to 18 can only be used in single-ended mode.  */
+/* For ADC1 and ADC2, channels 1 to 15 are available in differential mode,
+                      channels 0, 16 to 18 can be only used in single-ended mode.
+   For ADC3, channels 1 to 3 and 6 to 12 are available in differential mode,
+             channels 4, 5 and 13 to 18 can only be used in single-ended mode. */
 #define IS_ADC_DIFF_CHANNEL(__HANDLE__, __CHANNEL__)  ((((((__HANDLE__)->Instance) == ADC1)   || \
                                                          (((__HANDLE__)->Instance) == ADC2))  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)    || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)    || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)    || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_4)    || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_5)    || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_6)    || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)    || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)    || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)    || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_13)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_14)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_15))) || \
-                                                        ((((__HANDLE__)->Instance) == ADC3)  && \
-                                                         (((__CHANNEL__) == ADC_CHANNEL_1)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_2)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_3)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_6)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_7)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_8)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_9)   || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_10)  || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_11)  || \
-                                                          ((__CHANNEL__) == ADC_CHANNEL_12)   )))
-#endif
+                                                        (((__CHANNEL__) == ADC_CHANNEL_1)    || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_2)    || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_3)    || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_4)    || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_5)    || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_6)    || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_7)    || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_8)    || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_9)    || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_10)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_11)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_12)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_13)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_14)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_15))) || \
+                                                       ((((__HANDLE__)->Instance) == ADC3)  && \
+                                                        (((__CHANNEL__) == ADC_CHANNEL_1)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_2)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_3)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_6)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_7)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_8)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_9)   || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_10)  || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_11)  || \
+                                                         ((__CHANNEL__) == ADC_CHANNEL_12)   )))
+#endif /* (STM32L412xx) || defined (STM32L422xx) || defined (STM32L431xx) || defined (STM32L432xx) || defined (STM32L433xx) || defined (STM32L442xx) || defined (STM32L443xx) || defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx) */
 
 /**
   * @brief Verify the ADC single-ended input or differential mode setting.
@@ -1155,7 +1159,7 @@ typedef struct
                                           ((__HANDLE__)->Init.DFSDMConfig == ADC_DFSDM_MODE_ENABLE) )
 #else
 #define IS_ADC_DFSDMCFG_MODE(__HANDLE__) (SET)
-#endif
+#endif /* ADC_CFGR_DFSDMCFG */
 
 /**
   * @brief Return the DFSDM configuration mode.
@@ -1169,7 +1173,7 @@ typedef struct
 #define ADC_CFGR_DFSDM(__HANDLE__) ((__HANDLE__)->Init.DFSDMConfig)
 #else
 #define ADC_CFGR_DFSDM(__HANDLE__) (0x0UL)
-#endif
+#endif /* ADC_CFGR_DFSDMCFG */
 
 /**
   * @}
@@ -1234,7 +1238,8 @@ HAL_StatusTypeDef HAL_ADCEx_RegularMultiModeStop_DMA(ADC_HandleTypeDef *hadc);
   * @{
   */
 /* Peripheral Control functions ***********************************************/
-HAL_StatusTypeDef       HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc,ADC_InjectionConfTypeDef* sConfigInjected);
+HAL_StatusTypeDef       HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc,
+                                                        ADC_InjectionConfTypeDef *sConfigInjected);
 #if defined(ADC_MULTIMODE_SUPPORT)
 HAL_StatusTypeDef       HAL_ADCEx_MultiModeConfigChannel(ADC_HandleTypeDef *hadc, ADC_MultiModeTypeDef *multimode);
 #endif /* ADC_MULTIMODE_SUPPORT */

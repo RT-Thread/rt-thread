@@ -25,7 +25,7 @@
 #include "stm32_assert.h"
 #else
 #define assert_param(expr) ((void)0U)
-#endif
+#endif /* USE_FULL_ASSERT */
 
 /** @addtogroup STM32G0xx_LL_Driver
   * @{
@@ -106,7 +106,7 @@
                                                              ((CHANNEL) == LL_DMA_CHANNEL_3) || \
                                                              ((CHANNEL) == LL_DMA_CHANNEL_4) || \
                                                              ((CHANNEL) == LL_DMA_CHANNEL_5))))
-#endif
+#endif /* DMA1_Channel8 */
 #endif /* DMA2 */
 /**
   * @}
@@ -165,7 +165,7 @@ ErrorStatus LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)
       /* Release reset of DMA clock */
       LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_DMA2);
     }
-#endif
+#endif /* DMA2 */
     else
     {
       status = ERROR;
@@ -226,14 +226,14 @@ ErrorStatus LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)
       /* Reset interrupt pending bits for DMAx Channel6 */
       LL_DMA_ClearFlag_GI6(DMAx);
     }
-#endif
+#endif /* DMA1_Channel6 */
 #if defined(DMA1_Channel7)
     else if (Channel == LL_DMA_CHANNEL_7)
     {
       /* Reset interrupt pending bits for DMAx Channel7 */
       LL_DMA_ClearFlag_GI7(DMAx);
     }
-#endif
+#endif /* DMA1_Channel7 */
     else
     {
       status = ERROR;

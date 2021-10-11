@@ -125,15 +125,15 @@ static uint8_t           FLASH_OB_GetUser(void);
   ==============================================================================
 
     [..] The FLASH Memory Erasing functions, includes the following functions:
-    (+) @ref HAL_FLASHEx_Erase: return only when erase has been done
-    (+) @ref HAL_FLASHEx_Erase_IT: end of erase is done when @ref HAL_FLASH_EndOfOperationCallback 
+    (+) HAL_FLASHEx_Erase: return only when erase has been done
+    (+) HAL_FLASHEx_Erase_IT: end of erase is done when HAL_FLASH_EndOfOperationCallback 
         is called with parameter 0xFFFFFFFF
 
     [..] Any operation of erase should follow these steps:
-    (#) Call the @ref HAL_FLASH_Unlock() function to enable the flash control register and 
+    (#) Call the HAL_FLASH_Unlock() function to enable the flash control register and 
         program memory access.
     (#) Call the desired function to erase page.
-    (#) Call the @ref HAL_FLASH_Lock() to disable the flash program memory access 
+    (#) Call the HAL_FLASH_Lock() to disable the flash program memory access 
        (recommended to protect the FLASH memory against possible unwanted operation).
 
 @endverbatim
@@ -694,7 +694,7 @@ static HAL_StatusTypeDef FLASH_OB_DisableWRP(uint32_t WriteProtectPage)
 #if defined(OB_WRP0_WRP0)
       if(WRP0_Data != 0xFFU)
       {
-        OB->WRP0 |= WRP0_Data;
+        OB->WRP0 &= WRP0_Data;
         
         /* Wait for last operation to be completed */
         status = FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
@@ -704,7 +704,7 @@ static HAL_StatusTypeDef FLASH_OB_DisableWRP(uint32_t WriteProtectPage)
 #if defined(OB_WRP1_WRP1)
       if((status == HAL_OK) && (WRP1_Data != 0xFFU))
       {
-        OB->WRP1 |= WRP1_Data;
+        OB->WRP1 &= WRP1_Data;
         
         /* Wait for last operation to be completed */
         status = FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
@@ -714,7 +714,7 @@ static HAL_StatusTypeDef FLASH_OB_DisableWRP(uint32_t WriteProtectPage)
 #if defined(OB_WRP2_WRP2)
       if((status == HAL_OK) && (WRP2_Data != 0xFFU))
       {
-        OB->WRP2 |= WRP2_Data;
+        OB->WRP2 &= WRP2_Data;
         
         /* Wait for last operation to be completed */
         status = FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
@@ -724,7 +724,7 @@ static HAL_StatusTypeDef FLASH_OB_DisableWRP(uint32_t WriteProtectPage)
 #if defined(OB_WRP3_WRP3)
       if((status == HAL_OK) && (WRP3_Data != 0xFFU))
       {
-        OB->WRP3 |= WRP3_Data;
+        OB->WRP3 &= WRP3_Data;
         
         /* Wait for last operation to be completed */
         status = FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
