@@ -39,4 +39,10 @@ config UTEST_MAILBOX_TC
     bool "mailbox test"
     default n
 
+config UTEST_THREAD_TC
+    bool "thread test"
+    default n
+    select RT_USING_TIMER_SOFT
+    select RT_USING_THREAD
+
 endmenu
