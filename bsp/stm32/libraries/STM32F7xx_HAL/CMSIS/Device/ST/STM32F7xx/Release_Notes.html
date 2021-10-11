@@ -5,11 +5,14 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Release Notes for STM32F7xx CMSIS</title>
-  <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="_htmresc/mini-st.css" />
   <!--[if lt IE 9]>
@@ -35,12 +38,20 @@
 <a href="https://opensource.org/licenses/BSD-3-Clause">https://opensource.org/licenses/BSD-3-Clause</a>
 </center>
 </div>
-<div class="col-sm-12 col-lg-8">
-<h1 id="update-history"><strong>Update History</strong></h1>
+<section id="update-history" class="col-sm-12 col-lg-8">
+<h1><strong>Update History</strong></h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1_2_6"  aria-hidden="true"> <label for="collapse-section1_2_6" aria-hidden="true"><strong>V1.2.6 / 12-February-2021</strong></label>
+<h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>Improved GCC startup files robustness.</li>
+<li>Protect Vector table modification following SRAM or FLASH preprocessor directive by a generic preprocessor directive : USER_VECT_TAB_ADDRESS.</li>
+<li>Added License.md and Readme.md files required for GitHub publication.</li>
+</ul>
+</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_2_5"  aria-hidden="true"> <label for="collapse-section1_2_5" aria-hidden="true"><strong>V1.2.5 / 13-February-2020</strong></label>
-<div>
-<h2 id="main-changes">Main Changes</h2>
+<h2 id="main-changes-1">Main Changes</h2>
 <ul>
 <li>Add ADC missing calibration address for Vref and Temperature sensor.</li>
 <li>Align GPIO Bits Definitions to use _POS and _MSK.</li>
@@ -51,11 +62,9 @@
 <li>Remove IS_TIM_SYNCHRO_INSTANCE macro.</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_2_4"  aria-hidden="true"> <label for="collapse-section1_2_4" aria-hidden="true"><strong>V1.2.4 / 08-February-2019</strong></label>
-<div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <ul>
 <li>CRYP
 <ul>
@@ -104,11 +113,9 @@
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_2_3"  aria-hidden="true"> <label for="collapse-section1_2_3" aria-hidden="true"><strong>V1.2.3 / 29-June-2018</strong></label>
-<div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <ul>
 <li>Add the support of <strong>STM32F730xx and STM32F750xx</strong> devices
 <ul>
@@ -119,31 +126,25 @@
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_2_2"  aria-hidden="true"> <label for="collapse-section1_2_2" aria-hidden="true"><strong>V1.2.2 / 26-December-2017</strong></label>
-<div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <ul>
 <li>Update bits definition for USBPHYC_PLL1 and USBPHYC_LDO registers to be inline with products documentation.</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_2_1"  aria-hidden="true"> <label for="collapse-section1_2_1" aria-hidden="true"><strong>V1.2.1 / 25-August-2017</strong></label>
-<div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <ul>
 <li>Update FLASHSIZE_BASE and UID_BASE defined values for STM32F72x and STM32F73x devices.</li>
 <li>Update stm32f7xx.h to include stm32f7xx_hal.h file instead of stm32f7xx_hal_conf.h file</li>
 <li>Remove Date and Version from header files</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_2_0"  aria-hidden="true"> <label for="collapse-section1_2_0" aria-hidden="true"><strong>V1.2.0 / 30-December-2016</strong></label>
-<div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <ul>
 <li>Add the support of <strong>STM32F722xx, STM32F723xx, STM32F732xx and STM32F733xx</strong> devices
 <ul>
@@ -178,11 +179,9 @@
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_1_1"  aria-hidden="true"> <label for="collapse-section1_1_1" aria-hidden="true"><strong>V1.1.1 / 01-July-2016</strong></label>
-<div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <ul>
 <li>stm32f7xx.h
 <ul>
@@ -190,11 +189,9 @@
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_1_0"  aria-hidden="true"> <label for="collapse-section1_1_0" aria-hidden="true"><strong>V1.1.0 / 22-April-2016</strong></label>
-<div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <ul>
 <li>Add the support of <strong>STM32F765xx, STM32F767xx, STM32F768xx, STM32F769xx, STM32F777xx, STM32F778xx and STM32F779xx</strong> devices
 <ul>
@@ -254,11 +251,9 @@
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_0_3"  aria-hidden="true"> <label for="collapse-section1_0_3" aria-hidden="true"><strong>V1.0.3 / 13-November-2015</strong></label>
-<div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <ul>
 <li>stm32f745xx.h, stm32f746xx.h and stm32f756xx.h files
 <ul>
@@ -274,11 +269,9 @@
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_0_2"  aria-hidden="true"> <label for="collapse-section1_0_2" aria-hidden="true"><strong>V1.0.2 / 21-September-2015</strong></label>
-<div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <ul>
 <li>stm32f745xx.h, stm32f746xx.h and stm32f756xx.h files
 <ul>
@@ -287,11 +280,9 @@
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_0_1"  aria-hidden="true"> <label for="collapse-section1_0_1" aria-hidden="true"><strong>V1.0.1 / 25-June-2015</strong></label>
-<div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <ul>
 <li>stm32f745xx.h, stm32f746xx.h and stm32f756xx.h files
 <ul>
@@ -307,16 +298,13 @@
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_0_0"  aria-hidden="true"> <label for="collapse-section1_0_0" aria-hidden="true"><strong>V1.0.0 / 12-April-2019</strong></label>
-<div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release for <strong>STM32F756xx/746xx/745xx</strong> devices</p>
 </div>
-</div>
-</div>
+</section>
 </div>
 <footer class="sticky">
 For complete documentation on STM32 Microcontrollers </mark> , visit: <span style="font-color: blue;"><a href="http://www.st.com/stm32">www.st.com/stm32</a></span> <em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em>

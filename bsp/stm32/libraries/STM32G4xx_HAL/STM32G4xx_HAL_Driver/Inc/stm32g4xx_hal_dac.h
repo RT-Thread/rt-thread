@@ -64,7 +64,7 @@ typedef enum
 typedef struct __DAC_HandleTypeDef
 #else
 typedef struct
-#endif
+#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 {
   DAC_TypeDef                 *Instance;     /*!< Register base address             */
 
@@ -79,17 +79,19 @@ typedef struct
   __IO uint32_t               ErrorCode;     /*!< DAC Error code                    */
 
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
-  void (* ConvCpltCallbackCh1)            (struct __DAC_HandleTypeDef *hdac);
-  void (* ConvHalfCpltCallbackCh1)        (struct __DAC_HandleTypeDef *hdac);
-  void (* ErrorCallbackCh1)               (struct __DAC_HandleTypeDef *hdac);
-  void (* DMAUnderrunCallbackCh1)         (struct __DAC_HandleTypeDef *hdac);
-  void (* ConvCpltCallbackCh2)            (struct __DAC_HandleTypeDef *hdac);
-  void (* ConvHalfCpltCallbackCh2)        (struct __DAC_HandleTypeDef *hdac);
-  void (* ErrorCallbackCh2)               (struct __DAC_HandleTypeDef *hdac);
-  void (* DMAUnderrunCallbackCh2)         (struct __DAC_HandleTypeDef *hdac);
+  void (* ConvCpltCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
+  void (* ConvHalfCpltCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
+  void (* ErrorCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
+  void (* DMAUnderrunCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
 
-  void (* MspInitCallback)                (struct __DAC_HandleTypeDef *hdac);
-  void (* MspDeInitCallback )             (struct __DAC_HandleTypeDef *hdac);
+  void (* ConvCpltCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
+  void (* ConvHalfCpltCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
+  void (* ErrorCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
+  void (* DMAUnderrunCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
+
+
+  void (* MspInitCallback)(struct __DAC_HandleTypeDef *hdac);
+  void (* MspDeInitCallback)(struct __DAC_HandleTypeDef *hdac);
 #endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 
 } DAC_HandleTypeDef;
@@ -131,11 +133,13 @@ typedef struct
 
   uint32_t DAC_Trigger;                  /*!< Specifies the external trigger for the selected DAC channel.
                                               This parameter can be a value of @ref DAC_trigger_selection.
-                                              Note: In case of sawtooth wave generation, this trigger corresponds to the reset trigger. */
+                                              Note: In case of sawtooth wave generation, this
+                                              trigger corresponds to the reset trigger. */
 
   uint32_t DAC_Trigger2;                 /*!< Specifies the external secondary trigger for the selected DAC channel.
                                               This parameter can be a value of @ref DAC_trigger_selection.
-                                              Note: In case of sawtooth wave generation, this trigger corresponds to the step trigger.*/
+                                              Note: In case of sawtooth wave generation, this
+                                              trigger corresponds to the step trigger.*/
 
   uint32_t DAC_OutputBuffer;             /*!< Specifies whether the DAC channel output buffer is enabled or disabled.
                                                This parameter can be a value of @ref DAC_output_buffer */
@@ -150,9 +154,7 @@ typedef struct
   uint32_t DAC_TrimmingValue;             /*!< Specifies the offset trimming value
                                                i.e. when DAC_SampleAndHold is DAC_TRIMMING_USER.
                                                This parameter must be a number between Min_Data = 1 and Max_Data = 31 */
-
   DAC_SampleAndHoldConfTypeDef  DAC_SampleAndHoldConfig;  /*!< Sample and Hold settings */
-
 } DAC_ChannelConfTypeDef;
 
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
@@ -165,10 +167,12 @@ typedef enum
   HAL_DAC_CH1_HALF_COMPLETE_CB_ID            = 0x01U,  /*!< DAC CH1 half Complete Callback ID */
   HAL_DAC_CH1_ERROR_ID                       = 0x02U,  /*!< DAC CH1 error Callback ID         */
   HAL_DAC_CH1_UNDERRUN_CB_ID                 = 0x03U,  /*!< DAC CH1 underrun Callback ID      */
+
   HAL_DAC_CH2_COMPLETE_CB_ID                 = 0x04U,  /*!< DAC CH2 Complete Callback ID      */
   HAL_DAC_CH2_HALF_COMPLETE_CB_ID            = 0x05U,  /*!< DAC CH2 half Complete Callback ID */
   HAL_DAC_CH2_ERROR_ID                       = 0x06U,  /*!< DAC CH2 error Callback ID         */
   HAL_DAC_CH2_UNDERRUN_CB_ID                 = 0x07U,  /*!< DAC CH2 underrun Callback ID      */
+
   HAL_DAC_MSPINIT_CB_ID                      = 0x08U,  /*!< DAC MspInit Callback ID           */
   HAL_DAC_MSPDEINIT_CB_ID                    = 0x09U,  /*!< DAC MspDeInit Callback ID         */
   HAL_DAC_ALL_CB_ID                          = 0x0AU   /*!< DAC All ID                        */
@@ -209,7 +213,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_trigger_selection DAC trigger selection
   * @{
   */
-#define DAC_TRIGGER_NONE                0x00000000U                                                                       /*!< DAC (all) conversion is automatic once the DAC_DHRxxxx register has been loaded, and not by external trigger */
+#define DAC_TRIGGER_NONE                0x00000000UL                                                                      /*!< DAC (all) conversion is automatic once the DAC_DHRxxxx register has been loaded, and not by external trigger */
 #define DAC_TRIGGER_SOFTWARE            (                                                                    DAC_CR_TEN1) /*!< DAC (all) conversion started by software trigger for DAC channel */
 #define DAC_TRIGGER_T1_TRGO             (                                                   DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC3: TIM1 TRGO selected as external conversion trigger for DAC channel. */
 #define DAC_TRIGGER_T8_TRGO             (                                                   DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC1/2/4: TIM8 TRGO selected as external conversion trigger for DAC channel. Refer to device datasheet for DACx availability. */
@@ -221,21 +225,21 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 #define DAC_TRIGGER_EXT_IT10            (                 DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< DAC (all): EXTI Line10 event selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger */
 #define DAC_TRIGGER_T6_TRGO             (                 DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): TIM6 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T3_TRGO             (DAC_CR_TSEL1_3                                                    | DAC_CR_TEN1) /*!< DAC (all): TIM3 TRGO selected as external conversion trigger for DAC channel */
-#define DAC_TRIGGER_HRTIM_RST_TRG1      (DAC_CR_TSEL1_3                                   | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 1 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_STEP_TRG1     (DAC_CR_TSEL1_3                                   | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 1 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_RST_TRG2      (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 2 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_STEP_TRG2     (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 2 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_RST_TRG3      (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 3 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_STEP_TRG3     (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 3 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_RST_TRG4      (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                                   | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 4 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_STEP_TRG4     (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                                   | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 4 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_RST_TRG5      (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                  | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 5 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_STEP_TRG5     (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                  | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 5 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_RST_TRG6      (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 6 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_STEP_TRG6     (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 6 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_TRG01         (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC1&4: HRTIM TRIG OUT 1 selected as external conversion trigger for DAC channel. Note: only to be used as update or reset (sawtooth generation) trigger. Refer to device datasheet for DACx instance availability. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
-#define DAC_TRIGGER_HRTIM_TRG02         (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC2: HRTIM TRIG OUT 1 selected as external conversion trigger for DAC channel. Note: only to be used as update or reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported and DAC2 instance present (refer to device datasheet for supported features list and DAC2 instance availability) */
-#define DAC_TRIGGER_HRTIM_TRG03         (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC3: HRTIM TRIG OUT 1 selected as external conversion trigger for DAC channel. Note: only to be used as update or reset (sawtooth generation) trigger. On this STM32 serie, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_RST_TRG1      (DAC_CR_TSEL1_3                                   | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 1 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_STEP_TRG1     (DAC_CR_TSEL1_3                                   | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 1 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_RST_TRG2      (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 2 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_STEP_TRG2     (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 2 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_RST_TRG3      (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 3 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_STEP_TRG3     (DAC_CR_TSEL1_3                  | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 3 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_RST_TRG4      (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                                   | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 4 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_STEP_TRG4     (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                                   | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 4 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_RST_TRG5      (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                  | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 5 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_STEP_TRG5     (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2                  | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 5 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_RST_TRG6      (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< DAC (all): HRTIM RST TRIG 6 selected as external conversion trigger for DAC channel. Note: only to be used as reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_STEP_TRG6     (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< DAC (all): HRTIM STEP TRIG 6 selected as external conversion trigger for DAC channel. Note: only to be used as step (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_TRG01         (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC1&4: HRTIM TRIG OUT 1 selected as external conversion trigger for DAC channel. Note: only to be used as update or reset (sawtooth generation) trigger. Refer to device datasheet for DACx instance availability. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
+#define DAC_TRIGGER_HRTIM_TRG02         (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC2: HRTIM TRIG OUT 1 selected as external conversion trigger for DAC channel. Note: only to be used as update or reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported and DAC2 instance present (refer to device datasheet for supported features list and DAC2 instance availability) */
+#define DAC_TRIGGER_HRTIM_TRG03         (DAC_CR_TSEL1_3 | DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< DAC3: HRTIM TRIG OUT 1 selected as external conversion trigger for DAC channel. Note: only to be used as update or reset (sawtooth generation) trigger. On this STM32 series, parameter only available if HRTIM feature is supported (refer to device datasheet for supported features list) */
 
 /**
   * @}
@@ -255,7 +259,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @{
   */
 #define DAC_CHANNEL_1                      0x00000000U
+
 #define DAC_CHANNEL_2                      0x00000010U
+
 /**
   * @}
   */
@@ -275,9 +281,13 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @{
   */
 #define DAC_FLAG_DMAUDR1                   (DAC_SR_DMAUDR1)
+
 #define DAC_FLAG_DMAUDR2                   (DAC_SR_DMAUDR2)
+
 #define DAC_FLAG_DAC1RDY                   (DAC_SR_DAC1RDY)
+
 #define DAC_FLAG_DAC2RDY                   (DAC_SR_DAC2RDY)
+
 
 /**
   * @}
@@ -287,7 +297,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @{
   */
 #define DAC_IT_DMAUDR1                   (DAC_SR_DMAUDR1)
+
 #define DAC_IT_DMAUDR2                   (DAC_SR_DMAUDR2)
+
 
 /**
   * @}
@@ -307,9 +319,8 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_UserTrimming DAC User Trimming
   * @{
   */
-#define DAC_TRIMMING_FACTORY        0x00000000U           /*!< Factory trimming */
-#define DAC_TRIMMING_USER           0x00000001U           /*!< User trimming */
-
+#define DAC_TRIMMING_FACTORY        (0x00000000UL)        /*!< Factory trimming */
+#define DAC_TRIMMING_USER           (0x00000001UL)        /*!< User trimming */
 /**
   * @}
   */
@@ -317,7 +328,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_SampleAndHold DAC power mode
   * @{
   */
-#define DAC_SAMPLEANDHOLD_DISABLE     0x00000000U
+#define DAC_SAMPLEANDHOLD_DISABLE     (0x00000000UL)
 #define DAC_SAMPLEANDHOLD_ENABLE      (DAC_MCR_MODE1_2)
 
 /**
@@ -326,10 +337,10 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_HighFrequency DAC high frequency interface mode
   * @{
   */
-#define DAC_HIGH_FREQUENCY_INTERFACE_MODE_DISABLE        0x00000000U        /*!< High frequency interface mode disabled */
+#define DAC_HIGH_FREQUENCY_INTERFACE_MODE_DISABLE        0x00000000UL       /*!< High frequency interface mode disabled */
 #define DAC_HIGH_FREQUENCY_INTERFACE_MODE_ABOVE_80MHZ    (DAC_MCR_HFSEL_0)  /*!< High frequency interface mode compatible to AHB>80MHz enabled */
 #define DAC_HIGH_FREQUENCY_INTERFACE_MODE_ABOVE_160MHZ   (DAC_MCR_HFSEL_1)  /*!< High frequency interface mode compatible to AHB>160MHz enabled */
-#define DAC_HIGH_FREQUENCY_INTERFACE_MODE_AUTOMATIC      0x00000002U        /*!< High frequency interface mode automatic */
+#define DAC_HIGH_FREQUENCY_INTERFACE_MODE_AUTOMATIC      0x00000002UL       /*!< High frequency interface mode automatic */
 
 /**
   * @}
@@ -379,28 +390,30 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @param  __ALIGNMENT__ specifies the DAC alignment
   * @retval None
   */
-#define DAC_DHR12R1_ALIGNMENT(__ALIGNMENT__) (0x00000008U + (__ALIGNMENT__))
+#define DAC_DHR12R1_ALIGNMENT(__ALIGNMENT__) (0x00000008UL + (__ALIGNMENT__))
+
 
 /** @brief  Set DHR12R2 alignment.
   * @param  __ALIGNMENT__ specifies the DAC alignment
   * @retval None
   */
-#define DAC_DHR12R2_ALIGNMENT(__ALIGNMENT__) (0x00000014U + (__ALIGNMENT__))
+#define DAC_DHR12R2_ALIGNMENT(__ALIGNMENT__) (0x00000014UL + (__ALIGNMENT__))
+
 
 /** @brief  Set DHR12RD alignment.
   * @param  __ALIGNMENT__ specifies the DAC alignment
   * @retval None
   */
-#define DAC_DHR12RD_ALIGNMENT(__ALIGNMENT__) (0x00000020U + (__ALIGNMENT__))
+#define DAC_DHR12RD_ALIGNMENT(__ALIGNMENT__) (0x00000020UL + (__ALIGNMENT__))
 
 /** @brief Enable the DAC interrupt.
   * @param  __HANDLE__ specifies the DAC handle
   * @param  __INTERRUPT__ specifies the DAC interrupt.
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_IT_DMAUDR1: DAC channel 1 DMA underrun interrupt
-  *            @arg DAC_IT_DMAUDR2: DAC channel 2 DMA underrun interrupt (1)
+  *            @arg DAC_IT_DMAUDR1 DAC channel 1 DMA underrun interrupt
+  *            @arg DAC_IT_DMAUDR2 DAC channel 2 DMA underrun interrupt (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -410,10 +423,10 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @param  __HANDLE__ specifies the DAC handle
   * @param  __INTERRUPT__ specifies the DAC interrupt.
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_IT_DMAUDR1: DAC channel 1 DMA underrun interrupt
-  *            @arg DAC_IT_DMAUDR2: DAC channel 2 DMA underrun interrupt (1)
+  *            @arg DAC_IT_DMAUDR1 DAC channel 1 DMA underrun interrupt
+  *            @arg DAC_IT_DMAUDR2 DAC channel 2 DMA underrun interrupt (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -423,25 +436,26 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @param __HANDLE__ DAC handle
   * @param __INTERRUPT__ DAC interrupt source to check
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_IT_DMAUDR1: DAC channel 1 DMA underrun interrupt
-  *            @arg DAC_IT_DMAUDR2: DAC channel 2 DMA underrun interrupt (1)
+  *            @arg DAC_IT_DMAUDR1 DAC channel 1 DMA underrun interrupt
+  *            @arg DAC_IT_DMAUDR2 DAC channel 2 DMA underrun interrupt (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval State of interruption (SET or RESET)
   */
-#define __HAL_DAC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR & (__INTERRUPT__)) == (__INTERRUPT__))
+#define __HAL_DAC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR\
+                                                             & (__INTERRUPT__)) == (__INTERRUPT__))
 
 /** @brief  Get the selected DAC's flag status.
   * @param  __HANDLE__ specifies the DAC handle.
   * @param  __FLAG__ specifies the DAC flag to get.
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_FLAG_DMAUDR1: DAC channel 1 DMA underrun flag
-  *            @arg DAC_FLAG_DMAUDR2: DAC channel 2 DMA underrun flag (1)
-  *            @arg DAC_FLAG_DAC1RDY: DAC channel 1 ready status flag
-  *            @arg DAC_FLAG_DAC2RDY: DAC channel 2 ready status flag (1)
+  *            @arg DAC_FLAG_DMAUDR1 DAC channel 1 DMA underrun flag
+  *            @arg DAC_FLAG_DMAUDR2 DAC channel 2 DMA underrun flag (1)
+  *            @arg DAC_FLAG_DAC1RDY DAC channel 1 ready status flag
+  *            @arg DAC_FLAG_DAC2RDY DAC channel 2 ready status flag (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -451,10 +465,10 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @param  __HANDLE__ specifies the DAC handle.
   * @param  __FLAG__ specifies the DAC flag to clear.
   *          This parameter can be any combination of the following values:
-  *            @arg DAC_FLAG_DMAUDR1: DAC channel 1 DMA underrun flag
-  *            @arg DAC_FLAG_DMAUDR2: DAC channel 2 DMA underrun flag (1)
+  *            @arg DAC_FLAG_DMAUDR1 DAC channel 1 DMA underrun flag
+  *            @arg DAC_FLAG_DMAUDR2 DAC channel 2 DMA underrun flag (1)
   *
-  *         (1) On this STM32 serie, parameter not available on all instances.
+  *         (1) On this STM32 series, parameter not available on all instances.
   *             Refer to device datasheet for channels availability.
   * @retval None
   */
@@ -489,9 +503,9 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
                              ((ALIGN) == DAC_ALIGN_12B_L) || \
                              ((ALIGN) == DAC_ALIGN_8B_R))
 
-#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0U)
+#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0UL)
 
-#define IS_DAC_REFRESHTIME(TIME)   ((TIME) <= 0x000000FFU)
+#define IS_DAC_REFRESHTIME(TIME)   ((TIME) <= 0x000000FFUL)
 
 /**
   * @}
@@ -528,9 +542,7 @@ HAL_StatusTypeDef HAL_DAC_Stop(DAC_HandleTypeDef *hdac, uint32_t Channel);
 HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t *pData, uint32_t Length,
                                     uint32_t Alignment);
 HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel);
-
 void HAL_DAC_IRQHandler(DAC_HandleTypeDef *hdac);
-
 HAL_StatusTypeDef HAL_DAC_SetValue(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Alignment, uint32_t Data);
 
 void HAL_DAC_ConvCpltCallbackCh1(DAC_HandleTypeDef *hdac);
@@ -554,7 +566,6 @@ HAL_StatusTypeDef     HAL_DAC_UnRegisterCallback(DAC_HandleTypeDef *hdac, HAL_DA
   */
 /* Peripheral Control functions ***********************************************/
 uint32_t HAL_DAC_GetValue(DAC_HandleTypeDef *hdac, uint32_t Channel);
-
 HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel);
 /**
   * @}
@@ -600,7 +611,6 @@ void DAC_DMAHalfConvCpltCh1(DMA_HandleTypeDef *hdma);
 #endif
 
 
-#endif /*STM32G4xx_HAL_DAC_H */
+#endif /* STM32G4xx_HAL_DAC_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

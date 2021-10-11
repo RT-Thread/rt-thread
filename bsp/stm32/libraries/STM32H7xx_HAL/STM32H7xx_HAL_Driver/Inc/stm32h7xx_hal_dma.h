@@ -332,8 +332,11 @@ typedef struct __DMA_HandleTypeDef
 
 #define DMA_REQUEST_SAI1_A           87U  /*!< DMAMUX1 SAI1 A request    */
 #define DMA_REQUEST_SAI1_B           88U  /*!< DMAMUX1 SAI1 B request    */
+
+#if defined(SAI2)
 #define DMA_REQUEST_SAI2_A           89U  /*!< DMAMUX1 SAI2 A request    */
 #define DMA_REQUEST_SAI2_B           90U  /*!< DMAMUX1 SAI2 B request    */
+#endif /* SAI2 */
 
 #define DMA_REQUEST_SWPMI_RX         91U  /*!< DMAMUX1 SWPMI RX request  */
 #define DMA_REQUEST_SWPMI_TX         92U  /*!< DMAMUX1 SWPMI TX request  */
@@ -343,11 +346,11 @@ typedef struct __DMA_HandleTypeDef
 
 #if defined(HRTIM1)
 #define DMA_REQUEST_HRTIM_MASTER     95U  /*!< DMAMUX1 HRTIM1 Master request 1 */
-#define DMA_REQUEST_HRTIM_TIMER_A    96U  /*!< DMAMUX1 HRTIM1 TimerA request 2 */
-#define DMA_REQUEST_HRTIM_TIMER_B    97U  /*!< DMAMUX1 HRTIM1 TimerB request 3 */
-#define DMA_REQUEST_HRTIM_TIMER_C    98U  /*!< DMAMUX1 HRTIM1 TimerC request 4 */
-#define DMA_REQUEST_HRTIM_TIMER_D    99U  /*!< DMAMUX1 HRTIM1 TimerD request 5 */
-#define DMA_REQUEST_HRTIM_TIMER_E   100U  /*!< DMAMUX1 HRTIM1 TimerE request 6 */
+#define DMA_REQUEST_HRTIM_TIMER_A    96U  /*!< DMAMUX1 HRTIM1 Timer A request 2 */
+#define DMA_REQUEST_HRTIM_TIMER_B    97U  /*!< DMAMUX1 HRTIM1 Timer B request 3 */
+#define DMA_REQUEST_HRTIM_TIMER_C    98U  /*!< DMAMUX1 HRTIM1 Timer C request 4 */
+#define DMA_REQUEST_HRTIM_TIMER_D    99U  /*!< DMAMUX1 HRTIM1 Timer D request 5 */
+#define DMA_REQUEST_HRTIM_TIMER_E   100U  /*!< DMAMUX1 HRTIM1 Timer E request 6*/
 #endif /* HRTIM1 */
 
 #define DMA_REQUEST_DFSDM1_FLT0     101U  /*!< DMAMUX1 DFSDM Filter0 request */
@@ -385,6 +388,38 @@ typedef struct __DMA_HandleTypeDef
 #define DMA_REQUEST_USART10_TX      119U  /*!< DMAMUX1 USART10 request  */
 #endif /* USART10 */
 
+#if defined(FMAC)
+#define DMA_REQUEST_FMAC_READ       120U  /*!< DMAMUX1 FMAC Read request  */
+#define DMA_REQUEST_FMAC_WRITE      121U  /*!< DMAMUX1 FMAC Write request */
+#endif /* FMAC */
+
+#if defined(CORDIC)
+#define DMA_REQUEST_CORDIC_READ     122U  /*!< DMAMUX1 CORDIC Read request  */
+#define DMA_REQUEST_CORDIC_WRITE    123U  /*!< DMAMUX1 CORDIC Write request */
+#endif /* CORDIC */
+
+#if defined(I2C5)
+#define DMA_REQUEST_I2C5_RX         124U  /*!< DMAMUX1 I2C5 RX request   */
+#define DMA_REQUEST_I2C5_TX         125U  /*!< DMAMUX1 I2C5 TX request   */
+#endif /* I2C5 */
+
+#if defined(TIM23)
+#define DMA_REQUEST_TIM23_CH1        126U  /*!< DMAMUX1 TIM23 CH1 request  */
+#define DMA_REQUEST_TIM23_CH2        127U  /*!< DMAMUX1 TIM23 CH2 request  */
+#define DMA_REQUEST_TIM23_CH3        128U  /*!< DMAMUX1 TIM23 CH3 request  */
+#define DMA_REQUEST_TIM23_CH4        129U  /*!< DMAMUX1 TIM23 CH4 request  */
+#define DMA_REQUEST_TIM23_UP         130U  /*!< DMAMUX1 TIM23 UP request   */
+#define DMA_REQUEST_TIM23_TRIG       131U  /*!< DMAMUX1 TIM23 TRIG request */
+#endif /* TIM23 */
+
+#if defined(TIM24)
+#define DMA_REQUEST_TIM24_CH1        132U  /*!< DMAMUX1 TIM24 CH1 request  */
+#define DMA_REQUEST_TIM24_CH2        133U  /*!< DMAMUX1 TIM24 CH2 request  */
+#define DMA_REQUEST_TIM24_CH3        134U  /*!< DMAMUX1 TIM24 CH3 request  */
+#define DMA_REQUEST_TIM24_CH4        135U  /*!< DMAMUX1 TIM24 CH4 request  */
+#define DMA_REQUEST_TIM24_UP         136U  /*!< DMAMUX1 TIM24 UP request   */
+#define DMA_REQUEST_TIM24_TRIG       137U  /*!< DMAMUX1 TIM24 TRIG request */
+#endif /* TIM24 */
 
 /* DMAMUX2 requests */
 #define BDMA_REQUEST_MEM2MEM          0U  /*!< memory to memory transfer   */
@@ -1200,11 +1235,13 @@ uint32_t             HAL_DMA_GetError(DMA_HandleTypeDef *hdma);
   * @{
   */
 
-#if defined(ADC3)
+#if defined(TIM24)
+#define IS_DMA_REQUEST(REQUEST) (((REQUEST) <= DMA_REQUEST_TIM24_TRIG))
+#elif defined(ADC3)
 #define IS_DMA_REQUEST(REQUEST) (((REQUEST) <= DMA_REQUEST_ADC3))
 #else
 #define IS_DMA_REQUEST(REQUEST) (((REQUEST) <= DMA_REQUEST_USART10_TX))
-#endif /* ADC3 */
+#endif /* TIM24 */
 
 #if defined(ADC3)
 #define IS_BDMA_REQUEST(REQUEST) (((REQUEST) <= BDMA_REQUEST_ADC3))

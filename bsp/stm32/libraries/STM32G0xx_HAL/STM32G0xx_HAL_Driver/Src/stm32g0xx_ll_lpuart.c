@@ -151,7 +151,7 @@ ErrorStatus LL_LPUART_DeInit(USART_TypeDef *LPUARTx)
     /* Release reset of LPUART peripheral */
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_LPUART2);
   }
-#endif
+#endif /* LPUART2 */
   else
   {
     status = ERROR;
@@ -182,7 +182,7 @@ ErrorStatus LL_LPUART_Init(USART_TypeDef *LPUARTx, LL_LPUART_InitTypeDef *LPUART
   uint32_t periphclk = LL_RCC_PERIPH_FREQUENCY_NO;
 #else
   uint32_t periphclk;
-#endif
+#endif /* LPUART2 */
 
   /* Check the parameters */
   assert_param(IS_LPUART_INSTANCE(LPUARTx));
@@ -239,7 +239,7 @@ ErrorStatus LL_LPUART_Init(USART_TypeDef *LPUARTx, LL_LPUART_InitTypeDef *LPUART
     }
 #else
     periphclk = LL_RCC_GetLPUARTClockFreq(LL_RCC_LPUART1_CLKSOURCE);
-#endif
+#endif /* LPUART2 */
 
     /* Configure the LPUART Baud Rate :
        - prescaler value is required

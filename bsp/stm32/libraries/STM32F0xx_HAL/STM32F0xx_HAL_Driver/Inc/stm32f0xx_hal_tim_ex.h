@@ -99,8 +99,8 @@ typedef struct
 /** @defgroup TIMEx_Private_Macros TIM Extended Private Macros
   * @{
   */
-#define IS_TIM_REMAP(__INSTANCE__, __REMAP__)                                             \
-          (((__INSTANCE__) == TIM14)  && (((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U))
+#define IS_TIM_REMAP(__INSTANCE__, __REMAP__)                                        \
+  (((__INSTANCE__) == TIM14)  && (((__REMAP__) & 0xFFFFFFFCU) == 0x00000000U))
 
 /**
   * @}
@@ -229,6 +229,7 @@ void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim);
   */
 /* Extended Peripheral State functions  ***************************************/
 HAL_TIM_StateTypeDef HAL_TIMEx_HallSensor_GetState(TIM_HandleTypeDef *htim);
+HAL_TIM_ChannelStateTypeDef HAL_TIMEx_GetChannelNState(TIM_HandleTypeDef *htim,  uint32_t ChannelN);
 /**
   * @}
   */

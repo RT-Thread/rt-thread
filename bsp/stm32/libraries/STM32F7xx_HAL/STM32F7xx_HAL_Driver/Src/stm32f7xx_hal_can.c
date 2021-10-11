@@ -120,7 +120,7 @@
           submitted (the sleep mode is not yet entered), and become
           HAL_CAN_STATE_SLEEP_ACTIVE when the sleep mode is effective.
 
-      (#) The wake-up from sleep mode can be trigged by two ways:
+      (#) The wake-up from sleep mode can be triggered by two ways:
             (++) Using HAL_CAN_WakeUp(). When returning from this function,
                  the sleep mode is exited (if return status is HAL_OK).
             (++) When a start of Rx CAN frame is detected by the CAN peripheral,
@@ -1901,7 +1901,7 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef *hcan)
     /* Check if message is still pending */
     if ((hcan->Instance->RF0R & CAN_RF0R_FMP0) != 0U)
     {
-      /* Receive FIFO 0 mesage pending Callback */
+      /* Receive FIFO 0 message pending Callback */
 #if USE_HAL_CAN_REGISTER_CALLBACKS == 1
       /* Call registered callback*/
       hcan->RxFifo0MsgPendingCallback(hcan);
@@ -1950,7 +1950,7 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef *hcan)
     /* Check if message is still pending */
     if ((hcan->Instance->RF1R & CAN_RF1R_FMP1) != 0U)
     {
-      /* Receive FIFO 1 mesage pending Callback */
+      /* Receive FIFO 1 message pending Callback */
 #if USE_HAL_CAN_REGISTER_CALLBACKS == 1
       /* Call registered callback*/
       hcan->RxFifo1MsgPendingCallback(hcan);

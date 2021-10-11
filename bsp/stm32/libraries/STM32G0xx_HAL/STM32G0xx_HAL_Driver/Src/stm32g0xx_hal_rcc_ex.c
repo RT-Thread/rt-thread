@@ -419,7 +419,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
   }
 #endif /* RCC_CCIPR2_I2S2SEL */
 
-#if defined(STM32G0C1xx) || defined(STM32G0B1xx)  || defined(STM32G0B0xx) 
+#if defined(STM32G0C1xx) || defined(STM32G0B1xx)  || defined(STM32G0B0xx)
   /*-------------------------- USB clock source configuration ---------------------*/
   if (((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_USB) == RCC_PERIPHCLK_USB)
   {
@@ -1528,8 +1528,7 @@ uint32_t HAL_RCCEx_CRSWaitSynchronization(uint32_t Timeout)
       /* frequency error counter reached a zero value */
       __HAL_RCC_CRS_CLEAR_FLAG(RCC_CRS_FLAG_ESYNC);
     }
-  }
-  while (RCC_CRS_NONE == crsstatus);
+  } while (RCC_CRS_NONE == crsstatus);
 
   return crsstatus;
 }

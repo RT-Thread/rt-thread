@@ -195,7 +195,7 @@
     The compilation define USE_HAL_MMC_REGISTER_CALLBACKS when set to 1
     allows the user to configure dynamically the driver callbacks.
 
-    Use Functions @ref HAL_MMC_RegisterCallback() to register a user callback,
+    Use Functions HAL_MMC_RegisterCallback() to register a user callback,
     it allows to register following callbacks:
       (+) TxCpltCallback : callback when a transmission transfer is completed.
       (+) RxCpltCallback : callback when a reception transfer is completed.
@@ -206,7 +206,7 @@
     This function takes as parameters the HAL peripheral handle, the Callback ID
     and a pointer to the user callback function.
 
-    Use function @ref HAL_MMC_UnRegisterCallback() to reset a callback to the default
+    Use function HAL_MMC_UnRegisterCallback() to reset a callback to the default
     weak (surcharged) function. It allows to reset following callbacks:
       (+) TxCpltCallback : callback when a transmission transfer is completed.
       (+) RxCpltCallback : callback when a reception transfer is completed.
@@ -216,12 +216,12 @@
       (+) MspDeInitCallback  : MMC MspDeInit.
     This function) takes as parameters the HAL peripheral handle and the Callback ID.
 
-    By default, after the @ref HAL_MMC_Init and if the state is HAL_MMC_STATE_RESET
+    By default, after the HAL_MMC_Init and if the state is HAL_MMC_STATE_RESET
     all callbacks are reset to the corresponding legacy weak (surcharged) functions.
     Exception done for MspInit and MspDeInit callbacks that are respectively
-    reset to the legacy weak (surcharged) functions in the @ref HAL_MMC_Init
-    and @ref  HAL_MMC_DeInit only when these callbacks are null (not registered beforehand).
-    If not, MspInit or MspDeInit are not null, the @ref HAL_MMC_Init and @ref HAL_MMC_DeInit
+    reset to the legacy weak (surcharged) functions in the HAL_MMC_Init
+    and  HAL_MMC_DeInit only when these callbacks are null (not registered beforehand).
+    If not, MspInit or MspDeInit are not null, the HAL_MMC_Init and HAL_MMC_DeInit
     keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
 
     Callbacks can be registered/unregistered in READY state only.
@@ -229,8 +229,8 @@
     in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
     during the Init/DeInit.
     In that case first register the MspInit/MspDeInit user callbacks
-    using @ref HAL_MMC_RegisterCallback before calling @ref HAL_MMC_DeInit
-    or @ref HAL_MMC_Init function.
+    using HAL_MMC_RegisterCallback before calling HAL_MMC_DeInit
+    or HAL_MMC_Init function.
 
     When The compilation define USE_HAL_MMC_REGISTER_CALLBACKS is set to 0 or
     not defined, the callback registering feature is not available

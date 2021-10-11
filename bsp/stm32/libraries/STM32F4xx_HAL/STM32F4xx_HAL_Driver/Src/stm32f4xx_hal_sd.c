@@ -199,7 +199,7 @@
     The compilation define USE_HAL_SD_REGISTER_CALLBACKS when set to 1
     allows the user to configure dynamically the driver callbacks.
 
-    Use Functions @ref HAL_SD_RegisterCallback() to register a user callback,
+    Use Functions HAL_SD_RegisterCallback() to register a user callback,
     it allows to register following callbacks:
       (+) TxCpltCallback : callback when a transmission transfer is completed.
       (+) RxCpltCallback : callback when a reception transfer is completed.
@@ -210,7 +210,7 @@
     This function takes as parameters the HAL peripheral handle, the Callback ID
     and a pointer to the user callback function.
 
-    Use function @ref HAL_SD_UnRegisterCallback() to reset a callback to the default
+    Use function HAL_SD_UnRegisterCallback() to reset a callback to the default
     weak (surcharged) function. It allows to reset following callbacks:
       (+) TxCpltCallback : callback when a transmission transfer is completed.
       (+) RxCpltCallback : callback when a reception transfer is completed.
@@ -220,12 +220,12 @@
       (+) MspDeInitCallback  : SD MspDeInit.
     This function) takes as parameters the HAL peripheral handle and the Callback ID.
 
-    By default, after the @ref HAL_SD_Init and if the state is HAL_SD_STATE_RESET
+    By default, after the HAL_SD_Init and if the state is HAL_SD_STATE_RESET
     all callbacks are reset to the corresponding legacy weak (surcharged) functions.
     Exception done for MspInit and MspDeInit callbacks that are respectively
-    reset to the legacy weak (surcharged) functions in the @ref HAL_SD_Init
-    and @ref  HAL_SD_DeInit only when these callbacks are null (not registered beforehand).
-    If not, MspInit or MspDeInit are not null, the @ref HAL_SD_Init and @ref HAL_SD_DeInit
+    reset to the legacy weak (surcharged) functions in the HAL_SD_Init
+    and  HAL_SD_DeInit only when these callbacks are null (not registered beforehand).
+    If not, MspInit or MspDeInit are not null, the HAL_SD_Init and HAL_SD_DeInit
     keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
 
     Callbacks can be registered/unregistered in READY state only.
@@ -233,8 +233,8 @@
     in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
     during the Init/DeInit.
     In that case first register the MspInit/MspDeInit user callbacks
-    using @ref HAL_SD_RegisterCallback before calling @ref HAL_SD_DeInit
-    or @ref HAL_SD_Init function.
+    using HAL_SD_RegisterCallback before calling HAL_SD_DeInit
+    or HAL_SD_Init function.
 
     When The compilation define USE_HAL_SD_REGISTER_CALLBACKS is set to 0 or
     not defined, the callback registering feature is not available

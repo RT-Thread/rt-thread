@@ -301,7 +301,9 @@ typedef struct
 #define SDMMC_SINGLE_BUS_SUPPORT                      0x00010000U
 #define SDMMC_CARD_LOCKED                             0x02000000U
 
+#ifndef SDMMC_DATATIMEOUT
 #define SDMMC_DATATIMEOUT                             0xFFFFFFFFU
+#endif /* SDMMC_DATATIMEOUT */
 
 #define SDMMC_0TO7BITS                                0x000000FFU
 #define SDMMC_8TO15BITS                               0x0000FF00U
@@ -455,7 +457,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SDMMC_LL_Data_Length Data Lenght
+/** @defgroup SDMMC_LL_Data_Length Data Length
   * @{
   */
 #define IS_SDMMC_DATA_LENGTH(LENGTH) ((LENGTH) <= 0x01FFFFFFU)
@@ -984,6 +986,7 @@ uint32_t SDMMC_CmdBusWidth(SDMMC_TypeDef *SDMMCx, uint32_t BusWidth);
 uint32_t SDMMC_CmdSendSCR(SDMMC_TypeDef *SDMMCx);
 uint32_t SDMMC_CmdSendCID(SDMMC_TypeDef *SDMMCx);
 uint32_t SDMMC_CmdSendCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument);
+uint32_t SDMMC_CmdSendEXTCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument);
 uint32_t SDMMC_CmdSetRelAdd(SDMMC_TypeDef *SDMMCx, uint16_t *pRCA);
 uint32_t SDMMC_CmdSendStatus(SDMMC_TypeDef *SDMMCx, uint32_t Argument);
 uint32_t SDMMC_CmdStatusRegister(SDMMC_TypeDef *SDMMCx);

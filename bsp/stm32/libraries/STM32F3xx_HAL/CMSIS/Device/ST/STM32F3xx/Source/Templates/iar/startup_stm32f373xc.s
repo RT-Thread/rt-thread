@@ -135,7 +135,7 @@ __vector_table
         DCD     SDADC1_IRQHandler                 ; SDADC1
         DCD     SDADC2_IRQHandler                 ; SDADC2
         DCD     SDADC3_IRQHandler                 ; SDADC3
-        DCD     COMP1_2_IRQHandler                ; COMP1 and COMP2 global Interrupt
+        DCD     COMP_IRQHandler                   ; COMP1 and COMP2 global Interrupt
         DCD     0                                 ; Reserved
         DCD     0                                 ; Reserved
         DCD     0                                 ; Reserved
@@ -503,10 +503,10 @@ SDADC2_IRQHandler
 SDADC3_IRQHandler
         B SDADC3_IRQHandler
 
-        PUBWEAK COMP1_2_IRQHandler
+        PUBWEAK COMP_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
-COMP1_2_IRQHandler
-        B COMP1_2_IRQHandler
+COMP_IRQHandler
+        B COMP_IRQHandler
 
         PUBWEAK USB_HP_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)

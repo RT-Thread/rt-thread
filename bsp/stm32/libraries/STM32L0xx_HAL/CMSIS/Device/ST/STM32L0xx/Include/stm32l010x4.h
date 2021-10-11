@@ -14,7 +14,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright(c) 2018 STMicroelectronics.
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -565,6 +565,15 @@ typedef struct
 /** @addtogroup Exported_constants
   * @{
   */
+
+  /** @addtogroup Hardware_Constant_Definition
+    * @{
+    */
+#define LSI_STARTUP_TIME 200U /*!< LSI Maximum startup time in us */
+
+  /**
+    * @}
+    */
   
   /** @addtogroup Peripheral_Registers_Bits_Definition
   * @{
@@ -2972,7 +2981,10 @@ typedef struct
 /*                         Reset and Clock Control                            */
 /*                                                                            */
 /******************************************************************************/
-
+/*
+* @brief Specific device feature definitions (not present on all devices in the STM32L0 family)
+*/
+/* Note: No specific macro feature on this device */
 
 /********************  Bit definition for RCC_CR register  ********************/
 #define RCC_CR_HSION_Pos                 (0U) 
@@ -4644,13 +4656,7 @@ typedef struct
 /*
 * @brief Specific device feature definitions (not present on all devices in the STM32L0 family)
 */
-#if defined (STM32L071xx) || defined (STM32L072xx) || defined (STM32L073xx) \
-    || defined (STM32L081xx) || defined (STM32L082xx) || defined (STM32L083xx)
-#define TIM_TIM2_REMAP_HSI_SUPPORT       /*!<Support remap HSI on TIM2 */
 #define TIM_TIM2_REMAP_HSI48_SUPPORT     /*!<Support remap HSI48 on TIM2 */
-#else
-#define TIM_TIM2_REMAP_HSI48_SUPPORT     /*!<Support remap HSI48 on TIM2 */
-#endif	
 
 /*******************  Bit definition for TIM_CR1 register  ********************/
 #define TIM_CR1_CEN_Pos           (0U)        
@@ -5702,9 +5708,6 @@ typedef struct
 /****************** TIM Instances : remapping capability **********************/
 #define IS_TIM_REMAP_INSTANCE(INSTANCE) (((INSTANCE) == TIM2)   || \
                                          ((INSTANCE) == TIM21))
-
-/****************** TIM Instances : supporting synchronization ****************/
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
 
 /******************* TIM Instances : output(s) OCXEC register *****************/
 #define IS_TIM_OCXREF_CLEAR_INSTANCE(INSTANCE)  ((INSTANCE) == TIM2)
