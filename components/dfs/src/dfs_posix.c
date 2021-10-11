@@ -254,6 +254,7 @@ off_t lseek(int fd, off_t offset, int whence)
 }
 RTM_EXPORT(lseek);
 
+#ifndef _WIN32 /* we can not implement these functions */
 /**
  * this function is a POSIX compliant version, which will rename old file name
  * to new file name.
@@ -280,6 +281,7 @@ int rename(const char *old_file, const char *new_file)
     return 0;
 }
 RTM_EXPORT(rename);
+#endif
 
 /**
  * this function is a POSIX compliant version, which will unlink (remove) a
@@ -305,7 +307,6 @@ int unlink(const char *pathname)
 }
 RTM_EXPORT(unlink);
 
-#ifndef _WIN32 /* we can not implement these functions */
 /**
  * this function is a POSIX compliant version, which will get file information.
  *
@@ -370,7 +371,6 @@ int fstat(int fildes, struct stat *buf)
     return RT_EOK;
 }
 RTM_EXPORT(fstat);
-#endif
 
 /**
  * this function is a POSIX compliant version, which shall request that all data
