@@ -2,6 +2,31 @@
 
 ## 简介
 
+用于搭建stm32F407vet6系统，学习STM32及相关功能接口开放。
+
+## 调试
+
+    #define DBG_TAG     "MAIN"
+    #define DBG_LVL     DBG_
+    DBG_ERROR
+    DBG_WARNING
+    DBG_INFO
+    DBG_LOG
+    #include <rtdbg.h>
+    // LOG_D("LOG_D(%d): RT-Thread is an open source IoT operating system from China.", count);
+    // LOG_I("LOG_I(%d): RT-Thread is an open source IoT operating system from China.", count);
+    // LOG_W("LOG_W(%d): RT-Thread is an open source IoT operating system from China.", count);
+    // LOG_E("LOG_E(%d): RT-Thread is an open source IoT operating system from China.", count);
+    // ulog_d("test", "ulog_d(%d): RT-Thread is an open source IoT operating system from China.", count);
+    // ulog_i("test", "ulog_i(%d): RT-Thread is an open source IoT operating system from China.", count);
+    // ulog_w("test", "ulog_w(%d): RT-Thread is an open source IoT operating system from China.", count);
+    // ulog_e("test", "ulog_e(%d): RT-Thread is an open source IoT operating system from China.", count);
+    
+
+## 功能
+
+* 输出编译版本号
+
 
 
 ## 开发板介绍
@@ -54,15 +79,7 @@
 
 ## 使用说明
 
-使用说明分为如下两个章节：
-
-- 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
-- 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+- 
 
 
 ### 快速上手
@@ -81,39 +98,21 @@
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LED 常亮、绿色 LED 会周期性闪烁。
-
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
-
-> 注：正点原子开发板 在使用终端工具如：PuTTy、XShell 时，会出现系统不能启动的问题，推荐使用串口调试助手如：sscom
+> 
 
 ```bash
- \ | /
-- RT -     Thread Operating System
- / | \     3.1.1 build Nov 19 2018
- 2006 - 2018 Copyright by rt-thread team
-msh >
+
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
-1. 在 bsp 下打开 env 工具。
-
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
-3. 输入`pkgs --update`命令更新软件包。
-
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
 
 ## 注意事项
 
-暂无
+
 
 ## 联系人信息
 
 维护人:
 
-- [guozhanxin](https://github.com/Guozhanxin) 
+- ericyinwork@163.com
