@@ -1,7 +1,7 @@
 <project>
   <fileVersion>3</fileVersion>
   <configuration>
-    <name>rt-thread</name>
+    <name>rtthread</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>SWM320xE	Synwit SWM320xE</state>
+          <state>STM32F407ZG	ST STM32F407ZG</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -137,7 +137,7 @@
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>SWM320xE	Synwit SWM320xE</state>
+          <state>STM32F407ZG	ST STM32F407ZG</state>
         </option>
         <option>
           <name>FPU2</name>
@@ -340,16 +340,16 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\Libraries\XXX_StdPeriph_Driver</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\DeviceSupport</state>
-          <state>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
-          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\libcpu</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\CoreSupport</state>
         </option>
@@ -702,7 +702,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>rtthread.out</state>
+          <state>project.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -1240,7 +1240,6 @@
         </option>
         <option>
           <name>CCDefines</name>
-          <state />
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1366,16 +1365,16 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\Libraries\XXX_StdPeriph_Driver</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\DeviceSupport</state>
-          <state>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
-          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\libcpu</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\CoreSupport</state>
         </option>
@@ -2082,9 +2081,6 @@
       <name>$PROJ_DIR$\..\..\src\mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\memheap.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\src\mempool.c</name>
     </file>
     <file>
@@ -2108,6 +2104,9 @@
     <file>
       <name>$PROJ_DIR$\applications\main.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\applications\mnt.c</name>
+    </file>
   </group>
   <group>
     <name>Drivers</name>
@@ -2115,76 +2114,19 @@
       <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\drivers\drv_uart.c</name>
+    </file>
+  </group>
+  <group>
+    <name>CPU</name>
+    <file>
+      <name>$PROJ_DIR$\libcpu\port.c</name>
     </file>
   </group>
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\DeviceSupport\system_SWM320.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_lcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_norflash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_port.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_pwm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_sdram.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_timr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\SWM320_StdPeriph_Driver\SWM320_wdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\DeviceSupport\startup\iar\startup_SWM320.s</name>
+      <name>$PROJ_DIR$\Libraries\CMSIS\startup_xxx.s</name>
     </file>
   </group>
   <group>
@@ -2208,13 +2150,7 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\hwtimer\hwtimer.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\misc\pin.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\misc\rt_drv_pwm.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
@@ -2247,10 +2183,19 @@
       <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\finsh\msh_cmd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\finsh\msh_file.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\finsh_compiler.c</name>
@@ -2282,8 +2227,5 @@
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.c</name>
     </file>
-  </group>
-  <group>
-    <name>libc</name>
   </group>
 </project>

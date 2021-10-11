@@ -1,10 +1,10 @@
 /******************************************************************************************************************************************
-* ÎÄ¼þÃû³Æ: SWM320_norflash.c
-* ¹¦ÄÜËµÃ÷: SWM320µ¥Æ¬»úµÄNOR FlashÇý¶¯³ÌÐò
-* ¼¼ÊõÖ§³Ö: http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî:
-* °æ±¾ÈÕÆÚ: V1.1.0      2017Äê10ÔÂ25ÈÕ
-* Éý¼¶¼ÇÂ¼:
+* æ–‡ä»¶åç§°: SWM320_norflash.c
+* åŠŸèƒ½è¯´æ˜Ž: SWM320å•ç‰‡æœºçš„NOR Flashé©±åŠ¨ç¨‹åº
+* æŠ€æœ¯æ”¯æŒ: http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹:
+* ç‰ˆæœ¬æ—¥æœŸ: V1.1.0      2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•:
 *
 *
 *******************************************************************************************************************************************
@@ -21,30 +21,30 @@
 #include "SWM320.h"
 #include "SWM320_norflash.h"
 
-
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: NORFL_Init()
-* ¹¦ÄÜËµÃ÷: NOR Flash¿ØÖÆÆ÷³õÊ¼»¯
-* Êä    Èë: NORFL_InitStructure * initStruct    °üº¬NOR Flash¿ØÖÆÆ÷Ïà¹ØÉè¶¨ÖµµÄ½á¹¹Ìå
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: NORFL_Init()
+* åŠŸèƒ½è¯´æ˜Ž: NOR FlashæŽ§åˆ¶å™¨åˆå§‹åŒ–
+* è¾“    å…¥: NORFL_InitStructure * initStruct    åŒ…å«NOR FlashæŽ§åˆ¶å™¨ç›¸å…³è®¾å®šå€¼çš„ç»“æž„ä½“
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void NORFL_Init(NORFL_InitStructure *initStruct)
 {
     uint32_t i;
 
-    // ÅäÖÃSRAMÇ°ÐèÒªË¢ÐÂÏÂSDRAM¿ØÖÆÆ÷
+    // é…ç½®SRAMå‰éœ€è¦åˆ·æ–°ä¸‹SDRAMæŽ§åˆ¶å™¨
     do
     {
         SYS->CLKEN |= (1 << SYS_CLKEN_SDRAM_Pos);
 
-        while (SDRAMC->REFDONE == 0);
+        while (SDRAMC->REFDONE == 0)
+            ;
         SDRAMC->REFRESH &= ~(1 << SDRAMC_REFRESH_EN_Pos);
 
-        for (i = 0; i < 1000; i++) __NOP();
+        for (i = 0; i < 1000; i++)
+            __NOP();
         SYS->CLKEN &= ~(1 << SYS_CLKEN_SDRAM_Pos);
-    }
-    while (0);
+    } while (0);
 
     SYS->CLKEN |= (1 << SYS_CLKEN_NORFL_Pos);
 
@@ -53,19 +53,23 @@ void NORFL_Init(NORFL_InitStructure *initStruct)
                  (initStruct->OEPreValidTime << NORFLC_CR_RDTIME_Pos);
 
     NORFLC->IE = 3;
-    NORFLC->IF = 3;     // Çå³ýÖÐ¶Ï±êÖ¾
-    if (initStruct->OperFinishIEn)  NORFLC->IM &= ~(1 << NORFLC_IM_FINISH_Pos);
-    else                           NORFLC->IM |= (1 << NORFLC_IM_FINISH_Pos);
-    if (initStruct->OperTimeoutIEn) NORFLC->IM &= ~(1 << NORFLC_IM_TIMEOUT_Pos);
-    else                           NORFLC->IM |= (1 << NORFLC_IM_TIMEOUT_Pos);
+    NORFLC->IF = 3; // æ¸…é™¤ä¸­æ–­æ ‡å¿—
+    if (initStruct->OperFinishIEn)
+        NORFLC->IM &= ~(1 << NORFLC_IM_FINISH_Pos);
+    else
+        NORFLC->IM |= (1 << NORFLC_IM_FINISH_Pos);
+    if (initStruct->OperTimeoutIEn)
+        NORFLC->IM &= ~(1 << NORFLC_IM_TIMEOUT_Pos);
+    else
+        NORFLC->IM |= (1 << NORFLC_IM_TIMEOUT_Pos);
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: NORFL_ChipErase()
-* ¹¦ÄÜËµÃ÷: NOR FlashÕûÆ¬²Á³ý
-* Êä    Èë: ÎÞ
-* Êä    ³ö: uint32_t            0 ²Á³ý³É¹¦    1 ²Á³ý³¬Ê±
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: NORFL_ChipErase()
+* åŠŸèƒ½è¯´æ˜Ž: NOR Flashæ•´ç‰‡æ“¦é™¤
+* è¾“    å…¥: æ— 
+* è¾“    å‡º: uint32_t          0 æ“¦é™¤æˆåŠŸ    1 æ“¦é™¤è¶…æ—¶
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t NORFL_ChipErase(void)
 {
@@ -74,10 +78,13 @@ uint32_t NORFL_ChipErase(void)
     NORFLC->CMD = (NORFL_CMD_CHIP_ERASE << NORFLC_CMD_CMD_Pos);
 
     while (((NORFLC->IF & NORFLC_IF_FINISH_Msk) == 0) &&
-            ((NORFLC->IF & NORFLC_IF_TIMEOUT_Msk) == 0)) __NOP();
+           ((NORFLC->IF & NORFLC_IF_TIMEOUT_Msk) == 0))
+        __NOP();
 
-    if (NORFLC->IF & NORFLC_IF_FINISH_Msk)  res = 0;
-    else                                   res = 1;
+    if (NORFLC->IF & NORFLC_IF_FINISH_Msk)
+        res = 0;
+    else
+        res = 1;
 
     NORFLC->IF = NORFLC_IF_FINISH_Msk | NORFLC_IF_TIMEOUT_Msk;
 
@@ -85,11 +92,11 @@ uint32_t NORFL_ChipErase(void)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: NORFL_SectorErase()
-* ¹¦ÄÜËµÃ÷: NOR FlashÉÈÇø²Á³ý
-* Êä    Èë: uint32_t addr       Òª²Á³ýÉÈÇøµÄÆðÊ¼µØÖ·
-* Êä    ³ö: uint32_t            0 ²Á³ý³É¹¦    1 ²Á³ý³¬Ê±
-* ×¢ÒâÊÂÏî: MX29LV128DB Ç°8ÉÈÇøÎª8K¡¢ºó255ÉÈÇøÎª64K    MX29LV128DT Ç°255ÉÈÇøÎª64K¡¢ºó8ÉÈÇøÎª8K
+* å‡½æ•°åç§°: NORFL_SectorErase()
+* åŠŸèƒ½è¯´æ˜Ž: NOR Flashæ‰‡åŒºæ“¦é™¤
+* è¾“    å…¥: uint32_t addr     è¦æ“¦é™¤æ‰‡åŒºçš„èµ·å§‹åœ°å€
+* è¾“    å‡º: uint32_t          0 æ“¦é™¤æˆåŠŸ    1 æ“¦é™¤è¶…æ—¶
+* æ³¨æ„äº‹é¡¹: MX29LV128DB å‰8æ‰‡åŒºä¸º8Kã€åŽ255æ‰‡åŒºä¸º64K    MX29LV128DT å‰255æ‰‡åŒºä¸º64Kã€åŽ8æ‰‡åŒºä¸º8K
 ******************************************************************************************************************************************/
 uint32_t NORFL_SectorErase(uint32_t addr)
 {
@@ -99,10 +106,13 @@ uint32_t NORFL_SectorErase(uint32_t addr)
     NORFLC->CMD = (NORFL_CMD_SECTOR_ERASE << NORFLC_CMD_CMD_Pos);
 
     while (((NORFLC->IF & NORFLC_IF_FINISH_Msk) == 0) &&
-            ((NORFLC->IF & NORFLC_IF_TIMEOUT_Msk) == 0)) __NOP();
+           ((NORFLC->IF & NORFLC_IF_TIMEOUT_Msk) == 0))
+        __NOP();
 
-    if (NORFLC->IF & NORFLC_IF_FINISH_Msk)  res = 0;
-    else                                   res = 1;
+    if (NORFLC->IF & NORFLC_IF_FINISH_Msk)
+        res = 0;
+    else
+        res = 1;
 
     NORFLC->IF = NORFLC_IF_FINISH_Msk | NORFLC_IF_TIMEOUT_Msk;
 
@@ -110,12 +120,12 @@ uint32_t NORFL_SectorErase(uint32_t addr)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: NORFL_Write()
-* ¹¦ÄÜËµÃ÷: NOR FlashÐ´
-* Êä    Èë: uint32_t addr       Êý¾ÝÒªÐ´ÈëµÄµØÖ·
-*           uint32_t data       ÒªÐ´ÈëµÄÊý¾Ý
-* Êä    ³ö: uint32_t            0 Ð´Èë³É¹¦    1 Ð´Èë³¬Ê±
-* ×¢ÒâÊÂÏî: Ó²¼þÁ¬½Ó£¬Êý¾ÝÏßÎª16Î»Ê±£¬°ë×ÖÐ´Èë£»Êý¾ÝÏßÎª8Î»Ê±£¬×Ö½ÚÐ´Èë
+* å‡½æ•°åç§°: NORFL_Write()
+* åŠŸèƒ½è¯´æ˜Ž: NOR Flashå†™
+* è¾“    å…¥: uint32_t addr     æ•°æ®è¦å†™å…¥çš„åœ°å€
+*           uint32_t data       è¦å†™å…¥çš„æ•°æ®
+* è¾“    å‡º: uint32_t          0 å†™å…¥æˆåŠŸ    1 å†™å…¥è¶…æ—¶
+* æ³¨æ„äº‹é¡¹: ç¡¬ä»¶è¿žæŽ¥ï¼Œæ•°æ®çº¿ä¸º16ä½æ—¶ï¼ŒåŠå­—å†™å…¥ï¼›æ•°æ®çº¿ä¸º8ä½æ—¶ï¼Œå­—èŠ‚å†™å…¥
 ******************************************************************************************************************************************/
 uint32_t NORFL_Write(uint32_t addr, uint32_t data)
 {
@@ -125,10 +135,13 @@ uint32_t NORFL_Write(uint32_t addr, uint32_t data)
     NORFLC->CMD = (NORFL_CMD_PROGRAM << NORFLC_CMD_CMD_Pos) | (data << NORFLC_CMD_DATA_Pos);
 
     while (((NORFLC->IF & NORFLC_IF_FINISH_Msk) == 0) &&
-            ((NORFLC->IF & NORFLC_IF_TIMEOUT_Msk) == 0)) __NOP();
+           ((NORFLC->IF & NORFLC_IF_TIMEOUT_Msk) == 0))
+        __NOP();
 
-    if (NORFLC->IF & NORFLC_IF_FINISH_Msk)  res = 0;
-    else                                   res = 1;
+    if (NORFLC->IF & NORFLC_IF_FINISH_Msk)
+        res = 0;
+    else
+        res = 1;
 
     NORFLC->IF = NORFLC_IF_FINISH_Msk | NORFLC_IF_TIMEOUT_Msk;
 
@@ -136,11 +149,11 @@ uint32_t NORFL_Write(uint32_t addr, uint32_t data)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: NORFL_Read()
-* ¹¦ÄÜËµÃ÷: NOR Flash¶Á
-* Êä    Èë: uint32_t addr       Êý¾ÝÒª¶Á³öµÄµØÖ·
-* Êä    ³ö: uint32_t            ¶Á³öµÄÊý¾Ý
-* ×¢ÒâÊÂÏî: Ó²¼þÁ¬½Ó£¬Êý¾ÝÏßÎª16Î»Ê±£¬°ë×Ö¶Á³ö£»Êý¾ÝÏßÎª8Î»Ê±£¬×Ö½Ú¶Á³ö
+* å‡½æ•°åç§°: NORFL_Read()
+* åŠŸèƒ½è¯´æ˜Ž: NOR Flashè¯»
+* è¾“    å…¥: uint32_t addr     æ•°æ®è¦è¯»å‡ºçš„åœ°å€
+* è¾“    å‡º: uint32_t          è¯»å‡ºçš„æ•°æ®
+* æ³¨æ„äº‹é¡¹: ç¡¬ä»¶è¿žæŽ¥ï¼Œæ•°æ®çº¿ä¸º16ä½æ—¶ï¼ŒåŠå­—è¯»å‡ºï¼›æ•°æ®çº¿ä¸º8ä½æ—¶ï¼Œå­—èŠ‚è¯»å‡º
 ******************************************************************************************************************************************/
 uint32_t NORFL_Read(uint32_t addr)
 {
@@ -151,11 +164,11 @@ uint32_t NORFL_Read(uint32_t addr)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: NORFL_ReadID()
-* ¹¦ÄÜËµÃ÷: NOR Flash¶ÁID
-* Êä    Èë: uint32_t id_addr    IDµØÖ·£¬´Ë²ÎÊýÊÇÐ¾Æ¬Ïà¹ØµÄ£¬Ã¿ÖÖÐ¾Æ¬¶¼²»Í¬
-* Êä    ³ö: uint16_t            ¶ÁÈ¡µ½µÄID
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: NORFL_ReadID()
+* åŠŸèƒ½è¯´æ˜Ž: NOR Flashè¯»ID
+* è¾“    å…¥: uint32_t id_addr  IDåœ°å€ï¼Œæ­¤å‚æ•°æ˜¯èŠ¯ç‰‡ç›¸å…³çš„ï¼Œæ¯ç§èŠ¯ç‰‡éƒ½ä¸åŒ
+* è¾“    å‡º: uint16_t          è¯»å–åˆ°çš„ID
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint16_t NORFL_ReadID(uint32_t id_addr)
 {
@@ -168,7 +181,7 @@ uint16_t NORFL_ReadID(uint32_t id_addr)
 
     id = NORFLC->CMD & NORFLC_CMD_DATA_Msk;
 
-    NORFLC->CMD = (NORFL_CMD_RESET << NORFLC_CMD_CMD_Pos);  // ÍË³öID¶ÁÈ¡Ä£Ê½
+    NORFLC->CMD = (NORFL_CMD_RESET << NORFLC_CMD_CMD_Pos); // é€€å‡ºIDè¯»å–æ¨¡å¼
 
     return id;
 }

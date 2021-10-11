@@ -10,13 +10,14 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include "drv_gpio.h"
 
-#define LED_PIN 18
+#define LED_PIN    GET_PIN( F , 0 )
 
 int main(void)
 {
     int count = 1;
-    /* set PF00 pin mode to output */
+    /* set pin mode to output */
     rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
 
     while (count++)
