@@ -9,6 +9,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <drivers/rt_drv_pwm.h>
 
