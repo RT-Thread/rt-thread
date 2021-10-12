@@ -29,7 +29,7 @@ MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
 
 extern __IO uint32_t uwTick;
-static uint32_t sysTickMillisecond = 1;
+static uint32_t _systick_ms = 1;
 
 /* SysTick configuration */
 void rt_hw_systick_init(void)
@@ -38,9 +38,9 @@ void rt_hw_systick_init(void)
 
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
 
-    sysTickMillisecond = 1000u / RT_TICK_PER_SECOND;
-    if(sysTickMillisecond == 0)
-        sysTickMillisecond = 1;
+    _systick_ms = 1000u / RT_TICK_PER_SECOND;
+    if(_systick_ms == 0)
+        _systick_ms = 1;
 }
 
 /**
@@ -71,7 +71,7 @@ uint32_t HAL_GetTick(void)
 
 void HAL_IncTick(void)
 {
-    uwTick += sysTickMillisecond;
+    uwTick += _systick_ms;
 }
 
 void HAL_SuspendTick(void)
