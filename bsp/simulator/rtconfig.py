@@ -29,17 +29,17 @@ elif  CROSS_TOOL == 'msvc':
     EXEC_PATH = ''
     vc_version = ''
     vc_versions = SCons.Tool.MSCommon.vc.get_installed_vcs()
-    print(vc_versions)
     if not vc_versions:
-        print("no vc version")
+        print("No vc version!")
         exit(1)
     else:
         vc_version = vc_versions[0]
     EXEC_PATH = SCons.Tool.MSCommon.vc.find_vc_pdir(vc_version)
     if not EXEC_PATH:
-        print('find_vs_dir():  no installed VC %s' % vc_version)
+        print('Installed VC %s failure!' % vc_version)
+        exit(1)
     else:
-        print('find_vs_dir(): installed VC %s, path:%s' % (vc_version, EXEC_PATH))
+        print('Successfully installed VC %s, path:%s' % (vc_version, EXEC_PATH))
 
 else:
     print("bad CROSS TOOL!")
