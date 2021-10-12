@@ -56,6 +56,12 @@ enum rt_object_info_type
 #ifdef RT_USING_MODULE
     RT_Object_Info_Module,                             /**< The object is a module. */
 #endif
+#ifdef RT_USING_SMALL_MEM
+    RT_Object_Info_Mem,                               /**< The object is a small memory. */
+#endif
+#ifdef RT_USING_SLAB
+    RT_Object_Info_Slab,                              /**< The object is a slab memory. */
+#endif
     RT_Object_Info_Unknown,                            /**< The object is unknown. */
 };
 
@@ -103,6 +109,11 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
 #ifdef RT_USING_MODULE
     /* initialize object container - module */
     {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Module), sizeof(struct rt_dlmodule)},
+#endif
+#ifdef RT_USING_SMALL_MEM
+    /* initialize object container - small memory */
+    {RT_Object_Class_Mem, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Mem), sizeof(struct rt_mem)},
+#endif
 #endif
 };
 

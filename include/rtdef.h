@@ -431,7 +431,9 @@ enum rt_object_class_type
     RT_Object_Class_Device        = 0x09,      /**< The object is a device. */
     RT_Object_Class_Timer         = 0x0a,      /**< The object is a timer. */
     RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
-    RT_Object_Class_Unknown       = 0x0c,      /**< The object is unknown. */
+    RT_Object_Class_Mem           = 0x0c,      /**< The object is a small memory. */
+    RT_Object_Class_Slab          = 0x0d,      /**< The object is a slab memory. */
+    RT_Object_Class_Unknown       = 0x0e,      /**< The object is unknown. */
     RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 
@@ -821,6 +823,46 @@ typedef struct rt_messagequeue *rt_mq_t;
  * memory management
  * heap & partition
  */
+
+#ifdef RT_USING_SMALL_MEM
+ /**
+  * memory item on the small mem
+  */
+struct rt_mem_item
+{
+    rt_uint16_t             magic;          /**< magic */
+    rt_uint16_t             used;           /**< used flag */
+#ifdef ARCH_CPU_64BIT
+    rt_uint32_t             resv;
+#endif /* ARCH_CPU_64BIT */
+    rt_size_t               next;             /**< next free item */
+    rt_size_t               prev;             /**< prev free item */
+#ifdef RT_USING_MEMTRACE
+#ifdef ARCH_CPU_64BIT
+    rt_uint8_t              thread[8];       /**< thread name */
+#else
+    rt_uint8_t              thread[4];       /**< thread name */
+#endif /* ARCH_CPU_64BIT */
+#endif /* RT_USING_MEMTRACE */
+};
+
+/**
+ * Base structure of small memory object
+ */
+
+struct rt_mem
+{
+    struct rt_object        parent;                 /**< inherit from rt_object */
+    struct rt_semaphore     heap_sem;
+    rt_uint8_t             *heap_ptr;               /**< pointer to the heap */
+    struct rt_mem_item     *heap_end;
+    struct rt_mem_item     *lfree;
+    rt_size_t               mem_size_aligned;       /**< aligned memory size */
+    rt_size_t               used_mem;
+    rt_size_t               max_mem;
+    rt_size_t               total;
+};
+#endif
 
 #ifdef RT_USING_MEMHEAP
 /**

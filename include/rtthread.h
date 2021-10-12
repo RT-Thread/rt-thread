@@ -283,6 +283,24 @@ void rt_free_sethook(void (*hook)(void *ptr));
 
 #endif
 
+#ifdef RT_USING_SMALL_MEM
+/**
+ * small memory object interface
+ */
+rt_err_t rt_mem_init(struct rt_mem *m,
+                     const char    *name,
+                     void          *begin_addr,
+                     rt_size_t      size);
+rt_err_t rt_mem_detach(struct rt_mem *m);
+void *rt_mem_alloc(struct rt_mem *m, rt_size_t size);
+void *rt_mem_realloc(struct rt_mem *m, void *rmem, rt_size_t newsize);
+void rt_mem_free(struct rt_mem *m, void *rmem);
+void rt_mem_info(struct rt_mem *m,
+               rt_uint32_t *total,
+               rt_uint32_t *used,
+               rt_uint32_t *max_used);
+#endif
+
 #ifdef RT_USING_MEMHEAP
 /**
  * memory heap object interface
