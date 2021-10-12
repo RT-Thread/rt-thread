@@ -552,6 +552,16 @@ void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         /* input setting: pull up. */
         GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
     }
+    else if (mode == PIN_MODE_INPUT_PULLDOWN)
+    {
+        /* input setting: pull up. */
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPD;
+    }
+    else if (mode == PIN_MODE_OUTPUT_OD)
+    {
+        /* input setting: pull up. */
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_OD;
+    }
     else
     {
         /* input setting:default. */

@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2015-07-29     Arda.Fu      first implementation
  */
+#include <stdint.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 
