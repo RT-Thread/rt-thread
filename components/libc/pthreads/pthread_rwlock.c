@@ -92,26 +92,27 @@ int pthread_rwlock_destroy (pthread_rwlock_t *rwlock)
     else
     {
         /* check whether busy */
-        result = rt_sem_trytake(&(rwlock->rw_condreaders.sem));
-        if (result == RT_EOK)
+        rt_enter_critical();
+        if (rt_list_isempty(&rwlock->rw_condreaders.sem.parent.suspend_thread))
         {
-            result = rt_sem_trytake(&(rwlock->rw_condwriters.sem));
-            if (result == RT_EOK)
+            if (rt_list_isempty(&rwlock->rw_condwriters.sem.parent.suspend_thread))
             {
-                rt_sem_release(&(rwlock->rw_condreaders.sem));
-                rt_sem_release(&(rwlock->rw_condwriters.sem));
-
+                rt_exit_critical();
                 pthread_cond_destroy(&rwlock->rw_condreaders);
                 pthread_cond_destroy(&rwlock->rw_condwriters);
+                result = RT_EOK;
             }
             else
             {
-                rt_sem_release(&(rwlock->rw_condreaders.sem));
+                rt_exit_critical();
                 result = EBUSY;
             }
         }
         else
+        {
+            rt_exit_critical();
             result = EBUSY;
+        }
     }
 
     pthread_mutex_unlock(&rwlock->rw_mutex);

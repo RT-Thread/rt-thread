@@ -200,7 +200,7 @@ int pthread_attr_setscope(pthread_attr_t *attr, int scope)
 }
 RTM_EXPORT(pthread_attr_setscope);
 
-int pthread_attr_getscope(pthread_attr_t const *attr)
+int pthread_attr_getscope(pthread_attr_t const *attr, int contentionscope)
 {
     return PTHREAD_SCOPE_SYSTEM;
 }

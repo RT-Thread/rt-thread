@@ -8,7 +8,6 @@
  */
 
 #include <string.h>
-#include <sys/signal.h>
 #include "mqueue.h"
 #include "pthread_internal.h"
 

@@ -9,6 +9,7 @@
  */
 
 #include <pthread.h>
+#include <rthw.h>
 #include "pthread_internal.h"
 
 int pthread_condattr_destroy(pthread_condattr_t *attr)
@@ -109,9 +110,17 @@ int pthread_cond_destroy(pthread_cond_t *cond)
     if (cond->attr == -1)
         return 0; /* which is not initialized */
 
-    result = rt_sem_trytake(&(cond->sem));
-    if (result != RT_EOK)
+    if (!rt_list_isempty(&cond->sem.parent.suspend_thread))
+    {
         return EBUSY;
+    }
+__retry:
+    result = rt_sem_trytake(&(cond->sem));
+    if (result == EBUSY)
+    {
+        pthread_cond_broadcast(cond);
+        goto __retry;
+    }
 
     /* clean condition */
     rt_memset(cond, 0, sizeof(pthread_cond_t));
@@ -161,6 +170,7 @@ RTM_EXPORT(pthread_cond_broadcast);
 
 int pthread_cond_signal(pthread_cond_t *cond)
 {
+    rt_base_t temp;
     rt_err_t result;
 
     if (cond == RT_NULL)
@@ -168,11 +178,21 @@ int pthread_cond_signal(pthread_cond_t *cond)
     if (cond->attr == -1)
         pthread_cond_init(cond, RT_NULL);
 
-    result = rt_sem_release(&(cond->sem));
-    if (result == RT_EOK)
+    /* disable interrupt */
+    temp = rt_hw_interrupt_disable();
+    if (rt_list_isempty(&cond->sem.parent.suspend_thread)) {
+        /* enable interrupt */
+        rt_hw_interrupt_enable(temp);
         return 0;
+    } else {
+        /* enable interrupt */
+        rt_hw_interrupt_enable(temp);
+        result = rt_sem_release(&(cond->sem));
+        if (result == RT_EOK)
+            return 0;
 
-    return 0;
+        return 0;
+    }
 }
 RTM_EXPORT(pthread_cond_signal);
 
@@ -207,9 +227,19 @@ int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
     rt_err_t result;
 
+__retry:
     result = _pthread_cond_timedwait(cond, mutex, RT_WAITING_FOREVER);
     if (result == RT_EOK)
+    {
         return 0;
+    }
+    else if (result == -RT_EINTR)
+    {
+        /* https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_cond_wait.html
+         * These functions shall not return an error code of [EINTR].
+         */
+        goto __retry;
+    }
 
     return EINVAL;
 }

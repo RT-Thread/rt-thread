@@ -116,10 +116,13 @@ int sem_destroy(sem_t *sem)
     result = rt_sem_trytake(sem->sem);
     if (result != RT_EOK)
     {
-        rt_sem_release(&posix_sem_lock);
-        rt_set_errno(EBUSY);
+        if (!rt_list_isempty(&sem->sem->parent.suspend_thread))
+        {
+            rt_sem_release(&posix_sem_lock);
+            rt_set_errno(EBUSY);
 
-        return -1;
+            return -1;
+        }
     }
 
     /* destroy an unamed posix semaphore */

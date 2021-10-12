@@ -14,6 +14,10 @@
 #include <rtthread.h>
 #include <pthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct posix_sem
 {
     /* reference count and unlinked */
@@ -39,5 +43,9 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout);
 int sem_trywait(sem_t *sem);
 int sem_unlink(const char *name);
 int sem_wait(sem_t *sem);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

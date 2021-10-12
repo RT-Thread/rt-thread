@@ -19,9 +19,16 @@
 
 #include <sys/types.h>
 #include <sys/time.h>
+
+/* errno for Keil MDK */
+#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
+#include <sys/errno.h>
+#include <sys/unistd.h>
+#else
 #include <unistd.h>
 #include <sys/errno.h>
 #include <fcntl.h>
+#endif
 
 #endif
 

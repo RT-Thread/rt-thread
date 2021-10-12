@@ -16,6 +16,8 @@
 #include <sys/time.h>
 #include "pthread_internal.h"
 
+#define CPP_DEFAULT_ID_OFFSET 1
+
 RT_DEFINE_SPINLOCK(pth_lock);
 _pthread_data_t *pth_table[PTHREAD_NUM_MAX] = {NULL};
 
@@ -47,7 +49,7 @@ pthread_t _pthread_data_get_pth(_pthread_data_t *ptd)
     }
     rt_hw_spin_unlock(&pth_lock);
 
-    return index;
+    return index + CPP_DEFAULT_ID_OFFSET;
 }
 
 pthread_t _pthread_data_create(void)
@@ -61,7 +63,7 @@ pthread_t _pthread_data_create(void)
 
     memset(ptd, 0x0, sizeof(_pthread_data_t));
     ptd->canceled = 0;
-    ptd->cancelstate = PTHREAD_CANCEL_DISABLE;
+    ptd->cancelstate = PTHREAD_CANCEL_ENABLE;
     ptd->canceltype = PTHREAD_CANCEL_DEFERRED;
     ptd->magic = PTHREAD_MAGIC;
 
@@ -166,7 +168,7 @@ INIT_COMPONENT_EXPORT(pthread_system_init);
 
 static void _pthread_destroy(_pthread_data_t *ptd)
 {
-    pthread_t pth = _pthread_data_get_pth(ptd);
+    pthread_t pth = _pthread_data_get_pth(ptd) - CPP_DEFAULT_ID_OFFSET;
     if (pth != PTHREAD_NUM_MAX)
     {
         _pthread_data_destroy(pth);

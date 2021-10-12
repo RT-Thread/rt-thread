@@ -159,7 +159,7 @@ int pthread_attr_getstack(pthread_attr_t const *attr,
 int pthread_attr_setguardsize(pthread_attr_t *attr, size_t guard_size);
 int pthread_attr_getguardsize(pthread_attr_t const *attr, size_t *guard_size);
 int pthread_attr_setscope(pthread_attr_t *attr, int scope);
-int pthread_attr_getscope(pthread_attr_t const *attr);
+int pthread_attr_getscope(pthread_attr_t const *attr, int contentionscope);
 int pthread_system_init(void);
 int pthread_create (pthread_t *tid, const pthread_attr_t *attr,
     void *(*start) (void *), void *arg);
@@ -261,7 +261,7 @@ int pthread_barrierattr_setpshared(pthread_barrierattr_t *attr, int pshared);
 int pthread_barrier_destroy(pthread_barrier_t *barrier);
 int pthread_barrier_init(pthread_barrier_t           *barrier,
                          const pthread_barrierattr_t *attr,
-                         unsigned                     count);
+                         unsigned int                 count);
 
 int pthread_barrier_wait(pthread_barrier_t *barrier);
 

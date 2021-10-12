@@ -203,9 +203,8 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex)
         if (mtype == PTHREAD_MUTEX_ERRORCHECK)
             return EPERM;
 
-        /* no thread waiting on this mutex */
-        if (mutex->lock.owner == RT_NULL)
-            return 0;
+        /* Unlocking a not owned recursive mutex return EPERM */
+        return EPERM;
     }
 
     result = rt_mutex_release(&(mutex->lock));
