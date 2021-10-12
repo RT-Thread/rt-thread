@@ -76,7 +76,7 @@ extern   "C"
 //#define OLED_PIN
 #ifdef OLED_PIN
 /* OLED POWER CONFIGURATION*/
-#define OLED_POWER_PIN     GET_PIN(A , 2)    //PA2   Power configuration High active
+//#define OLED_POWER_PIN     GET_PIN(A , 2)    //PA2   Power configuration High active
 /* OLED  CONFIGURATION  */
 #define OLED_SPI_PIN_RES   GET_PIN(A , 4)    //PA4   This is a reset signal input pad.
 #define OLED_SPI_PIN_DC    GET_PIN(A , 6)    //PA6   This is the Data/Command control pads that determines whether the data bits are data or a command.

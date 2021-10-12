@@ -57,6 +57,7 @@
 
 /* C++ features */
 
+#define RT_USING_CPLUSPLUS
 
 /* Command shell */
 
@@ -86,6 +87,7 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -143,8 +145,25 @@
 /* multimedia packages */
 
 
-/* U8G2: a monochrome graphic library */
+/* u8g2: a monochrome graphic library */
 
+#define U8G2_USE_HW_SPI
+#define U8G2_SPI_BUS_NAME "spi1"
+#define U8G2_SPI_DEVICE_NAME "spi10"
+#define U8G2_USING_HW_SPI_SSD1306
+#define PKG_USING_U8G2
+
+/* U8G2 Examples */
+
+#define PKG_USING_U8G2_LATEST_VERSION
+
+/* C     version: v1.x.x */
+
+/* C++   version: v2.x.x */
+
+/* C/C++ version: v3.x.x */
+
+#define PKG_U8G2_VER_NUM 0x99999
 
 /* tools packages */
 
@@ -186,6 +205,8 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_SPI
+#define BSP_USING_SPI1
 
 /* Board extended module Drivers */
 
