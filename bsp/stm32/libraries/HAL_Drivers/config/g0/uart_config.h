@@ -72,7 +72,7 @@ extern "C" {
         .Instance = USART2,                                         \
         .irq_type = USART2_LPUART2_IRQn ,                           \
     }
-#else             
+#else
 #define UART2_CONFIG                                                \
     {                                                               \
         .name = "uart2",                                            \
