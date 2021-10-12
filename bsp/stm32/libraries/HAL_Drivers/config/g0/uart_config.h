@@ -13,6 +13,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if defined(BSP_USING_LPUART1)
 #ifndef LPUART1_CONFIG
 #define LPUART1_CONFIG                                              \
@@ -61,12 +65,21 @@
 
 #if defined(BSP_USING_UART2)
 #ifndef UART2_CONFIG
+#if defined(STM32G0B1xx) || defined(STM32G0C1xx)
+#define UART2_CONFIG                                                \
+    {                                                               \
+        .name = "uart2",                                            \
+        .Instance = USART2,                                         \
+        .irq_type = USART2_LPUART2_IRQn ,                           \
+    }
+#else             
 #define UART2_CONFIG                                                \
     {                                                               \
         .name = "uart2",                                            \
         .Instance = USART2,                                         \
         .irq_type = USART2_IRQn,                                    \
     }
+#endif /* defined(STM32G0B1xx) || defined(STM32G0C1xx) */
 #endif /* UART2_CONFIG */
 #endif /* BSP_USING_UART2 */
 
@@ -84,19 +97,26 @@
 
 #if defined(BSP_USING_UART3)
 #ifndef UART3_CONFIG
-#ifndef SOC_SERIES_STM32G0
+#if defined(SOC_SERIES_STM32G0)
 #define UART3_CONFIG                                                \
     {                                                               \
         .name = "uart3",                                            \
         .Instance = USART3,                                         \
-        .irq_type = USART3_IRQn,                                    \
+        .irq_type = USART3_4_LPUART1_IRQn,                          \
+    }
+#elif defined(STM32G0B1xx) || defined(STM32G0C1xx)
+#define UART3_CONFIG                                                \
+    {                                                               \
+        .name = "uart3",                                            \
+        .Instance = USART3,                                         \
+        .irq_type = USART3_4_5_6_LPUART1_IRQn ,                     \
     }
 #else
 #define UART3_CONFIG                                                \
     {                                                               \
         .name = "uart3",                                            \
         .Instance = USART3,                                         \
-        .irq_type = USART3_4_LPUART1_IRQn,                          \
+        .irq_type = USART3_IRQn,                                    \
     }
 #endif /* SOC_SERIES_STM32G0 */
 #endif /* UART3_CONFIG */
@@ -116,19 +136,26 @@
 
 #if defined(BSP_USING_UART4)
 #ifndef UART4_CONFIG
-#ifndef SOC_SERIES_STM32G0
+#if defined(SOC_SERIES_STM32G0)
 #define UART4_CONFIG                                                \
     {                                                               \
         .name = "uart4",                                            \
         .Instance = UART4,                                          \
-        .irq_type = UART4_IRQn,                                     \
+        .irq_type = USART3_4_LPUART1_IRQn,                          \
+    }
+#elif defined(STM32G0B1xx) || defined(STM32G0C1xx)
+#define UART4_CONFIG                                                \
+    {                                                               \
+        .name = "uart4",                                            \
+        .Instance = USART4,                                         \
+        .irq_type = USART3_4_5_6_LPUART1_IRQn,                      \
     }
 #else
 #define UART4_CONFIG                                                \
     {                                                               \
         .name = "uart4",                                            \
         .Instance = USART4,                                         \
-        .irq_type = USART3_4_LPUART1_IRQn,                          \
+        .irq_type = UART4_IRQn,                                     \
     }
 #endif /* UART4_CONFIG */
 #endif /* SOC_SERIES_STM32G0 */
@@ -148,12 +175,21 @@
 
 #if defined(BSP_USING_UART5)
 #ifndef UART5_CONFIG
+#if defined(STM32G0B1xx) || defined(STM32G0C1xx)
+#define UART5_CONFIG                                                \
+    {                                                               \
+        .name = "uart5",                                            \
+        .Instance = UART5,                                          \
+        .irq_type = USART3_4_5_6_LPUART1_IRQn,                      \
+    }
+#else
 #define UART5_CONFIG                                                \
     {                                                               \
         .name = "uart5",                                            \
         .Instance = UART5,                                          \
         .irq_type = UART5_IRQn,                                     \
     }
+#endif /* defined(STM32G0B1xx) || defined(STM32G0C1xx) */
 #endif /* UART5_CONFIG */
 #endif /* BSP_USING_UART5 */
 
