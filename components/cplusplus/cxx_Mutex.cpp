@@ -7,7 +7,7 @@
  * Date           Author       Notes
  */
 
-#include "Mutex.h"
+#include "cxx_mutex.h"
 
 using namespace rtthread;
 
