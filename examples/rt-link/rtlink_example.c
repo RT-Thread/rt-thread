@@ -93,7 +93,7 @@ static void rt_link_speed_test(void *paremeter)
         }
         else
         {
-            log_w("send err %d", ret);
+            LOG_W("send err %d", ret);
         }
 
         tick2 = rt_tick_get();
