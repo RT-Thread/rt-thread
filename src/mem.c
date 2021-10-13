@@ -513,7 +513,7 @@ void rt_mem_free(void *rmem)
     RT_ASSERT(rt_object_is_systemobject(&m->parent));
     RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)m->heap_ptr &&
               (rt_uint8_t *)rmem < (rt_uint8_t *)m->heap_end);
-    RT_ASSERT(MEM_POOL(mem->next) == m);
+    RT_ASSERT(MEM_POOL(&m->heap_ptr[mem->next]) == m);
 
     /* protect the heap from concurrent access */
     rt_sem_take(&m->heap_sem, RT_WAITING_FOREVER);
