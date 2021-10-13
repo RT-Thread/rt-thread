@@ -500,6 +500,28 @@ rt_int32_t rt_strcmp(const char *cs, const char *ct)
 RTM_EXPORT(rt_strcmp);
 
 /**
+ * This function will return the length of a string, which terminate will
+ * null character.
+ *
+ * @param  s is the string
+ *
+ * @return The length of string.
+ */
+rt_size_t rt_strlen(const char *s)
+{
+    const char *sc;
+
+    for (sc = s; *sc != '\0'; ++sc) /* nothing */
+        ;
+
+    return sc - s;
+}
+RTM_EXPORT(rt_strlen);
+
+#endif /* RT_KSERVICE_USING_STDLIB */
+
+#if !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION)
+/**
  * The  strnlen()  function  returns the number of characters in the
  * string pointed to by s, excluding the terminating null byte ('\0'),
  * but at most maxlen.  In doing this, strnlen() looks only at the
@@ -522,27 +544,10 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
     return sc - s;
 }
 RTM_EXPORT(rt_strnlen);
-
-/**
- * This function will return the length of a string, which terminate will
- * null character.
- *
- * @param  s is the string
- *
- * @return The length of string.
- */
-rt_size_t rt_strlen(const char *s)
-{
-    const char *sc;
-
-    for (sc = s; *sc != '\0'; ++sc) /* nothing */
-        ;
-
-    return sc - s;
-}
-RTM_EXPORT(rt_strlen);
-
-#endif /* RT_KSERVICE_USING_STDLIB */
+#ifdef __ARMCC_VERSION
+size_t strnlen(const char *s, size_t maxlen) __attribute__((alias("rt_strnlen")));
+#endif /* __ARMCC_VERSION */
+#endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
 
 #ifdef RT_USING_HEAP
 /**
@@ -567,7 +572,7 @@ char *rt_strdup(const char *s)
 RTM_EXPORT(rt_strdup);
 #ifdef __ARMCC_VERSION
 char *strdup(const char *s) __attribute__((alias("rt_strdup")));
-#endif
+#endif /* __ARMCC_VERSION */
 #endif /* RT_USING_HEAP */
 
 /**

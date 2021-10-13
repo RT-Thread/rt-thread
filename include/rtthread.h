@@ -564,6 +564,7 @@ int __rt_ffs(int value);
 
 void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
+char *rt_strdup(const char *s);
 
 #ifndef RT_KSERVICE_USING_STDLIB
 void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
@@ -573,7 +574,6 @@ rt_int32_t rt_strcasecmp(const char *a, const char *b);
 char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
-rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 rt_size_t rt_strlen(const char *src);
 #else
 #include <string.h>
@@ -584,15 +584,20 @@ rt_size_t rt_strlen(const char *src);
 #define rt_strncpy(dest, src, n)    strncpy(dest, src, n)
 #define rt_strncmp(cs, ct, count)   strncmp(cs, ct, count)
 #define rt_strcmp(cs, ct)           strcmp(cs, ct)
-#define rt_strnlen(s, maxlen)       strnlen(s, maxlen)
 #define rt_strlen(src)              strlen(src)
 #endif /*RT_KSERVICE_USING_STDLIB*/
 
-char *rt_strdup(const char *s);
+#if !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION)
+rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
+#else
+#define rt_strnlen(s, maxlen)       strnlen(s, maxlen)
+#endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
+
 #ifdef __ARMCC_VERSION
-/* lack strdup interface */
+/* MDK doesn't have these APIs */
 char* strdup(const char* str);
-#endif
+size_t strnlen(const char *s, size_t maxlen);
+#endif /* __ARMCC_VERSION */
 
 void rt_show_version(void);
 
