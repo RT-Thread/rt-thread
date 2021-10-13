@@ -5,7 +5,6 @@ cwd     = GetCurrentDir()
 CPPPATH = [cwd, str(Dir('#'))]
 src     = Split("""
 main.c
-PrintUTF8.cpp
 """)
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)

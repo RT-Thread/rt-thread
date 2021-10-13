@@ -57,7 +57,6 @@
 
 /* C++ features */
 
-#define RT_USING_CPLUSPLUS
 
 /* Command shell */
 
@@ -94,6 +93,7 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
 #define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
@@ -150,23 +150,6 @@
 
 /* u8g2: a monochrome graphic library */
 
-#define U8G2_USE_HW_SPI
-#define U8G2_SPI_BUS_NAME "spi1"
-#define U8G2_SPI_DEVICE_NAME "spi10"
-#define U8G2_USING_HW_SPI_SSD1306
-#define PKG_USING_U8G2
-
-/* U8G2 Examples */
-
-#define PKG_USING_U8G2_LATEST_VERSION
-
-/* C     version: v1.x.x */
-
-/* C++   version: v2.x.x */
-
-/* C/C++ version: v3.x.x */
-
-#define PKG_U8G2_VER_NUM 0x99999
 
 /* tools packages */
 
@@ -197,11 +180,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_STM32F407ZG
-
-/* Onboard Peripheral Drivers */
-
-#define BSP_USING_USB_TO_USART
+#define SOC_STM32F407VE
 
 /* On-chip Peripheral Drivers */
 
