@@ -145,6 +145,9 @@
 /* multimedia packages */
 
 
+/* lvgl: powerful and easy-to-use embedded GUI library */
+
+
 /* u8g2: a monochrome graphic library */
 
 #define U8G2_USE_HW_SPI
