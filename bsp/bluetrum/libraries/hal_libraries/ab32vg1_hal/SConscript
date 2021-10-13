@@ -48,8 +48,8 @@ ASFLAGS          = ""
 CPPDEFINES       = []
 LOCAL_CPPDEFINES = []
 
-LIBS             = [] 
-LIBPATH          = []
+LIBS             = ['hal'] 
+LIBPATH          = [CWD]
 
 LINKFLAGS        = "" 
 
