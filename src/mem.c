@@ -152,6 +152,7 @@ rt_err_t rt_mem_init(struct rt_mem *m,
 
     RT_ASSERT(m != RT_NULL);
 
+    rt_memset(m, 0, sizeof(*m));
     /* alignment addr */
     if ((end_align > (2 * SIZEOF_STRUCT_MEM)) &&
         ((end_align - 2 * SIZEOF_STRUCT_MEM) >= begin_align))
