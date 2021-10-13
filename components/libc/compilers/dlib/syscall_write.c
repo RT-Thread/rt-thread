@@ -25,7 +25,7 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
 {
 #ifdef RT_USING_DFS
     int size;
-#endif
+#endif /* RT_USING_DFS */
 
     if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
     {
@@ -33,7 +33,7 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
         return _LLIO_ERROR;
 #else
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_DFS
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard output before initializing libc");
@@ -50,8 +50,8 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
         }
 
         return len;
-#endif
-#endif
+#endif /* RT_USING_DFS */
+#endif /* RT_USING_CONSOLE */
     }
     else if (handle == _LLIO_STDIN)
     {
@@ -63,6 +63,6 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
 #else
     size = write(handle, buf, len);
     return size;
-#endif
+#endif /* RT_USING_DFS */
 }
 
