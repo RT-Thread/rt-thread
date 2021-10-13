@@ -38,58 +38,6 @@
 #define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
 #define MEMITEM(ptr)            (struct rt_memheap_item*)((rt_uint8_t*)ptr - RT_MEMHEAP_SIZE)
 
-#ifdef RT_USING_MEMTRACE
-/**
- * @brief This function will set a new name for memheap.
- *
- * @param item is a pointer point to a memheap object.
- *
- * @param name is the new name to be set.
- */
-rt_inline void rt_memheap_setname(struct rt_memheap_item *item, const char *name)
-{
-    int index;
-    rt_uint8_t *ptr;
-
-    ptr = (rt_uint8_t *) & (item->next_free);
-    for (index = 0; index < sizeof(void *); index ++)
-    {
-        if (name[index] == '\0') break;
-        ptr[index] = name[index];
-    }
-    if (name[index] == '\0') ptr[index] = '\0';
-    else
-    {
-        ptr = (rt_uint8_t *) & (item->prev_free);
-        for (index = 0; index < sizeof(void *) && (index + sizeof(void *)) < RT_NAME_MAX; index ++)
-        {
-            if (name[sizeof(void *) + index] == '\0') break;
-            ptr[index] = name[sizeof(void *) + index];
-        }
-
-        if (name[sizeof(void *) + index] == '\0') ptr[index] = '\0';
-    }
-}
-
-/**
- * @brief This function will set a new name for memheap.
- *
- * @param ptr is a pointer point to a memheap object.
- *
- * @param name is the new name to be set.
- */
-void rt_mem_set_tag(void *ptr, const char *name)
-{
-    struct rt_memheap_item *item;
-
-    if (ptr && name)
-    {
-        item = MEMITEM(ptr);
-        rt_memheap_setname(item, name);
-    }
-}
-#endif /* RT_USING_MEMTRACE */
-
 /**
  * @brief   This function initializes a piece of memory called memheap.
  *
@@ -727,417 +675,93 @@ void rt_memheap_free(void *ptr)
 }
 RTM_EXPORT(rt_memheap_free);
 
-#ifdef RT_USING_FINSH
-static void _memheap_dump_tag(struct rt_memheap_item *item)
-{
-    rt_uint8_t name[2 * sizeof(void *)];
-    rt_uint8_t *ptr;
-
-    ptr = (rt_uint8_t *) & (item->next_free);
-    rt_memcpy(name, ptr, sizeof(void *));
-    ptr = (rt_uint8_t *) & (item->prev_free);
-    rt_memcpy(&name[sizeof(void *)], ptr, sizeof(void *));
-
-    rt_kprintf("%.*s", 2 * sizeof(void *), name);
-}
-/**
- * @brief   This function will print the memheap infomation.
- *
- * @param   heap is the pointer  to the memheap to get information.
- *
- * @return  0
- */
-int rt_memheap_dump(struct rt_memheap *heap)
-{
-    struct rt_memheap_item *item, *end;
-
-    if (heap == RT_NULL) return 0;
-    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
-
-    rt_kprintf("\n[%.*s] [0x%08x - 0x%08x]->\n", RT_NAME_MAX, heap->parent.name,
-               (rt_ubase_t)heap->start_addr, (rt_ubase_t)heap->start_addr + heap->pool_size);
-    rt_kprintf("------------------------------\n");
-
-    /* lock memheap */
-    rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
-    item = heap->block_list;
-
-    end = (struct rt_memheap_item *)((rt_uint8_t *)heap->start_addr + heap->pool_size - RT_MEMHEAP_SIZE);
-
-    /* for each memory block */
-    while ((rt_ubase_t)item < ((rt_ubase_t)end))
-    {
-        if (RT_MEMHEAP_IS_USED(item) && ((item->magic & RT_MEMHEAP_MASK) != RT_MEMHEAP_MAGIC))
-            rt_kprintf("0x%08x", item + 1);
-
-        if (item->magic == (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED))
-        {
-            rt_kprintf("0x%08x: %-8d ",     item + 1, MEMITEM_SIZE(item));
-            _memheap_dump_tag(item);
-            rt_kprintf("\n");
-        }
-        else
-        {
-            rt_kprintf("0x%08x: %-8d <F>\n", item + 1, MEMITEM_SIZE(item));
-        }
-
-        item = item->next;
-    }
-    rt_sem_release(&(heap->lock));
-
-    return 0;
-}
-
-int memheaptrace(void)
-{
-    int count = rt_object_get_length(RT_Object_Class_MemHeap);
-    struct rt_memheap **heaps;
-
-    if (count > 0)
-    {
-        int index;
-#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
-        extern int list_memheap(void);
-#endif
-
-        heaps = (struct rt_memheap **)rt_malloc(sizeof(struct rt_memheap *) * count);
-        if (heaps == RT_NULL) return 0;
-#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
-        list_memheap();
-#endif
-        rt_kprintf("memheap header size: %d\n", RT_MEMHEAP_SIZE);
-        count = rt_object_get_pointers(RT_Object_Class_MemHeap, (rt_object_t *)heaps, count);
-        for (index = 0; index < count; index++)
-        {
-            rt_memheap_dump(heaps[index]);
-        }
-
-        rt_free(heaps);
-    }
-
-    return 0;
-}
-MSH_CMD_EXPORT(memheaptrace, dump memory trace information);
-#endif /* RT_USING_FINSH */
-
-#ifdef RT_USING_MEMHEAP_AS_HEAP
-static struct rt_memheap _heap;
-
-/**
- * @brief   This function initializes a heap for system.
- *
- * @param   begin_addr is the start address of the memory.
- *
- * @param   end_addr is the end address of the memory.
- */
-void rt_system_heap_init(void *begin_addr, void *end_addr)
-{
-    RT_ASSERT((rt_size_t)end_addr > (rt_size_t)begin_addr);
-
-    rt_size_t begin_align = RT_ALIGN((rt_size_t)begin_addr, RT_ALIGN_SIZE);
-    rt_size_t end_align   = RT_ALIGN_DOWN((rt_size_t)end_addr, RT_ALIGN_SIZE);
-
-    /* initialize a default heap in the system */
-    rt_memheap_init(&_heap,
-                    "heap",
-                    (void *)begin_align,
-                    end_align - begin_align);
-}
-
-/**
- * @brief Allocate a block of memory with a minimum of 'size' bytes.
- *
- * @param size is the minimum size of the requested block in bytes.
- */
-void *rt_malloc(rt_size_t size)
-{
-    void *ptr;
-
-    /* zero size, return RT_NULL */
-    if (size == 0)
-        return RT_NULL;
-
-    /* try to allocate in system heap */
-    ptr = rt_memheap_alloc(&_heap, size);
-#ifdef RT_USING_MEMHEAP_AUTO_BINDING
-    if (ptr == RT_NULL)
-    {
-        struct rt_object *object;
-        struct rt_list_node *node;
-        struct rt_memheap *heap;
-        struct rt_object_information *information;
-
-        /* try to allocate on other memory heap */
-        information = rt_object_get_information(RT_Object_Class_MemHeap);
-        RT_ASSERT(information != RT_NULL);
-        for (node  = information->object_list.next;
-             node != &(information->object_list);
-             node  = node->next)
-        {
-            object = rt_list_entry(node, struct rt_object, list);
-            heap   = (struct rt_memheap *)object;
-
-            RT_ASSERT(heap);
-            RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
-
-            /* not allocate in the default system heap */
-            if (heap == &_heap)
-                continue;
-
-            ptr = rt_memheap_alloc(heap, size);
-            if (ptr != RT_NULL)
-                break;
-        }
-    }
-#endif /* RT_USING_MEMHEAP_AUTO_BINDING */
-
-#ifdef RT_USING_MEMTRACE
-    if (ptr == RT_NULL)
-    {
-        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("malloc[%d] => NULL", size));
-    }
-    else
-    {
-        struct rt_memheap_item *item = MEMITEM(ptr);
-        if (rt_thread_self())
-            rt_memheap_setname(item, rt_thread_self()->name);
-        else
-            rt_memheap_setname(item, "<null>");
-
-        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("malloc => 0x%08x : %d", ptr, size));
-    }
-#endif /* RT_USING_MEMTRACE */
-
-    return ptr;
-}
-RTM_EXPORT(rt_malloc);
-
-/**
- * @brief This function will release the previously allocated memory block by
- *        rt_malloc. The released memory block is taken back to system heap.
- *
- * @param rmem the address of memory which will be released.
- */
-void rt_free(void *rmem)
-{
-    rt_memheap_free(rmem);
-}
-RTM_EXPORT(rt_free);
-
-/**
- * @brief This function will change the size of previously allocated memory block.
- *
- * @param rmem is the pointer to memory allocated by rt_malloc.
- *
- * @param newsize is the required new size.
- *
- * @return the changed memory block address.
- */
-void *rt_realloc(void *rmem, rt_size_t newsize)
-{
-    void *new_ptr;
-    struct rt_memheap_item *header_ptr;
-
-    if (rmem == RT_NULL)
-        return rt_malloc(newsize);
-
-    if (newsize == 0)
-    {
-        rt_free(rmem);
-        return RT_NULL;
-    }
-
-    /* get old memory item */
-    header_ptr = (struct rt_memheap_item *)
-                 ((rt_uint8_t *)rmem - RT_MEMHEAP_SIZE);
-
-    new_ptr = rt_memheap_realloc(header_ptr->pool_ptr, rmem, newsize);
-    if (new_ptr == RT_NULL && newsize != 0)
-    {
-        /* allocate memory block from other memheap */
-        new_ptr = rt_malloc(newsize);
-        if (new_ptr != RT_NULL && rmem != RT_NULL)
-        {
-            rt_size_t oldsize;
-
-            /* get the size of old memory block */
-            oldsize = MEMITEM_SIZE(header_ptr);
-            if (newsize > oldsize)
-                rt_memcpy(new_ptr, rmem, oldsize);
-            else
-                rt_memcpy(new_ptr, rmem, newsize);
-
-            rt_free(rmem);
-        }
-    }
-
-#ifdef RT_USING_MEMTRACE
-    if (new_ptr == RT_NULL)
-    {
-        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("realloc[%d] => NULL", newsize));
-    }
-    else
-    {
-        struct rt_memheap_item *item = MEMITEM(new_ptr);
-        if (rt_thread_self())
-            rt_memheap_setname(item, rt_thread_self()->name);
-        else
-            rt_memheap_setname(item, "<null>");
-
-        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("realloc => 0x%08x : %d",
-                                        new_ptr, newsize));
-    }
-#endif /* RT_USING_MEMTRACE */
-
-    return new_ptr;
-}
-RTM_EXPORT(rt_realloc);
-
-/**
- * @brief  This function will contiguously allocate enough space for count objects
- *         that are size bytes of memory each and returns a pointer to the allocated
- *         memory.
- *
- * @note   The allocated memory is filled with bytes of value zero.
- *
- * @param  count is the number of objects to allocate.
- *
- * @param  size is the size of one object to allocate.
- *
- * @return pointer to allocated memory pointer.
- */
-void *rt_calloc(rt_size_t count, rt_size_t size)
-{
-    void *ptr;
-    rt_size_t total_size;
-
-    total_size = count * size;
-    ptr = rt_malloc(total_size);
-    if (ptr != RT_NULL)
-    {
-        /* clean memory */
-        rt_memset(ptr, 0, total_size);
-    }
-
-#ifdef RT_USING_MEMTRACE
-    if (ptr == RT_NULL)
-    {
-        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("calloc[%d x %d] => NULL",
-                                        count, size));
-    }
-    else
-    {
-        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("calloc => 0x%08x : %d",
-                                        ptr, count * size));
-    }
-#endif /* RT_USING_MEMTRACE */
-
-    return ptr;
-}
-RTM_EXPORT(rt_calloc);
-
 /**
 * @brief This function will caculate the total memory, the used memory, and
 *        the max used memory.
 *
+* @param heap is a pointer to the memheap object, which will reallocate
+*             memory from the block
+* 
 * @param total is a pointer to get the total size of the memory.
 *
 * @param used is a pointer to get the size of memory used.
 *
 * @param max_used is a pointer to get the maximum memory used.
 */
-void rt_memory_info(rt_uint32_t *total,
-                    rt_uint32_t *used,
-                    rt_uint32_t *max_used)
+void rt_memheap_info(struct rt_memheap *heap,
+                     rt_uint32_t *total,
+                     rt_uint32_t *used,
+                     rt_uint32_t *max_used)
 {
     if (total != RT_NULL)
-        *total = _heap.pool_size;
+        *total = heap->pool_size;
 
     if (used  != RT_NULL)
-        *used = _heap.pool_size - _heap.available_size;
+        *used = heap->pool_size - heap->available_size;
 
     if (max_used != RT_NULL)
-        *max_used = _heap.max_used_size;
+        *max_used = heap->max_used_size;
 }
-
-#endif /* RT_USING_MEMHEAP_AS_HEAP */
 
 #ifdef RT_USING_MEMTRACE
-
-/**
- * @brief  This function will print the used memheap infomation.
- *
- * @param  mh is a pointer of the memheap object.
- */
-void dump_used_memheap(struct rt_memheap *mh)
-{
-    struct rt_memheap_item *header_ptr;
-    rt_uint32_t block_size;
-
-    rt_kprintf("\nmemory heap address:\n");
-    rt_kprintf("heap_ptr: 0x%08x\n", mh->start_addr);
-    rt_kprintf("free    : 0x%08x\n", mh->available_size);
-    rt_kprintf("max_used: 0x%08x\n", mh->max_used_size);
-    rt_kprintf("size    : 0x%08x\n", mh->pool_size);
-
-    rt_kprintf("\n--memory used information --\n");
-
-    header_ptr = mh->block_list;
-    while (header_ptr->next != mh->block_list)
-    {
-        if ((header_ptr->magic & RT_MEMHEAP_MASK) != RT_MEMHEAP_MAGIC)
-        {
-            rt_kprintf("[0x%08x - incorrect magic: 0x%08x\n", header_ptr, header_ptr->magic);
-            break;
-        }
-
-        /* get current memory block size */
-        block_size = MEMITEM_SIZE(header_ptr);
-        if (block_size < 0)
-            break;
-
-        if (RT_MEMHEAP_IS_USED(header_ptr))
-        {
-            /* dump information */
-            rt_kprintf("[0x%08x - %d - %c%c%c%c] used\n", header_ptr, block_size,
-                       header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
-                       header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
-        }
-        else
-        {
-            /* dump information */
-            rt_kprintf("[0x%08x - %d - %c%c%c%c] free\n", header_ptr, block_size,
-                       header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
-                       header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
-        }
-
-        /* move to next used memory block */
-        header_ptr = header_ptr->next;
-    }
-}
-
-void memtrace_heap()
+int memheaptrace(int argc, char *argv[])
 {
     struct rt_object_information *info;
     struct rt_list_node *list;
     struct rt_memheap *mh;
     struct rt_list_node *node;
+    char *name;
 
+    name = argc > 1 ? argv[1] : RT_NULL;
     info = rt_object_get_information(RT_Object_Class_MemHeap);
     list = &info->object_list;
-
     for (node = list->next; node != list; node = node->next)
     {
+        struct rt_memheap_item *header_ptr;
+        rt_uint32_t block_size;
+
         mh = (struct rt_memheap *)rt_list_entry(node, struct rt_object, list);
-        dump_used_memheap(mh);
+        /* find the specified object */
+        if (name != RT_NULL && rt_strncmp(name, mh->parent.name, RT_NAME_MAX) != 0)
+            continue;
+        /* memheap dump */
+        rt_kprintf("\nmemory heap address:\n");
+        rt_kprintf("name    : %s\n", mh->parent.name);
+        rt_kprintf("heap_ptr: 0x%08x\n", mh->start_addr);
+        rt_kprintf("free    : 0x%08x\n", mh->available_size);
+        rt_kprintf("max_used: 0x%08x\n", mh->max_used_size);
+        rt_kprintf("size    : 0x%08x\n", mh->pool_size);
+        rt_kprintf("\n--memory used information --\n");
+        /* memheap item */
+        for (header_ptr = mh->block_list;
+             header_ptr->next != mh->block_list;
+             header_ptr = header_ptr->next)
+        {
+            if ((header_ptr->magic & RT_MEMHEAP_MASK) != RT_MEMHEAP_MAGIC)
+            {
+                rt_kprintf("[0x%08x - incorrect magic: 0x%08x\n",
+                    header_ptr, header_ptr->magic);
+                break;
+            }
+            /* get current memory block size */
+            block_size = MEMITEM_SIZE(header_ptr);
+            if (block_size < 0)
+                break;
+            rt_kprintf("[0x%08x - %d - %c%c%c%c] %s\n",
+                            header_ptr, block_size,
+                            header_ptr->owner_thread_name[0],
+                            header_ptr->owner_thread_name[1],
+                            header_ptr->owner_thread_name[2],
+                            header_ptr->owner_thread_name[3],
+                            RT_MEMHEAP_IS_USED(header_ptr) ? "used" : "free");
+        }
     }
+    return 0;
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-MSH_CMD_EXPORT(memtrace_heap, dump memory trace for heap);
+MSH_CMD_EXPORT(memheaptrace, dump memory trace for memheap);
 #endif /* RT_USING_FINSH */
-
 #endif /* RT_USING_MEMTRACE */
-
 #endif /* RT_USING_MEMHEAP */
