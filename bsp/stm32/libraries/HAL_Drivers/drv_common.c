@@ -150,12 +150,12 @@ void rt_hw_us_delay(rt_uint32_t us)
  */
 RT_WEAK void rt_hw_board_init()
 {
-#ifdef SCB_EnableICache
+#ifdef BSP_SCB_ENABLE_I_CACHE
     /* Enable I-Cache---------------------------------------------------------*/
     SCB_EnableICache();
 #endif
 
-#ifdef SCB_EnableDCache
+#ifdef BSP_SCB_ENABLE_D_CACHE
     /* Enable D-Cache---------------------------------------------------------*/
     SCB_EnableDCache();
 #endif
