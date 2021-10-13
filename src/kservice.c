@@ -1276,7 +1276,288 @@ RT_WEAK int rt_kprintf(const char *fmt, ...)
 RTM_EXPORT(rt_kprintf);
 #endif /* RT_USING_CONSOLE */
 
-#ifdef RT_USING_HEAP
+#if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
+#ifdef RT_USING_HOOK
+static void (*rt_malloc_hook)(void *ptr, rt_size_t size);
+static void (*rt_free_hook)(void *ptr);
+
+/**
+ * @addtogroup Hook
+ */
+
+/**@{*/
+
+/**
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is allocated from heap memory.
+ *
+ * @param hook the hook function.
+ */
+void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
+{
+    rt_malloc_hook = hook;
+}
+
+/**
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is released to heap memory.
+ *
+ * @param hook the hook function
+ */
+void rt_free_sethook(void (*hook)(void *ptr))
+{
+    rt_free_hook = hook;
+}
+
+/**@}*/
+
+#endif /* RT_USING_HOOK */
+
+#if defined(RT_USING_HEAP_ISR)
+volatile static rt_base_t _lock;
+#elif defined(RT_USING_MUTEX)
+static struct rt_mutex _lock;
+#endif
+
+rt_inline void _heap_lock_init(void)
+{
+#if defined(RT_USING_HEAP_ISR)
+    _lock = 0;
+#elif defined(RT_USING_MUTEX)
+    rt_mutex_init(&_lock, "heap", RT_IPC_FLAG_PRIO);
+#endif
+}
+
+rt_inline rt_base_t _heap_lock(void)
+{
+#if defined(RT_USING_HEAP_ISR)
+    return rt_hw_interrupt_disable();
+#elif defined(RT_USING_MUTEX)
+    if (rt_thread_self())
+        return rt_mutex_take(&_lock, RT_WAITING_FOREVER);
+    else
+        return RT_EOK;
+#else
+    rt_enter_critical();
+    return RT_EOK;
+#endif
+}
+
+rt_inline void _heap_unlock(rt_base_t level)
+{
+#if defined(RT_USING_HEAP_ISR)
+    rt_hw_interrupt_enable(level);
+#elif defined(RT_USING_MUTEX)
+    RT_ASSERT(level == RT_EOK);
+    if (rt_thread_self())
+        rt_mutex_release(&_lock);
+#else
+    rt_exit_critical();
+#endif
+}
+
+#if defined(RT_USING_SMALL_MEM_AS_HEAP)
+static struct rt_mem system_heap;
+#define _MEM_INIT               rt_mem_init
+#define _MEM_MALLOC             rt_mem_alloc
+#define _MEM_REALLOC            rt_mem_realloc
+#define _MEM_FREE(_obj, _ptr)   rt_mem_free(_ptr)
+#define _MEM_INFO               rt_mem_info
+#elif defined(RT_USING_MEMHEAP_AS_HEAP)
+static struct rt_memheap system_heap;
+#define _MEM_INIT               rt_memheap_init
+#define _MEM_MALLOC             rt_memheap_alloc
+#define _MEM_REALLOC            rt_memheap_realloc
+#define _MEM_FREE(_obj, _ptr)   rt_memheap_free(_ptr)
+#define _MEM_INFO               rt_memheap_info
+#elif defined(RT_USING_SLAB_AS_HEAP)
+static struct rt_slab system_heap;
+#define _MEM_INIT       rt_slab_init
+#define _MEM_MALLOC     rt_slab_alloc
+#define _MEM_REALLOC    rt_slab_realloc
+#define _MEM_FREE       rt_slab_free
+#define _MEM_INFO       rt_slab_info
+#else
+#define _MEM_INIT(...)      -RT_ERROR;
+#define _MEM_MALLOC(...)     RT_NULL
+#define _MEM_REALLOC(...)    RT_NULL
+#define _MEM_FREE(...)
+#define _MEM_INFO(...)
+#endif
+
+/**
+ * @brief This function will init system heap.
+ *
+ * @param begin_addr the beginning address of system page.
+ *
+ * @param end_addr the end address of system page.
+ */
+RT_WEAK void rt_system_heap_init(void *begin_addr, void *end_addr)
+{
+    rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
+    rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
+    rt_err_t err;
+
+    RT_ASSERT(end_align > begin_align);
+
+    /* Initialize system memory heap */
+    err = _MEM_INIT(&system_heap, "heap", begin_addr, end_align - begin_align);
+    RT_ASSERT(err == RT_EOK);
+    /* Initialize multi thread contention lock */
+    _heap_lock_init();
+}
+
+/**
+ * @brief Allocate a block of memory with a minimum of 'size' bytes.
+ *
+ * @param size is the minimum size of the requested block in bytes.
+ *
+ * @return the pointer to allocated memory or NULL if no free memory was found.
+ */
+RT_WEAK void *rt_malloc(rt_size_t size)
+{
+    rt_base_t level;
+    void *ptr;
+
+    /* Enter critical zone */
+    level = _heap_lock();
+    /* allocate memory block from system heap */
+    ptr = _MEM_MALLOC(&system_heap, size);
+#if defined(RT_USING_MEMHEAP_AS_HEAP) && defined(RT_USING_MEMHEAP_AUTO_BINDING)
+    if (ptr == RT_NULL)
+    {
+        struct rt_object *object;
+        struct rt_list_node *node;
+        struct rt_object_information *information;
+
+        /* try to allocate on other memory heap */
+        information = rt_object_get_information(rt_object_get_type(&system_heap.parent));
+        RT_ASSERT(information != RT_NULL);
+        for (node  = information->object_list.next;
+             node != &(information->object_list);
+             node  = node->next)
+        {
+            object = rt_list_entry(node, struct rt_object, list);
+            /* not allocate in the default system heap */
+            if (object == &system_heap.parent)
+                continue;
+
+            ptr = _MEM_MALLOC((void *)object, size);
+            if (ptr != RT_NULL)
+                break;
+        }
+    }
+#endif /* RT_USING_MEMHEAP_AUTO_BINDING */
+    /* Exit critical zone */
+    _heap_unlock(level);
+    /* call 'rt_malloc' hook */
+    RT_OBJECT_HOOK_CALL(rt_malloc_hook, (ptr, size));
+    return ptr;
+}
+RTM_EXPORT(rt_malloc);
+
+/**
+ * @brief This function will change the size of previously allocated memory block.
+ *
+ * @param rmem is the pointer to memory allocated by rt_malloc.
+ *
+ * @param newsize is the required new size.
+ *
+ * @return the changed memory block address.
+ */
+RT_WEAK void *rt_realloc(void *rmem, rt_size_t newsize)
+{
+    rt_base_t level;
+    void *nptr;
+
+    /* Enter critical zone */
+    level = _heap_lock();
+    /* Change the size of previously allocated memory block */
+    nptr = _MEM_REALLOC(&system_heap, rmem, newsize);
+    /* Exit critical zone */
+    _heap_unlock(level);
+    return nptr;
+}
+RTM_EXPORT(rt_realloc);
+
+/**
+ * @brief  This function will contiguously allocate enough space for count objects
+ *         that are size bytes of memory each and returns a pointer to the allocated
+ *         memory.
+ *
+ * @note   The allocated memory is filled with bytes of value zero.
+ *
+ * @param  count is the number of objects to allocate.
+ *
+ * @param  size is the size of one object to allocate.
+ *
+ * @return pointer to allocated memory / NULL pointer if there is an error.
+ */
+RT_WEAK void *rt_calloc(rt_size_t count, rt_size_t size)
+{
+    void *p;
+
+    /* allocate 'count' objects of size 'size' */
+    p = rt_malloc(count * size);
+    /* zero the memory */
+    if (p)
+    {
+        rt_memset(p, 0, count * size);
+    }
+    return p;
+}
+RTM_EXPORT(rt_calloc);
+
+/**
+ * @brief This function will release the previously allocated memory block by
+ *        rt_malloc. The released memory block is taken back to system heap.
+ *
+ * @param rmem the address of memory which will be released.
+ */
+RT_WEAK void rt_free(void *rmem)
+{
+    rt_base_t level;
+
+    /* call 'rt_free' hook */
+    RT_OBJECT_HOOK_CALL(rt_free_hook, (rmem));
+    /* Enter critical zone */
+    level = _heap_lock();
+    _MEM_FREE(&system_heap, rmem);
+    /* Exit critical zone */
+    _heap_unlock(level);
+}
+RTM_EXPORT(rt_free);
+
+/**
+* @brief This function will caculate the total memory, the used memory, and
+*        the max used memory.
+*
+* @param total is a pointer to get the total size of the memory.
+*
+* @param used is a pointer to get the size of memory used.
+*
+* @param max_used is a pointer to get the maximum memory used.
+*/
+RT_WEAK void rt_memory_info(rt_uint32_t *total,
+                            rt_uint32_t *used,
+                            rt_uint32_t *max_used)
+{
+    _MEM_INFO(&system_heap, total, used, max_used);
+}
+RTM_EXPORT(rt_memory_info);
+
+#if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
+void *rt_page_alloc(rt_size_t npages)
+{
+    rt_slab_page_alloc(&system_heap, npages);
+}
+
+void rt_page_free(void *addr, rt_size_t npages)
+{
+    rt_slab_page_free(&system_heap, addr, npages);
+}
+#endif
+
 /**
  * This function allocates a memory block, which address is aligned to the
  * specified alignment size.
