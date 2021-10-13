@@ -747,13 +747,20 @@ int memheaptrace(int argc, char *argv[])
             block_size = MEMITEM_SIZE(header_ptr);
             if (block_size < 0)
                 break;
-            rt_kprintf("[0x%08x - %d - %c%c%c%c] %s\n",
-                            header_ptr, block_size,
-                            header_ptr->owner_thread_name[0],
-                            header_ptr->owner_thread_name[1],
-                            header_ptr->owner_thread_name[2],
-                            header_ptr->owner_thread_name[3],
-                            RT_MEMHEAP_IS_USED(header_ptr) ? "used" : "free");
+
+            rt_kprintf("[0x%08x - ", header_ptr);
+            if (block_size < 1024)
+                rt_kprintf("%5d", block_size);
+            else if (block_size < 1024 * 1024)
+                rt_kprintf("%4dK", block_size / 1024);
+            else
+                rt_kprintf("%4dM", block_size / (1024 * 1024));
+            /* dump thread name */
+            rt_kprintf("] %c%c%c%c",
+                header_ptr->owner_thread_name[0],
+                header_ptr->owner_thread_name[1],
+                header_ptr->owner_thread_name[2],
+                header_ptr->owner_thread_name[3]);
         }
     }
     return 0;
