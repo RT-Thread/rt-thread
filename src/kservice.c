@@ -545,7 +545,7 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
 }
 RTM_EXPORT(rt_strnlen);
 #ifdef __ARMCC_VERSION
-size_t strnlen(const char *s, size_t maxlen) __attribute__((alias("rt_strnlen")));
+rt_size_t strnlen(const char *s, rt_size_t maxlen) __attribute__((alias("rt_strnlen")));
 #endif /* __ARMCC_VERSION */
 #endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
 
