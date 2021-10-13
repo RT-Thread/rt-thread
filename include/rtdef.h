@@ -903,6 +903,79 @@ struct rt_memheap
 };
 #endif
 
+#ifdef RT_USING_SLAB
+/**
+ * Base structure of slab memory object
+ */
+
+/*
+ * The IN-BAND zone header is placed at the beginning of each zone.
+ */
+struct rt_slab_zone
+{
+    rt_uint32_t  z_magic;                    /**< magic number for sanity check */
+    rt_uint32_t  z_nfree;                    /**< total free chunks / ualloc space in zone */
+    rt_uint32_t  z_nmax;                     /**< maximum free chunks */
+    struct rt_slab_zone *z_next;            /**< zoneary[] link if z_nfree non-zero */
+    rt_uint8_t  *z_baseptr;                 /**< pointer to start of chunk array */
+
+    rt_uint32_t  z_uindex;                   /**< current initial allocation index */
+    rt_uint32_t  z_chunksize;                /**< chunk size for validation */
+
+    rt_uint32_t  z_zoneindex;                /**< zone index */
+    struct rt_slab_chunk  *z_freechunk;     /**< free chunk list */
+};
+
+/*
+ * Chunk structure for free elements
+ */
+struct rt_slab_chunk
+{
+    struct rt_slab_chunk *c_next;
+};
+
+struct rt_slab_memusage
+{
+    rt_uint32_t     type: 2 ;               /**< page type */
+    rt_uint32_t     size: 30;               /**< pages allocated or offset from zone */
+};
+
+/* 
+ * slab page allocator
+ */
+struct rt_slab_page
+{
+    struct rt_slab_page *next;      /**< next valid page */
+    rt_size_t page;                 /**< number of page  */
+
+    /* dummy */
+    char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_slab_page *) + sizeof(rt_size_t))];
+};
+
+#define RT_SLAB_NZONES                  72              /* number of zones */
+
+/*
+ * slab object
+ */
+struct rt_slab
+{
+    struct rt_object            parent;                         /**< inherit from rt_object */
+    struct rt_semaphore         heap_sem;
+    rt_ubase_t                  heap_start;                     /**< memory start address */
+    rt_ubase_t                  heap_end;                       /**< memory end address */
+    struct rt_slab_memusage    *memusage;
+    struct rt_slab_zone        *zone_array[RT_SLAB_NZONES];     /* linked list of zones NFree > 0 */
+    struct rt_slab_zone        *zone_free;                      /* whole zones that have become free */
+    rt_uint32_t                 zone_free_cnt;
+    rt_uint32_t                 zone_size;
+    rt_uint32_t                 zone_limit;
+    rt_uint32_t                 zone_page_cnt;
+    struct rt_slab_page        *page_list;
+    rt_size_t                   used_mem;
+    rt_size_t                   max_mem;
+};
+#endif
+
 #ifdef RT_USING_MEMPOOL
 /**
  * Base structure of Memory pool object

@@ -313,6 +313,26 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap);
 void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize);
 void rt_memheap_free(void *ptr);
+void rt_memheap_info(struct rt_memheap *heap,
+                     rt_uint32_t *total,
+                     rt_uint32_t *used,
+                     rt_uint32_t *max_used);
+#endif
+
+#ifdef RT_USING_SLAB
+/**
+ * slab object interface
+ */
+rt_err_t rt_slab_init(struct rt_slab *slab, const char *name,
+    void *begin_addr, rt_size_t size);
+rt_err_t rt_slab_detach(struct rt_slab *slab);
+void *rt_slab_page_alloc(struct rt_slab *slab, rt_size_t npages);
+void rt_slab_page_free(struct rt_slab *slab, void *addr, rt_size_t npages);
+void *rt_slab_alloc(struct rt_slab *slab, rt_size_t size);
+void *rt_slab_realloc(struct rt_slab *slab, void *ptr, rt_size_t size);
+void rt_slab_free(struct rt_slab *slab, void *ptr);
+void rt_slab_info(struct rt_slab *slab, rt_uint32_t *total,
+    rt_uint32_t *used, rt_uint32_t *max_used);
 #endif
 
 /**@}*/

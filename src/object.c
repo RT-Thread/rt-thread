@@ -114,6 +114,9 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
     /* initialize object container - small memory */
     {RT_Object_Class_Mem, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Mem), sizeof(struct rt_mem)},
 #endif
+#ifdef RT_USING_SLAB
+    /* initialize object container - slab memory */
+    {RT_Object_Class_Slab, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Slab), sizeof(struct rt_slab)},
 #endif
 };
 
