@@ -91,6 +91,7 @@
 #define RT_DFS_ELM_DRIVES 2
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
 #define RT_DFS_ELM_REENTRANT
+#define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
@@ -156,6 +157,9 @@
 
 
 /* multimedia packages */
+
+
+/* U8G2: a monochrome graphic library */
 
 
 /* tools packages */
