@@ -1549,7 +1549,7 @@ RTM_EXPORT(rt_memory_info);
 #if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
 void *rt_page_alloc(rt_size_t npages)
 {
-    rt_slab_page_alloc(&system_heap, npages);
+    return rt_slab_page_alloc(&system_heap, npages);
 }
 
 void rt_page_free(void *addr, rt_size_t npages)
