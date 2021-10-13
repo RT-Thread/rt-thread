@@ -655,11 +655,23 @@ void rt_memheap_free(void *ptr)
 
     if (insert_header)
     {
+        struct rt_memheap_item *n = heap->free_list->next_free;;
+#if defined(RT_MEMHEAP_BSET_MODE)
+        rt_uint32_t blk_size = MEMITEM_SIZE(header_ptr);
+        for (;n != heap->free_list; n = n->next_free)
+        {
+            rt_uint32_t m = MEMITEM_SIZE(n);
+            if (blk_size <= m)
+            {
+                break;
+            }
+        }
+#endif
         /* no left merge, insert to free list */
-        header_ptr->next_free = heap->free_list->next_free;
-        header_ptr->prev_free = heap->free_list;
-        heap->free_list->next_free->prev_free = header_ptr;
-        heap->free_list->next_free            = header_ptr;
+        header_ptr->next_free = n;
+        header_ptr->prev_free = n->prev_free;
+        n->prev_free->next_free = header_ptr;
+        n->prev_free = header_ptr;
 
         RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
                      ("insert to free list: next_free 0x%08x, prev_free 0x%08x\n",
@@ -756,7 +768,7 @@ int memheaptrace(int argc, char *argv[])
             else
                 rt_kprintf("%4dM", block_size / (1024 * 1024));
             /* dump thread name */
-            rt_kprintf("] %c%c%c%c",
+            rt_kprintf("] %c%c%c%c\n",
                 header_ptr->owner_thread_name[0],
                 header_ptr->owner_thread_name[1],
                 header_ptr->owner_thread_name[2],
