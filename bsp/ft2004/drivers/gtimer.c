@@ -86,7 +86,7 @@ static inline rt_uint64_t __get_cntp_cval(void)
  *  This function assigns the given value to PL1 Physical Timer Control Register (CNTP_CTL).
  *  param value: CNTP_CTL Register value to set
  */
-static inline void __set_cntp_ctl(uint32_t value)
+static inline void __set_cntp_ctl(rt_uint32_t value)
 {
     __set_cp(15, 0, value, 14, 2, 1);
 }
