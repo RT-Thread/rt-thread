@@ -32,7 +32,7 @@ typedef struct
 {
     FSpi_Ctrl_t spi_ctrl;
     struct rt_spi_bus spi_bus;
-    uint16_t spi_cs_pin;
+    rt_uint16_t spi_cs_pin;
     spi_cs_handler_t spi_cs_handler;
 } ft2004_spi_class;
 
@@ -214,7 +214,7 @@ static const struct rt_spi_ops ft2004_spi_ops =
 /**
   * Attach the spi device to SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint16_t cs_gpio_pin)
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint16_t cs_gpio_pin)
 {
     rt_err_t result;
     struct rt_spi_device *spi_device;
