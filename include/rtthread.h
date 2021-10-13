@@ -294,7 +294,7 @@ rt_err_t rt_mem_init(struct rt_mem *m,
 rt_err_t rt_mem_detach(struct rt_mem *m);
 void *rt_mem_alloc(struct rt_mem *m, rt_size_t size);
 void *rt_mem_realloc(struct rt_mem *m, void *rmem, rt_size_t newsize);
-void rt_mem_free(struct rt_mem *m, void *rmem);
+void rt_mem_free(void *rmem);
 void rt_mem_info(struct rt_mem *m,
                rt_uint32_t *total,
                rt_uint32_t *used,

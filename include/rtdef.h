@@ -830,8 +830,7 @@ typedef struct rt_messagequeue *rt_mq_t;
   */
 struct rt_mem_item
 {
-    rt_uint16_t             magic;          /**< magic */
-    rt_uint16_t             used;           /**< used flag */
+    rt_ubase_t              pool_ptr;         /**< small memory object addr */
 #ifdef ARCH_CPU_64BIT
     rt_uint32_t             resv;
 #endif /* ARCH_CPU_64BIT */
@@ -858,9 +857,8 @@ struct rt_mem
     struct rt_mem_item     *heap_end;
     struct rt_mem_item     *lfree;
     rt_size_t               mem_size_aligned;       /**< aligned memory size */
-    rt_size_t               used_mem;
-    rt_size_t               max_mem;
-    rt_size_t               total;
+    rt_size_t               used_mem;               /**< size used */
+    rt_size_t               max_mem;                /**< maximum allocated size */
 };
 #endif
 
