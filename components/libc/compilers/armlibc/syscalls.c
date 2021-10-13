@@ -336,7 +336,13 @@ int fgetc(FILE *f)
 #ifdef RT_USING_POSIX
     char ch;
 
-    if (libc_stdio_read(&ch, 1) == 1)
+    if (libc_stdio_get_console() < 0)
+    {
+        LOG_W("Do not invoke standard output before initializing libc");
+        return -1;
+    }
+
+    if(read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
 #endif
 
