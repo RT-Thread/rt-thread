@@ -59,7 +59,7 @@ elif rtconfig.PLATFORM == 'mingw':
     DefaultEnvironment(tools=[])
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-        CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
         AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
     env['LIBS']=libs
