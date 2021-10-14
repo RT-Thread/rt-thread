@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_spi.h"
@@ -26,10 +26,10 @@
 * @{
 */
 
-/** @defgroup SPI 
+/** @defgroup SPI
 * @brief SPI driver modules
 * @{
-*/ 
+*/
 
 /** @defgroup SPI_Private_TypesDefinitions
 * @{
@@ -37,7 +37,7 @@
 
 /**
 * @}
-*/ 
+*/
 
 
 /** @defgroup SPI_Private_Defines
@@ -96,7 +96,7 @@ void SPI_DeInit(SPI_TypeDef* SPIx)
 {
   /* Check the parameters */
   assert_param(IS_SPI_ALL_PERIPH(SPIx));
-  
+
   switch (*(uint32_t*)&SPIx)
   {
   case SPI1_BASE:
@@ -111,7 +111,7 @@ void SPI_DeInit(SPI_TypeDef* SPIx)
 }
 
 /**
-* @brief  Initializes the SPIx peripheral according to the specified 
+* @brief  Initializes the SPIx peripheral according to the specified
 *   parameters in the SPI_InitStruct.
 * @param SPIx: where x can be 0, 1 to select the SPI peripheral.
 * @param SPI_InitStruct: pointer to a SPI_InitTypeDef structure that
@@ -122,10 +122,10 @@ void SPI_DeInit(SPI_TypeDef* SPIx)
 void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
 {
   uint32_t tmpreg = 0;
-  
+
   /* check the parameters */
-  assert_param(IS_SPI_ALL_PERIPH(SPIx));   
-  
+  assert_param(IS_SPI_ALL_PERIPH(SPIx));
+
   /* Check the SPI parameters */
   assert_param(IS_SPI_DIRECTION_MODE(SPI_InitStruct->SPI_Direction));
   assert_param(IS_SPI_MODE(SPI_InitStruct->SPI_Mode));
@@ -147,12 +147,12 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
   /* Set dat_sel bits according to SPI_DataSize value */
   /* Set csn and csn_sel bits according to SPI_NSS value */
   /* Set mm bit according to SPI_Mode value */
-  tmpreg |= (uint32_t)((uint32_t) SPI_InitStruct->SPI_DataSize   |  SPI_InitStruct->SPI_NSS | 
+  tmpreg |= (uint32_t)((uint32_t) SPI_InitStruct->SPI_DataSize   |  SPI_InitStruct->SPI_NSS |
                        SPI_InitStruct->SPI_Mode  );
   /* Write to SPIx GCTL */
-//	if(SPI_InitStruct->SPI_DataSize==SPI_DataSize_8b) tmpreg |= 0x1000;
+//  if(SPI_InitStruct->SPI_DataSize==SPI_DataSize_8b) tmpreg |= 0x1000;
   SPIx->GCTL = tmpreg;
-  /*---------------------------- SPIx CCTL Configuration ------------------------*/	
+  /*---------------------------- SPIx CCTL Configuration ------------------------*/
   tmpreg = SPIx->CCTL;
   /* Clear spilen, lsbfe, CPOL, CPHA bits */
   tmpreg &= CCTL_CLEAR_Mask;
@@ -160,21 +160,21 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
   /* Set LSBFirst bit according to SPI_FirstBit value */
   /* Set CPOL bit according to SPI_CPOL value */
   /* Set CPHA bit according to SPI_CPHA value */
-  tmpreg |= (uint16_t)((uint16_t)  SPI_InitStruct->SPI_DataWidth | SPI_InitStruct->SPI_FirstBit   |  SPI_InitStruct->SPI_CPOL | 
+  tmpreg |= (uint16_t)((uint16_t)  SPI_InitStruct->SPI_DataWidth | SPI_InitStruct->SPI_FirstBit   |  SPI_InitStruct->SPI_CPOL |
                        SPI_InitStruct->SPI_CPHA  );
-  
+
   /* Write to SPIx CCTL */
   SPIx->CCTL = tmpreg;
-  
-  /*---------------------------- SPIx SPBRG Configuration ------------------------*/	
+
+  /*---------------------------- SPIx SPBRG Configuration ------------------------*/
   tmpreg = SPIx->SPBRG;
   /* Clear spbrg bits */
-  tmpreg &= (uint16_t)SPBRG_CLEAR_Mask;	
+  tmpreg &= (uint16_t)SPBRG_CLEAR_Mask;
   /* Set BR bits according to SPI_BaudRatePrescaler value */
   tmpreg |= (uint16_t) SPI_InitStruct->SPI_BaudRatePrescaler;
   /* Write to SPIx SPBRG */
   SPIx->SPBRG = tmpreg;
-  
+
 }
 
 /**
@@ -186,7 +186,7 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
 void SPI_StructInit(SPI_InitTypeDef* SPI_InitStruct)
 {
   /*--------------- Reset SPI init structure parameters values -----------------*/
-  
+
   /* initialize the SPI_Mode member */
   SPI_InitStruct->SPI_Mode = SPI_Mode_Slave;
   /* initialize the SPI_DataSize member */
@@ -203,14 +203,14 @@ void SPI_StructInit(SPI_InitTypeDef* SPI_InitStruct)
   SPI_InitStruct->SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
   /* Initialize the SPI_FirstBit member */
   SPI_InitStruct->SPI_FirstBit = SPI_FirstBit_MSB;
-  
+
 }
 
 
 /**
 * @brief  Enables or disables the specified SPI peripheral.
 * @param SPIx: where x can be 0, 1 to select the SPI peripheral.
-* @param NewState: new state of the SPIx peripheral. 
+* @param NewState: new state of the SPIx peripheral.
 *   This parameter can be: ENABLE or DISABLE.
 * @retval : None
 */
@@ -235,17 +235,17 @@ void SPI_Cmd(SPI_TypeDef* SPIx, FunctionalState NewState)
 /**
 * @brief  Enables or disables the specified SPIinterrupts.
 * @param SPIx: where x can be :
-*   0, 1  in SPI mode 
-* @param SPI_IT: specifies the SPI interrupt source to be 
-*   enabled or disabled. 
+*   0, 1  in SPI mode
+* @param SPI_IT: specifies the SPI interrupt source to be
+*   enabled or disabled.
 *   This parameter can be one of the following values:
 * @arg SPI_IT_TX: Tx buffer empty interrupt mask
 * @arg SPI_IT_RX: Rx buffer  interrupt mask
 * @arg SPI_IT_UNDERRUN: under Error interrupt mask in slave mode
-* @arg SPI_IT_RXOVER: RX OVER Error interrupt mask 
-* @arg SPI_IT_RXMATCH: spectials rx data numbers  interrupt mask 
-* @arg SPI_IT_RXFULL: Rx buffer full interrupt mask 
-* @arg SPI_IT_TXEPT: Tx buffer empty interrupt mask 
+* @arg SPI_IT_RXOVER: RX OVER Error interrupt mask
+* @arg SPI_IT_RXMATCH: spectials rx data numbers  interrupt mask
+* @arg SPI_IT_RXFULL: Rx buffer full interrupt mask
+* @arg SPI_IT_TXEPT: Tx buffer empty interrupt mask
 * @param NewState: new state of the specified SPI interrupt.
 *   This parameter can be: ENABLE or DISABLE.
 * @retval : None
@@ -256,7 +256,7 @@ void SPI_ITConfig(SPI_TypeDef* SPIx, uint8_t SPI_IT, FunctionalState NewState)
   assert_param(IS_SPI_ALL_PERIPH(SPIx));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
   assert_param(IS_SPI_CONFIG_IT(SPI_IT));
-  
+
   if (NewState != DISABLE)
   {
     /* Enable the selected SPI Global interrupt */
@@ -271,18 +271,18 @@ void SPI_ITConfig(SPI_TypeDef* SPIx, uint8_t SPI_IT, FunctionalState NewState)
     /* Disable the selected SPI Global interrupt */
     SPIx->GCTL &= (uint16_t)~SPI_INT_EN;
   }
-  
+
 }
 
 /**
 * @brief  Enables or disables the SPIx DMA interface.
 * @param SPIx: where x can be :
-*   0, 1 in SPI mode 
-* @param SPI_DMAReq: specifies the SPI DMA transfer request 
-*   to be enabled or disabled. 
+*   0, 1 in SPI mode
+* @param SPI_DMAReq: specifies the SPI DMA transfer request
+*   to be enabled or disabled.
 *   This parameter can be any combination of the following values:
 * @arg SPI_DMAReq_EN: DMA transfer request enable
-* @param NewState: new state of the selected SPI DMA transfer 
+* @param NewState: new state of the selected SPI DMA transfer
 *   request.
 *   This parameter can be: ENABLE or DISABLE.
 * @retval : None
@@ -308,12 +308,12 @@ void SPI_DMACmd(SPI_TypeDef* SPIx, uint16_t SPI_DMAReq, FunctionalState NewState
 /**
 * @brief  configure tn Fifo trigger level bit.
 * @param SPIx: where x can be :
-*   0, 1 in SPI mode 
-* @param SPI_FifoTriggerValue: specifies the Fifo trigger level 
+*   0, 1 in SPI mode
+* @param SPI_FifoTriggerValue: specifies the Fifo trigger level
 *   This parameter can be any combination of the following values:
 * SPI_TXTLF : SPI TX FIFO Trigger value set
 * SPI_RXTLF : SPI RX FIFO Trigger value set
-* @param NewState: new state of the selected SPI DMA transfer 
+* @param NewState: new state of the selected SPI DMA transfer
 *   request.
 *   This parameter can be: ENABLE or DISABLE.
 * @retval : None
@@ -324,7 +324,7 @@ void SPI_FifoTrigger(SPI_TypeDef* SPIx, uint16_t SPI_FifoTriggerValue, Functiona
   assert_param(IS_SPI_ALL_PERIPH(SPIx));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
   assert_param(IS_SPI_FIFOTRIGGER(SPI_FifoTriggerValue));
-  
+
   if (NewState != DISABLE)
   {
     /* Enable the selected SPI DMA requests */
@@ -340,7 +340,7 @@ void SPI_FifoTrigger(SPI_TypeDef* SPIx, uint16_t SPI_FifoTriggerValue, Functiona
 /**
 * @brief  Transmits a Data through the SPIx peripheral.
 * @param SPIx: where x can be :
-*   0, 1 in SPI mode 
+*   0, 1 in SPI mode
 * @param Data : Data to be transmitted..
 * @retval : None
 */
@@ -348,40 +348,40 @@ void SPI_SendData(SPI_TypeDef* SPIx, uint16_t Data)
 {
   /* Check the parameters */
   assert_param(IS_SPI_ALL_PERIPH(SPIx));
-  
+
   /* Write in the TXREG register the data to be sent */
   SPIx->TXREG = Data;
 }
 
 /**
-* @brief  Returns the most recent received data by the SPIx peripheral. 
+* @brief  Returns the most recent received data by the SPIx peripheral.
 * @param SPIx: where x can be :
-*   0, 1 in SPI mode 
+*   0, 1 in SPI mode
 * @retval : The value of the received data.
 */
 uint16_t SPI_ReceiveData(SPI_TypeDef* SPIx)
 {
   /* Check the parameters */
   assert_param(IS_SPI_ALL_PERIPH(SPIx));
-  
+
   /* Return the data in the RXREG register */
   return SPIx->RXREG;
 }
 
 /**
-* @brief Slave chip csn single by selected 
+* @brief Slave chip csn single by selected
 * @param SPIx: where x can be 0, 1 to select the SPI peripheral.
 * @param SPI_CSInternalSelected: specifies the SPI CS internal selected.
-*   This parameter can be one of the following values: 
-* @arg SPI_CS_BIT0: cs bit 0 selected  
-* @arg SPI_CS_BIT1: cs bit 1 selected  
-* @arg SPI_CS_BIT2: cs bit 2 selected  
-* @arg SPI_CS_BIT3: cs bit 3 selected  
-* @arg SPI_CS_BIT4: cs bit 4 selected  
-* @arg SPI_CS_BIT5: cs bit 5 selected  
-* @arg SPI_CS_BIT6: cs bit 6 selected  
-* @arg SPI_CS_BIT7: cs bit 7 selected 
-* @param NewState: new state of the selected SPI CS pin 
+*   This parameter can be one of the following values:
+* @arg SPI_CS_BIT0: cs bit 0 selected
+* @arg SPI_CS_BIT1: cs bit 1 selected
+* @arg SPI_CS_BIT2: cs bit 2 selected
+* @arg SPI_CS_BIT3: cs bit 3 selected
+* @arg SPI_CS_BIT4: cs bit 4 selected
+* @arg SPI_CS_BIT5: cs bit 5 selected
+* @arg SPI_CS_BIT6: cs bit 6 selected
+* @arg SPI_CS_BIT7: cs bit 7 selected
+* @param NewState: new state of the selected SPI CS pin
 *   request.
 *   This parameter can be: ENABLE or DISABLE.
 * @retval : None
@@ -392,8 +392,8 @@ void SPI_CSInternalSelected(SPI_TypeDef* SPIx, uint16_t SPI_CSInternalSelected,F
   assert_param(IS_SPI_ALL_PERIPH(SPIx));
   assert_param(IS_SPI_CS(SPI_CSInternalSelected));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-  
-  
+
+
   if (NewState != DISABLE)
   {
     /* selected cs pin according SCSR Value */
@@ -434,7 +434,7 @@ void SPI_DataSizeConfig(SPI_TypeDef* SPIx, uint16_t SPI_DataSize)
 *   for the specified SPI.
 * @param SPIx: where x can be 0, 1 to select the SPI peripheral.
 * @param SPI_Direction: specifies the data transfer direction in
-*   bi-directional mode. 
+*   bi-directional mode.
 *   This parameter can be one of the following values:
 * @arg SPI_Direction_Tx: Selects Tx transmission direction
 * @arg SPI_Direction_Rx: Selects Rx receive direction
@@ -447,7 +447,7 @@ void SPI_BiDirectionalLineConfig(SPI_TypeDef* SPIx, uint16_t SPI_Direction)
   /* Check the parameters */
   assert_param(IS_SPI_ALL_PERIPH(SPIx));
   assert_param(IS_SPI_DIRECTION(SPI_Direction));
-  
+
   /* Set the Tx  only mode */
   if(SPI_Direction==SPI_Direction_Tx)
   {
@@ -473,8 +473,8 @@ void SPI_BiDirectionalLineConfig(SPI_TypeDef* SPIx, uint16_t SPI_Direction)
 /**
 * @brief  Checks whether the specified SPI flag is set or not.
 * @param SPIx: where x can be :
-*   0, 1 in SPI mode 
-* @param SPI_FLAG: specifies the SPI flag to check. 
+*   0, 1 in SPI mode
+* @param SPI_FLAG: specifies the SPI flag to check.
 *   This parameter can be one of the following values:
 * @arg SPI_FLAG_RXAVL: Rx buffer has bytes flag
 * @arg SPI_FLAG_TXEPT:  Tx  buffer  and tx shifter empty flag
@@ -504,22 +504,22 @@ FlagStatus SPI_GetFlagStatus(SPI_TypeDef* SPIx, uint16_t SPI_FLAG)
 /**
 * @brief  Checks whether the specified SPI interrupt has occurred or not.
 * @param SPIx: where x can be :
-*  0, 1 in SPI mode 
-* @param SPI_IT: specifies the SPI interrupt source to check. 
+*  0, 1 in SPI mode
+* @param SPI_IT: specifies the SPI interrupt source to check.
 *   This parameter can be one of the following values:
 * @arg SPI_IT_TX: Tx buffer empty interrupt
 * @arg SPI_IT_RX: Rx buffer  interrupt
 * @arg SPI_IT_UNDERRUN: under Error interrupt in slave mode
 * @arg SPI_IT_RXOVER: RX OVER Error interrupt
-* @arg SPI_IT_RXMATCH: spectials rx data numbers  interrupt 
+* @arg SPI_IT_RXMATCH: spectials rx data numbers  interrupt
 * @arg SPI_IT_RXFULL: Rx buffer full interrupt
-* @arg SPI_IT_TXEPT: Tx buffer  and tx shifter empty interrupt  
+* @arg SPI_IT_TXEPT: Tx buffer  and tx shifter empty interrupt
 * @retval : The new state of SPI_IT (SET or RESET).
 */
 ITStatus SPI_GetITStatus(SPI_TypeDef* SPIx, uint8_t SPI_IT)
 {
   ITStatus bitstatus = RESET;
-  
+
   /* Check the parameters */
   assert_param(IS_SPI_ALL_PERIPH(SPIx));
   assert_param(IS_SPI_GET_IT(SPI_IT));
@@ -541,25 +541,25 @@ ITStatus SPI_GetITStatus(SPI_TypeDef* SPIx, uint8_t SPI_IT)
 /**
 * @brief  Clears the SPIx  Error  interrupt pending bit.
 * @param SPIx: where x can be :
-*   0, 1 in SPI mode 
+*   0, 1 in SPI mode
 * @param SPI_IT: specifies the SPI interrupt pending bit to clear.
 * @arg SPI_IT_TX: Tx buffer empty interrupt
 * @arg SPI_IT_RX: Rx buffer  interrupt
 * @arg SPI_IT_UNDERRUN: under Error interrupt in slave mode
 * @arg SPI_IT_RXOVER: RX OVER Error interrupt
-* @arg SPI_IT_RXMATCH: spectials rx data numbers  interrupt 
+* @arg SPI_IT_RXMATCH: spectials rx data numbers  interrupt
 * @arg SPI_IT_RXFULL: Rx buffer full interrupt
-* @arg SPI_IT_TXEPT: Tx buffer  and tx shifter empty interrupt  
-*   This function clears only ERR intetrrupt pending bit.   
+* @arg SPI_IT_TXEPT: Tx buffer  and tx shifter empty interrupt
+*   This function clears only ERR intetrrupt pending bit.
 * @retval : None
 */
 void SPI_ClearITPendingBit(SPI_TypeDef* SPIx, uint8_t SPI_IT)
 {
-  
+
   /* Check the parameters */
   assert_param(IS_SPI_ALL_PERIPH(SPIx));
   assert_param(IS_SPI_CLEAR_IT(SPI_IT));
-  
+
   /* Clear the selected SPI IT INTERRUPT */
   SPIx->INTCLR |= (uint16_t)SPI_IT;
 }
@@ -567,10 +567,10 @@ void SPI_ClearITPendingBit(SPI_TypeDef* SPIx, uint8_t SPI_IT)
 
 /**
 * @brief  SPI Hole a count Received bytes in next receive process.
-* @param SPIx: where x can be 0, 1 in SPI mode 
+* @param SPIx: where x can be 0, 1 in SPI mode
 * @param Number: specifies the SPI receive Number.
-*   This parament can be 1-65535.  
-*   This function can use only in SPI master single receive mode. 
+*   This parament can be 1-65535.
+*   This function can use only in SPI master single receive mode.
 * @retval : None
 */
 void SPI_RxBytes(SPI_TypeDef* SPIx, uint16_t Number)
@@ -583,12 +583,12 @@ void SPI_RxBytes(SPI_TypeDef* SPIx, uint16_t Number)
 
 /**
 * @brief  slave mode tx data transmit phase adjust set.
-* @param SPIx: where x can be 0, 1 in SPI mode 
+* @param SPIx: where x can be 0, 1 in SPI mode
 * @param AdjustValue: specifies the SPI receive Number.
-*   This parament can be : 
+*   This parament can be :
 *   SPI_SlaveAdjust_FAST:  fast speed use
 *   SPI_SlaveAdjust_LOW:   low speed use
-*   This function can use only in SPI master single receive mode. 
+*   This function can use only in SPI master single receive mode.
 * @retval : None
 */
 void SPI_SlaveAdjust(SPI_TypeDef* SPIx, uint16_t AdjustValue)
@@ -603,14 +603,14 @@ void SPI_SlaveAdjust(SPI_TypeDef* SPIx, uint16_t AdjustValue)
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /*-------------------------(C) COPYRIGHT 2016 HOLOCENE ----------------------*/

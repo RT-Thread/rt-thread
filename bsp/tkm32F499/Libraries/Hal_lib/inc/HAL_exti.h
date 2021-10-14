@@ -4,7 +4,7 @@
 * @author  IC Applications Department
 * @version  V0.8
 * @date  2019_08_02
-* @brief  This file contains all the functions prototypes for the EXTI 
+* @brief  This file contains all the functions prototypes for the EXTI
 *         firmware library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_EXTI_H
@@ -38,8 +38,8 @@
 * @{
 */
 
-/** 
-* @brief  EXTI mode enumeration  
+/**
+* @brief  EXTI mode enumeration
 */
 
 typedef enum
@@ -50,22 +50,22 @@ typedef enum
 
 #define IS_EXTI_MODE(MODE) (((MODE) == EXTI_Mode_Interrupt) || ((MODE) == EXTI_Mode_Event))
 
-/** 
-* @brief  EXTI Trigger enumeration  
+/**
+* @brief  EXTI Trigger enumeration
 */
 
 typedef enum
 {
   EXTI_Trigger_Rising = 0x08,
-  EXTI_Trigger_Falling = 0x0C,  
+  EXTI_Trigger_Falling = 0x0C,
   EXTI_Trigger_Rising_Falling = 0x10
 }EXTITrigger_TypeDef;
 
 #define IS_EXTI_TRIGGER(TRIGGER) (((TRIGGER) == EXTI_Trigger_Rising) || \
 ((TRIGGER) == EXTI_Trigger_Falling) || \
   ((TRIGGER) == EXTI_Trigger_Rising_Falling))
-/** 
-* @brief  EXTI Init Structure definition  
+/**
+* @brief  EXTI Init Structure definition
 */
 
 typedef struct
@@ -84,7 +84,7 @@ typedef struct
 * @{
 */
 
-/** @defgroup EXTI_Lines 
+/** @defgroup EXTI_Lines
 * @{
 */
 
@@ -106,10 +106,10 @@ typedef struct
 #define EXTI_Line15      ((uint32_t)0x08000)  /* External interrupt line 15 */
 #define EXTI_Line16      ((uint32_t)0x10000)  /* External interrupt line 16
 Connected to the PVD Output */
-#define EXTI_Line17      ((uint32_t)0x20000)  /* External interrupt line 17 
+#define EXTI_Line17      ((uint32_t)0x20000)  /* External interrupt line 17
 Connected to the RTC Alarm event */
-#define EXTI_Line18      ((uint32_t)0x40000)  /* External interrupt line 18 
-Connected to the USB Wakeup from 
+#define EXTI_Line18      ((uint32_t)0x40000)  /* External interrupt line 18
+Connected to the USB Wakeup from
 suspend event */
 
 #define IS_EXTI_LINE(LINE) ((((LINE) & (uint32_t)0xFFF80000) == 0x00) && ((LINE) != (uint16_t)0x00))

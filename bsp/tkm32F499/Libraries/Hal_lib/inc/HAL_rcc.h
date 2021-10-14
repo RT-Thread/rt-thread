@@ -4,7 +4,7 @@
 * @author  IC Applications Department
 * @version  V0.8
 * @date  2019_08_02
-* @brief  This file contains all the functions prototypes for the RCC firmware 
+* @brief  This file contains all the functions prototypes for the RCC firmware
 *         library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_RCC_H
@@ -55,7 +55,7 @@ typedef struct
 * @{
 */
 
-/** @defgroup HSE_configuration 
+/** @defgroup HSE_configuration
 * @{
 */
 
@@ -67,9 +67,9 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup PLL_entry_clock_source 
+/** @defgroup PLL_entry_clock_source
 * @{
 */
 
@@ -81,10 +81,10 @@ typedef struct
   ((SOURCE) == RCC_PLLSource_HSE_Div2))
 /**
 * @}
-*/ 
+*/
 
 
-/** @defgroup System_clock_source 
+/** @defgroup System_clock_source
 * @{
 */
 
@@ -98,7 +98,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup AHB_clock_source 
+/** @defgroup AHB_clock_source
 * @{
 */
 
@@ -118,9 +118,9 @@ typedef struct
       ((HCLK) == RCC_SYSCLK_Div512))
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup APB1_APB2_clock_source 
+/** @defgroup APB1_APB2_clock_source
 * @{
 */
 
@@ -135,9 +135,9 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup PLL_multiplication_factor 
+/** @defgroup PLL_multiplication_factor
 * @{
 */
 
@@ -178,14 +178,14 @@ typedef struct
       ((MUL) == RCC_PLLMul_10) || ((MUL) == RCC_PLLMul_11) || \
         ((MUL) == RCC_PLLMul_12) || ((MUL) == RCC_PLLMul_13) || \
           ((MUL) == RCC_PLLMul_14) || ((MUL) == RCC_PLLMul_15) || \
-            ((MUL) == RCC_PLLMul_16))													 
+            ((MUL) == RCC_PLLMul_16))
 
 
 /**
 * @}
 */
 
-/** @defgroup RCC_Interrupt_source 
+/** @defgroup RCC_Interrupt_source
 * @{
 */
 
@@ -205,7 +205,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup USB_clock_source 
+/** @defgroup USB_clock_source
 * @{
 */
 
@@ -217,7 +217,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup ADC_clock_source 
+/** @defgroup ADC_clock_source
 * @{
 */
 
@@ -231,7 +231,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup LSE_configuration 
+/** @defgroup LSE_configuration
 * @{
 */
 
@@ -244,7 +244,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup RTC_clock_source 
+/** @defgroup RTC_clock_source
 * @{
 */
 
@@ -258,7 +258,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup AHB_peripheral 
+/** @defgroup AHB_peripheral
 * @{
 */
 
@@ -282,7 +282,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup APB2_peripheral 
+/** @defgroup APB2_peripheral
 * @{
 */
 
@@ -313,9 +313,9 @@ typedef struct
 #define IS_RCC_APB2_PERIPH(PERIPH) ((((PERIPH) & 0xFFFC0002) == 0x00) && ((PERIPH) != 0x00))
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup APB1_peripheral 
+/** @defgroup APB1_peripheral
 * @{
 */
 
@@ -356,7 +356,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup Clock_source_to_output_on_MCO_pin 
+/** @defgroup Clock_source_to_output_on_MCO_pin
 * @{
 */
 
@@ -375,7 +375,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup RCC_Flag 
+/** @defgroup RCC_Flag
 * @{
 */
 
@@ -462,6 +462,6 @@ void getSystemClock(u32 *sysclk);
 
 /**
 * @}
-*/ 
+*/
 
 /*-------------------------(C) COPYRIGHT 2016 HOLOCENE ----------------------*/

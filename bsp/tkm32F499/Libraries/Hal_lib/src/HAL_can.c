@@ -38,7 +38,7 @@ void CAN_DeInit(CAN_TypeDef* CANx)
             /* Release CAN1 from reset state */
             RCC_APB1PeriphResetCmd(RCC_APB1Periph_CAN1, DISABLE);
             break;
-				case CAN2_BASE:
+                case CAN2_BASE:
             /* Enable CAN1 reset state */
             RCC_APB1PeriphResetCmd(RCC_APB1Periph_CAN2, ENABLE);
             /* Release CAN1 from reset state */
@@ -453,19 +453,19 @@ void CAN_ClearITPendingBit(CAN_TypeDef* CANx)
 */
 void CAN_Peli_SleepMode_Cmd(CAN_TypeDef* CANx, FunctionalState NewState)
 {
-		switch (*(uint32_t*)&CANx)
+        switch (*(uint32_t*)&CANx)
     {
         case CAN1_BASE:
             if(NewState == ENABLE)
-							CAN1_PELI->MOD |= CAN_SleepMode;
-						else
-							CAN1_PELI->MOD &= ~CAN_SleepMode;
+                            CAN1_PELI->MOD |= CAN_SleepMode;
+                        else
+                            CAN1_PELI->MOD &= ~CAN_SleepMode;
             break;
-				case CAN2_BASE:
+                case CAN2_BASE:
             if(NewState == ENABLE)
-							CAN2_PELI->MOD |= CAN_SleepMode;
-						else
-							CAN2_PELI->MOD &= ~CAN_SleepMode;
+                            CAN2_PELI->MOD |= CAN_SleepMode;
+                        else
+                            CAN2_PELI->MOD &= ~CAN_SleepMode;
             break;
         default:
             break;
@@ -519,47 +519,47 @@ void CAN_Peli_Init(CAN_TypeDef* CANx, CAN_Peli_InitTypeDef* CAN_Peli_InitStruct)
     assert_param(IS_FUNCTIONAL_STATE(CAN_InitStruct->TESG2));
     assert_param(IS_FUNCTIONAL_STATE(CAN_InitStruct->TESG1));
 
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							CAN1_PELI->BTR0 = ((uint32_t)CAN_Peli_InitStruct->SJW << 6) | ((uint32_t)CAN_Peli_InitStruct->BRP);
-							CAN1_PELI->BTR1 = ((uint32_t)CAN_Peli_InitStruct->SAM << 7) | ((uint32_t)CAN_Peli_InitStruct->TESG2 << 4) | \
-																((uint32_t)CAN_Peli_InitStruct->TESG1);
-							if(CAN_Peli_InitStruct->LOM == ENABLE)
-									CAN1_PELI->MOD |= (uint32_t)CAN_ListenOnlyMode;
-							else
-									CAN1_PELI->MOD &= ~(uint32_t)CAN_ListenOnlyMode;
-							if(CAN_Peli_InitStruct->STM == ENABLE)
-									CAN1_PELI->MOD |= (uint32_t)CAN_SeftTestMode;
-							else
-									CAN1_PELI->MOD &= ~(uint32_t)CAN_SeftTestMode;
-							if(CAN_Peli_InitStruct->SM == ENABLE)
-									CAN1_PELI->MOD |= (uint32_t)CAN_SleepMode;
-							else
-									CAN1_PELI->MOD &= ~(uint32_t)CAN_SleepMode;
-							CAN1_PELI->EWLR = (uint32_t)CAN_Peli_InitStruct->EWLR;
-							break;
-					case CAN2_BASE:
-							CAN2_PELI->BTR0 = ((uint32_t)CAN_Peli_InitStruct->SJW << 6) | ((uint32_t)CAN_Peli_InitStruct->BRP);
-							CAN2_PELI->BTR1 = ((uint32_t)CAN_Peli_InitStruct->SAM << 7) | ((uint32_t)CAN_Peli_InitStruct->TESG2 << 4) | \
-																((uint32_t)CAN_Peli_InitStruct->TESG1);
-							if(CAN_Peli_InitStruct->LOM == ENABLE)
-									CAN2_PELI->MOD |= (uint32_t)CAN_ListenOnlyMode;
-							else
-									CAN2_PELI->MOD &= ~(uint32_t)CAN_ListenOnlyMode;
-							if(CAN_Peli_InitStruct->STM == ENABLE)
-									CAN2_PELI->MOD |= (uint32_t)CAN_SeftTestMode;
-							else
-									CAN2_PELI->MOD &= ~(uint32_t)CAN_SeftTestMode;
-							if(CAN_Peli_InitStruct->SM == ENABLE)
-									CAN2_PELI->MOD |= (uint32_t)CAN_SleepMode;
-							else
-									CAN2_PELI->MOD &= ~(uint32_t)CAN_SleepMode;
-							CAN2_PELI->EWLR = (uint32_t)CAN_Peli_InitStruct->EWLR;
-							break;
-					default:
-							break;
-			}
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            CAN1_PELI->BTR0 = ((uint32_t)CAN_Peli_InitStruct->SJW << 6) | ((uint32_t)CAN_Peli_InitStruct->BRP);
+                            CAN1_PELI->BTR1 = ((uint32_t)CAN_Peli_InitStruct->SAM << 7) | ((uint32_t)CAN_Peli_InitStruct->TESG2 << 4) | \
+                                                                ((uint32_t)CAN_Peli_InitStruct->TESG1);
+                            if(CAN_Peli_InitStruct->LOM == ENABLE)
+                                    CAN1_PELI->MOD |= (uint32_t)CAN_ListenOnlyMode;
+                            else
+                                    CAN1_PELI->MOD &= ~(uint32_t)CAN_ListenOnlyMode;
+                            if(CAN_Peli_InitStruct->STM == ENABLE)
+                                    CAN1_PELI->MOD |= (uint32_t)CAN_SeftTestMode;
+                            else
+                                    CAN1_PELI->MOD &= ~(uint32_t)CAN_SeftTestMode;
+                            if(CAN_Peli_InitStruct->SM == ENABLE)
+                                    CAN1_PELI->MOD |= (uint32_t)CAN_SleepMode;
+                            else
+                                    CAN1_PELI->MOD &= ~(uint32_t)CAN_SleepMode;
+                            CAN1_PELI->EWLR = (uint32_t)CAN_Peli_InitStruct->EWLR;
+                            break;
+                    case CAN2_BASE:
+                            CAN2_PELI->BTR0 = ((uint32_t)CAN_Peli_InitStruct->SJW << 6) | ((uint32_t)CAN_Peli_InitStruct->BRP);
+                            CAN2_PELI->BTR1 = ((uint32_t)CAN_Peli_InitStruct->SAM << 7) | ((uint32_t)CAN_Peli_InitStruct->TESG2 << 4) | \
+                                                                ((uint32_t)CAN_Peli_InitStruct->TESG1);
+                            if(CAN_Peli_InitStruct->LOM == ENABLE)
+                                    CAN2_PELI->MOD |= (uint32_t)CAN_ListenOnlyMode;
+                            else
+                                    CAN2_PELI->MOD &= ~(uint32_t)CAN_ListenOnlyMode;
+                            if(CAN_Peli_InitStruct->STM == ENABLE)
+                                    CAN2_PELI->MOD |= (uint32_t)CAN_SeftTestMode;
+                            else
+                                    CAN2_PELI->MOD &= ~(uint32_t)CAN_SeftTestMode;
+                            if(CAN_Peli_InitStruct->SM == ENABLE)
+                                    CAN2_PELI->MOD |= (uint32_t)CAN_SleepMode;
+                            else
+                                    CAN2_PELI->MOD &= ~(uint32_t)CAN_SleepMode;
+                            CAN2_PELI->EWLR = (uint32_t)CAN_Peli_InitStruct->EWLR;
+                            break;
+                    default:
+                            break;
+            }
 }
 
 
@@ -573,43 +573,43 @@ void CAN_Peli_Init(CAN_TypeDef* CANx, CAN_Peli_InitTypeDef* CAN_Peli_InitStruct)
 */
 void CAN_Peli_FilterInit(CAN_TypeDef* CANx, CAN_Peli_FilterInitTypeDef* CAN_Peli_FilterInitStruct)
 {
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							if(CAN_Peli_FilterInitStruct->AFM == CAN_FilterMode_Singal)
-								CAN1_PELI->MOD |= (uint32_t)CAN_FilterMode_Singal;
-							else
-								CAN1_PELI->MOD &= (uint32_t)CAN_FilterMode_Double;
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            if(CAN_Peli_FilterInitStruct->AFM == CAN_FilterMode_Singal)
+                                CAN1_PELI->MOD |= (uint32_t)CAN_FilterMode_Singal;
+                            else
+                                CAN1_PELI->MOD &= (uint32_t)CAN_FilterMode_Double;
 
-								CAN1_PELI->FF = CAN_Peli_FilterInitStruct->CAN_FilterId0;
-								CAN1_PELI->ID0 = CAN_Peli_FilterInitStruct->CAN_FilterId1;
-								CAN1_PELI->ID1 = CAN_Peli_FilterInitStruct->CAN_FilterId2;
-								CAN1_PELI->DATA0 = CAN_Peli_FilterInitStruct->CAN_FilterId3;
+                                CAN1_PELI->FF = CAN_Peli_FilterInitStruct->CAN_FilterId0;
+                                CAN1_PELI->ID0 = CAN_Peli_FilterInitStruct->CAN_FilterId1;
+                                CAN1_PELI->ID1 = CAN_Peli_FilterInitStruct->CAN_FilterId2;
+                                CAN1_PELI->DATA0 = CAN_Peli_FilterInitStruct->CAN_FilterId3;
 
-								CAN1_PELI->DATA1 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId0;
-								CAN1_PELI->DATA2 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId1;
-								CAN1_PELI->DATA3 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId2;
-								CAN1_PELI->DATA4 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId3;
-							break;
-					case CAN2_BASE:
-							if(CAN_Peli_FilterInitStruct->AFM == CAN_FilterMode_Singal)
-								CAN2_PELI->MOD |= (uint32_t)CAN_FilterMode_Singal;
-							else
-								CAN2_PELI->MOD &= (uint32_t)CAN_FilterMode_Double;
+                                CAN1_PELI->DATA1 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId0;
+                                CAN1_PELI->DATA2 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId1;
+                                CAN1_PELI->DATA3 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId2;
+                                CAN1_PELI->DATA4 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId3;
+                            break;
+                    case CAN2_BASE:
+                            if(CAN_Peli_FilterInitStruct->AFM == CAN_FilterMode_Singal)
+                                CAN2_PELI->MOD |= (uint32_t)CAN_FilterMode_Singal;
+                            else
+                                CAN2_PELI->MOD &= (uint32_t)CAN_FilterMode_Double;
 
-								CAN2_PELI->FF = CAN_Peli_FilterInitStruct->CAN_FilterId0;
-								CAN2_PELI->ID0 = CAN_Peli_FilterInitStruct->CAN_FilterId1;
-								CAN2_PELI->ID1 = CAN_Peli_FilterInitStruct->CAN_FilterId2;
-								CAN2_PELI->DATA0 = CAN_Peli_FilterInitStruct->CAN_FilterId3;
+                                CAN2_PELI->FF = CAN_Peli_FilterInitStruct->CAN_FilterId0;
+                                CAN2_PELI->ID0 = CAN_Peli_FilterInitStruct->CAN_FilterId1;
+                                CAN2_PELI->ID1 = CAN_Peli_FilterInitStruct->CAN_FilterId2;
+                                CAN2_PELI->DATA0 = CAN_Peli_FilterInitStruct->CAN_FilterId3;
 
-								CAN2_PELI->DATA1 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId0;
-								CAN2_PELI->DATA2 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId1;
-								CAN2_PELI->DATA3 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId2;
-								CAN2_PELI->DATA4 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId3;
-							break;
-					default:
-							break;
-			}
+                                CAN2_PELI->DATA1 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId0;
+                                CAN2_PELI->DATA2 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId1;
+                                CAN2_PELI->DATA3 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId2;
+                                CAN2_PELI->DATA4 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId3;
+                            break;
+                    default:
+                            break;
+            }
 
 }
 
@@ -642,103 +642,103 @@ void CAN_Peli_Transmit(CAN_TypeDef* CANx, CanPeliTxMsg* PeliTxMessage)
     /* Check the parameters */
     assert_param(IS_CAN_RTR(PeliTxMessage->RTR));
     assert_param(IS_CAN_DLC(PeliTxMessage->DLC));
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							CAN1_PELI->FF = (PeliTxMessage->FF << 7) | (PeliTxMessage->RTR << 6) | (PeliTxMessage->DLC);
-							if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
-								{
-										CAN1_PELI->ID0 = (PeliTxMessage->IDHH);
-										//    CAN1_PELI->ID1 = ((PeliTxMessage->IDHL)<<5);
-										CAN1_PELI->ID1 = (PeliTxMessage->IDHL & 0xE0);
-										if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
-										{
-												CAN1_PELI->DATA0 = PeliTxMessage->Data[0];
-												CAN1_PELI->DATA1 = PeliTxMessage->Data[1];
-												CAN1_PELI->DATA2 = PeliTxMessage->Data[2];
-												CAN1_PELI->DATA3 = PeliTxMessage->Data[3];
-												CAN1_PELI->DATA4 = PeliTxMessage->Data[4];
-												CAN1_PELI->DATA5 = PeliTxMessage->Data[5];
-												CAN1_PELI->DATA6 = PeliTxMessage->Data[6];
-												CAN1_PELI->DATA7 = PeliTxMessage->Data[7];
-										}
-								}
-							else
-								{
-										CAN1_PELI->ID0 = PeliTxMessage->IDHH;
-										CAN1_PELI->ID1 = PeliTxMessage->IDHL;
-										CAN1_PELI->DATA0 = PeliTxMessage->IDLH;
-										CAN1_PELI->DATA1 = PeliTxMessage->IDLL;
-										if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
-										{
-												CAN1_PELI->DATA2 = PeliTxMessage->Data[0];
-												CAN1_PELI->DATA3 = PeliTxMessage->Data[1];
-												CAN1_PELI->DATA4 = PeliTxMessage->Data[2];
-												CAN1_PELI->DATA5 = PeliTxMessage->Data[3];
-												CAN1_PELI->DATA6 = PeliTxMessage->Data[4];
-												CAN1_PELI->DATA7 = PeliTxMessage->Data[5];
-												CAN1_PELI->DATA8 = PeliTxMessage->Data[6];
-												CAN1_PELI->DATA9 = PeliTxMessage->Data[7];
-										}
-								}
-							if(CAN1_PELI->MOD & CAN_MOD_STM)
-								{
-										CANx->CMR = CAN_CMR_GTS | CAN_CMR_AT;
-								}
-							else
-								{
-										CANx->CMR = CAN_TR | CAN_AT;
-								}
-							break;
-					case CAN2_BASE:
-							CAN2_PELI->FF = (PeliTxMessage->FF << 7) | (PeliTxMessage->RTR << 6) | (PeliTxMessage->DLC);
-							if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
-								{
-										CAN2_PELI->ID0 = (PeliTxMessage->IDHH);
-										//    CAN2_PELI->ID1 = ((PeliTxMessage->IDHL)<<5);
-										CAN2_PELI->ID1 = (PeliTxMessage->IDHL & 0xE0);
-										if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
-										{
-												CAN2_PELI->DATA0 = PeliTxMessage->Data[0];
-												CAN2_PELI->DATA1 = PeliTxMessage->Data[1];
-												CAN2_PELI->DATA2 = PeliTxMessage->Data[2];
-												CAN2_PELI->DATA3 = PeliTxMessage->Data[3];
-												CAN2_PELI->DATA4 = PeliTxMessage->Data[4];
-												CAN2_PELI->DATA5 = PeliTxMessage->Data[5];
-												CAN2_PELI->DATA6 = PeliTxMessage->Data[6];
-												CAN2_PELI->DATA7 = PeliTxMessage->Data[7];
-										}
-								}
-							else
-								{
-										CAN2_PELI->ID0 = PeliTxMessage->IDHH;
-										CAN2_PELI->ID1 = PeliTxMessage->IDHL;
-										CAN2_PELI->DATA0 = PeliTxMessage->IDLH;
-										CAN2_PELI->DATA1 = PeliTxMessage->IDLL;
-										if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
-										{
-												CAN2_PELI->DATA2 = PeliTxMessage->Data[0];
-												CAN2_PELI->DATA3 = PeliTxMessage->Data[1];
-												CAN2_PELI->DATA4 = PeliTxMessage->Data[2];
-												CAN2_PELI->DATA5 = PeliTxMessage->Data[3];
-												CAN2_PELI->DATA6 = PeliTxMessage->Data[4];
-												CAN2_PELI->DATA7 = PeliTxMessage->Data[5];
-												CAN2_PELI->DATA8 = PeliTxMessage->Data[6];
-												CAN2_PELI->DATA9 = PeliTxMessage->Data[7];
-										}
-								}
-							if(CAN2_PELI->MOD & CAN_MOD_STM)
-								{
-										CANx->CMR = CAN_CMR_GTS | CAN_CMR_AT;
-								}
-							else
-								{
-										CANx->CMR = CAN_TR | CAN_AT;
-								}
-							break;
-					default:
-							break;
-			}
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            CAN1_PELI->FF = (PeliTxMessage->FF << 7) | (PeliTxMessage->RTR << 6) | (PeliTxMessage->DLC);
+                            if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
+                                {
+                                        CAN1_PELI->ID0 = (PeliTxMessage->IDHH);
+                                        //    CAN1_PELI->ID1 = ((PeliTxMessage->IDHL)<<5);
+                                        CAN1_PELI->ID1 = (PeliTxMessage->IDHL & 0xE0);
+                                        if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
+                                        {
+                                                CAN1_PELI->DATA0 = PeliTxMessage->Data[0];
+                                                CAN1_PELI->DATA1 = PeliTxMessage->Data[1];
+                                                CAN1_PELI->DATA2 = PeliTxMessage->Data[2];
+                                                CAN1_PELI->DATA3 = PeliTxMessage->Data[3];
+                                                CAN1_PELI->DATA4 = PeliTxMessage->Data[4];
+                                                CAN1_PELI->DATA5 = PeliTxMessage->Data[5];
+                                                CAN1_PELI->DATA6 = PeliTxMessage->Data[6];
+                                                CAN1_PELI->DATA7 = PeliTxMessage->Data[7];
+                                        }
+                                }
+                            else
+                                {
+                                        CAN1_PELI->ID0 = PeliTxMessage->IDHH;
+                                        CAN1_PELI->ID1 = PeliTxMessage->IDHL;
+                                        CAN1_PELI->DATA0 = PeliTxMessage->IDLH;
+                                        CAN1_PELI->DATA1 = PeliTxMessage->IDLL;
+                                        if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
+                                        {
+                                                CAN1_PELI->DATA2 = PeliTxMessage->Data[0];
+                                                CAN1_PELI->DATA3 = PeliTxMessage->Data[1];
+                                                CAN1_PELI->DATA4 = PeliTxMessage->Data[2];
+                                                CAN1_PELI->DATA5 = PeliTxMessage->Data[3];
+                                                CAN1_PELI->DATA6 = PeliTxMessage->Data[4];
+                                                CAN1_PELI->DATA7 = PeliTxMessage->Data[5];
+                                                CAN1_PELI->DATA8 = PeliTxMessage->Data[6];
+                                                CAN1_PELI->DATA9 = PeliTxMessage->Data[7];
+                                        }
+                                }
+                            if(CAN1_PELI->MOD & CAN_MOD_STM)
+                                {
+                                        CANx->CMR = CAN_CMR_GTS | CAN_CMR_AT;
+                                }
+                            else
+                                {
+                                        CANx->CMR = CAN_TR | CAN_AT;
+                                }
+                            break;
+                    case CAN2_BASE:
+                            CAN2_PELI->FF = (PeliTxMessage->FF << 7) | (PeliTxMessage->RTR << 6) | (PeliTxMessage->DLC);
+                            if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
+                                {
+                                        CAN2_PELI->ID0 = (PeliTxMessage->IDHH);
+                                        //    CAN2_PELI->ID1 = ((PeliTxMessage->IDHL)<<5);
+                                        CAN2_PELI->ID1 = (PeliTxMessage->IDHL & 0xE0);
+                                        if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
+                                        {
+                                                CAN2_PELI->DATA0 = PeliTxMessage->Data[0];
+                                                CAN2_PELI->DATA1 = PeliTxMessage->Data[1];
+                                                CAN2_PELI->DATA2 = PeliTxMessage->Data[2];
+                                                CAN2_PELI->DATA3 = PeliTxMessage->Data[3];
+                                                CAN2_PELI->DATA4 = PeliTxMessage->Data[4];
+                                                CAN2_PELI->DATA5 = PeliTxMessage->Data[5];
+                                                CAN2_PELI->DATA6 = PeliTxMessage->Data[6];
+                                                CAN2_PELI->DATA7 = PeliTxMessage->Data[7];
+                                        }
+                                }
+                            else
+                                {
+                                        CAN2_PELI->ID0 = PeliTxMessage->IDHH;
+                                        CAN2_PELI->ID1 = PeliTxMessage->IDHL;
+                                        CAN2_PELI->DATA0 = PeliTxMessage->IDLH;
+                                        CAN2_PELI->DATA1 = PeliTxMessage->IDLL;
+                                        if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
+                                        {
+                                                CAN2_PELI->DATA2 = PeliTxMessage->Data[0];
+                                                CAN2_PELI->DATA3 = PeliTxMessage->Data[1];
+                                                CAN2_PELI->DATA4 = PeliTxMessage->Data[2];
+                                                CAN2_PELI->DATA5 = PeliTxMessage->Data[3];
+                                                CAN2_PELI->DATA6 = PeliTxMessage->Data[4];
+                                                CAN2_PELI->DATA7 = PeliTxMessage->Data[5];
+                                                CAN2_PELI->DATA8 = PeliTxMessage->Data[6];
+                                                CAN2_PELI->DATA9 = PeliTxMessage->Data[7];
+                                        }
+                                }
+                            if(CAN2_PELI->MOD & CAN_MOD_STM)
+                                {
+                                        CANx->CMR = CAN_CMR_GTS | CAN_CMR_AT;
+                                }
+                            else
+                                {
+                                        CANx->CMR = CAN_TR | CAN_AT;
+                                }
+                            break;
+                    default:
+                            break;
+            }
 }
 
 
@@ -753,103 +753,103 @@ void CAN_Peli_TransmitRepeat(CAN_TypeDef* CANx, CanPeliTxMsg* PeliTxMessage)
     /* Check the parameters */
     assert_param(IS_CAN_RTR(PeliTxMessage->RTR));
     assert_param(IS_CAN_DLC(PeliTxMessage->DLC));
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							CAN1_PELI->FF = (PeliTxMessage->FF << 7) | (PeliTxMessage->RTR << 6) | (PeliTxMessage->DLC);
-							if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
-								{
-										CAN1_PELI->ID0 = (PeliTxMessage->IDHH);
-										CAN1_PELI->ID1 = ((PeliTxMessage->IDHL) << 5);
-										if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
-										{
-												CAN1_PELI->DATA0 = PeliTxMessage->Data[0];
-												CAN1_PELI->DATA1 = PeliTxMessage->Data[1];
-												CAN1_PELI->DATA2 = PeliTxMessage->Data[2];
-												CAN1_PELI->DATA3 = PeliTxMessage->Data[3];
-												CAN1_PELI->DATA4 = PeliTxMessage->Data[4];
-												CAN1_PELI->DATA5 = PeliTxMessage->Data[5];
-												CAN1_PELI->DATA6 = PeliTxMessage->Data[6];
-												CAN1_PELI->DATA7 = PeliTxMessage->Data[7];
-										}
-								}
-							else
-								{
-										CAN1_PELI->ID0 = PeliTxMessage->IDHH;
-										CAN1_PELI->ID1 = PeliTxMessage->IDHL;
-										CAN1_PELI->DATA0 = PeliTxMessage->IDLH;
-										CAN1_PELI->DATA1 = PeliTxMessage->IDLL;
-										if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
-										{
-												CAN1_PELI->DATA2 = PeliTxMessage->Data[0];
-												CAN1_PELI->DATA3 = PeliTxMessage->Data[1];
-												CAN1_PELI->DATA4 = PeliTxMessage->Data[2];
-												CAN1_PELI->DATA5 = PeliTxMessage->Data[3];
-												CAN1_PELI->DATA6 = PeliTxMessage->Data[4];
-												CAN1_PELI->DATA7 = PeliTxMessage->Data[5];
-												CAN1_PELI->DATA8 = PeliTxMessage->Data[6];
-												CAN1_PELI->DATA9 = PeliTxMessage->Data[7];
-										}
-								}
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            CAN1_PELI->FF = (PeliTxMessage->FF << 7) | (PeliTxMessage->RTR << 6) | (PeliTxMessage->DLC);
+                            if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
+                                {
+                                        CAN1_PELI->ID0 = (PeliTxMessage->IDHH);
+                                        CAN1_PELI->ID1 = ((PeliTxMessage->IDHL) << 5);
+                                        if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
+                                        {
+                                                CAN1_PELI->DATA0 = PeliTxMessage->Data[0];
+                                                CAN1_PELI->DATA1 = PeliTxMessage->Data[1];
+                                                CAN1_PELI->DATA2 = PeliTxMessage->Data[2];
+                                                CAN1_PELI->DATA3 = PeliTxMessage->Data[3];
+                                                CAN1_PELI->DATA4 = PeliTxMessage->Data[4];
+                                                CAN1_PELI->DATA5 = PeliTxMessage->Data[5];
+                                                CAN1_PELI->DATA6 = PeliTxMessage->Data[6];
+                                                CAN1_PELI->DATA7 = PeliTxMessage->Data[7];
+                                        }
+                                }
+                            else
+                                {
+                                        CAN1_PELI->ID0 = PeliTxMessage->IDHH;
+                                        CAN1_PELI->ID1 = PeliTxMessage->IDHL;
+                                        CAN1_PELI->DATA0 = PeliTxMessage->IDLH;
+                                        CAN1_PELI->DATA1 = PeliTxMessage->IDLL;
+                                        if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
+                                        {
+                                                CAN1_PELI->DATA2 = PeliTxMessage->Data[0];
+                                                CAN1_PELI->DATA3 = PeliTxMessage->Data[1];
+                                                CAN1_PELI->DATA4 = PeliTxMessage->Data[2];
+                                                CAN1_PELI->DATA5 = PeliTxMessage->Data[3];
+                                                CAN1_PELI->DATA6 = PeliTxMessage->Data[4];
+                                                CAN1_PELI->DATA7 = PeliTxMessage->Data[5];
+                                                CAN1_PELI->DATA8 = PeliTxMessage->Data[6];
+                                                CAN1_PELI->DATA9 = PeliTxMessage->Data[7];
+                                        }
+                                }
 
-							if(CAN1_PELI->MOD & CAN_MOD_STM)
-								{
-										CANx->CMR = CAN_CMR_GTS | CAN_CMR_AT;
-								}
-							else
-								{
-										CANx->CMR = CAN_CMR_TR;
-								}
-							break;
-					case CAN2_BASE:
-							CAN2_PELI->FF = (PeliTxMessage->FF << 7) | (PeliTxMessage->RTR << 6) | (PeliTxMessage->DLC);
-							if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
-								{
-										CAN2_PELI->ID0 = (PeliTxMessage->IDHH);
-										CAN2_PELI->ID1 = ((PeliTxMessage->IDHL) << 5);
-										if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
-										{
-												CAN2_PELI->DATA0 = PeliTxMessage->Data[0];
-												CAN2_PELI->DATA1 = PeliTxMessage->Data[1];
-												CAN2_PELI->DATA2 = PeliTxMessage->Data[2];
-												CAN2_PELI->DATA3 = PeliTxMessage->Data[3];
-												CAN2_PELI->DATA4 = PeliTxMessage->Data[4];
-												CAN2_PELI->DATA5 = PeliTxMessage->Data[5];
-												CAN2_PELI->DATA6 = PeliTxMessage->Data[6];
-												CAN2_PELI->DATA7 = PeliTxMessage->Data[7];
-										}
-								}
-							else
-								{
-										CAN2_PELI->ID0 = PeliTxMessage->IDHH;
-										CAN2_PELI->ID1 = PeliTxMessage->IDHL;
-										CAN2_PELI->DATA0 = PeliTxMessage->IDLH;
-										CAN2_PELI->DATA1 = PeliTxMessage->IDLL;
-										if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
-										{
-												CAN2_PELI->DATA2 = PeliTxMessage->Data[0];
-												CAN2_PELI->DATA3 = PeliTxMessage->Data[1];
-												CAN2_PELI->DATA4 = PeliTxMessage->Data[2];
-												CAN2_PELI->DATA5 = PeliTxMessage->Data[3];
-												CAN2_PELI->DATA6 = PeliTxMessage->Data[4];
-												CAN2_PELI->DATA7 = PeliTxMessage->Data[5];
-												CAN2_PELI->DATA8 = PeliTxMessage->Data[6];
-												CAN2_PELI->DATA9 = PeliTxMessage->Data[7];
-										}
-								}
+                            if(CAN1_PELI->MOD & CAN_MOD_STM)
+                                {
+                                        CANx->CMR = CAN_CMR_GTS | CAN_CMR_AT;
+                                }
+                            else
+                                {
+                                        CANx->CMR = CAN_CMR_TR;
+                                }
+                            break;
+                    case CAN2_BASE:
+                            CAN2_PELI->FF = (PeliTxMessage->FF << 7) | (PeliTxMessage->RTR << 6) | (PeliTxMessage->DLC);
+                            if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
+                                {
+                                        CAN2_PELI->ID0 = (PeliTxMessage->IDHH);
+                                        CAN2_PELI->ID1 = ((PeliTxMessage->IDHL) << 5);
+                                        if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
+                                        {
+                                                CAN2_PELI->DATA0 = PeliTxMessage->Data[0];
+                                                CAN2_PELI->DATA1 = PeliTxMessage->Data[1];
+                                                CAN2_PELI->DATA2 = PeliTxMessage->Data[2];
+                                                CAN2_PELI->DATA3 = PeliTxMessage->Data[3];
+                                                CAN2_PELI->DATA4 = PeliTxMessage->Data[4];
+                                                CAN2_PELI->DATA5 = PeliTxMessage->Data[5];
+                                                CAN2_PELI->DATA6 = PeliTxMessage->Data[6];
+                                                CAN2_PELI->DATA7 = PeliTxMessage->Data[7];
+                                        }
+                                }
+                            else
+                                {
+                                        CAN2_PELI->ID0 = PeliTxMessage->IDHH;
+                                        CAN2_PELI->ID1 = PeliTxMessage->IDHL;
+                                        CAN2_PELI->DATA0 = PeliTxMessage->IDLH;
+                                        CAN2_PELI->DATA1 = PeliTxMessage->IDLL;
+                                        if((FunctionalState)(PeliTxMessage->RTR) != ENABLE)
+                                        {
+                                                CAN2_PELI->DATA2 = PeliTxMessage->Data[0];
+                                                CAN2_PELI->DATA3 = PeliTxMessage->Data[1];
+                                                CAN2_PELI->DATA4 = PeliTxMessage->Data[2];
+                                                CAN2_PELI->DATA5 = PeliTxMessage->Data[3];
+                                                CAN2_PELI->DATA6 = PeliTxMessage->Data[4];
+                                                CAN2_PELI->DATA7 = PeliTxMessage->Data[5];
+                                                CAN2_PELI->DATA8 = PeliTxMessage->Data[6];
+                                                CAN2_PELI->DATA9 = PeliTxMessage->Data[7];
+                                        }
+                                }
 
-							if(CAN2_PELI->MOD & CAN_MOD_STM)
-								{
-										CANx->CMR = CAN_CMR_GTS | CAN_CMR_AT;
-								}
-							else
-								{
-										CANx->CMR = CAN_CMR_TR;
-								}
-							break;
-					default:
-							break;
-			}
+                            if(CAN2_PELI->MOD & CAN_MOD_STM)
+                                {
+                                        CANx->CMR = CAN_CMR_GTS | CAN_CMR_AT;
+                                }
+                            else
+                                {
+                                        CANx->CMR = CAN_CMR_TR;
+                                }
+                            break;
+                    default:
+                            break;
+            }
 
 }
 
@@ -879,85 +879,85 @@ void CAN_Peli_TransmitRepeat(CAN_TypeDef* CANx, CanPeliTxMsg* PeliTxMessage)
 void CAN_Peli_Receive(CAN_TypeDef* CANx, CanPeliRxMsg* PeliRxMessage)
 {
     uint32_t tempid;
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							PeliRxMessage->FF = (CAN1_PELI->FF) >> 7;
-							PeliRxMessage->RTR = ((CAN1_PELI->FF) >> 6) & 0x1;
-							PeliRxMessage->DLC = (CAN1_PELI->FF) & 0xf;
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            PeliRxMessage->FF = (CAN1_PELI->FF) >> 7;
+                            PeliRxMessage->RTR = ((CAN1_PELI->FF) >> 6) & 0x1;
+                            PeliRxMessage->DLC = (CAN1_PELI->FF) & 0xf;
 
-							if(((FunctionalState)PeliRxMessage->FF) != ENABLE)
-								{
-										tempid = (uint32_t)(CAN1_PELI->ID1 >> 5);
-										tempid |= (uint32_t)(CAN1_PELI->ID0 << 3);
-										PeliRxMessage->ID = tempid;
-										PeliRxMessage->Data[0] = CAN1_PELI->DATA0;
-										PeliRxMessage->Data[1] = CAN1_PELI->DATA1;
-										PeliRxMessage->Data[2] = CAN1_PELI->DATA2;
-										PeliRxMessage->Data[3] = CAN1_PELI->DATA3;
-										PeliRxMessage->Data[4] = CAN1_PELI->DATA4;
-										PeliRxMessage->Data[5] = CAN1_PELI->DATA5;
-										PeliRxMessage->Data[6] = CAN1_PELI->DATA6;
-										PeliRxMessage->Data[7] = CAN1_PELI->DATA7;
-								}
-							else
-								{
-										tempid = (uint32_t)((CAN1_PELI->DATA1 & 0xf8) >> 3);
-										tempid |= (uint32_t)(CAN1_PELI->DATA0 << 5);
-										tempid |= (uint32_t)(CAN1_PELI->ID1 << 13);
-										tempid |= (uint32_t)(CAN1_PELI->ID0 << 21);
-										PeliRxMessage->ID = tempid;
-										PeliRxMessage->Data[0] = CAN1_PELI->DATA2;
-										PeliRxMessage->Data[1] = CAN1_PELI->DATA3;
-										PeliRxMessage->Data[2] = CAN1_PELI->DATA4;
-										PeliRxMessage->Data[3] = CAN1_PELI->DATA5;
-										PeliRxMessage->Data[4] = CAN1_PELI->DATA6;
-										PeliRxMessage->Data[5] = CAN1_PELI->DATA7;
-										PeliRxMessage->Data[6] = CAN1_PELI->DATA8;
-										PeliRxMessage->Data[7] = CAN1_PELI->DATA9;
-								}
-							CAN_FIFORelease(CANx);
-							break;
-					case CAN2_BASE:
-							PeliRxMessage->FF = (CAN2_PELI->FF) >> 7;
-							PeliRxMessage->RTR = ((CAN2_PELI->FF) >> 6) & 0x1;
-							PeliRxMessage->DLC = (CAN2_PELI->FF) & 0xf;
+                            if(((FunctionalState)PeliRxMessage->FF) != ENABLE)
+                                {
+                                        tempid = (uint32_t)(CAN1_PELI->ID1 >> 5);
+                                        tempid |= (uint32_t)(CAN1_PELI->ID0 << 3);
+                                        PeliRxMessage->ID = tempid;
+                                        PeliRxMessage->Data[0] = CAN1_PELI->DATA0;
+                                        PeliRxMessage->Data[1] = CAN1_PELI->DATA1;
+                                        PeliRxMessage->Data[2] = CAN1_PELI->DATA2;
+                                        PeliRxMessage->Data[3] = CAN1_PELI->DATA3;
+                                        PeliRxMessage->Data[4] = CAN1_PELI->DATA4;
+                                        PeliRxMessage->Data[5] = CAN1_PELI->DATA5;
+                                        PeliRxMessage->Data[6] = CAN1_PELI->DATA6;
+                                        PeliRxMessage->Data[7] = CAN1_PELI->DATA7;
+                                }
+                            else
+                                {
+                                        tempid = (uint32_t)((CAN1_PELI->DATA1 & 0xf8) >> 3);
+                                        tempid |= (uint32_t)(CAN1_PELI->DATA0 << 5);
+                                        tempid |= (uint32_t)(CAN1_PELI->ID1 << 13);
+                                        tempid |= (uint32_t)(CAN1_PELI->ID0 << 21);
+                                        PeliRxMessage->ID = tempid;
+                                        PeliRxMessage->Data[0] = CAN1_PELI->DATA2;
+                                        PeliRxMessage->Data[1] = CAN1_PELI->DATA3;
+                                        PeliRxMessage->Data[2] = CAN1_PELI->DATA4;
+                                        PeliRxMessage->Data[3] = CAN1_PELI->DATA5;
+                                        PeliRxMessage->Data[4] = CAN1_PELI->DATA6;
+                                        PeliRxMessage->Data[5] = CAN1_PELI->DATA7;
+                                        PeliRxMessage->Data[6] = CAN1_PELI->DATA8;
+                                        PeliRxMessage->Data[7] = CAN1_PELI->DATA9;
+                                }
+                            CAN_FIFORelease(CANx);
+                            break;
+                    case CAN2_BASE:
+                            PeliRxMessage->FF = (CAN2_PELI->FF) >> 7;
+                            PeliRxMessage->RTR = ((CAN2_PELI->FF) >> 6) & 0x1;
+                            PeliRxMessage->DLC = (CAN2_PELI->FF) & 0xf;
 
-							if(((FunctionalState)PeliRxMessage->FF) != ENABLE)
-								{
-										tempid = (uint32_t)(CAN2_PELI->ID1 >> 5);
-										tempid |= (uint32_t)(CAN2_PELI->ID0 << 3);
-										PeliRxMessage->ID = tempid;
-										PeliRxMessage->Data[0] = CAN2_PELI->DATA0;
-										PeliRxMessage->Data[1] = CAN2_PELI->DATA1;
-										PeliRxMessage->Data[2] = CAN2_PELI->DATA2;
-										PeliRxMessage->Data[3] = CAN2_PELI->DATA3;
-										PeliRxMessage->Data[4] = CAN2_PELI->DATA4;
-										PeliRxMessage->Data[5] = CAN2_PELI->DATA5;
-										PeliRxMessage->Data[6] = CAN2_PELI->DATA6;
-										PeliRxMessage->Data[7] = CAN2_PELI->DATA7;
-								}
-							else
-								{
-										tempid = (uint32_t)((CAN2_PELI->DATA1 & 0xf8) >> 3);
-										tempid |= (uint32_t)(CAN2_PELI->DATA0 << 5);
-										tempid |= (uint32_t)(CAN2_PELI->ID1 << 13);
-										tempid |= (uint32_t)(CAN2_PELI->ID0 << 21);
-										PeliRxMessage->ID = tempid;
-										PeliRxMessage->Data[0] = CAN2_PELI->DATA2;
-										PeliRxMessage->Data[1] = CAN2_PELI->DATA3;
-										PeliRxMessage->Data[2] = CAN2_PELI->DATA4;
-										PeliRxMessage->Data[3] = CAN2_PELI->DATA5;
-										PeliRxMessage->Data[4] = CAN2_PELI->DATA6;
-										PeliRxMessage->Data[5] = CAN2_PELI->DATA7;
-										PeliRxMessage->Data[6] = CAN2_PELI->DATA8;
-										PeliRxMessage->Data[7] = CAN2_PELI->DATA9;
-								}
-							CAN_FIFORelease(CANx);
-							break;
-					default:
-							break;
-			}
+                            if(((FunctionalState)PeliRxMessage->FF) != ENABLE)
+                                {
+                                        tempid = (uint32_t)(CAN2_PELI->ID1 >> 5);
+                                        tempid |= (uint32_t)(CAN2_PELI->ID0 << 3);
+                                        PeliRxMessage->ID = tempid;
+                                        PeliRxMessage->Data[0] = CAN2_PELI->DATA0;
+                                        PeliRxMessage->Data[1] = CAN2_PELI->DATA1;
+                                        PeliRxMessage->Data[2] = CAN2_PELI->DATA2;
+                                        PeliRxMessage->Data[3] = CAN2_PELI->DATA3;
+                                        PeliRxMessage->Data[4] = CAN2_PELI->DATA4;
+                                        PeliRxMessage->Data[5] = CAN2_PELI->DATA5;
+                                        PeliRxMessage->Data[6] = CAN2_PELI->DATA6;
+                                        PeliRxMessage->Data[7] = CAN2_PELI->DATA7;
+                                }
+                            else
+                                {
+                                        tempid = (uint32_t)((CAN2_PELI->DATA1 & 0xf8) >> 3);
+                                        tempid |= (uint32_t)(CAN2_PELI->DATA0 << 5);
+                                        tempid |= (uint32_t)(CAN2_PELI->ID1 << 13);
+                                        tempid |= (uint32_t)(CAN2_PELI->ID0 << 21);
+                                        PeliRxMessage->ID = tempid;
+                                        PeliRxMessage->Data[0] = CAN2_PELI->DATA2;
+                                        PeliRxMessage->Data[1] = CAN2_PELI->DATA3;
+                                        PeliRxMessage->Data[2] = CAN2_PELI->DATA4;
+                                        PeliRxMessage->Data[3] = CAN2_PELI->DATA5;
+                                        PeliRxMessage->Data[4] = CAN2_PELI->DATA6;
+                                        PeliRxMessage->Data[5] = CAN2_PELI->DATA7;
+                                        PeliRxMessage->Data[6] = CAN2_PELI->DATA8;
+                                        PeliRxMessage->Data[7] = CAN2_PELI->DATA9;
+                                }
+                            CAN_FIFORelease(CANx);
+                            break;
+                    default:
+                            break;
+            }
 }
 
 
@@ -967,17 +967,17 @@ void CAN_Peli_Receive(CAN_TypeDef* CANx, CanPeliRxMsg* PeliRxMessage)
 */
 uint32_t CAN_Peli_GetRxFIFOInfo(CAN_TypeDef* CANx)
 {
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							return CAN1_PELI->RMC;
-							break;
-					case CAN2_BASE:
-							return CAN2_PELI->RMC;
-							break;
-					default:
-							break;
-			}
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            return CAN1_PELI->RMC;
+                            break;
+                    case CAN2_BASE:
+                            return CAN2_PELI->RMC;
+                            break;
+                    default:
+                            break;
+            }
 
 }
 
@@ -1010,19 +1010,19 @@ uint8_t CAN_Peli_GetLastErrorCode(CAN_TypeDef* CANx)
 {
     uint8_t errorcode = 0;
 
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							/* Get the error code*/
-							errorcode = ((uint8_t)CAN1_PELI->ECC);
-							break;
-					case CAN2_BASE:
-							/* Get the error code*/
-							errorcode = ((uint8_t)CAN2_PELI->ECC);
-							break;
-					default:
-							break;
-			}
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            /* Get the error code*/
+                            errorcode = ((uint8_t)CAN1_PELI->ECC);
+                            break;
+                    case CAN2_BASE:
+                            /* Get the error code*/
+                            errorcode = ((uint8_t)CAN2_PELI->ECC);
+                            break;
+                    default:
+                            break;
+            }
     /* Return the error code*/
     return errorcode;
 }
@@ -1043,19 +1043,19 @@ uint8_t CAN_Peli_GetReceiveErrorCounter(CAN_TypeDef* CANx)
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
 
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							/* Get the Receive Error Counter*/
-							counter = (uint8_t)(CAN1_PELI->RXERR);
-							break;
-					case CAN2_BASE:
-							/* Get the Receive Error Counter*/
-							counter = (uint8_t)(CAN2_PELI->RXERR);
-							break;
-					default:
-							break;
-			}
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            /* Get the Receive Error Counter*/
+                            counter = (uint8_t)(CAN1_PELI->RXERR);
+                            break;
+                    case CAN2_BASE:
+                            /* Get the Receive Error Counter*/
+                            counter = (uint8_t)(CAN2_PELI->RXERR);
+                            break;
+                    default:
+                            break;
+            }
 
     /* Return the Receive Error Counter*/
     return counter;
@@ -1073,19 +1073,19 @@ uint8_t CAN_Peli_GetLSBTransmitErrorCounter(CAN_TypeDef* CANx)
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
 
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							/* Get the LSB of the 8-bit CAN Transmit Error Counter(TEC) */
-							counter = (uint8_t)(CAN1_PELI->TXERR);
-							break;
-					case CAN2_BASE:
-							/* Get the LSB of the 8-bit CAN Transmit Error Counter(TEC) */
-							counter = (uint8_t)(CAN2_PELI->TXERR);
-							break;
-					default:
-							break;
-			}
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            /* Get the LSB of the 8-bit CAN Transmit Error Counter(TEC) */
+                            counter = (uint8_t)(CAN1_PELI->TXERR);
+                            break;
+                    case CAN2_BASE:
+                            /* Get the LSB of the 8-bit CAN Transmit Error Counter(TEC) */
+                            counter = (uint8_t)(CAN2_PELI->TXERR);
+                            break;
+                    default:
+                            break;
+            }
 
     /* Return the LSB of the 8-bit CAN Transmit Error Counter(TEC) */
     return counter;
@@ -1127,35 +1127,35 @@ void CAN_Peli_ITConfig(CAN_TypeDef* CANx,uint32_t CAN_IT, FunctionalState NewSta
     assert_param(IS_CAN_IT(CAN_IT));
     assert_param(IS_FUNCTIONAL_STATE(NewState));
 
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							if (NewState != DISABLE)
-								{
-										/* Enable the selected CAN interrupt */
-										CAN1_PELI->IER |= CAN_IT;
-								}
-							else
-								{
-										/* Disable the selected CAN interrupt */
-										CAN1_PELI->IER &= ~CAN_IT;
-								}
-							break;
-					case CAN2_BASE:
-							if (NewState != DISABLE)
-								{
-										/* Enable the selected CAN interrupt */
-										CAN2_PELI->IER |= CAN_IT;
-								}
-							else
-								{
-										/* Disable the selected CAN interrupt */
-										CAN2_PELI->IER &= ~CAN_IT;
-								}
-							break;
-					default:
-							break;
-			}
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            if (NewState != DISABLE)
+                                {
+                                        /* Enable the selected CAN interrupt */
+                                        CAN1_PELI->IER |= CAN_IT;
+                                }
+                            else
+                                {
+                                        /* Disable the selected CAN interrupt */
+                                        CAN1_PELI->IER &= ~CAN_IT;
+                                }
+                            break;
+                    case CAN2_BASE:
+                            if (NewState != DISABLE)
+                                {
+                                        /* Enable the selected CAN interrupt */
+                                        CAN2_PELI->IER |= CAN_IT;
+                                }
+                            else
+                                {
+                                        /* Disable the selected CAN interrupt */
+                                        CAN2_PELI->IER &= ~CAN_IT;
+                                }
+                            break;
+                    default:
+                            break;
+            }
 
 }
 
@@ -1181,33 +1181,33 @@ ITStatus CAN_Peli_GetITStatus(CAN_TypeDef* CANx, uint32_t CAN_IT)
     /* Check the parameters */
     assert_param(IS_CAN_IT(CAN_IT));
 
-		switch (*(uint32_t*)&CANx)
-			{
-					case CAN1_BASE:
-							/* check the interrupt enable bit */
-							if((CAN1_PELI->IR & CAN_IT) != CAN_IT)
-							{
-									itstatus = RESET;
-							}
-							else
-							{
-									itstatus = SET;
-							}
-							break;
-					case CAN2_BASE:
-							/* check the interrupt enable bit */
-							if((CAN2_PELI->IR & CAN_IT) != CAN_IT)
-							{
-									itstatus = RESET;
-							}
-							else
-							{
-									itstatus = SET;
-							}
-							break;
-					default:
-							break;
-			}
+        switch (*(uint32_t*)&CANx)
+            {
+                    case CAN1_BASE:
+                            /* check the interrupt enable bit */
+                            if((CAN1_PELI->IR & CAN_IT) != CAN_IT)
+                            {
+                                    itstatus = RESET;
+                            }
+                            else
+                            {
+                                    itstatus = SET;
+                            }
+                            break;
+                    case CAN2_BASE:
+                            /* check the interrupt enable bit */
+                            if((CAN2_PELI->IR & CAN_IT) != CAN_IT)
+                            {
+                                    itstatus = RESET;
+                            }
+                            else
+                            {
+                                    itstatus = SET;
+                            }
+                            break;
+                    default:
+                            break;
+            }
 
     return itstatus;
 }
@@ -1229,7 +1229,7 @@ void CAN_AutoCfg_BaudParam(CAN_Peli_InitTypeDef  *CAN_Peli_InitStruct, unsigned 
     for( i = 25; i > 3; i -- )
     {
         remain = sumPrescaler - ((sumPrescaler / i) * i);
-        if( remain == 0 )		//整除
+        if( remain == 0 )       //整除
         {
             record = i;
             break;

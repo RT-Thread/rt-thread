@@ -95,14 +95,14 @@ typedef struct
 * @brief  for ADC1, ADC2
 */
 
-#define ADC_PCLK2_PRESCARE_2						 ((uint32_t)0x00000000)
-#define ADC_PCLK2_PRESCARE_4						 ((uint32_t)0x00000010)
-#define ADC_PCLK2_PRESCARE_6						 ((uint32_t)0x00000020)
-#define ADC_PCLK2_PRESCARE_8						 ((uint32_t)0x00000030)
-#define ADC_PCLK2_PRESCARE_10						 ((uint32_t)0x00000040)
-#define ADC_PCLK2_PRESCARE_12						 ((uint32_t)0x00000050)
-#define ADC_PCLK2_PRESCARE_14						 ((uint32_t)0x00000060)
-#define ADC_PCLK2_PRESCARE_16						 ((uint32_t)0x00000070)
+#define ADC_PCLK2_PRESCARE_2                         ((uint32_t)0x00000000)
+#define ADC_PCLK2_PRESCARE_4                         ((uint32_t)0x00000010)
+#define ADC_PCLK2_PRESCARE_6                         ((uint32_t)0x00000020)
+#define ADC_PCLK2_PRESCARE_8                         ((uint32_t)0x00000030)
+#define ADC_PCLK2_PRESCARE_10                        ((uint32_t)0x00000040)
+#define ADC_PCLK2_PRESCARE_12                        ((uint32_t)0x00000050)
+#define ADC_PCLK2_PRESCARE_14                        ((uint32_t)0x00000060)
+#define ADC_PCLK2_PRESCARE_16                        ((uint32_t)0x00000070)
 
 
 
@@ -133,14 +133,14 @@ typedef struct
 * @brief  for ADC1
 */
 
-#define ADC_ExternalTrigConv_T1_CC1         	((uint32_t)0x00000000)
-#define ADC_ExternalTrigConv_T1_CC2   			  ((uint32_t)0x00000010)
-#define ADC_ExternalTrigConv_T1_CC3     		  ((uint32_t)0x00000020)
-#define ADC_ExternalTrigConv_T2_CC2  			  ((uint32_t)0x00000030)
-#define ADC_ExternalTrigConv_T3_TRGO      		((uint32_t)0x00000040)
-#define ADC_ExternalTrigConv_T4_CC4      		((uint32_t)0x00000050)
-#define ADC_ExternalTrigConv_T3_CC1      		((uint32_t)0x00000060)
-#define ADC_ExternalTrigConv_EXTI_11     	  ((uint32_t)0x00000070)
+#define ADC_ExternalTrigConv_T1_CC1             ((uint32_t)0x00000000)
+#define ADC_ExternalTrigConv_T1_CC2               ((uint32_t)0x00000010)
+#define ADC_ExternalTrigConv_T1_CC3               ((uint32_t)0x00000020)
+#define ADC_ExternalTrigConv_T2_CC2               ((uint32_t)0x00000030)
+#define ADC_ExternalTrigConv_T3_TRGO            ((uint32_t)0x00000040)
+#define ADC_ExternalTrigConv_T4_CC4             ((uint32_t)0x00000050)
+#define ADC_ExternalTrigConv_T3_CC1             ((uint32_t)0x00000060)
+#define ADC_ExternalTrigConv_EXTI_11          ((uint32_t)0x00000070)
 
 /**
 * @brief  for ADC2
@@ -202,7 +202,7 @@ typedef struct
 #define ADC_Channel_6                               ((uint8_t)0x06)
 #define ADC_Channel_7                               ((uint8_t)0x07)
 #define ADC_Channel_8                               ((uint8_t)0x08)
-#define ADC_Channel_All															((uint8_t)0x0f)
+#define ADC_Channel_All                                                         ((uint8_t)0x0f)
 
 
 #define IS_ADC_CHANNEL(CHANNEL) (((CHANNEL) == ADC_Channel_0) || ((CHANNEL) == ADC_Channel_1) || \

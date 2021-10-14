@@ -4,7 +4,7 @@
 * @author  IC Applications Department
 * @version  V0.8
 * @date  2019_08_02
-* @brief  This file contains all the functions prototypes for the 
+* @brief  This file contains all the functions prototypes for the
 *         miscellaneous firmware library functions.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MISC_H
@@ -38,8 +38,8 @@
 * @{
 */
 
-/** 
-* @brief  NVIC Init Structure definition  
+/**
+* @brief  NVIC Init Structure definition
 */
 
 typedef struct
@@ -58,7 +58,7 @@ typedef struct
 * @{
 */
 
-/** @defgroup Vector_Table_Base 
+/** @defgroup Vector_Table_Base
 * @{
 */
 
@@ -70,7 +70,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup System_Low_Power 
+/** @defgroup System_Low_Power
 * @{
 */
 
@@ -84,7 +84,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup Preemption_Priority_Group 
+/** @defgroup Preemption_Priority_Group
 * @{
 */
 
@@ -115,7 +115,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SysTick_clock_source 
+/** @defgroup SysTick_clock_source
 * @{
 */
 

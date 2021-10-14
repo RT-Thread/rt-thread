@@ -13,16 +13,16 @@ void  RemapVtorTable(void);
 void  AI_Responder_enable(void);
 void  AI_Responder_disable(void);
 
-void Sys_Soft_Reset(void);      							//系统软复位
-void Sys_Standby(void);         							//待机模式
+void Sys_Soft_Reset(void);                                  //系统软复位
+void Sys_Standby(void);                                     //待机模式
 
 void TK499_NVIC_Init(u8 NVIC_PreemptionPriority,u8 NVIC_SubPriority,u8 NVIC_Channel,u8 NVIC_Group);
-void Ex_NVIC_Config(u8 GPIOx,u8 BITx,u8 TRIM);				//外部中断配置函数(只对GPIOA~I)
+void Ex_NVIC_Config(u8 GPIOx,u8 BITx,u8 TRIM);              //外部中断配置函数(只对GPIOA~I)
 
 //以下为汇编函数
-void WFI_SET(void);		//执行WFI指令
+void WFI_SET(void);     //执行WFI指令
 void INTX_DISABLE(void);//关闭所有中断
-void INTX_ENABLE(void);	//开启所有中断
+void INTX_ENABLE(void); //开启所有中断
 
 void TIM3_Config(u16 arr,u16 psc);
 #endif
