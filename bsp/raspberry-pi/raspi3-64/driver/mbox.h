@@ -13,6 +13,7 @@
 #define __MBOX_H__
 
 #include <rtthread.h>
+#include <stdint.h>
 /* a properly aligned buffer */
 extern volatile unsigned int* mbox;
 

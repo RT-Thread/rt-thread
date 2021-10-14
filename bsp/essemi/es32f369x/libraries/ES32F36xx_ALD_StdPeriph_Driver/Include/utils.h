@@ -130,7 +130,7 @@ do {			\
   */
 #define MCU_UID0_ADDR	0x000803E0U
 #define MCU_UID1_ADDR	0x000803E8U
-#define MCU_UID2_ADDR	0x000803F0U
+#define MCU_UID2_ADDR	0x000803ECU
 #define MCU_CHIPID_ADDR	0x000803F8U
 #define DWT_CR		*(uint32_t *)0xE0001000U
 #define DWT_CYCCNT	*(volatile uint32_t *)0xE0001004U
@@ -170,6 +170,7 @@ void ald_systick_interval_select(systick_interval_t value);
 /* Peripheral Control functions */
 void ald_inc_tick(void);
 void ald_systick_irq_cbk(void);
+void ald_delay_us(__IO uint32_t delay);
 void ald_delay_ms(__IO uint32_t delay);
 uint32_t ald_get_tick(void);
 void ald_suspend_tick(void);

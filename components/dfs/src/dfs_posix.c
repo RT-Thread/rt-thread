@@ -110,10 +110,10 @@ RTM_EXPORT(close);
  * @return the actual read data buffer length. If the returned value is 0, it
  * may be reach the end of file, please check errno.
  */
-#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
-_READ_WRITE_RETURN_TYPE _EXFUN(read, (int fd, void *buf, size_t len))
+#ifdef _READ_WRITE_RETURN_TYPE
+_READ_WRITE_RETURN_TYPE read(int fd, void *buf, size_t len) /* some gcc tool chains will use different data structure */
 #else
-int read(int fd, void *buf, size_t len)
+ssize_t read(int fd, void *buf, size_t len)
 #endif
 {
     int result;
@@ -154,10 +154,10 @@ RTM_EXPORT(read);
  *
  * @return the actual written data buffer length.
  */
-#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
-_READ_WRITE_RETURN_TYPE _EXFUN(write, (int fd, const void *buf, size_t len))
+#ifdef _READ_WRITE_RETURN_TYPE
+_READ_WRITE_RETURN_TYPE write(int fd, const void *buf, size_t len) /* some gcc tool chains will use different data structure */
 #else
-int write(int fd, const void *buf, size_t len)
+ssize_t write(int fd, const void *buf, size_t len)
 #endif
 {
     int result;
@@ -254,6 +254,7 @@ off_t lseek(int fd, off_t offset, int whence)
 }
 RTM_EXPORT(lseek);
 
+#ifndef _WIN32 /* we can not implement these functions */
 /**
  * this function is a POSIX compliant version, which will rename old file name
  * to new file name.
@@ -280,6 +281,7 @@ int rename(const char *old_file, const char *new_file)
     return 0;
 }
 RTM_EXPORT(rename);
+#endif
 
 /**
  * this function is a POSIX compliant version, which will unlink (remove) a
@@ -305,7 +307,6 @@ int unlink(const char *pathname)
 }
 RTM_EXPORT(unlink);
 
-#ifndef _WIN32 /* we can not implement these functions */
 /**
  * this function is a POSIX compliant version, which will get file information.
  *
@@ -370,7 +371,6 @@ int fstat(int fildes, struct stat *buf)
     return RT_EOK;
 }
 RTM_EXPORT(fstat);
-#endif
 
 /**
  * this function is a POSIX compliant version, which shall request that all data

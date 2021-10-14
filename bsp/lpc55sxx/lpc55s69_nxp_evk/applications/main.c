@@ -8,6 +8,7 @@
  * Date           Author       Notes
  * 2019-10-24     Magicoe      first version
  * 2020-01-10     Kevin/Karl   Add PS demo
+ * 2020-09-21     supperthomas fix the main.c
  *
  */
 
@@ -18,12 +19,9 @@
 /* GPIO1_4 is Blue LED */
 #define LEDB_PIN      GET_PINS(1, 4)
 
-extern void protected_storage_demo_thread(void * parameters);
 
 int main(void)
 {
-    rt_thread_t t_psa_ps_demo;
-
 #if defined(__CC_ARM)
     rt_kprintf("using armcc, version: %d\n", __ARMCC_VERSION);
 #elif defined(__CLANG_ARM)
@@ -33,14 +31,6 @@ int main(void)
 #elif defined(__GNUC__)
     rt_kprintf("using gcc, version: %d.%d\n", __GNUC__, __GNUC_MINOR__);
 #endif
-
-    t_psa_ps_demo = rt_thread_create("psa_ps_demo",
-                                     protected_storage_demo_thread,
-                                     RT_NULL,
-                                     512,
-                                     ( RT_MAIN_THREAD_PRIORITY - 1),
-                                     50);
-    if (t_psa_ps_demo != RT_NULL) rt_thread_startup(t_psa_ps_demo);
 
     rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
     while (1)

@@ -25,6 +25,10 @@
 #include <dfs_posix.h>
 #endif
 
+#define DBG_TAG    "armlibc.syscalls"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #ifdef __CLANG_ARM
 __asm(".global __use_no_semihosting\n\t");
 #else
@@ -146,16 +150,22 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
     if (fh == STDIN)
     {
 #ifdef RT_USING_POSIX
-        size = libc_stdio_read(buf, len);
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_W("Do not invoke standard output before initializing libc");
+            return 0;
+        }
+        size = read(STDIN_FILENO, buf, len);
         return len - size;
 #else
         /* no stdin */
         return -1;
 #endif
     }
-
-    if ((fh == STDOUT) || (fh == STDERR))
+    else if ((fh == STDOUT) || (fh == STDERR))
+    {
         return -1;
+    }
 
 #ifndef RT_USING_DFS
     return 0;
@@ -185,7 +195,12 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         return 0;
 #else
 #ifdef RT_USING_POSIX
-        size = libc_stdio_write(buf, len);
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_W("Do not invoke standard input before initializing libc");
+            return 0;
+        }
+        size = write(STDOUT_FILENO, buf, len);
         return len - size;
 #else
         if (rt_console_get_device())
@@ -198,8 +213,10 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 #endif
 #endif
     }
-
-    if (fh == STDIN) return -1;
+    else if (fh == STDIN)
+    {
+        return -1;
+    }
 
 #ifndef RT_USING_DFS
     return 0;
@@ -302,16 +319,6 @@ int remove(const char *filename)
 #endif
 }
 
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
-/* use system(const char *string) implementation in the msh */
-#else
-int system(const char *string)
-{
-    extern int __rt_libc_system(const char *string);
-    return __rt_libc_system(string);
-}
-#endif
-
 #ifdef __MICROLIB
 #include <stdio.h>
 
@@ -329,7 +336,13 @@ int fgetc(FILE *f)
 #ifdef RT_USING_POSIX
     char ch;
 
-    if (libc_stdio_read(&ch, 1) == 1)
+    if (libc_stdio_get_console() < 0)
+    {
+        LOG_W("Do not invoke standard output before initializing libc");
+        return -1;
+    }
+
+    if(read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
 #endif
 

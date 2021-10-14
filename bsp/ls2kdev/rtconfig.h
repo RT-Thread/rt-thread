@@ -16,6 +16,9 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 16384
+
+/* kservice optimization */
+
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -38,7 +41,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40003
+#define RT_VER_NUM 0x40004
 #define ARCH_CPU_64BIT
 #define ARCH_MIPS64
 
@@ -55,24 +58,25 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define RT_USING_MSH
+#define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 16384
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 16384
 #define FINSH_CMD_SIZE 80
-#define FINSH_USING_MSH
-#define FINSH_USING_MSH_DEFAULT
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 10
-#define DFS_FILESYSTEM_TYPES_MAX 10
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
 #define DFS_FD_MAX 16
 #define RT_USING_DFS_ELMFAT
 
@@ -98,6 +102,7 @@
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 16384
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 5
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
@@ -110,6 +115,7 @@
 
 #define RT_USING_LIBC
 #define RT_USING_POSIX
+#define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* Network */
 
@@ -189,6 +195,9 @@
 /* Utilities */
 
 
+/* RT-Thread Utestcases */
+
+
 /* RT-Thread MIPS CPU */
 
 
@@ -222,17 +231,27 @@
 
 /* system packages */
 
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
 
 /* peripheral libraries and drivers */
 
 
-/* miscellaneous packages */
+/* AI packages */
 
+
+/* miscellaneous packages */
 
 /* samples: kernel and components samples */
 
+
+/* entertainment: terminal games and other interesting software packages */
+
+#define SOC_LS
 #define SOC_LS2K1000
 #define RT_USING_UART0
-#define RT_USING_UART4
 
 #endif

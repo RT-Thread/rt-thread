@@ -6,7 +6,7 @@
   *
   *          This file overrides the native HAL time base functions (defined as weak)
   *          the TIM time base:
-  *           + Intializes the TIM peripheral generate a Period elapsed Event each 1ms
+  *           + Initializes the TIM peripheral generate a Period elapsed Event each 1ms
   *           + HAL_IncTick is called inside HAL_TIM_PeriodElapsedCallback ie each 1ms
   *
  @verbatim
@@ -63,10 +63,18 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
   uint32_t              pFLatency;
 
     /*Configure the TIM6 IRQ priority */
+  if (TickPriority < (1UL << __NVIC_PRIO_BITS))
+  {
   HAL_NVIC_SetPriority(TIM6_DAC_IRQn, TickPriority ,0U);
 
   /* Enable the TIM6 global Interrupt */
   HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
+    uwTickPrio = TickPriority;
+  }
+  else
+  {
+    return HAL_ERROR;
+  }
 
   /* Enable TIM6 clock */
   __HAL_RCC_TIM6_CLK_ENABLE();

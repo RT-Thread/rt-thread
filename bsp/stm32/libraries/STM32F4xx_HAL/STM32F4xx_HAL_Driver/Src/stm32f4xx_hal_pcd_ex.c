@@ -49,7 +49,7 @@
 
 /** @defgroup PCDEx_Exported_Functions_Group1 Peripheral Control functions
   * @brief    PCDEx control functions
- *
+  *
 @verbatim
  ===============================================================================
                  ##### Extended features functions #####
@@ -164,7 +164,7 @@ void HAL_PCDEx_BCD_VBUSDetect(PCD_HandleTypeDef *hpcd)
   /* Enable DCD : Data Contact Detect */
   USBx->GCCFG |= USB_OTG_GCCFG_DCDEN;
 
-  /* Wait Detect flag or a timeout is happen*/
+  /* Wait Detect flag or a timeout is happen */
   while ((USBx->GCCFG & USB_OTG_GCCFG_DCDET) == 0U)
   {
     /* Check for the Timeout */
@@ -260,7 +260,7 @@ HAL_StatusTypeDef HAL_PCDEx_ActivateBCD(PCD_HandleTypeDef *hpcd)
   USBx->GCCFG &= ~(USB_OTG_GCCFG_PDEN);
   USBx->GCCFG &= ~(USB_OTG_GCCFG_SDEN);
 
-  /* Power Down USB tranceiver  */
+  /* Power Down USB transceiver  */
   USBx->GCCFG &= ~(USB_OTG_GCCFG_PWRDWN);
 
   /* Enable Battery charging */

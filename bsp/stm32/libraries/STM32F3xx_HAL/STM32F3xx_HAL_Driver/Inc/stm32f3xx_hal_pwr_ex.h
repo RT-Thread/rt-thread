@@ -45,7 +45,7 @@
     defined(STM32F302xC) || defined(STM32F303xC) || \
     defined(STM32F303x8) || defined(STM32F334x8) || \
     defined(STM32F301x8) || defined(STM32F302x8) || \
-    defined(STM32F373xC)
+    defined(STM32F373xC) 
 /**
   * @brief  PWR PVD configuration structure definition
   */
@@ -77,17 +77,17 @@ typedef struct
     defined(STM32F303x8) || defined(STM32F334x8) || \
     defined(STM32F301x8) || defined(STM32F302x8) || \
     defined(STM32F373xC)
-
+    
 /** @defgroup PWREx_PVD_detection_level PWR Extended PVD detection level
   * @{
   */
-#define PWR_PVDLEVEL_0                  PWR_CR_PLS_LEV0    /*!< PVD threshold around 2.2 V */
-#define PWR_PVDLEVEL_1                  PWR_CR_PLS_LEV1    /*!< PVD threshold around 2.3 V */
-#define PWR_PVDLEVEL_2                  PWR_CR_PLS_LEV2    /*!< PVD threshold around 2.4 V */
-#define PWR_PVDLEVEL_3                  PWR_CR_PLS_LEV3    /*!< PVD threshold around 2.5 V */
-#define PWR_PVDLEVEL_4                  PWR_CR_PLS_LEV4    /*!< PVD threshold around 2.6 V */
-#define PWR_PVDLEVEL_5                  PWR_CR_PLS_LEV5    /*!< PVD threshold around 2.7 V */
-#define PWR_PVDLEVEL_6                  PWR_CR_PLS_LEV6    /*!< PVD threshold around 2.8 V */
+#define PWR_PVDLEVEL_0                  PWR_CR_PLS_LEV0    /*!< PVD threshold around 2.2 V */                                    
+#define PWR_PVDLEVEL_1                  PWR_CR_PLS_LEV1    /*!< PVD threshold around 2.3 V */                                    
+#define PWR_PVDLEVEL_2                  PWR_CR_PLS_LEV2    /*!< PVD threshold around 2.4 V */                                    
+#define PWR_PVDLEVEL_3                  PWR_CR_PLS_LEV3    /*!< PVD threshold around 2.5 V */                                    
+#define PWR_PVDLEVEL_4                  PWR_CR_PLS_LEV4    /*!< PVD threshold around 2.6 V */                                    
+#define PWR_PVDLEVEL_5                  PWR_CR_PLS_LEV5    /*!< PVD threshold around 2.7 V */                                    
+#define PWR_PVDLEVEL_6                  PWR_CR_PLS_LEV6    /*!< PVD threshold around 2.8 V */                                    
 #define PWR_PVDLEVEL_7                  PWR_CR_PLS_LEV7    /*!< PVD threshold around 2.9 V */
 /**
   * @}
@@ -119,7 +119,7 @@ typedef struct
 /** @defgroup PWREx_SDADC_ANALOGx PWR Extended SDADC ANALOGx
   * @{
   */
-#define PWR_SDADC_ANALOG1              ((uint32_t)PWR_CR_ENSD1)   /*!< Enable SDADC1 */
+#define PWR_SDADC_ANALOG1              ((uint32_t)PWR_CR_ENSD1)   /*!< Enable SDADC1 */ 
 #define PWR_SDADC_ANALOG2              ((uint32_t)PWR_CR_ENSD2)   /*!< Enable SDADC2 */
 #define PWR_SDADC_ANALOG3              ((uint32_t)PWR_CR_ENSD3)   /*!< Enable SDADC3 */
 /**
@@ -141,7 +141,7 @@ typedef struct
     defined(STM32F303x8) || defined(STM32F334x8) || \
     defined(STM32F301x8) || defined(STM32F302x8) || \
     defined(STM32F373xC)
-
+    
 /**
   * @brief Enable interrupt on PVD Exti Line 16.
   * @retval None.
@@ -229,7 +229,7 @@ typedef struct
 /**
   * @}
   */
-
+  
 /* Private macros --------------------------------------------------------*/
 /** @addtogroup  PWREx_Private_Macros   PWR Extended Private Macros
   * @{
@@ -264,7 +264,7 @@ typedef struct
 
 /**
   * @}
-  */
+  */    
 
 /* Exported functions --------------------------------------------------------*/
 

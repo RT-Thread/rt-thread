@@ -118,6 +118,7 @@ typedef enum
 #define BSC2_BASE_OFFSET (0x805000)
 
 /* IRQ */
+#define MAX_HANDLERS       72
 #define IRQ_SYSTEM_TIMER_0 0
 #define IRQ_SYSTEM_TIMER_1  1
 #define IRQ_SYSTEM_TIMER_2 2

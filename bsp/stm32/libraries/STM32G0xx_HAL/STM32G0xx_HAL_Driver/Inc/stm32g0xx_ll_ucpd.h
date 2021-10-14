@@ -53,24 +53,24 @@ extern "C" {
   */
 typedef struct
 {
-  uint32_t psc_ucpdclk;         /*!< Specifies the prescaler for the ucpd clock.
+  uint32_t psc_ucpdclk;         /*!< Specify the prescaler for the UCPD clock.
                                      This parameter can be a value of @ref UCPD_LL_EC_PSC.
-                                     This feature can be modified afterwards using unitary function @ref LL_UCPD_SetPSCClk().*/
+                                     This feature can be modified afterwards using unitary function @ref LL_UCPD_SetPSCClk().         */
 
-  uint32_t transwin;            /*!< Specifies the number of cycles (minus 1) of the half bit clock (see HBITCLKDIV) to achieve a legal
-                                    tTransitionWindow (set according to peripheral clock to define an interval of between 12 and 20 us).
+  uint32_t transwin;            /*!< Specify the number of cycles (minus 1) of the half bit clock (see HBITCLKDIV) to achieve a legal
+                                    tTransitionWindow (set according to peripheral clock to define an interval of between 12 and 20 us)
                                     This parameter can be a value between Min_Data=0x1 and Max_Data=0x1F
-                                    This value can be modified afterwards using unitary function @ref LL_UCPD_SetTransWin().*/
+                                    This value can be modified afterwards using unitary function @ref LL_UCPD_SetTransWin().          */
 
-  uint32_t IfrGap;              /*!< Specifies the definition of the clock divider (minus 1) in order to generate tInterframeGap
+  uint32_t IfrGap;              /*!< Specify the definition of the clock divider (minus 1) in order to generate tInterframeGap
                                     from the peripheral clock.
                                     This parameter can be a value between Min_Data=0x1 and Max_Data=0x1F
-                                    This feature can be modified afterwards using unitary function @ref LL_UCPD_SetIfrGap().*/
+                                    This feature can be modified afterwards using unitary function @ref LL_UCPD_SetIfrGap().          */
 
-  uint32_t HbitClockDiv;        /*!< Specifies  the number of cycles (minus one) at UCPD peripheral for a half bit clock e.g. program 3
+  uint32_t HbitClockDiv;        /*!< Specify the number of cycles (minus one) at UCPD peripheral for a half bit clock e.g. program 3
                                      for a bit clock that takes 8 cycles of the peripheral clock "UCPD1_CLK"..
                                      This parameter can be a value between Min_Data=0x0 and Max_Data=0x3F.
-                                     This feature can be modified afterwards using unitary function @ref LL_UCPD_SetHbitClockDiv().*/
+                                     This feature can be modified afterwards using unitary function @ref LL_UCPD_SetHbitClockDiv().   */
 
 } LL_UCPD_InitTypeDef;
 
@@ -88,24 +88,24 @@ typedef struct
   * @brief    Flags defines which can be used with LL_ucpd_ReadReg function
   * @{
   */
-#define LL_UCPD_SR_TXIS             UCPD_SR_TXIS               /*!< Transmit interrupt status            */
-#define LL_UCPD_SR_TXMSGDISC        UCPD_SR_TXMSGDISC          /*!< Transmit message discarded interrupt */
-#define LL_UCPD_SR_TXMSGSENT        UCPD_SR_TXMSGSENT          /*!< Transmit message sent interrupt      */
-#define LL_UCPD_SR_TXMSGABT         UCPD_SR_TXMSGABT           /*!< Transmit message abort interrupt     */
-#define LL_UCPD_SR_HRSTDISC         UCPD_SR_HRSTDISC           /*!< HRST discarded interrupt             */
-#define LL_UCPD_SR_HRSTSENT         UCPD_SR_HRSTSENT           /*!< HRST sent interrupt                  */
-#define LL_UCPD_SR_TXUND            UCPD_SR_TXUND              /*!< Tx data underrun condition interrupt */
-#define LL_UCPD_SR_RXNE             UCPD_SR_RXNE               /*!< Receive data register not empty interrupt  */
-#define LL_UCPD_SR_RXORDDET         UCPD_SR_RXORDDET           /*!< Rx ordered set (4 K-codes) detected interrupt  */
-#define LL_UCPD_SR_RXHRSTDET        UCPD_SR_RXHRSTDET          /*!< Rx Hard Reset detect interrupt  */
-#define LL_UCPD_SR_RXOVR            UCPD_SR_RXOVR              /*!< Rx data overflow interrupt  */
-#define LL_UCPD_SR_RXMSGEND         UCPD_SR_RXMSGEND           /*!< Rx message received  */
-#define LL_UCPD_SR_RXERR            UCPD_SR_RXERR              /*!< Rx error  */
-#define LL_UCPD_SR_TYPECEVT1        UCPD_SR_TYPECEVT1          /*!< Type C voltage level event on CC1  */
-#define LL_UCPD_SR_TYPECEVT2        UCPD_SR_TYPECEVT2          /*!< Type C voltage level event on CC2  */
-#define LL_UCPD_SR_TYPEC_VSTATE_CC1 UCPD_SR_TYPEC_VSTATE_CC1   /*!<Status of DC level on CC1 pin  */
-#define LL_UCPD_SR_TYPEC_VSTATE_CC2 UCPD_SR_TYPEC_VSTATE_CC2   /*!<Status of DC level on CC2 pin  */
-#define LL_UCPD_SR_FRSEVT           UCPD_SR_FRSEVT             /*!<Fast Role Swap detection event  */
+#define LL_UCPD_SR_TXIS             UCPD_SR_TXIS                  /*!< Transmit interrupt status                      */
+#define LL_UCPD_SR_TXMSGDISC        UCPD_SR_TXMSGDISC             /*!< Transmit message discarded interrupt           */
+#define LL_UCPD_SR_TXMSGSENT        UCPD_SR_TXMSGSENT             /*!< Transmit message sent interrupt                */
+#define LL_UCPD_SR_TXMSGABT         UCPD_SR_TXMSGABT              /*!< Transmit message abort interrupt               */
+#define LL_UCPD_SR_HRSTDISC         UCPD_SR_HRSTDISC              /*!< HRST discarded interrupt                       */
+#define LL_UCPD_SR_HRSTSENT         UCPD_SR_HRSTSENT              /*!< HRST sent interrupt                            */
+#define LL_UCPD_SR_TXUND            UCPD_SR_TXUND                 /*!< Tx data underrun condition interrupt           */
+#define LL_UCPD_SR_RXNE             UCPD_SR_RXNE                  /*!< Receive data register not empty interrupt      */
+#define LL_UCPD_SR_RXORDDET         UCPD_SR_RXORDDET              /*!< Rx ordered set (4 K-codes) detected interrupt  */
+#define LL_UCPD_SR_RXHRSTDET        UCPD_SR_RXHRSTDET             /*!< Rx Hard Reset detect interrupt                 */
+#define LL_UCPD_SR_RXOVR            UCPD_SR_RXOVR                 /*!< Rx data overflow interrupt                     */
+#define LL_UCPD_SR_RXMSGEND         UCPD_SR_RXMSGEND              /*!< Rx message received                            */
+#define LL_UCPD_SR_RXERR            UCPD_SR_RXERR                 /*!< Rx error                                       */
+#define LL_UCPD_SR_TYPECEVT1        UCPD_SR_TYPECEVT1             /*!< Type C voltage level event on CC1              */
+#define LL_UCPD_SR_TYPECEVT2        UCPD_SR_TYPECEVT2             /*!< Type C voltage level event on CC2              */
+#define LL_UCPD_SR_TYPEC_VSTATE_CC1 UCPD_SR_TYPEC_VSTATE_CC1      /*!<Status of DC level on CC1 pin                   */
+#define LL_UCPD_SR_TYPEC_VSTATE_CC2 UCPD_SR_TYPEC_VSTATE_CC2      /*!<Status of DC level on CC2 pin                   */
+#define LL_UCPD_SR_FRSEVT           UCPD_SR_FRSEVT                /*!<Fast Role Swap detection event                  */
 
 /**
   * @}
@@ -115,44 +115,43 @@ typedef struct
   * @brief    IT defines which can be used with LL_UCPD_ReadReg and  LL_UCPD_WriteReg functions
   * @{
   */
-#define LL_UCPD_IMR_TXIS             UCPD_IMR_TXISIE               /*!< Enable transmit interrupt status            */
-#define LL_UCPD_IMR_TXMSGDISC        UCPD_IMR_TXMSGDISCIE          /*!< Enable transmit message discarded interrupt */
-#define LL_UCPD_IMR_TXMSGSENT        UCPD_IMR_TXMSGSENTIE          /*!< Enable transmit message sent interrupt      */
-#define LL_UCPD_IMR_TXMSGABT         UCPD_IMR_TXMSGABTIE           /*!< Enable transmit message abort interrupt     */
-#define LL_UCPD_IMR_HRSTDISC         UCPD_IMR_HRSTDISCIE           /*!< Enable HRST discarded interrupt             */
-#define LL_UCPD_IMR_HRSTSENT         UCPD_IMR_HRSTSENTIE           /*!< Enable HRST sent interrupt                  */
-#define LL_UCPD_IMR_TXUND            UCPD_IMR_TXUNDIE              /*!< Enable tx data underrun condition interrupt */
-#define LL_UCPD_IMR_RXNE             UCPD_IMR_RXNEIE               /*!< Enable Receive data register not empty interrupt  */
-#define LL_UCPD_IMR_RXORDDET         UCPD_IMR_RXORDDETIE           /*!< Enable Rx ordered set (4 K-codes) detected interrupt  */
-#define LL_UCPD_IMR_RXHRSTDET        UCPD_IMR_RXHRSTDETIE          /*!< Enable Rx Hard Reset detect interrupt  */
-#define LL_UCPD_IMR_RXOVR            UCPD_IMR_RXOVRIE              /*!< Enable Rx data overflow interrupt  */
-#define LL_UCPD_IMR_RXMSGEND         UCPD_IMR_RXMSGEND             /*!< Enable Rx message received  */
-#define LL_UCPD_IMR_RXERR            UCPD_IMR_RXMSGENDIE           /*!< Enable Rx error  */
-#define LL_UCPD_IMR_TYPECEVT1        UCPD_IMR_TYPECEVT1IE          /*!< Enable Type C voltage level event on CC1  */
-#define LL_UCPD_IMR_TYPECEVT2        UCPD_IMR_TYPECEVT2IE          /*!< Enable Type C voltage level event on CC2  */
-#define LL_UCPD_IMR_FRSEVT           UCPD_IMR_FRSEVTIE             /*!< Enable fast Role Swap detection event  */
+#define LL_UCPD_IMR_TXIS             UCPD_IMR_TXISIE              /*!< Enable transmit interrupt status                     */
+#define LL_UCPD_IMR_TXMSGDISC        UCPD_IMR_TXMSGDISCIE         /*!< Enable transmit message discarded interrupt          */
+#define LL_UCPD_IMR_TXMSGSENT        UCPD_IMR_TXMSGSENTIE         /*!< Enable transmit message sent interrupt               */
+#define LL_UCPD_IMR_TXMSGABT         UCPD_IMR_TXMSGABTIE          /*!< Enable transmit message abort interrupt              */
+#define LL_UCPD_IMR_HRSTDISC         UCPD_IMR_HRSTDISCIE          /*!< Enable HRST discarded interrupt                      */
+#define LL_UCPD_IMR_HRSTSENT         UCPD_IMR_HRSTSENTIE          /*!< Enable HRST sent interrupt                           */
+#define LL_UCPD_IMR_TXUND            UCPD_IMR_TXUNDIE             /*!< Enable tx data underrun condition interrupt          */
+#define LL_UCPD_IMR_RXNE             UCPD_IMR_RXNEIE              /*!< Enable Receive data register not empty interrupt     */
+#define LL_UCPD_IMR_RXORDDET         UCPD_IMR_RXORDDETIE          /*!< Enable Rx ordered set (4 K-codes) detected interrupt */
+#define LL_UCPD_IMR_RXHRSTDET        UCPD_IMR_RXHRSTDETIE         /*!< Enable Rx Hard Reset detect interrupt                */
+#define LL_UCPD_IMR_RXOVR            UCPD_IMR_RXOVRIE             /*!< Enable Rx data overflow interrupt                    */
+#define LL_UCPD_IMR_RXMSGEND         UCPD_IMR_RXMSGENDIE          /*!< Enable Rx message received                           */
+#define LL_UCPD_IMR_TYPECEVT1        UCPD_IMR_TYPECEVT1IE         /*!< Enable Type C voltage level event on CC1             */
+#define LL_UCPD_IMR_TYPECEVT2        UCPD_IMR_TYPECEVT2IE         /*!< Enable Type C voltage level event on CC2             */
+#define LL_UCPD_IMR_FRSEVT           UCPD_IMR_FRSEVTIE            /*!< Enable fast Role Swap detection event                */
 /**
   * @}
   */
 
-/** @defgroup UCPD_LL_EC_ORDERSET orderset value
-  * @brief    definition of the usual orderset
+/** @defgroup UCPD_LL_EC_ORDERSET Ordered sets value
+  * @brief    definition of the usual Ordered sets
   * @{
   */
-#define LL_UCPD_SYNC1 0x18u
-#define LL_UCPD_SYNC2 0x11u
-#define LL_UCPD_SYNC3 0x06u
-#define LL_UCPD_RST1  0x07u
-#define LL_UCPD_RST2  0x19u
-#define LL_UCPD_EOP   0x0Du
+#define LL_UCPD_SYNC1 0x18u                                       /*!< K-code for Startsynch #1                             */
+#define LL_UCPD_SYNC2 0x11u                                       /*!< K-code for Startsynch #2                             */
+#define LL_UCPD_SYNC3 0x06u                                       /*!< K-code for Startsynch #3                             */
+#define LL_UCPD_RST1  0x07u                                       /*!< K-code for Hard Reset #1                             */
+#define LL_UCPD_RST2  0x19u                                       /*!< K-code for Hard Reset #2                             */
+#define LL_UCPD_EOP   0x0Du                                       /*!< K-code for EOP End of Packet                         */
 
-#define LL_UCPD_ORDERED_SET_SOP         (LL_UCPD_SYNC1 | (LL_UCPD_SYNC1<<5u) | (LL_UCPD_SYNC1<<10u) | (LL_UCPD_SYNC2<<15u))
-#define LL_UCPD_ORDERED_SET_SOP1        (LL_UCPD_SYNC1 | (LL_UCPD_SYNC1<<5u) | (LL_UCPD_SYNC3<<10u) | (LL_UCPD_SYNC3<<15u))
-#define LL_UCPD_ORDERED_SET_SOP2        (LL_UCPD_SYNC1 | (LL_UCPD_SYNC3<<5u) | (LL_UCPD_SYNC1<<10u) | (LL_UCPD_SYNC3<<15u))
-#define LL_UCPD_ORDERED_SET_HARD_RESET  (LL_UCPD_RST1  | (LL_UCPD_RST1<<5u)  | (LL_UCPD_RST1<<10u)  | (LL_UCPD_RST2<<15u ))
-#define LL_UCPD_ORDERED_SET_CABLE_RESET (LL_UCPD_RST1  | (LL_UCPD_SYNC1<<5u) | (LL_UCPD_RST1<<10u)  | (LL_UCPD_SYNC3<<15u))
-#define LL_UCPD_ORDERED_SET_SOP1_DEBUG  (LL_UCPD_SYNC1 | (LL_UCPD_RST2<<5u)  | (LL_UCPD_RST2<<10u)  | (LL_UCPD_SYNC3<<15u))
-#define LL_UCPD_ORDERED_SET_SOP2_DEBUG  (LL_UCPD_SYNC1 | (LL_UCPD_RST2<<5u)  | (LL_UCPD_SYNC3<<10u) | (LL_UCPD_SYNC2<<15u))
+#define LL_UCPD_ORDERED_SET_SOP         (LL_UCPD_SYNC1 | (LL_UCPD_SYNC1<<5u) | (LL_UCPD_SYNC1<<10u) | (LL_UCPD_SYNC2<<15u)) /*!< SOP Ordered set coding         */
+#define LL_UCPD_ORDERED_SET_SOP1        (LL_UCPD_SYNC1 | (LL_UCPD_SYNC1<<5u) | (LL_UCPD_SYNC3<<10u) | (LL_UCPD_SYNC3<<15u)) /*!< SOP' Ordered set coding        */
+#define LL_UCPD_ORDERED_SET_SOP2        (LL_UCPD_SYNC1 | (LL_UCPD_SYNC3<<5u) | (LL_UCPD_SYNC1<<10u) | (LL_UCPD_SYNC3<<15u)) /*!< SOP'' Ordered set coding       */
+#define LL_UCPD_ORDERED_SET_HARD_RESET  (LL_UCPD_RST1  | (LL_UCPD_RST1<<5u)  | (LL_UCPD_RST1<<10u)  | (LL_UCPD_RST2<<15u )) /*!< Hard Reset Ordered set coding  */
+#define LL_UCPD_ORDERED_SET_CABLE_RESET (LL_UCPD_RST1  | (LL_UCPD_SYNC1<<5u) | (LL_UCPD_RST1<<10u)  | (LL_UCPD_SYNC3<<15u)) /*!< Cable Reset Ordered set coding */
+#define LL_UCPD_ORDERED_SET_SOP1_DEBUG  (LL_UCPD_SYNC1 | (LL_UCPD_RST2<<5u)  | (LL_UCPD_RST2<<10u)  | (LL_UCPD_SYNC3<<15u)) /*!< SOP' Debug Ordered set coding  */
+#define LL_UCPD_ORDERED_SET_SOP2_DEBUG  (LL_UCPD_SYNC1 | (LL_UCPD_RST2<<5u)  | (LL_UCPD_SYNC3<<10u) | (LL_UCPD_SYNC2<<15u)) /*!< SOP'' Debug Ordered set coding */
 /**
   * @}
   */
@@ -160,59 +159,59 @@ typedef struct
 /** @defgroup UCPD_LL_EC_MODE Role Mode
   * @{
   */
-#define LL_UCPD_ROLE_SNK             UCPD_CR_ANAMODE        /*!< Mode SNK Rd         */
-#define LL_UCPD_ROLE_SRC             0x0U
+#define LL_UCPD_ROLE_SNK             UCPD_CR_ANAMODE              /*!< Mode SNK Rd                                    */
+#define LL_UCPD_ROLE_SRC             0x0U                         /*!< Mode SRC Rp                                    */
 /**
   * @}
   */
 
-/** @defgroup UCPD_LL_EC_RESISTOR resistor value
+/** @defgroup UCPD_LL_EC_RESISTOR Resistor value
   * @{
   */
-#define LL_UCPD_RESISTOR_DEFAULT    UCPD_CR_ANASUBMODE_0   /*!< Rp default  */
-#define LL_UCPD_RESISTOR_1_5A       UCPD_CR_ANASUBMODE_1   /*!< Rp 1.5 A    */
-#define LL_UCPD_RESISTOR_3_0A       UCPD_CR_ANASUBMODE     /*!< Rp 3.0 A    */
-#define LL_UCPD_RESISTOR_NONE       0x0U                    /*!< No resistor */
+#define LL_UCPD_RESISTOR_DEFAULT    UCPD_CR_ANASUBMODE_0          /*!< Rp default                                     */
+#define LL_UCPD_RESISTOR_1_5A       UCPD_CR_ANASUBMODE_1          /*!< Rp 1.5 A                                       */
+#define LL_UCPD_RESISTOR_3_0A       UCPD_CR_ANASUBMODE            /*!< Rp 3.0 A                                       */
+#define LL_UCPD_RESISTOR_NONE       0x0U                          /*!< No resistor                                    */
 /**
   * @}
   */
 
-/** @defgroup UCPD_LL_EC_CFG1_ORDERSET orderset configuration
+/** @defgroup UCPD_LL_EC_CFG1_ORDERSET ordered set configuration
   * @{
   */
-#define LL_UCPD_ORDERSET_SOP         UCPD_CFG1_RXORDSETEN_0
-#define LL_UCPD_ORDERSET_SOP1        UCPD_CFG1_RXORDSETEN_1
-#define LL_UCPD_ORDERSET_SOP2        UCPD_CFG1_RXORDSETEN_2
-#define LL_UCPD_ORDERSET_HARDRST     UCPD_CFG1_RXORDSETEN_3
-#define LL_UCPD_ORDERSET_CABLERST    UCPD_CFG1_RXORDSETEN_4
-#define LL_UCPD_ORDERSET_SOP1_DEBUG  UCPD_CFG1_RXORDSETEN_5
-#define LL_UCPD_ORDERSET_SOP2_DEBUG  UCPD_CFG1_RXORDSETEN_6
-#define LL_UCPD_ORDERSET_SOP_EXT1    UCPD_CFG1_RXORDSETEN_7
-#define LL_UCPD_ORDERSET_SOP_EXT2    UCPD_CFG1_RXORDSETEN_8
+#define LL_UCPD_ORDERSET_SOP         UCPD_CFG1_RXORDSETEN_0       /*!< SOP Ordered set detection enabled              */
+#define LL_UCPD_ORDERSET_SOP1        UCPD_CFG1_RXORDSETEN_1       /*!< SOP' Ordered set detection enabled             */
+#define LL_UCPD_ORDERSET_SOP2        UCPD_CFG1_RXORDSETEN_2       /*!< SOP'' Ordered set detection enabled            */
+#define LL_UCPD_ORDERSET_HARDRST     UCPD_CFG1_RXORDSETEN_3       /*!< Hard Reset Ordered set detection enabled       */
+#define LL_UCPD_ORDERSET_CABLERST    UCPD_CFG1_RXORDSETEN_4       /*!< Cable Reset Ordered set detection enabled      */
+#define LL_UCPD_ORDERSET_SOP1_DEBUG  UCPD_CFG1_RXORDSETEN_5       /*!< SOP' Debug Ordered set detection enabled       */
+#define LL_UCPD_ORDERSET_SOP2_DEBUG  UCPD_CFG1_RXORDSETEN_6       /*!< SOP'' Debug Ordered set detection enabled      */
+#define LL_UCPD_ORDERSET_SOP_EXT1    UCPD_CFG1_RXORDSETEN_7       /*!< SOP extension#1 Ordered set detection enabled  */
+#define LL_UCPD_ORDERSET_SOP_EXT2    UCPD_CFG1_RXORDSETEN_8       /*!< SOP extension#2 Ordered set detection enabled  */
 /**
   * @}
   */
 
-/** @defgroup UCPD_LL_EC_CCxEVT  ccxevt
+/** @defgroup UCPD_LL_EC_CCxEVT  CCx event
   * @{
   */
-#define LL_UCPD_SNK_CC1_VOPEN      0x00u
-#define LL_UCPD_SNK_CC1_VRP        UCPD_SR_TYPEC_VSTATE_CC1_0
-#define LL_UCPD_SNK_CC1_VRP15A     UCPD_SR_TYPEC_VSTATE_CC1_1
-#define LL_UCPD_SNK_CC1_VRP30A     (UCPD_SR_TYPEC_VSTATE_CC1_0 | UCPD_SR_TYPEC_VSTATE_CC1_1)
+#define LL_UCPD_SNK_CC1_VOPEN      0x00u                                                      /*!< CC1 Sink Open state              */
+#define LL_UCPD_SNK_CC1_VRP        UCPD_SR_TYPEC_VSTATE_CC1_0                                 /*!< CC1 Sink vRP default state       */
+#define LL_UCPD_SNK_CC1_VRP15A     UCPD_SR_TYPEC_VSTATE_CC1_1                                 /*!< CC1 Sink vRP 1.5A state          */
+#define LL_UCPD_SNK_CC1_VRP30A     (UCPD_SR_TYPEC_VSTATE_CC1_0 | UCPD_SR_TYPEC_VSTATE_CC1_1)  /*!< CC1 Sink vRP 3.0A state          */
 
-#define LL_UCPD_SNK_CC2_VOPEN      0x00u
-#define LL_UCPD_SNK_CC2_VRP        UCPD_SR_TYPEC_VSTATE_CC2_0
-#define LL_UCPD_SNK_CC2_VRP15A     UCPD_SR_TYPEC_VSTATE_CC2_1
-#define LL_UCPD_SNK_CC2_VRP30A     (UCPD_SR_TYPEC_VSTATE_CC2_0 | UCPD_SR_TYPEC_VSTATE_CC2_1)
+#define LL_UCPD_SNK_CC2_VOPEN      0x00u                                                      /*!< CC2 Sink Open state              */
+#define LL_UCPD_SNK_CC2_VRP        UCPD_SR_TYPEC_VSTATE_CC2_0                                 /*!< CC2 Sink vRP default state       */
+#define LL_UCPD_SNK_CC2_VRP15A     UCPD_SR_TYPEC_VSTATE_CC2_1                                 /*!< CC2 Sink vRP 1.5A state          */
+#define LL_UCPD_SNK_CC2_VRP30A     (UCPD_SR_TYPEC_VSTATE_CC2_0 | UCPD_SR_TYPEC_VSTATE_CC2_1)  /*!< CC2 Sink vRP 3.0A state          */
 
-#define LL_UCPD_SRC_CC1_VRA        0x0U
-#define LL_UCPD_SRC_CC1_VRD        UCPD_SR_TYPEC_VSTATE_CC1_0
-#define LL_UCPD_SRC_CC1_OPEN       UCPD_SR_TYPEC_VSTATE_CC1_1
+#define LL_UCPD_SRC_CC1_VRA        0x0U                                                      /*!< CC1 Source vRA state              */
+#define LL_UCPD_SRC_CC1_VRD        UCPD_SR_TYPEC_VSTATE_CC1_0                                /*!< CC1 Source vRD state              */
+#define LL_UCPD_SRC_CC1_OPEN       UCPD_SR_TYPEC_VSTATE_CC1_1                                /*!< CC1 Source Open state             */
 
-#define LL_UCPD_SRC_CC2_VRA        0x0U
-#define LL_UCPD_SRC_CC2_VRD        UCPD_SR_TYPEC_VSTATE_CC2_0
-#define LL_UCPD_SRC_CC2_OPEN       UCPD_SR_TYPEC_VSTATE_CC2_1
+#define LL_UCPD_SRC_CC2_VRA        0x0U                                                      /*!< CC2 Source vRA state              */
+#define LL_UCPD_SRC_CC2_VRD        UCPD_SR_TYPEC_VSTATE_CC2_0                                /*!< CC2 Source vRD state              */
+#define LL_UCPD_SRC_CC2_OPEN       UCPD_SR_TYPEC_VSTATE_CC2_1                                /*!< CC2 Source Open state             */
 /**
   * @}
   */
@@ -220,65 +219,65 @@ typedef struct
 /** @defgroup UCPD_LL_EC_PSC prescaler for UCPDCLK
   * @{
   */
-#define LL_UCPD_PSC_DIV1            0x0u
-#define LL_UCPD_PSC_DIV2            UCPD_CFG1_PSC_UCPDCLK_0
-#define LL_UCPD_PSC_DIV4            UCPD_CFG1_PSC_UCPDCLK_1
-#define LL_UCPD_PSC_DIV8            (UCPD_CFG1_PSC_UCPDCLK_1 | UCPD_CFG1_PSC_UCPDCLK_0)
-#define LL_UCPD_PSC_DIV16           UCPD_CFG1_PSC_UCPDCLK_2
+#define LL_UCPD_PSC_DIV1            0x0u                                                     /*!< Bypass pre-scaling / divide by 1  */
+#define LL_UCPD_PSC_DIV2            UCPD_CFG1_PSC_UCPDCLK_0                                  /*!< Pre-scale clock by dividing by 2  */
+#define LL_UCPD_PSC_DIV4            UCPD_CFG1_PSC_UCPDCLK_1                                  /*!< Pre-scale clock by dividing by 4  */
+#define LL_UCPD_PSC_DIV8            (UCPD_CFG1_PSC_UCPDCLK_1 | UCPD_CFG1_PSC_UCPDCLK_0)      /*!< Pre-scale clock by dividing by 8  */
+#define LL_UCPD_PSC_DIV16           UCPD_CFG1_PSC_UCPDCLK_2                                  /*!< Pre-scale clock by dividing by 16 */
 /**
   * @}
   */
 
-/** @defgroup UCPD_LL_EC_CCENABLE cc pin enable
+/** @defgroup UCPD_LL_EC_CCENABLE CC pin enable
   * @{
   */
-#define LL_UCPD_CCENABLE_NONE       0x0U
-#define LL_UCPD_CCENABLE_CC1        UCPD_CR_CCENABLE_0
-#define LL_UCPD_CCENABLE_CC2        UCPD_CR_CCENABLE_1
-#define LL_UCPD_CCENABLE_CC1CC2     (UCPD_CR_CCENABLE_0 | UCPD_CR_CCENABLE_1)
+#define LL_UCPD_CCENABLE_NONE       0x0U                                                     /*!< Neither PHY is activated (e.g. disabled state of source)          */
+#define LL_UCPD_CCENABLE_CC1        UCPD_CR_CCENABLE_0                                       /*!< Controls apply to only CC1                                        */
+#define LL_UCPD_CCENABLE_CC2        UCPD_CR_CCENABLE_1                                       /*!< Controls apply to only CC1                                        */
+#define LL_UCPD_CCENABLE_CC1CC2     (UCPD_CR_CCENABLE_0 | UCPD_CR_CCENABLE_1)                /*!< Controls apply to both CC1 and CC2 (normal usage for sink/source) */
 /**
   * @}
   */
 
-/** @defgroup UCPD_LL_EC_CCPIN cc pin selection
+/** @defgroup UCPD_LL_EC_CCPIN CC pin selection
   * @{
   */
-#define LL_UCPD_CCPIN_CC1           0x0U
-#define LL_UCPD_CCPIN_CC2           UCPD_CR_PHYCCSEL
+#define LL_UCPD_CCPIN_CC1           0x0U                    /*!< Use CC1 IO for power delivery communication              */
+#define LL_UCPD_CCPIN_CC2           UCPD_CR_PHYCCSEL        /*!< Use CC2 IO for power delivery communication              */
 /**
   * @}
   */
 
-/** @defgroup UCPD_LL_EC_RXMODE rx mode
+/** @defgroup UCPD_LL_EC_RXMODE Receiver mode
   * @{
   */
-#define LL_UCPD_RXMODE_NORMAL           0x0U
-#define LL_UCPD_RXMODE_BIST_TEST_DATA   UCPD_CR_RXMODE
+#define LL_UCPD_RXMODE_NORMAL           0x0U                /*!< Normal receive mode                                      */
+#define LL_UCPD_RXMODE_BIST_TEST_DATA   UCPD_CR_RXMODE      /*!< BIST receive mode (BIST Test Data Mode)                  */
 /**
   * @}
   */
 
-/** @defgroup UCPD_LL_EC_TXMODE tx mode
+/** @defgroup UCPD_LL_EC_TXMODE Type of Tx packet
   * @{
   */
-#define LL_UCPD_TXMODE_NORMAL           0x0U
-#define LL_UCPD_TXMODE_CABLE_RESET      UCPD_CR_TXMODE_0
-#define LL_UCPD_TXMODE_BIST_CARRIER2    UCPD_CR_TXMODE_1
+#define LL_UCPD_TXMODE_NORMAL           0x0U                /*!< Initiate the transfer of a Tx message                    */
+#define LL_UCPD_TXMODE_CABLE_RESET      UCPD_CR_TXMODE_0    /*!< Trigger a the transfer of a Cable Reset sequence         */
+#define LL_UCPD_TXMODE_BIST_CARRIER2    UCPD_CR_TXMODE_1    /*!< Trigger a BIST test sequence send (BIST Carrier Mode 2)  */
 /**
   * @}
   */
 
-/** @defgroup UCPD_LL_EC_RXORDSET rx orderset
+/** @defgroup UCPD_LL_EC_RXORDSET Rx ordered set code detected
   * @{
   */
-#define LL_UCPD_RXORDSET_SOP             0x0U
-#define LL_UCPD_RXORDSET_SOP1            UCPD_RX_ORDSET_RXORDSET_0
-#define LL_UCPD_RXORDSET_SOP2            UCPD_RX_ORDSET_RXORDSET_1
-#define LL_UCPD_RXORDSET_SOP1_DEBUG      (UCPD_RX_ORDSET_RXORDSET_0 | UCPD_RX_ORDSET_RXORDSET_1)
-#define LL_UCPD_RXORDSET_SOP2_DEBUG      UCPD_RX_ORDSET_RXORDSET_2
-#define LL_UCPD_RXORDSET_CABLE_RESET     (UCPD_RX_ORDSET_RXORDSET_2 | UCPD_RX_ORDSET_RXORDSET_0)
-#define LL_UCPD_RXORDSET_SOPEXT1         (UCPD_RX_ORDSET_RXORDSET_2 | UCPD_RX_ORDSET_RXORDSET_1)
-#define LL_UCPD_RXORDSET_SOPEXT2         (UCPD_RX_ORDSET_RXORDSET_2 | UCPD_RX_ORDSET_RXORDSET_1 | UCPD_RX_ORDSET_RXORDSET_0)
+#define LL_UCPD_RXORDSET_SOP             0x0U                                                                                 /*!< SOP code detected in receiver              */
+#define LL_UCPD_RXORDSET_SOP1            UCPD_RX_ORDSET_RXORDSET_0                                                            /*!< SOP' code detected in receiver             */
+#define LL_UCPD_RXORDSET_SOP2            UCPD_RX_ORDSET_RXORDSET_1                                                            /*!< SOP'' code detected in receiver            */
+#define LL_UCPD_RXORDSET_SOP1_DEBUG      (UCPD_RX_ORDSET_RXORDSET_0 | UCPD_RX_ORDSET_RXORDSET_1)                              /*!< SOP' Debug code detected in receiver       */
+#define LL_UCPD_RXORDSET_SOP2_DEBUG      UCPD_RX_ORDSET_RXORDSET_2                                                            /*!< SOP'' Debug code detected in receiver      */
+#define LL_UCPD_RXORDSET_CABLE_RESET     (UCPD_RX_ORDSET_RXORDSET_2 | UCPD_RX_ORDSET_RXORDSET_0)                              /*!< Cable Reset code detected in receiver      */
+#define LL_UCPD_RXORDSET_SOPEXT1         (UCPD_RX_ORDSET_RXORDSET_2 | UCPD_RX_ORDSET_RXORDSET_1)                              /*!< SOP extension#1 code detected in receiver  */
+#define LL_UCPD_RXORDSET_SOPEXT2         (UCPD_RX_ORDSET_RXORDSET_2 | UCPD_RX_ORDSET_RXORDSET_1 | UCPD_RX_ORDSET_RXORDSET_0)  /*!< SOP extension#2 code detected in receiver  */
 /**
   * @}
   */

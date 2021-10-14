@@ -16,6 +16,7 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
 #include <sal_netdb.h>
 
 struct hostent *gethostbyname(const char *name);

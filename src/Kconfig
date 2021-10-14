@@ -268,11 +268,18 @@ menu "Memory Management"
         help
             Using static memory fixed partition
 
-    config RT_USING_MEMHEAP
+    menuconfig RT_USING_MEMHEAP
         bool "Using memory heap object"
         default n
-        help
-            Using memory heap object to manage dynamic memory heap.
+
+        if RT_USING_MEMHEAP
+
+            if RT_USING_MEMHEAP_AS_HEAP
+            config RT_USING_MEMHEAP_AUTO_BINDING
+                bool "Use all of memheap objects as heap"
+                default y
+            endif
+        endif
 
     choice
         prompt "Dynamic Memory Management"
@@ -289,7 +296,7 @@ menu "Memory Management"
 
         if RT_USING_MEMHEAP
         config RT_USING_MEMHEAP_AS_HEAP
-            bool "Use all of memheap objects as heap"
+            bool "Use memheap objects as heap"
         endif
 
         config RT_USING_USERHEAP

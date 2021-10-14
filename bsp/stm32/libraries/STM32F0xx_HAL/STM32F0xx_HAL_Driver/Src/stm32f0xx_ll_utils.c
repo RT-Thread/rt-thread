@@ -6,32 +6,17 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_ll_rcc.h"
 #include "stm32f0xx_ll_utils.h"
@@ -131,9 +116,6 @@
   */
 static uint32_t    UTILS_GetPLLOutputFrequency(uint32_t PLL_InputFrequency,
                                                LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct);
-#if defined(FLASH_ACR_LATENCY)
-static ErrorStatus UTILS_SetFlashLatency(uint32_t Frequency);
-#endif /* FLASH_ACR_LATENCY */
 static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
 static ErrorStatus UTILS_PLL_IsBusy(void);
 /**
@@ -234,6 +216,68 @@ void LL_SetSystemCoreClock(uint32_t HCLKFrequency)
   /* HCLK clock frequency */
   SystemCoreClock = HCLKFrequency;
 }
+
+/**
+  * @brief  Update number of Flash wait states in line with new frequency and current
+            voltage range.
+  * @param  Frequency  SYSCLK frequency
+  * @retval An ErrorStatus enumeration value:
+  *          - SUCCESS: Latency has been modified
+  *          - ERROR: Latency cannot be modified
+  */
+#if defined(FLASH_ACR_LATENCY)
+ErrorStatus LL_SetFlashLatency(uint32_t Frequency)
+{
+  uint32_t timeout;
+  uint32_t getlatency;
+  uint32_t latency;
+  ErrorStatus status = SUCCESS;
+
+  /* Frequency cannot be equal to 0 */
+  if (Frequency == 0U)
+  {
+    status = ERROR;
+  }
+  else
+  {
+    if (Frequency > UTILS_LATENCY1_FREQ)
+    {
+      /* 24 < SYSCLK <= 48 => 1WS (2 CPU cycles) */
+      latency = LL_FLASH_LATENCY_1;
+    }
+    else
+    {
+      /* else SYSCLK < 24MHz default LL_FLASH_LATENCY_0 0WS */
+      latency = LL_FLASH_LATENCY_0;
+    }
+    if (status != ERROR)
+    {
+      LL_FLASH_SetLatency(latency);
+
+      /* Check that the new number of wait states is taken into account to access the Flash
+         memory by reading the FLASH_ACR register */
+      timeout = 2;
+      do
+      {
+      /* Wait for Flash latency to be updated */
+      getlatency = LL_FLASH_GetLatency();
+      timeout--;
+      } while ((getlatency != latency) && (timeout > 0));
+
+      if(getlatency != latency)
+      {
+        status = ERROR;
+      }
+      else
+      {
+        status = SUCCESS;
+      }
+    }
+  }
+   
+  return status;
+}
+#endif /* FLASH_ACR_LATENCY */
 
 /**
   * @brief  This function configures system clock with HSI as clock source of the PLL
@@ -452,48 +496,6 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypa
   * @{
   */
 /**
-  * @brief  Update number of Flash wait states in line with new frequency and current
-            voltage range.
-  * @param  Frequency  SYSCLK frequency
-  * @retval An ErrorStatus enumeration value:
-  *          - SUCCESS: Latency has been modified
-  *          - ERROR: Latency cannot be modified
-  */
-#if defined(FLASH_ACR_LATENCY)
-static ErrorStatus UTILS_SetFlashLatency(uint32_t Frequency)
-{
-  ErrorStatus status = SUCCESS;
-
-  uint32_t latency = LL_FLASH_LATENCY_0;  /* default value 0WS */
-
-  /* Frequency cannot be equal to 0 */
-  if (Frequency == 0U)
-  {
-    status = ERROR;
-  }
-  else
-  {
-    if (Frequency > UTILS_LATENCY1_FREQ)
-    {
-      /* 24 < SYSCLK <= 48 => 1WS (2 CPU cycles) */
-      latency = LL_FLASH_LATENCY_1;
-    }
-    /* else SYSCLK < 24MHz default LL_FLASH_LATENCY_0 0WS */
-
-    LL_FLASH_SetLatency(latency);
-
-    /* Check that the new number of wait states is taken into account to access the Flash
-       memory by reading the FLASH_ACR register */
-    if (LL_FLASH_GetLatency() != latency)
-    {
-      status = ERROR;
-    }
-  }
-  return status;
-}
-#endif /* FLASH_ACR_LATENCY */
-
-/**
   * @brief  Function to check that PLL can be modified
   * @param  PLL_InputFrequency  PLL input frequency (in Hz)
   * @param  UTILS_PLLInitStruct pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
@@ -564,7 +566,7 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   if (sysclk_frequency_current < SYSCLK_Frequency)
   {
     /* Set FLASH latency to highest latency */
-    status = UTILS_SetFlashLatency(SYSCLK_Frequency);
+    status = LL_SetFlashLatency(SYSCLK_Frequency);
   }
 
   /* Update system clock configuration */
@@ -593,7 +595,7 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   if (sysclk_frequency_current > SYSCLK_Frequency)
   {
     /* Set FLASH latency to lowest latency */
-    status = UTILS_SetFlashLatency(SYSCLK_Frequency);
+    status = LL_SetFlashLatency(SYSCLK_Frequency);
   }
 
   /* Update SystemCoreClock variable */

@@ -7,7 +7,8 @@
  * 2014-08-03     bernard      Add file header.
  */
 
-#include "rtthread.h"
+#include <rtthread.h>
+#include <stddef.h>
 
 #ifdef RT_USING_HEAP
 

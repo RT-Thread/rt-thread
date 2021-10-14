@@ -49,29 +49,30 @@ extern "C" {
 typedef struct
 {
   uint32_t Timing;              /*!< Specifies the FMPI2C_TIMINGR_register value.
-                                  This parameter calculated by referring to FMPI2C initialization
-                                         section in Reference manual */
+                                     This parameter calculated by referring to FMPI2C initialization section
+                                     in Reference manual */
 
   uint32_t OwnAddress1;         /*!< Specifies the first device own address.
-                                  This parameter can be a 7-bit or 10-bit address. */
+                                     This parameter can be a 7-bit or 10-bit address. */
 
   uint32_t AddressingMode;      /*!< Specifies if 7-bit or 10-bit addressing mode is selected.
-                                  This parameter can be a value of @ref FMPI2C_ADDRESSING_MODE */
+                                     This parameter can be a value of @ref FMPI2C_ADDRESSING_MODE */
 
   uint32_t DualAddressMode;     /*!< Specifies if dual addressing mode is selected.
-                                  This parameter can be a value of @ref FMPI2C_DUAL_ADDRESSING_MODE */
+                                     This parameter can be a value of @ref FMPI2C_DUAL_ADDRESSING_MODE */
 
   uint32_t OwnAddress2;         /*!< Specifies the second device own address if dual addressing mode is selected
-                                  This parameter can be a 7-bit address. */
+                                     This parameter can be a 7-bit address. */
 
-  uint32_t OwnAddress2Masks;    /*!< Specifies the acknowledge mask address second device own address if dual addressing mode is selected
-                                  This parameter can be a value of @ref FMPI2C_OWN_ADDRESS2_MASKS */
+  uint32_t OwnAddress2Masks;    /*!< Specifies the acknowledge mask address second device own address if dual addressing
+                                     mode is selected.
+                                     This parameter can be a value of @ref FMPI2C_OWN_ADDRESS2_MASKS */
 
   uint32_t GeneralCallMode;     /*!< Specifies if general call mode is selected.
-                                  This parameter can be a value of @ref FMPI2C_GENERAL_CALL_ADDRESSING_MODE */
+                                     This parameter can be a value of @ref FMPI2C_GENERAL_CALL_ADDRESSING_MODE */
 
   uint32_t NoStretchMode;       /*!< Specifies if nostretch mode is selected.
-                                  This parameter can be a value of @ref FMPI2C_NOSTRETCH_MODE */
+                                     This parameter can be a value of @ref FMPI2C_NOSTRETCH_MODE */
 
 } FMPI2C_InitTypeDef;
 
@@ -201,7 +202,8 @@ typedef struct __FMPI2C_HandleTypeDef
 
   __IO uint32_t              PreviousState;  /*!< FMPI2C communication Previous state          */
 
-  HAL_StatusTypeDef(*XferISR)(struct __FMPI2C_HandleTypeDef *hfmpi2c, uint32_t ITFlags, uint32_t ITSources);  /*!< FMPI2C transfer IRQ handler function pointer */
+  HAL_StatusTypeDef(*XferISR)(struct __FMPI2C_HandleTypeDef *hfmpi2c, uint32_t ITFlags, uint32_t ITSources);
+  /*!< FMPI2C transfer IRQ handler function pointer */
 
   DMA_HandleTypeDef          *hdmatx;        /*!< FMPI2C Tx DMA handle parameters              */
 
@@ -218,20 +220,32 @@ typedef struct __FMPI2C_HandleTypeDef
   __IO uint32_t              AddrEventCount; /*!< FMPI2C Address Event counter                 */
 
 #if (USE_HAL_FMPI2C_REGISTER_CALLBACKS == 1)
-  void (* MasterTxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);           /*!< FMPI2C Master Tx Transfer completed callback */
-  void (* MasterRxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);           /*!< FMPI2C Master Rx Transfer completed callback */
-  void (* SlaveTxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);            /*!< FMPI2C Slave Tx Transfer completed callback  */
-  void (* SlaveRxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);            /*!< FMPI2C Slave Rx Transfer completed callback  */
-  void (* ListenCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);             /*!< FMPI2C Listen Complete callback              */
-  void (* MemTxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);              /*!< FMPI2C Memory Tx Transfer completed callback */
-  void (* MemRxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);              /*!< FMPI2C Memory Rx Transfer completed callback */
-  void (* ErrorCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);                  /*!< FMPI2C Error callback                        */
-  void (* AbortCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);              /*!< FMPI2C Abort callback                        */
+  void (* MasterTxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Master Tx Transfer completed callback */
+  void (* MasterRxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Master Rx Transfer completed callback */
+  void (* SlaveTxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Slave Tx Transfer completed callback  */
+  void (* SlaveRxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Slave Rx Transfer completed callback  */
+  void (* ListenCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Listen Complete callback              */
+  void (* MemTxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Memory Tx Transfer completed callback */
+  void (* MemRxCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Memory Rx Transfer completed callback */
+  void (* ErrorCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Error callback                        */
+  void (* AbortCpltCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Abort callback                        */
 
-  void (* AddrCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c, uint8_t TransferDirection, uint16_t AddrMatchCode);  /*!< FMPI2C Slave Address Match callback */
+  void (* AddrCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c, uint8_t TransferDirection, uint16_t AddrMatchCode);
+  /*!< FMPI2C Slave Address Match callback */
 
-  void (* MspInitCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);                /*!< FMPI2C Msp Init callback                     */
-  void (* MspDeInitCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);              /*!< FMPI2C Msp DeInit callback                   */
+  void (* MspInitCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Msp Init callback                     */
+  void (* MspDeInitCallback)(struct __FMPI2C_HandleTypeDef *hfmpi2c);
+  /*!< FMPI2C Msp DeInit callback                   */
 
 #endif  /* USE_HAL_FMPI2C_REGISTER_CALLBACKS */
 } FMPI2C_HandleTypeDef;
@@ -260,8 +274,11 @@ typedef enum
 /**
   * @brief  HAL FMPI2C Callback pointer definition
   */
-typedef  void (*pFMPI2C_CallbackTypeDef)(FMPI2C_HandleTypeDef *hfmpi2c); /*!< pointer to an FMPI2C callback function */
-typedef  void (*pFMPI2C_AddrCallbackTypeDef)(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t TransferDirection, uint16_t AddrMatchCode); /*!< pointer to an FMPI2C Address Match callback function */
+typedef  void (*pFMPI2C_CallbackTypeDef)(FMPI2C_HandleTypeDef *hfmpi2c);
+/*!< pointer to an FMPI2C callback function */
+typedef  void (*pFMPI2C_AddrCallbackTypeDef)(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t TransferDirection,
+                                             uint16_t AddrMatchCode);
+/*!< pointer to an FMPI2C Address Match callback function */
 
 #endif /* USE_HAL_FMPI2C_REGISTER_CALLBACKS */
 /**
@@ -441,14 +458,14 @@ typedef  void (*pFMPI2C_AddrCallbackTypeDef)(FMPI2C_HandleTypeDef *hfmpi2c, uint
   * @retval None
   */
 #if (USE_HAL_FMPI2C_REGISTER_CALLBACKS == 1)
-#define __HAL_FMPI2C_RESET_HANDLE_STATE(__HANDLE__)                do{                                                   \
-                                                                    (__HANDLE__)->State = HAL_FMPI2C_STATE_RESET;       \
-                                                                    (__HANDLE__)->MspInitCallback = NULL;            \
-                                                                    (__HANDLE__)->MspDeInitCallback = NULL;          \
+#define __HAL_FMPI2C_RESET_HANDLE_STATE(__HANDLE__)                do{                                             \
+                                                                    (__HANDLE__)->State = HAL_FMPI2C_STATE_RESET;  \
+                                                                    (__HANDLE__)->MspInitCallback = NULL;       \
+                                                                    (__HANDLE__)->MspDeInitCallback = NULL;     \
                                                                   } while(0)
 #else
 #define __HAL_FMPI2C_RESET_HANDLE_STATE(__HANDLE__)                ((__HANDLE__)->State = HAL_FMPI2C_STATE_RESET)
-#endif
+#endif /* USE_HAL_FMPI2C_REGISTER_CALLBACKS */
 
 /** @brief  Enable the specified FMPI2C interrupt.
   * @param  __HANDLE__ specifies the FMPI2C Handle.
@@ -496,7 +513,8 @@ typedef  void (*pFMPI2C_AddrCallbackTypeDef)(FMPI2C_HandleTypeDef *hfmpi2c, uint
   *
   * @retval The new state of __INTERRUPT__ (SET or RESET).
   */
-#define __HAL_FMPI2C_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)      ((((__HANDLE__)->Instance->CR1 & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
+#define __HAL_FMPI2C_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)      ((((__HANDLE__)->Instance->CR1 & \
+                                                                   (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
 /** @brief  Check whether the specified FMPI2C flag is set or not.
   * @param  __HANDLE__ specifies the FMPI2C Handle.
@@ -522,7 +540,8 @@ typedef  void (*pFMPI2C_AddrCallbackTypeDef)(FMPI2C_HandleTypeDef *hfmpi2c, uint
   * @retval The new state of __FLAG__ (SET or RESET).
   */
 #define FMPI2C_FLAG_MASK  (0x0001FFFFU)
-#define __HAL_FMPI2C_GET_FLAG(__HANDLE__, __FLAG__) (((((__HANDLE__)->Instance->ISR) & (__FLAG__)) == (__FLAG__)) ? SET : RESET)
+#define __HAL_FMPI2C_GET_FLAG(__HANDLE__, __FLAG__) (((((__HANDLE__)->Instance->ISR) & \
+                                                    (__FLAG__)) == (__FLAG__)) ? SET : RESET)
 
 /** @brief  Clear the FMPI2C pending flags which are cleared by writing 1 in a specific bit.
   * @param  __HANDLE__ specifies the FMPI2C Handle.
@@ -541,26 +560,27 @@ typedef  void (*pFMPI2C_AddrCallbackTypeDef)(FMPI2C_HandleTypeDef *hfmpi2c, uint
   *
   * @retval None
   */
-#define __HAL_FMPI2C_CLEAR_FLAG(__HANDLE__, __FLAG__) (((__FLAG__) == FMPI2C_FLAG_TXE) ? ((__HANDLE__)->Instance->ISR |= (__FLAG__)) \
-                                                                                 : ((__HANDLE__)->Instance->ICR = (__FLAG__)))
+#define __HAL_FMPI2C_CLEAR_FLAG(__HANDLE__, __FLAG__) (((__FLAG__) == FMPI2C_FLAG_TXE) ? \
+                                                    ((__HANDLE__)->Instance->ISR |= (__FLAG__)) : \
+                                                    ((__HANDLE__)->Instance->ICR = (__FLAG__)))
 
 /** @brief  Enable the specified FMPI2C peripheral.
   * @param  __HANDLE__ specifies the FMPI2C Handle.
   * @retval None
   */
-#define __HAL_FMPI2C_ENABLE(__HANDLE__)                            (SET_BIT((__HANDLE__)->Instance->CR1,  FMPI2C_CR1_PE))
+#define __HAL_FMPI2C_ENABLE(__HANDLE__)                         (SET_BIT((__HANDLE__)->Instance->CR1, FMPI2C_CR1_PE))
 
 /** @brief  Disable the specified FMPI2C peripheral.
   * @param  __HANDLE__ specifies the FMPI2C Handle.
   * @retval None
   */
-#define __HAL_FMPI2C_DISABLE(__HANDLE__)                           (CLEAR_BIT((__HANDLE__)->Instance->CR1, FMPI2C_CR1_PE))
+#define __HAL_FMPI2C_DISABLE(__HANDLE__)                        (CLEAR_BIT((__HANDLE__)->Instance->CR1, FMPI2C_CR1_PE))
 
 /** @brief  Generate a Non-Acknowledge FMPI2C peripheral in Slave mode.
   * @param  __HANDLE__ specifies the FMPI2C Handle.
   * @retval None
   */
-#define __HAL_FMPI2C_GENERATE_NACK(__HANDLE__)                     (SET_BIT((__HANDLE__)->Instance->CR2, FMPI2C_CR2_NACK))
+#define __HAL_FMPI2C_GENERATE_NACK(__HANDLE__)                  (SET_BIT((__HANDLE__)->Instance->CR2, FMPI2C_CR2_NACK))
 /**
   * @}
   */
@@ -584,7 +604,8 @@ void HAL_FMPI2C_MspDeInit(FMPI2C_HandleTypeDef *hfmpi2c);
 
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_FMPI2C_REGISTER_CALLBACKS == 1)
-HAL_StatusTypeDef HAL_FMPI2C_RegisterCallback(FMPI2C_HandleTypeDef *hfmpi2c, HAL_FMPI2C_CallbackIDTypeDef CallbackID, pFMPI2C_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_FMPI2C_RegisterCallback(FMPI2C_HandleTypeDef *hfmpi2c, HAL_FMPI2C_CallbackIDTypeDef CallbackID,
+                                           pFMPI2C_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_FMPI2C_UnRegisterCallback(FMPI2C_HandleTypeDef *hfmpi2c, HAL_FMPI2C_CallbackIDTypeDef CallbackID);
 
 HAL_StatusTypeDef HAL_FMPI2C_RegisterAddrCallback(FMPI2C_HandleTypeDef *hfmpi2c, pFMPI2C_AddrCallbackTypeDef pCallback);
@@ -599,49 +620,72 @@ HAL_StatusTypeDef HAL_FMPI2C_UnRegisterAddrCallback(FMPI2C_HandleTypeDef *hfmpi2
   */
 /* IO operation functions  ****************************************************/
 /******* Blocking mode: Polling */
-HAL_StatusTypeDef HAL_FMPI2C_Master_Transmit(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_FMPI2C_Master_Receive(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_FMPI2C_Slave_Transmit(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_FMPI2C_Slave_Receive(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_FMPI2C_Mem_Write(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_FMPI2C_Mem_Read(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef HAL_FMPI2C_IsDeviceReady(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint32_t Trials, uint32_t Timeout);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Transmit(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                             uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Receive(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                            uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef HAL_FMPI2C_Slave_Transmit(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size,
+                                            uint32_t Timeout);
+HAL_StatusTypeDef HAL_FMPI2C_Slave_Receive(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size,
+                                           uint32_t Timeout);
+HAL_StatusTypeDef HAL_FMPI2C_Mem_Write(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress,
+                                    uint16_t MemAddSize, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef HAL_FMPI2C_Mem_Read(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress,
+                                   uint16_t MemAddSize, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef HAL_FMPI2C_IsDeviceReady(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint32_t Trials,
+                                        uint32_t Timeout);
 
 /******* Non-Blocking mode: Interrupt */
-HAL_StatusTypeDef HAL_FMPI2C_Master_Transmit_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size);
-HAL_StatusTypeDef HAL_FMPI2C_Master_Receive_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Transmit_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                             uint16_t Size);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Receive_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                            uint16_t Size);
 HAL_StatusTypeDef HAL_FMPI2C_Slave_Transmit_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size);
 HAL_StatusTypeDef HAL_FMPI2C_Slave_Receive_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size);
-HAL_StatusTypeDef HAL_FMPI2C_Mem_Write_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
-HAL_StatusTypeDef HAL_FMPI2C_Mem_Read_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_FMPI2C_Mem_Write_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress,
+                                       uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_FMPI2C_Mem_Read_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress,
+                                      uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
 
-HAL_StatusTypeDef HAL_FMPI2C_Master_Seq_Transmit_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t XferOptions);
-HAL_StatusTypeDef HAL_FMPI2C_Master_Seq_Receive_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t XferOptions);
-HAL_StatusTypeDef HAL_FMPI2C_Slave_Seq_Transmit_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size, uint32_t XferOptions);
-HAL_StatusTypeDef HAL_FMPI2C_Slave_Seq_Receive_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size, uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Seq_Transmit_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                                 uint16_t Size, uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Seq_Receive_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                                uint16_t Size, uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPI2C_Slave_Seq_Transmit_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size,
+                                                uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPI2C_Slave_Seq_Receive_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size,
+                                               uint32_t XferOptions);
 HAL_StatusTypeDef HAL_FMPI2C_EnableListen_IT(FMPI2C_HandleTypeDef *hfmpi2c);
 HAL_StatusTypeDef HAL_FMPI2C_DisableListen_IT(FMPI2C_HandleTypeDef *hfmpi2c);
 HAL_StatusTypeDef HAL_FMPI2C_Master_Abort_IT(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress);
 
 /******* Non-Blocking mode: DMA */
-HAL_StatusTypeDef HAL_FMPI2C_Master_Transmit_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size);
-HAL_StatusTypeDef HAL_FMPI2C_Master_Receive_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Transmit_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                              uint16_t Size);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Receive_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                             uint16_t Size);
 HAL_StatusTypeDef HAL_FMPI2C_Slave_Transmit_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size);
 HAL_StatusTypeDef HAL_FMPI2C_Slave_Receive_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size);
-HAL_StatusTypeDef HAL_FMPI2C_Mem_Write_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
-HAL_StatusTypeDef HAL_FMPI2C_Mem_Read_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_FMPI2C_Mem_Write_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress,
+                                        uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
+HAL_StatusTypeDef HAL_FMPI2C_Mem_Read_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint16_t MemAddress,
+                                       uint16_t MemAddSize, uint8_t *pData, uint16_t Size);
 
-HAL_StatusTypeDef HAL_FMPI2C_Master_Seq_Transmit_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t XferOptions);
-HAL_StatusTypeDef HAL_FMPI2C_Master_Seq_Receive_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t XferOptions);
-HAL_StatusTypeDef HAL_FMPI2C_Slave_Seq_Transmit_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size, uint32_t XferOptions);
-HAL_StatusTypeDef HAL_FMPI2C_Slave_Seq_Receive_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size, uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Seq_Transmit_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                                  uint16_t Size, uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPI2C_Master_Seq_Receive_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint16_t DevAddress, uint8_t *pData,
+                                                 uint16_t Size, uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPI2C_Slave_Seq_Transmit_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size,
+                                                 uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPI2C_Slave_Seq_Receive_DMA(FMPI2C_HandleTypeDef *hfmpi2c, uint8_t *pData, uint16_t Size,
+                                                uint32_t XferOptions);
 /**
   * @}
   */
 
 /** @addtogroup FMPI2C_IRQ_Handler_and_Callbacks IRQ Handler and Callbacks
- * @{
- */
+  * @{
+  */
 /******* FMPI2C IRQHandler and Callbacks used in non blocking modes (Interrupt and DMA) */
 void HAL_FMPI2C_EV_IRQHandler(FMPI2C_HandleTypeDef *hfmpi2c);
 void HAL_FMPI2C_ER_IRQHandler(FMPI2C_HandleTypeDef *hfmpi2c);
@@ -733,10 +777,15 @@ uint32_t             HAL_FMPI2C_GetError(FMPI2C_HandleTypeDef *hfmpi2c);
 #define IS_FMPI2C_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST) (((REQUEST) == FMPI2C_OTHER_FRAME)     || \
                                                         ((REQUEST) == FMPI2C_OTHER_AND_LAST_FRAME))
 
-#define FMPI2C_RESET_CR2(__HANDLE__)                 ((__HANDLE__)->Instance->CR2 &= (uint32_t)~((uint32_t)(FMPI2C_CR2_SADD | FMPI2C_CR2_HEAD10R | FMPI2C_CR2_NBYTES | FMPI2C_CR2_RELOAD | FMPI2C_CR2_RD_WRN)))
+#define FMPI2C_RESET_CR2(__HANDLE__)                 ((__HANDLE__)->Instance->CR2 &= \
+                                                   (uint32_t)~((uint32_t)(FMPI2C_CR2_SADD   | FMPI2C_CR2_HEAD10R | \
+                                                                          FMPI2C_CR2_NBYTES | FMPI2C_CR2_RELOAD  | \
+                                                                          FMPI2C_CR2_RD_WRN)))
 
-#define FMPI2C_GET_ADDR_MATCH(__HANDLE__)            ((uint16_t)(((__HANDLE__)->Instance->ISR & FMPI2C_ISR_ADDCODE) >> 16U))
-#define FMPI2C_GET_DIR(__HANDLE__)                   ((uint8_t)(((__HANDLE__)->Instance->ISR & FMPI2C_ISR_DIR) >> 16U))
+#define FMPI2C_GET_ADDR_MATCH(__HANDLE__)            ((uint16_t)(((__HANDLE__)->Instance->ISR & FMPI2C_ISR_ADDCODE) \
+                                                                  >> 16U))
+#define FMPI2C_GET_DIR(__HANDLE__)                   ((uint8_t)(((__HANDLE__)->Instance->ISR & FMPI2C_ISR_DIR) \
+                                                                  >> 16U))
 #define FMPI2C_GET_STOP_MODE(__HANDLE__)             ((__HANDLE__)->Instance->CR2 & FMPI2C_CR2_AUTOEND)
 #define FMPI2C_GET_OWN_ADDRESS1(__HANDLE__)          ((uint16_t)((__HANDLE__)->Instance->OAR1 & FMPI2C_OAR1_OA1))
 #define FMPI2C_GET_OWN_ADDRESS2(__HANDLE__)          ((uint16_t)((__HANDLE__)->Instance->OAR2 & FMPI2C_OAR2_OA2))
@@ -744,13 +793,20 @@ uint32_t             HAL_FMPI2C_GetError(FMPI2C_HandleTypeDef *hfmpi2c);
 #define IS_FMPI2C_OWN_ADDRESS1(ADDRESS1)             ((ADDRESS1) <= 0x000003FFU)
 #define IS_FMPI2C_OWN_ADDRESS2(ADDRESS2)             ((ADDRESS2) <= (uint16_t)0x00FFU)
 
-#define FMPI2C_MEM_ADD_MSB(__ADDRESS__)              ((uint8_t)((uint16_t)(((uint16_t)((__ADDRESS__) & (uint16_t)(0xFF00U))) >> 8U)))
+#define FMPI2C_MEM_ADD_MSB(__ADDRESS__)              ((uint8_t)((uint16_t)(((uint16_t)((__ADDRESS__) & \
+                                                                         (uint16_t)(0xFF00U))) >> 8U)))
 #define FMPI2C_MEM_ADD_LSB(__ADDRESS__)              ((uint8_t)((uint16_t)((__ADDRESS__) & (uint16_t)(0x00FFU))))
 
-#define FMPI2C_GENERATE_START(__ADDMODE__,__ADDRESS__) (((__ADDMODE__) == FMPI2C_ADDRESSINGMODE_7BIT) ? (uint32_t)((((uint32_t)(__ADDRESS__) & (FMPI2C_CR2_SADD)) | (FMPI2C_CR2_START) | (FMPI2C_CR2_AUTOEND)) & (~FMPI2C_CR2_RD_WRN)) : \
-                                                          (uint32_t)((((uint32_t)(__ADDRESS__) & (FMPI2C_CR2_SADD)) | (FMPI2C_CR2_ADD10) | (FMPI2C_CR2_START)) & (~FMPI2C_CR2_RD_WRN)))
+#define FMPI2C_GENERATE_START(__ADDMODE__,__ADDRESS__) (((__ADDMODE__) == FMPI2C_ADDRESSINGMODE_7BIT) ? \
+                                                     (uint32_t)((((uint32_t)(__ADDRESS__) & (FMPI2C_CR2_SADD)) | \
+                                                                 (FMPI2C_CR2_START) | (FMPI2C_CR2_AUTOEND)) & \
+                                                                (~FMPI2C_CR2_RD_WRN)) : \
+                                                     (uint32_t)((((uint32_t)(__ADDRESS__) & (FMPI2C_CR2_SADD)) | \
+                                                                 (FMPI2C_CR2_ADD10) | (FMPI2C_CR2_START)) & \
+                                                                (~FMPI2C_CR2_RD_WRN)))
 
-#define FMPI2C_CHECK_FLAG(__ISR__, __FLAG__)         ((((__ISR__) & ((__FLAG__) & FMPI2C_FLAG_MASK)) == ((__FLAG__) & FMPI2C_FLAG_MASK)) ? SET : RESET)
+#define FMPI2C_CHECK_FLAG(__ISR__, __FLAG__)         ((((__ISR__) & ((__FLAG__) & FMPI2C_FLAG_MASK)) == \
+                                                    ((__FLAG__) & FMPI2C_FLAG_MASK)) ? SET : RESET)
 #define FMPI2C_CHECK_IT_SOURCE(__CR1__, __IT__)      ((((__CR1__) & (__IT__)) == (__IT__)) ? SET : RESET)
 /**
   * @}

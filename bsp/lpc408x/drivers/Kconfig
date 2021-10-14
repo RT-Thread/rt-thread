@@ -12,6 +12,11 @@ menu "Hardware Drivers Config"
             select RT_USING_HWTIMER 
             default n
 
+        config BSP_USING_ADC
+            bool "Using ADC"
+            select RT_USING_ADC 
+            default n
+
         menu "UART Drivers"
             config BSP_USING_UART0
                 bool "Enable UART0 P0.2/P0.3(T/R)"

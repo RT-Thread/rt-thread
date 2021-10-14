@@ -155,7 +155,7 @@ static void sensor_fifo(int argc, char **argv)
 
     rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)20);
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
 #endif
 
@@ -219,7 +219,7 @@ static void sensor_int(int argc, char **argv)
     }
     rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)20);
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
 #endif
 
@@ -268,7 +268,7 @@ static void sensor_polling(int argc, char **argv)
     }
     rt_device_close(dev);
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 MSH_CMD_EXPORT(sensor_polling, Sensor polling mode test function);
 #endif
 
@@ -496,6 +496,6 @@ static void sensor(int argc, char **argv)
         LOG_W("Unknown command, please enter 'sensor' get help information!");
     }
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 MSH_CMD_EXPORT(sensor, sensor test function);
 #endif

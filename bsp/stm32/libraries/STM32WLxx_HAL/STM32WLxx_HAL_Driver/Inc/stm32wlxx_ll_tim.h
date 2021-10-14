@@ -598,8 +598,8 @@ typedef struct
 /** @defgroup TIM_LL_EC_ONEPULSEMODE One Pulse Mode
   * @{
   */
-#define LL_TIM_ONEPULSEMODE_SINGLE             TIM_CR1_OPM          /*!< Counter is not stopped at update event */
-#define LL_TIM_ONEPULSEMODE_REPETITIVE         0x00000000U          /*!< Counter stops counting at the next update event */
+#define LL_TIM_ONEPULSEMODE_SINGLE             TIM_CR1_OPM          /*!< Counter stops counting at the next update event */
+#define LL_TIM_ONEPULSEMODE_REPETITIVE         0x00000000U          /*!< Counter is not stopped at update event */
 /**
   * @}
   */
@@ -1515,7 +1515,16 @@ __STATIC_INLINE void LL_TIM_SetCounterMode(TIM_TypeDef *TIMx, uint32_t CounterMo
   */
 __STATIC_INLINE uint32_t LL_TIM_GetCounterMode(TIM_TypeDef *TIMx)
 {
-  return (uint32_t)(READ_BIT(TIMx->CR1, TIM_CR1_DIR | TIM_CR1_CMS));
+  uint32_t counter_mode;
+
+  counter_mode = (uint32_t)(READ_BIT(TIMx->CR1, TIM_CR1_CMS));
+
+  if (counter_mode == 0U)
+  {
+    counter_mode = (uint32_t)(READ_BIT(TIMx->CR1, TIM_CR1_DIR));
+  }
+
+  return counter_mode;
 }
 
 /**

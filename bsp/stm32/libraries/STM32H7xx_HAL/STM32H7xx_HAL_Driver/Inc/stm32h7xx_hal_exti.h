@@ -134,22 +134,46 @@ typedef struct
 #define EXTI_LINE_41                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL     | 0x09U)
 #define EXTI_LINE_42                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x0AU)
 #define EXTI_LINE_43                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x0BU)
+#if !defined(USB2_OTG_FS)
+#define EXTI_LINE_44                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_NONE    | 0x0CU)
+#else
 #define EXTI_LINE_44                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x0CU)
+#endif /* USB2_OTG_FS */
 #define EXTI_LINE_45                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_NONE    | 0x0DU)
+#if defined(DSI)
 #define EXTI_LINE_46                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x0EU)
+#else
+#define EXTI_LINE_46                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_NONE    | 0x0EU)
+#endif /* DSI */
 #define EXTI_LINE_47                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x0FU)
 #define EXTI_LINE_48                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL     | 0x10U)
 #define EXTI_LINE_49                        (EXTI_CONFIG   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL     | 0x11U)
 #define EXTI_LINE_50                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL     | 0x12U)
 #define EXTI_LINE_51                        (EXTI_CONFIG   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL     | 0x13U)
+#if defined(LPTIM4)
 #define EXTI_LINE_52                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL     | 0x14U)
+#else
+#define EXTI_LINE_52                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x14U)
+#endif /*LPTIM4*/
+#if defined(LPTIM5)
 #define EXTI_LINE_53                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL     | 0x15U)
+#else
+#define EXTI_LINE_53                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x15U)
+#endif /*LPTIM5*/
 #define EXTI_LINE_54                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x16U)
 #define EXTI_LINE_55                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x17U)
 #define EXTI_LINE_56                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x18U)
+#if defined(EXTI_IMR2_IM57)
 #define EXTI_LINE_57                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x19U)
+#else
+#define EXTI_LINE_57                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_NONE    | 0x19U)
+#endif /*EXTI_IMR2_IM57*/
 #define EXTI_LINE_58                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x1AU)
+#if defined(EXTI_IMR2_IM59)
 #define EXTI_LINE_59                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x1BU)
+#else
+#define EXTI_LINE_59                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_NONE    | 0x1BU)
+#endif /*EXTI_IMR2_IM59*/
 #define EXTI_LINE_60                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x1CU)
 #define EXTI_LINE_61                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x1DU)
 #define EXTI_LINE_62                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG2 | EXTI_TARGET_MSK_ALL_CPU | 0x1EU)
@@ -165,37 +189,58 @@ typedef struct
 #define EXTI_LINE_72                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x08U)
 #define EXTI_LINE_73                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x09U)
 #define EXTI_LINE_74                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x0AU)
+#if defined(ADC3)
 #define EXTI_LINE_75                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x0BU)
-#define EXTI_LINE_76                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x0CU)
-#define EXTI_LINE_77                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_CPU1| 0x0DU)
-
-#if defined (DUAL_CORE)
-#define EXTI_LINE_78                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_CPU2| 0x0EU)
 #else
-#define EXTI_LINE_78                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x0EU)
-#endif /* DUAL_CORE */
-
-#define EXTI_LINE_79                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_CPU1| 0x0FU)
-
+#define EXTI_LINE_75                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 |  EXTI_TARGET_MSK_NONE   | 0x0BU)
+#endif /* ADC3 */
+#if defined(SAI4)
+#define EXTI_LINE_76                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x0CU)
+#else
+#define EXTI_LINE_76                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 |  EXTI_TARGET_MSK_NONE   | 0x0CU)
+#endif /* SAI4 */
 #if defined (DUAL_CORE)
+#define EXTI_LINE_77                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_CPU1| 0x0DU)
+#define EXTI_LINE_78                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_CPU2| 0x0EU)
+#define EXTI_LINE_79                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_CPU1| 0x0FU)
 #define EXTI_LINE_80                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_CPU2| 0x10U)
 #else
+#define EXTI_LINE_77                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x0DU)
+#define EXTI_LINE_78                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x0EU)
+#define EXTI_LINE_79                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x0FU)
 #define EXTI_LINE_80                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x10U)
 #endif /* DUAL_CORE */
-
 #define EXTI_LINE_81                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x11U)
-
 #if defined (DUAL_CORE)
 #define EXTI_LINE_82                        (EXTI_CONFIG   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_CPU2| 0x12U)
 #else
 #define EXTI_LINE_82                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x12U)
 #endif /* DUAL_CORE */
-
 #define EXTI_LINE_83                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x13U)
+#if defined (DUAL_CORE)
 #define EXTI_LINE_84                        (EXTI_CONFIG   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_CPU1| 0x14U)
+#else
+#define EXTI_LINE_84                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x14U)
+#endif /* DUAL_CORE */
 #define EXTI_LINE_85                        (EXTI_CONFIG   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x15U)
+#if defined(ETH)
 #define EXTI_LINE_86                        (EXTI_CONFIG   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x16U)
+#else
+#define EXTI_LINE_86                        (EXTI_RESERVED | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_NONE| 0x16U)
+#endif /* ETH */
 #define EXTI_LINE_87                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x17U)
+#if defined(DTS)
+#define EXTI_LINE_88                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL | 0x18U)
+#endif /* DTS */
+#if defined(EXTI_IMR3_IM89)
+#define EXTI_LINE_89                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x19U)
+#endif /*EXTI_IMR3_IM89*/
+#if defined(EXTI_IMR3_IM90)
+#define EXTI_LINE_90                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x1AU)
+#endif /*EXTI_IMR3_IM90*/
+#if defined(I2C5)
+#define EXTI_LINE_91                        (EXTI_DIRECT   | EXTI_EVENT | EXTI_REG3 | EXTI_TARGET_MSK_ALL_CPU | 0x1BU)
+#endif /*I2C5*/
 
 /**
   * @}
@@ -240,7 +285,9 @@ typedef struct
 #define EXTI_GPIOF                          0x00000005U
 #define EXTI_GPIOG                          0x00000006U
 #define EXTI_GPIOH                          0x00000007U
+#if defined(GPIOI)
 #define EXTI_GPIOI                          0x00000008U
+#endif /*GPIOI*/
 #define EXTI_GPIOJ                          0x00000009U
 #define EXTI_GPIOK                          0x0000000AU
 
@@ -255,8 +302,16 @@ typedef struct
 #define EXTI_D3_PENDCLR_SRC_NONE       0x00000000U /*!< No D3 domain pendclear source , PMRx register to be set to zero  */
 #define EXTI_D3_PENDCLR_SRC_DMACH6     0x00000001U /*!< DMA ch6 event selected as D3 domain pendclear source, PMRx register to be set to 1 */
 #define EXTI_D3_PENDCLR_SRC_DMACH7     0x00000002U /*!< DMA ch7 event selected as D3 domain pendclear source, PMRx register to be set to 1*/
+#if defined (LPTIM4)
 #define EXTI_D3_PENDCLR_SRC_LPTIM4     0x00000003U /*!< LPTIM4 out selected as D3 domain pendclear source, PMRx register to be set to 1    */
-#define EXTI_D3_PENDCLR_SRC_LPTIM5     0x00000004U /*!< LPTIM4 out selected as D3 domain pendclear source, PMRx register to be set to 1    */
+#else
+#define EXTI_D3_PENDCLR_SRC_LPTIM2     0x00000003U /*!< LPTIM2 out selected as D3 domain pendclear source, PMRx register to be set to 1    */
+#endif
+#if defined (LPTIM5)
+#define EXTI_D3_PENDCLR_SRC_LPTIM5     0x00000004U /*!< LPTIM5 out selected as D3 domain pendclear source, PMRx register to be set to 1    */
+#else
+#define EXTI_D3_PENDCLR_SRC_LPTIM3     0x00000004U /*!< LPTIM3 out selected as D3 domain pendclear source, PMRx register to be set to 1    */
+#endif
 /**
   * @}
   */
@@ -339,7 +394,13 @@ typedef struct
 /**
   * @brief  EXTI Line number
   */
+#if (STM32H7_DEV_ID == 0x483UL)
+#define EXTI_LINE_NB                        92UL
+#elif (STM32H7_DEV_ID == 0x480UL)
+#define EXTI_LINE_NB                        89UL
+#else
 #define EXTI_LINE_NB                        88UL
+#endif /* EXTI_LINE_91 */
 
 /**
   * @}
@@ -349,34 +410,36 @@ typedef struct
 /** @defgroup EXTI_Private_Macros EXTI Private Macros
   * @{
   */
-#define IS_EXTI_PROPERTY(__LINE__)      ((((__LINE__) & EXTI_PROPERTY_MASK) == EXTI_DIRECT) || \
-                                         (((__LINE__) & EXTI_PROPERTY_MASK) == EXTI_CONFIG)          || \
-                                         (((__LINE__) & EXTI_PROPERTY_MASK) == EXTI_GPIO))
+#define IS_EXTI_PROPERTY(__EXTI_LINE__)      ((((__EXTI_LINE__) & EXTI_PROPERTY_MASK) == EXTI_DIRECT) || \
+                                             (((__EXTI_LINE__) & EXTI_PROPERTY_MASK) == EXTI_CONFIG)          || \
+                                             (((__EXTI_LINE__) & EXTI_PROPERTY_MASK) == EXTI_GPIO))
 #if defined (DUAL_CORE)
-#define IS_EXTI_TARGET(__LINE__)        ((((__LINE__) & EXTI_TARGET_MASK)   == EXTI_TARGET_MSK_CPU1)      || \
-                                         (((__LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_CPU2)    || \
-                                         (((__LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_ALL_CPU) || \
-                                         (((__LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_ALL))
+#define IS_EXTI_TARGET(__EXTI_LINE__)        ((((__EXTI_LINE__) & EXTI_TARGET_MASK)   == EXTI_TARGET_MSK_CPU1)      || \
+                                             (((__EXTI_LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_CPU2)    || \
+                                             (((__EXTI_LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_ALL_CPU) || \
+                                             (((__EXTI_LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_ALL))
 #else
-#define IS_EXTI_TARGET(__LINE__)        ((((__LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_CPU1)   || \
-                                         (((__LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_ALL))
+#define IS_EXTI_TARGET(__EXTI_LINE__)        ((((__EXTI_LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_CPU1)   || \
+                                             (((__EXTI_LINE__) & EXTI_TARGET_MASK) == EXTI_TARGET_MSK_ALL))
 #endif
 
-#define IS_EXTI_LINE(__LINE__)          ((((__LINE__) & ~(EXTI_PROPERTY_MASK | EXTI_EVENT_PRESENCE_MASK | EXTI_REG_MASK | EXTI_PIN_MASK | EXTI_TARGET_MASK)) == 0x00UL) && \
-                                         IS_EXTI_PROPERTY(__LINE__) && IS_EXTI_TARGET(__LINE__) && \
-                                         (((__LINE__) & (EXTI_REG_MASK | EXTI_PIN_MASK))      < \
-                                         (((EXTI_LINE_NB / 32UL) << EXTI_REG_SHIFT) | (EXTI_LINE_NB % 32UL))))
+#define IS_EXTI_LINE(__EXTI_LINE__)          ((((__EXTI_LINE__) & ~(EXTI_PROPERTY_MASK | EXTI_EVENT_PRESENCE_MASK |\
+                                              EXTI_REG_MASK | EXTI_PIN_MASK | EXTI_TARGET_MASK)) == 0x00UL) && \
+                                              IS_EXTI_PROPERTY(__EXTI_LINE__) && IS_EXTI_TARGET(__EXTI_LINE__) && \
+                                             (((__EXTI_LINE__) & (EXTI_REG_MASK | EXTI_PIN_MASK))      < \
+                                             (((EXTI_LINE_NB / 32UL) << EXTI_REG_SHIFT) | (EXTI_LINE_NB % 32UL))))
 
-#define IS_EXTI_MODE(__MODE__)          (((__MODE__) & ~EXTI_MODE_MASK) == 0x00UL)
+#define IS_EXTI_MODE(__MODE__)               (((__MODE__) & ~EXTI_MODE_MASK) == 0x00UL)
 
-#define IS_EXTI_TRIGGER(__LINE__)       (((__LINE__) & ~EXTI_TRIGGER_MASK) == 0x00UL)
+#define IS_EXTI_TRIGGER(__EXTI_LINE__)       (((__EXTI_LINE__) & ~EXTI_TRIGGER_MASK) == 0x00UL)
 
-#define IS_EXTI_PENDING_EDGE(__LINE__)  (((__LINE__) == EXTI_TRIGGER_RISING) || \
-                                         ((__LINE__) == EXTI_TRIGGER_FALLING)|| \
-                                         ((__LINE__) == EXTI_TRIGGER_RISING_FALLING))
+#define IS_EXTI_PENDING_EDGE(__EXTI_LINE__)  (((__EXTI_LINE__) == EXTI_TRIGGER_RISING) || \
+                                             ((__EXTI_LINE__) == EXTI_TRIGGER_FALLING)|| \
+                                             ((__EXTI_LINE__) == EXTI_TRIGGER_RISING_FALLING))
 
-#define IS_EXTI_CONFIG_LINE(__LINE__)   (((__LINE__) & EXTI_CONFIG) != 0x00UL)
+#define IS_EXTI_CONFIG_LINE(__EXTI_LINE__)   (((__EXTI_LINE__) & EXTI_CONFIG) != 0x00UL)
 
+#if defined(GPIOI)
 #define IS_EXTI_GPIO_PORT(__PORT__)     (((__PORT__) == EXTI_GPIOA) || \
                                          ((__PORT__) == EXTI_GPIOB) || \
                                          ((__PORT__) == EXTI_GPIOC) || \
@@ -388,14 +451,33 @@ typedef struct
                                          ((__PORT__) == EXTI_GPIOI) || \
                                          ((__PORT__) == EXTI_GPIOJ) || \
                                          ((__PORT__) == EXTI_GPIOK))
+#else
+#define IS_EXTI_GPIO_PORT(__PORT__)     (((__PORT__) == EXTI_GPIOA) || \
+                                         ((__PORT__) == EXTI_GPIOB) || \
+                                         ((__PORT__) == EXTI_GPIOC) || \
+                                         ((__PORT__) == EXTI_GPIOD) || \
+                                         ((__PORT__) == EXTI_GPIOE) || \
+                                         ((__PORT__) == EXTI_GPIOF) || \
+                                         ((__PORT__) == EXTI_GPIOG) || \
+                                         ((__PORT__) == EXTI_GPIOH) || \
+                                         ((__PORT__) == EXTI_GPIOJ) || \
+                                         ((__PORT__) == EXTI_GPIOK))
+#endif /*GPIOI*/
 
 #define IS_EXTI_GPIO_PIN(__PIN__)       ((__PIN__) < 16UL)
-
+#if defined (LPTIM4) && defined (LPTIM5)
 #define IS_EXTI_D3_PENDCLR_SRC(__SRC__) (((__SRC__) == EXTI_D3_PENDCLR_SRC_NONE) || \
                                          ((__SRC__) == EXTI_D3_PENDCLR_SRC_DMACH6) || \
                                          ((__SRC__) == EXTI_D3_PENDCLR_SRC_DMACH7) || \
                                          ((__SRC__) == EXTI_D3_PENDCLR_SRC_LPTIM4) || \
                                          ((__SRC__) == EXTI_D3_PENDCLR_SRC_LPTIM5))
+#else
+#define IS_EXTI_D3_PENDCLR_SRC(__SRC__) (((__SRC__) == EXTI_D3_PENDCLR_SRC_NONE) || \
+                                         ((__SRC__) == EXTI_D3_PENDCLR_SRC_DMACH6) || \
+                                         ((__SRC__) == EXTI_D3_PENDCLR_SRC_DMACH7) || \
+                                         ((__SRC__) == EXTI_D3_PENDCLR_SRC_LPTIM2) || \
+                                         ((__SRC__) == EXTI_D3_PENDCLR_SRC_LPTIM3))
+#endif /* LPTIM4 && LPTIM5 */
 
 /**
   * @}

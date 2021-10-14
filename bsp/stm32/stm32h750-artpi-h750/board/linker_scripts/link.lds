@@ -1,16 +1,18 @@
 /*
- * linker script for STM32F4xx with GNU ld
- * bernard.xiong 2009-10-14
+ * linker script for STM32H750XBHx with GNU ld
  */
 
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    ROM (rx) : ORIGIN = 0x08000000, LENGTH =  128k /* 128KB flash */
-    RAM (rw) : ORIGIN = 0x20000000, LENGTH =  128k /* 128K DTCM */
+ROM (rx) : ORIGIN =0x90000000,LENGTH =8192k
+RAM (rw) : ORIGIN =0x24000000,LENGTH =512k
+RxDecripSection (rw) : ORIGIN =0x30040000,LENGTH =32k
+TxDecripSection (rw) : ORIGIN =0x30040060,LENGTH =32k
+RxArraySection (rw) : ORIGIN =0x30040200,LENGTH =32k
 }
 ENTRY(Reset_Handler)
-_system_stack_size = 0x200;
+_system_stack_size = 0x000;
 
 SECTIONS
 {
@@ -39,6 +41,25 @@ SECTIONS
         __vsymtab_start = .;
         KEEP(*(VSymTab))
         __vsymtab_end = .;
+
+        /* section information for utest */
+        . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
+
+        /* section information for at server */
+        . = ALIGN(4);
+        __rtatcmdtab_start = .;
+        KEEP(*(RtAtCmdTab))
+        __rtatcmdtab_end = .;
+        . = ALIGN(4);
+
+        /* section information for modules */
+        . = ALIGN(4);
+        __rtmsymtab_start = .;
+        KEEP(*(RTMSymTab))
+        __rtmsymtab_end = .;
 
         /* section information for initial. */
         . = ALIGN(4);
@@ -81,6 +102,7 @@ SECTIONS
         *(.data.*)
         *(.gnu.linkonce.d*)
 
+
         PROVIDE(__dtors_start__ = .);
         KEEP(*(SORT(.dtors.*)))
         KEEP(*(.dtors))
@@ -118,6 +140,33 @@ SECTIONS
         *(.bss.init)
     } > RAM
     __bss_end = .;
+
+    .RxDecripSection (NOLOAD) : ALIGN(4)
+    {
+    . = ALIGN(4);
+    *(.RxDecripSection)
+    *(.RxDecripSection.*)
+    . = ALIGN(4);
+    __RxDecripSection_free__ = .;
+    } > RxDecripSection
+    
+    .TxDecripSection (NOLOAD) : ALIGN(4)
+    {
+    . = ALIGN(4);
+    *(.TxDecripSection)
+    *(.TxDecripSection.*)
+    . = ALIGN(4);
+    __TxDecripSection_free__ = .;
+    } > TxDecripSection
+    
+    .RxArraySection (NOLOAD) : ALIGN(4)
+    {
+    . = ALIGN(4);
+    *(.RxArraySection)
+    *(.RxArraySection.*)
+    . = ALIGN(4);
+    __RxArraySection_free__ = .;
+    } > RxArraySection
 
     _end = .;
 

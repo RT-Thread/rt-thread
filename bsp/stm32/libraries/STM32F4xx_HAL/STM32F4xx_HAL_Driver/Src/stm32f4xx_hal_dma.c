@@ -199,12 +199,12 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
     assert_param(IS_DMA_MEMORY_BURST(hdma->Init.MemBurst));
     assert_param(IS_DMA_PERIPHERAL_BURST(hdma->Init.PeriphBurst));
   }
-  
-  /* Allocate lock resource */
-  __HAL_UNLOCK(hdma);
 
   /* Change DMA peripheral state */
   hdma->State = HAL_DMA_STATE_BUSY;
+
+  /* Allocate lock resource */
+  __HAL_UNLOCK(hdma);
   
   /* Disable the peripheral */
   __HAL_DMA_DISABLE(hdma);
@@ -478,7 +478,6 @@ HAL_StatusTypeDef HAL_DMA_Start_IT(DMA_HandleTypeDef *hdma, uint32_t SrcAddress,
     
     /* Enable Common interrupts*/
     hdma->Instance->CR  |= DMA_IT_TC | DMA_IT_TE | DMA_IT_DME;
-    hdma->Instance->FCR |= DMA_IT_FE;
     
     if(hdma->XferHalfCpltCallback != NULL)
     {
@@ -551,11 +550,11 @@ HAL_StatusTypeDef HAL_DMA_Abort(DMA_HandleTypeDef *hdma)
         /* Update error code */
         hdma->ErrorCode = HAL_DMA_ERROR_TIMEOUT;
         
-        /* Process Unlocked */
-        __HAL_UNLOCK(hdma);
-        
         /* Change the DMA state */
         hdma->State = HAL_DMA_STATE_TIMEOUT;
+        
+        /* Process Unlocked */
+        __HAL_UNLOCK(hdma);
         
         return HAL_TIMEOUT;
       }
@@ -564,11 +563,11 @@ HAL_StatusTypeDef HAL_DMA_Abort(DMA_HandleTypeDef *hdma)
     /* Clear all interrupt flags at correct offset within the register */
     regs->IFCR = 0x3FU << hdma->StreamIndex;
     
-    /* Process Unlocked */
-    __HAL_UNLOCK(hdma);
-    
     /* Change the DMA state*/
     hdma->State = HAL_DMA_STATE_READY;
+    
+    /* Process Unlocked */
+    __HAL_UNLOCK(hdma);
   }
   return HAL_OK;
 }
@@ -658,12 +657,12 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
       {
         /* Update error code */
         hdma->ErrorCode = HAL_DMA_ERROR_TIMEOUT;
-
-        /* Process Unlocked */
-        __HAL_UNLOCK(hdma);
         
         /* Change the DMA state */
         hdma->State = HAL_DMA_STATE_READY;
+        
+        /* Process Unlocked */
+        __HAL_UNLOCK(hdma);
         
         return HAL_TIMEOUT;
       }
@@ -709,11 +708,11 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
       /* Clear the half transfer and transfer complete flags */
       regs->IFCR = (DMA_FLAG_HTIF0_4 | DMA_FLAG_TCIF0_4) << hdma->StreamIndex;
     
-      /* Process Unlocked */
-      __HAL_UNLOCK(hdma);
-
       /* Change the DMA state */
       hdma->State= HAL_DMA_STATE_READY;
+
+      /* Process Unlocked */
+      __HAL_UNLOCK(hdma);
 
       return HAL_ERROR;
    }
@@ -725,10 +724,10 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
     /* Clear the half transfer and transfer complete flags */
     regs->IFCR = (DMA_FLAG_HTIF0_4 | DMA_FLAG_TCIF0_4) << hdma->StreamIndex;
     
+    hdma->State = HAL_DMA_STATE_READY;
+    
     /* Process Unlocked */
     __HAL_UNLOCK(hdma);
-
-    hdma->State = HAL_DMA_STATE_READY;
   }
   else
   {
@@ -864,11 +863,11 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
         /* Clear all interrupt flags at correct offset within the register */
         regs->IFCR = 0x3FU << hdma->StreamIndex;
 
-        /* Process Unlocked */
-        __HAL_UNLOCK(hdma);
-
         /* Change the DMA state */
         hdma->State = HAL_DMA_STATE_READY;
+
+        /* Process Unlocked */
+        __HAL_UNLOCK(hdma);
 
         if(hdma->XferAbortCallback != NULL)
         {
@@ -906,11 +905,11 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
           /* Disable the transfer complete interrupt */
           hdma->Instance->CR  &= ~(DMA_IT_TC);
 
-          /* Process Unlocked */
-          __HAL_UNLOCK(hdma);
-
           /* Change the DMA state */
           hdma->State = HAL_DMA_STATE_READY;
+
+          /* Process Unlocked */
+          __HAL_UNLOCK(hdma);
         }
 
         if(hdma->XferCpltCallback != NULL)
@@ -941,11 +940,11 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
       }
       while((hdma->Instance->CR & DMA_SxCR_EN) != RESET);
 
-      /* Process Unlocked */
-      __HAL_UNLOCK(hdma);
-
       /* Change the DMA state */
       hdma->State = HAL_DMA_STATE_READY;
+
+      /* Process Unlocked */
+      __HAL_UNLOCK(hdma);
     }
 
     if(hdma->XferErrorCallback != NULL)
