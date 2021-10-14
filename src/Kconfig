@@ -374,6 +374,12 @@ menu "Memory Management"
             to check memory block to find which thread has wrongly modified
             memory.
 
+    config RT_USING_HEAP_ISR
+        bool "Using heap in ISR"
+        default n
+        help
+            When this option is enabled, the critical zone will be protected with disable interrupt.
+
     config RT_USING_HEAP
         bool
         default n if RT_USING_NOHEAP
