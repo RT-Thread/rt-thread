@@ -219,7 +219,7 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>AT32F403AVGT7</state>
+          <state>HK32F030x8</state>
           <state>__RTTHREAD__</state>
           <state>RT_USING_DLIBC</state>
           <state>USE_STDPERIPH_DRIVER</state>
@@ -348,21 +348,23 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\board\msp</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\board\msp</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\Libraries\rt_drivers</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Include</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$\..\..\..\examples\utest\testcases\kernel</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\CMSIS</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
-          <state>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\CMSIS\AT32\AT32F4xx\inc</state>
+          <state>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\Core</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\nogcc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1256,7 +1258,7 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>AT32F403AVGT7</state>
+          <state>HK32F030x8</state>
           <state>__RTTHREAD__</state>
           <state>RT_USING_DLIBC</state>
           <state>USE_STDPERIPH_DRIVER</state>
@@ -1385,21 +1387,23 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\board\msp</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\board\msp</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\Libraries\rt_drivers</state>
+          <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Include</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\inc</state>
+          <state>$PROJ_DIR$\..\..\..\examples\utest\testcases\kernel</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\CMSIS</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
-          <state>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\CMSIS\AT32\AT32F4xx\inc</state>
+          <state>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\Core</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\nogcc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2083,28 +2087,46 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0\cpuport.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0\context_iar.S</name>
     </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_core.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_dev.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c-bit-ops.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\waitqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\workqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringbuffer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\src\completion.c</name>
@@ -2118,62 +2140,68 @@
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringblk_buf.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\waitqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\workqueue.c</name>
-    </file>
   </group>
   <group>
     <name>Drivers</name>
     <file>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Source\system_hk32f0xx.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Source\iar\startup_hk32f030x4x6x8.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\board\msp\hk32_msp.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\board\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\board\msp\at32_msp.c</name>
+      <name>$PROJ_DIR$\..\libraries\rt_drivers\drv_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\board\msp\system_at32f4xx.c</name>
+      <name>$PROJ_DIR$\..\libraries\rt_drivers\drv_usart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\CMSIS\AT32\AT32F4xx\src\iar\startup_at32f403avgt7.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\rt_drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\rt_drivers\drv_usart.c</name>
+      <name>$PROJ_DIR$\..\libraries\rt_drivers\drv_soft_i2c.c</name>
     </file>
   </group>
   <group>
-    <name>finsh</name>
+    <name>Finsh</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
   </group>
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
@@ -2182,52 +2210,19 @@
       <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\memheap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
     </file>
   </group>
   <group>
     <name>libc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\stdlib.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\libc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\rmtx.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\stdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\stdlib.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
@@ -2236,100 +2231,94 @@
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\stdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\libc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
     </file>
   </group>
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_adc.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_rtc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_can.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_syscfg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_crc.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_exti.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_dbgmcu.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_wwdg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_dma.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_misc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_exti.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_i2c.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_flash.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_iwdg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_flash.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_i2c.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_divsqrt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_iwdg.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_pwr.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_crc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_rcc.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_spi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_spi.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_pwr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_tim.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_dma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_usart.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_dbgmcu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_wwdg.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_rcc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_sdio.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_tim.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_acc.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_usart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_bkp.c</name>
+      <name>$PROJ_DIR$\..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_adc.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_ertc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_eth.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_xmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_comp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\at32f4xx_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\Libraries\AT32_Std_Driver\AT32F4xx_StdPeriph_Driver\src\misc.c</name>
-    </file>
+  </group>
+  <group>
+    <name>utestcases</name>
   </group>
 </project>
