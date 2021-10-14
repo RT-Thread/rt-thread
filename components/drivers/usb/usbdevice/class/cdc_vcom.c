@@ -939,9 +939,12 @@ static void rt_usb_vcom_init(struct ufunction *func)
     config.parity       = PARITY_NONE;
     config.bit_order    = BIT_ORDER_LSB;
     config.invert       = NRZ_NORMAL;
+#if defined(RT_USING_SERIAL_V1)
+    config.bufsz        = CDC_RX_BUFSIZE;
+#elif defined(RT_USING_SERIAL_V2)
     config.rx_bufsz     = CDC_RX_BUFSIZE;
     config.tx_bufsz     = CDC_TX_BUFSIZE;
-
+#endif
     data->serial.ops        = &usb_vcom_ops;
     data->serial.serial_rx  = RT_NULL;
     data->serial.config     = config;
