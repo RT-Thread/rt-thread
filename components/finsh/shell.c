@@ -142,20 +142,24 @@ void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
     shell->prompt_mode = prompt_mode;
 }
 
-char finsh_getchar(void)
+int finsh_getchar(void)
 {
 #ifdef RT_USING_DEVICE
 #ifdef RT_USING_POSIX
     return getchar();
 #else
     char ch = 0;
+    rt_device_t device;
 
     RT_ASSERT(shell != RT_NULL);
-    if (shell->device == RT_NULL)
+
+    device = shell->device;
+    if (device == RT_NULL)
     {
-        return -RT_ERROR;
+        return -1; /* EOF */
     }
-    while (rt_device_read(shell->device, -1, &ch, 1) != 1)
+
+    while (rt_device_read(device, -1, &ch, 1) != 1)
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
 
     return ch;

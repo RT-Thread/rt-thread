@@ -93,7 +93,7 @@ rt_uint32_t finsh_get_echo(void);
 int finsh_system_init(void);
 void finsh_set_device(const char *device_name);
 const char *finsh_get_device(void);
-char finsh_getchar(void);
+int finsh_getchar(void);
 
 rt_uint32_t finsh_get_prompt_mode(void);
 void finsh_set_prompt_mode(rt_uint32_t prompt_mode);
