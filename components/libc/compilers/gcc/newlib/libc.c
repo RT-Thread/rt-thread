@@ -23,7 +23,7 @@ int _EXFUN(putenv,(char *__string));
 
 int libc_system_init(void)
 {
-#if defined(RT_USING_DFS) & defined(RT_USING_DFS_DEVFS) & defined(RT_USING_CONSOLE)
+#if defined(RT_USING_DFS_DEVFS) & defined(RT_USING_CONSOLE)
     rt_device_t dev_console;
 
     dev_console = rt_console_get_device();
@@ -39,11 +39,11 @@ int libc_system_init(void)
     /* set PATH and HOME */
     putenv("PATH=/bin");
     putenv("HOME=/home");
-#endif
+#endif /* defined(RT_USING_DFS_DEVFS) & defined(RT_USING_CONSOLE) */
 
-#if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
+#if defined(RT_USING_PTHREADS) && !defined(RT_USING_COMPONENTS_INIT)
     pthread_system_init();
-#endif
+#endif /* defined(RT_USING_PTHREADS) && !defined(RT_USING_COMPONENTS_INIT) */
 
     return 0;
 }

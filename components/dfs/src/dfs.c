@@ -18,7 +18,7 @@
 #include <lwp.h>
 #endif
 
-#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
+#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_LIBC)
 #include <libc.h>
 #endif
 
@@ -216,7 +216,7 @@ struct dfs_fd *fd_get(int fd)
     struct dfs_fd *d;
     struct dfs_fdtable *fdt;
 
-#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
+#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_LIBC)
     if ((0 <= fd) && (fd <= 2))
         fd = libc_stdio_get_console();
 #endif
