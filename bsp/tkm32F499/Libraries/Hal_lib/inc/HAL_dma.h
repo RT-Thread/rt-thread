@@ -4,7 +4,7 @@
 * @author  IC Applications Department
 * @version  V0.8
 * @date  2019_08_02
-* @brief  This file contains all the functions prototypes for the DMA firmware 
+* @brief  This file contains all the functions prototypes for the DMA firmware
 *         library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_DMA_H
@@ -38,7 +38,7 @@
 * @{
 */
 
-/** 
+/**
 * @brief  DMA Init structure definition
 */
 
@@ -71,9 +71,9 @@ typedef struct
     ((*(uint32_t*)&(PERIPH)) == DMA1_Channel4_BASE)  || \
       ((*(uint32_t*)&(PERIPH)) == DMA1_Channel5_BASE))
 
-           
 
-/** @defgroup DMA_data_transfer_direction 
+
+/** @defgroup DMA_data_transfer_direction
 * @{
 */
 
@@ -85,7 +85,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_peripheral_incremented_mode 
+/** @defgroup DMA_peripheral_incremented_mode
 * @{
 */
 
@@ -97,7 +97,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_memory_incremented_mode 
+/** @defgroup DMA_memory_incremented_mode
 * @{
 */
 
@@ -109,7 +109,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_peripheral_data_size 
+/** @defgroup DMA_peripheral_data_size
 * @{
 */
 
@@ -123,7 +123,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_memory_data_size 
+/** @defgroup DMA_memory_data_size
 * @{
 */
 
@@ -137,7 +137,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_circular_normal_mode 
+/** @defgroup DMA_circular_normal_mode
 * @{
 */
 
@@ -148,7 +148,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_priority_level 
+/** @defgroup DMA_priority_level
 * @{
 */
 
@@ -164,7 +164,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_memory_to_memory 
+/** @defgroup DMA_memory_to_memory
 * @{
 */
 
@@ -176,7 +176,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_interrupts_definition 
+/** @defgroup DMA_interrupts_definition
 * @{
 */
 
@@ -185,7 +185,7 @@ typedef struct
 #define DMA_IT_TE                          ((uint32_t)0x00000008)
 #define IS_DMA_CONFIG_IT(IT) ((((IT) & 0xFFFFFFF1) == 0x00) && ((IT) != 0x00))
 
-/** 
+/**
 * @brief  For DMA1
 */
 
@@ -262,11 +262,11 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_flags_definition 
+/** @defgroup DMA_flags_definition
 * @{
 */
 
-/** 
+/**
 * @brief  For DMA1
 */
 
@@ -352,13 +352,13 @@ typedef struct
             ((FLAG) == DMA1_FLAG_HT4) || ((FLAG) == DMA1_FLAG_TE4) || \
               ((FLAG) == DMA1_FLAG_GL5) || ((FLAG) == DMA1_FLAG_TC5) || \
                 ((FLAG) == DMA1_FLAG_HT5) || ((FLAG) == DMA1_FLAG_TE5))
-   
-      
+
+
 /**
 * @}
 */
 
-/** @defgroup DMA_Buffer_Size 
+/** @defgroup DMA_Buffer_Size
 * @{
 */
 

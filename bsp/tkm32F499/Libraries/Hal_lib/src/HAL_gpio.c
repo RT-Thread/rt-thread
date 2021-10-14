@@ -220,10 +220,10 @@ void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct)
     }
     GPIOx->CRH = tmpreg;
   }
-	/*---------------------------- GPIOE_CRH_EXT Configuration ------------------------*/
+    /*---------------------------- GPIOE_CRH_EXT Configuration ------------------------*/
   if(GPIO_InitStruct->GPIO_Pin>>16)  //说明是GPIOE的16~23位
   {
-		GPIO_InitStruct->GPIO_Pin = GPIO_InitStruct->GPIO_Pin>>16;
+        GPIO_InitStruct->GPIO_Pin = GPIO_InitStruct->GPIO_Pin>>16;
     tmpreg = GPIOE->CRH_EXT;
     for (pinpos = 0x00; pinpos < 0x08; pinpos++)
     {
@@ -362,7 +362,7 @@ void GPIO_SetBits(GPIO_TypeDef* GPIOx, uint32_t GPIO_Pin)
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Pin));
   if(GPIO_Pin>GPIO_Pin_15)GPIOE->BSRR_EXT=GPIO_Pin>>16;
-	else
+    else
   GPIOx->BSRR = GPIO_Pin;
 
 }
@@ -486,51 +486,51 @@ TIM1 6_CH1, TIM17_CH1
 void GPIO_PinAFConfig(GPIO_TypeDef* GPIOx, uint32_t GPIO_Pin, uint8_t GPIO_AF)
 {
   uint32_t temp;
-	unsigned char i;
+    unsigned char i;
 
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
   assert_param(IS_GPIO_PIN_SOURCE(GPIO_PinSource));
   assert_param(IS_GPIO_AF(GPIO_AF));
 
-	if(GPIO_Pin>>16)  //说明是GPIOE的16~23位
-	{
-		temp = GPIO_Pin>>16;
-		for(i=0;i<8;i++)
-		{
-			if(temp&0x01)
-			{
-				GPIOE->AFRH_EXT &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AF配置占半字节，要x4,即<<2
-				GPIOE->AFRH_EXT |= ((uint32_t)GPIO_AF << ((uint32_t)(i<<2)));
-			}
-			temp = temp>>1;
-		}
-	}
-	if(GPIO_Pin&0XFF00)  //说明是GPIOE的8~15位
-		{
-			temp = GPIO_Pin>>8;
-			for(i=0;i<8;i++)
-			{
-				if(temp&0x01)
-				{
-					GPIOx->AFRH &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AF配置占半字节，要x4,即<<2
-					GPIOx->AFRH |= ((uint32_t)GPIO_AF << ((uint32_t)(i<<2)));
-				}
-				temp = temp>>1;
-			}
-		}
-	if(GPIO_Pin&0XFF)  //说明是GPIOE的0~7位
-		{
-			for(i=0;i<8;i++)
-			{
-				if(temp&0x01)
-				{
-					GPIOx->AFRL &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AF配置占半字节，要x4,即<<2
-					GPIOx->AFRL |= ((uint32_t)GPIO_AF << ((uint32_t)(i<<2)));
-				}
-				temp = temp>>1;
-			}
-		}
+    if(GPIO_Pin>>16)  //说明是GPIOE的16~23位
+    {
+        temp = GPIO_Pin>>16;
+        for(i=0;i<8;i++)
+        {
+            if(temp&0x01)
+            {
+                GPIOE->AFRH_EXT &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AF配置占半字节，要x4,即<<2
+                GPIOE->AFRH_EXT |= ((uint32_t)GPIO_AF << ((uint32_t)(i<<2)));
+            }
+            temp = temp>>1;
+        }
+    }
+    if(GPIO_Pin&0XFF00)  //说明是GPIOE的8~15位
+        {
+            temp = GPIO_Pin>>8;
+            for(i=0;i<8;i++)
+            {
+                if(temp&0x01)
+                {
+                    GPIOx->AFRH &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AF配置占半字节，要x4,即<<2
+                    GPIOx->AFRH |= ((uint32_t)GPIO_AF << ((uint32_t)(i<<2)));
+                }
+                temp = temp>>1;
+            }
+        }
+    if(GPIO_Pin&0XFF)  //说明是GPIOE的0~7位
+        {
+            for(i=0;i<8;i++)
+            {
+                if(temp&0x01)
+                {
+                    GPIOx->AFRL &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AF配置占半字节，要x4,即<<2
+                    GPIOx->AFRL |= ((uint32_t)GPIO_AF << ((uint32_t)(i<<2)));
+                }
+                temp = temp>>1;
+            }
+        }
 }
 
 /**

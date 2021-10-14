@@ -216,16 +216,16 @@ typedef enum
 
 #define GPIO_AF_MCO_SW            ((uint8_t)0x00) /* MC0, SWDIO,SWCLK */
 #define GPIO_AF_TIM_1_2           ((uint8_t)0x01) /* TIM 1/2 */
-#define GPIO_AF_TIM_34567   		  ((uint8_t)0x02) /* TIM 3/4/5/6/7 */
+#define GPIO_AF_TIM_34567             ((uint8_t)0x02) /* TIM 3/4/5/6/7 */
 #define GPIO_AF_I2S               ((uint8_t)0x03)
 #define GPIO_AF_I2C               ((uint8_t)0x04) /* I2C 1/2/3 */
 #define GPIO_AF_SPI               ((uint8_t)0x05) /* SPI 1/2/3/4 */
-#define GPIO_AF_QSPI          	  ((uint8_t)0x06)
+#define GPIO_AF_QSPI              ((uint8_t)0x06)
 #define GPIO_AF_UART_2345         ((uint8_t)0x07) /* UART 2/3/4/5 */
-#define GPIO_AF_UART_1	          ((uint8_t)0x08)
-#define GPIO_AF_CAN        			  ((uint8_t)0x09) /* CAN 1/2 */
-#define GPIO_AF_USB			          ((uint8_t)0x0A)
-#define GPIO_AF_GPIO			        ((uint8_t)0x0B) /* Normal GPIO */
+#define GPIO_AF_UART_1            ((uint8_t)0x08)
+#define GPIO_AF_CAN                   ((uint8_t)0x09) /* CAN 1/2 */
+#define GPIO_AF_USB                   ((uint8_t)0x0A)
+#define GPIO_AF_GPIO                    ((uint8_t)0x0B) /* Normal GPIO */
 #define GPIO_AF_TK80_SDIO         ((uint8_t)0x0C) /* TK80   SDIO 1/2 */
 #define GPIO_AF_Touchpad          ((uint8_t)0x0D)
 #define GPIO_AF_LTDC              ((uint8_t)0x0E) /* RGB_LTDC AF */

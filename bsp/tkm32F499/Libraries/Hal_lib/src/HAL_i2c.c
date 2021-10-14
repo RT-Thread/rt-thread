@@ -47,7 +47,7 @@
 /*I2c Enable disable*/
 #define IC_ENABLE_Reset         ((uint16_t)0xFFFE)
 #define IC_ENABLE_Set           ((uint16_t)0x0001)
-#define IC_CON_RESET						((uint16_t)0xFE8A)
+#define IC_CON_RESET                        ((uint16_t)0xFE8A)
 #define INTR_MASK               ((uint16_t)0xC000)
 
 /*I2c DMA  reset*/
@@ -173,7 +173,7 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
   i2cPeriod = 1000000000/I2C_InitStruct->I2C_ClockSpeed; //ns unit
   tmpreg = 0;
 
-	/*Get the I2Cx IC_CON value */
+    /*Get the I2Cx IC_CON value */
   tmpreg = I2Cx->IC_CON;
   /*Clear TX_EMPTY_CTRL,IC_SLAVE_DISABLE,IC_RESTART_EN,IC_10BITADDR_SLAVE,SPEED,MASTER_MODE bits*/
   tmpreg &= IC_CON_RESET;
@@ -182,16 +182,16 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
   if (I2C_InitStruct->I2C_ClockSpeed <= 100000)
   {
     minSclLowTime = i2cPeriod/pclk1Period;
-		I2Cx->IC_SS_SCL_LCNT = minSclLowTime/2;
-		I2Cx->IC_SS_SCL_HCNT = minSclLowTime - I2Cx->IC_SS_SCL_LCNT;
-		I2C_InitStruct->I2C_Speed = I2C_Speed_STANDARD;
+        I2Cx->IC_SS_SCL_LCNT = minSclLowTime/2;
+        I2Cx->IC_SS_SCL_HCNT = minSclLowTime - I2Cx->IC_SS_SCL_LCNT;
+        I2C_InitStruct->I2C_Speed = I2C_Speed_STANDARD;
   }
   else /*(I2C_InitStruct->I2C_ClockSpeed <= 400000)*/
   {
-		minSclLowTime = i2cPeriod/pclk1Period;
-		I2Cx->IC_FS_SCL_LCNT = minSclLowTime/2;
-		I2Cx->IC_FS_SCL_HCNT = minSclLowTime - I2Cx->IC_FS_SCL_LCNT;
-		I2C_InitStruct->I2C_Speed = I2C_Speed_FAST;
+        minSclLowTime = i2cPeriod/pclk1Period;
+        I2Cx->IC_FS_SCL_LCNT = minSclLowTime/2;
+        I2Cx->IC_FS_SCL_HCNT = minSclLowTime - I2Cx->IC_FS_SCL_LCNT;
+        I2C_InitStruct->I2C_Speed = I2C_Speed_FAST;
   }
 
 
@@ -261,10 +261,10 @@ void I2C_Cmd(I2C_TypeDef* I2Cx, FunctionalState NewState)
 /**
 * @brief  Enables or disables the specified I2C DMA requests.
 * @param I2Cx: where x can be 1 or 2 to select the I2C peripheral.
-* @param	DMA_Direcction : TDMAE_SET,RDMAE_SET
+* @param    DMA_Direcction : TDMAE_SET,RDMAE_SET
 *   This parameter can be any combination of the following values:
-* @arg TDMAE_SET	:DMA TX set
-* @arg RDMAE_SET	:DMA RX set
+* @arg TDMAE_SET    :DMA TX set
+* @arg RDMAE_SET    :DMA RX set
 * @param NewState: new state of the I2C DMA transfer.
 *   This parameter can be: ENABLE or DISABLE.
 * @retval : None
@@ -424,14 +424,14 @@ void I2C_GeneralCallCmd(I2C_TypeDef* I2Cx, FunctionalState NewState)
 * @arg I2C_IT_RX_OVER : RX  Buffer Overrun interrupt mask
 * @arg I2C_IT_RX_FULL : Rx buffer full interrupt mask
 * @arg I2C_IT_TX_OVER : TX  Buffer Overrun interrupt mask
-* @arg I2C_IT_TX_EMPTY	: TX_FIFO empty interrupt mask
-* @arg I2C_IT_RD_REQ	: I2C work as slave or master interrupt mask
-* @arg I2C_IT_TX_ABRT	: TX error interrupt  mask(Master mode)
-* @arg I2C_IT_RX_DONE	: Master not ack interrupt mask(slave mode)
-* @arg I2C_IT_ACTIVITY	: I2C activity interrupt mask
-* @arg I2C_IT_STOP_DET	: stop condition  interrupt mask
-* @arg I2C_IT_START_DET	: start condition  interrupt mask
-* @arg I2C_IT_GEN_CALL	: a general call address and ack interrupt mask
+* @arg I2C_IT_TX_EMPTY  : TX_FIFO empty interrupt mask
+* @arg I2C_IT_RD_REQ    : I2C work as slave or master interrupt mask
+* @arg I2C_IT_TX_ABRT   : TX error interrupt  mask(Master mode)
+* @arg I2C_IT_RX_DONE   : Master not ack interrupt mask(slave mode)
+* @arg I2C_IT_ACTIVITY  : I2C activity interrupt mask
+* @arg I2C_IT_STOP_DET  : stop condition  interrupt mask
+* @arg I2C_IT_START_DET : start condition  interrupt mask
+* @arg I2C_IT_GEN_CALL  : a general call address and ack interrupt mask
 * @param NewState: new state of the specified I2C interrupts.
 *   This parameter can be: ENABLE or DISABLE.
 * @retval : None
@@ -566,14 +566,14 @@ uint32_t I2C_GetLastEvent(I2C_TypeDef* I2Cx)
 * @arg I2C_EVENT_RX_OVER : RX  Buffer Overrun event
 * @arg I2C_EVENTT_RX_FULL : Rx buffer full event
 * @arg I2C_EVENT_TX_OVER : TX  Buffer Overrun event
-* @arg I2C_EVENT_TX_EMPTY	: TX_FIFO empty event
-* @arg I2C_EVENT_RD_REQ	: I2C work as slave or master event
-* @arg I2C_EVENT_TX_ABRT	: TX error event(Master mode)
-* @arg I2C_EVENT_RX_DONE	: Master not ack event(slave mode)
-* @arg I2C_EVENT_ACTIVITY	: I2C activity event
-* @arg I2C_EVENT_STOP_DET	: stop condition  event
-* @arg I2C_EVENT_START_DET	: start condition  event
-* @arg I2C_EVENT_GEN_CALL	: a general call address and ack event
+* @arg I2C_EVENT_TX_EMPTY   : TX_FIFO empty event
+* @arg I2C_EVENT_RD_REQ : I2C work as slave or master event
+* @arg I2C_EVENT_TX_ABRT    : TX error event(Master mode)
+* @arg I2C_EVENT_RX_DONE    : Master not ack event(slave mode)
+* @arg I2C_EVENT_ACTIVITY   : I2C activity event
+* @arg I2C_EVENT_STOP_DET   : stop condition  event
+* @arg I2C_EVENT_START_DET  : start condition  event
+* @arg I2C_EVENT_GEN_CALL   : a general call address and ack event
 * - SUCCESS: Last event is equal to the I2C_EVENT
 * - ERROR: Last event is different from the I2C_EVENT
 */
@@ -624,9 +624,9 @@ ErrorStatus I2C_CheckEvent(I2C_TypeDef* I2Cx, uint32_t I2C_EVENT)
 * @arg I2C_FLAG_RX_FULL : Rx buffer full flag
 * @arg I2C_FLAG_TX_OVER : TX  Buffer Overrun flag
 * @arg I2C_FLAG_TX_EMPTY: TX_FIFO empty flag
-* @arg I2C_FLAG_RD_REQ	: I2C work as slave or master flag
-* @arg I2C_FLAG_TX_ABRT	: TX error flag(Master mode)
-* @arg I2C_FLAG_RX_DONE	: Master not ack flag(slave mode)
+* @arg I2C_FLAG_RD_REQ  : I2C work as slave or master flag
+* @arg I2C_FLAG_TX_ABRT : TX error flag(Master mode)
+* @arg I2C_FLAG_RX_DONE : Master not ack flag(slave mode)
 * @arg I2C_FLAG_ACTIVITY: I2C activity flag
 * @arg I2C_FLAG_STOP_DET: stop condition  flag
 * @arg I2C_FLAG_START_DET: start condition  flag
@@ -673,9 +673,9 @@ FlagStatus I2C_GetFlagStatus(I2C_TypeDef* I2Cx, uint32_t I2C_FLAG)
 * @arg I2C_FLAG_RX_FULL : Rx buffer full flag
 * @arg I2C_FLAG_TX_OVER : TX  Buffer Overrun flag
 * @arg I2C_FLAG_TX_EMPTY: TX_FIFO empty flag
-* @arg I2C_FLAG_RD_REQ	: I2C work as slave or master flag
-* @arg I2C_FLAG_TX_ABRT	: TX error flag(Master mode)
-* @arg I2C_FLAG_RX_DONE	: Master not ack flag(slave mode)
+* @arg I2C_FLAG_RD_REQ  : I2C work as slave or master flag
+* @arg I2C_FLAG_TX_ABRT : TX error flag(Master mode)
+* @arg I2C_FLAG_RX_DONE : Master not ack flag(slave mode)
 * @arg I2C_FLAG_ACTIVITY: I2C activity flag
 * @arg I2C_FLAG_STOP_DET: stop condition  flag
 * @arg I2C_FLAG_START_DET: start condition  flag
@@ -772,14 +772,14 @@ void I2C_ClearFlag(I2C_TypeDef* I2Cx, uint32_t I2C_FLAG)
 * @arg I2C_IT_RX_OVER : RX  Buffer Overrun interrupt
 * @arg I2C_IT_RX_FULL : Rx buffer full interrupt
 * @arg I2C_IT_TX_OVER : TX  Buffer Overrun interrupt
-* @arg I2C_IT_TX_EMPTY	: TX_FIFO empty interrupt
-* @arg I2C_IT_RD_REQ	: I2C work as slave or master interrupt
-* @arg I2C_IT_TX_ABRT	: TX error interrupt  (Master mode)
-* @arg I2C_IT_RX_DONE	: Master not ack interrupt (slave mode)
-* @arg I2C_IT_ACTIVITY	: I2C activity interrupt
-* @arg I2C_IT_STOP_DET	: stop condition  interrupt
-* @arg I2C_IT_START_DET	: start condition  interrupt
-* @arg I2C_IT_GEN_CALL	: a general call address and ack interrupt
+* @arg I2C_IT_TX_EMPTY  : TX_FIFO empty interrupt
+* @arg I2C_IT_RD_REQ    : I2C work as slave or master interrupt
+* @arg I2C_IT_TX_ABRT   : TX error interrupt  (Master mode)
+* @arg I2C_IT_RX_DONE   : Master not ack interrupt (slave mode)
+* @arg I2C_IT_ACTIVITY  : I2C activity interrupt
+* @arg I2C_IT_STOP_DET  : stop condition  interrupt
+* @arg I2C_IT_START_DET : start condition  interrupt
+* @arg I2C_IT_GEN_CALL  : a general call address and ack interrupt
 * @retval : The new state of I2C_IT (SET or RESET).
 */
 ITStatus I2C_GetITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT)
@@ -814,14 +814,14 @@ ITStatus I2C_GetITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT)
 * @arg I2C_IT_RX_OVER : RX  Buffer Overrun interrupt
 * @arg I2C_IT_RX_FULL : Rx buffer full interrupt
 * @arg I2C_IT_TX_OVER : TX  Buffer Overrun interrupt
-* @arg I2C_IT_TX_EMPTY	: TX_FIFO empty interrupt
-* @arg I2C_IT_RD_REQ	: I2C work as slave or master interrupt
-* @arg I2C_IT_TX_ABRT	: TX error interrupt  (Master mode)
-* @arg I2C_IT_RX_DONE	: Master not ack interrupt (slave mode)
-* @arg I2C_IT_ACTIVITY	: I2C activity interrupt
-* @arg I2C_IT_STOP_DET	: stop condition  interrupt
-* @arg I2C_IT_START_DET	: start condition  interrupt
-* @arg I2C_IT_GEN_CALL	: a general call address and ack interrupt
+* @arg I2C_IT_TX_EMPTY  : TX_FIFO empty interrupt
+* @arg I2C_IT_RD_REQ    : I2C work as slave or master interrupt
+* @arg I2C_IT_TX_ABRT   : TX error interrupt  (Master mode)
+* @arg I2C_IT_RX_DONE   : Master not ack interrupt (slave mode)
+* @arg I2C_IT_ACTIVITY  : I2C activity interrupt
+* @arg I2C_IT_STOP_DET  : stop condition  interrupt
+* @arg I2C_IT_START_DET : start condition  interrupt
+* @arg I2C_IT_GEN_CALL  : a general call address and ack interrupt
 * @retval : None
 */
 void I2C_ClearITPendingBit(I2C_TypeDef* I2Cx, uint32_t I2C_IT)

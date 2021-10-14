@@ -4,7 +4,7 @@
 * @author  IC Applications Department
 * @version  V0.8
 * @date  2019_08_02
-* @brief  This file contains all the functions prototypes for the I2C firmware 
+* @brief  This file contains all the functions prototypes for the I2C firmware
 *         library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_I2C_H
@@ -38,8 +38,8 @@
 * @{
 */
 
-/** 
-* @brief  I2C Init structure definition  
+/**
+* @brief  I2C Init structure definition
 */
 /*
 typedef struct
@@ -62,7 +62,7 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
 
 /** @defgroup I2C_Exported_Constants
@@ -71,27 +71,27 @@ typedef struct
 
 #define IS_I2C_ALL_PERIPH(PERIPH) (((*(uint32_t*)&(PERIPH)) == I2C1_BASE) || \
 ((*(uint32_t*)&(PERIPH)) == I2C2_BASE))
-/** @defgroup I2C_modes 
+/** @defgroup I2C_modes
 * @{
 */
 
-#define   TX_EMPTY_CTRL						(0x0001<<8)
-#define		IC_SLAVE_DISABLE				(0x0001<<6)
-#define		IC_SLAVE_ENABLE					(0x0000<<6)
-#define		IC_RESTART_EN						(0x0001<<5)
-#define		IC_7BITADDR_MASTER			(0x0000<<4)
-#define		IC_7BITADDR_SLAVE				(0x0000<<3)
+#define   TX_EMPTY_CTRL                     (0x0001<<8)
+#define     IC_SLAVE_DISABLE                (0x0001<<6)
+#define     IC_SLAVE_ENABLE                 (0x0000<<6)
+#define     IC_RESTART_EN                       (0x0001<<5)
+#define     IC_7BITADDR_MASTER          (0x0000<<4)
+#define     IC_7BITADDR_SLAVE               (0x0000<<3)
 
-#define 	I2C_Speed_STANDARD      ((uint16_t)0x0002)
-#define 	I2C_Speed_FAST         	((uint16_t)0x0004)
-#define 	I2C_Mode_MASTER					((uint16_t)0x0001)
-#define 	I2C_Mode_SLAVE					((uint16_t)0x0000)
+#define     I2C_Speed_STANDARD      ((uint16_t)0x0002)
+#define     I2C_Speed_FAST          ((uint16_t)0x0004)
+#define     I2C_Mode_MASTER                 ((uint16_t)0x0001)
+#define     I2C_Mode_SLAVE                  ((uint16_t)0x0000)
 
-#define 	TDMAE_SET								((uint16_t)0x0002)
-#define 	RDMAE_SET								((uint16_t)0x0001)
+#define     TDMAE_SET                               ((uint16_t)0x0002)
+#define     RDMAE_SET                               ((uint16_t)0x0001)
 
-#define 	CMD_READ								((uint16_t)0x0100)
-#define 	CMD_WRITE								((uint16_t)0x0000)
+#define     CMD_READ                                ((uint16_t)0x0100)
+#define     CMD_WRITE                               ((uint16_t)0x0000)
 
 
 
@@ -105,7 +105,7 @@ typedef struct
 */
 
 
-/** @defgroup I2C_transfer_direction 
+/** @defgroup I2C_transfer_direction
 * @{
 */
 
@@ -117,7 +117,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup I2C_acknowledged_address_defines 
+/** @defgroup I2C_acknowledged_address_defines
 * @{
 */
 
@@ -128,9 +128,9 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup I2C_interrupts_definition 
+/** @defgroup I2C_interrupts_definition
 * @{
 */
 
@@ -138,24 +138,24 @@ typedef struct
 #define IS_I2C_CONFIG_IT(IT) ((((IT) & (uint16_t)0xF8FF) == 0x00) && ((IT) != 0x00))
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup I2C_interrupts_definition 
+/** @defgroup I2C_interrupts_definition
 * @{
 */
 
-#define I2C_IT_RX_UNDER					((uint16_t)0x0001)
-#define I2C_IT_RX_OVER					((uint16_t)0x0002)
-#define I2C_IT_RX_FULL  				((uint16_t)0x0004)
-#define I2C_IT_TX_OVER					((uint16_t)0x0008)
-#define I2C_IT_TX_EMPTY					((uint16_t)0x0010)
-#define I2C_IT_RD_REQ						((uint16_t)0x0020)
-#define I2C_IT_TX_ABRT					((uint16_t)0x0040)
-#define I2C_IT_RX_DONE					((uint16_t)0x0080)
-#define I2C_IT_ACTIVITY					((uint16_t)0x0100)
-#define I2C_IT_STOP_DET					((uint16_t)0x0200)
-#define I2C_IT_START_DET				((uint16_t)0x0400)
-#define I2C_IT_GEN_CALL				((uint16_t)0x0800)
+#define I2C_IT_RX_UNDER                 ((uint16_t)0x0001)
+#define I2C_IT_RX_OVER                  ((uint16_t)0x0002)
+#define I2C_IT_RX_FULL                  ((uint16_t)0x0004)
+#define I2C_IT_TX_OVER                  ((uint16_t)0x0008)
+#define I2C_IT_TX_EMPTY                 ((uint16_t)0x0010)
+#define I2C_IT_RD_REQ                       ((uint16_t)0x0020)
+#define I2C_IT_TX_ABRT                  ((uint16_t)0x0040)
+#define I2C_IT_RX_DONE                  ((uint16_t)0x0080)
+#define I2C_IT_ACTIVITY                 ((uint16_t)0x0100)
+#define I2C_IT_STOP_DET                 ((uint16_t)0x0200)
+#define I2C_IT_START_DET                ((uint16_t)0x0400)
+#define I2C_IT_GEN_CALL             ((uint16_t)0x0800)
 
 #define IS_I2C_CLEAR_IT(IT) ((((IT) & (uint16_t)0xF000) == 0x00) && ((IT) != (uint16_t)0x00))
 
@@ -169,24 +169,24 @@ typedef struct
 * @}
 */
 
-/** @defgroup I2C_flags_definition 
+/** @defgroup I2C_flags_definition
 * @{
 */
 
 
 
-#define I2C_FLAG_RX_UNDER					((uint16_t)0x0001)
-#define I2C_FLAG_RX_OVER					((uint16_t)0x0002)
-#define I2C_FLAG_RX_FULL  				((uint16_t)0x0004)
-#define I2C_FLAG_TX_OVER					((uint16_t)0x0008)
-#define I2C_FLAG_TX_EMPTY					((uint16_t)0x0010)
-#define I2C_FLAG_RD_REQ						((uint16_t)0x0020)
-#define I2C_FLAG_TX_ABRT					((uint16_t)0x0040)
-#define I2C_FLAG_RX_DONE					((uint16_t)0x0080)
-#define I2C_FLAG_ACTIVITY					((uint16_t)0x0100)
-#define I2C_FLAG_STOP_DET					((uint16_t)0x0200)
-#define I2C_FLAG_START_DET				((uint16_t)0x0400)
-#define I2C_FLAG_GEN_CALL					((uint16_t)0x0800)
+#define I2C_FLAG_RX_UNDER                   ((uint16_t)0x0001)
+#define I2C_FLAG_RX_OVER                    ((uint16_t)0x0002)
+#define I2C_FLAG_RX_FULL                ((uint16_t)0x0004)
+#define I2C_FLAG_TX_OVER                    ((uint16_t)0x0008)
+#define I2C_FLAG_TX_EMPTY                   ((uint16_t)0x0010)
+#define I2C_FLAG_RD_REQ                     ((uint16_t)0x0020)
+#define I2C_FLAG_TX_ABRT                    ((uint16_t)0x0040)
+#define I2C_FLAG_RX_DONE                    ((uint16_t)0x0080)
+#define I2C_FLAG_ACTIVITY                   ((uint16_t)0x0100)
+#define I2C_FLAG_STOP_DET                   ((uint16_t)0x0200)
+#define I2C_FLAG_START_DET              ((uint16_t)0x0400)
+#define I2C_FLAG_GEN_CALL                   ((uint16_t)0x0800)
 
 
 
@@ -203,40 +203,40 @@ typedef struct
         ((FLAG) == I2C_FLAG_START_DET) || ((FLAG) == I2C_FLAG_GEN_CALL))
 
 
-/** @defgroup I2C_Statusflags_definition 
+/** @defgroup I2C_Statusflags_definition
 * @{
 */
 
-#define I2C_STATUS_FLAG_ACTIVITY				((uint16_t)0x0001)
-#define I2C_STATUS_FLAG_TFNF					((uint16_t)0x0002)
-#define I2C_STATUS_FLAG_TFE						((uint16_t)0x0004)
-#define I2C_STATUS_FLAG_RFNE					((uint16_t)0x0008)
-#define I2C_STATUS_FLAG_RFF						((uint16_t)0x0010)
-#define I2C_STATUS_FLAG_M_ACTIVITY				((uint16_t)0x0020)
-#define I2C_STATUS_FLAG_S_ACTIVITY				((uint16_t)0x0040)
+#define I2C_STATUS_FLAG_ACTIVITY                ((uint16_t)0x0001)
+#define I2C_STATUS_FLAG_TFNF                    ((uint16_t)0x0002)
+#define I2C_STATUS_FLAG_TFE                     ((uint16_t)0x0004)
+#define I2C_STATUS_FLAG_RFNE                    ((uint16_t)0x0008)
+#define I2C_STATUS_FLAG_RFF                     ((uint16_t)0x0010)
+#define I2C_STATUS_FLAG_M_ACTIVITY              ((uint16_t)0x0020)
+#define I2C_STATUS_FLAG_S_ACTIVITY              ((uint16_t)0x0040)
 
 
 /**
 * @}
 */
 
-/** @defgroup I2C_Events 
+/** @defgroup I2C_Events
 * @{
 */
 
 
-#define I2C_EVENT_RX_UNDER				((uint32_t)0x0001)
-#define I2C_EVENT_RX_OVER				((uint32_t)0x0002)
-#define I2C_EVENT_RX_FULL  				((uint32_t)0x0004)
-#define I2C_EVENT_TX_OVER				((uint32_t)0x0008)
-#define I2C_EVENT_TX_EMPTY				((uint32_t)0x0010)
-#define I2C_EVENT_RD_REQ				((uint32_t)0x0020)
-#define I2C_EVENT_TX_ABRT				((uint32_t)0x0040)
-#define I2C_EVENT_RX_DONE				((uint32_t)0x0080)
-#define I2C_EVENT_ACTIVITY				((uint32_t)0x0100)
-#define I2C_EVENT_STOP_DET				((uint32_t)0x0200)
-#define I2C_EVENT_START_DET				((uint32_t)0x0400)
-#define I2C_EVENT_GEN_CALL				((uint32_t)0x0800)
+#define I2C_EVENT_RX_UNDER              ((uint32_t)0x0001)
+#define I2C_EVENT_RX_OVER               ((uint32_t)0x0002)
+#define I2C_EVENT_RX_FULL               ((uint32_t)0x0004)
+#define I2C_EVENT_TX_OVER               ((uint32_t)0x0008)
+#define I2C_EVENT_TX_EMPTY              ((uint32_t)0x0010)
+#define I2C_EVENT_RD_REQ                ((uint32_t)0x0020)
+#define I2C_EVENT_TX_ABRT               ((uint32_t)0x0040)
+#define I2C_EVENT_RX_DONE               ((uint32_t)0x0080)
+#define I2C_EVENT_ACTIVITY              ((uint32_t)0x0100)
+#define I2C_EVENT_STOP_DET              ((uint32_t)0x0200)
+#define I2C_EVENT_START_DET             ((uint32_t)0x0400)
+#define I2C_EVENT_GEN_CALL              ((uint32_t)0x0800)
 
 
 #define IS_I2C_EVENT(EVENT)  (((EVENT) == I2C_EVENT_RX_UNDER) || \
@@ -253,7 +253,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup I2C_own_address1 
+/** @defgroup I2C_own_address1
 * @{
 */
 
@@ -262,7 +262,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup I2C_clock_speed 
+/** @defgroup I2C_clock_speed
 * @{
 */
 
@@ -317,14 +317,14 @@ void I2C_ReadCmd(I2C_TypeDef* I2Cx);
 #endif /*__HAL_I2C_H */
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /*-------------------------(C) COPYRIGHT 2016 HOLOCENE ----------------------*/

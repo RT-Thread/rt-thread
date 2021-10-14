@@ -49,8 +49,8 @@
 #define GCR_UE_Set                ((uint16_t)0x0001)  /* UART Enable Mask */
 #define GCR_UE_Reset              ((uint16_t)0xFFFE)  /* UART Disable Mask */
 
-#define CCR_CLEAR_Mask       			((uint32_t)0xFFFFFF30)  /* UART CCR Mask */
-#define GCR_CLEAR_Mask       			((uint32_t)0xFFFFFFE0)  /* UART GCR Mask */
+#define CCR_CLEAR_Mask                  ((uint32_t)0xFFFFFF30)  /* UART CCR Mask */
+#define GCR_CLEAR_Mask                  ((uint32_t)0xFFFFFFE0)  /* UART GCR Mask */
 /**
 * @}
 */
@@ -159,8 +159,8 @@ void UART_Init(UART_TypeDef* UARTx, UART_InitTypeDef* UART_InitStruct)
 
   /* Determine the UART_baud*/
     tmpreg = ((RCC_ClocksStatus.PCLK1_Frequency)/(UART_InitStruct->UART_BaudRate)/16) ;
-	 /* Write to UART BRR */
-	  UARTx->BRR = tmpreg;
+     /* Write to UART BRR */
+      UARTx->BRR = tmpreg;
 }
 
 /**

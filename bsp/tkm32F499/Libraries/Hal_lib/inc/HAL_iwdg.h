@@ -4,7 +4,7 @@
 * @author  IC Applications Department
 * @version  V0.8
 * @date  2019_08_02
-* @brief  This file contains all the functions prototypes for the IWDG 
+* @brief  This file contains all the functions prototypes for the IWDG
 *         firmware library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_IWDG_H
@@ -46,7 +46,7 @@
 * @{
 */
 
-/** @defgroup Write_access_to_IWDG_PR_and_IWDG_RLR_registers 
+/** @defgroup Write_access_to_IWDG_PR_and_IWDG_RLR_registers
 * @{
 */
 
@@ -58,7 +58,7 @@
 * @}
 */
 
-/** @defgroup IWDG_prescaler 
+/** @defgroup IWDG_prescaler
 * @{
 */
 
@@ -80,7 +80,7 @@
 * @}
 */
 
-/** @defgroup IWDG_Flag 
+/** @defgroup IWDG_Flag
 * @{
 */
 

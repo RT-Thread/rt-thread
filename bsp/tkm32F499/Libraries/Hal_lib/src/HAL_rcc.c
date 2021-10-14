@@ -174,22 +174,22 @@ static __I uint8_t ADCPrescTable[4] = {2, 4, 6, 8};
 */
 void SystemClk_HSEInit(uint32_t PLL_DN)
 {
-	RCC_DeInit();
-	//HSE on
-	//CR寄存器BIT16位（HSEON位）置1，作用是连接外部时钟HSE作为系统时钟
-	RCC_HSEConfig(RCC_HSE_ON);
+    RCC_DeInit();
+    //HSE on
+    //CR寄存器BIT16位（HSEON位）置1，作用是连接外部时钟HSE作为系统时钟
+    RCC_HSEConfig(RCC_HSE_ON);
 
-	while(1)
-	{
-		if(RCC_WaitForHSEStartUp()!=0)
-		{
-			break;
-		}
-	}
-	RCC_PLLCmd(DISABLE);
-	RCC_PLLConfig(RCC_PLLSource_HSE_Div1,PLL_DN);
-	RCC_PLLCmd(ENABLE);
-	RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);//选择外部时钟作为系统时钟
+    while(1)
+    {
+        if(RCC_WaitForHSEStartUp()!=0)
+        {
+            break;
+        }
+    }
+    RCC_PLLCmd(DISABLE);
+    RCC_PLLConfig(RCC_PLLSource_HSE_Div1,PLL_DN);
+    RCC_PLLCmd(ENABLE);
+    RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);//选择外部时钟作为系统时钟
 }
 /**
 * @brief  Resets the RCC clock configuration to the default reset state.
@@ -350,24 +350,24 @@ void RCC_PLLDMDNConfig(uint32_t RCC_PLLSource, uint32_t RCC_PLLDN,uint32_t RCC_P
   assert_param(IS_RCC_PLL_SOURCE(RCC_PLLSource));
   assert_param(IS_RCC_PLL_MUL(RCC_PLLMul));
 
-	if(RCC_PLLSource == 0)
-	{
-			tmpreg0 &= ~(1<<22);
-	}
-	else
-	{
-			TK499_PLL_FACTOR |= 0x10000;
-			tmpreg0 |= (1<<22);
-	}
+    if(RCC_PLLSource == 0)
+    {
+            tmpreg0 &= ~(1<<22);
+    }
+    else
+    {
+            TK499_PLL_FACTOR |= 0x10000;
+            tmpreg0 |= (1<<22);
+    }
 
   RCC_PLLDN &= 0x7f;
-	RCC_PLLDP &= 0x3;
-	RCC_PLLDM &= 0xf;
+    RCC_PLLDP &= 0x3;
+    RCC_PLLDM &= 0xf;
   /* Set the PLL configuration bits */
   tmpreg0 |= (u32)((u32)(RCC_PLLDN<<6))|((u32)(RCC_PLLDP<<4))|((u32)RCC_PLLDM);
 
   RCC->PLLCFGR = tmpreg0;
-//	RCC->PLLCFGR = 0x4004d1;
+//  RCC->PLLCFGR = 0x4004d1;
 }
 
 
@@ -402,137 +402,137 @@ void RCC_PLLConfig(uint32_t RCC_PLLSource, uint32_t RCC_PLLMul)
 
  if(RCC_PLLMul==RCC_PLLMul_2)
   {
-		TK499_PLL_FACTOR = 2;
+        TK499_PLL_FACTOR = 2;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000001, 0x00000000,0x00000000); //Frclk*8/4
   }
   if(RCC_PLLMul==RCC_PLLMul_3)
   {
-		TK499_PLL_FACTOR = 3;
+        TK499_PLL_FACTOR = 3;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000002, 0x00000000,0x00000000);//Frclk*6/2
   }
   if(RCC_PLLMul==RCC_PLLMul_4)
   {
-		TK499_PLL_FACTOR = 4;
+        TK499_PLL_FACTOR = 4;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000003, 0x00000000,0x00000000);//Frclk*8/2
   }
   if(RCC_PLLMul==RCC_PLLMul_5)
   {
-		TK499_PLL_FACTOR = 5;
+        TK499_PLL_FACTOR = 5;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000013, 0x00000001,0x00000001);//Frclk*10/2
   }
   if(RCC_PLLMul==RCC_PLLMul_6)
   {
-		TK499_PLL_FACTOR = 6;
+        TK499_PLL_FACTOR = 6;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000005, 0x00000000,0x00000000);//Frclk*12/2
   }
   if(RCC_PLLMul==RCC_PLLMul_7)
   {
-		TK499_PLL_FACTOR = 7;
+        TK499_PLL_FACTOR = 7;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000006, 0x00000000,0x00000000);//Frclk*14/2
   }
   if(RCC_PLLMul==RCC_PLLMul_8)
   {
-		TK499_PLL_FACTOR = 8;
+        TK499_PLL_FACTOR = 8;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000007, 0x00000000,0x00000000);//Frclk*16/2
   }
   if(RCC_PLLMul==RCC_PLLMul_9)
   {
-		TK499_PLL_FACTOR = 9;
+        TK499_PLL_FACTOR = 9;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000008, 0x00000000,0x00000000);//Frclk*18/2
   }
   if(RCC_PLLMul==RCC_PLLMul_10)
   {
-		TK499_PLL_FACTOR = 10;
+        TK499_PLL_FACTOR = 10;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000009, 0x00000000,0x00000000);//Frclk*20/2
   }
   if(RCC_PLLMul==RCC_PLLMul_11)
   {
-		TK499_PLL_FACTOR = 11;
+        TK499_PLL_FACTOR = 11;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x0000000a, 0x00000000,0x00000000);//Frclk*22/2
   }
   if(RCC_PLLMul==RCC_PLLMul_12)
   {
-		TK499_PLL_FACTOR = 12;
+        TK499_PLL_FACTOR = 12;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x0000000b, 0x00000000,0x00000000);//Frclk*24/2
   }
   if(RCC_PLLMul==RCC_PLLMul_13)
   {
-		TK499_PLL_FACTOR = 13;
+        TK499_PLL_FACTOR = 13;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x0000000c, 0x00000000,0x00000000);//Frclk*26/2
   }
   if(RCC_PLLMul==RCC_PLLMul_14)
   {
-		TK499_PLL_FACTOR = 14;
+        TK499_PLL_FACTOR = 14;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x0000000d, 0x00000000,0x00000000);//Frclk*28/2
   }
   if(RCC_PLLMul==RCC_PLLMul_15)
   {
-		TK499_PLL_FACTOR = 15;
+        TK499_PLL_FACTOR = 15;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x0000000e, 0x00000000,0x00000000);//Frclk*30/2
   }
   if(RCC_PLLMul==RCC_PLLMul_16)
   {
-		TK499_PLL_FACTOR = 16;
+        TK499_PLL_FACTOR = 16;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x0000000f, 0x00000000,0x00000000);//Frclk*32/2
   }
-	if(RCC_PLLMul==RCC_PLLMul_17)
+    if(RCC_PLLMul==RCC_PLLMul_17)
   {
-		TK499_PLL_FACTOR = 17;
+        TK499_PLL_FACTOR = 17;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000010, 0x00000000,0x00000000);//Frclk*32/2
   }
-	if(RCC_PLLMul==RCC_PLLMul_18)
+    if(RCC_PLLMul==RCC_PLLMul_18)
   {
-		TK499_PLL_FACTOR = 18;
+        TK499_PLL_FACTOR = 18;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000011, 0x00000000,0x00000000);//Frclk*32/2
   }
-	if(RCC_PLLMul==RCC_PLLMul_19)
+    if(RCC_PLLMul==RCC_PLLMul_19)
   {
-		TK499_PLL_FACTOR = 19;
+        TK499_PLL_FACTOR = 19;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000012, 0x00000000,0x00000000);//Frclk*32/2
   }
-	if(RCC_PLLMul==RCC_PLLMul_20)
+    if(RCC_PLLMul==RCC_PLLMul_20)
   {
-		TK499_PLL_FACTOR = 20;
+        TK499_PLL_FACTOR = 20;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000013, 0x00000000,0x00000000);//Frclk*32/2
   }
-	if(RCC_PLLMul==RCC_PLLMul_21)
+    if(RCC_PLLMul==RCC_PLLMul_21)
   {
-		TK499_PLL_FACTOR = 21;
+        TK499_PLL_FACTOR = 21;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000014, 0x00000000,0x00000000);//Frclk*32/2
   }
-	if(RCC_PLLMul==RCC_PLLMul_22)
+    if(RCC_PLLMul==RCC_PLLMul_22)
   {
-		TK499_PLL_FACTOR = 22;
+        TK499_PLL_FACTOR = 22;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000015, 0x00000000,0x00000000);//Frclk*32/2
   }
-	if(RCC_PLLMul==RCC_PLLMul_23)
+    if(RCC_PLLMul==RCC_PLLMul_23)
   {
-		TK499_PLL_FACTOR = 23;
+        TK499_PLL_FACTOR = 23;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000016, 0x00000000,0x00000000);//Frclk*32/2
   }
-		if(RCC_PLLMul==RCC_PLLMul_24)
+        if(RCC_PLLMul==RCC_PLLMul_24)
   {
-		TK499_PLL_FACTOR = 24;
+        TK499_PLL_FACTOR = 24;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000017, 0x00000000,0x00000000);//Frclk*32/2
   }
-		if(RCC_PLLMul==RCC_PLLMul_25)
+        if(RCC_PLLMul==RCC_PLLMul_25)
   {
-		TK499_PLL_FACTOR = 25;
+        TK499_PLL_FACTOR = 25;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000018, 0x00000000,0x00000000);//Frclk*32/2
   }
-		if(RCC_PLLMul==RCC_PLLMul_26)
+        if(RCC_PLLMul==RCC_PLLMul_26)
   {
-		TK499_PLL_FACTOR = 26;
+        TK499_PLL_FACTOR = 26;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000019, 0x00000000,0x00000000);//Frclk*32/2
   }
-		if(RCC_PLLMul==RCC_PLLMul_27)
+        if(RCC_PLLMul==RCC_PLLMul_27)
   {
-		TK499_PLL_FACTOR = 27;
+        TK499_PLL_FACTOR = 27;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000020, 0x00000000,0x00000000);//Frclk*32/2
   }
-		if(RCC_PLLMul==RCC_PLLMul_28)
+        if(RCC_PLLMul==RCC_PLLMul_28)
   {
-		TK499_PLL_FACTOR = 28;
+        TK499_PLL_FACTOR = 28;
     RCC_PLLDMDNConfig(RCC_PLLSource, 0x00000021, 0x00000000,0x00000000);//Frclk*32/2
   }
 }
@@ -581,25 +581,25 @@ void RCC_SYSCLKConfig(uint32_t RCC_SYSCLKSource)
   tmpreg |= RCC_SYSCLKSource;
   /* Store the new value */
   RCC->CFGR = tmpreg;
-	if(RCC_SYSCLKSource == RCC_SYSCLKSource_PLLCLK)
-	{
-		if(TK499_PLL_FACTOR&0x10000)//hse as pll src
-		{
-				TK499_SYS_CLK = (TK499_PLL_FACTOR&0xff)*HSE_VALUE;
-		}
-		else
-		{
-				TK499_SYS_CLK = (TK499_PLL_FACTOR&0xff)*HSI_Value_Pll_ON;
-		}
-	}
-	else if(RCC_SYSCLKSource == RCC_SYSCLKSource_HSE)
-	{
-		TK499_SYS_CLK = HSE_VALUE;
-	}
-	else
-	{
-		TK499_SYS_CLK = HSI_Value_Pll_OFF;
-	}
+    if(RCC_SYSCLKSource == RCC_SYSCLKSource_PLLCLK)
+    {
+        if(TK499_PLL_FACTOR&0x10000)//hse as pll src
+        {
+                TK499_SYS_CLK = (TK499_PLL_FACTOR&0xff)*HSE_VALUE;
+        }
+        else
+        {
+                TK499_SYS_CLK = (TK499_PLL_FACTOR&0xff)*HSI_Value_Pll_ON;
+        }
+    }
+    else if(RCC_SYSCLKSource == RCC_SYSCLKSource_HSE)
+    {
+        TK499_SYS_CLK = HSE_VALUE;
+    }
+    else
+    {
+        TK499_SYS_CLK = HSI_Value_Pll_OFF;
+    }
 }
 
 /**

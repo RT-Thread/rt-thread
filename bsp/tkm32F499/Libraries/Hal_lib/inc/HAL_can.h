@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_CAN_H
 #define __HAL_CAN_H
@@ -66,13 +66,13 @@
 */
 #define CAN_BASICMode ((uint32_t)0x0)
 #define CAN_PELIMode  ((uint32_t)0x80)
-#define CAN_WorkMode		((uint32_t)0x80)
-#define CAN_ResetMode 		((uint32_t)0x1)
-#define CAN_ListenOnlyMode	((uint32_t)0x2)
-#define CAN_SeftTestMode	((uint32_t)0x4)
-#define CAN_FilterMode_Singal	((uint32_t)0x8)
-#define CAN_FilterMode_Double	((uint32_t)0xf7)
-#define CAN_SleepMode		((uint32_t)0x10)
+#define CAN_WorkMode        ((uint32_t)0x80)
+#define CAN_ResetMode       ((uint32_t)0x1)
+#define CAN_ListenOnlyMode  ((uint32_t)0x2)
+#define CAN_SeftTestMode    ((uint32_t)0x4)
+#define CAN_FilterMode_Singal   ((uint32_t)0x8)
+#define CAN_FilterMode_Double   ((uint32_t)0xf7)
+#define CAN_SleepMode       ((uint32_t)0x10)
 
 /**
 * @}
@@ -81,10 +81,10 @@
 /**
 * @brief  parasmeter of BASIC CAN interrupt
 */
-#define CAN_IT_RIE	((uint32_t)0x2)
-#define CAN_IT_TIE	((uint32_t)0x4)
-#define CAN_IT_EIE	((uint32_t)0x8)
-#define CAN_IT_OIE	((uint32_t)0x10)
+#define CAN_IT_RIE  ((uint32_t)0x2)
+#define CAN_IT_TIE  ((uint32_t)0x4)
+#define CAN_IT_EIE  ((uint32_t)0x8)
+#define CAN_IT_OIE  ((uint32_t)0x10)
 
 /**
 * @}
@@ -93,15 +93,15 @@
 /**
 * @brief  parasmeter of PELI CAN interrupt
 */
-#define CAN_IT_RI	((uint32_t)0x1)
-#define CAN_IT_TI	((uint32_t)0x2)
-#define CAN_IT_EI	((uint32_t)0x4)
-#define CAN_IT_DOI	((uint32_t)0x8)
-#define CAN_IT_WUI	((uint32_t)0x10)
-#define CAN_IT_EPI	((uint32_t)0x20)
-#define CAN_IT_ALI	((uint32_t)0x40)
-#define CAN_IT_BEI	((uint32_t)0x80)
-#define CAN_IT_ALL	((uint32_t)0xff)
+#define CAN_IT_RI   ((uint32_t)0x1)
+#define CAN_IT_TI   ((uint32_t)0x2)
+#define CAN_IT_EI   ((uint32_t)0x4)
+#define CAN_IT_DOI  ((uint32_t)0x8)
+#define CAN_IT_WUI  ((uint32_t)0x10)
+#define CAN_IT_EPI  ((uint32_t)0x20)
+#define CAN_IT_ALI  ((uint32_t)0x40)
+#define CAN_IT_BEI  ((uint32_t)0x80)
+#define CAN_IT_ALL  ((uint32_t)0xff)
 
 /**
 * @}
@@ -110,14 +110,14 @@
 /**
 * @brief  parasmeter of CAN Status
 */
-#define CAN_STATUS_RBS	((uint32_t)0x1)
-#define CAN_STATUS_DOS	((uint32_t)0x2)
-#define CAN_STATUS_TBS	((uint32_t)0x4)
-#define CAN_STATUS_TCS	((uint32_t)0x8)
-#define CAN_STATUS_RS	((uint32_t)0x10)
-#define CAN_STATUS_TS	((uint32_t)0x20)
-#define CAN_STATUS_ES	((uint32_t)0x40)
-#define CAN_STATUS_BS	((uint32_t)0x80)
+#define CAN_STATUS_RBS  ((uint32_t)0x1)
+#define CAN_STATUS_DOS  ((uint32_t)0x2)
+#define CAN_STATUS_TBS  ((uint32_t)0x4)
+#define CAN_STATUS_TCS  ((uint32_t)0x8)
+#define CAN_STATUS_RS   ((uint32_t)0x10)
+#define CAN_STATUS_TS   ((uint32_t)0x20)
+#define CAN_STATUS_ES   ((uint32_t)0x40)
+#define CAN_STATUS_BS   ((uint32_t)0x80)
 
 /**
 * @}
@@ -126,10 +126,10 @@
 /**
 * @brief  parasmeter of CAN Command register
 */
-#define CAN_TR	0x1
-#define CAN_AT	0x2
-#define CAN_RRB	0x4
-#define CAN_CDO	0x8
+#define CAN_TR  0x1
+#define CAN_AT  0x2
+#define CAN_RRB 0x4
+#define CAN_CDO 0x8
 
 /**
 * @}
