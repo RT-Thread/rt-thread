@@ -11,6 +11,14 @@
 
 #include <shell.h>
 
+#ifdef RT_USING_POSIX
+#error "simulator does not support RT_USING_POSIX"
+#endif
+
+#ifdef RT_USING_LIBC
+#error "simulator does not support RT_USING_LIBC"
+#endif
+
 int platform_init(void)
 {
 #ifdef RT_USING_LWIP
