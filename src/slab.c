@@ -148,8 +148,6 @@ void *rt_slab_page_alloc(struct rt_slab *slab, rt_size_t npages)
     if (npages == 0)
         return RT_NULL;
 
-    /* lock heap */
-    rt_sem_take(&slab->heap_sem, RT_WAITING_FOREVER);
     for (prev = &slab->page_list; (b = *prev) != RT_NULL; prev = &(b->next))
     {
         if (b->page > npages)
@@ -169,9 +167,6 @@ void *rt_slab_page_alloc(struct rt_slab *slab, rt_size_t npages)
             break;
         }
     }
-
-    /* unlock heap */
-    rt_sem_release(&slab->heap_sem);
 
     return b;
 }
@@ -196,9 +191,6 @@ void rt_slab_page_free(struct rt_slab *slab, void *addr, rt_size_t npages)
 
     n = (struct rt_slab_page *)addr;
 
-    /* lock heap */
-    rt_sem_take(&slab->heap_sem, RT_WAITING_FOREVER);
-
     for (prev = &slab->page_list; (b = *prev) != RT_NULL; prev = &(b->next))
     {
         RT_ASSERT(b->page > 0);
@@ -211,8 +203,7 @@ void rt_slab_page_free(struct rt_slab *slab, void *addr, rt_size_t npages)
                 b->page += b->next->page;
                 b->next  = b->next->next;
             }
-
-            goto _return;
+            return;
         }
 
         if (b == n + npages)
@@ -220,8 +211,7 @@ void rt_slab_page_free(struct rt_slab *slab, void *addr, rt_size_t npages)
             n->page = b->page + npages;
             n->next = b->next;
             *prev   = n;
-
-            goto _return;
+            return;
         }
 
         if (b > n + npages)
@@ -231,10 +221,6 @@ void rt_slab_page_free(struct rt_slab *slab, void *addr, rt_size_t npages)
     n->page = npages;
     n->next = b;
     *prev   = n;
-
-_return:
-    /* unlock heap */
-    rt_sem_release(&slab->heap_sem);
 }
 
 /*
@@ -287,9 +273,6 @@ rt_err_t rt_slab_init(struct rt_slab *slab, const char *name,
     limsize = slab->heap_end - slab->heap_start;
     npages  = limsize / RT_MM_PAGE_SIZE;
 
-    /* initialize heap semaphore */
-    rt_sem_init(&slab->heap_sem, "heap", 1, RT_IPC_FLAG_PRIO);
-
     RT_DEBUG_LOG(RT_DEBUG_SLAB, ("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n",
                                  slab->heap_start, slab->heap_end, limsize, npages));
 
@@ -334,7 +317,6 @@ rt_err_t rt_slab_detach(struct rt_slab *slab)
     RT_ASSERT(rt_object_get_type(&slab->parent) == RT_Object_Class_Slab);
     RT_ASSERT(rt_object_is_systemobject(&slab->parent));
 
-    rt_sem_detach(&slab->heap_sem);
     rt_object_detach(&(slab->parent));
 
     return RT_EOK;
@@ -457,18 +439,12 @@ void *rt_slab_alloc(struct rt_slab *slab, rt_size_t size)
                       size,
                       size >> RT_MM_PAGE_BITS,
                       ((rt_ubase_t)chunk - slab->heap_start) >> RT_MM_PAGE_BITS));
-
-        /* lock heap */
-        rt_sem_take(&slab->heap_sem, RT_WAITING_FOREVER);
         /* mem stat */
         slab->used_mem += size;
         if (slab->used_mem > slab->max_mem)
             slab->max_mem = slab->used_mem;
-        goto done;
+        return chunk;
     }
-
-    /* lock heap */
-    rt_sem_take(&slab->heap_sem, RT_WAITING_FOREVER);
 
     /*
      * Attempt to allocate out of an existing zone.  First try the free list,
@@ -518,7 +494,7 @@ void *rt_slab_alloc(struct rt_slab *slab, rt_size_t size)
         if (slab->used_mem > slab->max_mem)
             slab->max_mem = slab->used_mem;
 
-        goto done;
+        return chunk;
     }
 
     /*
@@ -540,19 +516,12 @@ void *rt_slab_alloc(struct rt_slab *slab, rt_size_t size)
         }
         else
         {
-            /* unlock heap, since page allocator will think about lock */
-            rt_sem_release(&slab->heap_sem);
-
             /* allocate a zone from page */
             z = rt_slab_page_alloc(slab, slab->zone_size / RT_MM_PAGE_SIZE);
             if (z == RT_NULL)
             {
-                chunk = RT_NULL;
-                goto __exit;
+                return RT_NULL;
             }
-
-            /* lock heap */
-            rt_sem_take(&slab->heap_sem, RT_WAITING_FOREVER);
 
             RT_DEBUG_LOG(RT_DEBUG_SLAB, ("alloc a new zone: 0x%x\n",
                                          (rt_ubase_t)z));
@@ -601,10 +570,6 @@ void *rt_slab_alloc(struct rt_slab *slab, rt_size_t size)
             slab->max_mem = slab->used_mem;
     }
 
-done:
-    rt_sem_release(&slab->heap_sem);
-
-__exit:
     return chunk;
 }
 RTM_EXPORT(rt_slab_alloc);
@@ -715,14 +680,11 @@ void rt_slab_free(struct rt_slab *slab, void *ptr)
     {
         rt_ubase_t size;
 
-        /* lock heap */
-        rt_sem_take(&slab->heap_sem, RT_WAITING_FOREVER);
         /* clear page counter */
         size = kup->size;
         kup->size = 0;
         /* mem stats */
         slab->used_mem -= size * RT_MM_PAGE_SIZE;
-        rt_sem_release(&slab->heap_sem);
 
         RT_DEBUG_LOG(RT_DEBUG_SLAB,
                      ("free large memory block 0x%x, page count %d\n",
@@ -733,9 +695,6 @@ void rt_slab_free(struct rt_slab *slab, void *ptr)
 
         return;
     }
-
-    /* lock heap */
-    rt_sem_take(&slab->heap_sem, RT_WAITING_FOREVER);
 
     /* zone case. get out zone. */
     z = (struct rt_slab_zone *)(((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK) -
@@ -803,17 +762,12 @@ void rt_slab_free(struct rt_slab *slab, void *ptr)
                 kup ++;
             }
 
-            /* unlock heap */
-            rt_sem_release(&slab->heap_sem);
-
             /* release pages */
             rt_slab_page_free(slab, z, slab->zone_size / RT_MM_PAGE_SIZE);
 
             return;
         }
     }
-    /* unlock heap */
-    rt_sem_release(&slab->heap_sem);
 }
 RTM_EXPORT(rt_slab_free);
 

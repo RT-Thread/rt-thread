@@ -852,7 +852,6 @@ struct rt_mem_item
 struct rt_mem
 {
     struct rt_object        parent;                 /**< inherit from rt_object */
-    struct rt_semaphore     heap_sem;
     rt_uint8_t             *heap_ptr;               /**< pointer to the heap */
     struct rt_mem_item     *heap_end;
     struct rt_mem_item     *lfree;
@@ -960,7 +959,6 @@ struct rt_slab_page
 struct rt_slab
 {
     struct rt_object            parent;                         /**< inherit from rt_object */
-    struct rt_semaphore         heap_sem;
     rt_ubase_t                  heap_start;                     /**< memory start address */
     rt_ubase_t                  heap_end;                       /**< memory end address */
     struct rt_slab_memusage    *memusage;

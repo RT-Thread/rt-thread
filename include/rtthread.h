@@ -271,7 +271,7 @@ void rt_memory_info(rt_uint32_t *total,
                     rt_uint32_t *used,
                     rt_uint32_t *max_used);
 
-#ifdef RT_USING_SLAB
+#if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
 void *rt_page_alloc(rt_size_t npages);
 void rt_page_free(void *addr, rt_size_t npages);
 #endif

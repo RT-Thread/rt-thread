@@ -1542,19 +1542,41 @@ RT_WEAK void rt_memory_info(rt_uint32_t *total,
                             rt_uint32_t *used,
                             rt_uint32_t *max_used)
 {
+    rt_base_t level;
+
+    /* Enter critical zone */
+    level = _heap_lock();
     _MEM_INFO(&system_heap, total, used, max_used);
+    /* Exit critical zone */
+    _heap_unlock(level);
 }
 RTM_EXPORT(rt_memory_info);
 
 #if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
 void *rt_page_alloc(rt_size_t npages)
 {
-    return rt_slab_page_alloc(&system_heap, npages);
+    rt_base_t level;
+    void *ptr;
+
+    /* Enter critical zone */
+    level = _heap_lock();
+    /* alloc page */
+    ptr = rt_slab_page_alloc(&system_heap, npages);
+    /* Exit critical zone */
+    _heap_unlock(level);
+    return ptr;
 }
 
 void rt_page_free(void *addr, rt_size_t npages)
 {
+    rt_base_t level;
+
+    /* Enter critical zone */
+    level = _heap_lock();
+    /* free page */
     rt_slab_page_free(&system_heap, addr, npages);
+    /* Exit critical zone */
+    _heap_unlock(level);
 }
 #endif
 

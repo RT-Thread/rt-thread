@@ -195,8 +195,6 @@ rt_err_t rt_mem_init(struct rt_mem *m,
     rt_mem_setname(m->heap_end, "INIT");
 #endif /* RT_USING_MEMTRACE */
 
-    rt_sem_init(&m->heap_sem, "heap", 1, RT_IPC_FLAG_PRIO);
-
     /* initialize the lowest-free pointer to the start of the heap */
     m->lfree = (struct rt_mem_item *)m->heap_ptr;
 
@@ -217,7 +215,6 @@ rt_err_t rt_mem_detach(struct rt_mem *m)
     RT_ASSERT(rt_object_get_type(&m->parent) == RT_Object_Class_Mem);
     RT_ASSERT(rt_object_is_systemobject(&m->parent));
 
-    rt_sem_detach(&m->heap_sem);
     rt_object_detach(&(m->parent));
 
     return RT_EOK;
@@ -270,9 +267,6 @@ void *rt_mem_alloc(struct rt_mem *m, rt_size_t size)
     /* every data block must be at least MIN_SIZE_ALIGNED long */
     if (size < MIN_SIZE_ALIGNED)
         size = MIN_SIZE_ALIGNED;
-
-    /* take memory semaphore */
-    rt_sem_take(&m->heap_sem, RT_WAITING_FOREVER);
 
     for (ptr = (rt_uint8_t *)m->lfree - m->heap_ptr;
          ptr < m->mem_size_aligned - size;
@@ -350,8 +344,6 @@ void *rt_mem_alloc(struct rt_mem *m, rt_size_t size)
 
                 RT_ASSERT(((m->lfree == m->heap_end) || (!MEM_ISUSED(m->lfree))));
             }
-
-            rt_sem_release(&m->heap_sem);
             RT_ASSERT((rt_ubase_t)mem + SIZEOF_STRUCT_MEM + size <= (rt_ubase_t)m->heap_end);
             RT_ASSERT((rt_ubase_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM) % RT_ALIGN_SIZE == 0);
             RT_ASSERT((((rt_ubase_t)mem) & (RT_ALIGN_SIZE - 1)) == 0);
@@ -365,8 +357,6 @@ void *rt_mem_alloc(struct rt_mem *m, rt_size_t size)
             return (rt_uint8_t *)mem + SIZEOF_STRUCT_MEM;
         }
     }
-
-    rt_sem_release(&m->heap_sem);
 
     return RT_NULL;
 }
@@ -415,14 +405,9 @@ void *rt_mem_realloc(struct rt_mem *m, void *rmem, rt_size_t newsize)
     if (rmem == RT_NULL)
         return rt_mem_alloc(m, newsize);
 
-    rt_sem_take(&m->heap_sem, RT_WAITING_FOREVER);
-
     if ((rt_uint8_t *)rmem < (rt_uint8_t *)m->heap_ptr ||
         (rt_uint8_t *)rmem >= (rt_uint8_t *)m->heap_end)
     {
-        /* illegal memory */
-        rt_sem_release(&m->heap_sem);
-
         return rmem;
     }
 
@@ -433,7 +418,6 @@ void *rt_mem_realloc(struct rt_mem *m, void *rmem, rt_size_t newsize)
     if (size == newsize)
     {
         /* the size is the same as */
-        rt_sem_release(&m->heap_sem);
         return rmem;
     }
 
@@ -464,11 +448,8 @@ void *rt_mem_realloc(struct rt_mem *m, void *rmem, rt_size_t newsize)
 
         plug_holes(m, mem2);
 
-        rt_sem_release(&m->heap_sem);
-
         return rmem;
     }
-    rt_sem_release(&m->heap_sem);
 
     /* expand memory */
     nmem = rt_mem_alloc(m, newsize);
@@ -516,9 +497,6 @@ void rt_mem_free(void *rmem)
               (rt_uint8_t *)rmem < (rt_uint8_t *)m->heap_end);
     RT_ASSERT(MEM_POOL(&m->heap_ptr[mem->next]) == m);
 
-    /* protect the heap from concurrent access */
-    rt_sem_take(&m->heap_sem, RT_WAITING_FOREVER);
-
     /* ... and is now unused. */
     mem->pool_ptr = MEM_FREED();
 #ifdef RT_USING_MEMTRACE
@@ -535,7 +513,6 @@ void rt_mem_free(void *rmem)
 
     /* finally, see if prev or next are free also */
     plug_holes(m, mem);
-    rt_sem_release(&m->heap_sem);
 }
 RTM_EXPORT(rt_mem_free);
 
