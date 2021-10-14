@@ -187,14 +187,14 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
 #ifdef RT_USING_DFS
     int size;
-#endif
+#endif /* RT_USING_DFS */
 
     if ((fh == STDOUT) || (fh == STDERR))
     {
 #if !defined(RT_USING_CONSOLE) || !defined(RT_USING_DEVICE)
         return 0;
 #else
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_DFS
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard input before initializing libc");
@@ -210,8 +210,8 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         }
 
         return -1;
-#endif
-#endif
+#endif /* RT_USING_DFS */
+#endif /* !defined(RT_USING_CONSOLE) || !defined(RT_USING_DEVICE) */
     }
     else if (fh == STDIN)
     {
@@ -226,7 +226,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         return len - size;
     else
         return -1;
-#endif
+#endif /* RT_USING_DFS */
 }
 
 /*
