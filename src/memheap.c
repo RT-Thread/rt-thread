@@ -130,6 +130,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
 
     /* initialize semaphore lock */
     rt_sem_init(&(memheap->lock), name, 1, RT_IPC_FLAG_PRIO);
+    memheap->locked = RT_FALSE;
 
     RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
                  ("memory heap: start addr 0x%08x, size %d, free list header 0x%08x\n",
@@ -192,12 +193,15 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
         free_size = 0;
 
         /* lock memheap */
-        result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
-        if (result != RT_EOK)
+        if (heap->locked == RT_FALSE)
         {
-            rt_set_errno(result);
+            result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+            if (result != RT_EOK)
+            {
+                rt_set_errno(result);
 
-            return RT_NULL;
+                return RT_NULL;
+            }
         }
 
         /* get the first free memory block */
@@ -302,8 +306,11 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
                 rt_memcpy(header_ptr->owner_thread_name, "NONE", sizeof(header_ptr->owner_thread_name));
 #endif /* RT_USING_MEMTRACE */
 
-            /* release lock */
-            rt_sem_release(&(heap->lock));
+            if (heap->locked == RT_FALSE)
+            {
+                /* release lock */
+                rt_sem_release(&(heap->lock));
+            }
 
             /* Return a memory address to the caller.  */
             RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
@@ -315,8 +322,11 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
             return (void *)((rt_uint8_t *)header_ptr + RT_MEMHEAP_SIZE);
         }
 
-        /* release lock */
-        rt_sem_release(&(heap->lock));
+        if (heap->locked == RT_FALSE)
+        {
+            /* release lock */
+            rt_sem_release(&(heap->lock));
+        }
     }
 
     RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("allocate memory: failed\n"));
@@ -375,12 +385,15 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
         /* Fix the crash problem after opening Oz optimization on ac6  */
         volatile struct rt_memheap_item *next_ptr;
 
-        /* lock memheap */
-        result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
-        if (result != RT_EOK)
+        if (heap->locked == RT_FALSE)
         {
-            rt_set_errno(result);
-            return RT_NULL;
+            /* lock memheap */
+            result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+            if (result != RT_EOK)
+            {
+                rt_set_errno(result);
+                return RT_NULL;
+            }
         }
 
         next_ptr = header_ptr->next;
@@ -456,16 +469,21 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
                 RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("new ptr: next_free 0x%08x, prev_free 0x%08x",
                                                 next_ptr->next_free,
                                                 next_ptr->prev_free));
-
-                /* release lock */
-                rt_sem_release(&(heap->lock));
+                if (heap->locked == RT_FALSE)
+                {
+                    /* release lock */
+                    rt_sem_release(&(heap->lock));
+                }
 
                 return ptr;
             }
         }
 
-        /* release lock */
-        rt_sem_release(&(heap->lock));
+        if (heap->locked == RT_FALSE)
+        {
+            /* release lock */
+            rt_sem_release(&(heap->lock));
+        }
 
         /* re-allocate a memory block */
         new_ptr = (void *)rt_memheap_alloc(heap, newsize);
@@ -482,13 +500,16 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     if (newsize + RT_MEMHEAP_SIZE + RT_MEMHEAP_MINIALLOC >= oldsize)
         return ptr;
 
-    /* lock memheap */
-    result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
-    if (result != RT_EOK)
+    if (heap->locked == RT_FALSE)
     {
-        rt_set_errno(result);
+        /* lock memheap */
+        result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+        if (result != RT_EOK)
+        {
+            rt_set_errno(result);
 
-        return RT_NULL;
+            return RT_NULL;
+        }
     }
 
     /* split the block. */
@@ -550,8 +571,11 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     /* increment the available byte count.  */
     heap->available_size = heap->available_size + MEMITEM_SIZE(new_ptr);
 
-    /* release lock */
-    rt_sem_release(&(heap->lock));
+    if (heap->locked == RT_FALSE)
+    {
+        /* release lock */
+        rt_sem_release(&(heap->lock));
+    }
 
     /* return the old memory block */
     return ptr;
@@ -599,13 +623,16 @@ void rt_memheap_free(void *ptr)
     RT_ASSERT(heap);
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
-    /* lock memheap */
-    result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
-    if (result != RT_EOK)
+    if (heap->locked == RT_FALSE)
     {
-        rt_set_errno(result);
+        /* lock memheap */
+        result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+        if (result != RT_EOK)
+        {
+            rt_set_errno(result);
 
-        return ;
+            return ;
+        }
     }
 
     /* Mark the memory as available. */
@@ -682,8 +709,11 @@ void rt_memheap_free(void *ptr)
     rt_memset(header_ptr->owner_thread_name, ' ', sizeof(header_ptr->owner_thread_name));
 #endif /* RT_USING_MEMTRACE */
 
-    /* release lock */
-    rt_sem_release(&(heap->lock));
+    if (heap->locked == RT_FALSE)
+    {
+        /* release lock */
+        rt_sem_release(&(heap->lock));
+    }
 }
 RTM_EXPORT(rt_memheap_free);
 
@@ -705,6 +735,19 @@ void rt_memheap_info(struct rt_memheap *heap,
                      rt_uint32_t *used,
                      rt_uint32_t *max_used)
 {
+    rt_err_t result;
+
+    if (heap->locked == RT_FALSE)
+    {
+        /* lock memheap */
+        result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+        if (result != RT_EOK)
+        {
+            rt_set_errno(result);
+            return;
+        }
+    }
+
     if (total != RT_NULL)
         *total = heap->pool_size;
 
@@ -713,6 +756,12 @@ void rt_memheap_info(struct rt_memheap *heap,
 
     if (max_used != RT_NULL)
         *max_used = heap->max_used_size;
+
+    if (heap->locked == RT_FALSE)
+    {
+        /* release lock */
+        rt_sem_release(&(heap->lock));
+    }
 }
 
 #ifdef RT_USING_MEMTRACE
