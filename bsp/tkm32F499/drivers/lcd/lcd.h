@@ -13,27 +13,27 @@
 // #define XSIZE_PHYS 800
 // #define YSIZE_PHYS 480
 // extern __align(256) rt_uint32_t LTDC_Buf[XSIZE_PHYS*YSIZE_PHYS];
-#define LCD_SPI_CS(a)	\
-						if (a)	\
-						GPIOB->BSRR = GPIO_Pin_11;	\
-						else		\
-						GPIOB->BRR  = GPIO_Pin_11;
-#define SPI_DCLK(a)	\
-						if (a)	\
-						GPIOB->BSRR = GPIO_Pin_9;	\
-						else		\
-						GPIOB->BRR  = GPIO_Pin_9;
-#define SPI_SDA(a)	\
-						if (a)	\
-						GPIOB->BSRR = GPIO_Pin_0;	\
-						else		\
-						GPIOB->BRR  = GPIO_Pin_0;
+#define LCD_SPI_CS(a)   \
+                        if (a)  \
+                        GPIOB->BSRR = GPIO_Pin_11;  \
+                        else        \
+                        GPIOB->BRR  = GPIO_Pin_11;
+#define SPI_DCLK(a) \
+                        if (a)  \
+                        GPIOB->BSRR = GPIO_Pin_9;   \
+                        else        \
+                        GPIOB->BRR  = GPIO_Pin_9;
+#define SPI_SDA(a)  \
+                        if (a)  \
+                        GPIOB->BSRR = GPIO_Pin_0;   \
+                        else        \
+                        GPIOB->BRR  = GPIO_Pin_0;
 
-#define LCD_RST(a)	\
-						if (a)	\
-						GPIOD->BSRR = GPIO_Pin_6;	\
-						else		\
-						GPIOD->BRR  = GPIO_Pin_6;
+#define LCD_RST(a)  \
+                        if (a)  \
+                        GPIOD->BSRR = GPIO_Pin_6;   \
+                        else        \
+                        GPIOD->BRR  = GPIO_Pin_6;
 #define Set_Rst         GPIOD->BSRR = GPIO_Pin_6
 #define Clr_Rst         GPIOD->BRR  = GPIO_Pin_6
 #define Lcd_Light_ON    GPIOD->BSRR = GPIO_Pin_8  //PD8为高电平 背光打开
