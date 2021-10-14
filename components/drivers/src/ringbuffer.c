@@ -244,7 +244,7 @@ rt_size_t rt_ringbuffer_peak(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
 
     *ptr = &rb->buffer_ptr[rb->read_index];
 
-    if(rb->buffer_size - rb->read_index > size)
+    if((rt_size_t)(rb->buffer_size - rb->read_index) > size)
     {
         rb->read_index += size;
         return size;
