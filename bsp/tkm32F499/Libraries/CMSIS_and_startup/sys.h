@@ -1,28 +1,28 @@
 #ifndef __SYS_H
-#define __SYS_H	 
-#include "tk499.h" 
+#define __SYS_H
+#include "tk499.h"
 #include "HAL_conf.h"
-//Î»´ø²Ù×÷,ÊµÏÖ51ÀàËÆµÄGPIO¿ØÖÆ¹¦ÄÜ
-//¾ßÌåÊµÏÖË¼Ïë,²Î¿¼<<CM3È¨ÍşÖ¸ÄÏ>>µÚÎåÕÂ(87Ò³~92Ò³).M4Í¬M3ÀàËÆ,Ö»ÊÇ¼Ä´æÆ÷µØÖ·±äÁË.
-//IO¿Ú²Ù×÷ºê¶¨Òå
-//#define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x2000000+((addr &0xFFFFF)<<5)+(bitnum<<2)) 
-//#define MEM_ADDR(addr)  *((volatile unsigned long  *)(addr)) 
-//#define BIT_ADDR(addr, bitnum)   MEM_ADDR(BITBAND(addr, bitnum)) 
+//ä½å¸¦æ“ä½œ,å®ç°51ç±»ä¼¼çš„GPIOæ§åˆ¶åŠŸèƒ½
+//å…·ä½“å®ç°æ€æƒ³,å‚è€ƒ<<CM3æƒå¨æŒ‡å—>>ç¬¬äº”ç« (87é¡µ~92é¡µ).M4åŒM3ç±»ä¼¼,åªæ˜¯å¯„å­˜å™¨åœ°å€å˜äº†.
+//IOå£æ“ä½œå®å®šä¹‰
+//#define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x2000000+((addr &0xFFFFF)<<5)+(bitnum<<2))
+//#define MEM_ADDR(addr)  *((volatile unsigned long  *)(addr))
+//#define BIT_ADDR(addr, bitnum)   MEM_ADDR(BITBAND(addr, bitnum))
 
 void  RemapVtorTable(void);
 void  AI_Responder_enable(void);
 void  AI_Responder_disable(void);
 
-void Sys_Soft_Reset(void);      							//ÏµÍ³Èí¸´Î»
-void Sys_Standby(void);         							//´ı»úÄ£Ê½ 	
+void Sys_Soft_Reset(void);      							//ç³»ç»Ÿè½¯å¤ä½
+void Sys_Standby(void);         							//å¾…æœºæ¨¡å¼
 
-void TK499_NVIC_Init(u8 NVIC_PreemptionPriority,u8 NVIC_SubPriority,u8 NVIC_Channel,u8 NVIC_Group);	
-void Ex_NVIC_Config(u8 GPIOx,u8 BITx,u8 TRIM);				//Íâ²¿ÖĞ¶ÏÅäÖÃº¯Êı(Ö»¶ÔGPIOA~I)
+void TK499_NVIC_Init(u8 NVIC_PreemptionPriority,u8 NVIC_SubPriority,u8 NVIC_Channel,u8 NVIC_Group);
+void Ex_NVIC_Config(u8 GPIOx,u8 BITx,u8 TRIM);				//å¤–éƒ¨ä¸­æ–­é…ç½®å‡½æ•°(åªå¯¹GPIOA~I)
 
-//ÒÔÏÂÎª»ã±àº¯Êı
-void WFI_SET(void);		//Ö´ĞĞWFIÖ¸Áî
-void INTX_DISABLE(void);//¹Ø±ÕËùÓĞÖĞ¶Ï
-void INTX_ENABLE(void);	//¿ªÆôËùÓĞÖĞ¶Ï
+//ä»¥ä¸‹ä¸ºæ±‡ç¼–å‡½æ•°
+void WFI_SET(void);		//æ‰§è¡ŒWFIæŒ‡ä»¤
+void INTX_DISABLE(void);//å…³é—­æ‰€æœ‰ä¸­æ–­
+void INTX_ENABLE(void);	//å¼€å¯æ‰€æœ‰ä¸­æ–­
 
 void TIM3_Config(u16 arr,u16 psc);
 #endif

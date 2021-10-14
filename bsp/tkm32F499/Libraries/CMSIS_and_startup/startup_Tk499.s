@@ -4,7 +4,7 @@
 ; <h> Stack Configuration
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
-;//============== 版本 EK V1.0  20190801  ==============//
+;//============== 鐗堟湰 EK V1.0  20190801  ==============//
 
 Stack_Size      EQU     0x00002000
 
@@ -153,7 +153,7 @@ __Vectors_Size  EQU  __Vectors_End - __Vectors
 Reset_Handler    PROC
                 EXPORT  Reset_Handler             [WEAK]
                 IMPORT  __main
-                LDR     R0, =0xE000ED88    ; 使能浮点运算 CP10,CP11
+                LDR     R0, =0xE000ED88    ; 浣胯兘娴偣杩愮畻 CP10,CP11
                 LDR     R1,[R0]
                 ORR     R1,R1,#(0xF << 20)
                 STR     R1,[R0]

@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_exti.h"
@@ -25,7 +25,7 @@
 * @{
 */
 
-/** @defgroup EXTI 
+/** @defgroup EXTI
 * @brief EXTI driver modules
 * @{
 */
@@ -77,7 +77,7 @@
 */
 
 /**
-* @brief  Deinitializes the EXTI peripheral registers to their default 
+* @brief  Deinitializes the EXTI peripheral registers to their default
 *   reset values.
 * @param  None
 * @retval : None
@@ -86,8 +86,8 @@ void EXTI_DeInit(void)
 {
   EXTI->IMR = 0x00000000;
   EXTI->EMR = 0x00000000;
-  EXTI->RTSR = 0x00000000; 
-  EXTI->FTSR = 0x00000000; 
+  EXTI->RTSR = 0x00000000;
+  EXTI->FTSR = 0x00000000;
   EXTI->PR = 0x001FFFFF;
 }
 
@@ -105,24 +105,24 @@ void EXTI_Init(EXTI_InitTypeDef* EXTI_InitStruct)
   /* Check the parameters */
   assert_param(IS_EXTI_MODE(EXTI_InitStruct->EXTI_Mode));
   assert_param(IS_EXTI_TRIGGER(EXTI_InitStruct->EXTI_Trigger));
-  assert_param(IS_EXTI_LINE(EXTI_InitStruct->EXTI_Line));  
+  assert_param(IS_EXTI_LINE(EXTI_InitStruct->EXTI_Line));
   assert_param(IS_FUNCTIONAL_STATE(EXTI_InitStruct->EXTI_LineCmd));
-  
-  tmp = (uint32_t)EXTI_BASE;  
-  
+
+  tmp = (uint32_t)EXTI_BASE;
+
   if (EXTI_InitStruct->EXTI_LineCmd != DISABLE)
   {
     /* Clear EXTI line configuration */
     EXTI->IMR &= ~EXTI_InitStruct->EXTI_Line;
     EXTI->EMR &= ~EXTI_InitStruct->EXTI_Line;
-    
+
     tmp += EXTI_InitStruct->EXTI_Mode;
     *(__IO uint32_t *) tmp |= EXTI_InitStruct->EXTI_Line;
-    
+
     /* Clear Rising Falling edge configuration */
     EXTI->RTSR &= ~EXTI_InitStruct->EXTI_Line;
     EXTI->FTSR &= ~EXTI_InitStruct->EXTI_Line;
-    
+
     /* Select the trigger for the selected external interrupts */
     if (EXTI_InitStruct->EXTI_Trigger == EXTI_Trigger_Rising_Falling)
     {
@@ -134,7 +134,7 @@ void EXTI_Init(EXTI_InitTypeDef* EXTI_InitStruct)
     {
       tmp = (uint32_t)EXTI_BASE;
       tmp += EXTI_InitStruct->EXTI_Trigger;
-      
+
       *(__IO uint32_t *) tmp |= EXTI_InitStruct->EXTI_Line;
     }
   }
@@ -165,7 +165,7 @@ void EXTI_StructInit(EXTI_InitTypeDef* EXTI_InitStruct)
 * @brief  Generates a Software interrupt.
 * @param EXTI_Line: specifies the EXTI lines to be enabled or
 *   disabled.
-*   This parameter can be any combination of EXTI_Linex where 
+*   This parameter can be any combination of EXTI_Linex where
 *   x can be (0..18).
 * @retval : None
 */
@@ -173,7 +173,7 @@ void EXTI_GenerateSWInterrupt(uint32_t EXTI_Line)
 {
   /* Check the parameters */
   assert_param(IS_EXTI_LINE(EXTI_Line));
-  
+
   EXTI->SWIER |= EXTI_Line;
 }
 
@@ -189,7 +189,7 @@ FlagStatus EXTI_GetFlagStatus(uint32_t EXTI_Line)
   FlagStatus bitstatus = RESET;
   /* Check the parameters */
   assert_param(IS_GET_EXTI_LINE(EXTI_Line));
-  
+
   if ((EXTI->PR & EXTI_Line) != (uint32_t)RESET)
   {
     bitstatus = SET;
@@ -202,9 +202,9 @@ FlagStatus EXTI_GetFlagStatus(uint32_t EXTI_Line)
 }
 
 /**
-* @brief  Clears the EXTI’s line pending flags.
+* @brief  Clears the EXTIâ€™s line pending flags.
 * @param EXTI_Line: specifies the EXTI lines flags to clear.
-*   This parameter can be any combination of EXTI_Linex where 
+*   This parameter can be any combination of EXTI_Linex where
 *   x can be (0..18).
 * @retval : None
 */
@@ -212,7 +212,7 @@ void EXTI_ClearFlag(uint32_t EXTI_Line)
 {
   /* Check the parameters */
   assert_param(IS_EXTI_LINE(EXTI_Line));
-  
+
   EXTI->PR = EXTI_Line;
 }
 
@@ -229,7 +229,7 @@ ITStatus EXTI_GetITStatus(uint32_t EXTI_Line)
   uint32_t enablestatus = 0;
   /* Check the parameters */
   assert_param(IS_GET_EXTI_LINE(EXTI_Line));
-  
+
   enablestatus =  EXTI->IMR & EXTI_Line;
   if (((EXTI->PR & EXTI_Line) != (uint32_t)RESET) && (enablestatus != (uint32_t)RESET))
   {
@@ -243,9 +243,9 @@ ITStatus EXTI_GetITStatus(uint32_t EXTI_Line)
 }
 
 /**
-* @brief  Clears the EXTI’s line pending bits.
+* @brief  Clears the EXTIâ€™s line pending bits.
 * @param EXTI_Line: specifies the EXTI lines to clear.
-*   This parameter can be any combination of EXTI_Linex where 
+*   This parameter can be any combination of EXTI_Linex where
 *   x can be (0..18).
 * @retval : None
 */
@@ -253,7 +253,7 @@ void EXTI_ClearITPendingBit(uint32_t EXTI_Line)
 {
   /* Check the parameters */
   assert_param(IS_EXTI_LINE(EXTI_Line));
-  
+
   EXTI->PR = EXTI_Line;
 }
 
