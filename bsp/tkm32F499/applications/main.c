@@ -16,7 +16,6 @@
 #include "drv_gpio.h"
 
 
-#define LED_PIN    GET_PIN(D, 8)
 #define LED0_PIN    GET_PIN(B, 14)
 #define LED1_PIN    GET_PIN(B, 15)
 
@@ -24,11 +23,9 @@
 int main(void)
 {
     /* set LED pin mode to output */
-    rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
 
-    rt_pin_write(LED_PIN, PIN_LOW);
     rt_pin_write(LED0_PIN, PIN_LOW);
     rt_pin_write(LED1_PIN, PIN_LOW);
 

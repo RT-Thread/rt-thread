@@ -26,8 +26,8 @@ MSH_CMD_EXPORT(reboot, Reboot System);
 static void bsp_clock_config(void)
 {
     RemapVtorTable();
-    SystemClk_HSEInit(RCC_PLLMul_20);//启动PLL时钟，12MHz*20=240MHz
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//2：2，全局性函数，仅需设置一次
+	SystemClk_HSEInit(RCC_PLLMul_20);//启动PLL时钟，12MHz*20=240MHz
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//2：2，全局性函数，仅需设置一次
 
     uint32_t sysclk = 0;
     getSystemClock(&sysclk);
