@@ -151,15 +151,19 @@ char finsh_getchar(void)
     char ch = 0;
 
     RT_ASSERT(shell != RT_NULL);
+    if (shell->device == RT_NULL)
+    {
+        return -RT_ERROR;
+    }
     while (rt_device_read(shell->device, -1, &ch, 1) != 1)
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
 
     return ch;
-#endif
+#endif /* RT_USING_POSIX */
 #else
     extern char rt_hw_console_getchar(void);
     return rt_hw_console_getchar();
-#endif
+#endif /* RT_USING_DEVICE */
 }
 
 #if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
