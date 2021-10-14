@@ -4,7 +4,7 @@
 * @author  IC Applications Department
 * @version  V0.8
 * @date  2019_08_02
-* @brief  This file contains all the functions prototypes for the GPIO 
+* @brief  This file contains all the functions prototypes for the GPIO
 *         firmware library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_GPIO_H
@@ -46,33 +46,33 @@
         ((*(uint32_t*)&(PERIPH)) == GPIOF_BASE) || \
           ((*(uint32_t*)&(PERIPH)) == GPIOG_BASE))
 
-/** 
-* @brief  Output Maximum frequency selection  
+/**
+* @brief  Output Maximum frequency selection
 */
 
 typedef enum
-{ 
+{
   GPIO_Speed_10MHz = 1,
-  GPIO_Speed_2MHz, 
+  GPIO_Speed_2MHz,
   GPIO_Speed_50MHz
 }GPIOSpeed_TypeDef;
 #define IS_GPIO_SPEED(SPEED) (((SPEED) == GPIO_Speed_10MHz) || ((SPEED) == GPIO_Speed_2MHz) || \
 ((SPEED) == GPIO_Speed_50MHz))
 
-/** 
-* @brief  Configuration Mode enumeration  
+/**
+* @brief  Configuration Mode enumeration
 */
 
 typedef enum
-{ 
-GPIO_Mode_AIN = 0x0,  //Ä£ÄâÊäÈë
-GPIO_Mode_IN_FLOATING = 0x04, //¸¡¿ÕÊäÈë
-GPIO_Mode_IPD = 0x28,  //ÏÂÀ­ÊäÈë
-GPIO_Mode_IPU = 0x48,  //ÉÏÀ­ÊäÈë
-GPIO_Mode_Out_OD = 0x14,//Í¨ÓÃ¿ªÂ©Êä³ö
-GPIO_Mode_Out_PP = 0x10,//Í¨ÓÃÍÆÃâÊä³ö
-GPIO_Mode_AF_OD = 0x1C, // ¸´ÓÃ¿ªÂ©Êä³ö
-GPIO_Mode_AF_PP = 0x18  //¸´ÓÃÍÆÃâÊä³ö
+{
+GPIO_Mode_AIN = 0x0,  //æ¨¡æ‹Ÿè¾“å…¥
+GPIO_Mode_IN_FLOATING = 0x04, //æµ®ç©ºè¾“å…¥
+GPIO_Mode_IPD = 0x28,  //ä¸‹æ‹‰è¾“å…¥
+GPIO_Mode_IPU = 0x48,  //ä¸Šæ‹‰è¾“å…¥
+GPIO_Mode_Out_OD = 0x14,//é€šç”¨å¼€æ¼è¾“å‡º
+GPIO_Mode_Out_PP = 0x10,//é€šç”¨æ¨å…è¾“å‡º
+GPIO_Mode_AF_OD = 0x1C, // å¤ç”¨å¼€æ¼è¾“å‡º
+GPIO_Mode_AF_PP = 0x18  //å¤ç”¨æ¨å…è¾“å‡º
 }GPIOMode_TypeDef;
 
 #define IS_GPIO_MODE(MODE) (((MODE) == GPIO_Mode_AIN) || ((MODE) == GPIO_Mode_IN_FLOATING) || \
@@ -80,8 +80,8 @@ GPIO_Mode_AF_PP = 0x18  //¸´ÓÃÍÆÃâÊä³ö
   ((MODE) == GPIO_Mode_Out_OD) || ((MODE) == GPIO_Mode_Out_PP) || \
     ((MODE) == GPIO_Mode_AF_OD) || ((MODE) == GPIO_Mode_AF_PP))
 
-/** 
-* @brief  GPIO Init structure definition  
+/**
+* @brief  GPIO Init structure definition
 */
 
 typedef struct
@@ -91,8 +91,8 @@ typedef struct
   GPIOMode_TypeDef GPIO_Mode;
 }GPIO_InitTypeDef;
 
-/** 
-* @brief  Bit_SET and Bit_RESET enumeration  
+/**
+* @brief  Bit_SET and Bit_RESET enumeration
 */
 
 typedef enum
@@ -110,7 +110,7 @@ typedef enum
 * @{
 */
 
-/** @defgroup GPIO_pins_define 
+/** @defgroup GPIO_pins_define
 * @{
 */
 
@@ -164,7 +164,7 @@ typedef enum
 * @}
 */
 
-/** @defgroup GPIO_Remap_define 
+/** @defgroup GPIO_Remap_define
 * @{
 */
 
@@ -209,7 +209,7 @@ typedef enum
 * @}
 */
 
-/** @defgroup GPIO_Alternate_function_selection_define 
+/** @defgroup GPIO_Alternate_function_selection_define
 * @{
 */
 

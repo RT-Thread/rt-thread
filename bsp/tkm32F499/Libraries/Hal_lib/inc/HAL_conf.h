@@ -16,11 +16,11 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 #ifndef __HAL_CONF_H__
 #define __HAL_CONF_H__
 
-/*此处可添加或删除外设*/
+/*姝ゅ鍙坊鍔犳垨鍒犻櫎澶栬*/
 #include "HAL_device.h"
 #include "HAL_adc.h"
 #include "HAL_dma.h"

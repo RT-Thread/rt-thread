@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_can.h"
@@ -518,7 +518,7 @@ void CAN_Peli_Init(CAN_TypeDef* CANx, CAN_Peli_InitTypeDef* CAN_Peli_InitStruct)
     assert_param(IS_FUNCTIONAL_STATE(CAN_InitStruct->SAM));
     assert_param(IS_FUNCTIONAL_STATE(CAN_InitStruct->TESG2));
     assert_param(IS_FUNCTIONAL_STATE(CAN_InitStruct->TESG1));
-	
+
 		switch (*(uint32_t*)&CANx)
 			{
 					case CAN1_BASE:
@@ -559,7 +559,7 @@ void CAN_Peli_Init(CAN_TypeDef* CANx, CAN_Peli_InitTypeDef* CAN_Peli_InitStruct)
 							break;
 					default:
 							break;
-			} 
+			}
 }
 
 
@@ -610,7 +610,7 @@ void CAN_Peli_FilterInit(CAN_TypeDef* CANx, CAN_Peli_FilterInitTypeDef* CAN_Peli
 					default:
 							break;
 			}
-    
+
 }
 
 /**
@@ -850,7 +850,7 @@ void CAN_Peli_TransmitRepeat(CAN_TypeDef* CANx, CanPeliTxMsg* PeliTxMessage)
 					default:
 							break;
 			}
-    
+
 }
 
 /** @defgroup CAN_Group3 CAN Frames Reception functions
@@ -957,7 +957,7 @@ void CAN_Peli_Receive(CAN_TypeDef* CANx, CanPeliRxMsg* PeliRxMessage)
 							break;
 					default:
 							break;
-			}   
+			}
 }
 
 
@@ -977,8 +977,8 @@ uint32_t CAN_Peli_GetRxFIFOInfo(CAN_TypeDef* CANx)
 							break;
 					default:
 							break;
-			}  
-    
+			}
+
 }
 
 
@@ -1009,7 +1009,7 @@ uint32_t CAN_Peli_GetRxFIFOInfo(CAN_TypeDef* CANx)
 uint8_t CAN_Peli_GetLastErrorCode(CAN_TypeDef* CANx)
 {
     uint8_t errorcode = 0;
-	
+
 		switch (*(uint32_t*)&CANx)
 			{
 					case CAN1_BASE:
@@ -1022,7 +1022,7 @@ uint8_t CAN_Peli_GetLastErrorCode(CAN_TypeDef* CANx)
 							break;
 					default:
 							break;
-			} 
+			}
     /* Return the error code*/
     return errorcode;
 }
@@ -1056,7 +1056,7 @@ uint8_t CAN_Peli_GetReceiveErrorCounter(CAN_TypeDef* CANx)
 					default:
 							break;
 			}
-    
+
     /* Return the Receive Error Counter*/
     return counter;
 }
@@ -1072,7 +1072,7 @@ uint8_t CAN_Peli_GetLSBTransmitErrorCounter(CAN_TypeDef* CANx)
 
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
-		
+
 		switch (*(uint32_t*)&CANx)
 			{
 					case CAN1_BASE:
@@ -1126,7 +1126,7 @@ void CAN_Peli_ITConfig(CAN_TypeDef* CANx,uint32_t CAN_IT, FunctionalState NewSta
     /* Check the parameters */
     assert_param(IS_CAN_IT(CAN_IT));
     assert_param(IS_FUNCTIONAL_STATE(NewState));
-		
+
 		switch (*(uint32_t*)&CANx)
 			{
 					case CAN1_BASE:
@@ -1156,7 +1156,7 @@ void CAN_Peli_ITConfig(CAN_TypeDef* CANx,uint32_t CAN_IT, FunctionalState NewSta
 					default:
 							break;
 			}
-    
+
 }
 
 
@@ -1180,7 +1180,7 @@ ITStatus CAN_Peli_GetITStatus(CAN_TypeDef* CANx, uint32_t CAN_IT)
     ITStatus itstatus = RESET;
     /* Check the parameters */
     assert_param(IS_CAN_IT(CAN_IT));
-		
+
 		switch (*(uint32_t*)&CANx)
 			{
 					case CAN1_BASE:
@@ -1223,13 +1223,13 @@ void CAN_AutoCfg_BaudParam(CAN_Peli_InitTypeDef  *CAN_Peli_InitStruct, unsigned 
 {
     unsigned int i, value = baud, record = 1;
     unsigned int remain = 0, sumPrescaler = 0;
-    while(( baud == 0 ) || ( SrcClk == 0 )); //·ÀÖ¹²¨ÌØÂÊ¼°Ê±ÖÓÎª0
-    sumPrescaler = SrcClk / baud; //×Ü·ÖÆµ
+    while(( baud == 0 ) || ( SrcClk == 0 )); //é˜²æ­¢æ³¢ç‰¹çŽ‡åŠæ—¶é’Ÿä¸º0
+    sumPrescaler = SrcClk / baud; //æ€»åˆ†é¢‘
     sumPrescaler = sumPrescaler / 2; //
     for( i = 25; i > 3; i -- )
     {
         remain = sumPrescaler - ((sumPrescaler / i) * i);
-        if( remain == 0 )		//Õû³ý
+        if( remain == 0 )		//æ•´é™¤
         {
             record = i;
             break;

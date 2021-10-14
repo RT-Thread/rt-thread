@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2016 HOLOCENE</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_gpio.h"
@@ -26,10 +26,10 @@
 * @{
 */
 
-/** @defgroup GPIO 
+/** @defgroup GPIO
 * @brief GPIO driver modules
 * @{
-*/ 
+*/
 
 /** @defgroup GPIO_Private_TypesDefinitions
 * @{
@@ -101,7 +101,7 @@ void GPIO_DeInit(GPIO_TypeDef* GPIOx)
 {
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
-  
+
   switch (*(uint32_t*)&GPIOx)
   {
   case GPIOA_BASE:
@@ -142,12 +142,12 @@ void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct)
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
   assert_param(IS_GPIO_MODE(GPIO_InitStruct->GPIO_Mode));
-  assert_param(IS_GPIO_PIN(GPIO_InitStruct->GPIO_Pin));  
-  
+  assert_param(IS_GPIO_PIN(GPIO_InitStruct->GPIO_Pin));
+
   /*---------------------------- GPIO Mode Configuration -----------------------*/
   currentmode = ((uint32_t)GPIO_InitStruct->GPIO_Mode) & ((uint32_t)0x0F);
   if ((((uint32_t)GPIO_InitStruct->GPIO_Mode) & ((uint32_t)0x10)) != 0x00)
-  { 
+  {
     /* Check the parameters */
     assert_param(IS_GPIO_SPEED(GPIO_InitStruct->GPIO_Speed));
     /* Output mode */
@@ -221,7 +221,7 @@ void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct)
     GPIOx->CRH = tmpreg;
   }
 	/*---------------------------- GPIOE_CRH_EXT Configuration ------------------------*/
-  if(GPIO_InitStruct->GPIO_Pin>>16)  //Àµ√˜ «GPIOEµƒ16~23Œª	
+  if(GPIO_InitStruct->GPIO_Pin>>16)  //ËØ¥ÊòéÊòØGPIOEÁöÑ16~23‰Ωç
   {
 		GPIO_InitStruct->GPIO_Pin = GPIO_InitStruct->GPIO_Pin>>16;
     tmpreg = GPIOE->CRH_EXT;
@@ -281,11 +281,11 @@ void GPIO_StructInit(GPIO_InitTypeDef* GPIO_InitStruct)
 uint8_t GPIO_ReadInputDataBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
   uint8_t bitstatus = 0x00;
-  
+
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
-  assert_param(IS_GET_GPIO_PIN(GPIO_Pin)); 
-  
+  assert_param(IS_GET_GPIO_PIN(GPIO_Pin));
+
   if ((GPIOx->IDR & GPIO_Pin) != (uint32_t)Bit_RESET)
   {
     bitstatus = (uint8_t)Bit_SET;
@@ -306,7 +306,7 @@ uint16_t GPIO_ReadInputData(GPIO_TypeDef* GPIOx)
 {
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
-  
+
   return ((uint16_t)GPIOx->IDR);
 }
 
@@ -322,8 +322,8 @@ uint8_t GPIO_ReadOutputDataBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
   uint8_t bitstatus = 0x00;
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
-  assert_param(IS_GET_GPIO_PIN(GPIO_Pin)); 
-  
+  assert_param(IS_GET_GPIO_PIN(GPIO_Pin));
+
   if ((GPIOx->ODR & GPIO_Pin) != (uint32_t)Bit_RESET)
   {
     bitstatus = (uint8_t)Bit_SET;
@@ -344,7 +344,7 @@ uint16_t GPIO_ReadOutputData(GPIO_TypeDef* GPIOx)
 {
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
-  
+
   return ((uint16_t)GPIOx->ODR);
 }
 
@@ -352,7 +352,7 @@ uint16_t GPIO_ReadOutputData(GPIO_TypeDef* GPIOx)
 * @brief  Sets the selected data port bits.
 * @param GPIOx: where x can be (A..G) to select the GPIO peripheral.
 * @param GPIO_Pin: specifies the port bits to be written.
-*   This parameter can be any combination of GPIO_Pin_x where 
+*   This parameter can be any combination of GPIO_Pin_x where
 *   x can be (0..15).
 * @retval : None
 */
@@ -364,14 +364,14 @@ void GPIO_SetBits(GPIO_TypeDef* GPIOx, uint32_t GPIO_Pin)
   if(GPIO_Pin>GPIO_Pin_15)GPIOE->BSRR_EXT=GPIO_Pin>>16;
 	else
   GPIOx->BSRR = GPIO_Pin;
-	
+
 }
 
 /**
 * @brief  Clears the selected data port bits.
 * @param GPIOx: where x can be (A..G) to select the GPIO peripheral.
 * @param GPIO_Pin: specifies the port bits to be written.
-*   This parameter can be any combination of GPIO_Pin_x where 
+*   This parameter can be any combination of GPIO_Pin_x where
 *   x can be (0..15).
 * @retval : None
 */
@@ -399,8 +399,8 @@ void GPIO_WriteBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, BitAction BitVal)
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
   assert_param(IS_GET_GPIO_PIN(GPIO_Pin));
-  assert_param(IS_GPIO_BIT_ACTION(BitVal)); 
-  
+  assert_param(IS_GPIO_BIT_ACTION(BitVal));
+
   if (BitVal != Bit_RESET)
   {
     GPIOx->BSRR = GPIO_Pin;
@@ -422,7 +422,7 @@ void GPIO_Write(GPIO_TypeDef* GPIOx, uint16_t PortVal)
 {
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
-  
+
   GPIOx->ODR = PortVal;
 }
 
@@ -430,18 +430,18 @@ void GPIO_Write(GPIO_TypeDef* GPIOx, uint16_t PortVal)
 * @brief  Locks GPIO Pins configuration registers.
 * @param GPIOx: where x can be (A..G) to select the GPIO peripheral.
 * @param GPIO_Pin: specifies the port bit to be written.
-*   This parameter can be any combination of GPIO_Pin_x where 
+*   This parameter can be any combination of GPIO_Pin_x where
 *   x can be (0..15).
 * @retval : None
 */
 void GPIO_PinLockConfig(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
   uint32_t tmp = 0x00010000;
-  
+
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Pin));
-  
+
   tmp |= GPIO_Pin;
   /* Set LCKK bit */
   GPIOx->LCKR = tmp;
@@ -461,25 +461,25 @@ void GPIO_PinLockConfig(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 * @param  GPIOx: where x can be (A, B, C, D ) to select the GPIO peripheral.
 * @param  GPIO_PinSource: specifies the pin for the Alternate function.
 *          This parameter can be GPIO_PinSourcex where x can be (0..15) for GPIOA, GPIOB, GPIOD
-*          and (0..12) for GPIOC .    
+*          and (0..12) for GPIOC .
 * @param  GPIO_AF: selects the pin to used as Alternate function.
 *          This parameter can be one of the following value:
 *            @arg GPIO_AF_0: SPI1, MC0, TIM17_BKIN, SWDIO,SWCLK,
 UART1
 *            @arg GPIO_AF_1: UART1, TIM3_CH1, TIM3_CH2, TIM3_CH3,
-TIM3_CH4, I2C1  
-*            @arg GPIO_AF_2: TIM2_CH1_ETR, TIM2_CH2, TIM2_CH3, 
+TIM3_CH4, I2C1
+*            @arg GPIO_AF_2: TIM2_CH1_ETR, TIM2_CH2, TIM2_CH3,
 TIM2_CH3, TIM2_CH4, TIM1_BKIN,
 TIM1_CH1N, TIM1_CH1, TIM1_CH2,
 TIM1_CH3, TIM1_CH4, TIM1_ETR,
 TIM1_CH2N, TIM1_CH3N, TIM2_CH2,
 TIM1 6_BKIN, TIM16_CH1N, TIM17_CH1N,
-TIM1 6_CH1, TIM17_CH1  
+TIM1 6_CH1, TIM17_CH1
 *            @arg GPIO_AF_4: TIM14_CH1, I2C1
 * @note   The pin should already been configured in Alternate Function mode(AF)
 *         using GPIO_InitStruct->GPIO_Mode = GPIO_Mode_AF
-* @note   Refer to the Alternate function mapping table in the device datasheet 
-*         for the detailed mapping of the system and peripherals'alternate 
+* @note   Refer to the Alternate function mapping table in the device datasheet
+*         for the detailed mapping of the system and peripherals'alternate
 *         function I/O pins.
 * @retval None
 */
@@ -487,45 +487,45 @@ void GPIO_PinAFConfig(GPIO_TypeDef* GPIOx, uint32_t GPIO_Pin, uint8_t GPIO_AF)
 {
   uint32_t temp;
 	unsigned char i;
-  
+
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
   assert_param(IS_GPIO_PIN_SOURCE(GPIO_PinSource));
   assert_param(IS_GPIO_AF(GPIO_AF));
-	
-	if(GPIO_Pin>>16)  //Àµ√˜ «GPIOEµƒ16~23Œª
+
+	if(GPIO_Pin>>16)  //ËØ¥ÊòéÊòØGPIOEÁöÑ16~23‰Ωç
 	{
 		temp = GPIO_Pin>>16;
 		for(i=0;i<8;i++)
 		{
 			if(temp&0x01)
 			{
-				GPIOE->AFRH_EXT &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AF≈‰÷√’º∞Î◊÷Ω⁄£¨“™x4,º¥<<2
+				GPIOE->AFRH_EXT &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AFÈÖçÁΩÆÂç†ÂçäÂ≠óËäÇÔºåË¶Åx4,Âç≥<<2
 				GPIOE->AFRH_EXT |= ((uint32_t)GPIO_AF << ((uint32_t)(i<<2)));
 			}
 			temp = temp>>1;
 		}
 	}
-	if(GPIO_Pin&0XFF00)  //Àµ√˜ «GPIOEµƒ8~15Œª
+	if(GPIO_Pin&0XFF00)  //ËØ¥ÊòéÊòØGPIOEÁöÑ8~15‰Ωç
 		{
 			temp = GPIO_Pin>>8;
 			for(i=0;i<8;i++)
 			{
 				if(temp&0x01)
 				{
-					GPIOx->AFRH &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AF≈‰÷√’º∞Î◊÷Ω⁄£¨“™x4,º¥<<2
+					GPIOx->AFRH &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AFÈÖçÁΩÆÂç†ÂçäÂ≠óËäÇÔºåË¶Åx4,Âç≥<<2
 					GPIOx->AFRH |= ((uint32_t)GPIO_AF << ((uint32_t)(i<<2)));
 				}
 				temp = temp>>1;
 			}
 		}
-	if(GPIO_Pin&0XFF)  //Àµ√˜ «GPIOEµƒ0~7Œª
+	if(GPIO_Pin&0XFF)  //ËØ¥ÊòéÊòØGPIOEÁöÑ0~7‰Ωç
 		{
 			for(i=0;i<8;i++)
 			{
 				if(temp&0x01)
 				{
-					GPIOx->AFRL &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AF≈‰÷√’º∞Î◊÷Ω⁄£¨“™x4,º¥<<2
+					GPIOx->AFRL &= ~((uint32_t)0xF << ((uint32_t)(i<<2)));     //AFÈÖçÁΩÆÂç†ÂçäÂ≠óËäÇÔºåË¶Åx4,Âç≥<<2
 					GPIOx->AFRL |= ((uint32_t)GPIO_AF << ((uint32_t)(i<<2)));
 				}
 				temp = temp>>1;
