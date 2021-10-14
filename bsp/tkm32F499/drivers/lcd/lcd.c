@@ -187,7 +187,7 @@ void BlockWrite(unsigned int Xstart, unsigned int Xend, unsigned int Ystart, uns
     SPI_WriteData(Yend & 0xff);
 
     SPI_WriteComm(0x2c00);
-    //	for(Xstart=0;Xstart<1000;Xstart++)SPI_WriteData(0x55);
+    //  for(Xstart=0;Xstart<1000;Xstart++)SPI_WriteData(0x55);
 }
 void Lcd_Initialize(void)
 {
@@ -1040,23 +1040,23 @@ void LCD_Initial(rt_uint32_t LTDC_Buf1, rt_uint32_t LTDC_Buf2) //LCD初始化函
 //             LTDC_Buf[yStart + i + YSIZE_PHYS * j + temp] = Color;
 //     }
 
-//     //	rt_uint16_t i,j;
-//     //	rt_uint32_t temp;
-//     //	temp = XSIZE_PHYS*yStart;
-//     //	for(i=0;i<yLong;i++)
-//     //	{
-//     //		for(j=0;j<xLong;j++)
-//     //		LTDC_Buf[xStart+j+XSIZE_PHYS*i+temp]=Color;
-//     //	}
+//     //   rt_uint16_t i,j;
+//     //   rt_uint32_t temp;
+//     //   temp = XSIZE_PHYS*yStart;
+//     //   for(i=0;i<yLong;i++)
+//     //   {
+//     //       for(j=0;j<xLong;j++)
+//     //       LTDC_Buf[xStart+j+XSIZE_PHYS*i+temp]=Color;
+//     //   }
 // }
 
 /******************************************
 函数名：Lcd图像填充
 功能：向Lcd指定位置填充图像
 入口参数：
-					(x,y): 图片左上角起始坐标
-					(pic_H,pic_V): 图片的宽高
-					 pic  指向存储图片数组的指针
+                    (x,y): 图片左上角起始坐标
+                    (pic_H,pic_V): 图片的宽高
+                     pic  指向存储图片数组的指针
 LCD_Fill_Pic(400,100,320,480,(rt_uint32_t*)gImage_MM_T035);
 ******************************************/
 // void LCD_Fill_Pic(rt_uint16_t x, rt_uint16_t y, rt_uint16_t pic_H, rt_uint16_t pic_V, rt_uint32_t *pic)
@@ -1070,20 +1070,20 @@ LCD_Fill_Pic(400,100,320,480,(rt_uint32_t*)gImage_MM_T035);
 //             LTDC_Buf[Xstart + i + YSIZE_PHYS * j + y] = pic[k++];
 //     }
 
-//     //	rt_uint16_t i,j;
-//     //	rt_uint32_t Ystart,k=0;
-//     //	Ystart = YSIZE_PHYS*y;
-//     //	for(i=0;i<pic_V;i++)
-//     //	{
-//     //		for(j=0;j<pic_H;j++)
-//     //		LTDC_Buf[x+j+YSIZE_PHYS*i+Ystart]=pic[k++];
-//     //	}
+//     //   rt_uint16_t i,j;
+//     //   rt_uint32_t Ystart,k=0;
+//     //   Ystart = YSIZE_PHYS*y;
+//     //   for(i=0;i<pic_V;i++)
+//     //   {
+//     //       for(j=0;j<pic_H;j++)
+//     //       LTDC_Buf[x+j+YSIZE_PHYS*i+Ystart]=pic[k++];
+//     //   }
 // }
 //=============== 在x，y 坐标上打一个颜色为Color的点 ===============
 // void DrawPixel(rt_uint16_t x, rt_uint16_t y, int Color)
 // {
 //     LTDC_Buf[y + YSIZE_PHYS * x] = Color;
-//     //	LTDC_Buf[x+XSIZE_PHYS*y] = Color;
+//     //   LTDC_Buf[x+XSIZE_PHYS*y] = Color;
 // }
 /**********8*16字体 ASCII码 显示*************
 (x,y): 显示字母的起始坐标
