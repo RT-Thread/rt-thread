@@ -90,9 +90,30 @@ void _pthread_data_destroy(pthread_t pth)
 {
     RT_DECLARE_SPINLOCK(pth_lock);
 
+    extern _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
     _pthread_data_t *ptd = _pthread_get_data(pth);
     if (ptd)
     {
+        /* destruct thread local key */
+        if (ptd->tls != RT_NULL)
+        {
+            void *data;
+            rt_uint32_t index;
+            for (index = 0; index < PTHREAD_KEY_MAX; index ++)
+            {
+                if (_thread_keys[index].is_used)
+                {
+                    data = ptd->tls[index];
+                    if (data && _thread_keys[index].destructor)
+                        _thread_keys[index].destructor(data);
+                }
+            }
+
+            /* release tls area */
+            rt_free(ptd->tls);
+            ptd->tls = RT_NULL;
+        }
+
         /* remove from pthread table */
         rt_hw_spin_lock(&pth_lock);
         pth_table[pth] = NULL;
@@ -103,13 +124,17 @@ void _pthread_data_destroy(pthread_t pth)
             rt_sem_delete(ptd->joinable_sem);
 
         /* release thread resource */
-        if (ptd->attr.stackaddr == RT_NULL && ptd->tid->stack_addr != RT_NULL)
+        if (ptd->attr.stackaddr == RT_NULL)
         {
             /* release thread allocated stack */
-            rt_free(ptd->tid->stack_addr);
+            if (ptd->tid)
+            {
+                rt_free(ptd->tid->stack_addr);
+            }
         }
         /* clean stack addr pointer */
-        ptd->tid->stack_addr = RT_NULL;
+        if (ptd->tid)
+            ptd->tid->stack_addr = RT_NULL;
 
         /*
         * if this thread create the local thread data,
@@ -221,6 +246,12 @@ int pthread_create(pthread_t            *pid,
         pthread_attr_init(&ptd->attr);
     }
 
+    if (ptd->attr.stacksize == 0)
+    {
+        ret = EINVAL;
+        goto __exit;
+    }
+
     rt_snprintf(name, sizeof(name), "pth%02d", pthread_number ++);
 
     /* pthread is a static thread object */
@@ -269,7 +300,7 @@ int pthread_create(pthread_t            *pid,
     /* initial this pthread to system */
     if (rt_thread_init(ptd->tid, name, pthread_entry_stub, ptd,
                        stack, ptd->attr.stacksize,
-                       ptd->attr.schedparam.sched_priority, 5) != RT_EOK)
+                       ptd->attr.schedparam.sched_priority, 20) != RT_EOK)
     {
         ret = EINVAL;
         goto __exit;
@@ -460,7 +491,7 @@ void pthread_exit(void *value)
             if (_thread_keys[index].is_used)
             {
                 data = ptd->tls[index];
-                if (data)
+                if (data && _thread_keys[index].destructor)
                     _thread_keys[index].destructor(data);
             }
         }
@@ -507,14 +538,21 @@ int pthread_kill(pthread_t thread, int sig)
 {
 #ifdef RT_USING_SIGNALS
     _pthread_data_t *ptd;
+    int ret;
 
     ptd = _pthread_get_data(thread);
     if (ptd)
     {
-        return rt_thread_kill(ptd->tid, sig);
+        ret = rt_thread_kill(ptd->tid, sig);
+        if (ret == -RT_EINVAL)
+        {
+            return EINVAL;
+        }
+
+        return ret;
     }
 
-    return EINVAL;
+    return ESRCH;
 #else
     return ENOSYS;
 #endif
@@ -707,3 +745,4 @@ int pthread_cancel(pthread_t thread)
     return 0;
 }
 RTM_EXPORT(pthread_cancel);
+

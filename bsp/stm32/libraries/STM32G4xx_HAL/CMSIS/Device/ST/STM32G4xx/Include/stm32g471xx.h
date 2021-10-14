@@ -152,6 +152,7 @@ typedef enum
   I2C3_EV_IRQn                = 92,     /*!< I2C3 Event Interrupt                                                               */
   I2C3_ER_IRQn                = 93,     /*!< I2C3 Error interrupt                                                               */
   DMAMUX_OVR_IRQn             = 94,     /*!< DMAMUX overrun global interrupt                                                    */
+  QUADSPI_IRQn                = 95,     /*!< QUADSPI interrupt                                                                  */
   DMA1_Channel8_IRQn          = 96,     /*!< DMA1 Channel 8 interrupt                                                           */
   DMA2_Channel6_IRQn          = 97,     /*!< DMA2 Channel 6 interrupt                                                           */
   DMA2_Channel7_IRQn          = 98,     /*!< DMA2 Channel 7 interrupt                                                           */
@@ -586,6 +587,26 @@ typedef struct
   __IO uint32_t CR5;      /*!< PWR power control register 5,        Address offset: 0x80 */
 } PWR_TypeDef;
 
+/**
+  * @brief QUAD Serial Peripheral Interface
+  */
+
+typedef struct
+{
+  __IO uint32_t CR;          /*!< QUADSPI Control register,                           Address offset: 0x00 */
+  __IO uint32_t DCR;         /*!< QUADSPI Device Configuration register,              Address offset: 0x04 */
+  __IO uint32_t SR;          /*!< QUADSPI Status register,                            Address offset: 0x08 */
+  __IO uint32_t FCR;         /*!< QUADSPI Flag Clear register,                        Address offset: 0x0C */
+  __IO uint32_t DLR;         /*!< QUADSPI Data Length register,                       Address offset: 0x10 */
+  __IO uint32_t CCR;         /*!< QUADSPI Communication Configuration register,       Address offset: 0x14 */
+  __IO uint32_t AR;          /*!< QUADSPI Address register,                           Address offset: 0x18 */
+  __IO uint32_t ABR;         /*!< QUADSPI Alternate Bytes register,                   Address offset: 0x1C */
+  __IO uint32_t DR;          /*!< QUADSPI Data register,                              Address offset: 0x20 */
+  __IO uint32_t PSMKR;       /*!< QUADSPI Polling Status Mask register,               Address offset: 0x24 */
+  __IO uint32_t PSMAR;       /*!< QUADSPI Polling Status Match register,              Address offset: 0x28 */
+  __IO uint32_t PIR;         /*!< QUADSPI Polling Interval register,                  Address offset: 0x2C */
+  __IO uint32_t LPTR;        /*!< QUADSPI Low Power Timeout register,                 Address offset: 0x30 */
+} QUADSPI_TypeDef;
 
 /**
   * @brief Reset and Clock Control
@@ -955,7 +976,9 @@ typedef struct
 #define SRAM2_BASE            (0x20014000UL) /*!< SRAM2(16 KB) base address */
 #define CCMSRAM_BASE          (0x10000000UL) /*!< CCMSRAM(32 KB) base address */
 #define PERIPH_BASE           (0x40000000UL) /*!< Peripheral base address */
+#define QSPI_BASE             (0x90000000UL) /*!< QUADSPI memories accessible over AHB base address */
 
+#define QSPI_R_BASE           (0xA0001000UL) /*!< QUADSPI control registers base address */
 #define SRAM1_BB_BASE         (0x22000000UL) /*!< SRAM1(80 KB) base address in the bit-band region */
 #define SRAM2_BB_BASE         (0x22280000UL) /*!< SRAM2(16 KB) base address in the bit-band region */
 #define CCMSRAM_BB_BASE       (0x22300000UL) /*!< CCMSRAM(32 KB) base address in the bit-band region */
@@ -1242,6 +1265,7 @@ typedef struct
 #define DMAMUX1_RequestGenStatus   ((DMAMUX_RequestGenStatus_TypeDef *) DMAMUX1_RequestGenStatus_BASE)
 
 
+#define QUADSPI             ((QUADSPI_TypeDef *) QSPI_R_BASE)
 
 #define DBGMCU              ((DBGMCU_TypeDef *) DBGMCU_BASE)
 
@@ -1501,10 +1525,6 @@ typedef struct
 #define ADC_CFGR2_SMPTRIG_Pos          (27U)
 #define ADC_CFGR2_SMPTRIG_Msk          (0x1UL << ADC_CFGR2_SMPTRIG_Pos)        /*!< 0x08000000 */
 #define ADC_CFGR2_SMPTRIG              ADC_CFGR2_SMPTRIG_Msk                   /*!< ADC Sample Time Control Trigger mode */
-
-#define ADC_CFGR2_LFTRIG_Pos           (29U)
-#define ADC_CFGR2_LFTRIG_Msk           (0x1UL << ADC_CFGR2_LFTRIG_Pos)         /*!< 0x20000000 */
-#define ADC_CFGR2_LFTRIG               ADC_CFGR2_LFTRIG_Msk                    /*!< ADC Low Frequency Trigger */
 
 /********************  Bit definition for ADC_SMPR1 register  *****************/
 #define ADC_SMPR1_SMP0_Pos             (0U)
@@ -2292,11 +2312,11 @@ typedef struct
 
 #define COMP_CSR_BRGEN_Pos         (22U)
 #define COMP_CSR_BRGEN_Msk         (0x1UL << COMP_CSR_BRGEN_Pos)               /*!< 0x00400000 */
-#define COMP_CSR_BRGEN             COMP_CSR_BRGEN_Msk                          /*!< Comparator voltage scaler enable */
+#define COMP_CSR_BRGEN             COMP_CSR_BRGEN_Msk                          /*!< Comparator scaler bridge enable */
 
 #define COMP_CSR_SCALEN_Pos        (23U)
 #define COMP_CSR_SCALEN_Msk        (0x1UL << COMP_CSR_SCALEN_Pos)              /*!< 0x00800000 */
-#define COMP_CSR_SCALEN            COMP_CSR_SCALEN_Msk                         /*!< Comparator scaler bridge enable */
+#define COMP_CSR_SCALEN            COMP_CSR_SCALEN_Msk                         /*!< Comparator voltage scaler enable */
 
 #define COMP_CSR_VALUE_Pos         (30U)
 #define COMP_CSR_VALUE_Msk         (0x1UL << COMP_CSR_VALUE_Pos)               /*!< 0x40000000 */
@@ -2366,7 +2386,6 @@ typedef struct
 #define CORDIC_RDATA_RES_Pos     (0U)
 #define CORDIC_RDATA_RES_Msk     (0xFFFFFFFFUL << CORDIC_RDATA_RES_Pos)        /*!< 0xFFFFFFFF */
 #define CORDIC_RDATA_RES         CORDIC_RDATA_RES_Msk                          /*!< Output Result */
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -2516,9 +2535,9 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 /*
- * @brief Specific device feature definitions (not present on all devices in the STM32G4 serie)
+ * @brief Specific device feature definitions (not present on all devices in the STM32G4 series)
  */
- #define DAC_CHANNEL2_SUPPORT                           /*!< DAC feature available only on specific devices: DAC channel 2 available */
+#define DAC_CHANNEL2_SUPPORT                           /*!< DAC feature available only on specific devices: DAC channel 2 available */
 
 /********************  Bit definition for DAC_CR register  ********************/
 #define DAC_CR_EN1_Pos              (0U)
@@ -2721,7 +2740,6 @@ typedef struct
 #define DAC_SR_BWST1_Pos            (15U)
 #define DAC_SR_BWST1_Msk            (0x1UL << DAC_SR_BWST1_Pos)                /*!< 0x00008000 */
 #define DAC_SR_BWST1                DAC_SR_BWST1_Msk                           /*!<DAC channel1 busy writing sample time flag */
-
 
 #define DAC_SR_DAC2RDY_Pos          (27U)
 #define DAC_SR_DAC2RDY_Msk          (0x1UL << DAC_SR_DAC2RDY_Pos)              /*!< 0x08000000 */
@@ -7498,6 +7516,203 @@ typedef struct
 #define PWR_CR5_R1MODE_Msk           (0x1U << PWR_CR5_R1MODE_Pos)              /*!< 0x00000100 */
 #define PWR_CR5_R1MODE               PWR_CR5_R1MODE_Msk                        /*!< selection for Main Regulator in Range1 */
 
+/******************************************************************************/
+/*                                                                            */
+/*                                    QUADSPI                                 */
+/*                                                                            */
+/******************************************************************************/
+/*****************  Bit definition for QUADSPI_CR register  *******************/
+#define QUADSPI_CR_EN_Pos              (0U)
+#define QUADSPI_CR_EN_Msk              (0x1UL << QUADSPI_CR_EN_Pos)            /*!< 0x00000001 */
+#define QUADSPI_CR_EN                  QUADSPI_CR_EN_Msk                       /*!< Enable */
+#define QUADSPI_CR_ABORT_Pos           (1U)
+#define QUADSPI_CR_ABORT_Msk           (0x1UL << QUADSPI_CR_ABORT_Pos)         /*!< 0x00000002 */
+#define QUADSPI_CR_ABORT               QUADSPI_CR_ABORT_Msk                    /*!< Abort request */
+#define QUADSPI_CR_DMAEN_Pos           (2U)
+#define QUADSPI_CR_DMAEN_Msk           (0x1UL << QUADSPI_CR_DMAEN_Pos)         /*!< 0x00000004 */
+#define QUADSPI_CR_DMAEN               QUADSPI_CR_DMAEN_Msk                    /*!< DMA Enable */
+#define QUADSPI_CR_TCEN_Pos            (3U)
+#define QUADSPI_CR_TCEN_Msk            (0x1UL << QUADSPI_CR_TCEN_Pos)          /*!< 0x00000008 */
+#define QUADSPI_CR_TCEN                QUADSPI_CR_TCEN_Msk                     /*!< Timeout Counter Enable */
+#define QUADSPI_CR_SSHIFT_Pos          (4U)
+#define QUADSPI_CR_SSHIFT_Msk          (0x1UL << QUADSPI_CR_SSHIFT_Pos)        /*!< 0x00000010 */
+#define QUADSPI_CR_SSHIFT              QUADSPI_CR_SSHIFT_Msk                   /*!< Sample Shift */
+#define QUADSPI_CR_DFM_Pos             (6U)
+#define QUADSPI_CR_DFM_Msk             (0x1UL << QUADSPI_CR_DFM_Pos)           /*!< 0x00000040 */
+#define QUADSPI_CR_DFM                 QUADSPI_CR_DFM_Msk                      /*!< Dual-flash mode */
+#define QUADSPI_CR_FSEL_Pos            (7U)
+#define QUADSPI_CR_FSEL_Msk            (0x1UL << QUADSPI_CR_FSEL_Pos)          /*!< 0x00000080 */
+#define QUADSPI_CR_FSEL                QUADSPI_CR_FSEL_Msk                     /*!< Flash memory selection */
+#define QUADSPI_CR_FTHRES_Pos          (8U)
+#define QUADSPI_CR_FTHRES_Msk          (0xFUL << QUADSPI_CR_FTHRES_Pos)        /*!< 0x00000F00 */
+#define QUADSPI_CR_FTHRES              QUADSPI_CR_FTHRES_Msk                   /*!< FTHRES[3:0] FIFO Level */
+#define QUADSPI_CR_TEIE_Pos            (16U)
+#define QUADSPI_CR_TEIE_Msk            (0x1UL << QUADSPI_CR_TEIE_Pos)          /*!< 0x00010000 */
+#define QUADSPI_CR_TEIE                QUADSPI_CR_TEIE_Msk                     /*!< Transfer Error Interrupt Enable */
+#define QUADSPI_CR_TCIE_Pos            (17U)
+#define QUADSPI_CR_TCIE_Msk            (0x1UL << QUADSPI_CR_TCIE_Pos)          /*!< 0x00020000 */
+#define QUADSPI_CR_TCIE                QUADSPI_CR_TCIE_Msk                     /*!< Transfer Complete Interrupt Enable */
+#define QUADSPI_CR_FTIE_Pos            (18U)
+#define QUADSPI_CR_FTIE_Msk            (0x1UL << QUADSPI_CR_FTIE_Pos)          /*!< 0x00040000 */
+#define QUADSPI_CR_FTIE                QUADSPI_CR_FTIE_Msk                     /*!< FIFO Threshold Interrupt Enable */
+#define QUADSPI_CR_SMIE_Pos            (19U)
+#define QUADSPI_CR_SMIE_Msk            (0x1UL << QUADSPI_CR_SMIE_Pos)          /*!< 0x00080000 */
+#define QUADSPI_CR_SMIE                QUADSPI_CR_SMIE_Msk                     /*!< Status Match Interrupt Enable */
+#define QUADSPI_CR_TOIE_Pos            (20U)
+#define QUADSPI_CR_TOIE_Msk            (0x1UL << QUADSPI_CR_TOIE_Pos)          /*!< 0x00100000 */
+#define QUADSPI_CR_TOIE                QUADSPI_CR_TOIE_Msk                     /*!< TimeOut Interrupt Enable */
+#define QUADSPI_CR_APMS_Pos            (22U)
+#define QUADSPI_CR_APMS_Msk            (0x1UL << QUADSPI_CR_APMS_Pos)          /*!< 0x00400000 */
+#define QUADSPI_CR_APMS                QUADSPI_CR_APMS_Msk                     /*!< Automatic Polling Mode Stop */
+#define QUADSPI_CR_PMM_Pos             (23U)
+#define QUADSPI_CR_PMM_Msk             (0x1UL << QUADSPI_CR_PMM_Pos)           /*!< 0x00800000 */
+#define QUADSPI_CR_PMM                 QUADSPI_CR_PMM_Msk                      /*!< Polling Match Mode */
+#define QUADSPI_CR_PRESCALER_Pos       (24U)
+#define QUADSPI_CR_PRESCALER_Msk       (0xFFUL << QUADSPI_CR_PRESCALER_Pos)    /*!< 0xFF000000 */
+#define QUADSPI_CR_PRESCALER           QUADSPI_CR_PRESCALER_Msk                /*!< PRESCALER[7:0] Clock prescaler */
+
+/*****************  Bit definition for QUADSPI_DCR register  ******************/
+#define QUADSPI_DCR_CKMODE_Pos         (0U)
+#define QUADSPI_DCR_CKMODE_Msk         (0x1UL << QUADSPI_DCR_CKMODE_Pos)       /*!< 0x00000001 */
+#define QUADSPI_DCR_CKMODE             QUADSPI_DCR_CKMODE_Msk                  /*!< Mode 0 / Mode 3 */
+#define QUADSPI_DCR_CSHT_Pos           (8U)
+#define QUADSPI_DCR_CSHT_Msk           (0x7UL << QUADSPI_DCR_CSHT_Pos)         /*!< 0x00000700 */
+#define QUADSPI_DCR_CSHT               QUADSPI_DCR_CSHT_Msk                    /*!< CSHT[2:0]: ChipSelect High Time */
+#define QUADSPI_DCR_CSHT_0             (0x1UL << QUADSPI_DCR_CSHT_Pos)         /*!< 0x00000100 */
+#define QUADSPI_DCR_CSHT_1             (0x2UL << QUADSPI_DCR_CSHT_Pos)         /*!< 0x00000200 */
+#define QUADSPI_DCR_CSHT_2             (0x4UL << QUADSPI_DCR_CSHT_Pos)         /*!< 0x00000400 */
+#define QUADSPI_DCR_FSIZE_Pos          (16U)
+#define QUADSPI_DCR_FSIZE_Msk          (0x1FUL << QUADSPI_DCR_FSIZE_Pos)       /*!< 0x001F0000 */
+#define QUADSPI_DCR_FSIZE              QUADSPI_DCR_FSIZE_Msk                   /*!< FSIZE[4:0]: Flash Size */
+
+/******************  Bit definition for QUADSPI_SR register  *******************/
+#define QUADSPI_SR_TEF_Pos             (0U)
+#define QUADSPI_SR_TEF_Msk             (0x1UL << QUADSPI_SR_TEF_Pos)           /*!< 0x00000001 */
+#define QUADSPI_SR_TEF                 QUADSPI_SR_TEF_Msk                      /*!< Transfer Error Flag */
+#define QUADSPI_SR_TCF_Pos             (1U)
+#define QUADSPI_SR_TCF_Msk             (0x1UL << QUADSPI_SR_TCF_Pos)           /*!< 0x00000002 */
+#define QUADSPI_SR_TCF                 QUADSPI_SR_TCF_Msk                      /*!< Transfer Complete Flag */
+#define QUADSPI_SR_FTF_Pos             (2U)
+#define QUADSPI_SR_FTF_Msk             (0x1UL << QUADSPI_SR_FTF_Pos)           /*!< 0x00000004 */
+#define QUADSPI_SR_FTF                 QUADSPI_SR_FTF_Msk                      /*!< FIFO Threshlod Flag */
+#define QUADSPI_SR_SMF_Pos             (3U)
+#define QUADSPI_SR_SMF_Msk             (0x1UL << QUADSPI_SR_SMF_Pos)           /*!< 0x00000008 */
+#define QUADSPI_SR_SMF                 QUADSPI_SR_SMF_Msk                      /*!< Status Match Flag */
+#define QUADSPI_SR_TOF_Pos             (4U)
+#define QUADSPI_SR_TOF_Msk             (0x1UL << QUADSPI_SR_TOF_Pos)           /*!< 0x00000010 */
+#define QUADSPI_SR_TOF                 QUADSPI_SR_TOF_Msk                      /*!< Timeout Flag */
+#define QUADSPI_SR_BUSY_Pos            (5U)
+#define QUADSPI_SR_BUSY_Msk            (0x1UL << QUADSPI_SR_BUSY_Pos)          /*!< 0x00000020 */
+#define QUADSPI_SR_BUSY                QUADSPI_SR_BUSY_Msk                     /*!< Busy */
+#define QUADSPI_SR_FLEVEL_Pos          (8U)
+#define QUADSPI_SR_FLEVEL_Msk          (0x1FUL << QUADSPI_SR_FLEVEL_Pos)       /*!< 0x00001F00 */
+#define QUADSPI_SR_FLEVEL              QUADSPI_SR_FLEVEL_Msk                   /*!< FIFO Threshlod Flag */
+
+/******************  Bit definition for QUADSPI_FCR register  ******************/
+#define QUADSPI_FCR_CTEF_Pos           (0U)
+#define QUADSPI_FCR_CTEF_Msk           (0x1UL << QUADSPI_FCR_CTEF_Pos)         /*!< 0x00000001 */
+#define QUADSPI_FCR_CTEF               QUADSPI_FCR_CTEF_Msk                    /*!< Clear Transfer Error Flag */
+#define QUADSPI_FCR_CTCF_Pos           (1U)
+#define QUADSPI_FCR_CTCF_Msk           (0x1UL << QUADSPI_FCR_CTCF_Pos)         /*!< 0x00000002 */
+#define QUADSPI_FCR_CTCF               QUADSPI_FCR_CTCF_Msk                    /*!< Clear Transfer Complete Flag */
+#define QUADSPI_FCR_CSMF_Pos           (3U)
+#define QUADSPI_FCR_CSMF_Msk           (0x1UL << QUADSPI_FCR_CSMF_Pos)         /*!< 0x00000008 */
+#define QUADSPI_FCR_CSMF               QUADSPI_FCR_CSMF_Msk                    /*!< Clear Status Match Flag */
+#define QUADSPI_FCR_CTOF_Pos           (4U)
+#define QUADSPI_FCR_CTOF_Msk           (0x1UL << QUADSPI_FCR_CTOF_Pos)         /*!< 0x00000010 */
+#define QUADSPI_FCR_CTOF               QUADSPI_FCR_CTOF_Msk                    /*!< Clear Timeout Flag */
+
+/******************  Bit definition for QUADSPI_DLR register  ******************/
+#define QUADSPI_DLR_DL_Pos             (0U)
+#define QUADSPI_DLR_DL_Msk             (0xFFFFFFFFUL << QUADSPI_DLR_DL_Pos)    /*!< 0xFFFFFFFF */
+#define QUADSPI_DLR_DL                 QUADSPI_DLR_DL_Msk                      /*!< DL[31:0]: Data Length */
+
+/******************  Bit definition for QUADSPI_CCR register  ******************/
+#define QUADSPI_CCR_INSTRUCTION_Pos    (0U)
+#define QUADSPI_CCR_INSTRUCTION_Msk    (0xFFUL << QUADSPI_CCR_INSTRUCTION_Pos) /*!< 0x000000FF */
+#define QUADSPI_CCR_INSTRUCTION        QUADSPI_CCR_INSTRUCTION_Msk             /*!< INSTRUCTION[7:0]: Instruction */
+#define QUADSPI_CCR_IMODE_Pos          (8U)
+#define QUADSPI_CCR_IMODE_Msk          (0x3UL << QUADSPI_CCR_IMODE_Pos)        /*!< 0x00000300 */
+#define QUADSPI_CCR_IMODE              QUADSPI_CCR_IMODE_Msk                   /*!< IMODE[1:0]: Instruction Mode */
+#define QUADSPI_CCR_IMODE_0            (0x1UL << QUADSPI_CCR_IMODE_Pos)        /*!< 0x00000100 */
+#define QUADSPI_CCR_IMODE_1            (0x2UL << QUADSPI_CCR_IMODE_Pos)        /*!< 0x00000200 */
+#define QUADSPI_CCR_ADMODE_Pos         (10U)
+#define QUADSPI_CCR_ADMODE_Msk         (0x3UL << QUADSPI_CCR_ADMODE_Pos)       /*!< 0x00000C00 */
+#define QUADSPI_CCR_ADMODE             QUADSPI_CCR_ADMODE_Msk                  /*!< ADMODE[1:0]: Address Mode */
+#define QUADSPI_CCR_ADMODE_0           (0x1UL << QUADSPI_CCR_ADMODE_Pos)       /*!< 0x00000400 */
+#define QUADSPI_CCR_ADMODE_1           (0x2UL << QUADSPI_CCR_ADMODE_Pos)       /*!< 0x00000800 */
+#define QUADSPI_CCR_ADSIZE_Pos         (12U)
+#define QUADSPI_CCR_ADSIZE_Msk         (0x3UL << QUADSPI_CCR_ADSIZE_Pos)       /*!< 0x00003000 */
+#define QUADSPI_CCR_ADSIZE             QUADSPI_CCR_ADSIZE_Msk                  /*!< ADSIZE[1:0]: Address Size */
+#define QUADSPI_CCR_ADSIZE_0           (0x1UL << QUADSPI_CCR_ADSIZE_Pos)       /*!< 0x00001000 */
+#define QUADSPI_CCR_ADSIZE_1           (0x2UL << QUADSPI_CCR_ADSIZE_Pos)       /*!< 0x00002000 */
+#define QUADSPI_CCR_ABMODE_Pos         (14U)
+#define QUADSPI_CCR_ABMODE_Msk         (0x3UL << QUADSPI_CCR_ABMODE_Pos)       /*!< 0x0000C000 */
+#define QUADSPI_CCR_ABMODE             QUADSPI_CCR_ABMODE_Msk                  /*!< ABMODE[1:0]: Alternate Bytes Mode */
+#define QUADSPI_CCR_ABMODE_0           (0x1UL << QUADSPI_CCR_ABMODE_Pos)       /*!< 0x00004000 */
+#define QUADSPI_CCR_ABMODE_1           (0x2UL << QUADSPI_CCR_ABMODE_Pos)       /*!< 0x00008000 */
+#define QUADSPI_CCR_ABSIZE_Pos         (16U)
+#define QUADSPI_CCR_ABSIZE_Msk         (0x3UL << QUADSPI_CCR_ABSIZE_Pos)       /*!< 0x00030000 */
+#define QUADSPI_CCR_ABSIZE             QUADSPI_CCR_ABSIZE_Msk                  /*!< ABSIZE[1:0]: Instruction Mode */
+#define QUADSPI_CCR_ABSIZE_0           (0x1UL << QUADSPI_CCR_ABSIZE_Pos)       /*!< 0x00010000 */
+#define QUADSPI_CCR_ABSIZE_1           (0x2UL << QUADSPI_CCR_ABSIZE_Pos)       /*!< 0x00020000 */
+#define QUADSPI_CCR_DCYC_Pos           (18U)
+#define QUADSPI_CCR_DCYC_Msk           (0x1FUL << QUADSPI_CCR_DCYC_Pos)        /*!< 0x007C0000 */
+#define QUADSPI_CCR_DCYC               QUADSPI_CCR_DCYC_Msk                    /*!< DCYC[4:0]: Dummy Cycles */
+#define QUADSPI_CCR_DMODE_Pos          (24U)
+#define QUADSPI_CCR_DMODE_Msk          (0x3UL << QUADSPI_CCR_DMODE_Pos)        /*!< 0x03000000 */
+#define QUADSPI_CCR_DMODE              QUADSPI_CCR_DMODE_Msk                   /*!< DMODE[1:0]: Data Mode */
+#define QUADSPI_CCR_DMODE_0            (0x1UL << QUADSPI_CCR_DMODE_Pos)        /*!< 0x01000000 */
+#define QUADSPI_CCR_DMODE_1            (0x2UL << QUADSPI_CCR_DMODE_Pos)        /*!< 0x02000000 */
+#define QUADSPI_CCR_FMODE_Pos          (26U)
+#define QUADSPI_CCR_FMODE_Msk          (0x3UL << QUADSPI_CCR_FMODE_Pos)        /*!< 0x0C000000 */
+#define QUADSPI_CCR_FMODE              QUADSPI_CCR_FMODE_Msk                   /*!< FMODE[1:0]: Functional Mode */
+#define QUADSPI_CCR_FMODE_0            (0x1UL << QUADSPI_CCR_FMODE_Pos)        /*!< 0x04000000 */
+#define QUADSPI_CCR_FMODE_1            (0x2UL << QUADSPI_CCR_FMODE_Pos)        /*!< 0x08000000 */
+#define QUADSPI_CCR_SIOO_Pos           (28U)
+#define QUADSPI_CCR_SIOO_Msk           (0x1UL << QUADSPI_CCR_SIOO_Pos)         /*!< 0x10000000 */
+#define QUADSPI_CCR_SIOO               QUADSPI_CCR_SIOO_Msk                    /*!< SIOO: Send Instruction Only Once Mode */
+#define QUADSPI_CCR_DHHC_Pos           (30U)
+#define QUADSPI_CCR_DHHC_Msk           (0x1UL << QUADSPI_CCR_DHHC_Pos)         /*!< 0x40000000 */
+#define QUADSPI_CCR_DHHC               QUADSPI_CCR_DHHC_Msk                    /*!< DHHC: DDR hold */
+#define QUADSPI_CCR_DDRM_Pos           (31U)
+#define QUADSPI_CCR_DDRM_Msk           (0x1UL << QUADSPI_CCR_DDRM_Pos)         /*!< 0x80000000 */
+#define QUADSPI_CCR_DDRM               QUADSPI_CCR_DDRM_Msk                    /*!< DDRM: Double Data Rate Mode */
+
+/******************  Bit definition for QUADSPI_AR register  *******************/
+#define QUADSPI_AR_ADDRESS_Pos         (0U)
+#define QUADSPI_AR_ADDRESS_Msk         (0xFFFFFFFFUL << QUADSPI_AR_ADDRESS_Pos)/*!< 0xFFFFFFFF */
+#define QUADSPI_AR_ADDRESS             QUADSPI_AR_ADDRESS_Msk                  /*!< ADDRESS[31:0]: Address */
+
+/******************  Bit definition for QUADSPI_ABR register  ******************/
+#define QUADSPI_ABR_ALTERNATE_Pos      (0U)
+#define QUADSPI_ABR_ALTERNATE_Msk      (0xFFFFFFFFUL << QUADSPI_ABR_ALTERNATE_Pos)/*!< 0xFFFFFFFF */
+#define QUADSPI_ABR_ALTERNATE          QUADSPI_ABR_ALTERNATE_Msk               /*!< ALTERNATE[31:0]: Alternate Bytes */
+
+/******************  Bit definition for QUADSPI_DR register  *******************/
+#define QUADSPI_DR_DATA_Pos            (0U)
+#define QUADSPI_DR_DATA_Msk            (0xFFFFFFFFUL << QUADSPI_DR_DATA_Pos)   /*!< 0xFFFFFFFF */
+#define QUADSPI_DR_DATA                QUADSPI_DR_DATA_Msk                     /*!< DATA[31:0]: Data */
+
+/******************  Bit definition for QUADSPI_PSMKR register  ****************/
+#define QUADSPI_PSMKR_MASK_Pos         (0U)
+#define QUADSPI_PSMKR_MASK_Msk         (0xFFFFFFFFUL << QUADSPI_PSMKR_MASK_Pos)/*!< 0xFFFFFFFF */
+#define QUADSPI_PSMKR_MASK             QUADSPI_PSMKR_MASK_Msk                  /*!< MASK[31:0]: Status Mask */
+
+/******************  Bit definition for QUADSPI_PSMAR register  ****************/
+#define QUADSPI_PSMAR_MATCH_Pos        (0U)
+#define QUADSPI_PSMAR_MATCH_Msk        (0xFFFFFFFFUL << QUADSPI_PSMAR_MATCH_Pos)/*!< 0xFFFFFFFF */
+#define QUADSPI_PSMAR_MATCH            QUADSPI_PSMAR_MATCH_Msk                 /*!< MATCH[31:0]: Status Match */
+
+/******************  Bit definition for QUADSPI_PIR register  *****************/
+#define QUADSPI_PIR_INTERVAL_Pos       (0U)
+#define QUADSPI_PIR_INTERVAL_Msk       (0xFFFFUL << QUADSPI_PIR_INTERVAL_Pos)  /*!< 0x0000FFFF */
+#define QUADSPI_PIR_INTERVAL           QUADSPI_PIR_INTERVAL_Msk                /*!< INTERVAL[15:0]: Polling Interval */
+
+/******************  Bit definition for QUADSPI_LPTR register  *****************/
+#define QUADSPI_LPTR_TIMEOUT_Pos       (0U)
+#define QUADSPI_LPTR_TIMEOUT_Msk       (0xFFFFUL << QUADSPI_LPTR_TIMEOUT_Pos)  /*!< 0x0000FFFF */
+#define QUADSPI_LPTR_TIMEOUT           QUADSPI_LPTR_TIMEOUT_Msk                /*!< TIMEOUT[15:0]: Timeout period */
 
 /******************************************************************************/
 /*                                                                            */
@@ -9206,19 +9421,19 @@ typedef struct
 #define TAMP_CR2_TAMP3TRG            TAMP_CR2_TAMP3TRG_Msk
 
 /********************  Bits definition for TAMP_FLTCR register  ***************/
-#define TAMP_FLTCR_TAMPFREQ_0        ((uint32_t)0x00000001)
-#define TAMP_FLTCR_TAMPFREQ_1        ((uint32_t)0x00000002)
-#define TAMP_FLTCR_TAMPFREQ_2        ((uint32_t)0x00000004)
+#define TAMP_FLTCR_TAMPFREQ_0        (0x00000001UL)
+#define TAMP_FLTCR_TAMPFREQ_1        (0x00000002UL)
+#define TAMP_FLTCR_TAMPFREQ_2        (0x00000004UL)
 #define TAMP_FLTCR_TAMPFREQ_Pos      (0U)
 #define TAMP_FLTCR_TAMPFREQ_Msk      (0x7UL << TAMP_FLTCR_TAMPFREQ_Pos)        /*!< 0x00000007 */
 #define TAMP_FLTCR_TAMPFREQ          TAMP_FLTCR_TAMPFREQ_Msk
-#define TAMP_FLTCR_TAMPFLT_0         ((uint32_t)0x00000008)
-#define TAMP_FLTCR_TAMPFLT_1         ((uint32_t)0x00000010)
+#define TAMP_FLTCR_TAMPFLT_0         (0x00000008UL)
+#define TAMP_FLTCR_TAMPFLT_1         (0x00000010UL)
 #define TAMP_FLTCR_TAMPFLT_Pos       (3U)
 #define TAMP_FLTCR_TAMPFLT_Msk       (0x3UL << TAMP_FLTCR_TAMPFLT_Pos)         /*!< 0x00000018 */
 #define TAMP_FLTCR_TAMPFLT           TAMP_FLTCR_TAMPFLT_Msk
-#define TAMP_FLTCR_TAMPPRCH_0        ((uint32_t)0x00000020)
-#define TAMP_FLTCR_TAMPPRCH_1        ((uint32_t)0x00000040)
+#define TAMP_FLTCR_TAMPPRCH_0        (0x00000020UL)
+#define TAMP_FLTCR_TAMPPRCH_1        (0x00000040UL)
 #define TAMP_FLTCR_TAMPPRCH_Pos      (5U)
 #define TAMP_FLTCR_TAMPPRCH_Msk      (0x3UL << TAMP_FLTCR_TAMPPRCH_Pos)        /*!< 0x00000060 */
 #define TAMP_FLTCR_TAMPPRCH          TAMP_FLTCR_TAMPPRCH_Msk
@@ -10345,101 +10560,102 @@ typedef struct
 
 /******************  Bit definition for SYSCFG_SWPR register  ****************/
 #define SYSCFG_SWPR_PAGE0_Pos          (0U)
-#define SYSCFG_SWPR_PAGE0_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE0_Pos)       /*!< 0x00000001 */
-#define SYSCFG_SWPR_PAGE0              (uint32_t)(SYSCFG_SWPR_PAGE0_Msk)                  /*!< CCMSRAM  Write protection page 0 */
+#define SYSCFG_SWPR_PAGE0_Msk          (0x1UL << SYSCFG_SWPR_PAGE0_Pos)       /*!< 0x00000001 */
+#define SYSCFG_SWPR_PAGE0              (SYSCFG_SWPR_PAGE0_Msk)                /*!< CCMSRAM  Write protection page 0 */
 #define SYSCFG_SWPR_PAGE1_Pos          (1U)
-#define SYSCFG_SWPR_PAGE1_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE1_Pos)       /*!< 0x00000002 */
-#define SYSCFG_SWPR_PAGE1              (uint32_t)(SYSCFG_SWPR_PAGE1_Msk)                  /*!< CCMSRAM  Write protection page 1 */
+#define SYSCFG_SWPR_PAGE1_Msk          (0x1UL << SYSCFG_SWPR_PAGE1_Pos)       /*!< 0x00000002 */
+#define SYSCFG_SWPR_PAGE1              (SYSCFG_SWPR_PAGE1_Msk)                /*!< CCMSRAM  Write protection page 1 */
 #define SYSCFG_SWPR_PAGE2_Pos          (2U)
-#define SYSCFG_SWPR_PAGE2_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE2_Pos)       /*!< 0x00000004 */
-#define SYSCFG_SWPR_PAGE2              (uint32_t)(SYSCFG_SWPR_PAGE2_Msk)                  /*!< CCMSRAM  Write protection page 2 */
+#define SYSCFG_SWPR_PAGE2_Msk          (0x1UL << SYSCFG_SWPR_PAGE2_Pos)       /*!< 0x00000004 */
+#define SYSCFG_SWPR_PAGE2              (SYSCFG_SWPR_PAGE2_Msk)                /*!< CCMSRAM  Write protection page 2 */
 #define SYSCFG_SWPR_PAGE3_Pos          (3U)
-#define SYSCFG_SWPR_PAGE3_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE3_Pos)       /*!< 0x00000008 */
-#define SYSCFG_SWPR_PAGE3              (uint32_t)(SYSCFG_SWPR_PAGE3_Msk)                  /*!< CCMSRAM  Write protection page 3 */
+#define SYSCFG_SWPR_PAGE3_Msk          (0x1UL << SYSCFG_SWPR_PAGE3_Pos)       /*!< 0x00000008 */
+#define SYSCFG_SWPR_PAGE3              (SYSCFG_SWPR_PAGE3_Msk)                /*!< CCMSRAM  Write protection page 3 */
 #define SYSCFG_SWPR_PAGE4_Pos          (4U)
-#define SYSCFG_SWPR_PAGE4_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE4_Pos)       /*!< 0x00000010 */
-#define SYSCFG_SWPR_PAGE4              (uint32_t)(SYSCFG_SWPR_PAGE4_Msk)                  /*!< CCMSRAM  Write protection page 4 */
+#define SYSCFG_SWPR_PAGE4_Msk          (0x1UL << SYSCFG_SWPR_PAGE4_Pos)       /*!< 0x00000010 */
+#define SYSCFG_SWPR_PAGE4              (SYSCFG_SWPR_PAGE4_Msk)                /*!< CCMSRAM  Write protection page 4 */
 #define SYSCFG_SWPR_PAGE5_Pos          (5U)
-#define SYSCFG_SWPR_PAGE5_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE5_Pos)       /*!< 0x00000020 */
-#define SYSCFG_SWPR_PAGE5              (uint32_t)(SYSCFG_SWPR_PAGE5_Msk)                  /*!< CCMSRAM  Write protection page 5 */
+#define SYSCFG_SWPR_PAGE5_Msk          (0x1UL << SYSCFG_SWPR_PAGE5_Pos)       /*!< 0x00000020 */
+#define SYSCFG_SWPR_PAGE5              (SYSCFG_SWPR_PAGE5_Msk)                /*!< CCMSRAM  Write protection page 5 */
 #define SYSCFG_SWPR_PAGE6_Pos          (6U)
-#define SYSCFG_SWPR_PAGE6_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE6_Pos)       /*!< 0x00000040 */
-#define SYSCFG_SWPR_PAGE6              (uint32_t)(SYSCFG_SWPR_PAGE6_Msk)                  /*!< CCMSRAM  Write protection page 6 */
+#define SYSCFG_SWPR_PAGE6_Msk          (0x1UL << SYSCFG_SWPR_PAGE6_Pos)       /*!< 0x00000040 */
+#define SYSCFG_SWPR_PAGE6              (SYSCFG_SWPR_PAGE6_Msk)                /*!< CCMSRAM  Write protection page 6 */
 #define SYSCFG_SWPR_PAGE7_Pos          (7U)
-#define SYSCFG_SWPR_PAGE7_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE7_Pos)       /*!< 0x00000080 */
-#define SYSCFG_SWPR_PAGE7              (uint32_t)(SYSCFG_SWPR_PAGE7_Msk)                  /*!< CCMSRAM  Write protection page 7 */
+#define SYSCFG_SWPR_PAGE7_Msk          (0x1UL << SYSCFG_SWPR_PAGE7_Pos)       /*!< 0x00000080 */
+#define SYSCFG_SWPR_PAGE7              (SYSCFG_SWPR_PAGE7_Msk)                /*!< CCMSRAM  Write protection page 7 */
 #define SYSCFG_SWPR_PAGE8_Pos          (8U)
-#define SYSCFG_SWPR_PAGE8_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE8_Pos)       /*!< 0x00000100 */
-#define SYSCFG_SWPR_PAGE8              (uint32_t)(SYSCFG_SWPR_PAGE8_Msk)                  /*!< CCMSRAM  Write protection page 8 */
+#define SYSCFG_SWPR_PAGE8_Msk          (0x1UL << SYSCFG_SWPR_PAGE8_Pos)       /*!< 0x00000100 */
+#define SYSCFG_SWPR_PAGE8              (SYSCFG_SWPR_PAGE8_Msk)                /*!< CCMSRAM  Write protection page 8 */
 #define SYSCFG_SWPR_PAGE9_Pos          (9U)
-#define SYSCFG_SWPR_PAGE9_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE9_Pos)       /*!< 0x00000200 */
-#define SYSCFG_SWPR_PAGE9              (uint32_t)(SYSCFG_SWPR_PAGE9_Msk)                  /*!< CCMSRAM  Write protection page 9 */
+#define SYSCFG_SWPR_PAGE9_Msk          (0x1UL << SYSCFG_SWPR_PAGE9_Pos)       /*!< 0x00000200 */
+#define SYSCFG_SWPR_PAGE9              (SYSCFG_SWPR_PAGE9_Msk)                /*!< CCMSRAM  Write protection page 9 */
 #define SYSCFG_SWPR_PAGE10_Pos         (10U)
-#define SYSCFG_SWPR_PAGE10_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE10_Pos)      /*!< 0x00000400 */
-#define SYSCFG_SWPR_PAGE10             (uint32_t)(SYSCFG_SWPR_PAGE10_Msk)                 /*!< CCMSRAM  Write protection page 10*/
+#define SYSCFG_SWPR_PAGE10_Msk         (0x1UL << SYSCFG_SWPR_PAGE10_Pos)      /*!< 0x00000400 */
+#define SYSCFG_SWPR_PAGE10             (SYSCFG_SWPR_PAGE10_Msk)               /*!< CCMSRAM  Write protection page 10*/
 #define SYSCFG_SWPR_PAGE11_Pos         (11U)
-#define SYSCFG_SWPR_PAGE11_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE11_Pos)      /*!< 0x00000800 */
-#define SYSCFG_SWPR_PAGE11             (uint32_t)(SYSCFG_SWPR_PAGE11_Msk)                 /*!< CCMSRAM  Write protection page 11*/
+#define SYSCFG_SWPR_PAGE11_Msk         (0x1UL << SYSCFG_SWPR_PAGE11_Pos)      /*!< 0x00000800 */
+#define SYSCFG_SWPR_PAGE11             (SYSCFG_SWPR_PAGE11_Msk)               /*!< CCMSRAM  Write protection page 11*/
 #define SYSCFG_SWPR_PAGE12_Pos         (12U)
-#define SYSCFG_SWPR_PAGE12_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE12_Pos)      /*!< 0x00001000 */
-#define SYSCFG_SWPR_PAGE12             (uint32_t)(SYSCFG_SWPR_PAGE12_Msk)                 /*!< CCMSRAM  Write protection page 12*/
+#define SYSCFG_SWPR_PAGE12_Msk         (0x1UL << SYSCFG_SWPR_PAGE12_Pos)      /*!< 0x00001000 */
+#define SYSCFG_SWPR_PAGE12             (SYSCFG_SWPR_PAGE12_Msk)               /*!< CCMSRAM  Write protection page 12*/
 #define SYSCFG_SWPR_PAGE13_Pos         (13U)
-#define SYSCFG_SWPR_PAGE13_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE13_Pos)      /*!< 0x00002000 */
-#define SYSCFG_SWPR_PAGE13             (uint32_t)(SYSCFG_SWPR_PAGE13_Msk)                 /*!< CCMSRAM  Write protection page 13*/
+#define SYSCFG_SWPR_PAGE13_Msk         (0x1UL << SYSCFG_SWPR_PAGE13_Pos)      /*!< 0x00002000 */
+#define SYSCFG_SWPR_PAGE13             (SYSCFG_SWPR_PAGE13_Msk)               /*!< CCMSRAM  Write protection page 13*/
 #define SYSCFG_SWPR_PAGE14_Pos         (14U)
-#define SYSCFG_SWPR_PAGE14_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE14_Pos)      /*!< 0x00004000 */
-#define SYSCFG_SWPR_PAGE14             (uint32_t)(SYSCFG_SWPR_PAGE14_Msk)                 /*!< CCMSRAM  Write protection page 14*/
+#define SYSCFG_SWPR_PAGE14_Msk         (0x1UL << SYSCFG_SWPR_PAGE14_Pos)      /*!< 0x00004000 */
+#define SYSCFG_SWPR_PAGE14             (SYSCFG_SWPR_PAGE14_Msk)               /*!< CCMSRAM  Write protection page 14*/
 #define SYSCFG_SWPR_PAGE15_Pos         (15U)
-#define SYSCFG_SWPR_PAGE15_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE15_Pos)      /*!< 0x00008000 */
-#define SYSCFG_SWPR_PAGE15             (uint32_t)(SYSCFG_SWPR_PAGE15_Msk)                 /*!< CCMSRAM  Write protection page 15*/
+#define SYSCFG_SWPR_PAGE15_Msk         (0x1UL << SYSCFG_SWPR_PAGE15_Pos)      /*!< 0x00008000 */
+#define SYSCFG_SWPR_PAGE15             (SYSCFG_SWPR_PAGE15_Msk)               /*!< CCMSRAM  Write protection page 15*/
 #define SYSCFG_SWPR_PAGE16_Pos         (16U)
-#define SYSCFG_SWPR_PAGE16_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE16_Pos)      /*!< 0x00010000 */
-#define SYSCFG_SWPR_PAGE16             (uint32_t)(SYSCFG_SWPR_PAGE16_Msk)                 /*!< CCMSRAM  Write protection page 16*/
+#define SYSCFG_SWPR_PAGE16_Msk         (0x1UL << SYSCFG_SWPR_PAGE16_Pos)      /*!< 0x00010000 */
+#define SYSCFG_SWPR_PAGE16             (SYSCFG_SWPR_PAGE16_Msk)               /*!< CCMSRAM  Write protection page 16*/
 #define SYSCFG_SWPR_PAGE17_Pos         (17U)
-#define SYSCFG_SWPR_PAGE17_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE17_Pos)      /*!< 0x00020000 */
-#define SYSCFG_SWPR_PAGE17             (uint32_t)(SYSCFG_SWPR_PAGE17_Msk)                 /*!< CCMSRAM  Write protection page 17*/
+#define SYSCFG_SWPR_PAGE17_Msk         (0x1UL << SYSCFG_SWPR_PAGE17_Pos)      /*!< 0x00020000 */
+#define SYSCFG_SWPR_PAGE17             (SYSCFG_SWPR_PAGE17_Msk)               /*!< CCMSRAM  Write protection page 17*/
 #define SYSCFG_SWPR_PAGE18_Pos         (18U)
-#define SYSCFG_SWPR_PAGE18_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE18_Pos)      /*!< 0x00040000 */
-#define SYSCFG_SWPR_PAGE18             (uint32_t)(SYSCFG_SWPR_PAGE18_Msk)                 /*!< CCMSRAM  Write protection page 18*/
+#define SYSCFG_SWPR_PAGE18_Msk         (0x1UL << SYSCFG_SWPR_PAGE18_Pos)      /*!< 0x00040000 */
+#define SYSCFG_SWPR_PAGE18             (SYSCFG_SWPR_PAGE18_Msk)               /*!< CCMSRAM  Write protection page 18*/
 #define SYSCFG_SWPR_PAGE19_Pos         (19U)
-#define SYSCFG_SWPR_PAGE19_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE19_Pos)      /*!< 0x00080000 */
-#define SYSCFG_SWPR_PAGE19             (uint32_t)(SYSCFG_SWPR_PAGE19_Msk)                 /*!< CCMSRAM  Write protection page 19*/
+#define SYSCFG_SWPR_PAGE19_Msk         (0x1UL << SYSCFG_SWPR_PAGE19_Pos)      /*!< 0x00080000 */
+#define SYSCFG_SWPR_PAGE19             (SYSCFG_SWPR_PAGE19_Msk)               /*!< CCMSRAM  Write protection page 19*/
 #define SYSCFG_SWPR_PAGE20_Pos         (20U)
-#define SYSCFG_SWPR_PAGE20_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE20_Pos)      /*!< 0x00100000 */
-#define SYSCFG_SWPR_PAGE20             (uint32_t)(SYSCFG_SWPR_PAGE20_Msk)                 /*!< CCMSRAM  Write protection page 20*/
+#define SYSCFG_SWPR_PAGE20_Msk         (0x1UL << SYSCFG_SWPR_PAGE20_Pos)      /*!< 0x00100000 */
+#define SYSCFG_SWPR_PAGE20             (SYSCFG_SWPR_PAGE20_Msk)               /*!< CCMSRAM  Write protection page 20*/
 #define SYSCFG_SWPR_PAGE21_Pos         (21U)
-#define SYSCFG_SWPR_PAGE21_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE21_Pos)      /*!< 0x00200000 */
-#define SYSCFG_SWPR_PAGE21             (uint32_t)(SYSCFG_SWPR_PAGE21_Msk)                 /*!< CCMSRAM  Write protection page 21*/
+#define SYSCFG_SWPR_PAGE21_Msk         (0x1UL << SYSCFG_SWPR_PAGE21_Pos)      /*!< 0x00200000 */
+#define SYSCFG_SWPR_PAGE21             (SYSCFG_SWPR_PAGE21_Msk)               /*!< CCMSRAM  Write protection page 21*/
 #define SYSCFG_SWPR_PAGE22_Pos         (22U)
-#define SYSCFG_SWPR_PAGE22_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE22_Pos)      /*!< 0x00400000 */
-#define SYSCFG_SWPR_PAGE22             (uint32_t)(SYSCFG_SWPR_PAGE22_Msk)                 /*!< CCMSRAM  Write protection page 22*/
+#define SYSCFG_SWPR_PAGE22_Msk         (0x1UL << SYSCFG_SWPR_PAGE22_Pos)      /*!< 0x00400000 */
+#define SYSCFG_SWPR_PAGE22             (SYSCFG_SWPR_PAGE22_Msk)               /*!< CCMSRAM  Write protection page 22*/
 #define SYSCFG_SWPR_PAGE23_Pos         (23U)
-#define SYSCFG_SWPR_PAGE23_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE23_Pos)      /*!< 0x00800000 */
-#define SYSCFG_SWPR_PAGE23             (uint32_t)(SYSCFG_SWPR_PAGE23_Msk)                 /*!< CCMSRAM  Write protection page 23*/
+#define SYSCFG_SWPR_PAGE23_Msk         (0x1UL << SYSCFG_SWPR_PAGE23_Pos)      /*!< 0x00800000 */
+#define SYSCFG_SWPR_PAGE23             (SYSCFG_SWPR_PAGE23_Msk)               /*!< CCMSRAM  Write protection page 23*/
 #define SYSCFG_SWPR_PAGE24_Pos         (24U)
-#define SYSCFG_SWPR_PAGE24_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE24_Pos)      /*!< 0x01000000 */
-#define SYSCFG_SWPR_PAGE24             (uint32_t)(SYSCFG_SWPR_PAGE24_Msk)                 /*!< CCMSRAM  Write protection page 24*/
+#define SYSCFG_SWPR_PAGE24_Msk         (0x1UL << SYSCFG_SWPR_PAGE24_Pos)      /*!< 0x01000000 */
+#define SYSCFG_SWPR_PAGE24             (SYSCFG_SWPR_PAGE24_Msk)               /*!< CCMSRAM  Write protection page 24*/
 #define SYSCFG_SWPR_PAGE25_Pos         (25U)
-#define SYSCFG_SWPR_PAGE25_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE25_Pos)      /*!< 0x02000000 */
-#define SYSCFG_SWPR_PAGE25             (uint32_t)(SYSCFG_SWPR_PAGE25_Msk)                 /*!< CCMSRAM  Write protection page 25*/
+#define SYSCFG_SWPR_PAGE25_Msk         (0x1UL << SYSCFG_SWPR_PAGE25_Pos)      /*!< 0x02000000 */
+#define SYSCFG_SWPR_PAGE25             (SYSCFG_SWPR_PAGE25_Msk)               /*!< CCMSRAM  Write protection page 25*/
 #define SYSCFG_SWPR_PAGE26_Pos         (26U)
-#define SYSCFG_SWPR_PAGE26_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE26_Pos)      /*!< 0x04000000 */
-#define SYSCFG_SWPR_PAGE26             (uint32_t)(SYSCFG_SWPR_PAGE26_Msk)                 /*!< CCMSRAM  Write protection page 26*/
+#define SYSCFG_SWPR_PAGE26_Msk         (0x1UL << SYSCFG_SWPR_PAGE26_Pos)      /*!< 0x04000000 */
+#define SYSCFG_SWPR_PAGE26             (SYSCFG_SWPR_PAGE26_Msk)               /*!< CCMSRAM  Write protection page 26*/
 #define SYSCFG_SWPR_PAGE27_Pos         (27U)
-#define SYSCFG_SWPR_PAGE27_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE27_Pos)      /*!< 0x08000000 */
-#define SYSCFG_SWPR_PAGE27             (uint32_t)(SYSCFG_SWPR_PAGE27_Msk)                 /*!< CCMSRAM  Write protection page 27*/
+#define SYSCFG_SWPR_PAGE27_Msk         (0x1UL << SYSCFG_SWPR_PAGE27_Pos)      /*!< 0x08000000 */
+#define SYSCFG_SWPR_PAGE27             (SYSCFG_SWPR_PAGE27_Msk)               /*!< CCMSRAM  Write protection page 27*/
 #define SYSCFG_SWPR_PAGE28_Pos         (28U)
-#define SYSCFG_SWPR_PAGE28_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE28_Pos)      /*!< 0x10000000 */
-#define SYSCFG_SWPR_PAGE28             (uint32_t)(SYSCFG_SWPR_PAGE28_Msk)                 /*!< CCMSRAM  Write protection page 28*/
+#define SYSCFG_SWPR_PAGE28_Msk         (0x1UL << SYSCFG_SWPR_PAGE28_Pos)      /*!< 0x10000000 */
+#define SYSCFG_SWPR_PAGE28             (SYSCFG_SWPR_PAGE28_Msk)               /*!< CCMSRAM  Write protection page 28*/
 #define SYSCFG_SWPR_PAGE29_Pos         (29U)
-#define SYSCFG_SWPR_PAGE29_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE29_Pos)      /*!< 0x20000000 */
-#define SYSCFG_SWPR_PAGE29             (uint32_t)(SYSCFG_SWPR_PAGE29_Msk)                 /*!< CCMSRAM  Write protection page 29*/
+#define SYSCFG_SWPR_PAGE29_Msk         (0x1UL << SYSCFG_SWPR_PAGE29_Pos)      /*!< 0x20000000 */
+#define SYSCFG_SWPR_PAGE29             (SYSCFG_SWPR_PAGE29_Msk)               /*!< CCMSRAM  Write protection page 29*/
 #define SYSCFG_SWPR_PAGE30_Pos         (30U)
-#define SYSCFG_SWPR_PAGE30_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE30_Pos)      /*!< 0x40000000 */
-#define SYSCFG_SWPR_PAGE30             (uint32_t)(SYSCFG_SWPR_PAGE30_Msk)                 /*!< CCMSRAM  Write protection page 30*/
+#define SYSCFG_SWPR_PAGE30_Msk         (0x1UL << SYSCFG_SWPR_PAGE30_Pos)      /*!< 0x40000000 */
+#define SYSCFG_SWPR_PAGE30             (SYSCFG_SWPR_PAGE30_Msk)               /*!< CCMSRAM  Write protection page 30*/
 #define SYSCFG_SWPR_PAGE31_Pos         (31U)
-#define SYSCFG_SWPR_PAGE31_Msk         (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE31_Pos)      /*!< 0x80000000 */
-#define SYSCFG_SWPR_PAGE31             (uint32_t)(SYSCFG_SWPR_PAGE31_Msk)                 /*!< CCMSRAM  Write protection page 31*/
+#define SYSCFG_SWPR_PAGE31_Msk         (0x1UL << SYSCFG_SWPR_PAGE31_Pos)      /*!< 0x80000000 */
+#define SYSCFG_SWPR_PAGE31             (SYSCFG_SWPR_PAGE31_Msk)               /*!< CCMSRAM  Write protection page 31*/
+
 /******************  Bit definition for SYSCFG_SKR register  ****************/
 #define SYSCFG_SKR_KEY_Pos              (0U)
 #define SYSCFG_SKR_KEY_Msk              (0xFFUL << SYSCFG_SKR_KEY_Pos)         /*!< 0x000000FF */
@@ -13056,7 +13272,6 @@ typedef struct
                                           ((INSTANCE) == ADC345_COMMON) )
 
 
-
 /******************************** FDCAN Instances ******************************/
 #define IS_FDCAN_ALL_INSTANCE(INSTANCE) (((INSTANCE) == FDCAN1) || \
                                          ((INSTANCE) == FDCAN2))
@@ -13134,10 +13349,11 @@ typedef struct
                                          ((INSTANCE) == OPAMP2) || \
                                          ((INSTANCE) == OPAMP3))
 
-
 /******************************** PCD Instances *******************************/
 #define IS_PCD_ALL_INSTANCE(INSTANCE) ((INSTANCE) == USB)
 
+/******************************* QSPI Instances *******************************/
+#define IS_QSPI_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == QUADSPI)
 
 /******************************* RNG Instances ********************************/
 #define IS_RNG_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == RNG)
@@ -13500,7 +13716,6 @@ typedef struct
                                                        ((INSTANCE) == TIM16) || \
                                                        ((INSTANCE) == TIM17))
 
-
 /****************** TIM Instances : supporting bitfield OCCS in SMCR register *******************/
 #define IS_TIM_OCCS_INSTANCE(INSTANCE)                (((INSTANCE) == TIM1)  || \
                                                        ((INSTANCE) == TIM2)  || \
@@ -13525,9 +13740,6 @@ typedef struct
                                                        ((INSTANCE) == TIM16) || \
                                                        ((INSTANCE) == TIM17))
 
-/****************** TIM Instances : supporting synchronization ****************/
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
-
 /****************** TIM Instances : supporting ADC triggering through TRGO2 ***/
 #define IS_TIM_TRGO2_INSTANCE(INSTANCE)    (((INSTANCE) == TIM1)    || \
                                             ((INSTANCE) == TIM8))
@@ -13551,7 +13763,6 @@ typedef struct
                                          ((INSTANCE) == TIM15)  || \
                                          ((INSTANCE) == TIM16)  || \
                                          ((INSTANCE) == TIM17))
-
 
 /****************** TIM Instances : Advanced timer instances *******************/
 #define IS_TIM_ADVANCED_INSTANCE(INSTANCE)       (((INSTANCE) == TIM1)   || \

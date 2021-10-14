@@ -330,11 +330,11 @@ typedef struct
   */
 #define RCC_PERIPHCLK_RTC           0x00000001U
 #define RCC_PERIPHCLK_ADC           0x00000002U
-#if defined(STM32F103xE) || defined(STM32F103xG) || defined(STM32F105xC)\
- || defined(STM32F107xC)
+#if defined(STM32F101xE) || defined(STM32F101xG) || defined(STM32F103xE)\
+ || defined(STM32F103xG) || defined(STM32F105xC) || defined(STM32F107xC)
 #define RCC_PERIPHCLK_I2S2          0x00000004U
 #define RCC_PERIPHCLK_I2S3          0x00000008U
-#endif /* STM32F103xE || STM32F103xG || STM32F105xC || STM32F107xC */
+#endif /* STM32F101xE || STM32F101xG || STM32F103xE || STM32F103xG || STM32F105xC || STM32F107xC */
 #if defined(STM32F102x6) || defined(STM32F102xB) || defined(STM32F103x6)\
  || defined(STM32F103xB) || defined(STM32F103xE) || defined(STM32F103xG)\
  || defined(STM32F105xC) || defined(STM32F107xC)

@@ -10,7 +10,7 @@
  */
 
 #ifndef DRV_NOR_FLASH_H__
-#define DRV_NOR_FLASH_H__   
+#define DRV_NOR_FLASH_H__
 
 #include "es_conf_info_spi.h"
 

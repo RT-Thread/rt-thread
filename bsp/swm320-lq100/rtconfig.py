@@ -1,29 +1,25 @@
-# BSP Note: For TI EK-TM4C1294XL Tiva C Series Connected LancuhPad	(REV D)
-
 import os
-import sys
+
 # toolchains options
-CROSS_TOOL = 'gcc'
+ARCH='arm'
+CPU='cortex-m4'
+CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
-# device options
-ARCH = 'arm'
-CPU = 'cortex-m4'
-FPU = 'fpv4-sp-d16'
-FLOAT_ABI = 'softfp'
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
 
-# cross_tool provides the cross compiler
-# EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
-if CROSS_TOOL == 'gcc':
-    PLATFORM = 'gcc'
-    EXEC_PATH = '/Users/zhangyihong/.env/gcc-arm-none-eabi-5_4-2016q3/bin'
+# EXEC_PATH is the compiler execute path, for example, GCC, Keil MDK, IAR
+if  CROSS_TOOL == 'gcc':
+    PLATFORM    = 'gcc'
+    EXEC_PATH   = r'C:\Users\XXYYZZ'
 elif CROSS_TOOL == 'keil':
-    PLATFORM = 'armcc'
-    EXEC_PATH = 'C:/Keil_v5'
+    PLATFORM    = 'armcc'
+    EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-    PLATFORM = 'iar'
-    EXEC_PATH = 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.2'
+    PLATFORM    = 'iar'
+    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -34,18 +30,17 @@ BUILD = 'debug'
 if PLATFORM == 'gcc':
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
-    CXX = PREFIX + 'g++'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
+    CXX = PREFIX + 'g++'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=' + FPU + ' -mfloat-abi=' + \
-        FLOAT_ABI + ' -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE
+    TARGET_EXT = 'elf'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -g -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T drivers/linker_scripts/link.lds'
 
@@ -58,27 +53,30 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
+    CXXFLAGS = CFLAGS
+
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+
 elif PLATFORM == 'armcc':
-    # toolchains
     CC = 'armcc'
+    CXX = 'armcc'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cpu ' + CPU + '.fp '
-    CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
+    DEVICE = ' --cpu ' + CPU
+    CFLAGS = '-c ' + DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE + ' --apcs=interwork '
     LFLAGS = DEVICE + ' --scatter "drivers/linker_scripts/link.sct" --info sizes --info totals --info unused --info veneers --list rtthread.map --strict'
 
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/INC'
-    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/ARMCC/LIB'
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
+    LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 
     CFLAGS += ' -D__MICROLIB '
     AFLAGS += ' --pd "__MICROLIB SETA 1" '
     LFLAGS += ' --library_type=microlib '
-    EXEC_PATH += '/arm/armcc/bin/'
+    EXEC_PATH += '/ARM/ARMCC/bin/'
 
     if BUILD == 'debug':
         CFLAGS += ' -g -O0'
@@ -86,41 +84,41 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2'
 
+    CXXFLAGS = CFLAGS
+    CFLAGS += ' --c99'
+
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
-    # toolchains
     CC = 'iccarm'
+    CXX = 'iccarm'
     AS = 'iasmarm'
     AR = 'iarchive'
     LINK = 'ilinkarm'
     TARGET_EXT = 'out'
-
-    DEVICE = '-Dewarm' # + ' -D' + PART_TYPE
+    DEVICE = '-Dewarm'
 
     CFLAGS = DEVICE
     CFLAGS += ' --diag_suppress Pa050'
-    CFLAGS += ' --no_cse' 
-    CFLAGS += ' --no_unroll' 
-    CFLAGS += ' --no_inline' 
-    CFLAGS += ' --no_code_motion' 
-    CFLAGS += ' --no_tbaa' 
-    CFLAGS += ' --no_clustering' 
-    CFLAGS += ' --no_scheduling' 
-
-    CFLAGS += ' --endian=little' 
-    CFLAGS += ' --cpu=Cortex-M4' 
-    CFLAGS += ' -e' 
-    CFLAGS += ' --fpu=VFPv4_sp'
-    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
+    CFLAGS += ' --no_cse'
+    CFLAGS += ' --no_unroll'
+    CFLAGS += ' --no_inline'
+    CFLAGS += ' --no_code_motion'
+    CFLAGS += ' --no_tbaa'
+    CFLAGS += ' --no_clustering'
+    CFLAGS += ' --no_scheduling'
+    CFLAGS += ' --debug'
+    CFLAGS += ' --endian=little'
+    CFLAGS += ' --cpu=' + CPU
+    CFLAGS += ' -e'
+    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
     CFLAGS += ' --silent'
-        
+
     AFLAGS = DEVICE
-    AFLAGS += ' -s+' 
-    AFLAGS += ' -w+' 
-    AFLAGS += ' -r' 
-    AFLAGS += ' --cpu Cortex-M4' 
-    AFLAGS += ' --fpu VFPv4_sp' 
+    AFLAGS += ' -s+'
+    AFLAGS += ' -w+'
+    AFLAGS += ' -r'
+    AFLAGS += ' --cpu ' + CPU
     AFLAGS += ' -S'
 
     if BUILD == 'debug':
@@ -129,9 +127,9 @@ elif PLATFORM == 'iar':
     else:
         CFLAGS += ' -Oh'
 
+    CXXFLAGS = CFLAGS
     LFLAGS = ' --config "drivers/linker_scripts/link.icf"'
-    LFLAGS += ' --entry __iar_program_start'    
-    #LFLAGS += ' --silent'
+    LFLAGS += ' --entry __iar_program_start'
 
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
-    POST_ACTION = ''
+    POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'

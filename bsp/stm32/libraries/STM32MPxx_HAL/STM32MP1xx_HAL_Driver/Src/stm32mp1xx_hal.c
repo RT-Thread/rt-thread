@@ -54,7 +54,7 @@
  * @brief STM32MP1xx HAL Driver version number
    */
 #define __STM32MP1xx_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define __STM32MP1xx_HAL_VERSION_SUB1   (0x02U) /*!< [23:16] sub1 version */
+#define __STM32MP1xx_HAL_VERSION_SUB1   (0x04U) /*!< [23:16] sub1 version */
 #define __STM32MP1xx_HAL_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
 #define __STM32MP1xx_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32MP1xx_HAL_VERSION         ((__STM32MP1xx_HAL_VERSION_MAIN << 24)\
@@ -292,17 +292,15 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     return HAL_ERROR;
   }
   /* Configure the SysTick IRQ priority */
-//  if (TickPriority < (1UL << __NVIC_PRIO_BITS))
-//  {
-//    HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
-//    uwTickPrio = TickPriority;
-//  }
-//  else
-//  {
-//    return HAL_ERROR;
-//  }
+  if (TickPriority < (1UL << __NVIC_PRIO_BITS))
+  {
     HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
     uwTickPrio = TickPriority;
+  }
+  else
+  {
+    return HAL_ERROR;
+  }
 #endif /* CORE_CM4 */
 
 
@@ -705,8 +703,8 @@ void HAL_SYSCFG_ETHInterfaceSelect(uint32_t SYSCFG_ETHInterface)
 {
   /* Check the parameter */
   assert_param(IS_SYSCFG_ETHERNET_CONFIG(SYSCFG_ETHInterface));
-  SET_BIT(SYSCFG->PMCCLRR, SYSCFG_PMCSETR_ETH_SEL|SYSCFG_PMCSETR_ETH_SELMII_SEL);
-  SET_BIT(SYSCFG->PMCSETR, (uint32_t)(SYSCFG_ETHInterface));
+  SYSCFG->PMCCLRR = SYSCFG_PMCSETR_ETH_SEL|SYSCFG_PMCSETR_ETH_SELMII_SEL;
+  SYSCFG->PMCSETR = (uint32_t)(SYSCFG_ETHInterface);
 }
 
 /**
@@ -729,8 +727,8 @@ void HAL_SYSCFG_AnalogSwitchConfig(uint32_t SYSCFG_AnalogSwitch , uint32_t SYSCF
   /* Check the parameter */
   assert_param(IS_SYSCFG_ANALOG_SWITCH(SYSCFG_AnalogSwitch));
   assert_param(IS_SYSCFG_SWITCH_STATE(SYSCFG_SwitchState));
-  SET_BIT(SYSCFG->PMCCLRR, SYSCFG_AnalogSwitch);
-  SET_BIT(SYSCFG->PMCSETR, (uint32_t)(SYSCFG_SwitchState));
+  SYSCFG->PMCCLRR = SYSCFG_AnalogSwitch;
+  SYSCFG->PMCSETR = (uint32_t)(SYSCFG_SwitchState);
 
 }
 
@@ -745,7 +743,8 @@ void HAL_SYSCFG_AnalogSwitchConfig(uint32_t SYSCFG_AnalogSwitch , uint32_t SYSCF
   */
 void HAL_SYSCFG_EnableBOOST(void)
 {
-  SET_BIT(SYSCFG->PMCSETR, SYSCFG_PMCSETR_EN_BOOSTER) ;
+  SYSCFG->PMCSETR = SYSCFG_PMCSETR_EN_BOOSTER;
+
 }
 
 /**
@@ -757,7 +756,7 @@ void HAL_SYSCFG_EnableBOOST(void)
   */
 void HAL_SYSCFG_DisableBOOST(void)
 {
-  SET_BIT(SYSCFG->PMCCLRR, SYSCFG_PMCCLRR_EN_BOOSTER) ;
+  SYSCFG->PMCCLRR = SYSCFG_PMCCLRR_EN_BOOSTER;
 }
 
 
@@ -770,9 +769,9 @@ void HAL_SYSCFG_DisableBOOST(void)
 void HAL_EnableCompensationCell(void)
 {
 #if defined(CORE_CM4)
-  SET_BIT(SYSCFG->CMPENSETR, SYSCFG_CMPENSETR_MCU_EN) ;
+  SYSCFG->CMPENSETR = SYSCFG_CMPENSETR_MCU_EN;
 #elif defined(CORE_CA7)
-  SET_BIT(SYSCFG->CMPENSETR, SYSCFG_CMPENSETR_MPU_EN) ;
+  SYSCFG->CMPENSETR = SYSCFG_CMPENSETR_MPU_EN;
 #endif
 }
 
@@ -785,9 +784,9 @@ void HAL_EnableCompensationCell(void)
 void HAL_DisableCompensationCell(void)
 {
 #if defined(CORE_CM4)
-  SET_BIT(SYSCFG->CMPENCLRR, SYSCFG_CMPENCLRR_MCU_EN) ;
+  SYSCFG->CMPENCLRR = SYSCFG_CMPENCLRR_MCU_EN;
 #elif defined(CORE_CA7)
-  SET_BIT(SYSCFG->CMPENCLRR, SYSCFG_CMPENCLRR_MPU_EN) ;
+  SYSCFG->CMPENCLRR = SYSCFG_CMPENCLRR_MPU_EN;
 #endif
 }
 
@@ -808,7 +807,7 @@ void HAL_DisableCompensationCell(void)
   */
 void HAL_SYSCFG_EnableIOSpeedOptimize(uint32_t SYSCFG_HighSpeedSignal )
 {
-  SET_BIT(SYSCFG->IOCTRLSETR, SYSCFG_HighSpeedSignal) ;
+  SYSCFG->IOCTRLSETR = SYSCFG_HighSpeedSignal;
 }
 
 /**
@@ -827,7 +826,7 @@ void HAL_SYSCFG_EnableIOSpeedOptimize(uint32_t SYSCFG_HighSpeedSignal )
   */
 void HAL_SYSCFG_DisableIOSpeedOptimize(uint32_t SYSCFG_HighSpeedSignal )
 {
-  SET_BIT(SYSCFG->IOCTRLCLRR, SYSCFG_HighSpeedSignal) ;
+  SYSCFG->IOCTRLCLRR = SYSCFG_HighSpeedSignal;
 }
 
 /**
@@ -874,8 +873,8 @@ void HAL_SYSCFG_DisableIOCompensation(void)
   uint32_t nmos_val = 0;
 
   /* Get I/O compensation cell values for PMOS and NMOS transistors */
-  pmos_val = __HAL_SYSCFG_GET_PMOS_CMP();
-  nmos_val = __HAL_SYSCFG_GET_NMOS_CMP();
+  pmos_val = (__HAL_SYSCFG_GET_PMOS_CMP() >> 28);
+  nmos_val = (__HAL_SYSCFG_GET_NMOS_CMP() >> 24);
 
   /* Copy actual value of SYSCFG_CMPCR.APSRC[3:0]/ANSRC[3:0] in
    * SYSCFG_CMPCR.RAPSRC[3:0]/RANSRC[3:0]

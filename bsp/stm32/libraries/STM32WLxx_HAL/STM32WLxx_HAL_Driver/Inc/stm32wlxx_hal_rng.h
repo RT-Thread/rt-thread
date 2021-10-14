@@ -363,15 +363,14 @@ uint32_t             HAL_RNG_GetError(RNG_HandleTypeDef *hrng);
   * @}
   */
 
-/* Private functions----------------------------------------------------------*/
-/** @defgroup RNG_Private_Functions RNG Private Functions
+/* Private functions ---------------------------------------------------------*/
+/** @defgroup RNG_Private_Functions RNG Private functions
   * @{
   */
 HAL_StatusTypeDef RNG_RecoverSeedError(RNG_HandleTypeDef *hrng);
 /**
   * @}
   */
-
 /**
   * @}
   */

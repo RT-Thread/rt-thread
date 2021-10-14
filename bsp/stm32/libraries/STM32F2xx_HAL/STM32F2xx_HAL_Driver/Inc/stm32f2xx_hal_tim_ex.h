@@ -107,16 +107,16 @@ typedef struct
 /** @defgroup TIMEx_Private_Macros TIM Extended Private Macros
   * @{
   */
-#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                       \
-        ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_TIM8_TRGO)      || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
-                                    ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
-         (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSI)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_LSE)            || \
-                                    ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
-         (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
-                                    ((TIM_REMAP) == TIM_TIM11_HSE))))
+#define IS_TIM_REMAP(INSTANCE, TIM_REMAP)                                 \
+  ((((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_TIM8_TRGO)      || \
+                              ((TIM_REMAP) == TIM_TIM2_USBFS_SOF)      || \
+                              ((TIM_REMAP) == TIM_TIM2_USBHS_SOF)))    || \
+   (((INSTANCE) == TIM5)  && (((TIM_REMAP) == TIM_TIM5_GPIO)           || \
+                              ((TIM_REMAP) == TIM_TIM5_LSI)            || \
+                              ((TIM_REMAP) == TIM_TIM5_LSE)            || \
+                              ((TIM_REMAP) == TIM_TIM5_RTC)))          || \
+   (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO)          || \
+                              ((TIM_REMAP) == TIM_TIM11_HSE))))
 
 /**
   * @}
@@ -245,6 +245,7 @@ void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim);
   */
 /* Extended Peripheral State functions  ***************************************/
 HAL_TIM_StateTypeDef HAL_TIMEx_HallSensor_GetState(TIM_HandleTypeDef *htim);
+HAL_TIM_ChannelStateTypeDef HAL_TIMEx_GetChannelNState(TIM_HandleTypeDef *htim,  uint32_t ChannelN);
 /**
   * @}
   */

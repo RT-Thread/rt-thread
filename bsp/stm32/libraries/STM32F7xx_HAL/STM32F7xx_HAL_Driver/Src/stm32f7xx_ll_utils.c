@@ -193,7 +193,6 @@
   */
 static uint32_t    UTILS_GetPLLOutputFrequency(uint32_t PLL_InputFrequency,
                                                LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct);
-static ErrorStatus UTILS_SetFlashLatency(uint32_t HCLK_Frequency);
 static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
 static ErrorStatus UTILS_PLL_IsBusy(void);
 /**
@@ -314,6 +313,161 @@ void LL_SetSystemCoreClock(uint32_t HCLKFrequency)
 {
   /* HCLK clock frequency */
   SystemCoreClock = HCLKFrequency;
+}
+
+/**
+  * @brief  Update number of Flash wait states in line with new frequency and current
+            voltage range.
+  * @note   This Function support ONLY devices with supply voltage (voltage range) between 2.7V and 3.6V
+  * @param  HCLK_Frequency  HCLK frequency
+  * @retval An ErrorStatus enumeration value:
+  *          - SUCCESS: Latency has been modified
+  *          - ERROR: Latency cannot be modified
+  */
+ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
+{
+  uint32_t timeout;
+  uint32_t getlatency;
+  uint32_t latency = LL_FLASH_LATENCY_0;  /* default value 0WS */
+  ErrorStatus status = SUCCESS;
+
+  /* Frequency cannot be equal to 0 */
+  if(HCLK_Frequency == 0U)
+  {
+    status = ERROR;
+  }
+  else
+  {
+    if(LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE1)
+    {
+      if(LL_PWR_IsEnabledOverDriveMode() != 0U)
+        {
+          if(HCLK_Frequency > UTILS_SCALE1_LATENCY7_FREQ)
+          {
+            /* 210 < HCLK <= 216 => 7WS (8 CPU cycles) */
+            latency = LL_FLASH_LATENCY_7;
+          }
+          else /* (HCLK_Frequency > UTILS_SCALE1_LATENCY6_FREQ) */
+          {
+            /* 180 < HCLK <= 210 => 6WS (7 CPU cycles) */
+            latency = LL_FLASH_LATENCY_6;
+          }
+        }
+      if((HCLK_Frequency > UTILS_SCALE1_LATENCY5_FREQ) && (latency == LL_FLASH_LATENCY_0))
+      {
+        /* 150 < HCLK <= 180 => 5WS (6 CPU cycles) */
+        latency = LL_FLASH_LATENCY_5;
+      }
+      else if((HCLK_Frequency > UTILS_SCALE1_LATENCY4_FREQ) && (latency == LL_FLASH_LATENCY_0))
+      {
+        /* 120 < HCLK <= 150 => 4WS (5 CPU cycles) */
+        latency = LL_FLASH_LATENCY_4;
+      }
+      else if((HCLK_Frequency > UTILS_SCALE1_LATENCY3_FREQ) && (latency == LL_FLASH_LATENCY_0))
+      {
+        /* 90 < HCLK <= 120 => 3WS (4 CPU cycles) */
+        latency = LL_FLASH_LATENCY_3;
+      }
+      else if((HCLK_Frequency > UTILS_SCALE1_LATENCY2_FREQ) && (latency == LL_FLASH_LATENCY_0))
+      {
+        /* 60 < HCLK <= 90 => 2WS (3 CPU cycles) */
+        latency = LL_FLASH_LATENCY_2;
+      }
+      else
+      {
+        if((HCLK_Frequency > UTILS_SCALE1_LATENCY1_FREQ) && (latency == LL_FLASH_LATENCY_0))
+        {
+          /* 30 < HCLK <= 60 => 1WS (2 CPU cycles) */
+          latency = LL_FLASH_LATENCY_1;
+        }
+        /* else HCLK_Frequency < 30MHz default LL_FLASH_LATENCY_0 0WS */
+      }
+    }
+    else if(LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE2)
+    {
+      if(HCLK_Frequency > UTILS_SCALE2_LATENCY5_FREQ)
+      {
+        /* 150 < HCLK <= 168 OR 150 < HCLK <= 180 (when OverDrive mode is enable) => 5WS (6 CPU cycles) */
+        latency = LL_FLASH_LATENCY_5;
+      }
+      else if(HCLK_Frequency > UTILS_SCALE2_LATENCY4_FREQ)
+      {
+        /* 120 < HCLK <= 150 => 4WS (5 CPU cycles) */
+        latency = LL_FLASH_LATENCY_4;
+      }
+      else if(HCLK_Frequency > UTILS_SCALE2_LATENCY3_FREQ)
+      {
+        /* 90 < HCLK <= 120 => 3WS (4 CPU cycles) */
+        latency = LL_FLASH_LATENCY_3;
+      }
+      else if(HCLK_Frequency > UTILS_SCALE2_LATENCY2_FREQ)
+      {
+        /* 60 < HCLK <= 90 => 2WS (3 CPU cycles) */
+        latency = LL_FLASH_LATENCY_2;
+      }
+      else
+      {
+        if(HCLK_Frequency > UTILS_SCALE2_LATENCY1_FREQ)
+        {
+          /* 30 < HCLK <= 60 => 1WS (2 CPU cycles) */
+          latency = LL_FLASH_LATENCY_1;
+        }
+        /* else HCLK_Frequency < 24MHz default LL_FLASH_LATENCY_0 0WS */
+      }
+    }
+    else /* Scale 3 */
+    {
+      if(HCLK_Frequency > UTILS_SCALE3_LATENCY4_FREQ)
+      {
+        /* 120 < HCLK <= 144 => 4WS (5 CPU cycles) */
+        latency = LL_FLASH_LATENCY_4;
+      }
+      else if(HCLK_Frequency > UTILS_SCALE3_LATENCY3_FREQ)
+      {
+        /* 90 < HCLK <= 120 => 3WS (4 CPU cycles) */
+        latency = LL_FLASH_LATENCY_3;
+      }
+      else if(HCLK_Frequency > UTILS_SCALE3_LATENCY2_FREQ)
+      {
+        /* 60 < HCLK <= 90 => 2WS (3 CPU cycles) */
+        latency = LL_FLASH_LATENCY_2;
+      }
+      else
+      {
+        if(HCLK_Frequency > UTILS_SCALE3_LATENCY1_FREQ)
+        {
+          /* 30 < HCLK <= 60 => 1WS (2 CPU cycles) */
+          latency = LL_FLASH_LATENCY_1;
+        }
+        /* else HCLK_Frequency < 22MHz default LL_FLASH_LATENCY_0 0WS */
+      }
+    }
+
+    if (status != ERROR)
+    {
+      LL_FLASH_SetLatency(latency);
+
+      /* Check that the new number of wait states is taken into account to access the Flash
+           memory by reading the FLASH_ACR register */
+      timeout = 2;
+      do
+      {
+      /* Wait for Flash latency to be updated */
+      getlatency = LL_FLASH_GetLatency();
+      timeout--;
+      } while ((getlatency != latency) && (timeout > 0));
+
+      if(getlatency != latency)
+      {
+        status = ERROR;
+      }
+      else
+      {
+        status = SUCCESS;
+      }
+    }
+  }
+  return status;
 }
 
 /**
@@ -455,145 +609,6 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypa
   * @{
   */
 /**
-  * @brief  Update number of Flash wait states in line with new frequency and current
-            voltage range.
-  * @note   This Function support ONLY devices with supply voltage (voltage range) between 2.7V and 3.6V
-  * @param  HCLK_Frequency  HCLK frequency
-  * @retval An ErrorStatus enumeration value:
-  *          - SUCCESS: Latency has been modified
-  *          - ERROR: Latency cannot be modified
-  */
-static ErrorStatus UTILS_SetFlashLatency(uint32_t HCLK_Frequency)
-{
-  ErrorStatus status = SUCCESS;
-
-  uint32_t latency = LL_FLASH_LATENCY_0;  /* default value 0WS */
-
-  /* Frequency cannot be equal to 0 */
-  if(HCLK_Frequency == 0U)
-  {
-    status = ERROR;
-  }
-  else
-  {
-    if(LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE1)
-    {
-      if(LL_PWR_IsEnabledOverDriveMode() != 0U)
-        {
-          if(HCLK_Frequency > UTILS_SCALE1_LATENCY7_FREQ)
-          {
-            /* 210 < HCLK <= 216 => 7WS (8 CPU cycles) */
-            latency = LL_FLASH_LATENCY_7;
-          }
-          else /* (HCLK_Frequency > UTILS_SCALE1_LATENCY6_FREQ) */
-          {
-            /* 180 < HCLK <= 210 => 6WS (7 CPU cycles) */
-            latency = LL_FLASH_LATENCY_6;
-          }
-        }
-      if((HCLK_Frequency > UTILS_SCALE1_LATENCY5_FREQ) && (latency == LL_FLASH_LATENCY_0))
-      {
-        /* 150 < HCLK <= 180 => 5WS (6 CPU cycles) */
-        latency = LL_FLASH_LATENCY_5;
-      }
-      else if((HCLK_Frequency > UTILS_SCALE1_LATENCY4_FREQ) && (latency == LL_FLASH_LATENCY_0))
-      {
-        /* 120 < HCLK <= 150 => 4WS (5 CPU cycles) */
-        latency = LL_FLASH_LATENCY_4;
-      }
-      else if((HCLK_Frequency > UTILS_SCALE1_LATENCY3_FREQ) && (latency == LL_FLASH_LATENCY_0))
-      {
-        /* 90 < HCLK <= 120 => 3WS (4 CPU cycles) */
-        latency = LL_FLASH_LATENCY_3;
-      }
-      else if((HCLK_Frequency > UTILS_SCALE1_LATENCY2_FREQ) && (latency == LL_FLASH_LATENCY_0))
-      {
-        /* 60 < HCLK <= 90 => 2WS (3 CPU cycles) */
-        latency = LL_FLASH_LATENCY_2;
-      }
-      else
-      {
-        if((HCLK_Frequency > UTILS_SCALE1_LATENCY1_FREQ) && (latency == LL_FLASH_LATENCY_0))
-        {
-          /* 30 < HCLK <= 60 => 1WS (2 CPU cycles) */
-          latency = LL_FLASH_LATENCY_1;
-        }
-        /* else HCLK_Frequency < 30MHz default LL_FLASH_LATENCY_0 0WS */
-      }
-    }
-    else if(LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE2)
-    {
-      if(HCLK_Frequency > UTILS_SCALE2_LATENCY5_FREQ)
-      {
-        /* 150 < HCLK <= 168 OR 150 < HCLK <= 180 (when OverDrive mode is enable) => 5WS (6 CPU cycles) */
-        latency = LL_FLASH_LATENCY_5;
-      }
-      else if(HCLK_Frequency > UTILS_SCALE2_LATENCY4_FREQ)
-      {
-        /* 120 < HCLK <= 150 => 4WS (5 CPU cycles) */
-        latency = LL_FLASH_LATENCY_4;
-      }
-      else if(HCLK_Frequency > UTILS_SCALE2_LATENCY3_FREQ)
-      {
-        /* 90 < HCLK <= 120 => 3WS (4 CPU cycles) */
-        latency = LL_FLASH_LATENCY_3;
-      }
-      else if(HCLK_Frequency > UTILS_SCALE2_LATENCY2_FREQ)
-      {
-        /* 60 < HCLK <= 90 => 2WS (3 CPU cycles) */
-        latency = LL_FLASH_LATENCY_2;
-      }
-      else
-      {
-        if(HCLK_Frequency > UTILS_SCALE2_LATENCY1_FREQ)
-        {
-          /* 30 < HCLK <= 60 => 1WS (2 CPU cycles) */
-          latency = LL_FLASH_LATENCY_1;
-        }
-        /* else HCLK_Frequency < 24MHz default LL_FLASH_LATENCY_0 0WS */
-      }
-    }
-    else /* Scale 3 */
-    {
-      if(HCLK_Frequency > UTILS_SCALE3_LATENCY4_FREQ)
-      {
-        /* 120 < HCLK <= 144 => 4WS (5 CPU cycles) */
-        latency = LL_FLASH_LATENCY_4;
-      }
-      else if(HCLK_Frequency > UTILS_SCALE3_LATENCY3_FREQ)
-      {
-        /* 90 < HCLK <= 120 => 3WS (4 CPU cycles) */
-        latency = LL_FLASH_LATENCY_3;
-      }
-      else if(HCLK_Frequency > UTILS_SCALE3_LATENCY2_FREQ)
-      {
-        /* 60 < HCLK <= 90 => 2WS (3 CPU cycles) */
-        latency = LL_FLASH_LATENCY_2;
-      }
-      else
-      {
-        if(HCLK_Frequency > UTILS_SCALE3_LATENCY1_FREQ)
-        {
-          /* 30 < HCLK <= 60 => 1WS (2 CPU cycles) */
-          latency = LL_FLASH_LATENCY_1;
-        }
-        /* else HCLK_Frequency < 22MHz default LL_FLASH_LATENCY_0 0WS */
-      }
-    }
-
-    LL_FLASH_SetLatency(latency);
-
-    /* Check that the new number of wait states is taken into account to access the Flash
-       memory by reading the FLASH_ACR register */
-    if(LL_FLASH_GetLatency() != latency)
-    {
-      status = ERROR;
-    }
-  }
-  return status;
-}
-
-/**
   * @brief  Function to check that PLL can be modified
   * @param  PLL_InputFrequency  PLL input frequency (in Hz)
   * @param  UTILS_PLLInitStruct pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
@@ -682,7 +697,7 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   if(SystemCoreClock < hclk_frequency)
   {
     /* Set FLASH latency to highest latency */
-    status = UTILS_SetFlashLatency(hclk_frequency);
+    status = LL_SetFlashLatency(hclk_frequency);
   }
 
   /* Update system clock configuration */
@@ -712,7 +727,7 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   if(SystemCoreClock > hclk_frequency)
   {
     /* Set FLASH latency to lowest latency */
-    status = UTILS_SetFlashLatency(hclk_frequency);
+    status = LL_SetFlashLatency(hclk_frequency);
   }
 
   /* Update SystemCoreClock variable */

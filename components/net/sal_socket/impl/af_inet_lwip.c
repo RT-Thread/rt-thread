@@ -17,7 +17,7 @@
 #include <lwip/netif.h>
 
 #ifdef SAL_USING_POSIX
-#include <dfs_poll.h>
+#include <poll.h>
 #endif
 
 #include <sal.h>

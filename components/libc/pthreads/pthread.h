@@ -265,6 +265,11 @@ int pthread_barrier_init(pthread_barrier_t           *barrier,
 
 int pthread_barrier_wait(pthread_barrier_t *barrier);
 
+int pthread_setspecific(pthread_key_t key, const void *value);
+void *pthread_getspecific(pthread_key_t key);
+int pthread_key_create(pthread_key_t *key, void (*destructor)(void *));
+int pthread_key_delete(pthread_key_t key);
+
 #ifdef __cplusplus
 }
 #endif

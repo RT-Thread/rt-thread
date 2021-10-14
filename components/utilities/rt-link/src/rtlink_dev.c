@@ -21,7 +21,7 @@
 
 #ifdef RT_USING_POSIX
 #include <dfs_posix.h>
-#include <dfs_poll.h>
+#include <poll.h>
 
 int rtlink_fops_open(struct dfs_fd *fd)
 {

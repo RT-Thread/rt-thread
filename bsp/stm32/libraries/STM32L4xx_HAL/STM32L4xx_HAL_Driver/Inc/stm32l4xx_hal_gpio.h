@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_HAL_GPIO_H
-#define __STM32L4xx_HAL_GPIO_H
+#ifndef STM32L4xx_HAL_GPIO_H
+#define STM32L4xx_HAL_GPIO_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -165,7 +165,7 @@ typedef enum
 
 /**
   * @brief  Check whether the specified EXTI line flag is set or not.
-  * @param  __EXTI_LINE__: specifies the EXTI line flag to check.
+  * @param  __EXTI_LINE__ specifies the EXTI line flag to check.
   *         This parameter can be GPIO_PIN_x where x can be(0..15)
   * @retval The new state of __EXTI_LINE__ (SET or RESET).
   */
@@ -173,7 +173,7 @@ typedef enum
 
 /**
   * @brief  Clear the EXTI's line pending flags.
-  * @param  __EXTI_LINE__: specifies the EXTI lines flags to clear.
+  * @param  __EXTI_LINE__ specifies the EXTI lines flags to clear.
   *         This parameter can be any combination of GPIO_PIN_x where x can be (0..15)
   * @retval None
   */
@@ -181,7 +181,7 @@ typedef enum
 
 /**
   * @brief  Check whether the specified EXTI line is asserted or not.
-  * @param  __EXTI_LINE__: specifies the EXTI line to check.
+  * @param  __EXTI_LINE__ specifies the EXTI line to check.
   *          This parameter can be GPIO_PIN_x where x can be(0..15)
   * @retval The new state of __EXTI_LINE__ (SET or RESET).
   */
@@ -189,7 +189,7 @@ typedef enum
 
 /**
   * @brief  Clear the EXTI's line pending bits.
-  * @param  __EXTI_LINE__: specifies the EXTI lines to clear.
+  * @param  __EXTI_LINE__ specifies the EXTI lines to clear.
   *          This parameter can be any combination of GPIO_PIN_x where x can be (0..15)
   * @retval None
   */
@@ -197,7 +197,7 @@ typedef enum
 
 /**
   * @brief  Generate a Software interrupt on selected EXTI line.
-  * @param  __EXTI_LINE__: specifies the EXTI line to check.
+  * @param  __EXTI_LINE__ specifies the EXTI line to check.
   *          This parameter can be GPIO_PIN_x where x can be(0..15)
   * @retval None
   */
@@ -295,6 +295,6 @@ void              HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 }
 #endif
 
-#endif /* __STM32L4xx_HAL_GPIO_H */
+#endif /* STM32L4xx_HAL_GPIO_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

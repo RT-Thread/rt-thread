@@ -245,7 +245,7 @@ ErrorStatus LL_RTC_TIME_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_Time
   if (LL_RTC_EnterInitMode(RTCx) != ERROR)
   {
     /* Check the input parameters format */
-    if (RTC_Format != LL_RTC_FORMAT_BIN)
+    if (RTC_Format == LL_RTC_FORMAT_BIN)
     {
       counter_time = (uint32_t)(((uint32_t)RTC_TimeStruct->Hours * 3600U) + \
                                 ((uint32_t)RTC_TimeStruct->Minutes * 60U) + \
@@ -319,7 +319,7 @@ ErrorStatus LL_RTC_ALARM_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_Ala
   if (LL_RTC_EnterInitMode(RTCx) != ERROR)
   {
     /* Check the input parameters format */
-    if (RTC_Format != LL_RTC_FORMAT_BIN)
+    if (RTC_Format == LL_RTC_FORMAT_BIN)
     {
       counter_alarm = (uint32_t)(((uint32_t)RTC_AlarmStruct->AlarmTime.Hours * 3600U) + \
                                  ((uint32_t)RTC_AlarmStruct->AlarmTime.Minutes * 60U) + \

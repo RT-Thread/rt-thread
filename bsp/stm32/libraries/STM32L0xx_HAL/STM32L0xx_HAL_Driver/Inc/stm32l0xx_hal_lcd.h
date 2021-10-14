@@ -118,12 +118,12 @@ typedef struct
 /** @defgroup  LCD_ErrorCode LCD Error Code
   * @{
   */ 
-#define HAL_LCD_ERROR_NONE       ((uint32_t)0x00U)    /*!< No error */
-#define HAL_LCD_ERROR_FCRSF      ((uint32_t)0x01U)    /*!< Synchro flag timeout error */
-#define HAL_LCD_ERROR_UDR        ((uint32_t)0x02U)    /*!< Update display request flag timeout error */
-#define HAL_LCD_ERROR_UDD        ((uint32_t)0x04U)    /*!< Update display done flag timeout error */
-#define HAL_LCD_ERROR_ENS        ((uint32_t)0x08U)    /*!< LCD enabled status flag timeout error */
-#define HAL_LCD_ERROR_RDY        ((uint32_t)0x10U)    /*!< LCD Booster ready timeout error */
+#define HAL_LCD_ERROR_NONE       (0x00U)    /*!< No error */
+#define HAL_LCD_ERROR_FCRSF      (0x01U)    /*!< Synchro flag timeout error */
+#define HAL_LCD_ERROR_UDR        (0x02U)    /*!< Update display request flag timeout error */
+#define HAL_LCD_ERROR_UDD        (0x04U)    /*!< Update display done flag timeout error */
+#define HAL_LCD_ERROR_ENS        (0x08U)    /*!< LCD enabled status flag timeout error */
+#define HAL_LCD_ERROR_RDY        (0x10U)    /*!< LCD Booster ready timeout error */
 /**
   * @}
   */
@@ -132,22 +132,22 @@ typedef struct
   * @{
   */
 
-#define LCD_PRESCALER_1        ((uint32_t)0x00000000U)  /*!< CLKPS = LCDCLK        */
-#define LCD_PRESCALER_2        ((uint32_t)0x00400000U)  /*!< CLKPS = LCDCLK/2      */
-#define LCD_PRESCALER_4        ((uint32_t)0x00800000U)  /*!< CLKPS = LCDCLK/4      */
-#define LCD_PRESCALER_8        ((uint32_t)0x00C00000U)  /*!< CLKPS = LCDCLK/8      */
-#define LCD_PRESCALER_16       ((uint32_t)0x01000000U)  /*!< CLKPS = LCDCLK/16     */
-#define LCD_PRESCALER_32       ((uint32_t)0x01400000U)  /*!< CLKPS = LCDCLK/32     */
-#define LCD_PRESCALER_64       ((uint32_t)0x01800000U)  /*!< CLKPS = LCDCLK/64     */
-#define LCD_PRESCALER_128      ((uint32_t)0x01C00000U)  /*!< CLKPS = LCDCLK/128    */
-#define LCD_PRESCALER_256      ((uint32_t)0x02000000U)  /*!< CLKPS = LCDCLK/256    */
-#define LCD_PRESCALER_512      ((uint32_t)0x02400000U)  /*!< CLKPS = LCDCLK/512    */
-#define LCD_PRESCALER_1024     ((uint32_t)0x02800000U)  /*!< CLKPS = LCDCLK/1024   */
-#define LCD_PRESCALER_2048     ((uint32_t)0x02C00000U)  /*!< CLKPS = LCDCLK/2048   */
-#define LCD_PRESCALER_4096     ((uint32_t)0x03000000U)  /*!< CLKPS = LCDCLK/4096   */
-#define LCD_PRESCALER_8192     ((uint32_t)0x03400000U)  /*!< CLKPS = LCDCLK/8192   */
-#define LCD_PRESCALER_16384    ((uint32_t)0x03800000U)  /*!< CLKPS = LCDCLK/16384  */
-#define LCD_PRESCALER_32768    ((uint32_t)LCD_FCR_PS)  /*!< CLKPS = LCDCLK/32768  */
+#define LCD_PRESCALER_1        (0x00000000U)  /*!< CLKPS = LCDCLK        */
+#define LCD_PRESCALER_2        (0x00400000U)  /*!< CLKPS = LCDCLK/2      */
+#define LCD_PRESCALER_4        (0x00800000U)  /*!< CLKPS = LCDCLK/4      */
+#define LCD_PRESCALER_8        (0x00C00000U)  /*!< CLKPS = LCDCLK/8      */
+#define LCD_PRESCALER_16       (0x01000000U)  /*!< CLKPS = LCDCLK/16     */
+#define LCD_PRESCALER_32       (0x01400000U)  /*!< CLKPS = LCDCLK/32     */
+#define LCD_PRESCALER_64       (0x01800000U)  /*!< CLKPS = LCDCLK/64     */
+#define LCD_PRESCALER_128      (0x01C00000U)  /*!< CLKPS = LCDCLK/128    */
+#define LCD_PRESCALER_256      (0x02000000U)  /*!< CLKPS = LCDCLK/256    */
+#define LCD_PRESCALER_512      (0x02400000U)  /*!< CLKPS = LCDCLK/512    */
+#define LCD_PRESCALER_1024     (0x02800000U)  /*!< CLKPS = LCDCLK/1024   */
+#define LCD_PRESCALER_2048     (0x02C00000U)  /*!< CLKPS = LCDCLK/2048   */
+#define LCD_PRESCALER_4096     (0x03000000U)  /*!< CLKPS = LCDCLK/4096   */
+#define LCD_PRESCALER_8192     (0x03400000U)  /*!< CLKPS = LCDCLK/8192   */
+#define LCD_PRESCALER_16384    (0x03800000U)  /*!< CLKPS = LCDCLK/16384  */
+#define LCD_PRESCALER_32768    (LCD_FCR_PS)  /*!< CLKPS = LCDCLK/32768  */
 
 #define IS_LCD_PRESCALER(__PRESCALER__) (((__PRESCALER__) == LCD_PRESCALER_1)     || \
                                          ((__PRESCALER__) == LCD_PRESCALER_2)     || \
@@ -174,22 +174,22 @@ typedef struct
   * @{
   */
 
-#define LCD_DIVIDER_16    ((uint32_t)0x00000000U)  /*!< LCD frequency = CLKPS/16 */
-#define LCD_DIVIDER_17    ((uint32_t)0x00040000U)  /*!< LCD frequency = CLKPS/17 */
-#define LCD_DIVIDER_18    ((uint32_t)0x00080000U)  /*!< LCD frequency = CLKPS/18 */
-#define LCD_DIVIDER_19    ((uint32_t)0x000C0000U)  /*!< LCD frequency = CLKPS/19 */
-#define LCD_DIVIDER_20    ((uint32_t)0x00100000U)  /*!< LCD frequency = CLKPS/20 */
-#define LCD_DIVIDER_21    ((uint32_t)0x00140000U)  /*!< LCD frequency = CLKPS/21 */
-#define LCD_DIVIDER_22    ((uint32_t)0x00180000U)  /*!< LCD frequency = CLKPS/22 */
-#define LCD_DIVIDER_23    ((uint32_t)0x001C0000U)  /*!< LCD frequency = CLKPS/23 */
-#define LCD_DIVIDER_24    ((uint32_t)0x00200000U)  /*!< LCD frequency = CLKPS/24 */
-#define LCD_DIVIDER_25    ((uint32_t)0x00240000U)  /*!< LCD frequency = CLKPS/25 */
-#define LCD_DIVIDER_26    ((uint32_t)0x00280000U)  /*!< LCD frequency = CLKPS/26 */
-#define LCD_DIVIDER_27    ((uint32_t)0x002C0000U)  /*!< LCD frequency = CLKPS/27 */
-#define LCD_DIVIDER_28    ((uint32_t)0x00300000U)  /*!< LCD frequency = CLKPS/28 */
-#define LCD_DIVIDER_29    ((uint32_t)0x00340000U)  /*!< LCD frequency = CLKPS/29 */
-#define LCD_DIVIDER_30    ((uint32_t)0x00380000U)  /*!< LCD frequency = CLKPS/30 */
-#define LCD_DIVIDER_31    ((uint32_t)LCD_FCR_DIV) /*!< LCD frequency = CLKPS/31 */
+#define LCD_DIVIDER_16    (0x00000000U)  /*!< LCD frequency = CLKPS/16 */
+#define LCD_DIVIDER_17    (0x00040000U)  /*!< LCD frequency = CLKPS/17 */
+#define LCD_DIVIDER_18    (0x00080000U)  /*!< LCD frequency = CLKPS/18 */
+#define LCD_DIVIDER_19    (0x000C0000U)  /*!< LCD frequency = CLKPS/19 */
+#define LCD_DIVIDER_20    (0x00100000U)  /*!< LCD frequency = CLKPS/20 */
+#define LCD_DIVIDER_21    (0x00140000U)  /*!< LCD frequency = CLKPS/21 */
+#define LCD_DIVIDER_22    (0x00180000U)  /*!< LCD frequency = CLKPS/22 */
+#define LCD_DIVIDER_23    (0x001C0000U)  /*!< LCD frequency = CLKPS/23 */
+#define LCD_DIVIDER_24    (0x00200000U)  /*!< LCD frequency = CLKPS/24 */
+#define LCD_DIVIDER_25    (0x00240000U)  /*!< LCD frequency = CLKPS/25 */
+#define LCD_DIVIDER_26    (0x00280000U)  /*!< LCD frequency = CLKPS/26 */
+#define LCD_DIVIDER_27    (0x002C0000U)  /*!< LCD frequency = CLKPS/27 */
+#define LCD_DIVIDER_28    (0x00300000U)  /*!< LCD frequency = CLKPS/28 */
+#define LCD_DIVIDER_29    (0x00340000U)  /*!< LCD frequency = CLKPS/29 */
+#define LCD_DIVIDER_30    (0x00380000U)  /*!< LCD frequency = CLKPS/30 */
+#define LCD_DIVIDER_31    (LCD_FCR_DIV) /*!< LCD frequency = CLKPS/31 */
 
 #define IS_LCD_DIVIDER(__DIVIDER__) (((__DIVIDER__) == LCD_DIVIDER_16) || \
                                      ((__DIVIDER__) == LCD_DIVIDER_17) || \
@@ -217,7 +217,7 @@ typedef struct
   * @{
   */
   
-#define LCD_DUTY_STATIC                 ((uint32_t)0x00000000U)           /*!< Static duty */
+#define LCD_DUTY_STATIC                 (0x00000000U)           /*!< Static duty */
 #define LCD_DUTY_1_2                    (LCD_CR_DUTY_0)                   /*!< 1/2 duty    */
 #define LCD_DUTY_1_3                    (LCD_CR_DUTY_1)                   /*!< 1/3 duty    */
 #define LCD_DUTY_1_4                    ((LCD_CR_DUTY_1 | LCD_CR_DUTY_0)) /*!< 1/4 duty    */
@@ -238,7 +238,7 @@ typedef struct
   * @{
   */
   
-#define LCD_BIAS_1_4                    ((uint32_t)0x00000000U) /*!< 1/4 Bias */
+#define LCD_BIAS_1_4                    (0x00000000U) /*!< 1/4 Bias */
 #define LCD_BIAS_1_2                    LCD_CR_BIAS_0           /*!< 1/2 Bias */
 #define LCD_BIAS_1_3                    LCD_CR_BIAS_1           /*!< 1/3 Bias */
 
@@ -253,7 +253,7 @@ typedef struct
   * @{
   */
   
-#define LCD_VOLTAGESOURCE_INTERNAL      ((uint32_t)0x00000000U) /*!< Internal voltage source for the LCD */
+#define LCD_VOLTAGESOURCE_INTERNAL      (0x00000000U) /*!< Internal voltage source for the LCD */
 #define LCD_VOLTAGESOURCE_EXTERNAL      LCD_CR_VSEL             /*!< External voltage source for the LCD */
 
 #define IS_LCD_VOLTAGE_SOURCE(SOURCE) (((SOURCE) == LCD_VOLTAGESOURCE_INTERNAL) || \
@@ -277,7 +277,7 @@ typedef struct
   * @{
   */
 
-#define LCD_PULSEONDURATION_0           ((uint32_t)0x00000000U)         /*!< Pulse ON duration = 0 pulse   */
+#define LCD_PULSEONDURATION_0           (0x00000000U)         /*!< Pulse ON duration = 0 pulse   */
 #define LCD_PULSEONDURATION_1           (LCD_FCR_PON_0)                 /*!< Pulse ON duration = 1/CK_PS  */
 #define LCD_PULSEONDURATION_2           (LCD_FCR_PON_1)                 /*!< Pulse ON duration = 2/CK_PS  */
 #define LCD_PULSEONDURATION_3           (LCD_FCR_PON_1 | LCD_FCR_PON_0) /*!< Pulse ON duration = 3/CK_PS  */
@@ -302,7 +302,7 @@ typedef struct
   * @{
   */
 
-#define LCD_HIGHDRIVE_0           ((uint32_t)0x00000000U)         /*!< Low resistance Drive   */
+#define LCD_HIGHDRIVE_0           (0x00000000U)         /*!< Low resistance Drive   */
 #define LCD_HIGHDRIVE_1           (LCD_FCR_HD)                    /*!< High resistance Drive  */
 
 #define IS_LCD_HIGHDRIVE(__HIGHDRIVE__) (((__HIGHDRIVE__) == LCD_HIGHDRIVE_0) || \
@@ -315,7 +315,7 @@ typedef struct
   * @{
   */
 
-#define LCD_DEADTIME_0                  ((uint32_t)0x00000000U)           /*!< No dead Time  */
+#define LCD_DEADTIME_0                  (0x00000000U)           /*!< No dead Time  */
 #define LCD_DEADTIME_1                  (LCD_FCR_DEAD_0)                  /*!< One Phase between different couple of Frame   */
 #define LCD_DEADTIME_2                  (LCD_FCR_DEAD_1)                  /*!< Two Phase between different couple of Frame   */
 #define LCD_DEADTIME_3                  (LCD_FCR_DEAD_1 | LCD_FCR_DEAD_0) /*!< Three Phase between different couple of Frame */
@@ -340,7 +340,7 @@ typedef struct
   * @{
   */
 
-#define LCD_BLINKMODE_OFF               ((uint32_t)0x00000000U) /*!< Blink disabled            */
+#define LCD_BLINKMODE_OFF               (0x00000000U) /*!< Blink disabled            */
 #define LCD_BLINKMODE_SEG0_COM0         (LCD_FCR_BLINK_0)       /*!< Blink enabled on SEG[0], COM[0] (1 pixel)   */
 #define LCD_BLINKMODE_SEG0_ALLCOM       (LCD_FCR_BLINK_1)       /*!< Blink enabled on SEG[0], all COM (up to 
                                                                     8 pixels according to the programmed duty)  */
@@ -358,7 +358,7 @@ typedef struct
   * @{
   */
 
-#define LCD_BLINKFREQUENCY_DIV8         ((uint32_t)0x00000000U)               /*!< The Blink frequency = fLCD/8    */
+#define LCD_BLINKFREQUENCY_DIV8         (0x00000000U)               /*!< The Blink frequency = fLCD/8    */
 #define LCD_BLINKFREQUENCY_DIV16        (LCD_FCR_BLINKF_0)                    /*!< The Blink frequency = fLCD/16   */
 #define LCD_BLINKFREQUENCY_DIV32        (LCD_FCR_BLINKF_1)                    /*!< The Blink frequency = fLCD/32   */
 #define LCD_BLINKFREQUENCY_DIV64        (LCD_FCR_BLINKF_1 | LCD_FCR_BLINKF_0) /*!< The Blink frequency = fLCD/64   */
@@ -383,7 +383,7 @@ typedef struct
   * @{
   */
 
-#define LCD_CONTRASTLEVEL_0               ((uint32_t)0x00000000U)       /*!< Maximum Voltage = 2.60V    */
+#define LCD_CONTRASTLEVEL_0               (0x00000000U)       /*!< Maximum Voltage = 2.60V    */
 #define LCD_CONTRASTLEVEL_1               (LCD_FCR_CC_0)                /*!< Maximum Voltage = 2.73V    */
 #define LCD_CONTRASTLEVEL_2               (LCD_FCR_CC_1)                /*!< Maximum Voltage = 2.86V    */
 #define LCD_CONTRASTLEVEL_3               (LCD_FCR_CC_1 | LCD_FCR_CC_0) /*!< Maximum Voltage = 2.99V    */
@@ -408,7 +408,7 @@ typedef struct
   * @{
   */
 
-#define LCD_MUXSEGMENT_DISABLE            ((uint32_t)0x00000000U)       /*!< SEG pin multiplexing disabled */
+#define LCD_MUXSEGMENT_DISABLE            (0x00000000U)       /*!< SEG pin multiplexing disabled */
 #define LCD_MUXSEGMENT_ENABLE             (LCD_CR_MUX_SEG)              /*!< SEG[31:28] are multiplexed with SEG[43:40]    */
 
 #define IS_LCD_MUXSEGMENT(__VALUE__) (((__VALUE__) == LCD_MUXSEGMENT_ENABLE) || \
@@ -421,7 +421,7 @@ typedef struct
   * @{
   */
 
-#define LCD_VOLTBUFOUT_DISABLE            ((uint32_t)0x00000000U)       /*!< Voltage output buffer disabled */
+#define LCD_VOLTBUFOUT_DISABLE            (0x00000000U)       /*!< Voltage output buffer disabled */
 #define LCD_VOLTBUFOUT_ENABLE             (LCD_CR_BUFEN)                /*!< BUFEN[1] Voltage output buffer enabled    */
 
 #define IS_LCD_VOLTBUFOUT(__VALUE__) (((__VALUE__) == LCD_VOLTBUFOUT_ENABLE) || \
@@ -449,22 +449,22 @@ typedef struct
   * @{
   */
 
-#define LCD_RAM_REGISTER0               ((uint32_t)0x00000000U) /*!< LCD RAM Register 0  */
-#define LCD_RAM_REGISTER1               ((uint32_t)0x00000001U) /*!< LCD RAM Register 1  */
-#define LCD_RAM_REGISTER2               ((uint32_t)0x00000002U) /*!< LCD RAM Register 2  */
-#define LCD_RAM_REGISTER3               ((uint32_t)0x00000003U) /*!< LCD RAM Register 3  */
-#define LCD_RAM_REGISTER4               ((uint32_t)0x00000004U) /*!< LCD RAM Register 4  */
-#define LCD_RAM_REGISTER5               ((uint32_t)0x00000005U) /*!< LCD RAM Register 5  */
-#define LCD_RAM_REGISTER6               ((uint32_t)0x00000006U) /*!< LCD RAM Register 6  */
-#define LCD_RAM_REGISTER7               ((uint32_t)0x00000007U) /*!< LCD RAM Register 7  */
-#define LCD_RAM_REGISTER8               ((uint32_t)0x00000008U) /*!< LCD RAM Register 8  */
-#define LCD_RAM_REGISTER9               ((uint32_t)0x00000009U) /*!< LCD RAM Register 9  */
-#define LCD_RAM_REGISTER10              ((uint32_t)0x0000000AU) /*!< LCD RAM Register 10 */
-#define LCD_RAM_REGISTER11              ((uint32_t)0x0000000BU) /*!< LCD RAM Register 11 */
-#define LCD_RAM_REGISTER12              ((uint32_t)0x0000000CU) /*!< LCD RAM Register 12 */
-#define LCD_RAM_REGISTER13              ((uint32_t)0x0000000DU) /*!< LCD RAM Register 13 */
-#define LCD_RAM_REGISTER14              ((uint32_t)0x0000000EU) /*!< LCD RAM Register 14 */
-#define LCD_RAM_REGISTER15              ((uint32_t)0x0000000FU) /*!< LCD RAM Register 15 */
+#define LCD_RAM_REGISTER0               (0x00000000U) /*!< LCD RAM Register 0  */
+#define LCD_RAM_REGISTER1               (0x00000001U) /*!< LCD RAM Register 1  */
+#define LCD_RAM_REGISTER2               (0x00000002U) /*!< LCD RAM Register 2  */
+#define LCD_RAM_REGISTER3               (0x00000003U) /*!< LCD RAM Register 3  */
+#define LCD_RAM_REGISTER4               (0x00000004U) /*!< LCD RAM Register 4  */
+#define LCD_RAM_REGISTER5               (0x00000005U) /*!< LCD RAM Register 5  */
+#define LCD_RAM_REGISTER6               (0x00000006U) /*!< LCD RAM Register 6  */
+#define LCD_RAM_REGISTER7               (0x00000007U) /*!< LCD RAM Register 7  */
+#define LCD_RAM_REGISTER8               (0x00000008U) /*!< LCD RAM Register 8  */
+#define LCD_RAM_REGISTER9               (0x00000009U) /*!< LCD RAM Register 9  */
+#define LCD_RAM_REGISTER10              (0x0000000AU) /*!< LCD RAM Register 10 */
+#define LCD_RAM_REGISTER11              (0x0000000BU) /*!< LCD RAM Register 11 */
+#define LCD_RAM_REGISTER12              (0x0000000CU) /*!< LCD RAM Register 12 */
+#define LCD_RAM_REGISTER13              (0x0000000DU) /*!< LCD RAM Register 13 */
+#define LCD_RAM_REGISTER14              (0x0000000EU) /*!< LCD RAM Register 14 */
+#define LCD_RAM_REGISTER15              (0x0000000FU) /*!< LCD RAM Register 15 */
 
 #define IS_LCD_RAM_REGISTER(__REGISTER__) (((__REGISTER__) == LCD_RAM_REGISTER0)  || \
                                            ((__REGISTER__) == LCD_RAM_REGISTER1)  || \

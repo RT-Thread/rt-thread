@@ -66,10 +66,10 @@ static void (*rt_free_hook)(void *ptr);
 /**@{*/
 
 /**
- * This function will set a hook function, which will be invoked when a memory
- * block is allocated from heap memory.
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is allocated from heap memory.
  *
- * @param hook the hook function
+ * @param hook the hook function.
  */
 void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
 {
@@ -77,8 +77,8 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
 }
 
 /**
- * This function will set a hook function, which will be invoked when a memory
- * block is released to heap memory.
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is released to heap memory.
  *
  * @param hook the hook function
  */
@@ -194,11 +194,10 @@ static void plug_holes(struct heap_mem *mem)
 }
 
 /**
- * @ingroup SystemInit
- *
- * This function will initialize system heap memory.
+ * @brief This function will initialize system heap memory.
  *
  * @param begin_addr the beginning address of system heap memory.
+ *
  * @param end_addr the end address of system heap memory.
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr)
@@ -263,11 +262,11 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 /**@{*/
 
 /**
- * Allocate a block of memory with a minimum of 'size' bytes.
+ * @brief Allocate a block of memory with a minimum of 'size' bytes.
  *
  * @param size is the minimum size of the requested block in bytes.
  *
- * @return pointer to allocated memory or NULL if no free memory was found.
+ * @return the pointer to allocated memory or NULL if no free memory was found.
  */
 void *rt_malloc(rt_size_t size)
 {
@@ -411,12 +410,13 @@ void *rt_malloc(rt_size_t size)
 RTM_EXPORT(rt_malloc);
 
 /**
- * This function will change the previously allocated memory block.
+ * @brief This function will change the size of previously allocated memory block.
  *
- * @param rmem pointer to memory allocated by rt_malloc
- * @param newsize the required new size
+ * @param rmem is the pointer to memory allocated by rt_malloc.
  *
- * @return the changed memory block address
+ * @param newsize is the required new size.
+ *
+ * @return the changed memory block address.
  */
 void *rt_realloc(void *rmem, rt_size_t newsize)
 {
@@ -517,16 +517,17 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 RTM_EXPORT(rt_realloc);
 
 /**
- * This function will contiguously allocate enough space for count objects
- * that are size bytes of memory each and returns a pointer to the allocated
- * memory.
+ * @brief  This function will contiguously allocate enough space for count objects
+ *         that are size bytes of memory each and returns a pointer to the allocated
+ *         memory.
  *
- * The allocated memory is filled with bytes of value zero.
+ * @note   The allocated memory is filled with bytes of value zero.
  *
- * @param count number of objects to allocate
- * @param size size of the objects to allocate
+ * @param  count is the number of objects to allocate.
  *
- * @return pointer to allocated memory / NULL pointer if there is an error
+ * @param  size is the size of one object to allocate.
+ *
+ * @return pointer to allocated memory / NULL pointer if there is an error.
  */
 void *rt_calloc(rt_size_t count, rt_size_t size)
 {
@@ -544,10 +545,10 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 RTM_EXPORT(rt_calloc);
 
 /**
- * This function will release the previously allocated memory block by
- * rt_malloc. The released memory block is taken back to system heap.
+ * @brief This function will release the previously allocated memory block by
+ *        rt_malloc. The released memory block is taken back to system heap.
  *
- * @param rmem the address of memory which will be released
+ * @param rmem the address of memory which will be released.
  */
 void rt_free(void *rmem)
 {
@@ -616,6 +617,16 @@ void rt_free(void *rmem)
 RTM_EXPORT(rt_free);
 
 #ifdef RT_MEM_STATS
+/**
+* @brief This function will caculate the total memory, the used memory, and
+*        the max used memory.
+*
+* @param total is a pointer to get the total size of the memory.
+*
+* @param used is a pointer to get the size of memory used.
+*
+* @param max_used is a pointer to get the maximum memory used.
+*/
 void rt_memory_info(rt_uint32_t *total,
                     rt_uint32_t *used,
                     rt_uint32_t *max_used)

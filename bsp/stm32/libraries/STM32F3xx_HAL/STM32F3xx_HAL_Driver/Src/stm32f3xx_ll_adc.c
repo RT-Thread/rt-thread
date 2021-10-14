@@ -586,7 +586,7 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
 {
   /* Check the parameters */
   assert_param(IS_ADC_COMMON_INSTANCE(ADCxy_COMMON));
-
+  
   /* Force reset of ADC clock (core clock) */
   #if defined(ADC1) && defined(ADC2) && defined(ADC3) && defined(ADC4)
   if(ADCxy_COMMON == ADC12_COMMON)
@@ -602,7 +602,7 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
   #elif defined(ADC1)
   LL_AHB1_GRP1_ForceReset  (LL_AHB1_GRP1_PERIPH_ADC1);
   #endif
-
+  
   /* Release reset of ADC clock (core clock) */
   #if defined(ADC1) && defined(ADC2) && defined(ADC3) && defined(ADC4)
   if(ADCxy_COMMON == ADC12_COMMON)
@@ -618,7 +618,7 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
   #elif defined(ADC1)
   LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_ADC1);
   #endif
-
+  
   return SUCCESS;
 }
 
@@ -640,11 +640,11 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
 ErrorStatus LL_ADC_CommonInit(ADC_Common_TypeDef *ADCxy_COMMON, LL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
 {
   ErrorStatus status = SUCCESS;
-
+  
   /* Check the parameters */
   assert_param(IS_ADC_COMMON_INSTANCE(ADCxy_COMMON));
   assert_param(IS_LL_ADC_COMMON_CLOCK(ADC_CommonInitStruct->CommonClock));
-
+  
 #if defined(ADC_MULTIMODE_SUPPORT)
   assert_param(IS_LL_ADC_MULTI_MODE(ADC_CommonInitStruct->Multimode));
   if(ADC_CommonInitStruct->Multimode != LL_ADC_MULTI_INDEPENDENT)
@@ -707,7 +707,7 @@ ErrorStatus LL_ADC_CommonInit(ADC_Common_TypeDef *ADCxy_COMMON, LL_ADC_CommonIni
     /* the same ADC common instance are not disabled.                         */
     status = ERROR;
   }
-
+  
   return status;
 }
 
@@ -723,7 +723,7 @@ void LL_ADC_CommonStructInit(LL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
   /* Set fields of ADC common */
   /* (all ADC instances belonging to the same ADC common instance) */
   ADC_CommonInitStruct->CommonClock = LL_ADC_CLOCK_SYNC_PCLK_DIV2;
-
+  
 #if defined(ADC_MULTIMODE_SUPPORT)
   /* Set fields of ADC multimode */
   ADC_CommonInitStruct->Multimode             = LL_ADC_MULTI_INDEPENDENT;
@@ -753,12 +753,12 @@ void LL_ADC_CommonStructInit(LL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
 ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
 {
   ErrorStatus status = SUCCESS;
-
+  
   __IO uint32_t timeout_cpu_cycles = 0U;
-
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
-
+  
   /* Disable ADC instance if not already disabled.                            */
   if(LL_ADC_IsEnabled(ADCx) == 1U)
   {
@@ -766,7 +766,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     /* have an external trigger event occurring during the conversion stop    */
     /* ADC disable process.                                                   */
     LL_ADC_REG_SetTriggerSource(ADCx, LL_ADC_REG_TRIG_SOFTWARE);
-
+    
     /* Stop potential ADC conversion on going on ADC group regular.           */
     if(LL_ADC_REG_IsConversionOngoing(ADCx) != 0U)
     {
@@ -775,12 +775,12 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
         LL_ADC_REG_StopConversion(ADCx);
       }
     }
-
+    
     /* Set ADC group injected trigger source to SW start to ensure to not     */
     /* have an external trigger event occurring during the conversion stop    */
     /* ADC disable process.                                                   */
     LL_ADC_INJ_SetTriggerSource(ADCx, LL_ADC_INJ_TRIG_SOFTWARE);
-
+    
     /* Stop potential ADC conversion on going on ADC group injected.          */
     if(LL_ADC_INJ_IsConversionOngoing(ADCx) != 0U)
     {
@@ -789,10 +789,10 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
         LL_ADC_INJ_StopConversion(ADCx);
       }
     }
-
+    
     /* Wait for ADC conversions are effectively stopped                       */
     timeout_cpu_cycles = ADC_TIMEOUT_STOP_CONVERSION_CPU_CYCLES;
-    while ((  LL_ADC_REG_IsStopConversionOngoing(ADCx)
+    while ((  LL_ADC_REG_IsStopConversionOngoing(ADCx) 
             | LL_ADC_INJ_IsStopConversionOngoing(ADCx)) == 1U)
     {
       if(timeout_cpu_cycles-- == 0U)
@@ -801,15 +801,15 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
         status = ERROR;
       }
     }
-
+    
     /* Flush group injected contexts queue (register JSQR):                   */
     /* Note: Bit JQM must be set to empty the contexts queue (otherwise       */
     /*       contexts queue is maintained with the last active context).      */
     LL_ADC_INJ_SetQueueMode(ADCx, LL_ADC_INJ_QUEUE_2CONTEXTS_END_EMPTY);
-
+    
     /* Disable the ADC instance */
     LL_ADC_Disable(ADCx);
-
+    
     /* Wait for ADC instance is effectively disabled */
     timeout_cpu_cycles = ADC_TIMEOUT_DISABLE_CPU_CYCLES;
     while (LL_ADC_IsDisableOngoing(ADCx) == 1U)
@@ -821,7 +821,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
       }
     }
   }
-
+  
   /* Check whether ADC state is compliant with expected state */
   if(READ_BIT(ADCx->CR,
               (  ADC_CR_JADSTP | ADC_CR_ADSTP | ADC_CR_JADSTART | ADC_CR_ADSTART
@@ -844,7 +844,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | LL_ADC_IT_AWD2
                | LL_ADC_IT_AWD3 )
              );
-
+    
     /* Reset register ISR */
     SET_BIT(ADCx->ISR,
             (  LL_ADC_FLAG_ADRDY
@@ -859,7 +859,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
              | LL_ADC_FLAG_AWD2
              | LL_ADC_FLAG_AWD3 )
            );
-
+    
     /* Reset register CR */
     /*  - Bits ADC_CR_JADSTP, ADC_CR_ADSTP, ADC_CR_JADSTART, ADC_CR_ADSTART,  */
     /*    ADC_CR_ADCAL, ADC_CR_ADDIS, ADC_CR_ADEN are in                      */
@@ -874,7 +874,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     CLEAR_BIT(ADCx->CR, ADC_CR_ADVREGEN_1 | ADC_CR_ADVREGEN_0 | ADC_CR_ADCALDIF);
     /* 2. Set ADVREGEN bits to 0x10 */
     SET_BIT(ADCx->CR, ADC_CR_ADVREGEN_1);
-
+    
     /* Reset register CFGR */
     CLEAR_BIT(ADCx->CFGR,
               (  ADC_CFGR_AWD1CH  | ADC_CFGR_JAUTO   | ADC_CFGR_JAWD1EN
@@ -884,51 +884,51 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | ADC_CFGR_EXTEN   | ADC_CFGR_EXTSEL  | ADC_CFGR_ALIGN
                | ADC_CFGR_RES     | ADC_CFGR_DMACFG  | ADC_CFGR_DMAEN  )
              );
-
+    
     /* Reset register SMPR1 */
     CLEAR_BIT(ADCx->SMPR1,
               (  ADC_SMPR1_SMP9 | ADC_SMPR1_SMP8 | ADC_SMPR1_SMP7
                | ADC_SMPR1_SMP6 | ADC_SMPR1_SMP5 | ADC_SMPR1_SMP4
                | ADC_SMPR1_SMP3 | ADC_SMPR1_SMP2 | ADC_SMPR1_SMP1)
              );
-
+    
     /* Reset register SMPR2 */
     CLEAR_BIT(ADCx->SMPR2,
               (  ADC_SMPR2_SMP18 | ADC_SMPR2_SMP17 | ADC_SMPR2_SMP16
                | ADC_SMPR2_SMP15 | ADC_SMPR2_SMP14 | ADC_SMPR2_SMP13
                | ADC_SMPR2_SMP12 | ADC_SMPR2_SMP11 | ADC_SMPR2_SMP10)
              );
-
+    
     /* Reset register TR1 */
     MODIFY_REG(ADCx->TR1, ADC_TR1_HT1 | ADC_TR1_LT1, ADC_TR1_HT1);
-
+    
     /* Reset register TR2 */
     MODIFY_REG(ADCx->TR2, ADC_TR2_HT2 | ADC_TR2_LT2, ADC_TR2_HT2);
-
+    
     /* Reset register TR3 */
     MODIFY_REG(ADCx->TR3, ADC_TR3_HT3 | ADC_TR3_LT3, ADC_TR3_HT3);
-
+    
     /* Reset register SQR1 */
     CLEAR_BIT(ADCx->SQR1,
               (  ADC_SQR1_SQ4 | ADC_SQR1_SQ3 | ADC_SQR1_SQ2
                | ADC_SQR1_SQ1 | ADC_SQR1_L)
              );
-
+    
     /* Reset register SQR2 */
     CLEAR_BIT(ADCx->SQR2,
               (  ADC_SQR2_SQ9 | ADC_SQR2_SQ8 | ADC_SQR2_SQ7
                | ADC_SQR2_SQ6 | ADC_SQR2_SQ5)
              );
-
+    
     /* Reset register SQR3 */
     CLEAR_BIT(ADCx->SQR3,
               (  ADC_SQR3_SQ14 | ADC_SQR3_SQ13 | ADC_SQR3_SQ12
                | ADC_SQR3_SQ11 | ADC_SQR3_SQ10)
              );
-
+    
     /* Reset register SQR4 */
     CLEAR_BIT(ADCx->SQR4, ADC_SQR4_SQ16 | ADC_SQR4_SQ15);
-
+    
     /* Reset register JSQR */
     CLEAR_BIT(ADCx->JSQR,
               (  ADC_JSQR_JL
@@ -936,16 +936,16 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | ADC_JSQR_JSQ4    | ADC_JSQR_JSQ3
                | ADC_JSQR_JSQ2    | ADC_JSQR_JSQ1  )
              );
-
+    
     /* Flush ADC group injected contexts queue */
     SET_BIT(ADCx->CFGR, ADC_CFGR_JQM);
     CLEAR_BIT(ADCx->CFGR, ADC_CFGR_JQM);
     /* Reset register ISR bit JQOVF (set by previous operation on JSQR) */
     SET_BIT(ADCx->ISR, LL_ADC_FLAG_JQOVF);
-
+    
     /* Reset register DR */
     /* Note: bits in access mode read only, no direct reset applicable */
-
+    
     /* Reset register OFR1 */
     CLEAR_BIT(ADCx->OFR1, ADC_OFR1_OFFSET1_EN | ADC_OFR1_OFFSET1_CH | ADC_OFR1_OFFSET1);
     /* Reset register OFR2 */
@@ -954,19 +954,19 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     CLEAR_BIT(ADCx->OFR3, ADC_OFR3_OFFSET3_EN | ADC_OFR3_OFFSET3_CH | ADC_OFR3_OFFSET3);
     /* Reset register OFR4 */
     CLEAR_BIT(ADCx->OFR4, ADC_OFR4_OFFSET4_EN | ADC_OFR4_OFFSET4_CH | ADC_OFR4_OFFSET4);
-
+    
     /* Reset registers JDR1, JDR2, JDR3, JDR4 */
     /* Note: bits in access mode read only, no direct reset applicable */
-
+    
     /* Reset register AWD2CR */
     CLEAR_BIT(ADCx->AWD2CR, ADC_AWD2CR_AWD2CH);
-
+    
     /* Reset register AWD3CR */
     CLEAR_BIT(ADCx->AWD3CR, ADC_AWD3CR_AWD3CH);
-
+    
     /* Reset register DIFSEL */
     CLEAR_BIT(ADCx->DIFSEL, ADC_DIFSEL_DIFSEL);
-
+    
     /* Reset register CALFACT */
     CLEAR_BIT(ADCx->CALFACT, ADC_CALFACT_CALFACT_D | ADC_CALFACT_CALFACT_S);
   }
@@ -983,7 +983,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     /*          all ADC instances belonging to the common ADC instance.       */
     status = ERROR;
   }
-
+  
   return status;
 }
 
@@ -1023,14 +1023,14 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
 ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
-
+  
   assert_param(IS_LL_ADC_RESOLUTION(ADC_InitStruct->Resolution));
   assert_param(IS_LL_ADC_DATA_ALIGN(ADC_InitStruct->DataAlignment));
   assert_param(IS_LL_ADC_LOW_POWER(ADC_InitStruct->LowPowerMode));
-
+  
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       ADC instance must be disabled.                                     */
   if(LL_ADC_IsEnabled(ADCx) == 0U)
@@ -1049,7 +1049,7 @@ ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
                | ADC_InitStruct->DataAlignment
                | ADC_InitStruct->LowPowerMode
               );
-
+    
   }
   else
   {
@@ -1072,7 +1072,7 @@ void LL_ADC_StructInit(LL_ADC_InitTypeDef *ADC_InitStruct)
   ADC_InitStruct->Resolution    = LL_ADC_RESOLUTION_12B;
   ADC_InitStruct->DataAlignment = LL_ADC_DATA_ALIGN_RIGHT;
   ADC_InitStruct->LowPowerMode  = LL_ADC_LP_MODE_NONE;
-
+  
 }
 
 /**
@@ -1110,7 +1110,7 @@ void LL_ADC_StructInit(LL_ADC_InitTypeDef *ADC_InitStruct)
 ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
 #if defined(ADC1) && defined(ADC2) && defined(ADC3) && defined(ADC4)
@@ -1126,7 +1126,7 @@ ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_I
   assert_param(IS_LL_ADC_REG_CONTINUOUS_MODE(ADC_REG_InitStruct->ContinuousMode));
   assert_param(IS_LL_ADC_REG_DMA_TRANSFER(ADC_REG_InitStruct->DMATransfer));
   assert_param(IS_LL_ADC_REG_OVR_DATA_BEHAVIOR(ADC_REG_InitStruct->Overrun));
-
+  
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       ADC instance must be disabled.                                     */
   if(LL_ADC_IsEnabled(ADCx) == 0U)
@@ -1180,7 +1180,7 @@ ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_I
                  | ADC_REG_InitStruct->Overrun
                 );
     }
-
+    
     /* Set ADC group regular sequencer length and scan direction */
     LL_ADC_REG_SetSequencerLength(ADCx, ADC_REG_InitStruct->SequencerLength);
   }
@@ -1238,7 +1238,7 @@ void LL_ADC_REG_StructInit(LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct)
   *            Refer to function @ref LL_ADC_INJ_SetSequencerRanks().
   *          - Set ADC channel sampling time
   *            Refer to function LL_ADC_SetChannelSamplingTime();
-  * @note   Caution to ADC group injected contexts queue: On this STM32 serie,
+  * @note   Caution to ADC group injected contexts queue: On this STM32 serie, 
   *         using successively several times this function will appear has
   *         having no effect.
   *         This is due to ADC group injected contexts queue (this feature
@@ -1254,7 +1254,7 @@ void LL_ADC_REG_StructInit(LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct)
 ErrorStatus LL_ADC_INJ_Init(ADC_TypeDef *ADCx, LL_ADC_INJ_InitTypeDef *ADC_INJ_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
 #if defined(ADC1) && defined(ADC2) && defined(ADC3) && defined(ADC4)
@@ -1268,7 +1268,7 @@ ErrorStatus LL_ADC_INJ_Init(ADC_TypeDef *ADCx, LL_ADC_INJ_InitTypeDef *ADC_INJ_I
     assert_param(IS_LL_ADC_INJ_SEQ_SCAN_DISCONT_MODE(ADC_INJ_InitStruct->SequencerDiscont));
   }
   assert_param(IS_LL_ADC_INJ_TRIG_AUTO(ADC_INJ_InitStruct->TrigAuto));
-
+  
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       ADC instance must be disabled.                                     */
   if(LL_ADC_IsEnabled(ADCx) == 0U)
@@ -1302,7 +1302,7 @@ ErrorStatus LL_ADC_INJ_Init(ADC_TypeDef *ADCx, LL_ADC_INJ_InitTypeDef *ADC_INJ_I
                  | ADC_INJ_InitStruct->TrigAuto
                 );
     }
-
+    
     MODIFY_REG(ADCx->JSQR,
                  ADC_JSQR_JEXTSEL
                | ADC_JSQR_JEXTEN
@@ -1490,10 +1490,10 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
 {
   /* Check the parameters */
   assert_param(IS_ADC_COMMON_INSTANCE(ADCxy_COMMON));
-
+  
   /* Force reset of ADC clock (core clock) */
   LL_APB2_GRP1_ForceReset  (LL_APB2_GRP1_PERIPH_ADC1);
-
+  
   /* Release reset of ADC clock (core clock) */
   LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_ADC1);
 
@@ -1513,10 +1513,10 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
 ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
 {
   ErrorStatus status = SUCCESS;
-
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
-
+  
   /* Disable ADC instance if not already disabled.                            */
   if(LL_ADC_IsEnabled(ADCx) == 1U)
   {
@@ -1524,16 +1524,16 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     /* have an external trigger event occurring during the conversion stop    */
     /* ADC disable process.                                                   */
     LL_ADC_REG_SetTriggerSource(ADCx, LL_ADC_REG_TRIG_SOFTWARE);
-
+    
     /* Set ADC group injected trigger source to SW start to ensure to not     */
     /* have an external trigger event occurring during the conversion stop    */
     /* ADC disable process.                                                   */
     LL_ADC_INJ_SetTriggerSource(ADCx, LL_ADC_INJ_TRIG_SOFTWARE);
-
+    
     /* Disable the ADC instance */
     LL_ADC_Disable(ADCx);
   }
-
+  
   /* Check whether ADC state is compliant with expected state */
   /* (hardware requirements of bits state to reset registers below) */
   if(READ_BIT(ADCx->CR2, ADC_CR2_ADON) == 0U)
@@ -1547,7 +1547,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | LL_ADC_FLAG_JEOS
                | LL_ADC_FLAG_AWD1 )
              );
-
+    
     /* Reset register CR1 */
     CLEAR_BIT(ADCx->CR1,
               (  ADC_CR1_AWDEN   | ADC_CR1_JAWDEN
@@ -1556,7 +1556,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | ADC_CR1_JEOCIE  | ADC_CR1_AWDIE   | ADC_CR1_EOCIE
                | ADC_CR1_AWDCH                                     )
              );
-
+    
     /* Reset register CR2 */
     CLEAR_BIT(ADCx->CR2,
               (  ADC_CR2_TSVREFE
@@ -1566,14 +1566,14 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | ADC_CR2_RSTCAL   | ADC_CR2_CAL
                | ADC_CR2_CONT     | ADC_CR2_ADON                      )
              );
-
+    
     /* Reset register SMPR1 */
     CLEAR_BIT(ADCx->SMPR1,
               (  ADC_SMPR1_SMP17 | ADC_SMPR1_SMP16
                | ADC_SMPR1_SMP15 | ADC_SMPR1_SMP14 | ADC_SMPR1_SMP13
                | ADC_SMPR1_SMP12 | ADC_SMPR1_SMP11 | ADC_SMPR1_SMP10)
              );
-
+    
     /* Reset register SMPR2 */
     CLEAR_BIT(ADCx->SMPR2,
               (  ADC_SMPR2_SMP9
@@ -1581,7 +1581,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | ADC_SMPR2_SMP5 | ADC_SMPR2_SMP4 | ADC_SMPR2_SMP3
                | ADC_SMPR2_SMP2 | ADC_SMPR2_SMP1 | ADC_SMPR2_SMP0)
              );
-
+    
     /* Reset register JOFR1 */
     CLEAR_BIT(ADCx->JOFR1, ADC_JOFR1_JOFFSET1);
     /* Reset register JOFR2 */
@@ -1590,41 +1590,41 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     CLEAR_BIT(ADCx->JOFR3, ADC_JOFR3_JOFFSET3);
     /* Reset register JOFR4 */
     CLEAR_BIT(ADCx->JOFR4, ADC_JOFR4_JOFFSET4);
-
+    
     /* Reset register HTR */
     SET_BIT(ADCx->HTR, ADC_HTR_HT);
     /* Reset register LTR */
     CLEAR_BIT(ADCx->LTR, ADC_LTR_LT);
-
+    
     /* Reset register SQR1 */
     CLEAR_BIT(ADCx->SQR1,
               (  ADC_SQR1_L
                | ADC_SQR1_SQ16
                | ADC_SQR1_SQ15 | ADC_SQR1_SQ14 | ADC_SQR1_SQ13)
              );
-
+             
     /* Reset register SQR2 */
     CLEAR_BIT(ADCx->SQR2,
               (  ADC_SQR2_SQ12 | ADC_SQR2_SQ11 | ADC_SQR2_SQ10
                | ADC_SQR2_SQ9 | ADC_SQR2_SQ8 | ADC_SQR2_SQ7)
              );
-
-
+    
+    
     /* Reset register JSQR */
     CLEAR_BIT(ADCx->JSQR,
               (  ADC_JSQR_JL
                | ADC_JSQR_JSQ4 | ADC_JSQR_JSQ3
                | ADC_JSQR_JSQ2 | ADC_JSQR_JSQ1  )
              );
-
+    
     /* Reset register DR */
     /* bits in access mode read only, no direct reset applicable */
-
+    
     /* Reset registers JDR1, JDR2, JDR3, JDR4 */
     /* bits in access mode read only, no direct reset applicable */
-
+    
   }
-
+  
   return status;
 }
 
@@ -1664,13 +1664,13 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
 ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
-
+  
   assert_param(IS_LL_ADC_DATA_ALIGN(ADC_InitStruct->DataAlignment));
   assert_param(IS_LL_ADC_SCAN_SELECTION(ADC_InitStruct->SequencersScanMode));
-
+  
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       ADC instance must be disabled.                                     */
   if(LL_ADC_IsEnabled(ADCx) == 0U)
@@ -1683,7 +1683,7 @@ ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
               ,
                  ADC_InitStruct->SequencersScanMode
               );
-
+    
     MODIFY_REG(ADCx->CR2,
                  ADC_CR2_ALIGN
               ,
@@ -1710,13 +1710,13 @@ void LL_ADC_StructInit(LL_ADC_InitTypeDef *ADC_InitStruct)
   /* Set ADC_InitStruct fields to default values */
   /* Set fields of ADC instance */
   ADC_InitStruct->DataAlignment = LL_ADC_DATA_ALIGN_RIGHT;
-
+  
   /* Enable scan mode to have a generic behavior with ADC of other            */
   /* STM32 families, without this setting available:                          */
   /* ADC group regular sequencer and ADC group injected sequencer depend      */
   /* only of their own configuration.                                         */
   ADC_InitStruct->SequencersScanMode      = LL_ADC_SEQ_SCAN_ENABLE;
-
+  
 }
 
 /**
@@ -1754,7 +1754,7 @@ void LL_ADC_StructInit(LL_ADC_InitTypeDef *ADC_InitStruct)
 ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
   assert_param(IS_LL_ADC_REG_TRIG_SOURCE(ADC_REG_InitStruct->TriggerSource));
@@ -1763,15 +1763,15 @@ ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_I
   {
     assert_param(IS_LL_ADC_REG_SEQ_SCAN_DISCONT_MODE(ADC_REG_InitStruct->SequencerDiscont));
   }
-
+  
   /* ADC group regular continuous mode and discontinuous mode                 */
   /* can not be enabled simultenaeously                                       */
   assert_param((ADC_REG_InitStruct->ContinuousMode == LL_ADC_REG_CONV_SINGLE)
                || (ADC_REG_InitStruct->SequencerDiscont == LL_ADC_REG_SEQ_DISCONT_DISABLE));
-
+  
   assert_param(IS_LL_ADC_REG_CONTINUOUS_MODE(ADC_REG_InitStruct->ContinuousMode));
   assert_param(IS_LL_ADC_REG_DMA_TRANSFER(ADC_REG_InitStruct->DMATransfer));
-
+  
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       ADC instance must be disabled.                                     */
   if(LL_ADC_IsEnabled(ADCx) == 0U)
@@ -1807,7 +1807,7 @@ ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_I
                  | LL_ADC_REG_SEQ_DISCONT_DISABLE
                 );
     }
-
+    
     MODIFY_REG(ADCx->CR2,
                  ADC_CR2_EXTSEL
                | ADC_CR2_CONT
@@ -1890,7 +1890,7 @@ void LL_ADC_REG_StructInit(LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct)
 ErrorStatus LL_ADC_INJ_Init(ADC_TypeDef *ADCx, LL_ADC_INJ_InitTypeDef *ADC_INJ_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
   assert_param(IS_LL_ADC_INJ_TRIG_SOURCE(ADC_INJ_InitStruct->TriggerSource));
@@ -1900,7 +1900,7 @@ ErrorStatus LL_ADC_INJ_Init(ADC_TypeDef *ADCx, LL_ADC_INJ_InitTypeDef *ADC_INJ_I
     assert_param(IS_LL_ADC_INJ_SEQ_SCAN_DISCONT_MODE(ADC_INJ_InitStruct->SequencerDiscont));
   }
   assert_param(IS_LL_ADC_INJ_TRIG_AUTO(ADC_INJ_InitStruct->TrigAuto));
-
+  
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       ADC instance must be disabled.                                     */
   if(LL_ADC_IsEnabled(ADCx) == 0U)
@@ -1935,13 +1935,13 @@ ErrorStatus LL_ADC_INJ_Init(ADC_TypeDef *ADCx, LL_ADC_INJ_InitTypeDef *ADC_INJ_I
                  | ADC_INJ_InitStruct->TrigAuto
                 );
     }
-
+    
     MODIFY_REG(ADCx->CR2,
                ADC_CR2_JEXTSEL
               ,
                ADC_INJ_InitStruct->TriggerSource
               );
-
+    
     /* Note: Hardware constraint (refer to description of this function):     */
     /* Note: If ADC instance feature scan mode is disabled                    */
     /*       (refer to  ADC instance initialization structure                 */

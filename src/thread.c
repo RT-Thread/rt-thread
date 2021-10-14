@@ -38,12 +38,11 @@ static void (*rt_thread_resume_hook) (rt_thread_t thread);
 static void (*rt_thread_inited_hook) (rt_thread_t thread);
 
 /**
- * @ingroup Hook
- * This function sets a hook function when the system suspend a thread.
+ * @brief   This function sets a hook function when the system suspend a thread.
  *
- * @param hook the specified hook function
+ * @note    The hook function must be simple and never be blocked or suspend.
  *
- * @note the hook function must be simple and never be blocked or suspend.
+ * @param   hook is the specified hook function.
  */
 void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread))
 {
@@ -51,12 +50,11 @@ void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread))
 }
 
 /**
- * @ingroup Hook
- * This function sets a hook function when the system resume a thread.
+ * @brief   This function sets a hook function when the system resume a thread.
  *
- * @param hook the specified hook function
+ * @note    The hook function must be simple and never be blocked or suspend.
  *
- * @note the hook function must be simple and never be blocked or suspend.
+ * @param   hook is the specified hook function.
  */
 void rt_thread_resume_sethook(void (*hook)(rt_thread_t thread))
 {
@@ -64,10 +62,9 @@ void rt_thread_resume_sethook(void (*hook)(rt_thread_t thread))
 }
 
 /**
- * @ingroup Hook
- * This function sets a hook function when a thread is initialized.
+ * @brief   This function sets a hook function when a thread is initialized.
  *
- * @param hook the specified hook function
+ * @param   hook is the specified hook function.
  */
 void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 {
@@ -76,7 +73,6 @@ void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 
 #endif /* RT_USING_HOOK */
 
-/* must be invoke witch rt_hw_interrupt_disable */
 static void _thread_cleanup_execute(rt_thread_t thread)
 {
     register rt_base_t level;
@@ -244,19 +240,27 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 /**@{*/
 
 /**
- * This function will initialize a thread, normally it's used to initialize a
- * static thread object.
+ * @brief   This function will initialize a thread. It's used to initialize a
+ *          static thread object.
  *
- * @param thread the static thread object
- * @param name the name of thread, which shall be unique
- * @param entry the entry function of thread
- * @param parameter the parameter of thread enter function
- * @param stack_start the start address of thread stack
- * @param stack_size the size of thread stack
- * @param priority the priority of thread
- * @param tick the time slice if there are same priority thread
+ * @param   thread is the static thread object.
  *
- * @return the operation status, RT_EOK on OK, -RT_ERROR on error
+ * @param   name is the name of thread, which shall be unique.
+ *
+ * @param   entry is the entry function of thread.
+ *
+ * @param   parameter is the parameter of thread enter function.
+ *
+ * @param   stack_start is the start address of thread stack.
+ *
+ * @param   stack_size is the size of thread stack.
+ *
+ * @param   priority is the priority of thread.
+ *
+ * @param   tick is the time slice if there are same priority thread.
+ *
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_init(struct rt_thread *thread,
                         const char       *name,
@@ -286,9 +290,9 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
 RTM_EXPORT(rt_thread_init);
 
 /**
- * This function will return self thread object
+ * @brief   This function will return self thread object.
  *
- * @return the self thread object
+ * @return  The self thread object.
  */
 rt_thread_t rt_thread_self(void)
 {
@@ -309,11 +313,12 @@ rt_thread_t rt_thread_self(void)
 RTM_EXPORT(rt_thread_self);
 
 /**
- * This function will start a thread and put it to system ready queue
+ * @brief   This function will start a thread and put it to system ready queue.
  *
- * @param thread the thread to be started
+ * @param   thread is the thread to be started.
  *
- * @return the operation status, RT_EOK on OK, -RT_ERROR on error
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_startup(rt_thread_t thread)
 {
@@ -351,12 +356,13 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 RTM_EXPORT(rt_thread_startup);
 
 /**
- * This function will detach a thread. The thread object will be removed from
- * thread queue and detached/deleted from system object management.
+ * @brief   This function will detach a thread. The thread object will be removed from
+ *          thread queue and detached/deleted from the system object management.
  *
- * @param thread the thread to be deleted
+ * @param   thread is the thread to be deleted.
  *
- * @return the operation status, RT_EOK on OK, -RT_ERROR on error
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_detach(rt_thread_t thread)
 {
@@ -404,17 +410,23 @@ RTM_EXPORT(rt_thread_detach);
 
 #ifdef RT_USING_HEAP
 /**
- * This function will create a thread object and allocate thread object memory
- * and stack.
+ * @brief   This function will create a thread object and allocate thread object memory.
+ *          and stack.
  *
- * @param name the name of thread, which shall be unique
- * @param entry the entry function of thread
- * @param parameter the parameter of thread enter function
- * @param stack_size the size of thread stack
- * @param priority the priority of thread
- * @param tick the time slice if there are same priority thread
+ * @param   name is the name of thread, which shall be unique.
  *
- * @return the created thread object
+ * @param   entry is the entry function of thread.
+ *
+ * @param   parameter is the parameter of thread enter function.
+ *
+ * @param   stack_size is the size of thread stack.
+ *
+ * @param   priority is the priority of thread.
+ *
+ * @param   tick is the time slice if there are same priority thread.
+ *
+ * @return  If the return value is a rt_thread structure pointer, the function is successfully executed.
+ *          If the return value is RT_NULL, it means this operation failed.
  */
 rt_thread_t rt_thread_create(const char *name,
                              void (*entry)(void *parameter),
@@ -454,12 +466,13 @@ rt_thread_t rt_thread_create(const char *name,
 RTM_EXPORT(rt_thread_create);
 
 /**
- * This function will delete a thread. The thread object will be removed from
- * thread queue and deleted from system object management in the idle thread.
+ * @brief   This function will delete a thread. The thread object will be removed from
+ *          thread queue and deleted from system object management in the idle thread.
  *
- * @param thread the thread to be deleted
+ * @param   thread is the thread to be deleted.
  *
- * @return the operation status, RT_EOK on OK, -RT_ERROR on error
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_delete(rt_thread_t thread)
 {
@@ -502,11 +515,12 @@ RTM_EXPORT(rt_thread_delete);
 #endif /* RT_USING_HEAP */
 
 /**
- * This function will let current thread yield processor, and scheduler will
- * choose a highest thread to run. After yield processor, the current thread
- * is still in READY state.
+ * @brief   This function will let current thread yield processor, and scheduler will
+ *          choose the highest thread to run. After yield processor, the current thread
+ *          is still in READY state.
  *
- * @return RT_EOK
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_yield(void)
 {
@@ -525,11 +539,13 @@ rt_err_t rt_thread_yield(void)
 RTM_EXPORT(rt_thread_yield);
 
 /**
- * This function will let current thread sleep for some ticks.
+ * @brief   This function will let current thread sleep for some ticks. Change current thread state to suspend,
+ *          when the thread timer reaches the tick value, scheduler will awaken this thread.
  *
- * @param tick the sleep ticks
+ * @param   tick is the sleep ticks.
  *
- * @return RT_EOK
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_sleep(rt_tick_t tick)
 {
@@ -564,11 +580,12 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
 }
 
 /**
- * This function will let current thread delay for some ticks.
+ * @brief   This function will let current thread delay for some ticks.
  *
- * @param tick the delay ticks
+ * @param   tick is the delay ticks.
  *
- * @return RT_EOK
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_delay(rt_tick_t tick)
 {
@@ -577,12 +594,14 @@ rt_err_t rt_thread_delay(rt_tick_t tick)
 RTM_EXPORT(rt_thread_delay);
 
 /**
- * This function will let current thread delay until (*tick + inc_tick).
+ * @brief   This function will let current thread delay until (*tick + inc_tick).
  *
- * @param tick the tick of last wakeup.
- * @param inc_tick the increment tick
+ * @param   tick is the tick of last wakeup.
  *
- * @return RT_EOK
+ * @param   inc_tick is the increment tick.
+ *
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 {
@@ -637,11 +656,12 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 RTM_EXPORT(rt_thread_delay_until);
 
 /**
- * This function will let current thread delay for some milliseconds.
+ * @brief   This function will let current thread delay for some milliseconds.
  *
- * @param ms the delay ms time
+ * @param   ms is the delay ms time.
  *
- * @return RT_EOK
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_mdelay(rt_int32_t ms)
 {
@@ -654,17 +674,24 @@ rt_err_t rt_thread_mdelay(rt_int32_t ms)
 RTM_EXPORT(rt_thread_mdelay);
 
 /**
- * This function will control thread behaviors according to control command.
+ * @brief   This function will control thread behaviors according to control command.
  *
- * @param thread the specified thread to be controlled
- * @param cmd the control command, which includes
- *  RT_THREAD_CTRL_CHANGE_PRIORITY for changing priority level of thread;
- *  RT_THREAD_CTRL_STARTUP for starting a thread;
- *  RT_THREAD_CTRL_CLOSE for delete a thread;
- *  RT_THREAD_CTRL_BIND_CPU for bind the thread to a CPU.
- * @param arg the argument of control command
+ * @param   thread is the specified thread to be controlled.
  *
- * @return RT_EOK
+ * @param   cmd is the control command, which includes.
+ *
+ *              RT_THREAD_CTRL_CHANGE_PRIORITY for changing priority level of thread.
+ *
+ *              RT_THREAD_CTRL_STARTUP for starting a thread.
+ *
+ *              RT_THREAD_CTRL_CLOSE for delete a thread.
+ *
+ *              RT_THREAD_CTRL_BIND_CPU for bind the thread to a CPU.
+ *
+ * @param   arg is the argument of control command.
+ *
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 {
@@ -755,7 +782,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
                 return RT_ERROR;
             }
 
-            cpu = (rt_uint8_t)(size_t)arg;
+            cpu = (rt_uint8_t)(rt_size_t)arg;
             thread->bind_cpu = cpu > RT_CPUS_NR? RT_CPUS_NR : cpu;
             break;
         }
@@ -770,14 +797,15 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 RTM_EXPORT(rt_thread_control);
 
 /**
- * This function will suspend the specified thread.
+ * @brief   This function will suspend the specified thread and change it to suspend state.
  *
- * @param thread the thread to be suspended
+ * @note    If suspend self thread, after this function call, the
+ *          rt_schedule() must be invoked.
  *
- * @return the operation status, RT_EOK on OK, -RT_ERROR on error
+ * @param   thread is the thread to be suspended.
  *
- * @note if suspend self thread, after this function call, the
- * rt_schedule() must be invoked.
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_suspend(rt_thread_t thread)
 {
@@ -822,11 +850,12 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 RTM_EXPORT(rt_thread_suspend);
 
 /**
- * This function will resume a thread and put it to system ready queue.
+ * @brief   This function will resume a thread and put it to system ready queue.
  *
- * @param thread the thread to be resumed
+ * @param   thread is the thread to be resumed.
  *
- * @return the operation status, RT_EOK on OK, -RT_ERROR on error
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_resume(rt_thread_t thread)
 {
@@ -866,10 +895,10 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 RTM_EXPORT(rt_thread_resume);
 
 /**
- * This function is the timeout function for thread, normally which is invoked
- * when thread is timeout to wait some resource.
+ * @brief   This function is the timeout function for thread, normally which is invoked
+ *          when thread is timeout to wait some resource.
  *
- * @param parameter the parameter of thread timeout function
+ * @param   parameter is the parameter of thread timeout function
  */
 void rt_thread_timeout(void *parameter)
 {
@@ -904,18 +933,20 @@ void rt_thread_timeout(void *parameter)
 RTM_EXPORT(rt_thread_timeout);
 
 /**
- * This function will find the specified thread.
+ * @brief   This function will find the specified thread.
  *
- * @param name the name of thread finding
+ * @note    Please don't invoke this function in interrupt status.
  *
- * @return the found thread
+ * @param   name is the name of thread finding.
  *
- * @note please don't invoke this function in interrupt status.
+ * @return  If the return value is a rt_thread structure pointer, the function is successfully executed.
+ *          If the return value is RT_NULL, it means this operation failed.
  */
 rt_thread_t rt_thread_find(char *name)
 {
     return (rt_thread_t)rt_object_find(name, RT_Object_Class_Thread);
 }
+
 RTM_EXPORT(rt_thread_find);
 
 /**@}*/

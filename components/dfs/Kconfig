@@ -122,6 +122,12 @@ if RT_USING_DFS
         config RT_DFS_ELM_REENTRANT
             bool "Enable the reentrancy (thread safe) of the FatFs module"
             default y
+
+        config RT_DFS_ELM_MUTEX_TIMEOUT
+            int "Timeout of thread-safe protection mutex"
+            range 0 1000000
+            default 3000
+            depends on RT_DFS_ELM_REENTRANT
         endmenu
     endif
 

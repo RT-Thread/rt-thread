@@ -399,7 +399,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
                                                                         comparison. Only SS[12:0] are compared */
 #define RTC_ALARMSUBSECONDMASK_SS14        (RTC_ALRMASSR_MASKSS_1 | RTC_ALRMASSR_MASKSS_2 | RTC_ALRMASSR_MASKSS_3)  /*!< SS[14] is don't care in Alarm
                                                                         comparison.Only SS[13:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_NONE        RTC_ALRMASSR_MASKSS    /*!< SS[14:0] are compared and must match
+#define RTC_ALARMSUBSECONDMASK_NONE        RTC_ALRMASSR_MASKSS    /*!< SS[14:0] are compared and must match 
                                                                         to activate alarm. */
 /**
   * @}

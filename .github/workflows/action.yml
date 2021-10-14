@@ -29,13 +29,14 @@ jobs:
       fail-fast: false
       matrix:
        legs:
+         - {RTT_BSP: "acm32f0x0-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "CME_M7", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apollo2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "efm32", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"}
          - {RTT_BSP: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "imx6sx/cortex-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -58,6 +59,7 @@ jobs:
          - {RTT_BSP: "lpc54114-lite", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "ls1bdev", RTT_TOOL_CHAIN: "sourcery-mips"}
          - {RTT_BSP: "ls1cdev", RTT_TOOL_CHAIN: "sourcery-mips"}
+         - {RTT_BSP: "ls2kdev", RTT_TOOL_CHAIN: "sourcery-mips"}
          - {RTT_BSP: "mb9bf500r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mb9bf506r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -134,6 +136,9 @@ jobs:
          - {RTT_BSP: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "raspberry-pico", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "raspberry-pi/raspi4-32", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "bluetrum/ab32vg1-ab-prougen", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -166,6 +171,22 @@ jobs:
           sudo tar xjf mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 -C /opt
           /opt/mips-2016.05/bin/mips-sde-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/mips-2016.05/bin" >> $GITHUB_ENV
+
+      - name: Install Riscv64-unknown-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv64-unknown-elf' && success() }}
+        run: |
+          wget -q https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+          sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
+          /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+
+      - name: Install Riscv-none-embed ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv-none-embed' && success() }}
+        run: |
+          wget -q https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v8.3.0-2.3/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
+          sudo tar zxvf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
+          /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
+          echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
 
       - name: Bsp Scons Compile
         if: ${{ success() }}

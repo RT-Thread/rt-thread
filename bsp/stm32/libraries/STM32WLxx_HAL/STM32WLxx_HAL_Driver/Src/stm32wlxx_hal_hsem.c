@@ -20,15 +20,15 @@
   ==============================================================================
   [..]
       (#)Take a semaphore In 2-Step mode Using function HAL_HSEM_Take. This function takes as parameters :
-           (++) the semaphore ID from 0 to 31
+           (++) the semaphore ID from 0 to 15
            (++) the process ID from 0 to 255
       (#) Fast Take semaphore In 1-Step mode Using function HAL_HSEM_FastTake. This function takes as parameter :
-           (++) the semaphore ID from 0_ID to 31. Note that the process ID value is implicitly assumed as zero
+           (++) the semaphore ID from 0 to 15. Note that the process ID value is implicitly assumed as zero
       (#) Check if a semaphore is Taken using function HAL_HSEM_IsSemTaken. This function takes as parameter :
-          (++) the semaphore ID from 0_ID to 31
+          (++) the semaphore ID from 0 to 15
           (++) It returns 1 if the given semaphore is taken otherwise (Free) zero
       (#)Release a semaphore using function with HAL_HSEM_Release. This function takes as parameters :
-           (++) the semaphore ID from 0 to 31
+           (++) the semaphore ID from 0 to 15
            (++) the process ID from 0 to 255:
            (++) Note: If ProcessID and MasterID match, semaphore is freed, and an interrupt
          may be generated when enabled (notification activated). If ProcessID or MasterID does not match,
@@ -144,7 +144,7 @@
 
 /**
   * @brief  Take a semaphore in 2 Step mode.
-  * @param  SemID: semaphore ID from 0 to 31
+  * @param  SemID: semaphore ID from 0 to 15
   * @param  ProcessID: Process ID from 0 to 255
   * @retval HAL status
   */
@@ -170,7 +170,7 @@ HAL_StatusTypeDef  HAL_HSEM_Take(uint32_t SemID, uint32_t ProcessID)
 
 /**
   * @brief  Fast Take a semaphore with 1 Step mode.
-  * @param  SemID: semaphore ID from 0 to 31
+  * @param  SemID: semaphore ID from 0 to 15
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_HSEM_FastTake(uint32_t SemID)
@@ -201,7 +201,7 @@ uint32_t HAL_HSEM_IsSemTaken(uint32_t SemID)
 
 /**
   * @brief  Release a semaphore.
-  * @param  SemID: semaphore ID from 0 to 31
+  * @param  SemID: semaphore ID from 0 to 15
   * @param  ProcessID: Process ID from 0 to 255
   * @retval None
   */

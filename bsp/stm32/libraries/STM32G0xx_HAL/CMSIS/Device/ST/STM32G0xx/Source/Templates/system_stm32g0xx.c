@@ -53,17 +53,15 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2018-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
-
 /** @addtogroup CMSIS
   * @{
   */
@@ -111,11 +109,29 @@
   */
 
 /************************* Miscellaneous Configuration ************************/
-/*!< Uncomment the following line if you need to relocate your vector Table in
-     Internal SRAM. */
+/* Note: Following vector table addresses must be defined in line with linker
+         configuration. */
+/*!< Uncomment the following line if you need to relocate the vector table
+     anywhere in Flash or Sram, else the vector table is kept at the automatic
+     remap of boot address selected */
+/* #define USER_VECT_TAB_ADDRESS */
+
+#if defined(USER_VECT_TAB_ADDRESS)
+/*!< Uncomment the following line if you need to relocate your vector Table
+     in Sram else user remap will be done in Flash. */
 /* #define VECT_TAB_SRAM */
-#define VECT_TAB_OFFSET  0x0U /*!< Vector Table base offset field.
-                                   This value must be a multiple of 0x100. */
+#if defined(VECT_TAB_SRAM)
+#define VECT_TAB_BASE_ADDRESS   SRAM_BASE       /*!< Vector Table base address field.
+                                                     This value must be a multiple of 0x200. */
+#define VECT_TAB_OFFSET         0x00000000U     /*!< Vector Table base offset field.
+                                                     This value must be a multiple of 0x200. */
+#else
+#define VECT_TAB_BASE_ADDRESS   FLASH_BASE      /*!< Vector Table base address field.
+                                                     This value must be a multiple of 0x200. */
+#define VECT_TAB_OFFSET         0x00000000U     /*!< Vector Table base offset field.
+                                                     This value must be a multiple of 0x200. */
+#endif /* VECT_TAB_SRAM */
+#endif /* USER_VECT_TAB_ADDRESS */
 /******************************************************************************/
 /**
   * @}
@@ -168,12 +184,10 @@
   */
 void SystemInit(void)
 {
-  /* Configure the Vector Table location add offset address ------------------*/
-#ifdef VECT_TAB_SRAM
-  SCB->VTOR = SRAM_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
-#else
-  SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
-#endif
+  /* Configure the Vector Table location -------------------------------------*/
+#if defined(USER_VECT_TAB_ADDRESS)
+  SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET; /* Vector Table Relocation */
+#endif /* USER_VECT_TAB_ADDRESS */
 }
 
 /**
@@ -228,30 +242,30 @@ void SystemCoreClockUpdate(void)
   /* Get SYSCLK source -------------------------------------------------------*/
   switch (RCC->CFGR & RCC_CFGR_SWS)
   {
-    case RCC_CFGR_SWS_HSE:  /* HSE used as system clock */
+    case RCC_CFGR_SWS_0:                /* HSE used as system clock */
       SystemCoreClock = HSE_VALUE;
       break;
 
-    case RCC_CFGR_SWS_LSI:  /* LSI used as system clock */
+    case (RCC_CFGR_SWS_1 | RCC_CFGR_SWS_0):  /* LSI used as system clock */
       SystemCoreClock = LSI_VALUE;
       break;
 
-    case RCC_CFGR_SWS_LSE:  /* LSE used as system clock */
+    case RCC_CFGR_SWS_2:                /* LSE used as system clock */
       SystemCoreClock = LSE_VALUE;
       break;
 
-    case RCC_CFGR_SWS_PLL:  /* PLL used as system clock */
+    case RCC_CFGR_SWS_1:  /* PLL used as system clock */
       /* PLL_VCO = (HSE_VALUE or HSI_VALUE / PLLM) * PLLN
          SYSCLK = PLL_VCO / PLLR
          */
       pllsource = (RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC);
       pllm = ((RCC->PLLCFGR & RCC_PLLCFGR_PLLM) >> RCC_PLLCFGR_PLLM_Pos) + 1UL;
 
-      if(pllsource == 0x03UL) /* HSE used as PLL clock source */
+      if(pllsource == 0x03UL)           /* HSE used as PLL clock source */
       {
         pllvco = (HSE_VALUE / pllm);
       }
-      else /* HSI used as PLL clock source */
+      else                              /* HSI used as PLL clock source */
       {
           pllvco = (HSI_VALUE / pllm);
       }
@@ -261,8 +275,8 @@ void SystemCoreClockUpdate(void)
       SystemCoreClock = pllvco/pllr;
       break;
       
-    case RCC_CFGR_SWS_HSI:  /* HSI used as system clock */
-    default:                /* HSI used as system clock */
+    case 0x00000000U:                   /* HSI used as system clock */
+    default:                            /* HSI used as system clock */
       hsidiv = (1UL << ((READ_BIT(RCC->CR, RCC_CR_HSIDIV))>> RCC_CR_HSIDIV_Pos));
       SystemCoreClock = (HSI_VALUE/hsidiv);
       break;

@@ -729,8 +729,8 @@ __STATIC_INLINE uint32_t LL_I2C_GetClockPeriod(I2C_TypeDef *I2Cx)
 __STATIC_INLINE void LL_I2C_ConfigSpeed(I2C_TypeDef *I2Cx, uint32_t PeriphClock, uint32_t ClockSpeed,
                                         uint32_t DutyCycle)
 {
-  register uint32_t freqrange = 0x0U;
-  register uint32_t clockconfig = 0x0U;
+  uint32_t freqrange = 0x0U;
+  uint32_t clockconfig = 0x0U;
 
   /* Compute frequency range */
   freqrange = __LL_I2C_FREQ_HZ_TO_MHZ(PeriphClock);
@@ -1360,7 +1360,7 @@ __STATIC_INLINE uint32_t LL_I2C_IsActiveSMBusFlag_SMBDEFAULT(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Indicate the status of General call address reception (Slave mode).
-  * @note   RESET: No Generall call address
+  * @note   RESET: No General call address
   *         SET: General call address received.
   * @note   This status is cleared by hardware after a STOP condition or repeated START condition.
   * @rmtoll SR2          GENCALL       LL_I2C_IsActiveFlag_GENCALL

@@ -41,23 +41,23 @@
 /** @addtogroup UTILS_LL_Private_Constants
   * @{
   */
-#define UTILS_MAX_FREQUENCY_SCALE1  ((uint32_t)32000000U)        /*!< Maximum frequency for system clock at power scale1, in Hz */
-#define UTILS_MAX_FREQUENCY_SCALE2  ((uint32_t)16000000U)        /*!< Maximum frequency for system clock at power scale2, in Hz */
-#define UTILS_MAX_FREQUENCY_SCALE3  ((uint32_t)4194304U)         /*!< Maximum frequency for system clock at power scale3, in Hz */
+#define UTILS_MAX_FREQUENCY_SCALE1  (32000000U)        /*!< Maximum frequency for system clock at power scale1, in Hz */
+#define UTILS_MAX_FREQUENCY_SCALE2  (16000000U)        /*!< Maximum frequency for system clock at power scale2, in Hz */
+#define UTILS_MAX_FREQUENCY_SCALE3  (4194304U)         /*!< Maximum frequency for system clock at power scale3, in Hz */
 
 /* Defines used for PLL range */
-#define UTILS_PLLVCO_OUTPUT_SCALE1  ((uint32_t)96000000U)        /*!< Frequency max for PLLVCO output at power scale1, in Hz  */
-#define UTILS_PLLVCO_OUTPUT_SCALE2  ((uint32_t)48000000U)        /*!< Frequency max for PLLVCO output at power scale2, in Hz  */
-#define UTILS_PLLVCO_OUTPUT_SCALE3  ((uint32_t)24000000U)        /*!< Frequency max for PLLVCO output at power scale3, in Hz  */
+#define UTILS_PLLVCO_OUTPUT_SCALE1  (96000000U)        /*!< Frequency max for PLLVCO output at power scale1, in Hz  */
+#define UTILS_PLLVCO_OUTPUT_SCALE2  (48000000U)        /*!< Frequency max for PLLVCO output at power scale2, in Hz  */
+#define UTILS_PLLVCO_OUTPUT_SCALE3  (24000000U)        /*!< Frequency max for PLLVCO output at power scale3, in Hz  */
 
 /* Defines used for HSE range */
-#define UTILS_HSE_FREQUENCY_MIN     ((uint32_t)1000000U)         /*!< Frequency min for HSE frequency, in Hz   */
-#define UTILS_HSE_FREQUENCY_MAX     ((uint32_t)24000000U)        /*!< Frequency max for HSE frequency, in Hz   */
+#define UTILS_HSE_FREQUENCY_MIN     (1000000U)         /*!< Frequency min for HSE frequency, in Hz   */
+#define UTILS_HSE_FREQUENCY_MAX     (24000000U)        /*!< Frequency max for HSE frequency, in Hz   */
 
 /* Defines used for FLASH latency according to HCLK Frequency */
-#define UTILS_SCALE1_LATENCY1_FREQ  ((uint32_t)16000000U)        /*!< HCLK frequency to set FLASH latency 1 in power scale 1 */
-#define UTILS_SCALE2_LATENCY1_FREQ  ((uint32_t)8000000U)         /*!< HCLK frequency to set FLASH latency 1 in power scale 2 */
-#define UTILS_SCALE3_LATENCY1_FREQ  ((uint32_t)2000000U)         /*!< HCLK frequency to set FLASH latency 1 in power scale 3 */
+#define UTILS_SCALE1_LATENCY1_FREQ  (16000000U)        /*!< HCLK frequency to set FLASH latency 1 in power scale 1 */
+#define UTILS_SCALE2_LATENCY1_FREQ  (8000000U)         /*!< HCLK frequency to set FLASH latency 1 in power scale 2 */
+#define UTILS_SCALE3_LATENCY1_FREQ  (2000000U)         /*!< HCLK frequency to set FLASH latency 1 in power scale 3 */
 /**
   * @}
   */
@@ -121,7 +121,6 @@
   */
 static uint32_t    UTILS_GetPLLOutputFrequency(uint32_t PLL_InputFrequency,
                                                LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct);
-static ErrorStatus UTILS_SetFlashLatency(uint32_t Frequency);
 static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
 static ErrorStatus UTILS_PLL_IsBusy(void);
 /**
@@ -227,6 +226,95 @@ void LL_SetSystemCoreClock(uint32_t HCLKFrequency)
 {
   /* HCLK clock frequency */
   SystemCoreClock = HCLKFrequency;
+}
+
+/**
+  * @brief  Update number of Flash wait states in line with new frequency and current
+            voltage range.
+  * @param  Frequency  HCLK frequency
+  * @retval An ErrorStatus enumeration value:
+  *          - SUCCESS: Latency has been modified
+  *          - ERROR: Latency cannot be modified
+  */
+ErrorStatus LL_SetFlashLatency(uint32_t Frequency)
+{
+  uint32_t timeout;
+  uint32_t getlatency;
+  uint32_t latency;
+  ErrorStatus status = SUCCESS;
+
+  /* Frequency cannot be equal to 0 */
+  if ((Frequency == 0U) || (Frequency > UTILS_MAX_FREQUENCY_SCALE1))
+  {
+    status = ERROR;
+  }
+  else
+  {
+    if (LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE1)
+    {
+      if (Frequency > UTILS_SCALE1_LATENCY1_FREQ)
+      {
+        /* 16 < HCLK <= 32 => 1WS (2 CPU cycles) */
+        latency = LL_FLASH_LATENCY_1;
+      }
+      else
+      {
+        /* else HCLK < 16MHz default LL_FLASH_LATENCY_0 0WS */
+        latency = LL_FLASH_LATENCY_0;
+      }
+    }
+    else if (LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE2)
+    {
+      if (Frequency > UTILS_SCALE2_LATENCY1_FREQ)
+      {
+        /* 8 < HCLK <= 16 => 1WS (2 CPU cycles) */
+        latency = LL_FLASH_LATENCY_1;
+      }
+      else
+      {
+        /* else HCLK < 8MHz default LL_FLASH_LATENCY_0 0WS */
+        latency = LL_FLASH_LATENCY_0;
+      }
+    }
+    else
+    {
+      if (Frequency > UTILS_SCALE3_LATENCY1_FREQ)
+      {
+        /* 2 < HCLK <= 4 => 1WS (2 CPU cycles) */
+        latency = LL_FLASH_LATENCY_1;
+      }
+      else
+      {
+        /* else HCLK < 2MHz default LL_FLASH_LATENCY_0 0WS */
+        latency = LL_FLASH_LATENCY_0;
+      }
+    }
+
+    if (status != ERROR)
+    {
+      LL_FLASH_SetLatency(latency);
+
+      /* Check that the new number of wait states is taken into account to access the Flash
+           memory by reading the FLASH_ACR register */
+      timeout = 2;
+      do
+      {
+      /* Wait for Flash latency to be updated */
+      getlatency = LL_FLASH_GetLatency();
+      timeout--;
+      } while ((getlatency != latency) && (timeout > 0));
+
+      if(getlatency != latency)
+      {
+        status = ERROR;
+      }
+      else
+      {
+        status = SUCCESS;
+      }
+    }
+  }
+  return status;
 }
 
 /**
@@ -370,67 +458,6 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypa
   * @{
   */
 /**
-  * @brief  Update number of Flash wait states in line with new frequency and current
-            voltage range.
-  * @param  Frequency  HCLK frequency
-  * @retval An ErrorStatus enumeration value:
-  *          - SUCCESS: Latency has been modified
-  *          - ERROR: Latency cannot be modified
-  */
-static ErrorStatus UTILS_SetFlashLatency(uint32_t Frequency)
-{
-  ErrorStatus status = SUCCESS;
-
-  uint32_t latency = LL_FLASH_LATENCY_0;  /* default value 0WS */
-
-  /* Frequency cannot be equal to 0 */
-  if (Frequency == 0U)
-  {
-    status = ERROR;
-  }
-  else
-  {
-    if (LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE1)
-    {
-      if (Frequency > UTILS_SCALE1_LATENCY1_FREQ)
-      {
-        /* 16 < HCLK <= 32 => 1WS (2 CPU cycles) */
-        latency = LL_FLASH_LATENCY_1;
-      }
-      /* else HCLK < 16MHz default LL_FLASH_LATENCY_0 0WS */
-     }
-    else if (LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE2)
-    {
-      if (Frequency > UTILS_SCALE2_LATENCY1_FREQ)
-      {
-        /* 8 < HCLK <= 16 => 1WS (2 CPU cycles) */
-        latency = LL_FLASH_LATENCY_1;
-      }
-      /* else HCLK < 8MHz default LL_FLASH_LATENCY_0 0WS */
-    }
-    else
-    {
-      if (Frequency > UTILS_SCALE3_LATENCY1_FREQ)
-      {
-        /* 2 < HCLK <= 4 => 1WS (2 CPU cycles) */
-        latency = LL_FLASH_LATENCY_1;
-      }
-      /* else HCLK < 4MHz default LL_FLASH_LATENCY_0 0WS */
-    }
-
-    LL_FLASH_SetLatency(latency);
-
-    /* Check that the new number of wait states is taken into account to access the Flash
-       memory by reading the FLASH_ACR register */
-    if (LL_FLASH_GetLatency() != latency)
-    {
-      status = ERROR;
-    }
-  }
-  return status;
-}
-
-/**
   * @brief  Function to check that PLL can be modified
   * @param  PLL_InputFrequency  PLL input frequency (in Hz)
   * @param  UTILS_PLLInitStruct pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
@@ -507,7 +534,7 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   if (SystemCoreClock < hclk_frequency)
   {
     /* Set FLASH latency to highest latency */
-    status = UTILS_SetFlashLatency(hclk_frequency);
+    status = LL_SetFlashLatency(hclk_frequency);
   }
 
   /* Update system clock configuration */
@@ -537,7 +564,7 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   if (SystemCoreClock > hclk_frequency)
   {
     /* Set FLASH latency to lowest latency */
-    status = UTILS_SetFlashLatency(hclk_frequency);
+    status = LL_SetFlashLatency(hclk_frequency);
   }
 
   /* Update SystemCoreClock variable */

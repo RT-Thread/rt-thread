@@ -116,7 +116,7 @@ static void rt_hw_uart_isr(int irqno, void *param)
 static struct hw_uart_device _uart0_device =
 {
     PL011_UART0_BASE,
-    33,
+    PL011_UART0_IRQNUM,
 };
 static struct rt_serial_device _serial0;
 #endif

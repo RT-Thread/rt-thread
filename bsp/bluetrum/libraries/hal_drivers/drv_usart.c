@@ -64,7 +64,7 @@ static struct ab32_uart_config uart_config[] =
 static struct ab32_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
 
 #ifdef HUART_ENABLE
-static uint8_t huart_dma[512];
+static rt_uint8_t huart_dma[512];
 #endif
 
 static rt_err_t ab32_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -179,13 +179,13 @@ static int ab32_getc(struct rt_serial_device *serial)
     uart = rt_container_of(serial, struct ab32_uart, serial);
 
     ch = -1;
-    switch ((uint32_t)(uart->handle.instance)) {
-        case (uint32_t)UART0_BASE:
+    switch ((rt_uint32_t)(uart->handle.instance)) {
+        case (rt_uint32_t)UART0_BASE:
             if (uart->rx_idx != uart->rx_idx_prev) {
                 ch = (int)(uart->rx_buf[uart->rx_idx_prev++ % 10]);
             }
             break;
-        case (uint32_t)UART1_BASE:
+        case (rt_uint32_t)UART1_BASE:
 #ifdef HUART_ENABLE
             if ((uart->uart_dma_flag) && (huart_get_rxcnt())) {
                 ch = huart_getchar();
@@ -197,7 +197,7 @@ static int ab32_getc(struct rt_serial_device *serial)
                 }
             }
             break;
-        case (uint32_t)UART2_BASE:
+        case (rt_uint32_t)UART2_BASE:
             if (uart->rx_idx != uart->rx_idx_prev) {
                 ch = (int)(uart->rx_buf[uart->rx_idx_prev++ % 10]);
             }
@@ -324,7 +324,7 @@ int rt_hw_usart_init(void)
                                        | RT_DEVICE_FLAG_INT_RX
                                        | RT_DEVICE_FLAG_INT_TX
                                        | uart_obj[i].uart_dma_flag
-                                       , NULL);
+                                       , RT_NULL);
         RT_ASSERT(result == RT_EOK);
     }
 

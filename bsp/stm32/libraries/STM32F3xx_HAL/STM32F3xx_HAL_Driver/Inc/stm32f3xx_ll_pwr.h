@@ -201,7 +201,7 @@ extern "C" {
   */
 __STATIC_INLINE void LL_PWR_EnableSDADC(uint32_t Analogx)
 {
-  SET_BIT(PWR->CR, Analogx);
+  SET_BIT(PWR->CR, Analogx); 
 }
 
 /**

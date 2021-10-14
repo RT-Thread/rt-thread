@@ -24,7 +24,7 @@
 /******************************************************************************************************************************************
 * 函数名称: PWM_Init()
 * 功能说明: PWM初始化
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           PWM_InitStructure * initStruct  包含PWM相关设定值的结构体
 * 输    出: 无
 * 注意事项: 无
@@ -101,9 +101,9 @@ void PWM_Init(PWM_TypeDef *PWMx, PWM_InitStructure *initStruct)
 /******************************************************************************************************************************************
 * 函数名称: PWM_Start()
 * 功能说明: 启动PWM，开始PWM输出
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
-*           uint32_t chA            0 通道A不启动       1 通道A启动
-*           uint32_t chB            0 通道B不启动       1 通道B启动
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+*           uint32_t chA            0 通道A不启动        1 通道A启动
+*           uint32_t chB            0 通道B不启动        1 通道B启动
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
@@ -140,9 +140,9 @@ void PWM_Start(PWM_TypeDef *PWMx, uint32_t chA, uint32_t chB)
 /******************************************************************************************************************************************
 * 函数名称: PWM_Stop()
 * 功能说明: 关闭PWM，停止PWM输出
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
-*           uint32_t chA            0 通道A不关闭       1 通道A关闭
-*           uint32_t chB            0 通道B不关闭       1 通道B关闭
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+*           uint32_t chA            0 通道A不关闭        1 通道A关闭
+*           uint32_t chB            0 通道B不关闭        1 通道B关闭
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
@@ -179,7 +179,7 @@ void PWM_Stop(PWM_TypeDef *PWMx, uint32_t chA, uint32_t chB)
 /******************************************************************************************************************************************
 * 函数名称: PWM_SetCycle()
 * 功能说明: 设置周期
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
 *           uint16_t cycle          要设定的周期值
 * 输    出: 无
@@ -196,9 +196,9 @@ void PWM_SetCycle(PWM_TypeDef *PWMx, uint32_t chn, uint16_t cycle)
 /******************************************************************************************************************************************
 * 函数名称: PWM_GetCycle()
 * 功能说明: 获取周期
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要查询哪个通道，有效值：PWM_CH_A、PWM_CH_B
-* 输    出: uint16_t                获取到的周期值
+* 输    出: uint16_t              获取到的周期值
 * 注意事项: 无
 ******************************************************************************************************************************************/
 uint16_t PWM_GetCycle(PWM_TypeDef *PWMx, uint32_t chn)
@@ -216,7 +216,7 @@ uint16_t PWM_GetCycle(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_SetHDuty()
 * 功能说明: 设置高电平时长
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
 *           uint16_t hduty          要设定的高电平时长
 * 输    出: 无
@@ -233,9 +233,9 @@ void PWM_SetHDuty(PWM_TypeDef *PWMx, uint32_t chn, uint16_t hduty)
 /******************************************************************************************************************************************
 * 函数名称: PWM_GetHDuty()
 * 功能说明: 获取高电平时长
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要查询哪个通道，有效值：PWM_CH_A、PWM_CH_B
-* 输    出: uint16_t                获取到的高电平时长
+* 输    出: uint16_t              获取到的高电平时长
 * 注意事项: 无
 ******************************************************************************************************************************************/
 uint16_t PWM_GetHDuty(PWM_TypeDef *PWMx, uint32_t chn)
@@ -253,7 +253,7 @@ uint16_t PWM_GetHDuty(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_SetDeadzone()
 * 功能说明: 设置死区时长
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
 *           uint8_t deadzone        要设定的死区时长
 * 输    出: 无
@@ -270,9 +270,9 @@ void PWM_SetDeadzone(PWM_TypeDef *PWMx, uint32_t chn, uint8_t deadzone)
 /******************************************************************************************************************************************
 * 函数名称: PWM_GetDeadzone()
 * 功能说明: 获取死区时长
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要查询哪个通道，有效值：PWM_CH_A、PWM_CH_B
-* 输    出: uint8_t                 获取到的死区时长
+* 输    出: uint8_t                   获取到的死区时长
 * 注意事项: 无
 ******************************************************************************************************************************************/
 uint8_t PWM_GetDeadzone(PWM_TypeDef *PWMx, uint32_t chn)
@@ -290,7 +290,7 @@ uint8_t PWM_GetDeadzone(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_IntNCycleEn()
 * 功能说明: 新周期开始中断使能
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
 * 输    出: 无
 * 注意事项: 无
@@ -346,7 +346,7 @@ void PWM_IntNCycleEn(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_IntNCycleDis()
 * 功能说明: 新周期开始中断禁能
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
 * 输    出: 无
 * 注意事项: 无
@@ -402,7 +402,7 @@ void PWM_IntNCycleDis(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_IntNCycleClr()
 * 功能说明: 新周期开始中断标志清除
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
 * 输    出: 无
 * 注意事项: 无
@@ -458,9 +458,9 @@ void PWM_IntNCycleClr(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_IntNCycleStat()
 * 功能说明: 新周期开始中断是否发生
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
-* 输    出: uint32_t                1 新周期开始中断已发生    0 新周期开始中断未发生
+* 输    出: uint32_t              1 新周期开始中断已发生    0 新周期开始中断未发生
 * 注意事项: 无
 ******************************************************************************************************************************************/
 uint32_t PWM_IntNCycleStat(PWM_TypeDef *PWMx, uint32_t chn)
@@ -518,7 +518,7 @@ uint32_t PWM_IntNCycleStat(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_IntHEndEn()
 * 功能说明: 高电平结束中断使能
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
 * 输    出: 无
 * 注意事项: 无
@@ -574,7 +574,7 @@ void PWM_IntHEndEn(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_IntHEndDis()
 * 功能说明: 高电平结束中断禁能
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
 * 输    出: 无
 * 注意事项: 无
@@ -630,7 +630,7 @@ void PWM_IntHEndDis(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_IntHEndClr()
 * 功能说明: 高电平结束中断标志清除
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
 * 输    出: 无
 * 注意事项: 无
@@ -686,9 +686,9 @@ void PWM_IntHEndClr(PWM_TypeDef *PWMx, uint32_t chn)
 /******************************************************************************************************************************************
 * 函数名称: PWM_IntHEndStat()
 * 功能说明: 高电平结束中断是否发生
-* 输    入: PWM_TypeDef * PWMx      指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
+* 输    入: PWM_TypeDef * PWMx        指定要被设置的PWM，有效值包括PWM0、PWM1、PWM2、PWM3、PWM4、PWM5
 *           uint32_t chn            选择要设置哪个通道，有效值：PWM_CH_A、PWM_CH_B
-* 输    出: uint32_t                1 高电平结束中断已发生    0 高电平结束中断未发生
+* 输    出: uint32_t              1 高电平结束中断已发生    0 高电平结束中断未发生
 * 注意事项: 无
 ******************************************************************************************************************************************/
 uint32_t PWM_IntHEndStat(PWM_TypeDef *PWMx, uint32_t chn)

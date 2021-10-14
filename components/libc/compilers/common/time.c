@@ -29,7 +29,7 @@
 #include <rtdevice.h>
 #endif
 
-#define DBG_TAG    "TIME"
+#define DBG_TAG    "time"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
@@ -101,7 +101,7 @@ static rt_err_t get_timeval(struct timeval *tv)
         if (rt_device_open(device, 0) == RT_EOK)
         {
             rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &tv->tv_sec);
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME_US, &tv->tv_usec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIMEVAL, tv);
             rt_device_close(device);
         }
     }
@@ -147,7 +147,7 @@ static int set_timeval(struct timeval *tv)
         if (rt_device_open(device, 0) == RT_EOK)
         {
             rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &tv->tv_sec);
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME_US, &tv->tv_usec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIMEVAL, tv);
             rt_device_close(device);
         }
     }
@@ -199,7 +199,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
 
-    r->tm_isdst = rt_tz_is_dst();
+    r->tm_isdst = tz_is_dst();
     return r;
 }
 RTM_EXPORT(gmtime_r);
@@ -215,7 +215,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
 
-    local_tz = *t + rt_tz_get() * 3600;
+    local_tz = *t + tz_get() * 3600;
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -232,13 +232,36 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
 
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * rt_tz_get();
+    timestamp = timestamp - 3600 * tz_get();
     return timestamp;
 }
 RTM_EXPORT(mktime);
 
 char* asctime_r(const struct tm *t, char *buf)
 {
+    /* Checking input validity */
+    if (rt_strlen(days) <= (t->tm_wday << 2) || rt_strlen(months) <= (t->tm_mon << 2))
+    {
+        LOG_W("asctime_r: the input parameters exceeded the limit, please check it.");
+        *(int*) buf = *(int*) days;
+        *(int*) (buf + 4) = *(int*) months;
+        num2str(buf + 8, t->tm_mday);
+        if (buf[8] == '0')
+            buf[8] = ' ';
+        buf[10] = ' ';
+        num2str(buf + 11, t->tm_hour);
+        buf[13] = ':';
+        num2str(buf + 14, t->tm_min);
+        buf[16] = ':';
+        num2str(buf + 17, t->tm_sec);
+        buf[19] = ' ';
+        num2str(buf + 20, 2000 / 100);
+        num2str(buf + 22, 2000 % 100);
+        buf[24] = '\n';
+        buf[25] = '\0';
+        return buf;
+    }
+
     /* "Wed Jun 30 21:49:08 1993\n" */
     *(int*) buf = *(int*) (days + (t->tm_wday << 2));
     *(int*) (buf + 4) = *(int*) (months + (t->tm_mon << 2));
@@ -423,7 +446,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     if(tz != RT_NULL)
     {
         tz->tz_dsttime = DST_NONE;
-        tz->tz_minuteswest = -(rt_tz_get() * 60);
+        tz->tz_minuteswest = -(tz_get() * 60);
     }
 
     if (tv != RT_NULL && get_timeval(tv) == RT_EOK)
@@ -446,7 +469,6 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
      * Thus, the following is purely of historic interest.
      */
     if (tv != RT_NULL
-        && tv->tv_sec >= 0
         && tv->tv_usec >= 0
         && set_timeval((struct timeval *)tv) == RT_EOK)
     {
@@ -676,22 +698,22 @@ RTM_EXPORT(rt_timespec_to_tick);
 #define RT_LIBC_DEFAULT_TIMEZONE    8
 #endif
 
-static volatile rt_int8_t rt_current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
+static volatile int8_t _current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
 
-void rt_tz_set(rt_int8_t tz)
+void tz_set(int8_t tz)
 {
     register rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_current_timezone = tz;
+    _current_timezone = tz;
     rt_hw_interrupt_enable(level);
 }
 
-rt_int8_t rt_tz_get(void)
+int8_t tz_get(void)
 {
-    return rt_current_timezone;
+    return _current_timezone;
 }
 
-rt_int8_t rt_tz_is_dst(void)
+int8_t tz_is_dst(void)
 {
     return 0;
 }

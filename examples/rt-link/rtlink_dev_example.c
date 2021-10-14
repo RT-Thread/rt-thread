@@ -47,8 +47,8 @@ static rt_err_t rtlink_dev_tx_done(rt_device_t dev, void *buffer)
 
 #ifdef RT_USING_POSIX
 #include <dfs_posix.h>
-#include <dfs_poll.h>
-#include <dfs_select.h>
+#include <poll.h>
+#include <sys/select.h>
 
 #define RTLINK01_PATH "/dev/rtlink01"
 int fd  = -1;

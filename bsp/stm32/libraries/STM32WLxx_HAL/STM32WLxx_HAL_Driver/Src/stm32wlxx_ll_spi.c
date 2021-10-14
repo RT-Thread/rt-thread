@@ -221,6 +221,12 @@ ErrorStatus LL_SPI_Init(SPI_TypeDef *SPIx, LL_SPI_InitTypeDef *SPI_InitStruct)
                SPI_CR2_DS | SPI_CR2_SSOE,
                SPI_InitStruct->DataWidth | (SPI_InitStruct->NSS >> 16U));
 
+    /* Set Rx FIFO to Quarter (1 Byte) in case of 8 Bits mode. No DataPacking by default */
+    if (SPI_InitStruct->DataWidth < LL_SPI_DATAWIDTH_9BIT)
+    {
+      LL_SPI_SetRxFIFOThreshold(SPIx, LL_SPI_RX_FIFO_TH_QUARTER);
+    }
+
     /*---------------------------- SPIx CRCPR Configuration ----------------------
      * Configure SPIx CRCPR with parameters:
      * - CRCPoly:            CRCPOLY[15:0] bits
