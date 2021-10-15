@@ -187,9 +187,10 @@ void eclic_irq20_handler(void)
 
 #endif
 
-/* For HBird Uart, when CPU freq is lower than 8M
-   The uart read will only work on baudrate <= 57600 */
-#define DRV_UART_BAUDRATE       BAUD_RATE_57600
+/* For Nuclei demosoc Uart, when CPU freq is lower than 8M
+   The uart read will only work on baudrate <= 57600.
+   Nowadays, we usually distribute FPGA bitsteam with CPU Freq 16MHz */
+#define DRV_UART_BAUDRATE       BAUD_RATE_115200
 
 int rt_hw_uart_init(void)
 {
