@@ -27,6 +27,7 @@
 #include "drv_uart.h"
 #include "drv_gpio.h"
 #include <ald_gpio.h>
+#include "ald_dma.h"
 
 /**
  * @addtogroup es32f3
@@ -155,7 +156,18 @@ void CMU_Handler(void)
 {
     ald_cmu_irq_handler();
 }
-
+/**
+ * This is the DMA interrupt service.
+ *
+ */
+void DMA_Handler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    ald_dma_irq_handler();
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
 /*@}*/
 /**
  * This function will initial ES32F3 board.
@@ -177,6 +189,10 @@ void rt_hw_board_init(void)
 #endif
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+#ifdef BSP_USING_DMA0
+    ald_cmu_perh_clock_config(CMU_PERH_DMA, ENABLE);
+    ald_dma_init(DMA0);
 #endif
 }
 
