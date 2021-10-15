@@ -17,7 +17,7 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2019-04-01     wangyq        the first version 
+ * 2019-04-01     wangyq        the first version
  * 2021-04-20     liuhy         the second version
  */
 
@@ -33,7 +33,7 @@
 int rt_hw_pm_init(void);
 
 extern void save_register(void *p_head,uint32_t size,void *p_save);
- 
+
 extern void load_register(void *p_head,uint32_t size,void *p_load);
 
 #endif
