@@ -608,14 +608,15 @@ void rt_memheap_free(void *ptr)
                                     ptr, header_ptr));
 
     /* check magic */
-    if (header_ptr->magic != (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED))
+    if (header_ptr->magic != (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED) ||
+       (header_ptr->next->magic & RT_MEMHEAP_MASK) != RT_MEMHEAP_MAGIC)
     {
         RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("bad magic:0x%08x @ memheap\n",
                                         header_ptr->magic));
+        RT_ASSERT(header_ptr->magic == (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED));
+        /* check whether this block of memory has been over-written. */
+        RT_ASSERT((header_ptr->next->magic & RT_MEMHEAP_MASK) == RT_MEMHEAP_MAGIC);
     }
-    RT_ASSERT(header_ptr->magic == (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED));
-    /* check whether this block of memory has been over-written. */
-    RT_ASSERT((header_ptr->next->magic & RT_MEMHEAP_MASK) == RT_MEMHEAP_MAGIC);
 
     /* get pool ptr */
     heap = header_ptr->pool_ptr;
@@ -765,6 +766,77 @@ void rt_memheap_info(struct rt_memheap *heap,
 }
 
 #ifdef RT_USING_MEMTRACE
+int memheapcheck(int argc, char *argv[])
+{
+    struct rt_object_information *info;
+    struct rt_list_node *list;
+    struct rt_memheap *heap;
+    struct rt_list_node *node;
+    struct rt_memheap_item *item;
+    struct rt_memheap_item *last = RT_NULL;
+    rt_bool_t has_bad = RT_FALSE;
+    rt_base_t level;
+    char *name;
+
+    name = argc > 1 ? argv[1] : RT_NULL;
+    level = rt_hw_interrupt_disable();
+    info = rt_object_get_information(RT_Object_Class_MemHeap);
+    list = &info->object_list;
+    for (node = list->next; node != list; node = node->next)
+    {
+        struct rt_memheap_item *header_ptr;
+        rt_uint32_t block_size;
+
+        heap = (struct rt_memheap *)rt_list_entry(node, struct rt_object, list);
+        /* find the specified object */
+        if (name != RT_NULL && rt_strncmp(name, heap->parent.name, RT_NAME_MAX) != 0)
+            continue;
+        /* check memheap */
+        for (item = heap->block_list; item->next != heap->block_list; item = item->next)
+        {
+            /* check magic */
+            if (!((item->magic & (RT_MEMHEAP_MAGIC | RT_MEMHEAP_FREED)) == (RT_MEMHEAP_MAGIC | RT_MEMHEAP_FREED) ||
+                 (item->magic & (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED))  == (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED)))
+            {
+                has_bad = RT_TRUE;
+                break;
+            }
+            /* check pool_ptr */
+            if (heap != item->pool_ptr)
+            {
+                has_bad = RT_TRUE;
+                break;
+            }
+            /* check next and prev */
+            if (!((rt_uint32_t)item->next <= (rt_uint32_t)((rt_uint32_t)heap->start_addr + heap->pool_size) &&
+                  (rt_uint32_t)item->prev >= (rt_uint32_t)heap->start_addr) &&
+                  (rt_uint32_t)item->next == RT_ALIGN((rt_uint32_t)item->next, RT_ALIGN_SIZE) &&
+                  (rt_uint32_t)item->prev == RT_ALIGN((rt_uint32_t)item->prev, RT_ALIGN_SIZE))
+            {
+                has_bad = RT_TRUE;
+                break;
+            }
+            /* check item */
+            if (item->next == item->next->prev)
+            {
+                has_bad = RT_TRUE;
+                break;
+            }
+            /* move to next used memory block */
+            last = item;
+        }
+    }
+    rt_hw_interrupt_enable(level);
+    if (has_bad)
+    {
+        rt_kprintf("Memory block wrong:\n");
+        rt_kprintf("name: %s\n", heap->parent.name);
+        rt_kprintf("item: 0x%08x\n", item);
+    }
+    return 0;
+}
+MSH_CMD_EXPORT(memheapcheck, check memory for memheap);
+
 int memheaptrace(int argc, char *argv[])
 {
     struct rt_object_information *info;
