@@ -1233,15 +1233,15 @@ static const struct pin_index pins[] =
 #define ES_USART1_CTS_GPIO_FUNC GPIO_FUNC_3
 #endif
 #ifndef ES_USART1_CTS_GPIO_PORT
-#define ES_USART1_CTS_GPIO_PORT GPIOF
+#define ES_USART1_CTS_GPIO_PORT GPIOA
 #endif
 #ifndef ES_USART1_CTS_GPIO_PIN
-#define ES_USART1_CTS_GPIO_PIN GPIO_PIN_7
+#define ES_USART1_CTS_GPIO_PIN GPIO_PIN_0
 #endif
 
 #ifndef ES_USART1_CTS_PIN
-#ifdef ES_PIN_GPIO_F_7
-#define ES_USART1_CTS_PIN ES_PIN_GPIO_F_7
+#ifdef ES_PIN_GPIO_A_0
+#define ES_USART1_CTS_PIN ES_PIN_GPIO_A_0
 #endif
 #endif
 
@@ -2470,15 +2470,15 @@ static const struct pin_index pins[] =
 #define ES_GP16C2T0_CH1_GPIO_FUNC GPIO_FUNC_2
 #endif
 #ifndef ES_GP16C2T0_CH1_GPIO_PORT
-#define ES_GP16C2T0_CH1_GPIO_PORT GPIOF
+#define ES_GP16C2T0_CH1_GPIO_PORT GPIOA
 #endif
 #ifndef ES_GP16C2T0_CH1_GPIO_PIN
-#define ES_GP16C2T0_CH1_GPIO_PIN GPIO_PIN_7
+#define ES_GP16C2T0_CH1_GPIO_PIN GPIO_PIN_0
 #endif
 
 #ifndef ES_GP16C2T0_CH1_PIN
-#ifdef ES_PIN_GPIO_F_7
-#define ES_GP16C2T0_CH1_PIN ES_PIN_GPIO_F_7
+#ifdef ES_PIN_GPIO_A_0
+#define ES_GP16C2T0_CH1_PIN ES_PIN_GPIO_A_0
 #endif
 #endif
 
