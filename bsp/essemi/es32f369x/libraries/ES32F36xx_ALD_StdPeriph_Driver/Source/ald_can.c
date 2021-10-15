@@ -443,8 +443,8 @@ ald_status_t ald_can_recv(can_handle_t *hperh, can_rx_fifo_t num, can_rx_msg_t *
 		}
 	}
 
-	if (__can_rx_check(hperh, num))
-		return ERROR;
+//	if (__can_rx_check(hperh, num))
+//		return ERROR;
 
 	stid = READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_STDID_MSK, CAN_RXF0ID_STDID_POSS);
 	exid = READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_EXID_MSK, CAN_RXF0ID_EXID_POSS);

@@ -81,6 +81,10 @@ endif
             bool "BSP_USING_EXAMPLE_UART"
             default n
 
+        config BSP_USING_EXAMPLE_UART_DMA
+            bool "BSP_USING_EXAMPLE_UART_DMA"
+            default n
+
         config BSP_USING_EXAMPLE_CAN
             bool "BSP_USING_EXAMPLE_CAN"
             default n

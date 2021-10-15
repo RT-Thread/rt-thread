@@ -54,7 +54,7 @@
 #endif
 
 #ifndef  ES_CAN0_AUTO_BAN_RE_T
-#define ES_CAN0_AUTO_BAN_RE_T    ES_C_ENABLE
+#define ES_CAN0_AUTO_BAN_RE_T    ES_C_DISABLE
 #endif
 #ifndef  ES_CAN0_SPEED
 #define ES_CAN0_SPEED           1000000
