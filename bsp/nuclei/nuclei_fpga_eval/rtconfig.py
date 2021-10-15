@@ -1,4 +1,5 @@
 import os
+import platform
 
 # toolchains options
 ARCH='risc-v'
@@ -10,17 +11,23 @@ if os.getenv('RTT_CC'):
 
 if CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
-    EXEC_PATH 	= 'D:/Software/Nuclei/gcc/bin'
+    if platform.system().lower() == "windows":
+        EXEC_PATH 	= 'D:/NucleiStudio/toolchain/gcc/bin'
+    else:
+        EXEC_PATH 	= '~/NucleiStudio/toolchain/gcc/bin'
+    if os.path.exists(EXEC_PATH) == False:
+        print("Warning: Toolchain path %s doesn't exist, assume it is already in PATH" % EXEC_PATH)
+        EXEC_PATH = '' # Don't set path if not exist
 else:
-    print("CROSS_TOOL = {} not yet supported" % CROSS_TOOL)
+    print("CROSS_TOOL = %s not yet supported" % CROSS_TOOL)
 
-# if os.getenv('RTT_EXEC_PATH'):
-# 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 # Fixed configurations below
-NUCLEI_SDK_SOC = "hbird"
-NUCLEI_SDK_BOARD = "hbird_eval"
+NUCLEI_SDK_SOC = "demosoc"
+NUCLEI_SDK_BOARD = "nuclei_fpga_eval"
 # Configurable options below
 # DOWNLOAD: https://doc.nucleisys.com/nuclei_sdk/develop/buildsystem.html#download
 NUCLEI_SDK_DOWNLOAD = "ilm"
