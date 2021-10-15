@@ -34,6 +34,7 @@
  * Components Initialization will initialize some driver and components as following
  * order:
  * rti_start         --> 0
+ * rti_board_start   --> 0.end
  * BOARD_EXPORT      --> 1
  * rti_board_end     --> 1.end
  *

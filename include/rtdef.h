@@ -258,20 +258,132 @@ typedef int (*init_fn_t)(void);
 #define INIT_EXPORT(fn, level)
 #endif
 
+/* initialization export order */
+#define _INIT_ORDER_0  "00"
+#define _INIT_ORDER_1  "01"
+#define _INIT_ORDER_2  "02"
+#define _INIT_ORDER_3  "03"
+#define _INIT_ORDER_4  "04"
+#define _INIT_ORDER_5  "05"
+#define _INIT_ORDER_6  "06"
+#define _INIT_ORDER_7  "07"
+#define _INIT_ORDER_8  "08"
+#define _INIT_ORDER_9  "09"
+#define _INIT_ORDER_10 "10"
+#define _INIT_ORDER_11 "11"
+#define _INIT_ORDER_12 "12"
+#define _INIT_ORDER_13 "13"
+#define _INIT_ORDER_14 "14"
+#define _INIT_ORDER_15 "15"
+#define _INIT_ORDER_16 "16"
+#define _INIT_ORDER_17 "17"
+#define _INIT_ORDER_18 "18"
+#define _INIT_ORDER_19 "19"
+#define _INIT_ORDER_20 "20"
+#define _INIT_ORDER_21 "21"
+#define _INIT_ORDER_22 "22"
+#define _INIT_ORDER_23 "23"
+#define _INIT_ORDER_24 "24"
+#define _INIT_ORDER_25 "25"
+#define _INIT_ORDER_26 "26"
+#define _INIT_ORDER_27 "27"
+#define _INIT_ORDER_28 "28"
+#define _INIT_ORDER_29 "29"
+#define _INIT_ORDER_30 "30"
+#define _INIT_ORDER_31 "31"
+#define _INIT_ORDER_32 "32"
+#define _INIT_ORDER_33 "33"
+#define _INIT_ORDER_34 "34"
+#define _INIT_ORDER_35 "35"
+#define _INIT_ORDER_36 "36"
+#define _INIT_ORDER_37 "37"
+#define _INIT_ORDER_38 "38"
+#define _INIT_ORDER_39 "39"
+#define _INIT_ORDER_40 "40"
+#define _INIT_ORDER_41 "41"
+#define _INIT_ORDER_42 "42"
+#define _INIT_ORDER_43 "43"
+#define _INIT_ORDER_44 "44"
+#define _INIT_ORDER_45 "45"
+#define _INIT_ORDER_46 "46"
+#define _INIT_ORDER_47 "47"
+#define _INIT_ORDER_48 "48"
+#define _INIT_ORDER_49 "49"
+#define _INIT_ORDER_50 "50"
+#define _INIT_ORDER_51 "51"
+#define _INIT_ORDER_52 "52"
+#define _INIT_ORDER_53 "53"
+#define _INIT_ORDER_54 "54"
+#define _INIT_ORDER_55 "55"
+#define _INIT_ORDER_56 "56"
+#define _INIT_ORDER_57 "57"
+#define _INIT_ORDER_58 "58"
+#define _INIT_ORDER_59 "59"
+#define _INIT_ORDER_60 "60"
+#define _INIT_ORDER_61 "61"
+#define _INIT_ORDER_62 "62"
+#define _INIT_ORDER_63 "63"
+#define _INIT_ORDER_64 "64"
+#define _INIT_ORDER_65 "65"
+#define _INIT_ORDER_66 "66"
+#define _INIT_ORDER_67 "67"
+#define _INIT_ORDER_68 "68"
+#define _INIT_ORDER_69 "69"
+#define _INIT_ORDER_70 "70"
+#define _INIT_ORDER_71 "71"
+#define _INIT_ORDER_72 "72"
+#define _INIT_ORDER_73 "73"
+#define _INIT_ORDER_74 "74"
+#define _INIT_ORDER_75 "75"
+#define _INIT_ORDER_76 "76"
+#define _INIT_ORDER_77 "77"
+#define _INIT_ORDER_78 "78"
+#define _INIT_ORDER_79 "79"
+#define _INIT_ORDER_80 "80"
+#define _INIT_ORDER_81 "81"
+#define _INIT_ORDER_82 "82"
+#define _INIT_ORDER_83 "83"
+#define _INIT_ORDER_84 "84"
+#define _INIT_ORDER_85 "85"
+#define _INIT_ORDER_86 "86"
+#define _INIT_ORDER_87 "87"
+#define _INIT_ORDER_88 "88"
+#define _INIT_ORDER_89 "89"
+#define _INIT_ORDER_90 "90"
+#define _INIT_ORDER_91 "91"
+#define _INIT_ORDER_92 "92"
+#define _INIT_ORDER_93 "93"
+#define _INIT_ORDER_94 "94"
+#define _INIT_ORDER_95 "95"
+#define _INIT_ORDER_96 "96"
+#define _INIT_ORDER_97 "97"
+#define _INIT_ORDER_98 "98"
+#define _INIT_ORDER_99 "99"
+
+#define INIT_ORDER_DEFAULT 49
+
+#define _INIT_ORDER(order)  _INIT_ORDER_##order
+
 /* board init routines will be called in board_init() function */
-#define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
+#define INIT_BOARD_EXPORT_ORDER(fn, order) INIT_EXPORT(fn, "1." _INIT_ORDER(order))
+#define INIT_BOARD_EXPORT(fn)              INIT_BOARD_EXPORT_ORDER(fn, INIT_ORDER_DEFAULT)
 
 /* pre/device/component/env/app init routines will be called in init_thread */
 /* components pre-initialization (pure software initilization) */
-#define INIT_PREV_EXPORT(fn)            INIT_EXPORT(fn, "2")
+#define INIT_PREV_EXPORT_ORDER(fn, order) INIT_EXPORT(fn, "2." _INIT_ORDER(order))
+#define INIT_PREV_EXPORT(fn)              INIT_PREV_EXPORT_ORDER(fn, INIT_ORDER_DEFAULT)
 /* device initialization */
-#define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "3")
+#define INIT_DEVICE_EXPORT_ORDER(fn, order) INIT_EXPORT(fn, "3." _INIT_ORDER(order))
+#define INIT_DEVICE_EXPORT(fn)              INIT_DEVICE_EXPORT_ORDER(fn, INIT_ORDER_DEFAULT)
 /* components initialization (dfs, lwip, ...) */
-#define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "4")
+#define INIT_COMPONENT_EXPORT_ORDER(fn, order) INIT_EXPORT(fn, "4." _INIT_ORDER(order))
+#define INIT_COMPONENT_EXPORT(fn)              INIT_COMPONENT_EXPORT_ORDER(fn, INIT_ORDER_DEFAULT)
 /* environment initialization (mount disk, ...) */
-#define INIT_ENV_EXPORT(fn)             INIT_EXPORT(fn, "5")
+#define INIT_ENV_EXPORT_ORDER(fn, order) INIT_EXPORT(fn, "5." _INIT_ORDER(order))
+#define INIT_ENV_EXPORT(fn)              INIT_ENV_EXPORT_ORDER(fn, INIT_ORDER_DEFAULT)
 /* appliation initialization (rtgui application etc ...) */
-#define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
+#define INIT_APP_EXPORT_ORDER(fn, order) INIT_EXPORT(fn, "6." _INIT_ORDER(order))
+#define INIT_APP_EXPORT(fn)              INIT_APP_EXPORT_ORDER(fn, INIT_ORDER_DEFAULT)
 
 #if !defined(RT_USING_FINSH)
 /* define these to empty, even if not include finsh.h file */
