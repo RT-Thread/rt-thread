@@ -627,6 +627,13 @@ void rt_scheduler_do_irq_switch(void *context)
 
                 rt_hw_context_switch_interrupt(context, (rt_ubase_t)&current_thread->sp,
                         (rt_ubase_t)&to_thread->sp, to_thread);
+
+                /*
+                 * If the content in the `context` interrupt context is not used directly in
+                 * `rt_hw_context_switch_interrupt`, then you need to return here and return
+                 * to the interrupt to restore the interrupt context.
+                 */
+                return;
             }
         }
     }
