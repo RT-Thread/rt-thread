@@ -66,6 +66,9 @@
                       (((rt_base_t)(((struct rt_mem_item *)(_mem))->pool_ptr)) & (~MEM_MASK))
 #define MEM_POOL(_mem)     \
     ((struct rt_mem *)(((rt_base_t)(((struct rt_mem_item *)(_mem))->pool_ptr)) & (MEM_MASK)))
+#define MEM_SIZE(_heap, _mem)      \
+    (((struct rt_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - \
+    (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_mem_item), RT_ALIGN_SIZE))
 
 #define MIN_SIZE_ALIGNED     RT_ALIGN(MIN_SIZE, RT_ALIGN_SIZE)
 #define SIZEOF_STRUCT_MEM    RT_ALIGN(sizeof(struct rt_mem_item), RT_ALIGN_SIZE)
@@ -269,7 +272,7 @@ void *rt_mem_alloc(struct rt_mem *m, rt_size_t size)
         size = MIN_SIZE_ALIGNED;
 
     for (ptr = (rt_uint8_t *)m->lfree - m->heap_ptr;
-         ptr < m->mem_size_aligned - size;
+         ptr <= m->mem_size_aligned - size;
          ptr = ((struct rt_mem_item *)&m->heap_ptr[ptr])->next)
     {
         mem = (struct rt_mem_item *)&m->heap_ptr[ptr];
@@ -633,12 +636,9 @@ int memtrace(int argc, char **argv)
         rt_kprintf("\n--memory item information --\n");
         for (mem = (struct rt_mem_item *)m->heap_ptr; mem != m->heap_end; mem = (struct rt_mem_item *)&m->heap_ptr[mem->next])
         {
-            int position = (rt_ubase_t)mem - (rt_ubase_t)m->heap_ptr;
-            int size;
+            int size = MEM_SIZE(m, mem);
 
             rt_kprintf("[0x%08x - ", mem);
-
-            size = mem->next - position - SIZEOF_STRUCT_MEM;
             if (size < 1024)
                 rt_kprintf("%5d", size);
             else if (size < 1024 * 1024)
