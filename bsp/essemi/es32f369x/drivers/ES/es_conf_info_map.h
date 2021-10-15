@@ -1937,22 +1937,6 @@ static const struct pin_index pins[] =
 
 
 #ifndef ES_AD16C4T0_CH1_GPIO_FUNC
-#define ES_AD16C4T0_CH1_GPIO_FUNC GPIO_FUNC_4
-#endif
-#ifndef ES_AD16C4T0_CH1_GPIO_PORT
-#define ES_AD16C4T0_CH1_GPIO_PORT GPIOA
-#endif
-#ifndef ES_AD16C4T0_CH1_GPIO_PIN
-#define ES_AD16C4T0_CH1_GPIO_PIN GPIO_PIN_7
-#endif
-
-#ifndef ES_AD16C4T0_CH1_PIN
-#ifdef ES_PIN_GPIO_A_7
-#define ES_AD16C4T0_CH1_PIN ES_PIN_GPIO_A_7
-#endif
-#endif
-
-#ifndef ES_AD16C4T0_CH1_GPIO_FUNC
 #define ES_AD16C4T0_CH1_GPIO_FUNC GPIO_FUNC_2
 #endif
 #ifndef ES_AD16C4T0_CH1_GPIO_PORT
@@ -2097,6 +2081,22 @@ static const struct pin_index pins[] =
 #endif
 
 #ifndef ES_AD16C4T0_CH1N_GPIO_FUNC
+#define ES_AD16C4T0_CH1N_GPIO_FUNC GPIO_FUNC_4
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PORT
+#define ES_AD16C4T0_CH1N_GPIO_PORT GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PIN
+#define ES_AD16C4T0_CH1N_GPIO_PIN GPIO_PIN_7
+#endif
+
+#ifndef ES_AD16C4T0_CH1N_PIN
+#ifdef ES_PIN_GPIO_A_7
+#define ES_AD16C4T0_CH1N_PIN ES_PIN_GPIO_A_7
+#endif
+#endif
+
+#ifndef ES_AD16C4T0_CH1N_GPIO_FUNC
 #define ES_AD16C4T0_CH1N_GPIO_FUNC GPIO_FUNC_2
 #endif
 #ifndef ES_AD16C4T0_CH1N_GPIO_PORT
@@ -2149,6 +2149,22 @@ static const struct pin_index pins[] =
 #endif
 
 #ifndef ES_AD16C4T0_CH2N_GPIO_FUNC
+#define ES_AD16C4T0_CH2N_GPIO_FUNC GPIO_FUNC_6
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PORT
+#define ES_AD16C4T0_CH2N_GPIO_PORT GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PIN
+#define ES_AD16C4T0_CH2N_GPIO_PIN GPIO_PIN_0
+#endif
+
+#ifndef ES_AD16C4T0_CH2N_PIN
+#ifdef ES_PIN_GPIO_B_0
+#define ES_AD16C4T0_CH2N_PIN ES_PIN_GPIO_B_0
+#endif
+#endif
+
+#ifndef ES_AD16C4T0_CH2N_GPIO_FUNC
 #define ES_AD16C4T0_CH2N_GPIO_FUNC GPIO_FUNC_2
 #endif
 #ifndef ES_AD16C4T0_CH2N_GPIO_PORT
@@ -2197,6 +2213,22 @@ static const struct pin_index pins[] =
 #ifndef ES_AD16C4T0_CH3N_PIN
 #ifdef ES_PIN_GPIO_B_15
 #define ES_AD16C4T0_CH3N_PIN ES_PIN_GPIO_B_15
+#endif
+#endif
+
+#ifndef ES_AD16C4T0_CH3N_GPIO_FUNC
+#define ES_AD16C4T0_CH3N_GPIO_FUNC GPIO_FUNC_6
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PORT
+#define ES_AD16C4T0_CH3N_GPIO_PORT GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PIN
+#define ES_AD16C4T0_CH3N_GPIO_PIN GPIO_PIN_1
+#endif
+
+#ifndef ES_AD16C4T0_CH3N_PIN
+#ifdef ES_PIN_GPIO_B_1
+#define ES_AD16C4T0_CH3N_PIN ES_PIN_GPIO_B_1
 #endif
 #endif
 
