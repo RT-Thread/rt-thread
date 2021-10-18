@@ -35,6 +35,18 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI3
         default n
 
+    config BSP_USING_LCD_SAMPLE
+        bool "Enable LCD sample"
+        depends on BSP_USING_SPI_LCD
+        depends on !BSP_USING_LVGL
+        default n
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select BSP_USING_SPI_LCD
+        select PKG_USING_LVGL
+        default n
+
     config BSP_USING_SDCARD
         bool "Enable SDCARD (spi1)"
         select BSP_USING_SPI
