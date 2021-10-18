@@ -20,6 +20,9 @@ elif rtconfig.CROSS_TOOL == 'gcc':
     if GetDepend(['RT_USING_SERIAL']):
         src += [cwd + '/fsp/src/r_sci_uart/r_sci_uart.c']
 
+    if GetDepend(['RT_USING_PIN']):
+        src += [cwd + '/fsp/src/r_icu/r_icu.c']
+
     CPPPATH = [ cwd + '/arm/CMSIS_5/CMSIS/Core/Include',
                 cwd + '/fsp/inc',
                 cwd + '/fsp/inc/api',
