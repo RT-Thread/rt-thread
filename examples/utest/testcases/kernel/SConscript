@@ -8,6 +8,9 @@ src     = Split('''
 if GetDepend(['UTEST_MEMHEAP_TC']):
     src += ['memheap_tc.c']
 
+if GetDepend(['UTEST_SMALL_MEM_TC']):
+    src += ['mem_tc.c']
+
 if GetDepend(['UTEST_IRQ_TC']):
     src += ['irq_tc.c']
     
