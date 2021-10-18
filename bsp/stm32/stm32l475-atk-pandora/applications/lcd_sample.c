@@ -11,8 +11,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-
-#ifdef BSP_USING_SPI_LCD
 #include <drv_lcd.h>
 #include <rttlogo.h>
 
@@ -45,4 +43,3 @@ static int lcd_sample(void)
     return RT_EOK;
 }
 INIT_APP_EXPORT(lcd_sample);
-#endif /* BSP_USING_SPI_LCD */
