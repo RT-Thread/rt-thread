@@ -386,9 +386,6 @@ void *rt_mem_realloc(struct rt_mem *m, void *rmem, rt_size_t newsize)
     RT_ASSERT(m != RT_NULL);
     RT_ASSERT(rt_object_get_type(&m->parent) == RT_Object_Class_Mem);
     RT_ASSERT(rt_object_is_systemobject(&m->parent));
-    RT_ASSERT((((rt_ubase_t)rmem) & (RT_ALIGN_SIZE - 1)) == 0);
-    RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)m->heap_ptr &&
-              (rt_uint8_t *)rmem < (rt_uint8_t *)m->heap_end);
 
     /* alignment size */
     newsize = RT_ALIGN(newsize, RT_ALIGN_SIZE);
@@ -408,14 +405,13 @@ void *rt_mem_realloc(struct rt_mem *m, void *rmem, rt_size_t newsize)
     if (rmem == RT_NULL)
         return rt_mem_alloc(m, newsize);
 
-    if ((rt_uint8_t *)rmem < (rt_uint8_t *)m->heap_ptr ||
-        (rt_uint8_t *)rmem >= (rt_uint8_t *)m->heap_end)
-    {
-        return rmem;
-    }
+    RT_ASSERT((((rt_ubase_t)rmem) & (RT_ALIGN_SIZE - 1)) == 0);
+    RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)m->heap_ptr);
+    RT_ASSERT((rt_uint8_t *)rmem < (rt_uint8_t *)m->heap_end);
 
     mem = (struct rt_mem_item *)((rt_uint8_t *)rmem - SIZEOF_STRUCT_MEM);
 
+    /* current memory block size */
     ptr = (rt_uint8_t *)mem - m->heap_ptr;
     size = mem->next - ptr - SIZEOF_STRUCT_MEM;
     if (size == newsize)
