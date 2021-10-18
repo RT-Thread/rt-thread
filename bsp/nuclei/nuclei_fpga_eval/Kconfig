@@ -19,7 +19,7 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "board/Kconfig"
 
-config SOC_HUMMINGBIRD
+config SOC_DEMOSOC
     bool
     select ARCH_RISCV
     select PKG_USING_NUCLEI_SDK

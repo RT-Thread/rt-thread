@@ -1,14 +1,14 @@
-# 芯来科技蜂鸟FPGA评估板
+# 芯来科技FPGA评估板
 
 ## 简介
 
-**蜂鸟FPGA系列评估板** 是由芯来科技公司推出的用于一系列测试评估芯来RISC-V内核处理器的FPGA评估板。
+**芯来科技FPGA系列板** 是由芯来科技公司推出的用于一系列测试评估芯来RISC-V内核处理器的FPGA评估板。
 
-更多关于 **蜂鸟FPGA评估板** 开发板的详细资料请参见:
+更多关于 **芯来科技FPGA评估板** 开发板的详细资料请参见:
 
 * [Nuclei DDR200T开发板](https://nucleisys.com/developboard.php#ddr200t)
 * [Nuclei MCU200T开发板](https://nucleisys.com/developboard.php#mcu200t)
-* [蜂鸟开发板](https://nucleisys.com/developboard.php#hbird100t)
+* [蜂鸟开发板](https://nucleisys.com/developboard.php#demosoc100t)
 
 ### 板载资源
 
@@ -16,7 +16,7 @@
 | ---  | --- |
 | 内核 | Nuclei RISC-V N/NX/UX 内核 |
 | 架构 | RV32 or RV64 |
-| 主频 | 8MHz or uncertain freq |
+| 主频 | 16MHz or uncertain freq |
 
 **注意**: 这个上面烧写的是FPGA bitstream文件，所以处理器内核版本根据型号来定，通过修改**rtconfig.py**中的**NUCLEI_SDK_CORE**.
 
@@ -33,28 +33,28 @@
 
 #### Windows
 
-假设工具安装在 **D:\Software\Nuclei**目录下, 则可以修改系统环境变量**PATH**,
-将**D:\Software\Nuclei\gcc\bin;D:\Software\Nuclei\openocd\bin;**增加到**PATH**中。
+假设工具安装在 **D:\NucleiStudio\toolchain**目录下, 则可以修改系统环境变量**PATH**,
+将**D:\NucleiStudio\toolchain\gcc\bin;D:\NucleiStudio\toolchain\openocd\bin;**增加到**PATH**中。
 
 或者在ENV工具命令行中运行
 
 ~~~cmd
-set PATH=D:\Software\Nuclei\gcc\bin;D:\Software\Nuclei\openocd\bin;%PATH%
+set PATH=D:\NucleiStudio\toolchain\gcc\bin;D:\NucleiStudio\toolchain\openocd\bin;%PATH%
 ~~~
 
 #### Linux
 
-假设工具安装在 **~/Software/Nuclei**目录下, 通过在Linux的``.bashrc``增加如下一行代码
+假设工具安装在 **~/NucleiStudio/toolchain**目录下, 通过在Linux的``.bashrc``增加如下一行代码
 来添加环境变量。
 
 ~~~bash
-export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
+export PATH=~/NucleiStudio/toolchain/gcc/bin:~/NucleiStudio/toolchain/openocd/bin:$PATH
 ~~~
 
 或者在ENV工具命令行中运行
 
 ~~~bash
-export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
+export PATH=~/NucleiStudio/toolchain/gcc/bin:~/NucleiStudio/toolchain/openocd/bin:$PATH
 ~~~
 
 **注意**: 对应的RISC-V GCC和OPENOCD的路径请替换成自己安装的路径。
@@ -69,7 +69,7 @@ export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
 
 下载好[RT-Thread](https://github.com/RT-Thread/rt-thread)的代码和[ENV工具](https://www.rt-thread.org/document/site/tutorial/env-video/)以后。
 
-按照ENV工具的教程, 在**rt-thread\bsp\nuclei\hbird_eval**目录打开ENV工具命令行。
+按照ENV工具的教程, 在**rt-thread\bsp\nuclei\nuclei_fpga_eval**目录打开ENV工具命令行。
 
 **注意**: 请确保Nuclei GCC和Nuclei OpenOCD的路径设置正确无误。
 
@@ -91,9 +91,9 @@ export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
 
 ~~~
 scons: Reading SConscript files ...
-Supported downloaded modes for board hbird_eval are ('ilm', 'flash', 'flashxip'), chosen downloaded mode is ilm
+Supported downloaded modes for board nuclei_fpga_eval are ('ilm', 'flash', 'flashxip'), chosen downloaded mode is ilm
 Upload application rtthread.elf using openocd and gdb
-riscv-nuclei-elf-gdb rtthread.elf -ex "set remotetimeout 240"                     -ex "target remote | openocd --pipe -f D:/workspace/Sourcecode/rt-thread/bsp/nuclei/hbird_eval/packages/nuclei_sdk-latest/SoC/hbird/Board/hbird_eval/openocd_hbird.cfg"
+riscv-nuclei-elf-gdb rtthread.elf -ex "set remotetimeout 240"                     -ex "target remote | openocd --pipe -f D:/workspace/Sourcecode/rt-thread/bsp/nuclei/nuclei_fpga_eval/packages/nuclei_sdk-latest/SoC/demosoc/Board/nuclei_fpga_eval/openocd_demosoc.cfg"
               --batch -ex "monitor halt" -ex "monitor flash protect 0 0 last off" -ex "load"                     -ex "monitor resume" -ex "monitor shutdown" -ex "quit"
 D:\Software\Nuclei\gcc\bin\riscv-nuclei-elf-gdb.exe: warning: Couldn't determine a path for the index cache directory.
 Nuclei OpenOCD, i386 Open On-Chip Debugger 0.10.0+dev-g11f0cf429 (2020-07-15-04:09)
@@ -119,11 +119,9 @@ Quit anyway? (y or n) [answered Y; input not from terminal]
 [Inferior 1 (Remote target) detached]
 ~~~
 
-下载程序之后, 连接**串口(57600-N-8-1)**, 可以看到 RT-Thread 的输出信息:
+下载程序之后, 连接**串口(115200-N-8-1)**, 可以看到 RT-Thread 的输出信息:
 
-> 由于FPGA评估的Nuclei RISC-V内核主频一般在8MHz左右, 而评估SoC串口
-> 在8MHz主频下，工作大于在115200 bps时，串口读取工作不正常，因此这里设置
-> 波特率为57600bps，特此说明.
+> 最新发布出去的评估Bit一般都是16MHz, 串口工作在115200bps下串口读取可以正常工作.
 
 ```
 initialize rti_board_start:0 done
@@ -161,9 +159,9 @@ msh />
 
 ~~~
 scons: Reading SConscript files ...
-Supported downloaded modes for board hbird_eval are ('ilm', 'flash', 'flashxip'), chosen downloaded mode is ilm
+Supported downloaded modes for board nuclei_fpga_eval are ('ilm', 'flash', 'flashxip'), chosen downloaded mode is ilm
 Debug application rtthread.elf using openocd and gdb
-riscv-nuclei-elf-gdb rtthread.elf -ex "set remotetimeout 240"                     -ex "target remote | openocd --pipe -f D:/workspace/Sourcecode/rt-thread/bsp/nuclei/hbird_eval/packages/nuclei_sdk-latest/SoC/hbird/Board/hbird_eval/openocd_hbird.cfg"
+riscv-nuclei-elf-gdb rtthread.elf -ex "set remotetimeout 240"                     -ex "target remote | openocd --pipe -f D:/workspace/Sourcecode/rt-thread/bsp/nuclei/nuclei_fpga_eval/packages/nuclei_sdk-latest/SoC/demosoc/Board/nuclei_fpga_eval/openocd_demosoc.cfg"
 D:\Software\Nuclei\gcc\bin\riscv-nuclei-elf-gdb.exe: warning: Couldn't determine a path for the index cache directory.
 GNU gdb (GDB) 8.3.0.20190516-git
 Copyright (C) 2019 Free Software Foundation, Inc.
@@ -181,7 +179,7 @@ Find the GDB manual and other documentation resources online at:
 For help, type "help".
 Type "apropos word" to search for commands related to "word"...
 Reading symbols from rtthread.elf...
-Remote debugging using | openocd --pipe -f D:/workspace/Sourcecode/rt-thread/bsp/nuclei/hbird_eval/packages/nuclei_sdk-latest/SoC/hbird/Board/hbird_eval/openocd_hbird.cfg
+Remote debugging using | openocd --pipe -f D:/workspace/Sourcecode/rt-thread/bsp/nuclei/nuclei_fpga_eval/packages/nuclei_sdk-latest/SoC/demosoc/Board/nuclei_fpga_eval/openocd_demosoc.cfg
 Nuclei OpenOCD, i386 Open On-Chip Debugger 0.10.0+dev-g11f0cf429 (2020-07-15-04:09)
 Licensed under GNU GPL v2
 For bug reports, read
@@ -215,7 +213,7 @@ Continuing.
 * https://doc.nucleisys.com/nuclei_sdk/quickstart.html#debug-application
 
 为了更方便的进行调试, 也可以下载**Nuclei Studio**集成开发环境, 创建一个Debug Configuration, 选择编译好的
-ELF文件, 然后配置OPENOCD和GDB即可, OPENOCD配置文件路径为**bsp\nuclei\hbird_eval\packages\nuclei_sdk-latest\SoC\hbird\Board\hbird_eval\openocd_hbird.cfg**
+ELF文件, 然后配置OPENOCD和GDB即可, OPENOCD配置文件路径为**bsp\nuclei\nuclei_fpga_eval\packages\nuclei_sdk-latest\SoC\demosoc\Board\nuclei_fpga_eval\openocd_demosoc.cfg**
 
 
 ## 驱动支持情况
@@ -226,9 +224,9 @@ ELF文件, 然后配置OPENOCD和GDB即可, OPENOCD配置文件路径为**bsp\nu
 
 **注:**
 
-- 适配RT-Thread的驱动框架的代码在 [../libraries/hbird/HAL_Drivers](../libraries/hbird/HAL_Drivers)目录下。
+- 适配RT-Thread的驱动框架的代码在 [../libraries/demosoc/HAL_Drivers](../libraries/demosoc/HAL_Drivers)目录下。
 - 如果有开发者想适配更多的驱动, 请在对应目录下增加驱动适配支持。
-- 目前串口读取功能在主频为8MHz情况下需要工作在57600bps
+- 目前串口读取功能在主频为8MHz情况下需要工作在57600bps, 目前发布的Bit一般都是16Mhz
 - 目前串口读取没有采用中断的方式进行，而是采用单独的任务来读取，等中断信号接入后可以直接中断方式读取
 
 ## 联系人信息
