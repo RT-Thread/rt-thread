@@ -8,17 +8,17 @@
  * 2018-08-14    flybreak           the first version
  * 2018-09-18    balanceTWK         add sleep mode function
  * 2018-09-27    ZYLX               optimized display speed
+ * 2021-10-17    Meco Man           add lcd_fill_array()
  */
 
 #include <rtdevice.h>
 #include "drv_spi.h"
-#include "drv_lcd.h"
+#include <drv_lcd.h>
 #include "drv_lcd_font.h"
-#include "drv_gpio.h"
+#include <drv_gpio.h>
 
-#define DBG_SECTION_NAME    "LCD"
-#define DBG_COLOR
-#define DBG_LEVEL           DBG_LOG
+#define DBG_TAG    "drv.lcd"
+#define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
 #define LCD_PWR_PIN           GET_PIN(B, 7)
@@ -375,7 +375,7 @@ void lcd_fill(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_ui
     rt_uint32_t size = 0, size_remain = 0;
     rt_uint8_t *fill_buf = RT_NULL;
 
-    size = (x_end - x_start) * (y_end - y_start) * 2;
+    size = (x_end - x_start + 1) * (y_end - y_start + 1) * 2;
 
     if (size > LCD_CLEAR_SEND_NUMBER)
     {
@@ -422,6 +422,55 @@ void lcd_fill(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_ui
         for (i = y_start; i <= y_end; i++)
         {
             for (j = x_start; j <= x_end; j++)lcd_write_half_word(color);
+        }
+    }
+}
+
+/**
+ * full color array on the lcd.
+ *
+ * @param   x_start     start of x position
+ * @param   y_start     start of y position
+ * @param   x_end       end of x position
+ * @param   y_end       end of y position
+ * @param   color       Fill color array's pointer
+ *
+ * @return  void
+ */
+void lcd_fill_array(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_uint16_t y_end, void *pcolor)
+{
+    rt_uint32_t size = 0, size_remain = 0;
+
+    size = (x_end - x_start + 1) * (y_end - y_start + 1) * 2;
+
+    if (size > LCD_CLEAR_SEND_NUMBER)
+    {
+        /* the number of remaining to be filled */
+        size_remain = size - LCD_CLEAR_SEND_NUMBER;
+        size = LCD_CLEAR_SEND_NUMBER;
+    }
+
+    lcd_address_set(x_start, y_start, x_end, y_end);
+
+    /* fast fill */
+    while (1)
+    {
+        rt_pin_write(LCD_DC_PIN, PIN_HIGH);
+        rt_spi_send(spi_dev_lcd, pcolor, size);
+
+        /* Fill completed */
+        if (size_remain == 0)
+            break;
+
+        /* calculate the number of fill next time */
+        if (size_remain > LCD_CLEAR_SEND_NUMBER)
+        {
+            size_remain = size_remain - LCD_CLEAR_SEND_NUMBER;
+        }
+        else
+        {
+            size = size_remain;
+            size_remain = 0;
         }
     }
 }
