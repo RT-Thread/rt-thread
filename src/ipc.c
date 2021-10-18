@@ -287,6 +287,7 @@ rt_err_t rt_sem_init(rt_sem_t    sem,
 {
     RT_ASSERT(sem != RT_NULL);
     RT_ASSERT(value < 0x10000U);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* initialize object */
     rt_object_init(&(sem->parent.parent), RT_Object_Class_Semaphore, name);
@@ -379,6 +380,7 @@ rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
 
     RT_DEBUG_NOT_IN_INTERRUPT;
     RT_ASSERT(value < 0x10000U);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* allocate object */
     sem = (rt_sem_t)rt_object_allocate(RT_Object_Class_Semaphore, name);
@@ -1257,6 +1259,7 @@ rt_err_t rt_event_init(rt_event_t event, const char *name, rt_uint8_t flag)
 {
     /* parameter check */
     RT_ASSERT(event != RT_NULL);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* initialize object */
     rt_object_init(&(event->parent.parent), RT_Object_Class_Event, name);
@@ -1344,7 +1347,8 @@ rt_event_t rt_event_create(const char *name, rt_uint8_t flag)
     rt_event_t event;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
-
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
+    
     /* allocate object */
     event = (rt_event_t)rt_object_allocate(RT_Object_Class_Event, name);
     if (event == RT_NULL)
@@ -1766,6 +1770,7 @@ rt_err_t rt_mb_init(rt_mailbox_t mb,
                     rt_uint8_t   flag)
 {
     RT_ASSERT(mb != RT_NULL);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* initialize object */
     rt_object_init(&(mb->parent.parent), RT_Object_Class_MailBox, name);
@@ -1865,6 +1870,7 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
     rt_mailbox_t mb;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* allocate object */
     mb = (rt_mailbox_t)rt_object_allocate(RT_Object_Class_MailBox, name);
@@ -2463,6 +2469,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* initialize object */
     rt_object_init(&(mq->parent.parent), RT_Object_Class_MessageQueue, name);
@@ -2585,7 +2592,8 @@ rt_mq_t rt_mq_create(const char *name,
     register rt_base_t temp;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
-
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
+    
     /* allocate object */
     mq = (rt_mq_t)rt_object_allocate(RT_Object_Class_MessageQueue, name);
     if (mq == RT_NULL)
