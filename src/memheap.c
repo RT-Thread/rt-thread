@@ -784,9 +784,6 @@ int memheapcheck(int argc, char *argv[])
     list = &info->object_list;
     for (node = list->next; node != list; node = node->next)
     {
-        struct rt_memheap_item *header_ptr;
-        rt_uint32_t block_size;
-
         heap = (struct rt_memheap *)rt_list_entry(node, struct rt_object, list);
         /* find the specified object */
         if (name != RT_NULL && rt_strncmp(name, heap->parent.name, RT_NAME_MAX) != 0)
