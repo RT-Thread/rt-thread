@@ -8,9 +8,6 @@
  * 2021-08-25     AisinoChip   first implementation
  */
 
-#include <rthw.h>
-#include <rtthread.h>
-#include "rtconfig.h"
 #include "board.h"
 #include <rtdevice.h>
 

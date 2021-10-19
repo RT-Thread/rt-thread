@@ -14,7 +14,8 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <drivers/pm.h>
+#include <drivers/pm.h>  
+#include <stdlib.h>
 
 #ifdef RT_USING_PM
 
