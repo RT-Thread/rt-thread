@@ -106,6 +106,9 @@ if GetDepend(['BSP_USING_PULSE_ENCODER']):
 if GetDepend(['BSP_USING_USBH']):
     src += ['drv_usbh.c']
 
+if GetDepend(['PKG_USING_TINYUSB']):
+    src += ['drv_tinyusb.c']
+
 src += ['drv_common.c']
 
 path =  [cwd]
