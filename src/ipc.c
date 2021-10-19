@@ -1350,7 +1350,7 @@ rt_event_t rt_event_create(const char *name, rt_uint8_t flag)
     RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     RT_DEBUG_NOT_IN_INTERRUPT;
-    
+
     /* allocate object */
     event = (rt_event_t)rt_object_allocate(RT_Object_Class_Event, name);
     if (event == RT_NULL)
@@ -2597,7 +2597,7 @@ rt_mq_t rt_mq_create(const char *name,
     RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     RT_DEBUG_NOT_IN_INTERRUPT;
-    
+
     /* allocate object */
     mq = (rt_mq_t)rt_object_allocate(RT_Object_Class_MessageQueue, name);
     if (mq == RT_NULL)
