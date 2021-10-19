@@ -68,3 +68,9 @@ void rt_hw_cpu_reset(void)
 }
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);
 
+int rt_sbi_init(void)
+{
+    sbi_init();
+    return 0;
+}
+INIT_PREV_EXPORT(rt_sbi_init);
