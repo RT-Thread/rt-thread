@@ -16,7 +16,7 @@
     (((struct rt_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - \
     (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_mem_item), RT_ALIGN_SIZE))
 
-#define TEST_MEM_SIZE 1024 * 1024
+#define TEST_MEM_SIZE 1024
 
 static rt_size_t max_block(struct rt_mem *heap)
 {
