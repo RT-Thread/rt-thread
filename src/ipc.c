@@ -378,9 +378,10 @@ rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
 {
     rt_sem_t sem;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
     RT_ASSERT(value < 0x10000U);
     RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* allocate object */
     sem = (rt_sem_t)rt_object_allocate(RT_Object_Class_Semaphore, name);
@@ -421,12 +422,12 @@ RTM_EXPORT(rt_sem_create);
  */
 rt_err_t rt_sem_delete(rt_sem_t sem)
 {
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* parameter check */
     RT_ASSERT(sem != RT_NULL);
     RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
     RT_ASSERT(rt_object_is_systemobject(&sem->parent.parent) == RT_FALSE);
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* wakeup all suspended threads */
     _ipc_list_resume_all(&(sem->parent.suspend_thread));
@@ -850,12 +851,12 @@ RTM_EXPORT(rt_mutex_create);
  */
 rt_err_t rt_mutex_delete(rt_mutex_t mutex)
 {
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
     RT_ASSERT(rt_object_is_systemobject(&mutex->parent.parent) == RT_FALSE);
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* wakeup all suspended threads */
     _ipc_list_resume_all(&(mutex->parent.suspend_thread));
@@ -1346,8 +1347,9 @@ rt_event_t rt_event_create(const char *name, rt_uint8_t flag)
 {
     rt_event_t event;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
     RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
     
     /* allocate object */
     event = (rt_event_t)rt_object_allocate(RT_Object_Class_Event, name);
@@ -1869,8 +1871,9 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 {
     rt_mailbox_t mb;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
     RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* allocate object */
     mb = (rt_mailbox_t)rt_object_allocate(RT_Object_Class_MailBox, name);
@@ -1925,12 +1928,12 @@ RTM_EXPORT(rt_mb_create);
  */
 rt_err_t rt_mb_delete(rt_mailbox_t mb)
 {
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mb->parent.parent) == RT_Object_Class_MailBox);
     RT_ASSERT(rt_object_is_systemobject(&mb->parent.parent) == RT_FALSE);
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* resume all suspended thread */
     _ipc_list_resume_all(&(mb->parent.suspend_thread));
@@ -2591,8 +2594,9 @@ rt_mq_t rt_mq_create(const char *name,
     struct rt_mq_message *head;
     register rt_base_t temp;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
     RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
     
     /* allocate object */
     mq = (rt_mq_t)rt_object_allocate(RT_Object_Class_MessageQueue, name);
@@ -2666,12 +2670,12 @@ RTM_EXPORT(rt_mq_create);
  */
 rt_err_t rt_mq_delete(rt_mq_t mq)
 {
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mq->parent.parent) == RT_Object_Class_MessageQueue);
     RT_ASSERT(rt_object_is_systemobject(&mq->parent.parent) == RT_FALSE);
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* resume all suspended thread */
     _ipc_list_resume_all(&(mq->parent.suspend_thread));
