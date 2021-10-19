@@ -35,7 +35,7 @@ void plic_set_priority(int irq, int priority)
 */
 void plic_irq_enable(int irq)
 {
-    int hart = r_mhartid();
+    int hart = __raw_hartid();
     *(uint32_t*)PLIC_ENABLE(hart) = ((*(uint32_t*)PLIC_ENABLE(hart)) | (1 << irq));
 #ifdef  RISCV_S_MODE
     set_csr(sie, read_csr(sie) | MIP_SEIP);
@@ -46,7 +46,7 @@ void plic_irq_enable(int irq)
 
 void plic_irq_disable(int irq)
 {
-    int hart = r_mhartid();
+    int hart = __raw_hartid();
     *(uint32_t*)PLIC_ENABLE(hart) = (((*(uint32_t*)PLIC_ENABLE(hart)) & (~(1 << irq))));
 }
 
@@ -59,7 +59,7 @@ void plic_irq_disable(int irq)
 */
 void plic_set_threshold(int threshold)
 {
-    int hart = r_mhartid();
+    int hart = __raw_hartid();
     *(uint32_t*)PLIC_THRESHOLD(hart) = threshold;
 }
 
@@ -77,7 +77,7 @@ void plic_set_threshold(int threshold)
  */
 int plic_claim(void)
 {
-    int hart = r_mhartid();
+    int hart = __raw_hartid();
     int irq = *(uint32_t*)PLIC_CLAIM(hart);
     return irq;
 }
@@ -94,6 +94,6 @@ int plic_claim(void)
  */
 void plic_complete(int irq)
 {
-    int hart = r_mhartid();
+    int hart = __raw_hartid();
     *(uint32_t*)PLIC_COMPLETE(hart) = irq;
 }
