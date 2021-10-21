@@ -19,6 +19,7 @@
 #include "encoding.h"
 #include "fpioa.h"
 #include "dmac.h"
+#include "dmalock.h"
 
 void init_bss(void)
 {
@@ -80,10 +81,13 @@ void rt_hw_board_init(void)
 {
     sysctl_pll_set_freq(SYSCTL_PLL0, 800000000UL);
     sysctl_pll_set_freq(SYSCTL_PLL1, 400000000UL);
+    sysctl_pll_set_freq(SYSCTL_PLL2, 45158400UL);
+    sysctl_clock_set_threshold(SYSCTL_THRESHOLD_APB1, 2);
     /* Init FPIOA */
     fpioa_init();
     /* Dmac init */
     dmac_init();
+    dmalock_init();
 
     /* initalize interrupt */
     rt_hw_interrupt_init();
