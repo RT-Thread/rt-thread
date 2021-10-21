@@ -9,14 +9,9 @@
  * 2018-03-09     Bernard      Add protection for pt->triggered.
  */
 #include <stdint.h>
-
 #include <rthw.h>
-#include <rtdevice.h>
 #include <rtthread.h>
-
-#include <dfs.h>
 #include <dfs_file.h>
-#include <dfs_posix.h>
 #include <poll.h>
 
 #ifdef RT_USING_POSIX
