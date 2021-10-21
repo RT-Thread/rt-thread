@@ -1,0 +1,4 @@
+/MDK-ARM/
+/Src/
+!/Src/main.c
+!/Src/stm32*_hal_msp.c
