@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 #include "drv_spi.h"
 #include <drv_io_config.h>
 #include <spi.h>
-#include <dmac.h>
+#include "dmalock.h"
 #include <sysctl.h>
 #include <gpiohs.h>
 #include <string.h>
@@ -31,6 +31,7 @@ struct drv_spi_bus
     spi_device_num_t spi_instance;
     dmac_channel_number_t dma_send_channel;
     dmac_channel_number_t dma_recv_channel;
+    struct rt_completion dma_completion;
 };
 
 struct drv_cs
@@ -89,6 +90,14 @@ void __spi_set_tmod(uint8_t spi_num, uint32_t tmod)
     }
     set_bit(&spi_handle->ctrlr0, 3 << tmod_offset, tmod << tmod_offset);
 }
+int dma_irq_callback(void *ctx)
+{
+    struct rt_completion * cmp = ctx;
+    if(cmp)
+    {
+        rt_completion_done(cmp);
+    }
+}
 
 static rt_uint32_t drv_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
@@ -99,8 +108,10 @@ static rt_uint32_t drv_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
     uint32_t * rx_buff = RT_NULL;
     int i;
     rt_ubase_t dummy = 0xFFFFFFFFU;
-
-    __spi_set_tmod(bus->spi_instance, SPI_TMOD_TRANS_RECV);
+    if(cfg->data_width != 8)
+    {
+        return 0;
+    }
 
     RT_ASSERT(bus != RT_NULL);
 
@@ -110,37 +121,25 @@ static rt_uint32_t drv_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
     }
     if(message->length)
     {
-        spi_instance[bus->spi_instance]->dmacr = 0x3;
-        spi_instance[bus->spi_instance]->ssienr = 0x01;
+        bus->dma_send_channel = DMAC_CHANNEL_MAX;
+        bus->dma_recv_channel = DMAC_CHANNEL_MAX;
 
-        sysctl_dma_select(bus->dma_send_channel, SYSCTL_DMA_SELECT_SSI0_TX_REQ + bus->spi_instance * 2);
-        sysctl_dma_select(bus->dma_recv_channel, SYSCTL_DMA_SELECT_SSI0_RX_REQ + bus->spi_instance * 2);
-
-        if(!message->recv_buf)
+        rt_completion_init(&bus->dma_completion);
+        if(message->recv_buf)
         {
-            dmac_set_single_mode(bus->dma_recv_channel, (void *)(&spi_instance[bus->spi_instance]->dr[0]), &dummy, DMAC_ADDR_NOCHANGE, DMAC_ADDR_NOCHANGE,
-                           DMAC_MSIZE_1, DMAC_TRANS_WIDTH_32, message->length);
-        }
-        else
-        {
+            dmalock_sync_take(&bus->dma_recv_channel, RT_WAITING_FOREVER);
+            sysctl_dma_select(bus->dma_recv_channel, SYSCTL_DMA_SELECT_SSI0_RX_REQ + bus->spi_instance * 2);
             rx_buff = rt_calloc(message->length * 4, 1);
             if(!rx_buff)
             {
                 goto transfer_done;
             }
-            
-            dmac_set_single_mode(bus->dma_recv_channel, (void *)(&spi_instance[bus->spi_instance]->dr[0]), rx_buff, DMAC_ADDR_NOCHANGE, DMAC_ADDR_INCREMENT,
-                           DMAC_MSIZE_1, DMAC_TRANS_WIDTH_32, message->length);
         }
-        
 
-        if(!message->send_buf)
+        if(message->send_buf)
         {
-            dmac_set_single_mode(bus->dma_send_channel, &dummy, (void *)(&spi_instance[bus->spi_instance]->dr[0]), DMAC_ADDR_NOCHANGE, DMAC_ADDR_NOCHANGE,
-                           DMAC_MSIZE_4, DMAC_TRANS_WIDTH_32, message->length);
-        }
-        else
-        {
+            dmalock_sync_take(&bus->dma_send_channel, RT_WAITING_FOREVER);
+            sysctl_dma_select(bus->dma_send_channel, SYSCTL_DMA_SELECT_SSI0_TX_REQ + bus->spi_instance * 2);
             tx_buff = rt_malloc(message->length * 4);
             if(!tx_buff)
             {
@@ -150,13 +149,54 @@ static rt_uint32_t drv_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
             {
                 tx_buff[i] = ((uint8_t *)message->send_buf)[i];
             }
+        }
+
+        if(message->send_buf && message->recv_buf)
+        {
+            dmac_irq_register(bus->dma_recv_channel, dma_irq_callback, &bus->dma_completion, 1);
+            __spi_set_tmod(bus->spi_instance, SPI_TMOD_TRANS_RECV);
+            spi_instance[bus->spi_instance]->dmacr = 0x3;
+            spi_instance[bus->spi_instance]->ssienr = 0x01;
+            dmac_set_single_mode(bus->dma_recv_channel, (void *)(&spi_instance[bus->spi_instance]->dr[0]), rx_buff, DMAC_ADDR_NOCHANGE, DMAC_ADDR_INCREMENT,
+                           DMAC_MSIZE_1, DMAC_TRANS_WIDTH_32, message->length);
             dmac_set_single_mode(bus->dma_send_channel, tx_buff, (void *)(&spi_instance[bus->spi_instance]->dr[0]), DMAC_ADDR_INCREMENT, DMAC_ADDR_NOCHANGE,
                            DMAC_MSIZE_4, DMAC_TRANS_WIDTH_32, message->length);
         }
-        
+        else if(message->send_buf)
+        {
+            dmac_irq_register(bus->dma_send_channel, dma_irq_callback, &bus->dma_completion, 1);
+            __spi_set_tmod(bus->spi_instance, SPI_TMOD_TRANS);
+            spi_instance[bus->spi_instance]->dmacr = 0x2;
+            spi_instance[bus->spi_instance]->ssienr = 0x01;
+            dmac_set_single_mode(bus->dma_send_channel, tx_buff, (void *)(&spi_instance[bus->spi_instance]->dr[0]), DMAC_ADDR_INCREMENT, DMAC_ADDR_NOCHANGE,
+                           DMAC_MSIZE_4, DMAC_TRANS_WIDTH_32, message->length);
+        }
+        else if(message->recv_buf)
+        {
+            dmac_irq_register(bus->dma_recv_channel, dma_irq_callback, &bus->dma_completion, 1);
+            __spi_set_tmod(bus->spi_instance, SPI_TMOD_RECV);
+            spi_instance[bus->spi_instance]->ctrlr1 = message->length - 1;
+            spi_instance[bus->spi_instance]->dmacr = 0x1;
+            spi_instance[bus->spi_instance]->ssienr = 0x01;
+            spi_instance[bus->spi_instance]->dr[0] = 0xFF;
+            dmac_set_single_mode(bus->dma_recv_channel, (void *)(&spi_instance[bus->spi_instance]->dr[0]), rx_buff, DMAC_ADDR_NOCHANGE, DMAC_ADDR_INCREMENT,
+                           DMAC_MSIZE_1, DMAC_TRANS_WIDTH_32, message->length);
+        }
+        else
+        {
+            goto transfer_done;
+        }
         spi_instance[bus->spi_instance]->ser = 1U << cs->cs_index;
-        dmac_wait_done(bus->dma_send_channel);
-        dmac_wait_done(bus->dma_recv_channel);
+
+        rt_completion_wait(&bus->dma_completion, RT_WAITING_FOREVER);
+        if(message->recv_buf)
+            dmac_irq_unregister(bus->dma_recv_channel);
+        else
+            dmac_irq_unregister(bus->dma_send_channel);
+
+        // wait until all data has been transmitted
+        while ((spi_instance[bus->spi_instance]->sr & 0x05) != 0x04)
+            ;
         spi_instance[bus->spi_instance]->ser = 0x00;
         spi_instance[bus->spi_instance]->ssienr = 0x00;
 
@@ -169,6 +209,8 @@ static rt_uint32_t drv_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
         }
 
 transfer_done:
+        dmalock_release(bus->dma_send_channel);
+        dmalock_release(bus->dma_recv_channel);
         if(tx_buff)
         {
             rt_free(tx_buff);
@@ -196,24 +238,22 @@ const static struct rt_spi_ops drv_spi_ops =
 int rt_hw_spi_init(void)
 {
     rt_err_t ret = RT_EOK;
-    
+
 #ifdef BSP_USING_SPI1
     {
         static struct drv_spi_bus spi_bus1;
         spi_bus1.spi_instance = SPI_DEVICE_1;
-        spi_bus1.dma_send_channel = DMAC_CHANNEL1;
-        spi_bus1.dma_recv_channel = DMAC_CHANNEL2;
         ret = rt_spi_bus_register(&spi_bus1.parent, "spi1", &drv_spi_ops);
 
 #ifdef BSP_SPI1_USING_SS0
         {
             static struct rt_spi_device spi_device10;
-            static struct drv_cs cs10 = 
+            static struct drv_cs cs10 =
             {
                 .cs_index = SPI_CHIP_SELECT_0,
                 .cs_pin = SPI1_CS0_PIN
             };
-            
+
             rt_spi_bus_attach_device(&spi_device10, "spi10", "spi1", (void *)&cs10);
         }
 #endif
@@ -221,7 +261,7 @@ int rt_hw_spi_init(void)
 #ifdef BSP_SPI1_USING_SS1
         {
             static struct rt_spi_device spi_device11;
-            static struct drv_cs cs11 = 
+            static struct drv_cs cs11 =
             {
                 .cs_index = SPI_CHIP_SELECT_1,
                 .cs_pin = SPI1_CS1_PIN
@@ -233,7 +273,7 @@ int rt_hw_spi_init(void)
 #ifdef BSP_SPI1_USING_SS2
         {
             static struct rt_spi_device spi_device12;
-            static struct drv_cs cs12 = 
+            static struct drv_cs cs12 =
             {
                 .cs_index = SPI_CHIP_SELECT_2,
                 .cs_pin = SPI1_CS2_PIN
@@ -245,7 +285,7 @@ int rt_hw_spi_init(void)
 #ifdef BSP_SPI1_USING_SS3
         {
             static struct rt_spi_device spi_device13;
-            static struct drv_cs cs13 = 
+            static struct drv_cs cs13 =
             {
                 .cs_index = SPI_CHIP_SELECT_2,
                 .cs_pin = SPI1_CS2_PIN
