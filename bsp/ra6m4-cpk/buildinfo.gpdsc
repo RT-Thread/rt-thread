@@ -11,8 +11,12 @@
     <generator id="Renesas RA Smart Configurator">
       <project_files>
         <file category="include" name="src/"/>
+        <file category="source" name="src/alarm_sample.c"/>
         <file category="source" name="src/hal_entry.c"/>
+        <file category="source" name="src/icu_sample.c"/>
+        <file category="source" name="src/rtc_sample.c"/>
         <file category="other" name="src/SConscript"/>
+        <file category="source" name="src/wdt_sample.c"/>
       </project_files>
     </generator>
   </generators>
@@ -58,14 +62,19 @@
         <file category="source" name="ra/board/ra6m4_cpk/board_leds.c"/>
         <file category="header" name="ra/board/ra6m4_cpk/board_leds.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/bsp_api.h" path=""/>
+        <file category="header" name="ra/fsp/inc/api/r_cgc_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_ioport_api.h" path=""/>
+        <file category="header" name="ra/fsp/inc/api/r_rtc_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_transfer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_uart_api.h" path=""/>
+        <file category="header" name="ra/fsp/inc/api/r_wdt_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_common_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_features.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_version.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_ioport.h" path=""/>
+        <file category="header" name="ra/fsp/inc/instances/r_rtc.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_sci_uart.h" path=""/>
+        <file category="header" name="ra/fsp/inc/instances/r_wdt.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/base_addresses.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/renesas.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/system.h" path=""/>
@@ -112,8 +121,10 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_mcu_info.h" path=""/>
         <file category="source" name="ra/fsp/src/r_ioport/r_ioport.c"/>
         <file category="other" name="ra/fsp/src/r_ioport/r_ioport.o"/>
+        <file category="source" name="ra/fsp/src/r_rtc/r_rtc.c"/>
         <file category="source" name="ra/fsp/src/r_sci_uart/r_sci_uart.c"/>
         <file category="other" name="ra/fsp/src/r_sci_uart/r_sci_uart.o"/>
+        <file category="source" name="ra/fsp/src/r_wdt/r_wdt.c"/>
         <file category="other" name="ra/SConscript"/>
       </files>
     </component>
@@ -128,7 +139,9 @@
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_family_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_pin_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_ioport_cfg.h" path=""/>
+        <file category="header" name="ra_cfg/fsp_cfg/r_rtc_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_sci_uart_cfg.h" path=""/>
+        <file category="header" name="ra_cfg/fsp_cfg/r_wdt_cfg.h" path=""/>
         <file category="other" name="ra_cfg/SConscript"/>
       </files>
     </component>

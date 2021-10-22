@@ -14,94 +14,94 @@
 
 #define DBG_TAG              "drv.gpio"
 #ifdef DRV_DEBUG
-#define DBG_LVL               DBG_LOG
+    #define DBG_LVL               DBG_LOG
 #else
-#define DBG_LVL               DBG_INFO
+    #define DBG_LVL               DBG_INFO
 #endif /* DRV_DEBUG */
 
 #ifdef R_ICU_H
 static rt_base_t ra_pin_get_irqx(rt_uint32_t pin)
 {
-    switch(pin)
+    switch (pin)
     {
-        case BSP_IO_PORT_04_PIN_00:
-        case BSP_IO_PORT_02_PIN_06:
-        case BSP_IO_PORT_01_PIN_05:
-            return 0;
+    case BSP_IO_PORT_04_PIN_00:
+    case BSP_IO_PORT_02_PIN_06:
+    case BSP_IO_PORT_01_PIN_05:
+        return 0;
 
-        case BSP_IO_PORT_02_PIN_05:
-        case BSP_IO_PORT_01_PIN_01:
-        case BSP_IO_PORT_01_PIN_04:
-            return 1;
+    case BSP_IO_PORT_02_PIN_05:
+    case BSP_IO_PORT_01_PIN_01:
+    case BSP_IO_PORT_01_PIN_04:
+        return 1;
 
-        case BSP_IO_PORT_02_PIN_03:
-        case BSP_IO_PORT_01_PIN_00:
-        case BSP_IO_PORT_02_PIN_13:
-            return 2;
+    case BSP_IO_PORT_02_PIN_03:
+    case BSP_IO_PORT_01_PIN_00:
+    case BSP_IO_PORT_02_PIN_13:
+        return 2;
 
-        case BSP_IO_PORT_02_PIN_02:
-        case BSP_IO_PORT_01_PIN_10:
-        case BSP_IO_PORT_02_PIN_12:
-            return 3;
+    case BSP_IO_PORT_02_PIN_02:
+    case BSP_IO_PORT_01_PIN_10:
+    case BSP_IO_PORT_02_PIN_12:
+        return 3;
 
-        case BSP_IO_PORT_04_PIN_02:
-        case BSP_IO_PORT_01_PIN_11:
-        case BSP_IO_PORT_04_PIN_11:
-            return 4;
+    case BSP_IO_PORT_04_PIN_02:
+    case BSP_IO_PORT_01_PIN_11:
+    case BSP_IO_PORT_04_PIN_11:
+        return 4;
 
-        case BSP_IO_PORT_04_PIN_01:
-        case BSP_IO_PORT_03_PIN_02:
-        case BSP_IO_PORT_04_PIN_10:
-            return 5;
+    case BSP_IO_PORT_04_PIN_01:
+    case BSP_IO_PORT_03_PIN_02:
+    case BSP_IO_PORT_04_PIN_10:
+        return 5;
 
-        case BSP_IO_PORT_03_PIN_01:
-        case BSP_IO_PORT_00_PIN_00:
-        case BSP_IO_PORT_04_PIN_09:
-            return 6;
+    case BSP_IO_PORT_03_PIN_01:
+    case BSP_IO_PORT_00_PIN_00:
+    case BSP_IO_PORT_04_PIN_09:
+        return 6;
 
-        case BSP_IO_PORT_00_PIN_01:
-        case BSP_IO_PORT_04_PIN_08:
-            return 7;
+    case BSP_IO_PORT_00_PIN_01:
+    case BSP_IO_PORT_04_PIN_08:
+        return 7;
 
-        case BSP_IO_PORT_00_PIN_02:
-        case BSP_IO_PORT_03_PIN_05:
-        case BSP_IO_PORT_04_PIN_15:
-            return 8;
+    case BSP_IO_PORT_00_PIN_02:
+    case BSP_IO_PORT_03_PIN_05:
+    case BSP_IO_PORT_04_PIN_15:
+        return 8;
 
-        case BSP_IO_PORT_00_PIN_04:
-        case BSP_IO_PORT_03_PIN_04:
-        case BSP_IO_PORT_04_PIN_14:
-            return 9;
+    case BSP_IO_PORT_00_PIN_04:
+    case BSP_IO_PORT_03_PIN_04:
+    case BSP_IO_PORT_04_PIN_14:
+        return 9;
 
-        case BSP_IO_PORT_00_PIN_05:
-        case BSP_IO_PORT_07_PIN_09:
-            return 10;
+    case BSP_IO_PORT_00_PIN_05:
+    case BSP_IO_PORT_07_PIN_09:
+        return 10;
 
-        case BSP_IO_PORT_05_PIN_01:
-        case BSP_IO_PORT_00_PIN_06:
-        case BSP_IO_PORT_07_PIN_08:
-            return 11;
+    case BSP_IO_PORT_05_PIN_01:
+    case BSP_IO_PORT_00_PIN_06:
+    case BSP_IO_PORT_07_PIN_08:
+        return 11;
 
-        case BSP_IO_PORT_05_PIN_02:
-        case BSP_IO_PORT_00_PIN_08:
-            return 12;
+    case BSP_IO_PORT_05_PIN_02:
+    case BSP_IO_PORT_00_PIN_08:
+        return 12;
 
-        case BSP_IO_PORT_00_PIN_15:
-        case BSP_IO_PORT_00_PIN_09:
-            return 13;
+    case BSP_IO_PORT_00_PIN_15:
+    case BSP_IO_PORT_00_PIN_09:
+        return 13;
 
-        case BSP_IO_PORT_04_PIN_03:
-        case BSP_IO_PORT_05_PIN_12:
-        case BSP_IO_PORT_05_PIN_05:
-            return 14;
+    case BSP_IO_PORT_04_PIN_03:
+    case BSP_IO_PORT_05_PIN_12:
+    case BSP_IO_PORT_05_PIN_05:
+        return 14;
 
-        case BSP_IO_PORT_04_PIN_04:
-        case BSP_IO_PORT_05_PIN_11:
-        case BSP_IO_PORT_05_PIN_06:
-            return 15;
+    case BSP_IO_PORT_04_PIN_04:
+    case BSP_IO_PORT_05_PIN_11:
+    case BSP_IO_PORT_05_PIN_06:
+        return 15;
 
-        default  :
-            return -1;
+    default  :
+        return -1;
     }
 }
 
@@ -209,34 +209,34 @@ static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         return;
     }
 
-    switch(mode)
+    switch (mode)
     {
-        case PIN_MODE_OUTPUT:
-            err = R_IOPORT_PinCfg(&g_ioport_ctrl, pin, BSP_IO_DIRECTION_OUTPUT);
-            if (err != FSP_SUCCESS)
-            {
-                LOG_E("PIN_MODE_OUTPUT configuration failed");
-                return;
-            }
-            break;
+    case PIN_MODE_OUTPUT:
+        err = R_IOPORT_PinCfg(&g_ioport_ctrl, pin, BSP_IO_DIRECTION_OUTPUT);
+        if (err != FSP_SUCCESS)
+        {
+            LOG_E("PIN_MODE_OUTPUT configuration failed");
+            return;
+        }
+        break;
 
-        case PIN_MODE_INPUT:
-            err = R_IOPORT_PinCfg(&g_ioport_ctrl, pin, BSP_IO_DIRECTION_INPUT);
-            if (err != FSP_SUCCESS)
-            {
-                LOG_E("PIN_MODE_INPUT configuration failed");
-                return;
-            }
-            break;
+    case PIN_MODE_INPUT:
+        err = R_IOPORT_PinCfg(&g_ioport_ctrl, pin, BSP_IO_DIRECTION_INPUT);
+        if (err != FSP_SUCCESS)
+        {
+            LOG_E("PIN_MODE_INPUT configuration failed");
+            return;
+        }
+        break;
 
-        case PIN_MODE_OUTPUT_OD:
-            err = R_IOPORT_PinCfg(&g_ioport_ctrl, pin, IOPORT_CFG_NMOS_ENABLE);
-            if (err != FSP_SUCCESS)
-            {
-                LOG_E("PIN_MODE_OUTPUT_OD configuration failed");
-                return;
-            }
-            break;
+    case PIN_MODE_OUTPUT_OD:
+        err = R_IOPORT_PinCfg(&g_ioport_ctrl, pin, IOPORT_CFG_NMOS_ENABLE);
+        if (err != FSP_SUCCESS)
+        {
+            LOG_E("PIN_MODE_OUTPUT_OD configuration failed");
+            return;
+        }
+        break;
     }
 }
 
@@ -269,12 +269,12 @@ static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
 #ifdef R_ICU_H
     rt_err_t err;
     rt_int32_t irqx = ra_pin_get_irqx(pin);
-    if(PIN_IRQ_ENABLE == enabled)
+    if (PIN_IRQ_ENABLE == enabled)
     {
-        if(0 <= irqx && irqx < sizeof(pin_irq_map) / sizeof(pin_irq_map[0]))
+        if (0 <= irqx && irqx < sizeof(pin_irq_map) / sizeof(pin_irq_map[0]))
         {
-            err = R_ICU_ExternalIrqOpen((external_irq_ctrl_t * const)pin_irq_map[irqx].irq_ctrl, 
-                        (external_irq_cfg_t const * const)pin_irq_map[irqx].irq_cfg);
+            err = R_ICU_ExternalIrqOpen((external_irq_ctrl_t *const)pin_irq_map[irqx].irq_ctrl,
+                                        (external_irq_cfg_t const * const)pin_irq_map[irqx].irq_cfg);
             /* Handle error */
             if (FSP_SUCCESS != err)
             {
@@ -282,8 +282,8 @@ static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
                 LOG_E("\r\n**R_ICU_ExternalIrqOpen API FAILED**\r\n");
                 return -RT_ERROR;
             }
-            
-            err = R_ICU_ExternalIrqEnable((external_irq_ctrl_t * const)pin_irq_map[irqx].irq_ctrl);
+
+            err = R_ICU_ExternalIrqEnable((external_irq_ctrl_t *const)pin_irq_map[irqx].irq_ctrl);
             /* Handle error */
             if (FSP_SUCCESS != err)
             {
@@ -293,16 +293,16 @@ static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
             }
         }
     }
-    else if(PIN_IRQ_DISABLE == enabled)
+    else if (PIN_IRQ_DISABLE == enabled)
     {
-        err = R_ICU_ExternalIrqDisable((external_irq_ctrl_t * const)pin_irq_map[irqx].irq_ctrl);
+        err = R_ICU_ExternalIrqDisable((external_irq_ctrl_t *const)pin_irq_map[irqx].irq_ctrl);
         if (FSP_SUCCESS != err)
         {
             /* ICU Disable failure message */
             LOG_E("\r\n**R_ICU_ExternalIrqDisable API FAILED**\r\n");
             return -RT_ERROR;
         }
-        err = R_ICU_ExternalIrqClose((external_irq_ctrl_t * const)pin_irq_map[irqx].irq_ctrl);
+        err = R_ICU_ExternalIrqClose((external_irq_ctrl_t *const)pin_irq_map[irqx].irq_ctrl);
         if (FSP_SUCCESS != err)
         {
             /* ICU Close failure message */
@@ -317,31 +317,31 @@ static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
 }
 
 static rt_err_t ra_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
+                                  rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
 #ifdef R_ICU_H
     rt_int32_t irqx = ra_pin_get_irqx(pin);
-    if(0 <= irqx && irqx < (sizeof(pin_irq_map) / sizeof(pin_irq_map[0])))
+    if (0 <= irqx && irqx < (sizeof(pin_irq_map) / sizeof(pin_irq_map[0])))
     {
-    int level = rt_hw_interrupt_disable();
-    if (pin_irq_hdr_tab[irqx].pin == irqx &&
-        pin_irq_hdr_tab[irqx].hdr == hdr &&
-        pin_irq_hdr_tab[irqx].mode == mode &&
-        pin_irq_hdr_tab[irqx].args == args)
-    {
+        int level = rt_hw_interrupt_disable();
+        if (pin_irq_hdr_tab[irqx].pin == irqx &&
+                pin_irq_hdr_tab[irqx].hdr == hdr &&
+                pin_irq_hdr_tab[irqx].mode == mode &&
+                pin_irq_hdr_tab[irqx].args == args)
+        {
+            rt_hw_interrupt_enable(level);
+            return RT_EOK;
+        }
+        if (pin_irq_hdr_tab[irqx].pin != -1)
+        {
+            rt_hw_interrupt_enable(level);
+            return RT_EBUSY;
+        }
+        pin_irq_hdr_tab[irqx].pin = irqx;
+        pin_irq_hdr_tab[irqx].hdr = hdr;
+        pin_irq_hdr_tab[irqx].mode = mode;
+        pin_irq_hdr_tab[irqx].args = args;
         rt_hw_interrupt_enable(level);
-        return RT_EOK;
-    }
-    if(pin_irq_hdr_tab[irqx].pin != -1)
-    {
-        rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
-    }
-    pin_irq_hdr_tab[irqx].pin = irqx;
-    pin_irq_hdr_tab[irqx].hdr = hdr;
-    pin_irq_hdr_tab[irqx].mode = mode;
-    pin_irq_hdr_tab[irqx].args = args;
-    rt_hw_interrupt_enable(level);
     }
     else return -RT_ERROR;
     return RT_EOK;
@@ -354,7 +354,7 @@ static rt_err_t ra_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 {
 #ifdef R_ICU_H
     rt_int32_t irqx = ra_pin_get_irqx(pin);
-    if(0 <= irqx && irqx < sizeof(pin_irq_map) / sizeof(pin_irq_map[0]))
+    if (0 <= irqx && irqx < sizeof(pin_irq_map) / sizeof(pin_irq_map[0]))
     {
         int level = rt_hw_interrupt_disable();
         if (pin_irq_hdr_tab[irqx].pin == -1)
@@ -381,16 +381,16 @@ static rt_err_t ra_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 static rt_base_t ra_pin_get(const char *name)
 {
     int pin_number = -1, port = -1, pin = -1;
-    if(rt_strlen(name) != 4)
+    if (rt_strlen(name) != 4)
         return -1;
-    if(name[0] == 'P')
+    if (name[0] == 'P')
     {
-        if('0' <= (int)name[1] && (int)name[1] <= '9')
+        if ('0' <= (int)name[1] && (int)name[1] <= '9')
         {
             port = ((int)name[1] - 48) * 16 * 16;
-            if('0' <= (int)name[2] && (int)name[2] <= '9')
+            if ('0' <= (int)name[2] && (int)name[2] <= '9')
             {
-                if('0' <= (int)name[3] && (int)name[3] <= '9')
+                if ('0' <= (int)name[3] && (int)name[3] <= '9')
                 {
                     pin = ((int)name[2] - 48) * 10;
                     pin += (int)name[3] - 48;
@@ -428,7 +428,7 @@ int rt_hw_pin_init(void)
 void irq0_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(0 == pin_irq_hdr_tab[0].pin)
+    if (0 == pin_irq_hdr_tab[0].pin)
     {
         pin_irq_hdr_tab[0].hdr(pin_irq_hdr_tab[0].args);
     }
@@ -438,7 +438,7 @@ void irq0_callback(external_irq_callback_args_t *p_args)
 void irq1_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(1 == pin_irq_hdr_tab[1].pin)
+    if (1 == pin_irq_hdr_tab[1].pin)
     {
         pin_irq_hdr_tab[1].hdr(pin_irq_hdr_tab[1].args);
     }
@@ -448,7 +448,7 @@ void irq1_callback(external_irq_callback_args_t *p_args)
 void irq2_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(2 == pin_irq_hdr_tab[2].pin)
+    if (2 == pin_irq_hdr_tab[2].pin)
     {
         pin_irq_hdr_tab[2].hdr(pin_irq_hdr_tab[2].args);
     }
@@ -458,7 +458,7 @@ void irq2_callback(external_irq_callback_args_t *p_args)
 void irq3_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(3 == pin_irq_hdr_tab[3].pin)
+    if (3 == pin_irq_hdr_tab[3].pin)
     {
         pin_irq_hdr_tab[3].hdr(pin_irq_hdr_tab[3].args);
     }
@@ -468,7 +468,7 @@ void irq3_callback(external_irq_callback_args_t *p_args)
 void irq4_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(4 == pin_irq_hdr_tab[4].pin)
+    if (4 == pin_irq_hdr_tab[4].pin)
     {
         pin_irq_hdr_tab[4].hdr(pin_irq_hdr_tab[4].args);
     }
@@ -478,7 +478,7 @@ void irq4_callback(external_irq_callback_args_t *p_args)
 void irq5_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(5 == pin_irq_hdr_tab[5].pin)
+    if (5 == pin_irq_hdr_tab[5].pin)
     {
         pin_irq_hdr_tab[5].hdr(pin_irq_hdr_tab[5].args);
     }
@@ -488,7 +488,7 @@ void irq5_callback(external_irq_callback_args_t *p_args)
 void irq6_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(6 == pin_irq_hdr_tab[6].pin)
+    if (6 == pin_irq_hdr_tab[6].pin)
     {
         pin_irq_hdr_tab[6].hdr(pin_irq_hdr_tab[6].args);
     }
@@ -498,7 +498,7 @@ void irq6_callback(external_irq_callback_args_t *p_args)
 void irq7_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(7 == pin_irq_hdr_tab[7].pin)
+    if (7 == pin_irq_hdr_tab[7].pin)
     {
         pin_irq_hdr_tab[7].hdr(pin_irq_hdr_tab[7].args);
     }
@@ -508,7 +508,7 @@ void irq7_callback(external_irq_callback_args_t *p_args)
 void irq8_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(8 == pin_irq_hdr_tab[8].pin)
+    if (8 == pin_irq_hdr_tab[8].pin)
     {
         pin_irq_hdr_tab[8].hdr(pin_irq_hdr_tab[8].args);
     }
@@ -518,7 +518,7 @@ void irq8_callback(external_irq_callback_args_t *p_args)
 void irq9_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(9 == pin_irq_hdr_tab[9].pin)
+    if (9 == pin_irq_hdr_tab[9].pin)
     {
         pin_irq_hdr_tab[9].hdr(pin_irq_hdr_tab[9].args);
     }
@@ -528,7 +528,7 @@ void irq9_callback(external_irq_callback_args_t *p_args)
 void irq10_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(10 == pin_irq_hdr_tab[10].pin)
+    if (10 == pin_irq_hdr_tab[10].pin)
     {
         pin_irq_hdr_tab[10].hdr(pin_irq_hdr_tab[10].args);
     }
@@ -538,7 +538,7 @@ void irq10_callback(external_irq_callback_args_t *p_args)
 void irq11_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(11 == pin_irq_hdr_tab[11].pin)
+    if (11 == pin_irq_hdr_tab[11].pin)
     {
         pin_irq_hdr_tab[11].hdr(pin_irq_hdr_tab[11].args);
     }
@@ -548,7 +548,7 @@ void irq11_callback(external_irq_callback_args_t *p_args)
 void irq12_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(12 == pin_irq_hdr_tab[12].pin)
+    if (12 == pin_irq_hdr_tab[12].pin)
     {
         pin_irq_hdr_tab[12].hdr(pin_irq_hdr_tab[12].args);
     }
@@ -558,7 +558,7 @@ void irq12_callback(external_irq_callback_args_t *p_args)
 void irq13_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(13 == pin_irq_hdr_tab[13].pin)
+    if (13 == pin_irq_hdr_tab[13].pin)
     {
         pin_irq_hdr_tab[13].hdr(pin_irq_hdr_tab[13].args);
     }
@@ -568,7 +568,7 @@ void irq13_callback(external_irq_callback_args_t *p_args)
 void irq14_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(14 == pin_irq_hdr_tab[14].pin)
+    if (14 == pin_irq_hdr_tab[14].pin)
     {
         pin_irq_hdr_tab[14].hdr(pin_irq_hdr_tab[14].args);
     }
@@ -578,7 +578,7 @@ void irq14_callback(external_irq_callback_args_t *p_args)
 void irq15_callback(external_irq_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(15 == pin_irq_hdr_tab[15].pin)
+    if (15 == pin_irq_hdr_tab[15].pin)
     {
         pin_irq_hdr_tab[15].hdr(pin_irq_hdr_tab[15].args);
     }
