@@ -16,8 +16,8 @@
 static lv_disp_draw_buf_t disp_buf;
 
 /*Static or global buffer(s). The second buffer is optional*/
-static lv_color_t buf_1[MY_DISP_HOR_RES * LCD_W /5];
-static lv_color_t buf_2[MY_DISP_HOR_RES * LCD_W /5];
+static lv_color_t buf_1[MY_DISP_HOR_RES * 10];
+static lv_color_t buf_2[MY_DISP_HOR_RES * 10];
 
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
