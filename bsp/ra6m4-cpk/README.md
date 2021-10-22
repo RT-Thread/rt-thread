@@ -33,7 +33,11 @@
 | **片上外设** | **支持情况** | **备注**                  |
 | :----------- | :---------- | :------------------------ |
 | UART         |     支持     | UART7               |
-| 持续更新中... |  |          |
+| GPIO | 支持 |          |
+| IIC | 支持 | 软件 |
+| WDT | 支持 | |
+| RTC | 支持 | |
+| 持续更新中... | | |
 
 
 ## 使用说明
@@ -111,7 +115,7 @@ msh >
 
 **应用入口函数**
 
-应用层的入口函数在 **bsp\ra6m4-cpk\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的 .c 文件和直接放在 src 目录下
+应用层的入口函数在 **bsp\ra6m4-cpk\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
 
 ```c
 void hal_entry(void)
@@ -120,7 +124,10 @@ void hal_entry(void)
 
     while (1)
     {
-        rt_thread_mdelay(1000);
+        rt_pin_write(LED3_PIN, PIN_HIGH);
+        rt_thread_mdelay(500);
+        rt_pin_write(LED3_PIN, PIN_LOW);
+        rt_thread_mdelay(500);
     }
 }
 ```
