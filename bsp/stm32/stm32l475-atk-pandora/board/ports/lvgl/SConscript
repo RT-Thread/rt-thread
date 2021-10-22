@@ -5,5 +5,5 @@ cwd = GetCurrentDir()
 src = Glob('*.c')
 CPPPATH = [cwd]
 
-group = DefineGroup('LVGL', src, depend = ['BSP_USING_LVGL'], CPPPATH = CPPPATH)
+group = DefineGroup('LVGL-port', src, depend = ['BSP_USING_LVGL'], CPPPATH = CPPPATH)
 Return('group')
