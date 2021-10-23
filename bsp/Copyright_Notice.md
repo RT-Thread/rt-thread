@@ -8,7 +8,7 @@ RT-Thread is an open source operating system, which is released under Apache Lic
 
 The peripheral library or firmware library of the chip manufacturer is authorized according to the manufacturer's license, and these files are released according to the original license agreement.
 
-## BSP's License and Coyright:
+## BSP's License and Copyright:
 
 ### acm32f0x0-nucleo
 
