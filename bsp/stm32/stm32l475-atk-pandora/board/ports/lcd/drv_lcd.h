@@ -13,6 +13,7 @@
 #define __DRV_LCD_H__
 
 #include <rtthread.h>
+
 #ifdef PKG_USING_QRCODE
 #include <qrcode.h>
 #endif
@@ -40,6 +41,8 @@
 #define GRAY187          0XBDD7
 #define GRAY240          0XF79E
 
+extern rt_uint16_t BACK_COLOR, FORE_COLOR;
+
 void lcd_clear(rt_uint16_t color);
 void lcd_address_set(rt_uint16_t x1, rt_uint16_t y1, rt_uint16_t x2, rt_uint16_t y2);
 void lcd_set_color(rt_uint16_t back, rt_uint16_t fore);
@@ -54,9 +57,6 @@ void lcd_fill_array(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end,
 void lcd_show_num(rt_uint16_t x, rt_uint16_t y, rt_uint32_t num, rt_uint8_t len, rt_uint32_t size);
 rt_err_t lcd_show_string(rt_uint16_t x, rt_uint16_t y, rt_uint32_t size, const char *fmt, ...);
 rt_err_t lcd_show_image(rt_uint16_t x, rt_uint16_t y, rt_uint16_t length, rt_uint16_t wide, const rt_uint8_t *p);
-#ifdef PKG_USING_QRCODE
-rt_err_t lcd_show_qrcode(rt_uint16_t x, rt_uint16_t y, rt_uint8_t version, rt_uint8_t ecc, const char *data, rt_uint8_t enlargement);
-#endif
 
 void lcd_enter_sleep(void);
 void lcd_exit_sleep(void);
