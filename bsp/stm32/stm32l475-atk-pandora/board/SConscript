@@ -56,4 +56,10 @@ elif rtconfig.CROSS_TOOL == 'iar':
 CPPDEFINES = ['STM32L475xx'] 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
+list = os.listdir(cwd)
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        group = group + SConscript(os.path.join(d, 'SConscript'))
+
 Return('group')
