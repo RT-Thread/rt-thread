@@ -38,5 +38,7 @@ ncscope.*
 tags
 
 .idea
+.vscode
+.history
 CMakeLists.txt
 cmake-build-debug
