@@ -153,7 +153,6 @@ jobs:
           sudo apt-get update
           sudo apt-get -qq install gcc-multilib libsdl-dev scons
           sudo apt-get install libncurses5-dev -y
-          sudo apt-get install python-requests -y
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
 
