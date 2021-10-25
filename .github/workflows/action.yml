@@ -155,7 +155,6 @@ jobs:
           sudo python -m pip install --upgrade pip -qq
           sudo pip install requests -qq
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
-          source ~/.env/env.sh
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
 
@@ -200,5 +199,6 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
         run: |
+          source ~/.env/env.sh
           pushd bsp/$RTT_BSP && pkgs --update && popd
           scons -C bsp/$RTT_BSP
