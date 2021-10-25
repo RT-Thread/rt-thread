@@ -153,6 +153,7 @@ jobs:
           sudo apt-get update
           sudo apt-get -qq install gcc-multilib libsdl-dev scons
           sudo apt-get install libncurses5-dev -y
+          sudo apt-get install pip -y
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
 
@@ -181,7 +182,8 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
         run: |
-          sudo apt-get install python3-requests -y
+          sudo python -m pip install requests
+          sudo apt-get install python-requests -y
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           ls ~/.env
           source ~/.env/env.sh
