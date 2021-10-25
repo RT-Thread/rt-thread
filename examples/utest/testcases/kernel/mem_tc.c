@@ -336,7 +336,7 @@ static void mem_alloc_test(void)
                         }
                     }
                     rt_memset(ctx, 0xAA, ctx->size);
-                    rt_free(ctx);
+                    rt_mem_free(ctx);
                     head.count --;
                 }
                 continue;
@@ -370,7 +370,7 @@ static void mem_alloc_test(void)
                     }
                 }
                 rt_memset(ctx, 0xAA, ctx->size);
-                rt_free(ctx);
+                rt_mem_free(ctx);
                 head.count --;
             }
         }
@@ -387,7 +387,7 @@ static void mem_alloc_test(void)
             }
         }
         rt_memset(ctx, 0xAA, ctx->size);
-        rt_free(ctx);
+        rt_mem_free(ctx);
         head.count --;
     }
     uassert_int_equal(head.count, 0);
