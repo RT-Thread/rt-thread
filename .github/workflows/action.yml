@@ -152,8 +152,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -qq install gcc-multilib libsdl-dev libncurses5-dev scons
-          sudo python -m pip install --upgrade pip
-          sudo pip install requests
+          sudo python -m pip install --upgrade pip -qq
+          pip install requests -qq
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
