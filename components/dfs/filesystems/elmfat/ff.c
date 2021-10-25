@@ -6997,3 +6997,18 @@ FRESULT f_setcp (
 }
 #endif	/* FF_CODE_PAGE == 0 */
 
+#include <rtthread.h>
+#if FF_VOLUMES > 1
+int elm_get_vol(FATFS *fat)
+{
+    int vol;
+
+    for (vol = 0; vol < FF_VOLUMES; vol ++)
+    {
+        if (FatFs[vol] == fat) return vol;
+    }
+
+    return -1;
+}
+#endif
+
