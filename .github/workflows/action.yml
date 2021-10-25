@@ -181,6 +181,7 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
         run: |
+          sudo apt-get install python3-requests -y
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           ls ~/.env
           source ~/.env/env.sh
