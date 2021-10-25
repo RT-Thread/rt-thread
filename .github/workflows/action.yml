@@ -65,6 +65,10 @@ jobs:
          - {RTT_BSP: "mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mb9bf568r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mini2440", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf51822", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52832", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52833", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52840", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "qemu-vexpress-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "qemu-vexpress-gemini", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "sam7x", RTT_TOOL_CHAIN: "sourcery-arm"}
