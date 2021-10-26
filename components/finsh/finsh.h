@@ -169,7 +169,7 @@ extern struct finsh_syscall *_syscall_table_begin, *_syscall_table_end;
 struct finsh_syscall *finsh_syscall_lookup(const char *name);
 
 #ifdef RT_USING_DEVICE
-    void finsh_set_device(const char *device_name);
+void finsh_set_device(const char *device_name);
 #endif
 
 #endif

@@ -5,19 +5,15 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-05-27     Yi.qiu       The first version
- * 2018-02-07     Bernard      Change the 3rd parameter of open/fcntl/ioctl to '...'
+ * 2020-09-01     Meco Man     first Version
+ * 2021-02-12     Meco Man     move all functions located in <pthread_sleep.c> to this file
  */
-
-#include <dfs.h>
-#include <dfs_posix.h>
-#include "dfs_private.h"
-
-/**
- * @addtogroup FsPosixApi
- */
-
-/*@{*/
+#include <rtthread.h>
+#include <dfs_file.h>
+#include <dfs_private.h>
+#include <sys/errno.h>
+#include <unistd.h>
+#include <delay.h>
 
 /**
  * this function is a POSIX compliant version, which will open a file and
@@ -585,11 +581,6 @@ int mkdir(const char *path, mode_t mode)
 }
 RTM_EXPORT(mkdir);
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-FINSH_FUNCTION_EXPORT(mkdir, create a directory);
-#endif
-
 /**
  * this function is a POSIX compliant version, which will remove a directory.
  *
@@ -947,4 +938,107 @@ char *getcwd(char *buf, size_t size)
 }
 RTM_EXPORT(getcwd);
 
-/* @} */
+#ifdef RT_USING_POSIX_TERMIOS
+#include "termios.h"
+int isatty(int fd)
+{
+    struct termios ts;
+    return(tcgetattr(fd, &ts) != -1); /*true if no error (is a tty)*/
+}
+#else
+int isatty(int fd)
+{
+    if (fd >=0 && fd < 3)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+#endif
+RTM_EXPORT(isatty);
+
+char *ttyname(int fd)
+{
+    return "/dev/tty"; /* TODO: need to add more specific */
+}
+RTM_EXPORT(ttyname);
+
+unsigned int sleep(unsigned int seconds)
+{
+    if (rt_thread_self() != RT_NULL)
+    {
+        ssleep(seconds);
+    }
+    else /* scheduler has not run yet */
+    {
+        while(seconds > 0)
+        {
+            udelay(1000000u);
+            seconds --;
+        }
+    }
+
+    return 0;
+}
+RTM_EXPORT(sleep);
+
+int usleep(useconds_t usec)
+{
+    if (rt_thread_self() != RT_NULL)
+    {
+        msleep(usec / 1000u);
+    }
+    else  /* scheduler has not run yet */
+    {
+        udelay(usec / 1000u);
+    }
+    udelay(usec % 1000u);
+
+    return 0;
+}
+RTM_EXPORT(usleep);
+
+pid_t gettid(void)
+{
+    /*TODO*/
+    return 0;
+}
+
+pid_t getpid(void)
+{
+    return gettid();
+}
+RTM_EXPORT(getpid);
+
+pid_t getppid(void)
+{
+    return 0;
+}
+RTM_EXPORT(getppid);
+
+uid_t getuid(void)
+{
+    return 0; /*ROOT*/
+}
+RTM_EXPORT(getuid);
+
+uid_t geteuid(void)
+{
+    return 0; /*ROOT*/
+}
+RTM_EXPORT(geteuid);
+
+gid_t getgid(void)
+{
+    return 0; /*ROOT*/
+}
+RTM_EXPORT(getgid);
+
+gid_t getegid(void)
+{
+    return 0; /*ROOT*/
+}
+RTM_EXPORT(getegid);

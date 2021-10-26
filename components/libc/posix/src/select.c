@@ -7,10 +7,7 @@
  * Date           Author       Notes
  * 2016-12-28     Bernard      first version
  */
-#include <dfs.h>
-#include <dfs_fs.h>
-#include <dfs_posix.h>
-
+#include <rtthread.h>
 #include <poll.h>
 #include <sys/select.h>
 
