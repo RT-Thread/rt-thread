@@ -8,6 +8,14 @@ config SOC_STM32F469NI
     default y
 
 menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL"
+        select BSP_USING_LCD_OTM8009A
+        select BSP_USING_TOUCH
+        select PKG_USING_LVGL
+        default n
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         select BSP_USING_FMC
@@ -23,7 +31,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_LTDC
         select BSP_USING_LCD_MIPI
         default n
-        
+
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI FLASH (N25Q128A qspi1)"
         select BSP_USING_QSPI
