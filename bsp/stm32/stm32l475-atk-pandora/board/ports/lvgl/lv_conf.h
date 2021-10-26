@@ -12,5 +12,6 @@
 #define LV_CONF_H
 
 #define LV_COLOR_16_SWAP 1
+#define LV_USE_PERF_MONITOR 1
 
 #endif
