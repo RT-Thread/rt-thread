@@ -163,14 +163,6 @@
       <description>SCI UART</description>
       <originalPack>Renesas.RA.3.1.0.pack</originalPack>
     </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_rtc" variant="" vendor="Renesas" version="3.1.0">
-      <description>Real Time Clock</description>
-      <originalPack>Renesas.RA.3.1.0.pack</originalPack>
-    </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_wdt" variant="" vendor="Renesas" version="3.1.0">
-      <description>Watchdog Timer</description>
-      <originalPack>Renesas.RA.3.1.0.pack</originalPack>
-    </component>
   </raComponentSelection>
   <raElcConfiguration/>
   <raIcuConfiguration/>
@@ -204,39 +196,10 @@
       <property id="module.driver.uart.tei_ipl" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.uart.eri_ipl" value="board.icu.common.irq.priority12"/>
     </module>
-    <module id="module.driver.rtc_on_rtc.546341368">
-      <property id="module.driver.rtc.name" value="g_rtc"/>
-      <property id="module.driver.rtc.clock_source" value="module.driver.rtc.clock_source.clock_source_loco"/>
-      <property id="module.driver.rtc.freq_cmpr_value_loco" value="255"/>
-      <property id="module.driver.rtc.err_adjustment_mode" value="module.driver.rtc.err_adjustment_mode.m1"/>
-      <property id="module.driver.rtc.err_adjustment_period" value="module.driver.rtc.err_adjustment_period.p1"/>
-      <property id="module.driver.rtc.err_adjustment_type" value="module.driver.rtc.err_adjustment_type.t1"/>
-      <property id="module.driver.rtc.err_adjustment_value" value="0"/>
-      <property id="module.driver.rtc.p_callback" value="rtc_callback"/>
-      <property id="module.driver.rtc.alarm_ipl" value="board.icu.common.irq.priority2"/>
-      <property id="module.driver.rtc.periodic_ipl" value="board.icu.common.irq.priority2"/>
-      <property id="module.driver.rtc.carry_ipl" value="board.icu.common.irq.priority2"/>
-    </module>
-    <module id="module.driver.watchdog_on_wdt.423233170">
-      <property id="module.driver.watchdog.name" value="g_wdt"/>
-      <property id="module.driver.watchdog.timeout" value="module.driver.watchdog.timeout.16384"/>
-      <property id="module.driver.watchdog.clock_division" value="module.driver.watchdog.clock_division.8192"/>
-      <property id="module.driver.watchdog.window_start" value="module.driver.watchdog.window_start.100"/>
-      <property id="module.driver.watchdog.window_end" value="module.driver.watchdog.window_end.0"/>
-      <property id="module.driver.watchdog.reset_control" value="module.driver.watchdog.reset_control.reset"/>
-      <property id="module.driver.watchdog.stop_control" value="module.driver.watchdog.stop_control.disable"/>
-      <property id="module.driver.watchdog.nmi_callback" value="NULL"/>
-    </module>
     <context id="_hal.0">
       <stack module="module.driver.ioport_on_ioport.0"/>
       <stack module="module.driver.uart_on_sci_uart.813326093"/>
-      <stack module="module.driver.rtc_on_rtc.546341368"/>
-      <stack module="module.driver.watchdog_on_wdt.423233170"/>
     </context>
-    <config id="config.driver.wdt">
-      <property id="config.driver.wdt.param_checking_enable" value="config.driver.wdt.param_checking_enable.bsp"/>
-      <property id="config.driver.wdt.register_start_nmi_supported" value="config.driver.wdt.register_start_nmi_supported.disabled"/>
-    </config>
     <config id="config.driver.ioport">
       <property id="config.driver.ioport.checking" value="config.driver.ioport.checking.system"/>
     </config>
@@ -245,9 +208,6 @@
       <property id="config.driver.sci_uart.fifo_support" value="config.driver.sci_uart.fifo_support.disabled"/>
       <property id="config.driver.sci_uart.dtc_support" value="config.driver.sci_uart.dtc_support.disabled"/>
       <property id="config.driver.sci_uart.flow_control" value="config.driver.sci_uart.flow_control.disabled"/>
-    </config>
-    <config id="config.driver.rtc">
-      <property id="config.driver.rtc.param_checking_enable" value="config.driver.rtc.param_checking_enable.bsp"/>
     </config>
   </raModuleConfiguration>
   <raPinConfiguration>
@@ -360,13 +320,14 @@
     <symbolicName propertyId="p712.symbolic_name" value="ARDUINO_GPIO_PWM"/>
     <symbolicName propertyId="p713.symbolic_name" value="ARDUINO_GPIO"/>
     <pincfg active="true" name="RA6M4 CPK" selected="true" symbol="g_bsp_pin_cfg">
-      <configSetting altId="adc0.an00.p000" configurationId="adc0.an00"/>
-      <configSetting altId="adc0.an01.p001" configurationId="adc0.an01"/>
-      <configSetting altId="adc0.an02.p002" configurationId="adc0.an02"/>
       <configSetting altId="adc0.an03.p003" configurationId="adc0.an03"/>
       <configSetting altId="adc0.an04.p004" configurationId="adc0.an04"/>
       <configSetting altId="adc0.an05.p005" configurationId="adc0.an05"/>
       <configSetting altId="adc0.mode.custom" configurationId="adc0.mode"/>
+      <configSetting altId="adc1.an00.p000" configurationId="adc1.an00"/>
+      <configSetting altId="adc1.an01.p001" configurationId="adc1.an01"/>
+      <configSetting altId="adc1.an02.p002" configurationId="adc1.an02"/>
+      <configSetting altId="adc1.mode.custom" configurationId="adc1.mode"/>
       <configSetting altId="cgc0.extal.p212" configurationId="cgc0.extal"/>
       <configSetting altId="cgc0.mode.mainsub" configurationId="cgc0.mode"/>
       <configSetting altId="cgc0.xtal.p213" configurationId="cgc0.xtal"/>
