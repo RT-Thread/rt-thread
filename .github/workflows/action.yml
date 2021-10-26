@@ -145,6 +145,7 @@ jobs:
          - {RTT_BSP: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "bluetrum/ab32vg1-ab-prougen", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"}
+         - {RTT_BSP: "k210", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
