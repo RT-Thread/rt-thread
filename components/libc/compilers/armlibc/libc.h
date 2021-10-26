@@ -10,13 +10,17 @@
 #ifndef __RTT_LIBC_H__
 #define __RTT_LIBC_H__
 
+#include <rtconfig.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 int libc_system_init(void);
+#ifdef RT_USING_POSIX
 int libc_stdio_get_console(void);
 int libc_stdio_set_console(const char* device_name, int mode);
+#endif /* RT_USING_POSIX */
 
 #ifdef __cplusplus
 }
