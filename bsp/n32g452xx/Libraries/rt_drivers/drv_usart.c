@@ -51,7 +51,7 @@ static void DMA_Configuration(struct rt_serial_device *serial);
 
 static rt_err_t n32_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    struct n32_uart* uart;
+    struct n32_uart *uart;
     USART_InitType USART_InitStructure;
 
     RT_ASSERT(serial != RT_NULL);
@@ -102,14 +102,14 @@ static rt_err_t n32_uart_configure(struct rt_serial_device *serial, struct seria
     /* Enable USART */
     USART_Enable(uart->uart_device, ENABLE);
 
-    USART_ClrFlag(uart->uart_device, USART_FLAG_TXDE|USART_FLAG_TXC);
+    USART_ClrFlag(uart->uart_device, USART_FLAG_TXDE | USART_FLAG_TXC);
 
     return RT_EOK;
 }
 
 static rt_err_t n32_uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
-    struct n32_uart* uart;
+    struct n32_uart *uart;
     rt_uint32_t ctrl_arg = (rt_uint32_t)(arg);
 
     RT_ASSERT(serial != RT_NULL);
@@ -117,34 +117,34 @@ static rt_err_t n32_uart_control(struct rt_serial_device *serial, int cmd, void 
 
     switch (cmd)
     {
+    /* disable interrupt */
+    case RT_DEVICE_CTRL_CLR_INT:
+        /* disable rx irq */
+        UART_DISABLE_IRQ(uart->irq);
         /* disable interrupt */
-        case RT_DEVICE_CTRL_CLR_INT:
-            /* disable rx irq */
-            UART_DISABLE_IRQ(uart->irq);
-            /* disable interrupt */
-            USART_ConfigInt(uart->uart_device, USART_INT_RXDNE, DISABLE);
-            break;
+        USART_ConfigInt(uart->uart_device, USART_INT_RXDNE, DISABLE);
+        break;
+    /* enable interrupt */
+    case RT_DEVICE_CTRL_SET_INT:
+        /* enable rx irq */
+        UART_ENABLE_IRQ(uart->irq);
         /* enable interrupt */
-        case RT_DEVICE_CTRL_SET_INT:
-            /* enable rx irq */
-            UART_ENABLE_IRQ(uart->irq);
-            /* enable interrupt */
-            USART_ConfigInt(uart->uart_device, USART_INT_RXDNE, ENABLE);
-            break;
-        /* USART config */
-        case RT_DEVICE_CTRL_CONFIG :
-            if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX)
-            {
-                DMA_Configuration(serial);
-            }
-            break;
+        USART_ConfigInt(uart->uart_device, USART_INT_RXDNE, ENABLE);
+        break;
+    /* USART config */
+    case RT_DEVICE_CTRL_CONFIG :
+        if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX)
+        {
+            DMA_Configuration(serial);
+        }
+        break;
     }
     return RT_EOK;
 }
 
 static int n32_uart_putc(struct rt_serial_device *serial, char c)
 {
-    struct n32_uart* uart;
+    struct n32_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct n32_uart *)serial->parent.user_data;
@@ -171,7 +171,7 @@ static int n32_uart_putc(struct rt_serial_device *serial, char c)
 static int n32_uart_getc(struct rt_serial_device *serial)
 {
     int ch;
-    struct n32_uart* uart;
+    struct n32_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct n32_uart *)serial->parent.user_data;
@@ -250,23 +250,23 @@ static void uart_isr(struct rt_serial_device *serial)
 
     RT_ASSERT(uart != RT_NULL);
 
-    if(USART_GetIntStatus(uart->uart_device, USART_INT_RXDNE) != RESET)
+    if (USART_GetIntStatus(uart->uart_device, USART_INT_RXDNE) != RESET)
     {
-        if(USART_GetFlagStatus(uart->uart_device, USART_FLAG_PEF) == RESET)
+        if (USART_GetFlagStatus(uart->uart_device, USART_FLAG_PEF) == RESET)
         {
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
         }
         /* clear interrupt */
         USART_ClrIntPendingBit(uart->uart_device, USART_INT_RXDNE);
     }
-    if(USART_GetIntStatus(uart->uart_device, USART_INT_IDLEF) != RESET)
+    if (USART_GetIntStatus(uart->uart_device, USART_INT_IDLEF) != RESET)
     {
         dma_uart_rx_idle_isr(serial);
     }
     if (USART_GetIntStatus(uart->uart_device, USART_INT_TXC) != RESET)
     {
         /* clear interrupt */
-        if(serial->parent.open_flag & RT_DEVICE_FLAG_INT_TX)
+        if (serial->parent.open_flag & RT_DEVICE_FLAG_INT_TX)
         {
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DONE);
         }
@@ -443,7 +443,7 @@ void DMA2_Channel3_IRQHandler(void)
 }
 #endif /* BSP_USING_UART4 */
 
-static void NVIC_Configuration(struct n32_uart* uart)
+static void NVIC_Configuration(struct n32_uart *uart)
 {
     NVIC_InitType NVIC_InitStructure;
 
@@ -473,7 +473,7 @@ static void DMA_Configuration(struct rt_serial_device *serial)
 
     /* rx dma config */
     DMA_DeInit(uart->dma.rx_ch);
-    DMA_InitStructure.PeriphAddr = (uint32_t)&(uart->uart_device->DAT);
+    DMA_InitStructure.PeriphAddr = (uint32_t) & (uart->uart_device->DAT);
     DMA_InitStructure.MemAddr = (uint32_t)(rx_fifo->buffer);
     DMA_InitStructure.Direction = DMA_DIR_PERIPH_SRC;
     DMA_InitStructure.BufSize = serial->config.bufsz;
@@ -500,7 +500,7 @@ static void DMA_Configuration(struct rt_serial_device *serial)
 
 int rt_hw_usart_init(void)
 {
-    struct n32_uart* uart;
+    struct n32_uart *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #if defined(BSP_USING_UART1)
