@@ -34,30 +34,30 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     struct st_wdt_timeout_values *wdt_value = {0};
     switch (cmd)
     {
-        /* feed the watchdog */
+    /* feed the watchdog */
     case RT_DEVICE_CTRL_WDT_KEEPALIVE:
-        if(R_WDT_Refresh(&g_wdt_ctrl) != FSP_SUCCESS)
+        if (R_WDT_Refresh(&g_wdt_ctrl) != FSP_SUCCESS)
         {
             LOG_E("watch dog keepalive fail.");
         }
         break;
-        /* set watchdog timeout */
+    /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
         /**< set*/
 //        g_wdt_cfg.timeout = *(rt_uint32_t *)arg;
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
         wdt_value = (struct st_wdt_timeout_values *)arg;
-        if(R_WDT_TimeoutGet(&g_wdt_ctrl,wdt_value) != FSP_SUCCESS)
+        if (R_WDT_TimeoutGet(&g_wdt_ctrl, wdt_value) != FSP_SUCCESS)
         {
             LOG_E("wdt get timeout failed.");
             return -RT_ERROR;
         }
         break;
     case RT_DEVICE_CTRL_WDT_START:
-        if(R_WDT_Open(&g_wdt_ctrl, &g_wdt_cfg) == FSP_SUCCESS)
+        if (R_WDT_Open(&g_wdt_ctrl, &g_wdt_cfg) == FSP_SUCCESS)
         {
-            if(R_WDT_Refresh(&g_wdt_ctrl) != FSP_SUCCESS)
+            if (R_WDT_Refresh(&g_wdt_ctrl) != FSP_SUCCESS)
             {
                 LOG_E("wdt start failed.");
                 return -RT_ERROR;
