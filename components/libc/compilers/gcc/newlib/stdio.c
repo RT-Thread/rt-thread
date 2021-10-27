@@ -8,14 +8,14 @@
  * 2017/10/15     bernard      the first version
  */
 #include <rtthread.h>
-
-#ifdef RT_LIBC_USING_FILEIO
 #include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include "libc.h"
 
 #define STDIO_DEVICE_NAME_MAX   32
+
+#ifdef RT_LIBC_USING_FILEIO
+#include <stdlib.h>
 
 static FILE* std_console = NULL;
 
@@ -28,9 +28,18 @@ int libc_stdio_set_console(const char* device_name, int mode)
     snprintf(name, sizeof(name) - 1, "/dev/%s", device_name);
     name[STDIO_DEVICE_NAME_MAX - 1] = '\0';
 
-    if (mode == O_RDWR) file_mode = "r+";
-    else if (mode == O_WRONLY) file_mode = "wb";
-    else file_mode = "rb";
+    if (mode == O_RDWR)
+    {
+        file_mode = "r+";
+    }
+    else if (mode == O_WRONLY)
+    {
+        file_mode = "wb";
+    }
+    else
+    {
+        file_mode = "rb";
+    }
 
     fp = fopen(name, file_mode);
     if (fp)
@@ -78,6 +87,36 @@ int libc_stdio_get_console(void)
         return fileno(std_console);
     else
         return -1;
+}
+
+#elif defined(RT_USING_POSIX)
+#include <unistd.h>
+static int std_fd = -1;
+
+int libc_stdio_set_console(const char* device_name, int mode)
+{
+    int fd;
+    char name[STDIO_DEVICE_NAME_MAX];
+
+    snprintf(name, sizeof(name) - 1, "/dev/%s", device_name);
+    name[STDIO_DEVICE_NAME_MAX - 1] = '\0';
+
+    fd = open(name, mode, 0);
+    if (fd >= 0)
+    {
+        if (std_fd >= 0)
+        {
+            close(std_fd);
+        }
+        std_fd = fd;
+    }
+
+    return std_fd;
+}
+
+int libc_stdio_get_console(void)
+{
+    return std_fd;
 }
 
 #endif /* RT_LIBC_USING_FILEIO */
