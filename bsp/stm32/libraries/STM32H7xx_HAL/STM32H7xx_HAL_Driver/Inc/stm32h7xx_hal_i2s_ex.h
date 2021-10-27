@@ -16,5 +16,13 @@
   *
   ******************************************************************************
   */
-  /* The I2S Full duplex feature is not supported by this HAL Driver          */
+  
+/**
+  ******************************************************************************
+                      ===== I2S FULL DUPLEX FEATURE =====
+       I2S Full Duplex APIs are available in stm32h7xx_hal_i2s.c/.h
+  ******************************************************************************
+  */
+
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

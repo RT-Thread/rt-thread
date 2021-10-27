@@ -27,9 +27,9 @@
 #include "shell.h"
 #include "msh.h"
 
-#if defined(RT_USING_DFS)
-    #include <dfs_posix.h>
-#endif /* RT_USING_DFS */
+#ifdef RT_USING_POSIX
+#include <dfs_posix.h>
+#endif /* RT_USING_POSIX */
 
 /* finsh thread */
 #ifndef RT_USING_HEAP
@@ -104,7 +104,7 @@ const char *finsh_get_prompt(void)
     }
     strcpy(finsh_prompt, _MSH_PROMPT);
 
-#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#if defined(RT_USING_POSIX) && defined(DFS_USING_WORKDIR)
     /* get current working directory */
     getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
 #endif
@@ -142,27 +142,35 @@ void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
     shell->prompt_mode = prompt_mode;
 }
 
-char finsh_getchar(void)
+int finsh_getchar(void)
 {
 #ifdef RT_USING_DEVICE
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_LIBC
     return getchar();
 #else
     char ch = 0;
+    rt_device_t device;
 
     RT_ASSERT(shell != RT_NULL);
-    while (rt_device_read(shell->device, -1, &ch, 1) != 1)
+
+    device = shell->device;
+    if (device == RT_NULL)
+    {
+        return -1; /* EOF */
+    }
+
+    while (rt_device_read(device, -1, &ch, 1) != 1)
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
 
     return ch;
-#endif
+#endif /* RT_USING_LIBC */
 #else
     extern char rt_hw_console_getchar(void);
     return rt_hw_console_getchar();
-#endif
+#endif /* RT_USING_DEVICE */
 }
 
-#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
+#if !defined(RT_USING_LIBC) && defined(RT_USING_DEVICE)
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
@@ -428,7 +436,7 @@ void finsh_thread_entry(void *parameter)
     shell->echo_mode = 0;
 #endif
 
-#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
+#if !defined(RT_USING_LIBC) && defined(RT_USING_DEVICE)
     /* set console device as shell device */
     if (shell->device == RT_NULL)
     {

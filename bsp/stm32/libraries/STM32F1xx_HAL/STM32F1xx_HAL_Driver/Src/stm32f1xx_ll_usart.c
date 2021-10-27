@@ -63,9 +63,6 @@
 /* __VALUE__ In case of oversampling by 16 and 8, BRR content must be greater than or equal to 16d. */
 #define IS_LL_USART_BRR_MIN(__VALUE__) ((__VALUE__) >= 16U)
 
-/* __VALUE__ BRR content must be lower than or equal to 0xFFFF. */
-#define IS_LL_USART_BRR_MAX(__VALUE__) ((__VALUE__) <= 0x0000FFFFU)
-
 #define IS_LL_USART_DIRECTION(__VALUE__) (((__VALUE__) == LL_USART_DIRECTION_NONE) \
                                        || ((__VALUE__) == LL_USART_DIRECTION_RX) \
                                        || ((__VALUE__) == LL_USART_DIRECTION_TX) \
@@ -311,9 +308,6 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 
       /* Check BRR is greater than or equal to 16d */
       assert_param(IS_LL_USART_BRR_MIN(USARTx->BRR));
-
-      /* Check BRR is greater than or equal to 16d */
-      assert_param(IS_LL_USART_BRR_MAX(USARTx->BRR));
     }
   }
   /* Endif (=> USART not in Disabled state => return ERROR) */

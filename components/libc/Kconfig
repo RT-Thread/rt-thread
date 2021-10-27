@@ -2,6 +2,8 @@ menu "POSIX layer and C standard library"
 
 config RT_USING_LIBC
     bool "Enable libc APIs from toolchain"
+    select RT_USING_DFS
+    select RT_USING_POSIX
     default y
 
 config RT_USING_PTHREADS
@@ -14,9 +16,9 @@ if RT_USING_PTHREADS
     default 8
 endif
 
-if RT_USING_LIBC && RT_USING_DFS
+if RT_USING_DFS
     config RT_USING_POSIX
-        bool "Enable POSIX layer for compatibility with UNIX APIs, poll/select etc"
+        bool "Enable POSIX layer, open/read/write/select etc"
         select RT_USING_DFS_DEVFS
         default y
 
@@ -49,9 +51,9 @@ if RT_USING_LIBC
         default n
 
     if RT_USING_MODULE
-    config RT_USING_CUSTOM_DLMODULE
-        bool "Enable load dynamic module by custom"
-        default n
+        config RT_USING_CUSTOM_DLMODULE
+            bool "Enable load dynamic module by custom"
+            default n
     endif
 
 endif

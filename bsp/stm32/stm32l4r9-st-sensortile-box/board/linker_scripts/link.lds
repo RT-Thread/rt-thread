@@ -10,7 +10,7 @@ MEMORY
     RAM2 (rw) : ORIGIN = 0x20040000, LENGTH =  384k /* 384k sram */
 }
 ENTRY(Reset_Handler)
-_system_stack_size = 0x200;
+_system_stack_size = 0x000;
 
 SECTIONS
 {

@@ -251,11 +251,11 @@ HAL_StatusTypeDef HAL_RTCEx_SetTimeStamp_IT(RTC_HandleTypeDef *hrtc, uint32_t Ti
   /* Enable IT timestamp */
   __HAL_RTC_TIMESTAMP_ENABLE_IT(hrtc,RTC_IT_TS);
 
-  /* RTC timestamp Interrupt Configuration: EXTI configuration */
-  __HAL_RTC_TIMESTAMP_EXTI_ENABLE_IT();
-
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+
+  /* RTC timestamp Interrupt Configuration: EXTI configuration */
+  __HAL_RTC_TIMESTAMP_EXTI_ENABLE_IT();
 
   hrtc->State = HAL_RTC_STATE_READY;
 
@@ -1712,7 +1712,7 @@ void HAL_RTCEx_TamperIRQHandler(RTC_HandleTypeDef *hrtc)
     HAL_RTCEx_Tamper3EventCallback(hrtc);
 #endif /* USE_HAL_RTC_REGISTER_CALLBACKS */
   }
-#endif
+#endif /* TAMP_CR1_TAMP3E */
 
   /* Check Internal Tamper3 status */
   if((tmp & RTC_INT_TAMPER_3) == RTC_INT_TAMPER_3)
@@ -1811,7 +1811,7 @@ __weak void HAL_RTCEx_Tamper3EventCallback(RTC_HandleTypeDef *hrtc)
             the HAL_RTCEx_Tamper2EventCallback could be implemented in the user file
    */
 }
-#endif
+#endif /* TAMP_CR1_TAMP3E */
 
 /**
   * @brief  Internal Tamper 3 callback.

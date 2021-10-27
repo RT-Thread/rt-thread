@@ -80,7 +80,7 @@
 /* HSE Freq as RTCCLK = 8 MHz / 32 = 250 kHz */
 #define RTC_ASYNCH_PREDIV                   0x07u   /* (8 - 1) */
 #define RTC_SYNCH_PREDIV                    0x7A11u /* (31250 -1) */
-#endif
+#endif /* RTC_CLOCK_SOURCE_LSE */
 
 
 /* Private macro -------------------------------------------------------------*/
@@ -139,7 +139,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     if ((PeriphClkInitStruct.RTCClockSelection == RCC_RTCCLKSOURCE_HSE_DIV32) && (__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) != 0x00u))
 #else
 #error Please select the RTC Clock source
-#endif
+#endif /* RTC_CLOCK_SOURCE_LSE */
     {
       /* Do nothing */
     }
@@ -163,7 +163,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
       RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
       RCC_OscInitStruct.HSEState = RCC_HSE_ON;
       PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_HSE_DIV32;
-#endif
+#endif /* RTC_CLOCK_SOURCE_LSE */
 
       /* COnfigure oscillator */
       status = HAL_RCC_OscConfig(&RCC_OscInitStruct);
@@ -208,7 +208,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 #elif defined (RTC_CLOCK_SOURCE_HSE)
         /* HSE input clock to RTC is divided by 32 */
         wucounter = (HSE_VALUE >> 5);
-#endif
+#endif /* RTC_CLOCK_SOURCE_LSE */
         wucounter = ((wucounter >> 1) / (1000U / (uint32_t)uwTickFreq)) -1u;
         status = HAL_RTCEx_SetWakeUpTimer_IT(&hRTC_Handle, wucounter, RTC_WAKEUPCLOCK_RTCCLK_DIV2);
 

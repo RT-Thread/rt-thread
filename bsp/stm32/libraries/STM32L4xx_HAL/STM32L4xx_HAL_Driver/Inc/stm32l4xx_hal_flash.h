@@ -738,8 +738,8 @@ typedef struct
   * @retval The new state of FLASH_FLAG (SET or RESET).
   */
 #define __HAL_FLASH_GET_FLAG(__FLAG__)          ((((__FLAG__) & FLASH_FLAG_ECCR_ERRORS) != 0U)     ? \
-                                                 (READ_BIT(FLASH->ECCR, (__FLAG__)) == (__FLAG__)) : \
-                                                 (READ_BIT(FLASH->SR,   (__FLAG__)) == (__FLAG__)))
+                                                 (READ_BIT(FLASH->ECCR, (__FLAG__)) != 0U) : \
+                                                 (READ_BIT(FLASH->SR,   (__FLAG__)) != 0U))
 
 /**
   * @brief  Clear the FLASH's pending flags.

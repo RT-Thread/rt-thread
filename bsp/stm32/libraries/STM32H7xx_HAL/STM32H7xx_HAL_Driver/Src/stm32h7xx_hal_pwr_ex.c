@@ -102,7 +102,7 @@
    (#) Call HAL_PWREx_EnableUSBReg(), HAL_PWREx_DisableUSBReg(),
        HAL_PWREx_EnableUSBVoltageDetector() and
        HAL_PWREx_DisableUSBVoltageDetector() functions to manage USB power
-       regulation functionnalities.
+       regulation functionalities.
 
    (#) Call HAL_PWREx_EnableBatteryCharging() and
        HAL_PWREx_DisableBatteryCharging() functions to enable and disable the
@@ -120,7 +120,7 @@
 
    (#) Call HAL_PWREx_GetMMCVoltage() and HAL_PWREx_DisableMonitoring()
        function to get VDDMMC voltage level. This API is used only for
-       STM32H7AxxQ, STM32H7BxxQ, STM32H7Axxx and STM32H7Bxxx lines
+       STM32H7Axxx and STM32H7Bxxx lines
 
    (#) Call HAL_PWREx_ConfigAVD() after setting parameter to be configured
        (event mode and voltage threshold) in order to set up the Analog Voltage
@@ -195,9 +195,14 @@
   * @{
   */
 /* Wake-Up Pins EXTI register mask */
+#if defined (EXTI_IMR2_IM57)
 #define PWR_EXTI_WAKEUP_PINS_MASK  (EXTI_IMR2_IM55 | EXTI_IMR2_IM56 |\
                                     EXTI_IMR2_IM57 | EXTI_IMR2_IM58 |\
                                     EXTI_IMR2_IM59 | EXTI_IMR2_IM60)
+#else
+#define PWR_EXTI_WAKEUP_PINS_MASK  (EXTI_IMR2_IM55 | EXTI_IMR2_IM56 |\
+                                    EXTI_IMR2_IM58 | EXTI_IMR2_IM60)
+#endif /* defined (EXTI_IMR2_IM57) */
 
 /* Wake-Up Pins PWR Pin Pull shift offsets */
 #define PWR_WAKEUP_PINS_PULL_SHIFT_OFFSET (2U)
@@ -385,11 +390,6 @@ uint32_t HAL_PWREx_GetSupplyConfig (void)
 
 /**
   * @brief Configure the main internal regulator output voltage.
-  * @note   For STM32H7x3, STM32H7x5, STM32H7x7, STM32H742 and STM32H750 lines,
-  *         configuring Voltage Scale 0 is only possible when Vcore is supplied
-  *         from LDO (Low DropOut). The SYSCFG Clock must be enabled through
-  *         __HAL_RCC_SYSCFG_CLK_ENABLE() macro before configuring Voltage
-  *         Scale 0.
   * @param  VoltageScaling : Specifies the regulator output voltage to achieve
   *                          a tradeoff between performance and power
   *                          consumption.
@@ -402,6 +402,13 @@ uint32_t HAL_PWREx_GetSupplyConfig (void)
   *                                                range 2 mode.
   *            @arg PWR_REGULATOR_VOLTAGE_SCALE3 : Regulator voltage output
   *                                                range 3 mode.
+  * @note   For STM32H74x and STM32H75x lines, configuring Voltage Scale 0 is
+  *         only possible when Vcore is supplied from LDO (Low DropOut). The
+  *         SYSCFG Clock must be enabled through __HAL_RCC_SYSCFG_CLK_ENABLE()
+  *         macro before configuring Voltage Scale 0.
+  *         To enter low power mode , and if current regulator voltage is
+  *         Voltage Scale 0 then first switch to Voltage Scale 1 before entering
+  *         low power mode.
   * @retval HAL Status
   */
 HAL_StatusTypeDef HAL_PWREx_ControlVoltageScaling (uint32_t VoltageScaling)
@@ -422,6 +429,7 @@ HAL_StatusTypeDef HAL_PWREx_ControlVoltageScaling (uint32_t VoltageScaling)
   /* Set the voltage range */
   MODIFY_REG (PWR->SRDCR, PWR_SRDCR_VOS, VoltageScaling);
 #else
+#if defined(SYSCFG_PWRCR_ODEN) /* STM32H74xxx and STM32H75xxx lines */
   if (VoltageScaling == PWR_REGULATOR_VOLTAGE_SCALE0)
   {
     if ((PWR->CR3 & PWR_CR3_LDOEN) == PWR_CR3_LDOEN)
@@ -476,6 +484,10 @@ HAL_StatusTypeDef HAL_PWREx_ControlVoltageScaling (uint32_t VoltageScaling)
     /* Set the voltage range */
     MODIFY_REG (PWR->D3CR, PWR_D3CR_VOS, VoltageScaling);
   }
+#else  /* STM32H72xxx and STM32H73xxx lines */
+  /* Set the voltage range */
+  MODIFY_REG(PWR->D3CR, PWR_D3CR_VOS, VoltageScaling);
+#endif /* defined (SYSCFG_PWRCR_ODEN) */
 #endif /* defined (PWR_SRDCR_VOS) */
 
   /* Get tick */
@@ -619,9 +631,9 @@ uint32_t HAL_PWREx_GetStopModeVoltageRange (void)
           (+++) PWR_STOPENTRY_WFI : enter STOP mode with WFI instruction
           (+++) PWR_STOPENTRY_WFE : enter STOP mode with WFE instruction
          (++) Domain:
-          (+++) PWR_D1_DOMAIN : Enters D1 domain to DSTOP mode.
+          (+++) PWR_D1_DOMAIN : Enters D1/CD domain to DSTOP mode.
           (+++) PWR_D2_DOMAIN : Enters D2 domain to DSTOP mode.
-          (+++) PWR_D3_DOMAIN : Enters D3 domain to DSTOP mode.
+          (+++) PWR_D3_DOMAIN : Enters D3/SRD domain to DSTOP mode.
 
       (+) Exit:
         Any EXTI Line (Internal or External) configured in Interrupt/Event mode.
@@ -642,9 +654,9 @@ uint32_t HAL_PWREx_GetStopModeVoltageRange (void)
          The DSTANDBY mode is entered using the HAL_PWREx_EnterSTANDBYMode
          (Domain) function with:
        (++) Domain:
-        (+++) PWR_D1_DOMAIN : Enters D1 domain to DSTANDBY mode.
+        (+++) PWR_D1_DOMAIN : Enters D1/CD domain to DSTANDBY mode.
         (+++) PWR_D2_DOMAIN : Enters D2 domain to DSTANDBY mode.
-        (+++) PWR_D3_DOMAIN : Enters D3 domain to DSTANDBY mode.
+        (+++) PWR_D3_DOMAIN : Enters D3/SRD domain to DSTANDBY mode.
 
       (+) Exit:
         WKUP pin rising or falling edge, RTC alarm (Alarm A and Alarm B), RTC
@@ -855,9 +867,6 @@ void HAL_PWREx_EnterSTOPMode (uint32_t Regulator, uint8_t STOPEntry, uint32_t Do
 #if defined (PWR_CPUCR_PDDS_D2)
   else if (Domain == PWR_D2_DOMAIN)
   {
-    /* Keep DSTOP mode when D2 domain enters Deepsleep */
-    CLEAR_BIT (PWR->CPUCR, PWR_CPUCR_PDDS_D2);
-
 #if defined (DUAL_CORE)
     /* Check current core */
     if (HAL_GetCurrentCPUID () != CM4_CPUID)
@@ -868,6 +877,9 @@ void HAL_PWREx_EnterSTOPMode (uint32_t Regulator, uint8_t STOPEntry, uint32_t Do
       */
       return;
     }
+
+    /* Keep DSTOP mode when D2 domain enters Deepsleep */
+    CLEAR_BIT (PWR->CPU2CR, PWR_CPU2CR_PDDS_D2);
 
     /* Set SLEEPDEEP bit of Cortex System Control Register */
     SET_BIT (SCB->SCR, SCB_SCR_SLEEPDEEP_Msk);
@@ -890,13 +902,30 @@ void HAL_PWREx_EnterSTOPMode (uint32_t Regulator, uint8_t STOPEntry, uint32_t Do
 
     /* Clear SLEEPDEEP bit of Cortex-Mx in the System Control Register */
     CLEAR_BIT (SCB->SCR, SCB_SCR_SLEEPDEEP_Msk);
-#endif /* defined (DUAL_CORE) */
+#else
+    /* Keep DSTOP mode when D2 domain enters Deepsleep */
+    CLEAR_BIT (PWR->CPUCR, PWR_CPUCR_PDDS_D2);
+#endif  /* defined (DUAL_CORE) */
   }
 #endif /* defined (PWR_CPUCR_PDDS_D2) */
   else
   {
+#if defined (DUAL_CORE)
+    /* Check current core */
+    if (HAL_GetCurrentCPUID () == CM7_CPUID)
+    {
+      /* Keep DSTOP mode when D3 domain enters Deepsleep */
+      CLEAR_BIT (PWR->CPUCR, PWR_CPUCR_PDDS_D3);
+    }
+    else
+    {
+      /* Keep DSTOP mode when D3 domain enters Deepsleep */
+      CLEAR_BIT (PWR->CPU2CR, PWR_CPU2CR_PDDS_D3);
+    }
+#else
     /* Keep DSTOP mode when D3/SRD domain enters Deepsleep */
     CLEAR_BIT (PWR->CPUCR, PWR_CPUCR_PDDS_D3);
+#endif  /* defined (DUAL_CORE) */
   }
 }
 
@@ -905,6 +934,7 @@ void HAL_PWREx_EnterSTOPMode (uint32_t Regulator, uint8_t STOPEntry, uint32_t Do
   * @note   This API clears the pending event in order to enter a given CPU
   *         to CSLEEP or CSTOP. It should be called just before APIs performing
   *         enter low power mode using Wait For Event request.
+  * @note   Cortex-M7 must be in CRUN mode when calling this API by Cortex-M4.
   * @retval None.
   */
 void HAL_PWREx_ClearPendingEvent (void)
@@ -1029,11 +1059,11 @@ void HAL_PWREx_EnterSTANDBYMode (uint32_t Domain)
   else
   {
     /* Allow DSTANDBY mode when D3/SRD domain enters Deepsleep */
-    SET_BIT (PWR-> CPUCR, PWR_CPUCR_PDDS_D3);
+    SET_BIT (PWR->CPUCR, PWR_CPUCR_PDDS_D3);
 
 #if defined (DUAL_CORE)
     /* Allow DSTANDBY mode when D3/SRD domain enters Deepsleep */
-    SET_BIT (PWR-> CPU2CR, PWR_CPU2CR_PDDS_D3);
+    SET_BIT (PWR->CPU2CR, PWR_CPU2CR_PDDS_D3);
 #endif /* defined (DUAL_CORE) */
   }
 }
@@ -1308,6 +1338,8 @@ void HAL_PWREx_EnableWakeUpPin (PWREx_WakeupPinTypeDef *sPinParams)
   *           @arg PWR_WAKEUP_PIN4 : Disable PC13 wake-up PIN.
   *           @arg PWR_WAKEUP_PIN5 : Disable PI11 wake-up PIN.
   *           @arg PWR_WAKEUP_PIN6 : Disable PC1  wake-up PIN.
+  * @note   The PWR_WAKEUP_PIN3 and PWR_WAKEUP_PIN5 are available only for
+  *         devices that support GPIOI port.
   * @retval None
   */
 void HAL_PWREx_DisableWakeUpPin (uint32_t WakeUpPin)
@@ -1331,6 +1363,8 @@ void HAL_PWREx_DisableWakeUpPin (uint32_t WakeUpPin)
   *            @arg PWR_WAKEUP_FLAG6    : Get wakeup event received from PC1.
   *            @arg PWR_WAKEUP_FLAG_ALL : Get Wakeup event received from all
   *                                      wake up pins.
+  * @note   The PWR_WAKEUP_FLAG3 and PWR_WAKEUP_FLAG5 are available only for
+  *         devices that support GPIOI port.
   * @retval The Wake-Up pin flag.
   */
 uint32_t HAL_PWREx_GetWakeupFlag (uint32_t WakeUpFlag)
@@ -1354,6 +1388,8 @@ uint32_t HAL_PWREx_GetWakeupFlag (uint32_t WakeUpFlag)
   *            @arg PWR_WAKEUP_FLAG6 : Clear the wakeup event received from PC1.
   *            @arg PWR_WAKEUP_FLAG_ALL : Clear the wakeup events received from
   *                                      all wake up pins.
+  * @note   The PWR_WAKEUP_FLAG3 and PWR_WAKEUP_FLAG5 are available only for
+  *         devices that support GPIOI port.
   * @retval HAL status.
   */
 HAL_StatusTypeDef HAL_PWREx_ClearWakeupFlag (uint32_t WakeUpFlag)
@@ -1397,6 +1433,7 @@ void HAL_PWREx_WAKEUP_PIN_IRQHandler (void)
     /* PWR WKUP2 interrupt user callback */
     HAL_PWREx_WKUP2_Callback ();
   }
+#if defined (PWR_WKUPFR_WKUPF3)
   else if (READ_BIT (PWR->WKUPFR, PWR_WKUPFR_WKUPF3) != 0U)
   {
     /* Clear PWR WKUPF3 flag */
@@ -1405,6 +1442,7 @@ void HAL_PWREx_WAKEUP_PIN_IRQHandler (void)
     /* PWR WKUP3 interrupt user callback */
     HAL_PWREx_WKUP3_Callback ();
   }
+#endif /* defined (PWR_WKUPFR_WKUPF3) */
   else if (READ_BIT (PWR->WKUPFR, PWR_WKUPFR_WKUPF4) != 0U)
   {
     /* Clear PWR WKUPF4 flag */
@@ -1413,6 +1451,7 @@ void HAL_PWREx_WAKEUP_PIN_IRQHandler (void)
     /* PWR WKUP4 interrupt user callback */
     HAL_PWREx_WKUP4_Callback ();
   }
+#if defined (PWR_WKUPFR_WKUPF5)
   else if (READ_BIT (PWR->WKUPFR, PWR_WKUPFR_WKUPF5) != 0U)
   {
     /* Clear PWR WKUPF5 flag */
@@ -1421,6 +1460,7 @@ void HAL_PWREx_WAKEUP_PIN_IRQHandler (void)
     /* PWR WKUP5 interrupt user callback */
     HAL_PWREx_WKUP5_Callback ();
   }
+#endif /* defined (PWR_WKUPFR_WKUPF5) */
   else
   {
     /* Clear PWR WKUPF6 flag */
@@ -1453,6 +1493,7 @@ __weak void HAL_PWREx_WKUP2_Callback (void)
   */
 }
 
+#if defined (PWR_WKUPFR_WKUPF3)
 /**
   * @brief PWR WKUP3 interrupt callback.
   * @retval None.
@@ -1463,6 +1504,7 @@ __weak void HAL_PWREx_WKUP3_Callback (void)
             the HAL_PWREx_WKUP3Callback can be implemented in the user file
   */
 }
+#endif /* defined (PWR_WKUPFR_WKUPF3) */
 
 /**
   * @brief PWR WKUP4 interrupt callback.
@@ -1475,6 +1517,7 @@ __weak void HAL_PWREx_WKUP4_Callback (void)
   */
 }
 
+#if defined (PWR_WKUPFR_WKUPF5)
 /**
   * @brief PWR WKUP5 interrupt callback.
   * @retval None.
@@ -1485,6 +1528,7 @@ __weak void HAL_PWREx_WKUP5_Callback (void)
             the HAL_PWREx_WKUP5Callback can be implemented in the user file
   */
 }
+#endif /* defined (PWR_WKUPFR_WKUPF5) */
 
 /**
   * @brief PWR WKUP6 interrupt callback.
@@ -2003,14 +2047,14 @@ void HAL_PWREx_DisableAVD (void)
 void HAL_PWREx_PVD_AVD_IRQHandler (void)
 {
   /* Check if the Programmable Voltage Detector is enabled (PVD) */
-  if(READ_BIT (PWR->CR1, PWR_CR1_PVDEN) != 0U)
+  if (READ_BIT (PWR->CR1, PWR_CR1_PVDEN) != 0U)
   {
 #if defined (DUAL_CORE)
     if (HAL_GetCurrentCPUID () == CM7_CPUID)
 #endif /* defined (DUAL_CORE) */
     {
       /* Check PWR D1/CD EXTI flag */
-      if(__HAL_PWR_PVD_EXTI_GET_FLAG () != 0U)
+      if (__HAL_PWR_PVD_EXTI_GET_FLAG () != 0U)
       {
         /* PWR PVD interrupt user callback */
         HAL_PWR_PVDCallback ();

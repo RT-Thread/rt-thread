@@ -64,7 +64,7 @@ typedef enum
 typedef struct __DAC_HandleTypeDef
 #else
 typedef struct
-#endif
+#endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 {
   DAC_TypeDef                 *Instance;     /*!< Register base address             */
 

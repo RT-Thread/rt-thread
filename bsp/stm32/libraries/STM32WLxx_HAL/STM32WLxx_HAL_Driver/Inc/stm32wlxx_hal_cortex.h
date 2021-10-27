@@ -187,9 +187,12 @@ typedef struct
 /** @defgroup CORTEX_MPU_Region_Size CORTEX MPU Region Size
   * @{
   */
+#if defined(CORE_CM0PLUS)
+#else
 #define   MPU_REGION_SIZE_32B        ((uint8_t)0x04)
 #define   MPU_REGION_SIZE_64B        ((uint8_t)0x05)
 #define   MPU_REGION_SIZE_128B       ((uint8_t)0x06)
+#endif
 #define   MPU_REGION_SIZE_256B       ((uint8_t)0x07)
 #define   MPU_REGION_SIZE_512B       ((uint8_t)0x08)
 #define   MPU_REGION_SIZE_1KB        ((uint8_t)0x09)
@@ -379,6 +382,33 @@ void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init);
                                          ((NUMBER) == MPU_REGION_NUMBER6) || \
                                          ((NUMBER) == MPU_REGION_NUMBER7))
 
+#if defined(CORE_CM0PLUS)
+#define IS_MPU_REGION_SIZE(SIZE)    (((SIZE) == MPU_REGION_SIZE_256B)  || \
+                                     ((SIZE) == MPU_REGION_SIZE_512B)  || \
+                                     ((SIZE) == MPU_REGION_SIZE_1KB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_2KB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_4KB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_8KB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_16KB)  || \
+                                     ((SIZE) == MPU_REGION_SIZE_32KB)  || \
+                                     ((SIZE) == MPU_REGION_SIZE_64KB)  || \
+                                     ((SIZE) == MPU_REGION_SIZE_128KB) || \
+                                     ((SIZE) == MPU_REGION_SIZE_256KB) || \
+                                     ((SIZE) == MPU_REGION_SIZE_512KB) || \
+                                     ((SIZE) == MPU_REGION_SIZE_1MB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_2MB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_4MB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_8MB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_16MB)  || \
+                                     ((SIZE) == MPU_REGION_SIZE_32MB)  || \
+                                     ((SIZE) == MPU_REGION_SIZE_64MB)  || \
+                                     ((SIZE) == MPU_REGION_SIZE_128MB) || \
+                                     ((SIZE) == MPU_REGION_SIZE_256MB) || \
+                                     ((SIZE) == MPU_REGION_SIZE_512MB) || \
+                                     ((SIZE) == MPU_REGION_SIZE_1GB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_2GB)   || \
+                                     ((SIZE) == MPU_REGION_SIZE_4GB))
+#else
 #define IS_MPU_REGION_SIZE(SIZE)    (((SIZE) == MPU_REGION_SIZE_32B)   || \
                                      ((SIZE) == MPU_REGION_SIZE_64B)   || \
                                      ((SIZE) == MPU_REGION_SIZE_128B)  || \
@@ -407,7 +437,7 @@ void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init);
                                      ((SIZE) == MPU_REGION_SIZE_1GB)   || \
                                      ((SIZE) == MPU_REGION_SIZE_2GB)   || \
                                      ((SIZE) == MPU_REGION_SIZE_4GB))
-
+#endif
 #define IS_MPU_SUB_REGION_DISABLE(SUBREGION)      ((SUBREGION) < (uint16_t)0x00FFU)
 #endif /* __MPU_PRESENT */
 

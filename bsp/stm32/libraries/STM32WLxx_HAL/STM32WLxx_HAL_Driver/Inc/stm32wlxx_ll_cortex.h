@@ -83,10 +83,9 @@ extern "C" {
 /**
   * @}
   */
-
 #endif  /* CORE_CM0PLUS */
-#if __MPU_PRESENT
 
+#if __MPU_PRESENT
 /** @defgroup CORTEX_LL_EC_CTRL_HFNMI_PRIVDEF MPU Control
   * @{
   */
@@ -116,9 +115,12 @@ extern "C" {
 /** @defgroup CORTEX_LL_EC_REGION_SIZE MPU Region Size
   * @{
   */
+#if defined(CORE_CM0PLUS)
+#else
 #define LL_MPU_REGION_SIZE_32B             (0x04U << MPU_RASR_SIZE_Pos) /*!< 32B Size of the MPU protection region */
 #define LL_MPU_REGION_SIZE_64B             (0x05U << MPU_RASR_SIZE_Pos) /*!< 64B Size of the MPU protection region */
 #define LL_MPU_REGION_SIZE_128B            (0x06U << MPU_RASR_SIZE_Pos) /*!< 128B Size of the MPU protection region */
+#endif
 #define LL_MPU_REGION_SIZE_256B            (0x07U << MPU_RASR_SIZE_Pos) /*!< 256B Size of the MPU protection region */
 #define LL_MPU_REGION_SIZE_512B            (0x08U << MPU_RASR_SIZE_Pos) /*!< 512B Size of the MPU protection region */
 #define LL_MPU_REGION_SIZE_1KB             (0x09U << MPU_RASR_SIZE_Pos) /*!< 1KB Size of the MPU protection region */
@@ -569,7 +571,7 @@ __STATIC_INLINE void LL_MPU_EnableRegion(uint32_t Region)
   * @param  Address Value of region base address
   * @param  SubRegionDisable Sub-region disable value between Min_Data = 0x00 and Max_Data = 0xFF
   * @param  Attributes This parameter can be a combination of the following values:
-  *         @arg @ref LL_MPU_REGION_SIZE_32B or @ref LL_MPU_REGION_SIZE_64B or @ref LL_MPU_REGION_SIZE_128B
+  *         @arg @ref LL_MPU_REGION_SIZE_32B (*) or @ref LL_MPU_REGION_SIZE_64B (*) or @ref LL_MPU_REGION_SIZE_128B (*)
   *           or @ref LL_MPU_REGION_SIZE_256B or @ref LL_MPU_REGION_SIZE_512B or @ref LL_MPU_REGION_SIZE_1KB
   *           or @ref LL_MPU_REGION_SIZE_2KB or @ref LL_MPU_REGION_SIZE_4KB or @ref LL_MPU_REGION_SIZE_8KB
   *           or @ref LL_MPU_REGION_SIZE_16KB or @ref LL_MPU_REGION_SIZE_32KB or @ref LL_MPU_REGION_SIZE_64KB
@@ -586,6 +588,7 @@ __STATIC_INLINE void LL_MPU_EnableRegion(uint32_t Region)
   *         @arg @ref LL_MPU_ACCESS_SHAREABLE or @ref LL_MPU_ACCESS_NOT_SHAREABLE
   *         @arg @ref LL_MPU_ACCESS_CACHEABLE or @ref LL_MPU_ACCESS_NOT_CACHEABLE
   *         @arg @ref LL_MPU_ACCESS_BUFFERABLE or @ref LL_MPU_ACCESS_NOT_BUFFERABLE
+  *         (*) value not defined for CM0+ core.
   * @retval None
   */
 __STATIC_INLINE void LL_MPU_ConfigRegion(uint32_t Region, uint32_t SubRegionDisable, uint32_t Address,

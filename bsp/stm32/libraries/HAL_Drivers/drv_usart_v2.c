@@ -302,6 +302,53 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     return 1;
 }
 
+rt_uint32_t stm32_uart_get_mask(rt_uint32_t word_length, rt_uint32_t parity)
+{
+    rt_uint32_t mask;
+    if (word_length == UART_WORDLENGTH_8B)
+    {
+        if (parity == UART_PARITY_NONE)
+        {
+            mask = 0x00FFU ;
+        }
+        else
+        {
+            mask = 0x007FU ;
+        }
+    }
+#ifdef UART_WORDLENGTH_9B
+    else if (word_length == UART_WORDLENGTH_9B)
+    {
+        if (parity == UART_PARITY_NONE)
+        {
+            mask = 0x01FFU ;
+        }
+        else
+        {
+            mask = 0x00FFU ;
+        }
+    }
+#endif
+#ifdef UART_WORDLENGTH_7B
+    else if (word_length == UART_WORDLENGTH_7B)
+    {
+        if (parity == UART_PARITY_NONE)
+        {
+            mask = 0x007FU ;
+        }
+        else
+        {
+            mask = 0x003FU ;
+        }
+    }
+    else
+    {
+        mask = 0x0000U;
+    }
+#endif
+    return mask;
+}
+
 static int stm32_getc(struct rt_serial_device *serial)
 {
     int ch;
@@ -311,7 +358,7 @@ static int stm32_getc(struct rt_serial_device *serial)
 
     ch = -1;
     if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
-        ch = UART_GET_RDR(&uart->handle);
+        ch = UART_GET_RDR(&uart->handle, stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity));
     return ch;
 }
 
@@ -403,7 +450,7 @@ static void uart_isr(struct rt_serial_device *serial)
         rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        rt_ringbuffer_putchar(&(rx_fifo->rb), UART_GET_RDR(&uart->handle));
+        rt_ringbuffer_putchar(&(rx_fifo->rb), UART_GET_RDR(&uart->handle, stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity)));
 
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }

@@ -120,10 +120,12 @@ typedef struct
 
   __IO HAL_NOR_StateTypeDef     State;        /*!< NOR device access state                      */
 
+  uint32_t                      CommandSet;   /*!< NOR algorithm command set and control        */
+
 #if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
-  void  (* MspInitCallback)        ( struct __NOR_HandleTypeDef * hnor);    /*!< NOR Msp Init callback              */
-  void  (* MspDeInitCallback)      ( struct __NOR_HandleTypeDef * hnor);    /*!< NOR Msp DeInit callback            */
-#endif
+  void (* MspInitCallback)(struct __NOR_HandleTypeDef *hnor);               /*!< NOR Msp Init callback              */
+  void (* MspDeInitCallback)(struct __NOR_HandleTypeDef *hnor);             /*!< NOR Msp DeInit callback            */
+#endif /* USE_HAL_NOR_REGISTER_CALLBACKS */
 } NOR_HandleTypeDef;
 
 #if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
@@ -134,13 +136,13 @@ typedef enum
 {
   HAL_NOR_MSP_INIT_CB_ID       = 0x00U,  /*!< NOR MspInit Callback ID          */
   HAL_NOR_MSP_DEINIT_CB_ID     = 0x01U   /*!< NOR MspDeInit Callback ID        */
-}HAL_NOR_CallbackIDTypeDef;
+} HAL_NOR_CallbackIDTypeDef;
 
 /**
   * @brief  HAL NOR Callback pointer definition
   */
 typedef void (*pNOR_CallbackTypeDef)(NOR_HandleTypeDef *hnor);
-#endif
+#endif /* USE_HAL_NOR_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -162,7 +164,7 @@ typedef void (*pNOR_CallbackTypeDef)(NOR_HandleTypeDef *hnor);
                                                              } while(0)
 #else
 #define __HAL_NOR_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_NOR_STATE_RESET)
-#endif
+#endif /* USE_HAL_NOR_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -177,7 +179,8 @@ typedef void (*pNOR_CallbackTypeDef)(NOR_HandleTypeDef *hnor);
   */
 
 /* Initialization/de-initialization functions  ********************************/
-HAL_StatusTypeDef HAL_NOR_Init(NOR_HandleTypeDef *hnor, FMC_NORSRAM_TimingTypeDef *Timing, FMC_NORSRAM_TimingTypeDef *ExtTiming);
+HAL_StatusTypeDef HAL_NOR_Init(NOR_HandleTypeDef *hnor, FMC_NORSRAM_TimingTypeDef *Timing,
+                               FMC_NORSRAM_TimingTypeDef *ExtTiming);
 HAL_StatusTypeDef HAL_NOR_DeInit(NOR_HandleTypeDef *hnor);
 void HAL_NOR_MspInit(NOR_HandleTypeDef *hnor);
 void HAL_NOR_MspDeInit(NOR_HandleTypeDef *hnor);
@@ -196,8 +199,10 @@ HAL_StatusTypeDef HAL_NOR_ReturnToReadMode(NOR_HandleTypeDef *hnor);
 HAL_StatusTypeDef HAL_NOR_Read(NOR_HandleTypeDef *hnor, uint32_t *pAddress, uint16_t *pData);
 HAL_StatusTypeDef HAL_NOR_Program(NOR_HandleTypeDef *hnor, uint32_t *pAddress, uint16_t *pData);
 
-HAL_StatusTypeDef HAL_NOR_ReadBuffer(NOR_HandleTypeDef *hnor, uint32_t uwAddress, uint16_t *pData, uint32_t uwBufferSize);
-HAL_StatusTypeDef HAL_NOR_ProgramBuffer(NOR_HandleTypeDef *hnor, uint32_t uwAddress, uint16_t *pData, uint32_t uwBufferSize);
+HAL_StatusTypeDef HAL_NOR_ReadBuffer(NOR_HandleTypeDef *hnor, uint32_t uwAddress, uint16_t *pData,
+                                     uint32_t uwBufferSize);
+HAL_StatusTypeDef HAL_NOR_ProgramBuffer(NOR_HandleTypeDef *hnor, uint32_t uwAddress, uint16_t *pData,
+                                        uint32_t uwBufferSize);
 
 HAL_StatusTypeDef HAL_NOR_Erase_Block(NOR_HandleTypeDef *hnor, uint32_t BlockAddress, uint32_t Address);
 HAL_StatusTypeDef HAL_NOR_Erase_Chip(NOR_HandleTypeDef *hnor, uint32_t Address);
@@ -205,9 +210,10 @@ HAL_StatusTypeDef HAL_NOR_Read_CFI(NOR_HandleTypeDef *hnor, NOR_CFITypeDef *pNOR
 
 #if (USE_HAL_NOR_REGISTER_CALLBACKS == 1)
 /* NOR callback registering/unregistering */
-HAL_StatusTypeDef HAL_NOR_RegisterCallback(NOR_HandleTypeDef *hnor, HAL_NOR_CallbackIDTypeDef CallbackId, pNOR_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_NOR_RegisterCallback(NOR_HandleTypeDef *hnor, HAL_NOR_CallbackIDTypeDef CallbackId,
+                                           pNOR_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_NOR_UnRegisterCallback(NOR_HandleTypeDef *hnor, HAL_NOR_CallbackIDTypeDef CallbackId);
-#endif
+#endif /* USE_HAL_NOR_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -251,23 +257,23 @@ HAL_NOR_StatusTypeDef HAL_NOR_GetStatus(NOR_HandleTypeDef *hnor, uint32_t Addres
 #define DEVICE_CODE3_ADDR        ((uint16_t)0x000F)
 
 /* NOR CFI IDs addresses */
-#define CFI1_ADDRESS             ((uint16_t)0x61)
-#define CFI2_ADDRESS             ((uint16_t)0x62)
-#define CFI3_ADDRESS             ((uint16_t)0x63)
-#define CFI4_ADDRESS             ((uint16_t)0x64)
+#define CFI1_ADDRESS             ((uint16_t)0x0061)
+#define CFI2_ADDRESS             ((uint16_t)0x0062)
+#define CFI3_ADDRESS             ((uint16_t)0x0063)
+#define CFI4_ADDRESS             ((uint16_t)0x0064)
 
 /* NOR operation wait timeout */
 #define NOR_TMEOUT               ((uint16_t)0xFFFF)
 
 /* NOR memory data width */
-#define NOR_MEMORY_8B            ((uint8_t)0x0)
-#define NOR_MEMORY_16B           ((uint8_t)0x1)
+#define NOR_MEMORY_8B            ((uint8_t)0x00)
+#define NOR_MEMORY_16B           ((uint8_t)0x01)
 
 /* NOR memory device read/write start address */
-#define NOR_MEMORY_ADRESS1       ((uint32_t)0x60000000)
-#define NOR_MEMORY_ADRESS2       ((uint32_t)0x64000000)
-#define NOR_MEMORY_ADRESS3       ((uint32_t)0x68000000)
-#define NOR_MEMORY_ADRESS4       ((uint32_t)0x6C000000)
+#define NOR_MEMORY_ADRESS1       (0x60000000U)
+#define NOR_MEMORY_ADRESS2       (0x64000000U)
+#define NOR_MEMORY_ADRESS3       (0x68000000U)
+#define NOR_MEMORY_ADRESS4       (0x6C000000U)
 /**
   * @}
   */
@@ -284,7 +290,7 @@ HAL_NOR_StatusTypeDef HAL_NOR_GetStatus(NOR_HandleTypeDef *hnor, uint32_t Addres
   * @retval NOR shifted address value
   */
 #define NOR_ADDR_SHIFT(__NOR_ADDRESS, __NOR_MEMORY_WIDTH_, __ADDRESS__)         \
-              ((uint32_t)(((__NOR_MEMORY_WIDTH_) == NOR_MEMORY_16B)?            \
+  ((uint32_t)(((__NOR_MEMORY_WIDTH_) == NOR_MEMORY_16B)?            \
               ((uint32_t)((__NOR_ADDRESS) + (2U * (__ADDRESS__)))):              \
               ((uint32_t)((__NOR_ADDRESS) + (__ADDRESS__)))))
 

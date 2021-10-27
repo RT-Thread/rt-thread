@@ -1475,14 +1475,14 @@ HAL_StatusTypeDef HAL_MDMA_GenerateSWRequest(MDMA_HandleTypeDef *hmdma)
 
   if((hmdma->Instance->CCR &  MDMA_CCR_EN) == 0U)
   {
-    /* if no Transfer on going (MDMA enable bit not set) retrun error */
+    /* if no Transfer on going (MDMA enable bit not set) return error */
     hmdma->ErrorCode = HAL_MDMA_ERROR_NO_XFER;
 
     return HAL_ERROR;
   }
   else if(((hmdma->Instance->CISR &  MDMA_CISR_CRQA) != 0U) || (request_mode == 0U))
   {
-    /* if an MDMA ongoing request has not yet end or if request mode is not SW request retrun error */
+    /* if an MDMA ongoing request has not yet end or if request mode is not SW request return error */
     hmdma->ErrorCode = HAL_MDMA_ERROR_BUSY;
 
     return HAL_ERROR;
@@ -1755,7 +1755,7 @@ uint32_t HAL_MDMA_GetError(MDMA_HandleTypeDef *hmdma)
   * @param  SrcAddress: The source memory Buffer address
   * @param  DstAddress: The destination memory Buffer address
   * @param  BlockDataLength : The length of a block transfer in bytes
-  * @param  BlockCount: The number of blocks to be transfered
+  * @param  BlockCount: The number of blocks to be transferred
   * @retval HAL status
   */
 static void MDMA_SetConfig(MDMA_HandleTypeDef *hmdma, uint32_t SrcAddress, uint32_t DstAddress, uint32_t BlockDataLength, uint32_t BlockCount)

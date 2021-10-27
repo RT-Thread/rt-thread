@@ -105,7 +105,6 @@
   * @{
   */
 #define FLASH_TIMEOUT_VALUE              50000U /* 50 s */
-
 /**
   * @}
   */
@@ -135,11 +134,16 @@ FLASH_ProcessTypeDef pFlash;
   */
 
 /**
-  * @brief  Program flash word at a specified address
+  * @brief  Program a flash word at a specified address
   * @param  TypeProgram Indicate the way to program at a specified address.
   *         This parameter can be a value of @ref FLASH_Type_Program
   * @param  FlashAddress specifies the address to be programmed.
-  * @param  DataAddress specifies the address of data to be programmed
+  *         This parameter shall be aligned to the Flash word:
+  *          - 256 bits for STM32H74x/5X devices (8x 32bits words)
+  *          - 128 bits for STM32H7Ax/BX devices (4x 32bits words)
+  *          - 256 bits for STM32H72x/3X devices (8x 32bits words)
+  * @param  DataAddress specifies the address of data to be programmed.
+  *         This parameter shall be 32-bit aligned
   *
   * @retval HAL_StatusTypeDef HAL Status
   */
@@ -166,9 +170,15 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t FlashAddress,
   {
     bank = FLASH_BANK_1;
   }
-  else
+#if defined (DUAL_BANK)
+  else if(IS_FLASH_PROGRAM_ADDRESS_BANK2(FlashAddress))
   {
     bank = FLASH_BANK_2;
+  }
+#endif /* DUAL_BANK */
+  else
+  {
+    return HAL_ERROR;
   }
 
   /* Reset error code */
@@ -179,6 +189,7 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t FlashAddress,
 
   if(status == HAL_OK)
   {
+#if defined (DUAL_BANK)
     if(bank == FLASH_BANK_1)
     {
 #if defined (FLASH_OPTCR_PG_OTP)
@@ -199,6 +210,20 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t FlashAddress,
       /* Set PG bit */
       SET_BIT(FLASH->CR2, FLASH_CR_PG);
     }
+#else /* Single Bank */
+#if defined (FLASH_OPTCR_PG_OTP)
+      if (TypeProgram == FLASH_TYPEPROGRAM_OTPWORD)
+      {
+        /* Set OTP_PG bit */
+        SET_BIT(FLASH->OPTCR, FLASH_OPTCR_PG_OTP);
+      }
+      else
+#endif /* FLASH_OPTCR_PG_OTP */
+      {
+        /* Set PG bit */
+        SET_BIT(FLASH->CR1, FLASH_CR_PG);
+      }
+#endif /* DUAL_BANK */
 
     __ISB();
     __DSB();
@@ -228,6 +253,7 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t FlashAddress,
     /* Wait for last operation to be completed */
     status = FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE, bank);
 
+#if defined (DUAL_BANK)
 #if defined (FLASH_OPTCR_PG_OTP)
     if (TypeProgram == FLASH_TYPEPROGRAM_OTPWORD)
     {
@@ -248,6 +274,20 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t FlashAddress,
         CLEAR_BIT(FLASH->CR2, FLASH_CR_PG);
       }
     }
+#else /* Single Bank */
+#if defined (FLASH_OPTCR_PG_OTP)
+    if (TypeProgram == FLASH_TYPEPROGRAM_OTPWORD)
+    {
+      /* If the program operation is completed, disable the OTP_PG */
+      CLEAR_BIT(FLASH->OPTCR, FLASH_OPTCR_PG_OTP);
+    }
+    else
+#endif /* FLASH_OPTCR_PG_OTP */
+    {
+      /* If the program operation is completed, disable the PG */
+      CLEAR_BIT(FLASH->CR1, FLASH_CR_PG);
+    }
+#endif /* DUAL_BANK */
   }
 
   /* Process Unlocked */
@@ -257,11 +297,16 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t FlashAddress,
 }
 
 /**
-  * @brief  Program flash words of 256 bits at a specified address with interrupt enabled.
+  * @brief  Program a flash word at a specified address with interrupt enabled.
   * @param  TypeProgram Indicate the way to program at a specified address.
   *                      This parameter can be a value of @ref FLASH_Type_Program
   * @param  FlashAddress specifies the address to be programmed.
-  * @param  DataAddress specifies the address of data (256 bits) to be programmed
+  *         This parameter shall be aligned to the Flash word:
+  *          - 256 bits for STM32H74x/5X devices (8x 32bits words)
+  *          - 128 bits for STM32H7Ax/BX devices (4x 32bits words)
+  *          - 256 bits for STM32H72x/3X devices (8x 32bits words)
+  * @param  DataAddress specifies the address of data to be programmed.
+  *         This parameter shall be 32-bit aligned
   *
   * @retval HAL Status
   */
@@ -291,9 +336,15 @@ HAL_StatusTypeDef HAL_FLASH_Program_IT(uint32_t TypeProgram, uint32_t FlashAddre
   {
     bank = FLASH_BANK_1;
   }
-  else
+#if defined (DUAL_BANK)
+  else if(IS_FLASH_PROGRAM_ADDRESS_BANK2(FlashAddress))
   {
     bank = FLASH_BANK_2;
+  }
+#endif /* DUAL_BANK */
+  else
+  {
+    return HAL_ERROR;
   }
 
   /* Wait for last operation to be completed */
@@ -308,6 +359,7 @@ HAL_StatusTypeDef HAL_FLASH_Program_IT(uint32_t TypeProgram, uint32_t FlashAddre
   {
     pFlash.Address = FlashAddress;
 
+#if defined (DUAL_BANK)
     if(bank == FLASH_BANK_1)
     {
       /* Set internal variables used by the IRQ handler */
@@ -352,6 +404,32 @@ HAL_StatusTypeDef HAL_FLASH_Program_IT(uint32_t TypeProgram, uint32_t FlashAddre
                                   FLASH_IT_STRBERR_BANK2 | FLASH_IT_INCERR_BANK2);
 #endif /* FLASH_CR_OPERRIE */
     }
+#else /* Single Bank */
+    /* Set internal variables used by the IRQ handler */
+    pFlash.ProcedureOnGoing = FLASH_PROC_PROGRAM_BANK1;
+
+#if defined (FLASH_OPTCR_PG_OTP)
+    if (TypeProgram == FLASH_TYPEPROGRAM_OTPWORD)
+    {
+      /* Set OTP_PG bit */
+      SET_BIT(FLASH->OPTCR, FLASH_OPTCR_PG_OTP);
+    }
+    else
+#endif /* FLASH_OPTCR_PG_OTP */
+    {
+      /* Set PG bit */
+      SET_BIT(FLASH->CR1, FLASH_CR_PG);
+    }
+
+      /* Enable End of Operation and Error interrupts for Bank 1 */
+#if defined (FLASH_CR_OPERRIE)
+      __HAL_FLASH_ENABLE_IT_BANK1(FLASH_IT_EOP_BANK1     | FLASH_IT_WRPERR_BANK1 | FLASH_IT_PGSERR_BANK1 | \
+                                  FLASH_IT_STRBERR_BANK1 | FLASH_IT_INCERR_BANK1 | FLASH_IT_OPERR_BANK1);
+#else
+      __HAL_FLASH_ENABLE_IT_BANK1(FLASH_IT_EOP_BANK1     | FLASH_IT_WRPERR_BANK1 | FLASH_IT_PGSERR_BANK1 | \
+                                  FLASH_IT_STRBERR_BANK1 | FLASH_IT_INCERR_BANK1);
+#endif /* FLASH_CR_OPERRIE */
+#endif /* DUAL_BANK */
 
     __ISB();
     __DSB();
@@ -460,7 +538,8 @@ void HAL_FLASH_IRQHandler(void)
     }
   }
 
-  /* Check FLASH Bank2 End of Operation flag  */
+#if defined (DUAL_BANK)
+ /* Check FLASH Bank2 End of Operation flag  */
   if(__HAL_FLASH_GET_FLAG_BANK2(FLASH_SR_EOP) != RESET)
   {
     if(pFlash.ProcedureOnGoing == FLASH_PROC_SECTERASE_BANK2)
@@ -527,6 +606,7 @@ void HAL_FLASH_IRQHandler(void)
       }
     }
   }
+#endif /* DUAL_BANK */
 
   /* Check FLASH Bank1 operation error flags */
 #if defined (FLASH_SR_OPERR)
@@ -571,6 +651,7 @@ void HAL_FLASH_IRQHandler(void)
     HAL_FLASH_OperationErrorCallback(temp);
   }
 
+#if defined (DUAL_BANK)
   /* Check FLASH Bank2 operation error flags */
 #if defined (FLASH_SR_OPERR)
   errorflag = FLASH->SR2 & ((FLASH_FLAG_WRPERR_BANK2 | FLASH_FLAG_PGSERR_BANK2 | FLASH_FLAG_STRBERR_BANK2 | \
@@ -613,6 +694,7 @@ void HAL_FLASH_IRQHandler(void)
     /* FLASH error interrupt user callback */
     HAL_FLASH_OperationErrorCallback(temp);
   }
+#endif /* DUAL_BANK */
 
   if(pFlash.ProcedureOnGoing == FLASH_PROC_NONE)
   {
@@ -621,17 +703,21 @@ void HAL_FLASH_IRQHandler(void)
     __HAL_FLASH_DISABLE_IT_BANK1(FLASH_IT_EOP_BANK1    | FLASH_IT_WRPERR_BANK1 | FLASH_IT_PGSERR_BANK1 | \
                                  FLASH_IT_STRBERR_BANK1 | FLASH_IT_INCERR_BANK1 | FLASH_IT_OPERR_BANK1);
 
+#if defined (DUAL_BANK)
     /* Disable Bank2 Operation and Error source interrupt */
     __HAL_FLASH_DISABLE_IT_BANK2(FLASH_IT_EOP_BANK2    | FLASH_IT_WRPERR_BANK2 | FLASH_IT_PGSERR_BANK2 | \
                                  FLASH_IT_STRBERR_BANK2 | FLASH_IT_INCERR_BANK2 | FLASH_IT_OPERR_BANK2);
+#endif /* DUAL_BANK */
 #else
     /* Disable Bank1 Operation and Error source interrupt */
     __HAL_FLASH_DISABLE_IT_BANK1(FLASH_IT_EOP_BANK1    | FLASH_IT_WRPERR_BANK1 | FLASH_IT_PGSERR_BANK1 | \
                                  FLASH_IT_STRBERR_BANK1 | FLASH_IT_INCERR_BANK1);
 
+#if defined (DUAL_BANK)
     /* Disable Bank2 Operation and Error source interrupt */
     __HAL_FLASH_DISABLE_IT_BANK2(FLASH_IT_EOP_BANK2    | FLASH_IT_WRPERR_BANK2 | FLASH_IT_PGSERR_BANK2 | \
                                  FLASH_IT_STRBERR_BANK2 | FLASH_IT_INCERR_BANK2);
+#endif /* DUAL_BANK */
 #endif /* FLASH_CR_OPERRIE */
 
     /* Process Unlocked */
@@ -714,6 +800,7 @@ HAL_StatusTypeDef HAL_FLASH_Unlock(void)
     }
   }
 
+#if defined (DUAL_BANK)
   if(READ_BIT(FLASH->CR2, FLASH_CR_LOCK) != 0U)
   {
     /* Authorize the FLASH Bank2 Registers access */
@@ -726,6 +813,7 @@ HAL_StatusTypeDef HAL_FLASH_Unlock(void)
       return HAL_ERROR;
     }
   }
+#endif /* DUAL_BANK */
 
   return HAL_OK;
 }
@@ -745,6 +833,7 @@ HAL_StatusTypeDef HAL_FLASH_Lock(void)
     return HAL_ERROR;
   }
 
+#if defined (DUAL_BANK)
   /* Set the LOCK Bit to lock the FLASH Bank2 Control Register access */
   SET_BIT(FLASH->CR2, FLASH_CR_LOCK);
 
@@ -753,6 +842,7 @@ HAL_StatusTypeDef HAL_FLASH_Lock(void)
   {
     return HAL_ERROR;
   }
+#endif /* DUAL_BANK */
 
   return HAL_OK;
 }
@@ -810,10 +900,12 @@ HAL_StatusTypeDef HAL_FLASH_OB_Launch(void)
   {
     status = HAL_ERROR;
   }
+#if defined (DUAL_BANK)
   else if (FLASH_CRC_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE, FLASH_BANK_2) != HAL_OK)
   {
     status = HAL_ERROR;
   }
+#endif /* DUAL_BANK */
   else
   {
     status = HAL_OK;
@@ -908,20 +1000,22 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout, uint32_t Bank)
      Even if the FLASH operation fails, the QW flag will be reset and an error
      flag will be set */
 
-  uint32_t bsyflag, errorflag;
+  uint32_t bsyflag = FLASH_FLAG_QW_BANK1;
+  uint32_t errorflag = FLASH->SR1 & FLASH_FLAG_ALL_ERRORS_BANK1;
   uint32_t tickstart = HAL_GetTick();
 
   assert_param(IS_FLASH_BANK_EXCLUSIVE(Bank));
 
-  /* Select bsyflag depending on Bank */
-  if(Bank == FLASH_BANK_1)
+#if defined (DUAL_BANK)
+
+  if (Bank == FLASH_BANK_2)
   {
-    bsyflag = FLASH_FLAG_QW_BANK1;
-  }
-  else
-  {
+    /* Get Error Flags */
+    errorflag = (FLASH->SR2 & FLASH_FLAG_ALL_ERRORS_BANK2) | 0x80000000U;
+    /* Select bsyflag depending on Bank */
     bsyflag = FLASH_FLAG_QW_BANK2;
   }
+#endif /* DUAL_BANK */
 
   while(__HAL_FLASH_GET_FLAG(bsyflag))
   {
@@ -934,18 +1028,8 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout, uint32_t Bank)
     }
   }
 
-  /* Get Error Flags */
-  if (Bank == FLASH_BANK_1)
-  {
-    errorflag = FLASH->SR1 & FLASH_FLAG_ALL_ERRORS_BANK1;
-  }
-  else
-  {
-    errorflag = (FLASH->SR2 & FLASH_FLAG_ALL_ERRORS_BANK2) | 0x80000000U;
-  }
-
-  /* In case of error reported in Flash SR1 or SR2 registers (ECCC not managed as an error) */
-  if((errorflag & 0x7DFFFFFFU) != 0U)
+  /* In case of error reported in Flash SR1 or SR2 register */
+  if((errorflag & 0x7FFFFFFFU) != 0U)
   {
     /*Save the error code*/
     pFlash.ErrorCode |= errorflag;
@@ -965,6 +1049,7 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout, uint32_t Bank)
       __HAL_FLASH_CLEAR_FLAG_BANK1(FLASH_FLAG_EOP_BANK1);
     }
   }
+#if defined (DUAL_BANK)
   else
   {
     if (__HAL_FLASH_GET_FLAG_BANK2(FLASH_FLAG_EOP_BANK2))
@@ -973,6 +1058,7 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout, uint32_t Bank)
       __HAL_FLASH_CLEAR_FLAG_BANK2(FLASH_FLAG_EOP_BANK2);
     }
   }
+#endif /* DUAL_BANK */
 
   return HAL_OK;
 }
@@ -1064,6 +1150,7 @@ HAL_StatusTypeDef FLASH_CRC_WaitForLastOperation(uint32_t Timeout, uint32_t Bank
       return HAL_ERROR;
     }
   }
+#if defined (DUAL_BANK)
   else
   {
     if (__HAL_FLASH_GET_FLAG_BANK2(FLASH_FLAG_CRCRDERR_BANK2))
@@ -1077,6 +1164,7 @@ HAL_StatusTypeDef FLASH_CRC_WaitForLastOperation(uint32_t Timeout, uint32_t Bank
       return HAL_ERROR;
     }
   }
+#endif /* DUAL_BANK */
 
   /* If there is no error flag set */
   return HAL_OK;

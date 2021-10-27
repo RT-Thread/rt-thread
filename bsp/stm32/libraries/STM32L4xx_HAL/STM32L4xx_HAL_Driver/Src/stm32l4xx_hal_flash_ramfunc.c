@@ -64,8 +64,6 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern FLASH_ProcessTypeDef pFlash;
-
 /* Private function prototypes -----------------------------------------------*/
 /* Exported functions -------------------------------------------------------*/
 
@@ -132,7 +130,7 @@ __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_DisableRunPowerDown(void)
   */
 __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_OB_DBankConfig(uint32_t DBankConfig)
 {
-  register uint32_t count, reg;
+  uint32_t count, reg;
   HAL_StatusTypeDef status = HAL_ERROR;
 
   /* Process Locked */

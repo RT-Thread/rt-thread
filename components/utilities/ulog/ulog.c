@@ -268,6 +268,8 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     }
 #endif /* ULOG_USING_COLOR */
 
+    log_buf[log_len] = '\0';
+
 #ifdef ULOG_OUTPUT_TIME
     /* add time info */
     {
@@ -288,7 +290,7 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
             {
                 long old_usec = now.tv_usec;
                 /* delay some time for wait microseconds changed */
-                rt_thread_delay(2);
+                rt_thread_mdelay(10);
                 gettimeofday(&now, NULL);
                 check_usec_support = RT_TRUE;
                 /* the microseconds is not equal between two gettimeofday calls */
@@ -445,6 +447,7 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
         {
             /* recalculate the log start address and log size when backend not supported color */
             rt_size_t color_info_len = 0, output_size = size;
+            char *output_log = log;
 
             if (color_output_info[level] != RT_NULL)
                 color_info_len = rt_strlen(color_output_info[level]);
@@ -453,10 +456,10 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
             {
                 rt_size_t color_hdr_len = rt_strlen(CSI_START) + color_info_len;
 
-                log += color_hdr_len;
+                output_log += color_hdr_len;
                 output_size -= (color_hdr_len + (sizeof(CSI_END) - 1));
             }
-            backend->output(backend, level, tag, is_raw, log, output_size);
+            backend->output(backend, level, tag, is_raw, output_log, output_size);
         }
 #endif /* !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG) */
     }

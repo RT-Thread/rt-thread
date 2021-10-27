@@ -36,7 +36,7 @@ int tick_isr(void)
 #ifdef RISCV_S_MODE
     sbi_set_timer(get_ticks() + tick_cycles);
 #else
-    *(uint64_t*)CLINT_MTIMECMP(r_mhartid()) = *(uint64_t*)CLINT_MTIME + tick_cycles;
+    *(uint64_t*)CLINT_MTIMECMP(__raw_hartid()) = *(uint64_t*)CLINT_MTIME + tick_cycles;
 #endif
 
     return 0;
@@ -62,7 +62,7 @@ int rt_hw_tick_init(void)
 #else
     clear_csr(mie, MIP_MTIP);
     clear_csr(mip, MIP_MTIP);
-    *(uint64_t*)CLINT_MTIMECMP(r_mhartid()) = *(uint64_t*)CLINT_MTIME + interval;
+    *(uint64_t*)CLINT_MTIMECMP(__raw_hartid()) = *(uint64_t*)CLINT_MTIME + interval;
     set_csr(mie, MIP_MTIP);
 #endif
     return 0;

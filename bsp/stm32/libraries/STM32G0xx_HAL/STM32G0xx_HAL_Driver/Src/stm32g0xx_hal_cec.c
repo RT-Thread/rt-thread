@@ -822,19 +822,15 @@ void HAL_CEC_IRQHandler(CEC_HandleTypeDef *hcec)
   /* CEC TX byte request interrupt ------------------------------------------------*/
   if ((reg & CEC_FLAG_TXBR) != 0U)
   {
+    --hcec->TxXferCount;
     if (hcec->TxXferCount == 0U)
     {
       /* if this is the last byte transmission, set TX End of Message (TXEOM) bit */
       __HAL_CEC_LAST_BYTE_TX_SET(hcec);
-      hcec->Instance->TXDR = *hcec->pTxBuffPtr;
-      hcec->pTxBuffPtr++;
     }
-    else
-    {
-      hcec->Instance->TXDR = *hcec->pTxBuffPtr;
-      hcec->pTxBuffPtr++;
-      hcec->TxXferCount--;
-    }
+    /* In all cases transmit the byte */
+    hcec->Instance->TXDR = *hcec->pTxBuffPtr;
+    hcec->pTxBuffPtr++;
     /* clear Tx-Byte request flag */
     __HAL_CEC_CLEAR_FLAG(hcec, CEC_FLAG_TXBR);
   }

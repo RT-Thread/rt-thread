@@ -225,15 +225,11 @@ HAL_StatusTypeDef HAL_RTCEx_SetTimeStamp_IT(RTC_HandleTypeDef *hrtc, uint32_t Ti
 
   hrtc->State = HAL_RTC_STATE_BUSY;
 
-  /* RTC timestamp Interrupt Configuration: EXTI configuration (always rising edge)*/
-  __HAL_RTC_TIMESTAMP_EXTI_RISING_IT();
-  __HAL_RTC_TIMESTAMP_EXTI_ENABLE_IT();
-
-  /* Get the RTC_CR register and clear the bits to be configured */
-  CLEAR_BIT(RTC->CR, (RTC_CR_TSEDGE | RTC_CR_TSE));
-
   /* Disable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+
+  /* Get the RTC_CR register and clear the bits to be configured */
+  CLEAR_BIT(RTC->CR, (RTC_CR_TSEDGE | RTC_CR_TSE | RTC_CR_TSIE));
 
   /* Configure the Time Stamp TSEDGE before Enable bit to avoid unwanted TSF setting. */
   SET_BIT(RTC->CR, (uint32_t)TimeStampEdge);
@@ -246,6 +242,10 @@ HAL_StatusTypeDef HAL_RTCEx_SetTimeStamp_IT(RTC_HandleTypeDef *hrtc, uint32_t Ti
 
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+
+  /* RTC timestamp Interrupt Configuration: EXTI configuration (always rising edge)*/
+  __HAL_RTC_TIMESTAMP_EXTI_RISING_IT();
+  __HAL_RTC_TIMESTAMP_EXTI_ENABLE_IT();
 
   hrtc->State = HAL_RTC_STATE_READY;
 
@@ -490,6 +490,10 @@ HAL_StatusTypeDef HAL_RTCEx_PollForTimeStampEvent(RTC_HandleTypeDef *hrtc, uint3
       if (((HAL_GetTick() - tickstart) > Timeout) || (Timeout == 0U))
       {
         hrtc->State = HAL_RTC_STATE_TIMEOUT;
+
+        /* Process Unlocked */
+        __HAL_UNLOCK(hrtc);
+
         return HAL_TIMEOUT;
       }
     }
@@ -792,6 +796,10 @@ HAL_StatusTypeDef HAL_RTCEx_PollForWakeUpTimerEvent(RTC_HandleTypeDef *hrtc, uin
       if (((HAL_GetTick() - tickstart) > Timeout) || (Timeout == 0U))
       {
         hrtc->State = HAL_RTC_STATE_TIMEOUT;
+
+        /* Process Unlocked */
+        __HAL_UNLOCK(hrtc);
+
         return HAL_TIMEOUT;
       }
     }
@@ -1282,6 +1290,10 @@ HAL_StatusTypeDef HAL_RTCEx_PollForAlarmBEvent(RTC_HandleTypeDef *hrtc, uint32_t
       if (((HAL_GetTick() - tickstart) > Timeout) || (Timeout == 0U))
       {
         hrtc->State = HAL_RTC_STATE_TIMEOUT;
+
+        /* Process Unlocked */
+        __HAL_UNLOCK(hrtc);
+
         return HAL_TIMEOUT;
       }
     }

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-10-30     CDT          first version
+ * 2021-10-05     lizhengyang  fix set uart clk bug
  */
 
 /*******************************************************************************
@@ -289,6 +290,39 @@ static struct hc32_uart uart_obj[] =
     UART_CONFIG("uart10", USART10),
 #endif
 };
+static const struct uart_index uart_clock_map[] =
+{
+#ifdef BSP_USING_UART1
+    {0, M4_USART1},
+#endif
+#ifdef BSP_USING_UART2
+    {1, M4_USART2},
+#endif
+#ifdef BSP_USING_UART3
+    {2, M4_USART3},
+#endif
+#ifdef BSP_USING_UART4
+    {3, M4_USART4},
+#endif
+#ifdef BSP_USING_UART5
+    {4, M4_USART5},
+#endif
+#ifdef BSP_USING_UART6
+    {5, M4_USART6},
+#endif
+#ifdef BSP_USING_UART7
+    {6, M4_USART7},
+#endif
+#ifdef BSP_USING_UART8
+    {7, M4_USART8},
+#endif
+#ifdef BSP_USING_UART9
+    {8, M4_USART9},
+#endif
+#ifdef BSP_USING_UART10
+    {9, M4_USART10},
+#endif
+};
 
 static const struct uart_irq_handler uart_irq_handlers[sizeof(uart_obj) / sizeof(uart_obj[0])];
 
@@ -313,9 +347,26 @@ static uint32_t hc32_get_uart_index(M4_USART_TypeDef *Instance)
     return index;
 }
 
+static uint32_t hc32_get_uart_clock_index(M4_USART_TypeDef *Instance)
+{
+    uint32_t index = 10;
+
+    for (uint8_t i = 0U; i < ARRAY_SZ(uart_clock_map); i++)
+    {
+        if (uart_clock_map[i].Instance == Instance)
+        {
+            index = uart_clock_map[i].index;
+            RT_ASSERT(index < 10)
+            break;
+        }
+    }
+
+    return index;
+}
+
 static uint32_t hc32_get_usart_fcg(M4_USART_TypeDef *Instance)
 {
-    return (PWC_FCG3_USART1 << hc32_get_uart_index(Instance));
+    return (PWC_FCG3_USART1 << hc32_get_uart_clock_index(Instance));
 }
 
 static rt_err_t hc32_configure(struct rt_serial_device *serial,

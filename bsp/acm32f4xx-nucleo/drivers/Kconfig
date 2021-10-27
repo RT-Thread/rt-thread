@@ -1,0 +1,387 @@
+menu "Hardware Drivers Config"
+
+choice
+    prompt "select chip type"
+    default SOC_ACM32F403RET7
+
+    config SOC_ACM32F403KCU7
+    bool "SOC_ACM32F403KCU7"
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to ACM32F403 DataSheet
+
+    config SOC_ACM32F403KEU7
+    bool "SOC_ACM32F403KEU7"
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to ACM32F403 DataSheet
+
+    config SOC_ACM32F403CCT7
+    bool "SOC_ACM32F403CCT7"
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to ACM32F403 DataSheet
+
+    config SOC_ACM32F403CET7
+    bool "SOC_ACM32F403CET7"
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to ACM32F403 DataSheet
+
+    config SOC_ACM32F403RCT7
+    bool "SOC_ACM32F403RCT7"
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to ACM32F403 DataSheet
+
+    config SOC_ACM32F403RET7
+    bool "SOC_ACM32F403RET7"
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to ACM32F403 DataSheet
+
+    config SOC_ACM32F403VCT7
+    bool "SOC_ACM32F403VCT7"
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to ACM32F403 DataSheet
+
+    config SOC_ACM32F403VET7
+    bool "SOC_ACM32F403VET7"
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to ACM32F403 DataSheet
+endchoice
+
+menu "ACM32F403RET7"
+    depends on SOC_ACM32F403RET7
+
+    config SOC_SRAM_START_ADDR
+        hex "sram start address"
+        default 0x20000000
+
+    config SOC_SRAM_SIZE
+        hex "sram size(KBytes)"
+        default 0xC0
+
+    config SOC_FLASH_START_ADDR
+        hex "EFlash Start Address"
+        default 0x00000000
+
+    config SOC_FLASH_SIZE
+        hex "EFlash Size(KBytes)"
+        default 0x8000
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    menu "Hardware GPIO"
+        config BSP_USING_GPIO1
+            bool "Enable GPIOAB"
+            default y
+            select RT_USING_PIN
+        config BSP_USING_GPIO2
+            bool "Enable GPIOCD"
+            default y
+            select RT_USING_PIN
+        config BSP_USING_GPIO3
+            bool "Enable GPIOEF"
+            default y
+            select RT_USING_PIN
+    endmenu
+
+    config BSP_USING_ADC
+        bool "Enable ADC"
+        select RT_USING_ADC
+        default n
+
+    config BSP_USING_DAC
+        bool "Enable DAC"
+        select RT_USING_DAC
+        default n
+
+    menu "Hardware UART"
+        config BSP_USING_UART1
+            bool "Enable UART1 (PA9/PA10)"
+            default y
+            select RT_USING_SERIAL
+
+        config BSP_USING_UART2
+            bool "Enable UART2 (PA2/PA3)"
+            default y
+            select RT_USING_SERIAL
+
+        if BSP_USING_UART2
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART2_TX_USING_DMA
+                bool "Enable UART2 TX DMA"
+                depends on BSP_USING_UART2
+                select RT_SERIAL_USING_DMA
+                default n
+        endif
+
+        config BSP_USING_UART3
+            bool "Enable UART3 (PC4/PC5)"
+            default n
+            select RT_USING_SERIAL
+
+        if BSP_USING_UART3
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART3_TX_USING_DMA
+                bool "Enable UART3 TX DMA"
+                depends on BSP_USING_UART3
+                select RT_SERIAL_USING_DMA
+                default n
+        endif
+
+        config BSP_USING_UART4
+            bool "Enable UART4 (PC11/PC10)"
+            default n
+            select RT_USING_SERIAL
+
+        if BSP_USING_UART4
+            config BSP_UART4_RX_USING_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART4_TX_USING_DMA
+                bool "Enable UART4 TX DMA"
+                depends on BSP_USING_UART4
+                select RT_SERIAL_USING_DMA
+                default n
+        endif
+    endmenu
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    config BSP_USING_LPUART
+        bool "Enable LPUART"
+        select RT_USING_UART
+        default n
+
+    menu "Hardware I2C"
+        config BSP_USING_I2C1
+            bool "Enable I2C1"
+            default n
+            select RT_USING_I2C
+        config BSP_USING_I2C2
+            bool "Enable I2C2"
+            default n
+            select RT_USING_I2C
+    endmenu
+
+    menu "Hardware I2S"
+        config BSP_USING_I2S1
+            bool "Enable I2S1"
+            default n
+            select RT_USING_I2S
+    endmenu
+
+    menu "Hardware CAN"
+        config BSP_USING_CAN1
+            bool "Enable CAN1"
+            default n
+            select RT_USING_CAN
+        config BSP_USING_CAN2
+            bool "Enable CAN2"
+            default n
+            select RT_USING_CAN
+    endmenu
+
+    menu "Hardware TIMER"
+        config BSP_USING_TIM1
+            bool "Enable Timer1"
+            default n
+            select RT_USING_HWTIMER
+        config BSP_USING_TIM2
+            bool "Enable Timer2"
+            default n
+            select RT_USING_HWTIMER
+        config BSP_USING_TIM3
+            bool "Enable Timer3"
+            default n
+            select RT_USING_HWTIMER
+        config BSP_USING_TIM4
+            bool "Enable Timer4"
+            default n
+            select RT_USING_HWTIMER
+        config BSP_USING_TIM6
+            bool "Enable Timer6"
+            default n
+            select RT_USING_HWTIMER
+        config BSP_USING_TIM7
+            bool "Enable Timer7"
+            default n
+            select RT_USING_HWTIMER
+        config BSP_USING_TIM14
+            bool "Enable Timer14"
+            default n
+            select RT_USING_HWTIMER
+        config BSP_USING_TIM15
+            bool "Enable Timer15"
+            default n
+            select RT_USING_HWTIMER
+        config BSP_USING_TIM16
+            bool "Enable Timer16"
+            default n
+            select RT_USING_HWTIMER
+        config BSP_USING_TIM17
+            bool "Enable Timer17"
+            default n
+            select RT_USING_HWTIMER
+    endmenu
+
+    menu "Hardware WDT"
+        config BSP_USING_WDT
+            bool "Enable Watch Dog Timer"
+            default n
+            select RT_USING_WDT
+        config BSP_USING_IWDT
+            bool "Enable Independent Watch Dog Timer"
+            default n
+            select RT_USING_WDT
+    endmenu
+
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        default n
+
+    menu "Hardware SPI"
+        config BSP_USING_SPI1
+            bool "Enable SPI1"
+            select RT_USING_SPI
+            default n
+
+        if BSP_USING_SPI1
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                default n
+        endif
+
+        config BSP_USING_SPI2
+            bool "Enable SPI2"
+            select RT_USING_SPI
+            default n
+
+        if BSP_USING_SPI2
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                default n
+        endif
+
+        config BSP_USING_SPI3
+            bool "Enable SPI3"
+            select RT_USING_SPI
+            default n
+
+        if BSP_USING_SPI3
+            config BSP_SPI3_RX_USING_DMA
+                bool "Enable SPI3 RX DMA"
+                default n
+
+            config BSP_SPI3_TX_USING_DMA
+                bool "Enable SPI3 TX DMA"
+                default n
+        endif
+
+        config BSP_USING_SPI4
+            bool "Enable SPI4"
+            select RT_USING_SPI
+            default n
+
+        if BSP_USING_SPI4
+            config BSP_SPI4_RX_USING_DMA
+                bool "Enable SPI4 RX DMA"
+                default n
+
+            config BSP_SPI4_TX_USING_DMA
+                bool "Enable SPI4 TX DMA"
+                default n
+        endif
+    endmenu
+
+    menu "Hardware CRYPTO"
+        config BSP_USING_CRC
+            select RT_HWCRYPTO_USING_CRC
+            bool "Enable CRC"
+            default n
+            select RT_USING_HWCRYPTO
+        config BSP_USING_AES
+            select RT_HWCRYPTO_USING_AES
+            bool "Enable AES"
+            default n
+            select RT_USING_HWCRYPTO
+
+        config BSP_USING_HRNG
+            select RT_HWCRYPTO_USING_RNG
+            bool "Enable HRNG"
+            default n
+            select RT_USING_HWCRYPTO
+    endmenu
+
+    config BSP_USING_CMP
+        bool "Enable Analog Voltage Comparer"
+        default n
+
+    config BSP_USING_OPA
+        bool "Enable Operational Amplifier"
+        default n
+
+    config BSP_USING_TKEY
+        bool "Enable Touch Key"
+        select RT_USING_TOUCH
+        default n
+
+    config BSP_USING_RPMU
+        bool "Enable RTC PMU"
+        select RT_USING_PM
+        default n
+
+    config BSP_USING_USBD
+        bool "Enable USB Device"
+        select RT_USING_USB
+        default n
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu
+

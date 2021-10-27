@@ -307,15 +307,15 @@ HAL_StatusTypeDef HAL_OPAMP_Init(OPAMP_HandleTypeDef *hopamp)
     assert_param(IS_OPAMP_FUNCTIONAL_NORMALMODE(hopamp->Init.Mode));
     assert_param(IS_OPAMP_NONINVERTING_INPUT(hopamp->Init.NonInvertingInput));
 
+#if (USE_HAL_OPAMP_REGISTER_CALLBACKS == 1)
     if(hopamp->State == HAL_OPAMP_STATE_RESET)
     {
-#if (USE_HAL_OPAMP_REGISTER_CALLBACKS == 1)
-    if(hopamp->MspInitCallback == NULL)
-    {
-      hopamp->MspInitCallback               = HAL_OPAMP_MspInit;
+      if(hopamp->MspInitCallback == NULL)
+      {
+        hopamp->MspInitCallback               = HAL_OPAMP_MspInit;
+      }
     }
 #endif /* USE_HAL_OPAMP_REGISTER_CALLBACKS */
-    }
 
     if ((hopamp->Init.Mode) == OPAMP_STANDALONE_MODE)
     {
