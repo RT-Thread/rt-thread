@@ -80,7 +80,9 @@
 
 ![image-20211019152407572](picture/wdt_config.png)
 
-3. [如何在 ENV 中打开 WDT](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/watchdog/watchdog) 
+3. 如何在 ENV 中打开 WDT 以及 [WDT 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/watchdog/watchdog)
+
+![image-20211027183406251](picture/wdt_env.png)
 
 ## RTC
 
@@ -92,4 +94,68 @@
 
 ![image-20211019152627412](picture/rtc_config.png)
 
-3.  [如何在 ENV 中打开 RTC](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/rtc/rtc) 
+3.  如何在 ENV 中打开 RTC 以及[ RTC 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/rtc/rtc) 
+
+![image-20211027181550233](picture/rtc_env.png)
+
+
+## Flash
+
+1. 创建 Flash
+
+![image-20211026105031200](picture/add_flash.png)
+
+2. 配置 Flash，需要注意在 RT-Thread 中只使用了一个 flash 设备，所以没有对其进行编号，如果是新创建的 flash 设备需要注意 name 字段，在驱动中默认使用的是 `g_flash` 。
+
+![image-20211026105628706](picture/config_flash.png)
+
+3. 如何在 ENV 中打开 Flash
+
+![image-20211026123252310](picture/flash_menuconfig.png)
+
+
+## SPI
+
+1. 添加一个 SPI 外设端口
+
+![image-20211027180820968](picture/spi_add.png)
+
+2. 配置 channel、name、Clock Phase、Clock Polarity、Callback、 SPI Mode 等参数，波特率在代码中可通过 API 修改，这里可以设置一个默认值。
+
+![img](picture/spi.png)
+
+3. 如何在 ENV 中打开 SPI 以及 [SPI 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/spi/spi)
+
+   ![image-20211027181444023](picture/spi_env.png)
+
+
+
+## ADC/DAC
+
+创建 ADC/DAC
+
+![img](picture/adc_dac.png)
+
+- ADC
+
+1. 配置 name、unit、mode，选择扫描的通道编号
+
+![img](picture/adc_config.png)
+
+2. 配置扫描通道对应的引脚
+
+![img](picture/adc_config1.png)
+
+- DAC
+
+1. 需要先关闭 P014 的默认 mode
+
+![img](picture/dac_config0.png)
+
+2. 开启 DAC0 通道
+
+![img](picture/dac_config1.png)
+
+3. 修改通道号为 0，与 DAC0 对应
+
+![img](picture/dac_config2.png)
