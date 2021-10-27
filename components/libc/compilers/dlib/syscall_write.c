@@ -9,10 +9,8 @@
  */
 
 #include <rtthread.h>
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#endif
 #include <yfuns.h>
+#include <unistd.h>
 #include "libc.h"
 
 #define DBG_TAG    "dlib.syscall_write"
@@ -23,24 +21,20 @@
 
 size_t __write(int handle, const unsigned char *buf, size_t len)
 {
-#ifdef RT_USING_DFS
+#ifdef RT_LIBC_USING_FILEIO
     int size;
-#endif
+#endif /* RT_LIBC_USING_FILEIO */
 
     if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
     {
-#ifndef RT_USING_CONSOLE
-        return _LLIO_ERROR;
-#else
-
-#ifdef RT_USING_POSIX
+#ifdef RT_LIBC_USING_FILEIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard output before initializing libc");
             return 0;
         }
         return write(STDOUT_FILENO, (void*)buf, len);
-#else
+#elif defined(RT_USING_CONSOLE)
         rt_device_t console_device;
 
         console_device = rt_console_get_device();
@@ -50,19 +44,19 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
         }
 
         return len;
-#endif
-#endif
+#else
+        return _LLIO_ERROR;
+#endif /* RT_LIBC_USING_FILEIO */
     }
     else if (handle == _LLIO_STDIN)
     {
         return _LLIO_ERROR;
     }
 
-#ifndef RT_USING_DFS
-    return _LLIO_ERROR;
-#else
+#ifdef RT_LIBC_USING_FILEIO
     size = write(handle, buf, len);
     return size;
-#endif
+#else
+    return _LLIO_ERROR;
+#endif /* RT_LIBC_USING_FILEIO */
 }
-

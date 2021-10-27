@@ -18,7 +18,7 @@
 #include <lwp.h>
 #endif
 
-#ifdef RT_USING_LIBC
+#ifdef RT_LIBC_USING_FILEIO
 #include <libc.h>
 #endif
 
@@ -216,7 +216,7 @@ struct dfs_fd *fd_get(int fd)
     struct dfs_fd *d;
     struct dfs_fdtable *fdt;
 
-#ifdef RT_USING_LIBC
+#ifdef RT_LIBC_USING_FILEIO
     if ((0 <= fd) && (fd <= 2))
         fd = libc_stdio_get_console();
 #endif

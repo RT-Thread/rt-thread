@@ -8,9 +8,6 @@ group = []
 CPPPATH = [cwd]
 CPPDEFINES = ['RT_USING_ARM_LIBC']
 
-if GetDepend('RT_USING_DFS') == False:
-    SrcRemove(src, ['stdio.c'])
-
 if GetDepend('RT_USING_MODULE') == False:
     SrcRemove(src, ['libc_syms.c'])
 
