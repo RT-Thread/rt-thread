@@ -42,7 +42,7 @@
                                             _CONF_.max_hz = ES_SPI##_I_##_MAX_HZ;                     \
                                             }while(0)
 
-                                            
+
 //    spi_config.mode &= ~RT_SPI_SLAVE; /* 主机模式 */
 //    spi_config.mode &= ~RT_SPI_3WIRE; /* 4线，双向传输 */
 //    spi_config.mode |= RT_SPI_CPHA;   /* 第二边沿采样 */
@@ -52,14 +52,14 @@
 //    spi_config.data_width = 8;        /* 数据长度：8 */
 //    spi_config.max_hz = 2000000;      /* 最快时钟频率 */
 
-#define ES_C_SPI_CLK_POL_HIGH            RT_SPI_CPOL  
-#define ES_C_SPI_CLK_POL_LOW             !RT_SPI_CPOL    
-                                            
-#define ES_C_SPI_CLK_PHA_FIRST            !RT_SPI_CPHA  
+#define ES_C_SPI_CLK_POL_HIGH            RT_SPI_CPOL
+#define ES_C_SPI_CLK_POL_LOW             !RT_SPI_CPOL
+
+#define ES_C_SPI_CLK_PHA_FIRST            !RT_SPI_CPHA
 #define ES_C_SPI_CLK_PHA_SECOND           RT_SPI_CPHA
-                                            
-#define ES_C_SPI_MSB                      RT_SPI_MSB     
-#define ES_C_SPI_LSB                      RT_SPI_LSB                      
+
+#define ES_C_SPI_MSB                      RT_SPI_MSB
+#define ES_C_SPI_LSB                      RT_SPI_LSB
 
 #define ES_C_SPI_CS_LOW_LEVEL             0
 #define ES_C_SPI_CS_HIGH_LEVEL            1
@@ -69,64 +69,64 @@
 
 #ifndef  ES_DEVICE_NAME_SPI0_BUS
 #define  ES_DEVICE_NAME_SPI0_BUS     "spi0"
-#endif             
+#endif
 #ifndef  ES_DEVICE_NAME_SPI0_DEV0
 #define  ES_DEVICE_NAME_SPI0_DEV0     "spi00"
-#endif           
+#endif
 
 #ifndef  ES_DEVICE_NAME_SPI1_BUS
 #define  ES_DEVICE_NAME_SPI1_BUS     "spi1"
-#endif             
+#endif
 #ifndef  ES_DEVICE_NAME_SPI1_DEV0
 #define  ES_DEVICE_NAME_SPI1_DEV0     "spi10"
-#endif    
-             
+#endif
+
 
 #define ES_SPI_CS_LEVEL               ES_C_SPI_CS_LOW_LEVEL
 
-#ifndef   ES_SPI0_CPHA_1_2      
+#ifndef   ES_SPI0_CPHA_1_2
 #define   ES_SPI0_CPHA_1_2               ES_C_SPI_CLK_PHA_SECOND
-#endif                         
-#ifndef   ES_SPI0_CPOL_H_L      
-#define   ES_SPI0_CPOL_H_L               ES_C_SPI_CLK_POL_HIGH   
-#endif    
-#ifndef   ES_SPI0_M_L_SB
-#define   ES_SPI0_M_L_SB                 RT_SPI_MSB    
 #endif
-#ifndef   ES_SPI0_MAX_HZ        
+#ifndef   ES_SPI0_CPOL_H_L
+#define   ES_SPI0_CPOL_H_L               ES_C_SPI_CLK_POL_HIGH
+#endif
+#ifndef   ES_SPI0_M_L_SB
+#define   ES_SPI0_M_L_SB                 RT_SPI_MSB
+#endif
+#ifndef   ES_SPI0_MAX_HZ
 #define   ES_SPI0_MAX_HZ                 2000000
-#endif  
+#endif
 #ifndef   ES_SPI0_NSS_PIN
 #define ES_SPI0_NSS_PIN 0xFFFFFFFF
-#endif     
-                                                                      
-#ifndef   ES_SPI1_CPHA_1_2      
-#define   ES_SPI1_CPHA_1_2               ES_C_SPI_CLK_PHA_SECOND
-#endif                         
-#ifndef   ES_SPI1_CPOL_H_L      
-#define   ES_SPI1_CPOL_H_L               ES_C_SPI_CLK_POL_HIGH   
-#endif        
-#ifndef   ES_SPI1_M_L_SB
-#define   ES_SPI1_M_L_SB                 RT_SPI_MSB    
 #endif
-#ifndef   ES_SPI1_MAX_HZ        
+
+#ifndef   ES_SPI1_CPHA_1_2
+#define   ES_SPI1_CPHA_1_2               ES_C_SPI_CLK_PHA_SECOND
+#endif
+#ifndef   ES_SPI1_CPOL_H_L
+#define   ES_SPI1_CPOL_H_L               ES_C_SPI_CLK_POL_HIGH
+#endif
+#ifndef   ES_SPI1_M_L_SB
+#define   ES_SPI1_M_L_SB                 RT_SPI_MSB
+#endif
+#ifndef   ES_SPI1_MAX_HZ
 #define   ES_SPI1_MAX_HZ                 2000000
-#endif  
+#endif
 #ifndef   ES_SPI1_NSS_PIN
 #define ES_SPI1_NSS_PIN 0xFFFFFFFF
-#endif     
-              
+#endif
+
 
 
 #define   ES_SPI0_MASTER_SLAVE           !RT_SPI_SLAVE
 #define   ES_SPI0_WIRE_3_4               !RT_SPI_3WIRE
 #define   ES_SPI0_CS                     RT_SPI_NO_CS
 #define   ES_SPI0_DATA_W                 8
-         
+
 #define   ES_SPI1_MASTER_SLAVE           !RT_SPI_SLAVE
 #define   ES_SPI1_WIRE_3_4               !RT_SPI_3WIRE
 #define   ES_SPI1_CS                     RT_SPI_NO_CS
 #define   ES_SPI1_DATA_W                 8
-         
+
 
 #endif

@@ -164,7 +164,7 @@ void HAL_PCDEx_BCD_VBUSDetect(PCD_HandleTypeDef *hpcd)
   /* Enable DCD : Data Contact Detect */
   USBx->GCCFG |= USB_OTG_GCCFG_DCDEN;
 
-  /* Wait Detect flag or a timeout is happen*/
+  /* Wait Detect flag or a timeout is happen */
   while ((USBx->GCCFG & USB_OTG_GCCFG_DCDET) == 0U)
   {
     /* Check for the Timeout */

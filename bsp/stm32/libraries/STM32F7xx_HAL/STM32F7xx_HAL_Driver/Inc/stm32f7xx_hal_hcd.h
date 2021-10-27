@@ -33,7 +33,7 @@ extern "C" {
   * @{
   */
 
-/** @addtogroup HCD
+/** @addtogroup HCD HCD
   * @{
   */
 
@@ -112,6 +112,10 @@ typedef struct
 #define HCD_SPEED_FULL               USBH_FSLS_SPEED
 #define HCD_SPEED_LOW                USBH_FSLS_SPEED
 
+#define HCD_DEVICE_SPEED_HIGH               0U
+#define HCD_DEVICE_SPEED_FULL               1U
+#define HCD_DEVICE_SPEED_LOW                2U
+
 /**
   * @}
   */
@@ -143,9 +147,9 @@ typedef struct
 
 /* Exported macro ------------------------------------------------------------*/
 /** @defgroup HCD_Exported_Macros HCD Exported Macros
- *  @brief macros to handle interrupts and specific clock configurations
- * @{
- */
+  *  @brief macros to handle interrupts and specific clock configurations
+  * @{
+  */
 #define __HAL_HCD_ENABLE(__HANDLE__)                   (void)USB_EnableGlobalInt ((__HANDLE__)->Instance)
 #define __HAL_HCD_DISABLE(__HANDLE__)                  (void)USB_DisableGlobalInt ((__HANDLE__)->Instance)
 
@@ -214,10 +218,16 @@ typedef void (*pHCD_HC_NotifyURBChangeCallbackTypeDef)(HCD_HandleTypeDef *hhcd,
   * @}
   */
 
-HAL_StatusTypeDef HAL_HCD_RegisterCallback(HCD_HandleTypeDef *hhcd, HAL_HCD_CallbackIDTypeDef CallbackID, pHCD_CallbackTypeDef pCallback);
-HAL_StatusTypeDef HAL_HCD_UnRegisterCallback(HCD_HandleTypeDef *hhcd, HAL_HCD_CallbackIDTypeDef CallbackID);
+HAL_StatusTypeDef HAL_HCD_RegisterCallback(HCD_HandleTypeDef *hhcd,
+                                           HAL_HCD_CallbackIDTypeDef CallbackID,
+                                           pHCD_CallbackTypeDef pCallback);
 
-HAL_StatusTypeDef HAL_HCD_RegisterHC_NotifyURBChangeCallback(HCD_HandleTypeDef *hhcd, pHCD_HC_NotifyURBChangeCallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_HCD_UnRegisterCallback(HCD_HandleTypeDef *hhcd,
+                                             HAL_HCD_CallbackIDTypeDef CallbackID);
+
+HAL_StatusTypeDef HAL_HCD_RegisterHC_NotifyURBChangeCallback(HCD_HandleTypeDef *hhcd,
+                                                             pHCD_HC_NotifyURBChangeCallbackTypeDef pCallback);
+
 HAL_StatusTypeDef HAL_HCD_UnRegisterHC_NotifyURBChangeCallback(HCD_HandleTypeDef *hhcd);
 #endif /* USE_HAL_HCD_REGISTER_CALLBACKS */
 /**
@@ -235,6 +245,7 @@ HAL_StatusTypeDef HAL_HCD_HC_SubmitRequest(HCD_HandleTypeDef *hhcd, uint8_t ch_n
 
 /* Non-Blocking mode: Interrupt */
 void HAL_HCD_IRQHandler(HCD_HandleTypeDef *hhcd);
+void HAL_HCD_WKUP_IRQHandler(HCD_HandleTypeDef *hhcd);
 void HAL_HCD_SOF_Callback(HCD_HandleTypeDef *hhcd);
 void HAL_HCD_Connect_Callback(HCD_HandleTypeDef *hhcd);
 void HAL_HCD_Disconnect_Callback(HCD_HandleTypeDef *hhcd);
@@ -267,6 +278,7 @@ HCD_HCStateTypeDef      HAL_HCD_HC_GetState(HCD_HandleTypeDef *hhcd, uint8_t chn
 uint32_t                HAL_HCD_HC_GetXferCount(HCD_HandleTypeDef *hhcd, uint8_t chnum);
 uint32_t                HAL_HCD_GetCurrentFrame(HCD_HandleTypeDef *hhcd);
 uint32_t                HAL_HCD_GetCurrentSpeed(HCD_HandleTypeDef *hhcd);
+
 /**
   * @}
   */
@@ -277,36 +289,17 @@ uint32_t                HAL_HCD_GetCurrentSpeed(HCD_HandleTypeDef *hhcd);
 
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup HCD_Private_Macros HCD Private Macros
- * @{
- */
-
+  * @{
+  */
 /**
   * @}
   */
-
 /* Private functions prototypes ----------------------------------------------*/
-/** @defgroup HCD_Private_Functions_Prototypes HCD Private Functions Prototypes
-  * @{
-  */
 
-/**
+ /**
   * @}
   */
-
-/* Private functions ---------------------------------------------------------*/
-/** @defgroup HCD_Private_Functions HCD Private Functions
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
+ /**
   * @}
   */
 #endif /* defined (USB_OTG_FS) || defined (USB_OTG_HS) */

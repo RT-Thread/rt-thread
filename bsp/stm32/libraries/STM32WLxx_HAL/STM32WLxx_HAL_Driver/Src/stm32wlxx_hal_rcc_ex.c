@@ -78,7 +78,7 @@ static uint32_t          RCC_PLL_GetFreqDomain_Q(void);
     This subsection provides a set of functions allowing to control the RCC Clocks
     frequencies.
     [..]
-    (@) Important note: Care must be taken when @ref HAL_RCCEx_PeriphCLKConfig() is used to
+    (@) Important note: Care must be taken when HAL_RCCEx_PeriphCLKConfig() is used to
         select the RTC clock source; in this case the Backup domain will be reset in
         order to modify the RTC Clock source, as consequence RTC registers (including
         the backup registers) and RCC_BDCR register are set to their reset values.

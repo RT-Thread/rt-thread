@@ -33,29 +33,29 @@
 /* GPIO 配置 */
 
 typedef struct {
-		uint8_t pin; 
-		uint8_t pin_mode; 
-		uint8_t pin_level;
-		uint8_t irq_en;
-		uint8_t irq_mode;
-        void (*callback)(void *arg); 
+        uint8_t pin;
+        uint8_t pin_mode;
+        uint8_t pin_level;
+        uint8_t irq_en;
+        uint8_t irq_mode;
+        void (*callback)(void *arg);
 } gpio_conf_t;
 
 /*参数的定义*/
 
-#define ES_C_GPIO_LEVEL_HIGH          PIN_HIGH    
+#define ES_C_GPIO_LEVEL_HIGH          PIN_HIGH
 #define ES_C_GPIO_LEVEL_LOW           PIN_LOW
 
-#define ES_C_GPIO_MODE_OUTPUT           PIN_MODE_OUTPUT    
-#define ES_C_GPIO_MODE_INPUT            PIN_MODE_INPUT    
-#define ES_C_GPIO_MODE_INPUT_PULLUP     PIN_MODE_INPUT_PULLUP  
-#define ES_C_GPIO_MODE_INPUT_PULLDOWN   PIN_MODE_INPUT_PULLDOWN 
-#define ES_C_GPIO_MODE_OUTPUT_OD        PIN_MODE_OUTPUT_OD     
+#define ES_C_GPIO_MODE_OUTPUT           PIN_MODE_OUTPUT
+#define ES_C_GPIO_MODE_INPUT            PIN_MODE_INPUT
+#define ES_C_GPIO_MODE_INPUT_PULLUP     PIN_MODE_INPUT_PULLUP
+#define ES_C_GPIO_MODE_INPUT_PULLDOWN   PIN_MODE_INPUT_PULLDOWN
+#define ES_C_GPIO_MODE_OUTPUT_OD        PIN_MODE_OUTPUT_OD
 
-#define ES_C_GPIO_IRQ_ENABLE       PIN_IRQ_ENABLE    
+#define ES_C_GPIO_IRQ_ENABLE       PIN_IRQ_ENABLE
 #define ES_C_GPIO_IRQ_DISABLE      PIN_IRQ_DISABLE
 
-#define ES_C_GPIO_IRQ_MODE_FALL    PIN_IRQ_MODE_FALLING    
+#define ES_C_GPIO_IRQ_MODE_FALL    PIN_IRQ_MODE_FALLING
 #define ES_C_GPIO_IRQ_MODE_RISE    PIN_IRQ_MODE_RISING
 #define ES_C_GPIO_IRQ_MODE_R_F    PIN_IRQ_MODE_RISING_FALLING
 
@@ -75,7 +75,7 @@ typedef struct {
 
 /*GPIO外部中断回调函数控制需要，补充是否中断*/
 #if 11111
-    
+
 #ifndef  ES_INIT_GPIO_A_0_IRQ_EN
 #define ES_INIT_GPIO_A_0_IRQ_EN   ES_C_GPIO_IRQ_DISABLE
 #endif
@@ -682,67 +682,67 @@ typedef struct {
 #if 11111
 
 #ifdef ES_CONF_EXTI_IRQ_0
-void irq_pin0_callback(void* arg);    
+void irq_pin0_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_1
-void irq_pin1_callback(void* arg);    
-#endif   
+void irq_pin1_callback(void* arg);
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_2
-void irq_pin2_callback(void* arg);    
+void irq_pin2_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_3
-void irq_pin3_callback(void* arg);    
+void irq_pin3_callback(void* arg);
 #endif
-          
+
 #ifdef ES_CONF_EXTI_IRQ_4
-void irq_pin4_callback(void* arg);    
+void irq_pin4_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_5
-void irq_pin5_callback(void* arg);    
-#endif   
+void irq_pin5_callback(void* arg);
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_6
-void irq_pin6_callback(void* arg);    
+void irq_pin6_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_7
-void irq_pin7_callback(void* arg);    
+void irq_pin7_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_8
-void irq_pin8_callback(void* arg);    
+void irq_pin8_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_9
-void irq_pin9_callback(void* arg);    
-#endif   
+void irq_pin9_callback(void* arg);
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_10
-void irq_pin10_callback(void* arg);    
+void irq_pin10_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_11
-void irq_pin11_callback(void* arg);    
+void irq_pin11_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_12
-void irq_pin12_callback(void* arg);    
+void irq_pin12_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_13
-void irq_pin13_callback(void* arg);    
-#endif   
+void irq_pin13_callback(void* arg);
+#endif
 
 #ifdef ES_CONF_EXTI_IRQ_14
-void irq_pin14_callback(void* arg);    
+void irq_pin14_callback(void* arg);
 #endif
 
 #ifdef ES_CONF_EXTI_IRQ_15
-void irq_pin15_callback(void* arg);    
+void irq_pin15_callback(void* arg);
 #endif
 
 
@@ -783,7 +783,7 @@ void irq_pin15_callback(void* arg);
     defined(ES_INIT_PIN_GPIO_H_0) || defined(ES_INIT_PIN_GPIO_H_1) || defined(ES_INIT_PIN_GPIO_H_2) || defined(ES_INIT_PIN_GPIO_H_3) || \
     defined(ES_INIT_PIN_GPIO_H_4) || defined(ES_INIT_PIN_GPIO_H_5) || defined(ES_INIT_PIN_GPIO_H_6) || defined(ES_INIT_PIN_GPIO_H_7) || \
     defined(ES_INIT_PIN_GPIO_H_8) || defined(ES_INIT_PIN_GPIO_H_9) || defined(ES_INIT_PIN_GPIO_H_10) || defined(ES_INIT_PIN_GPIO_H_11) || \
-    defined(ES_INIT_PIN_GPIO_H_12) || defined(ES_INIT_PIN_GPIO_H_13) || defined(ES_INIT_PIN_GPIO_H_14) || defined(ES_INIT_PIN_GPIO_H_15)    
+    defined(ES_INIT_PIN_GPIO_H_12) || defined(ES_INIT_PIN_GPIO_H_13) || defined(ES_INIT_PIN_GPIO_H_14) || defined(ES_INIT_PIN_GPIO_H_15)
 
 #define ES_INIT_GPIOS
 
@@ -792,9 +792,9 @@ void irq_pin15_callback(void* arg);
 
 #ifdef   ES_INIT_GPIOS
 
-static gpio_conf_t gpio_conf_all[] = 
+static gpio_conf_t gpio_conf_all[] =
 {
- 
+
 #ifdef  ES_INIT_PIN_GPIO_A_0
 
     {
@@ -5147,12 +5147,12 @@ static gpio_conf_t gpio_conf_all[] =
 
 #endif
 
- 
 
-};    
 
-#endif    
-    
- 
+};
+
+#endif
+
+
 
 #endif

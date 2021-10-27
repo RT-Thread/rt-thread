@@ -58,8 +58,10 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-objs = objs + SConscript('../Libraries/drivers/SConscript')
-objs = objs + SConscript('../Libraries/LPC55S6X/SConscript')
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
+
+# include cmsis
+objs.extend(SConscript(os.path.join(libraries_path_prefix, rtconfig.BSP_LIBRARY_TYPE, 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)

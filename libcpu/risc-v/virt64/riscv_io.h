@@ -10,15 +10,15 @@
 #ifndef __RISCV_IO_H__
 #define __RISCV_IO_H__
 
-// which hart (core) is this?
-static inline uint32_t  r_mhartid()
+static inline uint32_t  __raw_hartid(void)
 {
-#ifndef RISCV_S_MODE
+#ifdef RISCV_S_MODE
+    extern int boot_hartid;
+    return boot_hartid;
+#else
     uint32_t x;
     asm volatile("csrr %0, mhartid" : "=r" (x) );
     return x;
-#else
-    return 0;
 #endif
 }
 

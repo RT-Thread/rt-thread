@@ -305,7 +305,9 @@ ald_status_t ald_nand_read_page_8b(nand_handle_t *hperh, nand_address_t *addr, u
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = ((uint8_t)0x00);
 		}
 
-		/* Get Data into Buffer */    
+        ald_delay_us(25);  /*延时25us,nand flash 手册中的最大值*/
+        
+        /* Get Data into Buffer */    
 		for (; index < size; index++) {
 			*(uint8_t *)buf++ = *(uint8_t *)deviceaddr;
 		}

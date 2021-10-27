@@ -199,7 +199,7 @@ Reset_Handler:
 #else
     ldr   r0,=__libc_init_array
     blx   r0
-    ldr   r0,=main
+    ldr   r0,=entry
     bx    r0
 #endif
     .pool

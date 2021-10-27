@@ -110,4 +110,10 @@ int rt_hw_board_init(void)
 #endif
     return 0;
 }
+
+void rt_hw_us_delay(rt_uint32_t usec)
+{
+
+}
+
 /*@}*/

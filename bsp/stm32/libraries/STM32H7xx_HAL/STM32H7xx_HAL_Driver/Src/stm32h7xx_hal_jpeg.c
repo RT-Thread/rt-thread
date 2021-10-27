@@ -223,14 +223,14 @@
   * @{
   */
 
+#ifdef HAL_JPEG_MODULE_ENABLED
+
+#if defined (JPEG)
+
 /** @defgroup JPEG JPEG
   * @brief JPEG HAL module driver.
   * @{
   */
-
-#ifdef HAL_JPEG_MODULE_ENABLED
-
-#if defined (JPEG)
 
 /* Private define ------------------------------------------------------------*/
 /** @addtogroup JPEG_Private_Constants
@@ -1284,7 +1284,7 @@ HAL_StatusTypeDef HAL_JPEG_ConfigEncoding(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTy
   * @param  hjpeg pointer to a JPEG_HandleTypeDef structure that contains
   *         the configuration information for JPEG module
   * @param  pInfo pointer to a JPEG_ConfTypeDef structure that contains
-  *         The JPEG decoded header informations
+  *         The JPEG decoded header information
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo)
@@ -2313,7 +2313,7 @@ HAL_StatusTypeDef HAL_JPEG_Abort(JPEG_HandleTypeDef *hjpeg)
   * @param  hjpeg pointer to a JPEG_HandleTypeDef structure that contains
   *         the configuration information for JPEG module
   * @param  pInfo pointer to a JPEG_ConfTypeDef structure that contains
-  *         The JPEG decoded header informations
+  *         The JPEG decoded header information
   * @retval None
   */
 __weak void HAL_JPEG_InfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo)
@@ -2524,7 +2524,7 @@ uint32_t HAL_JPEG_GetError(JPEG_HandleTypeDef *hjpeg)
   * @param  Bits pointer to bits table
   * @param  Huffsize pointer to sizes table
   * @param  Huffcode pointer to codes table
-  * @param  LastK pointer to last Coeff (table dimmension)
+  * @param  LastK pointer to last Coeff (table dimension)
   * @retval HAL status
   */
 static HAL_StatusTypeDef JPEG_Bits_To_SizeCodes(uint8_t *Bits, uint8_t *Huffsize, uint32_t *Huffcode, uint32_t *LastK)
@@ -3328,12 +3328,12 @@ static uint32_t JPEG_Process(JPEG_HandleTypeDef *hjpeg)
 {
   uint32_t tmpContext;
 
-  /*End of header processing flag rised*/
+  /*End of header processing flag */
   if ((hjpeg->Context & JPEG_CONTEXT_OPERATION_MASK) == JPEG_CONTEXT_DECODE)
   {
     if (__HAL_JPEG_GET_FLAG(hjpeg, JPEG_FLAG_HPDF) != 0UL)
     {
-      /*Call Header parsing complet callback */
+      /*Call Header parsing complete callback */
       (void) HAL_JPEG_GetInfo(hjpeg, &hjpeg->Conf);
       /* Reset the ImageQuality */
       hjpeg->Conf.ImageQuality = 0;
@@ -3359,13 +3359,13 @@ static uint32_t JPEG_Process(JPEG_HandleTypeDef *hjpeg)
   {
     if (__HAL_JPEG_GET_FLAG(hjpeg, JPEG_FLAG_IFTF) != 0UL)
     {
-      /*Input FIFO threshold flag rised*/
+      /*Input FIFO threshold flag */
       /*JPEG_FIFO_TH_SIZE words can be written in */
       JPEG_ReadInputData(hjpeg, JPEG_FIFO_TH_SIZE);
     }
     else if (__HAL_JPEG_GET_FLAG(hjpeg, JPEG_FLAG_IFNFF) != 0UL)
     {
-      /*Input FIFO Not Full flag rised*/
+      /*Input FIFO Not Full flag */
       /*32-bit value can be written in */
       JPEG_ReadInputData(hjpeg, 1);
     }
@@ -3381,13 +3381,13 @@ static uint32_t JPEG_Process(JPEG_HandleTypeDef *hjpeg)
   {
     if (__HAL_JPEG_GET_FLAG(hjpeg, JPEG_FLAG_OFTF) != 0UL)
     {
-      /*Output FIFO threshold flag rised*/
+      /*Output FIFO threshold flag */
       /*JPEG_FIFO_TH_SIZE words can be read out */
       JPEG_StoreOutputData(hjpeg, JPEG_FIFO_TH_SIZE);
     }
     else if (__HAL_JPEG_GET_FLAG(hjpeg, JPEG_FLAG_OFNEF) != 0UL)
     {
-      /*Output FIFO Not Empty flag rised*/
+      /*Output FIFO Not Empty flag */
       /*32-bit value can be read out */
       JPEG_StoreOutputData(hjpeg, 1);
     }
@@ -3828,7 +3828,7 @@ static void JPEG_DMA_EndProcess(JPEG_HandleTypeDef *hjpeg)
     hjpeg->Instance->CONFR0 &=  ~JPEG_CONFR0_START;
 
     tmpContext = hjpeg->Context;
-    /*Clear all context fileds execpt JPEG_CONTEXT_CONF_ENCODING and JPEG_CONTEXT_CUSTOM_TABLES*/
+    /*Clear all context fields execpt JPEG_CONTEXT_CONF_ENCODING and JPEG_CONTEXT_CUSTOM_TABLES*/
     hjpeg->Context &= (JPEG_CONTEXT_CONF_ENCODING | JPEG_CONTEXT_CUSTOM_TABLES);
 
     /* Process Unlocked */
@@ -3927,7 +3927,7 @@ static void JPEG_DMA_PollResidualData(JPEG_HandleTypeDef *hjpeg)
     }
 
     tmpContext = hjpeg->Context;
-    /*Clear all context fileds execpt JPEG_CONTEXT_CONF_ENCODING and JPEG_CONTEXT_CUSTOM_TABLES*/
+    /*Clear all context fields execpt JPEG_CONTEXT_CONF_ENCODING and JPEG_CONTEXT_CUSTOM_TABLES*/
     hjpeg->Context &= (JPEG_CONTEXT_CONF_ENCODING | JPEG_CONTEXT_CUSTOM_TABLES);
 
     /* Process Unlocked */
@@ -4186,11 +4186,12 @@ static uint32_t JPEG_GetQuality(JPEG_HandleTypeDef *hjpeg)
   * @}
   */
 
-#endif /* JPEG */
-#endif /* HAL_JPEG_MODULE_ENABLED */
 /**
   * @}
   */
+#endif /* JPEG */
+#endif /* HAL_JPEG_MODULE_ENABLED */
+
 
 /**
   * @}

@@ -4359,9 +4359,6 @@ __STATIC_INLINE void LL_ADC_REG_SetSequencerChRem(ADC_TypeDef *ADCx, uint32_t Ch
   *         This can be done using function @ref LL_ADC_SetCommonPathInternalCh().
   * @note   On STM32WB (except devices: STM32WB10xx, STM32WB15xx), some fast channels are available: fast analog inputs
   *         coming from GPIO pads (ADC_IN1..5).
-*/
-//TBC
-/*
   * @note   On this STM32 serie, setting of this feature is conditioned to
   *         ADC state:
   *         ADC must be disabled or enabled without conversion on going

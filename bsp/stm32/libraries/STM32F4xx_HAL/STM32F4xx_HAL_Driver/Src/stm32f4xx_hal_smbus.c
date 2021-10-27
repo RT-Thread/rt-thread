@@ -20,7 +20,7 @@
     (#) Declare a SMBUS_HandleTypeDef handle structure, for example:
         SMBUS_HandleTypeDef  hsmbus;
 
-    (#)Initialize the SMBUS low level resources by implementing the @ref HAL_SMBUS_MspInit() API:
+    (#)Initialize the SMBUS low level resources by implementing the HAL_SMBUS_MspInit() API:
         (##) Enable the SMBUSx interface clock
         (##) SMBUS pins configuration
             (+++) Enable the clock for the SMBUS GPIOs
@@ -32,10 +32,10 @@
     (#) Configure the Communication Speed, Duty cycle, Addressing mode, Own Address1,
         Dual Addressing mode, Own Address2, General call and Nostretch mode in the hsmbus Init structure.
 
-    (#) Initialize the SMBUS registers by calling the @ref HAL_SMBUS_Init(), configures also the low level Hardware
-        (GPIO, CLOCK, NVIC...etc) by calling the customized @ref HAL_SMBUS_MspInit(&hsmbus) API.
+    (#) Initialize the SMBUS registers by calling the HAL_SMBUS_Init(), configures also the low level Hardware
+        (GPIO, CLOCK, NVIC...etc) by calling the customized HAL_SMBUS_MspInit(&hsmbus) API.
 
-    (#) To check if target device is ready for communication, use the function @ref HAL_SMBUS_IsDeviceReady()
+    (#) To check if target device is ready for communication, use the function HAL_SMBUS_IsDeviceReady()
 
     (#) For SMBUS IO operations, only one mode of operations is available within this driver :
 
@@ -44,35 +44,35 @@
     ===================================
 
   [..]
-      (+) Transmit in master/host SMBUS mode an amount of data in non blocking mode using @ref HAL_SMBUS_Master_Transmit_IT()
-      (++) At transmission end of transfer @ref HAL_SMBUS_MasterTxCpltCallback() is executed and user can
-           add his own code by customization of function pointer @ref HAL_SMBUS_MasterTxCpltCallback()
-      (+) Receive in master/host SMBUS mode an amount of data in non blocking mode using @ref HAL_SMBUS_Master_Receive_IT()
-      (++) At reception end of transfer @ref HAL_SMBUS_MasterRxCpltCallback() is executed and user can
-           add his own code by customization of function pointer @ref HAL_SMBUS_MasterRxCpltCallback()
-      (+) Abort a master/Host SMBUS process communication with Interrupt using @ref HAL_SMBUS_Master_Abort_IT()
-      (++) End of abort process, @ref HAL_SMBUS_AbortCpltCallback() is executed and user can
-           add his own code by customization of function pointer @ref HAL_SMBUS_AbortCpltCallback()
+      (+) Transmit in master/host SMBUS mode an amount of data in non blocking mode using HAL_SMBUS_Master_Transmit_IT()
+      (++) At transmission end of transfer HAL_SMBUS_MasterTxCpltCallback() is executed and user can
+           add his own code by customization of function pointer HAL_SMBUS_MasterTxCpltCallback()
+      (+) Receive in master/host SMBUS mode an amount of data in non blocking mode using HAL_SMBUS_Master_Receive_IT()
+      (++) At reception end of transfer HAL_SMBUS_MasterRxCpltCallback() is executed and user can
+           add his own code by customization of function pointer HAL_SMBUS_MasterRxCpltCallback()
+      (+) Abort a master/Host SMBUS process communication with Interrupt using HAL_SMBUS_Master_Abort_IT()
+      (++) End of abort process, HAL_SMBUS_AbortCpltCallback() is executed and user can
+           add his own code by customization of function pointer HAL_SMBUS_AbortCpltCallback()
       (+) Enable/disable the Address listen mode in slave/device or host/slave SMBUS mode
-           using @ref HAL_SMBUS_EnableListen_IT() @ref HAL_SMBUS_DisableListen_IT()
-      (++) When address slave/device SMBUS match, @ref HAL_SMBUS_AddrCallback() is executed and user can
+           using HAL_SMBUS_EnableListen_IT() HAL_SMBUS_DisableListen_IT()
+      (++) When address slave/device SMBUS match, HAL_SMBUS_AddrCallback() is executed and user can
            add his own code to check the Address Match Code and the transmission direction request by master/host (Write/Read).
-      (++) At Listen mode end @ref HAL_SMBUS_ListenCpltCallback() is executed and user can
-           add his own code by customization of function pointer @ref HAL_SMBUS_ListenCpltCallback()
-      (+) Transmit in slave/device SMBUS mode an amount of data in non blocking mode using @ref HAL_SMBUS_Slave_Transmit_IT()
-      (++) At transmission end of transfer @ref HAL_SMBUS_SlaveTxCpltCallback() is executed and user can
-           add his own code by customization of function pointer @ref HAL_SMBUS_SlaveTxCpltCallback()
-      (+) Receive in slave/device SMBUS mode an amount of data in non blocking mode using @ref HAL_SMBUS_Slave_Receive_IT()
-      (++) At reception end of transfer @ref HAL_SMBUS_SlaveRxCpltCallback() is executed and user can
-           add his own code by customization of function pointer @ref HAL_SMBUS_SlaveRxCpltCallback()
-      (+) Enable/Disable the SMBUS alert mode using @ref HAL_SMBUS_EnableAlert_IT() and @ref HAL_SMBUS_DisableAlert_IT()
-      (++) When SMBUS Alert is generated @ref HAL_SMBUS_ErrorCallback() is executed and user can
-           add his own code by customization of function pointer @ref HAL_SMBUS_ErrorCallback()
-           to check the Alert Error Code using function @ref HAL_SMBUS_GetError()
-      (+) Get HAL state machine or error values using @ref HAL_SMBUS_GetState() or HAL_SMBUS_GetError()
-      (+) In case of transfer Error, @ref HAL_SMBUS_ErrorCallback() function is executed and user can
-           add his own code by customization of function pointer @ref HAL_SMBUS_ErrorCallback()
-           to check the Error Code using function @ref HAL_SMBUS_GetError()
+      (++) At Listen mode end HAL_SMBUS_ListenCpltCallback() is executed and user can
+           add his own code by customization of function pointer HAL_SMBUS_ListenCpltCallback()
+      (+) Transmit in slave/device SMBUS mode an amount of data in non blocking mode using HAL_SMBUS_Slave_Transmit_IT()
+      (++) At transmission end of transfer HAL_SMBUS_SlaveTxCpltCallback() is executed and user can
+           add his own code by customization of function pointer HAL_SMBUS_SlaveTxCpltCallback()
+      (+) Receive in slave/device SMBUS mode an amount of data in non blocking mode using HAL_SMBUS_Slave_Receive_IT()
+      (++) At reception end of transfer HAL_SMBUS_SlaveRxCpltCallback() is executed and user can
+           add his own code by customization of function pointer HAL_SMBUS_SlaveRxCpltCallback()
+      (+) Enable/Disable the SMBUS alert mode using HAL_SMBUS_EnableAlert_IT() and HAL_SMBUS_DisableAlert_IT()
+      (++) When SMBUS Alert is generated HAL_SMBUS_ErrorCallback() is executed and user can
+           add his own code by customization of function pointer HAL_SMBUS_ErrorCallback()
+           to check the Alert Error Code using function HAL_SMBUS_GetError()
+      (+) Get HAL state machine or error values using HAL_SMBUS_GetState() or HAL_SMBUS_GetError()
+      (+) In case of transfer Error, HAL_SMBUS_ErrorCallback() function is executed and user can
+           add his own code by customization of function pointer HAL_SMBUS_ErrorCallback()
+           to check the Error Code using function HAL_SMBUS_GetError()
 
 
      *** SMBUS HAL driver macros list ***
@@ -80,12 +80,12 @@
      [..]
        Below the list of most used macros in SMBUS HAL driver.
 
-      (+) @ref __HAL_SMBUS_ENABLE    : Enable the SMBUS peripheral
-      (+) @ref __HAL_SMBUS_DISABLE   : Disable the SMBUS peripheral
-      (+) @ref __HAL_SMBUS_GET_FLAG  : Checks whether the specified SMBUS flag is set or not
-      (+) @ref __HAL_SMBUS_CLEAR_FLAG: Clear the specified SMBUS pending flag
-      (+) @ref __HAL_SMBUS_ENABLE_IT : Enable the specified SMBUS interrupt
-      (+) @ref __HAL_SMBUS_DISABLE_IT: Disable the specified SMBUS interrupt
+      (+) __HAL_SMBUS_ENABLE    : Enable the SMBUS peripheral
+      (+) __HAL_SMBUS_DISABLE   : Disable the SMBUS peripheral
+      (+) __HAL_SMBUS_GET_FLAG  : Checks whether the specified SMBUS flag is set or not
+      (+) __HAL_SMBUS_CLEAR_FLAG: Clear the specified SMBUS pending flag
+      (+) __HAL_SMBUS_ENABLE_IT : Enable the specified SMBUS interrupt
+      (+) __HAL_SMBUS_DISABLE_IT: Disable the specified SMBUS interrupt
 
      [..]
        (@) You can refer to the SMBUS HAL driver header file for more useful macros
@@ -95,10 +95,10 @@
     [..]
      The compilation flag USE_HAL_SMBUS_REGISTER_CALLBACKS when set to 1
      allows the user to configure dynamically the driver callbacks.
-     Use Functions @ref HAL_SMBUS_RegisterCallback() or @ref HAL_SMBUS_RegisterXXXCallback()
+     Use Functions HAL_SMBUS_RegisterCallback() or HAL_SMBUS_RegisterXXXCallback()
      to register an interrupt callback.
 
-     Function @ref HAL_SMBUS_RegisterCallback() allows to register following callbacks:
+     Function HAL_SMBUS_RegisterCallback() allows to register following callbacks:
        (+) MasterTxCpltCallback : callback for Master transmission end of transfer.
        (+) MasterRxCpltCallback : callback for Master reception end of transfer.
        (+) SlaveTxCpltCallback  : callback for Slave transmission end of transfer.
@@ -111,11 +111,11 @@
      This function takes as parameters the HAL peripheral handle, the Callback ID
      and a pointer to the user callback function.
     [..]
-     For specific callback AddrCallback use dedicated register callbacks : @ref HAL_SMBUS_RegisterAddrCallback().
+     For specific callback AddrCallback use dedicated register callbacks : HAL_SMBUS_RegisterAddrCallback().
     [..]
-     Use function @ref HAL_SMBUS_UnRegisterCallback to reset a callback to the default
+     Use function HAL_SMBUS_UnRegisterCallback to reset a callback to the default
      weak function.
-     @ref HAL_SMBUS_UnRegisterCallback takes as parameters the HAL peripheral handle,
+     HAL_SMBUS_UnRegisterCallback takes as parameters the HAL peripheral handle,
      and the Callback ID.
      This function allows to reset following callbacks:
        (+) MasterTxCpltCallback : callback for Master transmission end of transfer.
@@ -128,24 +128,24 @@
        (+) MspInitCallback      : callback for Msp Init.
        (+) MspDeInitCallback    : callback for Msp DeInit.
     [..]
-     For callback AddrCallback use dedicated register callbacks : @ref HAL_SMBUS_UnRegisterAddrCallback().
+     For callback AddrCallback use dedicated register callbacks : HAL_SMBUS_UnRegisterAddrCallback().
     [..]
-     By default, after the @ref HAL_SMBUS_Init() and when the state is @ref HAL_SMBUS_STATE_RESET
+     By default, after the HAL_SMBUS_Init() and when the state is HAL_SMBUS_STATE_RESET
      all callbacks are set to the corresponding weak functions:
-     examples @ref HAL_SMBUS_MasterTxCpltCallback(), @ref HAL_SMBUS_MasterRxCpltCallback().
+     examples HAL_SMBUS_MasterTxCpltCallback(), HAL_SMBUS_MasterRxCpltCallback().
      Exception done for MspInit and MspDeInit functions that are
-     reset to the legacy weak functions in the @ref HAL_SMBUS_Init()/ @ref HAL_SMBUS_DeInit() only when
+     reset to the legacy weak functions in the HAL_SMBUS_Init()/ HAL_SMBUS_DeInit() only when
      these callbacks are null (not registered beforehand).
-     If MspInit or MspDeInit are not null, the @ref HAL_SMBUS_Init()/ @ref HAL_SMBUS_DeInit()
+     If MspInit or MspDeInit are not null, the HAL_SMBUS_Init()/ HAL_SMBUS_DeInit()
      keep and use the user MspInit/MspDeInit callbacks (registered beforehand) whatever the state.
     [..]
-     Callbacks can be registered/unregistered in @ref HAL_SMBUS_STATE_READY state only.
+     Callbacks can be registered/unregistered in HAL_SMBUS_STATE_READY state only.
      Exception done MspInit/MspDeInit functions that can be registered/unregistered
-     in @ref HAL_SMBUS_STATE_READY or @ref HAL_SMBUS_STATE_RESET state,
+     in HAL_SMBUS_STATE_READY or HAL_SMBUS_STATE_RESET state,
      thus registered (user) MspInit/DeInit callbacks can be used during the Init/DeInit.
      Then, the user first registers the MspInit/MspDeInit user callbacks
-     using @ref HAL_SMBUS_RegisterCallback() before calling @ref HAL_SMBUS_DeInit()
-     or @ref HAL_SMBUS_Init() function.
+     using HAL_SMBUS_RegisterCallback() before calling HAL_SMBUS_DeInit()
+     or HAL_SMBUS_Init() function.
     [..]
      When the compilation flag USE_HAL_SMBUS_REGISTER_CALLBACKS is set to 0 or
      not defined, the callback registration feature is not available and all callbacks
@@ -359,7 +359,7 @@ HAL_StatusTypeDef HAL_SMBUS_Init(SMBUS_HandleTypeDef *hsmbus)
 
   /*---------------------------- SMBUSx CR1 Configuration ----------------------*/
   /* Configure SMBUSx: Generalcall , PEC , Peripheral mode and  NoStretch mode */
-  MODIFY_REG(hsmbus->Instance->CR1, (I2C_CR1_NOSTRETCH | I2C_CR1_ENGC | I2C_CR1_PEC | I2C_CR1_ENARP | I2C_CR1_SMBTYPE | I2C_CR1_SMBUS), (hsmbus->Init.NoStretchMode | hsmbus->Init.GeneralCallMode |  hsmbus->Init.PacketErrorCheckMode | hsmbus->Init.PeripheralMode));
+  MODIFY_REG(hsmbus->Instance->CR1, (I2C_CR1_NOSTRETCH | I2C_CR1_ENGC | I2C_CR1_ENPEC | I2C_CR1_ENARP | I2C_CR1_SMBTYPE | I2C_CR1_SMBUS), (hsmbus->Init.NoStretchMode | hsmbus->Init.GeneralCallMode |  hsmbus->Init.PacketErrorCheckMode | hsmbus->Init.PeripheralMode));
 
   /*---------------------------- SMBUSx OAR1 Configuration ---------------------*/
   /* Configure SMBUSx: Own Address1 and addressing mode */
@@ -1706,7 +1706,7 @@ void HAL_SMBUS_ER_IRQHandler(SMBUS_HandleTypeDef *hsmbus)
   /* SMBUS Packet Error Check error interrupt occurred ----------------------------------*/
   if (((sr1itflags & SMBUS_FLAG_PECERR) != RESET) && ((itsources & SMBUS_IT_ERR) != RESET))
   {
-    hsmbus->ErrorCode |= SMBUS_FLAG_PECERR;
+    hsmbus->ErrorCode |= HAL_SMBUS_ERROR_PECERR;
 
     /* Clear PEC error flag */
     __HAL_SMBUS_CLEAR_FLAG(hsmbus, SMBUS_FLAG_PECERR);
@@ -1963,7 +1963,7 @@ static HAL_StatusTypeDef SMBUS_MasterTransmit_TXE(SMBUS_HandleTypeDef *hsmbus)
 #endif /* USE_HAL_SMBUS_REGISTER_CALLBACKS */
     }
   }
-  else if ((CurrentState == HAL_SMBUS_STATE_BUSY_TX))
+  else if (CurrentState == HAL_SMBUS_STATE_BUSY_TX)
   {
 
     if ((hsmbus->XferCount == 2U) && (SMBUS_GET_PEC_MODE(hsmbus) == SMBUS_PEC_ENABLE) && ((hsmbus->XferOptions == SMBUS_FIRST_AND_LAST_FRAME_WITH_PEC) || (hsmbus->XferOptions == SMBUS_LAST_FRAME_WITH_PEC)))

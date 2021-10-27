@@ -623,9 +623,14 @@ menuconfig RT_USING_WIFI
     endif
 
 menu "Using USB"
+    config RT_USING_USB
+        bool
+        default n
+
     config RT_USING_USB_HOST
         bool "Using USB host"
         default n
+        select RT_USING_USB
 
         if RT_USING_USB_HOST
             config RT_USBH_MSTORAGE
@@ -648,6 +653,8 @@ menu "Using USB"
     config RT_USING_USB_DEVICE
         bool "Using USB device"
         default n
+        select RT_USING_USB
+
         if RT_USING_USB_DEVICE || RT_USING_USB_HOST
             config RT_USBD_THREAD_STACK_SZ
                 int "usb thread stack size"

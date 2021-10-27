@@ -55,11 +55,17 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+/** @defgroup SMARTCARDEx_Private_Constants SMARTCARD Extended Private Constants
+  * @{
+  */
 /* UART RX FIFO depth */
 #define RX_FIFO_DEPTH 8U
 
 /* UART TX FIFO depth */
 #define TX_FIFO_DEPTH 8U
+/**
+  * @}
+  */
 
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -190,8 +196,8 @@ HAL_StatusTypeDef HAL_SMARTCARDEx_DisableReceiverTimeOut(SMARTCARD_HandleTypeDef
     This subsection provides a set of FIFO mode related callback functions.
 
     (#) TX/RX Fifos Callbacks:
-        (+) HAL_SMARTCARDEx_RxFifoFullCallback()
-        (+) HAL_SMARTCARDEx_TxFifoEmptyCallback()
+        (++) HAL_SMARTCARDEx_RxFifoFullCallback()
+        (++) HAL_SMARTCARDEx_TxFifoEmptyCallback()
 
 @endverbatim
   * @{
@@ -235,15 +241,16 @@ __weak void HAL_SMARTCARDEx_TxFifoEmptyCallback(SMARTCARD_HandleTypeDef *hsmartc
   * @}
   */
 
-/** @defgroup SMARTCARD_Exported_Functions_Group3 Extended Peripheral Peripheral Control functions
+/** @defgroup SMARTCARDEx_Exported_Functions_Group3 Extended Peripheral FIFO Control functions
   *  @brief   SMARTCARD control functions
   *
 @verbatim
  ===============================================================================
-                      ##### Peripheral Control functions #####
+                  ##### Peripheral FIFO Control functions #####
  ===============================================================================
     [..]
-    This subsection provides a set of functions allowing to control the SMARTCARD.
+    This subsection provides a set of functions allowing to control the SMARTCARD
+    FIFO feature.
      (+) HAL_SMARTCARDEx_EnableFifoMode() API enables the FIFO mode
      (+) HAL_SMARTCARDEx_DisableFifoMode() API disables the FIFO mode
      (+) HAL_SMARTCARDEx_SetTxFifoThreshold() API sets the TX FIFO threshold
@@ -439,7 +446,7 @@ HAL_StatusTypeDef HAL_SMARTCARDEx_SetRxFifoThreshold(SMARTCARD_HandleTypeDef *hs
   * @}
   */
 
-/** @defgroup SMARTCARDEx_Private_Functions  SMARTCARD Extended private Functions
+/** @defgroup SMARTCARDEx_Private_Functions  SMARTCARD Extended Private Functions
   * @{
   */
 
@@ -458,8 +465,8 @@ static void SMARTCARDEx_SetNbDataToProcess(SMARTCARD_HandleTypeDef *hsmartcard)
   uint8_t rx_fifo_threshold;
   uint8_t tx_fifo_threshold;
   /* 2 0U/1U added for MISRAC2012-Rule-18.1_b and MISRAC2012-Rule-18.1_d */
-  uint8_t numerator[]   = {1U, 1U, 1U, 3U, 7U, 1U, 0U, 0U};
-  uint8_t denominator[] = {8U, 4U, 2U, 4U, 8U, 1U, 1U, 1U};
+  static const uint8_t numerator[]   = {1U, 1U, 1U, 3U, 7U, 1U, 0U, 0U};
+  static const uint8_t denominator[] = {8U, 4U, 2U, 4U, 8U, 1U, 1U, 1U};
 
   if (hsmartcard->FifoMode == SMARTCARD_FIFOMODE_DISABLE)
   {

@@ -240,7 +240,7 @@ RTM_EXPORT(mktime);
 char* asctime_r(const struct tm *t, char *buf)
 {
     /* Checking input validity */
-    if (rt_strlen(days) <= (t->tm_wday << 2) || rt_strlen(months) <= (t->tm_mon << 2))
+    if ((int)rt_strlen(days) <= (t->tm_wday << 2) || (int)rt_strlen(months) <= (t->tm_mon << 2))
     {
         LOG_W("asctime_r: the input parameters exceeded the limit, please check it.");
         *(int*) buf = *(int*) days;

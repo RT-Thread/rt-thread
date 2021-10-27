@@ -1607,10 +1607,6 @@ typedef struct
 #define ADC_CFGR2_SMPTRIG_Msk          (0x1UL << ADC_CFGR2_SMPTRIG_Pos)        /*!< 0x08000000 */
 #define ADC_CFGR2_SMPTRIG              ADC_CFGR2_SMPTRIG_Msk                   /*!< ADC Sample Time Control Trigger mode */
 
-#define ADC_CFGR2_LFTRIG_Pos           (29U)
-#define ADC_CFGR2_LFTRIG_Msk           (0x1UL << ADC_CFGR2_LFTRIG_Pos)         /*!< 0x20000000 */
-#define ADC_CFGR2_LFTRIG               ADC_CFGR2_LFTRIG_Msk                    /*!< ADC Low Frequency Trigger */
-
 /********************  Bit definition for ADC_SMPR1 register  *****************/
 #define ADC_SMPR1_SMP0_Pos             (0U)
 #define ADC_SMPR1_SMP0_Msk             (0x7UL << ADC_SMPR1_SMP0_Pos)           /*!< 0x00000007 */
@@ -2397,11 +2393,11 @@ typedef struct
 
 #define COMP_CSR_BRGEN_Pos         (22U)
 #define COMP_CSR_BRGEN_Msk         (0x1UL << COMP_CSR_BRGEN_Pos)               /*!< 0x00400000 */
-#define COMP_CSR_BRGEN             COMP_CSR_BRGEN_Msk                          /*!< Comparator voltage scaler enable */
+#define COMP_CSR_BRGEN             COMP_CSR_BRGEN_Msk                          /*!< Comparator scaler bridge enable */
 
 #define COMP_CSR_SCALEN_Pos        (23U)
 #define COMP_CSR_SCALEN_Msk        (0x1UL << COMP_CSR_SCALEN_Pos)              /*!< 0x00800000 */
-#define COMP_CSR_SCALEN            COMP_CSR_SCALEN_Msk                         /*!< Comparator scaler bridge enable */
+#define COMP_CSR_SCALEN            COMP_CSR_SCALEN_Msk                         /*!< Comparator voltage scaler enable */
 
 #define COMP_CSR_VALUE_Pos         (30U)
 #define COMP_CSR_VALUE_Msk         (0x1UL << COMP_CSR_VALUE_Pos)               /*!< 0x40000000 */
@@ -2471,7 +2467,6 @@ typedef struct
 #define CORDIC_RDATA_RES_Pos     (0U)
 #define CORDIC_RDATA_RES_Msk     (0xFFFFFFFFUL << CORDIC_RDATA_RES_Pos)        /*!< 0xFFFFFFFF */
 #define CORDIC_RDATA_RES         CORDIC_RDATA_RES_Msk                          /*!< Output Result */
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -2621,9 +2616,9 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 /*
- * @brief Specific device feature definitions (not present on all devices in the STM32G4 serie)
+ * @brief Specific device feature definitions (not present on all devices in the STM32G4 series)
  */
- #define DAC_CHANNEL2_SUPPORT                           /*!< DAC feature available only on specific devices: DAC channel 2 available */
+#define DAC_CHANNEL2_SUPPORT                           /*!< DAC feature available only on specific devices: DAC channel 2 available */
 
 /********************  Bit definition for DAC_CR register  ********************/
 #define DAC_CR_EN1_Pos              (0U)
@@ -2826,7 +2821,6 @@ typedef struct
 #define DAC_SR_BWST1_Pos            (15U)
 #define DAC_SR_BWST1_Msk            (0x1UL << DAC_SR_BWST1_Pos)                /*!< 0x00008000 */
 #define DAC_SR_BWST1                DAC_SR_BWST1_Msk                           /*!<DAC channel1 busy writing sample time flag */
-
 
 #define DAC_SR_DAC2RDY_Pos          (27U)
 #define DAC_SR_DAC2RDY_Msk          (0x1UL << DAC_SR_DAC2RDY_Pos)              /*!< 0x08000000 */
@@ -11214,6 +11208,7 @@ typedef struct
 #define SYSCFG_SWPR_PAGE31_Pos         (31U)
 #define SYSCFG_SWPR_PAGE31_Msk         (0x1UL << SYSCFG_SWPR_PAGE31_Pos)      /*!< 0x80000000 */
 #define SYSCFG_SWPR_PAGE31             (SYSCFG_SWPR_PAGE31_Msk)               /*!< CCMSRAM  Write protection page 31*/
+
 /******************  Bit definition for SYSCFG_SKR register  ****************/
 #define SYSCFG_SKR_KEY_Pos              (0U)
 #define SYSCFG_SKR_KEY_Msk              (0xFFUL << SYSCFG_SKR_KEY_Pos)         /*!< 0x000000FF */
@@ -13851,7 +13846,6 @@ typedef struct
                                           ((INSTANCE) == ADC345_COMMON) )
 
 
-
 /******************************** FDCAN Instances ******************************/
 #define IS_FDCAN_ALL_INSTANCE(INSTANCE) (((INSTANCE) == FDCAN1) || \
                                          ((INSTANCE) == FDCAN2) || \
@@ -14348,7 +14342,6 @@ typedef struct
                                                        ((INSTANCE) == TIM17) || \
                                                        ((INSTANCE) == TIM20))
 
-
 /****************** TIM Instances : supporting bitfield OCCS in SMCR register *******************/
 #define IS_TIM_OCCS_INSTANCE(INSTANCE)                (((INSTANCE) == TIM1)  || \
                                                        ((INSTANCE) == TIM2)  || \
@@ -14403,12 +14396,10 @@ typedef struct
                                          ((INSTANCE) == TIM17)  || \
                                          ((INSTANCE) == TIM20))
 
-
 /****************** TIM Instances : Advanced timer instances *******************/
 #define IS_TIM_ADVANCED_INSTANCE(INSTANCE)       (((INSTANCE) == TIM1)   || \
                                                   ((INSTANCE) == TIM8)   || \
                                                   ((INSTANCE) == TIM20))
-
 
 /****************** TIM Instances : supporting HSE/32 request instances *******************/
 #define IS_TIM_HSE32_INSTANCE(INSTANCE)         (((INSTANCE) == TIM16)   || \

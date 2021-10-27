@@ -35,8 +35,8 @@ jobs:
          - {RTT_BSP: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "efm32", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"}
          - {RTT_BSP: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "imx6sx/cortex-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -47,9 +47,11 @@ jobs:
          - {RTT_BSP: "lm3s9b9x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lm4f232", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "tm4c123bsp", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "tkm32F499", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "tm4c129x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc43xx/M4", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc176x", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "lpc55sxx/lpc55s69_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc178x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc408x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc1114", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -65,6 +67,10 @@ jobs:
          - {RTT_BSP: "mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mb9bf568r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mini2440", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf51822", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52832", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52833", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52840", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "qemu-vexpress-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "qemu-vexpress-gemini", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "sam7x", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -138,7 +144,8 @@ jobs:
          - {RTT_BSP: "raspberry-pi/raspi4-32", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "bluetrum/ab32vg1-ab-prougen", RTT_TOOL_CHAIN: "sourcery-riscv"}
+         - {RTT_BSP: "bluetrum/ab32vg1-ab-prougen", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"}
+         - {RTT_BSP: "k210", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -150,7 +157,10 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libsdl-dev scons
+          sudo apt-get -qq install gcc-multilib libsdl-dev libncurses5-dev scons
+          sudo python -m pip install --upgrade pip -qq
+          pip install requests -qq
+          python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
 
@@ -172,6 +182,22 @@ jobs:
           /opt/mips-2016.05/bin/mips-sde-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/mips-2016.05/bin" >> $GITHUB_ENV
 
+      - name: Install Riscv64-unknown-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv64-unknown-elf' && success() }}
+        run: |
+          wget -q https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+          sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
+          /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+
+      - name: Install Riscv-none-embed ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv-none-embed' && success() }}
+        run: |
+          wget -q https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v8.3.0-2.3/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
+          sudo tar zxvf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
+          /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
+          echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+
       - name: Bsp Scons Compile
         if: ${{ success() }}
         shell: bash
@@ -179,4 +205,6 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
         run: |
+          source ~/.env/env.sh
+          pushd bsp/$RTT_BSP && pkgs --update && popd
           scons -C bsp/$RTT_BSP

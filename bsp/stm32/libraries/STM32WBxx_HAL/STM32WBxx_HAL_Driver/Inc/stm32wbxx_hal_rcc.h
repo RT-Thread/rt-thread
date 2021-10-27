@@ -50,6 +50,33 @@ extern "C" {
 #define CRRCR_REG_INDEX           4U
 
 #define RCC_FLAG_MASK             0x1FU
+
+/* Defines Oscillator Masks */
+#if defined(RCC_HSI48_SUPPORT)
+#define RCC_OSCILLATORTYPE_ALL          (RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSI48 | RCC_OSCILLATORTYPE_MSI | \
+                                         RCC_OSCILLATORTYPE_LSI1 | RCC_OSCILLATORTYPE_LSI2 | RCC_OSCILLATORTYPE_LSE)  /*!< All Oscillator to configure */
+#else
+#define RCC_OSCILLATORTYPE_ALL          (RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_MSI | \
+                                         RCC_OSCILLATORTYPE_LSI1 | RCC_OSCILLATORTYPE_LSI2 | RCC_OSCILLATORTYPE_LSE)  /*!< All Oscillator to configure */
+#endif
+
+/** @defgroup RCC_Reset_Flag Reset Flag
+  * @{
+  */
+#define RCC_RESET_FLAG_OBL             RCC_CSR_OBLRSTF    /*!< Option Byte Loader reset flag */
+#define RCC_RESET_FLAG_PIN             RCC_CSR_PINRSTF    /*!< PIN reset flag */
+#define RCC_RESET_FLAG_PWR             RCC_CSR_BORRSTF    /*!< BOR or POR/PDR reset flag */
+#define RCC_RESET_FLAG_SW              RCC_CSR_SFTRSTF    /*!< Software Reset flag */
+#define RCC_RESET_FLAG_IWDG            RCC_CSR_IWDGRSTF   /*!< Independent Watchdog reset flag */
+#define RCC_RESET_FLAG_WWDG            RCC_CSR_WWDGRSTF   /*!< Window watchdog reset flag */
+#define RCC_RESET_FLAG_LPWR            RCC_CSR_LPWRRSTF   /*!< Low power reset flag */
+#define RCC_RESET_FLAG_ALL             (RCC_RESET_FLAG_OBL | RCC_RESET_FLAG_PIN | RCC_RESET_FLAG_PWR | \
+                                        RCC_RESET_FLAG_SW | RCC_RESET_FLAG_IWDG | RCC_RESET_FLAG_WWDG | \
+                                        RCC_RESET_FLAG_LPWR)
+/**
+  * @}
+  */
+
 /**
   * @}
   */
@@ -59,25 +86,8 @@ extern "C" {
   * @{
   */
 
-#if defined(RCC_HSI48_SUPPORT)
-#define IS_RCC_OSCILLATORTYPE(__OSCILLATOR__) (((__OSCILLATOR__) == RCC_OSCILLATORTYPE_NONE)                               || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_HSE)  == RCC_OSCILLATORTYPE_HSE)    || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_HSI)  == RCC_OSCILLATORTYPE_HSI)    || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_HSI48) == RCC_OSCILLATORTYPE_HSI48) || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_MSI)  == RCC_OSCILLATORTYPE_MSI)    || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_LSI1) == RCC_OSCILLATORTYPE_LSI1)   || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_LSI2) == RCC_OSCILLATORTYPE_LSI2)   || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_LSE)  == RCC_OSCILLATORTYPE_LSE))
-#else
-#define IS_RCC_OSCILLATORTYPE(__OSCILLATOR__) (((__OSCILLATOR__) == RCC_OSCILLATORTYPE_NONE)                             || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_HSE)  == RCC_OSCILLATORTYPE_HSE)  || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_HSI)  == RCC_OSCILLATORTYPE_HSI)  || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_MSI)  == RCC_OSCILLATORTYPE_MSI)  || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_LSI1) == RCC_OSCILLATORTYPE_LSI1) || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_LSI2) == RCC_OSCILLATORTYPE_LSI2) || \
-                                               (((__OSCILLATOR__) & RCC_OSCILLATORTYPE_LSE)  == RCC_OSCILLATORTYPE_LSE))
-#endif
-
+#define IS_RCC_OSCILLATORTYPE(__OSCILLATOR__)  (((__OSCILLATOR__) == RCC_OSCILLATORTYPE_NONE) || \
+                                                (((__OSCILLATOR__) & ~RCC_OSCILLATORTYPE_ALL) == 0x00U))
 
 #define IS_RCC_HSE(__HSE__)  (((__HSE__) == RCC_HSE_OFF) || ((__HSE__) == RCC_HSE_ON))
 
@@ -2964,7 +2974,6 @@ typedef struct
   */
 #define __HAL_RCC_RTC_CONFIG(__RTC_CLKSOURCE__)  LL_RCC_SetRTCClockSource(__RTC_CLKSOURCE__)
 
-
 /** @brief  Macro to get the RTC clock source.
   * @retval The returned value can be one of the following:
   *            @arg @ref RCC_RTCCLKSOURCE_NONE  none clock selected as RTC clock.
@@ -3361,6 +3370,7 @@ void              HAL_RCC_NMI_IRQHandler(void);
 /* User Callbacks in non blocking mode (IT mode) */
 void              HAL_RCC_CSSCallback(void);
 
+uint32_t          HAL_RCC_GetResetSource(void);
 /**
   * @}
   */

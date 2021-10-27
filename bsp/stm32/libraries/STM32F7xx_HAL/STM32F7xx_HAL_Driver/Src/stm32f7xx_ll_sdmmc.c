@@ -511,7 +511,7 @@ HAL_StatusTypeDef SDMMC_SetSDMMCReadWaitMode(SDMMC_TypeDef *SDMMCx, uint32_t SDM
   */
 
 /**
-  * @brief  Send the Data Block Lenght command and check the response
+  * @brief  Send the Data Block Length command and check the response
   * @param  SDMMCx: Pointer to SDMMC register base 
   * @retval HAL status
   */
@@ -1099,7 +1099,7 @@ uint32_t SDMMC_CmdOpCondition(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
 }
 
 /**
-  * @brief  Checks switchable function and switch card function. SDMMC_CMD_HS_SWITCH comand
+  * @brief  Checks switchable function and switch card function. SDMMC_CMD_HS_SWITCH command
   * @param  SDMMCx: Pointer to SDMMC register base 
   * @parame Argument: Argument used for the command
   * @retval HAL status
@@ -1142,7 +1142,7 @@ static uint32_t SDMMC_GetCmdError(SDMMC_TypeDef *SDMMCx)
 {
   /* 8 is the number of required instructions cycles for the below loop statement.
   The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
   
   do
   {
@@ -1172,7 +1172,7 @@ static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_
   
   /* 8 is the number of required instructions cycles for the below loop statement.
   The Timeout is expressed in ms */
-  register uint32_t count = Timeout * (SystemCoreClock / 8U /1000U);
+  uint32_t count = Timeout * (SystemCoreClock / 8U /1000U);
   
   do
   {
@@ -1305,7 +1305,7 @@ static uint32_t SDMMC_GetCmdResp2(SDMMC_TypeDef *SDMMCx)
   uint32_t sta_reg;
   /* 8 is the number of required instructions cycles for the below loop statement.
   The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
   
   do
   {
@@ -1349,7 +1349,7 @@ static uint32_t SDMMC_GetCmdResp3(SDMMC_TypeDef *SDMMCx)
   uint32_t sta_reg;
   /* 8 is the number of required instructions cycles for the below loop statement.
   The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
   
   do
   {
@@ -1391,7 +1391,7 @@ static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_
 
   /* 8 is the number of required instructions cycles for the below loop statement.
   The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
   
   do
   {
@@ -1462,7 +1462,7 @@ static uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx)
   uint32_t sta_reg;
   /* 8 is the number of required instructions cycles for the below loop statement.
   The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
   
   do
   {
@@ -1502,6 +1502,32 @@ static uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx)
   return SDMMC_ERROR_NONE;
   
 }
+
+/**
+  * @brief  Send the Send EXT_CSD command and check the response.
+  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  Argument: Command Argument
+  * @retval HAL status
+  */
+uint32_t SDMMC_CmdSendEXTCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
+{
+  SDMMC_CmdInitTypeDef  sdmmc_cmdinit;
+  uint32_t errorstate;
+
+  /* Send CMD9 SEND_CSD */
+  sdmmc_cmdinit.Argument         = Argument;
+  sdmmc_cmdinit.CmdIndex         = SDMMC_CMD_HS_SEND_EXT_CSD;
+  sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
+  sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
+  sdmmc_cmdinit.CPSM             = SDMMC_CPSM_ENABLE;
+  (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
+
+  /* Check for error conditions */
+  errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_HS_SEND_EXT_CSD,SDMMC_CMDTIMEOUT);
+
+  return errorstate;
+}
+
 
 /**
   * @}

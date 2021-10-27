@@ -28,7 +28,6 @@ extern "C" {
 #if defined(FMPI2C_CR1_PE)
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal_def.h"
-#include "stm32f4xx_hal_fmpsmbus_ex.h"
 
 /** @addtogroup STM32F4xx_HAL_Driver
   * @{
@@ -50,42 +49,43 @@ extern "C" {
 typedef struct
 {
   uint32_t Timing;                 /*!< Specifies the FMPSMBUS_TIMINGR_register value.
-                                     This parameter calculated by referring to FMPSMBUS initialization
-                                            section in Reference manual */
+                                        This parameter calculated by referring to FMPSMBUS initialization section
+                                        in Reference manual */
   uint32_t AnalogFilter;           /*!< Specifies if Analog Filter is enable or not.
-                                     This parameter can be a value of @ref FMPSMBUS_Analog_Filter */
+                                        This parameter can be a value of @ref FMPSMBUS_Analog_Filter */
 
   uint32_t OwnAddress1;            /*!< Specifies the first device own address.
-                                     This parameter can be a 7-bit or 10-bit address. */
+                                        This parameter can be a 7-bit or 10-bit address. */
 
   uint32_t AddressingMode;         /*!< Specifies if 7-bit or 10-bit addressing mode for master is selected.
-                                     This parameter can be a value of @ref FMPSMBUS_addressing_mode */
+                                        This parameter can be a value of @ref FMPSMBUS_addressing_mode */
 
   uint32_t DualAddressMode;        /*!< Specifies if dual addressing mode is selected.
-                                     This parameter can be a value of @ref FMPSMBUS_dual_addressing_mode */
+                                        This parameter can be a value of @ref FMPSMBUS_dual_addressing_mode */
 
   uint32_t OwnAddress2;            /*!< Specifies the second device own address if dual addressing mode is selected
-                                     This parameter can be a 7-bit address. */
+                                        This parameter can be a 7-bit address. */
 
-  uint32_t OwnAddress2Masks;       /*!< Specifies the acknowledge mask address second device own address if dual addressing mode is selected
-                                     This parameter can be a value of @ref FMPSMBUS_own_address2_masks. */
+  uint32_t OwnAddress2Masks;       /*!< Specifies the acknowledge mask address second device own address
+                                        if dual addressing mode is selected
+                                        This parameter can be a value of @ref FMPSMBUS_own_address2_masks. */
 
   uint32_t GeneralCallMode;        /*!< Specifies if general call mode is selected.
-                                     This parameter can be a value of @ref FMPSMBUS_general_call_addressing_mode. */
+                                        This parameter can be a value of @ref FMPSMBUS_general_call_addressing_mode. */
 
   uint32_t NoStretchMode;          /*!< Specifies if nostretch mode is selected.
-                                     This parameter can be a value of @ref FMPSMBUS_nostretch_mode */
+                                        This parameter can be a value of @ref FMPSMBUS_nostretch_mode */
 
   uint32_t PacketErrorCheckMode;   /*!< Specifies if Packet Error Check mode is selected.
-                                     This parameter can be a value of @ref FMPSMBUS_packet_error_check_mode */
+                                        This parameter can be a value of @ref FMPSMBUS_packet_error_check_mode */
 
   uint32_t PeripheralMode;         /*!< Specifies which mode of Periphal is selected.
-                                     This parameter can be a value of @ref FMPSMBUS_peripheral_mode */
+                                        This parameter can be a value of @ref FMPSMBUS_peripheral_mode */
 
   uint32_t SMBusTimeout;           /*!< Specifies the content of the 32 Bits FMPSMBUS_TIMEOUT_register value.
-                                      (Enable bits and different timeout values)
-                                     This parameter calculated by referring to FMPSMBUS initialization
-                                         section in Reference manual */
+                                        (Enable bits and different timeout values)
+                                        This parameter calculated by referring to FMPSMBUS initialization section
+                                        in Reference manual */
 } FMPSMBUS_InitTypeDef;
 /**
   * @}
@@ -104,7 +104,7 @@ typedef struct
 #define HAL_FMPSMBUS_STATE_SLAVE_BUSY_RX   (0x00000042U)  /*!< Slave Data Reception process is ongoing       */
 #define HAL_FMPSMBUS_STATE_TIMEOUT         (0x00000003U)  /*!< Timeout state                                 */
 #define HAL_FMPSMBUS_STATE_ERROR           (0x00000004U)  /*!< Reception process is ongoing                  */
-#define HAL_FMPSMBUS_STATE_LISTEN          (0x00000008U)   /*!< Address Listen Mode is ongoing                */
+#define HAL_FMPSMBUS_STATE_LISTEN          (0x00000008U)  /*!< Address Listen Mode is ongoing                */
 /**
   * @}
   */
@@ -123,7 +123,7 @@ typedef struct
 #define HAL_FMPSMBUS_ERROR_ALERT           (0x00000040U)    /*!< Alert error          */
 #define HAL_FMPSMBUS_ERROR_PECERR          (0x00000080U)    /*!< PEC error            */
 #if (USE_HAL_FMPSMBUS_REGISTER_CALLBACKS == 1)
-#define HAL_FMPSMBUS_ERROR_INVALID_CALLBACK  (0x00000100U)    /*!< Invalid Callback error */
+#define HAL_FMPSMBUS_ERROR_INVALID_CALLBACK  (0x00000100U)  /*!< Invalid Callback error   */
 #endif /* USE_HAL_FMPSMBUS_REGISTER_CALLBACKS */
 #define HAL_FMPSMBUS_ERROR_INVALID_PARAM    (0x00000200U)   /*!< Invalid Parameters error */
 /**
@@ -161,17 +161,26 @@ typedef struct
   __IO uint32_t                ErrorCode;       /*!< FMPSMBUS Error code                   */
 
 #if (USE_HAL_FMPSMBUS_REGISTER_CALLBACKS == 1)
-  void (* MasterTxCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);           /*!< FMPSMBUS Master Tx Transfer completed callback */
-  void (* MasterRxCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);           /*!< FMPSMBUS Master Rx Transfer completed callback */
-  void (* SlaveTxCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);            /*!< FMPSMBUS Slave Tx Transfer completed callback  */
-  void (* SlaveRxCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);            /*!< FMPSMBUS Slave Rx Transfer completed callback  */
-  void (* ListenCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);             /*!< FMPSMBUS Listen Complete callback              */
-  void (* ErrorCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);                  /*!< FMPSMBUS Error callback                        */
+  void (* MasterTxCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);
+  /*!< FMPSMBUS Master Tx Transfer completed callback */
+  void (* MasterRxCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);
+  /*!< FMPSMBUS Master Rx Transfer completed callback */
+  void (* SlaveTxCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);
+  /*!< FMPSMBUS Slave Tx Transfer completed callback  */
+  void (* SlaveRxCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);
+  /*!< FMPSMBUS Slave Rx Transfer completed callback  */
+  void (* ListenCpltCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);
+  /*!< FMPSMBUS Listen Complete callback              */
+  void (* ErrorCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);
+  /*!< FMPSMBUS Error callback                        */
 
-  void (* AddrCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus, uint8_t TransferDirection, uint16_t AddrMatchCode);  /*!< FMPSMBUS Slave Address Match callback */
+  void (* AddrCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus, uint8_t TransferDirection, uint16_t AddrMatchCode);
+  /*!< FMPSMBUS Slave Address Match callback */
 
-  void (* MspInitCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);                /*!< FMPSMBUS Msp Init callback                     */
-  void (* MspDeInitCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);              /*!< FMPSMBUS Msp DeInit callback                   */
+  void (* MspInitCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);
+  /*!< FMPSMBUS Msp Init callback                     */
+  void (* MspDeInitCallback)(struct __FMPSMBUS_HandleTypeDef *hfmpsmbus);
+  /*!< FMPSMBUS Msp DeInit callback                   */
 
 #endif  /* USE_HAL_FMPSMBUS_REGISTER_CALLBACKS */
 } FMPSMBUS_HandleTypeDef;
@@ -197,8 +206,11 @@ typedef enum
 /**
   * @brief  HAL FMPSMBUS Callback pointer definition
   */
-typedef  void (*pFMPSMBUS_CallbackTypeDef)(FMPSMBUS_HandleTypeDef *hfmpsmbus); /*!< pointer to an FMPSMBUS callback function */
-typedef  void (*pFMPSMBUS_AddrCallbackTypeDef)(FMPSMBUS_HandleTypeDef *hfmpsmbus, uint8_t TransferDirection, uint16_t AddrMatchCode); /*!< pointer to an FMPSMBUS Address Match callback function */
+typedef  void (*pFMPSMBUS_CallbackTypeDef)(FMPSMBUS_HandleTypeDef *hfmpsmbus);
+/*!< pointer to an FMPSMBUS callback function */
+typedef  void (*pFMPSMBUS_AddrCallbackTypeDef)(FMPSMBUS_HandleTypeDef *hfmpsmbus, uint8_t TransferDirection,
+                                            uint16_t AddrMatchCode);
+/*!< pointer to an FMPSMBUS Address Match callback function */
 
 #endif /* USE_HAL_FMPSMBUS_REGISTER_CALLBACKS */
 /**
@@ -360,9 +372,10 @@ typedef  void (*pFMPSMBUS_AddrCallbackTypeDef)(FMPSMBUS_HandleTypeDef *hfmpsmbus
 #define FMPSMBUS_IT_ADDRI                          FMPI2C_CR1_ADDRIE
 #define FMPSMBUS_IT_RXI                            FMPI2C_CR1_RXIE
 #define FMPSMBUS_IT_TXI                            FMPI2C_CR1_TXIE
-#define FMPSMBUS_IT_TX                             (FMPSMBUS_IT_ERRI | FMPSMBUS_IT_TCI | FMPSMBUS_IT_STOPI | FMPSMBUS_IT_NACKI | \
-                                                 FMPSMBUS_IT_TXI)
-#define FMPSMBUS_IT_RX                             (FMPSMBUS_IT_ERRI | FMPSMBUS_IT_TCI | FMPSMBUS_IT_NACKI | FMPSMBUS_IT_RXI)
+#define FMPSMBUS_IT_TX                             (FMPSMBUS_IT_ERRI | FMPSMBUS_IT_TCI | FMPSMBUS_IT_STOPI | \
+                                                   FMPSMBUS_IT_NACKI | FMPSMBUS_IT_TXI)
+#define FMPSMBUS_IT_RX                             (FMPSMBUS_IT_ERRI | FMPSMBUS_IT_TCI | FMPSMBUS_IT_NACKI | \
+                                                   FMPSMBUS_IT_RXI)
 #define FMPSMBUS_IT_ALERT                          (FMPSMBUS_IT_ERRI)
 #define FMPSMBUS_IT_ADDR                           (FMPSMBUS_IT_ADDRI | FMPSMBUS_IT_STOPI | FMPSMBUS_IT_NACKI)
 /**
@@ -410,14 +423,14 @@ typedef  void (*pFMPSMBUS_AddrCallbackTypeDef)(FMPSMBUS_HandleTypeDef *hfmpsmbus
   * @retval None
   */
 #if (USE_HAL_FMPSMBUS_REGISTER_CALLBACKS == 1)
-#define __HAL_FMPSMBUS_RESET_HANDLE_STATE(__HANDLE__)           do{                                                   \
-                                                                 (__HANDLE__)->State = HAL_FMPSMBUS_STATE_RESET;       \
+#define __HAL_FMPSMBUS_RESET_HANDLE_STATE(__HANDLE__)           do{                                               \
+                                                                 (__HANDLE__)->State = HAL_FMPSMBUS_STATE_RESET;  \
                                                                  (__HANDLE__)->MspInitCallback = NULL;            \
                                                                  (__HANDLE__)->MspDeInitCallback = NULL;          \
                                                                } while(0)
 #else
 #define __HAL_FMPSMBUS_RESET_HANDLE_STATE(__HANDLE__)         ((__HANDLE__)->State = HAL_FMPSMBUS_STATE_RESET)
-#endif
+#endif /* USE_HAL_FMPSMBUS_REGISTER_CALLBACKS */
 
 /** @brief  Enable the specified FMPSMBUS interrupts.
   * @param  __HANDLE__ specifies the FMPSMBUS Handle.
@@ -493,7 +506,8 @@ typedef  void (*pFMPSMBUS_AddrCallbackTypeDef)(FMPSMBUS_HandleTypeDef *hfmpsmbus
   */
 #define FMPSMBUS_FLAG_MASK  (0x0001FFFFU)
 #define __HAL_FMPSMBUS_GET_FLAG(__HANDLE__, __FLAG__) \
-  (((((__HANDLE__)->Instance->ISR) & ((__FLAG__) & FMPSMBUS_FLAG_MASK)) == ((__FLAG__) & FMPSMBUS_FLAG_MASK)) ? SET : RESET)
+  (((((__HANDLE__)->Instance->ISR) & ((__FLAG__) & FMPSMBUS_FLAG_MASK)) == \
+    ((__FLAG__) & FMPSMBUS_FLAG_MASK)) ? SET : RESET)
 
 /** @brief  Clear the FMPSMBUS pending flags which are cleared by writing 1 in a specific bit.
   * @param  __HANDLE__ specifies the FMPSMBUS Handle.
@@ -576,43 +590,52 @@ typedef  void (*pFMPSMBUS_AddrCallbackTypeDef)(FMPSMBUS_HandleTypeDef *hfmpsmbus
                                                          ((MODE) == FMPSMBUS_PERIPHERAL_MODE_FMPSMBUS_SLAVE)  || \
                                                          ((MODE) == FMPSMBUS_PERIPHERAL_MODE_FMPSMBUS_SLAVE_ARP))
 
-#define IS_FMPSMBUS_TRANSFER_MODE(MODE)                    (((MODE) == FMPSMBUS_RELOAD_MODE)                          || \
-                                                         ((MODE) == FMPSMBUS_AUTOEND_MODE)                         || \
-                                                         ((MODE) == FMPSMBUS_SOFTEND_MODE)                         || \
-                                                         ((MODE) == FMPSMBUS_SENDPEC_MODE)                         || \
-                                                         ((MODE) == (FMPSMBUS_RELOAD_MODE | FMPSMBUS_SENDPEC_MODE))   || \
-                                                         ((MODE) == (FMPSMBUS_AUTOEND_MODE | FMPSMBUS_SENDPEC_MODE))  || \
-                                                         ((MODE) == (FMPSMBUS_AUTOEND_MODE | FMPSMBUS_RELOAD_MODE))   || \
-                                                         ((MODE) == (FMPSMBUS_AUTOEND_MODE | FMPSMBUS_SENDPEC_MODE | FMPSMBUS_RELOAD_MODE )))
+#define IS_FMPSMBUS_TRANSFER_MODE(MODE)                 (((MODE) == FMPSMBUS_RELOAD_MODE)                          || \
+                                                      ((MODE) == FMPSMBUS_AUTOEND_MODE)                         || \
+                                                      ((MODE) == FMPSMBUS_SOFTEND_MODE)                         || \
+                                                      ((MODE) == FMPSMBUS_SENDPEC_MODE)                         || \
+                                                      ((MODE) == (FMPSMBUS_RELOAD_MODE | FMPSMBUS_SENDPEC_MODE))   || \
+                                                      ((MODE) == (FMPSMBUS_AUTOEND_MODE | FMPSMBUS_SENDPEC_MODE))  || \
+                                                      ((MODE) == (FMPSMBUS_AUTOEND_MODE | FMPSMBUS_RELOAD_MODE))   || \
+                                                      ((MODE) == (FMPSMBUS_AUTOEND_MODE | FMPSMBUS_SENDPEC_MODE | \
+                                                                  FMPSMBUS_RELOAD_MODE )))
 
 
 #define IS_FMPSMBUS_TRANSFER_REQUEST(REQUEST)              (((REQUEST) == FMPSMBUS_GENERATE_STOP)              || \
-                                                         ((REQUEST) == FMPSMBUS_GENERATE_START_READ)       || \
-                                                         ((REQUEST) == FMPSMBUS_GENERATE_START_WRITE)      || \
+                                                         ((REQUEST) == FMPSMBUS_GENERATE_START_READ)        || \
+                                                         ((REQUEST) == FMPSMBUS_GENERATE_START_WRITE)       || \
                                                          ((REQUEST) == FMPSMBUS_NO_STARTSTOP))
 
 
-#define IS_FMPSMBUS_TRANSFER_OPTIONS_REQUEST(REQUEST)      (IS_FMPSMBUS_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST)       || \
-                                                         ((REQUEST) == FMPSMBUS_FIRST_FRAME)                       || \
-                                                         ((REQUEST) == FMPSMBUS_NEXT_FRAME)                        || \
-                                                         ((REQUEST) == FMPSMBUS_FIRST_AND_LAST_FRAME_NO_PEC)       || \
-                                                         ((REQUEST) == FMPSMBUS_LAST_FRAME_NO_PEC)                 || \
-                                                         ((REQUEST) == FMPSMBUS_FIRST_FRAME_WITH_PEC)              || \
-                                                         ((REQUEST) == FMPSMBUS_FIRST_AND_LAST_FRAME_WITH_PEC)     || \
-                                                         ((REQUEST) == FMPSMBUS_LAST_FRAME_WITH_PEC))
+#define IS_FMPSMBUS_TRANSFER_OPTIONS_REQUEST(REQUEST)   (IS_FMPSMBUS_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST)       || \
+                                                      ((REQUEST) == FMPSMBUS_FIRST_FRAME)                       || \
+                                                      ((REQUEST) == FMPSMBUS_NEXT_FRAME)                        || \
+                                                      ((REQUEST) == FMPSMBUS_FIRST_AND_LAST_FRAME_NO_PEC)       || \
+                                                      ((REQUEST) == FMPSMBUS_LAST_FRAME_NO_PEC)                 || \
+                                                      ((REQUEST) == FMPSMBUS_FIRST_FRAME_WITH_PEC)              || \
+                                                      ((REQUEST) == FMPSMBUS_FIRST_AND_LAST_FRAME_WITH_PEC)     || \
+                                                      ((REQUEST) == FMPSMBUS_LAST_FRAME_WITH_PEC))
 
-#define IS_FMPSMBUS_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST) (((REQUEST) == FMPSMBUS_OTHER_FRAME_NO_PEC)                || \
-                                                          ((REQUEST) == FMPSMBUS_OTHER_AND_LAST_FRAME_NO_PEC)       || \
-                                                          ((REQUEST) == FMPSMBUS_OTHER_FRAME_WITH_PEC)              || \
+#define IS_FMPSMBUS_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST) (((REQUEST) == FMPSMBUS_OTHER_FRAME_NO_PEC)             || \
+                                                          ((REQUEST) == FMPSMBUS_OTHER_AND_LAST_FRAME_NO_PEC)    || \
+                                                          ((REQUEST) == FMPSMBUS_OTHER_FRAME_WITH_PEC)           || \
                                                           ((REQUEST) == FMPSMBUS_OTHER_AND_LAST_FRAME_WITH_PEC))
 
-#define FMPSMBUS_RESET_CR1(__HANDLE__)                       ((__HANDLE__)->Instance->CR1 &= \
-                                                           (uint32_t)~((uint32_t)(FMPI2C_CR1_SMBHEN | FMPI2C_CR1_SMBDEN | FMPI2C_CR1_PECEN)))
-#define FMPSMBUS_RESET_CR2(__HANDLE__)                       ((__HANDLE__)->Instance->CR2 &= \
-                                                           (uint32_t)~((uint32_t)(FMPI2C_CR2_SADD | FMPI2C_CR2_HEAD10R | FMPI2C_CR2_NBYTES | FMPI2C_CR2_RELOAD | FMPI2C_CR2_RD_WRN)))
+#define FMPSMBUS_RESET_CR1(__HANDLE__)                    ((__HANDLE__)->Instance->CR1 &= \
+                                                        (uint32_t)~((uint32_t)(FMPI2C_CR1_SMBHEN | FMPI2C_CR1_SMBDEN | \
+                                                                    FMPI2C_CR1_PECEN)))
+#define FMPSMBUS_RESET_CR2(__HANDLE__)                    ((__HANDLE__)->Instance->CR2 &= \
+                                                        (uint32_t)~((uint32_t)(FMPI2C_CR2_SADD | FMPI2C_CR2_HEAD10R | \
+                                                                    FMPI2C_CR2_NBYTES | FMPI2C_CR2_RELOAD | \
+                                                                    FMPI2C_CR2_RD_WRN)))
 
-#define FMPSMBUS_GENERATE_START(__ADDMODE__,__ADDRESS__)     (((__ADDMODE__) == FMPSMBUS_ADDRESSINGMODE_7BIT) ? (uint32_t)((((uint32_t)(__ADDRESS__) & (FMPI2C_CR2_SADD)) | (FMPI2C_CR2_START) | (FMPI2C_CR2_AUTOEND)) & (~FMPI2C_CR2_RD_WRN)) : \
-                                                           (uint32_t)((((uint32_t)(__ADDRESS__) & (FMPI2C_CR2_SADD)) | (FMPI2C_CR2_ADD10) | (FMPI2C_CR2_START)) & (~FMPI2C_CR2_RD_WRN)))
+#define FMPSMBUS_GENERATE_START(__ADDMODE__,__ADDRESS__)     (((__ADDMODE__) == FMPSMBUS_ADDRESSINGMODE_7BIT) ? \
+                                                           (uint32_t)((((uint32_t)(__ADDRESS__) & (FMPI2C_CR2_SADD)) | \
+                                                                       (FMPI2C_CR2_START) | (FMPI2C_CR2_AUTOEND)) & \
+                                                                      (~FMPI2C_CR2_RD_WRN)) : \
+                                                           (uint32_t)((((uint32_t)(__ADDRESS__) & \
+                                                                        (FMPI2C_CR2_SADD)) | (FMPI2C_CR2_ADD10) | \
+                                                                       (FMPI2C_CR2_START)) & (~FMPI2C_CR2_RD_WRN)))
 
 #define FMPSMBUS_GET_ADDR_MATCH(__HANDLE__)                  (((__HANDLE__)->Instance->ISR & FMPI2C_ISR_ADDCODE) >> 17U)
 #define FMPSMBUS_GET_DIR(__HANDLE__)                         (((__HANDLE__)->Instance->ISR & FMPI2C_ISR_DIR) >> 16U)
@@ -630,6 +653,9 @@ typedef  void (*pFMPSMBUS_AddrCallbackTypeDef)(FMPSMBUS_HandleTypeDef *hfmpsmbus
 /**
   * @}
   */
+
+/* Include FMPSMBUS HAL Extended module */
+#include "stm32f4xx_hal_fmpsmbus_ex.h"
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup FMPSMBUS_Exported_Functions FMPSMBUS Exported Functions
@@ -650,11 +676,14 @@ HAL_StatusTypeDef HAL_FMPSMBUS_ConfigDigitalFilter(FMPSMBUS_HandleTypeDef *hfmps
 
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_FMPSMBUS_REGISTER_CALLBACKS == 1)
-HAL_StatusTypeDef HAL_FMPSMBUS_RegisterCallback(FMPSMBUS_HandleTypeDef *hfmpsmbus, HAL_FMPSMBUS_CallbackIDTypeDef CallbackID,
-                                             pFMPSMBUS_CallbackTypeDef pCallback);
-HAL_StatusTypeDef HAL_FMPSMBUS_UnRegisterCallback(FMPSMBUS_HandleTypeDef *hfmpsmbus, HAL_FMPSMBUS_CallbackIDTypeDef CallbackID);
+HAL_StatusTypeDef HAL_FMPSMBUS_RegisterCallback(FMPSMBUS_HandleTypeDef *hfmpsmbus,
+                                                HAL_FMPSMBUS_CallbackIDTypeDef CallbackID,
+                                                pFMPSMBUS_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_FMPSMBUS_UnRegisterCallback(FMPSMBUS_HandleTypeDef *hfmpsmbus,
+                                                  HAL_FMPSMBUS_CallbackIDTypeDef CallbackID);
 
-HAL_StatusTypeDef HAL_FMPSMBUS_RegisterAddrCallback(FMPSMBUS_HandleTypeDef *hfmpsmbus, pFMPSMBUS_AddrCallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_FMPSMBUS_RegisterAddrCallback(FMPSMBUS_HandleTypeDef *hfmpsmbus,
+                                                    pFMPSMBUS_AddrCallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_FMPSMBUS_UnRegisterAddrCallback(FMPSMBUS_HandleTypeDef *hfmpsmbus);
 #endif /* USE_HAL_FMPSMBUS_REGISTER_CALLBACKS */
 /**
@@ -680,10 +709,10 @@ HAL_StatusTypeDef HAL_FMPSMBUS_IsDeviceReady(FMPSMBUS_HandleTypeDef *hfmpsmbus, 
   * @{
   */
 /******* Non-Blocking mode: Interrupt */
-HAL_StatusTypeDef HAL_FMPSMBUS_Master_Transmit_IT(FMPSMBUS_HandleTypeDef *hfmpsmbus, uint16_t DevAddress, uint8_t *pData,
-                                               uint16_t Size, uint32_t XferOptions);
-HAL_StatusTypeDef HAL_FMPSMBUS_Master_Receive_IT(FMPSMBUS_HandleTypeDef *hfmpsmbus, uint16_t DevAddress, uint8_t *pData,
-                                              uint16_t Size, uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPSMBUS_Master_Transmit_IT(FMPSMBUS_HandleTypeDef *hfmpsmbus, uint16_t DevAddress,
+                                                  uint8_t *pData, uint16_t Size, uint32_t XferOptions);
+HAL_StatusTypeDef HAL_FMPSMBUS_Master_Receive_IT(FMPSMBUS_HandleTypeDef *hfmpsmbus, uint16_t DevAddress,
+                                                 uint8_t *pData, uint16_t Size, uint32_t XferOptions);
 HAL_StatusTypeDef HAL_FMPSMBUS_Master_Abort_IT(FMPSMBUS_HandleTypeDef *hfmpsmbus, uint16_t DevAddress);
 HAL_StatusTypeDef HAL_FMPSMBUS_Slave_Transmit_IT(FMPSMBUS_HandleTypeDef *hfmpsmbus, uint8_t *pData, uint16_t Size,
                                               uint32_t XferOptions);

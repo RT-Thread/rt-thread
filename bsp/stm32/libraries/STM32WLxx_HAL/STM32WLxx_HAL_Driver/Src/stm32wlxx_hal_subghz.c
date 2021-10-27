@@ -155,6 +155,7 @@
 /* SystemCoreClock dividers. Corresponding to time execution of while loop.   */
 #define SUBGHZ_DEFAULT_LOOP_TIME   ((SystemCoreClock*28U)>>19U)
 #define SUBGHZ_RFBUSY_LOOP_TIME    ((SystemCoreClock*24U)>>20U)
+#define SUBGHZ_NSS_LOOP_TIME       ((SystemCoreClock*24U)>>16U)
 /**
   * @}
   */
@@ -319,6 +320,7 @@ HAL_StatusTypeDef HAL_SUBGHZ_Init(SUBGHZ_HandleTypeDef *hsubghz)
 HAL_StatusTypeDef HAL_SUBGHZ_DeInit(SUBGHZ_HandleTypeDef *hsubghz)
 {
   HAL_StatusTypeDef status;
+  __IO uint32_t count;
 
   /* Check the SUBGHZ handle allocation */
   if (hsubghz == NULL)
@@ -363,8 +365,25 @@ HAL_StatusTypeDef HAL_SUBGHZ_DeInit(SUBGHZ_HandleTypeDef *hsubghz)
   LL_PWR_SetRadioBusyTrigger(LL_PWR_RADIO_BUSY_TRIGGER_NONE);
 #endif /* CM0PLUS */
 
-  /* Disable the Radio peripheral  Reset signal */
-  LL_RCC_RF_DisableReset();
+  /* Clear Pending Flag */
+  LL_PWR_ClearFlag_RFBUSY();
+
+  /* Re-asserts the reset signal of the Radio peripheral */
+  LL_RCC_RF_EnableReset();
+
+  /* Verify that Radio in reset status flag is set */
+  count  = SUBGHZ_DEFAULT_TIMEOUT * SUBGHZ_DEFAULT_LOOP_TIME;
+
+  do
+  {
+    if (count == 0U)
+    {
+      status  = HAL_ERROR;
+      hsubghz->ErrorCode = HAL_SUBGHZ_ERROR_TIMEOUT;
+      break;
+    }
+    count--;
+  } while (LL_RCC_IsRFUnderReset() != 1UL);
 
   hsubghz->ErrorCode = HAL_SUBGHZ_ERROR_NONE;
   hsubghz->State     = HAL_SUBGHZ_STATE_RESET;
@@ -1677,13 +1696,22 @@ HAL_StatusTypeDef SUBGHZSPI_Receive(SUBGHZ_HandleTypeDef *hsubghz,
   */
 HAL_StatusTypeDef SUBGHZ_CheckDeviceReady(SUBGHZ_HandleTypeDef *hsubghz)
 {
+  __IO uint32_t count;
+
   /* Wakeup radio in case of sleep mode: Select-Unselect radio */
   if (hsubghz->DeepSleep == SUBGHZ_DEEP_SLEEP_ENABLE)
   {
+    /* Initialize NSS switch Delay */
+    count  = SUBGHZ_NSS_LOOP_TIME;
+
     /* NSS = 0; */
     LL_PWR_SelectSUBGHZSPI_NSS();
 
-    HAL_Delay(1);
+    /* Wait Radio wakeup */
+    do
+    {
+      count--;
+    } while (count != 0UL);
 
     /* NSS = 1 */
     LL_PWR_UnselectSUBGHZSPI_NSS();

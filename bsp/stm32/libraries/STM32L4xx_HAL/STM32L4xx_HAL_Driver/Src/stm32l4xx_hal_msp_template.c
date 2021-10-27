@@ -3,7 +3,7 @@
   * @file    stm32l4xx_hal_msp_template.c
   * @author  MCD Application Team
   * @brief   HAL MSP module.
-  *          This file template is located in the HAL folder and should be copied 
+  *          This file template is located in the HAL folder and should be copied
   *          to the user folder.
   ******************************************************************************
   * @attention
@@ -16,8 +16,8 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
-  ******************************************************************************  
-  */ 
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
@@ -49,19 +49,19 @@
   */
 void HAL_MspInit(void)
 {
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually  
+  /* NOTE : This function is generated automatically by STM32CubeMX and eventually
             modified by the user
-   */ 
+   */
 }
 
 /**
   * @brief  DeInitialize the Global MSP.
-  * @param  None  
+  * @param  None
   * @retval None
   */
 void HAL_MspDeInit(void)
 {
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually  
+  /* NOTE : This function is generated automatically by STM32CubeMX and eventually
             modified by the user
    */
 }
@@ -73,19 +73,19 @@ void HAL_MspDeInit(void)
   */
 void HAL_PPP_MspInit(void)
 {
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually  
+  /* NOTE : This function is generated automatically by STM32CubeMX and eventually
             modified by the user
-   */ 
+   */
 }
 
 /**
   * @brief  DeInitialize the PPP MSP.
-  * @param  None  
+  * @param  None
   * @retval None
   */
 void HAL_PPP_MspDeInit(void)
 {
-  /* NOTE : This function is generated automatically by STM32CubeMX and eventually  
+  /* NOTE : This function is generated automatically by STM32CubeMX and eventually
             modified by the user
    */
 }

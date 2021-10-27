@@ -170,11 +170,6 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 static uint32_t SDMMC_GetCmdError(SDMMC_TypeDef *SDMMCx);
-static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_t Timeout);
-static uint32_t SDMMC_GetCmdResp2(SDMMC_TypeDef *SDMMCx);
-static uint32_t SDMMC_GetCmdResp3(SDMMC_TypeDef *SDMMCx);
-static uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx);
-static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_t *pRCA);
 
 /* Exported functions --------------------------------------------------------*/
 
@@ -183,8 +178,8 @@ static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_
   */
 
 /** @defgroup HAL_SDMMC_LL_Group1 Initialization de-initialization functions
- *  @brief    Initialization and Configuration functions
- *
+  *  @brief    Initialization and Configuration functions
+  *
 @verbatim
  ===============================================================================
               ##### Initialization/de-initialization functions #####
@@ -215,12 +210,12 @@ HAL_StatusTypeDef SDMMC_Init(SDMMC_TypeDef *SDMMCx, SDMMC_InitTypeDef Init)
   assert_param(IS_SDMMC_CLKDIV(Init.ClockDiv));
 
   /* Set SDMMC configuration parameters */
-  tmpreg |= (Init.ClockEdge           |\
-             Init.ClockPowerSave      |\
-             Init.BusWide             |\
-             Init.HardwareFlowControl |\
+  tmpreg |= (Init.ClockEdge           | \
+             Init.ClockPowerSave      | \
+             Init.BusWide             | \
+             Init.HardwareFlowControl | \
              Init.ClockDiv
-             );
+            );
 
   /* Write to SDMMC CLKCR */
   MODIFY_REG(SDMMCx->CLKCR, CLKCR_CLEAR_MASK, tmpreg);
@@ -234,8 +229,8 @@ HAL_StatusTypeDef SDMMC_Init(SDMMC_TypeDef *SDMMCx, SDMMC_InitTypeDef Init)
   */
 
 /** @defgroup HAL_SDMMC_LL_Group2 IO operation functions
- *  @brief   Data transfers functions
- *
+  *  @brief   Data transfers functions
+  *
 @verbatim
  ===============================================================================
                       ##### I/O operation functions #####
@@ -278,8 +273,8 @@ HAL_StatusTypeDef SDMMC_WriteFIFO(SDMMC_TypeDef *SDMMCx, uint32_t *pWriteData)
   */
 
 /** @defgroup HAL_SDMMC_LL_Group3 Peripheral Control functions
- *  @brief   management functions
- *
+  *  @brief   management functions
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral Control functions #####
@@ -367,9 +362,9 @@ HAL_StatusTypeDef SDMMC_SendCommand(SDMMC_TypeDef *SDMMCx, SDMMC_CmdInitTypeDef 
   SDMMCx->ARG = Command->Argument;
 
   /* Set SDMMC command parameters */
-  tmpreg |= (uint32_t)(Command->CmdIndex         |\
-                       Command->Response         |\
-                       Command->WaitForInterrupt |\
+  tmpreg |= (uint32_t)(Command->CmdIndex         | \
+                       Command->Response         | \
+                       Command->WaitForInterrupt | \
                        Command->CPSM);
 
   /* Write to SDMMC CMD register */
@@ -421,7 +416,7 @@ uint32_t SDMMC_GetResponse(SDMMC_TypeDef *SDMMCx, uint32_t Response)
   *         that contains the configuration information for the SDMMC data.
   * @retval HAL status
   */
-HAL_StatusTypeDef SDMMC_ConfigData(SDMMC_TypeDef *SDMMCx, SDMMC_DataInitTypeDef* Data)
+HAL_StatusTypeDef SDMMC_ConfigData(SDMMC_TypeDef *SDMMCx, SDMMC_DataInitTypeDef *Data)
 {
   uint32_t tmpreg = 0;
 
@@ -439,9 +434,9 @@ HAL_StatusTypeDef SDMMC_ConfigData(SDMMC_TypeDef *SDMMCx, SDMMC_DataInitTypeDef*
   SDMMCx->DLEN = Data->DataLength;
 
   /* Set the SDMMC data configuration parameters */
-  tmpreg |= (uint32_t)(Data->DataBlockSize |\
-                       Data->TransferDir   |\
-                       Data->TransferMode  |\
+  tmpreg |= (uint32_t)(Data->DataBlockSize | \
+                       Data->TransferDir   | \
+                       Data->TransferMode  | \
                        Data->DPSM);
 
   /* Write to SDMMC DCTRL */
@@ -497,8 +492,8 @@ HAL_StatusTypeDef SDMMC_SetSDMMCReadWaitMode(SDMMC_TypeDef *SDMMCx, uint32_t SDM
 
 
 /** @defgroup HAL_SDMMC_LL_Group4 Command management functions
- *  @brief   Data transfers functions
- *
+  *  @brief   Data transfers functions
+  *
 @verbatim
  ===============================================================================
                    ##### Commands management functions #####
@@ -511,7 +506,7 @@ HAL_StatusTypeDef SDMMC_SetSDMMCReadWaitMode(SDMMC_TypeDef *SDMMCx, uint32_t SDM
   */
 
 /**
-  * @brief  Send the Data Block Lenght command and check the response
+  * @brief  Send the Data Block Length command and check the response
   * @param  SDMMCx: Pointer to SDMMC register base
   * @retval HAL status
   */
@@ -728,16 +723,17 @@ uint32_t SDMMC_CmdEraseEndAdd(SDMMC_TypeDef *SDMMCx, uint32_t EndAdd)
 
 /**
   * @brief  Send the Erase command and check the response
-  * @param  SDMMCx: Pointer to SDMMC register base
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  EraseType Type of erase to be performed
   * @retval HAL status
   */
-uint32_t SDMMC_CmdErase(SDMMC_TypeDef *SDMMCx)
+uint32_t SDMMC_CmdErase(SDMMC_TypeDef *SDMMCx, uint32_t EraseType)
 {
   SDMMC_CmdInitTypeDef  sdmmc_cmdinit;
   uint32_t errorstate;
 
   /* Set Block Size for Card */
-  sdmmc_cmdinit.Argument         = 0U;
+  sdmmc_cmdinit.Argument         = EraseType;
   sdmmc_cmdinit.CmdIndex         = SDMMC_CMD_ERASE;
   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
   sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
@@ -792,7 +788,7 @@ uint32_t SDMMC_CmdStopTransfer(SDMMC_TypeDef *SDMMCx)
   * @param  addr: Address of the card to be selected
   * @retval HAL status
   */
-uint32_t SDMMC_CmdSelDesel(SDMMC_TypeDef *SDMMCx, uint64_t Addr)
+uint32_t SDMMC_CmdSelDesel(SDMMC_TypeDef *SDMMCx, uint32_t Addr)
 {
   SDMMC_CmdInitTypeDef  sdmmc_cmdinit;
   uint32_t errorstate;
@@ -1039,6 +1035,31 @@ uint32_t SDMMC_CmdSetRelAdd(SDMMC_TypeDef *SDMMCx, uint16_t *pRCA)
 }
 
 /**
+  * @brief  Send the Set Relative Address command to MMC card (not SD card).
+  * @param  SDMMCx Pointer to SDMMC register base
+  * @param  RCA Card RCA
+  * @retval HAL status
+  */
+uint32_t SDMMC_CmdSetRelAddMmc(SDMMC_TypeDef *SDMMCx, uint16_t RCA)
+{
+  SDMMC_CmdInitTypeDef  sdmmc_cmdinit;
+  uint32_t errorstate;
+
+  /* Send CMD3 SD_CMD_SET_REL_ADDR */
+  sdmmc_cmdinit.Argument         = ((uint32_t)RCA << 16U);
+  sdmmc_cmdinit.CmdIndex         = SDMMC_CMD_SET_REL_ADDR;
+  sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
+  sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
+  sdmmc_cmdinit.CPSM             = SDMMC_CPSM_ENABLE;
+  (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
+
+  /* Check for error conditions */
+  errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_SET_REL_ADDR, SDMMC_CMDTIMEOUT);
+
+  return errorstate;
+}
+
+/**
   * @brief  Send the Status command and check the response.
   * @param  SDMMCx: Pointer to SDMMC register base
   * @param  Argument: Command Argument
@@ -1111,7 +1132,7 @@ uint32_t SDMMC_CmdOpCondition(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
 }
 
 /**
-  * @brief  Checks switchable function and switch card function. SDMMC_CMD_HS_SWITCH comand
+  * @brief  Checks switchable function and switch card function. SDMMC_CMD_HS_SWITCH command
   * @param  SDMMCx: Pointer to SDMMC register base
   * @parame Argument: Argument used for the command
   * @retval HAL status
@@ -1180,61 +1201,43 @@ uint32_t SDMMC_CmdSendEXTCSD(SDMMC_TypeDef *SDMMCx, uint32_t Argument)
   (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
 
   /* Check for error conditions */
-  errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_HS_SEND_EXT_CSD,SDMMC_CMDTIMEOUT);
+  errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_HS_SEND_EXT_CSD, SDMMC_CMDTIMEOUT);
 
   return errorstate;
 }
-
 
 /**
   * @}
   */
 
-/* Private function ----------------------------------------------------------*/
-/** @addtogroup SD_Private_Functions
+
+/** @defgroup HAL_SDMMC_LL_Group5 Responses management functions
+  *  @brief   Responses functions
+  *
+@verbatim
+ ===============================================================================
+                   ##### Responses management functions #####
+ ===============================================================================
+    [..]
+    This subsection provides a set of functions allowing to manage the needed responses.
+
+@endverbatim
   * @{
   */
-
-/**
-  * @brief  Checks for error conditions for CMD0.
-  * @param  hsd: SD handle
-  * @retval SD Card error state
-  */
-static uint32_t SDMMC_GetCmdError(SDMMC_TypeDef *SDMMCx)
-{
-  /* 8 is the number of required instructions cycles for the below loop statement.
-  The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
-
-  do
-  {
-    if (count-- == 0U)
-    {
-      return SDMMC_ERROR_TIMEOUT;
-    }
-
-  }while(!__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CMDSENT));
-
-  /* Clear all the static flags */
-  __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_STATIC_CMD_FLAGS);
-
-  return SDMMC_ERROR_NONE;
-}
-
 /**
   * @brief  Checks for error conditions for R1 response.
   * @param  hsd: SD handle
   * @param  SD_CMD: The sent command index
   * @retval SD Card error state
   */
-static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_t Timeout)
+uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_t Timeout)
 {
   uint32_t response_r1;
   uint32_t sta_reg;
 
   /* 8 is the number of required instructions cycles for the below loop statement.
   The Timeout is expressed in ms */
-  register uint32_t count = Timeout * (SystemCoreClock / 8U /1000U);
+  uint32_t count = Timeout * (SystemCoreClock / 8U / 1000U);
 
   do
   {
@@ -1243,16 +1246,16 @@ static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_
       return SDMMC_ERROR_TIMEOUT;
     }
     sta_reg = SDMMCx->STA;
-  }while(((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT | SDMMC_FLAG_BUSYD0END)) == 0U) ||
-         ((sta_reg & SDMMC_FLAG_CMDACT) != 0U ));
+  } while (((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT |
+                        SDMMC_FLAG_BUSYD0END)) == 0U) || ((sta_reg & SDMMC_FLAG_CMDACT) != 0U));
 
-  if(__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
+  if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
   {
     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT);
 
     return SDMMC_ERROR_CMD_RSP_TIMEOUT;
   }
-  else if(__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL))
+  else if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL))
   {
     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL);
 
@@ -1267,7 +1270,7 @@ static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_
   __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_STATIC_CMD_FLAGS);
 
   /* Check response received is of desired command */
-  if(SDMMC_GetCommandResponse(SDMMCx) != SD_CMD)
+  if (SDMMC_GetCommandResponse(SDMMCx) != SD_CMD)
   {
     return SDMMC_ERROR_CMD_CRC_FAIL;
   }
@@ -1275,79 +1278,79 @@ static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_
   /* We have received response, retrieve it for analysis  */
   response_r1 = SDMMC_GetResponse(SDMMCx, SDMMC_RESP1);
 
-  if((response_r1 & SDMMC_OCR_ERRORBITS) == SDMMC_ALLZERO)
+  if ((response_r1 & SDMMC_OCR_ERRORBITS) == SDMMC_ALLZERO)
   {
     return SDMMC_ERROR_NONE;
   }
-  else if((response_r1 & SDMMC_OCR_ADDR_OUT_OF_RANGE) == SDMMC_OCR_ADDR_OUT_OF_RANGE)
+  else if ((response_r1 & SDMMC_OCR_ADDR_OUT_OF_RANGE) == SDMMC_OCR_ADDR_OUT_OF_RANGE)
   {
     return SDMMC_ERROR_ADDR_OUT_OF_RANGE;
   }
-  else if((response_r1 & SDMMC_OCR_ADDR_MISALIGNED) == SDMMC_OCR_ADDR_MISALIGNED)
+  else if ((response_r1 & SDMMC_OCR_ADDR_MISALIGNED) == SDMMC_OCR_ADDR_MISALIGNED)
   {
     return SDMMC_ERROR_ADDR_MISALIGNED;
   }
-  else if((response_r1 & SDMMC_OCR_BLOCK_LEN_ERR) == SDMMC_OCR_BLOCK_LEN_ERR)
+  else if ((response_r1 & SDMMC_OCR_BLOCK_LEN_ERR) == SDMMC_OCR_BLOCK_LEN_ERR)
   {
     return SDMMC_ERROR_BLOCK_LEN_ERR;
   }
-  else if((response_r1 & SDMMC_OCR_ERASE_SEQ_ERR) == SDMMC_OCR_ERASE_SEQ_ERR)
+  else if ((response_r1 & SDMMC_OCR_ERASE_SEQ_ERR) == SDMMC_OCR_ERASE_SEQ_ERR)
   {
     return SDMMC_ERROR_ERASE_SEQ_ERR;
   }
-  else if((response_r1 & SDMMC_OCR_BAD_ERASE_PARAM) == SDMMC_OCR_BAD_ERASE_PARAM)
+  else if ((response_r1 & SDMMC_OCR_BAD_ERASE_PARAM) == SDMMC_OCR_BAD_ERASE_PARAM)
   {
     return SDMMC_ERROR_BAD_ERASE_PARAM;
   }
-  else if((response_r1 & SDMMC_OCR_WRITE_PROT_VIOLATION) == SDMMC_OCR_WRITE_PROT_VIOLATION)
+  else if ((response_r1 & SDMMC_OCR_WRITE_PROT_VIOLATION) == SDMMC_OCR_WRITE_PROT_VIOLATION)
   {
     return SDMMC_ERROR_WRITE_PROT_VIOLATION;
   }
-  else if((response_r1 & SDMMC_OCR_LOCK_UNLOCK_FAILED) == SDMMC_OCR_LOCK_UNLOCK_FAILED)
+  else if ((response_r1 & SDMMC_OCR_LOCK_UNLOCK_FAILED) == SDMMC_OCR_LOCK_UNLOCK_FAILED)
   {
     return SDMMC_ERROR_LOCK_UNLOCK_FAILED;
   }
-  else if((response_r1 & SDMMC_OCR_COM_CRC_FAILED) == SDMMC_OCR_COM_CRC_FAILED)
+  else if ((response_r1 & SDMMC_OCR_COM_CRC_FAILED) == SDMMC_OCR_COM_CRC_FAILED)
   {
     return SDMMC_ERROR_COM_CRC_FAILED;
   }
-  else if((response_r1 & SDMMC_OCR_ILLEGAL_CMD) == SDMMC_OCR_ILLEGAL_CMD)
+  else if ((response_r1 & SDMMC_OCR_ILLEGAL_CMD) == SDMMC_OCR_ILLEGAL_CMD)
   {
     return SDMMC_ERROR_ILLEGAL_CMD;
   }
-  else if((response_r1 & SDMMC_OCR_CARD_ECC_FAILED) == SDMMC_OCR_CARD_ECC_FAILED)
+  else if ((response_r1 & SDMMC_OCR_CARD_ECC_FAILED) == SDMMC_OCR_CARD_ECC_FAILED)
   {
     return SDMMC_ERROR_CARD_ECC_FAILED;
   }
-  else if((response_r1 & SDMMC_OCR_CC_ERROR) == SDMMC_OCR_CC_ERROR)
+  else if ((response_r1 & SDMMC_OCR_CC_ERROR) == SDMMC_OCR_CC_ERROR)
   {
     return SDMMC_ERROR_CC_ERR;
   }
-  else if((response_r1 & SDMMC_OCR_STREAM_READ_UNDERRUN) == SDMMC_OCR_STREAM_READ_UNDERRUN)
+  else if ((response_r1 & SDMMC_OCR_STREAM_READ_UNDERRUN) == SDMMC_OCR_STREAM_READ_UNDERRUN)
   {
     return SDMMC_ERROR_STREAM_READ_UNDERRUN;
   }
-  else if((response_r1 & SDMMC_OCR_STREAM_WRITE_OVERRUN) == SDMMC_OCR_STREAM_WRITE_OVERRUN)
+  else if ((response_r1 & SDMMC_OCR_STREAM_WRITE_OVERRUN) == SDMMC_OCR_STREAM_WRITE_OVERRUN)
   {
     return SDMMC_ERROR_STREAM_WRITE_OVERRUN;
   }
-  else if((response_r1 & SDMMC_OCR_CID_CSD_OVERWRITE) == SDMMC_OCR_CID_CSD_OVERWRITE)
+  else if ((response_r1 & SDMMC_OCR_CID_CSD_OVERWRITE) == SDMMC_OCR_CID_CSD_OVERWRITE)
   {
     return SDMMC_ERROR_CID_CSD_OVERWRITE;
   }
-  else if((response_r1 & SDMMC_OCR_WP_ERASE_SKIP) == SDMMC_OCR_WP_ERASE_SKIP)
+  else if ((response_r1 & SDMMC_OCR_WP_ERASE_SKIP) == SDMMC_OCR_WP_ERASE_SKIP)
   {
     return SDMMC_ERROR_WP_ERASE_SKIP;
   }
-  else if((response_r1 & SDMMC_OCR_CARD_ECC_DISABLED) == SDMMC_OCR_CARD_ECC_DISABLED)
+  else if ((response_r1 & SDMMC_OCR_CARD_ECC_DISABLED) == SDMMC_OCR_CARD_ECC_DISABLED)
   {
     return SDMMC_ERROR_CARD_ECC_DISABLED;
   }
-  else if((response_r1 & SDMMC_OCR_ERASE_RESET) == SDMMC_OCR_ERASE_RESET)
+  else if ((response_r1 & SDMMC_OCR_ERASE_RESET) == SDMMC_OCR_ERASE_RESET)
   {
     return SDMMC_ERROR_ERASE_RESET;
   }
-  else if((response_r1 & SDMMC_OCR_AKE_SEQ_ERROR) == SDMMC_OCR_AKE_SEQ_ERROR)
+  else if ((response_r1 & SDMMC_OCR_AKE_SEQ_ERROR) == SDMMC_OCR_AKE_SEQ_ERROR)
   {
     return SDMMC_ERROR_AKE_SEQ_ERR;
   }
@@ -1362,12 +1365,12 @@ static uint32_t SDMMC_GetCmdResp1(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint32_
   * @param  hsd: SD handle
   * @retval SD Card error state
   */
-static uint32_t SDMMC_GetCmdResp2(SDMMC_TypeDef *SDMMCx)
+uint32_t SDMMC_GetCmdResp2(SDMMC_TypeDef *SDMMCx)
 {
   uint32_t sta_reg;
   /* 8 is the number of required instructions cycles for the below loop statement.
   The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U / 1000U);
 
   do
   {
@@ -1376,8 +1379,8 @@ static uint32_t SDMMC_GetCmdResp2(SDMMC_TypeDef *SDMMCx)
       return SDMMC_ERROR_TIMEOUT;
     }
     sta_reg = SDMMCx->STA;
-  }while(((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT)) == 0U) ||
-         ((sta_reg & SDMMC_FLAG_CMDACT) != 0U ));
+  } while (((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT)) == 0U) ||
+           ((sta_reg & SDMMC_FLAG_CMDACT) != 0U));
 
   if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
   {
@@ -1406,12 +1409,12 @@ static uint32_t SDMMC_GetCmdResp2(SDMMC_TypeDef *SDMMCx)
   * @param  hsd: SD handle
   * @retval SD Card error state
   */
-static uint32_t SDMMC_GetCmdResp3(SDMMC_TypeDef *SDMMCx)
+uint32_t SDMMC_GetCmdResp3(SDMMC_TypeDef *SDMMCx)
 {
   uint32_t sta_reg;
   /* 8 is the number of required instructions cycles for the below loop statement.
   The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U / 1000U);
 
   do
   {
@@ -1420,10 +1423,10 @@ static uint32_t SDMMC_GetCmdResp3(SDMMC_TypeDef *SDMMCx)
       return SDMMC_ERROR_TIMEOUT;
     }
     sta_reg = SDMMCx->STA;
-  }while(((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT)) == 0U) ||
-         ((sta_reg & SDMMC_FLAG_CMDACT) != 0U ));
+  } while (((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT)) == 0U) ||
+           ((sta_reg & SDMMC_FLAG_CMDACT) != 0U));
 
-  if(__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
+  if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
   {
     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT);
 
@@ -1446,14 +1449,14 @@ static uint32_t SDMMC_GetCmdResp3(SDMMC_TypeDef *SDMMCx)
   *         address RCA
   * @retval SD Card error state
   */
-static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_t *pRCA)
+uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_t *pRCA)
 {
   uint32_t response_r1;
   uint32_t sta_reg;
 
   /* 8 is the number of required instructions cycles for the below loop statement.
   The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U / 1000U);
 
   do
   {
@@ -1462,16 +1465,16 @@ static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_
       return SDMMC_ERROR_TIMEOUT;
     }
     sta_reg = SDMMCx->STA;
-  }while(((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT)) == 0U) ||
-         ((sta_reg & SDMMC_FLAG_CMDACT) != 0U ));
+  } while (((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT)) == 0U) ||
+           ((sta_reg & SDMMC_FLAG_CMDACT) != 0U));
 
-  if(__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
+  if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
   {
     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT);
 
     return SDMMC_ERROR_CMD_RSP_TIMEOUT;
   }
-  else if(__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL))
+  else if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL))
   {
     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL);
 
@@ -1483,7 +1486,7 @@ static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_
   }
 
   /* Check response received is of desired command */
-  if(SDMMC_GetCommandResponse(SDMMCx) != SD_CMD)
+  if (SDMMC_GetCommandResponse(SDMMCx) != SD_CMD)
   {
     return SDMMC_ERROR_CMD_CRC_FAIL;
   }
@@ -1494,17 +1497,18 @@ static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_
   /* We have received response, retrieve it.  */
   response_r1 = SDMMC_GetResponse(SDMMCx, SDMMC_RESP1);
 
-  if((response_r1 & (SDMMC_R6_GENERAL_UNKNOWN_ERROR | SDMMC_R6_ILLEGAL_CMD | SDMMC_R6_COM_CRC_FAILED)) == SDMMC_ALLZERO)
+  if ((response_r1 & (SDMMC_R6_GENERAL_UNKNOWN_ERROR | SDMMC_R6_ILLEGAL_CMD |
+                      SDMMC_R6_COM_CRC_FAILED)) == SDMMC_ALLZERO)
   {
-    *pRCA = (uint16_t) (response_r1 >> 16);
+    *pRCA = (uint16_t)(response_r1 >> 16);
 
     return SDMMC_ERROR_NONE;
   }
-  else if((response_r1 & SDMMC_R6_ILLEGAL_CMD) == SDMMC_R6_ILLEGAL_CMD)
+  else if ((response_r1 & SDMMC_R6_ILLEGAL_CMD) == SDMMC_R6_ILLEGAL_CMD)
   {
     return SDMMC_ERROR_ILLEGAL_CMD;
   }
-  else if((response_r1 & SDMMC_R6_COM_CRC_FAILED) == SDMMC_R6_COM_CRC_FAILED)
+  else if ((response_r1 & SDMMC_R6_COM_CRC_FAILED) == SDMMC_R6_COM_CRC_FAILED)
   {
     return SDMMC_ERROR_COM_CRC_FAILED;
   }
@@ -1519,12 +1523,12 @@ static uint32_t SDMMC_GetCmdResp6(SDMMC_TypeDef *SDMMCx, uint8_t SD_CMD, uint16_
   * @param  hsd: SD handle
   * @retval SD Card error state
   */
-static uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx)
+uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx)
 {
   uint32_t sta_reg;
   /* 8 is the number of required instructions cycles for the below loop statement.
   The SDMMC_CMDTIMEOUT is expressed in ms */
-  register uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U /1000U);
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U / 1000U);
 
   do
   {
@@ -1533,10 +1537,10 @@ static uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx)
       return SDMMC_ERROR_TIMEOUT;
     }
     sta_reg = SDMMCx->STA;
-  }while(((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT)) == 0U) ||
-         ((sta_reg & SDMMC_FLAG_CMDACT) != 0U ));
+  } while (((sta_reg & (SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT)) == 0U) ||
+           ((sta_reg & SDMMC_FLAG_CMDACT) != 0U));
 
-  if(__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
+  if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
   {
     /* Card is SD V2.0 compliant */
     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT);
@@ -1544,7 +1548,7 @@ static uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx)
     return SDMMC_ERROR_CMD_RSP_TIMEOUT;
   }
 
-  else if(__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL))
+  else if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL))
   {
     /* Card is SD V2.0 compliant */
     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL);
@@ -1556,7 +1560,7 @@ static uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx)
     /* Nothing to do */
   }
 
-  if(__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CMDREND))
+  if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CMDREND))
   {
     /* Card is SD V2.0 compliant */
     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CMDREND);
@@ -1564,6 +1568,41 @@ static uint32_t SDMMC_GetCmdResp7(SDMMC_TypeDef *SDMMCx)
 
   return SDMMC_ERROR_NONE;
 
+}
+
+/**
+  * @}
+  */
+
+/* Private function ----------------------------------------------------------*/
+/** @addtogroup SD_Private_Functions
+  * @{
+  */
+
+/**
+  * @brief  Checks for error conditions for CMD0.
+  * @param  hsd: SD handle
+  * @retval SD Card error state
+  */
+static uint32_t SDMMC_GetCmdError(SDMMC_TypeDef *SDMMCx)
+{
+  /* 8 is the number of required instructions cycles for the below loop statement.
+  The SDMMC_CMDTIMEOUT is expressed in ms */
+  uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U / 1000U);
+
+  do
+  {
+    if (count-- == 0U)
+    {
+      return SDMMC_ERROR_TIMEOUT;
+    }
+
+  } while (!__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CMDSENT));
+
+  /* Clear all the static flags */
+  __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_STATIC_CMD_FLAGS);
+
+  return SDMMC_ERROR_NONE;
 }
 
 /**

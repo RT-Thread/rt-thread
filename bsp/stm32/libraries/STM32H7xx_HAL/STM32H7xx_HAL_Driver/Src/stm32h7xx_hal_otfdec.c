@@ -305,7 +305,8 @@ __weak void HAL_OTFDEC_MspDeInit(OTFDEC_HandleTypeDef *hotfdec)
   * @param  pCallback pointer to the Callback function
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_OTFDEC_RegisterCallback(OTFDEC_HandleTypeDef *hotfdec, HAL_OTFDEC_CallbackIDTypeDef CallbackID, pOTFDEC_CallbackTypeDef pCallback)
+HAL_StatusTypeDef HAL_OTFDEC_RegisterCallback(OTFDEC_HandleTypeDef *hotfdec, HAL_OTFDEC_CallbackIDTypeDef CallbackID, 
+                                              pOTFDEC_CallbackTypeDef pCallback)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
@@ -577,7 +578,7 @@ HAL_StatusTypeDef HAL_OTFDEC_RegionKeyLock(OTFDEC_HandleTypeDef *hotfdec, uint32
   *         the configuration information for OTFDEC module
   * @param  RegionIndex index of region the keys of which are set
   * @param  pKey pointer at set of keys
-  * @note   The API reads the key CRC computed by the peripheral and compares it with thzt
+  * @note   The API reads the key CRC computed by the peripheral and compares it with that
   *         theoretically expected. An error is reported if they are different.
   * @retval HAL state
   */
@@ -644,10 +645,14 @@ HAL_StatusTypeDef HAL_OTFDEC_RegionSetKey(OTFDEC_HandleTypeDef *hotfdec, uint32_
   *         the configuration information for OTFDEC module
   * @param  RegionIndex index of region the mode of which is set
   * @param  mode This parameter can be only:
-  *           @arg @ref OTFDEC_REG_MODE_INSTRUCTION_ACCESSES_ONLY             Only instruction accesses are decrypted
-  *           @arg @ref OTFDEC_REG_MODE_DATA_ACCESSES_ONLY                    Only data accesses are decrypted
-  *           @arg @ref OTFDEC_REG_MODE_INSTRUCTION_OR_DATA_ACCESSES          All read accesses are decrypted (instruction or data)
-  *           @arg @ref OTFDEC_REG_MODE_INSTRUCTION_ACCESSES_ONLY_WITH_CIPHER Only instruction accesses are decrypted with proprietary cipher activated
+  *           @arg @ref OTFDEC_REG_MODE_INSTRUCTION_ACCESSES_ONLY            
+                        Only instruction accesses are decrypted
+  *           @arg @ref OTFDEC_REG_MODE_DATA_ACCESSES_ONLY                    
+                        Only data accesses are decrypted
+  *           @arg @ref OTFDEC_REG_MODE_INSTRUCTION_OR_DATA_ACCESSES         
+                        All read accesses are decrypted (instruction or data)
+  *           @arg @ref OTFDEC_REG_MODE_INSTRUCTION_ACCESSES_ONLY_WITH_CIPHER 
+                        Only instruction accesses are decrypted with proprietary cipher activated
   * @retval HAL state
   */
 HAL_StatusTypeDef HAL_OTFDEC_RegionSetMode(OTFDEC_HandleTypeDef *hotfdec, uint32_t RegionIndex, uint32_t mode)
@@ -689,7 +694,8 @@ HAL_StatusTypeDef HAL_OTFDEC_RegionSetMode(OTFDEC_HandleTypeDef *hotfdec, uint32
   *          @arg @ref OTFDEC_REG_CONFIGR_LOCK_ENABLE       OTFDEC region configuration is locked
   * @retval HAL state
   */
-HAL_StatusTypeDef HAL_OTFDEC_RegionConfig(OTFDEC_HandleTypeDef *hotfdec, uint32_t RegionIndex, OTFDEC_RegionConfigTypeDef *Config, uint32_t lock)
+HAL_StatusTypeDef HAL_OTFDEC_RegionConfig(OTFDEC_HandleTypeDef *hotfdec, uint32_t RegionIndex, 
+                                          OTFDEC_RegionConfigTypeDef *Config, uint32_t lock)
 {
   OTFDEC_Region_TypeDef * region;
   uint32_t address;
@@ -723,7 +729,8 @@ HAL_StatusTypeDef HAL_OTFDEC_RegionConfig(OTFDEC_HandleTypeDef *hotfdec, uint32_
     WRITE_REG( region->REG_END_ADDR, Config->EndAddress);
 
     /* Write Version */
-    MODIFY_REG( region->REG_CONFIGR, OTFDEC_REG_CONFIGR_VERSION, (uint32_t)(Config->Version) << OTFDEC_REG_CONFIGR_VERSION_Pos );
+    MODIFY_REG( region->REG_CONFIGR, OTFDEC_REG_CONFIGR_VERSION, 
+	          (uint32_t)(Config->Version) << OTFDEC_REG_CONFIGR_VERSION_Pos );
 
     /* Enable region deciphering or enciphering (depending of OTFDEC_CR ENC bit setting) */
     SET_BIT( region->REG_CONFIGR, OTFDEC_REG_CONFIGR_REG_ENABLE);
@@ -754,7 +761,9 @@ uint32_t HAL_OTFDEC_KeyCRCComputation(uint32_t *pKey)
   uint32_t key_strobe[4] = {0xAA55AA55U, 0x3U, 0x18U, 0xC0U};
   uint8_t  i;
   uint8_t crc = 0;
-  uint32_t  j, keyval, k;
+  uint32_t  j;
+  uint32_t  keyval;
+  uint32_t  k;
   uint32_t * temp = pKey;
 
   for (j = 0U; j < 4U; j++)
@@ -935,7 +944,8 @@ uint32_t HAL_OTFDEC_RegionGetKeyCRC(OTFDEC_HandleTypeDef *hotfdec, uint32_t Regi
   * @param  Config pointer on structure that will be filled up with the region configuration parameters
   * @retval HAL state
   */
-HAL_StatusTypeDef HAL_OTFDEC_RegionGetConfig(OTFDEC_HandleTypeDef *hotfdec, uint32_t RegionIndex, OTFDEC_RegionConfigTypeDef *Config)
+HAL_StatusTypeDef HAL_OTFDEC_RegionGetConfig(OTFDEC_HandleTypeDef *hotfdec, uint32_t RegionIndex,
+                                             OTFDEC_RegionConfigTypeDef *Config)
 {
   OTFDEC_Region_TypeDef * region;
   uint32_t address;
@@ -965,7 +975,8 @@ HAL_StatusTypeDef HAL_OTFDEC_RegionGetConfig(OTFDEC_HandleTypeDef *hotfdec, uint
     Config->EndAddress = READ_REG(region->REG_END_ADDR);
 
     /* Read Version */
-    Config->Version = (uint16_t)(READ_REG(region->REG_CONFIGR) & OTFDEC_REG_CONFIGR_VERSION) >> OTFDEC_REG_CONFIGR_VERSION_Pos;
+    Config->Version = (uint16_t)(READ_REG(region->REG_CONFIGR) & 
+	                             OTFDEC_REG_CONFIGR_VERSION) >> OTFDEC_REG_CONFIGR_VERSION_Pos;
 
     /* Release Lock */
     __HAL_UNLOCK(hotfdec);
