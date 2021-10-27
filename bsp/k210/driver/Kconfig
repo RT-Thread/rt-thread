@@ -1,3 +1,5 @@
+menu "Hardware Drivers Config"
+
 config BSP_USING_UART_HS
     bool "Enable High Speed UART"
     default y
@@ -192,4 +194,6 @@ if BSP_USING_CAMERA
         int "CMOS HREF pin number for camera"
         default 17
 endif
+
+endmenu
 
