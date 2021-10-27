@@ -151,6 +151,9 @@ if BSP_USING_LCD
         config  BSP_BOARD_K210_OPENMV_TEST
             bool "board_k210_openmv lcd scan: DIR_YX_LRUD"
 
+        config  BSP_BOARD_K210_DRACO
+            bool "board_k210_Draco lcd scan: DIR_YX_LRUD"
+
         config  BSP_BOARD_USER
             bool "board_user: user defined."    
     endchoice
