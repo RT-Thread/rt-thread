@@ -14,16 +14,15 @@
  * 2020-02-13     Meco Man     re-implement exit() and abort()
  * 2020-02-14     Meco Man     implement _sys_tmpnam()
  */
-
 #include <string.h>
 #include <rt_sys.h>
 
 #include <rtthread.h>
 #include "libc.h"
 
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#endif
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #define DBG_TAG    "armlibc.syscalls"
 #define DBG_LVL    DBG_INFO
@@ -55,7 +54,7 @@ const char __stderr_name[] = "STDERR";
  */
 FILEHANDLE _sys_open(const char *name, int openmode)
 {
-#ifdef RT_USING_DFS
+#ifdef RT_LIBC_USING_FILEIO
     int fd;
     int mode = O_RDONLY;
 #endif
@@ -68,8 +67,8 @@ FILEHANDLE _sys_open(const char *name, int openmode)
     if (strcmp(name, __stderr_name) == 0)
         return (STDERR);
 
-#ifndef RT_USING_DFS
-    return -1;
+#ifndef RT_LIBC_USING_FILEIO
+    return 0; /* error */
 #else
     /* Correct openmode from fopen to open */
     if (openmode & OPEN_PLUS)
@@ -99,21 +98,22 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 
     fd = open(name, mode, 0);
     if (fd < 0)
-        return -1;
+        return 0; /* error */
     else
         return fd;
-#endif
+#endif /* RT_LIBC_USING_FILEIO */
 }
 
 int _sys_close(FILEHANDLE fh)
 {
-#ifndef RT_USING_DFS
-    return 0;
-#else
-    if (fh <= STDERR) return 0;
+#ifdef RT_LIBC_USING_FILEIO
+    if (fh <= STDERR)
+        return 0; /* error */
 
     return close(fh);
-#endif
+#else
+    return 0;
+#endif /* RT_LIBC_USING_FILEIO */
 }
 
 /*
@@ -143,13 +143,11 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_DFS
+#ifdef RT_LIBC_USING_FILEIO
     int size;
-#endif
 
     if (fh == STDIN)
     {
-#ifdef RT_USING_POSIX
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard output before initializing libc");
@@ -157,25 +155,20 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
         }
         size = read(STDIN_FILENO, buf, len);
         return len - size;
-#else
-        /* no stdin */
-        return -1;
-#endif
     }
     else if ((fh == STDOUT) || (fh == STDERR))
     {
-        return -1;
+        return 0; /* error */
     }
 
-#ifndef RT_USING_DFS
-    return 0;
-#else
     size = read(fh, buf, len);
     if (size >= 0)
         return len - size;
     else
-        return -1;
-#endif
+        return 0; /* error */
+#else
+    return 0; /* error */
+#endif /* RT_LIBC_USING_FILEIO */
 }
 
 /*
@@ -185,16 +178,13 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
  */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_DFS
+#ifdef RT_LIBC_USING_FILEIO
     int size;
-#endif
+#endif /* RT_LIBC_USING_FILEIO */
 
     if ((fh == STDOUT) || (fh == STDERR))
     {
-#if !defined(RT_USING_CONSOLE) || !defined(RT_USING_DEVICE)
-        return 0;
-#else
-#ifdef RT_USING_POSIX
+#ifdef RT_LIBC_USING_FILEIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard input before initializing libc");
@@ -202,31 +192,29 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         }
         size = write(STDOUT_FILENO, buf, len);
         return len - size;
-#else
+#elif defined(RT_USING_CONSOLE)
         if (rt_console_get_device())
         {
             rt_device_write(rt_console_get_device(), -1, buf, len);
-            return 0;
         }
 
-        return -1;
-#endif
-#endif
+        return 0; /* error */
+#endif /* RT_LIBC_USING_FILEIO */
     }
     else if (fh == STDIN)
     {
-        return -1;
+        return 0; /* error */
     }
 
-#ifndef RT_USING_DFS
-    return 0;
-#else
+#ifdef RT_LIBC_USING_FILEIO
     size = write(fh, buf, len);
     if (size >= 0)
         return len - size;
     else
-        return -1;
-#endif
+        return 0; /* error */
+#else
+    return 0;
+#endif /* RT_LIBC_USING_FILEIO */
 }
 
 /*
@@ -235,16 +223,15 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
  */
 int _sys_seek(FILEHANDLE fh, long pos)
 {
+#ifdef RT_LIBC_USING_FILEIO
     if (fh < STDERR)
-        return -1;
-
-#ifndef RT_USING_DFS
-    return -1;
-#else
+        return 0; /* error */
 
     /* position is relative to the start of file fh */
     return lseek(fh, pos, 0);
-#endif
+#else
+    return 0; /* error */
+#endif /* RT_LIBC_USING_FILEIO */
 }
 
 /**
@@ -270,7 +257,7 @@ void _ttywrch(int ch)
 
     c = (char)ch;
     rt_kprintf(&c);
-#endif
+#endif /* RT_USING_CONSOLE */
 }
 
 /* for exit() and abort() */
@@ -289,17 +276,17 @@ RT_WEAK void _sys_exit(int return_code)
  */
 long _sys_flen(FILEHANDLE fh)
 {
-#ifdef RT_USING_DFS
+#ifdef RT_LIBC_USING_FILEIO
     struct stat stat;
 
     if (fh < STDERR)
-        return -1;
+        return 0; /* error */
 
     fstat(fh, &stat);
     return stat.st_size;
 #else
-    return -1;
-#endif
+    return 0;
+#endif /* RT_LIBC_USING_FILEIO */
 }
 
 int _sys_istty(FILEHANDLE fh)
@@ -312,11 +299,11 @@ int _sys_istty(FILEHANDLE fh)
 
 int remove(const char *filename)
 {
-#ifndef RT_USING_DFS
-    return -1;
-#else
+#ifdef RT_LIBC_USING_FILEIO
     return unlink(filename);
-#endif
+#else
+    return 0; /* error */
+#endif /* RT_LIBC_USING_FILEIO */
 }
 
 #ifdef __MICROLIB
@@ -324,28 +311,32 @@ int remove(const char *filename)
 
 int fputc(int c, FILE *f)
 {
+#ifdef RT_USING_CONSOLE
     char ch[2] = {0};
 
     ch[0] = c;
     rt_kprintf(&ch[0]);
     return 1;
+#else
+    return 0; /* error */
+#endif /* RT_USING_CONSOLE */
 }
 
 int fgetc(FILE *f)
 {
-#ifdef RT_USING_POSIX
+#ifdef RT_LIBC_USING_FILEIO
     char ch;
 
     if (libc_stdio_get_console() < 0)
     {
         LOG_W("Do not invoke standard output before initializing libc");
-        return -1;
+        return 0;
     }
 
     if(read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
-#endif
-
-    return -1;
+#endif /* RT_LIBC_USING_FILEIO */
+    return 0; /* error */
 }
-#endif
+
+#endif /* __MICROLIB */

@@ -8,17 +8,15 @@
  * 2015-01-28     Bernard      first version
  */
 #include <rtthread.h>
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#endif
 #include <yfuns.h>
+#include <unistd.h>
 
 #pragma module_name = "?remove"
 int remove(const char *val)
 {
-#ifndef RT_USING_DFS
-    return -1;
-#else
+#ifdef RT_USING_POSIX
     return unlink(val);
-#endif
+#else
+    return -1;
+#endif /* RT_USING_POSIX */
 }

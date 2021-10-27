@@ -7,15 +7,15 @@
  * Date           Author       Notes
  * 2017/10/15     bernard      the first version
  */
+#include <rtthread.h>
+
+#ifdef RT_LIBC_USING_FILEIO
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <rtthread.h>
 #include "libc.h"
 
 #define STDIO_DEVICE_NAME_MAX   32
-
-int _EXFUN(fileno, (FILE *));
 
 static FILE* std_console = NULL;
 
@@ -79,3 +79,5 @@ int libc_stdio_get_console(void)
     else
         return -1;
 }
+
+#endif /* RT_LIBC_USING_FILEIO */

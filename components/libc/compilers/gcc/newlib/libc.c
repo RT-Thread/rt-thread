@@ -12,34 +12,23 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/time.h>
-
 #include "libc.h"
 
 #ifdef RT_USING_PTHREADS
 #include <pthread.h>
 #endif
 
-int _EXFUN(putenv,(char *__string));
-
 int libc_system_init(void)
 {
-#if defined(RT_USING_DFS) & defined(RT_USING_DFS_DEVFS) & defined(RT_USING_CONSOLE)
+#ifdef RT_LIBC_USING_FILEIO
     rt_device_t dev_console;
 
     dev_console = rt_console_get_device();
     if (dev_console)
     {
-    #if defined(RT_USING_POSIX)
         libc_stdio_set_console(dev_console->parent.name, O_RDWR);
-    #else
-        libc_stdio_set_console(dev_console->parent.name, O_WRONLY);
-    #endif
     }
-
-    /* set PATH and HOME */
-    putenv("PATH=/bin");
-    putenv("HOME=/home");
-#endif
+#endif /* RT_LIBC_USING_FILEIO */
 
 #if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
     pthread_system_init();
