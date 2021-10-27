@@ -145,18 +145,17 @@ void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
 int finsh_getchar(void)
 {
 #ifdef RT_USING_DEVICE
+    char ch = 0;
 #ifdef RT_USING_POSIX
-    int c;
-    if(read(STDIN_FILENO,&c,1)>0)
+    if(read(STDIN_FILENO, &ch, 1) > 0)
     {
-        return c;
+        return ch;
     }
     else
     {
         return -1; /* EOF */
     }
 #else
-    char ch = 0;
     rt_device_t device;
 
     RT_ASSERT(shell != RT_NULL);
