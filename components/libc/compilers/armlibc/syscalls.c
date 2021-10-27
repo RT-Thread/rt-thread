@@ -54,7 +54,7 @@ const char __stderr_name[] = "STDERR";
  */
 FILEHANDLE _sys_open(const char *name, int openmode)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     int fd;
     int mode = O_RDONLY;
 #endif
@@ -67,7 +67,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
     if (strcmp(name, __stderr_name) == 0)
         return (STDERR);
 
-#ifndef RT_LIBC_USING_FILEIO
+#ifndef RT_USING_POSIX
     return 0; /* error */
 #else
     /* Correct openmode from fopen to open */
@@ -101,19 +101,19 @@ FILEHANDLE _sys_open(const char *name, int openmode)
         return 0; /* error */
     else
         return fd;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 int _sys_close(FILEHANDLE fh)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     if (fh <= STDERR)
         return 0; /* error */
 
     return close(fh);
 #else
     return 0;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 /*
@@ -143,7 +143,7 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     int size;
 
     if (fh == STDIN)
@@ -168,7 +168,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
         return 0; /* error */
 #else
     return 0; /* error */
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 /*
@@ -178,13 +178,13 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
  */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     int size;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 
     if ((fh == STDOUT) || (fh == STDERR))
     {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard input before initializing libc");
@@ -199,14 +199,14 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         }
 
         return 0; /* error */
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
     }
     else if (fh == STDIN)
     {
         return 0; /* error */
     }
 
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     size = write(fh, buf, len);
     if (size >= 0)
         return len - size;
@@ -214,7 +214,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         return 0; /* error */
 #else
     return 0;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 /*
@@ -223,7 +223,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
  */
 int _sys_seek(FILEHANDLE fh, long pos)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     if (fh < STDERR)
         return 0; /* error */
 
@@ -231,7 +231,7 @@ int _sys_seek(FILEHANDLE fh, long pos)
     return lseek(fh, pos, 0);
 #else
     return 0; /* error */
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 /**
@@ -276,7 +276,7 @@ RT_WEAK void _sys_exit(int return_code)
  */
 long _sys_flen(FILEHANDLE fh)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     struct stat stat;
 
     if (fh < STDERR)
@@ -286,7 +286,7 @@ long _sys_flen(FILEHANDLE fh)
     return stat.st_size;
 #else
     return 0;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 int _sys_istty(FILEHANDLE fh)
@@ -299,11 +299,11 @@ int _sys_istty(FILEHANDLE fh)
 
 int remove(const char *filename)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     return unlink(filename);
 #else
     return 0; /* error */
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 #ifdef __MICROLIB
@@ -324,7 +324,7 @@ int fputc(int c, FILE *f)
 
 int fgetc(FILE *f)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     char ch;
 
     if (libc_stdio_get_console() < 0)
@@ -335,7 +335,7 @@ int fgetc(FILE *f)
 
     if(read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
     return 0; /* error */
 }
 

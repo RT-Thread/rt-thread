@@ -18,9 +18,9 @@ long __lseek(int handle, long offset, int whence)
         handle == _LLIO_STDERR ||
         handle == _LLIO_STDIN)
         return _LLIO_ERROR;
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     return lseek(handle, offset, whence);
 #else
     return _LLIO_ERROR;
-#endif
+#endif /* RT_USING_POSIX */
 }
