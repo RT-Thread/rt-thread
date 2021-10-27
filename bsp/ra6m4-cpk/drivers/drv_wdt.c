@@ -44,7 +44,6 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
         /**< set*/
-//        g_wdt_cfg.timeout = *(rt_uint32_t *)arg;
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
         wdt_value = (struct st_wdt_timeout_values *)arg;

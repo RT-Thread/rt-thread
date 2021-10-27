@@ -141,6 +141,9 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
+        config BSP_USING_ONCHIP_FLASH
+            bool "Enable Onchip FLASH"
+            default n
     endmenu
 
     menu "Board extended module Drivers"
