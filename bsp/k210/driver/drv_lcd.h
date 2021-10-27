@@ -58,7 +58,7 @@ void lcd_draw_rectangle(int x1, int y1, int x2, int y2);
 void lcd_draw_circle(int x1, int y1, int r);
 void lcd_set_color(int back, int fore);
 void lcd_show_image(int x, int y, int length, int wide, const unsigned char *buf);
-
+int lcd_init(void);
 void lcd_set_direction(lcd_dir_t dir);
 
 #endif
