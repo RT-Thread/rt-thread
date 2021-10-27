@@ -125,8 +125,8 @@ void smartconfig_demo(void)
     rt_smartconfig_start(SMARTCONFIG_TYPE_AIRKISS, SMARTCONFIG_ENCRYPT_NONE, RT_NULL, smartconfig_result);
 }
 
-#ifdef RT_USING_FINSH
-#include "finsh.h"
+#ifdef RT_USING_MSH
+#include "msh.h"
 MSH_CMD_EXPORT(smartconfig_demo, smartconfig demo);
 #endif
 

@@ -36,11 +36,10 @@ void machine_shutdown()
 
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 
-#include <finsh.h>
+#include <msh.h>
 
-#ifdef FINSH_USING_MSH
 int cmd_reset(int argc, char** argv)
 {
     rt_hw_cpu_reset();
@@ -55,7 +54,6 @@ int cmd_shutdown(int argc, char** argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_shutdown, shutdown, shutdown the system);
 
-#endif
 #endif
 
 /*@}*/

@@ -39,7 +39,7 @@ static void rt_thread_entry_led1(void* parameter)
     while (1)
     {
         /* led1 on */
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led1 on,count : %d\r\n",count);
 #endif
         count++;
@@ -48,7 +48,7 @@ static void rt_thread_entry_led1(void* parameter)
         rt_thread_delay(RT_TICK_PER_SECOND/2);
 
         /* led1 off */
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led1 off\r\n");
 #endif
         rt_hw_led_off(1);
@@ -65,7 +65,7 @@ void rt_thread_entry_led2(void* parameter)
     while (1)
     {
         /* led2 on */
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led2 on,count : %d\r\n",count);
 #endif
         count++;
@@ -73,7 +73,7 @@ void rt_thread_entry_led2(void* parameter)
         rt_thread_delay(RT_TICK_PER_SECOND);
 
         /* led2 off */
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led2 off\r\n");
 #endif
         rt_hw_led_off(2);

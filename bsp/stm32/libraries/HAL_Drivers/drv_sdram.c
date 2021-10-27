@@ -190,7 +190,7 @@ static int SDRAM_Init(void)
 INIT_BOARD_EXPORT(SDRAM_Init);
 
 #ifdef DRV_DEBUG
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
 int sdram_test(void)
 {
     int i = 0;
@@ -259,6 +259,6 @@ int sdram_test(void)
     return RT_EOK;
 }
 MSH_CMD_EXPORT(sdram_test, sdram test)
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_MSH */
 #endif /* DRV_DEBUG */
 #endif /* BSP_USING_SDRAM */

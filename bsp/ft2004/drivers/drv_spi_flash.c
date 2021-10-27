@@ -16,7 +16,7 @@
 #include <drv_spi.h>
 #include <rtdevice.h>
 #include <rthw.h>
-#include <finsh.h>
+#include <msh.h>
 #include "ft_spi.h"
 
 #ifdef BSP_USE_SPI

@@ -23,7 +23,7 @@ void rt_hw_board_init(void);
 void rt_hw_led_set(int led);
 void rt_hw_led_flash(void);
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 void rt_hw_finsh_init(void);
 #endif
 

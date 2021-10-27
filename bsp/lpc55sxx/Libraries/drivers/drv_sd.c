@@ -21,7 +21,7 @@
 
 #include "drv_sd.h"
 
-#include <finsh.h>
+#include <msh.h>
 #include <dfs.h>
 #include <dfs_fs.h>
 #include "board.h"

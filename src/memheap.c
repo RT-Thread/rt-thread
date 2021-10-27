@@ -727,7 +727,7 @@ void rt_memheap_free(void *ptr)
 }
 RTM_EXPORT(rt_memheap_free);
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 static void _memheap_dump_tag(struct rt_memheap_item *item)
 {
     rt_uint8_t name[2 * sizeof(void *)];
@@ -796,13 +796,13 @@ int memheaptrace(void)
     if (count > 0)
     {
         int index;
-#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+#if defined(RT_USING_MSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         extern int list_memheap(void);
 #endif
 
         heaps = (struct rt_memheap **)rt_malloc(sizeof(struct rt_memheap *) * count);
         if (heaps == RT_NULL) return 0;
-#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+#if defined(RT_USING_MSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         list_memheap();
 #endif
         rt_kprintf("memheap header size: %d\n", RT_MEMHEAP_SIZE);
@@ -818,7 +818,7 @@ int memheaptrace(void)
     return 0;
 }
 MSH_CMD_EXPORT(memheaptrace, dump memory trace information);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #ifdef RT_USING_MEMHEAP_AS_HEAP
 static struct rt_memheap _heap;
@@ -1126,10 +1126,10 @@ void memtrace_heap()
     }
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 MSH_CMD_EXPORT(memtrace_heap, dump memory trace for heap);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #endif /* RT_USING_MEMTRACE */
 

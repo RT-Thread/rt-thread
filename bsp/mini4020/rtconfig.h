@@ -72,8 +72,8 @@
 
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
-#define RT_USING_FINSH
-#define FINSH_USING_SYMTAB
+#define RT_USING_MSH
+#define MSH_USING_SYMTAB
 #define FINSH USING DESCRIPTION
 
 /* SECTION: a runtime libc library */

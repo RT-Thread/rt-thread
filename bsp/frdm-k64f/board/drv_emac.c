@@ -14,7 +14,7 @@
 
 #if defined(RT_USING_LWIP)
 
-#include <finsh.h>
+#include <msh.h>
 #include <stdint.h>
 #include <netif/ethernetif.h>
 #include <lwip/opt.h>

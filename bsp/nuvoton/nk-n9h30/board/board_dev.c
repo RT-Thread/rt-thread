@@ -244,7 +244,7 @@ static void LCMLightOn(void)
         rt_kprintf("Can't find %s\n", PWM_DEV_NAME);
     }
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
     MSH_CMD_EXPORT(LCMLightOn, LCM - light on panel);
 #endif
 
@@ -278,7 +278,7 @@ int buzzer_test(void)
     PlayRingTone();
     return 0;
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
     MSH_CMD_EXPORT(buzzer_test, Buzzer - Play ring tone);
 #endif
 #endif /* BOARD_USING_BUZZER */

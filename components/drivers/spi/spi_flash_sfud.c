@@ -509,9 +509,9 @@ __error:
     return RT_NULL;
 }
 
-#if defined(RT_USING_FINSH)
+#if defined(RT_USING_MSH)
 
-#include <finsh.h>
+#include <msh.h>
 
 static void sf(uint8_t argc, char **argv) {
 
@@ -774,6 +774,6 @@ static void sf(uint8_t argc, char **argv) {
     }
 }
 MSH_CMD_EXPORT(sf, SPI Flash operate.);
-#endif /* defined(RT_USING_FINSH) */
+#endif /* defined(RT_USING_MSH) */
 
 #endif /* RT_USING_SFUD */

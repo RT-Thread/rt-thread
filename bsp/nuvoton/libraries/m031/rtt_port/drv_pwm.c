@@ -226,10 +226,9 @@ int rt_hw_pwm_init(void)
 
 INIT_DEVICE_EXPORT(rt_hw_pwm_init);
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
-#ifdef FINSH_USING_MSH
 
 static int xpwm_get(int argc, char **argv)
 {
@@ -260,7 +259,6 @@ _exit:
 
 MSH_CMD_EXPORT(xpwm_get, xpwm_get <pwm_dev> <channel>);
 
-#endif /* FINSH_USING_MSH */
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #endif

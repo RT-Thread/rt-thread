@@ -235,7 +235,7 @@ __usage:
     usage();
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 MSH_CMD_EXPORT_ALIAS(tcpclient_test, tcpclient,
     Start a tcp client. Help: tcpclient --help);
 #endif

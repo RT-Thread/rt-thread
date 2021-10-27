@@ -54,8 +54,8 @@ int rtc_test(void)
 
     return RT_EOK;
 }
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(rtc_test, rtc driver test. e.g: rtc_test());
 MSH_CMD_EXPORT(rtc_test, rtc driver test. e.g: rtc_test());
 #endif

@@ -196,7 +196,7 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context))
 #define SCB_CFSR_BFSR   (*(volatile const unsigned char*)0xE000ED29)  /* Bus Fault Status Register */
 #define SCB_CFSR_UFSR   (*(volatile const unsigned short*)0xE000ED2A) /* Usage Fault Status Register */
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 static void usage_fault_track(void)
 {
     rt_kprintf("usage fault:\n");
@@ -360,7 +360,7 @@ static void hard_fault_track(void)
         rt_kprintf("debug event\n");
     }
 }
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 struct exception_info
 {
@@ -370,7 +370,7 @@ struct exception_info
 
 void rt_hw_hard_fault_exception(struct exception_info *exception_info)
 {
-#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+#if defined(RT_USING_MSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     extern long list_thread(void);
 #endif
     struct exception_stack_frame *exception_stack = &exception_info->stack_frame.exception_stack_frame;
@@ -406,7 +406,7 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
     {
         rt_kprintf("hard fault on thread: %s\r\n\r\n", rt_thread_self()->name);
 
-#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+#if defined(RT_USING_MSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         list_thread();
 #endif
     }
@@ -420,9 +420,9 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
         rt_kprintf("FPU active!\r\n");
     }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     hard_fault_track();
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
     while (1);
 }

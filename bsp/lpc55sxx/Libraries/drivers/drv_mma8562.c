@@ -71,8 +71,8 @@ rt_err_t mma8562_write_reg(rt_uint8_t reg, rt_uint8_t data)
     }
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #include <rtdevice.h>
 
 void get_mma8562(uint8_t data)

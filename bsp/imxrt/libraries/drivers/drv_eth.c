@@ -14,8 +14,8 @@
 #include "board.h"
 #include <rtdevice.h>
 
-#ifdef RT_USING_FINSH
-    #include <finsh.h>
+#ifdef RT_USING_MSH
+    #include <msh.h>
 #endif
 
 #include "fsl_enet.h"
@@ -691,8 +691,8 @@ static int rt_hw_imxrt_eth_init(void)
 INIT_DEVICE_EXPORT(rt_hw_imxrt_eth_init);
 #endif
 
-#if defined(RT_USING_FINSH) && defined(RT_USING_PHY)
-#include <finsh.h>
+#if defined(RT_USING_MSH) && defined(RT_USING_PHY)
+#include <msh.h>
 
 void phy_read(rt_uint32_t phy_reg)
 {
@@ -749,7 +749,7 @@ void phy_dump(void)
 }
 #endif
 
-#if defined(RT_USING_FINSH) && defined(RT_USING_LWIP)
+#if defined(RT_USING_MSH) && defined(RT_USING_LWIP)
 void enet_reg_dump(void)
 {
     ENET_Type *enet_base = imxrt_eth_device.enet_base;

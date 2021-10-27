@@ -639,8 +639,8 @@ void rt_memory_info(rt_uint32_t *total,
         *max_used = max_mem;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 void list_mem(void)
 {
@@ -718,7 +718,7 @@ int memtrace(int argc, char **argv)
 }
 MSH_CMD_EXPORT(memtrace, dump memory trace information);
 #endif /* RT_USING_MEMTRACE */
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #endif /* defined (RT_USING_HEAP) && defined (RT_USING_SMALL_MEM) */
 

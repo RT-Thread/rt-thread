@@ -63,7 +63,7 @@
 
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
-/* #define RT_USING_FINSH */
+/* #define RT_USING_MSH */
 
 /* SECTION: C++ support */
 /* Using C++ support*/

@@ -145,9 +145,8 @@ int rt_hw_led_init(void)
 
 INIT_DEVICE_EXPORT(rt_hw_led_init);
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#include "msh.h"
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 void led_test(rt_uint32_t led_num, rt_uint32_t value)
 {

@@ -152,8 +152,8 @@ void rt_led_hw_init(void)
     rt_led_init(&fm4_led.parent);
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 void led(rt_uint32_t led, rt_uint32_t value)
 {
     rt_uint8_t led_value = value;

@@ -13,8 +13,8 @@
 
 #include <board.h>
 #include <serial.h>
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #endif
 
 #ifdef RT_USING_LWIP
@@ -61,11 +61,11 @@ void rtthread_startup()
     /* init application */
     rt_application_init();
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* init finsh */
     finsh_system_init();
 #ifdef RT_USING_DEVICE
-    finsh_set_device("uart0");
+    msh_set_device("uart0");
 #endif
 #endif
 

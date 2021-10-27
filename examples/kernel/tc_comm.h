@@ -15,8 +15,8 @@
  *
  */
 #include <rtthread.h>
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #endif
 
 #if RT_THREAD_PRIORITY_MAX == 8

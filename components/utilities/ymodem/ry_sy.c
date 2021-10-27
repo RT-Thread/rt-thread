@@ -190,8 +190,8 @@ static rt_err_t rym_upload_file(rt_device_t idev, const char *file_path)
     return res;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 static rt_err_t ry(uint8_t argc, char **argv)
 {
@@ -242,4 +242,4 @@ static rt_err_t sy(uint8_t argc, char **argv)
 }
 MSH_CMD_EXPORT(sy, YMODEM Send e.g: sy file_path [uart0] default by console.);
 
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

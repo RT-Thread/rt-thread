@@ -9,8 +9,8 @@
  */
 #include <rtthread.h>
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #include <shell.h>
 #endif
 
@@ -18,7 +18,7 @@ extern int demo_init(void);
 
 void rt_init_thread_entry(void* parameter)
 {
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* initialization finsh shell Component */
     finsh_system_init();
 #endif

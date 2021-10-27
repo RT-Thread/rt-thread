@@ -12,7 +12,7 @@
 #include <drv_qspi.h>
 #include <rtdevice.h>
 #include <rthw.h>
-#include <finsh.h>
+#include <msh.h>
 
 #ifdef BSP_USE_QSPI
 

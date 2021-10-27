@@ -21,7 +21,7 @@ config RT_USING_USER_MAIN
 
 source "$RTT_DIR/components/cplusplus/Kconfig"
 
-source "$RTT_DIR/components/finsh/Kconfig"
+source "$RTT_DIR/components/msh/Kconfig"
 
 source "$RTT_DIR/components/dfs/Kconfig"
 

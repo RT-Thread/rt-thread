@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <finsh.h>
+#include <msh.h>
 
 #ifdef RT_USING_RTGUI
 #include <rtgui/event.h>

@@ -56,17 +56,15 @@
 
 /* Command shell */
 
-#define RT_USING_FINSH
-#define FINSH_USING_HISTORY
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
-#define FINSH_CMD_SIZE 80
-/* FINSH_USING_AUTH is not set */
-#define FINSH_USING_MSH
-//#define FINSH_USING_MSH_DEFAULT
-/* FINSH_USING_MSH_ONLY is not set */
+#define RT_USING_MSH
+#define MSH_USING_HISTORY
+#define MSH_USING_SYMTAB
+#define MSH_USING_DESCRIPTION
+#define MSH_THREAD_PRIORITY 20
+#define MSH_THREAD_STACK_SIZE 4096
+#define MSH_CMD_SIZE 80
+/* MSH_USING_AUTH is not set */
+///* FINSH_USING_MSH_ONLY is not set */
 
 /* Device virtual file system */
 

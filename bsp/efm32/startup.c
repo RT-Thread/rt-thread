@@ -109,9 +109,9 @@ void rtthread_startup(void)
     rt_system_scheduler_init();
 
     /* init finsh */
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     finsh_system_init();
-    finsh_set_device(CONSOLE_DEVICE);
+    msh_set_device(CONSOLE_DEVICE);
 #endif
 
     /* Initialize gui server */

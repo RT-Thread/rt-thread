@@ -16,15 +16,15 @@
 
 #include <rtthread.h>
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #include <shell.h>
 #endif
 
 int rt_application_init(void)
 {
     /* Set finsh device */
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* initialize finsh */
     finsh_system_init();
 #endif

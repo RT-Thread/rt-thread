@@ -320,7 +320,7 @@ int rt_hw_lcd_ili9341_init(void)
     return 0;
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #define LINE_LEN 32
 static void lcd_test(int argc, char *argv[])
 {

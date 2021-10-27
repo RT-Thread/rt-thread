@@ -141,7 +141,7 @@ rt_err_t rt_dac_disabled(rt_dac_device_t dev, rt_uint32_t channel)
     return result;
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 
 static int dac(int argc, char **argv)
 {
@@ -228,4 +228,4 @@ static int dac(int argc, char **argv)
 }
 MSH_CMD_EXPORT(dac, dac function);
 
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

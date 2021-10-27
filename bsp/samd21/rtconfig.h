@@ -81,16 +81,15 @@
 // #define RT_USING_SPI
 
 /* SECTION: finsh, a C-Express shell */
-// #define RT_USING_FINSH
+// #define RT_USING_MSH
 /* configure finsh parameters */
-#define FINSH_THREAD_PRIORITY 6
-#define FINSH_THREAD_STACK_SIZE	512
-#define FINSH_HISTORY_LINES	1
+#define MSH_THREAD_PRIORITY 6
+#define MSH_THREAD_STACK_SIZE	512
+#define MSH_HISTORY_LINES	1
 /* Using symbol table */
-// #define FINSH_USING_SYMTAB
-// #define FINSH_USING_DESCRIPTION
+// #define MSH_USING_SYMTAB
+// #define MSH_USING_DESCRIPTION
 
-// #define FINSH_USING_MSH
-// #define FINSH_USING_MSH_ONLY
+// // #define FINSH_USING_MSH_ONLY
 
 #endif

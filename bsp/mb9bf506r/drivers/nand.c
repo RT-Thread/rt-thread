@@ -590,7 +590,7 @@ void rt_hw_nand_init(void)
 }
 
 #ifdef NAND_DEBUG
-#include <finsh.h>
+#include <msh.h>
 unsigned char nand_buffer[512];
 unsigned char nand_oob[16];
 

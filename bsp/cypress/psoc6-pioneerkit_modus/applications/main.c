@@ -47,8 +47,8 @@
 #include "board.h"
 #include "cybsp.h"
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #include <shell.h>
 #endif
 

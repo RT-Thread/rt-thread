@@ -9,7 +9,7 @@
  * 2017-09-20     Quintin.Z    modify for nv32
  */
 #include "rtthread.h"
-#include "finsh.h"
+#include "msh.h"
 
 extern void led_thread_entry(void* parameter);
 
@@ -17,8 +17,8 @@ int main(void)
 {
     rt_thread_t thread;
 
-#ifdef  RT_USING_FINSH
-    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#ifdef  RT_USING_MSH
+    msh_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
     /* Create led thread */

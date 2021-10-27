@@ -11,8 +11,8 @@
 
 #include <drivers/pin.h>
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #endif
 
 static struct rt_device_pin _hw_pin;

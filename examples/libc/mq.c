@@ -125,5 +125,5 @@ int libc_mq()
     printf("PASSED\n");
     return 0;
 }
-#include <finsh.h>
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(libc_mq, posix mqueue test);

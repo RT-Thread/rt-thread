@@ -428,7 +428,7 @@ void rt_interrupt_dispatch(rt_uint32_t fiq_irq)
 }
 
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #ifdef RT_USING_INTERRUPT_INFO
 void list_irq(void)
 {
@@ -444,16 +444,14 @@ void list_irq(void)
     }
 }
 
-#include <finsh.h>
+#include <msh.h>
 
-#ifdef FINSH_USING_MSH
 int cmd_list_irq(int argc, char** argv)
 {
     list_irq();
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_list_irq, list_irq, list system irq);
-#endif
 #endif
 #endif
 

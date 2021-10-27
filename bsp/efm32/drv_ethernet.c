@@ -1025,8 +1025,8 @@ rt_err_t efm_hw_eth_init(void)
  *  Export to FINSH
  ******************************************************************************/
 #if defined(EFM32_USING_ETH_UTILS)
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 void list_eth(void)
 {
@@ -1321,7 +1321,7 @@ void update_myip(char *ip)
 }
 FINSH_FUNCTION_EXPORT(update_myip, update DDNS with specified IP address.)
 
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 #endif /* defined(EFM32_USING_ETH_UTILS) */
 
 #endif /* defined(EFM32_USING_ETHERNET) */

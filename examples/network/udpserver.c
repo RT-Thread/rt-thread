@@ -198,7 +198,7 @@ __usage:
     usage();
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 MSH_CMD_EXPORT_ALIAS(udpserver_test, udpserver,
     Start a udp server. Help: udpserver --help);
 #endif

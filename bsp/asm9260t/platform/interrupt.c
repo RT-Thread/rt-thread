@@ -186,7 +186,7 @@ void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id)
     outl(level, HW_ICOLL_LEVELACK);
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 void list_irq(void)
 {
     int irq;
@@ -201,7 +201,7 @@ void list_irq(void)
     }
 }
 
-#include <finsh.h>
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(list_irq, list system irq);
 
 #endif

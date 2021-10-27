@@ -25,7 +25,7 @@ void rt_init_thread_entry(void *parameter)
 
 
     //finsh_system_init();
-    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+    msh_set_device(RT_CONSOLE_DEVICE_NAME);
 
 
     /**< init led device */

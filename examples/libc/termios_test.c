@@ -354,10 +354,8 @@ int termios_test(int argc, char **argv)
     return 0;
 }
 
-#ifdef RT_USING_FINSH
-    #include <finsh.h>
-    #ifdef RT_USING_FINSH
-        MSH_CMD_EXPORT_ALIAS(termios_test, termtest, e.g: termtest /dev/uart4 115200);
-    #endif /* RT_USING_FINSH */
-#endif /* RT_USING_FINSH */
+#ifdef RT_USING_MSH
+    #include <msh.h>
+    MSH_CMD_EXPORT_ALIAS(termios_test, termtest, e.g: termtest /dev/uart4 115200);
+#endif /* RT_USING_MSH */
 

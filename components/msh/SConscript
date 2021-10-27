@@ -14,6 +14,6 @@ if GetDepend('RT_USING_DFS'):
 
 CPPPATH = [cwd]
 
-group = DefineGroup('Finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH)
+group = DefineGroup('Finsh', src, depend = ['RT_USING_MSH'], CPPPATH = CPPPATH)
 
 Return('group')

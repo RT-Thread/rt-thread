@@ -261,7 +261,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #ifdef RT_USING_INTERRUPT_INFO
 void list_irq(void)
 {
@@ -277,17 +277,15 @@ void list_irq(void)
     }
 }
 
-#include <finsh.h>
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(list_irq, list system irq);
 
-#ifdef FINSH_USING_MSH
 int cmd_list_irq(int argc, char** argv)
 {
     list_irq();
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_list_irq, list_irq, list system irq);
-#endif
 #endif
 #endif
 

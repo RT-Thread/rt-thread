@@ -41,5 +41,5 @@ int libc_ex1(void)
     printf("join b %s %d\n", sucfail(pret), pret);
     return ret;
 }
-#include <finsh.h>
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(libc_ex1, example 1 for libc);

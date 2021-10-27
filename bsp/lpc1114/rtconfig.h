@@ -58,19 +58,17 @@
 
 /* Command shell */
 
-#define RT_USING_FINSH
 #define RT_USING_MSH
-#define FINSH_USING_MSH
-#define FINSH_THREAD_NAME "tshell"
-#define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
-#define FINSH_USING_HISTORY
-#define FINSH_HISTORY_LINES 5
-#define FINSH_USING_SYMTAB
-#define FINSH_CMD_SIZE 80
+#define MSH_THREAD_NAME "tshell"
+#define MSH_THREAD_PRIORITY 20
+#define MSH_THREAD_STACK_SIZE 4096
+#define MSH_USING_HISTORY
+#define MSH_HISTORY_LINES 5
+#define MSH_USING_SYMTAB
+#define MSH_CMD_SIZE 80
 #define MSH_USING_BUILT_IN_COMMANDS
-#define FINSH_USING_DESCRIPTION
-#define FINSH_ARG_MAX 10
+#define MSH_USING_DESCRIPTION
+#define MSH_ARG_MAX 10
 /* end of Command shell */
 
 /* Device virtual file system */

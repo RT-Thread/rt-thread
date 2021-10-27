@@ -210,8 +210,8 @@ int spdifrx_init(void)
 }
 INIT_DEVICE_EXPORT(spdifrx_init);
 
-#ifdef FINSH_USING_MSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 #define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
 static void dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)

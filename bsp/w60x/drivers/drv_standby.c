@@ -82,8 +82,8 @@ void sys_start_standby(int ms)
     tls_reg_write32(HR_PMU_PS_CR, val);
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #include <stdlib.h>
 static void standby(uint8_t argc, char **argv)
 {
@@ -98,6 +98,6 @@ static void standby(uint8_t argc, char **argv)
     }
 }
 MSH_CMD_EXPORT(standby, sleep system);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #endif /* BSP_USING_STANDBY */

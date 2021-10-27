@@ -65,11 +65,10 @@
 #define RT_CONSOLE_DEVICE_NAME	        "uart2"
 
 /* SECTION: finsh, a C-Express shell */
-#define RT_USING_FINSH
+#define RT_USING_MSH
 /* Using symbol table */
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_USING_MSH
+#define MSH_USING_SYMTAB
+#define MSH_USING_DESCRIPTION
 //#define FINSH_USING_MSH_ONLY
 
 #define RT_USING_LIBC

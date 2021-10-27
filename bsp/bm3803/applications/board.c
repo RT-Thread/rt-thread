@@ -10,7 +10,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <finsh.h>
+#include <msh.h>
 
 #include "board.h"
 #include <interrupt.h>

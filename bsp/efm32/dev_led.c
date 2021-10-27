@@ -171,8 +171,8 @@ rt_err_t rt_hw_led_init(void)
 /***************************************************************************//**
  *  Export to FINSH
  ******************************************************************************/
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 void list_leds(void)
 {

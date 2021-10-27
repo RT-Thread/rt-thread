@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <sys/fcntl.h>
 
-#include <finsh.h>
+#include <msh.h>
 
 char * format[] = {
   "%",

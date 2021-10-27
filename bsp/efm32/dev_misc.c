@@ -177,8 +177,8 @@ rt_int32_t efm32_misc_getCelsius(rt_uint32_t adcResult)
 /*******************************************************************************
  *  Export to FINSH
  ******************************************************************************/
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 void list_temp(void)
 {
@@ -196,7 +196,7 @@ void list_vdd(void)
 }
 FINSH_FUNCTION_EXPORT(list_vdd, list current VDD value.)
 
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #endif /* defined(RT_USING_MISC) */
 /***************************************************************************//**

@@ -517,8 +517,8 @@ struct dfs_fdtable *dfs_fdtable_get(void)
     return fdt;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 int list_fd(void)
 {
     int index;

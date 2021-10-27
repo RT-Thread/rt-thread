@@ -240,8 +240,8 @@ int fdcan_init(void)
 }
 INIT_DEVICE_EXPORT(fdcan_init);
 
-#ifdef FINSH_USING_MSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 int fdcan_sample(int argc, char **argv)
 {

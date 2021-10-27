@@ -12,13 +12,13 @@
 #include <board.h>
 #include <rtthread.h>
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include "shell.h"
 #endif
 
 void rt_init_thread_entry(void* parameter)
 {
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     finsh_system_init();
 #endif
 }

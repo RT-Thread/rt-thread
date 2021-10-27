@@ -62,8 +62,8 @@ void writespeed(const char* filename, int total_length, int block_size)
     rt_kprintf("File write speed: %d byte/s\n", total_length / tick * RT_TICK_PER_SECOND);
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(writespeed, perform file write test);
 
 static void cmd_writespeed(int argc, char *argv[])
@@ -93,4 +93,4 @@ static void cmd_writespeed(int argc, char *argv[])
     writespeed(filename, length, block_size);
 }
 MSH_CMD_EXPORT_ALIAS(cmd_writespeed, writespeed, test file system write speed);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

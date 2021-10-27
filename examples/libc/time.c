@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <finsh.h>
+#include <msh.h>
 
 int speed()
 {

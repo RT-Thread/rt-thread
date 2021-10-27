@@ -112,5 +112,5 @@ int libc_ex4()
   pthread_join(th1, NULL);
   pthread_join(th2, NULL);
 }
-#include <finsh.h>
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(libc_ex4, example 4 for libc);

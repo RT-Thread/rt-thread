@@ -164,7 +164,7 @@ __usage:
     usage();
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 MSH_CMD_EXPORT_ALIAS(udpclient_test, udpclient,
     Start a udp client. Help: udpclient --help);
 #endif

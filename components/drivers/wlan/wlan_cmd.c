@@ -586,7 +586,7 @@ static int wifi_msh(int argc, char *argv[])
     return 0;
 }
 
-#if defined(RT_USING_FINSH)
+#if defined(RT_USING_MSH)
 MSH_CMD_EXPORT_ALIAS(wifi_msh, wifi, wifi command);
 #endif
 

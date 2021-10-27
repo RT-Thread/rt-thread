@@ -204,10 +204,10 @@ int rt_hw_pwm_init(void)
 INIT_DEVICE_EXPORT(rt_hw_pwm_init);
 
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
 
 rt_err_t rt_pwm_get(struct rt_device_pwm *device, int channel)
 {
@@ -251,7 +251,7 @@ _exit:
 }
 MSH_CMD_EXPORT(pwm_get, pwm_get pwm1 1);
 
-#endif /* FINSH_USING_MSH */
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
+#endif /* RT_USING_MSH */
 
 #endif /* RT_USING_PWM */

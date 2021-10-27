@@ -891,7 +891,7 @@ err:
 
 INIT_DEVICE_EXPORT(at91_mci_init);
 
-#include "finsh.h"
+#include "msh.h"
 FINSH_FUNCTION_EXPORT(at91_mci_init, at91sam9260 sd init);
 
 void mci_dump(void)

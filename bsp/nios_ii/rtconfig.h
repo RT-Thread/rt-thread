@@ -78,10 +78,10 @@
 #define RT_USING_NEWLIB
 
 /* SECTION: finsh, a C-Express shell */
-#define RT_USING_FINSH
+#define RT_USING_MSH
 /* Using symbol table */
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
+#define MSH_USING_SYMTAB
+#define MSH_USING_DESCRIPTION
 #define __fsymtab_start _alt_partition_FSymTab_start
 #define __fsymtab_end   _alt_partition_FSymTab_end
 #define __vsymtab_start _alt_partition_VSymTab_start

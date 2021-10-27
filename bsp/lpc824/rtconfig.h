@@ -151,27 +151,26 @@
 // <h>Finsh Configuration
 // <c1>Using finsh as shell, which is a C-Express shell
 //  <i>Using finsh as shell, which is a C-Express shell
-#define RT_USING_FINSH
+#define RT_USING_MSH
 // </c>
 // <o>the priority of finsh thread <1-7>
 //  <i>the priority of finsh thread
 //  <i>Default: 6
-#define FINSH_THREAD_PRIORITY       (RT_THREAD_PRIORITY_MAX / 8 * 5 + 1)
+#define MSH_THREAD_PRIORITY       (RT_THREAD_PRIORITY_MAX / 8 * 5 + 1)
 // <o>the stack of finsh thread <1-4096>
 //  <i>the stack of finsh thread
 //  <i>Default: 4096  (4096Byte)
-#define FINSH_THREAD_STACK_SIZE     512
+#define MSH_THREAD_STACK_SIZE     512
 // <o>the history lines of finsh thread <1-32>
 //  <i>the history lines of finsh thread
 //  <i>Default: 5
-#define FINSH_HISTORY_LINES         1
+#define MSH_HISTORY_LINES         1
 // <c1>Using symbol table in finsh shell
 //  <i>Using symbol table in finsh shell
-#define FINSH_USING_SYMTAB
+#define MSH_USING_SYMTAB
 // </c>
 // <c1>Using module shell in finsh
 //  <i>Using module shell in finsh
-#define FINSH_USING_MSH
 // </c>
 // <c1>Only using module shell in finsh
 //  <i>Only using module shell in finsh

@@ -386,8 +386,8 @@ rt_uint32_t efm_spiFlash_cmd(
 /*********************************************************************
 *   Export to FINSH
 *********************************************************************/
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 void list_sflash(void)
 {

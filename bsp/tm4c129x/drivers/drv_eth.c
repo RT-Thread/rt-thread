@@ -1487,8 +1487,8 @@ INIT_COMPONENT_EXPORT(rt_hw_tiva_eth_init);
 
 
 #if 0
-#ifdef RT_USING_FINSH
-#include "finsh.h"
+#ifdef RT_USING_MSH
+#include "msh.h"
 void PHY_Read(uint8_t addr)
 {
     uint16_t data = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, addr);
@@ -1515,5 +1515,5 @@ void PHY_SetAdd(uint8_t addr0, uint8_t addr1, uint8_t addr2,
     rt_kprintf("Save to EEPROM. please reboot.");
 }
 FINSH_FUNCTION_EXPORT(PHY_SetAdd, (add0-add5));
-#endif //RT_USING_FINSH
+#endif //RT_USING_MSH
 #endif

@@ -287,7 +287,7 @@ void fs_test(rt_uint32_t arg)
     }
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(fs_test, file system R/W test. e.g: fs_test(3));
 #endif

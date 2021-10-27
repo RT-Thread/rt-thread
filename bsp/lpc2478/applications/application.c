@@ -10,9 +10,9 @@
 
 #include <rtthread.h>
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <shell.h>
-#include <finsh.h>
+#include <msh.h>
 #endif
 
 /**
@@ -21,7 +21,7 @@
 /*@{*/
 int rt_application_init()
 {
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* init finsh */
     finsh_system_init();
 #endif

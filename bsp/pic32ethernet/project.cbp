@@ -44,7 +44,7 @@
 		<Unit filename="..\..\components\finsh\cmd.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\components\finsh\finsh.h" />
+		<Unit filename="..\..\components\finsh\msh.h" />
 		<Unit filename="..\..\components\finsh\finsh_compiler.c">
 			<Option compilerVar="CC" />
 		</Unit>

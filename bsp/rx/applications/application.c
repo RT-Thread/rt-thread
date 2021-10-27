@@ -57,10 +57,10 @@ void rt_init_thread_entry(void* parameter)
     rt_system_module_init();
 #endif
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 	/* initialize finsh */
 	finsh_system_init();
-	finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+	msh_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
 #ifdef RT_USING_LWIP
@@ -129,9 +129,9 @@ void rt_init_thread_entry(void* parameter)
 	rt_usb_host_init();
 #endif
 
-#ifdef  RT_USING_FINSH
-    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif  /* RT_USING_FINSH */
+#ifdef  RT_USING_MSH
+    msh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif  /* RT_USING_MSH */
 
     /* Filesystem Initialization */
 #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
@@ -189,7 +189,7 @@ static void led_thread_entry(void* parameter)
     while (1)
     {
         /* led1 on */
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led on, count : %d\r\n",count);
 #endif
         count++;
@@ -197,7 +197,7 @@ static void led_thread_entry(void* parameter)
         rt_thread_delay( RT_TICK_PER_SECOND/2 ); /* sleep 0.5 second and switch to other thread */
 
         /* led1 off */
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led off\r\n");
 #endif
         rt_thread_delay( RT_TICK_PER_SECOND/2 );

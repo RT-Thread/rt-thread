@@ -64,7 +64,7 @@ VIEW: LN=.3626 CL=9 LE=0 CX=9 CY=7 WI=5 BI=14 HT=0 HN=0 HF=0 HC=4
 BUFFER: BN="..\..\libcpu\rx\cpuport.c"
 BI: MA=1 74 1  TABS=1 5  WWS=1 IWT=0 ST=8 IN=2 BW=0 US=32000 RO=0 SE=1 SN=0 BIN=0 MN=C/C++	HM=0 MF=118620768 TL=0 MLL=0 ASE=0 LNL=1 LCF=6 CAPS=0 E=0 ESBU2=1 CL="" SC="" SCE= SCU=
 VIEW: LN=.5430 CL=1 LE=0 CX=1 CY=10 WI=5 BI=4 HT=0 HN=0 HF=0 HC=4
-BUFFER: BN="..\..\components\finsh\finsh.h"
+BUFFER: BN="..\..\components\finsh\msh.h"
 BI: MA=1 74 1  TABS=1 5  WWS=1 IWT=0 ST=8 IN=2 BW=0 US=32000 RO=0 SE=1 SN=0 BIN=0 MN=C/C++	HM=0 MF=33554432 TL=0 MLL=0 ASE=0 LNL=1 LCF=6 CAPS=0 E=0 ESBU2=1 CL="" SC="" SCE= SCU=
 VIEW: LN=.5625 CL=70 LE=0 CX=70 CY=6 WI=5 BI=28 HT=0 HN=0 HF=0 HC=4
 BUFFER: BN="..\..\src\scheduler.c"
@@ -86,7 +86,7 @@ WINDOW: 1 22 933 491 0 0 N  WF=0 WT=8 ",,," DID=0
 BUFFER: BN="..\..\src\scheduler.c"
 VIEW: LN=.12003 CL=13 LE=0 CX=18 CY=25 WI=155 BI=27 HT=0 HN=0 HF=0 HC=4
 WINDOW: 1 22 933 351 0 0 N  WF=0 WT=11 ",,," DID=0
-BUFFER: BN="..\..\components\finsh\finsh.h"
+BUFFER: BN="..\..\components\finsh\msh.h"
 VIEW: LN=.5625 CL=70 LE=0 CX=75 CY=6 WI=153 BI=28 HT=0 HN=0 HF=0 HC=4
 WINDOW: 1 22 933 351 0 0 N  WF=0 WT=2 ",,," DID=0
 BUFFER: BN="drivers\board.c"
@@ -137,7 +137,7 @@ rtconfig.h
 drivers\uart.c
 RPDL\interrupt_sci.c
 ..\..\include\rthw.h
-..\..\components\finsh\finsh.h
+..\..\components\finsh\msh.h
 RPDL\Interrupt_INTC.c
 ..\..\libcpu\rx\context_iar.S
 ..\..\libcpu\rx\cpuconfig.h

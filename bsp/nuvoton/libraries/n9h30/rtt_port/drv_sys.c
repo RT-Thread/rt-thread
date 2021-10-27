@@ -268,11 +268,10 @@ E_SYS_USB0_ID nu_sys_usb0_role(void)
     return ((inpw(REG_SYS_MISCISR) & (1 << 17)) > 0) ? USB0_ID_HOST : USB0_ID_DEVICE;
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 
-#include <finsh.h>
+#include <msh.h>
 
-#ifdef FINSH_USING_MSH
 int cmd_reset(int argc, char **argv)
 {
     rt_hw_cpu_reset();
@@ -321,8 +320,6 @@ int list_interrupt(int argc, char **argv)
     return 0;
 }
 MSH_CMD_EXPORT(list_interrupt, list registered interrupts);
-#endif
-
 #endif
 
 #endif

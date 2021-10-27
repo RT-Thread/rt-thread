@@ -31,9 +31,9 @@
 #include <rtgui/driver.h>
 #endif
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <shell.h>
-#include <finsh.h>
+#include <msh.h>
 #endif
 
 /* thread phase init */
@@ -99,7 +99,7 @@ void rt_init_thread_entry(void *parameter)
     }
 #endif
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* initialize finsh */
     finsh_system_init();
 #endif
@@ -124,7 +124,7 @@ static void rt_thread_entry_led(void* parameter)
     while (1)
     {
         /* led on */
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led on,count : %d\r\n",count);
 #endif
         count++;
@@ -133,7 +133,7 @@ static void rt_thread_entry_led(void* parameter)
         rt_thread_delay(RT_TICK_PER_SECOND/2);
 
         /* led off */
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led off\r\n");
 #endif
         rt_hw_led_off(1);
@@ -161,12 +161,12 @@ int rt_application_init(void)
     return 0;
 }
 
-#if defined(RT_USING_RTGUI) && defined(RT_USING_FINSH)
+#if defined(RT_USING_RTGUI) && defined(RT_USING_MSH)
 #include <rtgui/rtgui_server.h>
 #include <rtgui/event.h>
 #include <rtgui/kbddef.h>
 
-#include <finsh.h>
+#include <msh.h>
 
 void key(rt_uint32_t key)
 {

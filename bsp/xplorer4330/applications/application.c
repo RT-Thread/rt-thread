@@ -12,18 +12,18 @@
 #include <board.h>
 #include <rtdevice.h>
 #include "drv_led.h"
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #include <shell.h>
 #endif
 
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* initialize finsh */
     finsh_system_init();
-    finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+    msh_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
 /*the led thread*/

@@ -63,8 +63,8 @@ void list_dir(const char* path)
     }
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(list_dir, list directory);
 
 static void cmd_list_dir(int argc, char *argv[])
@@ -83,4 +83,4 @@ static void cmd_list_dir(int argc, char *argv[])
     list_dir(filename);
 }
 MSH_CMD_EXPORT_ALIAS(cmd_list_dir, list_dir, list directory);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

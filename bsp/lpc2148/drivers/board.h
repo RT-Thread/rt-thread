@@ -22,7 +22,7 @@
 
 void rt_hw_board_init(void);
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 void rt_hw_finsh_init(void);
 #endif
 

@@ -152,7 +152,7 @@ void nfs_start(void)
         rt_kprintf("NFSv3 File System initialzation failed!\n");
 }
 
-#include "finsh.h"
+#include "msh.h"
 FINSH_FUNCTION_EXPORT(nfs_start, start net filesystem);
 #endif
 

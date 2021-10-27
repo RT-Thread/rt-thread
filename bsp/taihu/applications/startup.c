@@ -11,8 +11,8 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 extern int finsh_system_init(void);
 #endif
 
@@ -50,10 +50,10 @@ void rtthread_startup(void)
     /* init application */
     rt_application_init();
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* init finsh */
     finsh_system_init();
-    finsh_set_device("uart1");
+    msh_set_device("uart1");
 #endif
 
     /* init soft timer thread */

@@ -1,47 +1,38 @@
 menu "Command shell"
 
-config RT_USING_FINSH
-    bool
-    default n
-
 config RT_USING_MSH
     bool "msh shell"
-    select RT_USING_FINSH
     default y
 
 if RT_USING_MSH
 
-    config FINSH_USING_MSH
-        bool
-        default y
-
-    config FINSH_THREAD_NAME
+    config MSH_THREAD_NAME
         string "The msh thread name"
         default "tshell"
 
-    config FINSH_THREAD_PRIORITY
+    config MSH_THREAD_PRIORITY
         int "The priority level value of thread"
         default 20
 
-    config FINSH_THREAD_STACK_SIZE
+    config MSH_THREAD_STACK_SIZE
         int "The stack size for thread"
         default 4096
 
-    config FINSH_USING_HISTORY
+    config MSH_USING_HISTORY
         bool "Enable command history feature"
         default y
 
-    if FINSH_USING_HISTORY
-        config FINSH_HISTORY_LINES
+    if MSH_USING_HISTORY
+        config MSH_HISTORY_LINES
             int "The command history line number"
             default 5
     endif
 
-    config FINSH_USING_SYMTAB
+    config MSH_USING_SYMTAB
         bool "Using symbol table for commands"
         default y
 
-    config FINSH_CMD_SIZE
+    config MSH_CMD_SIZE
         int "The command line size for shell"
         default 80
 
@@ -49,33 +40,33 @@ if RT_USING_MSH
         bool "Enable built-in commands, such as list_thread"
         default y
 
-    config FINSH_USING_DESCRIPTION
+    config MSH_USING_DESCRIPTION
         bool "Keeping description in symbol table"
         default y
 
-    config FINSH_ECHO_DISABLE_DEFAULT
+    config MSH_ECHO_DISABLE_DEFAULT
         bool "Disable the echo mode in default"
         default n
 
-    config FINSH_USING_AUTH
+    config MSH_USING_AUTH
         bool "shell support authentication"
         default n
 
-    if FINSH_USING_AUTH
-        config FINSH_DEFAULT_PASSWORD
+    if MSH_USING_AUTH
+        config MSH_DEFAULT_PASSWORD
             string "The default password for shell authentication"
             default "rtthread"
 
-        config FINSH_PASSWORD_MIN
+        config MSH_PASSWORD_MIN
             int "The password min length"
             default 6
 
-        config FINSH_PASSWORD_MAX
+        config MSH_PASSWORD_MAX
             int "The password max length"
             default RT_NAME_MAX
     endif
 
-    config FINSH_ARG_MAX
+    config MSH_ARG_MAX
         int "The number of arguments for a shell command"
         default 10
 

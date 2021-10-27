@@ -570,7 +570,7 @@ void uffs_setup_storage(struct uffs_StorageAttrSt *attr,
 }
 #endif
 
-#include <finsh.h>
+#include <msh.h>
 static int nread(int argc, char **argv)
 {
     int ret = -1;
@@ -896,7 +896,7 @@ static int nlist(int argc, char **argv)
 }
 
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
     MSH_CMD_EXPORT(nid, nand id);
     MSH_CMD_EXPORT(nlist, list all partition information on nand);
     MSH_CMD_EXPORT(nmove, nand copy page);

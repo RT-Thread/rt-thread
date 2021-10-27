@@ -10,7 +10,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <finsh.h>
+#include <msh.h>
 #include "sysinit.h"
 #include "board.h"
 #include "drv_uart.h"

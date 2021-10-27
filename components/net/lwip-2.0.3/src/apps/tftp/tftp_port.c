@@ -45,8 +45,8 @@ static int tftp_write(void* handle, struct pbuf* p)
     return write(fd, p->payload, p->len);
 }
 
-#if defined(RT_USING_FINSH)
-#include <finsh.h>
+#if defined(RT_USING_MSH)
+#include <msh.h>
 
 static void tftp_server(uint8_t argc, char **argv)
 {
@@ -68,4 +68,4 @@ FINSH_FUNCTION_EXPORT(tftp_server, start tftp server.);
 
 MSH_CMD_EXPORT(tftp_server, start tftp server.);
 
-#endif /* defined(RT_USING_FINSH) */
+#endif /* defined(RT_USING_MSH) */

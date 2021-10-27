@@ -327,7 +327,7 @@ int buzzer_test(void)
     PlayRingTone();
     return 0;
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
     MSH_CMD_EXPORT(buzzer_test, Buzzer - Play ring tone);
 #endif
 #endif /* BOARD_USING_BUZZER */

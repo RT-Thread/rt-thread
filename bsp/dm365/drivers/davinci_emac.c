@@ -1674,8 +1674,8 @@ int rt_hw_davinci_emac_init()
 INIT_DEVICE_EXPORT(rt_hw_davinci_emac_init);
 
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 void dump_emac_stats(void)
 {
@@ -1745,13 +1745,11 @@ void dump_emac_stats(void)
 
 FINSH_FUNCTION_EXPORT(dump_emac_stats, dump emac statistics);
 
-#ifdef FINSH_USING_MSH
 int cmd_dump_emac_stats(int argc, char** argv)
 {
     dump_emac_stats();
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_dump_emac_stats, dump_emac_stats, dump emac statistics);
-#endif
 
 #endif

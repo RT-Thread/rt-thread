@@ -178,7 +178,7 @@ void rt_hw_led_flash(void)
 	for ( i = 0; i < 2000000; i++);
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 extern void finsh_notify(void);
 void rt_serial_isr(int vector)
 {

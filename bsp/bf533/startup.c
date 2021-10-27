@@ -13,7 +13,7 @@
 #include "application.h"
 #include "board.h"
 #include "serial.h"
-#include "finsh.h"
+#include "msh.h"
 
 extern "asm" int rtt_heap_start;
 extern "asm" int rtt_heap_end;
@@ -58,11 +58,11 @@ void rtthread_startup(void)
     /* init application */
     rt_application_init();
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* init finsh */
     extern int finsh_system_init(void);
     finsh_system_init();
-    finsh_set_device("uart0");
+    msh_set_device("uart0");
 #endif
 
     rt_system_timer_thread_init();

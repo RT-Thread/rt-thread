@@ -208,7 +208,7 @@ static void client_cli_parser(at_client_t  client)
 #define DELECT_KEY              0x7F
 
     char ch;
-    char cur_line[FINSH_CMD_SIZE] = { 0 };
+    char cur_line[MSH_CMD_SIZE] = { 0 };
     rt_size_t cur_line_len = 0;
     static rt_err_t (*client_odev_rx_ind)(rt_device_t dev, rt_size_t size) = RT_NULL;
     rt_base_t int_lvl;

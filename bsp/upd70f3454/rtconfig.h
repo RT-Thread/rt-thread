@@ -71,10 +71,10 @@
 
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
-#define RT_USING_FINSH
+#define RT_USING_MSH
 /* Using symbol table */
-///#define FINSH_USING_SYMTAB
-///#define FINSH_USING_DESCRIPTION
+///#define MSH_USING_SYMTAB
+///#define MSH_USING_DESCRIPTION
 
 /* SECTION: device filesystem support */
 /* #define RT_USING_DFS */

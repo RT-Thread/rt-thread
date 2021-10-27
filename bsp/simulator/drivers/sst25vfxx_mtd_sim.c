@@ -234,8 +234,8 @@ rt_err_t sst25vfxx_mtd_init(const char *nor_name,
     return RT_EOK;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 void nor_erase(void)
 {
     rt_uint32_t index;

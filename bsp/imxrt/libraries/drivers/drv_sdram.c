@@ -85,7 +85,7 @@ int rt_hw_sdram_Init(void)
 INIT_BOARD_EXPORT(rt_hw_sdram_Init);
 
 #ifdef DRV_DEBUG
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
 
 #define SEMC_DATALEN                (0x1000U)
 rt_uint32_t sdram_writeBuffer[SEMC_DATALEN];
@@ -137,5 +137,5 @@ void sdram_test(void)
 MSH_CMD_EXPORT(sdram_test, sdram test)
 
 #endif /* DRV_DEBUG */
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_MSH */
 #endif /* BSP_USING_SDRAM */

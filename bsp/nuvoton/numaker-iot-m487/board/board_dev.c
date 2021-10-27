@@ -239,7 +239,7 @@ static void at_wifi_set(int argc, char **argv)
         rt_kprintf("Can't find any initialized AT device.\n");
     }
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
     MSH_CMD_EXPORT(at_wifi_set, AT device wifi set ssid / password function);
 #endif
 #endif /* BOARD_USING_ESP8266  */

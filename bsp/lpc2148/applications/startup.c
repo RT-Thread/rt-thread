@@ -10,8 +10,8 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #endif
 
 #include "board.h"

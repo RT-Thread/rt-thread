@@ -15,9 +15,9 @@
 extern int _ramfunc_end;
 #define PIC32_SRAM_END (0xA0000000 + 1024UL*128) //795F512L 512K FLASH 128KB SRAM
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 extern int finsh_system_init(void);
-extern void finsh_set_device(const char* device);
+extern void msh_set_device(const char* device);
 #endif
 
 /**
@@ -45,11 +45,11 @@ void rtthread_startup(void)
     /* init application */
     rt_application_init();
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* init finsh */
     finsh_system_init();
 #ifdef RT_USING_DEVICE
-    finsh_set_device("uart1");
+    msh_set_device("uart1");
 #endif
 #endif
 

@@ -59,7 +59,7 @@ void found_by_module(void)
         }
     }
 }
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 MSH_CMD_EXPORT(found_by_module, found by module);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

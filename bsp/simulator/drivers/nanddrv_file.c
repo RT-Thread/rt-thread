@@ -392,8 +392,8 @@ void rt_hw_mtd_nand_init(void)
     rt_mtd_nand_register_device("nand0", &_nanddrv_file_device);
 }
 
-#if defined(RT_USING_FINSH)
-#include <finsh.h>
+#if defined(RT_USING_MSH)
+#include <msh.h>
 void nand_eraseall()
 {
     int index;
@@ -404,4 +404,4 @@ void nand_eraseall()
 }
 FINSH_FUNCTION_EXPORT(nand_eraseall, erase all of block in the nand flash);
 
-#endif //RT_USING_FINSH
+#endif //RT_USING_MSH

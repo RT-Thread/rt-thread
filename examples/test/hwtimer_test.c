@@ -9,7 +9,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <finsh.h>
+#include <msh.h>
 
 #ifdef RT_USING_HWTIMER
 
@@ -105,7 +105,7 @@ EXIT:
 
     return err;
 }
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 MSH_CMD_EXPORT(hwtimer, "Test hardware timer");
 #endif
 #endif /* RT_USING_HWTIMER */

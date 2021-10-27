@@ -19,14 +19,14 @@
 #endif
 #endif
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 static void reboot(uint8_t argc, char **argv)
 {
     rt_hw_cpu_reset();
 }
 MSH_CMD_EXPORT(reboot, Reboot System);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 /**
  * This function will delay for some us.

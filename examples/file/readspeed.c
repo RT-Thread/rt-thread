@@ -54,8 +54,8 @@ void readspeed(const char* filename, int block_size)
     rt_kprintf("File read speed: %d byte/s\n", total_length /tick * RT_TICK_PER_SECOND);
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(readspeed, perform file read test);
 
 static void cmd_readspeed(int argc, char *argv[])
@@ -82,4 +82,4 @@ static void cmd_readspeed(int argc, char *argv[])
     readspeed(filename, block_size);
 }
 MSH_CMD_EXPORT_ALIAS(cmd_readspeed, readspeed, test file system read speed);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

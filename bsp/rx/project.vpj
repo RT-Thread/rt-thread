@@ -164,7 +164,7 @@
 			</Folder>
 			<Folder Name="finsh">
 				<F N="../../components/finsh/cmd.c"/>
-				<F N="../../components/finsh/finsh.h"/>
+				<F N="../../components/finsh/msh.h"/>
 				<F N="../../components/finsh/finsh_compiler.c"/>
 				<F N="../../components/finsh/finsh_error.c"/>
 				<F N="../../components/finsh/finsh_error.h"/>

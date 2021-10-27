@@ -81,11 +81,11 @@ void rt_hw_exit(void)
     exit(0);
 }
 
-#if defined(RT_USING_FINSH)
-#include <finsh.h>
+#if defined(RT_USING_MSH)
+#include <msh.h>
 FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_exit, exit, exit rt - thread);
 MSH_CMD_EXPORT_ALIAS(rt_hw_exit, quit, exit rt-thread);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 /**
  * This function will initial win32

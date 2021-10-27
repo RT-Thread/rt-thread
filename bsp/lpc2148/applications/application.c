@@ -15,9 +15,9 @@
  */
 /*@{*/
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <shell.h>
-#include <finsh.h>
+#include <msh.h>
 #endif
 
 #ifdef RT_USING_DFS
@@ -84,7 +84,7 @@ void rt_init_thread_entry(void *parameter)
     }
 #endif
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     finsh_system_init();
 #endif
 }
@@ -107,7 +107,7 @@ void thread_led1_entry(void *parameter)
     {
         /* led1 on */
         IO1CLR = LED1;
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led1 on, count : %d\r\n", count);
 #endif
         count++;
@@ -115,7 +115,7 @@ void thread_led1_entry(void *parameter)
 
         /* led1 off */
         IO1SET = LED1;
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led1 off\r\n");
 #endif
         rt_thread_delay(RT_TICK_PER_SECOND / 3);
@@ -133,7 +133,7 @@ void thread_led2_entry(void *parameter)
     {
         /* led2 on */
         IO1CLR = LED2;
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led2 on, count : %d\r\n", count);
 #endif
         count++;
@@ -141,7 +141,7 @@ void thread_led2_entry(void *parameter)
 
         /* led2 off */
         IO1SET = LED2;
-#ifndef RT_USING_FINSH
+#ifndef RT_USING_MSH
         rt_kprintf("led1 off\r\n");
 #endif
         rt_thread_delay(RT_TICK_PER_SECOND / 2);

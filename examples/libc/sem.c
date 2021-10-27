@@ -59,7 +59,7 @@ static void test_thread(void* parameter)
 
     pthread_exit(0);
 }
-#include <finsh.h>
+#include <msh.h>
 void libc_sem()
 {
     rt_thread_t tid;

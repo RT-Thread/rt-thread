@@ -195,8 +195,8 @@ void vmm_show_guest(void)
     vmm_dump_domain();
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 FINSH_FUNCTION_EXPORT_ALIAS(vmm_show_guest, vmm, show vmm status);
 #endif
 

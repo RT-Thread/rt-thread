@@ -95,8 +95,8 @@ rt_err_t rt_mtd_nand_register_device(const char                *name,
     return rt_device_register(dev, name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STANDALONE);
 }
 
-#if defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_FINSH)
-#include <finsh.h>
+#if defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_MSH)
+#include <msh.h>
 #define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
 
 static void mtd_dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
@@ -278,7 +278,7 @@ int mtd_nand_erase_all(const char *name)
     return 0;
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 static void mtd_nand(int argc, char **argv)
 {
     /* If the number of arguments less than 2 */
@@ -346,7 +346,7 @@ help:
     }
 }
 MSH_CMD_EXPORT(mtd_nand, MTD nand device test function);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
 #ifndef RT_USING_FINSH_ONLY
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nandid, nand_id, read ID - nandid(name));
@@ -357,6 +357,6 @@ FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase, nand_erase, nand_erase(name, block))
 FINSH_FUNCTION_EXPORT_ALIAS(mtd_nand_erase_all, nand_erase_all, erase all of nand device - nand_erase_all(name, block));
 #endif /* RT_USING_FINSH_ONLY */
 
-#endif /* defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_FINSH) */
+#endif /* defined(RT_MTD_NAND_DEBUG) && defined(RT_USING_MSH) */
 
 #endif /* RT_USING_MTD_NAND */

@@ -30,9 +30,9 @@ extern int lwip_system_init(void);
 #endif
 #endif
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <shell.h>
-#include <finsh.h>
+#include <msh.h>
 #endif
 
 /* thread phase init */
@@ -73,7 +73,7 @@ void rt_init_thread_entry(void *parameter)
         rt_kprintf("File System init failed!\n");
 #endif
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* initialize finsh */
     finsh_system_init();
 #endif

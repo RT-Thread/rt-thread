@@ -27,12 +27,11 @@ void machine_shutdown(void)
     at91_sys_write(AT91_SHDW_CR, AT91_SHDW_KEY | AT91_SHDW_SHDW);
 }
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 
-#include <finsh.h>
+#include <msh.h>
 FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_cpu_reset, reset, restart the system);
 
-#ifdef FINSH_USING_MSH
 int cmd_reset(int argc, char** argv)
 {
     rt_hw_cpu_reset();
@@ -47,7 +46,6 @@ int cmd_shutdown(int argc, char** argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_shutdown, shutdown, shutdown the system);
 
-#endif
 #endif
 
 /*@}*/

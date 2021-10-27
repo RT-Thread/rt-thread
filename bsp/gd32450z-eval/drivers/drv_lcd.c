@@ -12,7 +12,7 @@
 #include <gd32f4xx.h>
 #include <drv_usart.h>
 #include <board.h>
-#include <finsh.h>
+#include <msh.h>
 
 #ifdef PKG_USING_GUIENGINE
 

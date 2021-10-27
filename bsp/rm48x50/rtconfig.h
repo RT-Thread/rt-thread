@@ -85,14 +85,14 @@
 
 // <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
 #define RT_USING_COMPONENTS_INIT
-// <section name="RT_USING_FINSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
-#define RT_USING_FINSH
-// <bool name="FINSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
-#define FINSH_USING_SYMTAB
-// <bool name="FINSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />
-#define FINSH_USING_DESCRIPTION
-// <integer name="FINSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
-#define FINSH_THREAD_STACK_SIZE	4096
+// <section name="RT_USING_MSH" description="Using finsh as shell, which is a C-Express shell" default="true" >
+#define RT_USING_MSH
+// <bool name="MSH_USING_SYMTAB" description="Using symbol table in finsh shell" default="true" />
+#define MSH_USING_SYMTAB
+// <bool name="MSH_USING_DESCRIPTION" description="Keeping description in symbol table" default="true" />
+#define MSH_USING_DESCRIPTION
+// <integer name="MSH_THREAD_STACK_SIZE" description="The stack size for finsh thread" default="4096" />
+#define MSH_THREAD_STACK_SIZE	4096
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >

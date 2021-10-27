@@ -537,8 +537,8 @@ void lpc17xx_emac_hw_init(void)
     eth_device_init(&(lpc17xx_emac_device.parent), "e0");
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 void emac_dump()
 {
     rt_kprintf("Command  : %08x\n", LPC_EMAC->Command);

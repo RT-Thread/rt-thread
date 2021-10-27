@@ -702,7 +702,7 @@ void dm9161a(void)
 {
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(dm9161a, dm9161a register dump);
 #endif

@@ -77,11 +77,11 @@
 
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
-#define RT_USING_FINSH
+#define RT_USING_MSH
 /* Using symbol table */
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_STACK_SIZE 1024
+#define MSH_USING_SYMTAB
+#define MSH_USING_DESCRIPTION
+#define MSH_THREAD_STACK_SIZE 1024
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library */

@@ -655,7 +655,7 @@ INIT_ENV_EXPORT(graphic_device_init);
 #endif
 
 #ifdef DRV_DEBUG
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
 int lcd_dsi_test()
 {
     struct drv_lcd_dsi_device *lcd;
@@ -720,6 +720,6 @@ void line()
 }
 MSH_CMD_EXPORT(line, line);
 
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_MSH */
 #endif /* DRV_DEBUG */
 #endif /* BSP_USING_LCD */

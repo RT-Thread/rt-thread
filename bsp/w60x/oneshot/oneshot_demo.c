@@ -143,7 +143,7 @@ void oneshot_demo(int argc, char *argv[])
     }
 }
 
-#ifdef RT_USING_FINSH
-#include "finsh.h"
+#ifdef RT_USING_MSH
+#include "msh.h"
 MSH_CMD_EXPORT(oneshot_demo, oneshot demo);
 #endif

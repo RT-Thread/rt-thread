@@ -1526,9 +1526,9 @@ PREDEFINED             = RT_USING_SEMAPHORE \
                          RT_USING_DEVICE \
                          RT_USING_MODULE \
                          RT_USING_DFS \
-                         FINSH_USING_SYMTAB \
-                         FINSH_USING_DESCRIPTION \
-                         RT_USING_FINSH \
+                         MSH_USING_SYMTAB \
+                         MSH_USING_DESCRIPTION \
+                         RT_USING_MSH \
                          RT_USING_HEAP \
                          RT_USING_MODULE
 

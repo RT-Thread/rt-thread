@@ -80,7 +80,7 @@ static int audio_test(int argc, char **argv)
     return 0;
 }
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
     MSH_CMD_EXPORT(audio_test, Audio record / replay);
 #endif
 
@@ -121,7 +121,7 @@ static int audio_overnight(int argc, char **argv)
     return 0;
 }
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
     MSH_CMD_EXPORT(audio_overnight, auto test record / replay);
 #endif
 

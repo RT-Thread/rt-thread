@@ -455,11 +455,11 @@ void lcd_test(void)
     lcd_clear(0x001f);
     rt_thread_delay(200);
 }
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(lcd_clear, lcd_clear);
 FINSH_FUNCTION_EXPORT(lcd_test, lcd_test);
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
 MSH_CMD_EXPORT(lcd_clear, lcd_clear);
 MSH_CMD_EXPORT(lcd_test, lcd_test);
 #endif

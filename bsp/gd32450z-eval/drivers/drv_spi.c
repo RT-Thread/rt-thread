@@ -11,7 +11,7 @@
 #include "drv_spi.h"
 
 #include <board.h>
-#include <finsh.h>
+#include <msh.h>
 
 #ifdef RT_USING_SPI
 

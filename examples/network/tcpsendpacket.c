@@ -81,8 +81,8 @@ void tcp_senddata(const char *url, int port, int length)
     }
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 /* 输出tcpclient函数到finsh shell中 */
 FINSH_FUNCTION_EXPORT(tcp_senddata, send a packet through tcp connection);
 #endif

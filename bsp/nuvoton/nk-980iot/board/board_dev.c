@@ -271,7 +271,7 @@ static int at_wifi_set(int argc, char **argv)
 
     return 0;
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
     MSH_CMD_EXPORT(at_wifi_set, AT device wifi set ssid / password function);
 #endif
 #endif /* BOARD_USING_ESP8266  */

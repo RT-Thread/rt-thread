@@ -34,7 +34,7 @@ extern int Image$$RW_RAM1$$ZI$$Limit;
 extern int __bss_end;
 #endif
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 extern int finsh_system_init(void);
 #endif
 extern int  rt_application_init(void);
@@ -81,7 +81,7 @@ void rtthread_startup(void)
 	/* init application */
 	rt_application_init();
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 	/* init the finsh input */
 	rt_hw_finsh_init();
 

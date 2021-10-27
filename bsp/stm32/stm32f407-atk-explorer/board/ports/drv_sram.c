@@ -87,7 +87,7 @@ static int rt_hw_sram_init(void)
 INIT_BOARD_EXPORT(rt_hw_sram_init);
 
 #ifdef DRV_DEBUG
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
 static int sram_test(void)
 {
     int i = 0;
@@ -156,6 +156,6 @@ static int sram_test(void)
     return RT_EOK;
 }
 MSH_CMD_EXPORT(sram_test, sram test);
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_MSH */
 #endif /* DRV_DEBUG */
 #endif /* BSP_USING_SRAM */

@@ -339,8 +339,8 @@ void n32_msp_can_init(void *Instance)
 }
 #endif /* BSP_USING_CAN */
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #if defined(BSP_USING_UART2) || defined(BSP_USING_UART3)
 static void uart_test_rw(rt_device_t uartx, const char *name)
 {

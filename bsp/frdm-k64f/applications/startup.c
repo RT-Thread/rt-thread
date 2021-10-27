@@ -20,9 +20,9 @@
 /*@{*/
 
 extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 extern int finsh_system_init(void);
-extern void finsh_set_device(const char* device);
+extern void msh_set_device(const char* device);
 #endif
 
 #ifdef __CC_ARM
@@ -76,10 +76,10 @@ void rtthread_startup(void)
     /* init application */
     rt_application_init();
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* init finsh */
     finsh_system_init();
-    finsh_set_device( FINSH_DEVICE_NAME );
+    msh_set_device( FINSH_DEVICE_NAME );
 #endif
 
     /* init timer thread */

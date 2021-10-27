@@ -42,8 +42,8 @@ void seekdir_test(void)
     closedir (dirp);
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(seekdir_test, perform directory seek test);
 MSH_CMD_EXPORT(seekdir_test, perform directory seek test);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

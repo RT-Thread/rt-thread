@@ -220,10 +220,10 @@
 #define RT_CONSOLEBUF_SIZE          (128)
 
 /* SECTION: finsh, a C-Express shell */
-#define RT_USING_FINSH
+#define RT_USING_MSH
 /* Using symbol table */
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
+#define MSH_USING_SYMTAB
+#define MSH_USING_DESCRIPTION
 
 /* SECTION: Peripheral devices */
 #define EFM32_INTERFACE_ADC         (0)

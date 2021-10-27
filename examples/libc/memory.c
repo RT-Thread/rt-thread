@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <finsh.h>
+#include <msh.h>
 #include <sys/errno.h>
 
 static int errors = 0;

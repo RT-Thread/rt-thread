@@ -101,8 +101,8 @@ rt_err_t rym_write_to_file(rt_device_t idev)
     return res;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 rt_err_t ry(char *dname)
 {
     rt_err_t res;

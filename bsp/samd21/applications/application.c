@@ -84,10 +84,10 @@ void rt_init_thread_entry(void* parameter)
 
     rt_kprintf("SYSTEM running at %uhz\n", SystemCoreClock);
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
     /* init finsh */
     finsh_system_init();
-    finsh_set_device("uart1");
+    msh_set_device("uart1");
 #endif
 
     LED_Init();

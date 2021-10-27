@@ -24,9 +24,9 @@
 /*@{*/
 
 extern int  rt_application_init(void);
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 extern void finsh_system_init(void);
-extern void finsh_set_device(const char* device);
+extern void msh_set_device(const char* device);
 #endif
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM)

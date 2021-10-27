@@ -68,10 +68,10 @@
 
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
-#define RT_USING_FINSH
+#define RT_USING_MSH
 /* Using symbol table */
-#define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
+#define MSH_USING_SYMTAB
+#define MSH_USING_DESCRIPTION
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* #define RT_USING_LWIP */

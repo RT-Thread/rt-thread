@@ -7,7 +7,7 @@
  */
 
 #include <rtthread.h>
-#include <finsh.h>
+#include <msh.h>
 #include <shell.h>
 #include <rtdef.h>
 #include <dfs.h>

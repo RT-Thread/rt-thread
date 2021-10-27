@@ -345,5 +345,5 @@ register int    l;
 }
 #endif
 
-#include <finsh.h>
+#include <msh.h>
 FINSH_FUNCTION_EXPORT(dhry_test, dhry test);

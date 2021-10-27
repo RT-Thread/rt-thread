@@ -12,7 +12,7 @@
 
 #ifdef BSP_USING_OPENAMP
 
-#include <finsh.h>
+#include <msh.h>
 #include <drv_openamp.h>
 #include <openamp.h>
 #include <virt_uart.h>
@@ -293,7 +293,7 @@ static int creat_openamp_thread(void)
 }
 INIT_APP_EXPORT(creat_openamp_thread);
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
 
 static int console(int argc, char **argv)
 {
@@ -305,7 +305,7 @@ static int console(int argc, char **argv)
         {
             rt_kprintf("console change to %s\n", argv[2]);
             rt_console_set_device(argv[2]);
-            finsh_set_device(argv[2]);
+            msh_set_device(argv[2]);
         }
         else
         {
@@ -323,6 +323,6 @@ static int console(int argc, char **argv)
 }
 MSH_CMD_EXPORT(console, set console name);
 
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_MSH */
 
 #endif

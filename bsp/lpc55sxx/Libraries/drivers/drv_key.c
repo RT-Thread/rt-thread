@@ -125,10 +125,10 @@ int my_button_start(void)
     return 0;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
 
 #define KEY_PIN          51
 #define KEY_PRESS_VALUE  0
@@ -164,5 +164,5 @@ void key_test(rt_uint32_t led_num, rt_uint32_t value)
 }
 MSH_CMD_EXPORT(key_test, key_test);
 
-#endif /* FINSH_USING_MSH */
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
+#endif /* RT_USING_MSH */

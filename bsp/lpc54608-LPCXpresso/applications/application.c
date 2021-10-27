@@ -9,9 +9,9 @@
  */
 
 #include <rtthread.h>
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 #include <shell.h>
-#include <finsh.h>
+#include <msh.h>
 #endif
 
 /* thread phase init */
@@ -20,7 +20,7 @@ void rt_init_thread_entry(void *parameter)
     /* Initialization RT-Thread Components */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_init();
-#elif defined(RT_USING_FINSH)
+#elif defined(RT_USING_MSH)
     finsh_system_init();
 #endif
 }

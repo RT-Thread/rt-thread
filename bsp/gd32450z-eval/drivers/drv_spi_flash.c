@@ -17,7 +17,7 @@
 #endif
 
 #include <rthw.h>
-#include <finsh.h>
+#include <msh.h>
 
 #define SPI_PERIPH                  SPI5
 #define SPI_BUS_NAME                "spi5"

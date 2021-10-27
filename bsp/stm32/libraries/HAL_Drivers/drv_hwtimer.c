@@ -475,6 +475,7 @@ void TIM1_BRK_TIM15_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
     HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM15_INDEX].tim_handle);
+		rt_thread_mdelay(100);
     /* leave interrupt */
     rt_interrupt_leave();
 }

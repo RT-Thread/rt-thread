@@ -142,8 +142,8 @@ __exit:
     rt_free(buffer);
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 /* export to finsh */
 FINSH_FUNCTION_EXPORT(readwrite, perform file read and write test);
 
@@ -163,4 +163,4 @@ static void cmd_readwrite(int argc, char *argv[])
     readwrite(filename);
 }
 MSH_CMD_EXPORT_ALIAS(cmd_readwrite, readwrite, perform file read and write test);
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

@@ -7,7 +7,7 @@
  */
 
 #include <rtthread.h>
-#include <finsh.h>
+#include <msh.h>
 #include <shell.h>
 #include <dfs.h>
 #include <dfs_file.h>
@@ -69,8 +69,8 @@ void finsh_sz(void *parameter)
     rt_kprintf(FINSH_PROMPT);
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 #include <shell.h>
 
 static void rz(char *para)
