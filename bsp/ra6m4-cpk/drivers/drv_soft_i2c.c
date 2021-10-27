@@ -16,14 +16,14 @@
 
 #define DBG_TAG              "drv.i2c"
 #ifdef DRV_DEBUG
-#define DBG_LVL               DBG_LOG
+    #define DBG_LVL               DBG_LOG
 #else
-#define DBG_LVL               DBG_INFO
+    #define DBG_LVL               DBG_INFO
 #endif /* DRV_DEBUG */
 
 #if !defined(BSP_USING_I2C0) && !defined(BSP_USING_I2C1)
-#error "Please define at least one BSP_USING_I2Cx"
-/* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
+    #error "Please define at least one BSP_USING_I2Cx"
+    /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
 #endif
 
 static const struct ra_soft_i2c_config soft_i2c_config[] =
@@ -45,7 +45,7 @@ static struct ra_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0]
  */
 static void ra_i2c_gpio_init(struct ra_i2c *i2c)
 {
-    struct ra_soft_i2c_config* cfg = (struct ra_soft_i2c_config*)i2c->ops.data;
+    struct ra_soft_i2c_config *cfg = (struct ra_soft_i2c_config *)i2c->ops.data;
 
     rt_pin_mode(cfg->scl, PIN_MODE_OUTPUT_OD);
     rt_pin_mode(cfg->sda, PIN_MODE_OUTPUT_OD);
@@ -62,7 +62,7 @@ static void ra_i2c_gpio_init(struct ra_i2c *i2c)
  */
 static void ra_set_sda(void *data, rt_int32_t state)
 {
-    struct ra_soft_i2c_config* cfg = (struct ra_soft_i2c_config*)data;
+    struct ra_soft_i2c_config *cfg = (struct ra_soft_i2c_config *)data;
     if (state)
     {
         rt_pin_write(cfg->sda, PIN_HIGH);
@@ -81,7 +81,7 @@ static void ra_set_sda(void *data, rt_int32_t state)
  */
 static void ra_set_scl(void *data, rt_int32_t state)
 {
-    struct ra_soft_i2c_config* cfg = (struct ra_soft_i2c_config*)data;
+    struct ra_soft_i2c_config *cfg = (struct ra_soft_i2c_config *)data;
     if (state)
     {
         rt_pin_write(cfg->scl, PIN_HIGH);
@@ -99,7 +99,7 @@ static void ra_set_scl(void *data, rt_int32_t state)
  */
 static rt_int32_t ra_get_sda(void *data)
 {
-    struct ra_soft_i2c_config* cfg = (struct ra_soft_i2c_config*)data;
+    struct ra_soft_i2c_config *cfg = (struct ra_soft_i2c_config *)data;
     return rt_pin_read(cfg->sda);
 }
 
@@ -110,7 +110,7 @@ static rt_int32_t ra_get_sda(void *data)
  */
 static rt_int32_t ra_get_scl(void *data)
 {
-    struct ra_soft_i2c_config* cfg = (struct ra_soft_i2c_config*)data;
+    struct ra_soft_i2c_config *cfg = (struct ra_soft_i2c_config *)data;
     return rt_pin_read(cfg->scl);
 }
 /**
@@ -198,7 +198,7 @@ int rt_hw_i2c_init(void)
     for (int i = 0; i < obj_num; i++)
     {
         i2c_obj[i].ops = ra_bit_ops_default;
-        i2c_obj[i].ops.data = (void*)&soft_i2c_config[i];
+        i2c_obj[i].ops.data = (void *)&soft_i2c_config[i];
         i2c_obj[i].i2c2_bus.priv = &i2c_obj[i].ops;
         ra_i2c_gpio_init(&i2c_obj[i]);
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c2_bus, soft_i2c_config[i].bus_name);
@@ -206,9 +206,9 @@ int rt_hw_i2c_init(void)
         ra_i2c_bus_unlock(&soft_i2c_config[i]);
 
         LOG_D("software simulation %s init done, pin scl: %d, pin sda %d",
-        soft_i2c_config[i].bus_name,
-        soft_i2c_config[i].scl,
-        soft_i2c_config[i].sda);
+              soft_i2c_config[i].bus_name,
+              soft_i2c_config[i].scl,
+              soft_i2c_config[i].sda);
     }
 
     return RT_EOK;

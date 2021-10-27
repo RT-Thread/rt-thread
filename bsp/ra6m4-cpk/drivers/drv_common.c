@@ -17,11 +17,11 @@
 #endif
 
 #ifdef RT_USING_SERIAL
-#ifdef RT_USING_SERIAL_V2
-#include <drv_usart_v2.h>
-#else
-#include <drv_usart.h>
-#endif
+    #ifdef RT_USING_SERIAL_V2
+        #include <drv_usart_v2.h>
+    #else
+        #include <drv_usart.h>
+    #endif
 #endif
 
 #ifdef RT_USING_FINSH
