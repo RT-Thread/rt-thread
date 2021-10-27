@@ -16,7 +16,7 @@
 
 int __open(const char *filename, int mode)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
   int handle;
   int open_mode = O_RDONLY;
 
@@ -68,5 +68,5 @@ int __open(const char *filename, int mode)
   return handle;
 #else
   return _LLIO_ERROR;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
