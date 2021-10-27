@@ -11,7 +11,7 @@ CPPDEFINES = []
 if GetDepend('RT_USING_LIBC'):
     src += Glob('*.c')
 elif GetDepend('RT_LIBC_USING_TIME'):
-    src += Glob('time.c')
+    src += ['time.c']
 
 if rtconfig.CROSS_TOOL == 'keil':
     CPPDEFINES += ['__CLK_TCK=RT_TICK_PER_SECOND']
