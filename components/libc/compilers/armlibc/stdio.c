@@ -7,16 +7,17 @@
  * Date           Author       Notes
  * 2017/10/15     bernard      implement stdio for armcc.
  */
+#include <rtthread.h>
 
+#ifdef RT_USING_POSIX
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <rtthread.h>
 #include "libc.h"
 
-#if defined(RT_USING_DFS) && defined(RT_USING_DFS_DEVFS)
-#include <dfs_posix.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #define STDIO_DEVICE_NAME_MAX   32
 
@@ -48,4 +49,4 @@ int libc_stdio_get_console(void)
     return std_fd;
 }
 
-#endif
+#endif /* RT_USING_POSIX */
