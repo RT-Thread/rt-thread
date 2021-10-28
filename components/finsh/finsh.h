@@ -46,7 +46,6 @@
 
 #define finsh_get_prompt msh_get_prompt
 #define finsh_set_prompt msh_set_prompt
-#define finsh_set_device msh_set_device
 #define finsh_shell msh_shell
 
 #define finsh_set_echo msh_set_echo
