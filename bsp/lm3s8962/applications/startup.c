@@ -119,7 +119,7 @@ void rtthread_startup(void)
 #ifdef RT_USING_MSH
     /* init finsh */
     finsh_system_init();
-#ifdef RT_USING_DEVICE
+#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
     msh_set_device("uart1");
 #endif
 #endif

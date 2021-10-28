@@ -18,9 +18,9 @@
 #include <lwp.h>
 #endif
 
-#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX
 #include <libc.h>
-#endif
+#endif /* RT_USING_POSIX */
 
 /* Global variables */
 const struct dfs_filesystem_ops *filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
@@ -216,10 +216,10 @@ struct dfs_fd *fd_get(int fd)
     struct dfs_fd *d;
     struct dfs_fdtable *fdt;
 
-#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX
     if ((0 <= fd) && (fd <= 2))
         fd = libc_stdio_get_console();
-#endif
+#endif /* RT_USING_POSIX */
 
     fdt = dfs_fdtable_get();
     fd = fd - DFS_FD_OFFSET;

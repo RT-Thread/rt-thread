@@ -27,9 +27,9 @@
 #include "shell.h"
 #include "msh.h"
 
-#if defined(RT_USING_DFS)
-    #include <dfs_posix.h>
-#endif /* RT_USING_DFS */
+#ifdef RT_USING_POSIX
+#include <dfs_posix.h>
+#endif /* RT_USING_POSIX */
 
 /* finsh thread */
 #ifndef RT_USING_HEAP
@@ -104,7 +104,7 @@ const char *finsh_get_prompt(void)
     }
     strcpy(finsh_prompt, _MSH_PROMPT);
 
-#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
+#if defined(RT_USING_POSIX) && defined(DFS_USING_WORKDIR)
     /* get current working directory */
     getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
 #endif
@@ -145,10 +145,17 @@ void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
 int finsh_getchar(void)
 {
 #ifdef RT_USING_DEVICE
-#ifdef RT_USING_POSIX
-    return getchar();
-#else
     char ch = 0;
+#ifdef RT_USING_POSIX
+    if(read(STDIN_FILENO, &ch, 1) > 0)
+    {
+        return ch;
+    }
+    else
+    {
+        return -1; /* EOF */
+    }
+#else
     rt_device_t device;
 
     RT_ASSERT(shell != RT_NULL);

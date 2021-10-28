@@ -47,6 +47,7 @@ jobs:
          - {RTT_BSP: "lm3s9b9x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lm4f232", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "tm4c123bsp", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "tkm32F499", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "tm4c129x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc43xx/M4", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc176x", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -66,6 +67,10 @@ jobs:
          - {RTT_BSP: "mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mb9bf568r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mini2440", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf51822", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52832", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52833", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52840", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "qemu-vexpress-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "qemu-vexpress-gemini", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "sam7x", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -140,6 +145,7 @@ jobs:
          - {RTT_BSP: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "bluetrum/ab32vg1-ab-prougen", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"}
+         - {RTT_BSP: "k210", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -151,7 +157,10 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libsdl-dev scons
+          sudo apt-get -qq install gcc-multilib libsdl-dev libncurses5-dev scons
+          sudo python -m pip install --upgrade pip -qq
+          pip install requests -qq
+          python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
 
@@ -196,4 +205,6 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
         run: |
+          source ~/.env/env.sh
+          pushd bsp/$RTT_BSP && pkgs --update && popd
           scons -C bsp/$RTT_BSP
