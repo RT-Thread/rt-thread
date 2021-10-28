@@ -7,16 +7,45 @@
  * Date           Author       Notes
  * 2017/10/15     bernard      the first version
  */
-#include <rtconfig.h>
-#ifdef RT_USING_POSIX
+#include <rtthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <fcntl.h>
+#include <sys/time.h>
 #include "libc.h"
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef RT_USING_PTHREADS
+#include <pthread.h>
+#endif
 
+int libc_system_init(void)
+{
+#ifdef RT_USING_POSIX
+    rt_device_t dev_console;
+
+    dev_console = rt_console_get_device();
+    if (dev_console)
+    {
+        libc_stdio_set_console(dev_console->parent.name, O_RDWR);
+    }
+#endif /* RT_USING_POSIX */
+
+#if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
+    pthread_system_init();
+#endif
+
+    return 0;
+}
+INIT_COMPONENT_EXPORT(libc_system_init);
+
+#ifdef RT_USING_POSIX
+
+#if defined(RT_USING_LIBC) && defined(RT_USING_NEWLIB)
 #define STDIO_DEVICE_NAME_MAX   32
 static FILE* std_console = NULL;
-
 int libc_stdio_set_console(const char* device_name, int mode)
 {
     FILE *fp;
@@ -88,4 +117,32 @@ int libc_stdio_get_console(void)
         return -1;
 }
 
+#else
+#define STDIO_DEVICE_NAME_MAX   32
+static int std_fd = -1;
+int libc_stdio_set_console(const char* device_name, int mode)
+{
+    int fd;
+    char name[STDIO_DEVICE_NAME_MAX];
+
+    snprintf(name, sizeof(name) - 1, "/dev/%s", device_name);
+    name[STDIO_DEVICE_NAME_MAX - 1] = '\0';
+
+    fd = open(name, mode, 0);
+    if (fd >= 0)
+    {
+        if (std_fd >= 0)
+        {
+            close(std_fd);
+        }
+        std_fd = fd;
+    }
+
+    return std_fd;
+}
+
+int libc_stdio_get_console(void) {
+    return std_fd;
+}
+#endif /* defined(RT_USING_LIBC) && (defined(__GNUC__) && !defined(__ARMCC_VERSION)) */
 #endif /* RT_USING_POSIX */
