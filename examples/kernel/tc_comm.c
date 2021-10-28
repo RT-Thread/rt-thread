@@ -31,13 +31,13 @@ static rt_uint32_t _tc_loop;
 void tc_thread_entry(void* parameter)
 {
     unsigned int fail_count = 0;
-    struct finsh_syscall* index;
+    struct msh_syscall* index;
 
     /* create tc semaphore */
     rt_sem_init(&_tc_sem, "tc", 0, RT_IPC_FLAG_PRIO);
 
     do {
-        for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
+        for (index = _syscall_table_begin; index < _syscall_table_end; MSH_NEXT_SYSCALL(index))
         {
             /* search testcase */
             if (rt_strstr(index->name, _tc_prefix) == index->name)
@@ -185,10 +185,10 @@ FINSH_FUNCTION_EXPORT(tc_loop, start testcase with testcase prefix or name in lo
 
 void list_tc()
 {
-    struct finsh_syscall* index;
+    struct msh_syscall* index;
 
     rt_kprintf("TestCases List:\n");
-    for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
+    for (index = _syscall_table_begin; index < _syscall_table_end; MSH_NEXT_SYSCALL(index))
     {
         /* search testcase */
         if (rt_strstr(index->name, "_tc_") == index->name)

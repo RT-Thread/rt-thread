@@ -41,22 +41,22 @@
 
 /* finsh symtab */
 #ifdef FINSH_USING_SYMTAB
-    struct finsh_syscall *_syscall_table_begin  = NULL;
-    struct finsh_syscall *_syscall_table_end    = NULL;
+    struct msh_syscall *_syscall_table_begin  = NULL;
+    struct msh_syscall *_syscall_table_end    = NULL;
 #endif
 
 struct finsh_shell *shell;
 static char *finsh_prompt_custom = RT_NULL;
 
 #if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
-struct finsh_syscall *finsh_syscall_next(struct finsh_syscall *call)
+struct msh_syscall *msh_syscall_next(struct msh_syscall *call)
 {
     unsigned int *ptr;
     ptr = (unsigned int *)(call + 1);
     while ((*ptr == 0) && ((unsigned int *)ptr < (unsigned int *) _syscall_table_end))
         ptr ++;
 
-    return (struct finsh_syscall *)ptr;
+    return (struct msh_syscall *)ptr;
 }
 
 #endif /* defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__)) */
@@ -195,7 +195,7 @@ static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
  *
  * @param device_name the name of new input device.
  */
-void finsh_set_device(const char *device_name)
+void msh_set_device(const char *device_name)
 {
     rt_device_t dev = RT_NULL;
 
@@ -437,7 +437,7 @@ void finsh_thread_entry(void *parameter)
     int ch;
 
     /* normal is echo mode */
-#ifndef FINSH_ECHO_DISABLE_DEFAULT
+#ifndef MSH_ECHO_DISABLE_DEFAULT
     shell->echo_mode = 1;
 #else
     shell->echo_mode = 0;
@@ -450,7 +450,7 @@ void finsh_thread_entry(void *parameter)
         rt_device_t console = rt_console_get_device();
         if (console)
         {
-            finsh_set_device(console->parent.name);
+            msh_set_device(console->parent.name);
         }
     }
 #endif
@@ -676,8 +676,8 @@ void finsh_thread_entry(void *parameter)
 
 void finsh_system_function_init(const void *begin, const void *end)
 {
-    _syscall_table_begin = (struct finsh_syscall *) begin;
-    _syscall_table_end = (struct finsh_syscall *) end;
+    _syscall_table_begin = (struct msh_syscall *) begin;
+    _syscall_table_end = (struct msh_syscall *) end;
 }
 
 #if defined(__ICCARM__) || defined(__ICCRX__)               /* for IAR compiler */
@@ -693,7 +693,7 @@ void finsh_system_function_init(const void *begin, const void *end)
 #pragma section("FSymTab$a", read)
 const char __fsym_begin_name[] = "__start";
 const char __fsym_begin_desc[] = "begin of finsh";
-__declspec(allocate("FSymTab$a")) const struct finsh_syscall __fsym_begin =
+__declspec(allocate("FSymTab$a")) const struct msh_syscall __fsym_begin =
 {
     __fsym_begin_name,
     __fsym_begin_desc,
@@ -703,7 +703,7 @@ __declspec(allocate("FSymTab$a")) const struct finsh_syscall __fsym_begin =
 #pragma section("FSymTab$z", read)
 const char __fsym_end_name[] = "__end";
 const char __fsym_end_desc[] = "end of finsh";
-__declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end =
+__declspec(allocate("FSymTab$z")) const struct msh_syscall __fsym_end =
 {
     __fsym_end_name,
     __fsym_end_desc,
@@ -746,7 +746,7 @@ int finsh_system_init(void)
     }
 
     ptr_begin = (unsigned int *)&__fsym_begin;
-    ptr_begin += (sizeof(struct finsh_syscall) / sizeof(unsigned int));
+    ptr_begin += (sizeof(struct msh_syscall) / sizeof(unsigned int));
     while (*ptr_begin == 0) ptr_begin ++;
 
     ptr_end = (unsigned int *) &__fsym_end;

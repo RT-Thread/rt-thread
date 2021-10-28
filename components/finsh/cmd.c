@@ -886,10 +886,10 @@ long list(void)
 {
     rt_kprintf("--Commands List:\n");
     {
-        struct finsh_syscall *index;
+        struct msh_syscall *index;
         for (index = _syscall_table_begin;
                 index < _syscall_table_end;
-                FINSH_NEXT_SYSCALL(index))
+                MSH_NEXT_SYSCALL(index))
         {
             /* skip the internal command */
             if (strncmp((char *)index->name, "__", 2) == 0) continue;

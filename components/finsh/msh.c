@@ -35,11 +35,11 @@ int msh_help(int argc, char **argv)
 {
     rt_kprintf("RT-Thread shell commands:\n");
     {
-        struct finsh_syscall *index;
+        struct msh_syscall *index;
 
         for (index = _syscall_table_begin;
                 index < _syscall_table_end;
-                FINSH_NEXT_SYSCALL(index))
+                MSH_NEXT_SYSCALL(index))
         {
 #if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
             rt_kprintf("%-16s - %s\n", index->name, index->desc);
@@ -168,12 +168,12 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
 
 static cmd_function_t msh_get_cmd(char *cmd, int size)
 {
-    struct finsh_syscall *index;
+    struct msh_syscall *index;
     cmd_function_t cmd_func = RT_NULL;
 
     for (index = _syscall_table_begin;
             index < _syscall_table_end;
-            FINSH_NEXT_SYSCALL(index))
+            MSH_NEXT_SYSCALL(index))
     {
         if (strncmp(index->name, cmd, size) == 0 &&
                 index->name[size] == '\0')
@@ -527,7 +527,7 @@ void msh_auto_complete(char *prefix)
 {
     int length, min_length;
     const char *name_ptr, *cmd_name;
-    struct finsh_syscall *index;
+    struct msh_syscall *index;
 
     min_length = 0;
     name_ptr = RT_NULL;
@@ -568,7 +568,7 @@ void msh_auto_complete(char *prefix)
 
     /* checks in internal command */
     {
-        for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
+        for (index = _syscall_table_begin; index < _syscall_table_end; MSH_NEXT_SYSCALL(index))
         {
             /* skip finsh shell function */
             cmd_name = (const char *) index->name;
