@@ -13,11 +13,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "libc.h"
-
 #include <fcntl.h>
 #include <unistd.h>
+#include "libc.h"
 
 #define STDIO_DEVICE_NAME_MAX   32
 

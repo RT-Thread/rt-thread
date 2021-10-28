@@ -2,7 +2,7 @@ from building import *
 
 Import('rtconfig')
 
-src   = Glob('*.c')
+src   = []
 cwd   = GetCurrentDir()
 group = []
 
@@ -10,16 +10,19 @@ CPPPATH    = [cwd]
 CPPDEFINES = ['RT_USING_DLIBC']
 
 if rtconfig.PLATFORM == 'iar':
+    if GetDepend('RT_USING_LIBC'):
+        src += Glob('*.c')
+        if GetDepend('RT_USING_POSIX'):
+            from distutils.version import LooseVersion
+            from iar import IARVersion
 
-    if GetDepend('RT_USING_POSIX'):
-        from distutils.version import LooseVersion
-        from iar import IARVersion
+            CPPDEFINES = CPPDEFINES + ['_DLIB_FILE_DESCRIPTOR']
 
-        CPPDEFINES = CPPDEFINES + ['_DLIB_FILE_DESCRIPTOR']
+            if LooseVersion(IARVersion()) < LooseVersion("8.20.1"):
+                CPPDEFINES = CPPDEFINES + ['_DLIB_THREAD_SUPPORT']
+    elif GetDepend('RT_USING_POSIX'):
+        src += ['stdio.c', 'libc.c']
 
-        if LooseVersion(IARVersion()) < LooseVersion("8.20.1"):
-            CPPDEFINES = CPPDEFINES + ['_DLIB_THREAD_SUPPORT']
-
-    group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+    group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

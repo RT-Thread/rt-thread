@@ -19,6 +19,8 @@ if rtconfig.PLATFORM == 'gcc':
         src += Glob('*.c')
         if GetDepend('RT_USING_MODULE') == False:
             SrcRemove(src, ['libc_syms.c'])
+    elif GetDepend('RT_USING_POSIX'):
+        src += ['stdio.c', 'libc.c', 'syscalls.c']
     else:
         src += ['syscalls.c']
 
