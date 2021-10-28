@@ -7,15 +7,15 @@
  * Date           Author       Notes
  * 2013-03-30     Bernard      the first verion for finsh
  * 2014-01-03     Bernard      msh can execute module.
- * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
+ * 2017-07-19     Aubr.Cool    limit argc to RT_MSH_ARG_MAX
  */
 #include <rtthread.h>
 #include <string.h>
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 
-#ifndef FINSH_ARG_MAX
-    #define FINSH_ARG_MAX    8
+#ifndef MSH_ARG_MAX
+    #define MSH_ARG_MAX    8
 #endif
 
 #include "msh.h"
@@ -41,7 +41,7 @@ int msh_help(int argc, char **argv)
                 index < _syscall_table_end;
                 MSH_NEXT_SYSCALL(index))
         {
-#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
+#if defined(MSH_USING_DESCRIPTION) && defined(MSH_USING_SYMTAB)
             rt_kprintf("%-16s - %s\n", index->name, index->desc);
 #else
             rt_kprintf("%s ", index->name);
@@ -87,7 +87,7 @@ MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system.);
 #endif /* RT_USING_HEAP */
 #endif /* MSH_USING_BUILT_IN_COMMANDS */
 
-static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
+static int msh_split(char *cmd, rt_size_t length, char *argv[MSH_ARG_MAX])
 {
     char *ptr;
     rt_size_t position;
@@ -108,7 +108,7 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
             position ++;
         }
 
-        if (argc >= FINSH_ARG_MAX)
+        if (argc >= MSH_ARG_MAX)
         {
             rt_kprintf("Too many args ! We only Use:\n");
             for (i = 0; i < argc; i++)
@@ -264,7 +264,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     int argc;
     rt_size_t cmd0_size = 0;
     cmd_function_t cmd_func;
-    char *argv[FINSH_ARG_MAX];
+    char *argv[MSH_ARG_MAX];
 
     RT_ASSERT(cmd);
     RT_ASSERT(retp);
@@ -295,7 +295,7 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
 {
     int argc;
     int cmd0_size = 0;
-    char *argv[FINSH_ARG_MAX];
+    char *argv[MSH_ARG_MAX];
     int fd = -1;
     char *pg_name;
 
@@ -570,7 +570,7 @@ void msh_auto_complete(char *prefix)
     {
         for (index = _syscall_table_begin; index < _syscall_table_end; MSH_NEXT_SYSCALL(index))
         {
-            /* skip finsh shell function */
+            /* skip msh shell function */
             cmd_name = (const char *) index->name;
             if (strncmp(prefix, cmd_name, strlen(prefix)) == 0)
             {
@@ -599,4 +599,4 @@ void msh_auto_complete(char *prefix)
 
     return ;
 }
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

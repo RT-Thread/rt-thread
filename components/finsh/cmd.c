@@ -35,8 +35,8 @@
 #include <rtthread.h>
 #include <string.h>
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
+#ifdef RT_USING_MSH
+#include <msh.h>
 
 #define LIST_FIND_OBJ_NR 8
 
@@ -894,7 +894,7 @@ long list(void)
             /* skip the internal command */
             if (strncmp((char *)index->name, "__", 2) == 0) continue;
 
-#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
+#if defined(MSH_USING_DESCRIPTION) && defined(MSH_USING_SYMTAB)
             rt_kprintf("%-16s -- %s\n", index->name, index->desc);
 #else
             rt_kprintf("%s\n", index->name);
@@ -906,4 +906,4 @@ long list(void)
 }
 MSH_CMD_EXPORT(list, list all commands in system)
 
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */

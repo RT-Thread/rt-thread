@@ -22,7 +22,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef RT_USING_FINSH
+#ifdef RT_USING_MSH
 
 #include "shell.h"
 #include "msh.h"
@@ -31,22 +31,22 @@
 #include <dfs_posix.h>
 #endif /* RT_USING_POSIX */
 
-/* finsh thread */
+/* msh thread */
 #ifndef RT_USING_HEAP
-    static struct rt_thread finsh_thread;
+    static struct rt_thread msh_thread;
     ALIGN(RT_ALIGN_SIZE)
-    static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
-    struct finsh_shell _shell;
+    static char msh_thread_stack[MSH_THREAD_STACK_SIZE];
+    struct msh_shell _shell;
 #endif
 
-/* finsh symtab */
-#ifdef FINSH_USING_SYMTAB
+/* msh symtab */
+#ifdef MSH_USING_SYMTAB
     struct msh_syscall *_syscall_table_begin  = NULL;
     struct msh_syscall *_syscall_table_end    = NULL;
 #endif
 
-struct finsh_shell *shell;
-static char *finsh_prompt_custom = RT_NULL;
+struct msh_shell *shell;
+static char *msh_prompt_custom = RT_NULL;
 
 #if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
 struct msh_syscall *msh_syscall_next(struct msh_syscall *call)
@@ -62,21 +62,21 @@ struct msh_syscall *msh_syscall_next(struct msh_syscall *call)
 #endif /* defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__)) */
 
 #ifdef RT_USING_HEAP
-int finsh_set_prompt(const char *prompt)
+int msh_set_prompt(const char *prompt)
 {
-    if (finsh_prompt_custom)
+    if (msh_prompt_custom)
     {
-        rt_free(finsh_prompt_custom);
-        finsh_prompt_custom = RT_NULL;
+        rt_free(msh_prompt_custom);
+        msh_prompt_custom = RT_NULL;
     }
 
     /* strdup */
     if (prompt)
     {
-        finsh_prompt_custom = (char *)rt_malloc(strlen(prompt) + 1);
-        if (finsh_prompt_custom)
+        msh_prompt_custom = (char *)rt_malloc(strlen(prompt) + 1);
+        if (msh_prompt_custom)
         {
-            strcpy(finsh_prompt_custom, prompt);
+            strcpy(msh_prompt_custom, prompt);
         }
     }
 
@@ -86,63 +86,63 @@ int finsh_set_prompt(const char *prompt)
 
 #define _MSH_PROMPT "msh "
 
-const char *finsh_get_prompt(void)
+const char *msh_get_prompt(void)
 {
-    static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {0};
+    static char msh_prompt[RT_CONSOLEBUF_SIZE + 1] = {0};
 
     /* check prompt mode */
     if (!shell->prompt_mode)
     {
-        finsh_prompt[0] = '\0';
-        return finsh_prompt;
+        msh_prompt[0] = '\0';
+        return msh_prompt;
     }
 
-    if (finsh_prompt_custom)
+    if (msh_prompt_custom)
     {
-        strncpy(finsh_prompt, finsh_prompt_custom, sizeof(finsh_prompt) - 1);
-        return finsh_prompt;
+        strncpy(msh_prompt, msh_prompt_custom, sizeof(msh_prompt) - 1);
+        return msh_prompt;
     }
-    strcpy(finsh_prompt, _MSH_PROMPT);
+    strcpy(msh_prompt, _MSH_PROMPT);
 
 #if defined(RT_USING_POSIX) && defined(DFS_USING_WORKDIR)
     /* get current working directory */
-    getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
+    getcwd(&msh_prompt[rt_strlen(msh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(msh_prompt));
 #endif
 
-    strcat(finsh_prompt, ">");
+    strcat(msh_prompt, ">");
 
-    return finsh_prompt;
+    return msh_prompt;
 }
 
 /**
- * @ingroup finsh
+ * @ingroup msh
  *
- * This function get the prompt mode of finsh shell.
+ * This function get the prompt mode of msh shell.
  *
  * @return prompt the prompt mode, 0 disable prompt mode, other values enable prompt mode.
  */
-rt_uint32_t finsh_get_prompt_mode(void)
+rt_uint32_t msh_get_prompt_mode(void)
 {
     RT_ASSERT(shell != RT_NULL);
     return shell->prompt_mode;
 }
 
 /**
- * @ingroup finsh
+ * @ingroup msh
  *
- * This function set the prompt mode of finsh shell.
+ * This function set the prompt mode of msh shell.
  *
  * The parameter 0 disable prompt mode, other values enable prompt mode.
  *
  * @param prompt the prompt mode
  */
-void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
+void msh_set_prompt_mode(rt_uint32_t prompt_mode)
 {
     RT_ASSERT(shell != RT_NULL);
     shell->prompt_mode = prompt_mode;
 }
 
-int finsh_getchar(void)
+int msh_getchar(void)
 {
 #ifdef RT_USING_DEVICE
     char ch = 0;
@@ -178,20 +178,20 @@ int finsh_getchar(void)
 }
 
 #if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
-static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
+static rt_err_t msh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
 
-    /* release semaphore to let finsh thread rx data */
+    /* release semaphore to let msh thread rx data */
     rt_sem_release(&shell->rx_sem);
 
     return RT_EOK;
 }
 
 /**
- * @ingroup finsh
+ * @ingroup msh
  *
- * This function sets the input device of finsh shell.
+ * This function sets the input device of msh shell.
  *
  * @param device_name the name of new input device.
  */
@@ -203,19 +203,19 @@ void msh_set_device(const char *device_name)
     dev = rt_device_find(device_name);
     if (dev == RT_NULL)
     {
-        rt_kprintf("finsh: can not find device: %s\n", device_name);
+        rt_kprintf("msh: can not find device: %s\n", device_name);
         return;
     }
 
     /* check whether it's a same device */
     if (dev == shell->device) return;
-    /* open this device and set the new device in finsh shell */
+    /* open this device and set the new device in msh shell */
     if (rt_device_open(dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX | \
                        RT_DEVICE_FLAG_STREAM) == RT_EOK)
     {
         if (shell->device != RT_NULL)
         {
-            /* close old finsh device */
+            /* close old msh device */
             rt_device_close(shell->device);
             rt_device_set_rx_indicate(shell->device, RT_NULL);
         }
@@ -225,18 +225,18 @@ void msh_set_device(const char *device_name)
         shell->line_curpos = shell->line_position = 0;
 
         shell->device = dev;
-        rt_device_set_rx_indicate(dev, finsh_rx_ind);
+        rt_device_set_rx_indicate(dev, msh_rx_ind);
     }
 }
 
 /**
- * @ingroup finsh
+ * @ingroup msh
  *
- * This function returns current finsh shell input device.
+ * This function returns current msh shell input device.
  *
- * @return the finsh shell input device name is returned.
+ * @return the msh shell input device name is returned.
  */
-const char *finsh_get_device()
+const char *msh_get_device()
 {
     RT_ASSERT(shell != RT_NULL);
     return shell->device->parent.name;
@@ -244,76 +244,76 @@ const char *finsh_get_device()
 #endif
 
 /**
- * @ingroup finsh
+ * @ingroup msh
  *
- * This function set the echo mode of finsh shell.
+ * This function set the echo mode of msh shell.
  *
- * FINSH_OPTION_ECHO=0x01 is echo mode, other values are none-echo mode.
+ * MSH_OPTION_ECHO=0x01 is echo mode, other values are none-echo mode.
  *
  * @param echo the echo mode
  */
-void finsh_set_echo(rt_uint32_t echo)
+void msh_set_echo(rt_uint32_t echo)
 {
     RT_ASSERT(shell != RT_NULL);
     shell->echo_mode = (rt_uint8_t)echo;
 }
 
 /**
- * @ingroup finsh
+ * @ingroup msh
  *
- * This function gets the echo mode of finsh shell.
+ * This function gets the echo mode of msh shell.
  *
  * @return the echo mode
  */
-rt_uint32_t finsh_get_echo()
+rt_uint32_t msh_get_echo()
 {
     RT_ASSERT(shell != RT_NULL);
 
     return shell->echo_mode;
 }
 
-#ifdef FINSH_USING_AUTH
+#ifdef MSH_USING_AUTH
 /**
- * set a new password for finsh
+ * set a new password for msh
  *
  * @param password new password
  *
  * @return result, RT_EOK on OK, -RT_ERROR on the new password length is less than
- *  FINSH_PASSWORD_MIN or greater than FINSH_PASSWORD_MAX
+ *  MSH_PASSWORD_MIN or greater than MSH_PASSWORD_MAX
  */
-rt_err_t finsh_set_password(const char *password)
+rt_err_t msh_set_password(const char *password)
 {
     rt_ubase_t level;
     rt_size_t pw_len = rt_strlen(password);
 
-    if (pw_len < FINSH_PASSWORD_MIN || pw_len > FINSH_PASSWORD_MAX)
+    if (pw_len < MSH_PASSWORD_MIN || pw_len > MSH_PASSWORD_MAX)
         return -RT_ERROR;
 
     level = rt_hw_interrupt_disable();
-    rt_strncpy(shell->password, password, FINSH_PASSWORD_MAX);
+    rt_strncpy(shell->password, password, MSH_PASSWORD_MAX);
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
 
 /**
- * get the finsh password
+ * get the msh password
  *
  * @return password
  */
-const char *finsh_get_password(void)
+const char *msh_get_password(void)
 {
     return shell->password;
 }
 
-static void finsh_wait_auth(void)
+static void msh_wait_auth(void)
 {
     int ch;
     rt_bool_t input_finish = RT_FALSE;
-    char password[FINSH_PASSWORD_MAX] = { 0 };
+    char password[MSH_PASSWORD_MAX] = { 0 };
     rt_size_t cur_pos = 0;
     /* password not set */
-    if (rt_strlen(finsh_get_password()) == 0) return;
+    if (rt_strlen(msh_get_password()) == 0) return;
 
     while (1)
     {
@@ -323,13 +323,13 @@ static void finsh_wait_auth(void)
             while (1)
             {
                 /* read one character from device */
-                ch = (int)finsh_getchar();
+                ch = (int)msh_getchar();
                 if (ch < 0)
                 {
                     continue;
                 }
 
-                if (ch >= ' ' && ch <= '~' && cur_pos < FINSH_PASSWORD_MAX)
+                if (ch >= ' ' && ch <= '~' && cur_pos < MSH_PASSWORD_MAX)
                 {
                     /* change the printable characters to '*' */
                     rt_kprintf("*");
@@ -350,7 +350,7 @@ static void finsh_wait_auth(void)
                 }
             }
         }
-        if (!rt_strncmp(shell->password, password, FINSH_PASSWORD_MAX)) return;
+        if (!rt_strncmp(shell->password, password, MSH_PASSWORD_MAX)) return;
         else
         {
             /* authentication failed, delay 2S for retry */
@@ -358,22 +358,22 @@ static void finsh_wait_auth(void)
             rt_kprintf("Sorry, try again.\n");
             cur_pos = 0;
             input_finish = RT_FALSE;
-            rt_memset(password, '\0', FINSH_PASSWORD_MAX);
+            rt_memset(password, '\0', MSH_PASSWORD_MAX);
         }
     }
 }
-#endif /* FINSH_USING_AUTH */
+#endif /* MSH_USING_AUTH */
 
 static void shell_auto_complete(char *prefix)
 {
     rt_kprintf("\n");
     msh_auto_complete(prefix);
 
-    rt_kprintf("%s%s", FINSH_PROMPT, prefix);
+    rt_kprintf("%s%s", MSH_PROMPT, prefix);
 }
 
-#ifdef FINSH_USING_HISTORY
-static rt_bool_t shell_handle_history(struct finsh_shell *shell)
+#ifdef MSH_USING_HISTORY
+static rt_bool_t shell_handle_history(struct msh_shell *shell)
 {
 #if defined(_WIN32)
     int i;
@@ -386,41 +386,41 @@ static rt_bool_t shell_handle_history(struct finsh_shell *shell)
 #else
     rt_kprintf("\033[2K\r");
 #endif
-    rt_kprintf("%s%s", FINSH_PROMPT, shell->line);
+    rt_kprintf("%s%s", MSH_PROMPT, shell->line);
     return RT_FALSE;
 }
 
-static void shell_push_history(struct finsh_shell *shell)
+static void shell_push_history(struct msh_shell *shell)
 {
     if (shell->line_position != 0)
     {
         /* push history */
-        if (shell->history_count >= FINSH_HISTORY_LINES)
+        if (shell->history_count >= MSH_HISTORY_LINES)
         {
             /* if current cmd is same as last cmd, don't push */
-            if (memcmp(&shell->cmd_history[FINSH_HISTORY_LINES - 1], shell->line, FINSH_CMD_SIZE))
+            if (memcmp(&shell->cmd_history[MSH_HISTORY_LINES - 1], shell->line, MSH_CMD_SIZE))
             {
                 /* move history */
                 int index;
-                for (index = 0; index < FINSH_HISTORY_LINES - 1; index ++)
+                for (index = 0; index < MSH_HISTORY_LINES - 1; index ++)
                 {
                     memcpy(&shell->cmd_history[index][0],
-                           &shell->cmd_history[index + 1][0], FINSH_CMD_SIZE);
+                           &shell->cmd_history[index + 1][0], MSH_CMD_SIZE);
                 }
-                memset(&shell->cmd_history[index][0], 0, FINSH_CMD_SIZE);
+                memset(&shell->cmd_history[index][0], 0, MSH_CMD_SIZE);
                 memcpy(&shell->cmd_history[index][0], shell->line, shell->line_position);
 
                 /* it's the maximum history */
-                shell->history_count = FINSH_HISTORY_LINES;
+                shell->history_count = MSH_HISTORY_LINES;
             }
         }
         else
         {
             /* if current cmd is same as last cmd, don't push */
-            if (shell->history_count == 0 || memcmp(&shell->cmd_history[shell->history_count - 1], shell->line, FINSH_CMD_SIZE))
+            if (shell->history_count == 0 || memcmp(&shell->cmd_history[shell->history_count - 1], shell->line, MSH_CMD_SIZE))
             {
                 shell->current_history = shell->history_count;
-                memset(&shell->cmd_history[shell->history_count][0], 0, FINSH_CMD_SIZE);
+                memset(&shell->cmd_history[shell->history_count][0], 0, MSH_CMD_SIZE);
                 memcpy(&shell->cmd_history[shell->history_count][0], shell->line, shell->line_position);
 
                 /* increase count and set current history position */
@@ -432,7 +432,7 @@ static void shell_push_history(struct finsh_shell *shell)
 }
 #endif
 
-void finsh_thread_entry(void *parameter)
+void msh_thread_entry(void *parameter)
 {
     int ch;
 
@@ -455,24 +455,24 @@ void finsh_thread_entry(void *parameter)
     }
 #endif
 
-#ifdef FINSH_USING_AUTH
+#ifdef MSH_USING_AUTH
     /* set the default password when the password isn't setting */
-    if (rt_strlen(finsh_get_password()) == 0)
+    if (rt_strlen(msh_get_password()) == 0)
     {
-        if (finsh_set_password(FINSH_DEFAULT_PASSWORD) != RT_EOK)
+        if (msh_set_password(MSH_DEFAULT_PASSWORD) != RT_EOK)
         {
-            rt_kprintf("Finsh password set failed.\n");
+            rt_kprintf("MSH password set failed.\n");
         }
     }
     /* waiting authenticate success */
-    finsh_wait_auth();
+    msh_wait_auth();
 #endif
 
-    rt_kprintf(FINSH_PROMPT);
+    rt_kprintf(MSH_PROMPT);
 
     while (1)
     {
-        ch = (int)finsh_getchar();
+        ch = (int)msh_getchar();
         if (ch < 0)
         {
             continue;
@@ -506,7 +506,7 @@ void finsh_thread_entry(void *parameter)
 
             if (ch == 0x41) /* up key */
             {
-#ifdef FINSH_USING_HISTORY
+#ifdef MSH_USING_HISTORY
                 /* prev history */
                 if (shell->current_history > 0)
                     shell->current_history --;
@@ -518,7 +518,7 @@ void finsh_thread_entry(void *parameter)
 
                 /* copy the history command */
                 memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
-                       FINSH_CMD_SIZE);
+                       MSH_CMD_SIZE);
                 shell->line_curpos = shell->line_position = strlen(shell->line);
                 shell_handle_history(shell);
 #endif
@@ -526,7 +526,7 @@ void finsh_thread_entry(void *parameter)
             }
             else if (ch == 0x42) /* down key */
             {
-#ifdef FINSH_USING_HISTORY
+#ifdef MSH_USING_HISTORY
                 /* next history */
                 if (shell->current_history < shell->history_count - 1)
                     shell->current_history ++;
@@ -540,7 +540,7 @@ void finsh_thread_entry(void *parameter)
                 }
 
                 memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
-                       FINSH_CMD_SIZE);
+                       MSH_CMD_SIZE);
                 shell->line_curpos = shell->line_position = strlen(shell->line);
                 shell_handle_history(shell);
 #endif
@@ -622,21 +622,21 @@ void finsh_thread_entry(void *parameter)
         /* handle end of line, break */
         if (ch == '\r' || ch == '\n')
         {
-#ifdef FINSH_USING_HISTORY
+#ifdef MSH_USING_HISTORY
             shell_push_history(shell);
 #endif
             if (shell->echo_mode)
                 rt_kprintf("\n");
             msh_exec(shell->line, shell->line_position);
 
-            rt_kprintf(FINSH_PROMPT);
+            rt_kprintf(MSH_PROMPT);
             memset(shell->line, 0, sizeof(shell->line));
             shell->line_curpos = shell->line_position = 0;
             continue;
         }
 
         /* it's a large line, discard it */
-        if (shell->line_position >= FINSH_CMD_SIZE)
+        if (shell->line_position >= MSH_CMD_SIZE)
             shell->line_position = 0;
 
         /* normal character */
@@ -665,7 +665,7 @@ void finsh_thread_entry(void *parameter)
         ch = 0;
         shell->line_position ++;
         shell->line_curpos++;
-        if (shell->line_position >= FINSH_CMD_SIZE)
+        if (shell->line_position >= MSH_CMD_SIZE)
         {
             /* clear command line */
             shell->line_position = 0;
@@ -674,25 +674,25 @@ void finsh_thread_entry(void *parameter)
     } /* end of device read */
 }
 
-void finsh_system_function_init(const void *begin, const void *end)
+void msh_system_function_init(const void *begin, const void *end)
 {
     _syscall_table_begin = (struct msh_syscall *) begin;
     _syscall_table_end = (struct msh_syscall *) end;
 }
 
 #if defined(__ICCARM__) || defined(__ICCRX__)               /* for IAR compiler */
-#ifdef FINSH_USING_SYMTAB
+#ifdef MSH_USING_SYMTAB
     #pragma section="FSymTab"
 #endif
 #elif defined(__ADSPBLACKFIN__) /* for VisaulDSP++ Compiler*/
-#ifdef FINSH_USING_SYMTAB
+#ifdef MSH_USING_SYMTAB
     extern "asm" int __fsymtab_start;
     extern "asm" int __fsymtab_end;
 #endif
 #elif defined(_MSC_VER)
 #pragma section("FSymTab$a", read)
 const char __fsym_begin_name[] = "__start";
-const char __fsym_begin_desc[] = "begin of finsh";
+const char __fsym_begin_desc[] = "begin of msh";
 __declspec(allocate("FSymTab$a")) const struct msh_syscall __fsym_begin =
 {
     __fsym_begin_name,
@@ -702,7 +702,7 @@ __declspec(allocate("FSymTab$a")) const struct msh_syscall __fsym_begin =
 
 #pragma section("FSymTab$z", read)
 const char __fsym_end_name[] = "__end";
-const char __fsym_end_desc[] = "end of finsh";
+const char __fsym_end_desc[] = "end of msh";
 __declspec(allocate("FSymTab$z")) const struct msh_syscall __fsym_end =
 {
     __fsym_end_name,
@@ -712,36 +712,36 @@ __declspec(allocate("FSymTab$z")) const struct msh_syscall __fsym_end =
 #endif
 
 /*
- * @ingroup finsh
+ * @ingroup msh
  *
- * This function will initialize finsh shell
+ * This function will initialize msh shell
  */
-int finsh_system_init(void)
+int msh_system_init(void)
 {
     rt_err_t result = RT_EOK;
     rt_thread_t tid;
 
-#ifdef FINSH_USING_SYMTAB
+#ifdef MSH_USING_SYMTAB
 #ifdef __ARMCC_VERSION  /* ARM C Compiler */
     extern const int FSymTab$$Base;
     extern const int FSymTab$$Limit;
-    finsh_system_function_init(&FSymTab$$Base, &FSymTab$$Limit);
+    msh_system_function_init(&FSymTab$$Base, &FSymTab$$Limit);
 #elif defined (__ICCARM__) || defined(__ICCRX__)      /* for IAR Compiler */
-    finsh_system_function_init(__section_begin("FSymTab"),
+    msh_system_function_init(__section_begin("FSymTab"),
                                __section_end("FSymTab"));
 #elif defined (__GNUC__) || defined(__TI_COMPILER_VERSION__) || defined(__TASKING__)
     /* GNU GCC Compiler and TI CCS */
     extern const int __fsymtab_start;
     extern const int __fsymtab_end;
-    finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
+    msh_system_function_init(&__fsymtab_start, &__fsymtab_end);
 #elif defined(__ADSPBLACKFIN__) /* for VisualDSP++ Compiler */
-    finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
+    msh_system_function_init(&__fsymtab_start, &__fsymtab_end);
 #elif defined(_MSC_VER)
     unsigned int *ptr_begin, *ptr_end;
 
     if (shell)
     {
-        rt_kprintf("finsh shell already init.\n");
+        rt_kprintf("msh shell already init.\n");
         return RT_EOK;
     }
 
@@ -753,39 +753,39 @@ int finsh_system_init(void)
     ptr_end --;
     while (*ptr_end == 0) ptr_end --;
 
-    finsh_system_function_init(ptr_begin, ptr_end);
+    msh_system_function_init(ptr_begin, ptr_end);
 #endif
 #endif
 
 #ifdef RT_USING_HEAP
     /* create or set shell structure */
-    shell = (struct finsh_shell *)rt_calloc(1, sizeof(struct finsh_shell));
+    shell = (struct msh_shell *)rt_calloc(1, sizeof(struct msh_shell));
     if (shell == RT_NULL)
     {
         rt_kprintf("no memory for shell\n");
         return -1;
     }
-    tid = rt_thread_create(FINSH_THREAD_NAME,
-                           finsh_thread_entry, RT_NULL,
-                           FINSH_THREAD_STACK_SIZE, FINSH_THREAD_PRIORITY, 10);
+    tid = rt_thread_create(MSH_THREAD_NAME,
+                           msh_thread_entry, RT_NULL,
+                           MSH_THREAD_STACK_SIZE, MSH_THREAD_PRIORITY, 10);
 #else
     shell = &_shell;
-    tid = &finsh_thread;
-    result = rt_thread_init(&finsh_thread,
-                            FINSH_THREAD_NAME,
-                            finsh_thread_entry, RT_NULL,
-                            &finsh_thread_stack[0], sizeof(finsh_thread_stack),
-                            FINSH_THREAD_PRIORITY, 10);
+    tid = &msh_thread;
+    result = rt_thread_init(&msh_thread,
+                            MSH_THREAD_NAME,
+                            msh_thread_entry, RT_NULL,
+                            &msh_thread_stack[0], sizeof(msh_thread_stack),
+                            MSH_THREAD_PRIORITY, 10);
 #endif /* RT_USING_HEAP */
 
     rt_sem_init(&(shell->rx_sem), "shrx", 0, 0);
-    finsh_set_prompt_mode(1);
+    msh_set_prompt_mode(1);
 
     if (tid != NULL && result == RT_EOK)
         rt_thread_startup(tid);
     return 0;
 }
-INIT_APP_EXPORT(finsh_system_init);
+INIT_APP_EXPORT(msh_system_init);
 
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 
