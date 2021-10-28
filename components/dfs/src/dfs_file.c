@@ -845,6 +845,6 @@ void copy(const char *src, const char *dst)
 FINSH_FUNCTION_EXPORT(copy, copy file or dir)
 #endif /* RT_USING_POSIX */
 
-#endif /* RT_USING_FINSH */
+#endif /* RT_USING_MSH */
 /* @} */
 
