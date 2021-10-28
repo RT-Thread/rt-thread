@@ -144,5 +144,5 @@ int libc_stdio_set_console(const char* device_name, int mode)
 int libc_stdio_get_console(void) {
     return std_fd;
 }
-#endif /* defined(RT_USING_LIBC) && (defined(__GNUC__) && !defined(__ARMCC_VERSION)) */
+#endif /* defined(RT_USING_LIBC) && defined(RT_USING_NEWLIB) */
 #endif /* RT_USING_POSIX */
