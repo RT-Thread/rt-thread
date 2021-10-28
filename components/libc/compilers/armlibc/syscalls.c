@@ -14,15 +14,16 @@
  * 2020-02-13     Meco Man     re-implement exit() and abort()
  * 2020-02-14     Meco Man     implement _sys_tmpnam()
  */
-#include <string.h>
+
 #include <rt_sys.h>
-
 #include <rtthread.h>
-#include "libc.h"
-
+#include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#ifdef RT_USING_POSIX
+#include "libc.h"
+#endif
 
 #define DBG_TAG    "armlibc.syscalls"
 #define DBG_LVL    DBG_INFO
