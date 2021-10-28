@@ -2,9 +2,10 @@
 
 from building import *
 
-cwd     = GetCurrentDir()
 src     = Glob('*.c')
+cwd     = GetCurrentDir()
+CPPPATH = [cwd]
 
-group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX'])
+group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX'], CPPPATH = CPPPATH)
 
 Return('group')
