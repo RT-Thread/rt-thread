@@ -11,7 +11,9 @@
 #include <rtthread.h>
 #include <yfuns.h>
 #include <unistd.h>
+#ifdef RT_USING_POSIX
 #include "libc.h"
+#endif
 
 #define DBG_TAG    "dlib.syscall_read"
 #define DBG_LVL    DBG_INFO

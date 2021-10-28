@@ -20,7 +20,9 @@
 #include <unistd.h>
 #include <sys/errno.h>
 #include <sys/stat.h>
+#ifdef RT_USING_POSIX
 #include "libc.h"
+#endif
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif
