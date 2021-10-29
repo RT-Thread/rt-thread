@@ -17,6 +17,15 @@ menu "Hardware Drivers Config"
             select RT_USING_PIN
             default y
 
+        config BSP_USING_ONCHIP_FLASH
+            bool "Enable Onchip FLASH"
+            default n
+
+        config BSP_USING_WDT
+            bool "Enable Watchdog Timer"
+            select RT_USING_WDT
+            default n
+
         menuconfig BSP_USING_UART
             bool "Enable UART"
             default y
@@ -72,11 +81,6 @@ menu "Hardware Drivers Config"
                             default 0x0511
                     endif
             endif
-
-        config BSP_USING_WDT
-            bool "Enable Watchdog Timer"
-            select RT_USING_WDT
-            default n
 
         menuconfig BSP_USING_ONCHIP_RTC
             bool "Enable RTC"
@@ -141,9 +145,52 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
-        config BSP_USING_ONCHIP_FLASH
-            bool "Enable Onchip FLASH"
+        menuconfig BSP_USING_PWM
+            bool "Enable PWM"
             default n
+            select RT_USING_PWM
+            if BSP_USING_PWM
+                config BSP_USING_PWM0
+                    bool "Enable GPT0 (32-Bits) output PWM"
+                    default n
+                
+                config BSP_USING_PWM1
+                    bool "Enable GPT1 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM2
+                    bool "Enable GPT2 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM3
+                    bool "Enable GPT3 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM4
+                    bool "Enable GPT4 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM5
+                    bool "Enable GPT5 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM6
+                    bool "Enable GPT6 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM7
+                    bool "Enable GPT7 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM8
+                    bool "Enable GPT8 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM9
+                    bool "Enable GPT9 (16-Bits) output PWM"
+                    default n
+            endif
+
     endmenu
 
     menu "Board extended module Drivers"
