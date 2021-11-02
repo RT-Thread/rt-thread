@@ -1,6 +1,6 @@
 # RT-Thread #
 
-[中文页](README_zh.md) |
+English | [中文页](README_zh.md) |
 
 [![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
@@ -64,11 +64,6 @@ It includes:
 
 RT-Thread has now been ported for nearly 90 development boards, most BSPs support MDK, IAR development environment and GCC compiler, and have provided default MDK and IAR project, which allows users to add their own application code directly based on the project. Each BSP has a similar directory structure, and most BSPs provide a README.md file, which is a markdown-format file that contains the basic introduction of BSP, and introduces how to simply start using BSP.
 
-Env is a development tool developed by RT-Thread which provides a build environment, text graphical system configuration, and package management capabilities for project based on the RT-Thread operating system. Its built-in `menuconfig` provides an easy-to-use configuration tool. It can tailor the kernels, components and software packages freely, so that the system can be constructed by building blocks.
-
-- [Download Env Tool](https://www.rt-thread.io/download.html?download=Env)
-- [User manual of Env](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md)
-
 # Resources
 
 ## Supported Architectures
@@ -107,6 +102,15 @@ RT-Thread Studio Demonstration:
 
 ![studio](./documentation/figures/studio.gif)                                                 
 
+
+
+## Env Tool
+
+Env is a development tool developed by RT-Thread which provides a build environment, text graphical system configuration, and package management capabilities for project based on the RT-Thread operating system. Its built-in `menuconfig` provides an easy-to-use configuration tool. It can tailor the kernels, components and software packages freely, so that the system can be constructed by building blocks.
+
+- [Download Env Tool](https://www.rt-thread.io/download.html?download=Env)
+- [User manual of Env](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md)
+
 ## Getting Started
 
 RT-Thread BSP can be compiled directly and downloaded to the corresponding development board for use. In addition, RT-Thread also provides qemu-vexpress-a9 BSP, which can be used without hardware platform. See the getting started guide below for details.
@@ -122,9 +126,7 @@ RT-Thread BSP can be compiled directly and downloaded to the corresponding devel
 
 ## Sample
 
-[Kernel Sample](https://github.com/RT-Thread-packages/kernel-sample) | [Device Sample Code](https://github.com/RT-Thread-packages/peripheral-sample) | [File System Sample Code](https://github.com/RT-Thread-packages/filesystem-sample ) | [Network Sample Code](https://github.com/RT-Thread-packages/network-sample ) | 
-
-[Based on the STM32L475 IoT Board SDK](https://github.com/RT-Thread/IoT_Board) | [Based on the W601 IoT Board SDK](https://github.com/RT-Thread/W601_IoT_Board)
+[Kernel Sample](https://github.com/RT-Thread-packages/kernel-sample) | [Based on the STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/master/bsp/stm32/stm32f103-blue-pill)
 
 # License
 
@@ -144,7 +146,7 @@ To avoid possible future license conflicts, developers need to sign a Contributo
 
 RT-Thread is very grateful for the support from all community developers, and if you have any ideas, suggestions or questions in the process of using RT-Thread, RT-Thread can be reached by the following means, and we are also updating RT-Thread in real time on these channels. At the same time, Any questions can be asked in the [issue section of rtthread-manual-doc](https://github.com/RT-Thread/rtthread-manual-doc/issues). By creating a new issue to describe your questions, community members will answer them.
 
-[Website](https://www.rt-thread.io) | [Twitter](https://twitter.com/rt_thread) | [Youtube]( https://www.youtube.com/channel/UCdDHtIfSYPq4002r27ffqPw?view_as=subscriber) | [Gitter](  https://gitter.im/RT-Thread) | [Facebook](https://www.facebook.com/RT-Thread-IoT-OS-110395723808463/?modal=admin_todo_tour) | [Medium](https://medium.com/@rt_thread)
+[Website](https://www.rt-thread.io) | [Twitter](https://twitter.com/rt_thread) | [Youtube]( https://www.youtube.com/channel/UCdDHtIfSYPq4002r27ffqPw?view_as=subscriber) | [Facebook](https://www.facebook.com/RT-Thread-IoT-OS-110395723808463/?modal=admin_todo_tour) | [Medium](https://rt-thread.medium.com/) | [Gitter](  https://gitter.im/RT-Thread)
 
 # Contribution
 
