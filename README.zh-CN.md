@@ -9,7 +9,7 @@ RT-Thread有完整版和Nano版，对于资源受限的微控制器（MCU）系�
 
 RT-Thread是一个集实时操作系统（RTOS）内核、中间件组件的物联网操作系统，架构如下：
 
-![architecturezh](./documentation/figures/architecturezh.png)  
+![architecturezh](./documentation/figures/architecturezh.png)
 
 
 
@@ -19,14 +19,14 @@ RT-Thread是一个集实时操作系统（RTOS）内核、中间件组件的物�
 
 
 - RT-Thread软件包：运行于 RT-Thread物联网操作系统平台上，面向不同应用领域的通用软件组件，由描述信息、源代码或库文件组成。RT-Thread提供了开放的软件包平台，这里存放了官方提供或开发者提供的软件包，该平台为开发者提供了众多可重用软件包的选择，这也是 RT-Thread生态的重要组成部分。软件包生态对于一个操作系统的选择至关重要，因为这些软件包具有很强的可重用性，模块化程度很高，极大的方便应用开发者在最短时间内，打造出自己想要的系统。RT-Thread已经支持的软件包数量已经达到 180+。
-  
+
 
 
 ## RT-Thread的特点
 
 - 资源占用极低，超低功耗设计，最小内核（Nano版本）仅需1.2KB RAM，3KB Flash。
 
-- 组件丰富，繁荣发展的软件包生态 。                                 
+- 组件丰富，繁荣发展的软件包生态 。
 
 - 简单易用 ，优雅的代码风格，易于阅读、掌握。
 
@@ -117,7 +117,7 @@ RT-Thread主要支持的IDE/编译器包括：
 RT-Thread Studio演示：
 
 
-![studiozh](./documentation/figures/studiozh.gif)                                        
+![studiozh](./documentation/figures/studiozh.gif)
 
 
 ## **快速上手**
@@ -131,15 +131,15 @@ RT-Thread BSP可以直接编译并下载到相应的开发板使用。此外，R
 
 ## 文档
 
-[文档中心](https://www.rt-thread.org/document/site/ ) | [编程指南](https://www.rt-thread.org/document/site/programming-manual/basic/basic/ ) 
+[文档中心](https://www.rt-thread.org/document/site/ ) | [编程指南](https://www.rt-thread.org/document/site/programming-manual/basic/basic/ )
 
-[应用 RT-Thread 实现蜂鸣器播放器教程](https://www.rt-thread.org/document/site/tutorial/beep-player/) | [分布式温度监控系统教程](https://www.rt-thread.org/document/site/tutorial/temperature-system/ ) | [智能车连载教程](https://www.rt-thread.org/document/site/tutorial/smart-car/ ) 
+[应用 RT-Thread 实现蜂鸣器播放器教程](https://www.rt-thread.org/document/site/tutorial/beep-player/) | [分布式温度监控系统教程](https://www.rt-thread.org/document/site/tutorial/temperature-system/ ) | [智能车连载教程](https://www.rt-thread.org/document/site/tutorial/smart-car/ )
 
 ## 例程
 
-[内核示例](https://github.com/RT-Thread-packages/kernel-sample)  | [设备示例代码](https://github.com/RT-Thread-packages/peripheral-sample ) | [文件系统示例代码](https://github.com/RT-Thread-packages/filesystem-sample ) | [网络示例代码](https://github.com/RT-Thread-packages/network-sample ) | [RT-Thread API参考手册](https://www.rt-thread.org/document/api/ ) 
+[内核示例](https://github.com/RT-Thread-packages/kernel-sample)  | [设备示例代码](https://github.com/RT-Thread-packages/peripheral-sample ) | [文件系统示例代码](https://github.com/RT-Thread-packages/filesystem-sample ) | [网络示例代码](https://github.com/RT-Thread-packages/network-sample ) | [RT-Thread API参考手册](https://www.rt-thread.org/document/api/ )
 
-[基于STM32L475 IoT Board 开发板SDK](https://github.com/RT-Thread/IoT_Board) | [基于W601 IoT Board 开发板SDK](https://github.com/RT-Thread/W601_IoT_Board) 
+[基于STM32L475 IoT Board 开发板SDK](https://github.com/RT-Thread/IoT_Board) | [基于W601 IoT Board 开发板SDK](https://github.com/RT-Thread/W601_IoT_Board)
 
 ## 视频
 
@@ -165,7 +165,7 @@ RT-Thread系统完全开源，3.1.0 及以前的版本遵循 GPL V2 + 开源许�
 
 RT-Thread非常感谢所有社区小伙伴的支持，在使用RT-Thread的过程中若您有任何的想法，建议或疑问都可通过以下方式联系到 RT-Thread，我们也实时在这些频道更新RT-Thread的最新讯息。同时，任何问题都可以在 [issue section](https://github.com/RT-Thread/rtthread-manual-doc/issues) 中提出。通过创建一个issue来描述您的问题，社区成员将回答这些问题。
 
-[官网]( https://www.rt-thread.org) | [论坛]( https://www.rt-thread.org/qa/forum.php) | [哔哩哔哩官方账号](https://space.bilibili.com/423462075?spm_id_from=333.788.b_765f7570696e666f.2) | [微博官方账号](https://weibo.com/rtthread?is_hot=1) | [知乎官方账号](https://www.zhihu.com/topic/19964581/hot) 
+[官网]( https://www.rt-thread.org) | [论坛]( https://www.rt-thread.org/qa/forum.php) | [哔哩哔哩官方账号](https://space.bilibili.com/423462075?spm_id_from=333.788.b_765f7570696e666f.2) | [微博官方账号](https://weibo.com/rtthread?is_hot=1) | [知乎官方账号](https://www.zhihu.com/topic/19964581/hot)
 
 RT-Thread微信公众号：
 
