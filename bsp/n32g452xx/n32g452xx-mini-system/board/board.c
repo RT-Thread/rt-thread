@@ -15,7 +15,7 @@
 #include <board.h>
 
 #ifdef BSP_USING_SRAM
-#include "drv_sram.h"
+    #include "drv_sram.h"
 #endif
 /**
   * @brief  This function is executed in case of error occurrence.
