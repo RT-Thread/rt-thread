@@ -86,6 +86,7 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V2
 #define RT_SERIAL_USING_DMA
+#define RT_USING_PIN
 
 /* Using USB */
 
@@ -177,6 +178,7 @@
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART7
 #define BSP_UART7_RX_BUFSIZE 256

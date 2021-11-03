@@ -22,8 +22,8 @@
 struct ra_uart_config
 {
     const char *name;
-    uart_ctrl_t * const p_api_ctrl;
-    uart_cfg_t const * const p_cfg;
+    uart_ctrl_t *const p_api_ctrl;
+    uart_cfg_t const *const p_cfg;
 };
 
 struct ra_uart

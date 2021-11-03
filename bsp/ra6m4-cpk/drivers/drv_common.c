@@ -12,12 +12,16 @@
 #include <bsp_api.h>
 #include "board.h"
 
-#ifdef RT_USING_SERIAL
-#ifdef RT_USING_SERIAL_V2
-#include <drv_usart_v2.h>
-#else
-#include <drv_usart.h>
+#ifdef RT_USING_PIN
+    #include <drv_gpio.h>
 #endif
+
+#ifdef RT_USING_SERIAL
+    #ifdef RT_USING_SERIAL_V2
+        #include <drv_usart_v2.h>
+    #else
+        #include <drv_usart.h>
+    #endif
 #endif
 
 #ifdef RT_USING_FINSH
