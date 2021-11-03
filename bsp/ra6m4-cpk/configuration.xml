@@ -163,6 +163,10 @@
       <description>SCI UART</description>
       <originalPack>Renesas.RA.3.1.0.pack</originalPack>
     </component>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_icu" variant="" vendor="Renesas" version="3.1.0">
+      <description>External Interrupt</description>
+      <originalPack>Renesas.RA.3.1.0.pack</originalPack>
+    </component>
   </raComponentSelection>
   <raElcConfiguration/>
   <raIcuConfiguration/>
@@ -196,12 +200,25 @@
       <property id="module.driver.uart.tei_ipl" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.uart.eri_ipl" value="board.icu.common.irq.priority12"/>
     </module>
+    <module id="module.driver.external_irq_on_icu.402865750">
+      <property id="module.driver.external_irq.name" value="g_external_irq0"/>
+      <property id="module.driver.external_irq.channel" value="0"/>
+      <property id="module.driver.external_irq.trigger" value="module.driver.external_irq.trigger.trig_rising"/>
+      <property id="module.driver.external_irq.filter_enable" value="module.driver.external_irq.filter_enable.false"/>
+      <property id="module.driver.external_irq.pclk_div" value="module.driver.external_irq.pclk_div.pclk_div_by_64"/>
+      <property id="module.driver.external_irq.p_callback" value="irq0_callback"/>
+      <property id="module.driver.external_irq.ipl" value="board.icu.common.irq.priority12"/>
+    </module>
     <context id="_hal.0">
       <stack module="module.driver.ioport_on_ioport.0"/>
       <stack module="module.driver.uart_on_sci_uart.813326093"/>
+      <stack module="module.driver.external_irq_on_icu.402865750"/>
     </context>
     <config id="config.driver.ioport">
       <property id="config.driver.ioport.checking" value="config.driver.ioport.checking.system"/>
+    </config>
+    <config id="config.driver.icu">
+      <property id="config.driver.icu.param_checking_enable" value="config.driver.icu.param_checking_enable.bsp"/>
     </config>
     <config id="config.driver.sci_uart">
       <property id="config.driver.sci_uart.param_checking_enable" value="config.driver.sci_uart.param_checking_enable.bsp"/>
@@ -331,6 +348,8 @@
       <configSetting altId="cgc0.extal.p212" configurationId="cgc0.extal"/>
       <configSetting altId="cgc0.mode.mainsub" configurationId="cgc0.mode"/>
       <configSetting altId="cgc0.xtal.p213" configurationId="cgc0.xtal"/>
+      <configSetting altId="dac0.da.p014" configurationId="dac0.da"/>
+      <configSetting altId="dac0.mode.enabled" configurationId="dac0.mode"/>
       <configSetting altId="debug0.mode.jtag" configurationId="debug0.mode"/>
       <configSetting altId="debug0.tck.p300" configurationId="debug0.tck"/>
       <configSetting altId="debug0.tdi.p110" configurationId="debug0.tdi"/>
@@ -362,8 +381,8 @@
       <configSetting altId="p006.gpio_pupd.gpio_pupd_ip_up" configurationId="p006.gpio_pupd"/>
       <configSetting altId="p008.output.low" configurationId="p008"/>
       <configSetting altId="p008.gpio_mode.gpio_mode_out.low" configurationId="p008.gpio_mode"/>
-      <configSetting altId="p014.output.low" configurationId="p014"/>
-      <configSetting altId="p014.gpio_mode.gpio_mode_out.low" configurationId="p014.gpio_mode"/>
+      <configSetting altId="p014.asel" configurationId="p014"/>
+      <configSetting altId="p014.gpio_mode.gpio_mode_an" configurationId="p014.gpio_mode"/>
       <configSetting altId="p015.output.low" configurationId="p015"/>
       <configSetting altId="p015.gpio_mode.gpio_mode_out.low" configurationId="p015.gpio_mode"/>
       <configSetting altId="p105.irq0.irq00" configurationId="p105"/>

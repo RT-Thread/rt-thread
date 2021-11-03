@@ -25,20 +25,23 @@
 
 **更多详细资料及工具**
 
-
 ## 外设支持
 
 本 BSP 目前对外设的支持情况如下：
 
-| **片上外设** | **支持情况** | **备注**                  |
-| :----------- | :---------- | :------------------------ |
-| UART         |     支持     | UART7               |
-| GPIO | 支持 |          |
-| IIC | 支持 | 软件 |
-| WDT | 支持 | |
-| RTC | 支持 | |
-| 持续更新中... | | |
-
+| **片上外设** | **支持情况** | **备注** |
+| :----------------- | :----------------- | :------------- |
+| UART               | 支持               | UART7          |
+| GPIO               | 支持               |                |
+| IIC                | 支持               | 软件           |
+| WDT                | 支持               |                |
+| RTC                | 支持               |                |
+| ADC                | 支持               |                |
+| DAC                | 支持               |                |
+| SPI                | 支持               |                |
+| FLASH              | 支持               |                |
+| PWM                | 支持               |                |
+| 持续更新中...      |                    |                |
 
 ## 使用说明
 
@@ -46,16 +49,14 @@
 
 - 快速上手
 
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
+  本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
 - 进阶使用
 
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
-
+  本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
 
 ### 快速上手
 
-本 BSP 为目前仅为开发者提供 MDK5 工程。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+本 BSP 目前仅提供 MDK5 工程。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
 **硬件连接**
 
@@ -134,42 +135,35 @@ void hal_entry(void)
 
 ### 进阶使用
 
+**资料及文档**
+
+- [开发板官网主页](https://www2.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/cpk-ra6m4-evaluation-board)
+- [开发板用户手册](https://www2.renesas.cn/cn/zh/document/mah/1527156?language=zh&r=1527191)
+- [瑞萨RA MCU 基础知识](https://www2.renesas.cn/cn/zh/document/gde/1520091)
+- [RA6 MCU 快速设计指南](https://www2.renesas.cn/cn/zh/document/apn/ra6-quick-design-guide)
+- [RA6M4_datasheet](https://www2.renesas.cn/cn/zh/document/dst/ra6m4-group-datasheet)
+- [RA6M4 Group User’s Manual: Hardware](https://www2.renesas.cn/cn/zh/document/man/ra6m4-group-user-s-manual-hardware)
+
+**FSP 配置**
+
+需要修改瑞萨的 BSP 外设配置或添加新的外设端口，需要用到瑞萨的 [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp#document) 配置工具。请务必按照如下步骤完成配置。配置中有任何问题可到[RT-Thread 社区论坛](https://club.rt-thread.org/)中提问。
+
+1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.com/cn/zh/software-tool/flexible-software-package-fsp)
+2. 下载安装完成后，需要添加 CPK-RA6M4 开发板的[官方板级支持包](https://www2.renesas.cn/document/sws/1527176?language=zh&r=1527191)
+3. 如何将 BSP 配置包添加到 FSP 中，请参考文档[如何导入板级支持包](https://www2.renesas.cn/document/ppt/1527171?language=zh&r=1527191)
+4. 请查看文档：[使用瑞萨 FSP 配置工具](./docs/使用瑞萨FSP配置工具.md)。在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置，
+
 **ENV 配置**
 
 - 如何使用 ENV 工具：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 
-此 BSP 默认只开启了 串口7 的功能，如果需使用更多高级功能例如组件、软件包等，需要利用 ENV 工具进行配置。步骤如下：
+此 BSP 默认只开启了 串口7 的功能，如果需使用更多高级功能例如组件、软件包等，需要利用 ENV 工具进行配置。
 
+步骤如下：
 1. 在 bsp 下打开 env 工具。
-
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
 3. 输入`pkgs --update`命令更新软件包。
-
 4. 输入`scons --target=mdk5` 命令重新生成工程。
-
-**FSP 配置**
-
-如果需要修改瑞萨的 BSP 外设配置或者需要添加新的外设端口，需要用到瑞萨的 FSP 配置工具。
-
-1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.com/cn/zh/software-tool/flexible-software-package-fsp)
-2. 下载安装完成后，需要添加这款开发板的官方[CPK-RA6M4板级支持包](https://www2.renesas.cn/document/sws/1527176?language=zh&r=1527191)
-3. 如何将BSP配置包添加到 FSP 中，请参考文档[如何导入板级支持包](https://www2.renesas.cn/document/ppt/1527171?language=zh&r=1527191)
-4. 在 MDK 中添加自定义命名来打开当前工程的配置详细步骤，请查看文档： [使用瑞萨 FSP 配置工具](./docs/使用瑞萨FSP配置工具.md)
-
-## 更多资料及文档
-
-- [开发板官网主页](https://www2.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/cpk-ra6m4-evaluation-board)
-
-- [开发板用户手册](https://www2.renesas.cn/cn/zh/document/mah/1527156?language=zh&r=1527191)
-
-- [瑞萨RA MCU 基础知识](https://www2.renesas.cn/cn/zh/document/gde/1520091) 
-
-- [RA6 MCU 快速设计指南](https://www2.renesas.cn/cn/zh/document/apn/ra6-quick-design-guide) 
-
-- [RA6M4_datasheet](https://www2.renesas.cn/cn/zh/document/dst/ra6m4-group-datasheet) 
-
-- [RA6M4 Group User’s Manual: Hardware](https://www2.renesas.cn/cn/zh/document/man/ra6m4-group-user-s-manual-hardware) 
 
 ## 联系人信息
 
