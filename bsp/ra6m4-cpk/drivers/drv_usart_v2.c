@@ -15,9 +15,9 @@
 //#define DRV_DEBUG
 #define DBG_TAG              "drv.usart"
 #ifdef DRV_DEBUG
-#define DBG_LVL               DBG_LOG
+    #define DBG_LVL               DBG_LOG
 #else
-#define DBG_LVL               DBG_INFO
+    #define DBG_LVL               DBG_INFO
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
@@ -81,7 +81,7 @@ static rt_err_t ra_uart_configure(struct rt_serial_device *serial, struct serial
     uart = rt_container_of(serial, struct ra_uart, serial);
     RT_ASSERT(uart != RT_NULL);
 
-    err = R_SCI_UART_Open (uart->config->p_api_ctrl, uart->config->p_cfg);
+    err = R_SCI_UART_Open(uart->config->p_api_ctrl, uart->config->p_cfg);
     if (FSP_SUCCESS != err)
     {
         return RT_ERROR;
@@ -103,10 +103,10 @@ static int ra_uart_putc(struct rt_serial_device *serial, char c)
     uart = rt_container_of(serial, struct ra_uart, serial);
     RT_ASSERT(uart != RT_NULL);
 
-    sci_uart_instance_ctrl_t * p_ctrl = (sci_uart_instance_ctrl_t *)uart->config->p_api_ctrl;
+    sci_uart_instance_ctrl_t *p_ctrl = (sci_uart_instance_ctrl_t *)uart->config->p_api_ctrl;
 
     p_ctrl->p_reg->TDR = c;
-    while((p_ctrl->p_reg->SSR_b.TEND) == 0);
+    while ((p_ctrl->p_reg->SSR_b.TEND) == 0);
 
     return RT_EOK;
 }
@@ -125,13 +125,13 @@ void uart7_isr_cb(uart_callback_args_t *p_args)
     struct rt_serial_device *serial = &uart_obj[0].serial;
     RT_ASSERT(serial != RT_NULL);
 
-    if(UART_EVENT_RX_CHAR == p_args->event)
+    if (UART_EVENT_RX_CHAR == p_args->event)
     {
         struct rt_serial_rx_fifo *rx_fifo;
         rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        rt_ringbuffer_putchar(&(rx_fifo->rb), (rt_uint8_t )p_args->data);
+        rt_ringbuffer_putchar(&(rx_fifo->rb), (rt_uint8_t)p_args->data);
 
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
@@ -149,13 +149,13 @@ void uart1_isr_cb(uart_callback_args_t *p_args)
     struct rt_serial_device *serial = &uart_obj[1].serial;
     RT_ASSERT(serial != RT_NULL);
 
-    if(UART_EVENT_RX_CHAR == p_args->event)
+    if (UART_EVENT_RX_CHAR == p_args->event)
     {
         struct rt_serial_rx_fifo *rx_fifo;
         rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
-        rt_ringbuffer_putchar(&(rx_fifo->rb), (rt_uint8_t )p_args->data);
+        rt_ringbuffer_putchar(&(rx_fifo->rb), (rt_uint8_t)p_args->data);
 
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
@@ -187,9 +187,9 @@ int rt_hw_usart_init(void)
         uart_obj[i].serial.ops = &ra_uart_ops;
         /* register UART device */
         result = rt_hw_serial_register(&uart_obj[i].serial,
-                                        uart_obj[i].config->name,
-                                        RT_DEVICE_FLAG_RDWR,
-                                        NULL);
+                                       uart_obj[i].config->name,
+                                       RT_DEVICE_FLAG_RDWR,
+                                       NULL);
         RT_ASSERT(result == RT_EOK);
     }
 
