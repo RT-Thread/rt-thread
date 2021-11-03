@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#if defined(BSP_USING_DAC0) && defined(BSP_USING_DAC1)
+#ifdef BSP_USING_DAC
 struct ra_dac_map
 {
     char name;

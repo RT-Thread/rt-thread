@@ -1,5 +1,7 @@
 ## 在 MDK 中使用 FSP
 
+- 添加RA Smart Config
+
 1. 打开 MDK，选择 “Tools -> Customize Tools Menu…”
 2. 点击 “new” 图标，添加一条自定义命令: RA Smart Configurator
 3. Command 输入工具的安装路径， 点击“…”找到安装路径下的“rasc.exe”文件并选中 (setup_fsp_v3_1_0_rasc_ 安装目录下)
@@ -13,6 +15,26 @@
 
 ![image.png](picture/openrasc.png)
 
+- 添加 Device Partition Manager，添加步骤同上。
+
+1. 输入命令名称: `Device Partition Manager`
+2. Command: 在安装路径选中 `rasc.exe`
+3. Initial Folder : `$P`
+4. Arguments: `-application com.renesas.cdt.ddsc.dpm.ui.dpmapplication configuration.xml "SL%L"` 
+
+> PS：以上相关操作也可以在 FSP 的说明文档中找到。
+>
+> 文档路径（本地）：在 FSP 的安装目录下  .\fsp_documentation\v3.1.0\fsp_user_manual_v3.1.0\index.html
+>
+> 文档路径（官网）：https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp#document
+
+## 更新工程配置
+
+使用 FSP 配置完成后如果有新的文件添加进工程中，不会马上添加进去。需要先编译一次，如果弹出如下提醒，选择 “是” 然后再次编译即可。
+
+![img](picture/import_changes.png)
+
+
 ## UART
 
 如何添加一个 UART 端口外设配置？
@@ -21,40 +43,39 @@
 
 ![image.png](picture/rascuart.png)
 
-2. 配置 UART 参数，因为需要适配 RT-Thread 驱动中使用的命名，所以需要修改命名，设置 **name** 、**channel**  、**callback** 是一致的标号。
-![image.png](picture/rascuart1.png)
-
-
+2. 配置 UART 参数，因为需要适配 RT-Thread 驱动中使用的命名，所以需要修改命名，设置**name** 、**channel**  、**callback** 是一致的标号。![image.png](picture/rascuart1.png)
 
 ## GPIO 中断
 
 如何添加一个 IO 中断？
 
-1. 选择引脚编号，进入配置，比如选择 P402 做为中断引脚。
+1. 选择引脚编号，进入配置，比如选择 P105 做为中断引脚。可先找到引脚查看可配置成的 IRQx 通道号。
 
-![image-20211019142514276](picture/gpio.png)
-  2. 打开 ICU 中断通道 IRQ4
+![image-20211103200949759](picture/p105.png)
 
-![image-20211019142801323](picture/gpio_irq.png)
-  3. 创建 stack 并进入配置。因为需要适配 RT-Thread 驱动中使用的命名，所以需要修改命名，设置 **name** 、**channel**  、**callback** 是一致的标号。选择你希望的触发方式。最后保存配置，生成配置代码。
+2. 打开 ICU 中断通道 IRQ00
 
-![image-20211019142910292](picture/icu_stack.png)
+![image-20211103200813467](picture/irq0.png)
 
-![image-20211019143151891](picture/config_irq4.png)
+3. 创建 stack 并进入配置。因为需要适配 RT-Thread 驱动中使用的命名，所以需要修改命名，设置**name** 、**channel**  、**callback** 是一致的标号。选择你希望的触发方式，最后保存配置，生成配置代码。
 
-4. 测试中断是否能够成功开启
+![](picture/1635929089445.png)
+
+![image-20211103201047103](picture/irq1.png)
+
+4. 测试中断是否成功开启
 
    ```c
-   
+   #define IRQ_TEST_PIN	"p104"
    void irq_callback_test(void *args)
    {
-       rt_kprintf("\n Irq4 triggered \n");
+       rt_kprintf("\n IRQ01 triggered \n");
    }
-   
+
    void icu_sample(void)
    {
-       /* 初始化P*/
-       rt_uint32_t pin = rt_pin_get("P402");
+       /* init P104 */
+       rt_uint32_t pin = rt_pin_get(IRQ_TEST_PIN);
        rt_kprintf("\n pin number : 0x%04X \n", pin);
        rt_err_t err = rt_pin_attach_irq(pin, PIN_IRQ_MODE_RISING, irq_callback_test, RT_NULL);
        if(RT_EOK != err)
@@ -72,15 +93,15 @@
 
 ## WDT
 
-1. 创建 WDT 
+1. 创建 WDT
 
 ![image-20211019152302939](picture/wdt.png)
 
-2. 配置 WDT，需要注意在 RT-Thread 中只是用了一个 WDT 设备，所以没有对其进行编号，如果是新创建的 WDT 设备需要注意 name 字段，在驱动中默认使用的是 `g_wdt` 。
+2. 配置 WDT，需要注意在 RT-Thread 中只使用了一个 WDT 设备，所以没有对其进行编号，如果是新创建的 WDT 设备需要注意 name 字段，在驱动中默认使用的是`g_wdt` 。
 
 ![image-20211019152407572](picture/wdt_config.png)
 
-3. 如何在 ENV 中打开 WDT 以及 [WDT 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/watchdog/watchdog)
+3. 如何在 ENV 中打开 WDT 以及[WDT 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/watchdog/watchdog)
 
 ![image-20211027183406251](picture/wdt_env.png)
 
@@ -90,14 +111,13 @@
 
 ![image-20211019152536749](picture/rtc.png)
 
-2. 配置 RTC，需要注意在 RT-Thread 中只是用了一个 RTC 设备，所以没有对其进行编号，如果是新创建的 RTC 设备需要注意 name 字段，在驱动中默认使用的是 `g_rtc` 。
+2. 配置 RTC，需要注意在 RT-Thread 中只是用了一个 RTC 设备，所以没有对其进行编号，如果是新创建的 RTC 设备需要注意 name 字段，在驱动中默认使用的是`g_rtc` 。修改 Callback 为 rtc_callback
 
 ![image-20211019152627412](picture/rtc_config.png)
 
-3.  如何在 ENV 中打开 RTC 以及[ RTC 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/rtc/rtc) 
+3. 如何在 ENV 中打开 RTC 以及[ RTC 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/rtc/rtc) 
 
 ![image-20211027181550233](picture/rtc_env.png)
-
 
 ## Flash
 
@@ -105,14 +125,13 @@
 
 ![image-20211026105031200](picture/add_flash.png)
 
-2. 配置 Flash，需要注意在 RT-Thread 中只使用了一个 flash 设备，所以没有对其进行编号，如果是新创建的 flash 设备需要注意 name 字段，在驱动中默认使用的是 `g_flash` 。
+2. 配置 Flash，需要注意在 RT-Thread 中只使用了一个 flash 设备，所以没有对其进行编号，如果是新创建的 flash 设备需要注意 name 字段，在驱动中默认使用的是`g_flash` 。
 
 ![image-20211026105628706](picture/config_flash.png)
 
 3. 如何在 ENV 中打开 Flash
 
 ![image-20211026123252310](picture/flash_menuconfig.png)
-
 
 ## SPI
 
@@ -128,15 +147,13 @@
 
    ![image-20211027181444023](picture/spi_env.png)
 
-
-
 ## ADC/DAC
 
 创建 ADC/DAC
 
 ![img](picture/adc_dac.png)
 
-- ADC
+- **ADC**
 
 1. 配置 name、unit、mode，选择扫描的通道编号
 
@@ -146,7 +163,9 @@
 
 ![img](picture/adc_config1.png)
 
-- DAC
+3. 在 menuconfig 中打开对应的通道
+
+- **DAC**
 
 1. 需要先关闭 P014 的默认 mode
 
@@ -160,6 +179,7 @@
 
 ![img](picture/dac_config2.png)
 
+4. 在 menuconfig 中打开对应的通道
 
 ## 通用 PWM 定时器（GPT）
 
@@ -168,21 +188,25 @@ GPT 定时器在该芯片中可作为通用定时器，也可以用于产生 PWM
 1. 添加 GPT 设备
 
    ![img](./picture/add_gpt1.png)
-
+   
 2. 配置通道
 
    ![img](./picture/add_gpt2.png)
 
    对 GPT 较为关键的配置如图所示，具体解释如下：
 
-   1. 将 ```Common``` -> ```Pin Output Support``` 设置为 Enable ，以开启 PWM 波形的输出。
-   2. 指定 GPT 通道，并根据通道数指定 GPT 的名称，例如此处指定 GPT 通道 3 ，所以 GPT 的名称必须为 ```g_timer3```。并且将定时器模式设置为 PWM ，并指定每个 PWM 周期的计数值。
+   1. 将``Common`` ->``Pin Output Support`` 设置为 Enable ，以开启 PWM 波形的输出。
+   2. 指定 GPT 通道，并根据通道数指定 GPT 的名称，例如此处指定 GPT 通道 3 ，所以 GPT 的名称必须为``g_timer3``。并且将定时器模式设置为 PWM ，并指定每个 PWM 周期的计数值。
    3. 设定 PWM 通道默认输出的占空比，这里为 50% 。
    4. 设定 GPT 通道下两个输出端口的使能状态。
    5. 此处设置 GPT 通道下两个输出端口各自对应的引脚。
-
+   
 3. 配置输出引脚
 
    ![img](./picture/add_gpt3.png)
 
-   在完成上一步对 GPT 定时器的设置后，根据图示找到对应 GPT 通道输出引脚设置的界面（这里是 GPT3），将图中标号 **1** 处设置为 ```GTIOCA or GTIOCB``` ，并根据需要在图中标号 **2** 处设置 GPT 通道下两个输出端口各自对应的输出引脚。
+   在完成上一步对 GPT 定时器的设置后，根据图示找到对应 GPT 通道输出引脚设置的界面（这里是 GPT3），将图中标号 **1** 处设置为 ``GTIOCA or GTIOCB`` ，并根据需要在图中标号 **2** 处设置 GPT 通道下两个输出端口各自对应的输出引脚。
+   
+   4. 在 menuconfig 中打开对应的通道，[RT-Thread 的 pwm 框架介绍](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/pwm/pwm) 
+   
+   ![image-20211103202216381](picture/pwm_env.png)

@@ -383,7 +383,7 @@ static rt_base_t ra_pin_get(const char *name)
     int pin_number = -1, port = -1, pin = -1;
     if (rt_strlen(name) != 4)
         return -1;
-    if (name[0] == 'P')
+    if ((name[0] == 'P')||(name[0] == 'p'))
     {
         if ('0' <= (int)name[1] && (int)name[1] <= '9')
         {

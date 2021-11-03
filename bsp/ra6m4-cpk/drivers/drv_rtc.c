@@ -111,6 +111,7 @@ static rt_err_t ra_set_secs(void *args)
     return result;
 }
 
+#ifdef RT_USING_ALARM
 static rt_err_t ra_get_alarm(void *arg)
 {
     rt_err_t result = RT_EOK;
@@ -179,15 +180,17 @@ static rt_err_t ra_set_alarm(void *arg)
     }
     return result;
 }
-
-static rt_device_t ra_device;
+#endif /* RT_USING_ALARM */
 
 void rtc_callback(rtc_callback_args_t *p_args)
 {
+#ifdef RT_USING_ALARM 
+    static rt_device_t ra_device;
     if (RTC_EVENT_ALARM_IRQ == p_args->event)
     {
         rt_alarm_update(ra_device, 1);
     }
+#endif
 }
 
 static const struct rt_rtc_ops ra_rtc_ops =
@@ -195,8 +198,10 @@ static const struct rt_rtc_ops ra_rtc_ops =
     .init      = ra_rtc_init,
     .get_secs  = ra_get_secs,
     .set_secs  = ra_set_secs,
+#ifdef RT_USING_ALARM
     .set_alarm = ra_set_alarm,
     .get_alarm = ra_get_alarm,
+#endif
 };
 
 static rt_rtc_dev_t ra_rtc_dev;
