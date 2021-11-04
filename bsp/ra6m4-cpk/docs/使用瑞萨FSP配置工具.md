@@ -66,15 +66,15 @@
 4. 测试中断是否成功开启
 
    ```c
-   #define IRQ_TEST_PIN	"p104"
+   #define IRQ_TEST_PIN	"p105"
    void irq_callback_test(void *args)
    {
-       rt_kprintf("\n IRQ01 triggered \n");
+       rt_kprintf("\n IRQ00 triggered \n");
    }
 
    void icu_sample(void)
    {
-       /* init P104 */
+       /* init */
        rt_uint32_t pin = rt_pin_get(IRQ_TEST_PIN);
        rt_kprintf("\n pin number : 0x%04X \n", pin);
        rt_err_t err = rt_pin_attach_irq(pin, PIN_IRQ_MODE_RISING, irq_callback_test, RT_NULL);
