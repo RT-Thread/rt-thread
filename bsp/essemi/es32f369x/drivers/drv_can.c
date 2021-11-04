@@ -183,10 +183,10 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
             NVIC_EnableIRQ(CAN0_RX0_IRQn);
 
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FP0, ENABLE);
-            ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF0, ENABLE);
+//            ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF0, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FOV0, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FP1, ENABLE);
-            ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF1, ENABLE);
+//            ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF1, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FOV1, ENABLE);
 
         }

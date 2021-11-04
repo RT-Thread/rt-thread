@@ -545,7 +545,7 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
 }
 RTM_EXPORT(rt_strnlen);
 #ifdef __ARMCC_VERSION
-size_t strnlen(const char *s, size_t maxlen) __attribute__((alias("rt_strnlen")));
+rt_size_t strnlen(const char *s, rt_size_t maxlen) __attribute__((alias("rt_strnlen")));
 #endif /* __ARMCC_VERSION */
 #endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
 
@@ -582,8 +582,8 @@ void rt_show_version(void)
 {
     rt_kprintf("\n \\ | /\n");
     rt_kprintf("- RT -     Thread Operating System\n");
-    rt_kprintf(" / | \\     %d.%d.%d build %s\n",
-               RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
+    rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
+               RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__, __TIME__);
     rt_kprintf(" 2006 - 2021 Copyright by rt-thread team\n");
 }
 RTM_EXPORT(rt_show_version);

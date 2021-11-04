@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>USE_HAL_DRIVER, __RTTHREAD__, STM32G070xx</Define>
+              <Define>USE_HAL_DRIVER, __RTTHREAD__, STM32G070xx, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\compilers\common;..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Inc;..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Include;..\libraries\STM32G0xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\nogcc;..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Inc;..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Include;..\libraries\STM32G0xx_HAL\CMSIS\Include;..\..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,6 +390,13 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
@@ -404,9 +411,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
@@ -414,13 +421,6 @@
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -438,20 +438,6 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -477,6 +463,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
@@ -484,21 +477,21 @@
           </Files>
           <Files>
             <File>
-              <FileName>workqueue.c</FileName>
+              <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
+              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>stm32g0xx_hal_msp.c</FileName>
@@ -511,6 +504,13 @@
               <FileName>startup_stm32g070xx.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\arm\startup_stm32g070xx.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -536,7 +536,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>finsh</GroupName>
+          <GroupName>Finsh</GroupName>
           <Files>
             <File>
               <FileName>shell.c</FileName>
@@ -546,119 +546,14 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>finsh_compiler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_compiler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_error.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_error.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_heap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_heap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_node.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_node.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_ops.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_parser.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_var.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_var.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_vm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_vm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_token.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\finsh_token.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Kernel</GroupName>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>ipc.c</FileName>
@@ -668,16 +563,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
+              <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\irq.c</FilePath>
+              <FilePath>..\..\..\src\kservice.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kservice.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\kservice.c</FilePath>
+              <FilePath>..\..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -696,23 +591,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>object.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
+              <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\idle.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>signal.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\signal.c</FilePath>
+              <FilePath>..\..\..\src\components.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -724,9 +619,30 @@
           </Files>
           <Files>
             <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\irq.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -744,13 +660,6 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32g0xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\system_stm32g0xx.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>stm32g0xx_hal_cec.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_cec.c</FilePath>
@@ -758,9 +667,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32g0xx_hal_rcc.c</FileName>
+              <FileName>stm32g0xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rcc.c</FilePath>
+              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_pwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32g0xx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_dma_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32g0xx_hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -786,30 +709,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32g0xx_hal_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32g0xx_hal_dma_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_dma_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32g0xx_hal_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_pwr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>stm32g0xx_hal_pwr_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_pwr_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32g0xx_ll_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32g0xx_hal_usart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_usart_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_stm32g0xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\system_stm32g0xx.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -828,9 +751,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>stm32g0xx_hal_gpio.c</FileName>
+              <FileName>stm32g0xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_gpio.c</FilePath>
+              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32g0xx_hal_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_dma.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -845,20 +775,6 @@
               <FileName>stm32g0xx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32g0xx_hal_usart_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_usart_ex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32g0xx_ll_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_usart.c</FilePath>
             </File>
           </Files>
         </Group>

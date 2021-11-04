@@ -14,7 +14,6 @@
 #include "riscv.h"
 #include "interrupt.h"
 
-#define CPU_NUM         2
 #define MAX_HANDLERS    128
 
 static struct rt_irq_desc irq_desc[MAX_HANDLERS];
@@ -60,7 +59,6 @@ void rt_hw_interrupt_init(void)
     /* init exceptions table */
     for (idx = 0; idx < MAX_HANDLERS; idx++)
     {
-        //rt_hw_interrupt_mask(idx);
         irq_desc[idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
         irq_desc[idx].param = RT_NULL;
 #ifdef RT_USING_INTERRUPT_INFO
@@ -68,6 +66,8 @@ void rt_hw_interrupt_init(void)
         irq_desc[idx].counter = 0;
 #endif
     }
+
+    plic_set_threshold(0);
 }
 
 /**
@@ -86,7 +86,7 @@ void rt_hw_interrupt_mask(int vector)
 void rt_hw_interrupt_umask(int vector)
 {
     plic_set_priority(vector, 1);
-    plic_set_threshold(0);
+
     rt_hw_plic_irq_enable(vector);
 }
 
@@ -182,6 +182,7 @@ void handle_trap(rt_size_t xcause,rt_size_t xtval,rt_size_t xepc,struct rt_hw_st
 {
     int cause = (xcause & 0xFFFFFFFF);
     int plic_irq = 0;
+
     if (xcause & (1UL << 63))
     {
         switch (cause)
@@ -197,11 +198,13 @@ void handle_trap(rt_size_t xcause,rt_size_t xtval,rt_size_t xepc,struct rt_hw_st
             case IRQ_S_TIMER:
                 tick_isr();
                 break;
+
             case IRQ_S_EXT:
                 plic_irq = plic_claim();
                 plic_complete(plic_irq);
                 irq_desc[plic_irq].handler(plic_irq, irq_desc[plic_irq].param);
                 break;
+
             case IRQ_M_EXT:
                 plic_irq = plic_claim();
                 plic_complete(plic_irq);

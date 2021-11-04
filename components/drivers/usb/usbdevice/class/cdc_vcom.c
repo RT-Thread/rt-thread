@@ -10,11 +10,11 @@
  * 2013-06-25     heyuanjie87  remove SOF mechinism
  * 2013-07-20     Yi Qiu       do more test
  * 2016-02-01     Urey         Fix some error
+ * 2021-10-14     mazhiyuan    Fix some error
  */
 
 #include <rthw.h>
 #include <rtdevice.h>
-#include <drivers/serial.h>
 #include "drivers/usb_device.h"
 #include "cdc.h"
 
@@ -738,7 +738,7 @@ static rt_size_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt
     return size;
 }
 
-static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size,int direction)
+static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size,rt_uint32_t direction)
 {
     struct ufunction *func;
     struct vcom *data;
@@ -939,8 +939,12 @@ static void rt_usb_vcom_init(struct ufunction *func)
     config.parity       = PARITY_NONE;
     config.bit_order    = BIT_ORDER_LSB;
     config.invert       = NRZ_NORMAL;
+#if defined(RT_USING_SERIAL_V1)
     config.bufsz        = CDC_RX_BUFSIZE;
-
+#elif defined(RT_USING_SERIAL_V2)
+    config.rx_bufsz     = CDC_RX_BUFSIZE;
+    config.tx_bufsz     = CDC_TX_BUFSIZE;
+#endif
     data->serial.ops        = &usb_vcom_ops;
     data->serial.serial_rx  = RT_NULL;
     data->serial.config     = config;

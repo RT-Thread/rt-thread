@@ -12,4 +12,6 @@
 
 #include <poll.h>
 
+#warning "This file will be obsolete in the next version! Please use <poll.h> to instead."
+
 #endif /* DFS_POLL_H__ */

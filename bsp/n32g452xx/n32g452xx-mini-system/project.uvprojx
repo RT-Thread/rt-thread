@@ -908,6 +908,7 @@
               <FileName>n32g45x_sdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_sdio.c</FilePath>
+
             </File>
           </Files>
         </Group>

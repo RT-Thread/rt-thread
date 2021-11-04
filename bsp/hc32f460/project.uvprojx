@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
-
   <SchemaVersion>2.1</SchemaVersion>
-
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Targets>
     <Target>
       <TargetName>rt-thread</TargetName>
@@ -19,28 +16,28 @@
           <PackID>HDSC.HC32F460.1.0.7</PackID>
           <PackURL>https://raw.githubusercontent.com/hdscmcu/pack/master/</PackURL>
           <Cpu>IRAM(0x1FFF8000,0x2F000) IRAM2(0x200F0000,0x1000) IROM(0x00000000,0x80000) IROM2(0x03000C00,0x003FC) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
+          <FlashUtilSpec />
+          <StartupFile />
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD1FFF8000 -FC1000 -FN2 -FF0HC32F460_512K -FS00 -FL080000 -FF1HC32F460_otp -FS13000C00 -FL13FC -FP0($$Device:HC32F460PETB$FlashARM\HC32F460_512K.FLM) -FP1($$Device:HC32F460PETB$FlashARM\HC32F460_otp.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:HC32F460PETB$Device\Include\HC32F460PETB.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <MemoryEnv />
+          <Cmp />
+          <Asm />
+          <Linker />
+          <OHString />
+          <InfinionOptionDll />
+          <SLE66CMisc />
+          <SLE66AMisc />
+          <SLE66LinkerMisc />
           <SFDFile>$$Device:HC32F460PETB$SVD\HDSC_HC32F460PETB.svd</SFDFile>
           <bCustSvd>1</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <BinPath />
+          <IncludePath />
+          <LibPath />
+          <RegisterFilePath />
+          <DBRegisterFilePath />
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -62,8 +59,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -72,8 +69,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -83,14 +80,14 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString />
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -104,8 +101,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
+          <CustomArgument />
+          <IncludeLibraryModules />
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
@@ -139,10 +136,10 @@
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
+          <Flash4 />
+          <pFcarmOut />
+          <pFcarmGrp />
+          <pFcArmRoot />
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -175,7 +172,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M4"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -309,7 +306,7 @@
                 <Size>0x1000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector />
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -338,8 +335,8 @@
             <VariousControls>
               <MiscControls>--diag_suppress=186,66</MiscControls>
               <Define>USE_DEVICE_DRIVER_LIB, __CLK_TCK=RT_TICK_PER_SECOND, HC32F460, __RTTHREAD__, __DEBUG, RT_USING_ARM_LIBC</Define>
-              <Undefine></Undefine>
-              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;Libraries\CMSIS\Include;Libraries\CMSIS\Device\HDSC\HC32F460\Include;Libraries\HC32F460_StdPeriph_Driver\inc;.;..\..\include;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\none-gcc;..\..\examples\utest\testcases\kernel</IncludePath>
+              <Undefine />
+              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;Libraries\CMSIS\Include;Libraries\CMSIS\Device\HDSC\HC32F460\Include;Libraries\HC32F460_StdPeriph_Driver\inc;.;..\..\include;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -354,10 +351,10 @@
             <useXO>0</useXO>
             <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <MiscControls />
+              <Define />
+              <Undefine />
+              <IncludePath />
             </VariousControls>
           </Aads>
           <LDads>
@@ -369,13 +366,13 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x1FFF8000</DataAddressRange>
-            <pXoBase></pXoBase>
+            <pXoBase />
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
-            <LinkerInputFile></LinkerInputFile>
-            <DisabledWarnings></DisabledWarnings>
+            <IncludeLibs />
+            <IncludeLibsPath />
+            <Misc />
+            <LinkerInputFile />
+            <DisabledWarnings />
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -394,25 +391,33 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-            <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
@@ -428,41 +433,57 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\misc\pin.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
             </File>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
@@ -478,21 +499,29 @@
               <FileType>1</FileType>
               <FilePath>board\board_config.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_irq.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
@@ -508,31 +537,43 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_poll.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_poll.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
             </File>
-            <File>
-              <FileName>select.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\select.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
             </File>
-            <File>
-              <FileName>poll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\poll.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_select.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_select.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>devfs.c</FileName>
               <FileType>1</FileType>
@@ -548,15 +589,26 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh_file.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -568,56 +620,78 @@
               <FileType>1</FileType>
               <FilePath>Libraries\CMSIS\Device\HDSC\HC32F460\Source\system_hc32f460.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32F460_StdPeriph_Driver\src\hc32f460_usart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32F460_StdPeriph_Driver\src\hc32f460_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_clk.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32F460_StdPeriph_Driver\src\hc32f460_clk.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_efm.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32F460_StdPeriph_Driver\src\hc32f460_efm.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_sram.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32F460_StdPeriph_Driver\src\hc32f460_sram.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_utility.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32F460_StdPeriph_Driver\src\hc32f460_utility.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_exint_nmi_swi.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32F460_StdPeriph_Driver\src\hc32f460_exint_nmi_swi.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_icg.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32F460_StdPeriph_Driver\src\hc32f460_icg.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>startup_hc32f460.s</FileName>
               <FileType>2</FileType>
               <FilePath>Libraries\CMSIS\Device\HDSC\HC32F460\Source\ARM\startup_hc32f460.s</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_interrupts.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32F460_StdPeriph_Driver\src\hc32f460_interrupts.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hc32f460_pwc.c</FileName>
               <FileType>1</FileType>
@@ -629,69 +703,93 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
+              <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
+              <FilePath>..\..\src\object.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\idle.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
             </File>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
-            </File>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>mempool.c</FileName>
+              <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -699,40 +797,54 @@
           <GroupName>libc</GroupName>
           <Files>
             <File>
-              <FileName>libc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
-            </File>
-            <File>
               <FileName>mem_std.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>stdio.c</FileName>
+              <FileName>libc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>unistd.c</FileName>
+              <FileName>stdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\unistd.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>time.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>unistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\unistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
@@ -743,26 +855,23 @@
       </Groups>
     </Target>
   </Targets>
-
   <RTE>
-    <apis/>
-    <components/>
-    <files/>
+    <apis />
+    <components />
+    <files />
   </RTE>
-
   <LayerInfo>
     <Layers>
       <Layer>
         <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc></LayDesc>
-        <LayUrl></LayUrl>
-        <LayKeys></LayKeys>
-        <LayCat></LayCat>
-        <LayLic></LayLic>
+        <LayDesc />
+        <LayUrl />
+        <LayKeys />
+        <LayCat />
+        <LayLic />
         <LayTarg>0</LayTarg>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
     </Layers>
   </LayerInfo>
-
 </Project>

@@ -309,7 +309,7 @@ rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *wo
  *
  * @return RT_EOK   Success.
  */
-rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *work)
+rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *work)
 {
     rt_base_t level;
     RT_ASSERT(queue != RT_NULL);
