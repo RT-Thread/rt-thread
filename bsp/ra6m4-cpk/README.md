@@ -31,7 +31,7 @@
 
 | **片上外设** | **支持情况** | **备注** |
 | :----------------- | :----------------- | :------------- |
-| UART               | 支持               | UART7          |
+| UART               | 支持               | UART7 为默认日志输出端口 |
 | GPIO               | 支持               |                |
 | IIC                | 支持               | 软件           |
 | WDT                | 支持               |                |
@@ -41,7 +41,12 @@
 | SPI                | 支持               |                |
 | FLASH              | 支持               |                |
 | PWM                | 支持               |                |
+| CAN                | 支持               |                |
 | 持续更新中...      |                    |                |
+| **外接外设** | **支持情况** | **备注** |
+| WiFi        | 支持        |  [RW007 WiFi 网络模块](https://github.com/RT-Thread-packages/rw007)  |
+| 温湿度传感器   | 支持       |  [HS300x 温湿度模块](https://github.com/Guozhanxin/hs300x) |
+
 
 ## 使用说明
 
@@ -148,10 +153,10 @@ void hal_entry(void)
 
 需要修改瑞萨的 BSP 外设配置或添加新的外设端口，需要用到瑞萨的 [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp#document) 配置工具。请务必按照如下步骤完成配置。配置中有任何问题可到[RT-Thread 社区论坛](https://club.rt-thread.org/)中提问。
 
-1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.com/cn/zh/software-tool/flexible-software-package-fsp)
+1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.com/cn/zh/software-tool/flexible-software-package-fsp)，建议使用 FSP 3.1.0
 2. 下载安装完成后，需要添加 CPK-RA6M4 开发板的[官方板级支持包](https://www2.renesas.cn/document/sws/1527176?language=zh&r=1527191)
 3. 如何将 BSP 配置包添加到 FSP 中，请参考文档[如何导入板级支持包](https://www2.renesas.cn/document/ppt/1527171?language=zh&r=1527191)
-4. 请查看文档：[使用瑞萨 FSP 配置工具](./docs/使用瑞萨FSP配置工具.md)。在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置，
+4. 请查看文档：[使用瑞萨 FSP 配置工具](./docs/使用瑞萨FSP配置工具.md)。在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置。
 
 **ENV 配置**
 
@@ -165,10 +170,19 @@ void hal_entry(void)
 3. 输入`pkgs --update`命令更新软件包。
 4. 输入`scons --target=mdk5` 命令重新生成工程。
 
+
+## FAQ
+
+### 使用 MDK 的 DEBUG 时如果遇到提示  “Error: Flash Download failed Cortex-M33” 怎么办？
+
+可按照下图操作，修改 Utilities 中的选项：
+
+![image-20211214102231248](docs/picture/readme_faq1.png)
+
 ## 联系人信息
 
 在使用过程中若您有任何的想法和建议，建议您通过以下方式来联系到我们  [RT-Thread 社区论坛](https://club.rt-thread.org/)
 
 ## 贡献代码
 
-如果您对 CPK-RA6M4 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github) 。
+如果您对 CPK-RA6M4 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。

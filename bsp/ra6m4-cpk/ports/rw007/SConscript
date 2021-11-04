@@ -17,6 +17,6 @@ elif rtconfig.PLATFORM == 'armcc':
 elif rtconfig.PLATFORM == 'armclang':
     LOCAL_CCFLAGS += ' -std=c99'
 
-group = DefineGroup('FAL', src, depend = ['PKG_USING_FAL'], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
+group = DefineGroup('rw007', src, depend = ['BSP_USING_RW007'], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
 
 Return('group')
