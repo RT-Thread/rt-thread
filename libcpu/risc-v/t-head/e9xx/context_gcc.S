@@ -45,12 +45,12 @@ rt_hw_context_switch_to:
     /* save a0 to to_thread */
     la      t0, rt_interrupt_to_thread
     STORE   a0, (t0)
-    
+
     /* save 0 to from_thread */
     la      t0, rt_interrupt_from_thread
     li      t1, 0
     STORE   t1, (t0)
-    
+
     /* set rt_thread_switch_interrupt_flag=1 */
     la      t0, rt_thread_switch_interrupt_flag
     li      t1, 1
@@ -97,7 +97,7 @@ rt_hw_context_switch_interrupt:
     beq     t1, t2, .reswitch
     /*  set rt_thread_switch_interrupt_flag=1 */
     STORE   t2, (t0)
-  
+
     /* update from_thread */
     la      t0, rt_interrupt_from_thread
     STORE   a0, (t0)
@@ -137,7 +137,7 @@ PendSV_Handler:
     la      t0, rt_interrupt_from_thread
     lw      t1, (t0)
     beqz    t1, .switch_to_thead
-    
+
     /* restore from thread context t0,t1 */
     lw      t0, (-4)(sp)
     lw      t1, (-8)(sp)
@@ -328,6 +328,23 @@ PendSV_Handler:
 
 .pendsv_exit:
     mret
- 
 
+/*
+ * rt_base_t rt_hw_interrupt_disable(void);
+ */
+    .globl rt_hw_interrupt_disable
+    .type   rt_hw_interrupt_disable, %function
+rt_hw_interrupt_disable:
+    csrrci a0, mstatus, 8
+    ret
+
+
+/*
+ * void rt_hw_interrupt_enable(rt_base_t level);
+ */
+    .globl rt_hw_interrupt_enable
+    .type   rt_hw_interrupt_enable, %function
+rt_hw_interrupt_enable:
+    csrw mstatus, a0
+    ret
 
