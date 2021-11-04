@@ -126,8 +126,8 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
     rt_uint32_t spi_periph = (rt_uint32_t)device->bus->parent.user_data;
     struct rt_spi_configuration * config = &device->config;
 
-    RT_ASSERT(device != NULL);
-    RT_ASSERT(message != NULL);
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(message != RT_NULL);
 
     /* take CS */
     if(message->cs_take)

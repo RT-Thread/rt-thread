@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,12 +22,18 @@ static struct io_config
     int io_num;
     fpioa_function_t func;
     const char * func_name;
-} io_config[] = 
+} io_config[] =
 {
 #ifdef BSP_USING_LCD
     IOCONFIG(BSP_LCD_CS_PIN, FUNC_SPI0_SS0),                 /* LCD CS PIN */
     IOCONFIG(BSP_LCD_WR_PIN, FUNC_SPI0_SCLK),                /* LCD WR PIN */
-    IOCONFIG(BSP_LCD_DC_PIN, HS_GPIO(LCD_DC_PIN)),     /* LCD DC PIN */
+    IOCONFIG(BSP_LCD_DC_PIN, HS_GPIO(LCD_DC_PIN)),           /* LCD DC PIN */
+#if BSP_LCD_RST_PIN >= 0
+    IOCONFIG(BSP_LCD_RST_PIN, HS_GPIO(LCD_RST_PIN)),         /* LCD RESET PIN */
+#endif
+#if BSP_LCD_BACKLIGHT_PIN >= 0
+    IOCONFIG(BSP_LCD_BACKLIGHT_PIN, HS_GPIO(LCD_BACKLIGHT_PIN)),    /* LCD BACKLIGHT PIN */
+#endif
 #endif
 
 #ifdef BSP_USING_CAMERA

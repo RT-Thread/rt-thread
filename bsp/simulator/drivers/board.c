@@ -110,4 +110,5 @@ int rt_hw_board_init(void)
 #endif
     return 0;
 }
+
 /*@}*/

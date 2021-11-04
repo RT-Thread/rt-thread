@@ -596,7 +596,7 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 #ifdef __ARMCC_VERSION
 /* MDK doesn't have these APIs */
 char* strdup(const char* str);
-size_t strnlen(const char *s, size_t maxlen);
+rt_size_t strnlen(const char *s, rt_size_t maxlen);
 #endif /* __ARMCC_VERSION */
 
 void rt_show_version(void);

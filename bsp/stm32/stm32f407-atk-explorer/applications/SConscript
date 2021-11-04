@@ -1,19 +1,15 @@
-import rtconfig
-import os
 from building import *
+import os
 
 cwd     = GetCurrentDir()
-CPPPATH = [cwd, str(Dir('#'))]
-src     = Split("""
-main.c
-""")
+CPPPATH = [cwd]
+src = Glob('*.c')
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        group = group + SConscript(os.path.join(d, 'SConscript'))
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

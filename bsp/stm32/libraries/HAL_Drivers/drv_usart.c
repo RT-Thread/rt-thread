@@ -251,6 +251,53 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
     return RT_EOK;
 }
 
+rt_uint32_t stm32_uart_get_mask(rt_uint32_t word_length, rt_uint32_t parity)
+{
+    rt_uint32_t mask;
+    if (word_length == UART_WORDLENGTH_8B)
+    {
+        if (parity == UART_PARITY_NONE)
+        {
+            mask = 0x00FFU ;
+        }
+        else
+        {
+            mask = 0x007FU ;
+        }
+    }
+#ifdef UART_WORDLENGTH_9B
+    else if (word_length == UART_WORDLENGTH_9B)
+    {
+        if (parity == UART_PARITY_NONE)
+        {
+            mask = 0x01FFU ;
+        }
+        else
+        {
+            mask = 0x00FFU ;
+        }
+    }
+#endif
+#ifdef UART_WORDLENGTH_7B
+    else if (word_length == UART_WORDLENGTH_7B)
+    {
+        if (parity == UART_PARITY_NONE)
+        {
+            mask = 0x007FU ;
+        }
+        else
+        {
+            mask = 0x003FU ;
+        }
+    }
+    else
+    {
+        mask = 0x0000U;
+    }
+#endif
+    return mask;
+}
+
 static int stm32_putc(struct rt_serial_device *serial, char c)
 {
     struct stm32_uart *uart;
@@ -282,9 +329,9 @@ static int stm32_getc(struct rt_serial_device *serial)
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) \
     || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32F3)
-        ch = uart->handle.Instance->RDR & 0xff;
+        ch = uart->handle.Instance->RDR & stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity);
 #else
-        ch = uart->handle.Instance->DR & 0xff;
+        ch = uart->handle.Instance->DR & stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity);
 #endif
     }
     return ch;

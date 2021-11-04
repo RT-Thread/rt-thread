@@ -110,6 +110,7 @@
 
 #define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
+#define RT_USING_POSIX
 
 /* Network */
 
@@ -158,8 +159,10 @@
 
 /* multimedia packages */
 
+/* LVGL: powerful and easy-to-use embedded GUI library */
 
-/* U8G2: a monochrome graphic library */
+
+/* u8g2: a monochrome graphic library */
 
 
 /* tools packages */
