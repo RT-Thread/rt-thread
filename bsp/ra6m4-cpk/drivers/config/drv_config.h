@@ -33,6 +33,10 @@ extern "C" {
 #include "ra6m4/pwm_config.h"
 #endif
 
+#ifdef BSP_USING_CAN
+#include "ra6m4/can_config.h"
+#endif
+
 #endif/* SOC_SERIES_R7FA6M4AF */
 
 #ifdef __cplusplus

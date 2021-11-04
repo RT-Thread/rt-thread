@@ -10,14 +10,15 @@
       <TargetName>Target 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>R7FA6M4AF</Device>
+          <Device>R7FA6M4AF3CFB</Device>
           <Vendor>Renesas</Vendor>
           <PackID>Renesas.RA_DFP.3.1.0</PackID>
           <PackURL>https://www2.renesas.eu/Keil_MDK_Packs/</PackURL>
-          <Cpu>CPUTYPE("Cortex-M33") FPU2 CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>CPUTYPE("Cortex-M33") FPU3(SFPU) DSP TZ CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
           <FlashDriverDll></FlashDriverDll>
@@ -32,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:R7FA6M4AF$SVD\R7FA6M4AF.svd</SFDFile>
+          <SFDFile>$$Device:R7FA6M4AF3CFB$SVD\R7FA6M4AF.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -108,10 +109,10 @@
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
-          <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>  -MPU</SimDllArguments>
-          <SimDlgDll>DCM.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
+          <SimDllName></SimDllName>
+          <SimDllArguments></SimDllArguments>
+          <SimDlgDll></SimDlgDll>
+          <SimDlgDllArguments></SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
           <TargetDllArguments> -MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
@@ -129,7 +130,7 @@
         <Utilities>
           <Flash1>
             <UseTargetDll>0</UseTargetDll>
-            <UseExternalTool>0</UseExternalTool>
+            <UseExternalTool>1</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>0</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
@@ -394,6 +395,16 @@
               <FileName>SConscript</FileName>
               <FileType>5</FileType>
               <FilePath>.\src\SConscript</FilePath>
+            </File>
+            <File>
+              <FileName>mqtt_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\mqtt_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>mqtt_client.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\mqtt_client.h</FilePath>
             </File>
           </Files>
         </Group>
