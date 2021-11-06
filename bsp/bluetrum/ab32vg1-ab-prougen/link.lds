@@ -23,7 +23,7 @@ MEMORY
     flash(rx)       : org = __base + 512,       len = __max_flash_size
     comm(rx)        : org = __comm_vma,         len = __comm_ram_size
 
-    bram			: org = __bram_vma,         len = __ble_ram_size
+    bram            : org = __bram_vma,         len = __ble_ram_size
     data            : org = __data_vma,         len = __data_ram_size
     stack           : org = __stack_vma,        len = __stack_ram_size
     heap            : org = __heap_vma,         len = __heap_ram_size
