@@ -139,6 +139,10 @@ config RT_USING_ASM_MEMCPY
     bool
     default n
 
+config RT_USING_ASM_MEMSET
+    bool
+    default n
+
 endmenu
 
 menuconfig RT_DEBUG
