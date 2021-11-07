@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\Synwit\SWM320.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32F407ZG.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.20.1.14181</state>
+                    <state>8.11.3.13977</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -88,7 +88,7 @@
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.20.1.14181</state>
+                    <state>8.11.3.13977</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$\config\flashloader\Synwit\FlashSWM320xE.board</state>
+                    <state>$TOOLKIT_DIR$\config\flashloader\ST\FlashSTM32F4xxx.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -892,7 +892,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state></state>
+                    <state>168.0</state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -1403,11 +1403,11 @@
                 <loadFlag>1</loadFlag>
             </plugin>
             <plugin>
-                <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
+                <file>$EW_DIR$\common\plugins\IARProbe\IarProbePlugin.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$EW_DIR$\common\plugins\TargetAccessServer\TargetAccessServer.ENU.ewplugin</file>
+                <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
@@ -1495,7 +1495,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.20.1.14181</state>
+                    <state>8.11.3.13977</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -2818,11 +2818,11 @@
                 <loadFlag>1</loadFlag>
             </plugin>
             <plugin>
-                <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
+                <file>$EW_DIR$\common\plugins\IARProbe\IarProbePlugin.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$EW_DIR$\common\plugins\TargetAccessServer\TargetAccessServer.ENU.ewplugin</file>
+                <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>

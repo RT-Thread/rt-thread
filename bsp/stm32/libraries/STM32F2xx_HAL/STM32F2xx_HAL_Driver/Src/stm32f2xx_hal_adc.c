@@ -3,7 +3,7 @@
   * @file    stm32f2xx_hal_adc.c
   * @author  MCD Application Team
   * @brief   This file provides firmware functions to manage the following 
-  *          functionalities of the Analog to Digital Convertor (ADC) peripheral:
+  *          functionalities of the Analog to Digital Converter (ADC) peripheral:
   *           + Initialization and de-initialization functions
   *           + IO operation functions
   *           + State and errors functions
@@ -802,6 +802,14 @@ HAL_StatusTypeDef HAL_ADC_Start(ADC_HandleTypeDef* hadc)
       }
     }
   }
+  else
+  {
+    /* Update ADC state machine to error */
+    SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
+    
+    /* Set ADC error code to ADC IP internal error */
+    SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
+  }
   
   /* Return function status */
   return HAL_OK;
@@ -1095,6 +1103,14 @@ HAL_StatusTypeDef HAL_ADC_Start_IT(ADC_HandleTypeDef* hadc)
           hadc->Instance->CR2 |= (uint32_t)ADC_CR2_SWSTART;
       }
     }
+  }
+  else
+  {
+    /* Update ADC state machine to error */
+    SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
+    
+    /* Set ADC error code to ADC IP internal error */
+    SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
   }
   
   /* Return function status */
@@ -1416,6 +1432,14 @@ HAL_StatusTypeDef HAL_ADC_Start_DMA(ADC_HandleTypeDef* hadc, uint32_t* pData, ui
       }
     }
   }
+  else
+  {
+    /* Update ADC state machine to error */
+    SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
+    
+    /* Set ADC error code to ADC IP internal error */
+    SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
+  }
   
   /* Return function status */
   return HAL_OK;
@@ -1449,17 +1473,20 @@ HAL_StatusTypeDef HAL_ADC_Stop_DMA(ADC_HandleTypeDef* hadc)
     
     /* Disable the DMA channel (in case of DMA in circular mode or stop while */
     /* DMA transfer is on going)                                              */
-    tmp_hal_status = HAL_DMA_Abort(hadc->DMA_Handle);
-    
-    /* Disable ADC overrun interrupt */
-    __HAL_ADC_DISABLE_IT(hadc, ADC_IT_OVR);
-    
-    /* Set ADC state */
-    ADC_STATE_CLR_SET(hadc->State,
-                      HAL_ADC_STATE_REG_BUSY | HAL_ADC_STATE_INJ_BUSY,
-                      HAL_ADC_STATE_READY);
+    if (hadc->DMA_Handle->State == HAL_DMA_STATE_BUSY)
+    {
+      tmp_hal_status = HAL_DMA_Abort(hadc->DMA_Handle);
+      
+      /* Disable ADC overrun interrupt */
+      __HAL_ADC_DISABLE_IT(hadc, ADC_IT_OVR);
+      
+      /* Set ADC state */
+      ADC_STATE_CLR_SET(hadc->State,
+                        HAL_ADC_STATE_REG_BUSY | HAL_ADC_STATE_INJ_BUSY,
+                        HAL_ADC_STATE_READY);
+    }
   }
-  
+
   /* Process unlocked */
   __HAL_UNLOCK(hadc);
   
@@ -1527,7 +1554,7 @@ __weak void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc)
 /**
   * @brief  Error ADC callback.
   * @note   In case of error due to overrun when using ADC with DMA transfer 
-  *         (HAL ADC handle paramater "ErrorCode" to state "HAL_ADC_ERROR_OVR"):
+  *         (HAL ADC handle parameter "ErrorCode" to state "HAL_ADC_ERROR_OVR"):
   *         - Reinitialize the DMA using function "HAL_ADC_Stop_DMA()".
   *         - If needed, restart a new ADC conversion using function
   *           "HAL_ADC_Start_DMA()"
@@ -1645,7 +1672,7 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef* hadc, ADC_ChannelConf
     /* Enable the TSVREFE channel*/
     ADC->CCR |= ADC_CCR_TSVREFE;
     
-    if((sConfig->Channel == ADC_CHANNEL_TEMPSENSOR))
+    if(sConfig->Channel == ADC_CHANNEL_TEMPSENSOR)
     {
       /* Delay for temperature sensor stabilization time */
       /* Compute number of CPU cycles to wait for */
@@ -1837,7 +1864,7 @@ static void ADC_Init(ADC_HandleTypeDef* hadc)
   
   /* Enable or disable ADC continuous conversion mode */
   hadc->Instance->CR2 &= ~(ADC_CR2_CONT);
-  hadc->Instance->CR2 |= ADC_CR2_CONTINUOUS(hadc->Init.ContinuousConvMode);
+  hadc->Instance->CR2 |= ADC_CR2_CONTINUOUS((uint32_t)hadc->Init.ContinuousConvMode);
   
   if(hadc->Init.DiscontinuousConvMode != DISABLE)
   {
@@ -1862,7 +1889,7 @@ static void ADC_Init(ADC_HandleTypeDef* hadc)
   
   /* Enable or disable ADC DMA continuous request */
   hadc->Instance->CR2 &= ~(ADC_CR2_DDS);
-  hadc->Instance->CR2 |= ADC_CR2_DMAContReq(hadc->Init.DMAContinuousRequests);
+  hadc->Instance->CR2 |= ADC_CR2_DMAContReq((uint32_t)hadc->Init.DMAContinuousRequests);
   
   /* Enable or disable ADC end of conversion selection */
   hadc->Instance->CR2 &= ~(ADC_CR2_EOCS);

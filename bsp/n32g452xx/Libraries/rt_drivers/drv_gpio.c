@@ -552,6 +552,16 @@ void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         /* input setting: pull up. */
         GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
     }
+    else if (mode == PIN_MODE_INPUT_PULLDOWN)
+    {
+        /* input setting: pull up. */
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPD;
+    }
+    else if (mode == PIN_MODE_OUTPUT_OD)
+    {
+        /* input setting: pull up. */
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_OD;
+    }
     else
     {
         /* input setting:default. */
@@ -563,9 +573,9 @@ void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 {
     int i;
-    for(i = 0; i < 32; i++)
+    for (i = 0; i < 32; i++)
     {
-        if((0x01 << i) == bit)
+        if ((0x01 << i) == bit)
         {
             return i;
         }
@@ -575,7 +585,7 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
 {
     rt_int32_t mapindex = bit2bitno(pinbit);
-    if(mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
+    if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
     }
@@ -594,22 +604,22 @@ rt_err_t n32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
         return -RT_ENOSYS;
     }
     irqindex = bit2bitno(index->pin);
-    if(irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
         return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
-    if(pin_irq_hdr_tab[irqindex].pin == pin   &&
-       pin_irq_hdr_tab[irqindex].hdr == hdr   &&
-       pin_irq_hdr_tab[irqindex].mode == mode &&
-       pin_irq_hdr_tab[irqindex].args == args
-      )
+    if (pin_irq_hdr_tab[irqindex].pin == pin   &&
+            pin_irq_hdr_tab[irqindex].hdr == hdr   &&
+            pin_irq_hdr_tab[irqindex].mode == mode &&
+            pin_irq_hdr_tab[irqindex].args == args
+       )
     {
         rt_hw_interrupt_enable(level);
         return RT_EOK;
     }
-    if(pin_irq_hdr_tab[irqindex].pin != -1)
+    if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
         return -RT_EBUSY;
@@ -634,13 +644,13 @@ rt_err_t n32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
         return -RT_ENOSYS;
     }
     irqindex = bit2bitno(index->pin);
-    if(irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
         return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
-    if(pin_irq_hdr_tab[irqindex].pin == -1)
+    if (pin_irq_hdr_tab[irqindex].pin == -1)
     {
         rt_hw_interrupt_enable(level);
         return RT_EOK;
@@ -669,15 +679,15 @@ rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     {
         return -RT_ENOSYS;
     }
-    if(enabled == PIN_IRQ_ENABLE)
+    if (enabled == PIN_IRQ_ENABLE)
     {
         irqindex = bit2bitno(index->pin);
-        if(irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+        if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
             return -RT_ENOSYS;
         }
         level = rt_hw_interrupt_disable();
-        if(pin_irq_hdr_tab[irqindex].pin == -1)
+        if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
             return -RT_ENOSYS;
@@ -691,35 +701,35 @@ rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_InitPeripheral(index->gpio, &GPIO_InitStructure);
 
-        NVIC_InitStructure.NVIC_IRQChannel= irqmap->irqno;
-        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority= 2;
-        NVIC_InitStructure.NVIC_IRQChannelSubPriority= 2;
-        NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
+        NVIC_InitStructure.NVIC_IRQChannel = irqmap->irqno;
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+        NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
         NVIC_Init(&NVIC_InitStructure);
 
         GPIO_ConfigEXTILine(index->port_source, index->pin_source);
         EXTI_InitStructure.EXTI_Line = irqmap->irqbit;
         EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-        switch(pin_irq_hdr_tab[irqindex].mode)
+        switch (pin_irq_hdr_tab[irqindex].mode)
         {
-            case PIN_IRQ_MODE_RISING:
-                EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-                break;
-            case PIN_IRQ_MODE_FALLING:
-                EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-                break;
-            case PIN_IRQ_MODE_RISING_FALLING:
-                EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
-                break;
+        case PIN_IRQ_MODE_RISING:
+            EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+            break;
+        case PIN_IRQ_MODE_FALLING:
+            EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+            break;
+        case PIN_IRQ_MODE_RISING_FALLING:
+            EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+            break;
         }
         EXTI_InitStructure.EXTI_LineCmd = ENABLE;
         EXTI_InitPeripheral(&EXTI_InitStructure);
         rt_hw_interrupt_enable(level);
     }
-    else if(enabled == PIN_IRQ_DISABLE)
+    else if (enabled == PIN_IRQ_DISABLE)
     {
         irqmap = get_pin_irq_map(index->pin);
-        if(irqmap == RT_NULL)
+        if (irqmap == RT_NULL)
         {
             return -RT_ENOSYS;
         }
@@ -758,7 +768,7 @@ INIT_BOARD_EXPORT(n32_hw_pin_init);
 rt_inline void pin_irq_hdr(int irqno)
 {
     EXTI_ClrITPendBit(pin_irq_map[irqno].irqbit);
-    if(pin_irq_hdr_tab[irqno].hdr)
+    if (pin_irq_hdr_tab[irqno].hdr)
     {
         pin_irq_hdr_tab[irqno].hdr(pin_irq_hdr_tab[irqno].args);
     }
@@ -807,23 +817,23 @@ void EXTI9_5_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    if(EXTI_GetITStatus(EXTI_LINE5) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE5) != RESET)
     {
         pin_irq_hdr(5);
     }
-    if(EXTI_GetITStatus(EXTI_LINE6) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE6) != RESET)
     {
         pin_irq_hdr(6);
     }
-    if(EXTI_GetITStatus(EXTI_LINE7) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE7) != RESET)
     {
         pin_irq_hdr(7);
     }
-    if(EXTI_GetITStatus(EXTI_LINE8) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE8) != RESET)
     {
         pin_irq_hdr(8);
     }
-    if(EXTI_GetITStatus(EXTI_LINE9) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE9) != RESET)
     {
         pin_irq_hdr(9);
     }
@@ -834,27 +844,27 @@ void EXTI15_10_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    if(EXTI_GetITStatus(EXTI_LINE10) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE10) != RESET)
     {
         pin_irq_hdr(10);
     }
-    if(EXTI_GetITStatus(EXTI_LINE11) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE11) != RESET)
     {
         pin_irq_hdr(11);
     }
-    if(EXTI_GetITStatus(EXTI_LINE12) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE12) != RESET)
     {
         pin_irq_hdr(12);
     }
-    if(EXTI_GetITStatus(EXTI_LINE13) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE13) != RESET)
     {
         pin_irq_hdr(13);
     }
-    if(EXTI_GetITStatus(EXTI_LINE14) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE14) != RESET)
     {
         pin_irq_hdr(14);
     }
-    if(EXTI_GetITStatus(EXTI_LINE15) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE15) != RESET)
     {
         pin_irq_hdr(15);
     }

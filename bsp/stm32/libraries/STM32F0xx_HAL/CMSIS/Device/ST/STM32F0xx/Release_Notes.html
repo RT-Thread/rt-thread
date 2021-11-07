@@ -5,11 +5,14 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Release Notes for STM32F0xx CMSIS</title>
-  <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="_htmresc/mini-st.css" />
   <!--[if lt IE 9]>
@@ -35,12 +38,38 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <a href="https://opensource.org/licenses/BSD-3-Clause">https://opensource.org/licenses/BSD-3-Clause</a>
 </center>
 </div>
-<div class="col-sm-12 col-lg-8">
-<h1 id="update-history"><strong>Update History</strong></h1>
+<section id="update-history" class="col-sm-12 col-lg-8">
+<h1><strong>Update History</strong></h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2_3_6" aria-hidden="true"> <label for="collapse-section2_3_6" aria-hidden="true"><strong>V2.3.6 / 23-July-2021</strong></label>
+<h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>General updates
+<ul>
+<li>CAN updates
+<ul>
+<li>Remove extra CAN filters: bit fields 14..27</li>
+</ul></li>
+<li>Added new atomic register access macros in stm32f0xx.h file.</li>
+<li>Add new defined value for LSI maximum startup time: LSI_STARTUP_TIME.</li>
+</ul></li>
+</ul>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2_3_5" aria-hidden="true"> <label for="collapse-section2_3_5" aria-hidden="true"><strong>V2.3.5 / 06-November-2020</strong></label>
+<h2 id="main-changes-1">Main Changes</h2>
+<ul>
+<li>General updates
+<ul>
+<li>Update stm32f030xc.h header file to be aligned with RCC_CFGR bit definition.</li>
+<li>Rename the defined STM32 sub-family “STM32F048x6” to “STM32F048xx”</li>
+<li>Add License.md and Readme.md files required for GitHub publication.</li>
+</ul></li>
+</ul>
+</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_3_4" aria-hidden="true"> <label for="collapse-section2_3_4" aria-hidden="true"><strong>V2.3.4 / 12-September-2019</strong></label>
-<div>
-<h2 id="main-changes">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <ul>
 <li>General updates
 <ul>
@@ -52,41 +81,33 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Add macro definition IS_GPIO_AF_INSTANCE for stm32f030xc devices</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_3_3" aria-hidden="true"> <label for="collapse-section2_3_3" aria-hidden="true"><strong>V2.3.3 / 25-August-2017</strong></label>
-<div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <ul>
 <li>Remove support of Atollic TrueSTUDIO STM32 (TrueSTUDIO) toolchain.</li>
 <li>Performance improvement of the startup code for GCC.</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_3_2" aria-hidden="true"> <label for="collapse-section2_3_2" aria-hidden="true"><strong>V2.3.2 / 07-April-2017</strong></label>
-<div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <ul>
 <li>Rename GPIO_AFRH and GPIO_AFRL bitfields for alignment with all STM32 series.</li>
 <li>Add macro definition : IS_TIM_ADVANCED.</li>
 <li>Rename RTC_CR register bit definition to be aligned with STM32F0xx Reference Manual : RTC_CR_BCK ==&gt; RTC_CR_BKP</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_3_1" aria-hidden="true"> <label for="collapse-section2_3_1" aria-hidden="true"><strong>V2.3.1 / 04-November-2016</strong></label>
-<div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <ul>
 <li>Add TIM6_IRQHandler in vectors table for STM32F030x8 devices</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_3_0" aria-hidden="true"> <label for="collapse-section2_3_0" aria-hidden="true"><strong>V2.3.0 / 27-May-2016</strong></label>
-<div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <ul>
 <li>General updates
 <ul>
@@ -105,21 +126,44 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <ul>
 <li>Added definitions of bit 31 in EXTI registers for STM32F04x, STM32F078xx and STM32F098xx devices.</li>
 </ul></li>
-<li>I2C updates - Added IS_I2C_WAKEUP_FROMSTOP_INSTANCE definition for I2C instances supporting Wakeup from Stop mode.</li>
-<li>I2S updates - Removed SPI_I2S prescaler register not supported by STM32F030x6 and STM32F030x8 devices.</li>
-<li>RCC updates - Added missing RCC_CFGR_PLLNODIV definition for STM32F030x4/6 devices.</li>
-<li>RTC updates - Removed cast from RTC_BKP_NUMBER definition.</li>
-<li>SYSCFG updates - Renamed SYSCFG_CFGR1_IRDA_ENV_SEL bit definitions to SYSCFG_CFGR1_IR_MOD for SYSCFG_CFGR1 register.</li>
-<li>TIM updates - Added IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE definition. - Added IS_TIM_ETR_INSTANCE definition.</li>
-<li>UART updates - Renamed IS_UART_WAKEUP_INSTANCE to IS_UART_WAKEUP_FROMSTOP_INSTANCE.</li>
-<li>USART updates - Defined USART_ISR_RWU bit for all STM32F0xx devices.</li>
+<li>I2C updates
+<ul>
+<li>Added IS_I2C_WAKEUP_FROMSTOP_INSTANCE definition for I2C instances supporting Wakeup from Stop mode.</li>
+</ul></li>
+<li>I2S updates
+<ul>
+<li>Removed SPI_I2S prescaler register not supported by STM32F030x6 and STM32F030x8 devices.</li>
+</ul></li>
+<li>RCC updates
+<ul>
+<li>Added missing RCC_CFGR_PLLNODIV definition for STM32F030x4/6 devices.</li>
+</ul></li>
+<li>RTC updates
+<ul>
+<li>Removed cast from RTC_BKP_NUMBER definition.</li>
+</ul></li>
+<li>SYSCFG updates
+<ul>
+<li>Renamed SYSCFG_CFGR1_IRDA_ENV_SEL bit definitions to SYSCFG_CFGR1_IR_MOD for SYSCFG_CFGR1 register.</li>
+</ul></li>
+<li>TIM updates
+<ul>
+<li>Added IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE definition.</li>
+<li>Added IS_TIM_ETR_INSTANCE definition.</li>
+</ul></li>
+<li>UART updates
+<ul>
+<li>Renamed IS_UART_WAKEUP_INSTANCE to IS_UART_WAKEUP_FROMSTOP_INSTANCE.</li>
+</ul></li>
+<li>USART updates
+<ul>
+<li>Defined USART_ISR_RWU bit for all STM32F0xx devices.</li>
+</ul></li>
 </ul>
-</div>
 </div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_2_3" aria-hidden="true"> <label for="collapse-section2_2_3" aria-hidden="true"><strong>V2.2.3 / 29-January-2016</strong></label>
-<div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <ul>
 <li>Added mention to STM32F091xB mcus missing in the list of mcus of stm32f0xx.h.</li>
 <li>Updated CMSIS Device compliancy with MISRA C 2004 rule 10.6.</li>
@@ -154,11 +198,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Removed HW Flow Control support on USART5/6/7/8 for STM32F091xC.</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_2_2" aria-hidden="true"> <label for="collapse-section2_2_2" aria-hidden="true"><strong>V2.2.2 / 26-June-2015</strong></label>
-<div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <ul>
 <li>Add missing WUT bits in EXTI_IMR/EMR/RTSR/FTSR/PR/SWIER for different IT lines.</li>
 <li>Add preprocessor compilation switch #define STM32F0 in stm32f0xx.h.</li>
@@ -171,11 +213,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Add FLASH_OBR_RAM_PARITY_CHECK and FLASH_OBR_BOOT_SEL CMSIS files.</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_2_1" aria-hidden="true"> <label for="collapse-section2_2_1" aria-hidden="true"><strong>V2.2.1 / 09-January-2015</strong></label>
-<div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <ul>
 <li>system_stm32f0xx.c: replace wrong compilation switch STM32F078xB by STM32F078xx.</li>
 <li>stm32F070xb.h: correct wrong DMA remap mask value for STM32f070xB.</li>
@@ -183,11 +223,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>stm32F070xb.h, stm32F030xc.h: add missing RTC periodic Wakeup register &amp; bits description</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_2_0" aria-hidden="true"> <label for="collapse-section2_2_0" aria-hidden="true"><strong>V2.2.0 / 05-December-2014</strong></label>
-<div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <ul>
 <li>Add CMSIS files for new STM32F0 value line devices: STM32F030xC and STM32F070x6/xB.</li>
 <li>Add macro to check AF capability of gpio instance</li>
@@ -196,11 +234,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>startup_stm32f042x6.s &amp; startup_stm32f070x6.s: fix boot issue</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_1_0" aria-hidden="true"> <label for="collapse-section2_1_0" aria-hidden="true"><strong>V2.1.0 / 03-October-2014</strong></label>
-<div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <ul>
 <li>Add new CMSIS files for STM32F091xc and STM32F098xx products</li>
 <li>VDDIO2 IRQ missing in F07xx/F09xx/F04xx product</li>
@@ -212,11 +248,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>GPIOS BSRR regsiter should not be split in BSRRH/BSRRL</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_0_1" aria-hidden="true"> <label for="collapse-section2_0_1" aria-hidden="true"><strong>V2.0.1 / 18-June-2014</strong></label>
-<div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <ul>
 <li>General
 <ul>
@@ -247,21 +281,17 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2_0_0" aria-hidden="true"> <label for="collapse-section2_0_0" aria-hidden="true"><strong>V2.0.0 / 28-May-2014</strong></label>
-<div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <ul>
 <li>Major update based on STM32Cube specification: new CMSIS device files release dedicated to <strong>STM32F030x4/x6, STM32F030x8, STM32F031x4/x6, STM32F051x4/x6/x8, STM32F071x8/xB, STM32F042x4/x6, STM32F072x8/xB, STM32F038xx, STM32F048xx, STM32F058xx and STM32F078xx devices</strong>.</li>
 <li><strong>This version has to be used for STM32CubeF0 based development although files can be used independently too</strong>.</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_2_1" aria-hidden="true"> <label for="collapse-section1_2_1" aria-hidden="true"><strong>V1.2.1 / 22-November-2013</strong></label>
-<div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <ul>
 <li>stm32f0xx.h
 <ul>
@@ -278,11 +308,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Remove the startup files startup_stm32f030x8.s and startup_stm32f030x6.s and replace them by startup_stm32f030.s, for EWARM, MDK-ARM and Truestudio supported compilers</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_2_0" aria-hidden="true"> <label for="collapse-section1_2_0" aria-hidden="true"><strong>V1.2.0 / 01-August-2013</strong></label>
-<div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-15">Main Changes</h2>
 <ul>
 <li>Add support of STM32F030 devices (STM32F030x8 and STM32F030x6 microcontrollers where the Flash memory ranges between 16 and 32 Kbytes)</li>
 <li>stm32f0xx.h
@@ -295,11 +323,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_1_1" aria-hidden="true"> <label for="collapse-section1_1_1" aria-hidden="true"><strong>V1.1.1 / 31-July-2013</strong></label>
-<div>
-<h2 id="main-changes-14">Main Changes</h2>
+<h2 id="main-changes-16">Main Changes</h2>
 <ul>
 <li>stm32f0xx.h
 <ul>
@@ -307,11 +333,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_1_0" aria-hidden="true"> <label for="collapse-section1_1_0" aria-hidden="true"><strong>V1.1.0 / 10-May-2013</strong></label>
-<div>
-<h2 id="main-changes-15">Main Changes</h2>
+<h2 id="main-changes-17">Main Changes</h2>
 <ul>
 <li>Add support of STM32F0xx Low-density devices (STM32F050xx and STM32F060xx microcontrollers where the Flash memory ranges between 16 and 32 Kbytes)</li>
 <li>stm32f0xx.h
@@ -335,11 +359,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Add new startup files, startup_stm32f0xx_ld.s, for the supported compilers</li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_0_2" aria-hidden="true"> <label for="collapse-section1_0_2" aria-hidden="true"><strong>V1.0.2 / 13-July-2012</strong></label>
-<div>
-<h2 id="main-changes-16">Main Changes</h2>
+<h2 id="main-changes-18">Main Changes</h2>
 <ul>
 <li>stm32f0xx.h
 <ul>
@@ -347,11 +369,9 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_0_1" aria-hidden="true"> <label for="collapse-section1_0_1" aria-hidden="true"><strong>V1.0.1 / 20-April-2012</strong></label>
-<div>
-<h2 id="main-changes-17">Main Changes</h2>
+<h2 id="main-changes-19">Main Changes</h2>
 <ul>
 <li>stm32f0xx.h
 <ul>
@@ -360,17 +380,14 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul>
 </div>
-</div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1_0_0" aria-hidden="true"> <label for="collapse-section1_0_0" aria-hidden="true"><strong>V1.0.0 / 04-September-2012</strong></label>
-<div>
-<h2 id="main-changes-18">Main Changes</h2>
+<h2 id="main-changes-20">Main Changes</h2>
 <ul>
 <li>First official release for <strong>STM32F30x</strong> devices (Standard Library)</li>
 </ul>
 </div>
-</div>
-</div>
+</section>
 </div>
 <footer class="sticky">
 For complete documentation on STM32 Microcontrollers </mark> , visit: <span style="font-color: blue;"><a href="http://www.st.com/stm32">www.st.com/stm32</a></span> <em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em>

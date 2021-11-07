@@ -52,7 +52,8 @@ typedef struct
                                            where usart_ker_ckpres is the USART input clock divided by a prescaler */
 
   uint32_t WordLength;                /*!< Specifies the number of data bits transmitted or received in a frame.
-                                           This parameter @ref SMARTCARD_Word_Length can only be set to 9 (8 data + 1 parity bits). */
+                                           This parameter @ref SMARTCARD_Word_Length can only be
+                                           set to 9 (8 data + 1 parity bits). */
 
   uint32_t StopBits;                  /*!< Specifies the number of stop bits.
                                            This parameter can be a value of @ref SMARTCARD_Stop_Bits. */
@@ -76,13 +77,14 @@ typedef struct
                                            data bit (MSB) has to be output on the SCLK pin in synchronous mode.
                                            This parameter can be a value of @ref SMARTCARD_Last_Bit */
 
-  uint16_t OneBitSampling;            /*!< Specifies whether a single sample or three samples' majority vote is selected.
-                                           Selecting the single sample method increases the receiver tolerance to clock
-                                           deviations. This parameter can be a value of @ref SMARTCARD_OneBit_Sampling. */
+  uint16_t OneBitSampling;            /*!< Specifies whether a single sample or three samples' majority vote
+                                           is selected. Selecting the single sample method increases
+                                           the receiver tolerance to clock deviations. This parameter can be a value
+                                           of @ref SMARTCARD_OneBit_Sampling. */
 
   uint8_t  Prescaler;                 /*!< Specifies the SmartCard Prescaler.
-                                           This parameter can be any value from 0x01 to 0x1F. Prescaler value is multiplied
-                                           by 2 to give the division factor of the source clock frequency */
+                                           This parameter can be any value from 0x01 to 0x1F. Prescaler value is
+                                           multiplied by 2 to give the division factor of the source clock frequency */
 
   uint8_t  GuardTime;                 /*!< Specifies the SmartCard Guard Time applied after stop bits. */
 
@@ -141,14 +143,16 @@ typedef struct
   uint32_t MSBFirst;                  /*!< Specifies whether MSB is sent first on UART line.
                                            This parameter can be a value of @ref SMARTCARD_MSB_First */
 
-  uint16_t TxCompletionIndication;     /*!< Specifies which transmission completion indication is used: before (when
-                                            relevant flag is available) or once guard time period has elapsed.
-                                           This parameter can be a value of @ref SMARTCARDEx_Transmission_Completion_Indication. */
+  uint16_t TxCompletionIndication;    /*!< Specifies which transmission completion indication is used: before (when
+                                           relevant flag is available) or once guard time period has elapsed.
+                                           This parameter can be a value
+                                           of @ref SMARTCARDEx_Transmission_Completion_Indication. */
 } SMARTCARD_AdvFeatureInitTypeDef;
 
 /**
   * @brief HAL SMARTCARD State definition
-  * @note  HAL SMARTCARD State value is a combination of 2 different substates: gState and RxState (see @ref SMARTCARD_State_Definition).
+  * @note  HAL SMARTCARD State value is a combination of 2 different substates:
+  *        gState and RxState (see @ref SMARTCARD_State_Definition).
   *        - gState contains SMARTCARD state information related to global Handle management
   *          and also information related to Tx operations.
   *          gState value coding follow below described bitmap :
@@ -159,7 +163,7 @@ typedef struct
   *             11 : Error
   *          b5     Peripheral initialization status
   *             0  : Reset (Peripheral not initialized)
-  *             1  : Init done (Peripheral not initialized. HAL SMARTCARD Init function already called)
+  *             1  : Init done (Peripheral initialized. HAL SMARTCARD Init function already called)
   *          b4-b3  (not used)
   *             xx : Should be set to 00
   *          b2     Intrinsic process state
@@ -176,7 +180,7 @@ typedef struct
   *             xx : Should be set to 00
   *          b5     Peripheral initialization status
   *             0  : Reset (Peripheral not initialized)
-  *             1  : Init done (Peripheral not initialized)
+  *             1  : Init done (Peripheral initialized)
   *          b4-b2  (not used)
   *            xxx : Should be set to 000
   *          b1     Rx state
@@ -215,7 +219,8 @@ typedef struct __SMARTCARD_HandleTypeDef
   uint16_t                          NbTxDataToProcess;     /*!< Number of data to process during TX ISR execution     */
 
   uint32_t                          FifoMode;              /*!< Specifies if the FIFO mode will be used.
-                                                                This parameter can be a value of @ref SMARTCARDEx_FIFO_mode. */
+                                                                This parameter can be a value of
+                                                                @ref SMARTCARDEx_FIFO_mode.                           */
 
   void (*RxISR)(struct __SMARTCARD_HandleTypeDef *huart);  /*!< Function pointer on Rx IRQ handler                    */
 
@@ -227,12 +232,14 @@ typedef struct __SMARTCARD_HandleTypeDef
 
   HAL_LockTypeDef                   Lock;                  /*!< Locking object                                        */
 
-  __IO HAL_SMARTCARD_StateTypeDef   gState;                /*!< SmartCard state information related to global Handle management
-                                                                and also related to Tx operations.
-                                                                This parameter can be a value of @ref HAL_SMARTCARD_StateTypeDef */
+  __IO HAL_SMARTCARD_StateTypeDef   gState;                /*!< SmartCard state information related to global
+                                                                Handle management and also related to Tx operations.
+                                                                This parameter can be a value
+                                                                of @ref HAL_SMARTCARD_StateTypeDef                    */
 
   __IO HAL_SMARTCARD_StateTypeDef   RxState;               /*!< SmartCard state information related to Rx operations.
-                                                                This parameter can be a value of @ref HAL_SMARTCARD_StateTypeDef */
+                                                                This parameter can be a value
+                                                                of @ref HAL_SMARTCARD_StateTypeDef                    */
 
   __IO uint32_t                     ErrorCode;             /*!< SmartCard Error code                                  */
 
@@ -311,23 +318,26 @@ typedef enum
 /** @defgroup SMARTCARD_State_Definition SMARTCARD State Code Definition
   * @{
   */
-#define HAL_SMARTCARD_STATE_RESET            0x00000000U                     /*!< Peripheral is not initialized
-                                                                                  Value is allowed for gState and RxState */
-#define HAL_SMARTCARD_STATE_READY            0x00000020U                     /*!< Peripheral Initialized and ready for use
-                                                                                  Value is allowed for gState and RxState */
+#define HAL_SMARTCARD_STATE_RESET            0x00000000U                     /*!< Peripheral is not initialized. Value
+                                                                                  is allowed for gState and RxState */
+#define HAL_SMARTCARD_STATE_READY            0x00000020U                     /*!< Peripheral Initialized and ready for
+                                                                                  use. Value is allowed for gState
+                                                                                  and RxState                       */
 #define HAL_SMARTCARD_STATE_BUSY             0x00000024U                     /*!< an internal process is ongoing
-                                                                                  Value is allowed for gState only */
+                                                                                  Value is allowed for gState only  */
 #define HAL_SMARTCARD_STATE_BUSY_TX          0x00000021U                     /*!< Data Transmission process is ongoing
-                                                                                  Value is allowed for gState only */
+                                                                                  Value is allowed for gState only  */
 #define HAL_SMARTCARD_STATE_BUSY_RX          0x00000022U                     /*!< Data Reception process is ongoing
                                                                                   Value is allowed for RxState only */
-#define HAL_SMARTCARD_STATE_BUSY_TX_RX       0x00000023U                     /*!< Data Transmission and Reception process is ongoing
-                                                                                  Not to be used for neither gState nor RxState.
-                                                                                  Value is result of combination (Or) between gState and RxState values */
+#define HAL_SMARTCARD_STATE_BUSY_TX_RX       0x00000023U                     /*!< Data Transmission and Reception
+                                                                                  process is ongoing Not to be used for
+                                                                                  neither gState nor RxState.
+                                                                                  Value is result of combination (Or)
+                                                                                  between gState and RxState values */
 #define HAL_SMARTCARD_STATE_TIMEOUT          0x000000A0U                     /*!< Timeout state
-                                                                                  Value is allowed for gState only */
+                                                                                  Value is allowed for gState only  */
 #define HAL_SMARTCARD_STATE_ERROR            0x000000E0U                     /*!< Error
-                                                                                  Value is allowed for gState only */
+                                                                                  Value is allowed for gState only  */
 /**
   * @}
   */
@@ -335,15 +345,15 @@ typedef enum
 /** @defgroup SMARTCARD_Error_Definition SMARTCARD Error Code Definition
   * @{
   */
-#define HAL_SMARTCARD_ERROR_NONE             ((uint32_t)0x00000000U)         /*!< No error                */
-#define HAL_SMARTCARD_ERROR_PE               ((uint32_t)0x00000001U)         /*!< Parity error            */
-#define HAL_SMARTCARD_ERROR_NE               ((uint32_t)0x00000002U)         /*!< Noise error             */
-#define HAL_SMARTCARD_ERROR_FE               ((uint32_t)0x00000004U)         /*!< frame error             */
-#define HAL_SMARTCARD_ERROR_ORE              ((uint32_t)0x00000008U)         /*!< Overrun error           */
-#define HAL_SMARTCARD_ERROR_DMA              ((uint32_t)0x00000010U)         /*!< DMA transfer error      */
-#define HAL_SMARTCARD_ERROR_RTO              ((uint32_t)0x00000020U)         /*!< Receiver TimeOut error  */
+#define HAL_SMARTCARD_ERROR_NONE             (0x00000000U)         /*!< No error                */
+#define HAL_SMARTCARD_ERROR_PE               (0x00000001U)         /*!< Parity error            */
+#define HAL_SMARTCARD_ERROR_NE               (0x00000002U)         /*!< Noise error             */
+#define HAL_SMARTCARD_ERROR_FE               (0x00000004U)         /*!< frame error             */
+#define HAL_SMARTCARD_ERROR_ORE              (0x00000008U)         /*!< Overrun error           */
+#define HAL_SMARTCARD_ERROR_DMA              (0x00000010U)         /*!< DMA transfer error      */
+#define HAL_SMARTCARD_ERROR_RTO              (0x00000020U)         /*!< Receiver TimeOut error  */
 #if (USE_HAL_SMARTCARD_REGISTER_CALLBACKS == 1)
-#define HAL_SMARTCARD_ERROR_INVALID_CALLBACK ((uint32_t)0x00000040U)         /*!< Invalid Callback error  */
+#define HAL_SMARTCARD_ERROR_INVALID_CALLBACK (0x00000040U)         /*!< Invalid Callback error  */
 #endif /* USE_HAL_SMARTCARD_REGISTER_CALLBACKS */
 /**
   * @}
@@ -663,7 +673,8 @@ typedef enum
   *            @arg @ref SMARTCARD_IT_RTO    Receive timeout interrupt
   *            @arg @ref SMARTCARD_IT_TXE    Transmit data register empty interrupt
   *            @arg @ref SMARTCARD_IT_TC     Transmission complete interrupt
-  *            @arg @ref SMARTCARD_IT_TCBGT  Transmission complete before guard time interrupt (when interruption available)
+  *            @arg @ref SMARTCARD_IT_TCBGT  Transmission complete before
+  *                                          guard time interrupt (when interruption available)
   *            @arg @ref SMARTCARD_IT_RXNE   Receive data register not empty interrupt
   *            @arg @ref SMARTCARD_IT_IDLE   Idle line detection interrupt
   *            @arg @ref SMARTCARD_IT_PE     Parity error interrupt
@@ -676,9 +687,16 @@ typedef enum
   *            @arg @ref SMARTCARD_IT_TXFT   TXFIFO threshold reached interruption
   * @retval None
   */
-#define __HAL_SMARTCARD_ENABLE_IT(__HANDLE__, __INTERRUPT__)   (((((__INTERRUPT__) & SMARTCARD_CR_MASK) >> SMARTCARD_CR_POS) == 1U)? ((__HANDLE__)->Instance->CR1 |= ((uint32_t)1U << ((__INTERRUPT__) & SMARTCARD_IT_MASK))): \
-                                                                ((((__INTERRUPT__) & SMARTCARD_CR_MASK) >> SMARTCARD_CR_POS) == 2U)? ((__HANDLE__)->Instance->CR2 |= ((uint32_t)1U << ((__INTERRUPT__) & SMARTCARD_IT_MASK))): \
-                                                                ((__HANDLE__)->Instance->CR3 |= ((uint32_t)1U << ((__INTERRUPT__) & SMARTCARD_IT_MASK))))
+#define __HAL_SMARTCARD_ENABLE_IT(__HANDLE__, __INTERRUPT__)   (((((__INTERRUPT__) & SMARTCARD_CR_MASK) >>\
+                                                                  SMARTCARD_CR_POS) == 1U)?\
+                                                                ((__HANDLE__)->Instance->CR1 |= (1UL <<\
+                                                                    ((__INTERRUPT__) & SMARTCARD_IT_MASK))):\
+                                                                ((((__INTERRUPT__) & SMARTCARD_CR_MASK) >>\
+                                                                  SMARTCARD_CR_POS) == 2U)?\
+                                                                ((__HANDLE__)->Instance->CR2 |= (1UL <<\
+                                                                    ((__INTERRUPT__) & SMARTCARD_IT_MASK))): \
+                                                                ((__HANDLE__)->Instance->CR3 |= (1UL <<\
+                                                                    ((__INTERRUPT__) & SMARTCARD_IT_MASK))))
 
 /** @brief  Disable the specified SmartCard interrupt.
   * @param  __HANDLE__ specifies the SMARTCARD Handle.
@@ -688,7 +706,8 @@ typedef enum
   *            @arg @ref SMARTCARD_IT_RTO    Receive timeout interrupt
   *            @arg @ref SMARTCARD_IT_TXE    Transmit data register empty interrupt
   *            @arg @ref SMARTCARD_IT_TC     Transmission complete interrupt
-  *            @arg @ref SMARTCARD_IT_TCBGT  Transmission complete before guard time interrupt (when interruption available)
+  *            @arg @ref SMARTCARD_IT_TCBGT  Transmission complete before guard
+  *                                          time interrupt (when interruption available)
   *            @arg @ref SMARTCARD_IT_RXNE   Receive data register not empty interrupt
   *            @arg @ref SMARTCARD_IT_IDLE   Idle line detection interrupt
   *            @arg @ref SMARTCARD_IT_PE     Parity error interrupt
@@ -701,9 +720,16 @@ typedef enum
   *            @arg @ref SMARTCARD_IT_TXFT   TXFIFO threshold reached interruption
   * @retval None
   */
-#define __HAL_SMARTCARD_DISABLE_IT(__HANDLE__, __INTERRUPT__)  (((((__INTERRUPT__) & SMARTCARD_CR_MASK) >> SMARTCARD_CR_POS) == 1U)? ((__HANDLE__)->Instance->CR1 &= ~ ((uint32_t)1U << ((__INTERRUPT__) & SMARTCARD_IT_MASK))): \
-                                                                ((((__INTERRUPT__) & SMARTCARD_CR_MASK) >> SMARTCARD_CR_POS) == 2U)? ((__HANDLE__)->Instance->CR2 &= ~ ((uint32_t)1U << ((__INTERRUPT__) & SMARTCARD_IT_MASK))): \
-                                                                ((__HANDLE__)->Instance->CR3 &= ~ ((uint32_t)1U << ((__INTERRUPT__) & SMARTCARD_IT_MASK))))
+#define __HAL_SMARTCARD_DISABLE_IT(__HANDLE__, __INTERRUPT__)  (((((__INTERRUPT__) & SMARTCARD_CR_MASK) >>\
+                                                                  SMARTCARD_CR_POS) == 1U)?\
+                                                                ((__HANDLE__)->Instance->CR1 &= ~ (1U <<\
+                                                                    ((__INTERRUPT__) & SMARTCARD_IT_MASK))): \
+                                                                ((((__INTERRUPT__) & SMARTCARD_CR_MASK) >>\
+                                                                  SMARTCARD_CR_POS) == 2U)?\
+                                                                ((__HANDLE__)->Instance->CR2 &= ~ (1U <<\
+                                                                    ((__INTERRUPT__) & SMARTCARD_IT_MASK))): \
+                                                                ((__HANDLE__)->Instance->CR3 &= ~ (1U <<\
+                                                                    ((__INTERRUPT__) & SMARTCARD_IT_MASK))))
 
 /** @brief  Check whether the specified SmartCard interrupt has occurred or not.
   * @param  __HANDLE__ specifies the SMARTCARD Handle.
@@ -713,7 +739,8 @@ typedef enum
   *            @arg @ref SMARTCARD_IT_RTO    Receive timeout interrupt
   *            @arg @ref SMARTCARD_IT_TXE    Transmit data register empty interrupt
   *            @arg @ref SMARTCARD_IT_TC     Transmission complete interrupt
-  *            @arg @ref SMARTCARD_IT_TCBGT  Transmission complete before guard time interrupt (when interruption available)
+  *            @arg @ref SMARTCARD_IT_TCBGT  Transmission complete before guard time
+  *                                          interrupt (when interruption available)
   *            @arg @ref SMARTCARD_IT_RXNE   Receive data register not empty interrupt
   *            @arg @ref SMARTCARD_IT_IDLE   Idle line detection interrupt
   *            @arg @ref SMARTCARD_IT_PE     Parity error interrupt
@@ -726,8 +753,10 @@ typedef enum
   *            @arg @ref SMARTCARD_IT_TXFT   TXFIFO threshold reached interruption
   * @retval The new state of __INTERRUPT__ (SET or RESET).
   */
-#define __HAL_SMARTCARD_GET_IT(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->ISR\
-                                                             & ((uint32_t)0x01U << (((__INTERRUPT__) & SMARTCARD_ISR_MASK)>> SMARTCARD_ISR_POS))) != 0U) ? SET : RESET)
+#define __HAL_SMARTCARD_GET_IT(__HANDLE__, __INTERRUPT__) (\
+                                                           (((__HANDLE__)->Instance->ISR & (0x01UL << (((__INTERRUPT__)\
+                                                               & SMARTCARD_ISR_MASK)>> SMARTCARD_ISR_POS)))!= 0U)\
+                                                           ? SET : RESET)
 
 /** @brief  Check whether the specified SmartCard interrupt source is enabled or not.
   * @param  __HANDLE__ specifies the SMARTCARD Handle.
@@ -737,7 +766,8 @@ typedef enum
   *            @arg @ref SMARTCARD_IT_RTO    Receive timeout interrupt
   *            @arg @ref SMARTCARD_IT_TXE    Transmit data register empty interrupt
   *            @arg @ref SMARTCARD_IT_TC     Transmission complete interrupt
-  *            @arg @ref SMARTCARD_IT_TCBGT  Transmission complete before guard time interrupt (when interruption available)
+  *            @arg @ref SMARTCARD_IT_TCBGT  Transmission complete before guard time
+  *                                          interrupt (when interruption available)
   *            @arg @ref SMARTCARD_IT_RXNE   Receive data register not empty interrupt
   *            @arg @ref SMARTCARD_IT_IDLE   Idle line detection interrupt
   *            @arg @ref SMARTCARD_IT_PE     Parity error interrupt
@@ -750,9 +780,16 @@ typedef enum
   *            @arg @ref SMARTCARD_IT_TXFT   TXFIFO threshold reached interruption
   * @retval The new state of __INTERRUPT__ (SET or RESET).
   */
-#define __HAL_SMARTCARD_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((((((__INTERRUPT__) & SMARTCARD_CR_MASK) >> SMARTCARD_CR_POS) == 0x01U)? (__HANDLE__)->Instance->CR1 : \
-                                                                     (((((__INTERRUPT__) & SMARTCARD_CR_MASK) >> SMARTCARD_CR_POS) == 0x02U)? (__HANDLE__)->Instance->CR2 : \
-                                                                      (__HANDLE__)->Instance->CR3)) & ((uint32_t)0x01U << (((uint16_t)(__INTERRUPT__)) & SMARTCARD_IT_MASK)))  != 0U) ? SET : RESET)
+#define __HAL_SMARTCARD_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((((((__INTERRUPT__) & SMARTCARD_CR_MASK) >>\
+                                                                       SMARTCARD_CR_POS) == 0x01U)?\
+                                                                     (__HANDLE__)->Instance->CR1 : \
+                                                                     (((((__INTERRUPT__) & SMARTCARD_CR_MASK) >>\
+                                                                        SMARTCARD_CR_POS) == 0x02U)?\
+                                                                      (__HANDLE__)->Instance->CR2 : \
+                                                                      (__HANDLE__)->Instance->CR3)) &\
+                                                                    (0x01UL << (((uint16_t)(__INTERRUPT__))\
+                                                                                & SMARTCARD_IT_MASK)))  != 0U)\
+                                                                  ? SET : RESET)
 
 /** @brief  Clear the specified SMARTCARD ISR flag, in setting the proper ICR register flag.
   * @param  __HANDLE__ specifies the SMARTCARD Handle.
@@ -817,162 +854,6 @@ typedef enum
   * @{
   */
 
-/** @brief  Report the SMARTCARD clock source.
-  * @param  __HANDLE__ specifies the SMARTCARD Handle.
-  * @param  __CLOCKSOURCE__ output variable.
-  * @retval the SMARTCARD clocking source, written in __CLOCKSOURCE__.
-  */
-#if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
-#define SMARTCARD_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)   \
-  do {                                                         \
-    if((__HANDLE__)->Instance == USART1)                       \
-    {                                                          \
-      switch(__HAL_RCC_GET_USART1_SOURCE())                    \
-      {                                                        \
-        case RCC_USART1CLKSOURCE_PCLK1:                        \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;     \
-          break;                                               \
-        case RCC_USART1CLKSOURCE_HSI:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_HSI;       \
-          break;                                               \
-        case RCC_USART1CLKSOURCE_SYSCLK:                       \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_SYSCLK;    \
-          break;                                               \
-        case RCC_USART1CLKSOURCE_LSE:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_LSE;       \
-          break;                                               \
-        default:                                               \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED; \
-          break;                                               \
-      }                                                        \
-    }                                                          \
-    else if((__HANDLE__)->Instance == USART2)                  \
-    {                                                          \
-      switch(__HAL_RCC_GET_USART2_SOURCE())                    \
-      {                                                        \
-        case RCC_USART2CLKSOURCE_PCLK1:                        \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;     \
-          break;                                               \
-        case RCC_USART2CLKSOURCE_HSI:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_HSI;       \
-          break;                                               \
-        case RCC_USART2CLKSOURCE_SYSCLK:                       \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_SYSCLK;    \
-          break;                                               \
-        case RCC_USART2CLKSOURCE_LSE:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_LSE;       \
-          break;                                               \
-        default:                                               \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED; \
-          break;                                               \
-      }                                                        \
-    }                                                          \
-    else if((__HANDLE__)->Instance == USART3)                  \
-    {                                                          \
-      switch(__HAL_RCC_GET_USART2_SOURCE())                    \
-      {                                                        \
-        case RCC_USART3CLKSOURCE_PCLK1:                        \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;     \
-          break;                                               \
-        case RCC_USART3CLKSOURCE_HSI:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_HSI;       \
-          break;                                               \
-        case RCC_USART3CLKSOURCE_SYSCLK:                       \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_SYSCLK;    \
-          break;                                               \
-        case RCC_USART3CLKSOURCE_LSE:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_LSE;       \
-          break;                                               \
-        default:                                               \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED; \
-          break;                                               \
-      }                                                        \
-    }                                                          \
-    else                                                       \
-    {                                                          \
-      (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED;     \
-    }                                                          \
-  } while(0U)
-#elif defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G070xx)
-#define SMARTCARD_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)   \
-  do {                                                         \
-    if((__HANDLE__)->Instance == USART1)                       \
-    {                                                          \
-      switch(__HAL_RCC_GET_USART1_SOURCE())                    \
-      {                                                        \
-        case RCC_USART1CLKSOURCE_PCLK1:                        \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;     \
-          break;                                               \
-        case RCC_USART1CLKSOURCE_HSI:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_HSI;       \
-          break;                                               \
-        case RCC_USART1CLKSOURCE_SYSCLK:                       \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_SYSCLK;    \
-          break;                                               \
-        case RCC_USART1CLKSOURCE_LSE:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_LSE;       \
-          break;                                               \
-        default:                                               \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED; \
-          break;                                               \
-      }                                                        \
-    }                                                          \
-    else if((__HANDLE__)->Instance == USART2)                  \
-    {                                                          \
-      switch(__HAL_RCC_GET_USART2_SOURCE())                    \
-      {                                                        \
-        case RCC_USART2CLKSOURCE_PCLK1:                        \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;     \
-          break;                                               \
-        case RCC_USART2CLKSOURCE_HSI:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_HSI;       \
-          break;                                               \
-        case RCC_USART2CLKSOURCE_SYSCLK:                       \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_SYSCLK;    \
-          break;                                               \
-        case RCC_USART2CLKSOURCE_LSE:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_LSE;       \
-          break;                                               \
-        default:                                               \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED; \
-          break;                                               \
-      }                                                        \
-    }                                                          \
-    else                                                       \
-    {                                                          \
-      (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED;     \
-    }                                                          \
-  } while(0U)
-#else
-#define SMARTCARD_GETCLOCKSOURCE(__HANDLE__,__CLOCKSOURCE__)   \
-  do {                                                         \
-    if((__HANDLE__)->Instance == USART1)                       \
-    {                                                          \
-      switch(__HAL_RCC_GET_USART1_SOURCE())                    \
-      {                                                        \
-        case RCC_USART1CLKSOURCE_PCLK1:                        \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_PCLK1;     \
-          break;                                               \
-        case RCC_USART1CLKSOURCE_HSI:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_HSI;       \
-          break;                                               \
-        case RCC_USART1CLKSOURCE_SYSCLK:                       \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_SYSCLK;    \
-          break;                                               \
-        case RCC_USART1CLKSOURCE_LSE:                          \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_LSE;       \
-          break;                                               \
-        default:                                               \
-          (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED; \
-          break;                                               \
-      }                                                        \
-    }                                                          \
-    else                                                       \
-    {                                                          \
-      (__CLOCKSOURCE__) = SMARTCARD_CLOCKSOURCE_UNDEFINED;     \
-    }                                                          \
-  } while(0U)
-#endif
 
 /** @brief  Check the Baud rate range.
   * @note   The maximum Baud Rate is derived from the maximum clock on G0 (64 MHz)
@@ -1181,7 +1062,8 @@ void HAL_SMARTCARD_MspDeInit(SMARTCARD_HandleTypeDef *hsmartcard);
 #if (USE_HAL_SMARTCARD_REGISTER_CALLBACKS == 1)
 /* Callbacks Register/UnRegister functions  ***********************************/
 HAL_StatusTypeDef HAL_SMARTCARD_RegisterCallback(SMARTCARD_HandleTypeDef *hsmartcard,
-                                                 HAL_SMARTCARD_CallbackIDTypeDef CallbackID, pSMARTCARD_CallbackTypeDef pCallback);
+                                                 HAL_SMARTCARD_CallbackIDTypeDef CallbackID,
+                                                 pSMARTCARD_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_SMARTCARD_UnRegisterCallback(SMARTCARD_HandleTypeDef *hsmartcard,
                                                    HAL_SMARTCARD_CallbackIDTypeDef CallbackID);
 #endif /* USE_HAL_SMARTCARD_REGISTER_CALLBACKS */

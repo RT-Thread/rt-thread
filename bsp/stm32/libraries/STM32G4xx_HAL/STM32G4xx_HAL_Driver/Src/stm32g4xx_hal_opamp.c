@@ -128,7 +128,7 @@
       (++) Select the mode
       (++) Select the inverting input
       (++) Select the non-inverting input
-      (++) Select if the internal ouput should be enabled/disabled (if enabled, regular I/O output is disabled)
+      (++) Select if the internal output should be enabled/disabled (if enabled, regular I/O output is disabled)
       (++) Select if the Timer controlled Mux is disabled or enabled and controlled by specified timer(s)
       (++) If the Timer controlled Mux mode is enabled, select the secondary inverting input
       (++) If the Timer controlled Mux mode is enabled, Select the secondary non-inverting input
@@ -813,7 +813,7 @@ HAL_StatusTypeDef HAL_OPAMP_SelfCalibrate(OPAMP_HandleTypeDef *hopamp)
       CLEAR_BIT(hopamp->Instance->CSR, OPAMP_CSR_FORCEVP);
 
       /* Self calibration is successful  */
-      /* Store calibration(user timming) results in init structure. */
+      /* Store calibration(user timing) results in init structure. */
 
       /* Write calibration result N */
       hopamp->Init.TrimmingValueN = trimmingvaluen;
@@ -821,7 +821,7 @@ HAL_StatusTypeDef HAL_OPAMP_SelfCalibrate(OPAMP_HandleTypeDef *hopamp)
       /* Write calibration result P */
       hopamp->Init.TrimmingValueP = trimmingvaluep;
 
-      /* Select user timming mode */
+      /* Select user timing mode */
       /* And updated with calibrated settings */
       hopamp->Init.UserTrimming = OPAMP_TRIMMING_USER;
       MODIFY_REG(hopamp->Instance->CSR, OPAMP_CSR_TRIMOFFSETP, trimmingvaluep << OPAMP_INPUT_NONINVERTING);
@@ -1010,7 +1010,7 @@ OPAMP_TrimmingValueTypeDef HAL_OPAMP_GetTrimOffset(OPAMP_HandleTypeDef *hopamp, 
       oldtrimmingvaluen = (hopamp->Instance->CSR & OPAMP_CSR_TRIMOFFSETN) >> OPAMP_INPUT_INVERTING;
     }
 
-    /* Set factory timming mode */
+    /* Set factory timing mode */
     CLEAR_BIT(hopamp->Instance->CSR, OPAMP_CSR_USERTRIM);
 
     /* Get factory trimming  */

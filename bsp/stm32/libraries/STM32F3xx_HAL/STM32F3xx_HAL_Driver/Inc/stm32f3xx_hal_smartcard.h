@@ -690,9 +690,9 @@ typedef enum
   *            @arg @ref SMARTCARD_IT_ERR    Error interrupt(frame error, noise error, overrun error)
   * @retval The new state of __INTERRUPT__ (SET or RESET).
   */
-#define __HAL_SMARTCARD_GET_IT(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->ISR\
-                                                             & (0x01UL << (((__INTERRUPT__)\
-                                                                 & SMARTCARD_ISR_MASK)>> SMARTCARD_ISR_POS))) != 0U)\
+#define __HAL_SMARTCARD_GET_IT(__HANDLE__, __INTERRUPT__) (\
+                                                           (((__HANDLE__)->Instance->ISR & (0x01UL << (((__INTERRUPT__)\
+                                                               & SMARTCARD_ISR_MASK)>> SMARTCARD_ISR_POS)))!= 0U)\
                                                            ? SET : RESET)
 
 /** @brief  Check whether the specified SmartCard interrupt source is enabled or not.
@@ -717,7 +717,8 @@ typedef enum
                                                                       (__HANDLE__)->Instance->CR2 : \
                                                                       (__HANDLE__)->Instance->CR3)) &\
                                                                     (0x01UL << (((uint16_t)(__INTERRUPT__))\
-                                                                        & SMARTCARD_IT_MASK)))  != 0U) ? SET : RESET)
+                                                                                & SMARTCARD_IT_MASK)))  != 0U)\
+                                                                  ? SET : RESET)
 
 /** @brief  Clear the specified SMARTCARD ISR flag, in setting the proper ICR register flag.
   * @param  __HANDLE__ specifies the SMARTCARD Handle.

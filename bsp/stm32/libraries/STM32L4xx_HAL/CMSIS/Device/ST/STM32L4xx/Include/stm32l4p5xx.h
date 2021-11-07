@@ -15,10 +15,10 @@
   * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
+  * This software component is licensed by ST under Apache License, Version 2.0,
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  *                        opensource.org/licenses/Apache-2.0
   *
   ******************************************************************************
   */
@@ -1636,7 +1636,6 @@ typedef struct
 #define SAI2_Block_B        ((SAI_Block_TypeDef *)SAI2_Block_B_BASE)
 #define LTDC                ((LTDC_TypeDef *)LTDC_BASE)
 #define LTDC_Layer1         ((LTDC_Layer_TypeDef *)LTDC_Layer1_BASE)
-#define LTDC_Layer2         ((LTDC_Layer_TypeDef *)LTDC_Layer2_BASE)
 #define DFSDM1_Channel0     ((DFSDM_Channel_TypeDef *) DFSDM1_Channel0_BASE)
 #define DFSDM1_Channel1     ((DFSDM_Channel_TypeDef *) DFSDM1_Channel1_BASE)
 #define DFSDM1_Channel2     ((DFSDM_Channel_TypeDef *) DFSDM1_Channel2_BASE)
@@ -6474,7 +6473,13 @@ typedef struct
 #define CRS_CR_SWSYNC             CRS_CR_SWSYNC_Msk                            /*!< Generate software SYNC event */
 #define CRS_CR_TRIM_Pos           (8U)
 #define CRS_CR_TRIM_Msk           (0x3FUL << CRS_CR_TRIM_Pos)                  /*!< 0x00003F00 */
-#define CRS_CR_TRIM               CRS_CR_TRIM_Msk                              /*!< HSI48 oscillator smooth trimming */
+#define CRS_CR_TRIM               CRS_CR_TRIM_Msk                              /*!< TRIM[5:0] HSI48 oscillator smooth trimming */
+#define CRS_CR_TRIM_0             (0x01UL << CRS_CR_TRIM_Pos)                  /*!< 0x00000100 */
+#define CRS_CR_TRIM_1             (0x02UL << CRS_CR_TRIM_Pos)                  /*!< 0x00000200 */
+#define CRS_CR_TRIM_2             (0x04UL << CRS_CR_TRIM_Pos)                  /*!< 0x00000400 */
+#define CRS_CR_TRIM_3             (0x08UL << CRS_CR_TRIM_Pos)                  /*!< 0x00000800 */
+#define CRS_CR_TRIM_4             (0x10UL << CRS_CR_TRIM_Pos)                  /*!< 0x00001000 */
+#define CRS_CR_TRIM_5             (0x20UL << CRS_CR_TRIM_Pos)                  /*!< 0x00002000 */
 
 /*******************  Bit definition for CRS_CFGR register  *********************/
 #define CRS_CFGR_RELOAD_Pos       (0U)
@@ -12412,9 +12417,11 @@ typedef struct
 #define RCC_HSI48_SUPPORT
 #define RCC_PLLM_DIV_1_16_SUPPORT
 #define RCC_PLLP_DIV_2_31_SUPPORT
+#define RCC_PLLSAI1N_MUL_8_127_SUPPORT
 #define RCC_PLLSAI1M_DIV_1_16_SUPPORT
 #define RCC_PLLSAI1P_DIV_2_31_SUPPORT
 #define RCC_PLLSAI2_SUPPORT
+#define RCC_PLLSAI2N_MUL_8_127_SUPPORT
 #define RCC_PLLSAI2M_DIV_1_16_SUPPORT
 #define RCC_PLLSAI2P_DIV_2_31_SUPPORT
 #define RCC_PLLSAI2Q_DIV_SUPPORT
@@ -15773,8 +15780,11 @@ typedef struct
 #define OCTOSPI_DCR1_FRCK_Pos          (1U)
 #define OCTOSPI_DCR1_FRCK_Msk          (0x1UL << OCTOSPI_DCR1_FRCK_Pos)        /*!< 0x00000002 */
 #define OCTOSPI_DCR1_FRCK              OCTOSPI_DCR1_FRCK_Msk                   /*!< Free Running Clock */
+#define OCTOSPI_DCR1_DLYBYP_Pos        (3U)
+#define OCTOSPI_DCR1_DLYBYP_Msk        (0x1UL << OCTOSPI_DCR1_DLYBYP_Pos)      /*!< 0x00000004 */
+#define OCTOSPI_DCR1_DLYBYP            OCTOSPI_DCR1_DLYBYP_Msk                 /*!< Delay Block Bypass */
 #define OCTOSPI_DCR1_CSHT_Pos          (8U)
-#define OCTOSPI_DCR1_CSHT_Msk          (0x7UL << OCTOSPI_DCR1_CSHT_Pos)        /*!< 0x00000700 */
+#define OCTOSPI_DCR1_CSHT_Msk          (0x3FUL << OCTOSPI_DCR1_CSHT_Pos)       /*!< 0x00003F00 */
 #define OCTOSPI_DCR1_CSHT              OCTOSPI_DCR1_CSHT_Msk                   /*!< Chip Select High Time */
 #define OCTOSPI_DCR1_DEVSIZE_Pos       (16U)
 #define OCTOSPI_DCR1_DEVSIZE_Msk       (0x1FUL << OCTOSPI_DCR1_DEVSIZE_Pos)    /*!< 0x001F0000 */
@@ -15790,14 +15800,11 @@ typedef struct
 #define OCTOSPI_DCR2_PRESCALER_Pos     (0U)
 #define OCTOSPI_DCR2_PRESCALER_Msk     (0xFFUL << OCTOSPI_DCR2_PRESCALER_Pos)  /*!< 0x000000FF */
 #define OCTOSPI_DCR2_PRESCALER         OCTOSPI_DCR2_PRESCALER_Msk              /*!< Clock prescaler */
-#define OCTOSPI_DCR2_WRAPSIZE_Pos      (16U)
-#define OCTOSPI_DCR2_WRAPSIZE_Msk      (0x7UL << OCTOSPI_DCR2_WRAPSIZE_Pos)    /*!< 0x00070000 */
-#define OCTOSPI_DCR2_WRAPSIZE          OCTOSPI_DCR2_WRAPSIZE_Msk               /*!< Wrap Size */
-#define OCTOSPI_DCR2_WRAPSIZE_0        (0x1UL << OCTOSPI_DCR2_WRAPSIZE_Pos)    /*!< 0x00010000 */
-#define OCTOSPI_DCR2_WRAPSIZE_1        (0x2UL << OCTOSPI_DCR2_WRAPSIZE_Pos)    /*!< 0x00020000 */
-#define OCTOSPI_DCR2_WRAPSIZE_2        (0x4UL << OCTOSPI_DCR2_WRAPSIZE_Pos)    /*!< 0x00040000 */
 
 /****************  Bit definition for OCTOSPI_DCR3 register  ******************/
+#define OCTOSPI_DCR3_MAXTRAN_Pos       (0U)
+#define OCTOSPI_DCR3_MAXTRAN_Msk       (0xFFUL << OCTOSPI_DCR3_MAXTRAN_Pos)    /*!< 0x000000FF */
+#define OCTOSPI_DCR3_MAXTRAN           OCTOSPI_DCR3_MAXTRAN_Msk                /*!< Maximum Transfer */
 #define OCTOSPI_DCR3_CSBOUND_Pos       (16U)
 #define OCTOSPI_DCR3_CSBOUND_Msk       (0x1FUL << OCTOSPI_DCR3_CSBOUND_Pos)    /*!< 0x001F0000 */
 #define OCTOSPI_DCR3_CSBOUND           OCTOSPI_DCR3_CSBOUND_Msk                /*!< CS Boundary */
@@ -15840,8 +15847,8 @@ typedef struct
 #define OCTOSPI_FCR_CSMF_Pos           (3U)
 #define OCTOSPI_FCR_CSMF_Msk           (0x1UL << OCTOSPI_FCR_CSMF_Pos)         /*!< 0x00000008 */
 #define OCTOSPI_FCR_CSMF               OCTOSPI_FCR_CSMF_Msk                    /*!< Clear Status Match Flag */
-#define OCTOSPI_FCR_TOF_Pos            (8U)
-#define OCTOSPI_FCR_TOF_Msk            (0x1UL << OCTOSPI_FCR_TOF_Pos)          /*!< 0x00000100 */
+#define OCTOSPI_FCR_TOF_Pos            (4U)
+#define OCTOSPI_FCR_TOF_Msk            (0x1UL << OCTOSPI_FCR_TOF_Pos)          /*!< 0x00000010 */
 #define OCTOSPI_FCR_TOF                OCTOSPI_FCR_TOF_Msk                     /*!< Clear Timeout Flag */
 
 /****************  Bit definition for OCTOSPI_DLR register  *******************/
@@ -16014,9 +16021,6 @@ typedef struct
 #define OCTOSPI_WCCR_DQSE_Pos          (29U)
 #define OCTOSPI_WCCR_DQSE_Msk          (0x1UL << OCTOSPI_WCCR_DQSE_Pos)        /*!< 0x20000000 */
 #define OCTOSPI_WCCR_DQSE              OCTOSPI_WCCR_DQSE_Msk                   /*!< DQS Enable */
-#define OCTOSPI_WCCR_SIOO_Pos          (31U)
-#define OCTOSPI_WCCR_SIOO_Msk          (0x1UL << OCTOSPI_WCCR_SIOO_Pos)        /*!< 0x80000000 */
-#define OCTOSPI_WCCR_SIOO              OCTOSPI_WCCR_SIOO_Msk                   /*!< Send Instruction Only Once Mode */
 
 /****************  Bit definition for OCTOSPI_WTCR register  ******************/
 #define OCTOSPI_WTCR_DCYC_Pos          (0U)

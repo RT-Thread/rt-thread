@@ -1043,8 +1043,8 @@ __STATIC_INLINE void LL_USART_SetBaudRate(USART_TypeDef *USARTx, uint32_t Periph
   */
 __STATIC_INLINE uint32_t LL_USART_GetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t OverSampling)
 {
-  register uint32_t usartdiv = 0x0U;
-  register uint32_t brrresult = 0x0U;
+  uint32_t usartdiv = 0x0U;
+  uint32_t brrresult = 0x0U;
 
   usartdiv = USARTx->BRR;
 

@@ -1,3 +1,5 @@
+menu "Hardware Drivers Config"
+
 config BSP_USING_UART_HS
     bool "Enable High Speed UART"
     default y
@@ -119,6 +121,43 @@ if BSP_USING_LCD
     config BSP_LCD_DC_PIN
         int "DC pin number of 8080 interface"
         default 8
+    config BSP_LCD_RST_PIN
+        int "RESET pin number of 8080 interface (-1 for not used)"
+        default -1
+    config BSP_LCD_BACKLIGHT_PIN
+        int "Backlight control pin number (-1 for not used)"
+        default -1
+    choice
+        prompt "backlight active polarity"
+        default BSP_LCD_BACKLIGHT_ACTIVE_LOW
+        
+        config BSP_LCD_BACKLIGHT_ACTIVE_LOW
+            bool "lcd backlight on low level"
+        config BSP_LCD_BACKLIGHT_ACTIVE_HIGH
+            bool "lcd_backlight on high level"
+    endchoice
+
+    config BSP_LCD_CLK_FREQ
+        int "Lcd max clk frequency"
+        default 15000000
+    
+    choice
+        prompt "lcd scan direction"
+        default BSP_BOARD_K210_OPENMV_TEST
+
+        config  BSP_BOARD_KD233
+            bool "board_kd233 lcd scan: DIR_YX_RLUD"
+
+        config  BSP_BOARD_K210_OPENMV_TEST
+            bool "board_k210_openmv lcd scan: DIR_YX_LRUD"
+
+        config  BSP_BOARD_K210_DRACO
+            bool "board_k210_Draco lcd scan: DIR_YX_LRUD"
+
+        config  BSP_BOARD_USER
+            bool "board_user: user defined."    
+    endchoice
+
     config BSP_LCD_X_MAX
         int "LCD Height"
         default 240
@@ -158,4 +197,6 @@ if BSP_USING_CAMERA
         int "CMOS HREF pin number for camera"
         default 17
 endif
+
+endmenu
 

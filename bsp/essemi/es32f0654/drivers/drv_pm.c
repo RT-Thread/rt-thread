@@ -22,7 +22,7 @@
  * 2020-12-15     liuhy        the first version
  */
 
-#include "drv_pm.h" 
+#include "drv_pm.h"
 
 #ifdef RT_USING_PM
 
@@ -57,18 +57,18 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
         ald_pmu_stop1_enter();
         break;
 
-    case PM_SLEEP_MODE_DEEP:           
-        /* Enter STOP 2 mode  */   
+    case PM_SLEEP_MODE_DEEP:
+        /* Enter STOP 2 mode  */
         ald_pmu_stop2_enter();
         break;
 
     case PM_SLEEP_MODE_STANDBY:
-        /* Enter STANDBY mode */  
+        /* Enter STANDBY mode */
         ald_pmu_stop2_enter();
         break;
 
     case PM_SLEEP_MODE_SHUTDOWN:
-        /* Enter SHUTDOWNN mode */       
+        /* Enter SHUTDOWNN mode */
         ald_pmu_stop2_enter();
         break;
 

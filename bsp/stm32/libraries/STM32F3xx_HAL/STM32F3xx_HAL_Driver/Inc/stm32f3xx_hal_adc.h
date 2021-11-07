@@ -27,28 +27,28 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal_def.h"
-
+   
 /* Include ADC HAL Extended module */
 /* (include on top of file since ADC structures are defined in extended file) */
 #include "stm32f3xx_hal_adc_ex.h"
-
+   
 /** @addtogroup STM32F3xx_HAL_Driver
   * @{
   */
 
 /** @addtogroup ADC
   * @{
-  */
+  */ 
 
 /* Exported types ------------------------------------------------------------*/
 /** @defgroup ADC_Exported_Types ADC Exported Types
   * @{
   */
-/**
+/** 
   * @brief  HAL ADC state machine: ADC states definition (bitfields)
   * @note   ADC state machine is managed by bitfields, state must be compared
   *         with bit by bit.
-  *         For example:
+  *         For example:                                                         
   *           " if (HAL_IS_BIT_SET(HAL_ADC_GetState(hadc1), HAL_ADC_STATE_REG_BUSY)) "
   *           " if (HAL_IS_BIT_SET(HAL_ADC_GetState(hadc1), HAL_ADC_STATE_AWD1)    ) "
   */
@@ -85,8 +85,8 @@
 #define HAL_ADC_STATE_MULTIMODE_SLAVE   (0x00100000U)    /*!< ADC in multimode slave state, controlled by another ADC master ( */
 
 
-/**
-  * @brief  ADC handle Structure definition
+/** 
+  * @brief  ADC handle Structure definition  
   */
 typedef struct __ADC_HandleTypeDef
 {
@@ -101,12 +101,12 @@ typedef struct __ADC_HandleTypeDef
   __IO uint32_t                 State;                  /*!< ADC communication state (bitmap of ADC states) */
 
   __IO uint32_t                 ErrorCode;              /*!< ADC Error code */
-
+  
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx) || \
     defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx) || \
     defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx) || \
     defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
-  ADC_InjectionConfigTypeDef    InjectionConfig ;       /*!< ADC injected channel configuration build-up structure */
+  ADC_InjectionConfigTypeDef    InjectionConfig ;       /*!< ADC injected channel configuration build-up structure */  
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
        /* STM32F303x8 || STM32F334x8 || STM32F328xx || */
@@ -151,7 +151,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/
-
+     
 /** @defgroup ADC_Exported_Macro ADC Exported Macros
   * @{
   */
@@ -173,18 +173,18 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 
 /**
   * @}
-  */
+  */ 
 
 
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup ADC_Exported_Functions ADC Exported Functions
   * @{
-  */
+  */ 
 
-/** @addtogroup ADC_Exported_Functions_Group1 Initialization and de-initialization functions
+/** @addtogroup ADC_Exported_Functions_Group1 Initialization and de-initialization functions 
  * @{
- */
+ */ 
 /* Initialization and de-initialization functions  **********************************/
 HAL_StatusTypeDef       HAL_ADC_Init(ADC_HandleTypeDef* hadc);
 HAL_StatusTypeDef       HAL_ADC_DeInit(ADC_HandleTypeDef *hadc);
@@ -202,7 +202,7 @@ HAL_StatusTypeDef HAL_ADC_UnRegisterCallback(ADC_HandleTypeDef *hadc, HAL_ADC_Ca
 
 /** @addtogroup ADC_Exported_Functions_Group2 Input and Output operation functions
  * @{
- */
+ */ 
 /* Blocking mode: Polling */
 HAL_StatusTypeDef       HAL_ADC_Start(ADC_HandleTypeDef* hadc);
 HAL_StatusTypeDef       HAL_ADC_Stop(ADC_HandleTypeDef* hadc);
@@ -232,7 +232,7 @@ void                    HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc);
 
 /** @addtogroup ADC_Exported_Functions_Group3 Peripheral Control functions
  * @{
- */
+ */ 
 /* Peripheral Control functions ***********************************************/
 HAL_StatusTypeDef       HAL_ADC_ConfigChannel(ADC_HandleTypeDef* hadc, ADC_ChannelConfTypeDef* sConfig);
 HAL_StatusTypeDef       HAL_ADC_AnalogWDGConfig(ADC_HandleTypeDef* hadc, ADC_AnalogWDGConfTypeDef* AnalogWDGConfig);
@@ -241,9 +241,9 @@ HAL_StatusTypeDef       HAL_ADC_AnalogWDGConfig(ADC_HandleTypeDef* hadc, ADC_Ana
   */
 
 /** @defgroup ADC_Exported_Functions_Group4 Peripheral State functions
- *  @brief   ADC Peripheral State functions
+ *  @brief   ADC Peripheral State functions 
  * @{
- */
+ */ 
 /* Peripheral State functions *************************************************/
 uint32_t                HAL_ADC_GetState(ADC_HandleTypeDef* hadc);
 uint32_t                HAL_ADC_GetError(ADC_HandleTypeDef *hadc);
@@ -257,7 +257,7 @@ uint32_t                HAL_ADC_GetError(ADC_HandleTypeDef *hadc);
 
 /**
   * @}
-  */
+  */ 
 
 /**
   * @}

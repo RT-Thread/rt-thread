@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
-              <Define>CPU_LPC54114, CORE_M4, SDK_DEBUGCONSOLE=0, __RTTHREAD__, CPU_LPC54114J256BD64_cm4=1, RT_USING_ARM_LIBC</Define>
+              <Define>CPU_LPC54114, CORE_M4, SDK_DEBUGCONSOLE=0, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, CPU_LPC54114J256BD64_cm4=1, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\dfs\filesystems\romfs;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common;Libraries\CMSIS\Include;Libraries\devices\LPC54114\drivers;Libraries\devices\LPC54114\utilities;Libraries\devices\LPC54114</IncludePath>
+              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\dfs\filesystems\romfs;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;Libraries\CMSIS\Include;Libraries\devices\LPC54114\drivers;Libraries\devices\LPC54114\utilities;Libraries\devices\LPC54114;..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -380,16 +380,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>mnt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
+              <FilePath>applications\mnt.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mnt.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\mnt.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -418,16 +418,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -470,23 +470,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>spi_core.c</FileName>
+              <FileName>sfud.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\spi\spi_core.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi_msd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\spi\spi_msd.c</FilePath>
+              <FilePath>..\..\components\drivers\spi\sfud\src\sfud.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -498,30 +484,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>sfud.c</FileName>
+              <FileName>spi_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\spi\sfud\src\sfud.c</FilePath>
+              <FilePath>..\..\components\drivers\spi\spi_core.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>spi_msd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\spi\spi_msd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
+              <FileName>spi_dev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -533,6 +519,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
@@ -540,9 +533,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>waitqueue.c</FileName>
+              <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -569,16 +569,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>drv_sdcard.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock_config.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\clock_config.c</FilePath>
+              <FilePath>drivers\drv_sdcard.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -604,16 +597,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_i2c.c</FileName>
+              <FileName>clock_config.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_i2c.c</FilePath>
+              <FilePath>drivers\clock_config.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_sdcard.c</FileName>
+              <FileName>drv_romfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_sdcard.c</FilePath>
+              <FilePath>drivers\drv_romfs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -623,14 +623,28 @@
               <FilePath>drivers\drv_spi_flash.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Filesystem</GroupName>
           <Files>
             <File>
-              <FileName>dfs.c</FileName>
+              <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
+              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_poll.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_poll.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -642,6 +656,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
@@ -649,23 +670,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs_posix.c</FileName>
+              <FileName>dfs_select.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>poll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\poll.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>select.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\select.c</FilePath>
+              <FilePath>..\..\components\dfs\src\dfs_select.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -677,13 +684,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs_elm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
@@ -691,16 +691,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>ccsbcs.c</FileName>
+              <FileName>dfs_elm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\option\ccsbcs.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>dfs_romfs.c</FileName>
+              <FileName>ffunicode.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\romfs\dfs_romfs.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\ffunicode.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -710,21 +710,21 @@
               <FilePath>..\..\components\dfs\filesystems\romfs\romfs.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>dfs_romfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\romfs\dfs_romfs.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
-          <GroupName>finsh</GroupName>
+          <GroupName>Finsh</GroupName>
           <Files>
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -743,77 +743,35 @@
           </Files>
           <Files>
             <File>
-              <FileName>finsh_compiler.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_error.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_heap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_node.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_var.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_vm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_token.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Kernel</GroupName>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>clock.c</FileName>
@@ -823,30 +781,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>components.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -865,16 +802,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>mem.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mempool.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -886,30 +823,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\signal.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -917,9 +847,9 @@
           <GroupName>libc</GroupName>
           <Files>
             <File>
-              <FileName>libc.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -938,9 +868,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>stubs.c</FileName>
+              <FileName>libc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\delay.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -962,114 +906,16 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
+              <FileName>fsl_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>fsl_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\devices\LPC54114\drivers\fsl_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_common.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_ctimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_ctimer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dmic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_dmic.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dmic_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_dmic_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_flashiap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_flashiap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_flexcomm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_flexcomm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_fmeas.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_fmeas.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_gint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_gint.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_i2c_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_i2c_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_i2s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_i2s.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1081,37 +927,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_inputmux.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_inputmux.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_mrt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_mrt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_pint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_pint.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>fsl_power.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\devices\LPC54114\drivers\fsl_power.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_reset.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_reset.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1123,6 +941,34 @@
           </Files>
           <Files>
             <File>
+              <FileName>fsl_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_flexcomm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_flexcomm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_pint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_pint.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>fsl_sctimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\devices\LPC54114\drivers\fsl_sctimer.c</FilePath>
@@ -1130,9 +976,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_spi.c</FileName>
+              <FileName>fsl_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_spi.c</FilePath>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_mrt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_mrt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_flashiap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_flashiap.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1144,9 +1004,44 @@
           </Files>
           <Files>
             <File>
+              <FileName>fsl_wwdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_wwdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_ctimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_ctimer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>fsl_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\devices\LPC54114\drivers\fsl_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dmic_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_dmic_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_i2s.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_i2s.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1158,6 +1053,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>fsl_inputmux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_inputmux.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>fsl_utick.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\devices\LPC54114\drivers\fsl_utick.c</FilePath>
@@ -1165,9 +1067,51 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_wwdt.c</FileName>
+              <FileName>fsl_dmic.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\devices\LPC54114\drivers\fsl_wwdt.c</FilePath>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_dmic.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_reset.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_reset.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_i2c_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_i2c_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_gint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_gint.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_fmeas.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\devices\LPC54114\drivers\fsl_fmeas.c</FilePath>
             </File>
           </Files>
           <Files>

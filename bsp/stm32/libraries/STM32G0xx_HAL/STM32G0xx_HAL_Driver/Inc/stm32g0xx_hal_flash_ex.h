@@ -71,7 +71,7 @@ uint32_t          HAL_FLASHEx_FlashEmptyCheck(void);
 void              HAL_FLASHEx_ForceFlashEmpty(uint32_t FlashEmpty);
 #if defined(FLASH_SECURABLE_MEMORY_SUPPORT)
 void              HAL_FLASHEx_EnableSecMemProtection(uint32_t Banks);
-#endif
+#endif /* FLASH_SECURABLE_MEMORY_SUPPORT */
 HAL_StatusTypeDef HAL_FLASHEx_OBProgram(FLASH_OBProgramInitTypeDef *pOBInit);
 void              HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit);
 /**

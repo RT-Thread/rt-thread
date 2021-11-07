@@ -372,7 +372,7 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp)
       /* Note: Variable divided by 2 to compensate partially                  */
       /*       CPU processing cycles.*/
 
-     wait_loop_index = (COMP_DELAY_VOLTAGE_SCALER_STAB_US * (SystemCoreClock / (1000000UL * 2UL)));
+     wait_loop_index = ((COMP_DELAY_VOLTAGE_SCALER_STAB_US / 10UL) * ((SystemCoreClock / (100000UL * 2UL)) + 1UL));
 
      while(wait_loop_index != 0UL)
      {
@@ -782,7 +782,7 @@ HAL_StatusTypeDef HAL_COMP_Start(COMP_HandleTypeDef *hcomp)
      /* Note: Variable divided by 2 to compensate partially    */
      /*       CPU processing cycles.                           */
     
-     wait_loop_index = (COMP_DELAY_STARTUP_US * (SystemCoreClock / (1000000UL * 2UL)));
+     wait_loop_index = ((COMP_DELAY_STARTUP_US / 10UL) * ((SystemCoreClock / (100000UL * 2UL)) + 1UL));
      while(wait_loop_index != 0UL)
      {
        wait_loop_index--;
@@ -879,7 +879,7 @@ HAL_StatusTypeDef HAL_COMP_Start_IT(COMP_HandleTypeDef *hcomp)
       /* Note: Variable divided by 2 to compensate partially                  */
       /*       CPU processing cycles.                                         */
 
-     wait_loop_index = (COMP_DELAY_STARTUP_US * (SystemCoreClock / (1000000UL * 2UL)));
+     wait_loop_index = ((COMP_DELAY_STARTUP_US / 10UL) * ((SystemCoreClock / (100000UL * 2UL)) + 1UL));
      while(wait_loop_index != 0UL)
      {
        wait_loop_index--;

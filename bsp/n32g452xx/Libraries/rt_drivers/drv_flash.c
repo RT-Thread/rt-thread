@@ -15,7 +15,7 @@
 #include "drv_flash.h"
 
 #if defined(PKG_USING_FAL)
-#include "fal.h"
+    #include "fal.h"
 #endif
 
 //#define DRV_DEBUG
@@ -147,11 +147,11 @@ int n32_flash_erase(rt_uint32_t addr, size_t size)
         return -RT_EINVAL;
     }
 
-    while(addr < end_addr)
+    while (addr < end_addr)
     {
         page_addr = get_page(addr);
 
-        if(FLASH_EraseOnePage(page_addr) != FLASH_COMPL)
+        if (FLASH_EraseOnePage(page_addr) != FLASH_COMPL)
         {
             result = -RT_ERROR;
             goto __exit;
@@ -160,10 +160,10 @@ int n32_flash_erase(rt_uint32_t addr, size_t size)
         addr += FLASH_PAGE_SIZE;
     }
 
-        FLASH_Lock();
+    FLASH_Lock();
 
 __exit:
-    if(result != RT_EOK)
+    if (result != RT_EOK)
     {
         return result;
     }

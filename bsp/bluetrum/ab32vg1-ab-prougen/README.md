@@ -10,6 +10,36 @@
 
 通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
 
+## 注意事项
+
+芯片有部分不开源的代码是以静态库提供的，静态库在软件包中，默认已勾选，直接运行 `pkgs --update` 即可
+
+波特率默认为 1.5M，需要使用 [Downloader](https://github.com/BLUETRUM/Downloader) 下载 `.dcf` 到芯片，需要编译后自动下载，需要在 `Downloader` 中的下载的下拉窗中选择 `自动`；目前暂时屏蔽 uart1 打印
+
+使用 `romfs` 时，需要自己生成 `romfs.c` 进行替换，操作参考[使用 RomFS](https://www.rt-thread.org/document/site/tutorial/qemu-network/filesystems/filesystems/#romfs)
+
+编译报错的时候，如果出现重复定义的报错，可能需要在 `cconfig.h` 中手动添加以下配置
+
+``` c
+#define HAVE_SIGEVENT 1
+#define HAVE_SIGINFO 1
+#define HAVE_SIGVAL 1
+```
+
+所有在中断中使用的函数或数据需要放在 RAM 中，否则会导致系统运行报错。具体做法可以参考下面
+
+``` c
+RT_SECTION(".irq.example.str")
+static const char example_info[] = "example 0x%x";
+
+RT_SECTION(".irq.example")
+void example_isr(void)
+{
+    rt_kprintf(example_info, 11);
+    ...
+}
+```
+
 ## 开发板介绍
 
 ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核的开发板，最高主频为 120Mhz，该开发板芯片为 AB32VG1。
@@ -101,34 +131,6 @@ msh >
 3. 输入`pkgs --update`命令更新软件包。
 
 4. 输入`scons` 命令重新编译工程。
-
-## 注意事项
-
-波特率默认为 1.5M，需要使用 [Downloader](https://github.com/BLUETRUM/Downloader) 下载 `.dcf` 到芯片，需要编译后自动下载，需要在 `Downloader` 中的下载的下拉窗中选择 `自动`；目前暂时屏蔽 uart1 打印
-
-使用 `romfs` 时，需要自己生成 `romfs.c` 进行替换，操作参考[使用 RomFS](https://www.rt-thread.org/document/site/tutorial/qemu-network/filesystems/filesystems/#romfs)
-
-编译报错的时候，如果出现重复定义的报错，可能需要在 `cconfig.h` 中手动添加以下配置
-
-``` c
-#define HAVE_SIGEVENT 1
-#define HAVE_SIGINFO 1
-#define HAVE_SIGVAL 1
-```
-
-所有在中断中使用的函数或数据需要放在 RAM 中，否则会导致系统运行报错。具体做法可以参考下面
-
-``` c
-RT_SECTION(".irq.example.str")
-static const char example_info[] = "example 0x%x";
-
-RT_SECTION(".irq.example")
-void example_isr(void)
-{
-    rt_kprintf(example_info, 11);
-    ...
-}
-```
 
 ## 维护人信息
 

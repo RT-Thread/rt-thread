@@ -60,19 +60,22 @@ typedef struct
 {
   uint8_t DefaultPolynomialUse;       /*!< This parameter is a value of @ref CRC_Default_Polynomial and indicates if default polynomial is used.
                                             If set to DEFAULT_POLYNOMIAL_ENABLE, resort to default
-                                            X^32 + X^26 + X^23 + X^22 + X^16 + X^12 + X^11 + X^10 +X^8 + X^7 + X^5 + X^4 + X^2+ X +1.
+                                            X^32 + X^26 + X^23 + X^22 + X^16 + X^12 + X^11 + X^10 +X^8 + X^7 + X^5 +
+                                            X^4 + X^2+ X +1.
                                             In that case, there is no need to set GeneratingPolynomial field.
-                                            If otherwise set to DEFAULT_POLYNOMIAL_DISABLE, GeneratingPolynomial and CRCLength fields must be set. */
+                                            If otherwise set to DEFAULT_POLYNOMIAL_DISABLE, GeneratingPolynomial and
+                                            CRCLength fields must be set. */
 
   uint8_t DefaultInitValueUse;        /*!< This parameter is a value of @ref CRC_Default_InitValue_Use and indicates if default init value is used.
                                            If set to DEFAULT_INIT_VALUE_ENABLE, resort to default
-                                           0xFFFFFFFF value. In that case, there is no need to set InitValue field.
-                                           If otherwise set to DEFAULT_INIT_VALUE_DISABLE,  InitValue field must be set. */
+                                           0xFFFFFFFF value. In that case, there is no need to set InitValue field. If
+                                           otherwise set to DEFAULT_INIT_VALUE_DISABLE, InitValue field must be set. */
 
   uint32_t GeneratingPolynomial;      /*!< Set CRC generating polynomial as a 7, 8, 16 or 32-bit long value for a polynomial degree
-                                           respectively equal to 7, 8, 16 or 32. This field is written in normal representation,
-                                           e.g., for a polynomial of degree 7, X^7 + X^6 + X^5 + X^2 + 1 is written 0x65.
-                                           No need to specify it if DefaultPolynomialUse is set to DEFAULT_POLYNOMIAL_ENABLE.   */
+                                           respectively equal to 7, 8, 16 or 32. This field is written in normal,
+                                           representation e.g., for a polynomial of degree 7, X^7 + X^6 + X^5 + X^2 + 1
+                                           is written 0x65. No need to specify it if DefaultPolynomialUse is set to
+                                            DEFAULT_POLYNOMIAL_ENABLE.   */
 
   uint32_t CRCLength;                 /*!< This parameter is a value of @ref CRC_Polynomial_Sizes and indicates CRC length.
                                            Value can be either one of
@@ -87,14 +90,18 @@ typedef struct
   uint32_t InputDataInversionMode;    /*!< This parameter is a value of @ref CRCEx_Input_Data_Inversion and specifies input data inversion mode.
                                            Can be either one of the following values
                                            @arg @ref CRC_INPUTDATA_INVERSION_NONE       no input data inversion
-                                           @arg @ref CRC_INPUTDATA_INVERSION_BYTE       byte-wise inversion, 0x1A2B3C4D becomes 0x58D43CB2
-                                           @arg @ref CRC_INPUTDATA_INVERSION_HALFWORD   halfword-wise inversion, 0x1A2B3C4D becomes 0xD458B23C
-                                           @arg @ref CRC_INPUTDATA_INVERSION_WORD       word-wise inversion, 0x1A2B3C4D becomes 0xB23CD458 */
+                                           @arg @ref CRC_INPUTDATA_INVERSION_BYTE       byte-wise inversion, 0x1A2B3C4D
+                                           becomes 0x58D43CB2
+                                           @arg @ref CRC_INPUTDATA_INVERSION_HALFWORD   halfword-wise inversion,
+                                           0x1A2B3C4D becomes 0xD458B23C
+                                           @arg @ref CRC_INPUTDATA_INVERSION_WORD       word-wise inversion, 0x1A2B3C4D
+                                           becomes 0xB23CD458 */
 
   uint32_t OutputDataInversionMode;   /*!< This parameter is a value of @ref CRCEx_Output_Data_Inversion and specifies output data (i.e. CRC) inversion mode.
                                             Can be either
                                             @arg @ref CRC_OUTPUTDATA_INVERSION_DISABLE   no CRC inversion,
-                                            @arg @ref CRC_OUTPUTDATA_INVERSION_ENABLE    CRC 0x11223344 is converted into 0x22CC4488 */
+                                            @arg @ref CRC_OUTPUTDATA_INVERSION_ENABLE    CRC 0x11223344 is converted
+                                             into 0x22CC4488 */
 } CRC_InitTypeDef;
 
 /**
@@ -112,12 +119,16 @@ typedef struct
 
   uint32_t InputDataFormat;                /*!< This parameter is a value of @ref CRC_Input_Buffer_Format and specifies input data format.
                                             Can be either
-                                            @arg @ref CRC_INPUTDATA_FORMAT_BYTES       input data is a stream of bytes (8-bit data)
-                                            @arg @ref CRC_INPUTDATA_FORMAT_HALFWORDS   input data is a stream of half-words (16-bit data)
-                                            @arg @ref CRC_INPUTDATA_FORMAT_WORDS       input data is a stream of words (32-bit data)
+                                            @arg @ref CRC_INPUTDATA_FORMAT_BYTES       input data is a stream of bytes
+                                            (8-bit data)
+                                            @arg @ref CRC_INPUTDATA_FORMAT_HALFWORDS   input data is a stream of
+                                            half-words (16-bit data)
+                                            @arg @ref CRC_INPUTDATA_FORMAT_WORDS       input data is a stream of words
+                                            (32-bit data)
 
-                                           Note that constant CRC_INPUT_FORMAT_UNDEFINED is defined but an initialization error
-                                           must occur if InputBufferFormat is not one of the three values listed above  */
+                                          Note that constant CRC_INPUT_FORMAT_UNDEFINED is defined but an initialization
+                                          error must occur if InputBufferFormat is not one of the three values listed
+                                          above  */
 } CRC_HandleTypeDef;
 /**
   * @}
@@ -195,15 +206,6 @@ typedef struct
 #define CRC_INPUTDATA_FORMAT_BYTES                 0x00000001U  /*!< Input data in byte format      */
 #define CRC_INPUTDATA_FORMAT_HALFWORDS             0x00000002U  /*!< Input data in half-word format */
 #define CRC_INPUTDATA_FORMAT_WORDS                 0x00000003U  /*!< Input data in word format      */
-/**
-  * @}
-  */
-
-/** @defgroup CRC_Aliases CRC API aliases
-  * @{
-  */
-#define HAL_CRC_Input_Data_Reverse   HAL_CRCEx_Input_Data_Reverse    /*!< Aliased to HAL_CRCEx_Input_Data_Reverse for inter STM32 series compatibility  */
-#define HAL_CRC_Output_Data_Reverse  HAL_CRCEx_Output_Data_Reverse   /*!< Aliased to HAL_CRCEx_Output_Data_Reverse for inter STM32 series compatibility */
 /**
   * @}
   */

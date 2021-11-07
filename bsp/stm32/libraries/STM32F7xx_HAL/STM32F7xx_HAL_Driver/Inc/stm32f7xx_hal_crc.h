@@ -267,7 +267,6 @@ typedef struct
 #define IS_DEFAULT_POLYNOMIAL(DEFAULT) (((DEFAULT) == DEFAULT_POLYNOMIAL_ENABLE) || \
                                         ((DEFAULT) == DEFAULT_POLYNOMIAL_DISABLE))
 
-
 #define IS_DEFAULT_INIT_VALUE(VALUE)  (((VALUE) == DEFAULT_INIT_VALUE_ENABLE) || \
                                        ((VALUE) == DEFAULT_INIT_VALUE_DISABLE))
 

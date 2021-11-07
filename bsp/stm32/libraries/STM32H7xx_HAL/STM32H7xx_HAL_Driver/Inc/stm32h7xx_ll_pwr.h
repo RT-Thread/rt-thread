@@ -74,9 +74,13 @@ extern "C" {
 #define LL_PWR_FLAG_CPU2_CSSF         PWR_CPU2CR_CSSF     /*!< Clear flags for CPU2 */
 #endif /* DUAL_CORE */
 #define LL_PWR_FLAG_WKUPCR_WKUPC6     PWR_WKUPCR_WKUPC6   /*!< Clear PC1 WKUP flag  */
+#if defined (PWR_WKUPCR_WKUPC5)
 #define LL_PWR_FLAG_WKUPCR_WKUPC5     PWR_WKUPCR_WKUPC5   /*!< Clear PI11 WKUP flag */
+#endif /* defined (PWR_WKUPCR_WKUPC5) */
 #define LL_PWR_FLAG_WKUPCR_WKUPC4     PWR_WKUPCR_WKUPC4   /*!< Clear PC13 WKUP flag */
+#if defined (PWR_WKUPCR_WKUPC3)
 #define LL_PWR_FLAG_WKUPCR_WKUPC3     PWR_WKUPCR_WKUPC3   /*!< Clear PI8 WKUP flag  */
+#endif /* defined (PWR_WKUPCR_WKUPC3) */
 #define LL_PWR_FLAG_WKUPCR_WKUPC2     PWR_WKUPCR_WKUPC2   /*!< Clear PA2 WKUP flag  */
 #define LL_PWR_FLAG_WKUPCR_WKUPC1     PWR_WKUPCR_WKUPC1   /*!< Clear PA0 WKUP flag  */
 /**
@@ -131,9 +135,13 @@ extern "C" {
 #endif /* PWR_CPUCR_PDDS_D2 */
 
 #define LL_PWR_WKUPFR_WKUPF6          PWR_WKUPFR_WKUPF6   /*!< Wakeup flag on PC1  */
+#if defined (PWR_WKUPFR_WKUPF5)
 #define LL_PWR_WKUPFR_WKUPF5          PWR_WKUPFR_WKUPF5   /*!< Wakeup flag on PI11 */
+#endif /* defined (PWR_WKUPFR_WKUPF5) */
 #define LL_PWR_WKUPFR_WKUPF4          PWR_WKUPFR_WKUPF4   /*!< Wakeup flag on PC13 */
+#if defined (PWR_WKUPFR_WKUPF3)
 #define LL_PWR_WKUPFR_WKUPF3          PWR_WKUPFR_WKUPF3   /*!< Wakeup flag on PI8  */
+#endif /* defined (PWR_WKUPFR_WKUPF3) */
 #define LL_PWR_WKUPFR_WKUPF2          PWR_WKUPFR_WKUPF2   /*!< Wakeup flag on PA2  */
 #define LL_PWR_WKUPFR_WKUPF1          PWR_WKUPFR_WKUPF1   /*!< Wakeup flag on PA0  */
 /**
@@ -186,7 +194,11 @@ extern "C" {
 #define LL_PWR_REGU_VOLTAGE_SCALE3      PWR_D3CR_VOS_0                    /*!< Select voltage scale 3 */
 #define LL_PWR_REGU_VOLTAGE_SCALE2      PWR_D3CR_VOS_1                    /*!< Select voltage scale 2 */
 #define LL_PWR_REGU_VOLTAGE_SCALE1      (PWR_D3CR_VOS_0 | PWR_D3CR_VOS_1) /*!< Select voltage scale 1 */
+#if defined (SYSCFG_PWRCR_ODEN) /* STM32H74xxx and STM32H75xxx lines */
 #define LL_PWR_REGU_VOLTAGE_SCALE0      (PWR_D3CR_VOS_0 | PWR_D3CR_VOS_1) /*!< Select voltage scale 0 */
+#else
+#define LL_PWR_REGU_VOLTAGE_SCALE0      0x00000000U                       /*!< Select voltage scale 0 */
+#endif /* defined (SYSCFG_PWRCR_ODEN) */
 #else
 #define LL_PWR_REGU_VOLTAGE_SCALE3      0x00000000U                       /*!< Select voltage scale 3 */
 #define LL_PWR_REGU_VOLTAGE_SCALE2      PWR_D3CR_VOS_0                    /*!< Select voltage scale 2 */
@@ -257,9 +269,13 @@ extern "C" {
   */
 #define LL_PWR_WAKEUP_PIN1    PWR_WKUPEPR_WKUPEN1  /*!< Wake-Up pin 1 : PA0  */
 #define LL_PWR_WAKEUP_PIN2    PWR_WKUPEPR_WKUPEN2  /*!< Wake-Up pin 2 : PA2  */
+#if defined (PWR_WKUPEPR_WKUPEN3)
 #define LL_PWR_WAKEUP_PIN3    PWR_WKUPEPR_WKUPEN3  /*!< Wake-Up pin 3 : PI8  */
+#endif /* defined (PWR_WKUPEPR_WKUPEN3) */
 #define LL_PWR_WAKEUP_PIN4    PWR_WKUPEPR_WKUPEN4  /*!< Wake-Up pin 4 : PC13 */
+#if defined (PWR_WKUPEPR_WKUPEN5)
 #define LL_PWR_WAKEUP_PIN5    PWR_WKUPEPR_WKUPEN5  /*!< Wake-Up pin 5 : PI11 */
+#endif /* defined (PWR_WKUPEPR_WKUPEN5) */
 #define LL_PWR_WAKEUP_PIN6    PWR_WKUPEPR_WKUPEN6  /*!< Wake-Up pin 6 : PC1  */
 /**
   * @}
@@ -278,13 +294,13 @@ extern "C" {
 /** @defgroup PWR_LL_EC_SUPPLY_PWR Power supply source configuration
   * @{
   */
-#define LL_PWR_LDO_SUPPLY                     PWR_CR3_LDOEN                                                               /*!< Core domains are suppplied from the LDO                                                                     */
-#if defined (SMPS)                                                                                                                                                                                                                       
-#define LL_PWR_DIRECT_SMPS_SUPPLY             PWR_CR3_SMPSEN                                                              /*!< Core domains are suppplied from the SMPS                                                                    */
+#define LL_PWR_LDO_SUPPLY                     PWR_CR3_LDOEN                                                               /*!< Core domains are supplied from the LDO                                                                     */
+#if defined (SMPS)
+#define LL_PWR_DIRECT_SMPS_SUPPLY             PWR_CR3_SMPSEN                                                              /*!< Core domains are supplied from the SMPS                                                                    */
 #define LL_PWR_SMPS_1V8_SUPPLIES_LDO          (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)                      /*!< The SMPS 1.8V output supplies the LDO which supplies the Core domains                                       */
 #define LL_PWR_SMPS_2V5_SUPPLIES_LDO          (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)                      /*!< The SMPS 2.5V output supplies the LDO which supplies the Core domains                                       */
-#define LL_PWR_SMPS_1V8_SUPPLIES_EXT_AND_LDO  (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 1.8V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
-#define LL_PWR_SMPS_2V5_SUPPLIES_EXT_AND_LDO  (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 2.5V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
+#define LL_PWR_SMPS_1V8_SUPPLIES_EXT_AND_LDO  (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 1.8V output supplies an external circuits and the LDO. The Core domains are supplied from the LDO */
+#define LL_PWR_SMPS_2V5_SUPPLIES_EXT_AND_LDO  (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 2.5V output supplies an external circuits and the LDO. The Core domains are supplied from the LDO */
 #define LL_PWR_SMPS_1V8_SUPPLIES_EXT          (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /*!< The SMPS 1.8V output supplies an external source which supplies the Core domains                            */
 #define LL_PWR_SMPS_2V5_SUPPLIES_EXT          (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /*!< The SMPS 2.5V output supplies an external source which supplies the Core domains                            */
 #endif /* SMPS */
@@ -521,7 +537,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledAnalogBooster(void)
 
 #if defined (PWR_CR1_AVD_READY)
 /**
-  * @brief  Enable the Analog Voltage Ready to isolate the BOOST IP untill VDDA will be ready
+  * @brief  Enable the Analog Voltage Ready to isolate the BOOST IP until VDDA will be ready
   * @rmtoll CR1    AVD_READY  LL_PWR_EnableAnalogVoltageReady
   * @retval None
   */
@@ -1341,7 +1357,7 @@ __STATIC_INLINE void LL_PWR_CPU2_SetD3PowerMode(uint32_t PDMode)
 }
 #endif /* DUAL_CORE */
 
-#if defined (PWR_CPUCR_PDDS_D3)
+#if defined (PWR_CPUCR_PDDS_D2)
 /**
   * @brief  Get the D3 Domain Power Down mode when the CPU enters deepsleep
   * @rmtoll CPUCR     PDDS_D3       LL_PWR_CPU_GetD3PowerMode
@@ -1365,7 +1381,7 @@ __STATIC_INLINE uint32_t LL_PWR_CPU_GetSRDPowerMode(void)
 {
   return (uint32_t)(READ_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_SRD));
 }
-#endif /* PWR_CPUCR_PDDS_D3 */
+#endif /* PWR_CPUCR_PDDS_D2 */
 
 #if defined (DUAL_CORE)
 /**
@@ -1553,7 +1569,7 @@ __STATIC_INLINE uint32_t LL_PWR_CPU2_IsEnabledD3RunInLowPowerMode(void)
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE1
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE2
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE3
-  * @note   For all H7 lines except STM32H7Axxx and STM32H7Bxxx lines, VOS0 
+  * @note   For all H7 lines except STM32H7Axxx and STM32H7Bxxx lines, VOS0
   *         is applied when PWR_D3CR_VOS[1:0] = 0b11 and  SYSCFG_PWRCR_ODEN = 0b1.
   * @retval None
   */
@@ -1569,7 +1585,7 @@ __STATIC_INLINE void LL_PWR_SetRegulVoltageScaling(uint32_t VoltageScaling)
 /**
   * @brief  Get the main internal Regulator output voltage
   * @rmtoll D3CR    VOS       LL_PWR_GetRegulVoltageScaling
-  * @note   For all H7 lines except STM32H7Axxx and STM32H7Bxxx lines, checking 
+  * @note   For all H7 lines except STM32H7Axxx and STM32H7Bxxx lines, checking
   *         VOS0 need the check of PWR_D3CR_VOS[1:0] field and SYSCFG_PWRCR_ODEN bit.
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_PWR_REGU_VOLTAGE_SCALE0
@@ -1597,10 +1613,13 @@ __STATIC_INLINE uint32_t LL_PWR_GetRegulVoltageScaling(void)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_EnableWakeUpPin(uint32_t WakeUpPin)
@@ -1619,10 +1638,13 @@ __STATIC_INLINE void LL_PWR_EnableWakeUpPin(uint32_t WakeUpPin)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_DisableWakeUpPin(uint32_t WakeUpPin)
@@ -1641,10 +1663,13 @@ __STATIC_INLINE void LL_PWR_DisableWakeUpPin(uint32_t WakeUpPin)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_PWR_IsEnabledWakeUpPin(uint32_t WakeUpPin)
@@ -1663,10 +1688,13 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledWakeUpPin(uint32_t WakeUpPin)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_SetWakeUpPinPolarityLow(uint32_t WakeUpPin)
@@ -1685,10 +1713,13 @@ __STATIC_INLINE void LL_PWR_SetWakeUpPinPolarityLow(uint32_t WakeUpPin)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_SetWakeUpPinPolarityHigh(uint32_t WakeUpPin)
@@ -1707,10 +1738,13 @@ __STATIC_INLINE void LL_PWR_SetWakeUpPinPolarityHigh(uint32_t WakeUpPin)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_PWR_IsWakeUpPinPolarityLow(uint32_t WakeUpPin)
@@ -1729,10 +1763,13 @@ __STATIC_INLINE uint32_t LL_PWR_IsWakeUpPinPolarityLow(uint32_t WakeUpPin)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_SetWakeUpPinPullNone(uint32_t WakeUpPin)
@@ -1753,10 +1790,13 @@ __STATIC_INLINE void LL_PWR_SetWakeUpPinPullNone(uint32_t WakeUpPin)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_SetWakeUpPinPullUp(uint32_t WakeUpPin)
@@ -1777,10 +1817,13 @@ __STATIC_INLINE void LL_PWR_SetWakeUpPinPullUp(uint32_t WakeUpPin)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_SetWakeUpPinPullDown(uint32_t WakeUpPin)
@@ -1801,10 +1844,13 @@ __STATIC_INLINE void LL_PWR_SetWakeUpPinPullDown(uint32_t WakeUpPin)
   * @param  WakeUpPin This parameter can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN1
   *         @arg @ref LL_PWR_WAKEUP_PIN2
-  *         @arg @ref LL_PWR_WAKEUP_PIN3
+  *         @arg @ref LL_PWR_WAKEUP_PIN3 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN4
-  *         @arg @ref LL_PWR_WAKEUP_PIN5
+  *         @arg @ref LL_PWR_WAKEUP_PIN5 (*)
   *         @arg @ref LL_PWR_WAKEUP_PIN6
+  *
+  *         (*) value not defined in all devices.
+  *
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_PWR_WAKEUP_PIN_NOPULL
   *         @arg @ref LL_PWR_WAKEUP_PIN_PULLUP
@@ -1812,7 +1858,7 @@ __STATIC_INLINE void LL_PWR_SetWakeUpPinPullDown(uint32_t WakeUpPin)
   */
 __STATIC_INLINE uint32_t LL_PWR_GetWakeUpPinPull(uint32_t WakeUpPin)
 {
-  register uint32_t regValue = READ_BIT(PWR->WKUPEPR, (PWR_WKUPEPR_WKUPPUPD1 << ((LL_PWR_WAKEUP_PINS_PULL_SHIFT_OFFSET * POSITION_VAL(WakeUpPin)) & LL_PWR_WAKEUP_PINS_MAX_SHIFT_MASK)));
+  uint32_t regValue = READ_BIT(PWR->WKUPEPR, (PWR_WKUPEPR_WKUPPUPD1 << ((LL_PWR_WAKEUP_PINS_PULL_SHIFT_OFFSET * POSITION_VAL(WakeUpPin)) & LL_PWR_WAKEUP_PINS_MAX_SHIFT_MASK)));
 
   return (uint32_t)(regValue >> ((PWR_WKUPEPR_WKUPPUPD1_Pos + (LL_PWR_WAKEUP_PINS_PULL_SHIFT_OFFSET * POSITION_VAL(WakeUpPin))) & LL_PWR_WAKEUP_PINS_MAX_SHIFT_MASK));
 }
@@ -2079,6 +2125,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_WU6(void)
   return ((READ_BIT(PWR->WKUPFR, PWR_WKUPFR_WKUPF6) == (PWR_WKUPFR_WKUPF6)) ? 1UL : 0UL);
 }
 
+#if defined (PWR_WKUPFR_WKUPF5)
 /**
   * @brief  Get Wake-up Flag 5
   * @rmtoll WKUPFR          WKUPF5          LL_PWR_IsActiveFlag_WU5
@@ -2088,6 +2135,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_WU5(void)
 {
   return ((READ_BIT(PWR->WKUPFR, PWR_WKUPFR_WKUPF5) == (PWR_WKUPFR_WKUPF5)) ? 1UL : 0UL);
 }
+#endif /* defined (PWR_WKUPFR_WKUPF5) */
 
 /**
   * @brief  Get Wake-up Flag 4
@@ -2099,6 +2147,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_WU4(void)
   return ((READ_BIT(PWR->WKUPFR, PWR_WKUPFR_WKUPF4) == (PWR_WKUPFR_WKUPF4)) ? 1UL : 0UL);
 }
 
+#if defined (PWR_WKUPFR_WKUPF3)
 /**
   * @brief  Get Wake-up Flag 3
   * @rmtoll WKUPFR          WKUPF3          LL_PWR_IsActiveFlag_WU3
@@ -2108,6 +2157,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_WU3(void)
 {
   return ((READ_BIT(PWR->WKUPFR, PWR_WKUPFR_WKUPF3) == (PWR_WKUPFR_WKUPF3)) ? 1UL : 0UL);
 }
+#endif /* defined (PWR_WKUPFR_WKUPF3) */
 
 /**
   * @brief  Get Wake-up Flag 2
@@ -2161,6 +2211,7 @@ __STATIC_INLINE void LL_PWR_ClearFlag_WU6(void)
   WRITE_REG(PWR->WKUPCR, PWR_WKUPCR_WKUPC6);
 }
 
+#if defined (PWR_WKUPCR_WKUPC5)
 /**
   * @brief  Clear Wake-up Flag 5
   * @rmtoll WKUPCR          WKUPC5         LL_PWR_ClearFlag_WU5
@@ -2170,6 +2221,7 @@ __STATIC_INLINE void LL_PWR_ClearFlag_WU5(void)
 {
   WRITE_REG(PWR->WKUPCR, PWR_WKUPCR_WKUPC5);
 }
+#endif /* defined (PWR_WKUPCR_WKUPC5) */
 
 /**
   * @brief  Clear Wake-up Flag 4
@@ -2181,6 +2233,7 @@ __STATIC_INLINE void LL_PWR_ClearFlag_WU4(void)
   WRITE_REG(PWR->WKUPCR, PWR_WKUPCR_WKUPC4);
 }
 
+#if defined (PWR_WKUPCR_WKUPC3)
 /**
   * @brief  Clear Wake-up Flag 3
   * @rmtoll WKUPCR          WKUPC3         LL_PWR_ClearFlag_WU3
@@ -2190,6 +2243,7 @@ __STATIC_INLINE void LL_PWR_ClearFlag_WU3(void)
 {
   WRITE_REG(PWR->WKUPCR, PWR_WKUPCR_WKUPC3);
 }
+#endif /* defined (PWR_WKUPCR_WKUPC3) */
 
 /**
   * @brief  Clear Wake-up Flag 2

@@ -21,7 +21,7 @@
 #include "msh.h"
 #include "shell.h"
 
-#ifdef RT_USING_DFS
+#ifdef RT_USING_POSIX
     #include <dfs_posix.h>
 #endif
 
@@ -186,7 +186,7 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
     return cmd_func;
 }
 
-#if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
+#if defined(RT_USING_MODULE) && defined(RT_USING_POSIX)
 /* Return 0 on module executed. Other value indicate error.
  */
 int msh_exec_module(const char *cmd_line, int size)
@@ -257,7 +257,7 @@ int msh_exec_module(const char *cmd_line, int size)
     rt_free(pg_name);
     return ret;
 }
-#endif /* defined(RT_USING_MODULE) && defined(RT_USING_DFS) */
+#endif /* defined(RT_USING_MODULE) && defined(RT_USING_POSIX) */
 
 static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
 {
@@ -290,7 +290,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     return 0;
 }
 
-#if defined(RT_USING_LWP) && defined(RT_USING_DFS)
+#if defined(RT_USING_LWP) && defined(RT_USING_POSIX)
 static int _msh_exec_lwp(char *cmd, rt_size_t length)
 {
     int argc;
@@ -350,7 +350,7 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return cmd_ret;
     }
-#ifdef RT_USING_DFS
+#ifdef RT_USING_POSIX
 #ifdef DFS_USING_WORKDIR
     if (msh_exec_script(cmd, length) == 0)
     {
@@ -371,7 +371,7 @@ int msh_exec(char *cmd, rt_size_t length)
         return 0;
     }
 #endif /* RT_USING_LWP */
-#endif /* RT_USING_DFS */
+#endif /* RT_USING_POSIX */
 
     /* truncate the cmd at the first space. */
     {
@@ -400,7 +400,7 @@ static int str_common(const char *str1, const char *str2)
     return (str - str1);
 }
 
-#ifdef RT_USING_DFS
+#ifdef RT_USING_POSIX
 void msh_auto_complete_path(char *path)
 {
     DIR *dir = RT_NULL;
@@ -521,7 +521,7 @@ void msh_auto_complete_path(char *path)
     closedir(dir);
     rt_free(full_path);
 }
-#endif /* RT_USING_DFS */
+#endif /* RT_USING_POSIX */
 
 void msh_auto_complete(char *prefix)
 {
@@ -538,7 +538,7 @@ void msh_auto_complete(char *prefix)
         return;
     }
 
-#ifdef RT_USING_DFS
+#ifdef RT_USING_POSIX
     /* check whether a spare in the command */
     {
         char *ptr;

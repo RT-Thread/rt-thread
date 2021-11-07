@@ -103,14 +103,14 @@
   allows the user to configure dynamically the driver callbacks.
 
   [..]
-  Use Function @ref HAL_TIM_RegisterCallback() to register a callback.
-  @ref HAL_TIM_RegisterCallback() takes as parameters the HAL peripheral handle,
+  Use Function HAL_TIM_RegisterCallback() to register a callback.
+  HAL_TIM_RegisterCallback() takes as parameters the HAL peripheral handle,
   the Callback ID and a pointer to the user callback function.
 
   [..]
-  Use function @ref HAL_TIM_UnRegisterCallback() to reset a callback to the default
+  Use function HAL_TIM_UnRegisterCallback() to reset a callback to the default
   weak function.
-  @ref HAL_TIM_UnRegisterCallback takes as parameters the HAL peripheral handle,
+  HAL_TIM_UnRegisterCallback takes as parameters the HAL peripheral handle,
   and the Callback ID.
 
   [..]
@@ -147,7 +147,7 @@
   [..]
 By default, after the Init and when the state is HAL_TIM_STATE_RESET
 all interrupt callbacks are set to the corresponding weak functions:
-  examples @ref HAL_TIM_TriggerCallback(), @ref HAL_TIM_ErrorCallback().
+  examples HAL_TIM_TriggerCallback(), HAL_TIM_ErrorCallback().
 
   [..]
   Exception done for MspInit and MspDeInit functions that are reset to the legacy weak
@@ -161,7 +161,7 @@ all interrupt callbacks are set to the corresponding weak functions:
     in HAL_TIM_STATE_READY or HAL_TIM_STATE_RESET state,
     thus registered(user) MspInit / DeInit callbacks can be used during the Init / DeInit.
   In that case first register the MspInit/MspDeInit user callbacks
-      using @ref HAL_TIM_RegisterCallback() before calling DeInit or Init function.
+      using HAL_TIM_RegisterCallback() before calling DeInit or Init function.
 
   [..]
       When The compilation define USE_HAL_TIM_REGISTER_CALLBACKS is set to 0 or
@@ -2700,8 +2700,8 @@ __weak void HAL_TIM_OnePulse_MspDeInit(TIM_HandleTypeDef *htim)
   * @brief  Starts the TIM One Pulse signal generation.
   * @note Though OutputChannel parameter is deprecated and ignored by the function
   *        it has been kept to avoid HAL_TIM API compatibility break.
-  * @note The pulse output channel is determined when calling 
-  *       @ref HAL_TIM_OnePulse_ConfigChannel(). 
+  * @note The pulse output channel is determined when calling
+  *       @ref HAL_TIM_OnePulse_ConfigChannel().
   * @param  htim TIM One Pulse handle
   * @param  OutputChannel See note above
   * @retval HAL status
@@ -2757,8 +2757,8 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Start(TIM_HandleTypeDef *htim, uint32_t Outpu
   * @brief  Stops the TIM One Pulse signal generation.
   * @note Though OutputChannel parameter is deprecated and ignored by the function
   *        it has been kept to avoid HAL_TIM API compatibility break.
-  * @note The pulse output channel is determined when calling 
-  *       @ref HAL_TIM_OnePulse_ConfigChannel(). 
+  * @note The pulse output channel is determined when calling
+  *       @ref HAL_TIM_OnePulse_ConfigChannel().
   * @param  htim TIM One Pulse handle
   * @param  OutputChannel See note above
   * @retval HAL status
@@ -2800,8 +2800,8 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Stop(TIM_HandleTypeDef *htim, uint32_t Output
   * @brief  Starts the TIM One Pulse signal generation in interrupt mode.
   * @note Though OutputChannel parameter is deprecated and ignored by the function
   *        it has been kept to avoid HAL_TIM API compatibility break.
-  * @note The pulse output channel is determined when calling 
-  *       @ref HAL_TIM_OnePulse_ConfigChannel(). 
+  * @note The pulse output channel is determined when calling
+  *       @ref HAL_TIM_OnePulse_ConfigChannel().
   * @param  htim TIM One Pulse handle
   * @param  OutputChannel See note above
   * @retval HAL status
@@ -2863,8 +2863,8 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Start_IT(TIM_HandleTypeDef *htim, uint32_t Ou
   * @brief  Stops the TIM One Pulse signal generation in interrupt mode.
   * @note Though OutputChannel parameter is deprecated and ignored by the function
   *        it has been kept to avoid HAL_TIM API compatibility break.
-  * @note The pulse output channel is determined when calling 
-  *       @ref HAL_TIM_OnePulse_ConfigChannel(). 
+  * @note The pulse output channel is determined when calling
+  *       @ref HAL_TIM_OnePulse_ConfigChannel().
   * @param  htim TIM One Pulse handle
   * @param  OutputChannel See note above
   * @retval HAL status

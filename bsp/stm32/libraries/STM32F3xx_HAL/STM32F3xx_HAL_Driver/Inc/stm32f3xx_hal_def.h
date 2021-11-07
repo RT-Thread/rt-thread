@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f3xx_hal_def.h
   * @author  MCD Application Team
-  * @brief   This file contains HAL common defines, enumeration, macros and
-  *          structures definitions.
+  * @brief   This file contains HAL common defines, enumeration, macros and 
+  *          structures definitions. 
   ******************************************************************************
   * @attention
   *
@@ -33,10 +33,10 @@
 
 /* Exported types ------------------------------------------------------------*/
 
-/**
-  * @brief  HAL Status structures definition
-  */
-typedef enum
+/** 
+  * @brief  HAL Status structures definition  
+  */  
+typedef enum 
 {
   HAL_OK       = 0x00U,
   HAL_ERROR    = 0x01U,
@@ -44,13 +44,13 @@ typedef enum
   HAL_TIMEOUT  = 0x03
 } HAL_StatusTypeDef;
 
-/**
-  * @brief  HAL Lock structures definition
+/** 
+  * @brief  HAL Lock structures definition  
   */
-typedef enum
+typedef enum 
 {
   HAL_UNLOCKED = 0x00U,
-  HAL_LOCKED   = 0x01
+  HAL_LOCKED   = 0x01  
 } HAL_LockTypeDef;
 
 /* Exported macro ------------------------------------------------------------*/
@@ -98,7 +98,7 @@ typedef enum
                                     {                                      \
                                        (__HANDLE__)->Lock = HAL_LOCKED;    \
                                     }                                      \
-                                  }while (0U)
+       	                          }while (0U)
 
   #define __HAL_UNLOCK(__HANDLE__)                                          \
                                   do{                                       \
@@ -135,30 +135,30 @@ typedef enum
   #ifndef __ALIGN_END
     #define __ALIGN_END    __attribute__ ((aligned (4)))
   #endif /* __ALIGN_END */
-  #ifndef __ALIGN_BEGIN
+  #ifndef __ALIGN_BEGIN  
     #define __ALIGN_BEGIN
   #endif /* __ALIGN_BEGIN */
 #else
   #ifndef __ALIGN_END
     #define __ALIGN_END
   #endif /* __ALIGN_END */
-  #ifndef __ALIGN_BEGIN
+  #ifndef __ALIGN_BEGIN      
     #if defined   (__CC_ARM)      /* ARM Compiler V5*/
-      #define __ALIGN_BEGIN    __align(4)
+      #define __ALIGN_BEGIN    __align(4)  
     #elif defined (__ICCARM__)    /* IAR Compiler */
-      #define __ALIGN_BEGIN
+      #define __ALIGN_BEGIN 
     #endif /* __CC_ARM */
   #endif /* __ALIGN_BEGIN */
 #endif /* __GNUC__ */
 
-/**
+/** 
   * @brief  __NOINLINE definition
-  */
+  */ 
 #if defined ( __CC_ARM   ) || (defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)) || defined   (  __GNUC__  )
 /* ARM V4/V5 and V6 & GNU Compiler
    -------------------------------
 */
-#define __NOINLINE __attribute__ ( (noinline) )
+#define __NOINLINE __attribute__ ( (noinline) )  
 
 #elif defined ( __ICCARM__ )
 /* ICCARM Compiler

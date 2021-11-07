@@ -18,17 +18,17 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-03-22     wangyq       the first version
- * 2019-11-01     wangyq        update libraries 
+ * 2019-11-01     wangyq        update libraries
  * 2021-04-20     liuhy         the second version
  */
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <rtdevice.h>  
+#include <rtdevice.h>
 #include <sys/time.h>
 #include <string.h>
 #include "board.h"
-#include "drv_rtc.h" 
+#include "drv_rtc.h"
 
 #ifdef RT_USING_RTC
 
@@ -128,7 +128,7 @@ int rt_hw_rtc_init(void)
     rt_err_t ret = RT_EOK;
     static struct rt_device rtc_dev;
     rtc_init_t rtc_initstruct;
-    
+
     /* enable clk */
     ald_rtc_source_select(ES_RTC_CLK_SOURCE);
 
@@ -137,18 +137,18 @@ int rt_hw_rtc_init(void)
         CMU_LOSC_ENABLE();
         ald_cmu_losc_safe_config(ENABLE);
     }
-    
+
     /* set default time */
     RTC_UNLOCK();
     WRITE_REG(RTC->TIME, 0x134251);
     WRITE_REG(RTC->DATE, 0x1190401);
     RTC_LOCK();
-    
+
     /* RTC function initialization */
     rtc_initstruct.hour_format = RTC_HOUR_FORMAT_24;
     rtc_initstruct.asynch_pre_div = 0;
     rtc_initstruct.synch_pre_div = 32767;
-    rtc_initstruct.output = RTC_OUTPUT_DISABLE; 
+    rtc_initstruct.output = RTC_OUTPUT_DISABLE;
     rtc_initstruct.output_polarity = RTC_OUTPUT_POLARITY_HIGH;
     __rtc_init(&rtc_initstruct);
 

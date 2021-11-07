@@ -782,7 +782,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
                 return RT_ERROR;
             }
 
-            cpu = (rt_uint8_t)(size_t)arg;
+            cpu = (rt_uint8_t)(rt_size_t)arg;
             thread->bind_cpu = cpu > RT_CPUS_NR? RT_CPUS_NR : cpu;
             break;
         }

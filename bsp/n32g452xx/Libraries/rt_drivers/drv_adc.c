@@ -44,60 +44,63 @@ static rt_uint32_t n32_adc_get_channel(rt_uint32_t channel)
 
     switch (channel)
     {
-        case  0:
-            n32_channel = ADC_CH_0;
-            break;
-        case  1:
-            n32_channel = ADC_CH_1;
-            break;
-        case  2:
-            n32_channel = ADC_CH_2;
-            break;
-        case  3:
-            n32_channel = ADC_CH_3;
-            break;
-        case  4:
-            n32_channel = ADC_CH_4;
-            break;
-        case  5:
-            n32_channel = ADC_CH_5;
-            break;
-        case  6:
-            n32_channel = ADC_CH_6;
-            break;
-        case  7:
-            n32_channel = ADC_CH_7;
-            break;
-        case  8:
-            n32_channel = ADC_CH_8;
-            break;
-        case  9:
-            n32_channel = ADC_CH_9;
-            break;
-        case 10:
-            n32_channel = ADC_CH_10;
-            break;
-        case 11:
-            n32_channel = ADC_CH_11;
-            break;
-        case 12:
-            n32_channel = ADC_CH_12;
-            break;
-        case 13:
-            n32_channel = ADC_CH_13;
-            break;
-        case 14:
-            n32_channel = ADC_CH_14;
-            break;
-        case 15:
-            n32_channel = ADC_CH_15;
-            break;
-        case 16:
-            n32_channel = ADC_CH_16;
-            break;
-        case 17:
-            n32_channel = ADC_CH_17;
-            break;
+    case  0:
+        n32_channel = ADC_CH_0;
+        break;
+    case  1:
+        n32_channel = ADC_CH_1;
+        break;
+    case  2:
+        n32_channel = ADC_CH_2;
+        break;
+    case  3:
+        n32_channel = ADC_CH_3;
+        break;
+    case  4:
+        n32_channel = ADC_CH_4;
+        break;
+    case  5:
+        n32_channel = ADC_CH_5;
+        break;
+    case  6:
+        n32_channel = ADC_CH_6;
+        break;
+    case  7:
+        n32_channel = ADC_CH_7;
+        break;
+    case  8:
+        n32_channel = ADC_CH_8;
+        break;
+    case  9:
+        n32_channel = ADC_CH_9;
+        break;
+    case 10:
+        n32_channel = ADC_CH_10;
+        break;
+    case 11:
+        n32_channel = ADC_CH_11;
+        break;
+    case 12:
+        n32_channel = ADC_CH_12;
+        break;
+    case 13:
+        n32_channel = ADC_CH_13;
+        break;
+    case 14:
+        n32_channel = ADC_CH_14;
+        break;
+    case 15:
+        n32_channel = ADC_CH_15;
+        break;
+    case 16:
+        n32_channel = ADC_CH_16;
+        break;
+    case 17:
+        n32_channel = ADC_CH_17;
+        break;
+    case 18:
+        n32_channel = ADC_CH_18;
+        break;
     }
 
     return n32_channel;
@@ -121,21 +124,23 @@ static rt_err_t n32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
     ADC_InitStructure.ChsNumber             = 1;
     ADC_Init(n32_adc_handler, &ADC_InitStructure);
 
-    /* ADCx regular channels configuration */
-    ADC_ConfigRegularChannel(n32_adc_handler, n32_adc_get_channel(channel), 1, ADC_SAMP_TIME_28CYCLES5);
-
-    /* Enable ADCx */
-    ADC_Enable(n32_adc_handler, ENABLE);
-
-    /* Start ADCx calibration */
-    ADC_StartCalibration(n32_adc_handler);
-    /* Check the end of ADCx calibration */
-    while(ADC_GetCalibrationStatus(n32_adc_handler));
+    if (((n32_adc_handler == ADC2) || (n32_adc_handler == ADC2))
+            && ((n32_adc_get_channel(channel) == ADC_CH_16)
+                || (n32_adc_get_channel(channel) == ADC_CH_18)))
+    {
+        ADC_EnableTempSensorVrefint(ENABLE);
+    }
 
     if (enabled)
     {
         /* Enable ADC1 */
         ADC_Enable(n32_adc_handler, ENABLE);
+        /*Check ADC Ready*/
+        while (ADC_GetFlagStatusNew(n32_adc_handler, ADC_FLAG_RDY) == RESET);
+        /* Start ADCx calibration */
+        ADC_StartCalibration(n32_adc_handler);
+        /* Check the end of ADCx calibration */
+        while (ADC_GetCalibrationStatus(n32_adc_handler));
     }
     else
     {
@@ -155,11 +160,16 @@ static rt_err_t n32_get_adc_value(struct rt_adc_device *device, rt_uint32_t chan
 
     n32_adc_handler = device->parent.user_data;
 
+    /* ADCx regular channels configuration */
+    ADC_ConfigRegularChannel(n32_adc_handler, n32_adc_get_channel(channel), 1, ADC_SAMP_TIME_28CYCLES5);
+
     /* Start ADCx Software Conversion */
     ADC_EnableSoftwareStartConv(n32_adc_handler, ENABLE);
 
     /* Wait for the ADC to convert */
-    while(ADC_GetFlagStatus(n32_adc_handler, ADC_FLAG_ENDC) == RESET);
+    while (ADC_GetFlagStatus(n32_adc_handler, ADC_FLAG_ENDC) == RESET);
+
+    ADC_ClearFlag(n32_adc_handler, ADC_FLAG_ENDC);
 
     /* get ADC value */
     *value = ADC_GetDat(n32_adc_handler);
@@ -182,8 +192,8 @@ static int rt_hw_adc_init(void)
     {
         /* register ADC device */
         if (rt_hw_adc_register(&n32_adc_obj[i].n32_adc_device,
-                    n32_adc_obj[i].name, &at_adc_ops,
-                    n32_adc_obj[i].ADC_Handler) == RT_EOK)
+                               n32_adc_obj[i].name, &at_adc_ops,
+                               n32_adc_obj[i].ADC_Handler) == RT_EOK)
         {
             LOG_D("%s register success", n32_adc_obj[i].name);
         }

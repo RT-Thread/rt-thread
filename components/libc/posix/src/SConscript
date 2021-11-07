@@ -1,0 +1,13 @@
+from building import *
+Import('rtconfig')
+
+src     = Glob('*.c')
+cwd     = GetCurrentDir()
+CPPPATH = [cwd]
+
+if rtconfig.ARCH == 'sim': # the vs simulator does not support select and poll
+    SrcRemove(src, ['select.c', 'poll.c'])
+
+group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX'], CPPPATH = CPPPATH)
+
+Return('group')

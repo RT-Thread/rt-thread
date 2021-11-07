@@ -596,11 +596,11 @@ HAL_StatusTypeDef HAL_I2SEx_TransmitReceive_DMA(I2S_HandleTypeDef *hi2s,
   /* Set the I2S Rx DMA error callback */
   hi2s->hdmarx->XferErrorCallback = I2SEx_TxRxDMAError;
 
-  /* Set the I2S Tx DMA Half transfer complete callback */
-  hi2s->hdmatx->XferHalfCpltCallback  = I2SEx_TxRxDMAHalfCplt;
+  /* Set the I2S Tx DMA Half transfer complete callback as NULL */
+  hi2s->hdmatx->XferHalfCpltCallback  = NULL;
 
-  /* Set the I2S Tx DMA transfer complete callback */
-  hi2s->hdmatx->XferCpltCallback  = I2SEx_TxRxDMACplt;
+  /* Set the I2S Tx DMA transfer complete callback as NULL */
+  hi2s->hdmatx->XferCpltCallback  = NULL;
 
   /* Set the I2S Tx DMA error callback */
   hi2s->hdmatx->XferErrorCallback = I2SEx_TxRxDMAError;
@@ -887,65 +887,34 @@ static void I2SEx_TxRxDMACplt(DMA_HandleTypeDef *hdma)
 {
   I2S_HandleTypeDef *hi2s = (I2S_HandleTypeDef *)((DMA_HandleTypeDef *)hdma)->Parent;
 
-  /* if DMA is configured in DMA_NORMAL mode */
+  /* If DMA is configured in DMA_NORMAL mode */
   if (hdma->Init.Mode == DMA_NORMAL)
   {
-    if (hi2s->hdmarx == hdma)
+    if (((hi2s->Instance->I2SCFGR & SPI_I2SCFGR_I2SCFG) == I2S_MODE_MASTER_TX) || \
+        ((hi2s->Instance->I2SCFGR & SPI_I2SCFGR_I2SCFG) == I2S_MODE_SLAVE_TX))
+    /* Disable Tx & Rx DMA Requests */
     {
-      /* Disable Rx DMA Request */
-      if (((hi2s->Instance->I2SCFGR & SPI_I2SCFGR_I2SCFG) == I2S_MODE_MASTER_TX) || \
-          ((hi2s->Instance->I2SCFGR & SPI_I2SCFGR_I2SCFG) == I2S_MODE_SLAVE_TX))
-      {
-        CLEAR_BIT(I2SxEXT(hi2s->Instance)->CR2, SPI_CR2_RXDMAEN);
-      }
-      else
-      {
-        CLEAR_BIT(hi2s->Instance->CR2, SPI_CR2_RXDMAEN);
-      }
-
-      hi2s->RxXferCount = 0U;
-
-      if (hi2s->TxXferCount == 0U)
-      {
-        hi2s->State = HAL_I2S_STATE_READY;
-
-        /* Call user TxRx complete callback */
-#if (USE_HAL_I2S_REGISTER_CALLBACKS == 1U)
-        hi2s->TxRxCpltCallback(hi2s);
-#else
-        HAL_I2SEx_TxRxCpltCallback(hi2s);
-#endif /* USE_HAL_I2S_REGISTER_CALLBACKS */
-      }
+      CLEAR_BIT(I2SxEXT(hi2s->Instance)->CR2, SPI_CR2_RXDMAEN);
+      CLEAR_BIT(hi2s->Instance->CR2, SPI_CR2_TXDMAEN);
+    }
+    else
+    {
+      CLEAR_BIT(hi2s->Instance->CR2, SPI_CR2_RXDMAEN);
+      CLEAR_BIT(I2SxEXT(hi2s->Instance)->CR2, SPI_CR2_TXDMAEN);
     }
 
-    if (hi2s->hdmatx == hdma)
-    {
-      /* Disable Tx DMA Request */
-      if (((hi2s->Instance->I2SCFGR & SPI_I2SCFGR_I2SCFG) == I2S_MODE_MASTER_TX) || \
-          ((hi2s->Instance->I2SCFGR & SPI_I2SCFGR_I2SCFG) == I2S_MODE_SLAVE_TX))
-      {
-        CLEAR_BIT(hi2s->Instance->CR2, SPI_CR2_TXDMAEN);
-      }
-      else
-      {
-        CLEAR_BIT(I2SxEXT(hi2s->Instance)->CR2, SPI_CR2_TXDMAEN);
-      }
+    hi2s->RxXferCount = 0U;
+    hi2s->TxXferCount = 0U;
 
-      hi2s->TxXferCount = 0U;
-
-      if (hi2s->RxXferCount == 0U)
-      {
-        hi2s->State = HAL_I2S_STATE_READY;
-
-        /* Call user TxRx complete callback */
-#if (USE_HAL_I2S_REGISTER_CALLBACKS == 1U)
-        hi2s->TxRxCpltCallback(hi2s);
-#else
-        HAL_I2SEx_TxRxCpltCallback(hi2s);
-#endif /* USE_HAL_I2S_REGISTER_CALLBACKS */
-      }
-    }
+    hi2s->State = HAL_I2S_STATE_READY;
   }
+
+  /* Call user TxRx complete callback */
+#if (USE_HAL_I2S_REGISTER_CALLBACKS == 1U)
+  hi2s->TxRxCpltCallback(hi2s);
+#else
+  HAL_I2SEx_TxRxCpltCallback(hi2s);
+#endif /* USE_HAL_I2S_REGISTER_CALLBACKS */
 }
 
 /**

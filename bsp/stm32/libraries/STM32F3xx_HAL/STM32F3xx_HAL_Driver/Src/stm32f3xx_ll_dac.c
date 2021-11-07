@@ -73,7 +73,7 @@
    || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_EXTI_LINE9)                     \
   )
 
-#elif defined(STM32F303x8) || defined(STM32F328xx)
+#elif defined(STM32F303x8) || defined(STM32F328xx) 
 #define IS_LL_DAC_TRIGGER_SOURCE(__TRIGGER_SOURCE__)                           \
   (   ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_SOFTWARE)                           \
    || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_TIM2_TRGO)                      \
@@ -196,12 +196,12 @@ ErrorStatus LL_DAC_DeInit(DAC_TypeDef *DACx)
 {
   /* Check the parameters */
   assert_param(IS_DAC_ALL_INSTANCE(DACx));
-
+  
   if(DACx == DAC1)
   {
     /* Force reset of DAC clock */
     LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_DAC1);
-
+    
     /* Release reset of DAC clock */
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_DAC1);
   }
@@ -210,7 +210,7 @@ ErrorStatus LL_DAC_DeInit(DAC_TypeDef *DACx)
   {
     /* Force reset of DAC clock */
     LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_DAC2);
-
+    
     /* Release reset of DAC clock */
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_DAC2);
   }
@@ -227,7 +227,7 @@ ErrorStatus LL_DAC_DeInit(DAC_TypeDef *DACx)
   * @param  DAC_Channel This parameter can be one of the following values:
   *         @arg @ref LL_DAC_CHANNEL_1
   *         @arg @ref LL_DAC_CHANNEL_2 (1)
-  *
+  *         
   *         (1) On this STM32 serie, parameter not available on all devices.
   *             Refer to device datasheet for channels availability.
   * @param  DAC_InitStruct Pointer to a @ref LL_DAC_InitTypeDef structure
@@ -238,7 +238,7 @@ ErrorStatus LL_DAC_DeInit(DAC_TypeDef *DACx)
 ErrorStatus LL_DAC_Init(DAC_TypeDef *DACx, uint32_t DAC_Channel, LL_DAC_InitTypeDef *DAC_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-
+  
   /* Check the parameters */
   assert_param(IS_DAC_ALL_INSTANCE(DACx));
   assert_param(IS_LL_DAC_CHANNEL(DACx, DAC_Channel));
@@ -249,7 +249,7 @@ ErrorStatus LL_DAC_Init(DAC_TypeDef *DACx, uint32_t DAC_Channel, LL_DAC_InitType
   {
     assert_param(IS_LL_DAC_WAVE_AUTO_GENER_CONFIG(DAC_InitStruct->WaveAutoGenerationConfig));
   }
-
+  
   /* Note: Hardware constraint (refer to description of this function)        */
   /*       DAC instance must be disabled.                                     */
   if(LL_DAC_IsEnabled(DACx, DAC_Channel) == 0U)

@@ -4,22 +4,14 @@ Import('rtconfig')
 src = []
 cwd = GetCurrentDir()
 group = []
-LIBS = []
-CPPDEFINES = []
+LIBS = ['m'] # link libm
+CPPDEFINES = ['RT_USING_NEWLIB']
 CPPPATH = [cwd]
 
 if rtconfig.PLATFORM == 'gcc':
     if GetDepend('RT_USING_LIBC'):
-        CPPDEFINES += ['RT_USING_NEWLIB']
-        # link with libc and libm:
-        # libm is a frequently used lib. Newlib is compiled with -ffunction-sections in
-        # recent GCC tool chains. The linker would just link in the functions that have
-        # been referenced. So setting this won't result in bigger text size.
-        LIBS += ['c', 'm']
-
+        LIBS += ['c'] # link libc
         src += Glob('*.c')
-        if GetDepend('RT_USING_MODULE') == False:
-            SrcRemove(src, ['libc_syms.c'])
     else:
         src += ['syscalls.c']
 

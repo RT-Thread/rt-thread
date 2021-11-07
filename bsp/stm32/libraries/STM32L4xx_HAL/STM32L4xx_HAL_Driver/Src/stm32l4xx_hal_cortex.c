@@ -90,29 +90,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -161,7 +145,7 @@
 /**
   * @brief  Set the priority grouping field (pre-emption priority and subpriority)
   *         using the required unlock sequence.
-  * @param  PriorityGroup The priority grouping bits length.
+  * @param  PriorityGroup: The priority grouping bits length.
   *         This parameter can be one of the following values:
   *         @arg NVIC_PRIORITYGROUP_0: 0 bit  for pre-emption priority,
   *                                    4 bits for subpriority
@@ -188,13 +172,13 @@ void HAL_NVIC_SetPriorityGrouping(uint32_t PriorityGroup)
 
 /**
   * @brief  Set the priority of an interrupt.
-  * @param  IRQn External interrupt number.
+  * @param  IRQn: External interrupt number.
   *         This parameter can be an enumerator of IRQn_Type enumeration
   *         (For the complete STM32 Devices IRQ Channels list, please refer to the appropriate CMSIS device file (stm32l4xxxx.h))
-  * @param  PreemptPriority The pre-emption priority for the IRQn channel.
+  * @param  PreemptPriority: The pre-emption priority for the IRQn channel.
   *         This parameter can be a value between 0 and 15
   *         A lower priority value indicates a higher priority
-  * @param  SubPriority the subpriority level for the IRQ channel.
+  * @param  SubPriority: the subpriority level for the IRQ channel.
   *         This parameter can be a value between 0 and 15
   *         A lower priority value indicates a higher priority.
   * @retval None
@@ -259,7 +243,7 @@ void HAL_NVIC_SystemReset(void)
 /**
   * @brief  Initialize the System Timer with interrupt enabled and start the System Tick Timer (SysTick): 
   *         Counter is in free running mode to generate periodic interrupts.
-  * @param  TicksNumb Specifies the ticks Number of ticks between two interrupts.
+  * @param  TicksNumb: Specifies the ticks Number of ticks between two interrupts.
   * @retval status:  - 0  Function succeeded.
   *                  - 1  Function failed.
   */
@@ -299,7 +283,7 @@ uint32_t HAL_NVIC_GetPriorityGrouping(void)
 
 /**
   * @brief  Get the priority of an interrupt.
-  * @param  IRQn External interrupt number.
+  * @param  IRQn: External interrupt number.
   *         This parameter can be an enumerator of IRQn_Type enumeration
   *         (For the complete STM32 Devices IRQ Channels list, please refer to the appropriate CMSIS device file (stm32l4xxxx.h))
   * @param   PriorityGroup: the priority grouping bits length.
@@ -314,8 +298,8 @@ uint32_t HAL_NVIC_GetPriorityGrouping(void)
   *                                      1 bit for subpriority
   *           @arg NVIC_PRIORITYGROUP_4: 4 bits for pre-emption priority,
   *                                      0 bit for subpriority
-  * @param  pPreemptPriority Pointer on the Preemptive priority value (starting from 0).
-  * @param  pSubPriority Pointer on the Subpriority value (starting from 0).
+  * @param  pPreemptPriority: Pointer on the Preemptive priority value (starting from 0).
+  * @param  pSubPriority: Pointer on the Subpriority value (starting from 0).
   * @retval None
   */
 void HAL_NVIC_GetPriority(IRQn_Type IRQn, uint32_t PriorityGroup, uint32_t *pPreemptPriority, uint32_t *pSubPriority)
@@ -392,7 +376,7 @@ uint32_t HAL_NVIC_GetActive(IRQn_Type IRQn)
 
 /**
   * @brief  Configure the SysTick clock source.
-  * @param  CLKSource specifies the SysTick clock source.
+  * @param  CLKSource: specifies the SysTick clock source.
   *          This parameter can be one of the following values:
   *             @arg SYSTICK_CLKSOURCE_HCLK_DIV8: AHB clock divided by 8 selected as SysTick clock source.
   *             @arg SYSTICK_CLKSOURCE_HCLK: AHB clock selected as SysTick clock source.
@@ -435,7 +419,7 @@ __weak void HAL_SYSTICK_Callback(void)
 #if (__MPU_PRESENT == 1)
 /**
   * @brief  Enable the MPU.
-  * @param  MPU_Control Specifies the control mode of the MPU during hard fault, 
+  * @param  MPU_Control: Specifies the control mode of the MPU during hard fault, 
   *          NMI, FAULTMASK and privileged accessto the default memory 
   *          This parameter can be one of the following values:
   *            @arg MPU_HFNMI_PRIVDEF_NONE
@@ -471,7 +455,7 @@ void HAL_MPU_Disable(void)
 
 /**
   * @brief  Initialize and configure the Region and the memory to be protected.
-  * @param  MPU_Init Pointer to a MPU_Region_InitTypeDef structure that contains
+  * @param  MPU_Init: Pointer to a MPU_Region_InitTypeDef structure that contains
   *                the initialization and configuration information.
   * @retval None
   */
