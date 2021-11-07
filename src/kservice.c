@@ -1375,7 +1375,7 @@ const rt_uint8_t __lowest_bit_bitmap[] =
  */
 int __rt_ffs(int value)
 {
-    return __lowest_bit_bitmap_new[(rt_uint32_t)(value & (value - 1) ^ value) % 37];
+    return __lowest_bit_bitmap[(rt_uint32_t)(value & (value - 1) ^ value) % 37];
 }
 #else
 const rt_uint8_t __lowest_bit_bitmap[] =
