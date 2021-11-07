@@ -47,7 +47,6 @@ MAX32660-EVSYS是美信官方的开发板，搭载MAX32660芯片，基于ARM Cor
 
 ![board](doc\images\pins.jpg)
 
-
 MAX32660-EVSYS开发板常用 **板载资源** 如下：
 
 - MCU：MAX32660
