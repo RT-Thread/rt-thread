@@ -156,7 +156,6 @@ void cache_init(void)
 RT_SECTION(".irq.cache")
 void os_spiflash_lock(void)
 {
-    // if (rt_thread_self()->stat == RT_THREAD_RUNNING) {
     if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
         rt_mutex_take(&mutex_spiflash, RT_WAITING_FOREVER);
     }
@@ -165,7 +164,6 @@ void os_spiflash_lock(void)
 RT_SECTION(".irq.cache")
 void os_spiflash_unlock(void)
 {
-    // if (rt_thread_self()->stat == RT_THREAD_RUNNING) {
     if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
         rt_mutex_release(&mutex_spiflash);
     }
@@ -174,7 +172,6 @@ void os_spiflash_unlock(void)
 RT_SECTION(".irq.cache")
 void os_cache_lock(void)
 {
-    // if (rt_thread_self()->stat == RT_THREAD_RUNNING) {
     if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
         rt_mutex_take(&mutex_cache, RT_WAITING_FOREVER);
     }
@@ -183,7 +180,6 @@ void os_cache_lock(void)
 RT_SECTION(".irq.cache")
 void os_cache_unlock(void)
 {
-    // if (rt_thread_self()->stat == RT_THREAD_RUNNING) {
     if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
         rt_mutex_release(&mutex_cache);
     }
@@ -200,6 +196,8 @@ void rt_hw_console_output(const char *str)
 /**
  * @brief print exception error
  * @note Every message needed to print, must put in .comm exction.
+ * @note (IRQ in Flash: %x %x - %x %x\n, -, rt_interrupt_nest, PC, miss_addr)
+ *       miss_addr: The address in map file minus 0x10000000
  */
 RT_SECTION(".irq.err")
 void exception_isr(void)

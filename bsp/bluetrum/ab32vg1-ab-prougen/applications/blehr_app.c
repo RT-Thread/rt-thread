@@ -33,7 +33,6 @@ int btctrl_mem_init(void)
     uint32_t block_size;
 
     bthw_get_heap_info(&heap_buf, &heap_size_buf, &block_size);
-    // rt_kprintf("heap_buf=0x%p heap_size_buf=0x%p block_size=0x%p\n", heap_buf, heap_size_buf, block_size);
     nsmem_cb_init(heap_buf, heap_size_buf, block_size);
     return 0;
 }
