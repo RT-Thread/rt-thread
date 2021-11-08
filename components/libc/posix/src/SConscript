@@ -2,9 +2,15 @@
 
 from building import *
 
-src     = Glob('*.c')
+src     = ['libc.c','delay.c','unistd.c']
 cwd     = GetCurrentDir()
 CPPPATH = [cwd]
+
+if GetDepend('RT_USING_POSIX_POLL'):
+    src += ['poll.c']
+
+if GetDepend('RT_USING_POSIX_SELECT'):
+    src += ['select.c']
 
 group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX'], CPPPATH = CPPPATH)
 
