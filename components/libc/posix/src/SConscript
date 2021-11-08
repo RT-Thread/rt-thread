@@ -1,6 +1,5 @@
-# RT-Thread building script for component
-
 from building import *
+Import('rtconfig')
 
 src     = ['libc.c','delay.c','unistd.c']
 cwd     = GetCurrentDir()

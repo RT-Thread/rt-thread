@@ -42,7 +42,7 @@ elif  CROSS_TOOL == 'msvc':
         print('Successfully installed VC %s, path:%s' % (vc_version, EXEC_PATH))
 
 else:
-    print("bad CROSS TOOL!")
+    print("Simulator does not support this CROSS TOOL!")
     exit(1)
 
 if os.getenv('RTT_EXEC_PATH'):
