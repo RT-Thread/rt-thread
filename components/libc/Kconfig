@@ -43,16 +43,26 @@ config RT_USING_POSIX
     default n
 
 if RT_USING_POSIX
+
+    config RT_USING_POSIX_POLL
+        bool "Enable poll()"
+        default n
+
+    config RT_USING_POSIX_SELECT
+        bool "Enable select()"
+        select RT_USING_POSIX_POLL
+        default n
+
+    config RT_USING_POSIX_GETLINE
+        bool "Enable getline()/getdelim() APIs"
+        default n
+
     config RT_USING_POSIX_MMAP
         bool "Enable mmap() API"
         default n
 
     config RT_USING_POSIX_TERMIOS
         bool "Enable termios APIs"
-        default n
-
-    config RT_USING_POSIX_GETLINE
-        bool "Enable getline()/getdelim() APIs"
         default n
 
     config RT_USING_POSIX_AIO
