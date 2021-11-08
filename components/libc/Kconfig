@@ -11,6 +11,7 @@ if RT_USING_LIBC
     config RT_LIBC_USING_FILEIO
         bool "Enable libc with file operation, eg.fopen/fwrite/fread/getchar"
         select RT_USING_POSIX
+        select RT_USING_POSIX_STDIO
         default n
 
     config RT_USING_MODULE
