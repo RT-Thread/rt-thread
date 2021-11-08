@@ -1,0 +1,1 @@
+This folder provides functions that are not part of the standard C library but are part of the POSIX.1 (IEEE Standard 1003.1) standard.
