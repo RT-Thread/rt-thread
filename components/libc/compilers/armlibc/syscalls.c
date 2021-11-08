@@ -21,7 +21,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
 #endif
 
@@ -144,7 +144,7 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
     int size;
 
     if (fh == STDIN)
@@ -169,7 +169,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
         return 0; /* error */
 #else
     return 0; /* error */
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_STDIO */
 }
 
 /*
@@ -185,7 +185,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 
     if ((fh == STDOUT) || (fh == STDERR))
     {
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard input before initializing libc");
@@ -200,7 +200,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         }
 
         return 0; /* error */
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_STDIO */
     }
     else if (fh == STDIN)
     {
@@ -325,7 +325,7 @@ int fputc(int c, FILE *f)
 
 int fgetc(FILE *f)
 {
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
     char ch;
 
     if (libc_stdio_get_console() < 0)
@@ -336,7 +336,7 @@ int fgetc(FILE *f)
 
     if(read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_STDIO */
     return 0; /* error */
 }
 

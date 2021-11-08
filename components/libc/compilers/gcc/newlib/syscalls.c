@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <sys/errno.h>
 #include <sys/stat.h>
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
 #endif
 #ifdef RT_USING_MODULE
@@ -216,7 +216,7 @@ int _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 
 _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 {
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
     _ssize_t rc;
     if (libc_stdio_get_console() < 0 && fd == STDIN_FILENO)
     {
@@ -271,11 +271,13 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifdef RT_USING_POSIX
     _ssize_t rc;
+#ifdef RT_USING_POSIX_STDIO
     if (libc_stdio_get_console() < 0 && fd == STDOUT_FILENO)
     {
         LOG_W("Do not invoke standard output before initializing libc");
         return 0;
     }
+#endif /* RT_USING_POSIX_STDIO */
     rc = write(fd, buf, nbytes);
     return rc;
 #elif defined(RT_USING_CONSOLE)

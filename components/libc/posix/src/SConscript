@@ -2,9 +2,12 @@
 
 from building import *
 
-src     = ['libc.c', 'unistd.c']
+src     = ['unistd.c']
 cwd     = GetCurrentDir()
 CPPPATH = [cwd]
+
+if GetDepend('RT_USING_POSIX_STDIO'):
+    src += ['libc.c']
 
 if GetDepend('RT_USING_POSIX_POLL'):
     src += ['poll.c']
