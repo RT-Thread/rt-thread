@@ -10,17 +10,13 @@
 
 #include <rtthread.h>
 #include <yfuns.h>
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#endif
+#include <fcntl.h>
 
 #pragma module_name = "?__open"
 
 int __open(const char *filename, int mode)
 {
-#ifndef RT_USING_DFS
-  return _LLIO_ERROR;
-#else
+#ifdef RT_USING_POSIX
   int handle;
   int open_mode = O_RDONLY;
 
@@ -70,5 +66,7 @@ int __open(const char *filename, int mode)
     return _LLIO_ERROR;
 
   return handle;
-#endif
+#else
+  return _LLIO_ERROR;
+#endif /* RT_USING_POSIX */
 }

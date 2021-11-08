@@ -109,6 +109,8 @@
 
 #if     defined(BSP_BOARD_K210_OPENMV_TEST)
 #define LCD_SCAN_DIR           DIR_YX_LRUD
+#elif   defined(BSP_BOARD_K210_DRACO)
+#define LCD_SCAN_DIR           DIR_YX_LRUD
 #elif   defined(BSP_BOARD_KD233)
 #define LCD_SCAN_DIR           (DIR_YX_RLUD | 0x08)
 #elif   defined(BSP_BOARD_USER)
@@ -415,6 +417,9 @@ static rt_err_t drv_lcd_init(rt_device_t dev)
         framebuffer[i] = BLACK;
     }
     /*display on*/
+    #ifdef BSP_BOARD_K210_DRACO
+    drv_lcd_cmd(lcd, INVERSION_DISPALY_ON);
+    #endif
     drv_lcd_cmd(lcd, DISPALY_ON);
 
     /* set to black */
