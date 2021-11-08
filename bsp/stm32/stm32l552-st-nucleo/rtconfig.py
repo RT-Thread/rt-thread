@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m33 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+    DEVICE = ' -mcpu=cortex-m33 -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
@@ -104,7 +104,7 @@ elif PLATFORM == 'armclang':
 
     DEVICE = ' --cpu Cortex-M33.fp '
     CFLAGS = ' --target=arm-arm-none-eabi -mcpu=cortex-m4 '
-    CFLAGS += ' -mcpu=cortex-m33 -mfpu=fpv4-sp-d16 '
+    CFLAGS += ' -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 '
     CFLAGS += ' -mfloat-abi=hard -c -fno-rtti -funsigned-char -fshort-enums -fshort-wchar '
     CFLAGS += ' -gdwarf-3 -ffunction-sections '
     AFLAGS = DEVICE + ' --apcs=interwork '
@@ -159,7 +159,7 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -w+'
     AFLAGS += ' -r'
     AFLAGS += ' --cpu Cortex-M33'
-    AFLAGS += ' --fpu VFPv4_sp'
+    AFLAGS += ' --fpu VFPv5_sp'
     AFLAGS += ' -S'
 
     if BUILD == 'debug':
