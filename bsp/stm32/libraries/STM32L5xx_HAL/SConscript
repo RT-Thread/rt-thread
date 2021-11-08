@@ -13,17 +13,17 @@ STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_comp.c
 STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_cortex.c
 STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_crc.c
 STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_crc_ex.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_cryp.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_cryp_ex.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_dma.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_dma_ex.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_exti.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_pwr.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_pwr_ex.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_rcc.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_rcc_ex.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_rng.c
-STM32L5xx_HAL_Driver/Src/STM32l5xx_hal_gpio.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_cryp.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_cryp_ex.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_dma.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_dma_ex.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_exti.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_pwr.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_pwr_ex.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_rcc.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_rcc_ex.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_rng.c
+STM32L5xx_HAL_Driver/Src/stm32l5xx_hal_gpio.c
 ''')
   
 if GetDepend(['RT_USING_SERIAL']):
