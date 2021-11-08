@@ -134,34 +134,6 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     return stk;
 }
 
-
-/**
- * This function will disable global interrupt
- *
- * @param none
- *
- * @return zero
- */
-
-rt_base_t rt_hw_interrupt_disable(void)
-{
-    __asm volatile("csrrci a0, mstatus, 8");
-    return;
-}
-
-/**
- * This function will ennable global interrupt
- *
- * @param level not used
- *
- * @return none
- */
-/* XXX:rename rt_hw_interrupt_restore? */
-void rt_hw_interrupt_enable(rt_base_t level)
-{
-    __asm volatile("csrw mstatus, a0");
-}
-
 /** shutdown CPU */
 RT_WEAK void rt_hw_cpu_shutdown()
 {

@@ -1,3 +1,5 @@
+menu "Hardware Drivers Config"
+
 config BSP_USING_UART_HS
     bool "Enable High Speed UART"
     default y
@@ -149,6 +151,9 @@ if BSP_USING_LCD
         config  BSP_BOARD_K210_OPENMV_TEST
             bool "board_k210_openmv lcd scan: DIR_YX_LRUD"
 
+        config  BSP_BOARD_K210_DRACO
+            bool "board_k210_Draco lcd scan: DIR_YX_LRUD"
+
         config  BSP_BOARD_USER
             bool "board_user: user defined."    
     endchoice
@@ -192,4 +197,6 @@ if BSP_USING_CAMERA
         int "CMOS HREF pin number for camera"
         default 17
 endif
+
+endmenu
 
