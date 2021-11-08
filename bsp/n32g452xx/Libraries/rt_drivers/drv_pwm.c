@@ -12,10 +12,10 @@
 #include "drv_pwm.h"
 
 #ifdef RT_USING_PWM
-#if !defined(BSP_USING_TIM3_CH1) && !defined(BSP_USING_TIM3_CH2) && \
-    !defined(BSP_USING_TIM3_CH3) && !defined(BSP_USING_TIM3_CH4)
-#error "Please define at least one BSP_USING_TIMx_CHx"
-#endif
+    #if !defined(BSP_USING_TIM3_CH1) && !defined(BSP_USING_TIM3_CH2) && \
+        !defined(BSP_USING_TIM3_CH3) && !defined(BSP_USING_TIM3_CH4)
+        #error "Please define at least one BSP_USING_TIMx_CHx"
+    #endif
 #endif /* RT_USING_PWM */
 
 #define DRV_DEBUG
@@ -28,7 +28,7 @@ struct rt_device_pwm pwm_device;
 struct n32_pwm
 {
     struct rt_device_pwm pwm_device;
-    TIM_Module* tim_handle;
+    TIM_Module *tim_handle;
     rt_uint8_t channel;
     char *name;
 };
@@ -58,45 +58,45 @@ static struct rt_pwm_ops drv_ops =
     drv_pwm_control
 };
 
-static rt_err_t drv_pwm_enable(TIM_Module* TIMx, struct rt_pwm_configuration *configuration, rt_bool_t enable)
+static rt_err_t drv_pwm_enable(TIM_Module *TIMx, struct rt_pwm_configuration *configuration, rt_bool_t enable)
 {
     /* Get the value of channel */
     rt_uint32_t channel = configuration->channel;
 
     if (!enable)
     {
-        if(channel == 1)
+        if (channel == 1)
         {
             TIM_EnableCapCmpCh(TIMx, TIM_CH_1, TIM_CAP_CMP_DISABLE);
         }
-        else if(channel == 2)
+        else if (channel == 2)
         {
             TIM_EnableCapCmpCh(TIMx, TIM_CH_2, TIM_CAP_CMP_DISABLE);
         }
-        else if(channel == 3)
+        else if (channel == 3)
         {
             TIM_EnableCapCmpCh(TIMx, TIM_CH_3, TIM_CAP_CMP_DISABLE);
         }
-        else if(channel == 4)
+        else if (channel == 4)
         {
             TIM_EnableCapCmpCh(TIMx, TIM_CH_4, TIM_CAP_CMP_DISABLE);
         }
     }
     else
     {
-        if(channel == 1)
+        if (channel == 1)
         {
             TIM_EnableCapCmpCh(TIMx, TIM_CH_1, TIM_CAP_CMP_ENABLE);
         }
-        else if(channel == 2)
+        else if (channel == 2)
         {
             TIM_EnableCapCmpCh(TIMx, TIM_CH_2, TIM_CAP_CMP_ENABLE);
         }
-        else if(channel == 3)
+        else if (channel == 3)
         {
             TIM_EnableCapCmpCh(TIMx, TIM_CH_3, TIM_CAP_CMP_ENABLE);
         }
-        else if(channel == 4)
+        else if (channel == 4)
         {
             TIM_EnableCapCmpCh(TIMx, TIM_CH_4, TIM_CAP_CMP_ENABLE);
         }
@@ -107,7 +107,7 @@ static rt_err_t drv_pwm_enable(TIM_Module* TIMx, struct rt_pwm_configuration *co
     return RT_EOK;
 }
 
-static rt_err_t drv_pwm_get(TIM_Module* TIMx, struct rt_pwm_configuration *configuration)
+static rt_err_t drv_pwm_get(TIM_Module *TIMx, struct rt_pwm_configuration *configuration)
 {
     RCC_ClocksType  RCC_Clockstruct;
     rt_uint32_t ar, div, cc1, cc2, cc3, cc4;
@@ -128,19 +128,19 @@ static rt_err_t drv_pwm_get(TIM_Module* TIMx, struct rt_pwm_configuration *confi
     /* Convert nanosecond to frequency and duty cycle. */
     tim_clock /= 1000000UL;
     configuration->period = (ar + 1) * (div + 1) * 1000UL / tim_clock;
-    if(channel == 1)
+    if (channel == 1)
         configuration->pulse = (cc1 + 1) * (div + 1) * 1000UL / tim_clock;
-    if(channel == 2)
-        configuration->pulse = (cc2 + 1) * (div+ 1) * 1000UL / tim_clock;
-    if(channel == 3)
+    if (channel == 2)
+        configuration->pulse = (cc2 + 1) * (div + 1) * 1000UL / tim_clock;
+    if (channel == 3)
         configuration->pulse = (cc3 + 1) * (div + 1) * 1000UL / tim_clock;
-    if(channel == 4)
+    if (channel == 4)
         configuration->pulse = (cc4 + 1) * (div + 1) * 1000UL / tim_clock;
 
     return RT_EOK;
 }
 
-static rt_err_t drv_pwm_set(TIM_Module* TIMx, struct rt_pwm_configuration *configuration)
+static rt_err_t drv_pwm_set(TIM_Module *TIMx, struct rt_pwm_configuration *configuration)
 {
     /* Init timer pin and enable clock */
     n32_msp_tim_init(TIMx);
@@ -155,7 +155,7 @@ static rt_err_t drv_pwm_set(TIM_Module* TIMx, struct rt_pwm_configuration *confi
     }
     else
     {
-        if (1 == (RCC_Clock.HclkFreq/RCC_Clock.Pclk1Freq))
+        if (1 == (RCC_Clock.HclkFreq / RCC_Clock.Pclk1Freq))
             input_clock = RCC_Clock.Pclk1Freq;
         else
             input_clock = RCC_Clock.Pclk1Freq * 2;
@@ -186,22 +186,22 @@ static rt_err_t drv_pwm_set(TIM_Module* TIMx, struct rt_pwm_configuration *confi
     TIM_OCInitStructure.OcPolarity = TIM_OC_POLARITY_HIGH;
 
     rt_uint32_t channel = configuration->channel;
-    if(channel == 1)
+    if (channel == 1)
     {
         TIM_InitOc1(TIMx, &TIM_OCInitStructure);
         TIM_ConfigOc1Preload(TIMx, TIM_OC_PRE_LOAD_ENABLE);
     }
-    else if(channel == 2)
+    else if (channel == 2)
     {
         TIM_InitOc2(TIMx, &TIM_OCInitStructure);
         TIM_ConfigOc2Preload(TIMx, TIM_OC_PRE_LOAD_ENABLE);
     }
-    else if(channel == 3)
+    else if (channel == 3)
     {
         TIM_InitOc3(TIMx, &TIM_OCInitStructure);
         TIM_ConfigOc3Preload(TIMx, TIM_OC_PRE_LOAD_ENABLE);
     }
-    else if(channel == 4)
+    else if (channel == 4)
     {
         TIM_InitOc4(TIMx, &TIM_OCInitStructure);
         TIM_ConfigOc4Preload(TIMx, TIM_OC_PRE_LOAD_ENABLE);
@@ -220,16 +220,16 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
 
     switch (cmd)
     {
-        case PWM_CMD_ENABLE:
-            return drv_pwm_enable(TIMx, configuration, RT_TRUE);
-        case PWM_CMD_DISABLE:
-            return drv_pwm_enable(TIMx, configuration, RT_FALSE);
-        case PWM_CMD_SET:
-            return drv_pwm_set(TIMx, configuration);
-        case PWM_CMD_GET:
-            return drv_pwm_get(TIMx, configuration);
-        default:
-            return RT_EINVAL;
+    case PWM_CMD_ENABLE:
+        return drv_pwm_enable(TIMx, configuration, RT_TRUE);
+    case PWM_CMD_DISABLE:
+        return drv_pwm_enable(TIMx, configuration, RT_FALSE);
+    case PWM_CMD_SET:
+        return drv_pwm_set(TIMx, configuration);
+    case PWM_CMD_GET:
+        return drv_pwm_get(TIMx, configuration);
+    default:
+        return RT_EINVAL;
     }
 }
 
@@ -238,9 +238,9 @@ static int rt_hw_pwm_init(void)
     int i = 0;
     int result = RT_EOK;
 
-    for(i = 0; i < sizeof(n32_pwm_obj) / sizeof(n32_pwm_obj[0]); i++)
+    for (i = 0; i < sizeof(n32_pwm_obj) / sizeof(n32_pwm_obj[0]); i++)
     {
-        if(rt_device_pwm_register(&n32_pwm_obj[i].pwm_device, n32_pwm_obj[i].name, &drv_ops, n32_pwm_obj[i].tim_handle) == RT_EOK)
+        if (rt_device_pwm_register(&n32_pwm_obj[i].pwm_device, n32_pwm_obj[i].name, &drv_ops, n32_pwm_obj[i].tim_handle) == RT_EOK)
         {
             LOG_D("%s register success", n32_pwm_obj[i].name);
         }

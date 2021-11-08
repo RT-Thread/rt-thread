@@ -159,10 +159,6 @@ You can use other USB to UART adapters to replace FTDI adapter.
 
 - Compile and download the program to the board
 
-You can also follow this video to configurate *Blue Pill BSP* Keil5 project: 
-
-> https://www.youtube.com/watch?v=0PwBBYXQ08g&t
-
 
 
 ### 3.5 Running Results
