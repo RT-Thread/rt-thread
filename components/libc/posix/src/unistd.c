@@ -13,7 +13,6 @@
 #include <dfs_private.h>
 #include <sys/errno.h>
 #include <unistd.h>
-#include <delay.h>
 
 /**
  * this function is a POSIX compliant version, which will open a file and
