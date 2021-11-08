@@ -53,6 +53,10 @@ if RT_USING_POSIX
         select RT_USING_POSIX_POLL
         default n
 
+    config RT_USING_POSIX_DELAY
+        bool "Enable delay functions"
+        default n
+
     config RT_USING_POSIX_GETLINE
         bool "Enable getline()/getdelim() APIs"
         default n
