@@ -2,7 +2,7 @@
 
 from building import *
 
-src     = ['unistd.c']
+src     = ['unistd.c', 'delay.c']
 cwd     = GetCurrentDir()
 CPPPATH = [cwd]
 
@@ -14,9 +14,6 @@ if GetDepend('RT_USING_POSIX_POLL'):
 
 if GetDepend('RT_USING_POSIX_SELECT'):
     src += ['select.c']
-
-if GetDepend('RT_USING_POSIX_DELAY'):
-    src += ['delay.c']
 
 group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX'], CPPPATH = CPPPATH)
 
