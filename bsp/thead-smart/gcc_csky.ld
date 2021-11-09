@@ -44,7 +44,7 @@ SECTIONS
   .text : AT(ADDR(.text)){
   . = ALIGN(0x4) ;
   __stext = . ;
-  KEEP(*startup.o(*.text*))
+  KEEP(*startup_gcc.o(*.text*))
   *(.text)
   *(.text*)
   *(.text.*)
