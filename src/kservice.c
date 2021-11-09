@@ -1353,7 +1353,7 @@ RTM_EXPORT(rt_free_align);
 #endif /* RT_USING_HEAP */
 
 #ifndef RT_USING_CPU_FFS
-#ifdef RT_KSERVICE_USING_TINY_FFS
+#ifdef RT_USING_TINY_FFS
 const rt_uint8_t __lowest_bit_bitmap[] =
 {
     /*  0 - 7  */  0,  1,  2, 27,  3, 24, 28, 32,
@@ -1423,7 +1423,7 @@ int __rt_ffs(int value)
 
     return __lowest_bit_bitmap[(value & 0xff000000) >> 24] + 25;
 }
-#endif /* RT_KSERVICE_USING_TINY_FFS */
+#endif /* RT_USING_TINY_FFS */
 #endif /* RT_USING_CPU_FFS */
 
 #ifdef RT_DEBUG
