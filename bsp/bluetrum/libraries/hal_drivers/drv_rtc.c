@@ -16,6 +16,10 @@
 
 #ifdef BSP_USING_ONCHIP_RTC
 
+#if RTTHREAD_VERSION < 40004
+#error "RTTHREAD_VERSION is less than 4.0.4"
+#endif
+
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.rtc"
 #include <drv_log.h>
