@@ -62,9 +62,9 @@
 
     The compilation define USE_HAL_DCMI_REGISTER_CALLBACKS when set to 1
     allows the user to configure dynamically the driver callbacks.
-    Use functions @ref HAL_DCMI_RegisterCallback() to register a user callback.
+    Use functions HAL_DCMI_RegisterCallback() to register a user callback.
 
-    Function @ref HAL_DCMI_RegisterCallback() allows to register following callbacks:
+    Function HAL_DCMI_RegisterCallback() allows to register following callbacks:
       (+) FrameEventCallback : DCMI Frame Event.
       (+) VsyncEventCallback : DCMI Vsync Event.
       (+) LineEventCallback  : DCMI Line Event.
@@ -74,9 +74,9 @@
     This function takes as parameters the HAL peripheral handle, the callback ID
     and a pointer to the user callback function.
 
-    Use function @ref HAL_DCMI_UnRegisterCallback() to reset a callback to the default
+    Use function HAL_DCMI_UnRegisterCallback() to reset a callback to the default
     weak (surcharged) function.
-    @ref HAL_DCMI_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+    HAL_DCMI_UnRegisterCallback() takes as parameters the HAL peripheral handle,
     and the callback ID.
     This function allows to reset following callbacks:
       (+) FrameEventCallback : DCMI Frame Event.
@@ -86,13 +86,13 @@
       (+) MspInitCallback    : DCMI MspInit.
       (+) MspDeInitCallback  : DCMI MspDeInit.
 
-    By default, after the @ref HAL_DCMI_Init and if the state is HAL_DCMI_STATE_RESET
+    By default, after the HAL_DCMI_Init and if the state is HAL_DCMI_STATE_RESET
     all callbacks are reset to the corresponding legacy weak (surcharged) functions:
-    examples @ref FrameEventCallback(), @ref HAL_DCMI_ErrorCallback().
+    examples FrameEventCallback(), HAL_DCMI_ErrorCallback().
     Exception done for MspInit and MspDeInit callbacks that are respectively
-    reset to the legacy weak (surcharged) functions in the @ref HAL_DCMI_Init
-    and @ref  HAL_DCMI_DeInit only when these callbacks are null (not registered beforehand).
-    If not, MspInit or MspDeInit are not null, the @ref HAL_DCMI_Init and @ref HAL_DCMI_DeInit
+    reset to the legacy weak (surcharged) functions in the HAL_DCMI_Init
+    and  HAL_DCMI_DeInit only when these callbacks are null (not registered beforehand).
+    If not, MspInit or MspDeInit are not null, the HAL_DCMI_Init and HAL_DCMI_DeInit
     keep and use the user MspInit/MspDeInit callbacks (registered beforehand).
 
     Callbacks can be registered/unregistered in READY state only.
@@ -100,8 +100,8 @@
     in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
     during the Init/DeInit.
     In that case first register the MspInit/MspDeInit user callbacks
-    using @ref HAL_DCMI_RegisterCallback before calling @ref HAL_DCMI_DeInit
-    or @ref HAL_DCMI_Init function.
+    using HAL_DCMI_RegisterCallback before calling HAL_DCMI_DeInit
+    or HAL_DCMI_Init function.
 
     When the compilation define USE_HAL_DCMI_REGISTER_CALLBACKS is set to 0 or
     not defined, the callback registering feature is not available
@@ -802,6 +802,37 @@ HAL_StatusTypeDef HAL_DCMI_EnableCrop(DCMI_HandleTypeDef *hdcmi)
 
   /* Enable DCMI Crop feature */
   hdcmi->Instance->CR |= (uint32_t)DCMI_CR_CROP;
+
+  /* Change the DCMI state*/
+  hdcmi->State = HAL_DCMI_STATE_READY;
+
+  /* Process Unlocked */
+  __HAL_UNLOCK(hdcmi);
+
+  return HAL_OK;
+}
+
+/**
+  * @brief  Set embedded synchronization delimiters unmasks.
+  * @param  hdcmi pointer to a DCMI_HandleTypeDef structure that contains
+  *               the configuration information for DCMI.
+  * @param  SyncUnmask pointer to a DCMI_SyncUnmaskTypeDef structure that contains
+  *                    the embedded synchronization delimiters unmasks.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef  HAL_DCMI_ConfigSyncUnmask(DCMI_HandleTypeDef *hdcmi, DCMI_SyncUnmaskTypeDef *SyncUnmask)
+{
+  /* Process Locked */
+  __HAL_LOCK(hdcmi);
+
+  /* Lock the DCMI peripheral state */
+  hdcmi->State = HAL_DCMI_STATE_BUSY;
+
+  /* Write DCMI embedded synchronization unmask register */
+  hdcmi->Instance->ESUR = (((uint32_t)SyncUnmask->FrameStartUnmask) |\
+                           ((uint32_t)SyncUnmask->LineStartUnmask << DCMI_ESUR_LSU_Pos)|\
+                           ((uint32_t)SyncUnmask->LineEndUnmask << DCMI_ESUR_LEU_Pos)|\
+                           ((uint32_t)SyncUnmask->FrameEndUnmask << DCMI_ESUR_FEU_Pos));
 
   /* Change the DCMI state*/
   hdcmi->State = HAL_DCMI_STATE_READY;

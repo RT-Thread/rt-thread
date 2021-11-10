@@ -20,8 +20,8 @@ uint32_t NORFL_Read(uint32_t addr);
 uint16_t NORFL_ReadID(uint32_t id_addr);
 
 /* 当前版本总线读只支持字读
-#define NORFL_Read8(addr)			*((volatile uint8_t  *)(NORFLM_BASE + addr))
-#define NORFL_Read16(addr)			*((volatile uint16_t *)(NORFLM_BASE + addr))    */
+#define NORFL_Read8(addr)   *((volatile uint8_t  *)(NORFLM_BASE + addr))
+#define NORFL_Read16(addr)  *((volatile uint16_t *)(NORFLM_BASE + addr))    */
 #define NORFL_Read32(addr) *((volatile uint32_t *)(NORFLM_BASE + addr))
 
 #define NORFL_CMD_READ 0

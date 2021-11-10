@@ -15,6 +15,10 @@
 #include <dfs_posix.h>
 #endif
 
+#ifdef _WIN32
+#include <winsock.h>
+#endif
+
 struct winsize {
     unsigned short ws_row;
     unsigned short ws_col;
@@ -35,8 +39,8 @@ struct winsize {
 
 #define FIONREAD    _IOR('f', 127, int) /* get # bytes to read */
 #define FIONBIO     _IOW('f', 126, int) /* set/clear non-blocking i/o */
-#define FIONWRITE   _IOR('f', 121, int) /* get # bytes outstanding in send queue */
 #endif
+#define FIONWRITE   _IOR('f', 121, int) /* get # bytes outstanding in send queue */
 
 #define TCGETS      0x5401
 #define TCSETS      0x5402
@@ -234,5 +238,7 @@ struct winsize {
 
 #define SIOCDEVPRIVATE      0x89F0
 #define SIOCPROTOPRIVATE    0x89E0
+
+int ioctl(int fildes, int cmd, ...);
 
 #endif

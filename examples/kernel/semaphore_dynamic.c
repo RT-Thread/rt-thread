@@ -78,7 +78,7 @@ static void thread_entry(void* parameter)
 int semaphore_dynamic_init()
 {
     /* 创建一个信号量，初始值是0 */
-    sem = rt_sem_create("sem", 0, RT_IPC_FLAG_FIFO);
+    sem = rt_sem_create("sem", 0, RT_IPC_FLAG_PRIO);
     if (sem == RT_NULL)
     {
         tc_stat(TC_STAT_END | TC_STAT_FAILED);

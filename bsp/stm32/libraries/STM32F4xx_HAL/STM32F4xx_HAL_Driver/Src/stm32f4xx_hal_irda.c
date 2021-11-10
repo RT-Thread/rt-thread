@@ -111,8 +111,8 @@
       allows the user to configure dynamically the driver callbacks.
 
     [..]
-      Use Function @ref HAL_IRDA_RegisterCallback() to register a user callback.
-      Function @ref HAL_IRDA_RegisterCallback() allows to register following callbacks:
+      Use Function HAL_IRDA_RegisterCallback() to register a user callback.
+      Function HAL_IRDA_RegisterCallback() allows to register following callbacks:
        (+) TxHalfCpltCallback        : Tx Half Complete Callback.
        (+) TxCpltCallback            : Tx Complete Callback.
        (+) RxHalfCpltCallback        : Rx Half Complete Callback.
@@ -127,9 +127,9 @@
       and a pointer to the user callback function.
 
     [..]
-      Use function @ref HAL_IRDA_UnRegisterCallback() to reset a callback to the default
+      Use function HAL_IRDA_UnRegisterCallback() to reset a callback to the default
       weak (surcharged) function.
-      @ref HAL_IRDA_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+      HAL_IRDA_UnRegisterCallback() takes as parameters the HAL peripheral handle,
       and the Callback ID.
       This function allows to reset following callbacks:
        (+) TxHalfCpltCallback        : Tx Half Complete Callback.
@@ -144,13 +144,13 @@
        (+) MspDeInitCallback         : IRDA MspDeInit.
 
     [..]
-      By default, after the @ref HAL_IRDA_Init() and when the state is HAL_IRDA_STATE_RESET
+      By default, after the HAL_IRDA_Init() and when the state is HAL_IRDA_STATE_RESET
       all callbacks are set to the corresponding weak (surcharged) functions:
-      examples @ref HAL_IRDA_TxCpltCallback(), @ref HAL_IRDA_RxHalfCpltCallback().
+      examples HAL_IRDA_TxCpltCallback(), HAL_IRDA_RxHalfCpltCallback().
       Exception done for MspInit and MspDeInit functions that are respectively
-      reset to the legacy weak (surcharged) functions in the @ref HAL_IRDA_Init()
-      and @ref HAL_IRDA_DeInit() only when these callbacks are null (not registered beforehand).
-      If not, MspInit or MspDeInit are not null, the @ref HAL_IRDA_Init() and @ref HAL_IRDA_DeInit()
+      reset to the legacy weak (surcharged) functions in the HAL_IRDA_Init()
+      and HAL_IRDA_DeInit() only when these callbacks are null (not registered beforehand).
+      If not, MspInit or MspDeInit are not null, the HAL_IRDA_Init() and HAL_IRDA_DeInit()
       keep and use the user MspInit/MspDeInit callbacks (registered beforehand).
 
     [..]
@@ -159,8 +159,8 @@
       in HAL_IRDA_STATE_READY or HAL_IRDA_STATE_RESET state, thus registered (user)
       MspInit/DeInit callbacks can be used during the Init/DeInit.
       In that case first register the MspInit/MspDeInit user callbacks
-      using @ref HAL_IRDA_RegisterCallback() before calling @ref HAL_IRDA_DeInit()
-      or @ref HAL_IRDA_Init() function.
+      using HAL_IRDA_RegisterCallback() before calling HAL_IRDA_DeInit()
+      or HAL_IRDA_Init() function.
 
     [..]
       When The compilation define USE_HAL_IRDA_REGISTER_CALLBACKS is set to 0 or
@@ -169,7 +169,7 @@
 
   @endverbatim
      [..]
-       (@) Additionnal remark: If the parity is enabled, then the MSB bit of the data written
+       (@) Additional remark: If the parity is enabled, then the MSB bit of the data written
            in the data register is transmitted but is changed by the parity bit.
            Depending on the frame length defined by the M bit (8-bits or 9-bits),
            the possible IRDA frame formats are as listed in the following table:
@@ -756,12 +756,15 @@ HAL_StatusTypeDef HAL_IRDA_UnRegisterCallback(IRDA_HandleTypeDef *hirda, HAL_IRD
   */
 
 /**
-  * @brief  Sends an amount of data in blocking mode.
-  * @param  hirda  Pointer to a IRDA_HandleTypeDef structure that contains
-  *                the configuration information for the specified IRDA module.
-  * @param  pData Pointer to data buffer
-  * @param  Size Amount of data to be sent
-  * @param  Timeout Specify timeout value
+  * @brief Sends an amount of data in blocking mode.
+  * @note  When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *        the sent data is handled as a set of u16. In this case, Size must reflect the number
+  *        of u16 available through pData.
+  * @param hirda Pointer to a IRDA_HandleTypeDef structure that contains
+  *              the configuration information for the specified IRDA module.
+  * @param pData Pointer to data buffer (u8 or u16 data elements).
+  * @param Size  Amount of data elements (u8 or u16) to be sent.
+  * @param Timeout Specify timeout value.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_IRDA_Transmit(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size, uint32_t Timeout)
@@ -783,7 +786,7 @@ HAL_StatusTypeDef HAL_IRDA_Transmit(IRDA_HandleTypeDef *hirda, uint8_t *pData, u
     hirda->ErrorCode = HAL_IRDA_ERROR_NONE;
     hirda->gState = HAL_IRDA_STATE_BUSY_TX;
 
-    /* Init tickstart for timeout managment*/
+    /* Init tickstart for timeout management*/
     tickstart = HAL_GetTick();
 
     hirda->TxXferSize = Size;
@@ -838,12 +841,15 @@ HAL_StatusTypeDef HAL_IRDA_Transmit(IRDA_HandleTypeDef *hirda, uint8_t *pData, u
 }
 
 /**
-  * @brief  Receive an amount of data in blocking mode.
-  * @param  hirda  Pointer to a IRDA_HandleTypeDef structure that contains
-  *                the configuration information for the specified IRDA module.
-  * @param  pData Pointer to data buffer
-  * @param  Size Amount of data to be received
-  * @param  Timeout Specify timeout value
+  * @brief Receive an amount of data in blocking mode.
+  * @note  When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *        the received data is handled as a set of u16. In this case, Size must reflect the number
+  *        of u16 available through pData.
+  * @param hirda Pointer to a IRDA_HandleTypeDef structure that contains
+  *              the configuration information for the specified IRDA module.
+  * @param pData Pointer to data buffer (u8 or u16 data elements).
+  * @param Size  Amount of data elements (u8 or u16) to be received.
+  * @param Timeout Specify timeout value
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_IRDA_Receive(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size, uint32_t Timeout)
@@ -865,7 +871,7 @@ HAL_StatusTypeDef HAL_IRDA_Receive(IRDA_HandleTypeDef *hirda, uint8_t *pData, ui
     hirda->ErrorCode = HAL_IRDA_ERROR_NONE;
     hirda->RxState = HAL_IRDA_STATE_BUSY_RX;
 
-    /* Init tickstart for timeout managment*/
+    /* Init tickstart for timeout management*/
     tickstart = HAL_GetTick();
 
     hirda->RxXferSize = Size;
@@ -926,11 +932,14 @@ HAL_StatusTypeDef HAL_IRDA_Receive(IRDA_HandleTypeDef *hirda, uint8_t *pData, ui
 }
 
 /**
-  * @brief  Send an amount of data in non blocking mode.
-  * @param  hirda  Pointer to a IRDA_HandleTypeDef structure that contains
-  *                the configuration information for the specified IRDA module.
-  * @param  pData Pointer to data buffer
-  * @param  Size Amount of data to be sent
+  * @brief Send an amount of data in non blocking mode.
+  * @note  When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *        the sent data is handled as a set of u16. In this case, Size must reflect the number
+  *        of u16 available through pData.
+  * @param hirda Pointer to a IRDA_HandleTypeDef structure that contains
+  *              the configuration information for the specified IRDA module.
+  * @param pData Pointer to data buffer (u8 or u16 data elements).
+  * @param Size  Amount of data elements (u8 or u16) to be sent.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_IRDA_Transmit_IT(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size)
@@ -968,11 +977,14 @@ HAL_StatusTypeDef HAL_IRDA_Transmit_IT(IRDA_HandleTypeDef *hirda, uint8_t *pData
 }
 
 /**
-  * @brief  Receive an amount of data in non blocking mode.
-  * @param  hirda  Pointer to a IRDA_HandleTypeDef structure that contains
-  *                the configuration information for the specified IRDA module.
-  * @param  pData Pointer to data buffer
-  * @param  Size Amount of data to be received
+  * @brief Receive an amount of data in non blocking mode.
+  * @note  When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *        the received data is handled as a set of u16. In this case, Size must reflect the number
+  *        of u16 available through pData.
+  * @param hirda Pointer to a IRDA_HandleTypeDef structure that contains
+  *              the configuration information for the specified IRDA module.
+  * @param pData Pointer to data buffer (u8 or u16 data elements).
+  * @param Size  Amount of data elements (u8 or u16) to be received.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_IRDA_Receive_IT(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size)
@@ -1013,11 +1025,14 @@ HAL_StatusTypeDef HAL_IRDA_Receive_IT(IRDA_HandleTypeDef *hirda, uint8_t *pData,
 }
 
 /**
-  * @brief  Send an amount of data in non blocking mode.
-  * @param  hirda  Pointer to a IRDA_HandleTypeDef structure that contains
-  *                the configuration information for the specified IRDA module.
-  * @param  pData Pointer to data buffer
-  * @param  Size Amount of data to be sent
+  * @brief Send an amount of data in DMA mode.
+  * @note  When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *        the sent data is handled as a set of u16. In this case, Size must reflect the number
+  *        of u16 available through pData.
+  * @param hirda Pointer to a IRDA_HandleTypeDef structure that contains
+  *              the configuration information for the specified IRDA module.
+  * @param pData Pointer to data buffer (u8 or u16 data elements).
+  * @param Size  Amount of data elements (u8 or u16) to be sent.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_IRDA_Transmit_DMA(IRDA_HandleTypeDef *hirda, uint8_t *pData, uint16_t Size)
@@ -1077,11 +1092,14 @@ HAL_StatusTypeDef HAL_IRDA_Transmit_DMA(IRDA_HandleTypeDef *hirda, uint8_t *pDat
 }
 
 /**
-  * @brief  Receives an amount of data in non blocking mode.
-  * @param  hirda  Pointer to a IRDA_HandleTypeDef structure that contains
-  *                the configuration information for the specified IRDA module.
-  * @param  pData Pointer to data buffer
-  * @param  Size Amount of data to be received
+  * @brief Receives an amount of data in DMA mode.
+  * @note  When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *        the received data is handled as a set of u16. In this case, Size must reflect the number
+  *        of u16 available through pData.
+  * @param hirda Pointer to a IRDA_HandleTypeDef structure that contains
+  *              the configuration information for the specified IRDA module.
+  * @param pData Pointer to data buffer (u8 or u16 data elements).
+  * @param Size  Amount of data elements (u8 or u16) to be received.
   * @note   When the IRDA parity is enabled (PCE = 1) the data received contain the parity bit.
   * @retval HAL status
   */
@@ -1205,7 +1223,7 @@ HAL_StatusTypeDef HAL_IRDA_DMAResume(IRDA_HandleTypeDef *hirda)
     /* Clear the Overrun flag before resuming the Rx transfer */
     __HAL_IRDA_CLEAR_OREFLAG(hirda);
 
-    /* Reenable PE and ERR (Frame error, noise error, overrun error) interrupts */
+    /* Re-enable PE and ERR (Frame error, noise error, overrun error) interrupts */
     SET_BIT(hirda->Instance->CR1, USART_CR1_PEIE);
     SET_BIT(hirda->Instance->CR3, USART_CR3_EIE);
 
@@ -1745,7 +1763,7 @@ void HAL_IRDA_IRQHandler(IRDA_HandleTypeDef *hirda)
     }
 
     /* IRDA Over-Run interrupt occurred -----------------------------------*/
-    if (((isrflags & USART_SR_ORE) != RESET) && ((cr3its & USART_CR3_EIE) != RESET))
+    if (((isrflags & USART_SR_ORE) != RESET) && (((cr1its & USART_CR1_RXNEIE) != RESET) || ((cr3its & USART_CR3_EIE) != RESET)))
     {
       hirda->ErrorCode |= HAL_IRDA_ERROR_ORE;
     }
@@ -2582,6 +2600,8 @@ static HAL_StatusTypeDef IRDA_Receive_IT(IRDA_HandleTypeDef *hirda)
   */
 static void IRDA_SetConfig(IRDA_HandleTypeDef *hirda)
 {
+  uint32_t pclk;
+
   /* Check the parameters */
   assert_param(IS_IRDA_INSTANCE(hirda->Instance));
   assert_param(IS_IRDA_BAUDRATE(hirda->Init.BaudRate));
@@ -2610,20 +2630,29 @@ static void IRDA_SetConfig(IRDA_HandleTypeDef *hirda)
   CLEAR_BIT(hirda->Instance->CR3, (USART_CR3_RTSE | USART_CR3_CTSE));
 
   /*-------------------------- USART BRR Configuration -----------------------*/
-#if defined(USART6)
+#if defined(USART6) && defined(UART9) && defined(UART10)
+   if ((hirda->Instance == USART1) || (hirda->Instance == USART6) || (hirda->Instance == UART9) || (hirda->Instance == UART10))
+   {
+    pclk = HAL_RCC_GetPCLK2Freq();
+    SET_BIT(hirda->Instance->BRR, IRDA_BRR(pclk, hirda->Init.BaudRate));
+   }
+#elif defined(USART6)
   if((hirda->Instance == USART1) || (hirda->Instance == USART6))
   {
-    SET_BIT(hirda->Instance->BRR, IRDA_BRR(HAL_RCC_GetPCLK2Freq(), hirda->Init.BaudRate));
+    pclk = HAL_RCC_GetPCLK2Freq();
+    SET_BIT(hirda->Instance->BRR, IRDA_BRR(pclk, hirda->Init.BaudRate));
   }
 #else
   if(hirda->Instance == USART1)
   {
-    SET_BIT(hirda->Instance->BRR, IRDA_BRR(HAL_RCC_GetPCLK2Freq(), hirda->Init.BaudRate));
+    pclk = HAL_RCC_GetPCLK2Freq();
+    SET_BIT(hirda->Instance->BRR, IRDA_BRR(pclk, hirda->Init.BaudRate));
   }
 #endif /* USART6 */
   else
   {
-    SET_BIT(hirda->Instance->BRR, IRDA_BRR(HAL_RCC_GetPCLK1Freq(), hirda->Init.BaudRate));
+    pclk = HAL_RCC_GetPCLK1Freq();
+    SET_BIT(hirda->Instance->BRR, IRDA_BRR(pclk, hirda->Init.BaudRate));
   }
 }
 

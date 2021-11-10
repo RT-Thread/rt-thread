@@ -9,6 +9,7 @@
  * 2018-04-12     chenyong     add client implement
  * 2018-08-17     chenyong     multiple client support
  * 2021-03-17     Meco Man     fix a buf of leaking memory
+ * 2021-07-14     Sszl         fix a buf of leaking memory
  */
 
 #include <at.h>
@@ -309,13 +310,15 @@ int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr
     rt_mutex_take(client->lock, RT_WAITING_FOREVER);
 
     client->resp_status = AT_RESP_OK;
-    client->resp = resp;
 
     if (resp != RT_NULL)
     {
         resp->buf_len = 0;
         resp->line_counts = 0;
     }
+
+    client->resp = resp;
+    rt_sem_control(client->resp_notice, RT_IPC_CMD_RESET, RT_NULL);
 
     va_start(args, cmd_expr);
     at_vprintfln(client->device, cmd_expr, args);
@@ -326,7 +329,7 @@ int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr
         if (rt_sem_take(client->resp_notice, resp->timeout) != RT_EOK)
         {
             cmd = at_get_last_cmd(&cmd_size);
-            LOG_D("execute command (%.*s) timeout (%d ticks)!", cmd_size, cmd, resp->timeout);
+            LOG_W("execute command (%.*s) timeout (%d ticks)!", cmd_size, cmd, resp->timeout);
             client->resp_status = AT_RESP_TIMEOUT;
             result = -RT_ETIMEOUT;
             goto __exit;
@@ -380,6 +383,7 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
 
     rt_mutex_take(client->lock, RT_WAITING_FOREVER);
     client->resp = resp;
+    rt_sem_control(client->resp_notice, RT_IPC_CMD_RESET, RT_NULL);
 
     start_time = rt_tick_get();
 
@@ -425,6 +429,8 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
  */
 rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size)
 {
+    rt_size_t len;
+
     RT_ASSERT(buf);
 
     if (client == RT_NULL)
@@ -439,7 +445,7 @@ rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size
 
     rt_mutex_take(client->lock, RT_WAITING_FOREVER);
 
-    rt_size_t len = at_utils_send(client->device, 0, buf, size);
+    len = at_utils_send(client->device, 0, buf, size);
 
     rt_mutex_release(client->lock);
 
@@ -479,9 +485,7 @@ static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeo
  */
 rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_int32_t timeout)
 {
-    rt_size_t read_idx = 0;
-    rt_err_t result = RT_EOK;
-    char ch;
+    rt_size_t len = 0;
 
     RT_ASSERT(buf);
 
@@ -493,28 +497,30 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_i
 
     while (1)
     {
-        if (read_idx < size)
-        {
-            result = at_client_getchar(client, &ch, timeout);
-            if (result != RT_EOK)
-            {
-                LOG_E("AT Client receive failed, uart device get data error(%d)", result);
-                return 0;
-            }
+        rt_size_t read_len;
 
-            buf[read_idx++] = ch;
-        }
-        else
+        rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
+
+        read_len = rt_device_read(client->device, 0, buf + len, size);
+        if(read_len > 0)
         {
-            break;
+            len += read_len;
+            size -= read_len;
+            if(size == 0)
+                break;
+
+            continue;
         }
+
+        if(rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout)) != RT_EOK)
+            break;
     }
 
 #ifdef AT_PRINT_RAW_CMD
-    at_print_raw_cmd("urc_recv", buf, size);
+    at_print_raw_cmd("urc_recv", buf, len);
 #endif
 
-    return read_idx;
+    return len;
 }
 
 /**
@@ -571,30 +577,19 @@ int at_obj_set_urc_table(at_client_t client, const struct at_urc *urc_table, rt_
     }
     else
     {
-        struct at_urc_table *old_urc_table = RT_NULL;
-        size_t old_table_size = client->urc_table_size * sizeof(struct at_urc_table);
-
-        old_urc_table = (struct at_urc_table *) rt_malloc(old_table_size);
-        if (old_urc_table == RT_NULL)
-        {
-            return -RT_ENOMEM;
-        }
-        rt_memcpy(old_urc_table, client->urc_table, old_table_size);
+        struct at_urc_table *new_urc_table = RT_NULL;
 
         /* realloc urc table space */
-        client->urc_table = (struct at_urc_table *) rt_realloc(client->urc_table,
-                old_table_size + sizeof(struct at_urc_table));
-        if (client->urc_table == RT_NULL)
+        new_urc_table = (struct at_urc_table *) rt_realloc(client->urc_table,client->urc_table_size * sizeof(struct at_urc_table) + sizeof(struct at_urc_table));
+        if (new_urc_table == RT_NULL)
         {
-            rt_free(old_urc_table);
             return -RT_ENOMEM;
         }
-        rt_memcpy(client->urc_table, old_urc_table, old_table_size);
+        client->urc_table = new_urc_table;
         client->urc_table[client->urc_table_size].urc = urc_table;
         client->urc_table[client->urc_table_size].urc_size = table_sz;
         client->urc_table_size++;
 
-        rt_free(old_urc_table);
     }
 
     return RT_EOK;

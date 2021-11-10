@@ -2,7 +2,7 @@
 /  FatFs Functional Configurations
 /---------------------------------------------------------------------------*/
 
-#define FFCONF_DEF	86606	/* Revision ID */
+#define FFCONF_DEF	86631	/* Revision ID */
 
 /*---------------------------------------------------------------------------/
 / Function Configurations
@@ -23,14 +23,6 @@
 /      are removed.
 /   2: f_opendir(), f_readdir() and f_closedir() are removed in addition to 1.
 /   3: f_lseek() function is removed in addition to 2. */
-
-
-#define FF_USE_STRFUNC	0
-/* This option switches string functions, f_gets(), f_putc(), f_puts() and f_printf().
-/
-/  0: Disable string functions.
-/  1: Enable without LF-CRLF conversion.
-/  2: Enable with LF-CRLF conversion. */
 
 
 #define FF_USE_FIND		0
@@ -62,6 +54,30 @@
 
 #define FF_USE_FORWARD	0
 /* This option switches f_forward() function. (0:Disable or 1:Enable) */
+
+
+#define FF_USE_STRFUNC	0
+#define FF_PRINT_LLI	0
+#define FF_PRINT_FLOAT	0
+#define FF_STRF_ENCODE	3
+/* FF_USE_STRFUNC switches string functions, f_gets(), f_putc(), f_puts() and
+/  f_printf().
+/
+/   0: Disable. FF_PRINT_LLI, FF_PRINT_FLOAT and FF_STRF_ENCODE have no effect.
+/   1: Enable without LF-CRLF conversion.
+/   2: Enable with LF-CRLF conversion.
+/
+/  FF_PRINT_LLI = 1 makes f_printf() support long long argument and FF_PRINT_FLOAT = 1/2
+   makes f_printf() support floating point argument. These features want C99 or later.
+/  When FF_LFN_UNICODE >= 1 with LFN enabled, string functions convert the character
+/  encoding in it. FF_STRF_ENCODE selects assumption of character encoding ON THE FILE
+/  to be read/written via those functions.
+/
+/   0: ANSI/OEM in current CP
+/   1: Unicode in UTF-16LE
+/   2: Unicode in UTF-16BE
+/   3: Unicode in UTF-8
+*/
 
 
 /*---------------------------------------------------------------------------/
@@ -105,8 +121,8 @@
 #define FF_USE_LFN 	RT_DFS_ELM_USE_LFN
 #define FF_MAX_LFN 	RT_DFS_ELM_MAX_LFN
 #else
-#define	FF_USE_LFN	0		/* 0 to 3 */
-#define	FF_MAX_LFN	255		/* Maximum LFN length to handle (12 to 255) */
+#define FF_USE_LFN	0		/* 0 to 3 */
+#define FF_MAX_LFN	255		/* Maximum LFN length to handle (12 to 255) */
 #endif
 /* The FF_USE_LFN switches the support for LFN (long file name).
 /
@@ -140,6 +156,16 @@
 #else
 #define	FF_LFN_UNICODE	0	/* 0:ANSI/OEM or 1:Unicode */
 #endif
+/* This option switches the character encoding on the API when LFN is enabled.
+/
+/   0: ANSI/OEM in current CP (TCHAR = char)
+/   1: Unicode in UTF-16 (TCHAR = WCHAR)
+/   2: Unicode in UTF-8 (TCHAR = char)
+/   3: Unicode in UTF-32 (TCHAR = DWORD)
+/
+/  Also behavior of string I/O functions will be affected by this option.
+/  When LFN is not enabled, this option has no effect. */
+
 
 #define FF_LFN_BUF		255
 #define FF_SFN_BUF		12
@@ -147,19 +173,6 @@
 /  which is used to read out directory items. These values should be suffcient for
 /  the file names to read. The maximum possible length of the read file name depends
 /  on character encoding. When LFN is not enabled, these options have no effect. */
-
-
-#define FF_STRF_ENCODE	3
-/* When FF_LFN_UNICODE >= 1 with LFN enabled, string I/O functions, f_gets(),
-/  f_putc(), f_puts and f_printf() convert the character encoding in it.
-/  This option selects assumption of character encoding ON THE FILE to be
-/  read/written via those functions.
-/
-/   0: ANSI/OEM in current CP
-/   1: Unicode in UTF-16LE
-/   2: Unicode in UTF-16BE
-/   3: Unicode in UTF-8
-*/
 
 
 #define FF_FS_RPATH		0
@@ -206,7 +219,7 @@
 /  funciton will be available. */
 
 
-#define	FF_MIN_SS		512
+#define FF_MIN_SS		512
 #ifdef RT_DFS_ELM_MAX_SECTOR_SIZE
 #define FF_MAX_SS     RT_DFS_ELM_MAX_SECTOR_SIZE
 #else
@@ -214,7 +227,7 @@
 #endif
 /* This set of options configures the range of sector size to be supported. (512,
 /  1024, 2048 or 4096) Always set both 512 for most systems, generic memory card and
-/  harddisk. But a larger value may be required for on-board flash memory and some
+/  harddisk, but a larger value may be required for on-board flash memory and some
 /  type of optical media. When FF_MAX_SS is larger than FF_MIN_SS, FatFs is configured
 /  for variable sector size mode and disk_ioctl() function needs to implement
 /  GET_SECTOR_SIZE command. */
@@ -225,8 +238,8 @@
 /  To enable the 64-bit LBA, also exFAT needs to be enabled. (FF_FS_EXFAT == 1) */
 
 
-#define FF_MIN_GPT		0x100000000
-/* Minimum number of sectors to switch GPT format to create partition in f_mkfs and
+#define FF_MIN_GPT		0x10000000
+/* Minimum number of sectors to switch GPT as partitioning format in f_mkfs and
 /  f_fdisk function. 0x100000000 max. This option has no effect when FF_LBA64 == 0. */
 
 
@@ -260,7 +273,7 @@
 #define FF_FS_NORTC		0
 #define FF_NORTC_MON	1
 #define FF_NORTC_MDAY	1
-#define FF_NORTC_YEAR	2019
+#define FF_NORTC_YEAR	2020
 /* The option FF_FS_NORTC switches timestamp functiton. If the system does not have
 /  any RTC function or valid timestamp is not needed, set FF_FS_NORTC = 1 to disable
 /  the timestamp function. Every object modified by FatFs will have a fixed timestamp
@@ -294,13 +307,18 @@
 /      can be opened simultaneously under file lock control. Note that the file
 /      lock control is independent of re-entrancy. */
 
+
 /* #include <somertos.h>	// O/S definitions */
+#include <rtdef.h>
 #ifdef RT_DFS_ELM_REENTRANT
 #define FF_FS_REENTRANT	1		/* 0 or 1 */
 #else
 #define FF_FS_REENTRANT	0		/* 0:Disable or 1:Enable */
 #endif
-#define FF_FS_TIMEOUT	1000
+#ifndef RT_DFS_ELM_MUTEX_TIMEOUT
+#define RT_DFS_ELM_MUTEX_TIMEOUT    3000
+#endif
+#define FF_FS_TIMEOUT	RT_DFS_ELM_MUTEX_TIMEOUT
 #define FF_SYNC_t		rt_mutex_t
 /* The option FF_FS_REENTRANT switches the re-entrancy (thread safe) of the FatFs
 /  module itself. Note that regardless of this option, file access to different

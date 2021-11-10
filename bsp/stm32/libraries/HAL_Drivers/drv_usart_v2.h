@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,11 +24,11 @@ int rt_hw_usart_init(void);
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) \
     || defined(SOC_SERIES_STM32G4)
 #define UART_SET_TDR(__HANDLE__, __DATA__)  ((__HANDLE__)->Instance->TDR = (__DATA__))
-#define UART_GET_RDR(__HANDLE__)            ((__HANDLE__)->Instance->RDR & 0xFF)
+#define UART_GET_RDR(__HANDLE__, MASK)            ((__HANDLE__)->Instance->RDR & MASK)
 
 #else
 #define UART_SET_TDR(__HANDLE__, __DATA__)  ((__HANDLE__)->Instance->DR = (__DATA__))
-#define UART_GET_RDR(__HANDLE__)            ((__HANDLE__)->Instance->DR & 0xFF)
+#define UART_GET_RDR(__HANDLE__, MASK)            ((__HANDLE__)->Instance->DR & MASK)
 #endif
 
 

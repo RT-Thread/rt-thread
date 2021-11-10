@@ -322,13 +322,13 @@ typedef struct
 #define RTC_IT_TAMP_1                      TAMP_IER_TAMP1IE     /*!< Tamper 1 Interrupt */
 #define RTC_IT_TAMP_2                      TAMP_IER_TAMP2IE     /*!< Tamper 2 Interrupt */
 #define RTC_IT_TAMP_3                      TAMP_IER_TAMP3IE     /*!< Tamper 3 Interrupt */
-#define RTC_IT_TAMP_ALL                   (TAMP_IER_TAMP1IE | TAMP_IER_TAMP2IE | TAMP_IER_TAMP3IE)
+#define RTC_IT_TAMP_ALL                    (TAMP_IER_TAMP1IE | TAMP_IER_TAMP2IE | TAMP_IER_TAMP3IE)
 
 #define RTC_IT_INT_TAMP_3                  TAMP_IER_ITAMP3IE
 #define RTC_IT_INT_TAMP_5                  TAMP_IER_ITAMP5IE
 #define RTC_IT_INT_TAMP_6                  TAMP_IER_ITAMP6IE
 #define RTC_IT_INT_TAMP_8                  TAMP_IER_ITAMP8IE
-#define RTC_IT_INT_TAMP_ALL                (TAMP_IT_INT_TAMP3 | TAMP_IT_INT_TAMP5 | TAMP_IT_INT_TAMP6 | TAMP_IT_INT_TAMP8)
+#define RTC_IT_INT_TAMP_ALL                (TAMP_IER_ITAMP3IE | TAMP_IER_ITAMP5IE | TAMP_IER_ITAMP6IE | TAMP_IER_ITAMP8IE)
 /**
   * @}
   */
@@ -339,7 +339,7 @@ typedef struct
 #define RTC_FLAG_TAMP_1                    TAMP_SR_TAMP1F
 #define RTC_FLAG_TAMP_2                    TAMP_SR_TAMP2F
 #define RTC_FLAG_TAMP_3                    TAMP_SR_TAMP3F
-#define RTC_FLAG_TAMP_ALL                 (RTC_FLAG_TAMP1 | RTC_FLAG_TAMP2 | RTC_FLAG_TAMP3 )
+#define RTC_FLAG_TAMP_ALL                  (RTC_FLAG_TAMP1 | RTC_FLAG_TAMP2 | RTC_FLAG_TAMP3 )
 
 
 #define RTC_FLAG_INT_TAMP_3                 TAMP_SR_ITAMP3F
@@ -727,13 +727,13 @@ typedef struct
 #if defined(CORE_CM0PLUS)
 #define __HAL_RTC_TIMESTAMP_EXTI_ENABLE_IT()        (EXTI->C2IMR1 |= RTC_EXTI_LINE_TIMESTAMP_EVENT)
 #define __HAL_RTC_TIMESTAMP_EXTI_DISABLE_IT()       (EXTI->C2IMR1 &= ~(RTC_EXTI_LINE_TIMESTAMP_EVENT))
-#define __HAL_RTC_TIMESTAMP_EXTI_ENABLE_EVENT()    (EXTI->C2EMR1 |= RTC_EXTI_LINE_TIMESTAMP_EVENT)
-#define __HAL_RTC_TIMESTAMP_EXTI_DISABLE_EVENT()   (EXTI->C2EMR1 &= ~(RTC_EXTI_LINE_TIMESTAMP_EVENT))
+#define __HAL_RTC_TIMESTAMP_EXTI_ENABLE_EVENT()     (EXTI->C2EMR1 |= RTC_EXTI_LINE_TIMESTAMP_EVENT)
+#define __HAL_RTC_TIMESTAMP_EXTI_DISABLE_EVENT()    (EXTI->C2EMR1 &= ~(RTC_EXTI_LINE_TIMESTAMP_EVENT))
 #else
 #define __HAL_RTC_TIMESTAMP_EXTI_ENABLE_IT()        (EXTI->IMR1 |= RTC_EXTI_LINE_TIMESTAMP_EVENT)
 #define __HAL_RTC_TIMESTAMP_EXTI_DISABLE_IT()       (EXTI->IMR1 &= ~(RTC_EXTI_LINE_TIMESTAMP_EVENT))
-#define __HAL_RTC_TIMESTAMP_EXTI_ENABLE_EVENT()    (EXTI->EMR1 |= RTC_EXTI_LINE_TIMESTAMP_EVENT)
-#define __HAL_RTC_TIMESTAMP_EXTI_DISABLE_EVENT()   (EXTI->EMR1 &= ~(RTC_EXTI_LINE_TIMESTAMP_EVENT))
+#define __HAL_RTC_TIMESTAMP_EXTI_ENABLE_EVENT()     (EXTI->EMR1 |= RTC_EXTI_LINE_TIMESTAMP_EVENT)
+#define __HAL_RTC_TIMESTAMP_EXTI_DISABLE_EVENT()    (EXTI->EMR1 &= ~(RTC_EXTI_LINE_TIMESTAMP_EVENT))
 #endif
 
 /**
@@ -866,9 +866,14 @@ typedef struct
   *            @arg  RTC_TAMPER_1: Tamper1
   *            @arg  RTC_TAMPER_2: Tamper2
   *            @arg  RTC_TAMPER_3: Tamper3
+  *            @arg  RTC_IT_INT_TAMP_ALL: All Internal Tamper interrupts
+  *            @arg  RTC_IT_INT_TAMP_3: Internal Tamper3 interrupt
+  *            @arg  RTC_IT_INT_TAMP_5: Internal Tamper5 interrupt
+  *            @arg  RTC_IT_INT_TAMP_6: Internal Tamper6 interrupt
+  *            @arg  RTC_IT_INT_TAMP_8: Internal Tamper8 interrupt
   * @retval None
   */
-#define __HAL_RTC_TAMPER_ENABLE(__HANDLE__, __TAMPER__)           ((TAMP->CR1 |= (__TAMPER__))
+#define __HAL_RTC_TAMPER_ENABLE(__HANDLE__, __TAMPER__)           (TAMP->CR1 |= (__TAMPER__))
 
 /**
   * @brief  Disable the TAMP Tamper input detection.
@@ -879,8 +884,13 @@ typedef struct
   *            @arg  RTC_TAMPER_1: Tamper1
   *            @arg  RTC_TAMPER_2: Tamper2
   *            @arg  RTC_TAMPER_3: Tamper3
+  *            @arg  RTC_IT_INT_TAMP_ALL: All Internal Tamper interrupts
+  *            @arg  RTC_IT_INT_TAMP_3: Internal Tamper3 interrupt
+  *            @arg  RTC_IT_INT_TAMP_5: Internal Tamper5 interrupt
+  *            @arg  RTC_IT_INT_TAMP_6: Internal Tamper6 interrupt
+  *            @arg  RTC_IT_INT_TAMP_8: Internal Tamper8 interrupt
   */
-#define __HAL_RTC_TAMPER_DISABLE(__HANDLE__, __TAMPER__)           ((TAMP->CR1 &= ~(__TAMPER__))
+#define __HAL_RTC_TAMPER_DISABLE(__HANDLE__, __TAMPER__)           (TAMP->CR1 &= ~(__TAMPER__))
 
 
 /**************************************************************************************************/
@@ -893,9 +903,14 @@ typedef struct
   *            @arg  RTC_IT_TAMP_1: Tamper1 interrupt
   *            @arg  RTC_IT_TAMP_2: Tamper2 interrupt
   *            @arg  RTC_IT_TAMP_3: Tamper3 interrupt
+  *            @arg  RTC_IT_INT_TAMP_ALL: All Internal Tamper interrupts
+  *            @arg  RTC_IT_INT_TAMP_3: Internal Tamper3 interrupt
+  *            @arg  RTC_IT_INT_TAMP_5: Internal Tamper5 interrupt
+  *            @arg  RTC_IT_INT_TAMP_6: Internal Tamper6 interrupt
+  *            @arg  RTC_IT_INT_TAMP_8: Internal Tamper8 interrupt
   * @retval None
   */
-#define __HAL_RTC_TAMPER_ENABLE_IT(__HANDLE__, __INTERRUPT__)        ((TAMP->IER |= (__INTERRUPT__))
+#define __HAL_RTC_TAMPER_ENABLE_IT(__HANDLE__, __INTERRUPT__)        (TAMP->IER |= (__INTERRUPT__))
 
 /**
   * @brief  Disable the TAMP Tamper interrupt.
@@ -906,10 +921,14 @@ typedef struct
   *            @arg  RTC_IT_TAMP_1: Tamper1 interrupt
   *            @arg  RTC_IT_TAMP_2: Tamper2 interrupt
   *            @arg  RTC_IT_TAMP_3: Tamper3 interrupt
-
+  *            @arg  RTC_IT_INT_TAMP_ALL: All Internal Tamper interrupts
+  *            @arg  RTC_IT_INT_TAMP_3: Internal Tamper3 interrupt
+  *            @arg  RTC_IT_INT_TAMP_5: Internal Tamper5 interrupt
+  *            @arg  RTC_IT_INT_TAMP_6: Internal Tamper6 interrupt
+  *            @arg  RTC_IT_INT_TAMP_8: Internal Tamper8 interrupt
   * @retval None
   */
-#define __HAL_RTC_TAMPER_DISABLE_IT(__HANDLE__, __INTERRUPT__)       ((TAMP->IER &= ~(__INTERRUPT__))
+#define __HAL_RTC_TAMPER_DISABLE_IT(__HANDLE__, __INTERRUPT__)       (TAMP->IER &= ~(__INTERRUPT__))
 
 
 /**************************************************************************************************/
@@ -929,7 +948,7 @@ typedef struct
   *            @arg  RTC_IT_INT_TAMP_8: Internal Tamper8 interrupt
   * @retval None
   */
-#define __HAL_RTC_TAMPER_GET_IT(__HANDLE__, __INTERRUPT__)     (((((TAMP->MISR) & (__INTERRUPT__)) != 0U) ? 1UL : 0UL)
+#define __HAL_RTC_TAMPER_GET_IT(__HANDLE__, __INTERRUPT__)     ((((TAMP->MISR) & (__INTERRUPT__)) != 0U) ? 1UL : 0UL)
 
 
 /**
@@ -948,7 +967,7 @@ typedef struct
   *            @arg  RTC_IT_INT_TAMP_8: Internal Tamper8 interrupt
   * @retval None
   */
-#define __HAL_RTC_TAMPER_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)    (((((TAMP->IER) & (__INTERRUPT__)) != 0U) ? 1UL : 0UL)
+#define __HAL_RTC_TAMPER_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)    ((((TAMP->IER) & (__INTERRUPT__)) != 0U) ? 1UL : 0UL)
 
 
 /**
@@ -990,13 +1009,13 @@ typedef struct
 #if defined(CORE_CM0PLUS)
 #define __HAL_RTC_TAMPER_EXTI_ENABLE_IT()        (EXTI->C2IMR1 |= RTC_EXTI_LINE_TAMPER_EVENT)
 #define __HAL_RTC_TAMPER_EXTI_DISABLE_IT()       (EXTI->C2IMR1 &= ~(RTC_EXTI_LINE_TAMPER_EVENT))
-#define __HAL_RTC_TAMPER_EXTI_ENABLE_EVENT()    (EXTI->C2EMR1 |= RTC_EXTI_LINE_TAMPER_EVENT)
-#define __HAL_RTC_TAMPER_EXTI_DISABLE_EVENT()   (EXTI->C2EMR1 &= ~(RTC_EXTI_LINE_TAMPER_EVENT))
+#define __HAL_RTC_TAMPER_EXTI_ENABLE_EVENT()     (EXTI->C2EMR1 |= RTC_EXTI_LINE_TAMPER_EVENT)
+#define __HAL_RTC_TAMPER_EXTI_DISABLE_EVENT()    (EXTI->C2EMR1 &= ~(RTC_EXTI_LINE_TAMPER_EVENT))
 #else
 #define __HAL_RTC_TAMPER_EXTI_ENABLE_IT()        (EXTI->IMR1 |= RTC_EXTI_LINE_TAMPER_EVENT)
 #define __HAL_RTC_TAMPER_EXTI_DISABLE_IT()       (EXTI->IMR1 &= ~(RTC_EXTI_LINE_TAMPER_EVENT))
-#define __HAL_RTC_TAMPER_EXTI_ENABLE_EVENT()    (EXTI->EMR1 |= RTC_EXTI_LINE_TAMPER_EVENT)
-#define __HAL_RTC_TAMPER_EXTI_DISABLE_EVENT()   (EXTI->EMR1 &= ~(RTC_EXTI_LINE_TAMPER_EVENT))
+#define __HAL_RTC_TAMPER_EXTI_ENABLE_EVENT()     (EXTI->EMR1 |= RTC_EXTI_LINE_TAMPER_EVENT)
+#define __HAL_RTC_TAMPER_EXTI_DISABLE_EVENT()    (EXTI->EMR1 &= ~(RTC_EXTI_LINE_TAMPER_EVENT))
 #endif
 
 /**
@@ -1037,7 +1056,7 @@ typedef struct
   *            @arg @ref RTC_IT_SSRU  SSRU interrupt
   * @retval None
   */
-#define __HAL_RTC_SSRU_GET_IT(__HANDLE__, __INTERRUPT__)       ((((RTC->MISR) & ((__INTERRUPT__) >> 1) != 0U) ? 1U : 0U)
+#define __HAL_RTC_SSRU_GET_IT(__HANDLE__, __INTERRUPT__)       (((RTC->MISR) & ((__INTERRUPT__) >> 1) != 0U) ? 1U : 0U)
 /**
   * @brief  Check whether the specified RTC Wake Up timer interrupt has been enabled or not.
   * @param  __HANDLE__ specifies the RTC handle.

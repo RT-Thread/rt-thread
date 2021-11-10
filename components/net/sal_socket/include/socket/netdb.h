@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
- * 2108-05-24     ChenYong     Add socket abstraction layer
+ * 2018-05-24     ChenYong     Add socket abstraction layer
  */
 
 #ifndef NETDB_H__
@@ -16,6 +16,7 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
 #include <sal_netdb.h>
 
 struct hostent *gethostbyname(const char *name);

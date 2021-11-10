@@ -650,6 +650,7 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout)
 #if defined(FLASH_SR_OPTVERRUSR)
       __HAL_FLASH_GET_FLAG(FLASH_FLAG_OPTVERRUSR) || 
 #endif /* FLASH_SR_OPTVERRUSR */
+     __HAL_FLASH_GET_FLAG(FLASH_FLAG_SIZERR) || 
      __HAL_FLASH_GET_FLAG(FLASH_FLAG_PGAERR))
   {
     /*Save the error code*/
@@ -700,10 +701,14 @@ static void FLASH_SetErrorCode(void)
     flags |= FLASH_FLAG_OPTVERRUSR;
   }
 #endif /* FLASH_SR_OPTVERRUSR */
-
+  if(__HAL_FLASH_GET_FLAG(FLASH_FLAG_SIZERR))
+  {
+    pFlash.ErrorCode |= HAL_FLASH_ERROR_SIZE;
+    flags |= FLASH_FLAG_SIZERR;
+  }
   /* Clear FLASH error pending bits */
   __HAL_FLASH_CLEAR_FLAG(flags);
-}  
+}
 /**
   * @}
   */

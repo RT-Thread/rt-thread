@@ -78,7 +78,9 @@ static int rti_end(void)
 INIT_EXPORT(rti_end, "6.end");
 
 /**
- * RT-Thread Components Initialization for board
+ * @brief  Onboard components initialization. In this function, the board-level
+ *         initialization function will be called to complete the initialization
+ *         of the on-board peripherals.
  */
 void rt_components_board_init(void)
 {
@@ -102,7 +104,7 @@ void rt_components_board_init(void)
 }
 
 /**
- * RT-Thread Components Initialization
+ * @brief  RT-Thread Components Initialization.
  */
 void rt_components_init(void)
 {
@@ -169,7 +171,11 @@ static rt_uint8_t main_stack[RT_MAIN_THREAD_STACK_SIZE];
 struct rt_thread main_thread;
 #endif /* RT_USING_HEAP */
 
-/* the system main thread */
+/**
+ * @brief  The system main thread. In this thread will call the rt_components_init()
+ *         for initialization of RT-Thread Components and call the user's programming
+ *         entry main().
+ */
 void main_thread_entry(void *parameter)
 {
     extern int main(void);
@@ -193,6 +199,10 @@ void main_thread_entry(void *parameter)
 #endif
 }
 
+/**
+ * @brief  This function will create and start the main thread, but this thread
+ *         will not run until the scheduler starts.
+ */
 void rt_application_init(void)
 {
     rt_thread_t tid;
@@ -216,6 +226,10 @@ void rt_application_init(void)
     rt_thread_startup(tid);
 }
 
+/**
+ * @brief  This function will call all levels of initialization functions to complete
+ *         the initialization of the system, and finally start the scheduler.
+ */
 int rtthread_startup(void)
 {
     rt_hw_interrupt_disable();

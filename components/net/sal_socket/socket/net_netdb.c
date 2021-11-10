@@ -9,6 +9,7 @@
  * 2108-05-24     ChenYong     Add socket abstraction layer
  */
 
+#include <stddef.h>
 #include <rtthread.h>
 
 #include <netdb.h>

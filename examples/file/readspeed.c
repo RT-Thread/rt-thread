@@ -58,7 +58,6 @@ void readspeed(const char* filename, int block_size)
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(readspeed, perform file read test);
 
-#ifdef FINSH_USING_MSH
 static void cmd_readspeed(int argc, char *argv[])
 {
     char* filename;
@@ -82,6 +81,5 @@ static void cmd_readspeed(int argc, char *argv[])
     }
     readspeed(filename, block_size);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_readspeed, __cmd_readspeed, test file system read speed);
-#endif /* FINSH_USING_MSH */
+MSH_CMD_EXPORT_ALIAS(cmd_readspeed, readspeed, test file system read speed);
 #endif /* RT_USING_FINSH */

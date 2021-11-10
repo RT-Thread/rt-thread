@@ -55,8 +55,7 @@ rt_err_t rt_hwcrypto_symmetric_crypt(struct rt_hwcrypto_ctx *ctx, hwcrypto_mode 
     struct hwcrypto_symmetric_info symmetric_info;
     rt_err_t err;
 
-    if ((ctx == RT_NULL) ||
-            (mode != HWCRYPTO_MODE_ENCRYPT && mode != HWCRYPTO_MODE_DECRYPT))
+    if (ctx == RT_NULL)
     {
         return -RT_EINVAL;
     }
@@ -64,6 +63,10 @@ rt_err_t rt_hwcrypto_symmetric_crypt(struct rt_hwcrypto_ctx *ctx, hwcrypto_mode 
     if (symmetric_ctx->ops->crypt == RT_NULL)
     {
         return -RT_ERROR;
+    }
+    if (mode != HWCRYPTO_MODE_ENCRYPT && mode != HWCRYPTO_MODE_DECRYPT)
+    {
+        return -RT_EINVAL;
     }
 
     /* Input information packaging */

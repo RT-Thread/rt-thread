@@ -841,18 +841,15 @@ do {						\
 					 ((y) == TIMER_CHANNEL_3)   || \
 					 ((y) == TIMER_CHANNEL_4))))
 
-#define IS_TIMER_CCXN_INSTANCE(x, y)	((((x) == NULL)          || \
-					 ((x) == NULL))         && \
+#define IS_TIMER_CCXN_INSTANCE(x, y)	((((x) == NULL))           && \
                                          (((y) == TIMER_CHANNEL_1) || \
                                          ((y) == TIMER_CHANNEL_2)  || \
                                          ((y) == TIMER_CHANNEL_3)  || \
                                          ((y) == TIMER_CHANNEL_4)))
 
-#define IS_TIMER_REPETITION_COUNTER_INSTANCE(x)	(((x) == NULL) || \
-                                                 ((x) == NULL))
+#define IS_TIMER_REPETITION_COUNTER_INSTANCE(x)	(((x) == NULL))
 
-#define IS_TIMER_BREAK_INSTANCE(x) (((x) == NULL) || \
-                                    ((x) == NULL))
+#define IS_TIMER_BREAK_INSTANCE(x) (((x) == NULL))
 
 #define IS_TIMER_CLOCK_DIVISION_INSTANCE(x)	IS_TIMER_CC2_INSTANCE(x)
 
@@ -1050,7 +1047,7 @@ void ald_timer_pwm_start(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_pwm_stop(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_pwm_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_pwm_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
-void ald_timer_pwm_set_freq(timer_handle_t *hperh, uint16_t freq);
+void ald_timer_pwm_set_freq(timer_handle_t *hperh, uint32_t freq);
 void ald_timer_pwm_set_duty(timer_handle_t *hperh, timer_channel_t ch, uint16_t duty);
 void ald_timer_pwm_set_input(timer_handle_t *hperh, timer_channel_t ch);
 #ifdef ALD_DMA

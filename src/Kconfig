@@ -8,6 +8,10 @@ config RT_NAME_MAX
         Each kernel object, such as thread, timer, semaphore etc, has a name,
         the RT_NAME_MAX is the maximal size of this object name.
 
+config RT_USING_BIG_ENDIAN
+    bool
+    default n
+
 config RT_USING_ARCH_DATA_TYPE
     bool "Use the data types defined in ARCH_CPU"
     default n
@@ -129,6 +133,10 @@ config RT_KSERVICE_USING_STDLIB
 
 config RT_KSERVICE_USING_TINY_SIZE
     bool "Enable kservice to use tiny size"
+    default n
+
+config RT_USING_ASM_MEMCPY
+    bool
     default n
 
 endmenu
@@ -264,11 +272,18 @@ menu "Memory Management"
         help
             Using static memory fixed partition
 
-    config RT_USING_MEMHEAP
+    menuconfig RT_USING_MEMHEAP
         bool "Using memory heap object"
         default n
-        help
-            Using memory heap object to manage dynamic memory heap.
+
+        if RT_USING_MEMHEAP
+
+            if RT_USING_MEMHEAP_AS_HEAP
+            config RT_USING_MEMHEAP_AUTO_BINDING
+                bool "Use all of memheap objects as heap"
+                default y
+            endif
+        endif
 
     choice
         prompt "Dynamic Memory Management"
@@ -285,7 +300,7 @@ menu "Memory Management"
 
         if RT_USING_MEMHEAP
         config RT_USING_MEMHEAP_AS_HEAP
-            bool "Use all of memheap objects as heap"
+            bool "Use memheap objects as heap"
         endif
 
         config RT_USING_USERHEAP
@@ -352,6 +367,10 @@ menu "Kernel Device Object"
         config RT_CONSOLE_DEVICE_NAME
             string "the device name for console"
             default "uart"
+
+        config RT_PRINTF_LONGLONG
+            bool "rt_kprintf support long long"
+            default n
     endif
 
 endmenu

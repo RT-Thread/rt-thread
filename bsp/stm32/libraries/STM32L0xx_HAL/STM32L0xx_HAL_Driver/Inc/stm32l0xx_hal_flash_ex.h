@@ -239,7 +239,7 @@ typedef struct
 /** @defgroup FLASHEx_Type_Erase FLASHEx_Type_Erase
   * @{
   */
-#define FLASH_TYPEERASE_PAGES           ((uint32_t)0x00U)  /*!<Page erase only*/
+#define FLASH_TYPEERASE_PAGES           (0x00U)  /*!<Page erase only*/
 
 /**
   * @}
@@ -248,11 +248,11 @@ typedef struct
 /** @defgroup FLASHEx_Option_Type FLASHEx Option Type
   * @{
   */
-#define OPTIONBYTE_WRP            ((uint32_t)0x01U)  /*!<WRP option byte configuration*/
-#define OPTIONBYTE_RDP            ((uint32_t)0x02U)  /*!<RDP option byte configuration*/
-#define OPTIONBYTE_USER           ((uint32_t)0x04U)  /*!<USER option byte configuration*/
-#define OPTIONBYTE_BOR            ((uint32_t)0x08U)  /*!<BOR option byte configuration*/
-#define OPTIONBYTE_BOOT_BIT1      ((uint32_t)0x10U)  /*!< BOOT PIN1 option byte configuration*/
+#define OPTIONBYTE_WRP            (0x01U)  /*!<WRP option byte configuration*/
+#define OPTIONBYTE_RDP            (0x02U)  /*!<RDP option byte configuration*/
+#define OPTIONBYTE_USER           (0x04U)  /*!<USER option byte configuration*/
+#define OPTIONBYTE_BOR            (0x08U)  /*!<BOR option byte configuration*/
+#define OPTIONBYTE_BOOT_BIT1      (0x10U)  /*!< BOOT PIN1 option byte configuration*/
 
 /**
   * @}
@@ -261,8 +261,8 @@ typedef struct
 /** @defgroup FLASHEx_WRP_State FLASHEx WRP State
   * @{
   */
-#define OB_WRPSTATE_DISABLE        ((uint32_t)0x00U)  /*!<Disable the write protection of the desired sectors*/
-#define OB_WRPSTATE_ENABLE         ((uint32_t)0x01U)  /*!<Enable the write protection of the desired sectors*/
+#define OB_WRPSTATE_DISABLE        (0x00U)  /*!<Disable the write protection of the desired sectors*/
+#define OB_WRPSTATE_ENABLE         (0x01U)  /*!<Enable the write protection of the desired sectors*/
 
 /**
   * @}
@@ -272,39 +272,39 @@ typedef struct
 /** @defgroup FLASHEx_Option_Bytes_Write_Protection FLASH Option Bytes Write Protection
   * @{
   */
-#define OB_WRP_Pages0to31          ((uint32_t)0x00000001U) /* Write protection of Sector0 */
-#define OB_WRP_Pages32to63         ((uint32_t)0x00000002U) /* Write protection of Sector1 */
-#define OB_WRP_Pages64to95         ((uint32_t)0x00000004U) /* Write protection of Sector2 */
-#define OB_WRP_Pages96to127        ((uint32_t)0x00000008U) /* Write protection of Sector3 */
-#define OB_WRP_Pages128to159       ((uint32_t)0x00000010U) /* Write protection of Sector4 */
-#define OB_WRP_Pages160to191       ((uint32_t)0x00000020U) /* Write protection of Sector5 */
-#define OB_WRP_Pages192to223       ((uint32_t)0x00000040U) /* Write protection of Sector6 */
-#define OB_WRP_Pages224to255       ((uint32_t)0x00000080U) /* Write protection of Sector7 */
-#define OB_WRP_AllPages            ((uint32_t)0x000000FFU) /*!< Write protection of all Sectors */
+#define OB_WRP_Pages0to31          (0x00000001U) /* Write protection of Sector0 */
+#define OB_WRP_Pages32to63         (0x00000002U) /* Write protection of Sector1 */
+#define OB_WRP_Pages64to95         (0x00000004U) /* Write protection of Sector2 */
+#define OB_WRP_Pages96to127        (0x00000008U) /* Write protection of Sector3 */
+#define OB_WRP_Pages128to159       (0x00000010U) /* Write protection of Sector4 */
+#define OB_WRP_Pages160to191       (0x00000020U) /* Write protection of Sector5 */
+#define OB_WRP_Pages192to223       (0x00000040U) /* Write protection of Sector6 */
+#define OB_WRP_Pages224to255       (0x00000080U) /* Write protection of Sector7 */
+#define OB_WRP_AllPages            (0x000000FFU) /*!< Write protection of all Sectors */
 /**
   * @}
   */
-#elif defined (STM32L051xx) || defined (STM32L052xx) || defined (STM32L053xx) || defined (STM32L061xx) || defined (STM32L062xx) || defined (STM32L063xx)
+#elif defined (STM32L051xx) || defined (STM32L052xx) || defined (STM32L053xx) || defined (STM32L062xx) || defined (STM32L063xx)
 /** @defgroup FLASHEx_Option_Bytes_Write_Protection FLASH Option Bytes Write Protection
   * @{
   */
-#define OB_WRP_Pages0to31          ((uint32_t)0x00000001U) /* Write protection of Sector0 */
-#define OB_WRP_Pages32to63         ((uint32_t)0x00000002U) /* Write protection of Sector1 */
-#define OB_WRP_Pages64to95         ((uint32_t)0x00000004U) /* Write protection of Sector2 */
-#define OB_WRP_Pages96to127        ((uint32_t)0x00000008U) /* Write protection of Sector3 */
-#define OB_WRP_Pages128to159       ((uint32_t)0x00000010U) /* Write protection of Sector4 */
-#define OB_WRP_Pages160to191       ((uint32_t)0x00000020U) /* Write protection of Sector5 */
-#define OB_WRP_Pages192to223       ((uint32_t)0x00000040U) /* Write protection of Sector6 */
-#define OB_WRP_Pages224to255       ((uint32_t)0x00000080U) /* Write protection of Sector7 */
-#define OB_WRP_Pages256to287       ((uint32_t)0x00000100U) /* Write protection of Sector8 */
-#define OB_WRP_Pages288to319       ((uint32_t)0x00000200U) /* Write protection of Sector9 */
-#define OB_WRP_Pages320to351       ((uint32_t)0x00000400U) /* Write protection of Sector10 */
-#define OB_WRP_Pages352to383       ((uint32_t)0x00000800U) /* Write protection of Sector11 */
-#define OB_WRP_Pages384to415       ((uint32_t)0x00001000U) /* Write protection of Sector12 */
-#define OB_WRP_Pages416to447       ((uint32_t)0x00002000U) /* Write protection of Sector13 */
-#define OB_WRP_Pages448to479       ((uint32_t)0x00004000U) /* Write protection of Sector14 */
-#define OB_WRP_Pages480to511       ((uint32_t)0x00008000U) /* Write protection of Sector15 */
-#define OB_WRP_AllPages            ((uint32_t)0x0000FFFFU) /*!< Write protection of all Sectors */
+#define OB_WRP_Pages0to31          (0x00000001U) /* Write protection of Sector0 */
+#define OB_WRP_Pages32to63         (0x00000002U) /* Write protection of Sector1 */
+#define OB_WRP_Pages64to95         (0x00000004U) /* Write protection of Sector2 */
+#define OB_WRP_Pages96to127        (0x00000008U) /* Write protection of Sector3 */
+#define OB_WRP_Pages128to159       (0x00000010U) /* Write protection of Sector4 */
+#define OB_WRP_Pages160to191       (0x00000020U) /* Write protection of Sector5 */
+#define OB_WRP_Pages192to223       (0x00000040U) /* Write protection of Sector6 */
+#define OB_WRP_Pages224to255       (0x00000080U) /* Write protection of Sector7 */
+#define OB_WRP_Pages256to287       (0x00000100U) /* Write protection of Sector8 */
+#define OB_WRP_Pages288to319       (0x00000200U) /* Write protection of Sector9 */
+#define OB_WRP_Pages320to351       (0x00000400U) /* Write protection of Sector10 */
+#define OB_WRP_Pages352to383       (0x00000800U) /* Write protection of Sector11 */
+#define OB_WRP_Pages384to415       (0x00001000U) /* Write protection of Sector12 */
+#define OB_WRP_Pages416to447       (0x00002000U) /* Write protection of Sector13 */
+#define OB_WRP_Pages448to479       (0x00004000U) /* Write protection of Sector14 */
+#define OB_WRP_Pages480to511       (0x00008000U) /* Write protection of Sector15 */
+#define OB_WRP_AllPages            (0x0000FFFFU) /*!< Write protection of all Sectors */
 /**
   * @}
   */
@@ -313,39 +313,39 @@ typedef struct
 /** @defgroup FLASHEx_Option_Bytes_Write_Protection FLASH Option Bytes Write ProtectionP
   * @{
   */
-#define OB_WRP_Pages0to31          ((uint32_t)0x00000001U) /* Write protection of Sector0 */
-#define OB_WRP_Pages32to63         ((uint32_t)0x00000002U) /* Write protection of Sector1 */
-#define OB_WRP_Pages64to95         ((uint32_t)0x00000004U) /* Write protection of Sector2 */
-#define OB_WRP_Pages96to127        ((uint32_t)0x00000008U) /* Write protection of Sector3 */
-#define OB_WRP_Pages128to159       ((uint32_t)0x00000010U) /* Write protection of Sector4 */
-#define OB_WRP_Pages160to191       ((uint32_t)0x00000020U) /* Write protection of Sector5 */
-#define OB_WRP_Pages192to223       ((uint32_t)0x00000040U) /* Write protection of Sector6 */
-#define OB_WRP_Pages224to255       ((uint32_t)0x00000080U) /* Write protection of Sector7 */
-#define OB_WRP_Pages256to287       ((uint32_t)0x00000100U) /* Write protection of Sector8 */
-#define OB_WRP_Pages288to319       ((uint32_t)0x00000200U) /* Write protection of Sector9 */
-#define OB_WRP_Pages320to351       ((uint32_t)0x00000400U) /* Write protection of Sector10 */
-#define OB_WRP_Pages352to383       ((uint32_t)0x00000800U) /* Write protection of Sector11 */
-#define OB_WRP_Pages384to415       ((uint32_t)0x00001000U) /* Write protection of Sector12 */
-#define OB_WRP_Pages416to447       ((uint32_t)0x00002000U) /* Write protection of Sector13 */
-#define OB_WRP_Pages448to479       ((uint32_t)0x00004000U) /* Write protection of Sector14 */
-#define OB_WRP_Pages480to511       ((uint32_t)0x00008000U) /* Write protection of Sector15 */
-#define OB_WRP_Pages512to543       ((uint32_t)0x00010000U) /* Write protection of Sector16 */
-#define OB_WRP_Pages544to575       ((uint32_t)0x00020000U) /* Write protection of Sector17 */
-#define OB_WRP_Pages576to607       ((uint32_t)0x00040000U) /* Write protection of Sector18 */
-#define OB_WRP_Pages608to639       ((uint32_t)0x00080000U) /* Write protection of Sector19 */
-#define OB_WRP_Pages640to671       ((uint32_t)0x00100000U) /* Write protection of Sector20 */
-#define OB_WRP_Pages672to703       ((uint32_t)0x00200000U) /* Write protection of Sector21 */
-#define OB_WRP_Pages704to735       ((uint32_t)0x00400000U) /* Write protection of Sector22 */
-#define OB_WRP_Pages736to767       ((uint32_t)0x00800000U) /* Write protection of Sector23 */
-#define OB_WRP_Pages768to799       ((uint32_t)0x01000000U) /* Write protection of Sector24 */
-#define OB_WRP_Pages800to831       ((uint32_t)0x02000000U) /* Write protection of Sector25 */
-#define OB_WRP_Pages832to863       ((uint32_t)0x04000000U) /* Write protection of Sector26 */
-#define OB_WRP_Pages864to895       ((uint32_t)0x08000000U) /* Write protection of Sector27 */
-#define OB_WRP_Pages896to927       ((uint32_t)0x10000000U) /* Write protection of Sector28 */
-#define OB_WRP_Pages928to959       ((uint32_t)0x20000000U) /* Write protection of Sector29 */
-#define OB_WRP_Pages960to991       ((uint32_t)0x40000000U) /* Write protection of Sector30 */
-#define OB_WRP_Pages992to1023      ((uint32_t)0x80000000U) /* Write protection of Sector31 */
-#define OB_WRP_AllPages            ((uint32_t)0xFFFFFFFFU) /*!<Write  protection of all Sectors */
+#define OB_WRP_Pages0to31          (0x00000001U) /* Write protection of Sector0 */
+#define OB_WRP_Pages32to63         (0x00000002U) /* Write protection of Sector1 */
+#define OB_WRP_Pages64to95         (0x00000004U) /* Write protection of Sector2 */
+#define OB_WRP_Pages96to127        (0x00000008U) /* Write protection of Sector3 */
+#define OB_WRP_Pages128to159       (0x00000010U) /* Write protection of Sector4 */
+#define OB_WRP_Pages160to191       (0x00000020U) /* Write protection of Sector5 */
+#define OB_WRP_Pages192to223       (0x00000040U) /* Write protection of Sector6 */
+#define OB_WRP_Pages224to255       (0x00000080U) /* Write protection of Sector7 */
+#define OB_WRP_Pages256to287       (0x00000100U) /* Write protection of Sector8 */
+#define OB_WRP_Pages288to319       (0x00000200U) /* Write protection of Sector9 */
+#define OB_WRP_Pages320to351       (0x00000400U) /* Write protection of Sector10 */
+#define OB_WRP_Pages352to383       (0x00000800U) /* Write protection of Sector11 */
+#define OB_WRP_Pages384to415       (0x00001000U) /* Write protection of Sector12 */
+#define OB_WRP_Pages416to447       (0x00002000U) /* Write protection of Sector13 */
+#define OB_WRP_Pages448to479       (0x00004000U) /* Write protection of Sector14 */
+#define OB_WRP_Pages480to511       (0x00008000U) /* Write protection of Sector15 */
+#define OB_WRP_Pages512to543       (0x00010000U) /* Write protection of Sector16 */
+#define OB_WRP_Pages544to575       (0x00020000U) /* Write protection of Sector17 */
+#define OB_WRP_Pages576to607       (0x00040000U) /* Write protection of Sector18 */
+#define OB_WRP_Pages608to639       (0x00080000U) /* Write protection of Sector19 */
+#define OB_WRP_Pages640to671       (0x00100000U) /* Write protection of Sector20 */
+#define OB_WRP_Pages672to703       (0x00200000U) /* Write protection of Sector21 */
+#define OB_WRP_Pages704to735       (0x00400000U) /* Write protection of Sector22 */
+#define OB_WRP_Pages736to767       (0x00800000U) /* Write protection of Sector23 */
+#define OB_WRP_Pages768to799       (0x01000000U) /* Write protection of Sector24 */
+#define OB_WRP_Pages800to831       (0x02000000U) /* Write protection of Sector25 */
+#define OB_WRP_Pages832to863       (0x04000000U) /* Write protection of Sector26 */
+#define OB_WRP_Pages864to895       (0x08000000U) /* Write protection of Sector27 */
+#define OB_WRP_Pages896to927       (0x10000000U) /* Write protection of Sector28 */
+#define OB_WRP_Pages928to959       (0x20000000U) /* Write protection of Sector29 */
+#define OB_WRP_Pages960to991       (0x40000000U) /* Write protection of Sector30 */
+#define OB_WRP_Pages992to1023      (0x80000000U) /* Write protection of Sector31 */
+#define OB_WRP_AllPages            (0xFFFFFFFFU) /*!<Write  protection of all Sectors */
 /**
   * @}
   */
@@ -353,23 +353,23 @@ typedef struct
 /** @defgroup FLASHEx_Option_Bytes_Write_Protection2 FLASH Option Bytes Write Protection
   * @{
   */
-#define OB_WRP2_Pages1024to1055    ((uint32_t)0x00000001U) /* Write protection of Sector32 */
-#define OB_WRP2_Pages1056to1087    ((uint32_t)0x00000002U) /* Write protection of Sector33 */
-#define OB_WRP2_Pages1088to1119    ((uint32_t)0x00000004U) /* Write protection of Sector34 */
-#define OB_WRP2_Pages1120to1151    ((uint32_t)0x00000008U) /* Write protection of Sector35 */
-#define OB_WRP2_Pages1152to1183    ((uint32_t)0x00000010U) /* Write protection of Sector36 */
-#define OB_WRP2_Pages1184to1215    ((uint32_t)0x00000020U) /* Write protection of Sector37 */
-#define OB_WRP2_Pages1216to1247    ((uint32_t)0x00000040U) /* Write protection of Sector38 */
-#define OB_WRP2_Pages1248to1279    ((uint32_t)0x00000080U) /* Write protection of Sector39 */
-#define OB_WRP2_Pages1280to1311    ((uint32_t)0x00000100U) /* Write protection of Sector40 */
-#define OB_WRP2_Pages1312to1343    ((uint32_t)0x00000200U) /* Write protection of Sector41 */
-#define OB_WRP2_Pages1344to1375    ((uint32_t)0x00000400U) /* Write protection of Sector42 */
-#define OB_WRP2_Pages1376to1407    ((uint32_t)0x00000800U) /* Write protection of Sector43 */
-#define OB_WRP2_Pages1408to1439    ((uint32_t)0x00001000U) /* Write protection of Sector44 */
-#define OB_WRP2_Pages1440to1471    ((uint32_t)0x00002000U) /* Write protection of Sector45 */
-#define OB_WRP2_Pages1472to1503    ((uint32_t)0x00004000U) /* Write protection of Sector46 */
-#define OB_WRP2_Pages1504to1535    ((uint32_t)0x00008000U) /* Write protection of Sector47 */
-#define OB_WRP2_AllPages           ((uint32_t)0x0000FFFFU) /*!< Write protection of all Sectors WRP2 */
+#define OB_WRP2_Pages1024to1055    (0x00000001U) /* Write protection of Sector32 */
+#define OB_WRP2_Pages1056to1087    (0x00000002U) /* Write protection of Sector33 */
+#define OB_WRP2_Pages1088to1119    (0x00000004U) /* Write protection of Sector34 */
+#define OB_WRP2_Pages1120to1151    (0x00000008U) /* Write protection of Sector35 */
+#define OB_WRP2_Pages1152to1183    (0x00000010U) /* Write protection of Sector36 */
+#define OB_WRP2_Pages1184to1215    (0x00000020U) /* Write protection of Sector37 */
+#define OB_WRP2_Pages1216to1247    (0x00000040U) /* Write protection of Sector38 */
+#define OB_WRP2_Pages1248to1279    (0x00000080U) /* Write protection of Sector39 */
+#define OB_WRP2_Pages1280to1311    (0x00000100U) /* Write protection of Sector40 */
+#define OB_WRP2_Pages1312to1343    (0x00000200U) /* Write protection of Sector41 */
+#define OB_WRP2_Pages1344to1375    (0x00000400U) /* Write protection of Sector42 */
+#define OB_WRP2_Pages1376to1407    (0x00000800U) /* Write protection of Sector43 */
+#define OB_WRP2_Pages1408to1439    (0x00001000U) /* Write protection of Sector44 */
+#define OB_WRP2_Pages1440to1471    (0x00002000U) /* Write protection of Sector45 */
+#define OB_WRP2_Pages1472to1503    (0x00004000U) /* Write protection of Sector46 */
+#define OB_WRP2_Pages1504to1535    (0x00008000U) /* Write protection of Sector47 */
+#define OB_WRP2_AllPages           (0x0000FFFFU) /*!< Write protection of all Sectors WRP2 */
 /**
   * @}
   */
@@ -378,9 +378,9 @@ typedef struct
 /** @defgroup FLASHEx_Option_Bytes_Read_Protection FLASHEx Option Bytes Read Protection
   * @{
   */
-#define OB_RDP_LEVEL_0         ((uint8_t)0xAAU)
-#define OB_RDP_LEVEL_1         ((uint8_t)0xBBU)
-#define OB_RDP_LEVEL_2         ((uint8_t)0xCCU) /* Warning: When enabling read protection level 2
+#define OB_RDP_LEVEL_0         ((uint8_t)0xAA)
+#define OB_RDP_LEVEL_1         ((uint8_t)0xBB)
+#define OB_RDP_LEVEL_2         ((uint8_t)0xCC) /* Warning: When enabling read protection level 2
                                                 it is no more possible to go back to level 1 or 0 */
 
 /**
@@ -391,13 +391,13 @@ typedef struct
   * @{
   */
 
-#define OB_BOR_OFF       ((uint8_t)0x00U) /*!< BOR is disabled at power down, the reset is asserted when the VDD
-                                              power supply reaches the PDR(Power Down Reset) threshold (1.5V) */
-#define OB_BOR_LEVEL1    ((uint8_t)0x08U) /*!< BOR Reset threshold levels for 1.7V - 1.8V VDD power supply    */
-#define OB_BOR_LEVEL2    ((uint8_t)0x09U) /*!< BOR Reset threshold levels for 1.9V - 2.0V VDD power supply    */
-#define OB_BOR_LEVEL3    ((uint8_t)0x0AU) /*!< BOR Reset threshold levels for 2.3V - 2.4V VDD power supply    */
-#define OB_BOR_LEVEL4    ((uint8_t)0x0BU) /*!< BOR Reset threshold levels for 2.55V - 2.65V VDD power supply  */
-#define OB_BOR_LEVEL5    ((uint8_t)0x0CU) /*!< BOR Reset threshold levels for 2.8V - 2.9V VDD power supply    */
+#define OB_BOR_OFF       ((uint8_t)0x00) /*!< BOR is disabled at power down, the reset is asserted when the VDD
+                                             power supply reaches the PDR(Power Down Reset) threshold (1.5V) */
+#define OB_BOR_LEVEL1    ((uint8_t)0x08) /*!< BOR Reset threshold levels for 1.7V - 1.8V VDD power supply    */
+#define OB_BOR_LEVEL2    ((uint8_t)0x09) /*!< BOR Reset threshold levels for 1.9V - 2.0V VDD power supply    */
+#define OB_BOR_LEVEL3    ((uint8_t)0x0A) /*!< BOR Reset threshold levels for 2.3V - 2.4V VDD power supply    */
+#define OB_BOR_LEVEL4    ((uint8_t)0x0B) /*!< BOR Reset threshold levels for 2.55V - 2.65V VDD power supply  */
+#define OB_BOR_LEVEL5    ((uint8_t)0x0C) /*!< BOR Reset threshold levels for 2.8V - 2.9V VDD power supply    */
 
 /**
   * @}
@@ -407,8 +407,8 @@ typedef struct
   * @{
   */
 
-#define OB_IWDG_SW                     ((uint8_t)0x10U)  /*!< Software WDG selected */
-#define OB_IWDG_HW                     ((uint8_t)0x00U)  /*!< Hardware WDG selected */
+#define OB_IWDG_SW                     ((uint8_t)0x10)  /*!< Software WDG selected */
+#define OB_IWDG_HW                     ((uint8_t)0x00)  /*!< Hardware WDG selected */
 
 /**
   * @}
@@ -418,8 +418,8 @@ typedef struct
   * @{
   */
 
-#define OB_STOP_NORST                  ((uint8_t)0x20U) /*!< No reset generated when entering in STOP */
-#define OB_STOP_RST                    ((uint8_t)0x00U) /*!< Reset generated when entering in STOP */
+#define OB_STOP_NORST                  ((uint8_t)0x20) /*!< No reset generated when entering in STOP */
+#define OB_STOP_RST                    ((uint8_t)0x00) /*!< Reset generated when entering in STOP */
 /**
   * @}
   */
@@ -428,8 +428,8 @@ typedef struct
   * @{
   */
 
-#define OB_STDBY_NORST                 ((uint8_t)0x40U) /*!< No reset generated when entering in STANDBY */
-#define OB_STDBY_RST                   ((uint8_t)0x00U) /*!< Reset generated when entering in STANDBY */
+#define OB_STDBY_NORST                 ((uint8_t)0x40) /*!< No reset generated when entering in STANDBY */
+#define OB_STDBY_RST                   ((uint8_t)0x00) /*!< Reset generated when entering in STANDBY */
 
 /**
   * @}
@@ -441,7 +441,7 @@ typedef struct
   * @{
   */
 
-#define OPTIONBYTE_PCROP        ((uint32_t)0x01U)  /*!<PCROP option byte configuration*/
+#define OPTIONBYTE_PCROP        (0x01U)  /*!<PCROP option byte configuration*/
 
 /**
   * @}
@@ -455,7 +455,7 @@ typedef struct
   * @{
   */
 
-#define OPTIONBYTE_BOOTCONFIG   ((uint32_t)0x02U)  /*!<BOOTConfig option byte configuration*/
+#define OPTIONBYTE_BOOTCONFIG   (0x02U)  /*!<BOOTConfig option byte configuration*/
 
 /**
   * @}
@@ -468,8 +468,8 @@ typedef struct
 /** @defgroup  FLASHEx_PCROP_State FLASHEx PCROP State
   * @{
   */
-#define OB_PCROP_STATE_DISABLE        ((uint32_t)0x00U)  /*!<Disable PCROP for selected sectors */
-#define OB_PCROP_STATE_ENABLE         ((uint32_t)0x01U)  /*!<Enable PCROP for selected sectors */
+#define OB_PCROP_STATE_DISABLE        (0x00U)  /*!<Disable PCROP for selected sectors */
+#define OB_PCROP_STATE_ENABLE         (0x01U)  /*!<Enable PCROP for selected sectors */
 
 /**
   * @}
@@ -478,7 +478,7 @@ typedef struct
 /** @defgroup  FLASHEx_Selection_Protection_Mode FLASHEx Selection Protection Mode
   * @{
   */
-#define OB_PCROP_DESELECTED     ((uint16_t)0x0000U)            /*!< Disabled PCROP, nWPRi bits used for Write Protection on sector i */
+#define OB_PCROP_DESELECTED     ((uint16_t)0x0000)            /*!< Disabled PCROP, nWPRi bits used for Write Protection on sector i */
 #define OB_PCROP_SELECTED       ((uint16_t)FLASH_OPTR_WPRMOD)  /*!< Enable PCROP, nWPRi bits used for PCRoP Protection on sector i   */
 
 /**
@@ -490,39 +490,39 @@ typedef struct
 /** @defgroup FLASHEx_Option_Bytes_PC_ReadWrite_Protection FLASHEx Option Bytes PC Read/Write Protection
   * @{
   */
-#define OB_PCROP_Pages0to31          ((uint32_t)0x00000001U) /* PC Read/Write protection of Sector0 */
-#define OB_PCROP_Pages32to63         ((uint32_t)0x00000002U) /* PC Read/Write protection of Sector1 */
-#define OB_PCROP_Pages64to95         ((uint32_t)0x00000004U) /* PC Read/Write protection of Sector2 */
-#define OB_PCROP_Pages96to127        ((uint32_t)0x00000008U) /* PC Read/Write protection of Sector3 */
-#define OB_PCROP_Pages128to159       ((uint32_t)0x00000010U) /* PC Read/Write protection of Sector4 */
-#define OB_PCROP_Pages160to191       ((uint32_t)0x00000020U) /* PC Read/Write protection of Sector5 */
-#define OB_PCROP_Pages192to223       ((uint32_t)0x00000040U) /* PC Read/Write protection of Sector6 */
-#define OB_PCROP_Pages224to255       ((uint32_t)0x00000080U) /* PC Read/Write protection of Sector7 */
-#define OB_PCROP_AllPages            ((uint32_t)0x000000FFU) /*!< PC Read/Write protection of all Sectors */
+#define OB_PCROP_Pages0to31          (0x00000001U) /* PC Read/Write protection of Sector0 */
+#define OB_PCROP_Pages32to63         (0x00000002U) /* PC Read/Write protection of Sector1 */
+#define OB_PCROP_Pages64to95         (0x00000004U) /* PC Read/Write protection of Sector2 */
+#define OB_PCROP_Pages96to127        (0x00000008U) /* PC Read/Write protection of Sector3 */
+#define OB_PCROP_Pages128to159       (0x00000010U) /* PC Read/Write protection of Sector4 */
+#define OB_PCROP_Pages160to191       (0x00000020U) /* PC Read/Write protection of Sector5 */
+#define OB_PCROP_Pages192to223       (0x00000040U) /* PC Read/Write protection of Sector6 */
+#define OB_PCROP_Pages224to255       (0x00000080U) /* PC Read/Write protection of Sector7 */
+#define OB_PCROP_AllPages            (0x000000FFU) /*!< PC Read/Write protection of all Sectors */
 /**
   * @}
   */
-#elif defined (STM32L051xx) || defined (STM32L052xx) || defined (STM32L053xx) || defined (STM32L061xx) || defined (STM32L062xx) || defined (STM32L063xx)
+#elif defined (STM32L051xx) || defined (STM32L052xx) || defined (STM32L053xx) || defined (STM32L062xx) || defined (STM32L063xx)
 /** @defgroup FLASHEx_Option_Bytes_PC_ReadWrite_Protection FLASHEx Option Bytes PC Read/Write Protection
   * @{
   */
-#define OB_PCROP_Pages0to31          ((uint32_t)0x00000001U) /* PC Read/Write protection of Sector0 */
-#define OB_PCROP_Pages32to63         ((uint32_t)0x00000002U) /* PC Read/Write protection of Sector1 */
-#define OB_PCROP_Pages64to95         ((uint32_t)0x00000004U) /* PC Read/Write protection of Sector2 */
-#define OB_PCROP_Pages96to127        ((uint32_t)0x00000008U) /* PC Read/Write protection of Sector3 */
-#define OB_PCROP_Pages128to159       ((uint32_t)0x00000010U) /* PC Read/Write protection of Sector4 */
-#define OB_PCROP_Pages160to191       ((uint32_t)0x00000020U) /* PC Read/Write protection of Sector5 */
-#define OB_PCROP_Pages192to223       ((uint32_t)0x00000040U) /* PC Read/Write protection of Sector6 */
-#define OB_PCROP_Pages224to255       ((uint32_t)0x00000080U) /* PC Read/Write protection of Sector7 */
-#define OB_PCROP_Pages256to287       ((uint32_t)0x00000100U) /* PC Read/Write protection of Sector8 */
-#define OB_PCROP_Pages288to319       ((uint32_t)0x00000200U) /* PC Read/Write protection of Sector9 */
-#define OB_PCROP_Pages320to351       ((uint32_t)0x00000400U) /* PC Read/Write protection of Sector10 */
-#define OB_PCROP_Pages352to383       ((uint32_t)0x00000800U) /* PC Read/Write protection of Sector11 */
-#define OB_PCROP_Pages384to415       ((uint32_t)0x00001000U) /* PC Read/Write protection of Sector12 */
-#define OB_PCROP_Pages416to447       ((uint32_t)0x00002000U) /* PC Read/Write protection of Sector13 */
-#define OB_PCROP_Pages448to479       ((uint32_t)0x00004000U) /* PC Read/Write protection of Sector14 */
-#define OB_PCROP_Pages480to511       ((uint32_t)0x00008000U) /* PC Read/Write protection of Sector15 */
-#define OB_PCROP_AllPages            ((uint32_t)0x0000FFFFU) /*!< PC Read/Write protection of all Sectors */
+#define OB_PCROP_Pages0to31          (0x00000001U) /* PC Read/Write protection of Sector0 */
+#define OB_PCROP_Pages32to63         (0x00000002U) /* PC Read/Write protection of Sector1 */
+#define OB_PCROP_Pages64to95         (0x00000004U) /* PC Read/Write protection of Sector2 */
+#define OB_PCROP_Pages96to127        (0x00000008U) /* PC Read/Write protection of Sector3 */
+#define OB_PCROP_Pages128to159       (0x00000010U) /* PC Read/Write protection of Sector4 */
+#define OB_PCROP_Pages160to191       (0x00000020U) /* PC Read/Write protection of Sector5 */
+#define OB_PCROP_Pages192to223       (0x00000040U) /* PC Read/Write protection of Sector6 */
+#define OB_PCROP_Pages224to255       (0x00000080U) /* PC Read/Write protection of Sector7 */
+#define OB_PCROP_Pages256to287       (0x00000100U) /* PC Read/Write protection of Sector8 */
+#define OB_PCROP_Pages288to319       (0x00000200U) /* PC Read/Write protection of Sector9 */
+#define OB_PCROP_Pages320to351       (0x00000400U) /* PC Read/Write protection of Sector10 */
+#define OB_PCROP_Pages352to383       (0x00000800U) /* PC Read/Write protection of Sector11 */
+#define OB_PCROP_Pages384to415       (0x00001000U) /* PC Read/Write protection of Sector12 */
+#define OB_PCROP_Pages416to447       (0x00002000U) /* PC Read/Write protection of Sector13 */
+#define OB_PCROP_Pages448to479       (0x00004000U) /* PC Read/Write protection of Sector14 */
+#define OB_PCROP_Pages480to511       (0x00008000U) /* PC Read/Write protection of Sector15 */
+#define OB_PCROP_AllPages            (0x0000FFFFU) /*!< PC Read/Write protection of all Sectors */
 /**
   * @}
   */
@@ -532,39 +532,39 @@ typedef struct
 /** @defgroup FLASHEx_Option_Bytes_PC_ReadWrite_Protection FLASH Option Bytes PC Read/Write Protection
   * @{
   */
-#define OB_PCROP_Pages0to31          ((uint32_t)0x00000001U) /* PC Read/Write protection of Sector0 */
-#define OB_PCROP_Pages32to63         ((uint32_t)0x00000002U) /* PC Read/Write protection of Sector1 */
-#define OB_PCROP_Pages64to95         ((uint32_t)0x00000004U) /* PC Read/Write protection of Sector2 */
-#define OB_PCROP_Pages96to127        ((uint32_t)0x00000008U) /* PC Read/Write protection of Sector3 */
-#define OB_PCROP_Pages128to159       ((uint32_t)0x00000010U) /* PC Read/Write protection of Sector4 */
-#define OB_PCROP_Pages160to191       ((uint32_t)0x00000020U) /* PC Read/Write protection of Sector5 */
-#define OB_PCROP_Pages192to223       ((uint32_t)0x00000040U) /* PC Read/Write protection of Sector6 */
-#define OB_PCROP_Pages224to255       ((uint32_t)0x00000080U) /* PC Read/Write protection of Sector7 */
-#define OB_PCROP_Pages256to287       ((uint32_t)0x00000100U) /* PC Read/Write protection of Sector8 */
-#define OB_PCROP_Pages288to319       ((uint32_t)0x00000200U) /* PC Read/Write protection of Sector9 */
-#define OB_PCROP_Pages320to351       ((uint32_t)0x00000400U) /* PC Read/Write protection of Sector10 */
-#define OB_PCROP_Pages352to383       ((uint32_t)0x00000800U) /* PC Read/Write protection of Sector11 */
-#define OB_PCROP_Pages384to415       ((uint32_t)0x00001000U) /* PC Read/Write protection of Sector12 */
-#define OB_PCROP_Pages416to447       ((uint32_t)0x00002000U) /* PC Read/Write protection of Sector13 */
-#define OB_PCROP_Pages448to479       ((uint32_t)0x00004000U) /* PC Read/Write protection of Sector14 */
-#define OB_PCROP_Pages480to511       ((uint32_t)0x00008000U) /* PC Read/Write protection of Sector15 */
-#define OB_PCROP_Pages512to543       ((uint32_t)0x00010000U) /* PC Read/Write protection of Sector16 */
-#define OB_PCROP_Pages544to575       ((uint32_t)0x00020000U) /* PC Read/Write protection of Sector17 */
-#define OB_PCROP_Pages576to607       ((uint32_t)0x00040000U) /* PC Read/Write protection of Sector18 */
-#define OB_PCROP_Pages608to639       ((uint32_t)0x00080000U) /* PC Read/Write protection of Sector19 */
-#define OB_PCROP_Pages640to671       ((uint32_t)0x00100000U) /* PC Read/Write protection of Sector20 */
-#define OB_PCROP_Pages672to703       ((uint32_t)0x00200000U) /* PC Read/Write protection of Sector21 */
-#define OB_PCROP_Pages704to735       ((uint32_t)0x00400000U) /* PC Read/Write protection of Sector22 */
-#define OB_PCROP_Pages736to767       ((uint32_t)0x00800000U) /* PC Read/Write protection of Sector23 */
-#define OB_PCROP_Pages768to799       ((uint32_t)0x01000000U) /* PC Read/Write protection of Sector24 */
-#define OB_PCROP_Pages800to831       ((uint32_t)0x02000000U) /* PC Read/Write protection of Sector25 */
-#define OB_PCROP_Pages832to863       ((uint32_t)0x04000000U) /* PC Read/Write protection of Sector26 */
-#define OB_PCROP_Pages864to895       ((uint32_t)0x08000000U) /* PC Read/Write protection of Sector27 */
-#define OB_PCROP_Pages896to927       ((uint32_t)0x10000000U) /* PC Read/Write protection of Sector28 */
-#define OB_PCROP_Pages928to959       ((uint32_t)0x20000000U) /* PC Read/Write protection of Sector29 */
-#define OB_PCROP_Pages960to991       ((uint32_t)0x40000000U) /* PC Read/Write protection of Sector30 */
-#define OB_PCROP_Pages992to1023      ((uint32_t)0x80000000U) /* PC Read/Write protection of Sector31 */
-#define OB_PCROP_AllPages            ((uint32_t)0xFFFFFFFFU) /*!<PC Read/Write  protection of all Sectors */
+#define OB_PCROP_Pages0to31          (0x00000001U) /* PC Read/Write protection of Sector0 */
+#define OB_PCROP_Pages32to63         (0x00000002U) /* PC Read/Write protection of Sector1 */
+#define OB_PCROP_Pages64to95         (0x00000004U) /* PC Read/Write protection of Sector2 */
+#define OB_PCROP_Pages96to127        (0x00000008U) /* PC Read/Write protection of Sector3 */
+#define OB_PCROP_Pages128to159       (0x00000010U) /* PC Read/Write protection of Sector4 */
+#define OB_PCROP_Pages160to191       (0x00000020U) /* PC Read/Write protection of Sector5 */
+#define OB_PCROP_Pages192to223       (0x00000040U) /* PC Read/Write protection of Sector6 */
+#define OB_PCROP_Pages224to255       (0x00000080U) /* PC Read/Write protection of Sector7 */
+#define OB_PCROP_Pages256to287       (0x00000100U) /* PC Read/Write protection of Sector8 */
+#define OB_PCROP_Pages288to319       (0x00000200U) /* PC Read/Write protection of Sector9 */
+#define OB_PCROP_Pages320to351       (0x00000400U) /* PC Read/Write protection of Sector10 */
+#define OB_PCROP_Pages352to383       (0x00000800U) /* PC Read/Write protection of Sector11 */
+#define OB_PCROP_Pages384to415       (0x00001000U) /* PC Read/Write protection of Sector12 */
+#define OB_PCROP_Pages416to447       (0x00002000U) /* PC Read/Write protection of Sector13 */
+#define OB_PCROP_Pages448to479       (0x00004000U) /* PC Read/Write protection of Sector14 */
+#define OB_PCROP_Pages480to511       (0x00008000U) /* PC Read/Write protection of Sector15 */
+#define OB_PCROP_Pages512to543       (0x00010000U) /* PC Read/Write protection of Sector16 */
+#define OB_PCROP_Pages544to575       (0x00020000U) /* PC Read/Write protection of Sector17 */
+#define OB_PCROP_Pages576to607       (0x00040000U) /* PC Read/Write protection of Sector18 */
+#define OB_PCROP_Pages608to639       (0x00080000U) /* PC Read/Write protection of Sector19 */
+#define OB_PCROP_Pages640to671       (0x00100000U) /* PC Read/Write protection of Sector20 */
+#define OB_PCROP_Pages672to703       (0x00200000U) /* PC Read/Write protection of Sector21 */
+#define OB_PCROP_Pages704to735       (0x00400000U) /* PC Read/Write protection of Sector22 */
+#define OB_PCROP_Pages736to767       (0x00800000U) /* PC Read/Write protection of Sector23 */
+#define OB_PCROP_Pages768to799       (0x01000000U) /* PC Read/Write protection of Sector24 */
+#define OB_PCROP_Pages800to831       (0x02000000U) /* PC Read/Write protection of Sector25 */
+#define OB_PCROP_Pages832to863       (0x04000000U) /* PC Read/Write protection of Sector26 */
+#define OB_PCROP_Pages864to895       (0x08000000U) /* PC Read/Write protection of Sector27 */
+#define OB_PCROP_Pages896to927       (0x10000000U) /* PC Read/Write protection of Sector28 */
+#define OB_PCROP_Pages928to959       (0x20000000U) /* PC Read/Write protection of Sector29 */
+#define OB_PCROP_Pages960to991       (0x40000000U) /* PC Read/Write protection of Sector30 */
+#define OB_PCROP_Pages992to1023      (0x80000000U) /* PC Read/Write protection of Sector31 */
+#define OB_PCROP_AllPages            (0xFFFFFFFFU) /*!<PC Read/Write  protection of all Sectors */
 /**
   * @}
   */
@@ -572,23 +572,23 @@ typedef struct
 /** @defgroup FLASHEx_Option_Bytes_PC_ReadWrite_Protection2 FLASH Option Bytes PC Read/Write Protection (Sector 2)
   * @{
   */
-#define OB_PCROP2_Pages1024to1055    ((uint32_t)0x00000001U) /* PC Read/Write protection of Sector32 */
-#define OB_PCROP2_Pages1056to1087    ((uint32_t)0x00000002U) /* PC Read/Write protection of Sector33 */
-#define OB_PCROP2_Pages1088to1119    ((uint32_t)0x00000004U) /* PC Read/Write protection of Sector34 */
-#define OB_PCROP2_Pages1120to1151    ((uint32_t)0x00000008U) /* PC Read/Write protection of Sector35 */
-#define OB_PCROP2_Pages1152to1183    ((uint32_t)0x00000010U) /* PC Read/Write protection of Sector36 */
-#define OB_PCROP2_Pages1184to1215    ((uint32_t)0x00000020U) /* PC Read/Write protection of Sector37 */
-#define OB_PCROP2_Pages1216to1247    ((uint32_t)0x00000040U) /* PC Read/Write protection of Sector38 */
-#define OB_PCROP2_Pages1248to1279    ((uint32_t)0x00000080U) /* PC Read/Write protection of Sector39 */
-#define OB_PCROP2_Pages1280to1311    ((uint32_t)0x00000100U) /* PC Read/Write protection of Sector40 */
-#define OB_PCROP2_Pages1312to1343    ((uint32_t)0x00000200U) /* PC Read/Write protection of Sector41 */
-#define OB_PCROP2_Pages1344to1375    ((uint32_t)0x00000400U) /* PC Read/Write protection of Sector42 */
-#define OB_PCROP2_Pages1376to1407    ((uint32_t)0x00000800U) /* PC Read/Write protection of Sector43 */
-#define OB_PCROP2_Pages1408to1439    ((uint32_t)0x00001000U) /* PC Read/Write protection of Sector44 */
-#define OB_PCROP2_Pages1440to1471    ((uint32_t)0x00002000U) /* PC Read/Write protection of Sector45 */
-#define OB_PCROP2_Pages1472to1503    ((uint32_t)0x00004000U) /* PC Read/Write protection of Sector46 */
-#define OB_PCROP2_Pages1504to1535    ((uint32_t)0x00008000U) /* PC Read/Write protection of Sector47 */
-#define OB_PCROP2_AllPages           ((uint32_t)0x0000FFFFU) /*!< PC Read/Write protection of all Sectors PCROP2 */
+#define OB_PCROP2_Pages1024to1055    (0x00000001U) /* PC Read/Write protection of Sector32 */
+#define OB_PCROP2_Pages1056to1087    (0x00000002U) /* PC Read/Write protection of Sector33 */
+#define OB_PCROP2_Pages1088to1119    (0x00000004U) /* PC Read/Write protection of Sector34 */
+#define OB_PCROP2_Pages1120to1151    (0x00000008U) /* PC Read/Write protection of Sector35 */
+#define OB_PCROP2_Pages1152to1183    (0x00000010U) /* PC Read/Write protection of Sector36 */
+#define OB_PCROP2_Pages1184to1215    (0x00000020U) /* PC Read/Write protection of Sector37 */
+#define OB_PCROP2_Pages1216to1247    (0x00000040U) /* PC Read/Write protection of Sector38 */
+#define OB_PCROP2_Pages1248to1279    (0x00000080U) /* PC Read/Write protection of Sector39 */
+#define OB_PCROP2_Pages1280to1311    (0x00000100U) /* PC Read/Write protection of Sector40 */
+#define OB_PCROP2_Pages1312to1343    (0x00000200U) /* PC Read/Write protection of Sector41 */
+#define OB_PCROP2_Pages1344to1375    (0x00000400U) /* PC Read/Write protection of Sector42 */
+#define OB_PCROP2_Pages1376to1407    (0x00000800U) /* PC Read/Write protection of Sector43 */
+#define OB_PCROP2_Pages1408to1439    (0x00001000U) /* PC Read/Write protection of Sector44 */
+#define OB_PCROP2_Pages1440to1471    (0x00002000U) /* PC Read/Write protection of Sector45 */
+#define OB_PCROP2_Pages1472to1503    (0x00004000U) /* PC Read/Write protection of Sector46 */
+#define OB_PCROP2_Pages1504to1535    (0x00008000U) /* PC Read/Write protection of Sector47 */
+#define OB_PCROP2_AllPages           (0x0000FFFFU) /*!< PC Read/Write protection of all Sectors PCROP2 */
 /**
   * @}
   */
@@ -597,8 +597,8 @@ typedef struct
 /** @defgroup FLASHEx_Option_Bytes_BOOTBit1 FLASH Option Bytes BOOT Bit1 Setup
   * @{
   */
-#define OB_BOOT_BIT1_RESET      (uint8_t)(0x00U) /*!< BOOT Bit 1 Reset */
-#define OB_BOOT_BIT1_SET        (uint8_t)(0x01U) /*!< BOOT Bit 1 Set */
+#define OB_BOOT_BIT1_RESET      (uint8_t)(0x00) /*!< BOOT Bit 1 Reset */
+#define OB_BOOT_BIT1_SET        (uint8_t)(0x01) /*!< BOOT Bit 1 Set */
 /**
   * @}
   */
@@ -606,9 +606,9 @@ typedef struct
 /** @defgroup FLASHEx_Type_Program_Data FLASHEx Type Program Data
   * @{
   */
-#define FLASH_TYPEPROGRAMDATA_BYTE            ((uint32_t)0x00U)  /*!<Program byte (8-bit) at a specified address.*/
-#define FLASH_TYPEPROGRAMDATA_HALFWORD        ((uint32_t)0x01U)  /*!<Program a half-word (16-bit) at a specified address.*/
-#define FLASH_TYPEPROGRAMDATA_WORD            ((uint32_t)0x02U)  /*!<Program a word (32-bit) at a specified address.*/
+#define FLASH_TYPEPROGRAMDATA_BYTE            (0x00U)  /*!<Program byte (8-bit) at a specified address.*/
+#define FLASH_TYPEPROGRAMDATA_HALFWORD        (0x01U)  /*!<Program a half-word (16-bit) at a specified address.*/
+#define FLASH_TYPEPROGRAMDATA_WORD            (0x02U)  /*!<Program a word (32-bit) at a specified address.*/
 
 /**
   * @}
@@ -620,7 +620,7 @@ typedef struct
   * @{
   */
 
-#define OB_BOOT_BANK1                 ((uint8_t)0x00U) /*!<  At startup, if boot pin 0 and BOOT1 bit are set in boot from user Flash position
+#define OB_BOOT_BANK1                 ((uint8_t)0x00) /*!<  At startup, if boot pin 0 and BOOT1 bit are set in boot from user Flash position
                                                             and this parameter is selected the device will boot from Bank 1 (Default)*/
 #define OB_BOOT_BANK2                 ((uint8_t)(FLASH_OPTR_BFB2 >> 16)) /*!< At startup, if boot pin 0 and BOOT1 bit are set in boot from user Flash position
                                                             and this parameter is selected the device will boot from Bank 2 */

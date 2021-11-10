@@ -29,6 +29,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal_def.h"
 
+#if defined (MDIOS)
+
 /** @addtogroup STM32H7xx_HAL_Driver
   * @{
   */
@@ -597,6 +599,7 @@ HAL_MDIOS_StateTypeDef HAL_MDIOS_GetState(MDIOS_HandleTypeDef *hmdios);
   * @}
   */
 
+#endif /* MDIOS */
 
 #ifdef __cplusplus
 }
