@@ -67,6 +67,8 @@
 #define HAL_OPAMP_MODULE_ENABLED
 #define HAL_OSPI_MODULE_ENABLED
 #define HAL_PCD_MODULE_ENABLED
+#define HAL_PKA_MODULE_ENABLED
+#define HAL_PSSI_MODULE_ENABLED
 #define HAL_PWR_MODULE_ENABLED
 #define HAL_QSPI_MODULE_ENABLED
 #define HAL_RCC_MODULE_ENABLED
@@ -124,7 +126,7 @@
   *        When the CRS is not used, the HSI48 RC oscillator runs on it default frequency
   *        which is subject to manufacturing process variations.
   */
-#if !defined  (HSI48_VALUE) 
+#if !defined  (HSI48_VALUE)
   #define HSI48_VALUE   48000000U             /*!< Value of the Internal High Speed oscillator for USB FS/SDMMC/RNG in Hz.
                                                The real value my vary depending on manufacturing process variations.*/
 #endif /* HSI48_VALUE */
@@ -132,7 +134,7 @@
 /**
   * @brief Internal Low Speed oscillator (LSI) value.
   */
-#if !defined  (LSI_VALUE) 
+#if !defined  (LSI_VALUE)
   #define LSI_VALUE  32000U                 /*!< LSI Typical Value in Hz*/
 #endif /* LSI_VALUE */                      /*!< Value of the Internal Low Speed oscillator in Hz
                                               The real value may vary depending on the variations
@@ -151,7 +153,7 @@
 
 /**
   * @brief External clock source for SAI1 peripheral
-  *        This value is used by the RCC HAL module to compute the SAI1 & SAI2 clock source 
+  *        This value is used by the RCC HAL module to compute the SAI1 & SAI2 clock source
   *        frequency.
   */
 #if !defined  (EXTERNAL_SAI1_CLOCK_VALUE)
@@ -160,7 +162,7 @@
 
 /**
   * @brief External clock source for SAI2 peripheral
-  *        This value is used by the RCC HAL module to compute the SAI1 & SAI2 clock source 
+  *        This value is used by the RCC HAL module to compute the SAI1 & SAI2 clock source
   *        frequency.
   */
 #if !defined  (EXTERNAL_SAI2_CLOCK_VALUE)
@@ -379,6 +381,14 @@
   #include "stm32l4xx_hal_pcd.h"
 #endif /* HAL_PCD_MODULE_ENABLED */
 
+#ifdef HAL_PKA_MODULE_ENABLED
+  #include "stm32l4xx_hal_pka.h"
+#endif /* HAL_PKA_MODULE_ENABLED */
+
+#ifdef HAL_PSSI_MODULE_ENABLED
+  #include "stm32l4xx_hal_pssi.h"
+#endif /* HAL_PSSI_MODULE_ENABLED */
+
 #ifdef HAL_PWR_MODULE_ENABLED
   #include "stm32l4xx_hal_pwr.h"
 #endif /* HAL_PWR_MODULE_ENABLED */
@@ -447,7 +457,7 @@
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  The assert_param macro is used for function's parameters check.
-  * @param  expr: If expr is false, it calls assert_failed function
+  * @param  expr If expr is false, it calls assert_failed function
   *         which reports the name of the source file and the source
   *         line number of the call that failed.
   *         If expr is true, it returns no value.

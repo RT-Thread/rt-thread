@@ -105,7 +105,9 @@ typedef struct
   */
 #define PWR_LOWPOWERMODE_STOP0              (0x00000000u)                         /*!< Stop 0: stop mode with main regulator */
 #define PWR_LOWPOWERMODE_STOP1              (PWR_CR1_LPMS_0)                      /*!< Stop 1: stop mode with low power regulator */
+#if defined(PWR_SUPPORT_STOP2)
 #define PWR_LOWPOWERMODE_STOP2              (PWR_CR1_LPMS_1)                      /*!< Stop 2: stop mode with low power regulator and VDD12I interruptible digital core domain supply OFF (less peripherals activated than low power mode stop 1 to reduce power consumption)*/
+#endif
 #define PWR_LOWPOWERMODE_STANDBY            (PWR_CR1_LPMS_0 | PWR_CR1_LPMS_1)     /*!< Standby mode */
 #define PWR_LOWPOWERMODE_SHUTDOWN           (PWR_CR1_LPMS_2)                      /*!< Shutdown mode */
 /**

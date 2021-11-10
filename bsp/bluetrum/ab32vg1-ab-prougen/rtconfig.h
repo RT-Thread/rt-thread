@@ -61,16 +61,17 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define RT_USING_MSH
+#define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 2048
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 2048
 #define FINSH_CMD_SIZE 80
-#define FINSH_USING_MSH
-#define FINSH_USING_MSH_DEFAULT
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -90,8 +91,8 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
-#define RT_LIBC_FIXED_TIMEZONE 8
+#define RT_LIBC_USING_TIME
+#define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* Network */
 
@@ -140,6 +141,11 @@
 
 /* multimedia packages */
 
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+
+/* u8g2: a monochrome graphic library */
+
 
 /* tools packages */
 
@@ -154,12 +160,13 @@
 
 /* peripheral libraries and drivers */
 
+#define PKG_USING_BLUETRUM_SDK
+#define PKG_USING_BLUETRUM_SDK_LATEST_VERSION
 
 /* AI packages */
 
 
 /* miscellaneous packages */
-
 
 /* samples: kernel and components samples */
 
@@ -169,6 +176,8 @@
 
 /* Hardware Drivers Config */
 
+#define SOC_AB32VG1
+
 /* Onboard Peripheral Drivers */
 
 
@@ -176,6 +185,7 @@
 
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_UART0_FIFO_SIZE 10
 
 /* Board extended module Drivers */
 

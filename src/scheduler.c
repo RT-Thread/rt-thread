@@ -23,7 +23,7 @@
  * 2013-12-21     Grissiom     add rt_critical_level
  * 2018-11-22     Jesven       remove the current task from ready queue
  *                             add per cpu ready queue
- *                             add _get_highest_priority_thread to find highest priority task
+ *                             add _scheduler_get_highest_priority_thread to find highest priority task
  *                             rt_schedule_insert_thread won't insert current task to ready queue
  *                             in smp version, rt_hw_context_switch_interrupt maybe switch to
  *                               new task directly
@@ -58,19 +58,23 @@ static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
 /**@{*/
 
 /**
- * This function will set a hook function, which will be invoked when thread
- * switch happens.
+ * @brief This function will set a hook function, which will be invoked when thread
+ *        switch happens.
  *
- * @param hook the hook function
+ * @param hook is the hook function.
  */
-void
-rt_scheduler_sethook(void (*hook)(struct rt_thread *from, struct rt_thread *to))
+void rt_scheduler_sethook(void (*hook)(struct rt_thread *from, struct rt_thread *to))
 {
     rt_scheduler_hook = hook;
 }
 
-void
-rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
+/**
+ * @brief This function will set a hook function, which will be invoked when context
+ *        switch happens.
+ *
+ * @param hook is the hook function.
+ */
+void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 {
     rt_scheduler_switch_hook = hook;
 }
@@ -119,7 +123,7 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
  * get the highest priority thread in ready queue
  */
 #ifdef RT_USING_SMP
-static struct rt_thread* _get_highest_priority_thread(rt_ubase_t *highest_prio)
+static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
     register struct rt_thread *highest_priority_thread;
     register rt_ubase_t highest_ready_priority, local_highest_ready_priority;
@@ -155,7 +159,7 @@ static struct rt_thread* _get_highest_priority_thread(rt_ubase_t *highest_prio)
     return highest_priority_thread;
 }
 #else
-static struct rt_thread* _get_highest_priority_thread(rt_ubase_t *highest_prio)
+static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
     register struct rt_thread *highest_priority_thread;
     register rt_ubase_t highest_ready_priority;
@@ -181,8 +185,7 @@ static struct rt_thread* _get_highest_priority_thread(rt_ubase_t *highest_prio)
 #endif /* RT_USING_SMP */
 
 /**
- * @ingroup SystemInit
- * This function will initialize the system scheduler
+ * @brief This function will initialize the system scheduler.
  */
 void rt_system_scheduler_init(void)
 {
@@ -232,16 +235,15 @@ void rt_system_scheduler_init(void)
 }
 
 /**
- * @ingroup SystemInit
- * This function will startup scheduler. It will select one thread
- * with the highest priority level, then switch to it.
+ * @brief This function will startup the scheduler. It will select one thread
+ *        with the highest priority level, then switch to it.
  */
 void rt_system_scheduler_start(void)
 {
     register struct rt_thread *to_thread;
     rt_ubase_t highest_ready_priority;
 
-    to_thread = _get_highest_priority_thread(&highest_ready_priority);
+    to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
 
 #ifdef RT_USING_SMP
     to_thread->oncpu = rt_hw_cpu_id();
@@ -271,12 +273,13 @@ void rt_system_scheduler_start(void)
 
 #ifdef RT_USING_SMP
 /**
- * This function will handle IPI interrupt and do a scheduling in system;
+ * @brief This function will handle IPI interrupt and do a scheduling in system.
  *
- * @param vector, the number of IPI interrupt for system scheduling
- * @param param, use RT_NULL
+ * @param vector is the number of IPI interrupt for system scheduling.
  *
- * NOTE: this function should be invoke or register as ISR in BSP.
+ * @param param is not used, and can be set to RT_NULL.
+ *
+ * @note this function should be invoke or register as ISR in BSP.
  */
 void rt_scheduler_ipi_handler(int vector, void *param)
 {
@@ -284,9 +287,9 @@ void rt_scheduler_ipi_handler(int vector, void *param)
 }
 
 /**
- * This function will perform one scheduling. It will select one thread
- * with the highest priority level in global ready queue or local ready queue,
- * then switch to it.
+ * @brief This function will perform one scheduling. It will select one thread
+ *        with the highest priority level in global ready queue or local ready queue,
+ *        then switch to it.
  */
 void rt_schedule(void)
 {
@@ -329,7 +332,7 @@ void rt_schedule(void)
 
         if (rt_thread_ready_priority_group != 0 || pcpu->priority_group != 0)
         {
-            to_thread = _get_highest_priority_thread(&highest_ready_priority);
+            to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
             current_thread->oncpu = RT_CPU_DETACHED;
             if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
@@ -407,8 +410,8 @@ __exit:
 }
 #else
 /**
- * This function will perform one schedule. It will select one thread
- * with the highest priority level, and switch to it immediately.
+ * @brief This function will perform scheduling once. It will select one thread
+ *        with the highest priority, and switch to it immediately.
  */
 void rt_schedule(void)
 {
@@ -429,7 +432,7 @@ void rt_schedule(void)
             /* need_insert_from_thread: need to insert from_thread to ready queue */
             int need_insert_from_thread = 0;
 
-            to_thread = _get_highest_priority_thread(&highest_ready_priority);
+            to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
 
             if ((rt_current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
@@ -536,9 +539,9 @@ __exit:
 #endif /* RT_USING_SMP */
 
 /**
- * This function checks if a scheduling is needed after IRQ context. If yes,
- * it will select one thread with the highest priority level, and then switch
- * to it.
+ * @brief This function checks whether a scheduling is needed after an IRQ context switching. If yes,
+ *        it will select one thread with the highest priority level, and then switch
+ *        to it.
  */
 #ifdef RT_USING_SMP
 void rt_scheduler_do_irq_switch(void *context)
@@ -582,7 +585,7 @@ void rt_scheduler_do_irq_switch(void *context)
 
         if (rt_thread_ready_priority_group != 0 || pcpu->priority_group != 0)
         {
-            to_thread = _get_highest_priority_thread(&highest_ready_priority);
+            to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
             current_thread->oncpu = RT_CPU_DETACHED;
             if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
@@ -631,12 +634,13 @@ void rt_scheduler_do_irq_switch(void *context)
 }
 #endif /* RT_USING_SMP */
 
-/*
- * This function will insert a thread to system ready queue. The state of
- * thread will be set as READY and remove from suspend queue.
+/**
+ * @brief This function will insert a thread to the system ready queue. The state of
+ *        thread will be set as READY and the thread will be removed from suspend queue.
  *
- * @param thread the thread to be inserted
- * @note Please do not invoke this function in user application.
+ * @param thread is the thread to be inserted.
+ *
+ * @note  Please do not invoke this function in user application.
  */
 #ifdef RT_USING_SMP
 void rt_schedule_insert_thread(struct rt_thread *thread)
@@ -741,12 +745,12 @@ __exit:
 }
 #endif /* RT_USING_SMP */
 
-/*
- * This function will remove a thread from system ready queue.
+/**
+ * @brief This function will remove a thread from system ready queue.
  *
- * @param thread the thread to be removed
+ * @param thread is the thread to be removed.
  *
- * @note Please do not invoke this function in user application.
+ * @note  Please do not invoke this function in user application.
  */
 #ifdef RT_USING_SMP
 void rt_schedule_remove_thread(struct rt_thread *thread)
@@ -835,7 +839,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
 #endif /* RT_USING_SMP */
 
 /**
- * This function will lock the thread scheduler.
+ * @brief This function will lock the thread scheduler.
  */
 #ifdef RT_USING_SMP
 void rt_enter_critical(void)
@@ -897,7 +901,7 @@ void rt_enter_critical(void)
 RTM_EXPORT(rt_enter_critical);
 
 /**
- * This function will unlock the thread scheduler.
+ * @brief This function will unlock the thread scheduler.
  */
 #ifdef RT_USING_SMP
 void rt_exit_critical(void)
@@ -971,7 +975,7 @@ void rt_exit_critical(void)
 RTM_EXPORT(rt_exit_critical);
 
 /**
- * Get the scheduler lock level
+ * @brief Get the scheduler lock level.
  *
  * @return the level of the scheduler lock. 0 means unlocked.
  */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,6 +20,8 @@
 #include <spi.h>
 #include <drv_io_config.h>
 #include <rthw.h>
+#include "dmalock.h"
+#include "sleep.h"
 
 #define DBG_TAG  "LCD"
 #define DBG_LVL  DBG_WARNING
@@ -102,22 +104,19 @@
 #define DIGITAL_GAMMA_CTL2      0xE3
 #define INTERFACE_CTL           0xF6
 
-typedef enum _lcd_dir
-{
-    DIR_XY_RLUD = 0x00,
-    DIR_YX_RLUD = 0x20,
-    DIR_XY_LRUD = 0x40,
-    DIR_YX_LRUD = 0x60,
-    DIR_XY_RLDU = 0x80,
-    DIR_YX_RLDU = 0xA0,
-    DIR_XY_LRDU = 0xC0,
-    DIR_YX_LRDU = 0xE0,
-    DIR_XY_MASK = 0x20,
-    DIR_MASK = 0xE0,
-} lcd_dir_t;
-
 #define LCD_SPI_CHANNEL             SPI_DEVICE_0
 #define LCD_SPI_CHIP_SELECT         SPI_CHIP_SELECT_0
+
+#if     defined(BSP_BOARD_K210_OPENMV_TEST)
+#define LCD_SCAN_DIR           DIR_YX_LRUD
+#elif   defined(BSP_BOARD_K210_DRACO)
+#define LCD_SCAN_DIR           DIR_YX_LRUD
+#elif   defined(BSP_BOARD_KD233)
+#define LCD_SCAN_DIR           (DIR_YX_RLUD | 0x08)
+#elif   defined(BSP_BOARD_USER)
+/*user define.*/
+#define LCD_SCAN_DIR           DIR_YX_RLUD
+#endif
 
 typedef struct lcd_8080_device
 {
@@ -126,8 +125,16 @@ typedef struct lcd_8080_device
     int spi_channel;
     int cs;
     int dc_pin;
+#if BSP_LCD_RST_PIN >= 0
+    int rst_pin;
+#endif
+#if BSP_LCD_BACKLIGHT_PIN >= 0
+    int backlight_pin;
+#endif
     int dma_channel;
 } * lcd_8080_device_t;
+
+static struct lcd_8080_device _lcddev;
 
 static void drv_lcd_cmd(lcd_8080_device_t lcd, rt_uint8_t cmd)
 {
@@ -167,17 +174,36 @@ static void drv_lcd_data_word(lcd_8080_device_t lcd, rt_uint32_t *data_buf, rt_u
 
 static void drv_lcd_hw_init(lcd_8080_device_t lcd)
 {
+#if BSP_LCD_RST_PIN >= 0
+    {
+        gpiohs_set_drive_mode(lcd->rst_pin, GPIO_DM_OUTPUT);
+        gpiohs_set_pin(lcd->rst_pin, GPIO_PV_LOW);
+        msleep(20);
+        gpiohs_set_pin(lcd->rst_pin, GPIO_PV_HIGH);
+        msleep(20);
+    }
+#endif
+#if BSP_LCD_BACKLIGHT_PIN >= 0
+    {
+        gpiohs_set_drive_mode(lcd->backlight_pin, GPIO_DM_OUTPUT);
+#if defined(BSP_LCD_BACKLIGHT_ACTIVE_LOW)
+        gpiohs_set_pin(lcd->backlight_pin, GPIO_PV_LOW);
+#elif defined(BSP_LCD_BACKLIGHT_ACTIVE_HIGH)
+        gpiohs_set_pin(lcd->backlight_pin, GPIO_PV_HIGH);
+#else
+        gpiohs_set_pin(lcd->backlight_pin, GPIO_PV_LOW);
+#endif
+    }
+#endif
+
     gpiohs_set_drive_mode(lcd->dc_pin, GPIO_DM_OUTPUT);
     gpiohs_set_pin(lcd->dc_pin, GPIO_PV_HIGH);
     spi_init(lcd->spi_channel, SPI_WORK_MODE_0, SPI_FF_OCTAL, 8, 0);
-    spi_set_clk_rate(lcd->spi_channel, 25000000);
+    spi_set_clk_rate(lcd->spi_channel, BSP_LCD_CLK_FREQ);
 }
 
 static void drv_lcd_set_direction(lcd_8080_device_t lcd, lcd_dir_t dir)
 {
-#if !BOARD_LICHEEDAN
-    dir |= 0x08;
-#endif
     if (dir & DIR_XY_MASK)
     {
         lcd->lcd_info.width = BSP_LCD_Y_MAX;
@@ -233,7 +259,7 @@ static void drv_lcd_clear(lcd_8080_device_t lcd, uint16_t color)
 }
 
 static void rt_bitblt(rt_uint16_t * dest, int dest_segment, int dest_common, int dest_x, int dest_y, int width, int height,
-        rt_uint16_t *src, int src_segment, int src_common, int src_x, int src_y) 
+        rt_uint16_t *src, int src_segment, int src_common, int src_x, int src_y)
 {
     int sx0, sx1, sy0, sy1;
     int dx0, dx1, dy0, dy1;
@@ -345,14 +371,14 @@ static void drv_lcd_rect_update(lcd_8080_device_t lcd, uint16_t x1, uint16_t y1,
     if(x1 == 0 && y1 == 0 && width == lcd->lcd_info.width && height == lcd->lcd_info.height)
     {
         drv_lcd_set_area(lcd, x1, y1, x1 + width - 1, y1 + height - 1);
-        drv_lcd_data_word(lcd, (rt_uint32_t *)lcd->lcd_info.framebuffer, width * height / (lcd->lcd_info.bits_per_pixel / 8));
+        drv_lcd_data_half_word(lcd, (rt_uint32_t *)lcd->lcd_info.framebuffer, width * height);
     }
     else
     {
         rt_bitblt(rect_buffer, width, height, 0, 0, width, height,
         (rt_uint16_t *)lcd->lcd_info.framebuffer, lcd->lcd_info.width, lcd->lcd_info.height, x1, y1);
         drv_lcd_set_area(lcd, x1, y1, x1 + width - 1, y1 + height - 1);
-        drv_lcd_data_word(lcd, (rt_uint32_t *)rect_buffer, width * height / 2);
+        drv_lcd_data_half_word(lcd, (rt_uint16_t *)rect_buffer, width * height);
     }
 }
 
@@ -381,16 +407,23 @@ static rt_err_t drv_lcd_init(rt_device_t dev)
     drv_lcd_data_byte(lcd, &data, 1);
 
     /* set direction */
-    drv_lcd_set_direction(lcd, DIR_YX_RLUD);
+    drv_lcd_set_direction(lcd, LCD_SCAN_DIR);
 
     lcd->lcd_info.framebuffer = rt_malloc_align(lcd->lcd_info.height * lcd->lcd_info.width * (lcd->lcd_info.bits_per_pixel / 8), 64);
     RT_ASSERT(lcd->lcd_info.framebuffer);
 
+    uint16_t *framebuffer = (uint16_t *)(lcd->lcd_info.framebuffer);
+    for(uint32_t i=0; i<(lcd->lcd_info.height * lcd->lcd_info.width * (lcd->lcd_info.bits_per_pixel / 8))/2; i++) {
+        framebuffer[i] = BLACK;
+    }
     /*display on*/
+    #ifdef BSP_BOARD_K210_DRACO
+    drv_lcd_cmd(lcd, INVERSION_DISPALY_ON);
+    #endif
     drv_lcd_cmd(lcd, DISPALY_ON);
 
     /* set to black */
-    drv_lcd_clear(lcd, 0x0000);
+    drv_lcd_clear(lcd, BLACK);
     return ret;
 }
 
@@ -412,7 +445,7 @@ static rt_err_t drv_lcd_close(rt_device_t dev)
 
 static rt_size_t drv_lcd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    
+
     /* Not need */
 
     return 0;
@@ -420,7 +453,7 @@ static rt_size_t drv_lcd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_si
 
 static rt_size_t drv_lcd_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    
+
     /* Not need */
 
     return 0;
@@ -446,15 +479,27 @@ static rt_err_t drv_lcd_control(rt_device_t dev, int cmd, void *args)
         drv_lcd_rect_update(lcd, rect_info->x, rect_info->y, rect_info->width, rect_info->height);
         break;
 
+#if BSP_LCD_BACKLIGHT_PIN >= 0
     case RTGRAPHIC_CTRL_POWERON:
-        /* Todo: power on */
-        ret = -RT_ENOSYS;
+#if defined(BSP_LCD_BACKLIGHT_ACTIVE_LOW)
+        gpiohs_set_pin(lcd->backlight_pin, GPIO_PV_LOW);
+#elif defined(BSP_LCD_BACKLIGHT_ACTIVE_HIGH)
+        gpiohs_set_pin(lcd->backlight_pin, GPIO_PV_HIGH);
+#else
+        gpiohs_set_pin(lcd->backlight_pin, GPIO_PV_LOW);
+#endif
         break;
 
     case RTGRAPHIC_CTRL_POWEROFF:
-        /* Todo: power off */
-        ret = -RT_ENOSYS;
+#if defined(BSP_LCD_BACKLIGHT_ACTIVE_LOW)
+        gpiohs_set_pin(lcd->backlight_pin, GPIO_PV_HIGH);
+#elif defined(BSP_LCD_BACKLIGHT_ACTIVE_HIGH)
+        gpiohs_set_pin(lcd->backlight_pin, GPIO_PV_LOW);
+#else
+        gpiohs_set_pin(lcd->backlight_pin, GPIO_PV_HIGH);
+#endif
         break;
+#endif /* BSP_LCD_BACKLIGHT_PIN >= 0 */
 
     case RTGRAPHIC_CTRL_GET_INFO:
         *(struct rt_device_graphic_info *)args = lcd->lcd_info;
@@ -490,15 +535,17 @@ const static struct rt_device_ops drv_lcd_ops =
 int rt_hw_lcd_init(void)
 {
     rt_err_t ret = RT_EOK;
-    lcd_8080_device_t lcd_dev = (lcd_8080_device_t)rt_malloc(sizeof(struct lcd_8080_device));
-    if(!lcd_dev)
-    {
-        return -1;
-    }
+    lcd_8080_device_t lcd_dev = &_lcddev;
 
     lcd_dev->cs                         = SPI_CHIP_SELECT_0;
     lcd_dev->dc_pin                     = LCD_DC_PIN;
-    lcd_dev->dma_channel                = DMAC_CHANNEL0;
+#if BSP_LCD_RST_PIN >= 0
+    lcd_dev->rst_pin                    = LCD_RST_PIN;
+#endif
+#if BSP_LCD_BACKLIGHT_PIN >= 0
+    lcd_dev->backlight_pin              = LCD_BACKLIGHT_PIN;
+#endif
+    dmalock_sync_take(&lcd_dev->dma_channel, RT_WAITING_FOREVER);
     lcd_dev->spi_channel                = SPI_DEVICE_0;
     lcd_dev->lcd_info.bits_per_pixel    = 16;
     lcd_dev->lcd_info.pixel_format      = RTGRAPHIC_PIXEL_FORMAT_RGB565;
@@ -525,5 +572,10 @@ int rt_hw_lcd_init(void)
     return ret;
 }
 INIT_DEVICE_EXPORT(rt_hw_lcd_init);
+
+void lcd_set_direction(lcd_dir_t dir)
+{
+    drv_lcd_set_direction(&_lcddev, dir);
+}
 
 #endif

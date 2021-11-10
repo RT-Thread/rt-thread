@@ -99,6 +99,7 @@
 static void can_rx_fifo_release(can_handle_t *hperh, can_rx_fifo_t num);
 static ald_status_t __can_send_by_it(can_handle_t *hperh, uint8_t err);
 static ald_status_t __can_recv_by_it(can_handle_t *hperh, can_rx_fifo_t num);
+static int __can_rx_check(can_handle_t *hperh, can_rx_fifo_t num);
 /**
   * @}
   */
@@ -138,7 +139,7 @@ ald_status_t ald_can_init(can_handle_t *hperh)
 	assert_param(IS_FUNC_STATE(hperh->init.ttcm));
 	assert_param(IS_FUNC_STATE(hperh->init.abom));
 	assert_param(IS_FUNC_STATE(hperh->init.awk));
-	assert_param(IS_FUNC_STATE(hperh->init.abom));
+	assert_param(IS_FUNC_STATE(hperh->init.artx));
 	assert_param(IS_FUNC_STATE(hperh->init.rfom));
 	assert_param(IS_FUNC_STATE(hperh->init.txmp));
 	assert_param(IS_CAN_MODE(hperh->init.mode));
@@ -441,6 +442,9 @@ ald_status_t ald_can_recv(can_handle_t *hperh, can_rx_fifo_t num, can_rx_msg_t *
 			return TIMEOUT;
 		}
 	}
+
+//	if (__can_rx_check(hperh, num))
+//		return ERROR;
 
 	stid = READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_STDID_MSK, CAN_RXF0ID_STDID_POSS);
 	exid = READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_EXID_MSK, CAN_RXF0ID_EXID_POSS);

@@ -21,7 +21,7 @@
 
 int rt_hw_spi_flash_init(void)
 {
-  
+
     if (RT_NULL == rt_sfud_flash_probe(ES_DEVICE_NAME_SPI_FALSH_DEV, ES_DEVICE_NAME_SPI_DEV))
     {
         return -RT_ERROR;

@@ -6,162 +6,250 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-05-31     ZYH          first version
- * 2018-12-10     Zohar_Lee    修复bug
+ * 2018-12-10     Zohar_Lee    fix bug
+ * 2020-07-10     lik          rewrite
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
-#include <board.h>
-#include <SWM320_port.h>
-#include <SWM320_gpio.h>
-#include <SWM320_exti.h>
-#include <rthw.h>
+#include "drv_gpio.h"
 
-typedef void (*pin_callback_t)(void *args);
-struct pin
-{
-    uint32_t package_index;
-    const char *name;
-    GPIO_TypeDef *port;
-    uint32_t group_index;
-    IRQn_Type irq;
-    rt_uint32_t irq_mode;
-    pin_callback_t callback;
-    void *callback_args;
-};
-typedef struct pin pin_t;
+#ifdef RT_USING_PIN
+#ifdef BSP_USING_GPIO
 
-#define SWM32_PIN(a, b, c, d)             \
-    {                                     \
-        a, #b, GPIO##c, d, GPIO##c##_IRQn \
-    }
-#define GPIO0 ((GPIO_TypeDef *)(0))
-#define GPIO0_IRQn (GPIOA0_IRQn)
-
-const static pin_t swm32_pin_map[] =
-{
-    SWM32_PIN(0, None, 0, 0),
-    SWM32_PIN(1, ADC0 CH3, 0, 0),
-    SWM32_PIN(2, ADC0 REFP, 0, 0),
-    SWM32_PIN(3, Cap0, 0, 0),
-    SWM32_PIN(4, B12, B, 12),
-    SWM32_PIN(5, RTC VDD, 0, 0),
-    SWM32_PIN(6, N14, N, 14),
-    SWM32_PIN(7, N13, N, 13),
-    SWM32_PIN(8, N12, N, 12),
-    SWM32_PIN(9, N11, N, 11),
-    SWM32_PIN(10, VDD 3.3V, 0, 0),
-    SWM32_PIN(11, VSS 3.3V, 0, 0),
-    SWM32_PIN(12, Cap 2, 0, 0),
-    SWM32_PIN(13, N9, N, 9),
-    SWM32_PIN(14, N10, N, 10),
-    SWM32_PIN(15, Cap 1, 0, 0),
-    SWM32_PIN(16, AVSS, 0, 0),
-    SWM32_PIN(17, AVDD, 0, 0),
-    SWM32_PIN(18, N2, N, 2),
-    SWM32_PIN(19, N1, N, 1),
-    SWM32_PIN(20, N0, N, 0),
-    SWM32_PIN(21, C4, C, 4),
-    SWM32_PIN(22, C5, C, 5),
-    SWM32_PIN(23, C6, C, 6),
-    SWM32_PIN(24, C7, C, 7),
-    SWM32_PIN(25, C2, C, 2),
-    SWM32_PIN(26, C3, C, 3),
-    SWM32_PIN(27, XHIN, 0, 0),
-    SWM32_PIN(28, XHOUT, 0, 0),
-    SWM32_PIN(29, RESET, 0, 0),
-    SWM32_PIN(30, M2, M, 2),
-    SWM32_PIN(31, M3, M, 3),
-    SWM32_PIN(32, M4, M, 4),
-    SWM32_PIN(33, M5, M, 5),
-    SWM32_PIN(34, M6, M, 6),
-    SWM32_PIN(35, M7, M, 7),
-    SWM32_PIN(36, M8, M, 8),
-    SWM32_PIN(37, M9, M, 9),
-    SWM32_PIN(38, M10, M, 10),
-    SWM32_PIN(39, M11, M, 11),
-    SWM32_PIN(40, M12, M, 12),
-    SWM32_PIN(41, M13, M, 13),
-    SWM32_PIN(42, M14, M, 14),
-    SWM32_PIN(43, M15, M, 15),
-    SWM32_PIN(44, M16, M, 16),
-    SWM32_PIN(45, M17, M, 17),
-    SWM32_PIN(46, M18, M, 18),
-    SWM32_PIN(47, M19, M, 19),
-    SWM32_PIN(48, M20, M, 20),
-    SWM32_PIN(49, M21, M, 21),
-    SWM32_PIN(50, VDDIO, 0, 0),
-    SWM32_PIN(51, M1, M, 1),
-    SWM32_PIN(52, M0, M, 0),
-    SWM32_PIN(53, P0, P, 0),
-    SWM32_PIN(54, P1, P, 1),
-    SWM32_PIN(55, P2, P, 2),
-    SWM32_PIN(56, P3, P, 3),
-    SWM32_PIN(57, P4, P, 4),
-    SWM32_PIN(58, P5, P, 5),
-    SWM32_PIN(59, P6, P, 6),
-    SWM32_PIN(60, P7, P, 7),
-    SWM32_PIN(61, P8, P, 8),
-    SWM32_PIN(62, P9, P, 9),
-    SWM32_PIN(63, P10, P, 10),
-    SWM32_PIN(64, P11, P, 11),
-    SWM32_PIN(65, P12, P, 12),
-    SWM32_PIN(66, P13, P, 13),
-    SWM32_PIN(67, P14, P, 14),
-    SWM32_PIN(68, P15, P, 15),
-    SWM32_PIN(69, P16, P, 16),
-    SWM32_PIN(70, P17, P, 17),
-    SWM32_PIN(71, P18, P, 18),
-    SWM32_PIN(72, P19, P, 19),
-    SWM32_PIN(73, P20, P, 20),
-    SWM32_PIN(74, P21, P, 21),
-    SWM32_PIN(75, P22, P, 22),
-    SWM32_PIN(76, P23, P, 23),
-    SWM32_PIN(77, B0, B, 0),
-    SWM32_PIN(78, A0, A, 0),
-    SWM32_PIN(79, A1, A, 1),
-    SWM32_PIN(80, A2, A, 2),
-    SWM32_PIN(81, A3, A, 3),
-    SWM32_PIN(82, A4, A, 4),
-    SWM32_PIN(83, A5, A, 5),
-    SWM32_PIN(84, VSSIO, 0, 0),
-    SWM32_PIN(85, C1, C, 1),
-    SWM32_PIN(86, N19, N, 19),
-    SWM32_PIN(87, N18, N, 18),
-    SWM32_PIN(88, N17, N, 17),
-    SWM32_PIN(89, N16, N, 16),
-    SWM32_PIN(90, N15, N, 15),
-    SWM32_PIN(91, N8, N, 8),
-    SWM32_PIN(92, N7, N, 7),
-    SWM32_PIN(93, N6, N, 6),
-    SWM32_PIN(94, N5, N, 5),
-    SWM32_PIN(95, N4, N, 4),
-    SWM32_PIN(96, N3, N, 3),
-    SWM32_PIN(97, A9, A, 9),
-    SWM32_PIN(98, A10, A, 10),
-    SWM32_PIN(99, A11, A, 11),
-    SWM32_PIN(100, A12, A, 12)
-};
-#define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
-static pin_t *get_pin(uint8_t pin)
-{
-    pin_t *index;
-    if (pin < ITEM_NUM(swm32_pin_map))
+static const struct swm_pin_index pins[] =
     {
-        index = (pin_t *)&swm32_pin_map[pin];
-        if (index->port == GPIO0)
+        __SWM_PIN(0, A, 0),
+        __SWM_PIN(1, A, 1),
+        __SWM_PIN(2, A, 2),
+        __SWM_PIN(3, A, 3),
+        __SWM_PIN(4, A, 4),
+        __SWM_PIN(5, A, 5),
+        __SWM_PIN(6, A, 6),
+        __SWM_PIN(7, A, 7),
+        __SWM_PIN(8, A, 8),
+        __SWM_PIN(9, A, 9),
+        __SWM_PIN(10, A, 10),
+        __SWM_PIN(11, A, 11),
+        __SWM_PIN(12, A, 12),
+
+        __SWM_PIN(13, B, 0),
+        __SWM_PIN(14, B, 1),
+        __SWM_PIN(15, B, 2),
+        __SWM_PIN(16, B, 3),
+        __SWM_PIN(17, B, 4),
+        __SWM_PIN(18, B, 5),
+        __SWM_PIN(19, B, 6),
+        __SWM_PIN(20, B, 7),
+        __SWM_PIN(21, B, 8),
+        __SWM_PIN(22, B, 9),
+        __SWM_PIN(23, B, 10),
+        __SWM_PIN(24, B, 11),
+        __SWM_PIN(25, B, 12),
+
+        __SWM_PIN(26, C, 0),
+        __SWM_PIN(27, C, 1),
+        __SWM_PIN(28, C, 2),
+        __SWM_PIN(29, C, 3),
+        __SWM_PIN(30, C, 4),
+        __SWM_PIN(31, C, 5),
+        __SWM_PIN(32, C, 6),
+        __SWM_PIN(33, C, 7),
+
+        __SWM_PIN(34, M, 0),
+        __SWM_PIN(35, M, 1),
+        __SWM_PIN(36, M, 2),
+        __SWM_PIN(37, M, 3),
+        __SWM_PIN(38, M, 4),
+        __SWM_PIN(39, M, 5),
+        __SWM_PIN(40, M, 6),
+        __SWM_PIN(41, M, 7),
+        __SWM_PIN(42, M, 8),
+        __SWM_PIN(43, M, 9),
+        __SWM_PIN(44, M, 10),
+        __SWM_PIN(45, M, 11),
+        __SWM_PIN(46, M, 12),
+        __SWM_PIN(47, M, 13),
+        __SWM_PIN(48, M, 14),
+        __SWM_PIN(49, M, 15),
+        __SWM_PIN(50, M, 16),
+        __SWM_PIN(51, M, 17),
+        __SWM_PIN(52, M, 18),
+        __SWM_PIN(53, M, 19),
+        __SWM_PIN(54, M, 20),
+        __SWM_PIN(55, M, 21),
+
+        __SWM_PIN(56, N, 0),
+        __SWM_PIN(57, N, 1),
+        __SWM_PIN(58, N, 2),
+        __SWM_PIN(59, N, 3),
+        __SWM_PIN(60, N, 4),
+        __SWM_PIN(61, N, 5),
+        __SWM_PIN(62, N, 6),
+        __SWM_PIN(63, N, 7),
+        __SWM_PIN(64, N, 8),
+        __SWM_PIN(65, N, 9),
+        __SWM_PIN(66, N, 10),
+        __SWM_PIN(67, N, 11),
+        __SWM_PIN(68, N, 12),
+        __SWM_PIN(69, N, 13),
+        __SWM_PIN(70, N, 14),
+        __SWM_PIN(71, N, 15),
+        __SWM_PIN(72, N, 16),
+        __SWM_PIN(73, N, 17),
+        __SWM_PIN(74, N, 18),
+        __SWM_PIN(75, N, 19),
+
+        __SWM_PIN(76, P, 0),
+        __SWM_PIN(77, P, 1),
+        __SWM_PIN(78, P, 2),
+        __SWM_PIN(79, P, 3),
+        __SWM_PIN(80, P, 4),
+        __SWM_PIN(81, P, 5),
+        __SWM_PIN(82, P, 6),
+        __SWM_PIN(83, P, 7),
+        __SWM_PIN(84, P, 8),
+        __SWM_PIN(85, P, 9),
+        __SWM_PIN(86, P, 10),
+        __SWM_PIN(87, P, 11),
+        __SWM_PIN(88, P, 12),
+        __SWM_PIN(89, P, 13),
+        __SWM_PIN(90, P, 14),
+        __SWM_PIN(91, P, 15),
+        __SWM_PIN(92, P, 16),
+        __SWM_PIN(93, P, 17),
+        __SWM_PIN(94, P, 18),
+        __SWM_PIN(95, P, 19),
+        __SWM_PIN(96, P, 20),
+        __SWM_PIN(97, P, 21),
+        __SWM_PIN(98, P, 22),
+        __SWM_PIN(99, P, 23)};
+
+static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
+    {
+        {0, 0, RT_NULL, RT_NULL},
+        {1, 0, RT_NULL, RT_NULL},
+        {2, 0, RT_NULL, RT_NULL},
+        {3, 0, RT_NULL, RT_NULL},
+        {4, 0, RT_NULL, RT_NULL},
+        {5, 0, RT_NULL, RT_NULL},
+        {6, 0, RT_NULL, RT_NULL},
+        {7, 0, RT_NULL, RT_NULL},
+        {8, 0, RT_NULL, RT_NULL},
+        {9, 0, RT_NULL, RT_NULL},
+        {10, 0, RT_NULL, RT_NULL},
+        {11, 0, RT_NULL, RT_NULL},
+        {12, 0, RT_NULL, RT_NULL},
+        {13, 0, RT_NULL, RT_NULL},
+        {14, 0, RT_NULL, RT_NULL},
+        {15, 0, RT_NULL, RT_NULL},
+        {16, 0, RT_NULL, RT_NULL},
+        {17, 0, RT_NULL, RT_NULL},
+        {18, 0, RT_NULL, RT_NULL},
+        {19, 0, RT_NULL, RT_NULL},
+        {20, 0, RT_NULL, RT_NULL},
+        {21, 0, RT_NULL, RT_NULL},
+        {22, 0, RT_NULL, RT_NULL},
+        {23, 0, RT_NULL, RT_NULL},
+        {24, 0, RT_NULL, RT_NULL},
+        {25, 0, RT_NULL, RT_NULL},
+        {26, 0, RT_NULL, RT_NULL},
+        {27, 0, RT_NULL, RT_NULL},
+        {28, 0, RT_NULL, RT_NULL},
+        {29, 0, RT_NULL, RT_NULL},
+        {30, 0, RT_NULL, RT_NULL},
+        {31, 0, RT_NULL, RT_NULL},
+        {32, 0, RT_NULL, RT_NULL},
+        {33, 0, RT_NULL, RT_NULL},
+        {34, 0, RT_NULL, RT_NULL},
+        {35, 0, RT_NULL, RT_NULL},
+        {36, 0, RT_NULL, RT_NULL},
+        {37, 0, RT_NULL, RT_NULL},
+        {38, 0, RT_NULL, RT_NULL},
+        {39, 0, RT_NULL, RT_NULL},
+        {40, 0, RT_NULL, RT_NULL},
+        {41, 0, RT_NULL, RT_NULL},
+        {42, 0, RT_NULL, RT_NULL},
+        {43, 0, RT_NULL, RT_NULL},
+        {44, 0, RT_NULL, RT_NULL},
+        {45, 0, RT_NULL, RT_NULL},
+        {46, 0, RT_NULL, RT_NULL},
+        {47, 0, RT_NULL, RT_NULL},
+        {48, 0, RT_NULL, RT_NULL},
+        {49, 0, RT_NULL, RT_NULL},
+        {50, 0, RT_NULL, RT_NULL},
+        {51, 0, RT_NULL, RT_NULL},
+        {52, 0, RT_NULL, RT_NULL},
+        {53, 0, RT_NULL, RT_NULL},
+        {54, 0, RT_NULL, RT_NULL},
+        {55, 0, RT_NULL, RT_NULL},
+        {56, 0, RT_NULL, RT_NULL},
+        {57, 0, RT_NULL, RT_NULL},
+        {58, 0, RT_NULL, RT_NULL},
+        {59, 0, RT_NULL, RT_NULL},
+        {60, 0, RT_NULL, RT_NULL},
+        {61, 0, RT_NULL, RT_NULL},
+        {62, 0, RT_NULL, RT_NULL},
+        {63, 0, RT_NULL, RT_NULL},
+        {64, 0, RT_NULL, RT_NULL},
+        {65, 0, RT_NULL, RT_NULL},
+        {66, 0, RT_NULL, RT_NULL},
+        {67, 0, RT_NULL, RT_NULL},
+        {68, 0, RT_NULL, RT_NULL},
+        {69, 0, RT_NULL, RT_NULL},
+        {70, 0, RT_NULL, RT_NULL},
+        {71, 0, RT_NULL, RT_NULL},
+        {72, 0, RT_NULL, RT_NULL},
+        {73, 0, RT_NULL, RT_NULL},
+        {74, 0, RT_NULL, RT_NULL},
+        {75, 0, RT_NULL, RT_NULL},
+        {76, 0, RT_NULL, RT_NULL},
+        {77, 0, RT_NULL, RT_NULL},
+        {78, 0, RT_NULL, RT_NULL},
+        {79, 0, RT_NULL, RT_NULL},
+        {80, 0, RT_NULL, RT_NULL},
+        {81, 0, RT_NULL, RT_NULL},
+        {82, 0, RT_NULL, RT_NULL},
+        {83, 0, RT_NULL, RT_NULL},
+        {84, 0, RT_NULL, RT_NULL},
+        {85, 0, RT_NULL, RT_NULL},
+        {86, 0, RT_NULL, RT_NULL},
+        {87, 0, RT_NULL, RT_NULL},
+        {88, 0, RT_NULL, RT_NULL},
+        {89, 0, RT_NULL, RT_NULL},
+        {90, 0, RT_NULL, RT_NULL},
+        {91, 0, RT_NULL, RT_NULL},
+        {92, 0, RT_NULL, RT_NULL},
+        {93, 0, RT_NULL, RT_NULL},
+        {94, 0, RT_NULL, RT_NULL},
+        {95, 0, RT_NULL, RT_NULL},
+        {96, 0, RT_NULL, RT_NULL},
+        {97, 0, RT_NULL, RT_NULL},
+        {98, 0, RT_NULL, RT_NULL},
+        {99, 0, RT_NULL, RT_NULL}};
+
+#define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
+
+static const struct swm_pin_index *get_pin(uint8_t pin)
+{
+    const struct swm_pin_index *index;
+
+    if (pin < ITEM_NUM(pins))
+    {
+        index = &pins[pin];
+        if (index->gpio == GPIO0)
             index = RT_NULL;
     }
     else
     {
         index = RT_NULL;
     }
-    return index;
-};
 
-static void swm320_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+    return index;
+}
+
+static void swm_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
-    pin_t *index;
+    const struct swm_pin_index *index;
+
     index = get_pin(pin);
     if (index == RT_NULL)
     {
@@ -169,201 +257,206 @@ static void swm320_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
     if (value)
     {
-        GPIO_SetBit(index->port, index->group_index);
+        GPIO_SetBit(index->gpio, index->pin);
     }
     else
     {
-        GPIO_ClrBit(index->port, index->group_index);
+        GPIO_ClrBit(index->gpio, index->pin);
     }
 }
 
-static int swm320_pin_read(rt_device_t dev, rt_base_t pin)
+static int swm_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    pin_t *index;
+    const struct swm_pin_index *index;
+
     index = get_pin(pin);
     if (index == RT_NULL)
     {
         return PIN_LOW;
     }
-    return GPIO_GetBit(index->port, index->group_index);
+    return (int)GPIO_GetBit(index->gpio, index->pin);
 }
 
-static void swm320_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void swm_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
-    pin_t *index;
+    const struct swm_pin_index *index;
     int dir = 0;
     int pull_up = 0;
     int pull_down = 0;
+
     index = get_pin(pin);
     if (index == RT_NULL)
     {
         return;
     }
     /* Configure GPIO_InitStructure */
-    if (mode == PIN_MODE_OUTPUT)
+    switch (mode)
     {
+    case PIN_MODE_OUTPUT:
         /* output setting */
         dir = 1;
-    }
-    else if (mode == PIN_MODE_INPUT)
-    {
+        break;
+    case PIN_MODE_INPUT:
         /* input setting: not pull. */
         dir = 0;
-    }
-    else if (mode == PIN_MODE_INPUT_PULLUP)
-    {
+        break;
+    case PIN_MODE_INPUT_PULLUP:
         /* input setting: pull up. */
         dir = 0;
         pull_up = 1;
-    }
-    else if (mode == PIN_MODE_INPUT_PULLDOWN)
-    {
+        break;
+    case PIN_MODE_INPUT_PULLDOWN:
         /* input setting: pull down. */
         dir = 0;
         pull_down = 1;
-    }
-    else if (mode == PIN_MODE_OUTPUT_OD)
-    {
+        break;
+    case PIN_MODE_OUTPUT_OD:
         /* output setting: od. */
         dir = 1;
         pull_up = 1;
+        break;
     }
-    GPIO_Init(index->port, index->group_index, dir, pull_up, pull_down);
+
+    GPIO_Init(index->gpio, index->pin, dir, pull_up, pull_down);
 }
 
-static rt_err_t swm320_pin_attach_irq(struct rt_device *device,
-                                      rt_int32_t pin,
-                                      rt_uint32_t mode,
-                                      pin_callback_t cb,
-                                      void *args)
+static rt_err_t swm_pin_attach_irq(struct rt_device *device,
+                                   rt_int32_t pin,
+                                   rt_uint32_t mode,
+                                   void (*hdr)(void *args),
+                                   void *args)
 {
-    pin_t *index;
+    const struct swm_pin_index *index;
     rt_base_t level;
+
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return RT_ENOSYS;
     }
-    level = rt_hw_interrupt_disable();
-    index->callback = cb;
-    index->callback_args = args;
-    index->irq_mode = mode;
 
+    level = rt_hw_interrupt_disable();
+    if (pin_irq_hdr_tab[pin].pin == pin &&
+        pin_irq_hdr_tab[pin].mode == mode &&
+        pin_irq_hdr_tab[pin].hdr == hdr &&
+        pin_irq_hdr_tab[pin].args == args)
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EOK;
+    }
+    pin_irq_hdr_tab[pin].pin = pin;
+    pin_irq_hdr_tab[pin].mode = mode;
+    pin_irq_hdr_tab[pin].hdr = hdr;
+    pin_irq_hdr_tab[pin].args = args;
     rt_hw_interrupt_enable(level);
     return RT_EOK;
 }
 
-static rt_err_t swm320_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t swm_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
-    pin_t *index;
+    const struct swm_pin_index *index;
     rt_base_t level;
+
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return RT_ENOSYS;
     }
+
     level = rt_hw_interrupt_disable();
-    index->callback = 0;
-    index->callback_args = 0;
-    index->irq_mode = 0;
+    pin_irq_hdr_tab[pin].mode = 0;
+    pin_irq_hdr_tab[pin].hdr = RT_NULL;
+    pin_irq_hdr_tab[pin].args = RT_NULL;
     rt_hw_interrupt_enable(level);
     return RT_EOK;
 }
 
-static rt_err_t swm320_pin_irq_enable(struct rt_device *device,
-                                      rt_base_t pin,
-                                      rt_uint32_t enabled)
+static rt_err_t swm_pin_irq_enable(struct rt_device *device,
+                                   rt_base_t pin,
+                                   rt_uint32_t enabled)
 {
-    pin_t *index;
+    const struct swm_pin_index *index;
     rt_base_t level = 0;
+
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return RT_ENOSYS;
     }
+
     if (enabled == PIN_IRQ_ENABLE)
     {
-        switch (index->irq_mode)
+        switch (pin_irq_hdr_tab[pin].mode)
         {
         case PIN_IRQ_MODE_RISING:
-            GPIO_Init(index->port, index->group_index, 0, 0, 1);
-            EXTI_Init(index->port, index->group_index, EXTI_RISE_EDGE);
+            GPIO_Init(index->gpio, index->pin, 0, 0, 1);
+            EXTI_Init(index->gpio, index->pin, EXTI_RISE_EDGE);
             break;
         case PIN_IRQ_MODE_FALLING:
-            GPIO_Init(index->port, index->group_index, 0, 1, 0);
-            EXTI_Init(index->port, index->group_index, EXTI_FALL_EDGE);
+            GPIO_Init(index->gpio, index->pin, 0, 1, 0);
+            EXTI_Init(index->gpio, index->pin, EXTI_FALL_EDGE);
             break;
         case PIN_IRQ_MODE_RISING_FALLING:
-            GPIO_Init(index->port, index->group_index, 0, 1, 1);
-            EXTI_Init(index->port, index->group_index, EXTI_BOTH_EDGE);
+            GPIO_Init(index->gpio, index->pin, 0, 1, 1);
+            EXTI_Init(index->gpio, index->pin, EXTI_BOTH_EDGE);
             break;
         case PIN_IRQ_MODE_HIGH_LEVEL:
-            GPIO_Init(index->port, index->group_index, 0, 0, 1);
-            EXTI_Init(index->port, index->group_index, EXTI_HIGH_LEVEL);
+            GPIO_Init(index->gpio, index->pin, 0, 0, 1);
+            EXTI_Init(index->gpio, index->pin, EXTI_HIGH_LEVEL);
             break;
         case PIN_IRQ_MODE_LOW_LEVEL:
-            GPIO_Init(index->port, index->group_index, 0, 1, 0);
-            EXTI_Init(index->port, index->group_index, EXTI_LOW_LEVEL);
+            GPIO_Init(index->gpio, index->pin, 0, 1, 0);
+            EXTI_Init(index->gpio, index->pin, EXTI_LOW_LEVEL);
             break;
         default:
-            rt_hw_interrupt_enable(level);
             return RT_EINVAL;
         }
 
         level = rt_hw_interrupt_disable();
         NVIC_EnableIRQ(index->irq);
-        EXTI_Open(index->port, index->group_index);
+        EXTI_Open(index->gpio, index->pin);
         rt_hw_interrupt_enable(level);
     }
     else if (enabled == PIN_IRQ_DISABLE)
     {
+        level = rt_hw_interrupt_disable();
         NVIC_DisableIRQ(index->irq);
-        EXTI_Close(index->port, index->group_index);
+        EXTI_Close(index->gpio, index->pin);
+        rt_hw_interrupt_enable(level);
     }
     else
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     return RT_EOK;
 }
 
-const static struct rt_pin_ops swm320_pin_ops =
-{
-    swm320_pin_mode,
-    swm320_pin_write,
-    swm320_pin_read,
-    swm320_pin_attach_irq,
-    swm320_pin_detach_irq,
-    swm320_pin_irq_enable,
-    RT_NULL,
-};
+const static struct rt_pin_ops swm_pin_ops =
+    {
+        .pin_mode = swm_pin_mode,
+        .pin_write = swm_pin_write,
+        .pin_read = swm_pin_read,
+        .pin_attach_irq = swm_pin_attach_irq,
+        .pin_detach_irq = swm_pin_detach_irq,
+        .pin_irq_enable = swm_pin_irq_enable};
 
-int rt_hw_pin_init(void)
-{
-    int result;
-    result = rt_device_pin_register("pin", &swm320_pin_ops, RT_NULL);
-    return result;
-}
-INIT_BOARD_EXPORT(rt_hw_pin_init);
-
-void GPIOA_Handler(void)
+static void rt_hw_pin_isr(GPIO_TypeDef *GPIOx)
 {
     static int gpio[24];
     int index = 0;
     static int init = 0;
-    pin_t *pin;
-    /* enter interrupt */
-    rt_interrupt_enter();
+    const struct swm_pin_index *pin;
+
     if (init == 0)
     {
         init = 1;
-        for (pin = (pin_t *)&swm32_pin_map[1];
-                pin->package_index < ITEM_NUM(swm32_pin_map);
-                pin++)
+        for (pin = &pins[0];
+             pin->index < ITEM_NUM(pins);
+             pin++)
         {
-            if (pin->port == GPIOA)
+            if (pin->gpio == GPIOx)
             {
-                gpio[index] = pin->package_index;
+                gpio[index] = pin->index;
                 index++;
                 RT_ASSERT(index <= 24)
             }
@@ -372,228 +465,64 @@ void GPIOA_Handler(void)
     for (index = 0; index < 24; index++)
     {
         pin = get_pin(gpio[index]);
-        if (index != RT_NULL)
+        if (EXTI_State(pin->gpio, pin->pin))
         {
-            if (EXTI_State(pin->port, pin->group_index))
+            EXTI_Clear(pin->gpio, pin->pin);
+            if (pin_irq_hdr_tab[pin->index].hdr)
             {
-                EXTI_Clear(pin->port, pin->group_index);
-                if (pin->callback)
-                {
-                    pin->callback(pin->callback_args);
-                }
+                pin_irq_hdr_tab[pin->index].hdr(pin_irq_hdr_tab[pin->index].args);
             }
         }
     }
-    /* leave interrupt */
+}
+
+void GPIOA_Handler(void)
+{
+    rt_interrupt_enter();
+    rt_hw_pin_isr(GPIOA);
     rt_interrupt_leave();
 }
 
 void GPIOB_Handler(void)
 {
-    static int gpio[24];
-    int index = 0;
-    static int init = 0;
-    pin_t *pin;
-    /* enter interrupt */
     rt_interrupt_enter();
-    if (init == 0)
-    {
-        init = 1;
-        for (pin = (pin_t *)&swm32_pin_map[1];
-                pin->package_index < ITEM_NUM(swm32_pin_map);
-                pin++)
-        {
-            if (pin->port == GPIOB)
-            {
-                gpio[index] = pin->package_index;
-                index++;
-                RT_ASSERT(index <= 24)
-            }
-        }
-    }
-    for (index = 0; index < 24; index++)
-    {
-        pin = get_pin(gpio[index]);
-        if (index != RT_NULL)
-        {
-            if (EXTI_State(pin->port, pin->group_index))
-            {
-                EXTI_Clear(pin->port, pin->group_index);
-                if (pin->callback)
-                {
-                    pin->callback(pin->callback_args);
-                }
-            }
-        }
-    }
-    /* leave interrupt */
+    rt_hw_pin_isr(GPIOB);
     rt_interrupt_leave();
 }
 
 void GPIOC_Handler(void)
 {
-    static int gpio[24];
-    int index = 0;
-    static int init = 0;
-    pin_t *pin;
-    /* enter interrupt */
     rt_interrupt_enter();
-    if (init == 0)
-    {
-        init = 1;
-        for (pin = (pin_t *)&swm32_pin_map[1];
-                pin->package_index < ITEM_NUM(swm32_pin_map);
-                pin++)
-        {
-            if (pin->port == GPIOC)
-            {
-                gpio[index] = pin->package_index;
-                index++;
-                RT_ASSERT(index <= 24)
-            }
-        }
-    }
-    for (index = 0; index < 24; index++)
-    {
-        pin = get_pin(gpio[index]);
-        if (index != RT_NULL)
-        {
-            if (EXTI_State(pin->port, pin->group_index))
-            {
-                EXTI_Clear(pin->port, pin->group_index);
-                if (pin->callback)
-                {
-                    pin->callback(pin->callback_args);
-                }
-            }
-        }
-    }
-    /* leave interrupt */
+    rt_hw_pin_isr(GPIOC);
     rt_interrupt_leave();
 }
 
 void GPIOM_Handler(void)
 {
-    static int gpio[24];
-    int index = 0;
-    static int init = 0;
-    pin_t *pin;
-    /* enter interrupt */
     rt_interrupt_enter();
-    if (init == 0)
-    {
-        init = 1;
-        for (pin = (pin_t *)&swm32_pin_map[1];
-                pin->package_index < ITEM_NUM(swm32_pin_map);
-                pin++)
-        {
-            if (pin->port == GPIOM)
-            {
-                gpio[index] = pin->package_index;
-                index++;
-                RT_ASSERT(index <= 24)
-            }
-        }
-    }
-    for (index = 0; index < 24; index++)
-    {
-        pin = get_pin(gpio[index]);
-        if (index != RT_NULL)
-        {
-            if (EXTI_State(pin->port, pin->group_index))
-            {
-                EXTI_Clear(pin->port, pin->group_index);
-                if (pin->callback)
-                {
-                    pin->callback(pin->callback_args);
-                }
-            }
-        }
-    }
-    /* leave interrupt */
+    rt_hw_pin_isr(GPIOM);
     rt_interrupt_leave();
 }
 
 void GPION_Handler(void)
 {
-    static int gpio[24];
-    int index = 0;
-    static int init = 0;
-    pin_t *pin;
-    /* enter interrupt */
     rt_interrupt_enter();
-    if (init == 0)
-    {
-        init = 1;
-        for (pin = (pin_t *)&swm32_pin_map[1];
-                pin->package_index < ITEM_NUM(swm32_pin_map);
-                pin++)
-        {
-            if (pin->port == GPION)
-            {
-                gpio[index] = pin->package_index;
-                index++;
-                RT_ASSERT(index <= 24)
-            }
-        }
-    }
-    for (index = 0; index < 24; index++)
-    {
-        pin = get_pin(gpio[index]);
-        if (index != RT_NULL)
-        {
-            if (EXTI_State(pin->port, pin->group_index))
-            {
-                EXTI_Clear(pin->port, pin->group_index);
-                if (pin->callback)
-                {
-                    pin->callback(pin->callback_args);
-                }
-            }
-        }
-    }
-    /* leave interrupt */
+    rt_hw_pin_isr(GPION);
     rt_interrupt_leave();
 }
 
 void GPIOP_Handler(void)
 {
-    static int gpio[24];
-    int index = 0;
-    static int init = 0;
-    pin_t *pin;
-    /* enter interrupt */
     rt_interrupt_enter();
-    if (init == 0)
-    {
-        init = 1;
-        for (pin = (pin_t *)&swm32_pin_map[1];
-                pin->package_index < ITEM_NUM(swm32_pin_map);
-                pin++)
-        {
-            if (pin->port == GPIOP)
-            {
-                gpio[index] = pin->package_index;
-                index++;
-                RT_ASSERT(index <= 24)
-            }
-        }
-    }
-    for (index = 0; index < 24; index++)
-    {
-        pin = get_pin(gpio[index]);
-        if (index != RT_NULL)
-        {
-            if (EXTI_State(pin->port, pin->group_index))
-            {
-                EXTI_Clear(pin->port, pin->group_index);
-                if (pin->callback)
-                {
-                    pin->callback(pin->callback_args);
-                }
-            }
-        }
-    }
-    /* leave interrupt */
+    rt_hw_pin_isr(GPIOP);
     rt_interrupt_leave();
 }
+
+int rt_hw_pin_init(void)
+{
+    return rt_device_pin_register("pin", &swm_pin_ops, RT_NULL);
+}
+INIT_BOARD_EXPORT(rt_hw_pin_init);
+
+#endif /* BSP_USING_GPIO */
+#endif /* RT_USING_PIN */

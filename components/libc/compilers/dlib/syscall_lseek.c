@@ -8,10 +8,8 @@
  * 2015-01-28     Bernard      first version
  */
 #include <rtthread.h>
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#endif
 #include <yfuns.h>
+#include <unistd.h>
 
 #pragma module_name = "?__lseek"
 long __lseek(int handle, long offset, int whence)
@@ -20,10 +18,9 @@ long __lseek(int handle, long offset, int whence)
         handle == _LLIO_STDERR ||
         handle == _LLIO_STDIN)
         return _LLIO_ERROR;
-
-#ifdef RT_USING_DFS
+#ifdef RT_USING_POSIX
     return lseek(handle, offset, whence);
 #else
     return _LLIO_ERROR;
-#endif
+#endif /* RT_USING_POSIX */
 }

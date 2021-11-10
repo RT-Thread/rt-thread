@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,43 +8,46 @@
  * 2020-10-28     0xcccccccccccc           Initial Version
  * 2021-01-17     0xcccccccccccc           Bug Fixed : clock division cannot been adjusted as expected due to wrong register configuration.
  */
+
 /**
  * @addtogroup ls2k
  */
 /*@{*/
-#include <stdio.h>
+
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdint.h>
 #include <rtthread.h>
 #include <drivers/spi.h>
 #include "drv_spi.h"
 
 #ifdef RT_USING_SPI
+#ifdef RT_USING_SPI_GPIOCS
+#include <drivers/pin.h>
+#endif
+
 static void spi_init(uint8_t spre_spr, uint8_t copl, uint8_t cpha)
 {
-    SET_SPI(SPSR, 0xc0); 
+    SET_SPI(SPSR, 0xc0);
     SET_SPI(PARAM, 0x40);
     SET_SPI(PARAM2, 0x01);
     SET_SPI(SPER, (spre_spr & 0b00001100) >> 2);
-    SET_SPI(SPCR, 0x50 | copl << 3 | cpha << 2 | (spre_spr & 0b00000011)); 
+    SET_SPI(SPCR, 0x50 | copl << 3 | cpha << 2 | (spre_spr & 0b00000011));
     SET_SPI(SOFTCS, 0xff);
 }
 
-static void spi_set_csn(uint8_t val) 
+rt_inline void spi_set_csn(uint8_t val)
 {
     SET_SPI(SOFTCS, val);
 }
 
-#ifdef RT_USING_SPI_GPIOCS
-    #include <drivers/pin.h>
-#endif
-static void spi_set_cs(unsigned char cs, int new_status) 
+static void spi_set_cs(unsigned char cs, int new_status)
 {
     if (cs < 4)
     {
         unsigned char val = 0;
         val = GET_SPI(SOFTCS);
-        val |= 0x01 << cs ; // csen=1
+        val |= 0x01 << cs ;     // csen=1
         if (new_status)         // cs = 1
         {
             val |= (0x10 << cs);            // csn=1
@@ -64,6 +67,7 @@ static void spi_set_cs(unsigned char cs, int new_status)
     }
 #endif
 }
+
 static uint8_t spi_write_for_response(uint8_t data)
 {
     uint8_t val;
@@ -94,6 +98,7 @@ static int cmd_spi_init(int argc, char *argv[])
     }
 }
 MSH_CMD_EXPORT(cmd_spi_init, cmd_spi_init);
+
 static int cmd_spi_set_csn(int argc, char *argv[])
 {
     uint8_t val, csn;
@@ -110,6 +115,7 @@ static int cmd_spi_set_csn(int argc, char *argv[])
     }
 }
 MSH_CMD_EXPORT(cmd_spi_set_csn, cmd_spi_set_csn);
+
 static int cmd_spi_write(int argc, char *argv[])
 {
     uint8_t data, resp;
@@ -129,6 +135,7 @@ MSH_CMD_EXPORT(cmd_spi_write, cmd_spi_write);
 
 static rt_err_t configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
 static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *message);
+
 const static unsigned char SPI_DIV_TABLE[] = {0b0000, 0b0001, 0b0100, 0b0010, 0b0011, 0b0101, 0b0110, 0b0111, 0b1000, 0b1001, 0b1010, 0b1011};
 // 2      4      8      16     32     64      128   256    512    1024   2048   4096
 static rt_err_t configure(struct rt_spi_device *device,
@@ -171,8 +178,8 @@ static rt_err_t configure(struct rt_spi_device *device,
 
     return RT_EOK;
 }
-static rt_uint32_t xfer(struct rt_spi_device *device,
-                        struct rt_spi_message *message)
+
+static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
 
     unsigned char cs = 0;
@@ -214,18 +221,19 @@ static rt_uint32_t xfer(struct rt_spi_device *device,
     }
     return message->length;
 }
+
 static struct rt_spi_ops loongson_spi_ops =
 {
     .configure  = configure,
     .xfer       = xfer
 };
 static struct rt_spi_bus loongson_spi;
+
 static int loongson_spi_init()
 {
     //rt_kprintf("spi_init\n");
     return rt_spi_bus_register(&loongson_spi, "spi", &loongson_spi_ops);
 }
 INIT_BOARD_EXPORT(loongson_spi_init);
-
 #endif
 /*@}*/

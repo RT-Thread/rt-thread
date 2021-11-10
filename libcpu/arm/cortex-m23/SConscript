@@ -8,9 +8,7 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
-if rtconfig.PLATFORM == 'armcc':
-    src += Glob('*_rvds.S')
-elif rtconfig.PLATFORM == 'armclang':
+if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
     src += Glob('*_rvds.S')
 
 if rtconfig.PLATFORM == 'gcc':

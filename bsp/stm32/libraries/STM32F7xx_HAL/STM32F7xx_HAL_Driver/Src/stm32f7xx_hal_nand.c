@@ -753,7 +753,18 @@ HAL_StatusTypeDef HAL_NAND_Read_Page_16b(NAND_HandleTypeDef *hnand, NAND_Address
       *(__IO uint8_t *)((uint32_t)(deviceAddress | CMD_AREA)) = ((uint8_t)0x00U);
       __DSB();
     }
-    
+
+    /* Calculate PageSize */
+    if (hnand->Init.MemoryDataWidth == FMC_NAND_PCC_MEM_BUS_WIDTH_8)
+    {
+      size = size / 2U;
+    }
+    else
+    {
+      /* Do nothing */
+      /* Keep the same PageSize for FMC_NAND_MEM_BUS_WIDTH_16*/
+    }
+
     /* Get Data into Buffer */    
     for(; index < size; index++)
     {
@@ -1013,7 +1024,18 @@ HAL_StatusTypeDef HAL_NAND_Write_Page_16b(NAND_HandleTypeDef *hnand, NAND_Addres
         __DSB();
       }
     }
-  
+
+    /* Calculate PageSize */
+    if (hnand->Init.MemoryDataWidth == FMC_NAND_PCC_MEM_BUS_WIDTH_8)
+    {
+      size = size / 2U;
+    }
+    else
+    {
+      /* Do nothing */
+      /* Keep the same PageSize for FMC_NAND_MEM_BUS_WIDTH_16*/
+    }
+
     /* Write data to memory */
     for(; index < size; index++)
     {
@@ -1238,7 +1260,7 @@ HAL_StatusTypeDef HAL_NAND_Read_SpareArea_16b(NAND_HandleTypeDef *hnand, NAND_Ad
   nandAddress = ARRAY_ADDRESS(pAddress, hnand);
   
   /* Column in page address */
-  columnAddress = (uint32_t)(COLUMN_ADDRESS(hnand) * 2);
+  columnAddress = (uint32_t)(COLUMN_ADDRESS(hnand));
   
   /* Spare area(s) read loop */ 
   while((NumSpareAreaToRead != 0) && (nandAddress < ((hnand->Config.BlockSize) * (hnand->Config.BlockNbr))))
@@ -1534,7 +1556,7 @@ HAL_StatusTypeDef HAL_NAND_Write_SpareArea_16b(NAND_HandleTypeDef *hnand, NAND_A
   nandAddress = ARRAY_ADDRESS(pAddress, hnand);
   
   /* Column in page address */
-  columnAddress = (uint32_t)(COLUMN_ADDRESS(hnand) * 2);
+  columnAddress = (uint32_t)(COLUMN_ADDRESS(hnand));
   
   /* Spare area(s) write loop */
   while((NumSpareAreaTowrite != 0) && (nandAddress < ((hnand->Config.BlockSize) * (hnand->Config.BlockNbr))))

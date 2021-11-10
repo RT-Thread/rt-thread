@@ -61,11 +61,18 @@
    || ((__FUNCTIONAL_MODE__) == LL_OPAMP_MODE_PGA_IO0_IO1_BIAS)                \
   )
 
-
+#if defined(DAC2)
+#define IS_LL_OPAMP_INPUT_NONINVERTING(__INPUT_NONINVERTING__)                 \
+  (   ((__INPUT_NONINVERTING__) == LL_OPAMP_INPUT_NONINVERT_IO0)               \
+   || ((__INPUT_NONINVERTING__) == LL_OPAMP_INPUT_NONINVERT_DAC)               \
+   || ((__INPUT_NONINVERTING__) == LL_OPAMP_INPUT_NONINVERT_DAC2)              \
+  )
+#else
 #define IS_LL_OPAMP_INPUT_NONINVERTING(__INPUT_NONINVERTING__)                 \
   (   ((__INPUT_NONINVERTING__) == LL_OPAMP_INPUT_NONINVERT_IO0)               \
    || ((__INPUT_NONINVERTING__) == LL_OPAMP_INPUT_NONINVERT_DAC)               \
   )
+#endif /* DAC2 */
   
 
 #define IS_LL_OPAMP_INPUT_INVERTING(__INPUT_INVERTING__)                       \

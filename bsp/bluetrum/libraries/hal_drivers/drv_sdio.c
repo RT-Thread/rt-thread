@@ -50,9 +50,9 @@ struct rthw_sdio
 ALIGN(SDIO_ALIGN_LEN)
 static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 
-static uint8_t sd_baud = 119;
+static rt_uint8_t sd_baud = 119;
 
-uint8_t sysclk_update_baud(uint8_t baud);
+rt_uint8_t sysclk_update_baud(rt_uint8_t baud);
 
 static rt_uint32_t ab32_sdio_clk_get(hal_sfr_t hw_sdio)
 {
@@ -633,7 +633,7 @@ int rt_hw_sdio_init(void)
 {
     struct ab32_sdio_des sdio_des = {0};
     struct sd_handle hsd = {0};
-    uint8_t param = 0;
+    rt_uint8_t param = 0;
     hsd.instance = SDMMC0_BASE;
 
     hal_rcu_periph_clk_enable(RCU_SD0);

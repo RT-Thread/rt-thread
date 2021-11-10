@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for STM32F2xx HAL Drivers</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="_htmresc/mini-st.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<div class="card fluid">
+<div class="sectione dark">
+<center>
+<h1 id="release-notes-for-stm32f2xx-hal-drivers"><strong>Release Notes for STM32F2xx HAL Drivers</strong></h1>
+<p>Copyright © 2017 STMicroelectronics<br />
+</p>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo.png" alt="ST logo" /></a>
+</center>
+</div>
+</div>
+<h1 id="license"><strong>License</strong></h1>
+This software component is licensed by ST under BSD 3-Clause license, the “License”; You may not use this component except in compliance with the License. You may obtain a copy of the License at:
+<center>
+<a href="https://opensource.org/licenses/BSD-3-Clause">https://opensource.org/licenses/BSD-3-Clause</a>
+</center>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history"><strong>Update History</strong></h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1_2_7" aria-hidden="true"> <label for="collapse-section1_2_7" aria-hidden="true"><strong>V1.2.7 / 21-May-2021</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects.</li>
+</ul>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><strong>HAL/LL ADC</strong> driver
+<ul>
+<li>Update timeout mechanism to avoid false timeout detection in case of preemption.</li>
+<li>Update HAL ADC driver to add include of the LL ADC driver.</li>
+<li>Update LL_ADC_DeInit() API to clear missing SQR3 register.</li>
+</ul></li>
+<li><strong>HAL CAN</strong> driver
+<ul>
+<li>Update HAL_CAN_Init() API to be aligned with reference manual and to avoid timeout error:
+<ul>
+<li>Update CAN Initialization sequence to set “request initialization” bit before exit from sleep mode.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL GPIO</strong> driver
+<ul>
+<li>Update HAL_GPIO_Init() API to avoid the configuration of PUPDR register when Analog mode is selected.</li>
+</ul></li>
+<li><strong>LL FMC</strong> driver
+<ul>
+<li>Fix compilation warning with gcc -Wpedantic compiler option.</li>
+</ul></li>
+<li><strong>HAL NAND</strong> driver
+<ul>
+<li>Update implementation of “HAL_NAND_Write_Page_16b” and “HAL_NAND_Read_Page_16b” APIs implementation to fix an issue with the page calculation of 8 bits memories.</li>
+<li>Update functions HAL_NAND_Read_SpareArea_16b() and HAL_NAND_Write_SpareArea_16b() to fix column address calculation issue.</li>
+</ul></li>
+<li><strong>HAL SDMMC</strong> driver
+<ul>
+<li>Update the definition of SDMMC_DATATIMEOUT constant in order to allow the user to redefine it in his proper application.</li>
+<li>SD_FindSCR() updated to resolve an issue with FIFO blocking when reading.</li>
+<li>Update the definition of SDMMC_DATATIMEOUT constant in order to allow the user to redefine it in his proper application.</li>
+<li>Add the block size settings in the initialization functions and remove it from read/write transactions to avoid repeated and inefficient reconfiguration.</li>
+<li>Update read/write functions in DMA mode in order to force the DMA direction.</li>
+<li>Deploy new functions MMC_ReadExtCSD() and SDMMC_CmdSendEXTCSD () that read and check the sectors number of the device in order to resolve the issue of wrongly reading big memory size.</li>
+</ul></li>
+<li><strong>HAL/LL SPI</strong> driver
+<ul>
+<li>Update to fix MISRA-C 2012 Rule-13.2.</li>
+<li>Update LL_SPI_TransmitData8() API to avoid casting the result to 8 bits.</li>
+</ul></li>
+<li><strong>HAL IRDA</strong> driver
+<ul>
+<li>Fixed typos in the IRDA State definition description.</li>
+</ul></li>
+<li><strong>HAL IWDG</strong> driver
+<ul>
+<li>Updated HAL_IWDG_Init() API in order to fix HAL_GetTick() timeout vulnerability issue.</li>
+<li>Add LSI startup time in default IWDG timeout calculation (HAL_IWDG_DEFAULT_TIMEOUT).</li>
+</ul></li>
+<li><strong>HAL/LL RTC</strong> driver
+<ul>
+<li>New APIs to subtract or add one hour to the calendar in one single operation without going through the initialization procedure (Daylight Saving):
+<ul>
+<li>Add HAL_RTC_DST_Add1Hour()</li>
+<li>HAL_RTC_DST_Sub1Hour()</li>
+<li>HAL_RTC_DST_SetStoreOperation()</li>
+<li>HAL_RTC_DST_ClearStoreOperation()</li>
+<li>HAL_RTC_DST_ReadStoreOperation()</li>
+</ul></li>
+<li>Update __HAL_RTC_…(__HANDLE__, …) macros to access registers through (__HANDLE__)-&gt;Instance pointer and avoid “unused variable” warnings.</li>
+<li>Correct month management in IS_LL_RTC_MONTH() macro.</li>
+</ul></li>
+<li><strong>HAL DMA</strong> driver
+<ul>
+<li>Update HAL_DMA_IRQHandler() API to set the DMA state before unlocking access to the DMA handle.</li>
+</ul></li>
+<li><strong>HAL EXTI</strong> driver
+<ul>
+<li>Update macros using LINE as a macro parameter in order to use EXTI_LINE instead to resolve parameter conflicts with standard C usage.</li>
+<li>Update HAL_EXTI_GetConfigLine() API to set default configuration value of Trigger and GPIOSel before checking each corresponding registers.</li>
+</ul></li>
+<li><strong>HAL SMARTCARD</strong> driver
+<ul>
+<li>Fixed typos in the SMARTCARD State definition description.</li>
+</ul></li>
+<li><strong>HAL/LL TIM</strong> driver
+<ul>
+<li>Made TIM_DMADelayPulseCplt callback as a private function.</li>
+<li>Update HAL_TIMEx_OnePulseN_Start and HAL_TIMEx_OnePulseN_Stop (pooling and IT mode) to take into consideration all OutputChannel parameters.</li>
+<li>Update input capture measurement in DMA mode to avoid zero return values at high frequencies.</li>
+<li>Updated LL_TIM_GetCounterMode() API to return the correct counter mode.</li>
+<li>Corrected reversed description of TIM_LL_EC_ONEPULSEMODE One Pulse Mode.</li>
+</ul></li>
+<li><strong>HAL I2C</strong> driver
+<ul>
+<li>Update to prevent several calls of Start bit:
+<ul>
+<li>Update I2C_MemoryTransmit_TXE_BTF() API to increment EventCount.</li>
+</ul></li>
+<li>Update to avoid I2C interrupt in endless loop:
+<ul>
+<li>Update HAL_I2C_Master_Transmit_IT(), HAL_I2C_Master_Receive_IT(), HAL_I2C_Master_Transmit_DMA() and HAL_I2C_Master_Receive_DMA() APIs to unlock the I2C peripheral before generating the start.</li>
+</ul></li>
+<li>Update to use the right macro to clear I2C ADDR flag inside I2C_Slave_ADDR() API as it’s indicated in the reference manual.</li>
+<li>Update HAL_I2C_EV_IRQHandler() and I2C_MasterTransmit_BTF() APIs to fix an issue where the transfer of the first few bytes to an I2C memory fails.</li>
+</ul></li>
+<li><strong>HAL RNG</strong> driver
+<ul>
+<li>Update timeout mechanism to avoid false timeout detection in case of preemption.</li>
+</ul></li>
+<li><strong>HAL UART</strong> driver
+<ul>
+<li>Enhance reception for idle services (ReceptionToIdle):
+<ul>
+<li>Add a new field (HAL_UART_RxTypeTypeDef) to the UART_HandleTypeDef structure to identify the type of ongoing reception.</li>
+<li>Add UART Reception Event Callback registration.</li>
+</ul></li>
+<li>Add reception specific APIs specific to reception for Idle transfer in different modes:
+<ul>
+<li>HAL_UARTEx_ReceiveToIdle(): Receive an amount of data in blocking mode until either the expected number of data is received or an IDLE event occurs.</li>
+<li>HAL_UARTEx_ReceiveToIdle_IT(): Receive an amount of data in interrupt mode until either the expected number of data is received or an IDLE event occurs.</li>
+<li>HAL_UARTEx_ReceiveToIdle_DMA(): Receive an amount of data in DMA mode until either the expected number of data is received or an IDLE event occurs.</li>
+</ul></li>
+<li>Update HAL_UART_Receive(), HAL_UART_Receive_IT() and HAL_UART_Receive_DMA() APIs to support the new enhancement of ReceptionToIdle.</li>
+<li>Fix wrong comment related to RX pin configuration within the description section.</li>
+<li>Correction on UART ReceptionType management in case of ReceptionToIdle API are called from RxEvent callback.</li>
+</ul></li>
+<li><strong>LL USART</strong> driver
+<ul>
+<li>Remove useless check on maximum BRR value by removing IS_LL_USART_BRR_MAX() macro.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="true"><strong>V1.2.6 / 22-October-2020</strong></label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects.</li>
+</ul>
+<h2 id="contents-1">Contents</h2>
+<ul>
+<li><strong>HAL/LL I2C</strong> driver
+<ul>
+<li>Update to fix hardfault issue with HAL_I2C_Mem_Write_DMA() API:
+<ul>
+<li>Abort the right ongoing DMA transfer when memory write access request operation failed: fix typo “hdmarx” replaced by “hdmatx”</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="true"><strong>V1.2.5 / 09-September-2020</strong></label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and enhancements implementation.</li>
+<li><strong>HAL</strong> driver
+<ul>
+<li>Enhance HAL_SetTickFreq() API robustness:
+<ul>
+<li>HAL_SetTickFreq(): update to restore the previous tick frequency when HAL_InitTick() configuration failed.</li>
+</ul></li>
+<li>Add new defines for ARM compiler V6:
+<ul>
+<li>__weak</li>
+<li>__packed</li>
+<li>__NOINLINE</li>
+</ul></li>
+<li>Update HAL_Init_Tick() API to proporely store the priority when using the non-default time base.</li>
+</ul></li>
+<li><strong>HAL/LL ADC</strong> driver
+<ul>
+<li>Update the type for the following ADC parameters in ADC_InitTypeDef structure to fix MISRA-C 2012 Rule-10.4 error
+<ul>
+<li><strong>uint32_t</strong> ContinuousConvMode to <strong>FunctionalState</strong> ContinuousConvMode</li>
+<li><strong>uint32_t</strong> DiscontinuousConvMode to <strong>FunctionalState</strong> DiscontinuousConvMode</li>
+<li><strong>uint32_t</strong> DMAContinuousRequests to <strong>FunctionalState</strong> DMAContinuousRequests</li>
+</ul></li>
+<li>Update the following APIs to set status HAL_ADC_STATE_ERROR_INTERNAL and error code HAL_ADC_ERROR_INTERNAL when error occurs:
+<ul>
+<li>HAL_ADC_Start()</li>
+<li>HAL_ADC_Start_IT()</li>
+<li>HAL_ADC_Start_DMA()</li>
+<li>HAL_ADCEx_InjectedStart()</li>
+<li>HAL_ADCEx_InjectedStart_IT()</li>
+<li>HAL_ADCEx_MultiModeStart_DMA()</li>
+</ul></li>
+<li>Update HAL_ADC_Stop_DMA() API to check if DMA state is Busy before calling HAL_DMA_Abort() API to avoid DMA internal error.</li>
+<li>Update LL_ADC_REG_Init() API to avoid enabling continuous mode and discontinuous mode simultaneously.</li>
+</ul></li>
+<li><strong>HAL/LL GPIO</strong> driver
+<ul>
+<li>Update HAL_GPIO_TogglePin() API to allow multi Pin’s toggling.</li>
+<li>Update LL_GPIO_TogglePin() API to improve robustness: use BSRR register instead of ODR register.</li>
+</ul></li>
+<li><strong>HAL/LL RCC</strong> driver
+<ul>
+<li>Add new HAL interfaces allowing to control the activation or deactivation of PLLI2S:
+<ul>
+<li>HAL_RCCEx_EnablePLLI2S()</li>
+<li>HAL_RCCEx_DisablePLLI2S()</li>
+</ul></li>
+<li>Add new HAL macros
+<ul>
+<li>__HAL_RCC_GET_RTC_SOURCE()allowing to get the RTC clock source</li>
+<li>__HAL_RCC_GET_RTC_HSE_PRESCALER()allowing to get the HSE clock divider for RTC peripheral.</li>
+</ul></li>
+<li>Update HAL_RCC_OscConfig() API to avoid overwriting a reserved bit
+<ul>
+<li>Update to use MODIFY_REG instead of WRITE_REG.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL HASH</strong> driver
+<ul>
+<li>Fix Misra-C 2012 Rule-5.1 warning on identifiers to be distinct in the first 31 characters in renaming all <strong>HAL_HASH_xxx_Accumulate_yy()</strong> and <strong>HAL_HASHEx_xxx_Accumulate_yy()</strong> APIs respectively into <strong>HAL_HASH_xxx_Accmlt_yy()</strong> and <strong>HAL_HASHEx_xxx_Accmlt_yy()</strong></li>
+<li>Correct phase management issue when performing two successive hash operations on two different buffers</li>
+<li>Create new APIs to initialize the HASH peripheral then processes pInBuffer in interruption mode.
+<ul>
+<li>HASH_Accumulate_IT()</li>
+<li>HAL_HASH_SHA1_Accmlt_IT()</li>
+<li>HAL_HASH_MD5_Accmlt_IT()</li>
+</ul></li>
+<li>Create new APIs to wrap-up multi-buffer hashing processing in polling and interrupt modes
+<ul>
+<li>HAL_HASH_MD5_Accmlt_End()</li>
+<li>HAL_HASH_SHA1_Accmlt_End()</li>
+<li>HAL_HASH_MD5_Accmlt_End_IT()</li>
+<li>HAL_HASH_SHA1_Accmlt_End_IT()</li>
+</ul></li>
+<li>Ensure processing suspension flag is reset to HAL_HASH_SUSPEND_NONE value in HAL_HASH_Init() API</li>
+<li>Add comments to describe case of message made of several parts, not all with length multiple of 4 bytes.</li>
+<li>HASH_DMAXferCplt() callback API state improperly set to READY instead of BUSY fixed.</li>
+</ul></li>
+<li><strong>HAL NOR</strong> driver
+<ul>
+<li>Correct MISRA-C 2012-Rule-10.4_a / 14.4_d / 18.4 warnings in HAL NOR drivers</li>
+<li>Update address calculation in HAL_NOR_ProgramBuffer()</li>
+<li>Add new commands operations:
+<ul>
+<li>NOR_CMD_READ_ARRAY</li>
+<li>NOR_CMD_WORD_PROGRAM<br />
+</li>
+<li>NOR_CMD_BUFFERED_PROGRAM</li>
+<li>NOR_CMD_CONFIRM<br />
+</li>
+<li>NOR_CMD_BLOCK_ERASE<br />
+</li>
+<li>NOR_CMD_BLOCK_UNLOCK<br />
+</li>
+<li>NOR_CMD_READ_STATUS_REG</li>
+<li>NOR_CMD_CLEAR_STATUS_REG</li>
+</ul></li>
+<li>Apply adequate commands according to the command set field value
+<ul>
+<li>command set 1 for Micron JS28F512P33</li>
+<li>command set 2 for Micron M29W128G and Cypress S29GL128P</li>
+</ul></li>
+<li>Update some APIs in order to be compliant for memories with another command set.
+<ul>
+<li>HAL_NOR_Init()</li>
+<li>HAL_NOR_Read_ID()</li>
+<li>HAL_NOR_ReturnToReadMode()</li>
+<li>HAL_NOR_Read()</li>
+<li>HAL_NOR_Program()</li>
+<li>HAL_NOR_ReadBuffer()</li>
+<li>HAL_NOR_ProgramBuffer()</li>
+<li>HAL_NOR_Erase_Block()</li>
+<li>HAL_NOR_Erase_Chip()</li>
+<li>HAL_NOR_GetStatus()</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SRAM</strong> driver
+<ul>
+<li>General update to enhance HAL SRAM driver robustness
+<ul>
+<li>Update HAL_SRAM_Init() API to avoid activation of burst access for SRAM</li>
+</ul></li>
+</ul></li>
+<li><strong>LL FSMC</strong> driver
+<ul>
+<li>Remove useless casts.</li>
+<li>Update FSMC_NORSRAM_Init() API in order to resolve compilation issue with Microsoft Visual Studio 2017.</li>
+<li>Update FSMC_NORSRAM_Extended_Timing_Init() API in order to manage Bus turnaround phase duration FSMC_BWTR1_BUSTURN availability.</li>
+</ul></li>
+<li><strong>HAL/LL IWDG</strong> driver
+<ul>
+<li>Update HAL_IWDG_DEFAULT_TIMEOUT define value to consider LSI value instead of hardcoded value</li>
+</ul></li>
+<li><strong>HAL/LL I2C</strong> update
+<ul>
+<li>Update I2C_MasterReceiveRXNE() static API to avoid set the STOP bit again after the bit clearing by Hardware during the masking operation
+<ul>
+<li>Add new API I2C_WaitOnSTOPRequestThroughIT() to wait for stop bit.</li>
+</ul></li>
+<li>Update sequential APIs to avoid requesting a START when a STOP condition is not fully treated
+<ul>
+<li>Wait the end of STOP treatment by polling (with a timeout) the STOP bit on Control register CR1</li>
+</ul></li>
+<li>Update HAL_I2C_ER_IRQHandler() API to fix acknowledge failure issue with I2C memory IT processes
+<ul>
+<li>Add stop condition generation when NACK occurs.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL I2S</strong> driver
+<ul>
+<li>Update HAL_I2S_DMAStop() API to be more safe
+<ul>
+<li>Add a check on BSY, TXE and RXNE flags before disabling the I2S</li>
+</ul></li>
+<li>Update HAL_I2S_DMAStop() API to fix multi-call transfer issue(to avoid re-initializing the I2S for the next transfer).
+<ul>
+<li>Add __HAL_I2SEXT_FLUSH_RX_DR() and __HAL_I2S_FLUSH_RX_DR() macros to flush the remaining data inside DR registers.</li>
+<li>Add new ErrorCode define: HAL_I2S_ERROR_BUSY_LINE_RX</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL SPI</strong> driver
+<ul>
+<li>Update SPI_DMAReceiveCplt() API to handle efficiently the repeated transfers.
+<ul>
+<li>Disable TX DMA request only in bidirectional receive mode</li>
+</ul></li>
+<li>Update HAL_SPI_Init() API
+<ul>
+<li>To avoid setting the BaudRatePrescaler in case of Slave Motorola Mode</li>
+<li>Use the bit-mask for SPI configuration</li>
+</ul></li>
+<li>Update Transmit/Receive processes in half-duplex mode
+<ul>
+<li>Disable the SPI instance before setting BDIOE bit</li>
+</ul></li>
+<li>Fix wrong timeout management
+<ul>
+<li>Calculate Timeout based on a software loop to avoid blocking issue if Systick is disabled</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL UART</strong> driver
+<ul>
+<li>Update UART BRR calculation for ROM size gain</li>
+<li>Update UART polling and interruption processes to fix issues related to accesses out of user specified buffer.
+<ul>
+<li>Update UART_Transmit_IT(), UART_Receive_IT(), HAL_UART_Transmit() and HAL_UART_Receive() APIs.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SMARTCARD</strong> driver
+<ul>
+<li>Update SMARTCARD transmission and reception APIs to handle memory corruption
+<ul>
+<li>HAL_SMARTCARD_Transmit(), HAL_SMARTCARD_Receive(), HAL_SMARTCARD_Transmit_IT() and HAL_SMARTCARD_Receive_IT()</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL TIM</strong> driver
+<ul>
+<li>Align HAL/LL TIM driver with latest updates and enhancements</li>
+<li>Update Encoder interface mode to keep TIM_CCER_CCxNP bits low
+<ul>
+<li>Add TIM_ENCODERINPUTPOLARITY_RISING and TIM_ENCODERINPUTPOLARITY_FALLING definitions to determine encoder input polarity.</li>
+<li>Add IS_TIM_ENCODERINPUT_POLARITY() macro to check the encoder input polarity.</li>
+<li>Update HAL_TIM_Encoder_Init() API</li>
+<li>Replace IS_TIM_IC_POLARITY() macro by IS_TIM_ENCODERINPUT_POLARITY() macro.</li>
+</ul></li>
+<li>Fix bug when using multiple DMA request to different channels of same timer
+<ul>
+<li>Introduce DMA burst state management mechanism
+<ul>
+<li>Add a new structure for DMA Burst States definition : HAL_TIM_DMABurstStateTypeDef</li>
+<li>Update __HAL_TIM_RESET_HANDLE_STATE to support DMABurstState</li>
+<li>Add a new API HAL_TIM_DMABurstState() to get the actual state of a DMA burst operation</li>
+<li>Add DMABurstState, the DMA burst operation state, in the TIM_HandleTypeDef structure</li>
+<li>Add new API TIM_DMAErrorCCxN() for TIM DMA error callback (complementary channel)</li>
+<li>Add new API TIM_DMADelayPulseNCplt() for TIM DMA Delay Pulse complete callback (complementary channel)</li>
+</ul></li>
+</ul></li>
+<li>Implement TIM channel state management mechanism
+<ul>
+<li>Add new macro
+<ul>
+<li>TIM_CHANNEL_STATE_SET_ALL and TIM_CHANNEL_N_STATE_SET_ALL</li>
+<li>TIM_CHANNEL_STATE_SET and TIM_CHANNEL_N_STATE_SET</li>
+<li>TIM_CHANNEL_STATE_GET and TIM_CHANNEL_N_STATE_GET</li>
+</ul></li>
+</ul></li>
+<li>Add new API HAL_TIM_GetActiveChannel()</li>
+<li>Add new API HAL_TIM_GetChannelState() to get actual state of the TIM channel</li>
+<li>Add a new structure for TIM channel States definition : HAL_TIM_ChannelStateTypeDef</li>
+<li>Update __HAL_TIM_RESET_HANDLE_STATE to support ChannelState and ChannelNState</li>
+<li>Add a new element in the TIM_HandleTypeDef structure : ChannelState to manage TIM channel operation state</li>
+<li>Add a new element in the TIM_HandleTypeDef structure : ChannelNState to manage TIM complementary channel operation state</li>
+<li>Update HAL_TIMEx_MasterConfigSynchronization() API to avoid functional errors and assert fails when using some TIM instances as input trigger.
+<ul>
+<li>Replace IS_TIM_SYNCHRO_INSTANCE() macro by IS_TIM_MASTER_INSTANCE() macro.</li>
+<li>Add IS_TIM_SLAVE_INSTANCE() macro to check on TIM_SMCR_MSM bit.</li>
+</ul></li>
+<li>Remove ‘register’ storage class specifier from LL TIM driver.</li>
+<li>Add new API HAL_TIM_DMABurst_MultiWriteStart() allowing to configure the DMA Burst to transfer multiple Data from the memory to the TIM peripheral</li>
+<li>Add new API HAL_TIM_DMABurst_MultiReadStart() allowing to configure the DMA Burst to transfer Data from the TIM peripheral to the memory</li>
+</ul></li>
+<li><strong>HAL/LL USB</strong> driver
+<ul>
+<li>Bug fix: USB_ReadPMA() and USB_WritePMA() by ensuring 16-bits access to USB PMA memory</li>
+<li>Bug fix: correct USB RX count calculation</li>
+<li>Fix USB Bulk transfer double buffer mode</li>
+<li>Remove register keyword from USB defined macros as no more supported by C++ compiler</li>
+<li>Minor rework on USBD_Start() and USBD_Stop() APIs: stopping device will be handled by HAL_PCD_DeInit() API.</li>
+<li>Remove non used API for USB device mode.</li>
+</ul></li>
+<li><strong>LL UTILS</strong> driver
+<ul>
+<li>UTILS_SetFlashLatency() API renamed to LL_SetFlashLatency() and set exportable.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="true"><strong>V1.2.4 / 31-December-2019</strong></label>
+<div>
+<h2 id="main-changes-3">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and enhancements implementation</li>
+<li><strong>HAL/LL GPIO</strong> update
+<ul>
+<li>Update GPIO initialization sequence to avoid unwanted pulse on GPIO Pin’s</li>
+</ul></li>
+<li><strong>HAL I2C</strong> update
+<ul>
+<li>Update HAL_I2C_EV_IRQHandler() API to fix I2C send break issue
+<ul>
+<li>Add additional check on hi2c-&gt;hdmatx, hdmatx-&gt;XferCpltCallback, hi2c-&gt;hdmarx, hdmarx-&gt;XferCpltCallback in I2C_Master_SB() API to avoid enabling DMA request when IT mode is used.</li>
+</ul></li>
+<li>Update HAL_I2C_ER_IRQHandler() API to fix acknowledge failure issue with I2C memory IT processes
+<ul>
+<li>Add stop condition generation when NACK occurs.</li>
+</ul></li>
+<li>Update HAL_I2C_Init() API to force software reset before setting new I2C configuration.</li>
+<li>Update HAL I2C processes to report ErrorCode when wrong I2C start condition occurs
+<ul>
+<li>Add new ErrorCode define: HAL_I2C_WRONG_START</li>
+<li>Set ErrorCode parameter in I2C handle to HAL_I2C_WRONG_START</li>
+</ul></li>
+<li>Update I2C_DMAXferCplt(), I2C_DMAError() and I2C_DMAAbort() APIs to fix hardfault issue when hdmatx and hdmarx parameters in i2c handle aren’t initialized (NULL pointer).
+<ul>
+<li>Add additional check on hi2c-&gt;hdmtx and hi2c-&gt;hdmarx before resetting DMA Tx/Rx complete callbacks.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL IRDA</strong> update
+<ul>
+<li>Update IRDA interruption handler to manage correctly the overrun interrupt
+<ul>
+<li>Add in the HAL_IRDA_IRQHandler() API a check on USART_CR1_RXNEIE bit when an overrun interrupt occurs.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SMARTCARD</strong> update
+<ul>
+<li>Update SMARTCARD interruption handler to manage correctly the overrun interrupt.
+<ul>
+<li>Add in the HAL_SMARTCARD_IRQHandler() API a check on USART_CR1_RXNEIE bit when an overrun interrupt occurs.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL UART</strong> update
+<ul>
+<li>Update UART polling processes to handle efficiently the Lock mechanism
+<ul>
+<li>Move the process unlock at the top of the HAL_UART_Receive() and HAL_UART_Transmit() API.</li>
+</ul></li>
+<li>Update UART interruption handler to manage correctly the overrun interrupt
+<ul>
+<li>Add in the HAL_UART_IRQHandler() API a check on USART_CR1_RXNEIE bit when an overrun interrupt occurs.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL USART</strong> update
+<ul>
+<li>Update USART interruption handler to manage correctly the overrun interrupt
+<ul>
+<li>Add in the HAL_USART_IRQHandler() API a check on USART_CR1_RXNEIE bit when an overrun interrupt occurs.</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="true"><strong>V1.2.3 / 26-June-2019</strong></label>
+<div>
+<h2 id="main-changes-4">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and enhancements implementation</li>
+<li>HAL drivers clean up: remove double casting ‘uint32_t’ and ‘U’</li>
+<li>General updates to fix CodeSonar compilation warnings</li>
+<li>General updates to fix the user manual .chm files</li>
+<li>Add support of HAL callback registration feature</li>
+<li>Add new <strong>HAL EXTI</strong> driver</li>
+<li><strong>The following changes done on the HAL drivers require an update on the application code based on older HAL versions</strong>
+<ul>
+<li><strong>HAL/LL Generic</strong> update
+<ul>
+<li>Add support of <strong>HAL callback registration</strong> feature
+<ul>
+<li>The feature disabled by default is available for the following HAL drivers:
+<ul>
+<li><strong>ADC, CAN, CRYP, DAC, DCMI, ETH, HASH, HCD, I2C, UART, USART, IRDA, SMARTCARD,</strong></li>
+<li><strong>MMC, NAND, NOR, PCCARD, PCD, RNG, RTC, SD, SRAM, SPI, I2S, TIM and WWDG</strong></li>
+</ul></li>
+<li>The feature may be enabled individually per HAL PPP driver by setting the corresponding definition USE_HAL_PPP_REGISTER_CALLBACKS to 1U in stm32f2xx_hal_conf.h project configuration file (template file stm32f2xx_hal_conf_template.h available from Drivers/STM32F2xx_HAL_Driver/Inc)</li>
+<li>Once enabled , the user application may resort to HAL_PPP_RegisterCallback() to register specific callback function(s) and unregister it(them) with HAL_PPP_UnRegisterCallback()</li>
+</ul></li>
+</ul></li>
+<li><strong>Rework of HAL CRYP driver (compatibility break)</strong>
+<ul>
+<li>HAL CRYP driver has been redesigned with new API’s, to bypass limitations on data Encryption/Decryption management present with previous HAL CRYP driver version.</li>
+<li>The new HAL CRYP driver is the recommended version. It is located as usual in Drivers/STM32F2xx_HAL_Driver/Src and Drivers/STM32f2xx_HAL_Driver/Inc folders. It can be enabled through switch HAL_CRYP_MODULE_ENABLED in stm32f2xx_hal_conf.h</li>
+<li>The legacy HAL CRYP driver is no longer supported.</li>
+</ul></li>
+<li><strong>Rework of HAL CAN driver (compatibility break)</strong>
+<ul>
+<li>A new HAL CAN driver has been redesigned with new APIs, to bypass limitations on CAN Tx/Rx FIFO management present with previous HAL CAN driver version.</li>
+<li>The new HAL CAN driver is the recommended version. It is located as usual in Drivers/STM32F2xx_HAL_Driver/Src and Drivers/STM32f2xx_HAL_Driver/Inc folders. It can be enabled through switch HAL_CAN_MODULE_ENABLED in stm32f2xx_hal_conf.h</li>
+<li>The legacy HAL CAN driver is also present in the release in Drivers/STM32F2xx_HAL_Driver/Src/Legacy and Drivers/STM32F2xx_HAL_Driver/Inc/Legacy folders for software compatibility reasons. Its usage is not recommended as deprecated. It can however be enabled through switch HAL_CAN_LEGACY_MODULE_ENABLED in stm32f2xx_hal_conf.h</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL Generic</strong> update
+<ul>
+<li>Update HAL driver to allow user to change systick period to 1ms, 10 ms or 100 ms :
+<ul>
+<li>Add the following API’s :
+<ul>
+<li>HAL_GetTickPrio(): Returns a tick priority.</li>
+<li>HAL_SetTickFreq(): Sets new tick frequency.</li>
+<li>HAL_GetTickFreq(): Returns tick frequency.</li>
+</ul></li>
+<li>Add HAL_TickFreqTypeDef enumeration for the different Tick Frequencies: 10 Hz, 100 Hz and 1KHz (default).</li>
+</ul></li>
+<li>Add UNUSED() macro implementation to avoid GCC warning
+<ul>
+<li>The warning is detected when the UNUSED() macro is called from C++ file</li>
+</ul></li>
+<li>General updates to fix MISRA 2012 compilation errors
+<ul>
+<li>HAL_IS_BIT_SET()/HAL_IS_BIT_CLR() macros implementation update</li>
+<li>“stdio.h” include updated with “stddef.h”</li>
+</ul></li>
+<li>Add HAL_GetUIDw0(), HAL_GetUIDw1() and HAL_GetUIDw2() API in order to returns the unique device identifier</li>
+</ul></li>
+<li><strong>HAL CAN</strong> update
+<ul>
+<li>Fields of CAN_InitTypeDef structure are reworked:
+<ul>
+<li>SJW to SyncJumpWidth, BS1 to TimeSeg1, BS2 to TimeSeg2, TTCM to TimeTriggeredMode, ABOM to AutoBusOff, AWUM to AutoWakeUp, NART to AutoRetransmission (inversed), RFLM to ReceiveFifoLocked and TXFP to TransmitFifoPriority</li>
+</ul></li>
+<li>Rename CAN_FilterConfTypeDef structure to CAN_FilterTypeDef and update some fields:
+<ul>
+<li>FilterNumber to FilterBank</li>
+<li>BankNumber to SlaveStartFilterBank</li>
+</ul></li>
+<li>Rename CanTxMsgTypeDef structure to CAN_TxHeaderTypeDef and update some fields:
+<ul>
+<li>Data to TransmitGlobalTime</li>
+</ul></li>
+<li>Rename CanRxMsgTypeDef structure to CAN_RxHeaderTypeDef and update some fields:
+<ul>
+<li>Data to Timestamp</li>
+<li>FMI to FilterMatchIndex</li>
+</ul></li>
+<li>Update possible values list for FilterActivation parameter in CAN_FilterTypeDef structure
+<ul>
+<li>CAN_FILTER_ENABLE instead of ENABLE</li>
+<li>CAN_FILTER_DISABLE instead of DISABLE</li>
+</ul></li>
+<li>HAL_CAN_Init() is split into both HAL_CAN_Init() and HAL_CAN_Start() API’s</li>
+<li>HAL_CAN_Transmit() is replaced by HAL_CAN_AddTxMessage() to place Tx Request, then HAL_CAN_GetTxMailboxesFreeLevel() for polling until completion.</li>
+<li>HAL_CAN_Transmit_IT() is replaced by HAL_CAN_ActivateNotification() to enable transmit IT, then HAL_CAN_AddTxMessage() for place Tx request.</li>
+<li>HAL_CAN_Receive() is replaced by HAL_CAN_GetRxFifoFillLevel() for polling until reception, then HAL_CAN_GetRxMessage()</li>
+<li>to get Rx message.</li>
+<li>HAL_CAN_Receive_IT() is replaced by HAL_CAN_ActivateNotification() to enable receive IT, then HAL_CAN_GetRxMessage()</li>
+<li>in the receive callback to get Rx message</li>
+<li>HAL_CAN_Slepp() is renamed as HAL_CAN_RequestSleep()</li>
+<li>HAL_CAN_TxCpltCallback() is split into HAL_CAN_TxMailbox0CompleteCallback(), HAL_CAN_TxMailbox1CompleteCallback() and HAL_CAN_TxMailbox2CompleteCallback().</li>
+<li>HAL_CAN_RxCpltCallback is split into HAL_CAN_RxFifo0MsgPendingCallback() and HAL_CAN_RxFifo1MsgPendingCallback().</li>
+<li>More complete “How to use the new driver” is detailed in the driver header section itself.</li>
+<li><em>Refer to the following example to identify the changes</em></li>
+</ul></li>
+<li><strong>HAL CRC</strong> update
+<ul>
+<li>Update __HAL_CRC_DR_RESET() macro</li>
+<li>Update HAL_CRC_DeInit() API to
+<ul>
+<li>Be able to return HAL status when CRC is is already busy</li>
+<li>DeInit the low level hardware after reset IDR register content</li>
+</ul></li>
+<li>Remove extra call to HAL_LOCK/HAL_UNLOCK from the followings API’s:
+<ul>
+<li>HAL_CRC_Accumulate()</li>
+<li>HAL_CRC_Calculate()</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL CRYP</strong> update
+<ul>
+<li><strong>The CRYP_InitTypeDef</strong> is no more supported, changed by <strong>CRYP_ConfigTypedef</strong> to allow changing parameters</li>
+<li>Using HAL_CRYP_setConfig() API without reinitialize the CRYP IP using the HAL_CRYP_Init() API</li>
+<li>New parameters added in the <strong>CRYP_ConfigTypeDef</strong> structure: <strong>B0</strong> and <strong>DataWidthUnit</strong></li>
+<li>Input data size and error code parameters are added in the <strong>CRYP_HandleTypeDef</strong> structure</li>
+<li>Add new APIs to manage the CRYP configuration:
+<ul>
+<li>HAL_CRYP_SetConfig()</li>
+<li>HAL_CRYP_GetConfig()</li>
+</ul></li>
+<li>Add new APIs to encrypt and decrypt data:
+<ul>
+<li>HAL_CRYP_Encypt()</li>
+<li>HAL_CRYP_Decypt()</li>
+<li>HAL_CRYP_Encypt_IT()</li>
+<li>HAL_CRYP_Decypt_IT()</li>
+<li>HAL_CRYP_Encypt_DMA()</li>
+<li>HAL_CRYP_Decypt_DMA()</li>
+</ul></li>
+<li>More complete “How to use the new driver” is detailed in the driver header section itself.</li>
+<li><em>Refer to the following example to identify the changes</em></li>
+</ul></li>
+<li><strong>HAL DAC</strong> update
+<ul>
+<li>Overall rework of the driver for a more efficient implementation
+<ul>
+<li>Update HAL_DAC_Start(), HAL_DAC_Start_DMA(), HAL_DAC_Stop_DMA() and HAL_DAC_ConfigChannel() API to
+<ul>
+<li>Update lock mechanism for DAC process</li>
+<li>Optimize code by using direct register read</li>
+</ul></li>
+<li>Update HAL_DAC_IRQHandler() function to
+<ul>
+<li>Add error management in case DMA errors through HAL_DAC_DMAUnderrunCallbackCh1() and HAL_DACEx_DMAUnderrunCallbackCh2()</li>
+<li>Optimize code by using direct register read</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL DCMI</strong> update
+<ul>
+<li>Update HAL_DCMI_Start_DMA() function to Enable the DCMI peripheral</li>
+<li>Add new timeout implementation based on cpu cycles for DCMI stop</li>
+<li>Update lock mechanism for DCMI process</li>
+<li>Update HAL_DCMI_IRQHandler() function to:
+<ul>
+<li>Optimize code by using direct register read</li>
+</ul></li>
+<li>The extension files stm32f2xx_hal_dcmi_ex.c/.h is added and kept empty for projects compatibility reason</li>
+<li>Add DCMI_SyncUnmaskTypeDef structure and HAL_DCMI_ConfigSyncUnmask() API to manage embedded synchronization delimiters unmasks</li>
+<li>HAL DCMI driver clean-up: remove non referenced callback APIs: HAL_DCMI_VsyncCallback() and HAL_DCMI_HsyncCallback()</li>
+</ul></li>
+<li><strong>HAL DMA</strong> update
+<ul>
+<li>Add clean of callbacks in HAL_DMA_DeInit() API</li>
+<li>Remove FIFO error enabling in “HAL_DMA_Start_IT”
+<ul>
+<li>when FIFO error monitoring is requested in IT model, the macro __HAL_DMA_ENABLE_IT can be used to enable the FIFO error IT at the user Msp functio</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL FLASH</strong> update
+<ul>
+<li>HAL_FLASH_Unlock() update to return state error when the FLASH is already unlocked</li>
+</ul></li>
+<li><strong>HAL GPIO</strong> update
+<ul>
+<li>HAL_GPIO_TogglePin() API implementation update: to improve robustness</li>
+<li>HAL_GPIO_DeInit() API update to ensure clear all GPIO EXTI pending interrupts.</li>
+</ul></li>
+<li><strong>HAL HASH</strong> update
+<ul>
+<li>Overall rework of the driver for a more efficient implementation
+<ul>
+<li>HASH API changes for MISRA-C 2012 compliance</li>
+<li>Update HASH_Start_DMA() to add check on HASH_CR_MDMAT bit before checking input buffer length in case of multi-buffer processing</li>
+<li>Fill-up empty statement in HAL_HASH_DMAFeed_ProcessSuspend() to correct CodeSonar warning</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL I2C</strong> update
+<ul>
+<li>I2C API changes for MISRA-C 2012 compliance:
+<ul>
+<li>Rename HAL_I2C_Master_Sequential_Transmit_IT() to HAL_I2C_Master_Seq_Transmit_IT()</li>
+<li>Rename HAL_I2C_Master_Sequentiel_Receive_IT() to HAL_I2C_Master_Seq_Receive_IT()</li>
+<li>Rename HAL_I2C_Slave_Sequentiel_Transmit_IT() to HAL_I2C_Slave_Seq_Transmit_IT()</li>
+<li>Rename HAL_I2C_Slave_Sequentiel_Receive_DMA() to HAL_I2C_Slave_Seq_Receive_DMA()</li>
+</ul></li>
+<li>Add support of I2C repeated start feature in DMA Mode With the following new API’s
+<ul>
+<li>HAL_I2C_Master_Seq_Transmit_DMA()</li>
+<li>HAL_I2C_Master_Seq_Receive_DMA()</li>
+<li>HAL_I2C_Slave_Seq_Transmit_DMA()</li>
+<li>HAL_I2C_Slave_Seq_Receive_DMA()</li>
+</ul></li>
+<li>Add new I2C transfer options to easy manage the sequential transfers
+<ul>
+<li>I2C_OTHER_FRAME</li>
+<li>I2C_OTHER_AND_LAST_FRAME</li>
+</ul></li>
+<li>Fix I2C send break issue in IT processes
+<ul>
+<li>Add additional check on hi2c-&gt;hdmatxand hi2c-&gt;hdmarx to avoid the DMA request enable when ITmode is used.</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL UART/USART/IrDA/SMARTCARD</strong> update
+<ul>
+<li>Overall rework of the driver for a more efficient implementation
+<ul>
+<li>Improve I/O operation functions: separate transfer process and <em>PPP</em> state management</li>
+<li>Update the HAL_<em>PPP</em>_IRQHandler function by optimizing the management of interrupt errors</li>
+<li>Align driver with the Reference Manual regarding registers and bit definition naming</li>
+</ul></li>
+</ul></li>
+<li><strong>LL IWDG</strong> update
+<ul>
+<li>Update LL inline macros to use IWDGx parameter instead of IWDG instance defined in CMSIS device</li>
+</ul></li>
+<li><strong>HAL RNG</strong> update
+<ul>
+<li>Add ErrorCode parameter in HAL RNG Handler structure</li>
+<li>Add HAL_RNG_GetError() API</li>
+<li>HAL Lock/Unlock mechanism update</li>
+</ul></li>
+<li><strong>HAL/LL RTC</strong> update
+<ul>
+<li>HAL/ LL drivers optimization
+<ul>
+<li>HAL driver: remove unused variables</li>
+<li>LL driver: getter APIs optimization</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL RCC</strong> update
+<ul>
+<li>Update HAL_RCC_DeInit() and LL_RCC_DeInit() APIs to
+<ul>
+<li>Be able to return HAL/LL status</li>
+<li>Add checks for HSI, PLL and PLLI2S ready before modifying RCC CFGR registers</li>
+<li>Clear all interrupt flags</li>
+<li>Initialize systick interrupt period</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SDMMC</strong> update
+<ul>
+<li>Add API HAL_SD_ConfigSpeedBusOperation() to configure the SD card speed bus mode</li>
+<li>Fix and improve state and error management</li>
+<li>Fix preprocessing compilation issue with SDIO STA STBITERR interrupt</li>
+<li>Align driver with the Reference Manual regarding registers and bit definition naming</li>
+</ul></li>
+<li><strong>HAL SPI</strong> update
+<ul>
+<li>Overall rework of the driver for a more efficient implementation
+<ul>
+<li>Add the following new macros:
+<ul>
+<li>SPI_CHECK_FLAG()</li>
+<li>SPI_CHECK_IT_SOURCE()</li>
+</ul></li>
+<li>Update HAL_SPI_StateTypeDef structure to add new state: HAL_SPI_STATE_ABORT</li>
+<li>Add HAL_SPI_Abort() to manage abort issue in SPI TX or Rx mode only</li>
+<li>Update HAL_SPI_Transmit()/HAL_SPI_Receive() API’s to fix memory overflow issue.</li>
+<li>Update HAL_SPI_Transmit_DMA : checking hmdtx instead of hdmrx.</li>
+<li>Update HAL_SPI_IRQHandler() function to
+<ul>
+<li>Add error management in case DMA errors through HAL_DMA_Abort_IT() and ErrorCallback()</li>
+<li>Optimize code by using direct register read</li>
+</ul></li>
+<li>Align driver with the Reference Manual regarding registers and bit definition naming</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL I2S</strong> update
+<ul>
+<li>Overall rework of the driver for a more efficient implementation
+<ul>
+<li>Add the following new macros:
+<ul>
+<li>I2S_CHECK_FLAG()</li>
+<li>I2S_CHECK_IT_SOURCE()</li>
+</ul></li>
+<li>Update HAL_I2S_Transmit()/HAL_I2S_Receive() API’s to fix memory overflow issue</li>
+<li>Update HAL_SPI_IRQHandler() function to
+<ul>
+<li>Add error management in case DMA errors through HAL_DMA_Abort_IT() and ErrorCallback()</li>
+<li>Optimize code by using direct register read</li>
+</ul></li>
+<li>Add extra call to HAL_LOCK/HAL_UNLOCK to the followings API’s:
+<ul>
+<li>HAL_I2S_Transmit()</li>
+<li>HAL_I2S_Receive()</li>
+<li>HAL_I2S_Transmit_IT()</li>
+<li>HAL_I2S_Receive_IT()</li>
+<li>HAL_I2S_Transmit_DMA()</li>
+<li>HAL_I2S_Receive_DMA()</li>
+</ul></li>
+<li>Align driver with the Reference Manual regarding registers and bit definition naming</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL/LL TIM</strong> update
+<ul>
+<li>Move the following TIM structures from stm32f4xx_hal_tim_ex.h into stm32f4xx_hal_tim.h
+<ul>
+<li>TIM_MasterConfigTypeDef()</li>
+<li>TIM_BreakDeadTimeConfigTypeDef()</li>
+</ul></li>
+<li>Add new TIM Callbacks API’s:
+<ul>
+<li>HAL_TIM_PeriodElapsedHalfCpltCallback()</li>
+<li>HAL_TIM_IC_CaptureHalfCpltCallback()</li>
+<li>HAL_TIM_PWM_PulseFinishedHalfCpltCallback()</li>
+<li>HAL_TIM_TriggerHalfCpltCallback()</li>
+</ul></li>
+<li>TIM API changes for MISRA-C 2012 compliance:
+<ul>
+<li>Rename HAL_TIM_SlaveConfigSynchronization to HAL_TIM_SlaveConfigSynchro</li>
+<li>Rename HAL_TIM_SlaveConfigSynchronization_IT to HAL_TIM_SlaveConfigSynchro_IT</li>
+<li>Rename HAL_TIMEx_ConfigCommutationEvent to HAL_TIMEx_ConfigCommutEvent</li>
+<li>Rename HAL_TIMEx_ConfigCommutationEvent_IT to HAL_TIMEx_ConfigCommutEvent_IT</li>
+<li>Rename HAL_TIMEx_ConfigCommutationEvent_DMA to HAL_TIMEx_ConfigCommutEvent_DMA</li>
+<li>Rename HAL_TIMEx_CommutationCallback to HAL_TIMEx_CommutCallback</li>
+<li>Rename HAL_TIMEx_DMACommutationCplt to TIMEx_DMACommutationCplt</li>
+</ul></li>
+<li>Add a call to HAL_DMA_Abort_IT from HAL_TIM_XXX_Stop_DMA</li>
+</ul></li>
+<li><strong>HAL/LL USB</strong> update
+<ul>
+<li>Rework USB interrupt handler and improve HS DMA support in Device mode</li>
+<li>Fix BCD handling for OTG instance in device mode</li>
+<li>cleanup reference to low speed in device mode</li>
+<li>Allow writing TX FIFO in case of transfer length is equal to available space in the TX FIFO</li>
+<li>Fix Toggle OUT interrupt channel in host mode</li>
+<li>Add new callback to be used to handle usb device connection/disconnection
+<ul>
+<li>HAL_HCD_PortEnabled_Callback()</li>
+<li>HAL_HCD_PortDisabled_Callback()</li>
+</ul></li>
+<li>Update to prevent reactivate host interrupt channel</li>
+<li>Updated USB_WritePacket(), USB_ReadPacket()APIs to prevent compilation warning with GCC GNU v8.2.0</li>
+<li>Rework USB_EPStartXfer() API to enable theUSB endpoint before unmasking the TX FiFo empty interrupt in case DMA is not used</li>
+<li>USB HAL_HCD_Init() and HAL_PCD_Init() APIsupdated to avoid enabling USB DMA feature for OTG FS instance, USB DMAfeature is available only on OTG HS Instance</li>
+<li>Remove duplicated line in hal_hcd.c header file comment section</li>
+<li>Rework USB HAL driver to use instancePCD_SPEED_xxx, HCD_SPEED_xx speeds instead of OTG register Core speed definition during the instance initialization</li>
+<li>Software Quality improvement with a fix ofCodeSonar warning on PCD_Port_IRQHandler() and HCD_Port_IRQHandler()interrupt handlers</li>
+</ul></li>
+<li><strong>HAL UTILS</strong> update
+<ul>
+<li>Update LL_GetFlashSize() API to return uint32_t instead of uint16_t</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true"><strong>V1.2.2 / 29-September-2017</strong></label>
+<div>
+<h2 id="main-changes-5">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and enhancements implementation</li>
+<li>Fix compilation warning with GCC compiler</li>
+<li>Remove Date and version from header files</li>
+<li><strong>HAL Generic</strong> update
+<ul>
+<li>Update __weak and __packed defined values for ARM compiler</li>
+<li>Update __ALIGN_BEGIN and __ALIGN_END defined values for ARM compiler</li>
+</ul></li>
+<li><strong>HAL I2C</strong> update
+<ul>
+<li>Update Interface APIs headers to remove confusing message about device address</li>
+<li>UpdateI2C_MasterReceive_RXNE() and I2C_MasterReceive_BTF() static APIs to fix badHandling of NACK in I2C master receive process.</li>
+</ul></li>
+<li><strong>HAL RCC</strong> update
+<ul>
+<li>Update HAL_RCC_GetOscConfig()API to:
+<ul>
+<li>set PLLR in theRCC_OscInitStruct</li>
+<li>check on null pointer</li>
+<li>Update HAL_RCC_ClockConfig()API to:</li>
+<li>check on null pointer</li>
+<li>optimize code size byupdating the handling method of the SWS bits</li>
+<li>update to use __HAL_FLASH_GET_LATENCY() flash macro instead of using direct registeraccess to LATENCY bits in FLASH ACR register.</li>
+</ul></li>
+<li>Update HAL_RCC_DeInit() to
+<ul>
+<li>Be able to return HAL status (HAL_OK, HAL_TIMEOUT and HAL_ERROR)</li>
+<li>Add checks for HSI, PLL and PLLI2S ready before modifying RCC CFGR registers</li>
+<li>Clear all interrupt flags</li>
+<li>Initialize systick interrupt period</li>
+</ul></li>
+<li>Update HAL_RCC_GetSysClockFreq() to avoid risk of rounding error which may leads to a wrong returned value.</li>
+</ul></li>
+<li><strong>HAL RNG</strong> update
+<ul>
+<li>HAL_RNG_Init() remove Lock()/Unlock()</li>
+</ul></li>
+<li><strong>HAL MMC</strong> update
+<ul>
+<li>HAL_MMC_Erase() API: add missing () to fix compilation warning detected with SW4STM32 when extra feature is enabled.</li>
+</ul></li>
+<li><strong>LL DMA</strong> update
+<ul>
+<li>Update to clear DMA flags using WRITE_REG() instead SET_REG() API to avoid read access to the IFCR register that is write only.</li>
+<li>Update values for the following defines: DMA_FLAG_FEIF0_4 and DMA_FLAG_DMEIF0_4</li>
+</ul></li>
+<li><strong>LL RTC</strong> update
+<ul>
+<li>Fix warning with static analyzer</li>
+</ul></li>
+<li><strong>LL USART</strong> update
+<ul>
+<li>Add assert macros to check USART BaudRate register</li>
+</ul></li>
+<li><strong>LL I2C</strong> update
+<ul>
+<li>Rename IS_I2C_CLOCK_SPEED()and IS_I2C_DUTY_CYCLE() respectively to IS_LL_I2C_CLOCK_SPEED() andIS_LL_I2C_DUTY_CYCLE() to avoid incompatible macros redefinition.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="true"><strong>V1.2.1 / 14-April-2017</strong></label>
+<div>
+<h2 id="main-changes-6">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and enhancements implementation</li>
+<li><strong>HAL CONF Template</strong> update
+<ul>
+<li>Add support for HAL MMC driver.</li>
+</ul></li>
+<li><strong>HAL CAN</strong> update
+<ul>
+<li>Addmanagement of overrun error.</li>
+<li>Allowpossibility to receive messages from the 2 RX FIFOs in parallel viainterrupt.</li>
+<li>Fix messagelost issue with specific sequence of transmit requests.</li>
+<li>Handletransmission failure with error callback, when NART is enabled.</li>
+<li>Add __HAL_CAN_CANCEL_TRANSMIT() call to abort transmission whentimeout is reached</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true"><strong>V1.2.0 / 17-March-2017</strong></label>
+<div>
+<h2 id="main-changes-7">Main Changes</h2>
+<ul>
+<li><strong>Add Low Layer drivers allowing performance and footprint optimization</strong>
+<ul>
+<li>Low Layer drivers APIs provide register level programming: require deep knowledge of peripherals described in STM32F2xx Reference Manuals</li>
+<li>Low Layer drivers are available for: ADC, Cortex, CRC, DAC, DMA, EXTI, GPIO, I2C, IWDG, PWR, RCC, RNG, RTC, SPI, TIM, USART, WWDG peripherals and additional Low Level Bus, System and Utilities APIs.</li>
+<li>Low Layer drivers APIs are implemented as static inline function in new Inc/stm32f2xx_ll_ppp.h files for PPP peripherals, there is no configuration file and each stm32f2xx_ll_ppp.h file must be included in user code.</li>
+</ul></li>
+<li>General updates to fix known defects and enhancements implementation</li>
+<li>Fix extra warnings with GCC compiler</li>
+<li>HAL drivers clean up: remove double casting ‘uint32_t’ and ‘U’</li>
+<li>Add new <strong>HAL MMC</strong> driver</li>
+<li><strong>The following changes done on the HAL drivers require an update on the application code based on older HAL versions</strong>
+<ul>
+<li><strong>HAL SD</strong> update
+<ul>
+<li>Overall rework of the driver for a more efficient implementation
+<ul>
+<li>Modify initialization API and structures</li>
+<li>Modify Read / Write sequences: separate transfer process and SD Cards state management</li>
+<li>Adding interrupt mode for Read / Write operations</li>
+<li>Update the HAL_SD_IRQHandler function by optimizing the management of interrupt errors</li>
+</ul></li>
+<li>Refer to the following example to identify the changes: BSP example and USB_Device/MSC_Standalone application</li>
+</ul></li>
+<li><strong>HAL NAND</strong> update</li>
+<li>Modify NAND_AddressTypeDef, NAND_DeviceConfigTypeDef and NAND_HandleTypeDef structures fields</li>
+<li>Add new HAL_NAND_ConfigDevice API</li>
+</ul></li>
+<li><strong>HAL</strong> update
+<ul>
+<li>Modify default HAL_Delay implementation to guarantee minimum delay</li>
+<li>Add HAL_GetUID API : returns the unique device identifier</li>
+</ul></li>
+<li><strong>HAL Cortex</strong> update
+<ul>
+<li>Move HAL_MPU_Disable() and HAL_MPU_Enable() from stm32f2xx_hal_cortex.h to stm32f2xx_hal_cortex.c</li>
+<li>Clear the whole MPU control register in HAL_MPU_Disable() API</li>
+</ul></li>
+<li><strong>HAL FLASH</strong> update
+<ul>
+<li>IS_FLASH_ADDRESS() macro update to support OTP range</li>
+<li>FLASH_Program_DoubleWord(): Replace 64-bit accesses with 2 double-words operations</li>
+</ul></li>
+<li><strong>HAL GPIO</strong> update
+<ul>
+<li>Update IS_GPIO_PIN() macro implementation to be more safe</li>
+</ul></li>
+<li><strong>HAL RCC</strong> update
+<ul>
+<li>Update IS_RCC_PLLQ_VALUE() macro implementation: the minimum accepted value is 2 instead of 4</li>
+<li>Update to refer to AHBPrescTable[] and APBPrescTable[] tables defined in system_stm32f2xx.c file instead of APBAHBPrescTable[] table.</li>
+</ul></li>
+<li><strong>HAL DMA</strong> update
+<ul>
+<li>HAL_DMA_Init(): update to check compatibility between FIFO threshold level and size of the memory burst</li>
+</ul></li>
+<li><strong>HAL UART/USART/IrDA/SMARTCARD</strong> (referenced as PPP here below)
+<ul>
+<li>DMA Receive process; the code has been updated to clear the PPP OVR flag before enabling DMA receive request.</li>
+<li>Add transfer abort APIs and associated callbacks :
+<ul>
+<li>HAL_PPP_Abort()</li>
+<li>HAL_PPP_AbortTransmit()</li>
+<li>HAL_PPP_AbortReceive()</li>
+<li>HAL_PPP_Abort_IT()</li>
+<li>HAL_PPP_AbortTransmit_IT()</li>
+<li>HAL_PPP_AbortReceive_IT()</li>
+<li>HAL_PPP_AbortCpltCallback()</li>
+<li>HAL_PPP_AbortTransmitCpltCallback()</li>
+<li>HAL_PPP_AbortReceiveCpltCallback()</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL CAN</strong> update
+<ul>
+<li>Remove Lock mechanism from HAL_CAN_Transmit_IT() and HAL_CAN_Receive_IT() processes</li>
+<li>HAL CAN driver optimization</li>
+</ul></li>
+<li><strong>HAL TIM</strong> update
+<ul>
+<li>Add __HAL_TIM_MOE_DISABLE_UNCONDITIONALLY() macro to disable Master output without check on TIM channel state.</li>
+<li>Update HAL_TIMEx_ConfigBreakDeadTime() to fix TIM BDTR register corruption.</li>
+</ul></li>
+<li><strong>HAL I2C</strong> update
+<ul>
+<li>Update HAL_I2C_Master_Transmit() and HAL_I2C_Slave_Transmit() to avoid sending extra bytes at the end of the transmit processes</li>
+<li>UpdateHAL_I2C_Mem_Read() API to fix wrong check on misused parameter “Size”</li>
+<li>UpdateI2C_MasterReceive_RXNE() and I2C_MasterReceive_BTF() static APIs toenhance Master sequential reception process.</li>
+</ul></li>
+<li><strong>HAL SPI</strong> update
+<ul>
+<li>Add transfer abort APIs and associated callbacks in interrupt mode
+<ul>
+<li>HAL_SPI_Abort()</li>
+<li>HAL_SPI_Abort_IT()</li>
+<li>HAL_SPI_AbortCpltCallback()</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL USB PCD</strong> update
+<ul>
+<li>Flush all TX FIFOs on USB Reset</li>
+<li>Remove Lock mechanism from HAL_PCD_EP_Transmit() and HAL_PCD_EP_Receive() API’s</li>
+</ul></li>
+<li><strong>LL USB</strong> update
+<ul>
+<li>Enable DMA Burst mode for USB OTG HS</li>
+<li>Fix SD card detection issue</li>
+</ul></li>
+<li><strong>LL SDMMC</strong> update
+<ul>
+<li>Add new SDMMC_CmdSDEraseStartAdd, SDMMC_CmdSDEraseEndAdd, SDMMC_CmdOpCondition and SDMMC_CmdSwitch functions</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true"><strong>V1.1.3 / 29-June-2016</strong></label>
+<div>
+<h2 id="main-changes-8">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and enhancements implementation</li>
+<li>Enhance HAL delay and time base implementation:
+<ul>
+<li>Add new drivers stm32f2xx_hal_timebase_tim_template.c, stm32f2xx_hal_timebase_rtc_alarm_template.c and stm32f2xx_hal_timebase_rtc_wakeup_template.c which override the native HAL time base functions (defined as weak) to either use the TIM or the RTC as time base tick source. For more details about the usage of these drivers, please refer to HAL_TimeBase examples and FreeRTOS-based applications</li>
+</ul></li>
+<li><strong>The following changes done on the HAL drivers require an update on the application code based on HAL V1.1.2</strong>
+<ul>
+<li>HAL UART, USART, IRDA, SMARTCARD, SPI, I2C (referenced as PPP here below) drivers
+<ul>
+<li>Add PPP error management during DMA process. This requires the following updates on user application:
+<ul>
+<li>Configure and enable the PPP IRQ in HAL_PPP_MspInit() function</li>
+<li>In stm32f2xx_it.c file, PPP_IRQHandler() function: add a call to HAL_PPP_IRQHandler() function</li>
+<li>Add and customize the Error Callback API: HAL_PPP_ErrorCallback()</li>
+</ul></li>
+<li>HAL I2C driver:◾Update to avoid waiting on STOPF/BTF/AF flag under DMA ISR by using the PPP end of transfer interrupt in theDMA transfer process. This requires the following updates on user application:
+<ul>
+<li>Configure and enable the PPP IRQ in HAL_PPP_MspInit() function</li>
+<li>In stm32f2xx_it.c file, PPP_IRQHandler() function: add a call to HAL_PPP_IRQHandler() function</li>
+</ul></li>
+<li>I2C transfer processes IT update: NACK during addressing phase is managed through I2C Error interrupt instead of HAL state</li>
+</ul></li>
+<li>HAL IWDG driver: rework overall driver for better implementation
+<ul>
+<li>Remove HAL_IWDG_Start(), HAL_IWDG_MspInit() and HAL_IWDG_GetState() APIs</li>
+</ul></li>
+<li>HAL WWDG driver: rework overall driver for better implementation
+<ul>
+<li>Remove HAL_WWDG_Start(), HAL_WWDG_Start_IT(), HAL_WWDG_MspDeInit() and HAL_WWDG_GetState() APIs</li>
+<li>Update the HAL_WWDG_Refresh(WWDG_HandleTypeDef *hwwdg, uint32_t counter) function and API by removing the “counter” parameter</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL Generic</strong> update
+<ul>
+<li>stm32f2xx_hal_conf_template.h
+<ul>
+<li>Optimize HSE Startup Timeout value from 5000ms to 100 ms</li>
+<li>Add new define LSE_STARTUP_TIMEOUT</li>
+<li>Add new define USE_SPI_CRC for code cleanup when the CRC calculation is disabled.</li>
+</ul></li>
+<li>Update HAL drivers to support MISRA C 2004 rule 10.6</li>
+<li>Add new template driver to configure timebase using TIMER :
+<ul>
+<li>stm32f2xx_hal_timebase_tim_template.c</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL CAN</strong> update
+<ul>
+<li>Update HAL_CAN_Transmit() and HAL_CAN_Transmit_IT() functions to unlock process when all Mailboxes are busy</li>
+</ul></li>
+<li><strong>HAL DCMI</strong> update
+<ul>
+<li>Rename DCMI_DMAConvCplt to DCMI_DMAXferCplt</li>
+<li>Update HAL_DCMI_Start_DMA() function to Enable the DCMI peripheral</li>
+<li>Add new timeout implementation based on cpu cycles for DCMI stop</li>
+<li>Add HAL_DCMI_Suspend() function to suspend DCMI capture</li>
+<li>Add HAL_DCMI_Resume() function to resume capture after DCMI suspend</li>
+<li>Update lock mechanism for DCMI process</li>
+<li>Update HAL_DCMI_IRQHandler() function to
+<ul>
+<li>Add error management in case DMA errors through XferAbortCallback() and HAL_DMA_Abort_IT()</li>
+<li>Optimize code by using direct register read</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL DMA</strong> update
+<ul>
+<li>Add new APIs HAL_DMA_RegisterCallback() and HAL_DMA_UnRegisterCallback to register/unregister the different callbacks identified by the enum typedef HAL_DMA_CallbackIDTypeDef</li>
+<li>Add new API HAL_DMA_Abort_IT() to abort DMA transfer under interrupt context
+<ul>
+<li>The new registered Abort callback is called when DMA transfer abortion is completed</li>
+</ul></li>
+<li>Add the check of compatibility between FIFO threshold level and size of the memory burst in the HAL_DMA_Init() API</li>
+<li>Add new Error Codes: HAL_DMA_ERROR_PARAM, HAL_DMA_ERROR_NO_XFER and HAL_DMA_ERROR_NOT_SUPPORTED</li>
+<li>Remove all DMA states related to MEM0/MEM1 in HAL_DMA_StateTypeDef</li>
+</ul></li>
+<li><strong>HAL ETH</strong> update
+<ul>
+<li>Removal of ETH MAC debug register defines</li>
+</ul></li>
+<li><strong>HAL HCD</strong> update
+<ul>
+<li>Update HCD_Port_IRQHandler() to unmask disconnect IT only when the port is disable</li>
+</ul></li>
+<li><strong>HAL I2C</strong> update
+<ul>
+<li>Add support of I2C repeated start feature:
+<ul>
+<li>With the following new API’s
+<ul>
+<li>HAL_I2C_Master_Sequential_Transmit_IT()</li>
+<li>HAL_I2C_Master_Sequential_Receive_IT()</li>
+<li>HAL_I2C_Master_Abort_IT()</li>
+<li>HAL_I2C_Slave_Sequential_Transmit_IT()</li>
+<li>HAL_I2C_Slave_Sequential_Receive_IT()</li>
+<li>HAL_I2C_EnableListen_IT()</li>
+<li>HAL_I2C_DisableListen_IT()</li>
+</ul></li>
+<li>Add new user callbacks:
+<ul>
+<li>HAL_I2C_ListenCpltCallback()</li>
+<li>HAL_I2C_AddrCallback()</li>
+</ul></li>
+</ul></li>
+<li>Update to generate STOP condition when a acknowledge failure error is detected</li>
+<li>Several update on HAL I2C driver to implement the new I2C state machine:
+<ul>
+<li>Add new API to get the I2C mode: HAL_I2C_GetMode()</li>
+<li>Update I2C process to manage the new I2C states.</li>
+</ul></li>
+<li>Fix wrong behaviour in single byte transmission</li>
+<li>Update I2C_WaitOnFlagUntilTimeout() to manage the NACK feature.</li>
+<li>Update I2C transmission process to support the case data size equal 0</li>
+<li>Update Polling management:
+<ul>
+<li>The Timeout value must be estimated for the overall process duration: the Timeout measurement is cumulative</li>
+</ul></li>
+<li>Add the management of Abort service: Abort DMA transfer through interrupt
+<ul>
+<li>In the case of Master Abort IT transfer usage:
+<ul>
+<li>Add new user HAL_I2C_AbortCpltCallback() to inform user of the end of abort process</li>
+<li>A new abort state is defined in the HAL_I2C_StateTypeDef structure</li>
+</ul></li>
+</ul></li>
+<li>Add the management of I2C peripheral errors, ACK failure and STOP condition detection during DMA process. This requires the following updates on user application:
+<ul>
+<li>Configure and enable the I2C IRQ in HAL_I2C_MspInit() function</li>
+<li>In stm32f2xx_it.c file, I2C_IRQHandler() function: add a call to HAL_I2C_IRQHandler() function</li>
+<li>Add and customize the Error Callback API: HAL_I2C_ErrorCallback()</li>
+</ul></li>
+<li>NACK error during addressing phase is returned through interrupt instead of previously through I2C transfer API’s</li>
+<li>I2C addressing phase is updated to be managed using interrupt instead of polling (Only for HAL I2C driver)
+<ul>
+<li>Add new static functions to manage I2C SB, ADDR and ADD10 flags</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL IRDA</strong> update
+<ul>
+<li>Several update on HAL IRDA driver to implement the new UART state machine:
+<ul>
+<li>Add new field in IRDA_HandleTypeDef structure: “rxState”, IRDA state information related to Rx Operations</li>
+<li>Rename “state” field in UART_HandleTypeDef structure by “gstate”: IRDA state information related to global Handle management and Tx Operations</li>
+<li>Update IRDA process to manage the new UART states.</li>
+<li>Update __HAL_IRDA_RESET_HANDLE_STATE() macro to handle the new IRDA state parameters (gState, rxState)</li>
+</ul></li>
+<li>Removal of IRDA_TIMEOUT_VALUE define</li>
+<li>Update IRDA_BRR() Macro to fix wrong baudrate calculation</li>
+<li>Update Polling management:
+<ul>
+<li>The user Timeout value must be estimated for the overall process duration: the Timeout measurement is cumulative</li>
+</ul></li>
+<li>Update DMA process:
+<ul>
+<li>Update the management of IRDA peripheral errors during DMA process. This requires the following updates in user application:
+<ul>
+<li>Configure and enable the IRDA IRQ in HAL_IRDA_MspInit() function</li>
+<li>In stm32f2xx_it.c file, IRDA_IRQHandler() function: add a call to HAL_IRDA_IRQHandler() function</li>
+<li>Add and customize the Error Callback API: HAL_IRDA_ErrorCallback()</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL IWDG</strong> update
+<ul>
+<li>Overall rework of the driver for a more efficient implementation
+<ul>
+<li>Remove the following APIs:
+<ul>
+<li>HAL_IWDG_Start()</li>
+<li>HAL_IWDG_MspInit()</li>
+<li>HAL_IWDG_GetState()</li>
+</ul></li>
+<li>Update implementation:
+<ul>
+<li>HAL_IWDG_Init(): this function insures the configuration and the start of the IWDG counter</li>
+<li>HAL_IWDG_Refresh(): this function insures the reload of the IWDG counter</li>
+</ul></li>
+<li>Refer to the following example to identify the changes: IWDG_Example</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL NOR</strong> update
+<ul>
+<li>Update NOR_ADDR_SHIFT macro implementation</li>
+</ul></li>
+<li><strong>HAL PCD</strong> update
+<ul>
+<li>Update HAL_PCD_IRQHandler() to get HCLK frequency before setting TRDT value</li>
+</ul></li>
+<li><strong>HAL RCC</strong> update
+<ul>
+<li>Add new default define value for HSI calibration “RCC_HSICALIBRATION_DEFAULT”</li>
+<li>Optimize Internal oscillators and PLL startup timeout</li>
+<li>Update to avoid the disable for HSE/LSE oscillators before setting the new RCC HSE/LSE configuration and add the following notes in HAL_RCC_OscConfig() API description:
+<ul>
+<li><ul>
+<li><span class="citation" data-cites="note">@note</span> Transitions LSE Bypass to LSE On and LSE On to LSE Bypass are not</li>
+</ul></li>
+<li><ul>
+<li>supported by this API. User should request a transition to LSE Off</li>
+</ul></li>
+<li><ul>
+<li>first and then LSE On or LSE Bypass.</li>
+</ul></li>
+<li><ul>
+<li><span class="citation" data-cites="note">@note</span> Transition HSE Bypass to HSE On and HSE On to HSE Bypass are not</li>
+</ul></li>
+<li><ul>
+<li>supported by this API. User should request a transition to HSE Off</li>
+</ul></li>
+<li><ul>
+<li>first and then HSE On or HSE Bypass.◦Optimize the HAL_RCC_ClockConfig() API implementation</li>
+</ul></li>
+</ul></li>
+<li>Update HAL_RCC_ClockConfig() function to adjust the SystemCoreClock</li>
+<li>HAL_RCCEx_PeriphCLKConfig() API: update to fix the RTC clock configuration issue</li>
+</ul></li>
+<li><strong>HAL RTC</strong> update
+<ul>
+<li>Add new timeout implementation based on cpu cycles for ALRAWF, ALRBWF and WUTWF flags</li>
+</ul></li>
+<li><strong>HAL SMARTCARD</strong> update
+<ul>
+<li>Several update on HAL SMARTCARD driver to implement the new UART state machine:
+<ul>
+<li>Add new field in SMARTCARD_HandleTypeDef structure: “rxState”, SMARTCARDstate information related to Rx Operations</li>
+<li>Rename “state” field in UART_HandleTypeDef structure by “gstate”: SMARTCARDstate information related to global Handle management and Tx Operations</li>
+<li>Update SMARTCARD process to manage the new UART states.</li>
+<li>Update __HAL_SMARTCARD_RESET_HANDLE_STATE() macro to handle the new SMARTCARD state parameters (gState, rxState)</li>
+</ul></li>
+<li>Update SMARTCARD_BRR() macro to fix wrong baudrate calculation</li>
+<li>Update Polling management:
+<ul>
+<li>The user Timeout value must be estimated for the overall process duration: the Timeout measurement is cumulative</li>
+</ul></li>
+<li>Update DMA process:
+<ul>
+<li>Update the management of SMARTCARD peripheral errors during DMA process. This requires the following updates in user application:
+<ul>
+<li>Configure and enable the SMARTCARD IRQ in HAL_SMARTCARD_MspInit() function</li>
+<li>In stm32f2xx_it.c file, SMARTCARD_IRQHandler() function: add a call to HAL_SMARTCARD_IRQHandler() function</li>
+<li>Add and customize the Error Callback API: HAL_SMARTCARD_ErrorCallback()</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SPI</strong> update
+<ul>
+<li>Major Update to improve performance in polling/interrupt mode to reach max frequency:
+<ul>
+<li>Polling mode:
+<ul>
+<li>Replace use of SPI_WaitOnFlagUnitTimeout() funnction by “if” statement to check on RXNE/TXE flags while transferring data</li>
+<li>Use API data pointer instead of SPI handle data pointer</li>
+<li>Use a Goto implementation instead of “if..else” statements</li>
+</ul></li>
+</ul></li>
+<li>Interrupt mode:
+<ul>
+<li>Minimize access on SPI registers</li>
+<li>Split the SPI modes into dedicated static functions to minimize checking statements under HAL_IRQHandler():</li>
+<li>1lines/2lines modes</li>
+<li>8 bit/ 16 bits data formats</li>
+<li>CRC calculation enabled/disabled</li>
+<li>Remove waiting loop under ISR when closing the communication</li>
+</ul></li>
+<li>All modes
+<ul>
+<li>Adding switch USE_SPI_CRC to minimize number of statements when CRC calculation is disabled
+<ul>
+<li>Update Timeout management to check on global process</li>
+<li>Update Error code management in all processes</li>
+<li>Update DMA process:◾Add the management of SPI peripheral errors during DMA process. This requires the following updates in the user application:</li>
+<li>Configure and enable the SPI IRQ in HAL_SPI_MspInit() function</li>
+<li>In stm32f2xx_it.c file, SPI_IRQHandler() function: add a call to HAL_SPI_IRQHandler() function</li>
+<li>Add and customize the Error Callback API: HAL_SPI_ErrorCallback()</li>
+<li>Refer to the following example which describe the changes: SPI_FullDuplex_ComDMA</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL UART</strong> update
+<ul>
+<li>Several update on HAL UART driver to implement the new UART state machine:
+<ul>
+<li>Add new field in UART_HandleTypeDef structure: “rxState”, UART state information related to Rx Operations</li>
+<li>Rename “state” field in UART_HandleTypeDef structure by “gstate”: UART state information related to global Handle management and Tx Operations</li>
+<li>Update UART process to manage the new UART states.</li>
+<li>Update __HAL_UART_RESET_HANDLE_STATE() macro to handle the new UART state parameters (gState, rxState)</li>
+</ul></li>
+<li>Update UART_BRR_SAMPLING16() and UART_BRR_SAMPLING8() Macros to fix wrong baudrate calculation.</li>
+<li>Update Polling management:
+<ul>
+<li>The user Timeout value must be estimated for the overall process duration: the Timeout measurement is cumulative</li>
+</ul></li>
+<li>Update DMA process:
+<ul>
+<li>Update the management of UART peripheral errors during DMA process. This requires the following updates in user application:
+<ul>
+<li>Configure and enable the UART IRQ in HAL_UART_MspInit() function</li>
+<li>In stm32f2xx_it.c file, UART_IRQHandler() function: add a call to HAL_UART_IRQHandler() function</li>
+<li>Add and customize the Error Callback API: HAL_UART_ErrorCallback()</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL USART</strong> update
+<ul>
+<li>Update Polling management:
+<ul>
+<li>The user Timeout value must be estimated for the overall process duration: the Timeout measurement is cumulative</li>
+</ul></li>
+<li>Update DMA process:
+<ul>
+<li>Update the management of USART peripheral errors during DMA process. This requires the following updates in user application:
+<ul>
+<li>Configure and enable the USART IRQ in HAL_USART_MspInit() function</li>
+<li>In stm32f2xx_it.c file, USART_IRQHandler() function: add a call to HAL_USART_IRQHandler() function</li>
+<li>Add and customize the Error Callback API: HAL_USART_ErrorCallback()</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL WWDG</strong> update
+<ul>
+<li>Overall rework of the driver for more efficient implementation
+<ul>
+<li>Remove the following APIs:
+<ul>
+<li>HAL_WWDG_Start()</li>
+<li>HAL_WWDG_Start_IT()</li>
+<li>HAL_WWDG_MspDeInit()</li>
+<li>HAL_WWDG_GetState()</li>
+</ul></li>
+<li>Update implementation:
+<ul>
+<li>HAL_WWDG_Init()</li>
+<li>A new parameter in the Init structure: EWIMode
+<ul>
+<li>HAL_WWDG_MspInit()</li>
+</ul></li>
+<li>HAL_WWDG_Refresh()
+<ul>
+<li>This function insures the reload of the counter</li>
+<li>The “counter” parameter has been removed</li>
+</ul></li>
+<li>HAL_WWDG_IRQHandler()</li>
+<li>HAL_WWDG_EarlyWakeupCallback() is the new prototype of HAL_WWDG_WakeUpCallback()</li>
+</ul></li>
+</ul></li>
+<li>Refer to the following example to identify the changes: WWDG_Example</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true"><strong>V1.1.2 / 11-December-2015</strong></label>
+<div>
+<h2 id="main-changes-9">Main Changes</h2>
+<ul>
+<li><strong>HAL RCC</strong> update
+<ul>
+<li>Fix compilation errors with the __HAL_RCC_DAC_IS_CLK_DISABLED(), __HAL_RCC_CRYP_IS_CLK_DISABLED() and __HAL_RCC_HASH_IS_CLK_DISABLED() macros</li>
+</ul></li>
+<li><strong>HAL ETH</strong> update
+<ul>
+<li>Update HAL_ETH_Init() function to add timeout on the Software reset management</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true"><strong>V1.1.1 / 20-November-2015</strong></label>
+<div>
+<h2 id="main-changes-10">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and enhancements implementation</li>
+<li><strong>One change done on the HAL CRYP requires an update on the application code based on HAL V1.1.0</strong>
+<ul>
+<li>Update HAL_CRYP_DESECB_Decrypt() API to invert pPlainData and pCypherData parameters</li>
+</ul></li>
+<li><strong>HAL generic</strong> update
+<ul>
+<li>Update HAL weak empty callbacks to prevent unused argument compilation warnings with some compilers by calling the following line:
+<ul>
+<li>UNUSED(hppp);</li>
+</ul></li>
+<li>HSE_STARTUP_TIMEOUT constant has been corrected in stm32f2xx_hal_conf_template.h file, its value changed from 5000 to 100.</li>
+</ul></li>
+<li><strong>HAL CORTEX</strong> update
+<ul>
+<li>Remove duplication for __HAL_CORTEX_SYSTICKCLK_CONFIG() macro</li>
+</ul></li>
+<li><strong>HAL HASH</strong> update
+<ul>
+<li>Rename HAL_HASH_STATETypeDef to HAL_HASH_StateTypeDef</li>
+<li>Rename HAL_HASH_PhaseTypeDef to HAL_HASH_PhaseTypeDef</li>
+</ul></li>
+<li><strong>HAL RCC</strong> update
+<ul>
+<li>Add new macros __HAL_RCC_PPP_IS_CLK_ENABLED() to check on Clock enable/disable status</li>
+<li>Update __HAL_RCC_USB_OTG_FS_CLK_DISABLE() macro to remove the disable for the SYSCFG</li>
+</ul></li>
+<li><strong>HAL FLASH</strong> update
+<ul>
+<li>__HAL_FLASH_INSTRUCTION_CACHE_RESET() macro: update to reset ICRST bit in the ACR register after setting it.</li>
+</ul></li>
+<li><strong>HAL CRYP</strong> update
+<ul>
+<li>Update HAL_CRYP_DESECB_Decrypt() API to fix the inverted pPlainData and pCypherData parameters issue</li>
+</ul></li>
+<li><strong>HAL TIM</strong> update
+<ul>
+<li>Update HAL_TIM_ConfigClockSource() API to check only the required parameters</li>
+</ul></li>
+<li><strong>HAL NAND</strong> update
+<ul>
+<li>Update HAL_NAND_Read_Page()/HAL_NAND_Write_Page()/HAL_NAND_Read_SpareArea() APIs to manage correctly the NAND Page access</li>
+</ul></li>
+<li><strong>HAL CAN</strong> update
+<ul>
+<li>Update to use “=” instead of “|=” to clear flags in the MSR, TSR, RF0R and RF1R registers</li>
+</ul></li>
+<li><strong>HAL PCD</strong> update
+<ul>
+<li>Fix typo in __HAL_USB_OTG_HS_WAKEUP_EXTI_ENABLE_RISING_FALLING_EDGE() macro implementation</li>
+</ul></li>
+<li><strong>LL FSMC</strong> update
+<ul>
+<li>Update the FSMC_NORSRAM_Extended_Timing_Init() API to remove the check on CLKDIvison and DataLatency parameters</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true"><strong>V1.1.0 / 09-October-2015</strong></label>
+<div>
+<h2 id="main-changes-11">Main Changes</h2>
+<ul>
+<li><strong>Maintenance release to fix known defects and enhancements implementation</strong></li>
+<li><strong>Macros and literals renaming to ensure compatibles across STM32 series</strong>, backward compatibility maintained thanks to new added file stm32_hal_legacy.h under /Inc/Legacy</li>
+<li>Add *.chm UM for all drivers</li>
+<li>Update drivers to be C++ compliant</li>
+<li>Several update on source code formatting, for better UM generation (i.e. Doxygen tags updated)</li>
+<li><strong>Four changes done on the HAL requires an update on the application code based on HAL V1.0.1</strong>
+<ul>
+<li>LSI_VALUE constant has been corrected in stm32f2xx_hal_conf.h file, its value changed from 40 KHz to 32 KHz</li>
+<li>UART, USART, IRDA and SMARTCARD (referenced as PPP here below) drivers: in DMA transmit process, the code has been updated to avoid waiting on TC flag under DMA ISR, PPP TC interrupt is used instead. Below the update to be done on user application:
+<ul>
+<li>Configure and enable the USART IRQ in HAL_PPP_MspInit() function</li>
+<li>In stm32f2xx_it.c file, PPP_IRQHandler() function: add a call to HAL_PPP_IRQHandler() function</li>
+</ul></li>
+<li>CRYP driver updated to support multi instance,so user must ensure that the new parameter Instance is initialized in his application(CRYPHandle.Instance = CRYP)</li>
+<li>HASH IT process: update to call the HAL_HASH_InCpltCallback() at the end of the complete buffer instead of every each 512 bits</li>
+</ul></li>
+<li><strong>HAL generic</strong> update
+<ul>
+<li>stm32f2xx_hal_def.h
+<ul>
+<li>Remove NULL definition and add include for stdio.h</li>
+<li>Add UNUSED() macro</li>
+<li>Add a new define __NOINLINE to be used for the no inline code independent from tool chain</li>
+</ul></li>
+<li>stm32f2xx_hal_conf_template.h
+<ul>
+<li>Add a new define for LSI default value LSI_VALUE</li>
+<li>Add a new define for LSE default value LSE_VALUE</li>
+<li>Add a new define for Tick interrupt priority TICK_INT_PRIORITY (needed for the enhanced time base implementation)</li>
+</ul></li>
+<li>Enhance HAL delay and time base implementation
+<ul>
+<li>Systick timer is used by default as source of time base, but user can eventually implement his proper time base source (a general purpose timer for example or other time source)</li>
+<li>Functions affecting time base configurations are declared as __Weak to make override possible in case of other implementations in user file, for more details please refer to HAL_TimeBase example</li>
+</ul></li>
+<li>Fix flag clear procedure: use atomic write operation “=” instead of ready-modify-write operation “|=” or “&amp;=”</li>
+<li>Fix on Timeout management, Timeout value set to 0 passed to API automatically exits the function after checking the flag without any wait</li>
+<li>Common update for the following communication peripherals: SPI, UART, USART and IRDA
+<ul>
+<li>Add DMA circular mode support</li>
+<li>Remove lock from recursive process</li>
+</ul></li>
+<li>Add new macro __HAL_RESET_HANDLE_STATE to reset a given handle state</li>
+<li>Add a new attribute for functions executed from internal SRAM and depending from Compiler implementation</li>
+<li>When USE_RTOS == 1 (in stm32f2xx_hal_conf.h), the __HAL_LOCK() is not defined instead of being defined empty</li>
+<li>Miscellaneous comments and formatting update</li>
+<li>Update all macros and literals naming to be upper case</li>
+<li>ErrorCode parameter in PPP_HandleTypeDef structure updated to uint32_t instead of enum HAL_PPP_ErrorTypeDef</li>
+<li>Remove the unused FLAG and IT assert macros</li>
+<li>stm32f2xx_hal_ppp.c
+<ul>
+<li>HAL_PPP_Init(): update to force the HAL_PPP_STATE_RESET before calling the HAL_PPP_MspInit()</li>
+</ul></li>
+<li>Important Note: aliases has been added for any API naming change, to keep compatibility with previous version</li>
+</ul></li>
+<li><strong>HAL ADC</strong> update
+<ul>
+<li>ADC HAL state machine update to use bit fields instead of enum:
+<ul>
+<li>HAL_ADC_StateTypeDef enum fields are replaced by respective defines</li>
+</ul></li>
+<li>Add new literal: ADC_SOFTWARE_START to be used as possible value for the ExternalTrigConv parameter in the ADC_InitTypeDef structure to select the ADC software trigger mode.</li>
+<li>IS_ADC_CHANNEL() macro update to don’t assert stop the ADC_CHANNEL_TEMPSENSOR value</li>
+<li>HAL_ADC_PollForConversion(): update to manage particular case when ADC configured in DMA mode and ADC sequencer with several ranks and polling for end of each conversion</li>
+<li>HAL_ADC_Start()/HAL_ADC_Start_IT() /HAL_ADC_Start_DMA() update:
+<ul>
+<li>unlock the process before starting the ADC software conversion.</li>
+<li>Optimize the ADC stabilization delays</li>
+</ul></li>
+<li>__HAL_ADC_GET_IT_SOURCE() update macro implementation</li>
+<li>Add more details in ‘How to use this driver’ section</li>
+<li>Add new literal: ADC_INJECTED_SOFTWARE_START to be used as possible value for the ExternalTrigInjecConvEdge parameter in the ADC_InitTypeDef structure to select the ADC software trigger mode.</li>
+</ul></li>
+<li><strong>HAL DAC</strong> update
+<ul>
+<li>Enhance the DMA channelconfiguration when used with DAC</li>
+<li>HAL_DAC_ConfigChannel(): update the access to the DAC peripheral registers via the hdac handle instance</li>
+<li>HAL_DAC_IRQHandler(): update to check on both DAC_FLAG_DMAUDR1 and DAC_FLAG_DMAUDR2</li>
+<li>HAL_DACEx_NoiseWaveGenerate(): update to reset DAC CR register before setting the new DAC configuration</li>
+<li>HAL_DACEx_TriangleWaveGenerate(): update to reset DAC CR register before setting the new DAC configuration</li>
+<li>Add new macro to check if the specified DAC interrupt source is enabled or disabled
+<ul>
+<li>__HAL_DAC_GET_IT_SOURCE()</li>
+</ul></li>
+<li>HAL_DACEx_TriangleWaveGeneration() update to use DAC CR bit mask definition</li>
+<li>HAL_DACEx_NoiseWaveGeneration() update to use DAC CR bit mask definition</li>
+</ul></li>
+<li><strong>HAL CAN</strong> update
+<ul>
+<li>Unlock the CAN process when communication error occurred</li>
+<li>CanTxMsgTypeDef structure: update to use uint8_t Data[8] instead of uint32_t Data[8]</li>
+<li>CanRxMsgTypeDef structure: update to use uint8_t Data[8] instead of uint32_t Data[8]</li>
+</ul></li>
+<li><strong>HAL CORTEX</strong> update
+<ul>
+<li>Add new macro IS_NVIC_DEVICE_IRQ() to check on negative values of IRQn parameter</li>
+<li>Add specific API for MPU management
+<ul>
+<li>add MPU_Region_InitTypeDef structure</li>
+<li>add new function HAL_MPU_ConfigRegion()</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL CRYP</strong> update
+<ul>
+<li>HAL_CRYP_DESECB_Decrypt_DMA(): fix the inverted pPlainData and pCypherData parameters issue</li>
+<li>Add restriction for the CCM Encrypt/Decrypt API’s that only DataType equal to 8bits is supported</li>
+<li>Update to manage multi instance:
+<ul>
+<li>Add new parameter Instance in the CRYP_HandleTypeDef Handle structure.</li>
+<li>Add new parameter in all HAL CRYP macros
+<ul>
+<li>example: __HAL_CRYP_ENABLE() updated by __HAL_CRYP_ENABLE(<strong>HANDLE</strong>)</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL DCMI</strong> update
+<ul>
+<li>HAL_DCMI_ConfigCROP(): Invert assert macros to check Y0 and Ysize parameters</li>
+</ul></li>
+<li><strong>HAL DMA</strong> update
+<ul>
+<li>Overall driver update for code optimization</li>
+<li>add StreamBaseAddress and StreamIndex new fields in the DMA_HandleTypeDef structure</li>
+<li>add DMA_Base_Registers private structure</li>
+<li>add static function DMA_CalcBaseAndBitshift()
+<ul>
+<li>update HAL_DMA_Init() function to use the new added static function</li>
+<li>update HAL_DMA_DeInit() function to optimize clear flag operations</li>
+<li>update HAL_DMA_Start_IT() function to optimize interrupts enable</li>
+<li>update HAL_DMA_PollForTransfer() function to optimize check on flags</li>
+<li>update HAL_DMA_IRQHandler() function to optimize interrupt flag management</li>
+</ul></li>
+<li>Fix in HAL_DMA_PollForTransfer() to:
+<ul>
+<li>set DMA error code in case of HAL_ERROR status</li>
+<li>set HAL Unlock before DMA state update</li>
+</ul></li>
+<li>HAL_DMA_Init(): Update to clear the DBM bit in the SxCR register before setting the new configuration</li>
+<li>DMA_SetConfig(): add to clear the DBM bit in the SxCR register</li>
+</ul></li>
+<li><strong>HAL FLASH</strong> update
+<ul>
+<li>update HAL_FLASH_Program_IT() function by removing the pending flag clear</li>
+<li>update HAL_FLASH_IRQHandler() function to improve erase operation procedure</li>
+<li>update FLASH_WaitForLastOperation() function by checking on end of operation flag</li>
+<li>Add “HAL_” prefix in the defined values for the FLASH error code</li>
+<li>Example: FLASH_ERROR_PGP renamed by <strong>HAL</strong>_FLASH_ERROR_PGP</li>
+<li>Clear the Flash ErrorCode in the FLASH_WaitForLastOperation() function</li>
+<li>Update FLASH_SetErrorCode() function to use “|=” operant to update the Flash ErrorCode parameter in the FLASH handle</li>
+<li>IS_FLASH_ADDRESS(): Update the macro check using ‘&lt;=’ condition instead of ‘&lt;’</li>
+<li>IS_OPTIONBYTE(): Update the macro check using ‘&lt;=’ condition instead of ‘&lt;’</li>
+<li>Add “FLASH_” prefix in the defined values of FLASH Type Program parameter</li>
+<li>Example: TYPEPROGRAM_BYTE renamed by <strong>FLASH</strong>_TYPEPROGRAM_BYTE</li>
+<li>Add “FLASH_” prefix in the defined values of FLASH Type Erase parameter</li>
+<li>Example: TYPEERASE_SECTORS renamed by <strong>FLASH</strong>_TYPEERASE_SECTORS</li>
+<li>Add “FLASH_” prefix in the defined values of FLASH Voltage Range parameter</li>
+<li>Example: VOLTAGE_RANGE_1 renamed by <strong>FLASH</strong>_VOLTAGE_RANGE_1</li>
+<li>Add “OB_” prefix in the defined values of FLASH WRP State parameter</li>
+<li>Example: WRPSTATE_ENABLE renamed by <strong>OB</strong>_WRPSTATE_ENABLE</li>
+<li>__HAL_FLASH_INSTRUCTION_CACHE_RESET() macro: update to reset ICRST bit in the ACR register after setting it.</li>
+<li>__HAL_FLASH_DATA_CACHE_RESET() macro: update to reset DCRST bit in the ACR register after setting it.</li>
+<li>FLASH_OB_GetRDP() API update to return uint8_t instead of FlagStatus</li>
+<li>__HAL_FLASH_GET_LATENCY() new macro add to get the flash latency</li>
+</ul></li>
+<li><strong>HAL ETH</strong> update
+<ul>
+<li>Update HAL_ETH_GetReceivedFrame_IT() function to return HAL_ERROR if the received packet is not complete</li>
+<li>Use HAL_Delay() instead of counting loop</li>
+<li>__HAL_ETH_MAC_CLEAR_FLAG() macro is removed: the MACSR register is read only</li>
+<li>Add the following macros used toWake up the device from STOP mode by Ethernet event :
+<ul>
+<li>__HAL_ETH_WAKEUP_EXTI_ENABLE_IT()</li>
+<li>__HAL_ETH_WAKEUP_EXTI_DISABLE_IT()</li>
+<li>__HAL_ETH_WAKEUP_EXTI_GET_FLAG()</li>
+<li>__HAL_ETH_WAKEUP_EXTI_CLEAR_FLAG()</li>
+<li>__HAL_ETH_WAKEUP_EXTI_ENABLE_RISING_EGDE_TRIGGER()</li>
+<li>__HAL_ETH_WAKE_EXTI_ENABLE_FALLING_EGDE_TRIGGER()</li>
+<li>__HAL_ETH_WAKE_EXTI_ENABLE_FALLINGRISING_TRIGGER()</li>
+</ul></li>
+<li>Rename literals
+<ul>
+<li>ETH_PROMISCIOUSMODE_ENABLE by ETH_PROMISCUOUS_MODE_ENABLE</li>
+<li>ETH_PROMISCIOUSMODE_DISABLE by ETH_PROMISCUOUS_MODE_DISABLE</li>
+</ul></li>
+<li>Remove illegal space ETH_MAC_READCONTROLLER_FLUSHING macro</li>
+<li>Update ETH_MAC_READCONTROLLER_XXX defined values (XXX can be IDLE, READING_DATA and READING_STATUS)</li>
+</ul></li>
+<li><strong>HAL PWR</strong> update
+<ul>
+<li>HAL_PWR_ConfigPVD(): add clear of the EXTI trigger before new configuration</li>
+<li>Fix in HAL_PWR_EnterSTANDBYMode() to not clear Wakeup flag (WUF), which need to be cleared at application level before to call this function</li>
+<li>HAL_PWR_EnterSLEEPMode()
+<ul>
+<li>Remove disable and enable of SysTick Timer</li>
+<li>Update to clear SLEEPDEEP bit of Cortex System Control Register (SCB-&gt;SCR) before entering in sleep mode</li>
+<li>Update usage of __WFE() in low power entry function: if there is a pending event, calling __WFE() will not enter the CortexM3 core to sleep mode. The solution is to made the call below; the first __WFE() is always ignored and clears the event if one was already pending, the second is always applied
+<ul>
+<li>__SEV()</li>
+<li>__WFE()</li>
+<li>__WFE()</li>
+</ul></li>
+</ul></li>
+<li>Add new macro for software event generation __HAL_PWR_PVD_EXTI_GENERATE_SWIT()</li>
+<li>Remove the following defines form Generic driver and add them under extension driver because they are only used within extension functions.</li>
+<li>CR_FPDS_BB: used within HAL_PWREx_EnableFlashPowerDown() function</li>
+<li>CSR_BRE_BB: used within HAL_PWREx_EnableBkUpReg() function</li>
+<li>Add new API to manage SLEEPONEXIT and SEVONPEND bits of SCR register
+<ul>
+<li>HAL_PWR_DisableSleepOnExit()</li>
+<li>HAL_PWR_EnableSleepOnExit()</li>
+<li>HAL_PWR_EnableSEVOnPend()</li>
+<li>HAL_PWR_DisableSEVOnPend()</li>
+</ul></li>
+<li>HAL_PWR_EnterSLEEPMode()
+<ul>
+<li>Update to clear the CORTEX SLEEPDEEP bit of SCR register before entering in sleep mode</li>
+</ul></li>
+<li>Add new PVD configuration modes
+<ul>
+<li>PWR_PVD_MODE_NORMAL</li>
+<li>PWR_PVD_MODE_EVENT_RISING</li>
+<li>PWR_PVD_MODE_EVENT_FALLING</li>
+<li>PWR_PVD_MODE_EVENT_RISING_FALLING</li>
+</ul></li>
+<li>Add new macros to manage PVD Trigger
+<ul>
+<li>__HAL_PWR_PVD_EXTI_ENABLE_RISING_EDGE()</li>
+<li>__HAL_PWR_PVD_EXTI_DISABLE_RISING_EDGE(</li>
+<li>__HAL_PWR_PVD_EXTI_ENABLE_FALLING_EDGE()</li>
+<li>__HAL_PWR_PVD_EXTI_DISABLE_FALLING_EDGE()</li>
+<li>__HAL_PWR_PVD_EXTI_ENABLE_RISING_FALLING_EDGE()</li>
+<li>__HAL_PWR_PVD_EXTI_DISABLE_RISING_FALLING_EDGE()</li>
+</ul></li>
+<li>PVD macros:
+<ul>
+<li>Remove the <strong>EXTILINE</strong> parameter</li>
+<li>Update to use prefix "__HAL_PWR_PVD_" instead of prefix "__HAL_PVD"</li>
+</ul></li>
+<li>Rename HAL_PWR_PVDConfig() function by HAL_PWR_ConfigPVD()</li>
+</ul></li>
+<li><strong>HAL GPIO</strong> update
+<ul>
+<li>Rename GPIO_SPEED_LOW define to GPIO_SPEED_FREQ_LOW</li>
+<li>Rename GPIO_SPEED_MEDIUM define to GPIO_SPEED_FREQ_MEDIUM</li>
+<li>Rename GPIO_SPEED_FAST define to GPIO_SPEED_FREQ_HIGH</li>
+<li>Rename GPIO_SPEED_HIGH define to GPIO_SPEED_FREQ_VERY_HIGH</li>
+<li>Add a new macro __HAL_GPIO_EXTI_GENERATE_SWIT() to manage the generation of software interrupton selected EXTI line</li>
+<li>HAL_GPIO_Init(): use temporary variable when modifying the registers, to avoid unexpected transition in the GPIO pin configuration</li>
+<li>Remove IS_GET_GPIO_PIN macro</li>
+<li>Add a new function HAL_GPIO_LockPin()</li>
+<li>Update the following HAL GPIO macros description: rename EXTI_Linex by GPIO_PIN_x
+<ul>
+<li>__HAL_GPIO_EXTI_CLEAR_IT()</li>
+<li>__HAL_GPIO_EXTI_GET_IT()</li>
+<li>__HAL_GPIO_EXTI_CLEAR_FLAG()</li>
+<li>__HAL_GPIO_EXTI_GET_FLAG()</li>
+</ul></li>
+<li>HAL_GPIO_Init()/HAL_GPIO_DeInit(): add a call to the CMSIS assert macro to check GPIO instance: IS_GPIO_ALL_INSTANCE()</li>
+<li>Rename __HAL_GET_GPIO_SOURCE() by GPIO_GET_INDEX() and move this later to file stm32f2xx_hal_gpio_ex.h</li>
+<li>HAL_GPIO_DeInit(): Update to check if GPIO Pin x is already used in EXTI mode on another GPIO Port before De-Initialize the EXTI registers</li>
+</ul></li>
+<li><strong>HAL HASH</strong> update
+<ul>
+<li>HAL_HASH_MD5_Start_IT(): fix input address management issue</li>
+<li>HAL_HASH_<strong>MODE</strong>_Start_IT() (<strong>MODE</strong> stands for MD5 and SHA1) updates:
+<ul>
+<li>Fix processing fail for small input buffers</li>
+<li>Update to unlock the process and call return HAL_OK at the end of HASH processing to avoid incorrectly repeating software</li>
+<li>Update to properly manage the HashITCounter</li>
+<li>Update to call the HAL_HASH_InCpltCallback() at the end of the complete buffer instead of every each 512 bits</li>
+</ul></li>
+<li>__HAL_HASH_GET_FLAG() update to check the right register when the DINNE flag is selected</li>
+<li>HAL_HASH_SHA1_Accumulate() updates:
+<ul>
+<li>Add a call to the new IS_HASH_SHA1_BUFFER_SIZE() macro to check the size parameter.</li>
+<li>Add the following note in API description
+<ul>
+<li><ul>
+<li><span class="citation" data-cites="note">@note</span> Input buffer size in bytes must be a multiple of 4 otherwise the digest computation is corrupted.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL RCC</strong> update
+<ul>
+<li>HAL_RCCEx_PeriphCLKConfig() updates:
+<ul>
+<li>Update the LSE check condition after backup domain reset: update to check LSE ready flag when LSE oscillator is already enabled instead of check on LSE oscillator only when LSE is used as RTC clock source</li>
+</ul></li>
+<li>In HAL_RCC_ClockConfig()function: update the AHB clock divider before clock switch to new source</li>
+<li>Allow to calibrate the HSI when it is used as system clock source</li>
+<li>Reorganize the RCC macros to make them more clear</li>
+<li>Rename the following Macros
+<ul>
+<li>__PPP_CLK_ENABLE() by __HAL_RCC_PPP_CLK_ENABLE()</li>
+<li>__PPP_CLK_DISABLE() by __HAL_RCC_PPP_CLK_DISABLE()</li>
+<li>__PPP_FORCE_RESET() by __HAL_RCC_PPP_FORCE_RESET()</li>
+<li>__PPP_RELEASE_RESET() by __HAL_RCC_PPP_RELEASE_RESET()</li>
+<li>__PPP_CLK_SLEEP_ENABLE() by __HAL_RCC_PPP_CLK_SLEEP_ENABLE()</li>
+<li>__PPP_CLK_SLEEP_DISABLE() by __HAL_RCC_PPP_CLK_SLEEP_DISABLE()</li>
+</ul></li>
+<li>Add description of RCC known Limitations</li>
+<li>HAL_RCC_OscConfig() fix issues:
+<ul>
+<li>Remove the disable of HSE oscillator when HSE_BYPASS is used as system clock source or as PPL clock source</li>
+<li>Add a check on HSERDY flag when HSE_BYPASS is selected as new state for HSE oscillator.</li>
+</ul></li>
+<li>Rename __HAL_RCC_I2SCLK() by __HAL_RCC_I2S_Config()</li>
+<li>__HAL_RCC_PPP_CLK_ENABLE(): Implement workaround to cover RCC limitation regarding peripheral enable delay</li>
+<li>HAL_RCC_OscConfig() fix issues:
+<ul>
+<li>Add a check on LSERDY flag when LSE_BYPASS is selected as new state for LSE oscillator.</li>
+</ul></li>
+<li>__HAL_RCC_HSE_CONFIG() macro: add the comment below:
+<ul>
+<li><ul>
+<li><span class="citation" data-cites="note">@note</span> Transition HSE Bypass to HSE On and HSE On to HSE Bypass are not supported by this macro.</li>
+</ul></li>
+<li><ul>
+<li>User should request a transition to HSE Off first and then HSE On or HSE Bypass.</li>
+</ul></li>
+</ul></li>
+<li>__HAL_RCC_LSE_CONFIG() macro: add the comment below:
+<ul>
+<li><ul>
+<li><span class="citation" data-cites="note">@note</span> Transition LSE Bypass to LSE On and LSE On to LSE Bypass are not supported by this macro.</li>
+</ul></li>
+<li><ul>
+<li>User should request a transition to LSE Off first and then LSE On or LSE Bypass.</li>
+</ul></li>
+</ul></li>
+<li>Add the following new macros for PLL source and PLLM selection :
+<ul>
+<li>__HAL_RCC_PLL_PLLSOURCE_CONFIG()</li>
+<li>__HAL_RCC_PLL_PLLM_CONFIG()</li>
+</ul></li>
+<li>Add __HAL_RCC_SYSCLK_CONFIG() new macro to configure the system clock source (SYSCLK)</li>
+<li>__HAL_RCC_GET_SYSCLK_SOURCE() updates:</li>
+<li>Add new RCC Literals:
+<ul>
+<li>RCC_SYSCLKSOURCE_STATUS_HSI</li>
+<li>RCC_SYSCLKSOURCE_STATUS_HSE</li>
+<li>RCC_SYSCLKSOURCE_STATUS_PLLCLK</li>
+</ul></li>
+<li>Update macro description to refer to the literals above</li>
+</ul></li>
+<li><strong>HAL I2S</strong> update
+<ul>
+<li>HAL_I2S_Init(): add check on I2S instance using CMSIS macro IS_I2S_ALL_INSTANCE()</li>
+<li>HAL_I2S_IRQHandler() update for compliance with C++</li>
+<li>Add use of tmpreg variable in __HAL_I2S_CLEAR_OVRFLAG() and __HAL_I2S_CLEAR_UDRFLAG() macro for compliance with C++</li>
+<li>HAL_I2S_GetError(): update to return uint32_t instead of HAL_I2S_ErrorTypeDef enumeration</li>
+<li>HAL_I2S_Transmit() API update to check on busy flag only for I2S slave mode</li>
+</ul></li>
+<li><strong>HAL I2C</strong> update
+<ul>
+<li>I2C Polling/IT/DMA processes: move the wait loop on busy flag at the top of the processes, to ensure that software not perform any write access to I2C_CR1 register before hardware clearing STOP bit and to avoid also the waiting loop on BUSY flag under I2C/DMA ISR.</li>
+<li>Update busy flag Timeout value</li>
+<li>I2C Master Receive Processes update to disable ACK before generate the STOP</li>
+<li>Update to clear the POS bit in the CR1 register at the begging of all the HAL I2C processes</li>
+<li>Add use of tmpreg variable in __HAL_I2C_CLEAR_ADDRFLAG() and __HAL_I2C_CLEAR_STOPFLAG() macro for compliance with C++</li>
+</ul></li>
+<li><strong>HAL IrDA</strong> update
+<ul>
+<li>Add specific macros to manage the flags cleared only by a software sequence ◾__HAL_IRDA_CLEAR_PEFLAG()
+<ul>
+<li>__HAL_ IRDA _CLEAR_FEFLAG()</li>
+<li>__HAL_ IRDA _CLEAR_NEFLAG()</li>
+<li>__HAL_ IRDA _CLEAR_OREFLAG()</li>
+<li>__HAL_ IRDA _CLEAR_IDLEFLAG()</li>
+</ul></li>
+<li>Add several enhancements without affecting the driver functionalities
+<ul>
+<li>Remove the check on RXNE set after reading the Data in the DR register</li>
+<li>Update HAL_IRDA_Transmit_IT() to enable IRDA_IT_TXE instead of IRDA_IT_TC</li>
+</ul></li>
+<li>Add the following APIs used within DMA process ◾HAL_StatusTypeDef HAL_IRDA_DMAPause(IRDA_HandleTypeDef *hirda);
+<ul>
+<li>HAL_StatusTypeDef HAL_IRDA_DMAResume(IRDA_HandleTypeDef *hirda);</li>
+<li>HAL_StatusTypeDef HAL_IRDA_DMAStop(IRDA_HandleTypeDef *hirda);<br />
+</li>
+<li>void HAL_IRDA_TxHalfCpltCallback(IRDA_HandleTypeDef *hirda);</li>
+<li>void HAL_IRDA_RxHalfCpltCallback(IRDA_HandleTypeDef *hirda);</li>
+</ul></li>
+<li>DMA transmit process; the code has been updated to avoid waiting on TC flag under DMA ISR, IrDA TC interrupt is used instead. Below the update to be done on user application:
+<ul>
+<li>Configure and enable the USART IRQ in HAL_IRDA_MspInit() function</li>
+<li>In stm32f2xx_it.c file, UASRTx_IRQHandler() function: add a call to HAL_IRDA_IRQHandler() function</li>
+</ul></li>
+<li>IT transmit process; the code has been updated to avoid waiting on TC flag under IRDA ISR, IrDA TC interrupt is used instead. No impact on user application</li>
+<li>Rename Macros: add prefix "__HAL"
+<ul>
+<li>__IRDA_ENABLE() by __HAL_IRDA_ENABLE()</li>
+<li>__IRDA_DISABLE() by __HAL_IRDA_DISABLE()</li>
+</ul></li>
+<li>Add new user macros to manage the sample method feature
+<ul>
+<li>__HAL_IRDA_ONE_BIT_SAMPLE_ENABLE()</li>
+<li>__HAL_IRDA_ONE_BIT_SAMPLE_DISABLE()</li>
+</ul></li>
+<li>HAL_IRDA_Transmit_IT(): update to remove the enable of the parity error interrupt</li>
+<li>Add use of tmpreg variable in __HAL_IRDA_CLEAR_PEFLAG() macro for compliance with C++</li>
+<li>HAL_IRDA_Transmit_DMA() update to follow the right procedure “Transmission using DMA” in the reference manual
+<ul>
+<li>Add clear the TC flag in the SR register before enabling the DMA transmit request</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SPI</strong> update
+<ul>
+<li>SPI interface is used in synchronous polling mode: at high clock rates like SPI prescaler 2 and 4, calling</li>
+<li>AL_SPI_TransmitReceive() returns with error HAL_TIMEOUT</li>
+<li>HAL_SPI_TransmitReceive_DMA() does not clean up the TX DMA, so any subsequent SPI calls return the DMA error</li>
+<li>HAL_SPI_Transmit_DMA() is failing when data size is equal to 1 byte</li>
+<li>Add the following APIs used within the DMA process
+<ul>
+<li>HAL_StatusTypeDef HAL_SPI_DMAPause(SPI_HandleTypeDef *hspi);</li>
+<li>HAL_StatusTypeDef HAL_SPI_DMAResume(SPI_HandleTypeDef *hspi);</li>
+<li>HAL_StatusTypeDef HAL_SPI_DMAStop(SPI_HandleTypeDef *hspi);</li>
+<li>void HAL_SPI_TxHalfCpltCallback(SPI_HandleTypeDef *hspi);</li>
+<li>void HAL_SPI_RxHalfCpltCallback(SPI_HandleTypeDef *hspi);</li>
+<li>void HAL_SPI_TxRxHalfCpltCallback(SPI_HandleTypeDef *hspi);</li>
+</ul></li>
+<li>HAL_SPI_TransmitReceive_DMA() update to remove the DMA Tx Error Callback initialization when SPI RxOnly mode is selected</li>
+<li>Add use of UNUSED(tmpreg) in __HAL_SPI_CLEAR_MODFFLAG(), __HAL_SPI_CLEAR_OVRFLAG(), __HAL_SPI_CLEAR_FREFLAG() to fix “Unused variable” warning with TrueSTUDIO.</li>
+<li>Rename Literals: remove “D” from “DISABLED” and “ENABLED”
+<ul>
+<li>SPI_TIMODE_DISABLE<strong>D</strong> by SPI_TIMODE_DISABLE</li>
+<li>SPI_TIMODE_ENABLE<strong>D</strong> by SPI_TIMODE_ENABLE</li>
+<li>SPI_CRCCALCULATION_DISABLE<strong>D</strong> by SPI_CRCCALCULATION_DISABLE</li>
+<li>SPI_CRCCALCULATION_ENABLE<strong>D</strong> by SPI_CRCCALCULATION_ENABLE</li>
+</ul></li>
+<li>Add use of tmpreg variable in __HAL_SPI_CLEAR_MODFFLAG(), __HAL_SPI_CLEAR_FREFLAG() and __HAL_SPI_CLEAR_OVRFLAG() macros for compliance with C++</li>
+<li>HAL_SPI_Transmit_DMA()/HAL_SPI_Receive_DMA()/HAL_SPI_TransmitReceive_DMA() update to unlock the process before enabling the SPI peripheral</li>
+<li>HAL_SPI_Transmit_DMA() update to manage correctly the DMA TX stream in SPI Full duplex mode</li>
+<li>Section SPI_Exported_Functions_Group2 update to remove duplication in *.chm UM</li>
+<li>Fix the wrong definition of HAL_SPI_ERROR_FLAG literal</li>
+</ul></li>
+<li><strong>HAL CRC</strong> update
+<ul>
+<li>These macros are added to read/write the CRC IDR register: __HAL_CRC_SET_IDR() and __HAL_CRC_GET_IDR()</li>
+</ul></li>
+<li>__HAL_CRC_SET_IDR() macro implementation change to use WRITE_REG() instead of MODIFY_REG()</li>
+<li><strong>HAL LL SDMMC</strong> update
+<ul>
+<li>Use of CMSIS constants instead of magic values</li>
+<li>Miscellaneous update in functions internal coding</li>
+<li>IS_SDIO_ALL_INSTANCE() macro moved to CMSIS files</li>
+</ul></li>
+<li><strong>HAL NAND</strong> update
+<ul>
+<li>Fix issue of macros returning wrong address for NAND blocks</li>
+<li>Fix issue for read/write NAND page/spare area</li>
+<li>Rename NAND Address structure to NAND_AddressTypeDef instead of NAND_AddressTypedef</li>
+<li>Update the used algorithm of these functions
+<ul>
+<li>HAL_NAND_Read_Page()</li>
+<li>HAL_NAND_Write_Page()</li>
+<li>HAL_NAND_Read_SpareArea()</li>
+<li>HAL_NAND_Write_SpareArea()</li>
+</ul></li>
+<li>HAL_NAND_Write_Page(): move initialization of tickstart before while loop</li>
+<li>HAL_NAND_Erase_Block(): add whait until NAND status is ready before exiting this function</li>
+</ul></li>
+<li><strong>HAL NOR</strong> update
+<ul>
+<li>Add the NOR addressbank macro used within the API</li>
+<li>Update NOR APIimplementation to avoid the use of NOR address bank hard coded</li>
+<li>NOR Status literals renamed
+<ul>
+<li>NOR_SUCCESS by HAL_NOR_STATUS_SUCCESS</li>
+<li>NOR_ONGOING by HAL_NOR_STATUS_ONGOING</li>
+<li>NOR_ERROR by HAL_NOR_STATUS_ERROR</li>
+<li>NOR_TIMEOUT by HAL_NOR_STATUS_TIMEOUT</li>
+</ul></li>
+<li>HAL_NOR_GetStatus() update to fix Timeout issue and exit from waiting loop when timeout occurred</li>
+</ul></li>
+<li><strong>HAL PCCARD</strong> update</li>
+<li>Rename PCCARD Address structure to HAL_PCCARD_StatusTypeDef instead of CF_StatusTypedef</li>
+<li>PCCARD Status literals renamed
+<ul>
+<li>CF_SUCCESS by HAL_PCCARD_STATUS_SUCCESS</li>
+<li>CF_ONGOING by HAL_PCCARD_STATUS_ONGOING</li>
+<li>CF_ERROR by HAL_PCCARD_STATUS_ERROR</li>
+<li>CF_TIMEOUT by HAL_PCCARD_STATUS_TIMEOUT</li>
+</ul></li>
+<li>Update “CF” by “PCCARD” in functions, literals and macros</li>
+<li><strong>HAL HCD</strong> update
+<ul>
+<li>HCD_StateTypeDef structure members renamed</li>
+<li>These macro are renamed
+<ul>
+<li>__HAL_GET_FLAG(<strong>HANDLE</strong>, <strong>INTERRUPT</strong>) by __HAL_HCD_GET_FLAG(<strong>HANDLE</strong>, <strong>INTERRUPT</strong>)</li>
+<li>__HAL_IS_INVALID_INTERRUPT(<strong>HANDLE</strong>) by __HAL_HCD_IS_INVALID_INTERRUPT(<strong>HANDLE</strong>)</li>
+</ul></li>
+<li>Update to use local variable in USB Host channel re-activation</li>
+</ul></li>
+<li><strong>HAL PCD</strong> update
+<ul>
+<li>HAL_PCD_SetTxFiFo() and HAL_PCD_SetRxFiFo() renamed into HAL_PCDEx_SetTxFiFo() and HAL_PCDEx_SetRxFiFo() and moved to the extension files stm32f2xx_hal_pcd_ex.h/.c</li>
+<li>PCD_StateTypeDef structure members renamed</li>
+<li>Fix incorrect masking of TxFIFOEmpty</li>
+<li>stm32f2xx_ll_usb.c: fix issue in HS mode</li>
+<li>New macros added
+<ul>
+<li>__HAL_PCD_IS_PHY_SUSPENDED()</li>
+<li>__HAL_USB_HS_EXTI_GENERATE_SWIT()</li>
+<li>__HAL_USB_FS_EXTI_GENERATE_SWIT()</li>
+</ul></li>
+<li>These macro are renamed
+<ul>
+<li>__HAL_GET_FLAG(<strong>HANDLE</strong>, <strong>INTERRUPT</strong>) by __HAL_PCD_GET_FLAG(<strong>HANDLE</strong>, <strong>INTERRUPT</strong>)</li>
+<li>__HAL_CLEAR_FLAG(<strong>HANDLE</strong>, <strong>INTERRUPT</strong>) by __HAL_PCD_CLEAR_FLAG(<strong>HANDLE</strong>, <strong>INTERRUPT</strong>)<br />
+</li>
+<li>__HAL_IS_INVALID_INTERRUPT(<strong>HANDLE</strong>) by __HAL_PCD_IS_INVALID_INTERRUPT(<strong>HANDLE</strong>)<br />
+</li>
+<li>__HAL_PCD_UNGATE_CLOCK(<strong>HANDLE</strong>) by __HAL_PCD_UNGATE_PHYCLOCK(<strong>HANDLE</strong>)</li>
+<li>__HAL_PCD_GATE_CLOCK(<strong>HANDLE</strong>) by __HAL_PCD_GATE_PHYCLOCK(<strong>HANDLE</strong>)</li>
+</ul></li>
+<li>Rename functions
+<ul>
+<li>HAL_PCD_<strong>Active</strong>RemoteWakeup() by HAL_PCD_<strong>Activate</strong>RemoteWakeup()</li>
+<li>HAL_PCD_<strong>DeActive</strong>RemoteWakeup() by HAL_PCD_<strong>DeActivate</strong>RemoteWakeup()</li>
+</ul></li>
+<li>Rename literals
+<ul>
+<li>USB_FS_EXTI_TRIGGER_RISING_EDGE by USB_OTG_FS_WAKEUP_EXTI_RISING_EDGE</li>
+<li>USB_FS_EXTI_TRIGGER_FALLING_EDGE by USB_OTG_FS_WAKEUP_EXTI_FALLING_EDGE</li>
+<li>USB_FS_EXTI_TRIGGER_BOTH_EDGE() by USB_OTG_FS_WAKEUP_EXTI_RISING_FALLING_EDGE</li>
+<li>USB_HS_EXTI_TRIGGER_RISING_EDGE by USB_OTG_HS_WAKEUP_EXTI_RISING_EDGE</li>
+<li>USB_HS_EXTI_TRIGGER_FALLING_EDGE by USB_OTG_HS_WAKEUP_EXTI_FALLING_EDGE</li>
+<li>USB_HS_EXTI_TRIGGER_BOTH_EDGE by USB_OTG_HS_WAKEUP_EXTI_RISING_FALLING_EDGE</li>
+<li>USB_HS_EXTI_LINE_WAKEUP by USB_OTG_HS_WAKEUP_EXTI_LINE</li>
+<li>USB_FS_EXTI_LINE_WAKEUP by USB_OTG_FS_WAKEUP_EXTI_LINE</li>
+</ul></li>
+<li>Rename USB EXTI macros (FS, HS referenced as <strong>SUBBLOCK</strong> here below)
+<ul>
+<li>__HAL_USB_<strong>SUBBLOCK</strong>_EXTI_ENABLE_IT() by __HAL_USB_OTG_<strong>SUBBLOCK</strong>_WAKEUP_EXTI_ENABLE_IT()<br />
+</li>
+<li>__HAL_USB_<strong>SUBBLOCK</strong>_EXTI_DISABLE_IT() by __HAL_USB_OTG_<strong>SUBBLOCK</strong>_WAKEUP_EXTI_DISABLE_IT()</li>
+<li>__HAL_USB_<strong>SUBBLOCK</strong>_EXTI_GET_FLAG() by __HAL_USB_OTG_<strong>SUBBLOCK</strong>_WAKEUP_EXTI_GET_FLAG()</li>
+<li>__HAL_USB_<strong>SUBBLOCK</strong>_EXTI_CLEAR_FLAG() by __HAL_USB_OTG_<strong>SUBBLOCK</strong>_WAKEUP_EXTI_CLEAR_FLAG()</li>
+<li>__HAL_USB_<strong>SUBBLOCK</strong>_EXTI_SET_RISING_EGDE_TRIGGER() by __HAL_USB_OTG_<strong>SUBBLOCK</strong>_WAKEUP_EXTI_ENABLE_RISING_EDGE()</li>
+<li>__HAL_USB_<strong>SUBBLOCK</strong>_EXTI_SET_FALLING_EGDE_TRIGGER() by __HAL_USB_OTG_<strong>SUBBLOCK</strong>_WAKEUP_EXTI_ENABLE_FALLING_EDGE()</li>
+<li>__HAL_USB_<strong>SUBBLOCK</strong>_EXTI_SET_FALLINGRISING_TRIGGER() by __HAL_USB_OTG_<strong>SUBBLOCK</strong>_WAKEUP_EXTI_ENABLE_RISING_FALLING_EDGE()</li>
+<li>__HAL_USB_<strong>SUBBLOCK</strong>_EXTI_GENERATE_SWIT() by __HAL_USB_OTG_SUBBLOCK_WAKEUP_EXTI_GENERATE_SWIT()</li>
+</ul></li>
+<li>HAL_PCD_IRQHandler API: fix the bad Configuration of Turnaround Time</li>
+</ul></li>
+<li><strong>HAL RNG</strong> update
+<ul>
+<li>Add new functions
+<ul>
+<li>HAL_RNG_GenerateRandomNumber(): to generate a 32-bits random number, return random value in argument and return HAL status.</li>
+<li>HAL_RNG_GenerateRandomNumber_IT(): to start generation of the 32-bits random number, user should call the HAL_RNG_ReadLastRandomNumber() function under the HAL_RNG_ReadyCallback() to get the generated random value.</li>
+<li>HAL_RNG_ReadLastRandomNumber(): to return the last random value stored in the RNG handle</li>
+</ul></li>
+<li>HAL_RNG_GetRandomNumber(): return value update (obsolete), replaced by HAL_RNG_GenerateRandomNumber()</li>
+<li>HAL_RNG_GetRandomNumber_IT(): wrong implementation (obsolete), replaced by HAL_RNG_GenerateRandomNumber_IT()</li>
+<li>__HAL_RNG_CLEAR_FLAG() macro (obsolete), replaced by new __HAL_RNG_CLEAR_IT() macro</li>
+<li>Add new define for RNG ready interrupt: RNG_IT_DRDY</li>
+</ul></li>
+<li><strong>HAL RTC</strong> update
+<ul>
+<li>Update HAL_RTCEx_SetWakeUpTimer() and HAL_RTCEx_SetWakeUpTimer_IT() functions to properly check on the WUTWF flag</li>
+<li>HAL_RTC_GetTime() and HAL_RTC_GetDate(): add the comment below</li>
+<li><ul>
+<li><span class="citation" data-cites="note">@note</span> You must call HAL_RTC_GetDate() after HAL_RTC_GetTime() to unlock the values</li>
+</ul></li>
+<li><ul>
+<li>in the higher-order calendar shadow registers to ensure consistency between the time and date values.</li>
+</ul></li>
+<li><ul>
+<li>Reading RTC current time locks the values in calendar shadow registers until Current date is read.</li>
+</ul></li>
+<li>Rename literals: add prefix "__HAL"
+<ul>
+<li>FORMAT_BIN by RTC_FORMAT_BIN</li>
+<li>FORMAT_BCD by RTC_FORMAT_BCD</li>
+</ul></li>
+<li>Rename macros (ALARM, WAKEUPTIMER and TIMESTAMP referenced as <strong>SUBBLOCK</strong> here below)
+<ul>
+<li>__HAL_RTC_EXTI_ENABLE_IT() by __HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_ENABLE_IT()</li>
+<li>__HAL_RTC_EXTI_DISABLE_IT() by __HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_DISABLE_IT()</li>
+<li>__HAL_RTC_EXTI_CLEAR_FLAG() by __HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_CLEAR_FLAG()</li>
+<li>__HAL_RTC_EXTI_GENERATE_SWIT() by __HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_GENERATE_SWIT()</li>
+</ul></li>
+<li>Add new macros (ALARM, WAKEUPTIMER and TAMPER_TIMESTAMP referenced as <strong>SUBBLOCK</strong> here below)
+<ul>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_GET_IT_SOURCE()</li>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_ENABLE_EVENT()</li>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_DISABLE_EVENT()</li>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_ENABLE_FALLING_EDGE()</li>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_DISABLE_FALLING_EDGE()</li>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_ENABLE_RISING_EDGE()</li>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_DISABLE_RISING_EDGE()</li>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_ENABLE_RISING_FALLING_EDGE()</li>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_DISABLE_RISING_FALLING_EDGE()</li>
+<li>__HAL_RTC_<strong>SUBBLOCK</strong>_EXTI_GET_FLAG()</li>
+</ul></li>
+<li>Update to use CMSIS mask definition instead of hardcoded values (EXTI_IMR_IM17, EXTI_IMR_IM19..)</li>
+<li>__HAL_RTC_TAMPER_TIMESTAMP_EXTI_GET_FLAG() macro: fix implementation issue</li>
+<li>__HAL_RTC_ALARM_GET_IT(), __HAL_RTC_ALARM_CLEAR_FLAG(), __HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(), __HAL_RTC_TIMESTAMP_CLEAR_FLAG() and __HAL_RTC_TAMPER_CLEAR_FLAG() macros implementation changed: remove unused cast</li>
+<li>IS_RTC_TAMPER() macro: update to use literal instead of hardcoded value</li>
+<li>Update to define hardware independent literals names:
+<ul>
+<li>Rename RTC_TAMPERPIN_PC13 by RTC_TAMPERPIN_DEFAULT</li>
+<li>Rename RTC_TAMPERPIN_PA0 by RTC_TAMPERPIN_POS1</li>
+<li>Rename RTC_TAMPERPIN_PI8 by RTC_TAMPERPIN_POS1</li>
+<li>Rename RTC_TIMESTAMPPIN_PC13 by RTC_TIMESTAMPPIN_DEFAULT</li>
+<li>Rename RTC_TIMESTAMPPIN_PA0 by RTC_TIMESTAMPPIN_POS1</li>
+<li>Rename RTC_TIMESTAMPPIN_PI8 by RTC_TIMESTAMPPIN_POS1</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL SD</strong> update
+<ul>
+<li>Rename SD_CMD_SD_APP_STAUS by SD_CMD_SD_APP_STATUS</li>
+<li>SD_PowerON() updated to add 1ms required power up waiting time before starting the SD initialization sequence</li>
+<li>SD_DMA_RxCplt()/SD_DMA_TxCplt(): add a call to HAL_DMA_Abort()</li>
+<li>HAL_SD_ReadBlocks() update to set the defined DATA_BLOCK_SIZE as SDIO DataBlockSize parameter</li>
+<li>HAL_SD_ReadBlocks_DMA()/HAL_SD_WriteBlocks_DMA() update to call the HAL_DMA_Start_IT() function withDMA Datalength set to BlockSize/4 as the DMA is configured in word</li>
+</ul></li>
+<li><strong>HAL SMARTCARD</strong> update
+<ul>
+<li>Add specific macros to manage the flags cleared only by a software sequence ◾__HAL_SMARTCARD_CLEAR_PEFLAG()
+<ul>
+<li>__HAL_SMARTCARD_CLEAR_FEFLAG()</li>
+<li>__HAL_SMARTCARD_CLEAR_NEFLAG()</li>
+<li>__HAL_SMARTCARD_CLEAR_OREFLAG()</li>
+<li>__HAL_SMARTCARD_CLEAR_IDLEFLAG()</li>
+</ul></li>
+<li>Add several enhancements without affecting the driver functionalities
+<ul>
+<li>Add a new state HAL_SMARTCARD_STATE_BUSY_TX_RX and all processes has been updated accordingly</li>
+<li>Update HAL_SMARTCARD_Transmit_IT() to enable SMARTCARD_IT_TXE instead of SMARTCARD_IT_TC</li>
+</ul></li>
+<li>DMA transmit process; the code has been updated to avoid waiting on TC flag under DMA ISR, SMARTCARD TC interrupt is used instead. Below the update to be done on user application:
+<ul>
+<li>Configure and enable the USART IRQ in HAL_SAMRTCARD_MspInit() function</li>
+<li>In stm32f2xx_it.c file, UASRTx_IRQHandler() function: add a call to HAL_SMARTCARD_IRQHandler() function</li>
+</ul></li>
+<li>IT transmit process; the code has been updated to avoid waiting on TC flag under SMARTCARD ISR, SMARTCARD TC interrupt is used instead. No impact on user application</li>
+<li>Rename macros: add prefix "__HAL"
+<ul>
+<li>__SMARTCARD_ENABLE() by __HAL_SMARTCARD_ENABLE()</li>
+<li>__SMARTCARD_DISABLE() by __HAL_SMARTCARD_DISABLE()</li>
+<li>__SMARTCARD_ENABLE_IT() by __HAL_SMARTCARD_ENABLE_IT()</li>
+<li>__SMARTCARD_DISABLE_IT() by __HAL_SMARTCARD_DISABLE_IT()</li>
+<li>__SMARTCARD_DMA_REQUEST_ENABLE() by __HAL_SMARTCARD_DMA_REQUEST_ENABLE()</li>
+<li>__SMARTCARD_DMA_REQUEST_DISABLE() by __HAL_SMARTCARD_DMA_REQUEST_DISABLE()</li>
+</ul></li>
+<li>Rename literals: remove “D” from “DISABLED” and “ENABLED”
+<ul>
+<li>SMARTCARD_NACK_ENABLED by SMARTCARD_NACK_ENABLE</li>
+<li>SMARTCARD_NACK_DISABLED by SMARTCARD_NACK_DISABLE</li>
+</ul></li>
+<li>Add new user macros to manage the sample method feature
+<ul>
+<li>__HAL_SMARTCARD_ONE_BIT_SAMPLE_ENABLE()</li>
+<li>__HAL_SMARTCARD_ONE_BIT_SAMPLE_DISABLE()</li>
+</ul></li>
+<li>Add use of tmpreg variable in __HAL_SMARTCARD_CLEAR_PEFLAG() macro for compliance with C++</li>
+<li>HAL_SMARTCARD_Transmit_DMA() update to follow the right procedure “Transmission using DMA” in the reference manual
+<ul>
+<li>Add clear the TC flag in the SR register before enabling the DMA transmit request</li>
+<li>HAL_SMARTCARD_Transmit_IT() update to force the disable for the ERR interrupt to avoid the OVR interrupt</li>
+<li>HAL_SMARTCARD_IRQHandler() update check condition for transmission end</li>
+<li>Clean up: remove the following literals that aren’t used in smartcard mode
+<ul>
+<li>SMARTCARD_PARITY_NONE</li>
+<li>SMARTCARD_WORDLENGTH_8B</li>
+<li>SMARTCARD_STOPBITS_1</li>
+<li>SMARTCADR_STOPBITS_2</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL TIM</strong> update
+<ul>
+<li>HAL_TIM_IRQHandler(): update to check the input capture channel 3 and 4 in CCMR2 instead of CCMR1</li>
+<li>__HAL_TIM_SET_PRESCALER() updated to use ‘=’ instead of ‘|=’</li>
+<li>Add thefollowing macro in TIM HAL driver</li>
+<li>__HAL_TIM_GET_COMPARE()</li>
+<li>__HAL_TIM_GET_COUNTER()</li>
+<li>__HAL_TIM_GET_AUTORELOAD()</li>
+<li>__HAL_TIM_GET_CLOCKDIVISION()</li>
+<li>__HAL_TIM_GET_ICPRESCALER()</li>
+<li>Add TIM_CHANNEL_ALL as possible value for all Encoder Start/Stop APIs Description</li>
+<li>HAL_TIM_OC_ConfigChannel() remove call to IS_TIM_FAST_STATE() assert macro</li>
+<li>HAL_TIM_PWM_ConfigChannel() add a call to IS_TIM_FAST_STATE() assert macro to check the OCFastMode parameter</li>
+<li>TIM_DMADelayPulseCplt() Update to set the TIM Channel before to call HAL_TIM_PWM_PulseFinishedCallback()</li>
+<li>TIM_DMACaptureCplt() update to set the TIM Channel before to call HAL_TIM_IC_CaptureCallback()</li>
+<li>HAL_TIM_IC_ConfigChannel() update to fix Timer CCMR1 register corruption when setting ICFilter parameter</li>
+<li>HAL_TIM_DMABurst_WriteStop()/HAL_TIM_DMABurst_ReadStop() update to abort the DMA transfer for the specific TIM channel</li>
+<li>Add new function for TIM Slave configuration in IT mode: HAL_TIM_SlaveConfigSynchronization_IT()</li>
+<li>HAL_TIMEx_ConfigBreakDeadTime() add an assert check on Break &amp; DeadTime parameters values</li>
+<li>HAL_TIMEx_OCN_Start_IT() add the enable of Break Interrupt for all output modes</li>
+<li>Add new macros to ENABLE/DISABLE URS bit in TIM CR1 register:
+<ul>
+<li>__HAL_TIM_URS_ENABLE()</li>
+<li>__HAL_TIM_URS_DISABLE()</li>
+</ul></li>
+<li>Add new macro for TIM Edge modification: __HAL_TIM_SET_CAPTUREPOLARITY()</li>
+</ul></li>
+<li><strong>HAL UART</strong> update
+<ul>
+<li>Add new macros to control CTS and RTS</li>
+<li>Add specific macros to manage the flags cleared only by a software sequence ◾__HAL_UART_CLEAR_PEFLAG()
+<ul>
+<li>__HAL_UART_CLEAR_FEFLAG()</li>
+<li>__HAL_UART_CLEAR_NEFLAG()</li>
+<li>__HAL_UART_CLEAR_OREFLAG()</li>
+<li>__HAL_UART_CLEAR_IDLEFLAG()</li>
+</ul></li>
+<li>Remove the check on RXNE set after reading the Data in the DR register</li>
+<li>Add IS_UART_LIN_WORD_LENGTH() and IS_UART_LIN_OVERSAMPLING() macros: to check respectively WordLength and OverSampling parameters in LIN mode</li>
+<li>DMA transmit process; the code has been updated to avoid waiting on TC flag under DMA ISR, UART TC interrupt is used instead. Below the update to be done on user application:
+<ul>
+<li>Configure and enable the USART IRQ in HAL_UART_MspInit() function</li>
+<li>In stm32f2xx_it.c file, USARTx_IRQHandler() function: add a call to HAL_UART_IRQHandler() function</li>
+</ul></li>
+<li>IT transmit process; the code has been updated to avoid waiting on TC flag under UART ISR, UART TC interrupt is used instead. No impact on user application</li>
+<li>Rename macros:
+<ul>
+<li>__HAL_UART_ONEBIT_ENABLE() by __HAL_UART_ONE_BIT_SAMPLE_ENABLE()</li>
+<li>__HAL_UART_ONEBIT_DISABLE() by __HAL_UART_ONE_BIT_SAMPLE_DISABLE()</li>
+</ul></li>
+<li>Rename literals:
+<ul>
+<li>UART_WAKEUPMETHODE_IDLELINE by UART_WAKEUPMETHOD_IDLELINE</li>
+<li>UART_WAKEUPMETHODE_ADDRESSMARK by UART_WAKEUPMETHOD_ADDRESSMARK</li>
+</ul></li>
+<li>Add use of tmpreg variable in __HAL_UART_CLEAR_PEFLAG() macro for compliance with C++</li>
+<li>HAL_UART_Transmit_DMA() update to follow the right procedure “Transmission using DMA” in the reference manual
+<ul>
+<li>Add clear the TC flag in the SR register before enabling the DMA transmit request</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL USART</strong> update
+<ul>
+<li>Add specific macros to manage the flags cleared only by a software sequence ◾__HAL_USART_CLEAR_PEFLAG()
+<ul>
+<li>__HAL_USART_CLEAR_FEFLAG()</li>
+<li>__HAL_USART_CLEAR_NEFLAG()</li>
+<li>__HAL_USART_CLEAR_OREFLAG()</li>
+<li>__HAL_USART_CLEAR_IDLEFLAG()</li>
+</ul></li>
+<li>Update HAL_USART_Transmit_IT() to enable USART_IT_TXE instead of USART_IT_TC</li>
+<li>DMA transmit process; the code has been updated to avoid waiting on TC flag under DMA ISR, USART TC interrupt is used instead. Below the update to be done on user application:
+<ul>
+<li>Configure and enable the USART IRQ in HAL_USART_MspInit() function</li>
+<li>In stm32f2xx_it.c file, USARTx_IRQHandler() function: add a call to HAL_USART_IRQHandler() function</li>
+</ul></li>
+<li>IT transmit process; the code has been updated to avoid waiting on TC flag under USART ISR, USART TC interrupt is used instead. No impact on user application</li>
+<li>HAL_USART_Init() update to enable the USART oversampling by 8 by default in order to reach max USART frequencies</li>
+<li>USART_DMAReceiveCplt() update to set the new USART state after checking on the old state</li>
+<li>HAL_USART_Transmit_DMA()/HAL_USART_TransmitReceive_DMA() update to follow the right procedure “Transmission using DMA” in the reference manual
+<ul>
+<li>Add clear the TC flag in the SR register before enabling the DMA transmit request</li>
+</ul></li>
+<li>Rename macros:
+<ul>
+<li>__USART_ENABLE() by __HAL_USART_ENABLE()</li>
+<li>__USART_DISABLE() by __HAL_USART_DISABLE()</li>
+<li>__USART_ENABLE_IT() by __HAL_USART_ENABLE_IT()</li>
+<li>__USART_DISABLE_IT() by __HAL_USART_DISABLE_IT()</li>
+</ul></li>
+<li>Rename literals: remove “D” from “DISABLED” and “ENABLED”
+<ul>
+<li>USART_CLOCK_DISABLED by USART_CLOCK_DISABLE</li>
+<li>USART_CLOCK_ENABLED by USART_CLOCK_ENABLE</li>
+<li>USARTNACK_ENABLED by USART_NACK_ENABLE</li>
+<li>USARTNACK_DISABLED by USART_NACK_DISABLE</li>
+</ul></li>
+<li>Add new user macros to manage the sample method feature
+<ul>
+<li>__HAL_USART_ONE_BIT_SAMPLE_ENABLE()</li>
+<li>__HAL_USART_ONE_BIT_SAMPLE_DISABLE()</li>
+</ul></li>
+<li>Add use of tmpreg variable in __HAL_USART_CLEAR_PEFLAG() macro for compliance with C++</li>
+<li>HAL_USART_Init() fix USART baud rate configuration issue: USART baud rate is twice Higher than expected</li>
+</ul></li>
+<li><strong>HAL WWDG</strong> update
+<ul>
+<li>Update macro parameters to use underscore: <strong>XXX</strong></li>
+<li>Use of CMSIS constants instead of magic values</li>
+<li>Use MODIFY_REG macro in HAL_WWDG_Init()</li>
+<li>Add IS_WWDG_ALL_INSTANCE in HAL_WWDG_Init() and HAL_WWDG_DeInit()</li>
+<li>Add new parameter in __HAL_WWDG_ENABLE_IT() macro</li>
+<li>Add new macros to manage WWDG IT &amp; correction:
+<ul>
+<li>__HAL_WWDG_DISABLE()</li>
+<li>__HAL_WWDG_DISABLE_IT()</li>
+<li>__HAL_WWDG_GET_IT()</li>
+<li>__HAL_WWDG_GET_IT_SOURCE()</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL IWDG</strong> update
+<ul>
+<li>Use WRITE_REG instead of SET_BIT for all IWDG macros</li>
+<li>__HAL_IWDG_CLEAR_FLAG removed: no IWDG flag cleared by access to SR register</li>
+<li>Use MODIFY_REG macro in HAL_IWDG_Init()</li>
+<li>Add IS_IWDG_ALL_INSTANCE in HAL_IWDG_Init()</li>
+<li>Rename the defined IWDG keys:
+<ul>
+<li>KR_KEY_RELOAD by IWDG_KEY_RELOAD</li>
+<li>KR_KEY_ENABLE by IWDG_KEY_ENABLE</li>
+<li>KR_KEY_EWA by IWDG_KEY_WRITE_ACCESS_ENABLE</li>
+<li>KR_KEY_DWA by IWDG_KEY_WRITE_ACCESS_DISABLE</li>
+</ul></li>
+<li>Add new macro: __HAL_IWDG_RESET_HANDLE_STATE()</li>
+<li>Update IWDG_ENABLE_WRITE_ACCESS() and IWDG_DISABLE_WRITE_ACCESS() as private macro</li>
+</ul></li>
+<li><strong>HAL LL FSMC</strong> update
+<ul>
+<li>Add WriteFifo and PageSize fields in the FSMC_NORSRAM_InitTypeDef structure</li>
+<li>Update FSMC_NORSRAM_Init(), FSMC_NORSRAM_DeInit() and FSMC_NORSRAM_Extended_Timing_Init() functions</li>
+</ul></li>
+<li><strong>HAL LL USB</strong> update
+<ul>
+<li>Update USB_HostInit() and USB_DevInit() functions to support the VBUS Sensing B activation</li>
+<li>USB_FlushTxFifo API: update to flush all Tx FIFO</li>
+<li>Update to use local variable in USB Host channel re-activation</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true"><strong>V1.0.1 / 25-March-2014</strong></label>
+<div>
+<h2 id="main-changes-12">Main Changes</h2>
+<ul>
+<li>Patch release : moved macros related to RNG from hal_rcc_ex.h to hal_rcc.h as RNG is present in all versions of the STM32F2</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true"><strong>V1.0.0 / 07-March-2014</strong></label>
+<div>
+<h2 id="main-changes-13">Main Changes</h2>
+<ul>
+<li>First official release</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+For complete documentation on STM32 Microcontrollers </mark> , visit: <span style="font-color: blue;"><a href="http://www.st.com/stm32">www.st.com/stm32</a></span> <em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em>
+</footer>
+</body>
+</html>

@@ -969,7 +969,15 @@ typedef struct
 /** @addtogroup Exported_constants
   * @{
   */
-  
+
+  /** @addtogroup Hardware_Constant_Definition
+    * @{
+    */
+#define LSI_STARTUP_TIME                85U /*!< LSI Maximum startup time in us */
+  /**
+    * @}
+    */
+
   /** @addtogroup Peripheral_Registers_Bits_Definition
   * @{
   */
@@ -1330,6 +1338,11 @@ typedef struct
 /*                         Reset and Clock Control                            */
 /*                                                                            */
 /******************************************************************************/
+/*
+ * @brief Specific device feature definitions (not present on all devices in the STM32F1 serie)
+ */
+#define RCC_PLL2_SUPPORT                                                       /*!< Support PLL2 */
+#define RCC_PLLI2S_SUPPORT 
 
 /********************  Bit definition for RCC_CR register  ********************/
 #define RCC_CR_HSION_Pos                     (0U)                              
@@ -1363,22 +1376,12 @@ typedef struct
 #define RCC_CR_PLLRDY_Msk                    (0x1UL << RCC_CR_PLLRDY_Pos)       /*!< 0x02000000 */
 #define RCC_CR_PLLRDY                        RCC_CR_PLLRDY_Msk                 /*!< PLL clock ready flag */
 
-/*
- * @brief Specific device feature definitions (not present on all devices in the STM32F1 serie)
- */
-#define RCC_PLL2_SUPPORT                                                       /*!< Support PLL2 */
-
 #define RCC_CR_PLL2ON_Pos                    (26U)                             
 #define RCC_CR_PLL2ON_Msk                    (0x1UL << RCC_CR_PLL2ON_Pos)       /*!< 0x04000000 */
 #define RCC_CR_PLL2ON                        RCC_CR_PLL2ON_Msk                 /*!< PLL2 enable */
 #define RCC_CR_PLL2RDY_Pos                   (27U)                             
 #define RCC_CR_PLL2RDY_Msk                   (0x1UL << RCC_CR_PLL2RDY_Pos)      /*!< 0x08000000 */
 #define RCC_CR_PLL2RDY                       RCC_CR_PLL2RDY_Msk                /*!< PLL2 clock ready flag */
-
-/*
- * @brief Specific device feature definitions (not present on all devices in the STM32F1 serie)
- */
-#define RCC_PLLI2S_SUPPORT                                                     /*!< Support PLL3 (PLLI2S)*/
 
 #define RCC_CR_PLL3ON_Pos                    (28U)                             
 #define RCC_CR_PLL3ON_Msk                    (0x1UL << RCC_CR_PLL3ON_Pos)       /*!< 0x10000000 */
@@ -12006,7 +12009,6 @@ typedef struct
 #define SPI_I2SCFGR_I2SMOD_Pos              (11U)                              
 #define SPI_I2SCFGR_I2SMOD_Msk              (0x1UL << SPI_I2SCFGR_I2SMOD_Pos)   /*!< 0x00000800 */
 #define SPI_I2SCFGR_I2SMOD                  SPI_I2SCFGR_I2SMOD_Msk             /*!< I2S mode selection */
-
 /******************  Bit definition for SPI_I2SPR register  *******************/
 #define SPI_I2SPR_I2SDIV_Pos                (0U)                               
 #define SPI_I2SPR_I2SDIV_Msk                (0xFFUL << SPI_I2SPR_I2SDIV_Pos)    /*!< 0x000000FF */
@@ -15003,8 +15005,6 @@ typedef struct
    ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM5))
 
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
-
 #define IS_TIM_DMABURST_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM2)    || \
@@ -15195,42 +15195,42 @@ typedef struct
 
 /* Aliases for __IRQn */
 #define ADC1_IRQn               ADC1_2_IRQn
-#define USB_LP_CAN1_RX0_IRQn    CAN1_RX0_IRQn
 #define USB_LP_IRQn             CAN1_RX0_IRQn
-#define USB_HP_CAN1_TX_IRQn     CAN1_TX_IRQn
+#define USB_LP_CAN1_RX0_IRQn    CAN1_RX0_IRQn
 #define USB_HP_IRQn             CAN1_TX_IRQn
+#define USB_HP_CAN1_TX_IRQn     CAN1_TX_IRQn
 #define DMA2_Channel4_5_IRQn    DMA2_Channel4_IRQn
 #define USBWakeUp_IRQn          OTG_FS_WKUP_IRQn
 #define CEC_IRQn                OTG_FS_WKUP_IRQn
+#define TIM1_BRK_TIM9_IRQn      TIM1_BRK_IRQn
 #define TIM1_BRK_TIM15_IRQn     TIM1_BRK_IRQn
 #define TIM9_IRQn               TIM1_BRK_IRQn
-#define TIM1_BRK_TIM9_IRQn      TIM1_BRK_IRQn
+#define TIM11_IRQn              TIM1_TRG_COM_IRQn
 #define TIM1_TRG_COM_TIM17_IRQn TIM1_TRG_COM_IRQn
 #define TIM1_TRG_COM_TIM11_IRQn TIM1_TRG_COM_IRQn
-#define TIM11_IRQn              TIM1_TRG_COM_IRQn
-#define TIM1_UP_TIM10_IRQn      TIM1_UP_IRQn
 #define TIM1_UP_TIM16_IRQn      TIM1_UP_IRQn
+#define TIM1_UP_TIM10_IRQn      TIM1_UP_IRQn
 #define TIM10_IRQn              TIM1_UP_IRQn
 #define TIM6_DAC_IRQn           TIM6_IRQn
 
 
 /* Aliases for __IRQHandler */
 #define ADC1_IRQHandler               ADC1_2_IRQHandler
-#define USB_LP_CAN1_RX0_IRQHandler    CAN1_RX0_IRQHandler
 #define USB_LP_IRQHandler             CAN1_RX0_IRQHandler
-#define USB_HP_CAN1_TX_IRQHandler     CAN1_TX_IRQHandler
+#define USB_LP_CAN1_RX0_IRQHandler    CAN1_RX0_IRQHandler
 #define USB_HP_IRQHandler             CAN1_TX_IRQHandler
+#define USB_HP_CAN1_TX_IRQHandler     CAN1_TX_IRQHandler
 #define DMA2_Channel4_5_IRQHandler    DMA2_Channel4_IRQHandler
 #define USBWakeUp_IRQHandler          OTG_FS_WKUP_IRQHandler
 #define CEC_IRQHandler                OTG_FS_WKUP_IRQHandler
+#define TIM1_BRK_TIM9_IRQHandler      TIM1_BRK_IRQHandler
 #define TIM1_BRK_TIM15_IRQHandler     TIM1_BRK_IRQHandler
 #define TIM9_IRQHandler               TIM1_BRK_IRQHandler
-#define TIM1_BRK_TIM9_IRQHandler      TIM1_BRK_IRQHandler
+#define TIM11_IRQHandler              TIM1_TRG_COM_IRQHandler
 #define TIM1_TRG_COM_TIM17_IRQHandler TIM1_TRG_COM_IRQHandler
 #define TIM1_TRG_COM_TIM11_IRQHandler TIM1_TRG_COM_IRQHandler
-#define TIM11_IRQHandler              TIM1_TRG_COM_IRQHandler
-#define TIM1_UP_TIM10_IRQHandler      TIM1_UP_IRQHandler
 #define TIM1_UP_TIM16_IRQHandler      TIM1_UP_IRQHandler
+#define TIM1_UP_TIM10_IRQHandler      TIM1_UP_IRQHandler
 #define TIM10_IRQHandler              TIM1_UP_IRQHandler
 #define TIM6_DAC_IRQHandler           TIM6_IRQHandler
 

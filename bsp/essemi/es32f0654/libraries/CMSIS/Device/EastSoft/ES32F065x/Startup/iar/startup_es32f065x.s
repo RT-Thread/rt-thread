@@ -3,8 +3,27 @@
 ; description: es32f065x Device Startup File
 ; author     : AE Team
 ; data       : 10 Dec 2018
+; note
+;          Change Logs:
+;          Date            Author          Notes
+;          10 Dec 2018     AE Team         The first version
+;
 ; Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
-;*******************************************************************************
+;
+; SPDX-License-Identifier: Apache-2.0
+;
+; Licensed under the Apache License, Version 2.0 (the License); you may
+; not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+;
+; www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an AS IS BASIS, WITHOUT
+; WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+;*********************************************************************************
 
         MODULE  ?cstartup
 
@@ -35,7 +54,7 @@ __vector_table
         DCD     SysTick_Handler				;15, systick handler
         DCD     WWDG_IWDG_Handler			;16, irq0    WWDG_IWDG handler
         DCD     LVD_Handler				;17, irq1    LVD handler
-        DCD     RTC_TEMP_Handler			;18, irq2    RTC handler
+        DCD     RTC_TSENSE_Handler			;18, irq2    RTC handler
         DCD     CRYPT_TRNG_Handler			;19, irq3    CRYPT handler
         DCD     CMU_Handler				;20, irq4    CMU handler
         DCD     EXTI0_3_Handler				;21, irq5    EXTI0_3 handler
@@ -118,10 +137,10 @@ WWDG_IWDG_Handler
 LVD_Handler
 	B LVD_Handler
 		
-	PUBWEAK RTC_TEMP_Handler
+	PUBWEAK RTC_TSENSE_Handler
         SECTION .text:CODE:NOROOT:REORDER(1)
-RTC_TEMP_Handler
-        B RTC_TEMP_Handler
+RTC_TSENSE_Handler
+        B RTC_TSENSE_Handler
 
         PUBWEAK CRYPT_TRNG_Handler
         SECTION .text:CODE:NOROOT:REORDER(1)

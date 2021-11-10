@@ -44,6 +44,8 @@ void rt_rbb_init(rt_rbb_t rbb, rt_uint8_t *buf, rt_size_t buf_size, rt_rbb_blk_t
 }
 RTM_EXPORT(rt_rbb_init);
 
+#ifdef RT_USING_HEAP
+
 /**
  * ring block buffer object create
  *
@@ -101,6 +103,8 @@ void rt_rbb_destroy(rt_rbb_t rbb)
 
 }
 RTM_EXPORT(rt_rbb_destroy);
+
+#endif
 
 static rt_rbb_blk_t find_empty_blk_in_set(rt_rbb_t rbb)
 {

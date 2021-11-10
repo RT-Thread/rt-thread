@@ -57,8 +57,8 @@ typedef struct
 {
   uint32_t         ClockErrorDetection; /*!< Clock error detection.
                                       This parameter can be one value of @ref RNG_LL_CED.
-
-                                      This parameter can be modified using unitary functions @ref LL_RNG_EnableClkErrorDetect(). */
+                                      This parameter can be modified using unitary
+                                      functions @ref LL_RNG_EnableClkErrorDetect(). */
 } LL_RNG_InitTypeDef;
 
 /**

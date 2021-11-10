@@ -11,6 +11,8 @@
 #ifndef CPUTIME_H__
 #define CPUTIME_H__
 
+#include <stdint.h>
+
 struct rt_clock_cputime_ops
 {
     float    (*cputime_getres) (void);

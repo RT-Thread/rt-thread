@@ -36,13 +36,13 @@
         (##) On STM32L4Rx/STM32L4Sxx devices, no DMA configuration is need, an internal DMA for SDMMC Peripheral is used.
         (##) On other devices, perform DMA Configuration if you need to use DMA process (HAL_MMC_ReadBlocks_DMA()
              and HAL_MMC_WriteBlocks_DMA() APIs).
-            (+++) Enable the DMAx interface clock using __HAL_RCC_DMAx_CLK_ENABLE(); 
-            (+++) Configure the DMA using the function HAL_DMA_Init() with predeclared and filled. 
+            (+++) Enable the DMAx interface clock using __HAL_RCC_DMAx_CLK_ENABLE();
+            (+++) Configure the DMA using the function HAL_DMA_Init() with predeclared and filled.
         (##) NVIC configuration if you need to use interrupt process when using DMA transfer.
             (+++) Configure the SDMMC and DMA interrupt priorities using function HAL_NVIC_SetPriority();
                   DMA priority is superior to SDMMC's priority
             (+++) Enable the NVIC DMA and SDMMC IRQs using function HAL_NVIC_EnableIRQ()
-            (+++) SDMMC interrupts are managed using the macros __HAL_MMC_ENABLE_IT() 
+            (+++) SDMMC interrupts are managed using the macros __HAL_MMC_ENABLE_IT()
                   and __HAL_MMC_DISABLE_IT() inside the communication process.
             (+++) SDMMC interrupts pending bits are managed using the macros __HAL_MMC_GET_IT()
                   and __HAL_MMC_CLEAR_IT()
@@ -117,7 +117,7 @@
 
     (+) You can read from MMC card in Interrupt mode by using function HAL_MMC_ReadBlocks_IT().
         This function allows the read of 512 bytes blocks.
-        You can choose either one block read operation or multiple block read operation 
+        You can choose either one block read operation or multiple block read operation
         by adjusting the "NumberOfBlocks" parameter.
         After this, you have to ensure that the transfer is done correctly. The check is done
         through HAL_MMC_GetCardState() function for MMC card state.
@@ -141,18 +141,18 @@
         by adjusting the "NumberOfBlocks" parameter.
         After this, you have to ensure that the transfer is done correctly. The check is done
         through HAL_MMC_GetCardState() function for MMC card state.
-        You could also check the DMA transfer process through the MMC Tx interrupt event.  
+        You could also check the DMA transfer process through the MMC Tx interrupt event.
 
     (+) You can write to MMC card in Interrupt mode by using function HAL_MMC_WriteBlocks_IT().
         This function allows the read of 512 bytes blocks.
-        You can choose either one block read operation or multiple block read operation 
+        You can choose either one block read operation or multiple block read operation
         by adjusting the "NumberOfBlocks" parameter.
         After this, you have to ensure that the transfer is done correctly. The check is done
         through HAL_MMC_GetCardState() function for MMC card state.
         You could also check the IT transfer process through the MMC Tx interrupt event.
 
   *** MMC card information ***
-  =========================== 
+  ===========================
   [..]
     (+) To get MMC card information, you can use the function HAL_MMC_GetCardInfo().
         It returns useful information about the MMC card such as block size, card type,
@@ -277,7 +277,31 @@
 /** @addtogroup MMC_Private_Defines
   * @{
   */
+#if defined (VDD_VALUE) && (VDD_VALUE <= 1950U)
+#define MMC_VOLTAGE_RANGE               MMC_LOW_VOLTAGE_RANGE
 
+#define MMC_EXT_CSD_PWR_CL_26_INDEX     201
+#define MMC_EXT_CSD_PWR_CL_52_INDEX     200
+#define MMC_EXT_CSD_PWR_CL_DDR_52_INDEX 238
+
+#define MMC_EXT_CSD_PWR_CL_26_POS       8
+#define MMC_EXT_CSD_PWR_CL_52_POS       0
+#define MMC_EXT_CSD_PWR_CL_DDR_52_POS   16
+#else
+#define MMC_VOLTAGE_RANGE               MMC_HIGH_VOLTAGE_RANGE
+
+#define MMC_EXT_CSD_PWR_CL_26_INDEX     203
+#define MMC_EXT_CSD_PWR_CL_52_INDEX     202
+#define MMC_EXT_CSD_PWR_CL_DDR_52_INDEX 239
+
+#define MMC_EXT_CSD_PWR_CL_26_POS       24
+#define MMC_EXT_CSD_PWR_CL_52_POS       16
+#define MMC_EXT_CSD_PWR_CL_DDR_52_POS   24
+#endif
+
+/* Frequencies used in the driver for clock divider calculation */
+#define MMC_INIT_FREQ                   400000U   /* Initalization phase : 400 kHz max */
+#define MMC_HIGH_SPEED_FREQ             52000000U /* High speed phase : 52 MHz max */
 /**
   * @}
   */
@@ -295,15 +319,18 @@ static uint32_t MMC_SendStatus(MMC_HandleTypeDef *hmmc, uint32_t *pCardStatus);
 static void     MMC_PowerOFF(MMC_HandleTypeDef *hmmc);
 static void     MMC_Write_IT(MMC_HandleTypeDef *hmmc);
 static void     MMC_Read_IT(MMC_HandleTypeDef *hmmc);
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
 static void     MMC_DMATransmitCplt(DMA_HandleTypeDef *hdma);
 static void     MMC_DMAReceiveCplt(DMA_HandleTypeDef *hdma);
 static void     MMC_DMAError(DMA_HandleTypeDef *hdma);
 static void     MMC_DMATxAbort(DMA_HandleTypeDef *hdma);
 static void     MMC_DMARxAbort(DMA_HandleTypeDef *hdma);
 #else
-static HAL_StatusTypeDef MMC_ReadExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pBlockNbr, uint32_t Timeout);
+static uint32_t MMC_HighSpeed(MMC_HandleTypeDef *hmmc, FunctionalState state);
+static uint32_t MMC_DDR_Mode(MMC_HandleTypeDef *hmmc, FunctionalState state);
 #endif
+static HAL_StatusTypeDef MMC_ReadExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pFieldData, uint16_t FieldIndex, uint32_t Timeout);
+static uint32_t MMC_PwrClassUpdate(MMC_HandleTypeDef *hmmc, uint32_t Wide, uint32_t Speed);
 
 /**
   * @}
@@ -331,7 +358,7 @@ static HAL_StatusTypeDef MMC_ReadExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pBloc
 /**
   * @brief  Initializes the MMC according to the specified parameters in the
             MMC_HandleTypeDef and create the associated handle.
-  * @param  hmmc: Pointer to the MMC handle
+  * @param  hmmc Pointer to the MMC handle
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_Init(MMC_HandleTypeDef *hmmc)
@@ -345,7 +372,7 @@ HAL_StatusTypeDef HAL_MMC_Init(MMC_HandleTypeDef *hmmc)
   /* Check the parameters */
   assert_param(IS_SDMMC_ALL_INSTANCE(hmmc->Instance));
   assert_param(IS_SDMMC_CLOCK_EDGE(hmmc->Init.ClockEdge));
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
   assert_param(IS_SDMMC_CLOCK_BYPASS(hmmc->Init.ClockBypass));
 #endif
   assert_param(IS_SDMMC_CLOCK_POWER_SAVE(hmmc->Init.ClockPowerSave));
@@ -363,7 +390,7 @@ HAL_StatusTypeDef HAL_MMC_Init(MMC_HandleTypeDef *hmmc)
     hmmc->RxCpltCallback    = HAL_MMC_RxCpltCallback;
     hmmc->ErrorCallback     = HAL_MMC_ErrorCallback;
     hmmc->AbortCpltCallback = HAL_MMC_AbortCallback;
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     hmmc->Read_DMADblBuf0CpltCallback = HAL_MMCEx_Read_DMADoubleBuffer0CpltCallback;
     hmmc->Read_DMADblBuf1CpltCallback = HAL_MMCEx_Read_DMADoubleBuffer1CpltCallback;
     hmmc->Write_DMADblBuf0CpltCallback = HAL_MMCEx_Write_DMADoubleBuffer0CpltCallback;
@@ -400,12 +427,21 @@ HAL_StatusTypeDef HAL_MMC_Init(MMC_HandleTypeDef *hmmc)
   /* Initialize the MMC state */
   hmmc->State = HAL_MMC_STATE_READY;
 
+  /* Configure bus width */
+  if (hmmc->Init.BusWide != SDMMC_BUS_WIDE_1B)
+  {
+    if (HAL_MMC_ConfigWideBusOperation(hmmc, hmmc->Init.BusWide) != HAL_OK)
+    {
+      return HAL_ERROR;
+    }
+  }
+
   return HAL_OK;
 }
 
 /**
   * @brief  Initializes the MMC Card.
-  * @param  hmmc: Pointer to MMC handle
+  * @param  hmmc Pointer to MMC handle
   * @note   This function initializes the MMC card. It could be used when a card
             re-initialization is needed.
   * @retval HAL status
@@ -415,16 +451,31 @@ HAL_StatusTypeDef HAL_MMC_InitCard(MMC_HandleTypeDef *hmmc)
   uint32_t errorstate;
   MMC_InitTypeDef Init;
   HAL_StatusTypeDef status;
+  uint32_t sdmmc_clk;
 
   /* Default SDMMC peripheral configuration for MMC card initialization */
   Init.ClockEdge           = SDMMC_CLOCK_EDGE_RISING;
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
   Init.ClockBypass         = SDMMC_CLOCK_BYPASS_DISABLE;
 #endif
   Init.ClockPowerSave      = SDMMC_CLOCK_POWER_SAVE_DISABLE;
   Init.BusWide             = SDMMC_BUS_WIDE_1B;
   Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
-  Init.ClockDiv            = SDMMC_INIT_CLK_DIV;
+
+  /* Init Clock should be less or equal to 400Khz*/
+  sdmmc_clk = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SDMMC1);
+  if (sdmmc_clk == 0U)
+  {
+      hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->ErrorCode = SDMMC_ERROR_INVALID_PARAMETER;
+      return HAL_ERROR;
+  }
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+  Init.ClockDiv = ((sdmmc_clk/MMC_INIT_FREQ) - 2U);
+#else
+  Init.ClockDiv = sdmmc_clk/(2U*MMC_INIT_FREQ);
+  Init.Transceiver = SDMMC_TRANSCEIVER_DISABLE;
+#endif
 
   /* Initialize SDMMC peripheral interface with default configuration */
   status = SDMMC_Init(hmmc->Instance, Init);
@@ -433,11 +484,11 @@ HAL_StatusTypeDef HAL_MMC_InitCard(MMC_HandleTypeDef *hmmc)
     return HAL_ERROR;
   }
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
   /* Disable SDMMC Clock */
-  __HAL_MMC_DISABLE(hmmc); 
+  __HAL_MMC_DISABLE(hmmc);
 #endif
-  
+
   /* Set Power State to ON */
   status = SDMMC_PowerState_ON(hmmc->Instance);
   if(status == HAL_ERROR)
@@ -445,10 +496,19 @@ HAL_StatusTypeDef HAL_MMC_InitCard(MMC_HandleTypeDef *hmmc)
     return HAL_ERROR;
   }
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
   /* Enable MMC Clock */
   __HAL_MMC_ENABLE(hmmc);
 #endif
+
+  /* wait 74 Cycles: required power up waiting time before starting
+     the MMC initialization sequence */
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+  sdmmc_clk = sdmmc_clk/(Init.ClockDiv + 2U);
+#else
+  sdmmc_clk = sdmmc_clk/(2U*Init.ClockDiv);
+#endif
+  HAL_Delay(1U+ (74U*1000U/(sdmmc_clk)));
 
   /* Identify card operating voltage */
   errorstate = MMC_PowerON(hmmc);
@@ -468,12 +528,23 @@ HAL_StatusTypeDef HAL_MMC_InitCard(MMC_HandleTypeDef *hmmc)
     return HAL_ERROR;
   }
 
+  /* Set Block Size for Card */
+  errorstate = SDMMC_CmdBlockLength(hmmc->Instance, MMC_BLOCKSIZE);
+  if(errorstate != HAL_MMC_ERROR_NONE)
+  {
+    /* Clear all the static flags */
+    __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+    hmmc->ErrorCode |= errorstate;
+    hmmc->State = HAL_MMC_STATE_READY;
+    return HAL_ERROR;
+  }
+
   return HAL_OK;
 }
 
 /**
   * @brief  De-Initializes the MMC card.
-  * @param  hmmc: Pointer to MMC handle
+  * @param  hmmc Pointer to MMC handle
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_DeInit(MMC_HandleTypeDef *hmmc)
@@ -514,7 +585,7 @@ HAL_StatusTypeDef HAL_MMC_DeInit(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief  Initializes the MMC MSP.
-  * @param  hmmc: Pointer to MMC handle
+  * @param  hmmc Pointer to MMC handle
   * @retval None
   */
 __weak void HAL_MMC_MspInit(MMC_HandleTypeDef *hmmc)
@@ -529,7 +600,7 @@ __weak void HAL_MMC_MspInit(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief  De-Initialize MMC MSP.
-  * @param  hmmc: Pointer to MMC handle
+  * @param  hmmc Pointer to MMC handle
   * @retval None
   */
 __weak void HAL_MMC_MspDeInit(MMC_HandleTypeDef *hmmc)
@@ -566,11 +637,11 @@ __weak void HAL_MMC_MspDeInit(MMC_HandleTypeDef *hmmc)
   *         is managed by polling mode.
   * @note   This API should be followed by a check on the card state through
   *         HAL_MMC_GetCardState().
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pData: pointer to the buffer that will contain the received data
-  * @param  BlockAdd: Block Address from where data is to be read
-  * @param  NumberOfBlocks: Number of MMC blocks to read
-  * @param  Timeout: Specify timeout value
+  * @param  hmmc Pointer to MMC handle
+  * @param  pData pointer to the buffer that will contain the received data
+  * @param  BlockAdd Block Address from where data is to be read
+  * @param  NumberOfBlocks Number of MMC blocks to read
+  * @param  Timeout Specify timeout value
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, uint32_t BlockAdd, uint32_t NumberOfBlocks, uint32_t Timeout)
@@ -592,7 +663,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
   {
     hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
 
-    if((BlockAdd + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
+    if((add + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
     {
       hmmc->ErrorCode |= HAL_MMC_ERROR_ADDR_OUT_OF_RANGE;
       return HAL_ERROR;
@@ -608,30 +679,19 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
       add *= 512U;
     }
 
-    /* Set Block Size for Card */
-    errorstate = SDMMC_CmdBlockLength(hmmc->Instance, MMC_BLOCKSIZE);
-    if(errorstate != HAL_MMC_ERROR_NONE)
-    {
-      /* Clear all the static flags */
-      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-      hmmc->ErrorCode |= errorstate;
-      hmmc->State = HAL_MMC_STATE_READY;
-      return HAL_ERROR;
-    }
-
     /* Configure the MMC DPSM (Data Path State Machine) */
     config.DataTimeOut   = SDMMC_DATATIMEOUT;
     config.DataLength    = NumberOfBlocks * MMC_BLOCKSIZE;
     config.DataBlockSize = SDMMC_DATABLOCK_SIZE_512B;
     config.TransferDir   = SDMMC_TRANSFER_DIR_TO_SDMMC;
     config.TransferMode  = SDMMC_TRANSFER_MODE_BLOCK;
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     config.DPSM          = SDMMC_DPSM_ENABLE;
 #else
     config.DPSM          = SDMMC_DPSM_DISABLE;
 #endif
     (void)SDMMC_ConfigData(hmmc->Instance, &config);
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     __SDMMC_CMDTRANS_ENABLE( hmmc->Instance);
 #endif
 
@@ -656,6 +716,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= errorstate;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
 
@@ -690,10 +751,11 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
         __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
         hmmc->ErrorCode |= HAL_MMC_ERROR_TIMEOUT;
         hmmc->State= HAL_MMC_STATE_READY;
+        hmmc->Context = MMC_CONTEXT_NONE;
         return HAL_TIMEOUT;
       }
     }
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     __SDMMC_CMDTRANS_DISABLE( hmmc->Instance);
 #endif
 
@@ -708,6 +770,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
         __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
         hmmc->ErrorCode |= errorstate;
         hmmc->State = HAL_MMC_STATE_READY;
+        hmmc->Context = MMC_CONTEXT_NONE;
         return HAL_ERROR;
       }
     }
@@ -719,6 +782,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= HAL_MMC_ERROR_DATA_TIMEOUT;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
     else if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_DCRCFAIL))
@@ -727,6 +791,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= HAL_MMC_ERROR_DATA_CRC_FAIL;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
     else if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_RXOVERR))
@@ -735,6 +800,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= HAL_MMC_ERROR_RX_OVERRUN;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
     else
@@ -742,7 +808,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
       /* Nothing to do */
     }
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     /* Empty FIFO if there is still any data */
     while ((__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_RXDAVL)) && (dataremaining > 0U))
     {
@@ -763,9 +829,10 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
       if(((HAL_GetTick()-tickstart) >=  Timeout) || (Timeout == 0U))
       {
         /* Clear all the static flags */
-        __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);        
+        __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
         hmmc->ErrorCode |= HAL_MMC_ERROR_TIMEOUT;
         hmmc->State= HAL_MMC_STATE_READY;
+        hmmc->Context = MMC_CONTEXT_NONE;
         return HAL_ERROR;
       }
     }
@@ -790,11 +857,11 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, ui
   *         transfer is managed by polling mode.
   * @note   This API should be followed by a check on the card state through
   *         HAL_MMC_GetCardState().
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pData: pointer to the buffer that will contain the data to transmit
-  * @param  BlockAdd: Block Address where data will be written
-  * @param  NumberOfBlocks: Number of MMC blocks to write
-  * @param  Timeout: Specify timeout value
+  * @param  hmmc Pointer to MMC handle
+  * @param  pData pointer to the buffer that will contain the data to transmit
+  * @param  BlockAdd Block Address where data will be written
+  * @param  NumberOfBlocks Number of MMC blocks to write
+  * @param  Timeout Specify timeout value
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, uint32_t BlockAdd, uint32_t NumberOfBlocks, uint32_t Timeout)
@@ -816,7 +883,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, u
   {
     hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
 
-    if((BlockAdd + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
+    if((add + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
     {
       hmmc->ErrorCode |= HAL_MMC_ERROR_ADDR_OUT_OF_RANGE;
       return HAL_ERROR;
@@ -832,17 +899,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, u
       add *= 512U;
     }
 
-    /* Set Block Size for Card */
-    errorstate = SDMMC_CmdBlockLength(hmmc->Instance, MMC_BLOCKSIZE);
-    if(errorstate != HAL_MMC_ERROR_NONE)
-    {
-      /* Clear all the static flags */
-      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-      hmmc->ErrorCode |= errorstate;
-      hmmc->State = HAL_MMC_STATE_READY;
-      return HAL_ERROR;
-    }
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     /* Configure the MMC DPSM (Data Path State Machine) */
     config.DataTimeOut   = SDMMC_DATATIMEOUT;
     config.DataLength    = NumberOfBlocks * MMC_BLOCKSIZE;
@@ -875,10 +932,11 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, u
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= errorstate;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     /* Configure the MMC DPSM (Data Path State Machine) */
     config.DataTimeOut   = SDMMC_DATATIMEOUT;
     config.DataLength    = NumberOfBlocks * MMC_BLOCKSIZE;
@@ -920,10 +978,11 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, u
         __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
         hmmc->ErrorCode |= errorstate;
         hmmc->State = HAL_MMC_STATE_READY;
+        hmmc->Context = MMC_CONTEXT_NONE;
         return HAL_TIMEOUT;
       }
     }
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     __SDMMC_CMDTRANS_DISABLE( hmmc->Instance);
 #endif
 
@@ -938,6 +997,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, u
         __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
         hmmc->ErrorCode |= errorstate;
         hmmc->State = HAL_MMC_STATE_READY;
+        hmmc->Context = MMC_CONTEXT_NONE;
         return HAL_ERROR;
       }
     }
@@ -949,6 +1009,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, u
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= HAL_MMC_ERROR_DATA_TIMEOUT;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
     else if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_DCRCFAIL))
@@ -957,6 +1018,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, u
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= HAL_MMC_ERROR_DATA_CRC_FAIL;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
     else if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_TXUNDERR))
@@ -965,6 +1027,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, u
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= HAL_MMC_ERROR_TX_UNDERRUN;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
     else
@@ -993,10 +1056,10 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks(MMC_HandleTypeDef *hmmc, uint8_t *pData, u
   *         HAL_MMC_GetCardState().
   * @note   You could also check the IT transfer process through the MMC Rx
   *         interrupt event.
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pData: Pointer to the buffer that will contain the received data
-  * @param  BlockAdd: Block Address from where data is to be read
-  * @param  NumberOfBlocks: Number of blocks to read.
+  * @param  hmmc Pointer to MMC handle
+  * @param  pData Pointer to the buffer that will contain the received data
+  * @param  BlockAdd Block Address from where data is to be read
+  * @param  NumberOfBlocks Number of blocks to read.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_ReadBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData, uint32_t BlockAdd, uint32_t NumberOfBlocks)
@@ -1015,7 +1078,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData,
   {
     hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
 
-    if((BlockAdd + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
+    if((add + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
     {
       hmmc->ErrorCode |= HAL_MMC_ERROR_ADDR_OUT_OF_RANGE;
       return HAL_ERROR;
@@ -1029,22 +1092,9 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData,
     hmmc->pRxBuffPtr = pData;
     hmmc->RxXferSize = MMC_BLOCKSIZE * NumberOfBlocks;
 
-    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND | SDMMC_FLAG_RXFIFOHF));
-
     if ((hmmc->MmcCard.CardType) != MMC_HIGH_CAPACITY_CARD)
     {
       add *= 512U;
-    }
-
-    /* Set Block Size for Card */
-    errorstate = SDMMC_CmdBlockLength(hmmc->Instance, MMC_BLOCKSIZE);
-    if(errorstate != HAL_MMC_ERROR_NONE)
-    {
-      /* Clear all the static flags */
-      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-      hmmc->ErrorCode |= errorstate;
-      hmmc->State = HAL_MMC_STATE_READY;
-      return HAL_ERROR;
     }
 
     /* Configure the MMC DPSM (Data Path State Machine) */
@@ -1053,13 +1103,13 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData,
     config.DataBlockSize = SDMMC_DATABLOCK_SIZE_512B;
     config.TransferDir   = SDMMC_TRANSFER_DIR_TO_SDMMC;
     config.TransferMode  = SDMMC_TRANSFER_MODE_BLOCK;
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     config.DPSM          = SDMMC_DPSM_ENABLE;
 #else
     config.DPSM          = SDMMC_DPSM_DISABLE;
 #endif
     (void)SDMMC_ConfigData(hmmc->Instance, &config);
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     __SDMMC_CMDTRANS_ENABLE( hmmc->Instance);
 #endif
     /* Read Blocks in IT mode */
@@ -1084,8 +1134,11 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData,
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= errorstate;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
+
+    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND | SDMMC_FLAG_RXFIFOHF));
 
     return HAL_OK;
   }
@@ -1102,10 +1155,10 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData,
   *         HAL_MMC_GetCardState().
   * @note   You could also check the IT transfer process through the MMC Tx
   *         interrupt event.
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pData: Pointer to the buffer that will contain the data to transmit
-  * @param  BlockAdd: Block Address where data will be written
-  * @param  NumberOfBlocks: Number of blocks to write
+  * @param  hmmc Pointer to MMC handle
+  * @param  pData Pointer to the buffer that will contain the data to transmit
+  * @param  BlockAdd Block Address where data will be written
+  * @param  NumberOfBlocks Number of blocks to write
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_WriteBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData, uint32_t BlockAdd, uint32_t NumberOfBlocks)
@@ -1124,7 +1177,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData
   {
     hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
 
-    if((BlockAdd + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
+    if((add + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
     {
       hmmc->ErrorCode |= HAL_MMC_ERROR_ADDR_OUT_OF_RANGE;
       return HAL_ERROR;
@@ -1138,26 +1191,12 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData
     hmmc->pTxBuffPtr = pData;
     hmmc->TxXferSize = MMC_BLOCKSIZE * NumberOfBlocks;
 
-    /* Enable transfer interrupts */
-    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND | SDMMC_FLAG_TXFIFOHE));
-
     if ((hmmc->MmcCard.CardType) != MMC_HIGH_CAPACITY_CARD)
     {
       add *= 512U;
     }
 
-    /* Set Block Size for Card */
-    errorstate = SDMMC_CmdBlockLength(hmmc->Instance, MMC_BLOCKSIZE);
-    if(errorstate != HAL_MMC_ERROR_NONE)
-    {
-      /* Clear all the static flags */
-      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-      hmmc->ErrorCode |= errorstate;
-      hmmc->State = HAL_MMC_STATE_READY;
-      return HAL_ERROR;
-    }
-
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     /* Configure the MMC DPSM (Data Path State Machine) */
     config.DataTimeOut   = SDMMC_DATATIMEOUT;
     config.DataLength    = MMC_BLOCKSIZE * NumberOfBlocks;
@@ -1191,11 +1230,12 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= errorstate;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
-    /* Configure the MMC DPSM (Data Path State Machine) */ 
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+    /* Configure the MMC DPSM (Data Path State Machine) */
     config.DataTimeOut   = SDMMC_DATATIMEOUT;
     config.DataLength    = MMC_BLOCKSIZE * NumberOfBlocks;
     config.DataBlockSize = SDMMC_DATABLOCK_SIZE_512B;
@@ -1204,7 +1244,10 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData
     config.DPSM          = SDMMC_DPSM_ENABLE;
     (void)SDMMC_ConfigData(hmmc->Instance, &config);
 #endif
-    
+
+    /* Enable transfer interrupts */
+    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND | SDMMC_FLAG_TXFIFOHE));
+
     return HAL_OK;
   }
   else
@@ -1220,10 +1263,10 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_IT(MMC_HandleTypeDef *hmmc, uint8_t *pData
   *         HAL_MMC_GetCardState().
   * @note   You could also check the DMA transfer process through the MMC Rx
   *         interrupt event.
-  * @param  hmmc: Pointer MMC handle
-  * @param  pData: Pointer to the buffer that will contain the received data
-  * @param  BlockAdd: Block Address from where data is to be read
-  * @param  NumberOfBlocks: Number of blocks to read.
+  * @param  hmmc Pointer MMC handle
+  * @param  pData Pointer to the buffer that will contain the received data
+  * @param  BlockAdd Block Address from where data is to be read
+  * @param  NumberOfBlocks Number of blocks to read.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_ReadBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pData, uint32_t BlockAdd, uint32_t NumberOfBlocks)
@@ -1240,9 +1283,9 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pData
 
   if(hmmc->State == HAL_MMC_STATE_READY)
   {
-    hmmc->ErrorCode = HAL_DMA_ERROR_NONE;
+    hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
 
-    if((BlockAdd + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
+    if((add + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
     {
       hmmc->ErrorCode |= HAL_MMC_ERROR_ADDR_OUT_OF_RANGE;
       return HAL_ERROR;
@@ -1253,9 +1296,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pData
     /* Initialize data control register */
     hmmc->Instance->DCTRL = 0U;
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
-    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND));
-
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     /* Set the DMA transfer complete callback */
     hmmc->hdmarx->XferCpltCallback = MMC_DMAReceiveCplt;
 
@@ -1275,18 +1316,7 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pData
       add *= 512U;
     }
 
-    /* Set Block Size for Card */ 
-    errorstate = SDMMC_CmdBlockLength(hmmc->Instance, MMC_BLOCKSIZE);
-    if(errorstate != HAL_MMC_ERROR_NONE)
-    {
-      /* Clear all the static flags */
-      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS); 
-      hmmc->ErrorCode = errorstate;
-      hmmc->State = HAL_MMC_STATE_READY;
-      return HAL_ERROR;
-    }
-    
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     /* Configure the MMC DPSM (Data Path State Machine) */
     config.DataTimeOut   = SDMMC_DATATIMEOUT;
     config.DataLength    = MMC_BLOCKSIZE * NumberOfBlocks;
@@ -1296,9 +1326,6 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pData
     config.DPSM          = SDMMC_DPSM_DISABLE;
     (void)SDMMC_ConfigData(hmmc->Instance, &config);
 
-    /* Enable transfer interrupts */
-    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND));
-
     __SDMMC_CMDTRANS_ENABLE( hmmc->Instance);
     hmmc->Instance->IDMABASE0 = (uint32_t) pData ;
     hmmc->Instance->IDMACTRL  = SDMMC_ENABLE_IDMA_SINGLE_BUFF;
@@ -1306,7 +1333,6 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pData
     /* Enable the DMA Channel */
     if(HAL_DMA_Start_IT(hmmc->hdmarx, (uint32_t)&hmmc->Instance->FIFO, (uint32_t)pData, (uint32_t)(MMC_BLOCKSIZE * NumberOfBlocks)/4) != HAL_OK)
     {
-      __HAL_MMC_DISABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND));
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode = HAL_MMC_ERROR_DMA;
       hmmc->State = HAL_MMC_STATE_READY;
@@ -1346,14 +1372,17 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pData
       {
         /* Clear all the static flags */
         __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-        __HAL_MMC_DISABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND));
         hmmc->ErrorCode = errorstate;
         hmmc->State = HAL_MMC_STATE_READY;
+        hmmc->Context = MMC_CONTEXT_NONE;
         return HAL_ERROR;
       }
 
+      /* Enable transfer interrupts */
+      __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND));
+
       return HAL_OK;
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     }
 #endif
   }
@@ -1370,10 +1399,10 @@ HAL_StatusTypeDef HAL_MMC_ReadBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pData
   *         HAL_MMC_GetCardState().
   * @note   You could also check the DMA transfer process through the MMC Tx
   *         interrupt event.
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pData: Pointer to the buffer that will contain the data to transmit
-  * @param  BlockAdd: Block Address where data will be written
-  * @param  NumberOfBlocks: Number of blocks to write
+  * @param  hmmc Pointer to MMC handle
+  * @param  pData Pointer to the buffer that will contain the data to transmit
+  * @param  BlockAdd Block Address where data will be written
+  * @param  NumberOfBlocks Number of blocks to write
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_WriteBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pData, uint32_t BlockAdd, uint32_t NumberOfBlocks)
@@ -1392,7 +1421,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pDat
   {
     hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
 
-    if((BlockAdd + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
+    if((add + NumberOfBlocks) > (hmmc->MmcCard.LogBlockNbr))
     {
       hmmc->ErrorCode |= HAL_MMC_ERROR_ADDR_OUT_OF_RANGE;
       return HAL_ERROR;
@@ -1403,10 +1432,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pDat
     /* Initialize data control register */
     hmmc->Instance->DCTRL = 0U;
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
-    /* Enable MMC Error interrupts */
-    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR));
-
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     /* Set the DMA transfer complete callback */
     hmmc->hdmatx->XferCpltCallback = MMC_DMATransmitCplt;
 
@@ -1425,18 +1451,7 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pDat
       add *= 512U;
     }
 
-    /* Set Block Size for Card */
-    errorstate = SDMMC_CmdBlockLength(hmmc->Instance, MMC_BLOCKSIZE);
-    if(errorstate != HAL_MMC_ERROR_NONE)
-    {
-      /* Clear all the static flags */
-      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-      hmmc->ErrorCode |= errorstate;
-      hmmc->State = HAL_MMC_STATE_READY;
-      return HAL_ERROR;
-    }
-
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     /* Configure the MMC DPSM (Data Path State Machine) */
     config.DataTimeOut   = SDMMC_DATATIMEOUT;
     config.DataLength    = MMC_BLOCKSIZE * NumberOfBlocks;
@@ -1445,9 +1460,6 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pDat
     config.TransferMode  = SDMMC_TRANSFER_MODE_BLOCK;
     config.DPSM          = SDMMC_DPSM_DISABLE;
     (void)SDMMC_ConfigData(hmmc->Instance, &config);
-
-    /* Enable transfer interrupts */
-    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND));
 
     __SDMMC_CMDTRANS_ENABLE( hmmc->Instance);
 
@@ -1474,28 +1486,28 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pDat
     {
       /* Clear all the static flags */
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-      __HAL_MMC_DISABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND));
       hmmc->ErrorCode |= errorstate;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     /* Enable SDMMC DMA transfer */
     __HAL_MMC_DMA_ENABLE(hmmc);
 
     /* Enable the DMA Channel */
     if(HAL_DMA_Start_IT(hmmc->hdmatx, (uint32_t)pData, (uint32_t)&hmmc->Instance->FIFO, (uint32_t)(MMC_BLOCKSIZE * NumberOfBlocks)/4) != HAL_OK)
     {
-      __HAL_MMC_DISABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND));
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
       hmmc->ErrorCode |= HAL_MMC_ERROR_DMA;
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       return HAL_ERROR;
     }
     else
-    {    
-      /* Configure the MMC DPSM (Data Path State Machine) */ 
+    {
+      /* Configure the MMC DPSM (Data Path State Machine) */
       config.DataTimeOut   = SDMMC_DATATIMEOUT;
       config.DataLength    = MMC_BLOCKSIZE * NumberOfBlocks;
       config.DataBlockSize = SDMMC_DATABLOCK_SIZE_512B;
@@ -1504,9 +1516,15 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pDat
       config.DPSM          = SDMMC_DPSM_ENABLE;
       (void)SDMMC_ConfigData(hmmc->Instance, &config);
 
+      /* Enable MMC Error interrupts */
+      __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR));
+
       return HAL_OK;
     }
 #else
+    /* Enable MMC Error interrupts */
+    __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND));
+
     return HAL_OK;
 #endif
   }
@@ -1520,9 +1538,9 @@ HAL_StatusTypeDef HAL_MMC_WriteBlocks_DMA(MMC_HandleTypeDef *hmmc, uint8_t *pDat
   * @brief  Erases the specified memory area of the given MMC card.
   * @note   This API should be followed by a check on the card state through
   *         HAL_MMC_GetCardState().
-  * @param  hmmc: Pointer to MMC handle
-  * @param  BlockStartAdd: Start Block address
-  * @param  BlockEndAdd: End Block address
+  * @param  hmmc Pointer to MMC handle
+  * @param  BlockStartAdd Start Block address
+  * @param  BlockEndAdd End Block address
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_Erase(MMC_HandleTypeDef *hmmc, uint32_t BlockStartAdd, uint32_t BlockEndAdd)
@@ -1597,7 +1615,7 @@ HAL_StatusTypeDef HAL_MMC_Erase(MMC_HandleTypeDef *hmmc, uint32_t BlockStartAdd,
     }
 
     /* Send CMD38 ERASE */
-    errorstate = SDMMC_CmdErase(hmmc->Instance);
+    errorstate = SDMMC_CmdErase(hmmc->Instance, 0UL);
     if(errorstate != HAL_MMC_ERROR_NONE)
     {
       /* Clear all the static flags */
@@ -1619,7 +1637,7 @@ HAL_StatusTypeDef HAL_MMC_Erase(MMC_HandleTypeDef *hmmc, uint32_t BlockStartAdd,
 
 /**
   * @brief  This function handles MMC card interrupt request.
-  * @param  hmmc: Pointer to MMC handle
+  * @param  hmmc Pointer to MMC handle
   * @retval None
   */
 void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
@@ -1641,7 +1659,7 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
                                SDMMC_IT_TXUNDERR | SDMMC_IT_RXOVERR  | SDMMC_IT_TXFIFOHE |\
                                SDMMC_IT_RXFIFOHF);
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     hmmc->Instance->DCTRL &= ~(SDMMC_DCTRL_DTEN);
 #else
     __HAL_MMC_DISABLE_IT(hmmc, SDMMC_IT_IDMABTC);
@@ -1650,7 +1668,7 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
 
     if((context & MMC_CONTEXT_DMA) != 0U)
     {
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
       hmmc->Instance->DLEN = 0;
       hmmc->Instance->DCTRL = 0;
       hmmc->Instance->IDMACTRL = SDMMC_DISABLE_IDMA ;
@@ -1674,6 +1692,7 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_DATA_FLAGS);
 
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       if(((context & MMC_CONTEXT_WRITE_SINGLE_BLOCK) != 0U) || ((context & MMC_CONTEXT_WRITE_MULTIPLE_BLOCK) != 0U))
       {
 #if defined (USE_HAL_MMC_REGISTER_CALLBACKS) && (USE_HAL_MMC_REGISTER_CALLBACKS == 1U)
@@ -1709,9 +1728,10 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
         /* Disable the DMA transfer for transmit request by setting the DMAEN bit
         in the MMC DCTRL register */
         hmmc->Instance->DCTRL &= (uint32_t)~((uint32_t)SDMMC_DCTRL_DMAEN);
-        
+
         hmmc->State = HAL_MMC_STATE_READY;
-        
+        hmmc->Context = MMC_CONTEXT_NONE;
+
 #if defined (USE_HAL_MMC_REGISTER_CALLBACKS) && (USE_HAL_MMC_REGISTER_CALLBACKS == 1U)
         hmmc->TxCpltCallback(hmmc);
 #else
@@ -1741,6 +1761,7 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
       __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_DATA_FLAGS);
 
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
       if(((context & MMC_CONTEXT_READ_SINGLE_BLOCK) != 0U) || ((context & MMC_CONTEXT_READ_MULTIPLE_BLOCK) != 0U))
       {
 #if defined (USE_HAL_MMC_REGISTER_CALLBACKS) && (USE_HAL_MMC_REGISTER_CALLBACKS == 1U)
@@ -1796,13 +1817,13 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
     __HAL_MMC_DISABLE_IT(hmmc, SDMMC_IT_DATAEND | SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT|\
                                SDMMC_IT_TXUNDERR| SDMMC_IT_RXOVERR);
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     __SDMMC_CMDTRANS_DISABLE( hmmc->Instance);
     hmmc->Instance->DCTRL |= SDMMC_DCTRL_FIFORST;
     hmmc->Instance->CMD |= SDMMC_CMD_CMDSTOP;
 #endif
     hmmc->ErrorCode |= SDMMC_CmdStopTransfer(hmmc->Instance);
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     hmmc->Instance->CMD &= ~(SDMMC_CMD_CMDSTOP);
     __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_FLAG_DABORT);
 #endif
@@ -1811,6 +1832,7 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
     {
       /* Set the MMC state to ready to be able to start again the process */
       hmmc->State = HAL_MMC_STATE_READY;
+      hmmc->Context = MMC_CONTEXT_NONE;
 #if defined (USE_HAL_MMC_REGISTER_CALLBACKS) && (USE_HAL_MMC_REGISTER_CALLBACKS == 1U)
       hmmc->ErrorCallback(hmmc);
 #else
@@ -1819,7 +1841,7 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
     }
     else if((context & MMC_CONTEXT_DMA) != 0U)
     {
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
       if(hmmc->ErrorCode != HAL_MMC_ERROR_NONE)
       {
         /* Disable Internal DMA */
@@ -1860,6 +1882,7 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
       {
         hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
         hmmc->State = HAL_MMC_STATE_READY;
+        hmmc->Context = MMC_CONTEXT_NONE;
 #if defined (USE_HAL_MMC_REGISTER_CALLBACKS) && (USE_HAL_MMC_REGISTER_CALLBACKS == 1U)
         hmmc->AbortCpltCallback(hmmc);
 #else
@@ -1874,7 +1897,7 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
     }
   }
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   else if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_IDMABTC) != RESET)
   {
     __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_IT_IDMABTC);
@@ -1929,7 +1952,7 @@ void HAL_MMC_IRQHandler(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief return the MMC state
-  * @param hmmc: Pointer to mmc handle
+  * @param hmmc Pointer to mmc handle
   * @retval HAL state
   */
 HAL_MMC_StateTypeDef HAL_MMC_GetState(MMC_HandleTypeDef *hmmc)
@@ -1950,7 +1973,7 @@ uint32_t HAL_MMC_GetError(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief Tx Transfer completed callbacks
-  * @param hmmc: Pointer to MMC handle
+  * @param hmmc Pointer to MMC handle
   * @retval None
   */
 __weak void HAL_MMC_TxCpltCallback(MMC_HandleTypeDef *hmmc)
@@ -1965,7 +1988,7 @@ __weak void HAL_MMC_TxCpltCallback(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief Rx Transfer completed callbacks
-  * @param hmmc: Pointer MMC handle
+  * @param hmmc Pointer MMC handle
   * @retval None
   */
 __weak void HAL_MMC_RxCpltCallback(MMC_HandleTypeDef *hmmc)
@@ -1980,7 +2003,7 @@ __weak void HAL_MMC_RxCpltCallback(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief MMC error callbacks
-  * @param hmmc: Pointer MMC handle
+  * @param hmmc Pointer MMC handle
   * @retval None
   */
 __weak void HAL_MMC_ErrorCallback(MMC_HandleTypeDef *hmmc)
@@ -1995,7 +2018,7 @@ __weak void HAL_MMC_ErrorCallback(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief MMC Abort callbacks
-  * @param hmmc: Pointer MMC handle
+  * @param hmmc Pointer MMC handle
   * @retval None
   */
 __weak void HAL_MMC_AbortCallback(MMC_HandleTypeDef *hmmc)
@@ -2058,7 +2081,7 @@ HAL_StatusTypeDef HAL_MMC_RegisterCallback(MMC_HandleTypeDef *hmmc, HAL_MMC_Call
     case HAL_MMC_ABORT_CB_ID :
       hmmc->AbortCpltCallback = pCallback;
       break;
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     case HAL_MMC_READ_DMA_DBL_BUF0_CPLT_CB_ID :
       hmmc->Read_DMADblBuf0CpltCallback = pCallback;
       break;
@@ -2158,7 +2181,7 @@ HAL_StatusTypeDef HAL_MMC_UnRegisterCallback(MMC_HandleTypeDef *hmmc, HAL_MMC_Ca
     case HAL_MMC_ABORT_CB_ID :
       hmmc->AbortCpltCallback = HAL_MMC_AbortCallback;
       break;
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
     case HAL_MMC_READ_DMA_DBL_BUF0_CPLT_CB_ID :
       hmmc->Read_DMADblBuf0CpltCallback = HAL_MMCEx_Read_DMADoubleBuffer0CpltCallback;
       break;
@@ -2240,8 +2263,8 @@ HAL_StatusTypeDef HAL_MMC_UnRegisterCallback(MMC_HandleTypeDef *hmmc, HAL_MMC_Ca
 /**
   * @brief  Returns information the information of the card which are stored on
   *         the CID register.
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pCID: Pointer to a HAL_MMC_CIDTypedef structure that
+  * @param  hmmc Pointer to MMC handle
+  * @param  pCID Pointer to a HAL_MMC_CIDTypedef structure that
   *         contains all CID register parameters
   * @retval HAL status
   */
@@ -2273,16 +2296,14 @@ HAL_StatusTypeDef HAL_MMC_GetCardCID(MMC_HandleTypeDef *hmmc, HAL_MMC_CardCIDTyp
 /**
   * @brief  Returns information the information of the card which are stored on
   *         the CSD register.
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pCSD: Pointer to a HAL_MMC_CardCSDTypeDef structure that
+  * @param  hmmc Pointer to MMC handle
+  * @param  pCSD Pointer to a HAL_MMC_CardCSDTypeDef structure that
   *         contains all CSD register parameters
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MMC_GetCardCSD(MMC_HandleTypeDef *hmmc, HAL_MMC_CardCSDTypeDef *pCSD)
 {
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   uint32_t block_nbr = 0;
-#endif
 
   pCSD->CSDStruct = (uint8_t)((hmmc->CSD[0] & 0xC0000000U) >> 30U);
 
@@ -2310,15 +2331,13 @@ HAL_StatusTypeDef HAL_MMC_GetCardCSD(MMC_HandleTypeDef *hmmc, HAL_MMC_CardCSDTyp
 
   pCSD->Reserved2 = 0U; /*!< Reserved */
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
-  if(MMC_ReadExtCSD(hmmc, &block_nbr, 0x0FFFFFFFU) != HAL_OK)
+  if(MMC_ReadExtCSD(hmmc, &block_nbr, 212, 0x0FFFFFFFU) != HAL_OK) /* Field SEC_COUNT [215:212] */
   {
     return HAL_ERROR;
   }
 
   if(hmmc->MmcCard.CardType == MMC_LOW_CAPACITY_CARD)
   {
-#endif
     pCSD->DeviceSize = (((hmmc->CSD[1] & 0x000003FFU) << 2U) | ((hmmc->CSD[2] & 0xC0000000U) >> 30U));
 
     pCSD->MaxRdCurrentVDDMin = (uint8_t)((hmmc->CSD[2] & 0x38000000U) >> 27U);
@@ -2337,7 +2356,6 @@ HAL_StatusTypeDef HAL_MMC_GetCardCSD(MMC_HandleTypeDef *hmmc, HAL_MMC_CardCSDTyp
 
     hmmc->MmcCard.LogBlockNbr =  (hmmc->MmcCard.BlockNbr) * ((hmmc->MmcCard.BlockSize) / 512U);
     hmmc->MmcCard.LogBlockSize = 512U;
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   }
   else if(hmmc->MmcCard.CardType == MMC_HIGH_CAPACITY_CARD)
   {
@@ -2354,7 +2372,6 @@ HAL_StatusTypeDef HAL_MMC_GetCardCSD(MMC_HandleTypeDef *hmmc, HAL_MMC_CardCSDTyp
     hmmc->State = HAL_MMC_STATE_READY;
     return HAL_ERROR;
   }
-#endif
 
   pCSD->EraseGrSize = (uint8_t)((hmmc->CSD[2] & 0x00004000U) >> 14U);
 
@@ -2397,8 +2414,8 @@ HAL_StatusTypeDef HAL_MMC_GetCardCSD(MMC_HandleTypeDef *hmmc, HAL_MMC_CardCSDTyp
 
 /**
   * @brief  Gets the MMC card info.
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pCardInfo: Pointer to the HAL_MMC_CardInfoTypeDef structure that
+  * @param  hmmc Pointer to MMC handle
+  * @param  pCardInfo Pointer to the HAL_MMC_CardInfoTypeDef structure that
   *         will contain the MMC card status information
   * @retval HAL status
   */
@@ -2416,10 +2433,137 @@ HAL_StatusTypeDef HAL_MMC_GetCardInfo(MMC_HandleTypeDef *hmmc, HAL_MMC_CardInfoT
 }
 
 /**
+  * @brief  Returns information the information of the card which are stored on
+  *         the Extended CSD register.
+  * @param  hmmc Pointer to MMC handle
+  * @param  pExtCSD Pointer to a memory area (512 bytes) that contains all
+  *         Extended CSD register parameters
+  * @param  Timeout Specify timeout value
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_MMC_GetCardExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pExtCSD, uint32_t Timeout)
+{
+  SDMMC_DataInitTypeDef config;
+  uint32_t errorstate;
+  uint32_t tickstart = HAL_GetTick();
+  uint32_t count;
+  uint32_t *tmp_buf;
+
+  if(NULL == pExtCSD)
+  {
+    hmmc->ErrorCode |= HAL_MMC_ERROR_PARAM;
+    return HAL_ERROR;
+  }
+
+  if(hmmc->State == HAL_MMC_STATE_READY)
+  {
+    hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
+
+    hmmc->State = HAL_MMC_STATE_BUSY;
+
+    /* Initialize data control register */
+    hmmc->Instance->DCTRL = 0;
+
+    /* Initiaize the destination pointer */
+    tmp_buf = pExtCSD;
+
+    /* Configure the MMC DPSM (Data Path State Machine) */
+    config.DataTimeOut   = SDMMC_DATATIMEOUT;
+    config.DataLength    = 512;
+    config.DataBlockSize = SDMMC_DATABLOCK_SIZE_512B;
+    config.TransferDir   = SDMMC_TRANSFER_DIR_TO_SDMMC;
+    config.TransferMode  = SDMMC_TRANSFER_MODE_BLOCK;
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+    config.DPSM          = SDMMC_DPSM_ENABLE;
+#else
+    config.DPSM          = SDMMC_DPSM_DISABLE;
+#endif
+    (void)SDMMC_ConfigData(hmmc->Instance, &config);
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+    __SDMMC_CMDTRANS_ENABLE( hmmc->Instance);
+#endif
+
+    /* Send ExtCSD Read command to Card */
+    errorstate = SDMMC_CmdSendEXTCSD(hmmc->Instance, 0);
+    if(errorstate != HAL_MMC_ERROR_NONE)
+    {
+      /* Clear all the static flags */
+      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+      hmmc->ErrorCode |= errorstate;
+      hmmc->State = HAL_MMC_STATE_READY;
+      return HAL_ERROR;
+    }
+
+    /* Poll on SDMMC flags */
+    while(!__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_RXOVERR | SDMMC_FLAG_DCRCFAIL | SDMMC_FLAG_DTIMEOUT | SDMMC_FLAG_DATAEND))
+    {
+      if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_RXFIFOHF))
+      {
+        /* Read data from SDMMC Rx FIFO */
+        for(count = 0U; count < 8U; count++)
+        {
+          *tmp_buf = SDMMC_ReadFIFO(hmmc->Instance);
+          tmp_buf++;
+        }
+      }
+
+      if(((HAL_GetTick()-tickstart) >=  Timeout) || (Timeout == 0U))
+      {
+        /* Clear all the static flags */
+        __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+        hmmc->ErrorCode |= HAL_MMC_ERROR_TIMEOUT;
+        hmmc->State= HAL_MMC_STATE_READY;
+        return HAL_TIMEOUT;
+      }
+    }
+
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+    __SDMMC_CMDTRANS_DISABLE( hmmc->Instance);
+#endif
+
+    /* Get error state */
+    if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_DTIMEOUT))
+    {
+      /* Clear all the static flags */
+      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+      hmmc->ErrorCode |= HAL_MMC_ERROR_DATA_TIMEOUT;
+      hmmc->State = HAL_MMC_STATE_READY;
+      return HAL_ERROR;
+    }
+    else if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_DCRCFAIL))
+    {
+      /* Clear all the static flags */
+      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+      hmmc->ErrorCode |= HAL_MMC_ERROR_DATA_CRC_FAIL;
+      hmmc->State = HAL_MMC_STATE_READY;
+      return HAL_ERROR;
+    }
+    else if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_RXOVERR))
+    {
+      /* Clear all the static flags */
+      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+      hmmc->ErrorCode |= HAL_MMC_ERROR_RX_OVERRUN;
+      hmmc->State = HAL_MMC_STATE_READY;
+      return HAL_ERROR;
+    }
+    else
+    {
+      /* Nothing to do */
+    }
+
+    /* Clear all the static flags */
+    __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_DATA_FLAGS);
+    hmmc->State = HAL_MMC_STATE_READY;
+  }
+
+  return HAL_OK;
+}
+
+/**
   * @brief  Enables wide bus operation for the requested card if supported by
   *         card.
-  * @param  hmmc: Pointer to MMC handle
-  * @param  WideMode: Specifies the MMC card wide bus mode
+  * @param  hmmc Pointer to MMC handle
+  * @param  WideMode Specifies the MMC card wide bus mode
   *          This parameter can be one of the following values:
   *            @arg SDMMC_BUS_WIDE_8B: 8-bit data transfer
   *            @arg SDMMC_BUS_WIDE_4B: 4-bit data transfer
@@ -2428,137 +2572,285 @@ HAL_StatusTypeDef HAL_MMC_GetCardInfo(MMC_HandleTypeDef *hmmc, HAL_MMC_CardInfoT
   */
 HAL_StatusTypeDef HAL_MMC_ConfigWideBusOperation(MMC_HandleTypeDef *hmmc, uint32_t WideMode)
 {
-  __IO uint32_t count = 0U;
+  uint32_t count;
   SDMMC_InitTypeDef Init;
   uint32_t errorstate;
-  uint32_t response = 0U, busy = 0U;
+  uint32_t response = 0U;
 
   /* Check the parameters */
   assert_param(IS_SDMMC_BUS_WIDE(WideMode));
 
-  /* Chnage Satte */
+  /* Change State */
   hmmc->State = HAL_MMC_STATE_BUSY;
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
-  /* Update Clock for Bus mode update */
-  Init.ClockEdge           = SDMMC_CLOCK_EDGE_RISING;
-  Init.ClockBypass         = SDMMC_CLOCK_BYPASS_DISABLE;
-  Init.ClockPowerSave      = SDMMC_CLOCK_POWER_SAVE_DISABLE;
-  Init.BusWide             = WideMode;
-  Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
-  Init.ClockDiv            = SDMMC_INIT_CLK_DIV;
-  /* Initialize SDMMC*/
-  (void)SDMMC_Init(hmmc->Instance, Init); 
-#endif
-
-  if(WideMode == SDMMC_BUS_WIDE_8B)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+  /* Check and update the power class if needed */
+  if ((hmmc->Instance->CLKCR & SDMMC_CLKCR_BUSSPEED) != 0U)
   {
-    errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70200U);
-    if(errorstate != HAL_MMC_ERROR_NONE)
+    if ((hmmc->Instance->CLKCR & SDMMC_CLKCR_DDR) != 0U)
     {
-      hmmc->ErrorCode |= errorstate;
+      errorstate = MMC_PwrClassUpdate(hmmc, WideMode, SDMMC_SPEED_MODE_DDR);
     }
-  }
-  else if(WideMode == SDMMC_BUS_WIDE_4B)
-  {
-    errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70100U);
-    if(errorstate != HAL_MMC_ERROR_NONE)
+    else
     {
-      hmmc->ErrorCode |= errorstate;
-    }
-  }
-  else if(WideMode == SDMMC_BUS_WIDE_1B)
-  {
-    errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70000U);
-    if(errorstate != HAL_MMC_ERROR_NONE)
-    {
-      hmmc->ErrorCode |= errorstate;
+      errorstate = MMC_PwrClassUpdate(hmmc, WideMode, SDMMC_SPEED_MODE_HIGH);
     }
   }
   else
   {
-    /* WideMode is not a valid argument*/
-    hmmc->ErrorCode |= HAL_MMC_ERROR_PARAM;
+    errorstate = MMC_PwrClassUpdate(hmmc, WideMode, SDMMC_SPEED_MODE_DEFAULT);
   }
-
-  /* Check for switch error and violation of the trial number of sending CMD 13 */
-  while(busy == 0U)
-  {
-    if(count == SDMMC_MAX_TRIAL)
-    {
-      hmmc->State = HAL_MMC_STATE_READY;
-      hmmc->ErrorCode |= HAL_MMC_ERROR_REQUEST_NOT_APPLICABLE;
-      return HAL_ERROR;
-    }
-    count++;
-
-    /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
-    errorstate = SDMMC_CmdSendStatus(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
-    if(errorstate != HAL_MMC_ERROR_NONE)
-    {
-      hmmc->ErrorCode |= errorstate;
-    }
-
-    /* Get command response */
-    response = SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP1);
-
-    /* Get operating voltage*/
-    busy = (((response >> 7U) == 1U) ? 0U : 1U);
-  }
-
-  /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
-  count = SDMMC_DATATIMEOUT;
-  while((response & 0x00000100U) == 0U)
-  {
-    if(count == 0U)
-    {
-      hmmc->State = HAL_MMC_STATE_READY;
-      hmmc->ErrorCode |= HAL_MMC_ERROR_REQUEST_NOT_APPLICABLE;
-      return HAL_ERROR;
-    }
-    count--;
-
-    /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
-    errorstate = SDMMC_CmdSendStatus(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
-    if(errorstate != HAL_MMC_ERROR_NONE)
-    {
-      hmmc->ErrorCode |= errorstate;
-    }
-
-    /* Get command response */
-    response = SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP1);
-  }
-
-  if(hmmc->ErrorCode != HAL_MMC_ERROR_NONE)
-  {
-    /* Clear all the static flags */
-    __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-    hmmc->State = HAL_MMC_STATE_READY;
-    return HAL_ERROR;
-  }
-  else
-  {
-    /* Configure the SDMMC peripheral */
-    Init.ClockEdge           = hmmc->Init.ClockEdge;
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
-    Init.ClockBypass         = hmmc->Init.ClockBypass;
+#else
+  errorstate = MMC_PwrClassUpdate(hmmc, WideMode, 0U);
 #endif
-    Init.ClockPowerSave      = hmmc->Init.ClockPowerSave;
-    Init.BusWide             = WideMode;
-    Init.HardwareFlowControl = hmmc->Init.HardwareFlowControl;
-    Init.ClockDiv            = hmmc->Init.ClockDiv;
-    (void)SDMMC_Init(hmmc->Instance, Init);
+
+  if(errorstate == HAL_MMC_ERROR_NONE)
+  {
+    if(WideMode == SDMMC_BUS_WIDE_8B)
+    {
+      errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70200U);
+    }
+    else if(WideMode == SDMMC_BUS_WIDE_4B)
+    {
+      errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70100U);
+    }
+    else if(WideMode == SDMMC_BUS_WIDE_1B)
+    {
+      errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70000U);
+    }
+    else
+    {
+      /* WideMode is not a valid argument*/
+      errorstate = HAL_MMC_ERROR_PARAM;
+    }
+
+    /* Check for switch error and violation of the trial number of sending CMD 13 */
+    if(errorstate == HAL_MMC_ERROR_NONE)
+    {
+      /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
+      count = SDMMC_MAX_TRIAL;
+      do
+      {
+        errorstate = SDMMC_CmdSendStatus(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
+        if(errorstate != HAL_MMC_ERROR_NONE)
+        {
+          break;
+        }
+
+        /* Get command response */
+        response = SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP1);
+        count--;
+      }while(((response & 0x100U) == 0U) && (count != 0U));
+
+      /* Check the status after the switch command execution */
+      if ((count != 0U) && (errorstate == HAL_MMC_ERROR_NONE))
+      {
+        /* Check the bit SWITCH_ERROR of the device status */
+        if ((response & 0x80U) != 0U)
+        {
+          errorstate = SDMMC_ERROR_GENERAL_UNKNOWN_ERR;
+        }
+        else
+        {
+          /* Configure the SDMMC peripheral */
+          Init = hmmc->Init;
+          Init.BusWide = WideMode;
+          (void)SDMMC_Init(hmmc->Instance, Init);
+        }
+      }
+      else if (count == 0U)
+      {
+        errorstate = SDMMC_ERROR_TIMEOUT;
+      }
+      else
+      {
+        /* Nothing to do */
+      }
+    }
   }
 
   /* Change State */
   hmmc->State = HAL_MMC_STATE_READY;
 
+  if(errorstate != HAL_MMC_ERROR_NONE)
+  {
+    /* Clear all the static flags */
+    __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+    hmmc->ErrorCode |= errorstate;
+    return HAL_ERROR;
+  }
+
   return HAL_OK;
 }
 
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+/**
+  * @brief  Configure the speed bus mode
+  * @param  hmmc Pointer to the MMC handle
+  * @param  SpeedMode Specifies the MMC card speed bus mode
+  *          This parameter can be one of the following values:
+  *            @arg SDMMC_SPEED_MODE_AUTO: Max speed mode supported by the card
+  *            @arg SDMMC_SPEED_MODE_DEFAULT: Default Speed (MMC @ 26MHz)
+  *            @arg SDMMC_SPEED_MODE_HIGH: High Speed (MMC @ 52 MHz)
+  *            @arg SDMMC_SPEED_MODE_DDR: High Speed DDR (MMC DDR @ 52 MHz)
+  * @retval HAL status
+  */
+
+HAL_StatusTypeDef HAL_MMC_ConfigSpeedBusOperation(MMC_HandleTypeDef *hmmc, uint32_t SpeedMode)
+{
+  uint32_t tickstart;
+  HAL_StatusTypeDef status = HAL_OK;
+  uint32_t device_type;
+  uint32_t errorstate;
+
+  /* Check the parameters */
+  assert_param(IS_SDMMC_SPEED_MODE(SpeedMode));
+
+  /* Change State */
+  hmmc->State = HAL_MMC_STATE_BUSY;
+
+  /* Field DEVICE_TYPE [196 = 49*4] of Extended CSD register */
+  device_type = (hmmc->Ext_CSD[49] & 0x000000FFU);
+
+  switch (SpeedMode)
+  {
+    case SDMMC_SPEED_MODE_AUTO:
+    {
+      if (((hmmc->Instance->CLKCR & SDMMC_CLKCR_WIDBUS) != 0U) && ((device_type & 0x04U) != 0U))
+      {
+        /* High Speed DDR mode allowed */
+        errorstate = MMC_HighSpeed(hmmc, ENABLE);
+        if(errorstate != HAL_MMC_ERROR_NONE)
+        {
+          hmmc->ErrorCode |= errorstate;
+        }
+        else
+        {
+          if ((hmmc->Instance->CLKCR & SDMMC_CLKCR_CLKDIV) != 0U)
+          {
+            /* DDR mode not supported with CLKDIV = 0 */
+            errorstate = MMC_DDR_Mode(hmmc, ENABLE);
+            if(errorstate != HAL_MMC_ERROR_NONE)
+            {
+              hmmc->ErrorCode |= errorstate;
+            }
+          }
+        }
+      }
+      else if ((device_type & 0x02U) != 0U)
+      {
+        /* High Speed mode allowed */
+        errorstate = MMC_HighSpeed(hmmc, ENABLE);
+        if(errorstate != HAL_MMC_ERROR_NONE)
+        {
+          hmmc->ErrorCode |= errorstate;
+        }
+      }
+      else
+      {
+        /* Nothing to do : keep current speed */
+      }
+      break;
+    }
+    case SDMMC_SPEED_MODE_DDR:
+    {
+      if (((hmmc->Instance->CLKCR & SDMMC_CLKCR_WIDBUS) != 0U) && ((device_type & 0x04U) != 0U))
+      {
+        /* High Speed DDR mode allowed */
+        errorstate = MMC_HighSpeed(hmmc, ENABLE);
+        if(errorstate != HAL_MMC_ERROR_NONE)
+        {
+          hmmc->ErrorCode |= errorstate;
+        }
+        else
+        {
+          if ((hmmc->Instance->CLKCR & SDMMC_CLKCR_CLKDIV) != 0U)
+          {
+            /* DDR mode not supported with CLKDIV = 0 */
+            errorstate = MMC_DDR_Mode(hmmc, ENABLE);
+            if(errorstate != HAL_MMC_ERROR_NONE)
+            {
+              hmmc->ErrorCode |= errorstate;
+            }
+          }
+        }
+      }
+      else
+      {
+        /* High Speed DDR mode not allowed */
+        hmmc->ErrorCode |= HAL_MMC_ERROR_UNSUPPORTED_FEATURE;
+        status = HAL_ERROR;
+      }
+      break;
+    }
+    case SDMMC_SPEED_MODE_HIGH:
+    {
+      if ((device_type & 0x02U) != 0U)
+      {
+        /* High Speed mode allowed */
+        errorstate = MMC_HighSpeed(hmmc, ENABLE);
+        if(errorstate != HAL_MMC_ERROR_NONE)
+        {
+          hmmc->ErrorCode |= errorstate;
+        }
+      }
+      else
+      {
+        /* High Speed mode not allowed */
+        hmmc->ErrorCode |= HAL_MMC_ERROR_UNSUPPORTED_FEATURE;
+        status = HAL_ERROR;
+      }
+      break;
+    }
+    case SDMMC_SPEED_MODE_DEFAULT:
+    {
+      if ((hmmc->Instance->CLKCR & SDMMC_CLKCR_DDR) != 0U)
+      {
+        /* High Speed DDR mode activated */
+        errorstate = MMC_DDR_Mode(hmmc, DISABLE);
+        if(errorstate != HAL_MMC_ERROR_NONE)
+        {
+          hmmc->ErrorCode |= errorstate;
+        }
+      }
+      if ((hmmc->Instance->CLKCR & SDMMC_CLKCR_BUSSPEED) != 0U)
+      {
+        /* High Speed mode activated */
+        errorstate = MMC_HighSpeed(hmmc, DISABLE);
+        if(errorstate != HAL_MMC_ERROR_NONE)
+        {
+          hmmc->ErrorCode |= errorstate;
+        }
+      }
+      break;
+    }
+    default:
+      hmmc->ErrorCode |= HAL_MMC_ERROR_PARAM;
+      status = HAL_ERROR;
+      break;
+  }
+
+  /* Verify that MMC card is ready to use after Speed mode switch*/
+  tickstart = HAL_GetTick();
+  while ((HAL_MMC_GetCardState(hmmc) != HAL_MMC_CARD_TRANSFER))
+  {
+    if ((HAL_GetTick() - tickstart) >=  SDMMC_DATATIMEOUT)
+    {
+      hmmc->ErrorCode = HAL_MMC_ERROR_TIMEOUT;
+      hmmc->State = HAL_MMC_STATE_READY;
+      return HAL_TIMEOUT;
+    }
+  }
+
+  /* Change State */
+  hmmc->State = HAL_MMC_STATE_READY;
+  return status;
+}
+#endif
+
 /**
   * @brief  Gets the current mmc card data state.
-  * @param  hmmc: pointer to MMC handle
+  * @param  hmmc pointer to MMC handle
   * @retval Card state
   */
 HAL_MMC_CardStateTypeDef HAL_MMC_GetCardState(MMC_HandleTypeDef *hmmc)
@@ -2580,7 +2872,7 @@ HAL_MMC_CardStateTypeDef HAL_MMC_GetCardState(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief  Abort the current transfer and disable the MMC.
-  * @param  hmmc: pointer to a MMC_HandleTypeDef structure that contains
+  * @param  hmmc pointer to a MMC_HandleTypeDef structure that contains
   *                the configuration information for MMC module.
   * @retval HAL status
   */
@@ -2595,12 +2887,12 @@ HAL_StatusTypeDef HAL_MMC_Abort(MMC_HandleTypeDef *hmmc)
   /* Clear All flags */
   __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_DATA_FLAGS);
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
   if((hmmc->hdmatx != NULL) || (hmmc->hdmarx != NULL))
   {
     /* Disable the MMC DMA request */
     hmmc->Instance->DCTRL &= (uint32_t)~((uint32_t)SDMMC_DCTRL_DMAEN);
-    
+
     /* Abort the MMC DMA Tx Stream */
     if(hmmc->hdmatx != NULL)
     {
@@ -2642,7 +2934,7 @@ HAL_StatusTypeDef HAL_MMC_Abort(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief  Abort the current transfer and disable the MMC (IT mode).
-  * @param  hmmc: pointer to a MMC_HandleTypeDef structure that contains
+  * @param  hmmc pointer to a MMC_HandleTypeDef structure that contains
   *                the configuration information for MMC module.
   * @retval HAL status
   */
@@ -2654,7 +2946,7 @@ HAL_StatusTypeDef HAL_MMC_Abort_IT(MMC_HandleTypeDef *hmmc)
   __HAL_MMC_DISABLE_IT(hmmc, SDMMC_IT_DATAEND | SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT|\
                            SDMMC_IT_TXUNDERR| SDMMC_IT_RXOVERR);
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
   /* If IDMA Context, disable Internal DMA */
   hmmc->Instance->IDMACTRL = SDMMC_DISABLE_IDMA;
 #endif
@@ -2662,12 +2954,12 @@ HAL_StatusTypeDef HAL_MMC_Abort_IT(MMC_HandleTypeDef *hmmc)
   /* Clear All flags */
   __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_DATA_FLAGS);
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
   if((hmmc->hdmatx != NULL) || (hmmc->hdmarx != NULL))
   {
     /* Disable the MMC DMA request */
     hmmc->Instance->DCTRL &= (uint32_t)~((uint32_t)SDMMC_DCTRL_DMAEN);
-    
+
     /* Abort the MMC DMA Tx Stream */
     if(hmmc->hdmatx != NULL)
     {
@@ -2687,7 +2979,7 @@ HAL_StatusTypeDef HAL_MMC_Abort_IT(MMC_HandleTypeDef *hmmc)
       }
     }
   }
-  
+
   /* No transfer ongoing on both DMA channels*/
   if((hmmc->hdmatx == NULL) && (hmmc->hdmarx == NULL))
   {
@@ -2710,13 +3002,381 @@ HAL_StatusTypeDef HAL_MMC_Abort_IT(MMC_HandleTypeDef *hmmc)
 #else
       HAL_MMC_AbortCallback(hmmc);
 #endif
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
     }
 #endif
   }
 
   return HAL_OK;
 }
+
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+/**
+  * @brief  Perform specific commands sequence for the different type of erase.
+  * @note   This API should be followed by a check on the card state through
+  *         HAL_MMC_GetCardState().
+  * @param  hmmc Pointer to MMC handle
+  * @param  EraseType Specifies the type of erase to be performed
+  *          This parameter can be one of the following values:
+  *            @arg HAL_MMC_ERASE Erase the erase groups identified by CMD35 & 36
+  *            @arg HAL_MMC_TRIM Erase the write blocks identified by CMD35 & 36
+  *            @arg HAL_MMC_DISCARD Discard the write blocks identified by CMD35 & 36
+  *            @arg HAL_MMC_SECURE_ERASE Perform a secure purge according SRT on the erase groups identified by CMD35 & 36
+  *            @arg HAL_MMC_SECURE_TRIM_STEP1 Mark the write blocks identified by CMD35 & 36 for secure erase
+  *            @arg HAL_MMC_SECURE_TRIM_STEP2 Perform a secure purge according SRT on the write blocks previously identified
+  * @param  BlockStartAdd Start Block address
+  * @param  BlockEndAdd End Block address
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_MMC_EraseSequence(MMC_HandleTypeDef *hmmc, uint32_t EraseType, uint32_t BlockStartAdd, uint32_t BlockEndAdd)
+{
+  uint32_t errorstate;
+  uint32_t start_add = BlockStartAdd;
+  uint32_t end_add = BlockEndAdd;
+  uint32_t tickstart = HAL_GetTick();
+
+  /* Check the erase type value is correct */
+  assert_param(IS_MMC_ERASE_TYPE(EraseType));
+
+  /* Check the coherence between start and end address */
+  if(end_add < start_add)
+  {
+    hmmc->ErrorCode |= HAL_MMC_ERROR_PARAM;
+    return HAL_ERROR;
+  }
+
+  /* Check that the end address is not out of range of device memory */
+  if(end_add > (hmmc->MmcCard.LogBlockNbr))
+  {
+    hmmc->ErrorCode |= HAL_MMC_ERROR_ADDR_OUT_OF_RANGE;
+    return HAL_ERROR;
+  }
+
+  /* Check if the card command class supports erase command */
+  if(((hmmc->MmcCard.Class) & SDMMC_CCCC_ERASE) == 0U)
+  {
+    hmmc->ErrorCode |= HAL_MMC_ERROR_REQUEST_NOT_APPLICABLE;
+    return HAL_ERROR;
+  }
+
+  /* Check the state of the driver */
+  if(hmmc->State == HAL_MMC_STATE_READY)
+  {
+    /* Change State */
+    hmmc->State = HAL_MMC_STATE_BUSY;
+
+    /* Check that the card is not locked */
+    if((SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP1) & SDMMC_CARD_LOCKED) == SDMMC_CARD_LOCKED)
+    {
+      hmmc->ErrorCode |= HAL_MMC_ERROR_LOCK_UNLOCK_FAILED;
+      hmmc->State = HAL_MMC_STATE_READY;
+      return HAL_ERROR;
+    }
+
+    /* In case of low capacity card, the address is not block number but bytes */
+    if ((hmmc->MmcCard.CardType) != MMC_HIGH_CAPACITY_CARD)
+    {
+      start_add *= 512U;
+      end_add   *= 512U;
+    }
+
+    /* Send CMD35 MMC_ERASE_GRP_START with start address as argument */
+    errorstate = SDMMC_CmdEraseStartAdd(hmmc->Instance, start_add);
+    if(errorstate == HAL_MMC_ERROR_NONE)
+    {
+      /* Send CMD36 MMC_ERASE_GRP_END with end address as argument */
+      errorstate = SDMMC_CmdEraseEndAdd(hmmc->Instance, end_add);
+      if(errorstate == HAL_MMC_ERROR_NONE)
+      {
+        /* Send CMD38 ERASE with erase type as argument */
+        errorstate = SDMMC_CmdErase(hmmc->Instance, EraseType);
+        if(errorstate == HAL_MMC_ERROR_NONE)
+        {
+          if ((EraseType == HAL_MMC_SECURE_ERASE) || (EraseType == HAL_MMC_SECURE_TRIM_STEP2))
+          {
+            /* Wait that the device is ready by checking the D0 line */
+            while((!__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_BUSYD0END)) && (errorstate == HAL_MMC_ERROR_NONE))
+            {
+              if((HAL_GetTick()-tickstart) >= SDMMC_MAXERASETIMEOUT)
+              {
+                errorstate = HAL_MMC_ERROR_TIMEOUT;
+              }
+            }
+
+            /* Clear the flag corresponding to end D0 bus line */
+            __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_FLAG_BUSYD0END);
+          }
+        }
+      }
+    }
+
+    /* Change State */
+    hmmc->State = HAL_MMC_STATE_READY;
+
+    /* Manage errors */
+    if(errorstate != HAL_MMC_ERROR_NONE)
+    {
+      /* Clear all the static flags */
+      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+      hmmc->ErrorCode |= errorstate;
+
+      if(errorstate != HAL_MMC_ERROR_TIMEOUT)
+      {
+        return HAL_ERROR;
+      }
+      else
+      {
+        return HAL_TIMEOUT;
+      }
+    }
+    else
+    {
+      return HAL_OK;
+    }
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+}
+
+/**
+  * @brief  Perform sanitize operation on the device.
+  * @note   This API should be followed by a check on the card state through
+  *         HAL_MMC_GetCardState().
+  * @param  hmmc Pointer to MMC handle
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_MMC_Sanitize(MMC_HandleTypeDef *hmmc)
+{
+  uint32_t errorstate, response = 0U, count;
+  uint32_t tickstart = HAL_GetTick();
+
+  /* Check the state of the driver */
+  if(hmmc->State == HAL_MMC_STATE_READY)
+  {
+    /* Change State */
+    hmmc->State = HAL_MMC_STATE_BUSY;
+
+    /* Index : 165 - Value : 0x01 */
+    errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03A50100U);
+    if(errorstate == HAL_MMC_ERROR_NONE)
+    {
+      /* Wait that the device is ready by checking the D0 line */
+      while((!__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_BUSYD0END)) && (errorstate == HAL_MMC_ERROR_NONE))
+      {
+        if((HAL_GetTick()-tickstart) >= SDMMC_MAXERASETIMEOUT)
+        {
+          errorstate = HAL_MMC_ERROR_TIMEOUT;
+        }
+      }
+
+      /* Clear the flag corresponding to end D0 bus line */
+      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_FLAG_BUSYD0END);
+
+      if(errorstate == HAL_MMC_ERROR_NONE)
+      {
+        /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
+        count = SDMMC_MAX_TRIAL;
+        do
+        {
+          errorstate = SDMMC_CmdSendStatus(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
+          if(errorstate != HAL_MMC_ERROR_NONE)
+          {
+            break;
+          }
+
+          /* Get command response */
+          response = SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP1);
+          count--;
+        }while(((response & 0x100U) == 0U) && (count != 0U));
+
+        /* Check the status after the switch command execution */
+        if ((count != 0U) && (errorstate == HAL_MMC_ERROR_NONE))
+        {
+          /* Check the bit SWITCH_ERROR of the device status */
+          if ((response & 0x80U) != 0U)
+          {
+            errorstate = SDMMC_ERROR_GENERAL_UNKNOWN_ERR;
+          }
+        }
+        else if (count == 0U)
+        {
+          errorstate = SDMMC_ERROR_TIMEOUT;
+        }
+        else
+        {
+          /* Nothing to do */
+        }
+      }
+    }
+
+    /* Change State */
+    hmmc->State = HAL_MMC_STATE_READY;
+
+    /* Manage errors */
+    if(errorstate != HAL_MMC_ERROR_NONE)
+    {
+      /* Clear all the static flags */
+      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+      hmmc->ErrorCode |= errorstate;
+
+      if(errorstate != HAL_MMC_ERROR_TIMEOUT)
+      {
+        return HAL_ERROR;
+      }
+      else
+      {
+        return HAL_TIMEOUT;
+      }
+    }
+    else
+    {
+      return HAL_OK;
+    }
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+}
+
+/**
+  * @brief  Configure the Secure Removal Type (SRT) in the Extended CSD register.
+  * @note   This API should be followed by a check on the card state through
+  *         HAL_MMC_GetCardState().
+  * @param  hmmc Pointer to MMC handle
+  * @param  SRTMode Specifies the type of erase to be performed
+  *          This parameter can be one of the following values:
+  *            @arg HAL_MMC_SRT_ERASE Information removed by an erase
+  *            @arg HAL_MMC_SRT_WRITE_CHAR_ERASE Information removed by an overwriting with a character followed by an erase
+  *            @arg HAL_MMC_SRT_WRITE_CHAR_COMPL_RANDOM Information removed by an overwriting with a character, its complement then a random character
+  *            @arg HAL_MMC_SRT_VENDOR_DEFINED Information removed using a vendor defined
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_MMC_ConfigSecRemovalType(MMC_HandleTypeDef *hmmc, uint32_t SRTMode)
+{
+  uint32_t srt, errorstate, response = 0U, count;
+
+  /* Check the erase type value is correct */
+  assert_param(IS_MMC_SRT_TYPE(SRTMode));
+
+  /* Check the state of the driver */
+  if(hmmc->State == HAL_MMC_STATE_READY)
+  {
+    /* Get the supported values by the device */
+    if(HAL_MMC_GetSupportedSecRemovalType(hmmc, &srt) == HAL_OK)
+    {
+      /* Change State */
+      hmmc->State = HAL_MMC_STATE_BUSY;
+
+      /* Check the value passed as parameter is supported by the device */
+      if((SRTMode & srt) != 0U)
+      {
+        /* Index : 16 - Value : SRTMode */
+        srt |= ((POSITION_VAL(SRTMode)) << 4U);
+        errorstate = SDMMC_CmdSwitch(hmmc->Instance, (0x03100000U | (srt << 8U)));
+        if(errorstate == HAL_MMC_ERROR_NONE)
+        {
+          /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
+          count = SDMMC_MAX_TRIAL;
+          do
+          {
+            errorstate = SDMMC_CmdSendStatus(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
+            if(errorstate != HAL_MMC_ERROR_NONE)
+            {
+              break;
+            }
+
+            /* Get command response */
+            response = SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP1);
+            count--;
+          }while(((response & 0x100U) == 0U) && (count != 0U));
+
+          /* Check the status after the switch command execution */
+          if ((count != 0U) && (errorstate == HAL_MMC_ERROR_NONE))
+          {
+            /* Check the bit SWITCH_ERROR of the device status */
+            if ((response & 0x80U) != 0U)
+            {
+              errorstate = SDMMC_ERROR_GENERAL_UNKNOWN_ERR;
+            }
+          }
+          else if (count == 0U)
+          {
+            errorstate = SDMMC_ERROR_TIMEOUT;
+          }
+          else
+          {
+            /* Nothing to do */
+          }
+        }
+      }
+      else
+      {
+        errorstate = SDMMC_ERROR_UNSUPPORTED_FEATURE;
+      }
+
+      /* Change State */
+      hmmc->State = HAL_MMC_STATE_READY;
+    }
+    else
+    {
+      errorstate = SDMMC_ERROR_GENERAL_UNKNOWN_ERR;
+    }
+
+    /* Manage errors */
+    if(errorstate != HAL_MMC_ERROR_NONE)
+    {
+      /* Clear all the static flags */
+      __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+      hmmc->ErrorCode |= errorstate;
+      return HAL_ERROR;
+    }
+    else
+    {
+      return HAL_OK;
+    }
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+}
+
+/**
+  * @brief  Gets the supported values of the the Secure Removal Type (SRT).
+  * @param  hmmc pointer to MMC handle
+  * @param  SupportedSRT pointer for supported SRT value
+  *          This parameter is a bit field of the following values:
+  *            @arg HAL_MMC_SRT_ERASE Information removed by an erase
+  *            @arg HAL_MMC_SRT_WRITE_CHAR_ERASE Information removed by an overwriting with a character followed by an erase
+  *            @arg HAL_MMC_SRT_WRITE_CHAR_COMPL_RANDOM Information removed by an overwriting with a character, its complement then a random character
+  *            @arg HAL_MMC_SRT_VENDOR_DEFINED Information removed using a vendor defined
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_MMC_GetSupportedSecRemovalType(MMC_HandleTypeDef *hmmc, uint32_t *SupportedSRT)
+{
+  /* Check the state of the driver */
+  if(hmmc->State == HAL_MMC_STATE_READY)
+  {
+    /* Change State */
+    hmmc->State = HAL_MMC_STATE_BUSY;
+
+    /* Read field SECURE_REMOVAL_TYPE [16 = 4*4] of the Extended CSD register */
+    *SupportedSRT = (hmmc->Ext_CSD[4] & 0x0000000FU); /* Bits [3:0] of field 16 */
+
+    /* Change State */
+    hmmc->State = HAL_MMC_STATE_READY;
+
+    return HAL_OK;
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+}
+#endif /* defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) */
 
 /**
   * @}
@@ -2731,30 +3391,30 @@ HAL_StatusTypeDef HAL_MMC_Abort_IT(MMC_HandleTypeDef *hmmc)
   * @{
   */
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
+#if !defined(STM32L4P5xx) && !defined(STM32L4Q5xx) && !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
 /**
-  * @brief  DMA MMC transmit process complete callback 
-  * @param  hdma: DMA handle
+  * @brief  DMA MMC transmit process complete callback
+  * @param  hdma DMA handle
   * @retval None
   */
-static void MMC_DMATransmitCplt(DMA_HandleTypeDef *hdma)     
+static void MMC_DMATransmitCplt(DMA_HandleTypeDef *hdma)
 {
   MMC_HandleTypeDef* hmmc = (MMC_HandleTypeDef* )(hdma->Parent);
-  
+
   /* Enable DATAEND Interrupt */
   __HAL_MMC_ENABLE_IT(hmmc, (SDMMC_IT_DATAEND));
 }
 
 /**
-  * @brief  DMA MMC receive process complete callback 
-  * @param  hdma: DMA handle
+  * @brief  DMA MMC receive process complete callback
+  * @param  hdma DMA handle
   * @retval None
   */
-static void MMC_DMAReceiveCplt(DMA_HandleTypeDef *hdma)  
+static void MMC_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
 {
   MMC_HandleTypeDef* hmmc = (MMC_HandleTypeDef* )(hdma->Parent);
   uint32_t errorstate;
-  
+
   /* Send stop command in multiblock write */
   if(hmmc->Context == (MMC_CONTEXT_READ_MULTIPLE_BLOCK | MMC_CONTEXT_DMA))
   {
@@ -2769,15 +3429,16 @@ static void MMC_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
 #endif
     }
   }
-  
+
   /* Disable the DMA transfer for transmit request by setting the DMAEN bit
   in the MMC DCTRL register */
   hmmc->Instance->DCTRL &= (uint32_t)~((uint32_t)SDMMC_DCTRL_DMAEN);
-  
+
   /* Clear all the static flags */
   __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_DATA_FLAGS);
-  
+
   hmmc->State = HAL_MMC_STATE_READY;
+  hmmc->Context = MMC_CONTEXT_NONE;
 
 #if defined (USE_HAL_MMC_REGISTER_CALLBACKS) && (USE_HAL_MMC_REGISTER_CALLBACKS == 1U)
   hmmc->RxCpltCallback(hmmc);
@@ -2787,37 +3448,38 @@ static void MMC_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
 }
 
 /**
-  * @brief  DMA MMC communication error callback 
-  * @param  hdma: DMA handle
+  * @brief  DMA MMC communication error callback
+  * @param  hdma DMA handle
   * @retval None
   */
-static void MMC_DMAError(DMA_HandleTypeDef *hdma)   
+static void MMC_DMAError(DMA_HandleTypeDef *hdma)
 {
   MMC_HandleTypeDef* hmmc = (MMC_HandleTypeDef* )(hdma->Parent);
   HAL_MMC_CardStateTypeDef CardState;
   uint32_t RxErrorCode, TxErrorCode;
-  
+
   RxErrorCode = hmmc->hdmarx->ErrorCode;
-  TxErrorCode = hmmc->hdmatx->ErrorCode;  
+  TxErrorCode = hmmc->hdmatx->ErrorCode;
   if((RxErrorCode == HAL_DMA_ERROR_TE) || (TxErrorCode == HAL_DMA_ERROR_TE))
   {
     /* Clear All flags */
     __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-      
+
     /* Disable All interrupts */
     __HAL_MMC_DISABLE_IT(hmmc, SDMMC_IT_DATAEND | SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT|\
       SDMMC_IT_TXUNDERR| SDMMC_IT_RXOVERR);
-      
+
     hmmc->ErrorCode |= HAL_MMC_ERROR_DMA;
     CardState = HAL_MMC_GetCardState(hmmc);
     if((CardState == HAL_MMC_CARD_RECEIVING) || (CardState == HAL_MMC_CARD_SENDING))
     {
       hmmc->ErrorCode |= SDMMC_CmdStopTransfer(hmmc->Instance);
     }
-      
+
     hmmc->State= HAL_MMC_STATE_READY;
+    hmmc->Context = MMC_CONTEXT_NONE;
   }
-    
+
 #if defined (USE_HAL_MMC_REGISTER_CALLBACKS) && (USE_HAL_MMC_REGISTER_CALLBACKS == 1U)
   hmmc->ErrorCallback(hmmc);
 #else
@@ -2826,30 +3488,31 @@ static void MMC_DMAError(DMA_HandleTypeDef *hdma)
   }
 
 /**
-  * @brief  DMA MMC Tx Abort callback 
-  * @param  hdma: DMA handle
+  * @brief  DMA MMC Tx Abort callback
+  * @param  hdma DMA handle
   * @retval None
   */
-static void MMC_DMATxAbort(DMA_HandleTypeDef *hdma)   
+static void MMC_DMATxAbort(DMA_HandleTypeDef *hdma)
 {
   MMC_HandleTypeDef* hmmc = (MMC_HandleTypeDef* )(hdma->Parent);
   HAL_MMC_CardStateTypeDef CardState;
-  
+
   if(hmmc->hdmatx != NULL)
   {
     hmmc->hdmatx = NULL;
   }
-  
+
   /* All DMA channels are aborted */
   if(hmmc->hdmarx == NULL)
   {
     CardState = HAL_MMC_GetCardState(hmmc);
     hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
     hmmc->State = HAL_MMC_STATE_READY;
+    hmmc->Context = MMC_CONTEXT_NONE;
     if((CardState == HAL_MMC_CARD_RECEIVING) || (CardState == HAL_MMC_CARD_SENDING))
     {
       hmmc->ErrorCode |= SDMMC_CmdStopTransfer(hmmc->Instance);
-      
+
       if(hmmc->ErrorCode != HAL_MMC_ERROR_NONE)
       {
 #if defined (USE_HAL_MMC_REGISTER_CALLBACKS) && (USE_HAL_MMC_REGISTER_CALLBACKS == 1U)
@@ -2871,30 +3534,31 @@ static void MMC_DMATxAbort(DMA_HandleTypeDef *hdma)
 }
 
 /**
-  * @brief  DMA MMC Rx Abort callback 
-  * @param  hdma: DMA handle
+  * @brief  DMA MMC Rx Abort callback
+  * @param  hdma DMA handle
   * @retval None
   */
-static void MMC_DMARxAbort(DMA_HandleTypeDef *hdma)   
+static void MMC_DMARxAbort(DMA_HandleTypeDef *hdma)
 {
   MMC_HandleTypeDef* hmmc = (MMC_HandleTypeDef* )(hdma->Parent);
   HAL_MMC_CardStateTypeDef CardState;
-  
+
   if(hmmc->hdmarx != NULL)
   {
     hmmc->hdmarx = NULL;
   }
-  
+
   /* All DMA channels are aborted */
   if(hmmc->hdmatx == NULL)
   {
     CardState = HAL_MMC_GetCardState(hmmc);
     hmmc->ErrorCode = HAL_MMC_ERROR_NONE;
     hmmc->State = HAL_MMC_STATE_READY;
+    hmmc->Context = MMC_CONTEXT_NONE;
     if((CardState == HAL_MMC_CARD_RECEIVING) || (CardState == HAL_MMC_CARD_SENDING))
     {
       hmmc->ErrorCode |= SDMMC_CmdStopTransfer(hmmc->Instance);
-      
+
       if(hmmc->ErrorCode != HAL_MMC_ERROR_NONE)
       {
 #if defined (USE_HAL_MMC_REGISTER_CALLBACKS) && (USE_HAL_MMC_REGISTER_CALLBACKS == 1U)
@@ -2918,17 +3582,15 @@ static void MMC_DMARxAbort(DMA_HandleTypeDef *hdma)
 
 /**
   * @brief  Initializes the mmc card.
-  * @param  hmmc: Pointer to MMC handle
+  * @param  hmmc Pointer to MMC handle
   * @retval MMC Card error state
   */
 static uint32_t MMC_InitCard(MMC_HandleTypeDef *hmmc)
 {
   HAL_MMC_CardCSDTypeDef CSD;
   uint32_t errorstate;
-  uint16_t mmc_rca = 1U;
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+  uint16_t mmc_rca = 2U;
   MMC_InitTypeDef Init;
-#endif
 
   /* Check the power State */
   if(SDMMC_GetPowerState(hmmc->Instance) == 0U)
@@ -2952,9 +3614,9 @@ static uint32_t MMC_InitCard(MMC_HandleTypeDef *hmmc)
     hmmc->CID[3U] = SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP4);
   }
 
-  /* Send CMD3 SET_REL_ADDR with argument 0 */
+  /* Send CMD3 SET_REL_ADDR with RCA = 2 (should be greater than 1) */
   /* MMC Card publishes its RCA. */
-  errorstate = SDMMC_CmdSetRelAdd(hmmc->Instance, &mmc_rca);
+  errorstate = SDMMC_CmdSetRelAddMmc(hmmc->Instance, mmc_rca);
   if(errorstate != HAL_MMC_ERROR_NONE)
   {
     return errorstate;
@@ -2981,23 +3643,6 @@ static uint32_t MMC_InitCard(MMC_HandleTypeDef *hmmc)
   /* Get the Card Class */
   hmmc->MmcCard.Class = (SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP2) >> 20U);
 
-#if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
-  /* Get CSD parameters */
-  if (HAL_MMC_GetCardCSD(hmmc, &CSD) != HAL_OK)
-  {
-    return hmmc->ErrorCode;
-  }
-
-  /* Select the Card */
-  errorstate = SDMMC_CmdSelDesel(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
-  if(errorstate != HAL_MMC_ERROR_NONE)
-  {
-    return errorstate;
-  }
-
-  /* Configure SDMMC peripheral interface */
-  (void)SDMMC_Init(hmmc->Instance, hmmc->Init);
-#else
    /* Select the Card */
   errorstate = SDMMC_CmdSelDesel(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
   if(errorstate != HAL_MMC_ERROR_NONE)
@@ -3018,14 +3663,23 @@ static uint32_t MMC_InitCard(MMC_HandleTypeDef *hmmc)
     hmmc->ErrorCode |= errorstate;
   }
 
+  /* Get Extended CSD parameters */
+  if (HAL_MMC_GetCardExtCSD(hmmc, hmmc->Ext_CSD, SDMMC_DATATIMEOUT) != HAL_OK)
+  {
+    return hmmc->ErrorCode;
+  }
+
+  /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
+  errorstate = SDMMC_CmdSendStatus(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
+  if(errorstate != HAL_MMC_ERROR_NONE)
+  {
+    hmmc->ErrorCode |= errorstate;
+  }
+
   /* Configure the SDMMC peripheral */
-  Init.ClockEdge           = hmmc->Init.ClockEdge;
-  Init.ClockPowerSave      = hmmc->Init.ClockPowerSave;
-  Init.BusWide             = SDMMC_BUS_WIDE_1B;
-  Init.HardwareFlowControl = hmmc->Init.HardwareFlowControl;
-  Init.ClockDiv            = hmmc->Init.ClockDiv;
+  Init = hmmc->Init;
+  Init.BusWide = SDMMC_BUS_WIDE_1B;
   (void)SDMMC_Init(hmmc->Instance, Init);
-#endif
 
   /* All cards are initialized */
   return HAL_MMC_ERROR_NONE;
@@ -3035,7 +3689,7 @@ static uint32_t MMC_InitCard(MMC_HandleTypeDef *hmmc)
   * @brief  Enquires cards about their operating voltage and configures clock
   *         controls and stores MMC information that will be needed in future
   *         in the MMC handle.
-  * @param  hmmc: Pointer to MMC handle
+  * @param  hmmc Pointer to MMC handle
   * @retval error state
   */
 static uint32_t MMC_PowerON(MMC_HandleTypeDef *hmmc)
@@ -3058,8 +3712,8 @@ static uint32_t MMC_PowerON(MMC_HandleTypeDef *hmmc)
       return HAL_MMC_ERROR_INVALID_VOLTRANGE;
     }
 
-    /* SEND CMD1 APP_CMD with MMC_HIGH_VOLTAGE_RANGE(0xC0FF8000) as argument */
-    errorstate = SDMMC_CmdOpCondition(hmmc->Instance, eMMC_HIGH_VOLTAGE_RANGE);
+    /* SEND CMD1 APP_CMD with voltage range as argument */
+    errorstate = SDMMC_CmdOpCondition(hmmc->Instance, MMC_VOLTAGE_RANGE);
     if(errorstate != HAL_MMC_ERROR_NONE)
     {
       return HAL_MMC_ERROR_UNSUPPORTED_FEATURE;
@@ -3087,7 +3741,7 @@ static uint32_t MMC_PowerON(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief  Turns the SDMMC output signals off.
-  * @param  hmmc: Pointer to MMC handle
+  * @param  hmmc Pointer to MMC handle
   * @retval None
   */
 static void MMC_PowerOFF(MMC_HandleTypeDef *hmmc)
@@ -3098,8 +3752,8 @@ static void MMC_PowerOFF(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief  Returns the current card's status.
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pCardStatus: pointer to the buffer that will contain the MMC card
+  * @param  hmmc Pointer to MMC handle
+  * @param  pCardStatus pointer to the buffer that will contain the MMC card
   *         status (Card Status register)
   * @retval error state
   */
@@ -3125,15 +3779,15 @@ static uint32_t MMC_SendStatus(MMC_HandleTypeDef *hmmc, uint32_t *pCardStatus)
   return HAL_MMC_ERROR_NONE;
 }
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 /**
   * @brief  Reads extended CSD register to get the sectors number of the device
-  * @param  hmmc: Pointer to MMC handle
-  * @param  pBlockNbr: Pointer to the read buffer
-  * @param  Timeout: Specify timeout value
+  * @param  hmmc Pointer to MMC handle
+  * @param  pFieldData Pointer to the read buffer
+  * @param  FieldIndex Index of the field to be read
+  * @param  Timeout Specify timeout value
   * @retval HAL status
   */
-HAL_StatusTypeDef MMC_ReadExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pBlockNbr, uint32_t Timeout)
+static HAL_StatusTypeDef MMC_ReadExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pFieldData, uint16_t FieldIndex, uint32_t Timeout)
 {
   SDMMC_DataInitTypeDef config;
   uint32_t errorstate;
@@ -3146,26 +3800,6 @@ HAL_StatusTypeDef MMC_ReadExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pBlockNbr, u
 
   /* Initialize data control register */
   hmmc->Instance->DCTRL = 0;
-
-  /* Configure the MMC DPSM (Data Path State Machine) */
-  config.DataTimeOut   = SDMMC_DATATIMEOUT;
-  config.DataLength    = 0;
-  config.DataBlockSize = SDMMC_DATABLOCK_SIZE_1B;
-  config.TransferDir   = SDMMC_TRANSFER_DIR_TO_SDMMC;
-  config.TransferMode  = SDMMC_TRANSFER_MODE_BLOCK;
-  config.DPSM          = SDMMC_DPSM_DISABLE;
-  (void)SDMMC_ConfigData(hmmc->Instance, &config);
-
-  /* Set Block Size for Card */
-  errorstate = SDMMC_CmdBlockLength(hmmc->Instance, MMC_BLOCKSIZE);
-  if(errorstate != HAL_MMC_ERROR_NONE)
-  {
-    /* Clear all the static flags */
-    __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
-    hmmc->ErrorCode |= errorstate;
-    hmmc->State = HAL_MMC_STATE_READY;
-    return HAL_ERROR;
-  }
 
   /* Configure the MMC DPSM (Data Path State Machine) */
   config.DataTimeOut   = SDMMC_DATATIMEOUT;
@@ -3196,9 +3830,11 @@ HAL_StatusTypeDef MMC_ReadExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pBlockNbr, u
       for(count = 0U; count < 8U; count++)
       {
         tmp_data = SDMMC_ReadFIFO(hmmc->Instance);
-        if ((i == 48U) && (count == 5U))
+        /* eg : SEC_COUNT   : FieldIndex = 212 => i+count = 53 */
+        /*      DEVICE_TYPE : FieldIndex = 196 => i+count = 49 */
+        if ((i + count) == ((uint32_t)FieldIndex/4U))
         {
-          *pBlockNbr = tmp_data;
+          *pFieldData = tmp_data;
         }
       }
       i += 8U;
@@ -3212,6 +3848,36 @@ HAL_StatusTypeDef MMC_ReadExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pBlockNbr, u
       hmmc->State= HAL_MMC_STATE_READY;
       return HAL_TIMEOUT;
     }
+  }
+
+  /* Get error state */
+  if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_DTIMEOUT))
+  {
+    /* Clear all the static flags */
+    __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+    hmmc->ErrorCode |= HAL_MMC_ERROR_DATA_TIMEOUT;
+    hmmc->State = HAL_MMC_STATE_READY;
+    return HAL_ERROR;
+  }
+  else if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_DCRCFAIL))
+  {
+    /* Clear all the static flags */
+    __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+    hmmc->ErrorCode |= HAL_MMC_ERROR_DATA_CRC_FAIL;
+    hmmc->State = HAL_MMC_STATE_READY;
+    return HAL_ERROR;
+  }
+  else if(__HAL_MMC_GET_FLAG(hmmc, SDMMC_FLAG_RXOVERR))
+  {
+    /* Clear all the static flags */
+    __HAL_MMC_CLEAR_FLAG(hmmc, SDMMC_STATIC_FLAGS);
+    hmmc->ErrorCode |= HAL_MMC_ERROR_RX_OVERRUN;
+    hmmc->State = HAL_MMC_STATE_READY;
+    return HAL_ERROR;
+  }
+  else
+  {
+    /* Nothing to do */
   }
 
   /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
@@ -3228,11 +3894,10 @@ HAL_StatusTypeDef MMC_ReadExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pBlockNbr, u
 
   return HAL_OK;
 }
-#endif
 
 /**
   * @brief  Wrap up reading in non-blocking mode.
-  * @param  hmmc: pointer to a MMC_HandleTypeDef structure that contains
+  * @param  hmmc pointer to a MMC_HandleTypeDef structure that contains
   *              the configuration information.
   * @retval None
   */
@@ -3271,7 +3936,7 @@ static void MMC_Read_IT(MMC_HandleTypeDef *hmmc)
 
 /**
   * @brief  Wrap up writing in non-blocking mode.
-  * @param  hmmc: pointer to a MMC_HandleTypeDef structure that contains
+  * @param  hmmc pointer to a MMC_HandleTypeDef structure that contains
   *              the configuration information.
   * @retval None
   */
@@ -3308,6 +3973,322 @@ static void MMC_Write_IT(MMC_HandleTypeDef *hmmc)
   }
 }
 
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+/**
+  * @brief  Switches the MMC card to high speed mode.
+  * @param  hmmc MMC handle
+  * @param  state State of high speed mode
+  * @retval MMC Card error state
+  */
+static uint32_t MMC_HighSpeed(MMC_HandleTypeDef *hmmc, FunctionalState state)
+{
+  uint32_t errorstate = HAL_MMC_ERROR_NONE;
+  uint32_t response = 0U, count;
+  uint32_t sdmmc_clk;
+  SDMMC_InitTypeDef Init;
+
+  if (((hmmc->Instance->CLKCR & SDMMC_CLKCR_BUSSPEED) != 0U) && (state == DISABLE))
+  {
+    errorstate = MMC_PwrClassUpdate(hmmc, (hmmc->Instance->CLKCR & SDMMC_CLKCR_WIDBUS), SDMMC_SPEED_MODE_DEFAULT);
+    if(errorstate == HAL_MMC_ERROR_NONE)
+    {
+      /* Index : 185 - Value : 0 */
+      errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B90000U);
+    }
+  }
+
+  if (((hmmc->Instance->CLKCR & SDMMC_CLKCR_BUSSPEED) == 0U) && (state != DISABLE))
+  {
+    errorstate = MMC_PwrClassUpdate(hmmc, (hmmc->Instance->CLKCR & SDMMC_CLKCR_WIDBUS), SDMMC_SPEED_MODE_HIGH);
+    if(errorstate == HAL_MMC_ERROR_NONE)
+    {
+      /* Index : 185 - Value : 1 */
+      errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B90100U);
+    }
+  }
+
+  if(errorstate == HAL_MMC_ERROR_NONE)
+  {
+    /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
+    count = SDMMC_MAX_TRIAL;
+    do
+    {
+      errorstate = SDMMC_CmdSendStatus(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
+      if(errorstate != HAL_MMC_ERROR_NONE)
+      {
+        break;
+      }
+
+      /* Get command response */
+      response = SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP1);
+      count--;
+    }while(((response & 0x100U) == 0U) && (count != 0U));
+
+    /* Check the status after the switch command execution */
+    if ((count != 0U) && (errorstate == HAL_MMC_ERROR_NONE))
+    {
+      /* Check the bit SWITCH_ERROR of the device status */
+      if ((response & 0x80U) != 0U)
+      {
+        errorstate = SDMMC_ERROR_UNSUPPORTED_FEATURE;
+      }
+      else
+      {
+        /* Configure high speed */
+        Init.ClockEdge           = hmmc->Init.ClockEdge;
+        Init.ClockPowerSave      = hmmc->Init.ClockPowerSave;
+        Init.BusWide             = (hmmc->Instance->CLKCR & SDMMC_CLKCR_WIDBUS);
+        Init.HardwareFlowControl = hmmc->Init.HardwareFlowControl;
+
+        if (state == DISABLE)
+        {
+          Init.ClockDiv = hmmc->Init.ClockDiv;
+          (void)SDMMC_Init(hmmc->Instance, Init);
+
+          CLEAR_BIT(hmmc->Instance->CLKCR, SDMMC_CLKCR_BUSSPEED);
+        }
+        else
+        {
+          /* High Speed Clock should be less or equal to 52MHz*/
+          sdmmc_clk = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SDMMC1);
+          if (sdmmc_clk == 0U)
+          {
+            errorstate = SDMMC_ERROR_INVALID_PARAMETER;
+          }
+          else
+          {
+            Init.ClockDiv = sdmmc_clk/(2U*MMC_HIGH_SPEED_FREQ);
+            (void)SDMMC_Init(hmmc->Instance, Init);
+
+            SET_BIT(hmmc->Instance->CLKCR, SDMMC_CLKCR_BUSSPEED);
+          }
+        }
+      }
+    }
+    else if (count == 0U)
+    {
+      errorstate = SDMMC_ERROR_TIMEOUT;
+    }
+    else
+    {
+      /* Nothing to do */
+    }
+  }
+
+  return errorstate;
+}
+
+/**
+  * @brief  Switches the MMC card to Double Data Rate (DDR) mode.
+  * @param  hmmc MMC handle
+  * @param  state State of DDR mode
+  * @retval MMC Card error state
+  */
+static uint32_t MMC_DDR_Mode(MMC_HandleTypeDef *hmmc, FunctionalState state)
+{
+  uint32_t errorstate = HAL_MMC_ERROR_NONE;
+  uint32_t response = 0U, count;
+
+  if (((hmmc->Instance->CLKCR & SDMMC_CLKCR_DDR) != 0U) && (state == DISABLE))
+  {
+    if ((hmmc->Instance->CLKCR & SDMMC_CLKCR_WIDBUS_0) != 0U)
+    {
+      errorstate = MMC_PwrClassUpdate(hmmc, SDMMC_BUS_WIDE_4B, SDMMC_SPEED_MODE_HIGH);
+      if(errorstate == HAL_MMC_ERROR_NONE)
+      {
+        /* Index : 183 - Value : 1 */
+        errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70100U);
+      }
+    }
+    else
+    {
+      errorstate = MMC_PwrClassUpdate(hmmc, SDMMC_BUS_WIDE_8B, SDMMC_SPEED_MODE_HIGH);
+      if(errorstate == HAL_MMC_ERROR_NONE)
+      {
+        /* Index : 183 - Value : 2 */
+        errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70200U);
+      }
+    }
+  }
+
+  if (((hmmc->Instance->CLKCR & SDMMC_CLKCR_DDR) == 0U) && (state != DISABLE))
+  {
+    if ((hmmc->Instance->CLKCR & SDMMC_CLKCR_WIDBUS_0) != 0U)
+    {
+      errorstate = MMC_PwrClassUpdate(hmmc, SDMMC_BUS_WIDE_4B, SDMMC_SPEED_MODE_DDR);
+      if(errorstate == HAL_MMC_ERROR_NONE)
+      {
+        /* Index : 183 - Value : 5 */
+        errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70500U);
+      }
+    }
+    else
+    {
+      errorstate = MMC_PwrClassUpdate(hmmc, SDMMC_BUS_WIDE_8B, SDMMC_SPEED_MODE_DDR);
+      if(errorstate == HAL_MMC_ERROR_NONE)
+      {
+        /* Index : 183 - Value : 6 */
+        errorstate = SDMMC_CmdSwitch(hmmc->Instance, 0x03B70600U);
+      }
+    }
+  }
+
+  if(errorstate == HAL_MMC_ERROR_NONE)
+  {
+    /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
+    count = SDMMC_MAX_TRIAL;
+    do
+    {
+      errorstate = SDMMC_CmdSendStatus(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
+      if(errorstate != HAL_MMC_ERROR_NONE)
+      {
+        break;
+      }
+
+      /* Get command response */
+      response = SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP1);
+      count--;
+    }while(((response & 0x100U) == 0U) && (count != 0U));
+
+    /* Check the status after the switch command execution */
+    if ((count != 0U) && (errorstate == HAL_MMC_ERROR_NONE))
+    {
+      /* Check the bit SWITCH_ERROR of the device status */
+      if ((response & 0x80U) != 0U)
+      {
+        errorstate = SDMMC_ERROR_UNSUPPORTED_FEATURE;
+      }
+      else
+      {
+        /* Configure DDR mode */
+        if ((count != 0U) && (errorstate == HAL_MMC_ERROR_NONE))
+        {
+          if (state == DISABLE)
+          {
+            CLEAR_BIT(hmmc->Instance->CLKCR, SDMMC_CLKCR_DDR);
+          }
+          else
+          {
+            SET_BIT(hmmc->Instance->CLKCR, SDMMC_CLKCR_DDR);
+          }
+        }
+      }
+    }
+    else if (count == 0U)
+    {
+      errorstate = SDMMC_ERROR_TIMEOUT;
+    }
+    else
+    {
+      /* Nothing to do */
+    }
+  }
+
+  return errorstate;
+}
+#endif
+
+/**
+  * @brief  Update the power class of the device.
+  * @param  hmmc MMC handle
+  * @param  Wide Wide of MMC bus
+  * @param  Speed Speed of the MMC bus
+  * @retval MMC Card error state
+  */
+static uint32_t MMC_PwrClassUpdate(MMC_HandleTypeDef *hmmc, uint32_t Wide, uint32_t Speed)
+{
+  uint32_t count;
+  uint32_t response = 0U;
+  uint32_t errorstate = HAL_MMC_ERROR_NONE;
+  uint32_t power_class, supported_pwr_class;
+
+  if((Wide == SDMMC_BUS_WIDE_8B) || (Wide == SDMMC_BUS_WIDE_4B))
+  {
+    power_class = 0U; /* Default value after power-on or software reset */
+
+    /* Read the PowerClass field of the Extended CSD register */
+    if(MMC_ReadExtCSD(hmmc, &power_class, 187, SDMMC_DATATIMEOUT) != HAL_OK) /* Field POWER_CLASS [187] */
+    {
+      errorstate = SDMMC_ERROR_GENERAL_UNKNOWN_ERR;
+    }
+    else
+    {
+      power_class = ((power_class >> 24U) & 0x000000FFU);
+    }
+
+    /* Get the supported PowerClass field of the Extended CSD register */
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+    if (Speed == SDMMC_SPEED_MODE_DDR)
+    {
+      /* Field PWR_CL_DDR_52_xxx [238 or 239] */
+      supported_pwr_class = ((hmmc->Ext_CSD[(MMC_EXT_CSD_PWR_CL_DDR_52_INDEX/4)] >> MMC_EXT_CSD_PWR_CL_DDR_52_POS) & 0x000000FFU);
+    }
+    else if (Speed == SDMMC_SPEED_MODE_HIGH)
+    {
+      /* Field PWR_CL_52_xxx [200 or 202] */
+      supported_pwr_class = ((hmmc->Ext_CSD[(MMC_EXT_CSD_PWR_CL_52_INDEX/4)] >> MMC_EXT_CSD_PWR_CL_52_POS) & 0x000000FFU);
+    }
+    else
+#endif
+    {
+      /* Field PWR_CL_26_xxx [201 or 203] */
+      supported_pwr_class = ((hmmc->Ext_CSD[(MMC_EXT_CSD_PWR_CL_26_INDEX/4)] >> MMC_EXT_CSD_PWR_CL_26_POS) & 0x000000FFU);
+    }
+
+    if(errorstate == HAL_MMC_ERROR_NONE)
+    {
+      if(Wide == SDMMC_BUS_WIDE_8B)
+      {
+        /* Bit [7:4] : power class for 8-bits bus configuration - Bit [3:0] : power class for 4-bits bus configuration */
+        supported_pwr_class = (supported_pwr_class >> 4U);
+      }
+
+      if ((power_class & 0x0FU) != (supported_pwr_class & 0x0FU))
+      {
+        /* Need to change current power class */
+        errorstate = SDMMC_CmdSwitch(hmmc->Instance, (0x03BB0000U | ((supported_pwr_class & 0x0FU) << 8U)));
+
+        if(errorstate == HAL_MMC_ERROR_NONE)
+        {
+          /* While card is not ready for data and trial number for sending CMD13 is not exceeded */
+          count = SDMMC_MAX_TRIAL;
+          do
+          {
+            errorstate = SDMMC_CmdSendStatus(hmmc->Instance, (uint32_t)(((uint32_t)hmmc->MmcCard.RelCardAdd) << 16U));
+            if(errorstate != HAL_MMC_ERROR_NONE)
+            {
+              break;
+            }
+
+            /* Get command response */
+            response = SDMMC_GetResponse(hmmc->Instance, SDMMC_RESP1);
+            count--;
+          }while(((response & 0x100U) == 0U) && (count != 0U));
+
+          /* Check the status after the switch command execution */
+          if ((count != 0U) && (errorstate == HAL_MMC_ERROR_NONE))
+          {
+            /* Check the bit SWITCH_ERROR of the device status */
+            if ((response & 0x80U) != 0U)
+            {
+              errorstate = SDMMC_ERROR_UNSUPPORTED_FEATURE;
+            }
+          }
+          else if (count == 0U)
+          {
+            errorstate = SDMMC_ERROR_TIMEOUT;
+          }
+          else
+          {
+            /* Nothing to do */
+          }
+        }
+      }
+    }
+  }
+
+  return errorstate;
+}
 /**
   * @}
   */

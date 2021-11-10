@@ -93,7 +93,7 @@
   - 32K片内时钟源
   - 2～32MHz片外晶振
 
-芯片更多详细信息请参考[华芯微特技术支持][http://www.synwit.cn/support-1/3.html]。
+芯片更多详细信息请参考[华芯微特技术支持](http://www.synwit.cn/support-1/3.html)。
 
 ## 编译说明
 
@@ -119,7 +119,7 @@
 
 - 使用 Jlink 连接开发板到 PC （需要 Jlink 驱动）
 
-将串口 0 引脚为：`[PA2/PA3]`和 USB 转串口模块 P2 相连，串口配置方式为115200-N-8-1。
+将串口 1 引脚为：`[PC2/PC3]`和 USB 转串口模块 J11 相连，串口配置方式为115200-N-8-1。
 
 当使用 [env工具](https://www.rt-thread.org/page/download.html) 正确编译产生出rtthread.bin映像文件后，可以使用 ISP 的方式来烧写到设备中。
 
@@ -166,4 +166,4 @@ msh />
 
 * [RT-Thread 文档中心](https://www.rt-thread.org/document/site/)
 
-* [SWM320数据手册](http://www.synwit.cn/support-1/3.html)
+* [SWM320数据手册](https://www.synwit.cn/col.jsp?id=155)

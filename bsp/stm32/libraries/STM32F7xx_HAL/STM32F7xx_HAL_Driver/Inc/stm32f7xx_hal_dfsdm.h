@@ -301,8 +301,8 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
 /** @defgroup DFSDM_Channel_OuputClock DFSDM channel output clock selection
   * @{
   */
-#define DFSDM_CHANNEL_OUTPUT_CLOCK_SYSTEM    ((uint32_t)0x00000000U) /*!< Source for ouput clock is system clock */
-#define DFSDM_CHANNEL_OUTPUT_CLOCK_AUDIO     DFSDM_CHCFGR1_CKOUTSRC  /*!< Source for ouput clock is audio clock */
+#define DFSDM_CHANNEL_OUTPUT_CLOCK_SYSTEM    ((uint32_t)0x00000000U) /*!< Source for output clock is system clock */
+#define DFSDM_CHANNEL_OUTPUT_CLOCK_AUDIO     DFSDM_CHCFGR1_CKOUTSRC  /*!< Source for output clock is audio clock */
 /**
   * @}
   */

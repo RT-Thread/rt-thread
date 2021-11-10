@@ -7,7 +7,7 @@
  * Date           Author       Notes
  */
 
-#include "Semaphore.h"
+#include "cxx_semaphore.h"
 
 using namespace rtthread;
 

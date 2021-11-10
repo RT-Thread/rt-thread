@@ -19,7 +19,7 @@
 #define SPI_BUS_NAME "spi0"
 #define SPI_DEV_NAME "S25FS256"
 
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint16_t cs_gpio_pin);
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint16_t cs_gpio_pin);
 
 #ifdef __cplusplus
 extern "C"

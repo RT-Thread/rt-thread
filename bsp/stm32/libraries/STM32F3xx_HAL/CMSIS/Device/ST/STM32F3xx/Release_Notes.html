@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for STM32F3xx CMSIS</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="_htmresc/mini-st.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<div class="card fluid">
+<div class="sectione dark">
+<center>
+<h1 id="release-notes-for-stm32f3xx-cmsis"><strong>Release Notes for STM32F3xx CMSIS</strong></h1>
+<p>Copyright © 2016 STMicroelectronics<br />
+</p>
+<a href="https://www.st.com" class="logo"><img src="./_htmresc/st_logo.png" alt="ST logo" /></a>
+</center>
+</div>
+</div>
+<h1 id="license"><strong>License</strong></h1>
+This software component is licensed by ST under BSD 3-Clause license, the “License”; You may not use this component except in compliance with the License. You may obtain a copy of the License at:
+<center>
+<a href="https://opensource.org/licenses/BSD-3-Clause">https://opensource.org/licenses/BSD-3-Clause</a>
+</center>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history"><strong>Update History</strong></h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2_3_6" aria-hidden="true"> <label for="collapse-section2_3_6" aria-hidden="true"><strong>V2.3.6 / 23-July-2021</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>General update
+<ul>
+<li>Added new atomic register access macros in stm32f3xx.h file.</li>
+<li>Add LSI maximum startup time datasheet value: LSI_STARTUP_TIME.</li>
+</ul></li>
+<li>STM32F334x8 updates
+<ul>
+<li>HRTIM: Add missing defines to reset all Slave Timer X</li>
+</ul></li>
+<li>STM32F373xC/ STM32F378xx updates
+<ul>
+<li>Start-up files update to call COMP_IRQHandler instead of COMP1_2_IRQHandler</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2_3_5" aria-hidden="true"> <label for="collapse-section2_3_5" aria-hidden="true"><strong>V2.3.5 / 10-November-2020</strong></label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<ul>
+<li>General update
+<ul>
+<li>system_stm32f3xx.c
+<ul>
+<li>Protect Vector table modification following SRAM or FLASH preprocessor directive by a generic preprocessor directive : USER_VECT_TAB_ADDRESS<br />
+</li>
+</ul></li>
+<li>Add License.md and Readme.md files required for GitHub publication</li>
+<li>Improve GCC startup files robustness.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2_3_4" aria-hidden="true"> <label for="collapse-section2_3_4" aria-hidden="true"><strong>V2.3.4 / 12-September-2019</strong></label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<ul>
+<li>General update
+<ul>
+<li>Use ‘UL’ unsigned long postfix for _Msk definitions and momory/peripheral base addresses for MISRA C 2012 Compliance</li>
+<li>SystemInit(): update to don’t reset RCC registers to its reset values.</li>
+</ul></li>
+<li>STM32F334x8 update
+<ul>
+<li>HRTIM updates:
+<ul>
+<li>Fix too many defines for HRTIM Delayed Protection Flag Clear.</li>
+<li>Fix wrong definition of HRTIM1_TIMx constants</li>
+<li>Align HRTIM bits definition with reference manual</li>
+</ul></li>
+</ul></li>
+<li>Update OB_TypeDef structure to be aligned with reference manuals.</li>
+<li>Rename macro definition IS_<strong>USB</strong>_ALL_INSTANCE to IS_<strong>PCD</strong>_ALL_INSTANCE.</li>
+<li>Align ADC_DIFSEL_DIFSEL_Pos definition with reference manual.</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2.3.3" aria-hidden="true"> <label for="collapse-section2.3.3" aria-hidden="true"><strong>V2.3.3 / 11-June-2018</strong></label>
+<div>
+<h2 id="main-changes-3">Main Changes</h2>
+<ul>
+<li>General update
+<ul>
+<li>Align ErrorStatus typedef to common error handling ( stm32f3xx.h )</li>
+</ul></li>
+<li>TIM updates
+<ul>
+<li>Add IS_TIM_SYNCHRO_INSTANCE macro for STM32F37xxx devices</li>
+<li>Add IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE macro definition</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2.3.2" aria-hidden="true"> <label for="collapse-section2.3.2" aria-hidden="true"><strong>V2.3.2 / 23-June-2017</strong></label>
+<div>
+<h2 id="main-changes-4">Main Changes</h2>
+<ul>
+<li>Remove support of Atollic TrueSTUDIO STM32 (TrueSTUDIO) toolchain.</li>
+<li>FLASH updates
+<ul>
+<li>Clean-up OB_WRP2_nWRP2 &amp;&amp; OB_WRP2_nWRP3 (Option Byte) definitions according to family diversity.</li>
+</ul></li>
+<li>RTC updates
+<ul>
+<li>Renamed RTC_CR_BCK to RTC_CR_BKP in RTC_CR register in order to be aligned with STM32F3xx Reference Manual.</li>
+</ul></li>
+<li>SYSCFG updates
+<ul>
+<li>Removed SYSCFG_CFGR3_DAC1_TRG3, SYSCFG_CFGR3_DAC1_TRG5, SYSCFG_CFGR3_TRIGGER definitions for STM32F328xx devices.</li>
+</ul></li>
+<li>SPI updates
+<ul>
+<li>Removed SPI_SR_CHSIDE, SPI_SR_UDR definitions for STM32F303x8, STM32F328xx, STM32F334x8 devices.</li>
+</ul></li>
+<li>EXTI updates
+<ul>
+<li>Add EXTI_EMR2_EM definition.</li>
+</ul></li>
+<li>COMP updates
+<ul>
+<li>Clean-up COMPx_CSR definitions according to family diversity.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2.3.1" aria-hidden="true"> <label for="collapse-section2.3.1" aria-hidden="true"><strong>V2.3.1 / 16-December-2016</strong></label>
+<div>
+<h2 id="main-changes-5">Main Changes</h2>
+<ul>
+<li>COMP updates
+<ul>
+<li>Corrected COMP inputs definition for STM32F3xxxx devices</li>
+</ul></li>
+<li>ADC updates
+<ul>
+<li>Corrected SDADC_CONF1R_COMMON1_1 bit definition for STM32F373xC and STM32F378xx devices</li>
+</ul></li>
+<li>TIM updates
+<ul>
+<li>Added macro IS_TIM_ADVANCED_INSTANCE() to identify advanced timer instances</li>
+<li>Remove TIM_CR2_OIS2N, TIM_CR2_OIS3, TIM_CR2_OIS3N and TIM_CR2_OIS4 definitions for STM32F373xC and STM32F378xx devices (alignement with STM32F3xx Reference Manual)</li>
+</ul></li>
+<li>RCC updates
+<ul>
+<li>Renamed RCC_CFGR register fields defines for STM32F378xx and STM32F373xC devices to be aligned with STM32F3xx Reference Manual : SDADCPRE ==&gt; SDPRE</li>
+</ul></li>
+<li>PWR updates
+<ul>
+<li>Renamed PWR_CR register fields defines for STM32F378xx and STM32F373xC devices to be aligned with STM32F3xx Reference Manual : SDADCxEN ==&gt; ENSDx</li>
+</ul></li>
+<li>USB updates
+<ul>
+<li>compliancy with MISRA C 2004 rules:
+<ul>
+<li>MISRA C 2004 rule 10.6 (‘U’ suffix applied to all constants of ‘unsigned’ type).</li>
+<li>MISRA C 2004 rule 12.7 (bitwise operations not performed on signed integer types).</li>
+</ul></li>
+</ul></li>
+<li>EXTI updates
+<ul>
+<li>Depends on devices, removed EXTI_IMR_MRxx, EXTI_EMR_MRxx, EXTI_RTSR_TRxx, EXTI_FTSR_TRxx, EXTI_SWIER_SWIERxx, EXTI_PR_PRxx, EXTI_IMR2_MRxx, EXTI__EMR2_MRxx, EXTI_RTSR2_TRxx, EXTI_FTSR2_TRxx, EXTI_SWIER2_SWIERxx, EXTI_PR2_PRxx definitions to be aligned with STM32F3xx</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2.3.0" aria-hidden="true"> <label for="collapse-section2.3.0" aria-hidden="true"><strong>V2.3.0 / 29-April-2016</strong></label>
+<div>
+<h2 id="main-changes-6">Main Changes</h2>
+<ul>
+<li>General updates
+<ul>
+<li>Updated CMSIS Device compliancy with MISRA C 2004 rules:
+<ul>
+<li>MISRA C 2004 rule 5.1 (bitwise operators ~ and &lt;&lt;).</li>
+<li>MISRA C 2004 rule 10.6 (‘U’ suffix applied to all constants of ‘unsigned’ type).</li>
+</ul></li>
+<li>Added FLASHSIZE_BASE and UID_BASE defines.</li>
+<li>Added HardFault_IRQn definition (Cortex-M4 Hard Fault Interrupt)</li>
+<li>Updated “Liberty” License with the new license “Ultimate Liberty”.</li>
+<li>Updated system_stm32f3xx.h/.c files:
+<ul>
+<li>Added AHBPrescTable definition as external.</li>
+<li>Added APBPrescTable definition as external.</li>
+</ul></li>
+</ul></li>
+<li>ADC updates
+<ul>
+<li>Updated/added ADCxy_COMMON definitions for alignment between all STM32 series.</li>
+<li>Aligned bit definitions and descriptions for ADC registers between all STM32 series.</li>
+</ul></li>
+<li>COMP updates
+<ul>
+<li>Updated/added COMPxy_COMMON definitions for alignment between all STM32 series.</li>
+<li>Created literal COMP_CSR_COMPxSW1 (equivalent of COMP1_CSR_COMP1SW1 and COMP2_CSR_COMP2SW1).</li>
+<li>Removed COMPxxx_CSR_COMPyyyNONINSEL bit definitions for devices not supporting COMP3 or COMP5 instances</li>
+<li>and added COMP2_CSR_COMP2NONINSEL bit definition for STM32F303xE, STM32F398xx devices.</li>
+<li>Added COMP6_CSR_COMP6NONINSEL bit definition for for STM32F303xE and STM32F398xx devices.</li>
+</ul></li>
+<li>DAC updates
+<ul>
+<li>Aligned DAC_CR_BOFFx bit definition in DAC_CR register to be declared on the 2 DAC channels.</li>
+</ul></li>
+<li>EXTI updates
+<ul>
+<li>Aligned EXTI bits definition with others STM32 series.</li>
+</ul></li>
+<li>FMC updates
+<ul>
+<li>Aligned FMC_BWTRx register bit definitions.</li>
+</ul></li>
+<li>I2C updates
+<ul>
+<li>Added IS_I2S_EXT_ALL_INSTANCE definition for I2S Full-Duplex feature.</li>
+<li>Added IS_I2C_WAKEUP_FROMSTOP_INSTANCE definition for I2C instances supporting Wakeup from Stop mode.</li>
+</ul></li>
+<li>RCC updates
+<ul>
+<li>Used RCC_CFGR_MCOSEL as reference in all STM32 series.</li>
+<li>Renamed RCC_CFGR_MCOSEL_PLL to RCC_CFGR_MCOSEL_PLL_DIV2 for alignment between all STM32 series.</li>
+<li>Renamed RCC_CFGR3_TIMxSW_HCLK to RCC_CFGR3_TIMxSW_PCLK2 in RCC_CFGR3 register.</li>
+<li>Renamed RCC_CFGR3_HRTIM1SW_HCLK to RCC_CFGR3_HRTIM1SW_PCLK2 in RCC_CFGR3 register.</li>
+<li>Removed RCC_CFGR_PLLNODIV bit definition from STM32F358xx, STM32F303xC and STM32F302xC devices.</li>
+<li>Removed RCC_CSR_VREGRSTF bit definition in RCC_CSR register for STM32F303xC and STM32F303xE devices.</li>
+<li>Removed USART2 and USART3 clock switch in RCC_CFGR3 register not supported by STM32F303x8, STM32F334x8</li>
+<li>and STM32F328xx devices and for STM32F301x8, STM32F302x8 and STM32F318xx devices.</li>
+<li>Removed RCC_CSR_V18PWRRSTF bit definition in RCC_CSR register not supported by STM32F318xx, STM32F328xx, STM32F358xx, STM32F378xx and STM32F398xx devices.</li>
+</ul></li>
+<li>RTC updates
+<ul>
+<li>Added missing bits definition for RTC_TAFCR register.</li>
+<li>Removed RTC_ISR_TAMP3F, RTC_TAFCR_TAMP3TRG, RTC_TAFCR_TAMP3E bit definitions in RTC_ISR and RTC_TAFCR registers for STM32F303x8, STM32F334x8, STM32F328xx, STM32F301x8, STM32F302x8 and STM32F318xx devices.</li>
+</ul></li>
+<li>TIM updates
+<ul>
+<li>Removed TIM_SMCR_OCCS bit definition not supported by STM32F373xC.h and STM32F378xC.</li>
+</ul></li>
+<li>WWDG updates
+<ul>
+<li>Aligned WWDG registers bits naming between all STM32 series.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2.2.0" aria-hidden="true"> <label for="collapse-section2.2.0" aria-hidden="true"><strong>V2.2.0 / 13-November-2015</strong></label>
+<div>
+<h2 id="main-changes-7">Main Changes</h2>
+<ul>
+<li>General updates
+<ul>
+<li>Aligned all peripheral registers structures to uint32_t.</li>
+<li>Added preprocessor compilation switch STM32F3 definition (stm32f3xx.h).</li>
+<li>Added missing STM32F302xD and STM32F303xD mcus in the description list (stm32f3xx.h).</li>
+<li>Removed define for CCM(core coupled memory) data RAM base address in Bit-Band region.</li>
+<li>Removed __IO or __I from constant table declaration (system_stm32f3xx.c).</li>
+<li>Corrected _estack value in project template files.</li>
+</ul></li>
+<li>RCC updates
+<ul>
+<li>Renamed RCC_CFGR3_USART1SW_PCLK to RCC_CFGR3_USART1SW_PCLKx according to devices.</li>
+<li>Added missing flag for RCC_CSR_VREGRSTF bit.</li>
+<li>Moved RCC_CFGR_MCO flag in correct devices.</li>
+<li>Fixed minor typod in the comments (RCC bit definition).</li>
+</ul></li>
+<li>RTC updates
+<ul>
+<li>Updated list of RTC backup registers according to devices.</li>
+</ul></li>
+<li>HRTIM updates
+<ul>
+<li>Corrected Bit definition for HRTIM_MCMP2R/HRTIM_MCMP3R/HRTIM_MCMP4R registers (STM32F334x8 device).</li>
+</ul></li>
+<li>GPIO updates
+<ul>
+<li>Removed duplicated definition of IS_GPIO_ALL_INSTANCE macro.</li>
+<li>Used IS_GPIO_AF_INSTANCE and IS_GPIO_LOCK_INSTANCE macro definitions.</li>
+<li>Cleaned GPIO bank. Updated GPIO MLOCK capability.</li>
+<li>Added only one define BSRR for BSRRH/BSRRL GPIO port bit set/reset register.</li>
+<li>Added macro to check AF capability of GPIO instance.</li>
+</ul></li>
+<li>I2C updates
+<ul>
+<li>Renamed I2C_CR1_DFN to I2C_CR1_DNF.</li>
+<li>Added define for OwnAdress 2 mask bit field values (I2C_OAR2_OA2MASK).</li>
+</ul></li>
+<li>UART updates
+<ul>
+<li>Added IS_UART_DMA_INSTANCE macro to sort UART instances supporting DMA communication.</li>
+</ul></li>
+<li>FLASH updates
+<ul>
+<li>Renamed FLASH_OBR_WDG_SW to FLASH_OBR_IWDG_SW.</li>
+<li>Added defines for DATA0 &amp; DATA1 available in OBR register.</li>
+</ul></li>
+<li>USB updates
+<ul>
+<li>Renamed two bitfields: USB_XXX_PMAOVRM to USB_XXX_PMAOVR and USB_CNTR_LP_MODE to USB_CNTR_LPMODE.</li>
+</ul></li>
+<li>TIM updates
+<ul>
+<li>Corrected Repetition Counter bits definition (TIM_RCR_REP).</li>
+</ul></li>
+<li>DAC updates
+<ul>
+<li>Corrected/added DAC channel output switch enable bits definition in DAC_CR register.</li>
+</ul></li>
+<li>FMC updates
+<ul>
+<li>Updated Bits definitions for FMC registers.</li>
+</ul></li>
+<li>EXTI updates
+<ul>
+<li>Updated Bit definitions for External Interrupt/Event Controller (EXTI).</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2.1.0" aria-hidden="true"> <label for="collapse-section2.1.0" aria-hidden="true"><strong>V2.1.0 / 12-Sept-2014</strong></label>
+<div>
+<h2 id="main-changes-8">Main Changes</h2>
+<ul>
+<li>Add the support of the <strong>STM32F302xE</strong> and the <strong>STM32F398xx</strong> devices.</li>
+<li>STM32F303xE update
+<ul>
+<li>Renamed SYSCFG_CFGR3 in SYSCFG_CFGR4</li>
+</ul></li>
+<li>STM32F302xC update
+<ul>
+<li>Removed DHR12R2, DHR12L2, DHR8R2 and DOR2 from DAC registers definition</li>
+<li>Removed all DAC channel 2 related constant defintions</li>
+<li>Removed TIM8 related constant definitions</li>
+<li>Removed DAC_CHANNEL_2 from IS_DAC_CHANNEL_INSTANCE() macro</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2.1.0.RC2" aria-hidden="true"> <label for="collapse-section2.1.0.RC2" aria-hidden="true"><strong>V2.1.0.RC2 / 25-Aug-2014</strong></label>
+<div>
+<h2 id="main-changes-9">Main Changes</h2>
+<ul>
+<li>Add CMSIS files for STM32F303xE products</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2.0.1" aria-hidden="true"> <label for="collapse-section2.0.1" aria-hidden="true"><strong>V2.0.1 / 18-June-2014</strong></label>
+<div>
+<h2 id="main-changes-10">Main Changes</h2>
+<ul>
+<li>General
+<ul>
+<li>Add new macro IS_COMP_DAC1SWITCH_INSTANCE to check COMP instance with switch of DAC1 channel1 output to non inverting input</li>
+</ul></li>
+<li>STM32F301x8 update
+<ul>
+<li>Add new define SYSCFG_CFGR2_LOCKUP_LOCK</li>
+</ul></li>
+<li>STM32F302x8 update
+<ul>
+<li>Add USB interrupt remapping
+<ul>
+<li>Add new defines USB_HP_IRQn, USB_LP_IRQn and USBWakeUp_RMP_IRQn for USB interrupt remapping</li>
+<li>Add new define SYSCFG_CFGR1_USB_IT_RMP</li>
+</ul></li>
+<li>Add new define SYSCFG_CFGR2_LOCKUP_LOCK</li>
+</ul></li>
+<li>STM32F303xC update
+<ul>
+<li>Add new define SYSCFG_CFGR2_LOCKUP_LOCK</li>
+<li>Remove SYSCFG CFGR3 register description</li>
+</ul></li>
+<li>STM32F373xC update
+<ul>
+<li>Add new define COMP1_2_3_IRQn alias definition on COMP_IRQn</li>
+</ul></li>
+<li>STM32F318xx update
+<ul>
+<li>Rename COMP4_5_6_IRQn to COMP4_6_IRQn</li>
+</ul></li>
+<li>STM32F328xx update
+<ul>
+<li>Remove HRTIM1 (cleanup stm32f328xx.h and startup files)</li>
+</ul></li>
+<li>STM32F358xx update
+<ul>
+<li>Remove USB
+<ul>
+<li>Rename USB_HP_CAN_TX_IRQn and USB_LP_CAN_RX0_IRQn to CAN_TX_IRQn and CAN_RX0_IRQn</li>
+<li>Remove USBWakeUp_IRQn, USB_HP_IRQn, USB_LP_IRQn and USBWakeUp_RMP_IRQn</li>
+<li>Remove define SYSCFG_CFGR1_USB_IT_RMP</li>
+</ul></li>
+<li>Remove SYSCFG CFGR3 register description</li>
+</ul></li>
+<li>STM32F378xx update
+<ul>
+<li>Remove USBWakeUp_IRQn, USB_HP_IRQn and USB_LP_IRQn</li>
+<li>Add new define COMP1_2_3_IRQn alias definition on COMP_IRQn</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2.0.0" aria-hidden="true"> <label for="collapse-section2.0.0" aria-hidden="true"><strong>V2.0.0 / 28-May-2014</strong></label>
+<div>
+<h2 id="main-changes-11">Main Changes</h2>
+<ul>
+<li>Major update based on STM32Cube specification: new CMSIS device files release dedicated to <strong>STM32F301x6/x8, STM32F302x6/x8, STM32F302xB/xC, STM32F303x6/x8, STM32F373xB/xC, STM32F334x4/x6/x8, STM32F318xx, STM32F328xx, STM32F358xx and STM32F378xx devices .</strong></li>
+<li><strong>This version has to be used for STM32CubeF3 based development although files can be used independently too.</strong></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1.1.1" aria-hidden="true"> <label for="collapse-section1.1.1" aria-hidden="true"><strong>V1.1.1 / 28-March-2014</strong></label>
+<div>
+<h2 id="main-changes-12">Main Changes</h2>
+<ul>
+<li>Add new startup files for the STM32F302x8 and STM32F334x8 devices for TrueSTUDIO toolchain.</li>
+<li>Update startup files for EWARM toolchain to cope with compiler enhancement of the V7.10 version.</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1.1.0" aria-hidden="true"> <label for="collapse-section1.1.0" aria-hidden="true"><strong>V1.1.0 / 27-February-2014</strong></label>
+<div>
+<h2 id="main-changes-13">Main Changes</h2>
+<ul>
+<li>Add the support of the <strong>STM32F302x8</strong> and the <strong>STM32F334x8</strong> devices.</li>
+<li>Update devices names definition to be in line with the new new STM32F30x family devices names.
+<ul>
+<li><strong>STM32F30X</strong> replaced by <strong>STM32F303xC.</strong></li>
+</ul></li>
+<li>stm32f30x.h
+<ul>
+<li>Upddate to support the new STM32F30x family devices names.
+<ul>
+<li><strong>STM32F30X</strong> replaced by <strong>STM32F303xC</strong></li>
+</ul></li>
+<li>Update IRQn enum to support the STM32F302x8 and STM32F334x8 devices.</li>
+<li>Update HSE_STARTUP_TIMEOUT value.</li>
+<li>Update HSI_STARTUP_TIMEOUT value.</li>
+<li>Add HRTIM peripheral registers and bits definitons.</li>
+<li>Add CFGR3 registers in the SYSCFG_TypeDef structure.</li>
+<li>Update peripheral base addresses to support the added peripherals: DAC2, I2C3, HRTIM.</li>
+<li>Update ADC_SQR4 register bit definition.</li>
+<li>Remove ADC34_CCR_TSEN and ADC34_CCR_VBATEN bits definitions.</li>
+</ul></li>
+<li>Add new startup files for the STM32F302x8 and STM32F334x8 devices for the supported compilers
+<ul>
+<li>Replace startup_stm32f30x.s by startup_stm32f303xc.s file.</li>
+<li>startup_stm32f30x.s file is maintained for legacy purpose.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1.0.0" aria-hidden="true"> <label for="collapse-section1.0.0" aria-hidden="true"><strong>V1.0.0 / 04-September-2012</strong></label>
+<div>
+<h2 id="main-changes-14">Main Changes</h2>
+<ul>
+<li>First official release for <strong>STM32F30x devices</strong> (Standard Library)</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+For complete documentation on STM32 Microcontrollers </mark> , visit: <span style="font-color: blue;"><a href="http://www.st.com/stm32">www.st.com/stm32</a></span> <em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em>
+</footer>
+</body>
+</html>

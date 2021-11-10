@@ -85,7 +85,8 @@ static void Ft_Os_Uart_Callback(void *Args, u32 Event, u32 EventData)
 
     if (FUART_EVENT_RECV_DATA == Event || FUART_EVENT_RECV_TOUT == Event)
     {
-        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+        if (serial->serial_rx)
+            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
     else if (FUART_EVENT_RECV_ERROR == Event)
     {

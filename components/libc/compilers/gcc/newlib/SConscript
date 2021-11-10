@@ -1,0 +1,20 @@
+from building import *
+Import('rtconfig')
+
+src = []
+cwd = GetCurrentDir()
+group = []
+LIBS = ['m'] # link libm
+CPPDEFINES = ['RT_USING_NEWLIB']
+CPPPATH = [cwd]
+
+if rtconfig.PLATFORM == 'gcc':
+    if GetDepend('RT_USING_LIBC'):
+        LIBS += ['c'] # link libc
+        src += Glob('*.c')
+    else:
+        src += ['syscalls.c']
+
+    group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
+
+Return('group')

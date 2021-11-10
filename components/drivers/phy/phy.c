@@ -8,7 +8,7 @@
  * Date           Author        Notes
  * 2020-09-27     wangqiang     first version
  */
-
+#include <stddef.h>
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -60,7 +60,7 @@ rt_err_t rt_hw_phy_register(struct rt_phy_device *phy, const char *name)
     device->tx_complete = RT_NULL;
 
 #ifdef RT_USING_DEVICE_OPS
-    device->ops = phy_ops;
+    device->ops = &phy_ops;
 #else
     device->init = NULL;
     device->open = NULL;

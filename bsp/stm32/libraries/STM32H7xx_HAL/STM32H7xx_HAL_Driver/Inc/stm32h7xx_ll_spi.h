@@ -128,7 +128,7 @@ typedef struct
 #define LL_SPI_SR_EOT                              (SPI_SR_EOT)
 #define LL_SPI_SR_TXTF                             (SPI_SR_TXTF)
 #define LL_SPI_SR_UDR                              (SPI_SR_UDR)
-#define LL_SPI_SR_CRCERR                           (SPI_SR_CRCERR)
+#define LL_SPI_SR_CRCE                             (SPI_SR_CRCE)
 #define LL_SPI_SR_MODF                             (SPI_SR_MODF)
 #define LL_SPI_SR_OVR                              (SPI_SR_OVR)
 #define LL_SPI_SR_TIFRE                            (SPI_SR_TIFRE)
@@ -964,7 +964,7 @@ __STATIC_INLINE void LL_SPI_StartMasterTransfer(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if there is an unfinished master transfer
-  * @rmtoll CR1          CSTART        LL_SPI_IsMasterTransferActive
+  * @rmtoll CR1          CSTART        LL_SPI_IsActiveMasterTransfer
   * @param  SPIx SPI Instance
   * @retval State of bit (1 or 0)
   */
@@ -1285,8 +1285,8 @@ __STATIC_INLINE void LL_SPI_SetTransferDirection(SPI_TypeDef *SPIx, uint32_t Tra
   */
 __STATIC_INLINE uint32_t LL_SPI_GetTransferDirection(SPI_TypeDef *SPIx)
 {
-  register uint32_t Hddir = READ_BIT(SPIx->CR1, SPI_CR1_HDDIR);
-  register uint32_t Comm = READ_BIT(SPIx->CFG2, SPI_CFG2_COMM);
+  uint32_t Hddir = READ_BIT(SPIx->CR1, SPI_CR1_HDDIR);
+  uint32_t Comm = READ_BIT(SPIx->CFG2, SPI_CFG2_COMM);
   return (Hddir | Comm);
 }
 
@@ -1685,7 +1685,7 @@ __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_DXP(SPI_TypeDef *SPIx)
 }
 
 /**
-  * @brief  Check that end of transfer event occured
+  * @brief  Check that end of transfer event occurred
   * @rmtoll SR           EOT           LL_SPI_IsActiveFlag_EOT
   * @param  SPIx SPI Instance
   * @retval State of bit (1 or 0).
@@ -1784,7 +1784,7 @@ __STATIC_INLINE uint32_t LL_SPI_IsActiveFlag_SUSP(SPI_TypeDef *SPIx)
 }
 
 /**
-  * @brief  Get TXC flag
+  * @brief  Check if last TxFIFO or CRC frame transmission is completed
   * @rmtoll SR           TXC           LL_SPI_IsActiveFlag_TXC
   * @param  SPIx SPI Instance
   * @retval State of bit (1 or 0).
@@ -2402,7 +2402,7 @@ __STATIC_INLINE uint8_t LL_SPI_ReceiveData8(SPI_TypeDef *SPIx)
   */
 __STATIC_INLINE uint16_t LL_SPI_ReceiveData16(SPI_TypeDef *SPIx)
 {
-  return (*((__IO uint16_t *)&SPIx->RXDR));
+  return (uint16_t)(READ_REG(SPIx->RXDR));
 }
 
 /**
@@ -2437,7 +2437,12 @@ __STATIC_INLINE void LL_SPI_TransmitData8(SPI_TypeDef *SPIx, uint8_t TxData)
   */
 __STATIC_INLINE void LL_SPI_TransmitData16(SPI_TypeDef *SPIx, uint16_t TxData)
 {
-  *((__IO uint16_t *)&SPIx->TXDR) = TxData;
+#if defined (__GNUC__)
+  __IO uint16_t *spitxdr = ((__IO uint16_t *)&SPIx->TXDR);
+  *spitxdr = TxData;
+#else
+  SPIx->TXDR = TxData;
+#endif
 }
 
 /**
@@ -2537,7 +2542,9 @@ void        LL_SPI_StructInit(LL_SPI_InitTypeDef *SPI_InitStruct);
   * @}
   */
 #endif /* USE_FULL_LL_DRIVER */
-
+/**
+  * @}
+  */
 
 /** @defgroup I2S_LL I2S
   * @{
@@ -2811,7 +2818,7 @@ __STATIC_INLINE uint32_t LL_I2S_GetDataFormat(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Set I2S Channel Length Type
-  * @note   This feature is usefull with SLAVE only
+  * @note   This feature is useful with SLAVE only
   * @rmtoll I2SCFGR      FIXCH        LL_I2S_SetChannelLengthType
   * @param  SPIx SPI Handle
   * @param  ChannelLengthType This parameter can be one of the following values:
@@ -2826,7 +2833,7 @@ __STATIC_INLINE void LL_I2S_SetChannelLengthType(SPI_TypeDef *SPIx, uint32_t Cha
 
 /**
   * @brief  Get I2S Channel Length Type
-  * @note   This feature is usefull with SLAVE only
+  * @note   This feature is useful with SLAVE only
   * @rmtoll I2SCFGR      FIXCH         LL_I2S_GetChannelLengthType
   * @param  SPIx SPI Handle
   * @retval Return value can be one of the following values:
@@ -3240,7 +3247,7 @@ __STATIC_INLINE void LL_I2S_EnableMasterClock(SPI_TypeDef *SPIx)
 }
 
 /**
-  * @brief  Disable the Master Clock Ouput (Pin MCK)
+  * @brief  Disable the Master Clock Output (Pin MCK)
   * @rmtoll I2SCFGR      MCKOE         LL_I2S_DisableMasterClock
   * @param  SPIx SPI Handle
   * @retval None
@@ -3260,6 +3267,10 @@ __STATIC_INLINE uint32_t LL_I2S_IsEnabledMasterClock(SPI_TypeDef *SPIx)
 {
   return ((READ_BIT(SPIx->I2SCFGR, SPI_I2SCFGR_MCKOE) == (SPI_I2SCFGR_MCKOE)) ? 1UL : 0UL);
 }
+
+/**
+  * @}
+  */
 
 
 /** @defgroup I2S_LL_EF_FLAG_Management FLAG_Management
@@ -3683,14 +3694,7 @@ void        LL_I2S_ConfigPrescaler(SPI_TypeDef *SPIx, uint32_t PrescalerLinear, 
   * @}
   */
 
-/**
-  * @}
-  */
 #endif /* defined(SPI1) || defined(SPI2) || defined(SPI3) || defined(SPI4) || defined(SPI5) || defined(SPI6) */
-
-/**
-  * @}
-  */
 
 /**
   * @}

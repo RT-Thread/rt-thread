@@ -158,7 +158,7 @@ typedef struct
   * @}
   */
 
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 /** @defgroup RTCEx_Smooth_Calib_Low_Power_Definitions RTCEx Smooth Calib Low Power Definitions
   * @{
   */
@@ -172,7 +172,7 @@ typedef struct
 /**
   * @}
   */
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
 /** @defgroup RTCEx_Calib_Output_selection_Definitions RTCEx Calib Output Selection Definitions
   * @{
@@ -200,7 +200,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Pins_Definitions RTCEx Tamper Pins Definitions
   * @{
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #if defined(RTC_TAMPER1_SUPPORT)
 #define RTC_TAMPER_1                        TAMP_CR1_TAMP1E
 #endif /* RTC_TAMPER1_SUPPORT */
@@ -208,8 +208,12 @@ typedef struct
 #if defined(RTC_TAMPER3_SUPPORT)
 #define RTC_TAMPER_3                        TAMP_CR1_TAMP3E
 #endif /* RTC_TAMPER3_SUPPORT */
+#if defined(RTC_TAMPER3_SUPPORT)
+#define RTC_TAMPER_ALL                      (TAMP_CR1_TAMP1E | TAMP_CR1_TAMP2E | TAMP_CR1_TAMP3E)
+#else
 #define RTC_TAMPER_ALL                      (TAMP_CR1_TAMP1E | TAMP_CR1_TAMP2E)
-#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif
+#else /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 #if defined(RTC_TAMPER1_SUPPORT)
 #define RTC_TAMPER_1                        RTC_TAMPCR_TAMP1E
 #endif /* RTC_TAMPER1_SUPPORT */
@@ -217,7 +221,7 @@ typedef struct
 #if defined(RTC_TAMPER3_SUPPORT)
 #define RTC_TAMPER_3                        RTC_TAMPCR_TAMP3E
 #endif /* RTC_TAMPER3_SUPPORT */
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 /**
   * @}
   */
@@ -225,7 +229,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Trigger_Definitions RTCEx Tamper Triggers Definitions
   * @{
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define RTC_TAMPERTRIGGER_RISINGEDGE        0x00u  /*!< Warning : Filter must be RTC_TAMPERFILTER_DISABLE */
 #define RTC_TAMPERTRIGGER_FALLINGEDGE       0x01u  /*!< Warning : Filter must be RTC_TAMPERFILTER_DISABLE */
 #define RTC_TAMPERTRIGGER_LOWLEVEL          0x02u  /*!< Warning : Filter must not be RTC_TAMPERFILTER_DISABLE */
@@ -243,7 +247,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_MaskFlag_Definitions RTCEx Tamper Mask Flag Definitions
   * @{
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define RTC_TAMPERMASK_FLAG_DISABLE         0x00u
 #define RTC_TAMPERMASK_FLAG_ENABLE          0x01u
 #else
@@ -257,7 +261,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_EraseBackUp_Definitions RTCEx Tamper EraseBackUp Definitions
 * @{
 */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define RTC_TAMPER_ERASE_BACKUP_ENABLE      0x00u
 #define RTC_TAMPER_ERASE_BACKUP_DISABLE     0x01u
 #else
@@ -271,7 +275,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Filter_Definitions RTCEx Tamper Filter Definitions
   * @{
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define RTC_TAMPERFILTER_DISABLE           0x00000000U             /*!< Tamper filter is disabled */
 
 #define RTC_TAMPERFILTER_2SAMPLE           TAMP_FLTCR_TAMPFLT_0    /*!< Tamper is activated after 2
@@ -280,7 +284,7 @@ typedef struct
                                                                          consecutive samples at the active level */
 #define RTC_TAMPERFILTER_8SAMPLE           TAMP_FLTCR_TAMPFLT      /*!< Tamper is activated after 8
                                                                          consecutive samples at the active level */
-#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#else /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 #define RTC_TAMPERFILTER_DISABLE           0x00000000u             /*!< Tamper filter is disabled */
 
 #define RTC_TAMPERFILTER_2SAMPLE           RTC_TAMPCR_TAMPFLT_0    /*!< Tamper is activated after 2
@@ -289,7 +293,7 @@ typedef struct
                                                                          consecutive samples at the active level */
 #define RTC_TAMPERFILTER_8SAMPLE           RTC_TAMPCR_TAMPFLT      /*!< Tamper is activated after 8
                                                                          consecutive samples at the active level. */
-#endif /*#if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /*#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
 /**
   * @}
@@ -298,7 +302,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Sampling_Frequencies_Definitions RTCEx Tamper Sampling Frequencies Definitions
   * @{
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define RTC_TAMPERSAMPLINGFREQ_RTCCLK_DIV32768  0x00000000U                                     /*!< Each of the tamper inputs are sampled
                                                                                                       with a frequency =  RTCCLK / 32768 */
 #define RTC_TAMPERSAMPLINGFREQ_RTCCLK_DIV16384  TAMP_FLTCR_TAMPFREQ_0                           /*!< Each of the tamper inputs are sampled
@@ -317,7 +321,7 @@ typedef struct
                                                                                                       with a frequency =  RTCCLK / 256   */
 #define RTC_TAMPERSAMPLINGFREQ_RTCCLK_MASK      TAMP_FLTCR_TAMPFREQ                             /*!< Masking all bits except those of
                                                                                                       field TAMPFREQ[2:0]*/
-#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#else /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
 #define RTC_TAMPERSAMPLINGFREQ_RTCCLK_DIV32768  0x00000000u                                     /*!< Each of the tamper inputs are sampled
                                                                                                       with a frequency =  RTCCLK / 32768 */
@@ -337,7 +341,7 @@ typedef struct
                                                                                                       with a frequency =  RTCCLK / 256   */
 #define RTC_TAMPERSAMPLINGFREQ_RTCCLK_MASK      RTC_TAMPCR_TAMPFREQ                             /*!< Masking all bits except those of
                                                                                                       field TAMPFREQ[2:0]*/
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 /**
   * @}
   */
@@ -345,7 +349,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Pin_Precharge_Duration_Definitions RTCEx Tamper Pin Precharge Duration Definitions
   * @{
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define RTC_TAMPERPRECHARGEDURATION_1RTCCLK     0x00000000U                                       /*!< Tamper pins are pre-charged before
                                                                                                         sampling during 1 RTCCLK cycle  */
 #define RTC_TAMPERPRECHARGEDURATION_2RTCCLK     TAMP_FLTCR_TAMPPRCH_0                             /*!< Tamper pins are pre-charged before
@@ -354,7 +358,7 @@ typedef struct
                                                                                                         sampling during 4 RTCCLK cycles */
 #define RTC_TAMPERPRECHARGEDURATION_8RTCCLK     TAMP_FLTCR_TAMPPRCH     /*!< Tamper pins are pre-charged before
                                                                          sampling during 8 RTCCLK cycles */
-#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#else /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
 #define RTC_TAMPERPRECHARGEDURATION_1RTCCLK     0x00000000u             /*!< Tamper pins are pre-charged before
                                                                               sampling during 1 RTCCLK cycle  */
@@ -366,7 +370,7 @@ typedef struct
                                                                               sampling during 8 RTCCLK cycles */
 #define RTC_TAMPERPRECHARGEDURATION_MASK        RTC_TAMPCR_TAMPPRCH     /*!< Masking all bits except those of
                                                                               field TAMPPRCH[1:0] */
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 /**
   * @}
   */
@@ -374,7 +378,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Pull_UP_Definitions RTCEx Tamper Pull Up Definitions
   * @{
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define RTC_TAMPER_PULLUP_ENABLE           0x00000000u           /*!< Tamper pins are pre-charged before sampling */
 #define RTC_TAMPER_PULLUP_DISABLE          TAMP_FLTCR_TAMPPUDIS  /*!< Tamper pins pre-charge is disabled          */
 #else
@@ -389,7 +393,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_TimeStampOnTamperDetection_Definitions RTCEx Tamper TimeStamp On Tamper Detection Definitions
   * @{
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define RTC_TIMESTAMPONTAMPERDETECTION_DISABLE  0x00000000u    /*!< TimeStamp on Tamper Detection event is not saved */
 #define RTC_TIMESTAMPONTAMPERDETECTION_ENABLE   RTC_CR_TAMPTS  /*!< TimeStamp on Tamper Detection event saved        */
 #else
@@ -403,18 +407,23 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Interrupt_Definitions RTC Tamper Interrupts Definitions
   * @{
   */
+
 #if defined(STM32L412xx) || defined(STM32L422xx)
-#define RTC_IT_TAMP                         (TAMP_IER_TAMP1IE | TAMP_IER_TAMP2IE)  /*!< Enable all Tamper Interrupt */
 #define RTC_IT_TAMP1                        TAMP_IER_TAMP1IE   /*!< Tamper 1 Interrupt */
 #define RTC_IT_TAMP2                        TAMP_IER_TAMP2IE   /*!< Tamper 2 Interrupt */
-#define RTC_IT_TAMPALL                      RTC_IT_TAMP
-#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#define RTC_IT_TAMP                         (TAMP_IER_TAMP1IE | TAMP_IER_TAMP2IE)  /*!< Enable all Tamper Interrupt */
+#elif defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+#define RTC_IT_TAMP1                        TAMP_IER_TAMP1IE   /*!< Tamper 1 Interrupt */
+#define RTC_IT_TAMP2                        TAMP_IER_TAMP2IE   /*!< Tamper 2 Interrupt */
+#define RTC_IT_TAMP3                        TAMP_IER_TAMP3IE   /*!< Tamper 3 Interrupt */
+#define RTC_IT_TAMP                         (TAMP_IER_TAMP1IE | TAMP_IER_TAMP2IE | TAMP_IER_TAMP3IE)  /*!< Enable all Tamper Interrupt */
+#else
 #define RTC_IT_TAMP                         RTC_TAMPCR_TAMPIE  /*!< Enable all Tamper Interrupt  */
 #define RTC_IT_TAMP1                        RTC_TAMPCR_TAMP1IE /*!< Enable Tamper 1 Interrupt     */
 #define RTC_IT_TAMP2                        RTC_TAMPCR_TAMP2IE /*!< Enable Tamper 2 Interrupt     */
 #define RTC_IT_TAMP3                        RTC_TAMPCR_TAMP3IE /*!< Enable Tamper 3 Interrupt     */
+#endif
 #define RTC_IT_TAMPALL                      RTC_IT_TAMP
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
 /**
   * @}
   */
@@ -426,11 +435,16 @@ typedef struct
 #define RTC_FLAG_TAMP1F                     TAMP_SR_TAMP1F
 #define RTC_FLAG_TAMP2F                     TAMP_SR_TAMP2F
 #define RTC_FLAG_TAMPALL                   (RTC_FLAG_TAMP1F | RTC_FLAG_TAMP2F)
-#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#elif defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+#define RTC_FLAG_TAMP1F                     TAMP_SR_TAMP1F
+#define RTC_FLAG_TAMP2F                     TAMP_SR_TAMP2F
+#define RTC_FLAG_TAMP3F                     TAMP_SR_TAMP3F
+#define RTC_FLAG_TAMPALL                   (RTC_FLAG_TAMP1F | RTC_FLAG_TAMP2F | RTC_FLAG_TAMP3F)
+#else
 #define RTC_FLAG_TAMP1F                     RTC_ISR_TAMP1F
 #define RTC_FLAG_TAMP2F                     RTC_ISR_TAMP2F
 #define RTC_FLAG_TAMP3F                     RTC_ISR_TAMP3F
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif
 /**
   * @}
   */
@@ -500,6 +514,12 @@ typedef struct
 #if defined(STM32L412xx) || defined(STM32L422xx)
 #define RTC_TAMPER1_INTERRUPT              TAMP_IER_TAMP1IE
 #define RTC_TAMPER2_INTERRUPT              TAMP_IER_TAMP2IE
+#define RTC_ALL_TAMPER_INTERRUPT           (TAMP_IER_TAMP1IE | TAMP_IER_TAMP2IE)
+#elif defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+#define RTC_TAMPER1_INTERRUPT              TAMP_IER_TAMP1IE
+#define RTC_TAMPER2_INTERRUPT              TAMP_IER_TAMP2IE
+#define RTC_TAMPER3_INTERRUPT              TAMP_IER_TAMP3IE
+#define RTC_ALL_TAMPER_INTERRUPT           (TAMP_IER_TAMP1IE | TAMP_IER_TAMP2IE | TAMP_IER_TAMP3IE)
 #else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
 #if defined(RTC_TAMPER1_SUPPORT)
 #define RTC_TAMPER1_INTERRUPT              RTC_TAMPCR_TAMP1IE
@@ -512,9 +532,117 @@ typedef struct
 #endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
 
 
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+/** @defgroup RTCEx_Binary_Mode RTC Binary Mode (32-bit free-running counter configuration).
+  *           Warning : It Should not be confused with the Binary format @ref RTC_Input_parameter_format_definitions.
+  * @{
+  */
+#define RTC_BINARY_NONE                     0x00000000u      /*!< Free running BCD calendar mode (Binary mode disabled). */
+#define RTC_BINARY_ONLY                     RTC_ICSR_BIN_0   /*!< Free running Binary mode (BCD mode disabled) */
+#define RTC_BINARY_MIX                      RTC_ICSR_BIN_1   /*!< Free running BCD calendar and Binary modes */
 /**
   * @}
   */
+
+/** @defgroup RTCEx_Binary_mix_BCDU If Binary mode is RTC_BINARY_MIX, the BCD calendar second is incremented using the SSR Least Significant Bits.
+  * @{
+  */
+#define RTC_BINARY_MIX_BCDU_0  0x00000000u                   /*!<  The 1s BCD calendar increment is generated each time SS[7:0] = 0 */
+#define RTC_BINARY_MIX_BCDU_1  (0x1UL << RTC_ICSR_BCDU_Pos)  /*!<  The 1s BCD calendar increment is generated each time SS[8:0] = 0 */
+#define RTC_BINARY_MIX_BCDU_2  (0x2UL << RTC_ICSR_BCDU_Pos)  /*!<  The 1s BCD calendar increment is generated each time SS[9:0] = 0 */
+#define RTC_BINARY_MIX_BCDU_3  (0x3UL << RTC_ICSR_BCDU_Pos)  /*!<  The 1s BCD calendar increment is generated each time SS[10:0] = 0 */
+#define RTC_BINARY_MIX_BCDU_4  (0x4UL << RTC_ICSR_BCDU_Pos)  /*!<  The 1s BCD calendar increment is generated each time SS[11:0] = 0 */
+#define RTC_BINARY_MIX_BCDU_5  (0x5UL << RTC_ICSR_BCDU_Pos)  /*!<  The 1s BCD calendar increment is generated each time SS[12:0] = 0 */
+#define RTC_BINARY_MIX_BCDU_6  (0x6UL << RTC_ICSR_BCDU_Pos)  /*!<  The 1s BCD calendar increment is generated each time SS[13:0] = 0 */
+#define RTC_BINARY_MIX_BCDU_7  (0x7UL << RTC_ICSR_BCDU_Pos)  /*!<  The 1s BCD calendar increment is generated each time SS[14:0] = 0 */
+/**
+  * @}
+  */
+
+/** @defgroup RTCEx_Alarm_Sub_Seconds_binary_Masks_Definitions RTC Alarm Sub Seconds with binary mode Masks Definitions
+  * @{
+  */
+#define RTC_ALARMSUBSECONDBINMASK_ALL           0x00000000u                                                             /*!< All Alarm SS fields are masked.
+                                                                                                                          There is no comparison on sub seconds for Alarm */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_1        (1UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:1] are don't care in Alarm
+                                                                                                                          comparison. Only SS[0] is compared.    */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_2        (2UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:2] are don't care in Alarm
+                                                                                                                          comparison. Only SS[1:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_3        (3UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:3] are don't care in Alarm
+                                                                                                                          comparison. Only SS[2:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_4        (4UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:4] are don't care in Alarm
+                                                                                                                          comparison. Only SS[3:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_5        (5UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:5] are don't care in Alarm
+                                                                                                                          comparison. Only SS[4:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_6        (6UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:6] are don't care in Alarm
+                                                                                                                          comparison. Only SS[5:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_7        (7UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:7] are don't care in Alarm
+                                                                                                                          comparison. Only SS[6:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_8        (8UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:8] are don't care in Alarm
+                                                                                                                          comparison. Only SS[7:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_9        (9UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:9] are don't care in Alarm
+                                                                                                                          comparison. Only SS[8:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_10      (10UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:10] are don't care in Alarm
+                                                                                                                          comparison. Only SS[9:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_11      (11UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:11] are don't care in Alarm
+                                                                                                                          comparison. Only SS[10:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_12      (12UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:12] are don't care in Alarm
+                                                                                                                          comparison.Only SS[11:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_13      (13UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:13] are don't care in Alarm
+                                                                                                                          comparison. Only SS[12:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_14      (14UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:14] are don't care in Alarm
+                                                                                                                          comparison. Only SS[13:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_15      (15UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:15] are don't care in Alarm
+                                                                                                                          comparison. Only SS[14:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_16      (16UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:16] are don't care in Alarm
+                                                                                                                          comparison. Only SS[15:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_17      (17UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:17] are don't care in Alarm
+                                                                                                                          comparison. Only SS[16:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_18      (18UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:18] are don't care in Alarm
+                                                                                                                          comparison. Only SS[17:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_19      (19UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:19] are don't care in Alarm
+                                                                                                                          comparison. Only SS[18:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_20      (20UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:20] are don't care in Alarm
+                                                                                                                          comparison. Only SS[19:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_21      (21UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:21] are don't care in Alarm
+                                                                                                                          comparison. Only SS[20:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_22      (22UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:22] are don't care in Alarm
+                                                                                                                          comparison. Only SS[21:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_23      (23UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:23] are don't care in Alarm
+                                                                                                                          comparison. Only SS[22:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_24      (24UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:24] are don't care in Alarm
+                                                                                                                          comparison. Only SS[23:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_25      (25UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:25] are don't care in Alarm
+                                                                                                                          comparison. Only SS[24:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_26      (26UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:26] are don't care in Alarm
+                                                                                                                          comparison. Only SS[25:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_27      (27UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:27] are don't care in Alarm
+                                                                                                                          comparison. Only SS[26:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_28      (28UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:28] are don't care in Alarm
+                                                                                                                          comparison. Only SS[27:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_29      (29UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:29] are don't care in Alarm
+                                                                                                                          comparison. Only SS[28:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31_30      (30UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:30] are don't care in Alarm
+                                                                                                                          comparison. Only SS[29:0] are compared */
+#define RTC_ALARMSUBSECONDBINMASK_SS31         (31UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31] is don't care in Alarm
+                                                                                                                          comparison. Only SS[30:0] are compared  */
+#define RTC_ALARMSUBSECONDBINMASK_NONE         (32UL << RTC_ALRMASSR_MASKSS_Pos)                                        /*!< SS[31:0] are compared and must match to activate alarm. */
+/**
+  * @}
+  */
+
+/** @defgroup RTCEx_Alarm_Sub_Seconds_binary_Clear_Definitions RTC Alarm Sub Seconds with binary mode auto clear Definitions
+  * @{
+  */
+#define RTC_ALARMSUBSECONDBIN_AUTOCLR_NO    0UL                  /*!<  The synchronous Binary counter (SS[31:0] in RTC_SSR) is free-running. */
+#define RTC_ALARMSUBSECONDBIN_AUTOCLR_YES   RTC_ALRMASSR_SSCLR   /*!<  The synchronous Binary counter (SS[31:0] in RTC_SSR) is running from 0xFFFF FFFF to
+                                                                          RTC_ALRMABINR -> SS[31:0] value and is automatically reloaded with 0xFFFF FFFF
+                                                                          whenreaching RTC_ALRMABINR -> SS[31:0]. */
+/**
+  * @}
+  */
+#endif /* #if defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
+
 
 /**
   * @}
@@ -525,7 +653,7 @@ typedef struct
   * @{
   */
 
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 /** @brief  Clear the specified RTC pending flag.
   * @param  __HANDLE__ specifies the RTC Handle.
   * @param  __FLAG__ specifies the flag to check.
@@ -562,7 +690,7 @@ typedef struct
   */
 #define __HAL_RTC_GET_FLAG(__HANDLE__, __FLAG__)    (((((__FLAG__)) >> 8U) == 1U) ? ((__HANDLE__)->Instance->ICSR & (1U << (((uint16_t)(__FLAG__)) & RTC_FLAG_MASK))) : \
                                                      ((__HANDLE__)->Instance->SR & (1U << (((uint16_t)(__FLAG__)) & RTC_FLAG_MASK))))
-#endif /*#if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /*#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
 /* ---------------------------------WAKEUPTIMER---------------------------------*/
 /** @defgroup RTCEx_WakeUp_Timer RTC WakeUp Timer
@@ -611,7 +739,7 @@ typedef struct
   *            @arg @ref RTC_IT_WUT  WakeUpTimer interrupt
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_WAKEUPTIMER_GET_IT(__HANDLE__, __INTERRUPT__)       (((((__HANDLE__)->Instance->MISR) & ((__INTERRUPT__) >> 12)) != 0U) ? 1U : 0U)
 #else
 #define __HAL_RTC_WAKEUPTIMER_GET_IT(__HANDLE__, __INTERRUPT__)       (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__) >> 4)) != 0U) ? 1U : 0U)
@@ -636,21 +764,21 @@ typedef struct
   *             @arg @ref RTC_FLAG_WUTWF
   * @retval Flag status
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_WAKEUPTIMER_GET_FLAG(__HANDLE__, __FLAG__)   (__HAL_RTC_GET_FLAG((__HANDLE__), (__FLAG__)))
 #else
 #define __HAL_RTC_WAKEUPTIMER_GET_FLAG(__HANDLE__, __FLAG__)   (((((__HANDLE__)->Instance->ISR) & (__FLAG__)) != 0U) ? 1U : 0U)
 #endif
 
 /**
-  * @brief  Clear the RTC Wake Up timer's pending flags.
+  * @brief  Clear the RTC Wake Up timers pending flags.
   * @param  __HANDLE__ specifies the RTC handle.
   * @param  __FLAG__ specifies the RTC WakeUpTimer Flag to clear.
   *         This parameter can be:
   *            @arg @ref RTC_FLAG_WUTF
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(__HANDLE__, __FLAG__)     (__HAL_RTC_CLEAR_FLAG((__HANDLE__), RTC_CLEAR_WUTF))
 #else
 #define __HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(__HANDLE__, __FLAG__) ((__HANDLE__)->Instance->ISR) = (~((__FLAG__) | RTC_ISR_INIT)|((__HANDLE__)->Instance->ISR & RTC_ISR_INIT))
@@ -794,7 +922,7 @@ typedef struct
   *            @arg @ref RTC_IT_TS TimeStamp interrupt
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TIMESTAMP_GET_IT(__HANDLE__, __INTERRUPT__)        (((((__HANDLE__)->Instance->MISR) & ((__INTERRUPT__) >> 12)) != 0U) ? 1U : 0U)
 #else
 #define __HAL_RTC_TIMESTAMP_GET_IT(__HANDLE__, __INTERRUPT__)        (((((__HANDLE__)->Instance->ISR) & ((__INTERRUPT__) >> 4)) != 0U) ? 1U : 0U)
@@ -818,14 +946,14 @@ typedef struct
   *            @arg @ref RTC_FLAG_TSOVF
   * @retval Flag status
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TIMESTAMP_GET_FLAG(__HANDLE__, __FLAG__)     (__HAL_RTC_GET_FLAG((__HANDLE__),(__FLAG__)))
 #else
 #define __HAL_RTC_TIMESTAMP_GET_FLAG(__HANDLE__, __FLAG__)     (((((__HANDLE__)->Instance->ISR) & (__FLAG__)) != 0U) ? 1U : 0U)
 #endif
 
 /**
-  * @brief  Clear the RTC Time Stamp's pending flags.
+  * @brief  Clear the RTC Time Stamps pending flags.
   * @param  __HANDLE__ specifies the RTC handle.
   * @param  __FLAG__ specifies the RTC TimeStamp Flag to clear.
   *          This parameter can be:
@@ -833,7 +961,7 @@ typedef struct
   *             @arg @ref RTC_FLAG_TSOVF
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TIMESTAMP_CLEAR_FLAG(__HANDLE__, __FLAG__)   (__HAL_RTC_CLEAR_FLAG((__HANDLE__), (__FLAG__)))
 #else
 #define __HAL_RTC_TIMESTAMP_CLEAR_FLAG(__HANDLE__, __FLAG__)   ((__HANDLE__)->Instance->ISR) = (~((__FLAG__) | RTC_ISR_INIT)|((__HANDLE__)->Instance->ISR & RTC_ISR_INIT))
@@ -854,35 +982,35 @@ typedef struct
 #define __HAL_RTC_INTERNAL_TIMESTAMP_DISABLE(__HANDLE__)               ((__HANDLE__)->Instance->CR &= ~(RTC_CR_ITSE))
 
 /**
-  * @brief  Get the selected RTC Internal Time Stamp's flag status.
+  * @brief  Get the selected RTC Internal Time Stamps flag status.
   * @param  __HANDLE__ specifies the RTC handle.
   * @param  __FLAG__ specifies the RTC Internal Time Stamp Flag is pending or not.
   *         This parameter can be:
   *            @arg @ref RTC_FLAG_ITSF
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_INTERNAL_TIMESTAMP_GET_FLAG(__HANDLE__, __FLAG__)     (__HAL_RTC_GET_FLAG((__HANDLE__),(__FLAG__)))
 #else
 #define __HAL_RTC_INTERNAL_TIMESTAMP_GET_FLAG(__HANDLE__, __FLAG__)    (((((__HANDLE__)->Instance->ISR) & (__FLAG__)) != 0U) ? 1U : 0U)
 #endif
 
 /**
-  * @brief  Clear the RTC Internal Time Stamp's pending flags.
+  * @brief  Clear the RTC Internal Time Stamps pending flags.
   * @param  __HANDLE__ specifies the RTC handle.
   * @param  __FLAG__ specifies the RTC Internal Time Stamp Flag source to clear.
   * This parameter can be:
   *             @arg @ref RTC_FLAG_ITSF
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_INTERNAL_TIMESTAMP_CLEAR_FLAG(__HANDLE__, __FLAG__)     (__HAL_RTC_CLEAR_FLAG((__HANDLE__), RTC_CLEAR_ITSF))
 #else
 #define __HAL_RTC_INTERNAL_TIMESTAMP_CLEAR_FLAG(__HANDLE__, __FLAG__)  ((__HANDLE__)->Instance->ISR) = (~((__FLAG__) | RTC_ISR_INIT)|((__HANDLE__)->Instance->ISR & RTC_ISR_INIT))
 #endif
 
 
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 /**
   * @brief  Enable the RTC TimeStamp on Tamper detection.
   * @param  __HANDLE__ specifies the RTC handle.
@@ -915,7 +1043,7 @@ typedef struct
 /**
   * @}
   */
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 
 /* ------------------------------Calibration----------------------------------*/
 /** @defgroup RTCEx_Calibration RTC Calibration
@@ -958,7 +1086,7 @@ typedef struct
   *             @arg @ref RTC_FLAG_SHPF
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_SHIFT_GET_FLAG(__HANDLE__, __FLAG__)                (__HAL_RTC_GET_FLAG((__HANDLE__), (__FLAG__)))
 #else
 #define __HAL_RTC_SHIFT_GET_FLAG(__HANDLE__, __FLAG__)         (((((__HANDLE__)->Instance->ISR) & (__FLAG__)) != 0U) ? 1U : 0U)
@@ -979,7 +1107,7 @@ typedef struct
   * @param  __HANDLE__ specifies the RTC handle.
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER1_ENABLE(__HANDLE__)           (((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->CR1 |= (TAMP_CR1_TAMP1E))
 #else
 #define __HAL_RTC_TAMPER1_ENABLE(__HANDLE__)           ((__HANDLE__)->Instance->TAMPCR |= (RTC_TAMPCR_TAMP1E))
@@ -990,7 +1118,7 @@ typedef struct
   * @param  __HANDLE__ specifies the RTC handle.
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER1_DISABLE(__HANDLE__)          (((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->CR1 &= ~(RTC_TAMPCR_TAMP1E))
 #else
 #define __HAL_RTC_TAMPER1_DISABLE(__HANDLE__)          ((__HANDLE__)->Instance->TAMPCR &= ~(RTC_TAMPCR_TAMP1E))
@@ -1002,7 +1130,7 @@ typedef struct
   * @param  __HANDLE__ specifies the RTC handle.
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER2_ENABLE(__HANDLE__)           (((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->CR1 |= (TAMP_CR1_TAMP2E))
 #else
 #define __HAL_RTC_TAMPER2_ENABLE(__HANDLE__)           ((__HANDLE__)->Instance->TAMPCR |= (RTC_TAMPCR_TAMP2E))
@@ -1013,7 +1141,7 @@ typedef struct
   * @param  __HANDLE__ specifies the RTC handle.
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER2_DISABLE(__HANDLE__)          (((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->CR1 &= ~(RTC_TAMPCR_TAMP2E))
 #else
 #define __HAL_RTC_TAMPER2_DISABLE(__HANDLE__)          ((__HANDLE__)->Instance->TAMPCR &= ~(RTC_TAMPCR_TAMP2E))
@@ -1047,7 +1175,7 @@ typedef struct
   *             @arg  RTC_IT_TAMP3: Tamper3 interrupt
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER_ENABLE_IT(__HANDLE__, __INTERRUPT__)        (((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->IER |= (__INTERRUPT__))
 #else
 #define __HAL_RTC_TAMPER_ENABLE_IT(__HANDLE__, __INTERRUPT__)        ((__HANDLE__)->Instance->TAMPCR |= (__INTERRUPT__))
@@ -1063,7 +1191,7 @@ typedef struct
   *            @arg  RTC_IT_TAMP3: Tamper3 interrupt
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER_DISABLE_IT(__HANDLE__, __INTERRUPT__)       (((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->IER &= ~(__INTERRUPT__))
 #else
 #define __HAL_RTC_TAMPER_DISABLE_IT(__HANDLE__, __INTERRUPT__)       ((__HANDLE__)->Instance->TAMPCR &= ~(__INTERRUPT__))
@@ -1082,11 +1210,11 @@ typedef struct
   *            @arg  RTC_IT_TAMP3: Tamper3 interrupt
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER_GET_IT(__HANDLE__, __INTERRUPT__)     ((((((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->MISR) & (__INTERRUPT__)) != 0U) ? 1U : 0U)
-#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#else /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 #define __HAL_RTC_TAMPER_GET_IT(__HANDLE__, __INTERRUPT__)     (((((__HANDLE__)->Instance->ISR) & (__INTERRUPT__)) != 0U) ? 1U : 0U)
-#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 /**
   * @brief  Check whether the specified RTC Tamper interrupt has been enabled or not.
   * @param  __HANDLE__ specifies the RTC handle.
@@ -1098,7 +1226,7 @@ typedef struct
   *            @arg  RTC_IT_TAMP3: Tamper3 interrupt
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)    ((((((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->IER) & (__INTERRUPT__)) != 0U) ? 1U : 0U)
 #else
 #define __HAL_RTC_TAMPER_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)    (((((__HANDLE__)->Instance->TAMPCR) & (__INTERRUPT__)) != 0U) ? 1U : 0U)
@@ -1114,7 +1242,7 @@ typedef struct
   *             @arg RTC_FLAG_TAMP3F: Tamper3 flag
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER_GET_FLAG(__HANDLE__, __FLAG__)        (((((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->SR) & (__FLAG__)) != 0U)
 #else
 #define __HAL_RTC_TAMPER_GET_FLAG(__HANDLE__, __FLAG__)        (((((__HANDLE__)->Instance->ISR) & (__FLAG__)) != 0U) ? 1U : 0U)
@@ -1129,7 +1257,7 @@ typedef struct
   *             @arg RTC_FLAG_TAMP3F: Tamper3 flag
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define __HAL_RTC_TAMPER_CLEAR_FLAG(__HANDLE__, __FLAG__)      ((((TAMP_TypeDef *)((uint32_t)((__HANDLE__)->Instance) + (__HANDLE__)->TampOffset))->SCR) = (__FLAG__))
 #else
 #define __HAL_RTC_TAMPER_CLEAR_FLAG(__HANDLE__, __FLAG__)      ((__HANDLE__)->Instance->ISR) = (~((__FLAG__) | RTC_ISR_INIT)|((__HANDLE__)->Instance->ISR & RTC_ISR_INIT))
@@ -1223,6 +1351,105 @@ typedef struct
   * @}
   */
 
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+/* --------------------------------- SSR Underflow ---------------------------------*/
+/** @defgroup RTCEx_SSR_Underflow RTC SSR Underflow
+  * @{
+  */
+
+/**
+  * @brief  Enable the RTC SSRU interrupt.
+  * @param  __HANDLE__ specifies the RTC handle.
+  * @param  __INTERRUPT__ specifies the RTC SSRU interrupt sources to be enabled.
+  *         This parameter can be:
+  *            @arg @ref RTC_IT_SSRU SSRU interrupt
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_ENABLE_IT(__HANDLE__, __INTERRUPT__)    (RTC->CR |= (__INTERRUPT__))
+
+/**
+  * @brief  Disable the RTC SSRU interrupt.
+  * @param  __HANDLE__ specifies the RTC handle.
+  * @param  __INTERRUPT__ specifies the RTC SSRU interrupt sources to be disabled.
+  *         This parameter can be:
+  *            @arg @ref RTC_IT_SSRU SSRU interrupt
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_DISABLE_IT(__HANDLE__, __INTERRUPT__)   (RTC->CR &= ~(__INTERRUPT__))
+
+
+/**
+  * @brief  Check whether the specified RTC SSRU interrupt has occurred or not.
+  * @param  __HANDLE__ specifies the RTC handle.
+  * @param  __INTERRUPT__ specifies the RTC SSRU interrupt to check.
+  *         This parameter can be:
+  *            @arg @ref RTC_IT_SSRU  SSRU interrupt
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_GET_IT(__HANDLE__, __INTERRUPT__)       ((((RTC->MISR) & ((__INTERRUPT__) >> 1) != 0U) ? 1U : 0U)
+/**
+  * @brief  Check whether the specified RTC Wake Up timer interrupt has been enabled or not.
+  * @param  __HANDLE__ specifies the RTC handle.
+  * @param  __INTERRUPT__ specifies the RTC Wake Up timer interrupt sources to check.
+  *         This parameter can be:
+  *            @arg @ref RTC_IT_SSRU  SSRU interrupt
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)   ((((RTC->CR) & (__INTERRUPT__)) != 0U) ? 1U : 0U)
+
+/**
+  * @brief  Get the selected RTC SSRU's flag status.
+  * @param  __HANDLE__ specifies the RTC handle.
+  * @param  __FLAG__ specifies the RTC SSRU Flag is pending or not.
+  *          This parameter can be:
+  *             @arg @ref RTC_FLAG_SSRUF
+  *             @arg @ref RTC_FLAG_SSRUWF
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_GET_FLAG(__HANDLE__, __FLAG__)   (__HAL_RTC_GET_FLAG((__HANDLE__), (__FLAG__)))
+
+/**
+  * @brief  Clear the RTC Wake Up timer's pending flags.
+  * @param  __HANDLE__ specifies the RTC handle.
+  * @param  __FLAG__ specifies the RTC SSRU Flag to clear.
+  *         This parameter can be:
+  *            @arg @ref RTC_FLAG_SSRUF
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_CLEAR_FLAG(__HANDLE__, __FLAG__)     (__HAL_RTC_CLEAR_FLAG((__HANDLE__), RTC_CLEAR_SSRUF))
+
+/* WAKE-UP TIMER EXTI */
+/* ------------------ */
+/**
+  * @brief  Enable interrupt on the RTC SSR Underflow associated Exti line.
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_EXTI_ENABLE_IT()       (EXTI->IMR1 |= RTC_EXTI_LINE_SSRU_EVENT)
+
+/**
+  * @brief  Disable interrupt on the RTC SSR Underflow associated Exti line.
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_EXTI_DISABLE_IT()      (EXTI->IMR1 &= ~(RTC_EXTI_LINE_SSRU_EVENT))
+
+/**
+  * @brief  Enable event on the RTC SSR Underflow associated Exti line.
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_EXTI_ENABLE_EVENT()    (EXTI->EMR1 |= RTC_EXTI_LINE_SSRU_EVENT)
+
+/**
+  * @brief  Disable event on the RTC SSR Underflow associated Exti line.
+  * @retval None
+  */
+#define __HAL_RTC_SSRU_EXTI_DISABLE_EVENT()   (EXTI->EMR1 &= ~(RTC_EXTI_LINE_SSRU_EVENT))
+
+/**
+  * @}
+  */
+
+#endif /* #if defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
+
 /**
   * @}
   */
@@ -1265,7 +1492,7 @@ HAL_StatusTypeDef HAL_RTCEx_PollForTimeStampEvent(RTC_HandleTypeDef *hrtc, uint3
  * @{
  */
 HAL_StatusTypeDef HAL_RTCEx_SetWakeUpTimer(RTC_HandleTypeDef *hrtc, uint32_t WakeUpCounter, uint32_t WakeUpClock);
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 HAL_StatusTypeDef HAL_RTCEx_SetWakeUpTimer_IT(RTC_HandleTypeDef *hrtc, uint32_t WakeUpCounter, uint32_t WakeUpClock, uint32_t WakeUpAutoClr);
 #else
 HAL_StatusTypeDef HAL_RTCEx_SetWakeUpTimer_IT(RTC_HandleTypeDef *hrtc, uint32_t WakeUpCounter, uint32_t WakeUpClock);
@@ -1289,7 +1516,7 @@ HAL_StatusTypeDef HAL_RTCEx_PollForWakeUpTimerEvent(RTC_HandleTypeDef *hrtc, uin
  * @{
  */
 HAL_StatusTypeDef HAL_RTCEx_SetSmoothCalib(RTC_HandleTypeDef *hrtc, uint32_t SmoothCalibPeriod, uint32_t SmoothCalibPlusPulses, uint32_t SmoothCalibMinusPulsesValue);
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 HAL_StatusTypeDef HAL_RTCEx_SetLowPowerCalib(RTC_HandleTypeDef *hrtc, uint32_t LowPowerCalib);
 #endif
 HAL_StatusTypeDef HAL_RTCEx_SetSynchroShift(RTC_HandleTypeDef *hrtc, uint32_t ShiftAdd1S, uint32_t ShiftSubFS);
@@ -1299,6 +1526,12 @@ HAL_StatusTypeDef HAL_RTCEx_SetRefClock(RTC_HandleTypeDef *hrtc);
 HAL_StatusTypeDef HAL_RTCEx_DeactivateRefClock(RTC_HandleTypeDef *hrtc);
 HAL_StatusTypeDef HAL_RTCEx_EnableBypassShadow(RTC_HandleTypeDef *hrtc);
 HAL_StatusTypeDef HAL_RTCEx_DisableBypassShadow(RTC_HandleTypeDef *hrtc);
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+HAL_StatusTypeDef HAL_RTCEx_SetSSRU_IT(RTC_HandleTypeDef *hrtc);
+HAL_StatusTypeDef HAL_RTCEx_DeactivateSSRU(RTC_HandleTypeDef *hrtc);
+void              HAL_RTCEx_SSRUIRQHandler(RTC_HandleTypeDef *hrtc);
+void              HAL_RTCEx_SSRUEventCallback(RTC_HandleTypeDef *hrtc);
+#endif
 /**
   * @}
   */
@@ -1361,7 +1594,12 @@ uint32_t          HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupReg
 /** @defgroup RTCEx_Private_Constants RTCEx Private Constants
   * @{
   */
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+#define RTC_EXTI_LINE_SSRU_EVENT              EXTI_IMR1_IM18  /*!< External interrupt line 18 Connected to the RTC SSR Underflow event  */
+#endif
+
 #define RTC_EXTI_LINE_TAMPER_TIMESTAMP_EVENT  EXTI_IMR1_IM19  /*!< External interrupt line 19 Connected to the RTC Tamper and Time Stamp events */
+
 #define RTC_EXTI_LINE_WAKEUPTIMER_EVENT       EXTI_IMR1_IM20  /*!< External interrupt line 20 Connected to the RTC Wakeup event */
 
 /**
@@ -1401,12 +1639,12 @@ uint32_t          HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupReg
 
 #define IS_RTC_SMOOTH_CALIB_MINUS(VALUE) ((VALUE) <= RTC_CALR_CALM)
 
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define IS_RTC_LOW_POWER_CALIB(LPCAL) (((LPCAL) == RTC_LPCAL_SET) || \
                                        ((LPCAL) == RTC_LPCAL_RESET))
 #endif
 
-#if defined(STM32L412xx) || defined(STM32L422xx)
+#if defined(STM32L412xx) || defined(STM32L422xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx)
 #define IS_RTC_TAMPER(__TAMPER__)                ((((__TAMPER__) & RTC_TAMPER_ALL) != 0x00U) && \
                                                   (((__TAMPER__) & ~RTC_TAMPER_ALL) == 0x00U))
 #else
@@ -1460,6 +1698,26 @@ uint32_t          HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupReg
 #define IS_RTC_CALIB_OUTPUT(OUTPUT)  (((OUTPUT) == RTC_CALIBOUTPUT_512HZ) || \
                                       ((OUTPUT) == RTC_CALIBOUTPUT_1HZ))
 
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx)
+#define IS_RTC_BINARY_MODE(MODE) (((MODE) == RTC_BINARY_NONE) || \
+                                  ((MODE) == RTC_BINARY_ONLY) || \
+                                   ((MODE) == RTC_BINARY_MIX ))
+
+#define IS_RTC_BINARY_MIX_BCDU(BDCU) (((BDCU) == RTC_BINARY_MIX_BCDU_0) || \
+                                      ((BDCU) == RTC_BINARY_MIX_BCDU_1) || \
+                                      ((BDCU) == RTC_BINARY_MIX_BCDU_2) || \
+                                      ((BDCU) == RTC_BINARY_MIX_BCDU_3) || \
+                                      ((BDCU) == RTC_BINARY_MIX_BCDU_4) || \
+                                      ((BDCU) == RTC_BINARY_MIX_BCDU_5) || \
+                                      ((BDCU) == RTC_BINARY_MIX_BCDU_6) || \
+                                      ((BDCU) == RTC_BINARY_MIX_BCDU_7))
+
+#define IS_RTC_ALARM_SUB_SECOND_BINARY_MASK(MASK)   (((MASK) == 0u) || \
+                                                    (((MASK) >= RTC_ALARMSUBSECONDBINMASK_SS31_1) && ((MASK) <= RTC_ALARMSUBSECONDBINMASK_NONE)))
+
+#define IS_RTC_ALARMSUBSECONDBIN_AUTOCLR(SEL) (((SEL) == RTC_ALARMSUBSECONDBIN_AUTOCLR_NO) || \
+                                               ((SEL) == RTC_ALARMSUBSECONDBIN_AUTOCLR_YES))
+#endif /* #if defined (STM32L4P5xx) || defined (STM32L4Q5xx) */
 /**
   * @}
   */

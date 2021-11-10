@@ -57,8 +57,9 @@
    application
   */
 
-#if !defined (STM32G431xx) && !defined (STM32G441xx) && \
-    !defined (STM32G471xx) && !defined (STM32G473xx) && !defined (STM32G474xx) && !defined (STM32G483xx) && !defined (STM32G484xx) && !defined (STM32GBK1CB)
+#if !defined (STM32G431xx) && !defined (STM32G441xx) && !defined (STM32G471xx) && \
+    !defined (STM32G473xx) && !defined (STM32G474xx) && !defined (STM32G484xx) && \
+    !defined (STM32GBK1CB) && !defined (STM32G491xx) && !defined (STM32G4A1xx)
   /* #define STM32G431xx */   /*!< STM32G431xx Devices */
   /* #define STM32G441xx */   /*!< STM32G441xx Devices */
   /* #define STM32G471xx */   /*!< STM32G471xx Devices */
@@ -66,6 +67,8 @@
   /* #define STM32G483xx */   /*!< STM32G483xx Devices */
   /* #define STM32G474xx */   /*!< STM32G474xx Devices */
   /* #define STM32G484xx */   /*!< STM32G484xx Devices */
+  /* #define STM32G491xx */   /*!< STM32G491xx Devices */
+  /* #define STM32G4A1xx */   /*!< STM32G4A1xx Devices */
   /* #define STM32GBK1CB */   /*!< STM32GBK1CB Devices */
 #endif
 
@@ -82,11 +85,11 @@
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS Device version number $VERSION$
+  * @brief CMSIS Device version number V1.2.1
   */
 #define __STM32G4_CMSIS_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define __STM32G4_CMSIS_VERSION_SUB1   (0x01U) /*!< [23:16] sub1 version */
-#define __STM32G4_CMSIS_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
+#define __STM32G4_CMSIS_VERSION_SUB1   (0x02U) /*!< [23:16] sub1 version */
+#define __STM32G4_CMSIS_VERSION_SUB2   (0x01U) /*!< [15:8]  sub2 version */
 #define __STM32G4_CMSIS_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32G4_CMSIS_VERSION        ((__STM32G4_CMSIS_VERSION_MAIN << 24)\
                                        |(__STM32G4_CMSIS_VERSION_SUB1 << 16)\
@@ -115,6 +118,10 @@
   #include "stm32g474xx.h"
 #elif defined(STM32G484xx)
   #include "stm32g484xx.h"
+#elif defined(STM32G491xx)
+  #include "stm32g491xx.h"
+#elif defined(STM32G4A1xx)
+  #include "stm32g4a1xx.h"
 #elif defined(STM32GBK1CB)
   #include "stm32gbk1cb.h"
 #else
