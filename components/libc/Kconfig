@@ -44,16 +44,19 @@ config RT_USING_POSIX
 
 if RT_USING_POSIX
     config RT_USING_POSIX_STDIO
-        bool "Enable standard IO"
+        bool "Enable standard I/O"
+        select RT_USING_DFS
         select RT_USING_DFS_DEVFS
         default n
 
     config RT_USING_POSIX_POLL
         bool "Enable poll()"
+        select RT_USING_DFS
         default n
 
     config RT_USING_POSIX_SELECT
         bool "Enable select()"
+        select RT_USING_DFS
         select RT_USING_POSIX_POLL
         default n
 
@@ -67,6 +70,7 @@ if RT_USING_POSIX
 
     config RT_USING_POSIX_MMAP
         bool "Enable mmap() API"
+        select RT_USING_DFS
         default n
 
     config RT_USING_POSIX_TERMIOS
