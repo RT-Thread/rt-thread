@@ -11,8 +11,6 @@
 #include <poll.h>
 #include <sys/select.h>
 
-#ifdef RT_USING_POSIX
-
 static void fdszero(fd_set *set, int nfds)
 {
     fd_mask *m;
@@ -176,5 +174,3 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
 
     return ret;
 }
-
-#endif
