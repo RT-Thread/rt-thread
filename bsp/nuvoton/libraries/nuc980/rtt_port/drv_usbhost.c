@@ -30,6 +30,21 @@
 
 #define NU_MAX_USBH_HUB_PORT_DEV    USB_HUB_PORT_NUM
 
+#define NU_USBHOST_MUTEX_INIT()      { \
+                                s_sUSBHDev.lock = rt_mutex_create("usbhost_lock", RT_IPC_FLAG_PRIO); \
+                                RT_ASSERT(s_sUSBHDev.lock != RT_NULL); \
+                            }
+
+#define NU_USBHOST_LOCK()      { \
+                                rt_err_t result = rt_mutex_take(s_sUSBHDev.lock, RT_WAITING_FOREVER); \
+                                RT_ASSERT(result == RT_EOK); \
+                            }
+
+#define NU_USBHOST_UNLOCK()    { \
+                                rt_err_t result = rt_mutex_release(s_sUSBHDev.lock); \
+                                RT_ASSERT(result == RT_EOK); \
+                            }
+
 /* Private typedef --------------------------------------------------------------*/
 typedef struct nu_port_dev
 {
@@ -59,6 +74,7 @@ struct nu_usbh_dev
     E_SYS_IPRST rstidx;
     E_SYS_IPCLK clkidx;
     rt_thread_t polling_thread;
+    rt_mutex_t  lock;
     S_NU_RH_PORT_CTRL asPortCtrl[NU_MAX_USBH_PORT];
 };
 
@@ -398,15 +414,25 @@ static int nu_bulk_xfer(
     UTR_T *psUTR,
     int timeouts)
 {
-    int ret;
-
-    ret = usbh_bulk_xfer(psUTR);
-
+    int ret = usbh_bulk_xfer(psUTR);
     if (ret < 0)
         return ret;
 
     //wait transfer done
-    rt_completion_wait(&(psPortDev->utr_completion), timeouts);
+    if (rt_completion_wait(&(psPortDev->utr_completion), timeouts) < 0)
+    {
+        rt_kprintf("Request Timeout in %d ms!! (bulk_xfer)\n", timeouts);
+
+        rt_kprintf("psUTR->buff: %08x\n", psUTR->buff);
+        rt_kprintf("psUTR->data_len: %d\n", psUTR->data_len);
+        rt_kprintf("psUTR->xfer_len: %d\n", psUTR->xfer_len);
+        rt_kprintf("psUTR->ep: %08x\n", psUTR->ep);
+        rt_kprintf("psUTR->bIsTransferDone: %08x\n", psUTR->bIsTransferDone);
+        rt_kprintf("psUTR->status: %08x\n", psUTR->status);
+        rt_kprintf("psUTR->td_cnt: %08x\n", psUTR->td_cnt);
+
+        return -1;
+    }
     return 0;
 }
 
@@ -477,6 +503,8 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
 
     void *buffer_nonch = buffer;
 
+    NU_USBHOST_LOCK();
+
     psPortCtrl = GetRHPortControlFromPipe(pipe);
     if (psPortCtrl == RT_NULL)
     {
@@ -494,8 +522,11 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
     if (buffer_nonch && nbytes)
     {
         buffer_nonch = psPortDev->asPipePktBuf[pipe->pipe_index];
-        rt_memcpy(buffer_nonch, buffer, nbytes);
-        mmu_clean_invalidated_dcache((uint32_t)buffer_nonch, nbytes);
+        if ((pipe->ep.bEndpointAddress & USB_DIR_MASK) == USB_DIR_OUT)
+        {
+            rt_memcpy(buffer_nonch, buffer, nbytes);
+            mmu_clean_dcache((uint32_t)buffer_nonch, nbytes);
+        }
     }
 #endif
 
@@ -503,6 +534,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
     if (pipe->ep.bmAttributes == USB_EP_ATTR_CONTROL)
     {
         int ret;
+
         if (token == USBH_PID_SETUP)
         {
             struct urequest *psSetup = (struct urequest *)buffer_nonch;
@@ -517,7 +549,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
             else
             {
                 /* Write data to USB device. */
-                //Trigger USBHostLib Ctril_Xfer
+                //Trigger USBHostLib Ctrl_Xfer
                 ret = nu_ctrl_xfer(psPortDev, psSetup, NULL, timeouts);
                 if (ret != psSetup->wLength)
                     goto exit_nu_pipe_xfer;
@@ -571,7 +603,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
             if (nu_bulk_xfer(psPortDev, psUTR, timeouts) < 0)
             {
                 RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_pipe_xfer ERROR: bulk transfer failed\n"));
-                goto exit_nu_pipe_xfer;
+                goto failreport_nu_pipe_xfer;
             }
         }
         else if (pipe->ep.bmAttributes == USB_EP_ATTR_INT)
@@ -588,7 +620,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
             {
                 i32XferLen = nbytes;
             }
-            return i32XferLen;
+            goto exit2_nu_pipe_xfer;
         }
         else if (pipe->ep.bmAttributes == USB_EP_ATTR_ISOC)
         {
@@ -598,6 +630,8 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         }
 
     } //else
+
+failreport_nu_pipe_xfer:
 
     if (psUTR->bIsTransferDone == 0)
     {
@@ -628,29 +662,29 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
     //Call callback
     if (pipe->callback != RT_NULL)
     {
-        struct uhost_msg msg;
-        msg.type = USB_MSG_CALLBACK;
-        msg.content.cb.function = pipe->callback;
-        msg.content.cb.context = pipe->user_data;
-        rt_usbh_event_signal(&msg);
+        pipe->callback(pipe);
     }
 
-    if (pipe->status != UPIPE_STATUS_OK)
-        goto exit_nu_pipe_xfer;
-
 exit_nu_pipe_xfer:
+
+    if (psUTR)
+        free_utr(psUTR);
+
+exit2_nu_pipe_xfer:
 
 #if defined(BSP_USING_MMU)
     if ((nbytes) &&
             (buffer_nonch != buffer))
     {
-        mmu_invalidate_dcache((uint32_t)buffer_nonch, nbytes);
-        rt_memcpy(buffer, buffer_nonch, nbytes);
+        if ((pipe->ep.bEndpointAddress & USB_DIR_MASK) == USB_DIR_IN)
+        {
+            mmu_invalidate_dcache((uint32_t)buffer_nonch, nbytes);
+            rt_memcpy(buffer, buffer_nonch, nbytes);
+        }
     }
 #endif
 
-    if (psUTR)
-        free_utr(psUTR);
+    NU_USBHOST_UNLOCK();
 
     return i32XferLen;
 }
@@ -660,7 +694,10 @@ static void nu_usbh_rh_thread_entry(void *parameter)
 {
     while (1)
     {
+        NU_USBHOST_LOCK();
         usbh_polling_root_hubs();
+        NU_USBHOST_UNLOCK();
+
         rt_thread_mdelay(NU_USBHOST_HUB_POLLING_INTERVAL);
     }
 }
@@ -870,6 +907,8 @@ int nu_usbh_register(void)
 
     psUHCD->ops               = &nu_uhcd_ops;
     psUHCD->num_ports         = NU_MAX_USBH_PORT;
+
+    NU_USBHOST_MUTEX_INIT();
 
     res = rt_device_register(&psUHCD->parent, "usbh", RT_DEVICE_FLAG_DEACTIVATE);
     RT_ASSERT(res == RT_EOK);

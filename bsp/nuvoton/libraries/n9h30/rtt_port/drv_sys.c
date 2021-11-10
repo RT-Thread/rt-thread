@@ -57,9 +57,9 @@ void rt_interrupt_dispatch(rt_uint32_t fiq_irq)
             isr_func = irq_desc[_mISNR].handler;
             param = irq_desc[_mISNR].param;
 
-            #ifdef RT_USING_INTERRUPT_INFO
-                irq_desc[_mISNR].counter ++;
-            #endif
+#ifdef RT_USING_INTERRUPT_INFO
+            irq_desc[_mISNR].counter ++;
+#endif
 
             /* Turn to interrupt service routine */
             isr_func(_mISNR, param);

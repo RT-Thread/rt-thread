@@ -30,8 +30,8 @@ extern "C"
 */
 
 #define EMAC_PHY_ADDR      1UL    /*!<  PHY address, this address is board dependent \hideinitializer */
-#define EMAC_RX_DESC_SIZE  64UL    /*!<  Number of Rx Descriptors, should be 2 at least \hideinitializer */
-#define EMAC_TX_DESC_SIZE  32UL    /*!<  Number of Tx Descriptors, should be 2 at least \hideinitializer */
+#define EMAC_RX_DESC_SIZE  128UL  /*!<  Number of Rx Descriptors, should be 2 at least \hideinitializer */
+#define EMAC_TX_DESC_SIZE  64UL   /*!<  Number of Tx Descriptors, should be 2 at least \hideinitializer */
 #define EMAC_CAMENTRY_NB   16UL   /*!<  Number of CAM \hideinitializer */
 #define EMAC_MAX_PKT_SIZE  1536UL /*!<  Number of HDR + EXTRA + VLAN_TAG + PAYLOAD + CRC \hideinitializer */
 
@@ -53,6 +53,8 @@ typedef struct
     uint32_t u32Next;      /*!<  Pointer to next descriptor */
     uint32_t u32Backup1;   /*!<  For backup descriptor fields over written by time stamp */
     uint32_t u32Backup2;   /*!<  For backup descriptor fields over written by time stamp */
+    uint32_t u32Reserved1; /*!<  For Reserved */
+    uint32_t u32Reserved2; /*!<  For Reserved */
 } EMAC_DESCRIPTOR_T;
 
 /** Tx/Rx buffer structure */
@@ -379,7 +381,8 @@ int32_t EMAC_FillCamEntry(EMAC_T *EMAC, uint8_t pu8MacAddr[]);
 uint8_t *EMAC_ClaimFreeTXBuf(EMAC_MEMMGR_T *psMemMgr);
 uint32_t EMAC_GetAvailRXBufSize(EMAC_MEMMGR_T *psMemMgr, uint8_t **ppuDataBuf);
 uint32_t EMAC_SendPktWoCopy(EMAC_MEMMGR_T *psMemMgr, uint32_t u32Size);
-void EMAC_RecvPktDoneWoRxTrigger(EMAC_MEMMGR_T *psMemMgr);
+EMAC_DESCRIPTOR_T * EMAC_RecvPktDoneWoRxTrigger(EMAC_MEMMGR_T *psMemMgr);
+void EMAC_RxTrigger(EMAC_MEMMGR_T *psMemMgr, EMAC_DESCRIPTOR_T * rx_desc);
 
 /*@}*/ /* end of group EMAC_EXPORTED_FUNCTIONS */
 

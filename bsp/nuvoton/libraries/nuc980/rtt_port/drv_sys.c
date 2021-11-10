@@ -302,7 +302,6 @@ E_SYS_USB0_ID nu_sys_usb0_role(void)
 #ifdef RT_USING_FINSH
 
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_cpu_reset, reset, restart the system);
 
 #ifdef FINSH_USING_MSH
 int cmd_reset(int argc, char **argv)
