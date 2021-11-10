@@ -245,6 +245,11 @@ static rt_err_t nu_i2s_dai_setup(nu_i2s_t psNuI2s, struct rt_audio_configure *pc
 
         if (psNuI2s->AcodecOps->role == NU_ACODEC_ROLE_MASTER)
         {
+            // Set as slave, source clock is XIN (12MHz)
+            i2sIoctl(I2S_SET_MODE, I2S_MODE_SLAVE, 0);
+        }
+        else
+        {
             if (pconfig->samplerate % 11025)
             {
                 // 12.288MHz ==> APLL=98.4MHz / 8 = 12.3MHz
@@ -283,11 +288,6 @@ static rt_err_t nu_i2s_dai_setup(nu_i2s_t psNuI2s, struct rt_audio_configure *pc
             }
             // Set as master
             i2sIoctl(I2S_SET_MODE, I2S_MODE_MASTER, 0);
-        }
-        else
-        {
-            // Set as slave, source clock is XIN (12MHz)
-            i2sIoctl(I2S_SET_MODE, I2S_MODE_SLAVE, 0);
         }
 
         LOG_I("Open I2S.");

@@ -29,6 +29,11 @@ menu "Nuvoton Packages Config"
         select BSP_USING_I2C
         default n
 
+    config NU_PKG_USING_DA9062
+        bool "DA9062 PMIC."
+        select BSP_USING_I2C
+        default n
+
     config NU_PKG_USING_ILI9341
         bool "ILI9341 LCD Panel"
         select BSP_USING_GPIO
