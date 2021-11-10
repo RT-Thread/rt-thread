@@ -14,8 +14,6 @@
 #include <dfs_file.h>
 #include <poll.h>
 
-#ifdef RT_USING_POSIX
-
 struct rt_poll_node;
 
 struct rt_poll_table
@@ -226,5 +224,3 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
 
     return num;
 }
-
-#endif
