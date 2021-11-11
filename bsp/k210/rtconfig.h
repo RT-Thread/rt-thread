@@ -130,9 +130,10 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_USING_POSIX
 #define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
+#define RT_USING_POSIX
+#define RT_USING_POSIX_DELAY
 
 /* Network */
 
@@ -194,8 +195,7 @@
 
 /* multimedia packages */
 
-
-/* lvgl: powerful and easy-to-use embedded GUI library */
+/* LVGL: powerful and easy-to-use embedded GUI library */
 
 
 /* u8g2: a monochrome graphic library */
@@ -207,6 +207,9 @@
 /* system packages */
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -229,6 +232,9 @@
 /* entertainment: terminal games and other interesting software packages */
 
 #define BOARD_K210_EVB
+
+/* Hardware Drivers Config */
+
 #define BSP_USING_UART_HS
 
 /* General Purpose UARTs */

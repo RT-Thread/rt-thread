@@ -1,12 +1,25 @@
-from building import *
-Import('rtconfig')
+# RT-Thread building script for component
 
-src     = Glob('*.c')
+from building import *
+
+src     = ['unistd.c']
 cwd     = GetCurrentDir()
 CPPPATH = [cwd]
 
-if rtconfig.ARCH == 'sim': # the vs simulator does not support select and poll
-    SrcRemove(src, ['select.c', 'poll.c'])
+if GetDepend('RT_USING_POSIX_STDIO'):
+    src += ['libc.c']
+
+if GetDepend('RT_USING_POSIX_DELAY'):
+    src += ['delay.c']
+
+if GetDepend('RT_USING_POSIX_POLL'):
+    src += ['poll.c']
+
+if GetDepend('RT_USING_POSIX_SELECT'):
+    src += ['select.c']
+
+if GetDepend('RT_USING_POSIX_MMAP'):
+    src += ['mmap.c']
 
 group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX'], CPPPATH = CPPPATH)
 

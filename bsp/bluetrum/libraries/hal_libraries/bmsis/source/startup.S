@@ -96,6 +96,11 @@ __exception:
     mret
 #endif
 
+    .org    0x1e0
+    1: j       1b
+    nop
+    mret
+
     .global cpu_irq_comm
 cpu_irq_comm:
     la      a5, __irq_stack
