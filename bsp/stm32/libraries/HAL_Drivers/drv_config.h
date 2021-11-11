@@ -84,6 +84,17 @@ extern "C" {
 #include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
 #include "l4/usbd_config.h"
+#elif  defined(SOC_SERIES_STM32L5)
+#include "l5/dma_config.h"
+#include "l5/uart_config.h"
+#include "l5/spi_config.h"
+#include "l5/qspi_config.h"
+#include "l5/adc_config.h"
+#include "l5/dac_config.h"
+#include "l5/tim_config.h"
+#include "l5/sdio_config.h"
+#include "l5/pwm_config.h"
+#include "l5/usbd_config.h"
 #elif  defined(SOC_SERIES_STM32G0)
 #include "g0/dma_config.h"
 #include "g0/uart_config.h"

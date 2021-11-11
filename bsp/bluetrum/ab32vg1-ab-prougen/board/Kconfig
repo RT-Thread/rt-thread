@@ -5,6 +5,10 @@ config SOC_AB32VG1
     select PKG_USING_BLUETRUM_SDK
     default y
 
+config PKG_USING_BLUETRUM_NIMBLE
+    bool
+    default n
+
 menu "Onboard Peripheral Drivers"
 
     menuconfig BSP_USING_AUDIO
@@ -231,7 +235,18 @@ menu "On-chip Peripheral Drivers"
 
 endmenu
 
-menu "Board extended module Drivers"
-endmenu
+choice
+    prompt "BLE STACK"
+    default BLE_STACK_USING_NULL
+    help
+        Select the ble stack
+
+    config BLE_STACK_USING_NULL
+        bool "not use the ble stack"
+
+    config BSP_USING_NIMBLE
+        bool "use nimble stack(iot)"
+        select PKG_USING_BLUETRUM_NIMBLE
+endchoice
 
 endmenu

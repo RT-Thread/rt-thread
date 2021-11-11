@@ -10,6 +10,10 @@
 #include <lvgl.h>
 #include <lcd_port.h>
 
+//#define DRV_DEBUG
+#define LOG_TAG             "lvgl.disp"
+#include <drv_log.h>
+
 /*A static or global variable to store the buffers*/
 static lv_disp_draw_buf_t disp_buf;
 
@@ -18,184 +22,168 @@ static struct rt_device_graphic_info info;
 
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
-typedef struct
-{
-    uint8_t blue;
-    uint8_t green;
-    uint8_t red;
-} lv_color24_t;
+static DMA_HandleTypeDef         DmaHandle;
+#define DMA_STREAM               DMA2_Stream0
+#define DMA_CHANNEL              DMA_CHANNEL_0
+#define DMA_STREAM_IRQ           DMA2_Stream0_IRQn
+#define DMA_STREAM_IRQHANDLER    DMA2_Stream0_IRQHandler
 
-static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
+static int32_t x1_flush;
+static int32_t y1_flush;
+static int32_t x2_flush;
+static int32_t y2_fill;
+static int32_t y_fill_act;
+static const lv_color_t * buf_to_flush;
+
+static void DMA_TransferComplete(DMA_HandleTypeDef *han)
 {
-#if (LV_COLOR_DEPTH == 16)
-    dst->full = src->full;
-#else
-    dst->ch.blue = src->ch.blue;
-    dst->ch.green = src->ch.green;
-    dst->ch.red = src->ch.red;
-#endif
+    y_fill_act ++;
+
+    if(y_fill_act > y2_fill)
+    {
+          lv_disp_flush_ready(&disp_drv);
+    }
+    else
+    {
+        buf_to_flush += (x2_flush - x1_flush + 1);
+
+        if (HAL_DMA_Start_IT(han,(uint32_t)buf_to_flush,
+            (uint32_t)&((uint32_t *)info.framebuffer)[y_fill_act * info.width + x1_flush],
+            (x2_flush - x1_flush + 1)) != HAL_OK)
+        {
+            LOG_E("lvgl dma start error");
+            while(1);
+        }
+    }
 }
 
-static void color_to24(lv_color24_t *dst, lv_color_t *src)
+static void DMA_TransferError(DMA_HandleTypeDef *han)
 {
-    dst->blue = src->ch.blue;
-    dst->green = src->ch.green;
-    dst->red = src->ch.red;
+    LOG_E("dma transfer error");
+    while(1);
 }
 
-/*Flush the content of the internal buffer the specific area on the display
- *You can use DMA or any hardware acceleration to do this operation in the background but
- *'lv_disp_flush_ready()' has to be called when finished.*/
+void DMA_STREAM_IRQHANDLER(void)
+{
+    rt_interrupt_enter();
+
+    HAL_DMA_IRQHandler(&DmaHandle);
+
+    rt_interrupt_leave();
+}
+
+static void lvgl_dma_config(void)
+{
+    /*## -1- Enable DMA2 clock #################################################*/
+    __HAL_RCC_DMA2_CLK_ENABLE();
+
+    /*##-2- Select the DMA functional Parameters ###############################*/
+    DmaHandle.Init.Channel = DMA_CHANNEL;                     /* DMA_CHANNEL_0                    */
+    DmaHandle.Init.Direction = DMA_MEMORY_TO_MEMORY;          /* M2M transfer mode                */
+    DmaHandle.Init.PeriphInc = DMA_PINC_ENABLE;               /* Peripheral increment mode Enable */
+    DmaHandle.Init.MemInc = DMA_MINC_ENABLE;                  /* Memory increment mode Enable     */
+    DmaHandle.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD; /* Peripheral data alignment : 32bit */
+    DmaHandle.Init.MemDataAlignment = DMA_PDATAALIGN_WORD;    /* memory data alignment : 32bit     */
+    DmaHandle.Init.Mode = DMA_NORMAL;                         /* Normal DMA mode                  */
+    DmaHandle.Init.Priority = DMA_PRIORITY_HIGH;              /* priority level : high            */
+    DmaHandle.Init.FIFOMode = DMA_FIFOMODE_ENABLE;            /* FIFO mode enabled                */
+    DmaHandle.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_1QUARTERFULL;   /* FIFO threshold: 1/4 full   */
+    DmaHandle.Init.MemBurst = DMA_MBURST_SINGLE;              /* Memory burst                     */
+    DmaHandle.Init.PeriphBurst = DMA_PBURST_SINGLE;           /* Peripheral burst                 */
+
+    DmaHandle.Instance = DMA_STREAM;
+
+    if (HAL_DMA_Init(&DmaHandle) != HAL_OK)
+    {
+        while(1);
+    }
+
+    HAL_DMA_RegisterCallback(&DmaHandle, HAL_DMA_XFER_CPLT_CB_ID, DMA_TransferComplete);
+    HAL_DMA_RegisterCallback(&DmaHandle, HAL_DMA_XFER_ERROR_CB_ID, DMA_TransferError);
+
+    HAL_NVIC_SetPriority(DMA_STREAM_IRQ, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA_STREAM_IRQ);
+}
+
 static void lcd_fb_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
-    int x1, x2, y1, y2;
-
-    x1 = area->x1;
-    x2 = area->x2;
-    y1 = area->y1;
-    y2 = area->y2;
-
     /*Return if the area is out the screen*/
-    if (x2 < 0)
-        return;
-    if (y2 < 0)
-        return;
-    if (x1 > info.width - 1)
-        return;
-    if (y1 > info.height - 1)
-        return;
+    if (area->x2 < 0) return;
+    if (area->y2 < 0) return;
+    if (area->x1 > info.width - 1) return;
+    if (area->y1 > info.height - 1) return;
 
     /*Truncate the area to the screen*/
-    int32_t act_x1 = x1 < 0 ? 0 : x1;
-    int32_t act_y1 = y1 < 0 ? 0 : y1;
-    int32_t act_x2 = x2 > info.width - 1 ? info.width - 1 : x2;
-    int32_t act_y2 = y2 > info.height - 1 ? info.height - 1 : y2;
+    int32_t act_x1 = area->x1 < 0 ? 0 : area->x1;
+    int32_t act_y1 = area->y1 < 0 ? 0 : area->y1;
+    int32_t act_x2 = area->x2 > info.width - 1 ? info.width - 1 : area->x2;
+    int32_t act_y2 = area->y2 > info.height - 1 ? info.height - 1 : area->y2;
 
-    uint32_t x;
-    uint32_t y;
-    long int location = 0;
+    x1_flush = act_x1;
+    y1_flush = act_y1;
+    x2_flush = act_x2;
+    y2_fill = act_y2;
+    y_fill_act = act_y1;
+    buf_to_flush = color_p;
 
-    /* 8 bit per pixel */
-    if (info.bits_per_pixel == 8)
+    if (HAL_DMA_Start_IT(&DmaHandle,(uint32_t)buf_to_flush,
+        (uint32_t)&((uint32_t *)info.framebuffer)[y_fill_act * info.width + x1_flush],
+        (x2_flush - x1_flush + 1)) != HAL_OK)
     {
-        uint8_t *fbp8 = (uint8_t *)info.framebuffer;
-        //TODO color convert maybe
-        for (y = act_y1; y <= act_y2; y++)
-        {
-            for (x = act_x1; x <= act_x2; x++)
-            {
-                location = (x) + (y)*info.width;
-                fbp8[location] = color_p->full;
-                color_p++;
-            }
-
-            color_p += x2 - act_x2;
-        }
+        LOG_E("dma start it error");
+        while(1);
     }
-
-    /* 16 bit per pixel */
-    else if (info.bits_per_pixel == 16)
-    {
-        lv_color16_t *fbp16 = (lv_color16_t *)info.framebuffer;
-
-        for (y = act_y1; y <= act_y2; y++)
-        {
-            for (x = act_x1; x <= act_x2; x++)
-            {
-                location = (x) + (y)*info.width;
-                color_to16_maybe(&fbp16[location], color_p);
-                color_p++;
-            }
-
-            color_p += x2 - act_x2;
-        }
-    }
-
-    /* 24 bit per pixel */
-    else if (info.bits_per_pixel == 24)
-    {
-        lv_color24_t *fbp24 = (lv_color24_t *)info.framebuffer;
-
-        for (y = act_y1; y <= act_y2; y++)
-        {
-            for (x = act_x1; x <= act_x2; x++)
-            {
-                location = (x) + (y)*info.width;
-                color_to24(&fbp24[location], color_p);
-                color_p++;
-            }
-
-            color_p += x2 - act_x2;
-        }
-    }
-
-    /* 32 bit per pixel */
-    else if (info.bits_per_pixel == 32)
-    {
-        uint32_t *fbp32 = (uint32_t *)info.framebuffer;
-        //TODO
-        for (y = act_y1; y <= act_y2; y++)
-        {
-            for (x = act_x1; x <= act_x2; x++)
-            {
-                location = (x) + (y)*info.width;
-                fbp32[location] = color_p->full;
-                color_p++;
-            }
-
-            color_p += x2 - act_x2;
-        }
-    }
-
-    struct rt_device_rect_info rect_info;
-
-    rect_info.x = x1;
-    rect_info.y = y1;
-    rect_info.width = x2 - x1 + 1;
-    rect_info.height = y2 - y1 + 1;
-    rt_device_control(lcd_device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
-
-    lv_disp_flush_ready(disp_drv);
 }
 
 void lv_port_disp_init(void)
 {
     rt_err_t result;
-    lv_color_t *fbuf;
+    void* buf_1 = RT_NULL;
+    void* buf_2 = RT_NULL;
 
     lcd_device = rt_device_find("lcd");
     if (lcd_device == 0)
     {
-        rt_kprintf("error!\n");
+        LOG_E("error!");
         return;
     }
     result = rt_device_open(lcd_device, 0);
     if (result != RT_EOK)
     {
-        rt_kprintf("error!\n");
+        LOG_E("error!");
         return;
     }
+
     /* get framebuffer address */
     result = rt_device_control(lcd_device, RTGRAPHIC_CTRL_GET_INFO, &info);
     if (result != RT_EOK)
     {
-        rt_kprintf("error!\n");
+        LOG_E("error!");
         /* get device information failed */
         return;
     }
 
-    RT_ASSERT(info.bits_per_pixel == 8 || info.bits_per_pixel == 16 ||
+    RT_ASSERT (info.bits_per_pixel == 8 || info.bits_per_pixel == 16 ||
               info.bits_per_pixel == 24 || info.bits_per_pixel == 32);
 
-    fbuf = rt_malloc(info.width * info.height / 10);
-    if (!fbuf)
+    lvgl_dma_config();
+
+    buf_1 = rt_malloc(info.width * 30 * sizeof(lv_color_t));
+    if (buf_1 == RT_NULL)
     {
-        rt_kprintf("Error: alloc disp buf fail\n");
+        LOG_E("malloc memory failed");
         return;
     }
 
-    /*Initialize `disp_buf` with the buffer(s). With only one buffer use NULL instead buf_2 */
-    lv_disp_draw_buf_init(&disp_buf, fbuf, RT_NULL, info.width * 10);
+    buf_2 = rt_malloc(info.width * 30 * sizeof(lv_color_t));
+    if (buf_2 == RT_NULL)
+    {
+        LOG_E("malloc memory failed");
+        return;
+    }
+
+    /*Initialize `disp_buf` with the buffer(s).*/
+    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, info.width * 30);
 
     lv_disp_drv_init(&disp_drv); /*Basic initialization*/
 
