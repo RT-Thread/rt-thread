@@ -38,13 +38,13 @@ config RT_LIBC_DEFAULT_TIMEZONE
     default 8
 
 config RT_USING_POSIX
-    bool "Enable basic POSIX layer, open/read/write/close etc"
+    bool "Enable basic POSIX layer, open()/read()/write()/close() etc"
     select RT_USING_DFS
     default n
 
 if RT_USING_POSIX
     config RT_USING_POSIX_STDIO
-        bool "Enable standard I/O"
+        bool "Enable standard I/O, STDOUT_FILENO/STDIN_FILENO/STDERR_FILENO"
         select RT_USING_DFS
         select RT_USING_DFS_DEVFS
         default n
@@ -61,15 +61,15 @@ if RT_USING_POSIX
         default n
 
     config RT_USING_POSIX_DELAY
-        bool "Enable delay functions"
+        bool "Enable delay APIs, sleep()/usleep()/msleep() etc"
         default n
 
     config RT_USING_POSIX_GETLINE
-        bool "Enable getline()/getdelim() APIs"
+        bool "Enable getline()/getdelim()"
         default n
 
     config RT_USING_POSIX_MMAP
-        bool "Enable mmap() API"
+        bool "Enable mmap()"
         select RT_USING_DFS
         default n
 
@@ -78,7 +78,7 @@ if RT_USING_POSIX
         default n
 
     config RT_USING_POSIX_AIO
-        bool "Enable AIO"
+        bool "Enable AIO APIs"
         default n
 endif
 
