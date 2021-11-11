@@ -34,12 +34,7 @@ static int32_t x2_flush;
 static int32_t y2_fill;
 static int32_t y_fill_act;
 static const lv_color_t * buf_to_flush;
-/**
-  * @brief  DMA conversion complete callback
-  * @note   This function is executed when the transfer complete interrupt
-  *         is generated
-  * @retval None
-  */
+
 static void DMA_TransferComplete(DMA_HandleTypeDef *han)
 {
     y_fill_act ++;
@@ -51,44 +46,33 @@ static void DMA_TransferComplete(DMA_HandleTypeDef *han)
     else
     {
         buf_to_flush += (x2_flush - x1_flush + 1);
-        /*##-7- Start the DMA transfer using the interrupt mode ####################*/
-        /* Configure the source, destination and buffer size DMA fields and Start DMA Stream transfer */
-        /* Enable All the DMA interrupts */
+
         if (HAL_DMA_Start_IT(han,(uint32_t)buf_to_flush,
             (uint32_t)&((uint32_t *)info.framebuffer)[y_fill_act * info.width + x1_flush],
             (x2_flush - x1_flush + 1)) != HAL_OK)
         {
-            LOG_E("HAL_DMA_Start_IT error");
-            while(1);	/*Halt on error*/
+            LOG_E("lvgl dma start error");
+            while(1);
         }
     }
 }
 
-/**
-  * @brief  DMA conversion error callback
-  * @note   This function is executed when the transfer error interrupt
-  *         is generated during DMA transfer
-  * @retval None
-  */
 static void DMA_TransferError(DMA_HandleTypeDef *han)
 {
     LOG_E("dma transfer error");
     while(1);
 }
 
-/**
-  * @brief  This function handles DMA Stream interrupt request.
-  * @param  None
-  * @retval None
-  */
 void DMA_STREAM_IRQHANDLER(void)
 {
     rt_interrupt_enter();
+
     HAL_DMA_IRQHandler(&DmaHandle);
+
     rt_interrupt_leave();
 }
 
-static void DMA_Config(void)
+static void lvgl_dma_config(void)
 {
     /*## -1- Enable DMA2 clock #################################################*/
     __HAL_RCC_DMA2_CLK_ENABLE();
@@ -182,16 +166,16 @@ void lv_port_disp_init(void)
     RT_ASSERT (info.bits_per_pixel == 8 || info.bits_per_pixel == 16 ||
               info.bits_per_pixel == 24 || info.bits_per_pixel == 32);
 
-    DMA_Config();
+    lvgl_dma_config();
 
-    buf_1 = rt_malloc(info.width * 40 * sizeof(lv_color_t));
+    buf_1 = rt_malloc(info.width * 30 * sizeof(lv_color_t));
     if (buf_1 == RT_NULL)
     {
         LOG_E("malloc memory failed");
         return;
     }
 
-    buf_2 = rt_malloc(info.width * 40 * sizeof(lv_color_t));
+    buf_2 = rt_malloc(info.width * 30 * sizeof(lv_color_t));
     if (buf_2 == RT_NULL)
     {
         LOG_E("malloc memory failed");
@@ -199,7 +183,7 @@ void lv_port_disp_init(void)
     }
 
     /*Initialize `disp_buf` with the buffer(s).*/
-    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, info.width * 40);
+    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, info.width * 30);
 
     lv_disp_drv_init(&disp_drv); /*Basic initialization*/
 
