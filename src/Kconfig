@@ -139,6 +139,10 @@ config RT_USING_ASM_MEMCPY
     bool
     default n
 
+config RT_USING_TINY_FFS
+    bool "Enable kservice to use tiny ffs"
+    default n
+
 endmenu
 
 menuconfig RT_DEBUG
