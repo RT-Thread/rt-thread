@@ -9,7 +9,7 @@
 */
 
 #include <rtthread.h>
-#include <yfuns.h>
+#include <LowLevelIOInterface.h>
 #include <fcntl.h>
 
 #pragma module_name = "?__open"

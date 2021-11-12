@@ -8,7 +8,7 @@
  * 2015-01-28     Bernard      first version
  */
 #include <rtthread.h>
-#include <yfuns.h>
+#include <LowLevelIOInterface.h>
 #include <unistd.h>
 
 #pragma module_name = "?__lseek"
