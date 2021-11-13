@@ -25,7 +25,7 @@
 #include "libc.h"
 #endif
 
-#define DBG_TAG    "Keil.armlibc.syscalls"
+#define DBG_TAG    "armlibc.syscalls"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
