@@ -168,6 +168,30 @@ rt_hw_context_switch_to    PROC
     CPSIE   I
 
     ; never reach here!
+
+; In cortex-M uC, there is a tail-chain mechanism to fasen interrupt/exception response,
+; from simulation that it shows a mismatch of stack restore occours if:
+; an interrupt/exception happens at the moment that returning from previous interrupt
+; loop below process in case of return from MSP
+_tailchain_loop
+    ; Set pendSV bit in ICSR register / no side-effect of writting 0s
+    CPSID   I
+    MOV     r0, #0x10000000
+    LDR     r1, =0xe000ed04
+    STR     r0, [r1]
+
+    ; Current fix is to ensure no crash of stack
+    ; TODO...
+    ; 1> MSP is using now, thread's context is still kept in PSP
+    ; 2> Use a global variable & later check in pendSV handler for further process
+    ; 3> Re-schedule of task need to take care in pendSV handler,
+    ;    to rescan task list for higher priority task
+    CPSIE   I
+    NOP
+    B       _tailchain_loop
+
+    ; Never return
+    ALIGN   4
     ENDP
 
 ; compatible with old version
