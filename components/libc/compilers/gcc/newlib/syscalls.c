@@ -80,7 +80,7 @@ void _free_r (struct _reent *ptr, void *addr)
 void *
 _sbrk_r(struct _reent *ptr, ptrdiff_t incr)
 {
-    LOG_E("Please enable RT_USING_HEAP or RT_USING_LIBC");
+    LOG_E("Please enable RT_USING_HEAP");
     RT_ASSERT(0);
     return RT_NULL;
 }
@@ -109,7 +109,12 @@ int _getpid_r(struct _reent *ptr)
 
 int _close_r(struct _reent *ptr, int fd)
 {
+#ifdef RT_USING_POSIX
     return close(fd);
+#else
+    ptr->_errno = ENOTSUP;
+    return -1;
+#endif
 }
 
 int _execve_r(struct _reent *ptr, const char * name, char *const *argv, char *const *env)
