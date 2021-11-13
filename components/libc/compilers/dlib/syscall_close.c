@@ -11,7 +11,13 @@
 #include <LowLevelIOInterface.h>
 #include <unistd.h>
 
+/*
+ * The "__close" function should close the file corresponding to
+ * "handle".  It should return 0 on success and nonzero on failure.
+ */
+
 #pragma module_name = "?__close"
+
 int __close(int handle)
 {
     if (handle == _LLIO_STDOUT ||
