@@ -14,7 +14,7 @@
  * 2021-07-30     Meco Man     move rtc_core.c to rtc.c
  */
 
-#include <time.h>
+#include <sys/time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <rtthread.h>
@@ -133,7 +133,6 @@ rt_err_t rt_hw_rtc_register(rt_rtc_dev_t  *rtc,
     /* register a character device */
     return rt_device_register(device, name, flag);
 }
-
 /**
  * Set system date(time not modify, local timezone).
  *

@@ -72,6 +72,11 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz);
 struct tm *gmtime_r(const time_t *timep, struct tm *r);
 #endif
 
+#ifdef __STRICT_ANSI__
+extern _ARMABI struct tm *localtime_r(const time_t * __restrict /*timer*/,
+                                      struct tm * __restrict /*result*/) __attribute__((__nonnull__(1,2)));
+#endif
+
 #ifdef RT_USING_POSIX
 /* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
