@@ -11,12 +11,18 @@
 #include <LowLevelIOInterface.h>
 #include <unistd.h>
 
+/*
+ * The "remove" function should remove the file named "filename".  It
+ * should return 0 on success and nonzero on failure.
+ */
+
 #pragma module_name = "?remove"
-int remove(const char *val)
+
+int remove(const char *filename)
 {
 #ifdef RT_USING_POSIX
-    return unlink(val);
+    return unlink(filename);
 #else
-    return -1;
+    return _LLIO_ERROR;
 #endif /* RT_USING_POSIX */
 }

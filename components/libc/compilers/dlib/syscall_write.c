@@ -19,6 +19,20 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+/*
+ * The "__write" function should output "size" number of bytes from
+ * "buffer" in some application-specific way.  It should return the
+ * number of characters written, or _LLIO_ERROR on failure.
+ *
+ * If "buffer" is zero then __write should perform flushing of
+ * internal buffers, if any.  In this case "handle" can be -1 to
+ * indicate that all handles should be flushed.
+ *
+ * The template implementation below assumes that the application
+ * provides the function "MyLowLevelPutchar".  It should return the
+ * character written, or -1 on failure.
+ */
+
 #pragma module_name = "?__write"
 
 size_t __write(int handle, const unsigned char *buf, size_t len)
