@@ -1,4 +1,5 @@
 from building import *
+import os
 
 # The set of source files associated with this SConscript file.
 src = Split('''

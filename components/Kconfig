@@ -19,6 +19,10 @@ config RT_USING_USER_MAIN
             default 85  if RT_THREAD_PRIORITY_256
     endif
 
+config RT_USING_LEGACY
+    bool "Support legacy version for compatibility"
+    default n
+
 source "$RTT_DIR/components/cplusplus/Kconfig"
 
 source "$RTT_DIR/components/finsh/Kconfig"

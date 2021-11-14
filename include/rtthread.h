@@ -15,6 +15,7 @@
  * 2016-08-09     ArdaFu       add new thread and interrupt hook.
  * 2018-11-22     Jesven       add all cpu's lock and ipi handler
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
+ * 2021-11-14     Meco Man     add rtlegacy.h for compatibility
  */
 
 #ifndef __RT_THREAD_H__
@@ -25,6 +26,9 @@
 #include <rtdef.h>
 #include <rtservice.h>
 #include <rtm.h>
+#ifdef RT_USING_LEGACY
+#include <rtlegacy.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
