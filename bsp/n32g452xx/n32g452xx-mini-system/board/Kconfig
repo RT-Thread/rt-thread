@@ -26,7 +26,12 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
-        default n 
+        default n
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
 
     menuconfig BSP_USING_UART
         bool "Enable UART"
@@ -51,10 +56,44 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
-        menuconfig BSP_USING_TIM3
+        menuconfig BSP_USING_TIM1PWM
+            bool "Enable timer1 output PWM"
+            default n
+            if BSP_USING_TIM1PWM
+                config BSP_USING_TIM1_CH1
+                    bool "Enable TIM1 channel1 PWM"
+                    default n
+                config BSP_USING_TIM1_CH2
+                    bool "Enable TIM1 channel2 PWM"
+                    default n
+                config BSP_USING_TIM1_CH3
+                    bool "Enable TIM1 channel3 PWM"
+                    default n
+                config BSP_USING_TIM1_CH4
+                    bool "Enable TIM1 channel4 PWM"
+                    default n
+            endif
+        menuconfig BSP_USING_TIM2PWM
+            bool "Enable timer2 output PWM"
+            default n
+            if BSP_USING_TIM2PWM
+                config BSP_USING_TIM2_CH1
+                    bool "Enable TIM2 channel1 PWM"
+                    default n
+                config BSP_USING_TIM2_CH2
+                    bool "Enable TIM2 channel2 PWM"
+                    default n
+                config BSP_USING_TIM2_CH3
+                    bool "Enable TIM2 channel3 PWM"
+                    default n
+                config BSP_USING_TIM2_CH4
+                    bool "Enable TIM2 channel4 PWM"
+                    default n
+            endif
+        menuconfig BSP_USING_TIM3PWM
             bool "Enable timer3 output PWM"
             default n
-            if BSP_USING_TIM3
+            if BSP_USING_TIM3PWM
                 config BSP_USING_TIM3_CH1
                     bool "Enable TIM3 channel1 PWM"
                     default n
@@ -66,6 +105,57 @@ menu "On-chip Peripheral Drivers"
                     default n
                 config BSP_USING_TIM3_CH4
                     bool "Enable TIM3 channel4 PWM"
+                    default n
+            endif
+        menuconfig BSP_USING_TIM4PWM
+            bool "Enable timer4 output PWM"
+            default n
+            if BSP_USING_TIM4PWM
+                config BSP_USING_TIM4_CH1
+                    bool "Enable TIM4 channel1 PWM"
+                    default n
+                config BSP_USING_TIM4_CH2
+                    bool "Enable TIM4 channel2 PWM"
+                    default n
+                config BSP_USING_TIM4_CH3
+                    bool "Enable TIM4 channel3 PWM"
+                    default n
+                config BSP_USING_TIM4_CH4
+                    bool "Enable TIM4 channel4 PWM"
+                    default n
+            endif
+        menuconfig BSP_USING_TIM5PWM
+            bool "Enable timer5 output PWM"
+            default n
+            if BSP_USING_TIM5PWM
+                config BSP_USING_TIM5_CH1
+                    bool "Enable TIM5 channel1 PWM"
+                    default n
+                config BSP_USING_TIM5_CH2
+                    bool "Enable TIM5 channel2 PWM"
+                    default n
+                config BSP_USING_TIM5_CH3
+                    bool "Enable TIM5 channel3 PWM"
+                    default n
+                config BSP_USING_TIM5_CH4
+                    bool "Enable TIM5 channel4 PWM"
+                    default n
+            endif
+        menuconfig BSP_USING_TIM8PWM
+            bool "Enable timer8 output PWM"
+            default n
+            if BSP_USING_TIM8PWM
+                config BSP_USING_TIM8_CH1
+                    bool "Enable TIM8 channel1 PWM"
+                    default n
+                config BSP_USING_TIM8_CH2
+                    bool "Enable TIM8 channel2 PWM"
+                    default n
+                config BSP_USING_TIM8_CH3
+                    bool "Enable TIM8 channel3 PWM"
+                    default n
+                config BSP_USING_TIM8_CH4
+                    bool "Enable TIM8 channel4 PWM"
                     default n
             endif
         endif
