@@ -5,13 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2021-11-14     Meco Man     the first version
  */
 
 #ifndef DFS_POLL_H__
 #define DFS_POLL_H__
 
 #include <poll.h>
-
-#warning "This file will be obsolete in the next version! Please use <poll.h> to instead."
 
 #endif /* DFS_POLL_H__ */
