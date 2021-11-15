@@ -11,7 +11,9 @@
 #include <rtthread.h>
 #include <yfuns.h>
 #include <unistd.h>
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
+#endif
 
 #define DBG_TAG    "dlib.syscall_read"
 #define DBG_LVL    DBG_INFO
@@ -20,7 +22,7 @@
 #pragma module_name = "?__read"
 size_t __read(int handle, unsigned char *buf, size_t len)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX_STDIO
     int size;
 
     if (handle == _LLIO_STDIN)
@@ -41,5 +43,5 @@ size_t __read(int handle, unsigned char *buf, size_t len)
     return size;
 #else
     return _LLIO_ERROR;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }

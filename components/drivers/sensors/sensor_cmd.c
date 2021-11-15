@@ -225,7 +225,7 @@ MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
 
 static void sensor_polling(int argc, char **argv)
 {
-    uint16_t num = 10;
+    rt_uint16_t num = 10;
     rt_device_t dev = RT_NULL;
     rt_sensor_t sensor;
     struct rt_sensor_data data;
@@ -411,7 +411,7 @@ static void sensor(int argc, char **argv)
     }
     else if (!strcmp(argv[1], "read"))
     {
-        uint16_t num = 5;
+        rt_uint16_t num = 5;
 
         if (dev == RT_NULL)
         {

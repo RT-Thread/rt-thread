@@ -21,34 +21,19 @@
 ## MAX32660芯片介绍
 
 - RAM  96KB    0x20000000~0x20018000
-
 - ROM  256KB   0x0 ~ 0x40000
-
 - 16KB I-cache
-
 - UART 2个  UART0  UART1
-
 - GPIO  14个
-
 - I2C  2个 Master/Slave 高速3.4Mbps
-
 - ARM Cortex-M4F, 96MHz
-
 - MPU
-
-- SPI 2个  Master/Slave 
-
+- SPI 2个  Master/Slave
 - I2S  Master/Slave
-
 - 4 channel DMA
-
 - 3个 32bit  Timer
-
-- Watchdog 
-
+- Watchdog
 - RTC
-
-  
 
 ## 开发板介绍
 
@@ -57,6 +42,10 @@ MAX32660-EVSYS是美信官方的开发板，搭载MAX32660芯片，基于ARM Cor
 开发板外观如下图所示
 
 ![](doc/images/board.jpg)
+
+开发板引脚连接图如图所示：
+
+![board](doc\images\pins.jpg)
 
 MAX32660-EVSYS开发板常用 **板载资源** 如下：
 
@@ -70,39 +59,33 @@ MAX32660-EVSYS开发板常用 **板载资源** 如下：
 
 本 BSP 目前对外设的支持情况如下：
 
-| **片上外设** | **支持情况** |       **备注**        |
-| :----------- | :----------: | :-------------------: |
-| GPIO         |     支持     |                       |
-| UART         |     支持     | UART0, UART1(console) |
-| PWM          |              |                       |
-| SPI          |     支持     |      SPI0, SPI1       |
-| RTC          |     支持     |      RTC              |
-| I2S          |              |                       |
-| I2C          |     支持     |      I2C0, I2C1       |
-| TIMER        |              |                       |
-| Watchdog     |              |                       |
-
-
+| **片上外设** | **支持情况** |    **备注**    |
+| :----------------- | :----------------: | :-------------------: |
+| GPIO               |        支持        |                       |
+| UART               |        支持        | UART0, UART1(console) |
+| PWM                |                   |                       |
+| SPI                |        支持        |      SPI0, SPI1      |
+| RTC                |        支持        |          RTC          |
+| I2S                |                   |                       |
+| I2C                |        支持        |      I2C0, I2C1      |
+| TIMER              |                   |                       |
+| Watchdog           |                   |                       |
 
 ### 进阶使用
 
 此 BSP 默认只开启了串口 的功能，更多高级功能需要利用 env 工具对 BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
-
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
-4. 输入`scons --target=mdk5/vsc命令重新生成工程。
+2. 输入 `menuconfig`命令配置工程，配置好之后保存退出。
+3. 输入`scons --target=mdk5/vsc命令重新生成工程。
 
 ## 注意事项
 
 目前支持keil和GCC环境
 
-
-
 ## FAQ
 
-###  GCC环境如何调试使用
+### GCC环境如何调试使用
 
 第一步，需要配置arm-none-eabi-gcc路径到系統环境变量中去或者在rtconfig.py中EXEC_PATH  修改路径
 
@@ -122,12 +105,8 @@ MAX32660-EVSYS开发板常用 **板载资源** 如下：
             //"preLaunchTask": "build"
 ```
 
-
-
-
-
 ## 联系人信息
 
 维护人:
 
--  [supperthomas], 邮箱：<78900636@qq.com>
+- [supperthomas], 邮箱：<78900636@qq.com>

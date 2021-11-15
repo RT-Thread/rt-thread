@@ -145,10 +145,17 @@ void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
 int finsh_getchar(void)
 {
 #ifdef RT_USING_DEVICE
-#ifdef RT_LIBC_USING_FILEIO
-    return getchar();
-#else
     char ch = 0;
+#ifdef RT_USING_POSIX_STDIO
+    if(read(STDIN_FILENO, &ch, 1) > 0)
+    {
+        return ch;
+    }
+    else
+    {
+        return -1; /* EOF */
+    }
+#else
     rt_device_t device;
 
     RT_ASSERT(shell != RT_NULL);
@@ -163,14 +170,14 @@ int finsh_getchar(void)
         rt_sem_take(&shell->rx_sem, RT_WAITING_FOREVER);
 
     return ch;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX_STDIO */
 #else
     extern char rt_hw_console_getchar(void);
     return rt_hw_console_getchar();
 #endif /* RT_USING_DEVICE */
 }
 
-#if !defined(RT_LIBC_USING_FILEIO) && defined(RT_USING_DEVICE)
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
@@ -234,7 +241,7 @@ const char *finsh_get_device()
     RT_ASSERT(shell != RT_NULL);
     return shell->device->parent.name;
 }
-#endif
+#endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 
 /**
  * @ingroup finsh
@@ -436,7 +443,7 @@ void finsh_thread_entry(void *parameter)
     shell->echo_mode = 0;
 #endif
 
-#if !defined(RT_LIBC_USING_FILEIO) && defined(RT_USING_DEVICE)
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     /* set console device as shell device */
     if (shell->device == RT_NULL)
     {
@@ -446,7 +453,7 @@ void finsh_thread_entry(void *parameter)
             finsh_set_device(console->parent.name);
         }
     }
-#endif
+#endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 
 #ifdef FINSH_USING_AUTH
     /* set the default password when the password isn't setting */

@@ -18,9 +18,9 @@ int __close(int handle)
         handle == _LLIO_STDERR ||
         handle == _LLIO_STDIN)
         return _LLIO_ERROR;
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     return close(handle);
 #else
     return _LLIO_ERROR;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }

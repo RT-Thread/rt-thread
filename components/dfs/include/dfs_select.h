@@ -12,4 +12,6 @@
 
 #include <sys/select.h>
 
+#warning "This file will be obsolete in the next version! Please use <sys/select.h> to instead."
+
 #endif

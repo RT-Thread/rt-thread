@@ -128,6 +128,9 @@ static void ab32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     switch (mode)
     {
     case PIN_MODE_INPUT:
+        gpio_init.pull = GPIO_NOPULL;
+        gpio_init.dir = GPIO_DIR_INPUT;
+        break;
     case PIN_MODE_INPUT_PULLUP:
         gpio_init.pull = GPIO_PULLUP;
         gpio_init.dir = GPIO_DIR_INPUT;

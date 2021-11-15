@@ -12,7 +12,7 @@ static struct rt_device_graphic_info info;
 static uint16_t fcolor = WHITE;
 static int bcolor = BLACK;
 
-static int lcd_init(void)
+int lcd_init(void)
 {
     int result;
 

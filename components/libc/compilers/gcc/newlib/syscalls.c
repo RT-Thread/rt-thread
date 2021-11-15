@@ -14,12 +14,15 @@
 #include <reent.h>
 #include <rtthread.h>
 #include <stdio.h>
+#include <string.h>
 #include <stddef.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/errno.h>
 #include <sys/stat.h>
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
+#endif
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif
@@ -175,7 +178,7 @@ int flock(int fd, int operation)
 
 _off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     _off_t rc;
 
     rc = lseek(fd, pos, whence);
@@ -183,12 +186,12 @@ _off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 int _mkdir_r(struct _reent *ptr, const char *name, int mode)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     int rc;
 
     rc = mkdir(name, mode);
@@ -196,25 +199,24 @@ int _mkdir_r(struct _reent *ptr, const char *name, int mode)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 int _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     int rc;
-
     rc = open(file, flags, mode);
     return rc;
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX_STDIO
     _ssize_t rc;
     if (libc_stdio_get_console() < 0 && fd == STDIN_FILENO)
     {
@@ -226,12 +228,12 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 int _rename_r(struct _reent *ptr, const char *old, const char *new)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     int rc;
 
     rc = rename(old, new);
@@ -239,12 +241,12 @@ int _rename_r(struct _reent *ptr, const char *old, const char *new)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     int rc;
 
     rc = stat(file, pstat);
@@ -252,28 +254,30 @@ int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 int _unlink_r(struct _reent *ptr, const char *file)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     return unlink(file);
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
 }
 
 _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
-#ifdef RT_LIBC_USING_FILEIO
+#ifdef RT_USING_POSIX
     _ssize_t rc;
+#ifdef RT_USING_POSIX_STDIO
     if (libc_stdio_get_console() < 0 && fd == STDOUT_FILENO)
     {
         LOG_W("Do not invoke standard output before initializing libc");
         return 0;
     }
+#endif /* RT_USING_POSIX_STDIO */
     rc = write(fd, buf, nbytes);
     return rc;
 #elif defined(RT_USING_CONSOLE)
@@ -285,7 +289,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
         if (console)
             return rt_device_write(console, -1, buf, nbytes);
     }
-#endif /* RT_LIBC_USING_FILEIO */
+#endif /* RT_USING_POSIX */
     ptr->_errno = ENOTSUP;
     return -1;
 }
