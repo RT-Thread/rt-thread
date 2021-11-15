@@ -322,7 +322,7 @@ static rt_err_t nau8822_init(void)
     I2C_WriteNAU8822(48, 0x100);   /* Gain value */
     I2C_WriteNAU8822(50, 0x001);   /* Left DAC connected to LMIX */
     I2C_WriteNAU8822(51, 0x001);   /* Right DAC connected to RMIX */
-    
+
     I2C_WriteNAU8822(0x34, 0x13F);
     I2C_WriteNAU8822(0x35, 0x13F);
 
