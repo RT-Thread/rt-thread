@@ -1,123 +1,152 @@
-# BSP README 模板
+# NUCLEO-STM32U575ZI-Q- BSP Introduction
 
-## 简介
+[中文](README_zh.md)
 
-本文档为 xxx 开发板的 BSP (板级支持包) 说明。
+## MCU: STM32U575ZI @110MHz, 2048 KB FLASH,  786 KB RAM
 
-主要内容如下：
+The STM32U575xx devices belong to an ultra-low-power microcontrollers family (STM32U5 Series) based on the high-performance Arm® Cortex®-M33 32-bit RISC core. They operate at a frequency of up to 160 MHz.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The Cortex®-M33 core features a single-precision FPU (floating-point unit), that supports all the Arm® single-precision data-processing instructions and all the data types.
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+The Cortex®-M33 core also implements a full set of DSP (digital signal processing) instructions and a MPU (memory protection unit) that enhances the application security.
 
-## 开发板介绍
+The devices embed high-speed memories (up to 2 Mbytes of Flash memory and 786 Kbytes of SRAM), a FSMC (flexible external memory controller) for static memories (for devices with packages of 90 pins and more), two Octo-SPI Flash memory interfaces  (at least one Quad-SPI available on all packages) and an extensive range of enhanced I/Os and peripherals connected to three APB buses, three AHB buses and a 32-bit multi-AHB bus matrix.
 
-【此处简单介绍一下开发板】
+The devices offer security foundation compliant  with the TBSA (trusted-based security architecture) requirements from Arm®. It embeds the necessary security features to implement a secure boot, secure data storage and secure firmware update. Besides these capabilities, the devices incorporate a secure firmware installation feature, that allows the customer to secure the provisioning of the code during its production. A flexible lifecycle is managed thanks to multiple levels of readout protection and debug unlock with password. Firmware hardware isolation is supported thanks to securable peripherals, memories and I/Os, and privilege configuration of peripherals and memories.
 
-开发板外观如下图所示：
+The devices feature several protection mechanisms for embedded Flash memory and SRAM: readout protection, write protection, secure and hide protection areas.
 
-![board](figures/board.png)
+The devices embed several peripherals reinforcing security: with DPA resistancea HASH hardware accelerator, and a true random number generator.
 
-该开发板常用 **板载资源** 如下：
+The devices offer active tamper detection and protection against transient and environmental perturbation attacks,  thanks to several internal monitoring generating secret data erase in case of attack. This helps to fit the PCI requirements for point of sales applications.
 
-- MCU：STM32xxx，主频 xxxMHz，xxxKB FLASH ，xxxKB RAM
-- 外部 RAM：型号，xMB
-- 外部 FLASH：型号，xMB
-- 常用外设
-  - LED：x个，DS0（红色，PB1），DS1（绿色，PB0）
-  - 按键：x个，K0（兼具唤醒功能，PA0），K1（PC13）
-- 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口等
-- 调试接口，标准 JTAG/SWD
+The devices offer one fast 14-bit ADC (2.5 Msps), one 12-bit ADC (2.5 Msps), two comparators, two operational amplifiers, two DAC channels, an internal voltage reference buffer, a         low-power RTC, four 32-bit general-purpose timers, two 16-bit PWM timers dedicated to motor control, three 16-bit general-purpose timers, two 16-bit basic timers and four 16-bit low-power timers.
 
-开发板更多详细信息请参考【厂商名】 [xxx开发板介绍](https://xxx)。
+The devices support a MDF (multi-function digital filter) with six filters dedicated to the connection of external sigma-delta modulators. Another low-power digital filter dedicated to audio signals is embedded (ADF), with one filter supporting sound-activity detection. The devices embed also a Chrom-ART Accelerator dedicated to graphic applications, and mathematical accelerators (a trigonometric functions accelerator plus a filter mathematical accelerator). In addition, up to 24 capacitive sensing channels are available.
 
-## 外设支持
+The devices also feature standard and advanced communication interfaces such as: four I2Cs, three SPIs, three USARTs, two UARTs, one low-power UART, two SAIs, one digital camera interface (DCMI), two SDMMCs, one FDCAN, one USB OTG full-speed, one USB Type-C /USB Power Delivery controller, and one generic synchronous 8-/16-bit PSSI (parallel data input/output slave interface).
 
-本 BSP 目前对外设的支持情况如下：
+The devices operate in the –40 to +85 °C (+105 °C junction) and –40 to +125 °C (+130 °C junction) temperature ranges from a 1.71 to 3.6 V power supply.
 
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持     |                                       |
-| SPI Flash         |     支持     |                                       |
-| 以太网            |     支持     |                                       |
-| SD卡              |   暂不支持   |                                       |
-| CAN               |   暂不支持   |                                       |
-| **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
-| UART              |     支持     | UART1/x/x                             |
-| SPI               |     支持     | SPI1/x/x                              |
-| I2C               |     支持     | 软件 I2C                              |
-| SDIO              |   暂不支持   | 即将支持                              |
-| RTC               |   暂不支持   | 即将支持                              |
-| PWM               |   暂不支持   | 即将支持                              |
-| USB Device        |   暂不支持   | 即将支持                              |
-| USB Host          |   暂不支持   | 即将支持                              |
-| IWG               |   暂不支持   | 即将支持                              |
-| **扩展模块**      | **支持情况** | **备注**                              |
-|     xxx 模块      |   支持   |                                      |
+A comprehensive set of power-saving modes allow the design of low-power applications. Many peripherals (including communication, analog, timers and audio peripherals) can be functional and autonomous down to Stop mode with direct memory access, thanks to LPBAM support (low-power background autonomous mode).
 
-## 使用说明
+Some independent power supplies are supported like an analog independent supply input for ADC, DACs, OPAMPs and comparators, a 3.3 V dedicated supply input for USB and up to 14 I/Os, that can be supplied independently down to 1.08 V. A VBAT input is available for connecting a backup battery in order to preserve the RTC functionality and to backup 3232-bit registers and 2-Kbyte SRAM.
 
-使用说明分为如下两个章节：
+The devices offer eight packages from 48 to 169 pins.
 
-- 快速上手
+#### KEY FEATURES
 
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+- Includes ST state-of-the-art patented technology
 
-- 进阶使用
+- Ultra-low-power with FlexPowerControl
+  - 1.71 V to 3.6 V power supply
+  - –40 °C to +85/125 °C temperature range
+  -  Low-power background autonomous mode (LPBAM): autonomous peripherals with DMA, functional down to Stop 2 mode
+  - VBAT mode: supply for RTC, 32 x 32-bit backup registers and 2-Kbyte backup SRAM
+  - 160 nA Shutdown mode (24 wakeup pins)
+  - 210 nA Standby mode (24 wakeup pins)
+  - 440 nA Standby mode with RTC
+  - 1.9 μA Stop 3 mode with 16-Kbyte SRAM4.3 µA Stop 3 mode with full SRAM
+  - 4.0 µA Stop 2 mode with 16-Kbyte SRAM
+  - 8.95 µA Stop 2 mode with full SRAM
+  - 19.5 μA/MHz Run mode @ 3.3 V
 
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+-  Core
+  -  Arm® 32-bit Cortex®-M33 CPU with TrustZone®, MPU, DSP, and FPU
 
+-  ART Accelerator
+  - 8-Kbyte instruction cache allowing 0-wait-state execution from Flash and external memories: up to 160 MHz, 240 DMIPS
+  - 4-Kbyte data cache for external memories
 
-### 快速上手
+- Power management
+  - Embedded regulator (LDO) and SMPSstep-down converter supporting switchon-the-fly and voltage scaling
 
-本 BSP 为开发者提供 MDK4、MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+- Benchmarks
+  - 1.5 DMIPS/MHz (Drystone 2.1)
+  - 651 CoreMark® (4.07 CoreMark®/MHz)
+  - 535 ULPMark™-CP
+  - 149 ULPMark™-PP
+  - 58.2 ULPMark™-CM
+  - 133000 SecureMark™-TLS
 
-#### 硬件连接
+- Memories
+  ​- 2-Mbyte Flash memory with ECC, 2 banks read-while-write, including 512 Kbytes with 100 kcycles
+  - 86-Kbyte SRAM with ECC OFF or 722-Kbyte SRAM including up to 322-Kbyte SRAM with ECC ON
+  - External memory interface supporting SRAM, PSRAM, NOR, NAND and FRAM memories
+  - 2 Octo-SPI memory interfaces
 
-使用数据线连接开发板到 PC，打开电源开关。
+- Security
 
-#### 编译下载
+  - Arm® TrustZone® and securable I/Os, memories and peripherals
+  - Flexible life cycle scheme with RDP and password protected debug
+  - Root of trust thanks to unique boot entry and secure hide protection area (HDP)
+  - Secure firmware installation (SFI) thanks to embedded root secure services (RSS)
+  - Secure firmware upgrade support with TF-M
+  - HASH hardware accelerator
+  - True random number generator, NIST SP800-90B compliant
+  - 96-bit unique ID
+  - 512-byte OTP (one-time programmable)
+  - Active tampers
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+- Clock management
+  - 4 to 50 MHz crystal oscillator
+  - 32 kHz crystal oscillator for RTC (LSE)
+  - Internal 16 MHz factory-trimmed RC (±1%)
+  - Internal low-power 32 kHz RC (±5%)
+  - 2 internal multispeed 100 kHz to 48 MHz oscillators, including one auto-trimmed by LSE (better than ±0.25% accuracy)
+  - Internal 48 MHz with clock recovery
+  - 3 PLLs for system clock, USB, audio, ADC
 
-> 工程默认配置使用 xxx 仿真器下载程序，在通过 xxx 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+- General-purpose input/outputs
+  - Up to 136 fast I/Os with interrupt capability most 5V-tolerant and up to 14 I/Os with independent supply down to 1.08 V
 
-#### 运行结果
+- Up to 17 timers and 2 watchdogs
+  - 19 timers/watchdogs: 2 16-bit advanced motor-control, 4 32-bit, 5 16-bit, 4 low-power 16-bit (available in Stop mode), 2 SysTick timers and 2 watchdogs
+  - RTC with hardware calendar and calibration
 
-下载程序成功之后，系统会自动运行，【这里写开发板运行起来之后的现象，如：LED 闪烁等】。
+- Up to 22 communication peripherals
+  -  1 USB Type-C®/USB power delivery controller
+  - 1 USB OTG 2.0 full-speed controller
+  - 2 SAIs (serial-audio interface)
+  - 4 I2C FM+(1 Mbit/s), SMBus/PMBus™
+  - 6 USARTs (ISO 7816, LIN, IrDA, modem)
+  - 3 SPIs (5x SPIs with the dual OCTOSPI)
+  - 1 CAN FD controller
+  - 2 SDMMC interfaces
+  - 1 multi-function digital filter (6 filters)+ 1 audio digital filter with sound-activity detection
+  - Parallel synchronous slave interface
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+- 16- and 4-channel DMA controllers, functional in Stop mode
 
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     3.1.1 build Nov 19 2018
- 2006 - 2018 Copyright by rt-thread team
-msh >
-```
-### 进阶使用
+- Graphic features
+  - Chrom-ART Accelerator (DMA2D) for enhanced graphic content creation
+  - 1 digital camera interface
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+- Mathematical co-processor
+  - CORDIC for trigonometric functions acceleration
+  - Filter mathematical accelerator (FMAC)
 
-1. 在 bsp 下打开 env 工具。
+- Up to 24 capacitive sensing channels
+  -  Support touch key, linear and rotary touch sensors
 
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
+- Rich analog peripherals (independent supply)
 
-3. 输入`pkgs --update`命令更新软件包。
+  - 14-bit ADC 2.5-Msps with hardware oversampling
+  - 12-bit ADC 2.5-Msps, with hardware oversampling, autonomous in Stop 2 mode
+  - 2 12-bit DAC, low-power sample and hold
+  - 2 operational amplifiers with built-in PGA
+  - 2 ultra-low-power comparators
+  - Development support: serial-wire debug (SWD), JTAG, Embedded Trace Macrocell™ (ETM)
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+- ECOPACK2 compliant packages
 
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
+## Read more
 
-## 注意事项
+|                          Documents                           |                         Description                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [STM32_Nucleo-144_BSP_Introduction](../docs/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-144 boards (**Must-Read**) |
+| [STM32U575ZI ST Official Website](https://www.st.com/en/evaluation-tools/nucleo-u575zi-q.html) |          STM32U575ZI datasheet and other resources           |
 
-- xxx
+## Maintained By
 
-## 联系人信息
-
-维护人:
-
--  [xxx](https://个人主页), 邮箱：<xxx@xxx.com>
+[liukang](https://github.com/liukangcc)
