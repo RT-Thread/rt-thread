@@ -181,12 +181,16 @@ static EP_INFO_T *GetFreePipe(
 
         if (i < NU_MAX_USBH_PIPE)
         {
-            EP_INFO_T *psEPInfo = rt_malloc(sizeof(EP_INFO_T));
+            EP_INFO_T *psEPInfo = (EP_INFO_T *)rt_malloc_align(sizeof(EP_INFO_T), CACHE_LINE_SIZE);
             if (psEPInfo != RT_NULL)
             {
+#if defined(BSP_USING_MMU)
+                psPortDev->apsEPInfo[i] = (EP_INFO_T *)((uint32_t)psEPInfo | NON_CACHE_MASK);
+#else
                 psPortDev->apsEPInfo[i] = psEPInfo;
+#endif
                 *pu8PipeIndex = i;
-                return psEPInfo;
+                return psPortDev->apsEPInfo[i];
             }
         }
     }
@@ -202,7 +206,11 @@ static void FreePipe(
             (u8PipeIndex < NU_MAX_USBH_PIPE) &&
             (psPortDev->apsEPInfo[u8PipeIndex] != RT_NULL))
     {
-        rt_free(psPortDev->apsEPInfo[u8PipeIndex]);
+        EP_INFO_T *psEPInfo = psPortDev->apsEPInfo[u8PipeIndex];
+#if defined(BSP_USING_MMU)
+        psEPInfo = (EP_INFO_T *)((uint32_t)psEPInfo & ~NON_CACHE_MASK);
+#endif
+        rt_free_align(psEPInfo);
         psPortDev->apsEPInfo[u8PipeIndex] = RT_NULL;
     }
 }
@@ -314,8 +322,9 @@ static rt_err_t nu_open_pipe(upipe_t pipe)
 #if defined(BSP_USING_MMU)
     if (!psPortDev->asPipePktBuf[pipe->pipe_index])
     {
-        psPortDev->asPipePktBuf[pipe->pipe_index] = rt_malloc_align(512ul, CACHE_LINE_SIZE);
-        RT_ASSERT(psPortDev->asPipePktBuf[pipe->pipe_index] != RT_NULL);
+        void *paddr = rt_malloc_align(512ul, CACHE_LINE_SIZE);
+        RT_ASSERT(paddr != RT_NULL);
+        psPortDev->asPipePktBuf[pipe->pipe_index] = (void *)((uint32_t)paddr | NON_CACHE_MASK);
     }
 #endif
 
@@ -366,7 +375,9 @@ static rt_err_t nu_close_pipe(upipe_t pipe)
 #if defined(BSP_USING_MMU)
         if (psPortDev->asPipePktBuf[pipe->pipe_index])
         {
-            rt_free_align(psPortDev->asPipePktBuf[pipe->pipe_index]);
+            void *paddr = psPortDev->asPipePktBuf[pipe->pipe_index];
+            paddr = (void *)((uint32_t)paddr & ~NON_CACHE_MASK);
+            rt_free_align(paddr);
             psPortDev->asPipePktBuf[pipe->pipe_index] = RT_NULL;
         }
 #endif
@@ -414,26 +425,42 @@ static int nu_bulk_xfer(
     UTR_T *psUTR,
     int timeouts)
 {
+    #define TIMEOUT_RETRY 3
+
+    int retry = TIMEOUT_RETRY;
     int ret = usbh_bulk_xfer(psUTR);
     if (ret < 0)
-        return ret;
-
-    //wait transfer done
-    if (rt_completion_wait(&(psPortDev->utr_completion), timeouts) < 0)
     {
-        rt_kprintf("Request Timeout in %d ms!! (bulk_xfer)\n", timeouts);
-
-        rt_kprintf("psUTR->buff: %08x\n", psUTR->buff);
-        rt_kprintf("psUTR->data_len: %d\n", psUTR->data_len);
-        rt_kprintf("psUTR->xfer_len: %d\n", psUTR->xfer_len);
-        rt_kprintf("psUTR->ep: %08x\n", psUTR->ep);
-        rt_kprintf("psUTR->bIsTransferDone: %08x\n", psUTR->bIsTransferDone);
-        rt_kprintf("psUTR->status: %08x\n", psUTR->status);
-        rt_kprintf("psUTR->td_cnt: %08x\n", psUTR->td_cnt);
-
-        return -1;
+        rt_kprintf("usbh_bulk_xfer %x\n", ret);
+        return ret;
     }
-    return 0;
+
+    while ( retry > 0 )
+    {
+        if ( rt_completion_wait(&(psPortDev->utr_completion), timeouts) != 0 )
+        {
+            rt_uint32_t level;
+
+            rt_kprintf("Request %d Timeout in %d ms!!\n", psUTR->data_len, timeouts);
+
+            rt_completion_init(&(psPortDev->utr_completion));
+            rt_thread_mdelay(1);
+
+            // Workaround: To fix timeout case, this way is traveling qh's linking-list again.
+            level = rt_hw_interrupt_disable();
+            extern void scan_asynchronous_list();
+            extern void iaad_remove_qh();
+            scan_asynchronous_list();
+            iaad_remove_qh();
+            rt_hw_interrupt_enable(level);
+        }
+        else
+            break;
+
+        retry--;
+    }
+
+    return (retry > 0) ? 0 : -1;
 }
 
 static int nu_int_xfer(
@@ -525,7 +552,6 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         if ((pipe->ep.bEndpointAddress & USB_DIR_MASK) == USB_DIR_OUT)
         {
             rt_memcpy(buffer_nonch, buffer, nbytes);
-            mmu_clean_dcache((uint32_t)buffer_nonch, nbytes);
         }
     }
 #endif
@@ -678,7 +704,6 @@ exit2_nu_pipe_xfer:
     {
         if ((pipe->ep.bEndpointAddress & USB_DIR_MASK) == USB_DIR_IN)
         {
-            mmu_invalidate_dcache((uint32_t)buffer_nonch, nbytes);
             rt_memcpy(buffer, buffer_nonch, nbytes);
         }
     }
@@ -808,7 +833,6 @@ static rt_err_t nu_hcd_init(rt_device_t device)
 
     //install connect/disconnect callback
     usbh_install_conn_callback(nu_hcd_connect_callback, nu_hcd_disconnect_callback);
-    usbh_polling_root_hubs();
 
     //create thread for polling usbh port status
     /* create usb hub thread */

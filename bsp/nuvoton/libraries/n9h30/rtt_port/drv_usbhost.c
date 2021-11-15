@@ -324,11 +324,7 @@ static rt_err_t nu_open_pipe(upipe_t pipe)
     {
         void *paddr = rt_malloc_align(512ul, CACHE_LINE_SIZE);
         RT_ASSERT(paddr != RT_NULL);
-#if defined(BSP_USING_MMU)
         psPortDev->asPipePktBuf[pipe->pipe_index] = (void *)((uint32_t)paddr | NON_CACHE_MASK);
-#else
-        psPortDev->asPipePktBuf[pipe->pipe_index] = paddr;
-#endif
     }
 #endif
 
@@ -380,9 +376,7 @@ static rt_err_t nu_close_pipe(upipe_t pipe)
         if (psPortDev->asPipePktBuf[pipe->pipe_index])
         {
             void *paddr = psPortDev->asPipePktBuf[pipe->pipe_index];
-#if defined(BSP_USING_MMU)
             paddr = (void *)((uint32_t)paddr & ~NON_CACHE_MASK);
-#endif
             rt_free_align(paddr);
             psPortDev->asPipePktBuf[pipe->pipe_index] = RT_NULL;
         }
@@ -431,54 +425,40 @@ static int nu_bulk_xfer(
     UTR_T *psUTR,
     int timeouts)
 {
+    #define TIMEOUT_RETRY 3
 
-#define TIMEOUT_RETRY 10
-
-    UTR_T *psUTR_tmp = NULL;
     int retry = TIMEOUT_RETRY;
-    int ret;
-    int new_timeouts = timeouts / TIMEOUT_RETRY;
-    new_timeouts = (new_timeouts < 200) ? 200 : new_timeouts;
-
-    psUTR_tmp = alloc_utr(psPortDev->pUDev);
-    if (!psUTR_tmp)
+    int ret = usbh_bulk_xfer(psUTR);
+    if (ret < 0)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_bulk_xfer ERROR: unable alloc UTR\n"));
-        return -1;
+        rt_kprintf("usbh_bulk_xfer %x\n", ret);
+        return ret;
     }
 
-    rt_memcpy((void *)psUTR_tmp, psUTR, sizeof(UTR_T));
-
-    while (retry > 0)
+    while ( retry > 0 )
     {
-        ret = usbh_bulk_xfer(psUTR);
-        if (ret < 0)
+        if ( rt_completion_wait(&(psPortDev->utr_completion), timeouts) != 0 )
         {
-            rt_kprintf("usbh_bulk_xfer %x\n", ret);
-            return ret;
-        }
+            rt_uint32_t level;
 
-        rt_thread_mdelay(1);
+            rt_kprintf("Request %d Timeout in %d ms!!\n", psUTR->data_len, timeouts);
 
-        //wait transfer done
-        if (rt_completion_wait(&(psPortDev->utr_completion), new_timeouts) == 0)
-        {
-            break;
+            rt_completion_init(&(psPortDev->utr_completion));
+            rt_thread_mdelay(1);
+
+            // Workaround: To fix timeout case, this way is traveling qh's linking-list again.
+            level = rt_hw_interrupt_disable();
+            extern void scan_asynchronous_list();
+            extern void iaad_remove_qh();
+            scan_asynchronous_list();
+            iaad_remove_qh();
+            rt_hw_interrupt_enable(level);
         }
         else
-        {
-            // Timeout, let's retry.
-            retry--;
-            rt_kprintf("[%d/%d]Request Timeout in %d ms!! (bulk_xfer %d)\n", retry, TIMEOUT_RETRY, new_timeouts, psUTR->data_len);
+            break;
 
-            // Unlink
-            ret = usbh_quit_utr(psUTR);
-            rt_memcpy(psUTR, (void *)psUTR_tmp, sizeof(UTR_T));
-            rt_completion_init(&(psPortDev->utr_completion));
-        }
+        retry--;
     }
-
-    free_utr(psUTR_tmp);
 
     return (retry > 0) ? 0 : -1;
 }
