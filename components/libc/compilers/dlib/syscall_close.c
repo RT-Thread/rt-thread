@@ -24,9 +24,9 @@ int __close(int handle)
         handle == _LLIO_STDERR ||
         handle == _LLIO_STDIN)
         return _LLIO_ERROR;
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     return close(handle);
 #else
     return _LLIO_ERROR;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
