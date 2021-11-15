@@ -11,7 +11,7 @@
 #include <rtthread.h>
 #include <yfuns.h>
 #include <unistd.h>
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
 #endif
 
@@ -22,7 +22,7 @@
 #pragma module_name = "?__read"
 size_t __read(int handle, unsigned char *buf, size_t len)
 {
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
     int size;
 
     if (handle == _LLIO_STDIN)
