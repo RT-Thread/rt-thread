@@ -461,7 +461,7 @@ void nu_emac_pbuf_free(struct pbuf *p)
 
     //rt_kprintf("%08x %08x\n",my_buf, my_buf->rx_desc);
 
-    /* Update RX descriptor & trigger */    
+    /* Update RX descriptor & trigger */
     EMAC_RxTrigger(my_buf->psMemMgr, my_buf->rx_desc);
 
     memp_free_pool(my_buf->memp_rx_pool, my_buf);
@@ -483,7 +483,7 @@ static struct pbuf *nu_emac_rx(rt_device_t dev)
         nu_emac_lwip_pbuf_t my_pbuf  = (nu_emac_lwip_pbuf_t)memp_malloc_pool(psNuEmac->memp_rx_pool);
         if (my_pbuf != RT_NULL)
         {
-    
+
             my_pbuf->p.custom_free_function = nu_emac_pbuf_free;
             my_pbuf->psPktFrameDataBuf      = (EMAC_FRAME_T *)pu8DataBuf;
             my_pbuf->rx_desc                = cur_rx;

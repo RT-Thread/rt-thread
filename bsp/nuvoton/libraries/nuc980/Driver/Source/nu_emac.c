@@ -1134,7 +1134,7 @@ EMAC_DESCRIPTOR_T * EMAC_RecvPktDoneWoRxTrigger(EMAC_MEMMGR_T *psMemMgr)
     /* Get Rx Frame Descriptor */
     EMAC_DESCRIPTOR_T *desc = (EMAC_DESCRIPTOR_T *)psMemMgr->psCurrentRxDesc;
     EMAC_DESCRIPTOR_T *ret = desc;
- 
+
     /* Restore descriptor link list and data pointer they will be overwrite if time stamp enabled */
     desc->u32Data = desc->u32Backup1;
     desc->u32Next = desc->u32Backup2;
