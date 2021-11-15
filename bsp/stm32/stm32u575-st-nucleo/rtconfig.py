@@ -27,7 +27,7 @@ elif CROSS_TOOL == 'iar':
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
-EXEC_PATH = r'D:\\software\\tools\\gcc-arm-none-eabi-10.3-2021.07-win32\\gcc-arm-none-eabi-10.3-2021.07\\bin'
+
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
