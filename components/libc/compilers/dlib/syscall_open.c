@@ -21,7 +21,7 @@
 
 int __open(const char *filename, int mode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
   int handle;
   int open_mode = O_RDONLY;
 
@@ -73,5 +73,5 @@ int __open(const char *filename, int mode)
   return handle;
 #else
   return _LLIO_ERROR;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }

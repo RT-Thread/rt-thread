@@ -81,16 +81,18 @@ int dfs_init(void);
 char *dfs_normalize_path(const char *directory, const char *filename);
 const char *dfs_subdir(const char *directory, const char *filename);
 
+int fd_is_open(const char *pathname);
+struct dfs_fdtable *dfs_fdtable_get(void);
+
 void dfs_lock(void);
 void dfs_unlock(void);
 
+#ifdef DFS_USING_POSIX
 /* FD APIs */
 int fd_new(void);
 struct dfs_fd *fd_get(int fd);
 void fd_put(struct dfs_fd *fd);
-int fd_is_open(const char *pathname);
-
-struct dfs_fdtable *dfs_fdtable_get(void);
+#endif /* DFS_USING_POSIX */
 
 #ifdef __cplusplus
 }

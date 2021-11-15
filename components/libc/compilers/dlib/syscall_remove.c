@@ -20,9 +20,9 @@
 
 int remove(const char *filename)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     return unlink(filename);
 #else
     return _LLIO_ERROR;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }

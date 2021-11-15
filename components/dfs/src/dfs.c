@@ -34,7 +34,6 @@ char working_directory[DFS_PATH_MAX] = {"/"};
 #endif
 
 static struct dfs_fdtable _fdtab;
-static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 
 /**
  * @addtogroup DFS
@@ -118,6 +117,7 @@ void dfs_unlock(void)
     rt_mutex_release(&fslock);
 }
 
+#ifdef DFS_USING_POSIX
 static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
@@ -275,6 +275,8 @@ void fd_put(struct dfs_fd *fd)
     }
     dfs_unlock();
 }
+
+#endif /* DFS_USING_POSIX */
 
 /**
  * @ingroup Fd
