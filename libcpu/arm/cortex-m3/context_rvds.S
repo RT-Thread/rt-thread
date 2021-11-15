@@ -174,20 +174,17 @@ rt_hw_context_switch_to    PROC
 ; an interrupt/exception happens at the moment that returning from previous interrupt
 ; loop below process in case of return from MSP
 _tailchain_loop
-    ; Set pendSV bit in ICSR register / no side-effect of writting 0s
-    CPSID   I
-    MOV     r0, #0x10000000
-    LDR     r1, =0xe000ed04
-    STR     r0, [r1]
-
-    ; Current fix is to ensure no crash of stack
-    ; TODO...
-    ; 1> MSP is using now, thread's context is still kept in PSP
-    ; 2> Use a global variable & later check in pendSV handler for further process
-    ; 3> Re-schedule of task need to take care in pendSV handler,
-    ;    to rescan task list for higher priority task
-    CPSIE   I
     NOP
+
+    ; trigger the PendSV exception (causes context switch)
+    CPSID   I
+    LDR     r0, =NVIC_INT_CTRL
+    LDR     r1, =NVIC_PENDSVSET
+    STR     r1, [r0]
+    CPSIE   I
+    
+    ; MSP is using now, thread's context is still kept in PSP,
+    ; Re-schedule of task need to take care in pendSV handler in this case
     B       _tailchain_loop
 
     ; Never return
