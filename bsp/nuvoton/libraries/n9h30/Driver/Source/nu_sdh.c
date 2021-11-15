@@ -43,23 +43,6 @@
     static uint8_t _SDH1_ucSDHCBuffer[512] __attribute__((aligned(32)));
 #endif
 
-void dump_sdh_regs(SDH_T *sdh)
-{
-    rt_kprintf("\n+++++++++++++++++++++++\n");
-    rt_kprintf("    %s\n", sdh->CTL & SDH_CTL_SDPORT_Msk ? "SD1" : "SD0");
-    rt_kprintf("    DMACTL   = 0x%08x\n", sdh->DMACTL);
-    rt_kprintf("    GCTL   = 0x%08x\n", sdh->GCTL);
-    rt_kprintf("    GINTEN   = 0x%08x\n", sdh->GINTEN);
-    rt_kprintf("    GINTSTS   = 0x%08x\n", sdh->GINTSTS);
-    rt_kprintf("    CTL   = 0x%08x\n", sdh->CTL);
-    rt_kprintf("    INTEN   = 0x%08x\n", sdh->INTEN);
-    rt_kprintf("    INTSTS   = 0x%08x\n", sdh->INTSTS);
-    rt_kprintf("    BLEN   = 0x%08x\n", sdh->BLEN);
-    rt_kprintf("    TOUT   = 0x%08x\n", sdh->TOUT);
-    rt_kprintf("    ECTL   = 0x%08x\n", sdh->ECTL);
-    rt_kprintf("\n+++++++++++++++++++++++\n");
-}
-
 void SDH_CheckRB(SDH_T *sdh)
 {
     while (1)
@@ -404,8 +387,6 @@ uint32_t SDH_Init(SDH_T *sdh, SDH_INFO_T *pSD)
     /* initial SDHC */
     pSD->R7Flag = 1ul;
     u32CmdTimeOut = 0xFFFFFul;
-
-    //dump_sdh_regs(sdh);
 
     i = SDH_SDCmdAndRsp(sdh, pSD, 8ul, 0x00000155ul, u32CmdTimeOut);
     if (i == Successful)
