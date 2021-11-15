@@ -971,11 +971,11 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0)|| defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32L1) || defined(SOC_SERIES_STM32U5)
     DMA_Handle->Instance                 = dma_config->Instance;
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) 
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     DMA_Handle->Instance                 = dma_config->Instance;
     DMA_Handle->Init.Channel             = dma_config->channel;
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)\
-    || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1) 
+    || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1)
     DMA_Handle->Instance                 = dma_config->Instance;
     DMA_Handle->Init.Request             = dma_config->request;
 #endif
