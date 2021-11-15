@@ -11,7 +11,7 @@
 #include <rtthread.h>
 #include <yfuns.h>
 #include <unistd.h>
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
 #endif
 
@@ -29,7 +29,7 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
 
     if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
     {
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard output before initializing libc");

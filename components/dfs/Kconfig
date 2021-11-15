@@ -133,7 +133,7 @@ if RT_USING_DFS
 
     config RT_USING_DFS_DEVFS
         bool "Using devfs for device objects"
-        default y
+        default n
 
     config RT_USING_DFS_ROMFS
         bool "Enable ReadOnly file system on flash"
