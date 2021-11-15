@@ -9,8 +9,13 @@
 */
 
 #include <rtthread.h>
-#include <yfuns.h>
+#include <LowLevelIOInterface.h>
 #include <fcntl.h>
+
+/*
+ * The "__open" function opens the file named "filename" as specified
+ * by "mode".
+ */
 
 #pragma module_name = "?__open"
 
