@@ -844,7 +844,7 @@ static char *print_number(char *buf,
  *
  * @return The number of characters actually written to buffer.
  */
-RT_WEAK rt_int32_t rt_vsnprintf(char       *buf,
+RT_WEAK int rt_vsnprintf(char       *buf,
                         rt_size_t   size,
                         const char *fmt,
                         va_list     args)
@@ -1121,7 +1121,7 @@ RTM_EXPORT(rt_vsnprintf);
  *
  * @return The number of characters actually written to buffer.
  */
-rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...)
+int rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...)
 {
     rt_int32_t n;
     va_list args;
@@ -1145,7 +1145,7 @@ RTM_EXPORT(rt_snprintf);
  *
  * @return The number of characters actually written to buffer.
  */
-rt_int32_t rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
+int rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
 {
     return rt_vsnprintf(buf, (rt_size_t) - 1, format, arg_ptr);
 }
@@ -1160,7 +1160,7 @@ RTM_EXPORT(rt_vsprintf);
  *
  * @return The number of characters actually written to buffer.
  */
-rt_int32_t rt_sprintf(char *buf, const char *format, ...)
+int rt_sprintf(char *buf, const char *format, ...)
 {
     rt_int32_t n;
     va_list arg_ptr;
@@ -1261,7 +1261,7 @@ void rt_kputs(const char *str)
  *
  * @param fmt is the format parameters.
  */
-RT_WEAK void rt_kprintf(const char *fmt, ...)
+RT_WEAK int rt_kprintf(const char *fmt, ...)
 {
     va_list args;
     rt_size_t length;
@@ -1289,6 +1289,8 @@ RT_WEAK void rt_kprintf(const char *fmt, ...)
     rt_hw_console_output(rt_log_buf);
 #endif /* RT_USING_DEVICE */
     va_end(args);
+
+    return length; /* the total number of printed characters */
 }
 RTM_EXPORT(rt_kprintf);
 #endif /* RT_USING_CONSOLE */
