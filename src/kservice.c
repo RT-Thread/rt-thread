@@ -844,10 +844,7 @@ static char *print_number(char *buf,
  *
  * @return The number of characters actually written to buffer.
  */
-RT_WEAK int rt_vsnprintf(char       *buf,
-                        rt_size_t   size,
-                        const char *fmt,
-                        va_list     args)
+RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
 {
 #ifdef RT_PRINTF_LONGLONG
     unsigned long long num;
@@ -1260,6 +1257,8 @@ void rt_kputs(const char *str)
  * This function will print a formatted string on system console.
  *
  * @param fmt is the format parameters.
+ *
+ * @return The number of characters actually written to buffer.
  */
 RT_WEAK int rt_kprintf(const char *fmt, ...)
 {
@@ -1290,7 +1289,7 @@ RT_WEAK int rt_kprintf(const char *fmt, ...)
 #endif /* RT_USING_DEVICE */
     va_end(args);
 
-    return length; /* the total number of printed characters */
+    return length;
 }
 RTM_EXPORT(rt_kprintf);
 #endif /* RT_USING_CONSOLE */
