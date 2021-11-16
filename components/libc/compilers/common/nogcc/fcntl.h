@@ -12,10 +12,9 @@
 
 #include <sys/types.h>
 
-#define O_RDONLY    0x0000      /* open for reading only */
-#define O_WRONLY    0x0001      /* open for writing only */
-#define O_RDWR      0x0002      /* open for reading and writing */
-#define O_ACCMODE   0x0003      /* mask for above modes */
+#define O_RDONLY         00
+#define O_WRONLY         01
+#define O_RDWR           02
 
 #define O_CREAT        0100
 #define O_EXCL         0200
@@ -30,6 +29,7 @@
 #define O_DIRECTORY 0200000
 #define O_NOFOLLOW  0400000
 #define O_CLOEXEC  02000000
+
 #define O_ASYNC      020000
 #define O_DIRECT     040000
 #define O_LARGEFILE 0100000
@@ -37,8 +37,11 @@
 #define O_PATH    010000000
 #define O_TMPFILE 020200000
 #define O_NDELAY O_NONBLOCK
+
 #define O_SEARCH  O_PATH
 #define O_EXEC    O_PATH
+
+#define O_ACCMODE (03|O_SEARCH)
 
 #define F_DUPFD  0
 #define F_GETFD  1

@@ -144,38 +144,48 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_POSIX_STDIO
+#ifdef RT_USING_POSIX
     int size;
 
     if (fh == STDIN)
     {
+#ifdef RT_USING_POSIX_STDIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard output before initializing libc");
-            return 0;
+            return 0; /* error, but keep going */
         }
         size = read(STDIN_FILENO, buf, len);
-        return len - size;
+        return 0; /* success */
+#else
+        return 0; /* error */
+#endif
     }
-    else if ((fh == STDOUT) || (fh == STDERR))
+    else if (fh == STDOUT || fh == STDERR)
     {
         return 0; /* error */
     }
-
-    size = read(fh, buf, len);
-    if (size >= 0)
-        return len - size;
     else
-        return 0; /* error */
+    {
+        size = read(fh, buf, len);
+        if (size >= 0)
+            return len - size; /* success */
+        else
+            return 0; /* error */
+    }
 #else
     return 0; /* error */
-#endif /* RT_USING_POSIX_STDIO */
+#endif /* RT_USING_POSIX */
 }
 
 /*
  * Write to a file. Returns 0 on success, negative on error, and
  * the number of characters _not_ written on partial success.
  * `mode' exists for historical reasons and must be ignored.
+ * The return value is either:
+ * A positive number representing the number of characters not written
+ * (so any nonzero return value denotes a failure of some sort).
+ * A negative number indicating an error.
  */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
@@ -183,39 +193,36 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
     int size;
 #endif /* RT_USING_POSIX */
 
-    if ((fh == STDOUT) || (fh == STDERR))
+    if (fh == STDOUT || fh == STDERR)
     {
-#ifdef RT_USING_POSIX_STDIO
-        if (libc_stdio_get_console() < 0)
+#ifdef RT_USING_CONSOLE
+        rt_device_t console;
+        console = rt_console_get_device();
+        if (console)
         {
-            LOG_W("Do not invoke standard input before initializing libc");
-            return 0;
+            rt_device_write(console, -1, buf, len);
         }
-        size = write(STDOUT_FILENO, buf, len);
-        return len - size;
-#elif defined(RT_USING_CONSOLE)
-        if (rt_console_get_device())
-        {
-            rt_device_write(rt_console_get_device(), -1, buf, len);
-        }
-
+        return 0; /* success */
+#else
         return 0; /* error */
-#endif /* RT_USING_POSIX_STDIO */
+#endif /* RT_USING_CONSOLE */
     }
     else if (fh == STDIN)
     {
         return 0; /* error */
     }
-
-#ifdef RT_USING_POSIX
-    size = write(fh, buf, len);
-    if (size >= 0)
-        return len - size;
     else
-        return 0; /* error */
+    {
+#ifdef RT_USING_POSIX
+        size = write(fh, buf, len);
+        if (size >= 0)
+            return 0; /* success */
+        else
+            return 0; /* error */
 #else
-    return 0;
+        return 0; /* error */
 #endif /* RT_USING_POSIX */
+    }
 }
 
 /*
