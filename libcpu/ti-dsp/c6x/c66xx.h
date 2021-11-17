@@ -74,21 +74,6 @@ struct rt_hw_exp_stack_register
     struct rt_hw_register hw_register;
 };
 
-extern cregister volatile unsigned int IERR;    /* Internal Exception Report Register */
-extern cregister volatile unsigned int ECR;     /* Exception Clear Register */
-extern cregister volatile unsigned int EFR;     /* Exception Flag Register */
-extern cregister volatile unsigned int TSR;     /* Task State Register */
-extern cregister volatile unsigned int ITSR;    /* Interrupt Task State Register */
-extern cregister volatile unsigned int NTSR;    /* NMI/exception Task State Register */
-extern cregister volatile unsigned int TSCL;    /* Time Stamp Counter Register - Low Half  */
-extern cregister volatile unsigned int TSCH;    /* Time Stamp Counter Register - High Half */
-extern cregister volatile unsigned int DNUM;    /* Core number */
-
-#define get_creg(reg)    reg
-#define set_creg(reg, v) reg = (v)
-#define or_creg(reg, n)  reg |= (n)
-#define and_creg(reg, n) reg &= (n)
-
 #define __dint()				asm(" DINT")
 #define __rint()				asm(" RINT")
 #define __system_call()			asm(" SWE")
@@ -99,7 +84,4 @@ extern cregister volatile unsigned int DNUM;    /* Core number */
 #define __SYSREG(ADDR, TYPE)	(*(volatile TYPE*)(ADDR))
 #define __SYSREGA(ADDR, TYPE)	((volatile TYPE*)(ADDR))
 
-extern void rt_hw_enable_exception(void);
-
 #endif /* __C66XX_H__ */
-
