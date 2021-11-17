@@ -8,8 +8,10 @@
  * 2021-11-16     Dystopia     the first version
  */
 
-#include "c66xx.h"
+
 #include "interrupt.h"
+#include "c66xx.h"
+#include "trap.h"
 
 #define MAX_HANDLERS 128
 
@@ -24,6 +26,9 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
  */
 void rt_hw_interrupt_init(void)
 {
+	// initial system trap
+	rt_trap_init();
+
     /* init exceptions table */
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 

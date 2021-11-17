@@ -70,7 +70,7 @@ struct rt_exception_info {
 #define __ffs(a)	(_lmbd(1, _bitr(a)))
 #define __fls(a)	(!(a) ? 0 : (32 - _lmbd(1, (a))))
 
-void rt_trap_init(void);
+extern void rt_trap_init(void);
 
 #endif /* __TRAP_H__ */
 

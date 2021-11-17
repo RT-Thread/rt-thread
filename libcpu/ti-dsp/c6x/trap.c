@@ -18,6 +18,7 @@
 
 #define RT_SYS_STACK_SIZE	4096
 
+extern void rt_hw_enable_exception(void);
 rt_uint8_t rt_system_stack[RT_SYS_STACK_SIZE];
 rt_uint8_t *rt_system_stack_top;
 
