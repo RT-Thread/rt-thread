@@ -67,8 +67,8 @@ struct rt_exception_info {
 #define BKPT_OPCODE		0x56454314       /* illegal opcode */
 #define INTC_MEXPMASK	__SYSREGA(0x018000e0, unsigned int)
 
-#define __ffs(a)   (_lmbd(1, _bitr(a)))
-#define fls(a)     (!(a) ? 0 : (32 - _lmbd(1, (a))))
+#define __ffs(a)	(_lmbd(1, _bitr(a)))
+#define __fls(a)	(!(a) ? 0 : (32 - _lmbd(1, (a))))
 
 void rt_trap_init(void);
 

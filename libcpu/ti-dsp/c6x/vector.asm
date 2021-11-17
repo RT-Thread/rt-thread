@@ -75,21 +75,21 @@ __name:
 	.align 32
 	.global vector
 vector:
-	VEC_RESET	  _c_int00
-	IRQVEC NMI,   _nmi_handler
-	IRQVEC AINT,  _bad_handler
-	IRQVEC MSGINT,_bad_handler
-	IRQVEC INT4,  _int4_handler
-	IRQVEC INT5,  _int5_handler
-	IRQVEC INT6,  _int6_handler
-	IRQVEC INT7,  _int7_handler
-	IRQVEC INT8,  _int8_handler
-	IRQVEC INT9,  _int9_handler
-	IRQVEC INT10, _int10_handler
-	IRQVEC INT11, _int11_handler
-	IRQVEC INT12, _int12_handler
-	IRQVEC INT13, _int13_handler
-	IRQVEC INT14, _int14_handler
-	IRQVEC INT15, _int15_handler
+	VEC_RESET		_c_int00
+	IRQVEC NMI,		_nmi_handler
+	IRQVEC AINT,	_bad_handler
+	IRQVEC MSGINT,	_bad_handler
+	IRQVEC INT4,	_int4_handler
+	IRQVEC INT5,	_int5_handler
+	IRQVEC INT6,	_int6_handler
+	IRQVEC INT7,	_int7_handler
+	IRQVEC INT8,	_int8_handler
+	IRQVEC INT9,	_int9_handler
+	IRQVEC INT10,	_int10_handler
+	IRQVEC INT11,	_int11_handler
+	IRQVEC INT12,	_int12_handler
+	IRQVEC INT13,	_int13_handler
+	IRQVEC INT14,	_int14_handler
+	IRQVEC INT15,	_int15_handler
 
 	.end

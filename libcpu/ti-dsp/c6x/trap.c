@@ -14,8 +14,18 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#include <rtdef.h>
+
+#define RT_SYS_STACK_SIZE	4096
+
+rt_uint8_t rt_system_stack[RT_SYS_STACK_SIZE];
+rt_uint8_t *rt_system_stack_top;
+
 void rt_trap_init(void)
 {
+	rt_system_stack_top = &rt_system_stack[RT_SYS_STACK_SIZE-1];
+	rt_system_stack_top  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)rt_system_stack_top, 8);
+
 	ack_exception(EXCEPT_TYPE_NXF);
 	ack_exception(EXCEPT_TYPE_EXC);
 	ack_exception(EXCEPT_TYPE_IXF);
@@ -319,7 +329,7 @@ int rt_hw_process_exception(struct rt_hw_exp_stack_register *regs)
 	int ie_num = 9; /* default is unknown exception */
 
 	while ((type = get_except_type()) != 0) {
-		type_num = fls(type) - 1;
+		type_num = __fls(type) - 1;
 
 		switch(type_num) {
 		case EXCEPT_TYPE_NXF:					/* NMI exception   */

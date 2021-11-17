@@ -1,0 +1,3 @@
+	本工程使用TI公司编译器CCS5.5进行编译，工程中使用到了TI官方提供的K1_STK_v1.1，
+如有需要的请到TI官方论坛自行下载，并将K1_STK_v1.1中的KeyStone_common.c和KeyStone_common.h文件
+放置到本工程的driver目录下。

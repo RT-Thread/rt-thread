@@ -13,7 +13,7 @@
 ;-----------------------------------------------------------
 
 ;-----------------------------------------------------------
-; 						macro definition
+;					macro definition
 ;-----------------------------------------------------------
 ADDRESS_MSK .set    0xFFFFFFF0
 
@@ -22,6 +22,10 @@ ADDRESS_MSK .set    0xFFFFFFF0
 ;
 
     .sect   ".text"
+;
+;-----------------------------------------------------------
+;
+
 ;
 ; rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_addr, void *texit)
 ; tentry  --> A4

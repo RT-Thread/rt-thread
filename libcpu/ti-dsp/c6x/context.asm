@@ -12,12 +12,17 @@
 ; context switch for C6678 DSP
 ;-----------------------------------------------------------
 
+	.include "contextinc.asm"
 ;-----------------------------------------------------------
 ; 						macro definition
 ;-----------------------------------------------------------
 DP	.set	B14
 SP	.set	B15
 
+;-----------------------------------------------------------
+; 						extern variable
+;-----------------------------------------------------------
+	.ref rt_system_stack_top
 ;
 ;-----------------------------------------------------------
 ;
@@ -28,7 +33,6 @@ SP	.set	B15
 	.global	rt_interrupt_from_thread
 	.global	rt_interrupt_to_thread
 	.global	rt_thread_switch_interrupt_flag
-
 ;
 ;-----------------------------------------------------------
 ;
@@ -100,18 +104,17 @@ rt_hw_context_switch:
 	STDW	.D2T2	B13:B12,*SP--[1]	; Store PC:CSR
  ||	MVC	.S2	TSR,B5
 
-	MVC	ILC,B11							;
-	MVC	RILC,B10						;
+	MVC	.S2	ILC,B11						;
+	MVC	.S2	RILC,B10					;
 	STDW	.D2T2	B11:B10,*SP--[1]	; Store RILC:ILC
  ||	MV	.S1X	B5,A3
 
 	ZERO	A2          				;
 	STDW	.D2T1	A3:A2,*SP--[1]		; Store TSR:stack type
 	STW	SP,*A4							; Save thread's stack pointer
-
-	MV	B4,A4							;
 	B	rt_hw_context_switch_to
-	NOP	5
+	MV	B4,A4							;
+	NOP	4
 ;}
 
 ;
@@ -138,13 +141,13 @@ rt_hw_context_switch_to:
 	MV	B13,B3							; Restore PC
 	MVC	.S2	B12,CSR						; Restore CSR
 
-	LDDW	*++SP[1],B11:B10
-  	LDDW	*++SP[1],B13:B12
-	LDDW	*++SP[1],A11:A10
-	LDDW	*++SP[1],A13:A12
-	LDDW	*++SP[1],A15:A14
+	LDDW	.D2T2	*++SP[1],B11:B10
+  	LDDW	.D2T2	*++SP[1],B13:B12
+	LDDW	.D2T1	*++SP[1],A11:A10
+	LDDW	.D2T1	*++SP[1],A13:A12
+	LDDW	.D2T1	*++SP[1],A15:A14
 	B	B3                              ; Return to caller
-	ADDAW	SP,2,SP
+	ADDAW	.D2	SP,2,SP
 	NOP	4                               ; Delay slots
 _rt_thread_interrupt_stack:
 	ADDAW	.D1X	SP,30,A15
@@ -204,6 +207,7 @@ _rt_thread_interrupt_stack:
 ; void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
 ; A4 --> from
 ; B4 --> to
+;{
 	.global	rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
 	SUB		B15,0x8,B15
@@ -285,14 +289,26 @@ rt_interrupt_context_restore:
  ||	LDDW	.D2T2	*++SP[1],B13:B12
 
 	MV	.D2X	A15,SP
+ ||	MVKL	.S1	rt_system_stack_top,A15
+	MVKH	.S1	rt_system_stack_top,A15
+ ||	ADDAW	.D1X	SP,6,A14
+	STW	.D1T1	A14,*A15				; save system stack pointer
+
  	LDDW	.D2T1	*++SP[1],A15:A14
 	B	.S2	IRP							; return from interruption
 	LDDW	.D2T2	*+SP[1],SP:DP
 	NOP		4
-
 rt_preempt_context_restore:
 	ZERO	A12
-	STW	A12,*A3								; clear rt_thread_switch_interrupt_flag
+	STW	A12,*A3							; clear rt_thread_switch_interrupt_flag
+;
+; restore saved registers by system stack
+;
+	RESTORE_ALL	IRP,ITSR
+;
+; store registers to thread stack
+;
+	THREAD_SAVE_ALL	IRP,ITSR
 
     MVKL	rt_interrupt_from_thread,A11
     MVKH	rt_interrupt_from_thread,A11
@@ -302,10 +318,10 @@ rt_preempt_context_restore:
     MVKH	rt_interrupt_to_thread,B10
     LDW		*B10,B11
     NOP		3
-    STW		SP,*A10	    					; store sp in preempted tasks's TCB
-	MV		B11,A4							;
-	B		rt_hw_context_switch_to
-	NOP		5
+    STW		SP,*A10	    				; store sp in preempted tasks's TCB
+    B		rt_hw_context_switch_to
+	MV		B11,A4						;
+	NOP		4
 ;}
 
 	.end
