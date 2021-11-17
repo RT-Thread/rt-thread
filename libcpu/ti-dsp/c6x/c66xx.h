@@ -14,56 +14,56 @@
 #include <c6x.h>
 
 #ifdef _BIG_ENDIAN
-#define REG_PAIR(odd, even) unsigned long odd; unsigned long even
+#define RT_REG_PAIR(odd, even) unsigned long odd; unsigned long even
 #else
-#define REG_PAIR(odd, even) unsigned long even; unsigned long odd
+#define RT_REG_PAIR(odd, even) unsigned long even; unsigned long odd
 #endif
 
 struct rt_hw_register
 {
-	REG_PAIR(b17, b16);
-	REG_PAIR(b19, b18);
-	REG_PAIR(b21, b20);
-	REG_PAIR(b23, b22);
-	REG_PAIR(b25, b24);
-	REG_PAIR(b27, b26);
-	REG_PAIR(b29, b28);
-	REG_PAIR(b31, b30);
+	RT_REG_PAIR(b17, b16);
+	RT_REG_PAIR(b19, b18);
+	RT_REG_PAIR(b21, b20);
+	RT_REG_PAIR(b23, b22);
+	RT_REG_PAIR(b25, b24);
+	RT_REG_PAIR(b27, b26);
+	RT_REG_PAIR(b29, b28);
+	RT_REG_PAIR(b31, b30);
 
-	REG_PAIR(b1, b0);
-	REG_PAIR(b3, b2);
-	REG_PAIR(b5, b4);
-	REG_PAIR(b7, b6);
-	REG_PAIR(b9, b8);
-	REG_PAIR(b11, b10);
-	REG_PAIR(b13, b12);
+	RT_REG_PAIR(b1, b0);
+	RT_REG_PAIR(b3, b2);
+	RT_REG_PAIR(b5, b4);
+	RT_REG_PAIR(b7, b6);
+	RT_REG_PAIR(b9, b8);
+	RT_REG_PAIR(b11, b10);
+	RT_REG_PAIR(b13, b12);
 
-	REG_PAIR(a17, a16);
-	REG_PAIR(a19, a18);
-	REG_PAIR(a21, a20);
-	REG_PAIR(a23, a22);
-	REG_PAIR(a25, a24);
-	REG_PAIR(a27, a26);
-	REG_PAIR(a29, a28);
-	REG_PAIR(a31, a30);
+	RT_REG_PAIR(a17, a16);
+	RT_REG_PAIR(a19, a18);
+	RT_REG_PAIR(a21, a20);
+	RT_REG_PAIR(a23, a22);
+	RT_REG_PAIR(a25, a24);
+	RT_REG_PAIR(a27, a26);
+	RT_REG_PAIR(a29, a28);
+	RT_REG_PAIR(a31, a30);
 
-	REG_PAIR(a1, a0);
-	REG_PAIR(a3, a2);
-	REG_PAIR(a5, a4);
-	REG_PAIR(a7, a6);
-	REG_PAIR(a9, a8);
-	REG_PAIR(a11, a10);
-	REG_PAIR(a13, a12);
+	RT_REG_PAIR(a1, a0);
+	RT_REG_PAIR(a3, a2);
+	RT_REG_PAIR(a5, a4);
+	RT_REG_PAIR(a7, a6);
+	RT_REG_PAIR(a9, a8);
+	RT_REG_PAIR(a11, a10);
+	RT_REG_PAIR(a13, a12);
 
-	REG_PAIR(a15, a14);
-	REG_PAIR(sp, dp);
+	RT_REG_PAIR(a15, a14);
+	RT_REG_PAIR(sp, dp);
 };
 
 struct rt_hw_exp_stack_register
 {
-	REG_PAIR(tsr, orig_a4);
-	REG_PAIR(rilc, ilc);
-	REG_PAIR(pc, csr);
+	RT_REG_PAIR(tsr, orig_a4);
+	RT_REG_PAIR(rilc, ilc);
+	RT_REG_PAIR(pc, csr);
     struct rt_hw_register hw_register;
 };
 
