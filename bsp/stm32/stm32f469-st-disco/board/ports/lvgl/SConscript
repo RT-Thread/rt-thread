@@ -5,9 +5,8 @@ cwd = GetCurrentDir()
 group = []
 src = Glob('*.c')
 CPPPATH = [cwd]
-
 CPPDEFINES = ['STM32F4']
-objs = []
+
 list = os.listdir(cwd)
 for d in list:
     path = os.path.join(cwd, d)

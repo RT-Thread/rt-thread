@@ -11,16 +11,17 @@
 #include <drv_lcd.h>
 
 #define MY_DISP_HOR_RES LCD_W
-#define DISP_BUFFER_LINES 10
+#define DISP_BUFFER_LINES 70
 
 /*A static or global variable to store the buffers*/
 static lv_disp_draw_buf_t disp_buf;
 
+/*Descriptor of a display driver*/
+static lv_disp_drv_t disp_drv;
+
 /*Static or global buffer(s). The second buffer is optional*/
 static lv_color_t buf_1[MY_DISP_HOR_RES * DISP_BUFFER_LINES];
 static lv_color_t buf_2[MY_DISP_HOR_RES * DISP_BUFFER_LINES];
-
-static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
 /*Flush the content of the internal buffer the specific area on the display
  *You can use DMA or any hardware acceleration to do this operation in the background but

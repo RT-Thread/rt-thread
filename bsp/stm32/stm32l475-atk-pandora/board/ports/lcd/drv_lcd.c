@@ -9,6 +9,7 @@
  * 2018-09-18    balanceTWK         add sleep mode function
  * 2018-09-27    ZYLX               optimized display speed
  * 2021-10-17    Meco Man           add lcd_fill_array()
+ * 2021-10-17    Meco Man           fix the bug of lcd_fill_array()
  */
 
 #include <rtdevice.h>
@@ -24,7 +25,7 @@
 #define LCD_PWR_PIN           GET_PIN(B, 7)
 #define LCD_DC_PIN            GET_PIN(B, 4)
 #define LCD_RES_PIN           GET_PIN(B, 6)
-#define LCD_CLEAR_SEND_NUMBER 5760
+#define LCD_CLEAR_SEND_NUMBER 5760 /* 240*240/10 */
 
 rt_uint16_t BACK_COLOR = WHITE, FORE_COLOR = BLACK;
 
@@ -117,6 +118,7 @@ static void lcd_gpio_init(void)
     rt_pin_write(LCD_PWR_PIN, PIN_LOW);
 
     rt_pin_write(LCD_RES_PIN, PIN_LOW);
+
     //wait at least 100ms for reset
     rt_thread_delay(RT_TICK_PER_SECOND / 10);
     rt_pin_write(LCD_RES_PIN, PIN_HIGH);
@@ -203,8 +205,6 @@ static int rt_hw_lcd_init(void)
     lcd_write_cmd(0x11);
     /* wait for power stability */
     rt_thread_mdelay(100);
-
-    lcd_clear(WHITE);
 
     /* display on */
     rt_pin_write(LCD_PWR_PIN, PIN_HIGH);
@@ -298,7 +298,6 @@ void lcd_clear(rt_uint16_t color)
     data[1] = color;
     lcd_address_set(0, 0, LCD_W - 1, LCD_H - 1);
 
-    /* 5760 = 240*240/20 */
     buf = rt_malloc(LCD_CLEAR_SEND_NUMBER);
     if (buf)
     {
@@ -442,37 +441,9 @@ void lcd_fill_array(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end,
     rt_uint32_t size = 0, size_remain = 0;
 
     size = (x_end - x_start + 1) * (y_end - y_start + 1) * 2;
-
-    if (size > LCD_CLEAR_SEND_NUMBER)
-    {
-        /* the number of remaining to be filled */
-        size_remain = size - LCD_CLEAR_SEND_NUMBER;
-        size = LCD_CLEAR_SEND_NUMBER;
-    }
-
     lcd_address_set(x_start, y_start, x_end, y_end);
-
-    /* fast fill */
-    while (1)
-    {
-        rt_pin_write(LCD_DC_PIN, PIN_HIGH);
-        rt_spi_send(spi_dev_lcd, pcolor, size);
-
-        /* Fill completed */
-        if (size_remain == 0)
-            break;
-
-        /* calculate the number of fill next time */
-        if (size_remain > LCD_CLEAR_SEND_NUMBER)
-        {
-            size_remain = size_remain - LCD_CLEAR_SEND_NUMBER;
-        }
-        else
-        {
-            size = size_remain;
-            size_remain = 0;
-        }
-    }
+    rt_pin_write(LCD_DC_PIN, PIN_HIGH);
+    rt_spi_send(spi_dev_lcd, pcolor, size);
 }
 
 /**
