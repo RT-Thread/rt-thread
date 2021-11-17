@@ -45,7 +45,7 @@ rt_hw_enable_exception:
 	DINT
 	MVC	.S2	TSR,B0
 	MVC	.S2	B3,NRP
-	MVK	.L2	0xc,B1
+	MVK	.L2	0xC,B1
 	OR	.D2	B0,B1,B0
 	MVC	.S2	B0,TSR			;  Set GEE and XEN in TSR
 	B	.S2	NRP

@@ -11,9 +11,9 @@
 #ifndef __SYS_TIMER_H__
 #define __SYS_TIMER_H__
 
-void hw_system_timer_init(void);
+void rt_hw_system_timer_init(void);
 
-void hw_system_timer_start(void);
+void rt_hw_system_timer_start(void);
 
 #endif	/* __SYS_TIMER_H__ */
 
