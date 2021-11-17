@@ -19,13 +19,6 @@
 #define REG_PAIR(odd, even) unsigned long even; unsigned long odd
 #endif
 
-/*
- * this struct defines the way the registers are stored on the
- * stack during a system call. fields defined with REG_PAIR
- * are saved and restored using double-word memory operations
- * which means the word ordering of the pair depends on endianess.
- */
-
 struct rt_hw_register
 {
 	REG_PAIR(b17, b16);

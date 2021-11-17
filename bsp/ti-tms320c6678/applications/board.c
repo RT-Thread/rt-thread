@@ -27,11 +27,11 @@ void rt_hw_board_init(void)
 	rt_hw_interrupt_init();
 
 	// initial system timer
-    hw_system_timer_init();
+    rt_hw_system_timer_init();
 
     /* initialize memory system */
     rt_kprintf("heap: 0x%08x - 0x%08x\n", RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 
-    hw_system_timer_start();
+    rt_hw_system_timer_start();
 }

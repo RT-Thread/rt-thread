@@ -32,7 +32,7 @@ void rt_hw_systick_isr(void)
 /**
  * The function initial system timer interrupt.
  */
-void hw_system_timer_init(void)
+void rt_hw_system_timer_init(void)
 {
 	// initial system timer interrupt, map local timer interrupt to INT14
     gpCGEM_regs->INTMUX3 = (CSL_GEM_TINTLN<<CSL_CGEM_INTMUX3_INTSEL14_SHIFT);
@@ -47,7 +47,7 @@ void hw_system_timer_init(void)
  * Use local timer (==DNUM of a core) to generate a clock on TIMO0,interrupts are generated as well
  *
  */
-void hw_system_timer_start(void)
+void rt_hw_system_timer_start(void)
 {
     Timer64_Config tmrCfg;
 
