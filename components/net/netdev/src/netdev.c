@@ -1052,7 +1052,7 @@ MSH_CMD_EXPORT_ALIAS(netdev_ifconfig, ifconfig, list the information of all netw
 #endif /* NETDEV_USING_IFCONFIG */
 
 #ifdef NETDEV_USING_PING
-int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
+int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_size_t size)
 {
 #define NETDEV_PING_DATA_SIZE       32
 /** ping receive timeout - in milliseconds */
@@ -1071,6 +1071,16 @@ int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
     if (size == 0)
     {
         size = NETDEV_PING_DATA_SIZE;
+    }
+
+    if (netdev_name != RT_NULL)
+    {
+        netdev = netdev_get_by_name(netdev_name);
+        if (netdev == RT_NULL)
+        {
+            netdev = netdev_default;
+            rt_kprintf("ping: not found specified netif, using default netdev %s.\n", netdev->name);
+        }
     }
 
     if (NETDEV_PING_IS_COMMONICABLE(netdev_default))
@@ -1144,11 +1154,15 @@ int netdev_ping(int argc, char **argv)
 {
     if (argc == 1)
     {
-        rt_kprintf("Please input: ping <host address>\n");
+        rt_kprintf("Please input: ping [netdev name] <host address>\n");
     }
-    else
+    else if (argc == 2)
     {
-        netdev_cmd_ping(argv[1], 4, 0);
+        netdev_cmd_ping(argv[1], RT_NULL, 4, 0);
+    }
+    else if (argc == 3)
+    {
+        netdev_cmd_ping(argv[1], argv[2], 4, 0);
     }
 
     return 0;
