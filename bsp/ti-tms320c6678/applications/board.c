@@ -22,13 +22,13 @@
  */
 void rt_hw_systick_isr(void)
 {
-    /* enter interrupt */
-    rt_interrupt_enter();
+	/* enter interrupt */
+	rt_interrupt_enter();
 
-    rt_tick_increase();
+	rt_tick_increase();
 
-    /* leave interrupt */
-    rt_interrupt_leave();
+	/* leave interrupt */
+	rt_interrupt_leave();
 }
 
 /**
@@ -46,15 +46,12 @@ void rt_hw_board_init(void)
 	rt_trap_init();
 
 	// initial system timer
-    hw_system_timer_init();
+	hw_system_timer_init();
 
-#ifdef RT_USING_HEAP
-    /* initialize memory system */
-    rt_kprintf("heap: 0x%08x - 0x%08x\n", RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
-    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
-#endif
-    // ......
+	/* initialize memory system */
+	rt_kprintf("heap: 0x%08x - 0x%08x\n", RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
+	rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 
-    hw_system_timer_start();
+	hw_system_timer_start();
 }
 

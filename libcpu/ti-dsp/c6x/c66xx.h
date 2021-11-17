@@ -91,14 +91,13 @@ extern cregister volatile unsigned int DNUM;    /* Core number */
 
 #define __dint()				asm(" DINT")
 #define __rint()				asm(" RINT")
-
 #define __system_call()			asm(" SWE")
 #define __enter_idle()			asm(" IDLE")
 #define __nop()					asm(" NOP")
 #define __mfence()				asm(" MFENCE")
 
-#define __SYSREG(ADDR, TYPE) 	(*(volatile TYPE*)(ADDR))
-#define __SYSREGA(ADDR, TYPE) 	((volatile TYPE*)(ADDR))
+#define __SYSREG(ADDR, TYPE)	(*(volatile TYPE*)(ADDR))
+#define __SYSREGA(ADDR, TYPE)	((volatile TYPE*)(ADDR))
 
 extern void rt_hw_enable_exception(void);
 

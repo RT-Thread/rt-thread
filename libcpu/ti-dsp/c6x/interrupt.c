@@ -8,7 +8,6 @@
  * 2021-11-16     Dystopia     the first version
  */
 
-
 #include "c66xx.h"
 #include "interrupt.h"
 
