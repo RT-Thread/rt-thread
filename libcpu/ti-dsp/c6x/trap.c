@@ -106,7 +106,6 @@ void show_regs(struct rt_hw_exp_stack_register *regs)
            regs->hw_register.a31, regs->hw_register.b31);
 }
 
-
 void do_trap(struct rt_exception_info *except_info, struct rt_hw_exp_stack_register *regs)
 {
     rt_kprintf("Enter exception: %s\n", except_info->kernel_str);
@@ -148,7 +147,9 @@ static int process_iexcept(struct rt_hw_exp_stack_register *regs)
         if (*(unsigned int *)regs->pc == BKPT_OPCODE)
         {
             /* This is a breakpoint */
-            struct rt_exception_info bkpt_exception = { " - undefined instruction", ABORT_TYPE_UNDDEF, ABORT_BRKPT_ILL };
+            struct rt_exception_info bkpt_exception = \
+                                     { " - undefined instruction",\
+                                     ABORT_TYPE_UNDDEF, ABORT_BRKPT_ILL };
             do_trap(&bkpt_exception, regs);
             iexcept_report &= ~(0xFF);
             set_iexcept(iexcept_report);
@@ -299,7 +300,7 @@ static struct rt_exception_info except_table[128] = {
  */
 static void process_except(struct rt_hw_exp_stack_register *regs)
 {
-    int except_num;
+    int except_num = 0;
     int bank = 0;
     int i = 0;
 
