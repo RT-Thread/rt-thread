@@ -9,28 +9,28 @@
 ;
 
 ;-----------------------------------------------------------
-;					macro definition
+;                     macro definition
 ;-----------------------------------------------------------
 SAVE_ALL	.macro  __rp, __tsr
-	STW	.D2T2	B0,*SP--[2]				; save original B0
+	STW	.D2T2	B0,*SP--[2]             ; save original B0
 	MVKL	.S2	rt_system_stack_top,B0
 	MVKH	.S2	rt_system_stack_top,B0
-	LDW	.D2T2	*B0,B1					; system stack
+	LDW	.D2T2	*B0,B1                  ; system stack
 
 	NOP	3
-	STW	.D2T2	B1,*+SP[1]				; save original B1
-	XOR	.D2	SP,B1,B0					; check current stack types
-	LDW	.D2T2	*+SP[1],B1				; restore B0/B1
+	STW	.D2T2	B1,*+SP[1]              ; save original B1
+	XOR	.D2	SP,B1,B0                    ; check current stack types
+	LDW	.D2T2	*+SP[1],B1              ; restore B0/B1
 	LDW	.D2T2	*++SP[2],B0
-	SHR	.S2	B0,12,B0					; 0 if already using system stack
- [B0]	STDW	.D2T2	SP:DP,*--B1[1]	; thread: save thread sp/dp system stack
- [B0]	MV	.S2	B1,SP					; and switch to system stack
-||[!B0] STDW	.D2T2	SP:DP,*--SP[1]	; kernel: nest interrupt save(not support)
+	SHR	.S2	B0,12,B0                    ; 0 if already using system stack
+ [B0]	STDW	.D2T2	SP:DP,*--B1[1]  ; thread: save thread sp/dp system stack
+ [B0]	MV	.S2	B1,SP                   ; and switch to system stack
+||[!B0] STDW	.D2T2	SP:DP,*--SP[1]  ; kernel: nest interrupt save(not support)
 
 	SUBAW	.D2	SP,2,SP
 
 	ADD	.D1X	SP,-8,A15
- ||	STDW	.D2T1	A15:A14,*SP--[16]	; save A15:A14
+ ||	STDW	.D2T1	A15:A14,*SP--[16]   ; save A15:A14
 
 	STDW	.D2T2	B13:B12,*SP--[1]
  ||	STDW	.D1T1	A13:A12,*A15--[1]
@@ -73,15 +73,15 @@ SAVE_ALL	.macro  __rp, __tsr
 	STDW	.D2T2	B17:B16,*SP--[1]
  ||	STDW	.D1T1	A17:A16,*A15--[1]
 
-	STDW	.D2T2	B13:B12,*SP--[1]	; save PC and CSR
-	STDW	.D2T2	B11:B10,*SP--[1]	; save RILC and ILC
-	STDW	.D2T1	A5:A4,*SP--[1]		; save TSR and  orig A4(stack type)
+	STDW	.D2T2	B13:B12,*SP--[1]    ; save PC and CSR
+	STDW	.D2T2	B11:B10,*SP--[1]    ; save RILC and ILC
+	STDW	.D2T1	A5:A4,*SP--[1]      ; save TSR and  orig A4(stack type)
 			.endm
 
 RESTORE_ALL	.macro  __rp, __tsr
-	LDDW	.D2T2	*++SP[1],B9:B8		; get TSR (B9)
-	LDDW	.D2T2	*++SP[1],B11:B10	; get RILC (B11) and ILC (B10)
-	LDDW	.D2T2	*++SP[1],B13:B12	; get PC (B13) and CSR (B12)
+	LDDW	.D2T2	*++SP[1],B9:B8      ; get TSR (B9)
+	LDDW	.D2T2	*++SP[1],B11:B10    ; get RILC (B11) and ILC (B10)
+	LDDW	.D2T2	*++SP[1],B13:B12    ; get PC (B13) and CSR (B12)
 
 	ADDAW	.D1X	SP,30,A15
 
@@ -127,7 +127,7 @@ RESTORE_ALL	.macro  __rp, __tsr
  ||	MVKL	.S1	rt_system_stack_top,A15
 	MVKH	.S1	rt_system_stack_top,A15
  ||	ADDAW	.D1X	SP,6,A14
-	STW	.D1T1	A14,*A15				; save system stack pointer
+	STW	.D1T1	A14,*A15                ; save system stack pointer
 
  	LDDW	.D2T1	*++SP[1],A15:A14
 	LDDW	.D2T2	*+SP[1],SP:DP
@@ -139,7 +139,7 @@ THREAD_SAVE_ALL	.macro  __rp, __tsr
 	SUBAW	.D2	SP,2,SP
 
 	ADD	.D1X	SP,-8,A15
- ||	STDW	.D2T1	A15:A14,*SP--[16]	; save A15:A14
+ ||	STDW	.D2T1	A15:A14,*SP--[16]   ; save A15:A14
 
 	STDW	.D2T2	B13:B12,*SP--[1]
  ||	STDW	.D1T1	A13:A12,*A15--[1]
@@ -181,7 +181,7 @@ THREAD_SAVE_ALL	.macro  __rp, __tsr
 	STDW	.D2T2	B17:B16,*SP--[1]
  ||	STDW	.D1T1	A17:A16,*A15--[1]
 
-	STDW	.D2T2	B13:B12,*SP--[1]	; save PC and CSR
-	STDW	.D2T2	B11:B10,*SP--[1]	; save RILC and ILC
-	STDW	.D2T1	A5:A4,*SP--[1]		; save TSR and orig A4(stack type)
+	STDW	.D2T2	B13:B12,*SP--[1]    ; save PC and CSR
+	STDW	.D2T2	B11:B10,*SP--[1]    ; save RILC and ILC
+	STDW	.D2T1	A5:A4,*SP--[1]      ; save TSR and orig A4(stack type)
 				.endm

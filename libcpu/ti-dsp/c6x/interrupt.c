@@ -26,8 +26,8 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
  */
 void rt_hw_interrupt_init(void)
 {
-	// initial system trap
-	rt_trap_init();
+    // initial system trap
+    rt_trap_init();
 
     /* init exceptions table */
     rt_memset(isr_table, 0x00, sizeof(isr_table));

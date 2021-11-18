@@ -333,26 +333,26 @@ int rt_hw_process_exception(struct rt_hw_exp_stack_register *regs)
 		type_num = __fls(type) - 1;
 
 		switch(type_num) {
-		case EXCEPT_TYPE_NXF:					/* NMI exception   */
-			ack_exception(EXCEPT_TYPE_NXF);		/* clear exception */
+		case EXCEPT_TYPE_NXF:                   /* NMI exception   */
+			ack_exception(EXCEPT_TYPE_NXF);	    /* clear exception */
 			if (hw_nmi_handler != RT_NULL)
 				hw_nmi_handler(regs);
 			break;
 
-		case EXCEPT_TYPE_IXF:					/* internal exception */
+		case EXCEPT_TYPE_IXF:                   /* internal exception */
 			if (process_iexcept(regs))
 				return 1;
 			break;
 
-		case EXCEPT_TYPE_EXC:					/* external exception  */
+		case EXCEPT_TYPE_EXC:                   /* external exception  */
 			process_except(regs);
 			break;
 
-		case EXCEPT_TYPE_SXF:					/* software exception */
+		case EXCEPT_TYPE_SXF:                   /* software exception */
 			ie_num = 8;
 			ack_exception(type_num);
 			break;
-		default:								/* clear exception */
+		default:                                /* clear exception */
 			ack_exception(type_num);
 			do_trap(&iexcept_table[ie_num], regs);
 			break;

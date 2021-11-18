@@ -20,13 +20,13 @@
  */
 void rt_hw_systick_isr(void)
 {
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	rt_tick_increase();
+    rt_tick_increase();
 
-	/* leave interrupt */
-	rt_interrupt_leave();
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 /**
@@ -34,7 +34,7 @@ void rt_hw_systick_isr(void)
  */
 void rt_hw_system_timer_init(void)
 {
-	// initial system timer interrupt, map local timer interrupt to INT14
+    // initial system timer interrupt, map local timer interrupt to INT14
     gpCGEM_regs->INTMUX3 = (CSL_GEM_TINTLN<<CSL_CGEM_INTMUX3_INTSEL14_SHIFT);
     // enable CPU INT14
     CPU_interrupt_enable(1<<14);

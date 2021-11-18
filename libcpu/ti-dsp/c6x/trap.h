@@ -41,30 +41,30 @@
 
 enum SYSTEM_TRAP_CODE
 {
-	ABORT_BUS_ADDRERR = 0,	// bus address error
-	ABORT_BUS_ACCERR,		// bus access permission error
-	ABORT_OPCODE_ILL,		// illegal opcode
-	ABORT_PRVREG_ILL,		// privilege register
-	ABORT_PRVOPC_ILL,		// privileged opcode
-	ABORT_ILLTRP_ILL,		// illegal trap
-	ABORT_BRKPT_ILL,		// handling breakpoints
+	ABORT_BUS_ADDRERR = 0,  // bus address error
+	ABORT_BUS_ACCERR,       // bus access permission error
+	ABORT_OPCODE_ILL,       // illegal opcode
+	ABORT_PRVREG_ILL,       // privilege register
+	ABORT_PRVOPC_ILL,       // privileged opcode
+	ABORT_ILLTRP_ILL,       // illegal trap
+	ABORT_BRKPT_ILL,        // handling breakpoints
 };
 
 /*
  * abort types
  */
-#define	ABORT_TYPE_BUS		0			// bus access abnormal
-#define ABORT_TYPE_MAP		1			// page table mapping error
-#define	ABORT_TYPE_UNDDEF	0xff		// undefined exception
-#define ABORT_TYPE_FATAL	0xffffffff	// fatal error
+#define	ABORT_TYPE_BUS		0           // bus access abnormal
+#define ABORT_TYPE_MAP		1           // page table mapping error
+#define	ABORT_TYPE_UNDDEF	0xff        // undefined exception
+#define ABORT_TYPE_FATAL	0xffffffff  // fatal error
 
 struct rt_exception_info {
 	char *kernel_str;
-	int  type;
-	int  code;
+	int type;
+	int code;
 };
 
-#define BKPT_OPCODE		0x56454314       /* illegal opcode */
+#define BKPT_OPCODE		0x56454314    /* illegal opcode */
 #define INTC_MEXPMASK	__SYSREGA(0x018000e0, unsigned int)
 
 #define __ffs(a)	(_lmbd(1, _bitr(a)))

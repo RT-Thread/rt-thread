@@ -9,11 +9,11 @@
 ;
 
 ;-----------------------------------------------------------
-; 		interrupt and execption handler for C6000 DSP
+;      interrupt and execption handler for C6000 DSP
 ;-----------------------------------------------------------
 
 ;-----------------------------------------------------------
-; 						macro definition
+;                    macro definition
 ;-----------------------------------------------------------
 DP	.set	B14
 SP	.set	B15
@@ -22,7 +22,7 @@ SP	.set	B15
 ;
 	.include "contextinc.asm"
 ;-----------------------------------------------------------
-; 						global function
+;                     global function
 ;-----------------------------------------------------------
     .global _nmi_handler
     .global _bad_handler
@@ -43,7 +43,7 @@ SP	.set	B15
 ;
 
 ;-----------------------------------------------------------
-; 						extern function
+;                     extern function
 ;-----------------------------------------------------------
 	.ref hw_nmi_handler
 	.ref hw_bad_handler
@@ -66,7 +66,7 @@ SP	.set	B15
 ;
 
 ;-----------------------------------------------------------
-; 						extern variable
+;                     extern variable
 ;-----------------------------------------------------------
 	.ref rt_system_stack_top
 ;
@@ -74,7 +74,7 @@ SP	.set	B15
 ;
 
 ;-----------------------------------------------------------
-; 				interrupt macro definition
+;               interrupt macro definition
 ;-----------------------------------------------------------
 RT_INTERRUPT_ENTRY	.macro
 	SAVE_ALL	IRP,ITSR
@@ -86,7 +86,7 @@ RT_CALL_INT .macro __isr
 	NOP	5
 			.endm
 ;-----------------------------------------------------------
-; 				execption macro definition
+;               execption macro definition
 ;-----------------------------------------------------------
 RT_EXECPTION_ENTRY	.macro
 	SAVE_ALL NRP,NTSR
@@ -94,7 +94,7 @@ RT_EXECPTION_ENTRY	.macro
 
 RT_EXECPTION_EXIT	.macro
 	RESTORE_ALL NRP,NTSR
-	B	.S2	NRP				; return from execption
+	B	.S2	NRP   ; return from execption
 	NOP	5
 					.endm
 

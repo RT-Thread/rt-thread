@@ -15,8 +15,8 @@
 
 void rt_init_thread_entry(void *parameter)
 {
-	rt_kprintf("hello rt-thread\n");
-	return 0;
+    rt_kprintf("hello rt-thread\n");
+    return 0;
 }
 
 int rt_application_init(void)
@@ -39,42 +39,42 @@ int rt_application_init(void)
  */
 void rtthread_startup(void)
 {
-	/* disable interrupt first */
-	rt_hw_interrupt_disable();
+    /* disable interrupt first */
+    rt_hw_interrupt_disable();
+	
+    /* init board */
+    rt_hw_board_init();
 
-	/* init board */
-	rt_hw_board_init();
+    /* show version */
+    rt_show_version();
 
-	/* show version */
-	rt_show_version();
+    /* init timer system */
+    rt_system_timer_init();
 
-	/* init timer system */
-	rt_system_timer_init();
+    /* init scheduler system */
+    rt_system_scheduler_init();
 
-	/* init scheduler system */
-	rt_system_scheduler_init();
+    /* init application */
+    rt_application_init();
 
-	/* init application */
-	rt_application_init();
+    /* init timer thread */
+    rt_system_timer_thread_init();
 
-	/* init timer thread */
-	rt_system_timer_thread_init();
+    /* init idle thread */
+    rt_thread_idle_init();
 
-	/* init idle thread */
-	rt_thread_idle_init();
+    /* start scheduler */
+    rt_system_scheduler_start();
 
-	/* start scheduler */
-	rt_system_scheduler_start();
-
-	/* never reach here */
-	return ;
+    /* never reach here */
+    return ;
 }
 
 void main(void)
 {
-	/* startup RT-Thread RTOS */
-	rtthread_startup();
+    /* startup RT-Thread RTOS */
+    rtthread_startup();
 
-	for ( ; ; );
+    for ( ; ; );
 }
 
