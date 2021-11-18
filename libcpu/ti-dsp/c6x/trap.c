@@ -12,9 +12,8 @@
 #include "c66xx.h"
 
 #include <rthw.h>
-#include <rtthread.h>
-
 #include <rtdef.h>
+#include <rtthread.h>
 
 #define RT_SYS_STACK_SIZE    4096
 
@@ -136,16 +135,18 @@ static struct rt_exception_info iexcept_table[10] = {
 static int process_iexcept(struct rt_hw_exp_stack_register *regs)
 {
     unsigned int iexcept_report = get_iexcept();
-    unsigned int iexcept_num;
+    unsigned int iexcept_num = 0;
 
     ack_exception(EXCEPT_TYPE_IXF);
 
-    while(iexcept_report) {
+    while(iexcept_report)
+    {
         iexcept_num = __ffs(iexcept_report);
         iexcept_report &= ~(1 << iexcept_num);
         set_iexcept(iexcept_report);
 
-        if (*(unsigned int *)regs->pc == BKPT_OPCODE) {
+        if (*(unsigned int *)regs->pc == BKPT_OPCODE)
+        {
             /* This is a breakpoint */
             struct rt_exception_info bkpt_exception = { " - undefined instruction", ABORT_TYPE_UNDDEF, ABORT_BRKPT_ILL };
             do_trap(&bkpt_exception, regs);
@@ -300,10 +301,12 @@ static void process_except(struct rt_hw_exp_stack_register *regs)
 {
     int except_num;
     int bank = 0;
-    int i;
+    int i = 0;
 
-    for (i = 0; i <= 3; i++) {
-        while (INTC_MEXPMASK[i]) {
+    for (i = 0; i <= 3; i++)
+    {
+        while (INTC_MEXPMASK[i]) 
+       {
             __dint();
             except_num = __ffs(INTC_MEXPMASK[i]);
             INTC_MEXPMASK[i] &= ~(1 << except_num); /* ack the external exception */
@@ -317,14 +320,13 @@ static void process_except(struct rt_hw_exp_stack_register *regs)
 }
 
 extern void hw_nmi_handler(struct rt_hw_exp_stack_register *regs);
-
 /*
  * Main exception processing
  */
 int rt_hw_process_exception(struct rt_hw_exp_stack_register *regs)
 {
-    int type;
-    int type_num;
+    int type = 0;
+    int type_num = 0;
     int ie_num = 9; /* default is unknown exception */
 
     while ((type = get_except_type()) != 0) {
@@ -334,12 +336,16 @@ int rt_hw_process_exception(struct rt_hw_exp_stack_register *regs)
         case EXCEPT_TYPE_NXF:                   /* NMI exception   */
             ack_exception(EXCEPT_TYPE_NXF);        /* clear exception */
             if (hw_nmi_handler != RT_NULL)
+            {
                 hw_nmi_handler(regs);
+            }
             break;
 
         case EXCEPT_TYPE_IXF:                   /* internal exception */
             if (process_iexcept(regs))
+            {
                 return 1;
+            }
             break;
 
         case EXCEPT_TYPE_EXC:                   /* external exception  */
