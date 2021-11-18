@@ -19,7 +19,7 @@ SAVE_ALL	.macro  __rp, __tsr
 
 	NOP	3
 	STW	.D2T2	B1,*+SP[1]				; save original B1
-	XOR	.D2	SP,B1,B0					; (SP ^ KSP, check current stack types)
+	XOR	.D2	SP,B1,B0					; check current stack types
 	LDW	.D2T2	*+SP[1],B1				; restore B0/B1
 	LDW	.D2T2	*++SP[2],B0
 	SHR	.S2	B0,12,B0					; 0 if already using system stack
@@ -75,7 +75,7 @@ SAVE_ALL	.macro  __rp, __tsr
 
 	STDW	.D2T2	B13:B12,*SP--[1]	; save PC and CSR
 	STDW	.D2T2	B11:B10,*SP--[1]	; save RILC and ILC
-	STDW	.D2T1	A5:A4,*SP--[1]		; save TSR and orig A4
+	STDW	.D2T1	A5:A4,*SP--[1]		; save TSR and  orig A4(stack type)
 			.endm
 
 RESTORE_ALL	.macro  __rp, __tsr
@@ -183,5 +183,5 @@ THREAD_SAVE_ALL	.macro  __rp, __tsr
 
 	STDW	.D2T2	B13:B12,*SP--[1]	; save PC and CSR
 	STDW	.D2T2	B11:B10,*SP--[1]	; save RILC and ILC
-	STDW	.D2T1	A5:A4,*SP--[1]		; save TSR and orig A4
+	STDW	.D2T1	A5:A4,*SP--[1]		; save TSR and orig A4(stack type)
 				.endm

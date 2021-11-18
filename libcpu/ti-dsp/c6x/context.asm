@@ -136,15 +136,14 @@ rt_hw_context_switch_to:
 ;
 ; this maybe do better
 ;
-	MVC	.S2	B11,RILC					; Restore RILC
-	MVC	.S2	B10,ILC						; Restore ILC
-	MV	B13,B3							; Restore PC
-	MVC	.S2	B12,CSR						; Restore CSR
-
 	LDDW	.D2T2	*++SP[1],B11:B10
+ || MVC	.S2	B11,RILC					; Restore RILC
   	LDDW	.D2T2	*++SP[1],B13:B12
+ ||	MVC	.S2	B10,ILC						; Restore ILC
 	LDDW	.D2T1	*++SP[1],A11:A10
+ ||	MV	B13,B3							; Restore PC
 	LDDW	.D2T1	*++SP[1],A13:A12
+ ||	MVC	.S2	B12,CSR						; Restore CSR
 	LDDW	.D2T1	*++SP[1],A15:A14
 	B	B3                              ; Return to caller
 	ADDAW	.D2	SP,2,SP
@@ -236,7 +235,6 @@ _reswitch:
 	.global	rt_interrupt_context_restore
 rt_interrupt_context_restore:
 ;{
-; if rt_switch_interrupt_flag set, jump to rt_hw_context_switch_interrupt and don't return
 	MVKL	rt_thread_switch_interrupt_flag,A3
 	MVKH	rt_thread_switch_interrupt_flag,A3
 	LDW		*A3,A1
