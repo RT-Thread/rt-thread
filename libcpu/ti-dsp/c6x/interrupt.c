@@ -45,9 +45,9 @@ void rt_hw_interrupt_init(void)
 void rt_hw_interrupt_mask(int vector)
 {
     if (vector < 0 || vector >= MAX_HANDLERS)
-	{
+    {
         return;
-	}
+    }
 }
 
 /**
@@ -57,9 +57,9 @@ void rt_hw_interrupt_mask(int vector)
 void rt_hw_interrupt_umask(int vector)
 {
     if (vector < 0 || vector >= MAX_HANDLERS)
-	{
+    {
         return;
-	}
+    }
 }
 
 /**
@@ -93,7 +93,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 void rt_hw_interrupt_clear(int vector)
 {
     if (vector < 0 || vector >= MAX_HANDLERS)
-	{
-        return;
-	}
+    {
+         return;
+    }
 }
