@@ -124,6 +124,17 @@ extern "C" {
 #include "h7/sdio_config.h"
 #include "h7/pwm_config.h"
 #include "h7/usbd_config.h"
+#elif defined(SOC_SERIES_STM32U5)
+#include "u5/dma_config.h"
+#include "u5/uart_config.h"
+#include "u5/spi_config.h"
+#include "u5/qspi_config.h"
+#include "u5/adc_config.h"
+#include "u5/dac_config.h"
+#include "u5/tim_config.h"
+#include "u5/sdio_config.h"
+#include "u5/pwm_config.h"
+#include "u5/usbd_config.h"
 #elif  defined(SOC_SERIES_STM32MP1)
 #include "mp1/dma_config.h"
 #include "mp1/uart_config.h"
