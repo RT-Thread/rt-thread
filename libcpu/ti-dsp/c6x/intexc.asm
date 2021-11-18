@@ -9,7 +9,7 @@
 ;
 
 ;-----------------------------------------------------------
-; 		interrupt and execption handler for C000 DSP
+; 		interrupt and execption handler for C6000 DSP
 ;-----------------------------------------------------------
 
 ;-----------------------------------------------------------
@@ -94,7 +94,7 @@ RT_EXECPTION_ENTRY	.macro
 
 RT_EXECPTION_EXIT	.macro
 	RESTORE_ALL NRP,NTSR
-	B	.S2	NRP				; return from interruption
+	B	.S2	NRP				; return from execption
 	NOP	5
 					.endm
 
@@ -137,7 +137,7 @@ ret_from_trap:
  [!B0]	MVKH	.S2	ret_from_exception,B3
  [!B0]	BNOP	.S2	B3,5
 ;
-; return from trap£¬restore exception context
+; return from trap restore exception context
 ;
 ret_from_exception:
 	RT_EXECPTION_EXIT
