@@ -75,6 +75,6 @@ void main(void)
     /* startup RT-Thread RTOS */
     rtthread_startup();
 
-    for ( ; ; );
+    for(;;){}
 }
 

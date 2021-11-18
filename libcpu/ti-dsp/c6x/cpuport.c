@@ -37,7 +37,7 @@ RT_WEAK void rt_hw_cpu_shutdown(void)
 
 void nested_exception_handler(void)
 {
-	for ( ; ; );
+    for(;;){}
 }
 
 /*------------ hw_nmi_handler() function --------------------------------------
@@ -48,7 +48,7 @@ void nested_exception_handler(void)
 -----------------------------------------------------------------------------*/
 void hw_nmi_handler(struct rt_hw_exp_stack_register *regs)
 {
-	for ( ; ; );
+    for(;;){}
 }
 
 /*------------ hw_bad_handler() function --------------------------------------
@@ -59,7 +59,7 @@ void hw_nmi_handler(struct rt_hw_exp_stack_register *regs)
 -----------------------------------------------------------------------------*/
 void hw_bad_handler(void)
 {
-	for ( ; ; );
+    for(;;){}
 }
 
 /*------------ hw_int4_handler() function -------------------------------------
@@ -181,7 +181,7 @@ void hw_int13_handler(void)
 void hw_int14_handler(void)
 {
 extern void rt_hw_systick_isr();
-	rt_hw_systick_isr();
+    rt_hw_systick_isr();
 }
 
 /*------------ hw_int15_handler() function ------------------------------------
