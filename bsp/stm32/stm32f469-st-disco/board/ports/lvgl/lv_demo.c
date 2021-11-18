@@ -9,11 +9,10 @@
  */
 #include <rtthread.h>
 #include <lvgl.h>
+#include <lv_port_indev.h>
 #define DBG_TAG    "LVGL"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
-#include <lcd_port.h>
-#include <lv_port_indev.h>
 
 #ifndef LV_THREAD_STACK_SIZE
 #define LV_THREAD_STACK_SIZE 4096
