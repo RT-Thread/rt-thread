@@ -438,7 +438,7 @@ void lcd_fill(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_ui
  */
 void lcd_fill_array(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_uint16_t y_end, void *pcolor)
 {
-    rt_uint32_t size = 0, size_remain = 0;
+    rt_uint32_t size = 0;
 
     size = (x_end - x_start + 1) * (y_end - y_start + 1) * 2;
     lcd_address_set(x_start, y_start, x_end, y_end);
