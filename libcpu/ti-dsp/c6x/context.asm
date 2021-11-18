@@ -9,18 +9,18 @@
 ;
 
 ;-----------------------------------------------------------
-; 				context switch for C6000 DSP
+;               context switch for C6000 DSP
 ;-----------------------------------------------------------
 
 	.include "contextinc.asm"
 ;-----------------------------------------------------------
-; 						macro definition
+;                      macro definition
 ;-----------------------------------------------------------
 DP	.set	B14
 SP	.set	B15
 
 ;-----------------------------------------------------------
-; 						extern variable
+;                      extern variable
 ;-----------------------------------------------------------
 	.ref rt_system_stack_top
 ;
@@ -28,7 +28,7 @@ SP	.set	B15
 ;
 
 ;-----------------------------------------------------------
-; 						global variable
+;                      global variable
 ;-----------------------------------------------------------
 	.global	rt_interrupt_from_thread
 	.global	rt_interrupt_to_thread
@@ -47,7 +47,7 @@ rt_hw_enable_exception:
 	MVC	.S2	B3,NRP
 	MVK	.L2	0xC,B1
 	OR	.D2	B0,B1,B0
-	MVC	.S2	B0,TSR			;  Set GEE and XEN in TSR
+	MVC	.S2	B0,TSR    ; Set GEE and XEN in TSR
 	B	.S2	NRP
 	NOP	5
 
@@ -93,27 +93,27 @@ rt_hw_context_switch:
 ; {
 	SUBAW	.D2	SP,2,SP
 	ADD	.D1X	SP,-8,A15
- ||	STDW	.D2T1	A15:A14,*SP--[3]	; Store A15:A14
+ ||	STDW	.D2T1	A15:A14,*SP--[3]    ; Store A15:A14
 
-	STDW	.D2T2	B13:B12,*SP--[1]	; Store B13:B12
- ||	STDW	.D1T1	A13:A12,*A15--[1]	; Store A13:A12
+	STDW	.D2T2	B13:B12,*SP--[1]    ; Store B13:B12
+ ||	STDW	.D1T1	A13:A12,*A15--[1]   ; Store A13:A12
  ||	MV		B3,B13
-	STDW	.D2T2	B11:B10,*SP--[1]	; Store B11:B10
- ||	STDW	.D1T1	A11:A10,*A15--[1]	; Store A11:A10
+	STDW	.D2T2	B11:B10,*SP--[1]    ; Store B11:B10
+ ||	STDW	.D1T1	A11:A10,*A15--[1]   ; Store A11:A10
  ||	MVC	.S2	CSR,B12
-	STDW	.D2T2	B13:B12,*SP--[1]	; Store PC:CSR
+	STDW	.D2T2	B13:B12,*SP--[1]    ; Store PC:CSR
  ||	MVC	.S2	TSR,B5
 
-	MVC	.S2	ILC,B11						;
-	MVC	.S2	RILC,B10					;
-	STDW	.D2T2	B11:B10,*SP--[1]	; Store RILC:ILC
+	MVC	.S2	ILC,B11
+	MVC	.S2	RILC,B10
+	STDW	.D2T2	B11:B10,*SP--[1]    ; Store RILC:ILC
  ||	MV	.S1X	B5,A3
 
-	ZERO	A2          				;
-	STDW	.D2T1	A3:A2,*SP--[1]		; Store TSR:stack type
-	STW	SP,*A4							; Save thread's stack pointer
+	ZERO	A2                          ;
+	STDW	.D2T1	A3:A2,*SP--[1]      ; Store TSR:stack type
+	STW	SP,*A4                          ; Save thread's stack pointer
 	B	rt_hw_context_switch_to
-	MV	B4,A4							;
+	MV	B4,A4
 	NOP	4
 ;}
 
@@ -126,24 +126,24 @@ rt_hw_context_switch_to:
 ;{
 	LDW	*A4,SP
 	NOP	4
-	LDDW	.D2T2	*++SP[1],B9:B8		; get TSR (B9) and stack frame type (B8)
-	LDDW	.D2T2	*++SP[1],B11:B10	; get RILC (B11) and ILC (B10)
-	LDDW	.D2T2	*++SP[1],B13:B12	; get PC (B13) and CSR (B12)
+	LDDW	.D2T2	*++SP[1],B9:B8      ; get TSR (B9) and stack frame type (B8)
+	LDDW	.D2T2	*++SP[1],B11:B10    ; get RILC (B11) and ILC (B10)
+	LDDW	.D2T2	*++SP[1],B13:B12    ; get PC (B13) and CSR (B12)
 	NOP	2
 	MV	B8,B0
- [B0]   B	_rt_thread_interrupt_stack 	;
+ [B0]   B	_rt_thread_interrupt_stack
  	NOP	5
 ;
 ; this maybe do better
 ;
 	LDDW	.D2T2	*++SP[1],B11:B10
- || MVC	.S2	B11,RILC					; Restore RILC
+ || MVC	.S2	B11,RILC                    ; Restore RILC
   	LDDW	.D2T2	*++SP[1],B13:B12
- ||	MVC	.S2	B10,ILC						; Restore ILC
+ ||	MVC	.S2	B10,ILC                     ; Restore ILC
 	LDDW	.D2T1	*++SP[1],A11:A10
- ||	MV	B13,B3							; Restore PC
+ ||	MV	B13,B3                          ; Restore PC
 	LDDW	.D2T1	*++SP[1],A13:A12
- ||	MVC	.S2	B12,CSR						; Restore CSR
+ ||	MVC	.S2	B12,CSR                     ; Restore CSR
 	LDDW	.D2T1	*++SP[1],A15:A14
 	B	B3                              ; Return to caller
 	ADDAW	.D2	SP,2,SP
@@ -172,21 +172,21 @@ _rt_thread_interrupt_stack:
 
 	LDDW	.D1T1	*++A15[1],A3:A2
  ||	LDDW	.D2T2	*++SP[1],B3:B2
- ||	MVC	.S2	B9,ITSR						; Restore ITSR
+ ||	MVC	.S2	B9,ITSR	                    ; Restore ITSR
 	LDDW	.D1T1	*++A15[1],A5:A4
  ||	LDDW	.D2T2	*++SP[1],B5:B4
- ||	MVC	.S2	B11,RILC					; Restore RILC
+ ||	MVC	.S2	B11,RILC                    ; Restore RILC
 	LDDW	.D1T1	*++A15[1],A7:A6
  ||	LDDW	.D2T2	*++SP[1],B7:B6
- ||	MVC	.S2	B10,ILC						; Restore ILC
+ ||	MVC	.S2	B10,ILC                     ; Restore ILC
 
 	LDDW	.D1T1	*++A15[1],A9:A8
  ||	LDDW	.D2T2	*++SP[1],B9:B8
- ||	MVC	.S2	B13,IRP						; Restore IPR
+ ||	MVC	.S2	B13,IRP                     ; Restore IPR
 
 	LDDW	.D1T1	*++A15[1],A11:A10
  ||	LDDW	.D2T2	*++SP[1],B11:B10
- ||	MVC	.S2	B12,CSR						; Restore CSR
+ ||	MVC	.S2	B12,CSR                     ; Restore CSR
 
 	LDDW	.D1T1	*++A15[1],A13:A12
  ||	LDDW	.D2T2	*++SP[1],B13:B12
@@ -242,9 +242,9 @@ rt_interrupt_context_restore:
 	CMPEQ	1,A1,A2
  [A2]  BNOP	 rt_preempt_context_restore,5
 	NOP		5
-	LDDW	.D2T2	*++SP[1],B9:B8		; get TSR (B9)
-	LDDW	.D2T2	*++SP[1],B11:B10	; get RILC (B11) and ILC (B10)
-	LDDW	.D2T2	*++SP[1],B13:B12	; get PC (B13) and CSR (B12)
+	LDDW	.D2T2	*++SP[1],B9:B8      ; get TSR (B9)
+	LDDW	.D2T2	*++SP[1],B11:B10    ; get RILC (B11) and ILC (B10)
+	LDDW	.D2T2	*++SP[1],B13:B12    ; get PC (B13) and CSR (B12)
 
 	ADDAW	.D1X	SP,30,A15
 
@@ -290,15 +290,15 @@ rt_interrupt_context_restore:
  ||	MVKL	.S1	rt_system_stack_top,A15
 	MVKH	.S1	rt_system_stack_top,A15
  ||	ADDAW	.D1X	SP,6,A14
-	STW	.D1T1	A14,*A15				; save system stack pointer
+	STW	.D1T1	A14,*A15                ; save system stack pointer
 
  	LDDW	.D2T1	*++SP[1],A15:A14
-	B	.S2	IRP							; return from interruption
+	B	.S2	IRP                         ; return from interruption
 	LDDW	.D2T2	*+SP[1],SP:DP
 	NOP		4
 rt_preempt_context_restore:
 	ZERO	A12
-	STW	A12,*A3							; clear rt_thread_switch_interrupt_flag
+	STW	A12,*A3                         ; clear rt_thread_switch_interrupt_flag
 ;
 ; restore saved registers by system stack
 ;
@@ -316,11 +316,9 @@ rt_preempt_context_restore:
     MVKH	rt_interrupt_to_thread,B10
     LDW		*B10,B11
     NOP		3
-    STW		SP,*A10	    				; store sp in preempted tasks's TCB
+    STW		SP,*A10                     ; store sp in preempted tasks's TCB
     B		rt_hw_context_switch_to
-	MV		B11,A4						;
+	MV		B11,A4
 	NOP		4
 ;}
-
 	.end
-

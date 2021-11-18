@@ -20,13 +20,13 @@
  */
 void rt_hw_board_init(void)
 {
-	// initial CPU core
-	KeyStone_common_CPU_init();
+    // initial CPU core
+    KeyStone_common_CPU_init();
 
-	// initial interrupt controller
-	rt_hw_interrupt_init();
+    // initial interrupt controller
+    rt_hw_interrupt_init();
 
-	// initial system timer
+    // initial system timer
     rt_hw_system_timer_init();
 
     /* initialize memory system */
