@@ -4,7 +4,7 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Glob('*.c') + Glob('*.cpp')
-print("hello, world")
+
 path =  [cwd]
 path += [cwd + '/src']
 
