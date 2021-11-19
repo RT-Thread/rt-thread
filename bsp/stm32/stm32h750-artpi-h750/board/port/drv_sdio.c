@@ -517,7 +517,7 @@ int rt_hw_sdio_init(void)
     /* wifi auto change */
     mmcsd_change(host2);
     #endif
-    mmcsd_mutex = rt_mutex_create("mmutex", RT_IPC_FLAG_FIFO);
+    mmcsd_mutex = rt_mutex_create("mmutex", RT_IPC_FLAG_PRIO);
 
     if (mmcsd_mutex == RT_NULL)
     {

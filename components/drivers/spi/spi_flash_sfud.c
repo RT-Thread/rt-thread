@@ -318,7 +318,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, con
     if (rtt_dev) {
         rt_memset(rtt_dev, 0, sizeof(struct spi_flash_device));
         /* initialize lock */
-        rt_mutex_init(&(rtt_dev->lock), spi_flash_dev_name, RT_IPC_FLAG_FIFO);
+        rt_mutex_init(&(rtt_dev->lock), spi_flash_dev_name, RT_IPC_FLAG_PRIO);
     }
 
     if (rtt_dev && sfud_dev && spi_flash_dev_name_bak && spi_dev_name_bak) {
