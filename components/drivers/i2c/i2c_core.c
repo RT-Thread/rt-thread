@@ -24,7 +24,7 @@ rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
 {
     rt_err_t res = RT_EOK;
 
-    rt_mutex_init(&bus->lock, "i2c_bus_lock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&bus->lock, "i2c_bus_lock", RT_IPC_FLAG_PRIO);
 
     if (bus->timeout == 0) bus->timeout = RT_TICK_PER_SECOND;
 

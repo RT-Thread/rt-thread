@@ -35,7 +35,7 @@ static void test_static_mutex_init(void)
         uassert_true(RT_FALSE);
     }
 
-    result = rt_mutex_init(&static_mutex, "static_mutex", RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&static_mutex, "static_mutex", RT_IPC_FLAG_PRIO);
     if (RT_EOK != result)
     {
         uassert_true(RT_FALSE);
@@ -348,7 +348,7 @@ static void test_dynamic_mutex_create(void)
     }
 
     /* FIFO mode */
-    dynamic_mutex = rt_mutex_create("dynamic_mutex", RT_IPC_FLAG_FIFO);
+    dynamic_mutex = rt_mutex_create("dynamic_mutex", RT_IPC_FLAG_PRIO);
     if (RT_NULL == dynamic_mutex)
     {
         uassert_true(RT_FALSE);

@@ -313,7 +313,7 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
     if (at_slock == RT_NULL)
     {
         /* create AT socket lock */
-        at_slock = rt_mutex_create("at_slock", RT_IPC_FLAG_FIFO);
+        at_slock = rt_mutex_create("at_slock", RT_IPC_FLAG_PRIO);
         if (at_slock == RT_NULL)
         {
             LOG_E("No memory for socket allocation lock!");
@@ -367,7 +367,7 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
 
     rt_snprintf(name, RT_NAME_MAX, "%s%d", "at_skt", idx);
     /* create AT socket receive ring buffer lock */
-    if((sock->recv_lock = rt_mutex_create(name, RT_IPC_FLAG_FIFO)) == RT_NULL)
+    if((sock->recv_lock = rt_mutex_create(name, RT_IPC_FLAG_PRIO)) == RT_NULL)
     {
         LOG_E("No memory for socket receive mutex create.");
         rt_sem_delete(sock->recv_notice);
