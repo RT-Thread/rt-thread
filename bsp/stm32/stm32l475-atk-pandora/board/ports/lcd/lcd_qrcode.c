@@ -186,4 +186,4 @@ __exit:
 
     return result;
 }
-#endif
+#endif /* BSP_USING_LCD_QRCODE */

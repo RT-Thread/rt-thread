@@ -16,7 +16,9 @@
 #include <drv_gpio.h>
 #include <drv_spi.h>
 #include "drv_lcd.h"
+#ifndef BSP_USING_LVGL
 #include "drv_lcd_font.h"
+#endif /* BSP_USING_LVGL */
 
 #define DBG_TAG    "drv.lcd"
 #define DBG_LVL    DBG_INFO
@@ -25,9 +27,11 @@
 #define LCD_PWR_PIN           GET_PIN(B, 7)
 #define LCD_DC_PIN            GET_PIN(B, 4)
 #define LCD_RES_PIN           GET_PIN(B, 6)
-#define LCD_CLEAR_SEND_NUMBER 5760 /* 240*240/10 */
 
+#ifndef BSP_USING_LVGL
+#define LCD_CLEAR_SEND_NUMBER 5760 /* 240*240/10 */
 rt_uint16_t BACK_COLOR = WHITE, FORE_COLOR = BLACK;
+#endif /* BSP_USING_LVGL */
 
 static struct rt_spi_device *spi_dev_lcd;
 
@@ -86,6 +90,7 @@ static rt_err_t lcd_write_data(const rt_uint8_t data)
     }
 }
 
+#ifndef BSP_USING_LVGL
 static rt_err_t lcd_write_half_word(const rt_uint16_t da)
 {
     rt_size_t len;
@@ -106,6 +111,7 @@ static rt_err_t lcd_write_half_word(const rt_uint16_t da)
         return RT_EOK;
     }
 }
+#endif /* BSP_USING_LVGL */
 
 static void lcd_gpio_init(void)
 {
@@ -214,6 +220,7 @@ static int rt_hw_lcd_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_lcd_init);
 
+#ifndef BSP_USING_LVGL
 /**
  * Set background color and foreground color
  *
@@ -227,6 +234,7 @@ void lcd_set_color(rt_uint16_t back, rt_uint16_t fore)
     BACK_COLOR = back;
     FORE_COLOR = fore;
 }
+#endif /* BSP_USING_LVGL */
 
 void lcd_display_on(void)
 {
@@ -281,6 +289,7 @@ void lcd_address_set(rt_uint16_t x1, rt_uint16_t y1, rt_uint16_t x2, rt_uint16_t
     lcd_write_cmd(0x2C);
 }
 
+#ifndef BSP_USING_LVGL
 /**
  * clear the lcd.
  *
@@ -424,6 +433,8 @@ void lcd_fill(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_ui
         }
     }
 }
+#endif /* BSP_USING_LVGL */
+
 
 /**
  * full color array on the lcd.
@@ -446,6 +457,7 @@ void lcd_fill_array(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end,
     rt_spi_send(spi_dev_lcd, pcolor, size);
 }
 
+#ifndef BSP_USING_LVGL
 /**
  * display a line on the lcd.
  *
@@ -856,3 +868,5 @@ rt_err_t lcd_show_image(rt_uint16_t x, rt_uint16_t y, rt_uint16_t length, rt_uin
 
     return RT_EOK;
 }
+
+#endif /* BSP_USING_LVGL */
