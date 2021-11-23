@@ -94,6 +94,6 @@ void rt_hw_interrupt_clear(int vector)
 {
     if (vector < 0 || vector >= MAX_HANDLERS)
     {
-         return;
+        return;
     }
 }

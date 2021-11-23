@@ -67,10 +67,49 @@ struct rt_exception_info {
 #define BKPT_OPCODE        0x56454314    /* illegal opcode */
 #define INTC_MEXPMASK    __SYSREGA(0x018000e0, unsigned int)
 
-#define __ffs(a)    (_lmbd(1, _bitr(a)))
-#define __fls(a)    (!(a) ? 0 : (32 - _lmbd(1, (a))))
-
 extern void rt_trap_init(void);
+extern void rt_hw_enable_exception(void);
+extern int __fls(int val);
+extern int __ffs(int val);
+
+/*
+ * ffz - find first zero in word.
+ * @word: The word to search
+ *
+ * Undefined if no zero exists, so code should check against ~0UL first.
+ */
+#define ffz(x) __ffs(~(x))
+
+/**
+ * fls - find last (most-significant) bit set
+ * @x: the word to search
+ *
+ * This is defined the same way as ffs.
+ * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+ */
+static inline int fls(int x)
+{
+    if (!x)
+        return 0;
+
+    return 32 - __fls(x);
+}
+
+/**
+ * ffs - find first bit set
+ * @x: the word to search
+ *
+ * This is defined the same way as
+ * the libc and compiler builtin ffs routines, therefore
+ * differs in spirit from the above ffz (man ffs).
+ * Note ffs(0) = 0, ffs(1) = 1, ffs(0x80000000) = 32.
+ */
+static inline int ffs(int x)
+{
+    if (!x)
+        return 0;
+
+    return __ffs(x) + 1;
+}
 
 #endif /* __TRAP_H__ */
-
