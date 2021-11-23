@@ -81,7 +81,9 @@ RT_INTERRUPT_ENTRY	.macro
 					.endm
 
 RT_CALL_INT .macro __isr
-	CALLP	__isr,B3
+    B	__isr
+    ADDKPC	$1	,B3,4
+$1:
 	B	.S1	rt_interrupt_context_restore
 	NOP	5
 			.endm

@@ -17,7 +17,6 @@
 
 #define RT_SYS_STACK_SIZE    4096
 
-extern void rt_hw_enable_exception(void);
 rt_uint8_t rt_system_stack[RT_SYS_STACK_SIZE];
 rt_uint8_t *rt_system_stack_top;
 
@@ -117,14 +116,14 @@ void do_trap(struct rt_exception_info *except_info, struct rt_hw_exp_stack_regis
 
 static struct rt_exception_info iexcept_table[10] = {
     { " - instruction fetch",         ABORT_TYPE_BUS, ABORT_BUS_ADDRERR },
-    { " - fetch packet",             ABORT_TYPE_BUS, ABORT_BUS_ADDRERR },
-    { " - execute packet",             ABORT_TYPE_UNDDEF, ABORT_OPCODE_ILL },
+    { " - fetch packet",              ABORT_TYPE_BUS, ABORT_BUS_ADDRERR },
+    { " - execute packet",            ABORT_TYPE_UNDDEF, ABORT_OPCODE_ILL },
     { " - undefined instruction",     ABORT_TYPE_UNDDEF, ABORT_OPCODE_ILL },
     { " - resource conflict",         ABORT_TYPE_UNDDEF, ABORT_OPCODE_ILL },
-    { " - resource access",         ABORT_TYPE_UNDDEF, ABORT_PRVREG_ILL },
+    { " - resource access",           ABORT_TYPE_UNDDEF, ABORT_PRVREG_ILL },
     { " - privilege",                 ABORT_TYPE_UNDDEF, ABORT_PRVOPC_ILL },
-    { " - loops buffer",             ABORT_TYPE_UNDDEF, ABORT_PRVOPC_ILL },
-    { " - software exception",         ABORT_TYPE_UNDDEF, ABORT_ILLTRP_ILL },
+    { " - loops buffer",              ABORT_TYPE_UNDDEF, ABORT_PRVOPC_ILL },
+    { " - software exception",        ABORT_TYPE_UNDDEF, ABORT_ILLTRP_ILL },
     { " - unknown exception",         ABORT_TYPE_UNDDEF, ABORT_PRVOPC_ILL }
 };
 
@@ -140,7 +139,7 @@ static int process_iexcept(struct rt_hw_exp_stack_register *regs)
 
     while(iexcept_report)
     {
-        iexcept_num = __ffs(iexcept_report);
+        iexcept_num = ffs(iexcept_report);
         iexcept_report &= ~(1 << iexcept_num);
         set_iexcept(iexcept_report);
 
@@ -160,7 +159,7 @@ static int process_iexcept(struct rt_hw_exp_stack_register *regs)
     return 0;
 }
 
-static struct rt_exception_info except_table[128] = {
+static struct rt_exception_info eexcept_table[128] = {
     { " - external exception", ABORT_TYPE_BUS, ABORT_BUS_ADDRERR },
     { " - external exception", ABORT_TYPE_BUS, ABORT_BUS_ADDRERR },
     { " - external exception", ABORT_TYPE_BUS, ABORT_BUS_ADDRERR },
@@ -298,7 +297,7 @@ static struct rt_exception_info except_table[128] = {
 /*
  * Process an external exception (maskable)
  */
-static void process_except(struct rt_hw_exp_stack_register *regs)
+static void process_eexcept(struct rt_hw_exp_stack_register *regs)
 {
     int except_num = 0;
     int bank = 0;
@@ -309,10 +308,10 @@ static void process_except(struct rt_hw_exp_stack_register *regs)
         while (INTC_MEXPMASK[i]) 
        {
             __dint();
-            except_num = __ffs(INTC_MEXPMASK[i]);
+            except_num = ffs(INTC_MEXPMASK[i]);
             INTC_MEXPMASK[i] &= ~(1 << except_num); /* ack the external exception */
             __rint();
-            do_trap(&except_table[except_num + (bank << 5)], regs);
+            do_trap(&eexcept_table[except_num + (bank << 5)], regs);
         }
         bank++;
     }
@@ -331,11 +330,11 @@ int rt_hw_process_exception(struct rt_hw_exp_stack_register *regs)
     int ie_num = 9; /* default is unknown exception */
 
     while ((type = get_except_type()) != 0) {
-        type_num = __fls(type) - 1;
+        type_num = fls(type) - 1;
 
         switch(type_num) {
         case EXCEPT_TYPE_NXF:                   /* NMI exception   */
-            ack_exception(EXCEPT_TYPE_NXF);        /* clear exception */
+            ack_exception(EXCEPT_TYPE_NXF);     /* clear exception */
             if (hw_nmi_handler != RT_NULL)
             {
                 hw_nmi_handler(regs);
@@ -350,7 +349,7 @@ int rt_hw_process_exception(struct rt_hw_exp_stack_register *regs)
             break;
 
         case EXCEPT_TYPE_EXC:                   /* external exception  */
-            process_except(regs);
+            process_eexcept(regs);
             break;
 
         case EXCEPT_TYPE_SXF:                   /* software exception */

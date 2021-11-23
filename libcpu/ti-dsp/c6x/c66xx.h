@@ -11,7 +11,15 @@
 #ifndef __C66XX_H__
 #define __C66XX_H__
 
-#include <c6x.h>
+extern cregister volatile unsigned int IERR;    /* Internal Exception Report Register */
+extern cregister volatile unsigned int ECR;     /* Exception Clear Register */
+extern cregister volatile unsigned int EFR;     /* Exception Flag Register */
+extern cregister volatile unsigned int TSR;     /* Task State Register */
+extern cregister volatile unsigned int ITSR;    /* Interrupt Task State Register */
+extern cregister volatile unsigned int NTSR;    /* NMI/exception Task State Register */
+extern cregister volatile unsigned int TSCL;    /* Time Stamp Counter Register - Low Half  */
+extern cregister volatile unsigned int TSCH;    /* Time Stamp Counter Register - High Half */
+extern cregister volatile unsigned int DNUM;    /* Core number */
 
 #ifdef _BIG_ENDIAN
 #define RT_REG_PAIR(odd, even) unsigned long odd; unsigned long even
@@ -37,7 +45,7 @@ struct rt_hw_register
     RT_REG_PAIR(b9, b8);
     RT_REG_PAIR(b11, b10);
     RT_REG_PAIR(b13, b12);
-	
+    
     RT_REG_PAIR(a17, a16);
     RT_REG_PAIR(a19, a18);
     RT_REG_PAIR(a21, a20);
@@ -58,14 +66,14 @@ struct rt_hw_register
     RT_REG_PAIR(a15, a14);
     RT_REG_PAIR(sp, dp);
 };
-
-struct rt_hw_exp_stack_register
+    
+typedef struct rt_hw_exp_stack_register
 {
     RT_REG_PAIR(tsr, orig_a4);
     RT_REG_PAIR(rilc, ilc);
     RT_REG_PAIR(pc, csr);
     struct rt_hw_register hw_register;
-};
+} rt_hw_thread_stack_register;
 
 #define __dint()                asm(" DINT")
 #define __rint()                asm(" RINT")
