@@ -650,7 +650,7 @@ static rt_err_t _rt_wlan_dev_init(rt_device_t dev)
     struct rt_wlan_device *wlan = (struct rt_wlan_device *)dev;
     rt_err_t result = RT_EOK;
 
-    rt_mutex_init(&wlan->lock, "wlan_dev", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&wlan->lock, "wlan_dev", RT_IPC_FLAG_PRIO);
 
     if (wlan->ops->wlan_init)
         result = wlan->ops->wlan_init(wlan);

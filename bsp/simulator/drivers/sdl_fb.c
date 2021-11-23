@@ -220,7 +220,7 @@ static void sdlfb_hw_init(void)
 
     rt_device_register(RT_DEVICE(&_device), "sdl", RT_DEVICE_FLAG_RDWR);
 
-    sdllock = rt_mutex_create("fb", RT_IPC_FLAG_FIFO);
+    sdllock = rt_mutex_create("fb", RT_IPC_FLAG_PRIO);
     if (sdllock == RT_NULL)
     {
         LOG_E("Create mutex for sdlfb failed!");

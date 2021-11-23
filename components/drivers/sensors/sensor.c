@@ -452,7 +452,7 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
     if (sensor->module != RT_NULL && sensor->module->lock == RT_NULL)
     {
         /* Create a mutex lock for the module */
-        sensor->module->lock = rt_mutex_create(name, RT_IPC_FLAG_FIFO);
+        sensor->module->lock = rt_mutex_create(name, RT_IPC_FLAG_PRIO);
         if (sensor->module->lock == RT_NULL)
         {
             rt_free(device_name);
