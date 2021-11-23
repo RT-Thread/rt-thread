@@ -21,6 +21,19 @@ struct rt_data_item
     rt_size_t data_size;
 };
 
+/**
+ * @brief This function will initialize a data queue.Calling this function will 
+ * initialize the data queue control block and set the notification callback function.
+ * 
+ * @param queue The data queue object
+ * @param size The maximum number of data in the data queue
+ * @param lwm  Low water mark, when the number of data in the data queue is less than this value,
+ * will wake up the thread waiting for write data.
+ * @param evt_notify The notification callback function
+ * 
+ * @return the operation status, RT_EOK on successful, 
+ * RT_ENOMEM on insufficient memory allocation failed.
+ */
 rt_err_t
 rt_data_queue_init(struct rt_data_queue *queue,
                    rt_uint16_t size,
@@ -32,7 +45,7 @@ rt_data_queue_init(struct rt_data_queue *queue,
 
     queue->evt_notify = evt_notify;
 
-    queue->magic = DATAQUEUE_MAGIC;
+    queue->magic = DATAQUEUE_MAGIC; 
     queue->size = size;
     queue->lwm = lwm;
 
@@ -54,6 +67,17 @@ rt_data_queue_init(struct rt_data_queue *queue,
 }
 RTM_EXPORT(rt_data_queue_init);
 
+/**
+ * @brief This function will write data to the data queue. If the data queue is full,
+ * the thread will suspend for the specified amount of time.
+ * 
+ * @param queue The data queue object
+ * @param data_ptr The buffer pointer of the data to be written
+ * @param size The size in bytes of the data to be written
+ * @param timeout The waiting time
+ * 
+ * @return  the operation status, RT_EOK on successful 
+ */
 rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
                             const void *data_ptr,
                             rt_size_t data_size,
@@ -153,6 +177,20 @@ __exit:
 }
 RTM_EXPORT(rt_data_queue_push);
 
+/**
+ * @brief This function will pop data from the data queue. If the data queue is empty,
+ * the thread will suspend for the specified amount of time.
+ * 
+ * @attention when the number of data in the data queue is less than lwm(low water mark),
+ * will wake up the thread waiting for write data.
+ * 
+ * @param queue The data queue object
+ * @param data_ptr The buffer pointer of the data to be fetched
+ * @param size The size in bytes of the data to be fetched
+ * @param timeout The waiting time
+ * 
+ * @return Operation status, RT_EOK on successful, RT_ETIMEOUT on timeout.
+ */
 rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
                            const void** data_ptr,
                            rt_size_t *size,
@@ -264,6 +302,15 @@ __exit:
 }
 RTM_EXPORT(rt_data_queue_pop);
 
+/**
+ * @brief This function will fetching but retaining data in the data queue.
+ * 
+ * @param queue The data queue object
+ * @param data_ptr The buffer pointer of the data to be fetched
+ * @param size The size in bytes of the data to be fetched
+ * 
+ * @return The operation status, RT_EOK on successful 
+ */
 rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
                             const void** data_ptr,
                             rt_size_t *size)
@@ -289,6 +336,12 @@ rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
 }
 RTM_EXPORT(rt_data_queue_peek);
 
+/**
+ * @brief Reset a data queue. Calling this function will wake up all threads on the data queue
+ * that are hanging and waiting.
+ * 
+ * @param queue The data queue object
+ */
 void rt_data_queue_reset(struct rt_data_queue *queue)
 {
     rt_ubase_t  level;
@@ -362,6 +415,13 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
 }
 RTM_EXPORT(rt_data_queue_reset);
 
+/**
+ * @brief Deinit a data queue.
+ * 
+ * @param queue The data queue object
+ * 
+ * @return operation status, RT_EOK on successful.
+ */
 rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
 {
     rt_ubase_t level;
@@ -382,6 +442,12 @@ rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
 }
 RTM_EXPORT(rt_data_queue_deinit);
 
+/**
+ * @brief This function get the number of data in the data queue.
+ * 
+ * @param queue The data queue object
+ * @return The number of data in the data queue 
+ */
 rt_uint16_t rt_data_queue_len(struct rt_data_queue *queue)
 {
     rt_ubase_t level;
