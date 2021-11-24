@@ -12,7 +12,7 @@ if RT_USING_LIBC
     config RT_LIBC_USING_FILEIO
         bool "Enable libc with file operation, eg.fopen/fwrite/fread/getchar"
         select RT_USING_POSIX
-        select RT_USING_POSIX_STDIO
+        select RT_USING_POSIX_DEVIO
         default n
 
     config RT_USING_MODULE
@@ -44,8 +44,8 @@ config RT_USING_POSIX
     default n
 
 if RT_USING_POSIX
-    config RT_USING_POSIX_STDIO
-        bool "Enable standard I/O, STDOUT_FILENO/STDIN_FILENO/STDERR_FILENO"
+    config RT_USING_POSIX_DEVIO
+        bool "Enable devices as file descriptors"
         select RT_USING_DFS
         select RT_USING_DFS_DEVFS
         default n
