@@ -5,13 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2021-11-14     Meco Man     the first version
  */
 
 #ifndef DFS_SELECT_H__
 #define DFS_SELECT_H__
 
 #include <sys/select.h>
-
-#warning "This file will be obsolete in the next version! Please use <sys/select.h> to instead."
 
 #endif
