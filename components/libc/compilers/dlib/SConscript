@@ -7,7 +7,7 @@ group = []
 CPPDEFINES = ['RT_USING_DLIBC']
 
 if rtconfig.PLATFORM == 'iar':
-    if GetDepend('RT_USING_POSIX'):
+    if GetDepend('DFS_USING_POSIX'):
         from distutils.version import LooseVersion
         from iar import IARVersion
 

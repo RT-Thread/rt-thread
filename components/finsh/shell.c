@@ -27,9 +27,9 @@
 #include "shell.h"
 #include "msh.h"
 
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
 #include <dfs_posix.h>
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 
 /* finsh thread */
 #ifndef RT_USING_HEAP
@@ -104,7 +104,7 @@ const char *finsh_get_prompt(void)
     }
     strcpy(finsh_prompt, _MSH_PROMPT);
 
-#if defined(RT_USING_POSIX) && defined(DFS_USING_WORKDIR)
+#if defined(DFS_USING_POSIX) && defined(DFS_USING_WORKDIR)
     /* get current working directory */
     getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
 #endif

@@ -109,12 +109,12 @@ int _getpid_r(struct _reent *ptr)
 
 int _close_r(struct _reent *ptr, int fd)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     return close(fd);
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif
+#endif /* DFS_USING_POSIX */
 }
 
 int _execve_r(struct _reent *ptr, const char * name, char *const *argv, char *const *env)
@@ -183,7 +183,7 @@ int flock(int fd, int operation)
 
 _off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     _off_t rc;
 
     rc = lseek(fd, pos, whence);
@@ -191,12 +191,12 @@ _off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _mkdir_r(struct _reent *ptr, const char *name, int mode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int rc;
 
     rc = mkdir(name, mode);
@@ -204,24 +204,24 @@ int _mkdir_r(struct _reent *ptr, const char *name, int mode)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int rc;
     rc = open(file, flags, mode);
     return rc;
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     _ssize_t rc;
     if (fd == STDIN_FILENO)
     {
@@ -247,12 +247,12 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _rename_r(struct _reent *ptr, const char *old, const char *new)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int rc;
 
     rc = rename(old, new);
@@ -260,12 +260,12 @@ int _rename_r(struct _reent *ptr, const char *old, const char *new)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int rc;
 
     rc = stat(file, pstat);
@@ -273,24 +273,24 @@ int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _unlink_r(struct _reent *ptr, const char *file)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     return unlink(file);
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     _ssize_t rc;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 
     if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
     {
@@ -311,13 +311,13 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
         return -1;
     }
 
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     rc = write(fd, buf, nbytes);
     return rc;
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 /* for exit() and abort() */

@@ -34,7 +34,7 @@
 
 size_t __read(int handle, unsigned char *buf, size_t len)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int size;
 
     if (handle == _LLIO_STDIN)
@@ -59,5 +59,5 @@ size_t __read(int handle, unsigned char *buf, size_t len)
     return size; /* return the length of the data read */
 #else
     return _LLIO_ERROR;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }

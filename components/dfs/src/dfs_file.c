@@ -621,7 +621,7 @@ void cat(const char *filename)
 }
 FINSH_FUNCTION_EXPORT(cat, print file);
 
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
 #define BUF_SZ  4096
 static void copyfile(const char *src, const char *dst)
 {
@@ -843,7 +843,7 @@ void copy(const char *src, const char *dst)
     }
 }
 FINSH_FUNCTION_EXPORT(copy, copy file or dir)
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 
 #endif /* RT_USING_FINSH */
 /* @} */

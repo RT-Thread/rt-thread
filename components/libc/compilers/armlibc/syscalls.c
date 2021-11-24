@@ -33,7 +33,7 @@
 __asm(".global __use_no_semihosting\n\t");
 #else
 #pragma import(__use_no_semihosting_swi)
-#endif
+#endif /* __CLANG_ARM */
 
 /* Standard IO device handles. */
 #define STDIN       0
@@ -55,10 +55,10 @@ const char __stderr_name[] = "STDERR";
  */
 FILEHANDLE _sys_open(const char *name, int openmode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int fd;
     int mode = O_RDONLY;
-#endif
+#endif /* DFS_USING_POSIX */
 
     /* Register standard Input Output devices. */
     if (strcmp(name, __stdin_name) == 0)
@@ -68,7 +68,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
     if (strcmp(name, __stderr_name) == 0)
         return (STDERR);
 
-#ifndef RT_USING_POSIX
+#ifndef DFS_USING_POSIX
     return 0; /* error */
 #else
     /* Correct openmode from fopen to open */
@@ -102,19 +102,19 @@ FILEHANDLE _sys_open(const char *name, int openmode)
         return 0; /* error */
     else
         return fd;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _sys_close(FILEHANDLE fh)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     if (fh <= STDERR)
         return 0; /* error */
 
     return close(fh);
 #else
     return 0;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 /*
@@ -144,7 +144,7 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int size;
 
     if (fh == STDIN)
@@ -175,7 +175,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
     }
 #else
     return 0; /* error */
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 /*
@@ -189,9 +189,9 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
  */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int size;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 
     if (fh == STDOUT || fh == STDERR)
     {
@@ -213,7 +213,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
     }
     else
     {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
         size = write(fh, buf, len);
         if (size >= 0)
             return 0; /* success */
@@ -221,7 +221,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
             return 0; /* error */
 #else
         return 0; /* error */
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
     }
 }
 
@@ -231,7 +231,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
  */
 int _sys_seek(FILEHANDLE fh, long pos)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     if (fh < STDERR)
         return 0; /* error */
 
@@ -239,7 +239,7 @@ int _sys_seek(FILEHANDLE fh, long pos)
     return lseek(fh, pos, 0);
 #else
     return 0; /* error */
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 /**
@@ -284,7 +284,7 @@ RT_WEAK void _sys_exit(int return_code)
  */
 long _sys_flen(FILEHANDLE fh)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     struct stat stat;
 
     if (fh < STDERR)
@@ -294,7 +294,7 @@ long _sys_flen(FILEHANDLE fh)
     return stat.st_size;
 #else
     return 0;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _sys_istty(FILEHANDLE fh)
@@ -307,11 +307,11 @@ int _sys_istty(FILEHANDLE fh)
 
 int remove(const char *filename)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     return unlink(filename);
 #else
     return 0; /* error */
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 #ifdef __MICROLIB
