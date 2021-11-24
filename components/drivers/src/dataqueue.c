@@ -188,7 +188,7 @@ RTM_EXPORT(rt_data_queue_push);
  * @brief    This function will pop data from the data queue. If the data queue is empty,the thread
  *           will suspend for the specified amount of time.
  *
- * @note     when the number of data in the data queue is less than lwm(low water mark),will
+ * @note     when the number of data in the data queue is less than lwm(low water mark), will
  *           wake up the thread waiting for write data.
  *
  * @param    queue is a pointer to a data queue object.
