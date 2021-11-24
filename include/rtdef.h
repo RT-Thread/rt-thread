@@ -1034,7 +1034,7 @@ struct rt_device
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 #endif
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_DEVIO
     const struct dfs_file_ops *fops;
     struct rt_wqueue wait_queue;
 #endif
