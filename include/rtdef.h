@@ -76,11 +76,13 @@ typedef unsigned int                    rt_uint32_t;    /**< 32bit unsigned inte
 #ifdef ARCH_CPU_64BIT
 typedef signed long                     rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned integer type */
+typedef unsigned long                   rt_size_t;      /**< Type for size number */
 #else
 typedef signed long long                rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
-#endif
-#endif
+typedef unsigned int                    rt_size_t;      /**< Type for size number */
+#endif /* ARCH_CPU_64BIT */
+#endif /* RT_USING_ARCH_DATA_TYPE */
 
 typedef int                             rt_bool_t;      /**< boolean type */
 typedef long                            rt_base_t;      /**< Nbit CPU related date type */
@@ -90,7 +92,6 @@ typedef rt_base_t                       rt_err_t;       /**< Type for error numb
 typedef rt_uint32_t                     rt_time_t;      /**< Type for time stamp */
 typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count */
 typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
-typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
