@@ -9,6 +9,9 @@ src/dfs_fs.c
 cwd = GetCurrentDir()
 CPPPATH = [cwd + "/include"]
 
+if GetDepend('DFS_USING_POSIX'):
+    src += ['src/dfs_posix.c']
+
 group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH)
 
 if GetDepend('RT_USING_DFS'):

@@ -37,9 +37,9 @@
 
 size_t __write(int handle, const unsigned char *buf, size_t len)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int size;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 
     if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
     {
@@ -63,11 +63,11 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
     }
     else
     {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
         size = write(handle, buf, len);
         return size; /* return the length of the data written */
 #else
         return _LLIO_ERROR;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
     }
 }
