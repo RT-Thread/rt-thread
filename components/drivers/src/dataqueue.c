@@ -22,7 +22,7 @@ struct rt_data_item
 };
 
 /**
- * @brief    This function will initialize the data queue.Calling this function will
+ * @brief    This function will initialize the data queue. Calling this function will
  *           initialize the data queue control block and set the notification callback function.
  *
  * @param    queue is a pointer to the data queue object.
