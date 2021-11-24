@@ -115,6 +115,7 @@ int *_rt_errno(void)
 }
 RTM_EXPORT(_rt_errno);
 
+#ifndef RT_USING_ASM_MEMSET
 /**
  * This function will set the content of memory to specified value.
  *
@@ -127,7 +128,7 @@ RTM_EXPORT(_rt_errno);
  *
  * @return The address of source memory.
  */
-RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
+void *rt_memset(void *s, int c, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *xs = (char *)s;
@@ -200,6 +201,7 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memset);
+#endif /* RT_USING_ASM_MEMSET */
 
 #ifndef RT_USING_ASM_MEMCPY
 /**
@@ -338,7 +340,7 @@ RTM_EXPORT(rt_memmove);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
-RT_WEAK rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
+rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
 {
     const unsigned char *su1, *su2;
     int res = 0;
@@ -842,10 +844,7 @@ static char *print_number(char *buf,
  *
  * @return The number of characters actually written to buffer.
  */
-rt_int32_t rt_vsnprintf(char       *buf,
-                        rt_size_t   size,
-                        const char *fmt,
-                        va_list     args)
+RT_WEAK int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
 {
 #ifdef RT_PRINTF_LONGLONG
     unsigned long long num;
@@ -1119,7 +1118,7 @@ RTM_EXPORT(rt_vsnprintf);
  *
  * @return The number of characters actually written to buffer.
  */
-rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...)
+int rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...)
 {
     rt_int32_t n;
     va_list args;
@@ -1143,7 +1142,7 @@ RTM_EXPORT(rt_snprintf);
  *
  * @return The number of characters actually written to buffer.
  */
-rt_int32_t rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
+int rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
 {
     return rt_vsnprintf(buf, (rt_size_t) - 1, format, arg_ptr);
 }
@@ -1158,7 +1157,7 @@ RTM_EXPORT(rt_vsprintf);
  *
  * @return The number of characters actually written to buffer.
  */
-rt_int32_t rt_sprintf(char *buf, const char *format, ...)
+int rt_sprintf(char *buf, const char *format, ...)
 {
     rt_int32_t n;
     va_list arg_ptr;
@@ -1258,8 +1257,10 @@ void rt_kputs(const char *str)
  * This function will print a formatted string on system console.
  *
  * @param fmt is the format parameters.
+ *
+ * @return The number of characters actually written to buffer.
  */
-RT_WEAK void rt_kprintf(const char *fmt, ...)
+RT_WEAK int rt_kprintf(const char *fmt, ...)
 {
     va_list args;
     rt_size_t length;
@@ -1287,6 +1288,8 @@ RT_WEAK void rt_kprintf(const char *fmt, ...)
     rt_hw_console_output(rt_log_buf);
 #endif /* RT_USING_DEVICE */
     va_end(args);
+
+    return length;
 }
 RTM_EXPORT(rt_kprintf);
 #endif /* RT_USING_CONSOLE */
