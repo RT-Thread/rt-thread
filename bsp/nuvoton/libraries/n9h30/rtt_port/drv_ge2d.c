@@ -12,7 +12,7 @@
 #include <drv_sys.h>
 
 //#define DEBUG
-//#define DEF_COND_WAIT 1
+#define DEF_COND_WAIT 1
 
 static unsigned int GFX_BPP;
 static unsigned int GFX_WIDTH;

@@ -14,6 +14,7 @@
 
 #if defined(NU_PKG_USING_MAX31875)
 
+#include <sys/time.h>
 #include "sensor.h"
 #include "max31875_c.h"
 

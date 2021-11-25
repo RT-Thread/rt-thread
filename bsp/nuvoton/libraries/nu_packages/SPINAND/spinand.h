@@ -19,24 +19,6 @@
 #include "drv_spi.h"
 #include <board.h>
 
-/* SPI NAND flash information */
-struct nu_spinand_info
-{
-    uint32_t   u32JEDECID;
-    uint16_t   u16PageSize;
-    uint16_t   u16OOBSize;
-    uint8_t    u8QuadReadCmdId;
-    uint8_t    u8ReadStatusCmdId;
-    uint8_t    u8WriteStatusCmdid;
-    uint8_t    u8StatusValue;
-    uint8_t    u8DummyByte;
-    uint32_t   u32BlockPerFlash;
-    uint32_t   u32PagePerBlock;
-    uint8_t    u8IsDieSelect;
-    const char *szDescription;
-};
-typedef struct nu_spinand_info *nu_spinand_info_t;
-
 struct spinand_ops
 {
     rt_err_t (*block_erase)(struct rt_qspi_device *qspi, uint8_t u8Addr2, uint8_t u8Addr1, uint8_t u8Addr0);
@@ -52,15 +34,6 @@ struct spinand_ops
     rt_err_t (*read_quadoutput)(struct rt_qspi_device *qspi, uint8_t u8AddrH, uint8_t u8AddrL, uint8_t *pu8DataBuff, uint32_t u32DataCount);
 };
 typedef struct spinand_ops *nu_spinand_ops_t;
-
-struct nu_spinand
-{
-    struct nu_spinand_info info;
-    struct rt_qspi_device *qspi_device;
-    nu_spinand_ops_t       ops;
-    struct rt_mutex        lock;
-};
-typedef struct nu_spinand *nu_spinand_t;
 
 #define SPINAND_FLASH_JEDECID              g_spinandflash_dev.info.u32JEDECID
 #define SPINAND_FLASH_PAGE_SIZE            g_spinandflash_dev.info.u16PageSize
@@ -81,6 +54,36 @@ typedef struct nu_spinand *nu_spinand_t;
 #define SPINAND_DIE_ID1 (1)
 
 #define SPINAND_SPARE_LAYOUT_SIZE          16
+
+/* SPI NAND flash information */
+struct nu_spinand_info
+{
+    uint32_t   u32JEDECID;
+    uint16_t   u16PageSize;
+    uint16_t   u16OOBSize;
+    uint8_t    u8QuadReadCmdId;
+    uint8_t    u8ReadStatusCmdId;
+    uint8_t    u8WriteStatusCmdid;
+    uint8_t    u8StatusValue;
+    uint8_t    u8DummyByte;
+    uint32_t   u32BlockPerFlash;
+    uint32_t   u32PagePerBlock;
+    uint8_t    u8IsDieSelect;
+    const char *szDescription;
+
+    uint8_t    au8DataLayout[SPINAND_SPARE_LAYOUT_SIZE];
+    uint8_t    au8EccLayout[SPINAND_SPARE_LAYOUT_SIZE];
+};
+typedef struct nu_spinand_info *nu_spinand_info_t;
+
+struct nu_spinand
+{
+    struct nu_spinand_info info;
+    struct rt_qspi_device *qspi_device;
+    nu_spinand_ops_t       ops;
+    struct rt_mutex        lock;
+};
+typedef struct nu_spinand *nu_spinand_t;
 
 rt_err_t rt_hw_mtd_spinand_register(const char *device_name);
 rt_size_t nu_qspi_transfer_message(struct rt_qspi_device  *device, struct rt_qspi_message *message);
