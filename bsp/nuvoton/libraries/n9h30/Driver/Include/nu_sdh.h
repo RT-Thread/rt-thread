@@ -376,6 +376,7 @@ typedef struct
     __IO uint32_t BLEN;                  /*!< [0x0838] SD Block Length Register                                         */
     __IO uint32_t TOUT;                  /*!< [0x083c] SD Response/Data-in Time-out Register                            */
 
+    __IO uint32_t ECTL;                  /*!< [0x0840] SD Host Extend Control Register                                  */
 } SDH_T;
 
 
@@ -450,8 +451,8 @@ typedef struct
 #define SDH_CTL_CLK8OEN_Pos              (6)                                               /*!< SDH_T::CTL: CLK8OEN Position           */
 #define SDH_CTL_CLK8OEN_Msk              (0x1ul << SDH_CTL_CLK8OEN_Pos)                    /*!< SDH_T::CTL: CLK8OEN Mask               */
 
-#define SDH_CTL_CLKKEEP_Pos              (7)                                               /*!< SDH_T::CTL: CLKKEEP Position          */
-#define SDH_CTL_CLKKEEP_Msk              (0x1ul << SDH_CTL_CLKKEEP_Pos)                    /*!< SDH_T::CTL: CLKKEEP Mask              */
+#define SDH_CTL_CLKKEEP0_Pos              (7)                                               /*!< SDH_T::CTL: CLKKEEP Position          */
+#define SDH_CTL_CLKKEEP0_Msk              (0x1ul << SDH_CTL_CLKKEEP0_Pos)                    /*!< SDH_T::CTL: CLKKEEP Mask              */
 
 #define SDH_CTL_CMDCODE_Pos              (8)                                               /*!< SDH_T::CTL: CMDCODE Position           */
 #define SDH_CTL_CMDCODE_Msk              (0x3ful << SDH_CTL_CMDCODE_Pos)                   /*!< SDH_T::CTL: CMDCODE Mask               */
@@ -567,6 +568,12 @@ typedef struct
 #define SDH_TOUT_TOUT_Pos                (0)                                               /*!< SDH_T::TOUT: TOUT Position             */
 #define SDH_TOUT_TOUT_Msk                (0xfffffful << SDH_TOUT_TOUT_Pos)                 /*!< SDH_T::TOUT: TOUT Mask                 */
 
+#define SDH_ECTL_POWEROFF0_Pos           (0)                                               /*!< SDH_T::ECTL: POWEROFF0 Position             */
+#define SDH_ECTL_POWEROFF0_Msk           (0x1ul << SDH_ECTL_POWEROFF0_Pos)                 /*!< SDH_T::ECTL: POWEROFF0 Mask                 */
+
+#define SDH_ECTL_POWEROFF1_Pos           (1)                                               /*!< SDH_T::ECTL: POWEROFF1 Position             */
+#define SDH_ECTL_POWEROFF1_Msk           (0x1ul << SDH_ECTL_POWEROFF1_Pos)                 /*!< SDH_T::ECTL: POWEROFF1 Mask                 */
+
 /**@}*/ /* SDH_CONST */
 /**@}*/ /* end of SDH register group */
 /**@}*/ /* end of REGISTER group */
@@ -645,7 +652,6 @@ typedef struct SDH_info_t
 /*@}*/ /* end of group N9H30_SDH_EXPORTED_TYPEDEF */
 
 /// @cond HIDDEN_SYMBOLS
-extern SDH_INFO_T SD0, SD1;
 
 /// @endcond HIDDEN_SYMBOLS
 
@@ -724,7 +730,7 @@ extern SDH_INFO_T SD0, SD1;
  *            0: Card removed.
  * \hideinitializer
  */
-#define SDH_IS_CARD_PRESENT(sdh) (((sdh) == SDH0)? SD0.IsCardInsert : SD1.IsCardInsert)
+//#define SDH_IS_CARD_PRESENT(sdh) (((sdh) == SDH0)? SD0.IsCardInsert : SD1.IsCardInsert)
 
 /**
  *  @brief    Get SD Card capacity.
@@ -734,17 +740,18 @@ extern SDH_INFO_T SD0, SD1;
  *  @return   SD Card capacity. (unit: KByte)
  * \hideinitializer
  */
-#define SDH_GET_CARD_CAPACITY(sdh)  (((sdh) == SDH0)? SD0.diskSize : SD1.diskSize)
+//#define SDH_GET_CARD_CAPACITY(sdh)  (((sdh) == SDH0)? SD0.diskSize : SD1.diskSize)
 
 
-void SDH_Open(SDH_T *sdh, uint32_t u32CardDetSrc);
-uint32_t SDH_Probe(SDH_T *sdh);
-uint32_t SDH_Read(SDH_T *sdh, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
-uint32_t SDH_Write(SDH_T *sdh, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
-
-uint32_t SDH_CardDetection(SDH_T *sdh);
-void SDH_Open_Disk(SDH_T *sdh, uint32_t u32CardDetSrc);
-void SDH_Close_Disk(SDH_T *sdh);
+void SDH_Open(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t u32CardDetSrc);
+uint32_t SDH_Probe(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t card_num);
+uint32_t SDH_Read(SDH_T *sdh, SDH_INFO_T *pSD, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
+uint32_t SDH_Write(SDH_T *sdh, SDH_INFO_T *pSD, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
+void SDH_CardSelect(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t u32CardSrc);
+uint32_t SDH_CardDetection(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t card_num);
+void SDH_Open_Disk(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t u32CardDetSrc);
+void SDH_Close_Disk(SDH_T *sdh, SDH_INFO_T *pSD);
+uint32_t SDH_WhichCardIsSelected(SDH_T *sdh);
 
 
 /*@}*/ /* end of group N9H30_SDH_EXPORTED_FUNCTIONS */
