@@ -755,7 +755,7 @@ long list_timer(void)
     object_split(maxlen);
     rt_kprintf(" ---------- ---------- ----------- ---------\n");
     do
-	{
+    {
         next = list_get_next(next, &find_arg);
         {
             int i;
