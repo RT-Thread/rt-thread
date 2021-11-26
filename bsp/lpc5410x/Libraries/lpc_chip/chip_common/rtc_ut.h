@@ -36,7 +36,7 @@
 
 #include "chip.h"
 #include <stdlib.h>
-#include <time.h>
+#include <sys/time.h>
 
 #ifdef __cplusplus
 extern "C" {
