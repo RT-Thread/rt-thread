@@ -20,7 +20,7 @@
 
 #include "drv_rtc.h"
 #include "fsl_snvs_hp.h"
-#include <time.h>
+#include <sys/time.h>
 
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
