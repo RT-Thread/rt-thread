@@ -405,6 +405,64 @@ menu "On-chip Peripheral Drivers"
             hex "MCU FLASH PAGE SIZE, please not change,nrfx default is 0x1000"
             default 0x1000
 	endmenu
+	
+	config BSP_USING_TIM
+        bool "Enable TIMER"
+        select RT_USING_HWTIMER
+        default n
+        if BSP_USING_TIM
+            config NRFX_TIMER_ENABLED
+            int 
+            default 1
+            config BSP_USING_TIM0
+                bool "Enable TIMER0"
+                default n
+            if BSP_USING_TIM0
+                config NRFX_TIMER0_ENABLED
+                int 
+                default 1
+            endif
+            config BSP_USING_TIM1
+                bool "Enable TIMER1"
+                default n
+            if BSP_USING_TIM1
+                config NRFX_TIMER1_ENABLED
+                int 
+                default 1
+            endif
+            config BSP_USING_TIM2
+                bool "Enable TIMER2"
+                default n
+            if BSP_USING_TIM2
+                config NRFX_TIMER2_ENABLED
+                int 
+                default 1
+            endif
+            config BSP_USING_TIM3
+                bool "Enable TIMER3"
+                default n
+            if BSP_USING_TIM3
+                config NRFX_TIMER3_ENABLED
+                int 
+                default 1
+            endif
+
+            config BSP_USING_TIM4
+                bool "Enable TIMER4"
+                default n
+            if BSP_USING_TIM4
+                config NRFX_TIMER4_ENABLED
+                int 
+                default 1
+            endif
+        endif
+
+
+    if PKG_USING_TINYUSB
+        config NRFX_POWER_ENABLED
+        int 
+        default 1
+    endif
 
 endmenu
 
