@@ -144,7 +144,11 @@ config RT_USING_ASM_MEMSET
     default n
 
 config RT_USING_TINY_FFS
-    bool "Enable kservice to use tiny ffs"
+    bool "Enable kservice to use tiny finding first bit set method"
+    default n
+
+config RT_PRINTF_LONGLONG
+    bool "Enable rt_xprintf functions to support long long format"
     default n
 
 endmenu
@@ -375,10 +379,6 @@ menu "Kernel Device Object"
         config RT_CONSOLE_DEVICE_NAME
             string "the device name for console"
             default "uart"
-
-        config RT_PRINTF_LONGLONG
-            bool "rt_kprintf support long long"
-            default n
     endif
 
 endmenu
