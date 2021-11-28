@@ -652,30 +652,19 @@ rt_inline int skip_atoi(const char **s)
 #define SPECIAL     (1 << 5)    /* 0x */
 #define LARGE       (1 << 6)    /* use 'ABCDEF' instead of 'abcdef' */
 
+static char *print_number(char *buf,
+                          char *end,
+#ifdef RT_PRINTF_LONGLONG
+                          long long  num,
+#else
+                          long  num,
+#endif /* RT_PRINTF_LONGLONG */
+                          int   base,
+                          int   s,
 #ifdef RT_PRINTF_PRECISION
-static char *print_number(char *buf,
-                          char *end,
-#ifdef RT_PRINTF_LONGLONG
-                          long long  num,
-#else
-                          long  num,
-#endif /* RT_PRINTF_LONGLONG */
-                          int   base,
-                          int   s,
                           int   precision,
-                          int   type)
-#else
-static char *print_number(char *buf,
-                          char *end,
-#ifdef RT_PRINTF_LONGLONG
-                          long long  num,
-#else
-                          long  num,
-#endif /* RT_PRINTF_LONGLONG */
-                          int   base,
-                          int   s,
-                          int   type)
 #endif /* RT_PRINTF_PRECISION */
+                          int   type)
 {
     char c, sign;
 #ifdef RT_PRINTF_LONGLONG
