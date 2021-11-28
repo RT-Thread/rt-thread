@@ -147,7 +147,7 @@ menu "kservice optimization"
         default n
 
     config RT_PRINTF_LONGLONG
-        bool "Enable rt_xprintf functions to support long long format"
+        bool "Enable rt_printf-family functions to support long long format"
         default n
 
 endmenu
