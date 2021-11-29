@@ -34,7 +34,7 @@ float clock_cpu_getres(void)
  *
  * @return the cpu tick
  */
-uint32_t clock_cpu_gettime(void)
+uint64_t clock_cpu_gettime(void)
 {
     if (_cputime_ops)
         return _cputime_ops->cputime_gettime();
