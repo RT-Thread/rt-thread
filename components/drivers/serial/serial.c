@@ -36,7 +36,7 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 #include <dfs_posix.h>
 #include <poll.h>
 #include <sys/ioctl.h>
@@ -203,7 +203,7 @@ const static struct dfs_file_ops _serial_fops =
     RT_NULL, /* getdents */
     serial_fops_poll,
 };
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
 
 /*
  * Serial poll routines
@@ -976,8 +976,7 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
     }
 
 }
-
-#endif
+#endif /* RT_USING_POSIX_TERMIOS */
 
 static rt_err_t rt_serial_control(struct rt_device *dev,
                                   int              cmd,
@@ -1020,7 +1019,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
 
             break;
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 #ifdef RT_USING_POSIX_TERMIOS
         case TCGETA:
             {
@@ -1215,7 +1214,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 *(rt_size_t *)args = recved;
             }
             break;
-#endif /*RT_USING_POSIX*/
+#endif /* RT_USING_POSIX_DEVIO */
         default :
             /* control device */
             ret = serial->ops->control(serial, cmd, args);
@@ -1270,7 +1269,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     /* register a character device */
     ret = rt_device_register(device, name, flag);
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_DEVIO
     /* set fops */
     device->fops        = &_serial_fops;
 #endif

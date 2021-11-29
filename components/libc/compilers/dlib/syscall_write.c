@@ -11,10 +11,6 @@
 #include <rtthread.h>
 #include <LowLevelIOInterface.h>
 #include <unistd.h>
-#ifdef RT_USING_POSIX_STDIO
-#include "libc.h"
-#endif
-
 #define DBG_TAG    "dlib.syscall_write"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
