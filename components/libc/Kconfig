@@ -2,7 +2,6 @@ menu "POSIX layer and C standard library"
 
 config RT_USING_LIBC
     bool "Enable libc APIs from toolchain"
-    select RT_USING_HEAP
     default n
 
 if RT_USING_LIBC
@@ -10,8 +9,8 @@ if RT_USING_LIBC
         default y
 
     config RT_LIBC_USING_FILEIO
-        bool "Enable libc with file operation, eg.fopen/fwrite/fread/getchar"
-        select RT_USING_POSIX
+        bool "Enable libc with file operation, eg.fopen/fwrite/fread/getchar/STDIO"
+        select RT_USING_POSIX_FS
         select RT_USING_POSIX_DEVIO
         default n
 
@@ -38,50 +37,50 @@ config RT_LIBC_DEFAULT_TIMEZONE
     range -12 12
     default 8
 
-config RT_USING_POSIX
-    bool "Enable basic POSIX layer, open()/read()/write()/close() etc"
+config RT_USING_POSIX_FS
+    bool "Enable POSIX file system, open()/read()/write()/close() etc"
     select RT_USING_DFS
+    select DFS_USING_POSIX
     default n
 
-if RT_USING_POSIX
+if RT_USING_POSIX_FS
     config RT_USING_POSIX_DEVIO
         bool "Enable devices as file descriptors"
-        select RT_USING_DFS
         select RT_USING_DFS_DEVFS
         default n
 
     config RT_USING_POSIX_POLL
         bool "Enable poll()"
-        select RT_USING_DFS
         default n
 
     config RT_USING_POSIX_SELECT
         bool "Enable select()"
-        select RT_USING_DFS
         select RT_USING_POSIX_POLL
         default n
-
-    config RT_USING_POSIX_DELAY
-        bool "Enable delay APIs, sleep()/usleep()/msleep() etc"
-        default n
-
-    config RT_USING_POSIX_GETLINE
-        bool "Enable getline()/getdelim()"
-        default n
-
-    config RT_USING_POSIX_MMAP
-        bool "Enable mmap()"
-        select RT_USING_DFS
-        default n
-
-    config RT_USING_POSIX_TERMIOS
-        bool "Enable termios APIs"
-        default n
-
-    config RT_USING_POSIX_AIO
-        bool "Enable AIO APIs"
-        default n
 endif
+
+config RT_USING_POSIX_DELAY
+    bool "Enable delay APIs, sleep()/usleep()/msleep() etc"
+    default n
+
+config RT_USING_POSIX_GETLINE
+    bool "Enable getline()/getdelim()"
+    select RT_USING_LIBC
+    select RT_LIBC_USING_FILEIO
+    default n
+
+config RT_USING_POSIX_MMAP
+    bool "Enable mmap()"
+    select RT_USING_POSIX_FS
+    default n
+
+config RT_USING_POSIX_TERMIOS
+    bool "Enable termios APIs"
+    default n
+
+config RT_USING_POSIX_AIO
+    bool "Enable AIO APIs"
+    default n
 
 config RT_USING_PTHREADS
     bool "Enable pthreads APIs"
