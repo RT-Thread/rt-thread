@@ -41,7 +41,7 @@ config RT_USING_SAL
         config SAL_USING_POSIX
             bool "Enable BSD socket operated by file system API"
             default n
-            select RT_USING_POSIX
+            select RT_USING_POSIX_FS
             select RT_USING_POSIX_SELECT
             help
                 Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
