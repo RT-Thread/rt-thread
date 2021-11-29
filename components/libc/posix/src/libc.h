@@ -17,10 +17,10 @@ extern "C" {
 #endif
 
 int libc_system_init(void);
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 int libc_stdio_get_console(void);
 int libc_stdio_set_console(const char* device_name, int mode);
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_DEVIO */
 
 #ifdef __cplusplus
 }

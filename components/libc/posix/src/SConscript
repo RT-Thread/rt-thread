@@ -6,7 +6,7 @@ src     = ['unistd.c']
 cwd     = GetCurrentDir()
 CPPPATH = [cwd]
 
-if GetDepend('RT_USING_POSIX_STDIO'):
+if GetDepend('RT_USING_POSIX_DEVIO'):
     src += ['libc.c']
 
 if GetDepend('RT_USING_POSIX_DELAY'):

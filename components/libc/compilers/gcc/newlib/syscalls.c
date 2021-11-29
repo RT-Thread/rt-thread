@@ -20,12 +20,12 @@
 #include <unistd.h>
 #include <sys/errno.h>
 #include <sys/stat.h>
-#ifdef RT_USING_POSIX_STDIO
+#ifdef RT_USING_POSIX_DEVIO
 #include "libc.h"
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
-#endif
+#endif /* RT_USING_MODULE */
 
 #define DBG_TAG    "newlib.syscalls"
 #define DBG_LVL    DBG_INFO
@@ -225,7 +225,7 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
     _ssize_t rc;
     if (fd == STDIN_FILENO)
     {
-#ifdef RT_USING_POSIX_STDIO
+#ifdef RT_USING_POSIX_DEVIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard input before initializing libc");
@@ -234,7 +234,7 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 #else
         ptr->_errno = ENOTSUP;
         return -1;
-#endif /* RT_USING_POSIX_STDIO */
+#endif /* RT_USING_POSIX_DEVIO */
     }
     else if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
     {
