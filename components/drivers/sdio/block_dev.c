@@ -496,7 +496,7 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
     rt_list_t *l, *n;
     struct mmcsd_blk_device *blk_dev;
 
-    for (l = (&blk_devices)->next, n = l->next; l != &blk_devices; l = n)
+    for (l = (&blk_devices)->next, n = l->next; l != &blk_devices; l = n, n = n->next)
     {
         blk_dev = (struct mmcsd_blk_device *)rt_list_entry(l, struct mmcsd_blk_device, list);
         if (blk_dev->card == card)
