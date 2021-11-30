@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, Bluetrum Development Team
+ * Copyright (c) 2021-2021, Bluetrum Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
