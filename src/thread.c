@@ -31,6 +31,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <stddef.h>
 
 #ifdef RT_USING_HOOK
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
