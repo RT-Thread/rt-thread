@@ -21,16 +21,12 @@ void hal_set_ticks(uint32_t ticks)
 
 WEAK void hal_mdelay(uint32_t nms)
 {
-
 }
 
-void hal_udelay(uint16_t nus)
+WEAK void hal_udelay(uint32_t nus)
 {
-   int i;
-   for (i = 0; i < nus*10; i++) {
-        asm("nop");
-   }
 }
 
 WEAK void hal_printf(const char *fmt, ...)
-{}
+{
+}

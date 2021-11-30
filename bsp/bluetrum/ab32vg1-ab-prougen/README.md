@@ -70,12 +70,12 @@ ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核�
 | GPIO         |     支持     | PA PB PE PF                               |
 | UART         |     支持     | UART0/1/2                                 |
 | SDIO         |     支持     |                                           |
-| ADC          |     支持     | 10bit ADC                                 |
-| SPI          |   即将支持   | 软件 SPI                                  |
+| ADC          |     支持     | 10bit SRADC  16bit SDADC                  |
+| SPI          |   即将支持   |                                           |
 | I2C          |     支持     | 软件 I2C                                  |
 | RTC          |     支持     |                                           |
 | WDT          |     支持     |                                           |
-| FLASH        |   即将支持   | 对接 FAL                                  |
+| FLASH        |     支持     | 对接 FAL                                  |
 | TIMER        |     支持     |                                           |
 | PWM          |     支持     | LPWM 的 G1 G2 G3 之间是互斥的，只能三选一 |
 | FM receive   |     支持     |                                           |

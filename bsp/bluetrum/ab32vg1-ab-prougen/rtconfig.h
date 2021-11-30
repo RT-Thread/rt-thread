@@ -18,7 +18,7 @@
 #define IDLE_THREAD_STACK_SIZE 512
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 256
+#define RT_TIMER_THREAD_STACK_SIZE 1024
 
 /* kservice optimization */
 
@@ -46,7 +46,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40004
+#define RT_VER_NUM 0x40100
 
 /* RT-Thread Components */
 
@@ -91,6 +91,7 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
 #define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
@@ -147,12 +148,18 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
 /* system packages */
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -186,9 +193,6 @@
 #define BSP_USING_UART
 #define BSP_USING_UART0
 #define BSP_UART0_FIFO_SIZE 10
-
-/* Board extended module Drivers */
-
 #define BOARD_BLUETRUM_EVB
 
 #endif
