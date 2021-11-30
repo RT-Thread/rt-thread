@@ -362,7 +362,7 @@ static void _serial_check_buffer_size(void)
     }
 }
 
-#if defined(RT_USING_POSIX) || defined(RT_SERIAL_USING_DMA)
+#if defined(RT_USING_POSIX_DEVIO) || defined(RT_SERIAL_USING_DMA)
 static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
 {
     struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
@@ -385,7 +385,7 @@ static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
         }
     }
 }
-#endif /* RT_USING_POSIX || RT_SERIAL_USING_DMA */
+#endif /* RT_USING_POSIX_DEVIO || RT_SERIAL_USING_DMA */
 
 #ifdef RT_SERIAL_USING_DMA
 /**
@@ -1133,6 +1133,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 }
                 else
                 {
+                    #include <shell.h>
                     #define _TIO_BUFLEN 20
                     char _tio_buf[_TIO_BUFLEN];
                     unsigned char cnt1, cnt2, cnt3, i;
@@ -1148,7 +1149,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     i = 0;
                     while(i < _TIO_BUFLEN)
                     {
-                        _tio_buf[i] = getchar();
+                        _tio_buf[i] = finsh_getchar();
                         if(_tio_buf[i] != 't')
                         {
                             i ++;
