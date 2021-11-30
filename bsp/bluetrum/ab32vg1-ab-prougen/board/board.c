@@ -182,7 +182,7 @@ void rt_hw_systick_init(void)
 
     timer0_init();
     hal_set_tick_hook(timer0_cfg);
-    hal_set_ticks(get_sysclk_nhz()/RT_TICK_PER_SECOND);
+    hal_set_ticks(get_sysclk_nhz() / RT_TICK_PER_SECOND);
 
     PICCON |= 0x10002;
 }
@@ -224,7 +224,8 @@ void cache_init(void)
 RT_SECTION(".irq.cache")
 void os_spiflash_lock(void)
 {
-    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
+    {
         rt_mutex_take(&mutex_spiflash, RT_WAITING_FOREVER);
     }
 }
@@ -232,7 +233,8 @@ void os_spiflash_lock(void)
 RT_SECTION(".irq.cache")
 void os_spiflash_unlock(void)
 {
-    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
+    {
         rt_mutex_release(&mutex_spiflash);
     }
 }
@@ -240,7 +242,8 @@ void os_spiflash_unlock(void)
 RT_SECTION(".irq.cache")
 void os_cache_lock(void)
 {
-    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
+    {
         rt_mutex_take(&mutex_cache, RT_WAITING_FOREVER);
     }
 }
@@ -248,7 +251,8 @@ void os_cache_lock(void)
 RT_SECTION(".irq.cache")
 void os_cache_unlock(void)
 {
-    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
+    {
         rt_mutex_release(&mutex_cache);
     }
 }
@@ -280,5 +284,5 @@ void exception_isr(void)
     rt_kprintf(stack_info, rt_thread_self()->sp, rt_thread_self()->name);
 #endif
 
-    while(1);
+    while (1);
 }

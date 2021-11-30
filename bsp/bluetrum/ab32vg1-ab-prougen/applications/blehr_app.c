@@ -64,7 +64,8 @@ static int blehr_sample(void)
         15,
         1);
 
-    if (tid != RT_NULL) {
+    if (tid != RT_NULL)
+    {
         rt_thread_startup(tid);
     }
 }

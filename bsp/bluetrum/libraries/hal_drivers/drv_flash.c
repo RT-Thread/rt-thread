@@ -31,13 +31,14 @@ static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_erase(long offset, size_t size);
 
-const struct fal_flash_dev ab32_onchip_flash = {
+const struct fal_flash_dev ab32_onchip_flash =
+{
     "onchip_flash",
     AB32_FLASH_START_ADDRESS,
     AB32_FLASH_SIZE,
     AB32_FLASH_PAGE_SIZE,
     {NULL, fal_flash_read, fal_flash_write, fal_flash_erase},
-    256*8
+    256 * 8
 };
 
 static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size)
@@ -47,7 +48,8 @@ static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size)
 
 static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size)
 {
-    if (size % 256) {
+    if (size % 256)
+    {
         rt_kprintf("Flash write requires 256 byte alignment\n");
         return -1;
     }
@@ -57,11 +59,13 @@ static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size)
 
 static int fal_flash_erase(long offset, size_t size)
 {
-    if (size % 4096) {
+    if (size % 4096)
+    {
         rt_kprintf("Flash erase requires 4096 byte alignment\n");
         return -1;
     }
-    while (size > 0) {
+    while (size > 0)
+    {
         os_spiflash_erase(offset);
         offset += 4096;
         size -= 4096;
@@ -78,7 +82,8 @@ int fal_ops_test(void)
     int size = 256;
     int addr = 0;
 
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < 256; i++)
+    {
         data[i] = i;
     }
 
@@ -108,9 +113,11 @@ int fal_ops_test(void)
     }
 
     result = fal_partition_erase(part_dev, 0, 4096);
-    if (result >= 0) {
+    if (result >= 0)
+    {
         rt_kprintf("Erase data success.\n");
     }
+
     rt_memset(data, 0, 256);
     result = fal_partition_read(part_dev, 0, data, 256);
     if (result >= 0)
