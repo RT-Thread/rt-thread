@@ -11,10 +11,12 @@ void hal_set_tick_hook(void (*hook)(uint32_t ticks))
 
 void hal_set_ticks(uint32_t ticks)
 {
-    if (ticks != hw_ticks) {
+    if (ticks != hw_ticks)
+    {
         hw_ticks = ticks;
     }
-    if (tick_cfg_hook != HAL_NULL) {
+    if (tick_cfg_hook != HAL_NULL)
+    {
         tick_cfg_hook(hw_ticks);
     }
 }
