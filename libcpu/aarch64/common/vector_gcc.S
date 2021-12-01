@@ -18,7 +18,7 @@ system_vectors:
 .align 11
     .set    VBAR, system_vectors
     .org    VBAR
-    // Exception from CurrentEL (EL1) with SP_EL0 (SPSEL=1)
+    // Exception from CurrentEL (EL1) with SP_EL0 (SPSEL=0)
     .org (VBAR + 0x00 + 0)
     B vector_error      // 			Synchronous
     .org (VBAR + 0x80 + 0)
