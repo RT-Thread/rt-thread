@@ -84,6 +84,7 @@ RTM_EXPORT(rt_data_queue_init);
  * @param    timeout is the waiting time.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           When the return value is RT_ETIMEOUT, it means the specified time out.
  */
 rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
                             const void *data_ptr,
@@ -200,6 +201,7 @@ RTM_EXPORT(rt_data_queue_push);
  * @param    timeout is the waiting time.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           When the return value is RT_ETIMEOUT, it means the specified time out.
  */
 rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
                            const void** data_ptr,
@@ -322,6 +324,7 @@ RTM_EXPORT(rt_data_queue_pop);
  * @param    size is the size in bytes of the data to be fetched.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           When the return value is -RT_EEMPTY, it means the data queue is empty.
  */
 rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
                             const void** data_ptr,
