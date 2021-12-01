@@ -148,4 +148,4 @@ SECTIONS
     .debug_varnames  0 : { *(.debug_varnames) }
 }
 
-__bss_size = (__bss_end - __bss_start)>>3;
+__bss_size = SIZEOF(.bss);

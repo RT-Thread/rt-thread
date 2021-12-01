@@ -5,10 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-10-06     ZhaoXiaowei    the first version
+ * 2018-10-06     ZhaoXiaowei  the first version
+ * 2021-11-04     GuEe-GUI     set sp with SP_ELx
  */
 
-  /*
+/*
  *enable gtimer
  */
 .globl rt_hw_gtimer_enable
@@ -16,6 +17,14 @@ rt_hw_gtimer_enable:
 	MOV X0,#1
 	MSR CNTP_CTL_EL0,X0
 	RET
+
+/*
+ *disable gtimer
+ */
+.globl rt_hw_gtimer_disable
+rt_hw_gtimer_disable:
+    MSR CNTP_CTL_EL0,XZR
+    RET
 
 /*
  *set gtimer CNTP_TVAL_EL0 value
@@ -48,10 +57,6 @@ rt_hw_get_gtimer_frq:
 	RET
 
 .macro SAVE_CONTEXT
-
-    /* Switch to use the EL0 stack pointer. */
-    MSR 	SPSEL, #0
-
     /* Save the entire context. */
     STP 	X0, X1, [SP, #-0x10]!
     STP 	X2, X3, [SP, #-0x10]!
@@ -98,16 +103,9 @@ rt_hw_get_gtimer_frq:
 
     MOV 	X0, SP   /* Move SP into X0 for saving. */
 
-    /* Switch to use the ELx stack pointer. */
-    MSR 	SPSEL, #1
-
     .endm
 
 .macro SAVE_CONTEXT_T
-
-    /* Switch to use the EL0 stack pointer. */
-    MSR 	SPSEL, #0
-
     /* Save the entire context. */
     STP 	X0, X1, [SP, #-0x10]!
     STP 	X2, X3, [SP, #-0x10]!
@@ -135,15 +133,15 @@ rt_hw_get_gtimer_frq:
     B.EQ	1f
     B 		.
 3:
-    MRS		X3, SPSR_EL3
+    MOV		X3, 0x0d
     MOV		X2, X30
     B		0f
 2:
-    MRS		X3, SPSR_EL2
+    MOV		X3, 0x09
     MOV		X2, X30
     B		0f
 1:
-    MRS		X3, SPSR_EL1
+    MOV		X3, 0x05
     MOV		X2, X30
     B		0f
 0:
@@ -152,15 +150,9 @@ rt_hw_get_gtimer_frq:
 
     MOV 	X0, SP   /* Move SP into X0 for saving. */
 
-    /* Switch to use the ELx stack pointer. */
-    MSR 	SPSEL, #1
-
     .endm
 
 .macro RESTORE_CONTEXT
-
-    /* Switch to use the EL0 stack pointer. */
-    MSR 	SPSEL, #0
 
     /* Set the SP to point to the stack of the task being restored. */
     MOV		SP, X0
@@ -205,9 +197,6 @@ rt_hw_get_gtimer_frq:
     LDP 	X4, X5, [SP], #0x10
     LDP 	X2, X3, [SP], #0x10
     LDP 	X0, X1, [SP], #0x10
-
-    /* Switch to use the ELx stack pointer.  _RB_ Might not be required. */
-    MSR 	SPSEL, #1
 
     ERET
 
