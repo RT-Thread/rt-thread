@@ -71,6 +71,10 @@ struct rt_rbb
     rt_size_t blk_max_num;
     /* saved the initialized and put status blocks */
     rt_slist_t blk_list;
+    /* point to tail node */
+    rt_slist_t *tail;
+    /* free node list */
+    rt_slist_t free_list;
 };
 typedef struct rt_rbb *rt_rbb_t;
 
