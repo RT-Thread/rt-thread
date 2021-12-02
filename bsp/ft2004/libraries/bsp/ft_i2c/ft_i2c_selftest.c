@@ -12,7 +12,7 @@
  * ----- ------     --------    --------------------------------------
  */
 
-#include <time.h>
+#include <sys/time.h>
 #include <string.h>
 #include "ft_i2c_hw.h"
 #include "ft_i2c.h"

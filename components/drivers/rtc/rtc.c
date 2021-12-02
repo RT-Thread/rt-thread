@@ -14,7 +14,7 @@
  * 2021-07-30     Meco Man     move rtc_core.c to rtc.c
  */
 
-#include <time.h>
+#include <sys/time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <rtthread.h>

@@ -26,7 +26,7 @@ void sd_mount(void *parameter)
     while (1)
     {
         rt_thread_mdelay(500);
-        if(rt_device_find("sd0") != RT_NULL)
+        if (rt_device_find("sd0") != RT_NULL)
         {
             if (dfs_mount("sd0", "/", "elm", 0, 0) == RT_EOK)
             {

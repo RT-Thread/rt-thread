@@ -28,9 +28,9 @@ menu "Hardware Drivers Config"
             default n
 
         config BOARD_USING_STORAGE_SDCARD
-            bool "SDCARD supporting(over sdh1)"
+            bool "SDCARD supporting(over sdh_p0)"
             select BSP_USING_SDH
-            select BSP_USING_SDH1
+            select BSP_USING_SDH0
             default y
 
         config BOARD_USING_STORAGE_SPIFLASH

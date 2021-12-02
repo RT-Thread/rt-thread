@@ -14,6 +14,7 @@
 
 #if defined(NU_PKG_USING_BMX055)
 
+#include <sys/time.h>
 #include <string.h>
 #include "sensor_bmx055.h"
 
