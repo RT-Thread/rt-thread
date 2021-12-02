@@ -48,19 +48,23 @@ void rt_interrupt_dispatch(rt_uint32_t fiq_irq)
     /* Get irq number */
     _mIPER = (inpw(REG_AIC_IPER) >> 2) & 0x3f;
     _mISNR = inpw(REG_AIC_ISNR) & 0x3f;
-    if ((_mIPER != _mISNR) || _mISNR == 0)
-        return;
 
-    /* Get interrupt service routine */
-    isr_func = irq_desc[_mISNR].handler;
-    param = irq_desc[_mISNR].param;
+    if (_mISNR != 0)
+    {
+        if (_mIPER == _mISNR)
+        {
+            /* Get interrupt service routine */
+            isr_func = irq_desc[_mISNR].handler;
+            param = irq_desc[_mISNR].param;
 
 #ifdef RT_USING_INTERRUPT_INFO
-    irq_desc[_mISNR].counter ++;
+            irq_desc[_mISNR].counter ++;
 #endif
 
-    /* Turn to interrupt service routine */
-    isr_func(_mISNR, param);
+            /* Turn to interrupt service routine */
+            isr_func(_mISNR, param);
+        }
+    }
 
     /* Handled the ISR. */
     outpw(REG_AIC_EOSCR, 1);
