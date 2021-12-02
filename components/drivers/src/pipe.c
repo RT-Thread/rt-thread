@@ -439,7 +439,7 @@ const static struct rt_device_ops pipe_ops =
     rt_pipe_write,
     rt_pipe_control,
 };
-#endif
+#endif /* RT_USING_DEVICE_OPS */
 
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 {
@@ -481,7 +481,7 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
     }
 #ifdef RT_USING_POSIX_DEVIO
     dev->fops = (void*)&pipe_fops;
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
 
     return pipe;
 }

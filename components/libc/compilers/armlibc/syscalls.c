@@ -156,22 +156,26 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
             return 0; /* error, but keep going */
         }
         size = read(STDIN_FILENO, buf, len);
-        return 0; /* success */
+        return len - size; /* success */
 #else
         return 0; /* error */
 #endif /* RT_USING_POSIX_DEVIO */
     }
     else if (fh == STDOUT || fh == STDERR)
     {
-        return 0; /* error */
+        return -1; /* 100% error */
     }
     else
     {
         size = read(fh, buf, len);
         if (size >= 0)
+        {
             return len - size; /* success */
+        }
         else
+        {
             return 0; /* error */
+        }
     }
 #else
     return 0; /* error */
@@ -209,16 +213,20 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
     }
     else if (fh == STDIN)
     {
-        return 0; /* error */
+        return -1; /* 100% error */
     }
     else
     {
 #ifdef DFS_USING_POSIX
         size = write(fh, buf, len);
         if (size >= 0)
-            return 0; /* success */
+        {
+            return len - size; /* success */
+        }
         else
+        {
             return 0; /* error */
+        }
 #else
         return 0; /* error */
 #endif /* DFS_USING_POSIX */

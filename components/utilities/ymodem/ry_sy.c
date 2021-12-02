@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef DFS_USING_POSIX
+#error "Please enable DFS_USING_POSIX"
+#endif
+
 struct custom_ctx
 {
     struct rym_ctx parent;
