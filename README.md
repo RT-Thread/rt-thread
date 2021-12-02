@@ -1,4 +1,6 @@
-# RT-Thread #
+<p align="center">
+<img src="documentation/figures/logo.png" width="60%" >
+</p>
 
 **English** | [中文](README_zh.md) |
 
@@ -9,7 +11,7 @@
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/pulls)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://github.com/RT-Thread/rt-thread/pulls)
 
-# Introduction
+# RT-Thread
 
 RT-Thread was born in 2006, it is an open source, neutral, and community-based real-time operating system (RTOS).
 

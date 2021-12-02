@@ -169,7 +169,7 @@ RT-Thread非常感谢所有社区小伙伴的支持，在使用RT-Thread的过�
 
 RT-Thread微信公众号：
 
-![qrcode](./documentation/figures/qrcode.png)
+![qrcode](./documentation/figures/qrcode.jpg)
 
 
 # 贡献代码
