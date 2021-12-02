@@ -19,7 +19,6 @@ extern "C" {
 #endif
 
 #define RT_I2C_DEV_CTRL_10BIT        0x20
-#define RT_I2C_DEV_CTRL_ADDR         0x21
 #define RT_I2C_DEV_CTRL_TIMEOUT      0x22
 #define RT_I2C_DEV_CTRL_RW           0x23
 #define RT_I2C_DEV_CTRL_CLK          0x24

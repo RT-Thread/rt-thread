@@ -55,7 +55,6 @@ struct rt_i2c_bus_device
     struct rt_device parent;
     const struct rt_i2c_bus_device_ops *ops;
     rt_uint16_t  flags;
-    rt_uint16_t  addr;
     struct rt_mutex lock;
     rt_uint32_t  timeout;
     rt_uint32_t  retries;
@@ -64,7 +63,6 @@ struct rt_i2c_bus_device
 
 struct rt_i2c_client
 {
-    struct rt_device               parent;
     struct rt_i2c_bus_device       *bus;
     rt_uint16_t                    client_addr;
 };

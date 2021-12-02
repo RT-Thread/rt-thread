@@ -77,9 +77,6 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
     case RT_I2C_DEV_CTRL_10BIT:
         bus->flags |= RT_I2C_ADDR_10BIT;
         break;
-    case RT_I2C_DEV_CTRL_ADDR:
-        bus->addr = *(rt_uint16_t *)args;
-        break;
     case RT_I2C_DEV_CTRL_TIMEOUT:
         bus->timeout = *(rt_uint32_t *)args;
         break;
