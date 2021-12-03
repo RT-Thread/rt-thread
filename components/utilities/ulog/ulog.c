@@ -244,7 +244,6 @@ static char *get_log_buf(void)
     }
 }
 
-extern struct tm* localtime_r(const time_t* t, struct tm* r);
 RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *tag, rt_bool_t newline,
         const char *format, va_list args)
 {
@@ -275,6 +274,7 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     /* add time info */
     {
 #ifdef ULOG_TIME_USING_TIMESTAMP
+        extern struct tm* localtime_r(const time_t* t, struct tm* r);
         static struct timeval now;
         static struct tm *tm, tm_tmp;
         static rt_bool_t check_usec_support = RT_FALSE, usec_is_support = RT_FALSE;
