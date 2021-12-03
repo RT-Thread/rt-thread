@@ -295,11 +295,11 @@ help:
         rt_kprintf("         eraseall <name>            Erase all block on device <name>\n");
         return ;
     }
-    else if (!strcmp(argv[1], "id"))
+    else if (!rt_strcmp(argv[1], "id"))
     {
         mtd_nandid(argv[2]);
     }
-    else if (!strcmp(argv[1], "read"))
+    else if (!rt_strcmp(argv[1], "read"))
     {
         if (argc < 5)
         {
@@ -308,7 +308,7 @@ help:
         }
         mtd_nand_read(argv[2], atoi(argv[3]), atoi(argv[4]));
     }
-    else if (!strcmp(argv[1], "readoob"))
+    else if (!rt_strcmp(argv[1], "readoob"))
     {
         if (argc < 5)
         {
@@ -317,7 +317,7 @@ help:
         }
         mtd_nand_readoob(argv[2], atoi(argv[3]), atoi(argv[4]));
     }
-    else if (!strcmp(argv[1], "write"))
+    else if (!rt_strcmp(argv[1], "write"))
     {
         if (argc < 5)
         {
@@ -326,7 +326,7 @@ help:
         }
         mtd_nand_write(argv[2], atoi(argv[3]), atoi(argv[4]));
     }
-    else if (!strcmp(argv[1], "erase"))
+    else if (!rt_strcmp(argv[1], "erase"))
     {
         if (argc < 4)
         {
@@ -335,7 +335,7 @@ help:
         }
         mtd_nand_erase(argv[2], atoi(argv[3]));
     }
-    else if (!strcmp(argv[1], "eraseall"))
+    else if (!rt_strcmp(argv[1], "eraseall"))
     {
         mtd_nand_erase_all(argv[2]);
     }
