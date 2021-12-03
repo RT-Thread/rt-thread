@@ -25,8 +25,8 @@ extern int Image$$RAM_END$$ZI$$Base;
 #pragma section="CSTACK"
 #define HEAP_BEGIN      (__segment_end("CSTACK"))
 #else
-extern int __bss_end;
-#define HEAP_BEGIN      (&__bss_end)
+extern int __RAM_segment_used_end__;
+#define HEAP_BEGIN      (&__RAM_segment_used_end__)
 #endif
 
 #define HEAP_END        RA_SRAM_END
