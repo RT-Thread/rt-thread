@@ -10,6 +10,7 @@ src = Split("""
 """)
 
 src += ['drv_common.c']
+src += ['drv_clk.c']
 
 if GetDepend(['RT_USING_PIN']):
     src += ['drv_gpio.c']
