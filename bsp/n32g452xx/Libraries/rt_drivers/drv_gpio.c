@@ -763,7 +763,6 @@ int n32_hw_pin_init(void)
     result = rt_device_pin_register("pin", &_n32_pin_ops, RT_NULL);
     return result;
 }
-INIT_BOARD_EXPORT(n32_hw_pin_init);
 
 rt_inline void pin_irq_hdr(int irqno)
 {
