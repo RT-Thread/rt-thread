@@ -51,7 +51,7 @@
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_A
-#define RT_NO_USING_GIC
+#define RT_USING_GIC_V2
 #define ARCH_ARM_CORTEX_A9
 
 /* RT-Thread Components */
