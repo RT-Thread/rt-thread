@@ -264,7 +264,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
 };
 
 
-static struct rt_spi_bus spi_bus[];
+static struct rt_spi_bus spi_bus[6];
 
 static const struct gd32f4_spi spis[] = {
 #ifdef RT_USING_SPI0
@@ -291,8 +291,6 @@ static const struct gd32f4_spi spis[] = {
     {SPI5, RCU_SPI5, &spi_bus[5]},
 #endif
 };
-
-static struct rt_spi_bus spi_bus[ARR_LEN(spis)];
 
 /** \brief init and register gd32 spi bus.
  *
