@@ -54,6 +54,8 @@ void ulog_deinit(void);
  */
 rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color);
 rt_err_t ulog_backend_unregister(ulog_backend_t backend);
+rt_err_t ulog_backend_set_filter(ulog_backend_t backend, ulog_backend_filter_t filter);
+ulog_backend_t ulog_backend_find(const char *name);
 
 #ifdef ULOG_USING_FILTER
 /*
