@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <rthw.h>
 #include <dfs_posix.h>
-#include "posix_aio.h"
+#include "aio.h"
 
 struct rt_workqueue* aio_queue = NULL;
 
