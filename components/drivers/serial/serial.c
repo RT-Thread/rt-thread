@@ -42,7 +42,7 @@
 #include <sys/ioctl.h>
 
 #ifdef RT_USING_POSIX_TERMIOS
-#include <posix_termios.h>
+#include <termios.h>
 #endif
 
 /* it's possible the 'getc/putc' is defined by stdio.h in gcc/newlib. */

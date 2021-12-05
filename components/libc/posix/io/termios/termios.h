@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2017/08/30     Bernard      The first version
  */
-#ifndef TERMIOS_H__
-#define TERMIOS_H__
+#ifndef __TERMIOS_H__
+#define __TERMIOS_H__
 
 #include <sys/types.h>
 #include <sys/ioctl.h>

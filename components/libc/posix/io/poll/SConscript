@@ -3,9 +3,9 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = Glob('*.c')
+src     = ['poll.c']
 CPPPATH = [cwd]
 
-group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_AIO'], CPPPATH = CPPPATH)
+group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_POLL'], CPPPATH = CPPPATH)
 
 Return('group')
