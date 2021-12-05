@@ -13,4 +13,4 @@
 
 #include <sys/select.h>
 
-#endif
+#endif /* DFS_SELECT_H__ */

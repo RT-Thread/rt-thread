@@ -23,7 +23,7 @@
 
 int libc_system_init(void)
 {
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
     rt_device_t dev_console;
 
     dev_console = rt_console_get_device();
@@ -31,7 +31,7 @@ int libc_system_init(void)
     {
         libc_stdio_set_console(dev_console->parent.name, O_RDWR);
     }
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_DEVIO */
 
 #if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
     pthread_system_init();
@@ -41,8 +41,7 @@ int libc_system_init(void)
 }
 INIT_COMPONENT_EXPORT(libc_system_init);
 
-#ifdef RT_USING_POSIX
-
+#ifdef RT_USING_POSIX_DEVIO
 #if defined(RT_USING_LIBC) && defined(RT_USING_NEWLIB)
 #define STDIO_DEVICE_NAME_MAX   32
 static FILE* std_console = NULL;
@@ -145,4 +144,4 @@ int libc_stdio_get_console(void) {
     return std_fd;
 }
 #endif /* defined(RT_USING_LIBC) && defined(RT_USING_NEWLIB) */
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_DEVIO */

@@ -14,18 +14,6 @@
 #include <string.h>
 #include <sys/time.h>
 
-#if defined (RT_USING_POSIX)
-    #include <dfs_posix.h>
-    #include <sys/select.h>
-    #if defined (RT_USING_POSIX_TERMIOS)
-        #include <termios.h>
-    #else
-        #error "TERMIOS need RT_USING_POSIX_TERMIOS"
-    #endif
-#else
-    #error "POSIX poll/select need RT_USING_POSIX"
-#endif
-
 #define JOINT(x,y) x##y
 #define B(x) JOINT(B,x)
 #define Default_baud_rate   115200

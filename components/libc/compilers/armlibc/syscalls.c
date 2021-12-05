@@ -21,9 +21,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#ifdef RT_USING_POSIX_STDIO
+#ifdef RT_USING_POSIX_DEVIO
 #include "libc.h"
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
 
 #define DBG_TAG    "armlibc.syscalls"
 #define DBG_LVL    DBG_INFO
@@ -149,29 +149,33 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 
     if (fh == STDIN)
     {
-#ifdef RT_USING_POSIX_STDIO
+#ifdef RT_USING_POSIX_DEVIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard output before initializing libc");
             return 0; /* error, but keep going */
         }
         size = read(STDIN_FILENO, buf, len);
-        return 0; /* success */
+        return len - size; /* success */
 #else
         return 0; /* error */
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
     }
     else if (fh == STDOUT || fh == STDERR)
     {
-        return 0; /* error */
+        return -1; /* 100% error */
     }
     else
     {
         size = read(fh, buf, len);
         if (size >= 0)
+        {
             return len - size; /* success */
+        }
         else
+        {
             return 0; /* error */
+        }
     }
 #else
     return 0; /* error */
@@ -209,16 +213,20 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
     }
     else if (fh == STDIN)
     {
-        return 0; /* error */
+        return -1; /* 100% error */
     }
     else
     {
 #ifdef DFS_USING_POSIX
         size = write(fh, buf, len);
         if (size >= 0)
-            return 0; /* success */
+        {
+            return len - size; /* success */
+        }
         else
+        {
             return 0; /* error */
+        }
 #else
         return 0; /* error */
 #endif /* DFS_USING_POSIX */
@@ -332,7 +340,7 @@ int fputc(int c, FILE *f)
 
 int fgetc(FILE *f)
 {
-#ifdef RT_USING_POSIX_STDIO
+#ifdef RT_USING_POSIX_DEVIO
     char ch;
 
     if (libc_stdio_get_console() < 0)
@@ -343,7 +351,7 @@ int fgetc(FILE *f)
 
     if(read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
-#endif /* RT_USING_POSIX_STDIO */
+#endif /* RT_USING_POSIX_DEVIO */
     return 0; /* error */
 }
 
