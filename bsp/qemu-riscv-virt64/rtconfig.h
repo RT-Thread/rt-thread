@@ -47,7 +47,7 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart"
 /* end of Kernel Device Object */
-#define RT_VER_NUM 0x40004
+#define RT_VER_NUM 0x40100
 /* end of RT-Thread Kernel */
 #define ARCH_CPU_64BIT
 #define ARCH_RISCV
@@ -84,6 +84,7 @@
 /* Device virtual file system */
 
 #define RT_USING_DFS
+#define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FILESYSTEMS_MAX 2
 #define DFS_FILESYSTEM_TYPES_MAX 2
@@ -110,9 +111,12 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_USING_POSIX
 #define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
+
+/* POSIX (Portable Operating System Interface) layer */
+
+/* end of POSIX (Portable Operating System Interface) layer */
 /* end of POSIX layer and C standard library */
 
 /* Network */
@@ -178,14 +182,17 @@
 
 /* multimedia packages */
 
+/* LVGL: powerful and easy-to-use embedded GUI library */
 
-/* lvgl: powerful and easy-to-use embedded GUI library */
-
-/* end of lvgl: powerful and easy-to-use embedded GUI library */
+/* end of LVGL: powerful and easy-to-use embedded GUI library */
 
 /* u8g2: a monochrome graphic library */
 
 /* end of u8g2: a monochrome graphic library */
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+/* end of PainterEngine: A cross-platform graphics application framework written in C language */
 /* end of multimedia packages */
 
 /* tools packages */
@@ -197,6 +204,10 @@
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 /* end of acceleration: Assembly language or algorithmic acceleration packages */
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+/* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
@@ -225,9 +236,9 @@
 #define BOARD_virt
 #define RT_USING_USERSPACE
 
-/* RISCV qemu virt64 configs */
+/* RISC-V QEMU virt64 configs */
 
-/* end of RISCV qemu virt64 configs */
+/* end of RISC-V QEMU virt64 configs */
 #define __STACKSIZE__ 16384
 
 #endif

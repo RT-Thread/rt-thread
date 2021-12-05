@@ -173,7 +173,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
     if (device == RT_NULL)
         return -ENODEV;
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
     if (device->fops)
     {
         /* use device fops */
@@ -192,7 +192,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
         }
     }
     else
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
     {
         result = rt_device_open(device, RT_DEVICE_OFLAG_RDWR);
         if (result == RT_EOK || result == -RT_ENOSYS)

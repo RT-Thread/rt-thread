@@ -45,7 +45,7 @@ static rt_err_t rtlink_dev_tx_done(rt_device_t dev, void *buffer)
     return RT_EOK;
 }
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 #include <dfs_posix.h>
 #include <poll.h>
 #include <sys/select.h>
@@ -205,7 +205,7 @@ static void rtlink_fselect()
     }
 }
 MSH_CMD_EXPORT(rtlink_fselect, rtlink posix interface example);
-#endif  /* RT_USING_POSIX */
+#endif  /* RT_USING_POSIX_DEVIO */
 
 static void rtlink_dread(void)
 {

@@ -486,8 +486,6 @@ RTM_EXPORT(settimeofday);
 RTM_EXPORT(difftime);
 RTM_EXPORT(strftime);
 
-#ifdef RT_USING_POSIX
-
 #ifdef RT_USING_RTC
 static volatile struct timeval _timevalue;
 static int _rt_clock_time_system_init()
@@ -689,9 +687,6 @@ int rt_timespec_to_tick(const struct timespec *time)
     return tick;
 }
 RTM_EXPORT(rt_timespec_to_tick);
-
-#endif /* RT_USING_POSIX */
-
 
 /* timezone */
 #ifndef RT_LIBC_DEFAULT_TIMEZONE
