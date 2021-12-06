@@ -174,14 +174,17 @@
 
 /* multimedia packages */
 
+/* LVGL: powerful and easy-to-use embedded GUI library */
 
-/* lvgl: powerful and easy-to-use embedded GUI library */
-
-/* end of lvgl: powerful and easy-to-use embedded GUI library */
+/* end of LVGL: powerful and easy-to-use embedded GUI library */
 
 /* u8g2: a monochrome graphic library */
 
 /* end of u8g2: a monochrome graphic library */
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+/* end of PainterEngine: A cross-platform graphics application framework written in C language */
 /* end of multimedia packages */
 
 /* tools packages */
@@ -190,9 +193,17 @@
 
 /* system packages */
 
+/* rt_kprintf: enhanced rt_kprintf packages */
+
+/* end of rt_kprintf: enhanced rt_kprintf packages */
+
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 /* end of acceleration: Assembly language or algorithmic acceleration packages */
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+/* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
 

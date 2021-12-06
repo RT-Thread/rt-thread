@@ -388,6 +388,13 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
+              <FileName>backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
@@ -402,9 +409,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
@@ -412,13 +419,6 @@
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -496,16 +496,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringblk_buf.c</FileName>
+              <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -626,9 +626,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ff.c</FileName>
+              <FileName>dfs_elm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -640,9 +640,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs_elm.c</FileName>
+              <FileName>ff.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -681,37 +681,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>idle.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -723,23 +695,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>device.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -751,9 +709,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>components.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -765,9 +730,44 @@
           </Files>
           <Files>
             <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -778,6 +778,13 @@
               <FileName>mem_std.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -796,9 +803,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>stdio.c</FileName>
+              <FileName>time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -808,21 +815,49 @@
               <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>gd32f30x_usart.c</FileName>
+              <FileName>gd32f30x_pmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_usart.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_pmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_rcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rcu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_bkp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -830,6 +865,20 @@
               <FileName>system_gd32f30x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\CMSIS\GD\GD32F30x\Source\system_gd32f30x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_gd32f30x_hd.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\GD\GD32F30x\Source\ARM\startup_gd32f30x_hd.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_crc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -848,69 +897,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_wwdgt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_wwdgt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_rcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_exmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32f30x_can.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_can.c</FilePath>
@@ -925,20 +911,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_gd32f30x_hd.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F30x\Source\ARM\startup_gd32f30x_hd.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32f30x_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_adc.c</FilePath>
@@ -946,23 +918,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_ctc.c</FileName>
+              <FileName>gd32f30x_wwdgt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_ctc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_dbg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dbg.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_wwdgt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -974,16 +932,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_sdio.c</FileName>
+              <FileName>gd32f30x_exmc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_sdio.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exmc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_bkp.c</FileName>
+              <FileName>gd32f30x_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_bkp.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dma.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -995,9 +960,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_i2c.c</FileName>
+              <FileName>gd32f30x_dbg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_i2c.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dbg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_sdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_ctc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_ctc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_spi.c</FilePath>
             </File>
           </Files>
         </Group>

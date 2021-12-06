@@ -397,13 +397,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
@@ -411,9 +404,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+              <FileName>backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -421,6 +414,13 @@
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -442,30 +442,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -484,9 +463,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
+              <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -542,13 +542,6 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>
@@ -556,30 +549,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -598,13 +591,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>memheap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\memheap.c</FilePath>
@@ -612,9 +598,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>clock.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -626,9 +612,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>idle.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -636,16 +636,16 @@
           <GroupName>libc</GroupName>
           <Files>
             <File>
-              <FileName>libc.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>libc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -657,16 +657,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>stdlib.c</FileName>
+              <FileName>time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -674,135 +674,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>SWM320_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_sdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_sdram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_sdram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_lcd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>SWM320_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_norflash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_norflash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_SWM320.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\CMSIS\DeviceSupport\system_SWM320.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_timr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_timr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_SWM320.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\CMSIS\DeviceSupport\startup\arm\startup_SWM320.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_pwm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -814,9 +688,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>SWM320_dma.c</FileName>
+              <FileName>SWM320_sdram.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_dma.c</FilePath>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_sdram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_lcd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_norflash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_norflash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -824,6 +733,97 @@
               <FileName>SWM320_sram.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_sram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_SWM320.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\CMSIS\DeviceSupport\system_SWM320.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_sdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_SWM320.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\CMSIS\DeviceSupport\startup\arm\startup_SWM320.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_timr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_timr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM320_StdPeriph_Driver\SWM320_spi.c</FilePath>
             </File>
           </Files>
         </Group>

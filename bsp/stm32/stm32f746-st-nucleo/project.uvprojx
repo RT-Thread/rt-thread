@@ -391,16 +391,16 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -419,16 +419,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
+              <FileName>cpu_cache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cpu_cache.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -478,27 +478,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
@@ -513,6 +492,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
@@ -520,9 +506,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
+              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
           </Files>
           <GroupOption>
@@ -549,16 +549,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
+              <FileName>startup_stm32f746xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\arm\startup_stm32f746xx.s</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup_stm32f746xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\arm\startup_stm32f746xx.s</FilePath>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -670,6 +670,41 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mempool.c</FilePath>
@@ -684,51 +719,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\idle.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -747,35 +740,28 @@
           </Files>
           <Files>
             <File>
-              <FileName>kservice.c</FileName>
+              <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\kservice.c</FilePath>
+              <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>idle.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
+              <FilePath>..\..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>stdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>libc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\libc.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>mem_std.c</FileName>
@@ -792,9 +778,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>stdlib.c</FileName>
+              <FileName>libc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -806,16 +799,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>unistd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\unistd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>unistd.c</FileName>
+              <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\unistd.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>

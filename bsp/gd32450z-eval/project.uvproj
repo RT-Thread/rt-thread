@@ -479,37 +479,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -521,9 +493,37 @@
           </Files>
           <Files>
             <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -673,23 +673,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -701,9 +687,65 @@
           </Files>
           <Files>
             <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -718,48 +760,6 @@
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -781,13 +781,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>mem_std.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
@@ -795,9 +788,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -816,6 +809,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
@@ -826,30 +826,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>gd32f4xx_exti.c</FileName>
+              <FileName>gd32f4xx_syscfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_can.c</FilePath>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -861,13 +840,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32f4xx_ctc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ctc.c</FilePath>
@@ -875,135 +847,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_rtc.c</FileName>
+              <FileName>gd32f4xx_pmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rtc.c</FilePath>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_pmu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_exmc.c</FileName>
+              <FileName>gd32f4xx_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_syscfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_enet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_enet.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_tli.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_tli.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_wwdgt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_wwdgt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_dbg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dbg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_fmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_iref.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_iref.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_trng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_trng.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_sdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_gd32f4xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\ARM\startup_gd32f4xx.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_rcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dac.c</FilePath>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exti.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1015,9 +868,114 @@
           </Files>
           <Files>
             <File>
+              <FileName>gd32f4xx_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>gd32f4xx_dci.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dci.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_rcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rcu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_dbg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dbg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_trng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_trng.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_gd32f4xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\system_gd32f4xx.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_wwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_wwdgt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_gd32f4xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\ARM\startup_gd32f4xx.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1029,6 +987,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>gd32f4xx_tli.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_tli.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>gd32f4xx_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_spi.c</FilePath>
@@ -1036,9 +1001,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>system_gd32f4xx.c</FileName>
+              <FileName>gd32f4xx_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\system_gd32f4xx.c</FilePath>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_exmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_sdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_enet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_enet.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_iref.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_iref.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1077,6 +1077,13 @@
               <FileName>netif.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.2\src\core\netif.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ping.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\apps\ping\ping.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1147,13 +1154,6 @@
               <FileName>memp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.2\src\core\memp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ping.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.2\src\apps\ping\ping.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1308,6 +1308,13 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
+              <FileName>netdev_ipaddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>netdev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\netdev\src\netdev.c</FilePath>
@@ -1315,9 +1322,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>netdev_ipaddr.c</FileName>
+              <FileName>af_inet_lwip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+              <FilePath>..\..\components\net\sal_socket\impl\af_inet_lwip.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_net.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\dfs_net\dfs_net.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1336,23 +1350,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs_net.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\sal_socket\dfs_net\dfs_net.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>net_sockets.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\sal_socket\socket\net_sockets.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>af_inet_lwip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\sal_socket\impl\af_inet_lwip.c</FilePath>
             </File>
           </Files>
         </Group>
