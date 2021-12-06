@@ -37,7 +37,7 @@ void lv_port_indev_init(void)
 {
     static lv_indev_drv_t indev_drv;
 
-    lv_indev_drv_init(&indev_drv);      /*Basic initialization*/
+    lv_indev_drv_init(&indev_drv); /*Basic initialization*/
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = input_read;
 
