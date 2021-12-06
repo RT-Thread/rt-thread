@@ -645,4 +645,7 @@
 
 
 #define LWIP_HOOK_IP4_ROUTE_SRC(dest, src)  lwip_ip4_route_src(dest, src)
+#include "lwip/ip_addr.h"
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
+
 #endif /* __LWIPOPTS_H__ */

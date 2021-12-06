@@ -779,6 +779,7 @@ void ppp_trace(int level, const char *format, ...)
 }
 #endif
 
+#ifdef LWIP_HOOK_IP4_ROUTE_SRC
 struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src)
 {
     struct netif *netif;
@@ -802,6 +803,7 @@ struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src)
     netif = netif_default;
     return netif;
 }
+#endif /* LWIP_HOOK_IP4_ROUTE_SRC */
 
 /*
  * export bsd socket symbol for RT-Thread Application Module
