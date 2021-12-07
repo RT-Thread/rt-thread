@@ -12,20 +12,46 @@
 #include <stdlib.h>
 #include "utest.h"
 
+struct rt_small_mem_item
+{
+    rt_ubase_t              pool_ptr;         /**< small memory object addr */
+#ifdef ARCH_CPU_64BIT
+    rt_uint32_t             resv;
+#endif /* ARCH_CPU_64BIT */
+    rt_size_t               next;             /**< next free item */
+    rt_size_t               prev;             /**< prev free item */
+#ifdef RT_USING_MEMTRACE
+#ifdef ARCH_CPU_64BIT
+    rt_uint8_t              thread[8];       /**< thread name */
+#else
+    rt_uint8_t              thread[4];       /**< thread name */
+#endif /* ARCH_CPU_64BIT */
+#endif /* RT_USING_MEMTRACE */
+};
+
+struct rt_small_mem
+{
+    struct rt_memory            parent;                 /**< inherit from rt_memory */
+    rt_uint8_t                 *heap_ptr;               /**< pointer to the heap */
+    struct rt_small_mem_item   *heap_end;
+    struct rt_small_mem_item   *lfree;
+    rt_size_t                   mem_size_aligned;       /**< aligned memory size */
+};
+
 #define MEM_SIZE(_heap, _mem)      \
-    (((struct rt_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - \
-    (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_mem_item), RT_ALIGN_SIZE))
+    (((struct rt_small_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - \
+    (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
 
 #define TEST_MEM_SIZE 1024
 
-static rt_size_t max_block(struct rt_mem *heap)
+static rt_size_t max_block(struct rt_small_mem *heap)
 {
-    struct rt_mem_item *mem;
+    struct rt_small_mem_item *mem;
     rt_size_t max = 0, size;
 
-    for (mem = (struct rt_mem_item *)heap->heap_ptr;
+    for (mem = (struct rt_small_mem_item *)heap->heap_ptr;
          mem != heap->heap_end;
-         mem = (struct rt_mem_item *)&heap->heap_ptr[mem->next])
+         mem = (struct rt_small_mem_item *)&heap->heap_ptr[mem->next])
     {
         if (((rt_ubase_t)mem->pool_ptr & 0x1) == 0)
         {
@@ -58,22 +84,19 @@ struct mem_test_context
 
 static void mem_functional_test(void)
 {
-    rt_size_t buf_size, total_size;
-    rt_uint8_t *begin, *buf;
-    struct rt_mem *heap;
+    rt_size_t total_size;
+    rt_uint8_t *buf;
+    struct rt_small_mem *heap;
     rt_uint8_t magic = __LINE__;
 
     /* Prepare test memory */
     buf = rt_malloc(TEST_MEM_SIZE);
     uassert_not_null(buf);
     uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
-    heap = (struct rt_mem *)buf;
-    begin = (rt_uint8_t *)&heap[1];
-    buf_size = buf + TEST_MEM_SIZE - begin;
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
-    // small heap init
-    rt_mem_init(heap, "mem_tc", begin, buf_size);
-    // get total size
+    /* small heap init */
+    heap = (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
+    /* get total size */
     total_size = max_block(heap);
     uassert_int_not_equal(total_size, 0);
     /* 
@@ -84,11 +107,11 @@ static void mem_functional_test(void)
         struct mem_test_context ctx;
         ctx.magic = magic++;
         ctx.size = max_block(heap);
-        ctx.ptr = rt_mem_alloc(heap, ctx.size);
+        ctx.ptr = rt_smem_alloc(&heap->parent, ctx.size);
         uassert_not_null(ctx.ptr);
         rt_memset(ctx.ptr, ctx.magic, ctx.size);
         uassert_int_equal(_mem_cmp(ctx.ptr, ctx.magic, ctx.size), 0);
-        rt_mem_free(ctx.ptr);
+        rt_smem_free(ctx.ptr);
         uassert_int_equal(max_block(heap), total_size);
     }
     /* 
@@ -98,31 +121,31 @@ static void mem_functional_test(void)
     {
         rt_size_t i, max_free = 0;
         struct mem_test_context ctx[3];
-        // alloc mem
+        /* alloc mem */
         for (i = 0; i < sizeof(ctx) / sizeof(ctx[0]); i++)
         {
             ctx[i].magic = magic++;
             ctx[i].size = max_block(heap) / (sizeof(ctx) / sizeof(ctx[0]) - i);
-            ctx[i].ptr = rt_mem_alloc(heap, ctx[i].size);
+            ctx[i].ptr = rt_smem_alloc(&heap->parent, ctx[i].size);
             uassert_not_null(ctx[i].ptr);
             rt_memset(ctx[i].ptr, ctx[i].magic, ctx[i].size);
         }
-        // All memory has been applied. The remaining memory should be 0
+        /* All memory has been applied. The remaining memory should be 0 */
         uassert_int_equal(max_block(heap), 0);
-        // Verify that the memory data is correct
+        /* Verify that the memory data is correct */
         for (i = 0; i < sizeof(ctx) / sizeof(ctx[0]); i++)
         {
             uassert_int_equal(_mem_cmp(ctx[i].ptr, ctx[i].magic, ctx[i].size), 0);
         }
-        // Sequential memory release
+        /* Sequential memory release */
         for (i = 0; i < sizeof(ctx) / sizeof(ctx[0]); i++)
         {
             uassert_int_equal(_mem_cmp(ctx[i].ptr, ctx[i].magic, ctx[i].size), 0);
-            rt_mem_free(ctx[i].ptr);
+            rt_smem_free(ctx[i].ptr);
             max_free += ctx[i].size;
             uassert_true(max_block(heap) >= max_free);
         }
-        // Check whether the memory is fully merged
+        /* Check whether the memory is fully merged */
         uassert_int_equal(max_block(heap), total_size);
     }
     /*
@@ -132,129 +155,129 @@ static void mem_functional_test(void)
     {
         rt_size_t i, max_free = 0;
         struct mem_test_context ctx[3];
-        // alloc mem
+        /* alloc mem */
         for (i = 0; i < sizeof(ctx) / sizeof(ctx[0]); i++)
         {
             ctx[i].magic = magic++;
             ctx[i].size = max_block(heap) / (sizeof(ctx) / sizeof(ctx[0]) - i);
-            ctx[i].ptr = rt_mem_alloc(heap, ctx[i].size);
+            ctx[i].ptr = rt_smem_alloc(&heap->parent, ctx[i].size);
             uassert_not_null(ctx[i].ptr);
             rt_memset(ctx[i].ptr, ctx[i].magic, ctx[i].size);
         }
-        // All memory has been applied. The remaining memory should be 0
+        /* All memory has been applied. The remaining memory should be 0 */
         uassert_int_equal(max_block(heap), 0);
-        // Verify that the memory data is correct
+        /* Verify that the memory data is correct */
         for (i = 0; i < sizeof(ctx) / sizeof(ctx[0]); i++)
         {
             uassert_int_equal(_mem_cmp(ctx[i].ptr, ctx[i].magic, ctx[i].size), 0);
         }
-        // Release even address
+        /* Release even address */
         for (i = 0; i < sizeof(ctx) / sizeof(ctx[0]); i++)
         {
             if (i % 2 == 0)
             {
                 uassert_int_equal(_mem_cmp(ctx[i].ptr, ctx[i].magic, ctx[i].size), 0);
-                rt_mem_free(ctx[i].ptr);
+                rt_smem_free(ctx[i].ptr);
                 uassert_true(max_block(heap) >= ctx[0].size);
             }
         }
-        // Release odd addresses and merge memory blocks
+        /* Release odd addresses and merge memory blocks */
         for (i = 0; i < sizeof(ctx) / sizeof(ctx[0]); i++)
         {
             if (i % 2 != 0)
             {
                 uassert_int_equal(_mem_cmp(ctx[i].ptr, ctx[i].magic, ctx[i].size), 0);
-                rt_mem_free(ctx[i].ptr);
+                rt_smem_free(ctx[i].ptr);
                 max_free += ctx[i - 1].size + ctx[i + 1].size;
                 uassert_true(max_block(heap) >= max_free);
             }
         }
-        // Check whether the memory is fully merged
+        /* Check whether the memory is fully merged */
         uassert_int_equal(max_block(heap), total_size);
     }
-    // mem realloc test,Small - > Large
+    /* mem realloc test,Small - > Large */
     {
-        // Request a piece of memory for subsequent reallocation operations
+        /* Request a piece of memory for subsequent reallocation operations */
         struct mem_test_context ctx[3];
         ctx[0].magic = magic++;
         ctx[0].size = max_block(heap) / 3;
-        ctx[0].ptr = rt_mem_alloc(heap, ctx[0].size);
+        ctx[0].ptr = rt_smem_alloc(&heap->parent, ctx[0].size);
         uassert_not_null(ctx[0].ptr);
         rt_memset(ctx[0].ptr, ctx[0].magic, ctx[0].size);
-        // Apply for a small piece of memory and split the continuous memory
+        /* Apply for a small piece of memory and split the continuous memory */
         ctx[1].magic = magic++;
         ctx[1].size = RT_ALIGN_SIZE;
-        ctx[1].ptr = rt_mem_alloc(heap, ctx[1].size);
+        ctx[1].ptr = rt_smem_alloc(&heap->parent, ctx[1].size);
         uassert_not_null(ctx[1].ptr);
         rt_memset(ctx[1].ptr, ctx[1].magic, ctx[1].size);
-        // Check whether the maximum memory block is larger than the first piece of memory
+        /* Check whether the maximum memory block is larger than the first piece of memory */
         uassert_true(max_block(heap) > ctx[0].size);
-        // Reallocate the first piece of memory
+        /* Reallocate the first piece of memory */
         ctx[2].magic = magic++;
         ctx[2].size = max_block(heap);
-        ctx[2].ptr = rt_mem_realloc(heap, ctx[0].ptr, ctx[2].size);
+        ctx[2].ptr = rt_smem_realloc(&heap->parent, ctx[0].ptr, ctx[2].size);
         uassert_not_null(ctx[2].ptr);
         uassert_int_not_equal(ctx[0].ptr, ctx[2].ptr);
         uassert_int_equal(_mem_cmp(ctx[2].ptr, ctx[0].magic, ctx[0].size), 0);
         rt_memset(ctx[2].ptr, ctx[2].magic, ctx[2].size);
-        // Free the second piece of memory
+        /* Free the second piece of memory */
         uassert_int_equal(_mem_cmp(ctx[1].ptr, ctx[1].magic, ctx[1].size), 0);
-        rt_mem_free(ctx[1].ptr);
-        // Free reallocated memory
+        rt_smem_free(ctx[1].ptr);
+        /* Free reallocated memory */
         uassert_int_equal(_mem_cmp(ctx[2].ptr, ctx[2].magic, ctx[2].size), 0);
-        rt_mem_free(ctx[2].ptr);
-        // Check memory integrity
+        rt_smem_free(ctx[2].ptr);
+        /* Check memory integrity */
         uassert_int_equal(max_block(heap), total_size);
     }
-    // mem realloc test,Large - > Small
+    /* mem realloc test,Large - > Small */
     {
         rt_size_t max_free;
         struct mem_test_context ctx;
-        // alloc a piece of memory
+        /* alloc a piece of memory */
         ctx.magic = magic++;
         ctx.size = max_block(heap) / 2;
-        ctx.ptr = rt_mem_alloc(heap, ctx.size);
+        ctx.ptr = rt_smem_alloc(&heap->parent, ctx.size);
         uassert_not_null(ctx.ptr);
         rt_memset(ctx.ptr, ctx.magic, ctx.size);
         uassert_int_equal(_mem_cmp(ctx.ptr, ctx.magic, ctx.size), 0);
-        // Get remaining memory
+        /* Get remaining memory */
         max_free = max_block(heap);
-        // Change memory size
+        /* Change memory size */
         ctx.size = ctx.size / 2;
-        uassert_int_equal((rt_ubase_t)rt_mem_realloc(heap, ctx.ptr, ctx.size), (rt_ubase_t)ctx.ptr);
-        // Get remaining size
+        uassert_int_equal((rt_ubase_t)rt_smem_realloc(&heap->parent, ctx.ptr, ctx.size), (rt_ubase_t)ctx.ptr);
+        /* Get remaining size */
         uassert_true(max_block(heap) > max_free);
-        // Free memory
+        /* Free memory */
         uassert_int_equal(_mem_cmp(ctx.ptr, ctx.magic, ctx.size), 0);
-        rt_mem_free(ctx.ptr);
-        // Check memory integrity
+        rt_smem_free(ctx.ptr);
+        /* Check memory integrity */
         uassert_int_equal(max_block(heap), total_size);
     }
-    // mem realloc test,equal
+    /* mem realloc test,equal */
     {
         rt_size_t max_free;
         struct mem_test_context ctx;
-        // alloc a piece of memory
+        /* alloc a piece of memory */
         ctx.magic = magic++;
         ctx.size = max_block(heap) / 2;
-        ctx.ptr = rt_mem_alloc(heap, ctx.size);
+        ctx.ptr = rt_smem_alloc(&heap->parent, ctx.size);
         uassert_not_null(ctx.ptr);
         rt_memset(ctx.ptr, ctx.magic, ctx.size);
         uassert_int_equal(_mem_cmp(ctx.ptr, ctx.magic, ctx.size), 0);
-        // Get remaining memory
+        /* Get remaining memory */
         max_free = max_block(heap);
-        // Do not change memory size
-        uassert_int_equal((rt_ubase_t)rt_mem_realloc(heap, ctx.ptr, ctx.size), (rt_ubase_t)ctx.ptr);
-        // Get remaining size
+        /* Do not change memory size */
+        uassert_int_equal((rt_ubase_t)rt_smem_realloc(&heap->parent, ctx.ptr, ctx.size), (rt_ubase_t)ctx.ptr);
+        /* Get remaining size */
         uassert_true(max_block(heap) == max_free);
-        // Free memory
+        /* Free memory */
         uassert_int_equal(_mem_cmp(ctx.ptr, ctx.magic, ctx.size), 0);
-        rt_mem_free(ctx.ptr);
-        // Check memory integrity
+        rt_smem_free(ctx.ptr);
+        /* Check memory integrity */
         uassert_int_equal(max_block(heap), total_size);
     }
-    // small heap deinit
-    rt_mem_detach(heap);
+    /* small heap deinit */
+    rt_smem_detach(&heap->parent);
     /* release test resources */
     rt_free(buf);
 }
@@ -282,9 +305,9 @@ struct mem_alloc_head
 static void mem_alloc_test(void)
 {
     struct mem_alloc_head head;
-    rt_uint8_t *begin, *buf;
-    struct rt_mem *heap;
-    rt_size_t buf_size, total_size, size;
+    rt_uint8_t *buf;
+    struct rt_small_mem *heap;
+    rt_size_t total_size, size;
     struct mem_alloc_context *ctx;
 
     /* init */
@@ -296,14 +319,11 @@ static void mem_alloc_test(void)
     buf = rt_malloc(TEST_MEM_SIZE);
     uassert_not_null(buf);
     uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
-    heap = (struct rt_mem *)buf;
-    begin = (rt_uint8_t *)&heap[1];
-    buf_size = buf + TEST_MEM_SIZE - begin;
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
-    rt_mem_init(heap, "mem_tc", begin, buf_size);
+    heap =  (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
     total_size = max_block(heap);
     uassert_int_not_equal(total_size, 0);
-    // test run
+    /* test run */
     while (head.end - head.start < RT_TICK_MAX / 2)
     {
         if (rt_tick_get() - head.start >= head.interval)
@@ -311,12 +331,12 @@ static void mem_alloc_test(void)
             head.start = rt_tick_get();
             rt_kprintf("#");
         }
-        // %60 probability to perform alloc operation
+        /* %60 probability to perform alloc operation */
         if (rand() % 10 >= 4)
         {
             size = rand() % MEM_RANG_ALLOC_BLK_MAX + MEM_RANG_ALLOC_BLK_MIN;
             size *= sizeof(struct mem_alloc_context);
-            ctx = rt_mem_alloc(heap, size);
+            ctx = rt_smem_alloc(&heap->parent, size);
             if (ctx == RT_NULL)
             {
                 if (head.count == 0)
@@ -336,7 +356,7 @@ static void mem_alloc_test(void)
                         }
                     }
                     rt_memset(ctx, 0xAA, ctx->size);
-                    rt_mem_free(ctx);
+                    rt_smem_free(ctx);
                     head.count --;
                 }
                 continue;
@@ -370,7 +390,7 @@ static void mem_alloc_test(void)
                     }
                 }
                 rt_memset(ctx, 0xAA, ctx->size);
-                rt_mem_free(ctx);
+                rt_smem_free(ctx);
                 head.count --;
             }
         }
@@ -387,13 +407,13 @@ static void mem_alloc_test(void)
             }
         }
         rt_memset(ctx, 0xAA, ctx->size);
-        rt_mem_free(ctx);
+        rt_smem_free(ctx);
         head.count --;
     }
     uassert_int_equal(head.count, 0);
     uassert_int_equal(max_block(heap), total_size);
-    // small heap deinit
-    rt_mem_detach(heap);
+    /* small heap deinit */
+    rt_smem_detach(&heap->parent);
     /* release test resources */
     rt_free(buf);
 }
@@ -420,9 +440,9 @@ struct mem_realloc_head
 static void mem_realloc_test(void)
 {
     struct mem_realloc_head head;
-    rt_uint8_t *begin, *buf;
-    struct rt_mem *heap;
-    rt_size_t buf_size, total_size, size, idx;
+    rt_uint8_t *buf;
+    struct rt_small_mem *heap;
+    rt_size_t total_size, size, idx;
     struct mem_realloc_context *ctx;
     int res;
 
@@ -437,19 +457,16 @@ static void mem_realloc_test(void)
     buf = rt_malloc(TEST_MEM_SIZE);
     uassert_not_null(buf);
     uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
-    heap = (struct rt_mem *)buf;
-    begin = (rt_uint8_t *)&heap[1];
-    buf_size = buf + TEST_MEM_SIZE - begin;
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
-    rt_mem_init(heap, "mem_tc", begin, buf_size);
+    heap =  (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
     total_size = max_block(heap);
     uassert_int_not_equal(total_size, 0);
     /* init ctx tab */
     size = head.count * sizeof(struct mem_realloc_context *);
-    head.ctx_tab = rt_mem_alloc(heap, size);
+    head.ctx_tab = rt_smem_alloc(&heap->parent, size);
     uassert_not_null(head.ctx_tab);
     rt_memset(head.ctx_tab, 0, size);
-    // test run
+    /* test run */
     while (head.end - head.start < RT_TICK_MAX / 2)
     {
         if (rt_tick_get() - head.start >= head.interval)
@@ -460,7 +477,7 @@ static void mem_realloc_test(void)
         size = rand() % MEM_RANG_ALLOC_BLK_MAX + MEM_RANG_ALLOC_BLK_MIN;
         size *= sizeof(struct mem_realloc_context);
         idx = rand() % head.count;
-        ctx = rt_mem_realloc(heap, head.ctx_tab[idx], size);
+        ctx = rt_smem_realloc(&heap->parent, head.ctx_tab[idx], size);
         if (ctx == RT_NULL)
         {
             if (size == 0)
@@ -486,7 +503,7 @@ static void mem_realloc_test(void)
                             }
                         }
                         rt_memset(ctx, 0xAA, ctx->size);
-                        rt_mem_realloc(heap, ctx, 0);
+                        rt_smem_realloc(&heap->parent, ctx, 0);
                         head.ctx_tab[idx] = RT_NULL;
                     }
                 }
@@ -525,7 +542,7 @@ static void mem_realloc_test(void)
         }
         head.ctx_tab[idx] = ctx;
     }
-    // free all mem
+    /* free all mem */
     for (idx = 0; idx < head.count; idx++)
     {
         ctx = head.ctx_tab[idx];
@@ -542,12 +559,12 @@ static void mem_realloc_test(void)
             }
         }
         rt_memset(ctx, 0xAA, ctx->size);
-        rt_mem_realloc(heap, ctx, 0);
+        rt_smem_realloc(&heap->parent, ctx, 0);
         head.ctx_tab[idx] = RT_NULL;
     }
     uassert_int_not_equal(max_block(heap), total_size);
-    // small heap deinit
-    rt_mem_detach(heap);
+    /* small heap deinit */
+    rt_smem_detach(&heap->parent);
     /* release test resources */
     rt_free(buf);
 }
