@@ -765,6 +765,100 @@ void rt_memheap_info(struct rt_memheap *heap,
     }
 }
 
+#ifdef RT_USING_MEMHEAP_AS_HEAP
+/*
+ * rt_malloc port function
+*/
+void *_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
+{
+    void *ptr;
+
+    /* try to allocate in system heap */
+    ptr = rt_memheap_alloc(heap, size);
+#ifdef RT_USING_MEMHEAP_AUTO_BINDING
+    if (ptr == RT_NULL)
+    {
+        struct rt_object *object;
+        struct rt_list_node *node;
+        struct rt_memheap *_heap;
+        struct rt_object_information *information;
+
+        /* try to allocate on other memory heap */
+        information = rt_object_get_information(RT_Object_Class_MemHeap);
+        RT_ASSERT(information != RT_NULL);
+        for (node  = information->object_list.next;
+             node != &(information->object_list);
+             node  = node->next)
+        {
+            object = rt_list_entry(node, struct rt_object, list);
+            _heap   = (struct rt_memheap *)object;
+
+            /* not allocate in the default system heap */
+            if (heap == _heap)
+                continue;
+
+            ptr = rt_memheap_alloc(_heap, size);
+            if (ptr != RT_NULL)
+                break;
+        }
+    }
+#endif /* RT_USING_MEMHEAP_AUTO_BINDING */
+    return ptr;
+}
+
+/*
+ * rt_free port function
+*/
+void _memheap_free(void *rmem)
+{
+    rt_memheap_free(rmem);
+}
+
+/*
+ * rt_realloc port function
+*/
+void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize)
+{
+    void *new_ptr;
+    struct rt_memheap_item *header_ptr;
+
+    if (rmem == RT_NULL)
+        return _memheap_alloc(heap, newsize);
+
+    if (newsize == 0)
+    {
+        _memheap_free(rmem);
+        return RT_NULL;
+    }
+
+    /* get old memory item */
+    header_ptr = (struct rt_memheap_item *)
+                 ((rt_uint8_t *)rmem - RT_MEMHEAP_SIZE);
+
+    new_ptr = rt_memheap_realloc(header_ptr->pool_ptr, rmem, newsize);
+    if (new_ptr == RT_NULL && newsize != 0)
+    {
+        /* allocate memory block from other memheap */
+        new_ptr = _memheap_alloc(heap, newsize);
+        if (new_ptr != RT_NULL && rmem != RT_NULL)
+        {
+            rt_size_t oldsize;
+
+            /* get the size of old memory block */
+            oldsize = MEMITEM_SIZE(header_ptr);
+            if (newsize > oldsize)
+                rt_memcpy(new_ptr, rmem, oldsize);
+            else
+                rt_memcpy(new_ptr, rmem, newsize);
+
+            _memheap_free(rmem);
+        }
+    }
+
+    return new_ptr;
+}
+#endif
+
 #ifdef RT_USING_MEMTRACE
 int memheapcheck(int argc, char *argv[])
 {
@@ -773,7 +867,6 @@ int memheapcheck(int argc, char *argv[])
     struct rt_memheap *heap;
     struct rt_list_node *node;
     struct rt_memheap_item *item;
-    struct rt_memheap_item *last = RT_NULL;
     rt_bool_t has_bad = RT_FALSE;
     rt_base_t level;
     char *name;
@@ -819,8 +912,6 @@ int memheapcheck(int argc, char *argv[])
                 has_bad = RT_TRUE;
                 break;
             }
-            /* move to next used memory block */
-            last = item;
         }
     }
     rt_hw_interrupt_enable(level);

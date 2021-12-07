@@ -1357,28 +1357,65 @@ rt_inline void _heap_unlock(rt_base_t level)
 }
 
 #if defined(RT_USING_SMALL_MEM_AS_HEAP)
-static struct rt_mem system_heap;
-#define _MEM_INIT               rt_mem_init
-#define _MEM_MALLOC             rt_mem_alloc
-#define _MEM_REALLOC            rt_mem_realloc
-#define _MEM_FREE(_obj, _ptr)   rt_mem_free(_ptr)
-#define _MEM_INFO               rt_mem_info
+static rt_smem_t system_heap;
+rt_inline void _smem_info(rt_uint32_t *total,
+    rt_uint32_t *used, rt_uint32_t *max_used)
+{
+    if (total)
+        *total = system_heap->total;
+    if (used)
+        *used = system_heap->used;
+    if (max_used)
+        *max_used = system_heap->max;
+}
+#define _MEM_INIT(_name, _start, _size) \
+    system_heap = rt_smem_init(_name, _start, _size)
+#define _MEM_MALLOC(_size)  \
+    rt_smem_alloc(system_heap, _size)
+#define _MEM_REALLOC(_ptr, _newsize)\
+    rt_smem_realloc(system_heap, _ptr, _newsize)
+#define _MEM_FREE(_ptr) \
+    rt_smem_free(_ptr)
+#define _MEM_INFO(_total, _used, _max)  \
+    _smem_info(_total, _used, _max)
 #elif defined(RT_USING_MEMHEAP_AS_HEAP)
 static struct rt_memheap system_heap;
-#define _MEM_INIT               rt_memheap_init
-#define _MEM_MALLOC             rt_memheap_alloc
-#define _MEM_REALLOC            rt_memheap_realloc
-#define _MEM_FREE(_obj, _ptr)   rt_memheap_free(_ptr)
-#define _MEM_INFO               rt_memheap_info
+void *_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
+void _memheap_free(void *rmem);
+void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize);
+#define _MEM_INIT(_name, _start, _size) \
+    rt_memheap_init(&system_heap, _name, _start, _size)
+#define _MEM_MALLOC(_size)  \
+    _memheap_alloc(&system_heap, _size)
+#define _MEM_REALLOC(_ptr, _newsize)    \
+    _memheap_realloc(&system_heap, _ptr, _newsize)
+#define _MEM_FREE(_ptr)   \
+    _memheap_free(_ptr)
+#define _MEM_INFO(_total, _used, _max)   \
+    rt_memheap_info(&system_heap, _total, _used, _max)
 #elif defined(RT_USING_SLAB_AS_HEAP)
-static struct rt_slab system_heap;
-#define _MEM_INIT       rt_slab_init
-#define _MEM_MALLOC     rt_slab_alloc
-#define _MEM_REALLOC    rt_slab_realloc
-#define _MEM_FREE       rt_slab_free
-#define _MEM_INFO       rt_slab_info
+static rt_slab_t system_heap;
+rt_inline void _slab_info(rt_uint32_t *total,
+    rt_uint32_t *used, rt_uint32_t *max_used)
+{
+    if (total)
+        *total = system_heap->total;
+    if (used)
+        *used = system_heap->used;
+    if (max_used)
+        *max_used = system_heap->max;
+}
+#define _MEM_INIT(_name, _start, _size) \
+    system_heap = rt_slab_init(_name, _start, _size)
+#define _MEM_MALLOC(_size)  \
+    rt_slab_alloc(system_heap, _size)
+#define _MEM_REALLOC(_ptr, _newsize)    \
+    rt_slab_realloc(system_heap, _ptr, _newsize)
+#define _MEM_FREE(_ptr) \
+    rt_slab_free(system_heap, _ptr)
+#define _MEM_INFO       _slab_info
 #else
-#define _MEM_INIT(...)      -RT_ERROR;
+#define _MEM_INIT(...)
 #define _MEM_MALLOC(...)     RT_NULL
 #define _MEM_REALLOC(...)    RT_NULL
 #define _MEM_FREE(...)
@@ -1396,13 +1433,11 @@ RT_WEAK void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
     rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
-    rt_err_t err;
 
     RT_ASSERT(end_align > begin_align);
 
     /* Initialize system memory heap */
-    err = _MEM_INIT(&system_heap, "heap", begin_addr, end_align - begin_align);
-    RT_ASSERT(err == RT_EOK);
+    _MEM_INIT("heap", begin_addr, end_align - begin_align);
     /* Initialize multi thread contention lock */
     _heap_lock_init();
 }
@@ -1422,32 +1457,7 @@ RT_WEAK void *rt_malloc(rt_size_t size)
     /* Enter critical zone */
     level = _heap_lock();
     /* allocate memory block from system heap */
-    ptr = _MEM_MALLOC(&system_heap, size);
-#if defined(RT_USING_MEMHEAP_AS_HEAP) && defined(RT_USING_MEMHEAP_AUTO_BINDING)
-    if (ptr == RT_NULL)
-    {
-        struct rt_object *object;
-        struct rt_list_node *node;
-        struct rt_object_information *information;
-
-        /* try to allocate on other memory heap */
-        information = rt_object_get_information(rt_object_get_type(&system_heap.parent));
-        RT_ASSERT(information != RT_NULL);
-        for (node  = information->object_list.next;
-             node != &(information->object_list);
-             node  = node->next)
-        {
-            object = rt_list_entry(node, struct rt_object, list);
-            /* not allocate in the default system heap */
-            if (object == &system_heap.parent)
-                continue;
-
-            ptr = _MEM_MALLOC((void *)object, size);
-            if (ptr != RT_NULL)
-                break;
-        }
-    }
-#endif /* RT_USING_MEMHEAP_AUTO_BINDING */
+    ptr = _MEM_MALLOC(size);
     /* Exit critical zone */
     _heap_unlock(level);
     /* call 'rt_malloc' hook */
@@ -1473,7 +1483,7 @@ RT_WEAK void *rt_realloc(void *rmem, rt_size_t newsize)
     /* Enter critical zone */
     level = _heap_lock();
     /* Change the size of previously allocated memory block */
-    nptr = _MEM_REALLOC(&system_heap, rmem, newsize);
+    nptr = _MEM_REALLOC(rmem, newsize);
     /* Exit critical zone */
     _heap_unlock(level);
     return nptr;
@@ -1522,7 +1532,7 @@ RT_WEAK void rt_free(void *rmem)
     RT_OBJECT_HOOK_CALL(rt_free_hook, (rmem));
     /* Enter critical zone */
     level = _heap_lock();
-    _MEM_FREE(&system_heap, rmem);
+    _MEM_FREE(rmem);
     /* Exit critical zone */
     _heap_unlock(level);
 }
@@ -1546,7 +1556,7 @@ RT_WEAK void rt_memory_info(rt_uint32_t *total,
 
     /* Enter critical zone */
     level = _heap_lock();
-    _MEM_INFO(&system_heap, total, used, max_used);
+    _MEM_INFO(total, used, max_used);
     /* Exit critical zone */
     _heap_unlock(level);
 }
@@ -1561,7 +1571,7 @@ void *rt_page_alloc(rt_size_t npages)
     /* Enter critical zone */
     level = _heap_lock();
     /* alloc page */
-    ptr = rt_slab_page_alloc(&system_heap, npages);
+    ptr = rt_slab_page_alloc(system_heap, npages);
     /* Exit critical zone */
     _heap_unlock(level);
     return ptr;
@@ -1574,7 +1584,7 @@ void rt_page_free(void *addr, rt_size_t npages)
     /* Enter critical zone */
     level = _heap_lock();
     /* free page */
-    rt_slab_page_free(&system_heap, addr, npages);
+    rt_slab_page_free(system_heap, addr, npages);
     /* Exit critical zone */
     _heap_unlock(level);
 }

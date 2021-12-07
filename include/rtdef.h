@@ -431,8 +431,7 @@ enum rt_object_class_type
     RT_Object_Class_Device        = 0x09,      /**< The object is a device. */
     RT_Object_Class_Timer         = 0x0a,      /**< The object is a timer. */
     RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
-    RT_Object_Class_Mem           = 0x0c,      /**< The object is a small memory. */
-    RT_Object_Class_Slab          = 0x0d,      /**< The object is a slab memory. */
+    RT_Object_Class_Memory        = 0x0c,      /**< The object is a memory. */
     RT_Object_Class_Unknown       = 0x0e,      /**< The object is unknown. */
     RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
@@ -819,46 +818,33 @@ typedef struct rt_messagequeue *rt_mq_t;
 
 /**@{*/
 
+#ifdef RT_USING_HEAP
+/*
+ * memory structure
+ */
+struct rt_memory
+{
+    struct rt_object        parent;                 /**< inherit from rt_object */
+    const char *            algorithm;              /**< Memory management algorithm name */
+    rt_ubase_t              address;                /**< memory start address */
+    rt_size_t               total;                  /**< memory size */
+    rt_size_t               used;                   /**< size used */
+    rt_size_t               max;                    /**< maximum usage */
+};
+typedef struct rt_memory *rt_mem_t;
+#endif
+
 /*
  * memory management
  * heap & partition
  */
 
 #ifdef RT_USING_SMALL_MEM
- /**
-  * memory item on the small mem
-  */
-struct rt_mem_item
-{
-    rt_ubase_t              pool_ptr;         /**< small memory object addr */
-#ifdef ARCH_CPU_64BIT
-    rt_uint32_t             resv;
-#endif /* ARCH_CPU_64BIT */
-    rt_size_t               next;             /**< next free item */
-    rt_size_t               prev;             /**< prev free item */
-#ifdef RT_USING_MEMTRACE
-#ifdef ARCH_CPU_64BIT
-    rt_uint8_t              thread[8];       /**< thread name */
-#else
-    rt_uint8_t              thread[4];       /**< thread name */
-#endif /* ARCH_CPU_64BIT */
-#endif /* RT_USING_MEMTRACE */
-};
+typedef rt_mem_t rt_smem_t;
+#endif
 
-/**
- * Base structure of small memory object
- */
-
-struct rt_mem
-{
-    struct rt_object        parent;                 /**< inherit from rt_object */
-    rt_uint8_t             *heap_ptr;               /**< pointer to the heap */
-    struct rt_mem_item     *heap_end;
-    struct rt_mem_item     *lfree;
-    rt_size_t               mem_size_aligned;       /**< aligned memory size */
-    rt_size_t               used_mem;               /**< size used */
-    rt_size_t               max_mem;                /**< maximum allocated size */
-};
+#ifdef RT_USING_SLAB
+typedef rt_mem_t rt_slab_t;
 #endif
 
 #ifdef RT_USING_MEMHEAP
@@ -900,78 +886,6 @@ struct rt_memheap
 
     struct rt_semaphore     lock;                       /**< semaphore lock */
     rt_bool_t               locked;                     /**< External lock mark */
-};
-#endif
-
-#ifdef RT_USING_SLAB
-/**
- * Base structure of slab memory object
- */
-
-/*
- * The IN-BAND zone header is placed at the beginning of each zone.
- */
-struct rt_slab_zone
-{
-    rt_uint32_t  z_magic;                    /**< magic number for sanity check */
-    rt_uint32_t  z_nfree;                    /**< total free chunks / ualloc space in zone */
-    rt_uint32_t  z_nmax;                     /**< maximum free chunks */
-    struct rt_slab_zone *z_next;            /**< zoneary[] link if z_nfree non-zero */
-    rt_uint8_t  *z_baseptr;                 /**< pointer to start of chunk array */
-
-    rt_uint32_t  z_uindex;                   /**< current initial allocation index */
-    rt_uint32_t  z_chunksize;                /**< chunk size for validation */
-
-    rt_uint32_t  z_zoneindex;                /**< zone index */
-    struct rt_slab_chunk  *z_freechunk;     /**< free chunk list */
-};
-
-/*
- * Chunk structure for free elements
- */
-struct rt_slab_chunk
-{
-    struct rt_slab_chunk *c_next;
-};
-
-struct rt_slab_memusage
-{
-    rt_uint32_t     type: 2 ;               /**< page type */
-    rt_uint32_t     size: 30;               /**< pages allocated or offset from zone */
-};
-
-/* 
- * slab page allocator
- */
-struct rt_slab_page
-{
-    struct rt_slab_page *next;      /**< next valid page */
-    rt_size_t page;                 /**< number of page  */
-
-    /* dummy */
-    char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_slab_page *) + sizeof(rt_size_t))];
-};
-
-#define RT_SLAB_NZONES                  72              /* number of zones */
-
-/*
- * slab object
- */
-struct rt_slab
-{
-    struct rt_object            parent;                         /**< inherit from rt_object */
-    rt_ubase_t                  heap_start;                     /**< memory start address */
-    rt_ubase_t                  heap_end;                       /**< memory end address */
-    struct rt_slab_memusage    *memusage;
-    struct rt_slab_zone        *zone_array[RT_SLAB_NZONES];     /* linked list of zones NFree > 0 */
-    struct rt_slab_zone        *zone_free;                      /* whole zones that have become free */
-    rt_uint32_t                 zone_free_cnt;
-    rt_uint32_t                 zone_size;
-    rt_uint32_t                 zone_limit;
-    rt_uint32_t                 zone_page_cnt;
-    struct rt_slab_page        *page_list;
-    rt_size_t                   used_mem;
-    rt_size_t                   max_mem;
 };
 #endif
 
