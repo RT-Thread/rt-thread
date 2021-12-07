@@ -47,9 +47,9 @@ struct slab_alloc_head
 static void slab_alloc_test(void)
 {
     struct slab_alloc_head head;
-    rt_uint8_t *begin, *buf;
-    struct rt_slab *heap;
-    rt_size_t buf_size, size;
+    rt_uint8_t *buf;
+    rt_slab_t heap;
+    rt_size_t size;
     struct slab_alloc_context *ctx;
 
     /* init */
@@ -61,11 +61,8 @@ static void slab_alloc_test(void)
     buf = rt_malloc(TEST_SLAB_SIZE);
     uassert_not_null(buf);
     uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
-    heap = (struct rt_slab *)buf;
-    begin = (rt_uint8_t *)&heap[1];
-    buf_size = buf + TEST_SLAB_SIZE - begin;
     rt_memset(buf, 0xAA, TEST_SLAB_SIZE);
-    rt_slab_init(heap, "slab_tc", begin, buf_size);
+    heap = rt_slab_init("slab_tc", buf, TEST_SLAB_SIZE);
     // test run
     while (head.end - head.start < RT_TICK_MAX / 2)
     {
@@ -182,9 +179,9 @@ struct slab_realloc_head
 static void slab_realloc_test(void)
 {
     struct slab_realloc_head head;
-    rt_uint8_t *begin, *buf;
-    struct rt_slab *heap;
-    rt_size_t buf_size, size, idx;
+    rt_uint8_t *buf;
+    rt_slab_t heap;
+    rt_size_t size, idx;
     struct slab_realloc_context *ctx;
     int res;
 
@@ -199,11 +196,8 @@ static void slab_realloc_test(void)
     buf = rt_malloc(TEST_SLAB_SIZE);
     uassert_not_null(buf);
     uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
-    heap = (struct rt_slab *)buf;
-    begin = (rt_uint8_t *)&heap[1];
-    buf_size = buf + TEST_SLAB_SIZE - begin;
     rt_memset(buf, 0xAA, TEST_SLAB_SIZE);
-    rt_slab_init(heap, "slab_tc", begin, buf_size);
+    heap = rt_slab_init("slab_tc", buf, TEST_SLAB_SIZE);
     /* init ctx tab */
     size = head.count * sizeof(struct slab_realloc_context *);
     head.ctx_tab = rt_slab_alloc(heap, size);
