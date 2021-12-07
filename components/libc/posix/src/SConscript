@@ -10,24 +10,8 @@ group   = []
 flag = False
 src += ['unistd.c'] #TODO
 
-if GetDepend('RT_USING_POSIX_DEVIO'):
-    src += ['libc.c']
-    flag = True
-
 if GetDepend('RT_USING_POSIX_DELAY'):
     src += ['delay.c']
-    flag = True
-
-if GetDepend('RT_USING_POSIX_POLL'):
-    src += ['poll.c']
-    flag = True
-
-if GetDepend('RT_USING_POSIX_SELECT'):
-    src += ['select.c']
-    flag = True
-
-if GetDepend('RT_USING_POSIX_MMAP'):
-    src += ['mmap.c']
     flag = True
 
 if flag == True:
