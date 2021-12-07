@@ -939,7 +939,7 @@ int memheaptrace(int argc, char *argv[])
     for (node = list->next; node != list; node = node->next)
     {
         struct rt_memheap_item *header_ptr;
-        rt_uint32_t block_size;
+        long block_size;
 
         mh = (struct rt_memheap *)rt_list_entry(node, struct rt_object, list);
         /* find the specified object */

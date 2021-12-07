@@ -819,7 +819,7 @@ void rt_slab_free(rt_slab_t m, void *ptr)
         *pz = z->z_next;
 
         /* reset zone */
-        z->z_magic = -1;
+        z->z_magic = RT_UINT32_MAX;
 
         /* insert to free zone list */
         z->z_next = slab->zone_free;

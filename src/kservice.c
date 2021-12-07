@@ -1314,7 +1314,6 @@ void rt_free_sethook(void (*hook)(void *ptr))
 #endif /* RT_USING_HOOK */
 
 #if defined(RT_USING_HEAP_ISR)
-volatile static rt_base_t _lock;
 #elif defined(RT_USING_MUTEX)
 static struct rt_mutex _lock;
 #endif
@@ -1322,7 +1321,6 @@ static struct rt_mutex _lock;
 rt_inline void _heap_lock_init(void)
 {
 #if defined(RT_USING_HEAP_ISR)
-    _lock = 0;
 #elif defined(RT_USING_MUTEX)
     rt_mutex_init(&_lock, "heap", RT_IPC_FLAG_PRIO);
 #endif
