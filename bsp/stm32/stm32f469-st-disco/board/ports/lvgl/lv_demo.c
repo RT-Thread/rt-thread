@@ -10,7 +10,7 @@
 #include <rtthread.h>
 #include <lvgl.h>
 #include <lv_port_indev.h>
-#define DBG_TAG    "LVGL"
+#define DBG_TAG    "LVGL.demo"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
