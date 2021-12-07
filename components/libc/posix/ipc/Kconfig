@@ -1,0 +1,17 @@
+menu "Interprocess Communication (IPC)"
+
+config RT_USING_POSIX_PIPE
+    bool "Enable pipe and FIFO"
+    select RT_USING_POSIX_FS
+    select RT_USING_POSIX_DEVIO
+    select RT_USING_POSIX_POLL
+    default n
+
+config RT_USING_POSIX_PIPE_SIZE
+    int "Set pipe buffer size"
+    depends on RT_USING_POSIX_PIPE
+    default 512
+
+comment "Socket is in the 'Network' category"
+
+endmenu

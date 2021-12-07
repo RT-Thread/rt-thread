@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <sys/errno.h>
 
-#ifdef RT_USING_POSIX_DEVIO
+#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
 #include <dfs_file.h>
 #include <dfs_posix.h>
 #include <poll.h>
@@ -320,9 +320,9 @@ static const struct dfs_file_ops pipe_fops =
     RT_NULL,
     pipe_fops_poll,
 };
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE) */
 
-rt_err_t  rt_pipe_open(rt_device_t device, rt_uint16_t oflag)
+static rt_err_t rt_pipe_open(rt_device_t device, rt_uint16_t oflag)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
     rt_err_t ret = RT_EOK;
@@ -350,7 +350,7 @@ __exit:
     return ret;
 }
 
-rt_err_t  rt_pipe_close(rt_device_t device)
+static rt_err_t rt_pipe_close(rt_device_t device)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
 
@@ -368,7 +368,7 @@ rt_err_t  rt_pipe_close(rt_device_t device)
     return RT_EOK;
 }
 
-rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
+static rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
     rt_size_t read_bytes = 0;
@@ -396,7 +396,7 @@ rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t
     return read_bytes;
 }
 
-rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
+static rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
     rt_size_t write_bytes = 0;
@@ -424,7 +424,7 @@ rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt
     return write_bytes;
 }
 
-rt_err_t  rt_pipe_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t rt_pipe_control(rt_device_t dev, int cmd, void *args)
 {
     return RT_EOK;
 }
@@ -479,9 +479,9 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
         rt_free(pipe);
         return RT_NULL;
     }
-#ifdef RT_USING_POSIX_DEVIO
+#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
     dev->fops = (void*)&pipe_fops;
-#endif /* RT_USING_POSIX_DEVIO */
+#endif
 
     return pipe;
 }
@@ -529,7 +529,7 @@ int rt_pipe_delete(const char *name)
     return result;
 }
 
-#ifdef RT_USING_POSIX_DEVIO
+#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
 int pipe(int fildes[2])
 {
     rt_pipe_t *pipe;
@@ -539,7 +539,7 @@ int pipe(int fildes[2])
 
     rt_snprintf(dname, sizeof(dname), "pipe%d", pipeno++);
 
-    pipe = rt_pipe_create(dname, PIPE_BUFSZ);
+    pipe = rt_pipe_create(dname, RT_USING_POSIX_PIPE_SIZE);
     if (pipe == RT_NULL)
     {
         return -1;
@@ -567,7 +567,7 @@ int mkfifo(const char *path, mode_t mode)
 {
     rt_pipe_t *pipe;
 
-    pipe = rt_pipe_create(path, PIPE_BUFSZ);
+    pipe = rt_pipe_create(path, RT_USING_POSIX_PIPE_SIZE);
     if (pipe == RT_NULL)
     {
         return -1;
@@ -575,4 +575,4 @@ int mkfifo(const char *path, mode_t mode)
 
     return 0;
 }
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE) */
