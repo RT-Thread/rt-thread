@@ -401,13 +401,6 @@
           <GroupName>CPlusPlus</GroupName>
           <Files>
             <File>
-              <FileName>cxx_Thread.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\components\cplusplus\cxx_Thread.cpp</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cxx_crt_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\cplusplus\cxx_crt_init.c</FilePath>
@@ -434,21 +427,28 @@
               <FilePath>..\..\components\cplusplus\cxx_Semaphore.cpp</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>cxx_Thread.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\components\cplusplus\cxx_Thread.cpp</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>showmem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -460,16 +460,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>stack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\s3c24x0\stack.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\s3c24x0\rtc.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\s3c24x0\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
@@ -481,23 +474,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\s3c24x0\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>interrupt.c</FileName>
+              <FileName>rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\s3c24x0\interrupt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\s3c24x0\system_clock.c</FilePath>
+              <FilePath>..\..\libcpu\arm\s3c24x0\rtc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -509,9 +488,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\s3c24x0\start_rvds.S</FilePath>
+              <FileName>stack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\s3c24x0\stack.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\s3c24x0\system_clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -519,6 +505,20 @@
               <FileName>mmu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\s3c24x0\mmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>start_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\s3c24x0\start_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\s3c24x0\interrupt.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -575,16 +575,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>workqueue.c</FileName>
+              <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -610,16 +617,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
+              <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -721,6 +721,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>dfs_elm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>ffunicode.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\filesystems\elmfat\ffunicode.c</FilePath>
@@ -731,13 +738,6 @@
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dfs_elm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -783,23 +783,23 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
+              <FilePath>..\..\src\irq.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>memheap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\memheap.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>clock.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -811,13 +811,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
@@ -825,9 +818,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>mempool.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -853,23 +846,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>mem.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>memheap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\memheap.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -877,6 +863,20 @@
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -898,20 +898,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>mem_std.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>syscalls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>libc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
@@ -926,9 +912,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>stdlib.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem_std.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\delay.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -940,9 +940,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>delay.c</FileName>
+              <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\delay.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -961,16 +961,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>mqueue.c</FileName>
+              <FileName>pthread_tls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\pthreads\mqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread_rwlock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\pthreads\pthread_rwlock.c</FilePath>
+              <FilePath>..\..\components\libc\pthreads\pthread_tls.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -982,20 +975,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>pthread_mutex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\pthreads\pthread_mutex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\pthreads\pthread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>semaphore.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\pthreads\semaphore.c</FilePath>
@@ -1003,9 +982,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pthread_attr.c</FileName>
+              <FileName>pthread_rwlock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\pthreads\pthread_attr.c</FilePath>
+              <FilePath>..\..\components\libc\pthreads\pthread_rwlock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1024,9 +1003,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>pthread_tls.c</FileName>
+              <FileName>pthread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\pthreads\pthread_tls.c</FilePath>
+              <FilePath>..\..\components\libc\pthreads\pthread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\mqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread_mutex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread_mutex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread_attr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread_attr.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1046,13 +1046,6 @@
         </Group>
         <Group>
           <GroupName>lwIP</GroupName>
-          <Files>
-            <File>
-              <FileName>ping.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\apps\ping\ping.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>netdb.c</FileName>
@@ -1163,6 +1156,13 @@
               <FileName>ip4.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.3\src\core\ipv4\ip4.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ping.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.3\src\apps\ping\ping.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1310,13 +1310,6 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
-              <FileName>netdev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\netdev\src\netdev.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>netdev_ipaddr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
@@ -1324,9 +1317,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>sal_socket.c</FileName>
+              <FileName>netdev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\sal_socket\src\sal_socket.c</FilePath>
+              <FilePath>..\..\components\net\netdev\src\netdev.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1338,6 +1331,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>sal_socket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\src\sal_socket.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dfs_net.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\sal_socket\dfs_net\dfs_net.c</FilePath>
@@ -1345,16 +1345,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>net_sockets.c</FileName>
+              <FileName>af_inet_lwip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\sal_socket\socket\net_sockets.c</FilePath>
+              <FilePath>..\..\components\net\sal_socket\impl\af_inet_lwip.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>af_inet_lwip.c</FileName>
+              <FileName>net_sockets.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\sal_socket\impl\af_inet_lwip.c</FilePath>
+              <FilePath>..\..\components\net\sal_socket\socket\net_sockets.c</FilePath>
             </File>
           </Files>
         </Group>
