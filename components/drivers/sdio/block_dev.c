@@ -449,7 +449,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     status = rt_mmcsd_req_blk(card, 0, sector, 1, 0);
     if (status == RT_EOK)
     {
-        rt_uint8_t i; 
+        rt_uint8_t i;
         char dname[8];
         struct dfs_partition part;
         struct mmcsd_blk_device *blk_dev = RT_NULL;
