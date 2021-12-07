@@ -55,4 +55,6 @@ if RT_USING_PTHREADS
         default 8
 endif
 
+source "$RTT_DIR/components/libc/posix/ipc/Kconfig"
+
 endmenu
