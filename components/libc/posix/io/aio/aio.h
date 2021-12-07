@@ -8,8 +8,8 @@
  * 2017/12/30     Bernard      The first version.
  */
 
-#ifndef POSIX_AIO_H__
-#define POSIX_AIO_H__
+#ifndef __AIO_H__
+#define __AIO_H__
 
 #include <stdio.h>
 #include <sys/signal.h>
