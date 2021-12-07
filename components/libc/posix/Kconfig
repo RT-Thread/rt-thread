@@ -30,7 +30,7 @@ if RT_USING_POSIX_FS
         bool "Enable Asynchronous I/O <aio.h>"
         default n
 
-    config RT_USING_POSIX_MMAP
+    config RT_USING_POSIX_MMAN
         bool "Enable Memory-Mapped I/O <sys/mman.h>"
         default n
 endif

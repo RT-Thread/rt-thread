@@ -14,7 +14,7 @@
 #include <rtthread.h>
 #include <dfs_posix.h>
 
-#include <sys/mman.h>
+#include "sys/mman.h"
 
 void *mmap(void *addr, size_t length, int prot, int flags,
     int fd, off_t offset)
