@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2020-09-01     Meco Man     First Version
  */
-#ifndef _SYS_IOCTL_H
-#define _SYS_IOCTL_H
+#ifndef __SYS_IOCTL_H__
+#define __SYS_IOCTL_H__
 
 #include <rtconfig.h>
 #include <dfs_posix.h>
