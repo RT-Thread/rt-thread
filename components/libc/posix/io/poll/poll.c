@@ -12,7 +12,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <dfs_file.h>
-#include <poll.h>
+#include "poll.h"
 
 struct rt_poll_node;
 
