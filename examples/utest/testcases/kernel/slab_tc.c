@@ -42,7 +42,7 @@ struct slab_alloc_head
 
 #define SLAB_RANG_ALLOC_BLK_MIN  2
 #define SLAB_RANG_ALLOC_BLK_MAX  5
-#define SLAB_RANG_ALLOC_TEST_TIME 10
+#define SLAB_RANG_ALLOC_TEST_TIME 5
 
 static void slab_alloc_test(void)
 {

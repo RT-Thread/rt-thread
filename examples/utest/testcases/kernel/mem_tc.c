@@ -300,7 +300,7 @@ struct mem_alloc_head
 
 #define MEM_RANG_ALLOC_BLK_MIN  2
 #define MEM_RANG_ALLOC_BLK_MAX  5
-#define MEM_RANG_ALLOC_TEST_TIME 10
+#define MEM_RANG_ALLOC_TEST_TIME 5
 
 static void mem_alloc_test(void)
 {
