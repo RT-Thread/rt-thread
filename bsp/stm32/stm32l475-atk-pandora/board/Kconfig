@@ -455,6 +455,32 @@ endmenu
 
 menu "Board extended module Drivers"
 
+    menuconfig BSP_USING_AT_ESP8266
+        bool "Enable ESP8266(AT Command, COM2)"
+        default n
+        select BSP_USING_COM2
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP8266
+        select AT_DEVICE_ESP8266_SAMPLE
+
+        if BSP_USING_AT_ESP8266
+            config ESP8266_SAMPLE_WIFI_SSID
+                string "WIFI ssid"
+                default "rtthread"
+
+            config ESP8266_SAMPLE_WIFI_PASSWORD
+                string "WIFI password"
+                default "12345678"
+
+            config ESP8266_SAMPLE_CLIENT_NAME
+                string "AT client device name (Must be 'uart2')"
+                default "uart2"
+
+            config ESP8266_SAMPLE_RECV_BUFF_LEN
+                int "The maximum length of receive line buffer"
+                default 512
+        endif
+
     config BSP_USING_NRF24L01
         bool "Enable NRF24L01"
         select BSP_USING_SPI
