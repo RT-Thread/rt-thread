@@ -724,7 +724,7 @@ RTM_EXPORT(rt_memheap_free);
 *
 * @param heap is a pointer to the memheap object, which will reallocate
 *             memory from the block
-* 
+*
 * @param total is a pointer to get the total size of the memory.
 *
 * @param used is a pointer to get the size of memory used.

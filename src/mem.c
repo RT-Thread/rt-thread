@@ -166,13 +166,13 @@ static void plug_holes(struct rt_small_mem *m, struct rt_small_mem_item *mem)
  * @brief This function will initialize small memory management algorithm.
  *
  * @param m the small memory management object.
- * 
+ *
  * @param name is the name of the small memory management object.
  *
  * @param begin_addr the beginning address of memory.
  *
  * @param size is the size of the memory.
- * 
+ *
  * @return Return a pointer to the memory object. When the return value is RT_NULL, it means the init failed.
  */
 rt_smem_t rt_smem_init(const char    *name,
@@ -271,7 +271,7 @@ RTM_EXPORT(rt_smem_detach);
  * @brief Allocate a block of memory with a minimum of 'size' bytes.
  *
  * @param m the small memory management object.
- * 
+ *
  * @param size is the minimum size of the requested block in bytes.
  *
  * @return the pointer to allocated memory or NULL if no free memory was found.
@@ -408,7 +408,7 @@ RTM_EXPORT(rt_smem_alloc);
  * @brief This function will change the size of previously allocated memory block.
  *
  * @param m the small memory management object.
- * 
+ *
  * @param rmem is the pointer to memory allocated by rt_mem_alloc.
  *
  * @param newsize is the required new size.

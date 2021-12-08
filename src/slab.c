@@ -169,7 +169,7 @@ struct rt_slab_memusage
     rt_uint32_t     size: 30;               /**< pages allocated or offset from zone */
 };
 
-/* 
+/*
  * slab page allocator
  */
 struct rt_slab_page
@@ -205,7 +205,7 @@ struct rt_slab
  * @brief Alloc memory size by page.
  *
  * @param slab the slab memory management object.
- * 
+ *
  * @param npages the number of pages.
  */
 void *rt_slab_page_alloc(rt_slab_t m, rt_size_t npages)
@@ -244,7 +244,7 @@ void *rt_slab_page_alloc(rt_slab_t m, rt_size_t npages)
  * @brief Free memory by page.
  *
  * @param slab the slab memory management object.
- * 
+ *
  * @param addr is the head address of first page.
  *
  * @param npages is the number of pages.
@@ -309,13 +309,13 @@ static void rt_slab_page_init(struct rt_slab *slab, void *addr, rt_size_t npages
  * @brief This function will init slab memory management algorithm
  *
  * @param slab the slab memory management object.
- * 
+ *
  * @param name is the name of the slab memory management object.
- * 
+ *
  * @param begin_addr the beginning address of system page.
  *
  * @param size is the size of the memory.
- * 
+ *
  * @return Return a pointer to the slab memory object.
  */
 rt_slab_t rt_slab_init(const char *name, void *begin_addr, rt_size_t size)
@@ -479,7 +479,7 @@ rt_inline int zoneindex(rt_size_t *bytes)
  *         - there is no nbytes sized memory valid in system.
  *
  * @param m the slab memory management object.
- * 
+ *
  * @param size is the size of memory to be allocated.
  *
  * @return the allocated memory.
@@ -657,7 +657,7 @@ RTM_EXPORT(rt_slab_alloc);
  * @brief This function will change the size of previously allocated memory block.
  *
  * @param m the slab memory management object.
- * 
+ *
  * @param ptr is the previously allocated memory block.
  *
  * @param size is the new size of memory block.
