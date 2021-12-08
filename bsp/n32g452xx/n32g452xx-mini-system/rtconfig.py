@@ -19,18 +19,20 @@ else:
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
-if  CROSS_TOOL == 'gcc':
-    PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/gcc-arm-none-eabi-6_2-2016q4/bin'
-elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armcc'
-    EXEC_PATH   = r'C:/Keil_v5'
-elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iar'
-    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
-
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if  CROSS_TOOL == 'gcc':
+    PLATFORM    = 'gcc'
+    if ('EXEC_PATH' in dir()) == False:
+        EXEC_PATH   = r'/opt/gcc-arm-none-eabi-6_2-2016q4/bin'
+elif CROSS_TOOL == 'keil':
+    PLATFORM    = 'armcc'
+    if ('EXEC_PATH' in dir()) == False:
+        EXEC_PATH   = r'C:/Keil_v5'
+elif CROSS_TOOL == 'iar':
+    PLATFORM    = 'iar'
+    if ('EXEC_PATH' in dir()) == False:
+        EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 BUILD = 'debug'
 
