@@ -21,9 +21,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#ifdef RT_USING_POSIX_STDIO
+#ifdef RT_USING_POSIX_DEVIO
 #include "libc.h"
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
 
 #define DBG_TAG    "armlibc.syscalls"
 #define DBG_LVL    DBG_INFO
@@ -33,7 +33,7 @@
 __asm(".global __use_no_semihosting\n\t");
 #else
 #pragma import(__use_no_semihosting_swi)
-#endif
+#endif /* __CLANG_ARM */
 
 /* Standard IO device handles. */
 #define STDIN       0
@@ -55,10 +55,10 @@ const char __stderr_name[] = "STDERR";
  */
 FILEHANDLE _sys_open(const char *name, int openmode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int fd;
     int mode = O_RDONLY;
-#endif
+#endif /* DFS_USING_POSIX */
 
     /* Register standard Input Output devices. */
     if (strcmp(name, __stdin_name) == 0)
@@ -68,7 +68,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
     if (strcmp(name, __stderr_name) == 0)
         return (STDERR);
 
-#ifndef RT_USING_POSIX
+#ifndef DFS_USING_POSIX
     return 0; /* error */
 #else
     /* Correct openmode from fopen to open */
@@ -102,19 +102,19 @@ FILEHANDLE _sys_open(const char *name, int openmode)
         return 0; /* error */
     else
         return fd;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _sys_close(FILEHANDLE fh)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     if (fh <= STDERR)
         return 0; /* error */
 
     return close(fh);
 #else
     return 0;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 /*
@@ -144,78 +144,93 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_POSIX_STDIO
+#ifdef DFS_USING_POSIX
     int size;
 
     if (fh == STDIN)
     {
+#ifdef RT_USING_POSIX_DEVIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard output before initializing libc");
-            return 0;
+            return 0; /* error, but keep going */
         }
         size = read(STDIN_FILENO, buf, len);
-        return len - size;
+        return len - size; /* success */
+#else
+        return 0; /* error */
+#endif /* RT_USING_POSIX_DEVIO */
     }
-    else if ((fh == STDOUT) || (fh == STDERR))
+    else if (fh == STDOUT || fh == STDERR)
     {
-        return 0; /* error */
+        return -1; /* 100% error */
     }
-
-    size = read(fh, buf, len);
-    if (size >= 0)
-        return len - size;
     else
-        return 0; /* error */
+    {
+        size = read(fh, buf, len);
+        if (size >= 0)
+        {
+            return len - size; /* success */
+        }
+        else
+        {
+            return 0; /* error */
+        }
+    }
 #else
     return 0; /* error */
-#endif /* RT_USING_POSIX_STDIO */
+#endif /* DFS_USING_POSIX */
 }
 
 /*
  * Write to a file. Returns 0 on success, negative on error, and
  * the number of characters _not_ written on partial success.
  * `mode' exists for historical reasons and must be ignored.
+ * The return value is either:
+ * A positive number representing the number of characters not written
+ * (so any nonzero return value denotes a failure of some sort).
+ * A negative number indicating an error.
  */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int size;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 
-    if ((fh == STDOUT) || (fh == STDERR))
+    if (fh == STDOUT || fh == STDERR)
     {
-#ifdef RT_USING_POSIX_STDIO
-        if (libc_stdio_get_console() < 0)
+#ifdef RT_USING_CONSOLE
+        rt_device_t console;
+        console = rt_console_get_device();
+        if (console)
         {
-            LOG_W("Do not invoke standard input before initializing libc");
-            return 0;
+            rt_device_write(console, -1, buf, len);
         }
-        size = write(STDOUT_FILENO, buf, len);
-        return len - size;
-#elif defined(RT_USING_CONSOLE)
-        if (rt_console_get_device())
-        {
-            rt_device_write(rt_console_get_device(), -1, buf, len);
-        }
-
+        return 0; /* success */
+#else
         return 0; /* error */
-#endif /* RT_USING_POSIX_STDIO */
+#endif /* RT_USING_CONSOLE */
     }
     else if (fh == STDIN)
     {
-        return 0; /* error */
+        return -1; /* 100% error */
     }
-
-#ifdef RT_USING_POSIX
-    size = write(fh, buf, len);
-    if (size >= 0)
-        return len - size;
     else
-        return 0; /* error */
+    {
+#ifdef DFS_USING_POSIX
+        size = write(fh, buf, len);
+        if (size >= 0)
+        {
+            return len - size; /* success */
+        }
+        else
+        {
+            return 0; /* error */
+        }
 #else
-    return 0;
-#endif /* RT_USING_POSIX */
+        return 0; /* error */
+#endif /* DFS_USING_POSIX */
+    }
 }
 
 /*
@@ -224,7 +239,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
  */
 int _sys_seek(FILEHANDLE fh, long pos)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     if (fh < STDERR)
         return 0; /* error */
 
@@ -232,7 +247,7 @@ int _sys_seek(FILEHANDLE fh, long pos)
     return lseek(fh, pos, 0);
 #else
     return 0; /* error */
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 /**
@@ -277,7 +292,7 @@ RT_WEAK void _sys_exit(int return_code)
  */
 long _sys_flen(FILEHANDLE fh)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     struct stat stat;
 
     if (fh < STDERR)
@@ -287,7 +302,7 @@ long _sys_flen(FILEHANDLE fh)
     return stat.st_size;
 #else
     return 0;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _sys_istty(FILEHANDLE fh)
@@ -300,11 +315,11 @@ int _sys_istty(FILEHANDLE fh)
 
 int remove(const char *filename)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     return unlink(filename);
 #else
     return 0; /* error */
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 #ifdef __MICROLIB
@@ -325,7 +340,7 @@ int fputc(int c, FILE *f)
 
 int fgetc(FILE *f)
 {
-#ifdef RT_USING_POSIX_STDIO
+#ifdef RT_USING_POSIX_DEVIO
     char ch;
 
     if (libc_stdio_get_console() < 0)
@@ -336,7 +351,7 @@ int fgetc(FILE *f)
 
     if(read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
-#endif /* RT_USING_POSIX_STDIO */
+#endif /* RT_USING_POSIX_DEVIO */
     return 0; /* error */
 }
 

@@ -11,7 +11,7 @@
 
 #include <rtthread.h>
 
-#if defined(RT_USING_FINSH) && defined(RT_USING_POSIX)
+#if defined(RT_USING_FINSH) && defined(DFS_USING_POSIX)
 
 #include <finsh.h>
 #include "msh.h"
@@ -702,5 +702,4 @@ static int cmd_tail(int argc, char **argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_tail, tail, print the last N - lines data of the given file);
 
-#endif /* defined(RT_USING_FINSH) && defined(RT_USING_POSIX) */
-
+#endif /* defined(RT_USING_FINSH) && defined(DFS_USING_POSIX) */

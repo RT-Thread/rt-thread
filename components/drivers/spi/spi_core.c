@@ -29,7 +29,7 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
         return result;
 
     /* initialize mutex lock */
-    rt_mutex_init(&(bus->lock), name, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&(bus->lock), name, RT_IPC_FLAG_PRIO);
     /* set ops */
     bus->ops = ops;
     /* initialize owner */

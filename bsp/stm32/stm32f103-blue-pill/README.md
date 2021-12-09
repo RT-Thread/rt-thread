@@ -151,6 +151,14 @@ You can use other USB to UART adapters to replace FTDI adapter.
 
 ### 3.4 Compile and Download
 
+#### 3.4.1 Using RT-Studio to create and compile the project
+
+***Please watch this tutorial video:***
+
+- [RT-Thread RTOS Tutorial #3 | Advanced Skills - YouTube](https://www.youtube.com/watch?v=k4-ArvvIiR8)
+
+#### 3.4.2 Using Keil-MDK or IAR to compile the project
+
 - Double-click the `project.uvprojx` file to open the MDK-Keil5 project  (**NOT** `template.uvprojx` file)
 - Click the “option for target” button
   - Debug: Choose "ST-LINK Debugger" and Click "Setting" button:
@@ -179,7 +187,7 @@ msh >
 
 ### 3.6 Terminal tool - PuTTy 
 
-If you have no terminal tool software available, you can download *PuTTy*:
+If you have no terminal tool software available, you can download ***PuTTy***:
 
 >  https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
 
@@ -220,7 +228,7 @@ Each peripheral supporting condition for this BSP is as follows:
 
 ### 3.8 MDK-Keil5 Simulator
 
- If you haven't had a real Blue Pill Board yet, you may use MDK-Keil5 simulator to simulate to run RT-Thread on Blue Pill Board.
+ If you haven't had a real Blue Pill Board yet, you may use MDK-Keil5 simulator to simulate to run RT-Thread on Blue Pill Board. Please Double-click the `project.uvprojx` file to open the MDK-Keil5 project  (**NOT** `template.uvprojx` file).
 
 ![simulator1](figures/simulator1.png)
 
@@ -231,12 +239,6 @@ Each peripheral supporting condition for this BSP is as follows:
 
 
 ![simulator3](figures/simulator3.png)
-
-
-
-### 3.9 How to create RT-Studio Project
-
-- [RT-Thread RTOS Tutorial #3 | Advanced Skills - YouTube](https://www.youtube.com/watch?v=k4-ArvvIiR8)
 
 
 

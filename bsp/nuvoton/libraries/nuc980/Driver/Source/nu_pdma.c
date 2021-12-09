@@ -8,9 +8,6 @@
 #include "nuc980.h"
 #include "nu_pdma.h"
 
-
-static uint8_t u32ChSelect[PDMA_CH_MAX];
-
 /** @addtogroup Standard_Driver Standard Driver
   @{
 */
@@ -44,7 +41,6 @@ void PDMA_Open(PDMA_T *pdma, uint32_t u32Mask)
         if ((1 << i) & u32Mask)
         {
             pdma->DSCT[i].CTL = 0UL;
-            u32ChSelect[i] = PDMA_MEM;
         }
     }
 
@@ -188,54 +184,27 @@ void PDMA_SetTransferAddr(PDMA_T *pdma, uint32_t u32Ch, uint32_t u32SrcAddr, uin
  */
 void PDMA_SetTransferMode(PDMA_T *pdma, uint32_t u32Ch, uint32_t u32Peripheral, uint32_t u32ScatterEn, uint32_t u32DescAddr)
 {
-    u32ChSelect[u32Ch] = u32Peripheral;
-    switch (u32Ch)
+    if (u32Ch < PDMA_CH_MAX)
     {
-    case 0ul:
-        pdma->REQSEL0_3 = (pdma->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC0_Msk) | u32Peripheral;
-        break;
-    case 1ul:
-        pdma->REQSEL0_3 = (pdma->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC1_Msk) | (u32Peripheral << PDMA_REQSEL0_3_REQSRC1_Pos);
-        break;
-    case 2ul:
-        pdma->REQSEL0_3 = (pdma->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC2_Msk) | (u32Peripheral << PDMA_REQSEL0_3_REQSRC2_Pos);
-        break;
-    case 3ul:
-        pdma->REQSEL0_3 = (pdma->REQSEL0_3 & ~PDMA_REQSEL0_3_REQSRC3_Msk) | (u32Peripheral << PDMA_REQSEL0_3_REQSRC3_Pos);
-        break;
-    case 4ul:
-        pdma->REQSEL4_7 = (pdma->REQSEL4_7 & ~PDMA_REQSEL4_7_REQSRC4_Msk) | u32Peripheral;
-        break;
-    case 5ul:
-        pdma->REQSEL4_7 = (pdma->REQSEL4_7 & ~PDMA_REQSEL4_7_REQSRC5_Msk) | (u32Peripheral << PDMA_REQSEL4_7_REQSRC5_Pos);
-        break;
-    case 6ul:
-        pdma->REQSEL4_7 = (pdma->REQSEL4_7 & ~PDMA_REQSEL4_7_REQSRC6_Msk) | (u32Peripheral << PDMA_REQSEL4_7_REQSRC6_Pos);
-        break;
-    case 7ul:
-        pdma->REQSEL4_7 = (pdma->REQSEL4_7 & ~PDMA_REQSEL4_7_REQSRC7_Msk) | (u32Peripheral << PDMA_REQSEL4_7_REQSRC7_Pos);
-        break;
-    case 8ul:
-        pdma->REQSEL8_11 = (pdma->REQSEL8_11 & ~PDMA_REQSEL8_11_REQSRC8_Msk) | u32Peripheral;
-        break;
-    case 9ul:
-        pdma->REQSEL8_11 = (pdma->REQSEL8_11 & ~PDMA_REQSEL8_11_REQSRC9_Msk) | (u32Peripheral << PDMA_REQSEL8_11_REQSRC9_Pos);
-        break;
-    default:
-        break;
-    }
+        __IO uint32_t *pau32REQSEL  = (__IO uint32_t *)&pdma->REQSEL0_3;
+        uint32_t u32REQSEL_Pos, u32REQSEL_Msk;
 
-    if (u32ScatterEn)
-    {
-        pdma->DSCT[u32Ch].CTL = (pdma->DSCT[u32Ch].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_SCATTER;
-        pdma->DSCT[u32Ch].NEXT = u32DescAddr - (pdma->SCATBA);
+        u32REQSEL_Pos = (u32Ch % 4) * 8 ;
+        u32REQSEL_Msk = PDMA_REQSEL0_3_REQSRC0_Msk << u32REQSEL_Pos;
+        pau32REQSEL[u32Ch / 4] = (pau32REQSEL[u32Ch / 4] & ~u32REQSEL_Msk) | (u32Peripheral << u32REQSEL_Pos);
+
+        if (u32ScatterEn)
+        {
+            pdma->DSCT[u32Ch].CTL = (pdma->DSCT[u32Ch].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_SCATTER;
+            pdma->DSCT[u32Ch].NEXT = u32DescAddr - (pdma->SCATBA);
+        }
+        else
+        {
+            pdma->DSCT[u32Ch].CTL = (pdma->DSCT[u32Ch].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_BASIC;
+        }
     }
-    else
-    {
-        pdma->DSCT[u32Ch].CTL = (pdma->DSCT[u32Ch].CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_BASIC;
-    }
+    else {}
 }
-
 /**
  * @brief       Set PDMA Burst Type and Size
  *
@@ -310,45 +279,21 @@ void PDMA_DisableTimeout(PDMA_T *pdma, uint32_t u32Mask)
  */
 void PDMA_SetTimeOut(PDMA_T *pdma, uint32_t u32Ch, uint32_t u32OnOff, uint32_t u32TimeOutCnt)
 {
-    switch (u32Ch)
+    if (u32Ch < PDMA_CH_MAX)
     {
-    case 0ul:
-        pdma->TOC0_1 = (pdma->TOC0_1 & ~PDMA_TOC0_1_TOC0_Msk) | u32TimeOutCnt;
-        break;
-    case 1ul:
-        pdma->TOC0_1 = (pdma->TOC0_1 & ~PDMA_TOC0_1_TOC1_Msk) | (u32TimeOutCnt << PDMA_TOC0_1_TOC1_Pos);
-        break;
-    case 2ul:
-        pdma->TOC2_3 = (pdma->TOC2_3 & ~PDMA_TOC2_3_TOC2_Msk) | u32TimeOutCnt;
-        break;
-    case 3ul:
-        pdma->TOC2_3 = (pdma->TOC2_3 & ~PDMA_TOC2_3_TOC3_Msk) | (u32TimeOutCnt << PDMA_TOC0_1_TOC1_Pos);
-        break;
-    case 4ul:
-        pdma->TOC4_5 = (pdma->TOC4_5 & ~PDMA_TOC4_5_TOC4_Msk) | u32TimeOutCnt;
-        break;
-    case 5ul:
-        pdma->TOC4_5 = (pdma->TOC4_5 & ~PDMA_TOC4_5_TOC5_Msk) | (u32TimeOutCnt << PDMA_TOC4_5_TOC5_Pos);
-        break;
-    case 6ul:
-        pdma->TOC6_7 = (pdma->TOC6_7 & ~PDMA_TOC6_7_TOC6_Msk) | u32TimeOutCnt;
-        break;
-    case 7ul:
-        pdma->TOC6_7 = (pdma->TOC6_7 & ~PDMA_TOC6_7_TOC7_Msk) | (u32TimeOutCnt << PDMA_TOC6_7_TOC7_Pos);
-        break;
-    case 8ul:
-        pdma->TOC8_9 = (pdma->TOC8_9 & ~PDMA_TOC8_9_TOC8_Msk) | u32TimeOutCnt;
-        break;
-    case 9ul:
-        pdma->TOC8_9 = (pdma->TOC8_9 & ~PDMA_TOC8_9_TOC9_Msk) | (u32TimeOutCnt << PDMA_TOC8_9_TOC9_Pos);
-        break;
-    default:
-        break;
+        __IO uint32_t *pau32TOC  = (__IO uint32_t *)&pdma->TOC0_1;
+        uint32_t u32TOC_Pos, u32TOC_Msk;
+
+        u32TOC_Pos = (u32Ch % 2) * 16 ;
+        u32TOC_Msk = PDMA_TOC0_1_TOC0_Msk << u32TOC_Pos;
+        pau32TOC[u32Ch / 2] = (pau32TOC[u32Ch / 2] & ~u32TOC_Msk) | (u32TimeOutCnt << u32TOC_Pos);
+
+        if (u32OnOff)
+            pdma->TOUTEN |= (1 << u32Ch);
+        else
+            pdma->TOUTEN &= ~(1 << u32Ch);
     }
-    if (u32OnOff)
-        pdma->TOUTEN |= (1 << u32Ch);
-    else
-        pdma->TOUTEN &= ~(1 << u32Ch);
+    else {}
 }
 
 /**
@@ -363,7 +308,15 @@ void PDMA_SetTimeOut(PDMA_T *pdma, uint32_t u32Ch, uint32_t u32OnOff, uint32_t u
  */
 void PDMA_Trigger(PDMA_T *pdma, uint32_t u32Ch)
 {
-    if (u32ChSelect[u32Ch] == PDMA_MEM)
+    __IO uint32_t *pau32REQSEL  = (__IO uint32_t *)&pdma->REQSEL0_3;
+    uint32_t u32REQSEL_Pos, u32REQSEL_Msk, u32ChReq;
+
+    u32REQSEL_Pos = (u32Ch % 4) * 8 ;
+    u32REQSEL_Msk = PDMA_REQSEL0_3_REQSRC0_Msk << u32REQSEL_Pos;
+
+    u32ChReq = (pau32REQSEL[u32Ch / 4] & u32REQSEL_Msk) >> u32REQSEL_Pos;
+
+    if (u32ChReq == PDMA_MEM)
     {
         pdma->SWREQ = (1ul << u32Ch);
     }

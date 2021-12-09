@@ -11,13 +11,13 @@
 #include <lcd_port.h>
 
 //#define DRV_DEBUG
-#define LOG_TAG             "lvgl.disp"
+#define LOG_TAG             "LVGL.port.disp"
 #include <drv_log.h>
 
 /*A static or global variable to store the buffers*/
 static lv_disp_draw_buf_t disp_buf;
 
-rt_device_t lcd_device = 0;
+static rt_device_t lcd_device = RT_NULL;
 static struct rt_device_graphic_info info;
 
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
@@ -41,7 +41,7 @@ static void DMA_TransferComplete(DMA_HandleTypeDef *han)
 
     if(y_fill_act > y2_fill)
     {
-          lv_disp_flush_ready(&disp_drv);
+        lv_disp_flush_ready(&disp_drv);
     }
     else
     {
@@ -51,16 +51,16 @@ static void DMA_TransferComplete(DMA_HandleTypeDef *han)
             (uint32_t)&((uint32_t *)info.framebuffer)[y_fill_act * info.width + x1_flush],
             (x2_flush - x1_flush + 1)) != HAL_OK)
         {
-            LOG_E("lvgl dma start error");
-            while(1);
+            LOG_E("HAL_DMA_Start_IT error");
+            RT_ASSERT(0);
         }
     }
 }
 
 static void DMA_TransferError(DMA_HandleTypeDef *han)
 {
-    LOG_E("dma transfer error");
-    while(1);
+    LOG_E("DMA_TransferError");
+    RT_ASSERT(0);
 }
 
 void DMA_STREAM_IRQHANDLER(void)
@@ -95,7 +95,8 @@ static void lvgl_dma_config(void)
 
     if (HAL_DMA_Init(&DmaHandle) != HAL_OK)
     {
-        while(1);
+        LOG_E("HAL_DMA_Init error");
+        RT_ASSERT(0);
     }
 
     HAL_DMA_RegisterCallback(&DmaHandle, HAL_DMA_XFER_CPLT_CB_ID, DMA_TransferComplete);
@@ -130,8 +131,8 @@ static void lcd_fb_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_colo
         (uint32_t)&((uint32_t *)info.framebuffer)[y_fill_act * info.width + x1_flush],
         (x2_flush - x1_flush + 1)) != HAL_OK)
     {
-        LOG_E("dma start it error");
-        while(1);
+        LOG_E("HAL_DMA_Start_IT error");
+        RT_ASSERT(0);
     }
 }
 

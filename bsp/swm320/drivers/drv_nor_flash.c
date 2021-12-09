@@ -96,7 +96,7 @@ int rt_hw_norflash_init(void)
     mtd.ops = &mtd_ops;
 
     /* initialize mutex */
-    if (rt_mutex_init(&flash_lock, "nor", RT_IPC_FLAG_FIFO) != RT_EOK)
+    if (rt_mutex_init(&flash_lock, "nor", RT_IPC_FLAG_PRIO) != RT_EOK)
     {
         rt_kprintf("init sd lock mutex failed\n");
         return -RT_ERROR;

@@ -68,6 +68,28 @@ void hal_printf(const char *fmt, ...)
 }
 #endif
 
+RT_SECTION(".irq")
+void os_interrupt_enter(void)
+{
+    rt_interrupt_enter();
+}
+
+RT_SECTION(".irq")
+void os_interrupt_leave(void)
+{
+    rt_interrupt_leave();
+}
+
+typedef void (*isr_t)(void);
+RT_SECTION(".irq")
+isr_t register_isr(int vector, isr_t isr)
+{
+    char buf[8] = {0};
+    rt_snprintf(buf, sizeof(buf), "sys%d", vector);
+    rt_isr_handler_t handle = (rt_isr_handler_t)isr;
+    rt_hw_interrupt_install(vector, handle, RT_NULL, buf);
+}
+
 RT_SECTION(".irq.timer")
 void timer0_isr(int vector, void *param)
 {
@@ -94,9 +116,55 @@ void timer0_cfg(uint32_t ticks)
     TMR0CON |= BIT(0); // EN
 }
 
-void hal_mdelay(uint32_t ms)
+uint32_t hal_get_ticks(void)
 {
-    rt_thread_mdelay(ms);
+    return rt_tick_get();
+}
+
+void hal_mdelay(uint32_t nms)
+{
+    rt_thread_mdelay(nms);
+}
+
+void hal_udelay(uint32_t nus)
+{
+    rt_hw_us_delay(nus);
+}
+
+/**
+ * The time delay function.
+ *
+ * @param us microseconds.
+ */
+RT_SECTION(".com_text")
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t ticks;
+    rt_uint32_t told, tnow, tcnt = 0;
+    rt_uint32_t reload = TMR0PR;
+
+    ticks = us * reload / (1000 / RT_TICK_PER_SECOND);
+    told = TMR0CNT;
+    while (1)
+    {
+        tnow = TMR0CNT;
+        if (tnow != told)
+        {
+            if (tnow < told)
+            {
+                tcnt += told - tnow;
+            }
+            else
+            {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+            if (tcnt >= ticks)
+            {
+                break;
+            }
+        }
+    }
 }
 
 void rt_hw_systick_init(void)
@@ -114,7 +182,7 @@ void rt_hw_systick_init(void)
 
     timer0_init();
     hal_set_tick_hook(timer0_cfg);
-    hal_set_ticks(get_sysclk_nhz()/RT_TICK_PER_SECOND);
+    hal_set_ticks(get_sysclk_nhz() / RT_TICK_PER_SECOND);
 
     PICCON |= 0x10002;
 }
@@ -149,14 +217,15 @@ RT_SECTION(".irq.cache")
 void cache_init(void)
 {
     os_cache_init();
-    rt_mutex_init(&mutex_spiflash, "flash_mutex", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&mutex_cache, "cache_mutex", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&mutex_spiflash, "flash_mutex", RT_IPC_FLAG_PRIO);
+    rt_mutex_init(&mutex_cache, "cache_mutex", RT_IPC_FLAG_PRIO);
 }
 
 RT_SECTION(".irq.cache")
 void os_spiflash_lock(void)
 {
-    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
+    {
         rt_mutex_take(&mutex_spiflash, RT_WAITING_FOREVER);
     }
 }
@@ -164,7 +233,8 @@ void os_spiflash_lock(void)
 RT_SECTION(".irq.cache")
 void os_spiflash_unlock(void)
 {
-    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
+    {
         rt_mutex_release(&mutex_spiflash);
     }
 }
@@ -172,7 +242,8 @@ void os_spiflash_unlock(void)
 RT_SECTION(".irq.cache")
 void os_cache_lock(void)
 {
-    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
+    {
         rt_mutex_take(&mutex_cache, RT_WAITING_FOREVER);
     }
 }
@@ -180,7 +251,8 @@ void os_cache_lock(void)
 RT_SECTION(".irq.cache")
 void os_cache_unlock(void)
 {
-    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
+    {
         rt_mutex_release(&mutex_cache);
     }
 }
@@ -212,5 +284,5 @@ void exception_isr(void)
     rt_kprintf(stack_info, rt_thread_self()->sp, rt_thread_self()->name);
 #endif
 
-    while(1);
+    while (1);
 }

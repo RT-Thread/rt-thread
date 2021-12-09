@@ -24,7 +24,7 @@ static float cortexm_cputime_getres(void)
     return ret;
 }
 
-static uint32_t cortexm_cputime_gettime(void)
+static uint64_t cortexm_cputime_gettime(void)
 {
     return DWT->CYCCNT;
 }

@@ -17,8 +17,10 @@ static void nu_pin_uart_init(void)
     /* UART0: GPF11, GPF12 */
     outpw(REG_SYS_GPF_MFPH, (inpw(REG_SYS_GPF_MFPH) & 0xfff00fff) | 0x11000);
 
+#if !defined(BOARD_USING_LCD_ILI9341)
     /* UART1: GPF9, GPF10 */
     outpw(REG_SYS_GPF_MFPH, (inpw(REG_SYS_GPF_MFPH) & 0xfffff00f) | 0x00220);
+#endif
 }
 
 static void nu_pin_emac_init(void)

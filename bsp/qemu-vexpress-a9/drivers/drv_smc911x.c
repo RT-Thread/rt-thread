@@ -13,6 +13,7 @@
 #include <netif/ethernetif.h>
 #include <lwipopts.h>
 #include <automac.h>
+#include "delay.h"
 
 #define MAX_ADDR_LEN                6
 #define SMC911X_EMAC_DEVICE(eth)    (struct eth_device_smc911x*)(eth)

@@ -11,9 +11,7 @@
 #define _SYS_IOCTL_H
 
 #include <rtconfig.h>
-#ifdef RT_USING_POSIX
 #include <dfs_posix.h>
-#endif
 
 #ifdef _WIN32
 #include <winsock.h>

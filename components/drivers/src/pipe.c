@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <sys/errno.h>
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 #include <dfs_file.h>
 #include <dfs_posix.h>
 #include <poll.h>
@@ -320,7 +320,7 @@ static const struct dfs_file_ops pipe_fops =
     RT_NULL,
     pipe_fops_poll,
 };
-#endif /* end of RT_USING_POSIX */
+#endif /* RT_USING_POSIX_DEVIO */
 
 rt_err_t  rt_pipe_open(rt_device_t device, rt_uint16_t oflag)
 {
@@ -439,7 +439,7 @@ const static struct rt_device_ops pipe_ops =
     rt_pipe_write,
     rt_pipe_control,
 };
-#endif
+#endif /* RT_USING_DEVICE_OPS */
 
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 {
@@ -451,7 +451,7 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 
     rt_memset(pipe, 0, sizeof(rt_pipe_t));
     pipe->is_named = RT_TRUE; /* initialize as a named pipe */
-    rt_mutex_init(&(pipe->lock), name, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&(pipe->lock), name, RT_IPC_FLAG_PRIO);
     rt_wqueue_init(&(pipe->reader_queue));
     rt_wqueue_init(&(pipe->writer_queue));
 
@@ -479,9 +479,9 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
         rt_free(pipe);
         return RT_NULL;
     }
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
     dev->fops = (void*)&pipe_fops;
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
 
     return pipe;
 }
@@ -529,7 +529,7 @@ int rt_pipe_delete(const char *name)
     return result;
 }
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 int pipe(int fildes[2])
 {
     rt_pipe_t *pipe;
@@ -575,4 +575,4 @@ int mkfifo(const char *path, mode_t mode)
 
     return 0;
 }
-#endif
+#endif /* RT_USING_POSIX_DEVIO */

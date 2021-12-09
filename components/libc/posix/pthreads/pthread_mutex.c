@@ -121,7 +121,7 @@ int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
         mutex->attr = *attr;
 
     /* init mutex lock */
-    result = rt_mutex_init(&(mutex->lock), name, RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&(mutex->lock), name, RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
         return EINVAL;
 

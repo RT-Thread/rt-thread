@@ -36,6 +36,7 @@
  * 2020-10-23     Meco Man     define maximum value of ipc type
  * 2021-03-19     Meco Man     add security devices
  * 2021-05-10     armink       change version number to v4.0.4
+ * 2021-11-19     Meco Man     change version number to v4.1.0
  */
 
 #ifndef __RT_DEF_H__
@@ -56,8 +57,8 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION                      4L              /**< major version number */
-#define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     4L              /**< revise version number */
+#define RT_SUBVERSION                   1L              /**< minor version number */
+#define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
@@ -75,11 +76,13 @@ typedef unsigned int                    rt_uint32_t;    /**< 32bit unsigned inte
 #ifdef ARCH_CPU_64BIT
 typedef signed long                     rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned integer type */
+typedef unsigned long                   rt_size_t;      /**< Type for size number */
 #else
 typedef signed long long                rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
-#endif
-#endif
+typedef unsigned int                    rt_size_t;      /**< Type for size number */
+#endif /* ARCH_CPU_64BIT */
+#endif /* RT_USING_ARCH_DATA_TYPE */
 
 typedef int                             rt_bool_t;      /**< boolean type */
 typedef long                            rt_base_t;      /**< Nbit CPU related date type */
@@ -89,7 +92,6 @@ typedef rt_base_t                       rt_err_t;       /**< Type for error numb
 typedef rt_uint32_t                     rt_time_t;      /**< Type for time stamp */
 typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count */
 typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
-typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
@@ -1032,7 +1034,7 @@ struct rt_device
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 #endif
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_DEVIO
     const struct dfs_file_ops *fops;
     struct rt_wqueue wait_queue;
 #endif

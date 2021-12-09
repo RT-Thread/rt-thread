@@ -640,7 +640,7 @@ int rt_hw_nand_init(void)
         LOG_D("nand flash init error!");
         return RT_ERROR;
     }
-    rt_mutex_init(&_device.lock, "nand", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_device.lock, "nand", RT_IPC_FLAG_PRIO);
 
     nand_dev.page_size       = 4096;
     nand_dev.pages_per_block = 224;

@@ -980,7 +980,7 @@ int ff_cre_syncobj(BYTE drv, FF_SYNC_t *m)
     rt_mutex_t mutex;
 
     rt_snprintf(name, sizeof(name), "fat%d", drv);
-    mutex = rt_mutex_create(name, RT_IPC_FLAG_FIFO);
+    mutex = rt_mutex_create(name, RT_IPC_FLAG_PRIO);
     if (mutex != RT_NULL)
     {
         *m = mutex;

@@ -1,4 +1,5 @@
 from building import *
+import os
 
 # The set of source files associated with this SConscript file.
 src = Split('''
@@ -8,6 +9,9 @@ src/dfs_fs.c
 ''')
 cwd = GetCurrentDir()
 CPPPATH = [cwd + "/include"]
+
+if GetDepend('DFS_USING_POSIX'):
+    src += ['src/dfs_posix.c']
 
 group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH)
 

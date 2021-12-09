@@ -34,7 +34,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI1_TX_DMA_RCC,                 \
         .Instance = SPI1_TX_DMA_INSTANCE,           \
-        .channel = SPI1_TX_DMA_CHANNEL,             \
         .dma_irq = SPI1_TX_DMA_IRQ,                 \
     }
 #endif /* SPI1_TX_DMA_CONFIG */
@@ -46,7 +45,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI1_RX_DMA_RCC,                 \
         .Instance = SPI1_RX_DMA_INSTANCE,           \
-        .channel = SPI1_RX_DMA_CHANNEL,             \
         .dma_irq = SPI1_RX_DMA_IRQ,                 \
     }
 #endif /* SPI1_RX_DMA_CONFIG */
@@ -69,7 +67,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI2_TX_DMA_RCC,                 \
         .Instance = SPI2_TX_DMA_INSTANCE,           \
-        .channel = SPI2_TX_DMA_CHANNEL,             \
         .dma_irq = SPI2_TX_DMA_IRQ,                 \
     }
 #endif /* SPI2_TX_DMA_CONFIG */
@@ -81,7 +78,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI2_RX_DMA_RCC,                 \
         .Instance = SPI2_RX_DMA_INSTANCE,           \
-        .channel = SPI2_RX_DMA_CHANNEL,             \
         .dma_irq = SPI2_RX_DMA_IRQ,                 \
     }
 #endif /* SPI2_RX_DMA_CONFIG */
@@ -104,7 +100,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI3_TX_DMA_RCC,                 \
         .Instance = SPI3_TX_DMA_INSTANCE,           \
-        .channel = SPI3_TX_DMA_CHANNEL,             \
         .dma_irq = SPI3_TX_DMA_IRQ,                 \
     }
 #endif /* SPI3_TX_DMA_CONFIG */
@@ -116,7 +111,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI3_RX_DMA_RCC,                 \
         .Instance = SPI3_RX_DMA_INSTANCE,           \
-        .channel = SPI3_RX_DMA_CHANNEL,             \
         .dma_irq = SPI3_RX_DMA_IRQ,                 \
     }
 #endif /* SPI3_RX_DMA_CONFIG */
@@ -139,7 +133,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI4_TX_DMA_RCC,                 \
         .Instance = SPI4_TX_DMA_INSTANCE,           \
-        .channel = SPI4_TX_DMA_CHANNEL,             \
         .dma_irq = SPI4_TX_DMA_IRQ,                 \
     }
 #endif /* SPI4_TX_DMA_CONFIG */
@@ -151,7 +144,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI4_RX_DMA_RCC,                 \
         .Instance = SPI4_RX_DMA_INSTANCE,           \
-        .channel = SPI4_RX_DMA_CHANNEL,             \
         .dma_irq = SPI4_RX_DMA_IRQ,                 \
     }
 #endif /* SPI4_RX_DMA_CONFIG */
@@ -174,7 +166,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI5_TX_DMA_RCC,                 \
         .Instance = SPI5_TX_DMA_INSTANCE,           \
-        .channel = SPI5_TX_DMA_CHANNEL,             \
         .dma_irq = SPI5_TX_DMA_IRQ,                 \
     }
 #endif /* SPI5_TX_DMA_CONFIG */
@@ -186,7 +177,6 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI5_RX_DMA_RCC,                 \
         .Instance = SPI5_RX_DMA_INSTANCE,           \
-        .channel = SPI5_RX_DMA_CHANNEL,             \
         .dma_irq = SPI5_RX_DMA_IRQ,                 \
     }
 #endif /* SPI5_RX_DMA_CONFIG */

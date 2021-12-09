@@ -40,6 +40,14 @@
 #include <string.h>
 #include <stdint.h>
 
+#ifndef BYTE_ORDER
+#ifdef RT_USING_BIG_ENDIAN
+#define BYTE_ORDER BIG_ENDIAN
+#else
+#define BYTE_ORDER LITTLE_ENDIAN
+#endif /* RT_USING_BIG_ENDIAN */
+#endif /* BYTE_ORDER */
+
 typedef uint8_t   u8_t;
 typedef int8_t    s8_t;
 typedef uint16_t  u16_t;

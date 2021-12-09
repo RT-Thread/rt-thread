@@ -16,9 +16,9 @@
  */
 
 #include <rtthread.h>
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 #include <rtdevice.h> /* for wqueue_init */
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_DEVIO */
 
 #ifdef RT_USING_DEVICE
 
@@ -64,10 +64,10 @@ rt_err_t rt_device_register(rt_device_t dev,
     dev->ref_count = 0;
     dev->open_flag = 0;
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
     dev->fops = RT_NULL;
     rt_wqueue_init(&(dev->wait_queue));
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_DEVIO */
 
     return RT_EOK;
 }

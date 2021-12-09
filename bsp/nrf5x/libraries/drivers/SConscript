@@ -39,6 +39,9 @@ if GetDepend(['BSP_USING_WDT']):
 
 if GetDepend(['BSP_USING_ONCHIP_RTC']):
     src += ['drv_rtc.c']
+    
+if GetDepend(['BSP_USING_TIM']):
+    src += ['drv_hwtimer.c']
 
 path =  [cwd]
 

@@ -8,6 +8,10 @@ config RT_USING_DFS
         The device file system is a light weight virtual file system.
 
 if RT_USING_DFS
+    config DFS_USING_POSIX
+        bool "Using posix-like functions, open/read/write/close"
+        default y
+
     config DFS_USING_WORKDIR
         bool "Using working directory"
         default y
