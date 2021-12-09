@@ -77,6 +77,7 @@ RT-Thread supports many architectures, and has covered the major architectures i
 - **ARM Cortex-M4**：manufacturers like ST、Nuvton、NXP、GigaDevice、Realtek、Ambiq Micro, ect.
 - **ARM Cortex-M7**：manufacturers like ST、NXP
 - **ARM Cortex-M23**：manufacturers like GigaDevice
+- **ARM Cortex-M33**：manufacturers like ST
 - **ARM Cortex-R4**
 - **ARM Cortex-A8/A9**：manufacturers like NXP
 - **ARM7**：manufacturers like Samsung
