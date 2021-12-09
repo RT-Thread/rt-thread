@@ -143,6 +143,7 @@ contex_ns_store:
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
     TST     lr, #0x10                               /* if(!EXC_RETURN[4]) */
+    IT      EQ
     VSTMDBEQ  r1!, {d8 - d15}                       /* push FPU register s16~s31 */
 #endif
 
@@ -187,6 +188,7 @@ contex_ns_load:
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
     TST     lr, #0x10                               /* if(!EXC_RETURN[4]) */
+    IT      EQ
     VLDMIAEQ  r1!, {d8 - d15}                       /* pop FPU register s16~s31 */
 #endif
 
