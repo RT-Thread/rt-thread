@@ -297,6 +297,8 @@ static int  ehci_init(void)
     _ehci->UCFGR = 0x1;                          /* enable port routing to EHCI           */
     _ehci->UIENR = HSUSBH_UIENR_USBIEN_Msk | HSUSBH_UIENR_UERRIEN_Msk | HSUSBH_UIENR_HSERREN_Msk | HSUSBH_UIENR_IAAEN_Msk;
 
+    _ehci->UASSTR = 0xfff;
+
     usbh_delay_ms(1);                              /* delay 1 ms                            */
 
     _ehci->UPSCR[0] = HSUSBH_UPSCR_PP_Msk;      /* enable port 1 port power               */
@@ -905,7 +907,7 @@ static int visit_qtd(qTD_T *qtd)
     return 0;
 }
 
-static void scan_asynchronous_list()
+void scan_asynchronous_list()
 {
     QH_T    *qh, *qh_tmp;
     qTD_T   *q_pre, *qtd, *qtd_tmp;
@@ -1094,9 +1096,8 @@ void iaad_remove_qh()
 //void EHCI_IRQHandler(void)
 void nu_ehci_isr(int vector, void *param)
 {
-    uint32_t  intsts;
+    volatile uint32_t  intsts = _ehci->USTSR;
 
-    intsts = _ehci->USTSR;
     _ehci->USTSR = intsts;                  /* clear interrupt status                     */
 
     //USB_debug("ehci int_sts = 0x%x\n", intsts);

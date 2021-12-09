@@ -21,6 +21,23 @@ struct rt_data_item
     rt_size_t data_size;
 };
 
+/**
+ * @brief    This function will initialize the data queue. Calling this function will
+ *           initialize the data queue control block and set the notification callback function.
+ *
+ * @param    queue is a pointer to the data queue object.
+ *
+ * @param    size is the maximum number of data in the data queue.
+ *
+ * @param    lwm is low water mark.
+ *           When the number of data in the data queue is less than this value, this function will
+ *           wake up the thread waiting for write data.
+ *
+ * @param    evt_notify is the notification callback function.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           When the return value is RT_ENOMEM, it means insufficient memory allocation failed.
+ */
 rt_err_t
 rt_data_queue_init(struct rt_data_queue *queue,
                    rt_uint16_t size,
@@ -54,6 +71,21 @@ rt_data_queue_init(struct rt_data_queue *queue,
 }
 RTM_EXPORT(rt_data_queue_init);
 
+/**
+ * @brief    This function will write data to the data queue. If the data queue is full,
+ *           the thread will suspend for the specified amount of time.
+ *
+ * @param    queue is a pointer to the data queue object.
+ * .
+ * @param    data_ptr is the buffer pointer of the data to be written.
+ *
+ * @param    size is the size in bytes of the data to be written.
+ *
+ * @param    timeout is the waiting time.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           When the return value is RT_ETIMEOUT, it means the specified time out.
+ */
 rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
                             const void *data_ptr,
                             rt_size_t data_size,
@@ -153,6 +185,24 @@ __exit:
 }
 RTM_EXPORT(rt_data_queue_push);
 
+/**
+ * @brief    This function will pop data from the data queue. If the data queue is empty,the thread
+ *           will suspend for the specified amount of time.
+ *
+ * @note     When the number of data in the data queue is less than lwm(low water mark), will
+ *           wake up the thread waiting for write data.
+ *
+ * @param    queue is a pointer to the data queue object.
+ *
+ * @param    data_ptr is the buffer pointer of the data to be fetched.
+ *
+ * @param    size is the size in bytes of the data to be fetched.
+ *
+ * @param    timeout is the waiting time.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           When the return value is RT_ETIMEOUT, it means the specified time out.
+ */
 rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
                            const void** data_ptr,
                            rt_size_t *size,
@@ -264,6 +314,18 @@ __exit:
 }
 RTM_EXPORT(rt_data_queue_pop);
 
+/**
+ * @brief    This function will fetch but retaining data in the data queue.
+ *
+ * @param    queue is a pointer to the data queue object.
+ *
+ * @param    data_ptr is the buffer pointer of the data to be fetched.
+ *
+ * @param    size is the size in bytes of the data to be fetched.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           When the return value is -RT_EEMPTY, it means the data queue is empty.
+ */
 rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
                             const void** data_ptr,
                             rt_size_t *size)
@@ -289,6 +351,14 @@ rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
 }
 RTM_EXPORT(rt_data_queue_peek);
 
+/**
+ * @brief    This function will reset the data queue.
+ *
+ * @note     Calling this function will wake up all threads on the data queue
+ *           that are hanging and waiting.
+ *
+ * @param    queue is a pointer to the data queue object.
+ */
 void rt_data_queue_reset(struct rt_data_queue *queue)
 {
     rt_ubase_t  level;
@@ -362,6 +432,13 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
 }
 RTM_EXPORT(rt_data_queue_reset);
 
+/**
+ * @brief    This function will deinit the data queue.
+ *
+ * @param    queue is a pointer to the data queue object.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ */
 rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
 {
     rt_ubase_t level;
@@ -382,6 +459,13 @@ rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
 }
 RTM_EXPORT(rt_data_queue_deinit);
 
+/**
+ * @brief    This function will get the number of data in the data queue.
+ *
+ * @param    queue is a pointer to the data queue object.
+ *
+ * @return   Return the number of data in the data queue.
+ */
 rt_uint16_t rt_data_queue_len(struct rt_data_queue *queue)
 {
     rt_ubase_t level;

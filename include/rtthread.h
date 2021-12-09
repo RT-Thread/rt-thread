@@ -15,6 +15,7 @@
  * 2016-08-09     ArdaFu       add new thread and interrupt hook.
  * 2018-11-22     Jesven       add all cpu's lock and ipi handler
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
+ * 2021-11-14     Meco Man     add rtlegacy.h for compatibility
  */
 
 #ifndef __RT_THREAD_H__
@@ -25,6 +26,9 @@
 #include <rtdef.h>
 #include <rtservice.h>
 #include <rtm.h>
+#ifdef RT_USING_LEGACY
+#include <rtlegacy.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -537,14 +541,14 @@ void rt_components_board_init(void);
 #define rt_kprintf(...)
 #define rt_kputs(str)
 #else
-void rt_kprintf(const char *fmt, ...);
+int rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
 #endif
 
-rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
-rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
-rt_int32_t rt_sprintf(char *buf, const char *format, ...);
-rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
+int rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
+int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
+int rt_sprintf(char *buf, const char *format, ...);
+int rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);

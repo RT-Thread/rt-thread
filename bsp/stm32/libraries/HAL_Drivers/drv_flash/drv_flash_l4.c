@@ -233,7 +233,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
     HAL_FLASH_Unlock();
 
     /* Clear OPTVERR bit set on virgin samples */
-    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
+    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR | FLASH_FLAG_PGSERR);
     /* Get the 1st page to erase */
     FirstPage = GetPage(addr);
     /* Get the number of pages to erase from 1st page */

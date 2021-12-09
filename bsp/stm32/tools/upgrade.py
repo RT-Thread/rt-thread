@@ -24,7 +24,8 @@
 
 # 本文件用于在HAL库更新之后
 # 1.对gcc的汇编启动文件中main替换为entry函数
-# 2.将启动文件heap降为0
+# 2.将启动文件heap降为0(Keil IAR)
+# 3.将GCC的堆大小扩展到0x400，与Keil IAR保持一致
 
 
 #使用方法：运行脚本，将bsp/stm32的绝对路径传给脚本即可，如：C:\Users\92036\Desktop\rt-thread\bsp\stm32
@@ -122,10 +123,10 @@ def heap2zero(path):
                         if line == '':
                             break
 
-                        re_result = re.match('\s*_system_stack_size\s*=\s*0[xX][0-9a-fA-F]+', line) #GCC的表示方法
+                        re_result = re.match('\s*_system_stack_size\s*=\s*0[xX][0-9a-fA-F]+', line) #GCC的表示方法, 将默认的栈大小增加到0x400
                         if re_result != None:
                             oldline = line
-                            newline = re.sub('0[xX][0-9a-fA-F]+','0x000', oldline)
+                            newline = re.sub('0[xX][0-9a-fA-F]+','0x400', oldline)
                             flag_need_replace = True
                             break
 

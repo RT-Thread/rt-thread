@@ -217,7 +217,7 @@ int rt_hw_crypto_init(void)
     {
         return -1;
     }
-    rt_mutex_init(&_crypto_dev.mutex, RT_HWCRYPTO_DEFAULT_NAME, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_crypto_dev.mutex, RT_HWCRYPTO_DEFAULT_NAME, RT_IPC_FLAG_PRIO);
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_crypto_init);

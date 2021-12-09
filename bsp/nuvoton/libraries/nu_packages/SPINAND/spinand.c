@@ -26,7 +26,48 @@
 const struct nu_spinand_info g_spinandflash_list[] =
 {
     /* Winbond */
-    { 0xEFAA21, 2048, 64, 0x6b, 0xff, 0xff, 0xff, 0x1, 1024, 64, 0, "Winbond 128MB: 2048+64@64@1024" }, /* Only tested */
+    /* Only tested */
+    {
+        0xEFAA21, 2048, 64, 0x6b, 0xff, 0xff, 0xff, 0x1, 1024, 64, 0, "Winbond 128MB: 2048+64@64@1024",
+#if defined(RT_USING_DFS_UFFS)
+        {
+            /* For storing Seal-byte at 0x37. Need 15-Bytes */
+            0x04, 0x04, 0x14, 0x04, 0x24, 0x04, 0x34, 0x03, 0xFF, 0x00
+        },
+        {
+            /* For storing Seal-byte at 0x37 and not report latest ECC part in Spare-3 */
+            0x08, 0x08, 0x18, 0x08, 0x28, 0x08, /*0x38, 0x08,*/ 0xFF, 0x00
+        }
+#else
+        {
+            0x04, 0x04, 0x14, 0x04, 0x24, 0x04, 0x34, 0x04, 0xFF, 0x00
+        },
+        {
+            0x08, 0x08, 0x18, 0x08, 0x28, 0x08, 0x38, 0x08, 0xFF, 0x00
+        }
+#endif
+    },
+
+    {
+        0xEFBF22, 2048, 64, 0x6b, 0xff, 0xff, 0xff, 0x1, 2048, 64, 0, "Winbond 256MB: 2048+64@64@2048",
+#if defined(RT_USING_DFS_UFFS)
+        {
+            /* For storing Seal-byte at 0x39. Need 15-Bytes */
+            0x08, 0x04, 0x18, 0x04, 0x28, 0x04, 0x38, 0x03, 0xFF, 0x00
+        },
+        {
+            /* For storing Seal-byte at 0x39 and not report latest ECC part in Spare-3 */
+            0x0C, 0x04, 0x1C, 0x04, 0x2C, 0x04, /*0x3C, 0x04,*/ 0xFF, 0x00
+        }
+#else
+        {
+            0x08, 0x04, 0x18, 0x04, 0x28, 0x04, 0x38, 0x04, 0xFF, 0x00
+        },
+        {
+            0x0C, 0x04, 0x1C, 0x04, 0x2C, 0x04, 0x3C, 0x04, 0xFF, 0x00
+        }
+#endif
+    },
 
 #if 0
     { 0xEFAA22, 2048, 64, 0x6b, 0xff, 0xff, 0xff, 0x1, 2048, 64, 0, "Winbond 256MB: 2048+64@64@1024" },
@@ -61,6 +102,7 @@ const struct nu_spinand_info g_spinandflash_list[] =
 
 
 /*
+========================================================
 For 0xEFAA21 description:
 
 Data Area(2048-Byte)
@@ -112,27 +154,66 @@ ECC Spare: ECC for spare 4-D.
 | 0 1 2 3 | 4 5 6 7 | 8 9 A B C D | E F       |
 -----------------------------------------------
 |  NO ECC |   ECC PROTECTED       | ECC 34-3D |
+
+========================================================
+
+========================================================
+For 0xEFBF22 description:
+
+Data Area(2048-Byte)
+-----------------------------
+|Sect-0|Sect-1|Sect-2|Sect-3|
+|(512B)|(512B)|(512B)|(512B)|
+-----------------------------
+
+         Spare Area(64-Byte)
+         ---------------------------------
+         |Spare-0|Spare-1|Spare-2|Spare-3|
+         | (16B) | (16B) | (16B) | (16B) |
+         ---------------------------------
+
+ ----------------- Spare-0 -------------------
+/                                             \
+-----------------------------------------
+| BBM |     UD2     |   UD1   | ECC UD1 |
+| 0 1 | 2 3 4 5 6 7 | 8 9 A B | C D E F |
+-----------------------------------------
+|       NO ECC      |   ECC PROTECTED   |
+
+BBM: Bad block marker.
+UD1: User Data 1.
+UD2: User Data 2.
+ECC UD1: ECC for UD1.
+
+ ---------------- Spare-1 -------------------
+/                                            \
+---------------------------------------
+|       UD2       |   UD1   | ECC UD1 |
+| 0 1 2 3 4 5 6 7 | 8 9 A B | C D E F |
+---------------------------------------
+|      NO ECC     |   ECC PROTECTED   |
+
+ ---------------- Spare-2 -------------------
+/                                            \
+---------------------------------------
+|       UD2       |   UD1   | ECC UD1 |
+| 0 1 2 3 4 5 6 7 | 8 9 A B | C D E F |
+---------------------------------------
+|      NO ECC     |   ECC PROTECTED   |
+
+ ---------------- Spare-3 -------------------
+/                                            \
+---------------------------------------
+|       UD2       |   UD1   | ECC UD1 |
+| 0 1 2 3 4 5 6 7 | 8 9 A B | C D E F |
+---------------------------------------
+|      NO ECC     |   ECC PROTECTED   |
+
+========================================================
 */
 
-rt_uint8_t spinand_flash_data_layout[SPINAND_SPARE_LAYOUT_SIZE] =
-{
-#if defined(RT_USING_DFS_UFFS)
-    /* For storing Seal-byte at 0x37. */
-    0x04, 0x04, 0x14, 0x04, 0x24, 0x04, 0x34, 0x03, 0xFF, 0x00
-#else
-    0x04, 0x04, 0x14, 0x04, 0x24, 0x04, 0x34, 0x04, 0xFF, 0x00
-#endif
-};
-
-rt_uint8_t spinand_flash_ecc_layout[SPINAND_SPARE_LAYOUT_SIZE] =
-{
-#if defined(RT_USING_DFS_UFFS)
-    /* For storing Seal-byte at 0x37 and not report latest ECC part in Spare-3 */
-    0x08, 0x08, 0x18, 0x08, 0x28, 0x08, /*0x38, 0x08,*/ 0xFF, 0x00
-#else
-    0x08, 0x08, 0x18, 0x08, 0x28, 0x08, 0x38, 0x08, 0xFF, 0x00
-#endif
-};
+rt_uint8_t spinand_flash_data_layout[SPINAND_SPARE_LAYOUT_SIZE];
+rt_uint8_t spinand_flash_ecc_layout[SPINAND_SPARE_LAYOUT_SIZE];
 
 static rt_err_t spinand_info_read(struct rt_qspi_device *qspi);
 
@@ -186,7 +267,6 @@ static rt_err_t spinand_program_dataload(
     uint8_t *pu8SpareBuff,
     uint32_t u32SpareCount)
 {
-    uint32_t volatile i = 0;
     uint8_t u8WECmd = 0x06;
     rt_err_t result = RT_EOK;
 
@@ -667,6 +747,9 @@ static rt_err_t spinand_info_read(struct rt_qspi_device *qspi)
     {
         if (u32JedecId == g_spinandflash_list[i].u32JEDECID)   /* Match JEDECID? */
         {
+            rt_memcpy((void *)&spinand_flash_data_layout[0], (void *)&g_spinandflash_list[i].au8DataLayout[0], SPINAND_SPARE_LAYOUT_SIZE);
+            rt_memcpy((void *)&spinand_flash_ecc_layout[0], (void *)&g_spinandflash_list[i].au8EccLayout[0], SPINAND_SPARE_LAYOUT_SIZE);
+
             rt_memcpy(SPINAND_FLASH_INFO, &g_spinandflash_list[i], sizeof(struct nu_spinand_info));
             LOG_I("Found: [%08X] %s.", u32JedecId, SPINAND_FLASH_DESCRIPTION);
 

@@ -169,7 +169,7 @@ MSH_CMD_EXPORT(pwm_sample, pwm sample);
 #endif
 
 #ifdef RT_USING_RTC
-#include <time.h>
+#include <sys/time.h>
 static int rtc_sample(int argc, char *argv[])
 {
     rt_err_t ret = RT_EOK;

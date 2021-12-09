@@ -79,7 +79,9 @@ void rtthread_startup(void)
 #ifdef RT_USING_FINSH
     /* init finsh */
     finsh_system_init();
+#if !defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_DEVICE)
     finsh_set_device( FINSH_DEVICE_NAME );
+#endif
 #endif
 
     /* init timer thread */

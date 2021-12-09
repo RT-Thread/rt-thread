@@ -9,13 +9,16 @@
  * 2018-09-18    balanceTWK         add sleep mode function
  * 2018-09-27    ZYLX               optimized display speed
  * 2021-10-17    Meco Man           add lcd_fill_array()
+ * 2021-10-17    Meco Man           fix the bug of lcd_fill_array()
  */
 
 #include <rtdevice.h>
 #include <drv_gpio.h>
 #include <drv_spi.h>
 #include "drv_lcd.h"
+#ifndef BSP_USING_LVGL
 #include "drv_lcd_font.h"
+#endif /* BSP_USING_LVGL */
 
 #define DBG_TAG    "drv.lcd"
 #define DBG_LVL    DBG_INFO
@@ -24,9 +27,11 @@
 #define LCD_PWR_PIN           GET_PIN(B, 7)
 #define LCD_DC_PIN            GET_PIN(B, 4)
 #define LCD_RES_PIN           GET_PIN(B, 6)
-#define LCD_CLEAR_SEND_NUMBER 5760
 
+#ifndef BSP_USING_LVGL
+#define LCD_CLEAR_SEND_NUMBER 5760 /* 240*240/10 */
 rt_uint16_t BACK_COLOR = WHITE, FORE_COLOR = BLACK;
+#endif /* BSP_USING_LVGL */
 
 static struct rt_spi_device *spi_dev_lcd;
 
@@ -85,6 +90,7 @@ static rt_err_t lcd_write_data(const rt_uint8_t data)
     }
 }
 
+#ifndef BSP_USING_LVGL
 static rt_err_t lcd_write_half_word(const rt_uint16_t da)
 {
     rt_size_t len;
@@ -105,6 +111,7 @@ static rt_err_t lcd_write_half_word(const rt_uint16_t da)
         return RT_EOK;
     }
 }
+#endif /* BSP_USING_LVGL */
 
 static void lcd_gpio_init(void)
 {
@@ -117,6 +124,7 @@ static void lcd_gpio_init(void)
     rt_pin_write(LCD_PWR_PIN, PIN_LOW);
 
     rt_pin_write(LCD_RES_PIN, PIN_LOW);
+
     //wait at least 100ms for reset
     rt_thread_delay(RT_TICK_PER_SECOND / 10);
     rt_pin_write(LCD_RES_PIN, PIN_HIGH);
@@ -204,8 +212,6 @@ static int rt_hw_lcd_init(void)
     /* wait for power stability */
     rt_thread_mdelay(100);
 
-    lcd_clear(WHITE);
-
     /* display on */
     rt_pin_write(LCD_PWR_PIN, PIN_HIGH);
     lcd_write_cmd(0x29);
@@ -214,6 +220,7 @@ static int rt_hw_lcd_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_lcd_init);
 
+#ifndef BSP_USING_LVGL
 /**
  * Set background color and foreground color
  *
@@ -227,6 +234,7 @@ void lcd_set_color(rt_uint16_t back, rt_uint16_t fore)
     BACK_COLOR = back;
     FORE_COLOR = fore;
 }
+#endif /* BSP_USING_LVGL */
 
 void lcd_display_on(void)
 {
@@ -281,6 +289,7 @@ void lcd_address_set(rt_uint16_t x1, rt_uint16_t y1, rt_uint16_t x2, rt_uint16_t
     lcd_write_cmd(0x2C);
 }
 
+#ifndef BSP_USING_LVGL
 /**
  * clear the lcd.
  *
@@ -298,7 +307,6 @@ void lcd_clear(rt_uint16_t color)
     data[1] = color;
     lcd_address_set(0, 0, LCD_W - 1, LCD_H - 1);
 
-    /* 5760 = 240*240/20 */
     buf = rt_malloc(LCD_CLEAR_SEND_NUMBER);
     if (buf)
     {
@@ -425,6 +433,8 @@ void lcd_fill(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_ui
         }
     }
 }
+#endif /* BSP_USING_LVGL */
+
 
 /**
  * full color array on the lcd.
@@ -439,42 +449,15 @@ void lcd_fill(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_ui
  */
 void lcd_fill_array(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_uint16_t y_end, void *pcolor)
 {
-    rt_uint32_t size = 0, size_remain = 0;
+    rt_uint32_t size = 0;
 
     size = (x_end - x_start + 1) * (y_end - y_start + 1) * 2;
-
-    if (size > LCD_CLEAR_SEND_NUMBER)
-    {
-        /* the number of remaining to be filled */
-        size_remain = size - LCD_CLEAR_SEND_NUMBER;
-        size = LCD_CLEAR_SEND_NUMBER;
-    }
-
     lcd_address_set(x_start, y_start, x_end, y_end);
-
-    /* fast fill */
-    while (1)
-    {
-        rt_pin_write(LCD_DC_PIN, PIN_HIGH);
-        rt_spi_send(spi_dev_lcd, pcolor, size);
-
-        /* Fill completed */
-        if (size_remain == 0)
-            break;
-
-        /* calculate the number of fill next time */
-        if (size_remain > LCD_CLEAR_SEND_NUMBER)
-        {
-            size_remain = size_remain - LCD_CLEAR_SEND_NUMBER;
-        }
-        else
-        {
-            size = size_remain;
-            size_remain = 0;
-        }
-    }
+    rt_pin_write(LCD_DC_PIN, PIN_HIGH);
+    rt_spi_send(spi_dev_lcd, pcolor, size);
 }
 
+#ifndef BSP_USING_LVGL
 /**
  * display a line on the lcd.
  *
@@ -885,3 +868,5 @@ rt_err_t lcd_show_image(rt_uint16_t x, rt_uint16_t y, rt_uint16_t length, rt_uin
 
     return RT_EOK;
 }
+
+#endif /* BSP_USING_LVGL */

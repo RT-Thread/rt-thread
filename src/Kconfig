@@ -115,33 +115,40 @@ config RT_USING_TIMER_SOFT
         thread.
 
 if RT_USING_TIMER_SOFT
-config RT_TIMER_THREAD_PRIO
-    int "The priority level value of timer thread"
-    default 4
+    config RT_TIMER_THREAD_PRIO
+        int "The priority level value of timer thread"
+        default 4
 
-config RT_TIMER_THREAD_STACK_SIZE
-    int "The stack size of timer thread"
-    default 512
-
+    config RT_TIMER_THREAD_STACK_SIZE
+        int "The stack size of timer thread"
+        default 512
 endif
 
 menu "kservice optimization"
 
-config RT_KSERVICE_USING_STDLIB
-    bool "Enable kservice to use standard C library"
-    default n
+    config RT_KSERVICE_USING_STDLIB
+        bool "Enable kservice to use standard C library"
+        default n
 
-config RT_KSERVICE_USING_TINY_SIZE
-    bool "Enable kservice to use tiny size"
-    default n
+    config RT_KSERVICE_USING_TINY_SIZE
+        bool "Enable kservice to use tiny size"
+        default n
 
-config RT_USING_ASM_MEMCPY
-    bool
-    default n
+    config RT_USING_ASM_MEMCPY
+        bool
+        default n
 
-config RT_USING_TINY_FFS
-    bool "Enable kservice to use tiny ffs"
-    default n
+    config RT_USING_ASM_MEMSET
+        bool
+        default n
+
+    config RT_USING_TINY_FFS
+        bool "Enable kservice to use tiny finding first bit set method"
+        default n
+
+    config RT_PRINTF_LONGLONG
+        bool "Enable rt_printf-family functions to support long long format"
+        default n
 
 endmenu
 
@@ -151,121 +158,122 @@ menuconfig RT_DEBUG
 
 if RT_DEBUG
 
-config RT_DEBUG_COLOR
-    bool "Enable color debugging log"
-    default n
+    config RT_DEBUG_COLOR
+        bool "Enable color debugging log"
+        default n
 
-config RT_DEBUG_INIT_CONFIG
-    bool "Enable debugging of components initialization"
-    default n
+    config RT_DEBUG_INIT_CONFIG
+        bool "Enable debugging of components initialization"
+        default n
 
-config RT_DEBUG_INIT
-    int
-    default 1 if RT_DEBUG_INIT_CONFIG
+    config RT_DEBUG_INIT
+        int
+        default 1 if RT_DEBUG_INIT_CONFIG
 
-config RT_DEBUG_THREAD_CONFIG
-    bool "Enable debugging of Thread State Changes"
-    default n
+    config RT_DEBUG_THREAD_CONFIG
+        bool "Enable debugging of Thread State Changes"
+        default n
 
-config RT_DEBUG_THREAD
-    int
-    default 1 if RT_DEBUG_THREAD_CONFIG
+    config RT_DEBUG_THREAD
+        int
+        default 1 if RT_DEBUG_THREAD_CONFIG
 
-config RT_DEBUG_SCHEDULER_CONFIG
-    bool "Enable debugging of Scheduler"
-    default n
+    config RT_DEBUG_SCHEDULER_CONFIG
+        bool "Enable debugging of Scheduler"
+        default n
 
-config RT_DEBUG_SCHEDULER
-    int
-    default 1 if RT_DEBUG_SCHEDULER_CONFIG
+    config RT_DEBUG_SCHEDULER
+        int
+        default 1 if RT_DEBUG_SCHEDULER_CONFIG
 
-config RT_DEBUG_IPC_CONFIG
-    bool "Enable debugging of IPC"
-    default n
+    config RT_DEBUG_IPC_CONFIG
+        bool "Enable debugging of IPC"
+        default n
 
-config RT_DEBUG_IPC
-    int
-    default 1 if RT_DEBUG_IPC_CONFIG
+    config RT_DEBUG_IPC
+        int
+        default 1 if RT_DEBUG_IPC_CONFIG
 
-config RT_DEBUG_TIMER_CONFIG
-    bool "Enable debugging of Timer"
-    default n
+    config RT_DEBUG_TIMER_CONFIG
+        bool "Enable debugging of Timer"
+        default n
 
-config RT_DEBUG_TIMER
-    int
-    default 1 if RT_DEBUG_TIMER_CONFIG
+    config RT_DEBUG_TIMER
+        int
+        default 1 if RT_DEBUG_TIMER_CONFIG
 
-config RT_DEBUG_IRQ_CONFIG
-    bool "Enable debugging of IRQ(Interrupt Request)"
-    default n
+    config RT_DEBUG_IRQ_CONFIG
+        bool "Enable debugging of IRQ(Interrupt Request)"
+        default n
 
-config RT_DEBUG_IRQ
-    int
-    default 1 if RT_DEBUG_IRQ_CONFIG
+    config RT_DEBUG_IRQ
+        int
+        default 1 if RT_DEBUG_IRQ_CONFIG
 
-config RT_DEBUG_MEM_CONFIG
-    bool "Enable debugging of Small Memory Algorithm"
-    default n
+    config RT_DEBUG_MEM_CONFIG
+        bool "Enable debugging of Small Memory Algorithm"
+        default n
 
-config RT_DEBUG_MEM
-    int
-    default 1 if RT_DEBUG_MEM_CONFIG
+    config RT_DEBUG_MEM
+        int
+        default 1 if RT_DEBUG_MEM_CONFIG
 
-config RT_DEBUG_SLAB_CONFIG
-    bool "Enable debugging of SLAB Memory Algorithm"
-    default n
+    config RT_DEBUG_SLAB_CONFIG
+        bool "Enable debugging of SLAB Memory Algorithm"
+        default n
 
-config RT_DEBUG_SLAB
-    int
-    default 1 if RT_DEBUG_SLAB_CONFIG
+    config RT_DEBUG_SLAB
+        int
+        default 1 if RT_DEBUG_SLAB_CONFIG
 
-config RT_DEBUG_MEMHEAP_CONFIG
-    bool "Enable debugging of Memory Heap Algorithm"
-    default n
+    config RT_DEBUG_MEMHEAP_CONFIG
+        bool "Enable debugging of Memory Heap Algorithm"
+        default n
 
-config RT_DEBUG_MEMHEAP
-    int
-    default 1 if RT_DEBUG_MEMHEAP_CONFIG
+    config RT_DEBUG_MEMHEAP
+        int
+        default 1 if RT_DEBUG_MEMHEAP_CONFIG
 
-config RT_DEBUG_MODULE_CONFIG
-    bool "Enable debugging of Application Module"
-    default n
+    config RT_DEBUG_MODULE_CONFIG
+        bool "Enable debugging of Application Module"
+        default n
 
-config RT_DEBUG_MODULE
-    int
-    default 1 if RT_DEBUG_MODULE_CONFIG
+    config RT_DEBUG_MODULE
+        int
+        default 1 if RT_DEBUG_MODULE_CONFIG
 
 endif
 
 menu "Inter-Thread communication"
 
-config RT_USING_SEMAPHORE
-    bool "Enable semaphore"
-    default y
+    config RT_USING_SEMAPHORE
+        bool "Enable semaphore"
+        default y
 
-config RT_USING_MUTEX
-    bool "Enable mutex"
-    default y
+    config RT_USING_MUTEX
+        bool "Enable mutex"
+        default y
 
-config RT_USING_EVENT
-    bool "Enable event flag"
-    default y
+    config RT_USING_EVENT
+        bool "Enable event flag"
+        default y
 
-config RT_USING_MAILBOX
-    bool "Enable mailbox"
-    default y
+    config RT_USING_MAILBOX
+        bool "Enable mailbox"
+        default y
 
-config RT_USING_MESSAGEQUEUE
-    bool "Enable message queue"
-    default y
+    config RT_USING_MESSAGEQUEUE
+        bool "Enable message queue"
+        default y
 
-config RT_USING_SIGNALS
-    bool "Enable signals"
-    select RT_USING_MEMPOOL
-    default n
-    help
-        A signal is an asynchronous notification sent to a specific thread
-        in order to notify it of an event that occurred.
+    config RT_USING_SIGNALS
+        bool "Enable signals"
+        select RT_USING_MEMPOOL
+        default n
+        help
+            A signal is an asynchronous notification sent to a specific thread
+            in order to notify it of an event that occurred.
+
 endmenu
 
 menu "Memory Management"
@@ -371,17 +379,13 @@ menu "Kernel Device Object"
         config RT_CONSOLE_DEVICE_NAME
             string "the device name for console"
             default "uart"
-
-        config RT_PRINTF_LONGLONG
-            bool "rt_kprintf support long long"
-            default n
     endif
 
 endmenu
 
 config RT_VER_NUM
     hex
-    default 0x40004
+    default 0x40100
     help
         RT-Thread version number
 

@@ -39,6 +39,14 @@
 #include <rtthread.h>
 #include <string.h>
 
+#ifndef BYTE_ORDER
+#ifdef RT_USING_BIG_ENDIAN
+#define BYTE_ORDER BIG_ENDIAN
+#else
+#define BYTE_ORDER LITTLE_ENDIAN
+#endif /* RT_USING_BIG_ENDIAN */
+#endif /* BYTE_ORDER */
+
 #define U16_F "hu"
 #define S16_F "hd"
 #define X16_F "hx"

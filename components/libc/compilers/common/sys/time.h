@@ -72,7 +72,6 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz);
 struct tm *gmtime_r(const time_t *timep, struct tm *r);
 #endif
 
-#ifdef RT_USING_POSIX
 /* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
@@ -103,8 +102,8 @@ int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
 int rt_timespec_to_tick(const struct timespec *time);
-#endif /* RT_USING_POSIX */
 
+/* timezone */
 void tz_set(int8_t tz);
 int8_t tz_get(void);
 int8_t tz_is_dst(void);
