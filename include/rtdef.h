@@ -36,6 +36,7 @@
  * 2020-10-23     Meco Man     define maximum value of ipc type
  * 2021-03-19     Meco Man     add security devices
  * 2021-05-10     armink       change version number to v4.0.4
+ * 2021-12-09     Meco Man     change version number to v4.0.5
  */
 
 #ifndef __RT_DEF_H__
@@ -57,7 +58,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION                      4L              /**< major version number */
 #define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     4L              /**< revise version number */
+#define RT_REVISION                     5L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
