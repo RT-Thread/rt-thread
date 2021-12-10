@@ -17,9 +17,9 @@
 
 /**
  * @brief    This function will insert a node to the wait queue.
- * 
+ *
  * @param    queue is a pointer to the wait queue.
- * 
+ *
  * @param    node is a pointer to the node to be inserted.
  */
 void rt_wqueue_add(rt_wqueue_t *queue, struct rt_wqueue_node *node)
@@ -33,9 +33,9 @@ void rt_wqueue_add(rt_wqueue_t *queue, struct rt_wqueue_node *node)
 
 /**
  * @brief    This function will remove a node from the wait queue.
- * 
+ *
  * @param    queue is a pointer to the wait queue.
- * 
+ *
  * @param    node is a pointer to the node to be removed.
  */
 void rt_wqueue_remove(struct rt_wqueue_node *node)
@@ -50,11 +50,11 @@ void rt_wqueue_remove(struct rt_wqueue_node *node)
 /**
  * @brief    This function is the default wakeup function, but it actually don't do anything,
  *           just always return 0, user should define their own wakeup function.
- * 
+ *
  * @param    queue is a pointer to the wait queue.
- * 
+ *
  * @param    key is the wakeup condition.
- * 
+ *
  * @return   always return 0.
  */
 int __wqueue_default_wake(struct rt_wqueue_node *wait, void *key)
@@ -64,9 +64,9 @@ int __wqueue_default_wake(struct rt_wqueue_node *wait, void *key)
 
 /**
  * @brief    This function will wake up a pending thread on the specified waiting queue that meets the conditions.
- * 
+ *
  * @param    queue is a pointer to the wait queue.
- * 
+ *
  * @param    key is the wakeup conditions, but it is not effective now, because
  *           default wakeup function always return 0.
  *           If user wants to use it, user should define their own wakeup function.
@@ -110,13 +110,13 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
 /**
  * @brief    This function will join a thread to the specified waiting queue, the thread will holds a wait or
  *           timeout return on the specified wait queue.
- * 
+ *
  * @param    queue is a pointer to the wait queue.
- * 
+ *
  * @param    condition is parameters compatible with POSIX standard interface (currently meaningless, just pass in 0).
- * 
+ *
  * @param    msec is the timeout value, unit is millisecond.
- * 
+ *
  * @return   Return 0 if the thread is woken up.
  */
 int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
