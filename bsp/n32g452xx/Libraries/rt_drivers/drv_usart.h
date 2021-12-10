@@ -11,5 +11,6 @@
 #ifndef __USART_H__
 #define __USART_H__
 
+int rt_hw_usart_init(void);
 
 #endif

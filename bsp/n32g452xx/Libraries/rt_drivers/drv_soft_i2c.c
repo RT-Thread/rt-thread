@@ -214,7 +214,6 @@ int rt_hw_i2c_init(void)
 
     return RT_EOK;
 }
-
 INIT_BOARD_EXPORT(rt_hw_i2c_init);
 
 #endif /* RT_USING_I2C */
