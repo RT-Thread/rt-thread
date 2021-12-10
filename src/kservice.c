@@ -127,7 +127,7 @@ RTM_EXPORT(_rt_errno);
  *
  * @return The address of source memory.
  */
-RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
+void *rt_memset(void *s, int c, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *xs = (char *)s;
@@ -338,7 +338,7 @@ RTM_EXPORT(rt_memmove);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
-RT_WEAK rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
+rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
 {
     const unsigned char *su1, *su2;
     int res = 0;
@@ -842,7 +842,7 @@ static char *print_number(char *buf,
  *
  * @return The number of characters actually written to buffer.
  */
-rt_int32_t rt_vsnprintf(char       *buf,
+RT_WEAK rt_int32_t rt_vsnprintf(char       *buf,
                         rt_size_t   size,
                         const char *fmt,
                         va_list     args)
