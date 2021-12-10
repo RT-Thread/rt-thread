@@ -35,6 +35,7 @@ extern "C" {
         .dma_rcc = SPI1_TX_DMA_RCC,                 \
         .Instance = SPI1_TX_DMA_INSTANCE,           \
         .dma_irq = SPI1_TX_DMA_IRQ,                 \
+			  .request = DMA_REQUEST_SPI1_TX              \
     }
 #endif /* SPI1_TX_DMA_CONFIG */
 #endif /* BSP_SPI1_TX_USING_DMA */
@@ -46,6 +47,7 @@ extern "C" {
         .dma_rcc = SPI1_RX_DMA_RCC,                 \
         .Instance = SPI1_RX_DMA_INSTANCE,           \
         .dma_irq = SPI1_RX_DMA_IRQ,                 \
+			  .request = DMA_REQUEST_SPI1_RX              \
     }
 #endif /* SPI1_RX_DMA_CONFIG */
 #endif /* BSP_SPI1_RX_USING_DMA */
@@ -68,6 +70,7 @@ extern "C" {
         .dma_rcc = SPI2_TX_DMA_RCC,                 \
         .Instance = SPI2_TX_DMA_INSTANCE,           \
         .dma_irq = SPI2_TX_DMA_IRQ,                 \
+			  .request = DMA_REQUEST_SPI2_TX              \
     }
 #endif /* SPI2_TX_DMA_CONFIG */
 #endif /* BSP_SPI2_TX_USING_DMA */
@@ -79,6 +82,7 @@ extern "C" {
         .dma_rcc = SPI2_RX_DMA_RCC,                 \
         .Instance = SPI2_RX_DMA_INSTANCE,           \
         .dma_irq = SPI2_RX_DMA_IRQ,                 \
+			  .request = DMA_REQUEST_SPI2_RX              \
     }
 #endif /* SPI2_RX_DMA_CONFIG */
 #endif /* BSP_SPI2_RX_USING_DMA */
@@ -101,6 +105,7 @@ extern "C" {
         .dma_rcc = SPI3_TX_DMA_RCC,                 \
         .Instance = SPI3_TX_DMA_INSTANCE,           \
         .dma_irq = SPI3_TX_DMA_IRQ,                 \
+			  .request = DMA_REQUEST_SPI3_TX              \
     }
 #endif /* SPI3_TX_DMA_CONFIG */
 #endif /* BSP_SPI3_TX_USING_DMA */
@@ -112,6 +117,7 @@ extern "C" {
         .dma_rcc = SPI3_RX_DMA_RCC,                 \
         .Instance = SPI3_RX_DMA_INSTANCE,           \
         .dma_irq = SPI3_RX_DMA_IRQ,                 \
+			  .request = DMA_REQUEST_SPI3_RX              \
     }
 #endif /* SPI3_RX_DMA_CONFIG */
 #endif /* BSP_SPI3_RX_USING_DMA */
@@ -134,6 +140,7 @@ extern "C" {
         .dma_rcc = SPI4_TX_DMA_RCC,                 \
         .Instance = SPI4_TX_DMA_INSTANCE,           \
         .dma_irq = SPI4_TX_DMA_IRQ,                 \
+				.request = DMA_REQUEST_SPI4_TX              \
     }
 #endif /* SPI4_TX_DMA_CONFIG */
 #endif /* BSP_SPI4_TX_USING_DMA */
@@ -145,6 +152,7 @@ extern "C" {
         .dma_rcc = SPI4_RX_DMA_RCC,                 \
         .Instance = SPI4_RX_DMA_INSTANCE,           \
         .dma_irq = SPI4_RX_DMA_IRQ,                 \
+				.request = DMA_REQUEST_SPI4_RX              \
     }
 #endif /* SPI4_RX_DMA_CONFIG */
 #endif /* BSP_SPI4_RX_USING_DMA */
@@ -167,6 +175,7 @@ extern "C" {
         .dma_rcc = SPI5_TX_DMA_RCC,                 \
         .Instance = SPI5_TX_DMA_INSTANCE,           \
         .dma_irq = SPI5_TX_DMA_IRQ,                 \
+				.request = DMA_REQUEST_SPI5_TX              \
     }
 #endif /* SPI5_TX_DMA_CONFIG */
 #endif /* BSP_SPI5_TX_USING_DMA */
@@ -178,6 +187,7 @@ extern "C" {
         .dma_rcc = SPI5_RX_DMA_RCC,                 \
         .Instance = SPI5_RX_DMA_INSTANCE,           \
         .dma_irq = SPI5_RX_DMA_IRQ,                 \
+				.request = DMA_REQUEST_SPI5_RX              \
     }
 #endif /* SPI5_RX_DMA_CONFIG */
 #endif /* BSP_SPI5_RX_USING_DMA */
