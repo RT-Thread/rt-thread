@@ -8,7 +8,8 @@
  * 2021-08-20     breo.com     first version
  */
 
-
+#include <stdio.h>
+#include <string.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "n32g45x.h"
@@ -383,7 +384,7 @@ static void uart_test(void)
     static rt_device_t u2 = NULL;
     uart_test_rw(u2, "uart2");
 #endif
-#ifdef BSP_USING_UART2
+#ifdef BSP_USING_UART3
     static rt_device_t u3 = NULL;
     uart_test_rw(u3, "uart3");
 #endif
