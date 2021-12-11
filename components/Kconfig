@@ -41,4 +41,6 @@ source "$RTT_DIR/components/utilities/Kconfig"
 
 source "$RTT_DIR/components/lwp/Kconfig"
 
+source "$RTT_DIR/components/arduino/Kconfig"
+
 endmenu

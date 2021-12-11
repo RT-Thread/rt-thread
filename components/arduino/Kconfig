@@ -1,0 +1,19 @@
+menuconfig RT_USING_ARDUINO
+    bool "Compatible with Arduino ecology"
+    select RT_USING_CPLUSPLUS
+    select RT_USING_PIN
+    default n
+
+if RT_USING_ARDUINO
+    config RT_USING_ARDUINO_UNO_LAYOUT
+        bool "Support Arduino UNO layout"
+        default n
+
+    config RT_USING_ARDUINO_THREAD_SIZE
+        int "arduino thread's size"
+        default 1024
+
+    config RT_USING_ARDUINO_THREAD_PRIO
+        int "arduino thread's priority"
+        default 20
+endif
