@@ -15,6 +15,19 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART1
         default y
 
+    config BSP_USING_ARDUINO_UNO
+        bool "Support Arduino UNO"
+        select RT_USING_ARDUINO
+        select RT_USING_ARDUINO_UNO_LAYOUT
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH1
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH3
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        default n
+
     config BSP_USING_KEY
         bool "Enable onboard keys"
         select RT_USING_PIN
