@@ -832,13 +832,16 @@ static struct rt_memheap _heap;
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
-    RT_ASSERT((rt_uint32_t)end_addr > (rt_uint32_t)begin_addr);
+    RT_ASSERT((rt_size_t)end_addr > (rt_size_t)begin_addr);
+
+    rt_size_t begin_align = RT_ALIGN((rt_size_t)begin_addr, RT_ALIGN_SIZE);
+    rt_size_t end_align   = RT_ALIGN_DOWN((rt_size_t)end_addr, RT_ALIGN_SIZE);
 
     /* initialize a default heap in the system */
     rt_memheap_init(&_heap,
                     "heap",
-                    begin_addr,
-                    (rt_uint32_t)end_addr - (rt_uint32_t)begin_addr);
+                    (void *)begin_align,
+                    end_align - begin_align);
 }
 
 /**
