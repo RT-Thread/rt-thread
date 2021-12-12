@@ -12,11 +12,16 @@
 
 const pin_map_t pin_map_table[ARDUINO_LAYOUT_PIN_MAX]=
 {
-    /*{Arduino Pin, RT-Thread Pin, Device Name(PWM or ADC), Channel}*/
+    /*
+        {Arduino Pin, RT-Thread Pin [, Device Name(PWM or ADC), Channel]}
+        [] means optional
+        Digital pins must NOT give the device name and channel.
+        Analog pins MUST give the device name and channel(ADC or PWM).
+    */
     {0}, /* D0, RX */
     {1}, /* D1, TX */
     {2, GET_PIN(D,10)}, /* D2, BSP:KEY0 */
-    {3 }, /* D3, PWM */
+    {3}, /* D3, PWM */
     {4, GET_PIN(D,9)}, /* D4, BSP:KEY1 */
     {5, GET_PIN(D,8)}, /* D5, BSP:KEY2 */
     {6}, /* D6, PWM */
@@ -35,7 +40,8 @@ const pin_map_t pin_map_table[ARDUINO_LAYOUT_PIN_MAX]=
     {19} /* D19, A5 */
 };
 
+/* initialization for BSP; maybe a blank function  */
 void initVariant(void)
 {
-
+    /* Nothing needs to initialize for this BSP */
 }
