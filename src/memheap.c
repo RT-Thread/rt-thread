@@ -850,6 +850,10 @@ void *rt_malloc(rt_size_t size)
 {
     void *ptr;
 
+    /* zero size, return RT_NULL */
+    if (size == 0)
+        return RT_NULL;
+
     /* try to allocate in system heap */
     ptr = rt_memheap_alloc(&_heap, size);
 #ifdef RT_USING_MEMHEAP_AUTO_BINDING
