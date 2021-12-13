@@ -10,6 +10,6 @@
 #ifndef __SYS_SEM_H__
 #define __SYS_SEM_H__
 
-
+#include "semaphore.h"
 
 #endif
