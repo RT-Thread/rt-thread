@@ -612,6 +612,17 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
 }
 RTM_EXPORT(clock_gettime);
 
+int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp)
+{
+    if ((clockid != CLOCK_REALTIME) || (rqtp == RT_NULL))
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    return nanosleep(rqtp, rmtp);
+}
+
 int clock_settime(clockid_t clockid, const struct timespec *tp)
 {
 #ifndef RT_USING_RTC
@@ -654,6 +665,33 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 #endif /* RT_USING_RTC */
 }
 RTM_EXPORT(clock_settime);
+
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
+{
+    uint32_t time_ms = rqtp->tv_sec * 1000;
+    uint32_t time_us = rqtp->tv_nsec / 1000;
+
+    time_ms += time_us / 1000 ;
+    time_us = time_us % 1000;
+
+    if (rt_thread_self() != RT_NULL)
+    {
+        rt_thread_mdelay(time_ms);
+    }
+    else  /* scheduler has not run yet */
+    {
+        while(time_ms > 0)
+        {
+            rt_hw_us_delay(1000u);
+            time_ms -= 1;
+        }
+    }
+
+    rt_hw_us_delay(time_us);
+
+    return 0;
+}
+RTM_EXPORT(nanosleep);
 
 int rt_timespec_to_tick(const struct timespec *time)
 {
