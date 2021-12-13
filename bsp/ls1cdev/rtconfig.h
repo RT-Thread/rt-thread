@@ -44,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart2"
-#define RT_VER_NUM 0x40004
+#define RT_VER_NUM 0x40100
 
 /* RT-Thread Components */
 
@@ -75,6 +75,7 @@
 /* Device virtual file system */
 
 #define RT_USING_DFS
+#define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FILESYSTEMS_MAX 2
 #define DFS_FILESYSTEM_TYPES_MAX 2
@@ -93,6 +94,7 @@
 #define RT_DFS_ELM_DRIVES 2
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
 #define RT_DFS_ELM_REENTRANT
+#define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
@@ -116,10 +118,13 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_LIBC_USING_TIME
+#define RT_LIBC_DEFAULT_TIMEZONE 8
+
+/* POSIX (Portable Operating System Interface) layer */
+
 #define RT_USING_PTHREADS
 #define PTHREAD_NUM_MAX 8
-#define RT_USING_POSIX
-#define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* Network */
 
@@ -213,13 +218,27 @@
 
 /* multimedia packages */
 
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+
+/* u8g2: a monochrome graphic library */
+
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
 
 /* tools packages */
 
 
 /* system packages */
 
+/* enhanced kernel services */
+
+
 /* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -238,7 +257,6 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-#define SOC_LS
 #define SOC_LS1C300
 #define RT_LS1C_OPENLOONGSON
 #define RT_USING_UART2
