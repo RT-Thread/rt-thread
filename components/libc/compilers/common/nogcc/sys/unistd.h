@@ -32,6 +32,7 @@ int access(const char *path, int amode);
 int pipe(int fildes[2]);
 int isatty(int fd);
 char *ttyname(int desc);
+size_t confstr(int name, char *buf, size_t len);
 unsigned int sleep(unsigned int seconds);
 int usleep(useconds_t usec);
 pid_t gettid(void);

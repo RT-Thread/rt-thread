@@ -39,3 +39,17 @@ char *ttyname(int fd)
     return "/dev/tty"; /* TODO: need to add more specific */
 }
 RTM_EXPORT(ttyname);
+
+size_t confstr(int name, char *buf, size_t len)
+{
+    int length = 0;
+    length = rt_strlen(name);
+
+    if(buf != RT_NULL)
+    {
+        length = rt_strncpy(buf, name, len);
+    }
+
+    return length;
+}
+RTM_EXPORT(confstr);
