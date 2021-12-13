@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -99,7 +99,7 @@ static void mem_functional_test(void)
     /* get total size */
     total_size = max_block(heap);
     uassert_int_not_equal(total_size, 0);
-    /* 
+    /*
      * Allocate all memory at a time and test whether
      * the memory allocation release function is effective
      */
@@ -114,7 +114,7 @@ static void mem_functional_test(void)
         rt_smem_free(ctx.ptr);
         uassert_int_equal(max_block(heap), total_size);
     }
-    /* 
+    /*
      * Apply for memory release sequentially and
      * test whether memory block merging is effective
      */
