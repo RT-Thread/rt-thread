@@ -15,10 +15,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART1
         default y
 
-    config BSP_USING_ARDUINO_UNO
-        bool "Support Arduino UNO"
+    config BSP_USING_ARDUINO
+        bool "Support Arduino"
         select RT_USING_ARDUINO
-        select RT_USING_ARDUINO_UNO_LAYOUT
         select BSP_USING_PWM
         select BSP_USING_PWM1
         select BSP_USING_PWM1_CH1
