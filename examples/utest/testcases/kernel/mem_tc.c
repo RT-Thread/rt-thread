@@ -420,7 +420,7 @@ static void mem_alloc_test(void)
 
 #define MEM_RANG_REALLOC_BLK_MIN  0
 #define MEM_RANG_REALLOC_BLK_MAX  5
-#define MEM_RANG_REALLOC_TEST_TIME 10
+#define MEM_RANG_REALLOC_TEST_TIME 5
 
 struct mem_realloc_context
 {
@@ -585,4 +585,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(mem_alloc_test);
     UTEST_UNIT_RUN(mem_realloc_test);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.mem_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "testcases.kernel.mem_tc", utest_tc_init, utest_tc_cleanup, 20);

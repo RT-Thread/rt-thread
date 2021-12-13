@@ -159,7 +159,7 @@ static void slab_alloc_test(void)
 
 #define SLAB_RANG_REALLOC_BLK_MIN  0
 #define SLAB_RANG_REALLOC_BLK_MAX  5
-#define SLAB_RANG_REALLOC_TEST_TIME 10
+#define SLAB_RANG_REALLOC_TEST_TIME 5
 
 struct slab_realloc_context
 {
@@ -320,4 +320,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(slab_alloc_test);
     UTEST_UNIT_RUN(slab_realloc_test);
 }
-UTEST_TC_EXPORT(testcase, "testcases.kernel.slab_tc", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "testcases.kernel.slab_tc", utest_tc_init, utest_tc_cleanup, 20);
