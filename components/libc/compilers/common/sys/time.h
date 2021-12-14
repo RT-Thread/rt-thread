@@ -14,7 +14,6 @@
 #include <rtconfig.h>
 #include <sys/types.h>
 #include <stdint.h>
-#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,6 +52,7 @@ struct timeval
 };
 #endif
 #endif /* _TIMEVAL_DEFINED */
+#include <time.h>
 
 #if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && \
     !(defined(__ICCARM__) && (__VER__ >= 8010001)) && \
