@@ -1,7 +1,7 @@
 menu "POSIX (Portable Operating System Interface) layer"
 
 config RT_USING_POSIX_FS
-    bool "Enable POSIX file system, open()/read()/write()/close() etc"
+    bool "Enable POSIX file system and I/O"
     select RT_USING_DFS
     select DFS_USING_POSIX
     default n
@@ -13,12 +13,25 @@ if RT_USING_POSIX_FS
         default n
 
     config RT_USING_POSIX_POLL
-        bool "Enable poll()"
+        bool "Enable I/O Multiplexing poll() <poll.h>"
         default n
 
     config RT_USING_POSIX_SELECT
-        bool "Enable select()"
+        bool "Enable I/O Multiplexing select() <sys/select.h>"
         select RT_USING_POSIX_POLL
+        default n
+
+    config RT_USING_POSIX_TERMIOS
+        bool "Enable Terminal I/O <termios.h>"
+        select RT_USING_POSIX_DEVIO
+        default n
+
+    config RT_USING_POSIX_AIO
+        bool "Enable Asynchronous I/O <aio.h>"
+        default n
+
+    config RT_USING_POSIX_MMAN
+        bool "Enable Memory-Mapped I/O <sys/mman.h>"
         default n
 endif
 
@@ -32,19 +45,6 @@ config RT_USING_POSIX_GETLINE
     select RT_LIBC_USING_FILEIO
     default n
 
-config RT_USING_POSIX_MMAP
-    bool "Enable mmap()"
-    select RT_USING_POSIX_FS
-    default n
-
-config RT_USING_POSIX_TERMIOS
-    bool "Enable termios APIs"
-    default n
-
-config RT_USING_POSIX_AIO
-    bool "Enable AIO APIs"
-    default n
-
 config RT_USING_PTHREADS
     bool "Enable pthreads APIs"
     default n
@@ -54,5 +54,7 @@ if RT_USING_PTHREADS
         int "Maximum number of pthreads"
         default 8
 endif
+
+source "$RTT_DIR/components/libc/posix/ipc/Kconfig"
 
 endmenu
