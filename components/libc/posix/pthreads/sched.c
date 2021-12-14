@@ -43,7 +43,7 @@ RTM_EXPORT(sched_setscheduler);
 
 int sched_rr_get_interval(pid_t pid, struct timespec *tp)
 {
-    if(pid != NULL)
+    if(pid != 0)
     {
         return EINVAL;
     }
