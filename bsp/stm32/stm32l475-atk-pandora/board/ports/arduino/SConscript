@@ -1,7 +1,7 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = ['arduino_layout.c']
+src = ['arduino_pinout.c']
 inc = [cwd]
 
 group = DefineGroup('Arduino', src, depend = ['RT_USING_ARDUINO'], CPPPATH = inc)
