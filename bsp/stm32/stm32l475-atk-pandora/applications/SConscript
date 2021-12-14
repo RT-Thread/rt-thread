@@ -3,12 +3,13 @@ import os
 
 cwd = GetCurrentDir()
 
-src = Split('''
-main.c
-''')
+src = ['main.c']
 
 if GetDepend(['PKG_USING_NRF24L01']):
-    src += Glob('nrf24l01_init.c')
+    src += ['nrf24l01_init.c']
+
+if GetDepend(['RT_USING_ARDUINO']):
+    src += ['arduino_main.cpp']
 
 CPPPATH = [cwd]
 

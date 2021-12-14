@@ -3,9 +3,12 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = ['poll.c']
+src     = []
 CPPPATH = [cwd]
 
-group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_POLL'], CPPPATH = CPPPATH)
+if GetDepend('RT_USING_POSIX_POLL'):
+	src += ['poll.c']
+
+group = DefineGroup('POSIX', src, depend = [], CPPPATH = CPPPATH)
 
 Return('group')
