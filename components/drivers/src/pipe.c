@@ -24,7 +24,8 @@
  *
  * @param    fd is the file descriptor.
  *
- * @return   Return the operation status, 0 on successful.
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
  *           When the return value is -1, it means the file descriptor is invalid.
  *           When the return value is -RT_ENOMEM, it means insufficient memory allocation failed.
  */
@@ -76,7 +77,8 @@ __exit:
  *
  * @param    fd is the file descriptor.
  *
- * @return   Return the operation status, 0 on successful.
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
  *           When the return value is -1, it means the file descriptor is invalid.
  */
 static int pipe_fops_close(struct dfs_fd *fd)
@@ -146,7 +148,8 @@ static int pipe_fops_close(struct dfs_fd *fd)
  *
  * @param    args is the pointer to the data to store the read data.
  *
- * @return   Return the operation status, 0 on successful.
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
  *           When the return value is -EINVAL, it means the command is invalid.
  */
 static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
@@ -326,9 +329,9 @@ out:
  *
  * @return   mask of the pipe status.
  *           POLLIN means there is data to be read.
- *           POLLHUP means there is no thread that has the pipe open for writing.
+ *           POLLHUP means there is no thread that occupied the pipe to open for writing.
  *           POLLOUT means there is space to be written.
- *           POLLERR means there is no thread that has the pipe open for reading.
+ *           POLLERR means there is no thread that occupied the pipe to open for reading.
  */
 static int pipe_fops_poll(struct dfs_fd *fd, rt_pollreq_t *req)
 {
@@ -554,7 +557,7 @@ static rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buf
  *
  * @param    args is not used yet.
  *
- * @return   Always return RT_EOK yet.
+ * @return   Always return RT_EOK.
  */
 static rt_err_t rt_pipe_control(rt_device_t dev, int cmd, void *args)
 {
@@ -636,7 +639,8 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
  *
  * @param    pipe is the pointer to the pipe device.
  *
- * @return   Return the operation status, 0 on successful.
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
  *           When the return value is -RT_EINVAL, it means the pipe device is not found or the device isn't a pipe.
  *           When the return value is -RT_EBUSY, it means the pipe device is busy.
  */
@@ -690,7 +694,9 @@ int rt_pipe_delete(const char *name)
  * @param    fildes[0] is the read handle.
  *           fildes[1] is the write handle.
  *
- * @return   Return the operation status, 0 on successful, -1 on failed.
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
+ *           When the return value is -1, it means the operation is failed.
  */
 int pipe(int fildes[2])
 {
@@ -732,7 +738,9 @@ int pipe(int fildes[2])
  *
  * @param    mode is not used yet.
  *
- * @return   Return the operation status, 0 on successful, -1 on failed.
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
+ *           When the return value is -1, it means the operation is failed.
  */
 int mkfifo(const char *path, mode_t mode)
 {
