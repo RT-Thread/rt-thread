@@ -39,6 +39,11 @@ config RT_USING_POSIX_DELAY
     bool "Enable delay APIs, sleep()/usleep()/msleep() etc"
     default n
 
+config RT_USING_POSIX_CLOCK
+    bool "Enable clock/time functions, clock_gettime()/clock_settime()/clock_getres() etc"
+    select RT_USING_POSIX_DELAY
+    default n
+
 config RT_USING_POSIX_GETLINE
     bool "Enable getline()/getdelim()"
     select RT_USING_LIBC
@@ -47,6 +52,7 @@ config RT_USING_POSIX_GETLINE
 
 config RT_USING_PTHREADS
     bool "Enable pthreads APIs"
+    select RT_USING_POSIX_CLOCK
     default n
 
 if RT_USING_PTHREADS

@@ -11,9 +11,7 @@ group = []
 if rtconfig.PLATFORM == 'gcc' and ('mips' in rtconfig.PREFIX): # identify mips gcc tool chain
     try:
         # There is no 'sys/select.h' in tthe mips gcc toolchain; it will be copied from 'nogcc/sys/select.h'
-        # There is no 'sys/_timespec.h' in tthe mips gcc toolchain; it will be copied from 'nogcc/sys/_timespec.h'
         copy("../../../common/nogcc/sys/select.h", "./sys/select.h")
-        copy("../../../common/nogcc/sys/_timespec.h", "./sys/_timespec.h")
     except:
         pass
 

@@ -165,6 +165,7 @@
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_AIO
 #define RT_USING_POSIX_DELAY
+#define RT_USING_POSIX_CLOCK
 #define RT_USING_POSIX_GETLINE
 #define RT_USING_PTHREADS
 #define PTHREAD_NUM_MAX 8
@@ -293,7 +294,7 @@
 
 /* system packages */
 
-/* rt_kprintf: enhanced rt_kprintf packages */
+/* enhanced kernel services */
 
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
@@ -317,12 +318,6 @@
 
 
 /* entertainment: terminal games and other interesting software packages */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 
 /* Hardware Drivers Config */

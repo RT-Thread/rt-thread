@@ -14,6 +14,7 @@
 #include <rtconfig.h>
 #include <sys/types.h>
 #include <stdint.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,19 +53,15 @@ struct timeval
 };
 #endif
 #endif /* _TIMEVAL_DEFINED */
-#include <time.h>
 
 #if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && \
     !(defined(__ICCARM__) && (__VER__ >= 8010001)) && \
     !defined(_WIN32)
-#ifndef _TIMESPEC_DEFINED
-#define _TIMESPEC_DEFINED
 struct timespec
 {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
 };
-#endif
 #endif
 
 int stime(const time_t *t);
@@ -75,6 +72,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz);
 struct tm *gmtime_r(const time_t *timep, struct tm *r);
 #endif
 
+#ifdef RT_USING_POSIX_CLOCK
 /* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
@@ -104,7 +102,10 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r);
 int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
+int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp);
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 int rt_timespec_to_tick(const struct timespec *time);
+#endif /* RT_USING_POSIX_CLOCK */
 
 /* timezone */
 void tz_set(int8_t tz);

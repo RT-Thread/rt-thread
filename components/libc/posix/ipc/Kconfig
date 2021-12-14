@@ -23,10 +23,12 @@ config RT_USING_POSIX_PIPE_SIZE
 
 config RT_USING_POSIX_MESSAGE_QUEUE
     bool "Enable posix message queue <mqueue.h>"
+    select RT_USING_POSIX_CLOCK
     default n
 
 config RT_USING_POSIX_MESSAGE_SEMAPHORE
     bool "Enable posix semaphore <semaphore.h>"
+    select RT_USING_POSIX_CLOCK
     default n
 
 comment "Socket is in the 'Network' category"

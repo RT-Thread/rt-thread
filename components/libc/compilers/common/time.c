@@ -486,6 +486,8 @@ RTM_EXPORT(settimeofday);
 RTM_EXPORT(difftime);
 RTM_EXPORT(strftime);
 
+#ifdef RT_USING_POSIX_CLOCK
+#include <delay.h>
 #ifdef RT_USING_RTC
 static volatile struct timeval _timevalue;
 static int _rt_clock_time_system_init()
@@ -682,12 +684,12 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     {
         while(time_ms > 0)
         {
-            rt_hw_us_delay(1000u);
+            udelay(1000u);
             time_ms -= 1;
         }
     }
 
-    rt_hw_us_delay(time_us);
+    udelay(time_us);
 
     return 0;
 }
@@ -725,6 +727,8 @@ int rt_timespec_to_tick(const struct timespec *time)
     return tick;
 }
 RTM_EXPORT(rt_timespec_to_tick);
+
+#endif /* RT_USING_POSIX_CLOCK */
 
 /* timezone */
 #ifndef RT_LIBC_DEFAULT_TIMEZONE
