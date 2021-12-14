@@ -8,8 +8,8 @@
  * 2017/11/30     Bernard      The first version.
  */
 
-#ifndef _SYS_MMAN_H
-#define _SYS_MMAN_H
+#ifndef __SYS_MMAN_H__
+#define __SYS_MMAN_H__
 
 #ifdef __cplusplus
 extern "C" {
