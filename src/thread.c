@@ -28,6 +28,7 @@
  *                             add support for tasks bound to cpu
  * 2021-02-24     Meco Man     rearrange rt_thread_control() - schedule the thread when close it
  * 2021-11-15     THEWON       Remove duplicate work between idle and _thread_exit
+ * 2021-12-14     THEWON       let rt_thread_sleep return thread->error when using signal
  */
 
 #include <rthw.h>
@@ -521,6 +522,9 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
 
+    /* reset thread error */
+    thread->error = RT_EOK;
+
     /* suspend thread */
     rt_thread_suspend(thread);
 
@@ -537,7 +541,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     if (thread->error == -RT_ETIMEOUT)
         thread->error = RT_EOK;
 
-    return RT_EOK;
+    return thread->error;
 }
 
 /**
@@ -580,6 +584,9 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
+    /* reset thread error */
+    thread->error = RT_EOK;
+
     cur_tick = rt_tick_get();
     if (cur_tick - *tick < inc_tick)
     {
@@ -612,7 +619,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
         rt_hw_interrupt_enable(level);
     }
 
-    return RT_EOK;
+    return thread->error;
 }
 RTM_EXPORT(rt_thread_delay_until);
 
