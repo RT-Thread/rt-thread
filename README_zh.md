@@ -68,35 +68,21 @@ Env 是RT-Thread推出的开发辅助工具，针对基于RT-Thread操作系统�
 RT-Thread RTOS 支持许多架构，并且已经涵盖了当前应用中的主要架构。涉及的架构和芯片制造商有：
 
 - ARM Cortex-M0/M0+：如芯片制造商 ST
-
 - ARM Cortex-M3：如芯片制造商 ST、全志、灵动等.
-
 - ARM Cortex-M4：如芯片制造商 ST、Nuvton、NXP、GigaDevice、Realtek、Ambiq Micro等
-
 - ARM Cortex-M7：如芯片制造商 ST、NXP
-
 - ARM Cortex-M23：如芯片制造商 GigaDevice
-
+- ARM Cortex-M33：如芯片制造商 ST
 - ARM Cortex-R4
-
 - ARM Cortex-A8/A9：如芯片制造商 NXP
-
 - ARM7：如芯片制造商Samsung
-
 - ARM9：如芯片制造商Allwinner、Xilinx 、GOKE
-
 - ARM11：如芯片制造商Fullhan
-
 - MIPS32：如芯片制造商loongson、Ingenic
-
 - RISC-V：如芯片制造商Hifive、Kendryte、[芯来Nuclei](https://nucleisys.com/)
-
 - ARC：如芯片制造商SYNOPSYS
-
 - DSP：如芯片制造商 TI
-
 - C-Sky
-
 - x86
 
 

@@ -9,9 +9,9 @@ config SOC_N32G452XX
 
 menu "Onboard Peripheral Drivers"
 
-    config RT_USING_SERIAL
+    config BSP_USING_UART
         bool "Enable USART (uart1)"
-        select BSP_USING_UART
+        select RT_USING_SERIAL
         select BSP_USING_UART1
         default y
 
@@ -19,7 +19,7 @@ endmenu
 
 menu "On-chip Peripheral Drivers"
 
-    config RT_USING_GPIO
+    config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
