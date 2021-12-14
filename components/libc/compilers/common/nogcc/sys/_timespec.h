@@ -19,9 +19,12 @@ typedef	_TIME_T_	time_t;
 #define	_TIME_T_DECLARED
 #endif
 
+#ifndef _TIMESPEC_DEFINED
+#define _TIMESPEC_DEFINED
 struct timespec {
 	time_t	tv_sec;		/* seconds */
 	long	tv_nsec;	/* and nanoseconds */
 };
+#endif
 
 #endif /* !_SYS__TIMESPEC_H_ */

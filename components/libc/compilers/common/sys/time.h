@@ -57,11 +57,14 @@ struct timeval
 #if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && \
     !(defined(__ICCARM__) && (__VER__ >= 8010001)) && \
     !defined(_WIN32)
+#ifndef _TIMESPEC_DEFINED
+#define _TIMESPEC_DEFINED
 struct timespec
 {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
 };
+#endif
 #endif
 
 int stime(const time_t *t);
