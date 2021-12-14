@@ -1,0 +1,33 @@
+menu "MPU abstraction layer"
+
+config RT_USING_MAL
+    bool "Enable mpu abstraction layer"
+    default n
+
+    if RT_USING_MAL
+        config RT_MPU_USING_THREAD_STACK_PROTECT
+            bool "Enable thread stack protect"
+            default y
+
+        config RT_MPU_USING_LOG
+            bool "Enable mpu abstraction layer debug log"
+            default n
+
+        config RT_MPU_HW_USED_REGIONS
+            int "Set hardware used mpu regions number" 
+            default 4
+
+        config RT_MPU_PROTECT_AREA_REGIONS
+            int "Set mpu protect area regions number"
+            default 2
+
+        config RT_MPU_REGIONS_NUMBER
+            int "Set mpu regions number" 
+            default 8   if ARCH_ARM_CORTEX_M3
+            default 16  if ARCH_ARM_CORTEX_M4
+            default 16  if ARCH_ARM_CORTEX_M7
+            default 16  if ARCH_ARM_CORTEX_M23
+            default 16  if ARCH_ARM_CORTEX_M33
+    endif
+
+endmenu
