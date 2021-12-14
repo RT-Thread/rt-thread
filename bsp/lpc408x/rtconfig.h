@@ -188,7 +188,7 @@
 
 /* system packages */
 
-/* rt_kprintf: enhanced rt_kprintf packages */
+/* enhanced kernel services */
 
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
@@ -212,12 +212,6 @@
 
 
 /* entertainment: terminal games and other interesting software packages */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 #define SOC_LPC4088
 

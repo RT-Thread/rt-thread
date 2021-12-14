@@ -13,10 +13,13 @@
 
 static mqd_t posix_mq_list = RT_NULL;
 static struct rt_semaphore posix_mq_lock;
-void posix_mq_system_init()
+
+/* initialize posix mqueue */
+static void posix_mq_system_init(void)
 {
     rt_sem_init(&posix_mq_lock, "pmq", 1, RT_IPC_FLAG_FIFO);
 }
+INIT_COMPONENT_EXPORT(posix_mq_system_init);
 
 rt_inline void posix_mq_insert(mqd_t pmq)
 {

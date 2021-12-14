@@ -114,15 +114,6 @@ void rt_init_thread_entry(void* parameter)
 #endif
 #endif /* end of RT_USING_DFS */
 
-#ifdef RT_USING_NEWLIB
-	libc_system_init(RT_CONSOLE_DEVICE_NAME);
-#else
-	/* the pthread system initialization will be initiallized in libc */
-#ifdef RT_USING_PTHREADS 
-	pthread_system_init();
-#endif
-#endif
-
 #ifdef RT_USING_RTGUI
 	rtgui_system_server_init();
 #endif

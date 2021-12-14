@@ -152,19 +152,6 @@ void _pthread_data_destroy(pthread_t pth)
     }
 }
 
-int pthread_system_init(void)
-{
-    /* initialize key area */
-    pthread_key_system_init();
-    /* initialize posix mqueue */
-    posix_mq_system_init();
-    /* initialize posix semaphore */
-    posix_sem_system_init();
-
-    return 0;
-}
-INIT_COMPONENT_EXPORT(pthread_system_init);
-
 static void _pthread_destroy(_pthread_data_t *ptd)
 {
     pthread_t pth = _pthread_data_get_pth(ptd);

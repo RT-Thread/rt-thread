@@ -14,10 +14,13 @@
 
 static sem_t *posix_sem_list = RT_NULL;
 static struct rt_semaphore posix_sem_lock;
-void posix_sem_system_init()
+
+/* initialize posix semaphore */
+void posix_sem_system_init(void)
 {
     rt_sem_init(&posix_sem_lock, "psem", 1, RT_IPC_FLAG_FIFO);
 }
+INIT_COMPONENT_EXPORT(posix_sem_system_init);
 
 rt_inline void posix_sem_insert(sem_t *psem)
 {

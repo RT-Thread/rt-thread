@@ -104,6 +104,7 @@
 /* POSIX (Portable Operating System Interface) layer */
 
 #define RT_USING_POSIX_DELAY
+#define RT_USING_POSIX_CLOCK
 #define RT_USING_PTHREADS
 #define PTHREAD_NUM_MAX 8
 
@@ -183,7 +184,7 @@
 
 /* system packages */
 
-/* rt_kprintf: enhanced rt_kprintf packages */
+/* enhanced kernel services */
 
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
@@ -207,12 +208,6 @@
 
 
 /* entertainment: terminal games and other interesting software packages */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 #define SOC_VEXPRESS_GEMINI
 #define RT_USING_UART1
