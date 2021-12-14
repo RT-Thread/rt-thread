@@ -9,8 +9,9 @@
  */
 #include <Arduino.h>
 #include <board.h>
+#include "arduino_pinout.h"
 
-const pin_map_t pin_map_table[ARDUINO_LAYOUT_PIN_MAX]=
+const pin_map_t pin_map_table[ARDUINO_PINOUT_PIN_MAX]=
 {
     /*
         {Arduino Pin, RT-Thread Pin [, Device Name(PWM or ADC), Channel]}
