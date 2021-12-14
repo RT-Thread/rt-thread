@@ -8,16 +8,23 @@
  */
 
 #include <string.h>
+#include <fcntl.h>
 #include <sys/signal.h>
+#include <sys/time.h>
+#include <sys/errno.h>
+#include <rtthread.h>
 #include "mqueue.h"
-#include "pthread_internal.h"
 
 static mqd_t posix_mq_list = RT_NULL;
 static struct rt_semaphore posix_mq_lock;
-void posix_mq_system_init()
+
+/* initialize posix mqueue */
+static int posix_mq_system_init(void)
 {
     rt_sem_init(&posix_mq_lock, "pmq", 1, RT_IPC_FLAG_FIFO);
+    return 0;
 }
+INIT_COMPONENT_EXPORT(posix_mq_system_init);
 
 rt_inline void posix_mq_insert(mqd_t pmq)
 {
