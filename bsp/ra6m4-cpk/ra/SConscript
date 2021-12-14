@@ -15,13 +15,7 @@ elif rtconfig.CROSS_TOOL == 'gcc':
     src += Glob(cwd + '/fsp/src/bsp/mcu/all/*.c')
     src += [cwd + '/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c']
     src += [cwd + '/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c']
-    src += [cwd + '/fsp/src/r_ioport/r_ioport.c']
-
-    if GetDepend(['RT_USING_SERIAL']):
-        src += [cwd + '/fsp/src/r_sci_uart/r_sci_uart.c']
-
-    if GetDepend(['RT_USING_PIN']):
-        src += [cwd + '/fsp/src/r_icu/r_icu.c']
+    src += Glob(cwd + '/fsp/src/r_*/*.c')
 
     CPPPATH = [ cwd + '/arm/CMSIS_5/CMSIS/Core/Include',
                 cwd + '/fsp/inc',

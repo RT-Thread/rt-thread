@@ -1,6 +1,6 @@
 ## 在 MDK 中使用 FSP
 
-- 添加RA Smart Config
+###  添加RA Smart Config
 
 1. 打开 MDK，选择 “Tools -> Customize Tools Menu…”
 2. 点击 “new” 图标，添加一条自定义命令: RA Smart Configurator
@@ -15,12 +15,12 @@
 
 ![image.png](picture/openrasc.png)
 
-- 添加 Device Partition Manager，添加步骤同上。
+###  添加 Device Partition Manager，添加步骤同上。
 
-1. 输入命令名称: `Device Partition Manager`
-2. Command: 在安装路径选中 `rasc.exe`
-3. Initial Folder : `$P`
-4. Arguments: `-application com.renesas.cdt.ddsc.dpm.ui.dpmapplication configuration.xml "SL%L"` 
+1. 输入命令名称:`Device Partition Manager`
+2. Command: 在安装路径选中`rasc.exe`
+3. Initial Folder :`$P`
+4. Arguments:`-application com.renesas.cdt.ddsc.dpm.ui.dpmapplication configuration.xml "SL%L"`
 
 > PS：以上相关操作也可以在 FSP 的说明文档中找到。
 >
@@ -28,14 +28,25 @@
 >
 > 文档路径（官网）：https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp#document
 
+###  FSP 版本选择
+
+此 BSP 使用 **FSP 3.1.0** 版本为基础制作，优先推荐使用 FSP 3.1.0 版本进行配置修改。
+
+**使用 RASC 前请务必检查 FSP version 、Board、Device 配置项是否正确。**
+
+![fsp_version](picture/fsp_version.png)
+
 ## 更新工程配置
 
 使用 FSP 配置完成后如果有新的文件添加进工程中，不会马上添加进去。需要先编译一次，如果弹出如下提醒，选择 “是” 然后再次编译即可。
 
 ![img](picture/import_changes.png)
 
+## 如何使用 RASC 添加外设
 
-## UART
+**注意：文档中的外设添加步骤均为单独配置的说明，排版顺序不代表外设添加顺序，如遇到引脚冲突请查阅开发板及芯片手册的相关章节。**
+
+### UART
 
 如何添加一个 UART 端口外设配置？
 
@@ -45,7 +56,7 @@
 
 2. 配置 UART 参数，因为需要适配 RT-Thread 驱动中使用的命名，所以需要修改命名，设置**name** 、**channel**  、**callback** 是一致的标号。![image.png](picture/rascuart1.png)
 
-## GPIO 中断
+###  GPIO 中断
 
 如何添加一个 IO 中断？
 
@@ -91,7 +102,7 @@
    MSH_CMD_EXPORT(icu_sample, icu sample);
    ```
 
-## WDT
+### WDT
 
 1. 创建 WDT
 
@@ -105,7 +116,7 @@
 
 ![image-20211027183406251](picture/wdt_env.png)
 
-## RTC
+### RTC
 
 1. 添加 RTC 设备
 
@@ -115,11 +126,11 @@
 
 ![image-20211019152627412](picture/rtc_config.png)
 
-3. 如何在 ENV 中打开 RTC 以及[ RTC 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/rtc/rtc) 
+3. 如何在 ENV 中打开 RTC 以及[ RTC 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/rtc/rtc)
 
 ![image-20211027181550233](picture/rtc_env.png)
 
-## Flash
+### Flash
 
 1. 创建 Flash
 
@@ -133,7 +144,7 @@
 
 ![image-20211026123252310](picture/flash_menuconfig.png)
 
-## SPI
+### SPI
 
 1. 添加一个 SPI 外设端口
 
@@ -143,11 +154,16 @@
 
 ![img](picture/spi.png)
 
-3. 如何在 ENV 中打开 SPI 以及 [SPI 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/spi/spi)
+3. 在 Pins 中打开 SPI0 ，配置端口引脚。**注意：请勿在此处配置 SSLx 片选引脚，片选引脚的控制在驱动程序中由软件控制。**
+
+![image-20211209162334093](picture/spi_pin.png)
+
+
+4. 如何在 ENV 中打开 SPI 以及 [SPI 接口使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/spi/spi)
 
    ![image-20211027181444023](picture/spi_env.png)
 
-## ADC/DAC
+### ADC/DAC
 
 创建 ADC/DAC
 
@@ -181,14 +197,13 @@
 
 4. 在 menuconfig 中打开对应的通道
 
-## 通用 PWM 定时器（GPT）
+### 通用 PWM 定时器（GPT）
 
 GPT 定时器在该芯片中可作为通用定时器，也可以用于产生 PWM 信号。在将其用于产生 PWM 信号时，GPT 定时器提供了 gpt0 - gpt9 总共 10 个通道，每个通道可以设定两个输出端口。当前版本的 PWM 驱动将每个通道都看做一个单独的 PWM 设备，每个设备都只有一个通道。用户可以选择开启一个通道的任意一个输出端口，或将两个端口均开启，但在同时开启两个端口的情况下，它们输出的波形将完全一致。
 
 1. 添加 GPT 设备
 
    ![img](./picture/add_gpt1.png)
-   
 2. 配置通道
 
    ![img](./picture/add_gpt2.png)
@@ -200,13 +215,83 @@ GPT 定时器在该芯片中可作为通用定时器，也可以用于产生 PWM
    3. 设定 PWM 通道默认输出的占空比，这里为 50% 。
    4. 设定 GPT 通道下两个输出端口的使能状态。
    5. 此处设置 GPT 通道下两个输出端口各自对应的引脚。
-   
 3. 配置输出引脚
 
    ![img](./picture/add_gpt3.png)
 
    在完成上一步对 GPT 定时器的设置后，根据图示找到对应 GPT 通道输出引脚设置的界面（这里是 GPT3），将图中标号 **1** 处设置为 ``GTIOCA or GTIOCB`` ，并根据需要在图中标号 **2** 处设置 GPT 通道下两个输出端口各自对应的输出引脚。
-   
-   4. 在 menuconfig 中打开对应的通道，[RT-Thread 的 pwm 框架介绍](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/pwm/pwm) 
-   
+
+   4. 在 menuconfig 中打开对应的通道，[RT-Thread 的 pwm 框架介绍](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/pwm/pwm)
+
    ![image-20211103202216381](picture/pwm_env.png)
+
+### CAN
+
+1. 添加CAN
+
+![image-20211102145023112](picture/can.png)
+
+2. 配置Callback为 `can0_callback` 或 `can1_callback`
+
+![image-20211102145227603](picture/can_callback.png)
+
+3. 配置其他选项，并生成代码。
+
+4. 使用ENV使能CAN。[CAN设备使用说明](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/can/can)
+
+![image-20211102145613309](picture/can_menuconfig.png)
+
+
+### 使用 WiFi 模块 [RW007 ](https://github.com/RT-Thread-packages/rw007) 
+
+1. 软件包配置中找到 RW007，并修改为下图配置
+
+![image-20211108142805319](picture/rw007_pkg.png)
+
+2. menuconfig 中打开驱动的 RW007 配置，默认使用了 SPI1 端口。所以需要打开 SPI1 总线。
+
+![image-20211108142453678](picture/rw007_spi.png)
+
+![image-20211213212034701](picture/drv_rw007.png)
+
+3. 在设备驱动框架中打开 [WLAN 框架](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/wlan/wlan)，
+
+![image-20211108143027485](picture/rw007_wlan.png)
+
+在网络配置中打开 NETDEV 组件：
+
+![image-20211108143712513](picture/rw007_netdev.png)
+
+在 kernel 中打开 mempool 配置：
+
+![image-20211209161902884](picture/rw007_mempool.png)
+
+4. FSP 中打开添加 SPI 外设端口，[如何添加SPI](#SPI)。下图以 SPI1 端口为例的配置如下：
+
+![image-20211108183631379](picture/rw007_spicfg.png)
+
+5. RW007 有一个从机控制的 INT 引脚，需要占用一个 IRQ 通道，下图以 P506 为例的配置如下：
+
+![image-20211108183724282](picture/rw007_int.png)
+
+6. RW007 的 RESET 控制引脚修改默认配置，这里在 RASC 中 mode 设为关闭，交由 RW007 中进行控制。
+
+![image-20211213144108558](picture/rw007_reset.png)
+
+7. 配置完成，检查 MDK 工程中是否加入了必要的文件
+
+![image-20211109102232233](picture/rw007_mdk.png)
+
+8. 编译下载，验证结果。
+
+系统启动会自动获取 RW007 的信息，输入`wifi scan` 命令扫描环境中的 WiFi 信号。[更多 WiFi 命令](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/wlan/wlan?id=finsh-%e5%91%bd%e4%bb%a4)
+
+![image-20211109103856130](picture/rw007_test.png)
+
+使用 `WiFi join` 命令连接 WiFi 热点 ：
+
+![image-20211109104735733](picture/rw007_wifijoin.png)
+
+使用 `ping rt-thread.com` 测试网络连接：
+
+![image-20211109104700939](picture/rw007_ping.png)

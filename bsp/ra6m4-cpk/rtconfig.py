@@ -17,7 +17,7 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     EXEC_PATH   = 'C:\Users\XXYYZZ'
 elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armcc'
+    PLATFORM    = 'armclang'
     EXEC_PATH   = 'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iar'
@@ -26,7 +26,8 @@ elif CROSS_TOOL == 'iar':
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'debug'
+# BUILD = 'debug' 
+BUILD = 'release' 
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -54,7 +55,7 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -O0 -gdwarf-2 -g -Wall'
         AFLAGS += ' -gdwarf-2'
     else:
-        CFLAGS += ' -O2'
+        CFLAGS += ' -Os'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
     POST_ACTION += OBJCPY + ' -O ihex $TARGET rtthread.hex\n' + SIZE + ' $TARGET \n'
@@ -79,7 +80,7 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -g -O0'
         AFLAGS += ' -g'
     else:
-        CFLAGS += ' -O2'
+        CFLAGS += ' -Os'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET \n'
     POST_ACTION += 'python ./makeimg.py'

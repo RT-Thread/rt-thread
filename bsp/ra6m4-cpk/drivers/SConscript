@@ -44,6 +44,9 @@ if GetDepend(['BSP_USING_ONCHIP_FLASH']):
 if GetDepend(['BSP_USING_PWM']):
     src += ['drv_pwm.c']
 
+if GetDepend(['BSP_USING_CAN']):
+    src += ['drv_can.c']
+
 path =  [cwd]
 path += [cwd + '/config']
 
