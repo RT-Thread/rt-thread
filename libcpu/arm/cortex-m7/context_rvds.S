@@ -127,6 +127,9 @@ PendSV_Handler   PROC
     STR     r1, [r0]                ; update from thread stack pointer
 
 switch_to_thread
+	IMPORT  rt_mpu_table_switch
+	IMPORT  rt_current_thread
+		
     LDR     r1, =rt_interrupt_to_thread
     LDR     r1, [r1]
     LDR     r1, [r1]                ; load thread stack pointer
@@ -149,6 +152,12 @@ switch_to_thread
     CMP     r3,  #0                 ; if(flag_r3 != 0)
     BICNE   lr, lr, #0x10           ; lr &= ~(1 << 4), set FPCA.
     ENDIF
+
+    PUSH    {r0-r3, r12, lr}
+    LDR     r1, =rt_current_thread
+    LDR     r0, [r1]
+    BL      rt_mpu_table_switch     ; switch mpu table 
+    POP     {r0-r3, r12, lr}
 
 pendsv_exit
     ; restore interrupt
@@ -219,9 +228,7 @@ rt_hw_interrupt_thread_switch PROC
 
     IMPORT rt_hw_hard_fault_exception
     EXPORT HardFault_Handler
-    EXPORT MemManage_Handler
 HardFault_Handler    PROC
-MemManage_Handler
 
     ; get current context
     TST     lr, #0x04               ; if(!EXC_RETURN[2])

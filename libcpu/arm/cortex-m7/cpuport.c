@@ -445,6 +445,14 @@ RT_WEAK void rt_hw_cpu_reset(void)
     SCB_AIRCR = SCB_RESET_VALUE;
 }
 
+/**
+ * switch table
+ */
+RT_WEAK void rt_mpu_table_switch(rt_thread_t thread)
+{
+    return;
+}
+
 #ifdef RT_USING_CPU_FFS
 /**
  * This function finds the first bit set (beginning with the least significant bit)

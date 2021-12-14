@@ -598,6 +598,27 @@ struct rt_cpu
 
 #endif
 
+#ifdef RT_USING_MAL
+
+#ifndef RT_MPU_REGIONS_NUMBER
+#define RT_MPU_REGIONS_NUMBER   16
+#endif
+
+struct rt_mal_region
+{
+    rt_uint32_t addr;
+    rt_uint32_t size;
+    rt_uint32_t attribute;
+};
+
+struct rt_mal
+{
+    rt_uint16_t index;
+    struct rt_mal_region tables[RT_MPU_REGIONS_NUMBER];
+};
+
+#endif
+
 /**
  * Thread structure
  */
@@ -676,6 +697,12 @@ struct rt_thread
     /* light weight process if present */
 #ifdef RT_USING_LWP
     void        *lwp;
+#endif
+    
+    /* memory protect unit if present */
+#ifdef RT_USING_MAL
+    struct rt_mal setting;                            /**< mpu tables setting */
+    rt_err_t (*mpu_hook)(void* addr, rt_uint32_t attribute);
 #endif
 
     rt_ubase_t user_data;                             /**< private user data beyond this thread */
