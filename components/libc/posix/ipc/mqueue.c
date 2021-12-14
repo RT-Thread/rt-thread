@@ -10,7 +10,6 @@
 #include <string.h>
 #include <sys/signal.h>
 #include "mqueue.h"
-#include "pthread_internal.h"
 
 static mqd_t posix_mq_list = RT_NULL;
 static struct rt_semaphore posix_mq_lock;
