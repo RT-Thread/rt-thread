@@ -17,20 +17,13 @@ config RT_USING_UART1
     bool "Enable UART1"
     default y
 
-config BSP_USING_LVGL
-    bool "Enable LVGL for LCD"
-    select PKG_USING_LVGL
-    default n
-
 config BSP_DRV_CLCD
     bool "CLCD driver"
-    depends on PKG_USING_GUIENGINE || BSP_USING_LVGL
-    default y
+    default n
 
 config BSP_DRV_MOUSE
     bool "MOUSE driver"
-    depends on PKG_USING_GUIENGINE || BSP_USING_LVGL
-    default y
+    default n
 
 if BSP_DRV_CLCD
     config BSP_LCD_WIDTH
@@ -41,6 +34,14 @@ if BSP_DRV_CLCD
         int "Height of LCD panel"
         default 480
 endif
+
+config BSP_USING_LVGL
+    bool "Enable LVGL for LCD"
+    select PKG_USING_LVGL
+    select PKG_USING_LV_MUSIC_DEMO
+    select BSP_DRV_CLCD
+    select BSP_DRV_MOUSE
+    default n
 
 config BSP_DRV_EMAC
     bool "Enable EMAC driver"
