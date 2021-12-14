@@ -3,7 +3,6 @@ from building import *
 cwd        = GetCurrentDir()
 src        = []
 inc        = [cwd]
-CPPDEFINES = []
 
 # if GetDepend('RT_USING_POSIX_IPC_SYSTEM_V'):
 #     src += Glob('system-v/*.c')
@@ -15,6 +14,6 @@ if GetDepend('RT_USING_POSIX_MESSAGE_QUEUE'):
 if GetDepend('RT_USING_POSIX_MESSAGE_SEMAPHORE'):
     src += ['semaphore.c']
 
-group = DefineGroup('POSIX', src, depend = [], CPPPATH = inc, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('POSIX', src, depend = [], CPPPATH = inc)
 
 Return('group')

@@ -4,9 +4,7 @@ from utils import VersionCmp
 cwd        = GetCurrentDir()
 src        = Glob('*.c')
 CPPPATH    = [cwd]
-CPPDEFINES = []
 
-group = DefineGroup('POSIX', src,
-    depend = ['RT_USING_PTHREADS', 'RT_USING_LIBC'], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('POSIX', src, depend = ['RT_USING_PTHREADS'], CPPPATH = CPPPATH)
 
 Return('group')

@@ -40,5 +40,4 @@ int sem_trywait(sem_t *sem);
 int sem_unlink(const char *name);
 int sem_wait(sem_t *sem);
 
-
 #endif
