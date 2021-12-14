@@ -583,11 +583,6 @@
               <FileType>1</FileType>
               <FilePath>.\src\hal_entry.c</FilePath>
             </File>
-            <File>
-              <FileName>SConscript</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\SConscript</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
