@@ -48,8 +48,8 @@ void rt_wqueue_remove(struct rt_wqueue_node *node)
 }
 
 /**
- * @brief    This function is the default wakeup function. But it doesn't do anything in actual.
- *           Just always return 0, user should define their own wakeup function.
+ * @brief    This function is the default wakeup function, but it doesn't do anything in actual.
+ *           It always return 0, user should define their own wakeup function.
  *
  * @param    queue is a pointer to the wait queue.
  *
