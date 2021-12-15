@@ -36,12 +36,10 @@ config BSP_DRV_MOUSE
 if BSP_DRV_CLCD
     config BSP_LCD_WIDTH
         int "Width of LCD panel"
-        default 480 if PKG_USING_LV_MUSIC_DEMO
         default 640
 
     config BSP_LCD_HEIGHT
         int "Height of LCD panel"
-        default 272 if PKG_USING_LV_MUSIC_DEMO
         default 480
 endif
 

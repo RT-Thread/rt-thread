@@ -109,7 +109,7 @@ int drv_clcd_hw_init(void)
 
     _lcd.width  = CLCD_WIDTH;
     _lcd.height = CLCD_HEIGHT;
-    _lcd.fb     = rt_malloc (_lcd.width * _lcd.height * 2);
+    _lcd.fb     = rt_malloc_align(_lcd.width * _lcd.height * 2, 32);
     if (_lcd.fb == NULL)
     {
         rt_kprintf("initialize frame buffer failed!\n");
