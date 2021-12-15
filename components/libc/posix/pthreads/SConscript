@@ -1,24 +1,9 @@
 from building import *
-from utils import VersionCmp
 
 cwd        = GetCurrentDir()
 src        = Glob('*.c')
 CPPPATH    = [cwd]
-CPPDEFINES = []
 
-# only enable POSIX.1b-1993 Real-time extensions
-libc_ver   = GetDepend('LIBC_VERSION')
-try:
-    ver = libc_ver.split(' ')
-    ver = ver[1]
-
-    # gcc10.2.1 -> 3.0; we need basal definition for '_POSIX_C_SOURCE'.
-    # if LIBC_VERSION > "2.5.0", CPPDEFINES = '_POSIX_C_SOURCE=199309L'
-    if VersionCmp(ver, "2.5.0") == 1:
-        CPPDEFINES = ['_POSIX_C_SOURCE=199309L']
-except :
-    pass
-
-group = DefineGroup('POSIX', src, depend = ['RT_USING_PTHREADS'], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('POSIX', src, depend = ['RT_USING_PTHREADS'], CPPPATH = CPPPATH)
 
 Return('group')
