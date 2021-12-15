@@ -169,14 +169,14 @@ void lv_port_disp_init(void)
 
     lvgl_dma_config();
 
-    buf_1 = rt_malloc(info.width * 30 * sizeof(lv_color_t));
+    buf_1 = rt_malloc(info.width * info.height * sizeof(lv_color_t));
     if (buf_1 == RT_NULL)
     {
         LOG_E("malloc memory failed");
         return;
     }
 
-    buf_2 = rt_malloc(info.width * 30 * sizeof(lv_color_t));
+    buf_2 = rt_malloc(info.width * info.height * sizeof(lv_color_t));
     if (buf_2 == RT_NULL)
     {
         LOG_E("malloc memory failed");
@@ -184,7 +184,7 @@ void lv_port_disp_init(void)
     }
 
     /*Initialize `disp_buf` with the buffer(s).*/
-    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, info.width * 30);
+    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, info.width * info.height);
 
     lv_disp_drv_init(&disp_drv); /*Basic initialization*/
 
