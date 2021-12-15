@@ -36,7 +36,7 @@ void rt_hw_systick_isr(void)
 void rt_hw_system_timer_init(void)
 {
     // initial system timer interrupt, map local timer interrupt to INT14
-    gpCGEM_regs->INTMUX3 = (CSL_GEM_TINTLN << CSL_CGEM_INTMUX3_INTSEL14_SHIFT);
+	gp_cgem_regs->INTMUX3 = (CSL_GEM_TINTLN << CSL_CGEM_INTMUX3_INTSEL14_SHIFT);
     // enable CPU INT14
     rt_hw_interrupt_umask(1 << 14);
 
@@ -45,7 +45,7 @@ void rt_hw_system_timer_init(void)
 
 /**
  * The function initial system timer.
- * Use local timer (==DNUM of a core) to generate a clock on TIMO0,interrupts are generated as well
+ * Use local timer (== DNUM of a core) to generate a clock on TIMO0,interrupts are generated as well
  *
  */
 void rt_hw_system_timer_start(void)
@@ -53,7 +53,7 @@ void rt_hw_system_timer_start(void)
     Timer64_Config tmrCfg;
 
     // select output on TIMO0 from local timer.
-    gpBootCfgRegs->TOUTSEL = (DNUM*2) << CSL_BOOTCFG_TOUTSEL_TOUTSEL0_SHIFT;
+    gp_bootcfg_regs->TOUTSEL = (DNUM*2) << CSL_BOOTCFG_TOUTSEL_TOUTSEL0_SHIFT;
 
     // configure the timer to generate clocks and interrupts
     tmrCfg.timer_num = DNUM;

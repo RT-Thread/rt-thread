@@ -21,8 +21,8 @@
 /* DSP core clock speed in Hz */
 #define DSP_CORE_SPEED_HZ 	1000000000
 
-extern CSL_CgemRegs * gpCGEM_regs;
-extern CSL_BootcfgRegs * gpBootCfgRegs;
+extern CSL_CgemRegs * gp_cgem_regs;
+extern CSL_BootcfgRegs * gp_bootcfg_regs;
 
 /*----------------------Timer plus registers definition----------------*/
 typedef struct {
@@ -69,16 +69,16 @@ typedef struct {
 
 #define CSL_TMR_ENAMODE_CONT_RELOAD    3
 
-extern CSL_TmrPlusRegs * gpTimer0Regs;
-extern CSL_TmrPlusRegs * gpTimer1Regs;
-extern CSL_TmrPlusRegs * gpTimer2Regs;
-extern CSL_TmrPlusRegs * gpTimer3Regs;
-extern CSL_TmrPlusRegs * gpTimer4Regs;
-extern CSL_TmrPlusRegs * gpTimer5Regs;
-extern CSL_TmrPlusRegs * gpTimer6Regs;
-extern CSL_TmrPlusRegs * gpTimer7Regs;
-extern CSL_TmrPlusRegs * gpTimer8Regs;
-extern CSL_TmrPlusRegs * gpTimerRegs[];
+extern CSL_TmrPlusRegs * gp_timer0_regs;
+extern CSL_TmrPlusRegs * gp_timer1_regs;
+extern CSL_TmrPlusRegs * gp_timer2_regs;
+extern CSL_TmrPlusRegs * gp_timer3_regs;
+extern CSL_TmrPlusRegs * gp_timer4_regs;
+extern CSL_TmrPlusRegs * gp_timer5_regs;
+extern CSL_TmrPlusRegs * gp_timer6_regs;
+extern CSL_TmrPlusRegs * gp_timer7_regs;
+extern CSL_TmrPlusRegs * gp_timer8_regs;
+extern CSL_TmrPlusRegs * gp_timer_regs[];
 
 typedef enum
 {
