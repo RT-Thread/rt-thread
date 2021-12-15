@@ -11,6 +11,9 @@
 #ifndef __SYS_TIMER_H__
 #define __SYS_TIMER_H__
 
+#include <c6x.h>
+#include <tistdtypes.h>
+
 void rt_hw_system_timer_init(void);
 
 void rt_hw_system_timer_start(void);

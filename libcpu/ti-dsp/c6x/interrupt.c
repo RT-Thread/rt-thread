@@ -60,6 +60,11 @@ void rt_hw_interrupt_umask(int vector)
     {
         return;
     }
+    ICR = vector;
+    IER |= vector;
+
+    //enable GIE
+    TSR = TSR | 1;
 }
 
 /**

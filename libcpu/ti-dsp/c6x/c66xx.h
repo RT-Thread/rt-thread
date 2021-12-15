@@ -11,15 +11,25 @@
 #ifndef __C66XX_H__
 #define __C66XX_H__
 
-extern cregister volatile unsigned int IERR;    /* Internal Exception Report Register */
-extern cregister volatile unsigned int ECR;     /* Exception Clear Register */
-extern cregister volatile unsigned int EFR;     /* Exception Flag Register */
-extern cregister volatile unsigned int TSR;     /* Task State Register */
-extern cregister volatile unsigned int ITSR;    /* Interrupt Task State Register */
-extern cregister volatile unsigned int NTSR;    /* NMI/exception Task State Register */
-extern cregister volatile unsigned int TSCL;    /* Time Stamp Counter Register - Low Half  */
-extern cregister volatile unsigned int TSCH;    /* Time Stamp Counter Register - High Half */
-extern cregister volatile unsigned int DNUM;    /* Core number */
+extern __cregister volatile unsigned int IERR;    /* Internal Exception Report Register */
+extern __cregister volatile unsigned int ECR;     /* Exception Clear Register */
+extern __cregister volatile unsigned int EFR;     /* Exception Flag Register */
+extern __cregister volatile unsigned int TSR;     /* Task State Register */
+extern __cregister volatile unsigned int ITSR;    /* Interrupt Task State Register */
+extern __cregister volatile unsigned int NTSR;    /* NMI/exception Task State Register */
+extern __cregister volatile unsigned int TSCL;    /* Time Stamp Counter Register - Low Half  */
+extern __cregister volatile unsigned int TSCH;    /* Time Stamp Counter Register - High Half */
+extern __cregister volatile unsigned int DNUM;    /* Core number */
+
+extern __cregister volatile unsigned int AMR;
+extern __cregister volatile unsigned int CSR;
+extern __cregister volatile unsigned int IFR;
+extern __cregister volatile unsigned int ISR;
+extern __cregister volatile unsigned int ICR;
+extern __cregister volatile unsigned int IER;
+extern __cregister volatile unsigned int ISTP;
+extern __cregister volatile unsigned int IRP;
+extern __cregister volatile unsigned int NRP;
 
 #ifdef _BIG_ENDIAN
 #define RT_REG_PAIR(odd, even) unsigned long odd; unsigned long even
