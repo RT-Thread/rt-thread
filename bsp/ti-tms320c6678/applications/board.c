@@ -11,7 +11,7 @@
 #include "board.h"
 #include "interrupt.h"
 #include "drv_timer.h"
-#include "KeyStone_common.h"
+#include "common.h"
 
 #include <rtthread.h>
 
@@ -21,7 +21,7 @@
 void rt_hw_board_init(void)
 {
     // initial CPU core
-    KeyStone_common_CPU_init();
+	keystone_cpu_init();
 
     // initial interrupt controller
     rt_hw_interrupt_init();
