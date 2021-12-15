@@ -18,6 +18,7 @@
 #define LV_VER_RES_MAX          (480)
 
 #define LV_USE_DEMO_MUSIC           1
+#define LV_DEMO_MUSIC_AUTO_PLAY     1
 #define LV_FONT_MONTSERRAT_12       1
 #define LV_FONT_MONTSERRAT_16       1
 
