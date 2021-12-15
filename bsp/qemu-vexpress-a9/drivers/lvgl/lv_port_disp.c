@@ -62,19 +62,22 @@ static void lcd_fb_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_colo
     long int location = 0;
 
     /* 16 bit per pixel */
-    lv_color16_t *fbp16 = (lv_color16_t *)info.framebuffer;
+    // lv_color16_t *fbp16 = (lv_color16_t *)info.framebuffer;
+    // for (y = act_y1; y <= act_y2; y++)
+    // {
+    //     for (x = act_x1; x <= act_x2; x++)
+    //     {
+    //         location = (x) + (y)*info.width;
+    //         color_to16_maybe(&fbp16[location], color_p);
+    //         color_p++;
+    //     }
 
-    for (y = act_y1; y <= act_y2; y++)
-    {
-        for (x = act_x1; x <= act_x2; x++)
-        {
-            location = (x) + (y)*info.width;
-            color_to16_maybe(&fbp16[location], color_p);
-            color_p++;
-        }
+    //     color_p += x2 - act_x2;
+    // }
 
-        color_p += x2 - act_x2;
-    }
+    rt_uint32_t size = 0;
+    size = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 +1) * sizeof(lv_color_t);
+    rt_memcpy(info.framebuffer, color_p, size);
 
     struct rt_device_rect_info rect_info;
 
