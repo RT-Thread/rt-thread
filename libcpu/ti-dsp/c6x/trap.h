@@ -90,8 +90,9 @@ extern int __ffs(int val);
 static inline int fls(int x)
 {
     if (!x)
+    {
         return 0;
-
+    }
     return 32 - __fls(x);
 }
 
@@ -107,8 +108,9 @@ static inline int fls(int x)
 static inline int ffs(int x)
 {
     if (!x)
+    {
         return 0;
-
+    }
     return __ffs(x) + 1;
 }
 

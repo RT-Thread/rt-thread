@@ -18,11 +18,6 @@
 ;-----------------------------------------------------------
 DP	.set	B14
 SP	.set	B15
-
-;-----------------------------------------------------------
-;                      extern variable
-;-----------------------------------------------------------
-	.ref rt_system_stack_top
 ;
 ;-----------------------------------------------------------
 ;
@@ -165,8 +160,7 @@ rt_hw_context_switch_to:
 	LDDW	.D2T2	*++SP[1],B13:B12    ; get PC (B13) and CSR (B12)
 	NOP	2
 	MV	B8,B0
- [B0]   B	_rt_thread_interrupt_stack
- 	NOP	5
+ [B0]  BNOP	_rt_thread_interrupt_stack, 5
 ;
 ; this maybe do better
 ;
@@ -275,7 +269,6 @@ rt_interrupt_context_restore:
 	NOP		4
 	CMPEQ	1,A1,A2
  [A2]  BNOP	 rt_preempt_context_restore,5
-	NOP		5
 	LDDW	.D2T2	*++SP[1],B9:B8      ; get TSR (B9)
 	LDDW	.D2T2	*++SP[1],B11:B10    ; get RILC (B11) and ILC (B10)
 	LDDW	.D2T2	*++SP[1],B13:B12    ; get PC (B13) and CSR (B12)

@@ -16,7 +16,6 @@
 void rt_init_thread_entry(void *parameter)
 {
     rt_kprintf("hello rt-thread\n");
-    return 0;
 }
 
 int rt_application_init(void)
