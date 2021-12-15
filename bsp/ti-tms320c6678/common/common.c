@@ -58,7 +58,7 @@ void reset_timer(int timer_num)
 {
     if(gpTimerRegs[timer_num]->TGCR)
     {
-        gpTimerRegs[timer_num]->TGCR= 0;
+        gpTimerRegs[timer_num]->TGCR = 0;
         gpTimerRegs[timer_num]->TCR= 0;
     }
 }
@@ -67,135 +67,137 @@ void timer64_init(Timer64_Config * tmrCfg)
 {
     reset_timer(tmrCfg->timer_num);
 
-    gpTimerRegs[tmrCfg->timer_num]->CNTLO= 0;
-    gpTimerRegs[tmrCfg->timer_num]->CNTHI= 0;
+    gpTimerRegs[tmrCfg->timer_num]->CNTLO = 0;
+    gpTimerRegs[tmrCfg->timer_num]->CNTHI = 0;
 
     /*please note, in clock mode, two timer periods generate a clock,
     one timer period output high voltage level, the other timer period
     output low voltage level, so, the timer period should be half to the
     desired output clock period*/
-    if(TIMER_PERIODIC_CLOCK==tmrCfg->timerMode)
-        tmrCfg->period= tmrCfg->period/2;
+    if(TIMER_PERIODIC_CLOCK == tmrCfg->timerMode)
+    {
+        tmrCfg->period = tmrCfg->period/2;
+    }
 
     /*the value written into period register is the expected value minus one*/
-    gpTimerRegs[tmrCfg->timer_num]->PRDLO= _loll(tmrCfg->period-1);
-    gpTimerRegs[tmrCfg->timer_num]->PRDHI= _hill(tmrCfg->period-1);
+    gpTimerRegs[tmrCfg->timer_num]->PRDLO = _loll(tmrCfg->period-1);
+    gpTimerRegs[tmrCfg->timer_num]->PRDHI = _hill(tmrCfg->period-1);
     if(tmrCfg->reload_period>1)
     {
-        gpTimerRegs[tmrCfg->timer_num]->RELLO= _loll(tmrCfg->reload_period-1);
-        gpTimerRegs[tmrCfg->timer_num]->RELHI= _hill(tmrCfg->reload_period-1);
+        gpTimerRegs[tmrCfg->timer_num]->RELLO = _loll(tmrCfg->reload_period-1);
+        gpTimerRegs[tmrCfg->timer_num]->RELHI = _hill(tmrCfg->reload_period-1);
     }
 
-    if(TIMER_WATCH_DOG==tmrCfg->timerMode)
+    if(TIMER_WATCH_DOG == tmrCfg->timerMode)
     {
-        gpTimerRegs[tmrCfg->timer_num]->TGCR=
+        gpTimerRegs[tmrCfg->timer_num]->TGCR =
             /*Select watch-dog mode*/
-            (CSL_TMR_TIMMODE_WDT<<CSL_TMR_TGCR_TIMMODE_SHIFT)
+            (CSL_TMR_TIMMODE_WDT << CSL_TMR_TGCR_TIMMODE_SHIFT)
             /*Remove the timer from reset*/
-            |(CSL_TMR_TGCR_TIMLORS_MASK)
-            |(CSL_TMR_TGCR_TIMHIRS_MASK);
+            | (CSL_TMR_TGCR_TIMLORS_MASK)
+            | (CSL_TMR_TGCR_TIMHIRS_MASK);
     }
-    else if(TIMER_PERIODIC_WAVE==tmrCfg->timerMode)
+    else if(TIMER_PERIODIC_WAVE == tmrCfg->timerMode)
     {
-        gpTimerRegs[tmrCfg->timer_num]->TGCR= TMR_TGCR_PLUSEN_MASK
+        gpTimerRegs[tmrCfg->timer_num]->TGCR = TMR_TGCR_PLUSEN_MASK
             /*for plus featuers, dual 32-bit unchained timer mode should be used*/
-            |(CSL_TMR_TIMMODE_DUAL_UNCHAINED<<CSL_TMR_TGCR_TIMMODE_SHIFT)
+            | (CSL_TMR_TIMMODE_DUAL_UNCHAINED << CSL_TMR_TGCR_TIMMODE_SHIFT)
             /*Remove the timer from reset*/
-            |(CSL_TMR_TGCR_TIMLORS_MASK);
+            | (CSL_TMR_TGCR_TIMLORS_MASK);
 
         //in plus mode, interrupt/event must be enabled manually
         gpTimerRegs[tmrCfg->timer_num]->INTCTL_STAT= TMR_INTCTLSTAT_EN_ALL_CLR_ALL;
     }
     else
     {
-        gpTimerRegs[tmrCfg->timer_num]->TGCR=
+        gpTimerRegs[tmrCfg->timer_num]->TGCR =
             /*Select 64-bit general timer mode*/
-            (CSL_TMR_TIMMODE_GPT<<CSL_TMR_TGCR_TIMMODE_SHIFT)
+            (CSL_TMR_TIMMODE_GPT << CSL_TMR_TGCR_TIMMODE_SHIFT)
             /*Remove the timer from reset*/
-            |(CSL_TMR_TGCR_TIMLORS_MASK)
-            |(CSL_TMR_TGCR_TIMHIRS_MASK);
+            | (CSL_TMR_TGCR_TIMLORS_MASK)
+            | (CSL_TMR_TGCR_TIMHIRS_MASK);
     }
 
     /*make timer stop with emulation*/
     gpTimerRegs[tmrCfg->timer_num]->EMUMGT_CLKSPD = (gpTimerRegs[tmrCfg->timer_num]->EMUMGT_CLKSPD&
         ~(CSL_TMR_EMUMGT_CLKSPD_FREE_MASK|CSL_TMR_EMUMGT_CLKSPD_SOFT_MASK));
 
-    if(TIMER_WATCH_DOG==tmrCfg->timerMode)
+    if(TIMER_WATCH_DOG == tmrCfg->timerMode)
     {
         /*enable watchdog timer*/
         gpTimerRegs[tmrCfg->timer_num]->WDTCR = CSL_TMR_WDTCR_WDEN_MASK
-            |(CSL_TMR_WDTCR_WDKEY_CMD1<<CSL_TMR_WDTCR_WDKEY_SHIFT);
+            | (CSL_TMR_WDTCR_WDKEY_CMD1 << CSL_TMR_WDTCR_WDKEY_SHIFT);
 
         gpTimerRegs[tmrCfg->timer_num]->TCR=
-            (CSL_TMR_CLOCK_INP_NOGATE<<CSL_TMR_TCR_TIEN_LO_SHIFT   )
-            |(CSL_TMR_CLKSRC_INTERNAL<<CSL_TMR_TCR_CLKSRC_LO_SHIFT )
+            (CSL_TMR_CLOCK_INP_NOGATE << CSL_TMR_TCR_TIEN_LO_SHIFT)
+            | (CSL_TMR_CLKSRC_INTERNAL << CSL_TMR_TCR_CLKSRC_LO_SHIFT)
             /*The timer is enabled continuously*/
-            |(CSL_TMR_ENAMODE_CONT<<CSL_TMR_TCR_ENAMODE_LO_SHIFT)
-            |((tmrCfg->pulseWidth<<CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
+            | (CSL_TMR_ENAMODE_CONT << CSL_TMR_TCR_ENAMODE_LO_SHIFT)
+            | ((tmrCfg->pulseWidth << CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
             /*select pulse mode*/
-            |(CSL_TMR_CP_PULSE<<CSL_TMR_TCR_CP_LO_SHIFT     )
-            |(CSL_TMR_INVINP_UNINVERTED<<CSL_TMR_TCR_INVINP_LO_SHIFT )
-            |(CSL_TMR_INVOUTP_UNINVERTED<<CSL_TMR_TCR_INVOUTP_LO_SHIFT)
-            |(0<<CSL_TMR_TCR_TSTAT_LO_SHIFT  );
+            | (CSL_TMR_CP_PULSE << CSL_TMR_TCR_CP_LO_SHIFT)
+            | (CSL_TMR_INVINP_UNINVERTED << CSL_TMR_TCR_INVINP_LO_SHIFT)
+            | (CSL_TMR_INVOUTP_UNINVERTED << CSL_TMR_TCR_INVOUTP_LO_SHIFT)
+            | (0 << CSL_TMR_TCR_TSTAT_LO_SHIFT);
 
         /*active watchdog timer*/
         gpTimerRegs[tmrCfg->timer_num]->WDTCR = CSL_TMR_WDTCR_WDEN_MASK
-            |(CSL_TMR_WDTCR_WDKEY_CMD2<<CSL_TMR_WDTCR_WDKEY_SHIFT);
+            | (CSL_TMR_WDTCR_WDKEY_CMD2 << CSL_TMR_WDTCR_WDKEY_SHIFT);
     }
-    else if(TIMER_ONE_SHOT_PULSE==tmrCfg->timerMode)
+    else if(TIMER_ONE_SHOT_PULSE == tmrCfg->timerMode)
     {
-        gpTimerRegs[tmrCfg->timer_num]->TCR=
-            (CSL_TMR_CLOCK_INP_NOGATE<<CSL_TMR_TCR_TIEN_LO_SHIFT   )
-            |(CSL_TMR_CLKSRC_INTERNAL<<CSL_TMR_TCR_CLKSRC_LO_SHIFT )
+        gpTimerRegs[tmrCfg->timer_num]->TCR =
+            (CSL_TMR_CLOCK_INP_NOGATE << CSL_TMR_TCR_TIEN_LO_SHIFT)
+            | (CSL_TMR_CLKSRC_INTERNAL << CSL_TMR_TCR_CLKSRC_LO_SHIFT)
             /*The timer is enabled one-shot*/
-            |(CSL_TMR_ENAMODE_ENABLE<<CSL_TMR_TCR_ENAMODE_LO_SHIFT)
-            |((tmrCfg->pulseWidth<<CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
+            | (CSL_TMR_ENAMODE_ENABLE << CSL_TMR_TCR_ENAMODE_LO_SHIFT)
+            | ((tmrCfg->pulseWidth << CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
             /*select pulse mode*/
-            |(CSL_TMR_CP_PULSE<<CSL_TMR_TCR_CP_LO_SHIFT     )
-            |(CSL_TMR_INVINP_UNINVERTED<<CSL_TMR_TCR_INVINP_LO_SHIFT )
-            |(CSL_TMR_INVOUTP_UNINVERTED<<CSL_TMR_TCR_INVOUTP_LO_SHIFT)
-            |(0<<CSL_TMR_TCR_TSTAT_LO_SHIFT  );
+            | (CSL_TMR_CP_PULSE << CSL_TMR_TCR_CP_LO_SHIFT)
+            | (CSL_TMR_INVINP_UNINVERTED << CSL_TMR_TCR_INVINP_LO_SHIFT)
+            | (CSL_TMR_INVOUTP_UNINVERTED << CSL_TMR_TCR_INVOUTP_LO_SHIFT)
+            | (0 << CSL_TMR_TCR_TSTAT_LO_SHIFT);
     }
-    else if(TIMER_PERIODIC_CLOCK==tmrCfg->timerMode)
+    else if(TIMER_PERIODIC_CLOCK == tmrCfg->timerMode)
     {
-        gpTimerRegs[tmrCfg->timer_num]->TCR=
-            (CSL_TMR_CLOCK_INP_NOGATE<<CSL_TMR_TCR_TIEN_LO_SHIFT   )
-            |(CSL_TMR_CLKSRC_INTERNAL<<CSL_TMR_TCR_CLKSRC_LO_SHIFT )
+        gpTimerRegs[tmrCfg->timer_num]->TCR =
+            (CSL_TMR_CLOCK_INP_NOGATE << CSL_TMR_TCR_TIEN_LO_SHIFT)
+            | (CSL_TMR_CLKSRC_INTERNAL << CSL_TMR_TCR_CLKSRC_LO_SHIFT)
             /*The timer is enabled continuously*/
-            |(CSL_TMR_ENAMODE_CONT<<CSL_TMR_TCR_ENAMODE_LO_SHIFT)
-            |((tmrCfg->pulseWidth<<CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
+            | (CSL_TMR_ENAMODE_CONT << CSL_TMR_TCR_ENAMODE_LO_SHIFT)
+            | ((tmrCfg->pulseWidth << CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
             /*select clock mode*/
-            |(CSL_TMR_CP_CLOCK<<CSL_TMR_TCR_CP_LO_SHIFT     )
-            |(CSL_TMR_INVINP_UNINVERTED<<CSL_TMR_TCR_INVINP_LO_SHIFT )
-            |(CSL_TMR_INVOUTP_UNINVERTED<<CSL_TMR_TCR_INVOUTP_LO_SHIFT)
-            |(0<<CSL_TMR_TCR_TSTAT_LO_SHIFT  );
+            | (CSL_TMR_CP_CLOCK << CSL_TMR_TCR_CP_LO_SHIFT)
+            | (CSL_TMR_INVINP_UNINVERTED << CSL_TMR_TCR_INVINP_LO_SHIFT)
+            | (CSL_TMR_INVOUTP_UNINVERTED << CSL_TMR_TCR_INVOUTP_LO_SHIFT)
+            | (0 << CSL_TMR_TCR_TSTAT_LO_SHIFT);
     }
-    else if(TIMER_PERIODIC_WAVE==tmrCfg->timerMode)
+    else if(TIMER_PERIODIC_WAVE == tmrCfg->timerMode)
     {
-        gpTimerRegs[tmrCfg->timer_num]->TCR=
-            (CSL_TMR_CLOCK_INP_NOGATE<<CSL_TMR_TCR_TIEN_LO_SHIFT   )
-            |(CSL_TMR_CLKSRC_INTERNAL<<CSL_TMR_TCR_CLKSRC_LO_SHIFT )
+        gpTimerRegs[tmrCfg->timer_num]->TCR =
+            (CSL_TMR_CLOCK_INP_NOGATE << CSL_TMR_TCR_TIEN_LO_SHIFT)
+            | (CSL_TMR_CLKSRC_INTERNAL << CSL_TMR_TCR_CLKSRC_LO_SHIFT)
             /*The timer is enabled continuously with period reload*/
-            |(CSL_TMR_ENAMODE_CONT_RELOAD<<CSL_TMR_TCR_ENAMODE_LO_SHIFT)
-            |((tmrCfg->pulseWidth<<CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
+            | (CSL_TMR_ENAMODE_CONT_RELOAD << CSL_TMR_TCR_ENAMODE_LO_SHIFT)
+            | ((tmrCfg->pulseWidth << CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
             /*select clock mode*/
-            |(CSL_TMR_CP_CLOCK<<CSL_TMR_TCR_CP_LO_SHIFT     )
-            |(CSL_TMR_INVINP_UNINVERTED<<CSL_TMR_TCR_INVINP_LO_SHIFT )
-            |(CSL_TMR_INVOUTP_UNINVERTED<<CSL_TMR_TCR_INVOUTP_LO_SHIFT)
-            |(0<<CSL_TMR_TCR_TSTAT_LO_SHIFT  );
+            | (CSL_TMR_CP_CLOCK << CSL_TMR_TCR_CP_LO_SHIFT)
+            | (CSL_TMR_INVINP_UNINVERTED << CSL_TMR_TCR_INVINP_LO_SHIFT)
+            | (CSL_TMR_INVOUTP_UNINVERTED << CSL_TMR_TCR_INVOUTP_LO_SHIFT)
+            | (0 << CSL_TMR_TCR_TSTAT_LO_SHIFT);
     }
     else     /*TIMER_PERIODIC_PULSE*/
     {
-        gpTimerRegs[tmrCfg->timer_num]->TCR=
-            (CSL_TMR_CLOCK_INP_NOGATE<<CSL_TMR_TCR_TIEN_LO_SHIFT   )
-            |(CSL_TMR_CLKSRC_INTERNAL<<CSL_TMR_TCR_CLKSRC_LO_SHIFT )
+        gpTimerRegs[tmrCfg->timer_num]->TCR =
+            (CSL_TMR_CLOCK_INP_NOGATE << CSL_TMR_TCR_TIEN_LO_SHIFT)
+            | (CSL_TMR_CLKSRC_INTERNAL << CSL_TMR_TCR_CLKSRC_LO_SHIFT)
             /*The timer is enabled continuously*/
-            |(CSL_TMR_ENAMODE_CONT<<CSL_TMR_TCR_ENAMODE_LO_SHIFT)
-            |((tmrCfg->pulseWidth<<CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
+            | (CSL_TMR_ENAMODE_CONT << CSL_TMR_TCR_ENAMODE_LO_SHIFT)
+            | ((tmrCfg->pulseWidth << CSL_TMR_TCR_PWID_LO_SHIFT)&CSL_TMR_TCR_PWID_LO_MASK)
             /*select clock mode*/
-            |(CSL_TMR_CP_PULSE<<CSL_TMR_TCR_CP_LO_SHIFT     )
-            |(CSL_TMR_INVINP_UNINVERTED<<CSL_TMR_TCR_INVINP_LO_SHIFT )
-            |(CSL_TMR_INVOUTP_UNINVERTED<<CSL_TMR_TCR_INVOUTP_LO_SHIFT)
-            |(0<<CSL_TMR_TCR_TSTAT_LO_SHIFT  );
+            | (CSL_TMR_CP_PULSE << CSL_TMR_TCR_CP_LO_SHIFT)
+            | (CSL_TMR_INVINP_UNINVERTED << CSL_TMR_TCR_INVINP_LO_SHIFT)
+            | (CSL_TMR_INVOUTP_UNINVERTED << CSL_TMR_TCR_INVOUTP_LO_SHIFT)
+            | (0 << CSL_TMR_TCR_TSTAT_LO_SHIFT);
     }
 }
