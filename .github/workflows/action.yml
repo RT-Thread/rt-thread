@@ -114,7 +114,7 @@ jobs:
          - {RTT_BSP: "stm32/stm32g431-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32h743-atk-apollo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32h743-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "stm32/ stm32h743-openmv-h7plus", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "stm32/stm32h743-openmv-h7plus", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32h747-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32h750-artpi-h750", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l4r9-st-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
