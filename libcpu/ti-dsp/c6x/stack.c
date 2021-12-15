@@ -31,8 +31,8 @@ extern rt_uint32_t rt_hw_get_current_dp(void);
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
                              rt_uint8_t *stack_addr, void *texit)
 {
-    rt_hw_thread_stack_register *thread_context;
-    rt_uint32_t stk;
+    rt_hw_thread_stack_register *thread_context = RT_NULL;
+    rt_uint32_t stk = 0;
 
     stack_addr += sizeof(rt_uint32_t);
     stack_addr  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 8);
