@@ -21,7 +21,7 @@
 void rt_hw_board_init(void)
 {
     // initial CPU core
-	keystone_cpu_init();
+    keystone_cpu_init();
 
     // initial interrupt controller
     rt_hw_interrupt_init();
