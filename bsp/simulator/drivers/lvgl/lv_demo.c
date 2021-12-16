@@ -12,10 +12,7 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 #include <lvgl.h>
-#include <lv_port_disp.h>
 #include <win32drv.h>
-
-#define IDI_LVGL                       101
 
 #ifndef LV_THREAD_STACK_SIZE
 #define LV_THREAD_STACK_SIZE 4096
@@ -28,28 +25,25 @@
 static void lvgl_thread(void *parameter)
 {
     /* initialize win32 driver; don't put this in lv_port_disp() */
-    if (!lv_win32_init(
-        GetModuleHandleW(NULL),
-        SW_SHOW,
-        BSP_LCD_WIDTH,
-        BSP_LCD_HEIGHT,
-        LoadIconW(GetModuleHandleW(NULL), MAKEINTRESOURCE(IDI_LVGL))))
+    if (!lv_win32_init(GetModuleHandleW(NULL), SW_SHOW, BSP_LCD_WIDTH, BSP_LCD_HEIGHT, NULL))
     {
         LOG_E("lv_win32_init failure!");
         return;
     }
-
     lv_win32_add_all_input_devices_to_group(NULL);
 
-    /* display demo */
+    /* display demo; you may replace with your LVGL application at here */
     extern void lv_demo_music(void);
     lv_demo_music();
 
+    /* handle the tasks of LVGL */
     while (!lv_win32_quit_signal)
     {
         lv_task_handler();
-        Sleep(1);
+        rt_thread_mdelay(1);
     }
+
+    LOG_W("LVGL simulator window closed!");
 }
 
 static int lvgl_demo_init(void)
