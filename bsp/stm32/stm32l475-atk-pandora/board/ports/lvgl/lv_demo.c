@@ -29,8 +29,10 @@ static void lvgl_thread(void *parameter)
     const lv_point_t points_array[] =  {{200,35},{0,0},{70,35},{0,0}};
     lv_indev_set_button_points(button_indev, points_array);
 
+    /* display demo; you may replace with your LVGL application at here */
     lv_demo_calendar();
 
+    /* handle the tasks of LVGL */
     while(1)
     {
         lv_task_handler();
