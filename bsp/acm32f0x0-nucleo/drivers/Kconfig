@@ -4,6 +4,7 @@ config SOC_ACM32F070RBT7
     bool
     select SOC_SERIES_ACM32F0
     select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 config SOC_SRAM_START_ADDR

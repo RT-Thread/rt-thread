@@ -271,7 +271,7 @@ void rt_memory_info(rt_uint32_t *total,
                     rt_uint32_t *used,
                     rt_uint32_t *max_used);
 
-#ifdef RT_USING_SLAB
+#if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
 void *rt_page_alloc(rt_size_t npages);
 void rt_page_free(void *addr, rt_size_t npages);
 #endif
@@ -281,6 +281,19 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size));
 void rt_free_sethook(void (*hook)(void *ptr));
 #endif
 
+#endif
+
+#ifdef RT_USING_SMALL_MEM
+/**
+ * small memory object interface
+ */
+rt_smem_t rt_smem_init(const char    *name,
+                     void          *begin_addr,
+                     rt_size_t      size);
+rt_err_t rt_smem_detach(rt_smem_t m);
+void *rt_smem_alloc(rt_smem_t m, rt_size_t size);
+void *rt_smem_realloc(rt_smem_t m, void *rmem, rt_size_t newsize);
+void rt_smem_free(void *rmem);
 #endif
 
 #ifdef RT_USING_MEMHEAP
@@ -295,6 +308,23 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap);
 void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize);
 void rt_memheap_free(void *ptr);
+void rt_memheap_info(struct rt_memheap *heap,
+                     rt_uint32_t *total,
+                     rt_uint32_t *used,
+                     rt_uint32_t *max_used);
+#endif
+
+#ifdef RT_USING_SLAB
+/**
+ * slab object interface
+ */
+rt_slab_t rt_slab_init(const char *name, void *begin_addr, rt_size_t size);
+rt_err_t rt_slab_detach(rt_slab_t m);
+void *rt_slab_page_alloc(rt_slab_t m, rt_size_t npages);
+void rt_slab_page_free(rt_slab_t m, void *addr, rt_size_t npages);
+void *rt_slab_alloc(rt_slab_t m, rt_size_t size);
+void *rt_slab_realloc(rt_slab_t m, void *ptr, rt_size_t size);
+void rt_slab_free(rt_slab_t m, void *ptr);
 #endif
 
 /**@}*/

@@ -343,16 +343,16 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\nogcc</state>
-          <state>$PROJ_DIR$\libraries\CMSIS\DeviceSupport</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
+          <state>$PROJ_DIR$\libraries\CMSIS\DeviceSupport</state>
           <state>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
@@ -1373,16 +1373,16 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\nogcc</state>
-          <state>$PROJ_DIR$\libraries\CMSIS\DeviceSupport</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
+          <state>$PROJ_DIR$\libraries\CMSIS\DeviceSupport</state>
           <state>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
@@ -2073,16 +2073,16 @@
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
     </file>
   </group>
   <group>
@@ -2094,25 +2094,25 @@
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\waitqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\workqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\dataqueue.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\pipe.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\ringblk_buf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\waitqueue.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\completion.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\dataqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\workqueue.c</name>
     </file>
   </group>
   <group>
@@ -2142,43 +2142,43 @@
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\clock.c</name>
+      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\thread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\memheap.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\src\object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\components.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\timer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
     </file>
   </group>
   <group>
@@ -2190,25 +2190,16 @@
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\stdlib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\libc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscalls.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\stdio.c</name>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_close.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
@@ -2217,34 +2208,25 @@
       <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\environ.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_read.c</name>
     </file>
   </group>
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_sram.c</name>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_timr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_port.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_flash.c</name>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_dma.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\CMSIS\DeviceSupport\system_SWM320.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_exti.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_norflash.c</name>
@@ -2253,25 +2235,28 @@
       <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_sdio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_wdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_lcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_sdram.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_can.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_dma.c</name>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_timr.c</name>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_flash.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_pwm.c</name>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_sram.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_wdt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_lcd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_spi.c</name>
@@ -2280,17 +2265,29 @@
       <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_adc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_i2c.c</name>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_sdram.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_gpio.c</name>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_port.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_uart.c</name>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_pwm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM320_StdPeriph_Driver\SWM320_exti.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\CMSIS\DeviceSupport\startup\iar\startup_SWM320.s</name>
     </file>
+  </group>
+  <group>
+    <name>POSIX</name>
   </group>
   <group>
     <name>utestcases</name>
