@@ -34,8 +34,9 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
-#define RT_USING_MEMHEAP_AUTO_BINDING
+#define RT_MEMHEAP_FAST_MODE
 #define RT_USING_MEMHEAP_AS_HEAP
+#define RT_USING_MEMHEAP_AUTO_BINDING
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -120,6 +121,7 @@
 
 /* POSIX (Portable Operating System Interface) layer */
 
+
 #define RT_USING_POSIX_DELAY
 
 /* Interprocess Communication (IPC) */
@@ -189,7 +191,6 @@
 /* system packages */
 
 /* enhanced kernel services */
-
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
 

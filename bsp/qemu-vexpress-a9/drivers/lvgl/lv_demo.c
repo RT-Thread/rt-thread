@@ -9,7 +9,6 @@
  */
 #include <rtthread.h>
 #include <lvgl.h>
-#include <lv_port_indev.h>
 #define DBG_TAG    "LVGL.demo"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
@@ -24,9 +23,11 @@
 
 static void lvgl_thread(void *parameter)
 {
+    /* display demo; you may replace with your LVGL application at here */
     extern void lv_demo_music(void);
     lv_demo_music();
 
+    /* handle the tasks of LVGL */
     while(1)
     {
         lv_task_handler();

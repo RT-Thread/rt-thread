@@ -40,8 +40,11 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_MEMHEAP
 #define RT_USING_SMALL_MEM
+#define RT_USING_SLAB
+#define RT_USING_MEMHEAP
+#define RT_MEMHEAP_FAST_MODE
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
 
@@ -296,7 +299,6 @@
 
 /* enhanced kernel services */
 
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -319,7 +321,6 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-
 /* Hardware Drivers Config */
 
 #define SOC_VEXPRESS_A9
@@ -329,5 +330,7 @@
 #define RT_USING_UART0
 #define RT_USING_UART1
 #define BSP_DRV_EMAC
+/* end of Onboard Peripheral Drivers */
+/* end of Hardware Drivers Config */
 
 #endif

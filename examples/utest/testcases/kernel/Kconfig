@@ -5,6 +5,16 @@ config UTEST_MEMHEAP_TC
     default y
     depends on RT_USING_MEMHEAP
 
+config UTEST_SMALL_MEM_TC
+    bool "mem test"
+    default y
+    depends on RT_USING_SMALL_MEM
+
+config UTEST_SLAB_TC
+    bool "slab test"
+    default n
+    depends on RT_USING_SLAB
+
 config UTEST_IRQ_TC
     bool "IRQ test"
     default n

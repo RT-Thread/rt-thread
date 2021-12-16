@@ -13,17 +13,10 @@
 /*A static or global variable to store the buffers*/
 static lv_disp_draw_buf_t disp_buf;
 
-rt_device_t lcd_device = 0;
+static rt_device_t lcd_device = 0;
 static struct rt_device_graphic_info info;
 
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
-
-typedef struct
-{
-    uint8_t blue;
-    uint8_t green;
-    uint8_t red;
-} lv_color24_t;
 
 static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
 {
@@ -34,13 +27,6 @@ static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
     dst->ch.green = src->ch.green;
     dst->ch.red = src->ch.red;
 #endif
-}
-
-static void color_to24(lv_color24_t *dst, lv_color_t *src)
-{
-    dst->blue = src->ch.blue;
-    dst->green = src->ch.green;
-    dst->red = src->ch.red;
 }
 
 /*Flush the content of the internal buffer the specific area on the display
@@ -75,76 +61,19 @@ static void lcd_fb_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_colo
     uint32_t y;
     long int location = 0;
 
-    /* 8 bit per pixel */
-    if (info.bits_per_pixel == 8)
-    {
-        uint8_t *fbp8 = (uint8_t *)info.framebuffer;
-        //TODO color convert maybe
-        for (y = act_y1; y <= act_y2; y++)
-        {
-            for (x = act_x1; x <= act_x2; x++)
-            {
-                location = (x) + (y)*info.width;
-                fbp8[location] = color_p->full;
-                color_p++;
-            }
-
-            color_p += x2 - act_x2;
-        }
-    }
-
     /* 16 bit per pixel */
-    else if (info.bits_per_pixel == 16)
+    lv_color16_t *fbp16 = (lv_color16_t *)info.framebuffer;
+
+    for (y = act_y1; y <= act_y2; y++)
     {
-        lv_color16_t *fbp16 = (lv_color16_t *)info.framebuffer;
-
-        for (y = act_y1; y <= act_y2; y++)
+        for (x = act_x1; x <= act_x2; x++)
         {
-            for (x = act_x1; x <= act_x2; x++)
-            {
-                location = (x) + (y)*info.width;
-                color_to16_maybe(&fbp16[location], color_p);
-                color_p++;
-            }
-
-            color_p += x2 - act_x2;
+            location = (x) + (y)*info.width;
+            color_to16_maybe(&fbp16[location], color_p);
+            color_p++;
         }
-    }
 
-    /* 24 bit per pixel */
-    else if (info.bits_per_pixel == 24)
-    {
-        lv_color24_t *fbp24 = (lv_color24_t *)info.framebuffer;
-
-        for (y = act_y1; y <= act_y2; y++)
-        {
-            for (x = act_x1; x <= act_x2; x++)
-            {
-                location = (x) + (y)*info.width;
-                color_to24(&fbp24[location], color_p);
-                color_p++;
-            }
-
-            color_p += x2 - act_x2;
-        }
-    }
-
-    /* 32 bit per pixel */
-    else if (info.bits_per_pixel == 32)
-    {
-        uint32_t *fbp32 = (uint32_t *)info.framebuffer;
-        //TODO
-        for (y = act_y1; y <= act_y2; y++)
-        {
-            for (x = act_x1; x <= act_x2; x++)
-            {
-                location = (x) + (y)*info.width;
-                fbp32[location] = color_p->full;
-                color_p++;
-            }
-
-            color_p += x2 - act_x2;
-        }
+        color_p += x2 - act_x2;
     }
 
     struct rt_device_rect_info rect_info;
@@ -161,7 +90,7 @@ static void lcd_fb_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_colo
 void lv_port_disp_init(void)
 {
     rt_err_t result;
-    lv_color_t *fbuf;
+    lv_color_t *fbuf1, *fbuf2;
 
     lcd_device = rt_device_find("lcd");
     if (lcd_device == 0)
@@ -187,15 +116,23 @@ void lv_port_disp_init(void)
     RT_ASSERT(info.bits_per_pixel == 8 || info.bits_per_pixel == 16 ||
               info.bits_per_pixel == 24 || info.bits_per_pixel == 32);
 
-    fbuf = rt_malloc(info.width * info.height / 10);
-    if (!fbuf)
+    fbuf1 = rt_malloc(info.width * info.height * sizeof(lv_color_t));
+    if (fbuf1 == RT_NULL)
     {
         rt_kprintf("Error: alloc disp buf fail\n");
         return;
     }
 
+    fbuf2 = rt_malloc(info.width * info.height * sizeof(lv_color_t));
+    if (fbuf2 == RT_NULL)
+    {
+        rt_kprintf("Error: alloc disp buf fail\n");
+        rt_free(fbuf1);
+        return;
+    }
+
     /*Initialize `disp_buf` with the buffer(s). With only one buffer use NULL instead buf_2 */
-    lv_disp_draw_buf_init(&disp_buf, fbuf, RT_NULL, info.width * 10);
+    lv_disp_draw_buf_init(&disp_buf, fbuf1, fbuf2, info.width * info.height);
 
     lv_disp_drv_init(&disp_drv); /*Basic initialization*/
 

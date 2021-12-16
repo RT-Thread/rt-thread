@@ -34,6 +34,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -185,7 +186,6 @@
 /* system packages */
 
 /* enhanced kernel services */
-
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
