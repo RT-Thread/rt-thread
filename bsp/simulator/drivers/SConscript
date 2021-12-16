@@ -1,4 +1,5 @@
 import sys
+import os
 from building import *
 
 cwd = GetCurrentDir()
@@ -33,5 +34,10 @@ if sys.platform[0:5]=="linux": #check whether under linux
 
 group = DefineGroup('Drivers', src, depend = [''],
                     CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')
