@@ -343,7 +343,7 @@
               <MiscControls />
               <Define>__RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;CMSIS\CM3\CoreSupport;CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;drivers;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\components\libc\posix\io\poll;..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;CMSIS\CM3\CoreSupport;CMSIS\CM3\DeviceSupport\NXP\LPC177x_8x;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;drivers;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -425,9 +425,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -439,16 +439,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -458,14 +451,21 @@
               <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>lpc177x_8x_uart.c</FileName>
+              <FileName>lpc177x_8x_pinsel.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_uart.c</FilePath>
+              <FilePath>drivers\lpc177x_8x_pinsel.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -477,16 +477,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>lpc177x_8x_clkpwr.c</FileName>
+              <FileName>lpc177x_8x_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_clkpwr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lpc17xx_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\lpc17xx_lcd.c</FilePath>
+              <FilePath>drivers\lpc177x_8x_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -498,9 +491,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>lpc177x_8x_emc.c</FileName>
+              <FileName>lpc17xx_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
+              <FilePath>drivers\lpc17xx_lcd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -512,9 +505,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>lpc177x_8x_pinsel.c</FileName>
+              <FileName>lpc177x_8x_clkpwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_pinsel.c</FilePath>
+              <FilePath>drivers\lpc177x_8x_clkpwr.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -522,6 +515,13 @@
               <FileName>sdram.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\sdram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lpc177x_8x_emc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -546,20 +546,6 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>
@@ -567,30 +553,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -602,16 +567,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>memheap.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\memheap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
+              <FilePath>..\..\src\idle.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -623,6 +581,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\device.c</FilePath>
@@ -630,16 +595,51 @@
           </Files>
           <Files>
             <File>
-              <FileName>idle.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kservice.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\memheap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
           </Files>
         </Group>
