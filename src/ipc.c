@@ -874,10 +874,10 @@ RTM_EXPORT(rt_mutex_delete);
  * @brief    This function will take a mutex, if the mutex is unavailable, the thread shall wait for
  *           the mutex up to a specified time.
  *
- * @note     When this function is called, the count value of the sem->value will decrease 1 until it is equal to 0.
- *           When the sem->value is 0, it means that the mutex is unavailable. At this time, it will suspend the
+ * @note     When this function is called, the count value of the mutex->value will decrease 1 until it is equal to 0.
+ *           When the mutex->value is 0, it means that the mutex is unavailable. At this time, it will suspend the
  *           thread preparing to take the mutex.
- *           On the contrary, the rt_sem_release() function will increase the count value of sem->value by 1 each time.
+ *           On the contrary, the rt_mutex_release() function will increase the count value of mutex->value by 1 each time.
  *
  * @see      rt_mutex_trytake()
  *
