@@ -14,8 +14,6 @@
 extern "C" {
 #endif
 
-#include <win32drv.h>
-
 void lv_port_disp_init(void);
 
 #ifdef __cplusplus

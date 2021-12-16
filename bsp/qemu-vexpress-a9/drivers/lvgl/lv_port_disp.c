@@ -116,14 +116,14 @@ void lv_port_disp_init(void)
     RT_ASSERT(info.bits_per_pixel == 8 || info.bits_per_pixel == 16 ||
               info.bits_per_pixel == 24 || info.bits_per_pixel == 32);
 
-    fbuf1 = rt_malloc_align(info.width * info.height * sizeof(lv_color_t), 32);
+    fbuf1 = rt_malloc(info.width * info.height * sizeof(lv_color_t));
     if (fbuf1 == RT_NULL)
     {
         rt_kprintf("Error: alloc disp buf fail\n");
         return;
     }
 
-    fbuf2 = rt_malloc_align(info.width * info.height * sizeof(lv_color_t), 32);
+    fbuf2 = rt_malloc(info.width * info.height * sizeof(lv_color_t));
     if (fbuf2 == RT_NULL)
     {
         rt_kprintf("Error: alloc disp buf fail\n");
