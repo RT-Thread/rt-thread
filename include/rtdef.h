@@ -431,7 +431,8 @@ enum rt_object_class_type
     RT_Object_Class_Device        = 0x09,      /**< The object is a device. */
     RT_Object_Class_Timer         = 0x0a,      /**< The object is a timer. */
     RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
-    RT_Object_Class_Unknown       = 0x0c,      /**< The object is unknown. */
+    RT_Object_Class_Memory        = 0x0c,      /**< The object is a memory. */
+    RT_Object_Class_Unknown       = 0x0e,      /**< The object is unknown. */
     RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 
@@ -817,10 +818,34 @@ typedef struct rt_messagequeue *rt_mq_t;
 
 /**@{*/
 
+#ifdef RT_USING_HEAP
+/*
+ * memory structure
+ */
+struct rt_memory
+{
+    struct rt_object        parent;                 /**< inherit from rt_object */
+    const char *            algorithm;              /**< Memory management algorithm name */
+    rt_ubase_t              address;                /**< memory start address */
+    rt_size_t               total;                  /**< memory size */
+    rt_size_t               used;                   /**< size used */
+    rt_size_t               max;                    /**< maximum usage */
+};
+typedef struct rt_memory *rt_mem_t;
+#endif
+
 /*
  * memory management
  * heap & partition
  */
+
+#ifdef RT_USING_SMALL_MEM
+typedef rt_mem_t rt_smem_t;
+#endif
+
+#ifdef RT_USING_SLAB
+typedef rt_mem_t rt_slab_t;
+#endif
 
 #ifdef RT_USING_MEMHEAP
 /**
@@ -860,6 +885,7 @@ struct rt_memheap
     struct rt_memheap_item  free_header;                /**< free block list header */
 
     struct rt_semaphore     lock;                       /**< semaphore lock */
+    rt_bool_t               locked;                     /**< External lock mark */
 };
 #endif
 

@@ -8,7 +8,7 @@ config BSP_DIR
 config RTT_DIR
     string
     option env="RTT_ROOT"
-    default "../../.."
+    default "../.."
 
 config PKGS_DIR
     string
@@ -20,7 +20,7 @@ source "$PKGS_DIR/Kconfig"
 
 config SOC_JUICEVM_RV64
     bool
-    select ARCH_RISCV
+    select ARCH_RISCV64
 
 config BOARD_RV64_FRDM_JUICEVM
     bool
@@ -30,3 +30,7 @@ config BOARD_RV64_FRDM_JUICEVM
     default y
 
 source "driver/Kconfig"
+
+config __STACKSIZE__
+    int
+    default 4096
