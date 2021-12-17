@@ -18,71 +18,27 @@ static struct rt_device_graphic_info info;
 
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
-static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
-{
-#if (LV_COLOR_DEPTH == 16)
-    dst->full = src->full;
-#else
-    dst->ch.blue = src->ch.blue;
-    dst->ch.green = src->ch.green;
-    dst->ch.red = src->ch.red;
-#endif
-}
-
 /*Flush the content of the internal buffer the specific area on the display
  *You can use DMA or any hardware acceleration to do this operation in the background but
  *'lv_disp_flush_ready()' has to be called when finished.*/
 static void lcd_fb_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
-    int x1, x2, y1, y2;
-
-    x1 = area->x1;
-    x2 = area->x2;
-    y1 = area->y1;
-    y2 = area->y2;
-
-    /*Return if the area is out the screen*/
-    if (x2 < 0)
-        return;
-    if (y2 < 0)
-        return;
-    if (x1 > info.width - 1)
-        return;
-    if (y1 > info.height - 1)
-        return;
-
-    /*Truncate the area to the screen*/
-    int32_t act_x1 = x1 < 0 ? 0 : x1;
-    int32_t act_y1 = y1 < 0 ? 0 : y1;
-    int32_t act_x2 = x2 > info.width - 1 ? info.width - 1 : x2;
-    int32_t act_y2 = y2 > info.height - 1 ? info.height - 1 : y2;
-
     uint32_t x;
     uint32_t y;
-    long int location = 0;
+    uint32_t location = 0;
 
     /* 16 bit per pixel */
     lv_color16_t *fbp16 = (lv_color16_t *)info.framebuffer;
 
-    for (y = act_y1; y <= act_y2; y++)
+    for (y = area->y1; y <area->y2 + 1; y++)
     {
-        for (x = act_x1; x <= act_x2; x++)
+        for (x = area->x1; x <area->x2 + 1; x++)
         {
-            location = (x) + (y)*info.width;
-            color_to16_maybe(&fbp16[location], color_p);
+            location = x + y * info.width;
+            fbp16[location].full = color_p->full;
             color_p++;
         }
-
-        color_p += x2 - act_x2;
     }
-
-    struct rt_device_rect_info rect_info;
-
-    rect_info.x = x1;
-    rect_info.y = y1;
-    rect_info.width = x2 - x1 + 1;
-    rect_info.height = y2 - y1 + 1;
-    rt_device_control(lcd_device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect_info);
 
     lv_disp_flush_ready(disp_drv);
 }
