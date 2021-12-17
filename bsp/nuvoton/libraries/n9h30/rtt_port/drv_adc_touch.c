@@ -216,7 +216,7 @@ static void adc_touch_entry(void *parameter)
                     || touch_point.event == RT_TOUCH_EVENT_UP
                     || touch_point.event == RT_TOUCH_EVENT_MOVE)
             {
-#if defined(PKG_USING_LITTLEVGL2RTT)
+#if defined(PKG_USING_LITTLEVGL2RTT) || defined(PKG_USING_LVGL)
                 extern void littlevgl2rtt_send_input_event(rt_int16_t x, rt_int16_t y, rt_uint8_t state);
                 littlevgl2rtt_send_input_event(touch_point.x_coordinate, touch_point.y_coordinate, touch_point.event);
 #endif

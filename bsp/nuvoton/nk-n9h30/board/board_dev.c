@@ -259,12 +259,7 @@ int rt_hw_lcm_port(void)
     }
 #endif
 
-#if defined(RT_USING_PIN)
-    /* set LCM_BLEN pin mode to output */
-    rt_pin_mode(LCM_BLEN, PIN_MODE_OUTPUT);
-    rt_pin_write(LCM_BLEN, PIN_HIGH);
-#endif
-
+    /* Use PWM to control backlight. */
     LCMLightOn();
 
     return 0;
