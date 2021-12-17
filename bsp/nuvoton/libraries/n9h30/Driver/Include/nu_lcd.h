@@ -231,6 +231,9 @@ void vpostMPUWriteAddr(uint16_t uscmd);
 void vpostMPUWriteData(uint16_t usdata);
 uint32_t vpostMPUReadData(void);
 VPOST_T *vpostLCMGetInstance(uint32_t u32DisplayPanelID);
+void vpostSetFrameBuffer(uint8_t *pu8BufPtr);
+void vpostSetOSDBuffer(uint8_t *pu8BufPtr);
+uint8_t *vpostGetMultiOSDBuffer(uint32_t u32Cnt);
 
 /*@}*/ /* end of group N9H30_LCD_EXPORTED_FUNCTIONS */
 

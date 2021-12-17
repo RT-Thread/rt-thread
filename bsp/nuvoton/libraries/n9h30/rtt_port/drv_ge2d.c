@@ -8,11 +8,16 @@
 *****************************************************************************/
 #include "rtthread.h"
 
+#include <rtdevice.h>
+#include <rthw.h>
+
 #include "NuMicro.h"
 #include <drv_sys.h>
+#include <rtdevice.h>
+#include <rthw.h>
 
 //#define DEBUG
-#define DEF_COND_WAIT 1
+#define DEF_COND_WAIT
 
 static unsigned int GFX_BPP;
 static unsigned int GFX_WIDTH;
@@ -32,7 +37,6 @@ static unsigned int GFX_HEIGHT;
 #define  PP   4  // Quadrant 4
 
 #define ABS(x)      (((x)>0)?(x):-(x))
-#define MAX(a,b)    (((a)>(b))?(a):(b))
 
 /* octant code of line drawing */
 
@@ -595,7 +599,7 @@ struct nu_ge2d
 
     rt_mutex_t           lock;
 #if defined(DEF_COND_WAIT)
-    rt_sem_t             signal;
+    struct rt_completion signal;
 #endif
 };
 typedef struct nu_ge2d *nu_ge2d_t;
@@ -619,14 +623,21 @@ static struct nu_ge2d g_sNuGe2d =
                           }
 
 #if defined(DEF_COND_WAIT)
+#define NU_GE2D_GO()        { \
+                                rt_completion_init(&(g_sNuGe2d.signal)); \
+                                outpw(REG_GE2D_TRG, 1); \
+                            }
+
 #define NU_GE2D_COND_WAIT() { \
-                                  rt_err_t result = rt_sem_take(g_sNuGe2d.signal, RT_WAITING_FOREVER); \
-                                RT_ASSERT(result == RT_EOK); \
+                                                          if( (inpw(REG_GE2D_INTSTS) & 0x01) == 0 ) \
+                                                          { \
+                                                              rt_thread_mdelay(1); \
+                                    rt_completion_wait(&g_sNuGe2d.signal, 100); \
+                                                        } \
                             }
 
 #define NU_GE2D_SIGNAL()  { \
-                                rt_err_t result = rt_sem_release(g_sNuGe2d.signal); \
-                              RT_ASSERT(result == RT_EOK); \
+                                rt_completion_done(&g_sNuGe2d.signal); \
                           }
 /* Interrupt Service Routine for GE2D */
 static void nu_ge2d_isr(int vector, void *param)
@@ -638,6 +649,10 @@ static void nu_ge2d_isr(int vector, void *param)
     NU_GE2D_SIGNAL();
 }
 #else
+#define NU_GE2D_GO()        { \
+                                 outpw(REG_GE2D_TRG, 1); \
+                            }
+
 #define NU_GE2D_COND_WAIT() { \
                                  while ((inpw(REG_GE2D_INTSTS) & 0x01) == 0); \
                                  outpw(REG_GE2D_INTSTS, 1); \
@@ -692,7 +707,7 @@ void ge2dClearScreen(int color)
     dest_dimension = GFX_HEIGHT << 16 | GFX_WIDTH;
     outpw(REG_GE2D_RTGLSZ, dest_dimension);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -785,7 +800,7 @@ void ge2dInit(int bpp, int width, int height, void *destination)
             uint32_t u32Size = (8 * 8 * (GFX_BPP / 8)) * 2;
             GFX_PAT_ADDR = (void *)rt_malloc_align(u32Size, u32Size);
             RT_ASSERT(GFX_PAT_ADDR != RT_NULL);
-            sysprintf("[%s] Allocated %d@0x%08x.\n", __func__, u32Size, GFX_PAT_ADDR);
+            //sysprintf("[%s] Allocated %d@0x%08x.\n", __func__, u32Size, GFX_PAT_ADDR);
         }
     }
 
@@ -1016,7 +1031,7 @@ void ge2dBitblt_ScreenToScreen(int srcx, int srcy, int destx, int desty, int wid
         outpw(REG_GE2D_MISCTL, data32);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -1155,7 +1170,7 @@ void ge2dBitblt_ScreenToScreenRop(int srcx, int srcy, int destx, int desty, int 
         outpw(REG_GE2D_CTL, cmd32);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -1279,7 +1294,7 @@ void ge2dBitblt_SourceToDestination(int srcx, int srcy, int destx, int desty, in
         outpw(REG_GE2D_MISCTL, data32);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -1402,7 +1417,7 @@ void ge2dDrawFrame(int x1, int y1, int x2, int y2, int color, int opt)
 
     outpw(REG_GE2D_MISCTL, inpw(REG_GE2D_MISCTL)); // address caculation
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -1509,7 +1524,7 @@ void ge2dLine_DrawSolidLine(int x1, int y1, int x2, int y2, int color)
         outpw(REG_GE2D_CLPBBR, _ClipBR);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -1616,7 +1631,7 @@ void ge2dLine_DrawSolidLine_RGB565(int x1, int y1, int x2, int y2, int color)
         outpw(REG_GE2D_CLPBBR, _ClipBR);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -1731,7 +1746,7 @@ void ge2dLine_DrawStyledLine(int x1, int y1, int x2, int y2, int style, int fgco
 
     outpw(REG_GE2D_MISCTL, temp32); // address caculation
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -1845,7 +1860,7 @@ void ge2dLine_DrawStyledLine_RGB565(int x1, int y1, int x2, int y2, int style, i
 
     outpw(REG_GE2D_MISCTL, temp32); // address caculation
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -1900,7 +1915,7 @@ void ge2dFill_Solid(int dx, int dy, int width, int height, int color)
 
     outpw(REG_GE2D_CTL, cmd32);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -1954,7 +1969,7 @@ void ge2dFill_Solid_RGB565(int dx, int dy, int width, int height, int color)
 
     outpw(REG_GE2D_CTL, cmd32);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2010,7 +2025,7 @@ void ge2dFill_SolidBackground(int dx, int dy, int width, int height, int color)
 
     outpw(REG_GE2D_CTL, cmd32);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2061,7 +2076,7 @@ void ge2dFill_ColorPattern(int dx, int dy, int width, int height)
         outpw(REG_GE2D_CLPBBR, _ClipBR);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2115,7 +2130,7 @@ void ge2dFill_MonoPattern(int dx, int dy, int width, int height, int opt)
         outpw(REG_GE2D_CLPBBR, _ClipBR);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2166,7 +2181,7 @@ void ge2dFill_ColorPatternROP(int sx, int sy, int width, int height, int rop)
         outpw(REG_GE2D_CLPBBR, _ClipBR);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2221,7 +2236,7 @@ void ge2dFill_MonoPatternROP(int sx, int sy, int width, int height, int rop, int
         outpw(REG_GE2D_CLPBBR, _ClipBR);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2286,7 +2301,7 @@ void ge2dFill_TileBlt(int srcx, int srcy, int destx, int desty, int width, int h
     tile_ctl = (y_count << 8) | (x_count);
     outpw(REG_GE2D_TCNTVHSF, tile_ctl);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2327,7 +2342,7 @@ void ge2dHostBlt_Write(int x, int y, int width, int height, void *buf)
     dest_dimension = height << 16 | width;
     outpw(REG_GE2D_RTGLSZ, dest_dimension);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     ptr32 = (UINT32 *)buf;
     for (i = 0; i < height; i++) // 120
@@ -2394,7 +2409,7 @@ void ge2dHostBlt_Read(int x, int y, int width, int height, void *buf)
     dest_dimension = height << 16 | width;
     outpw(REG_GE2D_RTGLSZ, dest_dimension);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     ptr32 = (UINT32 *)buf;
     for (i = 0; i < height; i++)
@@ -2498,7 +2513,7 @@ void ge2dHostBlt_Sprite(int x, int y, int width, int height, void *buf)
         outpw(REG_GE2D_MISCTL, data32);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     ptr32 = (UINT32 *)buf;
     for (i = 0; i < height; i++)
@@ -2598,7 +2613,7 @@ void ge2dRotation(int srcx, int srcy, int destx, int desty, int width, int heigh
     /* set rotation reference point xy register, then nothing happened */
     outpw(REG_GE2D_CTL, cmd32);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2688,7 +2703,7 @@ void ge2dSpriteBlt_Screen(int destx, int desty, int sprite_width, int sprite_hei
 
     outpw(REG_GE2D_CTL, cmd32);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2778,7 +2793,7 @@ void ge2dSpriteBltx_Screen(int x, int y, int sprite_sx, int sprite_sy, int width
         outpw(REG_GE2D_MISCTL, data32);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2876,7 +2891,7 @@ void ge2dSpriteBlt_ScreenRop(int x, int y, int sprite_width, int sprite_height, 
         outpw(REG_GE2D_CTL, cmd32);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -2978,7 +2993,7 @@ void ge2dSpriteBltx_ScreenRop(int x, int y, int sprite_sx, int sprite_sy, int wi
         outpw(REG_GE2D_CTL, cmd32);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -3044,7 +3059,7 @@ void ge2dColorExpansionBlt(int x, int y, int width, int height, int fore_color, 
         outpw(REG_GE2D_CLPBBR, _ClipBR);
     }
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -3094,7 +3109,7 @@ void ge2dHostColorExpansionBlt(int x, int y, int width, int height, int fore_col
     dest_dimension = height << 16 | width;
     outpw(REG_GE2D_RTGLSZ, dest_dimension);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     ptr32 = (UINT32 *)buf;
     for (i = 0; i < height; i++)
@@ -3411,7 +3426,7 @@ void ge2dFont_PutChar(int x, int y, char asc_code, int fore_color, int back_colo
     dest_dimension = height << 16 | width;
     outpw(REG_GE2D_RTGLSZ, dest_dimension);
 
-    outpw(REG_GE2D_TRG, 1);
+    NU_GE2D_GO();
 
     NU_GE2D_COND_WAIT();
 
@@ -3453,8 +3468,7 @@ int rt_hw_ge2d_init(void)
 
 #if defined(DEF_COND_WAIT)
     rt_kprintf("with_cond_wait\n");
-    g_sNuGe2d.signal = rt_sem_create("ge2d_wait", 0, RT_IPC_FLAG_FIFO);
-    RT_ASSERT(g_sNuGe2d.signal != RT_NULL);
+    rt_completion_init(&(g_sNuGe2d.signal));
 
     /* Install ISR & Respond the IRQ */
     rt_hw_interrupt_install(g_sNuGe2d.irqn, nu_ge2d_isr, &g_sNuGe2d, g_sNuGe2d.name);
