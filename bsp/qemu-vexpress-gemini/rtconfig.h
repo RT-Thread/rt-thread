@@ -113,11 +113,15 @@
 
 /* POSIX (Portable Operating System Interface) layer */
 
+#define RT_USING_POSIX_DELAY
+#define RT_USING_POSIX_CLOCK
 #define RT_USING_PTHREADS
 #define PTHREAD_NUM_MAX 8
 
 /* Interprocess Communication (IPC) */
 
+#define RT_USING_POSIX_MESSAGE_QUEUE
+#define RT_USING_POSIX_MESSAGE_SEMAPHORE
 
 /* Socket is in the 'Network' category */
 

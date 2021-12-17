@@ -336,7 +336,7 @@
               <MiscControls />
               <Define>USE_STDPERIPH_DRIVER, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;Libraries\CMSIS\KEIL_CORE;Libraries\MM32F103\Include;Libraries\MM32F103\Source;Libraries\MM32F103\HAL_lib\inc;..\..\components\libc\posix\io\poll;..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;Libraries\CMSIS\KEIL_CORE;Libraries\MM32F103\Include;Libraries\MM32F103\Source;Libraries\MM32F103\HAL_lib\inc;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,16 +381,16 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -402,16 +402,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -433,23 +433,16 @@
           </Files>
           <Files>
             <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -461,6 +454,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
@@ -468,16 +475,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>waitqueue.c</FileName>
+              <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -533,30 +533,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>kservice.c</FileName>
+              <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>memheap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\memheap.c</FilePath>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -568,30 +547,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>object.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
+              <FilePath>..\..\src\components.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -610,16 +568,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>components.c</FileName>
+              <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
+              <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -627,6 +599,34 @@
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\memheap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -644,9 +644,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>HAL_rcc.c</FileName>
+              <FileName>HAL_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_rcc.c</FilePath>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_misc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -658,37 +658,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_misc.c</FileName>
+              <FileName>HAL_wwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_MM32F103.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\MM32F103\Source\KEIL_StartAsm\startup_MM32F103.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_iwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_adc.c</FilePath>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_wwdg.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -700,51 +672,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_bkp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_bkp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_i2c.c</FilePath>
+              <FileName>startup_MM32F103.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\MM32F103\Source\KEIL_StartAsm\startup_MM32F103.s</FilePath>
             </File>
           </Files>
           <Files>
@@ -756,6 +686,62 @@
           </Files>
           <Files>
             <File>
+              <FileName>HAL_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_tim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_bkp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>HAL_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_exti.c</FilePath>
@@ -763,16 +749,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_wwdg.c</FileName>
+              <FileName>HAL_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_wwdg.c</FilePath>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_flash.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_uart.c</FileName>
+              <FileName>HAL_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_uart.c</FilePath>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_spi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -780,6 +766,20 @@
               <FileName>HAL_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_iwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32F103\HAL_lib\src\HAL_uart.c</FilePath>
             </File>
           </Files>
         </Group>

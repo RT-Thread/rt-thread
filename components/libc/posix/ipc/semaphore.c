@@ -10,15 +10,20 @@
 
 #include <rtthread.h>
 #include <string.h>
+#include <fcntl.h>
+#include <sys/errno.h>
 #include "semaphore.h"
-#include "pthread_internal.h"
 
 static sem_t *posix_sem_list = RT_NULL;
 static struct rt_semaphore posix_sem_lock;
-void posix_sem_system_init()
+
+/* initialize posix semaphore */
+static int posix_sem_system_init(void)
 {
     rt_sem_init(&posix_sem_lock, "psem", 1, RT_IPC_FLAG_FIFO);
+    return 0;
 }
+INIT_COMPONENT_EXPORT(posix_sem_system_init);
 
 rt_inline void posix_sem_insert(sem_t *psem)
 {
