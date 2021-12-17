@@ -451,7 +451,7 @@ void lcd_fill_array(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end,
 {
     rt_uint32_t size = 0;
 
-    size = (x_end - x_start + 1) * (y_end - y_start + 1) * 2;
+    size = (x_end - x_start + 1) * (y_end - y_start + 1) * 2/*16bit*/;
     lcd_address_set(x_start, y_start, x_end, y_end);
     rt_pin_write(LCD_DC_PIN, PIN_HIGH);
     rt_spi_send(spi_dev_lcd, pcolor, size);
