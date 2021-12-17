@@ -10,8 +10,9 @@
 #ifndef __MQUEUE_H__
 #define __MQUEUE_H__
 
-#include <rtthread.h>
-#include <pthread.h>
+#include <sys/signal.h>
+#include <sys/time.h>
+#include <rtdef.h>
 
 struct mqdes
 {

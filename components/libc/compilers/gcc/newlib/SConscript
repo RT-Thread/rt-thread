@@ -5,7 +5,6 @@ src = []
 cwd = GetCurrentDir()
 group = []
 LIBS = ['m'] # link libm
-CPPDEFINES = ['RT_USING_NEWLIB']
 CPPPATH = [cwd]
 
 if rtconfig.PLATFORM == 'gcc':
@@ -14,6 +13,9 @@ if rtconfig.PLATFORM == 'gcc':
         src += Glob('*.c')
     else:
         src += ['syscalls.c']
+
+    # identify this is Newlib, and only enable POSIX.1-1990
+    CPPDEFINES = ['RT_USING_NEWLIB', '_POSIX_C_SOURCE=1']
 
     group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
 

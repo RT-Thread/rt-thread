@@ -18,6 +18,7 @@
 
 RT_DEFINE_SPINLOCK(pth_lock);
 _pthread_data_t *pth_table[PTHREAD_NUM_MAX] = {NULL};
+static int concurrency_level;
 
 _pthread_data_t *_pthread_get_data(pthread_t thread)
 {
@@ -150,19 +151,6 @@ void _pthread_data_destroy(pthread_t pth)
         rt_free(ptd);
     }
 }
-
-int pthread_system_init(void)
-{
-    /* initialize key area */
-    pthread_key_system_init();
-    /* initialize posix mqueue */
-    posix_mq_system_init();
-    /* initialize posix semaphore */
-    posix_sem_system_init();
-
-    return 0;
-}
-INIT_COMPONENT_EXPORT(pthread_system_init);
 
 static void _pthread_destroy(_pthread_data_t *ptd)
 {
@@ -450,6 +438,70 @@ pthread_t pthread_self (void)
     return _pthread_data_get_pth(ptd);
 }
 RTM_EXPORT(pthread_self);
+
+int pthread_getcpuclockid(pthread_t thread, clockid_t *clock_id)
+{
+    if(_pthread_get_data(thread) == NULL)
+    {
+        return EINVAL;
+    }
+
+    *clock_id = (clockid_t)rt_tick_get();
+
+    return 0;
+}
+RTM_EXPORT(pthread_getcpuclockid);
+
+int pthread_getconcurrency(void)
+{
+    return concurrency_level;
+}
+RTM_EXPORT(pthread_getconcurrency);
+
+int pthread_setconcurrency(int new_level)
+{
+    concurrency_level = new_level;
+
+    return 0;
+}
+RTM_EXPORT(pthread_setconcurrency);
+
+int pthread_getschedparam(pthread_t thread, int *policy, struct sched_param *param)
+{
+    _pthread_data_t *ptd;
+
+    ptd = _pthread_get_data(thread);
+    pthread_attr_getschedpolicy(&ptd->attr, policy);
+    pthread_attr_getschedparam(&ptd->attr, param);
+
+    return 0;
+}
+RTM_EXPORT(pthread_getschedparam);
+
+int pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *param)
+{
+    _pthread_data_t *ptd;
+
+    ptd = _pthread_get_data(thread);
+    pthread_attr_setschedpolicy(&ptd->attr, policy);
+    pthread_attr_setschedparam(&ptd->attr, param);
+
+    return 0;
+}
+RTM_EXPORT(pthread_setschedparam);
+
+int pthread_setschedprio(pthread_t thread, int prio)
+{
+    _pthread_data_t *ptd;
+    struct sched_param param;
+
+    ptd = _pthread_get_data(thread);
+    param.sched_priority = prio;
+    pthread_attr_setschedparam(&ptd->attr, &param);
+
+    return 0;
+}
+RTM_EXPORT(pthread_setschedprio);
 
 void pthread_exit(void *value)
 {

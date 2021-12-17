@@ -333,7 +333,7 @@
               <MiscControls />
               <Define>V85xx, USE_STDPERIPH_DRIVER, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, USE_TARGET_DRIVER, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m0;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\components\libc\posix\io\poll;..\..\examples\utest\testcases\kernel;Libraries\CMSIS\Vango\V85xx\Include;Libraries\CMSIS;Libraries\VangoV85xx_standard_peripheral\Include</IncludePath>
+              <IncludePath>applications;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m0;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel;Libraries\CMSIS\Vango\V85xx\Include;Libraries\CMSIS;Libraries\VangoV85xx_standard_peripheral\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,6 +388,13 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
@@ -398,13 +405,6 @@
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -440,9 +440,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -450,13 +450,6 @@
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -478,6 +471,13 @@
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -585,30 +585,37 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -627,9 +634,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>mem.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -641,23 +648,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
+              <FilePath>..\..\src\components.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>device.c</FileName>
+              <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
+              <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
+              <FilePath>..\..\src\object.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -667,16 +674,16 @@
               <FilePath>..\..\src\kservice.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>libc</GroupName>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>libc_syms.c</FileName>
@@ -689,13 +696,6 @@
               <FileName>mem_std.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>syscalls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -717,44 +717,9 @@
           <GroupName>Vango_Lib</GroupName>
           <Files>
             <File>
-              <FileName>lib_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>lib_pmu.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_CodeRAM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_CodeRAM.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_LoadNVR.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_LoadNVR.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_iso7816.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_iso7816.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_tmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_tmr.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -773,58 +738,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>lib_i2c.c</FileName>
+              <FileName>lib_clk.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_comp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_comp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_cortex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_cortex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_version.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_version.c</FilePath>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_clk.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -836,9 +752,37 @@
           </Files>
           <Files>
             <File>
+              <FileName>lib_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_version.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>lib_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_CodeRAM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_CodeRAM.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -850,9 +794,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>lib_adc_tiny.c</FileName>
+              <FileName>lib_crypt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_adc_tiny.c</FilePath>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_crypt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -864,6 +808,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>lib_comp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_comp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_tmr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_tmr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>lib_u32k.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_u32k.c</FilePath>
@@ -871,9 +829,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>lib_clk.c</FileName>
+              <FileName>lib_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_clk.c</FilePath>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -885,6 +850,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>lib_adc_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_adc_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>lib_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_flash.c</FilePath>
@@ -892,16 +864,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>lib_wdt.c</FileName>
+              <FileName>lib_cortex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_wdt.c</FilePath>
+              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_cortex.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>lib_crypt.c</FileName>
+              <FileName>lib_LoadNVR.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_crypt.c</FilePath>
+              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_LoadNVR.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_iso7816.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_iso7816.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_wdt.c</FilePath>
             </File>
           </Files>
         </Group>

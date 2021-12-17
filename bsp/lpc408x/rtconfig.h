@@ -131,6 +131,7 @@
 
 /* POSIX (Portable Operating System Interface) layer */
 
+#define RT_USING_POSIX_DELAY
 
 /* Interprocess Communication (IPC) */
 

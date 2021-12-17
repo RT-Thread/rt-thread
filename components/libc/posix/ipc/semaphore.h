@@ -11,8 +11,8 @@
 #ifndef __POSIX_SEMAPHORE_H__
 #define __POSIX_SEMAPHORE_H__
 
-#include <rtthread.h>
-#include <pthread.h>
+#include <rtdef.h>
+#include <sys/time.h>
 
 struct posix_sem
 {

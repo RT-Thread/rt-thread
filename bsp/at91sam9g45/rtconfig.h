@@ -117,6 +117,8 @@
 
 /* POSIX (Portable Operating System Interface) layer */
 
+#define RT_USING_POSIX_DELAY
+#define RT_USING_POSIX_CLOCK
 #define RT_USING_PTHREADS
 #define PTHREAD_NUM_MAX 8
 
