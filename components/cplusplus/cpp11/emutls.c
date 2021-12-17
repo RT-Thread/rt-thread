@@ -138,6 +138,8 @@ static void emutls_init(void)
         abort();
 }
 
+#define __ATOMIC_ACQUIRE 2
+#define __ATOMIC_RELEASE 3
 /* Returns control->object.index; set index if not allocated yet. */
 static __inline uintptr_t emutls_get_index(__emutls_control *control)
 {
