@@ -234,6 +234,12 @@ uint8_t *vpostGetFrameBuffer(void)
     return (uint8_t *)((uint32_t)u8BufPtr | 0x80000000);
 }
 
+void vpostSetFrameBuffer(uint8_t *pu8BufPtr)
+{
+    outpw(REG_LCM_VA_BADDR0, (uint32_t)((uint32_t)pu8BufPtr | 0x80000000));
+    outpw(REG_LCM_VA_FBCTRL, inpw(REG_LCM_VA_FBCTRL) & ~(1 << 30) & ~VPOSTB_DB_EN);
+}
+
 
 /**
   * @brief Get the pointer of frame buffer
@@ -533,6 +539,56 @@ uint8_t *vpostGetOSDBuffer(void)
     outpw(REG_LCM_OSD_BADDR, (uint32_t)((uint32_t)u8BufPtr | 0x80000000));
 
     return (uint8_t *)((uint32_t)u8BufPtr | 0x80000000);
+}
+
+/**
+  * @brief Get the pointer of OSD buffer
+  * @param[in] u32Cnt is the frame buffer count to allocate. Min value is 1.
+  * @return pointer of frame buffer
+  * @retval NULL fail.
+  * @note before calling this function, display width, height and source format must be set first.
+  */
+uint8_t *vpostGetMultiOSDBuffer(uint32_t u32Cnt)
+{
+    uint32_t u32BytePerPixel;
+    uint8_t *u8BufPtr;
+
+    if ((curOSDDev.nOSDWidth == 0) || (curOSDDev.nOSDHeight == 0))
+    {
+        return NULL;
+    }
+
+    switch (curOSDDev.ucOSDSrcFormat)
+    {
+    case OSD_SRC_YUV422:
+    case OSD_SRC_YCBCR422:
+    case OSD_SRC_RGB565:
+        u32BytePerPixel = 2;
+        break;
+
+    case OSD_SRC_RGB666:
+    case OSD_SRC_RGB888:
+        u32BytePerPixel = 4;
+        break;
+
+    default:
+        u32BytePerPixel = 2;
+    }
+
+    u8BufPtr = (uint8_t *)malloc((curOSDDev.nOSDWidth * curOSDDev.nOSDHeight * u32BytePerPixel) * u32Cnt + 32);
+    if (u8BufPtr == NULL)
+        return NULL;
+    u8BufPtr = (uint8_t *)shift_pointer((uint32_t)u8BufPtr, 32);
+
+    outpw(REG_LCM_OSD_BADDR, (uint32_t)((uint32_t)u8BufPtr | 0x80000000));
+
+    return (uint8_t *)((uint32_t)u8BufPtr | 0x80000000);
+
+}
+
+void vpostSetOSDBuffer(uint8_t *u8BufPtr)
+{
+    outpw(REG_LCM_OSD_BADDR, (uint32_t)((uint32_t)u8BufPtr | 0x80000000));
 }
 
 /**

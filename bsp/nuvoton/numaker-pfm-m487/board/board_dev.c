@@ -153,7 +153,7 @@ INIT_COMPONENT_EXPORT(rt_hw_spiflash_init);
 #if defined(BOARD_USING_SRAM0_AS_MEMHEAP)
 /*
 In Advance board design, SRAM address bus A16/A17/A18 are GPIO-controlled by SW, not EBI.
-So we just remap 128KB only to RTT memory heap, due to it is out of controll.
+So we just remap 128KB only to RTT memory heap, due to it is out of control.
 AD0~AD15: 2^16*16bit = 128KB
 */
 #include <drv_ebi.h>

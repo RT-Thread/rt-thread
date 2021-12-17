@@ -22,6 +22,8 @@
 
 /* Private typedef --------------------------------------------------------------*/
 
+#define DEF_VPOST_BUFFER_NUMBER 2
+
 typedef enum
 {
     eVpost_LCD,
@@ -42,6 +44,10 @@ struct nu_vpost
     struct rt_device_graphic_info info;
 };
 typedef struct nu_vpost *nu_vpost_t;
+
+static volatile uint32_t g_u32VSyncBlank = 0;
+static volatile uint32_t g_u32VSyncLastCommit = 0;
+static struct rt_completion vsync_wq;
 
 static struct nu_vpost nu_fbdev[eVpost_Cnt] =
 {
@@ -151,6 +157,43 @@ static rt_err_t vpost_layer_control(rt_device_t dev, int cmd, void *args)
     }
     break;
 
+    /* FBIO_PANDISPLAY + WAIT_VSYNC Mechanism */
+    case RTGRAPHIC_CTRL_RECT_UPDATE:
+    {
+        if (args != RT_NULL)
+        {
+            uint8_t *pu8BufPtr = (uint8_t *)args;
+            g_u32VSyncLastCommit = g_u32VSyncBlank;
+
+            /* Pan display */
+            switch (psVpost->layer)
+            {
+            case eVpost_LCD:
+                vpostSetFrameBuffer(pu8BufPtr);
+                break;
+
+#if defined(BSP_USING_VPOST_OSD)
+            case eVpost_OSD:
+                vpostSetOSDBuffer(pu8BufPtr);
+                break;
+#endif
+
+            default:
+                return -RT_ERROR;
+            }
+
+            /*Wait sync*/
+            while (g_u32VSyncLastCommit == g_u32VSyncBlank)
+            {
+                rt_completion_init(&vsync_wq);
+                rt_completion_wait(&vsync_wq, RT_TICK_PER_SECOND / 60);
+            }
+        }
+        else
+            return -RT_ERROR;
+    }
+    break;
+
     default:
         break;
     }
@@ -166,7 +209,41 @@ static rt_err_t vpost_layer_init(rt_device_t dev)
     /* Enable VPOST engine clock. */
     nu_sys_ipclk_enable(LCDCKEN);
 
+    rt_completion_init(&vsync_wq);
+    outpw(REG_LCM_INT_CS, VPOSTB_UNDERRUN_EN | VPOSTB_DISP_F_EN);
+    outpw(REG_LCM_DCCS, (inpw(REG_LCM_DCCS) | (1 << 4)));
+
     return RT_EOK;
+}
+
+static void nu_vpost_isr(int vector, void *param)
+{
+    /*
+    #define VPOSTB_DISP_F_INT           ((UINT32)1<<31)
+    #define VPOSTB_DISP_F_STATUS        (1<<30)
+    #define VPOSTB_UNDERRUN_INT         (1<<29)
+    #define VPOSTB_BUS_ERROR_INT        (1<<28)
+    #define VPOSTB_FLY_ERR              (1<<27)
+    #define VPOSTB_UNDERRUN_EN          (1<<1)
+    #define VPOSTB_DISP_F_EN            (1)
+    */
+
+    uint32_t u32VpostIRQStatus = inpw(REG_LCM_INT_CS);
+    if (u32VpostIRQStatus & VPOSTB_DISP_F_STATUS)
+    {
+        outpw(REG_LCM_INT_CS, inpw(REG_LCM_INT_CS) | VPOSTB_DISP_F_STATUS);
+
+        g_u32VSyncBlank++;
+        rt_completion_done(&vsync_wq);
+    }
+    else if (u32VpostIRQStatus & VPOSTB_UNDERRUN_INT)
+    {
+        outpw(REG_LCM_INT_CS, inpw(REG_LCM_INT_CS) | VPOSTB_UNDERRUN_INT);
+    }
+    else if (u32VpostIRQStatus & VPOSTB_BUS_ERROR_INT)
+    {
+        outpw(REG_LCM_INT_CS, inpw(REG_LCM_INT_CS) | VPOSTB_BUS_ERROR_INT);
+    }
 }
 
 int rt_hw_vpost_init(void)
@@ -177,13 +254,8 @@ int rt_hw_vpost_init(void)
     VPOST_T *psVpostLcmInst = vpostLCMGetInstance(VPOST_USING_LCD_IDX);
     RT_ASSERT(psVpostLcmInst != RT_NULL);
 
-#if (LCM_USING_BPP==4 )
-    /* LCD clock is selected from UPLL and divide to 30MHz */
-    outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0x918);
-#else
     /* LCD clock is selected from UPLL and divide to 20MHz */
     outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0xE18);
-#endif
 
     /* Initial LCM */
     vpostLCMInit(VPOST_USING_LCD_IDX);
@@ -213,7 +285,7 @@ int rt_hw_vpost_init(void)
 #else
             vpostSetVASrc(VA_SRC_RGB565);
 #endif
-            psVpost->info.framebuffer = (rt_uint8_t *)vpostGetFrameBuffer();
+            psVpost->info.framebuffer = (rt_uint8_t *)vpostGetMultiFrameBuffer(DEF_VPOST_BUFFER_NUMBER);
         }
 #if defined(BSP_USING_VPOST_OSD)
         else if (psVpost->layer == eVpost_OSD)
@@ -225,7 +297,7 @@ int rt_hw_vpost_init(void)
 #else
             vpostSetOSDSrc(OSD_SRC_RGB565);
 #endif
-            psVpost->info.framebuffer = (rt_uint8_t *)vpostGetOSDBuffer();
+            psVpost->info.framebuffer = (rt_uint8_t *)vpostGetMultiOSDBuffer(DEF_VPOST_BUFFER_NUMBER);
         }
 #endif
 
@@ -242,9 +314,15 @@ int rt_hw_vpost_init(void)
         psVpost->dev.close = vpost_layer_close;
         psVpost->dev.control = vpost_layer_control;
 
-        /* register graphic device driver */
+        /* Register graphic device driver */
         ret = rt_device_register(&psVpost->dev, psVpost->name, RT_DEVICE_FLAG_RDWR);
         RT_ASSERT(ret == RT_EOK);
+
+        if (psVpost->layer == eVpost_LCD)
+        {
+            rt_hw_interrupt_install(psVpost->irqn, nu_vpost_isr,  psVpost, psVpost->name);
+            rt_hw_interrupt_umask(psVpost->irqn);
+        }
 
         rt_kprintf("%s's fbmem at 0x%08x.\n", psVpost->name, psVpost->info.framebuffer);
     }

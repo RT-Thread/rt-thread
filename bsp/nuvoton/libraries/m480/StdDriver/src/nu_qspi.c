@@ -322,6 +322,10 @@ uint32_t QSPI_SetBusClock(QSPI_T *qspi, uint32_t u32BusClock)
             u32ClkSrc = __HIRC; /* Clock source is HIRC */
         }
     }
+    else
+    {
+        return 0;
+    }
 
     if (u32BusClock >= u32HCLKFreq)
     {
