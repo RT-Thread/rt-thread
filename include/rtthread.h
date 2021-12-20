@@ -601,12 +601,13 @@ void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 char *rt_strdup(const char *s);
 
 #ifndef RT_KSERVICE_USING_STDLIB
-void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
-rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
+void *rt_memmove(void *dest, const void *src, rt_size_t n);
+rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count);
 char *rt_strstr(const char *str1, const char *str2);
 rt_int32_t rt_strcasecmp(const char *a, const char *b);
-char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
-rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
+char *rt_strcpy(char *dst, const char *src);
+char *rt_strncpy(char *dest, const char *src, rt_size_t n);
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 #else
@@ -615,6 +616,7 @@ rt_size_t rt_strlen(const char *src);
 #define rt_memcmp(cs, ct, count)    memcmp(cs, ct, count)
 #define rt_strstr(str1, str2)       strstr(str1, str2)
 #define rt_strcasecmp(a, b)         strcasecmp(a, b)
+#define rt_strcpy(dest, src)        strcpy(dest, src)
 #define rt_strncpy(dest, src, n)    strncpy(dest, src, n)
 #define rt_strncmp(cs, ct, count)   strncmp(cs, ct, count)
 #define rt_strcmp(cs, ct)           strcmp(cs, ct)

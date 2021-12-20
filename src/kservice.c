@@ -18,6 +18,7 @@
  * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
  * 2015-07-06     Bernard      Add rt_assert_handler routine.
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
+ * 2021-12-20     Meco Man     implement rt_strcpy()
  */
 
 #include <rtthread.h>
@@ -304,7 +305,7 @@ RTM_EXPORT(rt_memcpy);
  *
  * @return The address of destination memory.
  */
-void *rt_memmove(void *dest, const void *src, rt_ubase_t n)
+void *rt_memmove(void *dest, const void *src, rt_size_t n)
 {
     char *tmp = (char *)dest, *s = (char *)src;
 
@@ -340,7 +341,7 @@ RTM_EXPORT(rt_memmove);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
-rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
+rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
 {
     const unsigned char *su1, *su2;
     int res = 0;
@@ -425,7 +426,7 @@ RTM_EXPORT(rt_strcasecmp);
  *
  * @return The address where the copied content is stored.
  */
-char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
+char *rt_strncpy(char *dst, const char *src, rt_size_t n)
 {
     if (n != 0)
     {
@@ -449,6 +450,21 @@ char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
 RTM_EXPORT(rt_strncpy);
 
 /**
+ * This function will copy string.
+ *
+ * @param  dst points to the address used to store the copied content.
+ *
+ * @param  src is the string to be copied.
+ *
+ * @return The address where the copied content is stored.
+ */
+char *rt_strcpy(char *dst, const char *src)
+{
+    return rt_strncpy(dst, src, (rt_size_t)-1);
+}
+RTM_EXPORT(rt_strcpy);
+
+/**
  * This function will compare two strings with specified maximum length.
  *
  * @param  cs is the string to be compared.
@@ -462,7 +478,7 @@ RTM_EXPORT(rt_strncpy);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
-rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count)
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
 {
     register signed char __res = 0;
 
