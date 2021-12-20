@@ -9,17 +9,16 @@
  */
 #include <rtthread.h>
 #include <lvgl.h>
-#include <lv_port_indev.h>
 #define DBG_TAG    "LVGL"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
 #ifndef LV_THREAD_STACK_SIZE
-    #define LV_THREAD_STACK_SIZE 10240
+    #define LV_THREAD_STACK_SIZE 4096
 #endif
 
 #ifndef LV_THREAD_PRIO
-    #define LV_THREAD_PRIO 20
+    #define LV_THREAD_PRIO (RT_THREAD_PRIORITY_MAX*2/3)
 #endif
 
 static void lvgl_thread(void *parameter)
@@ -34,7 +33,7 @@ static void lvgl_thread(void *parameter)
     }
 }
 
-static int lvgl_demo(void)
+static int lvgl_demo_init(void)
 {
     rt_thread_t tid;
 
@@ -47,5 +46,4 @@ static int lvgl_demo(void)
 
     return 0;
 }
-INIT_APP_EXPORT(lvgl_demo);
-//MSH_CMD_EXPORT(lvgl_demo, start lvgl music demo);
+INIT_APP_EXPORT(lvgl_demo_init);

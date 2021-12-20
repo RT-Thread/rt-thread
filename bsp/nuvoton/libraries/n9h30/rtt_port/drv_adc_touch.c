@@ -216,10 +216,15 @@ static void adc_touch_entry(void *parameter)
                     || touch_point.event == RT_TOUCH_EVENT_UP
                     || touch_point.event == RT_TOUCH_EVENT_MOVE)
             {
-#if defined(PKG_USING_LITTLEVGL2RTT) || defined(PKG_USING_LVGL)
+
+#if defined(PKG_USING_LVGL)
+                extern void nu_touch_inputevent_cb(rt_int16_t x, rt_int16_t y, rt_uint8_t state);
+                nu_touch_inputevent_cb(touch_point.x_coordinate, touch_point.y_coordinate, touch_point.event);
+#elif defined(PKG_USING_LITTLEVGL2RTT)
                 extern void littlevgl2rtt_send_input_event(rt_int16_t x, rt_int16_t y, rt_uint8_t state);
                 littlevgl2rtt_send_input_event(touch_point.x_coordinate, touch_point.y_coordinate, touch_point.event);
 #endif
+
 #if defined(PKG_USING_NUEMWIN)
                 extern void nuemwin_send_input_event(rt_int16_t x, rt_int16_t y, rt_uint8_t state);
                 nuemwin_send_input_event(touch_point.x_coordinate, touch_point.y_coordinate, touch_point.event);
