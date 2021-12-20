@@ -12,9 +12,9 @@
 #define PRCI_PROCMONCFG  (0x00F0)
 
 /* Fields */
-#define ROSC_DIV(x)    (((x) & 0x2F) << 0 ) 
+#define ROSC_DIV(x)    (((x) & 0x2F) << 0 )
 #define ROSC_TRIM(x)   (((x) & 0x1F) << 16)
-#define ROSC_EN(x)     (((x) & 0x1 ) << 30) 
+#define ROSC_EN(x)     (((x) & 0x1 ) << 30)
 #define ROSC_RDY(x)    (((x) & 0x1 ) << 31)
 
 #define XOSC_EN(x)     (((x) & 0x1) << 30)

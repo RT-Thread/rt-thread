@@ -78,9 +78,9 @@
 
 // This gives the mapping from inputs to LOCAL interrupts.
 
-#define LOCAL_INT_SW_0   0 
+#define LOCAL_INT_SW_0   0
 #define LOCAL_INT_SW_1   1
-#define LOCAL_INT_SW_2   2 
+#define LOCAL_INT_SW_2   2
 #define LOCAL_INT_SW_3   3
 #define LOCAL_INT_BTN_0  4
 #define LOCAL_INT_BTN_1  5
