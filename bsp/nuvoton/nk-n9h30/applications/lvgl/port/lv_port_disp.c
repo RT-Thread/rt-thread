@@ -94,10 +94,8 @@ void lv_port_disp_init(void)
               info.bits_per_pixel == 24 || info.bits_per_pixel == 32);
 
     buf_1 = (void *)info.framebuffer;
-    rt_kprintf("lv buf_1=%08x\n", buf_1);
-
-    buf_2 = (void *)((uint32_t)info.framebuffer + info.height * info.width * info.bits_per_pixel / 8);
-    rt_kprintf("lv buf_2=%08x\n", buf_2);
+    buf_2 = (void *)((uint32_t)buf_1 + info.height * info.width * info.bits_per_pixel / 8);
+    rt_kprintf("LVGL: Use two buffers - buf_1@%08x, buf_2@%08x\n", buf_1, buf_2);
 
     /*Initialize `disp_buf` with the buffer(s).*/
     lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, info.width * info.height);

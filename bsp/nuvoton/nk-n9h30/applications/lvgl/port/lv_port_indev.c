@@ -24,7 +24,7 @@ static void input_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
     data->state = last_state;
 }
 
-void littlevgl2rtt_send_input_event(rt_int16_t x, rt_int16_t y, rt_uint8_t state)
+void nu_touch_inputevent_cb(rt_int16_t x, rt_int16_t y, rt_uint8_t state)
 {
     switch (state)
     {
@@ -43,17 +43,15 @@ void littlevgl2rtt_send_input_event(rt_int16_t x, rt_int16_t y, rt_uint8_t state
     }
 }
 
-
-lv_indev_t *button_indev;
-
 void lv_port_indev_init(void)
 {
     static lv_indev_drv_t indev_drv;
 
-    lv_indev_drv_init(&indev_drv);      /*Basic initialization*/
+    /* Basic initialization */
+    lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = input_read;
 
-    /*Register the driver in LVGL and save the created input device object*/
-    button_indev = lv_indev_drv_register(&indev_drv);
+    /* Register the driver in LVGL and save the created input device object */
+    lv_indev_drv_register(&indev_drv);
 }
