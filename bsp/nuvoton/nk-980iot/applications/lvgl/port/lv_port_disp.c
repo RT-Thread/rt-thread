@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-12-17     Wayne       The first version
+ * 2021-12-17     Wayne        The first version
  */
 #include <lvgl.h>
 
@@ -51,6 +51,7 @@ void lv_port_disp_init(void)
 {
     rt_err_t result;
     void *buf_1 = RT_NULL;
+    void *buf_2 = RT_NULL;
 
     lcd_device = rt_device_find("lcd");
     if (lcd_device == 0)
@@ -72,10 +73,11 @@ void lv_port_disp_init(void)
               info.bits_per_pixel == 24 || info.bits_per_pixel == 32);
 
     buf_1 = (void *)info.framebuffer;
-    rt_kprintf("lv buf_1=%08x\n", buf_1);
+    buf_2 = (void *)((uint32_t)buf_1 + info.height * info.width * info.bits_per_pixel / 8);
+    rt_kprintf("LVGL: Use two buffers - buf_1@%08x, buf_2@%08x\n", buf_1, buf_2);
 
     /*Initialize `disp_buf` with the buffer(s).*/
-    lv_disp_draw_buf_init(&disp_buf, buf_1, NULL, info.width * info.height);
+    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, info.width * info.height);
 
     result = rt_device_open(lcd_device, 0);
     if (result != RT_EOK)
@@ -89,7 +91,6 @@ void lv_port_disp_init(void)
     /*Set the resolution of the display*/
     disp_drv.hor_res = info.width;
     disp_drv.ver_res = info.height;
-    //disp_drv.full_refresh = 1;
 
     /*Set a display buffer*/
     disp_drv.draw_buf = &disp_buf;
