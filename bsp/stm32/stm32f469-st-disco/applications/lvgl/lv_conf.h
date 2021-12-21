@@ -17,10 +17,11 @@
 #define LV_USE_GPU_STM32_DMA2D  1
 #define LV_GPU_DMA2D_CMSIS_INCLUDE "stm32f469xx.h"
 
-#define LV_HOR_RES_MAX          (800)
-#define LV_VER_RES_MAX          (480)
-
-#define LV_USE_DEMO_MUSIC           1
+/* music player demo */
+#define LV_HOR_RES_MAX              800
+#define LV_VER_RES_MAX              480
+#define LV_USE_DEMO_RTT_MUSIC       1
+#define LV_DEMO_RTT_MUSIC_AUTO_PLAY 1
 #define LV_FONT_MONTSERRAT_12       1
 #define LV_FONT_MONTSERRAT_16       1
 
