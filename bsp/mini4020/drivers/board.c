@@ -51,7 +51,9 @@ void rt_serial_handler(int vector, void *param)
 {
 	//rt_kprintf("in rt_serial_handler\n");
 	rt_int32_t stat = *(RP)UART0_IIR ;
-	RT_UNUSED char c;
+	char c;
+
+	RT_UNUSED(c);
 
 	/*Received data*/
 	if (((stat & 0x0E) >> 1) == 0x02)
