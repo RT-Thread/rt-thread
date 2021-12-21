@@ -323,7 +323,7 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
 #else
         0,
 #endif
-	},
+    },
 
     /* HID Descriptor */
     {
