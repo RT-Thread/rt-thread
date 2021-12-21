@@ -245,7 +245,7 @@ struct es32_uart uart2 =
     {UART2},
     &serial2,
     UART2_IRQn,
-#ifdef RT_USING_SERIAL
+#ifdef RT_SERIAL_USING_DMA
     UART2_DMATX_CHANNEL,
     UART2_DMARX_CHANNEL
 #endif /* RT_SERIAL_USING_DMA */
