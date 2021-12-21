@@ -385,7 +385,14 @@ rt_err_t es32f3_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     {
         return RT_ENOSYS;
     }
-    irqindex = index->pin & 0x00FF;
+    
+    for (irqindex = 0; irqindex < 16; irqindex++)
+    {
+        if ((0x01 << irqindex) == index->pin)
+        {
+            break;
+        }
+    }
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
         return RT_ENOSYS;

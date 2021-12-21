@@ -222,11 +222,11 @@ typedef struct
 
 /****************** Bit definition for MSC_FLASHADDR register ************************/
 
-#define	MSC_FLASHADDR_IFREN_POS	18U 
+#define	MSC_FLASHADDR_IFREN_POS	19U 
 #define	MSC_FLASHADDR_IFREN_MSK	BIT(MSC_FLASHADDR_IFREN_POS)
 
 #define	MSC_FLASHADDR_ADDR_POSS	0U 
-#define	MSC_FLASHADDR_ADDR_POSE	17U 
+#define	MSC_FLASHADDR_ADDR_POSE	18U 
 #define	MSC_FLASHADDR_ADDR_MSK	BITS(MSC_FLASHADDR_ADDR_POSS,MSC_FLASHADDR_ADDR_POSE)
 
 /****************** Bit definition for MSC_FLASHFIFO register ************************/
