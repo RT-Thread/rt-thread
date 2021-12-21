@@ -504,6 +504,7 @@ typedef struct {
   */
 ald_status_t ald_adc_init(adc_handle_t *hperh);
 ald_status_t ald_adc_reset(adc_handle_t *hperh);
+void ald_adc_offset_adjust(uint32_t refmv);
 /**
   * @}
   */
