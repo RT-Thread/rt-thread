@@ -54,6 +54,17 @@ extern int __bss_end;
 
 void SystemClock_Config(void);
 
+#ifdef RT_USING_PM
+void SystemClock_Config(void);
+void SystemClock_MSI_ON(void);
+void SystemClock_MSI_OFF(void);
+void SystemClock_80M(void);
+void SystemClock_24M(void);
+void SystemClock_2M(void);
+void SystemClock_ReConfig(uint8_t mode);
+void SystemClock_Config_fromSTOP(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
