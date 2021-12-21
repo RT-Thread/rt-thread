@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-12-17     Wayne       The first version
+ * 2021-12-17     Wayne        The first version
  */
 #include <lvgl.h>
 

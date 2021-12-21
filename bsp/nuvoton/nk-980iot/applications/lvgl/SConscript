@@ -1,17 +1,10 @@
-Import('RTT_ROOT')
 from building import *
 
-import os
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
 
-objs = []
+group = DefineGroup('LVGL-port', src, depend = ['PKG_USING_LVGL'], CPPPATH = CPPPATH)
 
-if GetDepend('PKG_USING_LVGL'):
-    cwd = GetCurrentDir()
-    list = os.listdir(cwd)
-    for d in list:
-        path = os.path.join(cwd, d)
-        if os.path.isfile(os.path.join(path, 'SConscript')):
-            objs = objs + SConscript(os.path.join(d, 'SConscript'))
-
-Return('objs')
+Return('group')
 
