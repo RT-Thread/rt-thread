@@ -9,6 +9,7 @@
  */
 
 #include <rtthread.h>
+#ifdef RT_USING_WIFI
 #include <wlan_dev.h>
 #include "wm_type_def.h"
 #include "wm_wifi.h"
@@ -628,3 +629,4 @@ int wm_hw_wifi_init(void)
     return ret; //RT_EOK;
 }
 INIT_DEVICE_EXPORT(wm_hw_wifi_init);
+#endif
