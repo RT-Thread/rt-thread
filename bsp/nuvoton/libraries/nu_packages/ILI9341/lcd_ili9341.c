@@ -177,8 +177,8 @@ static rt_err_t ili9341_lcd_init(rt_device_t dev)
 #if defined(NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER)
 static void ili9341_fillrect(uint16_t *pixels, struct rt_device_rect_info *pRectInfo)
 {
-    ili9341_set_column(pRectInfo->x, pRectInfo->x + pRectInfo->width);
-    ili9341_set_page(pRectInfo->y, pRectInfo->y + pRectInfo->height);
+    ili9341_set_column(pRectInfo->x, pRectInfo->x + pRectInfo->width - 1);
+    ili9341_set_page(pRectInfo->y, pRectInfo->y + pRectInfo->height - 1);
     ili9341_send_cmd(0x2c);
 
     ili9341_send_pixels(pixels, pRectInfo->height * pRectInfo->width * 2);
