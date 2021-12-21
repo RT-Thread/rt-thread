@@ -14,7 +14,7 @@ if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
 if rtconfig.PLATFORM == 'armclang':
     src += Glob('*_rvds.S')
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM == 'gcc' or rtconfig.PLATFORM == 'clang':
     src += Glob('*_init.S')
     src += Glob('*_gcc.S')
 
