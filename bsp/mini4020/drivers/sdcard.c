@@ -263,10 +263,12 @@ static rt_err_t sd_readblock(rt_uint32_t address, rt_uint8_t *buf)
     U32 complete, i;
     rt_uint8_t temp;
     rt_err_t err;
-    RT_UNUSED rt_uint32_t discard;
+    rt_uint32_t discard;
 #ifdef USE_TIMEOUT
     rt_uint32_t to = 10;
 #endif
+
+    RT_UNUSED(discard);
 
     //rt_kprintf("in readblock:%x\n",address);
     //Clear all the errors & interrups
