@@ -14,8 +14,10 @@
 #define LV_USE_PERF_MONITOR         1
 #define LV_COLOR_DEPTH              32
 
-# define USE_WIN32DRV               1
-# define WIN32DRV_MONITOR_ZOOM      1
+#define USE_WIN32DRV                1
+#define WIN32DRV_MONITOR_ZOOM       1
+
+#define LV_USE_FS_WIN32             1
 
 /* music player demo */
 #include <rtconfig.h>

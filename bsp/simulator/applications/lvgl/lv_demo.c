@@ -27,7 +27,7 @@ static void lvgl_thread(void *parameter)
     /* initialize win32 driver; don't put this in lv_port_disp() */
     if (!lv_win32_init(GetModuleHandleW(NULL), SW_SHOW, BSP_LCD_WIDTH, BSP_LCD_HEIGHT, NULL))
     {
-        LOG_E("lv_win32_init failure!");
+        LOG_E("lv_win32_init is failure!");
         return;
     }
     lv_win32_add_all_input_devices_to_group(NULL);
@@ -43,7 +43,7 @@ static void lvgl_thread(void *parameter)
         rt_thread_mdelay(1);
     }
 
-    LOG_W("LVGL simulator window closed!");
+    LOG_W("LVGL simulator window is closed!");
 }
 
 static int lvgl_demo_init(void)
