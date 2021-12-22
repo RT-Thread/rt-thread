@@ -238,11 +238,7 @@
 #endif
 
 /* ---------- Memory options ---------- */
-#ifdef RT_USING_ASM_MEMCPY
 #define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
-#else
-#define MEMCPY(dst,src,len)             memcpy(dst,src,len)
-#endif /* RT_USING_ASM_MEMCPY */
 #define SMEMCPY(dst,src,len)            MEMCPY(dst,src,len)
 
 #define MEM_ALIGNMENT               4

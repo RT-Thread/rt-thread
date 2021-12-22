@@ -226,11 +226,7 @@
 #define LWIP_DBG_TYPES_ON           (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
 
 /* ---------- Memory options ---------- */
-#ifdef RT_USING_ASM_MEMCPY
 #define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
-#else
-#define MEMCPY(dst,src,len)             memcpy(dst,src,len)
-#endif /* RT_USING_ASM_MEMCPY */
 #define SMEMCPY(dst,src,len)            MEMCPY(dst,src,len)
 
 #ifdef RT_LWIP_MEM_ALIGNMENT
