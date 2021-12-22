@@ -49,6 +49,9 @@ SECTIONS
         __rt_init_end = .;
 
         . = ALIGN(4);
+        KEEP(*(FalPartTable))
+
+        . = ALIGN(4);
 
         PROVIDE(__ctors_start__ = .);
         KEEP (*(SORT(.init_array.*)))

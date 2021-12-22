@@ -8,7 +8,7 @@ cwd   = GetCurrentDir()
 CPPPATH = [cwd]
 group = []
 
-if rtconfig.PLATFORM == 'gcc' and ('mips' in rtconfig.PREFIX): # identify mips gcc tool chain
+if (rtconfig.PLATFORM == 'gcc' and ('mips' in rtconfig.PREFIX)) or rtconfig.PLATFORM == 'clang': # identify mips gcc tool chain
     try:
         # There is no 'sys/select.h' in tthe mips gcc toolchain; it will be copied from 'nogcc/sys/select.h'
         copy("../../../common/nogcc/sys/select.h", "./sys/select.h")
