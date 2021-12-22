@@ -45,10 +45,6 @@
 
 #define LWIP_PLATFORM_BYTESWAP      0
 
-#ifndef BYTE_ORDER
-#define BYTE_ORDER                  LITTLE_ENDIAN
-#endif
-
 /* #define RT_LWIP_DEBUG */
 
 #ifdef RT_LWIP_DEBUG
