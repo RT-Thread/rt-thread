@@ -1494,7 +1494,9 @@ class Kconfig(object):
             sym._visited = False
 
         # Did we just print an '# end of ...' comment?
-        after_end_comment = False
+        # 2021-12-22 Meco Man Don't need to add end comment
+        # after_end_comment = False
+        after_end_comment = True
 
         # "".join()ed later
         chunks = [header]
