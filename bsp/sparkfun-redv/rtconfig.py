@@ -12,7 +12,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/unknown-gcc/bin'
+    EXEC_PATH   = r'/opt/FreedomStudio/SiFive/riscv64-unknown-elf-gcc-8.3.0-2019.08.0/bin/'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -61,6 +61,8 @@ if PLATFORM == 'gcc':
         AFLAGS += ' -g3'
     else:
         CFLAGS += ' -O2'
+
+    CXXFLAGS = CFLAGS
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET ' + TARGET_NAME + '\n'
     POST_ACTION += OBJCPY + ' -O ihex   $TARGET ' + TARGET_NAME_HEX + '\n'
