@@ -475,7 +475,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
             {
                 break;
             }
-        } // for
+        }
 
         /* Always create the super node, given name is with allocated host id. */
         rt_snprintf(dname, sizeof(dname), "sd%d", host_id);
