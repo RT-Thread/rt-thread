@@ -37,6 +37,7 @@
  * 2021-03-19     Meco Man     add security devices
  * 2021-05-10     armink       change version number to v4.0.4
  * 2021-11-19     Meco Man     change version number to v4.1.0
+ * 2021-12-23     Gabriel      improve hooking method
  */
 
 #ifndef __RT_DEF_H__
@@ -449,11 +450,164 @@ struct rt_object_information
 /**
  * The hook function call macro
  */
+#undef __RT_OBJECT_HOOK_CALL
+#undef RT_OBJECT_HOOK_CALL
+#define __RT_OBJECT_HOOK_CALL(func, argv)  __on_##func argv
+#define RT_OBJECT_HOOK_CALL(func, argv)    __RT_OBJECT_HOOK_CALL(func, argv)
+
+
 #ifdef RT_USING_HOOK
-#define RT_OBJECT_HOOK_CALL(func, argv) \
-    do { if ((func) != RT_NULL) func argv; } while (0)
+#ifndef __on_rt_interrupt_enter_hook
+#   define __on_rt_interrupt_enter_hook()                                       \
+            do {                                                                \
+                if ((rt_interrupt_enter_hook) != RT_NULL)                       \
+                    rt_interrupt_enter_hook();                                  \
+            } while (0)
+#endif
+#ifndef __on_rt_interrupt_leave_hook
+#   define __on_rt_interrupt_leave_hook()                                       \
+            do {                                                                \
+                if ((rt_interrupt_leave_hook) != RT_NULL)                       \
+                    rt_interrupt_leave_hook();                                  \
+            } while (0)
+#endif
+#ifndef __on_rt_malloc_hook
+#   define __on_rt_malloc_hook(addr, size)                                      \
+            do {                                                                \
+                if ((rt_malloc_hook) != RT_NULL)                                \
+                    rt_malloc_hook(addr, size);                                 \
+            } while (0)
+#endif
+#ifndef __on_rt_free_hook
+#   define __on_rt_free_hook(rmem)                                              \
+            do {                                                                \
+                if ((rt_free_hook) != RT_NULL)                                  \
+                    rt_free_hook(rmem);                                         \
+            } while (0)
+#endif
+#ifndef __on_rt_object_trytake_hook
+#   define __on_rt_object_trytake_hook(parent)                                  \
+            do {                                                                \
+                if ((rt_object_trytake_hook) != RT_NULL)                        \
+                    rt_object_trytake_hook(parent);                             \
+            } while (0)
+#endif
+#ifndef __on_rt_object_take_hook
+#   define __on_rt_object_take_hook(parent)                                     \
+            do {                                                                \
+                if ((rt_object_take_hook) != RT_NULL)                           \
+                    rt_object_take_hook(parent);                                \
+            } while (0)
+#endif
+#ifndef __on_rt_object_put_hook
+#   define __on_rt_object_put_hook(parent)                                      \
+            do {                                                                \
+                if ((rt_object_put_hook) != RT_NULL)                            \
+                    rt_object_put_hook(parent);                                 \
+            } while (0)
+#endif
+#ifndef __on_rt_scheduler_hook
+#   define __on_rt_scheduler_hook(from, to)                                     \
+            do {                                                                \
+                if ((rt_scheduler_hook) != RT_NULL)                             \
+                    rt_scheduler_hook(from, to);                                \
+            } while (0)
+#endif
+#ifndef __on_rt_object_attach_hook
+#   define __on_rt_object_attach_hook(obj)                                      \
+            do {                                                                \
+                if ((rt_object_attach_hook) != RT_NULL)                         \
+                    rt_object_attach_hook(obj);                                 \
+            } while (0)
+#endif
+#ifndef __on_rt_object_detach_hook
+#   define __on_rt_object_detach_hook(obj)                                      \
+            do {                                                                \
+                if ((rt_object_detach_hook) != RT_NULL)                         \
+                    rt_object_detach_hook(obj);                                 \
+            } while (0)
+#endif
+#ifndef __on_rt_thread_inited_hook
+#   define __on_rt_thread_inited_hook(thread)                                   \
+            do {                                                                \
+                if ((rt_thread_inited_hook) != RT_NULL)                         \
+                    rt_thread_inited_hook(thread);                              \
+            } while (0)
+#endif
+#ifndef __on_rt_thread_suspend_hook
+#   define __on_rt_thread_suspend_hook(thread)                                  \
+            do {                                                                \
+                if ((rt_thread_suspend_hook) != RT_NULL)                        \
+                    rt_thread_suspend_hook(thread);                             \
+            } while (0)
+#endif
+#ifndef __on_rt_thread_resume_hook
+#   define __on_rt_thread_resume_hook(thread)                                   \
+            do {                                                                \
+                if ((rt_thread_resume_hook) != RT_NULL)                         \
+                    rt_thread_resume_hook(thread);                              \
+            } while (0)
+#endif
+#ifndef __on_rt_timer_enter_hook
+#   define __on_rt_timer_enter_hook(t)                                          \
+            do {                                                                \
+                if ((rt_timer_enter_hook) != RT_NULL)                           \
+                    rt_timer_enter_hook(t);                                     \
+            } while (0)
+#endif
+#ifndef __on_rt_timer_exit_hook
+#   define __on_rt_timer_exit_hook(t)                                           \
+            do {                                                                \
+                if ((rt_timer_exit_hook) != RT_NULL)                            \
+                    rt_timer_exit_hook(t);                                      \
+            } while (0)
+#endif
 #else
-#define RT_OBJECT_HOOK_CALL(func, argv)
+#ifndef __on_rt_interrupt_enter_hook
+#   define __on_rt_interrupt_enter_hook()
+#endif
+#ifndef __on_rt_interrupt_leave_hook
+#   define __on_rt_interrupt_leave_hook()
+#endif
+#ifndef __on_rt_malloc_hook
+#   define __on_rt_malloc_hook(addr, size)
+#endif
+#ifndef __on_rt_free_hook
+#   define __on_rt_free_hook(rmem)
+#endif
+#ifndef __on_rt_object_trytake_hook
+#   define __on_rt_object_trytake_hook(parent)
+#endif
+#ifndef __on_rt_object_take_hook
+#   define __on_rt_object_take_hook(parent)
+#endif
+#ifndef __on_rt_object_put_hook
+#   define __on_rt_object_put_hook(parent)
+#endif
+#ifndef __on_rt_scheduler_hook
+#   define __on_rt_scheduler_hook(from, to)
+#endif
+#ifndef __on_rt_object_attach_hook
+#   define __on_rt_object_attach_hook(obj)
+#endif
+#ifndef __on_rt_object_detach_hook
+#   define __on_rt_object_detach_hook(obj)
+#endif
+#ifndef __on_rt_thread_inited_hook
+#   define __on_rt_thread_inited_hook(thread)
+#endif
+#ifndef __on_rt_thread_suspend_hook
+#   define __on_rt_thread_suspend_hook(thread)
+#endif
+#ifndef __on_rt_thread_resume_hook
+#   define __on_rt_thread_resume_hook(thread)
+#endif
+#ifndef __on_rt_timer_enter_hook
+#   define __on_rt_timer_enter_hook(t)
+#endif
+#ifndef __on_rt_timer_exit_hook
+#   define __on_rt_timer_exit_hook(t)
+#endif
 #endif
 
 /**@}*/
