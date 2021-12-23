@@ -1067,22 +1067,22 @@
   <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
+      <name>$PROJ_DIR$\applications\mnt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\mnt.c</name>
+      <name>$PROJ_DIR$\applications\main.c</name>
     </file>
   </group>
   <group>
     <name>CPU</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\context_iar.S</name>
@@ -1109,22 +1109,22 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\waitqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringblk_buf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\dataqueue.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\src\completion.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\src\pipe.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\dataqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringblk_buf.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\waitqueue.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\src\workqueue.c</name>
@@ -1163,76 +1163,73 @@
   <group>
     <name>Kernel</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\memheap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\memheap.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
     </file>
   </group>
   <group>
     <name>libc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\stdlib.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\stdlib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\stdio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\stdio.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\libc.c</name>
@@ -1242,6 +1239,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
     </file>
   </group>
   <group>
@@ -1271,10 +1271,10 @@
   <group>
     <name>SAL</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev.c</name>
     </file>
   </group>
   <group>
@@ -1283,10 +1283,10 @@
   <group>
     <name>xip</name>
     <file>
-      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_flash.c</name>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_flash.c</name>
     </file>
   </group>
 </project>

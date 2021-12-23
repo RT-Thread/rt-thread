@@ -392,13 +392,6 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>vbus_drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\vbus_drv.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
@@ -409,6 +402,13 @@
               <FileName>application.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\application.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>vbus_drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\vbus_drv.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -461,16 +461,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -481,6 +481,13 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -499,6 +506,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
@@ -511,42 +532,21 @@
               <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_led.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\drivers\drv_led.c</FilePath>
+              <FilePath>..\drivers\drv_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>drv_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\drivers\drv_uart.c</FilePath>
+              <FilePath>..\drivers\drv_led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -578,16 +578,37 @@
           </Files>
           <Files>
             <File>
-              <FileName>device.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
+              <FilePath>..\..\..\src\components.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>components.c</FileName>
+              <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\components.c</FilePath>
+              <FilePath>..\..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -599,9 +620,37 @@
           </Files>
           <Files>
             <File>
-              <FileName>kservice.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\kservice.c</FilePath>
+              <FilePath>..\..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\object.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -618,70 +667,14 @@
               <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>VBus</GroupName>
           <Files>
             <File>
-              <FileName>prio_queue.c</FileName>
+              <FileName>vbus.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\vbus\prio_queue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>watermark_queue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\vbus\watermark_queue.c</FilePath>
+              <FilePath>..\..\..\components\vbus\vbus.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -693,9 +686,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>vbus.c</FileName>
+              <FileName>watermark_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\vbus\vbus.c</FilePath>
+              <FilePath>..\..\..\components\vbus\watermark_queue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>prio_queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\vbus\prio_queue.c</FilePath>
             </File>
           </Files>
         </Group>

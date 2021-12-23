@@ -413,16 +413,16 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>showmem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -434,23 +434,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>trap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\trap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>mmu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\arm926\mmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>trap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\arm926\trap.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -462,6 +455,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\arm926\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>machine.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\arm926\machine.c</FilePath>
@@ -469,16 +469,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\start_rvds.S</FilePath>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\arm926\cpuport.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
+              <FileName>start_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\context_rvds.S</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\start_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -500,9 +500,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
+              <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -521,30 +542,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -659,51 +659,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>object.c</FileName>
+              <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
+              <FilePath>..\..\src\irq.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -715,9 +673,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>idle.c</FileName>
+              <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -729,9 +687,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
+              <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -743,28 +708,49 @@
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>libc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem_std.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>syscalls.c</FileName>
@@ -781,9 +767,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>mem_std.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>libc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -791,6 +784,13 @@
               <FileName>unistd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\unistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -812,6 +812,13 @@
           <GroupName>Platform</GroupName>
           <Files>
             <File>
+              <FileName>rt_low_level_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>platform\rt_low_level_init.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>reset.c</FileName>
               <FileType>1</FileType>
               <FilePath>platform\reset.c</FilePath>
@@ -829,13 +836,6 @@
               <FileName>system_clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>platform\system_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_low_level_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>platform\rt_low_level_init.c</FilePath>
             </File>
           </Files>
         </Group>

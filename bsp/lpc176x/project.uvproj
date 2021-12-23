@@ -396,6 +396,13 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
+              <FileName>application.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\application.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
@@ -406,13 +413,6 @@
               <FileName>platform.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\platform.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>application.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -437,13 +437,6 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
@@ -458,9 +451,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -470,14 +463,21 @@
               <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>uart.c</FileName>
+              <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\uart.c</FilePath>
+              <FilePath>drivers\led.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -485,6 +485,13 @@
               <FileName>emac.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\emac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -499,13 +506,6 @@
               <FileName>spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -530,6 +530,13 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\kservice.c</FilePath>
@@ -537,16 +544,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>memheap.c</FileName>
+              <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\memheap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
+              <FilePath>..\..\src\object.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -558,30 +558,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -593,16 +572,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>object.c</FileName>
+              <FileName>memheap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
+              <FilePath>..\..\src\memheap.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -621,9 +600,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>mempool.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>

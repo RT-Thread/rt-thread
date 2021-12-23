@@ -47,7 +47,7 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 /* end of Kernel Device Object */
-#define RT_VER_NUM 0x40004
+#define RT_VER_NUM 0x40005
 /* end of RT-Thread Kernel */
 
 /* RT-Thread Components */
@@ -194,9 +194,9 @@
 
 /* system packages */
 
-/* rt_kprintf: enhanced rt_kprintf packages */
+/* enhanced kernel services */
 
-/* end of rt_kprintf: enhanced rt_kprintf packages */
+/* end of enhanced kernel services */
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
 

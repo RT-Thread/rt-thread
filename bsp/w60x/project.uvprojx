@@ -390,16 +390,16 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>showmem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -547,6 +547,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\completion.c</FilePath>
@@ -561,23 +568,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -589,9 +582,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
+              <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -795,9 +795,30 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>clock.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -809,16 +830,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -837,9 +865,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -849,58 +884,9 @@
               <FilePath>..\..\src\irq.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>libc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>syscalls.c</FileName>
@@ -917,9 +903,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>delay.c</FileName>
+              <FileName>stdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\delay.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>libc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -927,6 +920,13 @@
               <FileName>unistd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\unistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\delay.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1007,6 +1007,13 @@
               <FileName>tcpip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.2\src\api\tcpip.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ping.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\apps\ping\ping.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1105,13 +1112,6 @@
               <FileName>api_lib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.2\src\api\api_lib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ping.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.2\src\apps\ping\ping.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1227,13 +1227,6 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
-              <FileName>netdev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\netdev\src\netdev.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>netdev_ipaddr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
@@ -1241,9 +1234,30 @@
           </Files>
           <Files>
             <File>
+              <FileName>netdev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\netdev\src\netdev.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>sal_socket.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\sal_socket\src\sal_socket.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>net_netdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\socket\net_netdb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>net_sockets.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\socket\net_sockets.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1258,20 +1272,6 @@
               <FileName>af_inet_lwip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\sal_socket\impl\af_inet_lwip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>net_sockets.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\sal_socket\socket\net_sockets.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>net_netdb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\sal_socket\socket\net_netdb.c</FilePath>
             </File>
           </Files>
         </Group>
