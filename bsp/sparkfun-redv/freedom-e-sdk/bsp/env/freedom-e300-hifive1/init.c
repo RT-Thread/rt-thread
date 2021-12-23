@@ -4,6 +4,7 @@
 
 #include "platform.h"
 #include "encoding.h"
+#include "rtthread.h"
 
 extern int main(int argc, char** argv);
 extern void trap_entry();
