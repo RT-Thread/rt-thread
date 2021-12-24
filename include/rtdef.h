@@ -122,7 +122,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_UNUSED(x)                   ((void)x)
 
 /* Compiler Related Definitions */
-#if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
+#if defined(__ARMCC_VERSION)           /* ARM Compiler */
     #include <stdarg.h>
     #define RT_SECTION(x)               __attribute__((section(x)))
     #define RT_USED                     __attribute__((used))
