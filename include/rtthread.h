@@ -155,7 +155,6 @@ rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
-void rt_thread_timeout(void *parameter);
 
 #ifdef RT_USING_SIGNALS
 void rt_thread_alloc_sig(rt_thread_t tid);
