@@ -16,7 +16,9 @@ if RT_USING_DEVICE_IPC
 
         config RT_SYSTEM_WORKQUEUE_PRIORITY
             int "The priority level of system workqueue thread"
-            default 23
+            default 6 if RT_THREAD_PRIORITY_8
+            default 30  if RT_THREAD_PRIORITY_32
+            default 254  if RT_THREAD_PRIORITY_256
     endif
 endif
 
