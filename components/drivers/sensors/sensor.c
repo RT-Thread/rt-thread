@@ -488,7 +488,7 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
         return result;
     }
 
-    rt_free(device_name);
     LOG_I("rt_sensor[%s] init success", device_name);
+    rt_free(device_name);
     return RT_EOK;
 }
