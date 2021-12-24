@@ -17,9 +17,6 @@
 #include "libc.h"
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef RT_USING_PTHREADS
-#include <pthread.h>
-#endif
 
 int libc_system_init(void)
 {
@@ -32,11 +29,6 @@ int libc_system_init(void)
         libc_stdio_set_console(dev_console->parent.name, O_RDWR);
     }
 #endif /* RT_USING_POSIX_DEVIO */
-
-#if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
-    pthread_system_init();
-#endif
-
     return 0;
 }
 INIT_COMPONENT_EXPORT(libc_system_init);

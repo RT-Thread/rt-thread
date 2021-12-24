@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-12-5      SummerGift   first version
+ * 2021-11-30     flybreak     first version
  */
 
 #ifndef __DRV_FLASH_H__

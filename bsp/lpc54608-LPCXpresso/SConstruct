@@ -15,7 +15,7 @@ DefaultEnvironment(tools=[])
 if rtconfig.PLATFORM == 'armcc':
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+        CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
         CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
         AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS,
@@ -24,7 +24,7 @@ if rtconfig.PLATFORM == 'armcc':
 else:
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+        CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
         CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
         AR = rtconfig.AR, ARFLAGS = '-rc',
         LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)

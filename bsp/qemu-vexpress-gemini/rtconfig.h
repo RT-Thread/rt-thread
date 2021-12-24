@@ -35,6 +35,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 /* end of Memory Management */
 
@@ -93,7 +94,6 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
@@ -113,8 +113,19 @@
 
 /* POSIX (Portable Operating System Interface) layer */
 
+#define RT_USING_POSIX_DELAY
+#define RT_USING_POSIX_CLOCK
 #define RT_USING_PTHREADS
 #define PTHREAD_NUM_MAX 8
+
+/* Interprocess Communication (IPC) */
+
+#define RT_USING_POSIX_MESSAGE_QUEUE
+#define RT_USING_POSIX_MESSAGE_SEMAPHORE
+
+/* Socket is in the 'Network' category */
+
+/* end of Interprocess Communication (IPC) */
 /* end of POSIX (Portable Operating System Interface) layer */
 /* end of POSIX layer and C standard library */
 
@@ -207,6 +218,10 @@
 /* end of tools packages */
 
 /* system packages */
+
+/* enhanced kernel services */
+
+/* end of enhanced kernel services */
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
 

@@ -299,7 +299,6 @@ typedef struct {
 typedef struct {
 	uint32_t dlytd;			/**< Delay transmitted data [0 ~ 15]*/
 	uint32_t dlydcl;		/**< Delay the read data capturing logic [0 ~ 15]*/
-	type_func_t bypsalcc;		/**< Bypass of the adapted loopback clock circuit @ref type_func_t*/
 	qspi_data_sampled_t smpledge;	/**< Sample edge selection(of the flash data outputs) @ref qspi_data_sampled_t*/
 } qspi_data_capture_cfg_t;
 

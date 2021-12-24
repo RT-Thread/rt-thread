@@ -13,12 +13,22 @@
 #include <stdint.h>
 #include <sys/errno.h>
 
-#ifdef RT_USING_POSIX_DEVIO
+#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
 #include <dfs_file.h>
 #include <dfs_posix.h>
 #include <poll.h>
 #include <sys/ioctl.h>
 
+/**
+ * @brief    This function will open a pipe.
+ *
+ * @param    fd is the file descriptor.
+ *
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
+ *           When the return value is -1, it means the file descriptor is invalid.
+ *           When the return value is -RT_ENOMEM, it means insufficient memory allocation failed.
+ */
 static int pipe_fops_open(struct dfs_fd *fd)
 {
     int rc = 0;
@@ -62,6 +72,15 @@ __exit:
     return rc;
 }
 
+/**
+ * @brief    This function will close a pipe.
+ *
+ * @param    fd is the file descriptor.
+ *
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
+ *           When the return value is -1, it means the file descriptor is invalid.
+ */
 static int pipe_fops_close(struct dfs_fd *fd)
 {
     rt_device_t device;
@@ -116,6 +135,23 @@ static int pipe_fops_close(struct dfs_fd *fd)
     return 0;
 }
 
+/**
+ * @brief    This function will get the pipe space size depends on the command.
+ *
+ * @param    fd is the file descriptor.
+ *
+ * @param    cmd is the command. It determines what data will get.
+ *
+ *               FIONREAD        The command to get the number of bytes in the pipe.
+ *
+ *               FIONWRITE       The command to get the number of bytes can be written to the pipe.
+ *
+ * @param    args is the pointer to the data to store the read data.
+ *
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
+ *           When the return value is -EINVAL, it means the command is invalid.
+ */
 static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
 {
     rt_pipe_t *pipe;
@@ -139,6 +175,19 @@ static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     return ret;
 }
 
+/**
+ * @brief    This function will read data from pipe.
+ *
+ * @param    fd is the file descriptor.
+ *
+ * @param    buf is the buffer to store the read data.
+ *
+ * @param    count is the length of data to be read.
+ *
+ * @return   Return the length of data read.
+ *           When the return value is 0, it means O_NONBLOCK is enabled and there is no thread that has the pipe open for writing.
+ *           When the return value is -EAGAIN, it means there are no data to be read.
+ */
 static int pipe_fops_read(struct dfs_fd *fd, void *buf, size_t count)
 {
     int len = 0;
@@ -188,6 +237,19 @@ out:
     return len;
 }
 
+/**
+ * @brief    This function will write data to pipe.
+ *
+ * @param    fd is the file descriptor.
+ *
+ * @param    buf is a pointer to the data buffer to be written.
+ *
+ * @param    count is the length of data to be write.
+ *
+ * @return   Return the length of data written.
+ *           When the return value is -EAGAIN, it means O_NONBLOCK is enabled and there are no space to be written.
+ *           When the return value is -EPIPE, it means there is no thread that has the pipe open for reading.
+ */
 static int pipe_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
 {
     int len;
@@ -258,6 +320,19 @@ out:
     return ret;
 }
 
+/**
+ * @brief    This function will get the pipe status.
+ *
+ * @param    fd is the file descriptor.
+ *
+ * @param    req is the request type.
+ *
+ * @return   mask of the pipe status.
+ *           POLLIN means there is data to be read.
+ *           POLLHUP means there is no thread that occupied the pipe to open for writing.
+ *           POLLOUT means there is space to be written.
+ *           POLLERR means there is no thread that occupied the pipe to open for reading.
+ */
 static int pipe_fops_poll(struct dfs_fd *fd, rt_pollreq_t *req)
 {
     int mask = 0;
@@ -320,9 +395,21 @@ static const struct dfs_file_ops pipe_fops =
     RT_NULL,
     pipe_fops_poll,
 };
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE) */
 
-rt_err_t  rt_pipe_open(rt_device_t device, rt_uint16_t oflag)
+/**
+ * @brief    This function will open the pipe and actually creates the pipe buffer.
+ *
+ * @param    device is a pointer to the pipe device descriptor.
+ *
+ * @param    oflag is the open method, but it is not used yet.
+ *
+ * @return   Return the operation status.
+ *           When the return value is RT_EOK, the operation is successful.
+ *           When the return value is -RT_EINVAL, it means the device handle is empty.
+ *           When the return value is -RT_ENOMEM, it means insufficient memory allocation failed.
+ */
+static rt_err_t rt_pipe_open(rt_device_t device, rt_uint16_t oflag)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
     rt_err_t ret = RT_EOK;
@@ -350,7 +437,16 @@ __exit:
     return ret;
 }
 
-rt_err_t  rt_pipe_close(rt_device_t device)
+/**
+ * @brief    This function will close the pipe and release the pipe buffer.
+ *
+ * @param    device is a pointer to the pipe device descriptor.
+ *
+ * @return   Return the operation status.
+ *           When the return value is RT_EOK, the operation is successful.
+ *           When the return value is -RT_EINVAL, it means the device handle is empty.
+ */
+static rt_err_t rt_pipe_close(rt_device_t device)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
 
@@ -368,7 +464,21 @@ rt_err_t  rt_pipe_close(rt_device_t device)
     return RT_EOK;
 }
 
-rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
+/**
+ * @brief    This function will read the specified length of data from the pipe.
+ *
+ * @param    device is a pointer to the pipe device descriptor.
+ *
+ * @param    pos is a parameter compatible with POSIX standard interface (currently meaningless, just pass in 0).
+ *
+ * @param    buffer is a pointer to the buffer to store the read data.
+ *
+ * @param    count is the length of data to be read.
+ *
+ * @return   Return the length of data read.
+ *           When the return value is 0, it means the pipe device handle is empty or the count is 0.
+ */
+static rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
     rt_size_t read_bytes = 0;
@@ -396,7 +506,21 @@ rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t
     return read_bytes;
 }
 
-rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
+/**
+ * @brief    This function will write the specified length of data to the pipe.
+ *
+ * @param    device is a pointer to the pipe device descriptor.
+ *
+ * @param    pos is a parameter compatible with POSIX standard interface (currently meaningless, just pass in 0).
+ *
+ * @param    buffer is a pointer to the data buffer to be written.
+ *
+ * @param    count is the length of data to be written.
+ *
+ * @return   Return the length of data written.
+ *           When the return value is 0, it means the pipe device handle is empty or the count is 0.
+ */
+static rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
     rt_size_t write_bytes = 0;
@@ -424,7 +548,18 @@ rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt
     return write_bytes;
 }
 
-rt_err_t  rt_pipe_control(rt_device_t dev, int cmd, void *args)
+/**
+ * @brief    This function is not used yet.
+ *
+ * @param    dev is not used yet.
+ *
+ * @param    cmd is not used yet.
+ *
+ * @param    args is not used yet.
+ *
+ * @return   Always return RT_EOK.
+ */
+static rt_err_t rt_pipe_control(rt_device_t dev, int cmd, void *args)
 {
     return RT_EOK;
 }
@@ -441,6 +576,18 @@ const static struct rt_device_ops pipe_ops =
 };
 #endif /* RT_USING_DEVICE_OPS */
 
+/**
+ * @brief    This function will initialize a pipe device.
+ *           The system allocates a pipe handle from dynamic heap memory, initializes the pipe handle
+ *           with the specified value, and registers the pipe device with the system.
+ *
+ * @param    name is the name of pipe device.
+ *
+ * @param    bufsz is the size of pipe buffer.
+ *
+ * @return   Return the pointer to the pipe device.
+ *           When the return value is RT_NULL, it means the initialization failed.
+ */
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 {
     rt_pipe_t *pipe;
@@ -479,13 +626,24 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
         rt_free(pipe);
         return RT_NULL;
     }
-#ifdef RT_USING_POSIX_DEVIO
+#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
     dev->fops = (void*)&pipe_fops;
-#endif /* RT_USING_POSIX_DEVIO */
+#endif
 
     return pipe;
 }
 
+/**
+ * @brief    This function will delete a pipe device.
+ *           The system will release the pipe handle and unregister the pipe device from the system.
+ *
+ * @param    pipe is the pointer to the pipe device.
+ *
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
+ *           When the return value is -RT_EINVAL, it means the pipe device is not found or the device isn't a pipe.
+ *           When the return value is -RT_EBUSY, it means the pipe device is busy.
+ */
 int rt_pipe_delete(const char *name)
 {
     int result = 0;
@@ -529,7 +687,17 @@ int rt_pipe_delete(const char *name)
     return result;
 }
 
-#ifdef RT_USING_POSIX_DEVIO
+#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
+/**
+ * @brief    This function will creat a anonymous pipe.
+ *
+ * @param    fildes[0] is the read handle.
+ *           fildes[1] is the write handle.
+ *
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
+ *           When the return value is -1, it means the operation is failed.
+ */
 int pipe(int fildes[2])
 {
     rt_pipe_t *pipe;
@@ -539,7 +707,7 @@ int pipe(int fildes[2])
 
     rt_snprintf(dname, sizeof(dname), "pipe%d", pipeno++);
 
-    pipe = rt_pipe_create(dname, PIPE_BUFSZ);
+    pipe = rt_pipe_create(dname, RT_USING_POSIX_PIPE_SIZE);
     if (pipe == RT_NULL)
     {
         return -1;
@@ -563,11 +731,22 @@ int pipe(int fildes[2])
     return 0;
 }
 
+/**
+ * @brief    This function will create a named pipe.
+ *
+ * @param    path is the name of pipe device.
+ *
+ * @param    mode is not used yet.
+ *
+ * @return   Return the operation status.
+ *           When the return value is 0, it means the operation is successful.
+ *           When the return value is -1, it means the operation is failed.
+ */
 int mkfifo(const char *path, mode_t mode)
 {
     rt_pipe_t *pipe;
 
-    pipe = rt_pipe_create(path, PIPE_BUFSZ);
+    pipe = rt_pipe_create(path, RT_USING_POSIX_PIPE_SIZE);
     if (pipe == RT_NULL)
     {
         return -1;
@@ -575,4 +754,4 @@ int mkfifo(const char *path, mode_t mode)
 
     return 0;
 }
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE) */

@@ -323,6 +323,8 @@ typedef struct i2c_handle_s {
 #define I2C_SLAVE_GET_DIR(x) (READ_BIT(((x)->perh->STAT), I2C_STAT_DIR_MSK))
 #define I2C_ENABLE(x)  (SET_BIT((x)->perh->CON1, I2C_CON1_PE_MSK))
 #define I2C_DISABLE(x) (CLEAR_BIT((x)->perh->CON1, I2C_CON1_PE_MSK))
+#define I2C_RST_TXFIFO(x) (SET_BIT((x)->perh->FCON, I2C_FCON_TXFRST_MSK))
+#define I2C_RST_RXFIFO(x) (SET_BIT((x)->perh->FCON, I2C_FCON_RXFRST_MSK))
 /**
   * @}
   */

@@ -35,6 +35,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 /* end of Memory Management */
 
@@ -87,10 +88,10 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
-#define RT_USING_SERIAL_V2
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
 /* Using USB */
@@ -103,6 +104,13 @@
 
 /* POSIX (Portable Operating System Interface) layer */
 
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
+
+/* end of Interprocess Communication (IPC) */
 /* end of POSIX (Portable Operating System Interface) layer */
 /* end of POSIX layer and C standard library */
 
@@ -188,6 +196,10 @@
 
 /* system packages */
 
+/* enhanced kernel services */
+
+/* end of enhanced kernel services */
+
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 /* end of acceleration: Assembly language or algorithmic acceleration packages */
@@ -237,13 +249,9 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_UART1_RX_BUFSIZE 256
-#define BSP_UART1_TX_BUFSIZE 0
 #define BSP_USING_UART2
 #define BSP_UART2_RX_USING_DMA
 #define BSP_UART2_TX_USING_DMA
-#define BSP_UART2_RX_BUFSIZE 256
-#define BSP_UART2_TX_BUFSIZE 256
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

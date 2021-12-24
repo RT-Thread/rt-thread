@@ -175,6 +175,8 @@ __weak void ald_tick_init(uint32_t prio)
 void ald_systick_interval_select(systick_interval_t value)
 {
 	assert_param(IS_SYSTICK_INTERVAL(value));
+	
+	if (value == 0) return;
 
 	SysTick_Config(ald_cmu_get_sys_clock() / value);
 	__systick_interval = value;
@@ -506,7 +508,7 @@ void sys_config(void)
 {
 	uint32_t i = 0, tmp = 0;
 	uint8_t err = 0, flag = 0;
-	uint32_t inf014 = 0, inf0154 = 0;
+	uint32_t inf014 = 0, inf0154 = 0, inf0244 = 0;
 	uint8_t cnt = 4;
 
 	uint32_t *inf0_addr = (uint32_t *)0x20003C00;
@@ -514,7 +516,12 @@ void sys_config(void)
 	inf014  = *((uint32_t *)(0x80000 + 56));
 	/* read VR1_VREF register */
 	inf0154 = *((uint32_t *)(0x80000 + 616));
-
+	/* read Chip_v */
+	inf0244 = *((uint32_t *)(0x80000 + 0x03D0));
+	
+	/* if D version ,do nothing */
+	if (inf0244 == 0xFFFFFF44) return;
+	
 	if (inf0154 == 0xFFFFFFFF)
 		while(1);
 	
@@ -528,7 +535,7 @@ void sys_config(void)
 	/* change CFG_VR1_VREF value, FLASH ref 0xA */
 	tmp = (inf0154 >> 8) & 0xF;
 	if (0xA != tmp) {
-		inf0154 &= ~(0xF << 8);
+		inf0154 &= (uint32_t)~(0xF << 8);
 		inf0154 |= (0xA << 8);
 		inf0154 = (inf0154 & (0x0000FFFF)) | ((~(inf0154 & 0xFFFF)) << 16);
 		flag = 0x1;

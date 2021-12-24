@@ -18,6 +18,7 @@
  * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
  * 2015-07-06     Bernard      Add rt_assert_handler routine.
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
+ * 2021-12-20     Meco Man     implement rt_strcpy()
  */
 
 #include <rtthread.h>
@@ -115,7 +116,6 @@ int *_rt_errno(void)
 }
 RTM_EXPORT(_rt_errno);
 
-#ifndef RT_USING_ASM_MEMSET
 /**
  * This function will set the content of memory to specified value.
  *
@@ -128,7 +128,7 @@ RTM_EXPORT(_rt_errno);
  *
  * @return The address of source memory.
  */
-void *rt_memset(void *s, int c, rt_ubase_t count)
+RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *xs = (char *)s;
@@ -201,9 +201,7 @@ void *rt_memset(void *s, int c, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memset);
-#endif /* RT_USING_ASM_MEMSET */
 
-#ifndef RT_USING_ASM_MEMCPY
 /**
  * This function will copy memory content from source address to destination address.
  *
@@ -215,7 +213,7 @@ RTM_EXPORT(rt_memset);
  *
  * @return The address of destination memory
  */
-void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
@@ -287,7 +285,6 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memcpy);
-#endif /* RT_USING_ASM_MEMCPY */
 
 #ifndef RT_KSERVICE_USING_STDLIB
 
@@ -304,7 +301,7 @@ RTM_EXPORT(rt_memcpy);
  *
  * @return The address of destination memory.
  */
-void *rt_memmove(void *dest, const void *src, rt_ubase_t n)
+void *rt_memmove(void *dest, const void *src, rt_size_t n)
 {
     char *tmp = (char *)dest, *s = (char *)src;
 
@@ -340,7 +337,7 @@ RTM_EXPORT(rt_memmove);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
-rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
+rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
 {
     const unsigned char *su1, *su2;
     int res = 0;
@@ -425,7 +422,7 @@ RTM_EXPORT(rt_strcasecmp);
  *
  * @return The address where the copied content is stored.
  */
-char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
+char *rt_strncpy(char *dst, const char *src, rt_size_t n)
 {
     if (n != 0)
     {
@@ -449,6 +446,21 @@ char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
 RTM_EXPORT(rt_strncpy);
 
 /**
+ * This function will copy string.
+ *
+ * @param  dst points to the address used to store the copied content.
+ *
+ * @param  src is the string to be copied.
+ *
+ * @return The address where the copied content is stored.
+ */
+char *rt_strcpy(char *dst, const char *src)
+{
+    return rt_strncpy(dst, src, (rt_size_t)-1);
+}
+RTM_EXPORT(rt_strcpy);
+
+/**
  * This function will compare two strings with specified maximum length.
  *
  * @param  cs is the string to be compared.
@@ -462,7 +474,7 @@ RTM_EXPORT(rt_strncpy);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
-rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count)
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
 {
     register signed char __res = 0;
 
@@ -1276,7 +1288,318 @@ RT_WEAK int rt_kprintf(const char *fmt, ...)
 RTM_EXPORT(rt_kprintf);
 #endif /* RT_USING_CONSOLE */
 
-#ifdef RT_USING_HEAP
+#if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
+#ifdef RT_USING_HOOK
+static void (*rt_malloc_hook)(void *ptr, rt_size_t size);
+static void (*rt_free_hook)(void *ptr);
+
+/**
+ * @addtogroup Hook
+ */
+
+/**@{*/
+
+/**
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is allocated from heap memory.
+ *
+ * @param hook the hook function.
+ */
+void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
+{
+    rt_malloc_hook = hook;
+}
+
+/**
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is released to heap memory.
+ *
+ * @param hook the hook function
+ */
+void rt_free_sethook(void (*hook)(void *ptr))
+{
+    rt_free_hook = hook;
+}
+
+/**@}*/
+
+#endif /* RT_USING_HOOK */
+
+#if defined(RT_USING_HEAP_ISR)
+#elif defined(RT_USING_MUTEX)
+static struct rt_mutex _lock;
+#endif
+
+rt_inline void _heap_lock_init(void)
+{
+#if defined(RT_USING_HEAP_ISR)
+#elif defined(RT_USING_MUTEX)
+    rt_mutex_init(&_lock, "heap", RT_IPC_FLAG_PRIO);
+#endif
+}
+
+rt_inline rt_base_t _heap_lock(void)
+{
+#if defined(RT_USING_HEAP_ISR)
+    return rt_hw_interrupt_disable();
+#elif defined(RT_USING_MUTEX)
+    if (rt_thread_self())
+        return rt_mutex_take(&_lock, RT_WAITING_FOREVER);
+    else
+        return RT_EOK;
+#else
+    rt_enter_critical();
+    return RT_EOK;
+#endif
+}
+
+rt_inline void _heap_unlock(rt_base_t level)
+{
+#if defined(RT_USING_HEAP_ISR)
+    rt_hw_interrupt_enable(level);
+#elif defined(RT_USING_MUTEX)
+    RT_ASSERT(level == RT_EOK);
+    if (rt_thread_self())
+        rt_mutex_release(&_lock);
+#else
+    rt_exit_critical();
+#endif
+}
+
+#if defined(RT_USING_SMALL_MEM_AS_HEAP)
+static rt_smem_t system_heap;
+rt_inline void _smem_info(rt_uint32_t *total,
+    rt_uint32_t *used, rt_uint32_t *max_used)
+{
+    if (total)
+        *total = system_heap->total;
+    if (used)
+        *used = system_heap->used;
+    if (max_used)
+        *max_used = system_heap->max;
+}
+#define _MEM_INIT(_name, _start, _size) \
+    system_heap = rt_smem_init(_name, _start, _size)
+#define _MEM_MALLOC(_size)  \
+    rt_smem_alloc(system_heap, _size)
+#define _MEM_REALLOC(_ptr, _newsize)\
+    rt_smem_realloc(system_heap, _ptr, _newsize)
+#define _MEM_FREE(_ptr) \
+    rt_smem_free(_ptr)
+#define _MEM_INFO(_total, _used, _max)  \
+    _smem_info(_total, _used, _max)
+#elif defined(RT_USING_MEMHEAP_AS_HEAP)
+static struct rt_memheap system_heap;
+void *_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
+void _memheap_free(void *rmem);
+void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize);
+#define _MEM_INIT(_name, _start, _size) \
+    rt_memheap_init(&system_heap, _name, _start, _size)
+#define _MEM_MALLOC(_size)  \
+    _memheap_alloc(&system_heap, _size)
+#define _MEM_REALLOC(_ptr, _newsize)    \
+    _memheap_realloc(&system_heap, _ptr, _newsize)
+#define _MEM_FREE(_ptr)   \
+    _memheap_free(_ptr)
+#define _MEM_INFO(_total, _used, _max)   \
+    rt_memheap_info(&system_heap, _total, _used, _max)
+#elif defined(RT_USING_SLAB_AS_HEAP)
+static rt_slab_t system_heap;
+rt_inline void _slab_info(rt_uint32_t *total,
+    rt_uint32_t *used, rt_uint32_t *max_used)
+{
+    if (total)
+        *total = system_heap->total;
+    if (used)
+        *used = system_heap->used;
+    if (max_used)
+        *max_used = system_heap->max;
+}
+#define _MEM_INIT(_name, _start, _size) \
+    system_heap = rt_slab_init(_name, _start, _size)
+#define _MEM_MALLOC(_size)  \
+    rt_slab_alloc(system_heap, _size)
+#define _MEM_REALLOC(_ptr, _newsize)    \
+    rt_slab_realloc(system_heap, _ptr, _newsize)
+#define _MEM_FREE(_ptr) \
+    rt_slab_free(system_heap, _ptr)
+#define _MEM_INFO       _slab_info
+#else
+#define _MEM_INIT(...)
+#define _MEM_MALLOC(...)     RT_NULL
+#define _MEM_REALLOC(...)    RT_NULL
+#define _MEM_FREE(...)
+#define _MEM_INFO(...)
+#endif
+
+/**
+ * @brief This function will init system heap.
+ *
+ * @param begin_addr the beginning address of system page.
+ *
+ * @param end_addr the end address of system page.
+ */
+RT_WEAK void rt_system_heap_init(void *begin_addr, void *end_addr)
+{
+    rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
+    rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
+
+    RT_ASSERT(end_align > begin_align);
+
+    /* Initialize system memory heap */
+    _MEM_INIT("heap", begin_addr, end_align - begin_align);
+    /* Initialize multi thread contention lock */
+    _heap_lock_init();
+}
+
+/**
+ * @brief Allocate a block of memory with a minimum of 'size' bytes.
+ *
+ * @param size is the minimum size of the requested block in bytes.
+ *
+ * @return the pointer to allocated memory or NULL if no free memory was found.
+ */
+RT_WEAK void *rt_malloc(rt_size_t size)
+{
+    rt_base_t level;
+    void *ptr;
+
+    /* Enter critical zone */
+    level = _heap_lock();
+    /* allocate memory block from system heap */
+    ptr = _MEM_MALLOC(size);
+    /* Exit critical zone */
+    _heap_unlock(level);
+    /* call 'rt_malloc' hook */
+    RT_OBJECT_HOOK_CALL(rt_malloc_hook, (ptr, size));
+    return ptr;
+}
+RTM_EXPORT(rt_malloc);
+
+/**
+ * @brief This function will change the size of previously allocated memory block.
+ *
+ * @param rmem is the pointer to memory allocated by rt_malloc.
+ *
+ * @param newsize is the required new size.
+ *
+ * @return the changed memory block address.
+ */
+RT_WEAK void *rt_realloc(void *rmem, rt_size_t newsize)
+{
+    rt_base_t level;
+    void *nptr;
+
+    /* Enter critical zone */
+    level = _heap_lock();
+    /* Change the size of previously allocated memory block */
+    nptr = _MEM_REALLOC(rmem, newsize);
+    /* Exit critical zone */
+    _heap_unlock(level);
+    return nptr;
+}
+RTM_EXPORT(rt_realloc);
+
+/**
+ * @brief  This function will contiguously allocate enough space for count objects
+ *         that are size bytes of memory each and returns a pointer to the allocated
+ *         memory.
+ *
+ * @note   The allocated memory is filled with bytes of value zero.
+ *
+ * @param  count is the number of objects to allocate.
+ *
+ * @param  size is the size of one object to allocate.
+ *
+ * @return pointer to allocated memory / NULL pointer if there is an error.
+ */
+RT_WEAK void *rt_calloc(rt_size_t count, rt_size_t size)
+{
+    void *p;
+
+    /* allocate 'count' objects of size 'size' */
+    p = rt_malloc(count * size);
+    /* zero the memory */
+    if (p)
+    {
+        rt_memset(p, 0, count * size);
+    }
+    return p;
+}
+RTM_EXPORT(rt_calloc);
+
+/**
+ * @brief This function will release the previously allocated memory block by
+ *        rt_malloc. The released memory block is taken back to system heap.
+ *
+ * @param rmem the address of memory which will be released.
+ */
+RT_WEAK void rt_free(void *rmem)
+{
+    rt_base_t level;
+
+    /* call 'rt_free' hook */
+    RT_OBJECT_HOOK_CALL(rt_free_hook, (rmem));
+    /* Enter critical zone */
+    level = _heap_lock();
+    _MEM_FREE(rmem);
+    /* Exit critical zone */
+    _heap_unlock(level);
+}
+RTM_EXPORT(rt_free);
+
+/**
+* @brief This function will caculate the total memory, the used memory, and
+*        the max used memory.
+*
+* @param total is a pointer to get the total size of the memory.
+*
+* @param used is a pointer to get the size of memory used.
+*
+* @param max_used is a pointer to get the maximum memory used.
+*/
+RT_WEAK void rt_memory_info(rt_uint32_t *total,
+                            rt_uint32_t *used,
+                            rt_uint32_t *max_used)
+{
+    rt_base_t level;
+
+    /* Enter critical zone */
+    level = _heap_lock();
+    _MEM_INFO(total, used, max_used);
+    /* Exit critical zone */
+    _heap_unlock(level);
+}
+RTM_EXPORT(rt_memory_info);
+
+#if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
+void *rt_page_alloc(rt_size_t npages)
+{
+    rt_base_t level;
+    void *ptr;
+
+    /* Enter critical zone */
+    level = _heap_lock();
+    /* alloc page */
+    ptr = rt_slab_page_alloc(system_heap, npages);
+    /* Exit critical zone */
+    _heap_unlock(level);
+    return ptr;
+}
+
+void rt_page_free(void *addr, rt_size_t npages)
+{
+    rt_base_t level;
+
+    /* Enter critical zone */
+    level = _heap_lock();
+    /* free page */
+    rt_slab_page_free(system_heap, addr, npages);
+    /* Exit critical zone */
+    _heap_unlock(level);
+}
+#endif
+
 /**
  * This function allocates a memory block, which address is aligned to the
  * specified alignment size.

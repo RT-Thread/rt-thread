@@ -124,9 +124,13 @@ void ald_wwdt_clear_flag_status(void)
  */
 void ald_wwdt_feed_dog(void)
 {
+	uint16_t i = 0;
+	
 	WWDT_UNLOCK();
 	WRITE_REG(WWDT->INTCLR, 0x1);
 	WWDT_LOCK();
+	for (i = 0; i < 0x2ff; ++i)
+		__nop();
 
 	return;
 }
@@ -198,7 +202,9 @@ it_status_t ald_iwdt_get_flag_status(void)
  */
 void ald_iwdt_clear_flag_status(void)
 {
+	IWDT_UNLOCK();
 	WRITE_REG(IWDT->INTCLR, 1);
+	IWDT_LOCK();
 	return;
 }
 
@@ -208,10 +214,14 @@ void ald_iwdt_clear_flag_status(void)
  */
 void ald_iwdt_feed_dog(void)
 {
+	uint16_t i = 0;
+	
 	IWDT_UNLOCK();
 	WRITE_REG(IWDT->INTCLR, 1);
 	IWDT_LOCK();
-
+	for (i = 0; i < 0x2ff; ++i)
+		__NOP();
+	
 	return;
 }
 /**

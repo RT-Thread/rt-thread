@@ -40,9 +40,14 @@ def update_all_project_files(root_path):
         projects = os.listdir(root_path)
         # is a project path?
         if "SConscript" in projects:
-            print('new bsp path {}'.format(root_path))
             try:
-                os.system('scons --pyconfig-silent -C {0}'.format(root_path)) # update rtconfig.h and .config
+                if "win32" in sys.platform:
+                    retval = os.getcwd()
+                    os.chdir(root_path)
+                    os.system("menuconfig --silent")
+                    os.chdir(retval)
+                else:
+                    os.system('scons --pyconfig-silent -C {0}'.format(root_path)) # update rtconfig.h and .config
                 update_project_file(root_path)
             except Exception as e:
                 print("error message: {}".format(e))

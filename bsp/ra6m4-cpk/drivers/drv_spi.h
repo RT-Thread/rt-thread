@@ -26,7 +26,7 @@ extern "C" {
 #ifdef R_SPI_H
 struct ra_spi_handle
 {
-    const char *bus_name;
+    const char bus_name[RT_NAME_MAX];
     const spi_cfg_t           *spi_cfg_t;
     const spi_instance_ctrl_t *spi_ctrl_t;
 };

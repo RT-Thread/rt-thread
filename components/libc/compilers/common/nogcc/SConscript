@@ -10,6 +10,6 @@ group = []
 if GetDepend('RT_USING_LIBC'):
     src += Glob('*.c')
 
-if rtconfig.PLATFORM != 'gcc' or rtconfig.ARCH == 'sim':
+if (rtconfig.PLATFORM != 'gcc' and rtconfig.PLATFORM != 'clang') or rtconfig.ARCH == 'sim':
     group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH)
 Return('group')

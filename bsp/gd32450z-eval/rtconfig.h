@@ -35,6 +35,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 /* end of Memory Management */
 
@@ -106,7 +107,6 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SYSTEM_WORKQUEUE
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
@@ -132,6 +132,13 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
+
+/* end of Interprocess Communication (IPC) */
 /* end of POSIX (Portable Operating System Interface) layer */
 /* end of POSIX layer and C standard library */
 
@@ -273,6 +280,10 @@
 /* end of tools packages */
 
 /* system packages */
+
+/* enhanced kernel services */
+
+/* end of enhanced kernel services */
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
 

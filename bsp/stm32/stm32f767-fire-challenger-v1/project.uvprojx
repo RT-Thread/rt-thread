@@ -335,7 +335,7 @@
               <MiscControls />
               <Define>STM32F767xx, USE_HAL_DRIVER, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\nogcc;..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Inc;..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Include;..\libraries\STM32F7xx_HAL\CMSIS\Include;..\..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\nogcc;..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Inc;..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Include;..\libraries\STM32F7xx_HAL\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\ipc;..\..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -397,13 +397,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
@@ -411,9 +404,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cpu_cache.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
@@ -425,9 +425,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
+              <FileName>cpu_cache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -463,6 +463,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
@@ -484,13 +498,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
@@ -501,13 +508,6 @@
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
           <GroupOption>
@@ -603,16 +603,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>idle.c</FileName>
+              <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
+              <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -624,16 +617,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\irq.c</FilePath>
+              <FilePath>..\..\..\src\idle.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -645,9 +631,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\timer.c</FilePath>
+              <FilePath>..\..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\irq.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -655,13 +648,6 @@
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>memheap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\memheap.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -680,16 +666,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>clock.c</FileName>
+              <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
+              <FilePath>..\..\..\src\timer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>memheap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\..\src\memheap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
             </File>
           </Files>
         </Group>
