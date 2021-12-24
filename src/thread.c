@@ -760,8 +760,7 @@ RTM_EXPORT(rt_thread_control);
 /**
  * @brief   This function will suspend the specified thread and change it to suspend state.
  *
- * @note    If suspend self thread, after this function call, the
- *          rt_schedule() must be invoked.
+ * @note    This function only can suspend current thread itself.
  *
  * @param   thread is the thread to be suspended.
  *
@@ -776,14 +775,14 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+    RT_ASSERT(thread == rt_thread_self());
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->name));
 
     stat = thread->stat & RT_THREAD_STAT_MASK;
     if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
-        RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, 0x%2x\n",
-                                       thread->stat));
+        RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, 0x%2x\n", thread->stat));
         return -RT_ERROR;
     }
 
