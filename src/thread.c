@@ -105,6 +105,43 @@ static void _thread_exit(void)
     rt_schedule();
 }
 
+/**
+ * @brief   This function is the timeout function for thread, normally which is invoked
+ *          when thread is timeout to wait some resource.
+ *
+ * @param   parameter is the parameter of thread timeout function
+ */
+static void _thread_timeout(void *parameter)
+{
+    struct rt_thread *thread;
+    register rt_base_t temp;
+
+    thread = (struct rt_thread *)parameter;
+
+    /* thread check */
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    /* disable interrupt */
+    temp = rt_hw_interrupt_disable();
+
+    /* set error number */
+    thread->error = -RT_ETIMEOUT;
+
+    /* remove from suspend list */
+    rt_list_remove(&(thread->tlist));
+
+    /* insert to schedule ready list */
+    rt_schedule_insert_thread(thread);
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(temp);
+
+    /* do schedule */
+    rt_schedule();
+}
+
 static rt_err_t _thread_init(struct rt_thread *thread,
                              const char       *name,
                              void (*entry)(void *parameter),
@@ -173,7 +210,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     /* initialize thread timer */
     rt_timer_init(&(thread->thread_timer),
                   thread->name,
-                  rt_thread_timeout,
+                  _thread_timeout,
                   thread,
                   0,
                   RT_TIMER_FLAG_ONE_SHOT);
@@ -853,44 +890,6 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_resume);
-
-/**
- * @brief   This function is the timeout function for thread, normally which is invoked
- *          when thread is timeout to wait some resource.
- *
- * @param   parameter is the parameter of thread timeout function
- */
-void rt_thread_timeout(void *parameter)
-{
-    struct rt_thread *thread;
-    register rt_base_t temp;
-
-    thread = (struct rt_thread *)parameter;
-
-    /* thread check */
-    RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND);
-    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-
-    /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
-
-    /* set error number */
-    thread->error = -RT_ETIMEOUT;
-
-    /* remove from suspend list */
-    rt_list_remove(&(thread->tlist));
-
-    /* insert to schedule ready list */
-    rt_schedule_insert_thread(thread);
-
-    /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
-
-    /* do schedule */
-    rt_schedule();
-}
-RTM_EXPORT(rt_thread_timeout);
 
 /**
  * @brief   This function will find the specified thread.
