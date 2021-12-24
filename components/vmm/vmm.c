@@ -34,7 +34,7 @@ void vmm_thread_init(struct rt_thread *thread, const char *name)
 
     rt_thread_init(thread, name, RT_NULL, RT_NULL,
                    &vmm_stack_start, &vmm_stack_end - &vmm_stack_start,
-                   RT_THREAD_PRIORITY_MAX - 1, 10);
+                   RT_THREAD_PRIORITY_BACKGROUND, 10);
 
     /* set thread to ready status but not switch to */
     rt_thread_startup(thread);

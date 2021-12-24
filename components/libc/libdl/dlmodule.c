@@ -182,7 +182,7 @@ struct rt_dlmodule *dlmodule_create(void)
         module->stat = RT_DLMODULE_STAT_INIT;
 
         /* set initial priority and stack size */
-        module->priority = RT_THREAD_PRIORITY_MAX - 1;
+        module->priority = RT_THREAD_PRIORITY_BACKGROUND;
         module->stack_size = 2048;
 
         rt_list_init(&(module->object_list));
@@ -544,7 +544,7 @@ struct rt_dlmodule* dlmodule_exec(const char* pgname, const char* cmd, int cmd_s
             module->cmd_line = rt_strdup(cmd);
 
             /* check stack size and priority */
-            if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_MAX - 1;
+            if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_BACKGROUND;
             if (module->stack_size < 2048 || module->stack_size > (1024 * 32)) module->stack_size = 2048;
 
             tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module,
@@ -721,7 +721,7 @@ struct rt_dlmodule* dlmodule_exec_custom(const char* pgname, const char* cmd, in
             module->cmd_line = rt_strdup(cmd);
 
             /* check stack size and priority */
-            if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_MAX - 1;
+            if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_BACKGROUND;
             if (module->stack_size < 2048 || module->stack_size > (1024 * 32)) module->stack_size = 2048;
 
             tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module,

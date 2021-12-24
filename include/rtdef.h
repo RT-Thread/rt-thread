@@ -532,6 +532,8 @@ typedef siginfo_t rt_siginfo_t;
  * Thread
  */
 
+#define RT_THREAD_PRIORITY_BACKGROUND   (RT_THREAD_PRIORITY_MAX - 2)
+
 /*
  * thread state definitions
  */

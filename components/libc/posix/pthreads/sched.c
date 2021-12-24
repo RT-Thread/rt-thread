@@ -31,7 +31,7 @@ int sched_get_priority_max(int policy)
     if (policy != SCHED_FIFO && policy != SCHED_RR)
         return EINVAL;
 
-    return RT_THREAD_PRIORITY_MAX - 1;
+    return RT_THREAD_PRIORITY_BACKGROUND;
 }
 RTM_EXPORT(sched_get_priority_max);
 
