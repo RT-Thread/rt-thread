@@ -89,9 +89,11 @@
 #define PHY_PHYS_ADDR 0
 #endif
 
+#if 1
 #ifndef EMAC_PHY_CONFIG
 #define EMAC_PHY_CONFIG (EMAC_PHY_TYPE_INTERNAL | EMAC_PHY_INT_MDIX_EN |      \
                          EMAC_PHY_AN_100B_T_FULL_DUPLEX)
+#endif
 #endif
 
 /**
@@ -141,6 +143,11 @@ extern void lwIPHostGetTime(u32_t *time_s, u32_t *time_ns);
 #include <netif/ethernetif.h>
 #include "lwipopts.h"
 #include "drv_eth.h"
+
+/* Define those to better describe your network interface. */
+#define IFNAME0 't'
+#define IFNAME1 'i'
+
 
 /**
  * A structure used to keep track of driver state and error counts.
@@ -232,6 +239,13 @@ static tStellarisIF g_StellarisIFData = {
  */
 volatile uint32_t g_ui32NormalInts;
 volatile uint32_t g_ui32AbnormalInts;
+
+/**
+ * Status flag for EEE link established
+ */
+#if EEE_SUPPORT
+volatile bool g_bEEELinkActive;
+#endif
 
 /**
  * A macro which determines whether a pointer is within the SRAM address
@@ -335,8 +349,34 @@ tivaif_hwinit(struct netif *psNetif)
 {
   uint16_t ui16Val;
 
+  /* clear the EEE Link Active flag */
+#if EEE_SUPPORT
+  g_bEEELinkActive = false;
+#endif
+
+  /* Set MAC hardware address length */
+  psNetif->hwaddr_len = ETHARP_HWADDR_LEN;
+
+  /* Set MAC hardware address */
+  EMACAddrGet(EMAC0_BASE, 0, &(psNetif->hwaddr[0]));
+
+  /* Maximum transfer unit */
+  psNetif->mtu = 1500;
+
+  /* Device capabilities */
+  psNetif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+
   /* Initialize the DMA descriptors. */
   InitDMADescriptors();
+
+#if defined(EMAC_PHY_IS_EXT_MII) || defined(EMAC_PHY_IS_EXT_RMII)
+  /* If PHY is external then reset the PHY before configuring it */
+  EMACPHYWrite(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMCR,
+          EPHY_BMCR_MIIRESET);
+
+  while((EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMCR) &
+          EPHY_BMCR_MIIRESET) == EPHY_BMCR_MIIRESET);
+#endif
 
   /* Clear any stray PHY interrupts that may be set. */
   ui16Val = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_MISR1);
@@ -398,8 +438,13 @@ tivaif_hwinit(struct netif *psNetif)
   IntMasterEnable();
 
   /* Tell the PHY to start an auto-negotiation cycle. */
+#if defined(EMAC_PHY_IS_EXT_MII) || defined(EMAC_PHY_IS_EXT_RMII)
+  EMACPHYWrite(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMCR, (EPHY_BMCR_SPEED |
+               EPHY_BMCR_DUPLEXM | EPHY_BMCR_ANEN | EPHY_BMCR_RESTARTAN));
+#else
   EMACPHYWrite(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMCR, (EPHY_BMCR_ANEN |
                EPHY_BMCR_RESTARTAN));
+#endif
 }
 
 #ifdef DEBUG
@@ -484,15 +529,15 @@ tivaif_check_pbuf(struct pbuf *p)
                     tivaif_trace_pbuf("Copied:", pBuf);
 #endif
                     DRIVER_STATS_INC(TXCopyCount);
-
-                    /* Reduce the reference count on the original pbuf since
-                     * we're not going to hold on to it after returning from
-                     * tivaif_transmit.  Note that we already bumped
-                     * the reference count at the top of tivaif_transmit.
-                     */
-                    pbuf_free(p);
                 }
             }
+
+            /* Reduce the reference count on the original pbuf since we're not
+             * going to hold on to it after returning from tivaif_transmit.
+             * Note that we already bumped the reference count at the top of
+             * tivaif_transmit.
+             */
+            pbuf_free(p);
 
             /* Send back the new pbuf pointer or NULL if an error occurred. */
             return(pBuf);
@@ -573,7 +618,7 @@ tivaif_transmit(net_device_t dev, struct pbuf *p)
   {
       /**
        * The current write descriptor has a pbuf attached to it so this
-       * implies that the ring is fui32l. Reject this transmit request with a
+       * implies that the ring is full. Reject this transmit request with a
        * memory error since we can't satisfy it just now.
        */
       pbuf_free(p);
@@ -630,13 +675,8 @@ tivaif_transmit(net_device_t dev, struct pbuf *p)
           pDesc->Desc.ui32CtrlStatus = 0;
       }
 
-#ifdef RT_LWIP_USING_HW_CHECKSUM
       pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_IP_ALL_CKHSUMS |
                                      DES0_TX_CTRL_CHAINED);
-#else
-      pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_NO_CHKSUM |
-                                     DES0_TX_CTRL_CHAINED);
-#endif
 
       /* Decrement our descriptor counter, move on to the next buffer in the
        * pbuf chain. */
@@ -761,7 +801,7 @@ tivaif_receive(net_device_t dev)
 {
   tDescriptorList *pDescList;
   tStellarisIF *pIF;
-  struct pbuf *pBuf;
+  static struct pbuf *pBuf = NULL;
   uint32_t ui32DescEnd;
 
   /* Get a pointer to our state data */
@@ -773,10 +813,10 @@ tivaif_receive(net_device_t dev)
   /* Start with a NULL pbuf so that we don't try to link chain the first
    * time round.
    */
-  pBuf = NULL;
+  //pBuf = NULL;
 
   /* Determine where we start and end our walk of the descriptor list */
-   ui32DescEnd = pDescList->ui32Read ? (pDescList->ui32Read - 1) : (pDescList->ui32NumDescs - 1);
+  ui32DescEnd = pDescList->ui32Read ? (pDescList->ui32Read - 1) : (pDescList->ui32NumDescs - 1);
 
   /* Step through the descriptors that are marked for CPU attention. */
   while(pDescList->ui32Read != ui32DescEnd)
@@ -816,7 +856,7 @@ tivaif_receive(net_device_t dev)
           if(pBuf)
           {
               /* Link this pbuf to the last one we looked at since this buffer
-               * is a continuation of an existing frame (split across mui32tiple
+               * is a continuation of an existing frame (split across multiple
                * pbufs).  Note that we use pbuf_cat() here rather than
                * pbuf_chain() since we don't want to increase the reference
                * count of either pbuf - we only want to link them together.
@@ -843,6 +883,7 @@ tivaif_receive(net_device_t dev)
                   pbuf_free(pBuf);
                   LINK_STATS_INC(link.drop);
                   DRIVER_STATS_INC(RXPacketErrCount);
+                  pBuf = NULL;
               }
               else
               {
@@ -860,13 +901,11 @@ tivaif_receive(net_device_t dev)
 
 #if NO_SYS
                   if(ethernet_input(pBuf, psNetif) != RT_EOK)
-                  {
 #else
-                  //if(tcpip_input(pBuf, psNetif) != RT_EOK)
-                  if((rt_mb_send(dev->rx_pbuf_mb, (rt_uint32_t)pBuf) != RT_EOK) ||
-                    (eth_device_ready(&(dev->parent)) != RT_EOK))
-                  {
+                  //if(tcpip_input(pBuf, psNetif) != ERR_OK)
+                  if(rt_mb_send(dev->rx_pbuf_mb, (rt_uint32_t)pBuf) != RT_EOK)
 #endif
+                  {
                       /* drop the packet */
                       LWIP_DEBUGF(NETIF_DEBUG, ("tivaif_input: input error\n"));
                       pbuf_free(pBuf);
@@ -943,6 +982,9 @@ void
 tivaif_process_phy_interrupt(net_device_t dev)
 {
     uint16_t ui16Val, ui16Status;
+#if EEE_SUPPORT
+    uint16_t ui16EEEStatus;
+#endif
     uint32_t ui32Config, ui32Mode, ui32RxMaxFrameSize;
 
     /* Read the PHY interrupt status.  This clears all interrupt sources.
@@ -951,12 +993,15 @@ tivaif_process_phy_interrupt(net_device_t dev)
      */
     ui16Val = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_MISR1);
 
-    /*
-     * Dummy read PHY REG EPHY_BMSR, it will force update the EPHY_STS register
-     */
-        EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMSR);
     /* Read the current PHY status. */
     ui16Status = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_STS);
+
+    /* If EEE mode support is requested then read the value of the Link
+     * partners status
+     */
+#if EEE_SUPPORT
+    ui16EEEStatus = EMACPHYMMDRead(EMAC0_BASE, PHY_PHYS_ADDR, 0x703D);
+#endif
 
     /* Has the link status changed? */
     if(ui16Val & EPHY_MISR1_LINKSTAT)
@@ -972,6 +1017,19 @@ tivaif_process_phy_interrupt(net_device_t dev)
             eth_device_linkchange(&(dev->parent), RT_TRUE);
 #endif
 
+            /* if the link has been advertised as EEE capable then configure
+             * the MAC register for LPI timers and manually set the PHY link
+             * status bit
+             */
+#if EEE_SUPPORT
+            if(ui16EEEStatus & 0x2)
+            {
+                EMACLPIConfig(EMAC0_BASE, true, 1000, 36);
+                EMACLPILinkSet(EMAC0_BASE);
+                g_bEEELinkActive = true;
+            }
+#endif
+
             /* In this case we drop through since we may need to reconfigure
              * the MAC depending upon the speed and half/fui32l-duplex settings.
              */
@@ -984,6 +1042,16 @@ tivaif_process_phy_interrupt(net_device_t dev)
 #else
             //tcpip_callback((tcpip_callback_fn)netif_set_link_down, psNetif);
             eth_device_linkchange(&(dev->parent), RT_FALSE);
+#endif
+
+            /* if the link has been advertised as EEE capable then clear the
+             * MAC register LPI timers and manually clear the PHY link status
+             * bit
+             */
+#if EEE_SUPPORT
+            g_bEEELinkActive = false;
+            EMACLPILinkClear(EMAC0_BASE);
+            EMACLPIConfig(EMAC0_BASE, false, 1000, 0);
 #endif
         }
     }
@@ -1061,11 +1129,17 @@ tivaif_interrupt(net_device_t dev, uint32_t ui32Status)
    */
   if(ui32Status & EMAC_INT_TRANSMIT)
   {
+#if EEE_SUPPORT
+      if(g_bEEELinkActive)
+      {
+          EMACLPIEnter(EMAC0_BASE);
+      }
+#endif
       tivaif_process_transmit(dev->dma_if);
   }
 
   /**
-   * Process the receive DMA list and pass all successfui32ly received packets
+   * Process the receive DMA list and pass all successfully received packets
    * up the stack.  We also call this function in cases where the receiver has
    * stalled due to missing buffers since the receive function will attempt to
    * allocate new pbufs for descriptor entries which have none.

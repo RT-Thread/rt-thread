@@ -91,7 +91,6 @@ elif PLATFORM == 'armcc':
 
 
     CXXFLAGS = CFLAGS 
-    CFLAGS += ' -std=c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
@@ -105,7 +104,7 @@ elif PLATFORM == 'armclang':
     TARGET_EXT = 'axf'
 
     DEVICE = ' --cpu Cortex-M4.fp '
-    CFLAGS = ' -xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 '
+    CFLAGS = ' --target=arm-arm-none-eabi -mcpu=cortex-m4 '
     CFLAGS += ' -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 '
     CFLAGS += ' -mfloat-abi=hard -c -fno-rtti -funsigned-char -fshort-enums -fshort-wchar '
     CFLAGS += ' -gdwarf-3 -ffunction-sections '
@@ -125,6 +124,7 @@ elif PLATFORM == 'armclang':
         CFLAGS += ' -O2'
         
     CXXFLAGS = CFLAGS
+    CFLAGS += ' -std=c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 

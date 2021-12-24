@@ -11,7 +11,7 @@
 #include <at.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <stdint.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
@@ -264,6 +264,10 @@ static void client_cli_parser(at_client_t  client)
                 }
                 else
                 {
+                    if(cur_line_len >= FINSH_CMD_SIZE)
+                    {
+                        continue;
+                    }
                     rt_kprintf("%c", ch);
                     cur_line[cur_line_len++] = ch;
                 }

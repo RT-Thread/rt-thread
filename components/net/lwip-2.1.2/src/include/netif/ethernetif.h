@@ -22,7 +22,6 @@ struct eth_device
 
     /* network interface for lwip */
     struct netif *netif;
-    struct rt_semaphore tx_ack;
 
     rt_uint16_t flags;
     rt_uint8_t  link_changed;

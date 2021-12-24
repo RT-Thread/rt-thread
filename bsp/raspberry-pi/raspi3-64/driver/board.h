@@ -12,6 +12,7 @@
 #define BOARD_H__
 
 #include <stdint.h>
+#include "raspi.h"
 
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;

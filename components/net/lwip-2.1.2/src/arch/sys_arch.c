@@ -360,7 +360,7 @@ err_t sys_mutex_new(sys_mutex_t *mutex)
     rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_MUTEX_NAME, counter);
     counter ++;
 
-    tmpmutex = rt_mutex_create(tname, RT_IPC_FLAG_FIFO);
+    tmpmutex = rt_mutex_create(tname, RT_IPC_FLAG_PRIO);
     if (tmpmutex == RT_NULL)
         return ERR_MEM;
     else
@@ -778,6 +778,32 @@ void ppp_trace(int level, const char *format, ...)
     va_end(args);
 }
 #endif
+
+#ifdef LWIP_HOOK_IP4_ROUTE_SRC
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src)
+{
+    struct netif *netif;
+
+    /* iterate through netifs */
+    for (netif = netif_list; netif != NULL; netif = netif->next)
+    {
+        /* is the netif up, does it have a link and a valid address? */
+        if (netif_is_up(netif) && netif_is_link_up(netif) && !ip4_addr_isany_val(*netif_ip4_addr(netif)))
+        {
+            /* gateway matches on a non broadcast interface? (i.e. peer in a point to point interface) */
+            if (src != NULL)
+            {
+                if (ip4_addr_cmp(src, netif_ip4_addr(netif)))
+                {
+                    return netif;
+                }
+            }
+        }
+    }
+    netif = netif_default;
+    return netif;
+}
+#endif /* LWIP_HOOK_IP4_ROUTE_SRC */
 
 /*
  * export bsd socket symbol for RT-Thread Application Module

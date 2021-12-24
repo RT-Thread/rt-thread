@@ -1751,7 +1751,7 @@ int cmd_dump_emac_stats(int argc, char** argv)
     dump_emac_stats();
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_dump_emac_stats, __cmd_dump_emac_stats, dump emac statistics.);
+MSH_CMD_EXPORT_ALIAS(cmd_dump_emac_stats, dump_emac_stats, dump emac statistics);
 #endif
 
 #endif

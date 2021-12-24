@@ -3,7 +3,7 @@
 
 #include <rtconfig.h>
 
-#define ERRNO                       1
+#define ERRNO
 
 #define NO_SYS                      0
 #define LWIP_SOCKET                 1
@@ -36,10 +36,6 @@
 #define LWIP_HAVE_LOOPIF            0
 
 #define LWIP_PLATFORM_BYTESWAP      0
-
-#ifndef BYTE_ORDER
-#define BYTE_ORDER                  LITTLE_ENDIAN
-#endif
 
 /* #define RT_LWIP_DEBUG */
 
@@ -222,6 +218,9 @@
 #define LWIP_DBG_TYPES_ON           (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
 
 /* ---------- Memory options ---------- */
+#define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
+#define SMEMCPY(dst,src,len)            MEMCPY(dst,src,len)
+
 #define MEM_ALIGNMENT               4
 
 #define MEM_LIBC_MALLOC             1
@@ -526,6 +525,7 @@
 #ifndef LWIP_SOCKET
 #define LWIP_SOCKET                     1
 #endif
+#include <fcntl.h>
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.

@@ -5,10 +5,6 @@ config RT_USING_DEVICE_IPC
     default y
 
 if RT_USING_DEVICE_IPC
-    config RT_PIPE_BUFSZ
-        int "Set pipe buffer size"
-        default 512
-    
     config RT_USING_SYSTEM_WORKQUEUE
         bool "Using system default workqueue"
         default n
@@ -18,28 +14,36 @@ if RT_USING_DEVICE_IPC
             int "The stack size for system workqueue thread"
             default 2048
 
-    config RT_SYSTEM_WORKQUEUE_PRIORITY
+        config RT_SYSTEM_WORKQUEUE_PRIORITY
             int "The priority level of system workqueue thread"
             default 23
     endif
 endif
 
-config RT_USING_SERIAL
-    bool "Using serial device drivers"
+menuconfig RT_USING_SERIAL
+    bool "USING Serial device drivers"
     select RT_USING_DEVICE_IPC
     select RT_USING_DEVICE
     default y
 
-if RT_USING_SERIAL
-    config RT_SERIAL_USING_DMA
-        bool "Enable serial DMA mode"
-        default y
+    if RT_USING_SERIAL
+        choice
+            prompt "Choice Serial version"
+            default RT_USING_SERIAL_V1
+            config RT_USING_SERIAL_V1
+                bool "RT_USING_SERIAL_V1"
+            config RT_USING_SERIAL_V2
+                bool "RT_USING_SERIAL_V2"
+        endchoice
+        config RT_SERIAL_USING_DMA
+            bool "Enable serial DMA mode"
+            default y
 
-    config RT_SERIAL_RB_BUFSZ
-        int "Set RX buffer size"
-        default 64
-
-endif
+        config RT_SERIAL_RB_BUFSZ
+            int "Set RX buffer size"
+            depends on !RT_USING_SERIAL_V2
+            default 64
+    endif
 
 config RT_USING_CAN
     bool "Using CAN device drivers"
@@ -140,6 +144,42 @@ config RT_USING_MTD_NAND
 config RT_USING_PM
     bool "Using Power Management device drivers"
     default n
+
+    if RT_USING_PM
+        config PM_TICKLESS_THRESHOLD_TIME
+            int "PM tickless threashold time"
+            default 2
+
+        config PM_USING_CUSTOM_CONFIG
+            bool "PM using custom pm config"
+            default n
+
+        config PM_ENABLE_DEBUG
+            bool "PM Enable Debug"
+            default n
+
+        config PM_ENABLE_SUSPEND_SLEEP_MODE
+            bool "PM Device suspend change sleep mode"
+            default n
+
+        config PM_ENABLE_THRESHOLD_SLEEP_MODE
+            bool "PM using threshold time change sleep mode"
+            default n
+
+        if PM_ENABLE_THRESHOLD_SLEEP_MODE
+            config PM_LIGHT_THRESHOLD_TIME
+                int "PM light mode threashold time"
+                default 5
+
+            config PM_DEEP_THRESHOLD_TIME
+                int "PM deep mode threashold time"
+                default 20
+
+            config PM_STANDBY_THRESHOLD_TIME
+                int "PM standby mode threashold time"
+                default 100
+        endif
+    endif
 
 config RT_USING_RTC
     bool "Using RTC device drivers"
@@ -615,9 +655,14 @@ menuconfig RT_USING_WIFI
     endif
 
 menu "Using USB"
+    config RT_USING_USB
+        bool
+        default n
+
     config RT_USING_USB_HOST
         bool "Using USB host"
         default n
+        select RT_USING_USB
 
         if RT_USING_USB_HOST
             config RT_USBH_MSTORAGE
@@ -640,6 +685,8 @@ menu "Using USB"
     config RT_USING_USB_DEVICE
         bool "Using USB device"
         default n
+        select RT_USING_USB
+
         if RT_USING_USB_DEVICE || RT_USING_USB_HOST
             config RT_USBD_THREAD_STACK_SZ
                 int "usb thread stack size"

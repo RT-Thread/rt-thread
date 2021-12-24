@@ -13,12 +13,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/time.h>
+#include <sys/errno.h>
 
 #include <at_socket.h>
 #include <at_device.h>
 
 #ifdef SAL_USING_POSIX
-#include <dfs_poll.h>
+#include <poll.h>
 #endif
 
 #include <arpa/inet.h>
@@ -78,7 +79,7 @@ struct at_socket *at_get_socket(int socket)
 }
 
 /* get a block to the AT socket receive list*/
-static size_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
+static rt_err_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
 {
     at_recv_pkt_t pkt = RT_NULL;
 
@@ -86,7 +87,7 @@ static size_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
     if (pkt == RT_NULL)
     {
         LOG_E("No memory for receive packet table!");
-        return 0;
+        return -RT_ENOMEM;
     }
 
     pkt->bfsz_totle = length;
@@ -95,7 +96,7 @@ static size_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
 
     rt_slist_append(rlist, &pkt->list);
 
-    return length;
+    return RT_EOK;
 }
 
 /* delete and free all receive buffer list */
@@ -312,7 +313,7 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
     if (at_slock == RT_NULL)
     {
         /* create AT socket lock */
-        at_slock = rt_mutex_create("at_slock", RT_IPC_FLAG_FIFO);
+        at_slock = rt_mutex_create("at_slock", RT_IPC_FLAG_PRIO);
         if (at_slock == RT_NULL)
         {
             LOG_E("No memory for socket allocation lock!");
@@ -366,7 +367,7 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
 
     rt_snprintf(name, RT_NAME_MAX, "%s%d", "at_skt", idx);
     /* create AT socket receive ring buffer lock */
-    if((sock->recv_lock = rt_mutex_create(name, RT_IPC_FLAG_FIFO)) == RT_NULL)
+    if((sock->recv_lock = rt_mutex_create(name, RT_IPC_FLAG_PRIO)) == RT_NULL)
     {
         LOG_E("No memory for socket receive mutex create.");
         rt_sem_delete(sock->recv_notice);
@@ -651,14 +652,20 @@ static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, con
     RT_ASSERT(event == AT_SOCKET_EVT_RECV);
 
     /* check the socket object status */
-    if (sock->magic != AT_SOCKET_MAGIC)
+    if (sock->magic != AT_SOCKET_MAGIC || sock->state == AT_SOCKET_CLOSED)
     {
+        rt_free((void *)buff);
         return;
     }
 
     /* put receive buffer to receiver packet list */
     rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
-    at_recvpkt_put(&(sock->recvpkt_list), buff, bfsz);
+    if (at_recvpkt_put(&(sock->recvpkt_list), buff, bfsz) != RT_EOK)
+    {
+        rt_free((void *)buff);
+        rt_mutex_release(sock->recv_lock);
+        return;
+    }
     rt_mutex_release(sock->recv_lock);
 
     rt_sem_release(sock->recv_notice);
@@ -815,7 +822,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         /* wait the receive semaphore */
         if (rt_sem_take(sock->recv_notice, timeout) < 0)
         {
-            LOG_E("AT socket (%d) receive timeout (%d)!", socket, timeout);
+            LOG_D("AT socket (%d) receive timeout (%d)!", socket, timeout);
             errno = EAGAIN;
             result = -1;
             goto __exit;
@@ -1100,7 +1107,7 @@ static uint32_t ipstr_to_u32(char *ipstr)
 struct hostent *at_gethostbyname(const char *name)
 {
     struct at_device *device = RT_NULL;
-    ip_addr_t addr;
+    ip_addr_t addr = {0};
     char ipstr[16] = { 0 };
     /* buffer variables for at_gethostbyname() */
     static struct hostent s_hostent;

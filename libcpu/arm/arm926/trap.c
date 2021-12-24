@@ -16,7 +16,7 @@
 #define INT_FIQ     0x01
 
 extern struct rt_thread *rt_current_thread;
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
 extern long list_thread(void);
 #endif
 
@@ -90,7 +90,7 @@ void rt_hw_trap_udef(struct rt_hw_register *regs)
     rt_kprintf("undefined instruction\n");
     rt_kprintf("thread - %s stack:\n", rt_current_thread->name);
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
@@ -142,7 +142,7 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
     rt_kprintf("prefetch abort\n");
     rt_kprintf("thread - %s stack:\n", RT_NAME_MAX, rt_current_thread->name);
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
@@ -170,7 +170,7 @@ void rt_hw_trap_dabt(struct rt_hw_register *regs)
     rt_kprintf("data abort\n");
     rt_kprintf("thread - %s stack:\n", RT_NAME_MAX, rt_current_thread->name);
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();

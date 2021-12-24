@@ -777,7 +777,7 @@ void rt_alarm_dump(void)
     rt_kprintf("+----+---------------------+------+------+----+\n");
 }
 
-FINSH_FUNCTION_EXPORT_ALIAS(rt_alarm_dump, __cmd_alarm_dump, dump alarm info);
+MSH_CMD_EXPORT_ALIAS(rt_alarm_dump, rt_alarm_dump, dump alarm info);
 
 /** \brief initialize alarm service system
  *
@@ -790,7 +790,7 @@ int rt_alarm_system_init(void)
 
     rt_list_init(&_container.head);
     rt_event_init(&_container.event, "alarmsvc", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&_container.mutex, "alarmsvc", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_container.mutex, "alarmsvc", RT_IPC_FLAG_PRIO);
 
     tid = rt_thread_create("alarmsvc",
                            rt_alarmsvc_thread_init, RT_NULL,

@@ -12,6 +12,7 @@
 #define __MBOX_H__
 
 #include <rtthread.h>
+#include "board.h"
 
 //https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
 //https://github.com/hermanhermitage/videocoreiv

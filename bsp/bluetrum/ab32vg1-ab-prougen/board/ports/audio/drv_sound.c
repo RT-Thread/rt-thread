@@ -388,8 +388,6 @@ static rt_err_t sound_stop(struct rt_audio_device *audio, int stream)
 
     if (stream == AUDIO_STREAM_REPLAY)
     {
-        DACDIGCON0 = 0;
-        AUBUFCON &= ~BIT(4);
         LOG_D("close sound device");
     }
 

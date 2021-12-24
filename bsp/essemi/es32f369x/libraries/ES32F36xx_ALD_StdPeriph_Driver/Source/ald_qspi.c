@@ -11,6 +11,20 @@
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   *********************************************************************************
   */
 #include "ald_qspi.h"
@@ -245,7 +259,7 @@ ald_status_t ald_qspi_read_data_capture_config(qspi_handle_t * hperh, qspi_data_
 		return status;
 
 	MODIFY_REG(hperh->perh->RDCR, QSPI_RDCR_BYLPC_MSK | QSPI_RDCR_DLYR_MSK | QSPI_RDCR_SMES_MSK | QSPI_RDCR_DLYT_MSK, \
-				      dtcptcfg->bypsalcc | (dtcptcfg->dlydcl << 1) | (dtcptcfg->smpledge << 5) | (dtcptcfg->dlytd << 16));
+				      0x1U | (dtcptcfg->dlydcl << 1) | (dtcptcfg->smpledge << 5) | (dtcptcfg->dlytd << 16));
 	return status;
 }
 
@@ -315,14 +329,6 @@ ald_status_t qspi_dac_config(qspi_handle_t * hperh, qspi_dac_cfg_t * dcfg)
 		return ERROR;
 	if (ald_qspi_read_config(hperh, &dcfg->rdinit) != OK)
 		return ERROR;
-
-	MODIFY_REG(hperh->perh->DWIR, QSPI_DWIR_WINST_MSK | QSPI_DWIR_DCYC_MSK | \
-				      QSPI_DWIR_ADMODE_MSK | QSPI_DWIR_DMODE_MSK | \
-				      QSPI_DWIR_WELD_MSK, dcfg->wrinit.wrcde | dcfg->wrinit.autowel << 8 | \
-							  (dcfg->wrinit.addxfer << 12) | \
-							  (dcfg->wrinit.datxfer << 16) | \
-							  (dcfg->wrinit.dcyles << 24));
-	MODIFY_REG(hperh->perh->DRIR, QSPI_DRIR_RINST_MSK, dcfg->wrinit.instxfer);
 
 	if (dcfg->addrremap)
 		MODIFY_REG(hperh->perh->RAR, QSPI_RAR_READDR_MSK, dcfg->remapaddr);

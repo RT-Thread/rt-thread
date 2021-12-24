@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author      Notes
- * 2018/08/29     Bernard     first version
- * 2021/04/23     chunyexixiaoyu    distinguish 32-bit and 64-bit
+ * Date           Author          Notes
+ * 2018/08/29     Bernard         first version
+ * 2021/04/23     chunyexixiaoyu  distinguish 32-bit and 64-bit
  */
 
 #ifndef DL_ELF_H__
@@ -20,20 +20,15 @@ typedef rt_int32_t              Elf32_Sword;   /* Signed large integer */
 typedef rt_uint32_t             Elf32_Word;    /* Unsigned large integer */
 typedef rt_uint16_t             Elf32_Half;    /* Unsigned medium integer */
 
-typedef rt_uint64_t	            Elf64_Addr;
-typedef rt_uint16_t	            Elf64_Half;
-typedef rt_int16_t	            Elf64_SHalf;
-typedef rt_uint64_t	            Elf64_Off;
-typedef rt_int32_t	            Elf64_Sword;
-typedef rt_uint32_t	            Elf64_Word;
-typedef rt_uint64_t	            Elf64_Xword;
-typedef rt_int64_t	            Elf64_Sxword;
-typedef uint16_t                Elf64_Section;
-
-
-
-
-
+typedef rt_uint64_t             Elf64_Addr;
+typedef rt_uint16_t             Elf64_Half;
+typedef rt_int16_t              Elf64_SHalf;
+typedef rt_uint64_t             Elf64_Off;
+typedef rt_int32_t              Elf64_Sword;
+typedef rt_uint32_t             Elf64_Word;
+typedef rt_uint64_t             Elf64_Xword;
+typedef rt_int64_t              Elf64_Sxword;
+typedef rt_uint16_t             Elf64_Section;
 
 /* e_ident[] magic number */
 #define ELFMAG0                 0x7f           /* e_ident[EI_MAG0] */
@@ -91,24 +86,24 @@ typedef struct elfhdr
                                                   header string table" entry offset */
 } Elf32_Ehdr;
 
-
-typedef struct elf64_hdr {
-  unsigned char     e_ident[EI_NIDENT];        /* ELF Identification */ 
-  Elf64_Half        e_type;                    /* object file type */
-  Elf64_Half        e_machine;                 /* machine */
-  Elf64_Word        e_version;                 /* object file version */
-  Elf64_Addr        e_entry;                   /* virtual entry point */ 
-  Elf64_Off         e_phoff;                   /* program header table offset */ 
-  Elf64_Off         e_shoff;                   /* section header table offset */ 
-  Elf64_Word        e_flags;                   /* processor-specific flags */
-  Elf64_Half        e_ehsize;                  /* ELF header size */
-  Elf64_Half        e_phentsize;               /* program header entry size */
-  Elf64_Half        e_phnum;                   /* number of program header entries */
-  Elf64_Half        e_shentsize;               /* section header entry size */
-  Elf64_Half        e_shnum;                   /* number of section header entries */
-  Elf64_Half        e_shstrndx;                /* section header table's "section
+typedef struct elf64_hdr
+{
+    unsigned char     e_ident[EI_NIDENT];        /* ELF Identification */
+    Elf64_Half        e_type;                    /* object file type */
+    Elf64_Half        e_machine;                 /* machine */
+    Elf64_Word        e_version;                 /* object file version */
+    Elf64_Addr        e_entry;                   /* virtual entry point */
+    Elf64_Off         e_phoff;                   /* program header table offset */
+    Elf64_Off         e_shoff;                   /* section header table offset */
+    Elf64_Word        e_flags;                   /* processor-specific flags */
+    Elf64_Half        e_ehsize;                  /* ELF header size */
+    Elf64_Half        e_phentsize;               /* program header entry size */
+    Elf64_Half        e_phnum;                   /* number of program header entries */
+    Elf64_Half        e_shentsize;               /* section header entry size */
+    Elf64_Half        e_shnum;                   /* number of section header entries */
+    Elf64_Half        e_shstrndx;                /* section header table's "section
                                                 header string table" entry offset */
-} Elf64_Ehdr;                                   
+} Elf64_Ehdr;
 
 /* Section Header */
 typedef struct
@@ -128,18 +123,17 @@ typedef struct
 
 typedef struct
 {
-  Elf64_Word        sh_name;                   /* Section name (string tbl index) */
-  Elf64_Word        sh_type;                   /* Section type */
-  Elf64_Xword       sh_flags;                  /* Section flags */
-  Elf64_Addr        sh_addr;                   /* Section virtual addr at execution */
-  Elf64_Off         sh_offset;                 /* Section file offset */
-  Elf64_Xword       sh_size;                   /* Section size in bytes */
-  Elf64_Word        sh_link;                   /* Link to another section */
-  Elf64_Word        sh_info;                   /* Additional section information */
-  Elf64_Xword       sh_addralign;              /* Section alignment */
-  Elf64_Xword       sh_entsize;                /* Entry size if section holds table */
+    Elf64_Word        sh_name;                   /* Section name (string tbl index) */
+    Elf64_Word        sh_type;                   /* Section type */
+    Elf64_Xword       sh_flags;                  /* Section flags */
+    Elf64_Addr        sh_addr;                   /* Section virtual addr at execution */
+    Elf64_Off         sh_offset;                 /* Section file offset */
+    Elf64_Xword       sh_size;                   /* Section size in bytes */
+    Elf64_Word        sh_link;                   /* Link to another section */
+    Elf64_Word        sh_info;                   /* Additional section information */
+    Elf64_Xword       sh_addralign;              /* Section alignment */
+    Elf64_Xword       sh_entsize;                /* Entry size if section holds table */
 } Elf64_Shdr;
-
 
 /* Section names */
 #define ELF_BSS                 ".bss"         /* uninitialized data */
@@ -176,18 +170,15 @@ typedef struct elf32_sym
     Elf32_Half    st_shndx;                    /* section header index */
 } Elf32_Sym;
 
-
 typedef struct
 {
-  Elf64_Word        st_name;                   /* Symbol name (string tbl index) */
-  unsigned char     st_info;                   /* Symbol type and binding */
-  unsigned char     st_other;                  /* Symbol visibility */
-  Elf64_Section     st_shndx;                  /* Section index */
-  Elf64_Addr        st_value;                  /* Symbol value */
-  Elf64_Xword       st_size;                   /* Symbol size */
+    Elf64_Word        st_name;                   /* Symbol name (string tbl index) */
+    unsigned char     st_info;                   /* Symbol type and binding */
+    unsigned char     st_other;                  /* Symbol visibility */
+    Elf64_Section     st_shndx;                  /* Section index */
+    Elf64_Addr        st_value;                  /* Symbol value */
+    Elf64_Xword       st_size;                   /* Symbol size */
 } Elf64_Sym;
-
-
 
 #define STB_LOCAL               0              /* BIND */
 #define STB_GLOBAL              1
@@ -249,8 +240,6 @@ typedef struct
 #define ELF32_R_TYPE(i)         ((unsigned char) (i))
 #define ELF32_R_INFO(s,t)       (((s) << 8) + (unsigned char)(t))
 
-
-
 #define ELF64_R_SYM(i)                        ((i) >> 32)
 #define ELF64_R_TYPE(i)                        ((i) & 0xffffffff)
 #define ELF64_R_INFO(sym,type)                ((((Elf64_Xword) (sym)) << 32) + (type))
@@ -301,7 +290,6 @@ typedef struct
     Elf32_Word p_align;                        /* memory alignment */
 } Elf32_Phdr;
 
-
 typedef struct
 {
     Elf64_Word   p_type;                       /* Segment type */
@@ -313,10 +301,6 @@ typedef struct
     Elf64_Xword  p_memsz;                      /* Segment size in memory */
     Elf64_Xword  p_align;                      /* Segment alignment */
 } Elf64_Phdr;
-
-
-
-
 
 /* p_type */
 #define PT_NULL                 0
@@ -389,10 +373,9 @@ typedef Elf64_Sym       Elf_Sym;
 typedef Elf64_Rela      Elf_Rel;
 typedef Elf64_Addr      Elf_Addr;
 #endif
+
 int dlmodule_relocate(struct rt_dlmodule *module, Elf_Rel *rel, Elf_Addr sym_val);
-rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_ptr);
-rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module_ptr);
-
-
+rt_err_t dlmodule_load_shared_object(struct rt_dlmodule *module, void *module_ptr);
+rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule *module, void *module_ptr);
 
 #endif

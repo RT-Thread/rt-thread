@@ -20,8 +20,8 @@ rt_hw_cpu_id:
     cmp r0, #1
     beq core1 
     cmp r0, #256 
-    beq core2 
-    mov r1 ,#257
+    beq core2  
+    ldr r1,= #257
     cmp r0, r1
     beq core3
     b default

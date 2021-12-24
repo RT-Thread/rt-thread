@@ -35,14 +35,20 @@ void rt_rbb_init(rt_rbb_t rbb, rt_uint8_t *buf, rt_size_t buf_size, rt_rbb_blk_t
     rbb->buf_size = buf_size;
     rbb->blk_set = block_set;
     rbb->blk_max_num = blk_max_num;
+    rbb->tail = &rbb->blk_list;
     rt_slist_init(&rbb->blk_list);
+    rt_slist_init(&rbb->free_list);
     /* initialize block status */
     for (i = 0; i < blk_max_num; i++)
     {
         block_set[i].status = RT_RBB_BLK_UNUSED;
+        rt_slist_init(&block_set[i].list);
+        rt_slist_insert(&rbb->free_list, &block_set[i].list);
     }
 }
 RTM_EXPORT(rt_rbb_init);
+
+#ifdef RT_USING_HEAP
 
 /**
  * ring block buffer object create
@@ -102,21 +108,50 @@ void rt_rbb_destroy(rt_rbb_t rbb)
 }
 RTM_EXPORT(rt_rbb_destroy);
 
+#endif
+
 static rt_rbb_blk_t find_empty_blk_in_set(rt_rbb_t rbb)
 {
-    rt_size_t i;
+    struct rt_rbb_blk *blk;
 
     RT_ASSERT(rbb);
 
-    for (i = 0; i < rbb->blk_max_num; i ++)
+    if (rt_slist_isempty(&rbb->free_list))
     {
-        if (rbb->blk_set[i].status == RT_RBB_BLK_UNUSED)
-        {
-            return &rbb->blk_set[i];
-        }
+        return RT_NULL;
     }
+    blk = rt_slist_first_entry(&rbb->free_list, struct rt_rbb_blk, list);
+    rt_slist_remove(&rbb->free_list, &blk->list);
+    RT_ASSERT(blk->status == RT_RBB_BLK_UNUSED);
+    return blk;
+}
 
-    return RT_NULL;
+rt_inline void list_append(rt_rbb_t rbb, rt_slist_t* n)
+{
+    /* append the node to the tail */
+    rbb->tail->next = n;
+    n->next = RT_NULL;
+    /* save tail node */
+    rbb->tail = n;
+}
+
+rt_inline rt_slist_t *list_remove(rt_rbb_t rbb, rt_slist_t* n)
+{
+    rt_slist_t* l = &rbb->blk_list;
+    struct rt_slist_node* node = l;
+
+    /* remove slist head */
+    while (node->next && node->next != n) node = node->next;
+    /* remove node */
+    if (node->next != (rt_slist_t*)0)
+    {
+        node->next = node->next->next;
+        n->next = RT_NULL;
+        /* update tail node */
+        if (rbb->tail == n)
+            rbb->tail = node;
+    }
+    return l;
 }
 
 /**
@@ -143,12 +178,13 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
 
     new_rbb = find_empty_blk_in_set(rbb);
 
-    if (rt_slist_len(&rbb->blk_list) < rbb->blk_max_num && new_rbb)
+    if (new_rbb)
     {
-        if (rt_slist_len(&rbb->blk_list) > 0)
+        if (rt_slist_isempty(&rbb->blk_list) == 0)
         {
             head = rt_slist_first_entry(&rbb->blk_list, struct rt_rbb_blk, list);
-            tail = rt_slist_tail_entry(&rbb->blk_list, struct rt_rbb_blk, list);
+            /* get tail rbb blk object */
+            tail = rt_slist_entry(rbb->tail, struct rt_rbb_blk, list);
             if (head->buf <= tail->buf)
             {
                 /**
@@ -163,14 +199,14 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
 
                 if (empty1 >= blk_size)
                 {
-                    rt_slist_append(&rbb->blk_list, &new_rbb->list);
+                    list_append(rbb, &new_rbb->list);
                     new_rbb->status = RT_RBB_BLK_INITED;
                     new_rbb->buf = tail->buf + tail->size;
                     new_rbb->size = blk_size;
                 }
                 else if (empty2 >= blk_size)
                 {
-                    rt_slist_append(&rbb->blk_list, &new_rbb->list);
+                    list_append(rbb, &new_rbb->list);
                     new_rbb->status = RT_RBB_BLK_INITED;
                     new_rbb->buf = rbb->buf;
                     new_rbb->size = blk_size;
@@ -194,7 +230,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
 
                 if (empty1 >= blk_size)
                 {
-                    rt_slist_append(&rbb->blk_list, &new_rbb->list);
+                    list_append(rbb, &new_rbb->list);
                     new_rbb->status = RT_RBB_BLK_INITED;
                     new_rbb->buf = tail->buf + tail->size;
                     new_rbb->size = blk_size;
@@ -209,7 +245,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
         else
         {
             /* the list is empty */
-            rt_slist_append(&rbb->blk_list, &new_rbb->list);
+            list_append(rbb, &new_rbb->list);
             new_rbb->status = RT_RBB_BLK_INITED;
             new_rbb->buf = rbb->buf;
             new_rbb->size = blk_size;
@@ -326,12 +362,10 @@ void rt_rbb_blk_free(rt_rbb_t rbb, rt_rbb_blk_t block)
     RT_ASSERT(block->status != RT_RBB_BLK_UNUSED);
 
     level = rt_hw_interrupt_disable();
-
     /* remove it on rbb block list */
-    rt_slist_remove(&rbb->blk_list, &block->list);
-
+    list_remove(rbb, &block->list);
     block->status = RT_RBB_BLK_UNUSED;
-
+    rt_slist_insert(&rbb->free_list, &block->list);
     rt_hw_interrupt_enable(level);
 }
 RTM_EXPORT(rt_rbb_blk_free);
@@ -363,7 +397,7 @@ rt_size_t rt_rbb_blk_queue_get(rt_rbb_t rbb, rt_size_t queue_data_len, rt_rbb_bl
 {
     rt_base_t level;
     rt_size_t data_total_size = 0;
-    rt_slist_t *node;
+    rt_slist_t *node, *tmp = RT_NULL;
     rt_rbb_blk_t last_block = RT_NULL, block;
 
     RT_ASSERT(rbb);
@@ -374,7 +408,12 @@ rt_size_t rt_rbb_blk_queue_get(rt_rbb_t rbb, rt_size_t queue_data_len, rt_rbb_bl
 
     level = rt_hw_interrupt_disable();
 
-    for (node = rt_slist_first(&rbb->blk_list); node; node = rt_slist_next(node))
+    node = rt_slist_first(&rbb->blk_list);
+    if (node != RT_NULL)
+    {
+        tmp = rt_slist_next(node);
+    }
+    for (; node; node = tmp, tmp = rt_slist_next(node))
     {
         if (!last_block)
         {
@@ -411,7 +450,6 @@ rt_size_t rt_rbb_blk_queue_get(rt_rbb_t rbb, rt_size_t queue_data_len, rt_rbb_bl
             last_block = block;
         }
         /* remove current block */
-        rt_slist_remove(&rbb->blk_list, &last_block->list);
         data_total_size += last_block->size;
         last_block->status = RT_RBB_BLK_GET;
         blk_queue->blk_num++;
@@ -432,15 +470,16 @@ RTM_EXPORT(rt_rbb_blk_queue_get);
  */
 rt_size_t rt_rbb_blk_queue_len(rt_rbb_blk_queue_t blk_queue)
 {
-    rt_size_t i, data_total_size = 0;
+    rt_size_t i = 0, data_total_size = 0;
+    rt_rbb_blk_t blk;
 
     RT_ASSERT(blk_queue);
 
-    for (i = 0; i < blk_queue->blk_num; i++)
+    for (blk = blk_queue->blocks; i < blk_queue->blk_num; i++)
     {
-        data_total_size += blk_queue->blocks[i].size;
+        data_total_size += blk->size;
+        blk = rt_slist_entry(blk->list.next, struct rt_rbb_blk, list);
     }
-
     return data_total_size;
 }
 RTM_EXPORT(rt_rbb_blk_queue_len);
@@ -468,14 +507,17 @@ RTM_EXPORT(rt_rbb_blk_queue_buf);
  */
 void rt_rbb_blk_queue_free(rt_rbb_t rbb, rt_rbb_blk_queue_t blk_queue)
 {
-    rt_size_t i;
+    rt_size_t i = 0;
+    rt_rbb_blk_t blk, next_blk;
 
     RT_ASSERT(rbb);
     RT_ASSERT(blk_queue);
 
-    for (i = 0; i < blk_queue->blk_num; i++)
+    for (blk = blk_queue->blocks; i < blk_queue->blk_num; i++)
     {
-        rt_rbb_blk_free(rbb, &blk_queue->blocks[i]);
+        next_blk = rt_slist_entry(blk->list.next, struct rt_rbb_blk, list);
+        rt_rbb_blk_free(rbb, blk);
+        blk = next_blk;
     }
 }
 RTM_EXPORT(rt_rbb_blk_queue_free);

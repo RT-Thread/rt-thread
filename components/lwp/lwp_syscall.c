@@ -13,12 +13,11 @@
 #include <lwp_mem.h>
 #include <lwp_syscall.h>
 
-#include <dfs_poll.h>
-#include <dfs_select.h>
+#include <poll.h>
+#include <sys/select.h>
 
 #if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
 #include <sys/socket.h>
-
 #define SYSCALL_NET(f) ((void*)(f))
 #else
 #define SYSCALL_NET(f) ((void*)sys_notimpl)

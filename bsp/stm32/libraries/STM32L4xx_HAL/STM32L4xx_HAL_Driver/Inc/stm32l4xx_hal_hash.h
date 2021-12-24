@@ -278,7 +278,7 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
   */
 
 /** @brief  Check whether or not the specified HASH flag is set.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __FLAG__ specifies the flag to check.
   *        This parameter can be one of the following values:
   *            @arg @ref HASH_FLAG_DINIS A new block can be entered into the input buffer.
   *            @arg @ref HASH_FLAG_DCIS Digest calculation complete.
@@ -293,7 +293,7 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
 
 
 /** @brief  Clear the specified HASH flag.
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __FLAG__ specifies the flag to clear.
   *        This parameter can be one of the following values:
   *            @arg @ref HASH_FLAG_DINIS A new block can be entered into the input buffer.
   *            @arg @ref HASH_FLAG_DCIS Digest calculation complete
@@ -303,7 +303,7 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
 
 
 /** @brief  Enable the specified HASH interrupt.
-  * @param  __INTERRUPT__: specifies the HASH interrupt source to enable.
+  * @param  __INTERRUPT__ specifies the HASH interrupt source to enable.
   *          This parameter can be one of the following values:
   *            @arg @ref HASH_IT_DINI  A new block can be entered into the input buffer (DIN)
   *            @arg @ref HASH_IT_DCI   Digest calculation complete
@@ -312,7 +312,7 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
 #define __HAL_HASH_ENABLE_IT(__INTERRUPT__)   SET_BIT(HASH->IMR, (__INTERRUPT__))
 
 /** @brief  Disable the specified HASH interrupt.
-  * @param  __INTERRUPT__: specifies the HASH interrupt source to disable.
+  * @param  __INTERRUPT__ specifies the HASH interrupt source to disable.
   *          This parameter can be one of the following values:
   *            @arg @ref HASH_IT_DINI  A new block can be entered into the input buffer (DIN)
   *            @arg @ref HASH_IT_DCI   Digest calculation complete
@@ -321,7 +321,7 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
 #define __HAL_HASH_DISABLE_IT(__INTERRUPT__)   CLEAR_BIT(HASH->IMR, (__INTERRUPT__))
 
 /** @brief Reset HASH handle state.
-  * @param  __HANDLE__: HASH handle.
+  * @param  __HANDLE__ HASH handle.
   * @retval None
   */
 
@@ -337,7 +337,7 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
 
 
 /** @brief Reset HASH handle status.
-  * @param  __HANDLE__: HASH handle.
+  * @param  __HANDLE__ HASH handle.
   * @retval None
   */
 #define __HAL_HASH_RESET_HANDLE_STATUS(__HANDLE__) ((__HANDLE__)->Status = HAL_OK)
@@ -364,7 +364,7 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
 
 /**
   * @brief Set the number of valid bits in the last word written in data register DIN.
-  * @param  __SIZE__: size in bytes of last data written in Data register.
+  * @param  __SIZE__ size in bytes of last data written in Data register.
   * @retval None
 */
 #define  __HAL_HASH_SET_NBVALIDBITS(__SIZE__)    MODIFY_REG(HASH->STR, HASH_STR_NBLW, 8U * ((__SIZE__) % 4U))
@@ -399,7 +399,7 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
 
 /**
   * @brief Ensure that HASH input data type is valid.
-  * @param __DATATYPE__: HASH input data type.
+  * @param __DATATYPE__ HASH input data type.
   * @retval SET (__DATATYPE__ is valid) or RESET (__DATATYPE__ is invalid)
   */
 #define IS_HASH_DATATYPE(__DATATYPE__) (((__DATATYPE__) == HASH_DATATYPE_32B)|| \
@@ -411,7 +411,7 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
   * @brief Ensure that input data buffer size is valid for multi-buffer HASH
   *        processing in DMA mode.
   * @note  This check is valid only for multi-buffer HASH processing in DMA mode.
-  * @param __SIZE__: input data buffer size.
+  * @param __SIZE__ input data buffer size.
   * @retval SET (__SIZE__ is valid) or RESET (__SIZE__ is invalid)
   */
 #define IS_HASH_DMA_MULTIBUFFER_SIZE(__SIZE__)  ((READ_BIT(HASH->CR, HASH_CR_MDMAT) == 0U) || (((__SIZE__) % 4U) == 0U))
@@ -420,21 +420,21 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
   * @brief Ensure that input data buffer size is valid for multi-buffer HMAC
   *        processing in DMA mode.
   * @note  This check is valid only for multi-buffer HMAC processing in DMA mode.
-  * @param __HANDLE__: HASH handle.
-  * @param __SIZE__: input data buffer size.
+  * @param __HANDLE__ HASH handle.
+  * @param __SIZE__ input data buffer size.
   * @retval SET (__SIZE__ is valid) or RESET (__SIZE__ is invalid)
   */
 #define IS_HMAC_DMA_MULTIBUFFER_SIZE(__HANDLE__,__SIZE__)  ((((__HANDLE__)->DigestCalculationDisable) == RESET) || (((__SIZE__) % 4U) == 0U))
 /**
   * @brief Ensure that handle phase is set to HASH processing.
-  * @param __HANDLE__: HASH handle.
+  * @param __HANDLE__ HASH handle.
   * @retval SET (handle phase is set to HASH processing) or RESET (handle phase is not set to HASH processing)
   */
 #define IS_HASH_PROCESSING(__HANDLE__)  ((__HANDLE__)->Phase == HAL_HASH_PHASE_PROCESS)
 
 /**
   * @brief Ensure that handle phase is set to HMAC processing.
-  * @param __HANDLE__: HASH handle.
+  * @param __HANDLE__ HASH handle.
   * @retval SET (handle phase is set to HMAC processing) or RESET (handle phase is not set to HMAC processing)
   */
 #define IS_HMAC_PROCESSING(__HANDLE__)  (((__HANDLE__)->Phase == HAL_HASH_PHASE_HMAC_STEP_1) || \
@@ -484,8 +484,11 @@ HAL_StatusTypeDef HAL_HASH_UnRegisterCallback(HASH_HandleTypeDef *hhash, HAL_HAS
 /* HASH processing using polling  *********************************************/
 HAL_StatusTypeDef HAL_HASH_SHA1_Start(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer, uint32_t Timeout);
 HAL_StatusTypeDef HAL_HASH_MD5_Start(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer, uint32_t Timeout);
-HAL_StatusTypeDef HAL_HASH_MD5_Accumulate(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
-HAL_StatusTypeDef HAL_HASH_SHA1_Accumulate(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
+HAL_StatusTypeDef HAL_HASH_MD5_Accmlt(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
+HAL_StatusTypeDef HAL_HASH_SHA1_Accmlt(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
+HAL_StatusTypeDef HAL_HASH_MD5_Accmlt_End(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer, uint32_t Timeout);
+HAL_StatusTypeDef HAL_HASH_SHA1_Accmlt_End(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer, uint32_t Timeout);
+
 
 /**
   * @}
@@ -497,9 +500,11 @@ HAL_StatusTypeDef HAL_HASH_SHA1_Accumulate(HASH_HandleTypeDef *hhash, uint8_t *p
 
 /* HASH processing using IT  **************************************************/
 HAL_StatusTypeDef HAL_HASH_SHA1_Start_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer);
-HAL_StatusTypeDef HAL_HASH_SHA1_Accumulate_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
+HAL_StatusTypeDef HAL_HASH_SHA1_Accmlt_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
+HAL_StatusTypeDef HAL_HASH_SHA1_Accmlt_End_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer);
 HAL_StatusTypeDef HAL_HASH_MD5_Start_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer);
-HAL_StatusTypeDef HAL_HASH_MD5_Accumulate_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
+HAL_StatusTypeDef HAL_HASH_MD5_Accmlt_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
+HAL_StatusTypeDef HAL_HASH_MD5_Accmlt_End_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer);
 void HAL_HASH_IRQHandler(HASH_HandleTypeDef *hhash);
 /**
   * @}

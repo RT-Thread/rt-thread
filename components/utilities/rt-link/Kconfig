@@ -14,21 +14,6 @@ if RT_USING_RT_LINK
             bool "use hardware crc device"
     endchoice
 
-    menu "rt-link hardware device configuration"
-        config RT_LINK_HW_DEVICE_NAME
-            string "the name of base actual device"
-            default "uart2"
-
-        choice
-            prompt"hardware device is spi, uart or usb"
-            default RT_LINK_USING_UART
-
-            config RT_LINK_USING_UART
-                bool "use UART"
-        endchoice
-
-    endmenu
-
     menu "rt link debug option"
         config USING_RT_LINK_DEBUG
             bool "Enable RT-Link debug"

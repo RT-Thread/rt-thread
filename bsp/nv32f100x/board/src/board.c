@@ -98,21 +98,14 @@ void rt_hw_board_init()
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void*)NV32_SRAM_BEGIN, (void*)NV32_SRAM_END);
 #endif
-
-
-
-
 }
 
-long cmd_reset(int argc, char** argv)
+int cmd_reset(int argc, char** argv)
 {
     NVIC_SystemReset();
 
     return 0;
 }
-
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_reset, __cmd_reset, Reset Board.);
-
-
+MSH_CMD_EXPORT_ALIAS(cmd_reset, reset, restart the system);
 
 /*@}*/

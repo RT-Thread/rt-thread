@@ -12,6 +12,7 @@
 #ifndef __AT_H__
 #define __AT_H__
 
+#include <stddef.h>
 #include <rtthread.h>
 
 #ifdef __cplusplus
@@ -113,10 +114,10 @@ typedef struct at_server *at_server_t;
 #ifdef AT_USING_CLIENT
 enum at_resp_status
 {
-     AT_RESP_OK = 0,                   /* AT response end is OK */
-     AT_RESP_ERROR = -1,               /* AT response end is ERROR */
-     AT_RESP_TIMEOUT = -2,             /* AT response is timeout */
-     AT_RESP_BUFF_FULL= -3,            /* AT response buffer is full */
+    AT_RESP_OK = 0,                   /* AT response end is OK */
+    AT_RESP_ERROR = -1,               /* AT response end is ERROR */
+    AT_RESP_TIMEOUT = -2,             /* AT response is timeout */
+    AT_RESP_BUFF_FULL= -3,            /* AT response buffer is full */
 };
 typedef enum at_resp_status at_resp_status_t;
 

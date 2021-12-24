@@ -13,6 +13,8 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include "drv_touch.h"
+
+#include <stdint.h>
 #include <string.h>
 
 #ifdef BSP_USING_TOUCH

@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
@@ -7,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-05-15     Sherman      the first version
+ * 2021-08-04     Sherman      Adapted to new version of rt-link API
  */
 
 #include <stdlib.h>
@@ -30,33 +30,25 @@ enum
 
 void rt_link_speed_test(void *paremeter);
 static rt_uint8_t speed_test_type = NONE_TEST;
+static struct rt_link_service serv_socket;
+static struct rt_link_service serv_wifi;
 
-rt_err_t rt_link_receive_example_callback(void *data, rt_size_t length)
+static void send_cb(struct rt_link_service *service, void *buffer)
 {
-    LOG_I("recv data %d",length);
-    LOG_HEX("example",8,data,length);
-    rt_free(data);
-    return RT_EOK;
+    LOG_I("send_cb: service (%d) buffer (0x%p) err(%d)", service->service, buffer, service->err);
 }
 
-void create_thead_to_test_speed(rt_uint8_t mutil_num)
+static void recv_cb(struct rt_link_service *service, void *data, rt_size_t size)
 {
-    rt_uint8_t i = 0;
+    LOG_I("service (%d) size (%d) data(0x%p)", service->service, size, data);
 
-    LOG_D("Speed test type [%02d], mutil [%02d]", speed_test_type, mutil_num);
-    for(i = 0; i< mutil_num; i++)
+    if (size)
     {
-        rt_thread_t tid;
-        char tid_name[RT_NAME_MAX + 1] = {0};
-
-        rt_snprintf(tid_name, sizeof(tid_name), "lny_s%03d", i + 1);
-        tid = rt_thread_create(tid_name, rt_link_speed_test, RT_NULL, 1024, 20, 10);
-        rt_thread_startup(tid);
-        LOG_I("Speed test thread[%s] startup", tid_name);
+        rt_free(data);
     }
 }
 
-void rt_link_speed_test(void *paremeter)
+static void rt_link_speed_test(void *paremeter)
 {
     int ret;
     rt_uint8_t *send_buf, *data;
@@ -67,20 +59,20 @@ void rt_link_speed_test(void *paremeter)
     rt_size_t total = 0;
     rt_uint32_t integer, decimal;
 
-    if(speed_test_type == SHORT_FRAME_TEST)
+    if (speed_test_type == SHORT_FRAME_TEST)
     {
-        bufflen = 2044;
+        bufflen = RT_LINK_MAX_DATA_LENGTH;
     }
     else
     {
-        bufflen = 6132;
+        bufflen = RT_LINK_MAX_DATA_LENGTH * RT_LINK_FRAMES_MAX;
     }
 
     send_buf = rt_malloc(bufflen);
-    if(send_buf != RT_NULL)
+    if (send_buf != RT_NULL)
     {
         data = send_buf;
-        for(count = 0;count < bufflen; count++)
+        for (count = 0; count < bufflen; count++)
         {
             *data++ = (count % 93 + 33);
         }
@@ -94,70 +86,94 @@ void rt_link_speed_test(void *paremeter)
     tick1 = rt_tick_get();
     while (speed_test_type)
     {
-        ret = rt_link_send(RT_LINK_SERVICE_RTLINK, send_buf, bufflen);
-        if(ret > 0)
+        ret = rt_link_send(&serv_socket, send_buf, bufflen);
+        if (ret > 0)
         {
             sentlen += ret;
         }
+        else
+        {
+            LOG_W("send err %d", ret);
+        }
 
         tick2 = rt_tick_get();
-        if (tick2 - tick1 >= RT_TICK_PER_SECOND)//* 10
+        if (tick2 - tick1 >= RT_TICK_PER_SECOND)
         {
             total = sentlen * RT_TICK_PER_SECOND / 125 / (tick2 - tick1);
-            integer = total/1000;
-            decimal = total%1000;
+            integer = total / 1000;
+            decimal = total % 1000;
             LOG_I("%d.%03d0 Mbps!", integer, decimal);
             sentlen = 0;
             tick1 = tick2;
         }
     }
     rt_free(send_buf);
-    LOG_W("speed test end, type %d",speed_test_type);
+    LOG_W("speed test end, type %d", speed_test_type);
 }
 
-int rt_link_example_send(int argc, char **argv)
+static void create_thead_to_test_speed(rt_uint8_t mutil_num)
+{
+    rt_uint8_t i = 0;
+
+    LOG_D("Speed test type [%02d], mutil [%02d]", speed_test_type, mutil_num);
+    for (i = 0; i < mutil_num; i++)
+    {
+        rt_thread_t tid;
+        char tid_name[RT_NAME_MAX + 1] = {0};
+
+        rt_snprintf(tid_name, sizeof(tid_name), "lny_s%03d", i + 1);
+        tid = rt_thread_create(tid_name, rt_link_speed_test, RT_NULL, 1024, 20, 10);
+        if (tid)
+        {
+            rt_thread_startup(tid);
+            LOG_I("Speed test thread[%s] startup", tid_name);
+        }
+    }
+}
+
+static int rtlink_exsend(int argc, char **argv)
 {
     char *receive = RT_NULL;
     rt_size_t length = 0;
     rt_uint16_t count = 0;
 
-    if(argc == 1)
+    if (argc == 1)
     {
         receive = rt_malloc(sizeof(TEST_CONTEXT));
         rt_memcpy(receive, TEST_CONTEXT, sizeof(TEST_CONTEXT) - 1);
-        length = rt_link_send(RT_LINK_SERVICE_RTLINK, receive, sizeof(TEST_CONTEXT) - 1);
+        length = rt_link_send(&serv_socket, receive, sizeof(TEST_CONTEXT) - 1);
         LOG_I("send data length: %d.", length);
         rt_free(receive);
     }
-        else if(argc >= 3)
+    else if (argc >= 3)
     {
-        if(strcmp(argv[1], "-l") == 0)
+        if (strcmp(argv[1], "-l") == 0)
         {
             receive = rt_malloc(atoi((const char *)argv[2]));
-            for(count = 0;count < atoi((const char *)argv[2]); count++)
+            for (count = 0; count < atoi((const char *)argv[2]); count++)
             {
                 *receive++ = (count % 93 + 33);
             }
-            length = rt_link_send(RT_LINK_SERVICE_RTLINK, receive - atoi((const char *)argv[2]), atoi((const char *)argv[2]));
+            length = rt_link_send(&serv_socket, receive - atoi((const char *)argv[2]), atoi((const char *)argv[2]));
             rt_free(receive - atoi((const char *)argv[2]));
 
             LOG_I("send data length: %d.", length);
         }
-        else if(strcmp(argv[1], "-s") == 0)
+        else if (strcmp(argv[1], "-s") == 0)
         {
-            if(speed_test_type == NONE_TEST)
+            if (speed_test_type == NONE_TEST)
             {
                 rt_uint8_t mutil_num = 1;
-                if(argc > 3)
+                if (argc > 3)
                 {
                     mutil_num = atoi((const char *)argv[3]);
                 }
 
-                if(strncmp(argv[2], "-s", rt_strlen(argv[2])) == 0)
+                if (strncmp(argv[2], "-s", rt_strlen(argv[2])) == 0)
                 {
                     speed_test_type = SHORT_FRAME_TEST;
                 }
-                else if(strncmp(argv[2], "-l", rt_strlen(argv[2])) == 0)
+                else if (strncmp(argv[2], "-l", rt_strlen(argv[2])) == 0)
                 {
                     speed_test_type = LONG_FRAME_TEST;
                 }
@@ -176,12 +192,23 @@ int rt_link_example_send(int argc, char **argv)
     }
     return 0;
 }
-MSH_CMD_EXPORT(rt_link_example_send, rt link layer send test);
+MSH_CMD_EXPORT(rtlink_exsend, rt link layer send test);
 
-int rt_link_example_init(void)
+int rtlink_exinit(void)
 {
+    serv_socket.service = RT_LINK_SERVICE_SOCKET;
+    serv_socket.timeout_tx = RT_WAITING_FOREVER;
+    serv_socket.flag = RT_LINK_FLAG_ACK | RT_LINK_FLAG_CRC;
+    serv_socket.recv_cb = recv_cb;
+    serv_socket.send_cb = send_cb;
+    rt_link_service_attach(&serv_socket);
 
-    rt_link_service_attach(RT_LINK_SERVICE_RTLINK, rt_link_receive_example_callback);
+    serv_wifi.service = RT_LINK_SERVICE_WIFI;
+    serv_wifi.timeout_tx = RT_WAITING_FOREVER;
+    serv_wifi.flag = RT_NULL;
+    serv_wifi.recv_cb = recv_cb;
+    serv_wifi.send_cb = send_cb;
+    rt_link_service_attach(&serv_wifi);
     return RT_EOK;
 }
-MSH_CMD_EXPORT(rt_link_example_init, rt link layer example init);
+MSH_CMD_EXPORT(rtlink_exinit, rt link example init);

@@ -72,12 +72,16 @@ void hal_gpio_init(hal_sfr_t gpiox, gpio_init_t gpio_init)
             switch (gpio_init->pull)
             {
             case GPIO_PULLUP:
+                gpiox[GPIOxPD] &= ~BIT(iocurrent);
                 gpiox[GPIOxPU] |= BIT(iocurrent);
                 break;
             case GPIO_PULLDOWN:
+                gpiox[GPIOxPU] &= ~BIT(iocurrent);
                 gpiox[GPIOxPD] |= BIT(iocurrent);
                 break;
             case GPIO_NOPULL:
+                gpiox[GPIOxPU] &= ~BIT(iocurrent);
+                gpiox[GPIOxPD] &= ~BIT(iocurrent);
             default:
                 break;
             }

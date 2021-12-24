@@ -12,29 +12,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -1212,7 +1196,15 @@ typedef struct
 /** @addtogroup Exported_constants
   * @{
   */
-  
+
+/** @addtogroup Hardware_Constant_Definition
+  * @{
+  */
+#define LSI_STARTUP_TIME                40U /*!< LSI Maximum startup time in us */
+/**
+  * @}
+  */
+
   /** @addtogroup Peripheral_Registers_Bits_Definition
   * @{
   */
@@ -6827,17 +6819,18 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 /*******************  Bits definition for FLASH_ACR register  *****************/
-#define FLASH_ACR_LATENCY_Pos          (0U)                                    
-#define FLASH_ACR_LATENCY_Msk          (0xFUL << FLASH_ACR_LATENCY_Pos)         /*!< 0x0000000F */
-#define FLASH_ACR_LATENCY              FLASH_ACR_LATENCY_Msk                   
-#define FLASH_ACR_LATENCY_0WS          0x00000000U                             
-#define FLASH_ACR_LATENCY_1WS          0x00000001U                             
-#define FLASH_ACR_LATENCY_2WS          0x00000002U                             
-#define FLASH_ACR_LATENCY_3WS          0x00000003U                             
-#define FLASH_ACR_LATENCY_4WS          0x00000004U                             
-#define FLASH_ACR_LATENCY_5WS          0x00000005U                             
-#define FLASH_ACR_LATENCY_6WS          0x00000006U                             
-#define FLASH_ACR_LATENCY_7WS          0x00000007U                             
+#define FLASH_ACR_LATENCY_Pos          (0U)
+#define FLASH_ACR_LATENCY_Msk          (0x7UL << FLASH_ACR_LATENCY_Pos)         /*!< 0x00000007 */
+#define FLASH_ACR_LATENCY              FLASH_ACR_LATENCY_Msk
+#define FLASH_ACR_LATENCY_0WS          0x00000000U
+#define FLASH_ACR_LATENCY_1WS          0x00000001U
+#define FLASH_ACR_LATENCY_2WS          0x00000002U
+#define FLASH_ACR_LATENCY_3WS          0x00000003U
+#define FLASH_ACR_LATENCY_4WS          0x00000004U
+#define FLASH_ACR_LATENCY_5WS          0x00000005U
+#define FLASH_ACR_LATENCY_6WS          0x00000006U
+#define FLASH_ACR_LATENCY_7WS          0x00000007U
+
 
 #define FLASH_ACR_PRFTEN_Pos           (8U)                                    
 #define FLASH_ACR_PRFTEN_Msk           (0x1UL << FLASH_ACR_PRFTEN_Pos)          /*!< 0x00000100 */
@@ -6898,13 +6891,12 @@ typedef struct
 #define FLASH_CR_MER_Msk               (0x1UL << FLASH_CR_MER_Pos)              /*!< 0x00000004 */
 #define FLASH_CR_MER                   FLASH_CR_MER_Msk                        
 #define FLASH_CR_SNB_Pos               (3U)                                    
-#define FLASH_CR_SNB_Msk               (0x1FUL << FLASH_CR_SNB_Pos)             /*!< 0x000000F8 */
-#define FLASH_CR_SNB                   FLASH_CR_SNB_Msk                        
+#define FLASH_CR_SNB_Msk               (0x0FUL << FLASH_CR_SNB_Pos)             /*!< 0x00000078 */
+#define FLASH_CR_SNB                   FLASH_CR_SNB_Msk
 #define FLASH_CR_SNB_0                 (0x01UL << FLASH_CR_SNB_Pos)             /*!< 0x00000008 */
 #define FLASH_CR_SNB_1                 (0x02UL << FLASH_CR_SNB_Pos)             /*!< 0x00000010 */
 #define FLASH_CR_SNB_2                 (0x04UL << FLASH_CR_SNB_Pos)             /*!< 0x00000020 */
 #define FLASH_CR_SNB_3                 (0x08UL << FLASH_CR_SNB_Pos)             /*!< 0x00000040 */
-#define FLASH_CR_SNB_4                 (0x10UL << FLASH_CR_SNB_Pos)             /*!< 0x00000080 */
 #define FLASH_CR_PSIZE_Pos             (8U)                                    
 #define FLASH_CR_PSIZE_Msk             (0x3UL << FLASH_CR_PSIZE_Pos)            /*!< 0x00000300 */
 #define FLASH_CR_PSIZE                 FLASH_CR_PSIZE_Msk                      
@@ -6916,6 +6908,9 @@ typedef struct
 #define FLASH_CR_EOPIE_Pos             (24U)                                   
 #define FLASH_CR_EOPIE_Msk             (0x1UL << FLASH_CR_EOPIE_Pos)            /*!< 0x01000000 */
 #define FLASH_CR_EOPIE                 FLASH_CR_EOPIE_Msk                      
+#define FLASH_CR_ERRIE_Pos             (25U)
+#define FLASH_CR_ERRIE_Msk             (0x1UL << FLASH_CR_ERRIE_Pos)
+#define FLASH_CR_ERRIE                 FLASH_CR_ERRIE_Msk
 #define FLASH_CR_LOCK_Pos              (31U)                                   
 #define FLASH_CR_LOCK_Msk              (0x1UL << FLASH_CR_LOCK_Pos)             /*!< 0x80000000 */
 #define FLASH_CR_LOCK                  FLASH_CR_LOCK_Msk                       
@@ -15057,9 +15052,6 @@ typedef struct
                                     ((INSTANCE) == TIM13)|| \
                                     ((INSTANCE) == TIM14))
 
-/****************** TIM Instances : supporting synchronization ****************/
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
-
 /************* TIM Instances : at least 1 capture/compare channel *************/
 #define IS_TIM_CC1_INSTANCE(INSTANCE)   (((INSTANCE) == TIM1)  || \
                                          ((INSTANCE) == TIM2)  || \
@@ -15417,8 +15409,6 @@ typedef struct
 
 /****************************** QSPI Instances ********************************/
 #define IS_QSPI_ALL_INSTANCE(__INSTANCE__) ((__INSTANCE__) == QUADSPI)
-/****************************** USB Instances ********************************/
-#define IS_USB_ALL_INSTANCE(INSTANCE) ((INSTANCE) == USB_OTG_FS)
 /****************************** USB Exported Constants ************************/
 #define USB_OTG_FS_HOST_MAX_CHANNEL_NBR                12U
 #define USB_OTG_FS_MAX_IN_ENDPOINTS                    6U    /* Including EP0 */

@@ -178,6 +178,9 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   */
 #define COMP_INPUT_PLUS_IO1            ((uint32_t)0x00000000) /*!< Comparator input plus connected to IO1 (pin PB0 for COMP1, pin PE9 for COMP2) */
 #define COMP_INPUT_PLUS_IO2            (COMP_CFGRx_INPSEL)    /*!< Comparator input plus connected to IO2 (pin PB2 for COMP1, pin PE11 for COMP2) */
+#if defined (COMP_CFGRx_INP2SEL)
+#define COMP_INPUT_PLUS_DAC2_CH1       (COMP_CFGRx_INP2SEL)   /*!< Comparator input plus 2 connected to (DAC2_CH1 for COMP1) */
+#endif
 /**
   * @}
   */
@@ -185,14 +188,18 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /** @defgroup COMP_InputMinus COMP input minus (inverting input)
   * @{
   */
-#define COMP_INPUT_MINUS_1_4VREFINT     (                                                                  COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)        /*!< Comparator input minus connected to 1/4 VrefInt */
-#define COMP_INPUT_MINUS_1_2VREFINT     (                                            COMP_CFGRx_INMSEL_0 | COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)        /*!< Comparator input minus connected to 1/2 VrefInt */
-#define COMP_INPUT_MINUS_3_4VREFINT     (                      COMP_CFGRx_INMSEL_1                       | COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)        /*!< Comparator input minus connected to 3/4 VrefInt */
-#define COMP_INPUT_MINUS_VREFINT        (                      COMP_CFGRx_INMSEL_1 | COMP_CFGRx_INMSEL_0 | COMP_CFGRx_SCALEN                 )          /*!< Comparator input minus connected to VrefInt */
-#define COMP_INPUT_MINUS_DAC1_CH1       (COMP_CFGRx_INMSEL_2                                            )                                               /*!< Comparator input minus connected to DAC1 channel 1 (DAC_OUT1) */
-#define COMP_INPUT_MINUS_DAC1_CH2       (COMP_CFGRx_INMSEL_2                       | COMP_CFGRx_INMSEL_0)                                               /*!< Comparator input minus connected to DAC1 channel 2 (DAC_OUT2) */
-#define COMP_INPUT_MINUS_IO1            (COMP_CFGRx_INMSEL_2 | COMP_CFGRx_INMSEL_1                      )                                               /*!< Comparator input minus connected to IO1 (pin PB1 for COMP1, pin PE10 for COMP2) */
-#define COMP_INPUT_MINUS_IO2            (COMP_CFGRx_INMSEL_2 | COMP_CFGRx_INMSEL_1 | COMP_CFGRx_INMSEL_0)                                               /*!< Comparator input minus connected to IO2 (pin PC4 for COMP1, pin PE7 for COMP2) */
+#define COMP_INPUT_MINUS_1_4VREFINT     (                                                                                        COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)    /*!< Comparator input minus connected to 1/4 VrefInt */
+#define COMP_INPUT_MINUS_1_2VREFINT     (                                                                  COMP_CFGRx_INMSEL_0 | COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)    /*!< Comparator input minus connected to 1/2 VrefInt */
+#define COMP_INPUT_MINUS_3_4VREFINT     (                                            COMP_CFGRx_INMSEL_1                       | COMP_CFGRx_SCALEN | COMP_CFGRx_BRGEN)    /*!< Comparator input minus connected to 3/4 VrefInt */
+#define COMP_INPUT_MINUS_VREFINT        (                                            COMP_CFGRx_INMSEL_1 | COMP_CFGRx_INMSEL_0 | COMP_CFGRx_SCALEN                   )    /*!< Comparator input minus connected to VrefInt */
+#define COMP_INPUT_MINUS_DAC1_CH1       (                      COMP_CFGRx_INMSEL_2                                                                                   )    /*!< Comparator input minus connected to DAC1 channel 1 (DAC_OUT1) */
+#define COMP_INPUT_MINUS_DAC1_CH2       (                      COMP_CFGRx_INMSEL_2                       | COMP_CFGRx_INMSEL_0                                       )    /*!< Comparator input minus connected to DAC1 channel 2 (DAC_OUT2) */
+#define COMP_INPUT_MINUS_IO1            (                      COMP_CFGRx_INMSEL_2 | COMP_CFGRx_INMSEL_1                                                             )    /*!< Comparator input minus connected to IO1 (pin PB1 for COMP1, pin PE10 for COMP2) */
+#define COMP_INPUT_MINUS_IO2            (                      COMP_CFGRx_INMSEL_2 | COMP_CFGRx_INMSEL_1 | COMP_CFGRx_INMSEL_0                                       )    /*!< Comparator input minus connected to IO2 (pin PC4 for COMP1, pin PE7 for COMP2) */
+#if defined (COMP_CFGRx_INMSEL_3)
+#define COMP_INPUT_MINUS_TPSENS_DAC2CH1 (COMP_CFGRx_INMSEL_3                                                                                                         )    /*!< Comparator input minus connected to (temp sensor which is exist in ADC for COMP1, DAC2_CH1 for COMP2) */
+#define COMP_INPUT_MINUS_VBAT_VDDAP     (COMP_CFGRx_INMSEL_3                                             | COMP_CFGRx_INMSEL_0                                       )    /*!< Comparator input minus connected to (VBAT/4 for COMP1, VDDAP for COMP2) */
+#endif
 /**
   * @}
   */
@@ -212,7 +219,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @{
   */
 #define COMP_OUTPUTPOL_NONINVERTED     ((uint32_t)0x00000000)  /*!< COMP output level is not inverted (comparator output is high when the input plus is at a higher voltage than the input minus) */
-#define COMP_OUTPUTPOL_INVERTED        (COMP_CFGRx_POLARITY)     /*!< COMP output level is inverted     (comparator output is low  when the input plus is at a higher voltage than the input minus) */
+#define COMP_OUTPUTPOL_INVERTED        (COMP_CFGRx_POLARITY)   /*!< COMP output level is inverted     (comparator output is low  when the input plus is at a higher voltage than the input minus) */
 /**
   * @}
   */
@@ -314,7 +321,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @retval None
   */
 #if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
-#define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__) do{                                                   \
+#define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__) do{                                                 \
                                                      (__HANDLE__)->State = HAL_COMP_STATE_RESET;      \
                                                      (__HANDLE__)->MspInitCallback = NULL;            \
                                                      (__HANDLE__)->MspDeInitCallback = NULL;          \
@@ -400,8 +407,8 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @brief  Enable the COMP1 EXTI line rising & falling edge trigger. 
   * @retval None
   */                                         
-#define __HAL_COMP_COMP1_EXTI_ENABLE_RISING_FALLING_EDGE()   do { \
-                                                               __HAL_COMP_COMP1_EXTI_ENABLE_RISING_EDGE(); \
+#define __HAL_COMP_COMP1_EXTI_ENABLE_RISING_FALLING_EDGE()   do {                                           \
+                                                               __HAL_COMP_COMP1_EXTI_ENABLE_RISING_EDGE();  \
                                                                __HAL_COMP_COMP1_EXTI_ENABLE_FALLING_EDGE(); \
                                                              } while(0)
 
@@ -410,8 +417,8 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @brief  Disable the COMP1 EXTI line rising & falling edge trigger. 
   * @retval None
   */                                         
-#define __HAL_COMP_COMP1_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
-                                                               __HAL_COMP_COMP1_EXTI_DISABLE_RISING_EDGE(); \
+#define __HAL_COMP_COMP1_EXTI_DISABLE_RISING_FALLING_EDGE()  do {                                            \
+                                                               __HAL_COMP_COMP1_EXTI_DISABLE_RISING_EDGE();  \
                                                                __HAL_COMP_COMP1_EXTI_DISABLE_FALLING_EDGE(); \
                                                              } while(0)
 
@@ -536,8 +543,8 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @brief  Enable the COMP2 EXTI line rising & falling edge trigger.
   * @retval None
   */                                         
-#define __HAL_COMP_COMP2_EXTI_ENABLE_RISING_FALLING_EDGE()   do { \
-                                                               __HAL_COMP_COMP2_EXTI_ENABLE_RISING_EDGE(); \
+#define __HAL_COMP_COMP2_EXTI_ENABLE_RISING_FALLING_EDGE()   do {                                           \
+                                                               __HAL_COMP_COMP2_EXTI_ENABLE_RISING_EDGE();  \
                                                                __HAL_COMP_COMP2_EXTI_ENABLE_FALLING_EDGE(); \
                                                              } while(0)
 
@@ -545,8 +552,8 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @brief  Disable the COMP2 EXTI line rising & falling edge trigger.
   * @retval None
   */                                         
-#define __HAL_COMP_COMP2_EXTI_DISABLE_RISING_FALLING_EDGE()   do { \
-                                                               __HAL_COMP_COMP2_EXTI_DISABLE_RISING_EDGE(); \
+#define __HAL_COMP_COMP2_EXTI_DISABLE_RISING_FALLING_EDGE()   do {                                           \
+                                                               __HAL_COMP_COMP2_EXTI_DISABLE_RISING_EDGE();  \
                                                                __HAL_COMP_COMP2_EXTI_DISABLE_FALLING_EDGE(); \
                                                              } while(0)
 /**
@@ -800,12 +807,28 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
                                              ((__POWERMODE__) == COMP_POWERMODE_MEDIUMSPEED)  || \
                                              ((__POWERMODE__) == COMP_POWERMODE_ULTRALOWPOWER)  )
 
-
+#if defined (COMP_CFGRx_INP2SEL)
 #define IS_COMP_INPUT_PLUS(__COMP_INSTANCE__, __INPUT_PLUS__) (((__INPUT_PLUS__) == COMP_INPUT_PLUS_IO1) || \
-                                                               ((__INPUT_PLUS__) == COMP_INPUT_PLUS_IO2))
-                                                              
+                                                               ((__INPUT_PLUS__) == COMP_INPUT_PLUS_IO2) || \
+                                                               ((__INPUT_PLUS__) == COMP_INPUT_PLUS_DAC2_CH1))
+#else
+#define IS_COMP_INPUT_PLUS(__COMP_INSTANCE__, __INPUT_PLUS__) (((__INPUT_PLUS__) == COMP_INPUT_PLUS_IO1) || \
+                                                               ((__INPUT_PLUS__) == COMP_INPUT_PLUS_IO2))                                                              
+#endif                                                             
 
 
+#if defined (COMP_CFGRx_INMSEL_3)
+#define IS_COMP_INPUT_MINUS(__COMP_INSTANCE__, __INPUT_MINUS__) (((__INPUT_MINUS__) == COMP_INPUT_MINUS_1_4VREFINT)     || \
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_1_2VREFINT)     || \
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_3_4VREFINT)     || \
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_VREFINT)        || \
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_DAC1_CH1)       || \
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_DAC1_CH2)       || \
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_IO1)            || \
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_IO2)            || \
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_TPSENS_DAC2CH1) || \
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_VBAT_VDDAP))
+#else                                          
 #define IS_COMP_INPUT_MINUS(__COMP_INSTANCE__, __INPUT_MINUS__) (((__INPUT_MINUS__) == COMP_INPUT_MINUS_1_4VREFINT)  || \
                                                                  ((__INPUT_MINUS__) == COMP_INPUT_MINUS_1_2VREFINT)  || \
                                                                  ((__INPUT_MINUS__) == COMP_INPUT_MINUS_3_4VREFINT)  || \
@@ -813,8 +836,8 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
                                                                  ((__INPUT_MINUS__) == COMP_INPUT_MINUS_DAC1_CH1)    || \
                                                                  ((__INPUT_MINUS__) == COMP_INPUT_MINUS_DAC1_CH2)    || \
                                                                  ((__INPUT_MINUS__) == COMP_INPUT_MINUS_IO1)         || \
-                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_IO2))
-
+                                                                 ((__INPUT_MINUS__) == COMP_INPUT_MINUS_IO2))                                                                  
+#endif
 
 #define IS_COMP_HYSTERESIS(__HYSTERESIS__)  (((__HYSTERESIS__) == COMP_HYSTERESIS_NONE)   || \
                                              ((__HYSTERESIS__) == COMP_HYSTERESIS_LOW)    || \
@@ -824,7 +847,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #define IS_COMP_OUTPUTPOL(__POL__)          (((__POL__) == COMP_OUTPUTPOL_NONINVERTED) || \
                                              ((__POL__) == COMP_OUTPUTPOL_INVERTED))
 
-#define IS_COMP_BLANKINGSRCE(__SOURCE__)    (((__SOURCE__) == COMP_BLANKINGSRC_NONE)            || \
+#define IS_COMP_BLANKINGSRCE(__SOURCE__)    (((__SOURCE__) == COMP_BLANKINGSRC_NONE)      || \
                                              ((__SOURCE__) == COMP_BLANKINGSRC_TIM1_OC5)  || \
                                              ((__SOURCE__) == COMP_BLANKINGSRC_TIM2_OC3)  || \
                                              ((__SOURCE__) == COMP_BLANKINGSRC_TIM3_OC3)  || \

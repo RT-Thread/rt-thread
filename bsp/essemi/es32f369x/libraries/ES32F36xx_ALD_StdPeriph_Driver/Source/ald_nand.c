@@ -11,6 +11,20 @@
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   *********************************************************************************
   * @verbatim
   ==============================================================================
@@ -246,12 +260,12 @@ ald_status_t ald_nand_read_page_8b(nand_handle_t *hperh, nand_address_t *addr, u
 
 		/* Cards with page size <= 512 bytes */
 		if ((hperh->config.page_size) <= 512U) {
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else { /* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else { /* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
@@ -259,13 +273,13 @@ ald_status_t ald_nand_read_page_8b(nand_handle_t *hperh, nand_address_t *addr, u
 			}
 		}
 		else { /* (hperh->config.page_size) > 512 */
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
@@ -291,7 +305,9 @@ ald_status_t ald_nand_read_page_8b(nand_handle_t *hperh, nand_address_t *addr, u
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = ((uint8_t)0x00);
 		}
 
-		/* Get Data into Buffer */    
+        ald_delay_us(25);  /*延时25us,nand flash 手册中的最大值*/
+        
+        /* Get Data into Buffer */    
 		for (; index < size; index++) {
 			*(uint8_t *)buf++ = *(uint8_t *)deviceaddr;
 		}
@@ -349,12 +365,12 @@ ald_status_t ald_nand_write_page_8b(nand_handle_t *hperh, nand_address_t *addr, 
 
 		/* Cards with page size <= 512 bytes */
 		if ((hperh->config.page_size) <= 512U) {
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
@@ -362,13 +378,13 @@ ald_status_t ald_nand_write_page_8b(nand_handle_t *hperh, nand_address_t *addr, 
 			}
 		}
 		else {/* (hperh->config.page_size) > 512 */
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
@@ -446,12 +462,12 @@ ald_status_t ald_nand_read_sparearea_8b(nand_handle_t *hperh, nand_address_t *ad
 			/* Send read spare area command sequence */     
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_AREA_C;
 
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
@@ -462,13 +478,13 @@ ald_status_t ald_nand_read_sparearea_8b(nand_handle_t *hperh, nand_address_t *ad
 			/* Send read spare area command sequence */ 
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_AREA_A;
 
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_1ST_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_2ND_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_1ST_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_2ND_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
@@ -551,12 +567,12 @@ ald_status_t ald_nand_write_sparearea_8b(nand_handle_t *hperh, nand_address_t *a
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_AREA_C;
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_WRITE0;
 
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
@@ -568,13 +584,13 @@ ald_status_t ald_nand_write_sparearea_8b(nand_handle_t *hperh, nand_address_t *a
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_AREA_A;
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_WRITE0;
 
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_1ST_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_2ND_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_1ST_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_2ND_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
@@ -645,12 +661,12 @@ ald_status_t ald_nand_read_page_16b(nand_handle_t *hperh, nand_address_t *addr, 
 
 		/* Cards with page size <= 512 bytes */
 		if ((hperh->config.page_size) <= 512U) {
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
@@ -658,13 +674,13 @@ ald_status_t ald_nand_read_page_16b(nand_handle_t *hperh, nand_address_t *addr, 
 			}
 		}
 		else {/* (hperh->config.page_size) > 512 */
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
@@ -744,12 +760,12 @@ ald_status_t ald_nand_write_page_16b(nand_handle_t *hperh, nand_address_t *addr,
 
 		/* Cards with page size <= 512 bytes */
 		if ((hperh->config.page_size) <= 512U) {
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {	/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {	/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
@@ -757,13 +773,13 @@ ald_status_t ald_nand_write_page_16b(nand_handle_t *hperh, nand_address_t *addr,
 			}
 		}
 		else {	/* (hperh->config.page_size) > 512 */
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {	/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {	/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
@@ -843,12 +859,12 @@ ald_status_t ald_nand_read_sparearea_16b(nand_handle_t *hperh, nand_address_t *a
 			/* Send read spare area command sequence */     
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_AREA_C;
 
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
@@ -859,13 +875,13 @@ ald_status_t ald_nand_read_sparearea_16b(nand_handle_t *hperh, nand_address_t *a
 			/* Send read spare area command sequence */     
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_AREA_A;
 
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_1ST_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_2ND_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_1ST_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_2ND_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
@@ -949,12 +965,12 @@ ald_status_t ald_nand_write_sparearea_16b(nand_handle_t *hperh, nand_address_t *
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_AREA_C;
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_WRITE0;
 
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = 0x00;
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
@@ -966,13 +982,13 @@ ald_status_t ald_nand_write_sparearea_16b(nand_handle_t *hperh, nand_address_t *
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_AREA_A;
 			*(__IO uint8_t *)((uint32_t)(deviceaddr | CMD_AREA)) = NAND_CMD_WRITE0;
 
-			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65535U) {
+			if (((hperh->config.block_size)* (hperh->config.block_nbr)) <= 65536U) {
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_1ST_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_2ND_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_2ND_CYCLE(nandaddr);
 			}
-			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65535 */
+			else {/* ((hperh->config.block_size)*(hperh->config.block_nbr)) > 65536 */
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_1ST_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = COLUMN_2ND_CYCLE(columnaddr);
 				*(__IO uint8_t *)((uint32_t)(deviceaddr | ADDR_AREA)) = ADDR_1ST_CYCLE(nandaddr);

@@ -67,4 +67,3 @@ void rt_hw_cpu_reset(void)
     while(1);
 }
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);
-

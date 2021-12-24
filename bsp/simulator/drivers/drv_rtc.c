@@ -45,6 +45,23 @@ static void soft_rtc_alarm_update(struct rt_rtc_wkalarm *palarm)
 
 #endif
 
+static void get_rtc_timeval(struct timeval *tv)
+{
+    struct tm newtime = { 0 };
+    SYSTEMTIME sys_time;
+
+    GetSystemTime(&sys_time);
+    newtime.tm_year = sys_time.wYear - 1900;
+    newtime.tm_mon = sys_time.wMonth - 1;
+    newtime.tm_mday = sys_time.wDay;
+    newtime.tm_hour = sys_time.wHour;
+    newtime.tm_min = sys_time.wMinute;
+    newtime.tm_sec = sys_time.wSecond;
+
+    tv->tv_sec = timegm(&newtime);
+    tv->tv_usec = sys_time.wMilliseconds * 1000UL;
+}
+
 static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     __time32_t *t;
@@ -56,17 +73,14 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
     {
-        t = (__time32_t *)args;
-        SYSTEMTIME sys_time;
-
-        GetSystemTime(&sys_time);
-        newtime.tm_year = sys_time.wYear - 1900;
-        newtime.tm_mon = sys_time.wMonth - 1;
-        newtime.tm_mday = sys_time.wDay;
-        newtime.tm_hour = sys_time.wHour;
-        newtime.tm_min = sys_time.wMinute;
-        newtime.tm_sec = sys_time.wSecond;
-        *t = timegm(&newtime);
+        struct timeval tv;
+        get_rtc_timeval(&tv);
+        *(rt_uint32_t *) args = tv.tv_sec;
+        break;
+    }
+    case RT_DEVICE_CTRL_RTC_GET_TIMEVAL:
+    {
+        get_rtc_timeval((struct timeval *) args);
         break;
     }
     case RT_DEVICE_CTRL_RTC_SET_TIME:
@@ -85,14 +99,6 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
         soft_rtc_alarm_update(&wkalarm);
         break;
 #endif
-    case RT_DEVICE_CTRL_RTC_GET_TIME_US:
-    {
-        long *tv_usec = (long *)args;
-        SYSTEMTIME sys_time;
-        GetSystemTime(&sys_time);
-        *tv_usec = sys_time.wMilliseconds * 1000UL;
-        break;
-    }
     default:
         return -RT_ERROR;
     }

@@ -6,10 +6,14 @@
  * Change Logs:
  * Date           Author       Notes
  */
-#ifndef __RTT_DIRENT_H__
-#define __RTT_DIRENT_H__
+#ifndef __DIRENT_H__
+#define __DIRENT_H__
 
-#include <rtthread.h>
+#include <rtdef.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 * dirent.h - format of directory entries
@@ -26,27 +30,28 @@
 #define DT_REG          0x01
 #define DT_DIR          0x02
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef HAVE_DIR_STRUCTURE
+#define HAVE_DIR_STRUCTURE
 typedef struct
 {
     int fd;                         /* directory file */
     char buf[512];
     int num;
     int cur;
-} DIR;
+}DIR;
 #endif
 
 #ifndef HAVE_DIRENT_STRUCTURE
+#define HAVE_DIRENT_STRUCTURE
+
+#define DIRENT_NAME_MAX    256
+
 struct dirent
 {
     rt_uint8_t  d_type;             /* The type of the file */
     rt_uint8_t  d_namlen;           /* The length of the not including the terminating null file name */
     rt_uint16_t d_reclen;           /* length of this record */
-    char d_name[256];               /* The null-terminated file name */
+    char d_name[DIRENT_NAME_MAX];   /* The null-terminated file name */
 };
 #endif
 

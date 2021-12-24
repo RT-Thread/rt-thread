@@ -35,7 +35,9 @@
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  * 2020-10-23     Meco Man     define maximum value of ipc type
  * 2020-10-25     Meco Man     support to suspend thread with nesting
+ * 2021-03-19     Meco Man     add security devices
  * 2021-05-10     armink       change version number to v4.0.4
+ * 2021-11-19     Meco Man     change version number to v4.1.0
  */
 
 #ifndef __RT_DEF_H__
@@ -56,8 +58,8 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION                      4L              /**< major version number */
-#define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     4L              /**< revise version number */
+#define RT_SUBVERSION                   1L              /**< minor version number */
+#define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
@@ -75,11 +77,13 @@ typedef unsigned int                    rt_uint32_t;    /**< 32bit unsigned inte
 #ifdef ARCH_CPU_64BIT
 typedef signed long                     rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned integer type */
+typedef unsigned long                   rt_size_t;      /**< Type for size number */
 #else
 typedef signed long long                rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
-#endif
-#endif
+typedef unsigned int                    rt_size_t;      /**< Type for size number */
+#endif /* ARCH_CPU_64BIT */
+#endif /* RT_USING_ARCH_DATA_TYPE */
 
 typedef int                             rt_bool_t;      /**< boolean type */
 typedef long                            rt_base_t;      /**< Nbit CPU related date type */
@@ -89,7 +93,6 @@ typedef rt_base_t                       rt_err_t;       /**< Type for error numb
 typedef rt_uint32_t                     rt_time_t;      /**< Type for time stamp */
 typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count */
 typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
-typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
@@ -280,7 +283,6 @@ typedef int (*init_fn_t)(void);
 /* define these to empty, even if not include finsh.h file */
 #define FINSH_FUNCTION_EXPORT(name, desc)
 #define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
-#define FINSH_VAR_EXPORT(name, type, desc)
 
 #define MSH_CMD_EXPORT(command, desc)
 #define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
@@ -433,7 +435,8 @@ enum rt_object_class_type
     RT_Object_Class_Device        = 0x09,      /**< The object is a device. */
     RT_Object_Class_Timer         = 0x0a,      /**< The object is a timer. */
     RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
-    RT_Object_Class_Unknown       = 0x0c,      /**< The object is unknown. */
+    RT_Object_Class_Memory        = 0x0c,      /**< The object is a memory. */
+    RT_Object_Class_Unknown       = 0x0e,      /**< The object is unknown. */
     RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 
@@ -514,7 +517,7 @@ typedef struct rt_timer *rt_timer_t;
  * @addtogroup Signal
  */
 #ifdef RT_USING_SIGNALS
-#include <libc/libc_signal.h>
+#include <sys/signal.h>
 typedef unsigned long rt_sigset_t;
 typedef void (*rt_sighandler_t)(int signo);
 typedef siginfo_t rt_siginfo_t;
@@ -569,6 +572,10 @@ typedef siginfo_t rt_siginfo_t;
 
 #ifndef RT_SCHEDULE_IPI
 #define RT_SCHEDULE_IPI                 0
+#endif
+
+#ifndef RT_STOP_IPI
+#define RT_STOP_IPI                     1
 #endif
 
 /**
@@ -662,6 +669,10 @@ struct rt_thread
 
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
+
+#ifdef RT_USING_CPU_USAGE
+    rt_uint64_t  duration_tick;                          /**< cpu usage tick */
+#endif
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 
@@ -814,10 +825,34 @@ typedef struct rt_messagequeue *rt_mq_t;
 
 /**@{*/
 
+#ifdef RT_USING_HEAP
+/*
+ * memory structure
+ */
+struct rt_memory
+{
+    struct rt_object        parent;                 /**< inherit from rt_object */
+    const char *            algorithm;              /**< Memory management algorithm name */
+    rt_ubase_t              address;                /**< memory start address */
+    rt_size_t               total;                  /**< memory size */
+    rt_size_t               used;                   /**< size used */
+    rt_size_t               max;                    /**< maximum usage */
+};
+typedef struct rt_memory *rt_mem_t;
+#endif
+
 /*
  * memory management
  * heap & partition
  */
+
+#ifdef RT_USING_SMALL_MEM
+typedef rt_mem_t rt_smem_t;
+#endif
+
+#ifdef RT_USING_SLAB
+typedef rt_mem_t rt_slab_t;
+#endif
 
 #ifdef RT_USING_MEMHEAP
 /**
@@ -857,6 +892,7 @@ struct rt_memheap
     struct rt_memheap_item  free_header;                /**< free block list header */
 
     struct rt_semaphore     lock;                       /**< semaphore lock */
+    rt_bool_t               locked;                     /**< External lock mark */
 };
 #endif
 
@@ -907,6 +943,7 @@ enum rt_device_class_type
     RT_Device_Class_I2CBUS,                             /**< I2C bus device */
     RT_Device_Class_USBDevice,                          /**< USB slave device */
     RT_Device_Class_USBHost,                            /**< USB host bus */
+    RT_Device_Class_USBOTG,                             /**< USB OTG bus */
     RT_Device_Class_SPIBUS,                             /**< SPI bus device */
     RT_Device_Class_SPIDevice,                          /**< SPI device */
     RT_Device_Class_SDIO,                               /**< SDIO bus device */
@@ -918,6 +955,7 @@ enum rt_device_class_type
     RT_Device_Class_Sensor,                             /**< Sensor device */
     RT_Device_Class_Touch,                              /**< Touch device */
     RT_Device_Class_PHY,                                /**< PHY device */
+    RT_Device_Class_Security,                           /**< Security device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 
@@ -963,19 +1001,13 @@ enum rt_device_class_type
 /**
  * special device commands
  */
-#define RT_DEVICE_CTRL_CHAR_STREAM      0x10            /**< stream mode on char device */
-#define RT_DEVICE_CTRL_BLK_GETGEOME     0x10            /**< get geometry information   */
-#define RT_DEVICE_CTRL_BLK_SYNC         0x11            /**< flush data to block device */
-#define RT_DEVICE_CTRL_BLK_ERASE        0x12            /**< erase block on block device */
-#define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x13            /**< block device : enter/exit auto refresh mode */
-#define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
-#define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
-#define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get second time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set second time */
-#define RT_DEVICE_CTRL_RTC_GET_TIME_US  0x12            /**< get microsecond time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME_US  0x13            /**< set microsecond time */
-#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x14            /**< get alarm */
-#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x15            /**< set alarm */
+#define RT_DEVICE_CTRL_CHAR_STREAM      0x20            /**< stream mode on char device */
+#define RT_DEVICE_CTRL_BLK_GETGEOME     0x20            /**< get geometry information   */
+#define RT_DEVICE_CTRL_BLK_SYNC         0x21            /**< flush data to block device */
+#define RT_DEVICE_CTRL_BLK_ERASE        0x22            /**< erase block on block device */
+#define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x23            /**< block device : enter/exit auto refresh mode */
+#define RT_DEVICE_CTRL_NETIF_GETMAC     0x20            /**< get mac address */
+#define RT_DEVICE_CTRL_MTD_FORMAT       0x20            /**< format a MTD device */
 
 typedef struct rt_device *rt_device_t;
 
@@ -1035,7 +1067,7 @@ struct rt_device
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 #endif
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_DEVIO
     const struct dfs_file_ops *fops;
     struct rt_wqueue wait_queue;
 #endif
@@ -1148,9 +1180,6 @@ struct rt_device_graphic_ops
 
 /**@}*/
 #endif
-
-/* definitions for libc */
-#include "rtlibc.h"
 
 #ifdef __cplusplus
 }

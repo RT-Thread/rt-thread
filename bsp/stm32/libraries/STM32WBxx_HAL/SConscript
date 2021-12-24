@@ -42,7 +42,7 @@ if GetDepend(['RT_USING_SPI']):
     src += ['STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_spi_ex.c']
     src += ['STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_qspi.c']
 
-if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
+if GetDepend(['RT_USING_USB']):
 #    src += ['STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hcd.c'] 
     src += ['STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pcd.c']
     src += ['STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pcd_ex.c']

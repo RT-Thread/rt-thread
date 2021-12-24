@@ -904,7 +904,15 @@ typedef struct
 /** @addtogroup Exported_constants
   * @{
   */
-  
+
+  /** @addtogroup Hardware_Constant_Definition
+    * @{
+    */
+#define LSI_STARTUP_TIME                85U /*!< LSI Maximum startup time in us */
+  /**
+    * @}
+    */
+
   /** @addtogroup Peripheral_Registers_Bits_Definition
   * @{
   */
@@ -10583,7 +10591,6 @@ typedef struct
 #define SPI_I2SCFGR_I2SMOD_Pos              (11U)                              
 #define SPI_I2SCFGR_I2SMOD_Msk              (0x1UL << SPI_I2SCFGR_I2SMOD_Pos)   /*!< 0x00000800 */
 #define SPI_I2SCFGR_I2SMOD                  SPI_I2SCFGR_I2SMOD_Msk             /*!< I2S mode selection */
-
 /******************  Bit definition for SPI_I2SPR register  *******************/
 #define SPI_I2SPR_I2SDIV_Pos                (0U)                               
 #define SPI_I2SPR_I2SDIV_Msk                (0xFFUL << SPI_I2SPR_I2SDIV_Pos)    /*!< 0x000000FF */
@@ -11484,8 +11491,6 @@ typedef struct
    ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM5))
 
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
-
 #define IS_TIM_DMABURST_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM1)    || \
    ((INSTANCE) == TIM8)    || \
@@ -11693,20 +11698,20 @@ typedef struct
 /* Aliases for __IRQn */
 #define ADC1_IRQn               ADC1_2_IRQn
 #define DMA2_Channel4_IRQn      DMA2_Channel4_5_IRQn
-#define TIM9_IRQn               TIM1_BRK_IRQn
 #define TIM1_BRK_TIM9_IRQn      TIM1_BRK_IRQn
+#define TIM9_IRQn               TIM1_BRK_IRQn
 #define TIM1_BRK_TIM15_IRQn     TIM1_BRK_IRQn
-#define TIM1_TRG_COM_TIM11_IRQn TIM1_TRG_COM_IRQn
 #define TIM11_IRQn              TIM1_TRG_COM_IRQn
+#define TIM1_TRG_COM_TIM11_IRQn TIM1_TRG_COM_IRQn
 #define TIM1_TRG_COM_TIM17_IRQn TIM1_TRG_COM_IRQn
-#define TIM10_IRQn              TIM1_UP_IRQn
-#define TIM1_UP_TIM16_IRQn      TIM1_UP_IRQn
 #define TIM1_UP_TIM10_IRQn      TIM1_UP_IRQn
+#define TIM1_UP_TIM16_IRQn      TIM1_UP_IRQn
+#define TIM10_IRQn              TIM1_UP_IRQn
 #define TIM6_DAC_IRQn           TIM6_IRQn
-#define TIM12_IRQn              TIM8_BRK_IRQn
 #define TIM8_BRK_TIM12_IRQn     TIM8_BRK_IRQn
-#define TIM8_TRG_COM_TIM14_IRQn TIM8_TRG_COM_IRQn
+#define TIM12_IRQn              TIM8_BRK_IRQn
 #define TIM14_IRQn              TIM8_TRG_COM_IRQn
+#define TIM8_TRG_COM_TIM14_IRQn TIM8_TRG_COM_IRQn
 #define TIM8_UP_TIM13_IRQn      TIM8_UP_IRQn
 #define TIM13_IRQn              TIM8_UP_IRQn
 #define CEC_IRQn                USBWakeUp_IRQn
@@ -11720,20 +11725,20 @@ typedef struct
 /* Aliases for __IRQHandler */
 #define ADC1_IRQHandler               ADC1_2_IRQHandler
 #define DMA2_Channel4_IRQHandler      DMA2_Channel4_5_IRQHandler
-#define TIM9_IRQHandler               TIM1_BRK_IRQHandler
 #define TIM1_BRK_TIM9_IRQHandler      TIM1_BRK_IRQHandler
+#define TIM9_IRQHandler               TIM1_BRK_IRQHandler
 #define TIM1_BRK_TIM15_IRQHandler     TIM1_BRK_IRQHandler
-#define TIM1_TRG_COM_TIM11_IRQHandler TIM1_TRG_COM_IRQHandler
 #define TIM11_IRQHandler              TIM1_TRG_COM_IRQHandler
+#define TIM1_TRG_COM_TIM11_IRQHandler TIM1_TRG_COM_IRQHandler
 #define TIM1_TRG_COM_TIM17_IRQHandler TIM1_TRG_COM_IRQHandler
-#define TIM10_IRQHandler              TIM1_UP_IRQHandler
-#define TIM1_UP_TIM16_IRQHandler      TIM1_UP_IRQHandler
 #define TIM1_UP_TIM10_IRQHandler      TIM1_UP_IRQHandler
+#define TIM1_UP_TIM16_IRQHandler      TIM1_UP_IRQHandler
+#define TIM10_IRQHandler              TIM1_UP_IRQHandler
 #define TIM6_DAC_IRQHandler           TIM6_IRQHandler
-#define TIM12_IRQHandler              TIM8_BRK_IRQHandler
 #define TIM8_BRK_TIM12_IRQHandler     TIM8_BRK_IRQHandler
-#define TIM8_TRG_COM_TIM14_IRQHandler TIM8_TRG_COM_IRQHandler
+#define TIM12_IRQHandler              TIM8_BRK_IRQHandler
 #define TIM14_IRQHandler              TIM8_TRG_COM_IRQHandler
+#define TIM8_TRG_COM_TIM14_IRQHandler TIM8_TRG_COM_IRQHandler
 #define TIM8_UP_TIM13_IRQHandler      TIM8_UP_IRQHandler
 #define TIM13_IRQHandler              TIM8_UP_IRQHandler
 #define CEC_IRQHandler                USBWakeUp_IRQHandler

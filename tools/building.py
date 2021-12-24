@@ -258,6 +258,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'eclipse':('gcc', 'gcc'),
                 'ses' : ('gcc', 'gcc'),
                 'cmake':('gcc', 'gcc'),
+                'cmake-armclang':('keil', 'armclang'),
                 'codelite' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -615,6 +616,17 @@ def MergeGroup(src_group, group):
         else:
             src_group['LOCAL_ASFLAGS'] = group['LOCAL_ASFLAGS']
 
+def _PretreatListParameters(target_list):
+    while '' in target_list: # remove null strings
+        target_list.remove('')
+    while ' ' in target_list: # remove ' '
+        target_list.remove(' ')
+
+    if(len(target_list) == 0):
+        return False # ignore this list, don't add this list to the parameter
+
+    return True # permit to add this list to the parameter
+
 def DefineGroup(name, src, depend, **parameters):
     global Env
     if not GetDepend(depend):
@@ -639,19 +651,29 @@ def DefineGroup(name, src, depend, **parameters):
         group['src'] = src
 
     if 'CCFLAGS' in group:
-        Env.AppendUnique(CCFLAGS = group['CCFLAGS'])
+        target = group['CCFLAGS']
+        if len(target) > 0:
+            Env.AppendUnique(CCFLAGS = target)
     if 'CPPPATH' in group:
-        paths = []
-        for item in group['CPPPATH']:
-            paths.append(os.path.abspath(item))
-        group['CPPPATH'] = paths
-        Env.AppendUnique(CPPPATH = group['CPPPATH'])
+        target = group['CPPPATH']
+        if _PretreatListParameters(target) == True:
+            paths = []
+            for item in target:
+                paths.append(os.path.abspath(item))
+            target = paths
+            Env.AppendUnique(CPPPATH = target)
     if 'CPPDEFINES' in group:
-        Env.AppendUnique(CPPDEFINES = group['CPPDEFINES'])
+        target = group['CPPDEFINES']
+        if _PretreatListParameters(target) == True:
+            Env.AppendUnique(CPPDEFINES = target)
     if 'LINKFLAGS' in group:
-        Env.AppendUnique(LINKFLAGS = group['LINKFLAGS'])
+        target = group['LINKFLAGS']
+        if len(target) > 0:
+            Env.AppendUnique(LINKFLAGS = target)
     if 'ASFLAGS' in group:
-        Env.AppendUnique(ASFLAGS = group['ASFLAGS'])
+        target = group['ASFLAGS']
+        if len(target) > 0:
+            Env.AppendUnique(ASFLAGS = target)
     if 'LOCAL_CPPPATH' in group:
         paths = []
         for item in group['LOCAL_CPPPATH']:
@@ -674,9 +696,13 @@ def DefineGroup(name, src, depend, **parameters):
                 os.unlink(fn)
 
     if 'LIBS' in group:
-        Env.AppendUnique(LIBS = group['LIBS'])
+        target = group['LIBS']
+        if _PretreatListParameters(target) == True:
+            Env.AppendUnique(LIBS = target)
     if 'LIBPATH' in group:
-        Env.AppendUnique(LIBPATH = group['LIBPATH'])
+        target = group['LIBPATH']
+        if _PretreatListParameters(target) == True:
+            Env.AppendUnique(LIBPATH = target)
 
     # check whether to build group library
     if 'LIBRARY' in group:
@@ -883,7 +909,7 @@ def GenTargetProject(program = None):
         from codelite import TargetCodelite
         TargetCodelite(Projects, program)
 
-    if GetOption('target') == 'cmake':
+    if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from cmake import CMakeProject
         CMakeProject(Env,Projects)
 

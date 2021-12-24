@@ -646,7 +646,7 @@ void nand_readoob(int block, int page)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(nand_readoob, readoob, read oob[block/page]);
 
-void nand_erase_chip()
+void nand_erase_chip(void)
 {
     int i;
     unsigned char id;

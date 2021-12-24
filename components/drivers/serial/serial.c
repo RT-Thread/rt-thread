@@ -24,7 +24,8 @@
  * 2018-12-08     Ernest Chen  add DMA choice
  * 2020-09-14     WillianChan  add a line feed to the carriage return character
  *                             when using interrupt tx
- * 2020-12-14     Meco Man     add function of setting window's size(TIOCSWINSZ)
+ * 2020-12-14     Meco Man     implement function of setting window's size(TIOCSWINSZ)
+ * 2021-08-22     Meco Man     implement function of getting window's size(TIOCGWINSZ)
  */
 
 #include <rthw.h>
@@ -35,12 +36,13 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 #include <dfs_posix.h>
-#include <dfs_poll.h>
+#include <poll.h>
+#include <sys/ioctl.h>
 
 #ifdef RT_USING_POSIX_TERMIOS
-#include <posix_termios.h>
+#include <termios.h>
 #endif
 
 /* it's possible the 'getc/putc' is defined by stdio.h in gcc/newlib. */
@@ -201,7 +203,7 @@ const static struct dfs_file_ops _serial_fops =
     RT_NULL, /* getdents */
     serial_fops_poll,
 };
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
 
 /*
  * Serial poll routines
@@ -360,7 +362,7 @@ static void _serial_check_buffer_size(void)
     }
 }
 
-#if defined(RT_USING_POSIX) || defined(RT_SERIAL_USING_DMA)
+#if defined(RT_USING_POSIX_DEVIO) || defined(RT_SERIAL_USING_DMA)
 static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
 {
     struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
@@ -383,7 +385,7 @@ static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
         }
     }
 }
-#endif /* RT_USING_POSIX || RT_SERIAL_USING_DMA */
+#endif /* RT_USING_POSIX_DEVIO || RT_SERIAL_USING_DMA */
 
 #ifdef RT_SERIAL_USING_DMA
 /**
@@ -954,9 +956,7 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
             {
                 RT_ASSERT(RT_NULL != rx_fifo);
                 level = rt_hw_interrupt_disable();
-                rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
-                rx_fifo->put_index = 0;
-                rx_fifo->get_index = 0;
+                rx_fifo->get_index = rx_fifo->put_index;
                 rx_fifo->is_full = RT_FALSE;
                 rt_hw_interrupt_enable(level);
             }
@@ -976,8 +976,7 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
     }
 
 }
-
-#endif
+#endif /* RT_USING_POSIX_TERMIOS */
 
 static rt_err_t rt_serial_control(struct rt_device *dev,
                                   int              cmd,
@@ -1020,7 +1019,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
 
             break;
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 #ifdef RT_USING_POSIX_TERMIOS
         case TCGETA:
             {
@@ -1112,6 +1111,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
         case TCXONC:
             break;
+#endif /*RT_USING_POSIX_TERMIOS*/
         case TIOCSWINSZ:
             {
                 struct winsize* p_winsize;
@@ -1123,16 +1123,86 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         case TIOCGWINSZ:
             {
                 struct winsize* p_winsize;
-
                 p_winsize = (struct winsize*)args;
-                /* TODO: get windows size from console */
-                p_winsize->ws_col = 80;
-                p_winsize->ws_row = 24;
-                p_winsize->ws_xpixel = 0;/*unused*/
-                p_winsize->ws_ypixel = 0;/*unused*/
+
+                if(rt_thread_self() != rt_thread_find("tshell"))
+                {
+                    /* only can be used in tshell thread; otherwise, return default size */
+                    p_winsize->ws_col = 80;
+                    p_winsize->ws_row = 24;
+                }
+                else
+                {
+                    #include <shell.h>
+                    #define _TIO_BUFLEN 20
+                    char _tio_buf[_TIO_BUFLEN];
+                    unsigned char cnt1, cnt2, cnt3, i;
+                    char row_s[4], col_s[4];
+                    char *p;
+
+                    rt_memset(_tio_buf, 0, _TIO_BUFLEN);
+
+                    /* send the command to terminal for getting the window size of the terminal */
+                    rt_kprintf("\033[18t");
+
+                    /* waiting for the response from the terminal */
+                    i = 0;
+                    while(i < _TIO_BUFLEN)
+                    {
+                        _tio_buf[i] = finsh_getchar();
+                        if(_tio_buf[i] != 't')
+                        {
+                            i ++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    if(i == _TIO_BUFLEN)
+                    {
+                        /* buffer overloaded, and return default size */
+                        p_winsize->ws_col = 80;
+                        p_winsize->ws_row = 24;
+                        break;
+                    }
+
+                    /* interpreting data eg: "\033[8;1;15t" which means row is 1 and col is 15 (unit: size of ONE character) */
+                    rt_memset(row_s,0,4);
+                    rt_memset(col_s,0,4);
+                    cnt1 = 0;
+                    while(_tio_buf[cnt1] != ';' && cnt1 < _TIO_BUFLEN)
+                    {
+                        cnt1++;
+                    }
+                    cnt2 = ++cnt1;
+                    while(_tio_buf[cnt2] != ';' && cnt2 < _TIO_BUFLEN)
+                    {
+                        cnt2++;
+                    }
+                    p = row_s;
+                    while(cnt1 < cnt2)
+                    {
+                        *p++ = _tio_buf[cnt1++];
+                    }
+                    p = col_s;
+                    cnt2++;
+                    cnt3 = rt_strlen(_tio_buf) - 1;
+                    while(cnt2 < cnt3)
+                    {
+                        *p++ = _tio_buf[cnt2++];
+                    }
+
+                    /* load the window size date */
+                    p_winsize->ws_col = atoi(col_s);
+                    p_winsize->ws_row = atoi(row_s);
+                #undef _TIO_BUFLEN
+                }
+
+                p_winsize->ws_xpixel = 0;/* unused */
+                p_winsize->ws_ypixel = 0;/* unused */
             }
             break;
-#endif /*RT_USING_POSIX_TERMIOS*/
         case FIONREAD:
             {
                 rt_size_t recved = 0;
@@ -1145,7 +1215,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 *(rt_size_t *)args = recved;
             }
             break;
-#endif /*RT_USING_POSIX*/
+#endif /* RT_USING_POSIX_DEVIO */
         default :
             /* control device */
             ret = serial->ops->control(serial, cmd, args);
@@ -1200,7 +1270,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     /* register a character device */
     ret = rt_device_register(device, name, flag);
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_DEVIO
     /* set fops */
     device->fops        = &_serial_fops;
 #endif

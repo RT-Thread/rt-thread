@@ -62,16 +62,8 @@ void demo_core(void)
 
 int main(void)
 {
-    int count = 1;
-
 #ifdef RT_USING_SMP
     demo_core();
 #endif
-
-    while (count++)
-    {
-        rt_thread_mdelay(2000);
-    }
-
     return RT_EOK;
 }

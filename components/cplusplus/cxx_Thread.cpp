@@ -7,7 +7,7 @@
  * Date           Author       Notes
  */
 
-#include "Thread.h"
+#include "cxx_thread.h"
 
 using namespace rtthread;
 

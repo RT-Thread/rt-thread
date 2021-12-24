@@ -258,6 +258,7 @@ HAL_StatusTypeDef HAL_TSC_Init(TSC_HandleTypeDef *htsc)
   assert_param(IS_TSC_SSD(htsc->Init.SpreadSpectrumDeviation));
   assert_param(IS_TSC_SS_PRESC(htsc->Init.SpreadSpectrumPrescaler));
   assert_param(IS_TSC_PG_PRESC(htsc->Init.PulseGeneratorPrescaler));
+  assert_param(IS_TSC_PG_PRESC_VS_CTPL(htsc->Init.PulseGeneratorPrescaler, htsc->Init.CTPulseLowLength));
   assert_param(IS_TSC_MCV(htsc->Init.MaxCountValue));
   assert_param(IS_TSC_IODEF(htsc->Init.IODefaultMode));
   assert_param(IS_TSC_SYNC_POL(htsc->Init.SynchroPinPolarity));
@@ -431,7 +432,8 @@ __weak void HAL_TSC_MspDeInit(TSC_HandleTypeDef *htsc)
   * @param  pCallback pointer to the Callback function
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_TSC_RegisterCallback(TSC_HandleTypeDef *htsc, HAL_TSC_CallbackIDTypeDef CallbackID, pTSC_CallbackTypeDef pCallback)
+HAL_StatusTypeDef HAL_TSC_RegisterCallback(TSC_HandleTypeDef *htsc, HAL_TSC_CallbackIDTypeDef CallbackID,
+                                           pTSC_CallbackTypeDef pCallback)
 {
   HAL_StatusTypeDef status = HAL_OK;
 

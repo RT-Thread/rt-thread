@@ -40,6 +40,7 @@ static struct rt_mailbox  mmcsd_detect_mb;
 static rt_uint32_t mmcsd_detect_mb_pool[4];
 static struct rt_mailbox mmcsd_hotpluge_mb;
 static rt_uint32_t mmcsd_hotpluge_mb_pool[4];
+static rt_uint32_t allocated_host_num = 0;
 
 void mmcsd_host_lock(struct rt_mmcsd_host *host)
 {
@@ -707,8 +708,10 @@ struct rt_mmcsd_host *mmcsd_alloc_host(void)
     host->max_dma_segs = 1;
     host->max_blk_size = 512;
     host->max_blk_count = 4096;
+    host->id = allocated_host_num;
+    allocated_host_num++;
 
-    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_PRIO);
     rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
 
     return host;

@@ -8,17 +8,21 @@
  * 2015-01-28     Bernard      first version
  */
 #include <rtthread.h>
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#endif
-#include <yfuns.h>
+#include <LowLevelIOInterface.h>
+#include <unistd.h>
+
+/*
+ * The "remove" function should remove the file named "filename".  It
+ * should return 0 on success and nonzero on failure.
+ */
 
 #pragma module_name = "?remove"
-int remove(const char *val)
+
+int remove(const char *filename)
 {
-#ifndef RT_USING_DFS
-    return -1;
+#ifdef DFS_USING_POSIX
+    return unlink(filename);
 #else
-    return unlink(val);
-#endif
+    return _LLIO_ERROR;
+#endif /* DFS_USING_POSIX */
 }

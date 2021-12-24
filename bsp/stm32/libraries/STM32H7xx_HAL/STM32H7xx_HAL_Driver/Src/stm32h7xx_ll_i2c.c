@@ -31,7 +31,7 @@
   * @{
   */
 
-#if defined (I2C1) || defined (I2C2) || defined (I2C3) || defined (I2C4)
+#if defined (I2C1) || defined (I2C2) || defined (I2C3) || defined (I2C4) || defined (I2C5)
 
 /** @defgroup I2C_LL I2C
   * @{
@@ -124,6 +124,16 @@ ErrorStatus LL_I2C_DeInit(I2C_TypeDef *I2Cx)
     /* Release reset of I2C clock */
     LL_APB4_GRP1_ReleaseReset(LL_APB4_GRP1_PERIPH_I2C4);
   }
+#if defined(I2C5)
+  else if (I2Cx == I2C5)
+  {
+    /* Force reset of I2C clock */
+    LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_I2C5);
+
+    /* Release reset of I2C clock */
+    LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_I2C5);
+  }
+#endif
   else
   {
     status = ERROR;
@@ -232,7 +242,7 @@ void LL_I2C_StructInit(LL_I2C_InitTypeDef *I2C_InitStruct)
   * @}
   */
 
-#endif /* I2C1 || I2C2 || I2C3 || I2C4 */
+#endif /* I2C1 || I2C2 || I2C3 || I2C4  || I2C5 */
 
 /**
   * @}

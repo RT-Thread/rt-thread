@@ -2,25 +2,25 @@
 //
 // sysctl.h - Prototypes for the system control driver.
 //
-// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2020 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,8 +32,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
+//
+// This is part of revision 2.2.0.295 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -344,8 +344,23 @@ extern "C"
 #define SYSCTL_SYSDIV_61_5      0xDE800000  // Processor clock is pll / 61.5
 #define SYSCTL_SYSDIV_62_5      0xDF000000  // Processor clock is pll / 62.5
 #define SYSCTL_SYSDIV_63_5      0xDF800000  // Processor clock is pll / 63.5
-#define SYSCTL_CFG_VCO_480      0xF1000000  // VCO is 480 MHz
-#define SYSCTL_CFG_VCO_320      0xF0000000  // VCO is 320 MHz
+//
+// TivaWare 2.2.0.xxx Update
+// Due to TM4C129x Errata Item SYSCTL#22, the SYSCTL_CFG_VCO_xxx configurations
+// have misleading *names* as currently defined as the VCO does not run at the
+// stated frequencies. To amend this, new *name* defintions are being used,
+// however the register configuration remains the same.
+// The old definitions will remain for compatibility with code ported from
+// older versions of TivaWare.
+//
+#define SYSCTL_CFG_VCO_480      0xF1000000  // VCO is 480 MHz - Legacy
+                                            // Does not work @ 480, use
+                                            // SYSCTL_CFG_VCO_240 instead
+#define SYSCTL_CFG_VCO_320      0xF0000000  // VCO is 320 MHz - Legacy
+                                            // Does not work @ 320, use
+                                            // SYSCTL_CFG_VCO_160 instead
+#define SYSCTL_CFG_VCO_240      0xF1000000  // VCO is 240 MHz
+#define SYSCTL_CFG_VCO_160      0xF0000000  // VCO is 160 MHz
 #define SYSCTL_USE_PLL          0x00000000  // System clock is the PLL clock
 #define SYSCTL_USE_OSC          0x00003800  // System clock is the osc clock
 #define SYSCTL_XTAL_1MHZ        0x00000000  // External crystal is 1MHz

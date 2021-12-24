@@ -135,7 +135,7 @@ static const struct lpc_uart uarts[] =
         kCLOCK_Flexcomm0,
 
         &serial0,
-        "uart",
+        "uart0",
     },
 #endif
 #ifdef BSP_USING_UART1

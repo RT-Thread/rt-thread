@@ -4,12 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date         Author        Notes
- * 2020-05-19   shelton       first version
+ * Date         Author              Notes
+ * 2020-05-19   shelton             first version
+ * 2021-08-125  Dozingfiretruck     implement RTC framework V2.0
  */
 
 #include "board.h"
 #include <rtthread.h>
+#include <rtdevice.h>
 #include <sys/time.h>
 
 #ifdef BSP_USING_RTC
@@ -23,8 +25,6 @@
 #include <drv_log.h>
 
 #define BKUP_REG_DATA 0xA5A5
-
-static struct rt_device rtc;
 
 static time_t get_rtc_timestamp(void)
 {
@@ -93,25 +93,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     return RT_EOK;
 }
 
-static void rt_rtc_init(void)
-{
-#if defined (SOC_SERIES_AT32F415)
-    RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_PWR, ENABLE);
-#else
-    RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_PWR | RCC_APB1PERIPH_BKP, ENABLE);
-#endif
-
-#ifdef BSP_RTC_USING_LSI
-    RCC_LSICmd(ENABLE);
-    while(RCC_GetFlagStatus(RCC_FLAG_LSISTBL) == RESET);
-#else
-    PWR_BackupAccessCtrl(ENABLE);
-    RCC_LSEConfig(RCC_LSE_ENABLE);
-    while(RCC_GetFlagStatus(RCC_FLAG_LSESTBL) == RESET);
-#endif /* BSP_RTC_USING_LSI */
-}
-
-static rt_err_t rt_rtc_config(struct rt_device *dev)
+static rt_err_t rt_rtc_config(void)
 {
 #if defined (SOC_SERIES_AT32F415)
     ERTC_InitType ERTC_InitStructure;
@@ -166,73 +148,70 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t _rtc_init(void)
+{
+#if defined (SOC_SERIES_AT32F415)
+    RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_PWR, ENABLE);
+#else
+    RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_PWR | RCC_APB1PERIPH_BKP, ENABLE);
+#endif
+
+#ifdef BSP_RTC_USING_LSI
+    RCC_LSICmd(ENABLE);
+    while(RCC_GetFlagStatus(RCC_FLAG_LSISTBL) == RESET);
+#else
+    PWR_BackupAccessCtrl(ENABLE);
+    RCC_LSEConfig(RCC_LSE_ENABLE);
+    while(RCC_GetFlagStatus(RCC_FLAG_LSESTBL) == RESET);
+#endif /* BSP_RTC_USING_LSI */
+    if (rt_rtc_config() != RT_EOK)
+    {
+        LOG_E("rtc init failed.");
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t _rtc_get_secs(void *args)
+{
+    *(rt_uint32_t *)args = get_rtc_timestamp();
+    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
+
+    return RT_EOK;
+}
+
+static rt_err_t _rtc_set_secs(void *args)
 {
     rt_err_t result = RT_EOK;
-    RT_ASSERT(dev != RT_NULL);
-    switch (cmd)
-    {
-    case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(rt_uint32_t *)args = get_rtc_timestamp();
-        LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
-        break;
 
-    case RT_DEVICE_CTRL_RTC_SET_TIME:
-        if (set_rtc_time_stamp(*(rt_uint32_t *)args))
-        {
-            result = -RT_ERROR;
-        }
-        LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
-        break;
+    if (set_rtc_time_stamp(*(rt_uint32_t *)args))
+    {
+        result = -RT_ERROR;
     }
+    LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
 
     return result;
 }
 
-#ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops rtc_ops =
+static const struct rt_rtc_ops _rtc_ops =
 {
+    _rtc_init,
+    _rtc_get_secs,
+    _rtc_set_secs,
     RT_NULL,
     RT_NULL,
     RT_NULL,
     RT_NULL,
-    RT_NULL,
-    rt_rtc_control
 };
-#endif
 
-static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint32_t flag)
-{
-    RT_ASSERT(device != RT_NULL);
-
-    rt_rtc_init();
-    if (rt_rtc_config(device) != RT_EOK)
-    {
-        return -RT_ERROR;
-    }
-#ifdef RT_USING_DEVICE_OPS
-    device->ops         = &rtc_ops;
-#else
-    device->init        = RT_NULL;
-    device->open        = RT_NULL;
-    device->close       = RT_NULL;
-    device->read        = RT_NULL;
-    device->write       = RT_NULL;
-    device->control     = rt_rtc_control;
-#endif
-    device->type        = RT_Device_Class_RTC;
-    device->rx_indicate = RT_NULL;
-    device->tx_complete = RT_NULL;
-    device->user_data   = RT_NULL;
-
-    /* register a character device */
-    return rt_device_register(device, name, flag);
-}
+static rt_rtc_dev_t at32_rtc_dev;
 
 int rt_hw_rtc_init(void)
 {
     rt_err_t result;
-    result = rt_hw_rtc_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
+    at32_rtc_dev.ops = &_rtc_ops;
+    result = rt_hw_rtc_register(&at32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR,RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);

@@ -20,7 +20,7 @@ int rtc_test(void)
 
     rt_kprintf("[RTC Test]RTC Test Start...\n");
     rt_thread_delay(RT_TICK_PER_SECOND);
-    rt_kprintf("[RTC Test]Set RTC 2017-04-01 12:30:46\n\n");
+    rt_kprintf("[RTC Test]Set RTC 2017-04-01 12:30:46\n");
     rt_thread_delay(RT_TICK_PER_SECOND);
 
     ret = set_date(2017, 4, 1);
@@ -45,7 +45,7 @@ int rtc_test(void)
     {
         rt_kprintf("[RTC Test]Read RTC Date and Time: ");
         now = time(RT_NULL);
-        rt_kprintf("%s", ctime(&now));
+        rt_kprintf("%s\n", ctime(&now));
 
         rt_thread_delay(RT_TICK_PER_SECOND);
     }
@@ -56,6 +56,6 @@ int rtc_test(void)
 }
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(rtc_test, rtc drive test. e.g: rtc_test());
-MSH_CMD_EXPORT(rtc_test, rtc drive test. e.g: rtc_test());
+FINSH_FUNCTION_EXPORT(rtc_test, rtc driver test. e.g: rtc_test());
+MSH_CMD_EXPORT(rtc_test, rtc driver test. e.g: rtc_test());
 #endif

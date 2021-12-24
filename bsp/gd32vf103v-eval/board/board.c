@@ -8,7 +8,7 @@
  * 2019-07-23     tyustli      first version
  *
  */
-
+#include <stddef.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"

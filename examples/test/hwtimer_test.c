@@ -105,7 +105,7 @@ EXIT:
 
     return err;
 }
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 MSH_CMD_EXPORT(hwtimer, "Test hardware timer");
 #endif
 #endif /* RT_USING_HWTIMER */

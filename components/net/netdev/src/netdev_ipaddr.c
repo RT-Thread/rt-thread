@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-05-18     ChenYong     First version
  */
-
+#include <stdlib.h>
 #include <rtthread.h>
 #include <netdev_ipaddr.h>
 

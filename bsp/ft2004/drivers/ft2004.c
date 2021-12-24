@@ -75,7 +75,7 @@ rt_uint32_t arm_gic_cpumask_to_affval(rt_uint32_t *cpu_mask, rt_uint32_t *cluste
 
 void send_core_isg(void)
 {
-    for (size_t i = 0; i <= 0xf; i++)
+    for (rt_size_t i = 0; i <= 0xf; i++)
     {
         /* code */
         rt_kprintf("i %x \r\n", i);

@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ *2021-06-10      xiaoyu       implement rt_hw_us_delay()
  */
 
 #include <rthw.h>
@@ -18,6 +19,7 @@
 #include "encoding.h"
 #include "fpioa.h"
 #include "dmac.h"
+#include "dmalock.h"
 
 void init_bss(void)
 {
@@ -79,10 +81,13 @@ void rt_hw_board_init(void)
 {
     sysctl_pll_set_freq(SYSCTL_PLL0, 800000000UL);
     sysctl_pll_set_freq(SYSCTL_PLL1, 400000000UL);
+    sysctl_pll_set_freq(SYSCTL_PLL2, 45158400UL);
+    sysctl_clock_set_threshold(SYSCTL_THRESHOLD_APB1, 2);
     /* Init FPIOA */
     fpioa_init();
     /* Dmac init */
     dmac_init();
+    dmalock_init();
 
     /* initalize interrupt */
     rt_hw_interrupt_init();
@@ -117,3 +122,19 @@ void rt_hw_cpu_reset(void)
 }
 
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);
+
+/**
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t usec)
+{
+    rt_uint32_t cycle = read_cycle();
+    rt_uint32_t nop_all = usec * sysctl_clock_get_freq(SYSCTL_CLOCK_CPU) / 1000000UL;
+    while (1)
+    {
+       if(read_cycle() - cycle >= nop_all)
+            break;
+    }
+}

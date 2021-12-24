@@ -166,7 +166,7 @@ extern "C" {
   do {                                                                                                       \
     if (HAL_IS_BIT_CLR((__HANDLE__)->AdvancedInit.AdvFeatureInit, SMARTCARD_ADVFEATURE_TXCOMPLETION))        \
     {                                                                                                        \
-     (__HANDLE__)->AdvancedInit.TxCompletionIndication = SMARTCARD_TC;                                       \
+      (__HANDLE__)->AdvancedInit.TxCompletionIndication = SMARTCARD_TC;                                      \
     }                                                                                                        \
     else                                                                                                     \
     {                                                                                                        \
@@ -243,15 +243,6 @@ HAL_StatusTypeDef HAL_SMARTCARDEx_DisableReceiverTimeOut(SMARTCARD_HandleTypeDef
   * @}
   */
 
-/** @addtogroup SMARTCARDEx_Exported_Functions_Group3
-  * @{
-  */
-
-/* Peripheral Control functions ***********************************************/
-
-/**
-  * @}
-  */
 
 /**
   * @}

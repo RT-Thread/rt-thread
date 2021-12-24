@@ -122,7 +122,7 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
 
   *new_ext_csd = RT_NULL;
 
-  if (GET_BITS(card->resp_cid, 122, 4) < 4)
+  if (GET_BITS(card->resp_csd, 122, 4) < 4)
      return 0;
 
   /*
@@ -303,7 +303,7 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
   unsigned idx, trys, bus_width = 0;
   int err = 0;
 
-  if (GET_BITS(card->resp_cid, 122, 4) < 4)
+  if (GET_BITS(card->resp_csd, 122, 4) < 4)
      return 0;
 
   /*

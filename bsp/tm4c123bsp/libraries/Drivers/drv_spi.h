@@ -11,6 +11,7 @@
 #ifndef __DRV_SPI_H__
 #define __DRV_SPI_H__
 
+#include <stdint.h>
 #include <rtdevice.h>
 #include <rthw.h>
 #include "drivers/spi.h"

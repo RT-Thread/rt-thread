@@ -1,0 +1,48 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+''')
+
+if GetDepend(['UTEST_MEMHEAP_TC']):
+    src += ['memheap_tc.c']
+
+if GetDepend(['UTEST_SMALL_MEM_TC']):
+    src += ['mem_tc.c']
+
+if GetDepend(['UTEST_SLAB_TC']):
+    src += ['slab_tc.c']
+
+if GetDepend(['UTEST_IRQ_TC']):
+    src += ['irq_tc.c']
+    
+if GetDepend(['UTEST_SEMAPHORE_TC']):
+    src += ['semaphore_tc.c']
+
+if GetDepend(['UTEST_EVENT_TC']):
+    src += ['event_tc.c']
+
+if GetDepend(['UTEST_TIMER_TC']):
+    src += ['timer_tc.c']
+
+if GetDepend(['UTEST_MESSAGEQUEUE_TC']):
+    src += ['messagequeue_tc.c']
+
+if GetDepend(['UTEST_SIGNAL_TC']):
+    src += ['signal_tc.c']
+
+if GetDepend(['UTEST_MUTEX_TC']):
+    src += ['mutex_tc.c']
+
+if GetDepend(['UTEST_MAILBOX_TC']):
+    src += ['mailbox_tc.c']
+
+if GetDepend(['UTEST_THREAD_TC']):
+    src += ['thread_tc.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('utestcases', src, depend = [], CPPPATH = CPPPATH)
+
+Return('group')

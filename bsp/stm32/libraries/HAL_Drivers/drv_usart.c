@@ -107,9 +107,21 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     uart = rt_container_of(serial, struct stm32_uart, serial);
     uart->handle.Instance          = uart->config->Instance;
     uart->handle.Init.BaudRate     = cfg->baud_rate;
-    uart->handle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
     uart->handle.Init.Mode         = UART_MODE_TX_RX;
     uart->handle.Init.OverSampling = UART_OVERSAMPLING_16;
+
+    switch (cfg->flowcontrol)
+    {
+    case RT_SERIAL_FLOWCONTROL_NONE:
+        uart->handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+        break;
+    case RT_SERIAL_FLOWCONTROL_CTSRTS:
+        uart->handle.Init.HwFlowCtl = UART_HWCONTROL_RTS_CTS;
+        break;
+    default:
+        uart->handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+        break;
+    }
 
     switch (cfg->data_bits)
     {
@@ -239,6 +251,53 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
     return RT_EOK;
 }
 
+rt_uint32_t stm32_uart_get_mask(rt_uint32_t word_length, rt_uint32_t parity)
+{
+    rt_uint32_t mask;
+    if (word_length == UART_WORDLENGTH_8B)
+    {
+        if (parity == UART_PARITY_NONE)
+        {
+            mask = 0x00FFU ;
+        }
+        else
+        {
+            mask = 0x007FU ;
+        }
+    }
+#ifdef UART_WORDLENGTH_9B
+    else if (word_length == UART_WORDLENGTH_9B)
+    {
+        if (parity == UART_PARITY_NONE)
+        {
+            mask = 0x01FFU ;
+        }
+        else
+        {
+            mask = 0x00FFU ;
+        }
+    }
+#endif
+#ifdef UART_WORDLENGTH_7B
+    else if (word_length == UART_WORDLENGTH_7B)
+    {
+        if (parity == UART_PARITY_NONE)
+        {
+            mask = 0x007FU ;
+        }
+        else
+        {
+            mask = 0x003FU ;
+        }
+    }
+    else
+    {
+        mask = 0x0000U;
+    }
+#endif
+    return mask;
+}
+
 static int stm32_putc(struct rt_serial_device *serial, char c)
 {
     struct stm32_uart *uart;
@@ -247,8 +306,9 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     uart = rt_container_of(serial, struct stm32_uart, serial);
     UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
-    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) \
-    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
+    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L5) \
+    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32F3)  \
+    || defined(SOC_SERIES_STM32U5)
     uart->handle.Instance->TDR = c;
 #else
     uart->handle.Instance->DR = c;
@@ -268,11 +328,12 @@ static int stm32_getc(struct rt_serial_device *serial)
     if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
     {
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
-    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) \
-    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
-        ch = uart->handle.Instance->RDR & 0xff;
+    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L5) \
+    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32F3) \
+    || defined(SOC_SERIES_STM32U5)
+        ch = uart->handle.Instance->RDR & stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity);
 #else
-        ch = uart->handle.Instance->DR & 0xff;
+        ch = uart->handle.Instance->DR & stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity);
 #endif
     }
     return ch;
@@ -372,11 +433,19 @@ static void uart_isr(struct rt_serial_device *serial)
         }
 #if !defined(SOC_SERIES_STM32L4) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32F7) && !defined(SOC_SERIES_STM32F0) \
     && !defined(SOC_SERIES_STM32L0) && !defined(SOC_SERIES_STM32G0) && !defined(SOC_SERIES_STM32H7) \
-    && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1) && !defined(SOC_SERIES_STM32WB)
+    && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1) && !defined(SOC_SERIES_STM32WB) \
+    && !defined(SOC_SERIES_STM32L5) && !defined(SOC_SERIES_STM32U5)
+#ifdef SOC_SERIES_STM32F3
+        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBDF) != RESET)
+        {
+            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBDF);
+        }
+#else
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBD) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBD);
         }
+#endif
 #endif
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_CTS) != RESET)
         {
@@ -866,7 +935,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     {
         rt_uint32_t tmpreg = 0x00U;
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) \
-    || defined(SOC_SERIES_STM32L0)
+    || defined(SOC_SERIES_STM32L0)|| defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32L1)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHBENR, dma_config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHBENR, dma_config->dma_rcc);
@@ -900,7 +969,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         __HAL_LINKDMA(&(uart->handle), hdmatx, uart->dma_tx.handle);
     }
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0)|| defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32L1) || defined(SOC_SERIES_STM32U5)
     DMA_Handle->Instance                 = dma_config->Instance;
 #elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     DMA_Handle->Instance                 = dma_config->Instance;

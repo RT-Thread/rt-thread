@@ -9,8 +9,6 @@
 #include <rtthread.h>
 #include "board.h"
 
-#include <shell.h>
-
 int platform_init(void)
 {
 #ifdef RT_USING_LWIP

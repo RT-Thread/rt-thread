@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-02-02     xiangxistu   the first version
  * 2021-05-15     Sherman      function rename
+ * 2021-07-13     Sherman      add reconnect API
  */
 #ifndef __RT_LINK_PORT_H__
 #define __RT_LINK_PORT_H__
@@ -14,8 +15,9 @@
 #include <rtdef.h>
 
 /* Functions that need to be implemented at the hardware */
-int rt_link_port_init(void);
-int rt_link_port_deinit(void);
+rt_err_t rt_link_port_init(void);
+rt_err_t rt_link_port_deinit(void);
+rt_err_t rt_link_port_reconnect(void);
 rt_size_t rt_link_port_send(void *data, rt_size_t length);
 
 #ifdef RT_LINK_USING_HW_CRC

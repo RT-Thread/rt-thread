@@ -176,7 +176,8 @@ def bs_update_ide_project(bsp_root, rtt_root, rttide = None):
                     'iar':('iar', 'iar'),
                     'vs':('msvc', 'cl'),
                     'vs2012':('msvc', 'cl'),
-                    'cdk':('gcc', 'gcc')}
+                    'cdk':('gcc', 'gcc'),
+                    'eclipse':('eclipse', 'gcc')}
     else:
         item = 'eclipse --project-name=' + rttide['project_name']
         tgt_dict = {item:('gcc', 'gcc')}

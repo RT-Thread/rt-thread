@@ -94,7 +94,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     return(rt_uint8_t *)stack_frame;
 }
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
 extern void list_thread(void);
 #endif
 extern rt_thread_t rt_current_thread;
@@ -130,7 +130,7 @@ void rt_hw_hard_fault_exception(struct stack_frame* exception_contex)
         rt_kprintf("acclo: 0x%08x\n", exception_contex->ACCLO);
     }
         rt_kprintf("hard fault on thread: %s\n", rt_current_thread->name);
-    #ifdef RT_USING_FINSH
+    #if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         list_thread();
     #endif
         while (1);

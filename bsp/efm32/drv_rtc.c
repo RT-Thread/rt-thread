@@ -24,6 +24,8 @@
  ******************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
+
+#include <rtdevice.h>
 #include "board.h"
 #include "hdl_interrupt.h"
 #include "drv_rtc.h"
@@ -128,49 +130,6 @@ void rt_hw_rtc_isr(rt_device_t device)
 
 /***************************************************************************//**
  * @brief
- *  Register RTC device
- *
- * @details
- *
- * @note
- *
- * @param[in] device
- *  Pointer to device descriptor
- *
- * @param[in] name
- *  Device name
- *
- * @param[in] flag
- *  Configuration flags
- *
- * @return
- *  Error code
- ******************************************************************************/
-rt_err_t rt_hw_rtc_register(
-    rt_device_t     device,
-    const char      *name,
-    rt_uint32_t     flag)
-{
-    RT_ASSERT(device != RT_NULL);
-
-    device->type        = RT_Device_Class_RTC;
-    device->rx_indicate = RT_NULL;
-    device->tx_complete = RT_NULL;
-    device->init        = RT_NULL;
-    device->open        = rt_rtc_open;
-    device->close       = RT_NULL;
-    device->read        = rt_rtc_read;
-    device->write       = RT_NULL;
-    device->control     = rt_rtc_control;
-    device->user_data   = RT_NULL; /* no private */
-
-    /* register a character device */
-    return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
-}
-
-
-/***************************************************************************//**
- * @brief
  *  Initialize all RTC module related hardware and register RTC device to kernel
  *
  * @details
@@ -222,7 +181,18 @@ void rt_hw_rtc_init(void)
     }
 
     /* register rtc device */
-    rt_hw_rtc_register(&rtc, RT_RTC_NAME, EFM32_NO_DATA);
+    rtc.type        = RT_Device_Class_RTC;
+    rtc.rx_indicate = RT_NULL;
+    rtc.tx_complete = RT_NULL;
+    rtc.init        = RT_NULL;
+    rtc.open        = rt_rtc_open;
+    rtc.close       = RT_NULL;
+    rtc.read        = rt_rtc_read;
+    rtc.write       = RT_NULL;
+    rtc.control     = rt_rtc_control;
+    rtc.user_data   = RT_NULL; /* no private */
+
+    rt_device_register(&rtc, RT_RTC_NAME, RT_DEVICE_FLAG_RDWR | EFM32_NO_DATA);
 }
 
 #endif

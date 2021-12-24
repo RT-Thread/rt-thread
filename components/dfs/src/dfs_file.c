@@ -157,7 +157,7 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
         return -EINVAL;
 
     /* regular file system fd */
-    if (fd->type == FT_REGULAR || fd->type == FT_DEVICE)
+    if (fd->type == FT_REGULAR)
     {
         switch (cmd)
         {
@@ -621,6 +621,7 @@ void cat(const char *filename)
 }
 FINSH_FUNCTION_EXPORT(cat, print file);
 
+#ifdef DFS_USING_POSIX
 #define BUF_SZ  4096
 static void copyfile(const char *src, const char *dst)
 {
@@ -749,6 +750,7 @@ static const char *_get_path_lastname(const char *path)
     /* skip the '/' then return */
     return ++ptr;
 }
+
 void copy(const char *src, const char *dst)
 {
 #define FLAG_SRC_TYPE      0x03
@@ -841,7 +843,8 @@ void copy(const char *src, const char *dst)
     }
 }
 FINSH_FUNCTION_EXPORT(copy, copy file or dir)
+#endif /* DFS_USING_POSIX */
 
-#endif
+#endif /* RT_USING_FINSH */
 /* @} */
 

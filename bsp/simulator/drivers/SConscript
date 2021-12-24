@@ -1,4 +1,5 @@
 import sys
+import os
 from building import *
 
 cwd = GetCurrentDir()
@@ -6,6 +7,8 @@ src = Glob('*.c')
 LIBS = []
 LIBPATH = []
 CPPPATH = [cwd]
+
+CPPDEFINES = ['_CRT_DECLARE_NONSTDC_NAMES=0'] # avoid to conflict with the inherent STDC in VS
 
 # remove no need file.
 if GetDepend('PKG_USING_GUIENGINE') == False:
@@ -30,6 +33,11 @@ if sys.platform[0:5]=="linux": #check whether under linux
     SrcRemove(src, ['module_win32.c', 'dfs_win32.c'])
 
 group = DefineGroup('Drivers', src, depend = [''],
-                    CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH)
+                    CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

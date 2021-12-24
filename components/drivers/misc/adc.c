@@ -144,7 +144,7 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
     return result;
 }
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 
 static int adc(int argc, char **argv)
 {
@@ -232,4 +232,4 @@ static int adc(int argc, char **argv)
 }
 MSH_CMD_EXPORT(adc, adc function);
 
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */

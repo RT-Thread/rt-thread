@@ -10,60 +10,24 @@
  * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
 #include <rtthread.h>
+#include <string.h>
 
-#ifdef FINSH_USING_MSH
-
-#include "msh.h"
-#include <finsh.h>
-#include <shell.h>
-
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#endif
-
-#ifdef RT_USING_MODULE
-#include <dlmodule.h>
-#endif
+#ifdef RT_USING_FINSH
 
 #ifndef FINSH_ARG_MAX
 #define FINSH_ARG_MAX    8
-#endif
+#endif /* FINSH_ARG_MAX */
+
+#include "msh.h"
+#include "shell.h"
+#ifdef DFS_USING_POSIX
+#include <dfs_posix.h>
+#endif /* DFS_USING_POSIX */
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif /* RT_USING_MODULE */
 
 typedef int (*cmd_function_t)(int argc, char **argv);
-
-#ifdef FINSH_USING_MSH
-#ifdef FINSH_USING_MSH_ONLY
-rt_bool_t msh_is_used(void)
-{
-    return RT_TRUE;
-}
-#else
-#ifdef FINSH_USING_MSH_DEFAULT
-static rt_bool_t __msh_state = RT_TRUE;
-#else
-static rt_bool_t __msh_state = RT_FALSE;
-#endif
-rt_bool_t msh_is_used(void)
-{
-    return __msh_state;
-}
-
-static int msh_exit(int argc, char **argv)
-{
-    /* return to finsh shell mode */
-    __msh_state = RT_FALSE;
-    return 0;
-}
-FINSH_FUNCTION_EXPORT_ALIAS(msh_exit, __cmd_exit, return to RT-Thread shell mode.);
-
-static int msh_enter(void)
-{
-    /* enter module shell mode */
-    __msh_state = RT_TRUE;
-    return 0;
-}
-FINSH_FUNCTION_EXPORT_ALIAS(msh_enter, msh, use module shell);
-#endif
 
 int msh_help(int argc, char **argv)
 {
@@ -75,11 +39,10 @@ int msh_help(int argc, char **argv)
                 index < _syscall_table_end;
                 FINSH_NEXT_SYSCALL(index))
         {
-            if (strncmp(index->name, "__cmd_", 6) != 0) continue;
 #if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
-            rt_kprintf("%-16s - %s\n", &index->name[6], index->desc);
+            rt_kprintf("%-16s - %s\n", index->name, index->desc);
 #else
-            rt_kprintf("%s ", &index->name[6]);
+            rt_kprintf("%s ", index->name);
 #endif
         }
     }
@@ -87,8 +50,9 @@ int msh_help(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, RT-Thread shell help.);
+MSH_CMD_EXPORT_ALIAS(msh_help, help, RT - Thread shell help.);
 
+#ifdef MSH_USING_BUILT_IN_COMMANDS
 int cmd_ps(int argc, char **argv)
 {
     extern long list_thread(void);
@@ -102,23 +66,22 @@ int cmd_ps(int argc, char **argv)
         list_thread();
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
+MSH_CMD_EXPORT_ALIAS(cmd_ps, ps, List threads in the system.);
 
 #ifdef RT_USING_HEAP
 int cmd_free(int argc, char **argv)
 {
-    extern void list_mem(void);
-    extern void list_memheap(void);
+    rt_uint32_t total = 0, used = 0, max_used = 0;
 
-#ifdef RT_USING_MEMHEAP_AS_HEAP
-    list_memheap();
-#else
-    list_mem();
-#endif
+    rt_memory_info(&total, &used, &max_used);
+    rt_kprintf("total   : %d\n", total);
+    rt_kprintf("used    : %d\n", used);
+    rt_kprintf("maximum : %d\n", max_used);
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
-#endif
+MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system.);
+#endif /* RT_USING_HEAP */
+#endif /* MSH_USING_BUILT_IN_COMMANDS */
 
 static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
 {
@@ -128,7 +91,8 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
     rt_size_t i;
 
     ptr = cmd;
-    position = 0; argc = 0;
+    position = 0;
+    argc = 0;
 
     while (position < length)
     {
@@ -136,13 +100,14 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
         while ((*ptr == ' ' || *ptr == '\t') && position < length)
         {
             *ptr = '\0';
-            ptr ++; position ++;
+            ptr ++;
+            position ++;
         }
 
-        if(argc >= FINSH_ARG_MAX)
+        if (argc >= FINSH_ARG_MAX)
         {
             rt_kprintf("Too many args ! We only Use:\n");
-            for(i = 0; i < argc; i++)
+            for (i = 0; i < argc; i++)
             {
                 rt_kprintf("%s ", argv[i]);
             }
@@ -155,8 +120,10 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
         /* handle string */
         if (*ptr == '"')
         {
-            ptr ++; position ++;
-            argv[argc] = ptr; argc ++;
+            ptr ++;
+            position ++;
+            argv[argc] = ptr;
+            argc ++;
 
             /* skip this string */
             while (*ptr != '"' && position < length)
@@ -165,15 +132,19 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
                 {
                     if (*(ptr + 1) == '"')
                     {
-                        ptr ++; position ++;
+                        ptr ++;
+                        position ++;
                     }
                 }
-                ptr ++; position ++;
+                ptr ++;
+                position ++;
             }
             if (position >= length) break;
 
             /* skip '"' */
-            *ptr = '\0'; ptr ++; position ++;
+            *ptr = '\0';
+            ptr ++;
+            position ++;
         }
         else
         {
@@ -181,7 +152,8 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
             argc ++;
             while ((*ptr != ' ' && *ptr != '\t') && position < length)
             {
-                ptr ++; position ++;
+                ptr ++;
+                position ++;
             }
             if (position >= length) break;
         }
@@ -199,10 +171,8 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
             index < _syscall_table_end;
             FINSH_NEXT_SYSCALL(index))
     {
-        if (strncmp(index->name, "__cmd_", 6) != 0) continue;
-
-        if (strncmp(&index->name[6], cmd, size) == 0 &&
-                index->name[6 + size] == '\0')
+        if (strncmp(index->name, cmd, size) == 0 &&
+                index->name[size] == '\0')
         {
             cmd_func = (cmd_function_t)index->func;
             break;
@@ -212,7 +182,7 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
     return cmd_func;
 }
 
-#if defined(RT_USING_MODULE) && defined(RT_USING_DFS)
+#if defined(RT_USING_MODULE) && defined(DFS_USING_POSIX)
 /* Return 0 on module executed. Other value indicate error.
  */
 int msh_exec_module(const char *cmd_line, int size)
@@ -283,22 +253,7 @@ int msh_exec_module(const char *cmd_line, int size)
     rt_free(pg_name);
     return ret;
 }
-
-int system(const char *command)
-{
-    int ret = -RT_ENOMEM;
-    char *cmd = rt_strdup(command);
-
-    if (cmd)
-    {
-        ret = msh_exec(cmd, rt_strlen(cmd));
-        rt_free(cmd);
-    }
-
-    return ret;
-}
-RTM_EXPORT(system);
-#endif
+#endif /* defined(RT_USING_MODULE) && defined(DFS_USING_POSIX) */
 
 static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
 {
@@ -331,7 +286,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     return 0;
 }
 
-#if defined(RT_USING_LWP) && defined(RT_USING_DFS)
+#if defined(RT_USING_LWP) && defined(DFS_USING_POSIX)
 static int _msh_exec_lwp(char *cmd, rt_size_t length)
 {
     int argc;
@@ -340,7 +295,7 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
     int fd = -1;
     char *pg_name;
 
-    extern int exec(char*, int, char**);
+    extern int exec(char *, int, char **);
 
     /* find the size of first command */
     while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
@@ -367,7 +322,7 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
 
     return 0;
 }
-#endif
+#endif /* defined(RT_USING_LWP) && defined(DFS_USING_POSIX) */
 
 int msh_exec(char *cmd, rt_size_t length)
 {
@@ -391,7 +346,7 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return cmd_ret;
     }
-#ifdef RT_USING_DFS
+#ifdef DFS_USING_POSIX
 #ifdef DFS_USING_WORKDIR
     if (msh_exec_script(cmd, length) == 0)
     {
@@ -404,15 +359,15 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return 0;
     }
-#endif
+#endif /* RT_USING_MODULE */
 
 #ifdef RT_USING_LWP
     if (_msh_exec_lwp(cmd, length) == 0)
     {
         return 0;
     }
-#endif
-#endif
+#endif /* RT_USING_LWP */
+#endif /* DFS_USING_POSIX */
 
     /* truncate the cmd at the first space. */
     {
@@ -441,7 +396,7 @@ static int str_common(const char *str1, const char *str2)
     return (str - str1);
 }
 
-#ifdef RT_USING_DFS
+#ifdef DFS_USING_POSIX
 void msh_auto_complete_path(char *path)
 {
     DIR *dir = RT_NULL;
@@ -562,7 +517,7 @@ void msh_auto_complete_path(char *path)
     closedir(dir);
     rt_free(full_path);
 }
-#endif
+#endif /* DFS_USING_POSIX */
 
 void msh_auto_complete(char *prefix)
 {
@@ -579,7 +534,7 @@ void msh_auto_complete(char *prefix)
         return;
     }
 
-#ifdef RT_USING_DFS
+#ifdef DFS_USING_POSIX
     /* check whether a spare in the command */
     {
         char *ptr;
@@ -603,18 +558,16 @@ void msh_auto_complete(char *prefix)
         {
             msh_auto_complete_path(ptr);
         }
-#endif
+#endif /* RT_USING_MODULE */
     }
-#endif
+#endif /* DFS_USING_POSIX */
 
     /* checks in internal command */
     {
         for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
         {
             /* skip finsh shell function */
-            if (strncmp(index->name, "__cmd_", 6) != 0) continue;
-
-            cmd_name = (const char *) &index->name[6];
+            cmd_name = (const char *) index->name;
             if (strncmp(prefix, cmd_name, strlen(prefix)) == 0)
             {
                 if (min_length == 0)
@@ -642,6 +595,4 @@ void msh_auto_complete(char *prefix)
 
     return ;
 }
-#endif
-
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */

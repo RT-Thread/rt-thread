@@ -5,7 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-02-27     bernard      fix the re-work issue.
+ * 2017-02-27     Bernard      fix the re-work issue.
+ * 2021-08-01     Meco Man     remove rt_delayed_work_init()
+ * 2021-08-14     Jackistang   add comments for function interface.
  */
 
 #include <rthw.h>
@@ -208,6 +210,15 @@ static void _delayed_work_timeout_handler(void *parameter)
     }
 }
 
+/**
+ * @brief Create a work queue with a thread inside.
+ *
+ * @param name          The name of the work queue thread.
+ * @param stack_size    The stack size of the work queue thread.
+ * @param priority      The priority of the work queue thread.
+ *
+ * @return Return A pointer to the workqueue object. It will return RT_NULL if failed.
+ */
 struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_size, rt_uint8_t priority)
 {
     struct rt_workqueue *queue = RT_NULL;
@@ -235,6 +246,13 @@ struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_siz
     return queue;
 }
 
+/**
+ * @brief Destroy a work queue.
+ *
+ * @param queue         A pointer to the workqueue object.
+ *
+ * @return RT_EOK       Success.
+ */
 rt_err_t rt_workqueue_destroy(struct rt_workqueue *queue)
 {
     RT_ASSERT(queue != RT_NULL);
@@ -247,6 +265,15 @@ rt_err_t rt_workqueue_destroy(struct rt_workqueue *queue)
     return RT_EOK;
 }
 
+/**
+ * @brief Submit a work item to the work queue without delay.
+ *
+ * @param queue         A pointer to the workqueue object.
+ * @param work          A pointer to the work item object.
+ *
+ * @return RT_EOK       Success.
+ * @return -RT_EBUSY    This work item is executing.
+ */
 rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
 {
     RT_ASSERT(queue != RT_NULL);
@@ -255,6 +282,17 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
     return _workqueue_submit_work(queue, work, 0);
 }
 
+/**
+ * @brief Submit a work item to the work queue with a delay.
+ *
+ * @param queue     A pointer to the workqueue object.
+ * @param work      A pointer to the work item object.
+ * @param time      The delay time (unit: OS ticks) for the work item to be submitted to the work queue.
+ *
+ * @return RT_EOK       Success.
+ * @return -RT_EBUSY    This work item is executing.
+ * @return -RT_ERROR    The time parameter is invalid.
+ */
 rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *work, rt_tick_t time)
 {
     RT_ASSERT(queue != RT_NULL);
@@ -263,7 +301,15 @@ rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *wo
     return _workqueue_submit_work(queue, work, time);
 }
 
-rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *work)
+/**
+ * @brief Submit a work item to the work queue without delay. This work item will be executed after the current work item.
+ *
+ * @param queue     A pointer to the workqueue object.
+ * @param work      A pointer to the work item object.
+ *
+ * @return RT_EOK   Success.
+ */
+rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *work)
 {
     rt_base_t level;
     RT_ASSERT(queue != RT_NULL);
@@ -290,6 +336,15 @@ rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *
     return RT_EOK;
 }
 
+/**
+ * @brief Cancel a work item in the work queue.
+ *
+ * @param queue     A pointer to the workqueue object.
+ * @param work      A pointer to the work item object.
+ *
+ * @return RT_EOK       Success.
+ * @return -RT_EBUSY    This work item is executing.
+ */
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work)
 {
     RT_ASSERT(work != RT_NULL);
@@ -297,6 +352,14 @@ rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *wo
     return _workqueue_cancel_work(queue, work);
 }
 
+/**
+ * @brief Cancel a work item in the work queue. If the work item is executing, this function will block until it is done.
+ *
+ * @param queue     A pointer to the workqueue object.
+ * @param work      A pointer to the work item object.
+ *
+ * @return RT_EOK       Success.
+ */
 rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_work *work)
 {
     RT_ASSERT(queue != RT_NULL);
@@ -315,6 +378,13 @@ rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_wor
     return RT_EOK;
 }
 
+/**
+ * @brief This function will cancel all work items in work queue.
+ *
+ * @param queue     A pointer to the workqueue object.
+ *
+ * @return RT_EOK       Success.
+ */
 rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue)
 {
     struct rt_work *work;
@@ -339,26 +409,38 @@ rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue)
     return RT_EOK;
 }
 
-void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct rt_work *work,
-                          void *work_data), void *work_data)
-{
-    rt_work_init(&work->work, work_func, work_data);
-}
-
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 static struct rt_workqueue *sys_workq;
 
+/**
+ * @brief Submit a work item to the system work queue with a delay.
+ *
+ * @param work      A pointer to the work item object.
+ * @param time      The delay time (unit: OS ticks) for the work item to be submitted to the work queue.
+ *
+ * @return RT_EOK       Success.
+ * @return -RT_EBUSY    This work item is executing.
+ * @return -RT_ERROR    The time parameter is invalid.
+ */
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time)
 {
     return rt_workqueue_submit_work(sys_workq, work, time);
 }
 
+/**
+ * @brief Cancel a work item in the system work queue.
+ *
+ * @param work      A pointer to the work item object.
+ *
+ * @return RT_EOK       Success.
+ * @return -RT_EBUSY    This work item is executing.
+ */
 rt_err_t rt_work_cancel(struct rt_work *work)
 {
     return rt_workqueue_cancel_work(sys_workq, work);
 }
 
-int rt_work_sys_workqueue_init(void)
+static int rt_work_sys_workqueue_init(void)
 {
     if (sys_workq != RT_NULL)
         return RT_EOK;
@@ -370,5 +452,5 @@ int rt_work_sys_workqueue_init(void)
     return RT_EOK;
 }
 INIT_PREV_EXPORT(rt_work_sys_workqueue_init);
-#endif
-#endif
+#endif /* RT_USING_SYSTEM_WORKQUEUE */
+#endif /* RT_USING_HEAP */

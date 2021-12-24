@@ -1,10 +1,10 @@
 /******************************************************************************************************************************************
-* ÎÄ¼þÃû³Æ: SWM320_uart.c
-* ¹¦ÄÜËµÃ÷: SWM320µ¥Æ¬»úµÄUART´®¿Ú¹¦ÄÜÇý¶¯¿â
-* ¼¼ÊõÖ§³Ö: http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî: Ã»ÓÐ±àÐ´LIN¹¦ÄÜÏà¹ØµÄº¯Êý
-* °æ±¾ÈÕÆÚ: V1.1.0      2017Äê10ÔÂ25ÈÕ
-* Éý¼¶¼ÇÂ¼:
+* æ–‡ä»¶åç§°: SWM320_uart.c
+* åŠŸèƒ½è¯´æ˜Ž: SWM320å•ç‰‡æœºçš„UARTä¸²å£åŠŸèƒ½é©±åŠ¨åº“
+* æŠ€æœ¯æ”¯æŒ: http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹: æ²¡æœ‰ç¼–å†™LINåŠŸèƒ½ç›¸å…³çš„å‡½æ•°
+* ç‰ˆæœ¬æ—¥æœŸ: V1.1.0      2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•:
 *
 *
 *******************************************************************************************************************************************
@@ -21,14 +21,13 @@
 #include "SWM320.h"
 #include "SWM320_uart.h"
 
-
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_Init()
-* ¹¦ÄÜËµÃ÷: UART´®¿Ú³õÊ¼»¯
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-*           UART_InitStructure * initStruct    °üº¬UART´®¿ÚÏà¹ØÉè¶¨ÖµµÄ½á¹¹Ìå
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_Init()
+* åŠŸèƒ½è¯´æ˜Ž: UARTä¸²å£åˆå§‹åŒ–
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+*           UART_InitStructure * initStruct    åŒ…å«UARTä¸²å£ç›¸å…³è®¾å®šå€¼çš„ç»“æž„ä½“
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_Init(UART_TypeDef *UARTx, UART_InitStructure *initStruct)
 {
@@ -51,7 +50,7 @@ void UART_Init(UART_TypeDef *UARTx, UART_InitStructure *initStruct)
         break;
     }
 
-    UART_Close(UARTx);  //Ò»Ð©¹Ø¼ü¼Ä´æÆ÷Ö»ÄÜÔÚ´®¿Ú¹Ø±ÕÊ±ÉèÖÃ
+    UART_Close(UARTx); //ä¸€äº›å…³é”®å¯„å­˜å™¨åªèƒ½åœ¨ä¸²å£å…³é—­æ—¶è®¾ç½®
 
     UARTx->CTRL |= (0x01 << UART_CTRL_BAUDEN_Pos);
     UARTx->BAUD &= ~UART_BAUD_BAUD_Msk;
@@ -59,11 +58,29 @@ void UART_Init(UART_TypeDef *UARTx, UART_InitStructure *initStruct)
 
     UARTx->CTRL &= ~(UART_CTRL_DATA9b_Msk | UART_CTRL_PARITY_Msk | UART_CTRL_STOP2b_Msk);
     UARTx->CTRL |= (initStruct->DataBits << UART_CTRL_DATA9b_Pos) |
-                   (initStruct->Parity   << UART_CTRL_PARITY_Pos) |
+                   (initStruct->Parity << UART_CTRL_PARITY_Pos) |
                    (initStruct->StopBits << UART_CTRL_STOP2b_Pos);
 
+    /* åœ¨SWM320ä¸­ï¼Œå½“ RXLVL >= RXTHR æ—¶è§¦å‘ä¸­æ–­ï¼Œå¦‚æžœRXTHRè®¾ç½®ä¸º0çš„è¯ï¼Œåœ¨æœªæŽ¥æ”¶åˆ°æ•°æ®æ—¶å°±ä¼šä¸€ç›´è§¦å‘ä¸­æ–­ï¼›
+       å…¶ä»–èŠ¯ç‰‡ä¸­ï¼Œå½“ RXLVL >  RXTHR æ—¶è§¦å‘ä¸­æ–­ï¼Œä¸ºè§£å†³SWM320ä¸­RXTHRä¸èƒ½ä¸º0çš„é—®é¢˜ï¼Œå¹¶ç»Ÿä¸€åº“å‡½æ•°APIï¼Œè¿™é‡Œå°†RXTHRè®¾ç½®å€¼åŠ ä¸€
+    */
+    switch ((uint32_t)UARTx) // è½¯ä»¶å¤ä½ä¸èƒ½æ¸…é›¶ NVIC å¯„å­˜å™¨ï¼Œè‹¥ä¸æ‰‹åŠ¨æ¸…é™¤ï¼Œä¸‹é¢çš„ä»£ç æ¸…é›¶ RXTHR æ—¶ä¼šå¯¼è‡´ä¸€ç›´è¿›å…¥ ISR
+    {
+    case ((uint32_t)UART0):
+        NVIC_DisableIRQ(UART0_IRQn);
+        break;
+    case ((uint32_t)UART1):
+        NVIC_DisableIRQ(UART1_IRQn);
+        break;
+    case ((uint32_t)UART2):
+        NVIC_DisableIRQ(UART2_IRQn);
+        break;
+    case ((uint32_t)UART3):
+        NVIC_DisableIRQ(UART3_IRQn);
+        break;
+    }
     UARTx->FIFO &= ~(UART_FIFO_RXTHR_Msk | UART_FIFO_TXTHR_Msk);
-    UARTx->FIFO |= (initStruct->RXThreshold << UART_FIFO_RXTHR_Pos) |
+    UARTx->FIFO |= ((initStruct->RXThreshold + 1) << UART_FIFO_RXTHR_Pos) |
                    (initStruct->TXThreshold << UART_FIFO_TXTHR_Pos);
 
     UARTx->CTRL &= ~UART_CTRL_TOTIME_Msk;
@@ -123,11 +140,11 @@ void UART_Init(UART_TypeDef *UARTx, UART_InitStructure *initStruct)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_Open()
-* ¹¦ÄÜËµÃ÷: UART´®¿Ú´ò¿ª
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_Open()
+* åŠŸèƒ½è¯´æ˜Ž: UARTä¸²å£æ‰“å¼€
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_Open(UART_TypeDef *UARTx)
 {
@@ -135,11 +152,11 @@ void UART_Open(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_Close()
-* ¹¦ÄÜËµÃ÷: UART´®¿Ú¹Ø±Õ
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_Close()
+* åŠŸèƒ½è¯´æ˜Ž: UARTä¸²å£å…³é—­
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_Close(UART_TypeDef *UARTx)
 {
@@ -147,25 +164,25 @@ void UART_Close(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_WriteByte()
-* ¹¦ÄÜËµÃ÷: ·¢ËÍÒ»¸ö×Ö½ÚÊý¾Ý
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬¿ÉÈ¡Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3¡¢UART4
-*           uint8_t data            Òª·¢ËÍµÄ×Ö½Ú
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_WriteByte()
+* åŠŸèƒ½è¯´æ˜Ž: å‘é€ä¸€ä¸ªå­—èŠ‚æ•°æ®
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œå¯å–å€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3ã€UART4
+*           uint32_t data           è¦å‘é€çš„å­—èŠ‚
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void UART_WriteByte(UART_TypeDef *UARTx, uint8_t data)
+void UART_WriteByte(UART_TypeDef *UARTx, uint32_t data)
 {
     UARTx->DATA = data;
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_ReadByte()
-* ¹¦ÄÜËµÃ÷: ¶ÁÈ¡Ò»¸ö×Ö½ÚÊý¾Ý£¬²¢Ö¸³öÊý¾ÝÊÇ·ñValid
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬¿ÉÈ¡Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3¡¢UART4
-*           uint32_t * data         ½ÓÊÕµ½µÄÊý¾Ý
-* Êä    ³ö: uint32_t                0 ÎÞ´íÎó    UART_ERR_PARITY ÆæÅ¼Ð£Ñé´íÎó
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_ReadByte()
+* åŠŸèƒ½è¯´æ˜Ž: è¯»å–ä¸€ä¸ªå­—èŠ‚æ•°æ®ï¼Œå¹¶æŒ‡å‡ºæ•°æ®æ˜¯å¦Valid
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œå¯å–å€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3ã€UART4
+*           uint32_t * data         æŽ¥æ”¶åˆ°çš„æ•°æ®
+* è¾“    å‡º: uint32_t              0 æ— é”™è¯¯    UART_ERR_PARITY å¥‡å¶æ ¡éªŒé”™è¯¯
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_ReadByte(UART_TypeDef *UARTx, uint32_t *data)
 {
@@ -173,17 +190,18 @@ uint32_t UART_ReadByte(UART_TypeDef *UARTx, uint32_t *data)
 
     *data = (reg & UART_DATA_DATA_Msk);
 
-    if (reg & UART_DATA_PAERR_Msk) return UART_ERR_PARITY;
+    if (reg & UART_DATA_PAERR_Msk)
+        return UART_ERR_PARITY;
 
     return 0;
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_IsTXBusy()
-* ¹¦ÄÜËµÃ÷: UARTÊÇ·ñÕýÔÚ·¢ËÍÊý¾Ý
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                1 UARTÕýÔÚ·¢ËÍÊý¾Ý    0 Êý¾ÝÒÑ·¢Íê
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_IsTXBusy()
+* åŠŸèƒ½è¯´æ˜Ž: UARTæ˜¯å¦æ­£åœ¨å‘é€æ•°æ®
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              1 UARTæ­£åœ¨å‘é€æ•°æ®    0 æ•°æ®å·²å‘å®Œ
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_IsTXBusy(UART_TypeDef *UARTx)
 {
@@ -191,11 +209,11 @@ uint32_t UART_IsTXBusy(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_IsRXFIFOEmpty()
-* ¹¦ÄÜËµÃ÷: ½ÓÊÕFIFOÊÇ·ñÎª¿Õ£¬Èç¹û²»¿ÕÔòËµÃ÷ÆäÖÐÓÐÊý¾Ý¿ÉÒÔ¶ÁÈ¡
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                1 ½ÓÊÕFIFO¿Õ    0 ½ÓÊÕFIFO·Ç¿Õ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_IsRXFIFOEmpty()
+* åŠŸèƒ½è¯´æ˜Ž: æŽ¥æ”¶FIFOæ˜¯å¦ä¸ºç©ºï¼Œå¦‚æžœä¸ç©ºåˆ™è¯´æ˜Žå…¶ä¸­æœ‰æ•°æ®å¯ä»¥è¯»å–
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              1 æŽ¥æ”¶FIFOç©º    0 æŽ¥æ”¶FIFOéžç©º
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_IsRXFIFOEmpty(UART_TypeDef *UARTx)
 {
@@ -203,11 +221,11 @@ uint32_t UART_IsRXFIFOEmpty(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_IsTXFIFOFull()
-* ¹¦ÄÜËµÃ÷: ·¢ËÍFIFOÊÇ·ñÎªÂú£¬Èç¹û²»ÂúÔò¿ÉÒÔ¼ÌÐøÏòÆäÖÐÐ´ÈëÊý¾Ý
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                1 ·¢ËÍFIFOÂú    0 ·¢ËÍFIFO²»Âú
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_IsTXFIFOFull()
+* åŠŸèƒ½è¯´æ˜Ž: å‘é€FIFOæ˜¯å¦ä¸ºæ»¡ï¼Œå¦‚æžœä¸æ»¡åˆ™å¯ä»¥ç»§ç»­å‘å…¶ä¸­å†™å…¥æ•°æ®
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              1 å‘é€FIFOæ»¡    0 å‘é€FIFOä¸æ»¡
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_IsTXFIFOFull(UART_TypeDef *UARTx)
 {
@@ -215,53 +233,53 @@ uint32_t UART_IsTXFIFOFull(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_SetBaudrate()
-* ¹¦ÄÜËµÃ÷: ÉèÖÃ²¨ÌØÂÊ
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-*           uint32_t baudrate       ÒªÉèÖÃµÄ²¨ÌØÂÊ
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ²»ÒªÔÚ´®¿Ú¹¤×÷Ê±¸ü¸Ä²¨ÌØÂÊ£¬Ê¹ÓÃ´Ëº¯ÊýÇ°ÇëÏÈµ÷ÓÃUART_Close()¹Ø±Õ´®¿Ú
+* å‡½æ•°åç§°: UART_SetBaudrate()
+* åŠŸèƒ½è¯´æ˜Ž: è®¾ç½®æ³¢ç‰¹çŽ‡
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+*           uint32_t baudrate       è¦è®¾ç½®çš„æ³¢ç‰¹çŽ‡
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: ä¸è¦åœ¨ä¸²å£å·¥ä½œæ—¶æ›´æ”¹æ³¢ç‰¹çŽ‡ï¼Œä½¿ç”¨æ­¤å‡½æ•°å‰è¯·å…ˆè°ƒç”¨UART_Close()å…³é—­ä¸²å£
 ******************************************************************************************************************************************/
 void UART_SetBaudrate(UART_TypeDef *UARTx, uint32_t baudrate)
 {
     UARTx->BAUD &= ~UART_BAUD_BAUD_Msk;
-    UARTx->BAUD |= ((SystemCoreClock / 16 / baudrate) << UART_BAUD_BAUD_Pos);
+    UARTx->BAUD |= ((SystemCoreClock / 16 / baudrate - 1) << UART_BAUD_BAUD_Pos);
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_GetBaudrate()
-* ¹¦ÄÜËµÃ÷: ²éÑ¯²¨ÌØÂÊ
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                µ±Ç°²¨ÌØÂÊ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_GetBaudrate()
+* åŠŸèƒ½è¯´æ˜Ž: æŸ¥è¯¢æ³¢ç‰¹çŽ‡
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              å½“å‰æ³¢ç‰¹çŽ‡
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_GetBaudrate(UART_TypeDef *UARTx)
 {
-    return (UARTx->BAUD & UART_BAUD_BAUD_Msk);
+    return SystemCoreClock / 16 / (((UARTx->BAUD & UART_BAUD_BAUD_Msk) >> UART_BAUD_BAUD_Pos) + 1);
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_CTSConfig()
-* ¹¦ÄÜËµÃ÷: UART CTSÁ÷¿ØÅäÖÃ
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-*           uint32_t enable         1 Ê¹ÄÜCTSÁ÷¿Ø    0 ½ûÖ¹CTSÁ÷¿Ø
-*           uint32_t polarity       0 CTSÊäÈëÎªµÍ±íÊ¾¿ÉÒÔ·¢ËÍÊý¾Ý    1 CTSÊäÈëÎª¸ß±íÊ¾¿ÉÒÔ·¢ËÍÊý¾Ý
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_CTSConfig()
+* åŠŸèƒ½è¯´æ˜Ž: UART CTSæµæŽ§é…ç½®
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+*           uint32_t enable         1 ä½¿èƒ½CTSæµæŽ§    0 ç¦æ­¢CTSæµæŽ§
+*           uint32_t polarity       0 CTSè¾“å…¥ä¸ºä½Žè¡¨ç¤ºå¯ä»¥å‘é€æ•°æ®    1 CTSè¾“å…¥ä¸ºé«˜è¡¨ç¤ºå¯ä»¥å‘é€æ•°æ®
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_CTSConfig(UART_TypeDef *UARTx, uint32_t enable, uint32_t polarity)
 {
     UARTx->CTSCR &= ~(UART_CTSCR_EN_Msk | UART_CTSCR_POL_Msk);
-    UARTx->CTSCR |= (enable   << UART_CTSCR_EN_Pos) |
+    UARTx->CTSCR |= (enable << UART_CTSCR_EN_Pos) |
                     (polarity << UART_CTSCR_POL_Pos);
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_CTSLineState()
-* ¹¦ÄÜËµÃ÷: UART CTSÏßµ±Ç°×´Ì¬
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                0 CTSÏßµ±Ç°ÎªµÍµçÆ½    1 CTSÏßµ±Ç°Îª¸ßµçÆ½
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_CTSLineState()
+* åŠŸèƒ½è¯´æ˜Ž: UART CTSçº¿å½“å‰çŠ¶æ€
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              0 CTSçº¿å½“å‰ä¸ºä½Žç”µå¹³    1 CTSçº¿å½“å‰ä¸ºé«˜ç”µå¹³
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_CTSLineState(UART_TypeDef *UARTx)
 {
@@ -269,29 +287,29 @@ uint32_t UART_CTSLineState(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_RTSConfig()
-* ¹¦ÄÜËµÃ÷: UART RTSÁ÷¿ØÅäÖÃ
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-*           uint32_t enable         1 Ê¹ÄÜRTSÁ÷¿Ø    0 ½ûÖ¹RTSÁ÷¿Ø
-*           uint32_t polarity       0 RTSÊä³öµÍ±íÊ¾¿ÉÒÔ½ÓÊÕÊý¾Ý    1 RTSÊä³ö¸ß±íÊ¾¿ÉÒÔ½ÓÊÕÊý¾Ý
-*           uint32_t threshold      RTSÁ÷¿ØµÄ´¥·¢ãÐÖµ£¬¿ÉÈ¡ÖµUART_RTS_1BYTE¡¢UART_RTS_2BYTE¡¢UART_RTS_4BYTE¡¢UART_RTS_6BYTE
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_RTSConfig()
+* åŠŸèƒ½è¯´æ˜Ž: UART RTSæµæŽ§é…ç½®
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+*           uint32_t enable         1 ä½¿èƒ½RTSæµæŽ§    0 ç¦æ­¢RTSæµæŽ§
+*           uint32_t polarity       0 RTSè¾“å‡ºä½Žè¡¨ç¤ºå¯ä»¥æŽ¥æ”¶æ•°æ®    1 RTSè¾“å‡ºé«˜è¡¨ç¤ºå¯ä»¥æŽ¥æ”¶æ•°æ®
+*           uint32_t threshold      RTSæµæŽ§çš„è§¦å‘é˜ˆå€¼ï¼Œå¯å–å€¼UART_RTS_1BYTEã€UART_RTS_2BYTEã€UART_RTS_4BYTEã€UART_RTS_6BYTE
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_RTSConfig(UART_TypeDef *UARTx, uint32_t enable, uint32_t polarity, uint32_t threshold)
 {
     UARTx->RTSCR &= ~(UART_RTSCR_EN_Msk | UART_RTSCR_POL_Msk | UART_RTSCR_THR_Msk);
-    UARTx->RTSCR |= (enable    << UART_RTSCR_EN_Pos)  |
-                    (polarity  << UART_RTSCR_POL_Pos) |
+    UARTx->RTSCR |= (enable << UART_RTSCR_EN_Pos) |
+                    (polarity << UART_RTSCR_POL_Pos) |
                     (threshold << UART_RTSCR_THR_Pos);
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_RTSLineState()
-* ¹¦ÄÜËµÃ÷: UART RTSÏßµ±Ç°×´Ì¬
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                0 RTSÏßµ±Ç°ÎªµÍµçÆ½    1 RTSÏßµ±Ç°Îª¸ßµçÆ½
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_RTSLineState()
+* åŠŸèƒ½è¯´æ˜Ž: UART RTSçº¿å½“å‰çŠ¶æ€
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              0 RTSçº¿å½“å‰ä¸ºä½Žç”µå¹³    1 RTSçº¿å½“å‰ä¸ºé«˜ç”µå¹³
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_RTSLineState(UART_TypeDef *UARTx)
 {
@@ -299,27 +317,27 @@ uint32_t UART_RTSLineState(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_LINConfig()
-* ¹¦ÄÜËµÃ÷: UART LIN¹¦ÄÜÅäÖÃ
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-*           uint32_t detectedIEn    ¼ì²âµ½BreakÖÐ¶ÏÊ¹ÄÜ
-*           uint32_t generatedIEn   Break·¢ËÍÍê³ÉÖÐ¶ÏÊ¹ÄÜ
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_LINConfig()
+* åŠŸèƒ½è¯´æ˜Ž: UART LINåŠŸèƒ½é…ç½®
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+*           uint32_t detectedIEn    æ£€æµ‹åˆ°Breakä¸­æ–­ä½¿èƒ½
+*           uint32_t generatedIEn   Breakå‘é€å®Œæˆä¸­æ–­ä½¿èƒ½
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_LINConfig(UART_TypeDef *UARTx, uint32_t detectedIEn, uint32_t generatedIEn)
 {
     UARTx->LINCR &= ~(UART_LINCR_BRKDETIE_Msk | UART_LINCR_GENBRKIE_Msk);
-    UARTx->LINCR |= (detectedIEn  << UART_LINCR_BRKDETIE_Pos) |
+    UARTx->LINCR |= (detectedIEn << UART_LINCR_BRKDETIE_Pos) |
                     (generatedIEn << UART_LINCR_GENBRKIE_Pos);
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_LINGenerate()
-* ¹¦ÄÜËµÃ÷: UART LIN²úÉú/·¢ËÍBreak
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_LINGenerate()
+* åŠŸèƒ½è¯´æ˜Ž: UART LINäº§ç”Ÿ/å‘é€Break
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_LINGenerate(UART_TypeDef *UARTx)
 {
@@ -327,23 +345,23 @@ void UART_LINGenerate(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_LINIsDetected()
-* ¹¦ÄÜËµÃ÷: UART LINÊÇ·ñ¼ì²âµ½Break
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                1 ¼ì²âµ½LIN Break    0 Î´¼ì²âµ½LIN Break
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_LINIsDetected()
+* åŠŸèƒ½è¯´æ˜Ž: UART LINæ˜¯å¦æ£€æµ‹åˆ°Break
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              1 æ£€æµ‹åˆ°LIN Break    0 æœªæ£€æµ‹åˆ°LIN Break
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_LINIsDetected(UART_TypeDef *UARTx)
 {
-    return (UARTx->LINCR & UART_LINCR_BRKDETIE_Msk) ? 1 : 0;
+    return (UARTx->LINCR & UART_LINCR_BRKDETIF_Msk) ? 1 : 0;
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_LINIsGenerated()
-* ¹¦ÄÜËµÃ÷: UART LIN BreakÊÇ·ñ·¢ËÍÍê³É
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                1 LIN Break ·¢ËÍÍê³É    0 LIN Break·¢ËÍÎ´Íê³É
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_LINIsGenerated()
+* åŠŸèƒ½è¯´æ˜Ž: UART LIN Breakæ˜¯å¦å‘é€å®Œæˆ
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              1 LIN Break å‘é€å®Œæˆ    0 LIN Breakå‘é€æœªå®Œæˆ
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_LINIsGenerated(UART_TypeDef *UARTx)
 {
@@ -351,36 +369,42 @@ uint32_t UART_LINIsGenerated(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_ABRStart()
-* ¹¦ÄÜËµÃ÷: UART ×Ô¶¯²¨ÌØÂÊ¼ì²â¿ªÊ¼
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-*           uint32_t detectChar     ÓÃÓÚ×Ô¶¯¼ì²â¡¢¼ÆËã²¨ÌØÂÊµÄ¼ì²â×Ö·û
-*                                   8Î»Êý¾ÝÊ±¿ÉÈ¡Öµ£º0xFF¡¢0xFE¡¢0xF8¡¢0x80£¬·Ö±ð±íÊ¾·¢ËÍ·½±ØÐë·¢ËÍ0xFF¡¢0xFE¡¢0xF8¡¢0x80
-*                                   9Î»Êý¾ÝÊ±¿ÉÈ¡Öµ£º0x1FF¡¢0x1FE¡¢0x1F8¡¢0x180£¬·Ö±ð±íÊ¾·¢ËÍ·½±ØÐë·¢ËÍ0x1FF¡¢0x1FE¡¢0x1F8¡¢0x180
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ×Ô¶¯²¨ÌØÂÊ¼ì²âÊ±²»ÄÜ¿ªÆôÆæÅ¼Ð£Ñé
+* å‡½æ•°åç§°: UART_ABRStart()
+* åŠŸèƒ½è¯´æ˜Ž: UART è‡ªåŠ¨æ³¢ç‰¹çŽ‡æ£€æµ‹å¼€å§‹
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+*           uint32_t detectChar     ç”¨äºŽè‡ªåŠ¨æ£€æµ‹ã€è®¡ç®—æ³¢ç‰¹çŽ‡çš„æ£€æµ‹å­—ç¬¦
+*                                   8ä½æ•°æ®æ—¶å¯å–å€¼ï¼š0xFFã€0xFEã€0xF8ã€0x80ï¼Œåˆ†åˆ«è¡¨ç¤ºå‘é€æ–¹å¿…é¡»å‘é€0xFFã€0xFEã€0xF8ã€0x80
+*                                   9ä½æ•°æ®æ—¶å¯å–å€¼ï¼š0x1FFã€0x1FEã€0x1F8ã€0x180ï¼Œåˆ†åˆ«è¡¨ç¤ºå‘é€æ–¹å¿…é¡»å‘é€0x1FFã€0x1FEã€0x1F8ã€0x180
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: è‡ªåŠ¨æ³¢ç‰¹çŽ‡æ£€æµ‹æ—¶ä¸èƒ½å¼€å¯å¥‡å¶æ ¡éªŒ
 ******************************************************************************************************************************************/
 void UART_ABRStart(UART_TypeDef *UARTx, uint32_t detectChar)
 {
     uint32_t bits;
 
-    if ((detectChar == 0xFF) || (detectChar == 0x1FF))      bits = 0;
-    else if ((detectChar == 0xFE) || (detectChar == 0x1FE)) bits = 1;
-    else if ((detectChar == 0xF8) || (detectChar == 0x1F8)) bits = 2;
-    else if ((detectChar == 0x80) || (detectChar == 0x180)) bits = 3;
-    else while (1);
+    if ((detectChar == 0xFF) || (detectChar == 0x1FF))
+        bits = 0;
+    else if ((detectChar == 0xFE) || (detectChar == 0x1FE))
+        bits = 1;
+    else if ((detectChar == 0xF8) || (detectChar == 0x1F8))
+        bits = 2;
+    else if ((detectChar == 0x80) || (detectChar == 0x180))
+        bits = 3;
+    else
+        while (1)
+            ;
 
     UARTx->BAUD &= ~(UART_BAUD_ABREN_Msk | UART_BAUD_ABRBIT_Msk);
-    UARTx->BAUD |= (1    << UART_BAUD_ABREN_Pos) |
+    UARTx->BAUD |= (1 << UART_BAUD_ABREN_Pos) |
                    (bits << UART_BAUD_ABRBIT_Pos);
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_ABRIsDone()
-* ¹¦ÄÜËµÃ÷: UART ×Ô¶¯²¨ÌØÂÊÊÇ·ñÍê³É
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                0 Î´Íê³É    UART_ABR_RES_OK ÒÑÍê³É£¬ÇÒ³É¹¦    UART_ABR_RES_ERR ÒÑÍê³É£¬µ«Ê§°Ü¡¢³ö´í
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_ABRIsDone()
+* åŠŸèƒ½è¯´æ˜Ž: UART è‡ªåŠ¨æ³¢ç‰¹çŽ‡æ˜¯å¦å®Œæˆ
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              0 æœªå®Œæˆ    UART_ABR_RES_OK å·²å®Œæˆï¼Œä¸”æˆåŠŸ    UART_ABR_RES_ERR å·²å®Œæˆï¼Œä½†å¤±è´¥ã€å‡ºé”™
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_ABRIsDone(UART_TypeDef *UARTx)
 {
@@ -399,11 +423,11 @@ uint32_t UART_ABRIsDone(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTRXThresholdEn()
-* ¹¦ÄÜËµÃ÷: µ±RX FIFOÖÐÊý¾Ý¸öÊý >= RXThresholdÊ± ´¥·¢ÖÐ¶Ï
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTRXThresholdEn()
+* åŠŸèƒ½è¯´æ˜Ž: å½“RX FIFOä¸­æ•°æ®ä¸ªæ•° >= RXThresholdæ—¶ è§¦å‘ä¸­æ–­
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_INTRXThresholdEn(UART_TypeDef *UARTx)
 {
@@ -411,11 +435,11 @@ void UART_INTRXThresholdEn(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTRXThresholdDis()
-* ¹¦ÄÜËµÃ÷: µ±RX FIFOÖÐÊý¾Ý¸öÊý >= RXThresholdÊ± ²»´¥·¢ÖÐ¶Ï
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTRXThresholdDis()
+* åŠŸèƒ½è¯´æ˜Ž: å½“RX FIFOä¸­æ•°æ®ä¸ªæ•° >= RXThresholdæ—¶ ä¸è§¦å‘ä¸­æ–­
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_INTRXThresholdDis(UART_TypeDef *UARTx)
 {
@@ -423,11 +447,11 @@ void UART_INTRXThresholdDis(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTRXThresholdStat()
-* ¹¦ÄÜËµÃ÷: ÊÇ·ñRX FIFOÖÐÊý¾Ý¸öÊý >= RXThreshold
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                1 RX FIFOÖÐÊý¾Ý¸öÊý >= RXThreshold      0 RX FIFOÖÐÊý¾Ý¸öÊý < RXThreshold
-* ×¢ÒâÊÂÏî: RXIF = RXTHRF & RXIE
+* å‡½æ•°åç§°: UART_INTRXThresholdStat()
+* åŠŸèƒ½è¯´æ˜Ž: æ˜¯å¦RX FIFOä¸­æ•°æ®ä¸ªæ•° >= RXThreshold
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              1 RX FIFOä¸­æ•°æ®ä¸ªæ•° >= RXThreshold       0 RX FIFOä¸­æ•°æ®ä¸ªæ•° < RXThreshold
+* æ³¨æ„äº‹é¡¹: RXIF = RXTHRF & RXIE
 ******************************************************************************************************************************************/
 uint32_t UART_INTRXThresholdStat(UART_TypeDef *UARTx)
 {
@@ -435,11 +459,11 @@ uint32_t UART_INTRXThresholdStat(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTTXThresholdEn()
-* ¹¦ÄÜËµÃ÷: µ±TX FIFOÖÐÊý¾Ý¸öÊý <= TXThresholdÊ± ´¥·¢ÖÐ¶Ï
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTTXThresholdEn()
+* åŠŸèƒ½è¯´æ˜Ž: å½“TX FIFOä¸­æ•°æ®ä¸ªæ•° <= TXThresholdæ—¶ è§¦å‘ä¸­æ–­
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_INTTXThresholdEn(UART_TypeDef *UARTx)
 {
@@ -447,11 +471,11 @@ void UART_INTTXThresholdEn(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTTXThresholdDis()
-* ¹¦ÄÜËµÃ÷: µ±TX FIFOÖÐÊý¾Ý¸öÊý <= TXThresholdÊ± ²»´¥·¢ÖÐ¶Ï
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTTXThresholdDis()
+* åŠŸèƒ½è¯´æ˜Ž: å½“TX FIFOä¸­æ•°æ®ä¸ªæ•° <= TXThresholdæ—¶ ä¸è§¦å‘ä¸­æ–­
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_INTTXThresholdDis(UART_TypeDef *UARTx)
 {
@@ -459,11 +483,11 @@ void UART_INTTXThresholdDis(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTTXThresholdStat()
-* ¹¦ÄÜËµÃ÷: ÊÇ·ñTX FIFOÖÐÊý¾Ý¸öÊý <= TXThreshold
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                1 TX FIFOÖÐÊý¾Ý¸öÊý <= TXThreshold      0 TX FIFOÖÐÊý¾Ý¸öÊý > TXThreshold
-* ×¢ÒâÊÂÏî: TXIF = TXTHRF & TXIE
+* å‡½æ•°åç§°: UART_INTTXThresholdStat()
+* åŠŸèƒ½è¯´æ˜Ž: æ˜¯å¦TX FIFOä¸­æ•°æ®ä¸ªæ•° <= TXThreshold
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              1 TX FIFOä¸­æ•°æ®ä¸ªæ•° <= TXThreshold       0 TX FIFOä¸­æ•°æ®ä¸ªæ•° > TXThreshold
+* æ³¨æ„äº‹é¡¹: TXIF = TXTHRF & TXIE
 ******************************************************************************************************************************************/
 uint32_t UART_INTTXThresholdStat(UART_TypeDef *UARTx)
 {
@@ -471,11 +495,11 @@ uint32_t UART_INTTXThresholdStat(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTTimeoutEn()
-* ¹¦ÄÜËµÃ÷: ½ÓÊÕ·¢Éú³¬Ê±Ê± ´¥·¢ÖÐ¶Ï
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTTimeoutEn()
+* åŠŸèƒ½è¯´æ˜Ž: æŽ¥æ”¶å‘ç”Ÿè¶…æ—¶æ—¶ è§¦å‘ä¸­æ–­
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_INTTimeoutEn(UART_TypeDef *UARTx)
 {
@@ -483,11 +507,11 @@ void UART_INTTimeoutEn(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTTimeoutDis()
-* ¹¦ÄÜËµÃ÷: ½ÓÊÕ·¢Éú³¬Ê±Ê± ²»´¥·¢ÖÐ¶Ï
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTTimeoutDis()
+* åŠŸèƒ½è¯´æ˜Ž: æŽ¥æ”¶å‘ç”Ÿè¶…æ—¶æ—¶ ä¸è§¦å‘ä¸­æ–­
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_INTTimeoutDis(UART_TypeDef *UARTx)
 {
@@ -495,11 +519,11 @@ void UART_INTTimeoutDis(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTTimeoutStat()
-* ¹¦ÄÜËµÃ÷: ÊÇ·ñ·¢ÉúÁË½ÓÊÕ³¬Ê±£¬¼´³¬¹ý TimeoutTime/(Baudrate/10) ÃëÃ»ÓÐÔÚRXÏßÉÏ½ÓÊÕµ½Êý¾ÝÊ±´¥·¢ÖÐ¶Ï
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                1 ·¢ÉúÁË½ÓÊÕ³¬Ê±        0 Î´·¢Éú½ÓÊÕ³¬Ê±
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTTimeoutStat()
+* åŠŸèƒ½è¯´æ˜Ž: æ˜¯å¦å‘ç”Ÿäº†æŽ¥æ”¶è¶…æ—¶ï¼Œå³è¶…è¿‡ TimeoutTime/(Baudrate/10) ç§’æ²¡æœ‰åœ¨RXçº¿ä¸ŠæŽ¥æ”¶åˆ°æ•°æ®æ—¶è§¦å‘ä¸­æ–­
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              1 å‘ç”Ÿäº†æŽ¥æ”¶è¶…æ—¶       0 æœªå‘ç”ŸæŽ¥æ”¶è¶…æ—¶
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_INTTimeoutStat(UART_TypeDef *UARTx)
 {
@@ -507,11 +531,11 @@ uint32_t UART_INTTimeoutStat(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTTXDoneEn()
-* ¹¦ÄÜËµÃ÷: ·¢ËÍFIFO¿ÕÇÒ·¢ËÍÒÆÎ»¼Ä´æÆ÷¿ÕÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTTXDoneEn()
+* åŠŸèƒ½è¯´æ˜Ž: å‘é€FIFOç©ºä¸”å‘é€ç§»ä½å¯„å­˜å™¨ç©ºä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_INTTXDoneEn(UART_TypeDef *UARTx)
 {
@@ -519,11 +543,11 @@ void UART_INTTXDoneEn(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTTXDoneDis()
-* ¹¦ÄÜËµÃ÷: ·¢ËÍFIFO¿ÕÇÒ·¢ËÍÒÆÎ»¼Ä´æÆ÷¿ÕÖÐ¶Ï½ûÖ¹
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTTXDoneDis()
+* åŠŸèƒ½è¯´æ˜Ž: å‘é€FIFOç©ºä¸”å‘é€ç§»ä½å¯„å­˜å™¨ç©ºä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void UART_INTTXDoneDis(UART_TypeDef *UARTx)
 {
@@ -531,11 +555,11 @@ void UART_INTTXDoneDis(UART_TypeDef *UARTx)
 }
 
 /******************************************************************************************************************************************
-* º¯ÊýÃû³Æ: UART_INTTXDoneStat()
-* ¹¦ÄÜËµÃ÷: ·¢ËÍFIFO¿ÕÇÒ·¢ËÍÒÆÎ»¼Ä´æÆ÷¿ÕÖÐ¶Ï×´Ì¬
-* Êä    Èë: UART_TypeDef * UARTx    Ö¸¶¨Òª±»ÉèÖÃµÄUART´®¿Ú£¬ÓÐÐ§Öµ°üÀ¨UART0¡¢UART1¡¢UART2¡¢UART3
-* Êä    ³ö: uint32_t                1 ·¢ËÍFIFO¿ÕÇÒ·¢ËÍÒÆÎ»¼Ä´æÆ÷¿Õ      0 ·¢ËÍFIFO»ò·¢ËÍÒÆÎ»¼Ä´æÆ÷Î´¿Õ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: UART_INTTXDoneStat()
+* åŠŸèƒ½è¯´æ˜Ž: å‘é€FIFOç©ºä¸”å‘é€ç§»ä½å¯„å­˜å™¨ç©ºä¸­æ–­çŠ¶æ€
+* è¾“    å…¥: UART_TypeDef * UARTx  æŒ‡å®šè¦è¢«è®¾ç½®çš„UARTä¸²å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬UART0ã€UART1ã€UART2ã€UART3
+* è¾“    å‡º: uint32_t              1 å‘é€FIFOç©ºä¸”å‘é€ç§»ä½å¯„å­˜å™¨ç©º      0 å‘é€FIFOæˆ–å‘é€ç§»ä½å¯„å­˜å™¨æœªç©º
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 uint32_t UART_INTTXDoneStat(UART_TypeDef *UARTx)
 {

@@ -25,7 +25,7 @@ extern void (*g_nmivector)(void);
 */
 void drv_irq_enable(uint32_t irq_num)
 {
-    if (NMI_EXPn != irq_num) 
+    if (NMI_EXPn != irq_num)
     {
     #ifdef CONFIG_SYSTEM_SECURE
         csi_vic_enable_sirq(irq_num);
@@ -42,7 +42,7 @@ void drv_irq_enable(uint32_t irq_num)
 */
 void drv_irq_disable(uint32_t irq_num)
 {
-    if (NMI_EXPn != irq_num) 
+    if (NMI_EXPn != irq_num)
     {
     #ifdef CONFIG_SYSTEM_SECURE
         csi_vic_disable_sirq(irq_num);
@@ -60,11 +60,11 @@ void drv_irq_disable(uint32_t irq_num)
 */
 void drv_irq_register(uint32_t irq_num, void *irq_handler)
 {
-    if (NMI_EXPn != irq_num) 
+    if (NMI_EXPn != irq_num)
     {
         g_irqvector[irq_num] = irq_handler;
-    } 
-    else 
+    }
+    else
     {
         g_nmivector = irq_handler;
     }
@@ -77,11 +77,11 @@ void drv_irq_register(uint32_t irq_num, void *irq_handler)
 */
 void drv_irq_unregister(uint32_t irq_num)
 {
-    if (NMI_EXPn != irq_num) 
+    if (NMI_EXPn != irq_num)
     {
         g_irqvector[irq_num] = (void *)Default_Handler;
-    } 
-    else 
+    }
+    else
     {
         g_nmivector = (void *)Default_Handler;
     }

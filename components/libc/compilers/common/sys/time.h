@@ -8,16 +8,19 @@
  * 2020-09-07     Meco Man     combine gcc armcc iccarm
  * 2021-02-12     Meco Man     move all definitions located in <clock_time.h> to this file
  */
-#ifndef _SYS_TIME_H_
-#define _SYS_TIME_H_
+#ifndef __SYS_TIME_H__
+#define __SYS_TIME_H__
 
 #include <rtconfig.h>
+#include <sys/types.h>
+#include <stdint.h>
 #include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/* timezone */
 #define DST_NONE    0   /* not on dst */
 #define DST_USA     1   /* USA style dst */
 #define DST_AUST    2   /* Australian style dst */
@@ -30,31 +33,36 @@ extern "C" {
 #define DST_TUR     9   /* Turkey */
 #define DST_AUSTALT 10  /* Australian style with shift in 1986 */
 
-#ifndef _TIMEVAL_DEFINED
-#define _TIMEVAL_DEFINED
+struct timezone
+{
+    int tz_minuteswest;   /* minutes west of Greenwich */
+    int tz_dsttime;       /* type of dst correction */
+};
+
 /*
  * Structure returned by gettimeofday(2) system call,
  * and used in other calls.
  */
-#if !(defined(_WIN32))
-struct timeval {
-    long    tv_sec;     /* seconds */
-    long    tv_usec;    /* and microseconds */
+#ifndef _TIMEVAL_DEFINED
+#define _TIMEVAL_DEFINED
+#if !defined(_WIN32)
+struct timeval
+{
+    time_t      tv_sec;     /* seconds */
+    suseconds_t tv_usec;    /* and microseconds */
 };
 #endif
 #endif /* _TIMEVAL_DEFINED */
 
-#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !(defined(__ICCARM__) && (__VER__ >= 8010001)) && !defined(_WIN32)
-struct timespec {
+#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && \
+    !(defined(__ICCARM__) && (__VER__ >= 8010001)) && \
+    !defined(_WIN32)
+struct timespec
+{
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
 };
 #endif
-
-struct timezone {
-  int tz_minuteswest;   /* minutes west of Greenwich */
-  int tz_dsttime;       /* type of dst correction */
-};
 
 int stime(const time_t *t);
 time_t timegm(struct tm * const t);
@@ -64,9 +72,8 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz);
 struct tm *gmtime_r(const time_t *timep, struct tm *r);
 #endif
 
-#ifdef RT_USING_POSIX
-#include <sys/types.h>
-/* posix clock and timer */
+#ifdef RT_USING_POSIX_CLOCK
+/* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
 #define NANOSECOND_PER_SECOND   1000000000UL
@@ -95,8 +102,15 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r);
 int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
-int clock_time_to_tick(const struct timespec *time);
-#endif /* RT_USING_POSIX */
+int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp);
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
+int rt_timespec_to_tick(const struct timespec *time);
+#endif /* RT_USING_POSIX_CLOCK */
+
+/* timezone */
+void tz_set(int8_t tz);
+int8_t tz_get(void);
+int8_t tz_is_dst(void);
 
 #ifdef __cplusplus
 }

@@ -31,7 +31,9 @@
 // </RDTConfigurator>
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int Image$$ARM_LIB_HEAP$$ZI$$Base;
+extern int Image$$ARM_LIB_STACK$$ZI$$Base;
 #define HEAP_BEGIN  ((void *)&Image$$ARM_LIB_HEAP$$ZI$$Base)
+#define HEAP_END    ((void*)&Image$$ARM_LIB_STACK$$ZI$$Base)
 #elif defined(__ICCARM__)
 #pragma section="HEAP"
 #define HEAP_BEGIN  (__segment_end("HEAP"))
@@ -39,8 +41,8 @@ extern int Image$$ARM_LIB_HEAP$$ZI$$Base;
 extern int __HeapBase;
 extern int __HeapLimit;
 #define HEAP_BEGIN  ((void *)&__HeapBase)
+#define HEAP_END  ((void *)&__HeapLimit)
 #endif
-#define HEAP_END    ((void*)&__HeapLimit)
 
 void rt_hw_board_init(void);
 

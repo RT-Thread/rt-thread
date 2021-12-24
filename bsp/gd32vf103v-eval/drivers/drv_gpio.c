@@ -558,10 +558,6 @@ void EXTI10_15_IRQHandler(void)
 
 int rt_hw_pin_init(void)
 {
-    /* enable the global interrupt */
-    eclic_global_interrupt_enable();
-    eclic_priority_group_set(ECLIC_PRIGROUP_LEVEL3_PRIO1);
-
     rcu_periph_clock_enable(RCU_GPIOA);
     rcu_periph_clock_enable(RCU_GPIOB);
     rcu_periph_clock_enable(RCU_GPIOC);

@@ -1,10 +1,10 @@
 /******************************************************************************************************************************************
-* ÎÄ¼şÃû³Æ: SWM320_flash.c
-* ¹¦ÄÜËµÃ÷: Ê¹ÓÃĞ¾Æ¬µÄIAP¹¦ÄÜ½«Æ¬ÉÏFlashÄ£Äâ³ÉEEPROMÀ´±£´æÊı¾İ£¬µôµçºó²»¶ªÊ§
-* ¼¼ÊõÖ§³Ö: http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî:
-* °æ±¾ÈÕÆÚ: V1.1.0      2017Äê10ÔÂ25ÈÕ
-* Éı¼¶¼ÇÂ¼:
+* æ–‡ä»¶åç§°: SWM320_flash.c
+* åŠŸèƒ½è¯´æ˜: ä½¿ç”¨èŠ¯ç‰‡çš„IAPåŠŸèƒ½å°†ç‰‡ä¸ŠFlashæ¨¡æ‹ŸæˆEEPROMæ¥ä¿å­˜æ•°æ®ï¼Œæ‰ç”µåä¸ä¸¢å¤±
+* æŠ€æœ¯æ”¯æŒ: http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹:
+* ç‰ˆæœ¬æ—¥æœŸ: V1.1.0      2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•:
 *******************************************************************************************************************************************
 * @attention
 *
@@ -19,77 +19,77 @@
 #include "SWM320.h"
 #include "SWM320_flash.h"
 
-
-__attribute__((section("PlaceInRAM")))
-static void switchTo80M(void)
-{
-    uint32_t i;
-
-    for (i = 0; i < 50; i++) __NOP();
-
-    FLASH->CFG0 = 0x4bf;
-    FLASH->CFG1 = 0xabfc7a6e;
-
-    for (i = 0; i < 50; i++) __NOP();
-}
+IAP_Cache_Reset_t IAP_Cache_Reset = (IAP_Cache_Reset_t)0x11000601;
+IAP_Flash_Param_t IAP_Flash_Param = (IAP_Flash_Param_t)0x11000681;
+IAP_Flash_Erase_t IAP_Flash_Erase = (IAP_Flash_Erase_t)0x11000781;
+IAP_Flash_Write_t IAP_Flash_Write = (IAP_Flash_Write_t)0x11000801;
 
 /******************************************************************************************************************************************
-* º¯ÊıÃû³Æ: FLASH_Erase()
-* ¹¦ÄÜËµÃ÷: Æ¬ÄÚFlash²Á³ı
-* Êä    Èë: uint32_t addr           ²Á³ıµØÖ·
-* Êä    ³ö: ÎŞ
-* ×¢ÒâÊÂÏî: ÎŞ
+* å‡½æ•°åç§°: FLASH_Erase()
+* åŠŸèƒ½è¯´æ˜: ç‰‡å†…Flashæ“¦é™¤
+* è¾“    å…¥: uint32_t addr         æ“¦é™¤åœ°å€ï¼Œæ‰‡åŒºå¤§å°ä¸º4K Byte
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
 void FLASH_Erase(uint32_t addr)
 {
-//  switchTo80M();
+    __disable_irq();
 
-    FLASH->ERASE = addr | ((uint32_t)1 << FLASH_ERASE_REQ_Pos);
-    while ((FLASH->STAT & FLASH_STAT_ERASE_GOING_Msk) == 0);
-    while ((FLASH->STAT & FLASH_STAT_ERASE_GOING_Msk) == 1);
+    IAP_Flash_Erase(addr / 0x1000);
 
-    FLASH->ERASE = 0;
+    IAP_Cache_Reset();
 
-//  switchTo40M();
+    __enable_irq();
 }
 
 /******************************************************************************************************************************************
-* º¯ÊıÃû³Æ: FLASH_Write()
-* ¹¦ÄÜËµÃ÷: Æ¬ÄÚFlashĞ´Èë
-* Êä    Èë: uint32_t addr           Ğ´ÈëµØÖ·
-*           uint32_t buff[]         ÒªĞ´ÈëµÄÊı¾İ
-*           uint32_t size           ÒªĞ´ÈëÊı¾İµÄ¸öÊı£¬×ÖÎªµ¥Î»
-* Êä    ³ö: ÎŞ
-* ×¢ÒâÊÂÏî: ÎŞ
+* å‡½æ•°åç§°: FLASH_Write()
+* åŠŸèƒ½è¯´æ˜: ç‰‡å†…Flashå†™å…¥
+* è¾“    å…¥: uint32_t addr         å†™å…¥åœ°å€
+*           uint32_t buff[]         è¦å†™å…¥çš„æ•°æ®
+*           uint32_t count          è¦å†™å…¥æ•°æ®çš„ä¸ªæ•°ï¼Œä»¥å­—ä¸ºå•ä½ï¼Œä¸”å¿…é¡»æ˜¯4çš„æ•´æ•°å€ï¼Œå³æœ€å°‘å†™å…¥4ä¸ªå­—
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: å†™å…¥æ•°æ®ä¸ªæ•°å¿…é¡»æ˜¯4çš„æ•´æ•°å€ï¼Œå³æœ€å°‘å†™å…¥4ä¸ªå­—
 ******************************************************************************************************************************************/
-void FLASH_Write(uint32_t addr, uint32_t buff[], uint32_t size)
+void FLASH_Write(uint32_t addr, uint32_t buff[], uint32_t count)
 {
-    uint32_t i, j;
+    __disable_irq();
 
-    switchTo80M();
+    IAP_Flash_Write(addr, (uint32_t)buff, count / 4);
 
-    FLASH->CACHE |= (1 << FLASH_CACHE_PROG_Pos);
+    IAP_Cache_Reset();
 
-    for (i = 0; i < size / 4; i++)
+    __enable_irq();
+}
+
+/******************************************************************************************************************************************
+* å‡½æ•°åç§°: Flash_Param_at_xMHz()
+* åŠŸèƒ½è¯´æ˜: å°†Flashå‚æ•°è®¾ç½®æˆxMHzä¸»é¢‘ä¸‹è¿è¡Œæ—¶æ‰€éœ€çš„å‚æ•°
+* è¾“    å…¥: uint32_t x        å¯å–å€¼
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
+******************************************************************************************************************************************/
+void Flash_Param_at_xMHz(uint32_t x)
+{
+    __disable_irq();
+    switch (x)
     {
-        FLASH->ADDR = addr + i * 4 * 4;
+    case 30:
+        IAP_Flash_Param(0x489, 0xabf41f25);
+        break;
 
-        for (j = 0; j < 4; j++)
-            FLASH->DATA = buff[i * 4 + j];
-        while ((FLASH->STAT & FLASH_STAT_FIFO_EMPTY_Msk) == 0) __NOP();
+    case 40:
+        IAP_Flash_Param(0x489, 0xabf42929);
+        break;
+
+    case 80:
+        IAP_Flash_Param(0x489, 0xabf8524d);
+        break;
+
+    case 120:
+    default:
+        IAP_Flash_Param(0x48a, 0xabfc7a6e);
+        break;
     }
-    if ((size % 4) != 0)
-    {
-        FLASH->ADDR = addr + i * 4 * 4;
-
-        for (j = 0; j < size % 4; j++)
-            FLASH->DATA = buff[i * 4 + j];
-        while ((FLASH->STAT & FLASH_STAT_FIFO_EMPTY_Msk) == 0) __NOP();
-    }
-    while (FLASH->STAT & FLASH_STAT_PROG_GOING_Msk);
-
-    FLASH->CACHE |= (1 << FLASH_CACHE_CLEAR_Pos);
-    FLASH->CACHE = 0;
-
-//  switchTo40M();
+    __enable_irq();
 }

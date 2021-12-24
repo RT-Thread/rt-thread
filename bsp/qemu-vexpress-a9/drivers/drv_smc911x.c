@@ -13,6 +13,7 @@
 #include <netif/ethernetif.h>
 #include <lwipopts.h>
 #include <automac.h>
+#include "delay.h"
 
 #define MAX_ADDR_LEN                6
 #define SMC911X_EMAC_DEVICE(eth)    (struct eth_device_smc911x*)(eth)
@@ -32,16 +33,6 @@ struct eth_device_smc911x
     uint32_t irqno;
 };
 static struct eth_device_smc911x _emac;
-
-int udelay(int value)
-{
-    return 0;
-}
-
-int mdelay(int value)
-{
-    return 0;
-}
 
 #if defined (CONFIG_SMC911X_32_BIT)
 rt_inline uint32_t smc911x_reg_read(struct eth_device_smc911x *dev, uint32_t offset)

@@ -10,7 +10,6 @@
  * 2017-10-20     urey         support rt-thread 3.0
  */
 #include <rtthread.h>
-#include <rtlibc.h>
 
 #include <dfs_fs.h>
 #include <dfs_file.h>
@@ -24,22 +23,6 @@
 #include <WinError.h>
 #include <windows.h>
 
-#if defined(__MINGW32__) && defined(_NO_OLDNAMES)
-#define O_RDONLY    _O_RDONLY
-#define O_WRONLY    _O_WRONLY
-#define O_RDWR      _O_RDWR
-#define O_ACCMODE   _O_ACCMODE
-#define O_APPEND    _O_APPEND
-#define O_CREAT     _O_CREAT
-#define O_TRUNC     _O_TRUNC
-#define O_EXCL      _O_EXCL
-#define O_TEXT      _O_TEXT
-#define O_BINARY    _O_BINARY
-#define O_TEMPORARY _O_TEMPORARY
-#define O_NOINHERIT _O_NOINHERIT
-#define O_SEQUENTIAL   _O_SEQUENTIAL
-#define O_RANDOM    _O_RANDOM
-#endif
 /*
  * RT-Thread DFS Interface for win-directory as an disk device
  */

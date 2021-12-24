@@ -1,0 +1,22 @@
+from building import *
+Import('rtconfig')
+
+src = []
+cwd = GetCurrentDir()
+group = []
+LIBS = ['m'] # link libm
+CPPPATH = [cwd]
+
+if rtconfig.PLATFORM == 'gcc':
+    if GetDepend('RT_USING_LIBC'):
+        LIBS += ['c'] # link libc
+        src += Glob('*.c')
+    else:
+        src += ['syscalls.c']
+
+    # identify this is Newlib, and only enable POSIX.1-1990
+    CPPDEFINES = ['RT_USING_NEWLIB', '_POSIX_C_SOURCE=1']
+
+    group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
+
+Return('group')

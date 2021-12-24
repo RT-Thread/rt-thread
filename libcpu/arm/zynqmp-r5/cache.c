@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006 - 2021, RT-Thread Development Team
  * Copyright (c) 2014 - 2020 Xilinx, Inc.  All rights reserved.
  * Copyright (c) 2021 WangHuachen.  All rights reserved.
  * SPDX-License-Identifier: MIT
@@ -9,6 +9,8 @@
  * 2020-03-19     WangHuachen  first version
  * 2021-05-10     WangHuachen  add more functions
  */
+
+#include <stdint.h>
 #include <rthw.h>
 #include <rtdef.h>
 
@@ -69,9 +71,10 @@ void Xil_DCacheEnable(void)
 #if defined (__GNUC__)
     CtrlReg = mfcp(XREG_CP15_SYS_CONTROL);
 #elif defined (__ICCARM__)
-     mfcp(XREG_CP15_SYS_CONTROL,CtrlReg);
+    mfcp(XREG_CP15_SYS_CONTROL, CtrlReg);
 #endif
-    if ((CtrlReg & XREG_CP15_CONTROL_C_BIT)==0x00000000U) {
+    if ((CtrlReg & XREG_CP15_CONTROL_C_BIT) == 0x00000000U)
+    {
         /* invalidate the Data cache */
         Xil_DCacheInvalidate();
 
@@ -93,7 +96,7 @@ void Xil_DCacheDisable(void)
 #if defined (__GNUC__)
     CtrlReg = mfcp(XREG_CP15_SYS_CONTROL);
 #elif defined (__ICCARM__)
-     mfcp(XREG_CP15_SYS_CONTROL,CtrlReg);
+    mfcp(XREG_CP15_SYS_CONTROL, CtrlReg);
 #endif
 
     CtrlReg &= ~(XREG_CP15_CONTROL_C_BIT);
@@ -126,7 +129,7 @@ void Xil_DCacheInvalidateLine(INTPTR adr)
     mtcp(XREG_CP15_CACHE_SIZE_SEL, 0);
     mtcp(XREG_CP15_INVAL_DC_LINE_MVA_POC, (adr & (~0x1F)));
 
-        /* Wait for invalidate to complete */
+    /* Wait for invalidate to complete */
     dsb();
 
     mtcpsr(currmask);
@@ -143,29 +146,33 @@ void Xil_DCacheInvalidateRange(INTPTR adr, u32 len)
     currmask = mfcpsr();
     mtcpsr(currmask | IRQ_FIQ_MASK);
 
-    if (len != 0U) {
+    if (len != 0U)
+    {
         end = tempadr + len;
         tempend = end;
         /* Select L1 Data cache in CSSR */
         mtcp(XREG_CP15_CACHE_SIZE_SEL, 0U);
 
-        if ((tempadr & (cacheline-1U)) != 0U) {
+        if ((tempadr & (cacheline - 1U)) != 0U)
+        {
             tempadr &= (~(cacheline - 1U));
 
             Xil_DCacheFlushLine(tempadr);
         }
-        if ((tempend & (cacheline-1U)) != 0U) {
+        if ((tempend & (cacheline - 1U)) != 0U)
+        {
             tempend &= (~(cacheline - 1U));
 
             Xil_DCacheFlushLine(tempend);
         }
 
-        while (tempadr < tempend) {
+        while (tempadr < tempend)
+        {
 
-        /* Invalidate Data cache line */
-        asm_inval_dc_line_mva_poc(tempadr);
+            /* Invalidate Data cache line */
+            asm_inval_dc_line_mva_poc(tempadr);
 
-        tempadr += cacheline;
+            tempadr += cacheline;
         }
     }
 
@@ -189,7 +196,7 @@ void Xil_DCacheFlush(void)
 #if defined (__GNUC__)
     CsidReg = mfcp(XREG_CP15_CACHE_SIZE_ID);
 #elif defined (__ICCARM__)
-     mfcp(XREG_CP15_CACHE_SIZE_ID,CsidReg);
+    mfcp(XREG_CP15_CACHE_SIZE_ID, CsidReg);
 #endif
     /* Determine Cache Size */
 
@@ -204,15 +211,17 @@ void Xil_DCacheFlush(void)
     /* Get the cacheline size, way size, index size from csidr */
     LineSize = (CsidReg & 0x00000007U) + 0x00000004U;
 
-    NumSet = CacheSize/NumWays;
+    NumSet = CacheSize / NumWays;
     NumSet /= (0x00000001U << LineSize);
 
     Way = 0U;
     Set = 0U;
 
     /* Invalidate all the cachelines */
-    for (WayIndex = 0U; WayIndex < NumWays; WayIndex++) {
-        for (SetIndex = 0U; SetIndex < NumSet; SetIndex++) {
+    for (WayIndex = 0U; WayIndex < NumWays; WayIndex++)
+    {
+        for (SetIndex = 0U; SetIndex < NumSet; SetIndex++)
+        {
             C7Reg = Way | Set;
             /* Flush by Set/Way */
             asm_clean_inval_dc_line_sw(C7Reg);
@@ -241,7 +250,7 @@ void Xil_DCacheFlushLine(INTPTR adr)
 
     mtcp(XREG_CP15_CLEAN_INVAL_DC_LINE_MVA_POC, (adr & (~0x1F)));
 
-        /* Wait for flush to complete */
+    /* Wait for flush to complete */
     dsb();
     mtcpsr(currmask);
 }
@@ -256,14 +265,16 @@ void Xil_DCacheFlushRange(INTPTR adr, u32 len)
     currmask = mfcpsr();
     mtcpsr(currmask | IRQ_FIQ_MASK);
 
-    if (len != 0x00000000U) {
+    if (len != 0x00000000U)
+    {
         /* Back the starting address up to the start of a cache line
          * perform cache operations until adr+len
          */
         end = LocalAddr + len;
         LocalAddr &= ~(cacheline - 1U);
 
-        while (LocalAddr < end) {
+        while (LocalAddr < end)
+        {
             /* Flush Data cache line */
             asm_clean_inval_dc_line_mva_poc(LocalAddr);
 
@@ -301,7 +312,8 @@ void Xil_ICacheEnable(void)
 #elif defined (__ICCARM__)
     mfcp(XREG_CP15_SYS_CONTROL, CtrlReg);
 #endif
-    if ((CtrlReg & XREG_CP15_CONTROL_I_BIT)==0x00000000U) {
+    if ((CtrlReg & XREG_CP15_CONTROL_I_BIT) == 0x00000000U)
+    {
         /* invalidate the instruction cache */
         mtcp(XREG_CP15_INVAL_IC_POU, 0);
 
@@ -321,11 +333,11 @@ void Xil_ICacheDisable(void)
     /* invalidate the instruction cache */
     mtcp(XREG_CP15_INVAL_IC_POU, 0);
 
-        /* disable the instruction cache */
+    /* disable the instruction cache */
 #if defined (__GNUC__)
     CtrlReg = mfcp(XREG_CP15_SYS_CONTROL);
 #elif defined (__ICCARM__)
-    mfcp(XREG_CP15_SYS_CONTROL,CtrlReg);
+    mfcp(XREG_CP15_SYS_CONTROL, CtrlReg);
 #endif
 
     CtrlReg &= ~(XREG_CP15_CONTROL_I_BIT);
@@ -360,7 +372,7 @@ void Xil_ICacheInvalidateLine(INTPTR adr)
     mtcp(XREG_CP15_CACHE_SIZE_SEL, 1);
     mtcp(XREG_CP15_INVAL_IC_LINE_MVA_POU, (adr & (~0x1F)));
 
-        /* Wait for invalidate to complete */
+    /* Wait for invalidate to complete */
     dsb();
     mtcpsr(currmask);
 }
@@ -374,7 +386,8 @@ void Xil_ICacheInvalidateRange(INTPTR adr, u32 len)
 
     currmask = mfcpsr();
     mtcpsr(currmask | IRQ_FIQ_MASK);
-    if (len != 0x00000000U) {
+    if (len != 0x00000000U)
+    {
         /* Back the starting address up to the start of a cache line
          * perform cache operations until adr+len
          */
@@ -384,7 +397,8 @@ void Xil_ICacheInvalidateRange(INTPTR adr, u32 len)
         /* Select cache L0 I-cache in CSSR */
         mtcp(XREG_CP15_CACHE_SIZE_SEL, 1U);
 
-        while (LocalAddr < end) {
+        while (LocalAddr < end)
+        {
 
             /* Invalidate L1 I-cache line */
             asm_inval_ic_line_mva_pou(LocalAddr);
@@ -418,7 +432,7 @@ rt_base_t rt_hw_cpu_icache_status(void)
 #if defined (__GNUC__)
     CtrlReg = mfcp(XREG_CP15_SYS_CONTROL);
 #elif defined (__ICCARM__)
-     mfcp(XREG_CP15_SYS_CONTROL,CtrlReg);
+    mfcp(XREG_CP15_SYS_CONTROL, CtrlReg);
 #endif
     return CtrlReg & XREG_CP15_CONTROL_I_BIT;
 }
@@ -429,7 +443,7 @@ rt_base_t rt_hw_cpu_dcache_status(void)
 #if defined (__GNUC__)
     CtrlReg = mfcp(XREG_CP15_SYS_CONTROL);
 #elif defined (__ICCARM__)
-     mfcp(XREG_CP15_SYS_CONTROL,CtrlReg);
+    mfcp(XREG_CP15_SYS_CONTROL, CtrlReg);
 #endif
     return CtrlReg & XREG_CP15_CONTROL_C_BIT;
 }

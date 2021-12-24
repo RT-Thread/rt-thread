@@ -16,7 +16,9 @@
 
 #include "cp15.h"
 #include "mmu.h"
+#include "mbox.h"
 
+#ifdef BSP_USING_CORETIMER
 static rt_uint64_t timerStep;
 
 int rt_hw_get_gtimer_frq(void);
@@ -29,15 +31,21 @@ void core0_timer_enable_interrupt_controller(void)
 {
     CORE0_TIMER_IRQ_CTRL |= NON_SECURE_TIMER_IRQ;
 }
+#endif
 
 void rt_hw_timer_isr(int vector, void *parameter)
 {
+#ifdef BSP_USING_CORETIMER
     rt_hw_set_gtimer_val(timerStep);
+#else
+    ARM_TIMER_IRQCLR = 0;
+#endif
     rt_tick_increase();
 }
 
 void rt_hw_timer_init(void)
 {
+#ifdef BSP_USING_CORETIMER
     rt_hw_interrupt_install(TIMER_IRQ, rt_hw_timer_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(TIMER_IRQ);
     __ISB();
@@ -48,6 +56,27 @@ void rt_hw_timer_init(void)
     rt_hw_gtimer_enable();
     rt_hw_set_gtimer_val(timerStep);
     core0_timer_enable_interrupt_controller();
+#else
+    rt_uint32_t apb_clock = 0;
+    rt_uint32_t timer_clock = 1000000;
+
+    apb_clock = bcm271x_mbox_clock_get_rate(CORE_CLK_ID);
+    ARM_TIMER_PREDIV = (apb_clock/timer_clock - 1);
+
+    ARM_TIMER_RELOAD = 0;
+    ARM_TIMER_LOAD   = 0;
+    ARM_TIMER_IRQCLR = 0;
+    ARM_TIMER_CTRL   = 0;
+
+    ARM_TIMER_RELOAD = 1000000 / RT_TICK_PER_SECOND;
+    ARM_TIMER_LOAD   = 1000000 / RT_TICK_PER_SECOND;
+
+    /* 23-bit counter, enable interrupt, enable timer */
+    ARM_TIMER_CTRL   = (1 << 1) | (1 << 5) | (1 << 7);
+
+    rt_hw_interrupt_install(ARM_TIMER_IRQ, rt_hw_timer_isr, RT_NULL, "tick");
+    rt_hw_interrupt_umask(ARM_TIMER_IRQ);
+#endif
 }
 
 void idle_wfi(void)
@@ -65,6 +94,13 @@ void rt_hw_board_init(void)
     armv8_map(0, 0, 0x6400000, MEM_ATTR_MEMORY);
     armv8_map(0xFE200000, 0xFE200000, 0x200000, MEM_ATTR_IO);//uart gpio
     armv8_map(0xFF800000, 0xFF800000, 0x200000, MEM_ATTR_IO);//gic timer
+    armv8_map(ARM_TIMER_BASE, ARM_TIMER_BASE, 0x200000, MEM_ATTR_IO);//arm timer
+    armv8_map(STIMER_BASE, STIMER_BASE, 0x200000, MEM_ATTR_IO);//stimer
+    armv8_map(MMC2_BASE_ADDR, MMC2_BASE_ADDR, 0x200000, MEM_ATTR_IO);//mmc
+    armv8_map(MBOX_ADDR, MBOX_ADDR, 0x200000, MEM_ATTR_IO);//mbox msg
+    armv8_map((unsigned long)MAC_REG_BASE_ADDR, (unsigned long)MAC_REG_BASE_ADDR, 0x80000, MEM_ATTR_IO);//mac
+    armv8_map(SEND_DATA_NO_CACHE, SEND_DATA_NO_CACHE, 0x200000, MEM_ATTR_MEMORY);//eth send
+    armv8_map(RECV_DATA_NO_CACHE, RECV_DATA_NO_CACHE, 0x200000, MEM_ATTR_MEMORY);//eth recv
     mmu_enable();
 
     /* initialize hardware interrupt */

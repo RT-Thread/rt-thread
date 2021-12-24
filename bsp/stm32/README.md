@@ -26,6 +26,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f401-st-nucleo](stm32f401-st-nucleo) | ST 官方 STM32F401 Nucleo-64 开发板 |
 | [stm32f405-smdz-breadfruit](stm32f405-smdz-breadfruit) | 三木电子 SM1432F405 开发板 |
 | [stm32f407-atk-explorer](stm32f407-atk-explorer) | 正点原子 F407 探索者开发板 |
+| [stm32f407-robomaster-c](stm32f407-robomaster-c) | 大疆公司 RoboMaster C型开发板 |
 | [stm32f407-st-discovery](stm32f407-st-discovery) | ST 官方 STM32F407-discovery 开发板 |
 | [stm32f410-st-nucleo](stm32f410-st-nucleo) | ST 官方 STM32F410-Nucleo-64 开发板 |
 | [stm32f411-atk-nano](stm32f411-atk-nano/) | 正点原子 F411 NANO 开发板 |
@@ -72,6 +73,10 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32l476-st-nucleo](stm32l476-st-nucleo) | ST 官方 STM32L476-Nucleo 开发板 |
 | [stm32l496-ali-developer](stm32l496-ali-developer) | 诺行 STM32L496 Ali Developer Kit 开发板 |
 | [stm32l496-st-nucleo](stm32l496-st-nucleo) | ST 官方 STM32L496-Nucleo 开发板 |
+| **L5 系列** |  |
+| [stm32l552-st-nucleo](stm32l552-st-nucleo) | ST 官方 STM32L552-Nucleo 开发板 |
+| **U5 系列** |  |
+| [stm32u575-st-nucleo](stm32u575-st-nucleo) | ST 官方 STM32U575ZI-Nucleo 开发板 |
 | **MP1 系列** |  |
 | [stm32mp157a-st-discovery](stm32mp157a-st-discovery) | ST 官方 STM32MP157A-DK1 开发板 |
 | [stm32mp157a-st-ev1](stm32mp157a-st-ev1) | ST 官方 STM32MP157A-EV1 开发板 |

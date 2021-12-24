@@ -18,22 +18,20 @@
  * 2021-02-12     Meco Man     move all of the functions located in <clock_time.c> to this file
  * 2021-03-15     Meco Man     fixed a bug of leaking memory in asctime()
  * 2021-05-01     Meco Man     support fixed timezone
+ * 2021-07-21     Meco Man     implement that change/set timezone APIs
  */
 
 #include "sys/time.h"
+#include <sys/errno.h>
 #include <rtthread.h>
-
+#include <rthw.h>
 #ifdef RT_USING_DEVICE
 #include <rtdevice.h>
 #endif
 
-#define DBG_TAG    "TIME"
+#define DBG_TAG    "time"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
-
-#ifndef RT_LIBC_FIXED_TIMEZONE
-#define RT_LIBC_FIXED_TIMEZONE 8 /* UTC+8 */
-#endif
 
 /* seconds per day */
 #define SPD 24*60*60
@@ -103,7 +101,7 @@ static rt_err_t get_timeval(struct timeval *tv)
         if (rt_device_open(device, 0) == RT_EOK)
         {
             rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &tv->tv_sec);
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME_US, &tv->tv_usec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIMEVAL, tv);
             rt_device_close(device);
         }
     }
@@ -149,7 +147,7 @@ static int set_timeval(struct timeval *tv)
         if (rt_device_open(device, 0) == RT_EOK)
         {
             rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &tv->tv_sec);
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME_US, &tv->tv_usec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIMEVAL, tv);
             rt_device_close(device);
         }
     }
@@ -201,7 +199,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
 
-    r->tm_isdst = 0;
+    r->tm_isdst = tz_is_dst();
     return r;
 }
 RTM_EXPORT(gmtime_r);
@@ -217,7 +215,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
 
-    local_tz = *t + RT_LIBC_FIXED_TIMEZONE * 3600;
+    local_tz = *t + tz_get() * 3600;
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -234,13 +232,36 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
 
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * RT_LIBC_FIXED_TIMEZONE;
+    timestamp = timestamp - 3600 * tz_get();
     return timestamp;
 }
 RTM_EXPORT(mktime);
 
 char* asctime_r(const struct tm *t, char *buf)
 {
+    /* Checking input validity */
+    if ((int)rt_strlen(days) <= (t->tm_wday << 2) || (int)rt_strlen(months) <= (t->tm_mon << 2))
+    {
+        LOG_W("asctime_r: the input parameters exceeded the limit, please check it.");
+        *(int*) buf = *(int*) days;
+        *(int*) (buf + 4) = *(int*) months;
+        num2str(buf + 8, t->tm_mday);
+        if (buf[8] == '0')
+            buf[8] = ' ';
+        buf[10] = ' ';
+        num2str(buf + 11, t->tm_hour);
+        buf[13] = ':';
+        num2str(buf + 14, t->tm_min);
+        buf[16] = ':';
+        num2str(buf + 17, t->tm_sec);
+        buf[19] = ' ';
+        num2str(buf + 20, 2000 / 100);
+        num2str(buf + 22, 2000 % 100);
+        buf[24] = '\n';
+        buf[25] = '\0';
+        return buf;
+    }
+
     /* "Wed Jun 30 21:49:08 1993\n" */
     *(int*) buf = *(int*) (days + (t->tm_wday << 2));
     *(int*) (buf + 4) = *(int*) (months + (t->tm_mon << 2));
@@ -425,7 +446,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     if(tz != RT_NULL)
     {
         tz->tz_dsttime = DST_NONE;
-        tz->tz_minuteswest = -(RT_LIBC_FIXED_TIMEZONE * 60);
+        tz->tz_minuteswest = -(tz_get() * 60);
     }
 
     if (tv != RT_NULL && get_timeval(tv) == RT_EOK)
@@ -448,7 +469,6 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
      * Thus, the following is purely of historic interest.
      */
     if (tv != RT_NULL
-        && tv->tv_sec >= 0
         && tv->tv_usec >= 0
         && set_timeval((struct timeval *)tv) == RT_EOK)
     {
@@ -466,34 +486,48 @@ RTM_EXPORT(settimeofday);
 RTM_EXPORT(difftime);
 RTM_EXPORT(strftime);
 
-#ifdef RT_USING_POSIX
-static struct timeval _timevalue;
-static int clock_time_system_init()
+#ifdef RT_USING_POSIX_CLOCK
+#include <delay.h>
+#ifdef RT_USING_RTC
+static volatile struct timeval _timevalue;
+static int _rt_clock_time_system_init()
 {
-    time_t time;
+    register rt_base_t level;
+    time_t time = 0;
     rt_tick_t tick;
     rt_device_t device;
 
-    time = 0;
     device = rt_device_find("rtc");
     if (device != RT_NULL)
     {
         /* get realtime seconds */
-        rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
+        if(rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time) == RT_EOK)
+        {
+            level = rt_hw_interrupt_disable();
+            tick = rt_tick_get(); /* get tick */
+            _timevalue.tv_usec = (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
+            _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
+            rt_hw_interrupt_enable(level);
+            return 0;
+        }
     }
 
-    /* get tick */
-    tick = rt_tick_get();
+    level = rt_hw_interrupt_disable();
+    _timevalue.tv_usec = 0;
+    _timevalue.tv_sec = 0;
+    rt_hw_interrupt_enable(level);
 
-    _timevalue.tv_usec = (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
-    _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
-
-    return 0;
+    return -1;
 }
-INIT_COMPONENT_EXPORT(clock_time_system_init);
+INIT_COMPONENT_EXPORT(_rt_clock_time_system_init);
+#endif /* RT_USING_RTC */
 
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
+#ifndef RT_USING_RTC
+    LOG_W("Cannot find a RTC device to save time!");
+    return -1;
+#else
     int ret = 0;
 
     if (res == RT_NULL)
@@ -523,11 +557,16 @@ int clock_getres(clockid_t clockid, struct timespec *res)
     }
 
     return ret;
+#endif /* RT_USING_RTC */
 }
 RTM_EXPORT(clock_getres);
 
 int clock_gettime(clockid_t clockid, struct timespec *tp)
 {
+#ifndef RT_USING_RTC
+    LOG_W("Cannot find a RTC device to save time!");
+    return -1;
+#else
     int ret = 0;
 
     if (tp == RT_NULL)
@@ -540,11 +579,14 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     {
     case CLOCK_REALTIME:
         {
-            /* get tick */
-            int tick = rt_tick_get();
+            int tick;
+            register rt_base_t level;
 
+            level = rt_hw_interrupt_disable();
+            tick = rt_tick_get(); /* get tick */
             tp->tv_sec  = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
             tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
+            rt_hw_interrupt_enable(level);
         }
         break;
 
@@ -568,11 +610,28 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     }
 
     return ret;
+#endif /* RT_USING_RTC */
 }
 RTM_EXPORT(clock_gettime);
 
+int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp)
+{
+    if ((clockid != CLOCK_REALTIME) || (rqtp == RT_NULL))
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    return nanosleep(rqtp, rmtp);
+}
+
 int clock_settime(clockid_t clockid, const struct timespec *tp)
 {
+#ifndef RT_USING_RTC
+    LOG_W("Cannot find a RTC device to save time!");
+    return -1;
+#else
+    register rt_base_t level;
     int second;
     rt_tick_t tick;
     rt_device_t device;
@@ -580,34 +639,63 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     if ((clockid != CLOCK_REALTIME) || (tp == RT_NULL))
     {
         rt_set_errno(EINVAL);
-
         return -1;
     }
 
     /* get second */
     second = tp->tv_sec;
-    /* get tick */
-    tick = rt_tick_get();
 
+    level = rt_hw_interrupt_disable();
+    tick = rt_tick_get(); /* get tick */
     /* update timevalue */
     _timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
     _timevalue.tv_sec = second - tick/RT_TICK_PER_SECOND - 1;
+    rt_hw_interrupt_enable(level);
 
     /* update for RTC device */
     device = rt_device_find("rtc");
     if (device != RT_NULL)
     {
         /* set realtime seconds */
-        rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &second);
+        if(rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &second) == RT_EOK)
+        {
+            return 0;
+        }
     }
-    else
-        return -1;
 
-    return 0;
+    return -1;
+#endif /* RT_USING_RTC */
 }
 RTM_EXPORT(clock_settime);
 
-int clock_time_to_tick(const struct timespec *time)
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
+{
+    uint32_t time_ms = rqtp->tv_sec * 1000;
+    uint32_t time_us = rqtp->tv_nsec / 1000;
+
+    time_ms += time_us / 1000 ;
+    time_us = time_us % 1000;
+
+    if (rt_thread_self() != RT_NULL)
+    {
+        rt_thread_mdelay(time_ms);
+    }
+    else  /* scheduler has not run yet */
+    {
+        while(time_ms > 0)
+        {
+            udelay(1000u);
+            time_ms -= 1;
+        }
+    }
+
+    udelay(time_us);
+
+    return 0;
+}
+RTM_EXPORT(nanosleep);
+
+int rt_timespec_to_tick(const struct timespec *time)
 {
     int tick;
     int nsecond, second;
@@ -638,6 +726,31 @@ int clock_time_to_tick(const struct timespec *time)
 
     return tick;
 }
-RTM_EXPORT(clock_time_to_tick);
+RTM_EXPORT(rt_timespec_to_tick);
 
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_CLOCK */
+
+/* timezone */
+#ifndef RT_LIBC_DEFAULT_TIMEZONE
+#define RT_LIBC_DEFAULT_TIMEZONE    8
+#endif
+
+static volatile int8_t _current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
+
+void tz_set(int8_t tz)
+{
+    register rt_base_t level;
+    level = rt_hw_interrupt_disable();
+    _current_timezone = tz;
+    rt_hw_interrupt_enable(level);
+}
+
+int8_t tz_get(void)
+{
+    return _current_timezone;
+}
+
+int8_t tz_is_dst(void)
+{
+    return 0;
+}

@@ -1,0 +1,16 @@
+# RT-Thread building script for component
+
+from building import *
+
+src     = []
+cwd     = GetCurrentDir()
+CPPPATH = [cwd]
+group   = []
+
+flag = False
+src += ['unistd.c'] #TODO
+
+if flag == True:
+    group = DefineGroup('POSIX', src, depend = [], CPPPATH = CPPPATH)
+
+Return('group')

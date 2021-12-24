@@ -282,7 +282,7 @@ typedef void (*pSWPMI_CallbackTypeDef)(SWPMI_HandleTypeDef *hswpmi);
 
 /** @brief  Check whether the specified SWPMI flag is set or not.
   * @param  __HANDLE__ specifies the SWPMI Handle.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __FLAG__ specifies the flag to check.
   *        This parameter can be one of the following values:
   *            @arg SWPMI_FLAG_RXBFF  Receive buffer full flag.
   *            @arg SWPMI_FLAG_TXBEF  Transmit buffer empty flag.
@@ -301,7 +301,7 @@ typedef void (*pSWPMI_CallbackTypeDef)(SWPMI_HandleTypeDef *hswpmi);
 
 /** @brief  Clear the specified SWPMI ISR flag.
   * @param  __HANDLE__ specifies the SWPMI Handle.
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __FLAG__ specifies the flag to clear.
   *        This parameter can be one of the following values:
   *            @arg SWPMI_FLAG_RXBFF  Receive buffer full flag.
   *            @arg SWPMI_FLAG_TXBEF  Transmit buffer empty flag.

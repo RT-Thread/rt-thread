@@ -57,7 +57,11 @@ extern "C" {
 #endif /* RT_USING_USB_HOST */
 
 #ifdef RT_USING_SERIAL
+#ifdef RT_USING_SERIAL_V2
+#include "drivers/serial_v2.h"
+#else
 #include "drivers/serial.h"
+#endif
 #endif /* RT_USING_SERIAL */
 
 #ifdef RT_USING_I2C

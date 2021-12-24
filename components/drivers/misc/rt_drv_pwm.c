@@ -9,6 +9,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <drivers/rt_drv_pwm.h>
 
@@ -198,7 +199,7 @@ rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *c
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pwm_enable, pwm_enable, enable pwm by channel.);
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pwm_set, pwm_set, set pwm.);
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 static int pwm_enable(int argc, char **argv)
 {
     int result = 0;
@@ -323,5 +324,5 @@ _exit:
 }
 MSH_CMD_EXPORT(pwm_get, pwm_get <pwm_dev> <channel>);
 
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */
 #endif /* RT_USING_FINSH */
