@@ -581,7 +581,7 @@ static void sdh_hotplugger(void *param)
 
 int mnt_init_sdcard_hotplug(void)
 {
-    rt_thread_init(&sdh_tid, "hotplug", sdh_hotplugger, NULL, sdh_stack, sizeof(sdh_stack), RT_THREAD_PRIORITY_MAX - 2, 10);
+    rt_thread_init(&sdh_tid, "hotplug", sdh_hotplugger, NULL, sdh_stack, sizeof(sdh_stack), RT_THREAD_PRIORITY_BACKGROUND, 10);
     rt_thread_startup(&sdh_tid);
 
     return 0;

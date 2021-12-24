@@ -194,7 +194,7 @@ static rt_err_t rt_zynqmp_eth_init(rt_device_t dev)
                            phy_monitor_thread,
                            eth_dev,
                            1024,
-                           RT_THREAD_PRIORITY_MAX - 2,
+                           RT_THREAD_PRIORITY_BACKGROUND,
                            2);
     if (tid != RT_NULL)
         rt_thread_startup(tid);

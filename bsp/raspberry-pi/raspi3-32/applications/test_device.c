@@ -85,7 +85,7 @@ void test_cpusmp(void)
                 RT_NULL,
                 &rt_thread_stack[i][0],
                 sizeof(rt_thread_stack[i]),
-                RT_THREAD_PRIORITY_MAX - 2,
+                RT_THREAD_PRIORITY_BACKGROUND,
                 32);
         rt_thread_control(&smp[i], RT_THREAD_CTRL_BIND_CPU, (void*)i);
         /* startup */

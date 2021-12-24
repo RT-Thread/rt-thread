@@ -679,7 +679,7 @@ static int rt_hw_imxrt_eth_init(void)
                                phy_monitor_thread_entry,
                                RT_NULL,
                                512,
-                               RT_THREAD_PRIORITY_MAX - 2,
+                               RT_THREAD_PRIORITY_BACKGROUND,
                                2);
         if (tid != RT_NULL)
             rt_thread_startup(tid);

@@ -330,7 +330,7 @@ static rt_err_t nu_emac_init(rt_device_t dev)
                               link_monitor,
                               (void *)psNuEmac,
                               NU_EMAC_TID_STACK_SIZE,
-                              RT_THREAD_PRIORITY_MAX - 2,
+                              RT_THREAD_PRIORITY_BACKGROUND,
                               10);
     RT_ASSERT(psNuEmac->link_monitor != RT_NULL);
 

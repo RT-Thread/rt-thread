@@ -219,7 +219,7 @@ void efm32_emu_init(void)
             "EMU",
             emu_task_main_loop, (void *)&emu_task,
             (void *)&emu_task.stack, sizeof(emu_task.stack),
-            RT_THREAD_PRIORITY_MAX - 2, RT_TICK_PER_SECOND) != RT_EOK)
+            RT_THREAD_PRIORITY_BACKGROUND, RT_TICK_PER_SECOND) != RT_EOK)
         {
             break;
         }

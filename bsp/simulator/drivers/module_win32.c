@@ -309,7 +309,7 @@ rt_module_t rt_module_open(const char *path)
         module->module_thread =
             rt_thread_create(name,
             (void(*)(void *))module->module_entry, RT_NULL,
-            2048, RT_THREAD_PRIORITY_MAX - 2, 10);
+            2048, RT_THREAD_PRIORITY_BACKGROUND, 10);
 
         RT_DEBUG_LOG(RT_DEBUG_MODULE, ("thread entry 0x%x\n",
             module->module_entry));
@@ -513,7 +513,7 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int line_
         /* create module thread */
         module->module_thread = rt_thread_create(name,
             module_main_entry, module,
-            2048, RT_THREAD_PRIORITY_MAX - 2, 10);
+            2048, RT_THREAD_PRIORITY_BACKGROUND, 10);
 
         /* set module id */
         module->module_thread->module_id = (void *)module;

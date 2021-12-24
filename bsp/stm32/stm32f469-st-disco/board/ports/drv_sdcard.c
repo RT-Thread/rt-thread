@@ -88,7 +88,7 @@ int stm32_sdcard_mount(void)
     rt_pin_mode(SD_CHECK_PIN, PIN_MODE_INPUT_PULLUP);
 
     tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,
-                           1024, RT_THREAD_PRIORITY_MAX - 2, 20);
+                           1024, RT_THREAD_PRIORITY_BACKGROUND, 20);
     if (tid != RT_NULL)
     {
         rt_thread_startup(tid);

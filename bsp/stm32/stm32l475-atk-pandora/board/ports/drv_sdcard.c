@@ -54,7 +54,7 @@ static int onboard_sdcard_mount(void)
     else
     {
         tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,
-                               1024, RT_THREAD_PRIORITY_MAX - 2, 20);
+                               1024, RT_THREAD_PRIORITY_BACKGROUND, 20);
         if (tid != RT_NULL)
         {
             rt_thread_startup(tid);

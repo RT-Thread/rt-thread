@@ -259,7 +259,7 @@ static rt_err_t nu_emac_init(rt_device_t dev)
     result = rt_sem_init(&psNuEMAC->eth_sem, "eth_sem", 0, RT_IPC_FLAG_FIFO);
     RT_ASSERT(result == RT_EOK);
 
-    result = rt_thread_init(&eth_tid, "eth", link_monitor, (void *)psNuEMAC, eth_stack, sizeof(eth_stack), RT_THREAD_PRIORITY_MAX - 2, 10);
+    result = rt_thread_init(&eth_tid, "eth", link_monitor, (void *)psNuEMAC, eth_stack, sizeof(eth_stack), RT_THREAD_PRIORITY_BACKGROUND, 10);
     RT_ASSERT(result == RT_EOK);
 
     rt_thread_startup(&eth_tid);

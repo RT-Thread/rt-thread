@@ -331,7 +331,7 @@ void rt_thread_idle_init(void)
             RT_NULL,
             rt_system_stack,
             sizeof(rt_system_stack),
-            RT_THREAD_PRIORITY_MAX - 2,
+            RT_THREAD_PRIORITY_BACKGROUND,
             32);
     /* startup */
     rt_thread_startup(&rt_system_thread);

@@ -256,7 +256,7 @@ void fs_test(rt_uint32_t arg)
                                              fsrw1_thread_entry,
                                              RT_NULL,
                                              2048,
-                                             RT_THREAD_PRIORITY_MAX-2,
+                                             RT_THREAD_PRIORITY_BACKGROUND,
                                              1);
             if ( fsrw1_thread != RT_NULL)
             {
@@ -277,7 +277,7 @@ void fs_test(rt_uint32_t arg)
                                              fsrw2_thread_entry,
                                              RT_NULL,
                                              2048,
-                                             RT_THREAD_PRIORITY_MAX-2,
+                                             RT_THREAD_PRIORITY_BACKGROUND,
                                              1);
             if ( fsrw2_thread != RT_NULL)
             {

@@ -558,7 +558,7 @@ static int rt_hw_stm32_eth_init(void)
                            phy_monitor_thread_entry,
                            RT_NULL,
                            1024,
-                           RT_THREAD_PRIORITY_MAX - 2,
+                           RT_THREAD_PRIORITY_BACKGROUND,
                            2);
 
     if (tid != RT_NULL)
