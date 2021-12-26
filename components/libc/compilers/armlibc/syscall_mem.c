@@ -13,7 +13,7 @@
 #include <stddef.h>
 
 #ifndef RT_USING_HEAP
-#define DBG_TAG    "armlibc.mem"
+#define DBG_TAG    "armlibc.syscall.mem"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 

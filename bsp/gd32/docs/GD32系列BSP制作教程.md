@@ -918,7 +918,6 @@ GD32 BSP 的制作规范主要分为 3 个方面：工程配置，ENV 配置和 
 - 系统空闲线程栈大小统一设置为 256（宏：IDLE_THREAD_STACK_SIZE）
 - 开启组件自动初始化（宏：RT_USING_COMPONENTS_INIT）
 - 需要开启 user main 选项（宏：RT_USING_USER_MAIN）
-- 默认关闭 libc（宏：RT_USING_LIBC）
 - FinSH 默认只使用 MSH 模式（宏：FINSH_USING_MSH_ONLY）
 
 #### 4.1.3 IDE 配置

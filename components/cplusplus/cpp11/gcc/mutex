@@ -4,7 +4,7 @@
 #error "C++ version lower than C++11"
 #endif
 
-//#if defined(RT_USING_LIBC) && defined(RT_USING_PTHREADS)
+//#if defined(RT_USING_PTHREADS)
 
 #include <pthread.h>
 
@@ -509,4 +509,4 @@ namespace std
     }
 }
 
-//#endif // (RT_USING_LIBC) && (RT_USING_PTHREADS)
+//#endif //(RT_USING_PTHREADS)

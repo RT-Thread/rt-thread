@@ -95,8 +95,8 @@ extern "C" unsigned __ARM_TPL_thread_hw_concurrency()
 extern "C" int __ARM_TPL_tls_create(__ARM_TPL_tls_key *__key,
                                     void (*__at_exit)(void *))
 {
-    pthread_key_t key; 
-    
+    pthread_key_t key;
+
     if (pthread_key_create(&key, __at_exit) == 0)
     {
         *__key = key;
