@@ -127,6 +127,7 @@ jobs:
          - {RTT_BSP: "stm32/stm32l475-atk-pandora", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l475-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l476-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "stm32/stm32l433-ali-startkit", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l496-ali-developer", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l496-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l552-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
