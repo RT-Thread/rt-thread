@@ -125,10 +125,11 @@ __vector_table
                 DCD     TRNG_IRQHandler                   ; 96:TRNG
                 DCD     FPU_IRQHandler                    ; 97:FPU
                 DCD     UART6_IRQHandler                  ; 98:UART6
-                DCD     UART7_IRQHandler                  ; 98:UART7
+                DCD     UART7_IRQHandler                  ; 99:UART7
                 DCD     SPI3_IRQHandler                   ; 100:SPI3
                 DCD     SPI4_IRQHandler                   ; 101:SPI4
                 DCD     SPI5_IRQHandler                   ; 102:SPI5
+                DCD     0                                 ; 103:Reserved
                 DCD     TLI_IRQHandler                    ; 104:TLI
                 DCD     TLI_ER_IRQHandler                 ; 105:TLI Error
                 DCD     IPA_IRQHandler                    ; 106:IPA

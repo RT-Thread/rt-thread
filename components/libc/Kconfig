@@ -1,17 +1,17 @@
 menu "POSIX layer and C standard library"
 
 config RT_USING_LIBC
-    bool "Enable libc APIs from toolchain"
-    default y
+    bool "Enable libc APIs from the toolchain"
+    default n
 
 if RT_USING_LIBC
     config RT_LIBC_USING_TIME
         default y
 
     config RT_LIBC_USING_FILEIO
-        bool "Enable libc with file operation, eg.fopen/fwrite/fread/getchar"
-        select RT_USING_DFS
-        select RT_USING_POSIX
+        bool "Enable libc with file operation, eg.fopen/fwrite/fread/getchar/STDIO"
+        select RT_USING_POSIX_FS
+        select RT_USING_POSIX_DEVIO
         default n
 
     config RT_USING_MODULE
@@ -37,40 +37,6 @@ config RT_LIBC_DEFAULT_TIMEZONE
     range -12 12
     default 8
 
-config RT_USING_PTHREADS
-    bool "Enable pthreads APIs"
-    default n
-
-if RT_USING_PTHREADS
-    config PTHREAD_NUM_MAX
-        int "Maximum number of pthreads"
-        default 8
-endif
-
-if RT_USING_DFS
-    config RT_USING_POSIX
-        bool "Enable POSIX layer, open/read/write/select etc"
-        select RT_USING_DFS_DEVFS
-        default y
-
-    if RT_USING_POSIX
-        config RT_USING_POSIX_MMAP
-            bool "Enable mmap() API"
-            default n
-
-        config RT_USING_POSIX_TERMIOS
-            bool "Enable termios APIs"
-            default n
-
-        config RT_USING_POSIX_GETLINE
-            bool "Enable getline()/getdelim() APIs"
-            default n
-
-        config RT_USING_POSIX_AIO
-            bool "Enable AIO"
-            default n
-    endif
-
-endif
+source "$RTT_DIR/components/libc/posix/Kconfig"
 
 endmenu

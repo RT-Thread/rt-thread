@@ -7,15 +7,16 @@
  * Date           Author       Notes
  * 2011-09-23     Bernard      the first version
  * 2011-10-05     Bernard      add thumb mode
+ * 2021-11-04     GuEe-GUI     set sp with SP_ELx
  */
 #include <rtthread.h>
 #include <board.h>
 
 #include <armv8.h>
 
-#define INITIAL_SPSR_EL3 (PSTATE_EL3 | SP_EL0)
-#define INITIAL_SPSR_EL2 (PSTATE_EL2 | SP_EL0)
-#define INITIAL_SPSR_EL1 (PSTATE_EL1 | SP_EL0)
+#define INITIAL_SPSR_EL3 (PSTATE_EL3 | SP_ELx)
+#define INITIAL_SPSR_EL2 (PSTATE_EL2 | SP_ELx)
+#define INITIAL_SPSR_EL1 (PSTATE_EL1 | SP_ELx)
 
 /**
  * This function will initialize thread stack

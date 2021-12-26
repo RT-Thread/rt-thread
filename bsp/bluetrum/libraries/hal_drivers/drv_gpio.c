@@ -27,9 +27,9 @@ struct port_info
 static const struct port_info port_table[] =
 {
     {0, 8, 0},      /* PA0-PA7 */
-    {0, 5, 8},      /* PB0-PB5 */
+    {0, 5, 8},      /* PB0-PB4 */
     {0, 8, 13},     /* PE0-PE7 */
-    {0, 6, 21},     /* PF0-PF6 */
+    {0, 6, 21},     /* PF0-PF5 */
 };
 
 static const hal_sfr_t port_sfr[] =
@@ -55,8 +55,6 @@ static rt_uint8_t _pin_port(rt_uint32_t pin)
 #define PIN_PORT(pin)           _pin_port(pin)
 #define PORT_SFR(port)          (port_sfr[(port)])
 #define PIN_NO(pin)             (rt_uint8_t)((pin) & 0xFu)
-
-// #define PIN_ABPIN(pin)  (rt_uint8_t)(port_table[PIN_PORT(pin)].total_pin + PIN_NO(pin))
 
 static rt_base_t ab32_pin_get(const char *name)
 {
@@ -128,6 +126,9 @@ static void ab32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     switch (mode)
     {
     case PIN_MODE_INPUT:
+        gpio_init.pull = GPIO_NOPULL;
+        gpio_init.dir = GPIO_DIR_INPUT;
+        break;
     case PIN_MODE_INPUT_PULLUP:
         gpio_init.pull = GPIO_PULLUP;
         gpio_init.dir = GPIO_DIR_INPUT;

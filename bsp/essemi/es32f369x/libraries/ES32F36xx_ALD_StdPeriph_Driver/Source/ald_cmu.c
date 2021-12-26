@@ -1106,7 +1106,7 @@ void ald_cmu_perh_clock_config(cmu_perh_t perh, type_func_t status)
 		return;
 	}
 
-	idx = (perh >> 27) & 0x3;
+	idx = (uint32_t)(perh >> 27) & 0x3;
 	pos = perh & ~(0x3 << 27);
 
 	if (status) {

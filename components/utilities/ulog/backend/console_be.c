@@ -17,7 +17,7 @@
 #error "The thread stack size must more than 384 when using async output by thread (ULOG_ASYNC_OUTPUT_BY_THREAD)"
 #endif
 
-static struct ulog_backend console;
+static struct ulog_backend console = { 0 };
 
 void ulog_console_backend_output(struct ulog_backend *backend, rt_uint32_t level, const char *tag, rt_bool_t is_raw,
         const char *log, size_t len)

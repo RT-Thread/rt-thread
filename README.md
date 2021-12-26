@@ -1,6 +1,8 @@
-# RT-Thread #
+<p align="center">
+<img src="documentation/figures/logo.png" width="60%" >
+</p>
 
-**English** | [简体中文](README.zh-CN.md) |
+**English** | [中文](README_zh.md) |
 
 [![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/releases)
@@ -9,7 +11,7 @@
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/pulls)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://github.com/RT-Thread/rt-thread/pulls)
 
-# Introduction
+# RT-Thread
 
 RT-Thread was born in 2006, it is an open source, neutral, and community-based real-time operating system (RTOS).
 
@@ -36,16 +38,13 @@ It includes:
 ## RT-Thread Features
 
 - Designed for resource-constrained devices, the minimum kernel requires only 1.2KB of RAM and 3 KB of Flash.
-
+- A variety of standard interfaces, such as POSIX, CMSIS, C++ application environment.
 - Has rich components and a prosperous and fast growing package ecosystem.
-
 - Elegant code style, easy to use, read and master.
-
 - High Scalability. RT-Thread has high-quality scalable software architecture, loose coupling, modularity, is easy to tailor and expand.
-
 - Supports high-performance applications.
-
-- Supports cross-platform and a wide range of chips.
+- Supports all mainstream compiling tools such as GCC, Keil and IAR.
+- Supports a wide range of <a href="https://www.rt-thread.io/board.html">architectures and chips</a>.
 
 ## Code Catalogue
 
@@ -75,6 +74,7 @@ RT-Thread supports many architectures, and has covered the major architectures i
 - **ARM Cortex-M4**：manufacturers like ST、Nuvton、NXP、GigaDevice、Realtek、Ambiq Micro, ect.
 - **ARM Cortex-M7**：manufacturers like ST、NXP
 - **ARM Cortex-M23**：manufacturers like GigaDevice
+- **ARM Cortex-M33**：manufacturers like ST
 - **ARM Cortex-R4**
 - **ARM Cortex-A8/A9**：manufacturers like NXP
 - **ARM7**：manufacturers like Samsung
@@ -106,7 +106,7 @@ RT-Thread Studio IDE (a.k.a. RT-Studio) is a one-stop intergrated development en
 
 ## Env Tool
 
-[Env Manual](https://www.rt-thread.io/document/site/programming-manual/env/env/)
+[User Manual](https://www.rt-thread.io/document/site/programming-manual/env/env/) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
 
 In the early stage, RT-Thread team also created an auxiliary tool called Env. It is an auxiliary tool with a TUI (Text-based user interface). Developers can use Env tool to configure and generate the GCC, Keil MDK, and IAR projects.
 
@@ -116,7 +116,7 @@ In the early stage, RT-Thread team also created an auxiliary tool called Env. It
 
 [RT-Thread Programming Guide](https://www.rt-thread.io/document/site/tutorial/quick-start/introduction/introduction/) | [RT-Thread Studio IDE](https://www.rt-thread.io/studio.html) | [Kernel Sample](https://github.com/RT-Thread-packages/kernel-sample) | [RT-Thread Beginners Guide](https://www.youtube.com/watch?v=ZMi1O-Rr7yc&list=PLXUV89C_M3G5KVw2IerI-pqApdSM_IaZo)
 
-[Based on the STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/master/bsp/stm32/stm32f103-blue-pill)
+Based on [STM32F103 BluePill](https://github.com/RT-Thread/rt-thread/tree/master/bsp/stm32/stm32f103-blue-pill) | [Raspberry Pi Pico](https://github.com/RT-Thread/rt-thread/tree/master/bsp/raspberry-pico)
 
 ## Simulator
 
@@ -142,7 +142,7 @@ RT-Thread is an open source software and has been licensed under Apache License 
 
 RT-Thread is very grateful for the support from all community developers, and if you have any ideas, suggestions or questions in the process of using RT-Thread, RT-Thread can be reached by the following means, and we are also updating RT-Thread in real time on these channels. At the same time, any questions can be asked in the [issue section of RT-Thread repository](https://github.com/RT-Thread/rt-thread/issues) or [RT-Thread forum](https://club.rt-thread.io/), and community members will answer them.
 
-[Website](https://www.rt-thread.io) | [Github](https://github.com/RT-Thread/rt-thread) | [Twitter](https://twitter.com/rt_thread) | [LinkedIn](https://www.linkedin.com/company/rt-thread-iot-os/posts/?feedView=all) | [Youtube]( https://www.youtube.com/channel/UCdDHtIfSYPq4002r27ffqPw?view_as=subscriber) | [Facebook](https://www.facebook.com/RT-Thread-IoT-OS-110395723808463/?modal=admin_todo_tour) | [Medium](https://rt-thread.medium.com/)
+[Website](https://www.rt-thread.io) | [Github](https://github.com/RT-Thread/rt-thread) | [Twitter](https://twitter.com/rt_thread) | [LinkedIn](https://www.linkedin.com/company/rt-thread-iot-os/posts/?feedView=all) | [Youtube](https://www.youtube.com/channel/UCdDHtIfSYPq4002r27ffqPw) | [Facebook](https://www.facebook.com/RT-Thread-IoT-OS-110395723808463/?modal=admin_todo_tour) | [Medium](https://rt-thread.medium.com/)
 
 # Contribution
 

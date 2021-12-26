@@ -411,8 +411,8 @@ ald_status_t ald_i2c_reset(i2c_handle_t *hperh)
 	WRITE_REG(hperh->perh->ADDR2, 0);
 	WRITE_REG(hperh->perh->TIMINGR, 0);
 	WRITE_REG(hperh->perh->TIMEOUTR, 0);
-	WRITE_REG(hperh->perh->FCON, 0);
-	WRITE_REG(hperh->perh->TXDATA, 0);
+	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 	WRITE_REG(hperh->perh->IDR, I2C_FLAG_MASK);
 	WRITE_REG(hperh->perh->ICR, I2C_FLAG_MASK);
 

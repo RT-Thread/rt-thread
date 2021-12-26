@@ -39,8 +39,10 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_MEMHEAP
 #define RT_USING_SLAB
+#define RT_USING_MEMHEAP
+#define RT_MEMHEAP_FAST_MODE
+#define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -49,7 +51,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uarths"
-#define RT_VER_NUM 0x40004
+#define RT_VER_NUM 0x40100
 #define ARCH_CPU_64BIT
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
@@ -86,6 +88,7 @@
 /* Device virtual file system */
 
 #define RT_USING_DFS
+#define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FILESYSTEMS_MAX 16
 #define DFS_FILESYSTEM_TYPES_MAX 16
@@ -130,9 +133,12 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_USING_POSIX
 #define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
+
+/* POSIX (Portable Operating System Interface) layer */
+
+#define RT_USING_POSIX_DELAY
 
 /* Network */
 
@@ -194,11 +200,13 @@
 
 /* multimedia packages */
 
-
-/* lvgl: powerful and easy-to-use embedded GUI library */
+/* LVGL: powerful and easy-to-use embedded GUI library */
 
 
 /* u8g2: a monochrome graphic library */
+
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
@@ -206,7 +214,13 @@
 
 /* system packages */
 
+/* rt_kprintf: enhanced rt_kprintf packages */
+
+
 /* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -229,6 +243,9 @@
 /* entertainment: terminal games and other interesting software packages */
 
 #define BOARD_K210_EVB
+
+/* Hardware Drivers Config */
+
 #define BSP_USING_UART_HS
 
 /* General Purpose UARTs */

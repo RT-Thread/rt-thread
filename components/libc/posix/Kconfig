@@ -1,0 +1,67 @@
+menu "POSIX (Portable Operating System Interface) layer"
+
+config RT_USING_POSIX_FS
+    bool "Enable POSIX file system and I/O"
+    select RT_USING_DFS
+    select DFS_USING_POSIX
+    default n
+
+if RT_USING_POSIX_FS
+    config RT_USING_POSIX_DEVIO
+        bool "Enable devices as file descriptors"
+        select RT_USING_DFS_DEVFS
+        default n
+
+    config RT_USING_POSIX_POLL
+        bool "Enable I/O Multiplexing poll() <poll.h>"
+        default n
+
+    config RT_USING_POSIX_SELECT
+        bool "Enable I/O Multiplexing select() <sys/select.h>"
+        select RT_USING_POSIX_POLL
+        default n
+
+    config RT_USING_POSIX_TERMIOS
+        bool "Enable Terminal I/O <termios.h>"
+        select RT_USING_POSIX_DEVIO
+        default n
+
+    config RT_USING_POSIX_AIO
+        bool "Enable Asynchronous I/O <aio.h>"
+        default n
+
+    config RT_USING_POSIX_MMAN
+        bool "Enable Memory-Mapped I/O <sys/mman.h>"
+        default n
+endif
+
+config RT_USING_POSIX_DELAY
+    bool "Enable delay APIs, sleep()/usleep()/msleep() etc"
+    default n
+
+config RT_USING_POSIX_CLOCK
+    bool "Enable clock/time functions, clock_gettime()/clock_settime()/clock_getres() etc"
+    select RT_LIBC_USING_TIME if !RT_USING_LIBC
+    select RT_USING_POSIX_DELAY
+    default n
+
+config RT_USING_POSIX_GETLINE
+    bool "Enable getline()/getdelim()"
+    select RT_USING_LIBC
+    select RT_LIBC_USING_FILEIO
+    default n
+
+config RT_USING_PTHREADS
+    bool "Enable pthreads APIs"
+    select RT_USING_POSIX_CLOCK
+    default n
+
+if RT_USING_PTHREADS
+    config PTHREAD_NUM_MAX
+        int "Maximum number of pthreads"
+        default 8
+endif
+
+source "$RTT_DIR/components/libc/posix/ipc/Kconfig"
+
+endmenu

@@ -135,7 +135,7 @@ int sal_init(void)
     rt_memset(sal_dev_res_tbl,  0, sizeof(sal_dev_res_tbl));
 
     /* create sal socket lock */
-    rt_mutex_init(&sal_core_lock, "sal_lock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&sal_core_lock, "sal_lock", RT_IPC_FLAG_PRIO);
 
     LOG_I("Socket Abstraction Layer initialize success.");
     init_ok = RT_TRUE;

@@ -78,7 +78,7 @@ struct finsh_shell
     rt_uint16_t line_position;
     rt_uint16_t line_curpos;
 
-#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
+#if !defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_DEVICE)
     rt_device_t device;
 #endif
 
@@ -91,7 +91,6 @@ void finsh_set_echo(rt_uint32_t echo);
 rt_uint32_t finsh_get_echo(void);
 
 int finsh_system_init(void);
-void finsh_set_device(const char *device_name);
 const char *finsh_get_device(void);
 int finsh_getchar(void);
 

@@ -27,10 +27,12 @@
  * 2018-11-22     Jesven       yield is same to rt_schedule
  *                             add support for tasks bound to cpu
  * 2021-02-24     Meco Man     rearrange rt_thread_control() - schedule the thread when close it
+ * 2021-11-15     THEWON       Remove duplicate work between idle and _thread_exit
  */
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <stddef.h>
 
 #ifdef RT_USING_HOOK
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
@@ -73,30 +75,6 @@ void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 
 #endif /* RT_USING_HOOK */
 
-static void _thread_cleanup_execute(rt_thread_t thread)
-{
-    register rt_base_t level;
-#ifdef RT_USING_MODULE
-    struct rt_dlmodule *module = RT_NULL;
-#endif /* RT_USING_MODULE */
-    level = rt_hw_interrupt_disable();
-#ifdef RT_USING_MODULE
-    module = (struct rt_dlmodule*)thread->module_id;
-    if (module)
-    {
-        dlmodule_destroy(module);
-    }
-#endif /* RT_USING_MODULE */
-    /* invoke thread cleanup */
-    if (thread->cleanup != RT_NULL)
-        thread->cleanup(thread);
-
-#ifdef RT_USING_SIGNALS
-    rt_thread_free_sig(thread);
-#endif /* RT_USING_SIGNALS */
-    rt_hw_interrupt_enable(level);
-}
-
 static void _thread_exit(void)
 {
     struct rt_thread *thread;
@@ -108,31 +86,23 @@ static void _thread_exit(void)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    _thread_cleanup_execute(thread);
-
     /* remove from schedule */
     rt_schedule_remove_thread(thread);
-    /* change stat */
-    thread->stat = RT_THREAD_CLOSE;
 
     /* remove it from timer list */
     rt_timer_detach(&thread->thread_timer);
 
-    if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
-    {
-        rt_object_detach((rt_object_t)thread);
-    }
-    else
-    {
-        /* insert to defunct thread list */
-        rt_thread_defunct_enqueue(thread);
-    }
+    /* change stat */
+    thread->stat = RT_THREAD_CLOSE;
 
-    /* switch to next task */
-    rt_schedule();
+    /* insert to defunct thread list */
+    rt_thread_defunct_enqueue(thread);
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
+
+    /* switch to next task */
+    rt_schedule();
 }
 
 static rt_err_t _thread_init(struct rt_thread *thread,
@@ -382,7 +352,8 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
         rt_schedule_remove_thread(thread);
     }
 
-    _thread_cleanup_execute(thread);
+    /* disable interrupt */
+    lock = rt_hw_interrupt_disable();
 
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
@@ -390,19 +361,11 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;
 
-    if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
-    {
-        rt_object_detach((rt_object_t)thread);
-    }
-    else
-    {
-        /* disable interrupt */
-        lock = rt_hw_interrupt_disable();
-        /* insert to defunct thread list */
-        rt_thread_defunct_enqueue(thread);
-        /* enable interrupt */
-        rt_hw_interrupt_enable(lock);
-    }
+    /* insert to defunct thread list */
+    rt_thread_defunct_enqueue(thread);
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(lock);
 
     return RT_EOK;
 }
@@ -492,13 +455,11 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
         rt_schedule_remove_thread(thread);
     }
 
-    _thread_cleanup_execute(thread);
+    /* disable interrupt */
+    lock = rt_hw_interrupt_disable();
 
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
-
-    /* disable interrupt */
-    lock = rt_hw_interrupt_disable();
 
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;

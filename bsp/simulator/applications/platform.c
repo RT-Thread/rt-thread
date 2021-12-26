@@ -9,12 +9,6 @@
 #include <rtthread.h>
 #include "board.h"
 
-#include <shell.h>
-
-#ifdef RT_USING_LIBC
-#error "simulator does not support RT_USING_LIBC"
-#endif
-
 int platform_init(void)
 {
 #ifdef RT_USING_LWIP

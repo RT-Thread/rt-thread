@@ -18,7 +18,6 @@
 
 #if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
 #include <sys/socket.h>
-
 #define SYSCALL_NET(f) ((void*)(f))
 #else
 #define SYSCALL_NET(f) ((void*)sys_notimpl)

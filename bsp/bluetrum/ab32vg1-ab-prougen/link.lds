@@ -1,17 +1,19 @@
 /* Define the flash max size */
-__max_flash_size = 1024k;
+__max_flash_size = 1020k;
 
-__data_ram_size = 8k;
+__data_ram_size = 16k;
 __stack_ram_size = 4k;
 __comm_ram_size = 42k;
-__heap_ram_size = 70k;
+__heap_ram_size = 52k;
+__ble_ram_size = 10k;
 
 __base = 0x10000000;
 
-__data_vma = 0x11000;
+__bram_vma = 0x11000;
+__heap_vma = __bram_vma + __ble_ram_size;
+__data_vma = __heap_vma + __heap_ram_size;
 __stack_vma = __data_vma + __data_ram_size;
 __comm_vma = __stack_vma + __stack_ram_size;
-__heap_vma = __comm_vma + __comm_ram_size;
 
 __ram1_vma = 0x50000;
 
@@ -21,6 +23,7 @@ MEMORY
     flash(rx)       : org = __base + 512,       len = __max_flash_size
     comm(rx)        : org = __comm_vma,         len = __comm_ram_size
 
+    bram            : org = __bram_vma,         len = __ble_ram_size
     data            : org = __data_vma,         len = __data_ram_size
     stack           : org = __stack_vma,        len = __stack_ram_size
     heap            : org = __heap_vma,         len = __heap_ram_size
@@ -89,7 +92,15 @@ SECTIONS
         *(.data*)
         *(.sdata*)
         *(.com_text*)
+        *(.text.ble_mqueue_get)
+        *(.text.ble_mqueue_put)
+        *(.text.os_memblock_get)
     } > comm AT > flash
+
+    .bram __bram_vma (NOLOAD) : {
+        *(.btmem.bthw)
+        *(.btmem*)
+    } > bram
 
     .bss (NOLOAD):
     {

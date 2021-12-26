@@ -18,50 +18,6 @@
 extern "C" {
 #endif
 
-#ifdef BSP_USING_TIM3_CH1
-#ifndef PWM1_TIM3_CONFIG
-#define PWM1_TIM3_CONFIG         \
-    {                              \
-        .tim_handle   = TIM3,        \
-        .name         = "tim3pwm1",  \
-        .channel      = 1            \
-    }
-#endif /* PWM1_TIM3_CONFIG */
-#endif /* BSP_USING_TIM3_CH1 */
-
-#ifdef BSP_USING_TIM3_CH2
-#ifndef PWM2_TIM3_CONFIG
-#define PWM2_TIM3_CONFIG         \
-    {                              \
-        .tim_handle   = TIM3,        \
-        .name         = "tim3pwm2",  \
-        .channel      = 2            \
-    }
-#endif /* PWM2_TIM3_CONFIG */
-#endif /* BSP_USING_TIM3_CH2 */
-
-#ifdef BSP_USING_TIM3_CH3
-#ifndef PWM3_TIM3_CONFIG
-#define PWM3_TIM3_CONFIG         \
-    {                              \
-        .tim_handle   = TIM3,        \
-        .name         = "tim3pwm3",  \
-        .channel      = 3            \
-    }
-#endif /* PWM3_TIM3_CONFIG */
-#endif /* BSP_USING_TIM3_CH3 */
-
-#ifdef BSP_USING_TIM3_CH4
-#ifndef PWM4_TIM3_CONFIG
-#define PWM4_TIM3_CONFIG             \
-    {                              \
-        .tim_handle   = TIM3,        \
-        .name         = "tim3pwm4",  \
-        .channel      = 4            \
-    }
-#endif /* PWM4_TIM3_CONFIG */
-#endif /* BSP_USING_TIM3_CH4 */
-
 #ifdef __cplusplus
 }
 #endif

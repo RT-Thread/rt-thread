@@ -30,7 +30,7 @@ static struct dmac_host _dmac_host;
 void dmalock_init(void)
 {
     rt_sem_init(&_dmac_host.sem, "dma_sem", DMAC_CHANNEL_COUNT, RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&_dmac_host.mutex, "dma_mutex", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_dmac_host.mutex, "dma_mutex", RT_IPC_FLAG_PRIO);
     for (int i = 0; i < DMAC_CHANNEL_COUNT; i++)
     {
         _dmac_host.channel_used[i] = 0;

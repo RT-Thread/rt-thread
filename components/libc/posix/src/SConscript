@@ -1,13 +1,16 @@
-from building import *
-Import('rtconfig')
+# RT-Thread building script for component
 
-src     = Glob('*.c')
+from building import *
+
+src     = []
 cwd     = GetCurrentDir()
 CPPPATH = [cwd]
+group   = []
 
-if rtconfig.ARCH == 'sim': # the vs simulator does not support select and poll
-    SrcRemove(src, ['select.c', 'poll.c'])
+flag = False
+src += ['unistd.c'] #TODO
 
-group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX'], CPPPATH = CPPPATH)
+if flag == True:
+    group = DefineGroup('POSIX', src, depend = [], CPPPATH = CPPPATH)
 
 Return('group')

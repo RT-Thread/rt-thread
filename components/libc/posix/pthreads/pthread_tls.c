@@ -13,10 +13,13 @@
 
 _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
 
-void pthread_key_system_init()
+/* initialize key area */
+static int pthread_key_system_init(void)
 {
     rt_memset(&_thread_keys[0], 0, sizeof(_thread_keys));
+    return 0;
 }
+INIT_COMPONENT_EXPORT(pthread_key_system_init);
 
 void *pthread_getspecific(pthread_key_t key)
 {

@@ -560,12 +560,12 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
         if(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
         {
             /*timer is start and run*/
-            *(rt_tick_t *)arg = RT_TIMER_FLAG_ACTIVATED;
+            *(rt_uint32_t *)arg = RT_TIMER_FLAG_ACTIVATED;
         }
         else
         {
             /*timer is stop*/
-            *(rt_tick_t *)arg = RT_TIMER_FLAG_DEACTIVATED;
+            *(rt_uint32_t *)arg = RT_TIMER_FLAG_DEACTIVATED;
         }
         break;
 

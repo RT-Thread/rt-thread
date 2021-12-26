@@ -18,9 +18,9 @@
 #include <lwp.h>
 #endif
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 #include <libc.h>
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_DEVIO */
 
 /* Global variables */
 const struct dfs_filesystem_ops *filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
@@ -34,7 +34,6 @@ char working_directory[DFS_PATH_MAX] = {"/"};
 #endif
 
 static struct dfs_fdtable _fdtab;
-static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 
 /**
  * @addtogroup DFS
@@ -63,7 +62,7 @@ int dfs_init(void)
     memset(&_fdtab, 0, sizeof(_fdtab));
 
     /* create device filesystem lock */
-    rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_PRIO);
 
 #ifdef DFS_USING_WORKDIR
     /* set current working directory */
@@ -118,6 +117,7 @@ void dfs_unlock(void)
     rt_mutex_release(&fslock);
 }
 
+#ifdef DFS_USING_POSIX
 static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
@@ -216,10 +216,10 @@ struct dfs_fd *fd_get(int fd)
     struct dfs_fd *d;
     struct dfs_fdtable *fdt;
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
     if ((0 <= fd) && (fd <= 2))
         fd = libc_stdio_get_console();
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_DEVIO */
 
     fdt = dfs_fdtable_get();
     fd = fd - DFS_FD_OFFSET;
@@ -275,6 +275,8 @@ void fd_put(struct dfs_fd *fd)
     }
     dfs_unlock();
 }
+
+#endif /* DFS_USING_POSIX */
 
 /**
  * @ingroup Fd

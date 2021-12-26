@@ -1,0 +1,14 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend('RT_USING_POSIX_POLL'):
+	src += ['poll.c']
+
+group = DefineGroup('POSIX', src, depend = [], CPPPATH = CPPPATH)
+
+Return('group')

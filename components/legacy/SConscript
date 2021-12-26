@@ -1,0 +1,22 @@
+from building import *
+import os
+
+src = Split('''
+ipc/workqueue_legacy.c
+''')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+if GetDepend('RT_USING_DFS'):
+    dfs_cwd = os.path.join(cwd,'dfs')
+    CPPPATH += [dfs_cwd]
+
+group = DefineGroup('Legacy', src, depend = ['RT_USING_LEGACY'], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

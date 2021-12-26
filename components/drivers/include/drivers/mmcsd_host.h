@@ -96,6 +96,8 @@ struct rt_mmcsd_host {
     rt_uint32_t max_blk_size;   /* maximum block size */
     rt_uint32_t max_blk_count;  /* maximum block count */
 
+    rt_uint32_t id;          /* Assigned host id */
+
     rt_uint32_t   spi_use_crc;
     struct rt_mutex  bus_lock;
     struct rt_semaphore  sem_ack;

@@ -20,12 +20,12 @@
 #include <unistd.h>
 #include <sys/errno.h>
 #include <sys/stat.h>
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
 #include "libc.h"
-#endif
+#endif /* RT_USING_POSIX_DEVIO */
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
-#endif
+#endif /* RT_USING_MODULE */
 
 #define DBG_TAG    "newlib.syscalls"
 #define DBG_LVL    DBG_INFO
@@ -80,7 +80,7 @@ void _free_r (struct _reent *ptr, void *addr)
 void *
 _sbrk_r(struct _reent *ptr, ptrdiff_t incr)
 {
-    LOG_E("Please enable RT_USING_HEAP or RT_USING_LIBC");
+    LOG_E("Please enable RT_USING_HEAP");
     RT_ASSERT(0);
     return RT_NULL;
 }
@@ -109,7 +109,12 @@ int _getpid_r(struct _reent *ptr)
 
 int _close_r(struct _reent *ptr, int fd)
 {
+#ifdef DFS_USING_POSIX
     return close(fd);
+#else
+    ptr->_errno = ENOTSUP;
+    return -1;
+#endif /* DFS_USING_POSIX */
 }
 
 int _execve_r(struct _reent *ptr, const char * name, char *const *argv, char *const *env)
@@ -178,7 +183,7 @@ int flock(int fd, int operation)
 
 _off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     _off_t rc;
 
     rc = lseek(fd, pos, whence);
@@ -186,12 +191,12 @@ _off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _mkdir_r(struct _reent *ptr, const char *name, int mode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int rc;
 
     rc = mkdir(name, mode);
@@ -199,41 +204,55 @@ int _mkdir_r(struct _reent *ptr, const char *name, int mode)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int rc;
     rc = open(file, flags, mode);
     return rc;
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     _ssize_t rc;
-    if (libc_stdio_get_console() < 0 && fd == STDIN_FILENO)
+    if (fd == STDIN_FILENO)
     {
-        LOG_W("Do not invoke standard input before initializing libc");
-        return 0;
+#ifdef RT_USING_POSIX_DEVIO
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_W("Do not invoke standard input before initializing libc");
+            return 0;
+        }
+#else
+        ptr->_errno = ENOTSUP;
+        return -1;
+#endif /* RT_USING_POSIX_DEVIO */
     }
+    else if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
+    {
+        ptr->_errno = ENOTSUP;
+        return -1;
+    }
+
     rc = read(fd, buf, nbytes);
     return rc;
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _rename_r(struct _reent *ptr, const char *old, const char *new)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int rc;
 
     rc = rename(old, new);
@@ -241,12 +260,12 @@ int _rename_r(struct _reent *ptr, const char *old, const char *new)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     int rc;
 
     rc = stat(file, pstat);
@@ -254,42 +273,51 @@ int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 int _unlink_r(struct _reent *ptr, const char *file)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     return unlink(file);
 #else
     ptr->_errno = ENOTSUP;
     return -1;
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 }
 
 _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     _ssize_t rc;
-    if (libc_stdio_get_console() < 0 && fd == STDOUT_FILENO)
+#endif /* DFS_USING_POSIX */
+
+    if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
     {
-        LOG_W("Do not invoke standard output before initializing libc");
-        return 0;
-    }
-    rc = write(fd, buf, nbytes);
-    return rc;
-#elif defined(RT_USING_CONSOLE)
-    if (STDOUT_FILENO == fd)
-    {
+#ifdef RT_USING_CONSOLE
         rt_device_t console;
 
         console = rt_console_get_device();
         if (console)
             return rt_device_write(console, -1, buf, nbytes);
+#else
+        ptr->_errno = ENOTSUP;
+        return -1;
+#endif /* RT_USING_CONSOLE */
     }
-#endif /* RT_USING_POSIX */
+    else if (fd == STDIN_FILENO)
+    {
+        ptr->_errno = ENOTSUP;
+        return -1;
+    }
+
+#ifdef DFS_USING_POSIX
+    rc = write(fd, buf, nbytes);
+    return rc;
+#else
     ptr->_errno = ENOTSUP;
     return -1;
+#endif /* DFS_USING_POSIX */
 }
 
 /* for exit() and abort() */

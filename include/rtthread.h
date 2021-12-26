@@ -15,6 +15,7 @@
  * 2016-08-09     ArdaFu       add new thread and interrupt hook.
  * 2018-11-22     Jesven       add all cpu's lock and ipi handler
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
+ * 2021-11-14     Meco Man     add rtlegacy.h for compatibility
  */
 
 #ifndef __RT_THREAD_H__
@@ -25,6 +26,9 @@
 #include <rtdef.h>
 #include <rtservice.h>
 #include <rtm.h>
+#ifdef RT_USING_LEGACY
+#include <rtlegacy.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -267,7 +271,7 @@ void rt_memory_info(rt_uint32_t *total,
                     rt_uint32_t *used,
                     rt_uint32_t *max_used);
 
-#ifdef RT_USING_SLAB
+#if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
 void *rt_page_alloc(rt_size_t npages);
 void rt_page_free(void *addr, rt_size_t npages);
 #endif
@@ -277,6 +281,19 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size));
 void rt_free_sethook(void (*hook)(void *ptr));
 #endif
 
+#endif
+
+#ifdef RT_USING_SMALL_MEM
+/**
+ * small memory object interface
+ */
+rt_smem_t rt_smem_init(const char    *name,
+                     void          *begin_addr,
+                     rt_size_t      size);
+rt_err_t rt_smem_detach(rt_smem_t m);
+void *rt_smem_alloc(rt_smem_t m, rt_size_t size);
+void *rt_smem_realloc(rt_smem_t m, void *rmem, rt_size_t newsize);
+void rt_smem_free(void *rmem);
 #endif
 
 #ifdef RT_USING_MEMHEAP
@@ -291,6 +308,23 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap);
 void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize);
 void rt_memheap_free(void *ptr);
+void rt_memheap_info(struct rt_memheap *heap,
+                     rt_uint32_t *total,
+                     rt_uint32_t *used,
+                     rt_uint32_t *max_used);
+#endif
+
+#ifdef RT_USING_SLAB
+/**
+ * slab object interface
+ */
+rt_slab_t rt_slab_init(const char *name, void *begin_addr, rt_size_t size);
+rt_err_t rt_slab_detach(rt_slab_t m);
+void *rt_slab_page_alloc(rt_slab_t m, rt_size_t npages);
+void rt_slab_page_free(rt_slab_t m, void *addr, rt_size_t npages);
+void *rt_slab_alloc(rt_slab_t m, rt_size_t size);
+void *rt_slab_realloc(rt_slab_t m, void *ptr, rt_size_t size);
+void rt_slab_free(rt_slab_t m, void *ptr);
 #endif
 
 /**@}*/
@@ -537,14 +571,14 @@ void rt_components_board_init(void);
 #define rt_kprintf(...)
 #define rt_kputs(str)
 #else
-void rt_kprintf(const char *fmt, ...);
+int rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
 #endif
 
-rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
-rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
-rt_int32_t rt_sprintf(char *buf, const char *format, ...);
-rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
+int rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
+int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
+int rt_sprintf(char *buf, const char *format, ...);
+int rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
@@ -567,12 +601,13 @@ void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 char *rt_strdup(const char *s);
 
 #ifndef RT_KSERVICE_USING_STDLIB
-void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
-rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
+void *rt_memmove(void *dest, const void *src, rt_size_t n);
+rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count);
 char *rt_strstr(const char *str1, const char *str2);
 rt_int32_t rt_strcasecmp(const char *a, const char *b);
-char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
-rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
+char *rt_strcpy(char *dst, const char *src);
+char *rt_strncpy(char *dest, const char *src, rt_size_t n);
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 #else
@@ -581,6 +616,7 @@ rt_size_t rt_strlen(const char *src);
 #define rt_memcmp(cs, ct, count)    memcmp(cs, ct, count)
 #define rt_strstr(str1, str2)       strstr(str1, str2)
 #define rt_strcasecmp(a, b)         strcasecmp(a, b)
+#define rt_strcpy(dest, src)        strcpy(dest, src)
 #define rt_strncpy(dest, src, n)    strncpy(dest, src, n)
 #define rt_strncmp(cs, ct, count)   strncmp(cs, ct, count)
 #define rt_strcmp(cs, ct)           strcmp(cs, ct)

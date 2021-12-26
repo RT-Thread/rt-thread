@@ -6,6 +6,7 @@
  * Date           Author       Notes
  * 2020-01-15     bigmagic     the first version
  * 2020-08-10     SummerGift   support clang compiler
+ * 2021-11-04     GuEe-GUI     set sp with SP_ELx
  */
 
 .section ".text.entrypoint","ax"
@@ -32,14 +33,15 @@ cpu_setup:
     bne     cpu_not_in_el3
 
     /* Should never be executed, just for completeness. (EL3) */
-    mov     x0, #(1 << 0)           /* EL0 and EL1 are in Non-Secure state */
-    orr     x0, x0, #(1 << 4)       /* RES1 */
-    orr     x0, x0, #(1 << 5)       /* RES1 */
-    orr     x0, x0, #(1 << 7)       /* SMC instructions are undefined at EL1 and above */
-    orr     x0, x0, #(1 << 8)       /* HVC instructions are enabled at EL1 and above */
-    orr     x0, x0, #(1 << 10)      /* The next lower level is AArch64 */
+    mov     x2, #(1 << 0)           /* EL0 and EL1 are in Non-Secure state */
+    orr     x2, x2, #(1 << 4)       /* RES1 */
+    orr     x2, x2, #(1 << 5)       /* RES1 */
+    orr     x2, x2, #(1 << 7)       /* SMC instructions are undefined at EL1 and above */
+    orr     x2, x2, #(1 << 8)       /* HVC instructions are enabled at EL1 and above */
+    orr     x2, x2, #(1 << 10)      /* The next lower level is AArch64 */
     msr     scr_el3, x2
 
+    /* Change execution level to EL2 */
     mov     x2, #0x3c9
     msr     spsr_el3, x2            /* 0b1111001001 */
     adr     x2, cpu_not_in_el3
@@ -51,8 +53,6 @@ cpu_not_in_el3:                     /* Running at EL2 or EL1 */
     beq     cpu_in_el1              /* Halt this core if running in El1 */
 
 cpu_in_el2:
-    msr     sp_el1, x1
-
     /* Enable CNTP for EL1 */
     mrs     x0, cnthctl_el2         /* Counter-timer Hypervisor Control register */
     orr     x0, x0, #3
@@ -71,6 +71,7 @@ cpu_in_el2:
     eret
 
 cpu_in_el1:
+    msr     spsel, #1
     mov     sp, x1                  /* Set sp in el1 */
 
     /* Avoid trap from SIMD or float point instruction */
@@ -89,7 +90,7 @@ cpu_in_el1:
 clean_bss_loop:
     cbz     w2, jump_to_entry
     str     xzr, [x1], #8
-    sub     w2, w2, #1
+    sub     w2, w2, #8
     cbnz    w2, clean_bss_loop
 
 jump_to_entry:

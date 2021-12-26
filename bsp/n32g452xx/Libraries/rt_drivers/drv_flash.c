@@ -8,6 +8,7 @@
  * 2021-08-20     breo.com     first version
  */
 
+#include <stddef.h>
 #include <board.h>
 #include <rtthread.h>
 
