@@ -21,6 +21,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <compiler_private.h>
 #ifdef RT_USING_POSIX_DEVIO
 #include "libc.h"
 #endif /* RT_USING_POSIX_DEVIO */
@@ -69,6 +70,7 @@ FILEHANDLE _sys_open(const char *name, int openmode)
         return (STDERR);
 
 #ifndef DFS_USING_POSIX
+    LOG_W("%s: %s", __func__, warning_without_fs);
     return 0; /* error */
 #else
     /* Correct openmode from fopen to open */
@@ -113,6 +115,7 @@ int _sys_close(FILEHANDLE fh)
 
     return close(fh);
 #else
+    LOG_W("%s: %s", __func__, warning_without_fs);
     return 0;
 #endif /* DFS_USING_POSIX */
 }
@@ -152,12 +155,13 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 #ifdef RT_USING_POSIX_DEVIO
         if (libc_stdio_get_console() < 0)
         {
-            LOG_W("Do not invoke standard output before initializing libc");
+            LOG_W("Do not invoke standard output before initializing compiler-libc");
             return 0; /* error, but keep going */
         }
         size = read(STDIN_FILENO, buf, len);
         return len - size; /* success */
 #else
+        LOG_W("%s: %s", __func__, warning_without_devio);
         return 0; /* error */
 #endif /* RT_USING_POSIX_DEVIO */
     }
@@ -178,6 +182,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
         }
     }
 #else
+    LOG_W("%s: %s", __func__, warning_without_fs);
     return 0; /* error */
 #endif /* DFS_USING_POSIX */
 }
@@ -228,6 +233,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
             return 0; /* error */
         }
 #else
+        LOG_W("%s: %s", __func__, warning_without_fs);
         return 0; /* error */
 #endif /* DFS_USING_POSIX */
     }
@@ -246,6 +252,7 @@ int _sys_seek(FILEHANDLE fh, long pos)
     /* position is relative to the start of file fh */
     return lseek(fh, pos, 0);
 #else
+    LOG_W("%s: %s", __func__, warning_without_fs);
     return 0; /* error */
 #endif /* DFS_USING_POSIX */
 }
@@ -301,6 +308,7 @@ long _sys_flen(FILEHANDLE fh)
     fstat(fh, &stat);
     return stat.st_size;
 #else
+    LOG_W("%s: %s", __func__, warning_without_fs);
     return 0;
 #endif /* DFS_USING_POSIX */
 }
@@ -318,6 +326,7 @@ int remove(const char *filename)
 #ifdef DFS_USING_POSIX
     return unlink(filename);
 #else
+    LOG_W("%s: %s", __func__, warning_without_fs);
     return 0; /* error */
 #endif /* DFS_USING_POSIX */
 }
@@ -345,13 +354,14 @@ int fgetc(FILE *f)
 
     if (libc_stdio_get_console() < 0)
     {
-        LOG_W("Do not invoke standard output before initializing libc");
+        LOG_W("Do not invoke standard output before initializing compiler-libc");
         return 0;
     }
 
     if(read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
 #endif /* RT_USING_POSIX_DEVIO */
+    LOG_W("%s: %s", __func__, warning_without_devio);
     return 0; /* error */
 }
 

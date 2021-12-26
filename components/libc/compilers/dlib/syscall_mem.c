@@ -12,7 +12,7 @@
 #include <stddef.h>
 
 #ifndef RT_USING_HEAP
-#define DBG_TAG    "dlib.syscall_mem"
+#define DBG_TAG    "dlib.syscall.mem"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 #define _NO_HEAP_ERROR()  do{LOG_E("Please enable RT_USING_HEAP");\
