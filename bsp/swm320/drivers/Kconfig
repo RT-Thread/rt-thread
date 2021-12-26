@@ -236,7 +236,6 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
 
     menuconfig BSP_USING_SPI

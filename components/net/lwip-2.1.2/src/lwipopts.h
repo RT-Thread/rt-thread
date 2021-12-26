@@ -231,11 +231,7 @@
 #  define SSIZE_MAX LONG_MAX
 # endif
 
-#ifdef RT_USING_LIBC
 #define LWIP_NO_UNISTD_H 0
-#else
-#define LWIP_NO_UNISTD_H 1
-#endif
 
 /* ---------- Memory options ---------- */
 #define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)

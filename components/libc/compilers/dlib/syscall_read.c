@@ -14,8 +14,8 @@
 #ifdef RT_USING_POSIX_DEVIO
 #include "libc.h"
 #endif /* RT_USING_POSIX_DEVIO */
-
-#define DBG_TAG    "dlib.syscall_read"
+#include <compiler_private.h>
+#define DBG_TAG    "dlib.syscall.read"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
@@ -42,11 +42,12 @@ size_t __read(int handle, unsigned char *buf, size_t len)
 #ifdef RT_USING_POSIX_DEVIO
         if (libc_stdio_get_console() < 0)
         {
-            LOG_W("Do not invoke standard input before initializing libc");
+            LOG_W("Do not invoke standard input before initializing compiler-libc");
             return 0; /* error, but keep going */
         }
         return read(STDIN_FILENO, buf, len); /* return the length of the data read */
 #else
+        LOG_W(warning_without_devio);
         return _LLIO_ERROR;
 #endif /* RT_USING_POSIX_DEVIO */
     }
@@ -58,6 +59,7 @@ size_t __read(int handle, unsigned char *buf, size_t len)
     size = read(handle, buf, len);
     return size; /* return the length of the data read */
 #else
+    LOG_W(warning_without_fs);
     return _LLIO_ERROR;
 #endif /* DFS_USING_POSIX */
 }

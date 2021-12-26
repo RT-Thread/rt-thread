@@ -11,7 +11,8 @@
 #include <rtthread.h>
 #include <LowLevelIOInterface.h>
 #include <unistd.h>
-#define DBG_TAG    "dlib.syscall_write"
+#include <compiler_private.h>
+#define DBG_TAG    "dlib.syscall.write"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
@@ -63,6 +64,7 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
         size = write(handle, buf, len);
         return size; /* return the length of the data written */
 #else
+        LOG_W(warning_without_fs);
         return _LLIO_ERROR;
 #endif /* DFS_USING_POSIX */
     }

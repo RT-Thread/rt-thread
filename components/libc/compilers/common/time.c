@@ -25,13 +25,15 @@
 #include <sys/errno.h>
 #include <rtthread.h>
 #include <rthw.h>
-#ifdef RT_USING_DEVICE
+#ifdef RT_USING_RTC
 #include <rtdevice.h>
 #endif
 
 #define DBG_TAG    "time"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
+
+#define WARNING_NO_RTC "Cannot find a RTC device!"
 
 /* seconds per day */
 #define SPD 24*60*60
@@ -108,7 +110,7 @@ static rt_err_t get_timeval(struct timeval *tv)
     else
     {
         /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
-        rt_kprintf("Cannot find a RTC device to provide time!\r\n");
+        rt_kprintf(WARNING_NO_RTC);
         return -RT_ENOSYS;
     }
 
@@ -116,7 +118,7 @@ static rt_err_t get_timeval(struct timeval *tv)
 
 #else
     /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
-    rt_kprintf("Cannot find a RTC device to provide time!\r\n");
+    rt_kprintf(WARNING_NO_RTC);
     return -RT_ENOSYS;
 #endif /* RT_USING_RTC */
 }
@@ -153,14 +155,14 @@ static int set_timeval(struct timeval *tv)
     }
     else
     {
-        LOG_W("Cannot find a RTC device to provide time!");
+        LOG_W(WARNING_NO_RTC);
         return -RT_ENOSYS;
     }
 
     return rst;
 
 #else
-    LOG_W("Cannot find a RTC device to provide time!");
+    LOG_W(WARNING_NO_RTC);
     return -RT_ENOSYS;
 #endif /* RT_USING_RTC */
 }
@@ -525,7 +527,7 @@ INIT_COMPONENT_EXPORT(_rt_clock_time_system_init);
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
 #ifndef RT_USING_RTC
-    LOG_W("Cannot find a RTC device to save time!");
+    LOG_W(WARNING_NO_RTC);
     return -1;
 #else
     int ret = 0;
@@ -564,7 +566,7 @@ RTM_EXPORT(clock_getres);
 int clock_gettime(clockid_t clockid, struct timespec *tp)
 {
 #ifndef RT_USING_RTC
-    LOG_W("Cannot find a RTC device to save time!");
+    LOG_W(WARNING_NO_RTC);
     return -1;
 #else
     int ret = 0;
@@ -628,7 +630,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
 int clock_settime(clockid_t clockid, const struct timespec *tp)
 {
 #ifndef RT_USING_RTC
-    LOG_W("Cannot find a RTC device to save time!");
+    LOG_W(WARNING_NO_RTC);
     return -1;
 #else
     register rt_base_t level;

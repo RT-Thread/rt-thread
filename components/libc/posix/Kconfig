@@ -41,14 +41,13 @@ config RT_USING_POSIX_DELAY
 
 config RT_USING_POSIX_CLOCK
     bool "Enable clock/time functions, clock_gettime()/clock_settime()/clock_getres() etc"
-    select RT_LIBC_USING_TIME if !RT_USING_LIBC
     select RT_USING_POSIX_DELAY
     default n
 
 config RT_USING_POSIX_GETLINE
     bool "Enable getline()/getdelim()"
-    select RT_USING_LIBC
-    select RT_LIBC_USING_FILEIO
+    select RT_USING_POSIX_FS
+    select RT_USING_POSIX_DEVIO
     default n
 
 config RT_USING_PTHREADS
