@@ -242,7 +242,7 @@ menu "On-chip Peripheral Drivers"
                 int "USB PULL UP STATUS"
                 default 0
         endif
-    source "libraries/HAL_Drivers/Kconfig"
+    source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
 
