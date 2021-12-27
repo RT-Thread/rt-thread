@@ -442,8 +442,12 @@ struct rt_object_information
 /**
  * The hook function call macro
  */
-#undef __RT_OBJECT_HOOK_CALL
-#undef RT_OBJECT_HOOK_CALL
+#ifdef __RT_OBJECT_HOOK_CALL
+    #undef __RT_OBJECT_HOOK_CALL
+#endif
+#ifdef RT_OBJECT_HOOK_CALL
+    #undef RT_OBJECT_HOOK_CALL
+#endif
 #define __RT_OBJECT_HOOK_CALL(func, argv)  __on_##func argv
 #define RT_OBJECT_HOOK_CALL(func, argv)    __RT_OBJECT_HOOK_CALL(func, argv)
 
