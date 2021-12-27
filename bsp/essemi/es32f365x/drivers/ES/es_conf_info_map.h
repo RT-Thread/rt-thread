@@ -2991,11 +2991,11 @@ static const struct pin_index pins[] =
 
 
 
-/* GP16C2T_CH1N */
+/* GP16C2T_CH1N*/
 
 
 
-/* GP16C2T_CH2N */
+/* GP16C2T_CH2N*/
 
 
 
