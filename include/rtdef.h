@@ -37,6 +37,7 @@
  * 2021-03-19     Meco Man     add security devices
  * 2021-05-10     armink       change version number to v4.0.4
  * 2021-11-19     Meco Man     change version number to v4.1.0
+ * 2021-12-21     Meco Man     re-implement RT_UNUSED
  * 2021-12-24     Gabriel      improve hooking method
  */
 
