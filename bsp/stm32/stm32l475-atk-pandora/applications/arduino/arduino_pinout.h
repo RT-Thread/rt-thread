@@ -15,7 +15,7 @@
 #define ARDUINO_PWM_HZ 500 /* Arduino UNO's PWM is around 500Hz */
 
 #define ARDUINO_PINOUT_PIN_MAX  20 /* Arduino UNO has 20 pins in total*/
-#define ARDUINO_PINOUT_ADC_MAX  6  /* Arduino UNO has 5 ADC pins */
+#define ARDUINO_PINOUT_ADC_MAX  6  /* Arduino UNO has 6 ADC pins */
 #define ARDUINO_PINOUT_PWM_MAX  5  /* Arduino UNO has 5 PWM pins */
 
 #define A0   (14)
