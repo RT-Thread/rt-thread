@@ -1,0 +1,11 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = ['mman.c']
+CPPPATH = [cwd]
+
+group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_MMAN'], CPPPATH = CPPPATH)
+
+Return('group')

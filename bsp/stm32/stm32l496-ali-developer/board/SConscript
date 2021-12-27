@@ -24,7 +24,7 @@ path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.CROSS_TOOL == 'gcc' or rtconfig.CROSS_TOOL == 'clang':
     src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/gcc/startup_stm32l496xx.s']
 elif rtconfig.CROSS_TOOL == 'keil':
     src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/arm/startup_stm32l496xx.s']

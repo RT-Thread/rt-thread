@@ -63,8 +63,4 @@ typedef struct _pthread_data _pthread_data_t;
 
 _pthread_data_t *_pthread_get_data(pthread_t thread);
 
-void posix_mq_system_init(void);
-void posix_sem_system_init(void);
-void pthread_key_system_init(void);
-
 #endif

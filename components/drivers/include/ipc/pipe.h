@@ -15,12 +15,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#ifndef RT_PIPE_BUFSZ
-#define PIPE_BUFSZ    512
-#else
-#define PIPE_BUFSZ    RT_PIPE_BUFSZ
-#endif
-
 struct rt_pipe_device
 {
     struct rt_device parent;

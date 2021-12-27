@@ -40,3 +40,18 @@ int sched_setscheduler(pid_t pid, int policy)
     return EOPNOTSUPP;
 }
 RTM_EXPORT(sched_setscheduler);
+
+int sched_rr_get_interval(pid_t pid, struct timespec *tp)
+{
+    if(pid != 0)
+    {
+        return EINVAL;
+    }
+
+    rt_set_errno(-EINVAL);
+
+    /* course model, don't support */
+    // TODO
+    return -1;
+}
+RTM_EXPORT(sched_rr_get_interval);

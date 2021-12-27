@@ -38,16 +38,13 @@ It includes:
 ## RT-Thread Features
 
 - Designed for resource-constrained devices, the minimum kernel requires only 1.2KB of RAM and 3 KB of Flash.
-
+- A variety of standard interfaces, such as POSIX, CMSIS, C++ application environment.
 - Has rich components and a prosperous and fast growing package ecosystem.
-
 - Elegant code style, easy to use, read and master.
-
 - High Scalability. RT-Thread has high-quality scalable software architecture, loose coupling, modularity, is easy to tailor and expand.
-
 - Supports high-performance applications.
-
-- Supports cross-platform and a wide range of chips.
+- Supports all mainstream compiling tools such as GCC, Keil and IAR.
+- Supports a wide range of <a href="https://www.rt-thread.io/board.html">architectures and chips</a>.
 
 ## Code Catalogue
 
@@ -77,6 +74,7 @@ RT-Thread supports many architectures, and has covered the major architectures i
 - **ARM Cortex-M4**：manufacturers like ST、Nuvton、NXP、GigaDevice、Realtek、Ambiq Micro, ect.
 - **ARM Cortex-M7**：manufacturers like ST、NXP
 - **ARM Cortex-M23**：manufacturers like GigaDevice
+- **ARM Cortex-M33**：manufacturers like ST
 - **ARM Cortex-R4**
 - **ARM Cortex-A8/A9**：manufacturers like NXP
 - **ARM7**：manufacturers like Samsung
