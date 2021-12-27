@@ -7,6 +7,6 @@ inc = [cwd]
 group = DefineGroup('Arduino', src, depend = ['RT_USING_ARDUINO'], CPPPATH = inc)
 
 src = ['arduino_main.cpp']
-group = DefineGroup('Applications', src, depend = ['RT_USING_ARDUINO'])
+group += DefineGroup('Applications', src, depend = ['RT_USING_ARDUINO'])
 
 Return('group')
