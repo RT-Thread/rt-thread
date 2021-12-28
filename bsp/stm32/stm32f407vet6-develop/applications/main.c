@@ -49,7 +49,7 @@ extern   "C"
 /*----------------------------------------------------------------------------*
 **                             Mcaro Definitions                              *
 **----------------------------------------------------------------------------*/
-
+#define LED_PIN_NUM    41
 /*----------------------------------------------------------------------------*
 **                             Data Structures                                *
 **----------------------------------------------------------------------------*/
@@ -69,6 +69,11 @@ extern   "C"
 /*----------------------------------------------------------------------------*
 **                             Public Function                                *
 **----------------------------------------------------------------------------*/
+#include <rtthread.h>
+#include <rtdevice.h>
+#include <stdlib.h>
+
+#define LED_PIN    GET_PIN(E,11)
 
 /*----------------------------------------------------------------------------*
 **                             Function Define                                *
@@ -82,19 +87,25 @@ extern   "C"
 * History:
 *************************************************/
 int main(void)
-{
-	//  int main_ret = 0;
-
+{	
 	  LOG_D("BUILD=%s\n", BUILD);
+	   rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
     while (1)
     {
-				LOG_D("hello rt-thread!\n");
+			//	LOG_D("hello rt-thread!\n");
 				rt_thread_mdelay(100);
+		//	  rt_kprintf("thread run count : %d\r\n");
+        /* 拉低PIN脚 */
+        rt_pin_write(LED_PIN, PIN_LOW);
+   //     rt_kprintf("led on!\r\n");
+        /* 延时1000ms */
+        rt_thread_mdelay(1000);
+        /* 拉高PIN脚 */
+        rt_pin_write(LED_PIN, PIN_HIGH);
+    //    rt_kprintf("led off!\r\n");
+        rt_thread_mdelay(1000);
     }
- //   return main_ret;
 }
-
-
 
 /**---------------------------------------------------------------------------*
  **                         Compiler Flag                                     *

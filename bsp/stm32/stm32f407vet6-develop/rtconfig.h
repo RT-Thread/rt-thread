@@ -15,7 +15,7 @@
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 1024
+#define IDLE_THREAD_STACK_SIZE 256
 
 /* kservice optimization */
 
@@ -57,6 +57,7 @@
 
 /* C++ features */
 
+#define RT_USING_CPLUSPLUS
 
 /* Command shell */
 
@@ -150,6 +151,22 @@
 
 /* u8g2: a monochrome graphic library */
 
+#define U8G2_USE_HW_SPI
+#define U8G2_SPI_BUS_NAME "spi1"
+#define U8G2_SPI_DEVICE_NAME "spi10"
+#define PKG_USING_U8G2
+
+/* U8G2 Examples */
+
+#define PKG_USING_U8G2_LATEST_VERSION
+
+/* C     version: v1.x.x */
+
+/* C++   version: v2.x.x */
+
+/* C/C++ version: v3.x.x */
+
+#define PKG_U8G2_VER_NUM 0x99999
 
 /* tools packages */
 
@@ -189,6 +206,8 @@
 #define BSP_USING_UART1
 #define BSP_USING_SPI
 #define BSP_USING_SPI1
+#define BSP_SPI1_TX_USING_DMA
+#define BSP_SPI1_RX_USING_DMA
 
 /* Board extended module Drivers */
 
