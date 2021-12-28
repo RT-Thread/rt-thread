@@ -22,7 +22,7 @@
 
 /* Private typedef --------------------------------------------------------------*/
 
-#define DEF_VPOST_BUFFER_NUMBER 2
+#define DEF_VPOST_BUFFER_NUMBER 3
 
 typedef enum
 {
@@ -157,12 +157,12 @@ static rt_err_t vpost_layer_control(rt_device_t dev, int cmd, void *args)
     }
     break;
 
-    /* FBIO_PANDISPLAY + WAIT_VSYNC Mechanism */
-    case RTGRAPHIC_CTRL_RECT_UPDATE:
+    case RTGRAPHIC_CTRL_PAN_DISPLAY:
     {
         if (args != RT_NULL)
         {
             uint8_t *pu8BufPtr = (uint8_t *)args;
+
             g_u32VSyncLastCommit = g_u32VSyncBlank;
 
             /* Pan display */
@@ -182,20 +182,27 @@ static rt_err_t vpost_layer_control(rt_device_t dev, int cmd, void *args)
                 return -RT_ERROR;
             }
 
-            /*Wait sync*/
-            while (g_u32VSyncLastCommit == g_u32VSyncBlank)
-            {
-                rt_completion_init(&vsync_wq);
-                rt_completion_wait(&vsync_wq, RT_TICK_PER_SECOND / 60);
-            }
         }
         else
             return -RT_ERROR;
     }
     break;
 
+    case RTGRAPHIC_CTRL_WAIT_VSYNC:
+    {
+			  if (args != RT_NULL)
+				    g_u32VSyncLastCommit = g_u32VSyncBlank+1;
+
+        if (g_u32VSyncLastCommit >= g_u32VSyncBlank)
+        {
+            rt_completion_init(&vsync_wq);
+            rt_completion_wait(&vsync_wq, RT_TICK_PER_SECOND / 60);
+        }
+    }
+    break;
+
     default:
-        break;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -254,8 +261,19 @@ int rt_hw_vpost_init(void)
     VPOST_T *psVpostLcmInst = vpostLCMGetInstance(VPOST_USING_LCD_IDX);
     RT_ASSERT(psVpostLcmInst != RT_NULL);
 
-    /* LCD clock is selected from UPLL and divide to 20MHz */
-    outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0xE18);
+    if ( (psVpostLcmInst->u32DevWidth * psVpostLcmInst->u32DevHeight) > (480*272) )
+    {
+        /* LCD clock is selected from UPLL and divide to 20MHz */
+        outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0xE18);
+
+        /* LCD clock is selected from UPLL and divide to 30MHz */
+        //outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0x918);			
+    }
+    else
+    {
+        /* LCD clock is selected from UPLL and divide to 10MHz */
+        outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0xE19);
+    }
 
     /* Initial LCM */
     vpostLCMInit(VPOST_USING_LCD_IDX);
