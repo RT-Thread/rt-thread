@@ -33,6 +33,8 @@ struct rt_deferrable_t
 
     struct rt_thread deferrable;
 
+    rt_uint8_t priority;
+
     rt_uint32_t capacity;
 
     rt_uint32_t capacity_left;
@@ -42,7 +44,7 @@ struct rt_deferrable_t
     struct rt_timer tim_server;
 
     rt_list_t asyncTask;
-
+    
 };
 
 void rt_timer_deferrable_capacity(void* param);
