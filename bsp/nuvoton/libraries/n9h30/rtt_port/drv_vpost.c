@@ -190,8 +190,8 @@ static rt_err_t vpost_layer_control(rt_device_t dev, int cmd, void *args)
 
     case RTGRAPHIC_CTRL_WAIT_VSYNC:
     {
-			  if (args != RT_NULL)
-				    g_u32VSyncLastCommit = g_u32VSyncBlank+1;
+        if (args != RT_NULL)
+            g_u32VSyncLastCommit = g_u32VSyncBlank + 1;
 
         if (g_u32VSyncLastCommit >= g_u32VSyncBlank)
         {
@@ -261,13 +261,13 @@ int rt_hw_vpost_init(void)
     VPOST_T *psVpostLcmInst = vpostLCMGetInstance(VPOST_USING_LCD_IDX);
     RT_ASSERT(psVpostLcmInst != RT_NULL);
 
-    if ( (psVpostLcmInst->u32DevWidth * psVpostLcmInst->u32DevHeight) > (480*272) )
+    if ((psVpostLcmInst->u32DevWidth * psVpostLcmInst->u32DevHeight) > (480 * 272))
     {
         /* LCD clock is selected from UPLL and divide to 20MHz */
         outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0xE18);
 
         /* LCD clock is selected from UPLL and divide to 30MHz */
-        //outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0x918);			
+        //outpw(REG_CLK_DIVCTL1, (inpw(REG_CLK_DIVCTL1) & ~0xff1f) | 0x918);
     }
     else
     {
