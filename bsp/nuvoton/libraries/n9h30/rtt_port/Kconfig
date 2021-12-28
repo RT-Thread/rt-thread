@@ -464,13 +464,16 @@ config SOC_SERIES_N9H30
                 prompt "Select Supported LCM panel"
                 default LCM_USING_FW070TFT
                 config LCM_USING_E50A2V1
-                    bool "LCM_E50A2V1(800x480x2)"
+                    bool "LCM_E50A2V1(800x480-RGB565)"
 
                 config LCM_USING_LSA40AT9001
-                    bool "LCM_LSA40AT9001(800x600x2)"
+                    bool "LCM_LSA40AT9001(800x600-RGB565)"
 
                 config LCM_USING_FW070TFT
-                    bool "LCM_FW070TFT(800x480x4)"
+                    bool "LCM_FW070TFT(800x480-RGB888)"
+
+                config LCM_USING_FW043TFT
+                    bool "LCM_FW043TFT(480x272-RGB888)"
 
             endchoice
 
@@ -480,6 +483,7 @@ config SOC_SERIES_N9H30
 
                 default 2    if LCM_USING_LSA40AT9001
                 default 3    if LCM_USING_FW070TFT
+                default 4    if LCM_USING_FW043TFT
 
            config LCM_USING_BPP
                 int
@@ -487,6 +491,7 @@ config SOC_SERIES_N9H30
 
                 default 2    if LCM_USING_LSA40AT9001
                 default 4    if LCM_USING_FW070TFT
+                default 4    if LCM_USING_FW043TFT
 
            config BSP_USING_VPOST_OSD
                 bool "Enable VPOST OSD layer"

@@ -1098,6 +1098,8 @@ struct rt_device_blk_sectors
 #define RTGRAPHIC_CTRL_GET_BRIGHTNESS   7
 #define RTGRAPHIC_CTRL_GET_MODE         8
 #define RTGRAPHIC_CTRL_GET_STATUS       9
+#define RTGRAPHIC_CTRL_PAN_DISPLAY      10
+#define RTGRAPHIC_CTRL_WAIT_VSYNC       11
 
 /* graphic deice */
 enum
