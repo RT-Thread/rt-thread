@@ -30,11 +30,11 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#ifdef __CLANG_ARM
+#ifdef __clang__
 __asm(".global __use_no_semihosting\n\t");
 #else
 #pragma import(__use_no_semihosting_swi)
-#endif /* __CLANG_ARM */
+#endif
 
 /* Standard IO device handles. */
 #define STDIN       0

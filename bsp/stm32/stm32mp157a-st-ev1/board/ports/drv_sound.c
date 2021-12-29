@@ -22,7 +22,7 @@
 #define SOUND_BUS_NAME       "i2c2"
 
 #define TX_FIFO_SIZE         (4096)
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 __attribute__((at(0x2FFC2000))) static rt_uint8_t AUDIO_TX_FIFO[TX_FIFO_SIZE];
 #elif defined ( __GNUC__ )
 static rt_uint8_t AUDIO_TX_FIFO[TX_FIFO_SIZE] __attribute__((section(".AudioSection")));

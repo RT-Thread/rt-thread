@@ -13,7 +13,7 @@
 
 #include <rtthread.h>
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 extern void $Super$$__cpp_initialize__aeabi_(void);
 /* we need to change the cpp_initialize order */
 RT_WEAK void $Sub$$__cpp_initialize__aeabi_(void)
@@ -36,7 +36,7 @@ RT_WEAK void *__dso_handle = 0;
 
 RT_WEAK int cplusplus_system_init(void)
 {
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
     /* If there is no SHT$$INIT_ARRAY, calling
      * $Super$$__cpp_initialize__aeabi_() will cause fault. At least until Keil5.12
      * the problem still exists. So we have to initialize the C++ runtime by ourself.
