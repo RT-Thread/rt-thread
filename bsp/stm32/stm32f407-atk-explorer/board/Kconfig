@@ -36,7 +36,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_MCU_LCD
         bool "Enable ATK LCD"
-        select BSP_USING_SDRAM
+        select BSP_USING_SRAM
         default n
         if BSP_USING_MCU_LCD
             config BSP_USING_MCU_LCD_TEST
@@ -53,6 +53,13 @@ menu "Onboard Peripheral Drivers"
                 int "Touch interrupt pin, PB1"
                 default 17
         endif
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select BSP_USING_MCU_LCD
+        select BSP_USING_TOUCH
+        select PKG_USING_LVGL
+        default n
 
     config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q128 spi1)"
