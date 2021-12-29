@@ -42,7 +42,7 @@ size_t __read(int handle, unsigned char *buf, size_t len)
 #ifdef RT_USING_POSIX_DEVIO
         if (libc_stdio_get_console() < 0)
         {
-            LOG_W("Do not invoke standard input before initializing compiler-libc");
+            LOG_W("Do not invoke standard input before initializing Compiler");
             return 0; /* error, but keep going */
         }
         return read(STDIN_FILENO, buf, len); /* return the length of the data read */

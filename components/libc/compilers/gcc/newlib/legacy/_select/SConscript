@@ -15,6 +15,6 @@ if rtconfig.PLATFORM == 'gcc' and (CheckHeader(rtconfig, 'sys/select.h') == Fals
     except:
         pass
 
-    group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH)
+    group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

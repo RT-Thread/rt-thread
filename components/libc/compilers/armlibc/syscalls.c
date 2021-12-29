@@ -155,7 +155,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 #ifdef RT_USING_POSIX_DEVIO
         if (libc_stdio_get_console() < 0)
         {
-            LOG_W("Do not invoke standard output before initializing compiler-libc");
+            LOG_W("Do not invoke standard output before initializing Compiler");
             return 0; /* error, but keep going */
         }
         size = read(STDIN_FILENO, buf, len);
@@ -354,7 +354,7 @@ int fgetc(FILE *f)
 
     if (libc_stdio_get_console() < 0)
     {
-        LOG_W("Do not invoke standard output before initializing compiler-libc");
+        LOG_W("Do not invoke standard output before initializing Compiler");
         return 0;
     }
 

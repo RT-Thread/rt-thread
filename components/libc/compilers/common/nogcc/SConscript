@@ -10,5 +10,5 @@ group = []
 src += Glob('*.c')
 
 if rtconfig.PLATFORM != 'gcc' or rtconfig.ARCH == 'sim':
-    group = DefineGroup('compiler-libc', src, depend = [], CPPPATH = CPPPATH)
+    group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')
