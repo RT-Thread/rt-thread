@@ -9,6 +9,6 @@ CPPPATH = [cwd]
 if GetDepend('RT_USING_POSIX_POLL'):
 	src += ['poll.c']
 
-group = DefineGroup('POSIX', src, depend = [], CPPPATH = CPPPATH)
+group = DefineGroup('POSIX', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

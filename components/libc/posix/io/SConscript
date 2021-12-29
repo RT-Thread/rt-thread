@@ -19,7 +19,7 @@ if GetDepend('RT_USING_POSIX_SELECT'):
     flag = True
 
 if flag == True:
-    group = DefineGroup('POSIX', src, depend = [], CPPPATH = CPPPATH)
+    group = DefineGroup('POSIX', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)
 for d in list:
