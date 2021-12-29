@@ -47,7 +47,7 @@ size_t __read(int handle, unsigned char *buf, size_t len)
         }
         return read(STDIN_FILENO, buf, len); /* return the length of the data read */
 #else
-        LOG_W(warning_without_devio);
+        LOG_W(_WARNING_WITHOUT_DEVIO);
         return _LLIO_ERROR;
 #endif /* RT_USING_POSIX_DEVIO */
     }
@@ -59,7 +59,7 @@ size_t __read(int handle, unsigned char *buf, size_t len)
     size = read(handle, buf, len);
     return size; /* return the length of the data read */
 #else
-    LOG_W(warning_without_fs);
+    LOG_W(_WARNING_WITHOUT_FS);
     return _LLIO_ERROR;
 #endif /* DFS_USING_POSIX */
 }

@@ -77,7 +77,7 @@ int __open(const char *filename, int mode)
     }
     return handle;
 #else
-    LOG_W(warning_without_fs);
+    LOG_W(_WARNING_WITHOUT_FS);
     return _LLIO_ERROR;
 #endif /* DFS_USING_POSIX */
 }

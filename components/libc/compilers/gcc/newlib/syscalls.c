@@ -110,7 +110,7 @@ int _close_r(struct _reent *ptr, int fd)
 #ifdef DFS_USING_POSIX
     return close(fd);
 #else
-    LOG_W("%s: %s", __func__, warning_without_fs);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -187,7 +187,7 @@ _off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
     rc = lseek(fd, pos, whence);
     return rc;
 #else
-    LOG_W("%s: %s", __func__, warning_without_fs);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -200,7 +200,7 @@ int _mkdir_r(struct _reent *ptr, const char *name, int mode)
     rc = mkdir(name, mode);
     return rc;
 #else
-    LOG_W("%s: %s", __func__, warning_without_fs);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -213,7 +213,7 @@ int _open_r(struct _reent *ptr, const char *file, int flags, int mode)
     rc = open(file, flags, mode);
     return rc;
 #else
-    LOG_W("%s: %s", __func__, warning_without_fs);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -232,7 +232,7 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
             return 0;
         }
 #else
-        LOG_W("%s: %s", __func__, warning_without_devio);
+        LOG_W("%s: %s", __func__, _WARNING_WITHOUT_DEVIO);
         ptr->_errno = ENOTSUP;
         return -1;
 #endif /* RT_USING_POSIX_DEVIO */
@@ -246,7 +246,7 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
     rc = read(fd, buf, nbytes);
     return rc;
 #else
-    LOG_W("%s: %s", __func__, warning_without_fs);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -259,7 +259,7 @@ int _rename_r(struct _reent *ptr, const char *old, const char *new)
     rc = rename(old, new);
     return rc;
 #else
-    LOG_W("%s: %s", __func__, warning_without_fs);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -272,7 +272,7 @@ int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
     rc = stat(file, pstat);
     return rc;
 #else
-    LOG_W("%s: %s", __func__, warning_without_fs);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -283,7 +283,7 @@ int _unlink_r(struct _reent *ptr, const char *file)
 #ifdef DFS_USING_POSIX
     return unlink(file);
 #else
-    LOG_W("%s: %s", __func__, warning_without_fs);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -318,7 +318,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
     rc = write(fd, buf, nbytes);
     return rc;
 #else
-    LOG_W("%s: %s", __func__, warning_without_fs);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
