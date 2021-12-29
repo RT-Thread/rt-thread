@@ -276,10 +276,7 @@ char *_sys_command_string(char *cmd, int len)
 void _ttywrch(int ch)
 {
 #ifdef RT_USING_CONSOLE
-    char c;
-
-    c = (char)ch;
-    rt_kprintf(&c);
+    rt_kprintf("%c", (char)ch);
 #endif /* RT_USING_CONSOLE */
 }
 
@@ -337,10 +334,7 @@ int remove(const char *filename)
 int fputc(int c, FILE *f)
 {
 #ifdef RT_USING_CONSOLE
-    char ch[2] = {0};
-
-    ch[0] = c;
-    rt_kprintf(&ch[0]);
+    rt_kprintf("%c", (char)c);
     return 1;
 #else
     return 0; /* error */
