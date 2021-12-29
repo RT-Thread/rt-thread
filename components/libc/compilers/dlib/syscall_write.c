@@ -64,7 +64,7 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
         size = write(handle, buf, len);
         return size; /* return the length of the data written */
 #else
-        LOG_W(warning_without_fs);
+        LOG_W(_WARNING_WITHOUT_FS);
         return _LLIO_ERROR;
 #endif /* DFS_USING_POSIX */
     }
