@@ -205,10 +205,12 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
 static rt_err_t at32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
-    RT_UNUSED GPIO_Type *gpio_port;
+    GPIO_Type *gpio_port;
     uint16_t gpio_pin;
     rt_base_t level;
     rt_int32_t irqindex = -1;
+
+    RT_UNUSED(gpio_port);
 
     if (PIN_PORT(pin) < PIN_ATPORT_MAX)
     {
@@ -251,10 +253,12 @@ static rt_err_t at32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
 static rt_err_t at32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 {
-    RT_UNUSED GPIO_Type *gpio_port;
+    GPIO_Type *gpio_port;
     uint16_t gpio_pin;
     rt_base_t level;
     rt_int32_t irqindex = -1;
+
+    RT_UNUSED(gpio_port);
 
     if (PIN_PORT(pin) < PIN_ATPORT_MAX)
     {

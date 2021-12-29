@@ -15,6 +15,10 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
+#ifdef _WIN32
+#include <winsock.h>
+#endif
+
 #ifndef  FD_SETSIZE
 #define  FD_SETSIZE  32
 #endif
@@ -26,16 +30,17 @@
 #define FD_SETSIZE      DFS_FD_MAX
 #endif /* SAL_USING_POSIX */
 
-#define   NBBY    8       /* number of bits in a byte */
-
 typedef long    fd_mask;
 
+#ifndef _WIN32
+#ifndef _SYS_TYPES_FD_SET /* MIPS */
+
+#define   NBBY    8       /* number of bits in a byte */
 #define   NFDBITS (sizeof (fd_mask) * NBBY)   /* bits per mask */
 #ifndef   howmany
 #define   howmany(x,y)    (((x)+((y)-1))/(y))
 #endif
 
-#ifndef _SYS_TYPES_FD_SET /* MIPS */
 typedef struct _types_fd_set {
     fd_mask fds_bits[howmany(FD_SETSIZE, NFDBITS)];
 } _types_fd_set;
@@ -48,5 +53,6 @@ typedef struct _types_fd_set {
 #endif /* _SYS_TYPES_FD_SET */
 
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+#endif /* _WIN32 */
 
 #endif /* __SYS_SELECT_H__ */
