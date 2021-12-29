@@ -115,10 +115,6 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of mailbox .entry */
 #define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of message queue .entry */
 
-#if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-#define __CLANG_ARM
-#endif
-
 #define RT_UNUSED(x)                   ((void)x)
 
 /* Compiler Related Definitions */

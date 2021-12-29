@@ -68,7 +68,7 @@ void utest_log_lv_set(rt_uint8_t lv)
 int utest_init(void)
 {
     /* initialize the utest commands table.*/
-#if defined(__CC_ARM) || defined(__CLANG_ARM)       /* ARM C Compiler */
+#if defined(__ARMCC_VERSION)       /* ARM C Compiler */
     extern const int UtestTcTab$$Base;
     extern const int UtestTcTab$$Limit;
     tc_table = (utest_tc_export_t)&UtestTcTab$$Base;
