@@ -2,7 +2,7 @@ from building import *
 
 cwd = GetCurrentDir()
 src = []
-depend = []
+depend = ['']
 
 CPPPATH = [cwd + '/../include']
 group = []

@@ -228,7 +228,7 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 #ifdef RT_USING_POSIX_DEVIO
         if (libc_stdio_get_console() < 0)
         {
-            LOG_W("Do not invoke standard input before initializing compiler-libc");
+            LOG_W("Do not invoke standard input before initializing Compiler");
             return 0;
         }
 #else
