@@ -31,7 +31,7 @@ int __close(int handle)
 #ifdef DFS_USING_POSIX
     return close(handle);
 #else
-    LOG_W(warning_without_fs);
+    LOG_W(_WARNING_WITHOUT_FS);
     return _LLIO_ERROR;
 #endif /* DFS_USING_POSIX */
 }

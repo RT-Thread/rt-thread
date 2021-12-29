@@ -40,7 +40,7 @@ long __lseek(int handle, long offset, int whence)
 #ifdef DFS_USING_POSIX
     return lseek(handle, offset, whence);
 #else
-    LOG_W(warning_without_fs);
+    LOG_W(_WARNING_WITHOUT_FS);
     return _LLIO_ERROR;
 #endif /* DFS_USING_POSIX */
 }

@@ -12,7 +12,7 @@
 
 #include <rtconfig.h>
 
-extern const char *warning_without_fs;
-extern const char *warning_without_devio;
+#define _WARNING_WITHOUT_FS     "Please enable RT_USING_POSIX_FS"
+#define _WARNING_WITHOUT_DEVIO  "Please enable RT_USING_POSIX_FS and RT_USING_POSIX_DEVIO"
 
 #endif /* __COMPILER_PRIVATE_H__ */
