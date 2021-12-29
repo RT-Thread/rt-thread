@@ -1,3 +1,29 @@
+# RT-Thread v4.0.5 released
+
+Change log since v4.0.4
+
+## Kernel
+
+- Remove weak symbol from `rt_memset` , `rt_memcmp`, and add it for `rt_vsnprintf`
+
+## Components
+
+- Update Libc
+  - Fix the error when invoking `fopen` with mode "b"
+- [AT] Fix the overflow problem of input array
+- lwIP
+  - Fix the problem of implicit declaration of "lwip_ip4_route_src"
+  - Solve the conflict between multi BYTE_ORDERs
+
+## BSP
+
+- [qemu-vexpress-gemini] fix build errors
+- STM32
+  - Add SOC_SERIES_STM32G0 to use "stm32_wdt.hiwdg.Init.Window = 0x00000FFF"; otherwise, the watchdog will always reset.
+  - [STM32L4] Fix the failure of the first erase after programming
+- [GD32F4xx] Fix the problem of startup file
+- Revert STM32 stack size to 0x400, which is set by mistake in [#5129](https://github.com/RT-Thread/rt-thread/pull/5129)
+
 # RT-Thread v4.0.4 released
 
 Change log since v4.0.3
