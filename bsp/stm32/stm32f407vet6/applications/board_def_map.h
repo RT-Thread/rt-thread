@@ -33,20 +33,6 @@ extern   "C"
 #define BME280_PIN
 #define RSCDRRM020NDSE3_PIN
 
-/* ########################### Command Selection ############################ */
-#define BOARD_VERSION
-
-/*----------------------------------------------------------------------------*
-**                                                                            *
-**                            Board Version Define                            *
-**                                                                            *
-**----------------------------------------------------------------------------*/
-//#define BOARD_VERSION
-#ifdef BOARD_VERSION
-#define BUILD (__DATE__ " " __TIME__)
-#define VERSION ("V 1.1")
-#endif
-
 /*----------------------------------------------------------------------------*
 **                                                                            *
 **                          Board Pin Map Definitions                         *
@@ -128,6 +114,21 @@ extern   "C"
 #define RSCDRRM020NDSE3_CS_AD_PIN	 	GET_PIN(B, 10)/* defined the CS_ADC pin: PB10 */
 #define RSCDRRM020NDSE3_CS_EE_PIN	 	GET_PIN(E, 15)/* defined the CS_EE pin: PE15 */
 #endif
+
+/* ########################### Command Selection ############################ */
+#define BOARD_VERSION
+
+/*----------------------------------------------------------------------------*
+**                                                                            *
+**                            Board Version Define                            *
+**                                                                            *
+**----------------------------------------------------------------------------*/
+//#define BOARD_VERSION
+#ifdef BOARD_VERSION
+#define BUILD (__DATE__ " " __TIME__)
+#define VERSION ("V 1.1")
+#endif
+
 
 /*----------------------------------------------------------------------------*
 **                           BT pin configuration                             *

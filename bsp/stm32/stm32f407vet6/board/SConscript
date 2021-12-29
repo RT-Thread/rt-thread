@@ -9,6 +9,8 @@ cwd = GetCurrentDir()
 # add general drivers
 src = Split('''
 board.c
+spi_flash_init.c
+w25qxx.c
 CubeMX_Config/Src/stm32f4xx_hal_msp.c
 ''')
 	
