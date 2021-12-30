@@ -1,0 +1,10 @@
+from building import *
+
+Import('rtconfig')
+
+src   = []
+group = []
+
+group = DefineGroup('Compiler', src, depend = [''])
+
+Return('group')
