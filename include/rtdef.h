@@ -456,7 +456,7 @@ struct rt_object_information
 #endif
 
 #ifdef RT_USING_HOOK
-    //! \brief special thansk to hzc1998 for following __on_hook_argsx() macros
+    //! \brief special thanks to hzc1998 for following __on_hook_argsx() macros
     #define __on_hook_args0(name)               do {if ((name##_hook) != RT_NULL)  name##_hook(); } while (0)
     #define __on_hook_args1(name, arg0)         do {if ((name##_hook) != RT_NULL)  name##_hook(arg0); } while (0)
     #define __on_hook_args2(name, arg0, arg1)   do {if ((name##_hook) != RT_NULL)  name##_hook(arg0, arg1); } while (0)
