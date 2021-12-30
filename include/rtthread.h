@@ -570,12 +570,7 @@ void rt_components_board_init(void);
 #define rt_kprintf(...)
 #define rt_kputs(str)
 #else
-#if defined(__ARMCC_VERSION) || defined(__GNUC__) || \
-    defined(__TI_COMPILER_VERSION__)
-int rt_kprintf(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
-#else
 int rt_kprintf(const char *fmt, ...);
-#endif
 void rt_kputs(const char *str);
 #endif
 
