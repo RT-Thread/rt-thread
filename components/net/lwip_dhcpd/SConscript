@@ -1,13 +1,12 @@
 from building import *
 
 cwd = GetCurrentDir()
-
-if GetDepend('RT_USING_LWIP202') or GetDepend('RT_USING_LWIP212') :
-    src = ['dhcp_server_raw.c']
-else:
-    src = ['dhcp_server.c']
-
 CPPPATH = [cwd]
+
+if GetDepend('RT_USING_LWIP141'):
+    src = ['dhcp_server.c']
+else:
+    src = ['dhcp_server_raw.c']
 
 group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'LWIP_USING_DHCPD'], CPPPATH = CPPPATH)
 
