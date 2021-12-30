@@ -456,138 +456,68 @@ struct rt_object_information
 #endif
 
 #ifdef RT_USING_HOOK
+
+    //! \brief special thansk to hzc1998 for following __on_hook_argsx() macros
+    #define __on_hook_args0(name)               do {if ((name##_hook) != RT_NULL)  name##_hook(); } while (0)
+    #define __on_hook_args1(name, arg0)         do {if ((name##_hook) != RT_NULL)  name##_hook(arg0); } while (0)
+    #define __on_hook_args2(name, arg0, arg1)   do { if ((name##_hook) != RT_NULL) name##_hook(arg0, arg1); } while (0)
+
     #ifndef __on_rt_interrupt_enter_hook
-        #define __on_rt_interrupt_enter_hook()                                  \
-            do {                                                                \
-                if ((rt_interrupt_enter_hook) != RT_NULL)                       \
-                    rt_interrupt_enter_hook();                                  \
-            } while (0)
+        #define __on_rt_interrupt_enter_hook()          __on_hook_args0(rt_interrupt_enter_hook)
     #endif
     #ifndef __on_rt_interrupt_leave_hook
-        #define __on_rt_interrupt_leave_hook()                                  \
-            do {                                                                \
-                if ((rt_interrupt_leave_hook) != RT_NULL)                       \
-                    rt_interrupt_leave_hook();                                  \
-            } while (0)
+        #define __on_rt_interrupt_leave_hook()          __on_hook_args0(rt_interrupt_leave_hook)
     #endif
     #ifndef __on_rt_interrupt_switch_hook
-        #define __on_rt_interrupt_switch_hook()                                 \
-            do {                                                                \
-                if ((rt_interrupt_switch_hook) != RT_NULL)                      \
-                    rt_interrupt_switch_hook();                                 \
-            } while (0)
+        #define __on_rt_interrupt_switch_hook()         __on_hook_args0(rt_interrupt_switch_hook)
     #endif
     #ifndef __on_rt_malloc_hook
-        #define __on_rt_malloc_hook(addr, size)                                 \
-            do {                                                                \
-                if ((rt_malloc_hook) != RT_NULL)                                \
-                    rt_malloc_hook(addr, size);                                 \
-            } while (0)
+        #define __on_rt_malloc_hook(addr, size)         __on_hook_args2(rt_malloc_hook, addr, size)
     #endif
     #ifndef __on_rt_free_hook
-        #define __on_rt_free_hook(rmem)                                         \
-            do {                                                                \
-                if ((rt_free_hook) != RT_NULL)                                  \
-                    rt_free_hook(rmem);                                         \
-            } while (0)
+        #define __on_rt_free_hook(rmem)                 __on_hook_args1(rt_free_hook, rmem)
     #endif
     #ifndef __on_rt_mp_alloc_hook
-        #define __on_rt_mp_alloc_hook(mp, block)                                \
-            do {                                                                \
-                if ((rt_mp_alloc_hook) != RT_NULL)                              \
-                    rt_mp_alloc_hook(mp, block);                                \
-            } while (0)
+        #define __on_rt_mp_alloc_hook(mp, block)        __on_hook_args2(rt_mp_alloc_hook, mp, block)
     #endif
     #ifndef __on_rt_mp_free_hook
-        #define __on_rt_mp_free_hook(mp, block)                                 \
-            do {                                                                \
-                if ((rt_mp_free_hook) != RT_NULL)                               \
-                    rt_mp_free_hook(mp, block);                                 \
-            } while (0)
+        #define __on_rt_mp_free_hook(mp, block)         __on_hook_args2(rt_mp_free_hook, mp, block)
     #endif
     #ifndef __on_rt_object_trytake_hook
-        #define __on_rt_object_trytake_hook(parent)                             \
-            do {                                                                \
-                if ((rt_object_trytake_hook) != RT_NULL)                        \
-                    rt_object_trytake_hook(parent);                             \
-            } while (0)
+        #define __on_rt_object_trytake_hook(parent)     __on_hook_args1(rt_object_trytake_hook, parent)
     #endif
     #ifndef __on_rt_object_take_hook
-        #define __on_rt_object_take_hook(parent)                                \
-            do {                                                                \
-                if ((rt_object_take_hook) != RT_NULL)                           \
-                    rt_object_take_hook(parent);                                \
-            } while (0)
+        #define __on_rt_object_take_hook(parent)        __on_hook_args1(rt_object_take_hook, parent)
     #endif
     #ifndef __on_rt_object_put_hook
-        #define __on_rt_object_put_hook(parent)                                 \
-            do {                                                                \
-                if ((rt_object_put_hook) != RT_NULL)                            \
-                    rt_object_put_hook(parent);                                 \
-            } while (0)
+        #define __on_rt_object_put_hook(parent)         __on_hook_args1(rt_object_put_hook, parent)
     #endif
     #ifndef __on_rt_scheduler_hook
-        #define __on_rt_scheduler_hook(from, to)                                \
-            do {                                                                \
-                if ((rt_scheduler_hook) != RT_NULL)                             \
-                    rt_scheduler_hook(from, to);                                \
-            } while (0)
+        #define __on_rt_scheduler_hook(from, to)        __on_hook_args2(rt_scheduler_hook, from, to)
     #endif
     #ifndef __on_rt_scheduler_switch_hook
-        #define __on_rt_scheduler_switch_hook(tid)                              \
-            do {                                                                \
-                if ((rt_scheduler_switch_hook) != RT_NULL)                      \
-                    rt_scheduler_switch_hook(tid);                              \
-            } while (0)
+        #define __on_rt_scheduler_switch_hook(tid)      __on_hook_args1(rt_scheduler_switch_hook, tid)
     #endif
     #ifndef __on_rt_object_attach_hook
-        #define __on_rt_object_attach_hook(obj)                                 \
-            do {                                                                \
-                if ((rt_object_attach_hook) != RT_NULL)                         \
-                    rt_object_attach_hook(obj);                                 \
-            } while (0)
+        #define __on_rt_object_attach_hook(obj)         __on_hook_args1(rt_object_attach_hook, obj)
     #endif
     #ifndef __on_rt_object_detach_hook
-        #define __on_rt_object_detach_hook(obj)                                 \
-            do {                                                                \
-                if ((rt_object_detach_hook) != RT_NULL)                         \
-                    rt_object_detach_hook(obj);                                 \
-            } while (0)
+        #define __on_rt_object_detach_hook(obj)         __on_hook_args1(rt_object_detach_hook, obj)
     #endif
     #ifndef __on_rt_thread_inited_hook
-        #define __on_rt_thread_inited_hook(thread)                              \
-            do {                                                                \
-                if ((rt_thread_inited_hook) != RT_NULL)                         \
-                    rt_thread_inited_hook(thread);                              \
-            } while (0)
+        #define __on_rt_thread_inited_hook(thread)      __on_hook_args1(rt_thread_inited_hook, thread)
     #endif
     #ifndef __on_rt_thread_suspend_hook
-        #define __on_rt_thread_suspend_hook(thread)                             \
-            do {                                                                \
-                if ((rt_thread_suspend_hook) != RT_NULL)                        \
-                    rt_thread_suspend_hook(thread);                             \
-            } while (0)
+        #define __on_rt_thread_suspend_hook(thread)     __on_hook_args1(rt_thread_suspend_hook, thread)
     #endif
     #ifndef __on_rt_thread_resume_hook
-        #define __on_rt_thread_resume_hook(thread)                              \
-            do {                                                                \
-                if ((rt_thread_resume_hook) != RT_NULL)                         \
-                    rt_thread_resume_hook(thread);                              \
-            } while (0)
+        #define __on_rt_thread_resume_hook(thread)      __on_hook_args1(rt_thread_resume_hook, thread)
     #endif
     #ifndef __on_rt_timer_enter_hook
-        #define __on_rt_timer_enter_hook(t)                                     \
-            do {                                                                \
-                if ((rt_timer_enter_hook) != RT_NULL)                           \
-                    rt_timer_enter_hook(t);                                     \
-            } while (0)
+        #define __on_rt_timer_enter_hook(t)             __on_hook_args1(rt_timer_enter_hook, t)
     #endif
     #ifndef __on_rt_timer_exit_hook
-        #define __on_rt_timer_exit_hook(t)                                      \
-            do {                                                                \
-                if ((rt_timer_exit_hook) != RT_NULL)                            \
-                    rt_timer_exit_hook(t);                                      \
-            } while (0)
+        #define __on_rt_timer_exit_hook(t)              __on_hook_args1(rt_timer_exit_hook, t)
     #endif
 #else
     #ifndef __on_rt_interrupt_enter_hook
