@@ -448,9 +448,12 @@ struct rt_object_information
 #ifdef RT_OBJECT_HOOK_CALL
     #undef RT_OBJECT_HOOK_CALL
 #endif
-#define __RT_OBJECT_HOOK_CALL(func, argv)  __on_##func argv
-#define RT_OBJECT_HOOK_CALL(func, argv)    __RT_OBJECT_HOOK_CALL(func, argv)
-
+#ifdef RT_FORCE_ALL_HOOK_OFF
+    #define RT_OBJECT_HOOK_CALL(func, argv)
+#else
+    #define __RT_OBJECT_HOOK_CALL(func, argv)  __on_##func argv
+    #define RT_OBJECT_HOOK_CALL(func, argv)    __RT_OBJECT_HOOK_CALL(func, argv)
+#endif
 
 #ifdef RT_USING_HOOK
     #ifndef __on_rt_interrupt_enter_hook
