@@ -38,7 +38,7 @@
  * 2021-05-10     armink       change version number to v4.0.4
  * 2021-11-19     Meco Man     change version number to v4.1.0
  * 2021-12-21     Meco Man     re-implement RT_UNUSED
- * 2021-12-24     Gabriel      improve hooking method
+ * 2021-12-31     Gabriel      improve hooking method
  */
 
 #ifndef __RT_DEF_H__
@@ -457,13 +457,13 @@ struct rt_object_information
 
 #ifdef RT_USING_HOOK
     //! \brief special thanks to hzc1998 for following __on_hook_argsx() macros
-    #define __ON_HOOK_ARGS0(name)               do {if ((name##_hook) != RT_NULL)  name##_hook(); } while (0)
-    #define __ON_HOOK_ARGS1(name, arg0)         do {if ((name##_hook) != RT_NULL)  name##_hook(arg0); } while (0)
-    #define __ON_HOOK_ARGS2(name, arg0, arg1)   do {if ((name##_hook) != RT_NULL)  name##_hook(arg0, arg1); } while (0)
+    #define __ON_HOOK_ARGS0(__hook)               do {if ((__hook) != RT_NULL)  __hook();           } while (0)
+    #define __ON_HOOK_ARGS1(__hook, arg0)         do {if ((__hook) != RT_NULL)  __hook(arg0);       } while (0)
+    #define __ON_HOOK_ARGS2(__hook, arg0, arg1)   do {if ((__hook) != RT_NULL)  __hook(arg0, arg1); } while (0)
 #else
-    #define __ON_HOOK_ARGS0(name)                
-    #define __ON_HOOK_ARGS1(name, arg0)          
-    #define __ON_HOOK_ARGS2(name, arg0, arg1)    
+    #define __ON_HOOK_ARGS0(__hook)                
+    #define __ON_HOOK_ARGS1(__hook, arg0)          
+    #define __ON_HOOK_ARGS2(__hook, arg0, arg1)    
 #endif
 
 #ifndef __on_rt_interrupt_enter_hook
