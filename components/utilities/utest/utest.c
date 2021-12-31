@@ -174,7 +174,7 @@ static void utest_run(const char *utest_name)
         tc_run_num = 0;
         if (tc_fail_list)
         {
-            memset(tc_fail_list, 0, TC_FAIL_LIST_SIZE);
+            rt_memset(tc_fail_list, 0, TC_FAIL_LIST_SIZE);
         }
 
         LOG_I("[==========] [ utest    ] loop %d/%d", index + 1, tc_loop);
