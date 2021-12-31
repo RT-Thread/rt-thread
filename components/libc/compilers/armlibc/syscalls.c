@@ -204,7 +204,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 
     if (fh == STDOUT || fh == STDERR)
     {
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
         rt_device_t console;
         console = rt_console_get_device();
         if (console)
@@ -214,7 +214,7 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
         return 0; /* success */
 #else
         return 0; /* error */
-#endif /* RT_USING_CONSOLE */
+#endif /* defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE) */
     }
     else if (fh == STDIN)
     {

@@ -297,7 +297,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 
     if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
     {
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
         rt_device_t console;
 
         console = rt_console_get_device();
@@ -306,7 +306,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 #else
         ptr->_errno = ENOTSUP;
         return -1;
-#endif /* RT_USING_CONSOLE */
+#endif /* defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE) */
     }
     else if (fd == STDIN_FILENO)
     {
