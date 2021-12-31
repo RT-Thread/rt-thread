@@ -650,7 +650,7 @@ static sfud_err page256_or_1_byte_write(const sfud_flash *flash, uint32_t addr, 
         size -= data_size;
         addr += data_size;
 
-        memcpy(&cmd_data[cmd_size], data, data_size);
+        rt_memcpy(&cmd_data[cmd_size], data, data_size);
 
         result = spi->wr(spi, cmd_data, cmd_size + data_size, NULL, 0);
         if (result != SFUD_SUCCESS) {
