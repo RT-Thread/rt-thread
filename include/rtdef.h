@@ -460,9 +460,9 @@ struct rt_object_information
     #define __ON_HOOK_ARGS1(__hook, arg0)         do {if ((__hook) != RT_NULL)  __hook(arg0);       } while (0)
     #define __ON_HOOK_ARGS2(__hook, arg0, arg1)   do {if ((__hook) != RT_NULL)  __hook(arg0, arg1); } while (0)
 #else
-    #define __ON_HOOK_ARGS0(__hook)                
-    #define __ON_HOOK_ARGS1(__hook, arg0)          
-    #define __ON_HOOK_ARGS2(__hook, arg0, arg1)    
+    #define __ON_HOOK_ARGS0(__hook)
+    #define __ON_HOOK_ARGS1(__hook, arg0)
+    #define __ON_HOOK_ARGS2(__hook, arg0, arg1)
 #endif
 
 #ifndef __on_rt_interrupt_enter_hook
