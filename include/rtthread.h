@@ -266,9 +266,9 @@ void *rt_calloc(rt_size_t count, rt_size_t size);
 void *rt_malloc_align(rt_size_t size, rt_size_t align);
 void rt_free_align(void *ptr);
 
-void rt_memory_info(rt_uint32_t *total,
-                    rt_uint32_t *used,
-                    rt_uint32_t *max_used);
+void rt_memory_info(rt_size_t *total,
+                    rt_size_t *used,
+                    rt_size_t *max_used);
 
 #if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
 void *rt_page_alloc(rt_size_t npages);
@@ -308,9 +308,9 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize);
 void rt_memheap_free(void *ptr);
 void rt_memheap_info(struct rt_memheap *heap,
-                     rt_uint32_t *total,
-                     rt_uint32_t *used,
-                     rt_uint32_t *max_used);
+                     rt_size_t *total,
+                     rt_size_t *used,
+                     rt_size_t *max_used);
 #endif
 
 #ifdef RT_USING_SLAB

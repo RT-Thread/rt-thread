@@ -867,9 +867,9 @@ struct rt_memheap
 
     void                   *start_addr;                 /**< pool start address and size */
 
-    rt_uint32_t             pool_size;                  /**< pool size */
-    rt_uint32_t             available_size;             /**< available size */
-    rt_uint32_t             max_used_size;              /**< maximum allocated size */
+    rt_size_t               pool_size;                  /**< pool size */
+    rt_size_t               available_size;             /**< available size */
+    rt_size_t               max_used_size;              /**< maximum allocated size */
 
     struct rt_memheap_item *block_list;                 /**< used block list */
 
