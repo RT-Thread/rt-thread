@@ -22,9 +22,9 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <compiler_private.h>
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
 
 #define DBG_TAG    "armlibc.syscalls"
 #define DBG_LVL    DBG_INFO
@@ -152,7 +152,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 
     if (fh == STDIN)
     {
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard output before initializing Compiler");
@@ -161,9 +161,9 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
         size = read(STDIN_FILENO, buf, len);
         return len - size; /* success */
 #else
-        LOG_W("%s: %s", __func__, _WARNING_WITHOUT_DEVIO);
+        LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);
         return 0; /* error */
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
     }
     else if (fh == STDOUT || fh == STDERR)
     {
@@ -349,7 +349,7 @@ int fputc(int c, FILE *f)
 
 int fgetc(FILE *f)
 {
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
     char ch;
 
     if (libc_stdio_get_console() < 0)
@@ -360,8 +360,8 @@ int fgetc(FILE *f)
 
     if(read(STDIN_FILENO, &ch, 1) == 1)
         return ch;
-#endif /* RT_USING_POSIX_DEVIO */
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_DEVIO);
+#endif /* RT_USING_POSIX_STDIO */
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);
     return 0; /* error */
 }
 
