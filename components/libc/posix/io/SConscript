@@ -10,7 +10,7 @@ group   = []
 
 flag = False
 
-if GetDepend('RT_USING_POSIX_DEVIO'):
+if GetDepend('RT_USING_POSIX_STDIO'):
     src += ['libc.c']
     flag = True
 

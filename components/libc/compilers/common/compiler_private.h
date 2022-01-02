@@ -13,6 +13,6 @@
 #include <rtconfig.h>
 
 #define _WARNING_WITHOUT_FS     "Please enable RT_USING_POSIX_FS"
-#define _WARNING_WITHOUT_DEVIO  "Please enable RT_USING_POSIX_FS and RT_USING_POSIX_DEVIO"
+#define _WARNING_WITHOUT_STDIO  "Please enable RT_USING_POSIX_FS and RT_USING_POSIX_STDIO"
 
 #endif /* __COMPILER_PRIVATE_H__ */
