@@ -30,7 +30,7 @@ GD32407V-START是-兆易创新推出的一款GD32F4XX系列的评估板，最高
 | GPIO      | 支持       | PA0, PA1... PK15 ---> PIN: 0, 1...144 |
 | UART      | 支持       | UART0 - UART7                         |
 | I2C       | 支持       | I2C1                                  |
-| SPI       | 支持       | SPI0. SPI1, SPI2                      |
+| SPI       | 支持       | SPI0 -  SPI2                          |
 | SPI FLASH | 支持       |                                       |
 | **扩展模块**  | **支持情况** | **备注**                                |
 | 暂无        | 暂不支持     | 暂不支持                                  |
