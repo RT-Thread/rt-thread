@@ -4,7 +4,6 @@
 
 GD32407V-START是-兆易创新推出的一款GD32F4XX系列的评估板，最高主频高达168M，该开发板具有丰富的板载资源，可以充分发挥 GD32407V 的芯片性能。
 
-
 开发板外观如下图所示：
 
 ![board](figures/board.jpg)
@@ -14,32 +13,43 @@ GD32407V-START是-兆易创新推出的一款GD32F4XX系列的评估板，最高
 - GD32407V，主频 168MHz，3072KB FLASH ，192KB RAM 
 
 - 常用外设
-
-  - LED ：3个，LED1 (电源指示灯），LED2（PC6）
+  
+  - LED ：2个，LED1 (电源指示灯），LED2（PC6）
   - 按键：2个，K1（复位引脚），K2（用户按键，PA0）
 
 - 常用接口：USB 接口
 
 - 调试接口：GD-LINK
 
-  
+## 外设支持
+
+本 BSP 目前对外设的支持情况如下：
+
+| **片上外设**  | **支持情况** | **备注**                                |
+|:--------- |:--------:|:------------------------------------- |
+| GPIO      | 支持       | PA0, PA1... PK15 ---> PIN: 0, 1...144 |
+| UART      | 支持       | UART0 - UART7                         |
+| I2C       | 支持       | I2C1                                  |
+| SPI       | 支持       | SPI0. SPI1, SPI2                      |
+| SPI FLASH | 支持       |                                       |
+| **扩展模块**  | **支持情况** | **备注**                                |
+| 暂无        | 暂不支持     | 暂不支持                                  |
 
 ## 使用说明
 
 使用说明分为如下两个章节：
 
 - 快速上手
-
+  
   本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
 
 - 进阶使用
-
+  
   本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
-
 
 ### 快速上手
 
-本 BSP 为开发者提供 MDK5 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+本 BSP 为开发者提供 MDK5 工程，并且支持 GCC 开发环境，也可使用RT-Thread Studio开发。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
 #### 硬件连接
 
@@ -75,7 +85,7 @@ msh >
 
 3. 输入`pkgs --update`命令更新软件包。
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+4. 输入`scons --target=mdk4/mdk5` 命令重新生成工程。
 
 ## 注意事项
 
@@ -85,4 +95,4 @@ msh >
 
 维护人:
 
--  [BruceOu](https://github.com/Ouxiaolong/), 邮箱：<ouxiaolong@bruceou.cn>
+- [BruceOu](https://github.com/Ouxiaolong/), 邮箱：<ouxiaolong@bruceou.cn>
