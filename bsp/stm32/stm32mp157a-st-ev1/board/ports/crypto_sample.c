@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -43,7 +43,7 @@ static void hw_crc_sample(uint8_t *temp, int size)
 {
     struct rt_hwcrypto_ctx *ctx;
     rt_uint32_t result = 0;
-    
+
     struct hwcrypto_crc_cfg cfg =
     {
         .last_val = 0xFFFFFFFF,
@@ -58,9 +58,9 @@ static void hw_crc_sample(uint8_t *temp, int size)
 
     result = rt_hwcrypto_crc_update(ctx, temp, size);
 
-    rt_kprintf("crc result: %x \n", result);                
+    rt_kprintf("crc result: %x \n", result);
 
-    rt_hwcrypto_crc_destroy(ctx);  
+    rt_hwcrypto_crc_destroy(ctx);
 }
 #endif
 
@@ -70,19 +70,19 @@ static void hw_hash_sample()
     int i = 0;
     struct rt_hwcrypto_ctx *ctx = RT_NULL;
     const uint8_t hash_input[] = "RT-Thread was born in 2006, it is an open source, neutral, and community-based real-time operating system (RTOS).";
-    
+
     static uint8_t sha1_output[20];
-    static uint8_t sha1_except[20] = {0xff, 0x3c, 0x95, 0x54, 0x95, 0xf0, 0xad, 
+    static uint8_t sha1_except[20] = {0xff, 0x3c, 0x95, 0x54, 0x95, 0xf0, 0xad,
                                     0x02, 0x1b, 0xa8, 0xbc, 0xa2, 0x2e, 0xa5,
                                     0xb0, 0x62, 0x1b, 0xdf, 0x7f, 0xec};
-    
+
     static uint8_t md5_output[16];
-    static uint8_t md5_except[16] = {0x40, 0x86, 0x03, 0x80, 0x0d, 0x8c, 0xb9, 
+    static uint8_t md5_except[16] = {0x40, 0x86, 0x03, 0x80, 0x0d, 0x8c, 0xb9,
                                    0x4c, 0xd6, 0x7d, 0x28, 0xfc, 0xf6, 0xc3,
                                    0xac, 0x8b};
-    
+
     static uint8_t sha224_output[28];
-    static uint8_t sha224_except[28] = {0x6f, 0x62, 0x52, 0x7d, 0x80, 0xe6, 
+    static uint8_t sha224_except[28] = {0x6f, 0x62, 0x52, 0x7d, 0x80, 0xe6,
                                         0x9f, 0x82, 0x78, 0x7a, 0x46, 0x91,
                                         0xb0, 0xe9, 0x64, 0x89, 0xe6, 0xc3,
                                         0x6b, 0x7e, 0xcf, 0xca, 0x11, 0x42,
@@ -101,7 +101,7 @@ static void hw_hash_sample()
         rt_kprintf("%c", hash_input[i]);
     }
     rt_kprintf("\n");
-    
+
     /* sh1 test*/
     ctx = rt_hwcrypto_hash_create(rt_hwcrypto_dev_default(), HWCRYPTO_TYPE_SHA1);
     if (ctx == RT_NULL)
@@ -114,13 +114,13 @@ static void hw_hash_sample()
     for (i = 0; i < sizeof(sha1_except); i++)
     {
         rt_kprintf("%x ", sha1_except[i]);
-    } 
+    }
     rt_kprintf("\n");
     /* start sha1 */
     rt_hwcrypto_hash_update(ctx, hash_input, rt_strlen((char const *)hash_input));
     /* get sha1 result */
     rt_hwcrypto_hash_finish(ctx, sha1_output, rt_strlen((char const *)sha1_output));
-    
+
     rt_kprintf("Actual sha1 result: \n");
     for (i = 0; i < sizeof(sha1_output); i++)
     {
@@ -137,7 +137,7 @@ static void hw_hash_sample()
     }
     /* deinit hash*/
     rt_hwcrypto_hash_destroy(ctx);
-    
+
     /* md5 test*/
     ctx = rt_hwcrypto_hash_create(rt_hwcrypto_dev_default(), HWCRYPTO_TYPE_MD5);
     if (ctx == RT_NULL)
@@ -150,13 +150,13 @@ static void hw_hash_sample()
     for (i = 0; i < sizeof(md5_except); i++)
     {
         rt_kprintf("%x ", md5_except[i]);
-    } 
+    }
     rt_kprintf("\n");
     /* start md5 */
     rt_hwcrypto_hash_update(ctx, hash_input, rt_strlen((char const *)hash_input));
     /* get md5 result */
     rt_hwcrypto_hash_finish(ctx, md5_output, rt_strlen((char const *)md5_output));
-    
+
     rt_kprintf("Actual md5 result: \n");
     for (i = 0; i < sizeof(md5_output); i++)
     {
@@ -173,7 +173,7 @@ static void hw_hash_sample()
     }
     /* deinit hash*/
     rt_hwcrypto_hash_destroy(ctx);
-    
+
     /* sha224 test */
     ctx = rt_hwcrypto_hash_create(rt_hwcrypto_dev_default(), HWCRYPTO_TYPE_SHA224);
     if (ctx == RT_NULL)
@@ -186,13 +186,13 @@ static void hw_hash_sample()
     for (i = 0; i < sizeof(sha224_except); i++)
     {
         rt_kprintf("%x ", sha224_except[i]);
-    } 
+    }
     rt_kprintf("\n");
     /* start sha224 */
     rt_hwcrypto_hash_update(ctx, hash_input, rt_strlen((char const *)hash_input));
     /* get sha224 result */
     rt_hwcrypto_hash_finish(ctx, sha224_output, rt_strlen((char const *)sha224_output));
-    
+
     rt_kprintf("Actual sha224 result: \n");
     for (i = 0; i < sizeof(sha224_output); i++)
     {
@@ -216,13 +216,13 @@ static void hw_hash_sample()
         rt_kprintf("create hash[%08x] context err!\n", HWCRYPTO_TYPE_SHA256);
         return ;
     }
-    
+
     rt_kprintf("Create sha256 type success!\n");
     rt_kprintf("Except sha256 result: \n");
     for (i = 0; i < sizeof(sha256_except); i++)
     {
         rt_kprintf("%x ", sha256_except[i]);
-    } 
+    }
     rt_kprintf("\n");
     /* start sha256 */
     rt_hwcrypto_hash_update(ctx, hash_input, rt_strlen((char const *)hash_input));
@@ -235,7 +235,7 @@ static void hw_hash_sample()
         rt_kprintf("%x ", sha256_output[i]);
     }
     rt_kprintf("\n");
-    
+
     if(rt_memcmp(sha256_output, sha256_except, sizeof(sha256_except)/sizeof(sha256_except[0])) != 0)
     {
         rt_kprintf("Hash type sha256 Test error, The actual result is not equal to the except result\n");
@@ -245,7 +245,7 @@ static void hw_hash_sample()
         rt_kprintf("Hash type sha256 Test success, The actual result is equal to the except result\n");
     }
     rt_hwcrypto_hash_destroy(ctx);
-    rt_kprintf("Hash Test over!\n");    
+    rt_kprintf("Hash Test over!\n");
 }
 #endif
 
@@ -254,7 +254,7 @@ static int crypto(int argc, char **argv)
     int result = RT_EOK;
     static rt_device_t device = RT_NULL;
     char *result_str;
-    
+
     if (argc > 1)
     {
         if (!strcmp(argv[1], "probe"))
@@ -293,7 +293,7 @@ static int crypto(int argc, char **argv)
                 {
                     rt_kprintf("rng <number>        - generate <number> digital\n");
                 }
-                
+
 #else
                 rt_kprintf("please enable RNG first!\n");
 #endif
@@ -301,7 +301,7 @@ static int crypto(int argc, char **argv)
             else if (!strcmp(argv[1], "crc"))
             {
 #if defined (BSP_USING_CRC)
-                int size = 0, i = 0; 
+                int size = 0, i = 0;
                 if (argc > 3)
                 {
                     size = argc - 2;
@@ -312,7 +312,7 @@ static int crypto(int argc, char **argv)
                         {
                             data[i] = strtol(argv[2 + i], NULL, 0);
                         }
-                        hw_crc_sample(data, size);  
+                        hw_crc_sample(data, size);
                         rt_free(data);
                     }
                     else
@@ -333,16 +333,16 @@ static int crypto(int argc, char **argv)
 #if defined (BSP_USING_HASH)
                 if (argc == 3)
                 {
-                    hw_hash_sample(); 
+                    hw_hash_sample();
                 }
                 else
                 {
-                    rt_kprintf("crypto hash sample          - hash use sample\n");    
+                    rt_kprintf("crypto hash sample          - hash use sample\n");
                 }
 #else
-         rt_kprintf("please enable CRC first!\n");       
+         rt_kprintf("please enable CRC first!\n");
 #endif
-                
+
             }
             else
             {
@@ -359,7 +359,7 @@ static int crypto(int argc, char **argv)
         rt_kprintf("crypto hash sample                          - hash use sample\n");
         result = -RT_ERROR;
     }
-    
+
     return result;
 }
 MSH_CMD_EXPORT(crypto, crypto function);
