@@ -55,7 +55,7 @@ struct rthw_sdio
 
 /* SYSRAM SDMMC1/2 accesses */
 #define SDCARD_ADDR          0x2FFFF000
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 __attribute__((at(SDCARD_ADDR))) static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 #elif defined ( __GNUC__ )
 static rt_uint8_t cache_buf[SDIO_BUFF_SIZE] __attribute__((section(".SdCardSection")));
@@ -579,7 +579,7 @@ int rt_hw_sdio_init(void)
 #endif
 
 #ifdef BSP_USING_SDIO2
-    
+
     if (IS_ENGINEERING_BOOT_MODE())
     {
         MX_RTC_Init();
