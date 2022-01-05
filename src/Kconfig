@@ -84,6 +84,11 @@ config RT_USING_HOOK
     help
         Enable the hook function when system running, such as idle thread hook,
         thread context switch etc.
+    if RT_USING_HOOK
+        config RT_HOOK_USING_FUNC_PTR
+        bool "Using function pointers as system hook"
+        default y
+    endif
 
 config RT_USING_IDLE_HOOK
     bool "Enable IDLE Task hook"

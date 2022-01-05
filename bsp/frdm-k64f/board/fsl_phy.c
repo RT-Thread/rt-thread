@@ -80,7 +80,7 @@ status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
     while ((idReg != PHY_CONTROL_ID1) && (counter != 0))
     {
         PHY_Read(base, phyAddr, PHY_ID1_REG, &idReg);
-        counter --;       
+        counter --;
     }
 
     if (!counter)
