@@ -9,6 +9,7 @@
  */
 #include <lvgl.h>
 #include "nu_2d.h"
+#include "mmu.h"
 
 #define LOG_TAG             "lvgl.disp"
 #define DBG_ENABLE
@@ -23,10 +24,16 @@ static rt_device_t lcd_device = 0;
 static struct rt_device_graphic_info info;
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
+static void *buf3_next = RT_NULL;
+
 static void nu_flush_direct(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
     lv_disp_t *psDisp = _lv_refr_get_disp_refreshing();
     void *pvDstReDraw;
+
+#if (LV_USE_GPU_N9H30_GE2D==0)
+    mmu_clean_dcache((uint32_t)color_p, disp_drv->draw_buf->size * sizeof(lv_color_t));
+#endif
 
     /* Use PANDISPLAY */
     rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, color_p);
@@ -44,6 +51,10 @@ static void nu_flush_direct(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_c
     ge2dSpriteBlt_Screen(0, 0, info.width, info.height, (void *)color_p);
     // -> Leave GE2D
 
+#if (LV_USE_GPU_N9H30_GE2D==0)
+    mmu_invalidate_dcache((uint32_t)pvDstReDraw, disp_drv->draw_buf->size * sizeof(lv_color_t));
+#endif
+
     /* WAIT_VSYNC */
     rt_device_control(lcd_device, RTGRAPHIC_CTRL_WAIT_VSYNC, RT_NULL);
 
@@ -52,9 +63,29 @@ static void nu_flush_direct(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_c
 
 static void nu_flush_full_refresh(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
-    /* Use PANDISPLAY+WAIT_VSYNC without H/W copying. */
+#if (LV_USE_GPU_N9H30_GE2D==0)
+    mmu_clean_dcache((uint32_t)color_p, disp_drv->draw_buf->size * sizeof(lv_color_t));
+#endif
+
+    /* Use PANDISPLAY without H/W copying */
     rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, color_p);
-    rt_device_control(lcd_device, RTGRAPHIC_CTRL_WAIT_VSYNC, RT_NULL);
+
+    if (buf3_next)
+    {
+        /* vsync-none: Use triple screen-sized buffers. */
+        if (disp_drv->draw_buf->buf1 == color_p)
+            disp_drv->draw_buf->buf1 = buf3_next;
+        else
+            disp_drv->draw_buf->buf2 = buf3_next;
+
+        disp_drv->draw_buf->buf_act = buf3_next;
+        buf3_next = color_p;
+    }
+    else
+    {
+        /* vsync-after: Use ping-pong screen-sized buffers only.*/
+        rt_device_control(lcd_device, RTGRAPHIC_CTRL_WAIT_VSYNC, RT_NULL);
+    }
 
     lv_disp_flush_ready(disp_drv);
 }
@@ -78,7 +109,6 @@ static void nu_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t 
     lv_disp_flush_ready(disp_drv);
 }
 
-
 static void nu_fill_cb(struct _lv_disp_drv_t *disp_drv, lv_color_t *dest_buf, lv_coord_t dest_width,
                        const lv_area_t *fill_area, lv_color_t color)
 {
@@ -100,6 +130,10 @@ static void nu_fill_cb(struct _lv_disp_drv_t *disp_drv, lv_color_t *dest_buf, lv
     }
     else
     {
+#if (LV_USE_GPU_N9H30_GE2D==0)
+        mmu_clean_invalidated_dcache((uint32_t)dest_buf, disp_drv->draw_buf->size * sizeof(lv_color_t));
+#endif
+
         /*Hardware filling*/
         if (disp_drv->direct_mode || disp_drv->full_refresh)
         {
@@ -134,8 +168,8 @@ void nu_perf_monitor(struct _lv_disp_drv_t *disp_drv, uint32_t time, uint32_t px
 void lv_port_disp_init(void)
 {
     rt_err_t result;
-    void *buf_1 = RT_NULL;
-    void *buf_2 = RT_NULL;
+    void *buf1 = RT_NULL;
+    void *buf2 = RT_NULL;
     uint32_t u32FBSize;
 
     lcd_device = rt_device_find("lcd");
@@ -162,15 +196,23 @@ void lv_port_disp_init(void)
     /*Set the resolution of the display*/
     disp_drv.hor_res = info.width;
     disp_drv.ver_res = info.height;
-    //disp_drv.full_refresh = 1;
-    disp_drv.direct_mode = 1;
     u32FBSize = info.height * info.width * (info.bits_per_pixel / 8);
+
+#if (LV_USE_GPU_N9H30_GE2D==0)
+    disp_drv.full_refresh = 1;
+    //disp_drv.direct_mode = 1;
+#endif
 
     if (disp_drv.full_refresh || disp_drv.direct_mode)
     {
-        buf_1 = (void *)info.framebuffer;
-        buf_2 = (void *)((uint32_t)buf_1 + u32FBSize);
-        rt_kprintf("LVGL: Two screen-sized buffers(%s) - buf_1@%08x, buf_2@%08x\n", (disp_drv.full_refresh == 1) ? "full_refresh" : "direct_mode", buf_1, buf_2);
+#if (LV_USE_GPU_N9H30_GE2D==1)
+        buf1 = (void *)info.framebuffer;  // Use Non-cacheable VRAM
+#else
+        buf1 = (void *)((uint32_t)info.framebuffer & ~0x80000000); // Use Cacheable VRAM
+#endif
+        buf2 = (void *)((uint32_t)buf1 + u32FBSize);
+        buf3_next = (void *)((uint32_t)buf2 + u32FBSize);
+        rt_kprintf("LVGL: Use triple screen-sized buffers(%s) - buf1@%08x, buf2@%08x, buf3_next@%08x\n", (disp_drv.full_refresh == 1) ? "full_refresh" : "direct_mode", buf1, buf2, buf3_next);
 
         if (disp_drv.direct_mode)
             disp_drv.flush_cb = nu_flush_direct;
@@ -179,16 +221,16 @@ void lv_port_disp_init(void)
     }
     else
     {
-        buf_1 = (void *)(((uint32_t)info.framebuffer) + u32FBSize);
-        buf_2 = (void *)((uint32_t)buf_1 + u32FBSize);
-        rt_kprintf("LVGL: Two screen-sized buffers - buf_1@%08x, buf_2@%08x\n", buf_1, buf_2);
+        buf1 = (void *)(((uint32_t)info.framebuffer) + u32FBSize);
+        buf2 = (void *)((uint32_t)buf1 + u32FBSize);
+        rt_kprintf("LVGL: Use two screen-sized buffers - buf1@%08x, buf2@%08x\n", buf1, buf2);
         rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, info.framebuffer);
 
         disp_drv.flush_cb = nu_flush;
     }
 
     /*Initialize `disp_buf` with the buffer(s).*/
-    lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, info.width * info.height);
+    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, info.width * info.height);
 
     result = rt_device_open(lcd_device, 0);
     if (result != RT_EOK)
