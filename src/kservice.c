@@ -116,6 +116,7 @@ int *_rt_errno(void)
 }
 RTM_EXPORT(_rt_errno);
 
+#ifndef RT_KSERVICE_USING_STDLIB_MEMSET
 /**
  * This function will set the content of memory to specified value.
  *
@@ -201,7 +202,9 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memset);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
 
+#ifndef RT_KSERVICE_USING_STDLIB_MEMCPY
 /**
  * This function will copy memory content from source address to destination address.
  *
@@ -285,6 +288,7 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memcpy);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
 
 #ifndef RT_KSERVICE_USING_STDLIB
 
