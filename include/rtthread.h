@@ -596,8 +596,12 @@ int *_rt_errno(void);
 
 int __rt_ffs(int value);
 
+#ifndef RT_KSERVICE_USING_STDLIB_MEMSET
 void *rt_memset(void *src, int c, rt_ubase_t n);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
+#ifndef RT_KSERVICE_USING_STDLIB_MEMCPY
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
 char *rt_strdup(const char *s);
 
 #ifndef RT_KSERVICE_USING_STDLIB
@@ -612,6 +616,12 @@ rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 #else
 #include <string.h>
+#ifdef RT_KSERVICE_USING_STDLIB_MEMSET
+#define rt_memset(s, c, count)      memset(s, c, count)
+#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
+#ifdef RT_KSERVICE_USING_STDLIB_MEMCPY
+#define rt_memcpy(dst, src, count)  memcpy(dst, src, count)
+#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
 #define rt_memmove(dest, src, n)    memmove(dest, src, n)
 #define rt_memcmp(cs, ct, count)    memcmp(cs, ct, count)
 #define rt_strstr(str1, str2)       strstr(str1, str2)
