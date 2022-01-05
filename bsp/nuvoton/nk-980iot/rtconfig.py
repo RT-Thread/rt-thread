@@ -79,7 +79,7 @@ elif PLATFORM == 'armcc':
     LFLAGS += ' --scatter  ' + LINK_FILE + '.sct'
 
     if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
+        CFLAGS += ' -g -O2'
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'

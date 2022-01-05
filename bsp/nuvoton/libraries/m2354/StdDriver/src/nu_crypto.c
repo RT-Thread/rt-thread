@@ -9,6 +9,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#ifdef __has_include
+    #if __has_include("strings.h")
+        #include <strings.h>
+    #endif
+#endif
 #include "NuMicro.h"
 
 #define ENABLE_DEBUG    0

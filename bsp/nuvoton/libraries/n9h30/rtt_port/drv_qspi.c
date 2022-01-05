@@ -154,7 +154,11 @@ static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
 
         /* Set speed */
         u32SPISpeed = configuration->max_hz;
-        if (u32SPISpeed > DEF_SPI_MAX_SPEED)
+
+        /* Limitation: SPI clock must be lower than 37.5MHz. */
+        if ((SPI_INPUT_CLOCK / 2) > 37500000)
+            u32SPISpeed = SPI_INPUT_CLOCK / 4;
+        else if (u32SPISpeed > DEF_SPI_MAX_SPEED)
             u32SPISpeed = DEF_SPI_MAX_SPEED;
 
         u32SPISpeed = spiIoctl(qspi_bus->idx, SPI_IOC_SET_SPEED, u32SPISpeed, 0);

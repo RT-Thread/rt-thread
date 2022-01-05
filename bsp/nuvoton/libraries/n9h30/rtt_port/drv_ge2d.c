@@ -629,11 +629,10 @@ static struct nu_ge2d g_sNuGe2d =
                             }
 
 #define NU_GE2D_COND_WAIT() { \
-                                                          if( (inpw(REG_GE2D_INTSTS) & 0x01) == 0 ) \
-                                                          { \
-                                                              rt_thread_mdelay(1); \
-                                    rt_completion_wait(&g_sNuGe2d.signal, 100); \
-                                                        } \
+                                if( (inpw(REG_GE2D_INTSTS) & 0x01) == 0 ) \
+                                { \
+                                    rt_completion_wait(&g_sNuGe2d.signal, 60); \
+                                } \
                             }
 
 #define NU_GE2D_SIGNAL()  { \
@@ -3179,7 +3178,7 @@ void ge2dInitMonoPattern(int opt, int fore_color, int back_color)
   * @param[in] back_color is color of background
   * @return none
   */
-void ge2dInitMonoInputPattern(UINT32 PatternA, UINT32 PatternB, int fore_color, int back_color)
+void ge2dInitMonoInputPattern(uint32_t PatternA, uint32_t PatternB, int fore_color, int back_color)
 {
     UINT32 color32;
 
