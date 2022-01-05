@@ -217,7 +217,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
 
-    local_tz = *t + tz_get() * 3600;
+    local_tz = *t + (time_t)tz_get() * 3600;
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -234,7 +234,7 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
 
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * tz_get();
+    timestamp = timestamp - 3600 * (time_t)tz_get();
     return timestamp;
 }
 RTM_EXPORT(mktime);
@@ -367,7 +367,7 @@ time_t timegm(struct tm * const t)
 {
     register time_t day;
     register time_t i;
-    register time_t years = t->tm_year - 70;
+    register time_t years = (time_t)t->tm_year - 70;
 
     if (t->tm_sec > 60)
     {
