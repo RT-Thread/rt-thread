@@ -30,7 +30,6 @@
 
 #define MAX_PERIOD 65535
 #define MIN_PERIOD 3
-#define MIN_PULSE 2
 
 #ifdef BSP_USING_PWM
 
@@ -235,8 +234,7 @@ static rt_err_t drv_pwm_set(struct n32_pwm *pwm_dev, struct rt_pwm_configuration
 
     input_clock /= 1000000UL;
     /* Convert nanosecond to frequency and duty cycle. */
-    period = (unsigned long long)configuration->period * input_clock /
-             1000ULL;
+    period = (unsigned long long)configuration->period * input_clock / 1000ULL;
     psc = period / MAX_PERIOD + 1;
     period = period / psc;
     if (period < MIN_PERIOD)
@@ -255,16 +253,11 @@ static rt_err_t drv_pwm_set(struct n32_pwm *pwm_dev, struct rt_pwm_configuration
         TIM_InitTimeBase(TIMx, &TIM_TIMeBaseStructure);
     }
 
-    pulse = (unsigned long long)configuration->pulse *
-            input_clock / psc / 1000ULL;
+    pulse = (unsigned long long)configuration->pulse * input_clock / psc / 1000ULL;
     if (pulse > period)
     {
         pulse = period;
     }
-    // else if (pulse < MIN_PULSE)
-    // {
-    //     pulse = MIN_PULSE;
-    // }
 
     /* PWM1 Mode configuration: Channel1 */
     OCInitType  TIM_OCInitStructure;
