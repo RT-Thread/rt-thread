@@ -15,7 +15,7 @@
 
 #ifdef RT_USING_PIN
 
-#define N32F10X_PIN_NUMBERS 64 //[48, 64, 100, 144 ]
+#define N32G45X_PIN_NUMBERS 64 //[48, 64, 100, 144 ]
 
 #define __N32_PIN(index, rcc, gpio, gpio_index) \
 { \
@@ -37,7 +37,7 @@ struct pin_index
 
 static const struct pin_index pins[] =
 {
-#if (N32F10X_PIN_NUMBERS == 48)
+#if (N32G45X_PIN_NUMBERS == 48)
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
     __N32_PIN(2, APB2, C, 13),
@@ -89,7 +89,7 @@ static const struct pin_index pins[] =
     __N32_PIN_DEFAULT,
 
 #endif
-#if (N32F10X_PIN_NUMBERS == 64)
+#if (N32G45X_PIN_NUMBERS == 64)
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
     __N32_PIN(2, APB2, C, 13),
@@ -156,7 +156,7 @@ static const struct pin_index pins[] =
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
 #endif
-#if (N32F10X_PIN_NUMBERS == 100)
+#if (N32G45X_PIN_NUMBERS == 100)
     __N32_PIN_DEFAULT,
     __N32_PIN(1, APB2, E, 2),
     __N32_PIN(2, APB2, E, 3),
@@ -259,7 +259,7 @@ static const struct pin_index pins[] =
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
 #endif
-#if (N32F10X_PIN_NUMBERS == 144)
+#if (N32G45X_PIN_NUMBERS == 144)
     __N32_PIN_DEFAULT,
     __N32_PIN(1, APB2, E, 2),
     __N32_PIN(2, APB2, E, 3),
