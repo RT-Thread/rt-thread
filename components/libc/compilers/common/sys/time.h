@@ -79,6 +79,10 @@ char* ctime(const time_t* tim_p);
 time_t time(time_t* t);
 #endif
 
+#ifdef RT_USING_POSIX_DELAY
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
+#endif /* RT_USING_POSIX_DELAY */
+
 #ifdef RT_USING_POSIX_CLOCK
 /* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
@@ -110,7 +114,6 @@ int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
 int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp);
-int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 int rt_timespec_to_tick(const struct timespec *time);
 #endif /* RT_USING_POSIX_CLOCK */
 
