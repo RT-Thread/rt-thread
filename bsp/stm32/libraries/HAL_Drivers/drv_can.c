@@ -481,8 +481,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         case CAN_TX_MAILBOX0:
             if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME0) != SET)
             {
-                /* Change CAN state */
-                // hcan->State = HAL_CAN_STATE_ERROR;
                 /* Return function status */
                 return -RT_ERROR;
             }
@@ -490,8 +488,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         case CAN_TX_MAILBOX1:
             if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME1) != SET)
             {
-                /* Change CAN state */
-                // hcan->State = HAL_CAN_STATE_ERROR;
                 /* Return function status */
                 return -RT_ERROR;
             }
@@ -499,8 +495,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         case CAN_TX_MAILBOX2:
             if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME2) != SET)
             {
-                /* Change CAN state */
-                // hcan->State = HAL_CAN_STATE_ERROR;
                 /* Return function status */
                 return -RT_ERROR;
             }
