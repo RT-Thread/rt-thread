@@ -29,22 +29,22 @@ static int rt_hw_spi_flash_init(void)
 {
     rt_err_t res;
     static struct rt_spi_device spi_dev_gd25q;           /* SPI device */
-      static struct gd32_spi_cs  spi_cs;
-      spi_cs.GPIOx = GD25Q_SPI_CS_GPIOX;
+    static struct gd32_spi_cs  spi_cs;
+    spi_cs.GPIOx = GD25Q_SPI_CS_GPIOX;
     spi_cs.GPIO_Pin = GD25Q_SPI_CS_GPIOX_PIN_X;
 
 #if defined SOC_SERIES_GD32F4xx
-      gpio_mode_set(spi_cs.GPIOx, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, spi_cs.GPIO_Pin);
+    gpio_mode_set(spi_cs.GPIOx, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, spi_cs.GPIO_Pin);
     gpio_output_options_set(spi_cs.GPIOx, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, spi_cs.GPIO_Pin);
 
     gpio_bit_set(spi_cs.GPIOx, spi_cs.GPIO_Pin);
 #else
-        gpio_init(spi_cs.GPIOx, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, spi_cs.GPIO_Pin);
+    gpio_init(spi_cs.GPIOx, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, spi_cs.GPIO_Pin);
 
 #endif
-      res = rt_spi_bus_attach_device(&spi_dev_gd25q, SPI_FLASH_DEVICE_NAME, SPI_BUS_NAME, (void*)&spi_cs);
+    res = rt_spi_bus_attach_device(&spi_dev_gd25q, SPI_FLASH_DEVICE_NAME, SPI_BUS_NAME, (void*)&spi_cs);
 
-      if (res != RT_EOK)
+    if (res != RT_EOK)
     {
         rt_kprintf("rt_spi_bus_attach_device() run failed!\n");
         return res;

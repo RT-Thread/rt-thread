@@ -200,7 +200,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         pin_pupd = GPIO_PUPD_NONE;
         pin_odpp = GPIO_OTYPE_PP;
 #else
-                pin_mode = GPIO_MODE_OUT_PP;
+        pin_mode = GPIO_MODE_OUT_PP;
 #endif
         break;
     case PIN_MODE_OUTPUT_OD:
@@ -210,7 +210,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         pin_pupd = GPIO_PUPD_NONE;
         pin_odpp = GPIO_OTYPE_OD;
 #else
-                pin_mode = GPIO_MODE_OUT_OD;
+        pin_mode = GPIO_MODE_OUT_OD;
 #endif
         break;
     case PIN_MODE_INPUT:
@@ -219,7 +219,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         pin_mode = GPIO_MODE_INPUT;
         pin_pupd = GPIO_PUPD_PULLUP | GPIO_PUPD_PULLDOWN;
 #else
-                pin_mode = GPIO_MODE_IN_FLOATING;
+        pin_mode = GPIO_MODE_IN_FLOATING;
 #endif
         break;
     case PIN_MODE_INPUT_PULLUP:
@@ -228,7 +228,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         pin_mode = GPIO_MODE_INPUT;
         pin_pupd = GPIO_PUPD_PULLUP;
 #else
-                pin_mode = GPIO_MODE_IPU;
+        pin_mode = GPIO_MODE_IPU;
 #endif
         break;
     case PIN_MODE_INPUT_PULLDOWN:
@@ -237,7 +237,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         pin_mode = GPIO_MODE_INPUT;
         pin_pupd = GPIO_PUPD_PULLDOWN;
 #else
-                pin_mode = GPIO_MODE_IPD;
+        pin_mode = GPIO_MODE_IPD;
 #endif
         break;
     default:
@@ -476,7 +476,7 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
 #if defined SOC_SERIES_GD32F4xx
         syscfg_exti_line_config(index->port_src, index->pin_src);
 #else
-                gpio_exti_source_select(index->port_src, index->pin_src);
+        gpio_exti_source_select(index->port_src, index->pin_src);
 #endif
 
         /* configure EXTI line */

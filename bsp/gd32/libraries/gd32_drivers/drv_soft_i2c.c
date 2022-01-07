@@ -182,11 +182,11 @@ int rt_hw_i2c_init(void)
         i2c_obj[i].i2c2_bus.priv = &i2c_obj[i].ops;
         gd32_i2c_gpio_init(&i2c_obj[i]);
 
-              result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c2_bus, soft_i2c_config[i].bus_name);
+        result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c2_bus, soft_i2c_config[i].bus_name);
 
-              RT_ASSERT(result == RT_EOK);
+        RT_ASSERT(result == RT_EOK);
 
-              gd32_i2c_bus_unlock(&soft_i2c_config[i]);
+        gd32_i2c_bus_unlock(&soft_i2c_config[i]);
 
         LOG_D("software simulation %s init done, pin scl: %d, pin sda %d",
         soft_i2c_config[i].bus_name,
