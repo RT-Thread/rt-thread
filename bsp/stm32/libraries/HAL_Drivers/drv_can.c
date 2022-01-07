@@ -335,10 +335,25 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 if (filter_cfg->items[i].hdr == -1)
                 {
-                    drv_can->FilterConfig.FilterBank = i;
+                    /* use default filter bank settings */
+                    /**
+                     * because can1 and can2 use the same filter groups, 
+                     * separate the groups of can1 and can2, to prevent being covered.
+                     */
+                    if (drv_can->name == "can1")
+                    {
+                        /* can1 banks 0~13 */
+                        drv_can->FilterConfig.FilterBank = i;
+                    }
+                    else if (drv_can->name == "can2")
+                    {
+                        /* can1 banks 14~27 */
+                        drv_can->FilterConfig.FilterBank = i + 14;
+                    }
                 }
                 else
                 {
+                    /* use user-defined filter bank settings */
                     drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr;
                 }
                  /**
