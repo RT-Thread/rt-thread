@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017/10/15     bernard      the first version
  */
+
 #ifndef __RTT_LIBC_H__
 #define __RTT_LIBC_H__
 

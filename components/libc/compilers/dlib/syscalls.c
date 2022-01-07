@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-02-13     Meco Man     implement exit() and abort()
  */
+
 #include <rtthread.h>
 
 /* for exit() and abort() */
