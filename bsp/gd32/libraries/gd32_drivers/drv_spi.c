@@ -32,13 +32,13 @@ static const struct gd32_spi spi_bus_obj[] = {
     {
         SPI0,
         "spi0",
-            RCU_SPI0,
-            RCU_GPIOA,
-          &spi_bus0,
-          GPIOA,
-            GPIO_PIN_5,
-          GPIO_PIN_6,
-          GPIO_PIN_7,
+        RCU_SPI0,
+        RCU_GPIOA,
+        &spi_bus0,
+        GPIOA,
+        GPIO_PIN_5,
+        GPIO_PIN_6,
+        GPIO_PIN_7,
     }
 #endif /* BSP_USING_SPI0 */
 
@@ -46,13 +46,13 @@ static const struct gd32_spi spi_bus_obj[] = {
     {
         SPI1,
         "spi1",
-          RCU_SPI1,
-          RCU_GPIOB,
-          &spi_bus1,
-          GPIOB,
+        RCU_SPI1,
+        RCU_GPIOB,
+        &spi_bus1,
+        GPIOB,
         GPIO_PIN_12,
-          GPIO_PIN_14,
-            GPIO_PIN_15,
+        GPIO_PIN_14,
+        GPIO_PIN_15,
     }
 #endif /* BSP_USING_SPI1 */
 
@@ -60,13 +60,13 @@ static const struct gd32_spi spi_bus_obj[] = {
     {
         SPI2,
         "spi2",
-            RCU_SPI2,
-          RCU_GPIOB,
-            &spi_bus2,
-          GPIOB,
-          GPIO_PIN_3,
-          GPIO_PIN_4,
-          GPIO_PIN_5,
+        RCU_SPI2,
+        RCU_GPIOB,
+        &spi_bus2,
+        GPIOB,
+        GPIO_PIN_3,
+        GPIO_PIN_4,
+        GPIO_PIN_5,
     }
 #endif /* BSP_USING_SPI2 */
 };
@@ -93,10 +93,10 @@ static void gd32_spi_init(struct gd32_spi *gd32_spi)
     rcu_periph_clock_enable(gd32_spi->gpio_clk);
 
 #if defined SOC_SERIES_GD32F4xx
-        /*GPIO pin configuration*/
+    /*GPIO pin configuration*/
     gpio_af_set(gd32_spi->spi_port, GPIO_AF_5,  gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
 
-      gpio_mode_set(gd32_spi->spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->miso_pin| gd32_spi->miso_pin);
+    gpio_mode_set(gd32_spi->spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->miso_pin| gd32_spi->miso_pin);
     gpio_output_options_set(gd32_spi->spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,gd32_spi->miso_pin| gd32_spi->miso_pin);
 
 #else
@@ -120,8 +120,8 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(configuration != RT_NULL);
 
-        //Init SPI
-        gd32_spi_init(spi_device);
+    //Init SPI
+    gd32_spi_init(spi_device);
 
     /* data_width */
     if(configuration->data_width <= 8)

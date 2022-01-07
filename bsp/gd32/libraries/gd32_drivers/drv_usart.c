@@ -178,7 +178,7 @@ static const struct gd32_uart uart_obj[] = {
         GPIOA, GPIO_AF_7, GPIO_PIN_2,           // tx port, tx alternate, tx pin
         GPIOA, GPIO_AF_7, GPIO_PIN_3,           // rx port, rx alternate, rx pin
 #else
-              GPIOA, GPIO_PIN_2,                      // tx port, tx pin
+        GPIOA, GPIO_PIN_2,                      // tx port, tx pin
         GPIOA, GPIO_PIN_3,                      // rx port, rx pin
 #endif
         &serial1,
@@ -229,7 +229,7 @@ static const struct gd32_uart uart_obj[] = {
         GPIOC, GPIO_AF_8, GPIO_PIN_12,         // tx port, tx alternate, tx pin
         GPIOD, GPIO_AF_8, GPIO_PIN_2,          // rx port, rx alternate, rx pin
 #else
-                GPIOC, GPIO_PIN_12,         // tx port, tx pin
+        GPIOC, GPIO_PIN_12,         // tx port, tx pin
         GPIOD, GPIO_PIN_2,          // rx port, rx pin
 #endif
         &serial4,
@@ -246,7 +246,7 @@ static const struct gd32_uart uart_obj[] = {
         GPIOC, GPIO_AF_8, GPIO_PIN_6,           // tx port, tx alternate, tx pin
         GPIOC, GPIO_AF_8, GPIO_PIN_7,           // rx port, rx alternate, rx pin
 #else
-                GPIOC, GPIO_PIN_6,           // tx port, tx pin
+        GPIOC, GPIO_PIN_6,           // tx port, tx pin
         GPIOC, GPIO_PIN_7,           // rx port, rx pin
 #endif
         &serial5,
@@ -280,7 +280,7 @@ static const struct gd32_uart uart_obj[] = {
         GPIOE, GPIO_AF_8, GPIO_PIN_0,          // tx port, tx alternate, tx pin
         GPIOE, GPIO_AF_8, GPIO_PIN_1,          // rx port, rx alternate, rx pin
 #else
-                GPIOE, GPIO_PIN_0,          // tx port, tx pin
+        GPIOE, GPIO_PIN_0,          // tx port, tx pin
         GPIOE, GPIO_PIN_1,          // rx port, rx pin
 #endif
         &serial7,
@@ -488,7 +488,7 @@ static const struct rt_uart_ops gd32_uart_ops =
     .control = gd32_uart_control,
     .putc = gd32_uart_putc,
     .getc = gd32_uart_getc,
-      RT_NULL,
+    RT_NULL,
 };
 
 /**
@@ -501,7 +501,7 @@ int gd32_hw_usart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
 
-      int result;
+    int result;
 
     for (i = 0; i < sizeof(uart_obj) / sizeof(uart_obj[0]); i++)
     {
@@ -513,7 +513,7 @@ int gd32_hw_usart_init(void)
                               uart_obj[i].device_name,
                               RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                               (void *)&uart_obj[i]);
-              RT_ASSERT(result == RT_EOK);
+        RT_ASSERT(result == RT_EOK);
     }
 
     return result;
