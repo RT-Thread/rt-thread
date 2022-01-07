@@ -7,16 +7,54 @@
  * 2020-01-15     bigmagic     the first version
  * 2020-08-10     SummerGift   support clang compiler
  * 2021-11-04     GuEe-GUI     set sp with SP_ELx
+ * 2021-12-28     GuEe-GUI     add smp support
  */
 
+#include "rtconfig.h"
 .section ".text.entrypoint","ax"
 
+#define SECONDARY_STACK_SIZE 4096
+
 .globl _start
+.globl secondary_cpu_start
 _start:
-    /* Read cpu id */
     mrs     x1, mpidr_el1
-    and     x1, x1, #3
-    cbz     x1, cpu_setup           /* If cpu id > 0, stop slave cores */
+    and     x1, x1, #0xff
+    cbnz    x1, cpu_idle            /* If cpu id > 0, stop slave cores */
+
+secondary_cpu_start:
+#ifdef RT_USING_SMP
+    /* Read cpu mpidr_el1 */
+    mrs     x1, mpidr_el1
+
+    /* Read cpu id */
+    ldr     x0, =rt_cpu_mpidr_early /* BSP must be defined `rt_cpu_mpidr_early' table in smp */
+    mov     x2, #0
+
+cpu_id_confirm:
+    add     x2, x2, #1              /* Next cpu id inc */
+    ldr     x3, [x0], #8
+    cmp     x3, #0
+    beq     cpu_idle                /* Mean that `rt_cpu_mpidr_early' table is end */
+    cmp     x3, x1
+    bne     cpu_id_confirm
+
+    /* Get cpu id success */
+    sub     x0, x2, #1
+    msr     tpidr_el1, x0           /* Save cpu id global */
+    cbz     x0, cpu_setup           /* Only go to cpu_setup when cpu id = 0 */
+
+    /* Set current cpu's stack top */
+    sub     x0, x0, #1
+    mov     x1, #SECONDARY_STACK_SIZE
+    adr     x2, .secondary_cpu_stack_top
+    msub    x1, x0, x1, x2
+
+    b       cpu_check_el
+#else
+    msr     tpidr_el1, xzr
+    b       cpu_setup
+#endif /* RT_USING_SMP */
 
 cpu_idle:
     wfe
@@ -25,6 +63,7 @@ cpu_idle:
 cpu_setup:
     ldr     x1, =_start
 
+cpu_check_el:
     mrs     x0, CurrentEL           /* CurrentEL Register. bit 2, 3. Others reserved */
     and     x0, x0, #12             /* Clear reserved bits */
 
@@ -84,15 +123,41 @@ cpu_in_el1:
     bic     x1, x1, #(1 << 1)       /* Disable Alignment check */
     msr     sctlr_el1, x1
 
-    ldr     x1, =__bss_start
-    ldr     w2, =__bss_size
+#ifdef RT_USING_SMP
+    ldr     x1, =_start
+    cmp     sp, x1
+    bne     secondary_cpu_c_start
+#endif /* RT_USING_SMP */
 
-clean_bss_loop:
-    cbz     w2, jump_to_entry
-    str     xzr, [x1], #8
-    sub     w2, w2, #8
-    cbnz    w2, clean_bss_loop
+    ldr     x0, =__bss_start
+    ldr     x1, =__bss_end
+    sub     x2, x1, x0
+    mov     x3, x1
+    cmp     x2, #7
+    bls     clean_bss_check
+
+clean_bss_loop_quad:
+    str     xzr, [x0], #8
+    sub     x2, x3, x0
+    cmp     x2, #7
+    bhi     clean_bss_loop_quad
+    cmp     x1, x0
+    bls     jump_to_entry
+
+clean_bss_loop_byte:
+    str     xzr, [x0], #1
+
+clean_bss_check:
+    cmp     x1, x0
+    bhi     clean_bss_loop_byte
 
 jump_to_entry:
     b       rtthread_startup
     b       cpu_idle                /* For failsafe, halt this core too */
+
+#ifdef RT_USING_SMP
+.align 12
+.secondary_cpu_stack:
+.space (SECONDARY_STACK_SIZE * (RT_CPUS_NR - 1))
+.secondary_cpu_stack_top:
+#endif
