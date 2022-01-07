@@ -83,9 +83,13 @@ typedef enum
 } PACTL_CS_VAL;
 
 // 0x40, 0x44, 0x48, 0x4c: Core 0~3 Timers interrupt control
-#define CORE0_TIMER_IRQ_CTRL    HWREG32(0xFF800040)
+#define CORE_TIMER_IRQ_CTRL(n)  HWREG32((unsigned long)(0xFF800040 + (n) * 4))
 #define TIMER_IRQ               30
 #define NON_SECURE_TIMER_IRQ    (1 << 1)
+rt_inline void core_timer_enable(int cpu_id)
+{
+    CORE_TIMER_IRQ_CTRL(cpu_id) |= NON_SECURE_TIMER_IRQ;
+}
 
 //core timer
 #define ST_BASE_OFFSET          (0x003000)
@@ -109,10 +113,24 @@ do { \
 #define MMC2_BASE_ADDR          (PER_BASE + 0x340000)
 
 //eth
-#define MAC_REG_BASE_ADDR       (void *)(0xfd580000)
+#define MAC_BASE_ADDR           (0xfd580000)
+#define MAC_REG_BASE_ADDR       (void *)(MAC_BASE_ADDR)
 #define ETH_IRQ                 (160 + 29)
 #define SEND_DATA_NO_CACHE      (0x08200000)
 #define RECV_DATA_NO_CACHE      (0x08400000)
+
+//watchdog
+#define WDT_BASE                    (PER_BASE + 0x00100000)
+#define PM_RSTC                     HWREG32(WDT_BASE + 0x0000001c)
+#define PM_RSTS                     HWREG32(WDT_BASE + 0x00000020)
+#define PM_WDOG                     HWREG32(WDT_BASE + 0x00000024)
+
+#define PM_PASSWORD                 (0x5A000000)
+#define PM_WDOG_TIME_SET            (0x000fffff)
+#define PM_RSTS_HADWRH_SET          (0x00000040)
+#define PM_RSTC_WRCFG_FULL_RESET    (0x00000020)
+#define PM_RSTC_WRCFG_CLR           (0xffffffcf)
+#define PM_RSTC_RESET               (0x00000102)
 
 //gic max
 #define MAX_HANDLERS                (256)
@@ -124,6 +142,10 @@ do { \
 #define GIC_V2_CPU_INTERFACE_BASE   (INTC_BASE + 0x00042000)
 #define GIC_V2_HYPERVISOR_BASE      (INTC_BASE + 0x00044000)
 #define GIC_V2_VIRTUAL_CPU_BASE     (INTC_BASE + 0x00046000)
+
+/* ipi interrupt number */
+#define IRQ_ARM_IPI_KICK            0
+#define IRQ_ARM_IPI_CALL            1
 
 #define GIC_IRQ_START               0
 #define GIC_ACK_INTID_MASK          0x000003ff
