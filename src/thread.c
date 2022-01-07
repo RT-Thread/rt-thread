@@ -28,13 +28,24 @@
  *                             add support for tasks bound to cpu
  * 2021-02-24     Meco Man     rearrange rt_thread_control() - schedule the thread when close it
  * 2021-11-15     THEWON       Remove duplicate work between idle and _thread_exit
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to thread.c
  */
 
 #include <rthw.h>
 #include <rtthread.h>
 #include <stddef.h>
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_thread_inited_hook
+    #define __on_rt_thread_inited_hook(thread)      __ON_HOOK_ARGS(rt_thread_inited_hook, (thread))
+#endif
+#ifndef __on_rt_thread_suspend_hook
+    #define __on_rt_thread_suspend_hook(thread)     __ON_HOOK_ARGS(rt_thread_suspend_hook, (thread))
+#endif
+#ifndef __on_rt_thread_resume_hook
+    #define __on_rt_thread_resume_hook(thread)      __ON_HOOK_ARGS(rt_thread_resume_hook, (thread))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
 static void (*rt_thread_resume_hook) (rt_thread_t thread);
 static void (*rt_thread_inited_hook) (rt_thread_t thread);
