@@ -28,7 +28,6 @@
  *                             in smp version, rt_hw_context_switch_interrupt maybe switch to
  *                               new task directly
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to scheduler.c
- *
  */
 
 #include <rtthread.h>
