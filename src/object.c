@@ -114,7 +114,6 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
 #endif
 };
 
-
 #ifndef __on_rt_object_attach_hook
     #define __on_rt_object_attach_hook(obj)         __ON_HOOK_ARGS(rt_object_attach_hook, (obj))
 #endif
@@ -130,7 +129,6 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
 #ifndef __on_rt_object_put_hook
     #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
 #endif
-
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_object_attach_hook)(struct rt_object *object);

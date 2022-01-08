@@ -45,7 +45,6 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-
 #ifndef __on_rt_object_trytake_hook
     #define __on_rt_object_trytake_hook(parent)     __ON_HOOK_ARGS(rt_object_trytake_hook, (parent))
 #endif
