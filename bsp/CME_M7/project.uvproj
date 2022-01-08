@@ -407,6 +407,13 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
+              <FileName>application.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\application.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\led.c</FilePath>
@@ -417,13 +424,6 @@
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>application.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -448,13 +448,6 @@
           <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>libc_syms.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
@@ -469,9 +462,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -479,6 +472,13 @@
               <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -493,16 +493,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>showmem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -538,9 +538,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>waitqueue.c</FileName>
+              <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -552,16 +552,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringblk_buf.c</FileName>
+              <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -573,16 +566,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
+              <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -649,16 +649,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs_elm.c</FileName>
+              <FileName>ffunicode.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\ffunicode.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ffunicode.c</FileName>
+              <FileName>dfs_elm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\ffunicode.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -704,23 +704,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -732,16 +718,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
+              <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
+              <FilePath>..\..\src\scheduler.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -753,9 +739,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -772,35 +793,84 @@
               <FilePath>..\..\src\object.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>cmem7_eth.c</FileName>
+              <FileName>cmem7_usb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_eth.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_usb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_aes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_aes.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_efuse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_efuse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_wdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_wdg.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -819,44 +889,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmem7_misc.c</FileName>
+              <FileName>cmem7_eth.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_gpio.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_eth.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -868,63 +903,21 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmem7_rtc.c</FileName>
+              <FileName>cmem7_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_rtc.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_tim.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cmem7_adc.c</FileName>
+              <FileName>cmem7_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_wdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_wdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_aes.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_aes.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_efuse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_efuse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_usb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_usb.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_misc.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>lwIP</GroupName>
-          <Files>
-            <File>
-              <FileName>ping.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\apps\ping\ping.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>netdb.c</FileName>
@@ -1028,6 +1021,13 @@
               <FileName>memp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.3\src\core\memp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ping.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.3\src\apps\ping\ping.c</FilePath>
             </File>
           </Files>
           <Files>

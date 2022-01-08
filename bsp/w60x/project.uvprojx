@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--c99 --gnu</MiscControls>
-              <Define>__RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>WM_W600, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\hwcrypto;.;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\wlan;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;.;..\..\include;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\lwip_dhcpd;oneshot;..\..\components\libc\posix\io;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\components\net\netdev\include;..\..\components\net\sal_socket\include;..\..\components\net\sal_socket\include\socket;..\..\components\net\sal_socket\impl;..\..\components\net\sal_socket\include\dfs_net;..\..\components\net\sal_socket\include\socket\sys_socket;..\..\examples\utest\testcases\kernel;..\..\components\utilities\ulog</IncludePath>
+              <IncludePath>applications;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\hwcrypto;.;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\wlan;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;.;..\..\include;packages\wm_libraries-latest;packages\wm_libraries-latest\Include;packages\wm_libraries-latest\Include\Driver;packages\wm_libraries-latest\Platform\Drivers\spi;packages\wm_libraries-latest\Include\OS;packages\wm_libraries-latest\Include\Platform;packages\wm_libraries-latest\Include\OS;packages\wm_libraries-latest\Include\WiFi;packages\wm_libraries-latest\Platform\Inc;packages\wm_libraries-latest\Platform\Common\Params;packages\wm_libraries-latest\Platform\Common\crypto;packages\wm_libraries-latest\Platform\Common\crypto\digest;packages\wm_libraries-latest\Platform\Common\crypto\math;packages\wm_libraries-latest\Platform\Common\crypto\symmetric;packages\wm_libraries-latest\Platform\Boot\gcc;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\lwip_dhcpd;packages\netutils-v1.3.1\ntp;oneshot;..\..\components\libc\posix\io;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\components\net\netdev\include;..\..\components\net\sal_socket\include;..\..\components\net\sal_socket\include\socket;..\..\components\net\sal_socket\impl;..\..\components\net\sal_socket\include\dfs_net;..\..\components\net\sal_socket\include\socket\sys_socket;..\..\examples\utest\testcases\kernel;..\..\components\utilities\ulog</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,6 +390,13 @@
           <GroupName>Compiler</GroupName>
           <Files>
             <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
@@ -400,13 +407,6 @@
               <FileName>libc_syms.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>syscall_mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -428,16 +428,16 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>showmem.c</FileName>
+              <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -449,16 +449,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -585,30 +585,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -620,9 +599,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -630,6 +616,20 @@
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -819,16 +819,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
+              <FilePath>..\..\src\irq.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -840,44 +833,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>mem.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -896,6 +854,34 @@
           </Files>
           <Files>
             <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\timer.c</FilePath>
@@ -906,6 +892,366 @@
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Libraries</GroupName>
+          <Files>
+            <File>
+              <FileName>wm_hostspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\spi\wm_hostspi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pkcs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\pkcs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\dh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_sha512.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_sha512.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_venus.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>packages\wm_libraries-latest\rtthread\startup\armcc\startup_venus.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_gpio_afsel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\gpio\wm_gpio_afsel.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_base64.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\keyformat\wm_crypto_base64.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\timer\wm_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idea.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\idea.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\cpu\wm_cpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\rtc\wm_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_x509.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\keyformat\wm_crypto_x509.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\i2c\wm_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\pwm\wm_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>des3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\des3.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pubkey.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\pubkey.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>prng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\prng\prng.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sha224.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\sha224.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_efuse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\efuse\wm_efuse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_fwup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\fwup\wm_fwup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\dma\wm_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rc2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\rc2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_internal_fls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\internalflash\wm_internal_fls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_rsa.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\wm_crypto_rsa.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\irq\wm_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rtthread_patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\rtthread\rtthread_patch.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>aesGCM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\aesGCM.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_md4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_md4.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_io.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\io\wm_io.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_hmac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_hmac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>yarrow.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\prng\yarrow.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\gpio\wm_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_hard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\wm_crypto_hard.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\pmu\wm_pmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_fls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\flash\wm_fls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sha384.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\sha384.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_fls_gd25qxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\flash\wm_fls_gd25qxx.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>asn1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\keyformat\asn1.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>seed.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\seed.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\adc\wm_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_watchdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\watchdog\wm_watchdog.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_param.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\Params\wm_param.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\rtthread\utils\utils.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Boot\armcc\misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pstm_mul_comba.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\math\pstm_mul_comba.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ecc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\ecc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_md2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_md2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>libwlan_mdk.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>packages\wm_libraries-latest\Lib\Wlan\libwlan_mdk.lib</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>libwmoneshot_mdk.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>packages\wm_libraries-latest\Lib\oneshot\libwmoneshot_mdk.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -1039,13 +1385,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>ping.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.2\src\apps\ping\ping.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ip4_frag.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_frag.c</FilePath>
@@ -1151,6 +1490,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>ping.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\apps\ping\ping.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>def.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.2\src\core\def.c</FilePath>
@@ -1175,6 +1521,16 @@
               <FileName>dhcp_server_raw.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip_dhcpd\dhcp_server_raw.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>NetUtils</GroupName>
+          <Files>
+            <File>
+              <FileName>ntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\netutils-v1.3.1\ntp\ntp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1209,13 +1565,6 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
-              <FileName>netdev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\netdev\src\netdev.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>netdev_ipaddr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
@@ -1223,9 +1572,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>net_netdb.c</FileName>
+              <FileName>netdev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\sal_socket\socket\net_netdb.c</FilePath>
+              <FilePath>..\..\components\net\netdev\src\netdev.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1247,6 +1596,13 @@
               <FileName>af_inet_lwip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\sal_socket\impl\af_inet_lwip.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>net_netdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\socket\net_netdb.c</FilePath>
             </File>
           </Files>
           <Files>
