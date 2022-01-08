@@ -20,9 +20,9 @@
 #define __N32_PIN(index, rcc, gpio, gpio_index) \
 { \
 0, RCC_##rcc##_PERIPH_GPIO##gpio, GPIO##gpio, GPIO_PIN_##gpio_index \
-, GPIO##gpio##_PORT_SOURCE, GPIO_PIN_SOURCE##gpio_index \
+, GPIO##gpio##_PORT_SOURCE, GPIO_PIN_SOURCE##gpio_index, "P" #gpio "." #gpio_index \
 }
-#define __N32_PIN_DEFAULT {-1, 0, 0, 0, 0, 0}
+#define __N32_PIN_DEFAULT {-1, 0, 0, 0, 0, 0, ""}
 
 /* N32 GPIO driver */
 struct pin_index
@@ -33,6 +33,7 @@ struct pin_index
     uint32_t pin;
     uint8_t port_source;
     uint8_t pin_source;
+    const char* name;
 };
 
 static const struct pin_index pins[] =
@@ -473,6 +474,23 @@ const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
+rt_base_t n32_pin_get(const char *name)
+{
+    rt_base_t i;
+
+    for (i = 0; i < ITEM_NUM(pins); i++)
+    {
+        if (rt_strcmp(pins[i].name, name) == 0)
+        {
+            /* in get_pin function, use pin parameter as index of pins array */
+            return i;
+        }
+    }
+
+    /* refers content of pins array, map to __N32_PIN_DEFAULT */
+    return 0;
+}
+
 void n32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
     const struct pin_index *index;
@@ -754,6 +772,7 @@ const static struct rt_pin_ops _n32_pin_ops =
     n32_pin_attach_irq,
     n32_pin_dettach_irq,
     n32_pin_irq_enable,
+    n32_pin_get
 };
 
 int n32_hw_pin_init(void)
