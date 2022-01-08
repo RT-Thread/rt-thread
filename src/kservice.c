@@ -1558,9 +1558,9 @@ RTM_EXPORT(rt_free);
 *
 * @param max_used is a pointer to get the maximum memory used.
 */
-RT_WEAK void rt_memory_info(rt_uint32_t *total,
-                            rt_uint32_t *used,
-                            rt_uint32_t *max_used)
+RT_WEAK void rt_memory_info(rt_size_t *total,
+                            rt_size_t *used,
+                            rt_size_t *max_used)
 {
     rt_base_t level;
 

@@ -8,6 +8,7 @@
  * 2019-07-29     zdzn           first version
  * 2021-07-31     GuEe-GUI       config the memory/io address map
  * 2021-09-11     GuEe-GUI       remove do-while in rt_hw_timer_isr
+ * 2021-12-28     GuEe-GUI       add smp support
  */
 
 #include <rthw.h>
@@ -15,40 +16,24 @@
 
 #include "board.h"
 #include <mmu.h>
+#include <gic.h>
+#include <psci.h>
+#include <gtimer.h>
+#include <cpuport.h>
+#include <interrupt.h>
+
 #include "drv_uart.h"
 
-void rt_hw_vector_init(void);
-
-static uint64_t timer_val;
-static uint64_t timer_step;
-
-void rt_hw_timer_isr(int vector, void *parameter)
+struct mem_desc platform_mem_desc[] =
 {
-    timer_val += timer_step;
-    __asm__ volatile ("msr CNTV_CVAL_EL0, %0"::"r"(timer_val));
-    __asm__ volatile ("isb":::"memory");
+    {0x40000000, 0x80000000, 0x40000000, NORMAL_MEM},
+    {PL031_RTC_BASE, PL031_RTC_BASE + 0x1000, PL031_RTC_BASE, DEVICE_MEM},
+    {PL011_UART0_BASE, PL011_UART0_BASE + 0x1000, PL011_UART0_BASE, DEVICE_MEM},
+    {VIRTIO_MMIO_BLK0_BASE, VIRTIO_MMIO_BLK0_BASE + 0x1000, VIRTIO_MMIO_BLK0_BASE, DEVICE_MEM},
+    {GIC_PL390_DISTRIBUTOR_PPTR, GIC_PL390_DISTRIBUTOR_PPTR + 0x1000, GIC_PL390_DISTRIBUTOR_PPTR, DEVICE_MEM},
+};
 
-    rt_tick_increase();
-}
-
-int rt_hw_timer_init(void)
-{
-    rt_hw_interrupt_install(27, rt_hw_timer_isr, RT_NULL, "tick");
-    rt_hw_interrupt_umask(27);
-
-    __asm__ volatile ("msr CNTV_CTL_EL0, %0"::"r"(0));
-
-    __asm__ volatile ("isb 0xf":::"memory");
-    __asm__ volatile ("mrs %0, CNTFRQ_EL0" : "=r" (timer_step));
-    timer_step /= RT_TICK_PER_SECOND;
-    timer_val = timer_step;
-    __asm__ volatile ("dsb 0xf":::"memory");
-
-    __asm__ volatile ("msr CNTV_CVAL_EL0, %0"::"r"(timer_val));
-    __asm__ volatile ("msr CNTV_CTL_EL0, %0"::"r"(1));
-
-    return 0;
-}
+const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
 
 void idle_wfi(void)
 {
@@ -61,32 +46,19 @@ void idle_wfi(void)
  */
 void rt_hw_board_init(void)
 {
-    uint64_t cont;
-
-    mmu_init();
-    cont = (uint64_t)RT_HW_HEAP_END + 0x1fffff;
-    cont &= ~0x1fffff;
-    cont -= 0x40000000;
-    cont >>= 21;
-    /* memory location */
-    armv8_map_2M(0x40000000, 0x40000000, cont, MEM_ATTR_MEMORY);
-    /* virtio blk0 */
-    armv8_map_2M(VIRTIO_MMIO_BLK0_BASE, VIRTIO_MMIO_BLK0_BASE, 0x1, MEM_ATTR_IO);
-    /* uart location*/
-    armv8_map_2M(PL011_UART0_BASE, PL011_UART0_BASE, 0x1, MEM_ATTR_IO);
-    /* gic location*/
-    armv8_map_2M(GIC_PL390_DISTRIBUTOR_PPTR, GIC_PL390_DISTRIBUTOR_PPTR, 0x1, MEM_ATTR_IO);
-    mmu_enable();
+    rt_hw_init_mmu_table(platform_mem_desc, platform_mem_desc_size);
+    rt_hw_mmu_init();
 
     /* initialize hardware interrupt */
-    rt_hw_interrupt_init(); // in libcpu/interrupt.c. Set some data structures, no operation on device
-    rt_hw_vector_init();    // in libcpu/interrupt.c. == rt_cpu_vector_set_base((rt_ubase_t)&system_vectors);
+    rt_hw_interrupt_init();
 
     /* initialize uart */
-    rt_hw_uart_init();      // driver/drv_uart.c
+    rt_hw_uart_init();
     /* initialize timer for os tick */
-    rt_hw_timer_init();
+    rt_hw_gtimer_init();
     rt_thread_idle_sethook(idle_wfi);
+
+    arm_psci_init(RT_NULL, RT_NULL);
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
@@ -102,4 +74,56 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+
+#ifdef RT_USING_SMP
+    /* install IPI handle */
+    rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
+    arm_gic_umask(0, IRQ_ARM_IPI_KICK);
+#endif
 }
+
+void poweroff(void)
+{
+    arm_psci_system_off();
+}
+MSH_CMD_EXPORT(poweroff, poweroff...);
+
+void reboot(void)
+{
+    arm_psci_system_reboot();
+}
+MSH_CMD_EXPORT(reboot, reboot...);
+
+#ifdef RT_USING_SMP
+void rt_hw_secondary_cpu_up(void)
+{
+    int i;
+    extern void secondary_cpu_start(void);
+    extern rt_uint64_t rt_cpu_mpidr_early[];
+
+    for (i = 1; i < RT_CPUS_NR; ++i)
+    {
+        arm_psci_cpu_on(rt_cpu_mpidr_early[i], (uint64_t)(secondary_cpu_start));
+    }
+}
+
+void secondary_cpu_c_start(void)
+{
+    rt_hw_mmu_init();
+    rt_hw_spin_lock(&_cpus_lock);
+
+    arm_gic_cpu_init(0, platform_get_gic_cpu_base());
+    rt_hw_vector_init();
+    rt_hw_gtimer_local_enable();
+    arm_gic_umask(0, IRQ_ARM_IPI_KICK);
+
+    rt_kprintf("\rcall cpu %d on success\n", rt_hw_cpu_id());
+
+    rt_system_scheduler_start();
+}
+
+void rt_hw_secondary_cpu_idle_exec(void)
+{
+    __WFE();
+}
+#endif
