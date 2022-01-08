@@ -805,7 +805,11 @@ RTM_EXPORT(rt_thread_control);
 /**
  * @brief   This function will suspend the specified thread and change it to suspend state.
  *
- * @note    This function only can suspend current thread itself.
+ * @note    This function ONLY can suspend current thread itself.
+ *          Do not use the rt_thread_suspend and rt_thread_resume functions to synchronize the activities of threads.
+ *          You have no way of knowing what code a thread is executing when you suspend it.
+ *          If you suspend a thread while it is executing a critical area which is protected by a mutex,
+ *          other threads attempt to use that mutex and have to wait. Deadlocks can occur very easily.
  *
  * @param   thread is the thread to be suspended.
  *
@@ -833,11 +837,6 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
-    if (stat == RT_THREAD_RUNNING)
-    {
-        /* not suspend running status thread on other core */
-        RT_ASSERT(thread == rt_thread_self());
-    }
 
     /* change thread stat */
     rt_schedule_remove_thread(thread);
@@ -856,6 +855,8 @@ RTM_EXPORT(rt_thread_suspend);
 
 /**
  * @brief   This function will resume a thread and put it to system ready queue.
+ *
+ * @note    Do not use the rt_thread_suspend and rt_thread_resume functions to synchronize the activities of threads.
  *
  * @param   thread is the thread to be resumed.
  *
