@@ -1,0 +1,2 @@
+Cannot found RT-Thread root directory, please check RTT_ROOT
+C:\Users\92036\Desktop\rtt\bsp
