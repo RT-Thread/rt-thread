@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>CPU_MK64FN1M0VLL12, RT_USING_ARM_LIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>CPU_MK64FN1M0VLL12, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;device;device\MK64F12;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\components\net\lwip-2.0.3\src;..\..\components\net\lwip-2.0.3\src\include;..\..\components\net\lwip-2.0.3\src\include\ipv4;..\..\components\net\lwip-2.0.3\src\arch\include;..\..\components\net\lwip-2.0.3\src\include\netif;..\..\components\net\lwip-2.0.3\src\include\posix;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;device;device\MK64F12;..\..\components\finsh;.;..\..\include;..\..\components\net\lwip-2.0.3\src;..\..\components\net\lwip-2.0.3\src\include;..\..\components\net\lwip-2.0.3\src\include\ipv4;..\..\components\net\lwip-2.0.3\src\arch\include;..\..\components\net\lwip-2.0.3\src\include\netif;..\..\components\net\lwip-2.0.3\src\include\posix;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,16 +403,54 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
+              <FileName>application.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\application.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>libc_syms.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -427,13 +465,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
@@ -441,9 +472,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -451,6 +482,13 @@
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -472,30 +510,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -507,9 +524,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringblk_buf.c</FileName>
+              <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -517,6 +541,20 @@
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -566,16 +604,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_pit.c</FileName>
+              <FileName>fsl_vref.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_pit.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_sai.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_sai.c</FilePath>
+              <FilePath>device\MK64F12\fsl_vref.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -587,100 +618,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_smc.c</FileName>
+              <FileName>fsl_rnga.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_smc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_cmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_cmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_flexcan.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_flexcan.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dspi_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_dspi_edma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_pdb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_pdb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_rcm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_rcm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_lptmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_lptmr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_sai_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_sai_edma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dmamux.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_dmamux.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_i2c_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_i2c_edma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_sim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_sim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_MK64F12.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\system_MK64F12.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_i2c.c</FilePath>
+              <FilePath>device\MK64F12\fsl_rnga.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -692,107 +632,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_wdog.c</FileName>
+              <FileName>fsl_ewm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_wdog.c</FilePath>
+              <FilePath>device\MK64F12\fsl_ewm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>fsl_dac.c</FileName>
+              <FileName>fsl_sai_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_dac.c</FilePath>
+              <FilePath>device\MK64F12\fsl_sai_edma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>fsl_vref.c</FileName>
+              <FileName>fsl_cmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_vref.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_flexbus.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_flexbus.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_common.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_uart_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_uart_edma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_dspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_pmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_pmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_sysmpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_sysmpu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_edma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_MK64F12.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>device\TOOLCHAIN_ARM_STD\startup_MK64F12.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_rnga.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_rnga.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_cmt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_cmt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_adc16.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_adc16.c</FilePath>
+              <FilePath>device\MK64F12\fsl_cmp.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -804,23 +660,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_rtc.c</FileName>
+              <FileName>fsl_uart_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_rtc.c</FilePath>
+              <FilePath>device\MK64F12\fsl_uart_edma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>fsl_llwu.c</FileName>
+              <FileName>fsl_flexbus.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_llwu.c</FilePath>
+              <FilePath>device\MK64F12\fsl_flexbus.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>fsl_ewm.c</FileName>
+              <FileName>fsl_smc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_ewm.c</FilePath>
+              <FilePath>device\MK64F12\fsl_smc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_edma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_pdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_pdb.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -832,9 +709,58 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_ftm.c</FileName>
+              <FileName>fsl_llwu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_ftm.c</FilePath>
+              <FilePath>device\MK64F12\fsl_llwu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_MK64F12.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\system_MK64F12.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_i2c_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_i2c_edma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_rcm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_rcm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_flexcan.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_flexcan.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_sai.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_sai.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -842,6 +768,118 @@
               <FileName>fsl_crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>device\MK64F12\fsl_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_pit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_pit.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_sysmpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_sysmpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_ftm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_ftm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dspi_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_dspi_edma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_sim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_sim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_lptmr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_lptmr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_MK64F12.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>device\TOOLCHAIN_ARM_STD\startup_MK64F12.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_dmamux.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_adc16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_adc16.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_pmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_pmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_wdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_wdog.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_cmt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_cmt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_dspi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -880,9 +918,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -894,37 +932,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -950,59 +974,42 @@
           </Files>
           <Files>
             <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>libc_syms.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>syscalls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem_std.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stdlib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>lwIP</GroupName>
+          <Files>
+            <File>
+              <FileName>ping.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.3\src\apps\ping\ping.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>netdb.c</FileName>
@@ -1127,13 +1134,6 @@
               <FileName>raw.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip-2.0.3\src\core\raw.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ping.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\apps\ping\ping.c</FilePath>
             </File>
           </Files>
           <Files>

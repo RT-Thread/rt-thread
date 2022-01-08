@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017/10/15     bernard      the first version
  */
+
 #include <rtthread.h>
 #include <rtm.h>
 

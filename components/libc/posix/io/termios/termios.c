@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017/08/30     Bernard      The first version
  */
+
 #include <stdlib.h>
 #include <string.h>
 #include <dfs_posix.h>

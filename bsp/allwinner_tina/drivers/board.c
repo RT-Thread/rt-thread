@@ -87,13 +87,16 @@ void rt_hw_board_init(void)
     /* init memory system */
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
+
+#ifdef RT_USING_SERIAL
     /* init hardware interrupt */
     rt_hw_uart_init();
+#endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif /* RT_USING_CONSOLE */
+#endif
 
     os_clock_init();
 

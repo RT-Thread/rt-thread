@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017/08/30     Bernard      The first version
  */
+
 #ifndef __TERMIOS_H__
 #define __TERMIOS_H__
 
