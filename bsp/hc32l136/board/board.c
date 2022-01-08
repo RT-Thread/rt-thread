@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2021-08-19     pjq          first version
  */
- 
+
 
 
 #include <rthw.h>
@@ -29,7 +29,7 @@
  */
 void rt_hw_board_clock_init(void)
 {
-    Sysctrl_SetRCHTrim(SysctrlRchFreq24MHz); 
+    Sysctrl_SetRCHTrim(SysctrlRchFreq24MHz);
     Sysctrl_ClkSourceEnable(SysctrlClkRCH, TRUE);
 }
 

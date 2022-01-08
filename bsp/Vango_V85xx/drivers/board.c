@@ -32,7 +32,7 @@ void SystemClock_Config(void)
                         |CLK_TYPE_HCLK   \
                         |CLK_TYPE_PCLK;
   CLK_Struct.AHBSource      = CLK_AHBSEL_LSPLL;
-  
+
   CLK_Struct.PLLL.Frequency = CLK_PLLL_26_2144MHz;
   CLK_Struct.PLLL.Source    = CLK_PLLLSRC_XTALL;
   CLK_Struct.PLLL.State     = CLK_PLLL_ON;

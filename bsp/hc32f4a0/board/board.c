@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2020-10-30     CDT          first version
  */
- 
+
 
 
 #include <rthw.h>

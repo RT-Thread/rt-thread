@@ -48,7 +48,7 @@ void rt_hw_board_init(void)
     /* initialize memory system */
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
-    
+
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device("uart");
