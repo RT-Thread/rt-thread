@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>USE_STDPERIPH_DRIVER, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>USE_STDPERIPH_DRIVER, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\finsh;.;..\..\include;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;Libraries\CMSIS\KEIL_CORE;Libraries\MM32L3xx\Include;Libraries\MM32L3xx\Source;Libraries\MM32L3xx\HAL_lib\inc;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\finsh;.;..\..\include;Libraries\CMSIS\KEIL_CORE;Libraries\MM32L3xx\Include;Libraries\MM32L3xx\Source;Libraries\MM32L3xx\HAL_lib\inc;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,19 +387,57 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CPU</GroupName>
+          <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>showmem.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>libc_syms.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -411,16 +449,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -449,20 +487,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
@@ -477,9 +501,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -542,9 +580,51 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\memheap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -563,9 +643,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -577,23 +657,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -603,129 +676,14 @@
               <FilePath>..\..\src\components.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>memheap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\memheap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>HAL_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_MM32L3xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\MM32L3xx\Source\KEIL_StartAsm\startup_MM32L3xx.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_rcc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_bkp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_bkp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>HAL_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_wwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_wwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_flash.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -737,6 +695,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>HAL_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_bkp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_MM32L3xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\MM32L3xx\Source\KEIL_StartAsm\startup_MM32L3xx.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>HAL_can.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_can.c</FilePath>
@@ -744,23 +716,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_iwdg.c</FileName>
+              <FileName>HAL_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_iwdg.c</FilePath>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_dma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_pwr.c</FileName>
+              <FileName>HAL_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_pwr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_MM32L3xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L3xx\Source\system_MM32L3xx.c</FilePath>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_tim.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -772,6 +737,34 @@
           </Files>
           <Files>
             <File>
+              <FileName>HAL_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>HAL_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_gpio.c</FilePath>
@@ -779,9 +772,37 @@
           </Files>
           <Files>
             <File>
+              <FileName>HAL_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_wwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>HAL_misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_pwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_iwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_MM32L3xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\Source\system_MM32L3xx.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -796,6 +817,13 @@
               <FileName>HAL_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L3xx\HAL_lib\src\HAL_adc.c</FilePath>
             </File>
           </Files>
         </Group>

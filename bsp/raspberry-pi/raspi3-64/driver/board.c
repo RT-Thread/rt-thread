@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author         Notes
  * 2019-07-29     zdzn           first version
+ * 2021-12-28     GuEe-GUI       add smp support
  */
 
 #include <rthw.h>
@@ -15,38 +16,35 @@
 #include "drv_uart.h"
 #include "drv_timer.h"
 
-#include "cp15.h"
+#include "gtimer.h"
+#include "cpuport.h"
+#include "interrupt.h"
 #include "mmu.h"
 #include "raspi.h"
 
-#ifdef BSP_USING_CORETIMER
-static rt_uint64_t timerStep;
-#define CORE0_TIMER_IRQ_CTRL    HWREG32(0x40000040)
-
-int rt_hw_get_gtimer_frq(void);
-void rt_hw_set_gtimer_val(rt_uint64_t value);
-int rt_hw_get_gtimer_val(void);
-int rt_hw_get_cntpct_val(void);
-void rt_hw_gtimer_enable(void);
-
-void core0_timer_enable_interrupt_controller()
+struct mem_desc platform_mem_desc[] =
 {
-    CORE0_TIMER_IRQ_CTRL |= NON_SECURE_TIMER_IRQ;
-}
-#endif
+    {0, 0x6400000, 0, NORMAL_MEM},
+    {0xc00000, 0xc01000, 0xc00000, DEVICE_MEM}, /* mbox */
+    {0x3f000000, 0x3f200000, 0x3f000000, DEVICE_MEM}, /* timer */
+    {0x3f200000, 0x3f216000, 0x3f200000, DEVICE_MEM}, /* uart */
+    {0x40000000, 0x40200000, 0x40000000, DEVICE_MEM}, /* core timer */
+    {0x3F300000, 0x3F301000, 0x3F300000, DEVICE_MEM}, /* sdio */
+    {0x3f804000, 0x3f805000, 0x3f804000, DEVICE_MEM}, /* i2c0 */
+    {0x3f205000, 0x3f206000, 0x3f205000, DEVICE_MEM}, /* i2c1 */
+};
 
-#ifdef RT_USING_SMP
-extern void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);
+const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
 
-void ipi_handler(){
-    rt_scheduler_ipi_handler(0,RT_NULL);
-}
+#if defined(BSP_USING_CORETIMER) || defined(RT_USING_SMP)
+static volatile rt_uint64_t timer_step;
+#define BSP_USING_CORETIMER
 #endif
 
 void rt_hw_timer_isr(int vector, void *parameter)
 {
 #ifdef BSP_USING_CORETIMER
-    rt_hw_set_gtimer_val(timerStep);
+    rt_hw_set_gtimer_val(timer_step);
 #else
     ARM_TIMER_IRQCLR = 0;
 #endif
@@ -59,13 +57,17 @@ void rt_hw_timer_init(void)
     rt_hw_interrupt_umask(IRQ_ARM_TIMER);
 #ifdef BSP_USING_CORETIMER
     __ISB();
-    timerStep = rt_hw_get_gtimer_frq();
+    timer_step = rt_hw_get_gtimer_frq();
     __DSB();
-    timerStep /= RT_TICK_PER_SECOND;
+    timer_step /= RT_TICK_PER_SECOND;
 
     rt_hw_gtimer_enable();
-    rt_hw_set_gtimer_val(timerStep);
-    core0_timer_enable_interrupt_controller();
+    rt_hw_set_gtimer_val(timer_step);
+#ifdef RT_USING_SMP
+    core_timer_enable(rt_hw_cpu_id());
+#else
+    core_timer_enable(0);
+#endif
 #else
     __DSB();
     /* timer_clock = apb_clock/(pre_divider + 1) */
@@ -95,20 +97,11 @@ void idle_wfi(void)
  */
 void rt_hw_board_init(void)
 {
-    mmu_init();
-    armv8_map(0, 0, 0x6400000, MEM_ATTR_MEMORY);
-    armv8_map(0x3f000000, 0x3f000000, 0x200000, MEM_ATTR_IO);//timer
-    armv8_map(0x3f200000, 0x3f200000, 0x16000, MEM_ATTR_IO);//uart
-    armv8_map(0x40000000, 0x40000000, 0x1000, MEM_ATTR_IO);//core timer
-    armv8_map(0x3F300000, 0x3F300000, 0x1000, MEM_ATTR_IO);//sdio
-    armv8_map(0xc00000, 0xc00000, 0x1000, MEM_ATTR_IO);//mbox
-    armv8_map(0x3f804000, 0x3f804000, 0x1000, MEM_ATTR_IO);//i2c0
-    armv8_map(0x3f205000, 0x3f205000, 0x1000, MEM_ATTR_IO);//i2c1
-    mmu_enable();
+    rt_hw_init_mmu_table(platform_mem_desc, platform_mem_desc_size);
+    rt_hw_mmu_init();
 
     /* initialize hardware interrupt */
     rt_hw_interrupt_init(); // in libcpu/interrupt.c. Set some data structures, no operation on device
-    rt_hw_vector_init();    // in libcpu/interrupt.c. == rt_cpu_vector_set_base((rt_ubase_t)&system_vectors);
 
     /* initialize uart */
     rt_hw_uart_init();      // driver/drv_uart.c
@@ -116,10 +109,10 @@ void rt_hw_board_init(void)
     rt_hw_timer_init();
     rt_thread_idle_sethook(idle_wfi);
 
-    #ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif /* RT_USING_CONSOLE */
+#endif
 
 #ifdef RT_USING_HEAP
     /* initialize memory system */
@@ -131,60 +124,51 @@ void rt_hw_board_init(void)
     rt_components_board_init();
 #endif
 
+#ifdef RT_USING_SMP
+    /* install IPI handle */
+    rt_hw_ipi_handler_install(IRQ_ARM_MAILBOX, rt_scheduler_ipi_handler);
+    rt_hw_interrupt_umask(IRQ_ARM_MAILBOX);
+    enable_cpu_ipi_intr(0);
+#endif
 }
 
 #ifdef RT_USING_SMP
-void _reset(void);
-void secondary_cpu_start(void);
+static unsigned long cpu_release_paddr[] =
+{
+    [0] = 0xd8,
+    [1] = 0xe0,
+    [2] = 0xe8,
+    [3] = 0xf0,
+    [4] = 0
+};
 
 void rt_hw_secondary_cpu_up(void)
 {
     int i;
-    int retry,val;
-    rt_cpu_dcache_clean_flush();
-    rt_cpu_icache_flush();
-    /*TODO maybe, there is some bug */
-    for(i=RT_CPUS_NR-1; i>0; i-- )
-    {
-        rt_kprintf("boot cpu:%d\n", i);
-        setup_bootstrap_addr(i, (int)_reset);
-        __SEV();
-        __DSB();
-        __ISB();
-        retry = 10;
-        rt_thread_delay(RT_TICK_PER_SECOND/1000);
-        do
-        {
-            val = CORE_MAILBOX3_CLEAR(i);
-            if (val == 0)
-            {
-                rt_kprintf("start OK: CPU %d \n",i);
-                break;
-            }
-            rt_thread_delay(RT_TICK_PER_SECOND);
+    extern void secondary_cpu_start(void);
 
-            retry --;
-            if (retry <= 0)
-            {
-                rt_kprintf("can't start for CPU %d \n",i);
-                break;
-            }
-        }while (1);
+    for (i = 1; i < RT_CPUS_NR && cpu_release_paddr[i]; ++i)
+    {
+        __asm__ volatile ("str %0, [%1]"::"rZ"((unsigned long)secondary_cpu_start), "r"(cpu_release_paddr[i]));
+        rt_hw_dcache_flush_range(cpu_release_paddr[i], sizeof(cpu_release_paddr[i]));
+        __DSB();
+        __SEV();
     }
-    __DSB();
-    __SEV();
 }
 
 void secondary_cpu_c_start(void)
 {
-    uint32_t id;
-    id = rt_hw_cpu_id();
-    rt_kprintf("cpu = 0x%08x\n",id);
-    rt_hw_timer_init();
-    rt_kprintf("cpu %d startup.\n",id);
-    rt_hw_vector_init();
-    enable_cpu_ipi_intr(id);
+    int id = rt_hw_cpu_id();
+
+    rt_hw_mmu_init();
     rt_hw_spin_lock(&_cpus_lock);
+
+    rt_hw_vector_init();
+    rt_hw_timer_init();
+    enable_cpu_ipi_intr(id);
+
+    rt_kprintf("\rcall cpu %d on success\n", id);
+
     rt_system_scheduler_start();
 }
 

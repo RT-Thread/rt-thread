@@ -147,7 +147,7 @@ int dfs_romfs_read(struct dfs_fd *file, void *buf, size_t count)
         length = file->size - file->pos;
 
     if (length > 0)
-        memcpy(buf, &(dirent->data[file->pos]), length);
+        rt_memcpy(buf, &(dirent->data[file->pos]), length);
 
     /* update file current position */
     file->pos += length;

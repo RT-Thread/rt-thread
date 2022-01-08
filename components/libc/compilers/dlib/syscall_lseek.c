@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2015-01-28     Bernard      first version
  */
+
 #include <rtthread.h>
 #include <LowLevelIOInterface.h>
 #include <unistd.h>

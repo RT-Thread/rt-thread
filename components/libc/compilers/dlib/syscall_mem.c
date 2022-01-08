@@ -8,6 +8,7 @@
  * 2015-01-28     Bernard      first version
  * 2021-11-13     Meco Man     implement no-heap warning
  */
+
 #include <rtthread.h>
 #include <stddef.h>
 

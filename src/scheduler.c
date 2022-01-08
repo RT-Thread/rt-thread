@@ -26,7 +26,7 @@
  *                             add _scheduler_get_highest_priority_thread to find highest priority task
  *                             rt_schedule_insert_thread won't insert current task to ready queue
  *                             in smp version, rt_hw_context_switch_interrupt maybe switch to
- *                               new task directly
+ *                             new task directly
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to scheduler.c
  */
 

@@ -40,6 +40,11 @@ extern unsigned char __bss_end;
 #define PL011_UART0_SIZE            0x00001000
 #define PL011_UART0_IRQNUM          (VIRTIO_SPI_IRQ_BASE + 1)
 
+/* RTC */
+#define PL031_RTC_BASE              0x9010000
+#define PL031_RTC_SIZE              0x00001000
+#define PL031_RTC_IRQNUM            (VIRTIO_SPI_IRQ_BASE + 2)
+
 /* DIST and CPU */
 #define GIC_PL390_DISTRIBUTOR_PPTR  0x08000000
 #define GIC_PL390_CONTROLLER_PPTR   0x08010000
@@ -50,6 +55,10 @@ extern unsigned char __bss_end;
 #define ARM_GIC_NR_IRQS             96
 /* only one GIC available */
 #define ARM_GIC_MAX_NR              1
+
+/* ipi interrupt number */
+#define IRQ_ARM_IPI_KICK            0
+#define IRQ_ARM_IPI_CALL            1
 
 #define IRQ_ARM_VTIMER              27
 
