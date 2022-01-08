@@ -15,7 +15,6 @@
 #define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
-#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
@@ -114,6 +113,7 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
@@ -132,16 +132,13 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
+#define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* POSIX (Portable Operating System Interface) layer */
 
 #define RT_USING_POSIX_DELAY
-
-/* Interprocess Communication (IPC) */
-
-
-/* Socket is in the 'Network' category */
 
 /* Network */
 
@@ -217,10 +214,7 @@
 
 /* system packages */
 
-/* enhanced kernel services */
-
-
-/* POSIX extension functions */
+/* rt_kprintf: enhanced rt_kprintf packages */
 
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
