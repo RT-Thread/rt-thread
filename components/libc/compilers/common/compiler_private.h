@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-12-26     Meco Man     First Version
  */
+
 #ifndef __COMPILER_PRIVATE_H__
 #define __COMPILER_PRIVATE_H__
 

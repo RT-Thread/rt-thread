@@ -217,7 +217,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
 
-    local_tz = *t + tz_get() * 3600;
+    local_tz = *t + (time_t)tz_get() * 3600;
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -234,7 +234,7 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
 
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * tz_get();
+    timestamp = timestamp - 3600 * (time_t)tz_get();
     return timestamp;
 }
 RTM_EXPORT(mktime);
@@ -367,7 +367,7 @@ time_t timegm(struct tm * const t)
 {
     register time_t day;
     register time_t i;
-    register time_t years = t->tm_year - 70;
+    register time_t years = (time_t)t->tm_year - 70;
 
     if (t->tm_sec > 60)
     {
@@ -488,8 +488,18 @@ RTM_EXPORT(settimeofday);
 RTM_EXPORT(difftime);
 RTM_EXPORT(strftime);
 
-#ifdef RT_USING_POSIX_CLOCK
+#ifdef RT_USING_POSIX_DELAY
 #include <delay.h>
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
+{
+    sleep(rqtp->tv_sec);
+    ndelay(rqtp->tv_nsec);
+    return 0;
+}
+RTM_EXPORT(nanosleep);
+#endif /* RT_USING_POSIX_DELAY */
+
+#ifdef RT_USING_POSIX_CLOCK
 #ifdef RT_USING_RTC
 static volatile struct timeval _timevalue;
 static int _rt_clock_time_system_init()
@@ -669,33 +679,6 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 #endif /* RT_USING_RTC */
 }
 RTM_EXPORT(clock_settime);
-
-int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
-{
-    uint32_t time_ms = rqtp->tv_sec * 1000;
-    uint32_t time_us = rqtp->tv_nsec / 1000;
-
-    time_ms += time_us / 1000 ;
-    time_us = time_us % 1000;
-
-    if (rt_thread_self() != RT_NULL)
-    {
-        rt_thread_mdelay(time_ms);
-    }
-    else  /* scheduler has not run yet */
-    {
-        while(time_ms > 0)
-        {
-            udelay(1000u);
-            time_ms -= 1;
-        }
-    }
-
-    udelay(time_us);
-
-    return 0;
-}
-RTM_EXPORT(nanosleep);
 
 int rt_timespec_to_tick(const struct timespec *time)
 {

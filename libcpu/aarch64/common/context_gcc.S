@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,16 @@
  * Date           Author       Notes
  * 2018-10-06     ZhaoXiaowei  the first version
  * 2021-11-04     GuEe-GUI     set sp with SP_ELx
+ * 2021-12-28     GuEe-GUI     add fpu and smp support
  */
+
+#include "rtconfig.h"
+#include "asm_fpu.h"
+
+#ifdef RT_USING_SMP
+#define rt_hw_interrupt_disable rt_hw_local_irq_disable
+#define rt_hw_interrupt_enable rt_hw_local_irq_enable
+#endif
 
 /*
  *enable gtimer
@@ -58,6 +67,7 @@ rt_hw_get_gtimer_frq:
 
 .macro SAVE_CONTEXT
     /* Save the entire context. */
+    SAVE_FPU SP
     STP 	X0, X1, [SP, #-0x10]!
     STP 	X2, X3, [SP, #-0x10]!
     STP 	X4, X5, [SP, #-0x10]!
@@ -73,6 +83,9 @@ rt_hw_get_gtimer_frq:
     STP 	X24, X25, [SP, #-0x10]!
     STP 	X26, X27, [SP, #-0x10]!
     STP 	X28, X29, [SP, #-0x10]!
+    MRS     X28, FPCR
+    MRS     X29, FPSR
+    STP     X28, X29, [SP, #-0x10]!
     STP 	X30, XZR, [SP, #-0x10]!
 
     MRS		X0, CurrentEL
@@ -107,6 +120,7 @@ rt_hw_get_gtimer_frq:
 
 .macro SAVE_CONTEXT_T
     /* Save the entire context. */
+    SAVE_FPU SP
     STP 	X0, X1, [SP, #-0x10]!
     STP 	X2, X3, [SP, #-0x10]!
     STP 	X4, X5, [SP, #-0x10]!
@@ -122,6 +136,9 @@ rt_hw_get_gtimer_frq:
     STP 	X24, X25, [SP, #-0x10]!
     STP 	X26, X27, [SP, #-0x10]!
     STP 	X28, X29, [SP, #-0x10]!
+    MRS     X28, FPCR
+    MRS     X29, FPSR
+    STP     X28, X29, [SP, #-0x10]!
     STP 	X30, XZR, [SP, #-0x10]!
 
     MRS		X0, CurrentEL
@@ -182,6 +199,9 @@ rt_hw_get_gtimer_frq:
 0:
 
     LDP 	X30, XZR, [SP], #0x10
+    LDP     X28, X29, [SP], #0x10
+    MSR     FPCR, X28
+    MSR     FPSR, X29
     LDP 	X28, X29, [SP], #0x10
     LDP 	X26, X27, [SP], #0x10
     LDP 	X24, X25, [SP], #0x10
@@ -197,6 +217,7 @@ rt_hw_get_gtimer_frq:
     LDP 	X4, X5, [SP], #0x10
     LDP 	X2, X3, [SP], #0x10
     LDP 	X0, X1, [SP], #0x10
+    RESTORE_FPU SP
 
     ERET
 
@@ -227,22 +248,46 @@ rt_hw_interrupt_enable_exit:
     RET
 
 /*
+ * #ifdef RT_USING_SMP
+ * void rt_hw_context_switch_to(rt_ubase_t to, stuct rt_thread *to_thread);
+ * #else
  * void rt_hw_context_switch_to(rt_ubase_t to);
- * r0 --> to
+ * #endif
+ * X0 --> to
+ * X1 --> to_thread
  */
 .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
+#ifdef RT_USING_SMP
+    STR     X0, [SP, #-0x8]!
+    MOV     X0, X1
+    BL      rt_cpus_lock_status_restore
+    LDR     X0, [SP], #0x8
+#endif /*RT_USING_SMP*/
     LDR		X0, [X0]
     RESTORE_CONTEXT
 
 .text
 /*
+ * #ifdef RT_USING_SMP
+ * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread);
+ * #else
  * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
- * r0 --> from
- * r1 --> to
+ * #endif
+ * X0 --> from
+ * X1 --> to
+ * X2 --> to_thread
  */
 .globl rt_hw_context_switch
 rt_hw_context_switch:
+#ifdef RT_USING_SMP
+    STP     X0, X1, [SP, #-0x10]!
+    STR     X30, [SP, #-0x8]!
+    MOV     X0, X2
+    BL      rt_cpus_lock_status_restore
+    LDR     X30, [SP], #0x8
+    LDP     X0, X1, [SP], #0x10
+#endif /*RT_USING_SMP*/
 
     MOV		X8,X0
     MOV		X9,X1
@@ -262,19 +307,32 @@ rt_hw_context_switch:
 .globl rt_interrupt_to_thread
 .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
-    ADR 	X2, rt_thread_switch_interrupt_flag
+#ifdef RT_USING_SMP
+    /* x0 = context */
+    /* x1 = &current_thread->sp */
+    /* x2 = &to_thread->sp, */
+    /* x3 = to_thread TCB */
+    STR     X0, [X1]
+    LDR     X0, [x2]
+    MOV     SP, X0
+    MOV     X0, X3
+    BL      rt_cpus_lock_status_restore
+    MOV     X0, SP
+    RESTORE_CONTEXT
+#else
+    LDR 	X2, =rt_thread_switch_interrupt_flag
     LDR 	X3, [X2]
     CMP 	X3, #1
     B.EQ 	_reswitch
-    ADR 	X4, rt_interrupt_from_thread   // set rt_interrupt_from_thread
+    LDR 	X4, =rt_interrupt_from_thread  // set rt_interrupt_from_thread
     MOV 	X3, #1              // set rt_thread_switch_interrupt_flag to 1
     STR 	X0, [X4]
     STR 	X3, [X2]
 _reswitch:
-    ADR 	X2, rt_interrupt_to_thread     // set rt_interrupt_to_thread
+    LDR 	X2, =rt_interrupt_to_thread    // set rt_interrupt_to_thread
     STR 	X1, [X2]
     RET
-
+#endif
 .text
 
 // -- Exception handlers ----------------------------------
@@ -308,10 +366,15 @@ vector_irq:
     BL      rt_interrupt_leave
     
     LDP 	X0, X1, [SP], #0x10
+#ifdef RT_USING_SMP
+    /* Never reture If can switch */
+    BL      rt_scheduler_do_irq_switch
+    MOV     X0, SP
+#endif
 
     // if rt_thread_switch_interrupt_flag set, jump to
     // rt_hw_context_switch_interrupt_do and don't return
-    ADR 	X1, rt_thread_switch_interrupt_flag
+    LDR 	X1, =rt_thread_switch_interrupt_flag
     LDR     X2, [X1]
     CMP     X2, #1
     B.NE     vector_irq_exit
@@ -319,11 +382,11 @@ vector_irq:
     MOV     X2,  #0         // clear flag
     STR     X2,  [X1]
 
-    ADR     X3,  rt_interrupt_from_thread
+    LDR     X3, =rt_interrupt_from_thread
     LDR     X4,  [X3]
     STR     x0,  [X4]       // store sp in preempted tasks's TCB
 
-    ADR     x3,  rt_interrupt_to_thread
+    LDR     x3, =rt_interrupt_to_thread
     LDR     X4,  [X3]
     LDR     x0,  [X4]       // get new task's stack pointer
     

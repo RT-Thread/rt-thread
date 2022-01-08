@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2016-12-28     Bernard      first version
  */
+
 #include <rtthread.h>
 #include <poll.h>
 #include <sys/select.h>
