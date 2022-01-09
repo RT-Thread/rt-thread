@@ -34,7 +34,7 @@ namespace std
         get_once_functor_lock_ptr() = m_ptr;
     }
 
-    extern "C"  
+    extern "C"
     {
         void once_proxy()
         {
@@ -42,7 +42,7 @@ namespace std
             function<void()> once_call = std::move(once_functor);
 
             // no need to hold the lock anymore
-            unique_lock<mutex>* lock_ptr = get_once_functor_lock_ptr();            
+            unique_lock<mutex>* lock_ptr = get_once_functor_lock_ptr();
             get_once_functor_lock_ptr() = nullptr;
             lock_ptr->unlock();
 

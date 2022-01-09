@@ -57,7 +57,7 @@ struct nu_emac_lwip_pbuf
     struct pbuf_custom p;  // lwip pbuf
     EMAC_FRAME_T *psPktFrameDataBuf; // gmac descriptor
     EMAC_MEMMGR_T *psMemMgr;
-    EMAC_DESCRIPTOR_T * rx_desc;
+    EMAC_DESCRIPTOR_T *rx_desc;
     const struct memp_desc *memp_rx_pool;
 };
 typedef struct nu_emac_lwip_pbuf *nu_emac_lwip_pbuf_t;
@@ -107,11 +107,11 @@ static void nu_emac_rx_isr(int vector, void *param);
 
 /* Private variables ------------------------------------------------------------*/
 #if defined(BSP_USING_EMAC0)
-LWIP_MEMPOOL_DECLARE(emac0_rx, EMAC_RX_DESC_SIZE, sizeof(struct nu_emac_lwip_pbuf), "EMAC0 RX PBUF pool");
+    LWIP_MEMPOOL_DECLARE(emac0_rx, EMAC_RX_DESC_SIZE, sizeof(struct nu_emac_lwip_pbuf), "EMAC0 RX PBUF pool");
 #endif
 
 #if defined(BSP_USING_EMAC1)
-LWIP_MEMPOOL_DECLARE(emac1_rx, EMAC_RX_DESC_SIZE, sizeof(struct nu_emac_lwip_pbuf), "EMAC1 RX PBUF pool");
+    LWIP_MEMPOOL_DECLARE(emac1_rx, EMAC_RX_DESC_SIZE, sizeof(struct nu_emac_lwip_pbuf), "EMAC1 RX PBUF pool");
 #endif
 
 static struct nu_emac nu_emac_arr[] =
@@ -479,7 +479,7 @@ static struct pbuf *nu_emac_rx(rt_device_t dev)
     /* Check available data. */
     if ((avaialbe_size = EMAC_GetAvailRXBufSize(&psNuEmac->memmgr, &pu8DataBuf)) > 0)
     {
-        EMAC_DESCRIPTOR_T * cur_rx = EMAC_RecvPktDoneWoRxTrigger(&psNuEmac->memmgr);
+        EMAC_DESCRIPTOR_T *cur_rx = EMAC_RecvPktDoneWoRxTrigger(&psNuEmac->memmgr);
         nu_emac_lwip_pbuf_t my_pbuf  = (nu_emac_lwip_pbuf_t)memp_malloc_pool(psNuEmac->memp_rx_pool);
         if (my_pbuf != RT_NULL)
         {
@@ -495,11 +495,11 @@ static struct pbuf *nu_emac_rx(rt_device_t dev)
 #endif
             //rt_kprintf("%08x, %08x, %d\n", my_pbuf, cur_rx, avaialbe_size);
             p = pbuf_alloced_custom(PBUF_RAW,
-                                       avaialbe_size,
-                                       PBUF_REF,
-                                       &my_pbuf->p,
-                                       pu8DataBuf,
-                                       EMAC_MAX_PKT_SIZE);
+                                    avaialbe_size,
+                                    PBUF_REF,
+                                    &my_pbuf->p,
+                                    pu8DataBuf,
+                                    EMAC_MAX_PKT_SIZE);
             if (p == RT_NULL)
             {
                 rt_kprintf("%s : failed to alloted %08x\n", __func__, p);

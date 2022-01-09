@@ -148,7 +148,6 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_WIFI
             select RT_WLAN_PROT_LWIP_PBUF_FORCE
             select RT_USING_LWIP
-            select RT_USING_LIBC
             select RT_USING_DFS
             select DFS_USING_POSIX
             select PKG_USING_FAL

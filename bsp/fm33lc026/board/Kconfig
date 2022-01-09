@@ -30,7 +30,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART5"
                 default y
         endif
-    source "libraries/HAL_Drivers/Kconfig"
+    source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
 

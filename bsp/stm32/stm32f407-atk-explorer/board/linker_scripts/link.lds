@@ -10,6 +10,7 @@ MEMORY
     CODE (rx) : ORIGIN = 0x08000000, LENGTH = 1024k /* 1024KB flash */
     RAM1 (rw) : ORIGIN = 0x20000000, LENGTH =  128k /* 128K sram */
     RAM2 (rw) : ORIGIN = 0x10000000, LENGTH =   64k /* 64K sram */
+    MCUlcdgrambysram (rw) : ORIGIN =0x68000000, LENGTH = 1024k
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x400;
@@ -54,9 +55,9 @@ SECTIONS
         KEEP (*(SORT(.init_array.*)))
         KEEP (*(.init_array))
         PROVIDE(__ctors_end__ = .);
-        
+
         . = ALIGN(4);
-        
+
         _etext = .;
     } > CODE = 0
 
@@ -93,7 +94,7 @@ SECTIONS
         _edata = . ;
     } >RAM1
 
-    .stack : 
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;
@@ -116,10 +117,19 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > RAM1
     __bss_end = .;
+
+    .MCUlcdgrambysram (NOLOAD) : ALIGN(4)
+    {
+        . = ALIGN(4);
+        *(.MCUlcdgrambysram)
+        *(.MCUlcdgrambysram.*)
+        . = ALIGN(4);
+        __MCUlcdgrambysram_free__ = .;
+    } > MCUlcdgrambysram
 
     _end = .;
 

@@ -11,6 +11,9 @@ src = Split('''
 board.c
 CubeMX_Config/Src/stm32f4xx_hal_msp.c
 ''')
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+path += [cwd + '/ports']
 
 if GetDepend(['BSP_USING_ETH']):
     src += Glob('ports/phy_reset.c')
@@ -26,9 +29,12 @@ if GetDepend(['BSP_USING_FS']):
 if GetDepend(['BSP_USING_SRAM']):
     src += Glob('ports/drv_sram.c')
 
-path =  [cwd]
-path += [cwd + '/CubeMX_Config/Inc']
-path += [cwd + '/ports']
+if GetDepend(['BSP_USING_MCU_LCD']):
+    src += Glob('ports/drv_lcd.c')
+
+if GetDepend(['BSP_USING_TOUCH']):
+    src += Glob('ports/touch/*.c')
+    path += [cwd + '/ports/touch']
 
 startup_path_prefix = SDK_LIB
 

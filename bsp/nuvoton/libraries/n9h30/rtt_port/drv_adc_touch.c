@@ -29,7 +29,21 @@ typedef nu_adc_touch *nu_adc_touch_t;
 static nu_adc_touch s_NuAdcTouch = {0};
 
 #define DEF_CALDATA_LENGTH 7
-static int cal_data_a[DEF_CALDATA_LENGTH] = { 13230, -66, -1161952, -85, 8600, -1636996, 65536 };
+
+#if defined(LCM_USING_FW043TFT)
+    #define LCM_WIDTH     480
+    #define LCM_HEIGHT    272
+    static int cal_data_a[DEF_CALDATA_LENGTH] = { 8824, -34, -2261272, -70, -6302, 21805816, 65536 };
+#else
+    #define LCM_WIDTH     800
+    #define LCM_HEIGHT    480
+    #if defined(LCM_USING_FW070TFT)
+    static int cal_data_a[DEF_CALDATA_LENGTH] = { 13230, -66, -1161952, -85, 8600, -1636996, 65536 };
+    #else
+    static int cal_data_a[DEF_CALDATA_LENGTH] = { 1, 0, 0, 0, 1, 0, 1 };
+    #endif
+#endif
+
 static const int cal_zero[DEF_CALDATA_LENGTH] = { 1, 0, 0, 0, 1, 0, 1 };
 
 static void nu_adc_touch_cal(int *sumx, int *sumy)
@@ -152,8 +166,8 @@ int rt_hw_adc_touch_init(void)
     s_NuAdcTouch.dev.info.type = RT_TOUCH_TYPE_RESISTANCE;
     s_NuAdcTouch.dev.info.vendor = RT_TOUCH_VENDOR_UNKNOWN;
     s_NuAdcTouch.dev.info.point_num = 1;
-    s_NuAdcTouch.dev.info.range_x = 800;
-    s_NuAdcTouch.dev.info.range_x = 480;
+    s_NuAdcTouch.dev.info.range_x = LCM_WIDTH;
+    s_NuAdcTouch.dev.info.range_y = LCM_HEIGHT;
 
     s_NuAdcTouch.dev.ops = &touch_ops;
 
@@ -189,11 +203,11 @@ static void adc_touch_entry(void *parameter)
     result = rt_device_set_rx_indicate(pdev, adc_touch_rx_callback);
     RT_ASSERT(result == RT_EOK);
 
-    max_range = 800;
+    max_range = LCM_WIDTH;
     result = rt_device_control(pdev, RT_TOUCH_CTRL_SET_X_RANGE, (void *)&max_range);
     RT_ASSERT(result == RT_EOK);
 
-    max_range = 480;
+    max_range = LCM_HEIGHT;
     result = rt_device_control(pdev, RT_TOUCH_CTRL_SET_Y_RANGE, (void *)&max_range);
     RT_ASSERT(result == RT_EOK);
 
@@ -216,10 +230,15 @@ static void adc_touch_entry(void *parameter)
                     || touch_point.event == RT_TOUCH_EVENT_UP
                     || touch_point.event == RT_TOUCH_EVENT_MOVE)
             {
-#if defined(PKG_USING_LITTLEVGL2RTT)
+
+#if defined(PKG_USING_LVGL)
+                extern void nu_touch_inputevent_cb(rt_int16_t x, rt_int16_t y, rt_uint8_t state);
+                nu_touch_inputevent_cb(touch_point.x_coordinate, touch_point.y_coordinate, touch_point.event);
+#elif defined(PKG_USING_LITTLEVGL2RTT)
                 extern void littlevgl2rtt_send_input_event(rt_int16_t x, rt_int16_t y, rt_uint8_t state);
                 littlevgl2rtt_send_input_event(touch_point.x_coordinate, touch_point.y_coordinate, touch_point.event);
 #endif
+
 #if defined(PKG_USING_NUEMWIN)
                 extern void nuemwin_send_input_event(rt_int16_t x, rt_int16_t y, rt_uint8_t state);
                 nuemwin_send_input_event(touch_point.x_coordinate, touch_point.y_coordinate, touch_point.event);
