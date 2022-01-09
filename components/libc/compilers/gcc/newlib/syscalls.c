@@ -20,9 +20,9 @@
 #include <unistd.h>
 #include <sys/errno.h>
 #include <sys/stat.h>
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
@@ -225,17 +225,17 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
     _ssize_t rc;
     if (fd == STDIN_FILENO)
     {
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard input before initializing Compiler");
             return 0;
         }
 #else
-        LOG_W("%s: %s", __func__, _WARNING_WITHOUT_DEVIO);
+        LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);
         ptr->_errno = ENOTSUP;
         return -1;
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
     }
     else if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
     {
@@ -297,7 +297,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 
     if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
     {
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
         rt_device_t console;
 
         console = rt_console_get_device();
@@ -306,7 +306,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 #else
         ptr->_errno = ENOTSUP;
         return -1;
-#endif /* RT_USING_CONSOLE */
+#endif /* defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE) */
     }
     else if (fd == STDIN_FILENO)
     {

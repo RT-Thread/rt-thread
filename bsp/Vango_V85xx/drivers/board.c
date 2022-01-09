@@ -32,7 +32,7 @@ void SystemClock_Config(void)
                         |CLK_TYPE_HCLK   \
                         |CLK_TYPE_PCLK;
   CLK_Struct.AHBSource      = CLK_AHBSEL_LSPLL;
-  
+
   CLK_Struct.PLLL.Frequency = CLK_PLLL_26_2144MHz;
   CLK_Struct.PLLL.Source    = CLK_PLLLSRC_XTALL;
   CLK_Struct.PLLL.State     = CLK_PLLL_ON;
@@ -66,7 +66,7 @@ void rt_hw_board_init()
     rt_components_board_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 

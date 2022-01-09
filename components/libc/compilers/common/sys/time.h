@@ -8,6 +8,7 @@
  * 2020-09-07     Meco Man     combine gcc armcc iccarm
  * 2021-02-12     Meco Man     move all definitions located in <clock_time.h> to this file
  */
+
 #ifndef __SYS_TIME_H__
 #define __SYS_TIME_H__
 
@@ -15,6 +16,9 @@
 #include <sys/types.h>
 #include <stdint.h>
 #include <time.h>
+#ifdef _WIN32
+#include <winsock.h> /* for struct timeval */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,20 +43,14 @@ struct timezone
     int tz_dsttime;       /* type of dst correction */
 };
 
-/*
- * Structure returned by gettimeofday(2) system call,
- * and used in other calls.
- */
-#ifndef _TIMEVAL_DEFINED
+#if !defined(_TIMEVAL_DEFINED) && !defined(_WIN32)
 #define _TIMEVAL_DEFINED
-#if !defined(_WIN32)
 struct timeval
 {
     time_t      tv_sec;     /* seconds */
     suseconds_t tv_usec;    /* and microseconds */
 };
 #endif
-#endif /* _TIMEVAL_DEFINED */
 
 #if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && \
     !(defined(__ICCARM__) && (__VER__ >= 8010001)) && \
@@ -70,7 +68,21 @@ int gettimeofday(struct timeval *tv, struct timezone *tz);
 int settimeofday(const struct timeval *tv, const struct timezone *tz);
 #if defined(__ARMCC_VERSION) || defined (__ICCARM__)
 struct tm *gmtime_r(const time_t *timep, struct tm *r);
+#elif defined(_WIN32)
+struct tm* gmtime_r(const time_t* timep, struct tm* r);
+struct tm* gmtime(const time_t* t);
+struct tm* localtime_r(const time_t* t, struct tm* r);
+struct tm* localtime(const time_t* t);
+time_t mktime(struct tm* const t);
+char* asctime_r(const struct tm* t, char* buf);
+char* ctime_r(const time_t* tim_p, char* result);
+char* ctime(const time_t* tim_p);
+time_t time(time_t* t);
 #endif
+
+#ifdef RT_USING_POSIX_DELAY
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
+#endif /* RT_USING_POSIX_DELAY */
 
 #ifdef RT_USING_POSIX_CLOCK
 /* POSIX clock and timer */
@@ -103,7 +115,6 @@ int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
 int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp);
-int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 int rt_timespec_to_tick(const struct timespec *time);
 #endif /* RT_USING_POSIX_CLOCK */
 

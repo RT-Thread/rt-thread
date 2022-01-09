@@ -204,7 +204,7 @@ void rt_hw_board_init(void)
     rt_hw_usart_init();
 #endif // RT_USING_SERIAL
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif // RT_USING_CONSOLE
 
@@ -279,7 +279,7 @@ void exception_isr(void)
 #endif
     sys_error_hook(1);
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_NULL);
     rt_kprintf(stack_info, rt_thread_self()->sp, rt_thread_self()->name);
 #endif

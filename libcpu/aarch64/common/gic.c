@@ -15,7 +15,7 @@
 #include <rtthread.h>
 
 #include <gic.h>
-#include <cp15.h>
+#include <cpuport.h>
 
 struct arm_gic
 {

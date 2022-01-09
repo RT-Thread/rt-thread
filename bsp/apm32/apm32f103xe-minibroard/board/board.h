@@ -36,7 +36,7 @@ extern "C" {
 #define APM32_SRAM_SIZE      128
 #define APM32_SRAM_END       (0x20000000 + APM32_SRAM_SIZE * 1024)
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
