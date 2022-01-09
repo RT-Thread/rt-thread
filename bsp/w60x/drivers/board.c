@@ -143,7 +143,7 @@ static void _thread_inited_hook(rt_thread_t thread)
     if ((stk_start + stack_size) >= TASK_STACK_USING_MEM_UPPER_RANGE)
     {
         rt_kprintf("thread[%s] stack only between 0x%08x and 0x%08x, please use rt_create_thread()!!\n",
-                   thread->name, TASK_STACK_USING_MEM_LOWER_RANGE, TASK_STACK_USING_MEM_UPPER_RANGE);
+                   thread->parent.name, TASK_STACK_USING_MEM_LOWER_RANGE, TASK_STACK_USING_MEM_UPPER_RANGE);
     }
     RT_ASSERT((stk_start + stack_size) < TASK_STACK_USING_MEM_UPPER_RANGE);
 }

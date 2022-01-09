@@ -354,7 +354,7 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
             const char *thread_name = "N/A";
             if (rt_thread_self())
             {
-                thread_name = rt_thread_self()->name;
+                thread_name = rt_thread_self()->parent.name;
             }
             name_len = rt_strnlen(thread_name, RT_NAME_MAX);
             rt_strncpy(log_buf + log_len, thread_name, name_len);

@@ -182,7 +182,7 @@ rt_inline rt_err_t _ipc_list_resume(rt_list_t *list)
     /* get thread entry */
     thread = rt_list_entry(list->next, struct rt_thread, tlist);
 
-    RT_DEBUG_LOG(RT_DEBUG_IPC, ("resume thread:%s\n", thread->name));
+    RT_DEBUG_LOG(RT_DEBUG_IPC, ("resume thread:%s\n", thread->parent.name));
 
     /* resume it */
     rt_thread_resume(thread);
@@ -479,8 +479,8 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
     temp = rt_hw_interrupt_disable();
 
     RT_DEBUG_LOG(RT_DEBUG_IPC, ("thread %s take sem:%s, which value is: %d\n",
-                                rt_thread_self()->name,
-                                ((struct rt_object *)sem)->name,
+                                rt_thread_self()->parent.name,
+                                sem->parent.parent.name,
                                 sem->value));
 
     if (sem->value > 0)
@@ -512,8 +512,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
             /* reset thread error number */
             thread->error = RT_EOK;
 
-            RT_DEBUG_LOG(RT_DEBUG_IPC, ("sem take: suspend thread - %s\n",
-                                        thread->name));
+            RT_DEBUG_LOG(RT_DEBUG_IPC, ("sem take: suspend thread - %s\n", thread->parent.name));
 
             /* suspend thread */
             _ipc_list_suspend(&(sem->parent.suspend_thread),
@@ -523,8 +522,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
             /* has waiting time, start thread timer */
             if (time > 0)
             {
-                RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n",
-                                            thread->name));
+                RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n", thread->parent.name));
 
                 /* reset the timeout of thread timer and start it */
                 rt_timer_control(&(thread->thread_timer),
@@ -603,8 +601,8 @@ rt_err_t rt_sem_release(rt_sem_t sem)
     temp = rt_hw_interrupt_disable();
 
     RT_DEBUG_LOG(RT_DEBUG_IPC, ("thread %s releases sem:%s, which value is: %d\n",
-                                rt_thread_self()->name,
-                                ((struct rt_object *)sem)->name,
+                                rt_thread_self()->parent.name,
+                                sem->parent.parent.name,
                                 sem->value));
 
     if (!rt_list_isempty(&sem->parent.suspend_thread))
@@ -915,7 +913,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
     RT_DEBUG_LOG(RT_DEBUG_IPC,
                  ("mutex_take: current thread %s, mutex value: %d, hold: %d\n",
-                  thread->name, mutex->value, mutex->hold));
+                  thread->parent.name, mutex->value, mutex->hold));
 
     /* reset thread error */
     thread->error = RT_EOK;
@@ -975,8 +973,7 @@ __again:
             else
             {
                 /* mutex is unavailable, push to suspend list */
-                RT_DEBUG_LOG(RT_DEBUG_IPC, ("mutex_take: suspend thread: %s\n",
-                                            thread->name));
+                RT_DEBUG_LOG(RT_DEBUG_IPC, ("mutex_take: suspend thread: %s\n", thread->parent.name));
 
                 /* change the owner thread priority of mutex */
                 if (thread->current_priority < mutex->owner->current_priority)
@@ -997,7 +994,7 @@ __again:
                 {
                     RT_DEBUG_LOG(RT_DEBUG_IPC,
                                  ("mutex_take: start the timer of thread:%s\n",
-                                  thread->name));
+                                  thread->parent.name));
 
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread->thread_timer),
@@ -1099,7 +1096,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
     RT_DEBUG_LOG(RT_DEBUG_IPC,
                  ("mutex_release:current thread %s, mutex value: %d, hold: %d\n",
-                  thread->name, mutex->value, mutex->hold));
+                  thread->parent.name, mutex->value, mutex->hold));
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mutex->parent.parent)));
 
@@ -1136,7 +1133,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
                                    tlist);
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("mutex_release: resume thread: %s\n",
-                                        thread->name));
+                                        thread->parent.name));
 
             /* set new owner and priority */
             mutex->owner             = thread;
@@ -2033,7 +2030,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
             tick_delta = rt_tick_get();
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("mb_send_wait: start timer of thread:%s\n",
-                                        thread->name));
+                                        thread->parent.name));
 
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
@@ -2279,7 +2276,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
             tick_delta = rt_tick_get();
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("mb_recv: start timer of thread:%s\n",
-                                        thread->name));
+                                        thread->parent.name));
 
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
@@ -2792,7 +2789,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
             tick_delta = rt_tick_get();
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("mq_send_wait: start timer of thread:%s\n",
-                                        thread->name));
+                                        thread->parent.name));
 
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
@@ -3097,7 +3094,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
             tick_delta = rt_tick_get();
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n",
-                                        thread->name));
+                                        thread->parent.name));
 
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),

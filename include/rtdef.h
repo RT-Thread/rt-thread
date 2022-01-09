@@ -656,16 +656,7 @@ struct rt_cpu
  */
 struct rt_thread
 {
-    /* rt object */
-    char        name[RT_NAME_MAX];                      /**< the name of thread */
-    rt_uint8_t  type;                                   /**< type of object */
-    rt_uint8_t  flags;                                  /**< thread's flags */
-
-#ifdef RT_USING_MODULE
-    void       *module_id;                              /**< id of application module */
-#endif
-
-    rt_list_t   list;                                   /**< the object list */
+    struct rt_object parent;                            /**< inherit from rt_object */
     rt_list_t   tlist;                                  /**< the thread list */
 
     /* stack point and entry */

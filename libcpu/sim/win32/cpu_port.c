@@ -147,7 +147,7 @@ static DWORD WINAPI thread_run( LPVOID lpThreadParameter )
     rt_thread_t tid = rt_thread_self();
     win_thread_t  *pWinThread = (win_thread_t *)lpThreadParameter;
 
-    SetThreadName(GetCurrentThreadId(), tid->name);
+    SetThreadName(GetCurrentThreadId(), tid->parent.name);
 
     pWinThread->Entry(pWinThread->Param);
 

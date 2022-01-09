@@ -20,7 +20,7 @@ void __rt_libc_exit(int status)
 
     if (self != RT_NULL)
     {
-        LOG_E("thread:%s exit:%d!", self->name, status);
+        LOG_E("thread:%s exit:%d!", self->parent.name, status);
         rt_thread_control(self, RT_THREAD_CTRL_CLOSE, RT_NULL);
     }
 }

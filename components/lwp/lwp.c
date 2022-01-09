@@ -269,7 +269,7 @@ static void lwp_cleanup(struct rt_thread *tid)
 {
     struct rt_lwp *lwp;
 
-    dbg_log(DBG_INFO, "thread: %s, stack_addr: %08X\n", tid->name, tid->stack_addr);
+    dbg_log(DBG_INFO, "thread: %s, stack_addr: %08X\n", tid->parent.name, tid->stack_addr);
 
     lwp = (struct rt_lwp *)tid->lwp;
 

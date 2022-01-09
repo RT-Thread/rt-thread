@@ -209,7 +209,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
     /* initialize thread timer */
     rt_timer_init(&(thread->thread_timer),
-                  thread->name,
+                  thread->parent.name,
                   _thread_timeout,
                   thread,
                   0,
@@ -347,7 +347,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("startup a thread:%s with priority:%d\n",
-                                   thread->name, thread->init_priority));
+                                   thread->parent.name, thread->init_priority));
     /* change thread stat */
     thread->stat = RT_THREAD_SUSPEND;
     /* then resume it */
@@ -814,7 +814,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(thread == rt_thread_self());
 
-    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->name));
+    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->parent.name));
 
     stat = thread->stat & RT_THREAD_STAT_MASK;
     if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
@@ -862,7 +862,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->name));
+    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->parent.name));
 
     if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_SUSPEND)
     {

@@ -163,11 +163,11 @@ static void *thread_run(void *parameter)
 
     tid = rt_thread_self();
     TRACE("pid <%08x> tid <%s> starts...\n", (unsigned int)(thread->pthread),
-          tid->name);
+          tid->parent.name);
     thread->rtthread = tid;
     thread->task(thread->para);
     TRACE("pid <%08x> tid <%s> exit...\n", (unsigned int)(thread->pthread),
-          tid->name);
+          tid->parent.name);
     thread->exit();
 
     /*TODO:
