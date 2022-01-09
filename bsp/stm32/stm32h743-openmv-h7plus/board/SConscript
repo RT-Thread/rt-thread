@@ -14,6 +14,7 @@ CubeMX_Config/Core/Src/stm32h7xx_hal_msp.c
 
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Core/Inc']
+path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
 

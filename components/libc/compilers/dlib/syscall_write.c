@@ -40,7 +40,7 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
 
     if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
     {
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
         rt_device_t console_device;
 
         console_device = rt_console_get_device();
@@ -52,7 +52,7 @@ size_t __write(int handle, const unsigned char *buf, size_t len)
         return len; /* return the length of the data written */
 #else
         return _LLIO_ERROR;
-#endif /* RT_USING_CONSOLE */
+#endif /* defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE) */
     }
     else if (handle == _LLIO_STDIN)
     {

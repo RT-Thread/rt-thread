@@ -90,8 +90,11 @@ void rt_hw_board_init(void)
     rt_components_board_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#ifdef RT_USING_SERIAL
     rt_hw_uart_init();
+#endif
+
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
