@@ -268,4 +268,4 @@ Default_Handler:
     IRQ CAN1_RX0_IRQHandler
     IRQ CAN1_RX1_IRQHandler
     IRQ CAN1_EWMC_IRQHandler
-    IRQ USBFS_IRQHandlerBFS
+    IRQ USBFS_IRQHandler
