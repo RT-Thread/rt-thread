@@ -262,7 +262,7 @@ Default_Handler:
     IRQ DMA1_Channel1_IRQHandler
     IRQ DMA1_Channel2_IRQHandler
     IRQ DMA1_Channel3_IRQHandler
-	IRQ ENET_IRQHandler
+    IRQ ENET_IRQHandler
     IRQ ENET_WKUP_IRQHandler
     IRQ CAN1_TX_IRQHandler
     IRQ CAN1_RX0_IRQHandler
