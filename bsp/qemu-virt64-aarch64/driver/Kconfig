@@ -1,8 +1,8 @@
+menuconfig BSP_SUPPORT_FPU
+    bool "Using Float"
+    default y
 
 menu "AARCH64 qemu virt64 configs"
-    menuconfig BSP_SUPPORT_FPU
-        bool "Using Float"
-        default y
 
     menuconfig BSP_USING_UART
         bool "Using UART"
@@ -13,6 +13,19 @@ menu "AARCH64 qemu virt64 configs"
             config RT_USING_UART0
             bool "Enabel UART 0"
             default y
+        endif
+
+
+    menuconfig BSP_USING_RTC
+            bool "Using RTC"
+            select RT_USING_RTC
+            default y
+
+        if BSP_USING_RTC
+            config BSP_USING_ALARM
+                bool "Enable Alarm"
+                select RT_USING_ALARM
+                default n
         endif
 
     menuconfig BSP_USING_VIRTIO_BLK

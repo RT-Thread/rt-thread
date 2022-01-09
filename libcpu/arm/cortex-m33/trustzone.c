@@ -37,7 +37,7 @@ static __inline rt_uint32_t __get_IPSR(void)
   register rt_uint32_t result          __asm("ipsr");
   return(result);
 }
-#elif defined(__CLANG_ARM)
+#elif defined(__clang__)
 __attribute__((always_inline)) static __inline rt_uint32_t __get_IPSR(void)
 {
     rt_uint32_t result;

@@ -336,7 +336,7 @@
               <MiscControls>--diag_suppress=186,66</MiscControls>
               <Define>USE_DEVICE_DRIVER_LIB, __CLK_TCK=RT_TICK_PER_SECOND, HC32F460, __RTTHREAD__, __DEBUG, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;Libraries\CMSIS\Include;Libraries\CMSIS\Device\HDSC\HC32F460\Include;Libraries\HC32F460_StdPeriph_Driver\inc;.;..\..\include;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\nogcc;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;Libraries\CMSIS\Include;Libraries\CMSIS\Device\HDSC\HC32F460\Include;Libraries\HC32F460_StdPeriph_Driver\inc;.;..\..\include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,6 +384,44 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Compiler</GroupName>
+          <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>libc_syms.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -450,16 +488,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringblk_buf.c</FileName>
+              <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -471,23 +502,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -689,23 +727,23 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>idle.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
+              <FilePath>..\..\src\thread.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
+              <FilePath>..\..\src\ipc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mem.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
+              <FilePath>..\..\src\components.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -717,16 +755,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>mempool.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\src\idle.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -752,16 +797,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -773,47 +811,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>components.c</FileName>
+              <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>syscalls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>libc_syms.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\libc_syms.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem_std.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stdlib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
+              <FilePath>..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>

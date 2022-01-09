@@ -41,12 +41,12 @@ struct nu_vpost
     IRQn_Type             irqn;
     E_SYS_IPRST           rstidx;
     E_SYS_IPCLK           clkidx;
+    uint32_t              last_commit;
     struct rt_device_graphic_info info;
 };
 typedef struct nu_vpost *nu_vpost_t;
 
 static volatile uint32_t g_u32VSyncBlank = 0;
-static volatile uint32_t g_u32VSyncLastCommit = 0;
 static struct rt_completion vsync_wq;
 
 static struct nu_vpost nu_fbdev[eVpost_Cnt] =
@@ -87,7 +87,7 @@ static rt_err_t vpost_layer_open(rt_device_t dev, rt_uint16_t oflag)
         /* Set scale to 1:1 */
         vpostOSDScalingCtrl(1, 0, 0);
 
-#if (LCM_USING_BPP==4)
+#if (BSP_LCD_BPP==32)
         vpostOSDSetColMask(0xff, 0xff, 0xff);
 #else
         vpostOSDSetColMask(0x1f, 0x3f, 0x1f);
@@ -163,7 +163,7 @@ static rt_err_t vpost_layer_control(rt_device_t dev, int cmd, void *args)
         {
             uint8_t *pu8BufPtr = (uint8_t *)args;
 
-            g_u32VSyncLastCommit = g_u32VSyncBlank;
+            psVpost->last_commit = g_u32VSyncBlank;
 
             /* Pan display */
             switch (psVpost->layer)
@@ -191,9 +191,9 @@ static rt_err_t vpost_layer_control(rt_device_t dev, int cmd, void *args)
     case RTGRAPHIC_CTRL_WAIT_VSYNC:
     {
         if (args != RT_NULL)
-            g_u32VSyncLastCommit = g_u32VSyncBlank + 1;
+            psVpost->last_commit = g_u32VSyncBlank + 1;
 
-        if (g_u32VSyncLastCommit >= g_u32VSyncBlank)
+        if (psVpost->last_commit >= g_u32VSyncBlank)
         {
             rt_completion_init(&vsync_wq);
             rt_completion_wait(&vsync_wq, RT_TICK_PER_SECOND / 60);
@@ -287,9 +287,9 @@ int rt_hw_vpost_init(void)
         rt_memset((void *)&psVpost->info, 0, sizeof(struct rt_device_graphic_info));
 
         /* Register VPOST information */
-        psVpost->info.bits_per_pixel = LCM_USING_BPP * 8;
-        psVpost->info.pixel_format = (LCM_USING_BPP == 4) ? RTGRAPHIC_PIXEL_FORMAT_ARGB888 : RTGRAPHIC_PIXEL_FORMAT_RGB565;
-        psVpost->info.pitch = psVpostLcmInst->u32DevWidth * LCM_USING_BPP;
+        psVpost->info.bits_per_pixel = BSP_LCD_BPP;
+        psVpost->info.pixel_format = (BSP_LCD_BPP == 32) ? RTGRAPHIC_PIXEL_FORMAT_ARGB888 : RTGRAPHIC_PIXEL_FORMAT_RGB565;
+        psVpost->info.pitch = psVpostLcmInst->u32DevWidth * (BSP_LCD_BPP / 8);
         psVpost->info.width = psVpostLcmInst->u32DevWidth;
         psVpost->info.height = psVpostLcmInst->u32DevHeight;
 
@@ -298,7 +298,7 @@ int rt_hw_vpost_init(void)
         /* Note: before get pointer of frame buffer, must set display color depth first */
         if (psVpost->layer == eVpost_LCD)
         {
-#if (LCM_USING_BPP==4)
+#if (BSP_LCD_BPP==32)
             vpostSetVASrc(VA_SRC_RGB888);
 #else
             vpostSetVASrc(VA_SRC_RGB565);
@@ -310,7 +310,7 @@ int rt_hw_vpost_init(void)
         {
             vpostOSDSetWindow(0, 0, psVpost->info.width, psVpost->info.height);
 
-#if (LCM_USING_BPP==4)
+#if (BSP_LCD_BPP==32)
             vpostSetOSDSrc(OSD_SRC_RGB888);
 #else
             vpostSetOSDSrc(OSD_SRC_RGB565);

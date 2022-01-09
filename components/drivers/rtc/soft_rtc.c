@@ -61,7 +61,7 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
     struct tm time_temp;
 
     RT_ASSERT(dev != RT_NULL);
-    memset(&time_temp, 0, sizeof(struct tm));
+    rt_memset(&time_temp, 0, sizeof(struct tm));
 
     switch (cmd)
     {
