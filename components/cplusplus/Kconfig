@@ -10,7 +10,7 @@ if RT_USING_CPLUSPLUS
         bool "Enable c++11 threading feature support"
         default n
         select RT_USING_POSIX_FS
-        select RT_USING_POSIX_DEVIO
+        select RT_USING_POSIX_STDIO
         select RT_USING_PTHREADS
         select RT_USING_RTC
 

@@ -49,7 +49,7 @@ void rtthread_startup(void)
 {
     /* init board */
     rt_hw_board_init();
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* show version */
     rt_show_version();
 #endif

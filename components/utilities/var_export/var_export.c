@@ -20,7 +20,7 @@ static rt_size_t ve_exporter_num = 0;
 #endif
 
 /* for ARM C and IAR Compiler */
-#if defined(__CC_ARM) || defined(__CLANG_ARM) || defined (__ICCARM__) || defined(__ICCRX__)
+#if defined(__ARMCC_VERSION) || defined (__ICCARM__) || defined(__ICCRX__)
 static RT_USED const struct ve_exporter __ve_table_start
 RT_SECTION("0.""VarExpTab") = {"ve_start", "ve_start", 0};
 
@@ -43,7 +43,7 @@ RT_USED const struct ve_exporter __ve_table_end = { "ve_end", "ve_end", 2};
 int var_export_init(void)
 {
     /* initialize the var export table.*/
-#if defined(__CC_ARM) || defined(__CLANG_ARM)       /* for ARM C Compiler */
+#if defined(__ARMCC_VERSION)       /* for ARM C Compiler */
     ve_exporter_table = &__ve_table_start + 1;
     ve_exporter_num = &__ve_table_end - &__ve_table_start;
 #elif defined (__GNUC__)                            /* for GCC Compiler */
@@ -94,7 +94,7 @@ int var_export_init(void)
         }
     }
     ve_exporter_table = ve_exporter_tab;
-#endif /* __CC_ARM || __CLANG_ARM */
+#endif /* __ARMCC_VERSION */
 
     return ve_exporter_num;
 }

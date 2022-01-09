@@ -42,7 +42,7 @@ struct rt_completion rx_comp;
 /* SYSRAM SDMMC1/2 accesses */
 #define SDIO_BUFF_SIZE       512
 #define SDCARD_ADDR          0x2FFC0000
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 __attribute__((at(SDCARD_ADDR))) static rt_uint32_t cache_buf[SDIO_BUFF_SIZE];
 #elif defined ( __GNUC__ )
 static rt_uint32_t cache_buf[SDIO_BUFF_SIZE] __attribute__((section(".SdCardSection")));

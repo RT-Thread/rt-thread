@@ -26,7 +26,7 @@ static lv_disp_drv_t disp_drv;
 lv_color_t buf_1[LCD_H * LCD_W];
 #elif defined ( __CC_ARM )  /* MDK ARM Compiler */
 __attribute__((at(0x68000000))) lv_color_t buf_1[LCD_H * LCD_W];
-#elif defined ( __CLANG_ARM ) /* MDK ARM Compiler v6 */
+#elif defined ( __clang__ ) /* MDK ARM Compiler v6 */
 __attribute__((section(".ARM.__at_0x68000000"))) lv_color_t buf_1[LCD_H * LCD_W];
 #elif defined ( __GNUC__ ) /* GNU Compiler */
 lv_color_t buf_1[LCD_H * LCD_W] __attribute__((section(".MCUlcdgrambysram")));

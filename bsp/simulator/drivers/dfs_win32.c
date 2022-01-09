@@ -194,7 +194,7 @@ static int dfs_win32_open(struct dfs_fd *file)
         wdirp->start = malloc(len); //not rt_malloc!
         wdirp->end = wdirp->curr = wdirp->start;
         wdirp->end += len;
-        strncpy(wdirp->curr, wdirp->finddata.name, len);
+        rt_strncpy(wdirp->curr, wdirp->finddata.name, len);
 
         file->data = (void *)wdirp;
         rt_free(file_path);
@@ -361,7 +361,7 @@ static int dfs_win32_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint3
             wdirp->start = realloc(wdirp->start, wdirp->end - wdirp->start + name_len);
             wdirp->curr = wdirp->start + (wdirp->curr - old_start);
             wdirp->end = wdirp->curr + name_len;
-            strcpy(wdirp->curr, wdirp->finddata.name);
+            rt_strcpy(wdirp->curr, wdirp->finddata.name);
         }
         else
         {
