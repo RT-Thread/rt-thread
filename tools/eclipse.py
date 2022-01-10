@@ -365,7 +365,7 @@ def UpdateProjectStructure(env, prj_name):
     out = open('.project', 'w')
     out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
+    out.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
     out.close()
 
     return
@@ -504,7 +504,7 @@ def UpdateCproject(env, project, excluding, reset, prj_name):
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
     out.write('<?fileVersion 4.0.0?>')
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
+    out.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
     out.close()
 
 
