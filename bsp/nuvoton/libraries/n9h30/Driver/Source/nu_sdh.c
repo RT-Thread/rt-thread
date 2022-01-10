@@ -283,6 +283,10 @@ uint32_t SDH_CardDetection(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t card_num)
         u32INTSTS_CDSTS_Msk = SDH_INTSTS_CDSTS1_Msk;
         u32CTL_CLKKEEP_Msk = SDH_CTL_CLKKEEP1_Msk;
     }
+    else
+    {
+        return FALSE;
+    }
 
     if ((sdh->INTEN & u32INTEN_CDSRC_Msk) == u32INTEN_CDSRC_Msk)   /* Card detect pin from GPIO */
     {

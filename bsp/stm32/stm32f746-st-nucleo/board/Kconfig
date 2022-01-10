@@ -193,7 +193,6 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
         if BSP_USING_ONCHIP_RTC
             choice
@@ -242,7 +241,7 @@ menu "On-chip Peripheral Drivers"
                 int "USB PULL UP STATUS"
                 default 0
         endif
-    source "libraries/HAL_Drivers/Kconfig"
+    source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
 

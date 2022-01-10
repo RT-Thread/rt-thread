@@ -38,6 +38,8 @@
  * 2021-05-10     armink       change version number to v4.0.4
  * 2021-11-19     Meco Man     change version number to v4.1.0
  * 2021-12-21     Meco Man     re-implement RT_UNUSED
+ * 2022-01-01     Gabriel      improve hooking method
+ * 2022-01-07     Gabriel      move some __on_rt_xxxxx_hook to dedicated c soure files
  */
 
 #ifndef __RT_DEF_H__
@@ -114,10 +116,6 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_MUTEX_HOLD_MAX               RT_UINT8_MAX    /**< Maxium number of mutex .hold */
 #define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of mailbox .entry */
 #define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of message queue .entry */
-
-#if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-#define __CLANG_ARM
-#endif
 
 #define RT_UNUSED(x)                   ((void)x)
 
@@ -441,12 +439,28 @@ struct rt_object_information
 /**
  * The hook function call macro
  */
-#ifdef RT_USING_HOOK
-#define RT_OBJECT_HOOK_CALL(func, argv) \
-    do { if ((func) != RT_NULL) func argv; } while (0)
+#ifndef RT_USING_HOOK
+    #define __ON_HOOK_ARGS(__hook, argv)
+    #define RT_OBJECT_HOOK_CALL(func, argv)
 #else
-#define RT_OBJECT_HOOK_CALL(func, argv)
+    #define RT_OBJECT_HOOK_CALL(func, argv)         __on_##func argv
+    #ifdef RT_HOOK_USING_FUNC_PTR
+        #define __ON_HOOK_ARGS(__hook, argv)        do {if ((__hook) != RT_NULL) __hook argv; } while (0)
+    #else
+        #define __ON_HOOK_ARGS(__hook, argv)
+    #endif
 #endif
+
+#ifndef __on_rt_interrupt_switch_hook
+    #define __on_rt_interrupt_switch_hook()         __ON_HOOK_ARGS(rt_interrupt_switch_hook, ())
+#endif
+#ifndef __on_rt_malloc_hook
+    #define __on_rt_malloc_hook(addr, size)         __ON_HOOK_ARGS(rt_malloc_hook, (addr, size))
+#endif
+#ifndef __on_rt_free_hook
+    #define __on_rt_free_hook(rmem)                 __ON_HOOK_ARGS(rt_free_hook, (rmem))
+#endif
+
 
 /**@}*/
 
@@ -866,9 +880,9 @@ struct rt_memheap
 
     void                   *start_addr;                 /**< pool start address and size */
 
-    rt_uint32_t             pool_size;                  /**< pool size */
-    rt_uint32_t             available_size;             /**< available size */
-    rt_uint32_t             max_used_size;              /**< maximum allocated size */
+    rt_size_t               pool_size;                  /**< pool size */
+    rt_size_t               available_size;             /**< available size */
+    rt_size_t               max_used_size;              /**< maximum allocated size */
 
     struct rt_memheap_item *block_list;                 /**< used block list */
 
@@ -1097,6 +1111,8 @@ struct rt_device_blk_sectors
 #define RTGRAPHIC_CTRL_GET_BRIGHTNESS   7
 #define RTGRAPHIC_CTRL_GET_MODE         8
 #define RTGRAPHIC_CTRL_GET_STATUS       9
+#define RTGRAPHIC_CTRL_PAN_DISPLAY      10
+#define RTGRAPHIC_CTRL_WAIT_VSYNC       11
 
 /* graphic deice */
 enum

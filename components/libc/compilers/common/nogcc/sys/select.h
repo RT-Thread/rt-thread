@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-07-21     Meco Man     The first version
+ * 2021-12-25     Meco Man     Handle newlib 2.2.0 or lower version
  */
 
 #ifndef __SYS_SELECT_H__
@@ -33,13 +34,12 @@
 typedef long    fd_mask;
 
 #ifndef _WIN32
-#ifndef _SYS_TYPES_FD_SET /* MIPS */
-
+#ifndef _SYS_TYPES_FD_SET /* Newlib 2.2.0 or lower version */
 #define   NBBY    8       /* number of bits in a byte */
 #define   NFDBITS (sizeof (fd_mask) * NBBY)   /* bits per mask */
 #ifndef   howmany
 #define   howmany(x,y)    (((x)+((y)-1))/(y))
-#endif
+#endif /* howmany */
 
 typedef struct _types_fd_set {
     fd_mask fds_bits[howmany(FD_SETSIZE, NFDBITS)];

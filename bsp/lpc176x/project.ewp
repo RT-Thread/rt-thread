@@ -155,6 +155,7 @@
         <option>
           <name>CCDefines</name>
           <state />
+          <state>RT_USING_DLIBC</state>
           <state>__RTTHREAD__</state>
         </option>
         <option>
@@ -285,12 +286,12 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\nogcc</state>
           <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\nogcc</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
@@ -1042,6 +1043,7 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>RT_USING_DLIBC</state>
           <state>__RTTHREAD__</state>
         </option>
         <option>
@@ -1172,12 +1174,12 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\nogcc</state>
           <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\nogcc</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.3\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
@@ -1780,10 +1782,10 @@
       <name>$PROJ_DIR$\applications\platform.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\application.c</name>
+      <name>$PROJ_DIR$\applications\startup.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\startup.c</name>
+      <name>$PROJ_DIR$\applications\application.c</name>
     </file>
   </group>
   <group>
@@ -1796,15 +1798,51 @@
     </file>
   </group>
   <group>
+    <name>Compiler</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\stdlib.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\time.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscalls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\environ.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+    </file>
+  </group>
+  <group>
     <name>CPU</name>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
@@ -1816,19 +1854,19 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\led.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\drivers\spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\emac.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\uart.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\drivers\led.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\drivers\board.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\emac.c</name>
     </file>
   </group>
   <group>
@@ -1843,10 +1881,22 @@
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\src\components.c</name>
+      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
+      <name>$PROJ_DIR$\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\thread.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\clock.c</name>
@@ -1855,38 +1905,23 @@
       <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\src\mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
+      <name>$PROJ_DIR$\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\memheap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
+      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+      <name>$PROJ_DIR$\..\..\src\timer.c</name>
     </file>
-  </group>
-  <group>
-    <name>libc</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\memheap.c</name>
+    </file>
   </group>
   <group>
     <name>lwIP</name>

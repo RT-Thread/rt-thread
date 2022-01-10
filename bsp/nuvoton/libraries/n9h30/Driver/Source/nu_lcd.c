@@ -103,8 +103,74 @@ static VPOST_T DEF_FW070TFT =
     0x020001f6                      /*!< CRTCVR register value */
 };
 
+#define FW043TFT_WIDTH        480   /*!< XRES */
+#define FW043TFT_HEIGHT       272   /*!< YRES */
+#define FW043TFT_MARGIN_LEFT  30    /*!< HBP (Horizontal Back Porch) */
+#define FW043TFT_MARGIN_RIGHT 5     /*!< HFP (Horizontal Front Porch) */
+#define FW043TFT_MARGIN_UPPER 2     /*!< VBP (Vertical Back Porch) */
+#define FW043TFT_MARGIN_LOWER 27    /*!< VFP (Vertical Front Porch) */
+#define FW043TFT_HSYNC_LEN    41    /*!< HPW (HSYNC plus width) */
+#define FW043TFT_VSYNC_LEN    10    /*!< VPW (VSYNC width) */
+static VPOST_T DEF_FW043TFT =
+{
+    FW043TFT_WIDTH,                 /*!< Panel width */
+    FW043TFT_HEIGHT,                /*!< Panel height */
+    0,                              /*!< MPU command line low indicator */
+    0,                              /*!< MPU command width */
+    0,                              /*!< MPU bus width */
+    VPOSTB_DATA16or18,              /*!< Display bus width */
+    0,                              /*!< MPU mode */
+    VPOSTB_COLORTYPE_16M,           /*!< Display colors */
+    VPOSTB_DEVICE_SYNC_HIGHCOLOR,   /*!< Type of display panel */
+
+    .sCRTCSIZE =
+    {
+        /*!< Horizontal Total */
+        .HTT = FW043TFT_MARGIN_LEFT + FW043TFT_WIDTH + FW043TFT_MARGIN_RIGHT,
+
+        /*!< Vertical Total */
+        .VTT = FW043TFT_MARGIN_UPPER + FW043TFT_HEIGHT + FW043TFT_MARGIN_LOWER,
+    },
+    .sCRTCDEND =
+    {
+        /*!< Horizontal Display Enable End */
+        .HDEND = FW043TFT_WIDTH,
+
+        /*!< Vertical Display Enable End */
+        .VDEND = FW043TFT_HEIGHT,
+    },
+    .sCRTCHR =
+    {
+        /*!< Internal Horizontal Retrace Start Timing */
+        .HRS = FW043TFT_WIDTH + 1,
+
+        /*!< Internal Horizontal Retrace End Low */
+        .HRE = FW043TFT_WIDTH + 5,
+    },
+    .sCRTCHSYNC =
+    {
+        /*!< Horizontal Sync Start Timing */
+        .HSYNC_S = FW043TFT_WIDTH + FW043TFT_MARGIN_LEFT,
+
+        /*!< Horizontal Sync End Timing */
+        .HSYNC_E = FW043TFT_WIDTH + FW043TFT_MARGIN_LEFT + FW043TFT_HSYNC_LEN,
+
+        /*!< Hsync Signal Adjustment For Multi-Cycles Per Pixel Mode Of Sync-Based Unipac-LCD */
+        .HSYNC_SHIFT = 0,
+    },
+    .sCRTCVR =
+    {
+        /*!< Vertical Internal Retrace Start Timing */
+        .VRS = FW043TFT_HEIGHT + FW043TFT_MARGIN_UPPER,
+
+        /*!< Vertical Internal Retrace End Low */
+        .VRE = FW043TFT_HEIGHT + FW043TFT_MARGIN_UPPER + FW043TFT_VSYNC_LEN,
+    }
+};
+
+
 /* LCD build-in support list */
-static VPOST_T *DisplayDevList[4] = {&DEF_E50A2V1, &DEF_ILI9341_MPU80, &DEF_LSA40AT9001, &DEF_FW070TFT};
+static VPOST_T *DisplayDevList[5] = {&DEF_E50A2V1, &DEF_ILI9341_MPU80, &DEF_LSA40AT9001, &DEF_FW070TFT, &DEF_FW043TFT};
 static VPOST_T curDisplayDev;
 static OSDFORMATEX curOSDDev = {0};
 static LCDFORMATEX curVADev = {0};
@@ -232,6 +298,12 @@ uint8_t *vpostGetFrameBuffer(void)
     outpw(REG_LCM_VA_FBCTRL, inpw(REG_LCM_VA_FBCTRL) & ~(1 << 30) & ~VPOSTB_DB_EN);
 
     return (uint8_t *)((uint32_t)u8BufPtr | 0x80000000);
+}
+
+void vpostSetFrameBuffer(uint8_t *pu8BufPtr)
+{
+    outpw(REG_LCM_VA_BADDR0, (uint32_t)((uint32_t)pu8BufPtr | 0x80000000));
+    outpw(REG_LCM_VA_FBCTRL, inpw(REG_LCM_VA_FBCTRL) & ~(1 << 30) & ~VPOSTB_DB_EN);
 }
 
 
@@ -533,6 +605,56 @@ uint8_t *vpostGetOSDBuffer(void)
     outpw(REG_LCM_OSD_BADDR, (uint32_t)((uint32_t)u8BufPtr | 0x80000000));
 
     return (uint8_t *)((uint32_t)u8BufPtr | 0x80000000);
+}
+
+/**
+  * @brief Get the pointer of OSD buffer
+  * @param[in] u32Cnt is the frame buffer count to allocate. Min value is 1.
+  * @return pointer of frame buffer
+  * @retval NULL fail.
+  * @note before calling this function, display width, height and source format must be set first.
+  */
+uint8_t *vpostGetMultiOSDBuffer(uint32_t u32Cnt)
+{
+    uint32_t u32BytePerPixel;
+    uint8_t *u8BufPtr;
+
+    if ((curOSDDev.nOSDWidth == 0) || (curOSDDev.nOSDHeight == 0))
+    {
+        return NULL;
+    }
+
+    switch (curOSDDev.ucOSDSrcFormat)
+    {
+    case OSD_SRC_YUV422:
+    case OSD_SRC_YCBCR422:
+    case OSD_SRC_RGB565:
+        u32BytePerPixel = 2;
+        break;
+
+    case OSD_SRC_RGB666:
+    case OSD_SRC_RGB888:
+        u32BytePerPixel = 4;
+        break;
+
+    default:
+        u32BytePerPixel = 2;
+    }
+
+    u8BufPtr = (uint8_t *)malloc((curOSDDev.nOSDWidth * curOSDDev.nOSDHeight * u32BytePerPixel) * u32Cnt + 32);
+    if (u8BufPtr == NULL)
+        return NULL;
+    u8BufPtr = (uint8_t *)shift_pointer((uint32_t)u8BufPtr, 32);
+
+    outpw(REG_LCM_OSD_BADDR, (uint32_t)((uint32_t)u8BufPtr | 0x80000000));
+
+    return (uint8_t *)((uint32_t)u8BufPtr | 0x80000000);
+
+}
+
+void vpostSetOSDBuffer(uint8_t *u8BufPtr)
+{
+    outpw(REG_LCM_OSD_BADDR, (uint32_t)((uint32_t)u8BufPtr | 0x80000000));
 }
 
 /**

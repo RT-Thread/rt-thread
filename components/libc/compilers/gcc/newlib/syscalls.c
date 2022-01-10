@@ -20,13 +20,13 @@
 #include <unistd.h>
 #include <sys/errno.h>
 #include <sys/stat.h>
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
-
+#include <compiler_private.h>
 #define DBG_TAG    "newlib.syscalls"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
@@ -92,8 +92,6 @@ void __libc_init_array(void)
     /* __libc_init_array is ARM code, not Thumb; it will cause a hardfault. */
 }
 
-#ifdef RT_USING_LIBC
-
 /* Reentrant versions of system calls.  */
 #ifndef _REENT_ONLY
 int *__errno ()
@@ -112,6 +110,7 @@ int _close_r(struct _reent *ptr, int fd)
 #ifdef DFS_USING_POSIX
     return close(fd);
 #else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -185,10 +184,10 @@ _off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 {
 #ifdef DFS_USING_POSIX
     _off_t rc;
-
     rc = lseek(fd, pos, whence);
     return rc;
 #else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -198,10 +197,10 @@ int _mkdir_r(struct _reent *ptr, const char *name, int mode)
 {
 #ifdef DFS_USING_POSIX
     int rc;
-
     rc = mkdir(name, mode);
     return rc;
 #else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -214,6 +213,7 @@ int _open_r(struct _reent *ptr, const char *file, int flags, int mode)
     rc = open(file, flags, mode);
     return rc;
 #else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -225,16 +225,17 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
     _ssize_t rc;
     if (fd == STDIN_FILENO)
     {
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
         if (libc_stdio_get_console() < 0)
         {
-            LOG_W("Do not invoke standard input before initializing libc");
+            LOG_W("Do not invoke standard input before initializing Compiler");
             return 0;
         }
 #else
+        LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);
         ptr->_errno = ENOTSUP;
         return -1;
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
     }
     else if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
     {
@@ -245,6 +246,7 @@ _ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
     rc = read(fd, buf, nbytes);
     return rc;
 #else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -254,10 +256,10 @@ int _rename_r(struct _reent *ptr, const char *old, const char *new)
 {
 #ifdef DFS_USING_POSIX
     int rc;
-
     rc = rename(old, new);
     return rc;
 #else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -267,10 +269,10 @@ int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 {
 #ifdef DFS_USING_POSIX
     int rc;
-
     rc = stat(file, pstat);
     return rc;
 #else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -281,6 +283,7 @@ int _unlink_r(struct _reent *ptr, const char *file)
 #ifdef DFS_USING_POSIX
     return unlink(file);
 #else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -294,7 +297,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 
     if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
     {
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
         rt_device_t console;
 
         console = rt_console_get_device();
@@ -303,7 +306,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 #else
         ptr->_errno = ENOTSUP;
         return -1;
-#endif /* RT_USING_CONSOLE */
+#endif /* defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE) */
     }
     else if (fd == STDIN_FILENO)
     {
@@ -315,6 +318,7 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
     rc = write(fd, buf, nbytes);
     return rc;
 #else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
 #endif /* DFS_USING_POSIX */
@@ -333,5 +337,3 @@ These functions are implemented and replaced by the 'common/time.c' file
 int _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp);
 _CLOCK_T_  _times_r(struct _reent *ptr, struct tms *ptms);
 */
-
-#endif /* RT_USING_LIBC */

@@ -17,6 +17,10 @@
 #include <rtdevice.h>
 #include <lcd_ili9341.h>
 
+#if defined(NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER)
+    #define DEF_VRAM_BUFFER_NUMBER  2
+#endif
+
 static struct rt_device_graphic_info g_Ili9341Info =
 {
     .bits_per_pixel = 16,
@@ -173,8 +177,8 @@ static rt_err_t ili9341_lcd_init(rt_device_t dev)
 #if defined(NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER)
 static void ili9341_fillrect(uint16_t *pixels, struct rt_device_rect_info *pRectInfo)
 {
-    ili9341_set_column(pRectInfo->x, pRectInfo->x + pRectInfo->width);
-    ili9341_set_page(pRectInfo->y, pRectInfo->y + pRectInfo->height);
+    ili9341_set_column(pRectInfo->x, pRectInfo->x + pRectInfo->width - 1);
+    ili9341_set_page(pRectInfo->y, pRectInfo->y + pRectInfo->height - 1);
     ili9341_send_cmd(0x2c);
 
     ili9341_send_pixels(pixels, pRectInfo->height * pRectInfo->width * 2);
@@ -270,8 +274,18 @@ static rt_err_t ili9341_lcd_control(rt_device_t dev, int cmd, void *args)
     case RTGRAPHIC_CTRL_RECT_UPDATE:
     {
 #if defined(NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER)
+        struct rt_device_rect_info *psRectInfo = args;
+        rt_uint16_t *pixels  = (rt_uint16_t *)g_Ili9341Info.framebuffer;
         RT_ASSERT(args != RT_NULL);
-        ili9341_fillrect((uint16_t *)g_Ili9341Info.framebuffer, (struct rt_device_rect_info *) args);
+
+        if (psRectInfo->y >= g_Ili9341Info.height)
+        {
+            int buf_id = psRectInfo->y / g_Ili9341Info.height;
+            pixels += g_Ili9341Info.width * g_Ili9341Info.height * buf_id;
+            psRectInfo->y %= g_Ili9341Info.height;
+        }
+
+        ili9341_fillrect(pixels, psRectInfo);
 #else
         /* nothong to be done */
 #endif
@@ -310,7 +324,7 @@ int rt_hw_lcd_ili9341_init(void)
     lcd_device.user_data = &ili9341_ops;
 
 #if defined(NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER)
-    g_Ili9341Info.framebuffer = rt_malloc_align(g_Ili9341Info.bits_per_pixel / 2 * g_Ili9341Info.height * g_Ili9341Info.width, 32);
+    g_Ili9341Info.framebuffer = rt_malloc_align((DEF_VRAM_BUFFER_NUMBER * g_Ili9341Info.width * g_Ili9341Info.height * (g_Ili9341Info.bits_per_pixel / 8)) + 32, 32);
     RT_ASSERT(g_Ili9341Info.framebuffer != RT_NULL);
 #endif
 

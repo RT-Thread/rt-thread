@@ -40,7 +40,7 @@ extern "C"
 #define TX2     0x18    /*!< Transfer Register 2 Address */
 #define TX3     0x1C    /*!< Transfer Register 3 Address */
 
-#define SPI_INPUT_CLOCK         75000000        /* Unit: Hz */
+#define SPI_INPUT_CLOCK         (sysGetClock(SYS_PCLK)*1000000)        /* Unit: Hz */
 /// @endcond HIDDEN_SYMBOLS
 
 #define SPI_NUMBER  2       /*!< 2 spi interfaces  */

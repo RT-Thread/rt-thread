@@ -12,7 +12,6 @@
 #include <rtdevice.h>
 #include <board.h>
 
-/* defined the LED2 pin: PB7 */
 #define LED1_PIN    GET_PIN(C, 0)
 
 int main(void)

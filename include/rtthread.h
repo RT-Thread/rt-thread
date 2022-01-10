@@ -155,7 +155,6 @@ rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
-void rt_thread_timeout(void *parameter);
 
 #ifdef RT_USING_SIGNALS
 void rt_thread_alloc_sig(rt_thread_t tid);
@@ -267,9 +266,9 @@ void *rt_calloc(rt_size_t count, rt_size_t size);
 void *rt_malloc_align(rt_size_t size, rt_size_t align);
 void rt_free_align(void *ptr);
 
-void rt_memory_info(rt_uint32_t *total,
-                    rt_uint32_t *used,
-                    rt_uint32_t *max_used);
+void rt_memory_info(rt_size_t *total,
+                    rt_size_t *used,
+                    rt_size_t *max_used);
 
 #if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
 void *rt_page_alloc(rt_size_t npages);
@@ -309,9 +308,9 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize);
 void rt_memheap_free(void *ptr);
 void rt_memheap_info(struct rt_memheap *heap,
-                     rt_uint32_t *total,
-                     rt_uint32_t *used,
-                     rt_uint32_t *max_used);
+                     rt_size_t *total,
+                     rt_size_t *used,
+                     rt_size_t *max_used);
 #endif
 
 #ifdef RT_USING_SLAB
@@ -411,6 +410,7 @@ rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value);
 rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
                          rt_ubase_t  value,
                          rt_int32_t   timeout);
+rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value);
 rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout);
 rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 #endif
@@ -596,8 +596,12 @@ int *_rt_errno(void);
 
 int __rt_ffs(int value);
 
+#ifndef RT_KSERVICE_USING_STDLIB_MEMSET
 void *rt_memset(void *src, int c, rt_ubase_t n);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
+#ifndef RT_KSERVICE_USING_STDLIB_MEMCPY
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
 char *rt_strdup(const char *s);
 
 #ifndef RT_KSERVICE_USING_STDLIB
@@ -612,6 +616,12 @@ rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 #else
 #include <string.h>
+#ifdef RT_KSERVICE_USING_STDLIB_MEMSET
+#define rt_memset(s, c, count)      memset(s, c, count)
+#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
+#ifdef RT_KSERVICE_USING_STDLIB_MEMCPY
+#define rt_memcpy(dst, src, count)  memcpy(dst, src, count)
+#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
 #define rt_memmove(dest, src, n)    memmove(dest, src, n)
 #define rt_memcmp(cs, ct, count)    memcmp(cs, ct, count)
 #define rt_strstr(str1, str2)       strstr(str1, str2)

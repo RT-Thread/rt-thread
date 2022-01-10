@@ -15,16 +15,15 @@
 #include "gic.h"
 #include "armv8.h"
 #include "mmu.h"
+#include "cpuport.h"
 
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
 
-#ifndef RT_USING_SMP
 /* Those variables will be accessed in ISR, so we need to share them. */
 rt_ubase_t rt_interrupt_from_thread        = 0;
 rt_ubase_t rt_interrupt_to_thread          = 0;
 rt_ubase_t rt_thread_switch_interrupt_flag = 0;
-#endif
 
 const unsigned int VECTOR_BASE = 0x00;
 extern int system_vectors;
@@ -39,9 +38,9 @@ extern volatile rt_uint8_t rt_interrupt_nest;
 static void default_isr_handler(int vector, void *param)
 {
 #ifdef RT_USING_SMP
-    rt_kprintf("cpu %d unhandled irq: %d\n", rt_hw_cpu_id(),vector);
+    rt_kprintf("cpu %d unhandled irq: %d\n", rt_hw_cpu_id(), vector);
 #else
-    rt_kprintf("unhandled irq: %d\n",vector);
+    rt_kprintf("unhandled irq: %d\n", vector);
 #endif
 }
 #endif
@@ -138,7 +137,7 @@ void rt_hw_interrupt_mask(int vector)
 void rt_hw_interrupt_umask(int vector)
 {
 #ifndef BSP_USING_GIC
-if (vector < 32)
+    if (vector < 32)
     {
         IRQ_ENABLE1 = (1 << vector);
     }
@@ -397,7 +396,20 @@ void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
 {
 #ifdef BSP_USING_GIC
     arm_gic_send_sgi(0, ipi_vector, cpu_mask, 0);
+#else
+    int i;
+
+    __DSB();
+
+    for (i = 0; i < RT_CPUS_NR; ++i)
+    {
+        if (cpu_mask & (1 << i))
+        {
+            IPI_MAILBOX_SET(i) = 1 << ipi_vector;
+        }
+    }
 #endif
+    __DSB();
 }
 
 void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)

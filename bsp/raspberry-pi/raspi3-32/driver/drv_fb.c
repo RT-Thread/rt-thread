@@ -19,6 +19,7 @@
 
 #define COLOR_DELTA     0.05
 static struct rt_hdmi_fb_device _hdmi;
+fb_t fb_info;
 
 // https://github.com/xinu-os/xinu/blob/1789b7a50b5b73c2ea76ebd764c54a034097d04d/device/framebuffer_rpi/font.c
 unsigned char FONT[] = {

@@ -137,7 +137,6 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
-        select RT_LIBC_USING_TIME
         default y
 
     config BSP_USING_RTC
