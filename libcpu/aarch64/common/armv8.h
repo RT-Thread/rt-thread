@@ -6,10 +6,13 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-09-15     Bernard      first version
+ * 2021-12-28     GuEe-GUI     add fpu support
  */
 
 #ifndef __ARMV8_H__
 #define __ARMV8_H__
+
+#include <rtdef.h>
 
 /* the exception stack without VFP registers */
 struct rt_hw_exp_stack
@@ -17,7 +20,9 @@ struct rt_hw_exp_stack
     unsigned long long pc;
     unsigned long long spsr;
     unsigned long long x30;
-    unsigned long long xz;
+    unsigned long long xzr;
+    unsigned long long fpcr;
+    unsigned long long fpsr;
     unsigned long long x28;
     unsigned long long x29;
     unsigned long long x26;
@@ -48,6 +53,8 @@ struct rt_hw_exp_stack
     unsigned long long x3;
     unsigned long long x0;
     unsigned long long x1;
+
+    unsigned long long fpu[16];
 };
 
 #define SP_ELx                      ( ( unsigned long long ) 0x01 )

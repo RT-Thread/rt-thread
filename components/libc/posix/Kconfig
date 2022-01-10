@@ -12,6 +12,11 @@ if RT_USING_POSIX_FS
         select RT_USING_DFS_DEVFS
         default n
 
+    config RT_USING_POSIX_STDIO
+        bool "Enable standard I/O devices, e.g. STDOUT_FILENO"
+        select RT_USING_POSIX_DEVIO
+        default n
+
     config RT_USING_POSIX_POLL
         bool "Enable I/O Multiplexing poll() <poll.h>"
         default n
@@ -23,7 +28,7 @@ if RT_USING_POSIX_FS
 
     config RT_USING_POSIX_TERMIOS
         bool "Enable Terminal I/O <termios.h>"
-        select RT_USING_POSIX_DEVIO
+        select RT_USING_POSIX_STDIO
         default n
 
     config RT_USING_POSIX_AIO

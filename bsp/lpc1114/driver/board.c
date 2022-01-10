@@ -113,7 +113,7 @@ void rt_hw_board_init(void)
     /* initialize uart */
     rt_hw_uart_init();
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif

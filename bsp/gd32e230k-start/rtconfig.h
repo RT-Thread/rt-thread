@@ -13,6 +13,7 @@
 #define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
@@ -93,7 +94,6 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* POSIX (Portable Operating System Interface) layer */
@@ -166,6 +166,9 @@
 /* system packages */
 
 /* enhanced kernel services */
+
+
+/* POSIX extension functions */
 
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
