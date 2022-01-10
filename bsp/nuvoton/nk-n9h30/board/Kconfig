@@ -63,14 +63,20 @@ menu "Hardware Drivers Config"
 
     menu "Board extended module drivers"
 
-        choice
-            prompt "Select LCD panel devices.(Over VPOST)"
+        config BOARD_USING_LCM
+            bool "Use LCD panel."
+            default y
+
+        if BOARD_USING_LCM
+
+            choice
+                prompt "Select LCD panel devices.(Over VPOST)"
+                    default BOARD_USING_LCM_FW070TFT_WVGA
 
                 config BOARD_USING_LCM_FW070TFT_WVGA
                     bool "NuDesign TFT-LCD7-WVGA"
                     select BSP_USING_VPOST
                     select LCM_USING_FW070TFT
-                    default y
                     help
                         Choose this option if you use 7" 800x480x32b LCD panel.
 
@@ -87,15 +93,15 @@ menu "Hardware Drivers Config"
                     select LCM_USING_FW070TFT_WSVGA
                     help
                         Choose this option if you use 7" 1024x600x32b LCD panel.
-        endchoice
+            endchoice
 
-        choice
-            prompt "Select Touch devices."
+            choice
+                prompt "Select Touch devices."
+                    default BOARD_USING_ADCTOUCH
 
                 config BOARD_USING_ADCTOUCH
                     bool "ADC touching"
                     select BSP_USING_ADC_TOUCH
-                    default y
                     help
                         Choose this option if you use internal ADC touching function.
 
@@ -106,9 +112,10 @@ menu "Hardware Drivers Config"
                     select PKG_USING_GT911
                     help
                         Choose this option if you use GT911 external TSC touching function.
+            endchoice
 
-        endchoice
-
+        endif
+    
     endmenu
 
     source "$BSP_DIR/../libraries/nu_packages/Kconfig"
