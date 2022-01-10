@@ -1,8 +1,12 @@
 menu "Hardware Drivers Config"
 
+config SOC_SERIES_GD32F4xx
+    bool
+    default y
+
 config SOC_GD32407V
     bool 
-    select SOC_SERIES_GD32F4
+    select SOC_SERIES_GD32F4xx
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -70,7 +74,7 @@ menu "On-chip Peripheral Drivers"
                 range 1 216
                 default 25
         endif
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "../libraries/gd32_drivers/Kconfig"
     
 endmenu
 

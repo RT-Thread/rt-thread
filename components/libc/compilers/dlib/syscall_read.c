@@ -11,9 +11,9 @@
 #include <rtthread.h>
 #include <LowLevelIOInterface.h>
 #include <unistd.h>
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
 #include <compiler_private.h>
 #define DBG_TAG    "dlib.syscall.read"
 #define DBG_LVL    DBG_INFO
@@ -39,7 +39,7 @@ size_t __read(int handle, unsigned char *buf, size_t len)
 
     if (handle == _LLIO_STDIN)
     {
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
         if (libc_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard input before initializing Compiler");
@@ -47,9 +47,9 @@ size_t __read(int handle, unsigned char *buf, size_t len)
         }
         return read(STDIN_FILENO, buf, len); /* return the length of the data read */
 #else
-        LOG_W(_WARNING_WITHOUT_DEVIO);
+        LOG_W(_WARNING_WITHOUT_STDIO);
         return _LLIO_ERROR;
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
     }
     else if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
     {

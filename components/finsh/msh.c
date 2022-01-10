@@ -71,7 +71,7 @@ MSH_CMD_EXPORT_ALIAS(cmd_ps, ps, List threads in the system.);
 #ifdef RT_USING_HEAP
 int cmd_free(int argc, char **argv)
 {
-    rt_uint32_t total = 0, used = 0, max_used = 0;
+    rt_size_t total = 0, used = 0, max_used = 0;
 
     rt_memory_info(&total, &used, &max_used);
     rt_kprintf("total   : %d\n", total);
@@ -207,7 +207,7 @@ int msh_exec_module(const char *cmd_line, int size)
         return -RT_ENOMEM;
 
     /* copy command0 */
-    memcpy(pg_name, cmd_line, cmd_length);
+    rt_memcpy(pg_name, cmd_line, cmd_length);
     pg_name[cmd_length] = '\0';
 
     if (strstr(pg_name, ".mo") != RT_NULL || strstr(pg_name, ".MO") != RT_NULL)
@@ -276,7 +276,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
         return -RT_ERROR;
 
     /* split arguments */
-    memset(argv, 0x00, sizeof(argv));
+    rt_memset(argv, 0x00, sizeof(argv));
     argc = msh_split(cmd, length, argv);
     if (argc == 0)
         return -RT_ERROR;
@@ -509,7 +509,7 @@ void msh_auto_complete_path(char *path)
             }
 
             length = index - path;
-            memcpy(index, full_path, min_length);
+            rt_memcpy(index, full_path, min_length);
             path[length + min_length] = '\0';
         }
     }

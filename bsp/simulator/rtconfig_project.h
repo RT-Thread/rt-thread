@@ -13,10 +13,11 @@
 #define RT_HEAP_SIZE   (1024*1024*8)
 
 #if defined(_MSC_VER)
-#define NORESOURCE  //RT_VESRION in winuser.h
-#define _CRT_ERRNO_DEFINED  //errno macro redefinition
-#define _INC_WTIME_INL//dfs_elm.c time.h conflicts with wtime.inl
-#define _INC_TIME_INL //dfs_elm.c time.h conflicts with wtime.inl
+#define NORESOURCE  /* RT_VESRION in winuser.h */
+#define _CRT_ERRNO_DEFINED  /* errno macro redefinition */
+#define _INC_WTIME_INL /* dfs_elm.c time.h conflicts with wtime.inl */
+#define _INC_TIME_INL /* dfs_elm.c time.h conflicts with wtime.inl */
+#define _CRT_DECLARE_NONSTDC_NAMES 0 /* avoid to conflict with the inherent STDC in VS */
 
 /* disable some warning in MSC */
 #pragma warning(disable:4273)   /* to ignore: warning C4273: inconsistent dll linkage */
