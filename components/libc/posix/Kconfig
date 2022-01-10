@@ -60,6 +60,16 @@ if RT_USING_PTHREADS
         default 8
 endif
 
+config RT_USING_MODULE
+    bool "Enable dynamic module <dlfcn.h>, dlopen()/dlsym()/dlclose() etc"
+    default n
+
+if RT_USING_MODULE
+    config RT_USING_CUSTOM_DLMODULE
+        bool "Enable load dynamic module by custom"
+        default n
+endif
+
 source "$RTT_DIR/components/libc/posix/ipc/Kconfig"
 
 endmenu

@@ -14,7 +14,7 @@
 #include "dlmodule.h"
 #include "dlelf.h"
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_FS
 #include <dfs_posix.h>
 #endif
 
@@ -421,14 +421,14 @@ struct rt_dlmodule *rt_module_self(void)
 
 struct rt_dlmodule* dlmodule_load(const char* filename)
 {
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_FS
     int fd = -1, length = 0;
 #endif
     rt_err_t ret = RT_EOK;
     rt_uint8_t *module_ptr = RT_NULL;
     struct rt_dlmodule *module = RT_NULL;
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_FS
     fd = open(filename, O_RDONLY, 0);
     if (fd >= 0)
     {
@@ -520,7 +520,7 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
     return module;
 
 __exit:
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_FS
     if (fd >= 0) close(fd);
 #endif
     if (module_ptr) rt_free(module_ptr);
@@ -571,7 +571,7 @@ struct rt_dlmodule* dlmodule_exec(const char* pgname, const char* cmd, int cmd_s
 #if defined(RT_USING_CUSTOM_DLMODULE)
 struct rt_dlmodule* dlmodule_load_custom(const char* filename, struct rt_dlmodule_ops* ops)
 {
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_FS
     int fd = -1, length = 0;
 #endif
     rt_err_t ret = RT_EOK;
@@ -584,7 +584,7 @@ struct rt_dlmodule* dlmodule_load_custom(const char* filename, struct rt_dlmodul
         RT_ASSERT(ops->unload);
         module_ptr = ops->load(filename);
     }
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_FS
     else
     {
         fd = open(filename, O_RDONLY, 0);
@@ -686,7 +686,7 @@ struct rt_dlmodule* dlmodule_load_custom(const char* filename, struct rt_dlmodul
     return module;
 
 __exit:
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_FS
     if (fd >= 0) close(fd);
 #endif
     if (module_ptr)

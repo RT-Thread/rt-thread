@@ -1,14 +1,5 @@
 menu "POSIX layer and C standard library"
 
-config RT_USING_MODULE
-    bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
-    default n
-
-if RT_USING_MODULE
-    config RT_USING_CUSTOM_DLMODULE
-        bool "Enable load dynamic module by custom"
-        default n
-endif
 
 config RT_LIBC_DEFAULT_TIMEZONE
     int "Set the default time zone (UTC+)"
