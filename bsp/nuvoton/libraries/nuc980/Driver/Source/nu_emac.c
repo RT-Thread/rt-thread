@@ -1129,7 +1129,7 @@ uint32_t EMAC_GetAvailRXBufSize(EMAC_MEMMGR_T *psMemMgr, uint8_t **ppuDataBuf)
   * @note Application can only call this function once every time \ref EMAC_RecvPkt or \ref EMAC_RecvPktTS returns 1
   * @note This function is without doing EMAC_TRIGGER_RX.
   */
-EMAC_DESCRIPTOR_T * EMAC_RecvPktDoneWoRxTrigger(EMAC_MEMMGR_T *psMemMgr)
+EMAC_DESCRIPTOR_T *EMAC_RecvPktDoneWoRxTrigger(EMAC_MEMMGR_T *psMemMgr)
 {
     /* Get Rx Frame Descriptor */
     EMAC_DESCRIPTOR_T *desc = (EMAC_DESCRIPTOR_T *)psMemMgr->psCurrentRxDesc;
@@ -1151,7 +1151,7 @@ EMAC_DESCRIPTOR_T * EMAC_RecvPktDoneWoRxTrigger(EMAC_MEMMGR_T *psMemMgr)
     return ret;
 }
 
-void EMAC_RxTrigger(EMAC_MEMMGR_T *psMemMgr, EMAC_DESCRIPTOR_T * rx_desc)
+void EMAC_RxTrigger(EMAC_MEMMGR_T *psMemMgr, EMAC_DESCRIPTOR_T *rx_desc)
 {
     EMAC_T *EMAC = psMemMgr->psEmac;
 
