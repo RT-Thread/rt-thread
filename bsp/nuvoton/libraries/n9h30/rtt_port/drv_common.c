@@ -63,7 +63,7 @@ RT_WEAK void rt_hw_board_init(void)
     /* initialize uart */
     rt_hw_uart_init();
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
@@ -76,3 +76,40 @@ RT_WEAK void rt_hw_board_init(void)
     rt_kprintf("Heap: Begin@%08x, END@%08x, SIZE:%d\n", BOARD_HEAP_START, BOARD_HEAP_END, (rt_uint32_t)BOARD_HEAP_END - (rt_uint32_t)BOARD_HEAP_START);
 #endif
 }
+
+
+void devmem(int argc, char *argv[])
+{
+    volatile unsigned int u32Addr;
+    unsigned int value = 0, mode = 0;
+
+    if (argc < 2 || argc > 3)
+    {
+        goto exit_devmem;
+    }
+
+    if (argc == 3)
+    {
+        if (sscanf(argv[2], "0x%x", &value) != 1)
+            goto exit_devmem;
+        mode = 1; //Write
+    }
+
+    if (sscanf(argv[1], "0x%x", &u32Addr) != 1)
+        goto exit_devmem;
+    else if (!u32Addr || u32Addr & (4 - 1))
+        goto exit_devmem;
+
+    if (mode)
+    {
+        *((volatile uint32_t *)u32Addr) = value;
+    }
+    rt_kprintf("0x%08x\n", *((volatile uint32_t *)u32Addr));
+
+    return;
+exit_devmem:
+    rt_kprintf("Read: devmem <physical address in hex>\n");
+    rt_kprintf("Write: devmem <physical address in hex> <value in hex format>\n");
+    return;
+}
+MSH_CMD_EXPORT(devmem, dump device registers);

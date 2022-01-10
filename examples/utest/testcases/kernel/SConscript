@@ -43,6 +43,6 @@ if GetDepend(['UTEST_THREAD_TC']):
 
 CPPPATH = [cwd]
 
-group = DefineGroup('utestcases', src, depend = [], CPPPATH = CPPPATH)
+group = DefineGroup('utestcases', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

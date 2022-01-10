@@ -4,7 +4,7 @@
 #error "C++ version lower than C++11"
 #endif
 
-//#if defined(RT_USING_LIBC) && defined(RT_USING_PTHREADS)
+//#if defined(RT_USING_PTHREADS)
 
 #include <unistd.h>
 #include <pthread.h>

@@ -34,7 +34,7 @@ extern "C"
 #define EXT_SRAM_END (EXT_SRAM_BASE + EXT_SRAM_SIZE)
 #endif
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
     extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
