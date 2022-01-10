@@ -49,6 +49,10 @@ typedef struct nu_vpost *nu_vpost_t;
 static volatile uint32_t g_u32VSyncBlank = 0;
 static struct rt_completion vsync_wq;
 
+RT_WEAK void nu_lcd_backlight_on(void) { }
+
+RT_WEAK void nu_lcd_backlight_off(void) { }
+
 static struct nu_vpost nu_fbdev[eVpost_Cnt] =
 {
     {
@@ -149,6 +153,18 @@ static rt_err_t vpost_layer_control(rt_device_t dev, int cmd, void *args)
 
     switch (cmd)
     {
+    case RTGRAPHIC_CTRL_POWERON:
+    {
+        nu_lcd_backlight_on();
+    }
+    break;
+
+    case RTGRAPHIC_CTRL_POWEROFF:
+    {
+        nu_lcd_backlight_off();
+    }
+    break;
+
     case RTGRAPHIC_CTRL_GET_INFO:
     {
         struct rt_device_graphic_info *info = (struct rt_device_graphic_info *) args;
@@ -323,6 +339,11 @@ int rt_hw_vpost_init(void)
         {
             rt_kprintf("Fail to get VRAM buffer.\n");
             RT_ASSERT(0);
+        }
+        else
+        {
+            uint32_t u32FBSize = psVpost->info.pitch * psVpostLcmInst->u32DevHeight;
+            rt_memset(psVpost->info.framebuffer, 0, u32FBSize);
         }
 
         /* Register member functions of lcd device */

@@ -18,12 +18,6 @@ config PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-config NU_PKGS_DIR
-    string
-    option env="NU_PKGS_ROOT"
-    default "../libraries/nu_packages"
-
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-source "$NU_PKGS_DIR/Kconfig"
 source "$BSP_DIR/board/Kconfig"

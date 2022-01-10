@@ -26,9 +26,30 @@ static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
 static void *buf3_next = RT_NULL;
 
+static uint32_t u32FirstFlush = 0;
+
+static void nu_antitearing(lv_disp_draw_buf_t *draw_buf, lv_color_t *color_p)
+{
+    if (buf3_next)
+    {
+        /* vsync-none: Use triple screen-sized buffers. */
+        if (draw_buf->buf1 == color_p)
+            draw_buf->buf1 = buf3_next;
+        else
+            draw_buf->buf2 = buf3_next;
+
+        draw_buf->buf_act = buf3_next;
+        buf3_next = color_p;
+    }
+    else
+    {
+        /* vsync-after: Use ping-pong screen-sized buffers only.*/
+        rt_device_control(lcd_device, RTGRAPHIC_CTRL_WAIT_VSYNC, RT_NULL);
+    }
+}
+
 static void nu_flush_direct(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
-    lv_disp_t *psDisp = _lv_refr_get_disp_refreshing();
     void *pvDstReDraw;
 
 #if (LV_USE_GPU_N9H30_GE2D==0)
@@ -55,8 +76,14 @@ static void nu_flush_direct(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_c
     mmu_invalidate_dcache((uint32_t)pvDstReDraw, disp_drv->draw_buf->size * sizeof(lv_color_t));
 #endif
 
-    /* WAIT_VSYNC */
-    rt_device_control(lcd_device, RTGRAPHIC_CTRL_WAIT_VSYNC, RT_NULL);
+    nu_antitearing(disp_drv->draw_buf, color_p);
+
+    if (!u32FirstFlush)
+    {
+        /* Enable backlight at first flushing. */
+        rt_device_control(lcd_device, RTGRAPHIC_CTRL_POWERON, RT_NULL);
+        u32FirstFlush = 1;
+    }
 
     lv_disp_flush_ready(disp_drv);
 }
@@ -70,21 +97,13 @@ static void nu_flush_full_refresh(lv_disp_drv_t *disp_drv, const lv_area_t *area
     /* Use PANDISPLAY without H/W copying */
     rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, color_p);
 
-    if (buf3_next)
-    {
-        /* vsync-none: Use triple screen-sized buffers. */
-        if (disp_drv->draw_buf->buf1 == color_p)
-            disp_drv->draw_buf->buf1 = buf3_next;
-        else
-            disp_drv->draw_buf->buf2 = buf3_next;
+    nu_antitearing(disp_drv->draw_buf, color_p);
 
-        disp_drv->draw_buf->buf_act = buf3_next;
-        buf3_next = color_p;
-    }
-    else
+    if (!u32FirstFlush)
     {
-        /* vsync-after: Use ping-pong screen-sized buffers only.*/
-        rt_device_control(lcd_device, RTGRAPHIC_CTRL_WAIT_VSYNC, RT_NULL);
+        /* Enable backlight at first flushing. */
+        rt_device_control(lcd_device, RTGRAPHIC_CTRL_POWERON, RT_NULL);
+        u32FirstFlush = 1;
     }
 
     lv_disp_flush_ready(disp_drv);
@@ -105,6 +124,13 @@ static void nu_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t 
 
     ge2dSpriteBlt_Screen(area->x1, area->y1, flush_area_w, flush_area_h, (void *)color_p);
     // -> Leave GE2D
+
+    if (!u32FirstFlush)
+    {
+        /* Enable backlight at first flushing. */
+        rt_device_control(lcd_device, RTGRAPHIC_CTRL_POWERON, RT_NULL);
+        u32FirstFlush = 1;
+    }
 
     lv_disp_flush_ready(disp_drv);
 }
@@ -187,6 +213,9 @@ void lv_port_disp_init(void)
         /* get device information failed */
         return;
     }
+
+    /* Disable backlight at startup. */
+    rt_device_control(lcd_device, RTGRAPHIC_CTRL_POWEROFF, RT_NULL);
 
     RT_ASSERT(info.bits_per_pixel == 8 || info.bits_per_pixel == 16 ||
               info.bits_per_pixel == 24 || info.bits_per_pixel == 32);

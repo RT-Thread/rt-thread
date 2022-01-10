@@ -173,6 +173,34 @@ int rt_hw_nau8822_port(void)
 INIT_COMPONENT_EXPORT(rt_hw_nau8822_port);
 #endif /* BOARD_USING_NAU8822 */
 
+//#if defined(BOARD_USING_GT911) && defined(PKG_USING_GT911)
+#if defined(PKG_USING_GT911)
+#include "drv_gpio.h"
+#include "gt911.h"
+
+#define GT911_RST_PIN   NU_GET_PININDEX(NU_PG, 4)
+#define GT911_IRQ_PIN   NU_GET_PININDEX(NU_PG, 5)
+
+extern int gt911_sample(const char *name, rt_uint16_t x, rt_uint16_t y);
+int rt_hw_gt911_port(void)
+{
+    struct rt_touch_config cfg;
+    rt_uint8_t rst_pin;
+
+    rst_pin = GT911_RST_PIN;
+    cfg.dev_name = "i2c0";
+    cfg.irq_pin.pin = GT911_IRQ_PIN;
+    cfg.irq_pin.mode = PIN_MODE_INPUT_PULLDOWN;
+    cfg.user_data = &rst_pin;
+
+    rt_hw_gt911_init("gt911", &cfg);
+    gt911_sample("gt911", BSP_LCD_WIDTH, BSP_LCD_HEIGHT);
+
+    return 0;
+}
+INIT_ENV_EXPORT(rt_hw_gt911_port);
+#endif /* if defined(BOARD_USING_GT911) && defined(PKG_USING_GT911) */
+
 #if defined(BOARD_USING_BUZZER)
 
 #define PWM_DEV_NAME       "pwm0"
@@ -227,10 +255,11 @@ static void PlayRingTone(void)
     #define LCM_BLEN  NU_GET_PININDEX(NU_PH, 3)
 #endif
 
-#define PWM_DEV_NAME       "pwm0"
-#define LCM_PWM_CHANNEL    (0)
+#define PWM_DEV_NAME         "pwm0"
+#define LCM_PWM_CHANNEL      (0)
+#define LCM_BACKLIGHT_CTRL   NU_GET_PININDEX(NU_PH, 3)
 
-static void LCMLightOn(void)
+void nu_lcd_backlight_on(void)
 {
     struct rt_device_pwm *pwm_dev;
 
@@ -243,10 +272,27 @@ static void LCMLightOn(void)
     {
         rt_kprintf("Can't find %s\n", PWM_DEV_NAME);
     }
+
+    rt_pin_mode(LCM_BACKLIGHT_CTRL, PIN_MODE_OUTPUT);
+    rt_pin_write(LCM_BACKLIGHT_CTRL, PIN_HIGH);
 }
-#ifdef FINSH_USING_MSH
-    MSH_CMD_EXPORT(LCMLightOn, LCM - light on panel);
-#endif
+
+void nu_lcd_backlight_off(void)
+{
+    struct rt_device_pwm *pwm_dev;
+
+    if ((pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME)) != RT_NULL)
+    {
+        rt_pwm_disable(pwm_dev, LCM_PWM_CHANNEL);
+    }
+    else
+    {
+        rt_kprintf("Can't find %s\n", PWM_DEV_NAME);
+    }
+
+    rt_pin_mode(LCM_BACKLIGHT_CTRL, PIN_MODE_OUTPUT);
+    rt_pin_write(LCM_BACKLIGHT_CTRL, PIN_LOW);
+}
 
 int rt_hw_lcm_port(void)
 {
@@ -258,9 +304,6 @@ int rt_hw_lcm_port(void)
         rtgui_graphic_set_device(lcm_vpost);
     }
 #endif
-
-    /* Use PWM to control backlight. */
-    LCMLightOn();
 
     return 0;
 }
