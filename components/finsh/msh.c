@@ -21,7 +21,10 @@
 #include "msh.h"
 #include "shell.h"
 #ifdef DFS_USING_POSIX
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #endif /* DFS_USING_POSIX */
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>

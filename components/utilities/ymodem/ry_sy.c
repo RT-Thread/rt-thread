@@ -11,7 +11,10 @@
 
 #include <rtthread.h>
 #include <ymodem.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 #include <stdio.h>
 #include <stdlib.h>
