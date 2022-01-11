@@ -11,7 +11,10 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 #ifndef RT_USING_DFS
     #error  "lwp need file system(RT_USING_DFS)"

@@ -20,7 +20,9 @@
 #define RTLINK_SERV(dev)  (((struct rt_link_device*)dev)->service)
 
 #ifdef RT_USING_POSIX_DEVIO
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <poll.h>
 
 int rtlink_fops_open(struct dfs_fd *fd)
