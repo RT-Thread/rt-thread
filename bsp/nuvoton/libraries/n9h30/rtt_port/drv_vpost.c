@@ -49,10 +49,6 @@ typedef struct nu_vpost *nu_vpost_t;
 static volatile uint32_t g_u32VSyncBlank = 0;
 static struct rt_completion vsync_wq;
 
-RT_WEAK void nu_lcd_backlight_on(void) { }
-
-RT_WEAK void nu_lcd_backlight_off(void) { }
-
 static struct nu_vpost nu_fbdev[eVpost_Cnt] =
 {
     {
@@ -73,6 +69,9 @@ static struct nu_vpost nu_fbdev[eVpost_Cnt] =
 #endif
 };
 
+RT_WEAK void nu_lcd_backlight_on(void) { }
+
+RT_WEAK void nu_lcd_backlight_off(void) { }
 static rt_err_t vpost_layer_open(rt_device_t dev, rt_uint16_t oflag)
 {
     nu_vpost_t psVpost = (nu_vpost_t)dev;

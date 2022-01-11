@@ -252,12 +252,11 @@ static void PlayRingTone(void)
     #include <drv_gpio.h>
 
     /* defined the LCM_BLEN pin: PH3 */
-    #define LCM_BLEN  NU_GET_PININDEX(NU_PH, 3)
+    #define LCM_BACKLIGHT_CTRL  NU_GET_PININDEX(NU_PH, 3)
 #endif
 
 #define PWM_DEV_NAME         "pwm0"
 #define LCM_PWM_CHANNEL      (0)
-#define LCM_BACKLIGHT_CTRL   NU_GET_PININDEX(NU_PH, 3)
 
 void nu_lcd_backlight_on(void)
 {

@@ -516,7 +516,7 @@ static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u3
     psNuI2cBus = (nu_i2c_bus_t) bus;
     psNuI2cDev = &psNuI2cBus->dev;
 
-    switch (RT_I2C_DEV_CTRL_CLK)
+    switch (u32Cmd)
     {
     case RT_I2C_DEV_CTRL_CLK:
         nu_i2c_set_speed(psNuI2cDev, (int32_t)u32Value);
