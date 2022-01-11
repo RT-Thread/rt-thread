@@ -17,7 +17,9 @@
 #include <rtdbg.h>
 
 #ifdef RT_USING_POSIX_STDIO
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <poll.h>
 #include <sys/ioctl.h>
 

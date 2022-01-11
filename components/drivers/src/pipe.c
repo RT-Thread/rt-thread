@@ -14,8 +14,9 @@
 #include <sys/errno.h>
 
 #if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
-#include <dfs_file.h>
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <poll.h>
 #include <sys/ioctl.h>
 
