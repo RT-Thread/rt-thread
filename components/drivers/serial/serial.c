@@ -26,6 +26,7 @@
  *                             when using interrupt tx
  * 2020-12-14     Meco Man     implement function of setting window's size(TIOCSWINSZ)
  * 2021-08-22     Meco Man     implement function of getting window's size(TIOCGWINSZ)
+ * 2021-12-17     svchao       add support for MCU with a data bit length of 9.
  */
 
 #include <rthw.h>
@@ -1044,6 +1045,8 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     tio->c_cflag = CS7;
                 else if (serial->config.data_bits == DATA_BITS_8)
                     tio->c_cflag = CS8;
+                else if (serial->config.data_bits == DATA_BITS_9)
+                    tio->c_cflag = CS9;
 
                 if (serial->config.stop_bits == STOP_BITS_2)
                     tio->c_cflag |= CSTOPB;
@@ -1082,6 +1085,9 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     break;
                 case CS7:
                     config.data_bits = DATA_BITS_7;
+                    break;
+                case CS9:
+                    config.data_bits = DATA_BITS_9;
                     break;
                 default:
                     config.data_bits = DATA_BITS_8;

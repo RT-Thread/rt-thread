@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017/08/30     Bernard      The first version
+ * 2021/12/17     svchao       add the definition of CS9
  */
 
 #ifndef __TERMIOS_H__
@@ -134,11 +135,12 @@ struct termios {
 #define B3500000 0010016
 #define B4000000 0010017
 
-#define CSIZE  0000060
+#define CSIZE  0000070
 #define CS5    0000000
 #define CS6    0000020
 #define CS7    0000040
 #define CS8    0000060
+#define CS9    0000010
 #define CSTOPB 0000100
 #define CREAD  0000200
 #define PARENB 0000400
