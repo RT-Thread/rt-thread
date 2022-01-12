@@ -32,23 +32,23 @@ static struct rt_serial_device serial2;
 static rt_err_t CME_M7_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct CME_M7_uart* uart;
-	UART_InitTypeDef init;
+    UART_InitTypeDef init;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
     uart = (struct CME_M7_uart *)serial->parent.user_data;
 
-	init.UART_BaudRate = cfg->baud_rate;
-	init.UART_StopBits = UART_StopBits_1;
+    init.UART_BaudRate = cfg->baud_rate;
+    init.UART_StopBits = UART_StopBits_1;
     init.UART_Parity = UART_Parity_None;
-	init.UART_LoopBack = FALSE;
-	init.UART_RxEn = TRUE;
-	init.UART_CtsEn = FALSE;
+    init.UART_LoopBack = FALSE;
+    init.UART_RxEn = TRUE;
+    init.UART_CtsEn = FALSE;
 
     UART_Init(uart->uart_device, &init);
     uart->uart_device->RX_RESET = 1;
-	UART_Enable(uart->uart_device, TRUE);
+    UART_Enable(uart->uart_device, TRUE);
     uart->uart_device->RX_RESET = 0;
 
     return RT_EOK;
@@ -67,24 +67,24 @@ static rt_err_t CME_M7_control(struct rt_serial_device *serial, int cmd, void *a
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
         NVIC_InitStructure.NVIC_IRQChannel = uart->irq;
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-		NVIC_InitStructure.NVIC_IRQChannelCmd = FALSE;
-		NVIC_Init(&NVIC_InitStructure);
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+        NVIC_InitStructure.NVIC_IRQChannelCmd = FALSE;
+        NVIC_Init(&NVIC_InitStructure);
 
-		UART_EnableInt(uart->uart_device, UART_Int_RxNotEmpty, FALSE);
+        UART_EnableInt(uart->uart_device, UART_Int_RxNotEmpty, FALSE);
         break;
 
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         NVIC_InitStructure.NVIC_IRQChannel = uart->irq;
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-		NVIC_InitStructure.NVIC_IRQChannelCmd = TRUE;
-		NVIC_Init(&NVIC_InitStructure);
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+        NVIC_InitStructure.NVIC_IRQChannelCmd = TRUE;
+        NVIC_Init(&NVIC_InitStructure);
 
-		UART_ClearInt(uart->uart_device, UART_Int_RxNotEmpty);
-		UART_EnableInt(uart->uart_device, UART_Int_RxNotEmpty, TRUE);
+        UART_ClearInt(uart->uart_device, UART_Int_RxNotEmpty);
+        UART_EnableInt(uart->uart_device, UART_Int_RxNotEmpty, TRUE);
         break;
     }
 
@@ -132,8 +132,8 @@ static const struct rt_uart_ops CME_M7_uart_ops =
 
 int rt_hw_uart_init(void)
 {
-	struct CME_M7_uart* uart;
-	struct rt_serial_device *serial;
+    struct CME_M7_uart* uart;
+    struct rt_serial_device *serial;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART0
@@ -143,7 +143,7 @@ int rt_hw_uart_init(void)
     serial->ops    = &CME_M7_uart_ops;
     serial->config = config;
 
-	/* register UART device */
+    /* register UART device */
     rt_hw_serial_register(serial,
                           "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
@@ -157,14 +157,14 @@ int rt_hw_uart_init(void)
     serial->ops    = &CME_M7_uart_ops;
     serial->config = config;
 
-	/* register UART device */
+    /* register UART device */
     rt_hw_serial_register(serial,
                           "uart2",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART2 */
 
-	return RT_EOK;
+    return RT_EOK;
 }
 INIT_BOARD_EXPORT(rt_hw_uart_init);
 
