@@ -75,7 +75,7 @@ RT_WEAK rt_size_t at_utils_send(rt_device_t dev,
 
 rt_size_t at_vprintf(rt_device_t device, const char *format, va_list args)
 {
-    last_cmd_len = vsnprintf(send_buf, sizeof(send_buf), format, args);
+    last_cmd_len = rt_vsnprintf(send_buf, sizeof(send_buf), format, args);
     if(last_cmd_len > sizeof(send_buf))
         last_cmd_len = sizeof(send_buf);
 
@@ -90,7 +90,7 @@ rt_size_t at_vprintfln(rt_device_t device, const char *format, va_list args)
 {
     rt_size_t len;
 
-    last_cmd_len = vsnprintf(send_buf, sizeof(send_buf) - 2, format, args);
+    last_cmd_len = rt_vsnprintf(send_buf, sizeof(send_buf) - 2, format, args);
     if(last_cmd_len > sizeof(send_buf) - 2)
         last_cmd_len = sizeof(send_buf) - 2;
     rt_memcpy(send_buf + last_cmd_len, "\r\n", 2);
