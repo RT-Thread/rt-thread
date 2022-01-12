@@ -40,6 +40,7 @@
  * 2021-12-21     Meco Man     re-implement RT_UNUSED
  * 2022-01-01     Gabriel      improve hooking method
  * 2022-01-07     Gabriel      move some __on_rt_xxxxx_hook to dedicated c soure files
+ * 2022-01-12     Meco Man     remove RT_THREAD_BLOCK
  */
 
 #ifndef __RT_DEF_H__
@@ -545,7 +546,6 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_READY                 0x01                /**< Ready status */
 #define RT_THREAD_SUSPEND               0x02                /**< Suspend status */
 #define RT_THREAD_RUNNING               0x03                /**< Running status */
-#define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND   /**< Blocked status */
 #define RT_THREAD_CLOSE                 0x04                /**< Closed status */
 #define RT_THREAD_STAT_MASK             0x07
 
