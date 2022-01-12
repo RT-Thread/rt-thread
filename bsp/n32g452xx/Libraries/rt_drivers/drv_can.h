@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,14 +12,15 @@
 #define __DRV_CAN_H__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include <board.h>
 #include <rtdevice.h>
 #include <rtthread.h>
 
-int rt_hw_can_init(void);
+    int rt_hw_can_init(void);
 
 #ifdef __cplusplus
 }
