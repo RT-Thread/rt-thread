@@ -16,6 +16,8 @@
 #include "board.h"
 #include "hardware/structs/systick.h"
 
+#define PLL_SYS_KHZ (133 * 1000)
+
 void isr_systick(void)
 {
     /* enter interrupt */
@@ -43,6 +45,8 @@ uint32_t systick_config(uint32_t ticks)
 
 void rt_hw_board_init()
 {
+    set_sys_clock_khz(PLL_SYS_KHZ, true);
+
     rt_system_heap_init(HEAP_BEGIN, HEAP_END);
 
     alarm_pool_init_default();
@@ -65,7 +69,7 @@ void rt_hw_board_init()
     stdio_init_all();
     rt_hw_uart_init();
 
-#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+#ifdef RT_USING_CONSOLE
    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
