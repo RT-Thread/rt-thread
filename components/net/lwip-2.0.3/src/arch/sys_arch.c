@@ -544,7 +544,7 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
     else
     {
         if (ret == RT_EOK)
-            ret = 1;
+            ret = 0;
     }
 
     return ret;
