@@ -29,8 +29,7 @@
 
 #ifdef DFS_USING_POSIX
 #include <unistd.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
+#include <fcntl.h>
 #endif /* DFS_USING_POSIX */
 
 /* finsh thread */

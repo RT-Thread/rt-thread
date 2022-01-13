@@ -23,8 +23,7 @@
 #ifdef DFS_USING_POSIX
 #include <dfs_file.h>
 #include <unistd.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
+#include <fcntl.h>
 #endif /* DFS_USING_POSIX */
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>

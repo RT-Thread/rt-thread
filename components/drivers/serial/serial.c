@@ -38,9 +38,8 @@
 
 #ifdef RT_USING_POSIX_STDIO
 #include <dfs_file.h>
+#include <fcntl.h>
 #include <unistd.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
 #include <poll.h>
 #include <sys/ioctl.h>
 
