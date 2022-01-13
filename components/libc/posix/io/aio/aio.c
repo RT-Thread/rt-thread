@@ -8,12 +8,12 @@
  * 2017/12/30     Bernard      The first version.
  */
 
-#include <stdint.h>
+#include <rtthread.h>
 #include <rthw.h>
+#include <stdint.h>
 #include <unistd.h>
-#include <dfs_file.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
+#include <fcntl.h>
+#include <sys/errno.h>
 #include "aio.h"
 
 struct rt_workqueue* aio_queue = NULL;
