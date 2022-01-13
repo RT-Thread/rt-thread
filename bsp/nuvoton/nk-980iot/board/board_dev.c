@@ -158,12 +158,12 @@ struct rt_mtd_nand_device mtd_partitions[MTD_SPINAND_PARTITION_NUM] =
     [0] =
     {
         .block_start =  0,
-        .block_end   = 23,
-        .block_total = 24,
+        .block_end   = 63,
+        .block_total = 64,
     },
     [1] =
     {
-        .block_start = 24,
+        .block_start = 64,
         .block_end   = 1023,
         .block_total = 1000,
     },

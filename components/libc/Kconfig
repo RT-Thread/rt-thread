@@ -1,38 +1,16 @@
 menu "POSIX layer and C standard library"
 
-config RT_USING_LIBC
-    bool "Enable libc APIs from the toolchain"
+config RT_USING_MODULE
+    bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
     default n
 
-if RT_USING_LIBC
-    config RT_LIBC_USING_TIME
-        default y
-
-    config RT_LIBC_USING_FILEIO
-        bool "Enable libc with file operation, eg.fopen/fwrite/fread/getchar/STDIO"
-        select RT_USING_POSIX_FS
-        select RT_USING_POSIX_DEVIO
+if RT_USING_MODULE
+    config RT_USING_CUSTOM_DLMODULE
+        bool "Enable load dynamic module by custom"
         default n
-
-    config RT_USING_MODULE
-        bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
-        default n
-
-    if RT_USING_MODULE
-        config RT_USING_CUSTOM_DLMODULE
-            bool "Enable load dynamic module by custom"
-            default n
-    endif
-endif
-
-if RT_USING_LIBC != y
-    config RT_LIBC_USING_TIME
-    bool "Enable time functions without compiler's libc"
-    default y
 endif
 
 config RT_LIBC_DEFAULT_TIMEZONE
-    depends on (RT_LIBC_USING_TIME || RT_USING_LIBC)
     int "Set the default time zone (UTC+)"
     range -12 12
     default 8

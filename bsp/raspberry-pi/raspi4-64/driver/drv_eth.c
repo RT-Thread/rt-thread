@@ -13,6 +13,9 @@
 #include <rthw.h>
 #include <stdint.h>
 #include <rtthread.h>
+
+#ifdef BSP_USING_ETH
+
 #include <lwip/sys.h>
 #include <netif/ethernetif.h>
 #include <mmu.h>
@@ -39,7 +42,7 @@
 
 #define BIT(nr)                 (1UL << (nr))
 
-#define LINK_THREAD_STACK_SIZE  (1024)
+#define LINK_THREAD_STACK_SIZE  (2048)
 #define LINK_THREAD_PRIORITY    (20)
 #define LINK_THREAD_TIMESLICE   (10)
 
@@ -721,3 +724,5 @@ int rt_hw_eth_init(void)
     return 0;
 }
 INIT_COMPONENT_EXPORT(rt_hw_eth_init);
+
+#endif /* BSP_USING_ETH */

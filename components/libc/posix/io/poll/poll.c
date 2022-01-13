@@ -8,6 +8,7 @@
  * 2016-12-28     Bernard      first version
  * 2018-03-09     Bernard      Add protection for pt->triggered.
  */
+
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>

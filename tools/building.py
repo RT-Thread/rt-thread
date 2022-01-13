@@ -121,7 +121,7 @@ class Win32Spawn:
 def GenCconfigFile(env, BuildOptions):
     import rtconfig
 
-    if rtconfig.PLATFORM == 'gcc' or rtconfig.PLATFORM == 'clang':
+    if rtconfig.PLATFORM == 'gcc':
         contents = ''
         if not os.path.isfile('cconfig.h'):
             import gcc

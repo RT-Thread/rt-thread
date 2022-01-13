@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-05-22     Meco Man     The first version.
  */
+
 #ifndef __SYS_ERRNO_H__
 #define __SYS_ERRNO_H__
 
@@ -575,6 +576,10 @@ defined in armcc/errno.h
 #ifndef EHWPOISON
 #define EHWPOISON       (ERROR_BASE_NO + 133)
 #endif
-#endif
 
-#endif
+#elif defined(_WIN32)
+#include <errno.h>
+
+#endif /* defined(__ARMCC_VERSION) || defined(__IAR_SYSTEMS_ICC__) */
+
+#endif /* __SYS_ERRNO_H__ */

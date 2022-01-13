@@ -44,7 +44,7 @@ static TxDmaDesc txDmaDesc[ETH_TXBUFNB];
 #pragma location = RX_DMA_ADD_BASE
 static RxDmaDesc rxDmaDesc[ETH_RXBUFNB];
 
-#elif defined(__CC_ARM) || defined(__CLANG_ARM)
+#elif defined(__ARMCC_VERSION)
 /* transmit buffer */
 static rt_uint8_t txBuffer[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__((at(TX_ADD_BASE)));
 /* Receive buffer */

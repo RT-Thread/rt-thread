@@ -27,11 +27,38 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART3
         default n
-    
+
     config BSP_USING_SRAM
         bool "Enable SRAM"
         select BSP_USING_EXT_FMC_IO
         select BSP_USING_FMC
+        default n
+
+    config BSP_USING_MCU_LCD
+        bool "Enable ATK LCD"
+        select BSP_USING_SRAM
+        default n
+        if BSP_USING_MCU_LCD
+            config BSP_USING_MCU_LCD_TEST
+                bool "Enable lcd fill test"
+                default y
+        endif
+
+    config BSP_USING_TOUCH
+        bool "Use LCD TOUCH"
+        select BSP_USING_I2C2
+        default n
+        if BSP_USING_TOUCH
+            config BSP_TOUCH_INT_PIN
+                int "Touch interrupt pin, PB1"
+                default 17
+        endif
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select BSP_USING_MCU_LCD
+        select BSP_USING_TOUCH
+        select PKG_USING_LVGL
         default n
 
     config BSP_USING_SPI_FLASH
@@ -46,7 +73,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable I2C EEPROM (i2c1)"
         select BSP_USING_I2C1
         default n
-    
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
@@ -96,7 +123,7 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_DFS
             select RT_USING_DFS_ROMFS
             select RT_USING_MTD_NOR
-            select BSP_USING_SPI_FLASH            
+            select BSP_USING_SPI_FLASH
             select BSP_USING_FS
             select PKG_USING_FAL
             select FAL_USING_AUTO_INIT
@@ -155,7 +182,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
-                default n  
+                default n
 
             config BSP_UART3_TX_USING_DMA
                 bool "Enable UART3 TX DMA"
@@ -169,7 +196,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
-                default n  
+                default n
 
             config BSP_UART4_TX_USING_DMA
                 bool "Enable UART4 TX DMA"
@@ -183,7 +210,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART5_RX_USING_DMA
                 bool "Enable UART5 RX DMA"
                 depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
-                default n  
+                default n
 
             config BSP_UART5_TX_USING_DMA
                 bool "Enable UART5 TX DMA"
@@ -197,7 +224,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART6_RX_USING_DMA
                 bool "Enable UART6 RX DMA"
                 depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                default n  
+                default n
 
             config BSP_UART6_TX_USING_DMA
                 bool "Enable UART6 TX DMA"
@@ -255,7 +282,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -270,7 +297,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
@@ -303,6 +330,23 @@ menu "On-chip Peripheral Drivers"
                 int "I2C1 sda pin number"
                 range 0 143
                 default 25
+        endif
+
+    menuconfig BSP_USING_I2C2
+        bool "Enable LCD Touch BUS (software simulation)"
+        default y
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C2
+            config BSP_I2C2_SCL_PIN
+                int "i2c2 scl pin number, PB0"
+                range 0 143
+                default 16
+            config BSP_I2C2_SDA_PIN
+                int "I2C2 sda pin number, PF11"
+                range 0 143
+                default 91
         endif
 
     menuconfig BSP_USING_DAC
@@ -373,7 +417,7 @@ menu "On-chip Peripheral Drivers"
                 default n
 
         endif
-    
+
     config BSP_USING_EXT_FMC_IO
         bool
         default n
@@ -382,7 +426,7 @@ menu "On-chip Peripheral Drivers"
         bool
         default n
  source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

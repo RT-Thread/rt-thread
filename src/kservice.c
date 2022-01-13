@@ -19,6 +19,7 @@
  * 2015-07-06     Bernard      Add rt_assert_handler routine.
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  * 2021-12-20     Meco Man     implement rt_strcpy()
+ * 2022-01-07     Gabriel      add __on_rt_assert_hook
  */
 
 #include <rtthread.h>
@@ -116,6 +117,7 @@ int *_rt_errno(void)
 }
 RTM_EXPORT(_rt_errno);
 
+#ifndef RT_KSERVICE_USING_STDLIB_MEMSET
 /**
  * This function will set the content of memory to specified value.
  *
@@ -201,7 +203,9 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memset);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
 
+#ifndef RT_KSERVICE_USING_STDLIB_MEMCPY
 /**
  * This function will copy memory content from source address to destination address.
  *
@@ -285,6 +289,7 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memcpy);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
 
 #ifndef RT_KSERVICE_USING_STDLIB
 
@@ -1558,9 +1563,9 @@ RTM_EXPORT(rt_free);
 *
 * @param max_used is a pointer to get the maximum memory used.
 */
-RT_WEAK void rt_memory_info(rt_uint32_t *total,
-                            rt_uint32_t *used,
-                            rt_uint32_t *max_used)
+RT_WEAK void rt_memory_info(rt_size_t *total,
+                            rt_size_t *used,
+                            rt_size_t *max_used)
 {
     rt_base_t level;
 
@@ -1740,6 +1745,10 @@ int __rt_ffs(int value)
 }
 #endif /* RT_USING_TINY_FFS */
 #endif /* RT_USING_CPU_FFS */
+
+#ifndef __on_rt_assert_hook
+    #define __on_rt_assert_hook(ex, func, line)         __ON_HOOK_ARGS(rt_assert_hook, (ex, func, line))
+#endif
 
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */

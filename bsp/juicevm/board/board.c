@@ -21,10 +21,10 @@ void rt_hw_board_init(void)
     rt_hw_uart_init();
     // rt_hw_systick_init();
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif /* RT_USING_CONSOLE */
+#endif
 
 #ifdef RT_USING_HEAP
     rt_kprintf("heap: [0x%08x - 0x%08x]\n", (rt_ubase_t) RT_HW_HEAP_BEGIN, (rt_ubase_t) RT_HW_HEAP_END);

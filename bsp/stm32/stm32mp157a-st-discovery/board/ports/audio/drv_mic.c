@@ -24,7 +24,7 @@
 
 /* SYSRAM  */
 #define RX_FIFO_SIZE (4096)
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 rt_uint8_t MIC_RX_FIFO[RX_FIFO_SIZE] __attribute__((at(0x2FFC2000)));
 #elif defined(__ICCARM__)
 #pragma location = 0x2FFC2000

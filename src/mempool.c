@@ -14,6 +14,7 @@
  * 2010-10-26     yi.qiu       add module support in rt_mp_delete
  * 2011-01-24     Bernard      add object allocation check.
  * 2012-03-22     Bernard      fix align issue in rt_mp_init and rt_mp_create.
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to mempool.c
  */
 
 #include <rthw.h>
@@ -21,7 +22,14 @@
 
 #ifdef RT_USING_MEMPOOL
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_mp_alloc_hook
+    #define __on_rt_mp_alloc_hook(mp, block)        __ON_HOOK_ARGS(rt_mp_alloc_hook, (mp, block))
+#endif
+#ifndef __on_rt_mp_free_hook
+    #define __on_rt_mp_free_hook(mp, block)         __ON_HOOK_ARGS(rt_mp_free_hook, (mp, block))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_mp_alloc_hook)(struct rt_mempool *mp, void *block);
 static void (*rt_mp_free_hook)(struct rt_mempool *mp, void *block);
 

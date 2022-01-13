@@ -13,6 +13,13 @@
 
 #include <rtdef.h>
 
+#define __WFI() __asm__ volatile ("wfi":::"memory")
+#define __WFE() __asm__ volatile ("wfe":::"memory")
+#define __SEV() __asm__ volatile ("sev")
+#define __ISB() __asm__ volatile ("isb 0xf":::"memory")
+#define __DSB() __asm__ volatile ("dsb 0xf":::"memory")
+#define __DMB() __asm__ volatile ("dmb 0xf":::"memory")
+
 rt_inline void rt_hw_isb(void)
 {
     __asm__ volatile ("isb":::"memory");
