@@ -49,7 +49,7 @@ void rt_timer_deferrable_capacity(void* param);
 
 void rt_timer_deferrable_period(void* param);
 
-rt_err_t rt_thread_deferrable_init(rt_uint32_t capacity, rt_uint32_t period, rt_uint8_t priority);
+rt_err_t rt_deferrable_server_init(rt_uint32_t capacity, rt_uint32_t period, rt_uint8_t priority);
 
 rt_thread_t rt_thread_deferrable_gethandler(void);
 

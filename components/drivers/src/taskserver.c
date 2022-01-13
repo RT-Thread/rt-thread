@@ -99,7 +99,7 @@ static void rt_thread_deferrable_entry(void *param)
  *
  * @return void
  */
-rt_err_t rt_thread_deferrable_init(rt_uint32_t capacity, rt_uint32_t period, rt_uint8_t priority)
+rt_err_t rt_deferrable_server_init(rt_uint32_t capacity, rt_uint32_t period, rt_uint8_t priority)
 {
     rt_err_t err;
 
