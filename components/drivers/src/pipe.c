@@ -15,8 +15,7 @@
 
 #if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
 #include <unistd.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
+#include <fcntl.h>
 #include <poll.h>
 #include <sys/ioctl.h>
 

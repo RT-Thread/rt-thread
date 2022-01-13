@@ -12,9 +12,6 @@
 #define __SYS_IOCTL_H__
 
 #include <rtconfig.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
 
 #ifdef _WIN32
 #include <winsock.h>

@@ -18,8 +18,7 @@
 
 #ifdef RT_USING_POSIX_STDIO
 #include <unistd.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
+#include <fcntl.h>
 #include <poll.h>
 #include <sys/ioctl.h>
 
