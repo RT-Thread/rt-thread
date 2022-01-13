@@ -36,7 +36,7 @@ void lv_port_disp_init(void)
     LCD_Init(HORIZONTAL);
 
     /*Initialize `disp_buf` with the buffer(s).*/
-    lv_disp_draw_buf_init(&disp_buf, lv_disp_buf1, 0x00, DISP_BUF_SIZE);
+    lv_disp_draw_buf_init(&disp_buf, lv_disp_buf1, RT_NULL, DISP_BUF_SIZE);
 
     lv_disp_drv_init(&disp_drv); /*Basic initialization*/
 
