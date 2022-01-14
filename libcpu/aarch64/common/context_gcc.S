@@ -273,16 +273,16 @@ rt_hw_context_switch:
 .globl rt_interrupt_to_thread
 .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
-    ADR 	X2, rt_thread_switch_interrupt_flag
+    LDR 	X2, =rt_thread_switch_interrupt_flag
     LDR 	X3, [X2]
     CMP 	X3, #1
     B.EQ 	_reswitch
-    ADR 	X4, rt_interrupt_from_thread   // set rt_interrupt_from_thread
+    LDR 	X4, =rt_interrupt_from_thread   // set rt_interrupt_from_thread
     MOV 	X3, #1              // set rt_thread_switch_interrupt_flag to 1
     STR 	X0, [X4]
     STR 	X3, [X2]
 _reswitch:
-    ADR 	X2, rt_interrupt_to_thread     // set rt_interrupt_to_thread
+    LDR 	X2, =rt_interrupt_to_thread     // set rt_interrupt_to_thread
     STR 	X1, [X2]
     RET
 
@@ -322,7 +322,7 @@ vector_irq:
 
     // if rt_thread_switch_interrupt_flag set, jump to
     // rt_hw_context_switch_interrupt_do and don't return
-    ADR 	X1, rt_thread_switch_interrupt_flag
+    LDR 	X1, =rt_thread_switch_interrupt_flag
     LDR     X2, [X1]
     CMP     X2, #1
     B.NE     vector_irq_exit
@@ -330,11 +330,11 @@ vector_irq:
     MOV     X2,  #0         // clear flag
     STR     X2,  [X1]
 
-    ADR     X3,  rt_interrupt_from_thread
+    LDR     X3,  =rt_interrupt_from_thread
     LDR     X4,  [X3]
     STR     x0,  [X4]       // store sp in preempted tasks's TCB
 
-    ADR     x3,  rt_interrupt_to_thread
+    LDR     x3,  =rt_interrupt_to_thread
     LDR     X4,  [X3]
     LDR     x0,  [X4]       // get new task's stack pointer
     
