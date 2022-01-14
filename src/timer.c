@@ -257,7 +257,7 @@ void rt_timer_init(rt_timer_t  timer,
                    rt_tick_t   time,
                    rt_uint8_t  flag)
 {
-    /* timer check */
+    /* parameter check */
     RT_ASSERT(timer != RT_NULL);
 
     /* timer object initialization */
@@ -278,7 +278,7 @@ rt_err_t rt_timer_detach(rt_timer_t timer)
 {
     register rt_base_t level;
 
-    /* timer check */
+    /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
     RT_ASSERT(rt_object_is_systemobject(&timer->parent));
@@ -347,7 +347,7 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
 {
     register rt_base_t level;
 
-    /* timer check */
+    /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
     RT_ASSERT(rt_object_is_systemobject(&timer->parent) == RT_FALSE);
@@ -386,7 +386,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     unsigned int tst_nr;
     static unsigned int random_nr;
 
-    /* timer check */
+    /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
 
@@ -511,7 +511,7 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
 {
     register rt_base_t level;
 
-    /* timer check */
+    /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
 
@@ -547,7 +547,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 {
     register rt_base_t level;
 
-    /* timer check */
+    /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
 

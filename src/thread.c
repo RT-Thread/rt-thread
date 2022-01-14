@@ -130,7 +130,7 @@ static void _thread_timeout(void *parameter)
 
     thread = (struct rt_thread *)parameter;
 
-    /* thread check */
+    /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
@@ -289,7 +289,7 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
                         rt_uint8_t        priority,
                         rt_uint32_t       tick)
 {
-    /* thread check */
+    /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(stack_start != RT_NULL);
 
@@ -340,7 +340,7 @@ RTM_EXPORT(rt_thread_self);
  */
 rt_err_t rt_thread_startup(rt_thread_t thread)
 {
-    /* thread check */
+    /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
@@ -383,7 +383,7 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
 {
     rt_base_t lock;
 
-    /* thread check */
+    /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(rt_object_is_systemobject((rt_object_t)thread));
@@ -486,7 +486,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
 {
     rt_base_t lock;
 
-    /* thread check */
+    /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(rt_object_is_systemobject((rt_object_t)thread) == RT_FALSE);
@@ -703,7 +703,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 {
     register rt_base_t temp;
 
-    /* thread check */
+    /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
@@ -821,7 +821,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     register rt_base_t stat;
     register rt_base_t temp;
 
-    /* thread check */
+    /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(thread == rt_thread_self());
@@ -867,7 +867,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 {
     register rt_base_t temp;
 
-    /* thread check */
+    /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
