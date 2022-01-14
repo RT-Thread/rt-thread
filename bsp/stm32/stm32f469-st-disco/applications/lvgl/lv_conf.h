@@ -12,7 +12,7 @@
 #define LV_CONF_H
 
 #define LV_USE_PERF_MONITOR     1
-#define LV_COLOR_DEPTH          32
+#define LV_COLOR_DEPTH          16
 
 #define LV_USE_GPU_STM32_DMA2D  1
 #define LV_GPU_DMA2D_CMSIS_INCLUDE "stm32f469xx.h"
