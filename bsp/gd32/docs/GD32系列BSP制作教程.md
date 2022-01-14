@@ -1,37 +1,32 @@
 # GD32 系列 BSP 制作教程
 
-## 1. BSP 框架介绍 
+## 1. BSP 框架介绍
 
 BSP 框架结构如下图所示：
 
 ![BSP 框架图](./figures/frame.png)
 
-GD32的BSP架构主要分为三个部分：libraries、tools和具体的Boards，其中libraries包含了GD32的通用库，包括每个系列的HAL以及适配RT-Thread的drivers；tools是生成工程的Python脚本工具；另外就是Boards文件，当然这里的Boards有很多，我这里值列举了GD32407V-START。
-
-
-
+GD32的BSP架构主要分为三个部分：libraries、tools和具体的Boards，其中libraries包含了GD32的通用库，包括每个系列的Firmware Library以及适配RT-Thread的drivers；tools是生成工程的Python脚本工具；另外就是Boards文件，当然这里的Boards有很多，我这里值列举了GD32407V-START。
 
 ## 2. 知识准备
 
 制作一个 BSP 的过程就是构建一个新系统的过程，因此想要制作出好用的 BSP，要对 RT-Thread 系统的构建过程有一定了解，需要的知识准备如下所示：
 
 - 掌握  GD32 系列 BSP 的使用方法
-
+  
   了解 BSP 的使用方法，可以阅读 [BSP 说明文档](../README.md) 中使用教程表格内的文档。
 
 - 了解 Scons 工程构建方法
-
+  
   RT-Thread 使用 Scons 作为系统的构建工具，因此了解 Scons 的常用命令对制作新 BSP 是基本要求。
 
 - 了解设备驱动框架
-
+  
   在 RT-Thread 系统中，应用程序通过设备驱动框架来操作硬件，因此了解设备驱动框架，对添加 BSP 驱动是很重要的。
 
 - 了解 Kconfig 语法
-
-  RT-Thread 系统通过 menuconfig 的方式进行配置，而 menuconfig 中的选项是由 Kconfig 文件决定的，因此想要对 RT-Thread 系统进行配置，需要对 kconfig 语法有一定了解。
-
   
+  RT-Thread 系统通过 menuconfig 的方式进行配置，而 menuconfig 中的选项是由 Kconfig 文件决定的，因此想要对 RT-Thread 系统进行配置，需要对 kconfig 语法有一定了解。
 
 ## 3. BSP移植
 
@@ -53,27 +48,17 @@ GD32的BSP架构主要分为三个部分：libraries、tools和具体的Boards�
 
  ![Download](./figures/dowmload.png)
 
-
-
 下载好后双击GigaDevice.GD32F4xx_DFP.2.1.0.pack运行即可：
 
-
-
  ![install paxk](./figures/install_pack.png)
-
-
 
 点击[Next]即可安装完成。
 
  ![finish](./figures/pack_finish.png)
 
-
-
 安装成功后，重新打开Keil，则可以在File->Device Database中出现Gigadevice的下拉选项，点击可以查看到相应的型号。
 
  ![Gigadevice](./figures/Gigadevice.png)
-
- 
 
 ### 3.2 BSP工程制作
 
@@ -111,8 +96,6 @@ source "board/Kconfig"
 
 该文件是获取所有路径下的Kconfig。
 
-
-
 bsp/gd32/gd32407v-start/SConscript修改后的内容如下：
 
 ```python
@@ -135,11 +118,10 @@ for d in list:
 Return('objs')
 ```
 
-
 该文件是用于遍历当前目录的所有文件夹。
 
-
 bsp/gd32/gd32407v-start/SConstruct修改后的内容如下：
+
 ```python
 import os
 import sys
@@ -190,24 +172,24 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-gd32_library = 'GD32F4xx_HAL'
+gd32_library = 'GD32F4xx_Firmware_Library'
 rtconfig.BSP_LIBRARY_TYPE = gd32_library
 
 # include libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, gd32_library, 'SConscript')))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'Drivers', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)
 ```
+
 该文件用于链接所有的依赖文件，并调用make进行编译。
-
-
 
 **3.修改开发环境信息**
 bsp/gd32/gd32407v-start/cconfig.h修改后的内容如下：
+
 ```c
 #ifndef CCONFIG_H__
 #define CCONFIG_H__
@@ -228,9 +210,8 @@ bsp/gd32/gd32407v-start/cconfig.h修改后的内容如下：
 
 #endif
 ```
+
 该文件是是编译BSP的环境信息，需根据实际修改。
-
-
 
 **4.修改KEIL的模板工程**
 
@@ -240,31 +221,21 @@ bsp/gd32/gd32407v-start/cconfig.h修改后的内容如下：
 
  ![Chip](./figures/chip.png)
 
-
-
 修改FLASH和RAM的配置:
 
  ![storage](./figures/storage.png)
-
-
 
 修改可执行文件名字：
 
 ![rename](./figures/rename.png)
 
- 
-
 修改默认调试工具：CMSIS-DAP Debugger。
 
 ![Debug](./figures/debug.png)
 
- 
-
 修改编程算法：GD32F4xx FMC。
 
 ![FMC](./figures/FMC.png)
-
-
 
 **5.修改board文件夹**
 
@@ -314,9 +285,8 @@ place in RAM_region   { readwrite,
                         block CSTACK, block HEAP };                        
 place in RAM1_region  { section .sram };
 ```
+
 该文件是IAR编译的链接脚本，根据《GD32F407xx_Datasheet_Rev2.1》可知，GD32F407VKT6的flash大小为3072KB，SRAM大小为192KB，因此需要设置ROM和RAM的起始地址和堆栈大小等。
-
-
 
 (2) 修改bsp/gd32/gd32407v-start/board/linker_scripts/link.ld
 
@@ -358,74 +328,74 @@ SECTIONS
         KEEP(*(VSymTab))
         __vsymtab_end = .;
         . = ALIGN(4);
-    
+
         /* section information for initial. */
         . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
         . = ALIGN(4);
-    
+
         . = ALIGN(4);
         _etext = .;
     } > CODE = 0
-    
+
     /* .ARM.exidx is sorted, so has to go in its own output section.  */
     __exidx_start = .;
     .ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    
+
         /* This is used by the startup in order to initialize the .data secion */
         _sidata = .;
     } > CODE
     __exidx_end = .;
-    
+
     /* .data section which is used for initialized data */
-    
+
     .data : AT (_sidata)
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _sdata = . ;
-    
+
         *(.data)
         *(.data.*)
         *(.gnu.linkonce.d*)
-    
+
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
     } >DATA
-    
+
     .stack : 
     {
         . = . + _system_stack_size;
         . = ALIGN(4);
         _estack = .;
     } >DATA
-    
+
     __bss_start = .;
     .bss :
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _sbss = .;
-    
+
         *(.bss)
         *(.bss.*)
         *(COMMON)
-    
+
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > DATA
     __bss_end = .;
-    
+
     _end = .;
-    
+
     /* Stabs debugging sections.  */
     .stab          0 : { *(.stab) }
     .stabstr       0 : { *(.stabstr) }
@@ -461,6 +431,7 @@ SECTIONS
     .debug_varnames  0 : { *(.debug_varnames) }
 }
 ```
+
 该文件是GCC编译的链接脚本，根据《GD32F407xx_Datasheet_Rev2.1》可知，GD32F407VKT6的flash大小为3072KB，SRAM大小为192KB，因此CODE和DATA 的LENGTH分别设置为3072KB和192KB，其他芯片类似，但其实地址都是一样的。
 
 (3) 修改bsp/gd32/gd32407v-start/board/linker_scripts/link.sct
@@ -482,13 +453,13 @@ LR_IROM1 0x08000000 0x00300000  {    ; load region size_region
   }
 }
 ```
+
 该文件是MDK的连接脚本，根据《GD32F407xx_Datasheet_Rev2.1》手册，因此需要将 LR_IROM1 和 ER_IROM1 的参数设置为 0x00300000；RAM 的大小为192k，因此需要将 RW_IRAM1 的参数设置为 0x00030000。
-
-
 
 (4) 修改bsp/gd32/gd32407v-start/board/board.h文件
 
 修改后内容如下：
+
 ```c
 #ifndef __BOARD_H__
 #define __BOARD_H__
@@ -528,13 +499,13 @@ extern int __bss_end;
 
 #endif
 ```
+
 值得注意的是，不同的编译器规定的堆栈内存的起始地址 HEAP_BEGIN 和结束地址 HEAP_END。这里 HEAP_BEGIN 和 HEAP_END 的值需要和前面的链接脚本是一致的，需要结合实际去修改。
-
-
 
 (5) 修改bsp/gd32/gd32407v-start/board/board.c文件
 
 修改后的文件如下：
+
 ```c
 #include <stdint.h>
 #include <rthw.h>
@@ -611,22 +582,24 @@ void SystemClock_Config(void)
 #endif
 }
 ```
+
 该文件重点关注的就是SystemClock_Config配置，SystemCoreClock的定义在system_gd32f4xx.c中定义的。
-
-
 
 (6) 修改bsp/gd32/gd32407v-start/board/Kconfig文件
 修改后内容如下：
+
 ```config
 menu "Hardware Drivers Config"
+config SOC_SERIES_GD32F4xx
+    default y
 
 config SOC_GD32407V
     bool 
-    select SOC_SERIES_GD32F4
+    select SOC_SERIES_GD32F4xx
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
-	
+
 menu "Onboard Peripheral Drivers"
 
 endmenu
@@ -637,7 +610,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-    
+
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
@@ -646,13 +619,13 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default y
-    
+
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
         endif
-    
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
@@ -661,19 +634,19 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_SPI1
                 bool "Enable SPI1 BUS"
                 default n
-    
+
             config BSP_SPI1_TX_USING_DMA
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
                 select BSP_SPI1_TX_USING_DMA
                 default n
         endif
-    
+
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default n
@@ -690,7 +663,7 @@ menu "On-chip Peripheral Drivers"
                 range 1 216
                 default 25
         endif
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "../libraries/gd32_drivers/Kconfig"
 
 endmenu
 
@@ -700,13 +673,13 @@ endmenu
 
 endmenu
 ```
+
 这个文件就是配置板子驱动的，这里可根据实际需求添加。
-
-
 
 (7) 修改bsp/gd32/gd32407v-start/board/SConscript文件
 
 修改后内容如下：
+
 ```python
 import os
 import rtconfig
@@ -726,22 +699,21 @@ path =  [cwd]
 startup_path_prefix = SDK_LIB
 
 if rtconfig.CROSS_TOOL == 'gcc':
-    src += [startup_path_prefix + '/GD32F4xx_HAL/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f4xx.S']
+    src += [startup_path_prefix + '/GD32F4xx_Firmware_Library/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f4xx.s']
 elif rtconfig.CROSS_TOOL == 'keil':
-    src += [startup_path_prefix + '/GD32F4xx_HAL/CMSIS/GD/GD32F4xx/Source/ARM/startup_gd32f4xx.s']
+    src += [startup_path_prefix + '/GD32F4xx_Firmware_Library/CMSIS/GD/GD32F4xx/Source/ARM/startup_gd32f4xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    src += [startup_path_prefix + '/GD32F4xx_HAL/CMSIS/GD/GD32F4xx/Source/IAR/startup_gd32f4xx.s']
-    
-CPPDEFINES = ['GD32F407xx']
+    src += [startup_path_prefix + '/GD32F4xx_Firmware_Library/CMSIS/GD/GD32F4xx/Source/IAR/startup_gd32f4xx.s']
+
+CPPDEFINES = ['GD32F407']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
 ```
+
 该文件主要添加board文件夹的.c文件和头文件路径。另外根据开发环境选择相应的汇编文件，和前面的libraries的SConscript语法是一样，文件的结构都是类似的，这里就没有注释了。
 
 到这里，基本所有的依赖脚本都配置完成了，接下来将通过menuconfig配置工程。
-
-
 
 **6.menuconfig配置**
 关闭套接字抽象层。
@@ -758,18 +730,16 @@ Return('group')
 
 GD32407V-START板载没有以太网，因此这里主要是关闭网络相关的内容，当然GD32407V-START的资源丰富，不关这些其实也不影响，如果是其他MCU，根据实际需求自行修改吧。
 
-
-
 **7.驱动修改**
 一个基本的BSP中，串口是必不可少的，所以还需要编写串口驱动，这里使用的串口2作为调试串口。
 板子上还有LED灯，主要要编写GPIO驱动即可。
+
 关于串口和LED的驱动可以查看源码，这里就不贴出来了。
-
-
 
 **8.应用开发**
 
 笔者在applications的main.c中添加LED的应用代码，
+
 ```c
 #include <stdio.h>
 #include <rtthread.h>
@@ -785,7 +755,7 @@ int main(void)
 
     /* set LED2 pin mode to output */
     rt_pin_mode(LED2_PIN, PIN_MODE_OUTPUT);
-    
+
     while (count++)
     {
         rt_pin_write(LED2_PIN, PIN_HIGH);
@@ -793,13 +763,12 @@ int main(void)
         rt_pin_write(LED2_PIN, PIN_LOW);
         rt_thread_mdelay(500);
     }
-    
+
     return RT_EOK;
 }
 ```
+
 当然，这需要GPIO驱动的支持。
-
-
 
 **9.使用ENV编译工程**
 在env中执行：scons 
@@ -810,31 +779,22 @@ int main(void)
 
 ![scons_success](./figures/scons_success.png)
 
-
-
 **10.使用env生成MDK工程**
 在env中执行：scons --target=mdk5
 
 ![scons_mdk5](./figures/scons_mdk5.png)
 
-
-
 生成MDK工程后，打开MDK工程进行编译
 
 ![MDK Build](./figures/MDK_Build.png)
-
 
 成功编译打印信息如下：
 
 ![MDK Build success](./figures/MDK_Build_Success.png)
 
-
-
 ### 3.3 使用GD-Link 下载调试GD32
 
 前面使用ENV和MDK成功编译可BSP，那么接下来就是下载调试环节，下载需要下载器，而GD32部分开发板自带GD-link，可以用开发板上自带的GD-link调试仿真代码，不带的可外接GD-link模块，还是很方便的。具体操作方法如下。
-
-
 
 1.第一次使用GD-link插入电脑后，会自动安装驱动。
 
@@ -854,8 +814,6 @@ int main(void)
 
  ![GD link debug](./figures/gdlink_debug.png)
 
- 
-
 当然啦，也可使用GD-Link下载程序。
 
  ![GD link download](./figures/gdlink_download.png)
@@ -869,8 +827,6 @@ int main(void)
 ![UART print](./figures/com_print.png)
 
 同时LED会不断闪烁。
-
- 
 
 ### 3.4 RT-Thread studio开发
 
@@ -887,8 +843,6 @@ int main(void)
 最后，就可在rt-thread studio就可进行开发工作了。
 
 ![rt-thread_studio](./figures/rt-thread_studio.png)
-
-
 
 ## 4. 规范
 
@@ -918,6 +872,7 @@ GD32 BSP 的制作规范主要分为 3 个方面：工程配置，ENV 配置和 
 - 系统空闲线程栈大小统一设置为 256（宏：IDLE_THREAD_STACK_SIZE）
 - 开启组件自动初始化（宏：RT_USING_COMPONENTS_INIT）
 - 需要开启 user main 选项（宏：RT_USING_USER_MAIN）
+- 默认关闭 libc（宏：RT_USING_LIBC）
 - FinSH 默认只使用 MSH 模式（宏：FINSH_USING_MSH_ONLY）
 
 #### 4.1.3 IDE 配置
