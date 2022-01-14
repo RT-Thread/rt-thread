@@ -27,6 +27,7 @@ static struct rt_device_graphic_info g_Ili9341Info =
     .pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565,
     .framebuffer = RT_NULL,
     .width = XSIZE_PHYS,
+    .pitch = XSIZE_PHYS * 2,
     .height = YSIZE_PHYS
 };
 
@@ -324,7 +325,7 @@ int rt_hw_lcd_ili9341_init(void)
     lcd_device.user_data = &ili9341_ops;
 
 #if defined(NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER)
-    g_Ili9341Info.framebuffer = rt_malloc_align((DEF_VRAM_BUFFER_NUMBER * g_Ili9341Info.width * g_Ili9341Info.height * (g_Ili9341Info.bits_per_pixel / 8)) + 32, 32);
+    g_Ili9341Info.framebuffer = rt_malloc_align((DEF_VRAM_BUFFER_NUMBER * g_Ili9341Info.pitch * g_Ili9341Info.height) + 32, 32);
     RT_ASSERT(g_Ili9341Info.framebuffer != RT_NULL);
 #endif
 

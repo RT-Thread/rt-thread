@@ -34,11 +34,8 @@ typedef nu_adc_touch *nu_adc_touch_t;
 
 static nu_adc_touch s_NuAdcTouch = {0};
 
-#if (BSP_LCD_WIDTH==480) && (BSP_LCD_HEIGHT==272)
-static S_CALIBRATION_MATRIX g_sCalMat = { 8824, -34, -2261272, -70, -6302, 21805816, 65536 };
-static volatile uint32_t g_u32Calibrated = 1;
-#elif (BSP_LCD_WIDTH==800) && (BSP_LCD_HEIGHT==480)
-static S_CALIBRATION_MATRIX g_sCalMat = { 13230, -66, -1161952, -85, 8600, -1636996, 65536 };
+#if (BSP_LCD_WIDTH==320) && (BSP_LCD_HEIGHT==240)
+static S_CALIBRATION_MATRIX g_sCalMat = { 43, -5839, 21672848, 4193, -11, -747882, 65536 };
 static volatile uint32_t g_u32Calibrated = 1;
 #else
 static S_CALIBRATION_MATRIX g_sCalMat = { 1, 0, 0, 0, 1, 0, 1 };
