@@ -645,7 +645,6 @@ struct rt_thread
 
     /* priority */
     rt_uint8_t  current_priority;                       /**< current priority */
-    rt_uint8_t  init_priority;                          /**< initialized priority */
 #if RT_THREAD_PRIORITY_MAX > 32
     rt_uint8_t  number;
     rt_uint8_t  high_mask;

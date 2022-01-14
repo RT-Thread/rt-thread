@@ -28,6 +28,7 @@
  *                             add support for tasks bound to cpu
  * 2021-02-24     Meco Man     rearrange rt_thread_control() - schedule the thread when close it
  * 2021-11-15     THEWON       Remove duplicate work between idle and _thread_exit
+ * 2021-12-27     Meco Man     remove .init_priority
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to thread.c
  */
 
@@ -186,7 +187,6 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
     /* priority init */
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
-    thread->init_priority    = priority;
     thread->current_priority = priority;
 
     thread->number_mask = 0;
@@ -345,9 +345,6 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    /* set current priority to initialize priority */
-    thread->current_priority = thread->init_priority;
-
     /* calculate priority attribute */
 #if RT_THREAD_PRIORITY_MAX > 32
     thread->number      = thread->current_priority >> 3;            /* 5bit */
@@ -358,7 +355,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("startup a thread:%s with priority:%d\n",
-                                   thread->name, thread->init_priority));
+                                   thread->name, thread->current_priority));
     /* change thread stat */
     thread->stat = RT_THREAD_SUSPEND;
     /* then resume it */
