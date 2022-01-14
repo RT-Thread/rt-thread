@@ -11,7 +11,9 @@
 #include <rtthread.h>
 
 #ifdef RT_USING_DFS
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #endif
 
 #ifdef SAL_USING_TLS

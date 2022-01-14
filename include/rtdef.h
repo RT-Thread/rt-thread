@@ -39,6 +39,8 @@
  * 2021-11-19     Meco Man     change version number to v4.1.0
  * 2021-12-21     Meco Man     re-implement RT_UNUSED
  * 2022-01-01     Gabriel      improve hooking method
+ * 2022-01-07     Gabriel      move some __on_rt_xxxxx_hook to dedicated c soure files
+ * 2022-01-12     Meco Man     remove RT_THREAD_BLOCK
  */
 
 #ifndef __RT_DEF_H__
@@ -450,12 +452,6 @@ struct rt_object_information
     #endif
 #endif
 
-#ifndef __on_rt_interrupt_enter_hook
-    #define __on_rt_interrupt_enter_hook()          __ON_HOOK_ARGS(rt_interrupt_enter_hook, ())
-#endif
-#ifndef __on_rt_interrupt_leave_hook
-    #define __on_rt_interrupt_leave_hook()          __ON_HOOK_ARGS(rt_interrupt_leave_hook, ())
-#endif
 #ifndef __on_rt_interrupt_switch_hook
     #define __on_rt_interrupt_switch_hook()         __ON_HOOK_ARGS(rt_interrupt_switch_hook, ())
 #endif
@@ -465,48 +461,7 @@ struct rt_object_information
 #ifndef __on_rt_free_hook
     #define __on_rt_free_hook(rmem)                 __ON_HOOK_ARGS(rt_free_hook, (rmem))
 #endif
-#ifndef __on_rt_mp_alloc_hook
-    #define __on_rt_mp_alloc_hook(mp, block)        __ON_HOOK_ARGS(rt_mp_alloc_hook, (mp, block))
-#endif
-#ifndef __on_rt_mp_free_hook
-    #define __on_rt_mp_free_hook(mp, block)         __ON_HOOK_ARGS(rt_mp_free_hook, (mp, block))
-#endif
-#ifndef __on_rt_object_trytake_hook
-    #define __on_rt_object_trytake_hook(parent)     __ON_HOOK_ARGS(rt_object_trytake_hook, (parent))
-#endif
-#ifndef __on_rt_object_take_hook
-    #define __on_rt_object_take_hook(parent)        __ON_HOOK_ARGS(rt_object_take_hook, (parent))
-#endif
-#ifndef __on_rt_object_put_hook
-    #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
-#endif
-#ifndef __on_rt_scheduler_hook
-    #define __on_rt_scheduler_hook(from, to)        __ON_HOOK_ARGS(rt_scheduler_hook, (from, to))
-#endif
-#ifndef __on_rt_scheduler_switch_hook
-    #define __on_rt_scheduler_switch_hook(tid)      __ON_HOOK_ARGS(rt_scheduler_switch_hook, (tid))
-#endif
-#ifndef __on_rt_object_attach_hook
-    #define __on_rt_object_attach_hook(obj)         __ON_HOOK_ARGS(rt_object_attach_hook, (obj))
-#endif
-#ifndef __on_rt_object_detach_hook
-    #define __on_rt_object_detach_hook(obj)         __ON_HOOK_ARGS(rt_object_detach_hook, (obj))
-#endif
-#ifndef __on_rt_thread_inited_hook
-    #define __on_rt_thread_inited_hook(thread)      __ON_HOOK_ARGS(rt_thread_inited_hook, (thread))
-#endif
-#ifndef __on_rt_thread_suspend_hook
-    #define __on_rt_thread_suspend_hook(thread)     __ON_HOOK_ARGS(rt_thread_suspend_hook, (thread))
-#endif
-#ifndef __on_rt_thread_resume_hook
-    #define __on_rt_thread_resume_hook(thread)      __ON_HOOK_ARGS(rt_thread_resume_hook, (thread))
-#endif
-#ifndef __on_rt_timer_enter_hook
-    #define __on_rt_timer_enter_hook(t)             __ON_HOOK_ARGS(rt_timer_enter_hook, (t))
-#endif
-#ifndef __on_rt_timer_exit_hook
-    #define __on_rt_timer_exit_hook(t)              __ON_HOOK_ARGS(rt_timer_exit_hook, (t))
-#endif
+
 
 /**@}*/
 
@@ -591,7 +546,6 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_READY                 0x01                /**< Ready status */
 #define RT_THREAD_SUSPEND               0x02                /**< Suspend status */
 #define RT_THREAD_RUNNING               0x03                /**< Running status */
-#define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND   /**< Blocked status */
 #define RT_THREAD_CLOSE                 0x04                /**< Closed status */
 #define RT_THREAD_STAT_MASK             0x07
 
@@ -673,7 +627,7 @@ struct rt_thread
 
 #ifdef RT_USING_SMP
     rt_uint8_t  bind_cpu;                               /**< thread is bind to cpu */
-    rt_uint8_t  oncpu;                                  /**< process on cpu` */
+    rt_uint8_t  oncpu;                                  /**< process on cpu */
 
     rt_uint16_t scheduler_lock_nest;                    /**< scheduler lock count */
     rt_uint16_t cpus_lock_nest;                         /**< cpus lock count */
@@ -682,7 +636,6 @@ struct rt_thread
 
     /* priority */
     rt_uint8_t  current_priority;                       /**< current priority */
-    rt_uint8_t  init_priority;                          /**< initialized priority */
 #if RT_THREAD_PRIORITY_MAX > 32
     rt_uint8_t  number;
     rt_uint8_t  high_mask;

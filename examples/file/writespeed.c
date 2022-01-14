@@ -9,7 +9,11 @@
  * 2020-04-12     Jianjia Ma   add msh cmd
  */
 #include <rtthread.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 void writespeed(const char* filename, int total_length, int block_size)
 {

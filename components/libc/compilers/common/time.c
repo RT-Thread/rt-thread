@@ -25,6 +25,10 @@
 #include <sys/errno.h>
 #include <rtthread.h>
 #include <rthw.h>
+#include <unistd.h>
+#ifdef RT_USING_POSIX_DELAY
+#include <delay.h>
+#endif
 #ifdef RT_USING_RTC
 #include <rtdevice.h>
 #endif
@@ -489,7 +493,6 @@ RTM_EXPORT(difftime);
 RTM_EXPORT(strftime);
 
 #ifdef RT_USING_POSIX_DELAY
-#include <delay.h>
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
     sleep(rqtp->tv_sec);

@@ -15,7 +15,9 @@
 
 #include <finsh.h>
 #include "msh.h"
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 static int msh_readline(int fd, char *line_buf, int size)
 {

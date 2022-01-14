@@ -15,7 +15,9 @@
 #include "dlelf.h"
 
 #if defined(RT_USING_POSIX)
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #endif
 
 #define DBG_TAG    "DLMD"
