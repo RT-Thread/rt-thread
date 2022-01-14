@@ -715,6 +715,230 @@ RTM_EXPORT(rt_timespec_to_tick);
 
 #endif /* RT_USING_POSIX_CLOCK */
 
+#define ACTIVE 1
+#define NOT_ACTIVE 0
+
+struct timer_obj
+{
+    struct rt_timer timer;
+    void (*sigev_notify_function)(union sigval val);
+    union sigval val;
+    struct timespec interval;              /* Reload value */
+    rt_uint32_t reload;                    /* Reload value in ms */
+    rt_uint32_t status;
+};
+
+static void rtthread_timer_wrapper(void *timerobj)
+{
+    struct timer_obj *timer;
+
+    timer = (struct timer_obj *)timerobj;
+
+    if (timer->reload == 0U)
+    {
+        timer->status = NOT_ACTIVE;
+    }
+
+    (timer->sigev_notify_function)(timer->val);
+}
+
+/**
+ * @brief Create a per-process timer.
+ *
+ * This API does not accept SIGEV_THREAD as valid signal event notification
+ * type.
+ *
+ * See IEEE 1003.1
+ */
+int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
+{
+    static int num = 0;
+    struct timer_obj *timer;
+    char timername[RT_NAME_MAX] = {0};
+
+    if (clockid != CLOCK_MONOTONIC || evp == NULL ||
+        (evp->sigev_notify != SIGEV_NONE &&
+         evp->sigev_notify != SIGEV_SIGNAL))
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    timer = rt_malloc(sizeof(struct timer_obj));
+
+    rt_snprintf(timername, RT_NAME_MAX, "psx_tm%02d", num++);
+    num %= 100;
+    timer->sigev_notify_function = evp->sigev_notify_function;
+    timer->val = evp->sigev_value;
+    timer->interval.tv_sec = 0;
+    timer->interval.tv_nsec = 0;
+    timer->reload = 0U;
+    timer->status = NOT_ACTIVE;
+
+    if (evp->sigev_notify == SIGEV_NONE)
+    {
+        rt_timer_init(&timer->timer, timername, RT_NULL, RT_NULL, 0, RT_TIMER_FLAG_ONE_SHOT);
+    }
+    else
+    {
+        rt_timer_init(&timer->timer, timername, rtthread_timer_wrapper, timer, 0, RT_TIMER_FLAG_ONE_SHOT);
+    }
+
+    *timerid = (timer_t)timer;
+
+    return 0;
+}
+RTM_EXPORT(timer_create);
+
+/**
+ * @brief Delete a per-process timer.
+ *
+ * See IEEE 1003.1
+ */
+int timer_delete(timer_t timerid)
+{
+    struct timer_obj *timer = (struct timer_obj *)timerid;
+
+    if (timer == NULL)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (timer->status == ACTIVE)
+    {
+        timer->status = NOT_ACTIVE;
+        rt_timer_stop(&timer->timer);
+    }
+
+    rt_free(timer);
+
+    return 0;
+}
+RTM_EXPORT(timer_delete);
+
+/**
+ *
+ *  Return the overrun count for the last timer expiration.
+ *  It is subefficient to create a new structure to get overrun count.
+ **/
+int timer_getoverrun(timer_t timerid)
+{
+    rt_set_errno(-ENOSYS);
+    return -RT_ERROR;
+}
+
+/**
+ * @brief Get amount of time left for expiration on a per-process timer.
+ *
+ * See IEEE 1003.1
+ */
+int timer_gettime(timer_t timerid, struct itimerspec *its)
+{
+    struct timer_obj *timer = (struct timer_obj *)timerid;
+    rt_int32_t now, remaining, leftover;
+    rt_int64_t nsecs, secs;
+
+    if (timer == NULL)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (timer->status == ACTIVE)
+    {
+        rt_tick_t tick;
+
+        remaining = rt_timer_control(&timer->timer, RT_TIMER_CTRL_GET_REMAIN_TIME, &tick);
+        now = rt_tick_get();
+
+        if(now - remaining > 0)
+        {
+            remaining = remaining - now;
+        }
+        else
+        {
+            remaining = remaining + (0xffffffff - now);
+        }
+
+        secs = remaining / RT_TICK_PER_SECOND;
+        leftover = remaining - (secs * RT_TICK_PER_SECOND);
+        nsecs = (rt_int64_t)leftover * RT_TICK_PER_SECOND;
+        its->it_value.tv_sec = (rt_int32_t)secs;
+        its->it_value.tv_nsec = (rt_int32_t)nsecs;
+    }
+    else
+    {
+        /* Timer is disarmed */
+        its->it_value.tv_sec = 0;
+        its->it_value.tv_nsec = 0;
+    }
+
+    /* The interval last set by timer_settime() */
+    its->it_interval = timer->interval;
+    return 0;
+}
+RTM_EXPORT(timer_gettime);
+
+/**
+ * @brief Sets expiration time of per-process timer.
+ *
+ * See IEEE 1003.1
+ */
+int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
+                  struct itimerspec *ovalue)
+{
+    struct timer_obj *timer = (struct timer_obj *)timerid;
+    rt_uint32_t duration, current;
+
+    if (timer == NULL ||
+        value->it_interval.tv_nsec < 0 ||
+        value->it_interval.tv_nsec >= RT_TICK_PER_SECOND ||
+        value->it_value.tv_nsec < 0 ||
+        value->it_value.tv_nsec >= RT_TICK_PER_SECOND)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    /*  Save time to expire and old reload value. */
+    if (ovalue != NULL)
+    {
+        timer_gettime(timerid, ovalue);
+    }
+
+    /* Stop the timer if the value is 0 */
+    if ((value->it_value.tv_sec == 0) && (value->it_value.tv_nsec == 0))
+    {
+        if (timer->status == ACTIVE)
+        {
+            rt_timer_stop(&timer->timer);
+        }
+
+        timer->status = NOT_ACTIVE;
+        return 0;
+    }
+
+    /* Calculate timer period */
+    timer->reload = (value->it_interval.tv_sec * RT_TICK_PER_SECOND) + (value->it_interval.tv_nsec / RT_TICK_PER_SECOND);
+    timer->interval.tv_sec = value->it_interval.tv_sec;
+    timer->interval.tv_nsec = value->it_interval.tv_nsec;
+
+    if (timer->status == ACTIVE)
+    {
+        rt_timer_stop(&timer->timer);
+    }
+
+    timer->status = ACTIVE;
+    rt_timer_control(&timer->timer, RT_TIMER_CTRL_SET_TIME, (void *)timer->reload);
+    rt_timer_control(&timer->timer, RT_TIMER_CTRL_SET_PERIODIC, RT_NULL);
+    rt_timer_start(&timer->timer);
+
+    return 0;
+}
+RTM_EXPORT(timer_settime);
+
+
 /* timezone */
 #ifndef RT_LIBC_DEFAULT_TIMEZONE
 #define RT_LIBC_DEFAULT_TIMEZONE    8
