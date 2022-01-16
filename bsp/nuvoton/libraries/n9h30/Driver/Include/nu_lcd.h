@@ -171,11 +171,17 @@ typedef struct
     uint32_t *pFrameBuffer;          /*!< User input, The address of OSD source image */
 } OSDFORMATEX;
 
-#define DIS_PANEL_E50A2V1       0
-#define DIS_PANEL_ILI9341_MPU80 1
-#define DIS_LSA40AT9001         2
-#define DIS_PANEL_FW070TFT      3
-#define DIS_PANEL_FW043TFT      4
+enum DIS_PANEL
+{
+    DIS_PANEL_E50A2V1 = 0,
+    DIS_PANEL_ILI9341_MPU80,
+    DIS_LSA40AT9001,
+    DIS_PANEL_FW070TFT,
+    DIS_PANEL_FW043TFT,
+    DIS_PANEL_FW070TFT_WSVGA,
+    DIS_PANEL_CNT
+};
+
 typedef struct
 {
     uint32_t u32DevWidth;           /*!< Panel width */
