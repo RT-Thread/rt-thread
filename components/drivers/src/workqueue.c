@@ -98,7 +98,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
     /* remove list */
     rt_list_remove(&(work->list));
     work->flags &= ~RT_WORK_STATE_PENDING;
-    /*  */
+
     if (ticks == 0)
     {
         if (queue->work_current != work)
@@ -288,6 +288,7 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
  * @param queue     A pointer to the workqueue object.
  * @param work      A pointer to the work item object.
  * @param time      The delay time (unit: OS ticks) for the work item to be submitted to the work queue.
+ *                  The max timeout tick should be no more than (RT_TICK_MAX/2 - 1)
  *
  * @return RT_EOK       Success.
  * @return -RT_EBUSY    This work item is executing.
