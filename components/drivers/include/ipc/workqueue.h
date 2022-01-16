@@ -66,6 +66,7 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t ticks);
+rt_err_t rt_work_urgent(struct rt_work *work);
 rt_err_t rt_work_cancel(struct rt_work *work);
 #endif /* RT_USING_SYSTEM_WORKQUEUE */
 
