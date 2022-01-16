@@ -45,12 +45,6 @@ menu "Hardware Drivers Config"
             select BSP_USING_PWM0
             default n
 
-        config BOARD_USING_LCM
-            bool "NuDesign TFT-LCD7(over vpost)"
-            select BSP_USING_VPOST
-            select LCM_USING_FW070TFT
-            default y
-
         config BOARD_USING_USB0_DEVICE_HOST
             select BSP_USING_USBH
             select BSP_USING_USBD
@@ -69,7 +63,61 @@ menu "Hardware Drivers Config"
 
     menu "Board extended module drivers"
 
+        config BOARD_USING_LCM
+            bool "Use LCD panel."
+            default y
+
+        if BOARD_USING_LCM
+
+            choice
+                prompt "Select LCD panel devices.(Over VPOST)"
+                    default BOARD_USING_LCM_FW070TFT_WVGA
+
+                config BOARD_USING_LCM_FW070TFT_WVGA
+                    bool "NuDesign TFT-LCD7-WVGA"
+                    select BSP_USING_VPOST
+                    select LCM_USING_FW070TFT
+                    help
+                        Choose this option if you use 7" 800x480x32b LCD panel.
+
+                config BOARD_USING_LCM_FW043TFT_HVGA
+                    bool "NuDesign TFT-LCD43-HVGA"
+                    select BSP_USING_VPOST
+                    select LCM_USING_FW043TFT
+                    help
+                        Choose this option if you use 4.3" 480x272x32b LCD panel.
+
+                config BOARD_USING_LCM_FW070TFT_WSVGA
+                    bool "NuDesign TFT-LCD7-WSVGA"
+                    select BSP_USING_VPOST
+                    select LCM_USING_FW070TFT_WSVGA
+                    help
+                        Choose this option if you use 7" 1024x600x32b LCD panel.
+            endchoice
+
+            choice
+                prompt "Select Touch devices."
+                    default BOARD_USING_ADCTOUCH
+
+                config BOARD_USING_ADCTOUCH
+                    bool "ADC touching"
+                    select BSP_USING_ADC_TOUCH
+                    help
+                        Choose this option if you use internal ADC touching function.
+
+                config BOARD_USING_GT911
+                    bool "GT911 TSC"
+                    select BSP_USING_I2C
+                    select BSP_USING_I2C0
+                    select PKG_USING_GT911
+                    help
+                        Choose this option if you use GT911 external TSC touching function.
+            endchoice
+
+        endif
+    
     endmenu
 
+    source "$BSP_DIR/../libraries/nu_packages/Kconfig"
 
 endmenu

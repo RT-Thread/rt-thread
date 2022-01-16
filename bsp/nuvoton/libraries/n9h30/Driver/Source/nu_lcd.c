@@ -168,9 +168,82 @@ static VPOST_T DEF_FW043TFT =
     }
 };
 
+#define FW070TFT_WSVGA_WIDTH        1024  /*!< XRES */
+#define FW070TFT_WSVGA_HEIGHT       600   /*!< YRES */
+#define FW070TFT_WSVGA_MARGIN_LEFT  160   /*!< HBP (Horizontal Back Porch) */
+#define FW070TFT_WSVGA_MARGIN_RIGHT 160   /*!< HFP (Horizontal Front Porch) */
+#define FW070TFT_WSVGA_MARGIN_UPPER 12    /*!< VBP (Vertical Back Porch) */
+#define FW070TFT_WSVGA_MARGIN_LOWER 23    /*!< VFP (Vertical Front Porch) */
+#define FW070TFT_WSVGA_HSYNC_LEN    1     /*!< HPW (HSYNC plus width) */
+#define FW070TFT_WSVGA_VSYNC_LEN    1     /*!< VPW (VSYNC width) */
+static VPOST_T DEF_FW070TFT_WSVGA  =
+{
+    FW070TFT_WSVGA_WIDTH,                 /*!< Panel width */
+    FW070TFT_WSVGA_HEIGHT,                /*!< Panel height */
+    0,                              /*!< MPU command line low indicator */
+    0,                              /*!< MPU command width */
+    0,                              /*!< MPU bus width */
+    VPOSTB_DATA16or18,              /*!< Display bus width */
+    0,                              /*!< MPU mode */
+    VPOSTB_COLORTYPE_16M,           /*!< Display colors */
+    VPOSTB_DEVICE_SYNC_HIGHCOLOR,   /*!< Type of display panel */
+
+    .sCRTCSIZE =
+    {
+        /*!< Horizontal Total */
+        .HTT = FW070TFT_WSVGA_MARGIN_LEFT + FW070TFT_WSVGA_WIDTH + FW070TFT_WSVGA_MARGIN_RIGHT,
+
+        /*!< Vertical Total */
+        .VTT = FW070TFT_WSVGA_MARGIN_UPPER + FW070TFT_WSVGA_HEIGHT + FW070TFT_WSVGA_MARGIN_LOWER,
+    },
+    .sCRTCDEND =
+    {
+        /*!< Horizontal Display Enable End */
+        .HDEND = FW070TFT_WSVGA_WIDTH,
+
+        /*!< Vertical Display Enable End */
+        .VDEND = FW070TFT_WSVGA_HEIGHT,
+    },
+    .sCRTCHR =
+    {
+        /*!< Internal Horizontal Retrace Start Timing */
+        .HRS = FW070TFT_WSVGA_WIDTH + 1,
+
+        /*!< Internal Horizontal Retrace End Low */
+        .HRE = FW070TFT_WSVGA_WIDTH + 5,
+    },
+    .sCRTCHSYNC =
+    {
+        /*!< Horizontal Sync Start Timing */
+        .HSYNC_S = FW070TFT_WSVGA_WIDTH + FW070TFT_WSVGA_MARGIN_LEFT,
+
+        /*!< Horizontal Sync End Timing */
+        .HSYNC_E = FW070TFT_WSVGA_WIDTH + FW070TFT_WSVGA_MARGIN_LEFT + FW070TFT_WSVGA_HSYNC_LEN,
+
+        /*!< Hsync Signal Adjustment For Multi-Cycles Per Pixel Mode Of Sync-Based Unipac-LCD */
+        .HSYNC_SHIFT = 0,
+    },
+    .sCRTCVR =
+    {
+        /*!< Vertical Internal Retrace Start Timing */
+        .VRS = FW070TFT_WSVGA_HEIGHT + FW070TFT_WSVGA_MARGIN_UPPER,
+
+        /*!< Vertical Internal Retrace End Low */
+        .VRE = FW070TFT_WSVGA_HEIGHT + FW070TFT_WSVGA_MARGIN_UPPER + FW070TFT_WSVGA_VSYNC_LEN,
+    }
+};
 
 /* LCD build-in support list */
-static VPOST_T *DisplayDevList[5] = {&DEF_E50A2V1, &DEF_ILI9341_MPU80, &DEF_LSA40AT9001, &DEF_FW070TFT, &DEF_FW043TFT};
+static VPOST_T *DisplayDevList[DIS_PANEL_CNT] =
+{
+    &DEF_E50A2V1,
+    &DEF_ILI9341_MPU80,
+    &DEF_LSA40AT9001,
+    &DEF_FW070TFT,
+    &DEF_FW043TFT,
+    &DEF_FW070TFT_WSVGA
+};
+
 static VPOST_T curDisplayDev;
 static OSDFORMATEX curOSDDev = {0};
 static LCDFORMATEX curVADev = {0};
