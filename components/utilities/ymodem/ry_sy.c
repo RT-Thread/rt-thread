@@ -15,8 +15,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
-
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -115,7 +113,7 @@ static enum rym_code _rym_send_begin(
         rt_kprintf("error open file.\n");
         return RYM_ERR_FILE;
     }
-    sprintf((char *)buf, "%s%c%ld", (char *) & (cctx->fpath[1]), insert_0, file_buf.st_size);
+    rt_sprintf((char *)buf, "%s%c%d", (char *) & (cctx->fpath[1]), insert_0, file_buf.st_size);
 
     return RYM_CODE_SOH;
 }
@@ -140,8 +138,7 @@ static enum rym_code _rym_send_data(
     if (read_size < len)
     {
         rt_memset(buf + read_size, 0x1A, len - read_size);
-        /* stage = RYM_STAGE_FINISHING */
-        ctx->stage = 4;
+        ctx->stage = RYM_STAGE_FINISHING;
     }
 
     return RYM_CODE_SOH;
