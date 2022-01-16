@@ -7,7 +7,8 @@
  * Date           Author       Notes
  * 2017-02-27     Bernard      fix the re-work issue.
  * 2021-08-01     Meco Man     remove rt_delayed_work_init()
- * 2021-08-14     Jackistang   add comments for function interface.
+ * 2021-08-14     Jackistang   add comments for function interface
+ * 2022-01-16     Meco Man     add rt_work_urgent()
  */
 
 #include <rthw.h>
@@ -469,6 +470,18 @@ rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t ticks)
 }
 
 /**
+ * @brief Submit a work item to the system work queue without delay. This work item will be executed after the current work item.
+ *
+ * @param work is a pointer to the work item object.
+ *
+ * @return RT_EOK   Success.
+ */
+rt_err_t rt_work_urgent(struct rt_work *work)
+{
+    return rt_workqueue_urgent_work(sys_workq, work);
+}
+
+/**
  * @brief Cancel a work item in the system work queue.
  *
  * @param work is a pointer to the work item object.
@@ -486,7 +499,7 @@ static int rt_work_sys_workqueue_init(void)
     if (sys_workq != RT_NULL)
         return RT_EOK;
 
-    sys_workq = rt_workqueue_create("sys_work", RT_SYSTEM_WORKQUEUE_STACKSIZE,
+    sys_workq = rt_workqueue_create("sys workq", RT_SYSTEM_WORKQUEUE_STACKSIZE,
                                     RT_SYSTEM_WORKQUEUE_PRIORITY);
     RT_ASSERT(sys_workq != RT_NULL);
 
