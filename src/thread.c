@@ -214,9 +214,8 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->critical_lock_nest = 0;
 #endif /* RT_USING_SMP */
 
-    /* initialize cleanup function and user data */
+    /* initialize cleanup function*/
     thread->cleanup   = 0;
-    thread->user_data = 0;
 
     /* initialize thread timer */
     rt_timer_init(&(thread->thread_timer),
