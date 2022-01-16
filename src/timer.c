@@ -263,7 +263,7 @@ void rt_timer_init(rt_timer_t  timer,
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(timeout != RT_NULL);
-    RT_ASSERT(timer->init_tick < RT_TICK_MAX / 2);
+    RT_ASSERT(time < RT_TICK_MAX / 2);
 
     /* timer object initialization */
     rt_object_init(&(timer->parent), RT_Object_Class_Timer, name);
@@ -332,7 +332,7 @@ rt_timer_t rt_timer_create(const char *name,
 
     /* parameter check */
     RT_ASSERT(timeout != RT_NULL);
-    RT_ASSERT(timer->init_tick < RT_TICK_MAX / 2);
+    RT_ASSERT(time < RT_TICK_MAX / 2);
 
     /* allocate a object */
     timer = (struct rt_timer *)rt_object_allocate(RT_Object_Class_Timer, name);
