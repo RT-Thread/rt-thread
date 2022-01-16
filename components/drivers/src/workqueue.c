@@ -211,6 +211,30 @@ static void _delayed_work_timeout_handler(void *parameter)
 }
 
 /**
+ * @brief Initialize a work item, binding with a callback function.
+ *
+ * @param work is a pointer to the work item object.
+ *
+ * @param work_func is a callback function that will be called when this work item is executed.
+ *
+ * @param work_data is a user data passed to the callback function as the second parameter.
+ */
+void rt_work_init(struct rt_work *work,
+                  void (*work_func)(struct rt_work *work, void *work_data),
+                  void *work_data)
+{
+    RT_ASSERT(work != RT_NULL);
+    RT_ASSERT(work_func != RT_NULL);
+
+    rt_list_init(&(work->list));
+    work->work_func = work_func;
+    work->work_data = work_data;
+    work->workqueue = RT_NULL;
+    work->flags = 0;
+    work->type = 0;
+}
+
+/**
  * @brief Create a work queue with a thread inside.
  *
  * @param name is a name of the work queue thread.
@@ -292,20 +316,21 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
  *
  * @param work is a pointer to the work item object.
  *
- * @param time is the delay time (unit: OS ticks) for the work item to be submitted to the work queue.
+ * @param ticks is the delay ticks for the work item to be submitted to the work queue.
  *
  *             NOTE: The max timeout tick should be no more than (RT_TICK_MAX/2 - 1)
  *
  * @return RT_EOK       Success.
  *         -RT_EBUSY    This work item is executing.
- *         -RT_ERROR    The time parameter is invalid.
+ *         -RT_ERROR    The ticks parameter is invalid.
  */
-rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *work, rt_tick_t time)
+rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *work, rt_tick_t ticks)
 {
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(work != RT_NULL);
+    RT_ASSERT(ticks < RT_TICK_MAX / 2);
 
-    return _workqueue_submit_work(queue, work, time);
+    return _workqueue_submit_work(queue, work, ticks);
 }
 
 /**
@@ -422,24 +447,25 @@ rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue)
 }
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
-static struct rt_workqueue *sys_workq;
+
+static struct rt_workqueue *sys_workq; /* system work queue */
 
 /**
  * @brief Submit a work item to the system work queue with a delay.
  *
  * @param work is a pointer to the work item object.
  *
- * @param time is the delay time (unit: OS ticks) for the work item to be submitted to the work queue.
+ * @param ticks is the delay OS ticks for the work item to be submitted to the work queue.
  *
  *             NOTE: The max timeout tick should be no more than (RT_TICK_MAX/2 - 1)
  *
  * @return RT_EOK       Success.
  *         -RT_EBUSY    This work item is executing.
- *         -RT_ERROR    The time parameter is invalid.
+ *         -RT_ERROR    The ticks parameter is invalid.
  */
-rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time)
+rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t ticks)
 {
-    return rt_workqueue_submit_work(sys_workq, work, time);
+    return rt_workqueue_submit_work(sys_workq, work, ticks);
 }
 
 /**
