@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -213,11 +213,13 @@ static void _delayed_work_timeout_handler(void *parameter)
 /**
  * @brief Create a work queue with a thread inside.
  *
- * @param name          The name of the work queue thread.
- * @param stack_size    The stack size of the work queue thread.
- * @param priority      The priority of the work queue thread.
+ * @param name is a name of the work queue thread.
  *
- * @return Return A pointer to the workqueue object. It will return RT_NULL if failed.
+ * @param stack_size is stack size of the work queue thread.
+ *
+ * @param priority is a priority of the work queue thread.
+ *
+ * @return Return a pointer to the workqueue object. It will return RT_NULL if failed.
  */
 struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_size, rt_uint8_t priority)
 {
@@ -249,9 +251,9 @@ struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_siz
 /**
  * @brief Destroy a work queue.
  *
- * @param queue         A pointer to the workqueue object.
+ * @param queue is a pointer to the workqueue object.
  *
- * @return RT_EOK       Success.
+ * @return RT_EOK     Success.
  */
 rt_err_t rt_workqueue_destroy(struct rt_workqueue *queue)
 {
@@ -268,11 +270,12 @@ rt_err_t rt_workqueue_destroy(struct rt_workqueue *queue)
 /**
  * @brief Submit a work item to the work queue without delay.
  *
- * @param queue         A pointer to the workqueue object.
- * @param work          A pointer to the work item object.
+ * @param queue is a pointer to the workqueue object.
+ *
+ * @param work is a pointer to the work item object.
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is executing.
+ *         -RT_EBUSY    This work item is executing.
  */
 rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
 {
@@ -285,14 +288,17 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
 /**
  * @brief Submit a work item to the work queue with a delay.
  *
- * @param queue     A pointer to the workqueue object.
- * @param work      A pointer to the work item object.
- * @param time      The delay time (unit: OS ticks) for the work item to be submitted to the work queue.
- *                  The max timeout tick should be no more than (RT_TICK_MAX/2 - 1)
+ * @param queue is a pointer to the workqueue object.
+ *
+ * @param work is a pointer to the work item object.
+ *
+ * @param time is the delay time (unit: OS ticks) for the work item to be submitted to the work queue.
+ *
+ *             NOTE: The max timeout tick should be no more than (RT_TICK_MAX/2 - 1)
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is executing.
- * @return -RT_ERROR    The time parameter is invalid.
+ *         -RT_EBUSY    This work item is executing.
+ *         -RT_ERROR    The time parameter is invalid.
  */
 rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *work, rt_tick_t time)
 {
@@ -305,14 +311,16 @@ rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *wo
 /**
  * @brief Submit a work item to the work queue without delay. This work item will be executed after the current work item.
  *
- * @param queue     A pointer to the workqueue object.
- * @param work      A pointer to the work item object.
+ * @param queue is a pointer to the workqueue object.
+ *
+ * @param work is a pointer to the work item object.
  *
  * @return RT_EOK   Success.
  */
 rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *work)
 {
     rt_base_t level;
+
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(work != RT_NULL);
 
@@ -340,24 +348,27 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
 /**
  * @brief Cancel a work item in the work queue.
  *
- * @param queue     A pointer to the workqueue object.
- * @param work      A pointer to the work item object.
+ * @param queue is a pointer to the workqueue object.
+ *
+ * @param work is a pointer to the work item object.
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is executing.
+ *         -RT_EBUSY    This work item is executing.
  */
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work)
 {
     RT_ASSERT(work != RT_NULL);
     RT_ASSERT(queue != RT_NULL);
+
     return _workqueue_cancel_work(queue, work);
 }
 
 /**
  * @brief Cancel a work item in the work queue. If the work item is executing, this function will block until it is done.
  *
- * @param queue     A pointer to the workqueue object.
- * @param work      A pointer to the work item object.
+ * @param queue is a pointer to the workqueue object.
+ *
+ * @param work is a pointer to the work item object.
  *
  * @return RT_EOK       Success.
  */
@@ -382,7 +393,7 @@ rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_wor
 /**
  * @brief This function will cancel all work items in work queue.
  *
- * @param queue     A pointer to the workqueue object.
+ * @param queue is a pointer to the workqueue object.
  *
  * @return RT_EOK       Success.
  */
@@ -416,12 +427,15 @@ static struct rt_workqueue *sys_workq;
 /**
  * @brief Submit a work item to the system work queue with a delay.
  *
- * @param work      A pointer to the work item object.
- * @param time      The delay time (unit: OS ticks) for the work item to be submitted to the work queue.
+ * @param work is a pointer to the work item object.
+ *
+ * @param time is the delay time (unit: OS ticks) for the work item to be submitted to the work queue.
+ *
+ *             NOTE: The max timeout tick should be no more than (RT_TICK_MAX/2 - 1)
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is executing.
- * @return -RT_ERROR    The time parameter is invalid.
+ *         -RT_EBUSY    This work item is executing.
+ *         -RT_ERROR    The time parameter is invalid.
  */
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time)
 {
@@ -431,10 +445,10 @@ rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time)
 /**
  * @brief Cancel a work item in the system work queue.
  *
- * @param work      A pointer to the work item object.
+ * @param work is a pointer to the work item object.
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is executing.
+ *         -RT_EBUSY    This work item is executing.
  */
 rt_err_t rt_work_cancel(struct rt_work *work)
 {
