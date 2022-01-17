@@ -50,6 +50,7 @@ config RT_USING_POSIX_CLOCK
     default n
 
 config RT_USING_POSIX_TIMER
+    select RT_USING_TIMER_SOFT
     bool "Enable posix time functions, timer_create()/timer_gettime()/timer_settime() etc"
     default n
 
