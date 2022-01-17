@@ -60,6 +60,15 @@ struct timespec
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
 };
+
+/*
+ * Structure defined by POSIX.1b to be like a itimerval, but with
+ * timespecs. Used in the timer_*() system calls.
+ */
+struct itimerspec {
+	struct timespec  it_interval;
+	struct timespec  it_value;
+};
 #endif
 
 int stime(const time_t *t);
@@ -68,6 +77,9 @@ int gettimeofday(struct timeval *tv, struct timezone *tz);
 int settimeofday(const struct timeval *tv, const struct timezone *tz);
 #if defined(__ARMCC_VERSION) || defined (__ICCARM__)
 struct tm *gmtime_r(const time_t *timep, struct tm *r);
+struct tm* localtime_r(const time_t* t, struct tm* r);
+char* asctime_r(const struct tm *t, char *buf);
+char *ctime_r(const time_t * tim_p, char * result);
 #elif defined(_WIN32)
 struct tm* gmtime_r(const time_t* timep, struct tm* r);
 struct tm* gmtime(const time_t* t);
@@ -84,7 +96,6 @@ time_t time(time_t* t);
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #endif /* RT_USING_POSIX_DELAY */
 
-#ifdef RT_USING_POSIX_CLOCK
 /* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
@@ -111,12 +122,23 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #define CLOCK_MONOTONIC     4
 #endif
 
+#ifdef RT_USING_POSIX_CLOCK
 int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
 int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp);
 int rt_timespec_to_tick(const struct timespec *time);
 #endif /* RT_USING_POSIX_CLOCK */
+
+#ifdef RT_USING_POSIX_TIMER
+#include <sys/signal.h>
+int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid);
+int timer_delete(timer_t timerid);
+int timer_getoverrun(timer_t timerid);
+int timer_gettime(timer_t timerid, struct itimerspec *its);
+int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
+                  struct itimerspec *ovalue);
+#endif /* RT_USING_POSIX_TIMER */
 
 /* timezone */
 void tz_set(int8_t tz);
