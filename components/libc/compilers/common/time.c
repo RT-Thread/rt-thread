@@ -715,6 +715,8 @@ RTM_EXPORT(rt_timespec_to_tick);
 
 #endif /* RT_USING_POSIX_CLOCK */
 
+#ifdef RT_USING_POSIX_TIMER
+
 #define ACTIVE 1
 #define NOT_ACTIVE 0
 
@@ -937,6 +939,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     return 0;
 }
 RTM_EXPORT(timer_settime);
+#endif /* RT_USING_POSIX_TIMER */
 
 
 /* timezone */
