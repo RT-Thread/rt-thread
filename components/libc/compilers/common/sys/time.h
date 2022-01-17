@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -66,8 +66,8 @@ struct timespec
  * timespecs. Used in the timer_*() system calls.
  */
 struct itimerspec {
-	struct timespec  it_interval;
-	struct timespec  it_value;
+    struct timespec  it_interval;
+    struct timespec  it_value;
 };
 #endif
 
@@ -129,6 +129,8 @@ int clock_settime (clockid_t clockid, const struct timespec *tp);
 int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp);
 int rt_timespec_to_tick(const struct timespec *time);
 
+#endif /* RT_USING_POSIX_CLOCK */
+
 #include <sys/signal.h>
 int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid);
 int timer_delete(timer_t timerid);
@@ -136,7 +138,6 @@ int timer_getoverrun(timer_t timerid);
 int timer_gettime(timer_t timerid, struct itimerspec *its);
 int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
                   struct itimerspec *ovalue);
-#endif /* RT_USING_POSIX_CLOCK */
 
 /* timezone */
 void tz_set(int8_t tz);
