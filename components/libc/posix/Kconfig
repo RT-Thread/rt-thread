@@ -49,6 +49,10 @@ config RT_USING_POSIX_CLOCK
     select RT_USING_POSIX_DELAY
     default n
 
+config RT_USING_POSIX_TIMER
+    bool "Enable posix time functions, timer_create()/timer_gettime()/timer_settime() etc"
+    default n
+
 config RT_USING_PTHREADS
     bool "Enable pthreads APIs"
     select RT_USING_POSIX_CLOCK
