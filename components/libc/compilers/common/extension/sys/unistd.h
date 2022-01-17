@@ -22,7 +22,7 @@ extern char **environ;
 #define STDOUT_FILENO   1       /* standard output file descriptor */
 #define STDERR_FILENO   2       /* standard error file descriptor */
 
-unsigned  alarm (unsigned __secs);
+unsigned alarm(unsigned __secs);
 ssize_t read(int fd, void *buf, size_t len);
 ssize_t write(int fd, const void *buf, size_t len);
 off_t lseek(int fd, off_t offset, int whence);
