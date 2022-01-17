@@ -65,7 +65,8 @@ struct timespec
  * Structure defined by POSIX.1b to be like a itimerval, but with
  * timespecs. Used in the timer_*() system calls.
  */
-struct itimerspec {
+struct itimerspec
+{
     struct timespec  it_interval;
     struct timespec  it_value;
 };
@@ -131,7 +132,7 @@ int rt_timespec_to_tick(const struct timespec *time);
 #endif /* RT_USING_POSIX_CLOCK */
 
 #ifdef RT_USING_POSIX_TIMER
-#include <sys/signal.h>
+#include "signal.h"
 int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid);
 int timer_delete(timer_t timerid);
 int timer_getoverrun(timer_t timerid);

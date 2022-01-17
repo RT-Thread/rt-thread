@@ -98,7 +98,7 @@ int sigprocmask (int how, const sigset_t *set, sigset_t *oset);
 int sigpending (sigset_t *set);
 int sigsuspend (const sigset_t *set);
 
-#include <sys/time.h>
+#include "time.h"
 int sigtimedwait(const sigset_t *set, siginfo_t *info, const struct timespec *timeout);
 int sigwait(const sigset_t *set, int *sig);
 int sigwaitinfo(const sigset_t *set, siginfo_t *info);
