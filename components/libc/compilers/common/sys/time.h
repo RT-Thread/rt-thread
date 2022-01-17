@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -66,8 +66,8 @@ struct timespec
  * timespecs. Used in the timer_*() system calls.
  */
 struct itimerspec {
-	struct timespec  it_interval;
-	struct timespec  it_value;
+    struct timespec  it_interval;
+    struct timespec  it_value;
 };
 #endif
 
