@@ -11,8 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
 #include <sys/errno.h>
 #include "termios.h"
 
