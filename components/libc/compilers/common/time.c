@@ -744,7 +744,10 @@ static void rtthread_timer_wrapper(void *timerobj)
         timer->status = NOT_ACTIVE;
     }
 
-    (timer->sigev_notify_function)(timer->val);
+    if(timer->sigev_notify_function != RT_NULL)
+    {
+        (timer->sigev_notify_function)(timer->val);
+    }
 }
 
 /**
@@ -765,12 +768,18 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
         (evp->sigev_notify != SIGEV_NONE &&
          evp->sigev_notify != SIGEV_SIGNAL))
     {
-        errno = EINVAL;
-        return -1;
+        rt_set_errno(EINVAL);
+        return -RT_ERROR;
     }
 
     timer = rt_malloc(sizeof(struct timer_obj));
+    if(timer == RT_NULL)
+    {
+        rt_set_errno(ENOMEM);
+        return -RT_ENOMEM;
+    }
 
+    RT_ASSERT(evp->sigev_notify_function != RT_NULL);
     rt_snprintf(timername, RT_NAME_MAX, "psx_tm%02d", num++);
     num %= 100;
     timer->sigev_notify_function = evp->sigev_notify_function;
@@ -791,7 +800,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 
     *timerid = (timer_t)timer;
 
-    return 0;
+    return RT_EOK;
 }
 RTM_EXPORT(timer_create);
 
@@ -804,10 +813,10 @@ int timer_delete(timer_t timerid)
 {
     struct timer_obj *timer = (struct timer_obj *)timerid;
 
-    if (timer == NULL)
+    if (timer == RT_NULL)
     {
-        errno = EINVAL;
-        return -1;
+        rt_set_errno(EINVAL);
+        return -RT_ERROR;
     }
 
     if (timer->status == ACTIVE)
@@ -818,7 +827,7 @@ int timer_delete(timer_t timerid)
 
     rt_free(timer);
 
-    return 0;
+    return RT_EOK;
 }
 RTM_EXPORT(timer_delete);
 
@@ -829,7 +838,7 @@ RTM_EXPORT(timer_delete);
  **/
 int timer_getoverrun(timer_t timerid)
 {
-    rt_set_errno(-ENOSYS);
+    rt_set_errno(ENOSYS);
     return -RT_ERROR;
 }
 
@@ -841,36 +850,45 @@ int timer_getoverrun(timer_t timerid)
 int timer_gettime(timer_t timerid, struct itimerspec *its)
 {
     struct timer_obj *timer = (struct timer_obj *)timerid;
-    rt_int32_t now, remaining, leftover;
+    rt_tick_t remaining;
+    rt_uint32_t seconds, nanoseconds;
     rt_int64_t nsecs, secs;
 
     if (timer == NULL)
     {
-        errno = EINVAL;
-        return -1;
+        rt_set_errno(EINVAL);
+        return -RT_ERROR;
     }
 
     if (timer->status == ACTIVE)
     {
-        rt_tick_t tick;
+        rt_tick_t remain_tick;
 
-        remaining = rt_timer_control(&timer->timer, RT_TIMER_CTRL_GET_REMAIN_TIME, &tick);
-        now = rt_tick_get();
+        rt_timer_control(&timer->timer, RT_TIMER_CTRL_GET_REMAIN_TIME, &remain_tick);
 
-        if(now - remaining > 0)
-        {
-            remaining = remaining - now;
-        }
-        else
-        {
-            remaining = remaining + (0xffffffff - now);
-        }
+        /* 'remain_tick' is minimum-unit in the RT-Thread' timer,
+         * so the seconds, nanoseconds will be calculated by 'remain_tick'.
+         */
+        remaining = remain_tick - rt_tick_get();
 
-        secs = remaining / RT_TICK_PER_SECOND;
-        leftover = remaining - (secs * RT_TICK_PER_SECOND);
-        nsecs = (rt_int64_t)leftover * RT_TICK_PER_SECOND;
-        its->it_value.tv_sec = (rt_int32_t)secs;
-        its->it_value.tv_nsec = (rt_int32_t)nsecs;
+        /* calculate 'second' */
+        seconds = remaining / RT_TICK_PER_SECOND;
+
+        /* calculate 'nanosecond';  To avoid lost of accuracy, because "RT_TICK_PER_SECOND" maybe 100, 1000, 1024 and so on.
+         *
+         *        remain_tick                  millisecond                                 remain_tick * MILLISECOND_PER_SECOND
+         *  ------------------------- = --------------------------  --->  millisecond = -------------------------------------------
+         *    RT_TICK_PER_SECOND          MILLISECOND_PER_SECOND                                RT_TICK_PER_SECOND
+         *
+         *                    remain_tick * MILLISECOND_PER_SECOND                          remain_tick * MILLISECOND_PER_SECOND * MICROSECOND_PER_SECOND
+         *   millisecond = ----------------------------------------  ---> nanosecond = -------------------------------------------------------------------
+         *                         RT_TICK_PER_SECOND                                                           RT_TICK_PER_SECOND
+         *
+         */
+        nanoseconds = (((remaining % RT_TICK_PER_SECOND) * MILLISECOND_PER_SECOND) * MICROSECOND_PER_SECOND) / RT_TICK_PER_SECOND ;
+
+        its->it_value.tv_sec = (rt_int32_t)seconds;
+        its->it_value.tv_nsec = (rt_int32_t)nanoseconds;
     }
     else
     {
@@ -881,7 +899,7 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
 
     /* The interval last set by timer_settime() */
     its->it_interval = timer->interval;
-    return 0;
+    return RT_EOK;
 }
 RTM_EXPORT(timer_gettime);
 
@@ -898,12 +916,12 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
 
     if (timer == NULL ||
         value->it_interval.tv_nsec < 0 ||
-        value->it_interval.tv_nsec >= RT_TICK_PER_SECOND ||
+        value->it_interval.tv_nsec >= NANOSECOND_PER_SECOND ||
         value->it_value.tv_nsec < 0 ||
-        value->it_value.tv_nsec >= RT_TICK_PER_SECOND)
+        value->it_value.tv_nsec >= NANOSECOND_PER_SECOND)
     {
-        errno = EINVAL;
-        return -1;
+        rt_set_errno(EINVAL);
+        return -RT_EINVAL;
     }
 
     /*  Save time to expire and old reload value. */
@@ -921,11 +939,17 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
         }
 
         timer->status = NOT_ACTIVE;
-        return 0;
+        return RT_EOK;
     }
 
-    /* Calculate timer period */
-    timer->reload = (value->it_interval.tv_sec * RT_TICK_PER_SECOND) + (value->it_interval.tv_nsec / RT_TICK_PER_SECOND);
+    /* calculate timer period(tick);  To avoid lost of accuracy, because "RT_TICK_PER_SECOND" maybe 100, 1000, 1024 and so on.
+        *
+        *          tick                        nanosecond                          nanosecond * RT_TICK_PER_SECOND
+        *  ------------------------- = --------------------------  --->  tick = -------------------------------------
+        *    RT_TICK_PER_SECOND           NANOSECOND_PER_SECOND                         NANOSECOND_PER_SECOND
+        *
+        */
+    timer->reload = (value->it_interval.tv_sec * RT_TICK_PER_SECOND) + (value->it_interval.tv_nsec * RT_TICK_PER_SECOND) / NANOSECOND_PER_SECOND;
     timer->interval.tv_sec = value->it_interval.tv_sec;
     timer->interval.tv_nsec = value->it_interval.tv_nsec;
 
@@ -939,7 +963,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     rt_timer_control(&timer->timer, RT_TIMER_CTRL_SET_PERIODIC, RT_NULL);
     rt_timer_start(&timer->timer);
 
-    return 0;
+    return RT_EOK;
 }
 RTM_EXPORT(timer_settime);
 #endif /* RT_USING_POSIX_TIMER */
