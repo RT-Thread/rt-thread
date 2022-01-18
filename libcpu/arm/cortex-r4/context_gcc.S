@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -57,10 +57,10 @@ rt_hw_context_switch:
     STMDB   sp!, {r4}           @ push cpsr
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-		VMRS    r4,  fpexc
+        VMRS    r4,  fpexc
         TST     r4,  #0x40000000
         BEQ     __no_vfp_frame1
-		VSTMDB  sp!, {d0-d15}
+        VSTMDB  sp!, {d0-d15}
         VMRS    r5, fpscr
         @ TODO: add support for Common VFPv3.
         @       Save registers like FPINST, FPINST2
@@ -79,7 +79,7 @@ __no_vfp_frame1:
         BEQ     __no_vfp_frame2
         LDMIA   sp!, {r1}       @ get fpscr
         VMSR    fpscr, r1
-		VLDMIA  sp!, {d0-d15}
+        VLDMIA  sp!, {d0-d15}
 __no_vfp_frame2:
     #endif
 
@@ -103,7 +103,7 @@ rt_hw_context_switch_to:
         BEQ     __no_vfp_frame_to
         LDMIA   sp!, {r1}       @ get fpscr
         VMSR    fpscr, r1
-		VLDMIA  sp!, {d0-d15}
+        VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_to:
 #endif
 
@@ -137,10 +137,10 @@ IRQ_Handler:
     STMDB   sp!, {r0-r12,lr}
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-		VMRS    r0,  fpexc
+        VMRS    r0,  fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_str_irq
-		VSTMDB  sp!, {d0-d15}
+        VSTMDB  sp!, {d0-d15}
         VMRS    r1, fpscr
         @ TODO: add support for Common VFPv3.
         @       Save registers like FPINST, FPINST2
@@ -167,7 +167,7 @@ __no_vfp_frame_str_irq:
         BEQ     __no_vfp_frame_ldr_irq
         LDMIA   sp!, {r1}       @ get fpscr
         VMSR    fpscr, r1
-		VLDMIA  sp!, {d0-d15}
+        VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_ldr_irq:
 #endif
 
@@ -189,7 +189,7 @@ rt_hw_context_switch_interrupt_do:
         BEQ     __no_vfp_frame_do1
         LDMIA   sp!, {r1}       @ get fpscr
         VMSR    fpscr, r1
-		VLDMIA  sp!, {d0-d15}
+        VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_do1:
 #endif
 
@@ -213,7 +213,7 @@ __no_vfp_frame_do1:
     STMDB   sp!, {r3}         @ push old task's cpsr
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
-		VMRS    r0,  fpexc
+        VMRS    r0,  fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_do2
         VSTMDB  sp!, {d0-d15}
@@ -240,7 +240,7 @@ __no_vfp_frame_do2:
         BEQ     __no_vfp_frame_do3
         LDMIA   sp!, {r1}       @ get fpscr
         VMSR    fpscr, r1
-		VLDMIA  sp!, {d0-d15}
+        VLDMIA  sp!, {d0-d15}
 __no_vfp_frame_do3:
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -104,13 +104,13 @@ PendSV_Handler:
     CBZ r1, switch_to_thread    /* skip register save at the first time */
 
     MRS r1, psp                 /* get from thread stack pointer */
-    
+
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
     TST     lr, #0x10           /* if(!EXC_RETURN[4]) */
     IT      EQ
     VSTMDBEQ r1!, {d8 - d15}    /* push FPU register s16~s31 */
 #endif
-    
+
     STMFD   r1!, {r4 - r11}     /* push r4 - r11 register */
 
 #if defined (__VFP_FP__) && !defined(__SOFTFP__)
