@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,7 @@
  * 2013-06-18   aozima    add restore MSP feature.
  * 2013-07-09   aozima    enhancement hard fault exception handler.
  */
- 
+
     .cpu    cortex-m3
     .fpu    softvfp
     .syntax unified
@@ -22,7 +22,7 @@
     .equ    SCB_VTOR, 0xE000ED08            /* Vector Table Offset Register */
     .equ    ICSR, 0xE000ED04                /* interrupt control state register */
     .equ    PENDSVSET_BIT, 0x10000000       /* value to trigger PendSV exception */
-    
+
     .equ    SHPR3, 0xE000ED20               /* system priority register (3) */
     .equ    PENDSV_PRI_LOWEST, 0xFFFF0000   /* PendSV and SysTick priority value (lowest) */
 

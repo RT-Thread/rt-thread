@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -462,26 +462,26 @@ turnon_VFP:
         str     lr, [r0, #14*4]         @/* Save calling PC                 */
     .endm
 
-    .globl	vector_svc
+    .globl  vector_svc
 vector_svc:
         push_svc_reg
         bl      rt_hw_trap_svc
-		b       .
+        b       .
 
-    .globl	vector_pabort
+    .globl  vector_pabort
 vector_pabort:
         push_svc_reg
         bl      rt_hw_trap_pabt
-		b       .
+        b       .
 
-    .globl	vector_dabort
+    .globl  vector_dabort
 vector_dabort:
         push_svc_reg
         bl      rt_hw_trap_dabt
-		b       .
+        b       .
 
-    .globl	vector_resv
+    .globl  vector_resv
 vector_resv:
         push_svc_reg
         bl      rt_hw_trap_resv
-		b       .
+        b       .

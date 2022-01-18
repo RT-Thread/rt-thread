@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,8 +18,8 @@
 #define PLLFEED        (0xE01FC000 + 0x08C)
 #define PLLSTAT        (0xE01FC000 + 0x088)
 #define CCLKCFG        (0xE01FC000 + 0x104)
-#define MEMMAP         (0xE01FC000 + 0x040)     
-#define SCS            (0xE01FC000 + 0x1A0)     
+#define MEMMAP         (0xE01FC000 + 0x040)
+#define SCS            (0xE01FC000 + 0x1A0)
 #define CLKSRCSEL      (0xE01FC000 + 0x10C)
 #define MAMCR          (0xE01FC000 + 0x000)
 #define MAMTIM         (0xE01FC000 + 0x004)
@@ -77,7 +77,7 @@ _vector_fiq:    .word vector_fiq
 .globl _rtthread_start
 _rtthread_start:
         .word _start
-        
+
 .globl _rtthread_end
 _rtthread_end:
         .word  _end
@@ -86,9 +86,9 @@ _rtthread_end:
  * rtthread bss start and end which are defined in linker script
  */
 .globl _bss_start
-_bss_start:     
+_bss_start:
         .word __bss_start
-        
+
 .globl _bss_end
 _bss_end:
         .word __bss_end
@@ -100,25 +100,25 @@ _bss_end:
 reset:
         /* enter svc mode */
         msr cpsr_c, #SVCMODE|NOINT
-        
+
         /*watch dog disable */
         ldr r0,=WDMOD
-        ldr r1,=0x0             
+        ldr r1,=0x0
         str r1,[r0]
-        
+
         /* all interrupt disable */
         ldr r0,=VICIntEnClr
         ldr r1,=0xffffffff
         str r1,[r0]
-        
+
         ldr     r1, =VICVectAddr
         ldr     r0, =0x00
         str     r0, [r1]
-        
+
         ldr     r1, =VICIntSelect
         ldr     r0, =0x00
-        str     r0, [r1]        
-        
+        str     r0, [r1]
+
         /* setup stack */
         bl              stack_setup
 
@@ -140,7 +140,7 @@ data_loop:
         mov     r0,#0                   /* get a zero */
         ldr     r1,=__bss_start         /* bss start  */
         ldr     r2,=__bss_end           /* bss end    */
-        
+
 bss_loop:
         cmp     r1,r2                   /* check if data to clear */
         strlo   r0,[r1],#4              /* clear 4 bytes          */
@@ -158,13 +158,13 @@ ctor_loop:
         mov     lr, pc
         bx      r2
         ldmfd   sp!, {r0-r1}
-        b       ctor_loop       
+        b       ctor_loop
 ctor_end:
 
         /* start RT-Thread Kernel               */
         ldr     pc, _rtthread_startup
 
-_rtthread_startup: 
+_rtthread_startup:
         .word rtthread_startup
 
         .equ USERMODE,  0x10
@@ -188,7 +188,7 @@ vector_resv:    bl rt_hw_trap_resv
 .globl rt_thread_switch_interrupt_flag
 .globl rt_interrupt_from_thread
 .globl rt_interrupt_to_thread
-vector_irq:     
+vector_irq:
         stmfd   sp!, {r0-r12,lr}
         bl      rt_interrupt_enter
         bl      rt_hw_trap_irq

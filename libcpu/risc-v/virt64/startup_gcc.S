@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,13 +11,13 @@
  */
 
 #define XSTATUS_FS         (3 << 13) /* initial state of FPU, clear to disable */
-#define XSTATUS_PUM        (1 << 18) 
+#define XSTATUS_PUM        (1 << 18)
 #include <cpuport.h>
 
 boot_hartid: .int
   .global      boot_hartid
 
-  .global	_start
+  .global   _start
   .section ".start", "ax"
 _start:
 #ifdef RISCV_S_MODE

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,50 +21,50 @@
 
     /* 0x0 - TLB refill handler */
     .global tlb_refill_exception
-    .type	tlb_refill_exception,@function
+    .type   tlb_refill_exception,@function
 ebase_start:
 tlb_refill_exception:
-    b	_general_exception_handler
+    b   _general_exception_handler
     nop
 
     /* 0x080 - XTLB refill handler */
     .org ebase_start + 0x080
-    b	_general_exception_handler
+    b   _general_exception_handler
     nop
 
     /* 0x100 - Cache error handler */
     .org ebase_start + 0x100
-    j	cache_error_handler
+    j   cache_error_handler
     nop
 
     /* 0x180 - Exception/Interrupt handler */
     .global general_exception
-    .type	general_exception,@function
+    .type   general_exception,@function
     .org ebase_start + 0x180
 general_exception:
-    b	_general_exception_handler
+    b   _general_exception_handler
     nop
 
     /* 0x200 - Special Exception Interrupt handler (when IV is set in CP0_CAUSE) */
     .global irq_exception
-    .type	irq_exception,@function
+    .type   irq_exception,@function
     .org ebase_start + 0x200
 irq_exception:
-    b	_general_exception_handler
+    b   _general_exception_handler
     nop
 
     /* general exception handler */
 _general_exception_handler:
-    .set	noreorder
-    PTR_LA	k0, mips_irq_handle
-    jr	k0
+    .set    noreorder
+    PTR_LA  k0, mips_irq_handle
+    jr  k0
     nop
-    .set	reorder
+    .set    reorder
 
     /* interrupt handler */
 _irq_handler:
-    .set	noreorder
-    PTR_LA	k0, mips_irq_handle
-    jr	k0
+    .set    noreorder
+    PTR_LA  k0, mips_irq_handle
+    jr  k0
     nop
-    .set	reorder
+    .set    reorder
