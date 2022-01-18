@@ -1,6 +1,5 @@
 ### The list of function support for POSIX 51 standard in the RT-Thread
 
-```c
 <ctype.h>
 + isalnum()
 + isalpha()
@@ -325,5 +324,4 @@
 + write()
 - confstr()
 
-```
 

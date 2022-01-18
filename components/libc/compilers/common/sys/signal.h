@@ -78,7 +78,8 @@ struct sigaction
 /*
  * Structure used in sigaltstack call.
  */
-typedef struct sigaltstack {
+typedef struct sigaltstack
+{
   void     *ss_sp;    /* Stack base or pointer.  */
   int       ss_flags; /* Flags.  */
   size_t    ss_size;  /* Stack size.  */
@@ -103,7 +104,7 @@ int sigtimedwait(const sigset_t *set, siginfo_t *info, const struct timespec *ti
 int sigwait(const sigset_t *set, int *sig);
 int sigwaitinfo(const sigset_t *set, siginfo_t *info);
 int raise(int sig);
-int sigqueue (pid_t pid, int signo, const union sigval value);
+int sigqueue(pid_t pid, int signo, const union sigval value);
 int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
 
 #ifdef __ARMCC_VERSION
