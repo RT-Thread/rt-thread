@@ -27,58 +27,283 @@ void n32_msp_usart_init(void *Instance)
     if (USART1 == USARTx)
     {
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_USART1, ENABLE);
+        #ifdef BSP_USING_UART1_PIN_RMP
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP_USART1, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_6;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_7;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        #else
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_9;
         GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
-
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_10;
         GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
+        #endif
     }
-#endif
-#ifdef BSP_USING_UART2
-    if (USART2 == USARTx)
+
+    #endif /* BSP_USING_UART1 */
+    #ifdef BSP_USING_UART2
+
+    if(USART2 == USARTx)
     {
         RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_USART2, ENABLE);
+        #ifdef BSP_USING_UART2_PIN_RMP1
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP1_USART2, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_5;
+        GPIO_InitPeripheral(GPIOD, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_6;
+        GPIO_InitPeripheral(GPIOD, &GPIO_InitCtlStruct);
+
+        #elif defined (BSP_USING_UART2_PIN_RMP2)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMCP2_USART2, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_8;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_9;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+
+        #elif defined (BSP_USING_UART2_PIN_RMP3)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP3_USART2, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_4;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_5;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        
+        #else
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_2;
         GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
-
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_3;
         GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
+        #endif
     }
-#endif
-#ifdef BSP_USING_UART3
-    if (USART3 == USARTx)
+
+    #endif /* BSP_USING_UART2 */
+    #ifdef BSP_USING_UART3
+
+    if(USART3 == USARTx)
     {
         RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_USART3, ENABLE);
+        #if defined(BSP_USING_UART3_PIN_PART_RMP)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_PART_RMP_USART3, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_10;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_11;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        #elif defined(BSP_USING_UART3_PIN_ALL_RMP)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_ALL_RMP_USART3, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_8;
+        GPIO_InitPeripheral(GPIOD, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_9;
+        GPIO_InitPeripheral(GPIOD, &GPIO_InitCtlStruct);
+        #else
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_10;
         GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
-
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_11;
         GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        #endif
     }
-#endif
-#ifdef BSP_USING_UART4
-    if (UART4 == USARTx)
+
+    #endif /* BSP_USING_UART3 */
+    #ifdef BSP_USING_UART4
+
+    if(UART4 == USARTx)
     {
         RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_UART4, ENABLE);
-        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+        #if defined(BSP_USING_UART4_PIN_RMP1)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP1_UART4, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB | RCC_APB2_PERIPH_GPIOE, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_2;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_7;
+        GPIO_InitPeripheral(GPIOE, &GPIO_InitCtlStruct);
+        #elif defined(BSP_USING_UART4_PIN_RMP2)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP2_UART4, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_13;
+        GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_14;
+        GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
+        #elif defined(BSP_USING_UART4_PIN_RMP3)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP3_UART4, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_0;
+        GPIO_InitPeripheral(GPIOD, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_1;
+        GPIO_InitPeripheral(GPIOD, &GPIO_InitCtlStruct);
+        #else
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_10;
-        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
-
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_11;
-        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        #endif
     }
-#endif
+
+    #endif /* BSP_USING_UART4 */
+    #ifdef BSP_USING_UART5
+
+    if(UART5 == USARTx)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_UART5, ENABLE);
+        #if defined(BSP_USING_UART5_PIN_RMP1)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP1_UART5, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_13;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_14;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        #elif defined(BSP_USING_UART5_PIN_RMP2)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP2_UART5, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOE, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_8;
+        GPIO_InitPeripheral(GPIOE, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_9;
+        GPIO_InitPeripheral(GPIOE, &GPIO_InitCtlStruct);
+        #elif defined(BSP_USING_UART5_PIN_RMP3)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP3_UART5, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_8;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_9;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        #else
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC | RCC_APB2_PERIPH_GPIOD, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_12;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_2;
+        GPIO_InitPeripheral(GPIOD, &GPIO_InitCtlStruct);
+        #endif
+    }
+
+    #endif /* BSP_USING_UART5 */
+    #ifdef BSP_USING_UART6
+
+    if(UART6 == USARTx)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_UART6, ENABLE);
+        #if defined(BSP_USING_UART6_PIN_RMP2)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP2_UART6, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_0;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_1;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        #elif defined(BSP_USING_UART6_PIN_RMP3)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP3_UART6, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_0;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_1;
+        GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+        #else /* BSP_USING_UART6_PIN_NORMP */
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOE, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_2;
+        GPIO_InitPeripheral(GPIOE, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_3;
+        GPIO_InitPeripheral(GPIOE, &GPIO_InitCtlStruct);
+        #endif
+    }
+
+    #endif /* BSP_USING_UART6 */
+    #ifdef BSP_USING_UART7
+
+    if(UART7 == USARTx)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_UART7, ENABLE);
+        #if defined(BSP_USING_UART7_PIN_RMP1)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP1_UART7, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_2;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_3;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        #elif defined(BSP_USING_UART7_PIN_RMP3)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP3_UART7, ENABLE);
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOG, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_0;
+        GPIO_InitPeripheral(GPIOG, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_1;
+        GPIO_InitPeripheral(GPIOG, &GPIO_InitCtlStruct);
+        #else /* BSP_USING_UART7_PIN_NORMP */
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_4;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_5;
+        GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
+        #endif
+    }
+
+    #endif /* BSP_USING_UART7 */
     /* Add others */
 }
 #endif /* BSP_USING_SERIAL */
@@ -113,7 +338,6 @@ void n32_msp_spi_init(void *Instance)
     {
         RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_SPI2, ENABLE);
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
-
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_Out_PP;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_12;
         GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
@@ -167,7 +391,7 @@ void n32_msp_tim_init(void *Instance)
     {
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_TIM1, ENABLE);
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
-        GPIO_InitCtlStructure.Pin = GPIO_PIN_8 | GPIO_PIN_11;
+        GPIO_InitCtlStructure.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11;
         GPIO_InitCtlStructure.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitCtlStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStructure);
@@ -244,7 +468,7 @@ void n32_msp_adc_init(void *Instance)
 
         /* Configure ADC Channel as analog input */
         GPIO_InitCtlStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3;
-        GPIO_InitCtlStruct.GPIO_Speed = GPIO_Speed_2MHz;
+        GPIO_InitCtlStruct.GPIO_Speed = GPIO_INPUT;
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AIN;
         GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
     }
@@ -260,7 +484,7 @@ void n32_msp_adc_init(void *Instance)
 
         /* Configure ADC Channel as analog input */
         GPIO_InitCtlStruct.Pin = GPIO_PIN_1;
-        GPIO_InitCtlStruct.GPIO_Speed = GPIO_Speed_2MHz;
+        GPIO_InitCtlStruct.GPIO_Speed = GPIO_INPUT;
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AIN;
         GPIO_InitPeripheral(GPIOC, &GPIO_InitCtlStruct);
     }
@@ -341,20 +565,72 @@ void n32_msp_can_init(void *Instance)
     if (CAN2 == CANx)
     {
         RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_CAN2, ENABLE);
-        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
-        //        GPIO_PinsRemapConfig(AFIO_MAP6_CAN2_0001, ENABLE);
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
-        GPIO_InitCtlStruct.Pin = GPIO_PIN_6;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_13;
         GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
-
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-        GPIO_InitCtlStruct.Pin = GPIO_PIN_5;
+        GPIO_InitCtlStruct.Pin = GPIO_PIN_12;
         GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
     }
 #endif
 }
 #endif /* BSP_USING_CAN */
+
+void n32_msp_jtag_init(void* Instance)
+{
+    GPIO_InitType GPIO_InitCtlStruct;
+    GPIO_InitStruct(&GPIO_InitCtlStruct);
+    GPIO_InitCtlStruct.GPIO_Speed = GPIO_Speed_50MHz;
+    #if defined(BSP_RMP_SW_JTAG_NO_NJTRST)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+    GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_NO_NJTRST, ENABLE);
+    /* Available pin: PB4 */
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+    GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_InitCtlStruct.Pin = GPIO_PIN_4;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+    #elif defined(BSP_RMP_SW_JTAG_SW_ENABLE)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+    GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_SW_ENABLE, ENABLE);
+    /* Available pin: PB3, PB4, PA15 */
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+    GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_Out_OD;
+    GPIO_InitCtlStruct.Pin = GPIO_PIN_3;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+    GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_InitCtlStruct.Pin = GPIO_PIN_4;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+    GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_InitCtlStruct.Pin = GPIO_PIN_15;
+    GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
+    #elif defined(BSP_RMP_SW_JTAG_DISABLE)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+    GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_DISABLE, ENABLE);
+    /* Available pin: PB3, PB4, PA13, PA14, PA15 */
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOB, ENABLE);
+    GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_Out_OD;
+    GPIO_InitCtlStruct.Pin = GPIO_PIN_3;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+    GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IPU;
+    GDPIO_InitCtlStruct.Pin = GPIO_PIN_4;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitCtlStruct);
+    GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_InitCtlStruct.Pin = GPIO_PIN_13;
+    GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
+    GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IPD;
+    GPIO_InitCtlStruct.Pin = GPIO_PIN_14;
+    GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
+    GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_InitCtlStruct.Pin = GPIO_PIN_15;
+    GPIO_InitPeripheral(GPIOA, &GPIO_InitCtlStruct);
+    #else
+    return;
+    #endif
+}
+
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -413,7 +689,7 @@ static int adc_vol_sample(int argc, char *argv[])
         return RT_ERROR;
     }
 
-    for (int i = 6; i <= 9; ++i)
+    for(int i = 1; i <= 18; ++i)
     {
         ret = rt_adc_enable(adc_dev, i);
         value = rt_adc_read(adc_dev, i);

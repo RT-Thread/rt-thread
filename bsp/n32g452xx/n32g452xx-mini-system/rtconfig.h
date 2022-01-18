@@ -24,6 +24,7 @@
 /* kservice optimization */
 
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -32,6 +33,7 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
+#define RT_USING_SIGNALS
 
 /* Memory Management */
 
@@ -84,6 +86,9 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_HWTIMER
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_ADC
 #define RT_USING_PWM
@@ -157,24 +162,12 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
 /* system packages */
 
-/* enhanced kernel services */
-
-
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -204,7 +197,33 @@
 
 /* On-chip Peripheral Drivers */
 
+#define N32G45X_PIN_NUMBERS_64
+#define N32G45X_PIN_NUMBERS 64
 #define BSP_USING_GPIO
+
+/* Remap JTAG Port */
+
+#define BSP_RMP_SW_JTAG_SW_ENABLE
 #define BSP_USING_UART1
+#define BSP_USING_UART1_NO_RMP
+#define BSP_USING_PWM
+#define BSP_USING_TIM1PWM
+#define BSP_USING_TIM2PWM
+#define BSP_USING_TIM2_CH4
+#define BSP_USING_TIM3PWM
+#define BSP_USING_TIM3_CH2
+#define BSP_USING_TIM4PWM
+#define BSP_USING_TIM4_CH3
+#define BSP_USING_TIM5PWM
+#define BSP_USING_TIM5_CH3
+#define BSP_USING_TIM8PWM
+#define BSP_USING_TIM8_CH4
+#define BSP_USING_HWTIMER
+#define BSP_USING_HWTIM6
+#define BSP_USING_I2C1
+#define BSP_I2C1_SCL_PIN 29
+#define BSP_I2C1_SDA_PIN 30
+#define BSP_USING_ADC
+#define BSP_USING_ADC1
 
 #endif
