@@ -11,7 +11,7 @@
 #ifndef __FCNTL_H__
 #define __FCNTL_H__
 
-#include <sys/types.h>
+#include "sys/types.h"
 
 #define O_RDONLY         00
 #define O_WRONLY         01
@@ -66,6 +66,6 @@
 
 int open(const char *file, int flags, ...);
 int fcntl(int fildes, int cmd, ...);
-int creat(const char *, mode_t);
+int creat(const char *path, mode_t mode);
 
 #endif
