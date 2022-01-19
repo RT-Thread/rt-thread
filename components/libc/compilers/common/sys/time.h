@@ -97,6 +97,7 @@ time_t time(time_t* t);
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #endif /* RT_USING_POSIX_DELAY */
 
+#if defined(RT_USING_POSIX_CLOCK) || defined (RT_USING_POSIX_TIMER)
 /* POSIX clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
@@ -122,6 +123,7 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #ifndef CLOCK_MONOTONIC
 #define CLOCK_MONOTONIC     4
 #endif
+#endif /* defined(RT_USING_POSIX_CLOCK) || defined (RT_USING_POSIX_TIMER) */
 
 #ifdef RT_USING_POSIX_CLOCK
 int clock_getres  (clockid_t clockid, struct timespec *res);
