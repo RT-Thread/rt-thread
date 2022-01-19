@@ -854,7 +854,7 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
     rt_uint32_t seconds, nanoseconds;
     rt_int64_t nsecs, secs;
 
-    if (timer == NULL)
+    if (timer == NULL || its == NULL)
     {
         rt_set_errno(EINVAL);
         return -RT_ERROR;
