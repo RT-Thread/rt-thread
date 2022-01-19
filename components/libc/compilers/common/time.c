@@ -854,9 +854,15 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
     rt_uint32_t seconds, nanoseconds;
     rt_int64_t nsecs, secs;
 
-    if (timer == NULL || its == NULL)
+    if (timer == NULL)
     {
         rt_set_errno(EINVAL);
+        return -RT_ERROR;
+    }
+
+    if (its == NULL)
+    {
+        rt_set_errno(EFAULT);
         return -RT_ERROR;
     }
 
@@ -921,7 +927,13 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
         value->it_value.tv_nsec >= NANOSECOND_PER_SECOND)
     {
         rt_set_errno(EINVAL);
-        return -RT_EINVAL;
+        return -RT_ERROR;
+    }
+
+    if (value == NULL || ovalue == NULL)
+    {
+        rt_set_errno(EFAULT);
+        return -RT_ERROR;
     }
 
     /*  Save time to expire and old reload value. */
