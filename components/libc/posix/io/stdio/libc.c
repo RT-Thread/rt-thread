@@ -156,9 +156,3 @@ int isatty(int fd)
     return 0;
 }
 RTM_EXPORT(isatty);
-
-char *ttyname(int fd)
-{
-    return "/dev/tty"; /* TODO: need to add more specific */
-}
-RTM_EXPORT(ttyname);
