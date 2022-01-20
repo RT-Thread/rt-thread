@@ -55,6 +55,35 @@ int sigprocmask (int how, const sigset_t *set, sigset_t *oset)
     return 0;
 }
 
+int sigpending (sigset_t *set)
+{
+    sigprocmask(SIG_SETMASK, RT_NULL, set);
+    return 0;
+}
+
+int sigsuspend (const sigset_t *set)
+{
+    int ret  = 0;
+    sigset_t origin_set;
+    sigset_t suspend_set;
+    siginfo_t info;            /* unless paremeter */
+
+    /* get the origin signal information */
+    sigpending(&origin_set);
+
+    /* set the new signal information */
+    sigprocmask(SIG_BLOCK, set, RT_NULL);
+    sigpending(&suspend_set);
+
+    ret = rt_signal_wait(&suspend_set, &info, RT_WAITING_FOREVER);
+
+    /* restore the original sigprocmask */
+    sigprocmask(SIG_UNBLOCK, (sigset_t *)0xffffUL, RT_NULL);
+    sigprocmask(SIG_BLOCK, &origin_set, RT_NULL);
+
+    return ret;
+}
+
 int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 {
     rt_sighandler_t old = RT_NULL;
@@ -75,8 +104,7 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
     return 0;
 }
 
-int sigtimedwait(const sigset_t *set, siginfo_t *info,
-       const struct timespec *timeout)
+int sigtimedwait(const sigset_t *set, siginfo_t *info, const struct timespec *timeout)
 {
     int ret  = 0;
     int tick = RT_WAITING_FOREVER;
@@ -112,5 +140,13 @@ int raise(int sig)
 {
     rt_thread_kill(rt_thread_self(), sig);
     return 0;
+}
+
+#include <sys/types.h>
+int sigqueue (pid_t pid, int signo, const union sigval value)
+{
+    /* no support, signal queue */
+
+    return -1;
 }
 
