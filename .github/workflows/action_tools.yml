@@ -1,0 +1,82 @@
+name: ToolsCI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  # Runs at 16:00 UTC (BeiJing 00:00) on the 1st of every month
+  schedule:
+    - cron:  '0 16 1 * *'
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - documentation/**
+      - '**/README.md'
+      - '**/README_zh.md'
+      - '**/*.c'
+      - '**/*.h'
+      - '**/*.cpp'
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - documentation/**
+      - '**/README.md'
+      - '**/README_zh.md'
+      - '**/*.c'
+      - '**/*.h'
+      - '**/*.cpp'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Tools
+    strategy:
+      fail-fast: false
+    env:
+      TEST_BSP_ROOT: bsp/stm32/stm32f407-atk-explorer
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Install Tools
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get -yqq install scons
+
+    - name: Install Arm ToolChains
+      if: ${{ success() }}
+      shell: bash
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+        sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
+        /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
+        echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
+
+    - name: Build Tools
+      run: |
+        scons --pyconfig-silent -C $TEST_BSP_ROOT
+        scons -j$(nproc) -C $TEST_BSP_ROOT
+
+    - name: Project generate Tools
+      if: ${{ success() }}
+      run: |
+        echo "Test to generate mdk project"
+        scons --target=mdk -s -C $TEST_BSP_ROOT
+        scons --target=mdk4 -s -C $TEST_BSP_ROOT
+        scons --target=mdk5 -s -C $TEST_BSP_ROOT
+        echo "Test to generate iar project"
+        scons --target=iar -s -C $TEST_BSP_ROOT
+        echo "Test to generate eclipse project"
+        scons --target=eclipse -s -C $TEST_BSP_ROOT
+        echo "Test to generate cmake project"
+        scons --target=cmake -s -C $TEST_BSP_ROOT
+        echo "Test to generate makefile project"
+        scons --target=makefile -s -C $TEST_BSP_ROOT
+
+    - name: Project dist Tools
+      if: ${{ success() }}
+      run: |
+        echo "Test to dist project"
+        scons --dist -C $TEST_BSP_ROOT
+        scons --dist-ide -C $TEST_BSP_ROOT

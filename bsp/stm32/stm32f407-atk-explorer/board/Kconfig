@@ -438,6 +438,7 @@ menu "Board extended module Drivers"
         select PKG_USING_AT_DEVICE
         select AT_DEVICE_USING_ESP8266
         select AT_DEVICE_ESP8266_SAMPLE
+        select AT_DEVICE_ESP8266_SAMPLE_BSP_TAKEOVER
 
         if BSP_USING_AT_ESP8266
 
@@ -456,6 +457,8 @@ menu "Board extended module Drivers"
             config ESP8266_SAMPLE_RECV_BUFF_LEN
                 int "The maximum length of receive line buffer"
                 default 512
+
+            comment "May adjust RT_SERIAL_RB_BUFSZ up to 512 if using the Serial V1 device driver"
 
         endif
 

@@ -39,12 +39,23 @@
  * 2020-10-11     Meco Man     add value overflow-check code
  * 2021-01-03     Meco Man     implement rt_mb_urgent()
  * 2021-05-30     Meco Man     implement rt_mutex_trytake()
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to ipc.c
  */
 
 #include <rtthread.h>
 #include <rthw.h>
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_object_trytake_hook
+    #define __on_rt_object_trytake_hook(parent)     __ON_HOOK_ARGS(rt_object_trytake_hook, (parent))
+#endif
+#ifndef __on_rt_object_take_hook
+    #define __on_rt_object_take_hook(parent)        __ON_HOOK_ARGS(rt_object_take_hook, (parent))
+#endif
+#ifndef __on_rt_object_put_hook
+    #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
 extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);
@@ -714,8 +725,7 @@ RTM_EXPORT(rt_sem_control);
  *
  * @param    flag is the mutex flag, which determines the queuing way of how multiple threads wait
  *           when the mutex is not available.
- *           NOTE: The mutex flag can ONLY be RT_IPC_FLAG_PRIO. Using RT_IPC_FLAG_FIFO will seriously affect
- *           the real-time performance of the system.
+ *           NOTE: This parameter has been obsoleted. It can be RT_IPC_FLAG_PRIO, RT_IPC_FLAG_FIFO or RT_NULL.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
  *           If the return value is any other values, it represents the initialization failed.
@@ -724,7 +734,8 @@ RTM_EXPORT(rt_sem_control);
  */
 rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
 {
-    (void)flag;
+    /* flag parameter has been obsoleted */
+    RT_UNUSED(flag);
 
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
@@ -796,8 +807,7 @@ RTM_EXPORT(rt_mutex_detach);
  *
  * @param    flag is the mutex flag, which determines the queuing way of how multiple threads wait
  *           when the mutex is not available.
- *           NOTE: The mutex flag can ONLY be RT_IPC_FLAG_PRIO. Using RT_IPC_FLAG_FIFO will seriously affect
- *           the real-time performance of the system.
+ *           NOTE: This parameter has been obsoleted. It can be RT_IPC_FLAG_PRIO, RT_IPC_FLAG_FIFO or RT_NULL.
  *
  * @return   Return a pointer to the mutex object. When the return value is RT_NULL, it means the creation failed.
  *
@@ -806,7 +816,9 @@ RTM_EXPORT(rt_mutex_detach);
 rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
 {
     struct rt_mutex *mutex;
-    (void)flag;
+
+    /* flag parameter has been obsoleted */
+    RT_UNUSED(flag);
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 

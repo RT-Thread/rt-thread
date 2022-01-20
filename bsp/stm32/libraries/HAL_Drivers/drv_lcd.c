@@ -90,6 +90,9 @@ static rt_err_t drv_lcd_control(struct rt_device *device, int cmd, void *args)
         info->framebuffer   = lcd->lcd_info.framebuffer;
     }
     break;
+
+    default:
+        return -RT_EINVAL;
     }
 
     return RT_EOK;

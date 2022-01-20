@@ -76,6 +76,7 @@ void rt_hw_board_init()
 #ifdef RT_USING_PIN
     int n32_hw_pin_init(void);
     n32_hw_pin_init();
+    n32_msp_jtag_init(RT_NULL);
 #endif
 
 #ifdef RT_USING_SERIAL

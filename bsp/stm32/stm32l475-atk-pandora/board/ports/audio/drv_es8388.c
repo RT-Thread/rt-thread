@@ -25,7 +25,7 @@ static struct es8388_device es_dev = {0};
 static rt_uint16_t reg_read(rt_uint8_t addr)
 {
     struct rt_i2c_msg msg[2] = {0};
-    uint8_t val = 0xff;
+    rt_uint8_t val = 0xff;
 
     RT_ASSERT(es_dev.i2c != RT_NULL);
 
@@ -97,7 +97,7 @@ static int es8388_set_adc_dac_volume(int mode, int volume, int dot)
 
 void es8388_set_voice_mute(rt_bool_t enable)
 {
-    uint8_t reg = 0;
+    rt_uint8_t reg = 0;
 
     reg = reg_read(ES8388_DACCONTROL3);
     reg = reg & 0xFB;
@@ -154,7 +154,7 @@ rt_err_t es8388_init(const char *i2c_name, rt_uint16_t pin)
 rt_err_t es8388_start(enum es8388_mode mode)
 {
     int res = 0;
-    uint8_t prev_data = 0, data = 0;
+    rt_uint8_t prev_data = 0, data = 0;
 
     prev_data = reg_read(ES8388_DACCONTROL21);
     if (mode == ES_MODE_LINE)
@@ -225,7 +225,7 @@ rt_err_t es8388_stop(enum es8388_mode mode)
 
 rt_err_t es8388_fmt_set(enum es8388_mode mode, enum es8388_format fmt)
 {
-    uint8_t reg = 0;
+    rt_uint8_t reg = 0;
 
     if (mode == ES_MODE_ADC || mode == ES_MODE_DAC_ADC)
     {

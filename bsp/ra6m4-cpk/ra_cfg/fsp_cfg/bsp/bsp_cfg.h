@@ -34,7 +34,7 @@
             #ifndef BSP_CLOCK_CFG_MAIN_OSC_POPULATED
             #define BSP_CLOCK_CFG_MAIN_OSC_POPULATED (1)
             #endif
-            
+
             #ifndef BSP_CLOCK_CFG_MAIN_OSC_CLOCK_SOURCE
             #define BSP_CLOCK_CFG_MAIN_OSC_CLOCK_SOURCE (0)
             #endif

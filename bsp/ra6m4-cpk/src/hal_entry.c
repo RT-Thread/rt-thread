@@ -14,7 +14,7 @@
 #include <rtdevice.h>
 
 #define LED3_PIN    BSP_IO_PORT_01_PIN_06
-#define USER_INPUT	"P105"
+#define USER_INPUT  "P105"
 
 void hal_entry(void)
 {

@@ -45,7 +45,7 @@
 #define _CPUS_NR                1
 #endif /* RT_USING_SMP */
 
-static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);;
+static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);
 
 static struct rt_thread idle[_CPUS_NR];
 ALIGN(RT_ALIGN_SIZE)
@@ -241,7 +241,6 @@ static void rt_defunct_execute(void)
     }
 }
 
-extern void rt_system_power_manager(void);
 static void rt_thread_idle_entry(void *parameter)
 {
 #ifdef RT_USING_SMP
@@ -275,6 +274,7 @@ static void rt_thread_idle_entry(void *parameter)
 #endif /* RT_USING_SMP */
 
 #ifdef RT_USING_PM
+        void rt_system_power_manager(void);
         rt_system_power_manager();
 #endif /* RT_USING_PM */
     }
