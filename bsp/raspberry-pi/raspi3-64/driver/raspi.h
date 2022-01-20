@@ -304,6 +304,10 @@ typedef enum
 #define SYSTEM_TIMER_IRQ_3    (1 << 3)
 
 #define NON_SECURE_TIMER_IRQ    (1 << 1)
+rt_inline void core_timer_enable(int cpu_id)
+{
+    CORETIMER_INTCTL(cpu_id) |= NON_SECURE_TIMER_IRQ;
+}
 
 /* ARM Core Mailbox interrupt */
 #define C0MB_INTCTL      __REG32(PER_BASE_40000000 + 0x50)  /* Core0 Mailboxes Interrupt control */
@@ -337,6 +341,10 @@ typedef enum
 #define IPI_MAILBOX_SET  CORE_MAILBOX0_SET
 #define IPI_MAILBOX_CLEAR     CORE_MAILBOX0_CLEAR
 #define IPI_MAILBOX_INT_MASK (0x01)
+rt_inline void enable_cpu_ipi_intr(int cpu_id)
+{
+    COREMB_INTCTL(cpu_id) = IPI_MAILBOX_INT_MASK;
+}
 
 enum spi_bit_order
 {

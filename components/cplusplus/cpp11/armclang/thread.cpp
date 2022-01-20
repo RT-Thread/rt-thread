@@ -13,19 +13,18 @@
 #include <cstdio>
 #include <pthread.h>
 
+#define CPP11_DEFAULT_ID_OFFSET 1
+
 extern "C" int __ARM_TPL_thread_create(__ARM_TPL_thread_t *__t,
                                        void *(*__func)(void *),
                                        void *__arg)
 {
     int ret = 0;
-    /* TODO memory leek */
-    pthread_t *pid = (pthread_t *)rt_malloc(sizeof(pthread_t));
-    if (pid == nullptr)
-        return -1;
-    ret = pthread_create(pid, RT_NULL, __func, __arg);
+    pthread_t pid;
+    ret = pthread_create(&pid, RT_NULL, __func, __arg);
     if (ret == 0)
     {
-        __t->data = (std::uintptr_t)pid;
+        __t->data = (std::uintptr_t)pid + CPP11_DEFAULT_ID_OFFSET;
         return 0;
     }
     return -1;
@@ -50,18 +49,18 @@ extern "C" __ARM_TPL_thread_id __ARM_TPL_thread_get_current_id()
 extern "C" __ARM_TPL_thread_id __ARM_TPL_thread_get_id(
     const __ARM_TPL_thread_t *__t)
 {
-    return (__ARM_TPL_thread_id)((*(pthread_t *)__t->data));
+    return (__ARM_TPL_thread_id)(((pthread_t)__t->data - CPP11_DEFAULT_ID_OFFSET));
 }
 
 extern "C" int __ARM_TPL_thread_join(__ARM_TPL_thread_t *__t)
 {
-    pthread_join((*(pthread_t *)__t->data), RT_NULL);
+    pthread_join(((pthread_t)__t->data - CPP11_DEFAULT_ID_OFFSET), RT_NULL);
     return 0;
 }
 
 extern "C" int __ARM_TPL_thread_detach(__ARM_TPL_thread_t *__t)
 {
-    pthread_detach((*(pthread_t *)__t->data));
+    pthread_detach(((pthread_t)__t->data - CPP11_DEFAULT_ID_OFFSET));
     return 0;
 }
 
@@ -96,8 +95,8 @@ extern "C" unsigned __ARM_TPL_thread_hw_concurrency()
 extern "C" int __ARM_TPL_tls_create(__ARM_TPL_tls_key *__key,
                                     void (*__at_exit)(void *))
 {
-    pthread_key_t key; 
-    
+    pthread_key_t key;
+
     if (pthread_key_create(&key, __at_exit) == 0)
     {
         *__key = key;

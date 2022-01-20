@@ -10,7 +10,11 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 #if defined(BSP_USING_AUDIO) && defined(BSP_USING_SDMMC)
 #define BUFSZ   1024

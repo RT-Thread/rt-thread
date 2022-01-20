@@ -62,9 +62,11 @@ void rt_hw_serial_init(void);
 
 void rt_hw_uart_isr(struct rt_lpcserial* lpc_serial)
 {
-    RT_UNUSED rt_uint32_t iir;
+    rt_uint32_t iir;
 
     RT_ASSERT(lpc_serial != RT_NULL)
+
+    RT_UNUSED(iir);
 
     if (UART_LSR(lpc_serial->hw_base) & 0x01)
     {

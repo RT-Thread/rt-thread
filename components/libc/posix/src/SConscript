@@ -11,6 +11,6 @@ flag = False
 src += ['unistd.c'] #TODO
 
 if flag == True:
-    group = DefineGroup('POSIX', src, depend = [], CPPPATH = CPPPATH)
+    group = DefineGroup('POSIX', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

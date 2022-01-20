@@ -29,6 +29,7 @@
 #endif /* RT_USING_PWM */
 
 #define MAX_PERIOD 65535
+#define MIN_PERIOD 3
 
 #ifdef BSP_USING_PWM
 
@@ -207,10 +208,9 @@ static rt_err_t drv_pwm_set(struct n32_pwm *pwm_dev, struct rt_pwm_configuration
 {
     TIM_Module *TIMx = pwm_dev->tim_handle;
     rt_uint32_t channel = configuration->channel;
-
-    /* Init timer pin and enable clock */
-    void n32_msp_tim_init(void *Instance);
-    n32_msp_tim_init(TIMx);
+    rt_uint32_t period;
+    rt_uint64_t psc;
+    rt_uint32_t pulse;
 
     RCC_ClocksType RCC_Clock;
     RCC_GetClocksFreqValue(&RCC_Clock);
@@ -228,25 +228,33 @@ static rt_err_t drv_pwm_set(struct n32_pwm *pwm_dev, struct rt_pwm_configuration
             input_clock = RCC_Clock.Pclk1Freq * 2;
     }
 
+    input_clock /= 1000000UL;
     /* Convert nanosecond to frequency and duty cycle. */
-    rt_uint32_t period = (unsigned long long)configuration->period ;
-    rt_uint64_t psc = period / MAX_PERIOD + 1;
+    period = (unsigned long long)configuration->period * input_clock / 1000ULL;
+    psc = period / MAX_PERIOD + 1;
     period = period / psc;
-    psc = psc * (input_clock / 1000000);
-
+    if (period < MIN_PERIOD)
+    {
+        period = MIN_PERIOD;
+    }
     if ((pwm_dev->period != period) || (pwm_dev->psc != psc))
     {
-        /* TIMe base configuration */
+        /* Tim base configuration */
         TIM_TimeBaseInitType TIM_TIMeBaseStructure;
         TIM_InitTimBaseStruct(&TIM_TIMeBaseStructure);
-        TIM_TIMeBaseStructure.Period = period;
+        TIM_TIMeBaseStructure.Period = period - 1;
         TIM_TIMeBaseStructure.Prescaler = psc - 1;
         TIM_TIMeBaseStructure.ClkDiv = 0;
         TIM_TIMeBaseStructure.CntMode = TIM_CNT_MODE_UP;
         TIM_InitTimeBase(TIMx, &TIM_TIMeBaseStructure);
     }
 
-    rt_uint32_t pulse = (unsigned long long)configuration->pulse;
+    pulse = (unsigned long long)configuration->pulse * input_clock / psc / 1000ULL;
+    if (pulse > period)
+    {
+        pulse = period;
+    }
+
     /* PWM1 Mode configuration: Channel1 */
     OCInitType  TIM_OCInitStructure;
     TIM_InitOcStruct(&TIM_OCInitStructure);
@@ -320,6 +328,9 @@ static int rt_hw_pwm_init(void)
         if (rt_device_pwm_register(&n32_pwm_obj[i].pwm_device,
                                    n32_pwm_obj[i].name, &drv_ops, &(n32_pwm_obj[i])) == RT_EOK)
         {
+            /* Init timer pin and enable clock */
+            void n32_msp_tim_init(void *Instance);
+            n32_msp_tim_init(n32_pwm_obj[i].tim_handle);
         }
         else
         {

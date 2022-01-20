@@ -34,6 +34,8 @@
 #define I2C_ENABLE(dev)      I2C_REG_WRITE(dev, I2C_CSR, 0x3)    /* Enable i2c core and interrupt  */
 #define I2C_ISBUSFREE(dev)   (((I2C_REG_READ(dev, I2C_SWR) & 0x18) == 0x18 && (I2C_REG_READ(dev, I2C_CSR) & 0x0400) == 0) ? 1 : 0)
 
+#define I2C_SIGNAL_TIMEOUT   5000
+
 enum
 {
     I2C_START = -1,
@@ -50,7 +52,7 @@ enum
 typedef struct
 {
     int32_t base;       /* i2c bus number */
-    int32_t state;
+    volatile int32_t state;
     int32_t addr;
     uint32_t last_error;
     int32_t bNackValid;
@@ -58,9 +60,11 @@ typedef struct
     uint32_t subaddr;
     int32_t subaddr_len;
 
-    uint8_t buffer[I2C_MAX_BUF_LEN];
-    uint32_t pos, len;
+    volatile uint32_t pos;
+    volatile uint32_t len;
+    uint8_t *buffer;
 
+    struct rt_completion signal;
 } nu_i2c_dev;
 typedef nu_i2c_dev *nu_i2c_dev_t;
 
@@ -68,7 +72,6 @@ typedef struct
 {
     struct rt_i2c_bus_device parent;
     char *name;
-
     IRQn_Type irqn;
     E_SYS_IPRST rstidx;
     E_SYS_IPCLK clkidx;
@@ -113,13 +116,13 @@ static nu_i2c_bus nu_i2c_arr [ ] =
   * @brief  Set i2c interface speed
   * @param[in] dev i2c device structure pointer
   * @param[in] sp i2c speed
-  * @return always 0
+  * @return 0 or I2C_ERR_NOTTY
   */
 static int32_t nu_i2c_set_speed(nu_i2c_dev_t psNuI2cDev, int32_t sp)
 {
     uint32_t d;
 
-    if (sp != 100 && sp != 400)
+    if ((sp != 100) && (sp != 400))
         return (I2C_ERR_NOTTY);
 
     d = (sysGetClock(SYS_PCLK) * 1000) / (sp * 5) - 1;
@@ -205,6 +208,7 @@ static void nu_i2c_isr(int vector, void *param)
         psNuI2CDev->last_error = I2C_ERR_NACK;
         nu_i2c_command(psNuI2CDev, I2C_CMD_STOP);
         psNuI2CDev->state = I2C_STATE_NOP;
+        rt_completion_done(&psNuI2CDev->signal);
     }
     /* Arbitration lost */
     else if (csr & 0x200)
@@ -212,6 +216,7 @@ static void nu_i2c_isr(int vector, void *param)
         rt_kprintf("Arbitration lost\n");
         psNuI2CDev->last_error = I2C_ERR_LOSTARBITRATION;
         psNuI2CDev->state = I2C_STATE_NOP;
+        rt_completion_done(&psNuI2CDev->signal);
     }
     /* Transmit complete */
     else if (!(csr & 0x100))
@@ -225,6 +230,7 @@ static void nu_i2c_isr(int vector, void *param)
         }
         else if (psNuI2CDev->state == I2C_STATE_READ)
         {
+
             /* Sub-address send over, begin restart a read command */
             if (psNuI2CDev->pos == psNuI2CDev->subaddr_len + 1)
             {
@@ -246,6 +252,7 @@ static void nu_i2c_isr(int vector, void *param)
                 else
                 {
                     psNuI2CDev->state = I2C_STATE_NOP;
+                    rt_completion_done(&psNuI2CDev->signal);
                 }
             }
         }
@@ -270,12 +277,12 @@ static void nu_i2c_isr(int vector, void *param)
             else
             {
                 psNuI2CDev->state = I2C_STATE_NOP;
+                rt_completion_done(&psNuI2CDev->signal);
             }
         }
     }
+
 }
-
-
 
 /**
   * @brief Read data from I2C slave.
@@ -293,6 +300,9 @@ static int32_t nu_i2c_read(nu_i2c_dev_t psNuI2cDev, struct rt_i2c_msg *pmsg)
 {
     uint8_t *buf = pmsg->buf;
     uint32_t len = pmsg->len;
+
+    RT_ASSERT(len);
+    RT_ASSERT(buf);
 
     if (len > I2C_MAX_BUF_LEN - 10)
         len = I2C_MAX_BUF_LEN - 10;
@@ -317,19 +327,28 @@ static int32_t nu_i2c_read(nu_i2c_dev_t psNuI2cDev, struct rt_i2c_msg *pmsg)
     if (!I2C_ISBUSFREE(psNuI2cDev))
         return (I2C_ERR_BUSY);
 
+    rt_completion_init(&psNuI2cDev->signal);
+
     nu_i2c_command(psNuI2cDev, I2C_CMD_START | I2C_CMD_WRITE);
 
-    while (psNuI2cDev->state != I2C_STATE_NOP);
+    if ((RT_EOK == rt_completion_wait(&psNuI2cDev->signal, I2C_SIGNAL_TIMEOUT)))
+    {
+        rt_memcpy(buf, psNuI2cDev->buffer + psNuI2cDev->subaddr_len + 3, len);
+
+        psNuI2cDev->subaddr += len;
+    }
+    else
+    {
+        rt_kprintf("[%s]Wait signal timeout.\n", __func__);
+
+        len = 0;
+    }
 
     /* Disable I2C-EN */
     I2C_DISABLE(psNuI2cDev);
 
     if (psNuI2cDev->last_error)
         return (psNuI2cDev->last_error);
-
-    rt_memcpy(buf, psNuI2cDev->buffer + psNuI2cDev->subaddr_len + 3, len);
-
-    psNuI2cDev->subaddr += len;
 
     return len;
 }
@@ -350,6 +369,9 @@ static int32_t nu_i2c_write(nu_i2c_dev_t psNuI2cDev, struct rt_i2c_msg *pmsg)
 {
     uint8_t *buf = pmsg->buf;
     uint32_t len = pmsg->len;
+
+    RT_ASSERT(len);
+    RT_ASSERT(buf);
 
     if (len > I2C_MAX_BUF_LEN - 10)
         len = I2C_MAX_BUF_LEN - 10;
@@ -373,17 +395,26 @@ static int32_t nu_i2c_write(nu_i2c_dev_t psNuI2cDev, struct rt_i2c_msg *pmsg)
     if (!I2C_ISBUSFREE(psNuI2cDev))
         return (I2C_ERR_BUSY);
 
+    rt_completion_init(&psNuI2cDev->signal);
+
     nu_i2c_command(psNuI2cDev, I2C_CMD_START | I2C_CMD_WRITE);
 
-    while (psNuI2cDev->state != I2C_STATE_NOP);
+    if ((RT_EOK == rt_completion_wait(&psNuI2cDev->signal, I2C_SIGNAL_TIMEOUT)))
+    {
+        psNuI2cDev->subaddr += len;
+    }
+    else
+    {
+        rt_kprintf("[%s]Wait signal timeout.\n", __func__);
+
+        len = 0;
+    }
 
     /* Disable I2C-EN */
     I2C_DISABLE(psNuI2cDev);
 
     if (psNuI2cDev->last_error)
         return (psNuI2cDev->last_error);
-
-    psNuI2cDev->subaddr += len;
 
     return len;
 }
@@ -405,16 +436,13 @@ static int32_t nu_i2c_ioctl(nu_i2c_dev_t psNuI2cDev, uint32_t cmd, uint32_t arg0
     switch (cmd)
     {
     case I2C_IOC_SET_DEV_ADDRESS:
-
         psNuI2cDev->addr = arg0;
         break;
 
     case I2C_IOC_SET_SPEED:
-
-        return (nu_i2c_set_speed(psNuI2cDev, (int32_t)arg0));
+        return nu_i2c_set_speed(psNuI2cDev, (int32_t)arg0);
 
     case I2C_IOC_SET_SUB_ADDRESS:
-
         if (arg1 > 4)
         {
             return (I2C_ERR_NOTTY);
@@ -441,7 +469,8 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     rt_err_t ret;
     struct rt_i2c_msg *pmsg;
 
-    RT_ASSERT(bus != RT_NULL);
+    RT_ASSERT(bus);
+
     psNuI2cBus = (nu_i2c_bus_t) bus;
     psNuI2cDev = &psNuI2cBus->dev;
 
@@ -459,6 +488,7 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
         /* Set device address */
         nu_i2c_reset(psNuI2cDev);
+
         nu_i2c_ioctl(psNuI2cDev, I2C_IOC_SET_DEV_ADDRESS, pmsg->addr, 0);
 
         if (pmsg->flags & RT_I2C_RD)
@@ -470,18 +500,39 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             ret = nu_i2c_write(psNuI2cDev, pmsg);
         }
 
-
         if (ret != pmsg->len) break;
     }
 
     return i;
 }
 
+static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u32Cmd, rt_uint32_t u32Value)
+{
+    nu_i2c_bus_t psNuI2cBus;
+    nu_i2c_dev_t psNuI2cDev;
+
+    RT_ASSERT(bus);
+
+    psNuI2cBus = (nu_i2c_bus_t) bus;
+    psNuI2cDev = &psNuI2cBus->dev;
+
+    switch (u32Cmd)
+    {
+    case RT_I2C_DEV_CTRL_CLK:
+        nu_i2c_set_speed(psNuI2cDev, (int32_t)u32Value);
+        break;
+    default:
+        return -RT_EIO;
+    }
+
+    return RT_EOK;
+}
+
 static const struct rt_i2c_bus_device_ops nu_i2c_ops =
 {
     .master_xfer        = nu_i2c_mst_xfer,
     .slave_xfer         = NULL,
-    .i2c_bus_control    = NULL,
+    .i2c_bus_control    = nu_i2c_bus_control,
 };
 
 
@@ -489,16 +540,16 @@ static const struct rt_i2c_bus_device_ops nu_i2c_ops =
 int rt_hw_i2c_init(void)
 {
     int i;
-    rt_err_t ret = RT_EOK;
+    rt_err_t ret;
 
     for (i = (I2C_START + 1); i < I2C_CNT; i++)
     {
         nu_i2c_dev_t psNuI2cDev = &nu_i2c_arr[i].dev;
 
-        ret = rt_i2c_bus_device_register(&nu_i2c_arr[i].parent, nu_i2c_arr[i].name);
-        RT_ASSERT(RT_EOK == ret);
-
         nu_i2c_arr[i].parent.ops = &nu_i2c_ops;
+
+        psNuI2cDev->buffer = rt_malloc(I2C_MAX_BUF_LEN);
+        RT_ASSERT(psNuI2cDev->buffer);
 
         /* Enable I2C engine clock and reset. */
         nu_sys_ipclk_enable(nu_i2c_arr[i].clkidx);
@@ -509,6 +560,9 @@ int rt_hw_i2c_init(void)
         /* Register ISR and Respond IRQ. */
         rt_hw_interrupt_install(nu_i2c_arr[i].irqn, nu_i2c_isr, &nu_i2c_arr[i], nu_i2c_arr[i].name);
         rt_hw_interrupt_umask(nu_i2c_arr[i].irqn);
+
+        ret = rt_i2c_bus_device_register(&nu_i2c_arr[i].parent, nu_i2c_arr[i].name);
+        RT_ASSERT(RT_EOK == ret);
     }
 
     return 0;

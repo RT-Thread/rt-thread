@@ -1,0 +1,31 @@
+import os
+from building import *
+from gcc import *
+Import('rtconfig')
+
+src = []
+cwd = GetCurrentDir()
+group = []
+LIBS = ['m'] # link libm
+CPPPATH = [cwd]
+
+if rtconfig.PLATFORM == 'gcc':
+    LIBS += ['c'] # link libc
+    src += Glob('*.c')
+
+    #report newlib version
+    print('Newlib version:' + GetNewLibVersion(rtconfig))
+
+    # identify this is Newlib, and only enable POSIX.1-1990
+    CPPDEFINES = ['RT_USING_NEWLIB', '_POSIX_C_SOURCE=1']
+
+    group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
+
+
+list = os.listdir(cwd)
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        group = group + SConscript(os.path.join(d, 'SConscript'))
+
+Return('group')

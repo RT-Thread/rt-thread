@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,8 +16,9 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_POSIX_DEVIO
-#include <dfs_posix.h>
+#ifdef RT_USING_POSIX_STDIO
+#include <unistd.h>
+#include <fcntl.h>
 #include <poll.h>
 #include <sys/ioctl.h>
 
@@ -179,7 +180,7 @@ const static struct dfs_file_ops _serial_fops =
     RT_NULL, /* getdents */
     serial_fops_poll,
 };
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
 
 static rt_size_t rt_serial_get_linear_buffer(struct rt_ringbuffer       *rb,
                                                     rt_uint8_t         **ptr)
@@ -1135,7 +1136,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     /* register a character device */
     ret = rt_device_register(device, name, flag);
 
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
     /* set fops */
     device->fops        = &_serial_fops;
 #endif

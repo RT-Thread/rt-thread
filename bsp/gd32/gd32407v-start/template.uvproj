@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>rt-thread_gd32f4xx</TargetName>
+      <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <uAC6>0</uAC6>
@@ -15,12 +15,12 @@
         <TargetCommonOption>
           <Device>GD32F407VK</Device>
           <Vendor>GigaDevice</Vendor>
-          <Cpu>IRAM(0x20000000-0x2002FFFF) IRAM2(0x10000000-0x1000FFFF) IROM(0x08000000-0x082FFFFF) CLOCK(16000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
+          <Cpu>IRAM(0x20000000,0x020000) IRAM2(0x10000000,0x010000) IROM(0x08000000,0x300000) CPUTYPE("Cortex-M4") FPU2 CLOCK(16800000)</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"Startup\GD\GD32F4xx\startup_gd32f4xx.s" ("GD32F4xx Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0GD32F4xx_3MB -FS08000000 -FL0300000)</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0GD32F4xx_3MB -FS08000000 -FL0300000 -FP0($$Device:GD32F407VK$Flash\GD32F4xx_3MB.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>gd32f4xx0.h</RegisterFile>
+          <RegisterFile>gd32f4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -46,7 +46,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\output\</OutputDirectory>
-          <OutputName>rtthread-gd32f4xx</OutputName>
+          <OutputName>rtthread</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -592,12 +592,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>GD32F4xx_EVAL</GroupName>
+          <GroupName>GD32F4xx_START</GroupName>
           <Files>
             <File>
-              <FileName>gd32f450z_eval.c</FileName>
+              <FileName>gd32f407r_start.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\Library\Utilities\gd32f450z_eval.c</FilePath>
+              <FilePath>..\..\..\Library\Utilities\gd32f407r_start.c</FilePath>
             </File>
           </Files>
         </Group>

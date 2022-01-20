@@ -27,7 +27,7 @@
 
 /* dynamic pool magic and mask */
 #define RT_MEMHEAP_MAGIC        0x1ea01ea0
-#define RT_MEMHEAP_MASK         0xfffffffe
+#define RT_MEMHEAP_MASK         0xFFFFFFFE
 #define RT_MEMHEAP_USED         0x01
 #define RT_MEMHEAP_FREED        0x00
 
@@ -37,6 +37,16 @@
 #define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
 #define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
 #define MEMITEM(ptr)            (struct rt_memheap_item*)((rt_uint8_t*)ptr - RT_MEMHEAP_SIZE)
+
+static void _remove_next_ptr(struct rt_memheap_item *next_ptr)
+{
+    /* Fix the crash problem after opening Oz optimization on ac6  */
+    /* Fix IAR compiler warning  */
+    next_ptr->next_free->prev_free = next_ptr->prev_free;
+    next_ptr->prev_free->next_free = next_ptr->next_free;
+    next_ptr->next->prev = next_ptr->prev;
+    next_ptr->prev->next = next_ptr->next;
+}
 
 /**
  * @brief   This function initializes a piece of memory called memheap.
@@ -173,7 +183,7 @@ RTM_EXPORT(rt_memheap_detach);
 void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 {
     rt_err_t result;
-    rt_uint32_t free_size;
+    rt_size_t free_size;
     struct rt_memheap_item *header_ptr;
 
     RT_ASSERT(heap != RT_NULL);
@@ -382,8 +392,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     if (newsize > oldsize)
     {
         void *new_ptr;
-        /* Fix the crash problem after opening Oz optimization on ac6  */
-        volatile struct rt_memheap_item *next_ptr;
+        struct rt_memheap_item *next_ptr;
 
         if (heap->locked == RT_FALSE)
         {
@@ -432,10 +441,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
                               next_ptr->next_free,
                               next_ptr->prev_free));
 
-                next_ptr->next_free->prev_free = next_ptr->prev_free;
-                next_ptr->prev_free->next_free = next_ptr->next_free;
-                next_ptr->next->prev = next_ptr->prev;
-                next_ptr->prev->next = next_ptr->next;
+                _remove_next_ptr(next_ptr);
 
                 /* build a new one on the right place */
                 next_ptr = (struct rt_memheap_item *)((char *)ptr + newsize);
@@ -593,13 +599,13 @@ void rt_memheap_free(void *ptr)
     rt_err_t result;
     struct rt_memheap *heap;
     struct rt_memheap_item *header_ptr, *new_ptr;
-    rt_uint32_t insert_header;
+    rt_bool_t insert_header;
 
     /* NULL check */
     if (ptr == RT_NULL) return;
 
     /* set initial status as OK */
-    insert_header = 1;
+    insert_header = RT_TRUE;
     new_ptr       = RT_NULL;
     header_ptr    = (struct rt_memheap_item *)
                     ((rt_uint8_t *)ptr - RT_MEMHEAP_SIZE);
@@ -657,7 +663,7 @@ void rt_memheap_free(void *ptr)
         /* move header pointer to previous. */
         header_ptr = header_ptr->prev;
         /* don't insert header to free list */
-        insert_header = 0;
+        insert_header = RT_FALSE;
     }
 
     /* determine if the block can be merged with the next neighbor. */
@@ -685,10 +691,10 @@ void rt_memheap_free(void *ptr)
     {
         struct rt_memheap_item *n = heap->free_list->next_free;;
 #if defined(RT_MEMHEAP_BSET_MODE)
-        rt_uint32_t blk_size = MEMITEM_SIZE(header_ptr);
+        rt_size_t blk_size = MEMITEM_SIZE(header_ptr);
         for (;n != heap->free_list; n = n->next_free)
         {
-            rt_uint32_t m = MEMITEM_SIZE(n);
+            rt_size_t m = MEMITEM_SIZE(n);
             if (blk_size <= m)
             {
                 break;
@@ -732,9 +738,9 @@ RTM_EXPORT(rt_memheap_free);
 * @param max_used is a pointer to get the maximum memory used.
 */
 void rt_memheap_info(struct rt_memheap *heap,
-                     rt_uint32_t *total,
-                     rt_uint32_t *used,
-                     rt_uint32_t *max_used)
+                     rt_size_t *total,
+                     rt_size_t *used,
+                     rt_size_t *max_used)
 {
     rt_err_t result;
 
@@ -898,10 +904,10 @@ int memheapcheck(int argc, char *argv[])
                 break;
             }
             /* check next and prev */
-            if (!((rt_uint32_t)item->next <= (rt_uint32_t)((rt_uint32_t)heap->start_addr + heap->pool_size) &&
-                  (rt_uint32_t)item->prev >= (rt_uint32_t)heap->start_addr) &&
-                  (rt_uint32_t)item->next == RT_ALIGN((rt_uint32_t)item->next, RT_ALIGN_SIZE) &&
-                  (rt_uint32_t)item->prev == RT_ALIGN((rt_uint32_t)item->prev, RT_ALIGN_SIZE))
+            if (!((rt_ubase_t)item->next <= (rt_ubase_t)((rt_ubase_t)heap->start_addr + heap->pool_size) &&
+                  (rt_ubase_t)item->prev >= (rt_ubase_t)heap->start_addr) &&
+                  (rt_ubase_t)item->next == RT_ALIGN((rt_ubase_t)item->next, RT_ALIGN_SIZE) &&
+                  (rt_ubase_t)item->prev == RT_ALIGN((rt_ubase_t)item->prev, RT_ALIGN_SIZE))
             {
                 has_bad = RT_TRUE;
                 break;
@@ -919,7 +925,7 @@ int memheapcheck(int argc, char *argv[])
     {
         rt_kprintf("Memory block wrong:\n");
         rt_kprintf("name: %s\n", heap->parent.name);
-        rt_kprintf("item: 0x%08x\n", item);
+        rt_kprintf("item: 0x%p\n", item);
     }
     return 0;
 }
@@ -948,7 +954,7 @@ int memheaptrace(int argc, char *argv[])
         /* memheap dump */
         rt_kprintf("\nmemory heap address:\n");
         rt_kprintf("name    : %s\n", mh->parent.name);
-        rt_kprintf("heap_ptr: 0x%08x\n", mh->start_addr);
+        rt_kprintf("heap_ptr: 0x%p\n", mh->start_addr);
         rt_kprintf("free    : 0x%08x\n", mh->available_size);
         rt_kprintf("max_used: 0x%08x\n", mh->max_used_size);
         rt_kprintf("size    : 0x%08x\n", mh->pool_size);
@@ -960,7 +966,7 @@ int memheaptrace(int argc, char *argv[])
         {
             if ((header_ptr->magic & RT_MEMHEAP_MASK) != RT_MEMHEAP_MAGIC)
             {
-                rt_kprintf("[0x%08x - incorrect magic: 0x%08x\n",
+                rt_kprintf("[0x%p - incorrect magic: 0x%08x\n",
                     header_ptr, header_ptr->magic);
                 break;
             }
@@ -969,7 +975,7 @@ int memheaptrace(int argc, char *argv[])
             if (block_size < 0)
                 break;
 
-            rt_kprintf("[0x%08x - ", header_ptr);
+            rt_kprintf("[0x%p - ", header_ptr);
             if (block_size < 1024)
                 rt_kprintf("%5d", block_size);
             else if (block_size < 1024 * 1024)

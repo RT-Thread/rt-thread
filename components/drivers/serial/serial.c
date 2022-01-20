@@ -36,8 +36,10 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_POSIX_DEVIO
-#include <dfs_posix.h>
+#ifdef RT_USING_POSIX_STDIO
+#include <dfs_file.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <poll.h>
 #include <sys/ioctl.h>
 
@@ -203,7 +205,7 @@ const static struct dfs_file_ops _serial_fops =
     RT_NULL, /* getdents */
     serial_fops_poll,
 };
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
 
 /*
  * Serial poll routines
@@ -362,7 +364,7 @@ static void _serial_check_buffer_size(void)
     }
 }
 
-#if defined(RT_USING_POSIX_DEVIO) || defined(RT_SERIAL_USING_DMA)
+#if defined(RT_USING_POSIX_STDIO) || defined(RT_SERIAL_USING_DMA)
 static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
 {
     struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
@@ -385,7 +387,7 @@ static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
         }
     }
 }
-#endif /* RT_USING_POSIX_DEVIO || RT_SERIAL_USING_DMA */
+#endif /* RT_USING_POSIX_STDIO || RT_SERIAL_USING_DMA */
 
 #ifdef RT_SERIAL_USING_DMA
 /**
@@ -1019,7 +1021,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
 
             break;
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
 #ifdef RT_USING_POSIX_TERMIOS
         case TCGETA:
             {
@@ -1215,7 +1217,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 *(rt_size_t *)args = recved;
             }
             break;
-#endif /* RT_USING_POSIX_DEVIO */
+#endif /* RT_USING_POSIX_STDIO */
         default :
             /* control device */
             ret = serial->ops->control(serial, cmd, args);
@@ -1270,7 +1272,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     /* register a character device */
     ret = rt_device_register(device, name, flag);
 
-#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_POSIX_STDIO
     /* set fops */
     device->fops        = &_serial_fops;
 #endif

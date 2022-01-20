@@ -50,7 +50,7 @@ struct rthw_sdio
 
 #define EMMC_BUFF_SIZE       4096
 #define EMMC_BUFF_ADDR       0x2FFCB000
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 __attribute__((at(EMMC_BUFF_ADDR))) static rt_uint8_t cache_buf[EMMC_BUFF_SIZE];
 #elif defined ( __GNUC__ )
 static rt_uint8_t cache_buf[EMMC_BUFF_SIZE] __attribute__((section(".eMMCSection")));

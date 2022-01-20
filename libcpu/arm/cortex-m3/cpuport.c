@@ -385,7 +385,7 @@ __asm int __rt_ffs(int value)
 exit
     BX      lr
 }
-#elif defined(__CLANG_ARM)
+#elif defined(__clang__)
 int __rt_ffs(int value)
 {
     __asm volatile(

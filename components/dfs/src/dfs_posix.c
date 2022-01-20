@@ -639,7 +639,7 @@ DIR *opendir(const char *name)
         }
         else
         {
-            memset(t, 0, sizeof(DIR));
+            rt_memset(t, 0, sizeof(DIR));
 
             t->fd = fd;
         }

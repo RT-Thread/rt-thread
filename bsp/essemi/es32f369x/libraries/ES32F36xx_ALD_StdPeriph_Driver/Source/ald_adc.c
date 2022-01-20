@@ -57,6 +57,11 @@
 
 #ifdef ALD_ADC
 
+#define  INFO_ADC0DA      *(uint32_t*)0x000802C0
+#define  INFO_ADC1DA      *(uint32_t*)0x000802C8
+#define  CFG_ADC0DA       *(uint32_t*)0x40083C60      
+#define  CFG_ADC1DA       *(uint32_t*)0x40083C64
+
 /** @addtogroup ADC_Private_Functions
   * @{
   */
@@ -1116,6 +1121,43 @@ uint32_t ald_adc_get_state(adc_handle_t *hperh)
 uint32_t ald_adc_get_error(adc_handle_t *hperh)
 {
 	return hperh->error_code;
+}
+
+
+/**
+  * @brief  Adc offset adjust
+  * @param  refmv: ADC reference voltage, unit: mV.
+  * @retval None
+  */
+void ald_adc_offset_adjust(uint32_t refmv)
+{
+    uint32_t tmp = 0, os = 0;
+
+    if (refmv == 0) return;
+
+    *((volatile uint32_t *)(0x40080000)) = 0x55AA6996;
+    *((volatile uint32_t *)(0x40080100)) = 0x5A962814;
+    *((volatile uint32_t *)(0x40080100)) = 0xE7CB69A5;
+
+    tmp = INFO_ADC0DA;
+    os  = tmp & 0x7F;
+    os  = (uint32_t)((os * 5000) / refmv + 0.5);
+    tmp = tmp & 0xFF80;
+    tmp |= os;
+    tmp |= 0x55AA0000;
+    CFG_ADC0DA = tmp;
+
+    tmp = INFO_ADC1DA;
+    os  = tmp & 0x7F;
+    os  = (uint32_t)((os * 5000) / refmv + 0.5);
+    tmp = tmp & 0xFF80;
+    tmp |= os;
+    tmp |= 0x55AA0000;
+    CFG_ADC1DA = tmp;
+
+    *((volatile uint32_t *)(0x40080100)) = 0x123456;
+    *((volatile uint32_t *)(0x40080100)) = 0x123456;
+    *((volatile uint32_t *)(0x40080000)) = 0x123456;
 }
 
 /**

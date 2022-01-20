@@ -15,6 +15,6 @@ if GetDepend('RT_USING_POSIX_MESSAGE_QUEUE'):
 if GetDepend('RT_USING_POSIX_MESSAGE_SEMAPHORE'):
     src += ['semaphore.c']
 
-group = DefineGroup('POSIX', src, depend = [], CPPPATH = inc)
+group = DefineGroup('POSIX', src, depend = [''], CPPPATH = inc)
 
 Return('group')

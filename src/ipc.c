@@ -39,12 +39,23 @@
  * 2020-10-11     Meco Man     add value overflow-check code
  * 2021-01-03     Meco Man     implement rt_mb_urgent()
  * 2021-05-30     Meco Man     implement rt_mutex_trytake()
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to ipc.c
  */
 
 #include <rtthread.h>
 #include <rthw.h>
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_object_trytake_hook
+    #define __on_rt_object_trytake_hook(parent)     __ON_HOOK_ARGS(rt_object_trytake_hook, (parent))
+#endif
+#ifndef __on_rt_object_take_hook
+    #define __on_rt_object_take_hook(parent)        __ON_HOOK_ARGS(rt_object_take_hook, (parent))
+#endif
+#ifndef __on_rt_object_put_hook
+    #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
 extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);

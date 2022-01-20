@@ -770,4 +770,8 @@ void UART_SetLineConfig(UART_T *uart, uint32_t u32baudrate, uint32_t u32data_wid
 
 /*@}*/ /* end of group N9H30_Device_Driver */
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif

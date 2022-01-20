@@ -18,6 +18,8 @@
  * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
  * 2015-07-06     Bernard      Add rt_assert_handler routine.
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
+ * 2021-12-20     Meco Man     implement rt_strcpy()
+ * 2022-01-07     Gabriel      add __on_rt_assert_hook
  */
 
 #include <rtthread.h>
@@ -115,7 +117,7 @@ int *_rt_errno(void)
 }
 RTM_EXPORT(_rt_errno);
 
-#ifndef RT_USING_ASM_MEMSET
+#ifndef RT_KSERVICE_USING_STDLIB_MEMSET
 /**
  * This function will set the content of memory to specified value.
  *
@@ -128,7 +130,7 @@ RTM_EXPORT(_rt_errno);
  *
  * @return The address of source memory.
  */
-void *rt_memset(void *s, int c, rt_ubase_t count)
+RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *xs = (char *)s;
@@ -201,9 +203,9 @@ void *rt_memset(void *s, int c, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memset);
-#endif /* RT_USING_ASM_MEMSET */
+#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
 
-#ifndef RT_USING_ASM_MEMCPY
+#ifndef RT_KSERVICE_USING_STDLIB_MEMCPY
 /**
  * This function will copy memory content from source address to destination address.
  *
@@ -215,7 +217,7 @@ RTM_EXPORT(rt_memset);
  *
  * @return The address of destination memory
  */
-void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
@@ -287,7 +289,7 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memcpy);
-#endif /* RT_USING_ASM_MEMCPY */
+#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
 
 #ifndef RT_KSERVICE_USING_STDLIB
 
@@ -304,7 +306,7 @@ RTM_EXPORT(rt_memcpy);
  *
  * @return The address of destination memory.
  */
-void *rt_memmove(void *dest, const void *src, rt_ubase_t n)
+void *rt_memmove(void *dest, const void *src, rt_size_t n)
 {
     char *tmp = (char *)dest, *s = (char *)src;
 
@@ -340,7 +342,7 @@ RTM_EXPORT(rt_memmove);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
-rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
+rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
 {
     const unsigned char *su1, *su2;
     int res = 0;
@@ -425,7 +427,7 @@ RTM_EXPORT(rt_strcasecmp);
  *
  * @return The address where the copied content is stored.
  */
-char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
+char *rt_strncpy(char *dst, const char *src, rt_size_t n)
 {
     if (n != 0)
     {
@@ -449,6 +451,31 @@ char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
 RTM_EXPORT(rt_strncpy);
 
 /**
+ * This function will copy string.
+ *
+ * @param  dst points to the address used to store the copied content.
+ *
+ * @param  src is the string to be copied.
+ *
+ * @return The address where the copied content is stored.
+ */
+char *rt_strcpy(char *dst, const char *src)
+{
+    char *dest = dst;
+
+    while (*src != '\0')
+    {
+        *dst = *src;
+        dst++;
+        src++;
+    }
+
+    *dst = '\0';
+    return dest;
+}
+RTM_EXPORT(rt_strcpy);
+
+/**
  * This function will compare two strings with specified maximum length.
  *
  * @param  cs is the string to be compared.
@@ -462,7 +489,7 @@ RTM_EXPORT(rt_strncpy);
  *         If the result > 0, cs is greater than ct.
  *         If the result = 0, cs is equal to ct.
  */
-rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count)
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
 {
     register signed char __res = 0;
 
@@ -1546,9 +1573,9 @@ RTM_EXPORT(rt_free);
 *
 * @param max_used is a pointer to get the maximum memory used.
 */
-RT_WEAK void rt_memory_info(rt_uint32_t *total,
-                            rt_uint32_t *used,
-                            rt_uint32_t *max_used)
+RT_WEAK void rt_memory_info(rt_size_t *total,
+                            rt_size_t *used,
+                            rt_size_t *max_used)
 {
     rt_base_t level;
 
@@ -1728,6 +1755,10 @@ int __rt_ffs(int value)
 }
 #endif /* RT_USING_TINY_FFS */
 #endif /* RT_USING_CPU_FFS */
+
+#ifndef __on_rt_assert_hook
+    #define __on_rt_assert_hook(ex, func, line)         __ON_HOOK_ARGS(rt_assert_hook, (ex, func, line))
+#endif
 
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */

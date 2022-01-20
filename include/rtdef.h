@@ -37,6 +37,10 @@
  * 2021-03-19     Meco Man     add security devices
  * 2021-05-10     armink       change version number to v4.0.4
  * 2021-11-19     Meco Man     change version number to v4.1.0
+ * 2021-12-21     Meco Man     re-implement RT_UNUSED
+ * 2022-01-01     Gabriel      improve hooking method
+ * 2022-01-07     Gabriel      move some __on_rt_xxxxx_hook to dedicated c soure files
+ * 2022-01-12     Meco Man     remove RT_THREAD_BLOCK
  */
 
 #ifndef __RT_DEF_H__
@@ -114,18 +118,14 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of mailbox .entry */
 #define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of message queue .entry */
 
-#if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-#define __CLANG_ARM
-#endif
+#define RT_UNUSED(x)                   ((void)x)
 
 /* Compiler Related Definitions */
-#if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
+#if defined(__ARMCC_VERSION)           /* ARM Compiler */
     #include <stdarg.h>
     #define RT_SECTION(x)               __attribute__((section(x)))
-    #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-
     #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static __inline
     /* module compiling */
@@ -133,19 +133,16 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
         #define RTT_API                 __declspec(dllimport)
     #else
         #define RTT_API                 __declspec(dllexport)
-    #endif
-
+    #endif /* RT_USING_MODULE */
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
     #include <stdarg.h>
     #define RT_SECTION(x)               @ x
-    #define RT_UNUSED
     #define RT_USED                     __root
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
     #define RT_WEAK                     __weak
     #define rt_inline                   static inline
     #define RTT_API
-
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
     #ifdef RT_USING_NEWLIB
         #include <stdarg.h>
@@ -156,10 +153,8 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
         #define va_start(v,l)           __builtin_va_start(v,l)
         #define va_end(v)               __builtin_va_end(v)
         #define va_arg(v,l)             __builtin_va_arg(v,l)
-    #endif
-
+    #endif /* RT_USING_NEWLIB */
     #define RT_SECTION(x)               __attribute__((section(x)))
-    #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define RT_WEAK                     __attribute__((weak))
@@ -168,7 +163,6 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
     #include <stdarg.h>
     #define RT_SECTION(x)               __attribute__((section(x)))
-    #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define RT_WEAK                     __attribute__((weak))
@@ -177,7 +171,6 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #elif defined (_MSC_VER)
     #include <stdarg.h>
     #define RT_SECTION(x)
-    #define RT_UNUSED
     #define RT_USED
     #define ALIGN(n)                    __declspec(align(n))
     #define RT_WEAK
@@ -189,7 +182,6 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
      * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
      * details. */
     #define RT_SECTION(x)
-    #define RT_UNUSED
     #define RT_USED
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)
@@ -199,7 +191,6 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #elif defined (__TASKING__)
     #include <stdarg.h>
     #define RT_SECTION(x)               __attribute__((section(x)))
-    #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used, protect))
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    __attribute__((__align(n)))
@@ -449,12 +440,28 @@ struct rt_object_information
 /**
  * The hook function call macro
  */
-#ifdef RT_USING_HOOK
-#define RT_OBJECT_HOOK_CALL(func, argv) \
-    do { if ((func) != RT_NULL) func argv; } while (0)
+#ifndef RT_USING_HOOK
+    #define __ON_HOOK_ARGS(__hook, argv)
+    #define RT_OBJECT_HOOK_CALL(func, argv)
 #else
-#define RT_OBJECT_HOOK_CALL(func, argv)
+    #define RT_OBJECT_HOOK_CALL(func, argv)         __on_##func argv
+    #ifdef RT_HOOK_USING_FUNC_PTR
+        #define __ON_HOOK_ARGS(__hook, argv)        do {if ((__hook) != RT_NULL) __hook argv; } while (0)
+    #else
+        #define __ON_HOOK_ARGS(__hook, argv)
+    #endif
 #endif
+
+#ifndef __on_rt_interrupt_switch_hook
+    #define __on_rt_interrupt_switch_hook()         __ON_HOOK_ARGS(rt_interrupt_switch_hook, ())
+#endif
+#ifndef __on_rt_malloc_hook
+    #define __on_rt_malloc_hook(addr, size)         __ON_HOOK_ARGS(rt_malloc_hook, (addr, size))
+#endif
+#ifndef __on_rt_free_hook
+    #define __on_rt_free_hook(rmem)                 __ON_HOOK_ARGS(rt_free_hook, (rmem))
+#endif
+
 
 /**@}*/
 
@@ -539,7 +546,6 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_READY                 0x01                /**< Ready status */
 #define RT_THREAD_SUSPEND               0x02                /**< Suspend status */
 #define RT_THREAD_RUNNING               0x03                /**< Running status */
-#define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND   /**< Blocked status */
 #define RT_THREAD_CLOSE                 0x04                /**< Closed status */
 #define RT_THREAD_STAT_MASK             0x07
 
@@ -630,7 +636,7 @@ struct rt_thread
 
 #ifdef RT_USING_SMP
     rt_uint8_t  bind_cpu;                               /**< thread is bind to cpu */
-    rt_uint8_t  oncpu;                                  /**< process on cpu` */
+    rt_uint8_t  oncpu;                                  /**< process on cpu */
 
     rt_uint16_t scheduler_lock_nest;                    /**< scheduler lock count */
     rt_uint16_t cpus_lock_nest;                         /**< cpus lock count */
@@ -639,7 +645,6 @@ struct rt_thread
 
     /* priority */
     rt_uint8_t  current_priority;                       /**< current priority */
-    rt_uint8_t  init_priority;                          /**< initialized priority */
 #if RT_THREAD_PRIORITY_MAX > 32
     rt_uint8_t  number;
     rt_uint8_t  high_mask;
@@ -875,9 +880,9 @@ struct rt_memheap
 
     void                   *start_addr;                 /**< pool start address and size */
 
-    rt_uint32_t             pool_size;                  /**< pool size */
-    rt_uint32_t             available_size;             /**< available size */
-    rt_uint32_t             max_used_size;              /**< maximum allocated size */
+    rt_size_t               pool_size;                  /**< pool size */
+    rt_size_t               available_size;             /**< available size */
+    rt_size_t               max_used_size;              /**< maximum allocated size */
 
     struct rt_memheap_item *block_list;                 /**< used block list */
 
@@ -1106,6 +1111,8 @@ struct rt_device_blk_sectors
 #define RTGRAPHIC_CTRL_GET_BRIGHTNESS   7
 #define RTGRAPHIC_CTRL_GET_MODE         8
 #define RTGRAPHIC_CTRL_GET_STATUS       9
+#define RTGRAPHIC_CTRL_PAN_DISPLAY      10
+#define RTGRAPHIC_CTRL_WAIT_VSYNC       11
 
 /* graphic deice */
 enum

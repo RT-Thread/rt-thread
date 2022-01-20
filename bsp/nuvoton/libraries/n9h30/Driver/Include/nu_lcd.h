@@ -139,6 +139,8 @@ extern "C"
 #define VA_SCALE_INTERPOLATION  (0)     /*!< Scale mode is interpolation */
 #define VA_SCALE_DUPLICATION    (1<<15) /*!< Scale mode is duplication */
 
+#pragma anon_unions
+
 typedef enum va_hcmode_e
 {
     HC_MODE0,           /*!< 32X32X2bpp 4 color */
@@ -169,10 +171,17 @@ typedef struct
     uint32_t *pFrameBuffer;          /*!< User input, The address of OSD source image */
 } OSDFORMATEX;
 
-#define DIS_PANEL_E50A2V1       0
-#define DIS_PANEL_ILI9341_MPU80 1
-#define DIS_LSA40AT9001         2
-#define DIS_PANEL_FW070TFT      3
+enum DIS_PANEL
+{
+    DIS_PANEL_E50A2V1 = 0,
+    DIS_PANEL_ILI9341_MPU80,
+    DIS_LSA40AT9001,
+    DIS_PANEL_FW070TFT,
+    DIS_PANEL_FW043TFT,
+    DIS_PANEL_FW070TFT_WSVGA,
+    DIS_PANEL_CNT
+};
+
 typedef struct
 {
     uint32_t u32DevWidth;           /*!< Panel width */
@@ -184,11 +193,62 @@ typedef struct
     uint32_t u32MPU_Mode;           /*!< MPU mode */
     uint32_t u32DisplayColors;      /*!< Display colors */
     uint32_t u32DevType;            /*!< Type of display panel */
-    uint32_t u32Reg_CRTCSIZE;       /*!< CRTCSIZE register value */
-    uint32_t u32Reg_CRTCDEND;       /*!< CRTCDEND register value */
-    uint32_t u32Reg_CRTCHR;         /*!< CRTCHR register value */
-    uint32_t u32Reg_CRTCHSYNC;      /*!< CRTCHSYNC register value */
-    uint32_t u32Reg_CRTCVR;         /*!< CRTCVR register value */
+    union
+    {
+        uint32_t u32Reg_CRTCSIZE;   /*!< CRTCSIZE register value */
+        struct
+        {
+            uint32_t HTT: 11;       /*!< Horizontal Total Pixels */
+            uint32_t : 5;
+            uint32_t VTT: 11;       /*!< Vertical Total Scan Lines */
+            uint32_t : 5;
+        } sCRTCSIZE;
+    };
+    union
+    {
+        uint32_t u32Reg_CRTCDEND;   /*!< CRTCDEND register value */
+        struct
+        {
+            uint32_t HDEND: 11;     /*!< Horizontal Display Enable End */
+            uint32_t : 5;
+            uint32_t VDEND: 11;     /*!< Vertical Display Enable End */
+            uint32_t : 5;
+        } sCRTCDEND;
+    };
+    union
+    {
+        uint32_t u32Reg_CRTCHR;     /*!< CRTCHR register value */
+        struct
+        {
+            uint32_t HRS: 11;       /*!< Internal Horizontal Retrace Start Timing */
+            uint32_t : 5;
+            uint32_t HRE: 11;       /*!< Internal Horizontal Retrace End Low */
+            uint32_t : 5;
+        } sCRTCHR;
+    };
+    union
+    {
+        uint32_t u32Reg_CRTCHSYNC;  /*!< CRTCHSYNC register value */
+        struct
+        {
+            uint32_t HSYNC_S: 11;   /*!< Horizontal Sync Start Timing */
+            uint32_t : 5;
+            uint32_t HSYNC_E: 11;   /*!< Horizontal Sync End Timing */
+            uint32_t : 3;
+            uint32_t HSYNC_SHIFT: 2; /*!< Hsync Signal Adjustment For Multi-Cycles Per Pixel Mode Of Sync-Based Unipac-LCD */
+        } sCRTCHSYNC;
+    };
+    union
+    {
+        uint32_t u32Reg_CRTCVR;     /*!< CRTCVR register value */
+        struct
+        {
+            uint32_t VRS: 11;       /*!< Vertical Internal Retrace Start Timing */
+            uint32_t : 5;
+            uint32_t VRE: 11;       /*!< Vertical Internal Retrace End Low */
+            uint32_t : 5;
+        } sCRTCVR;
+    };
 } VPOST_T;
 
 #define LCM_ERR_ID      0xFFFF0400  /*!< LCM library ID */
@@ -231,6 +291,9 @@ void vpostMPUWriteAddr(uint16_t uscmd);
 void vpostMPUWriteData(uint16_t usdata);
 uint32_t vpostMPUReadData(void);
 VPOST_T *vpostLCMGetInstance(uint32_t u32DisplayPanelID);
+void vpostSetFrameBuffer(uint8_t *pu8BufPtr);
+void vpostSetOSDBuffer(uint8_t *pu8BufPtr);
+uint8_t *vpostGetMultiOSDBuffer(uint32_t u32Cnt);
 
 /*@}*/ /* end of group N9H30_LCD_EXPORTED_FUNCTIONS */
 
