@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Date           Author       Notes
  * 2018-10-06     ZhaoXiaowei    the first version
  */
- 
+
 .text
 
 .globl system_vectors
@@ -20,7 +20,7 @@ system_vectors:
     .org    VBAR
     // Exception from CurrentEL (EL1) with SP_EL0 (SPSEL=0)
     .org (VBAR + 0x00 + 0)
-    B vector_error      // 			Synchronous
+    B vector_error      //          Synchronous
     .org (VBAR + 0x80 + 0)
     B vector_irq        //          IRQ/vIRQ
     .org (VBAR + 0x100 + 0)
@@ -30,9 +30,9 @@ system_vectors:
 
     // Exception from CurrentEL (EL1) with SP_ELn
     .org (VBAR + 0x200 + 0)
-    B vector_error      // 			Synchronous
+    B vector_error      //          Synchronous
     .org (VBAR + 0x280 + 0)
-    B vector_irq    	// 			IRQ/vIRQ
+    B vector_irq        //          IRQ/vIRQ
     .org (VBAR + 0x300 + 0)
     B vector_fiq        //          FIQ/vFIQ
     .org (VBAR + 0x380 + 0)
