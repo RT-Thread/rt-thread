@@ -212,10 +212,6 @@ static rt_err_t drv_pwm_set(struct n32_pwm *pwm_dev, struct rt_pwm_configuration
     rt_uint64_t psc;
     rt_uint32_t pulse;
 
-    /* Init timer pin and enable clock */
-    void n32_msp_tim_init(void *Instance);
-    n32_msp_tim_init(TIMx);
-
     RCC_ClocksType RCC_Clock;
     RCC_GetClocksFreqValue(&RCC_Clock);
     rt_uint64_t input_clock;
@@ -332,6 +328,9 @@ static int rt_hw_pwm_init(void)
         if (rt_device_pwm_register(&n32_pwm_obj[i].pwm_device,
                                    n32_pwm_obj[i].name, &drv_ops, &(n32_pwm_obj[i])) == RT_EOK)
         {
+            /* Init timer pin and enable clock */
+            void n32_msp_tim_init(void *Instance);
+            n32_msp_tim_init(n32_pwm_obj[i].tim_handle);
         }
         else
         {
