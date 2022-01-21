@@ -273,6 +273,7 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
   * @}
   */
 #endif
+
 /**
   * @}
   */
@@ -352,10 +353,12 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 /**
   * @brief
   */
-#define MMC_HIGH_VOLTAGE_RANGE         0x80FF8000U  /*!< VALUE OF ARGUMENT            */
-#define MMC_DUAL_VOLTAGE_RANGE         0x80FF8080U  /*!< VALUE OF ARGUMENT            */
-#define eMMC_HIGH_VOLTAGE_RANGE        0xC0FF8000U  /*!< for eMMC > 2Gb sector mode   */
-#define eMMC_DUAL_VOLTAGE_RANGE        0xC0FF8080U  /*!< for eMMC > 2Gb sector mode   */
+#define MMC_HIGH_VOLTAGE_RANGE         0x80FF8000U  /*!< High voltage in byte mode    */
+#define MMC_DUAL_VOLTAGE_RANGE         0x80FF8080U  /*!< Dual voltage in byte mode    */
+#define MMC_LOW_VOLTAGE_RANGE          0x80000080U  /*!< Low voltage in byte mode     */
+#define eMMC_HIGH_VOLTAGE_RANGE        0xC0FF8000U  /*!< High voltage in sector mode  */
+#define eMMC_DUAL_VOLTAGE_RANGE        0xC0FF8080U  /*!< Dual voltage in sector mode  */
+#define eMMC_LOW_VOLTAGE_RANGE         0xC0000080U  /*!< Low voltage in sector mode   */
 #define MMC_INVALID_VOLTAGE_RANGE      0x0001FF01U
 /**
   * @}
@@ -370,6 +373,45 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 /**
   * @}
   */
+
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+/** @defgroup MMC_Exported_Constansts_Group5 MMC Erase Type
+  * @{
+  */
+#define HAL_MMC_ERASE             0x00000000U  /*!< Erase the erase groups identified by CMD35 & 36                                   */
+#define HAL_MMC_TRIM              0x00000001U  /*!< Erase the write blocks identified by CMD35 & 36                                   */
+#define HAL_MMC_DISCARD           0x00000003U  /*!< Discard the write blocks identified by CMD35 & 36                                 */
+#define HAL_MMC_SECURE_ERASE      0x80000000U  /*!< Perform a secure purge according SRT on the erase groups identified by CMD35 & 36 */
+#define HAL_MMC_SECURE_TRIM_STEP1 0x80000001U  /*!< Mark the write blocks identified by CMD35 & 36 for secure erase                   */
+#define HAL_MMC_SECURE_TRIM_STEP2 0x80008000U  /*!< Perform a secure purge according SRT on the write blocks previously identified    */
+
+#define IS_MMC_ERASE_TYPE(TYPE) (((TYPE) == HAL_MMC_ERASE)             || \
+                                 ((TYPE) == HAL_MMC_TRIM)              || \
+                                 ((TYPE) == HAL_MMC_DISCARD)           || \
+                                 ((TYPE) == HAL_MMC_SECURE_ERASE)      || \
+                                 ((TYPE) == HAL_MMC_SECURE_TRIM_STEP1) || \
+                                 ((TYPE) == HAL_MMC_SECURE_TRIM_STEP2))
+/**
+  * @}
+  */
+
+/** @defgroup MMC_Exported_Constansts_Group6 MMC Secure Removal Type
+  * @{
+  */
+#define HAL_MMC_SRT_ERASE                   0x00000001U  /*!< Information removed by an erase                                                                */
+#define HAL_MMC_SRT_WRITE_CHAR_ERASE        0x00000002U  /*!< Information removed by an overwriting with a character followed by an erase                    */
+#define HAL_MMC_SRT_WRITE_CHAR_COMPL_RANDOM 0x00000004U  /*!< Information removed by an overwriting with a character, its complement then a random character */
+#define HAL_MMC_SRT_VENDOR_DEFINED          0x00000008U  /*!< Information removed using a vendor defined                                                     */
+
+
+#define IS_MMC_SRT_TYPE(TYPE) (((TYPE) == HAL_MMC_SRT_ERASE)                   || \
+                               ((TYPE) == HAL_MMC_SRT_WRITE_CHAR_ERASE)        || \
+                               ((TYPE) == HAL_MMC_SRT_WRITE_CHAR_COMPL_RANDOM) || \
+                               ((TYPE) == HAL_MMC_SRT_VENDOR_DEFINED))
+/**
+  * @}
+  */
+#endif /* defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) */
 
 /**
   * @}
@@ -717,6 +759,7 @@ HAL_MMC_CardStateTypeDef HAL_MMC_GetCardState(MMC_HandleTypeDef *hmmc);
 HAL_StatusTypeDef HAL_MMC_GetCardCID(MMC_HandleTypeDef *hmmc, HAL_MMC_CardCIDTypeDef *pCID);
 HAL_StatusTypeDef HAL_MMC_GetCardCSD(MMC_HandleTypeDef *hmmc, HAL_MMC_CardCSDTypeDef *pCSD);
 HAL_StatusTypeDef HAL_MMC_GetCardInfo(MMC_HandleTypeDef *hmmc, HAL_MMC_CardInfoTypeDef *pCardInfo);
+HAL_StatusTypeDef HAL_MMC_GetCardExtCSD(MMC_HandleTypeDef *hmmc, uint32_t *pExtCSD, uint32_t Timeout);
 /**
   * @}
   */
@@ -730,7 +773,7 @@ uint32_t HAL_MMC_GetError(MMC_HandleTypeDef *hmmc);
   * @}
   */
 
-/** @defgroup MMC_Exported_Functions_Group6 Perioheral Abort management
+/** @defgroup MMC_Exported_Functions_Group6 Peripheral Abort management
   * @{
   */
 HAL_StatusTypeDef HAL_MMC_Abort(MMC_HandleTypeDef *hmmc);
@@ -738,6 +781,18 @@ HAL_StatusTypeDef HAL_MMC_Abort_IT(MMC_HandleTypeDef *hmmc);
 /**
   * @}
   */
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+/** @defgroup MMC_Exported_Functions_Group7 Peripheral Erase management
+  * @{
+  */
+HAL_StatusTypeDef HAL_MMC_EraseSequence(MMC_HandleTypeDef *hmmc, uint32_t EraseType, uint32_t BlockStartAdd, uint32_t BlockEndAdd);
+HAL_StatusTypeDef HAL_MMC_Sanitize(MMC_HandleTypeDef *hmmc);
+HAL_StatusTypeDef HAL_MMC_ConfigSecRemovalType(MMC_HandleTypeDef *hmmc, uint32_t SRTMode);
+HAL_StatusTypeDef HAL_MMC_GetSupportedSecRemovalType(MMC_HandleTypeDef *hmmc, uint32_t *SupportedSRT);
+/**
+  * @}
+  */
+#endif /* defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) */
 
 /**
   * @}

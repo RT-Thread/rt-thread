@@ -17,8 +17,10 @@ int main(void)
 {
     rt_thread_t thread;
 
-#ifdef  RT_USING_FINSH
+#ifdef RT_USING_FINSH
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
 #endif
 
     /* Create led thread */

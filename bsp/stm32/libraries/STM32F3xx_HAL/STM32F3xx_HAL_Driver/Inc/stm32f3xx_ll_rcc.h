@@ -778,7 +778,7 @@ typedef struct
 /** @defgroup RCC_LL_EC_PLLSOURCE PLL SOURCE
   * @{
   */
-#define LL_RCC_PLLSOURCE_NONE              0x00000000U                                   /*!< No clock selected as main PLL entry clock source */
+#define LL_RCC_PLLSOURCE_NONE              0x00000000U                                   /*!< No clock selected as main PLL entry clock source */  
 #define LL_RCC_PLLSOURCE_HSE               RCC_CFGR_PLLSRC_HSE_PREDIV                    /*!< HSE/PREDIV clock selected as PLL entry clock source */
 #if defined(RCC_PLLSRC_PREDIV1_SUPPORT)
 #define LL_RCC_PLLSOURCE_HSI               RCC_CFGR_PLLSRC_HSI_PREDIV                    /*!< HSI/PREDIV clock selected as PLL entry clock source */

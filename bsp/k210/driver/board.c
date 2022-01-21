@@ -19,6 +19,7 @@
 #include "encoding.h"
 #include "fpioa.h"
 #include "dmac.h"
+#include "dmalock.h"
 
 void init_bss(void)
 {
@@ -80,10 +81,13 @@ void rt_hw_board_init(void)
 {
     sysctl_pll_set_freq(SYSCTL_PLL0, 800000000UL);
     sysctl_pll_set_freq(SYSCTL_PLL1, 400000000UL);
+    sysctl_pll_set_freq(SYSCTL_PLL2, 45158400UL);
+    sysctl_clock_set_threshold(SYSCTL_THRESHOLD_APB1, 2);
     /* Init FPIOA */
     fpioa_init();
     /* Dmac init */
     dmac_init();
+    dmalock_init();
 
     /* initalize interrupt */
     rt_hw_interrupt_init();
@@ -96,10 +100,10 @@ void rt_hw_board_init(void)
     rt_hw_clint_ipi_enable();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif /* RT_USING_CONSOLE */
+#endif
 
 #ifdef RT_USING_HEAP
     rt_kprintf("heap: [0x%08x - 0x%08x]\n", (rt_ubase_t) RT_HW_HEAP_BEGIN, (rt_ubase_t) RT_HW_HEAP_END);

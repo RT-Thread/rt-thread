@@ -751,9 +751,9 @@ long list_timer(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s  periodic   timeout       flag\n", maxlen, item_title);
+    rt_kprintf("%-*.s  periodic   timeout    activated     mode\n", maxlen, item_title);
     object_split(maxlen);
-    rt_kprintf(" ---------- ---------- -----------\n");
+    rt_kprintf(" ---------- ---------- ----------- ---------\n");
     do
     {
         next = list_get_next(next, &find_arg);
@@ -781,9 +781,13 @@ long list_timer(void)
                            timer->init_tick,
                            timer->timeout_tick);
                 if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
-                    rt_kprintf("activated\n");
+                    rt_kprintf("activated   ");
                 else
-                    rt_kprintf("deactivated\n");
+                    rt_kprintf("deactivated ");
+                if (timer->parent.flag & RT_TIMER_FLAG_PERIODIC)
+                    rt_kprintf("periodic\n");
+                else
+                    rt_kprintf("one shot\n");
 
             }
         }

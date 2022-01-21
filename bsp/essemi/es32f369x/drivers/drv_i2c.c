@@ -15,9 +15,9 @@
  * limitations under the License.
  *
  * Change Logs:
- * Date           Author        Notes            
- * 2019-11-01     wangyq        update libraries   
- * 2020-01-14     wangyq        the first version  
+ * Date           Author        Notes
+ * 2019-11-01     wangyq        update libraries
+ * 2020-01-14     wangyq        the first version
  * 2021-04-20     liuhy         the second version
  */
 
@@ -49,26 +49,26 @@ static void _i2c_init(void)
     gpio_instruct.mode = GPIO_MODE_OUTPUT;
     gpio_instruct.odos = GPIO_OPEN_DRAIN;
     gpio_instruct.pupd = GPIO_PUSH_UP;
-    gpio_instruct.podrv = GPIO_OUT_DRIVE_1;
-    gpio_instruct.nodrv = GPIO_OUT_DRIVE_0_1;
+    gpio_instruct.podrv = GPIO_OUT_DRIVE_6;
+    gpio_instruct.nodrv = GPIO_OUT_DRIVE_6;
     gpio_instruct.flt  = GPIO_FILTER_DISABLE;
     gpio_instruct.type = GPIO_TYPE_CMOS;
-    
 
-#ifdef BSP_USING_I2C0             
-    
-#if  defined(ES_I2C0_SCL_GPIO_FUNC)&&defined(ES_I2C0_SCL_GPIO_PORT)&&defined(ES_I2C0_SCL_GPIO_PIN)     
+
+#ifdef BSP_USING_I2C0
+
+#if  defined(ES_I2C0_SCL_GPIO_FUNC)&&defined(ES_I2C0_SCL_GPIO_PORT)&&defined(ES_I2C0_SCL_GPIO_PIN)
     gpio_instruct.func = ES_I2C0_SCL_GPIO_FUNC;
     ald_gpio_init(ES_I2C0_SCL_GPIO_PORT, ES_I2C0_SCL_GPIO_PIN, &gpio_instruct);
-#endif                            
-             
+#endif
+
 #if  defined(ES_I2C0_SDA_GPIO_FUNC)&&defined(ES_I2C0_SDA_GPIO_PORT)&&defined(ES_I2C0_SDA_GPIO_PIN)
     gpio_instruct.func = ES_I2C0_SDA_GPIO_FUNC;
-    ald_gpio_init(ES_I2C0_SDA_GPIO_PORT, ES_I2C0_SDA_GPIO_PIN, &gpio_instruct); 
-#endif                            
+    ald_gpio_init(ES_I2C0_SDA_GPIO_PORT, ES_I2C0_SDA_GPIO_PIN, &gpio_instruct);
+#endif
 
     /* Initialize I2C Function */
-    _h_i2c0.perh = I2C0;      
+    _h_i2c0.perh = I2C0;
     _h_i2c0.init.module       = I2C_MODULE_MASTER;
     _h_i2c0.init.clk_speed    = ES_I2C0_CLK_SPEED;
     _h_i2c0.init.own_addr1    = ES_I2C0_OWN_ADDR1;
@@ -78,24 +78,24 @@ static void _i2c_init(void)
 
     ald_i2c_reset(&_h_i2c0);
     ald_i2c_init(&_h_i2c0);
-               
+
 #endif
 
-#ifdef BSP_USING_I2C1  
+#ifdef BSP_USING_I2C1
 
-#if  defined(ES_I2C1_SDA_GPIO_FUNC)&&defined(ES_I2C1_SDA_GPIO_PORT)&&defined(ES_I2C1_SDA_GPIO_PIN)    
+#if  defined(ES_I2C1_SCL_GPIO_FUNC)&&defined(ES_I2C1_SCL_GPIO_PORT)&&defined(ES_I2C1_SCL_GPIO_PIN)
+    gpio_instruct.func = ES_I2C1_SCL_GPIO_FUNC;
+    ald_gpio_init(ES_I2C1_SCL_GPIO_PORT, ES_I2C1_SCL_GPIO_PIN, &gpio_instruct);
+#endif
+
+#if  defined(ES_I2C1_SDA_GPIO_FUNC)&&defined(ES_I2C1_SDA_GPIO_PORT)&&defined(ES_I2C1_SDA_GPIO_PIN)
     gpio_instruct.func = ES_I2C1_SDA_GPIO_FUNC;
     ald_gpio_init(ES_I2C1_SDA_GPIO_PORT, ES_I2C1_SDA_GPIO_PIN, &gpio_instruct);
-#endif          
-                                                               
-#if  defined(ES_I2C1_SDA_GPIO_FUNC)&&defined(ES_I2C1_SDA_GPIO_PORT)&&defined(ES_I2C1_SDA_GPIO_PIN)   
-    gpio_instruct.func = ES_I2C1_SDA_GPIO_FUNC;
-    ald_gpio_init(ES_I2C1_SDA_GPIO_PORT, ES_I2C1_SDA_GPIO_PIN, &gpio_instruct);
-#endif        
+#endif
 
     /* Initialize i2c function */
-    _h_i2c1.perh = I2C1;               
-    _h_i2c1.init.module       = I2C_MODULE_MASTER;  
+    _h_i2c1.perh = I2C1;
+    _h_i2c1.init.module       = I2C_MODULE_MASTER;
     _h_i2c1.init.clk_speed    = ES_I2C1_CLK_SPEED;
     _h_i2c1.init.own_addr1    = ES_I2C1_OWN_ADDR1;
     _h_i2c1.init.addr_mode    = ES_I2C1_ADDR_MODE;
@@ -104,7 +104,7 @@ static void _i2c_init(void)
 
     ald_i2c_reset(&_h_i2c1);
     ald_i2c_init(&_h_i2c1);
-     
+
 #endif
 }
 

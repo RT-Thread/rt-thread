@@ -268,10 +268,13 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     }
 #endif /* ULOG_USING_COLOR */
 
+    log_buf[log_len] = '\0';
+
 #ifdef ULOG_OUTPUT_TIME
     /* add time info */
     {
 #ifdef ULOG_TIME_USING_TIMESTAMP
+        extern struct tm* localtime_r(const time_t* t, struct tm* r);
         static struct timeval now;
         static struct tm *tm, tm_tmp;
         static rt_bool_t check_usec_support = RT_FALSE, usec_is_support = RT_FALSE;
@@ -288,7 +291,7 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
             {
                 long old_usec = now.tv_usec;
                 /* delay some time for wait microseconds changed */
-                rt_thread_delay(2);
+                rt_thread_mdelay(10);
                 gettimeofday(&now, NULL);
                 check_usec_support = RT_TRUE;
                 /* the microseconds is not equal between two gettimeofday calls */
@@ -437,6 +440,11 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
 #if !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG)
         backend->output(backend, level, tag, is_raw, log, size);
 #else
+        if (backend->filter && backend->filter(backend, level, tag, is_raw, log, size) == RT_FALSE)
+        {
+            /* backend's filter is not match, so skip output */
+            continue;
+        }
         if (backend->support_color || is_raw)
         {
             backend->output(backend, level, tag, is_raw, log, size);
@@ -445,6 +453,7 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
         {
             /* recalculate the log start address and log size when backend not supported color */
             rt_size_t color_info_len = 0, output_size = size;
+            const char *output_log = log;
 
             if (color_output_info[level] != RT_NULL)
                 color_info_len = rt_strlen(color_output_info[level]);
@@ -453,10 +462,10 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
             {
                 rt_size_t color_hdr_len = rt_strlen(CSI_START) + color_info_len;
 
-                log += color_hdr_len;
+                output_log += color_hdr_len;
                 output_size -= (color_hdr_len + (sizeof(CSI_END) - 1));
             }
-            backend->output(backend, level, tag, is_raw, log, output_size);
+            backend->output(backend, level, tag, is_raw, output_log, output_size);
         }
 #endif /* !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG) */
     }
@@ -1250,7 +1259,7 @@ static void ulog_filter(uint8_t argc, char **argv)
     }
 }
 MSH_CMD_EXPORT(ulog_filter, Show ulog filter settings);
-#endif defined(RT_USING_FINSH)
+#endif /* RT_USING_FINSH */
 #endif /* ULOG_USING_FILTER */
 
 rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color)
@@ -1295,6 +1304,41 @@ rt_err_t ulog_backend_unregister(ulog_backend_t backend)
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
+}
+
+rt_err_t ulog_backend_set_filter(ulog_backend_t backend, ulog_backend_filter_t filter)
+{
+    rt_base_t level;
+    RT_ASSERT(backend);
+
+    level = rt_hw_interrupt_disable();
+    backend->filter = filter;
+    rt_hw_interrupt_enable(level);
+
+    return RT_EOK;
+}
+
+ulog_backend_t ulog_backend_find(const char *name)
+{
+    rt_base_t level;
+    rt_slist_t *node;
+    ulog_backend_t backend;
+
+    RT_ASSERT(ulog.init_ok);
+
+    level = rt_hw_interrupt_disable();
+    for (node = rt_slist_first(&ulog.backend_list); node; node = rt_slist_next(node))
+    {
+        backend = rt_slist_entry(node, struct ulog_backend, list);
+        if (rt_strncmp(backend->name, name, RT_NAME_MAX) == 0)
+        {
+            rt_hw_interrupt_enable(level);
+            return backend;
+        }
+    }
+
+    rt_hw_interrupt_enable(level);
+    return RT_NULL;
 }
 
 #ifdef ULOG_USING_ASYNC_OUTPUT

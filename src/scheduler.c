@@ -26,8 +26,8 @@
  *                             add _scheduler_get_highest_priority_thread to find highest priority task
  *                             rt_schedule_insert_thread won't insert current task to ready queue
  *                             in smp version, rt_hw_context_switch_interrupt maybe switch to
- *                               new task directly
- *
+ *                             new task directly
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to scheduler.c
  */
 
 #include <rtthread.h>
@@ -47,7 +47,14 @@ struct rt_thread *rt_current_thread = RT_NULL;
 rt_uint8_t rt_current_priority;
 #endif /* RT_USING_SMP */
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_scheduler_hook
+    #define __on_rt_scheduler_hook(from, to)        __ON_HOOK_ARGS(rt_scheduler_hook, (from, to))
+#endif
+#ifndef __on_rt_scheduler_switch_hook
+    #define __on_rt_scheduler_switch_hook(tid)      __ON_HOOK_ARGS(rt_scheduler_switch_hook, (tid))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
 static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
 

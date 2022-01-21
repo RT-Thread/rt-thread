@@ -158,7 +158,7 @@ typedef struct
 #define LL_COMP_WINDOWOUTPUT_COMP2                   (COMP_CSR_WINOUT | LL_COMP_WINDOWMODE_COMP_EVEN_REGOFFSET_MASK) /*!< Window output synthetized on COMP2 output: COMP2 output is no more indicating its own state, but global window mode state (logical high means monitored signal is within comparators window). */
 #if defined(COMP3)
 #define LL_COMP_WINDOWOUTPUT_COMP3                   (COMP_CSR_WINOUT | LL_COMP_WINDOWMODE_COMP_ODD_REGOFFSET_MASK)  /*!< Window output synthetized on COMP3 output: COMP3 output is no more indicating its own state, but global window mode state (logical high means monitored signal is within comparators window). Available only on devices featuring COMP3 instance. */
-#endif
+#endif /* COMP3 */
 #define LL_COMP_WINDOWOUTPUT_BOTH                    (COMP_CSR_WINOUT | LL_COMP_WINDOWMODE_COMP_EVEN_REGOFFSET_MASK | LL_COMP_WINDOWOUTPUT_BOTH_SETTING_MASK)      /*!< Window output synthetized on both comparators output of pair of comparator selected (COMP1 and COMP2, or COMP2 and COMP3 for devices featuring COMP3 instance): both comparators outputs are no more indicating their own state, but global window mode state (logical high means monitored signal is within comparators window). This is a specific configuration (technically possible but not relevant from application point of view: 2 comparators output used for the same signal level), standard configuration for window mode is one of the settings above. */
 /**
   * @}
@@ -328,7 +328,7 @@ typedef struct
 #else
 #define __LL_COMP_COMMON_INSTANCE(__COMPx__)                                   \
   (COMP12_COMMON)
-#endif
+#endif /* COMP3 */
 
 /**
   * @}
@@ -379,7 +379,7 @@ __STATIC_INLINE void LL_COMP_SetCommonWindowMode(COMP_Common_TypeDef *COMPxy_COM
       window_mode_tmp = LL_COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON;
     }
   }
-#endif
+#endif /* COMP3 */
 
   __IO uint32_t *preg = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (window_mode_tmp & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK));
 
@@ -434,7 +434,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetCommonWindowMode(COMP_Common_TypeDef *COMPxy
 #else
    const uint32_t window_mode_comp_odd = (uint32_t)READ_BIT(COMPxy_COMMON->CSR_ODD, COMP_CSR_WINMODE);
    const uint32_t window_mode_comp_even = (uint32_t)READ_BIT(COMPxy_COMMON->CSR_EVEN, COMP_CSR_WINMODE);
-#endif
+#endif /* COMP3 */
 
   return (uint32_t)(window_mode_comp_odd
                     | window_mode_comp_even
@@ -481,7 +481,7 @@ __STATIC_INLINE void LL_COMP_SetCommonWindowOutput(COMP_Common_TypeDef *COMPxy_C
       /* No modification of other parameters */
     }
   }
-#endif
+#endif /* COMP3 */
 
   __IO uint32_t *preg = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (window_output_tmp & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK));
 
@@ -538,7 +538,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetCommonWindowOutput(COMP_Common_TypeDef *COMP
 #else
   const uint32_t window_output_comp_odd = (uint32_t)READ_BIT(COMPxy_COMMON->CSR_ODD, COMP_CSR_WINOUT);
   const uint32_t window_output_comp_even = (uint32_t)READ_BIT(COMPxy_COMMON->CSR_EVEN, COMP_CSR_WINOUT);
-#endif
+#endif /* COMP3 */
 
   /* Construct value corresponding to LL_COMP_WINDOWOUTPUT_xxx */
   return (uint32_t)(window_output_comp_odd

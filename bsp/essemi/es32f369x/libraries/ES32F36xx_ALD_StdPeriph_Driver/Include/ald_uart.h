@@ -214,16 +214,6 @@ typedef struct {
 } uart_rs485_config_t;
 
 /**
-  * @brief Smart_card clock division
-  */
-typedef enum {
-	SCARD_CLOCK_DIV1 = 0x0U,	/**< No prescaler is used */
-	SCARD_CLOCK_DIV2 = 0x1U,	/** Clock is divided by 2 */
-	SCARD_CLOCK_DIV4 = 0x2U,	/** Clock is divided by 4 */
-	SCARD_CLOCK_DIV6 = 0x3U,	/** Clock is divided by 6 */
-} scard_clk_div_t;
-
-/**
   * @brief Smart_card Rx/Tx handle retry time
   */
 typedef enum {
@@ -244,7 +234,7 @@ typedef struct {
 	uint8_t block_len;       /**< Specifies the data block length.*/
 	uint8_t pt;	         /**< Specifies the protect time*/
 	scard_retry_t retry;	 /**< Specifies retry time.*/
-	scard_clk_div_t clk_div; /**< Specifies the clock division.*/
+	uint8_t clk_div;         /**< Specifies the clock division.*/
 	type_func_t clk_out;     /**< Specifies the clock out */
 } uart_scard_config_t;
 
@@ -458,10 +448,7 @@ typedef enum {
                                  ((x) == UART_IF_TFTH)    || \
                                  ((x) == UART_IF_TFEMPTY) || \
                                  ((x) == UART_IF_TFOVER))
-#define IS_UART_SCARD_CLK(x) (((x) == SCARD_CLOCK_DIV1) || \
-                              ((x) == SCARD_CLOCK_DIV2) || \
-                              ((x) == SCARD_CLOCK_DIV4) || \
-                              ((x) == SCARD_CLOCK_DIV6))
+#define IS_UART_SCARD_CLK(x) (((x) <= 0x1F))
 #define IS_UART_BAUDRATE(x)	(((x) > 0) && ((x) < 0x44AA21))
 #define IS_UART_DATA(x)		((x) <= 0x1FF)
 

@@ -133,7 +133,7 @@
       The compilation define  USE_HAL_QSPI_REGISTER_CALLBACKS when set to 1
       allows the user to configure dynamically the driver callbacks.
 
-      Use Functions @ref HAL_QSPI_RegisterCallback() to register a user callback,
+      Use Functions HAL_QSPI_RegisterCallback() to register a user callback,
       it allows to register following callbacks:
         (+) ErrorCallback : callback when error occurs.
         (+) AbortCpltCallback : callback when abort is completed.
@@ -150,7 +150,7 @@
       This function takes as parameters the HAL peripheral handle, the Callback ID
       and a pointer to the user callback function.
 
-      Use function @ref HAL_QSPI_UnRegisterCallback() to reset a callback to the default
+      Use function HAL_QSPI_UnRegisterCallback() to reset a callback to the default
       weak (surcharged) function. It allows to reset following callbacks:
         (+) ErrorCallback : callback when error occurs.
         (+) AbortCpltCallback : callback when abort is completed.
@@ -166,12 +166,12 @@
         (+) MspDeInitCallback  : QSPI MspDeInit.
       This function) takes as parameters the HAL peripheral handle and the Callback ID.
 
-      By default, after the @ref HAL_QSPI_Init and if the state is HAL_QSPI_STATE_RESET
+      By default, after the HAL_QSPI_Init and if the state is HAL_QSPI_STATE_RESET
       all callbacks are reset to the corresponding legacy weak (surcharged) functions.
       Exception done for MspInit and MspDeInit callbacks that are respectively
-      reset to the legacy weak (surcharged) functions in the @ref HAL_QSPI_Init
-      and @ref  HAL_QSPI_DeInit only when these callbacks are null (not registered beforehand).
-      If not, MspInit or MspDeInit are not null, the @ref HAL_QSPI_Init and @ref HAL_QSPI_DeInit
+      reset to the legacy weak (surcharged) functions in the HAL_QSPI_Init
+      and  HAL_QSPI_DeInit only when these callbacks are null (not registered beforehand).
+      If not, MspInit or MspDeInit are not null, the HAL_QSPI_Init and HAL_QSPI_DeInit
       keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
 
       Callbacks can be registered/unregistered in READY state only.
@@ -179,8 +179,8 @@
       in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
       during the Init/DeInit.
       In that case first register the MspInit/MspDeInit user callbacks
-      using @ref HAL_QSPI_RegisterCallback before calling @ref HAL_QSPI_DeInit
-      or @ref HAL_QSPI_Init function.
+      using HAL_QSPI_RegisterCallback before calling HAL_QSPI_DeInit
+      or HAL_QSPI_Init function.
 
       When The compilation define USE_HAL_QSPI_REGISTER_CALLBACKS is set to 0 or
       not defined, the callback registering feature is not available
@@ -258,6 +258,7 @@ static void QSPI_DMATxHalfCplt(DMA_HandleTypeDef *hdma);
 static void QSPI_DMAError(DMA_HandleTypeDef *hdma);
 static void QSPI_DMAAbortCplt(DMA_HandleTypeDef *hdma);
 static HAL_StatusTypeDef QSPI_WaitFlagStateUntilTimeout(QSPI_HandleTypeDef *hqspi, uint32_t Flag, FlagStatus State, uint32_t Tickstart, uint32_t Timeout);
+static HAL_StatusTypeDef QSPI_WaitFlagStateUntilTimeout_CPUCycle(QSPI_HandleTypeDef *hqspi, uint32_t Flag, FlagStatus State, uint32_t Timeout);
 static void QSPI_Config(QSPI_HandleTypeDef *hqspi, QSPI_CommandTypeDef *cmd, uint32_t FunctionalMode);
 
 /* Exported functions --------------------------------------------------------*/
@@ -726,7 +727,7 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
 
         /* Change state of QSPI */
         hqspi->State = HAL_QSPI_STATE_READY;
-        
+
         /* Error callback */
 #if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
         hqspi->ErrorCallback(hqspi);
@@ -908,7 +909,7 @@ HAL_StatusTypeDef HAL_QSPI_Command_IT(QSPI_HandleTypeDef *hqspi, QSPI_CommandTyp
     hqspi->State = HAL_QSPI_STATE_BUSY;
 
     /* Wait till BUSY flag reset */
-    status = QSPI_WaitFlagStateUntilTimeout(hqspi, QSPI_FLAG_BUSY, RESET, tickstart, hqspi->Timeout);
+    status = QSPI_WaitFlagStateUntilTimeout_CPUCycle(hqspi, QSPI_FLAG_BUSY, RESET, hqspi->Timeout);	
 
     if (status == HAL_OK)
     {
@@ -964,6 +965,7 @@ HAL_StatusTypeDef HAL_QSPI_Command_IT(QSPI_HandleTypeDef *hqspi, QSPI_CommandTyp
   * @param pData : pointer to data buffer
   * @param Timeout : Timeout duration
   * @note   This function is used only in Indirect Write Mode
+  
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_QSPI_Transmit(QSPI_HandleTypeDef *hqspi, uint8_t *pData, uint32_t Timeout)
@@ -1384,10 +1386,10 @@ HAL_StatusTypeDef HAL_QSPI_Transmit_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pDat
         {
           /* Process unlocked */
           __HAL_UNLOCK(hqspi);
-          
+
           /* Enable the QSPI transfer error Interrupt */
           __HAL_QSPI_ENABLE_IT(hqspi, QSPI_IT_TE);
-          
+
           /* Enable the DMA transfer by setting the DMAEN bit in the QSPI CR register */
           SET_BIT(hqspi->Instance->CR, QUADSPI_CR_DMAEN);
         }
@@ -1542,15 +1544,46 @@ HAL_StatusTypeDef HAL_QSPI_Receive_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pData
         /* 4 Extra words (32-bits) are needed for read operation to guarantee
         the last data is transferred from DMA FIFO to RAM memory */
         WRITE_REG(hqspi->Instance->DLR, (data_size - 1U + 16U));
+
+        /* Update direction mode bit */
+        MODIFY_REG(hqspi->hdma->Instance->CR, DMA_SxCR_DIR, hqspi->hdma->Init.Direction);
+
+        /* Configure QSPI: CCR register with functional as indirect read */
+        MODIFY_REG(hqspi->Instance->CCR, QUADSPI_CCR_FMODE, QSPI_FUNCTIONAL_MODE_INDIRECT_READ);
+
+        /* Start the transfer by re-writing the address in AR register */
+        WRITE_REG(hqspi->Instance->AR, addr_reg);
+
+        /* Enable the DMA Channel */
+        if(HAL_DMA_Start_IT(hqspi->hdma, (uint32_t)&hqspi->Instance->DR, (uint32_t)pData, hqspi->RxXferSize) == HAL_OK)
+        {
+          /* Enable the DMA transfer by setting the DMAEN bit in the QSPI CR register */
+          SET_BIT(hqspi->Instance->CR, QUADSPI_CR_DMAEN);
+
+          /* Process unlocked */
+          __HAL_UNLOCK(hqspi);
+
+          /* Enable the QSPI transfer error Interrupt */
+          __HAL_QSPI_ENABLE_IT(hqspi, QSPI_IT_TE);
+        }
+        else
+        {
+          status = HAL_ERROR;
+          hqspi->ErrorCode |= HAL_QSPI_ERROR_DMA;
+          hqspi->State = HAL_QSPI_STATE_READY;
+
+          /* Process unlocked */
+          __HAL_UNLOCK(hqspi);
+        }
 #else
         /* Configure the direction of the DMA */
         hqspi->hdma->Init.Direction = DMA_PERIPH_TO_MEMORY;
-#endif
+
         /* Update direction mode bit */
         MODIFY_REG(hqspi->hdma->Instance->CR, DMA_SxCR_DIR, hqspi->hdma->Init.Direction);
 
         /* Enable the DMA Channel */
-        if (HAL_DMA_Start_IT(hqspi->hdma, (uint32_t)&hqspi->Instance->DR, (uint32_t)pData, hqspi->RxXferSize) == HAL_OK)
+        if(HAL_DMA_Start_IT(hqspi->hdma, (uint32_t)&hqspi->Instance->DR, (uint32_t)pData, hqspi->RxXferSize)== HAL_OK)
         {
           /* Configure QSPI: CCR register with functional as indirect read */
           MODIFY_REG(hqspi->Instance->CCR, QUADSPI_CCR_FMODE, QSPI_FUNCTIONAL_MODE_INDIRECT_READ);
@@ -1560,10 +1593,10 @@ HAL_StatusTypeDef HAL_QSPI_Receive_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pData
 
           /* Process unlocked */
           __HAL_UNLOCK(hqspi);
-          
+
           /* Enable the QSPI transfer error Interrupt */
           __HAL_QSPI_ENABLE_IT(hqspi, QSPI_IT_TE);
-          
+
           /* Enable the DMA transfer by setting the DMAEN bit in the QSPI CR register */
           SET_BIT(hqspi->Instance->CR, QUADSPI_CR_DMAEN);
         }
@@ -1576,6 +1609,7 @@ HAL_StatusTypeDef HAL_QSPI_Receive_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pData
           /* Process unlocked */
           __HAL_UNLOCK(hqspi);
         }
+#endif /* QSPI1_V2_1L */
       }
     }
     else
@@ -1710,7 +1744,6 @@ HAL_StatusTypeDef HAL_QSPI_AutoPolling(QSPI_HandleTypeDef *hqspi, QSPI_CommandTy
 HAL_StatusTypeDef HAL_QSPI_AutoPolling_IT(QSPI_HandleTypeDef *hqspi, QSPI_CommandTypeDef *cmd, QSPI_AutoPollingTypeDef *cfg)
 {
   HAL_StatusTypeDef status;
-  uint32_t tickstart = HAL_GetTick();
 
   /* Check the parameters */
   assert_param(IS_QSPI_INSTRUCTION_MODE(cmd->InstructionMode));
@@ -1754,7 +1787,7 @@ HAL_StatusTypeDef HAL_QSPI_AutoPolling_IT(QSPI_HandleTypeDef *hqspi, QSPI_Comman
     hqspi->State = HAL_QSPI_STATE_BUSY_AUTO_POLLING;
 
     /* Wait till BUSY flag reset */
-    status = QSPI_WaitFlagStateUntilTimeout(hqspi, QSPI_FLAG_BUSY, RESET, tickstart, hqspi->Timeout);
+    status = QSPI_WaitFlagStateUntilTimeout_CPUCycle(hqspi, QSPI_FLAG_BUSY, RESET, hqspi->Timeout);	
 
     if (status == HAL_OK)
     {
@@ -2394,7 +2427,7 @@ HAL_StatusTypeDef HAL_QSPI_Abort_IT(QSPI_HandleTypeDef *hqspi)
       {
         /* Change state of QSPI */
         hqspi->State = HAL_QSPI_STATE_READY;
-        
+
         /* Abort Complete callback */
 #if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
         hqspi->AbortCpltCallback(hqspi);
@@ -2674,6 +2707,31 @@ static HAL_StatusTypeDef QSPI_WaitFlagStateUntilTimeout(QSPI_HandleTypeDef *hqsp
 }
 
 /**
+  * @brief  Wait for a flag state until timeout using CPU cycle.
+  * @param  hqspi : QSPI handle
+  * @param  Flag : Flag checked
+  * @param  State : Value of the flag expected
+  * @param  Timeout : Duration of the timeout
+  * @retval HAL status
+  */
+static HAL_StatusTypeDef QSPI_WaitFlagStateUntilTimeout_CPUCycle(QSPI_HandleTypeDef *hqspi, uint32_t Flag, FlagStatus State, uint32_t Timeout)
+{ 
+  __IO uint32_t count = Timeout * (SystemCoreClock / 16U / 1000U);
+   do
+   {
+     if (count-- == 0U)
+     {
+       hqspi->State     = HAL_QSPI_STATE_ERROR;
+       hqspi->ErrorCode |= HAL_QSPI_ERROR_TIMEOUT;
+       return HAL_TIMEOUT;
+     }
+   }
+   while ((__HAL_QSPI_GET_FLAG(hqspi, Flag)) != State);
+   
+   return HAL_OK;   
+}
+
+/**
   * @brief  Configure the communication registers.
   * @param  hqspi : QSPI handle
   * @param  cmd : structure that contains the command configuration information
@@ -2840,6 +2898,6 @@ static void QSPI_Config(QSPI_HandleTypeDef *hqspi, QSPI_CommandTypeDef *cmd, uin
   * @}
   */
 
-#endif /* defined(QUADSPI) || defined(QUADSPI1) || defined(QUADSPI2) */
+#endif /* defined(QUADSPI) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

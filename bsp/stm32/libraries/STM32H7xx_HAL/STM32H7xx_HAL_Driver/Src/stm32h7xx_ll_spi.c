@@ -371,6 +371,12 @@ ErrorStatus LL_SPI_Init(SPI_TypeDef *SPIx, LL_SPI_InitTypeDef *SPI_InitStruct)
       LL_SPI_SetInternalSSLevel(SPIx, LL_SPI_SS_LEVEL_HIGH);
     }
 
+    /* Checks to setup Internal SS signal to the active level in Slave Mode */
+    if ((LL_SPI_GetNSSPolarity(SPIx) == LL_SPI_NSS_POLARITY_HIGH) && (tmp_nss == LL_SPI_NSS_SOFT) && (tmp_mode == LL_SPI_MODE_SLAVE))
+    {
+      LL_SPI_SetInternalSSLevel(SPIx, LL_SPI_SS_LEVEL_HIGH);
+    }
+
     /*---------------------------- SPIx CFG2 Configuration ------------------------
        * Configure SPIx CFG2 with parameters:
        * - NSS management         : SPI_CFG2_SSM, SPI_CFG2_SSOE bits
@@ -656,7 +662,7 @@ ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)
       i2sdiv = tmp / 2UL;
     }
 
-    /* Test if the obtain values are forbiden or out of range */
+    /* Test if the obtain values are forbidden or out of range */
     if (((i2sodd == 1UL) && (i2sdiv == 1UL)) || (i2sdiv > 0xFFUL))
     {
       /* Set the default values */

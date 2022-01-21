@@ -71,8 +71,7 @@ typedef struct
                                 This parameter can be a value of @ref TIMEx_Break_Input_Source_Enable */
   uint32_t Polarity;       /*!< Specifies the break input source polarity.
                                 This parameter can be a value of @ref TIMEx_Break_Input_Source_Polarity */
-}
-TIMEx_BreakInputConfigTypeDef;
+} TIMEx_BreakInputConfigTypeDef;
 
 /**
   * @}
@@ -97,7 +96,7 @@ TIMEx_BreakInputConfigTypeDef;
 #define TIM_TIM1_ETR_ADC1_AWD3      (TIM1_AF1_ETRSEL_2 | TIM1_AF1_ETRSEL_0)     /* !< TIM1_ETR is connected to ADC1 AWD3 */
 #if defined(COMP3)
 #define TIM_TIM1_ETR_COMP3          (TIM1_AF1_ETRSEL_2 | TIM1_AF1_ETRSEL_1)     /* !< TIM1_ETR is connected to COMP3 output */
-#endif
+#endif /* COMP3 */
 #if defined(TIM2)
 #define TIM_TIM2_ETR_GPIO           0x00000000U                                 /* !< TIM2_ETR is connected to GPIO      */
 #define TIM_TIM2_ETR_COMP1          TIM2_AF1_ETRSEL_0                           /* !< TIM2_ETR is connected to COMP1 output */
@@ -107,7 +106,7 @@ TIMEx_BreakInputConfigTypeDef;
 #define TIM_TIM2_ETR_MCO            TIM2_AF1_ETRSEL_2                           /* !< TIM2_ETR is connected to MCO */
 #define TIM_TIM2_ETR_MCO2           (TIM1_AF1_ETRSEL_2 | TIM1_AF1_ETRSEL_0)     /* !< TIM2_ETR is connected to MCO2 */
 #define TIM_TIM2_ETR_COMP3          (TIM1_AF1_ETRSEL_2 | TIM1_AF1_ETRSEL_1)     /* !< TIM2_ETR is connected to COMP3 output */
-#endif
+#endif /* COMP3 */
 #endif /*  TIM2 */
 #if defined(TIM3)
 #define TIM_TIM3_ETR_GPIO           0x00000000U                                 /* !< TIM3_ETR is connected to GPIO */
@@ -136,8 +135,8 @@ TIMEx_BreakInputConfigTypeDef;
 /** @defgroup TIMEx_Break_Input TIM Extended Break input
   * @{
   */
-#define TIM_BREAKINPUT_BRK     0x00000001U                                      /* !< Timer break input  */
-#define TIM_BREAKINPUT_BRK2    0x00000002U                                      /* !< Timer break2 input */
+#define TIM_BREAKINPUT_BRK     0x00000001U                                      /*!< Timer break input  */
+#define TIM_BREAKINPUT_BRK2    0x00000002U                                      /*!< Timer break2 input */
 /**
   * @}
   */
@@ -160,8 +159,8 @@ TIMEx_BreakInputConfigTypeDef;
 /** @defgroup TIMEx_Break_Input_Source_Enable TIM Extended Break input source enabling
   * @{
   */
-#define TIM_BREAKINPUTSOURCE_DISABLE     0x00000000U                            /* !< Break input source is disabled */
-#define TIM_BREAKINPUTSOURCE_ENABLE      0x00000001U                            /* !< Break input source is enabled */
+#define TIM_BREAKINPUTSOURCE_DISABLE     0x00000000U                            /*!< Break input source is disabled */
+#define TIM_BREAKINPUTSOURCE_ENABLE      0x00000001U                            /*!< Break input source is enabled */
 /**
   * @}
   */
@@ -169,8 +168,8 @@ TIMEx_BreakInputConfigTypeDef;
 /** @defgroup TIMEx_Break_Input_Source_Polarity TIM Extended Break input polarity
   * @{
   */
-#define TIM_BREAKINPUTSOURCE_POLARITY_LOW     0x00000001U                       /* !< Break input source is active low */
-#define TIM_BREAKINPUTSOURCE_POLARITY_HIGH    0x00000000U                       /* !< Break input source is active_high */
+#define TIM_BREAKINPUTSOURCE_POLARITY_LOW     0x00000001U                       /*!< Break input source is active low */
+#define TIM_BREAKINPUTSOURCE_POLARITY_HIGH    0x00000000U                       /*!< Break input source is active_high */
 /**
   * @}
   */
@@ -262,17 +261,17 @@ TIMEx_BreakInputConfigTypeDef;
 #define TIM_TIM16_TI1_RTC_WAKEUP              0x00000003U                       /* !< TIM16_TI1 is connected to TRC wakeup interrupt */
 #if defined(RCC_MCO2_SUPPORT)
 #define TIM_TIM16_TI1_MCO2                    0x00000004U                       /* !< TIM16_TI1 is connected to MCO2 */
-#endif
+#endif /* RCC_MCO2_SUPPORT */
 
 #define TIM_TIM17_TI1_GPIO                    0x00000000U                       /* !< TIM17_TI1 is connected to GPIO */
 #if defined(RCC_HSI48_SUPPORT)
 #define TIM_TIM17_TI1_HSI48                   0x00000001U                       /* !< TIM17_TI1 is connected to HSI48/256 */
-#endif
+#endif /* RCC_HSI48_SUPPORT */
 #define TIM_TIM17_TI1_HSE_32                  0x00000002U                       /* !< TIM17_TI1 is connected to HSE div 32 */
 #define TIM_TIM17_TI1_MCO                     0x00000003U                       /* !< TIM17_TI1 is connected to MCO */
 #if defined(RCC_MCO2_SUPPORT)
 #define TIM_TIM17_TI1_MCO2                    0x00000004U                       /* !< TIM17_TI1 is connected to MCO2 */
-#endif
+#endif /* RCC_MCO2_SUPPORT */
 /**
   * @}
   */

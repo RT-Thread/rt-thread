@@ -274,7 +274,7 @@ HAL_StatusTypeDef HAL_RTC_Init(RTC_HandleTypeDef *hrtc)
     hrtc->Tamper2EventCallback         =  HAL_RTCEx_Tamper2EventCallback;     /* Legacy weak Tamper2EventCallback     */
 #if defined(TAMP_CR1_TAMP3E)
     hrtc->Tamper3EventCallback         =  HAL_RTCEx_Tamper3EventCallback;     /* Legacy weak Tamper3EventCallback     */    
-#endif
+#endif /* TAMP_CR1_TAMP3E */
     hrtc->InternalTamper3EventCallback =  HAL_RTCEx_InternalTamper3EventCallback;   /*!< Legacy weak InternalTamper3EventCallback */
     hrtc->InternalTamper4EventCallback =  HAL_RTCEx_InternalTamper4EventCallback;   /*!< Legacy weak InternalTamper4EventCallback */
     hrtc->InternalTamper5EventCallback =  HAL_RTCEx_InternalTamper5EventCallback;   /*!< Legacy weak InternalTamper5EventCallback */
@@ -494,7 +494,7 @@ HAL_StatusTypeDef HAL_RTC_RegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_Call
     case HAL_RTC_TAMPER3_EVENT_CB_ID :
       hrtc->Tamper3EventCallback = pCallback;
       break;
-#endif
+#endif /* TAMP_CR1_TAMP3E */
 
     case HAL_RTC_INTERNAL_TAMPER3_EVENT_CB_ID :
       hrtc->InternalTamper3EventCallback = pCallback;
@@ -616,7 +616,7 @@ HAL_StatusTypeDef HAL_RTC_UnRegisterCallback(RTC_HandleTypeDef *hrtc, HAL_RTC_Ca
     case HAL_RTC_TAMPER3_EVENT_CB_ID :
       hrtc->Tamper3EventCallback = HAL_RTCEx_Tamper3EventCallback;         /* Legacy weak Tamper3EventCallback         */
       break;
-#endif
+#endif /* TAMP_CR1_TAMP3E */
 
     case HAL_RTC_INTERNAL_TAMPER3_EVENT_CB_ID :
       hrtc->InternalTamper3EventCallback = HAL_RTCEx_InternalTamper3EventCallback;        /* Legacy weak InternalTamper3EventCallback         */
@@ -803,10 +803,10 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
     /* Set the RTC_TR register */
     hrtc->Instance->TR = (uint32_t)(tmpreg & RTC_TR_RESERVED_MASK);
 
-    /* Clear the bits to be configured */
+    /* This interface is deprecated. To manage Daylight Saving Time, please use HAL_RTC_DST_xxx functions */
     hrtc->Instance->CR &= ((uint32_t)~RTC_CR_BKP);
 
-    /* Configure the RTC_CR register */
+    /* This interface is deprecated. To manage Daylight Saving Time, please use HAL_RTC_DST_xxx functions */
     hrtc->Instance->CR |= (uint32_t)(sTime->DayLightSaving | sTime->StoreOperation);
 
     /* Exit Initialization mode */
@@ -1831,6 +1831,67 @@ uint8_t RTC_Bcd2ToByte(uint8_t Value)
   uint32_t tmp;
   tmp = (((uint32_t)Value & 0xF0U) >> 4U) * 10U;
   return (uint8_t)(tmp + ((uint32_t)Value & 0x0FU));
+}
+
+/**
+  * @brief  Daylight Saving Time, Add one hour to the calendar in one single operation
+  *         without going through the initialization procedure.
+  * @param  hrtc RTC handle
+  * @retval None
+  */
+void HAL_RTC_DST_Add1Hour(RTC_HandleTypeDef *hrtc)
+{
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+  SET_BIT(hrtc->Instance->CR, RTC_CR_ADD1H);
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+}
+
+/**
+  * @brief  Daylight Saving Time, Subtract one hour from the calendar in one
+  *         single operation without going through the initialization procedure.
+  * @param  hrtc RTC handle
+  * @retval None
+  */
+void HAL_RTC_DST_Sub1Hour(RTC_HandleTypeDef *hrtc)
+{
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+  SET_BIT(hrtc->Instance->CR, RTC_CR_SUB1H);
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+}
+
+/**
+  * @brief  Daylight Saving Time, Set the store operation bit.
+  * @note   It can be used by the software in order to memorize the DST status.
+  * @param  hrtc RTC handle
+  * @retval None
+  */
+void HAL_RTC_DST_SetStoreOperation(RTC_HandleTypeDef *hrtc)
+{
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+  SET_BIT(hrtc->Instance->CR, RTC_CR_BKP);
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+}
+
+/**
+  * @brief  Daylight Saving Time, Clear the store operation bit.
+  * @param  hrtc RTC handle
+  * @retval None
+  */
+void HAL_RTC_DST_ClearStoreOperation(RTC_HandleTypeDef *hrtc)
+{
+  __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
+  CLEAR_BIT(hrtc->Instance->CR, RTC_CR_BKP);
+  __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
+}
+
+/**
+  * @brief  Daylight Saving Time, Read the store operation bit.
+  * @param  hrtc RTC handle
+  * @retval operation see RTC_StoreOperation_Definitions
+  */
+uint32_t HAL_RTC_DST_ReadStoreOperation(RTC_HandleTypeDef *hrtc)
+{
+  return READ_BIT(hrtc->Instance->CR, RTC_CR_BKP);
 }
 
 /**

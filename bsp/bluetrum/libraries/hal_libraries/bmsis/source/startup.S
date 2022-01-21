@@ -6,7 +6,6 @@
 
 #include "ab32vg1.h"
 
-.set _memcpy,    0x84044
 .global _start
 .section .reset, "ax"
 _start:
@@ -96,6 +95,11 @@ __exception:
     mret
 #endif
 
+    .org    0x1e0
+    1: j       1b
+    nop
+    mret
+
     .global cpu_irq_comm
 cpu_irq_comm:
     la      a5, __irq_stack
@@ -106,3 +110,5 @@ cpu_irq_comm:
 
     .global _tp
     .set    _tp,        0x84800
+
+    .set    _memcpy,    0x84044

@@ -111,11 +111,16 @@ typedef struct
 #define HCD_SPEED_HIGH               USBH_HS_SPEED
 #define HCD_SPEED_FULL               USBH_FSLS_SPEED
 #define HCD_SPEED_LOW                USBH_FSLS_SPEED
+/**
+  * @}
+  */
 
+/** @defgroup HCD_Device_Speed HCD Device Speed
+  * @{
+  */
 #define HCD_DEVICE_SPEED_HIGH               0U
 #define HCD_DEVICE_SPEED_FULL               1U
 #define HCD_DEVICE_SPEED_LOW                2U
-
 /**
   * @}
   */
@@ -153,7 +158,8 @@ typedef struct
 #define __HAL_HCD_ENABLE(__HANDLE__)                   (void)USB_EnableGlobalInt ((__HANDLE__)->Instance)
 #define __HAL_HCD_DISABLE(__HANDLE__)                  (void)USB_DisableGlobalInt ((__HANDLE__)->Instance)
 
-#define __HAL_HCD_GET_FLAG(__HANDLE__, __INTERRUPT__)      ((USB_ReadInterrupts((__HANDLE__)->Instance) & (__INTERRUPT__)) == (__INTERRUPT__))
+#define __HAL_HCD_GET_FLAG(__HANDLE__, __INTERRUPT__)      ((USB_ReadInterrupts((__HANDLE__)->Instance)\
+                                                             & (__INTERRUPT__)) == (__INTERRUPT__))
 #define __HAL_HCD_CLEAR_FLAG(__HANDLE__, __INTERRUPT__)    (((__HANDLE__)->Instance->GINTSTS) = (__INTERRUPT__))
 #define __HAL_HCD_IS_INVALID_INTERRUPT(__HANDLE__)         (USB_ReadInterrupts((__HANDLE__)->Instance) == 0U)
 
@@ -296,10 +302,10 @@ uint32_t                HAL_HCD_GetCurrentSpeed(HCD_HandleTypeDef *hhcd);
   */
 /* Private functions prototypes ----------------------------------------------*/
 
- /**
+/**
   * @}
   */
- /**
+/**
   * @}
   */
 #endif /* defined (USB_OTG_FS) || defined (USB_OTG_HS) */

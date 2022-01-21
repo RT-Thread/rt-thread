@@ -38,6 +38,6 @@
 
 #ifndef  ES_DEVICE_NAME_RTC
 #define  ES_DEVICE_NAME_RTC     "rtc"
-#endif 
+#endif
 
 #endif

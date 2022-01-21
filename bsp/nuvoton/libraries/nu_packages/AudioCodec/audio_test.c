@@ -16,7 +16,11 @@
 
 #include "wavrecorder.h"
 #include "wavplayer.h"
-#include "dfs_posix.h"
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 /*
   The routine just for test automatically.

@@ -7,8 +7,10 @@
  * Date           Author       Notes
  * 2015-01-05     Bernard      the first version
  */
-#ifndef GPIO_H__
-#define GPIO_H__
+#ifndef __DRV_GPIO_H__
+#define __DRV_GPIO_H__
+
+int n32_hw_pin_init(void);
 
 
-#endif
+#endif /* __DRV_GPIO_H__ */

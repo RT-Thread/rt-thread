@@ -109,7 +109,7 @@ typedef struct __CRYP_HandleTypeDef
 typedef struct
 #endif
 {
-  AES_TypeDef                       *Instance;            /*!< AES Register base address */
+  AES_TypeDef                       *Instance;        /*!< AES Register base address */
 
   CRYP_ConfigTypeDef                Init;             /*!< CRYP required parameters */
 
@@ -120,13 +120,13 @@ typedef struct
 
   uint32_t                          *pCrypOutBuffPtr; /*!< Pointer to CRYP processing (encryption, decryption,...) buffer */
 
-  __IO uint16_t                     CrypHeaderCount;   /*!< Counter of header data */
+  __IO uint16_t                     CrypHeaderCount;  /*!< Counter of header data in words */
 
-  __IO uint16_t                     CrypInCount;      /*!< Counter of input data */
+  __IO uint16_t                     CrypInCount;      /*!< Counter of input data in words */
 
-  __IO uint16_t                     CrypOutCount;     /*!< Counter of output data */
+  __IO uint16_t                     CrypOutCount;     /*!< Counter of output data in words */
 
-  uint16_t                          Size;             /*!< length of input data in words */
+  uint16_t                          Size;             /*!< Length of input data */
 
   uint32_t                          Phase;            /*!< CRYP peripheral phase */
 

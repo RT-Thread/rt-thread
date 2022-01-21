@@ -96,6 +96,9 @@ if GetDepend('BSP_USING_EXAMPLE_RTC'):
 if GetDepend('BSP_USING_EXAMPLE_UART'):
     src += ['bsp_driver_example/uart_sample.c']
 
+if GetDepend('BSP_USING_EXAMPLE_UART_DMA'):
+    src += ['bsp_driver_example/uart_dma_sample.c']
+
 if GetDepend('BSP_USING_EXAMPLE_SPI'):
     src += ['bsp_driver_example/spi_sample.c']
 

@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -29,6 +29,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g4xx_hal_def.h"
 
+#if defined(CORDIC)
 /** @addtogroup STM32G4xx_HAL_Driver
   * @{
   */
@@ -197,15 +198,21 @@ typedef  void (*pCORDIC_CallbackTypeDef)(CORDIC_HandleTypeDef *hcordic);  /*!< p
 #define CORDIC_PRECISION_4CYCLES    ((uint32_t)(CORDIC_CSR_PRECISION_2))
 #define CORDIC_PRECISION_5CYCLES    ((uint32_t)(CORDIC_CSR_PRECISION_2 | CORDIC_CSR_PRECISION_0))
 #define CORDIC_PRECISION_6CYCLES    ((uint32_t)(CORDIC_CSR_PRECISION_2 | CORDIC_CSR_PRECISION_1))
-#define CORDIC_PRECISION_7CYCLES    ((uint32_t)(CORDIC_CSR_PRECISION_2 | CORDIC_CSR_PRECISION_1 | CORDIC_CSR_PRECISION_0))
+#define CORDIC_PRECISION_7CYCLES    ((uint32_t)(CORDIC_CSR_PRECISION_2\
+                                                | CORDIC_CSR_PRECISION_1 | CORDIC_CSR_PRECISION_0))
 #define CORDIC_PRECISION_8CYCLES    ((uint32_t)(CORDIC_CSR_PRECISION_3))
 #define CORDIC_PRECISION_9CYCLES    ((uint32_t)(CORDIC_CSR_PRECISION_3 | CORDIC_CSR_PRECISION_0))
 #define CORDIC_PRECISION_10CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3 | CORDIC_CSR_PRECISION_1))
-#define CORDIC_PRECISION_11CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3 | CORDIC_CSR_PRECISION_1 | CORDIC_CSR_PRECISION_0))
+#define CORDIC_PRECISION_11CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3\
+                                                | CORDIC_CSR_PRECISION_1 | CORDIC_CSR_PRECISION_0))
 #define CORDIC_PRECISION_12CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3 | CORDIC_CSR_PRECISION_2))
-#define CORDIC_PRECISION_13CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3 | CORDIC_CSR_PRECISION_2 | CORDIC_CSR_PRECISION_0))
-#define CORDIC_PRECISION_14CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3 | CORDIC_CSR_PRECISION_2 | CORDIC_CSR_PRECISION_1))
-#define CORDIC_PRECISION_15CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3 | CORDIC_CSR_PRECISION_2 | CORDIC_CSR_PRECISION_1 | CORDIC_CSR_PRECISION_0))
+#define CORDIC_PRECISION_13CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3\
+                                                | CORDIC_CSR_PRECISION_2 | CORDIC_CSR_PRECISION_0))
+#define CORDIC_PRECISION_14CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3\
+                                                | CORDIC_CSR_PRECISION_2 | CORDIC_CSR_PRECISION_1))
+#define CORDIC_PRECISION_15CYCLES   ((uint32_t)(CORDIC_CSR_PRECISION_3\
+                                                | CORDIC_CSR_PRECISION_2 | CORDIC_CSR_PRECISION_1\
+                                                |CORDIC_CSR_PRECISION_0))
 /**
   * @}
   */
@@ -256,7 +263,8 @@ typedef  void (*pCORDIC_CallbackTypeDef)(CORDIC_HandleTypeDef *hcordic);  /*!< p
   */
 #define CORDIC_NBWRITE_1           (0x00000000U)             /*!< One 32-bits write containing either only one
                                                                   32-bit data input (Q1.31 format), or two 16-bit
-                                                                  data input (Q1.15 format) packed in one 32 bits Data */
+                                                                  data input (Q1.15 format) packed in one 32 bits
+                                                                  Data */
 #define CORDIC_NBWRITE_2           CORDIC_CSR_NARGS          /*!< Two 32-bit write containing two 32-bits data input
                                                                   (Q1.31 format) */
 /**
@@ -267,8 +275,9 @@ typedef  void (*pCORDIC_CallbackTypeDef)(CORDIC_HandleTypeDef *hcordic);  /*!< p
   * @{
   */
 #define CORDIC_NBREAD_1            (0x00000000U)             /*!< One 32-bits read containing either only one
-                                                                  32-bit data ouput (Q1.31 format), or two 16-bit
-                                                                  data output (Q1.15 format) packed in one 32 bits Data */
+                                                                  32-bit data output (Q1.31 format), or two 16-bit
+                                                                  data output (Q1.15 format) packed in one 32 bits
+                                                                  Data */
 #define CORDIC_NBREAD_2            CORDIC_CSR_NRES           /*!< Two 32-bit Data containing two 32-bits data output
                                                                   (Q1.31 format) */
 /**
@@ -328,9 +337,9 @@ typedef  void (*pCORDIC_CallbackTypeDef)(CORDIC_HandleTypeDef *hcordic);  /*!< p
   */
 #if USE_HAL_CORDIC_REGISTER_CALLBACKS == 1
 #define __HAL_CORDIC_RESET_HANDLE_STATE(__HANDLE__) do{                                                \
-                                                       (__HANDLE__)->State = HAL_CORDIC_STATE_RESET;   \
-                                                       (__HANDLE__)->MspInitCallback = NULL;           \
-                                                       (__HANDLE__)->MspDeInitCallback = NULL;         \
+                                                        (__HANDLE__)->State = HAL_CORDIC_STATE_RESET;   \
+                                                        (__HANDLE__)->MspInitCallback = NULL;           \
+                                                        (__HANDLE__)->MspDeInitCallback = NULL;         \
                                                       } while(0)
 #else
 #define __HAL_CORDIC_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_CORDIC_STATE_RESET)
@@ -345,7 +354,7 @@ typedef  void (*pCORDIC_CallbackTypeDef)(CORDIC_HandleTypeDef *hcordic);  /*!< p
   * @retval None
   */
 #define __HAL_CORDIC_ENABLE_IT(__HANDLE__, __INTERRUPT__)                     \
-                  (((__HANDLE__)->Instance->CSR) |= (__INTERRUPT__))
+  (((__HANDLE__)->Instance->CSR) |= (__INTERRUPT__))
 
 /**
   * @brief  Disable the CORDIC interrupt
@@ -356,7 +365,7 @@ typedef  void (*pCORDIC_CallbackTypeDef)(CORDIC_HandleTypeDef *hcordic);  /*!< p
   * @retval None
   */
 #define __HAL_CORDIC_DISABLE_IT(__HANDLE__, __INTERRUPT__)                    \
-                 (((__HANDLE__)->Instance->CSR) &= ~(__INTERRUPT__))
+  (((__HANDLE__)->Instance->CSR) &= ~(__INTERRUPT__))
 
 /** @brief  Check whether the specified CORDIC interrupt occurred or not.
             Dummy macro as no interrupt status flag.
@@ -382,7 +391,7 @@ typedef  void (*pCORDIC_CallbackTypeDef)(CORDIC_HandleTypeDef *hcordic);  /*!< p
   * @retval SET (flag is set) or RESET (flag is reset)
   */
 #define __HAL_CORDIC_GET_FLAG(__HANDLE__, __FLAG__)                           \
-        ((((__HANDLE__)->Instance->CSR) & (__FLAG__)) == (__FLAG__))
+  ((((__HANDLE__)->Instance->CSR) & (__FLAG__)) == (__FLAG__))
 
 /** @brief  Clear specified CORDIC status flag. Dummy macro as no
             flag can be cleared.
@@ -402,7 +411,7 @@ typedef  void (*pCORDIC_CallbackTypeDef)(CORDIC_HandleTypeDef *hcordic);  /*!< p
   * @retval FlagStatus
   */
 #define __HAL_CORDIC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)                 \
-        (((__HANDLE__)->Instance->CSR) & (__INTERRUPT__))
+  (((__HANDLE__)->Instance->CSR) & (__INTERRUPT__))
 
 /**
   * @}
@@ -526,7 +535,8 @@ void HAL_CORDIC_MspDeInit(CORDIC_HandleTypeDef *hcordic);
 
 #if USE_HAL_CORDIC_REGISTER_CALLBACKS == 1
 /* Callbacks Register/UnRegister functions  ***********************************/
-HAL_StatusTypeDef HAL_CORDIC_RegisterCallback(CORDIC_HandleTypeDef *hcordic, HAL_CORDIC_CallbackIDTypeDef CallbackID, pCORDIC_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_CORDIC_RegisterCallback(CORDIC_HandleTypeDef *hcordic, HAL_CORDIC_CallbackIDTypeDef CallbackID,
+                                              pCORDIC_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_CORDIC_UnRegisterCallback(CORDIC_HandleTypeDef *hcordic, HAL_CORDIC_CallbackIDTypeDef CallbackID);
 /**
   * @}
@@ -538,10 +548,14 @@ HAL_StatusTypeDef HAL_CORDIC_UnRegisterCallback(CORDIC_HandleTypeDef *hcordic, H
 #endif /* USE_HAL_CORDIC_REGISTER_CALLBACKS */
 /* Peripheral Control functions ***********************************************/
 HAL_StatusTypeDef HAL_CORDIC_Configure(CORDIC_HandleTypeDef *hcordic, CORDIC_ConfigTypeDef *sConfig);
-HAL_StatusTypeDef HAL_CORDIC_Calculate(CORDIC_HandleTypeDef *hcordic, int32_t *pInBuff, int32_t *pOutBuff, uint32_t NbCalc, uint32_t Timeout);
-HAL_StatusTypeDef HAL_CORDIC_CalculateZO(CORDIC_HandleTypeDef *hcordic, int32_t *pInBuff, int32_t *pOutBuff, uint32_t NbCalc, uint32_t Timeout);
-HAL_StatusTypeDef HAL_CORDIC_Calculate_IT(CORDIC_HandleTypeDef *hcordic, int32_t *pInBuff, int32_t *pOutBuff, uint32_t NbCalc);
-HAL_StatusTypeDef HAL_CORDIC_Calculate_DMA(CORDIC_HandleTypeDef *hcordic, int32_t *pInBuff, int32_t *pOutBuff, uint32_t NbCalc, uint32_t DMADirection);
+HAL_StatusTypeDef HAL_CORDIC_Calculate(CORDIC_HandleTypeDef *hcordic, int32_t *pInBuff, int32_t *pOutBuff,
+                                       uint32_t NbCalc, uint32_t Timeout);
+HAL_StatusTypeDef HAL_CORDIC_CalculateZO(CORDIC_HandleTypeDef *hcordic, int32_t *pInBuff, int32_t *pOutBuff,
+                                         uint32_t NbCalc, uint32_t Timeout);
+HAL_StatusTypeDef HAL_CORDIC_Calculate_IT(CORDIC_HandleTypeDef *hcordic, int32_t *pInBuff, int32_t *pOutBuff,
+                                          uint32_t NbCalc);
+HAL_StatusTypeDef HAL_CORDIC_Calculate_DMA(CORDIC_HandleTypeDef *hcordic, int32_t *pInBuff, int32_t *pOutBuff,
+                                           uint32_t NbCalc, uint32_t DMADirection);
 /**
   * @}
   */
@@ -586,6 +600,8 @@ uint32_t HAL_CORDIC_GetError(CORDIC_HandleTypeDef *hcordic);
 /**
   * @}
   */
+
+#endif /* CORDIC */
 
 #ifdef __cplusplus
 }

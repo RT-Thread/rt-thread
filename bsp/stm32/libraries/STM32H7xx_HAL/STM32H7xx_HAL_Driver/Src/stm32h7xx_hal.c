@@ -47,10 +47,10 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /**
- * @brief STM32H7xx HAL Driver version number V1.8.0
+ * @brief STM32H7xx HAL Driver version number V1.10.0
    */
 #define __STM32H7xx_HAL_VERSION_MAIN   (0x01UL) /*!< [31:24] main version */
-#define __STM32H7xx_HAL_VERSION_SUB1   (0x08UL) /*!< [23:16] sub1 version */
+#define __STM32H7xx_HAL_VERSION_SUB1   (0x0AUL) /*!< [23:16] sub1 version */
 #define __STM32H7xx_HAL_VERSION_SUB2   (0x00UL) /*!< [15:8]  sub2 version */
 #define __STM32H7xx_HAL_VERSION_RC     (0x00UL) /*!< [7:0]  release candidate */
 #define __STM32H7xx_HAL_VERSION         ((__STM32H7xx_HAL_VERSION_MAIN << 24)\
@@ -267,11 +267,11 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     return HAL_ERROR;
   }
 
-  /* Configure the SysTick to have interrupt in 1ms time basis*/
-  if (HAL_SYSTICK_Config(SystemCoreClock / (1000UL / (uint32_t)uwTickFreq)) > 0U)
-  {
-    return HAL_ERROR;
-  }
+    /* Configure the SysTick to have interrupt in 1ms time basis*/
+    if (HAL_SYSTICK_Config(SystemCoreClock / (1000UL / (uint32_t)uwTickFreq)) > 0U)
+    {
+      return HAL_ERROR;
+    }
 
   /* Configure the SysTick IRQ priority */
   if (TickPriority < (1UL << __NVIC_PRIO_BITS))
@@ -507,14 +507,14 @@ uint32_t HAL_GetUIDw2(void)
   * @brief Configure the internal voltage reference buffer voltage scale.
   * @param VoltageScaling  specifies the output voltage to achieve
   *          This parameter can be one of the following values:
-  *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE0: VREF_OUT1 around 2.048 V.
-  *                                                This requires VDDA equal to or higher than 2.4 V.
-  *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE1: VREF_OUT2 around 2.5 V.
+  *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE0: VREF_OUT1 around 2.5 V.
   *                                                This requires VDDA equal to or higher than 2.8 V.
-  *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE2: VREF_OUT3 around 1.5 V.
-  *                                                This requires VDDA equal to or higher than 1.8 V.
-  *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE3: VREF_OUT4 around 1.8 V.
+  *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE1: VREF_OUT2 around 2.048 V.
+  *                                                This requires VDDA equal to or higher than 2.4 V.
+  *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE2: VREF_OUT3 around 1.8 V.
   *                                                This requires VDDA equal to or higher than 2.1 V.
+  *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE3: VREF_OUT4 around 1.5 V.
+  *                                                This requires VDDA equal to or higher than 1.8 V.
   * @retval None
   */
 void HAL_SYSCFG_VREFBUF_VoltageScalingConfig(uint32_t VoltageScaling)
@@ -769,7 +769,7 @@ void HAL_SYSCFG_DisableCM4BOOT(void)
 /**
   * @brief  Enables the I/O Compensation Cell.
   * @note   The I/O compensation cell can be used only when the device supply
-  *         voltage ranges from 2.4 to 3.6 V.
+  *         voltage ranges from 1.62 to 2.0 V and from 2.7 to 3.6 V.
   * @retval None
   */
 void HAL_EnableCompensationCell(void)
@@ -780,7 +780,7 @@ void HAL_EnableCompensationCell(void)
 /**
   * @brief  Power-down the I/O Compensation Cell.
   * @note   The I/O compensation cell can be used only when the device supply
-  *         voltage ranges from 2.4 to 3.6 V.
+  *         voltage ranges from 1.62 to 2.0 V and from 2.7 to 3.6 V.
   * @retval None
   */
 void HAL_DisableCompensationCell(void)
@@ -873,6 +873,42 @@ void HAL_SYSCFG_VDDMMC_CompensationCodeConfig(uint32_t SYSCFG_PMOSCode, uint32_t
   MODIFY_REG(SYSCFG->CCCR, (SYSCFG_CCCR_NCC_MMC | SYSCFG_CCCR_PCC_MMC), (((uint32_t)(SYSCFG_PMOSCode)<< 4)|(uint32_t)(SYSCFG_NMOSCode)) );
 }
 #endif /* SYSCFG_CCCR_NCC_MMC */
+
+#if defined(SYSCFG_ADC2ALT_ADC2_ROUT0)
+/** @brief  SYSCFG ADC2 internal input alternate connection macros
+  * @param Adc2AltRout0 This parameter can be a value of :
+  *     @arg @ref SYSCFG_ADC2_ROUT0_DAC1_1   DAC1_out1 connected to ADC2 VINP[16]
+  *     @arg @ref SYSCFG_ADC2_ROUT0_VBAT4    VBAT/4 connected to ADC2 VINP[16]
+  */
+void HAL_SYSCFG_ADC2ALT_Rout0Config(uint32_t Adc2AltRout0)
+{
+  /* Check the parameters */
+  assert_param(IS_SYSCFG_ADC2ALT_ROUT0(Adc2AltRout0));
+
+  MODIFY_REG(SYSCFG->ADC2ALT, SYSCFG_ADC2ALT_ADC2_ROUT0, Adc2AltRout0);
+}
+/**
+  * @}
+  */
+#endif /*SYSCFG_ADC2ALT_ADC2_ROUT0*/
+
+#if defined(SYSCFG_ADC2ALT_ADC2_ROUT1)
+/** @brief  SYSCFG ADC2 internal input alternate connection macros
+  * @param Adc2AltRout1  This parameter can be a value of :
+  *     @arg @ref SYSCFG_ADC2_ROUT1_DAC1_2   DAC1_out2 connected to ADC2 VINP[17]
+  *     @arg @ref SYSCFG_ADC2_ROUT1_VREFINT  VREFINT connected to ADC2 VINP[17]
+  */
+void HAL_SYSCFG_ADC2ALT_Rout1Config(uint32_t Adc2AltRout1)
+{
+  /* Check the parameters */
+  assert_param(IS_SYSCFG_ADC2ALT_ROUT1(Adc2AltRout1));
+
+  MODIFY_REG(SYSCFG->ADC2ALT, SYSCFG_ADC2ALT_ADC2_ROUT1, Adc2AltRout1);
+}
+/**
+  * @}
+  */
+#endif /*SYSCFG_ADC2ALT_ADC2_ROUT1*/
 
 /**
   * @brief  Enable the Debug Module during Domain1/CDomain SLEEP mode
@@ -985,6 +1021,7 @@ void HAL_DisableDomain2DBGStandbyMode(void)
 }
 #endif /*DUAL_CORE*/
 
+#if defined(DBGMCU_CR_DBG_STOPD3)
 /**
   * @brief  Enable the Debug Module during Domain3/SRDomain STOP mode
   * @retval None
@@ -993,6 +1030,7 @@ void HAL_EnableDomain3DBGStopMode(void)
 {
   SET_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STOPD3);
 }
+
 /**
   * @brief  Disable the Debug Module during Domain3/SRDomain STOP mode
   * @retval None
@@ -1001,7 +1039,9 @@ void HAL_DisableDomain3DBGStopMode(void)
 {
   CLEAR_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STOPD3);
 }
+#endif /*DBGMCU_CR_DBG_STOPD3*/
 
+#if defined(DBGMCU_CR_DBG_STANDBYD3)
 /**
   * @brief  Enable the Debug Module during Domain3/SRDomain STANDBY mode
   * @retval None
@@ -1019,6 +1059,7 @@ void HAL_DisableDomain3DBGStandbyMode(void)
 {
   CLEAR_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STANDBYD3);
 }
+#endif /*DBGMCU_CR_DBG_STANDBYD3*/
 
 /**
   * @brief  Set the FMC Memory Mapping Swapping config.

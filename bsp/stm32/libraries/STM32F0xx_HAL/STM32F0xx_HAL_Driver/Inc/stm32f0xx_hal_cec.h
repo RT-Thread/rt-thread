@@ -121,14 +121,14 @@ typedef struct
   *          b6  Error information
   *             0  : No Error
   *             1  : Error
-  *          b5     IP initilisation status
-  *             0  : Reset (IP not initialized)
-  *             1  : Init done (IP initialized. HAL CEC Init function already called)
+  *          b5     CEC peripheral initialization status
+  *             0  : Reset (peripheral not initialized)
+  *             1  : Init done (peripheral initialized. HAL CEC Init function already called)
   *          b4-b3  (not used)
   *             xx : Should be set to 00
   *          b2     Intrinsic process state
   *             0  : Ready
-  *             1  : Busy (IP busy with some configuration or internal operations)
+  *             1  : Busy (peripheral busy with some configuration or internal operations)
   *          b1     (not used)
   *             x  : Should be set to 0
   *          b0     Tx state
@@ -138,9 +138,9 @@ typedef struct
   *          RxState value coding follow below described bitmap :
   *          b7-b6  (not used)
   *             xx : Should be set to 00
-  *          b5     IP initilisation status
-  *             0  : Reset (IP not initialized)
-  *             1  : Init done (IP initialized)
+  *          b5     CEC peripheral initialization status
+  *             0  : Reset (peripheral not initialized)
+  *             1  : Init done (peripheral initialized)
   *          b4-b2  (not used)
   *            xxx : Should be set to 000
   *          b1     Rx state

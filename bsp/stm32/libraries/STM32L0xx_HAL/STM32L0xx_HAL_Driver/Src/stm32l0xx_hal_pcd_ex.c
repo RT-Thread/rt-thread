@@ -49,7 +49,7 @@
 
 /** @defgroup PCDEx_Exported_Functions_Group1 Peripheral Control functions
   * @brief    PCDEx control functions
- *
+  *
 @verbatim
  ===============================================================================
                  ##### Extended features functions #####
@@ -78,10 +78,8 @@
   * @retval HAL status
   */
 
-HAL_StatusTypeDef  HAL_PCDEx_PMAConfig(PCD_HandleTypeDef *hpcd,
-                                       uint16_t ep_addr,
-                                       uint16_t ep_kind,
-                                       uint32_t pmaadress)
+HAL_StatusTypeDef  HAL_PCDEx_PMAConfig(PCD_HandleTypeDef *hpcd, uint16_t ep_addr,
+                                       uint16_t ep_kind, uint32_t pmaadress)
 {
   PCD_EPTypeDef *ep;
 
@@ -125,9 +123,13 @@ HAL_StatusTypeDef HAL_PCDEx_ActivateBCD(PCD_HandleTypeDef *hpcd)
   USB_TypeDef *USBx = hpcd->Instance;
   hpcd->battery_charging_active = 1U;
 
-  USBx->BCDR |= (USB_BCDR_BCDEN);
+  /* Enable BCD feature */
+  USBx->BCDR |= USB_BCDR_BCDEN;
+
   /* Enable DCD : Data Contact Detect */
-  USBx->BCDR |= (USB_BCDR_DCDEN);
+  USBx->BCDR &= ~(USB_BCDR_PDEN);
+  USBx->BCDR &= ~(USB_BCDR_SDEN);
+  USBx->BCDR |= USB_BCDR_DCDEN;
 
   return HAL_OK;
 }
@@ -142,6 +144,7 @@ HAL_StatusTypeDef HAL_PCDEx_DeActivateBCD(PCD_HandleTypeDef *hpcd)
   USB_TypeDef *USBx = hpcd->Instance;
   hpcd->battery_charging_active = 0U;
 
+  /* Disable BCD feature */
   USBx->BCDR &= ~(USB_BCDR_BCDEN);
 
   return HAL_OK;
@@ -157,7 +160,7 @@ void HAL_PCDEx_BCD_VBUSDetect(PCD_HandleTypeDef *hpcd)
   USB_TypeDef *USBx = hpcd->Instance;
   uint32_t tickstart = HAL_GetTick();
 
-  /* Wait Detect flag or a timeout is happen*/
+  /* Wait Detect flag or a timeout is happen */
   while ((USBx->BCDR & USB_BCDR_DCDET) == 0U)
   {
     /* Check for the Timeout */
@@ -173,7 +176,7 @@ void HAL_PCDEx_BCD_VBUSDetect(PCD_HandleTypeDef *hpcd)
     }
   }
 
-  HAL_Delay(300U);
+  HAL_Delay(200U);
 
   /* Data Pin Contact ? Check Detect flag */
   if ((USBx->BCDR & USB_BCDR_DCDET) == USB_BCDR_DCDET)
@@ -187,8 +190,9 @@ void HAL_PCDEx_BCD_VBUSDetect(PCD_HandleTypeDef *hpcd)
   /* Primary detection: checks if connected to Standard Downstream Port
   (without charging capability) */
   USBx->BCDR &= ~(USB_BCDR_DCDEN);
+  HAL_Delay(50U);
   USBx->BCDR |= (USB_BCDR_PDEN);
-  HAL_Delay(300U);
+  HAL_Delay(50U);
 
   /* If Charger detect ? */
   if ((USBx->BCDR & USB_BCDR_PDET) == USB_BCDR_PDET)
@@ -196,8 +200,9 @@ void HAL_PCDEx_BCD_VBUSDetect(PCD_HandleTypeDef *hpcd)
     /* Start secondary detection to check connection to Charging Downstream
     Port or Dedicated Charging Port */
     USBx->BCDR &= ~(USB_BCDR_PDEN);
+    HAL_Delay(50U);
     USBx->BCDR |= (USB_BCDR_SDEN);
-    HAL_Delay(300U);
+    HAL_Delay(50U);
 
     /* If CDP ? */
     if ((USBx->BCDR & USB_BCDR_SDET) == USB_BCDR_SDET)
@@ -327,5 +332,3 @@ __weak void HAL_PCDEx_BCD_Callback(PCD_HandleTypeDef *hpcd, PCD_BCD_MsgTypeDef m
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -895,8 +895,6 @@ HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, u
   */
 HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel)
 {
-  HAL_StatusTypeDef status;
-
   /* Check the parameters */
   assert_param(IS_DAC_CHANNEL(Channel));
 
@@ -915,7 +913,7 @@ HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel)
   if (Channel == DAC_CHANNEL_1)
   {
     /* Disable the DMA channel */
-    status = HAL_DMA_Abort(hdac->DMA_Handle1);
+    (void)HAL_DMA_Abort(hdac->DMA_Handle1);
 
     /* Disable the DAC DMA underrun interrupt */
     __HAL_DAC_DISABLE_IT(hdac, DAC_IT_DMAUDR1);
@@ -923,7 +921,7 @@ HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel)
   else /* Channel2 is used for */
   {
     /* Disable the DMA channel */
-    status = HAL_DMA_Abort(hdac->DMA_Handle2);
+    (void)HAL_DMA_Abort(hdac->DMA_Handle2);
 
     /* Disable the DAC DMA underrun interrupt */
     __HAL_DAC_DISABLE_IT(hdac, DAC_IT_DMAUDR2);
@@ -935,26 +933,14 @@ HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel)
 
 #if defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx)
   /* Disable the DMA channel */
-  status = HAL_DMA_Abort(hdac->DMA_Handle1);
+  (void)HAL_DMA_Abort(hdac->DMA_Handle1);
 
   /* Disable the DAC DMA underrun interrupt */
   __HAL_DAC_DISABLE_IT(hdac, DAC_IT_DMAUDR1);
 #endif /* STM32L451xx STM32L452xx STM32L462xx */
 
-  /* Check if DMA Channel effectively disabled */
-  if (status != HAL_OK)
-  {
-    /* Update DAC state machine to error */
-    hdac->State = HAL_DAC_STATE_ERROR;
-  }
-  else
-  {
-    /* Change DAC state */
-    hdac->State = HAL_DAC_STATE_READY;
-  }
-
   /* Return function status */
-  return status;
+  return HAL_OK;
 }
 
 /* DAC channel 2 is available on top of DAC channel 1 in */
@@ -1252,11 +1238,11 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConf
   if (sConfig->DAC_SampleAndHold == DAC_SAMPLEANDHOLD_ENABLE)
   /* Sample on old configuration */
   {
-    /* SampleTime */
+    /* Get timeout */
+    tickstart = HAL_GetTick();
+
     if (Channel == DAC_CHANNEL_1)
     {
-      /* Get timeout */
-      tickstart = HAL_GetTick();
 
       /* SHSR1 can be written when BWST1 is cleared */
       while (((hdac->Instance->SR) & DAC_SR_BWST1) != 0UL)
@@ -1309,16 +1295,16 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConf
   if (sConfig->DAC_UserTrimming == DAC_TRIMMING_USER)
   /* USER TRIMMING */
   {
-  /* Get the DAC CCR value */
-  tmpreg1 = hdac->Instance->CCR;
-  /* Clear trimming value */
+    /* Get the DAC CCR value */
+    tmpreg1 = hdac->Instance->CCR;
+    /* Clear trimming value */
     tmpreg1 &= ~(((uint32_t)(DAC_CCR_OTRIM1)) << (Channel & 0x10UL));
-  /* Configure for the selected trimming offset */
-  tmpreg2 = sConfig->DAC_TrimmingValue;
-  /* Calculate CCR register value depending on DAC_Channel */
+    /* Configure for the selected trimming offset */
+    tmpreg2 = sConfig->DAC_TrimmingValue;
+    /* Calculate CCR register value depending on DAC_Channel */
     tmpreg1 |= tmpreg2 << (Channel & 0x10UL);
-  /* Write to DAC CCR */
-  hdac->Instance->CCR = tmpreg1;
+    /* Write to DAC CCR */
+    hdac->Instance->CCR = tmpreg1;
   }
   /* else factory trimming is used (factory setting are available at reset)*/
   /* SW Nothing has nothing to do */

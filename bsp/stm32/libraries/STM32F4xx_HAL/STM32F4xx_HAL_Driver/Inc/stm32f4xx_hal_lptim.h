@@ -97,22 +97,22 @@ typedef struct
   */
 typedef struct
 {
-  LPTIM_ClockConfigTypeDef     Clock;               /*!< Specifies the clock parameters */
+  LPTIM_ClockConfigTypeDef     Clock;             /*!< Specifies the clock parameters */
 
-  LPTIM_ULPClockConfigTypeDef  UltraLowPowerClock;  /*!< Specifies the Ultra Low Power clock parameters */
+  LPTIM_ULPClockConfigTypeDef  UltraLowPowerClock;/*!< Specifies the Ultra Low Power clock parameters */
 
-  LPTIM_TriggerConfigTypeDef   Trigger;             /*!< Specifies the Trigger parameters */
+  LPTIM_TriggerConfigTypeDef   Trigger;           /*!< Specifies the Trigger parameters */
 
-  uint32_t                     OutputPolarity;      /*!< Specifies the Output polarity.
-                                                    This parameter can be a value of @ref LPTIM_Output_Polarity */
+  uint32_t                     OutputPolarity;    /*!< Specifies the Output polarity.
+                                                  This parameter can be a value of @ref LPTIM_Output_Polarity */
 
-  uint32_t                     UpdateMode;          /*!< Specifies whether the update of the autoreload and the compare
-                                                    values is done immediately or after the end of current period.
-                                                    This parameter can be a value of @ref LPTIM_Updating_Mode */
+  uint32_t                     UpdateMode;        /*!< Specifies whether the update of the autoreload and the compare
+                                                  values is done immediately or after the end of current period.
+                                                  This parameter can be a value of @ref LPTIM_Updating_Mode */
 
-  uint32_t                     CounterSource;       /*!< Specifies whether the counter is incremented each internal event
-                                                    or each external event.
-                                                    This parameter can be a value of @ref LPTIM_Counter_Source */
+  uint32_t                     CounterSource;     /*!< Specifies whether the counter is incremented each internal event
+                                                  or each external event.
+                                                  This parameter can be a value of @ref LPTIM_Counter_Source */
 } LPTIM_InitTypeDef;
 
 /**

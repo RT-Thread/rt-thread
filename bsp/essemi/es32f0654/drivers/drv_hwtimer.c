@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the License); you may
  * not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <drv_hwtimer.h>
-#include <board.h> 
+#include <board.h>
 
 
 #ifdef RT_USING_HWTIMER
@@ -203,7 +203,7 @@ static void es32f0_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
 
     struct rt_hwtimer_info *hwtimer_info = (struct rt_hwtimer_info *)timer->info;
 
-    
+
     RT_ASSERT(hwtimer != RT_NULL);
 
     if (1 == state)
@@ -212,7 +212,7 @@ static void es32f0_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
         ald_timer_interrupt_config(hwtimer->hwtimer_periph, TIMER_IT_UPDATE, ENABLE);
         NVIC_EnableIRQ(hwtimer->IRQn);
     }
-    
+
     hwtimer->parent.freq = ald_cmu_get_pclk1_clock()/((hwtimer->hwtimer_periph->perh->PRES & 0xFFFF)+1);
     hwtimer_info->maxfreq = hwtimer->parent.freq;
     hwtimer_info->minfreq = (hwtimer->parent.freq)/0xFFFF;
@@ -267,19 +267,19 @@ static rt_err_t es32f0_hwtimer_control(rt_hwtimer_t *timer,
     {
     case HWTIMER_CTRL_FREQ_SET:
         freq = *(rt_uint32_t *)args;
-    
+
         ret = -RT_ERROR;
-    
+
         if(freq)
-        {   
+        {
             double temp,target;
             temp = (double)ald_cmu_get_pclk1_clock();
             target = temp/freq;
-        
-            if(target < 0x10001)   /*×î´ó·ÖÆµ = max(PRES)+1*/
+
+            if(target < 0x10001)   /*æœ€å¤§åˆ†é¢‘ = max(PRES)+1*/
             {
                 temp = target - (int)(target);
-            
+
                 if((temp > 0.998)&&(target < 0x10000))
                 {
                     hwtimer->hwtimer_periph->perh->PRES = (uint32_t)target;
@@ -290,14 +290,14 @@ static rt_err_t es32f0_hwtimer_control(rt_hwtimer_t *timer,
                     hwtimer->hwtimer_periph->perh->PRES = (uint32_t)target - 1;
                     ret = RT_EOK;
                 }
-             
+
             }
-            
-            if(ret == RT_EOK)     /*¸üÐÂÐÅÏ¢*/
+
+            if(ret == RT_EOK)     /*æ›´æ–°ä¿¡æ¯*/
                 hwtimer->parent.freq = ald_cmu_get_pclk1_clock()/((hwtimer->hwtimer_periph->perh->PRES & 0xFFFF)+1);
-    
+
         }
-       
+
         break;
 
     case HWTIMER_CTRL_STOP:
@@ -327,14 +327,14 @@ int rt_hw_hwtimer_init(void)
 
 #ifdef BSP_USING_AD16C4T0_HWTIMER
     static timer_handle_t ad16c4t0_hwtimer_periph;
-    
+
     ad16c4t0_hwtimer_periph.perh = AD16C4T0;
     ad16c4t0_hwtimer.IRQn = AD16C4T0_BRK_UP_TRIG_COM_IRQn;
-    
-    ad16c4t0_hwtimer_periph.init.prescaler = ES_AD16C4T0_HWTIMER_PRES - 1;  
+
+    ad16c4t0_hwtimer_periph.init.prescaler = ES_AD16C4T0_HWTIMER_PRES - 1;
     ad16c4t0_hwtimer_periph.init.mode = ( ES_AD16C4T0_HWTIMER_MODE == HWTIMER_CNTMODE_UP )? TIMER_CNT_MODE_UP : TIMER_CNT_MODE_DOWN;
     ad16c4t0_hwtimer.hwtimer_periph = &ad16c4t0_hwtimer_periph;
-    
+
     ad16c4t0_hwtimer.parent.info = &ad16c4t0_info;
     ad16c4t0_hwtimer.parent.ops = &es32f0_hwtimer_ops;
     ret = rt_device_hwtimer_register(&ad16c4t0_hwtimer.parent, ES_DEVICE_NAME_AD16C4T0_HWTIMER, &ad16c4t0_hwtimer);
@@ -342,14 +342,14 @@ int rt_hw_hwtimer_init(void)
 
 #ifdef BSP_USING_GP16C4T0_HWTIMER
     static timer_handle_t gp16c4t0_hwtimer_periph;
-    
+
     gp16c4t0_hwtimer_periph.perh = GP16C4T0;
     gp16c4t0_hwtimer.IRQn = GP16C4T0_LCD_IRQn;
-    
-    gp16c4t0_hwtimer_periph.init.prescaler = ES_GP16C4T0_HWTIMER_PRES - 1;  
+
+    gp16c4t0_hwtimer_periph.init.prescaler = ES_GP16C4T0_HWTIMER_PRES - 1;
     gp16c4t0_hwtimer_periph.init.mode = ( ES_GP16C4T0_HWTIMER_MODE == HWTIMER_CNTMODE_UP )? TIMER_CNT_MODE_UP : TIMER_CNT_MODE_DOWN;
     gp16c4t0_hwtimer.hwtimer_periph = &gp16c4t0_hwtimer_periph;
-    
+
     gp16c4t0_hwtimer.parent.info = &gp16c4t0_info;
     gp16c4t0_hwtimer.parent.ops = &es32f0_hwtimer_ops;
     ret = rt_device_hwtimer_register(&gp16c4t0_hwtimer.parent, ES_DEVICE_NAME_GP16C4T0_HWTIMER, &gp16c4t0_hwtimer);
@@ -357,14 +357,14 @@ int rt_hw_hwtimer_init(void)
 
 #ifdef BSP_USING_GP16C2T0_HWTIMER
     static timer_handle_t gp16c2t0_hwtimer_periph;
-    
+
     gp16c2t0_hwtimer_periph.perh = GP16C2T0;
     gp16c2t0_hwtimer.IRQn = GP16C2T0_IRQn;
-    
-    gp16c2t0_hwtimer_periph.init.prescaler = ES_GP16C2T0_HWTIMER_PRES - 1;  
+
+    gp16c2t0_hwtimer_periph.init.prescaler = ES_GP16C2T0_HWTIMER_PRES - 1;
     gp16c2t0_hwtimer_periph.init.mode = ( ES_GP16C2T0_HWTIMER_MODE == HWTIMER_CNTMODE_UP )? TIMER_CNT_MODE_UP : TIMER_CNT_MODE_DOWN;
     gp16c2t0_hwtimer.hwtimer_periph = &gp16c2t0_hwtimer_periph;
-    
+
     gp16c2t0_hwtimer.parent.info = &gp16c2t0_info;
     gp16c2t0_hwtimer.parent.ops = &es32f0_hwtimer_ops;
     ret = rt_device_hwtimer_register(&gp16c2t0_hwtimer.parent, ES_DEVICE_NAME_GP16C2T0_HWTIMER, &gp16c2t0_hwtimer);
@@ -372,14 +372,14 @@ int rt_hw_hwtimer_init(void)
 
 #ifdef BSP_USING_GP16C2T1_HWTIMER
     static timer_handle_t gp16c2t1_hwtimer_periph;
-    
+
     gp16c2t1_hwtimer_periph.perh = GP16C2T1;
     gp16c2t1_hwtimer.IRQn = GP16C2T1_IRQn;
-    
-    gp16c2t1_hwtimer_periph.init.prescaler = ES_GP16C2T1_HWTIMER_PRES - 1;  
+
+    gp16c2t1_hwtimer_periph.init.prescaler = ES_GP16C2T1_HWTIMER_PRES - 1;
     gp16c2t1_hwtimer_periph.init.mode = ( ES_GP16C2T1_HWTIMER_MODE == HWTIMER_CNTMODE_UP )? TIMER_CNT_MODE_UP : TIMER_CNT_MODE_DOWN;
     gp16c2t1_hwtimer.hwtimer_periph = &gp16c2t1_hwtimer_periph;
-    
+
     gp16c2t1_hwtimer.parent.info = &gp16c2t1_info;
     gp16c2t1_hwtimer.parent.ops = &es32f0_hwtimer_ops;
     ret = rt_device_hwtimer_register(&gp16c2t1_hwtimer.parent, ES_DEVICE_NAME_GP16C2T1_HWTIMER, &gp16c2t1_hwtimer);
@@ -387,14 +387,14 @@ int rt_hw_hwtimer_init(void)
 
 #ifdef BSP_USING_BS16T0_HWTIMER
     static timer_handle_t bs16t0_hwtimer_periph;
-    
+
     bs16t0_hwtimer_periph.perh = BS16T0;
     bs16t0_hwtimer.IRQn = BS16T0_IRQn;
-    
-    bs16t0_hwtimer_periph.init.prescaler = ES_BS16T0_HWTIMER_PRES - 1;  
+
+    bs16t0_hwtimer_periph.init.prescaler = ES_BS16T0_HWTIMER_PRES - 1;
     bs16t0_hwtimer_periph.init.mode = ( ES_BS16T0_HWTIMER_MODE == HWTIMER_CNTMODE_UP )? TIMER_CNT_MODE_UP : TIMER_CNT_MODE_DOWN;
     bs16t0_hwtimer.hwtimer_periph = &bs16t0_hwtimer_periph;
-    
+
     bs16t0_hwtimer.parent.info = &bs16t0_info;
     bs16t0_hwtimer.parent.ops = &es32f0_hwtimer_ops;
     ret = rt_device_hwtimer_register(&bs16t0_hwtimer.parent, ES_DEVICE_NAME_BS16T0_HWTIMER, &bs16t0_hwtimer);
@@ -402,14 +402,14 @@ int rt_hw_hwtimer_init(void)
 
 #ifdef BSP_USING_BS16T1_HWTIMER
     static timer_handle_t bs16t1_hwtimer_periph;
-    
+
     bs16t1_hwtimer_periph.perh = BS16T1;
     bs16t1_hwtimer.IRQn = BS16T1_UART2_IRQn;
-    
-    bs16t1_hwtimer_periph.init.prescaler = ES_BS16T1_HWTIMER_PRES - 1;  
+
+    bs16t1_hwtimer_periph.init.prescaler = ES_BS16T1_HWTIMER_PRES - 1;
     bs16t1_hwtimer_periph.init.mode = ( ES_BS16T1_HWTIMER_MODE == HWTIMER_CNTMODE_UP )? TIMER_CNT_MODE_UP : TIMER_CNT_MODE_DOWN;
     bs16t1_hwtimer.hwtimer_periph = &bs16t1_hwtimer_periph;
-    
+
     bs16t1_hwtimer.parent.info = &bs16t1_info;
     bs16t1_hwtimer.parent.ops = &es32f0_hwtimer_ops;
     ret = rt_device_hwtimer_register(&bs16t1_hwtimer.parent, ES_DEVICE_NAME_BS16T1_HWTIMER, &bs16t1_hwtimer);
@@ -417,14 +417,14 @@ int rt_hw_hwtimer_init(void)
 
 #ifdef BSP_USING_BS16T2_HWTIMER
     static timer_handle_t bs16t2_hwtimer_periph;
-    
+
     bs16t2_hwtimer_periph.perh = BS16T2;
     bs16t2_hwtimer.IRQn = BS16T2_UART3_IRQn;
-    
-    bs16t2_hwtimer_periph.init.prescaler = ES_BS16T2_HWTIMER_PRES - 1;  
+
+    bs16t2_hwtimer_periph.init.prescaler = ES_BS16T2_HWTIMER_PRES - 1;
     bs16t2_hwtimer_periph.init.mode = ( ES_BS16T2_HWTIMER_MODE == HWTIMER_CNTMODE_UP )? TIMER_CNT_MODE_UP : TIMER_CNT_MODE_DOWN;
     bs16t2_hwtimer.hwtimer_periph = &bs16t2_hwtimer_periph;
-    
+
     bs16t2_hwtimer.parent.info = &bs16t2_info;
     bs16t2_hwtimer.parent.ops = &es32f0_hwtimer_ops;
     ret = rt_device_hwtimer_register(&bs16t2_hwtimer.parent, ES_DEVICE_NAME_BS16T2_HWTIMER, &bs16t2_hwtimer);
@@ -432,14 +432,14 @@ int rt_hw_hwtimer_init(void)
 
 #ifdef BSP_USING_BS16T3_HWTIMER
     static timer_handle_t bs16t3_hwtimer_periph;
-    
+
     bs16t3_hwtimer_periph.perh = BS16T3;
     bs16t3_hwtimer.IRQn = BS16T3_DAC0_IRQn;
-    
-    bs16t3_hwtimer_periph.init.prescaler = ES_BS16T3_HWTIMER_PRES - 1;  
+
+    bs16t3_hwtimer_periph.init.prescaler = ES_BS16T3_HWTIMER_PRES - 1;
     bs16t3_hwtimer_periph.init.mode = ( ES_BS16T3_HWTIMER_MODE == HWTIMER_CNTMODE_UP )? TIMER_CNT_MODE_UP : TIMER_CNT_MODE_DOWN;
     bs16t3_hwtimer.hwtimer_periph = &bs16t3_hwtimer_periph;
-    
+
     bs16t3_hwtimer.parent.info = &bs16t3_info;
     bs16t3_hwtimer.parent.ops = &es32f0_hwtimer_ops;
     ret = rt_device_hwtimer_register(&bs16t3_hwtimer.parent, ES_DEVICE_NAME_BS16T3_HWTIMER, &bs16t3_hwtimer);

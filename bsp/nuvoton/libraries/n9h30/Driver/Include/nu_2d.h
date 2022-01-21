@@ -30,8 +30,8 @@ extern "C"
 /// @cond HIDDEN_SYMBOLS
 typedef struct
 {
-    UINT32    PatternA;
-    UINT32    PatternB;
+    uint32_t    PatternA;
+    uint32_t    PatternB;
 } MONOPATTERN;
 
 #define COLOR_KEY 0xFF000000
@@ -169,7 +169,7 @@ void ge2dSpriteBltx_ScreenRop(int x, int y, int sprite_sx, int sprite_sy, int wi
 void ge2dColorExpansionBlt(int x, int y, int width, int height, int fore_color, int back_color, int opt, void *buf);
 void ge2dHostColorExpansionBlt(int x, int y, int width, int height, int fore_color, int back_color, int opt, void *buf);
 void ge2dInitMonoPattern(int opt, int fore_color, int back_color);
-void ge2dInitMonoInputPattern(UINT32 PatternA, UINT32 PatternB, int fore_color, int back_color);
+void ge2dInitMonoInputPattern(uint32_t PatternA, uint32_t PatternB, int fore_color, int back_color);
 void ge2dInitColorPattern(int patformat, void *patdata);
 void ge2dFont_PutChar(int x, int y, char asc_code, int fore_color, int back_color, int draw_mode, int font_id);
 void ge2dFont_PutString(int x, int y, char *str, int fore_color, int back_color, int draw_mode, int font_id);

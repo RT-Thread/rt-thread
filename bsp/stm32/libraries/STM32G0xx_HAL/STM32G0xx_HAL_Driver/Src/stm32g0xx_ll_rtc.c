@@ -25,7 +25,7 @@
 #include "stm32_assert.h"
 #else
 #define assert_param(expr) ((void)0U)
-#endif
+#endif /* USE_FULL_ASSERT */
 
 /** @addtogroup STM32G0xx_LL_Driver
   * @{
@@ -87,18 +87,7 @@
 
 #define IS_LL_RTC_DAY(__DAY__)    (((__DAY__) >= 1U) && ((__DAY__) <= 31U))
 
-#define IS_LL_RTC_MONTH(__VALUE__) (((__VALUE__) == LL_RTC_MONTH_JANUARY) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_FEBRUARY) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_MARCH) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_APRIL) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_MAY) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_JUNE) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_JULY) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_AUGUST) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_SEPTEMBER) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_OCTOBER) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_NOVEMBER) \
-                                 || ((__VALUE__) == LL_RTC_MONTH_DECEMBER))
+#define IS_LL_RTC_MONTH(__MONTH__) (((__MONTH__) >= 1U) && ((__MONTH__) <= 12U))
 
 #define IS_LL_RTC_YEAR(__YEAR__) ((__YEAR__) <= 99U)
 

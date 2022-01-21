@@ -16,9 +16,9 @@
  * limitations under the License.
  *
  * Change Logs:
- * Date           Author        Notes             
- * 2019-11-01     wangyq        update libraries  
- * 2020-01-14     wangyq        the first version 
+ * Date           Author        Notes
+ * 2019-11-01     wangyq        update libraries
+ * 2020-01-14     wangyq        the first version
  * 2021-04-20     liuhy         the second version
  */
 
@@ -43,7 +43,7 @@ rt_err_t spi_configure(struct rt_spi_device *device,
     hspi->init.ss_en    = DISABLE;
     hspi->init.crc_calc = DISABLE;
     hspi->init.frame    = SPI_FRAME_MOTOROLA;
-    
+
     /* config spi mode */
     if (cfg->mode & RT_SPI_SLAVE)
     {
@@ -86,7 +86,7 @@ rt_err_t spi_configure(struct rt_spi_device *device,
     {
         hspi->init.first_bit = SPI_FIRSTBIT_LSB;
     }
-    
+
     if (cfg->mode & RT_SPI_CPOL)
     {
         hspi->init.polarity = SPI_CPOL_HIGH;
@@ -157,7 +157,7 @@ rt_err_t spi_configure(struct rt_spi_device *device,
     {
         hspi->init.baud = SPI_BAUD_256;
     }
-    
+
     ald_spi_init(hspi);
     return RT_EOK;
 }
@@ -171,7 +171,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
-    
+
     hspi = (spi_handle_t *)device->bus->parent.user_data;
     cs = device->parent.user_data;
 
@@ -179,7 +179,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             rt_pin_write(cs->pin, ES_SPI_CS_LEVEL);
         }
-    
+
     if(message->send_buf != RT_NULL || message->recv_buf != RT_NULL)
     {
     /* send & receive */
@@ -201,28 +201,28 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             res = ald_spi_recv(hspi, (rt_uint8_t *)message->recv_buf, (rt_int32_t)message->length, SPITIMEOUT);
         }
     }
-    
+
      if (message->cs_release)
      {
         rt_pin_write(cs->pin, !ES_SPI_CS_LEVEL);
      }
-     
-     if (res != RT_EOK) 
+
+     if (res != RT_EOK)
          return RT_ERROR;
-     else               
+     else
          return message->length;
-     
+
     }
     else
     {
-       
+
         if (message->cs_release)
         {
             rt_pin_write(cs->pin, !ES_SPI_CS_LEVEL);
         }
             return RT_EOK;
     }
-    
+
 }
 
 const struct rt_spi_ops es32f3_spi_ops =
@@ -242,19 +242,19 @@ rt_err_t es32f3_spi_device_attach(rt_uint32_t pin, const char *bus_name, const c
     cs_pin->pin = pin;
     rt_pin_mode(pin, PIN_MODE_OUTPUT);
     rt_pin_write(pin, 1);
-    
+
     result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
-    
-#ifdef BSP_USING_SPI0                  
-    if(!(strcmp(bus_name,ES_DEVICE_NAME_SPI0_BUS)))SPI_BUS_CONFIG(spi_device->config,0);   
-#endif  
-#ifdef BSP_USING_SPI1 
-    if(!(strcmp(bus_name,ES_DEVICE_NAME_SPI1_BUS)))SPI_BUS_CONFIG(spi_device->config,1); 
-#endif   
-#ifdef BSP_USING_SPI2  
-    if(!(strcmp(bus_name,ES_DEVICE_NAME_SPI2_BUS)))SPI_BUS_CONFIG(spi_device->config,2); 
-#endif    
-    
+
+#ifdef BSP_USING_SPI0
+    if(!(strcmp(bus_name,ES_DEVICE_NAME_SPI0_BUS)))SPI_BUS_CONFIG(spi_device->config,0);
+#endif
+#ifdef BSP_USING_SPI1
+    if(!(strcmp(bus_name,ES_DEVICE_NAME_SPI1_BUS)))SPI_BUS_CONFIG(spi_device->config,1);
+#endif
+#ifdef BSP_USING_SPI2
+    if(!(strcmp(bus_name,ES_DEVICE_NAME_SPI2_BUS)))SPI_BUS_CONFIG(spi_device->config,2);
+#endif
+
     return result;
 }
 
@@ -280,14 +280,14 @@ int rt_hw_spi_init(void)
     struct rt_spi_bus *spi_bus;
     spi_handle_t *spi;
     gpio_init_t gpio_instruct;
-    
+
     gpio_instruct.pupd = GPIO_PUSH_UP_DOWN;
     gpio_instruct.odos = GPIO_PUSH_PULL;
-    gpio_instruct.podrv = GPIO_OUT_DRIVE_1;
-    gpio_instruct.nodrv = GPIO_OUT_DRIVE_1;
+    gpio_instruct.podrv = GPIO_OUT_DRIVE_6;
+    gpio_instruct.nodrv = GPIO_OUT_DRIVE_6;
     gpio_instruct.type = GPIO_TYPE_TTL;
     gpio_instruct.flt  = GPIO_FILTER_DISABLE;
-    
+
 #ifdef BSP_USING_SPI0
     _spi0.perh = SPI0;
     spi_bus = &_spi_bus0;
@@ -299,19 +299,19 @@ int rt_hw_spi_init(void)
 #if  defined(ES_SPI0_SCK_GPIO_FUNC)&&defined(ES_SPI0_SCK_GPIO_PORT)&&defined(ES_SPI0_SCK_GPIO_PIN)
     gpio_instruct.func = ES_SPI0_SCK_GPIO_FUNC;
     ald_gpio_init(ES_SPI0_SCK_GPIO_PORT, ES_SPI0_SCK_GPIO_PIN, &gpio_instruct);
-#endif                                
+#endif
 
-#if  defined(ES_SPI0_MOSI_GPIO_FUNC)&&defined(ES_SPI0_MOSI_GPIO_PORT)&&defined(ES_SPI0_MOSI_GPIO_PIN)   
+#if  defined(ES_SPI0_MOSI_GPIO_FUNC)&&defined(ES_SPI0_MOSI_GPIO_PORT)&&defined(ES_SPI0_MOSI_GPIO_PIN)
     gpio_instruct.func = ES_SPI0_MOSI_GPIO_FUNC;
     ald_gpio_init(ES_SPI0_MOSI_GPIO_PORT, ES_SPI0_MOSI_GPIO_PIN, &gpio_instruct);
-#endif                                    
-    
+#endif
+
     gpio_instruct.mode = GPIO_MODE_INPUT;
 
-#if  defined(ES_SPI0_MISO_GPIO_FUNC)&&defined(ES_SPI0_MISO_GPIO_PORT)&&defined(ES_SPI0_MISO_GPIO_PIN)        
+#if  defined(ES_SPI0_MISO_GPIO_FUNC)&&defined(ES_SPI0_MISO_GPIO_PORT)&&defined(ES_SPI0_MISO_GPIO_PIN)
     gpio_instruct.func = ES_SPI0_MISO_GPIO_FUNC;
     ald_gpio_init(ES_SPI0_MISO_GPIO_PORT, ES_SPI0_MISO_GPIO_PIN, &gpio_instruct);
-#endif                            
+#endif
 
     spi_bus->parent.user_data = spi;
     result = rt_spi_bus_register(spi_bus, ES_DEVICE_NAME_SPI0_BUS, &es32f3_spi_ops);
@@ -319,14 +319,14 @@ int rt_hw_spi_init(void)
     {
         return result;
     }
-    
+
     result = es32f3_spi_device_attach(ES_SPI0_NSS_PIN, ES_DEVICE_NAME_SPI0_BUS, ES_DEVICE_NAME_SPI0_DEV0);
-    
+
     if (result != RT_EOK)
     {
         return result;
     }
-    
+
 #endif
 
 #ifdef BSP_USING_SPI1
@@ -336,23 +336,23 @@ int rt_hw_spi_init(void)
 
     /* SPI1 gpio init */
     gpio_instruct.mode = GPIO_MODE_OUTPUT;
-                
+
 #if  defined(ES_SPI1_SCK_GPIO_FUNC)&&defined(ES_SPI1_SCK_GPIO_PORT)&&defined(ES_SPI1_SCK_GPIO_PIN)
     gpio_instruct.func = ES_SPI1_SCK_GPIO_FUNC;
-    ald_gpio_init(ES_SPI1_SCK_GPIO_PORT, ES_SPI1_SCK_GPIO_PIN, &gpio_instruct);  
-#endif                            
-                                             
-#if  defined(ES_SPI1_MOSI_GPIO_FUNC)&&defined(ES_SPI1_MOSI_GPIO_PORT)&&defined(ES_SPI1_MOSI_GPIO_PIN) 
+    ald_gpio_init(ES_SPI1_SCK_GPIO_PORT, ES_SPI1_SCK_GPIO_PIN, &gpio_instruct);
+#endif
+
+#if  defined(ES_SPI1_MOSI_GPIO_FUNC)&&defined(ES_SPI1_MOSI_GPIO_PORT)&&defined(ES_SPI1_MOSI_GPIO_PIN)
     gpio_instruct.func = ES_SPI1_MOSI_GPIO_FUNC;
-    ald_gpio_init(ES_SPI1_MOSI_GPIO_PORT, ES_SPI1_MOSI_GPIO_PIN, &gpio_instruct); 
-#endif                            
-    
+    ald_gpio_init(ES_SPI1_MOSI_GPIO_PORT, ES_SPI1_MOSI_GPIO_PIN, &gpio_instruct);
+#endif
+
     gpio_instruct.mode = GPIO_MODE_INPUT;
-                                          
-#if  defined(ES_SPI1_MISO_GPIO_FUNC)&&defined(ES_SPI1_MISO_GPIO_PORT)&&defined(ES_SPI1_MISO_GPIO_PIN) 
+
+#if  defined(ES_SPI1_MISO_GPIO_FUNC)&&defined(ES_SPI1_MISO_GPIO_PORT)&&defined(ES_SPI1_MISO_GPIO_PIN)
     gpio_instruct.func = ES_SPI1_MISO_GPIO_FUNC;
-    ald_gpio_init(ES_SPI1_MISO_GPIO_PORT, ES_SPI1_MISO_GPIO_PIN, &gpio_instruct); 
-#endif                            
+    ald_gpio_init(ES_SPI1_MISO_GPIO_PORT, ES_SPI1_MISO_GPIO_PIN, &gpio_instruct);
+#endif
 
     spi_bus->parent.user_data = spi;
     result = rt_spi_bus_register(spi_bus, ES_DEVICE_NAME_SPI1_BUS, &es32f3_spi_ops);
@@ -360,14 +360,14 @@ int rt_hw_spi_init(void)
     {
         return result;
     }
-    
+
     result = es32f3_spi_device_attach(ES_SPI1_NSS_PIN, ES_DEVICE_NAME_SPI1_BUS, ES_DEVICE_NAME_SPI1_DEV0);
-    
+
     if (result != RT_EOK)
     {
         return result;
     }
-    
+
 #endif
 
 #ifdef BSP_USING_SPI2
@@ -377,23 +377,23 @@ int rt_hw_spi_init(void)
 
     /* SPI2 gpio init */
     gpio_instruct.mode = GPIO_MODE_OUTPUT;
-                                          
-#if  defined(ES_SPI2_SCK_GPIO_FUNC)&&defined(ES_SPI2_SCK_GPIO_PORT)&&defined(ES_SPI2_SCK_GPIO_PIN) 
+
+#if  defined(ES_SPI2_SCK_GPIO_FUNC)&&defined(ES_SPI2_SCK_GPIO_PORT)&&defined(ES_SPI2_SCK_GPIO_PIN)
     gpio_instruct.func = ES_SPI2_SCK_GPIO_FUNC;
     ald_gpio_init(ES_SPI2_SCK_GPIO_PORT, ES_SPI2_SCK_GPIO_PIN, &gpio_instruct);
-#endif                            
-                                         
-#if  defined(ES_SPI2_MOSI_GPIO_FUNC)&&defined(ES_SPI2_MOSI_GPIO_PORT)&&defined(ES_SPI2_MOSI_GPIO_PIN) 
+#endif
+
+#if  defined(ES_SPI2_MOSI_GPIO_FUNC)&&defined(ES_SPI2_MOSI_GPIO_PORT)&&defined(ES_SPI2_MOSI_GPIO_PIN)
     gpio_instruct.func = ES_SPI2_MOSI_GPIO_FUNC;
     ald_gpio_init(ES_SPI2_MOSI_GPIO_PORT, ES_SPI2_MOSI_GPIO_PIN, &gpio_instruct);
-#endif            
-    
+#endif
+
     gpio_instruct.mode = GPIO_MODE_INPUT;
-                                            
-#if  defined(ES_SPI2_MISO_GPIO_FUNC)&&defined(ES_SPI2_MISO_GPIO_PORT)&&defined(ES_SPI2_MISO_GPIO_PIN) 
+
+#if  defined(ES_SPI2_MISO_GPIO_FUNC)&&defined(ES_SPI2_MISO_GPIO_PORT)&&defined(ES_SPI2_MISO_GPIO_PIN)
     gpio_instruct.func = ES_SPI2_MISO_GPIO_FUNC;
     ald_gpio_init(ES_SPI2_MISO_GPIO_PORT, ES_SPI2_MISO_GPIO_PIN, &gpio_instruct);
-#endif            
+#endif
 
     spi_bus->parent.user_data = spi;
     result = rt_spi_bus_register(spi_bus, ES_DEVICE_NAME_SPI2_BUS, &es32f3_spi_ops);
@@ -401,14 +401,14 @@ int rt_hw_spi_init(void)
     {
         return result;
     }
-    
+
     result = es32f3_spi_device_attach(ES_SPI2_NSS_PIN, ES_DEVICE_NAME_SPI2_BUS, ES_DEVICE_NAME_SPI1_DEV0);
-    
+
     if (result != RT_EOK)
     {
         return result;
     }
-    
+
 #endif
     return result;
 }

@@ -26,17 +26,17 @@
 
 #include "es_conf_info_map.h"
 #include <ald_gpio.h>
-#include <ald_uart.h>   
+#include <ald_uart.h>
 #include <ald_usart.h>
 #include <ald_cmu.h>
- 
- 
 
-#define ES_C_UART_PARITY_NONE        PARITY_NONE    
+
+
+#define ES_C_UART_PARITY_NONE        PARITY_NONE
 #define ES_C_UART_PARITY_ODD         PARITY_ODD
 #define ES_C_UART_PARITY_EVEN        PARITY_EVEN
 
-#define ES_C_UART_STOP_1          STOP_BITS_1  
+#define ES_C_UART_STOP_1          STOP_BITS_1
 #define ES_C_UART_STOP_2          STOP_BITS_2
 
 
@@ -48,7 +48,7 @@
 
 #ifndef  ES_DEVICE_NAME_UART0
 #define  ES_DEVICE_NAME_UART0     "uart0"
-#endif       
+#endif
 #ifndef  ES_DEVICE_NAME_UART1
 #define  ES_DEVICE_NAME_UART1     "uart1"
 #endif
@@ -60,72 +60,72 @@
 #endif
 #ifndef  ES_DEVICE_NAME_USART0
 #define  ES_DEVICE_NAME_USART0     "usart0"
-#endif                                  
+#endif
 #ifndef  ES_DEVICE_NAME_USART1
 #define  ES_DEVICE_NAME_USART1     "usart1"
 #endif
 
 #ifndef ES_CONF_UART0_BAUD_RATE
-#define ES_CONF_UART0_BAUD_RATE         115200  
+#define ES_CONF_UART0_BAUD_RATE         115200
 #endif
 #ifndef ES_CONF_UART0_PARITY
 #define ES_CONF_UART0_PARITY         ES_C_UART_PARITY_NONE
 #endif
 #ifndef ES_CONF_UART0_STOP_BITS
 #define ES_CONF_UART0_STOP_BITS        ES_C_UART_STOP_1
-#endif          
+#endif
 
 #ifndef ES_CONF_UART1_BAUD_RATE
-#define ES_CONF_UART1_BAUD_RATE         115200  
+#define ES_CONF_UART1_BAUD_RATE         115200
 #endif
 #ifndef ES_CONF_UART1_PARITY
 #define ES_CONF_UART1_PARITY         ES_C_UART_PARITY_NONE
 #endif
 #ifndef ES_CONF_UART1_STOP_BITS
 #define ES_CONF_UART1_STOP_BITS        ES_C_UART_STOP_1
-#endif           
+#endif
 
 #ifndef ES_CONF_UART2_BAUD_RATE
-#define ES_CONF_UART2_BAUD_RATE         115200  
+#define ES_CONF_UART2_BAUD_RATE         115200
 #endif
 #ifndef ES_CONF_UART2_PARITY
 #define ES_CONF_UART2_PARITY         ES_C_UART_PARITY_NONE
 #endif
 #ifndef ES_CONF_UART2_STOP_BITS
 #define ES_CONF_UART2_STOP_BITS        ES_C_UART_STOP_1
-#endif   
+#endif
 
 #ifndef ES_CONF_UART3_BAUD_RATE
-#define ES_CONF_UART3_BAUD_RATE         115200  
+#define ES_CONF_UART3_BAUD_RATE         115200
 #endif
 #ifndef ES_CONF_UART3_PARITY
 #define ES_CONF_UART3_PARITY         ES_C_UART_PARITY_NONE
 #endif
 #ifndef ES_CONF_UART3_STOP_BITS
 #define ES_CONF_UART3_STOP_BITS        ES_C_UART_STOP_1
-#endif   
+#endif
 
 #ifndef ES_CONF_USART0_BAUD_RATE
-#define ES_CONF_USART0_BAUD_RATE         115200  
+#define ES_CONF_USART0_BAUD_RATE         115200
 #endif
 #ifndef ES_CONF_USART0_PARITY
 #define ES_CONF_USART0_PARITY         ES_C_UART_PARITY_NONE
 #endif
 #ifndef ES_CONF_USART0_STOP_BITS
 #define ES_CONF_USART0_STOP_BITS        ES_C_UART_STOP_1
-#endif   
+#endif
 
 #ifndef ES_CONF_USART1_BAUD_RATE
-#define ES_CONF_USART1_BAUD_RATE         115200  
+#define ES_CONF_USART1_BAUD_RATE         115200
 #endif
 #ifndef ES_CONF_USART1_PARITY
 #define ES_CONF_USART1_PARITY         ES_C_UART_PARITY_NONE
 #endif
 #ifndef ES_CONF_USART1_STOP_BITS
 #define ES_CONF_USART1_STOP_BITS        ES_C_UART_STOP_1
-#endif   
+#endif
 
-                                     
+
 #define ES_UART0_CONFIG                         \
 {                                               \
     ES_CONF_UART0_BAUD_RATE,                           \
@@ -137,7 +137,7 @@
     RT_SERIAL_RB_BUFSZ,                         \
     0                                           \
 }
-        
+
 
 #define ES_UART1_CONFIG                         \
 {                                               \
@@ -150,8 +150,8 @@
     RT_SERIAL_RB_BUFSZ,                         \
     0                                           \
 }
-               
-                                     
+
+
 #define ES_UART2_CONFIG                         \
 {                                               \
     ES_CONF_UART2_BAUD_RATE,                           \
@@ -163,8 +163,8 @@
     RT_SERIAL_RB_BUFSZ,                         \
     0                                           \
 }
-                            
-                                     
+
+
 #define ES_UART3_CONFIG                         \
 {                                               \
     ES_CONF_UART3_BAUD_RATE,                           \
@@ -189,8 +189,8 @@
     RT_SERIAL_RB_BUFSZ,                         \
     0                                           \
 }
-                     
-                                     
+
+
 #define ES_USART1_CONFIG                         \
 {                                               \
     ES_CONF_USART1_BAUD_RATE,                           \

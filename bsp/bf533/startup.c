@@ -62,7 +62,9 @@ void rtthread_startup(void)
     /* init finsh */
     extern int finsh_system_init(void);
     finsh_system_init();
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     finsh_set_device("uart0");
+#endif
 #endif
 
     rt_system_timer_thread_init();

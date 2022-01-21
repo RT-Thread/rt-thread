@@ -46,43 +46,45 @@ extern "C" {
   */
 typedef struct
 {
-  uint32_t BaudRate;                  /*!< This member configures the UART communication baud rate.
-                                           The baud rate register is computed using the following formula:
-                                           - If oversampling is 16 or in LIN mode,
-                                              Baud Rate Register = ((uart_ker_ck) / ((huart->Init.BaudRate)))
-                                           - If oversampling is 8,
-                                              Baud Rate Register[15:4] = ((2 * uart_ker_ck) / ((huart->Init.BaudRate)))[15:4]
-                                              Baud Rate Register[3] =  0
-                                              Baud Rate Register[2:0] =  (((2 * uart_ker_ck) / ((huart->Init.BaudRate)))[3:0]) >> 1
-                                           where uart_ker_ck is the UART input clock */
+  uint32_t BaudRate;                /*!< This member configures the UART communication baud rate.
+                                         The baud rate register is computed using the following formula:
+                                         - If oversampling is 16 or in LIN mode,
+                                            Baud Rate Register = ((uart_ker_ck) / ((huart->Init.BaudRate)))
+                                         - If oversampling is 8,
+                                            Baud Rate Register[15:4] = ((2 * uart_ker_ck) /
+                                                                        ((huart->Init.BaudRate)))[15:4]
+                                            Baud Rate Register[3] =  0
+                                            Baud Rate Register[2:0] =  (((2 * uart_ker_ck) /
+                                                                        ((huart->Init.BaudRate)))[3:0]) >> 1
+                                         where uart_ker_ck is the UART input clock */
 
-  uint32_t WordLength;                /*!< Specifies the number of data bits transmitted or received in a frame.
-                                           This parameter can be a value of @ref UARTEx_Word_Length. */
+  uint32_t WordLength;              /*!< Specifies the number of data bits transmitted or received in a frame.
+                                         This parameter can be a value of @ref UARTEx_Word_Length. */
 
-  uint32_t StopBits;                  /*!< Specifies the number of stop bits transmitted.
-                                           This parameter can be a value of @ref UART_Stop_Bits. */
+  uint32_t StopBits;                /*!< Specifies the number of stop bits transmitted.
+                                         This parameter can be a value of @ref UART_Stop_Bits. */
 
-  uint32_t Parity;                    /*!< Specifies the parity mode.
-                                           This parameter can be a value of @ref UART_Parity
-                                           @note When parity is enabled, the computed parity is inserted
-                                                 at the MSB position of the transmitted data (9th bit when
-                                                 the word length is set to 9 data bits; 8th bit when the
-                                                 word length is set to 8 data bits). */
+  uint32_t Parity;                  /*!< Specifies the parity mode.
+                                         This parameter can be a value of @ref UART_Parity
+                                         @note When parity is enabled, the computed parity is inserted
+                                               at the MSB position of the transmitted data (9th bit when
+                                               the word length is set to 9 data bits; 8th bit when the
+                                               word length is set to 8 data bits). */
 
-  uint32_t Mode;                      /*!< Specifies whether the Receive or Transmit mode is enabled or disabled.
-                                           This parameter can be a value of @ref UART_Mode. */
+  uint32_t Mode;                    /*!< Specifies whether the Receive or Transmit mode is enabled or disabled.
+                                         This parameter can be a value of @ref UART_Mode. */
 
-  uint32_t HwFlowCtl;                 /*!< Specifies whether the hardware flow control mode is enabled
-                                           or disabled.
-                                           This parameter can be a value of @ref UART_Hardware_Flow_Control. */
+  uint32_t HwFlowCtl;               /*!< Specifies whether the hardware flow control mode is enabled
+                                         or disabled.
+                                         This parameter can be a value of @ref UART_Hardware_Flow_Control. */
 
-  uint32_t OverSampling;              /*!< Specifies whether the Over sampling 8 is enabled or disabled,
-                                           to achieve higher speed (up to f_PCLK/8).
-                                           This parameter can be a value of @ref UART_Over_Sampling. */
+  uint32_t OverSampling;            /*!< Specifies whether the Over sampling 8 is enabled or disabled,
+                                         to achieve higher speed (up to f_PCLK/8).
+                                         This parameter can be a value of @ref UART_Over_Sampling. */
 
-  uint32_t OneBitSampling;            /*!< Specifies whether a single sample or three samples' majority vote is selected.
-                                           Selecting the single sample method increases the receiver tolerance to clock
-                                           deviations. This parameter can be a value of @ref UART_OneBit_Sampling. */
+  uint32_t OneBitSampling;          /*!< Specifies whether a single sample or three samples' majority vote is selected.
+                                         Selecting the single sample method increases the receiver tolerance to clock
+                                         deviations. This parameter can be a value of @ref UART_OneBit_Sampling. */
 
 
 } UART_InitTypeDef;
@@ -281,8 +283,9 @@ typedef enum
 /**
   * @brief  HAL UART Callback pointer definition
   */
-typedef  void (*pUART_CallbackTypeDef)(UART_HandleTypeDef *huart);  /*!< pointer to an UART callback function */
-typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart, uint16_t Pos);   /*!< pointer to a UART Rx Event specific callback function */
+typedef  void (*pUART_CallbackTypeDef)(UART_HandleTypeDef *huart); /*!< pointer to an UART callback function */
+typedef  void (*pUART_RxEventCallbackTypeDef)
+(struct __UART_HandleTypeDef *huart, uint16_t Pos); /*!< pointer to a UART Rx Event specific callback function */
 
 #endif /* USE_HAL_UART_REGISTER_CALLBACKS */
 
@@ -1047,10 +1050,10 @@ typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart
   * @param  __HANDLE__ specifies the UART Handle.
   * @retval None
   */
-#define __HAL_UART_HWCONTROL_CTS_ENABLE(__HANDLE__)        \
-  do{                                                      \
-    SET_BIT((__HANDLE__)->Instance->CR3, USART_CR3_CTSE);  \
-    (__HANDLE__)->Init.HwFlowCtl |= USART_CR3_CTSE;        \
+#define __HAL_UART_HWCONTROL_CTS_ENABLE(__HANDLE__)               \
+  do{                                                             \
+    ATOMIC_SET_BIT((__HANDLE__)->Instance->CR3, USART_CR3_CTSE);  \
+    (__HANDLE__)->Init.HwFlowCtl |= USART_CR3_CTSE;               \
   } while(0U)
 
 /** @brief  Disable CTS flow control.
@@ -1066,10 +1069,10 @@ typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart
   * @param  __HANDLE__ specifies the UART Handle.
   * @retval None
   */
-#define __HAL_UART_HWCONTROL_CTS_DISABLE(__HANDLE__)        \
-  do{                                                       \
-    CLEAR_BIT((__HANDLE__)->Instance->CR3, USART_CR3_CTSE); \
-    (__HANDLE__)->Init.HwFlowCtl &= ~(USART_CR3_CTSE);      \
+#define __HAL_UART_HWCONTROL_CTS_DISABLE(__HANDLE__)               \
+  do{                                                              \
+    ATOMIC_CLEAR_BIT((__HANDLE__)->Instance->CR3, USART_CR3_CTSE); \
+    (__HANDLE__)->Init.HwFlowCtl &= ~(USART_CR3_CTSE);             \
   } while(0U)
 
 /** @brief  Enable RTS flow control.
@@ -1085,10 +1088,10 @@ typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart
   * @param  __HANDLE__ specifies the UART Handle.
   * @retval None
   */
-#define __HAL_UART_HWCONTROL_RTS_ENABLE(__HANDLE__)       \
-  do{                                                     \
-    SET_BIT((__HANDLE__)->Instance->CR3, USART_CR3_RTSE); \
-    (__HANDLE__)->Init.HwFlowCtl |= USART_CR3_RTSE;       \
+#define __HAL_UART_HWCONTROL_RTS_ENABLE(__HANDLE__)              \
+  do{                                                            \
+    ATOMIC_SET_BIT((__HANDLE__)->Instance->CR3, USART_CR3_RTSE); \
+    (__HANDLE__)->Init.HwFlowCtl |= USART_CR3_RTSE;              \
   } while(0U)
 
 /** @brief  Disable RTS flow control.
@@ -1104,10 +1107,10 @@ typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart
   * @param  __HANDLE__ specifies the UART Handle.
   * @retval None
   */
-#define __HAL_UART_HWCONTROL_RTS_DISABLE(__HANDLE__)       \
-  do{                                                      \
-    CLEAR_BIT((__HANDLE__)->Instance->CR3, USART_CR3_RTSE);\
-    (__HANDLE__)->Init.HwFlowCtl &= ~(USART_CR3_RTSE);     \
+#define __HAL_UART_HWCONTROL_RTS_DISABLE(__HANDLE__)              \
+  do{                                                             \
+    ATOMIC_CLEAR_BIT((__HANDLE__)->Instance->CR3, USART_CR3_RTSE);\
+    (__HANDLE__)->Init.HwFlowCtl &= ~(USART_CR3_RTSE);            \
   } while(0U)
 /**
   * @}
@@ -1421,7 +1424,6 @@ typedef  void (*pUART_RxEventCallbackTypeDef)(struct __UART_HandleTypeDef *huart
 /* Include UART HAL Extended module */
 #include "stm32f3xx_hal_uart_ex.h"
 
-
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup UART_Exported_Functions UART Exported Functions
   * @{
@@ -1547,6 +1549,7 @@ HAL_StatusTypeDef UART_Start_Receive_DMA(UART_HandleTypeDef *huart, uint8_t *pDa
   * @}
   */
 
+/* Private variables -----------------------------------------------------------*/
 /**
   * @}
   */

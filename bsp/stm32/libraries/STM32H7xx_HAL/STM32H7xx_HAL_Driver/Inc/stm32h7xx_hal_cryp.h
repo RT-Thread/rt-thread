@@ -61,11 +61,12 @@ typedef struct
   uint32_t *Header;                    /*!< used only in AES GCM and CCM Algorithm for authentication,
                                         GCM : also known as Additional Authentication Data
                                         CCM : named B1 composed of the associated data length and Associated Data. */
-  uint32_t HeaderSize;                /*!< The size of header buffer in word  */
+  uint32_t HeaderSize;                /*!< The size of header buffer */
   uint32_t *B0;                       /*!< B0 is first authentication block used only  in AES CCM mode */
-  uint32_t DataWidthUnit;             /*!< Data With Unit, this parameter can be value of @ref CRYP_Data_Width_Unit*/
-  uint32_t KeyIVConfigSkip;            /*!< CRYP peripheral Key and IV configuration skip, to config Key and Initialization
-                                           Vector only once and to skip configuration for consecutive processings.
+  uint32_t DataWidthUnit;             /*!< Payload data Width Unit, this parameter can be value of @ref CRYP_Data_Width_Unit*/
+  uint32_t HeaderWidthUnit;            /*!< Header Width Unit, this parameter can be value of @ref CRYP_Header_Width_Unit*/
+  uint32_t KeyIVConfigSkip;            /*!< CRYP peripheral Key and IV configuration skip, to configure Key and Initialization
+                                           Vector only once and to skip configuration for consecutive processing.
                                            This parameter can be a value of @ref CRYP_Configuration_Skip */
 
 } CRYP_ConfigTypeDef;
@@ -108,7 +109,7 @@ typedef struct
 
   __IO uint16_t                     CrypOutCount;     /*!< Counter of output data */
 
-  uint16_t                          Size;           /*!< length of input data in word */
+  uint16_t                          Size;           /*!< length of input data in word or in byte, according to DataWidthUnit */
 
   uint32_t                          Phase;            /*!< CRYP peripheral phase */
 
@@ -211,6 +212,17 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef *hcryp);    /*!< point
 
 #define CRYP_DATAWIDTHUNIT_WORD   0x00000000U  /*!< By default, size unit is word */
 #define CRYP_DATAWIDTHUNIT_BYTE   0x00000001U  /*!< By default, size unit is word */
+
+/**
+  * @}
+  */
+
+/** @defgroup CRYP_Header_Width_Unit CRYP Header Width Unit
+  * @{
+  */
+
+#define CRYP_HEADERWIDTHUNIT_WORD   0x00000000U  /*!< By default, header size unit is word */
+#define CRYP_HEADERWIDTHUNIT_BYTE   0x00000001U  /*!< By default, header size unit is byte */
 
 /**
   * @}

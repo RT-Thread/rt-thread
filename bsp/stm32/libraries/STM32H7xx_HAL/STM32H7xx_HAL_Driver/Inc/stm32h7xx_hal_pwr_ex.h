@@ -46,8 +46,8 @@
 typedef struct
 {
   uint32_t AVDLevel; /*!< AVDLevel : Specifies the AVD detection level. This
-                          parameter can be a value of @ref
-                          PWREx_AVD_detection_level
+                                     parameter can be a value of @ref
+                                     PWREx_AVD_detection_level
                      */
 
   uint32_t Mode;     /*!< Mode : Specifies the EXTI operating mode for the AVD
@@ -102,25 +102,37 @@ typedef enum
   */
 /* High level and No pull (default configuration) */
 #define PWR_WAKEUP_PIN6      PWR_WKUPEPR_WKUPEN6
+#if defined (PWR_WKUPEPR_WKUPEN5)
 #define PWR_WAKEUP_PIN5      PWR_WKUPEPR_WKUPEN5
+#endif /* defined (PWR_WKUPEPR_WKUPEN5) */
 #define PWR_WAKEUP_PIN4      PWR_WKUPEPR_WKUPEN4
+#if defined (PWR_WKUPEPR_WKUPEN3)
 #define PWR_WAKEUP_PIN3      PWR_WKUPEPR_WKUPEN3
+#endif /* defined (PWR_WKUPEPR_WKUPEN3) */
 #define PWR_WAKEUP_PIN2      PWR_WKUPEPR_WKUPEN2
 #define PWR_WAKEUP_PIN1      PWR_WKUPEPR_WKUPEN1
 
 /* High level and No pull */
 #define PWR_WAKEUP_PIN6_HIGH PWR_WKUPEPR_WKUPEN6
+#if defined (PWR_WKUPEPR_WKUPEN5)
 #define PWR_WAKEUP_PIN5_HIGH PWR_WKUPEPR_WKUPEN5
+#endif /* defined (PWR_WKUPEPR_WKUPEN5) */
 #define PWR_WAKEUP_PIN4_HIGH PWR_WKUPEPR_WKUPEN4
+#if defined (PWR_WKUPEPR_WKUPEN3)
 #define PWR_WAKEUP_PIN3_HIGH PWR_WKUPEPR_WKUPEN3
+#endif /* defined (PWR_WKUPEPR_WKUPEN3) */
 #define PWR_WAKEUP_PIN2_HIGH PWR_WKUPEPR_WKUPEN2
 #define PWR_WAKEUP_PIN1_HIGH PWR_WKUPEPR_WKUPEN1
 
 /* Low level and No pull */
 #define PWR_WAKEUP_PIN6_LOW  (PWR_WKUPEPR_WKUPP6 | PWR_WKUPEPR_WKUPEN6)
+#if defined (PWR_WKUPEPR_WKUPP5)
 #define PWR_WAKEUP_PIN5_LOW  (PWR_WKUPEPR_WKUPP5 | PWR_WKUPEPR_WKUPEN5)
+#endif /* defined (PWR_WKUPEPR_WKUPP5) */
 #define PWR_WAKEUP_PIN4_LOW  (PWR_WKUPEPR_WKUPP4 | PWR_WKUPEPR_WKUPEN4)
+#if defined (PWR_WKUPEPR_WKUPP3)
 #define PWR_WAKEUP_PIN3_LOW  (PWR_WKUPEPR_WKUPP3 | PWR_WKUPEPR_WKUPEN3)
+#endif /* defined (PWR_WKUPEPR_WKUPP3) */
 #define PWR_WAKEUP_PIN2_LOW  (PWR_WKUPEPR_WKUPP2 | PWR_WKUPEPR_WKUPEN2)
 #define PWR_WAKEUP_PIN1_LOW  (PWR_WKUPEPR_WKUPP1 | PWR_WKUPEPR_WKUPEN1)
 /**
@@ -151,13 +163,22 @@ typedef enum
   */
 #define PWR_WAKEUP_FLAG1 PWR_WKUPFR_WKUPF1 /*!< Wakeup flag on PA0  */
 #define PWR_WAKEUP_FLAG2 PWR_WKUPFR_WKUPF2 /*!< Wakeup flag on PA2  */
+#if defined (PWR_WKUPFR_WKUPF3)
 #define PWR_WAKEUP_FLAG3 PWR_WKUPFR_WKUPF3 /*!< Wakeup flag on PI8  */
+#endif /* defined (PWR_WKUPFR_WKUPF3) */
 #define PWR_WAKEUP_FLAG4 PWR_WKUPFR_WKUPF4 /*!< Wakeup flag on PC13 */
+#if defined (PWR_WKUPFR_WKUPF5)
 #define PWR_WAKEUP_FLAG5 PWR_WKUPFR_WKUPF5 /*!< Wakeup flag on PI11 */
+#endif /* defined (PWR_WKUPFR_WKUPF5) */
 #define PWR_WAKEUP_FLAG6 PWR_WKUPFR_WKUPF6 /*!< Wakeup flag on PC1  */
+#if defined (PWR_WKUPFR_WKUPF3)
 #define PWR_WAKEUP_FLAG_ALL (PWR_WKUPFR_WKUPF1 | PWR_WKUPFR_WKUPF2 |\
                              PWR_WKUPFR_WKUPF3 | PWR_WKUPFR_WKUPF4 |\
                              PWR_WKUPFR_WKUPF5 | PWR_WKUPFR_WKUPF6)
+#else
+#define PWR_WAKEUP_FLAG_ALL (PWR_WKUPFR_WKUPF1 | PWR_WKUPFR_WKUPF2 |\
+                             PWR_WKUPFR_WKUPF4 | PWR_WKUPFR_WKUPF6)
+#endif /* defined (PWR_WKUPFR_WKUPF3) */
 /**
   * @}
   */
@@ -212,13 +233,13 @@ typedef enum
 /** @defgroup PWREx_Supply_configuration PWREx Supply configuration
   * @{
   */
-#define PWR_LDO_SUPPLY                      PWR_CR3_LDOEN                                                               /*!< Core domains are suppplied from the LDO                                                                     */
+#define PWR_LDO_SUPPLY                      PWR_CR3_LDOEN                                                               /*!< Core domains are supplied from the LDO                                                                     */
 #if defined (SMPS)
-#define PWR_DIRECT_SMPS_SUPPLY              PWR_CR3_SMPSEN                                                              /*!< Core domains are suppplied from the SMPS only                                                               */
+#define PWR_DIRECT_SMPS_SUPPLY              PWR_CR3_SMPSEN                                                              /*!< Core domains are supplied from the SMPS only                                                               */
 #define PWR_SMPS_1V8_SUPPLIES_LDO           (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEN    | PWR_CR3_LDOEN)                   /*!< The SMPS 1.8V output supplies the LDO which supplies the Core domains                                       */
 #define PWR_SMPS_2V5_SUPPLIES_LDO           (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEN    | PWR_CR3_LDOEN)                   /*!< The SMPS 2.5V output supplies the LDO which supplies the Core domains                                       */
-#define PWR_SMPS_1V8_SUPPLIES_EXT_AND_LDO   (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 1.8V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
-#define PWR_SMPS_2V5_SUPPLIES_EXT_AND_LDO   (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 2.5V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
+#define PWR_SMPS_1V8_SUPPLIES_EXT_AND_LDO   (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 1.8V output supplies an external circuits and the LDO. The Core domains are supplied from the LDO */
+#define PWR_SMPS_2V5_SUPPLIES_EXT_AND_LDO   (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 2.5V output supplies an external circuits and the LDO. The Core domains are supplied from the LDO */
 #define PWR_SMPS_1V8_SUPPLIES_EXT           (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /*!< The SMPS 1.8V output supplies an external source which supplies the Core domains                            */
 #define PWR_SMPS_2V5_SUPPLIES_EXT           (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /*!< The SMPS 2.5V output supplies an external source which supplies the Core domains                            */
 #endif /* defined (SMPS) */
@@ -486,12 +507,12 @@ do {                                                     \
 /** @addtogroup PWREx_Exported_Functions_Group1 Power Supply Control Functions
   * @{
   */
-HAL_StatusTypeDef HAL_PWREx_ConfigSupply(uint32_t SupplySource);
-uint32_t HAL_PWREx_GetSupplyConfig(void);
-HAL_StatusTypeDef HAL_PWREx_ControlVoltageScaling(uint32_t VoltageScaling);
-uint32_t HAL_PWREx_GetVoltageRange(void);
-HAL_StatusTypeDef HAL_PWREx_ControlStopModeVoltageScaling(uint32_t VoltageScaling);
-uint32_t HAL_PWREx_GetStopModeVoltageRange(void);
+HAL_StatusTypeDef HAL_PWREx_ConfigSupply                  (uint32_t SupplySource);
+uint32_t          HAL_PWREx_GetSupplyConfig               (void);
+HAL_StatusTypeDef HAL_PWREx_ControlVoltageScaling         (uint32_t VoltageScaling);
+uint32_t          HAL_PWREx_GetVoltageRange               (void);
+HAL_StatusTypeDef HAL_PWREx_ControlStopModeVoltageScaling (uint32_t VoltageScaling);
+uint32_t          HAL_PWREx_GetStopModeVoltageRange       (void);
 /**
   * @}
   */
@@ -501,63 +522,67 @@ uint32_t HAL_PWREx_GetStopModeVoltageRange(void);
   */
 /* System low power control functions */
 #if defined (PWR_CPUCR_RETDS_CD)
-void HAL_PWREx_EnterSTOP2Mode(uint32_t Regulator, uint8_t STOPEntry);
+void HAL_PWREx_EnterSTOP2Mode    (uint32_t Regulator, uint8_t STOPEntry);
 #endif /* defined (PWR_CPUCR_RETDS_CD) */
-void HAL_PWREx_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry, uint32_t Domain);
-void HAL_PWREx_EnterSTANDBYMode(uint32_t Domain);
-void HAL_PWREx_ConfigD3Domain(uint32_t D3State);
+void HAL_PWREx_EnterSTOPMode     (uint32_t Regulator, uint8_t STOPEntry, uint32_t Domain);
+void HAL_PWREx_EnterSTANDBYMode  (uint32_t Domain);
+void HAL_PWREx_ConfigD3Domain    (uint32_t D3State);
 /* Clear Cortex-Mx pending flag */
-void HAL_PWREx_ClearPendingEvent(void);
+void HAL_PWREx_ClearPendingEvent (void);
 #if defined (DUAL_CORE)
 /* Clear domain flags */
-void HAL_PWREx_ClearDomainFlags(uint32_t DomainFlags);
+void HAL_PWREx_ClearDomainFlags (uint32_t DomainFlags);
 /* Core Hold/Release functions */
-HAL_StatusTypeDef HAL_PWREx_HoldCore(uint32_t CPU);
-void HAL_PWREx_ReleaseCore(uint32_t CPU);
+HAL_StatusTypeDef HAL_PWREx_HoldCore    (uint32_t CPU);
+void              HAL_PWREx_ReleaseCore (uint32_t CPU);
 #endif /* defined (DUAL_CORE) */
 /* Flash low power control functions */
-void HAL_PWREx_EnableFlashPowerDown(void);
-void HAL_PWREx_DisableFlashPowerDown(void);
+void HAL_PWREx_EnableFlashPowerDown  (void);
+void HAL_PWREx_DisableFlashPowerDown (void);
 #if defined (PWR_CR1_SRDRAMSO)
 /* Memory shut-off functions */
-void HAL_PWREx_EnableMemoryShutOff(uint32_t MemoryBlock);
-void HAL_PWREx_DisableMemoryShutOff(uint32_t MemoryBlock);
+void HAL_PWREx_EnableMemoryShutOff  (uint32_t MemoryBlock);
+void HAL_PWREx_DisableMemoryShutOff (uint32_t MemoryBlock);
 #endif /* defined(PWR_CR1_SRDRAMSO) */
 /* Wakeup Pins control functions */
-void HAL_PWREx_EnableWakeUpPin(PWREx_WakeupPinTypeDef *sPinParams);
-void HAL_PWREx_DisableWakeUpPin(uint32_t WakeUpPin);
-uint32_t HAL_PWREx_GetWakeupFlag(uint32_t WakeUpFlag);
-HAL_StatusTypeDef HAL_PWREx_ClearWakeupFlag(uint32_t WakeUpFlag);
+void HAL_PWREx_EnableWakeUpPin              (PWREx_WakeupPinTypeDef *sPinParams);
+void HAL_PWREx_DisableWakeUpPin             (uint32_t WakeUpPin);
+uint32_t HAL_PWREx_GetWakeupFlag            (uint32_t WakeUpFlag);
+HAL_StatusTypeDef HAL_PWREx_ClearWakeupFlag (uint32_t WakeUpFlag);
 /* Power Wakeup PIN IRQ Handler */
-void HAL_PWREx_WAKEUP_PIN_IRQHandler(void);
-void HAL_PWREx_WKUP1_Callback(void);
-void HAL_PWREx_WKUP2_Callback(void);
-void HAL_PWREx_WKUP3_Callback(void);
-void HAL_PWREx_WKUP4_Callback(void);
-void HAL_PWREx_WKUP5_Callback(void);
-void HAL_PWREx_WKUP6_Callback(void);
+void HAL_PWREx_WAKEUP_PIN_IRQHandler (void);
+void HAL_PWREx_WKUP1_Callback        (void);
+void HAL_PWREx_WKUP2_Callback        (void);
+#if defined (PWR_WKUPEPR_WKUPEN3)
+void HAL_PWREx_WKUP3_Callback        (void);
+#endif /* defined (PWR_WKUPEPR_WKUPEN3) */
+void HAL_PWREx_WKUP4_Callback        (void);
+#if defined (PWR_WKUPEPR_WKUPEN5)
+void HAL_PWREx_WKUP5_Callback        (void);
+#endif /* defined (PWR_WKUPEPR_WKUPEN5) */
+void HAL_PWREx_WKUP6_Callback        (void);
 /**
   * @}
   */
 
-/** @addtogroup PWREx_Exported_Functions_Group3 Peripherals Control Functions
+/** @addtogroup PWREx_Exported_Functions_Group3 Peripherals control functions
   * @{
   */
 /* Backup regulator control functions */
-HAL_StatusTypeDef HAL_PWREx_EnableBkUpReg(void);
-HAL_StatusTypeDef HAL_PWREx_DisableBkUpReg(void);
+HAL_StatusTypeDef HAL_PWREx_EnableBkUpReg  (void);
+HAL_StatusTypeDef HAL_PWREx_DisableBkUpReg (void);
 /* USB regulator control functions */
-HAL_StatusTypeDef HAL_PWREx_EnableUSBReg(void);
-HAL_StatusTypeDef HAL_PWREx_DisableUSBReg(void);
-void HAL_PWREx_EnableUSBVoltageDetector(void);
-void HAL_PWREx_DisableUSBVoltageDetector(void);
+HAL_StatusTypeDef HAL_PWREx_EnableUSBReg  (void);
+HAL_StatusTypeDef HAL_PWREx_DisableUSBReg (void);
+void HAL_PWREx_EnableUSBVoltageDetector   (void);
+void HAL_PWREx_DisableUSBVoltageDetector  (void);
 /* Battery control functions */
-void HAL_PWREx_EnableBatteryCharging(uint32_t ResistorValue);
-void HAL_PWREx_DisableBatteryCharging(void);
-#if defined(PWR_CR1_BOOSTE)
+void HAL_PWREx_EnableBatteryCharging  (uint32_t ResistorValue);
+void HAL_PWREx_DisableBatteryCharging (void);
+#if defined (PWR_CR1_BOOSTE)
 /* Analog Booster functions */
-void HAL_PWREx_EnableAnalogBooster(void);
-void HAL_PWREx_DisableAnalogBooster(void);
+void HAL_PWREx_EnableAnalogBooster  (void);
+void HAL_PWREx_DisableAnalogBooster (void);
 #endif /* PWR_CR1_BOOSTE */
 /**
   * @}
@@ -567,20 +592,20 @@ void HAL_PWREx_DisableAnalogBooster(void);
   * @{
   */
 /* Power VBAT/Temperature monitoring functions */
-void HAL_PWREx_EnableMonitoring(void);
-void HAL_PWREx_DisableMonitoring(void);
-uint32_t HAL_PWREx_GetTemperatureLevel(void);
-uint32_t HAL_PWREx_GetVBATLevel(void);
-#if defined(PWR_CSR1_MMCVDO)
-PWREx_MMC_VoltageLevel HAL_PWREx_GetMMCVoltage(void);
+void HAL_PWREx_EnableMonitoring        (void);
+void HAL_PWREx_DisableMonitoring       (void);
+uint32_t HAL_PWREx_GetTemperatureLevel (void);
+uint32_t HAL_PWREx_GetVBATLevel        (void);
+#if defined (PWR_CSR1_MMCVDO)
+PWREx_MMC_VoltageLevel HAL_PWREx_GetMMCVoltage (void);
 #endif /* PWR_CSR1_MMCVDO */
 /* Power AVD configuration functions */
-void HAL_PWREx_ConfigAVD(PWREx_AVDTypeDef *sConfigAVD);
-void HAL_PWREx_EnableAVD(void);
-void HAL_PWREx_DisableAVD(void);
+void HAL_PWREx_ConfigAVD  (PWREx_AVDTypeDef *sConfigAVD);
+void HAL_PWREx_EnableAVD  (void);
+void HAL_PWREx_DisableAVD (void);
 /* Power PVD/AVD IRQ Handler */
-void HAL_PWREx_PVD_AVD_IRQHandler(void);
-void HAL_PWREx_AVDCallback(void);
+void HAL_PWREx_PVD_AVD_IRQHandler (void);
+void HAL_PWREx_AVDCallback        (void);
 /**
   * @}
   */
@@ -636,6 +661,7 @@ void HAL_PWREx_AVDCallback(void);
                             ((STATE) == PWR_D3_DOMAIN_RUN))
 
 /* Check wake up pin parameter */
+#if defined (PWR_WKUPEPR_WKUPEN3)
 #define IS_PWR_WAKEUP_PIN(PIN) (((PIN) == PWR_WAKEUP_PIN1)      ||\
                                 ((PIN) == PWR_WAKEUP_PIN2)      ||\
                                 ((PIN) == PWR_WAKEUP_PIN3)      ||\
@@ -654,6 +680,20 @@ void HAL_PWREx_AVDCallback(void);
                                 ((PIN) == PWR_WAKEUP_PIN4_LOW)  ||\
                                 ((PIN) == PWR_WAKEUP_PIN5_LOW)  ||\
                                 ((PIN) == PWR_WAKEUP_PIN6_LOW))
+#else
+#define IS_PWR_WAKEUP_PIN(PIN) (((PIN) == PWR_WAKEUP_PIN1)      ||\
+                                ((PIN) == PWR_WAKEUP_PIN2)      ||\
+                                ((PIN) == PWR_WAKEUP_PIN4)      ||\
+                                ((PIN) == PWR_WAKEUP_PIN6)      ||\
+                                ((PIN) == PWR_WAKEUP_PIN1_HIGH) ||\
+                                ((PIN) == PWR_WAKEUP_PIN2_HIGH) ||\
+                                ((PIN) == PWR_WAKEUP_PIN4_HIGH) ||\
+                                ((PIN) == PWR_WAKEUP_PIN6_HIGH) ||\
+                                ((PIN) == PWR_WAKEUP_PIN1_LOW)  ||\
+                                ((PIN) == PWR_WAKEUP_PIN2_LOW)  ||\
+                                ((PIN) == PWR_WAKEUP_PIN4_LOW)  ||\
+                                ((PIN) == PWR_WAKEUP_PIN6_LOW))
+#endif /* defined (PWR_WKUPEPR_WKUPEN3) */
 
 /* Check wake up pin polarity parameter */
 #define IS_PWR_WAKEUP_PIN_POLARITY(POLARITY) (((POLARITY) == PWR_PIN_POLARITY_HIGH) ||\
@@ -665,6 +705,7 @@ void HAL_PWREx_AVDCallback(void);
                                       ((PULL) == PWR_PIN_PULL_DOWN))
 
 /* Check wake up flag parameter */
+#if defined (PWR_WKUPEPR_WKUPEN3)
 #define IS_PWR_WAKEUP_FLAG(FLAG) (((FLAG) == PWR_WAKEUP_FLAG1) ||\
                                   ((FLAG) == PWR_WAKEUP_FLAG2) ||\
                                   ((FLAG) == PWR_WAKEUP_FLAG3) ||\
@@ -672,6 +713,13 @@ void HAL_PWREx_AVDCallback(void);
                                   ((FLAG) == PWR_WAKEUP_FLAG5) ||\
                                   ((FLAG) == PWR_WAKEUP_FLAG6) ||\
                                   ((FLAG) == PWR_WAKEUP_FLAG_ALL))
+#else
+#define IS_PWR_WAKEUP_FLAG(FLAG) (((FLAG) == PWR_WAKEUP_FLAG1) ||\
+                                  ((FLAG) == PWR_WAKEUP_FLAG2) ||\
+                                  ((FLAG) == PWR_WAKEUP_FLAG4) ||\
+                                  ((FLAG) == PWR_WAKEUP_FLAG6) ||\
+                                  ((FLAG) == PWR_WAKEUP_FLAG_ALL))
+#endif /* defined (PWR_WKUPEPR_WKUPEN3) */
 
 /* Check wake up flag parameter */
 #define IS_PWR_AVD_LEVEL(LEVEL) (((LEVEL) == PWR_AVDLEVEL_0) ||\

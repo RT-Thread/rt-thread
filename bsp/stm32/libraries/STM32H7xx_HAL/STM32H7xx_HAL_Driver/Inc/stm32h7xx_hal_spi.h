@@ -274,7 +274,7 @@ typedef  void (*pSPI_CallbackTypeDef)(SPI_HandleTypeDef *hspi); /*!< pointer to 
 #define HAL_SPI_ERROR_ABORT                           (0x00000040UL)   /*!< Error during SPI Abort procedure       */
 #define HAL_SPI_ERROR_UDR                             (0x00000080UL)   /*!< Underrun error                         */
 #define HAL_SPI_ERROR_TIMEOUT                         (0x00000100UL)   /*!< Timeout error                          */
-#define HAL_SPI_ERROR_UNKNOW                          (0x00000200UL)   /*!< Unknow error                           */
+#define HAL_SPI_ERROR_UNKNOW                          (0x00000200UL)   /*!< Unknown error                           */
 #define HAL_SPI_ERROR_NOT_SUPPORTED                   (0x00000400UL)   /*!< Requested operation not supported      */
 #if (USE_HAL_SPI_REGISTER_CALLBACKS == 1UL)
 #define HAL_SPI_ERROR_INVALID_CALLBACK                (0x00000800UL)   /*!< Invalid Callback error                 */

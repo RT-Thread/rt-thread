@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -190,8 +190,11 @@ typedef struct
 
 #define __HAL_PCD_ENABLE(__HANDLE__)                                  (void)USB_EnableGlobalInt ((__HANDLE__)->Instance)
 #define __HAL_PCD_DISABLE(__HANDLE__)                                 (void)USB_DisableGlobalInt ((__HANDLE__)->Instance)
-#define __HAL_PCD_GET_FLAG(__HANDLE__, __INTERRUPT__)                 ((USB_ReadInterrupts((__HANDLE__)->Instance) & (__INTERRUPT__)) == (__INTERRUPT__))
-#define __HAL_PCD_CLEAR_FLAG(__HANDLE__, __INTERRUPT__)               (((__HANDLE__)->Instance->ISTR) &= (uint16_t)(~(__INTERRUPT__)))
+#define __HAL_PCD_GET_FLAG(__HANDLE__, __INTERRUPT__)                 ((USB_ReadInterrupts((__HANDLE__)->Instance)\
+                                                                        & (__INTERRUPT__)) == (__INTERRUPT__))
+
+#define __HAL_PCD_CLEAR_FLAG(__HANDLE__, __INTERRUPT__)               (((__HANDLE__)->Instance->ISTR)\
+                                                                       &= (uint16_t)(~(__INTERRUPT__)))
 
 #define __HAL_USB_WAKEUP_EXTI_ENABLE_IT()                             EXTI->IMR2 |= USB_WAKEUP_EXTI_LINE
 #define __HAL_USB_WAKEUP_EXTI_DISABLE_IT()                            EXTI->IMR2 &= ~(USB_WAKEUP_EXTI_LINE)
@@ -528,7 +531,26 @@ PCD_StateTypeDef HAL_PCD_GetState(PCD_HandleTypeDef *hpcd);
   * @retval Counter value
   */
 #define PCD_GET_EP_TX_CNT                      USB_DRD_GET_CHEP_TX_CNT
-#define PCD_GET_EP_RX_CNT                      USB_DRD_GET_CHEP_RX_CNT
+
+/**
+  * @brief  gets counter of the rx buffer.
+  * @param  Instance USB peripheral instance register address.
+  * @param  bEpNum channel Number.
+  * @retval Counter value
+  */
+__STATIC_INLINE uint16_t PCD_GET_EP_RX_CNT(PCD_TypeDef *Instance, uint16_t bEpNum)
+{
+  UNUSED(Instance);
+  __IO uint32_t count = 10U;
+
+  /* WA: few cycles for RX PMA descriptor to update */
+  while (count > 0U)
+  {
+    count--;
+  }
+
+  return (uint16_t)USB_DRD_GET_CHEP_RX_CNT((Instance), (bEpNum));
+}
 
 /**
   * @brief  Sets addresses in a double buffer endpoint.
@@ -554,13 +576,44 @@ PCD_StateTypeDef HAL_PCD_GetState(PCD_HandleTypeDef *hpcd);
 #define PCD_SET_EP_DBUF_CNT                    USB_DRD_SET_CHEP_DBUF_CNT
 
 /**
-  * @brief  Gets buffer 0/1 rx/tx counter for double buffering.
-  * @param  USBx USB peripheral instance register address.
-  * @param  bEpNum Endpoint Number.
-  * @retval None
+  * @brief  gets counter of the rx buffer0.
+  * @param  Instance USB peripheral instance register address.
+  * @param  bEpNum channel Number.
+  * @retval Counter value
   */
-#define PCD_GET_EP_DBUF0_CNT                   USB_DRD_GET_CHEP_DBUF0_CNT
-#define PCD_GET_EP_DBUF1_CNT                   USB_DRD_GET_CHEP_DBUF1_CNT
+__STATIC_INLINE uint16_t PCD_GET_EP_DBUF0_CNT(PCD_TypeDef *Instance, uint16_t bEpNum)
+{
+  UNUSED(Instance);
+  __IO uint32_t count = 10U;
+
+  /* WA: few cycles for RX PMA descriptor to update */
+  while (count > 0U)
+  {
+    count--;
+  }
+
+  return (uint16_t)USB_DRD_GET_CHEP_DBUF0_CNT((Instance), (bEpNum));
+}
+
+/**
+  * @brief  gets counter of the rx buffer1.
+  * @param  Instance USB peripheral instance register address.
+  * @param  bEpNum channel Number.
+  * @retval Counter value
+  */
+__STATIC_INLINE uint16_t PCD_GET_EP_DBUF1_CNT(PCD_TypeDef *Instance, uint16_t bEpNum)
+{
+  UNUSED(Instance);
+  __IO uint32_t count = 10U;
+
+  /* WA: few cycles for RX PMA descriptor to update */
+  while (count > 0U)
+  {
+    count--;
+  }
+
+  return (uint16_t)USB_DRD_GET_CHEP_DBUF1_CNT((Instance), (bEpNum));
+}
 
 /**
   * @}

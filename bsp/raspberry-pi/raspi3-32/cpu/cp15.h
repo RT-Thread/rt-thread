@@ -142,7 +142,7 @@ static inline  rt_uint32_t read_cntctrl(void)
     return val;
 }
 
-static inline uint32_t write_cntctrl(uint32_t val)
+static inline rt_uint32_t write_cntctrl(rt_uint32_t val)
 {
 
     asm volatile ("mcr p15, 0, %0, c14, c1, 0" : :"r"(val));

@@ -12,7 +12,11 @@
 
 #if defined(BSP_USING_OV2640)
 
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <drv_ov2640.h>
 #include <drv_dcmi.h>
 #include "pcf8574.h"

@@ -951,17 +951,6 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
   * @}
   */
 
-/** @defgroup HRTIM_Timer_Rsync_Update_Enable HRTIM Re-Synchronized Update
-  * @{
-  * @brief Constants defining whether the update source coming outside from the timing unit must be synchronized
-
-  */
-#define HRTIM_RSYNCUPDATE_DISABLE          0x00000000U           /*!< The update is taken into account immediately */
-#define HRTIM_RSYNCUPDATE_ENABLE           (HRTIM_TIMCR_RSYNCU)  /*!< The update is taken into account on the following Reset/Roll-over event. */
-/**
-  * @}
-  */
-
 /** @defgroup HRTIM_Timer_Repetition_Update HRTIM Timer Repetition Update
   * @{
   * @brief Constants defining whether registers are updated when the timer
@@ -1148,7 +1137,7 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
 #define HRTIM_TIM_ADROM_BOTH      0x00000000U              /*!< Roll-over event which triggers */
 #define HRTIM_TIM_ADROM_CREST     (HRTIM_TIMCR2_ADROM_1)   /*!< the */
 #define HRTIM_TIM_ADROM_VALLEY    (HRTIM_TIMCR2_ADROM_0)   /*!< ADC */
-#define HRTIM_TIM_OUTROM_BOTH     0x00000000U              /*!< Roll-over event which sets and/or resets the ouputs */
+#define HRTIM_TIM_OUTROM_BOTH     0x00000000U              /*!< Roll-over event which sets and/or resets the outputs */
 #define HRTIM_TIM_OUTROM_CREST    (HRTIM_TIMCR2_OUTROM_1)  /*!< as per HRTIM_SETxyR */
 #define HRTIM_TIM_OUTROM_VALLEY   (HRTIM_TIMCR2_OUTROM_0)  /*!< and HRTIM_RSTxyR settings */
 #define HRTIM_TIM_ROM_BOTH        0x00000000U              /*!< Roll-over event with the following destinations: IRQ and DMA requests,*/
@@ -1200,7 +1189,7 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
   * @{
   * @brief Constants defining the polarity of a timer output
   */
-#define HRTIM_OUTPUTPOLARITY_HIGH    (0x00000000U)           /*!< Output is acitve HIGH */
+#define HRTIM_OUTPUTPOLARITY_HIGH    (0x00000000U)           /*!< Output is active HIGH */
 #define HRTIM_OUTPUTPOLARITY_LOW     (HRTIM_OUTR_POL1)       /*!< Output is active LOW */
 /**
   * @}
@@ -1599,18 +1588,8 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
   * @{
   * @brief Constants defining the External Event Counter A or B
   */
-#define HRTIM_TIMEEVENT_A    (HRTIM_EEFR3_EEVACE)           /*!< External Event Counter A */
-#define HRTIM_TIMEEVENT_B    (HRTIM_EEFR3_EEVBCE)           /*!< External Event Counter B */
-/**
-  * @}
-  */
-
-/** @defgroup HRTIM_Timer_External_Event_Counter HRTIM Timer External Event Counter
-  * @{
-  * @brief Constants enabling the External Event A or B Counter
-  */
-#define HRTIM_TIMEEVENTCOUNTER_DISABLED    (0x00000000U)           /*!< External Event Counter disabled */
-#define HRTIM_TIMEEVENTCOUNTER_ENABLED     (0x00000001U)           /*!< External Event Counter enabled */
+#define HRTIM_EVENTCOUNTER_A    (HRTIM_EEFR3_EEVACE)           /*!< External Event Counter A */
+#define HRTIM_EVENTCOUNTER_B    (HRTIM_EEFR3_EEVBCE)           /*!< External Event Counter B */
 /**
   * @}
   */
@@ -1619,9 +1598,9 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
   * @{
   * @brief Constants enabling the External Event Counter A or B Reset Mode
   */
-#define HRTIM_TIMEEVENTRESETMODE_UNCONDITIONAL   (0x00000000U)   /*!< External Event Counter is reset on each reset / roll-over event */
-#define HRTIM_TIMEEVENTRESETMODE_CONDITIONAL     (0x00000001U)   /*!< External Event Counter is reset on each reset / roll-over event only
-                                                                      if no event occurs during last counting period */
+#define HRTIM_EVENTCOUNTER_RSTMODE_UNCONDITIONAL   (0x00000000U)   /*!< External Event Counter is reset on each reset / roll-over event */
+#define HRTIM_EVENTCOUNTER_RSTMODE_CONDITIONAL     (0x00000001U)   /*!< External Event Counter is reset on each reset / roll-over event only
+                                                                        if no event occurs during last counting period */
 /**
   * @}
   */
@@ -1962,20 +1941,6 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
 #define HRTIM_FAULTSOURCE_DIGITALINPUT      (0x00000000U)              /*!< Fault input is FLT input pin */
 #define HRTIM_FAULTSOURCE_INTERNAL          (0x00000001U)              /*!< Fault input is FLT_Int signal (e.g. internal comparator) */
 #define HRTIM_FAULTSOURCE_EEVINPUT          (0x00000002U)              /*!< Fault input is EEV pin */
-/**
-  * @}
-  */
-
-/** @defgroup HRTIM_Fault_Input_Sources  HRTIM Fault Input Sources
-  * @{
-  * @brief Constants defining the fault input for a Fault channel
-  */
-#define HRTIM_FLTINR1_FLT1SRC               HRTIM_FLTINR1_FLT1SRC_0    /*!< bit 0 of the source input for Fault channel 1 */
-#define HRTIM_FLTINR1_FLT2SRC               HRTIM_FLTINR1_FLT2SRC_0    /*!< bit 0 of the source input for Fault channel 2 */
-#define HRTIM_FLTINR1_FLT3SRC               HRTIM_FLTINR1_FLT3SRC_0    /*!< bit 0 of the source input for Fault channel 3 */
-#define HRTIM_FLTINR1_FLT4SRC               HRTIM_FLTINR1_FLT4SRC_0    /*!< bit 0 of the source input for Fault channel 4 */
-#define HRTIM_FLTINR2_FLT5SRC               HRTIM_FLTINR2_FLT5SRC_0    /*!< bit 0 of the source input for Fault channel 5 */
-#define HRTIM_FLTINR2_FLT6SRC               HRTIM_FLTINR2_FLT6SRC_0    /*!< bit 0 of the source input for Fault channel 6 */
 /**
   * @}
   */
@@ -2755,16 +2720,12 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
       ((OUTPUT) == HRTIM_OUTPUT_TF2))))
 
 #define IS_HRTIM_TIMEEVENT(EVENT)\
-      (((EVENT) == HRTIM_TIMEEVENT_A)   || \
-       ((EVENT) == HRTIM_TIMEEVENT_B))
-
-#define IS_HRTIM_TIMEEVENT_ENABLE(EVENT)\
-      (((EVENT) == HRTIM_TIMEEVENTCOUNTER_ENABLED)   || \
-       ((EVENT) == HRTIM_TIMEEVENTCOUNTER_DISABLED))
+      (((EVENT) == HRTIM_EVENTCOUNTER_A)   || \
+       ((EVENT) == HRTIM_EVENTCOUNTER_B))
 
 #define IS_HRTIM_TIMEEVENT_RESETMODE(EVENT)\
-      (((EVENT) == HRTIM_TIMEEVENTRESETMODE_UNCONDITIONAL)   || \
-       ((EVENT) == HRTIM_TIMEEVENTRESETMODE_CONDITIONAL))
+      (((EVENT) == HRTIM_EVENTCOUNTER_RSTMODE_UNCONDITIONAL)   || \
+       ((EVENT) == HRTIM_EVENTCOUNTER_RSTMODE_CONDITIONAL))
 
 #define IS_HRTIM_TIMSYNCUPDATE(EVENT)\
       (((EVENT) == HRTIM_TIMERESYNC_UPDATE_UNCONDITIONAL)   || \
@@ -2829,10 +2790,6 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
              ((INTLVDMODE) == HRTIM_INTERLEAVED_MODE_TRIPLE)   ||  \
              ((INTLVDMODE) == HRTIM_INTERLEAVED_MODE_DISABLED)   ||  \
              ((INTLVDMODE) == HRTIM_INTERLEAVED_MODE_QUAD))
-
-#define IS_HRTIM_RESYNCUPDATE(RSYNCUPDATE)\
-              (((RSYNCUPDATE) == HRTIM_RSYNCUPDATE_DISABLE)  ||  \
-               ((RSYNCUPDATE) == HRTIM_RSYNCUPDATE_ENABLE))
 
 #define IS_HRTIM_SYNCSTART(SYNCSTART)\
               (((SYNCSTART) == HRTIM_SYNCSTART_DISABLED)  ||  \
@@ -3658,7 +3615,8 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
   || (((TIMER) == HRTIM_TIMERINDEX_TIMER_B) && (((BURSTDMA) & 0xFF800000U) == 0x00000000U)) \
   || (((TIMER) == HRTIM_TIMERINDEX_TIMER_C) && (((BURSTDMA) & 0xFF800000U) == 0x00000000U)) \
   || (((TIMER) == HRTIM_TIMERINDEX_TIMER_D) && (((BURSTDMA) & 0xFF800000U) == 0x00000000U)) \
-  || (((TIMER) == HRTIM_TIMERINDEX_TIMER_E) && (((BURSTDMA) & 0xFF800000U) == 0x00000000U)))
+  || (((TIMER) == HRTIM_TIMERINDEX_TIMER_E) && (((BURSTDMA) & 0xFF800000U) == 0x00000000U)) \
+  || (((TIMER) == HRTIM_TIMERINDEX_TIMER_F) && (((BURSTDMA) & 0xFF800000U) == 0x00000000U)))
 
 #define IS_HRTIM_BURSTMODECTL(BURSTMODECTL)\
     (((BURSTMODECTL) == HRTIM_BURSTMODECTL_DISABLED)  || \
@@ -3958,15 +3916,15 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
   *            @arg HRTIM_TIMERINDEX_TIMER_F: Timer F identifier
   * @param  Event external event Counter A or B for which timer event must be enabled
   *                    This parameter can be one of the following values:
-  *                    @arg HRTIM_TIMEEVENT_A
-  *                    @arg HRTIM_TIMEEVENT_B
+  *                    @arg HRTIM_EVENTCOUNTER_A
+  *                    @arg HRTIM_EVENTCOUNTER_B
   * @retval None
   */
 #define __HAL_HRTIM_EXTERNAL_EVENT_COUNTER_ENABLE(__HANDLE__, __TIMER__, __EVENT__)\
   do {\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_A) == HRTIM_TIMERINDEX_TIMER_A)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].EEFxR3) |= HRTIM_EEFR3_EEVACE;\
         }\
@@ -3977,55 +3935,55 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_B) == HRTIM_TIMERINDEX_TIMER_B)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].EEFxR3) |= HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].EEFxR3) |= HRTIM_EEFR3_EEVBCE;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_C) == HRTIM_TIMERINDEX_TIMER_C)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_C].EEFxR3) |= HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_C].EEFxR3) |= HRTIM_EEFR3_EEVBCE;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_D) == HRTIM_TIMERINDEX_TIMER_D)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_D].EEFxR3) |= HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_D].EEFxR3) |= HRTIM_EEFR3_EEVBCE;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_E) == HRTIM_TIMERINDEX_TIMER_E)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_E].EEFxR3) |= HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_E].EEFxR3) |= HRTIM_EEFR3_EEVBCE;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_F) == HRTIM_TIMERINDEX_TIMER_F)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_F].EEFxR3) |= HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_F].EEFxR3) |= HRTIM_EEFR3_EEVBCE;\
         }\
@@ -4044,74 +4002,74 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
   *            @arg HRTIM_TIMERINDEX_TIMER_F: Timer F identifier
   * @param  Event external event A or B for which timer event must be disabled
   *                    This parameter can be one of the following values:
-  *                    @arg HRTIM_TIMEEVENT_A
-  *                    @arg HRTIM_TIMEEVENT_B
+  *                    @arg HRTIM_EVENTCOUNTER_A
+  *                    @arg HRTIM_EVENTCOUNTER_B
   * @retval None
   */
 #define __HAL_HRTIM_EXTERNAL_EVENT_COUNTER_DISABLE(__HANDLE__, __TIMER__, __EVENT__)\
   do {\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_A) == HRTIM_TIMERINDEX_TIMER_A)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].EEFxR3) &= ~HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].EEFxR3) &= ~HRTIM_EEFR3_EEVBCE;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_B) == HRTIM_TIMERINDEX_TIMER_B)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].EEFxR3) &= ~HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].EEFxR3) &= ~HRTIM_EEFR3_EEVBCE;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_C) == HRTIM_TIMERINDEX_TIMER_C)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_C].EEFxR3) &= ~HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_C].EEFxR3) &= ~HRTIM_EEFR3_EEVBCE;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_D) == HRTIM_TIMERINDEX_TIMER_D)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_D].EEFxR3) &= ~HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_D].EEFxR3) &= ~HRTIM_EEFR3_EEVBCE;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_E) == HRTIM_TIMERINDEX_TIMER_E)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_E].EEFxR3) &= ~HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_E].EEFxR3) &= ~HRTIM_EEFR3_EEVBCE;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_F) == HRTIM_TIMERINDEX_TIMER_F)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_F].EEFxR3) &= ~HRTIM_EEFR3_EEVACE;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_F].EEFxR3) &= ~HRTIM_EEFR3_EEVBCE;\
         }\
@@ -4130,74 +4088,74 @@ typedef void (* pHRTIM_TIMxCallbackTypeDef)(HRTIM_HandleTypeDef *hhrtim,    /*!<
   *            @arg HRTIM_TIMERINDEX_TIMER_F: Timer F identifier
   * @param  Event external event A or B for which timer event must be reset
   *                    This parameter can be one of the following values:
-  *                    @arg HRTIM_TIMEEVENT_A
-  *                    @arg HRTIM_TIMEEVENT_B
+  *                    @arg HRTIM_EVENTCOUNTER_A
+  *                    @arg HRTIM_EVENTCOUNTER_B
   * @retval None
   */
 #define __HAL_HRTIM_EXTERNAL_EVENT_COUNTER_RESET(__HANDLE__, __TIMER__, __EVENT__)\
   do {\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_A) == HRTIM_TIMERINDEX_TIMER_A)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].EEFxR3) |= HRTIM_EEFR3_EEVACRES;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_A].EEFxR3) |= HRTIM_EEFR3_EEVBCRES;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_B) == HRTIM_TIMERINDEX_TIMER_B)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].EEFxR3) |= HRTIM_EEFR3_EEVACRES;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_B].EEFxR3) |= HRTIM_EEFR3_EEVBCRES;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_C) == HRTIM_TIMERINDEX_TIMER_C)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_C].EEFxR3) |= HRTIM_EEFR3_EEVACRES;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_C].EEFxR3) |= HRTIM_EEFR3_EEVBCRES;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_D) == HRTIM_TIMERINDEX_TIMER_D)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_D].EEFxR3) |= HRTIM_EEFR3_EEVACRES;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_D].EEFxR3) |= HRTIM_EEFR3_EEVBCRES;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_E) == HRTIM_TIMERINDEX_TIMER_E)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_E].EEFxR3) |= HRTIM_EEFR3_EEVACRES;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_E].EEFxR3) |= HRTIM_EEFR3_EEVBCRES;\
         }\
     }\
     if (((__TIMER__) & HRTIM_TIMERINDEX_TIMER_F) == HRTIM_TIMERINDEX_TIMER_F)\
     {\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_A) == HRTIM_TIMEEVENT_A)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_A) == HRTIM_EVENTCOUNTER_A)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_F].EEFxR3) |= HRTIM_EEFR3_EEVACRES;\
         }\
-      if (((__EVENT__) & HRTIM_TIMEEVENT_B) == HRTIM_TIMEEVENT_B)\
+      if (((__EVENT__) & HRTIM_EVENTCOUNTER_B) == HRTIM_EVENTCOUNTER_B)\
         {\
               ((__HANDLE__)->Instance->sTimerxRegs[HRTIM_TIMERINDEX_TIMER_F].EEFxR3) |= HRTIM_EEFR3_EEVBCRES;\
         }\

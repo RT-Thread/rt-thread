@@ -79,19 +79,19 @@ typedef struct
   __IO uint32_t               ErrorCode;     /*!< DAC Error code                    */
 
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
-  void (* ConvCpltCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
-  void (* ConvHalfCpltCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
-  void (* ErrorCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
-  void (* DMAUnderrunCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
+  void (* ConvCpltCallbackCh1)            (struct __DAC_HandleTypeDef *hdac);
+  void (* ConvHalfCpltCallbackCh1)        (struct __DAC_HandleTypeDef *hdac);
+  void (* ErrorCallbackCh1)               (struct __DAC_HandleTypeDef *hdac);
+  void (* DMAUnderrunCallbackCh1)         (struct __DAC_HandleTypeDef *hdac);
 #if defined(DAC_CHANNEL2_SUPPORT)
-  void (* ConvCpltCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
-  void (* ConvHalfCpltCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
-  void (* ErrorCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
-  void (* DMAUnderrunCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
+  void (* ConvCpltCallbackCh2)            (struct __DAC_HandleTypeDef *hdac);
+  void (* ConvHalfCpltCallbackCh2)        (struct __DAC_HandleTypeDef *hdac);
+  void (* ErrorCallbackCh2)               (struct __DAC_HandleTypeDef *hdac);
+  void (* DMAUnderrunCallbackCh2)         (struct __DAC_HandleTypeDef *hdac);
 #endif /* DAC_CHANNEL2_SUPPORT */
 
-  void (* MspInitCallback)(struct __DAC_HandleTypeDef *hdac);
-  void (* MspDeInitCallback)(struct __DAC_HandleTypeDef *hdac);
+  void (* MspInitCallback)                (struct __DAC_HandleTypeDef *hdac);
+  void (* MspDeInitCallback)              (struct __DAC_HandleTypeDef *hdac);
 #endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 
 } DAC_HandleTypeDef;

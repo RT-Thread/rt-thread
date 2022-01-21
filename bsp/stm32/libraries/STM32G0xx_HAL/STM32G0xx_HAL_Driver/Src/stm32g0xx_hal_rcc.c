@@ -98,7 +98,7 @@
 #endif /* RCC_MCO2_SUPPORT */
 
 #define RCC_PLL_OSCSOURCE_CONFIG(__HAL_RCC_PLLSOURCE__) \
-            (MODIFY_REG(RCC->PLLCFGR, RCC_PLLCFGR_PLLSRC, (uint32_t)(__HAL_RCC_PLLSOURCE__)))
+  (MODIFY_REG(RCC->PLLCFGR, RCC_PLLCFGR_PLLSRC, (uint32_t)(__HAL_RCC_PLLSOURCE__)))
 /**
   * @}
   */
@@ -334,7 +334,8 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     temp_pllckcfg = __HAL_RCC_GET_PLL_OSCSOURCE();
 
     /* When the HSE is used as system clock or clock source for PLL in these cases it is not allowed to be disabled */
-    if (((temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (temp_pllckcfg == RCC_PLLSOURCE_HSE)) || (temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_HSE))
+    if (((temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (temp_pllckcfg == RCC_PLLSOURCE_HSE))
+        || (temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_HSE))
     {
       if ((READ_BIT(RCC->CR, RCC_CR_HSERDY) != 0U) && (RCC_OscInitStruct->HSEState == RCC_HSE_OFF))
       {
@@ -388,7 +389,8 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     /* Check if HSI16 is used as system clock or as PLL source when PLL is selected as system clock */
     temp_sysclksrc = __HAL_RCC_GET_SYSCLK_SOURCE();
     temp_pllckcfg = __HAL_RCC_GET_PLL_OSCSOURCE();
-    if (((temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (temp_pllckcfg == RCC_PLLSOURCE_HSI)) || (temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_HSI))
+    if (((temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_PLLCLK) && (temp_pllckcfg == RCC_PLLSOURCE_HSI))
+        || (temp_sysclksrc == RCC_SYSCLKSOURCE_STATUS_HSI))
     {
       /* When HSI is used as system clock or as PLL input clock it can not be disabled */
       if ((READ_BIT(RCC->CR, RCC_CR_HSIRDY) != 0U) && (RCC_OscInitStruct->HSIState == RCC_HSI_OFF))
@@ -991,7 +993,7 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
   *            @arg @ref RCC_MCO1SOURCE_PLLPCLK  PLLP clock selected as MCO1 source(*)
   *            @arg @ref RCC_MCO1SOURCE_PLLQCLK  PLLQ clock selected as MCO1 source(*)
   *            @arg @ref RCC_MCO1SOURCE_RTCCLK   RTC clock selected as MCO1 source(*)
-  *            @arg @ref RCC_MCO1SOURCE_RTC_WKUP RTC_Wakeup selected as MCO1 source(*)  
+  *            @arg @ref RCC_MCO1SOURCE_RTC_WKUP RTC_Wakeup selected as MCO1 source(*)
   *            @arg @ref RCC_MCO2SOURCE_NOCLOCK  MCO2 output disabled, no clock on MCO2(*)
   *            @arg @ref RCC_MCO2SOURCE_SYSCLK   system  clock selected as MCO2 source(*)
   *            @arg @ref RCC_MCO2SOURCE_HSI48    HSI48 clock selected as MCO2 source for devices with HSI48(*)
@@ -1236,9 +1238,8 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   {
     RCC_OscInitStruct->HSIState = RCC_HSI_OFF;
   }
-
   RCC_OscInitStruct->HSICalibrationValue = ((RCC->ICSCR & RCC_ICSCR_HSITRIM) >> RCC_ICSCR_HSITRIM_Pos);
-  RCC_OscInitStruct->HSIDiv = ((RCC->CR & RCC_CR_HSIDIV) >> RCC_CR_HSIDIV_Pos);
+  RCC_OscInitStruct->HSIDiv = (RCC->CR & RCC_CR_HSIDIV);
 
   /* Get the LSE configuration -----------------------------------------------*/
   if ((RCC->BDCR & RCC_BDCR_LSEBYP) == RCC_BDCR_LSEBYP)
@@ -1415,6 +1416,25 @@ __weak void HAL_RCC_LSECSSCallback(void)
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_RCC_LSECSSCallback should be implemented in the user file
    */
+}
+
+/**
+  * @brief  Get and clear reset flags
+  * @note   Once reset flags are retrieved, this API is clearing them in order
+  *         to isolate next reset reason.
+  * @retval can be a combination of @ref RCC_Reset_Flag
+  */
+uint32_t HAL_RCC_GetResetSource(void)
+{
+  uint32_t reset;
+
+  /* Get all reset flags */
+  reset = RCC->CSR & RCC_RESET_FLAG_ALL;
+
+  /* Clear Reset flags */
+  RCC->CSR |= RCC_CSR_RMVF;
+
+  return reset;
 }
 
 /**

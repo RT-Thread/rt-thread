@@ -8,7 +8,11 @@
  * 2011-06-02     Bernard      first version
  * 2020-04-12     Jianjia Ma   add msh cmd
  */
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 void seekdir_test(void)
 {

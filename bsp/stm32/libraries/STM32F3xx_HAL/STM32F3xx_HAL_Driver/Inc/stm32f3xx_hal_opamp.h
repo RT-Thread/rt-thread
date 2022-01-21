@@ -259,13 +259,13 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   * @{
   */
 
-#define OPAMP_SEC_NONINVERTINGINPUT_IO0          OPAMP_CSR_VPSSEL       /*!< VP0 (PA1 for OPAMP1, PA7 for OPAMP2, PB0 for OPAMP3, PB13 for OPAMP4)
+#define OPAMP_SEC_NONINVERTINGINPUT_IO0          OPAMP_CSR_VPSSEL       /*!< VP0 (PA1 for OPAMP1, PA7 for OPAMP2, PB0 for OPAMP3, PB13 for OPAMP4)    
                                                                               connected to OPAMPx non inverting input */
-#define OPAMP_SEC_NONINVERTINGINPUT_IO1          (0x00000000U)          /*!< VP1 (PA7 for OPAMP1, PD14 for OPAMP2, PB13 for OPAMP3, PD11 for OPAMP4)
+#define OPAMP_SEC_NONINVERTINGINPUT_IO1          (0x00000000U)          /*!< VP1 (PA7 for OPAMP1, PD14 for OPAMP2, PB13 for OPAMP3, PD11 for OPAMP4)  
                                                                              connected to OPAMPx non inverting input */
-#define OPAMP_SEC_NONINVERTINGINPUT_IO2          OPAMP_CSR_VPSSEL_1     /*!< VP2 (PA3 for OPAMP1, PB0 for OPAMP2, PA1 for OPAMP3, PA4 for OPAMP4)
+#define OPAMP_SEC_NONINVERTINGINPUT_IO2          OPAMP_CSR_VPSSEL_1     /*!< VP2 (PA3 for OPAMP1, PB0 for OPAMP2, PA1 for OPAMP3, PA4 for OPAMP4)     
                                                                               connected to OPAMPx non inverting input */
-#define OPAMP_SEC_NONINVERTINGINPUT_IO3          OPAMP_CSR_VPSSEL_0     /*!< VP3 (PA5 for OPAMP1, PB14 for OPAMP2, PA5 for OPAMP3, PB11 for OPAMP4)
+#define OPAMP_SEC_NONINVERTINGINPUT_IO3          OPAMP_CSR_VPSSEL_0     /*!< VP3 (PA5 for OPAMP1, PB14 for OPAMP2, PA5 for OPAMP3, PB11 for OPAMP4)   
                                                                               connected to OPAMPx non inverting input */
 
 #define IS_OPAMP_SEC_NONINVERTINGINPUT(INPUT) (((INPUT) == OPAMP_SEC_NONINVERTINGINPUT_IO0) || \

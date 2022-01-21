@@ -49,10 +49,10 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /**
-  * @brief STM32G4xx HAL Driver version number V1.1.1
+  * @brief STM32G4xx HAL Driver version number V1.2.1
   */
 #define __STM32G4xx_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define __STM32G4xx_HAL_VERSION_SUB1   (0x01U) /*!< [23:16] sub1 version */
+#define __STM32G4xx_HAL_VERSION_SUB1   (0x02U) /*!< [23:16] sub1 version */
 #define __STM32G4xx_HAL_VERSION_SUB2   (0x01U) /*!< [15:8]  sub2 version */
 #define __STM32G4xx_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32G4xx_HAL_VERSION         ((__STM32G4xx_HAL_VERSION_MAIN << 24U)\

@@ -55,7 +55,7 @@ typedef enum
   HAL_SD_STATE_BUSY                   = 0x00000003U,  /*!< SD process ongoing                  */
   HAL_SD_STATE_PROGRAMMING            = 0x00000004U,  /*!< SD Programming State                */
   HAL_SD_STATE_RECEIVING              = 0x00000005U,  /*!< SD Receiving State                  */
-  HAL_SD_STATE_TRANSFER               = 0x00000006U,  /*!< SD Transfert State                  */
+  HAL_SD_STATE_TRANSFER               = 0x00000006U,  /*!< SD Transfer State                  */
   HAL_SD_STATE_ERROR                  = 0x0000000FU   /*!< SD is in error state                */
 }HAL_SD_StateTypeDef;
 /** 

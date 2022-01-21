@@ -10,7 +10,6 @@
   *
   @verbatim
   ==============================================================================
-
                       ##### RCC specific features #####
   ==============================================================================
     [..]
@@ -67,8 +66,8 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /** @defgroup RCC_Private_Constants RCC Private Constants
- * @{
- */
+  * @{
+  */
 #define HSE_TIMEOUT_VALUE          HSE_STARTUP_TIMEOUT
 #define HSI_TIMEOUT_VALUE          (2U)    /* 2 ms (minimum Tick + 1)   */
 #define MSI_TIMEOUT_VALUE          (2U)    /* 2 ms (minimum Tick + 1)   */
@@ -84,7 +83,7 @@
 #define CLOCKSWITCH_TIMEOUT_VALUE  (5000U) /* 5 s                       */
 
 #define PLLSOURCE_NONE             (0U)
-#define MEGA_HZ                     1000000U /* Division factor to convert Hz in Mhz */
+#define MEGA_HZ                    (1000000U) /* Division factor to convert Hz in Mhz */
 /**
   * @}
   */
@@ -476,6 +475,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
             return HAL_TIMEOUT;
           }
         }
+
         /* Selects the Multiple Speed oscillator (MSI) clock range .*/
         __HAL_RCC_MSI_RANGE_CONFIG(RCC_OscInitStruct->MSIClockRange);
         /* Adjusts the Multiple Speed oscillator (MSI) calibration value.*/
@@ -501,6 +501,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
       }
     }
   }
+
   /*------------------------------- HSE Configuration ------------------------*/
   if (((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_HSE) == RCC_OSCILLATORTYPE_HSE)
   {
@@ -554,6 +555,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
       }
     }
   }
+
   /*----------------------------- HSI Configuration --------------------------*/
   if (((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_HSI) == RCC_OSCILLATORTYPE_HSI)
   {
@@ -757,10 +759,10 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
       }
     }
   }
+
   /*------------------------------ LSE Configuration -------------------------*/
   if (((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_LSE) == RCC_OSCILLATORTYPE_LSE)
   {
-
     /* Check the parameters */
     assert_param(IS_RCC_LSE(RCC_OscInitStruct->LSEState));
 
@@ -1709,6 +1711,26 @@ __weak void HAL_RCC_CSSCallback(void)
 }
 
 /**
+  * @brief  Get and clear reset flags
+  * @param  None
+  * @note   Once reset flags are retrieved, this API is clearing them in order
+  *         to isolate next reset reason.
+  * @retval can be a combination of @ref RCC_Reset_Flag
+  */
+uint32_t HAL_RCC_GetResetSource(void)
+{
+  uint32_t reset;
+
+  /* Get all reset flags */
+  reset = RCC->CSR & RCC_RESET_FLAG_ALL;
+
+  /* Clear Reset flags */
+  RCC->CSR |= RCC_CSR_RMVF;
+
+  return reset;
+}
+
+/**
   * @}
   */
 
@@ -1824,6 +1846,7 @@ static HAL_StatusTypeDef RCC_SetFlashLatency(uint32_t Flash_ClkSrcFreq, uint32_t
   }
   return HAL_OK;
 }
+
 /**
   * @}
   */

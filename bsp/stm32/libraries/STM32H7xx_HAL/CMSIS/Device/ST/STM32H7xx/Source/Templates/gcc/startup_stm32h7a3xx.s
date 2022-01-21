@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file      startup_stm32h7a3xx.s
   * @author    MCD Application Team
-  * @brief     STM32H7B3xx Devices vector table for GCC based toolchain. 
+  * @brief     STM32H7B3xx Devices vector table for GCC based toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
@@ -24,7 +24,7 @@
   *
   ******************************************************************************
   */
-    
+
   .syntax unified
   .cpu cortex-m7
   .fpu softvfp
@@ -33,7 +33,7 @@
 .global  g_pfnVectors
 .global  Default_Handler
 
-/* start address for the initialization values of the .data section. 
+/* start address for the initialization values of the .data section.
 defined in linker script */
 .word  _sidata
 /* start address for the .data section. defined in linker script */
@@ -50,7 +50,7 @@ defined in linker script */
  * @brief  This is the code that gets called when the processor first
  *          starts execution following a reset event. Only the absolutely
  *          necessary set is performed, after which the application
- *          supplied main() routine is called. 
+ *          supplied main() routine is called.
  * @param  None
  * @retval : None
 */
@@ -58,39 +58,42 @@ defined in linker script */
     .section  .text.Reset_Handler
   .weak  Reset_Handler
   .type  Reset_Handler, %function
-Reset_Handler:  
+Reset_Handler:
   ldr   sp, =_estack      /* set stack pointer */
 
+/* Call the clock system initialization function.*/
+  bl  SystemInit
+
 /* Copy the data segment initializers from flash to SRAM */
-  movs  r1, #0
-  b  LoopCopyDataInit
+  ldr r0, =_sdata
+  ldr r1, =_edata
+  ldr r2, =_sidata
+  movs r3, #0
+  b LoopCopyDataInit
 
 CopyDataInit:
-  ldr  r3, =_sidata
-  ldr  r3, [r3, r1]
-  str  r3, [r0, r1]
-  adds  r1, r1, #4
-    
-LoopCopyDataInit:
-  ldr  r0, =_sdata
-  ldr  r3, =_edata
-  adds  r2, r0, r1
-  cmp  r2, r3
-  bcc  CopyDataInit
-  ldr  r2, =_sbss
-  b  LoopFillZerobss
-/* Zero fill the bss segment. */
-FillZerobss:
-  movs  r3, #0
-  str  r3, [r2], #4
-    
-LoopFillZerobss:
-  ldr  r3, = _ebss
-  cmp  r2, r3
-  bcc  FillZerobss
+  ldr r4, [r2, r3]
+  str r4, [r0, r3]
+  adds r3, r3, #4
 
-/* Call the clock system intitialization function.*/
-  bl  SystemInit   
+LoopCopyDataInit:
+  adds r4, r0, r3
+  cmp r4, r1
+  bcc CopyDataInit
+/* Zero fill the bss segment. */
+  ldr r2, =_sbss
+  ldr r4, =_ebss
+  movs r3, #0
+  b LoopFillZerobss
+
+FillZerobss:
+  str  r3, [r2]
+  adds r2, r2, #4
+
+LoopFillZerobss:
+  cmp r2, r4
+  bcc FillZerobss
+
 /* Call static constructors */
     bl __libc_init_array
 /* Call the application's entry point.*/
@@ -99,11 +102,11 @@ LoopFillZerobss:
 .size  Reset_Handler, .-Reset_Handler
 
 /**
- * @brief  This is the code that gets called when the processor receives an 
+ * @brief  This is the code that gets called when the processor receives an
  *         unexpected interrupt.  This simply enters an infinite loop, preserving
  *         the system state for examination by a debugger.
- * @param  None     
- * @retval None       
+ * @param  None
+ * @retval None
 */
     .section  .text.Default_Handler,"ax",%progbits
 Default_Handler:
@@ -115,13 +118,13 @@ Infinite_Loop:
 * The minimal vector table for a Cortex M. Note that the proper constructs
 * must be placed on this to ensure that it ends up at physical address
 * 0x0000.0000.
-* 
+*
 *******************************************************************************/
    .section  .isr_vector,"a",%progbits
   .type  g_pfnVectors, %object
   .size  g_pfnVectors, .-g_pfnVectors
-   
-   
+
+
 g_pfnVectors:
   .word  _estack
   .word  Reset_Handler
@@ -140,7 +143,7 @@ g_pfnVectors:
   .word  0
   .word  PendSV_Handler
   .word  SysTick_Handler
-  
+
   /* External Interrupts */
   .word     WWDG_IRQHandler                   /* Window WatchDog              */
   .word     PVD_PVM_IRQHandler                /* PVD/PVM through EXTI Line detection */
@@ -258,7 +261,7 @@ g_pfnVectors:
   .word     DFSDM1_FLT3_IRQHandler            /* DFSDM Filter3 Interrupt      */
   .word     0                                 /* Reserved                     */
   .word     SWPMI1_IRQHandler                 /* Serial Wire Interface 1 global interrupt */
-  .word     TIM15_IRQHandler                  /* TIM15 global Interrupt      */ 
+  .word     TIM15_IRQHandler                  /* TIM15 global Interrupt      */
   .word     TIM16_IRQHandler                  /* TIM16 global Interrupt      */
   .word     TIM17_IRQHandler                  /* TIM17 global Interrupt      */
   .word     MDIOS_WKUP_IRQHandler             /* MDIOS Wakeup  Interrupt     */
@@ -279,7 +282,7 @@ g_pfnVectors:
   .word     BDMA2_Channel5_IRQHandler         /* BDMA2 Channel 5 global Interrupt */
   .word     BDMA2_Channel6_IRQHandler         /* BDMA2 Channel 6 global Interrupt */
   .word     BDMA2_Channel7_IRQHandler         /* BDMA2 Channel 7 global Interrupt */
-  .word     COMP_IRQHandler                   /* COMP global Interrupt      */   
+  .word     COMP_IRQHandler                   /* COMP global Interrupt      */
   .word     LPTIM2_IRQHandler                 /* LP TIM2 global interrupt     */
   .word     LPTIM3_IRQHandler                 /* LP TIM3 global interrupt     */
   .word     UART9_IRQHandler                  /* UART9 global interrupt       */
@@ -300,10 +303,10 @@ g_pfnVectors:
 
 /*******************************************************************************
 *
-* Provide weak aliases for each Exception handler to the Default_Handler. 
-* As they are weak aliases, any function with the same name will override 
+* Provide weak aliases for each Exception handler to the Default_Handler.
+* As they are weak aliases, any function with the same name will override
 * this definition.
-* 
+*
 *******************************************************************************/
    .weak      NMI_Handler
    .thumb_set NMI_Handler,Default_Handler
@@ -357,7 +360,7 @@ g_pfnVectors:
    .thumb_set EXTI1_IRQHandler,Default_Handler
 
    .weak      EXTI2_IRQHandler
-   .thumb_set EXTI2_IRQHandler,Default_Handler 
+   .thumb_set EXTI2_IRQHandler,Default_Handler
 
    .weak      EXTI3_IRQHandler
    .thumb_set EXTI3_IRQHandler,Default_Handler
@@ -428,13 +431,13 @@ g_pfnVectors:
    .weak      I2C1_EV_IRQHandler
    .thumb_set I2C1_EV_IRQHandler,Default_Handler
 
-   .weak      I2C1_ER_IRQHandler   
+   .weak      I2C1_ER_IRQHandler
    .thumb_set I2C1_ER_IRQHandler,Default_Handler
 
-   .weak      I2C2_EV_IRQHandler   
+   .weak      I2C2_EV_IRQHandler
    .thumb_set I2C2_EV_IRQHandler,Default_Handler
 
-   .weak      I2C2_ER_IRQHandler   
+   .weak      I2C2_ER_IRQHandler
    .thumb_set I2C2_ER_IRQHandler,Default_Handler
 
    .weak      SPI1_IRQHandler
@@ -522,14 +525,14 @@ g_pfnVectors:
    .thumb_set DFSDM1_FLT4_IRQHandler,Default_Handler
 
    .weak      DFSDM1_FLT5_IRQHandler
-   .thumb_set DFSDM1_FLT5_IRQHandler,Default_Handler 
+   .thumb_set DFSDM1_FLT5_IRQHandler,Default_Handler
 
-   .weak      DFSDM1_FLT6_IRQHandler   
-   .thumb_set DFSDM1_FLT6_IRQHandler,Default_Handler 
+   .weak      DFSDM1_FLT6_IRQHandler
+   .thumb_set DFSDM1_FLT6_IRQHandler,Default_Handler
 
    .weak      DFSDM1_FLT7_IRQHandler
    .thumb_set DFSDM1_FLT7_IRQHandler,Default_Handler
-   
+
    .weak      DMA2_Stream5_IRQHandler
    .thumb_set DMA2_Stream5_IRQHandler,Default_Handler
 
@@ -556,7 +559,7 @@ g_pfnVectors:
 
    .weak      OTG_HS_WKUP_IRQHandler
    .thumb_set OTG_HS_WKUP_IRQHandler,Default_Handler
-            
+
    .weak      OTG_HS_IRQHandler
    .thumb_set OTG_HS_IRQHandler,Default_Handler
 
@@ -564,7 +567,7 @@ g_pfnVectors:
    .thumb_set DCMI_PSSI_IRQHandler,Default_Handler
 
    .weak      RNG_IRQHandler
-   .thumb_set RNG_IRQHandler,Default_Handler   
+   .thumb_set RNG_IRQHandler,Default_Handler
 
    .weak      FPU_IRQHandler
    .thumb_set FPU_IRQHandler,Default_Handler
@@ -601,19 +604,19 @@ g_pfnVectors:
 
    .weak      OCTOSPI1_IRQHandler
    .thumb_set OCTOSPI1_IRQHandler,Default_Handler
- 
+
    .weak      LPTIM1_IRQHandler
    .thumb_set LPTIM1_IRQHandler,Default_Handler
 
    .weak      CEC_IRQHandler
    .thumb_set CEC_IRQHandler,Default_Handler
-   
+
    .weak      I2C4_EV_IRQHandler
-   .thumb_set I2C4_EV_IRQHandler,Default_Handler 
- 
+   .thumb_set I2C4_EV_IRQHandler,Default_Handler
+
    .weak      I2C4_ER_IRQHandler
    .thumb_set I2C4_ER_IRQHandler,Default_Handler
-   
+
    .weak      SPDIF_RX_IRQHandler
    .thumb_set SPDIF_RX_IRQHandler,Default_Handler
 
@@ -658,7 +661,7 @@ g_pfnVectors:
 
    .weak      SDMMC2_IRQHandler
    .thumb_set SDMMC2_IRQHandler,Default_Handler
-   
+
    .weak      HSEM1_IRQHandler
    .thumb_set HSEM1_IRQHandler,Default_Handler
 
@@ -712,7 +715,7 @@ g_pfnVectors:
 
    .weak      USART10_IRQHandler
    .thumb_set USART10_IRQHandler,Default_Handler
-   
+
    .weak      LPUART1_IRQHandler
    .thumb_set LPUART1_IRQHandler,Default_Handler
 
@@ -736,6 +739,6 @@ g_pfnVectors:
 
    .weak      BDMA1_IRQHandler
    .thumb_set BDMA1_IRQHandler,Default_Handler
-   
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/        
- 
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

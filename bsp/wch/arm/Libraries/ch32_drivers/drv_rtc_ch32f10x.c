@@ -106,8 +106,8 @@ const static struct rt_rtc_ops rtc_ops =
         .set_secs = ch32f1_set_secs,
         .get_alarm = RT_NULL,
         .set_alarm = RT_NULL,
-        .get_usecs = RT_NULL,
-        .set_usecs = RT_NULL};
+        .get_timeval = RT_NULL,
+        .set_timeval = RT_NULL};
 
 int rt_hw_rtc_init(void)
 {

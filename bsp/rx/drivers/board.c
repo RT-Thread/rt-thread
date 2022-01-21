@@ -99,7 +99,7 @@ void rt_hw_board_init()
     rt_hw_system_freq_init();
     rt_hw_systick_init();
     rt_hw_uart_init();
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }

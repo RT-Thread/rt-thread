@@ -79,17 +79,17 @@ typedef struct
   __IO uint32_t               ErrorCode;     /*!< DAC Error code                    */
 
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
-  void (* ConvCpltCallbackCh1)            (struct __DAC_HandleTypeDef *hdac);
-  void (* ConvHalfCpltCallbackCh1)        (struct __DAC_HandleTypeDef *hdac);
-  void (* ErrorCallbackCh1)               (struct __DAC_HandleTypeDef *hdac);
-  void (* DMAUnderrunCallbackCh1)         (struct __DAC_HandleTypeDef *hdac);
-  void (* ConvCpltCallbackCh2)            (struct __DAC_HandleTypeDef *hdac);
-  void (* ConvHalfCpltCallbackCh2)        (struct __DAC_HandleTypeDef *hdac);
-  void (* ErrorCallbackCh2)               (struct __DAC_HandleTypeDef *hdac);
-  void (* DMAUnderrunCallbackCh2)         (struct __DAC_HandleTypeDef *hdac);
+  void (* ConvCpltCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
+  void (* ConvHalfCpltCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
+  void (* ErrorCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
+  void (* DMAUnderrunCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
+  void (* ConvCpltCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
+  void (* ConvHalfCpltCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
+  void (* ErrorCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
+  void (* DMAUnderrunCallbackCh2)(struct __DAC_HandleTypeDef *hdac);
 
-  void (* MspInitCallback)                (struct __DAC_HandleTypeDef *hdac);
-  void (* MspDeInitCallback )             (struct __DAC_HandleTypeDef *hdac);
+  void (* MspInitCallback)(struct __DAC_HandleTypeDef *hdac);
+  void (* MspDeInitCallback)(struct __DAC_HandleTypeDef *hdac);
 #endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 
 } DAC_HandleTypeDef;
@@ -391,7 +391,8 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   *            @arg DAC_IT_DMAUDR2 DAC channel 2 DMA underrun interrupt
   * @retval State of interruption (SET or RESET)
   */
-#define __HAL_DAC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR & (__INTERRUPT__)) == (__INTERRUPT__))
+#define __HAL_DAC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR\
+                                                             & (__INTERRUPT__)) == (__INTERRUPT__))
 
 /** @brief  Get the selected DAC's flag status.
   * @param  __HANDLE__ specifies the DAC handle.

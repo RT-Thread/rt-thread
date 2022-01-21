@@ -523,8 +523,13 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
               (  ADC_SQR2_SQ12 | ADC_SQR2_SQ11 | ADC_SQR2_SQ10
                | ADC_SQR2_SQ9 | ADC_SQR2_SQ8 | ADC_SQR2_SQ7)
              );
-    
-    
+
+    /* Reset register SQR3 */
+    CLEAR_BIT(ADCx->SQR3,
+              (  ADC_SQR3_SQ6 | ADC_SQR3_SQ5 | ADC_SQR3_SQ4
+               | ADC_SQR3_SQ3 | ADC_SQR3_SQ2 | ADC_SQR3_SQ1)
+             );
+
     /* Reset register JSQR */
     CLEAR_BIT(ADCx->JSQR,
               (  ADC_JSQR_JL

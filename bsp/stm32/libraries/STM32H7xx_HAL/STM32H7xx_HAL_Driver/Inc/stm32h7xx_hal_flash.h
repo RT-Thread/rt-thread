@@ -544,9 +544,13 @@ typedef struct
 
 #define __HAL_FLASH_ENABLE_IT_BANK2(__INTERRUPT__)      (FLASH->CR2 |= ((__INTERRUPT__) & 0x7FFFFFFFU))
 
+#if defined (DUAL_BANK)
 #define __HAL_FLASH_ENABLE_IT(__INTERRUPT__)    (IS_FLASH_IT_BANK1(__INTERRUPT__) ? \
                                                  __HAL_FLASH_ENABLE_IT_BANK1(__INTERRUPT__) : \
                                                  __HAL_FLASH_ENABLE_IT_BANK2(__INTERRUPT__))
+#else
+#define __HAL_FLASH_ENABLE_IT(__INTERRUPT__)    __HAL_FLASH_ENABLE_IT_BANK1(__INTERRUPT__)
+#endif /* DUAL_BANK */
 
 
 /**
@@ -588,9 +592,13 @@ typedef struct
 
 #define __HAL_FLASH_DISABLE_IT_BANK2(__INTERRUPT__)  (FLASH->CR2 &= ~(uint32_t)((__INTERRUPT__) & 0x7FFFFFFFU))
 
+#if defined (DUAL_BANK)
 #define __HAL_FLASH_DISABLE_IT(__INTERRUPT__)  (IS_FLASH_IT_BANK1(__INTERRUPT__) ? \
                                                 __HAL_FLASH_DISABLE_IT_BANK1(__INTERRUPT__) : \
                                                 __HAL_FLASH_DISABLE_IT_BANK2(__INTERRUPT__))
+#else
+#define __HAL_FLASH_DISABLE_IT(__INTERRUPT__)  __HAL_FLASH_DISABLE_IT_BANK1(__INTERRUPT__)
+#endif /* DUAL_BANK */
 
 
 /**
@@ -637,8 +645,12 @@ typedef struct
 
 #define __HAL_FLASH_GET_FLAG_BANK2(__FLAG__)     (READ_BIT(FLASH->SR2, ((__FLAG__) & 0x7FFFFFFFU)) == (((__FLAG__) & 0x7FFFFFFFU)))
 
+#if defined (DUAL_BANK)
 #define __HAL_FLASH_GET_FLAG(__FLAG__)           (IS_FLASH_FLAG_BANK1(__FLAG__) ?  __HAL_FLASH_GET_FLAG_BANK1(__FLAG__) : \
                                                   __HAL_FLASH_GET_FLAG_BANK2(__FLAG__))
+#else
+#define __HAL_FLASH_GET_FLAG(__FLAG__)           __HAL_FLASH_GET_FLAG_BANK1(__FLAG__)
+#endif /* DUAL_BANK */
 
 
 /**
@@ -682,8 +694,12 @@ typedef struct
 
 #define __HAL_FLASH_CLEAR_FLAG_BANK2(__FLAG__)    WRITE_REG(FLASH->CCR2, ((__FLAG__) & 0x7FFFFFFFU))
 
+#if defined (DUAL_BANK)
 #define __HAL_FLASH_CLEAR_FLAG(__FLAG__)         (IS_FLASH_FLAG_BANK1(__FLAG__) ?  __HAL_FLASH_CLEAR_FLAG_BANK1(__FLAG__) : \
-                                                   __HAL_FLASH_CLEAR_FLAG_BANK2(__FLAG__))
+                                                  __HAL_FLASH_CLEAR_FLAG_BANK2(__FLAG__))
+#else
+#define __HAL_FLASH_CLEAR_FLAG(__FLAG__)         __HAL_FLASH_CLEAR_FLAG_BANK1(__FLAG__)
+#endif /* DUAL_BANK */
 
 /**
   * @}
@@ -768,16 +784,23 @@ extern FLASH_ProcessTypeDef pFlash;
 #endif /* FLASH_OPTCR_PG_OTP */
 
 #define IS_FLASH_IT_BANK1(IT)            (((IT) & FLASH_IT_ALL_BANK1) == (IT))
-
+#if defined (DUAL_BANK)
 #define IS_FLASH_IT_BANK2(IT)            (((IT) & FLASH_IT_ALL_BANK2) == (IT))
+#endif /* DUAL_BANK */
 
 #define IS_FLASH_FLAG_BANK1(FLAG)        (((FLAG) & FLASH_FLAG_ALL_BANK1) == (FLAG))
-
+#if defined (DUAL_BANK)
 #define IS_FLASH_FLAG_BANK2(FLAG)        (((FLAG) & FLASH_FLAG_ALL_BANK2) == (FLAG))
+#endif /* DUAL_BANK */
 
+#if defined (DUAL_BANK)
 #define IS_FLASH_PROGRAM_ADDRESS_BANK1(ADDRESS) (((ADDRESS) >= FLASH_BANK1_BASE) && ((ADDRESS) < FLASH_BANK2_BASE))
 #define IS_FLASH_PROGRAM_ADDRESS_BANK2(ADDRESS) (((ADDRESS) >= FLASH_BANK2_BASE ) && ((ADDRESS) <= FLASH_END))
+#else
+#define IS_FLASH_PROGRAM_ADDRESS_BANK1(ADDRESS) (((ADDRESS) >= FLASH_BANK1_BASE) && ((ADDRESS) <= FLASH_END))
+#endif /* DUAL_BANK */
 
+#if defined (DUAL_BANK)
 #if defined (FLASH_OPTCR_PG_OTP)
 #define IS_FLASH_PROGRAM_ADDRESS_OTP(ADDRESS)   (((ADDRESS) >= 0x08FFF000U) && ((ADDRESS) <= 0x08FFF3FFU))
 #define IS_FLASH_PROGRAM_ADDRESS(ADDRESS)       (IS_FLASH_PROGRAM_ADDRESS_BANK1(ADDRESS) || \
@@ -787,16 +810,28 @@ extern FLASH_ProcessTypeDef pFlash;
 #define IS_FLASH_PROGRAM_ADDRESS(ADDRESS)       (IS_FLASH_PROGRAM_ADDRESS_BANK1(ADDRESS) || \
                                                  IS_FLASH_PROGRAM_ADDRESS_BANK2(ADDRESS))
 #endif /* FLASH_OPTCR_PG_OTP */
+#else
+#if defined (FLASH_OPTCR_PG_OTP)
+#define IS_FLASH_PROGRAM_ADDRESS_OTP(ADDRESS)   (((ADDRESS) >= 0x08FFF000U) && ((ADDRESS) <= 0x08FFF3FFU))
+#define IS_FLASH_PROGRAM_ADDRESS(ADDRESS)       (IS_FLASH_PROGRAM_ADDRESS_BANK1(ADDRESS) || \
+                                                 IS_FLASH_PROGRAM_ADDRESS_OTP(ADDRESS))
+#else
+#define IS_FLASH_PROGRAM_ADDRESS(ADDRESS)       (IS_FLASH_PROGRAM_ADDRESS_BANK1(ADDRESS))
+#endif /* FLASH_OPTCR_PG_OTP */
+#endif /* DUAL_BANK */
 
-#define IS_BOOT_ADDRESS(ADDRESS)           ((ADDRESS) <= (0x3FFF0000U))
+#define IS_BOOT_ADDRESS(ADDRESS)         ((ADDRESS) <= (0x3FFF0000U))
 
-#define IS_FLASH_BANK(BANK)                (((BANK) == FLASH_BANK_1)  || \
-                                            ((BANK) == FLASH_BANK_2)  || \
-                                            ((BANK) == FLASH_BANK_BOTH))
-
-#define IS_FLASH_BANK_EXCLUSIVE(BANK)      (((BANK) == FLASH_BANK_1)  || \
-                                            ((BANK) == FLASH_BANK_2))
-
+#if defined (DUAL_BANK)
+#define IS_FLASH_BANK(BANK)              (((BANK) == FLASH_BANK_1)  || \
+                                          ((BANK) == FLASH_BANK_2)  || \
+                                          ((BANK) == FLASH_BANK_BOTH))
+#define IS_FLASH_BANK_EXCLUSIVE(BANK)    (((BANK) == FLASH_BANK_1)  || \
+                                          ((BANK) == FLASH_BANK_2))
+#else
+#define IS_FLASH_BANK(BANK)              ((BANK) == FLASH_BANK_1)
+#define IS_FLASH_BANK_EXCLUSIVE(BANK)    ((BANK) == FLASH_BANK_1)
+#endif /* DUAL_BANK */
 
 /**
   * @}

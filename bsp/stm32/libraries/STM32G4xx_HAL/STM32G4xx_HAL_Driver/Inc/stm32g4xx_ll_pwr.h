@@ -433,37 +433,37 @@ __STATIC_INLINE uint32_t LL_PWR_GetPowerMode(void)
 
 #if defined(PWR_CR3_UCPD_STDBY)
 /**
-  * @brief  Enable (write 1) the USB Type-C and Power Delivery standby mode.
-  * @note Enable just before entering standby when using UCPD1.
-  * @rmtoll CR3          UCPD1_STDBY           LL_PWR_EnableUSBStandByModePD
+  * @brief  Enable the USB Type-C and Power Delivery memorization in Standby mode.
+  * @note   This function must be called just before entering Standby mode.
+  * @rmtoll CR3          UCPD_STDBY    LL_PWR_EnableUCPDStandbyMode
   * @retval None
   */
-__STATIC_INLINE void LL_PWR_EnableUSBStandByModePD(void)
+__STATIC_INLINE void LL_PWR_EnableUCPDStandbyMode(void)
 {
   SET_BIT(PWR->CR3, PWR_CR3_UCPD_STDBY);
 }
 
 /**
-  * @brief  Disable (write 0) USB Type-C and Power Delivery standby mode.
-  * @note Disable immediately after standby exit when using UCPD1,
-  *      (and before writing any UCPD1 registers).
-  * @rmtoll CR3          UCPD1_STDBY           LL_PWR_DisableUSBStandByModePD
+  * @brief  Disable the USB Type-C and Power Delivery memorization in Standby mode.
+  * @note   This function must be called after exiting Standby mode and before any
+  *         UCPD configuration update.
+  * @rmtoll CR3          UCPD_STDBY     LL_PWR_DisableUCPDStandbyMode
   * @retval None
   */
-__STATIC_INLINE void LL_PWR_DisableUSBStandByModePD(void)
+__STATIC_INLINE void LL_PWR_DisableUCPDStandbyMode(void)
 {
   CLEAR_BIT(PWR->CR3, PWR_CR3_UCPD_STDBY);
 }
 
 /**
-  * @brief  Check the USB Type-C and Power Delivery standby mode.
-  * @rmtoll CR3          UCPD1_STDBY           LL_PWR_IsEnabledUSBStandByModePD
+  * @brief  Check the USB Type-C and Power Delivery Standby mode memorization state.
+  * @rmtoll CR3          UCPD_STDBY           LL_PWR_IsEnabledUCPDStandbyMode
   * @retval State of bit (1 or 0).
   */
-__STATIC_INLINE uint32_t LL_PWR_IsEnabledUSBStandByModePD(void)
+__STATIC_INLINE uint32_t LL_PWR_IsEnabledUCPDStandbyMode(void)
 {
 
-  return ((READ_BIT(PWR->CR3, PWR_CR3_UCPD_STDBY) == (PWR_CR3_UCPD_STDBY))?1UL:0UL);
+  return ((READ_BIT(PWR->CR3, PWR_CR3_UCPD_STDBY) == (PWR_CR3_UCPD_STDBY)) ? 1UL : 0UL);
 
 }
 #endif /* PWR_CR3_UCPD_STDBY */
@@ -596,7 +596,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledVddIO2(void)
   * @param  PeriphVoltage This parameter can be one of the following values:
   *         @arg @ref LL_PWR_PVM_VDDA_COMP     (*)
   *         @arg @ref LL_PWR_PVM_VDDA_FASTDAC  (*)
-  *         @arg @ref LL_PWR_PVM_VDDA_ADC      
+  *         @arg @ref LL_PWR_PVM_VDDA_ADC
   *         @arg @ref LL_PWR_PVM_VDDA_OPAMP_DAC
   *
   *         (*) value not defined in all devices
@@ -616,7 +616,7 @@ __STATIC_INLINE void LL_PWR_EnablePVM(uint32_t PeriphVoltage)
   * @param  PeriphVoltage This parameter can be one of the following values:
   *         @arg @ref LL_PWR_PVM_VDDA_COMP     (*)
   *         @arg @ref LL_PWR_PVM_VDDA_FASTDAC  (*)
-  *         @arg @ref LL_PWR_PVM_VDDA_ADC      
+  *         @arg @ref LL_PWR_PVM_VDDA_ADC
   *         @arg @ref LL_PWR_PVM_VDDA_OPAMP_DAC
   *
   *         (*) value not defined in all devices
@@ -636,7 +636,7 @@ __STATIC_INLINE void LL_PWR_DisablePVM(uint32_t PeriphVoltage)
   * @param  PeriphVoltage This parameter can be one of the following values:
   *         @arg @ref LL_PWR_PVM_VDDA_COMP     (*)
   *         @arg @ref LL_PWR_PVM_VDDA_FASTDAC  (*)
-  *         @arg @ref LL_PWR_PVM_VDDA_ADC      
+  *         @arg @ref LL_PWR_PVM_VDDA_ADC
   *         @arg @ref LL_PWR_PVM_VDDA_OPAMP_DAC
   *
   *         (*) value not defined in all devices
@@ -750,28 +750,6 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledInternWU(void)
 {
   return ((READ_BIT(PWR->CR3, PWR_CR3_EIWF) == (PWR_CR3_EIWF))?1UL:0UL);
 }
-
-#if defined(PWR_CR3_UCPD_STDBY)
-/**
-  * @brief  Enable USB Type-C and Power Delivery standby mode.
-  * @rmtoll CR3          UCPD_STDBY          LL_PWR_EnableStandByModePD
-  * @retval None
-  */
-__STATIC_INLINE void LL_PWR_EnableStandByModePD(void)
-{
-  SET_BIT(PWR->CR3, PWR_CR3_UCPD_STDBY);
-}
-
-/**
-  * @brief  Disable USB Type-C and Power Delivery standby mode.
-  * @rmtoll CR3          UCPD_STDBY          LL_PWR_DisableStandByModePD
-  * @retval None
-  */
-__STATIC_INLINE void LL_PWR_DisableStandByModePD(void)
-{
-  CLEAR_BIT(PWR->CR3, PWR_CR3_UCPD_STDBY);
-}
-#endif /* PWR_CR3_UCPD_STDBY */
 
 /**
   * @brief  Enable pull-up and pull-down configuration
@@ -1594,7 +1572,11 @@ ErrorStatus LL_PWR_DeInit(void);
 #define LL_PWR_IsEnabledUSBDeadBattery         LL_PWR_IsEnabledUCPDDeadBattery
 #define LL_PWR_EnableDeadBatteryPD             LL_PWR_EnableUCPDDeadBattery
 #define LL_PWR_DisableDeadBatteryPD            LL_PWR_DisableUCPDDeadBattery
-
+#define LL_PWR_EnableUSBStandByModePD          LL_PWR_EnableUCPDStandbyMode
+#define LL_PWR_EnableStandByModePD             LL_PWR_EnableUCPDStandbyMode
+#define LL_PWR_DisableUSBStandByModePD         LL_PWR_DisableUCPDStandbyMode
+#define LL_PWR_DisableStandByModePD            LL_PWR_DisableUCPDStandbyMode
+#define LL_PWR_IsEnabledUSBStandByModePD       LL_PWR_IsEnabledUCPDStandbyMode
 /**
   * @}
   */

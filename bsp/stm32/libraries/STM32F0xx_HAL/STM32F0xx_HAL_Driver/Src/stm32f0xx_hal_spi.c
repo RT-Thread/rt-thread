@@ -58,15 +58,6 @@
           (##) HAL_SPI_DeInit()
           (##) HAL_SPI_Init()
      [..]
-       Data buffer address alignment restriction:
-      (#) In case more than 1 byte is requested to be transferred, the HAL SPI uses 16-bit access for data buffer.
-          But there is no support for unaligned accesses on the Cortex-M0 processor.
-          So, if the user wants to transfer more than 1 byte, it shall ensure that 16-bit aligned address is used for:
-          (##) pData parameter in HAL_SPI_Transmit(), HAL_SPI_Transmit_IT(), HAL_SPI_Receive() and HAL_SPI_Receive_IT()
-          (##) pTxData and pRxData parameters in HAL_SPI_TransmitReceive() and HAL_SPI_TransmitReceive_IT()
-      (#) There is no such restriction when going through DMA by using HAL_SPI_Transmit_DMA(), HAL_SPI_Receive_DMA()
-          and HAL_SPI_TransmitReceive_DMA().
-     [..]
        Callback registration:
 
       (#) The compilation flag USE_HAL_SPI_REGISTER_CALLBACKS when set to 1U
@@ -140,7 +131,7 @@
        DataSize = SPI_DATASIZE_8BIT:
        +----------------------------------------------------------------------------------------------+
        |         |                | 2Lines Fullduplex   |     2Lines RxOnly    |         1Line        |
-       | Process | Tranfert mode  |---------------------|----------------------|----------------------|
+       | Process | Transfer mode  |---------------------|----------------------|----------------------|
        |         |                |  Master  |  Slave   |  Master   |  Slave   |  Master   |  Slave   |
        |==============================================================================================|
        |    T    |     Polling    | Fpclk/4  | Fpclk/8  |    NA     |    NA    |    NA     |   NA     |
@@ -165,7 +156,7 @@
        DataSize = SPI_DATASIZE_16BIT:
        +----------------------------------------------------------------------------------------------+
        |         |                | 2Lines Fullduplex   |     2Lines RxOnly    |         1Line        |
-       | Process | Tranfert mode  |---------------------|----------------------|----------------------|
+       | Process | Transfer mode  |---------------------|----------------------|----------------------|
        |         |                |  Master  |  Slave   |  Master   |  Slave   |  Master   |  Slave   |
        |==============================================================================================|
        |    T    |     Polling    | Fpclk/4  | Fpclk/8  |    NA     |    NA    |    NA     |   NA     |
@@ -346,6 +337,24 @@ HAL_StatusTypeDef HAL_SPI_Init(SPI_HandleTypeDef *hspi)
   {
     assert_param(IS_SPI_CPOL(hspi->Init.CLKPolarity));
     assert_param(IS_SPI_CPHA(hspi->Init.CLKPhase));
+
+    if (hspi->Init.Mode == SPI_MODE_MASTER)
+    {
+      assert_param(IS_SPI_BAUDRATE_PRESCALER(hspi->Init.BaudRatePrescaler));
+    }
+    else
+    {
+      /* Baudrate prescaler not use in Motoraola Slave mode. force to default value */
+      hspi->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+    }
+  }
+  else
+  {
+    assert_param(IS_SPI_BAUDRATE_PRESCALER(hspi->Init.BaudRatePrescaler));
+
+    /* Force polarity and phase to TI protocaol requirements */
+    hspi->Init.CLKPolarity = SPI_POLARITY_LOW;
+    hspi->Init.CLKPhase    = SPI_PHASE_1EDGE;
   }
 #if (USE_SPI_CRC != 0U)
   assert_param(IS_SPI_CRC_CALCULATION(hspi->Init.CRCCalculation));
@@ -409,44 +418,56 @@ HAL_StatusTypeDef HAL_SPI_Init(SPI_HandleTypeDef *hspi)
     hspi->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   }
 
-  /* Align the CRC Length on the data size */
-  if (hspi->Init.CRCLength == SPI_CRC_LENGTH_DATASIZE)
-  {
-    /* CRC Length aligned on the data size : value set by default */
-    if (hspi->Init.DataSize > SPI_DATASIZE_8BIT)
-    {
-      hspi->Init.CRCLength = SPI_CRC_LENGTH_16BIT;
-    }
-    else
-    {
-      hspi->Init.CRCLength = SPI_CRC_LENGTH_8BIT;
-    }
-  }
-
   /*----------------------- SPIx CR1 & CR2 Configuration ---------------------*/
   /* Configure : SPI Mode, Communication Mode, Clock polarity and phase, NSS management,
   Communication speed, First bit and CRC calculation state */
-  WRITE_REG(hspi->Instance->CR1, (hspi->Init.Mode | hspi->Init.Direction |
-                                  hspi->Init.CLKPolarity | hspi->Init.CLKPhase | (hspi->Init.NSS & SPI_CR1_SSM) |
-                                  hspi->Init.BaudRatePrescaler | hspi->Init.FirstBit  | hspi->Init.CRCCalculation));
+  WRITE_REG(hspi->Instance->CR1, ((hspi->Init.Mode & (SPI_CR1_MSTR | SPI_CR1_SSI)) |
+                                  (hspi->Init.Direction & (SPI_CR1_RXONLY | SPI_CR1_BIDIMODE)) |
+                                  (hspi->Init.CLKPolarity & SPI_CR1_CPOL) |
+                                  (hspi->Init.CLKPhase & SPI_CR1_CPHA) |
+                                  (hspi->Init.NSS & SPI_CR1_SSM) |
+                                  (hspi->Init.BaudRatePrescaler & SPI_CR1_BR_Msk) |
+                                  (hspi->Init.FirstBit  & SPI_CR1_LSBFIRST) |
+                                  (hspi->Init.CRCCalculation & SPI_CR1_CRCEN)));
 #if (USE_SPI_CRC != 0U)
-  /* Configure : CRC Length */
-  if (hspi->Init.CRCLength == SPI_CRC_LENGTH_16BIT)
+  /*---------------------------- SPIx CRCL Configuration -------------------*/
+  if (hspi->Init.CRCCalculation == SPI_CRCCALCULATION_ENABLE)
   {
-    hspi->Instance->CR1 |= SPI_CR1_CRCL;
+    /* Align the CRC Length on the data size */
+    if (hspi->Init.CRCLength == SPI_CRC_LENGTH_DATASIZE)
+    {
+      /* CRC Length aligned on the data size : value set by default */
+      if (hspi->Init.DataSize > SPI_DATASIZE_8BIT)
+      {
+        hspi->Init.CRCLength = SPI_CRC_LENGTH_16BIT;
+      }
+      else
+      {
+        hspi->Init.CRCLength = SPI_CRC_LENGTH_8BIT;
+      }
+    }
+
+    /* Configure : CRC Length */
+    if (hspi->Init.CRCLength == SPI_CRC_LENGTH_16BIT)
+    {
+      SET_BIT(hspi->Instance->CR1, SPI_CR1_CRCL);
+    }
   }
 #endif /* USE_SPI_CRC */
 
   /* Configure : NSS management, TI Mode, NSS Pulse, Data size and Rx Fifo threshold */
-  WRITE_REG(hspi->Instance->CR2, (((hspi->Init.NSS >> 16U) & SPI_CR2_SSOE) | hspi->Init.TIMode |
-                                  hspi->Init.NSSPMode | hspi->Init.DataSize) | frxth);
+  WRITE_REG(hspi->Instance->CR2, (((hspi->Init.NSS >> 16U) & SPI_CR2_SSOE) |
+                                  (hspi->Init.TIMode & SPI_CR2_FRF) |
+                                  (hspi->Init.NSSPMode & SPI_CR2_NSSP) |
+                                  (hspi->Init.DataSize & SPI_CR2_DS_Msk) |
+                                  (frxth & SPI_CR2_FRXTH)));
 
 #if (USE_SPI_CRC != 0U)
   /*---------------------------- SPIx CRCPOLY Configuration ------------------*/
   /* Configure : CRC Polynomial */
   if (hspi->Init.CRCCalculation == SPI_CRCCALCULATION_ENABLE)
   {
-    WRITE_REG(hspi->Instance->CRCPR, hspi->Init.CRCPolynomial);
+    WRITE_REG(hspi->Instance->CRCPR, (hspi->Init.CRCPolynomial & SPI_CRCPR_CRCPOLY_Msk));
   }
 #endif /* USE_SPI_CRC */
 
@@ -805,13 +826,6 @@ HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, uint8_t *pData, uint
   HAL_StatusTypeDef errorcode = HAL_OK;
   uint16_t initial_TxXferCount;
 
-  if ((hspi->Init.DataSize > SPI_DATASIZE_8BIT) || ((hspi->Init.DataSize <= SPI_DATASIZE_8BIT) && (Size > 1U)))
-  {
-    /* in this case, 16-bit access is performed on Data
-       So, check Data is 16-bit aligned address */
-    assert_param(IS_SPI_16BIT_ALIGNED_ADDRESS(pData));
-  }
-
   /* Check Direction parameter */
   assert_param(IS_SPI_DIRECTION_2LINES_OR_1LINE(hspi->Init.Direction));
 
@@ -851,6 +865,8 @@ HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, uint8_t *pData, uint
   /* Configure communication direction : 1Line */
   if (hspi->Init.Direction == SPI_DIRECTION_1LINE)
   {
+    /* Disable SPI Peripheral before set 1Line direction (BIDIOE bit) */
+    __HAL_SPI_DISABLE(hspi);
     SPI_1LINE_TX(hspi);
   }
 
@@ -904,38 +920,18 @@ HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, uint8_t *pData, uint
   {
     if ((hspi->Init.Mode == SPI_MODE_SLAVE) || (initial_TxXferCount == 0x01U))
     {
-      if (hspi->TxXferCount > 1U)
-      {
-        /* write on the data register in packing mode */
-        hspi->Instance->DR = *((uint16_t *)hspi->pTxBuffPtr);
-        hspi->pTxBuffPtr += sizeof(uint16_t);
-        hspi->TxXferCount -= 2U;
-      }
-      else
-      {
-        *((__IO uint8_t *)&hspi->Instance->DR) = (*hspi->pTxBuffPtr);
-        hspi->pTxBuffPtr ++;
-        hspi->TxXferCount--;
-      }
+      *((__IO uint8_t *)&hspi->Instance->DR) = (*hspi->pTxBuffPtr);
+      hspi->pTxBuffPtr += sizeof(uint8_t);
+      hspi->TxXferCount--;
     }
     while (hspi->TxXferCount > 0U)
     {
       /* Wait until TXE flag is set to send data */
       if (__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_TXE))
       {
-        if (hspi->TxXferCount > 1U)
-        {
-          /* write on the data register in packing mode */
-          hspi->Instance->DR = *((uint16_t *)hspi->pTxBuffPtr);
-          hspi->pTxBuffPtr += sizeof(uint16_t);
-          hspi->TxXferCount -= 2U;
-        }
-        else
-        {
-          *((__IO uint8_t *)&hspi->Instance->DR) = (*hspi->pTxBuffPtr);
-          hspi->pTxBuffPtr++;
-          hspi->TxXferCount--;
-        }
+        *((__IO uint8_t *)&hspi->Instance->DR) = (*hspi->pTxBuffPtr);
+        hspi->pTxBuffPtr += sizeof(uint8_t);
+        hspi->TxXferCount--;
       }
       else
       {
@@ -991,15 +987,13 @@ error:
   */
 HAL_StatusTypeDef HAL_SPI_Receive(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size, uint32_t Timeout)
 {
+#if (USE_SPI_CRC != 0U)
+  __IO uint32_t tmpreg = 0U;
+  __IO uint8_t  * ptmpreg8;
+  __IO uint8_t  tmpreg8 = 0;
+#endif /* USE_SPI_CRC */
   uint32_t tickstart;
   HAL_StatusTypeDef errorcode = HAL_OK;
-
-  if ((hspi->Init.DataSize > SPI_DATASIZE_8BIT) || ((hspi->Init.DataSize <= SPI_DATASIZE_8BIT) && (Size > 1U)))
-  {
-    /* in this case, 16-bit access is performed on Data
-       So, check Data is 16-bit aligned address */
-    assert_param(IS_SPI_16BIT_ALIGNED_ADDRESS(pData));
-  }
 
   if ((hspi->Init.Mode == SPI_MODE_MASTER) && (hspi->Init.Direction == SPI_DIRECTION_2LINES))
   {
@@ -1065,6 +1059,8 @@ HAL_StatusTypeDef HAL_SPI_Receive(SPI_HandleTypeDef *hspi, uint8_t *pData, uint1
   /* Configure communication direction: 1Line */
   if (hspi->Init.Direction == SPI_DIRECTION_1LINE)
   {
+    /* Disable SPI Peripheral before set 1Line direction (BIDIOE bit) */
+    __HAL_SPI_DISABLE(hspi);
     SPI_1LINE_RX(hspi);
   }
 
@@ -1162,12 +1158,18 @@ HAL_StatusTypeDef HAL_SPI_Receive(SPI_HandleTypeDef *hspi, uint8_t *pData, uint1
     if (hspi->Init.DataSize == SPI_DATASIZE_16BIT)
     {
       /* Read 16bit CRC */
-      READ_REG(hspi->Instance->DR);
+      tmpreg = READ_REG(hspi->Instance->DR);
+      /* To avoid GCC warning */
+      UNUSED(tmpreg);
     }
     else
     {
+      /* Initialize the 8bit temporary pointer */
+      ptmpreg8 = (__IO uint8_t *)&hspi->Instance->DR;
       /* Read 8bit CRC */
-      READ_REG(*(__IO uint8_t *)&hspi->Instance->DR);
+      tmpreg8 = *ptmpreg8;
+      /* To avoid GCC warning */
+      UNUSED(tmpreg8);
 
       if ((hspi->Init.DataSize == SPI_DATASIZE_8BIT) && (hspi->Init.CRCLength == SPI_CRC_LENGTH_16BIT))
       {
@@ -1179,7 +1181,9 @@ HAL_StatusTypeDef HAL_SPI_Receive(SPI_HandleTypeDef *hspi, uint8_t *pData, uint1
           goto error;
         }
         /* Read 8bit CRC again in case of 16bit CRC in 8bit Data mode */
-        READ_REG(*(__IO uint8_t *)&hspi->Instance->DR);
+        tmpreg8 = *ptmpreg8;
+        /* To avoid GCC warning */
+        UNUSED(tmpreg8);
       }
     }
   }
@@ -1225,26 +1229,20 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, uint8_t *pTxD
                                           uint32_t Timeout)
 {
   uint16_t             initial_TxXferCount;
-  uint16_t             initial_RxXferCount;
   uint32_t             tmp_mode;
   HAL_SPI_StateTypeDef tmp_state;
   uint32_t             tickstart;
 #if (USE_SPI_CRC != 0U)
+  __IO uint32_t tmpreg = 0U;
   uint32_t             spi_cr1;
   uint32_t             spi_cr2;
+  __IO uint8_t  * ptmpreg8;
+  __IO uint8_t  tmpreg8 = 0;
 #endif /* USE_SPI_CRC */
 
   /* Variable used to alternate Rx and Tx during transfer */
   uint32_t             txallowed = 1U;
   HAL_StatusTypeDef    errorcode = HAL_OK;
-
-  if ((hspi->Init.DataSize > SPI_DATASIZE_8BIT) || ((hspi->Init.DataSize <= SPI_DATASIZE_8BIT) && (Size > 1U)))
-  {
-    /* in this case, 16-bit access is performed on Data
-       So, check Data is 16-bit aligned address */
-    assert_param(IS_SPI_16BIT_ALIGNED_ADDRESS(pTxData));
-    assert_param(IS_SPI_16BIT_ALIGNED_ADDRESS(pRxData));
-  }
 
   /* Check Direction parameter */
   assert_param(IS_SPI_DIRECTION_2LINES(hspi->Init.Direction));
@@ -1259,7 +1257,6 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, uint8_t *pTxD
   tmp_state           = hspi->State;
   tmp_mode            = hspi->Init.Mode;
   initial_TxXferCount = Size;
-  initial_RxXferCount = Size;
 #if (USE_SPI_CRC != 0U)
   spi_cr1             = READ_REG(hspi->Instance->CR1);
   spi_cr2             = READ_REG(hspi->Instance->CR2);
@@ -1306,7 +1303,7 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, uint8_t *pTxD
 #endif /* USE_SPI_CRC */
 
   /* Set the Rx Fifo threshold */
-  if ((hspi->Init.DataSize > SPI_DATASIZE_8BIT) || (initial_RxXferCount > 1U))
+  if (hspi->Init.DataSize > SPI_DATASIZE_8BIT)
   {
     /* Set fiforxthreshold according the reception data length: 16bit */
     CLEAR_BIT(hspi->Instance->CR2, SPI_RXFIFO_THRESHOLD);
@@ -1379,36 +1376,18 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, uint8_t *pTxD
   {
     if ((hspi->Init.Mode == SPI_MODE_SLAVE) || (initial_TxXferCount == 0x01U))
     {
-      if (hspi->TxXferCount > 1U)
-      {
-        hspi->Instance->DR = *((uint16_t *)hspi->pTxBuffPtr);
-        hspi->pTxBuffPtr += sizeof(uint16_t);
-        hspi->TxXferCount -= 2U;
-      }
-      else
-      {
-        *(__IO uint8_t *)&hspi->Instance->DR = (*hspi->pTxBuffPtr);
-        hspi->pTxBuffPtr++;
-        hspi->TxXferCount--;
-      }
+      *((__IO uint8_t *)&hspi->Instance->DR) = (*hspi->pTxBuffPtr);
+      hspi->pTxBuffPtr += sizeof(uint8_t);
+      hspi->TxXferCount--;
     }
     while ((hspi->TxXferCount > 0U) || (hspi->RxXferCount > 0U))
     {
       /* Check TXE flag */
       if ((__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_TXE)) && (hspi->TxXferCount > 0U) && (txallowed == 1U))
       {
-        if (hspi->TxXferCount > 1U)
-        {
-          hspi->Instance->DR = *((uint16_t *)hspi->pTxBuffPtr);
-          hspi->pTxBuffPtr += sizeof(uint16_t);
-          hspi->TxXferCount -= 2U;
-        }
-        else
-        {
-          *(__IO uint8_t *)&hspi->Instance->DR = (*hspi->pTxBuffPtr);
-          hspi->pTxBuffPtr++;
-          hspi->TxXferCount--;
-        }
+        *(__IO uint8_t *)&hspi->Instance->DR = (*hspi->pTxBuffPtr);
+        hspi->pTxBuffPtr++;
+        hspi->TxXferCount--;
         /* Next Data is a reception (Rx). Tx not allowed */
         txallowed = 0U;
 
@@ -1429,23 +1408,9 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, uint8_t *pTxD
       /* Wait until RXNE flag is reset */
       if ((__HAL_SPI_GET_FLAG(hspi, SPI_FLAG_RXNE)) && (hspi->RxXferCount > 0U))
       {
-        if (hspi->RxXferCount > 1U)
-        {
-          *((uint16_t *)hspi->pRxBuffPtr) = (uint16_t)hspi->Instance->DR;
-          hspi->pRxBuffPtr += sizeof(uint16_t);
-          hspi->RxXferCount -= 2U;
-          if (hspi->RxXferCount <= 1U)
-          {
-            /* Set RX Fifo threshold before to switch on 8 bit data size */
-            SET_BIT(hspi->Instance->CR2, SPI_RXFIFO_THRESHOLD);
-          }
-        }
-        else
-        {
-          (*(uint8_t *)hspi->pRxBuffPtr) = *(__IO uint8_t *)&hspi->Instance->DR;
-          hspi->pRxBuffPtr++;
-          hspi->RxXferCount--;
-        }
+        (*(uint8_t *)hspi->pRxBuffPtr) = *(__IO uint8_t *)&hspi->Instance->DR;
+        hspi->pRxBuffPtr++;
+        hspi->RxXferCount--;
         /* Next Data is a Transmission (Tx). Tx is allowed */
         txallowed = 1U;
       }
@@ -1473,12 +1438,18 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, uint8_t *pTxD
     if (hspi->Init.DataSize == SPI_DATASIZE_16BIT)
     {
       /* Read 16bit CRC */
-      READ_REG(hspi->Instance->DR);
+      tmpreg = READ_REG(hspi->Instance->DR);
+      /* To avoid GCC warning */
+      UNUSED(tmpreg);
     }
     else
     {
+      /* Initialize the 8bit temporary pointer */
+      ptmpreg8 = (__IO uint8_t *)&hspi->Instance->DR;
       /* Read 8bit CRC */
-      READ_REG(*(__IO uint8_t *)&hspi->Instance->DR);
+      tmpreg8 = *ptmpreg8;
+      /* To avoid GCC warning */
+      UNUSED(tmpreg8);
 
       if (hspi->Init.CRCLength == SPI_CRC_LENGTH_16BIT)
       {
@@ -1490,7 +1461,9 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, uint8_t *pTxD
           goto error;
         }
         /* Read 8bit CRC again in case of 16bit CRC in 8bit Data mode */
-        READ_REG(*(__IO uint8_t *)&hspi->Instance->DR);
+        tmpreg8 = *ptmpreg8;
+        /* To avoid GCC warning */
+        UNUSED(tmpreg8);
       }
     }
   }
@@ -1530,13 +1503,6 @@ error :
 HAL_StatusTypeDef HAL_SPI_Transmit_IT(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size)
 {
   HAL_StatusTypeDef errorcode = HAL_OK;
-
-  if ((hspi->Init.DataSize > SPI_DATASIZE_8BIT) || ((hspi->Init.DataSize <= SPI_DATASIZE_8BIT) && (Size > 1U)))
-  {
-    /* in this case, 16-bit access is performed on Data
-       So, check Data is 16-bit aligned address */
-    assert_param(IS_SPI_16BIT_ALIGNED_ADDRESS(pData));
-  }
 
   /* Check Direction parameter */
   assert_param(IS_SPI_DIRECTION_2LINES_OR_1LINE(hspi->Init.Direction));
@@ -1582,6 +1548,8 @@ HAL_StatusTypeDef HAL_SPI_Transmit_IT(SPI_HandleTypeDef *hspi, uint8_t *pData, u
   /* Configure communication direction : 1Line */
   if (hspi->Init.Direction == SPI_DIRECTION_1LINE)
   {
+    /* Disable SPI Peripheral before set 1Line direction (BIDIOE bit) */
+    __HAL_SPI_DISABLE(hspi);
     SPI_1LINE_TX(hspi);
   }
 
@@ -1620,13 +1588,6 @@ error :
 HAL_StatusTypeDef HAL_SPI_Receive_IT(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size)
 {
   HAL_StatusTypeDef errorcode = HAL_OK;
-
-  if ((hspi->Init.DataSize > SPI_DATASIZE_8BIT) || ((hspi->Init.DataSize <= SPI_DATASIZE_8BIT) && (Size > 1U)))
-  {
-    /* in this case, 16-bit access is performed on Data
-       So, check Data is 16-bit aligned address */
-    assert_param(IS_SPI_16BIT_ALIGNED_ADDRESS(pData));
-  }
 
   if ((hspi->Init.Direction == SPI_DIRECTION_2LINES) && (hspi->Init.Mode == SPI_MODE_MASTER))
   {
@@ -1680,6 +1641,8 @@ HAL_StatusTypeDef HAL_SPI_Receive_IT(SPI_HandleTypeDef *hspi, uint8_t *pData, ui
   /* Configure communication direction : 1Line */
   if (hspi->Init.Direction == SPI_DIRECTION_1LINE)
   {
+    /* Disable SPI Peripheral before set 1Line direction (BIDIOE bit) */
+    __HAL_SPI_DISABLE(hspi);
     SPI_1LINE_RX(hspi);
   }
 
@@ -1734,14 +1697,6 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive_IT(SPI_HandleTypeDef *hspi, uint8_t *p
   uint32_t             tmp_mode;
   HAL_SPI_StateTypeDef tmp_state;
   HAL_StatusTypeDef    errorcode = HAL_OK;
-
-  if ((hspi->Init.DataSize > SPI_DATASIZE_8BIT) || ((hspi->Init.DataSize <= SPI_DATASIZE_8BIT) && (Size > 1U)))
-  {
-    /* in this case, 16-bit access is performed on Data
-       So, check Data is 16-bit aligned address */
-    assert_param(IS_SPI_16BIT_ALIGNED_ADDRESS(pTxData));
-    assert_param(IS_SPI_16BIT_ALIGNED_ADDRESS(pRxData));
-  }
 
   /* Check Direction parameter */
   assert_param(IS_SPI_DIRECTION_2LINES(hspi->Init.Direction));
@@ -1888,6 +1843,8 @@ HAL_StatusTypeDef HAL_SPI_Transmit_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, 
   /* Configure communication direction : 1Line */
   if (hspi->Init.Direction == SPI_DIRECTION_1LINE)
   {
+    /* Disable SPI Peripheral before set 1Line direction (BIDIOE bit) */
+    __HAL_SPI_DISABLE(hspi);
     SPI_1LINE_TX(hspi);
   }
 
@@ -2018,6 +1975,8 @@ HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, u
   /* Configure communication direction : 1Line */
   if (hspi->Init.Direction == SPI_DIRECTION_1LINE)
   {
+    /* Disable SPI Peripheral before set 1Line direction (BIDIOE bit) */
+    __HAL_SPI_DISABLE(hspi);
     SPI_1LINE_RX(hspi);
   }
 
@@ -2037,7 +1996,7 @@ HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, u
     errorcode = HAL_ERROR;
     goto error;
   }
-#endif
+#endif /* STM32F030x6 || STM32F030x8 || STM32F031x6 || STM32F038xx || STM32F051x8 || STM32F058xx */
 
   CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_LDMARX);
   if (hspi->Init.DataSize > SPI_DATASIZE_8BIT)
@@ -2190,7 +2149,7 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive_DMA(SPI_HandleTypeDef *hspi, uint8_t *
     errorcode = HAL_ERROR;
     goto error;
   }
-#endif
+#endif /* STM32F030x6 || STM32F030x8 || STM32F031x6 || STM32F038xx || STM32F051x8 || STM32F058xx */
 
   /* Reset the threshold bit */
   CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_LDMATX | SPI_CR2_LDMARX);
@@ -3078,6 +3037,11 @@ static void SPI_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
 {
   SPI_HandleTypeDef *hspi = (SPI_HandleTypeDef *)(((DMA_HandleTypeDef *)hdma)->Parent); /* Derogation MISRAC2012-Rule-11.5 */
   uint32_t tickstart;
+#if (USE_SPI_CRC != 0U)
+  __IO uint32_t tmpreg = 0U;
+  __IO uint8_t  * ptmpreg8;
+  __IO uint8_t  tmpreg8 = 0;
+#endif /* USE_SPI_CRC */
 
   /* Init tickstart for timeout management*/
   tickstart = HAL_GetTick();
@@ -3102,12 +3066,18 @@ static void SPI_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
       if (hspi->Init.DataSize > SPI_DATASIZE_8BIT)
       {
         /* Read 16bit CRC */
-        READ_REG(hspi->Instance->DR);
+        tmpreg = READ_REG(hspi->Instance->DR);
+        /* To avoid GCC warning */
+        UNUSED(tmpreg);
       }
       else
       {
+        /* Initialize the 8bit temporary pointer */
+        ptmpreg8 = (__IO uint8_t *)&hspi->Instance->DR;
         /* Read 8bit CRC */
-        READ_REG(*(__IO uint8_t *)&hspi->Instance->DR);
+        tmpreg8 = *ptmpreg8;
+        /* To avoid GCC warning */
+        UNUSED(tmpreg8);
 
         if (hspi->Init.CRCLength == SPI_CRC_LENGTH_16BIT)
         {
@@ -3117,14 +3087,25 @@ static void SPI_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
             SET_BIT(hspi->ErrorCode, HAL_SPI_ERROR_CRC);
           }
           /* Read 8bit CRC again in case of 16bit CRC in 8bit Data mode */
-          READ_REG(*(__IO uint8_t *)&hspi->Instance->DR);
+          tmpreg8 = *ptmpreg8;
+          /* To avoid GCC warning */
+          UNUSED(tmpreg8);
         }
       }
     }
 #endif /* USE_SPI_CRC */
 
-    /* Disable Rx/Tx DMA Request (done by default to handle the case master rx direction 2 lines) */
-    CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN);
+    /* Check if we are in Master RX 2 line mode */
+    if ((hspi->Init.Direction == SPI_DIRECTION_2LINES) && (hspi->Init.Mode == SPI_MODE_MASTER))
+    {
+      /* Disable Rx/Tx DMA Request (done by default to handle the case master rx direction 2 lines) */
+      CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN);
+    }
+    else
+    {
+      /* Normal case */
+      CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_RXDMAEN);
+    }
 
     /* Check the end of the transaction */
     if (SPI_EndRxTransaction(hspi, SPI_DEFAULT_TIMEOUT, tickstart) != HAL_OK)
@@ -3173,6 +3154,11 @@ static void SPI_DMATransmitReceiveCplt(DMA_HandleTypeDef *hdma)
 {
   SPI_HandleTypeDef *hspi = (SPI_HandleTypeDef *)(((DMA_HandleTypeDef *)hdma)->Parent); /* Derogation MISRAC2012-Rule-11.5 */
   uint32_t tickstart;
+#if (USE_SPI_CRC != 0U)
+  __IO uint32_t tmpreg = 0U;
+  __IO uint8_t  * ptmpreg8;
+  __IO uint8_t  tmpreg8 = 0;
+#endif /* USE_SPI_CRC */
 
   /* Init tickstart for timeout management*/
   tickstart = HAL_GetTick();
@@ -3195,8 +3181,12 @@ static void SPI_DMATransmitReceiveCplt(DMA_HandleTypeDef *hdma)
           /* Error on the CRC reception */
           SET_BIT(hspi->ErrorCode, HAL_SPI_ERROR_CRC);
         }
-        /* Read CRC to Flush DR and RXNE flag */
-        READ_REG(*(__IO uint8_t *)&hspi->Instance->DR);
+        /* Initialize the 8bit temporary pointer */
+        ptmpreg8 = (__IO uint8_t *)&hspi->Instance->DR;
+        /* Read 8bit CRC */
+        tmpreg8 = *ptmpreg8;
+        /* To avoid GCC warning */
+        UNUSED(tmpreg8);
       }
       else
       {
@@ -3206,7 +3196,9 @@ static void SPI_DMATransmitReceiveCplt(DMA_HandleTypeDef *hdma)
           SET_BIT(hspi->ErrorCode, HAL_SPI_ERROR_CRC);
         }
         /* Read CRC to Flush DR and RXNE flag */
-        READ_REG(hspi->Instance->DR);
+        tmpreg = READ_REG(hspi->Instance->DR);
+        /* To avoid GCC warning */
+        UNUSED(tmpreg);
       }
     }
 #endif /* USE_SPI_CRC */
@@ -3541,8 +3533,15 @@ static void SPI_2linesRxISR_8BIT(struct __SPI_HandleTypeDef *hspi)
   */
 static void SPI_2linesRxISR_8BITCRC(struct __SPI_HandleTypeDef *hspi)
 {
-  /* Read 8bit CRC to flush Data Regsiter */
-  READ_REG(*(__IO uint8_t *)&hspi->Instance->DR);
+  __IO uint8_t  * ptmpreg8;
+  __IO uint8_t  tmpreg8 = 0;
+
+  /* Initialize the 8bit temporary pointer */
+  ptmpreg8 = (__IO uint8_t *)&hspi->Instance->DR;
+  /* Read 8bit CRC to flush Data Register */
+  tmpreg8 = *ptmpreg8;
+  /* To avoid GCC warning */
+  UNUSED(tmpreg8);
 
   hspi->CRCSize--;
 
@@ -3649,8 +3648,12 @@ static void SPI_2linesRxISR_16BIT(struct __SPI_HandleTypeDef *hspi)
   */
 static void SPI_2linesRxISR_16BITCRC(struct __SPI_HandleTypeDef *hspi)
 {
-  /* Read 16bit CRC to flush Data Regsiter */
-  READ_REG(hspi->Instance->DR);
+  __IO uint32_t tmpreg = 0U;
+
+  /* Read 16bit CRC to flush Data Register */
+  tmpreg = READ_REG(hspi->Instance->DR);
+  /* To avoid GCC warning */
+  UNUSED(tmpreg);  
 
   /* Disable RXNE interrupt */
   __HAL_SPI_DISABLE_IT(hspi, SPI_IT_RXNE);
@@ -3705,8 +3708,15 @@ static void SPI_2linesTxISR_16BIT(struct __SPI_HandleTypeDef *hspi)
   */
 static void SPI_RxISR_8BITCRC(struct __SPI_HandleTypeDef *hspi)
 {
+  __IO uint8_t  * ptmpreg8;
+  __IO uint8_t  tmpreg8 = 0;
+
+  /* Initialize the 8bit temporary pointer */
+  ptmpreg8 = (__IO uint8_t *)&hspi->Instance->DR;
   /* Read 8bit CRC to flush Data Register */
-  READ_REG(*(__IO uint8_t *)&hspi->Instance->DR);
+  tmpreg8 = *ptmpreg8;
+  /* To avoid GCC warning */
+  UNUSED(tmpreg8);
 
   hspi->CRCSize--;
 
@@ -3759,8 +3769,12 @@ static void SPI_RxISR_8BIT(struct __SPI_HandleTypeDef *hspi)
   */
 static void SPI_RxISR_16BITCRC(struct __SPI_HandleTypeDef *hspi)
 {
+  __IO uint32_t tmpreg = 0U;
+
   /* Read 16bit CRC to flush Data Register */
-  READ_REG(hspi->Instance->DR);
+  tmpreg = READ_REG(hspi->Instance->DR);
+  /* To avoid GCC warning */
+  UNUSED(tmpreg);
 
   /* Disable RXNE and ERR interrupt */
   __HAL_SPI_DISABLE_IT(hspi, (SPI_IT_RXNE | SPI_IT_ERR));
@@ -3866,69 +3880,22 @@ static void SPI_TxISR_16BIT(struct __SPI_HandleTypeDef *hspi)
 static HAL_StatusTypeDef SPI_WaitFlagStateUntilTimeout(SPI_HandleTypeDef *hspi, uint32_t Flag, FlagStatus State,
                                                        uint32_t Timeout, uint32_t Tickstart)
 {
+  __IO uint32_t count;
+  uint32_t tmp_timeout;
+  uint32_t tmp_tickstart;
+
+  /* Adjust Timeout value  in case of end of transfer */
+  tmp_timeout   = Timeout - (HAL_GetTick() - Tickstart);
+  tmp_tickstart = HAL_GetTick();
+
+  /* Calculate Timeout based on a software loop to avoid blocking issue if Systick is disabled */
+  count = tmp_timeout * ((SystemCoreClock * 32U) >> 20U);
+
   while ((__HAL_SPI_GET_FLAG(hspi, Flag) ? SET : RESET) != State)
   {
     if (Timeout != HAL_MAX_DELAY)
     {
-      if (((HAL_GetTick() - Tickstart) >= Timeout) || (Timeout == 0U))
-      {
-        /* Disable the SPI and reset the CRC: the CRC value should be cleared
-        on both master and slave sides in order to resynchronize the master
-        and slave for their respective CRC calculation */
-
-        /* Disable TXE, RXNE and ERR interrupts for the interrupt process */
-        __HAL_SPI_DISABLE_IT(hspi, (SPI_IT_TXE | SPI_IT_RXNE | SPI_IT_ERR));
-
-        if ((hspi->Init.Mode == SPI_MODE_MASTER) && ((hspi->Init.Direction == SPI_DIRECTION_1LINE)
-                                                     || (hspi->Init.Direction == SPI_DIRECTION_2LINES_RXONLY)))
-        {
-          /* Disable SPI peripheral */
-          __HAL_SPI_DISABLE(hspi);
-        }
-
-        /* Reset CRC Calculation */
-        if (hspi->Init.CRCCalculation == SPI_CRCCALCULATION_ENABLE)
-        {
-          SPI_RESET_CRC(hspi);
-        }
-
-        hspi->State = HAL_SPI_STATE_READY;
-
-        /* Process Unlocked */
-        __HAL_UNLOCK(hspi);
-
-        return HAL_TIMEOUT;
-      }
-    }
-  }
-
-  return HAL_OK;
-}
-
-/**
-  * @brief  Handle SPI FIFO Communication Timeout.
-  * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
-  *              the configuration information for SPI module.
-  * @param  Fifo Fifo to check
-  * @param  State Fifo state to check
-  * @param  Timeout Timeout duration
-  * @param  Tickstart tick start value
-  * @retval HAL status
-  */
-static HAL_StatusTypeDef SPI_WaitFifoStateUntilTimeout(SPI_HandleTypeDef *hspi, uint32_t Fifo, uint32_t State,
-                                                       uint32_t Timeout, uint32_t Tickstart)
-{
-  while ((hspi->Instance->SR & Fifo) != State)
-  {
-    if ((Fifo == SPI_SR_FRLVL) && (State == SPI_FRLVL_EMPTY))
-    {
-      /* Read 8bit CRC to flush Data Register */
-      READ_REG(*((__IO uint8_t *)&hspi->Instance->DR));
-    }
-
-    if (Timeout != HAL_MAX_DELAY)
-    {
-      if (((HAL_GetTick() - Tickstart) >= Timeout) || (Timeout == 0U))
+      if (((HAL_GetTick() - tmp_tickstart) >= tmp_timeout) || (tmp_timeout == 0U))
       {
         /* Disable the SPI and reset the CRC: the CRC value should be cleared
            on both master and slave sides in order to resynchronize the master
@@ -3957,6 +3924,94 @@ static HAL_StatusTypeDef SPI_WaitFifoStateUntilTimeout(SPI_HandleTypeDef *hspi, 
 
         return HAL_TIMEOUT;
       }
+      /* If Systick is disabled or not incremented, deactivate timeout to go in disable loop procedure */
+      if(count == 0U)
+      {
+        tmp_timeout = 0U;
+      }
+      count--;
+    }
+  }
+
+  return HAL_OK;
+}
+
+/**
+  * @brief  Handle SPI FIFO Communication Timeout.
+  * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
+  *              the configuration information for SPI module.
+  * @param  Fifo Fifo to check
+  * @param  State Fifo state to check
+  * @param  Timeout Timeout duration
+  * @param  Tickstart tick start value
+  * @retval HAL status
+  */
+static HAL_StatusTypeDef SPI_WaitFifoStateUntilTimeout(SPI_HandleTypeDef *hspi, uint32_t Fifo, uint32_t State,
+                                                       uint32_t Timeout, uint32_t Tickstart)
+{
+  __IO uint32_t count;
+  uint32_t tmp_timeout;
+  uint32_t tmp_tickstart;
+  __IO uint8_t  * ptmpreg8;
+  __IO uint8_t  tmpreg8 = 0;
+
+  /* Adjust Timeout value  in case of end of transfer */
+  tmp_timeout = Timeout - (HAL_GetTick() - Tickstart);
+  tmp_tickstart = HAL_GetTick();
+
+  /* Initialize the 8bit temporary pointer */
+  ptmpreg8 = (__IO uint8_t *)&hspi->Instance->DR;
+
+  /* Calculate Timeout based on a software loop to avoid blocking issue if Systick is disabled */
+  count = tmp_timeout * ((SystemCoreClock * 35U) >> 20U);
+
+  while ((hspi->Instance->SR & Fifo) != State)
+  {
+    if ((Fifo == SPI_SR_FRLVL) && (State == SPI_FRLVL_EMPTY))
+    {
+      /* Flush Data Register by a blank read */
+      tmpreg8 = *ptmpreg8;
+      /* To avoid GCC warning */
+      UNUSED(tmpreg8);
+    }
+
+    if (Timeout != HAL_MAX_DELAY)
+    {
+      if (((HAL_GetTick() - tmp_tickstart) >= tmp_timeout) || (tmp_timeout == 0U))
+      {
+        /* Disable the SPI and reset the CRC: the CRC value should be cleared
+           on both master and slave sides in order to resynchronize the master
+           and slave for their respective CRC calculation */
+
+        /* Disable TXE, RXNE and ERR interrupts for the interrupt process */
+        __HAL_SPI_DISABLE_IT(hspi, (SPI_IT_TXE | SPI_IT_RXNE | SPI_IT_ERR));
+
+        if ((hspi->Init.Mode == SPI_MODE_MASTER) && ((hspi->Init.Direction == SPI_DIRECTION_1LINE)
+                                                     || (hspi->Init.Direction == SPI_DIRECTION_2LINES_RXONLY)))
+        {
+          /* Disable SPI peripheral */
+          __HAL_SPI_DISABLE(hspi);
+        }
+
+        /* Reset CRC Calculation */
+        if (hspi->Init.CRCCalculation == SPI_CRCCALCULATION_ENABLE)
+        {
+          SPI_RESET_CRC(hspi);
+        }
+
+        hspi->State = HAL_SPI_STATE_READY;
+
+        /* Process Unlocked */
+        __HAL_UNLOCK(hspi);
+
+        return HAL_TIMEOUT;
+      }
+      /* If Systick is disabled or not incremented, deactivate timeout to go in disable loop procedure */
+      if(count == 0U)
+      {
+        tmp_timeout = 0U;
+      }      
+      count--;
     }
   }
 
@@ -4043,7 +4098,7 @@ static void SPI_CloseRxTx_ISR(SPI_HandleTypeDef *hspi)
 {
   uint32_t tickstart;
 
-  /* Init tickstart for timeout managment*/
+  /* Init tickstart for timeout management */
   tickstart = HAL_GetTick();
 
   /* Disable ERR interrupt */

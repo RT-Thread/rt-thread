@@ -101,7 +101,7 @@ uint32_t LL_EXTI_DeInit(void)
   LL_EXTI_WriteReg(IMR2,        0xFFFFFFFEU);
 #else
   LL_EXTI_WriteReg(IMR2,        0xFFFFFFFCU);
-#endif
+#endif  
   /* Event mask register 2 set to default reset values */
   LL_EXTI_WriteReg(EMR2,        0x00000000U);
   /* Rising Trigger selection register 2 set to default reset values */

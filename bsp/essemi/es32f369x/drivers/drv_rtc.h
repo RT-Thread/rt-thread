@@ -17,7 +17,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-03-22     wangyq       the first version   
+ * 2019-03-22     wangyq       the first version
  * 2021-04-20     liuhy         the second version
  */
 

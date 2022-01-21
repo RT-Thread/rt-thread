@@ -3334,7 +3334,7 @@ static uint32_t DFSDM_GetInjChannelsNbr(uint32_t Channels)
   */
 static uint32_t DFSDM_GetChannelFromInstance(DFSDM_Channel_TypeDef* Instance)
 {
-  uint32_t channel = 0xFF;
+  uint32_t channel;
   
   /* Get channel from instance */
   if(Instance == DFSDM1_Channel0)
@@ -3365,7 +3365,7 @@ static uint32_t DFSDM_GetChannelFromInstance(DFSDM_Channel_TypeDef* Instance)
   {
     channel = 6;
   }
-  else if(Instance == DFSDM1_Channel7)
+  else /* DFSDM1_Channel7 */
   {
     channel = 7;
   }

@@ -41,16 +41,21 @@
 /** @addtogroup UTILS_LL_Private_Constants
   * @{
   */
-#if (POWER_DOMAINS_NUMBER == 3U)
-#define UTILS_MAX_FREQUENCY_SCALE1  400000000U      /*!< Maximum frequency for system clock at power scale1, in Hz */
+#if (STM32H7_DEV_ID == 0x450UL)
+#define UTILS_MAX_FREQUENCY_SCALE1  480000000U      /*!< Maximum frequency for system clock at power scale1, in Hz */
 #define UTILS_MAX_FREQUENCY_SCALE2  300000000U      /*!< Maximum frequency for system clock at power scale2, in Hz */
 #define UTILS_MAX_FREQUENCY_SCALE3  200000000U      /*!< Maximum frequency for system clock at power scale3, in Hz */
-#else
+#elif (STM32H7_DEV_ID == 0x480UL)
 #define UTILS_MAX_FREQUENCY_SCALE0  280000000U      /*!< Maximum frequency for system clock at power scale0, in Hz */
 #define UTILS_MAX_FREQUENCY_SCALE1  225000000U      /*!< Maximum frequency for system clock at power scale1, in Hz */
 #define UTILS_MAX_FREQUENCY_SCALE2  160000000U      /*!< Maximum frequency for system clock at power scale2, in Hz */
 #define UTILS_MAX_FREQUENCY_SCALE3   88000000U      /*!< Maximum frequency for system clock at power scale3, in Hz */
-#endif /*POWER_DOMAINS_NUMBER == 3U*/
+#elif (STM32H7_DEV_ID == 0x483UL)
+#define UTILS_MAX_FREQUENCY_SCALE0  550000000U      /*!< Maximum frequency for system clock at power scale0, in Hz */
+#define UTILS_MAX_FREQUENCY_SCALE1  200000000U      /*!< Maximum frequency for system clock at power scale1, in Hz */
+#define UTILS_MAX_FREQUENCY_SCALE2  150000000U      /*!< Maximum frequency for system clock at power scale2, in Hz */
+#define UTILS_MAX_FREQUENCY_SCALE3   85000000U      /*!< Maximum frequency for system clock at power scale3, in Hz */
+#endif /*STM32H7_DEV_ID == 0x450UL*/
 
 /* Defines used for PLL range */
 #define UTILS_PLLVCO_INPUT_MIN1       1000000U      /*!< Frequency min for the low range PLLVCO input, in Hz    */
@@ -79,7 +84,7 @@
 #define UTILS_HSE_FREQUENCY_MAX     48000000U        /*!< Frequency max for HSE frequency, in Hz   */
 
 /* Defines used for FLASH latency according to HCLK Frequency */
-#if (POWER_DOMAINS_NUMBER == 2U)
+#if (STM32H7_DEV_ID == 0x480UL)
 #define UTILS_SCALE0_LATENCY0_FREQ   44000000U       /*!< HCLK frequency to set FLASH latency 0 in power scale 0  */
 #define UTILS_SCALE0_LATENCY1_FREQ   88000000U       /*!< HCLK frequency to set FLASH latency 1 in power scale 0  */
 #define UTILS_SCALE0_LATENCY2_FREQ  132000000U       /*!< HCLK frequency to set FLASH latency 2 in power scale 0  */
@@ -106,11 +111,11 @@
 #define UTILS_SCALE3_LATENCY2_FREQ   66000000U      /*!< HCLK frequency to set FLASH latency 2 in power scale 3  */
 #define UTILS_SCALE3_LATENCY3_FREQ   88000000U      /*!< HCLK frequency to set FLASH latency 3 in power scale 3  */
 
-#else
+#elif (STM32H7_DEV_ID == 0x450UL)
 
 #define UTILS_SCALE1_LATENCY0_FREQ   70000000U      /*!< HCLK frequency to set FLASH latency 0 in power scale 1  */
 #define UTILS_SCALE1_LATENCY1_FREQ  140000000U      /*!< HCLK frequency to set FLASH latency 1 in power scale 1  */
-#define UTILS_SCALE1_LATENCY2_FREQ  210000000U      /*!< HCLK frequency to set FLASH latency 2 in power scale 1  */
+#define UTILS_SCALE1_LATENCY2_FREQ  240000000U      /*!< HCLK frequency to set FLASH latency 2 in power scale 1  */
 
 #define UTILS_SCALE2_LATENCY0_FREQ   55000000U      /*!< HCLK frequency to set FLASH latency 0 in power scale 2  */
 #define UTILS_SCALE2_LATENCY1_FREQ  110000000U      /*!< HCLK frequency to set FLASH latency 1 in power scale 2  */
@@ -122,7 +127,27 @@
 #define UTILS_SCALE3_LATENCY2_FREQ  135000000U      /*!< HCLK frequency to set FLASH latency 2 in power scale 3  */
 #define UTILS_SCALE3_LATENCY3_FREQ  180000000U      /*!< HCLK frequency to set FLASH latency 3 in power scale 3  */
 #define UTILS_SCALE3_LATENCY4_FREQ  225000000U      /*!< HCLK frequency to set FLASH latency 4 in power scale 3  */
-#endif /*POWER_DOMAINS_NUMBER == 2U*/
+
+#elif (STM32H7_DEV_ID == 0x483UL)
+
+#define UTILS_SCALE0_LATENCY0_FREQ   70000000U       /*!< HCLK frequency to set FLASH latency 0 in power scale 0  */
+#define UTILS_SCALE0_LATENCY1_FREQ  140000000U       /*!< HCLK frequency to set FLASH latency 1 in power scale 0  */
+#define UTILS_SCALE0_LATENCY2_FREQ  210000000U       /*!< HCLK frequency to set FLASH latency 2 in power scale 0  */
+#define UTILS_SCALE0_LATENCY3_FREQ  275000000U       /*!< HCLK frequency to set FLASH latency 3 in power scale 0  */
+
+#define UTILS_SCALE1_LATENCY0_FREQ   67000000U      /*!< HCLK frequency to set FLASH latency 0 in power scale 1  */
+#define UTILS_SCALE1_LATENCY1_FREQ  133000000U      /*!< HCLK frequency to set FLASH latency 1 in power scale 1  */
+#define UTILS_SCALE1_LATENCY2_FREQ  200000000U      /*!< HCLK frequency to set FLASH latency 2 in power scale 1  */
+
+#define UTILS_SCALE2_LATENCY0_FREQ   50000000U      /*!< HCLK frequency to set FLASH latency 0 in power scale 2  */
+#define UTILS_SCALE2_LATENCY1_FREQ  100000000U      /*!< HCLK frequency to set FLASH latency 1 in power scale 2  */
+#define UTILS_SCALE2_LATENCY2_FREQ  150000000U      /*!< HCLK frequency to set FLASH latency 2 in power scale 2  */
+
+#define UTILS_SCALE3_LATENCY0_FREQ   35000000U      /*!< HCLK frequency to set FLASH latency 0 in power scale 3  */
+#define UTILS_SCALE3_LATENCY1_FREQ   70000000U      /*!< HCLK frequency to set FLASH latency 1 in power scale 3  */
+#define UTILS_SCALE3_LATENCY2_FREQ   85000000U      /*!< HCLK frequency to set FLASH latency 2 in power scale 3  */
+
+#endif /*STM32H7_DEV_ID == 0x480UL*/
 /**
   * @}
   */
@@ -201,7 +226,7 @@
 (((__RANGEIN__) == LL_RCC_PLLINPUTRANGE_1_2) && ((__RANGEOUT__) == LL_RCC_PLLVCORANGE_MEDIUM)) || \
 (((__RANGEIN__) != LL_RCC_PLLINPUTRANGE_1_2) && ((__RANGEOUT__) == LL_RCC_PLLVCORANGE_WIDE)))
 
-#if (POWER_DOMAINS_NUMBER == 3U)
+#if (STM32H7_DEV_ID == 0x450UL)
 #define IS_LL_UTILS_PLL_FREQUENCY(__VALUE__) ((LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE1) ? ((__VALUE__) <= UTILS_MAX_FREQUENCY_SCALE1) : \
                                               (LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE2) ? ((__VALUE__) <= UTILS_MAX_FREQUENCY_SCALE2) : \
                                               ((__VALUE__) <= UTILS_MAX_FREQUENCY_SCALE3))
@@ -210,7 +235,7 @@
                                               (LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE1) ? ((__VALUE__) <= UTILS_MAX_FREQUENCY_SCALE1) : \
                                               (LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE2) ? ((__VALUE__) <= UTILS_MAX_FREQUENCY_SCALE2) : \
                                               ((__VALUE__) <= UTILS_MAX_FREQUENCY_SCALE3))
-#endif /*POWER_DOMAINS_NUMBER == 3U*/
+#endif /* STM32H7_DEV_ID == 0x450UL */
 
 #define IS_LL_UTILS_HSE_BYPASS(__STATE__) (((__STATE__) == LL_UTILS_HSEBYPASS_ON) \
                                         || ((__STATE__) == LL_UTILS_HSEBYPASS_OFF))
@@ -247,7 +272,7 @@ static ErrorStatus UTILS_IsPLLsReady(void);
   * @note   CPU_Frequency can be calculated thanks to RCC helper macro or function
   *         @ref LL_RCC_GetSystemClocksFreq
   *         LL_RCC_GetSystemClocksFreq() is used to calculate the CM7 clock frequency
-  *         and __LL_RCC_CALC_HCLK_FREQ is used to caluclate the CM4 clock frequency.
+  *         and __LL_RCC_CALC_HCLK_FREQ is used to calculate the CM4 clock frequency.
   * @retval None
   */
 #else
@@ -304,6 +329,7 @@ void LL_mDelay(uint32_t Delay)
   * @}
   */
 
+#if (STM32H7_DEV_ID == 0x450UL)
 /** @addtogroup UTILS_EF_SYSTEM
   *  @brief    System Configuration functions
   *
@@ -314,9 +340,8 @@ void LL_mDelay(uint32_t Delay)
     [..]
          System, AHB and APB buses clocks configuration
 
-#if (POWER_DOMAINS_NUMBER == 3U)
-         (+) The maximum frequency of the SYSCLK is 400 MHz and HCLK is 200 MHz.
-         (+) The maximum frequency of the PCLK1, PCLK2, PCLK3 and PCLK4 is 100 MHz.
+         (+) The maximum frequency of the SYSCLK is 480 MHz(*) and HCLK is 240 MHz.
+         (+) The maximum frequency of the PCLK1, PCLK2, PCLK3 and PCLK4 is 120 MHz.
   @endverbatim
   @internal
              Depending on the device voltage range, the maximum frequency should be
@@ -331,14 +356,29 @@ void LL_mDelay(uint32_t Delay)
              (++) |----------------|-------------------|-------------------|-------------------|
              (++) |1WS(2CPU cycle) |  70 < HCLK <= 140 |  55 < HCLK <= 110 |  45 < HCLK <= 90  |
              (++) |----------------|-------------------|-------------------|-------------------|
-             (++) |2WS(3CPU cycle) | 140 < HCLK <= 210 | 110 < HCLK <= 165 |  90 < HCLK <= 135 |
+             (++) |2WS(3CPU cycle) | 140 < HCLK <= 240 | 110 < HCLK <= 165 |  90 < HCLK <= 135 |
              (++) |----------------|-------------------|-------------------|-------------------|
              (++) |3WS(4CPU cycle) |        --         | 165 < HCLK <= 220 | 135 < HCLK <= 180 |
              (++) |----------------|-------------------|-------------------|-------------------|
              (++) |4WS(5CPU cycle) |        --         |        --         | 180 < HCLK <= 225 |
              (++) +----------------------------------------------------------------------------+
 
-#else
+  (*) : For stm32h74xxx and stm32h75xxx family lines and requires the board to be connected on LDO regulator not SMPS, 400MHZ otherwise.
+  @endinternal
+  * @{
+  */
+
+#elif (STM32H7_DEV_ID == 0x480UL)
+/** @addtogroup UTILS_EF_SYSTEM
+  *  @brief    System Configuration functions
+  *
+  @verbatim
+ ===============================================================================
+           ##### System Configuration functions #####
+ ===============================================================================
+    [..]
+         System, AHB and APB buses clocks configuration
+
          (+) The maximum frequency of the SYSCLK is 280 MHz and HCLK is 280 MHz.
          (+) The maximum frequency of the PCLK1, PCLK2, PCLK3 and PCLK4 is 140 MHz.
   @endverbatim
@@ -368,10 +408,48 @@ void LL_mDelay(uint32_t Delay)
              (++) |7WS(8CPU cycle) |        --         |        --         |        --         |        --         |
              (++) +------------------------------------------------------------------------------------------------+
 
-#endif
   @endinternal
   * @{
   */
+
+#elif (STM32H7_DEV_ID == 0x483UL)
+/** @addtogroup UTILS_EF_SYSTEM
+  *  @brief    System Configuration functions
+  *
+  @verbatim
+ ===============================================================================
+           ##### System Configuration functions #####
+ ===============================================================================
+    [..]
+         System, AHB and APB buses clocks configuration
+
+         (+) The maximum frequency of the SYSCLK is 550 MHz(*) and HCLK is 275 MHz.
+         (+) The maximum frequency of the PCLK1, PCLK2, PCLK3 and PCLK4 is 137.5 MHz.
+  @endverbatim
+  @internal
+             Depending on the device voltage range, the maximum frequency should be
+             adapted accordingly:
+             (++) +------------------------------------------------------------------------------------------------+
+             (++) |  Wait states   |                          HCLK clock frequency (MHz)                           |
+             (++) |                |-------------------------------------------------------------------------------|
+             (++) |  (Latency)     |   voltage range 0 |   voltage range 1 |   voltage range 2 |   voltage range 3 |
+             (++) |                |    1.26V - 1.40V  |    1.15V - 1.26V  |    1.05V - 1.15V  |    0.95V - 1.05V  |
+             (++) |----------------|-------------------|-------------------|-------------------|-------------------|
+             (++) |0WS(1CPU cycle) |   0 < HCLK <= 70  |   0 < HCLK <= 67  |   0 < HCLK <= 50  |   0 < HCLK <= 35  |
+             (++) |----------------|-------------------|-------------------|-------------------|-------------------|
+             (++) |1WS(2CPU cycle) |  70 < HCLK <= 140 |  67 < HCLK <= 133 |  50 < HCLK <= 100 |  35 < HCLK <= 70  |
+             (++) |----------------|-------------------|-------------------|-------------------|-------------------|
+             (++) |2WS(3CPU cycle) | 140 < HCLK <= 210 | 133 < HCLK <= 200 | 100 < HCLK <= 150 |  70 < HCLK <= 85  |
+             (++) |----------------|-------------------|-------------------|-------------------|-------------------|
+             (++) |3WS(4CPU cycle) | 210 < HCLK <= 275 |        --         |        --         |        --         |
+             (++) +----------------|-------------------|-------------------|-------------------|-------------------|
+
+  (*)  : For stm32h72xxx and stm32h73xxx family lines and requires to enable the CPU_FREQ_BOOST flash option byte, 520MHZ otherwise.
+  @endinternal
+  * @{
+  */
+#endif /* STM32H7_DEV_ID == 0x450UL */
+
 #if defined (DUAL_CORE)
 /**
   * @brief  This function sets directly SystemCoreClock CMSIS variable.
@@ -380,7 +458,7 @@ void LL_mDelay(uint32_t Delay)
   * @note   CPU_Frequency can be calculated thanks to RCC helper macro or function
   *         @ref LL_RCC_GetSystemClocksFreq
   *         LL_RCC_GetSystemClocksFreq() is used to calculate the CM7 clock frequency
-  *         and __LL_RCC_CALC_HCLK_FREQ is used to caluclate the CM4 clock frequency.
+  *         and __LL_RCC_CALC_HCLK_FREQ is used to calculate the CM4 clock frequency.
   * @retval None
   */
 #else
@@ -405,8 +483,8 @@ void LL_SetSystemCoreClock(uint32_t CPU_Frequency)
   * @note   Function is based on the following formula:
   *         - PLL output frequency = (((HSI frequency / PLLM) * PLLN) / PLLP)
   *         - PLLM: ensure that the VCO input frequency ranges from 1 to 16 MHz (PLLVCO_input = HSI frequency / PLLM)
-  *         - PLLN: ensure that the VCO output frequency is between 150 and 836 MHz or 128 to 560 MHz(*) (PLLVCO_output = PLLVCO_input * PLLN)
-  *         - PLLP: ensure that max frequency at 400000000 Hz or 280000000 Hz is reach (PLLVCO_output / PLLP)
+  *         - PLLN: ensure that the VCO output frequency is between 150 and 836 MHz or 128 to 560 MHz(***) (PLLVCO_output = PLLVCO_input * PLLN)
+  *         - PLLP: ensure that max frequency at 550000000 Hz(*), 480000000 Hz(**) or 280000000 Hz(***) is reach (PLLVCO_output / PLLP)
   * @param  UTILS_PLLInitStruct pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
   *                             the configuration information for the PLL.
   * @param  UTILS_ClkInitStruct pointer to a @ref LL_UTILS_ClkInitTypeDef structure that contains
@@ -415,7 +493,9 @@ void LL_SetSystemCoreClock(uint32_t CPU_Frequency)
   *          - SUCCESS: Max frequency configuration done
   *          - ERROR: Max frequency configuration not done
   *
-  * (*) : For stm32h7a3xx, stm32h7b3xx and stm32h7b0xx family lines.
+  * (*)  : For stm32h72xxx and stm32h73xxx family lines and requires to enable the CPU_FREQ_BOOST flash option byte, 520MHZ otherwise.
+  * (**) : For stm32h74xxx and stm32h75xxx family lines and requires the board to be connected on LDO regulator not SMPS, 400MHZ otherwise.
+  * (***): For stm32h7a3xx, stm32h7b3xx and stm32h7b0xx family lines.
   *
   */
 ErrorStatus LL_PLL_ConfigSystemClock_HSI(LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct,
@@ -495,8 +575,8 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSI(LL_UTILS_PLLInitTypeDef *UTILS_PLLInitS
   * @note   Function is based on the following formula:
   *         - PLL output frequency = (((HSE frequency / PLLM) * PLLN) / PLLP)
   *         - PLLM: ensure that the VCO input frequency ranges from 0.95 to 2.10 MHz (PLLVCO_input = HSE frequency / PLLM)
-  *         - PLLN: ensure that the VCO output frequency is between 150 and 836 MHz or 128 to 560 MHz(*) (PLLVCO_output = PLLVCO_input * PLLN)
-  *         - PLLP: ensure that max frequency at 400000000 Hz or 280000000 Hz(*) is reached (PLLVCO_output / PLLP)
+  *         - PLLN: ensure that the VCO output frequency is between 150 and 836 MHz or 128 to 560 MHz(***) (PLLVCO_output = PLLVCO_input * PLLN)
+  *         - PLLP: ensure that max frequency at 550000000 Hz(*), 480000000 Hz(**) or 280000000 Hz(***) is reached (PLLVCO_output / PLLP)
   * @param  HSEFrequency Value between Min_Data = 4000000 and Max_Data = 48000000
   * @param  HSEBypass This parameter can be one of the following values:
   *         @arg @ref LL_UTILS_HSEBYPASS_ON
@@ -509,7 +589,9 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSI(LL_UTILS_PLLInitTypeDef *UTILS_PLLInitS
   *          - SUCCESS: Max frequency configuration done
   *          - ERROR: Max frequency configuration not done
   *
-  * (*) : For stm32h7a3xx, stm32h7b3xx and stm32h7b0xx family lines.
+  * (*)  : For stm32h72xxx and stm32h73xxx family lines and requires to enable the CPU_FREQ_BOOST flash option byte, 520MHZ otherwise.
+  * (**) : For stm32h74xxx and stm32h75xxx family lines and requires the board to be connected on LDO regulator not SMPS, 400MHZ otherwise.
+  * (***): For stm32h7a3xx, stm32h7b3xx and stm32h7b0xx family lines.
   *
   */
 ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypass,
@@ -622,9 +704,10 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
   }
   else
   {
-#if (POWER_DOMAINS_NUMBER == 2U)
+#if (STM32H7_DEV_ID == 0x480UL) || (STM32H7_DEV_ID == 0x483UL)
     if(LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE0)
     {
+#if (STM32H7_DEV_ID == 0x480UL)
       if((HCLK_Frequency > UTILS_SCALE0_LATENCY5_FREQ) && (HCLK_Frequency <= UTILS_SCALE0_LATENCY6_FREQ))
       {
         /* 264 < HCLK <= 280 => 6WS (7 CPU cycles) */
@@ -641,6 +724,9 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
         latency = LL_FLASH_LATENCY_4;
       }
       else if((HCLK_Frequency > UTILS_SCALE0_LATENCY2_FREQ) && (HCLK_Frequency <= UTILS_SCALE0_LATENCY3_FREQ))
+#elif (STM32H7_DEV_ID == 0x483UL)
+      if((HCLK_Frequency > UTILS_SCALE0_LATENCY2_FREQ) && (HCLK_Frequency <= UTILS_SCALE0_LATENCY3_FREQ))
+#endif /* STM32H7_DEV_ID == 0x480UL */
       {
         /* 132 < HCLK <= 176 => 3WS (4 CPU cycles) */
         latency = LL_FLASH_LATENCY_3;
@@ -664,6 +750,7 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
         status = ERROR;
       }
     }
+#if (STM32H7_DEV_ID == 0x480UL)
     else if(LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE1)
     {
       if((HCLK_Frequency > UTILS_SCALE1_LATENCY4_FREQ) && (HCLK_Frequency <= UTILS_SCALE1_LATENCY5_FREQ))
@@ -686,7 +773,12 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
     if(LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE1)
     {
       if((HCLK_Frequency > UTILS_SCALE1_LATENCY1_FREQ) && (HCLK_Frequency <= UTILS_SCALE1_LATENCY2_FREQ))
-#endif /*POWER_DOMAINS_NUMBER == 2U*/
+#endif /* STM32H7_DEV_ID == 0x480UL */
+#else
+    if(LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE1)
+    {
+      if((HCLK_Frequency > UTILS_SCALE1_LATENCY1_FREQ) && (HCLK_Frequency <= UTILS_SCALE1_LATENCY2_FREQ))
+#endif /* STM32H7_DEV_ID == 0x480UL || STM32H7_DEV_ID == 0x483UL */
       {
         /* 140 < HCLK <= 210 => 2WS (3 CPU cycles) */
         latency = LL_FLASH_LATENCY_2;
@@ -707,7 +799,8 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
     }
     else if(LL_PWR_GetRegulVoltageScaling() == LL_PWR_REGU_VOLTAGE_SCALE2)
     {
-#if (POWER_DOMAINS_NUMBER == 2U)
+#if (STM32H7_DEV_ID == 0x480UL) || (STM32H7_DEV_ID == 0x450UL)
+#if (STM32H7_DEV_ID == 0x480UL)
       if((HCLK_Frequency > UTILS_SCALE2_LATENCY3_FREQ) && (HCLK_Frequency <= UTILS_SCALE2_LATENCY4_FREQ))
       {
         /* 136 < HCLK <= 160 => 4WS (5 CPU cycles) */
@@ -716,12 +809,15 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
       else if((HCLK_Frequency > UTILS_SCALE2_LATENCY2_FREQ) && (HCLK_Frequency <= UTILS_SCALE2_LATENCY3_FREQ))
 #else
       if((HCLK_Frequency > UTILS_SCALE2_LATENCY2_FREQ) && (HCLK_Frequency <= UTILS_SCALE2_LATENCY3_FREQ))
-#endif /*POWER_DOMAINS_NUMBER == 2U*/
+#endif /* STM32H7_DEV_ID == 0x480UL */
       {
         /* 165 < HCLK <= 220 => 3WS (4 CPU cycles) */
         latency = LL_FLASH_LATENCY_3;
       }
       else if((HCLK_Frequency > UTILS_SCALE2_LATENCY1_FREQ) && (HCLK_Frequency <= UTILS_SCALE2_LATENCY2_FREQ))
+#else
+      if((HCLK_Frequency > UTILS_SCALE2_LATENCY1_FREQ) && (HCLK_Frequency <= UTILS_SCALE2_LATENCY2_FREQ))
+#endif /* STM32H7_DEV_ID == 0x480UL || STM32H7_DEV_ID == 0x450UL */
       {
         /* 110 < HCLK <= 165 => 2WS (3 CPU cycles) */
         latency = LL_FLASH_LATENCY_2;
@@ -742,7 +838,8 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
     }
     else /* Scale 3 */
     {
-#if (POWER_DOMAINS_NUMBER == 3U)
+#if (STM32H7_DEV_ID == 0x450UL) || (STM32H7_DEV_ID == 0x480UL)
+#if (STM32H7_DEV_ID == 0x450UL)
       if((HCLK_Frequency > UTILS_SCALE3_LATENCY3_FREQ) && (HCLK_Frequency <= UTILS_SCALE3_LATENCY4_FREQ))
       {
         /* 180 < HCLK <= 225 => 4WS (5 CPU cycles) */
@@ -751,12 +848,15 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
       else if((HCLK_Frequency > UTILS_SCALE3_LATENCY2_FREQ) && (HCLK_Frequency <= UTILS_SCALE3_LATENCY3_FREQ))
 #else
       if((HCLK_Frequency > UTILS_SCALE3_LATENCY2_FREQ) && (HCLK_Frequency <= UTILS_SCALE3_LATENCY3_FREQ))
-#endif /*POWER_DOMAINS_NUMBER == 3U*/
+#endif /*STM32H7_DEV_ID == 0x450UL*/
       {
         /* 135 < HCLK <= 180 => 3WS (4 CPU cycles) */
         latency = LL_FLASH_LATENCY_3;
       }
       else if((HCLK_Frequency > UTILS_SCALE3_LATENCY1_FREQ) && (HCLK_Frequency <= UTILS_SCALE3_LATENCY2_FREQ))
+#else
+      if((HCLK_Frequency > UTILS_SCALE3_LATENCY1_FREQ) && (HCLK_Frequency <= UTILS_SCALE3_LATENCY2_FREQ))
+#endif /* STM32H7_DEV_ID == 0x450UL || STM32H7_DEV_ID == 0x480UL */
       {
         /* 90 < HCLK <= 135 => 2WS (3 CPU cycles) */
         latency = LL_FLASH_LATENCY_2;
@@ -795,7 +895,6 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK_Frequency)
         status = ERROR;
       }
     }
-
   }
 
   return status;
@@ -891,12 +990,12 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
   /* Calculate the new HCLK frequency */
   new_hclk_frequency = LL_RCC_CALC_HCLK_FREQ(SYSCLK_Frequency, UTILS_ClkInitStruct->AHBCLKDivider);
 
-  /* Increasing the number of wait states because of higher CPU frequency */
+    /* Increasing the number of wait states because of higher CPU frequency */
   if (SystemD2Clock < new_hclk_frequency)
-  {
+    {
     /* Set FLASH latency to highest latency */
     status = LL_SetFlashLatency(new_hclk_frequency);
-  }
+    }
 
   /* Update system clock configuration */
   if(status == SUCCESS)
@@ -934,27 +1033,27 @@ static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_
     LL_RCC_SetAPB4Prescaler(UTILS_ClkInitStruct->APB4CLKDivider);
 
     /* Decreasing the number of wait states because of lower CPU frequency */
-    if (SystemD2Clock > new_hclk_frequency)
-    {
-      /* Set FLASH latency to lowest latency */
-      status = LL_SetFlashLatency(new_hclk_frequency);
-    }
+  if (SystemD2Clock > new_hclk_frequency)
+  {
+    /* Set FLASH latency to lowest latency */
+    status = LL_SetFlashLatency(new_hclk_frequency);
+  }
 
-    /* Update the SystemD2Clock global variable */
+      /* Update the SystemD2Clock global variable */
 #if defined(RCC_D1CFGR_HPRE)
-    SystemD2Clock = (SYSCLK_Frequency >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
+      SystemD2Clock = (SYSCLK_Frequency >> ((D1CorePrescTable[(RCC->D1CFGR & RCC_D1CFGR_HPRE)>> RCC_D1CFGR_HPRE_Pos]) & 0x1FU));
 #else
-    SystemD2Clock = (SYSCLK_Frequency >> ((D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_HPRE)>> RCC_CDCFGR1_HPRE_Pos]) & 0x1FU));
+      SystemD2Clock = (SYSCLK_Frequency >> ((D1CorePrescTable[(RCC->CDCFGR1 & RCC_CDCFGR1_HPRE)>> RCC_CDCFGR1_HPRE_Pos]) & 0x1FU));
 #endif
 
-    /* Update SystemCoreClock variable */
+      /* Update SystemCoreClock variable */
 #if defined(DUAL_CORE) && defined(CORE_CM4)
-    LL_SetSystemCoreClock(SystemD2Clock);
+      LL_SetSystemCoreClock(SystemD2Clock);
 #else
-    LL_SetSystemCoreClock(SYSCLK_Frequency);
+      LL_SetSystemCoreClock(SYSCLK_Frequency);
 #endif /* DUAL_CORE && CORE_CM4 */
 
-  }
+    }
 
 
   return status;

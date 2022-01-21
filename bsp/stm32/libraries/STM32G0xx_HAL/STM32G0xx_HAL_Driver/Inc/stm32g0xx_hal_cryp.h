@@ -107,7 +107,7 @@ typedef enum
 typedef struct __CRYP_HandleTypeDef
 #else
 typedef struct
-#endif
+#endif /* USE_HAL_CRYP_REGISTER_CALLBACKS */
 {
   AES_TypeDef                       *Instance;        /*!< AES Register base address */
 

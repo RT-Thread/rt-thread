@@ -72,9 +72,6 @@
 /* __VALUE__ In case of oversampling by 16 and 8, BRR content must be greater than or equal to 16d. */
 #define IS_LL_USART_BRR_MIN(__VALUE__) ((__VALUE__) >= 16U)
 
-/* __VALUE__ BRR content must be lower than or equal to 0xFFFF. */
-#define IS_LL_USART_BRR_MAX(__VALUE__) ((__VALUE__) <= 0x0000FFFFU)
-
 #define IS_LL_USART_DIRECTION(__VALUE__) (((__VALUE__) == LL_USART_DIRECTION_NONE) \
                                           || ((__VALUE__) == LL_USART_DIRECTION_RX) \
                                           || ((__VALUE__) == LL_USART_DIRECTION_TX) \
@@ -312,9 +309,6 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
 
       /* Check BRR is greater than or equal to 16d */
       assert_param(IS_LL_USART_BRR_MIN(USARTx->BRR));
-
-      /* Check BRR is lower than or equal to 0xFFFF */
-      assert_param(IS_LL_USART_BRR_MAX(USARTx->BRR));
     }
 #if defined(USART_PRESC_PRESCALER)
 
@@ -376,8 +370,28 @@ ErrorStatus LL_USART_ClockInit(USART_TypeDef *USARTx, LL_USART_ClockInitTypeDef 
      CRx registers */
   if (LL_USART_IsEnabled(USARTx) == 0U)
   {
-    /*---------------------------- USART CR2 Configuration -----------------------*/
-    /* If Clock signal has to be output */
+#if  defined(USART_CR2_SLVEN)
+    /* Ensure USART instance is USART capable */
+    assert_param(IS_USART_INSTANCE(USARTx));
+
+    /* Check clock related parameters */
+    assert_param(IS_LL_USART_CLOCKPOLARITY(USART_ClockInitStruct->ClockPolarity));
+    assert_param(IS_LL_USART_CLOCKPHASE(USART_ClockInitStruct->ClockPhase));
+    assert_param(IS_LL_USART_LASTBITCLKOUTPUT(USART_ClockInitStruct->LastBitClockPulse));
+
+    /*---------------------------- USART CR2 Configuration -----------------------
+     * Configure USARTx CR2 (Clock signal related bits) with parameters:
+     * - Clock Output:                USART_CR2_CLKEN bit according to USART_ClockInitStruct->ClockOutput value
+     * - Clock Polarity:              USART_CR2_CPOL bit according to USART_ClockInitStruct->ClockPolarity value
+     * - Clock Phase:                 USART_CR2_CPHA bit according to USART_ClockInitStruct->ClockPhase value
+     * - Last Bit Clock Pulse Output: USART_CR2_LBCL bit according to USART_ClockInitStruct->LastBitClockPulse value.
+     */
+    MODIFY_REG(USARTx->CR2,
+               USART_CR2_CLKEN | USART_CR2_CPHA | USART_CR2_CPOL | USART_CR2_LBCL,
+               USART_ClockInitStruct->ClockOutput | USART_ClockInitStruct->ClockPolarity |
+               USART_ClockInitStruct->ClockPhase | USART_ClockInitStruct->LastBitClockPulse);
+#else
+    /* If USART Clock signal is disabled */
     if (USART_ClockInitStruct->ClockOutput == LL_USART_CLOCK_DISABLE)
     {
       /* Deactivate Clock signal delivery :
@@ -407,6 +421,7 @@ ErrorStatus LL_USART_ClockInit(USART_TypeDef *USARTx, LL_USART_ClockInitTypeDef 
                  USART_CR2_CLKEN | USART_ClockInitStruct->ClockPolarity |
                  USART_ClockInitStruct->ClockPhase | USART_ClockInitStruct->LastBitClockPulse);
     }
+#endif /* USART_CR2_SLVEN */
   }
   /* Else (USART not in Disabled state => return ERROR */
   else

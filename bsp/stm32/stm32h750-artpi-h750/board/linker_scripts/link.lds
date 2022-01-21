@@ -12,7 +12,7 @@ TxDecripSection (rw) : ORIGIN =0x30040060,LENGTH =32k
 RxArraySection (rw) : ORIGIN =0x30040200,LENGTH =32k
 }
 ENTRY(Reset_Handler)
-_system_stack_size = 0x200;
+_system_stack_size = 0x400;
 
 SECTIONS
 {

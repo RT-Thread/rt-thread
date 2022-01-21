@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,13 +11,21 @@
  */
 
 #define XSTATUS_FS         (3 << 13) /* initial state of FPU, clear to disable */
-#define XSTATUS_PUM        (1 << 18) 
+#define XSTATUS_PUM        (1 << 18)
 #include <cpuport.h>
 
-  .global	_start
+boot_hartid: .int
+  .global      boot_hartid
+
+  .global   _start
   .section ".start", "ax"
 _start:
-#ifndef RISCV_S_MODE
+#ifdef RISCV_S_MODE
+  # save hartid
+  la t0, boot_hartid                # global varible rt_boot_hartid
+  mv t1, a0                         # get hartid in S-mode frome a0 register
+  sw t1, (t0)                       # store t1 register low 4 bits in memory address which is stored in t0
+#else
   # setup stacks per hart
   csrr t0, mhartid                  # read current hart id
   slli t0, t0, 10                   # shift left the hart id by 1024

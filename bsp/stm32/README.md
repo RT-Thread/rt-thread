@@ -71,8 +71,13 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32l475-atk-pandora](stm32l475-atk-pandora) | 正点原子 L475 潘多拉 IoT 开发板 |
 | [stm32l475-st-discovery](stm32l475-st-discovery) | ST 官方 stm32l475-discovery 开发板 |
 | [stm32l476-st-nucleo](stm32l476-st-nucleo) | ST 官方 STM32L476-Nucleo 开发板 |
+| [stm32l433-ali-startkit](stm32l433-ali-startkit) | 诺行 STM32L433 Ali Start Kit 开发板 |
 | [stm32l496-ali-developer](stm32l496-ali-developer) | 诺行 STM32L496 Ali Developer Kit 开发板 |
 | [stm32l496-st-nucleo](stm32l496-st-nucleo) | ST 官方 STM32L496-Nucleo 开发板 |
+| **L5 系列** |  |
+| [stm32l552-st-nucleo](stm32l552-st-nucleo) | ST 官方 STM32L552-Nucleo 开发板 |
+| **U5 系列** |  |
+| [stm32u575-st-nucleo](stm32u575-st-nucleo) | ST 官方 STM32U575ZI-Nucleo 开发板 |
 | **MP1 系列** |  |
 | [stm32mp157a-st-discovery](stm32mp157a-st-discovery) | ST 官方 STM32MP157A-DK1 开发板 |
 | [stm32mp157a-st-ev1](stm32mp157a-st-ev1) | ST 官方 STM32MP157A-EV1 开发板 |

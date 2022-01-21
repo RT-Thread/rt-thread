@@ -26,7 +26,7 @@
 #include "stm32_assert.h"
 #else
 #define assert_param(expr) ((void)0U)
-#endif
+#endif /* USE_FULL_ASSERT */
 
 /** @addtogroup STM32H7xx_LL_Driver
   * @{
@@ -53,7 +53,7 @@
 
 
 #define IS_LL_RNG_NIST_COMPLIANCE(__NIST_COMPLIANCE__) (((__NIST_COMPLIANCE__) == LL_RNG_NIST_COMPLIANT) || \
-                                                     ((__NIST_COMPLIANCE__) == LL_RNG_NOTNIST_COMPLIANT))
+                                                        ((__NIST_COMPLIANCE__) == LL_RNG_NOTNIST_COMPLIANT))
 
 #define IS_LL_RNG_CONFIG1 (__CONFIG1__) ((__CONFIG1__) <= 0x3FUL)
 

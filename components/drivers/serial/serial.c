@@ -36,13 +36,15 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_POSIX
-#include <dfs_posix.h>
+#ifdef RT_USING_POSIX_STDIO
+#include <dfs_file.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <poll.h>
 #include <sys/ioctl.h>
 
 #ifdef RT_USING_POSIX_TERMIOS
-#include <posix_termios.h>
+#include <termios.h>
 #endif
 
 /* it's possible the 'getc/putc' is defined by stdio.h in gcc/newlib. */
@@ -203,7 +205,7 @@ const static struct dfs_file_ops _serial_fops =
     RT_NULL, /* getdents */
     serial_fops_poll,
 };
-#endif
+#endif /* RT_USING_POSIX_STDIO */
 
 /*
  * Serial poll routines
@@ -362,7 +364,7 @@ static void _serial_check_buffer_size(void)
     }
 }
 
-#if defined(RT_USING_POSIX) || defined(RT_SERIAL_USING_DMA)
+#if defined(RT_USING_POSIX_STDIO) || defined(RT_SERIAL_USING_DMA)
 static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
 {
     struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
@@ -385,7 +387,7 @@ static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
         }
     }
 }
-#endif /* RT_USING_POSIX || RT_SERIAL_USING_DMA */
+#endif /* RT_USING_POSIX_STDIO || RT_SERIAL_USING_DMA */
 
 #ifdef RT_SERIAL_USING_DMA
 /**
@@ -976,8 +978,7 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
     }
 
 }
-
-#endif
+#endif /* RT_USING_POSIX_TERMIOS */
 
 static rt_err_t rt_serial_control(struct rt_device *dev,
                                   int              cmd,
@@ -1020,7 +1021,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
 
             break;
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
 #ifdef RT_USING_POSIX_TERMIOS
         case TCGETA:
             {
@@ -1134,6 +1135,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 }
                 else
                 {
+                    #include <shell.h>
                     #define _TIO_BUFLEN 20
                     char _tio_buf[_TIO_BUFLEN];
                     unsigned char cnt1, cnt2, cnt3, i;
@@ -1149,7 +1151,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     i = 0;
                     while(i < _TIO_BUFLEN)
                     {
-                        _tio_buf[i] = getchar();
+                        _tio_buf[i] = finsh_getchar();
                         if(_tio_buf[i] != 't')
                         {
                             i ++;
@@ -1215,7 +1217,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 *(rt_size_t *)args = recved;
             }
             break;
-#endif /*RT_USING_POSIX*/
+#endif /* RT_USING_POSIX_STDIO */
         default :
             /* control device */
             ret = serial->ops->control(serial, cmd, args);
@@ -1270,7 +1272,7 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     /* register a character device */
     ret = rt_device_register(device, name, flag);
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_STDIO
     /* set fops */
     device->fops        = &_serial_fops;
 #endif

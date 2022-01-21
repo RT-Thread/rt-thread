@@ -86,48 +86,10 @@ You can use Tera Term terminate emulator (or other software) to type commands of
 
 [![Serial settings](https://i.imgur.com/5NYuSNM.png "Serial settings")](https://i.imgur.com/5NYuSNM.png "Serial settings")
 
-## 5. Demo
-
-* Run NUemWin on NK-N9H30
-
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.3 build May 12 2021
- 2006 - 2021 Copyright by rt-thread team
-
-msh /> nu_touch_start
-msh /> nuemwin_start
-
-<Enjoy NuemWin with H/W 2D Graphics Accelerating>
-
-msh /> nuemwin_stop
-```
-
-  [![NUemWin2RTT on NK-N9H30](https://img.youtube.com/vi/TAfkOKpySQk/0.jpg)](https://www.youtube.com/watch?v=TAfkOKpySQk)
-
-* Run LittlevGL2RTT on NK-N9H30
-
-    **Please check out modified version with GE2D accelerating from [HERE](https://github.com/wosayttn/LittlevGL2RTT).**
-
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.3 build May 12 2021
- 2006 - 2021 Copyright by rt-thread team
-
-msh /> nu_touch_start
-msh /> lv_demo
-
-<Enjoy LvGL with H/W 2D Graphics Accelerating>
-```
-
-  [![LvGL2RTT on NK-N9H30](https://img.youtube.com/vi/djz0jAKrfjs/0.jpg)](https://www.youtube.com/watch?v=djz0jAKrfjs)
-
-## 6. Purchase
+## 5. Purchase
 * [Nuvoton Direct](https://direct.nuvoton.com/en/numaker-emwin-n9h30)
 
-## 7. Resources
+## 6. Resources
 * [Board Schematic](https://www.nuvoton.com/resource-download.jsp?tp_GUID=HL1020201117191514)
 * [Download NK-N9H30 Quick Start Guide](https://www.nuvoton.com/resource-download.jsp?tp_GUID=UG1320210329155300)
 * [Download NuWriter](https://github.com/OpenNuvoton/NUC970_NuWriter)

@@ -221,6 +221,14 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStart(ADC_HandleTypeDef* hadc)
       }
     }
   }
+  else
+  {
+    /* Update ADC state machine to error */
+    SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
+    
+    /* Set ADC error code to ADC IP internal error */
+    SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
+  }
   
   /* Return function status */
   return HAL_OK;
@@ -313,6 +321,14 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStart_IT(ADC_HandleTypeDef* hadc)
       }
     }
   }
+  else
+  {
+    /* Update ADC state machine to error */
+    SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
+    
+    /* Set ADC error code to ADC IP internal error */
+    SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
+  }
   
   /* Return function status */
   return HAL_OK;
@@ -399,10 +415,14 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
     {
       if((Timeout == 0)||((HAL_GetTick() - tickstart ) > Timeout))
       {
-        hadc->State= HAL_ADC_STATE_TIMEOUT;
-        /* Process unlocked */
-        __HAL_UNLOCK(hadc);
-        return HAL_TIMEOUT;
+        /* New check to avoid false timeout detection in case of preemption */
+        if(!(__HAL_ADC_GET_FLAG(hadc, ADC_FLAG_JEOC)))
+        {
+          hadc->State= HAL_ADC_STATE_TIMEOUT;
+          /* Process unlocked */
+          __HAL_UNLOCK(hadc);
+          return HAL_TIMEOUT;
+        }
       }
     }
   }
@@ -665,6 +685,14 @@ HAL_StatusTypeDef HAL_ADCEx_MultiModeStart_DMA(ADC_HandleTypeDef* hadc, uint32_t
       /* Enable the selected ADC software conversion for regular group */
       hadc->Instance->CR2 |= (uint32_t)ADC_CR2_SWSTART;
     }
+  }
+  else
+  {
+    /* Update ADC state machine to error */
+    SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
+    
+    /* Set ADC error code to ADC IP internal error */
+    SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
   }
   
   /* Return function status */

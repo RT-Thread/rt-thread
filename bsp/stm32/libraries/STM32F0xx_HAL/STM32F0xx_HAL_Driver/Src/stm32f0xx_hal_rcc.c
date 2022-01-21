@@ -14,7 +14,7 @@
   ==============================================================================
     [..]  
       After reset the device is running from Internal High Speed oscillator
-      (HSI 8MHz) with Flash 0 wait state, Flash prefetch buffer is enabled, 
+      (HSI 8MHz) with Flash 0 wait state, Flash prefetch buffer is disabled, 
       and all peripherals are off except internal SRAM, Flash and JTAG.
       (+) There is no prescaler on High speed (AHB) and Low speed (APB) buses;
           all peripherals mapped on these buses are running at HSI speed.
@@ -160,7 +160,7 @@
           on AHB bus (DMA, GPIO...). APB1 (PCLK1) clock is derived
           from AHB clock through configurable prescalers and used to clock
           the peripherals mapped on these buses. You can use
-          "@ref HAL_RCC_GetSysClockFreq()" function to retrieve the frequencies of these clocks.
+          "HAL_RCC_GetSysClockFreq()" function to retrieve the frequencies of these clocks.
 
       (#) All the peripheral clocks are derived from the System clock (SYSCLK) except:
         (++) The FLASH program/erase clock  which is always HSI 8MHz clock.

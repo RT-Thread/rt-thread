@@ -57,10 +57,10 @@
 /** @defgroup USARTEx_Private_Constants USARTEx Private Constants
   * @{
   */
-/* UART RX FIFO depth */
+/* USART RX FIFO depth */
 #define RX_FIFO_DEPTH 8U
 
-/* UART TX FIFO depth */
+/* USART TX FIFO depth */
 #define TX_FIFO_DEPTH 8U
 /**
   * @}
@@ -503,8 +503,8 @@ static void USARTEx_SetNbDataToProcess(USART_HandleTypeDef *husart)
   uint8_t rx_fifo_threshold;
   uint8_t tx_fifo_threshold;
   /* 2 0U/1U added for MISRAC2012-Rule-18.1_b and MISRAC2012-Rule-18.1_d */
-  uint8_t numerator[]   = {1U, 1U, 1U, 3U, 7U, 1U, 0U, 0U};
-  uint8_t denominator[] = {8U, 4U, 2U, 4U, 8U, 1U, 1U, 1U};
+  static const uint8_t numerator[]   = {1U, 1U, 1U, 3U, 7U, 1U, 0U, 0U};
+  static const uint8_t denominator[] = {8U, 4U, 2U, 4U, 8U, 1U, 1U, 1U};
 
   if (husart->FifoMode == USART_FIFOMODE_DISABLE)
   {
@@ -515,10 +515,14 @@ static void USARTEx_SetNbDataToProcess(USART_HandleTypeDef *husart)
   {
     rx_fifo_depth = RX_FIFO_DEPTH;
     tx_fifo_depth = TX_FIFO_DEPTH;
-    rx_fifo_threshold = (uint8_t)((READ_BIT(husart->Instance->CR3, USART_CR3_RXFTCFG) >> USART_CR3_RXFTCFG_Pos) & 0xFFU);
-    tx_fifo_threshold = (uint8_t)((READ_BIT(husart->Instance->CR3, USART_CR3_TXFTCFG) >> USART_CR3_TXFTCFG_Pos) & 0xFFU);
-    husart->NbTxDataToProcess = ((uint16_t)tx_fifo_depth * numerator[tx_fifo_threshold]) / (uint16_t)denominator[tx_fifo_threshold];
-    husart->NbRxDataToProcess = ((uint16_t)rx_fifo_depth * numerator[rx_fifo_threshold]) / (uint16_t)denominator[rx_fifo_threshold];
+    rx_fifo_threshold = (uint8_t)((READ_BIT(husart->Instance->CR3,
+                                            USART_CR3_RXFTCFG) >> USART_CR3_RXFTCFG_Pos) & 0xFFU);
+    tx_fifo_threshold = (uint8_t)((READ_BIT(husart->Instance->CR3,
+                                            USART_CR3_TXFTCFG) >> USART_CR3_TXFTCFG_Pos) & 0xFFU);
+    husart->NbTxDataToProcess = ((uint16_t)tx_fifo_depth * numerator[tx_fifo_threshold]) /
+                                (uint16_t)denominator[tx_fifo_threshold];
+    husart->NbRxDataToProcess = ((uint16_t)rx_fifo_depth * numerator[rx_fifo_threshold]) /
+                                (uint16_t)denominator[rx_fifo_threshold];
   }
 }
 /**

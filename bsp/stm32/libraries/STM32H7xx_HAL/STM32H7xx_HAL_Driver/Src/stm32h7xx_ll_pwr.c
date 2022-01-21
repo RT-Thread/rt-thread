@@ -55,9 +55,13 @@
   */
 ErrorStatus LL_PWR_DeInit(void)
 {
+#if defined (PWR_WKUPCR_WKUPC3)
   WRITE_REG(PWR->WKUPCR, (PWR_WKUPCR_WKUPC1 | PWR_WKUPCR_WKUPC2 | PWR_WKUPCR_WKUPC3 | \
                           PWR_WKUPCR_WKUPC4 | PWR_WKUPCR_WKUPC5 | PWR_WKUPCR_WKUPC6));
-
+#else
+  WRITE_REG(PWR->WKUPCR, (PWR_WKUPCR_WKUPC1 | PWR_WKUPCR_WKUPC2 | \
+                          PWR_WKUPCR_WKUPC4 | PWR_WKUPCR_WKUPC6));
+#endif /* defined (PWR_WKUPCR_WKUPC3) */
   return SUCCESS;
 }
 

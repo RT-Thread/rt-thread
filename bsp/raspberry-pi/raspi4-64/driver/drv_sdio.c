@@ -15,6 +15,8 @@
 
 #include "mmu.h"
 
+#ifdef BSP_USING_SDIO
+
 static rt_uint32_t mmc_base_clock = 0;
 
 static rt_uint32_t sdCommandTable[] =
@@ -718,3 +720,5 @@ err:
 }
 
 INIT_DEVICE_EXPORT(raspi_sdmmc_init);
+
+#endif /* BSP_USING_SDIO */

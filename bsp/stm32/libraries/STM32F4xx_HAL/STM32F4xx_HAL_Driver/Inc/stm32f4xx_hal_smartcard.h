@@ -99,7 +99,7 @@ typedef struct
   *             01 : (Not Used)
   *             10 : Timeout
   *             11 : Error
-  *          b5     IP initilisation status
+  *          b5     IP initialization status
   *             0  : Reset (IP not initialized)
   *             1  : Init done (IP initialized. HAL SMARTCARD Init function already called)
   *          b4-b3  (not used)
@@ -116,7 +116,7 @@ typedef struct
   *          RxState value coding follow below described bitmap :
   *          b7-b6  (not used)
   *             xx : Should be set to 00
-  *          b5     IP initilisation status
+  *          b5     IP initialization status
   *             0  : Reset (IP not initialized)
   *             1  : Init done (IP initialized)
   *          b4-b2  (not used)

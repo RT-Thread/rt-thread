@@ -47,10 +47,6 @@
 
 #define LWIP_PLATFORM_BYTESWAP      0
 
-#ifndef BYTE_ORDER
-#define BYTE_ORDER                  LITTLE_ENDIAN
-#endif
-
 /* #define RT_LWIP_DEBUG */
 
 #ifdef RT_LWIP_DEBUG
@@ -235,18 +231,10 @@
 #  define SSIZE_MAX LONG_MAX
 # endif
 
-#ifdef RT_USING_LIBC
 #define LWIP_NO_UNISTD_H 0
-#else
-#define LWIP_NO_UNISTD_H 1
-#endif
 
 /* ---------- Memory options ---------- */
-#ifdef RT_USING_ASM_MEMCPY
 #define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
-#else
-#define MEMCPY(dst,src,len)             memcpy(dst,src,len)
-#endif /* RT_USING_ASM_MEMCPY */
 #define SMEMCPY(dst,src,len)            MEMCPY(dst,src,len)
 
 #define MEM_ALIGNMENT               4
@@ -580,6 +568,7 @@
 #define LWIP_SOCKET                     1
 #endif
 #include <fcntl.h>
+#include <sys/ioctl.h>
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
@@ -647,5 +636,9 @@
 #define TFTP_MAX_FILENAME_LEN           64
 #endif
 
+
+#define LWIP_HOOK_IP4_ROUTE_SRC(dest, src)  lwip_ip4_route_src(dest, src)
+#include "lwip/ip_addr.h"
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
 
 #endif /* __LWIPOPTS_H__ */

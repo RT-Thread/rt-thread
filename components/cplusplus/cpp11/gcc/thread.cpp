@@ -35,17 +35,17 @@ namespace std
     {
         auto raw_ptr = b.get();
         // transfer the ownership of the invoker to the new thread
-        raw_ptr->this_ptr = std::move(b); 
+        raw_ptr->this_ptr = std::move(b);
         int err = pthread_create(&_m_thr.__cpp_thread_t, NULL,
                 &execute_native_thread_routine, raw_ptr);
 
-        if (err) 
+        if (err)
         {
             raw_ptr->this_ptr.reset();
             throw_system_error(err, "Failed to create a thread");
         }
-        
-    }    
+
+    }
 
     thread::~thread()
     {
@@ -59,12 +59,12 @@ namespace std
 
         if (joinable())
             err = pthread_join(native_handle(), NULL);
-        
-        if (err) 
+
+        if (err)
         {
             throw_system_error(err, "thread::join failed");
         }
-    
+
         _m_thr = id();
     }
 
@@ -78,14 +78,14 @@ namespace std
         {
             throw_system_error(err, "thread::detach failed");
         }
-    
+
         _m_thr = id();
     }
 
     // TODO: not yet actually implemented.
     // The standard states that the returned value should only be considered a hint.
-    unsigned thread::hardware_concurrency() noexcept 
-    {   
+    unsigned thread::hardware_concurrency() noexcept
+    {
         int __n = _RT_NPROCS;
         if (__n < 0)
             __n = 0;

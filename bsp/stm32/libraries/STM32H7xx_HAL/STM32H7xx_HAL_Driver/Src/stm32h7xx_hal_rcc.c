@@ -355,6 +355,11 @@ HAL_StatusTypeDef HAL_RCC_DeInit(void)
   /* Reset PLL3FRACR register */
   CLEAR_REG(RCC->PLL3FRACR);
 
+#if defined(RCC_CR_HSEEXT)
+  /* Reset HSEEXT  */
+  CLEAR_BIT(RCC->CR, RCC_CR_HSEEXT);
+#endif /* RCC_CR_HSEEXT */
+
   /* Reset HSEBYP bit */
   CLEAR_BIT(RCC->CR, RCC_CR_HSEBYP);
 
@@ -746,6 +751,8 @@ __weak HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruc
       {
         /* Check the parameters */
         assert_param(IS_RCC_PLLSOURCE(RCC_OscInitStruct->PLL.PLLSource));
+        assert_param(IS_RCC_PLLRGE_VALUE(RCC_OscInitStruct->PLL.PLLRGE));
+        assert_param(IS_RCC_PLLVCO_VALUE(RCC_OscInitStruct->PLL.PLLVCOSEL));
         assert_param(IS_RCC_PLLM_VALUE(RCC_OscInitStruct->PLL.PLLM));
         assert_param(IS_RCC_PLLN_VALUE(RCC_OscInitStruct->PLL.PLLN));
         assert_param(IS_RCC_PLLP_VALUE(RCC_OscInitStruct->PLL.PLLP));

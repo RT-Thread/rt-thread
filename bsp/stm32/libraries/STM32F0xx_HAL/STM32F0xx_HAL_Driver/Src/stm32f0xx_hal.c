@@ -52,11 +52,11 @@
   * @{
   */
 /** 
-  * @brief STM32F0xx HAL Driver version number V1.7.3
+  * @brief STM32F0xx HAL Driver version number V1.7.6
   */
 #define __STM32F0xx_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define __STM32F0xx_HAL_VERSION_SUB1   (0x07U) /*!< [23:16] sub1 version */
-#define __STM32F0xx_HAL_VERSION_SUB2   (0x03U) /*!< [15:8]  sub2 version */
+#define __STM32F0xx_HAL_VERSION_SUB2   (0x06U) /*!< [15:8]  sub2 version */
 #define __STM32F0xx_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */ 
 #define __STM32F0xx_HAL_VERSION         ((__STM32F0xx_HAL_VERSION_MAIN << 24U)\
                                         |(__STM32F0xx_HAL_VERSION_SUB1 << 16U)\

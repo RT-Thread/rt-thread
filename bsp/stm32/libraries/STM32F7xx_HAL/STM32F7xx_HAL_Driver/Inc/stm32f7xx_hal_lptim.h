@@ -345,10 +345,10 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   */
 #if (USE_HAL_LPTIM_REGISTER_CALLBACKS == 1)
 #define __HAL_LPTIM_RESET_HANDLE_STATE(__HANDLE__) do {                                                        \
-                                                      (__HANDLE__)->State             = HAL_LPTIM_STATE_RESET; \
-                                                      (__HANDLE__)->MspInitCallback   = NULL;                  \
-                                                      (__HANDLE__)->MspDeInitCallback = NULL;                  \
-                                                     } while(0)
+                                                        (__HANDLE__)->State             = HAL_LPTIM_STATE_RESET; \
+                                                        (__HANDLE__)->MspInitCallback   = NULL;                  \
+                                                        (__HANDLE__)->MspDeInitCallback = NULL;                  \
+                                                      } while(0)
 #else
 #define __HAL_LPTIM_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_LPTIM_STATE_RESET)
 #endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */
@@ -484,55 +484,64 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @retval Interrupt status.
   */
 
-#define __HAL_LPTIM_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->IER & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
+#define __HAL_LPTIM_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->IER\
+                                                                & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
 /**
   * @brief  Enable interrupt on the LPTIM Wake-up Timer associated Exti line.
   * @retval None
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_IT()       (EXTI->IMR |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_IT()       (EXTI->IMR\
+                                                        |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
 
 /**
   * @brief  Disable interrupt on the LPTIM Wake-up Timer associated Exti line.
   * @retval None
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_IT()      (EXTI->IMR &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_IT()      (EXTI->IMR\
+                                                        &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
 
 /**
   * @brief  Enable event on the LPTIM Wake-up Timer associated Exti line.
   * @retval None.
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_EVENT()    (EXTI->EMR |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_EVENT()    (EXTI->EMR\
+                                                        |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
 
 /**
   * @brief  Disable event on the LPTIM Wake-up Timer associated Exti line.
   * @retval None.
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_EVENT()   (EXTI->EMR &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_EVENT()   (EXTI->EMR\
+                                                        &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
 
 /**
   * @brief  Enable falling edge trigger on the LPTIM Wake-up Timer associated Exti line.
   * @retval None.
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_FALLING_EDGE()   (EXTI->FTSR |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_FALLING_EDGE()   (EXTI->FTSR\
+                                                              |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
 
 /**
   * @brief  Disable falling edge trigger on the LPTIM Wake-up Timer associated Exti line.
   * @retval None.
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_FALLING_EDGE()  (EXTI->FTSR &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_FALLING_EDGE()  (EXTI->FTSR\
+                                                              &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
 
 /**
   * @brief  Enable rising edge trigger on the LPTIM Wake-up Timer associated Exti line.
   * @retval None.
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_RISING_EDGE()    (EXTI->RTSR |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_ENABLE_RISING_EDGE()    (EXTI->RTSR\
+                                                              |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
 
 /**
   * @brief  Disable rising edge trigger on the LPTIM Wake-up Timer associated Exti line.
   * @retval None.
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_RISING_EDGE()   (EXTI->RTSR &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_RISING_EDGE()   (EXTI->RTSR\
+                                                              &= ~(LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT))
 
 /**
   * @brief  Enable rising & falling edge trigger on the LPTIM Wake-up Timer associated Exti line.
@@ -547,26 +556,29 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   * @retval None.
   */
 #define __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_RISING_FALLING_EDGE() do{__HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_RISING_EDGE();\
-                                                                      __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_FALLING_EDGE();\
+                                                                       __HAL_LPTIM_WAKEUPTIMER_EXTI_DISABLE_FALLING_EDGE();\
                                                                      }while(0)
 
 /**
   * @brief Check whether the LPTIM Wake-up Timer associated Exti line interrupt flag is set or not.
   * @retval Line Status.
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_GET_FLAG()              (EXTI->PR & LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_GET_FLAG()              (EXTI->PR\
+                                                              & LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
 
 /**
   * @brief Clear the LPTIM Wake-up Timer associated Exti line flag.
   * @retval None.
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_CLEAR_FLAG()            (EXTI->PR = LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_CLEAR_FLAG()            (EXTI->PR\
+                                                              = LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
 
 /**
   * @brief Generate a Software interrupt on the LPTIM Wake-up Timer associated Exti line.
   * @retval None.
   */
-#define __HAL_LPTIM_WAKEUPTIMER_EXTI_GENERATE_SWIT()         (EXTI->SWIER |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
+#define __HAL_LPTIM_WAKEUPTIMER_EXTI_GENERATE_SWIT()         (EXTI->SWIER\
+                                                              |= LPTIM_EXTI_LINE_WAKEUPTIMER_EVENT)
 
 /**
   * @}
@@ -578,9 +590,9 @@ typedef  void (*pLPTIM_CallbackTypeDef)(LPTIM_HandleTypeDef *hlptim);  /*!< poin
   */
 
 /** @addtogroup LPTIM_Exported_Functions_Group1
- *  @brief    Initialization and Configuration functions.
- * @{
- */
+  *  @brief    Initialization and Configuration functions.
+  * @{
+  */
 /* Initialization/de-initialization functions  ********************************/
 HAL_StatusTypeDef HAL_LPTIM_Init(LPTIM_HandleTypeDef *hlptim);
 HAL_StatusTypeDef HAL_LPTIM_DeInit(LPTIM_HandleTypeDef *hlptim);
@@ -593,9 +605,9 @@ void HAL_LPTIM_MspDeInit(LPTIM_HandleTypeDef *hlptim);
   */
 
 /** @addtogroup LPTIM_Exported_Functions_Group2
- *  @brief   Start-Stop operation functions.
- * @{
- */
+  *  @brief   Start-Stop operation functions.
+  * @{
+  */
 /* Start/Stop operation functions  *********************************************/
 /* ################################# PWM Mode ################################*/
 /* Blocking mode: Polling */
@@ -649,9 +661,9 @@ HAL_StatusTypeDef HAL_LPTIM_Counter_Stop_IT(LPTIM_HandleTypeDef *hlptim);
   */
 
 /** @addtogroup LPTIM_Exported_Functions_Group3
- *  @brief  Read operation functions.
- * @{
- */
+  *  @brief  Read operation functions.
+  * @{
+  */
 /* Reading operation functions ************************************************/
 uint32_t HAL_LPTIM_ReadCounter(LPTIM_HandleTypeDef *hlptim);
 uint32_t HAL_LPTIM_ReadAutoReload(LPTIM_HandleTypeDef *hlptim);
@@ -661,9 +673,9 @@ uint32_t HAL_LPTIM_ReadCompare(LPTIM_HandleTypeDef *hlptim);
   */
 
 /** @addtogroup LPTIM_Exported_Functions_Group4
- *  @brief  LPTIM IRQ handler and callback functions.
- * @{
- */
+  *  @brief  LPTIM IRQ handler and callback functions.
+  * @{
+  */
 /* LPTIM IRQ functions  *******************************************************/
 void HAL_LPTIM_IRQHandler(LPTIM_HandleTypeDef *hlptim);
 
@@ -678,7 +690,8 @@ void HAL_LPTIM_DirectionDownCallback(LPTIM_HandleTypeDef *hlptim);
 
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_LPTIM_REGISTER_CALLBACKS == 1)
-HAL_StatusTypeDef HAL_LPTIM_RegisterCallback(LPTIM_HandleTypeDef *lphtim, HAL_LPTIM_CallbackIDTypeDef CallbackID, pLPTIM_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_LPTIM_RegisterCallback(LPTIM_HandleTypeDef *lphtim, HAL_LPTIM_CallbackIDTypeDef CallbackID,
+                                             pLPTIM_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_LPTIM_UnRegisterCallback(LPTIM_HandleTypeDef *lphtim, HAL_LPTIM_CallbackIDTypeDef CallbackID);
 #endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */
 /**
@@ -686,9 +699,9 @@ HAL_StatusTypeDef HAL_LPTIM_UnRegisterCallback(LPTIM_HandleTypeDef *lphtim, HAL_
   */
 
 /** @addtogroup LPTIM_Group5
- *  @brief   Peripheral State functions.
- * @{
- */
+  *  @brief   Peripheral State functions.
+  * @{
+  */
 /* Peripheral State functions  ************************************************/
 HAL_LPTIM_StateTypeDef HAL_LPTIM_GetState(LPTIM_HandleTypeDef *hlptim);
 /**

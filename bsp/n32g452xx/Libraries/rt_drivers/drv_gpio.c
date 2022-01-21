@@ -15,14 +15,16 @@
 
 #ifdef RT_USING_PIN
 
-#define N32F10X_PIN_NUMBERS 64 //[48, 64, 100, 144 ]
+#ifndef N32G45X_PIN_NUMBERS
+    #define N32G45X_PIN_NUMBERS 64//[48, 64, 80, 100, 128 ]
+#endif
 
 #define __N32_PIN(index, rcc, gpio, gpio_index) \
 { \
 0, RCC_##rcc##_PERIPH_GPIO##gpio, GPIO##gpio, GPIO_PIN_##gpio_index \
-, GPIO##gpio##_PORT_SOURCE, GPIO_PIN_SOURCE##gpio_index \
+, GPIO##gpio##_PORT_SOURCE, GPIO_PIN_SOURCE##gpio_index, "P" #gpio "." #gpio_index \
 }
-#define __N32_PIN_DEFAULT {-1, 0, 0, 0, 0, 0}
+#define __N32_PIN_DEFAULT {-1, 0, 0, 0, 0, 0, ""}
 
 /* N32 GPIO driver */
 struct pin_index
@@ -33,11 +35,12 @@ struct pin_index
     uint32_t pin;
     uint8_t port_source;
     uint8_t pin_source;
+    const char* name;
 };
 
 static const struct pin_index pins[] =
 {
-#if (N32F10X_PIN_NUMBERS == 48)
+#if (N32G45X_PIN_NUMBERS == 48)
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
     __N32_PIN(2, APB2, C, 13),
@@ -87,16 +90,15 @@ static const struct pin_index pins[] =
     __N32_PIN(46, APB2, B, 9),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-
-#endif
-#if (N32F10X_PIN_NUMBERS == 64)
+    #endif
+    #if (N32G45X_PIN_NUMBERS == 64)
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
     __N32_PIN(2, APB2, C, 13),
     __N32_PIN(3, APB2, C, 14),
     __N32_PIN(4, APB2, C, 15),
-    __N32_PIN(5, APB2, D, 0),
-    __N32_PIN(6, APB2, D, 1),
+    __N32_PIN_DEFAULT,
+    __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
     __N32_PIN(8, APB2, C, 0),
     __N32_PIN(9, APB2, C, 1),
@@ -155,8 +157,91 @@ static const struct pin_index pins[] =
     __N32_PIN(62, APB2, B, 9),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
+    #endif
+    #if (N32G45X_PIN_NUMBERS == 80)
+    __N32_PIN_DEFAULT,
+    __N32_PIN(1, APB2, E, 2),
+    __N32_PIN(2, APB2, E, 3),
+    __N32_PIN_DEFAULT,
+    __N32_PIN(4, APB2, C, 13),
+    __N32_PIN(5, APB2, C, 14),
+    __N32_PIN(6, APB2, C, 15),
+    __N32_PIN_DEFAULT,
+    __N32_PIN_DEFAULT,
+    __N32_PIN_DEFAULT,
+    __N32_PIN(10, APB2, C, 0),
+    __N32_PIN(11, APB2, C, 1),
+    __N32_PIN(12, APB2, C, 2),
+    __N32_PIN(13, APB2, C, 3),
+    __N32_PIN_DEFAULT,
+    __N32_PIN_DEFAULT,
+    __N32_PIN(16, APB2, A, 0),
+    __N32_PIN(17, APB2, A, 1),
+    __N32_PIN(18, APB2, A, 2),
+    __N32_PIN(19, APB2, A, 3),
+    __N32_PIN_DEFAULT,
+    __N32_PIN_DEFAULT,
+    __N32_PIN(22, APB2, A, 4),
+    __N32_PIN(23, APB2, A, 5),
+    __N32_PIN(24, APB2, A, 6),
+    __N32_PIN(25, APB2, A, 7),
+    __N32_PIN(26, APB2, C, 4),
+    __N32_PIN(27, APB2, C, 5),
+    __N32_PIN(28, APB2, B, 0),
+    __N32_PIN(29, APB2, B, 1),
+    __N32_PIN(30, APB2, B, 2),
+    __N32_PIN(31, APB2, E, 7),
+    __N32_PIN(32, APB2, E, 8),
+    __N32_PIN(33, APB2, E, 9),
+    __N32_PIN(34, APB2, E, 10),
+    __N32_PIN(35, APB2, E, 11),
+    __N32_PIN(36, APB2, E, 12),
+    __N32_PIN(37, APB2, E, 13),
+    __N32_PIN(38, APB2, B, 10),
+    __N32_PIN(39, APB2, B, 11),
+    __N32_PIN_DEFAULT,
+    __N32_PIN_DEFAULT,
+    __N32_PIN(42, APB2, B, 12),
+    __N32_PIN(43, APB2, B, 13),
+    __N32_PIN(44, APB2, B, 14),
+    __N32_PIN(45, APB2, B, 15),
+    __N32_PIN(46, APB2, D, 8),
+    __N32_PIN(47, APB2, D, 9),
+    __N32_PIN(48, APB2, D, 10),
+    __N32_PIN(49, APB2, D, 14),
+    __N32_PIN(50, APB2, D, 15),
+    __N32_PIN(51, APB2, C, 6),
+    __N32_PIN(52, APB2, C, 7),
+    __N32_PIN(53, APB2, C, 8),
+    __N32_PIN(54, APB2, C, 9),
+    __N32_PIN(55, APB2, A, 8),
+    __N32_PIN(56, APB2, A, 9),
+    __N32_PIN(57, APB2, A, 10),
+    __N32_PIN(58, APB2, A, 11),
+    __N32_PIN(59, APB2, A, 12),
+    __N32_PIN(60, APB2, A, 13),
+    __N32_PIN_DEFAULT,
+    __N32_PIN_DEFAULT,
+    __N32_PIN(63, APB2, A, 14),
+    __N32_PIN(64, APB2, A, 15),
+    __N32_PIN(65, APB2, C, 10),
+    __N32_PIN(66, APB2, C, 11),
+    __N32_PIN(67, APB2, C, 12),
+    __N32_PIN(68, APB2, D, 0),
+    __N32_PIN(69, APB2, D, 1),
+    __N32_PIN(70, APB2, D, 2),
+    __N32_PIN(71, APB2, B, 3),
+    __N32_PIN(72, APB2, B, 4),
+    __N32_PIN(73, APB2, B, 5),
+    __N32_PIN(74, APB2, B, 6),
+    __N32_PIN(75, APB2, B, 7),
+    __N32_PIN_DEFAULT,
+    __N32_PIN(77, APB2, B, 8),
+    __N32_PIN(78, APB2, B, 9),
+    __N32_PIN_DEFAULT,
+    __N32_PIN_DEFAULT,
 #endif
-#if (N32F10X_PIN_NUMBERS == 100)
+#if (N32G45X_PIN_NUMBERS == 100)
     __N32_PIN_DEFAULT,
     __N32_PIN(1, APB2, E, 2),
     __N32_PIN(2, APB2, E, 3),
@@ -258,8 +343,8 @@ static const struct pin_index pins[] =
     __N32_PIN(98, APB2, E, 1),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-#endif
-#if (N32F10X_PIN_NUMBERS == 144)
+    #endif
+    #if (N32G45X_PIN_NUMBERS == 128)
     __N32_PIN_DEFAULT,
     __N32_PIN(1, APB2, E, 2),
     __N32_PIN(2, APB2, E, 3),
@@ -270,7 +355,6 @@ static const struct pin_index pins[] =
     __N32_PIN(7, APB2, C, 13),
     __N32_PIN(8, APB2, C, 14),
     __N32_PIN(9, APB2, C, 15),
-
     __N32_PIN(10, APB2, F, 0),
     __N32_PIN(11, APB2, F, 1),
     __N32_PIN(12, APB2, F, 2),
@@ -279,131 +363,115 @@ static const struct pin_index pins[] =
     __N32_PIN(15, APB2, F, 5),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(18, APB2, F, 6),
-    __N32_PIN(19, APB2, F, 7),
-    __N32_PIN(20, APB2, F, 8),
-    __N32_PIN(21, APB2, F, 9),
-    __N32_PIN(22, APB2, F, 10),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(26, APB2, C, 0),
-    __N32_PIN(27, APB2, C, 1),
-    __N32_PIN(28, APB2, C, 2),
-    __N32_PIN(29, APB2, C, 3),
+    __N32_PIN(21, APB2, C, 0),
+    __N32_PIN(22, APB2, C, 1),
+    __N32_PIN(23, APB2, C, 2),
+    __N32_PIN(24, APB2, C, 3),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(34, APB2, A, 0),
-    __N32_PIN(35, APB2, A, 1),
-    __N32_PIN(36, APB2, A, 2),
-    __N32_PIN(37, APB2, A, 3),
+    __N32_PIN(29, APB2, A, 0),
+    __N32_PIN(30, APB2, A, 1),
+    __N32_PIN(31, APB2, A, 2),
+    __N32_PIN(32, APB2, A, 3),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(40, APB2, A, 4),
-    __N32_PIN(41, APB2, A, 5),
-    __N32_PIN(42, APB2, A, 6),
-    __N32_PIN(43, APB2, A, 7),
-    __N32_PIN(44, APB2, C, 4),
-    __N32_PIN(45, APB2, C, 5),
-    __N32_PIN(46, APB2, B, 0),
-    __N32_PIN(47, APB2, B, 1),
-    __N32_PIN(48, APB2, B, 2),
-    __N32_PIN(49, APB2, F, 11),
-    __N32_PIN(50, APB2, F, 12),
+    __N32_PIN(35, APB2, A, 4),
+    __N32_PIN(36, APB2, A, 5),
+    __N32_PIN(37, APB2, A, 6),
+    __N32_PIN(38, APB2, A, 7),
+    __N32_PIN(39, APB2, C, 4),
+    __N32_PIN(40, APB2, C, 5),
+    __N32_PIN(41, APB2, B, 0),
+    __N32_PIN(42, APB2, B, 1),
+    __N32_PIN(43, APB2, B, 2),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(53, APB2, F, 13),
-    __N32_PIN(54, APB2, F, 14),
-    __N32_PIN(55, APB2, F, 15),
-    __N32_PIN(56, APB2, G, 0),
-    __N32_PIN(57, APB2, G, 1),
-    __N32_PIN(58, APB2, E, 7),
-    __N32_PIN(59, APB2, E, 8),
-    __N32_PIN(60, APB2, E, 9),
+    __N32_PIN(46, APB2, F, 12),
+    __N32_PIN(47, APB2, F, 13),
+    __N32_PIN(48, APB2, F, 14),
+    __N32_PIN(49, APB2, F, 15),
+    __N32_PIN(50, APB2, E, 7),
+    __N32_PIN(51, APB2, E, 8),
+    __N32_PIN(52, APB2, E, 9),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(63, APB2, E, 10),
-    __N32_PIN(64, APB2, E, 11),
-    __N32_PIN(65, APB2, E, 12),
-    __N32_PIN(66, APB2, E, 13),
-    __N32_PIN(67, APB2, E, 14),
-    __N32_PIN(68, APB2, E, 15),
-    __N32_PIN(69, APB2, B, 10),
-    __N32_PIN(70, APB2, B, 11),
+    __N32_PIN(55, APB2, E, 10),
+    __N32_PIN(56, APB2, E, 11),
+    __N32_PIN(57, APB2, E, 12),
+    __N32_PIN(58, APB2, E, 13),
+    __N32_PIN(59, APB2, E, 14),
+    __N32_PIN(60, APB2, E, 15),
+    __N32_PIN(61, APB2, B, 10),
+    __N32_PIN(62, APB2, B, 11),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(73, APB2, B, 12),
-    __N32_PIN(74, APB2, B, 13),
-    __N32_PIN(75, APB2, B, 14),
-    __N32_PIN(76, APB2, B, 15),
-    __N32_PIN(77, APB2, D, 8),
-    __N32_PIN(78, APB2, D, 9),
-    __N32_PIN(79, APB2, D, 10),
-    __N32_PIN(80, APB2, D, 11),
-    __N32_PIN(81, APB2, D, 12),
-    __N32_PIN(82, APB2, D, 13),
+    __N32_PIN(65, APB2, B, 12),
+    __N32_PIN(66, APB2, B, 13),
+    __N32_PIN(67, APB2, B, 14),
+    __N32_PIN(68, APB2, B, 15),
+    __N32_PIN(69, APB2, D, 8),
+    __N32_PIN(70, APB2, D, 9),
+    __N32_PIN(71, APB2, D, 10),
+    __N32_PIN(72, APB2, D, 11),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(85, APB2, D, 14),
-    __N32_PIN(86, APB2, D, 15),
-    __N32_PIN(87, APB2, G, 2),
-    __N32_PIN(88, APB2, G, 3),
-    __N32_PIN(89, APB2, G, 4),
-    __N32_PIN(90, APB2, G, 5),
-    __N32_PIN(91, APB2, G, 6),
-    __N32_PIN(92, APB2, G, 7),
-    __N32_PIN(93, APB2, G, 8),
+    __N32_PIN(75, APB2, D, 12),
+    __N32_PIN(76, APB2, D, 13),
+    __N32_PIN(77, APB2, D, 14),
+    __N32_PIN(78, APB2, D, 15),
+    __N32_PIN(79, APB2, G, 0),
+    __N32_PIN(80, APB2, G, 1),
+    __N32_PIN(81, APB2, G, 2),
+    __N32_PIN(82, APB2, G, 3),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(96, APB2, C, 6),
-    __N32_PIN(97, APB2, C, 7),
-    __N32_PIN(98, APB2, C, 8),
-    __N32_PIN(99, APB2, C, 9),
-    __N32_PIN(100, APB2, A, 8),
-    __N32_PIN(101, APB2, A, 9),
-    __N32_PIN(102, APB2, A, 10),
-    __N32_PIN(103, APB2, A, 11),
-    __N32_PIN(104, APB2, A, 12),
-    __N32_PIN(105, APB2, A, 13),
+    __N32_PIN(85, APB2, C, 6),
+    __N32_PIN(86, APB2, C, 7),
+    __N32_PIN(87, APB2, C, 8),
+    __N32_PIN(88, APB2, C, 9),
+    __N32_PIN(89, APB2, A, 8),
+    __N32_PIN(90, APB2, A, 9),
+    __N32_PIN(91, APB2, A, 10),
+    __N32_PIN(92, APB2, A, 11),
+    __N32_PIN(93, APB2, A, 12),
+    __N32_PIN(94, APB2, A, 13),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN_DEFAULT,
-    __N32_PIN(109, APB2, A, 14),
-    __N32_PIN(110, APB2, A, 15),
-    __N32_PIN(111, APB2, C, 10),
-    __N32_PIN(112, APB2, C, 11),
-    __N32_PIN(113, APB2, C, 12),
-    __N32_PIN(114, APB2, D, 0),
-    __N32_PIN(115, APB2, D, 1),
-    __N32_PIN(116, APB2, D, 2),
-    __N32_PIN(117, APB2, D, 3),
-    __N32_PIN(118, APB2, D, 4),
-    __N32_PIN(119, APB2, D, 5),
-    __N32_PIN_DEFAULT,
-    __N32_PIN_DEFAULT,
-    __N32_PIN(122, APB2, D, 6),
-    __N32_PIN(123, APB2, D, 7),
-    __N32_PIN(124, APB2, G, 9),
-    __N32_PIN(125, APB2, G, 10),
-    __N32_PIN(126, APB2, G, 11),
-    __N32_PIN(127, APB2, G, 12),
-    __N32_PIN(128, APB2, G, 13),
-    __N32_PIN(129, APB2, G, 14),
+    __N32_PIN(97, APB2, A, 14),
+    __N32_PIN(98, APB2, A, 15),
+    __N32_PIN(99, APB2, C, 10),
+    __N32_PIN(100, APB2, C, 11),
+    __N32_PIN(101, APB2, C, 12),
+    __N32_PIN(102, APB2, D, 0),
+    __N32_PIN(103, APB2, D, 1),
+    __N32_PIN(104, APB2, D, 2),
+    __N32_PIN(105, APB2, D, 3),
+    __N32_PIN(106, APB2, D, 4),
+    __N32_PIN(107, APB2, D, 5),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
-    __N32_PIN(132, APB2, G, 15),
-    __N32_PIN(133, APB2, B, 3),
-    __N32_PIN(134, APB2, B, 4),
-    __N32_PIN(135, APB2, B, 5),
-    __N32_PIN(136, APB2, B, 6),
-    __N32_PIN(137, APB2, B, 7),
+    __N32_PIN(110, APB2, D, 6),
+    __N32_PIN(111, APB2, D, 7),
+    __N32_PIN(112, APB2, G, 4),
+    __N32_PIN(113, APB2, G, 5),
+    __N32_PIN(114, APB2, G, 9),
     __N32_PIN_DEFAULT,
-    __N32_PIN(139, APB2, B, 8),
-    __N32_PIN(140, APB2, B, 9),
-    __N32_PIN(141, APB2, E, 0),
-    __N32_PIN(142, APB2, E, 1),
+    __N32_PIN_DEFAULT,
+    __N32_PIN(117, APB2, B, 3),
+    __N32_PIN(118, APB2, B, 4),
+    __N32_PIN(119, APB2, B, 5),
+    __N32_PIN(120, APB2, B, 6),
+    __N32_PIN(121, APB2, B, 7),
+    __N32_PIN_DEFAULT,
+    __N32_PIN(123, APB2, B, 8),
+    __N32_PIN(124, APB2, B, 9),
+    __N32_PIN(125, APB2, E, 0),
+    __N32_PIN(126, APB2, E, 1),
     __N32_PIN_DEFAULT,
     __N32_PIN_DEFAULT,
 #endif
@@ -472,6 +540,23 @@ const struct pin_index *get_pin(uint8_t pin)
 
     return index;
 };
+
+rt_base_t n32_pin_get(const char *name)
+{
+    rt_base_t i;
+
+    for (i = 0; i < ITEM_NUM(pins); i++)
+    {
+        if (rt_strcmp(pins[i].name, name) == 0)
+        {
+            /* in get_pin function, use pin parameter as index of pins array */
+            return i;
+        }
+    }
+
+    /* refers content of pins array, map to __N32_PIN_DEFAULT */
+    return 0;
+}
 
 void n32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
@@ -552,6 +637,16 @@ void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         /* input setting: pull up. */
         GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
     }
+    else if (mode == PIN_MODE_INPUT_PULLDOWN)
+    {
+        /* input setting: pull up. */
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPD;
+    }
+    else if (mode == PIN_MODE_OUTPUT_OD)
+    {
+        /* input setting: pull up. */
+        GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_OD;
+    }
     else
     {
         /* input setting:default. */
@@ -563,9 +658,9 @@ void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 {
     int i;
-    for(i = 0; i < 32; i++)
+    for (i = 0; i < 32; i++)
     {
-        if((0x01 << i) == bit)
+        if ((0x01 << i) == bit)
         {
             return i;
         }
@@ -575,7 +670,7 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
 {
     rt_int32_t mapindex = bit2bitno(pinbit);
-    if(mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
+    if (mapindex < 0 || mapindex >= ITEM_NUM(pin_irq_map))
     {
         return RT_NULL;
     }
@@ -594,22 +689,22 @@ rt_err_t n32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
         return -RT_ENOSYS;
     }
     irqindex = bit2bitno(index->pin);
-    if(irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
         return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
-    if(pin_irq_hdr_tab[irqindex].pin == pin   &&
-       pin_irq_hdr_tab[irqindex].hdr == hdr   &&
-       pin_irq_hdr_tab[irqindex].mode == mode &&
-       pin_irq_hdr_tab[irqindex].args == args
-      )
+    if (pin_irq_hdr_tab[irqindex].pin == pin   &&
+            pin_irq_hdr_tab[irqindex].hdr == hdr   &&
+            pin_irq_hdr_tab[irqindex].mode == mode &&
+            pin_irq_hdr_tab[irqindex].args == args
+       )
     {
         rt_hw_interrupt_enable(level);
         return RT_EOK;
     }
-    if(pin_irq_hdr_tab[irqindex].pin != -1)
+    if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
         return -RT_EBUSY;
@@ -634,13 +729,13 @@ rt_err_t n32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
         return -RT_ENOSYS;
     }
     irqindex = bit2bitno(index->pin);
-    if(irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+    if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
         return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
-    if(pin_irq_hdr_tab[irqindex].pin == -1)
+    if (pin_irq_hdr_tab[irqindex].pin == -1)
     {
         rt_hw_interrupt_enable(level);
         return RT_EOK;
@@ -669,15 +764,15 @@ rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     {
         return -RT_ENOSYS;
     }
-    if(enabled == PIN_IRQ_ENABLE)
+    if (enabled == PIN_IRQ_ENABLE)
     {
         irqindex = bit2bitno(index->pin);
-        if(irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
+        if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
             return -RT_ENOSYS;
         }
         level = rt_hw_interrupt_disable();
-        if(pin_irq_hdr_tab[irqindex].pin == -1)
+        if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
             return -RT_ENOSYS;
@@ -691,35 +786,35 @@ rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_InitPeripheral(index->gpio, &GPIO_InitStructure);
 
-        NVIC_InitStructure.NVIC_IRQChannel= irqmap->irqno;
-        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority= 2;
-        NVIC_InitStructure.NVIC_IRQChannelSubPriority= 2;
-        NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
+        NVIC_InitStructure.NVIC_IRQChannel = irqmap->irqno;
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+        NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
         NVIC_Init(&NVIC_InitStructure);
 
         GPIO_ConfigEXTILine(index->port_source, index->pin_source);
         EXTI_InitStructure.EXTI_Line = irqmap->irqbit;
         EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-        switch(pin_irq_hdr_tab[irqindex].mode)
+        switch (pin_irq_hdr_tab[irqindex].mode)
         {
-            case PIN_IRQ_MODE_RISING:
-                EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-                break;
-            case PIN_IRQ_MODE_FALLING:
-                EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-                break;
-            case PIN_IRQ_MODE_RISING_FALLING:
-                EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
-                break;
+        case PIN_IRQ_MODE_RISING:
+            EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+            break;
+        case PIN_IRQ_MODE_FALLING:
+            EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+            break;
+        case PIN_IRQ_MODE_RISING_FALLING:
+            EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+            break;
         }
         EXTI_InitStructure.EXTI_LineCmd = ENABLE;
         EXTI_InitPeripheral(&EXTI_InitStructure);
         rt_hw_interrupt_enable(level);
     }
-    else if(enabled == PIN_IRQ_DISABLE)
+    else if (enabled == PIN_IRQ_DISABLE)
     {
         irqmap = get_pin_irq_map(index->pin);
-        if(irqmap == RT_NULL)
+        if (irqmap == RT_NULL)
         {
             return -RT_ENOSYS;
         }
@@ -744,6 +839,7 @@ const static struct rt_pin_ops _n32_pin_ops =
     n32_pin_attach_irq,
     n32_pin_dettach_irq,
     n32_pin_irq_enable,
+    n32_pin_get
 };
 
 int n32_hw_pin_init(void)
@@ -753,12 +849,11 @@ int n32_hw_pin_init(void)
     result = rt_device_pin_register("pin", &_n32_pin_ops, RT_NULL);
     return result;
 }
-INIT_BOARD_EXPORT(n32_hw_pin_init);
 
 rt_inline void pin_irq_hdr(int irqno)
 {
     EXTI_ClrITPendBit(pin_irq_map[irqno].irqbit);
-    if(pin_irq_hdr_tab[irqno].hdr)
+    if (pin_irq_hdr_tab[irqno].hdr)
     {
         pin_irq_hdr_tab[irqno].hdr(pin_irq_hdr_tab[irqno].args);
     }
@@ -807,23 +902,23 @@ void EXTI9_5_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    if(EXTI_GetITStatus(EXTI_LINE5) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE5) != RESET)
     {
         pin_irq_hdr(5);
     }
-    if(EXTI_GetITStatus(EXTI_LINE6) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE6) != RESET)
     {
         pin_irq_hdr(6);
     }
-    if(EXTI_GetITStatus(EXTI_LINE7) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE7) != RESET)
     {
         pin_irq_hdr(7);
     }
-    if(EXTI_GetITStatus(EXTI_LINE8) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE8) != RESET)
     {
         pin_irq_hdr(8);
     }
-    if(EXTI_GetITStatus(EXTI_LINE9) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE9) != RESET)
     {
         pin_irq_hdr(9);
     }
@@ -834,27 +929,27 @@ void EXTI15_10_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    if(EXTI_GetITStatus(EXTI_LINE10) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE10) != RESET)
     {
         pin_irq_hdr(10);
     }
-    if(EXTI_GetITStatus(EXTI_LINE11) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE11) != RESET)
     {
         pin_irq_hdr(11);
     }
-    if(EXTI_GetITStatus(EXTI_LINE12) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE12) != RESET)
     {
         pin_irq_hdr(12);
     }
-    if(EXTI_GetITStatus(EXTI_LINE13) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE13) != RESET)
     {
         pin_irq_hdr(13);
     }
-    if(EXTI_GetITStatus(EXTI_LINE14) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE14) != RESET)
     {
         pin_irq_hdr(14);
     }
-    if(EXTI_GetITStatus(EXTI_LINE15) != RESET)
+    if (EXTI_GetITStatus(EXTI_LINE15) != RESET)
     {
         pin_irq_hdr(15);
     }

@@ -16,6 +16,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <sys/time.h>
 
 #include "slcd_rhe6616tp01.h"
 

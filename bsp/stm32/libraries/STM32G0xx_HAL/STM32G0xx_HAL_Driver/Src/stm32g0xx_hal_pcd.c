@@ -42,7 +42,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -200,7 +200,7 @@ HAL_StatusTypeDef HAL_PCD_Init(PCD_HandleTypeDef *hpcd)
 
   hpcd->USB_Address = 0U;
   hpcd->State = HAL_PCD_STATE_READY;
-  
+
   /* Activate LPM */
   if (hpcd->Init.lpm_enable == 1U)
   {
@@ -695,7 +695,8 @@ HAL_StatusTypeDef HAL_PCD_RegisterIsoOutIncpltCallback(PCD_HandleTypeDef *hpcd,
 
 /**
   * @brief  Unregister the USB PCD Iso OUT incomplete Callback
-  *         USB PCD Iso OUT incomplete Callback is redirected to the weak HAL_PCD_ISOOUTIncompleteCallback() predefined callback
+  *         USB PCD Iso OUT incomplete Callback is redirected
+  *         to the weak HAL_PCD_ISOOUTIncompleteCallback() predefined callback
   * @param  hpcd PCD handle
   * @retval HAL status
   */
@@ -769,7 +770,8 @@ HAL_StatusTypeDef HAL_PCD_RegisterIsoInIncpltCallback(PCD_HandleTypeDef *hpcd,
 
 /**
   * @brief  Unregister the USB PCD Iso IN incomplete Callback
-  *         USB PCD Iso IN incomplete Callback is redirected to the weak HAL_PCD_ISOINIncompleteCallback() predefined callback
+  *         USB PCD Iso IN incomplete Callback is redirected
+  *         to the weak HAL_PCD_ISOINIncompleteCallback() predefined callback
   * @param  hpcd PCD handle
   * @retval HAL status
   */
@@ -1003,6 +1005,12 @@ HAL_StatusTypeDef HAL_PCD_Stop(PCD_HandleTypeDef *hpcd)
   */
 void HAL_PCD_IRQHandler(PCD_HandleTypeDef *hpcd)
 {
+  /* check if this is an USB pending IT */
+  if ((SYSCFG->IT_LINE_SR[8] & (0x1U << 2)) == 0U)
+  {
+    return;
+  }
+
   if (__HAL_PCD_GET_FLAG(hpcd, USB_ISTR_CTR))
   {
     /* servicing of the endpoint correct transfer interrupt */
@@ -1759,8 +1767,11 @@ static HAL_StatusTypeDef PCD_EP_ISR_Handler(PCD_HandleTypeDef *hpcd)
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
           }
 
-          PCD_SET_EP_RX_CNT(hpcd->Instance, PCD_ENDP0, ep->maxpacket);
-          PCD_SET_EP_RX_STATUS(hpcd->Instance, PCD_ENDP0, USB_EP_RX_VALID);
+          if ((PCD_GET_ENDPOINT(hpcd->Instance, PCD_ENDP0) & USB_EP_SETUP) == 0U)
+          {
+            PCD_SET_EP_RX_CNT(hpcd->Instance, PCD_ENDP0, ep->maxpacket);
+            PCD_SET_EP_RX_STATUS(hpcd->Instance, PCD_ENDP0, USB_EP_RX_VALID);
+          }
         }
       }
     }
@@ -1847,9 +1858,9 @@ static HAL_StatusTypeDef PCD_EP_ISR_Handler(PCD_HandleTypeDef *hpcd)
         /* clear int flag */
         PCD_CLEAR_TX_EP_CTR(hpcd->Instance, epindex);
 
-        /* Manage all non bulk transaction or Bulk Single Buffer Transaction */
-        if ((ep->type != EP_TYPE_BULK) ||
-            ((ep->type == EP_TYPE_BULK) && ((wEPVal & USB_EP_KIND) == 0U)))
+        /* Manage all non bulk/isoc transaction Bulk Single Buffer Transaction */
+        if ((ep->type == EP_TYPE_INTR) || (ep->type == EP_TYPE_CTRL) ||
+           ((ep->type == EP_TYPE_BULK) && ((wEPVal & USB_EP_KIND) == 0U)))
         {
           /* multi-packet on the NON control IN endpoint */
           TxByteNbre = (uint16_t)PCD_GET_EP_TX_CNT(hpcd->Instance, ep->num);
@@ -1881,7 +1892,7 @@ static HAL_StatusTypeDef PCD_EP_ISR_Handler(PCD_HandleTypeDef *hpcd)
             (void)USB_EPStartXfer(hpcd->Instance, ep);
           }
         }
-        /* bulk in double buffer enable in case of transferLen> Ep_Mps */
+        /* Double Buffer Iso/bulk IN (bulk transfer Len > Ep_Mps) */
         else
         {
           (void)HAL_PCD_EP_DB_Transmit(hpcd, ep, wEPVal);
@@ -1927,7 +1938,7 @@ static uint16_t HAL_PCD_EP_DB_Receive(PCD_HandleTypeDef *hpcd,
       PCD_SET_EP_RX_STATUS(hpcd->Instance, ep->num, USB_EP_RX_NAK);
     }
 
-    /* Check if Buffer1 is in blocked state which requires to toggle */
+    /* Check if Buffer1 is in blocked sate which requires to toggle */
     if ((wEPVal & USB_EP_DTOG_TX) != 0U)
     {
       PCD_FreeUserBuffer(hpcd->Instance, ep->num, 0U);
@@ -2005,6 +2016,9 @@ static HAL_StatusTypeDef HAL_PCD_EP_DB_Transmit(PCD_HandleTypeDef *hpcd,
     /* Transfer is completed */
     if (ep->xfer_len == 0U)
     {
+      PCD_SET_EP_DBUF0_CNT(hpcd->Instance, ep->num, ep->is_in, 0U);
+      PCD_SET_EP_DBUF1_CNT(hpcd->Instance, ep->num, ep->is_in, 0U);
+
       /* TX COMPLETE */
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
       hpcd->DataInStageCallback(hpcd, ep->num);
@@ -2075,6 +2089,9 @@ static HAL_StatusTypeDef HAL_PCD_EP_DB_Transmit(PCD_HandleTypeDef *hpcd,
     /* Transfer is completed */
     if (ep->xfer_len == 0U)
     {
+      PCD_SET_EP_DBUF0_CNT(hpcd->Instance, ep->num, ep->is_in, 0U);
+      PCD_SET_EP_DBUF1_CNT(hpcd->Instance, ep->num, ep->is_in, 0U);
+
       /* TX COMPLETE */
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
       hpcd->DataInStageCallback(hpcd, ep->num);
@@ -2082,7 +2099,7 @@ static HAL_StatusTypeDef HAL_PCD_EP_DB_Transmit(PCD_HandleTypeDef *hpcd,
       HAL_PCD_DataInStageCallback(hpcd, ep->num);
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
 
-      /*need to Free USB Buff*/
+      /* need to Free USB Buff */
       if ((wEPVal & USB_EP_DTOG_RX) == 0U)
       {
         PCD_FreeUserBuffer(hpcd->Instance, ep->num, 1U);

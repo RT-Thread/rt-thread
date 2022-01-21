@@ -1,30 +1,22 @@
 from building import *
-
 Import('rtconfig')
 
 src   = []
 cwd   = GetCurrentDir()
 group = []
 CPPPATH = [cwd]
-
-if GetDepend('RT_USING_LIBC'):
-    src += Glob('*.c')
-    if GetDepend('RT_USING_POSIX') == False:
-        SrcRemove(src, ['unistd.c', 'delay.c'])
-elif GetDepend('RT_LIBC_USING_TIME'):
-    src += ['time.c']
+CPPDEFINES = []
 
 if rtconfig.CROSS_TOOL == 'keil':
-    CPPDEFINES = ['__CLK_TCK=RT_TICK_PER_SECOND']
-else:
-    CPPDEFINES = []
+    CPPDEFINES += ['__CLK_TCK=RT_TICK_PER_SECOND']
 
-group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+src += Glob('*.c')
+
+group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 list = os.listdir(cwd)
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        group = group + SConscript(os.path.join(d, 'SConscript'))
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

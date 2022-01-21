@@ -23,10 +23,10 @@
 #include <ald_cmu.h>
 #include <ald_pmu.h>
 
-#define ES_PMU_SAVE_LOAD_UART 
+#define ES_PMU_SAVE_LOAD_UART
 
 /* PM 配置 */
 
- 
+
 
 #endif

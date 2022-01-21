@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the License); you may
  * not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2019-04-03     wangyq        the first version
- * 2019-11-01     wangyq        update libraries 
+ * 2019-11-01     wangyq        update libraries
  * 2021-04-20     liuhy         the second version
  */
 
@@ -26,7 +26,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
-#include "drv_adc.h" 
+#include "drv_adc.h"
 
 #ifdef RT_USING_ADC
 
@@ -35,7 +35,7 @@
 #ifdef BSP_USING_ADC0
 static struct rt_adc_device _device_adc0;
 #endif /*BSP_USING_ADC0*/
- 
+
 #ifdef BSP_USING_ADC1
 static struct rt_adc_device _device_adc1;
 #endif /*BSP_USING_ADC1*/
@@ -66,10 +66,10 @@ static adc_channel_t es32f3_adc_get_channel(rt_uint32_t channel)
 
     /* Initialize ADC pin */
     gpio_initstruct.mode = GPIO_MODE_INPUT;
-    gpio_initstruct.pupd = GPIO_FLOATING; 
-    gpio_initstruct.odos = GPIO_OPEN_DRAIN; 
-    gpio_initstruct.podrv = GPIO_OUT_DRIVE_1;
-    gpio_initstruct.nodrv = GPIO_OUT_DRIVE_1;
+    gpio_initstruct.pupd = GPIO_FLOATING;
+    gpio_initstruct.odos = GPIO_OPEN_DRAIN;
+    gpio_initstruct.podrv = GPIO_OUT_DRIVE_6;
+    gpio_initstruct.nodrv = GPIO_OUT_DRIVE_6;
     gpio_initstruct.flt  = GPIO_FILTER_DISABLE;
     gpio_initstruct.type = GPIO_TYPE_CMOS;
     gpio_initstruct.func = GPIO_FUNC_0;
@@ -141,7 +141,7 @@ static adc_channel_t es32f3_adc_get_channel(rt_uint32_t channel)
         es32f3_channel = ADC_CHANNEL_15;
         ald_gpio_init(ES_GPIO_ADC_CH15_GPIO, ES_GPIO_ADC_CH15_PIN, &gpio_initstruct);
         break;
-    
+
     default:
         break;
     }
@@ -191,40 +191,40 @@ int rt_hw_adc_init(void)
     _h_adc.init.nche_sel = ADC_NCHESEL_MODE_ALL;
     _h_adc.init.cont = DISABLE;
     _h_adc.init.n_ref = ADC_NEG_REF_VSS;
-    _h_adc.init.p_ref = ADC_POS_REF_VDD;    
+    _h_adc.init.p_ref = ADC_POS_REF_VDD;
 
 #ifdef BSP_USING_ADC0
-    
+
     static adc_handle_t _h_adc0;
-    
+
     _h_adc0.init = _h_adc.init;
-    
+
     _h_adc0.perh = ADC0;
     _h_adc0.init.align = ES_ADC0_ALIGN;
     _h_adc0.init.data_bit = ES_ADC0_DATA_BIT;
     _h_adc0.init.div = ES_ADC0_CLK_DIV;
     ald_adc_init(&_h_adc0);
-    
+
     rt_hw_adc_register(&_device_adc0, ES_DEVICE_NAME_ADC0, &es32f3_adc_ops, &_h_adc0);
-    
+
 #endif /*BSP_USING_ADC0*/
- 
-#ifdef BSP_USING_ADC1         
+
+#ifdef BSP_USING_ADC1
 
     static adc_handle_t _h_adc1;
-    
+
     _h_adc1.init = _h_adc.init;
-    
+
     _h_adc1.perh = ADC1;
     _h_adc1.init.align = ES_ADC1_ALIGN;
     _h_adc1.init.data_bit = ES_ADC1_DATA_BIT;
     _h_adc1.init.div = ES_ADC1_CLK_DIV;
     ald_adc_init(&_h_adc1);
-    
+
     rt_hw_adc_register(&_device_adc1, ES_DEVICE_NAME_ADC1, &es32f3_adc_ops, &_h_adc1);
-    
+
 #endif /*BSP_USING_ADC1*/
-    
+
 
     return result;
 }

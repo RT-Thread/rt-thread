@@ -315,7 +315,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
   return status;
 }
 #endif /* STM32F302xE || */
-       /* STM32F302xC    */
+	   /* STM32F302xC    */
 
 #if defined(STM32F303xE) || defined(STM32F398xx) || \
     defined(STM32F303xC) || defined(STM32F358xx)

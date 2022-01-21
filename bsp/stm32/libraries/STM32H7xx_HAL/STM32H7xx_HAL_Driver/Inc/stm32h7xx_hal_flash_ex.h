@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    stm32H7xx_hal_flash_ex.h
+  * @file    stm32h7xx_hal_flash_ex.h
   * @author  MCD Application Team
   * @brief   Header file of FLASH HAL module.
   ******************************************************************************
@@ -138,6 +138,16 @@ typedef struct
                                 This parameter must be a value of @ref FLASHEx_OTP_Blocks */
 #endif /* FLASH_OTPBL_LOCKBL */
 
+#if defined (FLASH_OPTSR2_TCM_AXI_SHARED)
+  uint32_t SharedRamConfig; /*!< Specifies the configuration of TCM / AXI shared RAM.
+                                 This parameter must be a value of @ref FLASHEx_OB_TCM_AXI_SHARED */
+#endif /* FLASH_OPTSR2_TCM_AXI_SHARED */
+
+#if defined (FLASH_OPTSR2_CPUFREQ_BOOST)
+  uint32_t FreqBoostState;  /*!< Specifies the state of CPU Frequency Boost.
+                                 This parameter must be a value of @ref FLASHEx_OB_CPUFREQ_BOOST */
+#endif /* FLASH_OPTSR2_CPUFREQ_BOOST */
+
 } FLASH_OBProgramInitTypeDef;
 
 /**
@@ -227,6 +237,30 @@ typedef struct
 #if defined (FLASH_OTPBL_LOCKBL)
 #define OPTIONBYTE_OTP_LOCK      0x80U  /*!< OTP Lock option byte configuration */
 #endif /* FLASH_OTPBL_LOCKBL */
+#if defined (FLASH_OPTSR2_TCM_AXI_SHARED)
+#define OPTIONBYTE_SHARED_RAM    0x100U /*!< TCM / AXI Shared RAM option byte configuration */
+#endif /* FLASH_OPTSR2_TCM_AXI_SHARED */
+#if defined (FLASH_OPTSR2_CPUFREQ_BOOST)
+#define OPTIONBYTE_FREQ_BOOST    0x200U /*!< CPU Frequency Boost option byte configuration */
+#endif /* FLASH_OPTSR2_CPUFREQ_BOOST */
+
+#if defined (DUAL_CORE)
+#define OPTIONBYTE_ALL           (OPTIONBYTE_WRP         | OPTIONBYTE_RDP        | OPTIONBYTE_USER        |\
+                                  OPTIONBYTE_PCROP       | OPTIONBYTE_BOR        | OPTIONBYTE_SECURE_AREA |\
+                                  OPTIONBYTE_CM7_BOOTADD | OPTIONBYTE_CM4_BOOTADD) /*!< All option byte configuration */
+#elif defined (FLASH_OTPBL_LOCKBL)
+#define OPTIONBYTE_ALL           (OPTIONBYTE_WRP         | OPTIONBYTE_RDP        | OPTIONBYTE_USER        |\
+                                  OPTIONBYTE_PCROP       | OPTIONBYTE_BOR        | OPTIONBYTE_SECURE_AREA |\
+                                  OPTIONBYTE_BOOTADD     | OPTIONBYTE_OTP_LOCK)    /*!< All option byte configuration */
+#elif defined (FLASH_OPTSR2_TCM_AXI_SHARED)
+#define OPTIONBYTE_ALL           (OPTIONBYTE_WRP         | OPTIONBYTE_RDP        | OPTIONBYTE_USER        |\
+                                  OPTIONBYTE_PCROP       | OPTIONBYTE_BOR        | OPTIONBYTE_SECURE_AREA |\
+                                  OPTIONBYTE_BOOTADD     | OPTIONBYTE_SHARED_RAM | OPTIONBYTE_FREQ_BOOST) /*!< All option byte configuration */
+#else
+#define OPTIONBYTE_ALL           (OPTIONBYTE_WRP         | OPTIONBYTE_RDP        | OPTIONBYTE_USER        |\
+                                  OPTIONBYTE_PCROP       | OPTIONBYTE_BOR        | OPTIONBYTE_SECURE_AREA |\
+                                  OPTIONBYTE_BOOTADD)                              /*!< All option byte configuration */
+#endif /* DUAL_CORE */
 /**
   * @}
   */
@@ -242,21 +276,11 @@ typedef struct
   * @}
   */
 
-/** @defgroup FLASHEx_Option_Bytes_WWatchdog FLASH Option Bytes WWatchdog
-  * @{
-  */
-#define OB_WWDG_SW           0x10U  /*!< Software WWDG selected */
-#define OB_WWDG_HW           0x00U  /*!< Hardware WWDG selected */
-/**
-  * @}
-  */
-
-
 /** @defgroup FLASHEx_Option_Bytes_IWatchdog FLASH Option Bytes IWatchdog
   * @{
   */
-#define OB_IWDG_SW           0x20U  /*!< Software IWDG selected */
-#define OB_IWDG_HW           0x00U  /*!< Hardware IWDG selected */
+#define OB_IWDG_SW           OB_IWDG1_SW  /*!< Software IWDG selected */
+#define OB_IWDG_HW           OB_IWDG1_HW  /*!< Hardware IWDG selected */
 /**
   * @}
   */
@@ -351,8 +375,10 @@ typedef struct
   * @{
   */
 #define FLASH_BANK_1             0x01U                         /*!< Bank 1   */
+#if defined (DUAL_BANK)
 #define FLASH_BANK_2             0x02U                         /*!< Bank 2   */
-#define FLASH_BANK_BOTH          (FLASH_BANK_1 | FLASH_BANK_2) /*!< Bank1 and Bank2  */
+#define FLASH_BANK_BOTH          (FLASH_BANK_1 | FLASH_BANK_2) /*!< Bank1 and Bank2 */
+#endif /* DUAL_BANK */
 /**
   * @}
   */
@@ -500,7 +526,7 @@ typedef struct
   * @}
   */
 
-#if defined (DUAL_CORE)
+#if defined (FLASH_OPTSR_NRST_STOP_D2)
 /** @defgroup FLASHEx_OB_NRST_STOP_D2  FLASHEx OB NRST STOP D2
   * @{
   */
@@ -518,8 +544,9 @@ typedef struct
 /**
   * @}
   */
-#endif /* DUAL_CORE */
+#endif /* FLASH_OPTSR_NRST_STOP_D2 */
 
+#if defined (DUAL_BANK)
 /** @defgroup FLASHEx_OB_SWAP_BANK  FLASHEx OB SWAP BANK
   * @{
   */
@@ -528,6 +555,7 @@ typedef struct
 /**
   * @}
   */
+#endif /* DUAL_BANK */
 
 /** @defgroup FLASHEx_OB_IOHSLV FLASHEx OB IOHSLV
   * @{
@@ -549,15 +577,29 @@ typedef struct
   */
 #endif /* FLASH_OPTSR_VDDMMC_HSLV */
 
-/** @defgroup FLASHEx_OB_BOOT_OPTION  FLASHEx OB BOOT OPTION
+#if defined (FLASH_OPTSR2_CPUFREQ_BOOST)
+/** @defgroup FLASHEx_OB_CPUFREQ_BOOST FLASHEx OB CPUFREQ BOOST
   * @{
   */
-#define OB_BOOT_ADD0           0x01U       /*!< Select Boot Address 0 */
-#define OB_BOOT_ADD1           0x02U       /*!< Select Boot Address 1 */
-#define OB_BOOT_ADD_BOTH       0x03U       /*!< Select Boot Address 0 and 1 */
+#define OB_CPUFREQ_BOOST_DISABLE     0x00000000U                /*!< CPUFREQ BOOST disabled */
+#define OB_CPUFREQ_BOOST_ENABLE      FLASH_OPTSR2_CPUFREQ_BOOST /*!< CPUFREQ BOOST enabled */
 /**
   * @}
   */
+#endif /* FLASH_OPTSR2_CPUFREQ_BOOST */
+
+#if defined (FLASH_OPTSR2_TCM_AXI_SHARED)
+/** @defgroup FLASHEx_OB_TCM_AXI_SHARED  FLASHEx OB TCM AXI SHARED
+  * @{
+  */
+#define OB_TCM_AXI_SHARED_ITCM64KB   0x00000000U                   /*!< 64KB ITCM / 320KB system AXI  */
+#define OB_TCM_AXI_SHARED_ITCM128KB  FLASH_OPTSR2_TCM_AXI_SHARED_0 /*!< 128KB ITCM / 256KB system AXI */
+#define OB_TCM_AXI_SHARED_ITCM192KB  FLASH_OPTSR2_TCM_AXI_SHARED_1 /*!< 192KB ITCM / 192KB system AXI */
+#define OB_TCM_AXI_SHARED_ITCM256KB  FLASH_OPTSR2_TCM_AXI_SHARED   /*!< 256KB ITCM / 128KB system AXI */
+/**
+  * @}
+  */
+#endif /* FLASH_OPTSR2_TCM_AXI_SHARED */
 
  /** @defgroup FLASHEx_OB_USER_Type  FLASHEx OB USER Type
   * @{
@@ -570,7 +612,9 @@ typedef struct
 #define OB_USER_ST_RAM_SIZE       0x0020U /*!< dedicated DTCM Ram size selection */
 #define OB_USER_SECURITY          0x0040U /*!< security selection */
 #define OB_USER_IOHSLV            0x0080U /*!< IO HSLV selection */
+#if defined (DUAL_BANK)
 #define OB_USER_SWAP_BANK         0x0100U /*!< Bank swap selection */
+#endif /* DUAL_BANK */
 #if defined (FLASH_OPTSR_VDDMMC_HSLV)
 #define OB_USER_VDDMMC_HSLV       0x0200U /*!< VDDMMC HSLV selection */
 #endif /* FLASH_OPTSR_VDDMMC_HSLV */
@@ -578,10 +622,56 @@ typedef struct
 #define OB_USER_IWDG2_SW          0x0200U /*!< Window watchdog selection */
 #define OB_USER_BCM4              0x0400U /*!< CM4 boot selection */
 #define OB_USER_BCM7              0x0800U /*!< CM7 boot selection */
-#define OB_USER_NRST_STOP_D2      0x1000U /*!< Reset when entering Stop mode selection*/
-#define OB_USER_NRST_STDBY_D2     0x2000U /*!< Reset when entering standby mode selection*/
 #endif /*DUAL_CORE*/
+#if defined (FLASH_OPTSR_NRST_STOP_D2)
+#define OB_USER_NRST_STOP_D2      0x1000U /*!< Reset when entering Stop mode selection */
+#define OB_USER_NRST_STDBY_D2     0x2000U /*!< Reset when entering standby mode selection */
+#endif /* FLASH_OPTSR_NRST_STOP_D2 */
 
+#if defined (DUAL_CORE)
+#define OB_USER_ALL (OB_USER_IWDG1_SW     | OB_USER_NRST_STOP_D1 | OB_USER_NRST_STDBY_D1 |\
+                     OB_USER_IWDG_STOP    | OB_USER_IWDG_STDBY   | OB_USER_ST_RAM_SIZE   |\
+                     OB_USER_SECURITY     | OB_USER_IOHSLV       | OB_USER_SWAP_BANK     |\
+                     OB_USER_IWDG2_SW     | OB_USER_BCM4         | OB_USER_BCM7          |\
+                     OB_USER_NRST_STOP_D2 | OB_USER_NRST_STDBY_D2)
+#elif defined (FLASH_OPTSR_VDDMMC_HSLV)
+#if defined (DUAL_BANK)
+#define OB_USER_ALL (OB_USER_IWDG1_SW     | OB_USER_NRST_STOP_D1 | OB_USER_NRST_STDBY_D1 |\
+                     OB_USER_IWDG_STOP    | OB_USER_IWDG_STDBY   | OB_USER_ST_RAM_SIZE   |\
+                     OB_USER_SECURITY     | OB_USER_IOHSLV       | OB_USER_SWAP_BANK     |\
+                     OB_USER_VDDMMC_HSLV)
+#else
+#define OB_USER_ALL (OB_USER_IWDG1_SW     | OB_USER_NRST_STOP_D1 | OB_USER_NRST_STDBY_D1 |\
+                     OB_USER_IWDG_STOP    | OB_USER_IWDG_STDBY   | OB_USER_ST_RAM_SIZE   |\
+                     OB_USER_SECURITY     | OB_USER_IOHSLV                               |\
+                     OB_USER_VDDMMC_HSLV)
+#endif /* DUAL_BANK */
+#elif defined (FLASH_OPTSR2_TCM_AXI_SHARED)
+#define OB_USER_ALL (OB_USER_IWDG1_SW     | OB_USER_NRST_STOP_D1 | OB_USER_NRST_STDBY_D1 |\
+                     OB_USER_IWDG_STOP    | OB_USER_IWDG_STDBY   | OB_USER_ST_RAM_SIZE   |\
+                     OB_USER_SECURITY     | OB_USER_IOHSLV                               |\
+                     OB_USER_NRST_STOP_D2 | OB_USER_NRST_STDBY_D2)
+#else /* Single core */
+#if defined (DUAL_BANK)
+#define OB_USER_ALL (OB_USER_IWDG1_SW     | OB_USER_NRST_STOP_D1 | OB_USER_NRST_STDBY_D1 |\
+                     OB_USER_IWDG_STOP    | OB_USER_IWDG_STDBY   | OB_USER_ST_RAM_SIZE   |\
+                     OB_USER_SECURITY     | OB_USER_IOHSLV       | OB_USER_SWAP_BANK     )
+#else
+#define OB_USER_ALL (OB_USER_IWDG1_SW     | OB_USER_NRST_STOP_D1 | OB_USER_NRST_STDBY_D1 |\
+                     OB_USER_IWDG_STOP    | OB_USER_IWDG_STDBY   | OB_USER_ST_RAM_SIZE   |\
+                     OB_USER_SECURITY     | OB_USER_IOHSLV                               )
+#endif /* DUAL_BANK */
+#endif /* DUAL_CORE */
+/**
+  * @}
+  */
+
+/** @defgroup FLASHEx_OB_BOOT_OPTION  FLASHEx OB BOOT OPTION
+  * @{
+  */
+#define OB_BOOT_ADD0           0x01U       /*!< Select Boot Address 0 */
+#define OB_BOOT_ADD1           0x02U       /*!< Select Boot Address 1 */
+#define OB_BOOT_ADD_BOTH       0x03U       /*!< Select Boot Address 0 and 1 */
 /**
   * @}
   */
@@ -660,10 +750,10 @@ typedef struct
   * @{
   */
 /**
-  * @brief  Calculate the FLASH Boot Base Adress (BOOT_ADD0 or BOOT_ADD1)
+  * @brief  Calculate the FLASH Boot Base Address (BOOT_ADD0 or BOOT_ADD1)
   * @note   Returned value BOOT_ADDx[15:0] corresponds to boot address [29:14].
   * @param  __ADDRESS__: FLASH Boot Address (in the range 0x0000 0000 to 0x2004 FFFF with a granularity of 16KB)
-  * @retval The FLASH Boot Base Adress
+  * @retval The FLASH Boot Base Address
   */
 #define __HAL_FLASH_CALC_BOOT_BASE_ADR(__ADDRESS__) ((__ADDRESS__) >> 14U)
  /**
@@ -678,9 +768,13 @@ typedef struct
   * @param  __BANK__: Flash bank (FLASH_BANK_1 or FLASH_BANK_2)
   * @retval none
   */
+#if defined (DUAL_BANK)
 #define __HAL_FLASH_SET_PSIZE(__PSIZE__, __BANK__) (((__BANK__) == FLASH_BANK_1)  ? \
                               MODIFY_REG(FLASH->CR1, FLASH_CR_PSIZE, (__PSIZE__)) : \
                               MODIFY_REG(FLASH->CR2, FLASH_CR_PSIZE, (__PSIZE__)))
+#else
+#define __HAL_FLASH_SET_PSIZE(__PSIZE__, __BANK__)  MODIFY_REG(FLASH->CR1, FLASH_CR_PSIZE, (__PSIZE__))
+#endif /* DUAL_BANK */
 
 /**
   * @brief  Get the FLASH Program/Erase parallelism.
@@ -688,9 +782,14 @@ typedef struct
   * @retval FLASH Program/Erase parallelism
   *         This return value can be a value of @ref FLASH_Program_Parallelism
   */
+#if defined (DUAL_BANK)
 #define __HAL_FLASH_GET_PSIZE(__BANK__) (((__BANK__) == FLASH_BANK_1) ? \
                               READ_BIT((FLASH->CR1), FLASH_CR_PSIZE)  : \
                               READ_BIT((FLASH->CR2), FLASH_CR_PSIZE))
+#else
+#define __HAL_FLASH_GET_PSIZE(__BANK__)  READ_BIT((FLASH->CR1), FLASH_CR_PSIZE)
+#endif /* DUAL_BANK */
+
 #endif /* FLASH_CR_PSIZE */
 
 /**
@@ -724,8 +823,10 @@ void              HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit);
 
 HAL_StatusTypeDef HAL_FLASHEx_Unlock_Bank1(void);
 HAL_StatusTypeDef HAL_FLASHEx_Lock_Bank1(void);
+#if defined (DUAL_BANK)
 HAL_StatusTypeDef HAL_FLASHEx_Unlock_Bank2(void);
 HAL_StatusTypeDef HAL_FLASHEx_Lock_Bank2(void);
+#endif /* DUAL_BANK */
 
 HAL_StatusTypeDef HAL_FLASHEx_ComputeCRC(FLASH_CRCInitTypeDef *pCRCInit, uint32_t *CRC_Result);
 
@@ -761,21 +862,14 @@ HAL_StatusTypeDef HAL_FLASHEx_ComputeCRC(FLASH_CRCInitTypeDef *pCRCInit, uint32_
 #define IS_WRPSTATE(VALUE)               (((VALUE) == OB_WRPSTATE_DISABLE) || \
                                           ((VALUE) == OB_WRPSTATE_ENABLE))
 
-#if defined (FLASH_OPTSR_VDDMMC_HSLV)
-#define IS_OPTIONBYTE(VALUE)             (((VALUE) <= 0x03FFU) && ((VALUE) != 0U))
-#elif defined (DUAL_CORE)
-#define IS_OPTIONBYTE(VALUE)             (((VALUE) <= 0x3FFFU) && ((VALUE) != 0U))
-#else
-#define IS_OPTIONBYTE(VALUE)             (((VALUE) <= 0x01FFU) && ((VALUE) != 0U))
-#endif /*DUAL_CORE*/
+#define IS_OPTIONBYTE(VALUE)             ((((VALUE) & OPTIONBYTE_ALL) != 0U) && \
+                                          (((VALUE) & ~OPTIONBYTE_ALL) == 0U))
 
 #define IS_OB_BOOT_ADDRESS(ADDRESS)      ((ADDRESS) <= 0x8013U)
 
 #define IS_OB_RDP_LEVEL(LEVEL)           (((LEVEL) == OB_RDP_LEVEL_0)   ||\
                                           ((LEVEL) == OB_RDP_LEVEL_1)   ||\
                                           ((LEVEL) == OB_RDP_LEVEL_2))
-
-#define IS_OB_WWDG_SOURCE(SOURCE)        (((SOURCE) == OB_WWDG_SW) || ((SOURCE) == OB_WWDG_HW))
 
 #define IS_OB_IWDG_SOURCE(SOURCE)        (((SOURCE) == OB_IWDG_SW) || ((SOURCE) == OB_IWDG_HW))
 
@@ -821,7 +915,9 @@ HAL_StatusTypeDef HAL_FLASHEx_ComputeCRC(FLASH_CRCInitTypeDef *pCRCInit, uint32_
 #define IS_OB_SECURE_RDP(CONFIG)         (((CONFIG) == OB_SECURE_RDP_NOT_ERASE) || \
                                           ((CONFIG) == OB_SECURE_RDP_ERASE))
 
+#if defined (DUAL_BANK)
 #define IS_OB_USER_SWAP_BANK(VALUE)      (((VALUE) == OB_SWAP_BANK_DISABLE) || ((VALUE) == OB_SWAP_BANK_ENABLE))
+#endif /* DUAL_BANK */
 
 #define IS_OB_USER_IOHSLV(VALUE)         (((VALUE) == OB_IOHSLV_DISABLE) || ((VALUE) == OB_IOHSLV_ENABLE))
 
@@ -850,16 +946,25 @@ HAL_StatusTypeDef HAL_FLASHEx_ComputeCRC(FLASH_CRCInitTypeDef *pCRCInit, uint32_
 #define IS_OB_USER_BCM4(VALUE)           (((VALUE) == OB_BCM4_DISABLE) || ((VALUE) == OB_BCM4_ENABLE))
 
 #define IS_OB_USER_BCM7(VALUE)           (((VALUE) == OB_BCM7_DISABLE) || ((VALUE) == OB_BCM7_ENABLE))
+#endif /* DUAL_CORE */
 
+#if defined (FLASH_OPTSR_NRST_STOP_D2)
 #define IS_OB_STOP_D2_RESET(VALUE)       (((VALUE) == OB_STOP_NO_RST_D2) || ((VALUE) == OB_STOP_RST_D2))
 
 #define IS_OB_STDBY_D2_RESET(VALUE)      (((VALUE) == OB_STDBY_NO_RST_D2) || ((VALUE) == OB_STDBY_RST_D2))
-#endif /* DUAL_CORE */
-#if defined (DUAL_CORE)
-#define IS_OB_USER_TYPE(TYPE)            (((TYPE) <= (uint32_t)0x3FFFU) && ((TYPE) != 0U))
-#else
-#define IS_OB_USER_TYPE(TYPE)            (((TYPE) <= (uint32_t)0x73FU) && ((TYPE) != 0U))
-#endif /* DUAL_CORE */
+#endif /* FLASH_OPTSR_NRST_STOP_D2 */
+
+#if defined (FLASH_OPTSR2_TCM_AXI_SHARED)
+#define IS_OB_USER_TCM_AXI_SHARED(VALUE) (((VALUE) == OB_TCM_AXI_SHARED_ITCM64KB) || ((VALUE) == OB_TCM_AXI_SHARED_ITCM128KB) || \
+                                          ((VALUE) == OB_TCM_AXI_SHARED_ITCM192KB) || ((VALUE) == OB_TCM_AXI_SHARED_ITCM256KB))
+#endif /* FLASH_OPTSR2_TCM_AXI_SHARED */
+
+#if defined (FLASH_OPTSR2_CPUFREQ_BOOST)
+#define IS_OB_USER_CPUFREQ_BOOST(VALUE)  (((VALUE) == OB_CPUFREQ_BOOST_DISABLE) || ((VALUE) == OB_CPUFREQ_BOOST_ENABLE))
+#endif /* FLASH_OPTSR2_CPUFREQ_BOOST */
+
+#define IS_OB_USER_TYPE(TYPE)            ((((TYPE) & OB_USER_ALL) != 0U) && \
+                                          (((TYPE) & ~OB_USER_ALL) == 0U))
 
 #define IS_OB_BOOT_ADD_OPTION(VALUE)     (((VALUE) == OB_BOOT_ADD0)  || \
                                           ((VALUE) == OB_BOOT_ADD1)  || \

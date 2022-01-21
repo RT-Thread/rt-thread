@@ -65,8 +65,10 @@ typedef struct
                                     This means in PWM mode that (N+1) corresponds to:
                                         - the number of PWM periods in edge-aligned mode
                                         - the number of half PWM period in center-aligned mode
-                                     GP timers: this parameter must be a number between Min_Data = 0x00 and Max_Data = 0xFF.
-                                     Advanced timers: this parameter must be a number between Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+                                     GP timers: this parameter must be a number between Min_Data = 0x00 and
+                                     Max_Data = 0xFF.
+                                     Advanced timers: this parameter must be a number between Min_Data = 0x0000 and
+                                     Max_Data = 0xFFFF. */
 
   uint32_t AutoReloadPreload;  /*!< Specifies the auto-reload preload.
                                    This parameter can be a value of @ref TIM_AutoReloadPreload */
@@ -218,7 +220,8 @@ typedef struct
   uint32_t ClearInputPolarity;   /*!< TIM Clear Input polarity
                                       This parameter can be a value of @ref TIM_ClearInput_Polarity */
   uint32_t ClearInputPrescaler;  /*!< TIM Clear Input prescaler
-                                      This parameter must be 0: When OCRef clear feature is used with ETR source, ETR prescaler must be off */
+                                      This parameter must be 0: When OCRef clear feature is used with ETR source,
+                                      ETR prescaler must be off */
   uint32_t ClearInputFilter;     /*!< TIM Clear Input filter
                                       This parameter can be a number between Min_Data = 0x0 and Max_Data = 0xF */
 } TIM_ClearInputConfigTypeDef;
@@ -264,22 +267,22 @@ typedef struct
   */
 typedef struct
 {
-  uint32_t OffStateRunMode;      /*!< TIM off state in run mode
-                                      This parameter can be a value of @ref TIM_OSSR_Off_State_Selection_for_Run_mode_state */
-  uint32_t OffStateIDLEMode;     /*!< TIM off state in IDLE mode
-                                      This parameter can be a value of @ref TIM_OSSI_Off_State_Selection_for_Idle_mode_state */
-  uint32_t LockLevel;            /*!< TIM Lock level
-                                      This parameter can be a value of @ref TIM_Lock_level */
-  uint32_t DeadTime;             /*!< TIM dead Time
-                                      This parameter can be a number between Min_Data = 0x00 and Max_Data = 0xFF */
-  uint32_t BreakState;           /*!< TIM Break State
-                                      This parameter can be a value of @ref TIM_Break_Input_enable_disable */
-  uint32_t BreakPolarity;        /*!< TIM Break input polarity
-                                      This parameter can be a value of @ref TIM_Break_Polarity */
-  uint32_t BreakFilter;          /*!< Specifies the break input filter.
-                                      This parameter can be a number between Min_Data = 0x0 and Max_Data = 0xF */
-  uint32_t AutomaticOutput;      /*!< TIM Automatic Output Enable state
-                                      This parameter can be a value of @ref TIM_AOE_Bit_Set_Reset */
+  uint32_t OffStateRunMode;      /*!< TIM off state in run mode, This parameter can be a value of @ref TIM_OSSR_Off_State_Selection_for_Run_mode_state */
+
+  uint32_t OffStateIDLEMode;     /*!< TIM off state in IDLE mode, This parameter can be a value of @ref TIM_OSSI_Off_State_Selection_for_Idle_mode_state */
+
+  uint32_t LockLevel;            /*!< TIM Lock level, This parameter can be a value of @ref TIM_Lock_level */
+
+  uint32_t DeadTime;             /*!< TIM dead Time, This parameter can be a number between Min_Data = 0x00 and Max_Data = 0xFF */
+
+  uint32_t BreakState;           /*!< TIM Break State, This parameter can be a value of @ref TIM_Break_Input_enable_disable */
+
+  uint32_t BreakPolarity;        /*!< TIM Break input polarity, This parameter can be a value of @ref TIM_Break_Polarity */
+
+  uint32_t BreakFilter;          /*!< Specifies the break input filter.This parameter can be a number between Min_Data = 0x0 and Max_Data = 0xF */
+
+  uint32_t AutomaticOutput;      /*!< TIM Automatic Output Enable state, This parameter can be a value of @ref TIM_AOE_Bit_Set_Reset */
+
 } TIM_BreakDeadTimeConfigTypeDef;
 
 /**
@@ -628,10 +631,8 @@ typedef  void (*pTIM_CallbackTypeDef)(TIM_HandleTypeDef *htim);  /*!< pointer to
 /** @defgroup TIM_Input_Capture_Selection TIM Input Capture Selection
   * @{
   */
-#define TIM_ICSELECTION_DIRECTTI           TIM_CCMR1_CC1S_0                     /*!< TIM Input 1, 2, 3 or 4 is selected to be
-                                                                                     connected to IC1, IC2, IC3 or IC4, respectively */
-#define TIM_ICSELECTION_INDIRECTTI         TIM_CCMR1_CC1S_1                     /*!< TIM Input 1, 2, 3 or 4 is selected to be
-                                                                                     connected to IC2, IC1, IC4 or IC3, respectively */
+#define TIM_ICSELECTION_DIRECTTI           TIM_CCMR1_CC1S_0                     /*!< TIM Input 1, 2, 3 or 4 is selected to be connected to IC1, IC2, IC3 or IC4, respectively */
+#define TIM_ICSELECTION_INDIRECTTI         TIM_CCMR1_CC1S_1                     /*!< TIM Input 1, 2, 3 or 4 is selected to be connected to IC2, IC1, IC4 or IC3, respectively */
 #define TIM_ICSELECTION_TRC                TIM_CCMR1_CC1S                       /*!< TIM Input 1, 2, 3 or 4 is selected to be connected to TRC */
 /**
   * @}
@@ -846,8 +847,7 @@ typedef  void (*pTIM_CallbackTypeDef)(TIM_HandleTypeDef *htim);  /*!< pointer to
   * @{
   */
 #define TIM_AUTOMATICOUTPUT_DISABLE        0x00000000U                          /*!< MOE can be set only by software */
-#define TIM_AUTOMATICOUTPUT_ENABLE         TIM_BDTR_AOE                         /*!< MOE can be set by software or automatically at the next update event
-                                                                                    (if none of the break inputs BRK and BRK2 is active) */
+#define TIM_AUTOMATICOUTPUT_ENABLE         TIM_BDTR_AOE                         /*!< MOE can be set by software or automatically at the next update event (if none of the break inputs BRK and BRK2 is active) */
 /**
   * @}
   */
@@ -1091,7 +1091,8 @@ typedef  void (*pTIM_CallbackTypeDef)(TIM_HandleTypeDef *htim);  /*!< pointer to
   * @brief  Disable the TIM main Output.
   * @param  __HANDLE__ TIM handle
   * @retval None
-  * @note The Main Output Enable of a timer instance is disabled only if all the CCx and CCxN channels have been disabled
+  * @note The Main Output Enable of a timer instance is disabled only if all the CCx and CCxN channels have been
+  *       disabled
   */
 #define __HAL_TIM_MOE_DISABLE(__HANDLE__) \
   do { \
@@ -1252,8 +1253,8 @@ typedef  void (*pTIM_CallbackTypeDef)(TIM_HandleTypeDef *htim);  /*!< pointer to
   * @brief  Indicates whether or not the TIM Counter is used as downcounter.
   * @param  __HANDLE__ TIM handle.
   * @retval False (Counter used as upcounter) or True (Counter used as downcounter)
-  * @note This macro is particularly useful to get the counting mode when the timer operates in Center-aligned mode or Encoder
-mode.
+  * @note This macro is particularly useful to get the counting mode when the timer operates in Center-aligned mode
+  *       or Encoder mode.
   */
 #define __HAL_TIM_IS_TIM_COUNTING_DOWN(__HANDLE__)    (((__HANDLE__)->Instance->CR1 &(TIM_CR1_DIR)) == (TIM_CR1_DIR))
 
@@ -1327,7 +1328,8 @@ mode.
 #define __HAL_TIM_GET_CLOCKDIVISION(__HANDLE__)  ((__HANDLE__)->Instance->CR1 & TIM_CR1_CKD)
 
 /**
-  * @brief  Set the TIM Input Capture prescaler on runtime without calling another time HAL_TIM_IC_ConfigChannel() function.
+  * @brief  Set the TIM Input Capture prescaler on runtime without calling another time HAL_TIM_IC_ConfigChannel()
+  *         function.
   * @param  __HANDLE__ TIM handle.
   * @param  __CHANNEL__ TIM Channels to be configured.
   *          This parameter can be one of the following values:
@@ -1817,11 +1819,11 @@ mode.
    ((__HANDLE__)->ChannelState[3] = (__CHANNEL_STATE__)))
 
 #define TIM_CHANNEL_STATE_SET_ALL(__HANDLE__,  __CHANNEL_STATE__) do { \
-  (__HANDLE__)->ChannelState[0]  = (__CHANNEL_STATE__);  \
-  (__HANDLE__)->ChannelState[1]  = (__CHANNEL_STATE__);  \
-  (__HANDLE__)->ChannelState[2]  = (__CHANNEL_STATE__);  \
-  (__HANDLE__)->ChannelState[3]  = (__CHANNEL_STATE__);  \
- } while(0)
+                                                                       (__HANDLE__)->ChannelState[0]  = (__CHANNEL_STATE__);  \
+                                                                       (__HANDLE__)->ChannelState[1]  = (__CHANNEL_STATE__);  \
+                                                                       (__HANDLE__)->ChannelState[2]  = (__CHANNEL_STATE__);  \
+                                                                       (__HANDLE__)->ChannelState[3]  = (__CHANNEL_STATE__);  \
+                                                                     } while(0)
 
 #define TIM_CHANNEL_N_STATE_GET(__HANDLE__, __CHANNEL__)\
   (((__CHANNEL__) == TIM_CHANNEL_1) ? (__HANDLE__)->ChannelNState[0] :\
@@ -1836,11 +1838,15 @@ mode.
    ((__HANDLE__)->ChannelNState[3] = (__CHANNEL_STATE__)))
 
 #define TIM_CHANNEL_N_STATE_SET_ALL(__HANDLE__,  __CHANNEL_STATE__) do { \
-  (__HANDLE__)->ChannelNState[0] = (__CHANNEL_STATE__);  \
-  (__HANDLE__)->ChannelNState[1] = (__CHANNEL_STATE__);  \
-  (__HANDLE__)->ChannelNState[2] = (__CHANNEL_STATE__);  \
-  (__HANDLE__)->ChannelNState[3] = (__CHANNEL_STATE__);  \
- } while(0)
+                                                                         (__HANDLE__)->ChannelNState[0] = \
+                                                                         (__CHANNEL_STATE__);  \
+                                                                         (__HANDLE__)->ChannelNState[1] = \
+                                                                         (__CHANNEL_STATE__);  \
+                                                                         (__HANDLE__)->ChannelNState[2] = \
+                                                                         (__CHANNEL_STATE__);  \
+                                                                         (__HANDLE__)->ChannelNState[3] = \
+                                                                         (__CHANNEL_STATE__);  \
+                                                                       } while(0)
 
 /**
   * @}
@@ -2014,14 +2020,14 @@ HAL_StatusTypeDef HAL_TIM_SlaveConfigSynchro_IT(TIM_HandleTypeDef *htim, TIM_Sla
 HAL_StatusTypeDef HAL_TIM_DMABurst_WriteStart(TIM_HandleTypeDef *htim, uint32_t BurstBaseAddress,
                                               uint32_t BurstRequestSrc, uint32_t  *BurstBuffer, uint32_t  BurstLength);
 HAL_StatusTypeDef HAL_TIM_DMABurst_MultiWriteStart(TIM_HandleTypeDef *htim, uint32_t BurstBaseAddress,
-                                                   uint32_t BurstRequestSrc, uint32_t *BurstBuffer, uint32_t BurstLength,
-                                                   uint32_t DataLength);
+                                                   uint32_t BurstRequestSrc, uint32_t *BurstBuffer,
+                                                   uint32_t BurstLength,  uint32_t DataLength);
 HAL_StatusTypeDef HAL_TIM_DMABurst_WriteStop(TIM_HandleTypeDef *htim, uint32_t BurstRequestSrc);
 HAL_StatusTypeDef HAL_TIM_DMABurst_ReadStart(TIM_HandleTypeDef *htim, uint32_t BurstBaseAddress,
                                              uint32_t BurstRequestSrc, uint32_t  *BurstBuffer, uint32_t  BurstLength);
 HAL_StatusTypeDef HAL_TIM_DMABurst_MultiReadStart(TIM_HandleTypeDef *htim, uint32_t BurstBaseAddress,
-                                                  uint32_t BurstRequestSrc, uint32_t  *BurstBuffer, uint32_t  BurstLength,
-                                                  uint32_t  DataLength);
+                                                  uint32_t BurstRequestSrc, uint32_t  *BurstBuffer,
+                                                  uint32_t  BurstLength, uint32_t  DataLength);
 HAL_StatusTypeDef HAL_TIM_DMABurst_ReadStop(TIM_HandleTypeDef *htim, uint32_t BurstRequestSrc);
 HAL_StatusTypeDef HAL_TIM_GenerateEvent(TIM_HandleTypeDef *htim, uint32_t EventSource);
 uint32_t HAL_TIM_ReadCapturedValue(TIM_HandleTypeDef *htim, uint32_t Channel);

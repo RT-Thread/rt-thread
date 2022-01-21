@@ -15,7 +15,7 @@
 #include <rthw.h>
 #include <rtdevice.h>
 
-#define GET_PIN(PORTx,PIN) (uint8_t)__AB32_GET_PIN_##PORTx(PIN)
+#define GET_PIN(PORTx,PIN) (rt_uint8_t)__AB32_GET_PIN_##PORTx(PIN)
 
 void uart0_irq_post(void);
 void uart1_irq_post(void);

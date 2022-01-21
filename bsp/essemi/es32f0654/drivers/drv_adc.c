@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the License); you may
  * not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ static adc_channel_t es32f0_adc_get_channel(rt_uint32_t channel)
         es32f0_channel = ADC_CHANNEL_15;
         ald_gpio_init(ES_GPIO_ADC_CH15_GPIO, ES_GPIO_ADC_CH15_PIN, &gpio_initstruct);
         break;
-    
+
     default:
         break;
     }
@@ -153,7 +153,7 @@ static rt_err_t es32f0_get_adc_value(struct rt_adc_device *device, rt_uint32_t c
     /* config adc channel */
     nm_config.ch       = es32f0_adc_get_channel(channel);
     nm_config.idx          = ADC_NCH_IDX_1;
-	
+
 /*aaabbbccc*/
     nm_config.samp = ES_ADC0_NCH_SAMPLETIME;
     nm_config.samp = ADC_SAMPLETIME_4;
@@ -176,7 +176,7 @@ static const struct rt_adc_ops es32f0_adc_ops =
 int rt_hw_adc_init(void)
 {
     int result = RT_EOK;
- 
+
     adc_handle_t _h_adc;
 
     _h_adc.init.scan = DISABLE;
@@ -185,25 +185,25 @@ int rt_hw_adc_init(void)
     _h_adc.init.disc_nr = ADC_DISC_NR_1;
     _h_adc.init.nche_sel = ADC_NCHESEL_MODE_ALL;
     _h_adc.init.n_ref = ADC_NEG_REF_VSS;
-    _h_adc.init.p_ref = ADC_POS_REF_VDD;   
-    _h_adc.init.nch_nr = ADC_NCH_NR_16; 
-    
+    _h_adc.init.p_ref = ADC_POS_REF_VDD;
+    _h_adc.init.nch_nr = ADC_NCH_NR_16;
+
 #ifdef BSP_USING_ADC0
-    
+
     static adc_handle_t _h_adc0;
-    
+
     _h_adc0.init = _h_adc.init;
-    
+
     _h_adc0.perh = ADC0;
     _h_adc0.init.align = ES_ADC0_ALIGN;
     _h_adc0.init.data_bit = ES_ADC0_DATA_BIT;
-    _h_adc0.init.div = ES_ADC0_CLK_DIV;    
+    _h_adc0.init.div = ES_ADC0_CLK_DIV;
     ald_adc_init(&_h_adc0);
-    
+
     result = rt_hw_adc_register(&_device_adc0, ES_DEVICE_NAME_ADC0, &es32f0_adc_ops, &_h_adc0);
-    
+
 #endif /*BSP_USING_ADC0*/
- 
+
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_adc_init);

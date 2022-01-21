@@ -220,7 +220,7 @@ extern "C" {
       (__CLOCKSOURCE__) = IRDA_CLOCKSOURCE_UNDEFINED;         \
     }                                                         \
   } while(0U)
-#endif
+#endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 
 /** @brief  Compute the mask to apply to retrieve the received data
   *         according to the word length and to the parity bits activation.

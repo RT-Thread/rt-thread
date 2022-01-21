@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -22,7 +22,7 @@
 #define STM32G0xx_HAL_PWR_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -58,31 +58,31 @@
 #define PWR_WAKEUP_PIN2                     PWR_CR3_EWUP2  /*!< Wakeup pin 2 (with high level detection) */
 #if defined(PWR_CR3_EWUP3)
 #define PWR_WAKEUP_PIN3                     PWR_CR3_EWUP3  /*!< Wakeup pin 3 (with high level detection) */
-#endif
+#endif /* PWR_CR3_EWUP3 */
 #define PWR_WAKEUP_PIN4                     PWR_CR3_EWUP4  /*!< Wakeup pin 4 (with high level detection) */
 #if defined(PWR_CR3_EWUP5)
 #define PWR_WAKEUP_PIN5                     PWR_CR3_EWUP5  /*!< Wakeup pin 5 (with high level detection) */
-#endif
+#endif /* PWR_CR3_EWUP5 */
 #define PWR_WAKEUP_PIN6                     PWR_CR3_EWUP6  /*!< Wakeup pin 6 (with high level detection) */
 #define PWR_WAKEUP_PIN1_HIGH                PWR_CR3_EWUP1  /*!< Wakeup pin 1 (with high level detection) */
 #define PWR_WAKEUP_PIN2_HIGH                PWR_CR3_EWUP2  /*!< Wakeup pin 2 (with high level detection) */
 #if defined(PWR_CR3_EWUP3)
 #define PWR_WAKEUP_PIN3_HIGH                PWR_CR3_EWUP3  /*!< Wakeup pin 3 (with high level detection) */
-#endif
+#endif /* PWR_CR3_EWUP3 */
 #define PWR_WAKEUP_PIN4_HIGH                PWR_CR3_EWUP4  /*!< Wakeup pin 4 (with high level detection) */
 #if defined(PWR_CR3_EWUP5)
 #define PWR_WAKEUP_PIN5_HIGH                PWR_CR3_EWUP5  /*!< Wakeup pin 5 (with high level detection) */
-#endif
+#endif /* PWR_CR3_EWUP5*/
 #define PWR_WAKEUP_PIN6_HIGH                PWR_CR3_EWUP6  /*!< Wakeup pin 6 (with high level detection) */
 #define PWR_WAKEUP_PIN1_LOW                 ((PWR_CR4_WP1 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP1) /*!< Wakeup pin 1 (with low level detection) */
 #define PWR_WAKEUP_PIN2_LOW                 ((PWR_CR4_WP2 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP2) /*!< Wakeup pin 2 (with low level detection) */
 #if defined(PWR_CR3_EWUP3)
 #define PWR_WAKEUP_PIN3_LOW                 ((PWR_CR4_WP3 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP3) /*!< Wakeup pin 3 (with low level detection) */
-#endif
+#endif /* PWR_CR3_EWUP3 */
 #define PWR_WAKEUP_PIN4_LOW                 ((PWR_CR4_WP4 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP4) /*!< Wakeup pin 4 (with low level detection) */
 #if defined(PWR_CR3_EWUP5)
 #define PWR_WAKEUP_PIN5_LOW                 ((PWR_CR4_WP5 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP5) /*!< Wakeup pin 5 (with low level detection) */
-#endif
+#endif /* PWR_CR3_EWUP5 */
 #define PWR_WAKEUP_PIN6_LOW                 ((PWR_CR4_WP6 << PWR_WUP_POLARITY_SHIFT) | PWR_CR3_EWUP6) /*!< Wakeup pin 6 (with low level detection) */
 /**
   * @}
@@ -96,7 +96,7 @@
 #define PWR_LOWPOWERMODE_STANDBY            (PWR_CR1_LPMS_0 | PWR_CR1_LPMS_1)   /*!< Standby mode */
 #if defined(PWR_SHDW_SUPPORT)
 #define PWR_LOWPOWERMODE_SHUTDOWN           (PWR_CR1_LPMS_2)                    /*!< Shutdown mode */
-#endif
+#endif /* PWR_SHDW_SUPPORT */
 /**
   * @}
   */
@@ -142,11 +142,11 @@
 #define PWR_FLAG_WUF2                       (0x00010000u | PWR_SR1_WUF2)      /*!< Wakeup event on wakeup pin 2 */
 #if defined(PWR_CR3_EWUP3)
 #define PWR_FLAG_WUF3                       (0x00010000u | PWR_SR1_WUF3)      /*!< Wakeup event on wakeup pin 3 */
-#endif
+#endif /* PWR_CR3_EWUP3 */
 #define PWR_FLAG_WUF4                       (0x00010000u | PWR_SR1_WUF4)      /*!< Wakeup event on wakeup pin 4 */
 #if defined(PWR_CR3_EWUP5)
 #define PWR_FLAG_WUF5                       (0x00010000u | PWR_SR1_WUF5)      /*!< Wakeup event on wakeup pin 5 */
-#endif
+#endif /* PWR_CR3_EWUP5 */
 #define PWR_FLAG_WUF6                       (0x00010000u | PWR_SR1_WUF6)      /*!< Wakeup event on wakeup pin 6 */
 #define PWR_FLAG_WUF                        (0x00010000u | PWR_SR1_WUF)       /*!< Wakeup event on all wakeup pin  */
 #define PWR_FLAG_SB                         (0x00010000u | PWR_SR1_SBF)       /*!< Standby flag */
@@ -156,15 +156,15 @@
 #define PWR_FLAG_REGLPF                     (0x00020000u | PWR_SR2_REGLPF)    /*!< Regulator Low Power flag */
 #if defined(PWR_PVD_SUPPORT)
 #define PWR_FLAG_PVDO                       (0x00020000u | PWR_SR2_PVDO)      /*!< Power Voltage Detector output */
-#endif
+#endif /* PWR_PVD_SUPPORT */
 #if defined(PWR_PVM_SUPPORT)
 #define PWR_FLAG_PVMO_USB                   (0x00020000u | PWR_SR2_PVMO_USB)  /*!< Power Voltage Monitoring output */
-#endif
+#endif /* PWR_PVM_SUPPORT */
 
 /**
   * @}
   */
-  
+
 /**
   * @}
   */
@@ -206,8 +206,8 @@
   * @retval The new state of __FLAG__ (TRUE or FALSE).
   */
 #define __HAL_PWR_GET_FLAG(__FLAG__)        (((__FLAG__) & 0x00010000u) ?\
-                                            ((PWR->SR1 & ((__FLAG__) & ~0x00030000u)) == ((__FLAG__) & ~0x00030000u)) :\
-                                            ((PWR->SR2 & ((__FLAG__) & ~0x00030000u)) == ((__FLAG__) & ~0x00030000u)))
+                                             ((PWR->SR1 & ((__FLAG__) & ~0x00030000u)) == ((__FLAG__) & ~0x00030000u)) :\
+                                             ((PWR->SR2 & ((__FLAG__) & ~0x00030000u)) == ((__FLAG__) & ~0x00030000u)))
 
 /** @brief  Clear a specific PWR flag.
   * @param  __FLAG__  specifies the flag to clear.

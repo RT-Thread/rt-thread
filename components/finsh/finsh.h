@@ -168,8 +168,8 @@ extern struct finsh_syscall *_syscall_table_begin, *_syscall_table_end;
 /* find out system call, which should be implemented in user program */
 struct finsh_syscall *finsh_syscall_lookup(const char *name);
 
-#ifdef RT_USING_DEVICE
-    void finsh_set_device(const char *device_name);
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
+void finsh_set_device(const char *device_name);
 #endif
 
 #endif

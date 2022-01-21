@@ -47,10 +47,10 @@
 
   The compilation define  USE_HAL_CEC_REGISTER_CALLBACKS when set to 1
   allows the user to configure dynamically the driver callbacks.
-  Use Functions @ref HAL_CEC_RegisterCallback() or HAL_CEC_RegisterXXXCallback()
+  Use Functions HAL_CEC_RegisterCallback() or HAL_CEC_RegisterXXXCallback()
   to register an interrupt callback.
 
-  Function @ref HAL_CEC_RegisterCallback() allows to register following callbacks:
+  Function HAL_CEC_RegisterCallback() allows to register following callbacks:
     (+) TxCpltCallback     : Tx Transfer completed callback.
     (+) ErrorCallback      : callback for error detection.
     (+) MspInitCallback    : CEC MspInit.
@@ -59,11 +59,11 @@
   and a pointer to the user callback function.
 
   For specific callback HAL_CEC_RxCpltCallback use dedicated register callbacks
-  @ref HAL_CEC_RegisterRxCpltCallback().
+  HAL_CEC_RegisterRxCpltCallback().
 
-  Use function @ref HAL_CEC_UnRegisterCallback() to reset a callback to the default
+  Use function HAL_CEC_UnRegisterCallback() to reset a callback to the default
   weak function.
-  @ref HAL_CEC_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+  HAL_CEC_UnRegisterCallback() takes as parameters the HAL peripheral handle,
   and the Callback ID.
   This function allows to reset following callbacks:
     (+) TxCpltCallback     : Tx Transfer completed callback.
@@ -72,15 +72,15 @@
     (+) MspDeInitCallback  : CEC MspDeInit.
 
   For callback HAL_CEC_RxCpltCallback use dedicated unregister callback :
-  @ref HAL_CEC_UnRegisterRxCpltCallback().
+  HAL_CEC_UnRegisterRxCpltCallback().
 
-  By default, after the @ref HAL_CEC_Init() and when the state is HAL_CEC_STATE_RESET
+  By default, after the HAL_CEC_Init() and when the state is HAL_CEC_STATE_RESET
   all callbacks are set to the corresponding weak functions :
-  examples @ref HAL_CEC_TxCpltCallback() , @ref HAL_CEC_RxCpltCallback().
+  examples HAL_CEC_TxCpltCallback() , HAL_CEC_RxCpltCallback().
   Exception done for MspInit and MspDeInit functions that are
-  reset to the legacy weak function in the @ref HAL_CEC_Init()/ @ref HAL_CEC_DeInit() only when
+  reset to the legacy weak function in the HAL_CEC_Init()/ HAL_CEC_DeInit() only when
   these callbacks are null (not registered beforehand).
-  if not, MspInit or MspDeInit are not null, the @ref HAL_CEC_Init() / @ref HAL_CEC_DeInit()
+  if not, MspInit or MspDeInit are not null, the HAL_CEC_Init() / HAL_CEC_DeInit()
   keep and use the user MspInit/MspDeInit functions (registered beforehand)
 
   Callbacks can be registered/unregistered in HAL_CEC_STATE_READY state only.
@@ -88,8 +88,8 @@
   in HAL_CEC_STATE_READY or HAL_CEC_STATE_RESET state,
   thus registered (user) MspInit/DeInit callbacks can be used during the Init/DeInit.
   In that case first register the MspInit/MspDeInit user callbacks
-  using @ref HAL_CEC_RegisterCallback() before calling @ref HAL_CEC_DeInit()
-  or @ref HAL_CEC_Init() function.
+  using HAL_CEC_RegisterCallback() before calling HAL_CEC_DeInit()
+  or HAL_CEC_Init() function.
 
   When the compilation define USE_HAL_CEC_REGISTER_CALLBACKS is set to 0 or
   not defined, the callback registration feature is not available and all callbacks
@@ -696,7 +696,7 @@ HAL_StatusTypeDef HAL_CEC_UnRegisterRxCpltCallback(CEC_HandleTypeDef *hcec)
 HAL_StatusTypeDef HAL_CEC_Transmit_IT(CEC_HandleTypeDef *hcec, uint8_t InitiatorAddress, uint8_t DestinationAddress,
                                       uint8_t *pData, uint32_t Size)
 {
-  /* if the IP isn't already busy and if there is no previous transmission
+  /* if the peripheral isn't already busy and if there is no previous transmission
      already pending due to arbitration lost */
   if (hcec->gState == HAL_CEC_STATE_READY)
   {
@@ -822,19 +822,15 @@ void HAL_CEC_IRQHandler(CEC_HandleTypeDef *hcec)
   /* CEC TX byte request interrupt ------------------------------------------------*/
   if ((reg & CEC_FLAG_TXBR) != 0U)
   {
+    --hcec->TxXferCount;
     if (hcec->TxXferCount == 0U)
     {
       /* if this is the last byte transmission, set TX End of Message (TXEOM) bit */
       __HAL_CEC_LAST_BYTE_TX_SET(hcec);
-      hcec->Instance->TXDR = *hcec->pTxBuffPtr;
-      hcec->pTxBuffPtr++;
     }
-    else
-    {
-      hcec->Instance->TXDR = *hcec->pTxBuffPtr;
-      hcec->pTxBuffPtr++;
-      hcec->TxXferCount--;
-    }
+    /* In all cases transmit the byte */
+    hcec->Instance->TXDR = *hcec->pTxBuffPtr;
+    hcec->pTxBuffPtr++;
     /* clear Tx-Byte request flag */
     __HAL_CEC_CLEAR_FLAG(hcec, CEC_FLAG_TXBR);
   }

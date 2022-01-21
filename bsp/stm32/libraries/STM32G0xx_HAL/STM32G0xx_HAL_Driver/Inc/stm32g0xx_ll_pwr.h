@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -62,7 +62,7 @@ extern "C" {
 #define LL_PWR_SCR_CWUF4                   PWR_SCR_CWUF4
 #if defined(PWR_CR3_EWUP3)
 #define LL_PWR_SCR_CWUF3                   PWR_SCR_CWUF3
-#endif
+#endif /* PWR_CR3_EWUP3 */
 #define LL_PWR_SCR_CWUF2                   PWR_SCR_CWUF2
 #define LL_PWR_SCR_CWUF1                   PWR_SCR_CWUF1
 /**
@@ -80,12 +80,12 @@ extern "C" {
 #define LL_PWR_SR1_WUF4                    PWR_SR1_WUF4
 #if defined(PWR_CR3_EWUP3)
 #define LL_PWR_SR1_WUF3                    PWR_SR1_WUF3
-#endif
+#endif /* PWR_CR3_EWUP3 */
 #define LL_PWR_SR1_WUF2                    PWR_SR1_WUF2
 #define LL_PWR_SR1_WUF1                    PWR_SR1_WUF1
 #if defined(PWR_SR2_PVDO)
 #define LL_PWR_SR2_PVDO                    PWR_SR2_PVDO
-#endif
+#endif /* PWR_SR2_PVDO */
 #define LL_PWR_SR2_VOSF                    PWR_SR2_VOSF
 #define LL_PWR_SR2_REGLPF                  PWR_SR2_REGLPF
 #define LL_PWR_SR2_REGLPS                  PWR_SR2_REGLPS
@@ -110,7 +110,7 @@ extern "C" {
 #define LL_PWR_MODE_STANDBY                (PWR_CR1_LPMS_1|PWR_CR1_LPMS_0)
 #if defined (PWR_CR1_LPMS_2)
 #define LL_PWR_MODE_SHUTDOWN               (PWR_CR1_LPMS_2)
-#endif
+#endif /* PWR_CR1_LPMS_2 */
 /**
   * @}
   */
@@ -138,7 +138,7 @@ extern "C" {
 /**
   * @}
   */
-#endif
+#endif /* PWR_CR2_PVDE */
 
 #if defined(PWR_PVM_SUPPORT)
 /** @defgroup PWR_LL_EC_PVM_IP PVM_IP
@@ -148,8 +148,8 @@ extern "C" {
 /**
   * @}
   */
-#endif
-  
+#endif /* PWR_PVM_SUPPORT */
+
 /** @defgroup PWR_LL_EC_WAKEUP WAKEUP
   * @{
   */
@@ -157,11 +157,11 @@ extern "C" {
 #define LL_PWR_WAKEUP_PIN2                 (PWR_CR3_EWUP2)
 #if defined(PWR_CR3_EWUP3)
 #define LL_PWR_WAKEUP_PIN3                 (PWR_CR3_EWUP3)
-#endif
+#endif /* PWR_CR3_EWUP3 */
 #define LL_PWR_WAKEUP_PIN4                 (PWR_CR3_EWUP4)
 #if defined(PWR_CR3_EWUP5)
 #define LL_PWR_WAKEUP_PIN5                 (PWR_CR3_EWUP5)
-#endif
+#endif /* PWR_CR3_EWUP5 */
 #define LL_PWR_WAKEUP_PIN6                 (PWR_CR3_EWUP6)
 /**
   * @}
@@ -185,7 +185,7 @@ extern "C" {
 #define LL_PWR_GPIO_D                      ((uint32_t)(&(PWR->PUCRD)))
 #if defined(GPIOE)
 #define LL_PWR_GPIO_E                      ((uint32_t)(&(PWR->PUCRE)))
-#endif
+#endif /* GPIOE */
 #define LL_PWR_GPIO_F                      ((uint32_t)(&(PWR->PUCRF)))
 /**
   * @}
@@ -483,9 +483,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledVddIO2(void)
 {
   return ((READ_BIT(PWR->CR2, PWR_CR2_IOSV) == (PWR_CR2_IOSV)) ? 1UL : 0UL);
 }
-#endif
 
-#if defined(STM32G0C1xx) || defined(STM32G0B1xx)
 /**
   * @brief  Enable VDDUSB supply
   * @rmtoll CR2          USV           LL_PWR_EnableVddUSB
@@ -515,7 +513,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledVddUSB(void)
 {
   return ((READ_BIT(PWR->CR2, PWR_CR2_USV) == (PWR_CR2_USV)) ? 1UL : 0UL);
 }
-#endif
+#endif /* STM32G0C1xx || STM32G0B1xx */
 
 #if defined (PWR_PVM_SUPPORT)
 /**
@@ -559,7 +557,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledPVM(uint32_t PeriphVoltage)
 {
   return ((READ_BIT(PWR->CR2, PeriphVoltage) == (PeriphVoltage)) ? 1UL : 0UL);
 }
-#endif
+#endif /* PWR_PVM_SUPPORT */
 
 /**
   * @brief  Set Low-Power mode
@@ -691,7 +689,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledPVD(void)
 {
   return ((READ_BIT(PWR->CR2, PWR_CR2_PVDE) == (PWR_CR2_PVDE)) ? 1UL : 0UL);
 }
-#endif
+#endif /* PWR_CR2_PVDE */
 
 /**
   * @brief  Enable Internal Wake-up line
@@ -783,7 +781,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledSRAMRetention(void)
 {
   return ((READ_BIT(PWR->CR3, PWR_CR3_RRS) == (PWR_CR3_RRS)) ? 1UL : 0UL);
 }
-#endif
+#endif /* PWR_CR3_RRS */
 
 #if defined(PWR_CR3_ENB_ULP)
 /**
@@ -815,7 +813,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnableLPMUResetSamplingMode(void)
 {
   return ((READ_BIT(PWR->CR3, PWR_CR3_ENB_ULP) == (PWR_CR3_ENB_ULP)) ? 1UL : 0UL);
 }
-#endif
+#endif /* PWR_CR3_ENB_ULP */
 
 /**
   * @brief  Enable the WakeUp PINx functionality
@@ -1292,7 +1290,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_WU5(void)
 {
   return ((READ_BIT(PWR->SR1, PWR_SR1_WUF5) == (PWR_SR1_WUF5)) ? 1UL : 0UL);
 }
-#endif
+#endif /* PWR_CR3_EWUP5 */
 
 /**
   * @brief  Get Wake-up Flag 4
@@ -1314,7 +1312,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_WU3(void)
 {
   return ((READ_BIT(PWR->SR1, PWR_SR1_WUF3) == (PWR_SR1_WUF3)) ? 1UL : 0UL);
 }
-#endif
+#endif /* PWR_CR3_EWUP3 */
 
 /**
   * @brief  Get Wake-up Flag 2
@@ -1376,7 +1374,7 @@ __STATIC_INLINE void LL_PWR_ClearFlag_WU5(void)
 {
   WRITE_REG(PWR->SCR, PWR_SCR_CWUF5);
 }
-#endif
+#endif /* PWR_CR3_EWUP5 */
 
 /**
   * @brief  Clear Wake-up Flag 4
@@ -1398,7 +1396,7 @@ __STATIC_INLINE void LL_PWR_ClearFlag_WU3(void)
 {
   WRITE_REG(PWR->SCR, PWR_SCR_CWUF3);
 }
-#endif
+#endif /* PWR_CR3_EWUP3 */
 
 /**
   * @brief  Clear Wake-up Flag 2
@@ -1431,7 +1429,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_PVMOUSB(void)
 {
   return ((READ_BIT(PWR->SR2, PWR_SR2_PVMO_USB) == (PWR_SR2_PVMO_USB)) ? 1UL : 0UL);
 }
-#endif
+#endif /* PWR_PVM_SUPPORT */
 
 #if defined(PWR_SR2_PVDO)
 /**
@@ -1444,7 +1442,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsActiveFlag_PVDO(void)
 {
   return ((READ_BIT(PWR->SR2, PWR_SR2_PVDO) == (PWR_SR2_PVDO)) ? 1UL : 0UL);
 }
-#endif
+#endif /* PWR_SR2_PVDO */
 
 /**
   * @brief  Indicate whether the regulator is ready in the selected voltage

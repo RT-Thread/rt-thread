@@ -890,7 +890,7 @@ typedef struct
   *
   @endif
   * @param  __PLLSAI1N__ specifies the multiplication factor for PLLSAI1 VCO output clock.
-  *         This parameter must be a number between 8 and 86.
+  *         This parameter must be a number between 8 and 86 or 127 depending on devices.
   * @note   You have to set the PLLSAI1N parameter correctly to ensure that the VCO
   *         output frequency is between 64 and 344 MHz.
   *         PLLSAI1 clock frequency = f(PLLSAI1) multiplied by PLLSAI1N
@@ -974,7 +974,7 @@ typedef struct
   *         __HAL_RCC_PLL_CONFIG() macro)
   *
   * @param  __PLLSAI1N__ specifies the multiplication factor for PLLSAI1 VCO output clock.
-  *          This parameter must be a number between 8 and 86.
+  *          This parameter must be a number between 8 and 86 or 127 depending on devices.
   * @note   You have to set the PLLSAI1N parameter correctly to ensure that the VCO
   *         output frequency is between 64 and 344 MHz.
   *         Use to set PLLSAI1 clock frequency = f(PLLSAI1) multiplied by PLLSAI1N
@@ -1998,7 +1998,7 @@ typedef struct
 #if defined(LTDC)
 
 /** @brief  Macro to configure the LTDC clock.
-  * @param  __LTDC_CLKSOURCE__ specifies the DSI clock source.
+  * @param  __LTDC_CLKSOURCE__ specifies the LTDC clock source.
   *         This parameter can be one of the following values:
   *            @arg @ref RCC_LTDCCLKSOURCE_PLLSAI2_DIV2   PLLSAI2 divider R divided by 2 clock selected as LTDC clock
   *            @arg @ref RCC_LTDCCLKSOURCE_PLLSAI2_DIV4   PLLSAI2 divider R divided by 4 clock selected as LTDC clock
@@ -3097,7 +3097,11 @@ void              HAL_RCCEx_CRS_ErrorCallback(uint32_t Error);
 #define IS_RCC_PLLSAI1M_VALUE(__VALUE__)   ((1U <= (__VALUE__)) && ((__VALUE__) <= 8U))
 #endif /* RCC_PLLSAI1M_DIV_1_16_SUPPORT */
 
+#if defined(RCC_PLLSAI1N_MUL_8_127_SUPPORT)
+#define IS_RCC_PLLSAI1N_VALUE(__VALUE__)   ((8U <= (__VALUE__)) && ((__VALUE__) <= 127U))
+#else
 #define IS_RCC_PLLSAI1N_VALUE(__VALUE__)   ((8U <= (__VALUE__)) && ((__VALUE__) <= 86U))
+#endif /* RCC_PLLSAI1N_MUL_8_127_SUPPORT */
 
 #if defined(RCC_PLLSAI1P_DIV_2_31_SUPPORT)
 #define IS_RCC_PLLSAI1P_VALUE(__VALUE__)   (((__VALUE__) >= 2U) && ((__VALUE__) <= 31U))
@@ -3123,7 +3127,11 @@ void              HAL_RCCEx_CRS_ErrorCallback(uint32_t Error);
 #define IS_RCC_PLLSAI2M_VALUE(__VALUE__)   ((1U <= (__VALUE__)) && ((__VALUE__) <= 8U))
 #endif /* RCC_PLLSAI2M_DIV_1_16_SUPPORT */
 
+#if defined(RCC_PLLSAI2N_MUL_8_127_SUPPORT)
+#define IS_RCC_PLLSAI2N_VALUE(__VALUE__)   ((8U <= (__VALUE__)) && ((__VALUE__) <= 127U))
+#else
 #define IS_RCC_PLLSAI2N_VALUE(__VALUE__)   ((8U <= (__VALUE__)) && ((__VALUE__) <= 86U))
+#endif /* RCC_PLLSAI2N_MUL_8_127_SUPPORT */
 
 #if defined(RCC_PLLSAI2P_DIV_2_31_SUPPORT)
 #define IS_RCC_PLLSAI2P_VALUE(__VALUE__)   (((__VALUE__) >= 2U) && ((__VALUE__) <= 31U))
@@ -3163,7 +3171,11 @@ void              HAL_RCCEx_CRS_ErrorCallback(uint32_t Error);
 
 #define IS_RCC_CRS_ERRORLIMIT(__VALUE__)   (((__VALUE__) <= 0xFFU))
 
+#if defined(STM32L412xx) || defined(STM32L422xx)
+#define IS_RCC_CRS_HSI48CALIBRATION(__VALUE__) (((__VALUE__) <= 0x7FU))
+#else
 #define IS_RCC_CRS_HSI48CALIBRATION(__VALUE__) (((__VALUE__) <= 0x3FU))
+#endif /* STM32L412xx || STM32L422xx */
 
 #define IS_RCC_CRS_FREQERRORDIR(__DIR__)   (((__DIR__) == RCC_CRS_FREQERRORDIR_UP) || \
                                             ((__DIR__) == RCC_CRS_FREQERRORDIR_DOWN))

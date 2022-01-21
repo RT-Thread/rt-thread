@@ -178,7 +178,7 @@ typedef struct
 #define LL_UTILS_PACKAGETYPE_QFN32_PD       0x00000005U /*!< UFQFPN32 / LQFP32 Power Delivery (PD) package type  */
 #define LL_UTILS_PACKAGETYPE_QFN48          0x00000008U /*!< UFQFPN48 / LQFP488 package type                     */
 #define LL_UTILS_PACKAGETYPE_QFP64          0x0000000CU /*!< LQPF64 package type                                 */
-#endif
+#endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 /**
   * @}
   */
@@ -274,7 +274,7 @@ __STATIC_INLINE uint32_t LL_GetPackageType(void)
   return (uint32_t)(READ_REG(*((uint32_t *)PACKAGE_BASE_ADDRESS)) & 0x1FU);
 #else
   return (uint32_t)(READ_REG(*((uint32_t *)PACKAGE_BASE_ADDRESS)) & 0xFU);
-#endif
+#endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 }
 
 /**

@@ -456,10 +456,10 @@ typedef struct
   * @}
   */
 
-#if defined(TAMP_CR1_TAMP1E)
 /** @defgroup RTC_LL_EC_TAMPER  TAMPER
   * @{
   */
+#if defined(TAMP_CR1_TAMP1E)
 #define LL_RTC_TAMPER_1                    TAMP_CR1_TAMP1E /*!< Tamper 1 input detection */
 #endif /* TAMP_CR1_TAMP1E */
 #if defined(TAMP_CR1_TAMP2E)
@@ -472,10 +472,10 @@ typedef struct
   * @}
   */
 
-#if defined(TAMP_CR1_TAMP1E)
 /** @defgroup RTC_LL_EC_TAMPER_MASK  TAMPER MASK
   * @{
   */
+#if defined(TAMP_CR1_TAMP1E)
 #define LL_RTC_TAMPER_MASK_TAMPER1         TAMP_CR2_TAMP1MSK /*!< Tamper 1 event generates a trigger event. TAMP1F is masked and internally cleared by hardware. The backup registers are not erased */
 #endif /* TAMP_CR1_TAMP1E */
 #if defined(TAMP_CR1_TAMP2E)
@@ -488,10 +488,10 @@ typedef struct
   * @}
   */
 
-#if defined(TAMP_CR1_TAMP1E)
 /** @defgroup RTC_LL_EC_TAMPER_NOERASE  TAMPER NO ERASE
   * @{
   */
+#if defined(TAMP_CR1_TAMP1E)
 #define LL_RTC_TAMPER_NOERASE_TAMPER1      TAMP_CR2_TAMP1NOERASE /*!< Tamper 1 event does not erase the backup registers. */
 #endif /* TAMP_CR1_TAMP1E */
 #if defined(TAMP_CR1_TAMP2E)
@@ -547,10 +547,10 @@ typedef struct
   */
 #endif /* TAMP_FLTCR_TAMPFREQ */
 
-#if defined(TAMP_CR1_TAMP1E)
 /** @defgroup RTC_LL_EC_TAMPER_ACTIVELEVEL  TAMPER ACTIVE LEVEL
   * @{
   */
+#if defined(TAMP_CR1_TAMP1E)
 #define LL_RTC_TAMPER_ACTIVELEVEL_TAMP1    TAMP_CR2_TAMP1TRG /*!< Tamper 1 input falling edge (if TAMPFLT = 00) or staying high (if TAMPFLT != 00) triggers a tamper detection event */
 #endif /* TAMP_CR1_TAMP1E */
 #if defined(TAMP_CR1_TAMP2E)
@@ -563,10 +563,10 @@ typedef struct
   * @}
   */
 
-#if defined (RTC_TAMPCR_TAMP1E)
 /** @defgroup RTC_LL_EC_TAMPER  TAMPER
   * @{
   */
+#if defined (RTC_TAMPCR_TAMP1E)
 #define LL_RTC_TAMPER_1                    RTC_TAMPCR_TAMP1E /*!< RTC_TAMP1 input detection */
 #endif /* RTC_TAMPCR_TAMP1E */
 #if defined (RTC_TAMPCR_TAMP2E)
@@ -579,10 +579,10 @@ typedef struct
   * @}
   */
 
-#if defined (RTC_TAMPCR_TAMP1E)
 /** @defgroup RTC_LL_EC_TAMPER_MASK  TAMPER MASK
   * @{
   */
+#if defined (RTC_TAMPCR_TAMP1E)
 #define LL_RTC_TAMPER_MASK_TAMPER1         RTC_TAMPCR_TAMP1MF /*!< Tamper 1 event generates a trigger event. TAMP1F is masked and internally cleared by hardware.The backup registers are not erased */
 #endif /* RTC_TAMPCR_TAMP1E */
 #if defined (RTC_TAMPCR_TAMP2E)
@@ -595,10 +595,10 @@ typedef struct
   * @}
   */
 
-#if defined (RTC_TAMPCR_TAMP1E)
 /** @defgroup RTC_LL_EC_TAMPER_NOERASE  TAMPER NO ERASE
   * @{
   */
+#if defined (RTC_TAMPCR_TAMP1E)
 #define LL_RTC_TAMPER_NOERASE_TAMPER1      RTC_TAMPCR_TAMP1NOERASE /*!< Tamper 1 event does not erase the backup registers. */
 #endif /* RTC_TAMPCR_TAMP1E */
 #if defined (RTC_TAMPCR_TAMP2E)
@@ -654,10 +654,10 @@ typedef struct
   */
 #endif /* RTC_TAMPCR_TAMPFREQ */
 
-#if defined (RTC_TAMPCR_TAMP1E)
 /** @defgroup RTC_LL_EC_TAMPER_ACTIVELEVEL  TAMPER ACTIVE LEVEL
   * @{
   */
+#if defined (RTC_TAMPCR_TAMP1E)
 #define LL_RTC_TAMPER_ACTIVELEVEL_TAMP1    RTC_TAMPCR_TAMP1TRG /*!< RTC_TAMP1 input falling edge (if TAMPFLT = 00) or staying high (if TAMPFLT != 00) triggers a tamper detection event*/
 #endif /* RTC_TAMPCR_TAMP1E */
 #if defined (RTC_TAMPCR_TAMP2E)
@@ -670,10 +670,10 @@ typedef struct
   * @}
   */
 
-#if defined(TAMP_ATCR1_TAMP1AM)
 /** @defgroup RTC_LL_EC_ACTIVE_MODE   ACTIVE TAMPER MODE
   * @{
   */
+#if defined(TAMP_ATCR1_TAMP1AM)
 #define LL_RTC_TAMPER_ATAMP_TAMP1AM               TAMP_ATCR1_TAMP1AM /*!< tamper 1 is active */
 #endif /* TAMP_ATCR1_TAMP1AM */
 #if defined(TAMP_ATCR1_TAMP2AM)
@@ -703,10 +703,10 @@ typedef struct
   */
 #endif /* TAMP_ATCR1_ATCKSEL */
 
-#if defined(TAMP_ATCR1_TAMP1AM)
 /** @defgroup RTC_LL_EC_ACTIVE_OUTPUT_SELECTION   ACTIVE TAMPER OUTPUT SELECTION
   * @{
   */
+#if defined(TAMP_ATCR1_TAMP1AM)
 #define LL_RTC_TAMPER_ATAMP1IN_ATAMP1OUT  (0UL << TAMP_ATCR2_ATOSEL1_Pos)
 #define LL_RTC_TAMPER_ATAMP1IN_ATAMP2OUT  (1UL << TAMP_ATCR2_ATOSEL1_Pos)
 #define LL_RTC_TAMPER_ATAMP1IN_ATAMP3OUT  (2UL << TAMP_ATCR2_ATOSEL1_Pos)
@@ -1601,7 +1601,7 @@ __STATIC_INLINE uint32_t LL_RTC_TIME_GetSecond(RTC_TypeDef *RTCx)
   */
 __STATIC_INLINE void LL_RTC_TIME_Config(RTC_TypeDef *RTCx, uint32_t Format12_24, uint32_t Hours, uint32_t Minutes, uint32_t Seconds)
 {
-  register uint32_t temp;
+  uint32_t temp;
 
   temp = Format12_24                                                                                    | \
          (((Hours & 0xF0U) << (RTC_TR_HT_Pos - 4U)) | ((Hours & 0x0FU) << RTC_TR_HU_Pos))     | \
@@ -1629,7 +1629,7 @@ __STATIC_INLINE void LL_RTC_TIME_Config(RTC_TypeDef *RTCx, uint32_t Format12_24,
   */
 __STATIC_INLINE uint32_t LL_RTC_TIME_Get(RTC_TypeDef *RTCx)
 {
-  register uint32_t temp;
+  uint32_t temp;
 
   temp = READ_BIT(RTCx->TR, (RTC_TR_HT | RTC_TR_HU | RTC_TR_MNT | RTC_TR_MNU | RTC_TR_ST | RTC_TR_SU));
   return (uint32_t)((((((temp & RTC_TR_HT) >> RTC_TR_HT_Pos) << 4U) | ((temp & RTC_TR_HU) >> RTC_TR_HU_Pos)) << RTC_OFFSET_HOUR)       |  \
@@ -1931,7 +1931,7 @@ __STATIC_INLINE uint32_t LL_RTC_DATE_GetDay(RTC_TypeDef *RTCx)
   */
 __STATIC_INLINE void LL_RTC_DATE_Config(RTC_TypeDef *RTCx, uint32_t WeekDay, uint32_t Day, uint32_t Month, uint32_t Year)
 {
-  register uint32_t temp;
+  uint32_t temp;
 
   temp = (WeekDay << RTC_DR_WDU_Pos)                                                        | \
          (((Year & 0xF0U) << (RTC_DR_YT_Pos - 4U)) | ((Year & 0x0FU) << RTC_DR_YU_Pos))   | \
@@ -1959,7 +1959,7 @@ __STATIC_INLINE void LL_RTC_DATE_Config(RTC_TypeDef *RTCx, uint32_t WeekDay, uin
   */
 __STATIC_INLINE uint32_t LL_RTC_DATE_Get(RTC_TypeDef *RTCx)
 {
-  register uint32_t temp;
+  uint32_t temp;
 
   temp = READ_BIT(RTCx->DR, (RTC_DR_WDU | RTC_DR_MT | RTC_DR_MU | RTC_DR_DT | RTC_DR_DU | RTC_DR_YT | RTC_DR_YU));
   return (uint32_t)((((temp & RTC_DR_WDU) >> RTC_DR_WDU_Pos) << RTC_OFFSET_WEEKDAY) | \
@@ -2259,7 +2259,7 @@ __STATIC_INLINE uint32_t LL_RTC_ALMA_GetSecond(RTC_TypeDef *RTCx)
   */
 __STATIC_INLINE void LL_RTC_ALMA_ConfigTime(RTC_TypeDef *RTCx, uint32_t Format12_24, uint32_t Hours, uint32_t Minutes, uint32_t Seconds)
 {
-  register uint32_t temp;
+  uint32_t temp;
 
   temp = Format12_24 | (((Hours & 0xF0U) << (RTC_ALRMAR_HT_Pos - 4U)) | ((Hours & 0x0FU) << RTC_ALRMAR_HU_Pos))    | \
          (((Minutes & 0xF0U) << (RTC_ALRMAR_MNT_Pos - 4U)) | ((Minutes & 0x0FU) << RTC_ALRMAR_MNU_Pos)) | \
@@ -2625,7 +2625,7 @@ __STATIC_INLINE uint32_t LL_RTC_ALMB_GetSecond(RTC_TypeDef *RTCx)
   */
 __STATIC_INLINE void LL_RTC_ALMB_ConfigTime(RTC_TypeDef *RTCx, uint32_t Format12_24, uint32_t Hours, uint32_t Minutes, uint32_t Seconds)
 {
-  register uint32_t temp;
+  uint32_t temp;
 
   temp = Format12_24 | (((Hours & 0xF0U) << (RTC_ALRMBR_HT_Pos - 4U)) | ((Hours & 0x0FU) << RTC_ALRMBR_HU_Pos))    | \
          (((Minutes & 0xF0U) << (RTC_ALRMBR_MNT_Pos - 4U)) | ((Minutes & 0x0FU) << RTC_ALRMBR_MNU_Pos)) | \
@@ -3716,7 +3716,7 @@ __STATIC_INLINE uint32_t LL_RTC_WAKEUP_GetAutoReload(RTC_TypeDef *RTCx)
   */
 __STATIC_INLINE void LL_RTC_BAK_SetRegister(RTC_TypeDef *RTCx, uint32_t BackupRegister, uint32_t Data)
 {
-  register uint32_t tmp;
+  uint32_t tmp;
 
   tmp = (uint32_t)(&(RTCx->BKP0R));
   tmp += (BackupRegister * 4U);
@@ -3766,7 +3766,7 @@ __STATIC_INLINE void LL_RTC_BAK_SetRegister(RTC_TypeDef *RTCx, uint32_t BackupRe
   */
 __STATIC_INLINE uint32_t LL_RTC_BAK_GetRegister(RTC_TypeDef *RTCx, uint32_t BackupRegister)
 {
-  register uint32_t tmp;
+  uint32_t tmp;
 
   tmp = (uint32_t)(&(RTCx->BKP0R));
   tmp += (BackupRegister * 4U);
@@ -3819,7 +3819,7 @@ __STATIC_INLINE uint32_t LL_RTC_BAK_GetRegister(RTC_TypeDef *RTCx, uint32_t Back
   */
 __STATIC_INLINE void LL_RTC_BKP_SetRegister(TAMP_TypeDef *TAMPx, uint32_t BackupRegister, uint32_t Data)
 {
-  register uint32_t tmp = 0U;
+  uint32_t tmp = 0U;
 
   tmp = (uint32_t)(&(TAMPx->BKP0R));
   tmp += (BackupRegister * 4U);
@@ -3869,7 +3869,7 @@ __STATIC_INLINE void LL_RTC_BKP_SetRegister(TAMP_TypeDef *TAMPx, uint32_t Backup
   */
 __STATIC_INLINE uint32_t LL_RTC_BKP_GetRegister(TAMP_TypeDef *TAMPx, uint32_t BackupRegister)
 {
-  register uint32_t tmp = 0U;
+  uint32_t tmp = 0U;
 
   tmp = (uint32_t)(&(TAMPx->BKP0R));
   tmp += (BackupRegister * 4U);

@@ -60,7 +60,7 @@ typedef enum
 typedef struct
 {
   uint32_t HourFormat;      /*!< Specifies the RTC Hour Format.
-                                 This parameter can be a value of @ref RTC_Hour_Formats */
+                                 This parameter can be a value of @ref RTC_Hour_Formats_Definitions */
 
   uint32_t AsynchPrediv;    /*!< Specifies the RTC Asynchronous Predivider value.
                                  This parameter must be a number between Min_Data = 0x00 and Max_Data = 0x7F */
@@ -69,7 +69,7 @@ typedef struct
                                  This parameter must be a number between Min_Data = 0x00 and Max_Data = 0x7FFF */
 
   uint32_t OutPut;          /*!< Specifies which signal will be routed to the RTC output.
-                                 This parameter can be a value of @ref RTCEx_Output_selection_Definitions */
+                                 This parameter can be a value of @ref RTC_Output_selection_Definitions */
 
   uint32_t OutPutRemap;     /*!< Specifies the remap for RTC output.
                                  This parameter can be a value of @ref  RTC_Output_ALARM_OUT_Remap */
@@ -1217,6 +1217,7 @@ HAL_RTCStateTypeDef HAL_RTC_GetState(RTC_HandleTypeDef *hrtc);
   * @{
   */
 HAL_StatusTypeDef  RTC_EnterInitMode(RTC_HandleTypeDef *hrtc);
+HAL_StatusTypeDef  RTC_ExitInitMode(RTC_HandleTypeDef *hrtc);
 uint8_t            RTC_ByteToBcd2(uint8_t Value);
 uint8_t            RTC_Bcd2ToByte(uint8_t Value);
 

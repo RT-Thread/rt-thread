@@ -186,19 +186,20 @@ void ald_dma_irq_handler(void)
 	uint32_t i, reg = DMA0->IFLAG;
 
 	for (i = 0; i < DMA_CH_COUNT; ++i) {
-		if (READ_BIT(reg, (1 << i))) {
+		if (READ_BIT(reg, (1U << i))) {
+			DMA0->ICFR    = (1U << i);
+			DMA0->CHENCLR = (1U << i);
+
 			if (dma0_cbk[i].cplt_cbk != NULL)
 				dma0_cbk[i].cplt_cbk(dma0_cbk[i].cplt_arg);
-
-			ald_dma_clear_flag_status(DMA0, i);
 		}
 	}
 
 	if (READ_BIT(reg, (1U << DMA_ERR))) {
-		ald_dma_clear_flag_status(DMA0, DMA_ERR);
+		DMA0->ICFR = (1U << DMA_ERR);
 
 		for (i = 0; i < DMA_CH_COUNT; ++i) {
-			if (((DMA0->CHENSET >> i) & 0x1) && (dma0_cbk[i].err_cbk != NULL))
+			if (dma0_cbk[i].err_cbk != NULL)
 				dma0_cbk[i].err_cbk(dma0_cbk[i].err_arg);
 		}
 	}

@@ -103,7 +103,7 @@ typedef struct
   uint32_t SecureMode;             /*!< Secure mode activated or desactivated.
                                         This parameter can be a value of @ref FLASH_OB_SECURITY_MODE */
   uint32_t C2BootRegion;           /*!< CPU2 Secure Boot memory region(used for OPTIONBYTE_C2_BOOT_VECT).
-                                        This parameter can be a value of @ref C2_FLASH_OB_BOOT_REGION */
+                                        This parameter can be a value of @ref FLASH_C2_OB_BOOT_REGION */
   uint32_t C2SecureBootVectAddr;   /*!< CPU2 Secure Boot reset vector (used for OPTIONBYTE_C2_BOOT_VECT).
                                         This parameter contains the CPU2 boot reset start address within
                                         the selected memory region. Make sure this parameter is word aligned. */
@@ -503,7 +503,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup C2_FLASH_OB_BOOT_REGION CPU2 Option Bytes Reset Boot Vector
+/** @defgroup FLASH_C2_OB_BOOT_REGION CPU2 Option Bytes Reset Boot Vector
   * @{
   */
 #define OB_C2_BOOT_FROM_SRAM            0x00000000U        /*!< CPU2 boot from Sram  */

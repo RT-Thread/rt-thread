@@ -204,7 +204,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @param  __HANDLE__  COMP handle.
   * @retval None
   */
-
+  
 #if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
 #define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__) do{                                                   \
                                                      (__HANDLE__)->State = HAL_COMP_STATE_RESET;      \
@@ -220,7 +220,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @param __HANDLE__ COMP handle
   * @retval None
   */
-#define COMP_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_COMP_ERROR_NONE)
+#define COMP_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_COMP_ERROR_NONE) 
 
 /**
   * @}

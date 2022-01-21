@@ -36,7 +36,7 @@
 
 /** @addtogroup ETHEx
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /** @defgroup ETHEx_Exported_Types ETHEx Exported Types

@@ -5,7 +5,7 @@
   * @brief   Extended HASH HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the HASH peripheral for SHA-224 and SHA-256
-  *          alogrithms:
+  *          algorithms:
   *           + HASH or HMAC processing in polling mode
   *           + HASH or HMAC processing in interrupt mode
   *           + HASH or HMAC processing in DMA mode
@@ -46,10 +46,10 @@
 
         (##) In DMA mode, multi-buffer HASH and HMAC processing are possible.
 
-              (+++) HASH processing: once initialization is done, MDMAT bit must be set thru __HAL_HASH_SET_MDMAT() macro.
-             From that point, each buffer can be fed to the Peripheral thru HAL_HASHEx_xxx_Start_DMA() API.
+              (+++) HASH processing: once initialization is done, MDMAT bit must be set through __HAL_HASH_SET_MDMAT() macro.
+             From that point, each buffer can be fed to the Peripheral through HAL_HASHEx_xxx_Start_DMA() API.
              Before entering the last buffer, reset the MDMAT bit with __HAL_HASH_RESET_MDMAT()
-             macro then wrap-up the HASH processing in feeding the last input buffer thru the
+             macro then wrap-up the HASH processing in feeding the last input buffer through the
              same API HAL_HASHEx_xxx_Start_DMA(). The digest can then be retrieved with a call to
              API HAL_HASHEx_xxx_Finish().
 
@@ -388,7 +388,7 @@ HAL_StatusTypeDef HAL_HASHEx_SHA256_Accmlt_End_IT(HASH_HandleTypeDef *hhash, uin
  *
 @verbatim
  ===============================================================================
-                ##### DMA mode HASH extended  processing functionss #####
+                ##### DMA mode HASH extended  processing functions #####
  ===============================================================================
     [..]  This section provides functions allowing to calculate in DMA mode
           the hash value using one of the following algorithms:

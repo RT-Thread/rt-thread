@@ -40,7 +40,7 @@
         (++) max time (mS) = 1000 * (Counter - 0x40) / WWDG clock
     (+) Typical values:
         (++) Counter min (T[5;0] = 0x00) at 36MHz (PCLK1) with zero prescaler:
-             max timeout before reset: approximately 113.78Âµs
+             max timeout before reset: approximately 113.78�s
         (++) Counter max (T[5;0] = 0x3F) at 36MHz (PCLK1) with prescaler
              dividing by 8:
              max timeout before reset: approximately 58.25ms
@@ -55,7 +55,7 @@
     (+) Enable WWDG APB1 clock using __HAL_RCC_WWDG_CLK_ENABLE().
     (+) Configure the WWDG prescaler, refresh window value, counter value and early
         interrupt status using HAL_WWDG_Init() function. This will automatically
-        enable WWDG and start its downcounter. Time reference can be taken from
+        enable WWDG and start its downcounter. Time reference can be taken from 
         function exit. Care must be taken to provide a counter value
         greater than 0x40 to prevent generation of immediate reset.
     (+) If the Early Wakeup Interrupt (EWI) feature is enabled, an interrupt is

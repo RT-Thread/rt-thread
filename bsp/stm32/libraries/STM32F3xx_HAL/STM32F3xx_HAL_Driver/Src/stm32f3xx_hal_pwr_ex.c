@@ -7,7 +7,7 @@
   *          functionalities of the Power Controller (PWR) peripheral:
   *           + Extended Initialization and de-initialization functions
   *           + Extended Peripheral Control functions
-  *
+  *         
   ******************************************************************************
   * @attention
   *
@@ -48,7 +48,7 @@
 /**
   * @}
   */
-
+ 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -104,7 +104,7 @@
     *** SDADC power configuration ***
     ================================
     [..]
-      (+) On STM32F373xC/STM32F378xx devices, there are up to
+      (+) On STM32F373xC/STM32F378xx devices, there are up to 
           3 SDADC instances that can be enabled/disabled.
 
 @endverbatim
@@ -134,7 +134,7 @@ void HAL_PWR_ConfigPVD(PWR_PVDTypeDef *sConfigPVD)
 
   /* Set PLS[7:5] bits according to PVDLevel value */
   MODIFY_REG(PWR->CR, PWR_CR_PLS, sConfigPVD->PVDLevel);
-
+  
   /* Clear any previous config. Keep it clear if no event or IT mode is selected */
   __HAL_PWR_PVD_EXTI_DISABLE_EVENT();
   __HAL_PWR_PVD_EXTI_DISABLE_IT();
@@ -145,19 +145,19 @@ void HAL_PWR_ConfigPVD(PWR_PVDTypeDef *sConfigPVD)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_IT();
   }
-
+  
   /* Configure event mode */
   if((sConfigPVD->Mode & PVD_MODE_EVT) == PVD_MODE_EVT)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_EVENT();
   }
-
+  
   /* Configure the edge */
   if((sConfigPVD->Mode & PVD_RISING_EDGE) == PVD_RISING_EDGE)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_RISING_EDGE();
   }
-
+  
   if((sConfigPVD->Mode & PVD_FALLING_EDGE) == PVD_FALLING_EDGE)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_FALLING_EDGE();
@@ -170,7 +170,7 @@ void HAL_PWR_ConfigPVD(PWR_PVDTypeDef *sConfigPVD)
   */
 void HAL_PWR_EnablePVD(void)
 {
-  SET_BIT(PWR->CR, PWR_CR_PVDE);
+  SET_BIT(PWR->CR, PWR_CR_PVDE);  
 }
 
 /**
@@ -179,7 +179,7 @@ void HAL_PWR_EnablePVD(void)
   */
 void HAL_PWR_DisablePVD(void)
 {
-  CLEAR_BIT(PWR->CR, PWR_CR_PVDE);
+  CLEAR_BIT(PWR->CR, PWR_CR_PVDE);  
 }
 
 /**
@@ -232,7 +232,7 @@ void HAL_PWREx_EnableSDADC(uint32_t Analogx)
 
   /* Enable PWR clock interface for SDADC use */
   __HAL_RCC_PWR_CLK_ENABLE();
-
+    
   PWR->CR |= Analogx;
 }
 
@@ -246,7 +246,7 @@ void HAL_PWREx_DisableSDADC(uint32_t Analogx)
 {
   /* Check the parameters */
   assert_param(IS_PWR_SDADC_ANALOG(Analogx));
-
+  
   PWR->CR &= ~Analogx;
 }
 

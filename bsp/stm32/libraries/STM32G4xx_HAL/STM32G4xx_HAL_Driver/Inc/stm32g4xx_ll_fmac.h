@@ -201,7 +201,8 @@ __STATIC_INLINE void LL_FMAC_SetX1BufferSize(FMAC_TypeDef *FMACx, uint8_t Buffer
   * @brief  Return X1 buffer size.
   * @rmtoll X1BUFCFG     X1_BUF_SIZE   LL_FMAC_GetX1BufferSize
   * @param  FMACx FMAC instance
-  * @retval uint8_t Number of 16-bit words allocated to the input buffer (including the optional "headroom") (value between Min_Data=0x01 and Max_Data=0xFF).
+  * @retval uint8_t Number of 16-bit words allocated to the input buffer
+  *                 (including the optional "headroom") (value between Min_Data=0x01 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetX1BufferSize(FMAC_TypeDef *FMACx)
 {
@@ -225,7 +226,8 @@ __STATIC_INLINE void LL_FMAC_SetX1Base(FMAC_TypeDef *FMACx, uint8_t Base)
   * @brief  Return X1 base.
   * @rmtoll X1BUFCFG     X1_BASE       LL_FMAC_GetX1Base
   * @param  FMACx FMAC instance
-  * @retval uint8_t Base address of the input buffer (X1) within the internal memory (value between Min_Data=0x00 and Max_Data=0xFF).
+  * @retval uint8_t Base address of the input buffer (X1) within the internal memory
+  *                      (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetX1Base(FMAC_TypeDef *FMACx)
 {
@@ -249,7 +251,8 @@ __STATIC_INLINE void LL_FMAC_SetX2BufferSize(FMAC_TypeDef *FMACx, uint8_t Buffer
   * @brief  Return X2 buffer size.
   * @rmtoll X2BUFCFG     X2_BUF_SIZE   LL_FMAC_GetX2BufferSize
   * @param  FMACx FMAC instance
-  * @retval uint8_t Number of 16-bit words allocated to the coefficient buffer (value between Min_Data=0x01 and Max_Data=0xFF).
+  * @retval uint8_t Number of 16-bit words allocated to the coefficient buffer
+  *                 (value between Min_Data=0x01 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetX2BufferSize(FMAC_TypeDef *FMACx)
 {
@@ -273,7 +276,8 @@ __STATIC_INLINE void LL_FMAC_SetX2Base(FMAC_TypeDef *FMACx, uint8_t Base)
   * @brief  Return X2 base.
   * @rmtoll X2BUFCFG     X2_BASE       LL_FMAC_GetX2Base
   * @param  FMACx FMAC instance
-  * @retval uint8_t Base address of the coefficient buffer (X2) within the internal memory (value between Min_Data=0x00 and Max_Data=0xFF).
+  * @retval uint8_t Base address of the coefficient buffer (X2) within the internal memory
+  *                      (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetX2Base(FMAC_TypeDef *FMACx)
 {
@@ -328,7 +332,8 @@ __STATIC_INLINE void LL_FMAC_SetYBufferSize(FMAC_TypeDef *FMACx, uint8_t BufferS
   * @brief  Return Y buffer size.
   * @rmtoll YBUFCFG      Y_BUF_SIZE    LL_FMAC_GetYBufferSize
   * @param  FMACx FMAC instance
-  * @retval uint8_t Number of 16-bit words allocated to the output buffer (including the optional "headroom" - value between Min_Data=0x01 and Max_Data=0xFF).
+  * @retval uint8_t Number of 16-bit words allocated to the output buffer
+  *                (including the optional "headroom" - value between Min_Data=0x01 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetYBufferSize(FMAC_TypeDef *FMACx)
 {
@@ -352,7 +357,8 @@ __STATIC_INLINE void LL_FMAC_SetYBase(FMAC_TypeDef *FMACx, uint8_t Base)
   * @brief  Return Y base.
   * @rmtoll YBUFCFG      Y_BASE        LL_FMAC_GetYBase
   * @param  FMACx FMAC instance
-  * @retval uint8_t Base address of the output buffer (Y) within the internal memory (value between Min_Data=0x00 and Max_Data=0xFF).
+  * @retval uint8_t Base address of the output buffer (Y) within the internal memory
+  *                      (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetYBase(FMAC_TypeDef *FMACx)
 {
@@ -490,7 +496,8 @@ __STATIC_INLINE void LL_FMAC_SetParamP(FMAC_TypeDef *FMACx, uint8_t Param)
   * @brief  Return input parameter P.
   * @rmtoll PARAM        P             LL_FMAC_GetParamP
   * @param  FMACx FMAC instance
-  * @retval uint8_t Parameter P (vector length, number of filter taps, etc.) (value between Min_Data=0x00 and Max_Data=0xFF).
+  * @retval uint8_t Parameter P (vector length, number of filter taps, etc.)
+  *                 (value between Min_Data=0x00 and Max_Data=0xFF).
   */
 __STATIC_INLINE uint8_t LL_FMAC_GetParamP(FMAC_TypeDef *FMACx)
 {
@@ -938,7 +945,8 @@ __STATIC_INLINE uint16_t LL_FMAC_ReadData(FMAC_TypeDef *FMACx)
 __STATIC_INLINE void LL_FMAC_ConfigX1(FMAC_TypeDef *FMACx, uint32_t Watermark, uint8_t Base, uint8_t BufferSize)
 {
   MODIFY_REG(FMACx->X1BUFCFG, FMAC_X1BUFCFG_FULL_WM | FMAC_X1BUFCFG_X1_BASE | FMAC_X1BUFCFG_X1_BUF_SIZE,
-             Watermark | (((uint32_t)Base) << FMAC_X1BUFCFG_X1_BASE_Pos) | (((uint32_t)BufferSize) << FMAC_X1BUFCFG_X1_BUF_SIZE_Pos));
+             Watermark | (((uint32_t)Base) << FMAC_X1BUFCFG_X1_BASE_Pos) |
+             (((uint32_t)BufferSize) << FMAC_X1BUFCFG_X1_BUF_SIZE_Pos));
 }
 
 /**
@@ -955,7 +963,8 @@ __STATIC_INLINE void LL_FMAC_ConfigX1(FMAC_TypeDef *FMACx, uint32_t Watermark, u
 __STATIC_INLINE void LL_FMAC_ConfigX2(FMAC_TypeDef *FMACx, uint8_t Base, uint8_t BufferSize)
 {
   MODIFY_REG(FMACx->X2BUFCFG, FMAC_X2BUFCFG_X2_BASE | FMAC_X2BUFCFG_X2_BUF_SIZE,
-             (((uint32_t)Base) << FMAC_X2BUFCFG_X2_BASE_Pos) | (((uint32_t)BufferSize) << FMAC_X2BUFCFG_X2_BUF_SIZE_Pos));
+             (((uint32_t)Base) << FMAC_X2BUFCFG_X2_BASE_Pos) |
+             (((uint32_t)BufferSize) << FMAC_X2BUFCFG_X2_BUF_SIZE_Pos));
 }
 
 /**
@@ -978,7 +987,8 @@ __STATIC_INLINE void LL_FMAC_ConfigX2(FMAC_TypeDef *FMACx, uint8_t Base, uint8_t
 __STATIC_INLINE void LL_FMAC_ConfigY(FMAC_TypeDef *FMACx, uint32_t Watermark, uint8_t Base, uint8_t BufferSize)
 {
   MODIFY_REG(FMACx->YBUFCFG, FMAC_YBUFCFG_EMPTY_WM | FMAC_YBUFCFG_Y_BASE | FMAC_YBUFCFG_Y_BUF_SIZE,
-             Watermark | (((uint32_t)Base) << FMAC_YBUFCFG_Y_BASE_Pos) | (((uint32_t)BufferSize) << FMAC_YBUFCFG_Y_BUF_SIZE_Pos));
+             Watermark | (((uint32_t)Base) << FMAC_YBUFCFG_Y_BASE_Pos) |
+             (((uint32_t)BufferSize) << FMAC_YBUFCFG_Y_BUF_SIZE_Pos));
 }
 
 /**
@@ -1010,7 +1020,8 @@ __STATIC_INLINE void LL_FMAC_ConfigFunc(FMAC_TypeDef *FMACx, uint8_t Start, uint
                                         uint8_t ParamQ, uint8_t ParamR)
 {
   MODIFY_REG(FMACx->PARAM, FMAC_PARAM_START | FMAC_PARAM_FUNC | FMAC_PARAM_P | FMAC_PARAM_Q | FMAC_PARAM_R,
-             (((uint32_t)Start) << FMAC_PARAM_START_Pos) | Function | (((uint32_t)ParamP) << FMAC_PARAM_P_Pos) | (((uint32_t)ParamQ) << FMAC_PARAM_Q_Pos) | (((uint32_t)ParamR) << FMAC_PARAM_R_Pos));
+             (((uint32_t)Start) << FMAC_PARAM_START_Pos) | Function | (((uint32_t)ParamP) << FMAC_PARAM_P_Pos) |
+             (((uint32_t)ParamQ) << FMAC_PARAM_Q_Pos) | (((uint32_t)ParamR) << FMAC_PARAM_R_Pos));
 }
 
 /**

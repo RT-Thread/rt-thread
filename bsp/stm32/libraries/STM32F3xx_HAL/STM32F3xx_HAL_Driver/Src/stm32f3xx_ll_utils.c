@@ -302,9 +302,9 @@ ErrorStatus LL_SetFlashLatency(uint32_t Frequency)
   * @note   Function is based on the following formula:
   *         - PLL output frequency = ((HSI frequency / PREDIV) * PLLMUL)
   *         - PREDIV: Set to 2 for few devices
-  *         - PLLMUL: The application software must set correctly the PLL multiplication factor to
+  *         - PLLMUL: The application software must set correctly the PLL multiplication factor to 
   *                   not exceed 72MHz
-  * @note   FLASH latency can be modified through this function.
+  * @note   FLASH latency can be modified through this function. 
   * @param  UTILS_PLLInitStruct pointer to a @ref LL_UTILS_PLLInitTypeDef structure that contains
   *                             the configuration information for the PLL.
   * @param  UTILS_ClkInitStruct pointer to a @ref LL_UTILS_ClkInitTypeDef structure that contains
@@ -367,9 +367,9 @@ ErrorStatus LL_PLL_ConfigSystemClock_HSI(LL_UTILS_PLLInitTypeDef *UTILS_PLLInitS
   * @note   Function is based on the following formula:
   *         - PLL output frequency = ((HSI frequency / PREDIV) * PLLMUL)
   *         - PREDIV: Set to 2 for few devices
-  *         - PLLMUL: The application software must set correctly the PLL multiplication factor to
+  *         - PLLMUL: The application software must set correctly the PLL multiplication factor to 
   *                   not exceed @ref UTILS_PLL_OUTPUT_MAX
-  * @note   FLASH latency can be modified through this function.
+  * @note   FLASH latency can be modified through this function. 
   * @param  HSEFrequency Value between Min_Data = 4000000 and Max_Data = 32000000
   * @param  HSEBypass This parameter can be one of the following values:
   *         @arg @ref LL_UTILS_HSEBYPASS_ON
@@ -471,7 +471,7 @@ static uint32_t UTILS_GetPLLOutputFrequency(uint32_t PLL_InputFrequency, LL_UTIL
   assert_param(IS_LL_UTILS_PLLMUL_VALUE(UTILS_PLLInitStruct->PLLMul));
 
   /* Check different PLL parameters according to RM                          */
-  /* The application software must set correctly the PLL multiplication factor to
+  /* The application software must set correctly the PLL multiplication factor to 
      not exceed @ref UTILS_PLL_OUTPUT_MAX */
 #if defined(RCC_PLLSRC_PREDIV1_SUPPORT)
   pllfreq = __LL_RCC_CALC_PLLCLK_FREQ(PLL_InputFrequency, UTILS_PLLInitStruct->PLLMul, UTILS_PLLInitStruct->PLLDiv);

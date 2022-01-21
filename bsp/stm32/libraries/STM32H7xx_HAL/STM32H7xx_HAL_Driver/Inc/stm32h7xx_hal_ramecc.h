@@ -264,8 +264,8 @@ HAL_StatusTypeDef HAL_RAMECC_UnRegisterCallback  (RAMECC_HandleTypeDef *hramecc)
   * @}
   */
 
-/** @defgroup RAMECC_Exported_Functions_Group3 Error informations functions
-  * @brief    Error informations functions
+/** @defgroup RAMECC_Exported_Functions_Group3 Error information functions
+  * @brief    Error information functions
   * @{
   */
 uint32_t HAL_RAMECC_GetFailingAddress        (RAMECC_HandleTypeDef *hramecc);
@@ -278,8 +278,8 @@ uint32_t HAL_RAMECC_IsECCDoubleErrorDetected (RAMECC_HandleTypeDef *hramecc);
   * @}
   */
 
-/** @defgroup RAMECC_Exported_Functions_Group3 Error informations functions
-  * @brief    Error informations functions
+/** @defgroup RAMECC_Exported_Functions_Group3 Error information functions
+  * @brief    Error information functions
   * @{
   */
 HAL_RAMECC_StateTypeDef HAL_RAMECC_GetState (RAMECC_HandleTypeDef *hramecc);

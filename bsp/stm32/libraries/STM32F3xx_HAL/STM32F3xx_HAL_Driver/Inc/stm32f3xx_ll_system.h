@@ -133,11 +133,11 @@ extern "C" {
 /** @defgroup SYSTEM_LL_EC_ADC24_DMA_REMAP SYSCFG ADC DMA request REMAP
   * @{
   */
-#if defined (SYSCFG_CFGR1_ADC24_DMA_RMP)
+#if defined (SYSCFG_CFGR1_ADC24_DMA_RMP) 
 #define LL_SYSCFG_ADC24_RMP_DMA2_CH12    (SYSCFG_OFFSET_CFGR1 << 24U | SYSCFG_CFGR1_ADC24_DMA_RMP << 8U | (uint32_t)0x00000000U)        /*!< ADC24 DMA requests mapped on DMA2 channels 1 and 2 */
 #define LL_SYSCFG_ADC24_RMP_DMA2_CH34    (SYSCFG_OFFSET_CFGR1 << 24U | SYSCFG_CFGR1_ADC24_DMA_RMP << 8U | SYSCFG_CFGR1_ADC24_DMA_RMP)   /*!< ADC24 DMA requests mapped on DMA2 channels 3 and 4 */
 #endif /*SYSCFG_CFGR1_ADC24_DMA_RMP*/
-#if defined (SYSCFG_CFGR3_ADC2_DMA_RMP)
+#if defined (SYSCFG_CFGR3_ADC2_DMA_RMP) 
 #define LL_SYSCFG_ADC2_RMP_DMA1_CH2      (SYSCFG_OFFSET_CFGR3 << 24U | SYSCFG_CFGR3_ADC2_DMA_RMP_0 << 8U | (uint32_t)0x00000000U)       /*!< ADC2 mapped on DMA1 channel 2 */
 #define LL_SYSCFG_ADC2_RMP_DMA1_CH4      (SYSCFG_OFFSET_CFGR3 << 24U | SYSCFG_CFGR3_ADC2_DMA_RMP_0 << 8U | SYSCFG_CFGR3_ADC2_DMA_RMP_0) /*!< ADC2 mapped on DMA1 channel 4 */
 #define LL_SYSCFG_ADC2_RMP_DMA2          (SYSCFG_OFFSET_CFGR3 << 24U | SYSCFG_CFGR3_ADC2_DMA_RMP_1 << 8U | (uint32_t)0x00000000U)       /*!< ADC2 mapped on DMA2 */
@@ -580,7 +580,7 @@ __STATIC_INLINE void LL_SYSCFG_SetRemapDMA_I2C(uint32_t Remap)
   */
 __STATIC_INLINE void LL_SYSCFG_SetRemapDMA_ADC(uint32_t Remap)
 {
-  __IO uint32_t *reg = (__IO uint32_t *)(uint32_t)(SYSCFG_BASE + (Remap >> 24U));
+  __IO uint32_t *reg = (__IO uint32_t *)(uint32_t)(SYSCFG_BASE + (Remap >> 24U)); 
   MODIFY_REG(*reg, (Remap & 0x00FF0000U) >> 8U, (Remap & 0x0000FFFFU));
 }
 #endif /* SYSCFG_CFGR1_ADC24_DMA_RMP || SYSCFG_CFGR3_ADC2_DMA_RMP */
@@ -723,7 +723,7 @@ __STATIC_INLINE void LL_SYSCFG_SetRemapTrigger_ADC(uint32_t Remap)
   */
 __STATIC_INLINE void LL_SYSCFG_SetRemapTrigger_DAC(uint32_t Remap)
 {
-  __IO uint32_t *reg = (__IO uint32_t *)(uint32_t)(SYSCFG_BASE + (Remap >> 24U));
+  __IO uint32_t *reg = (__IO uint32_t *)(uint32_t)(SYSCFG_BASE + (Remap >> 24U)); 
   MODIFY_REG(*reg, (Remap & 0x00F00F00U) >> 4U, (Remap & 0x000F00F0U));
 }
 #endif /* SYSCFG_CFGR1_DAC1_TRIG1_RMP || SYSCFG_CFGR3_TRIGGER_RMP */

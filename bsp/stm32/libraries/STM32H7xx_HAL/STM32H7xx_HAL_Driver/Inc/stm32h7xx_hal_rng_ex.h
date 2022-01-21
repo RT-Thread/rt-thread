@@ -32,8 +32,8 @@ extern "C" {
   * @{
   */
 
-#if defined (RNG)
-#if defined (RNG_CR_CONDRST)
+#if defined(RNG)
+#if defined(RNG_CR_CONDRST)
 
 /** @defgroup RNGEx RNGEx
   * @brief RNG Extension HAL module driver
@@ -71,7 +71,7 @@ typedef struct
   */
 
 /** @defgroup RNGEX_Clock_Divider_Factor  Value used to configure an internal
- *            programmable divider acting on the incoming RNG clock
+  *            programmable divider acting on the incoming RNG clock
   * @{
   */
 #define RNG_CLKDIV_BY_1       (0x00000000UL)      /*!< No clock division  */
@@ -184,8 +184,8 @@ typedef struct
 
 
 /**
- * @}
- */
+  * @}
+  */
 
 /* Private functions ---------------------------------------------------------*/
 /** @defgroup RNGEx_Private_Functions RNGEx Private Functions
@@ -212,9 +212,10 @@ HAL_StatusTypeDef HAL_RNGEx_LockConfig(RNG_HandleTypeDef *hrng);
   * @}
   */
 
-/**
-  * @}
+/** @addtogroup RNGEx_Exported_Functions_Group2
+  * @{
   */
+HAL_StatusTypeDef HAL_RNGEx_RecoverSeedError(RNG_HandleTypeDef *hrng);
 
 /**
   * @}
@@ -224,7 +225,15 @@ HAL_StatusTypeDef HAL_RNGEx_LockConfig(RNG_HandleTypeDef *hrng);
   * @}
   */
 
-#endif  /* CONDRST */
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+#endif /* RNG_CR_CONDRST */
 #endif /* RNG */
 
 /**

@@ -16,6 +16,10 @@
 #include <rtgui/rtgui_server.h>
 #elif defined(PKG_USING_LITTLEVGL2RTT)
 #include <littlevgl2rtt.h>
+#elif defined(PKG_USING_LVGL)
+#include <lvgl.h>
+#include <lv_port_indev.h>
+static rt_bool_t touch_down = RT_FALSE;
 #endif
 #define BSP_TOUCH_SAMPLE_HZ    (50)
 
@@ -50,6 +54,9 @@ static void post_down_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 #elif defined(PKG_USING_LITTLEVGL2RTT)
     littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_DOWN);
+#elif defined(PKG_USING_LVGL)
+    touch_down = RT_TRUE;
+    lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
 #endif
 }
 
@@ -70,6 +77,8 @@ static void post_motion_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 #elif defined(PKG_USING_LITTLEVGL2RTT)
     littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_MOVE);
+#elif defined(PKG_USING_LVGL)
+    lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
 #endif
 }
 
@@ -90,6 +99,9 @@ static void post_up_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 #elif defined(PKG_USING_LITTLEVGL2RTT)
     littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_MOVE);
+#elif defined(PKG_USING_LVGL)
+    touch_down = RT_FALSE;
+    lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
 #endif
 }
 

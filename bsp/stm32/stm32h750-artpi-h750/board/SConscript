@@ -2,6 +2,8 @@ import os
 import rtconfig
 from building import *
 
+Import('SDK_LIB')
+
 objs = []
 cwd = GetCurrentDir()
 list = os.listdir(cwd)
@@ -43,12 +45,14 @@ path = [cwd]
 path += [cwd + '/CubeMX_Config/Core/Inc']
 path += [cwd + '/port']
 
+startup_path_prefix = SDK_LIB
+
 if rtconfig.CROSS_TOOL == 'gcc':
-    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32h750xx.s']
+    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32h750xx.s']
 elif rtconfig.CROSS_TOOL == 'keil':
-    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32h750xx.s']
+    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32h750xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/iar/startup_stm32h750xx.s']
+    src += [startup_path_prefix + '/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/iar/startup_stm32h750xx.s']
     
 # STM32H743xx || STM32H750xx || STM32F753xx
 # You can select chips from the list above

@@ -494,8 +494,8 @@ void HAL_ETHEx_DisableVLANProcessing(ETH_HandleTypeDef *heth)
   * @brief  Enters the Low Power Idle (LPI) mode
   * @param  heth: pointer to a ETH_HandleTypeDef structure that contains
   *         the configuration information for ETHERNET module
-  * @param  TxAutomate: Enable/Disbale automate enter/exit LPI mode.
-  * @param  TxClockStop: Enable/Disbale Tx clock stop in LPI mode.
+  * @param  TxAutomate: Enable/Disable automate enter/exit LPI mode.
+  * @param  TxClockStop: Enable/Disable Tx clock stop in LPI mode.
   * @retval None
   */
 void HAL_ETHEx_EnterLPIMode(ETH_HandleTypeDef *heth, FunctionalState TxAutomate, FunctionalState TxClockStop)

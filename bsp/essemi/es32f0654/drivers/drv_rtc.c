@@ -24,11 +24,11 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <rtdevice.h>  
+#include <rtdevice.h>
 #include <sys/time.h>
 #include <string.h>
 #include "board.h"
-#include "drv_rtc.h" 
+#include "drv_rtc.h"
 
 #ifdef RT_USING_RTC
 
@@ -129,7 +129,7 @@ int rt_hw_rtc_init(void)
     rt_err_t ret = RT_EOK;
     static struct rt_device rtc_dev;
     rtc_init_t rtc_initstruct;
-    
+
     /* enable clk */
     ald_rtc_source_select(ES_RTC_CLK_SOURCE);
 
@@ -138,7 +138,7 @@ int rt_hw_rtc_init(void)
         CMU_LOSC_ENABLE();
         ald_cmu_losc_safe_config(ENABLE);
     }
-    
+
     /* set default time */
     RTC_UNLOCK();
     WRITE_REG(RTC->TIME, 0x134251);
@@ -150,7 +150,7 @@ int rt_hw_rtc_init(void)
     rtc_initstruct.synch_pre_div = 32767;
     rtc_initstruct.output = RTC_OUTPUT_DISABLE;
     rtc_initstruct.output_polarity = RTC_OUTPUT_POLARITY_HIGH;
-	
+
     __rtc_init(&rtc_initstruct);
 
     rtc_dev.type = RT_Device_Class_RTC;

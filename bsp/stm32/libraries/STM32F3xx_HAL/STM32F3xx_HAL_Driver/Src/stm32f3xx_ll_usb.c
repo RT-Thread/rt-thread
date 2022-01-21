@@ -172,6 +172,7 @@ HAL_StatusTypeDef USB_DevInit(USB_TypeDef *USBx, USB_CfgTypeDef cfg)
   return HAL_OK;
 }
 
+#if defined (HAL_PCD_MODULE_ENABLED)
 /**
   * @brief  Activate and configure an endpoint
   * @param  USBx Selected device
@@ -234,22 +235,30 @@ HAL_StatusTypeDef USB_ActivateEndpoint(USB_TypeDef *USBx, USB_EPTypeDef *ep)
     }
     else
     {
-      /*Set the endpoint Receive buffer address */
+      /* Set the endpoint Receive buffer address */
       PCD_SET_EP_RX_ADDRESS(USBx, ep->num, ep->pmaadress);
 
-      /*Set the endpoint Receive buffer counter*/
+      /* Set the endpoint Receive buffer counter */
       PCD_SET_EP_RX_CNT(USBx, ep->num, ep->maxpacket);
       PCD_CLEAR_RX_DTOG(USBx, ep->num);
 
-      /* Configure VALID status for the Endpoint*/
+      /* Configure VALID status for the Endpoint */
       PCD_SET_EP_RX_STATUS(USBx, ep->num, USB_EP_RX_VALID);
     }
   }
-  /*Double Buffer*/
+  /* Double Buffer */
   else
   {
-    /* Set the endpoint as double buffered */
-    PCD_SET_EP_DBUF(USBx, ep->num);
+    if (ep->type == EP_TYPE_BULK)
+    {
+      /* Set bulk endpoint as double buffered */
+      PCD_SET_BULK_EP_DBUF(USBx, ep->num);
+    }
+    else
+    {
+      /* Set the ISOC endpoint in double buffer mode */
+      PCD_CLEAR_EP_KIND(USBx, ep->num);
+    }
 
     /* Set buffer address for double buffered mode */
     PCD_SET_EP_DBUF_ADDR(USBx, ep->num, ep->pmaaddr0, ep->pmaaddr1);
@@ -382,7 +391,7 @@ HAL_StatusTypeDef USB_EPStartXfer(USB_TypeDef *USBx, USB_EPTypeDef *ep)
         if (ep->xfer_len_db > ep->maxpacket)
         {
           /* enable double buffer */
-          PCD_SET_EP_DBUF(USBx, ep->num);
+          PCD_SET_BULK_EP_DBUF(USBx, ep->num);
 
           /* each Time to write in PMA xfer_len_db will */
           ep->xfer_len_db -= len;
@@ -448,8 +457,8 @@ HAL_StatusTypeDef USB_EPStartXfer(USB_TypeDef *USBx, USB_EPTypeDef *ep)
         {
           len = ep->xfer_len_db;
 
-          /* disable double buffer mode */
-          PCD_CLEAR_EP_DBUF(USBx, ep->num);
+          /* disable double buffer mode for Bulk endpoint */
+          PCD_CLEAR_BULK_EP_DBUF(USBx, ep->num);
 
           /* Set Tx count with nbre of byte to be transmitted */
           PCD_SET_EP_TX_CNT(USBx, ep->num, len);
@@ -458,27 +467,31 @@ HAL_StatusTypeDef USB_EPStartXfer(USB_TypeDef *USBx, USB_EPTypeDef *ep)
           /* Write the user buffer to USB PMA */
           USB_WritePMA(USBx, ep->xfer_buff, pmabuffer, (uint16_t)len);
         }
-      }/* end if bulk double buffer */
-
-      /* manage isochronous double buffer IN mode */
-      else
+      }
+      else /* manage isochronous double buffer IN mode */
       {
-        /* Write the data to the USB endpoint */
+        /* each Time to write in PMA xfer_len_db will */
+        ep->xfer_len_db -= len;
+
+        /* Fill the data buffer */
         if ((PCD_GET_ENDPOINT(USBx, ep->num) & USB_EP_DTOG_TX) != 0U)
         {
           /* Set the Double buffer counter for pmabuffer1 */
           PCD_SET_EP_DBUF1_CNT(USBx, ep->num, ep->is_in, len);
           pmabuffer = ep->pmaaddr1;
+
+          /* Write the user buffer to USB PMA */
+          USB_WritePMA(USBx, ep->xfer_buff, pmabuffer, (uint16_t)len);
         }
         else
         {
           /* Set the Double buffer counter for pmabuffer0 */
           PCD_SET_EP_DBUF0_CNT(USBx, ep->num, ep->is_in, len);
           pmabuffer = ep->pmaaddr0;
-        }
 
-        USB_WritePMA(USBx, ep->xfer_buff, pmabuffer, (uint16_t)len);
-        PCD_FreeUserBuffer(USBx, ep->num, ep->is_in);
+          /* Write the user buffer to USB PMA */
+          USB_WritePMA(USBx, ep->xfer_buff, pmabuffer, (uint16_t)len);
+        }
       }
     }
 
@@ -604,6 +617,7 @@ HAL_StatusTypeDef USB_EPClearStall(USB_TypeDef *USBx, USB_EPTypeDef *ep)
 
   return HAL_OK;
 }
+#endif /* defined (HAL_PCD_MODULE_ENABLED) */
 
 /**
   * @brief  USB_StopDevice Stop the usb device mode

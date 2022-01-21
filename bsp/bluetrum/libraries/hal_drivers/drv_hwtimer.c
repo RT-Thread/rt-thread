@@ -101,7 +101,7 @@ static void _rt_device_hwtimer_isr(rt_hwtimer_t *timer)
 
 static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
 {
-    uint32_t prescaler_value = 0;
+    rt_uint32_t prescaler_value = 0;
     hal_sfr_t tim = RT_NULL;
     struct ab32_hwtimer *tim_device = RT_NULL;
 

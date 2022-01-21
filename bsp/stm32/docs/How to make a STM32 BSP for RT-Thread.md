@@ -221,7 +221,6 @@ The specifications of making STM32 BSP are mainly divided into three aspects: en
 - The system idle thread stack size is uniformly set to 256 (Macro: IDLE_THREAD_STACK_SIZE) 
 - Turn on automatic component initialization (Macro: RT_USING_COMPONENTS_INIT) 
 - Need to enable the user main option (Macro: RT_USING_USER_MAIN) 
-- Disable libc by default (Macro: RT_USING_LIBC) 
 - FinSH only uses MSH mode by default (Macro: FINSH_USING_MSH_ONLY) 
 
 #### 4.1.3 IDE configuration

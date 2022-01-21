@@ -40,7 +40,7 @@
  extern "C" {
 #endif /* __cplusplus */
 
-  /** @addtogroup Configuration_section_for_CMSIS
+/** @addtogroup Configuration_section_for_CMSIS
   * @{
   */
 /**
@@ -64,7 +64,7 @@
  *        in @ref Library_configuration_section 
  */
 
- /*!< Interrupt Number Definition */
+/*!< Interrupt Number Definition */
 typedef enum
 {
 /******  Cortex-M0 Processor Exceptions Numbers **************************************************************/
@@ -557,7 +557,16 @@ typedef struct
   * @{
   */
 
-  /** @addtogroup Peripheral_Registers_Bits_Definition
+/** @addtogroup Hardware_Constant_Definition
+  * @{
+  */
+#define LSI_STARTUP_TIME 85U /*!< LSI Maximum startup time in us */
+
+/**
+  * @}
+  */
+
+/** @addtogroup Peripheral_Registers_Bits_Definition
   * @{
   */
 
@@ -2543,7 +2552,7 @@ typedef struct
 #define GPIO_AFRL_AFSEL7_Msk            (0xFUL << GPIO_AFRL_AFSEL7_Pos)         /*!< 0xF0000000 */
 #define GPIO_AFRL_AFSEL7                GPIO_AFRL_AFSEL7_Msk  
 
-/* Legacy aliases */                  
+/* Legacy aliases */
 #define GPIO_AFRL_AFRL0_Pos             GPIO_AFRL_AFSEL0_Pos                                  
 #define GPIO_AFRL_AFRL0_Msk             GPIO_AFRL_AFSEL0_Msk
 #define GPIO_AFRL_AFRL0                 GPIO_AFRL_AFSEL0
@@ -3131,8 +3140,8 @@ typedef struct
 #define RCC_CFGR_PPRE_DIV16_Msk                  (0x7UL << RCC_CFGR_PPRE_DIV16_Pos) /*!< 0x00000700 */
 #define RCC_CFGR_PPRE_DIV16                      RCC_CFGR_PPRE_DIV16_Msk       /*!< HCLK divided by 16 */
 
-#define RCC_CFGR_PLLSRC_Pos                      (15U)                         
-#define RCC_CFGR_PLLSRC_Msk                      (0x3UL << RCC_CFGR_PLLSRC_Pos) /*!< 0x00018000 */
+#define RCC_CFGR_PLLSRC_Pos                      (16U)                         
+#define RCC_CFGR_PLLSRC_Msk                      (0x1UL << RCC_CFGR_PLLSRC_Pos) /*!< 0x00010000 */
 #define RCC_CFGR_PLLSRC                          RCC_CFGR_PLLSRC_Msk           /*!< PLL entry clock source */
 #define RCC_CFGR_PLLSRC_HSI_DIV2                 (0x00000000U)                 /*!< HSI clock divided by 2 selected as PLL entry clock source */
 #define RCC_CFGR_PLLSRC_HSI_PREDIV               (0x00008000U)                 /*!< HSI/PREDIV clock selected as PLL entry clock source */
@@ -5798,7 +5807,7 @@ typedef struct
   * @}
   */
 
-  /**
+/**
   * @}
   */
 

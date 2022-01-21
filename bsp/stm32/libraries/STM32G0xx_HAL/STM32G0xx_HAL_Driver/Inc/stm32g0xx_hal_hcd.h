@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -28,7 +28,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_ll_usb.h"
 
-
+#if defined (USB_DRD_FS)
 /** @addtogroup STM32G0xx_HAL_Driver
   * @{
   */
@@ -129,7 +129,16 @@ typedef struct
   */
 #define HCD_SPEED_FULL               USBH_FSLS_SPEED
 #define HCD_SPEED_LOW                USBH_FSLS_SPEED
+/**
+  * @}
+  */
 
+/** @defgroup HCD_Device_Speed HCD Device Speed
+  * @{
+  */
+#define HCD_DEVICE_SPEED_HIGH               0U
+#define HCD_DEVICE_SPEED_FULL               1U
+#define HCD_DEVICE_SPEED_LOW                2U
 /**
   * @}
   */
@@ -167,7 +176,8 @@ typedef struct
 #define __HAL_HCD_ENABLE(__HANDLE__)                   (void)USB_EnableGlobalInt ((__HANDLE__)->Instance)
 #define __HAL_HCD_DISABLE(__HANDLE__)                  (void)USB_DisableGlobalInt ((__HANDLE__)->Instance)
 
-#define __HAL_HCD_GET_FLAG(__HANDLE__, __INTERRUPT__)      ((USB_ReadInterrupts((__HANDLE__)->Instance) & (__INTERRUPT__)) == (__INTERRUPT__))
+#define __HAL_HCD_GET_FLAG(__HANDLE__, __INTERRUPT__)      ((USB_ReadInterrupts((__HANDLE__)->Instance)\
+                                                             & (__INTERRUPT__)) == (__INTERRUPT__))
 #define __HAL_HCD_CLEAR_FLAG(__HANDLE__, __INTERRUPT__)    (((__HANDLE__)->Instance->ISTR) &= ~(__INTERRUPT__))
 #define __HAL_HCD_IS_INVALID_INTERRUPT(__HANDLE__)         (USB_ReadInterrupts((__HANDLE__)->Instance) == 0U)
 
@@ -447,14 +457,35 @@ HAL_StatusTypeDef  HAL_HCD_PMAReset(HCD_HandleTypeDef *hhcd);
   */
 #define HCD_SET_CH_TX_CNT                      USB_DRD_SET_CHEP_TX_CNT
 #define HCD_SET_CH_RX_CNT                      USB_DRD_SET_CHEP_RX_CNT
+
 /**
   * @brief  gets counter of the tx buffer.
   * @param  USBx USB peripheral instance register address.
-  * @param  bChNum Endpoint Number.
+  * @param  bChNum channel Number.
   * @retval Counter value
   */
 #define HCD_GET_CH_TX_CNT                      USB_DRD_GET_CHEP_TX_CNT
-#define HCD_GET_CH_RX_CNT                      USB_DRD_GET_CHEP_RX_CNT
+
+/**
+  * @brief  gets counter of the rx buffer.
+  * @param  Instance USB peripheral instance register address.
+  * @param  bChNum channel Number.
+  * @retval Counter value
+  */
+__STATIC_INLINE uint16_t HCD_GET_CH_RX_CNT(HCD_TypeDef *Instance, uint16_t bChNum)
+{
+  UNUSED(Instance);
+  __IO uint32_t count = 10U;
+
+  /* WA: few cycles for RX PMA descriptor to update */
+  while (count > 0U)
+  {
+    count--;
+  }
+
+  return (uint16_t)USB_DRD_GET_CHEP_RX_CNT((Instance), (bChNum));
+}
+
 /**
   * @brief  Gets buffer 0/1 address of a double buffer endpoint.
   * @param  USBx USB peripheral instance register address.
@@ -468,26 +499,59 @@ HAL_StatusTypeDef  HAL_HCD_PMAReset(HCD_HandleTypeDef *hhcd);
 #define HCD_SET_CH_DBUF1_CNT                   USB_DRD_SET_CHEP_DBUF1_CNT
 #define HCD_SET_CH_DBUF_CNT                    USB_DRD_SET_CHEP_DBUF_CNT
 
+
 /**
-  * @brief  Gets buffer 0/1 rx/tx counter for double buffering.
-  * @param  USBx USB peripheral instance register address.
-  * @param  bChNum Endpoint Number.
-  * @retval None
+  * @brief  gets counter of the rx buffer0.
+  * @param  Instance USB peripheral instance register address.
+  * @param  bChNum channel Number.
+  * @retval Counter value
   */
-#define HCD_GET_CH_DBUF0_CNT                   USB_DRD_GET_CHEP_DBUF0_CNT
-#define HCD_GET_CH_DBUF1_CNT                   USB_DRD_GET_CHEP_DBUF1_CNT
+__STATIC_INLINE uint16_t HCD_GET_CH_DBUF0_CNT(HCD_TypeDef *Instance, uint16_t bChNum)
+{
+  UNUSED(Instance);
+  __IO uint32_t count = 10U;
+
+  /* WA: few cycles for RX PMA descriptor to update */
+  while (count > 0U)
+  {
+    count--;
+  }
+
+  return (uint16_t)USB_DRD_GET_CHEP_DBUF0_CNT((Instance), (bChNum));
+}
+
+/**
+  * @brief  gets counter of the rx buffer1.
+  * @param  Instance USB peripheral instance register address.
+  * @param  bChNum channel Number.
+  * @retval Counter value
+  */
+__STATIC_INLINE uint16_t HCD_GET_CH_DBUF1_CNT(HCD_TypeDef *Instance, uint16_t bChNum)
+{
+  UNUSED(Instance);
+  __IO uint32_t count = 10U;
+
+  /* WA: few cycles for RX PMA descriptor to update */
+  while (count > 0U)
+  {
+    count--;
+  }
+
+  return (uint16_t)USB_DRD_GET_CHEP_DBUF1_CNT((Instance), (bChNum));
+}
+
 /**
   * @}
   */
 /* Private functions prototypes ----------------------------------------------*/
 
- /**
+/**
   * @}
   */
- /**
+/**
   * @}
   */
-
+#endif /* defined (USB_DRD_FS) */
 
 #ifdef __cplusplus
 }

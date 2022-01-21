@@ -105,6 +105,9 @@ extern "C" {
 #define LL_SYSCFG_I2C_FASTMODEPLUS_I2C2        SYSCFG_PMCR_I2C2_FMP       /*!< Enable Fast Mode Plus for I2C2      */
 #define LL_SYSCFG_I2C_FASTMODEPLUS_I2C3        SYSCFG_PMCR_I2C3_FMP       /*!< Enable Fast Mode Plus for I2C3      */
 #define LL_SYSCFG_I2C_FASTMODEPLUS_I2C4        SYSCFG_PMCR_I2C4_FMP       /*!< Enable Fast Mode Plus for I2C4      */
+#if defined(I2C5)
+#define LL_SYSCFG_I2C_FASTMODEPLUS_I2C5        SYSCFG_PMCR_I2C5_FMP       /*!< Enable Fast Mode Plus for I2C5      */
+#endif /*I2C5*/
 #define LL_SYSCFG_I2C_FASTMODEPLUS_PB6         SYSCFG_PMCR_I2C_PB6_FMP    /*!< Enable Fast Mode Plus on PB6        */
 #define LL_SYSCFG_I2C_FASTMODEPLUS_PB7         SYSCFG_PMCR_I2C_PB7_FMP    /*!< Enable Fast Mode Plus on PB7        */
 #define LL_SYSCFG_I2C_FASTMODEPLUS_PB8         SYSCFG_PMCR_I2C_PB8_FMP    /*!< Enable Fast Mode Plus on PB8        */
@@ -116,7 +119,9 @@ extern "C" {
 /** @defgroup SYSTEM_LL_EC_ANALOG_SWITCH Analog Switch control
 * @{
 */
+#if defined(SYSCFG_PMCR_BOOSTEN)
 #define LL_SYSCFG_ANALOG_SWITCH_BOOSTEN           SYSCFG_PMCR_BOOSTEN               /*!< I/O analog switch voltage booster enable */
+#endif /*SYSCFG_PMCR_BOOSTEN*/
 #define LL_SYSCFG_ANALOG_SWITCH_PA0               SYSCFG_PMCR_PA0SO                 /*!< PA0 Switch Open */
 #define LL_SYSCFG_ANALOG_SWITCH_PA1               SYSCFG_PMCR_PA1SO                 /*!< PA1 Switch Open */
 #define LL_SYSCFG_ANALOG_SWITCH_PC2               SYSCFG_PMCR_PC2SO                 /*!< PC2 Switch Open */
@@ -130,7 +135,7 @@ extern "C" {
 * @{
 */
 #define LL_SYSCFG_ETH_MII               0x00000000U                           /*!< ETH Media MII interface */
-#define LL_SYSCFG_ETH_RMII              SYSCFG_PMCR_EPIS_SEL                   /*!< ETH Media RMII interface */
+#define LL_SYSCFG_ETH_RMII              SYSCFG_PMCR_EPIS_SEL_2                /*!< ETH Media RMII interface */
 /**
   * @}
   */
@@ -147,7 +152,9 @@ extern "C" {
 #define LL_SYSCFG_EXTI_PORTF               5U               /*!< EXTI PORT F                        */
 #define LL_SYSCFG_EXTI_PORTG               6U               /*!< EXTI PORT G                        */
 #define LL_SYSCFG_EXTI_PORTH               7U               /*!< EXTI PORT H                        */
+#if defined(GPIOI)
 #define LL_SYSCFG_EXTI_PORTI               8U               /*!< EXTI PORT I                        */
+#endif /*GPIOI*/
 #define LL_SYSCFG_EXTI_PORTJ               9U               /*!< EXTI PORT J                        */
 #define LL_SYSCFG_EXTI_PORTK               10U              /*!< EXTI PORT k                        */
 /**
@@ -195,8 +202,10 @@ extern "C" {
 #define LL_SYSCFG_TIMBREAK_SRAM2_DBL_ECC   SYSCFG_CFGR_SRAM2L   /*!< Enables and locks the SRAM2 double ECC error signal
                                                                      with Break Input of TIM1/8/15/16/17 and HRTIM        */
 
+#if defined(SYSCFG_CFGR_SRAM3L)
 #define LL_SYSCFG_TIMBREAK_SRAM3_DBL_ECC   SYSCFG_CFGR_SRAM3L   /*!< Enables and locks the SRAM3 double ECC error signal
                                                                      with Break Input of TIM1/8/15/16/17 and HRTIM        */
+#endif /*SYSCFG_CFGR_SRAM3L*/
 
 #define LL_SYSCFG_TIMBREAK_SRAM4_DBL_ECC   SYSCFG_CFGR_SRAM4L   /*!< Enables and locks the SRAM4 double ECC error signal
                                                                      with Break Input of TIM1/8/15/16/17 and HRTIM        */
@@ -260,19 +269,45 @@ extern "C" {
 /**
   * @}
   */
-#ifdef SYSCFG_PKGR_PKG
+#ifdef SYSCFG_UR17_TCM_AXI_CFG
 /** @defgroup SYSTEM_LL_PACKAGE SYSCFG device package
   * @{
   */
+#define LL_SYSCFG_ITCM_AXI_64KB_320KB     0U
+#define LL_SYSCFG_ITCM_AXI_128KB_256KB    1U
+#define LL_SYSCFG_ITCM_AXI_192KB_192KB    2U
+#define LL_SYSCFG_ITCM_AXI_256KB_128KB    3U
+/**
+  * @}
+  */
+#endif /* #ifdef SYSCFG_UR17_TCM_AXI_CFG */
+#if defined(SYSCFG_PKGR_PKG)
+/** @defgroup SYSTEM_LL_PACKAGE SYSCFG device package
+  * @{
+  */
+#if (STM32H7_DEV_ID == 0x450UL)
 #define LL_SYSCFG_LQFP100_PACKAGE             0U
 #define LL_SYSCFG_TQFP144_PACKAGE             2U
 #define LL_SYSCFG_TQFP176_UFBGA176_PACKAGE    5U
 #define LL_SYSCFG_LQFP208_TFBGA240_PACKAGE    8U
+#elif (STM32H7_DEV_ID == 0x483UL)
+#define LL_SYSCFG_VFQFPN68_INDUS_PACKAGE       0U
+#define LL_SYSCFG_TFBGA100_LQFP100_PACKAGE    1U
+#define LL_SYSCFG_LQFP100_INDUS_PACKAGE        2U
+#define LL_SYSCFG_TFBGA100_INDUS_PACKAGE       3U
+#define LL_SYSCFG_WLCSP115_INDUS_PACKAGE       4U
+#define LL_SYSCFG_LQFP144_PACKAGE             5U
+#define LL_SYSCFG_UFBGA144_PACKAGE            6U
+#define LL_SYSCFG_LQFP144_INDUS_PACKAGE        7U
+#define LL_SYSCFG_UFBGA169_INDUS_PACKAGE       8U
+#define LL_SYSCFG_UFBGA176PLUS25_INDUS_PACKAGE 9U
+#define LL_SYSCFG_LQFP176_INDUS_PACKAGE        10U
+#endif /* STM32H7_DEV_ID == 0x450UL */
 /**
   * @}
   */
 #endif /* SYSCFG_PKGR_PKG */
-
+  
 /** @defgroup SYSTEM_LL_SYSCFG_BOR SYSCFG Brownout Reset Threshold Level
   * @{
   */
@@ -313,14 +348,26 @@ extern "C" {
 #define LL_DBGMCU_APB1_GRP1_I2C1_STOP      DBGMCU_APB1LFZ1_DBG_I2C1     /*!< I2C1 SMBUS timeout mode stopped when Core is halted */
 #define LL_DBGMCU_APB1_GRP1_I2C2_STOP      DBGMCU_APB1LFZ1_DBG_I2C2     /*!< I2C2 SMBUS timeout mode stopped when Core is halted */
 #define LL_DBGMCU_APB1_GRP1_I2C3_STOP      DBGMCU_APB1LFZ1_DBG_I2C3     /*!< I2C3 SMBUS timeout mode stopped when Core is halted */
+#if defined(I2C5)
+#define LL_DBGMCU_APB1_GRP1_I2C5_STOP      DBGMCU_APB1LFZ1_DBG_I2C5     /*!< I2C5 SMBUS timeout mode stopped when Core is halted */
+#endif /*I2C5*/
 /**
   * @}
   */
 
+
 /** @defgroup SYSTEM_LL_EC_APB1_GRP2_STOP_IP DBGMCU APB1 GRP2 STOP IP
   * @{
   */
+#if defined(DBGMCU_APB1HFZ1_DBG_FDCAN)
 #define LL_DBGMCU_APB1_GRP2_FDCAN_STOP    DBGMCU_APB1HFZ1_DBG_FDCAN    /*!< FDCAN is frozen while the core is in debug mode */
+#endif /*DBGMCU_APB1HFZ1_DBG_FDCAN*/
+#if defined(TIM23)
+#define LL_DBGMCU_APB1_GRP2_TIM23_STOP    DBGMCU_APB1HFZ1_DBG_TIM23    /*!< TIM23 is frozen while the core is in debug mode */
+#endif /*TIM23*/
+#if defined(TIM24)
+#define LL_DBGMCU_APB1_GRP2_TIM24_STOP    DBGMCU_APB1HFZ1_DBG_TIM24    /*!< TIM24 is frozen while the core is in debug mode */
+#endif /*TIM24*/
 /**
   * @}
   */
@@ -333,7 +380,9 @@ extern "C" {
 #define LL_DBGMCU_APB2_GRP1_TIM15_STOP     DBGMCU_APB2FZ1_DBG_TIM15   /*!< TIM15 counter stopped when core is halted */
 #define LL_DBGMCU_APB2_GRP1_TIM16_STOP     DBGMCU_APB2FZ1_DBG_TIM16   /*!< TIM16 counter stopped when core is halted */
 #define LL_DBGMCU_APB2_GRP1_TIM17_STOP     DBGMCU_APB2FZ1_DBG_TIM17   /*!< TIM17 counter stopped when core is halted */
+#if defined(HRTIM1)
 #define LL_DBGMCU_APB2_GRP1_HRTIM_STOP     DBGMCU_APB2FZ1_DBG_HRTIM   /*!< HRTIM counter stopped when core is halted */
+#endif /*HRTIM1*/
 /**
   * @}
   */
@@ -493,6 +542,7 @@ __STATIC_INLINE void LL_SYSCFG_DisableAnalogBooster(void)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C2 (*)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C3
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C4(*)
+  *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C5(*)
   *
   *         (*) value not defined in all devices
   * @retval None
@@ -515,6 +565,8 @@ __STATIC_INLINE void LL_SYSCFG_EnableFastModePlus(uint32_t ConfigFastModePlus)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C2 (*)
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C3
   *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C4
+  *         @arg @ref LL_SYSCFG_I2C_FASTMODEPLUS_I2C5 (*)
+  *
   *         (*) value not defined in all devices
   * @retval None
   */
@@ -538,7 +590,7 @@ __STATIC_INLINE void LL_SYSCFG_DisableFastModePlus(uint32_t ConfigFastModePlus)
   *         @arg @ref LL_SYSCFG_EXTI_PORTF
   *         @arg @ref LL_SYSCFG_EXTI_PORTG
   *         @arg @ref LL_SYSCFG_EXTI_PORTH
-  *         @arg @ref LL_SYSCFG_EXTI_PORTI
+  *         @arg @ref LL_SYSCFG_EXTI_PORTI (*)
   *         @arg @ref LL_SYSCFG_EXTI_PORTJ
   *         @arg @ref LL_SYSCFG_EXTI_PORTK
   *
@@ -599,7 +651,7 @@ __STATIC_INLINE void LL_SYSCFG_SetEXTISource(uint32_t Port, uint32_t Line)
   *         @arg @ref LL_SYSCFG_EXTI_PORTF
   *         @arg @ref LL_SYSCFG_EXTI_PORTG
   *         @arg @ref LL_SYSCFG_EXTI_PORTH
-  *         @arg @ref LL_SYSCFG_EXTI_PORTI
+  *         @arg @ref LL_SYSCFG_EXTI_PORTI (*)
   *         @arg @ref LL_SYSCFG_EXTI_PORTJ
   *         @arg @ref LL_SYSCFG_EXTI_PORTK
   *         (*) value not defined in all devices
@@ -630,7 +682,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_GetEXTISource(uint32_t Line)
   *         @arg @ref LL_SYSCFG_TIMBREAK_DTCM_DBL_ECC
   *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM1_DBL_ECC
   *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM2_DBL_ECC
-  *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM3_DBL_ECC
+  *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM3_DBL_ECC (*)
   *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM4_DBL_ECC
   *         @arg @ref LL_SYSCFG_TIMBREAK_BKRAM_DBL_ECC
   *         @arg @ref LL_SYSCFG_TIMBREAK_CM7_LOCKUP
@@ -638,6 +690,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_GetEXTISource(uint32_t Line)
   *         @arg @ref LL_SYSCFG_TIMBREAK_PVD
   *         @arg @ref LL_SYSCFG_TIMBREAK_CM4_LOCKUP (available for dual core lines only)
   * @retval None
+  *         (*) value not defined in all devices
   */
 __STATIC_INLINE void LL_SYSCFG_SetTIMBreakInputs(uint32_t Break)
 {
@@ -645,10 +698,14 @@ __STATIC_INLINE void LL_SYSCFG_SetTIMBreakInputs(uint32_t Break)
   MODIFY_REG(SYSCFG->CFGR, SYSCFG_CFGR_AXISRAML | SYSCFG_CFGR_ITCML  | SYSCFG_CFGR_DTCML  | SYSCFG_CFGR_SRAM1L | SYSCFG_CFGR_SRAM2L | \
                            SYSCFG_CFGR_SRAM3L   | SYSCFG_CFGR_SRAM4L | SYSCFG_CFGR_BKRAML | SYSCFG_CFGR_CM7L   | SYSCFG_CFGR_FLASHL | \
                            SYSCFG_CFGR_PVDL     | SYSCFG_CFGR_CM4L, Break);
-#elif defined (SYSCFG_CFGR_AXISRAML)
+#elif defined(SYSCFG_CFGR_AXISRAML) && defined(SYSCFG_CFGR_SRAM3L)
   MODIFY_REG(SYSCFG->CFGR, SYSCFG_CFGR_AXISRAML | SYSCFG_CFGR_ITCML  | SYSCFG_CFGR_DTCML  | SYSCFG_CFGR_SRAM1L | SYSCFG_CFGR_SRAM2L | \
                            SYSCFG_CFGR_SRAM3L   | SYSCFG_CFGR_SRAM4L | SYSCFG_CFGR_BKRAML | SYSCFG_CFGR_CM7L   | SYSCFG_CFGR_FLASHL | \
                            SYSCFG_CFGR_PVDL, Break);
+#elif defined(SYSCFG_CFGR_AXISRAML)
+  MODIFY_REG(SYSCFG->CFGR, SYSCFG_CFGR_AXISRAML | SYSCFG_CFGR_ITCML  | SYSCFG_CFGR_DTCML  | SYSCFG_CFGR_SRAM1L | SYSCFG_CFGR_SRAM2L | \
+                           SYSCFG_CFGR_SRAM4L   | SYSCFG_CFGR_BKRAML | SYSCFG_CFGR_CM7L   | SYSCFG_CFGR_FLASHL | SYSCFG_CFGR_PVDL,\
+                           Break);
 #else
   MODIFY_REG(SYSCFG->CFGR, SYSCFG_CFGR_ITCML  | SYSCFG_CFGR_DTCML  |\
                            SYSCFG_CFGR_CM7L   | SYSCFG_CFGR_FLASHL | \
@@ -677,13 +734,14 @@ __STATIC_INLINE void LL_SYSCFG_SetTIMBreakInputs(uint32_t Break)
   *         @arg @ref LL_SYSCFG_TIMBREAK_DTCM_DBL_ECC
   *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM1_DBL_ECC
   *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM2_DBL_ECC
-  *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM3_DBL_ECC
+  *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM3_DBL_ECC (*)
   *         @arg @ref LL_SYSCFG_TIMBREAK_SRAM4_DBL_ECC
   *         @arg @ref LL_SYSCFG_TIMBREAK_BKRAM_DBL_ECC
   *         @arg @ref LL_SYSCFG_TIMBREAK_CM7_LOCKUP
   *         @arg @ref LL_SYSCFG_TIMBREAK_FLASH_DBL_ECC
   *         @arg @ref LL_SYSCFG_TIMBREAK_PVD
   *         @arg @ref LL_SYSCFG_TIMBREAK_CM4_LOCKUP (available for dual core lines only)
+  *         (*) value not defined in all devices
   */
 __STATIC_INLINE uint32_t LL_SYSCFG_GetTIMBreakInputs(void)
 {
@@ -692,9 +750,14 @@ __STATIC_INLINE uint32_t LL_SYSCFG_GetTIMBreakInputs(void)
                                             SYSCFG_CFGR_SRAM1L   | SYSCFG_CFGR_SRAM2L | SYSCFG_CFGR_SRAM3L | \
                                             SYSCFG_CFGR_SRAM4L   | SYSCFG_CFGR_BKRAML | SYSCFG_CFGR_CM7L   | \
                                             SYSCFG_CFGR_FLASHL   | SYSCFG_CFGR_PVDL   | SYSCFG_CFGR_CM4L));
-#elif defined (SYSCFG_CFGR_AXISRAML)
+#elif defined (SYSCFG_CFGR_AXISRAML) && defined(SYSCFG_CFGR_SRAM3L)
   return (uint32_t)(READ_BIT(SYSCFG->CFGR,  SYSCFG_CFGR_AXISRAML | SYSCFG_CFGR_ITCML  | SYSCFG_CFGR_DTCML  | \
                                             SYSCFG_CFGR_SRAM1L   | SYSCFG_CFGR_SRAM2L | SYSCFG_CFGR_SRAM3L | \
+                                            SYSCFG_CFGR_SRAM4L   | SYSCFG_CFGR_BKRAML | SYSCFG_CFGR_CM7L   | \
+                                            SYSCFG_CFGR_FLASHL   | SYSCFG_CFGR_PVDL ));
+#elif defined (SYSCFG_CFGR_AXISRAML)
+  return (uint32_t)(READ_BIT(SYSCFG->CFGR,  SYSCFG_CFGR_AXISRAML | SYSCFG_CFGR_ITCML  | SYSCFG_CFGR_DTCML  | \
+                                            SYSCFG_CFGR_SRAM1L   | SYSCFG_CFGR_SRAM2L | \
                                             SYSCFG_CFGR_SRAM4L   | SYSCFG_CFGR_BKRAML | SYSCFG_CFGR_CM7L   | \
                                             SYSCFG_CFGR_FLASHL   | SYSCFG_CFGR_PVDL ));
 #else
@@ -707,7 +770,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_GetTIMBreakInputs(void)
   * @brief  Enable the Compensation Cell
   * @rmtoll CCCSR   EN    LL_SYSCFG_EnableCompensationCell
   * @note   The I/O compensation cell can be used only when the device supply
-  *         voltage ranges from 2.4 to 3.6 V
+  *         voltage ranges from 1.62 to 2.0 V and from 2.7 to 3.6 V.
   * @retval None
   */
 __STATIC_INLINE void LL_SYSCFG_EnableCompensationCell(void)
@@ -719,7 +782,7 @@ __STATIC_INLINE void LL_SYSCFG_EnableCompensationCell(void)
   * @brief  Disable the Compensation Cell
   * @rmtoll CCCSR   EN    LL_SYSCFG_DisableCompensationCell
   * @note   The I/O compensation cell can be used only when the device supply
-  *         voltage ranges from 2.4 to 3.6 V
+  *         voltage ranges from 1.62 to 2.0 V and from 2.7 to 3.6 V.
   * @retval None
   */
 __STATIC_INLINE void LL_SYSCFG_DisableCompensationCell(void)
@@ -1074,10 +1137,24 @@ __STATIC_INLINE uint32_t LL_SYSCFG_VDMMCGetNMOSCompensationCode(void)
   * @brief  Get the device package
   * @rmtoll PKGR    PKG   LL_SYSCFG_GetPackage
   * @retval Returned value can be one of the following values:
-  *         @arg @ref LL_SYSCFG_LQFP100_PACKAGE
-  *         @arg @ref LL_SYSCFG_TQFP144_PACKAGE
-  *         @arg @ref LL_SYSCFG_TQFP176_UFBGA176_PACKAGE
-  *         @arg @ref LL_SYSCFG_LQFP208_TFBGA240_PACKAGE
+  *         @arg @ref LL_SYSCFG_LQFP100_PACKAGE (*)
+  *         @arg @ref LL_SYSCFG_TQFP144_PACKAGE (*)
+  *         @arg @ref LL_SYSCFG_TQFP176_UFBGA176_PACKAGE (*)
+  *         @arg @ref LL_SYSCFG_LQFP208_TFBGA240_PACKAGE (*)
+  *         @arg @ref LL_SYSCFG_VFQFPN68_INDUS_PACKAGE (*)
+  *         @arg @ref LL_SYSCFG_TFBGA100_LQFP100_PACKAGE (*)
+  *         @arg @ref LL_SYSCFG_LQFP100_INDUS_PACKAGE (**)
+  *         @arg @ref LL_SYSCFG_TFBGA100_INDUS_PACKAGE (**)
+  *         @arg @ref LL_SYSCFG_WLCSP115_INDUS_PACKAGE (**)
+  *         @arg @ref LL_SYSCFG_LQFP144_PACKAGE (**)
+  *         @arg @ref LL_SYSCFG_UFBGA144_PACKAGE (**)
+  *         @arg @ref LL_SYSCFG_LQFP144_INDUS_PACKAGE (**)
+  *         @arg @ref LL_SYSCFG_UFBGA169_INDUS_PACKAGE (**)
+  *         @arg @ref LL_SYSCFG_UFBGA176PLUS25_INDUS_PACKAGE (**)
+  *         @arg @ref LL_SYSCFG_LQFP176_INDUS_PACKAGE (**)
+  *
+  * (*) : For stm32h74xxx and stm32h75xxx family lines.
+  * (**): For stm32h72xxx and stm32h73xxx family lines.
   */
 __STATIC_INLINE uint32_t LL_SYSCFG_GetPackage(void)
 {
@@ -1098,6 +1175,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_GetFLashProtectionLevel(void)
 {
   return (uint32_t)(READ_BIT(SYSCFG->UR0, SYSCFG_UR0_RDP));
 }
+#ifdef SYSCFG_UR0_BKS
 /**
   * @brief  Indicate if the Flash memory bank addresses are inverted or not
   * @rmtoll UR0   BKS   LL_SYSCFG_IsFLashBankAddressesSwaped
@@ -1107,6 +1185,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsFLashBankAddressesSwaped(void)
 {
   return ((READ_BIT(SYSCFG->UR0, SYSCFG_UR0_BKS) == 0U) ? 1UL : 0UL);
 }
+#endif /*SYSCFG_UR0_BKS*/
 
 /**
   * @brief  Get the BOR Threshold Reset Level
@@ -1372,6 +1451,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_GetFlashB1SecuredAreaEndAddress(void)
   return (uint32_t)(READ_BIT(SYSCFG->UR7, SYSCFG_UR7_SAEND_BANK1));
 }
 
+#ifdef SYSCFG_UR8_MEPAD_BANK2
 /**
   * @brief  Indicates if the flash protected area (Bank 2) is erased by a mass erase
   * @rmtoll UR8   MEPAD_BANK2   LL_SYSCFG_IsFlashB2ProtectedAreaErasable
@@ -1391,7 +1471,9 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsFlashB2SecuredAreaErasable(void)
 {
   return ((READ_BIT(SYSCFG->UR8, SYSCFG_UR8_MESAD_BANK2) == SYSCFG_UR8_MESAD_BANK2) ? 1UL : 0UL);
 }
+#endif /*SYSCFG_UR8_MEPAD_BANK2*/
 
+#ifdef SYSCFG_UR9_WRPN_BANK2
 /**
   * @brief  Indicates if the sector 0 of the Flash memory bank 2 is write protected
   * @rmtoll UR9   WRPN_BANK2    LL_SYSCFG_IsFlashB2Sector0WriteProtected
@@ -1481,7 +1563,9 @@ __STATIC_INLINE uint32_t LL_SYSCFG_GetFlashB2ProtectedAreaStartAddress(void)
 {
   return (uint32_t)(READ_BIT(SYSCFG->UR9, SYSCFG_UR9_PABEG_BANK2));
 }
+#endif /*SYSCFG_UR9_WRPN_BANK2*/
 
+#ifdef SYSCFG_UR10_PAEND_BANK2
 /**
   * @brief  Get the protected area end address for Flash bank 2
   * @rmtoll UR10    PAEND_BANK2   LL_SYSCFG_GetFlashB2ProtectedAreaEndAddress
@@ -1501,7 +1585,9 @@ __STATIC_INLINE uint32_t LL_SYSCFG_GetFlashB2SecuredAreaStartAddress(void)
 {
   return (uint32_t)(READ_BIT(SYSCFG->UR10, SYSCFG_UR10_SABEG_BANK2));
 }
+#endif /*SYSCFG_UR10_PAEND_BANK2*/
 
+#ifdef SYSCFG_UR11_SAEND_BANK2
 /**
   * @brief  Get the secured area end address for Flash bank 2
   * @rmtoll UR11    SAEND_BANK2   LL_SYSCFG_GetFlashB2SecuredAreaEndAddress
@@ -1511,6 +1597,7 @@ __STATIC_INLINE uint32_t LL_SYSCFG_GetFlashB2SecuredAreaEndAddress(void)
 {
   return (uint32_t)(READ_BIT(SYSCFG->UR11, SYSCFG_UR11_SAEND_BANK2));
 }
+#endif /*SYSCFG_UR11_SAEND_BANK2*/
 
 /**
   * @brief  Get the Independent Watchdog 1 control mode (Software or Hardware)
@@ -1646,6 +1733,35 @@ __STATIC_INLINE uint32_t LL_SYSCFG_IsActiveFlag_IOHSLV(void)
 {
   return ((READ_BIT(SYSCFG->UR17, SYSCFG_UR17_IOHSLV) == SYSCFG_UR17_IOHSLV) ? 1UL : 0UL);
 }
+
+#ifdef SYSCFG_UR17_TCM_AXI_CFG
+/**
+  * @brief  Get the size of ITCM-RAM and AXI-SRAM
+  * @rmtoll UR17    TCM_AXI_CFG    LL_SYSCFG_Get_ITCM_AXI_RAM_Size
+  * @retval Returned value can be one of the following values:
+  *           @arg @ref LL_SYSCFG_ITCM_AXI_64KB_320KB
+  *           @arg @ref LL_SYSCFG_ITCM_AXI_128KB_256KB
+  *           @arg @ref LL_SYSCFG_ITCM_AXI_192KB_192KB
+  *           @arg @ref LL_SYSCFG_ITCM_AXI_256KB_128KB
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_Get_ITCM_AXI_RAM_Size(void)
+{
+  return (uint32_t)(READ_BIT(SYSCFG->UR17, SYSCFG_UR17_TCM_AXI_CFG));
+}
+#endif /*SYSCFG_UR17_TCM_AXI_CFG*/
+
+#ifdef SYSCFG_UR18_CPU_FREQ_BOOST
+/**
+  * @brief  Indicates if the CPU maximum frequency boost is enabled
+  * @rmtoll UR18    CPU_FREQ_BOOST   LL_SYSCFG_IsCpuFreqBoostEnabled
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsCpuFreqBoostEnabled(void)
+{
+  return ((READ_BIT(SYSCFG->UR18, SYSCFG_UR18_CPU_FREQ_BOOST) == SYSCFG_UR18_CPU_FREQ_BOOST) ? 1UL : 0UL);
+}
+#endif /*SYSCFG_UR18_CPU_FREQ_BOOST*/
+
 #endif /*SYSCFG_UR0_RDP*/
 
 /**
@@ -1801,6 +1917,7 @@ __STATIC_INLINE void LL_DBGMCU_DisableD2DebugInStandbyMode(void)
 #endif /* DUAL_CORE */
 
 
+#if defined(DBGMCU_CR_DBG_STOPD3)
 /**
   * @brief  Enable D3 Domain/SRDomain debug during STOP mode
   * @rmtoll DBGMCU_CR    DBGSTOP_D3/DBGSTOP_SRD    LL_DBGMCU_EnableD3DebugInStopMode
@@ -1820,7 +1937,9 @@ __STATIC_INLINE void LL_DBGMCU_DisableD3DebugInStopMode(void)
 {
   CLEAR_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STOPD3);
 }
+#endif /*DBGMCU_CR_DBG_STOPD3*/
 
+#if defined(DBGMCU_CR_DBG_STANDBYD3)
 /**
   * @brief  Enable D3 Domain/SRDomain debug during STANDBY mode
   * @rmtoll DBGMCU_CR    DBGSTBY_D3/DBGSTBY_SRD     LL_DBGMCU_EnableD3DebugInStandbyMode
@@ -1840,6 +1959,7 @@ __STATIC_INLINE void LL_DBGMCU_DisableD3DebugInStandbyMode(void)
 {
   CLEAR_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STANDBYD3);
 }
+#endif /*DBGMCU_CR_DBG_STANDBYD3*/
 
 /**
   * @brief  Enable the trace port clock
@@ -1943,6 +2063,7 @@ __STATIC_INLINE uint32_t LL_DBGMCU_GetExternalTriggerPinDirection(void)
   *         DBGMCU_APB1LFZ1   I2C1      LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBGMCU_APB1LFZ1   I2C2      LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBGMCU_APB1LFZ1   I2C3      LL_DBGMCU_APB1_GRP1_FreezePeriph\n
+  *         DBGMCU_APB1LFZ1   I2C5      LL_DBGMCU_APB1_GRP1_FreezePeriph\n (*)
   * @param  Periphs This parameter can be a combination of the following values:
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM2_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM3_STOP
@@ -1957,6 +2078,9 @@ __STATIC_INLINE uint32_t LL_DBGMCU_GetExternalTriggerPinDirection(void)
   *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C1_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C2_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C3_STOP
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C5_STOP (*)
+  *
+  *         (*) value not defined in all devices
   * @retval None
   */
 __STATIC_INLINE void LL_DBGMCU_APB1_GRP1_FreezePeriph(uint32_t Periphs)
@@ -1979,6 +2103,7 @@ __STATIC_INLINE void LL_DBGMCU_APB1_GRP1_FreezePeriph(uint32_t Periphs)
   *         DBGMCU_APB1LFZ1   I2C1      LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBGMCU_APB1LFZ1   I2C2      LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   *         DBGMCU_APB1LFZ1   I2C3      LL_DBGMCU_APB1_GRP1_FreezePeriph\n
+  *         DBGMCU_APB1LFZ1   I2C5      LL_DBGMCU_APB1_GRP1_FreezePeriph\n
   * @param  Periphs This parameter can be a combination of the following values:
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM2_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_TIM3_STOP
@@ -1993,6 +2118,9 @@ __STATIC_INLINE void LL_DBGMCU_APB1_GRP1_FreezePeriph(uint32_t Periphs)
   *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C1_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C2_STOP
   *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C3_STOP
+  *         @arg @ref LL_DBGMCU_APB1_GRP1_I2C5_STOP (*)
+  *
+  *         (*) value not defined in all devices
   * @retval None
   */
 __STATIC_INLINE void LL_DBGMCU_APB1_GRP1_UnFreezePeriph(uint32_t Periphs)
@@ -2000,6 +2128,7 @@ __STATIC_INLINE void LL_DBGMCU_APB1_GRP1_UnFreezePeriph(uint32_t Periphs)
   CLEAR_BIT(DBGMCU->APB1LFZ1, Periphs);
 }
 
+#ifdef DBGMCU_APB1HFZ1_DBG_FDCAN
 /**
   * @brief  Freeze APB1 group2 peripherals
   * @rmtoll DBGMCU_APB1HFZ1   FDCAN   LL_DBGMCU_APB1_GRP2_FreezePeriph\n
@@ -2023,6 +2152,37 @@ __STATIC_INLINE void LL_DBGMCU_APB1_GRP2_UnFreezePeriph(uint32_t Periphs)
 {
   CLEAR_BIT(DBGMCU->APB1HFZ1, Periphs);
 }
+#endif /*DBGMCU_APB1HFZ1_DBG_FDCAN*/
+
+#if defined(TIM23) || defined(TIM24)
+/**
+  * @brief  Freeze APB1 group2 peripherals
+  * @rmtoll DBGMCU_APB1HFZ1   TIM23   LL_DBGMCU_APB1_GRP2_FreezePeriph\n
+  *         DBGMCU_APB1HFZ1   TIM24   LL_DBGMCU_APB1_GRP2_FreezePeriph\n
+  * @param  Periphs This parameter can be a combination of the following values:
+  *         @arg @ref LL_DBGMCU_APB1_GRP2_TIM23_STOP
+  *         @arg @ref LL_DBGMCU_APB1_GRP2_TIM24_STOP
+  * @retval None
+  */
+__STATIC_INLINE void LL_DBGMCU_APB1_GRP2_FreezePeriph(uint32_t Periphs)
+{
+  SET_BIT(DBGMCU->APB1HFZ1, Periphs);
+}
+
+/**
+  * @brief  Unfreeze APB1 group2 peripherals
+  * @rmtoll DBGMCU_APB1HFZ1   TIM23   LL_DBGMCU_APB1_GRP2_UnFreezePeriph\n
+            DBGMCU_APB1HFZ1   TIM24   LL_DBGMCU_APB1_GRP2_UnFreezePeriph\n
+  * @param  Periphs This parameter can be a combination of the following values:
+  *         @arg @ref LL_DBGMCU_APB1_GRP2_TIM23_STOP
+  *         @arg @ref LL_DBGMCU_APB1_GRP2_TIM24_STOP
+  * @retval None
+  */
+__STATIC_INLINE void LL_DBGMCU_APB1_GRP2_UnFreezePeriph(uint32_t Periphs)
+{
+  CLEAR_BIT(DBGMCU->APB1HFZ1, Periphs);
+}
+#endif /* TIM23 || TIM24 */
 
 /**
   * @brief  Freeze APB2 peripherals
@@ -2038,7 +2198,9 @@ __STATIC_INLINE void LL_DBGMCU_APB1_GRP2_UnFreezePeriph(uint32_t Periphs)
   *         @arg @ref LL_DBGMCU_APB2_GRP1_TIM15_STOP
   *         @arg @ref LL_DBGMCU_APB2_GRP1_TIM16_STOP
   *         @arg @ref LL_DBGMCU_APB2_GRP1_TIM17_STOP
-  *         @arg @ref LL_DBGMCU_APB2_GRP1_HRTIM_STOP
+  *         @arg @ref LL_DBGMCU_APB2_GRP1_HRTIM_STOP (*)
+  *
+  *         (*) value not defined in all devices
   * @retval None
   */
 __STATIC_INLINE void LL_DBGMCU_APB2_GRP1_FreezePeriph(uint32_t Periphs)
@@ -2060,7 +2222,9 @@ __STATIC_INLINE void LL_DBGMCU_APB2_GRP1_FreezePeriph(uint32_t Periphs)
   *         @arg @ref LL_DBGMCU_APB2_GRP1_TIM15_STOP
   *         @arg @ref LL_DBGMCU_APB2_GRP1_TIM16_STOP
   *         @arg @ref LL_DBGMCU_APB2_GRP1_TIM17_STOP
-  *         @arg @ref LL_DBGMCU_APB2_GRP1_HRTIM_STOP
+  *         @arg @ref LL_DBGMCU_APB2_GRP1_HRTIM_STOP (*)
+  *
+  *         (*) value not defined in all devices
   * @retval None
   */
 __STATIC_INLINE void LL_DBGMCU_APB2_GRP1_UnFreezePeriph(uint32_t Periphs)
@@ -2105,10 +2269,12 @@ __STATIC_INLINE void LL_DBGMCU_APB3_GRP1_UnFreezePeriph(uint32_t Periphs)
   *         @arg @ref LL_DBGMCU_APB4_GRP1_I2C4_STOP
   *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM2_STOP
   *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM3_STOP
-  *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM4_STOP
-  *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM5_STOP
+  *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM4_STOP (*)
+  *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM5_STOP (*)
   *         @arg @ref LL_DBGMCU_APB4_GRP1_RTC_STOP
   *         @arg @ref LL_DBGMCU_APB4_GRP1_IWDG1_STOP
+  *
+  *         (*) value not defined in all devices
   * @retval None
   */
 __STATIC_INLINE void LL_DBGMCU_APB4_GRP1_FreezePeriph(uint32_t Periphs)
@@ -2129,10 +2295,12 @@ __STATIC_INLINE void LL_DBGMCU_APB4_GRP1_FreezePeriph(uint32_t Periphs)
   *         @arg @ref LL_DBGMCU_APB4_GRP1_I2C4_STOP
   *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM2_STOP
   *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM3_STOP
-  *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM4_STOP
-  *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM5_STOP
+  *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM4_STOP (*)
+  *         @arg @ref LL_DBGMCU_APB4_GRP1_LPTIM5_STOP (*)
   *         @arg @ref LL_DBGMCU_APB4_GRP1_RTC_STOP
   *         @arg @ref LL_DBGMCU_APB4_GRP1_IWDG1_STOP
+  *
+  *         (*) value not defined in all devices
   * @retval None
   */
 __STATIC_INLINE void LL_DBGMCU_APB4_GRP1_UnFreezePeriph(uint32_t Periphs)

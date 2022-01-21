@@ -38,7 +38,6 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-
 /** @defgroup I2CEx_Exported_Constants I2C Extended Exported Constants
   * @{
   */
@@ -99,24 +98,51 @@ extern "C" {
   */
 
 /* Exported macro ------------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
+/** @defgroup I2CEx_Exported_Macros I2C Extended Exported Macros
+  * @{
+  */
 
+/**
+  * @}
+  */
+
+/* Exported functions --------------------------------------------------------*/
 /** @addtogroup I2CEx_Exported_Functions I2C Extended Exported Functions
   * @{
   */
 
-/** @addtogroup I2CEx_Exported_Functions_Group1 Extended features functions
-  * @brief    Extended features functions
+/** @addtogroup I2CEx_Exported_Functions_Group1 I2C Extended Filter Mode Functions
   * @{
   */
-
 /* Peripheral Control functions  ************************************************/
 HAL_StatusTypeDef HAL_I2CEx_ConfigAnalogFilter(I2C_HandleTypeDef *hi2c, uint32_t AnalogFilter);
 HAL_StatusTypeDef HAL_I2CEx_ConfigDigitalFilter(I2C_HandleTypeDef *hi2c, uint32_t DigitalFilter);
+/**
+  * @}
+  */
+
+/** @addtogroup I2CEx_Exported_Functions_Group2 I2C Extended WakeUp Mode Functions
+  * @{
+  */
+/**
+  * @}
+  */
+
+/** @addtogroup I2CEx_Exported_Functions_Group3 I2C Extended FastModePlus Functions
+  * @{
+  */
 #if  (defined(SYSCFG_PMC_I2C_PB6_FMP) || defined(SYSCFG_PMC_I2C_PB7_FMP)) || (defined(SYSCFG_PMC_I2C_PB8_FMP) || defined(SYSCFG_PMC_I2C_PB9_FMP)) || (defined(SYSCFG_PMC_I2C1_FMP)) || (defined(SYSCFG_PMC_I2C2_FMP)) || defined(SYSCFG_PMC_I2C3_FMP) || defined(SYSCFG_PMC_I2C4_FMP)
 void HAL_I2CEx_EnableFastModePlus(uint32_t ConfigFastModePlus);
 void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus);
 #endif
+/**
+  * @}
+  */
+
+
+/**
+  * @}
+  */
 
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup I2CEx_Private_Constants I2C Extended Private Constants
@@ -132,7 +158,7 @@ void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus);
   * @{
   */
 #define IS_I2C_ANALOG_FILTER(FILTER)    (((FILTER) == I2C_ANALOGFILTER_ENABLE) || \
-                                          ((FILTER) == I2C_ANALOGFILTER_DISABLE))
+                                         ((FILTER) == I2C_ANALOGFILTER_DISABLE))
 
 #define IS_I2C_DIGITAL_FILTER(FILTER)   ((FILTER) <= 0x0000000FU)
 
@@ -167,9 +193,6 @@ void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus);
                                          (((__CONFIG__) & I2C_FASTMODEPLUS_PB9)  == I2C_FASTMODEPLUS_PB9)  || \
                                          (((__CONFIG__) & I2C_FASTMODEPLUS_I2C1) == I2C_FASTMODEPLUS_I2C1))
 #endif /* SYSCFG_PMC_I2C1_FMP && SYSCFG_PMC_I2C2_FMP && SYSCFG_PMC_I2C3_FMP && SYSCFG_PMC_I2C4_FMP */
-
-
-
 /**
   * @}
   */
@@ -179,14 +202,6 @@ void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus);
   * @{
   */
 /* Private functions are defined in stm32f7xx_hal_i2c_ex.c file */
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
 /**
   * @}
   */

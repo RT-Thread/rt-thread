@@ -17,11 +17,9 @@ config PKGS_DIR
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-
-config SOC_SWM320VET7
-    bool
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 source "drivers/Kconfig"
+
+config SOC_SWM320
+    bool
+    select ARCH_ARM_CORTEX_M4
+    default y

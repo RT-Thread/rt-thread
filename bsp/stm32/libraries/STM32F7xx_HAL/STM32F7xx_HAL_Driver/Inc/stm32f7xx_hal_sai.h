@@ -22,7 +22,7 @@
 #define __STM32F7xx_HAL_SAI_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 
@@ -52,7 +52,7 @@ typedef enum
   HAL_SAI_STATE_BUSY     = 0x02U,  /*!< SAI internal process is ongoing                    */
   HAL_SAI_STATE_BUSY_TX  = 0x12U,  /*!< Data transmission process is ongoing               */
   HAL_SAI_STATE_BUSY_RX  = 0x22U,  /*!< Data reception process is ongoing                  */
-}HAL_SAI_StateTypeDef;
+} HAL_SAI_StateTypeDef;
 
 /**
   * @brief  SAI Callback prototype
@@ -125,13 +125,14 @@ typedef struct
 
   uint32_t ClockStrobing;   /*!< Specifies the SAI Block clock strobing edge sensitivity.
                                  This parameter can be a value of @ref SAI_Block_Clock_Strobing */
-}SAI_InitTypeDef;
+} SAI_InitTypeDef;
 /**
   * @}
   */
 
 /** @defgroup SAI_Frame_Structure_definition SAI Frame Structure definition
   * @brief  SAI Frame Init structure definition
+  * @note   For SPDIF and AC97 protocol, these parameters are not used (set by hardware).
   * @{
   */
 typedef struct
@@ -157,13 +158,15 @@ typedef struct
   uint32_t FSOffset;           /*!< Specifies the Frame synchronization Offset.
                                     This parameter can be a value of @ref SAI_Block_FS_Offset */
 
-}SAI_FrameInitTypeDef;
+} SAI_FrameInitTypeDef;
 /**
   * @}
   */
 
 /** @defgroup SAI_Slot_Structure_definition SAI Slot Structure definition
   * @brief   SAI Block Slot Init Structure definition
+  * @note    For SPDIF protocol, these parameters are not used (set by hardware).
+  * @note    For AC97 protocol, only SlotActive parameter is used (the others are set by hardware).
   * @{
   */
 typedef struct
@@ -179,7 +182,7 @@ typedef struct
 
   uint32_t SlotActive;      /*!< Specifies the slots in audio frame that will be activated.
                                  This parameter can be a value of @ref SAI_Block_Slot_Active */
-}SAI_SlotInitTypeDef;
+} SAI_SlotInitTypeDef;
 /**
   * @}
   */
@@ -227,7 +230,7 @@ typedef struct __SAI_HandleTypeDef
   void (*MspInitCallback)(struct __SAI_HandleTypeDef *hsai);     /*!< SAI MSP init callback */
   void (*MspDeInitCallback)(struct __SAI_HandleTypeDef *hsai);   /*!< SAI MSP de-init callback */
 #endif
-}SAI_HandleTypeDef;
+} SAI_HandleTypeDef;
 /**
   * @}
   */
@@ -657,9 +660,9 @@ typedef void (*pSAI_CallbackTypeDef)(SAI_HandleTypeDef *hsai);
 #define __HAL_SAI_ENABLE(__HANDLE__) ((__HANDLE__)->Instance->CR1 |=  SAI_xCR1_SAIEN)
 #define __HAL_SAI_DISABLE(__HANDLE__) ((__HANDLE__)->Instance->CR1 &=  ~SAI_xCR1_SAIEN)
 
- /**
-  * @}
-  */
+/**
+ * @}
+ */
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup SAI_Exported_Functions
@@ -672,7 +675,7 @@ typedef void (*pSAI_CallbackTypeDef)(SAI_HandleTypeDef *hsai);
   */
 HAL_StatusTypeDef HAL_SAI_InitProtocol(SAI_HandleTypeDef *hsai, uint32_t protocol, uint32_t datasize, uint32_t nbslot);
 HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai);
-HAL_StatusTypeDef HAL_SAI_DeInit (SAI_HandleTypeDef *hsai);
+HAL_StatusTypeDef HAL_SAI_DeInit(SAI_HandleTypeDef *hsai);
 void HAL_SAI_MspInit(SAI_HandleTypeDef *hsai);
 void HAL_SAI_MspDeInit(SAI_HandleTypeDef *hsai);
 

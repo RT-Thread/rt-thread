@@ -32,11 +32,11 @@
 /*默认的CAN硬件过滤器的编号   0 */
 #define ES_C_CAN_DEFAULT_FILTER_NUMBER   0
 
-/*硬件过滤器，过滤帧类型*/  
+/*硬件过滤器，过滤帧类型*/
 #define ES_C_CAN_FILTER_FRAME_TYPE       0
 
 
-#define ES_C_CAN_SJW_NUM_1   CAN_SJW_1 
+#define ES_C_CAN_SJW_NUM_1   CAN_SJW_1
 #define ES_C_CAN_SJW_NUM_2   CAN_SJW_2
 #define ES_C_CAN_SJW_NUM_3   CAN_SJW_3
 #define ES_C_CAN_SJW_NUM_4   CAN_SJW_4
@@ -44,7 +44,7 @@
 
 
 /* CAN 配置 */
-     
+
 /* codes_main */
 
 
@@ -54,8 +54,8 @@
 #endif
 
 #ifndef  ES_CAN0_AUTO_BAN_RE_T
-#define ES_CAN0_AUTO_BAN_RE_T    ES_C_ENABLE
-#endif            
+#define ES_CAN0_AUTO_BAN_RE_T    ES_C_DISABLE
+#endif
 #ifndef  ES_CAN0_SPEED
 #define ES_CAN0_SPEED           1000000
 #endif

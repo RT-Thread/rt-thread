@@ -200,7 +200,7 @@ typedef struct
 #define LL_GPIO_AF_8                       (0x0000008U) /*!< Select alternate function 8 */
 #define LL_GPIO_AF_9                       (0x0000009U) /*!< Select alternate function 9 */
 #define LL_GPIO_AF_10                      (0x000000AU) /*!< Select alternate function 10 */
-#endif
+#endif /* STM32G0B0xx || STM32G0B1xx || STM32G0C1xx */
 /**
   * @}
   */

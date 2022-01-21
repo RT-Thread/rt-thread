@@ -7,13 +7,13 @@
  * Date           Author       Notes
  */
 
-#include "Mutex.h"
+#include "cxx_mutex.h"
 
 using namespace rtthread;
 
 Mutex::Mutex(const char *name)
 {
-    rt_mutex_init(&mID, name, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&mID, name, RT_IPC_FLAG_PRIO);
 }
 
 bool Mutex::lock(int32_t millisec)

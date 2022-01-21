@@ -11,8 +11,6 @@ Because RT-Thread RTOS is used in embedded system mostly, there are some rules f
 4. Static class variables are discouraged. The time and place to call their constructor function could not be precisely controlled and make multi-threaded programming a nightmare.
 5. Multiple inheritance is strongly discouraged, as it can cause intolerable confusion.
 
-*NOTE*: The libc (RT_USING_LIBC in rtconfig.h) must be enable.
-
 About GNU GCC compiler
 
 please add following string in your ld link script:

@@ -24,7 +24,7 @@
 #include "stm32_assert.h"
 #else
 #define assert_param(expr) ((void)0U)
-#endif
+#endif /* USE_FULL_ASSERT */
 
 /** @addtogroup STM32G0xx_LL_Driver
   * @{
@@ -47,7 +47,7 @@
 #define IS_LL_EXTI_LINE_0_31(__VALUE__)              (((__VALUE__) & ~LL_EXTI_LINE_ALL_0_31) == 0x00000000U)
 #if defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
 #define IS_LL_EXTI_LINE_32_63(__VALUE__)             (((__VALUE__) & ~LL_EXTI_LINE_ALL_32_63) == 0x00000000U)
-#endif
+#endif /* STM32G081xx || STM32G071xx || STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 #define IS_LL_EXTI_MODE(__VALUE__)                   (((__VALUE__) == LL_EXTI_MODE_IT)            \
                                                    || ((__VALUE__) == LL_EXTI_MODE_EVENT)         \
                                                    || ((__VALUE__) == LL_EXTI_MODE_IT_EVENT))
@@ -103,7 +103,7 @@ uint32_t LL_EXTI_DeInit(void)
 #elif defined(STM32G0B0xx) || defined(STM32G070xx) || defined(STM32G050xx) || defined(STM32G030xx)
   LL_EXTI_WriteReg(RPR1,    0x0000FFFFU);
   LL_EXTI_WriteReg(FPR1,    0x0000FFFFU);
-#endif
+#endif /* STM32G0C1xx || STM32G0B1xx */
 
 #if defined(STM32G081xx) || defined(STM32G071xx)
   /* Interrupt mask register 2 set to default reset values */
@@ -129,7 +129,7 @@ uint32_t LL_EXTI_DeInit(void)
   LL_EXTI_WriteReg(IMR2, 0x00000010U);
   /* Event mask register 2 set to default reset values */
   LL_EXTI_WriteReg(EMR2, 0x00000000U);
-#endif
+#endif /* STM32G081xx || STM32G071xx */
 
   return 0x00u;
 }
@@ -149,7 +149,7 @@ uint32_t LL_EXTI_Init(LL_EXTI_InitTypeDef *EXTI_InitStruct)
   assert_param(IS_LL_EXTI_LINE_0_31(EXTI_InitStruct->Line_0_31));
 #if defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
   assert_param(IS_LL_EXTI_LINE_32_63(EXTI_InitStruct->Line_32_63));
-#endif
+#endif /* STM32G081xx || STM32G071xx || STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
   assert_param(IS_FUNCTIONAL_STATE(EXTI_InitStruct->LineCommand));
   assert_param(IS_LL_EXTI_MODE(EXTI_InitStruct->Mode));
 
@@ -238,7 +238,7 @@ uint32_t LL_EXTI_Init(LL_EXTI_InitTypeDef *EXTI_InitStruct)
           break;
       }
     }
-#endif
+#endif /* STM32G081xx || STM32G071xx || STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
   }
   /* DISABLE LineCommand */
   else
@@ -250,7 +250,7 @@ uint32_t LL_EXTI_Init(LL_EXTI_InitTypeDef *EXTI_InitStruct)
     /* De-configure EXTI Lines in range from 32 to 63 */
     LL_EXTI_DisableIT_32_63(EXTI_InitStruct->Line_32_63);
     LL_EXTI_DisableEvent_32_63(EXTI_InitStruct->Line_32_63);
-#endif
+#endif /* STM32G081xx || STM32G071xx || STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
   }
 
   return status;
@@ -266,7 +266,7 @@ void LL_EXTI_StructInit(LL_EXTI_InitTypeDef *EXTI_InitStruct)
   EXTI_InitStruct->Line_0_31      = LL_EXTI_LINE_NONE;
 #if defined(STM32G081xx) || defined(STM32G071xx) || defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
   EXTI_InitStruct->Line_32_63     = LL_EXTI_LINE_NONE;
-#endif
+#endif /* STM32G081xx || STM32G071xx || STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
   EXTI_InitStruct->LineCommand    = DISABLE;
   EXTI_InitStruct->Mode           = LL_EXTI_MODE_IT;
   EXTI_InitStruct->Trigger        = LL_EXTI_TRIGGER_FALLING;

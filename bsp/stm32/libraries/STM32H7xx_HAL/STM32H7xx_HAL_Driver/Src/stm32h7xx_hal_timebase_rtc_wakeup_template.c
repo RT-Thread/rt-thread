@@ -6,7 +6,7 @@
   *
   *          This file overrides the native HAL time base functions (defined as weak)
   *          to use the RTC WAKEUP for the time base generation:
-  *           + Intializes the RTC peripheral and configures the wakeup timer to be
+  *           + Initializes the RTC peripheral and configures the wakeup timer to be
   *             incremented each 1ms
   *           + The wakeup feature is configured to assert an interrupt each 1ms
   *           + HAL_IncTick is called inside the HAL_RTCEx_WakeUpTimerEventCallback
@@ -107,19 +107,19 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
   RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
 
 #ifdef RTC_CLOCK_SOURCE_LSE
-  /* Configue LSE as RTC clock soucre */
+  /* Configure LSE as RTC clock source */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
 #elif defined (RTC_CLOCK_SOURCE_LSI)
-  /* Configue LSI as RTC clock soucre */
+  /* Configure LSI as RTC clock source */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
 #elif defined (RTC_CLOCK_SOURCE_HSE)
-  /* Configue HSE as RTC clock soucre */
+  /* Configure HSE as RTC clock source */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -215,11 +215,11 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
       /* Configure the HAL Tick IRQ priority */
       if (TickPriority < (1UL << __NVIC_PRIO_BITS))
       {
-        HAL_NVIC_SetPriority(RTC_WKUP_IRQn, TickPriority, 0U);
-        HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
+      HAL_NVIC_SetPriority(RTC_WKUP_IRQn, TickPriority, 0U);
+      HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
 
         uwTickPrio = TickPriority;
-        return HAL_OK;
+      return HAL_OK;
       }
       else
       {

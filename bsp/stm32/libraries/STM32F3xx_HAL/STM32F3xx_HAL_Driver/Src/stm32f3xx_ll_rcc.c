@@ -239,7 +239,7 @@ ErrorStatus LL_RCC_DeInit(void)
   vl_mask = 0xFFFFFFFFU;
   CLEAR_BIT(vl_mask, (RCC_CFGR_SW | RCC_CFGR_HPRE | RCC_CFGR_PPRE1 |\
                       RCC_CFGR_PPRE2 | RCC_CFGR_MCOSEL));
-
+ 
   /* Write new value in CFGR register */
   LL_RCC_WriteReg(CFGR, vl_mask);
 
@@ -249,10 +249,10 @@ ErrorStatus LL_RCC_DeInit(void)
 
   /* Read CR register */
   vl_mask = LL_RCC_ReadReg(CR);
-
+  
   /* Reset HSEON, CSSON, PLLON bits */
   CLEAR_BIT(vl_mask, (RCC_CR_PLLON | RCC_CR_CSSON | RCC_CR_HSEON));
-
+ 
    /* Write new value in CR register */
   LL_RCC_WriteReg(CR, vl_mask);
 
@@ -297,9 +297,9 @@ ErrorStatus LL_RCC_DeInit(void)
   *         and different peripheral clocks available on the device.
   * @note   If SYSCLK source is HSI, function returns values based on HSI_VALUE(**)
   * @note   If SYSCLK source is HSE, function returns values based on HSE_VALUE(***)
-  * @note   If SYSCLK source is PLL, function returns values based on
+  * @note   If SYSCLK source is PLL, function returns values based on 
   *         HSI_VALUE(**) or HSE_VALUE(***) multiplied/divided by the PLL factors.
-  * @note   (**) HSI_VALUE is a defined constant but the real value may vary
+  * @note   (**) HSI_VALUE is a defined constant but the real value may vary 
   *              depending on the variations in voltage and temperature.
   * @note   (***) HSE_VALUE is a defined constant, user has to ensure that
   *               HSE_VALUE is same as the real frequency of the crystal used.
@@ -586,7 +586,7 @@ uint32_t LL_RCC_GetI2CClockFreq(uint32_t I2CxSource)
       case LL_RCC_I2C2_CLKSOURCE_SYSCLK: /* I2C2 Clock is System Clock */
         i2c_frequency = RCC_GetSystemClockFreq();
         break;
-
+	
       case LL_RCC_I2C2_CLKSOURCE_HSI:    /* I2C2 Clock is HSI Osc. */
       default:
         if (LL_RCC_HSI_IsReady())

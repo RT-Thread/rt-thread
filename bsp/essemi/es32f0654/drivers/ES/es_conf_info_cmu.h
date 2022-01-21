@@ -25,7 +25,7 @@
 #define __ES_CONF_INFO_CMU_H__
 
 
-#include <ald_cmu.h> 
+#include <ald_cmu.h>
 
 
 /* 时钟树 配置 */
@@ -33,19 +33,19 @@
 #define   ES_C_MUL_9          CMU_PLL1_OUTPUT_36M
 #define   ES_C_MUL_12         CMU_PLL1_OUTPUT_48M
 
-#define  ES_C_DIV_1          CMU_DIV_1  
-#define  ES_C_DIV_2          CMU_DIV_2 
-#define  ES_C_DIV_4          CMU_DIV_4 
-#define  ES_C_DIV_8          CMU_DIV_8 
-#define  ES_C_DIV_16          CMU_DIV_16 
-#define  ES_C_DIV_32          CMU_DIV_32 
-#define  ES_C_DIV_64          CMU_DIV_64 
-#define  ES_C_DIV_128          CMU_DIV_128 
-#define  ES_C_DIV_256          CMU_DIV_256 
-#define  ES_C_DIV_512          CMU_DIV_512 
-#define  ES_C_DIV_1024          CMU_DIV_1024 
-#define  ES_C_DIV_2048          CMU_DIV_2048 
-#define  ES_C_DIV_4096          CMU_DIV_4096 
+#define  ES_C_DIV_1          CMU_DIV_1
+#define  ES_C_DIV_2          CMU_DIV_2
+#define  ES_C_DIV_4          CMU_DIV_4
+#define  ES_C_DIV_8          CMU_DIV_8
+#define  ES_C_DIV_16          CMU_DIV_16
+#define  ES_C_DIV_32          CMU_DIV_32
+#define  ES_C_DIV_64          CMU_DIV_64
+#define  ES_C_DIV_128          CMU_DIV_128
+#define  ES_C_DIV_256          CMU_DIV_256
+#define  ES_C_DIV_512          CMU_DIV_512
+#define  ES_C_DIV_1024          CMU_DIV_1024
+#define  ES_C_DIV_2048          CMU_DIV_2048
+#define  ES_C_DIV_4096          CMU_DIV_4096
 
 #define  ES_C_HOSC_DIV_1        CMU_PLL1_INPUT_HOSC
 #define  ES_C_HOSC_DIV_2        CMU_PLL1_INPUT_HOSC_2

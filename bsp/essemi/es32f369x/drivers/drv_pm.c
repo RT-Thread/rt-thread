@@ -20,7 +20,7 @@
  * 2020-12-15     liuhy        the first version
  */
 
-#include "drv_pm.h" 
+#include "drv_pm.h"
 
 #ifdef RT_USING_PM
 
@@ -29,20 +29,20 @@ void save_register(void *p_head,uint32_t size,void *p_save)
 {
      memcpy(p_save,p_head,size);
 }
- 
+
 void load_register(void *p_head,uint32_t size,void *p_load)
 {
      memcpy(p_head,p_load,size);
-   
-#ifdef ES_PMU_SAVE_LOAD_UART  
 
-    if((p_head == UART0) || (p_head == UART1) || (p_head == UART2) || 
+#ifdef ES_PMU_SAVE_LOAD_UART
+
+    if((p_head == UART0) || (p_head == UART1) || (p_head == UART2) ||
          (p_head == UART3) || (p_head == UART4) || (p_head == UART5) )
     {
         ((UART_TypeDef*)p_head)->IER = ((UART_TypeDef*)p_load)->IVS;
     }
 #endif
-    
+
 }
 
 static void uart_console_reconfig(void)
@@ -62,7 +62,7 @@ static void uart_console_reconfig(void)
 /* 注意：进入睡眠前，如果有中断挂起（SYSTICK、PENDSV、UART、EXTI等），睡眠将被瞬间唤醒。*/
 static void sleep(struct rt_pm *pm, uint8_t mode)
 {
-   
+
     switch (mode)
     {
     case PM_SLEEP_MODE_NONE:
@@ -76,18 +76,18 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
         ald_pmu_stop1_enter();
         break;
 
-    case PM_SLEEP_MODE_DEEP:           
-        /* Enter STOP 2 mode  */   
+    case PM_SLEEP_MODE_DEEP:
+        /* Enter STOP 2 mode  */
         ald_pmu_stop2_enter();
         break;
 
     case PM_SLEEP_MODE_STANDBY:
-        /* Enter STANDBY mode */  
+        /* Enter STANDBY mode */
         ald_pmu_stop2_enter();
         break;
 
     case PM_SLEEP_MODE_SHUTDOWN:
-        /* Enter SHUTDOWNN mode */       
+        /* Enter SHUTDOWNN mode */
         ald_pmu_stop2_enter();
         break;
 
@@ -95,7 +95,7 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
         RT_ASSERT(0);
         break;
     }
-    
+
 }
 
 static uint8_t run_speed[PM_RUN_MODE_MAX][2] =

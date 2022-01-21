@@ -1971,7 +1971,7 @@ __STATIC_INLINE void LL_USART_SetBaudRate(USART_TypeDef *USARTx, uint32_t Periph
 #endif /* USART_PRESC_PRESCALER */
 {
   uint32_t usartdiv;
-  register uint32_t brrtemp;
+  uint32_t brrtemp;
 
 #if defined(USART_PRESC_PRESCALER)
   if (PrescalerValue > LL_USART_PRESCALER_DIV256)
@@ -2037,10 +2037,10 @@ __STATIC_INLINE uint32_t LL_USART_GetBaudRate(USART_TypeDef *USARTx, uint32_t Pe
 __STATIC_INLINE uint32_t LL_USART_GetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t OverSampling)
 #endif /* USART_PRESC_PRESCALER */
 {
-  register uint32_t usartdiv;
-  register uint32_t brrresult = 0x0U;
+  uint32_t usartdiv;
+  uint32_t brrresult = 0x0U;
 #if defined(USART_PRESC_PRESCALER)
-  register uint32_t periphclkpresc = (uint32_t)(PeriphClk / (USART_PRESCALER_TAB[(uint8_t)PrescalerValue]));
+  uint32_t periphclkpresc = (uint32_t)(PeriphClk / (USART_PRESCALER_TAB[(uint8_t)PrescalerValue]));
 #endif /* USART_PRESC_PRESCALER */
 
   usartdiv = USARTx->BRR;
@@ -4488,7 +4488,7 @@ __STATIC_INLINE uint32_t LL_USART_IsEnabledDMADeactOnRxErr(USART_TypeDef *USARTx
   */
 __STATIC_INLINE uint32_t LL_USART_DMA_GetRegAddr(USART_TypeDef *USARTx, uint32_t Direction)
 {
-  register uint32_t data_reg_addr;
+  uint32_t data_reg_addr;
 
   if (Direction == LL_USART_DMA_REG_DATA_TRANSMIT)
   {

@@ -192,7 +192,7 @@ ald_status_t ald_pis_output_start(pis_handle_t *hperh, pis_out_ch_t ch)
 	assert_param(IS_PIS(hperh->perh));
 	assert_param(IS_PIS_OUPUT_CH(ch));
 	__LOCK(hperh);
-	SET_BIT(PIS->CH_OER, (1 << ch));
+	SET_BIT(PIS->CH_OER, (1 << (uint32_t)ch));
 	__UNLOCK(hperh);
 
 	return OK;
@@ -215,7 +215,7 @@ ald_status_t ald_pis_output_stop(pis_handle_t *hperh, pis_out_ch_t ch)
 	assert_param(IS_PIS(hperh->perh));
 	assert_param(IS_PIS_OUPUT_CH(ch));
 	__LOCK(hperh);
-	CLEAR_BIT(PIS->CH_OER, (1 << ch));
+	CLEAR_BIT(PIS->CH_OER, (1 << (uint32_t)ch));
 	__UNLOCK(hperh);
 
 	return OK;

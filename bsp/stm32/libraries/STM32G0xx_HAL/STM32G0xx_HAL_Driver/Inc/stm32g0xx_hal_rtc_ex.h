@@ -187,7 +187,7 @@ typedef struct
 #define RTC_TAMPER_ALL                      (TAMP_CR1_TAMP1E | TAMP_CR1_TAMP2E | TAMP_CR1_TAMP3E)
 #else
 #define RTC_TAMPER_ALL                      (TAMP_CR1_TAMP1E | TAMP_CR1_TAMP2E)
-#endif
+#endif /* TAMP_CR1_TAMP3E */
 /**
   * @}
   */
@@ -316,7 +316,7 @@ typedef struct
 #define RTC_IT_TAMPALL                     (TAMP_IER_TAMP1IE | TAMP_IER_TAMP2IE | TAMP_IER_TAMP3IE)
 #else
 #define RTC_IT_TAMPALL                     (TAMP_IER_TAMP1IE | TAMP_IER_TAMP2IE)
-#endif
+#endif /* TAMP_CR1_TAMP3E */
 
 #define RTC_IT_INT_TAMP3                   TAMP_IER_ITAMP3IE
 #define RTC_IT_INT_TAMP4                   TAMP_IER_ITAMP4IE
@@ -338,7 +338,7 @@ typedef struct
 #define RTC_FLAG_TAMPALL                  (RTC_FLAG_TAMP1 | RTC_FLAG_TAMP2 | RTC_FLAG_TAMP3)
 #else
 #define RTC_FLAG_TAMPALL                  (RTC_FLAG_TAMP1 | RTC_FLAG_TAMP2)
-#endif
+#endif /* TAMP_CR1_TAMP3E */
 #define RTC_FLAG_INT_TAMP3                 TAMP_SR_ITAMP3F
 #define RTC_FLAG_INT_TAMP4                 TAMP_SR_ITAMP4F
 #define RTC_FLAG_INT_TAMP5                 TAMP_SR_ITAMP5F
@@ -985,7 +985,7 @@ void              HAL_RTCEx_Tamper1EventCallback(RTC_HandleTypeDef *hrtc);
 void              HAL_RTCEx_Tamper2EventCallback(RTC_HandleTypeDef *hrtc);
 #if defined(TAMP_CR1_TAMP3E)
 void              HAL_RTCEx_Tamper3EventCallback(RTC_HandleTypeDef *hrtc);
-#endif
+#endif /* TAMP_CR1_TAMP3E */
 void              HAL_RTCEx_InternalTamper3EventCallback(RTC_HandleTypeDef *hrtc);
 void              HAL_RTCEx_InternalTamper4EventCallback(RTC_HandleTypeDef *hrtc);
 void              HAL_RTCEx_InternalTamper5EventCallback(RTC_HandleTypeDef *hrtc);

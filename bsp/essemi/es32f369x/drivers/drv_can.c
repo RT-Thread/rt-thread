@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the License); you may
  * not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2020-01-14     wangyq        the first version   
+ * 2020-01-14     wangyq        the first version
  * 2021-04-20     liuhy         the second version
  */
 
@@ -29,26 +29,26 @@ static struct es32f3_can can;
 
 
 static rt_uint32_t get_can_baud_index(rt_uint32_t baud,can_init_t * init)
-{ 
+{
 /* attention !!! baud calculation example: Pclk / ((1 + seg1 + seg2) * psc)       Pclk=48 / ((1 + seg1=3 + seg2=2) * 8) = 1MHz */
     double target,temp,min;
     uint32_t i,j,j_max,near = 0;
     target = (double)(ald_cmu_get_pclk1_clock());
     target/= baud;                               /*计算误差1*/
-    
+
     min = 0xFFFFFFFF;
-    
+
     for(i = 1 + 16 + 8 ;i > 2;i--)     /*SYNC_SEG + SEG1 + SEG2*/
     {
         j_max = target/i/(0.98) + 1;                          /*缩小范围*/
         j_max = (j_max > 1024) ? (1024) : (j_max);
-        
+
         for(j = target/i/1.02 ;j < j_max;j++)
-        {   
+        {
             temp = target/i/j;                      /*计算误差2*/
             temp = (temp > 1) ? (temp - 1) : (1 - temp);
-            temp+= ((1.0 * i * j) / 0xFFFFFFFF) ;       
-            
+            temp+= ((1.0 * i * j) / 0xFFFFFFFF) ;
+
             if(temp < min)
             {
                 if(temp > 0.000001)
@@ -56,12 +56,12 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud,can_init_t * init)
                      near = (i<<16) + j;
                      min = temp;
                 }
-                else                         
+                else
                 {
                      init->seg1 = (can_seg1_t)((i - 1)*2/3-1);
                      init->seg2 = (can_seg2_t)(i - init->seg1 - 1 - 1 - 1);
                      init->psc = j;
-                
+
                      return 0;
                  }
              }
@@ -75,15 +75,15 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud,can_init_t * init)
         init->seg1 = (can_seg1_t)((i - 1)*2/3-1);
         init->seg2 = (can_seg2_t)(i - init->seg1 - 1 - 1 - 1);
         init->psc = j;
-        
+
         return 0;
     }
     else
     {
-        return 1; 
+        return 1;
     }
 }
-   
+
 
 static rt_err_t _can_config(struct rt_can_device *can_device, struct can_configure *cfg)
 {
@@ -120,10 +120,10 @@ static rt_err_t _can_config(struct rt_can_device *can_device, struct can_configu
     /*配置参数*/
     if(get_can_baud_index(cfg->baud_rate,&(drv_can->CanHandle.init)))
     {
-        return -RT_ERROR; 
+        return -RT_ERROR;
     }
     drv_can->CanHandle.init.sjw = (can_sjw_t)(cfg->reserved);
-    
+
     /* init can */
     if (ald_can_init(&drv_can->CanHandle) != OK)
     {
@@ -167,7 +167,7 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_TXM, DISABLE);
         }
         else if (argval == RT_DEVICE_CAN_INT_ERR)
-        {   
+        {
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_WARN, DISABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_PERR, DISABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_BOF, DISABLE);
@@ -181,33 +181,33 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
         {
             NVIC_SetPriority(CAN0_RX0_IRQn, 1);
             NVIC_EnableIRQ(CAN0_RX0_IRQn);
-            
+
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FP0, ENABLE);
-            ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF0, ENABLE);
+//            ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF0, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FOV0, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FP1, ENABLE);
-            ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF1, ENABLE);
+//            ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FF1, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_FOV1, ENABLE);
-            
+
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
             NVIC_SetPriority(CAN0_TX_IRQn, 1);
             NVIC_EnableIRQ(CAN0_TX_IRQn);
-            
+
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_TXM, ENABLE);
         }
         else if (argval == RT_DEVICE_CAN_INT_ERR)
         {
             NVIC_SetPriority(CAN0_EXCEPTION_IRQn, 1);
             NVIC_EnableIRQ(CAN0_EXCEPTION_IRQn);
-            
+
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_WARN, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_PERR, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_BOF, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_PRERR, ENABLE);
             ald_can_interrupt_config(&drv_can->CanHandle, CAN_IT_ERR, ENABLE);
-            
+
         }
         break;
 #ifdef RT_CAN_USING_HDR
@@ -222,12 +222,12 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
             filter_cfg = (struct rt_can_filter_config *)arg;
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
-            {   
-                
+            {
+
                 /*默认过滤表判断*/
-                if(filter_cfg->items[i].hdr < drv_can->device.config.maxhdr)           
+                if(filter_cfg->items[i].hdr < drv_can->device.config.maxhdr)
                     drv_can->FilterConfig.number = filter_cfg->items[i].hdr;
-                else       
+                else
                     drv_can->FilterConfig.number = ES_C_CAN_DEFAULT_FILTER_NUMBER;
 
                if(filter_cfg->items[i].mode)
@@ -235,40 +235,40 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
                     /*标识符列表模式： 类型匹配 ，id匹配为：接收的id = 配置的id
                                                                 或者 = 配置的mask ，通过*/
                     /*扩展帧*/
-                    if(filter_cfg->items[i].ide)  
-                    {    
+                    if(filter_cfg->items[i].ide)
+                    {
 //                         filter_cfg->items[i].id =  filter_cfg->items[i].id ;    /*id 29 位*/
                          filter_cfg->items[i].mask = ((filter_cfg->items[i].mask << 3) |
                                                     (filter_cfg->items[i].ide << 2) |
-                                                    (filter_cfg->items[i].rtr << 1));  
+                                                    (filter_cfg->items[i].rtr << 1));
                     }
                     else  /*标准帧*/
                     {
-                         filter_cfg->items[i].id = (filter_cfg->items[i].id << 18);   
+                         filter_cfg->items[i].id = (filter_cfg->items[i].id << 18);
                          filter_cfg->items[i].mask = ((filter_cfg->items[i].mask << 21) |
                                                     (filter_cfg->items[i].ide << 2) |
-                                                    (filter_cfg->items[i].rtr << 1));  
-                    }   
+                                                    (filter_cfg->items[i].rtr << 1));
+                    }
                 }
                 else
                 {
                     /*标识符掩码模式*/
                     /*扩展帧*/
-                    if(filter_cfg->items[i].ide)  
-                    {    
-                         filter_cfg->items[i].mask = (filter_cfg->items[i].mask)<<3;     
+                    if(filter_cfg->items[i].ide)
+                    {
+                         filter_cfg->items[i].mask = (filter_cfg->items[i].mask)<<3;
                     }
                     else  /*标准帧*/
                     {
-                         filter_cfg->items[i].id = (filter_cfg->items[i].id)<<18; 
+                         filter_cfg->items[i].id = (filter_cfg->items[i].id)<<18;
                          filter_cfg->items[i].mask = (filter_cfg->items[i].mask)<<21;
-                    }   
-                
+                    }
+
 #if   ES_C_CAN_FILTER_FRAME_TYPE
                     /*匹配类型*/
                     filter_cfg->items[i].mask |= 0x6;
-#endif            
-                
+#endif
+
                 }
 
                 drv_can->FilterConfig.id_high = (filter_cfg->items[i].id >> 13) & 0xFFFF;
@@ -277,7 +277,7 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
                                                 (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
                 drv_can->FilterConfig.mask_id_high = (filter_cfg->items[i].mask >> 16) & 0xFFFF;
                 drv_can->FilterConfig.mask_id_low = filter_cfg->items[i].mask & 0xFFFF;
-                   
+
                 drv_can->FilterConfig.mode = (can_filter_mode_t)filter_cfg->items[i].mode;
                 /* Filter conf */
                 ald_can_filter_config(&drv_can->CanHandle, &drv_can->FilterConfig);
@@ -303,7 +303,7 @@ static rt_err_t _can_control(struct rt_can_device *can_device, int cmd, void *ar
         break;
     case RT_CAN_CMD_SET_BAUD:
         argval = (rt_uint32_t) arg;
-    
+
         if (argval != drv_can->device.config.baud_rate)
         {
             drv_can->device.config.baud_rate = argval;
@@ -412,15 +412,15 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         }
         /* clear TIR */
         h_can->perh->TxMailBox[box_num].TXID &= CAN_TXID0_TXMREQ_MSK;
-        
+
         /* Set up the Id */
         if (RT_CAN_STDID == pmsg->ide)
         {
-            h_can->perh->TxMailBox[box_num].TXID |= (txheader.std << CAN_TXID0_STDID_POSS) | txheader.rtr;
+            h_can->perh->TxMailBox[box_num].TXID |= (txheader.std << CAN_TXID0_STDID_POSS) | (txheader.rtr << CAN_TXID0_RTR_POS);
         }
         else
         {
-            h_can->perh->TxMailBox[box_num].TXID |= (txheader.ext << CAN_TXID0_EXID_POSS) | txheader.type | txheader.rtr;
+            h_can->perh->TxMailBox[box_num].TXID |= (txheader.ext << CAN_TXID0_EXID_POSS) | (txheader.type << CAN_TXID0_IDE_POS) | (txheader.rtr << CAN_TXID0_RTR_POS);
         }
         /* Set up the DLC */
         h_can->perh->TxMailBox[box_num].TXFCON = pmsg->len & 0x0FU;
@@ -437,7 +437,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
                   ((uint32_t)pmsg->data[0] << CAN_TXDL0_BYTE0_POSS));
         /* Request transmission */
         SET_BIT(h_can->perh->TxMailBox[box_num].TXID, CAN_TXID0_TXMREQ_MSK);
-     
+
         return RT_EOK;
     }
     else
@@ -447,8 +447,8 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
 
         return -RT_ERROR;
     }
-    
-    
+
+
 }
 
 static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -530,8 +530,8 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
         /* RX interrupt */
         else
         {
-           if(CAN_RX_MSG_PENDING(h_can, CAN_RX_FIFO0) != 0) 
-            {                                                     
+           if(CAN_RX_MSG_PENDING(h_can, CAN_RX_FIFO0) != 0)
+            {
             /* save to user list */
             rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
             }
@@ -551,8 +551,8 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
         /* RX interrupt */
         else
         {
-            if(CAN_RX_MSG_PENDING(h_can, CAN_RX_FIFO1) != 0) 
-            {                                                     
+            if(CAN_RX_MSG_PENDING(h_can, CAN_RX_FIFO1) != 0)
+            {
             /* save to user list */
             rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
             }
@@ -695,21 +695,21 @@ int rt_hw_can_init(void)
     h_gpio.flt  = GPIO_FILTER_DISABLE;
     h_gpio.type = GPIO_TYPE_TTL;
 
-#if  defined(ES_CAN0_RX_GPIO_FUNC)&&defined(ES_CAN0_RX_GPIO_PORT)&&defined(ES_CAN0_RX_GPIO_PIN)    
+#if  defined(ES_CAN0_RX_GPIO_FUNC)&&defined(ES_CAN0_RX_GPIO_PORT)&&defined(ES_CAN0_RX_GPIO_PIN)
     /* Initialize can rx pin */
-    h_gpio.mode = GPIO_MODE_INPUT; 
+    h_gpio.mode = GPIO_MODE_INPUT;
     h_gpio.func = ES_CAN0_RX_GPIO_FUNC;
     ald_gpio_init(ES_CAN0_RX_GPIO_PORT, ES_CAN0_RX_GPIO_PIN, &h_gpio);
-#endif                            
-             
- 
-#if  defined(ES_CAN0_TX_GPIO_FUNC)&&defined(ES_CAN0_TX_GPIO_PORT)&&defined(ES_CAN0_TX_GPIO_PIN)     
+#endif
+
+
+#if  defined(ES_CAN0_TX_GPIO_FUNC)&&defined(ES_CAN0_TX_GPIO_PORT)&&defined(ES_CAN0_TX_GPIO_PIN)
     /* Initialize can tx pin */
-    h_gpio.mode = GPIO_MODE_OUTPUT; 
+    h_gpio.mode = GPIO_MODE_OUTPUT;
     h_gpio.func = ES_CAN0_TX_GPIO_FUNC;
     ald_gpio_init(ES_CAN0_TX_GPIO_PORT, ES_CAN0_TX_GPIO_PIN, &h_gpio);
-#endif                            
-             
+#endif
+
 
     /* config default filter */
     can_filter_t filter = {0};
@@ -718,13 +718,13 @@ int rt_hw_can_init(void)
     filter.mask_id_high = 0x0000;
     filter.mask_id_low = 0x0000;
     filter.fifo = CAN_FILTER_FIFO0;
-    filter.number = ES_C_CAN_DEFAULT_FILTER_NUMBER; 
+    filter.number = ES_C_CAN_DEFAULT_FILTER_NUMBER;
     filter.mode = CAN_FILTER_MODE_MASK;
     filter.scale = CAN_FILTER_SCALE_32;
     filter.active = ENABLE;
 
     can.FilterConfig = filter;
-    can.device.config = (struct can_configure)ES_CAN0_CONFIG; 
+    can.device.config = (struct can_configure)ES_CAN0_CONFIG;
 #ifdef RT_CAN_USING_HDR
     can.device.config.maxhdr = 14;
 #endif

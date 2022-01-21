@@ -1288,7 +1288,6 @@ __STATIC_INLINE uint32_t LL_DAC_RetrieveOutputData(DAC_TypeDef *DACx, uint32_t D
   * @{
   */
 
-
 /**
   * @brief  Get DAC underrun flag for DAC channel 1
   * @rmtoll SR       DMAUDR1        LL_DAC_IsActiveFlag_DMAUDR1

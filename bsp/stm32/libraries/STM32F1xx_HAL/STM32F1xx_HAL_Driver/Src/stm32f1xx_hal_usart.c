@@ -166,7 +166,7 @@
 
   @endverbatim
      [..]
-       (@) Additionnal remark: If the parity is enabled, then the MSB bit of the data written
+       (@) Additional remark: If the parity is enabled, then the MSB bit of the data written
            in the data register is transmitted but is changed by the parity bit.
            Depending on the frame length defined by the M bit (8-bits or 9-bits),
            the possible USART frame formats are as listed in the following table:
@@ -537,9 +537,9 @@ HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_US
 }
 
 /**
-  * @brief  Unregister an UART Callback
-  *         UART callaback is redirected to the weak predefined callback
-  * @param  husart uart handle
+  * @brief  Unregister an USART Callback
+  *         USART callaback is redirected to the weak predefined callback
+  * @param  husart usart handle
   * @param  CallbackID ID of the callback to be unregistered
   *         This parameter can be one of the following values:
   *           @arg @ref HAL_USART_TX_HALFCOMPLETE_CB_ID Tx Half Complete Callback ID
@@ -731,7 +731,7 @@ HAL_StatusTypeDef HAL_USART_UnRegisterCallback(USART_HandleTypeDef *husart, HAL_
 
 /**
   * @brief  Simplex Send an amount of data in blocking mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 provided through pTxData.
   * @param  husart  Pointer to a USART_HandleTypeDef structure that contains
@@ -743,8 +743,9 @@ HAL_StatusTypeDef HAL_USART_UnRegisterCallback(USART_HandleTypeDef *husart, HAL_
   */
 HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, uint8_t *pTxData, uint16_t Size, uint32_t Timeout)
 {
-  uint16_t *tmp;
-  uint32_t tickstart = 0U;
+  uint8_t  *ptxdata8bits;
+  uint16_t *ptxdata16bits;
+  uint32_t tickstart;
 
   if (husart->State == HAL_USART_STATE_READY)
   {
@@ -764,35 +765,38 @@ HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, uint8_t *pTxDa
 
     husart->TxXferSize = Size;
     husart->TxXferCount = Size;
+
+    /* In case of 9bits/No Parity transfer, pTxData needs to be handled as a uint16_t pointer */
+    if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
+    {
+      ptxdata8bits  = NULL;
+      ptxdata16bits = (uint16_t *) pTxData;
+    }
+    else
+    {
+      ptxdata8bits  = pTxData;
+      ptxdata16bits = NULL;
+    }
+
     while (husart->TxXferCount > 0U)
     {
-      husart->TxXferCount--;
-      if (husart->Init.WordLength == USART_WORDLENGTH_9B)
+      /* Wait for TXE flag in order to write data in DR */
+      if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TXE, RESET, tickstart, Timeout) != HAL_OK)
       {
-        /* Wait for TC flag in order to write data in DR */
-        if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TXE, RESET, tickstart, Timeout) != HAL_OK)
-        {
-          return HAL_TIMEOUT;
-        }
-        tmp = (uint16_t *) pTxData;
-        husart->Instance->DR = (*tmp & (uint16_t)0x01FF);
-        if (husart->Init.Parity == USART_PARITY_NONE)
-        {
-          pTxData += 2U;
-        }
-        else
-        {
-          pTxData += 1U;
-        }
+        return HAL_TIMEOUT;
+      }
+      if (ptxdata8bits == NULL)
+      {
+        husart->Instance->DR = (uint16_t)(*ptxdata16bits & (uint16_t)0x01FF);
+        ptxdata16bits++;
       }
       else
       {
-        if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TXE, RESET, tickstart, Timeout) != HAL_OK)
-        {
-          return HAL_TIMEOUT;
-        }
-        husart->Instance->DR = (*pTxData++ & (uint8_t)0xFF);
+        husart->Instance->DR = (uint8_t)(*ptxdata8bits & (uint8_t)0xFF);
+        ptxdata8bits++;
       }
+
+      husart->TxXferCount--;
     }
 
     if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TC, RESET, tickstart, Timeout) != HAL_OK)
@@ -816,7 +820,7 @@ HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, uint8_t *pTxDa
 /**
   * @brief  Full-Duplex Receive an amount of data in blocking mode.
   * @note   To receive synchronous data, dummy data are simultaneously transmitted.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the received data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 available through pRxData.
   * @param  husart  Pointer to a USART_HandleTypeDef structure that contains
@@ -828,8 +832,9 @@ HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, uint8_t *pTxDa
   */
 HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxData, uint16_t Size, uint32_t Timeout)
 {
-  uint16_t *tmp;
-  uint32_t tickstart = 0U;
+  uint8_t  *prxdata8bits;
+  uint16_t *prxdata16bits;
+  uint32_t tickstart;
 
   if (husart->State == HAL_USART_STATE_READY)
   {
@@ -848,65 +853,56 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
 
     husart->RxXferSize = Size;
     husart->RxXferCount = Size;
+
+    /* In case of 9bits/No Parity transfer, pRxData needs to be handled as a uint16_t pointer */
+    if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
+    {
+      prxdata8bits  = NULL;
+      prxdata16bits = (uint16_t *) pRxData;
+    }
+    else
+    {
+      prxdata8bits  = pRxData;
+      prxdata16bits = NULL;
+    }
+
     /* Check the remain data to be received */
     while (husart->RxXferCount > 0U)
     {
-      husart->RxXferCount--;
-      if (husart->Init.WordLength == USART_WORDLENGTH_9B)
+      /* Wait until TXE flag is set to send dummy byte in order to generate the
+      * clock for the slave to send data.
+      * Whatever the frame length (7, 8 or 9-bit long), the same dummy value
+      * can be written for all the cases. */
+      if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TXE, RESET, tickstart, Timeout) != HAL_OK)
       {
-        /* Wait until TXE flag is set to send dummy byte in order to generate the clock for the slave to send data */
-        if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TXE, RESET, tickstart, Timeout) != HAL_OK)
-        {
-          return HAL_TIMEOUT;
-        }
-        /* Send dummy byte in order to generate clock */
-        husart->Instance->DR = (DUMMY_DATA & (uint16_t)0x01FF);
+        return HAL_TIMEOUT;
+      }
+      husart->Instance->DR = (DUMMY_DATA & (uint16_t)0x0FF);
 
-        /* Wait for RXNE Flag */
-        if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_RXNE, RESET, tickstart, Timeout) != HAL_OK)
-        {
-          return HAL_TIMEOUT;
-        }
-        tmp = (uint16_t *) pRxData ;
-        if (husart->Init.Parity == USART_PARITY_NONE)
-        {
-          *tmp = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
-          pRxData += 2U;
-        }
-        else
-        {
-          *tmp = (uint16_t)(husart->Instance->DR & (uint16_t)0x00FF);
-          pRxData += 1U;
-        }
+      /* Wait until RXNE flag is set to receive the byte */
+      if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_RXNE, RESET, tickstart, Timeout) != HAL_OK)
+      {
+        return HAL_TIMEOUT;
+      }
+
+      if (prxdata8bits == NULL)
+      {
+        *prxdata16bits = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
+        prxdata16bits++;
       }
       else
       {
-        /* Wait until TXE flag is set to send dummy byte in order to generate the clock for the slave to send data */
-        if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TXE, RESET, tickstart, Timeout) != HAL_OK)
+        if ((husart->Init.WordLength == USART_WORDLENGTH_9B) || ((husart->Init.WordLength == USART_WORDLENGTH_8B) && (husart->Init.Parity == USART_PARITY_NONE)))
         {
-          return HAL_TIMEOUT;
-        }
-
-        /* Send Dummy Byte in order to generate clock */
-        husart->Instance->DR = (DUMMY_DATA & (uint16_t)0x00FF);
-
-        /* Wait until RXNE flag is set to receive the byte */
-        if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_RXNE, RESET, tickstart, Timeout) != HAL_OK)
-        {
-          return HAL_TIMEOUT;
-        }
-        if (husart->Init.Parity == USART_PARITY_NONE)
-        {
-          /* Receive data */
-          *pRxData++ = (uint8_t)(husart->Instance->DR & (uint8_t)0x00FF);
+          *prxdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x0FF);
         }
         else
         {
-          /* Receive data */
-          *pRxData++ = (uint8_t)(husart->Instance->DR & (uint8_t)0x007F);
+          *prxdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x07F);
         }
-
+        prxdata8bits++;
       }
+      husart->RxXferCount--;
     }
 
     husart->State = HAL_USART_STATE_READY;
@@ -924,7 +920,7 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
 
 /**
   * @brief  Full-Duplex Send and Receive an amount of data in full-duplex mode (blocking mode).
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
   *         of u16 available through pTxData and through pRxData.
   * @param  husart  Pointer to a USART_HandleTypeDef structure that contains
@@ -937,14 +933,29 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
   */
 HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout)
 {
-  uint16_t *tmp;
-  uint32_t tickstart = 0U;
+  uint8_t  *prxdata8bits;
+  uint16_t *prxdata16bits;
+  uint8_t  *ptxdata8bits;
+  uint16_t *ptxdata16bits;
+  uint16_t rxdatacount;
+  uint32_t tickstart;
 
   if (husart->State == HAL_USART_STATE_READY)
   {
     if ((pTxData == NULL) || (pRxData == NULL) || (Size == 0))
     {
       return  HAL_ERROR;
+    }
+
+    /* In case of 9bits/No Parity transfer, pTxData and pRxData buffers provided as input parameter
+       should be aligned on a u16 frontier, as data to be filled into TDR/retrieved from RDR will be
+       handled through a u16 cast. */
+    if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
+    {
+      if (((((uint32_t)pTxData) & 1U) != 0U) || ((((uint32_t)pRxData) & 1U) != 0U))
+      {
+        return  HAL_ERROR;
+      }
     }
     /* Process Locked */
     __HAL_LOCK(husart);
@@ -960,71 +971,78 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
     husart->TxXferCount = Size;
     husart->RxXferCount = Size;
 
-    /* Check the remain data to be received */
-    while (husart->TxXferCount > 0U)
+    /* In case of 9bits/No Parity transfer, pRxData needs to be handled as a uint16_t pointer */
+    if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
     {
-      husart->TxXferCount--;
-      husart->RxXferCount--;
-      if (husart->Init.WordLength == USART_WORDLENGTH_9B)
+      prxdata8bits  = NULL;
+      ptxdata8bits  = NULL;
+      ptxdata16bits = (uint16_t *) pTxData;
+      prxdata16bits = (uint16_t *) pRxData;
+    }
+    else
+    {
+      prxdata8bits  = pRxData;
+      ptxdata8bits  = pTxData;
+      ptxdata16bits = NULL;
+      prxdata16bits = NULL;
+    }
+
+    /* Check the remain data to be received */
+    /* rxdatacount is a temporary variable for MISRAC2012-Rule-13.5 */
+    rxdatacount = husart->RxXferCount;
+    while ((husart->TxXferCount > 0U) || (rxdatacount > 0U))
+    {
+      if (husart->TxXferCount > 0U)
       {
-        /* Wait for TC flag in order to write data in DR */
+        /* Wait for TXE flag in order to write data in DR */
         if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TXE, RESET, tickstart, Timeout) != HAL_OK)
         {
           return HAL_TIMEOUT;
         }
-        tmp = (uint16_t *) pTxData;
-        husart->Instance->DR = (*tmp & (uint16_t)0x01FF);
-        if (husart->Init.Parity == USART_PARITY_NONE)
+
+        if (ptxdata8bits == NULL)
         {
-          pTxData += 2U;
+          husart->Instance->DR = (uint16_t)(*ptxdata16bits & (uint16_t)0x01FF);
+          ptxdata16bits++;
         }
         else
         {
-          pTxData += 1U;
+          husart->Instance->DR = (uint8_t)(*ptxdata8bits & (uint8_t)0xFF);
+          ptxdata8bits++; 
         }
 
+        husart->TxXferCount--;
+      }
+
+      if (husart->RxXferCount > 0U)
+      {  
         /* Wait for RXNE Flag */
         if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_RXNE, RESET, tickstart, Timeout) != HAL_OK)
         {
           return HAL_TIMEOUT;
         }
-        tmp = (uint16_t *) pRxData ;
-        if (husart->Init.Parity == USART_PARITY_NONE)
+        if (prxdata8bits == NULL)
         {
-          *tmp = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
-          pRxData += 2U;
+          *prxdata16bits = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
+          prxdata16bits++;
         }
         else
         {
-          *tmp = (uint16_t)(husart->Instance->DR & (uint16_t)0x00FF);
-          pRxData += 1U;
-        }
-      }
-      else
-      {
-        /* Wait for TC flag in order to write data in DR */
-        if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TXE, RESET, tickstart, Timeout) != HAL_OK)
-        {
-          return HAL_TIMEOUT;
-        }
-        husart->Instance->DR = (*pTxData++ & (uint8_t)0x00FF);
+          if ((husart->Init.WordLength == USART_WORDLENGTH_9B) || ((husart->Init.WordLength == USART_WORDLENGTH_8B) && (husart->Init.Parity == USART_PARITY_NONE)))
+          {
+            *prxdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x0FF);
+          }
+          else
+          {
+            *prxdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x07F);
+          }
 
-        /* Wait for RXNE Flag */
-        if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_RXNE, RESET, tickstart, Timeout) != HAL_OK)
-        {
-          return HAL_TIMEOUT;
+          prxdata8bits++;
         }
-        if (husart->Init.Parity == USART_PARITY_NONE)
-        {
-          /* Receive data */
-          *pRxData++ = (uint8_t)(husart->Instance->DR & (uint8_t)0x00FF);
-        }
-        else
-        {
-          /* Receive data */
-          *pRxData++ = (uint8_t)(husart->Instance->DR & (uint8_t)0x007F);
-        }
+
+        husart->RxXferCount--;
       }
+      rxdatacount = husart->RxXferCount;
     }
 
     husart->State = HAL_USART_STATE_READY;
@@ -1042,7 +1060,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
 
 /**
   * @brief  Simplex Send an amount of data in non-blocking mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 provided through pTxData.
   * @param  husart  Pointer to a USART_HandleTypeDef structure that contains
@@ -1096,7 +1114,7 @@ HAL_StatusTypeDef HAL_USART_Transmit_IT(USART_HandleTypeDef *husart, uint8_t *pT
 /**
   * @brief  Simplex Receive an amount of data in non-blocking mode.
   * @note   To receive synchronous data, dummy data are simultaneously transmitted.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the received data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 available through pRxData.
   * @param  husart  Pointer to a USART_HandleTypeDef structure that contains
@@ -1145,7 +1163,7 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
 
 /**
   * @brief  Full-Duplex Send and Receive an amount of data in full-duplex mode (non-blocking).
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
   *         of u16 available through pTxData and through pRxData.
   * @param  husart  Pointer to a USART_HandleTypeDef structure that contains
@@ -1201,7 +1219,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint
 
 /**
   * @brief  Simplex Send an amount of data in DMA mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 provided through pTxData.
   * @param  husart  Pointer to a USART_HandleTypeDef structure that contains
@@ -1266,7 +1284,7 @@ HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *p
 
 /**
   * @brief  Full-Duplex Receive an amount of data in DMA mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the received data is handled as a set of u16. In this case, Size must indicate the number
   *         of u16 available through pRxData.
   * @param  husart  Pointer to a USART_HandleTypeDef structure that contains
@@ -1361,7 +1379,7 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
 
 /**
   * @brief  Full-Duplex Transmit Receive an amount of data in DMA mode.
-  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  * @note   When USART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
   *         of u16 available through pTxData and through pRxData.
   * @param  husart  Pointer to a USART_HandleTypeDef structure that contains
@@ -1789,7 +1807,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
     }
 
     /* USART Over-Run interrupt occurred -----------------------------------*/
-    if (((isrflags & USART_SR_ORE) != RESET) && ((cr3its & USART_CR3_EIE) != RESET))
+    if (((isrflags & USART_SR_ORE) != RESET) && (((cr1its & USART_CR1_RXNEIE) != RESET) || ((cr3its & USART_CR3_EIE) != RESET)))
     {
       husart->ErrorCode |= HAL_USART_ERROR_ORE;
     }
@@ -2155,8 +2173,6 @@ static void USART_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
     CLEAR_BIT(husart->Instance->CR3, USART_CR3_DMAR);
     CLEAR_BIT(husart->Instance->CR3, USART_CR3_DMAT);
 
-    husart->State = HAL_USART_STATE_READY;
-
     /* The USART state is HAL_USART_STATE_BUSY_RX */
     if (husart->State == HAL_USART_STATE_BUSY_RX)
     {
@@ -2179,6 +2195,7 @@ static void USART_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
       HAL_USART_TxRxCpltCallback(husart);
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
     }
+    husart->State = HAL_USART_STATE_READY;
   }
   /* DMA circular mode */
   else
@@ -2458,18 +2475,11 @@ static HAL_StatusTypeDef USART_Transmit_IT(USART_HandleTypeDef *husart)
 
   if (husart->State == HAL_USART_STATE_BUSY_TX)
   {
-    if (husart->Init.WordLength == USART_WORDLENGTH_9B)
+    if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
     {
       tmp = (uint16_t *) husart->pTxBuffPtr;
       husart->Instance->DR = (uint16_t)(*tmp & (uint16_t)0x01FF);
-      if (husart->Init.Parity == USART_PARITY_NONE)
-      {
-        husart->pTxBuffPtr += 2U;
-      }
-      else
-      {
-        husart->pTxBuffPtr += 1U;
-      }
+      husart->pTxBuffPtr += 2U;
     }
     else
     {
@@ -2527,45 +2537,36 @@ static HAL_StatusTypeDef USART_EndTransmit_IT(USART_HandleTypeDef *husart)
   */
 static HAL_StatusTypeDef USART_Receive_IT(USART_HandleTypeDef *husart)
 {
-  uint16_t *tmp;
+  uint8_t  *pdata8bits;
+  uint16_t *pdata16bits;
+
   if (husart->State == HAL_USART_STATE_BUSY_RX)
   {
-    if (husart->Init.WordLength == USART_WORDLENGTH_9B)
+    if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
     {
-      tmp = (uint16_t *) husart->pRxBuffPtr;
-      if (husart->Init.Parity == USART_PARITY_NONE)
-      {
-        *tmp = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
-        husart->pRxBuffPtr += 2U;
-      }
-      else
-      {
-        *tmp = (uint16_t)(husart->Instance->DR & (uint16_t)0x00FF);
-        husart->pRxBuffPtr += 1U;
-      }
-      if (--husart->RxXferCount != 0x00U)
-      {
-        /* Send dummy byte in order to generate the clock for the slave to send the next data */
-        husart->Instance->DR = (DUMMY_DATA & (uint16_t)0x01FF);
-      }
+      pdata8bits  = NULL;
+      pdata16bits = (uint16_t *) husart->pRxBuffPtr;
+      *pdata16bits = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
+      husart->pRxBuffPtr += 2U;
     }
     else
     {
-      if (husart->Init.Parity == USART_PARITY_NONE)
+      pdata8bits = (uint8_t *) husart->pRxBuffPtr;
+      pdata16bits  = NULL;
+
+      if ((husart->Init.WordLength == USART_WORDLENGTH_9B) || ((husart->Init.WordLength == USART_WORDLENGTH_8B) && (husart->Init.Parity == USART_PARITY_NONE)))
       {
-        *husart->pRxBuffPtr++ = (uint8_t)(husart->Instance->DR & (uint8_t)0x00FF);
+        *pdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x00FF);
       }
       else
       {
-        *husart->pRxBuffPtr++ = (uint8_t)(husart->Instance->DR & (uint8_t)0x007F);
+        *pdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x007F);
       }
 
-      if (--husart->RxXferCount != 0x00U)
-      {
-        /* Send dummy byte in order to generate the clock for the slave to send the next data */
-        husart->Instance->DR = (DUMMY_DATA & (uint16_t)0x00FF);
-      }
+      husart->pRxBuffPtr += 1U;
     }
+
+    husart->RxXferCount--;
 
     if (husart->RxXferCount == 0U)
     {
@@ -2589,6 +2590,13 @@ static HAL_StatusTypeDef USART_Receive_IT(USART_HandleTypeDef *husart)
 
       return HAL_OK;
     }
+    else
+    {
+      /* Send dummy byte in order to generate the clock for the slave to send the next data.
+      * Whatever the frame length (7, 8 or 9-bit long), the same dummy value
+      * can be written for all the cases. */
+      husart->Instance->DR = (DUMMY_DATA & (uint16_t)0x0FF);
+    }
     return HAL_OK;
   }
   else
@@ -2605,7 +2613,8 @@ static HAL_StatusTypeDef USART_Receive_IT(USART_HandleTypeDef *husart)
   */
 static HAL_StatusTypeDef USART_TransmitReceive_IT(USART_HandleTypeDef *husart)
 {
-  uint16_t *tmp;
+  uint8_t  *pdata8bits;
+  uint16_t *pdata16bits;
 
   if (husart->State == HAL_USART_STATE_BUSY_TX_RX)
   {
@@ -2613,23 +2622,18 @@ static HAL_StatusTypeDef USART_TransmitReceive_IT(USART_HandleTypeDef *husart)
     {
       if (__HAL_USART_GET_FLAG(husart, USART_FLAG_TXE) != RESET)
       {
-        if (husart->Init.WordLength == USART_WORDLENGTH_9B)
+        if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
         {
-          tmp = (uint16_t *) husart->pTxBuffPtr;
-          husart->Instance->DR = (uint16_t)(*tmp & (uint16_t)0x01FF);
-          if (husart->Init.Parity == USART_PARITY_NONE)
-          {
-            husart->pTxBuffPtr += 2U;
-          }
-          else
-          {
-            husart->pTxBuffPtr += 1U;
-          }
+          pdata8bits  = NULL;
+          pdata16bits = (uint16_t *) husart->pTxBuffPtr;
+          husart->Instance->DR = (uint16_t)(*pdata16bits & (uint16_t)0x01FF);
+          husart->pTxBuffPtr += 2U;
         }
         else
         {
           husart->Instance->DR = (uint8_t)(*husart->pTxBuffPtr++ & (uint8_t)0x00FF);
         }
+
         husart->TxXferCount--;
 
         /* Check the latest data transmitted */
@@ -2644,31 +2648,28 @@ static HAL_StatusTypeDef USART_TransmitReceive_IT(USART_HandleTypeDef *husart)
     {
       if (__HAL_USART_GET_FLAG(husart, USART_FLAG_RXNE) != RESET)
       {
-        if (husart->Init.WordLength == USART_WORDLENGTH_9B)
+        if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
         {
-          tmp = (uint16_t *) husart->pRxBuffPtr;
-          if (husart->Init.Parity == USART_PARITY_NONE)
-          {
-            *tmp = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
-            husart->pRxBuffPtr += 2U;
-          }
-          else
-          {
-            *tmp = (uint16_t)(husart->Instance->DR & (uint16_t)0x00FF);
-            husart->pRxBuffPtr += 1U;
-          }
+           pdata8bits  = NULL;
+           pdata16bits = (uint16_t *) husart->pRxBuffPtr;
+           *pdata16bits = (uint16_t)(husart->Instance->DR & (uint16_t)0x01FF);
+           husart->pRxBuffPtr += 2U;
         }
         else
         {
-          if (husart->Init.Parity == USART_PARITY_NONE)
+          pdata8bits = (uint8_t *) husart->pRxBuffPtr;
+          pdata16bits  = NULL;
+          if ((husart->Init.WordLength == USART_WORDLENGTH_9B) || ((husart->Init.WordLength == USART_WORDLENGTH_8B) && (husart->Init.Parity == USART_PARITY_NONE)))
           {
-            *husart->pRxBuffPtr++ = (uint8_t)(husart->Instance->DR & (uint8_t)0x00FF);
+            *pdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x00FF);
           }
           else
           {
-            *husart->pRxBuffPtr++ = (uint8_t)(husart->Instance->DR & (uint8_t)0x007F);
+            *pdata8bits = (uint8_t)(husart->Instance->DR & (uint8_t)0x007F);
           }
+          husart->pRxBuffPtr += 1U;
         }
+
         husart->RxXferCount--;
       }
     }

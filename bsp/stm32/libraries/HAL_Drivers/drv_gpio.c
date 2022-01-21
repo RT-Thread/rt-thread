@@ -84,7 +84,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_13, EXTI4_15_IRQn},
     {GPIO_PIN_14, EXTI4_15_IRQn},
     {GPIO_PIN_15, EXTI4_15_IRQn},
-#elif defined(SOC_SERIES_STM32MP1)
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32U5)
     {GPIO_PIN_0, EXTI0_IRQn},
     {GPIO_PIN_1, EXTI1_IRQn},
     {GPIO_PIN_2, EXTI2_IRQn},
@@ -567,7 +567,7 @@ void EXTI4_15_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#elif defined(SOC_STM32MP157A)
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5)
 void EXTI0_IRQHandler(void)
 {
     rt_interrupt_enter();

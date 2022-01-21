@@ -115,9 +115,10 @@ typedef struct
   uint32_t AudioFrequency;      /*!< Specifies the audio frequency sampling.
                                      This parameter can be a value of @ref SAI_Audio_Frequency */
 
-  uint32_t Mckdiv;              /*!< Specifies the master clock divider, the parameter will be used if for
-                                     AudioFrequency the user choice
-                                     This parameter must be a number between Min_Data = 0 and Max_Data = 63. */
+  uint32_t Mckdiv;              /*!< Specifies the master clock divider.
+                                     This parameter must be a number between Min_Data = 0 and Max_Data = 63.
+                                     @note This parameter is used only if AudioFrequency is set to
+                                           SAI_AUDIO_FREQUENCY_MCKDIV otherwise it is internally computed. */
 
   uint32_t MckOverSampling;     /*!< Specifies the master clock oversampling.
                                      This parameter can be a value of @ref SAI_Block_Mck_OverSampling */
@@ -154,6 +155,7 @@ typedef struct
 
 /** @defgroup SAI_Frame_Structure_definition SAI Frame Structure definition
   * @brief  SAI Frame Init structure definition
+  * @note   For SPDIF and AC97 protocol, these parameters are not used (set by hardware).
   * @{
   */
 typedef struct
@@ -186,6 +188,8 @@ typedef struct
 
 /** @defgroup SAI_Slot_Structure_definition SAI Slot Structure definition
   * @brief   SAI Block Slot Init Structure definition
+  * @note    For SPDIF protocol, these parameters are not used (set by hardware).
+  * @note    For AC97 protocol, only SlotActive parameter is used (the others are set by hardware).
   * @{
   */
 typedef struct
@@ -824,7 +828,7 @@ uint32_t HAL_SAI_GetError(SAI_HandleTypeDef *hsai);
   */
 
 /* Private macros ------------------------------------------------------------*/
-/** @addtogroup SAI_Private_Macros
+/** @defgroup SAI_Private_Macros SAI Private Macros
   * @{
   */
 #define IS_SAI_BLOCK_SYNCEXT(STATE) (((STATE) == SAI_SYNCEXT_DISABLE) ||\

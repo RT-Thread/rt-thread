@@ -87,7 +87,9 @@ void rt_init_thread_entry(void* parameter)
 #ifdef RT_USING_FINSH
     /* init finsh */
     finsh_system_init();
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     finsh_set_device("uart1");
+#endif
 #endif
 
     LED_Init();

@@ -14,7 +14,11 @@
 
 #include <dfs_elm.h>
 #include <dfs_fs.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include "drv_gpio.h"
 
 // #define DRV_DEBUG
@@ -26,7 +30,7 @@ void sd_mount(void *parameter)
     while (1)
     {
         rt_thread_mdelay(500);
-        if(rt_device_find("sd0") != RT_NULL)
+        if (rt_device_find("sd0") != RT_NULL)
         {
             if (dfs_mount("sd0", "/", "elm", 0, 0) == RT_EOK)
             {

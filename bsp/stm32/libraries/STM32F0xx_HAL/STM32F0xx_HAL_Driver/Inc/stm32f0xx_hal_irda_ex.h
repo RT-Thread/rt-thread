@@ -53,7 +53,7 @@ extern "C" {
 #define IRDA_WORDLENGTH_9B                  USART_CR1_M0   /*!< 9-bit long frame */
 #elif defined(USART_CR1_M)
 #define IRDA_WORDLENGTH_8B                  (0x00000000U)              /*!< 8-bit long frame */
-#define IRDA_WORDLENGTH_9B                  ((uint32_t)USART_CR1_M)    /*!< 9-bit long frame */
+#define IRDA_WORDLENGTH_9B                  USART_CR1_M    /*!< 9-bit long frame */
 #endif
 /**
   * @}

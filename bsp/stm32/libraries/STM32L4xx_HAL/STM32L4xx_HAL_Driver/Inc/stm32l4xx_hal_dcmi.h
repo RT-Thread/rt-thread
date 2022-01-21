@@ -143,6 +143,12 @@ typedef struct __DCMI_HandleTypeDef
 
   uint32_t                      pBuffPtr;            /*!< Pointer to DMA output buffer */
 
+  uint32_t                      XferCount_0;         /*!< Initial DMA transfers counter */
+
+  uint32_t                      XferSize_0;          /*!< Initial DMA transfers size   */
+
+  uint32_t                      pBuffPtr_0;          /*!< Saveguard of pointer to DMA output buffer */
+
   DMA_HandleTypeDef             *DMA_Handle;         /*!< Pointer to DMA handler       */
 
   DMA_HandleTypeDef             *DMAM2M_Handle;      /*!< Pointer to DMA handler for memory to memory copy

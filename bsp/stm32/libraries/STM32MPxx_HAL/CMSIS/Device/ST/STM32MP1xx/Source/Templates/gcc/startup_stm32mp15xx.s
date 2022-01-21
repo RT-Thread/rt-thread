@@ -96,7 +96,13 @@ LoopFillZerobss:
  // blx r0
 /* Call the application's entry point.*/
   bl entry
-  bx lr
+  //ldr r0, =main
+  //blx r0
+
+LoopForever:
+    b LoopForever
+
+
 .size Reset_Handler, .-Reset_Handler
 
 /**

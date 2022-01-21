@@ -27,14 +27,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal_def.h"
-
+   
 /** @addtogroup STM32F3xx_HAL_Driver
   * @{
   */
 
 /** @addtogroup ADCEx ADCEx
   * @{
-  */
+  */ 
 
 /* Exported types ------------------------------------------------------------*/
 /** @defgroup ADCEx_Exported_Types ADCEx Exported Types
@@ -47,9 +47,9 @@ struct __ADC_HandleTypeDef;
     defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx) || \
     defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 /**
-  * @brief  Structure definition of ADC initialization and regular group
+  * @brief  Structure definition of ADC initialization and regular group  
   * @note   Parameters of this structure are shared within 2 scopes:
-  *          - Scope entire ADC (affects regular and injected groups): ClockPrescaler, Resolution, DataAlign,
+  *          - Scope entire ADC (affects regular and injected groups): ClockPrescaler, Resolution, DataAlign, 
   *            ScanConvMode, EOCSelection, LowPowerAutoWait.
   *          - Scope regular group: ContinuousConvMode, NbrOfConversion, DiscontinuousConvMode, NbrOfDiscConversion, ExternalTrigConvEdge, ExternalTrigConv, DMAContinuousRequests, Overrun.
   * @note   The setting of these parameters with function HAL_ADC_Init() is conditioned to ADC state.
@@ -65,11 +65,11 @@ typedef struct
   uint32_t ClockPrescaler;                  /*!< Select ADC clock source (synchronous clock derived from AHB clock or asynchronous clock derived from ADC dedicated PLL 72MHz) and clock prescaler.
                                                  The clock is common for all the ADCs.
                                                  This parameter can be a value of @ref ADCEx_ClockPrescaler
-                                                 Note: In case of usage of channels on injected group, ADC frequency should be lower than AHB clock frequency /4 for resolution 12 or 10 bits,
+                                                 Note: In case of usage of channels on injected group, ADC frequency should be lower than AHB clock frequency /4 for resolution 12 or 10 bits, 
                                                        AHB clock frequency /3 for resolution 8 bits, AHB clock frequency /2 for resolution 6 bits.
-                                                 Note: In case of usage of the ADC dedicated PLL clock, this clock must be preliminarily enabled and prescaler set at RCC top level.
+                                                 Note: In case of usage of the ADC dedicated PLL clock, this clock must be preliminarily enabled and prescaler set at RCC top level. 
                                                  Note: This parameter can be modified only if all ADCs of the common ADC group are disabled (for products with several ADCs) */
-  uint32_t Resolution;                      /*!< Configures the ADC resolution.
+  uint32_t Resolution;                      /*!< Configures the ADC resolution. 
                                                  This parameter can be a value of @ref ADCEx_Resolution */
   uint32_t DataAlign;                       /*!< Specifies ADC data alignment to right (for resolution 12 bits: MSB on register bit 11 and LSB on register bit 0U) (default setting)
                                                  or to left (for resolution 12 bits, if offset disabled: MSB on register bit 15 and LSB on register bit 4U, if offset enabled: MSB on register bit 14 and LSB on register bit 3U).
@@ -86,7 +86,7 @@ typedef struct
                                                  This parameter can be a value of @ref ADCEx_EOCSelection. */
   FunctionalState LowPowerAutoWait;         /*!< Selects the dynamic low power Auto Delay: ADC conversions are performed only when necessary.
                                                  New conversion starts only when the previous conversion (for regular group) or previous sequence (for injected group) has been treated by user software.
-                                                 This feature automatically adapts the speed of ADC to the speed of the system that reads the data. Moreover, this avoids risk of overrun for low frequency applications.
+                                                 This feature automatically adapts the speed of ADC to the speed of the system that reads the data. Moreover, this avoids risk of overrun for low frequency applications. 
                                                  This parameter can be set to ENABLE or DISABLE.
                                                  Note: It is not recommended to use with interruption or DMA (HAL_ADC_Start_IT(), HAL_ADC_Start_DMA()) since these modes have to clear immediately the EOC flag (by CPU to free the IRQ pending event or by DMA).
                                                        Auto wait will work but fort a very short time, discarding its intended benefit (except specific case of high load of CPU or DMA transfers which can justify usage of auto wait).
@@ -127,8 +127,8 @@ typedef struct
                                                   - Usage with ADC conversion by DMA: Error is reported whatever overrun setting (DMA is expected to process all data from data register, any data missed would be abnormal). */
 }ADC_InitTypeDef;
 
-/**
-  * @brief  Structure definition of ADC channel for regular group
+/** 
+  * @brief  Structure definition of ADC channel for regular group  
   * @note   The setting of these parameters with function HAL_ADC_ConfigChannel() is conditioned to ADC state.
   *         ADC state can be either:
   *          - For all parameters: ADC disabled (this is the only possible ADC state to modify parameter 'SingleDiff')
@@ -137,7 +137,7 @@ typedef struct
   *         If ADC is not in the appropriate state to modify some parameters, these parameters setting is bypassed
   *         without error reporting (as it can be the expected behaviour in case of intended action to update another parameter (which fulfills the ADC state condition) on the fly).
   */
-typedef struct
+typedef struct 
 {
   uint32_t Channel;                /*!< Specifies the channel to configure into ADC regular group.
                                         This parameter can be a value of @ref ADCEx_channels
@@ -173,8 +173,8 @@ typedef struct
                                         Note: This parameter must be modified when no conversion is on going on both regular and injected groups (ADC disabled, or ADC enabled without continuous mode or external trigger that could launch a conversion). */
 }ADC_ChannelConfTypeDef;
 
-/**
-  * @brief  Structure definition of ADC injected group and ADC channel for injected group
+/** 
+  * @brief  Structure definition of ADC injected group and ADC channel for injected group  
   * @note   Parameters of this structure are shared within 2 scopes:
   *          - Scope channel: InjectedChannel, InjectedRank, InjectedSamplingTime , InjectedSingleDiff, InjectedOffsetNumber, InjectedOffset
   *          - Scope injected group (affects all channels of injected group): InjectedNbrOfConversion, InjectedDiscontinuousConvMode,
@@ -188,7 +188,7 @@ typedef struct
   *         If ADC is not in the appropriate state to modify some parameters, these parameters setting is bypassed
   *         without error reporting (as it can be the expected behaviour in case of intended action to update another parameter (which fulfills the ADC state condition) on the fly).
   */
-typedef struct
+typedef struct 
 {
   uint32_t InjectedChannel;                         /*!< Configure the ADC injected channel
                                                          This parameter can be a value of @ref ADCEx_channels
@@ -225,7 +225,7 @@ typedef struct
   uint32_t InjectedNbrOfConversion;                 /*!< Specifies the number of ranks that will be converted within the injected group sequencer.
                                                          To use the injected group sequencer and convert several ranks, parameter 'ScanConvMode' must be enabled.
                                                          This parameter must be a number between Min_Data = 1 and Max_Data = 4.
-                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
                                                                   configure a channel on injected group can impact the configuration of other channels previously set. */
   FunctionalState InjectedDiscontinuousConvMode;    /*!< Specifies whether the conversions sequence of injected group is performed in Complete-sequence/Discontinuous-sequence (main sequence subdivided in successive parts).
                                                          Discontinuous mode is used only if sequencer is enabled (parameter 'ScanConvMode'). If sequencer is disabled, this parameter is discarded.
@@ -233,15 +233,15 @@ typedef struct
                                                          This parameter can be set to ENABLE or DISABLE.
                                                          Note: This parameter must be modified when ADC is disabled (before ADC start conversion or after ADC stop conversion).
                                                          Note: For injected group, number of discontinuous ranks increment is fixed to one-by-one.
-                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
                                                                   configure a channel on injected group can impact the configuration of other channels previously set. */
   FunctionalState AutoInjectedConv;                 /*!< Enables or disables the selected ADC automatic injected group conversion after regular one
-                                                         This parameter can be set to ENABLE or DISABLE.
+                                                         This parameter can be set to ENABLE or DISABLE.      
                                                          Note: To use Automatic injected conversion, discontinuous mode must be disabled ('DiscontinuousConvMode' and 'InjectedDiscontinuousConvMode' set to DISABLE)
                                                          Note: To use Automatic injected conversion, injected group external triggers must be disabled ('ExternalTrigInjecConv' set to ADC_SOFTWARE_START)
                                                          Note: In case of DMA used with regular group: if DMA configured in normal mode (single shot) JAUTO will be stopped upon DMA transfer complete.
                                                                To maintain JAUTO always enabled, DMA must be configured in circular mode.
-                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
                                                                   configure a channel on injected group can impact the configuration of other channels previously set. */
   FunctionalState QueueInjectedContext;             /*!< Specifies whether the context queue feature is enabled.
                                                          This parameter can be set to ENABLE or DISABLE.
@@ -249,34 +249,34 @@ typedef struct
                                                          new injected context is set when queue is full, error is triggered by interruption and through function 'HAL_ADCEx_InjectedQueueOverflowCallback'.
                                                          Caution: This feature request that the sequence is fully configured before injected conversion start.
                                                                   Therefore, configure channels with HAL_ADCEx_InjectedConfigChannel() as many times as value of 'InjectedNbrOfConversion' parameter.
-                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
                                                                   configure a channel on injected group can impact the configuration of other channels previously set.
                                                          Note: This parameter must be modified when ADC is disabled (before ADC start conversion or after ADC stop conversion). */
   uint32_t ExternalTrigInjecConv;                   /*!< Selects the external event used to trigger the conversion start of injected group.
                                                          If set to ADC_INJECTED_SOFTWARE_START, external triggers are disabled.
                                                          This parameter can be a value of @ref ADCEx_External_trigger_source_Injected
-                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
                                                                   configure a channel on injected group can impact the configuration of other channels previously set. */
   uint32_t ExternalTrigInjecConvEdge;               /*!< Selects the external trigger edge of injected group.
                                                          This parameter can be a value of @ref ADCEx_External_trigger_edge_Injected.
                                                          If trigger is set to ADC_INJECTED_SOFTWARE_START, this parameter is discarded.
-                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
                                                                   configure a channel on injected group can impact the configuration of other channels previously set. */
 }ADC_InjectionConfTypeDef;
 
-/**
-  * @brief  ADC Injection Configuration
+/** 
+  * @brief  ADC Injection Configuration 
   */
 typedef struct
 {
-  uint32_t ContextQueue;                 /*!< Injected channel configuration context: build-up over each
+  uint32_t ContextQueue;                 /*!< Injected channel configuration context: build-up over each 
                                               HAL_ADCEx_InjectedConfigChannel() call to finally initialize
                                               JSQR register at HAL_ADCEx_InjectedConfigChannel() last call */
-
-  uint32_t ChannelCount;                 /*!< Number of channels in the injected sequence */
+                                               
+  uint32_t ChannelCount;                 /*!< Number of channels in the injected sequence */                                        
 }ADC_InjectionConfigTypeDef;
 
-/**
+/** 
   * @brief  Structure definition of ADC analog watchdog
   * @note   The setting of these parameters with function HAL_ADC_AnalogWDGConfig() is conditioned to ADC state.
   *         ADC state can be either: ADC disabled or ADC enabled without conversion on going on regular and injected groups.
@@ -299,15 +299,15 @@ typedef struct
                                           This parameter can be set to ENABLE or DISABLE */
   uint32_t HighThreshold;            /*!< Configures the ADC analog watchdog High threshold value.
                                           Depending of ADC resolution selected (12U, 10U, 8 or 6 bits), this parameter must be a number between Min_Data = 0x000 and Max_Data = 0xFFFU, 0x3FFU, 0xFF or 0x3F respectively.
-                                          Note: Analog watchdog 2 and 3 are limited to a resolution of 8 bits: if ADC resolution is 12 bits
+                                          Note: Analog watchdog 2 and 3 are limited to a resolution of 8 bits: if ADC resolution is 12 bits 
                                                 the 4 LSB are ignored, if ADC resolution is 10 bits the 2 LSB are ignored. */
   uint32_t LowThreshold;             /*!< Configures the ADC analog watchdog High threshold value.
                                           Depending of ADC resolution selected (12U, 10U, 8 or 6 bits), this parameter must be a number between Min_Data = 0x000 and Max_Data = 0xFFFU, 0x3FFU, 0xFF or 0x3F respectively.
-                                          Note: Analog watchdog 2 and 3 are limited to a resolution of 8 bits: if ADC resolution is 12 bits
+                                          Note: Analog watchdog 2 and 3 are limited to a resolution of 8 bits: if ADC resolution is 12 bits 
                                                 the 4 LSB are ignored, if ADC resolution is 10 bits the 2 LSB are ignored. */
 }ADC_AnalogWDGConfTypeDef;
 
-/**
+/** 
   * @brief  Structure definition of ADC multimode
   * @note   The setting of these parameters with function HAL_ADCEx_MultiModeConfigChannel() is conditioned to ADCs state (both ADCs of the common group).
   *         ADC state can be either:
@@ -318,7 +318,7 @@ typedef struct
   */
 typedef struct
 {
-  uint32_t Mode;              /*!< Configures the ADC to operate in independent or multi mode.
+  uint32_t Mode;              /*!< Configures the ADC to operate in independent or multi mode. 
                                    This parameter can be a value of @ref ADCEx_Common_mode */
   uint32_t DMAAccessMode;     /*!< Configures the DMA mode for multi ADC mode:
                                    selection whether 2 DMA channels (each ADC use its own DMA channel) or 1 DMA channel (one DMA channel for both ADC, DMA of ADC master)
@@ -338,8 +338,8 @@ typedef struct
 
 
 #if defined(STM32F373xC) || defined(STM32F378xx)
-/**
-  * @brief  Structure definition of ADC and regular group initialization
+/** 
+  * @brief  Structure definition of ADC and regular group initialization 
   * @note   Parameters of this structure are shared within 2 scopes:
   *          - Scope entire ADC (affects regular and injected groups): DataAlign, ScanConvMode.
   *          - Scope regular group: ContinuousConvMode, NbrOfConversion, DiscontinuousConvMode, NbrOfDiscConversion, ExternalTrigConvEdge, ExternalTrigConv.
@@ -381,17 +381,17 @@ typedef struct
                                                 This parameter can be a value of @ref ADCEx_External_trigger_source_Regular */
 }ADC_InitTypeDef;
 
-/**
-  * @brief  Structure definition of ADC channel for regular group
+/** 
+  * @brief  Structure definition of ADC channel for regular group   
   * @note   The setting of these parameters with function HAL_ADC_ConfigChannel() is conditioned to ADC state.
   *         ADC can be either disabled or enabled without conversion on going on regular group.
-  */
-typedef struct
+  */ 
+typedef struct 
 {
   uint32_t Channel;                /*!< Specifies the channel to configure into ADC regular group.
                                         This parameter can be a value of @ref ADCEx_channels
                                         Note: Depending on devices, some channels may not be available on package pins. Refer to device datasheet for channels availability. */
-  uint32_t Rank;                   /*!< Specifies the rank in the regular group sequencer
+  uint32_t Rank;                   /*!< Specifies the rank in the regular group sequencer 
                                         This parameter can be a value of @ref ADCEx_regular_rank
                                         Note: In case of need to disable a channel or change order of conversion sequencer, rank containing a previous channel setting can be overwritten by the new channel setting (or parameter number of conversions can be adjusted) */
   uint32_t SamplingTime;           /*!< Sampling time value to be set for the selected channel.
@@ -405,7 +405,7 @@ typedef struct
                                               Refer to device datasheet for timings values, parameters TS_vrefint, TS_vbat, TS_temp (values rough order: 5us to 17.1us min). */
 }ADC_ChannelConfTypeDef;
 
-/**
+/** 
   * @brief  ADC Configuration injected Channel structure definition
   * @note   Parameters of this structure are shared within 2 scopes:
   *          - Scope channel: InjectedChannel, InjectedRank, InjectedSamplingTime, InjectedOffset
@@ -416,7 +416,7 @@ typedef struct
   *          - For all parameters: ADC disabled (this is the only possible ADC state to modify parameter 'ExternalTrigInjecConv')
   *          - For all except parameters 'ExternalTrigInjecConv': ADC enabled without conversion on going on injected group.
   */
-typedef struct
+typedef struct 
 {
   uint32_t InjectedChannel;                         /*!< Selection of ADC channel to configure
                                                          This parameter can be a value of @ref ADCEx_channels
@@ -440,17 +440,17 @@ typedef struct
   uint32_t InjectedNbrOfConversion;                 /*!< Specifies the number of ranks that will be converted within the injected group sequencer.
                                                          To use the injected group sequencer and convert several ranks, parameter 'ScanConvMode' must be enabled.
                                                          This parameter must be a number between Min_Data = 1 and Max_Data = 4.
-                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
                                                                   configure a channel on injected group can impact the configuration of other channels previously set. */
   FunctionalState InjectedDiscontinuousConvMode;    /*!< Specifies whether the conversions sequence of injected group is performed in Complete-sequence/Discontinuous-sequence (main sequence subdivided in successive parts).
                                                          Discontinuous mode is used only if sequencer is enabled (parameter 'ScanConvMode'). If sequencer is disabled, this parameter is discarded.
                                                          Discontinuous mode can be enabled only if continuous mode is disabled. If continuous mode is enabled, this parameter setting is discarded.
                                                          This parameter can be set to ENABLE or DISABLE.
                                                          Note: For injected group, number of discontinuous ranks increment is fixed to one-by-one.
-                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
+                                                         Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
                                                                   configure a channel on injected group can impact the configuration of other channels previously set. */
   FunctionalState AutoInjectedConv;                 /*!< Enables or disables the selected ADC automatic injected group conversion after regular one
-                                                         This parameter can be set to ENABLE or DISABLE.
+                                                         This parameter can be set to ENABLE or DISABLE.      
                                                          Note: To use Automatic injected conversion, discontinuous mode must be disabled ('DiscontinuousConvMode' and 'InjectedDiscontinuousConvMode' set to DISABLE)
                                                          Note: To use Automatic injected conversion, injected group external triggers must be disabled ('ExternalTrigInjecConv' set to ADC_SOFTWARE_START)
                                                          Note: In case of DMA used with regular group: if DMA configured in normal mode (single shot) JAUTO will be stopped upon DMA transfer complete.
@@ -779,7 +779,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup ADCEx_EOCSelection ADC Extended End of Regular Sequence/Conversion
+/** @defgroup ADCEx_EOCSelection ADC Extended End of Regular Sequence/Conversion 
   * @{
   */
 #define ADC_EOC_SINGLE_CONV         ((uint32_t) ADC_ISR_EOC)
@@ -1410,7 +1410,7 @@ typedef struct
 /**
   * @}
   */
-
+       
 /** @defgroup ADCEx_injected_rank ADC Extended Injected Channel Rank
   * @{
   */
@@ -1509,13 +1509,13 @@ typedef struct
   */
 
 
-
+     
 /* Private constants ---------------------------------------------------------*/
 
 /** @addtogroup ADCEx_Private_Constants ADCEx Private Constants
   * @{
   */
-
+     
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx) || \
     defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx) || \
     defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx) || \
@@ -1725,7 +1725,7 @@ typedef struct
 #define ADC1_2_EXTERNALTRIGINJEC_T15_TRGO   ((uint32_t)ADC_JSQR_JEXTSEL)
 #endif /* STM32F302xE || */
        /* STM32F302xC    */
-
+      
 #if defined(STM32F303x8) || defined(STM32F328xx)
 /* List of external triggers of group ADC1&ADC2:                              */
 /* (used internally by HAL driver. To not use into HAL structure parameters)  */
@@ -1790,13 +1790,13 @@ typedef struct
 #define ADC_FLAG_POSTCONV_ALL (ADC_FLAG_EOC | ADC_FLAG_EOS  | ADC_FLAG_JEOC | ADC_FLAG_JEOS | \
                                ADC_FLAG_OVR | ADC_FLAG_AWD1 | ADC_FLAG_AWD2 | ADC_FLAG_AWD3 | \
                                ADC_FLAG_JQOVF)
-
+      
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
        /* STM32F303x8 || STM32F334x8 || STM32F328xx || */
        /* STM32F301x8 || STM32F302x8 || STM32F318xx    */
 
-
+      
 #if defined(STM32F373xC) || defined(STM32F378xx)
 
 /** @defgroup ADCEx_Internal_HAL_driver_Ext_trig_src_Regular ADC Extended Internal HAL driver trigger selection for regular group
@@ -1836,7 +1836,7 @@ typedef struct
 /**
   * @}
   */
-
+      
 /** @defgroup ADCEx_sampling_times_all_channels ADC Extended Sampling Times All Channels
   * @{
   */
@@ -1887,13 +1887,13 @@ typedef struct
 /**
   * @}
   */
-
+     
 #endif /* STM32F373xC || STM32F378xx */
-
+     
 /**
   * @}
   */
-
+     
 /* Exported macro ------------------------------------------------------------*/
 
 /** @defgroup ADCEx_Exported_Macros ADCEx Exported Macros
@@ -1916,7 +1916,7 @@ typedef struct
   *       respected before using this macro:
   *        - ADC internal voltage regulator must be preliminarily enabled.
   *          This is performed by function HAL_ADC_Init().
-  *        - ADC state requirements: ADC must be disabled, no conversion on
+  *        - ADC state requirements: ADC must be disabled, no conversion on 
   *          going, no calibration on going.
   *          These checks are performed by functions HAL_ADC_start_xxx().
   * @retval None
@@ -1929,7 +1929,7 @@ typedef struct
   * @param __HANDLE__ ADC handle
   * @note On STM32F3 devices, some hardware constraints must be strictly
   *       respected before using this macro:
-  *        - ADC state requirements: ADC must be enabled, no conversion on
+  *        - ADC state requirements: ADC must be enabled, no conversion on 
   *          going.
   *          These checks are performed by functions HAL_ADC_start_xxx().
   * @retval None
@@ -2065,7 +2065,7 @@ typedef struct
   */
 #define __HAL_ADC_ENABLE(__HANDLE__)                                           \
   (SET_BIT((__HANDLE__)->Instance->CR2, (ADC_CR2_ADON)))
-
+  
 /**
   * @brief Disable the ADC peripheral
   * @param __HANDLE__ ADC handle
@@ -2073,7 +2073,7 @@ typedef struct
   */
 #define __HAL_ADC_DISABLE(__HANDLE__)                                          \
   (CLEAR_BIT((__HANDLE__)->Instance->CR2, (ADC_CR2_ADON)))
-
+    
 /** @brief Enable the ADC end of conversion interrupt.
   * @param __HANDLE__ ADC handle
   * @param __INTERRUPT__ ADC Interrupt
@@ -2123,7 +2123,7 @@ typedef struct
   */
 #define __HAL_ADC_GET_FLAG(__HANDLE__, __FLAG__)                               \
   ((((__HANDLE__)->Instance->SR) & (__FLAG__)) == (__FLAG__))
-
+    
 /** @brief Clear the ADC's pending flags
   * @param __HANDLE__ ADC handle
   * @param __FLAG__ ADC flag
@@ -2151,7 +2151,7 @@ typedef struct
   */
 /* Macro reserved for internal HAL driver usage, not intended to be used in   */
 /* code of final user.                                                        */
-
+      
 #if defined(STM32F302xE) || defined(STM32F303xE) || defined(STM32F398xx) || \
     defined(STM32F302xC) || defined(STM32F303xC) || defined(STM32F358xx) || \
     defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx) || \
@@ -2247,19 +2247,19 @@ typedef struct
   * @retval None
   */
 #define ADC_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_ADC_ERROR_NONE)
-
+         
 /**
   * @brief Set the ADC's sample time for Channels numbers between 0 and 9.
   * @param _SAMPLETIME_ Sample time parameter.
-  * @param _CHANNELNB_ Channel number.
+  * @param _CHANNELNB_ Channel number.  
   * @retval None
   */
 #define ADC_SMPR1(_SAMPLETIME_, _CHANNELNB_) ((_SAMPLETIME_) << (3U * (_CHANNELNB_)))
-
+    
 /**
   * @brief Set the ADC's sample time for Channels numbers between 10 and 18.
   * @param _SAMPLETIME_ Sample time parameter.
-  * @param _CHANNELNB_ Channel number.
+  * @param _CHANNELNB_ Channel number.  
   * @retval None
   */
 #define ADC_SMPR2(_SAMPLETIME_, _CHANNELNB_) ((_SAMPLETIME_) << (3U * ((_CHANNELNB_) - 10U)))
@@ -2267,7 +2267,7 @@ typedef struct
 /**
   * @brief Set the selected regular Channel rank for rank between 1 and 4.
   * @param _CHANNELNB_ Channel number.
-  * @param _RANKNB_ Rank number.
+  * @param _RANKNB_ Rank number.    
   * @retval None
   */
 #define ADC_SQR1_RK(_CHANNELNB_, _RANKNB_) ((_CHANNELNB_) << (6U * (_RANKNB_)))
@@ -2275,7 +2275,7 @@ typedef struct
 /**
   * @brief Set the selected regular Channel rank for rank between 5 and 9.
   * @param _CHANNELNB_ Channel number.
-  * @param _RANKNB_ Rank number.
+  * @param _RANKNB_ Rank number.    
   * @retval None
   */
 #define ADC_SQR2_RK(_CHANNELNB_, _RANKNB_) ((_CHANNELNB_) << (6U * ((_RANKNB_) - 5U)))
@@ -2283,7 +2283,7 @@ typedef struct
 /**
   * @brief Set the selected regular Channel rank for rank between 10 and 14.
   * @param _CHANNELNB_ Channel number.
-  * @param _RANKNB_ Rank number.
+  * @param _RANKNB_ Rank number.    
   * @retval None
   */
 #define ADC_SQR3_RK(_CHANNELNB_, _RANKNB_) ((_CHANNELNB_) << (6U * ((_RANKNB_) - 10U)))
@@ -2291,7 +2291,7 @@ typedef struct
 /**
   * @brief Set the selected regular Channel rank for rank between 15 and 16.
   * @param _CHANNELNB_ Channel number.
-  * @param _RANKNB_ Rank number.
+  * @param _RANKNB_ Rank number.    
   * @retval None
   */
 #define ADC_SQR4_RK(_CHANNELNB_, _RANKNB_) ((_CHANNELNB_) << (6U * ((_RANKNB_) - 15U)))
@@ -2299,7 +2299,7 @@ typedef struct
 /**
   * @brief Set the selected injected Channel rank.
   * @param _CHANNELNB_ Channel number.
-  * @param _RANKNB_ Rank number.
+  * @param _RANKNB_ Rank number.   
   * @retval None
   */
 #define ADC_JSQR_RK(_CHANNELNB_, _RANKNB_) ((_CHANNELNB_) << (6U * (_RANKNB_) +2U))
@@ -2317,7 +2317,7 @@ typedef struct
   * @param _CHANNEL_ ADC Channel
   * @retval None
   */
-#define ADC_CFGR_AWD23CR(_CHANNEL_) (1U << (_CHANNEL_))
+#define ADC_CFGR_AWD23CR(_CHANNEL_) (1U << (_CHANNEL_)) 
 
 /**
   * @brief Enable automatic conversion of injected group
@@ -2367,7 +2367,7 @@ typedef struct
   * @retval None
   */
 #define ADC_CFGR_CONTINUOUS(_CONTINUOUS_MODE_) ((_CONTINUOUS_MODE_) << 13U)
-
+    
 /**
   * @brief Enable ADC overrun mode.
   * @param _OVERRUN_MODE_ Overrun mode.
@@ -2389,11 +2389,11 @@ typedef struct
 #define ADC_CFGR_DMACONTREQ(_DMACONTREQ_MODE_) ((_DMACONTREQ_MODE_) << 1U)
 
 /**
-  * @brief For devices with 3 ADCs or more: Defines the external trigger source
-  *        for regular group according to ADC into common group ADC1&ADC2 or
+  * @brief For devices with 3 ADCs or more: Defines the external trigger source 
+  *        for regular group according to ADC into common group ADC1&ADC2 or 
   *        ADC3&ADC4 (some triggers with same source have different value to
   *        be programmed into ADC EXTSEL bits of CFGR register).
-  *        Note: No risk of trigger bits value of common group ADC1&ADC2
+  *        Note: No risk of trigger bits value of common group ADC1&ADC2 
   *        misleading to another trigger at same bits value, because the 3
   *        exceptions below are circular and do not point to any other trigger
   *        with direct treatment.
@@ -2429,7 +2429,7 @@ typedef struct
    (__EXT_TRIG_CONV__)                                                         \
  )
 #endif /* STM32F303xC || STM32F358xx */
-
+   
 #if defined(STM32F303xE) || defined(STM32F398xx)
 /* Note: Macro including external triggers specific to device STM303xE: using */
 /*       Timer20 with ADC trigger input remap.                                */
@@ -2478,11 +2478,11 @@ typedef struct
        /* STM32F303xC || STM32F358xx    */
 
 /**
-  * @brief For devices with 3 ADCs or more: Defines the external trigger source
-  *        for injected group according to ADC into common group ADC1&ADC2 or
+  * @brief For devices with 3 ADCs or more: Defines the external trigger source 
+  *        for injected group according to ADC into common group ADC1&ADC2 or 
   *        ADC3&ADC4 (some triggers with same source have different value to
   *        be programmed into ADC JEXTSEL bits of JSQR register).
-  *        Note: No risk of trigger bits value of common group ADC1&ADC2
+  *        Note: No risk of trigger bits value of common group ADC1&ADC2 
   *        misleading to another trigger at same bits value, because the 3
   *        exceptions below are circular and do not point to any other trigger
   *        with direct treatment, except trigger
@@ -2522,7 +2522,7 @@ typedef struct
    (__EXT_TRIG_INJECTCONV__)                                                   \
  )
 #endif /* STM32F303xC || STM32F358xx */
-
+   
 #if defined(STM32F303xE) || defined(STM32F398xx)
 /* Note: Macro including external triggers specific to device STM303xE: using */
 /*       Timer20 with ADC trigger input remap.                                */
@@ -2584,7 +2584,7 @@ typedef struct
   * @param _CHANNEL_ ADC Channel
   * @retval None
   */
-#define ADC_DIFSEL_CHANNEL(_CHANNEL_) (1U << (_CHANNEL_))
+#define ADC_DIFSEL_CHANNEL(_CHANNEL_) (1U << (_CHANNEL_)) 
 
 /**
   * @brief Calibration factor in differential mode to be set into calibration register
@@ -2599,7 +2599,7 @@ typedef struct
   * @retval None
   */
 #define ADC_CALFACT_DIFF_GET(_Calibration_Factor_) ((_Calibration_Factor_) >> 16U)
-
+     
 /**
   * @brief Configure the analog watchdog high threshold into registers TR1, TR2 or TR3.
   * @param _Threshold_ Threshold value
@@ -2613,7 +2613,7 @@ typedef struct
   * @retval None
   */
 #define ADC_CCR_MULTI_DMACONTREQ(_DMAContReq_MODE_) ((_DMAContReq_MODE_) << 13U)
-
+    
 /**
   * @brief Verification of hardware constraints before ADC can be disabled
   * @param __HANDLE__ ADC handle
@@ -2623,10 +2623,10 @@ typedef struct
        (( ( ((__HANDLE__)->Instance->CR) &                                     \
             (ADC_CR_JADSTART | ADC_CR_ADSTART | ADC_CR_ADEN)) == ADC_CR_ADEN   \
         ) ? SET : RESET)
-
+         
 
 /**
-  * @brief Shift the offset in function of the selected ADC resolution.
+  * @brief Shift the offset in function of the selected ADC resolution. 
   *        Offset has to be left-aligned on bit 11, the LSB (right bits) are set to 0
   *        If resolution 12 bits, no shift.
   *        If resolution 10 bits, shift of 2 ranks on the left.
@@ -2694,7 +2694,7 @@ typedef struct
 #endif /* STM32F302xE                               || */
        /* STM32F302xC                               || */
        /* STM32F303x8 || STM32F328xx || STM32F334x8    */
-
+       
 #if defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 #define ADC_MASTER_INSTANCE(__HANDLE__)                                        \
   (ADC1)
@@ -2723,12 +2723,12 @@ typedef struct
 #endif /* STM32F302xE                               || */
        /* STM32F302xC                               || */
        /* STM32F303x8 || STM32F328xx || STM32F334x8    */
-
+       
 #if defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 #define ADC_COMMON_REGISTER(__HANDLE__)                                        \
   (ADC1_COMMON)
 #endif /* STM32F301x8 || STM32F302x8 || STM32F318xx */
-
+       
 /**
   * @brief Selection of ADC common register CCR bits MULTI[4:0]corresponding to the selected ADC (applicable for devices with several ADCs)
   * @param __HANDLE__ ADC handle
@@ -2745,7 +2745,7 @@ typedef struct
   )
 #endif /* STM32F303xE || STM32F398xx || */
        /* STM32F303xC || STM32F358xx    */
-
+    
 #if defined(STM32F302xE)                                                ||    \
     defined(STM32F302xC)                                                ||    \
     defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx)
@@ -2851,7 +2851,7 @@ typedef struct
 #else
 #define ADC_MULTIMODE_AUTO_INJECTED(__HANDLE__)                                \
   (RESET)
-#endif
+#endif 
 
 /**
   * @brief Set handle of the other ADC sharing the same common register ADC1_2 or ADC3_4
@@ -2886,7 +2886,7 @@ typedef struct
   )
 #endif /* STM32F303xE || STM32F398xx || */
        /* STM32F303xC || STM32F358xx    */
-
+    
 #if defined(STM32F302xE)                                                || \
     defined(STM32F302xC)                                                || \
     defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx)
@@ -2929,7 +2929,7 @@ typedef struct
   )
 #endif /* STM32F303xE || STM32F398xx || */
        /* STM32F303xC || STM32F358xx    */
-
+    
 #if defined(STM32F302xE)                                                || \
     defined(STM32F302xC)                                                || \
     defined(STM32F303x8) || defined(STM32F334x8) || defined(STM32F328xx)
@@ -3479,7 +3479,7 @@ typedef struct
 /**
   * @}
   */
-
+    
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
        /* STM32F303x8 || STM32F334x8 || STM32F328xx || */
@@ -3534,7 +3534,7 @@ typedef struct
 
 /**
   * @brief Set ADC number of conversions into regular channel sequence length.
-  * @param _NbrOfConversion_ Regular channel sequence length
+  * @param _NbrOfConversion_ Regular channel sequence length 
   * @retval None
   */
 #define ADC_SQR1_L_SHIFT(_NbrOfConversion_)                                    \
@@ -3543,7 +3543,7 @@ typedef struct
 /**
   * @brief Set the ADC's sample time for channel numbers between 10 and 18.
   * @param _SAMPLETIME_ Sample time parameter.
-  * @param _CHANNELNB_ Channel number.
+  * @param _CHANNELNB_ Channel number.  
   * @retval None
   */
 #define ADC_SMPR1(_SAMPLETIME_, _CHANNELNB_)                                   \
@@ -3552,7 +3552,7 @@ typedef struct
 /**
   * @brief Set the ADC's sample time for channel numbers between 0 and 9.
   * @param _SAMPLETIME_ Sample time parameter.
-  * @param _CHANNELNB_ Channel number.
+  * @param _CHANNELNB_ Channel number.  
   * @retval None
   */
 #define ADC_SMPR2(_SAMPLETIME_, _CHANNELNB_)                                   \
@@ -3561,7 +3561,7 @@ typedef struct
 /**
   * @brief Set the selected regular channel rank for rank between 1 and 6.
   * @param _CHANNELNB_ Channel number.
-  * @param _RANKNB_ Rank number.
+  * @param _RANKNB_ Rank number.    
   * @retval None
   */
 #define ADC_SQR3_RK(_CHANNELNB_, _RANKNB_)                                     \
@@ -3570,7 +3570,7 @@ typedef struct
 /**
   * @brief Set the selected regular channel rank for rank between 7 and 12.
   * @param _CHANNELNB_ Channel number.
-  * @param _RANKNB_ Rank number.
+  * @param _RANKNB_ Rank number.    
   * @retval None
   */
 #define ADC_SQR2_RK(_CHANNELNB_, _RANKNB_)                                     \
@@ -3579,7 +3579,7 @@ typedef struct
 /**
   * @brief Set the selected regular channel rank for rank between 13 and 16.
   * @param _CHANNELNB_ Channel number.
-  * @param _RANKNB_ Rank number.
+  * @param _RANKNB_ Rank number.    
   * @retval None
   */
 #define ADC_SQR1_RK(_CHANNELNB_, _RANKNB_)                                     \
@@ -3621,7 +3621,7 @@ typedef struct
   */
 #define ADC_CR1_DISCONTINUOUS_NUM(_NBR_DISCONTINUOUS_CONV_)                    \
   (((_NBR_DISCONTINUOUS_CONV_) - 1U) << 13U)
-
+   
 /**
   * @brief Enable ADC scan mode to convert multiple ranks with sequencer.
   * @param _SCAN_MODE_ Scan conversion mode.
@@ -3633,7 +3633,7 @@ typedef struct
   (( ((_SCAN_MODE_) == ADC_SCAN_ENABLE) || ((_SCAN_MODE_) == ENABLE)           \
    )? (ADC_SCAN_ENABLE) : (ADC_SCAN_DISABLE)                                   \
   )
-
+    
 /**
   * @brief Calibration factor in differential mode to be set into calibration register
   * @param _Calibration_Factor_ Calibration factor value
@@ -3649,8 +3649,8 @@ typedef struct
   */
 #define ADC_CALFACT_DIFF_GET(_Calibration_Factor_)                             \
   ((_Calibration_Factor_) >> 16U)
-
-
+      
+      
 /**
   * @brief Get the maximum ADC conversion cycles on all channels.
   * Returns the selected sampling time + conversion time (12.5 ADC clock cycles)
@@ -3662,7 +3662,7 @@ typedef struct
   * Unit: ADC clock cycles
   * @param __HANDLE__ ADC handle
   * @retval ADC conversion cycles on all channels
-  */
+  */   
 #define ADC_CONVCYCLES_MAX_RANGE(__HANDLE__)                                                                     \
     (( (((__HANDLE__)->Instance->SMPR2 & ADC_SAMPLETIME_ALLCHANNELS_SMPR2BIT2) == RESET)  &&                     \
        (((__HANDLE__)->Instance->SMPR1 & ADC_SAMPLETIME_ALLCHANNELS_SMPR1BIT2) == RESET) ) ?                     \
@@ -3697,7 +3697,7 @@ typedef struct
   )
 
 /**
-  * @brief Get the ADC clock prescaler from system clock configuration register.
+  * @brief Get the ADC clock prescaler from system clock configuration register. 
   * @retval None
   */
 #define ADC_GET_CLOCK_PRESCALER() (((RCC->CFGR & RCC_CFGR_ADCPRE) >> 14U) +1U)
@@ -3829,23 +3829,23 @@ typedef struct
 /**
   * @}
   */
-
+              
 #endif /* STM32F373xC || STM32F378xx */
 /**
   * @}
   */
 
 
-/* Exported functions --------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/  
 /** @addtogroup ADCEx_Exported_Functions ADCEx Exported Functions
   * @{
-  */
-
+  */ 
+          
 /* Initialization/de-initialization functions *********************************/
 
 /** @addtogroup ADCEx_Exported_Functions_Group2 ADCEx Input and Output operation functions
   * @{
-  */
+  */ 
 /* I/O operation functions ****************************************************/
 
 /* ADC calibration */
@@ -3880,7 +3880,7 @@ HAL_StatusTypeDef       HAL_ADCEx_InjectedStop_IT(struct __ADC_HandleTypeDef* ha
     defined(STM32F301x8) || defined(STM32F302x8) || defined(STM32F318xx)
 /* ADC multimode */
 HAL_StatusTypeDef       HAL_ADCEx_MultiModeStart_DMA(struct __ADC_HandleTypeDef *hadc, uint32_t *pData, uint32_t Length);
-HAL_StatusTypeDef       HAL_ADCEx_MultiModeStop_DMA(struct __ADC_HandleTypeDef *hadc);
+HAL_StatusTypeDef       HAL_ADCEx_MultiModeStop_DMA(struct __ADC_HandleTypeDef *hadc); 
 uint32_t                HAL_ADCEx_MultiModeGetValue(struct __ADC_HandleTypeDef *hadc);
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx || */
        /* STM32F302xC || STM32F303xC || STM32F358xx || */
@@ -3925,10 +3925,10 @@ void                    HAL_ADCEx_LevelOutOfWindow3Callback(struct __ADC_HandleT
 /**
   * @}
   */
-
+     
 /** @addtogroup ADCEx_Exported_Functions_Group3 ADCEx Peripheral Control functions
   * @{
-  */
+  */ 
 /* Peripheral Control functions ***********************************************/
 HAL_StatusTypeDef       HAL_ADCEx_InjectedConfigChannel(struct __ADC_HandleTypeDef* hadc,ADC_InjectionConfTypeDef* sConfigInjected);
 
@@ -3948,10 +3948,10 @@ HAL_StatusTypeDef       HAL_ADCEx_MultiModeConfigChannel(struct __ADC_HandleType
 /**
   * @}
   */
-
+  
 /**
   * @}
-  */
+  */ 
 
 /**
   * @}

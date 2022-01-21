@@ -82,7 +82,7 @@ typedef struct
                                           this is the number of bytes to be transferred in a single transfer (1 byte to 128 bytes)*/
 
   uint32_t SourceBurst;              /*!< Specifies the Burst transfer configuration for the source memory transfers.
-                                         It specifies the amount of data to be transferred in a single non interruptable
+                                         It specifies the amount of data to be transferred in a single non interruptible
                                          transaction.
                                          This parameter can be a value of @ref MDMA_Source_burst
                                          @note : the burst may be FIXED/INCR based on SourceInc value ,
@@ -90,7 +90,7 @@ typedef struct
                                          BufferTransferLength */
 
   uint32_t DestBurst;                 /*!< Specifies the Burst transfer configuration for the destination memory transfers.
-                                           It specifies the amount of data to be transferred in a single non interruptable
+                                           It specifies the amount of data to be transferred in a single non interruptible
                                            transaction.
                                            This parameter can be a value of @ref MDMA_Destination_burst
                                            @note : the burst may be FIXED/INCR based on DestinationInc value ,
@@ -509,7 +509,7 @@ typedef struct __MDMA_HandleTypeDef
 #define MDMA_FLAG_BRT   ((uint32_t)MDMA_CISR_BRTIF) /*!< Block Repeat Transfer complete flag */
 #define MDMA_FLAG_BT    ((uint32_t)MDMA_CISR_BTIF)  /*!< Block Transfer complete flag        */
 #define MDMA_FLAG_BFTC  ((uint32_t)MDMA_CISR_TCIF)  /*!< BuFfer Transfer complete flag       */
-#define MDMA_FLAG_CRQA  ((uint32_t)MDMA_CISR_CRQA)  /*!< Channel ReQest Active flag          */
+#define MDMA_FLAG_CRQA  ((uint32_t)MDMA_CISR_CRQA)  /*!< Channel request Active flag          */
 
 /**
   * @}
@@ -549,7 +549,7 @@ typedef struct __MDMA_HandleTypeDef
   *            @arg MDMA_FLAG_BRT  : Block Repeat Transfer flag.
   *            @arg MDMA_FLAG_BT   : Block Transfer complete flag.
   *            @arg MDMA_FLAG_BFTC : BuFfer Transfer Complete flag.
-  *            @arg MDMA_FLAG_CRQA : Channel ReQest Active flag.
+  *            @arg MDMA_FLAG_CRQA : Channel request Active flag.
   * @retval The state of FLAG (SET or RESET).
   */
 #define __HAL_MDMA_GET_FLAG(__HANDLE__, __FLAG__)  ((__HANDLE__)->Instance->CISR & (__FLAG__))
@@ -598,8 +598,8 @@ typedef struct __MDMA_HandleTypeDef
 
 /**
   * @brief  Checks whether the specified MDMA Channel interrupt is enabled or not.
-  * @param  __HANDLE__: DMA handle
-  * @param  __INTERRUPT__: specifies the DMA interrupt source to check.
+  * @param  __HANDLE__: MDMA handle
+  * @param  __INTERRUPT__: specifies the MDMA interrupt source to check.
   *            @arg MDMA_IT_TE   :  Transfer Error interrupt mask
   *            @arg MDMA_IT_CTC  :  Channel Transfer Complete interrupt mask
   *            @arg MDMA_IT_BRT  :  Block Repeat Transfer interrupt mask
@@ -608,6 +608,21 @@ typedef struct __MDMA_HandleTypeDef
   * @retval The state of MDMA_IT (SET or RESET).
   */
 #define __HAL_MDMA_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)  (((__HANDLE__)->Instance->CCR & (__INTERRUPT__)))
+
+/**
+  * @brief  Writes the number of data in bytes to be transferred on the MDMA Channelx.
+  * @param  __HANDLE__ : MDMA handle
+  * @param  __COUNTER__: Number of data in bytes to be transferred.
+  * @retval None
+  */
+#define __HAL_MDMA_SET_COUNTER(__HANDLE__, __COUNTER__)  ((__HANDLE__)->Instance->CBNDTR |= ((__COUNTER__) & MDMA_CBNDTR_BNDT))
+
+/**
+  * @brief  Returns the number of remaining data in bytes in the current MDMA Channelx transfer.
+  * @param  __HANDLE__ : MDMA handle
+  * @retval The number of remaining data in bytes in the current MDMA Channelx transfer.
+  */
+#define __HAL_MDMA_GET_COUNTER(__HANDLE__) ((__HANDLE__)->Instance->CBNDTR & MDMA_CBNDTR_BNDT)
 
 /**
   * @}

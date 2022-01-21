@@ -411,39 +411,39 @@ typedef struct
   */
 typedef enum
 {
-   HAL_TIM_BASE_MSPINIT_CB_ID            = 0x00U    /*!< TIM Base MspInit Callback ID                              */
-  ,HAL_TIM_BASE_MSPDEINIT_CB_ID          = 0x01U    /*!< TIM Base MspDeInit Callback ID                            */
-  ,HAL_TIM_IC_MSPINIT_CB_ID              = 0x02U    /*!< TIM IC MspInit Callback ID                                */
-  ,HAL_TIM_IC_MSPDEINIT_CB_ID            = 0x03U    /*!< TIM IC MspDeInit Callback ID                              */
-  ,HAL_TIM_OC_MSPINIT_CB_ID              = 0x04U    /*!< TIM OC MspInit Callback ID                                */
-  ,HAL_TIM_OC_MSPDEINIT_CB_ID            = 0x05U    /*!< TIM OC MspDeInit Callback ID                              */
-  ,HAL_TIM_PWM_MSPINIT_CB_ID             = 0x06U    /*!< TIM PWM MspInit Callback ID                               */
-  ,HAL_TIM_PWM_MSPDEINIT_CB_ID           = 0x07U    /*!< TIM PWM MspDeInit Callback ID                             */
-  ,HAL_TIM_ONE_PULSE_MSPINIT_CB_ID       = 0x08U    /*!< TIM One Pulse MspInit Callback ID                         */
-  ,HAL_TIM_ONE_PULSE_MSPDEINIT_CB_ID     = 0x09U    /*!< TIM One Pulse MspDeInit Callback ID                       */
-  ,HAL_TIM_ENCODER_MSPINIT_CB_ID         = 0x0AU    /*!< TIM Encoder MspInit Callback ID                           */
-  ,HAL_TIM_ENCODER_MSPDEINIT_CB_ID       = 0x0BU    /*!< TIM Encoder MspDeInit Callback ID                         */
-  ,HAL_TIM_HALL_SENSOR_MSPINIT_CB_ID     = 0x0CU    /*!< TIM Hall Sensor MspDeInit Callback ID                     */
-  ,HAL_TIM_HALL_SENSOR_MSPDEINIT_CB_ID   = 0x0DU    /*!< TIM Hall Sensor MspDeInit Callback ID                     */
-  ,HAL_TIM_PERIOD_ELAPSED_CB_ID          = 0x0EU    /*!< TIM Period Elapsed Callback ID                             */
-  ,HAL_TIM_PERIOD_ELAPSED_HALF_CB_ID     = 0x0FU    /*!< TIM Period Elapsed half complete Callback ID               */
-  ,HAL_TIM_TRIGGER_CB_ID                 = 0x10U    /*!< TIM Trigger Callback ID                                    */
-  ,HAL_TIM_TRIGGER_HALF_CB_ID            = 0x11U    /*!< TIM Trigger half complete Callback ID                      */
+  HAL_TIM_BASE_MSPINIT_CB_ID              = 0x00U   /*!< TIM Base MspInit Callback ID                              */
+  , HAL_TIM_BASE_MSPDEINIT_CB_ID          = 0x01U   /*!< TIM Base MspDeInit Callback ID                            */
+  , HAL_TIM_IC_MSPINIT_CB_ID              = 0x02U   /*!< TIM IC MspInit Callback ID                                */
+  , HAL_TIM_IC_MSPDEINIT_CB_ID            = 0x03U   /*!< TIM IC MspDeInit Callback ID                              */
+  , HAL_TIM_OC_MSPINIT_CB_ID              = 0x04U   /*!< TIM OC MspInit Callback ID                                */
+  , HAL_TIM_OC_MSPDEINIT_CB_ID            = 0x05U   /*!< TIM OC MspDeInit Callback ID                              */
+  , HAL_TIM_PWM_MSPINIT_CB_ID             = 0x06U   /*!< TIM PWM MspInit Callback ID                               */
+  , HAL_TIM_PWM_MSPDEINIT_CB_ID           = 0x07U   /*!< TIM PWM MspDeInit Callback ID                             */
+  , HAL_TIM_ONE_PULSE_MSPINIT_CB_ID       = 0x08U   /*!< TIM One Pulse MspInit Callback ID                         */
+  , HAL_TIM_ONE_PULSE_MSPDEINIT_CB_ID     = 0x09U   /*!< TIM One Pulse MspDeInit Callback ID                       */
+  , HAL_TIM_ENCODER_MSPINIT_CB_ID         = 0x0AU   /*!< TIM Encoder MspInit Callback ID                           */
+  , HAL_TIM_ENCODER_MSPDEINIT_CB_ID       = 0x0BU   /*!< TIM Encoder MspDeInit Callback ID                         */
+  , HAL_TIM_HALL_SENSOR_MSPINIT_CB_ID     = 0x0CU   /*!< TIM Hall Sensor MspDeInit Callback ID                     */
+  , HAL_TIM_HALL_SENSOR_MSPDEINIT_CB_ID   = 0x0DU   /*!< TIM Hall Sensor MspDeInit Callback ID                     */
+  , HAL_TIM_PERIOD_ELAPSED_CB_ID          = 0x0EU   /*!< TIM Period Elapsed Callback ID                             */
+  , HAL_TIM_PERIOD_ELAPSED_HALF_CB_ID     = 0x0FU   /*!< TIM Period Elapsed half complete Callback ID               */
+  , HAL_TIM_TRIGGER_CB_ID                 = 0x10U   /*!< TIM Trigger Callback ID                                    */
+  , HAL_TIM_TRIGGER_HALF_CB_ID            = 0x11U   /*!< TIM Trigger half complete Callback ID                      */
 
-  ,HAL_TIM_IC_CAPTURE_CB_ID              = 0x12U    /*!< TIM Input Capture Callback ID                              */
-  ,HAL_TIM_IC_CAPTURE_HALF_CB_ID         = 0x13U    /*!< TIM Input Capture half complete Callback ID                */
-  ,HAL_TIM_OC_DELAY_ELAPSED_CB_ID        = 0x14U    /*!< TIM Output Compare Delay Elapsed Callback ID               */
-  ,HAL_TIM_PWM_PULSE_FINISHED_CB_ID      = 0x15U    /*!< TIM PWM Pulse Finished Callback ID           */
-  ,HAL_TIM_PWM_PULSE_FINISHED_HALF_CB_ID = 0x16U    /*!< TIM PWM Pulse Finished half complete Callback ID           */
-  ,HAL_TIM_ERROR_CB_ID                   = 0x17U    /*!< TIM Error Callback ID                                      */
-  ,HAL_TIM_COMMUTATION_CB_ID             = 0x18U    /*!< TIM Commutation Callback ID                                */
-  ,HAL_TIM_COMMUTATION_HALF_CB_ID        = 0x19U    /*!< TIM Commutation half complete Callback ID                  */
-  ,HAL_TIM_BREAK_CB_ID                   = 0x1AU    /*!< TIM Break Callback ID                                      */
-  ,HAL_TIM_BREAK2_CB_ID                  = 0x1BU    /*!< TIM Break2 Callback ID                                     */
-  ,HAL_TIM_ENCODER_INDEX_CB_ID           = 0x1CU    /*!< TIM Encoder Index Callback ID                              */
-  ,HAL_TIM_DIRECTION_CHANGE_CB_ID        = 0x1DU    /*!< TIM Direction Change Callback ID                           */
-  ,HAL_TIM_INDEX_ERROR_CB_ID             = 0x1EU    /*!< TIM Index Error Callback ID                                */
-  ,HAL_TIM_TRANSITION_ERROR_CB_ID        = 0x1FU    /*!< TIM Transition Error Callback ID                           */
+  , HAL_TIM_IC_CAPTURE_CB_ID              = 0x12U   /*!< TIM Input Capture Callback ID                              */
+  , HAL_TIM_IC_CAPTURE_HALF_CB_ID         = 0x13U   /*!< TIM Input Capture half complete Callback ID                */
+  , HAL_TIM_OC_DELAY_ELAPSED_CB_ID        = 0x14U   /*!< TIM Output Compare Delay Elapsed Callback ID               */
+  , HAL_TIM_PWM_PULSE_FINISHED_CB_ID      = 0x15U   /*!< TIM PWM Pulse Finished Callback ID           */
+  , HAL_TIM_PWM_PULSE_FINISHED_HALF_CB_ID = 0x16U   /*!< TIM PWM Pulse Finished half complete Callback ID           */
+  , HAL_TIM_ERROR_CB_ID                   = 0x17U   /*!< TIM Error Callback ID                                      */
+  , HAL_TIM_COMMUTATION_CB_ID             = 0x18U   /*!< TIM Commutation Callback ID                                */
+  , HAL_TIM_COMMUTATION_HALF_CB_ID        = 0x19U   /*!< TIM Commutation half complete Callback ID                  */
+  , HAL_TIM_BREAK_CB_ID                   = 0x1AU   /*!< TIM Break Callback ID                                      */
+  , HAL_TIM_BREAK2_CB_ID                  = 0x1BU   /*!< TIM Break2 Callback ID                                     */
+  , HAL_TIM_ENCODER_INDEX_CB_ID           = 0x1CU   /*!< TIM Encoder Index Callback ID                              */
+  , HAL_TIM_DIRECTION_CHANGE_CB_ID        = 0x1DU   /*!< TIM Direction Change Callback ID                           */
+  , HAL_TIM_INDEX_ERROR_CB_ID             = 0x1EU   /*!< TIM Index Error Callback ID                                */
+  , HAL_TIM_TRANSITION_ERROR_CB_ID        = 0x1FU   /*!< TIM Transition Error Callback ID                           */
 } HAL_TIM_CallbackIDTypeDef;
 
 /**
@@ -977,7 +977,7 @@ typedef  void (*pTIM_CallbackTypeDef)(TIM_HandleTypeDef *htim);  /*!< pointer to
   * @{
   */
 #define TIM_AUTOMATICOUTPUT_DISABLE        0x00000000U                          /*!< MOE can be set only by software */
-#define TIM_AUTOMATICOUTPUT_ENABLE         TIM_BDTR_AOE                         /*!< MOE can be set by software or automatically at the next update event 
+#define TIM_AUTOMATICOUTPUT_ENABLE         TIM_BDTR_AOE                         /*!< MOE can be set by software or automatically at the next update event
                                                                                     (if none of the break inputs BRK and BRK2 is active) */
 /**
   * @}
@@ -1142,32 +1142,32 @@ typedef  void (*pTIM_CallbackTypeDef)(TIM_HandleTypeDef *htim);  /*!< pointer to
 /** @defgroup TIM_DMA_Burst_Length TIM DMA Burst Length
   * @{
   */
-#define TIM_DMABURSTLENGTH_1TRANSFER       0x00000000U                          /*!< The transfer is done to 1 register starting trom TIMx_CR1 + TIMx_DCR.DBA   */
-#define TIM_DMABURSTLENGTH_2TRANSFERS      0x00000100U                          /*!< The transfer is done to 2 registers starting trom TIMx_CR1 + TIMx_DCR.DBA  */
-#define TIM_DMABURSTLENGTH_3TRANSFERS      0x00000200U                          /*!< The transfer is done to 3 registers starting trom TIMx_CR1 + TIMx_DCR.DBA  */
-#define TIM_DMABURSTLENGTH_4TRANSFERS      0x00000300U                          /*!< The transfer is done to 4 registers starting trom TIMx_CR1 + TIMx_DCR.DBA  */
-#define TIM_DMABURSTLENGTH_5TRANSFERS      0x00000400U                          /*!< The transfer is done to 5 registers starting trom TIMx_CR1 + TIMx_DCR.DBA  */
-#define TIM_DMABURSTLENGTH_6TRANSFERS      0x00000500U                          /*!< The transfer is done to 6 registers starting trom TIMx_CR1 + TIMx_DCR.DBA  */
-#define TIM_DMABURSTLENGTH_7TRANSFERS      0x00000600U                          /*!< The transfer is done to 7 registers starting trom TIMx_CR1 + TIMx_DCR.DBA  */
-#define TIM_DMABURSTLENGTH_8TRANSFERS      0x00000700U                          /*!< The transfer is done to 8 registers starting trom TIMx_CR1 + TIMx_DCR.DBA  */
-#define TIM_DMABURSTLENGTH_9TRANSFERS      0x00000800U                          /*!< The transfer is done to 9 registers starting trom TIMx_CR1 + TIMx_DCR.DBA  */
-#define TIM_DMABURSTLENGTH_10TRANSFERS     0x00000900U                          /*!< The transfer is done to 10 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_11TRANSFERS     0x00000A00U                          /*!< The transfer is done to 11 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_12TRANSFERS     0x00000B00U                          /*!< The transfer is done to 12 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_13TRANSFERS     0x00000C00U                          /*!< The transfer is done to 13 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_14TRANSFERS     0x00000D00U                          /*!< The transfer is done to 14 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_15TRANSFERS     0x00000E00U                          /*!< The transfer is done to 15 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_16TRANSFERS     0x00000F00U                          /*!< The transfer is done to 16 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_17TRANSFERS     0x00001000U                          /*!< The transfer is done to 17 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_18TRANSFERS     0x00001100U                          /*!< The transfer is done to 18 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_19TRANSFERS     0x00001200U                          /*!< The transfer is done to 19 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_20TRANSFERS     0x00001300U                          /*!< The transfer is done to 20 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_21TRANSFERS     0x00001400U                          /*!< The transfer is done to 21 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_22TRANSFERS     0x00001500U                          /*!< The transfer is done to 22 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_23TRANSFERS     0x00001600U                          /*!< The transfer is done to 23 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_24TRANSFERS     0x00001700U                          /*!< The transfer is done to 24 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_25TRANSFERS     0x00001800U                          /*!< The transfer is done to 25 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
-#define TIM_DMABURSTLENGTH_26TRANSFERS     0x00001900U                          /*!< The transfer is done to 26 registers starting trom TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_1TRANSFER       0x00000000U                          /*!< The transfer is done to 1 register starting from TIMx_CR1 + TIMx_DCR.DBA   */
+#define TIM_DMABURSTLENGTH_2TRANSFERS      0x00000100U                          /*!< The transfer is done to 2 registers starting from TIMx_CR1 + TIMx_DCR.DBA  */
+#define TIM_DMABURSTLENGTH_3TRANSFERS      0x00000200U                          /*!< The transfer is done to 3 registers starting from TIMx_CR1 + TIMx_DCR.DBA  */
+#define TIM_DMABURSTLENGTH_4TRANSFERS      0x00000300U                          /*!< The transfer is done to 4 registers starting from TIMx_CR1 + TIMx_DCR.DBA  */
+#define TIM_DMABURSTLENGTH_5TRANSFERS      0x00000400U                          /*!< The transfer is done to 5 registers starting from TIMx_CR1 + TIMx_DCR.DBA  */
+#define TIM_DMABURSTLENGTH_6TRANSFERS      0x00000500U                          /*!< The transfer is done to 6 registers starting from TIMx_CR1 + TIMx_DCR.DBA  */
+#define TIM_DMABURSTLENGTH_7TRANSFERS      0x00000600U                          /*!< The transfer is done to 7 registers starting from TIMx_CR1 + TIMx_DCR.DBA  */
+#define TIM_DMABURSTLENGTH_8TRANSFERS      0x00000700U                          /*!< The transfer is done to 8 registers starting from TIMx_CR1 + TIMx_DCR.DBA  */
+#define TIM_DMABURSTLENGTH_9TRANSFERS      0x00000800U                          /*!< The transfer is done to 9 registers starting from TIMx_CR1 + TIMx_DCR.DBA  */
+#define TIM_DMABURSTLENGTH_10TRANSFERS     0x00000900U                          /*!< The transfer is done to 10 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_11TRANSFERS     0x00000A00U                          /*!< The transfer is done to 11 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_12TRANSFERS     0x00000B00U                          /*!< The transfer is done to 12 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_13TRANSFERS     0x00000C00U                          /*!< The transfer is done to 13 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_14TRANSFERS     0x00000D00U                          /*!< The transfer is done to 14 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_15TRANSFERS     0x00000E00U                          /*!< The transfer is done to 15 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_16TRANSFERS     0x00000F00U                          /*!< The transfer is done to 16 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_17TRANSFERS     0x00001000U                          /*!< The transfer is done to 17 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_18TRANSFERS     0x00001100U                          /*!< The transfer is done to 18 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_19TRANSFERS     0x00001200U                          /*!< The transfer is done to 19 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_20TRANSFERS     0x00001300U                          /*!< The transfer is done to 20 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_21TRANSFERS     0x00001400U                          /*!< The transfer is done to 21 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_22TRANSFERS     0x00001500U                          /*!< The transfer is done to 22 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_23TRANSFERS     0x00001600U                          /*!< The transfer is done to 23 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_24TRANSFERS     0x00001700U                          /*!< The transfer is done to 24 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_25TRANSFERS     0x00001800U                          /*!< The transfer is done to 25 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
+#define TIM_DMABURSTLENGTH_26TRANSFERS     0x00001900U                          /*!< The transfer is done to 26 registers starting from TIMx_CR1 + TIMx_DCR.DBA */
 /**
   * @}
   */
@@ -2003,7 +2003,23 @@ mode.
                                        ((__CLOCK__) == TIM_CLOCKSOURCE_ITR6)     || \
                                        ((__CLOCK__) == TIM_CLOCKSOURCE_ITR7)     || \
                                        ((__CLOCK__) == TIM_CLOCKSOURCE_ITR8)     || \
-                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR10)    || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR11))
+#elif defined(TIM20)
+#define IS_TIM_CLOCKSOURCE(__CLOCK__) (((__CLOCK__) == TIM_CLOCKSOURCE_INTERNAL) || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ETRMODE2) || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR0)     || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR1)     || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR2)     || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR3)     || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_TI1ED)    || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_TI1)      || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_TI2)      || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ETRMODE1) || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR5)     || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR6)     || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR7)     || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR8)     || \
+                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR9)     || \
                                        ((__CLOCK__) == TIM_CLOCKSOURCE_ITR11))
 #else
 #define IS_TIM_CLOCKSOURCE(__CLOCK__) (((__CLOCK__) == TIM_CLOCKSOURCE_INTERNAL) || \
@@ -2020,7 +2036,6 @@ mode.
                                        ((__CLOCK__) == TIM_CLOCKSOURCE_ITR6)     || \
                                        ((__CLOCK__) == TIM_CLOCKSOURCE_ITR7)     || \
                                        ((__CLOCK__) == TIM_CLOCKSOURCE_ITR8)     || \
-                                       ((__CLOCK__) == TIM_CLOCKSOURCE_ITR10)    || \
                                        ((__CLOCK__) == TIM_CLOCKSOURCE_ITR11))
 #endif /* TIM5 && TIM20 */
 
@@ -2171,6 +2186,18 @@ mode.
                                                                ((__SELECTION__) == TIM_TS_ITR10)|| \
                                                                ((__SELECTION__) == TIM_TS_ITR11)|| \
                                                                ((__SELECTION__) == TIM_TS_NONE))
+#elif defined (TIM20)
+#define IS_TIM_INTERNAL_TRIGGEREVENT_SELECTION(__SELECTION__) (((__SELECTION__) == TIM_TS_ITR0) || \
+                                                               ((__SELECTION__) == TIM_TS_ITR1) || \
+                                                               ((__SELECTION__) == TIM_TS_ITR2) || \
+                                                               ((__SELECTION__) == TIM_TS_ITR3) || \
+                                                               ((__SELECTION__) == TIM_TS_ITR5) || \
+                                                               ((__SELECTION__) == TIM_TS_ITR6) || \
+                                                               ((__SELECTION__) == TIM_TS_ITR7) || \
+                                                               ((__SELECTION__) == TIM_TS_ITR8) || \
+                                                               ((__SELECTION__) == TIM_TS_ITR9) || \
+                                                               ((__SELECTION__) == TIM_TS_ITR11)|| \
+                                                               ((__SELECTION__) == TIM_TS_NONE))
 #else
 #define IS_TIM_INTERNAL_TRIGGEREVENT_SELECTION(__SELECTION__) (((__SELECTION__) == TIM_TS_ITR0) || \
                                                                ((__SELECTION__) == TIM_TS_ITR1) || \
@@ -2180,7 +2207,6 @@ mode.
                                                                ((__SELECTION__) == TIM_TS_ITR6) || \
                                                                ((__SELECTION__) == TIM_TS_ITR7) || \
                                                                ((__SELECTION__) == TIM_TS_ITR8) || \
-                                                               ((__SELECTION__) == TIM_TS_ITR10)|| \
                                                                ((__SELECTION__) == TIM_TS_ITR11)|| \
                                                                ((__SELECTION__) == TIM_TS_NONE))
 #endif /* TIM5 && TIM20 */
@@ -2273,7 +2299,7 @@ mode.
    ((__CHANNEL__) == TIM_CHANNEL_4) ? (__HANDLE__)->ChannelState[3] :\
    ((__CHANNEL__) == TIM_CHANNEL_5) ? (__HANDLE__)->ChannelState[4] :\
    (__HANDLE__)->ChannelState[5])
-    
+
 #define TIM_CHANNEL_STATE_SET(__HANDLE__, __CHANNEL__, __CHANNEL_STATE__) \
   (((__CHANNEL__) == TIM_CHANNEL_1) ? ((__HANDLE__)->ChannelState[0] = (__CHANNEL_STATE__)) :\
    ((__CHANNEL__) == TIM_CHANNEL_2) ? ((__HANDLE__)->ChannelState[1] = (__CHANNEL_STATE__)) :\
@@ -2296,7 +2322,7 @@ mode.
    ((__CHANNEL__) == TIM_CHANNEL_2) ? (__HANDLE__)->ChannelNState[1] :\
    ((__CHANNEL__) == TIM_CHANNEL_3) ? (__HANDLE__)->ChannelNState[2] :\
    (__HANDLE__)->ChannelNState[3])
-    
+
 #define TIM_CHANNEL_N_STATE_SET(__HANDLE__, __CHANNEL__, __CHANNEL_STATE__) \
   (((__CHANNEL__) == TIM_CHANNEL_1) ? ((__HANDLE__)->ChannelNState[0] = (__CHANNEL_STATE__)) :\
    ((__CHANNEL__) == TIM_CHANNEL_2) ? ((__HANDLE__)->ChannelNState[1] = (__CHANNEL_STATE__)) :\

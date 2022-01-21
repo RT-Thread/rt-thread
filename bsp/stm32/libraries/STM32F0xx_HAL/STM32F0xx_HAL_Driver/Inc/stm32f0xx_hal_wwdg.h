@@ -56,7 +56,7 @@ typedef struct
   uint32_t Counter;       /*!< Specifies the WWDG free-running downcounter  value.
                                This parameter must be a number between Min_Data = 0x40 and Max_Data = 0x7F */
 
-  uint32_t EWIMode ;      /*!< Specifies if WWDG Early Wakeup Interupt is enable or not.
+  uint32_t EWIMode ;      /*!< Specifies if WWDG Early Wakeup Interrupt is enable or not.
                                This parameter can be a value of @ref WWDG_EWI_Mode */
 
 } WWDG_InitTypeDef;
@@ -68,17 +68,17 @@ typedef struct
 typedef struct __WWDG_HandleTypeDef
 #else
 typedef struct
-#endif
+#endif /* USE_HAL_WWDG_REGISTER_CALLBACKS */
 {
   WWDG_TypeDef      *Instance;  /*!< Register base address */
 
   WWDG_InitTypeDef  Init;       /*!< WWDG required parameters */
 
 #if (USE_HAL_WWDG_REGISTER_CALLBACKS == 1)
-  void              (* EwiCallback)(struct __WWDG_HandleTypeDef *hwwdg);     /*!< WWDG Early WakeUp Interrupt callback */
+  void (* EwiCallback)(struct __WWDG_HandleTypeDef *hwwdg);                  /*!< WWDG Early WakeUp Interrupt callback */
 
-  void              (* MspInitCallback)(struct __WWDG_HandleTypeDef *hwwdg); /*!< WWDG Msp Init callback */
-#endif
+  void (* MspInitCallback)(struct __WWDG_HandleTypeDef *hwwdg);              /*!< WWDG Msp Init callback */
+#endif /* USE_HAL_WWDG_REGISTER_CALLBACKS */
 } WWDG_HandleTypeDef;
 
 #if (USE_HAL_WWDG_REGISTER_CALLBACKS == 1)
@@ -87,8 +87,8 @@ typedef struct
   */
 typedef enum
 {
-  HAL_WWDG_EWI_CB_ID          = 0x00u,    /*!< WWDG EWI callback ID */
-  HAL_WWDG_MSPINIT_CB_ID      = 0x01u,    /*!< WWDG MspInit callback ID */
+  HAL_WWDG_EWI_CB_ID          = 0x00U,    /*!< WWDG EWI callback ID */
+  HAL_WWDG_MSPINIT_CB_ID      = 0x01U,    /*!< WWDG MspInit callback ID */
 } HAL_WWDG_CallbackIDTypeDef;
 
 /**
@@ -96,7 +96,7 @@ typedef enum
   */
 typedef void (*pWWDG_CallbackTypeDef)(WWDG_HandleTypeDef *hppp);  /*!< pointer to a WWDG common callback functions */
 
-#endif
+#endif /* USE_HAL_WWDG_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -260,9 +260,10 @@ HAL_StatusTypeDef     HAL_WWDG_Init(WWDG_HandleTypeDef *hwwdg);
 void                  HAL_WWDG_MspInit(WWDG_HandleTypeDef *hwwdg);
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_WWDG_REGISTER_CALLBACKS == 1)
-HAL_StatusTypeDef     HAL_WWDG_RegisterCallback(WWDG_HandleTypeDef *hwwdg, HAL_WWDG_CallbackIDTypeDef CallbackID, pWWDG_CallbackTypeDef pCallback);
+HAL_StatusTypeDef     HAL_WWDG_RegisterCallback(WWDG_HandleTypeDef *hwwdg, HAL_WWDG_CallbackIDTypeDef CallbackID,
+                                                pWWDG_CallbackTypeDef pCallback);
 HAL_StatusTypeDef     HAL_WWDG_UnRegisterCallback(WWDG_HandleTypeDef *hwwdg, HAL_WWDG_CallbackIDTypeDef CallbackID);
-#endif
+#endif /* USE_HAL_WWDG_REGISTER_CALLBACKS */
 
 /**
   * @}

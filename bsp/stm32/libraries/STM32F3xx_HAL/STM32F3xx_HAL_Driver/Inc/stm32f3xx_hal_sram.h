@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-#if defined FMC_BANK1
+#if defined(FMC_BANK1)
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_ll_fmc.h"
@@ -81,7 +81,7 @@ typedef struct
   void (* MspDeInitCallback)(struct __SRAM_HandleTypeDef *hsram);             /*!< SRAM Msp DeInit callback            */
   void (* DmaXferCpltCallback)(DMA_HandleTypeDef *hdma);                      /*!< SRAM DMA Xfer Complete callback     */
   void (* DmaXferErrorCallback)(DMA_HandleTypeDef *hdma);                     /*!< SRAM DMA Xfer Error callback        */
-#endif
+#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */
 } SRAM_HandleTypeDef;
 
 #if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
@@ -101,7 +101,7 @@ typedef enum
   */
 typedef void (*pSRAM_CallbackTypeDef)(SRAM_HandleTypeDef *hsram);
 typedef void (*pSRAM_DmaCallbackTypeDef)(DMA_HandleTypeDef *hdma);
-#endif
+#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */
 /**
   * @}
   */
@@ -125,7 +125,7 @@ typedef void (*pSRAM_DmaCallbackTypeDef)(DMA_HandleTypeDef *hdma);
                                                              } while(0)
 #else
 #define __HAL_SRAM_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_SRAM_STATE_RESET)
-#endif
+#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */
 
 /**
   * @}
@@ -183,7 +183,7 @@ HAL_StatusTypeDef HAL_SRAM_RegisterCallback(SRAM_HandleTypeDef *hsram, HAL_SRAM_
 HAL_StatusTypeDef HAL_SRAM_UnRegisterCallback(SRAM_HandleTypeDef *hsram, HAL_SRAM_CallbackIDTypeDef CallbackId);
 HAL_StatusTypeDef HAL_SRAM_RegisterDmaCallback(SRAM_HandleTypeDef *hsram, HAL_SRAM_CallbackIDTypeDef CallbackId,
                                                pSRAM_DmaCallbackTypeDef pCallback);
-#endif
+#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */
 
 /**
   * @}

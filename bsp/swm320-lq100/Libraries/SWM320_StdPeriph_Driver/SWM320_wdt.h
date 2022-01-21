@@ -1,19 +1,18 @@
 #ifndef __SWM320_WDT_H__
 #define __SWM320_WDT_H__
 
-#define WDT_MODE_RESET      0
-#define WDT_MODE_INTERRUPT  1
+#define WDT_MODE_RESET 0
+#define WDT_MODE_INTERRUPT 1
 
-void WDT_Init(WDT_TypeDef *WDTx, uint32_t peroid, uint32_t mode);   //WDT¿´ÃÅ¹·³õÊ¼»¯
-void WDT_Start(WDT_TypeDef *WDTx);          //Æô¶¯Ö¸¶¨WDT£¬¿ªÊ¼µ¹¼ÆÊ±
-void WDT_Stop(WDT_TypeDef *WDTx);           //¹Ø±ÕÖ¸¶¨WDT£¬Í£Ö¹µ¹¼ÆÊ±
+void WDT_Init(WDT_TypeDef *WDTx, uint32_t peroid, uint32_t mode); //WDTçœ‹é—¨ç‹—åˆå§‹åŒ–
+void WDT_Start(WDT_TypeDef *WDTx);                                //å¯åŠ¨æŒ‡å®šWDTï¼Œå¼€å§‹å€’è®¡æ—¶
+void WDT_Stop(WDT_TypeDef *WDTx);                                 //å…³é—­æŒ‡å®šWDTï¼Œåœæ­¢å€’è®¡æ—¶
 
-void WDT_Feed(WDT_TypeDef *WDTx);           //Î¹¹·£¬ÖØĞÂ´Ó×°ÔØÖµ¿ªÊ¼µ¹¼ÆÊ±
+void WDT_Feed(WDT_TypeDef *WDTx); //å–‚ç‹—ï¼Œé‡æ–°ä»è£…è½½å€¼å¼€å§‹å€’è®¡æ—¶
 
-int32_t WDT_GetValue(WDT_TypeDef *WDTx);    //»ñÈ¡Ö¸¶¨¿´ÃÅ¹·¶¨Ê±Æ÷µÄµ±Ç°µ¹¼ÆÊ±Öµ
+int32_t WDT_GetValue(WDT_TypeDef *WDTx); //è·å–æŒ‡å®šçœ‹é—¨ç‹—å®šæ—¶å™¨çš„å½“å‰å€’è®¡æ—¶å€¼
 
-
-void WDT_INTClr(WDT_TypeDef *WDTx);         //ÖĞ¶Ï±êÖ¾Çå³ı
-uint32_t WDT_INTStat(WDT_TypeDef *WDTx);    //ÖĞ¶Ï×´Ì¬²éÑ¯
+void WDT_INTClr(WDT_TypeDef *WDTx);      //ä¸­æ–­æ ‡å¿—æ¸…é™¤
+uint32_t WDT_INTStat(WDT_TypeDef *WDTx); //ä¸­æ–­çŠ¶æ€æŸ¥è¯¢
 
 #endif //__SWM320_WDT_H__

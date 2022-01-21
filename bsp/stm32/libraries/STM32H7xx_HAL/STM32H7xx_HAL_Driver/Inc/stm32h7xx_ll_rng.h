@@ -57,8 +57,8 @@ typedef struct
 {
   uint32_t         ClockErrorDetection; /*!< Clock error detection.
                                       This parameter can be one value of @ref RNG_LL_CED.
-
-                                      This parameter can be modified using unitary functions @ref LL_RNG_EnableClkErrorDetect(). */
+                                      This parameter can be modified using unitary
+                                      functions @ref LL_RNG_EnableClkErrorDetect(). */
 } LL_RNG_InitTypeDef;
 
 /**
@@ -81,7 +81,7 @@ typedef struct
 
 #if defined(RNG_CR_CONDRST)
 /** @defgroup RNG_LL_Clock_Divider_Factor  Value used to configure an internal
- *            programmable divider acting on the incoming RNG clock
+  *            programmable divider acting on the incoming RNG clock
   * @{
   */
 #define LL_RNG_CLKDIV_BY_1       (0x00000000UL)                                                           /*!< No clock division                             */
@@ -114,7 +114,7 @@ typedef struct
   * @}
   */
 
-#endif/*RNG_CR_CONDRST*/
+#endif /* RNG_CR_CONDRST */
 /** @defgroup RNG_LL_EC_GET_FLAG Get Flags Defines
   * @brief    Flags defines which can be used with LL_RNG_ReadReg function
   * @{
@@ -614,7 +614,7 @@ __STATIC_INLINE uint32_t LL_RNG_ReadRandData32(RNG_TypeDef *RNGx)
   * @}
   */
 
-#if defined (RNG_VER_3_1)
+#if defined(RNG_VER_3_2) || defined(RNG_VER_3_1) || defined(RNG_VER_3_0)
 /** @defgroup RNG_LL_EF_Health_Test_Control Health Test Control
   * @{
   */
@@ -645,7 +645,7 @@ __STATIC_INLINE uint32_t LL_RNG_GetHealthConfig(RNG_TypeDef *RNGx)
 /**
   * @}
   */
-#endif  /*RNG_VER_3_1*/
+#endif  /* RNG_VER_3_2, RNG_VER_3_1 or RNG_VER_3_0 */
 #if defined(USE_FULL_LL_DRIVER)
 /** @defgroup RNG_LL_EF_Init Initialization and de-initialization functions
   * @{

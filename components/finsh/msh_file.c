@@ -11,11 +11,13 @@
 
 #include <rtthread.h>
 
-#if defined(RT_USING_FINSH) && defined(RT_USING_DFS)
+#if defined(RT_USING_FINSH) && defined(DFS_USING_POSIX)
 
 #include <finsh.h>
 #include "msh.h"
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 static int msh_readline(int fd, char *line_buf, int size)
 {
@@ -78,7 +80,7 @@ int msh_exec_script(const char *cmd_line, int size)
     if (pg_name == RT_NULL) return -RT_ENOMEM;
 
     /* copy command0 */
-    memcpy(pg_name, cmd_line, cmd_length);
+    rt_memcpy(pg_name, cmd_line, cmd_length);
     pg_name[cmd_length] = '\0';
 
     if (strstr(pg_name, ".sh") != RT_NULL || strstr(pg_name, ".SH") != RT_NULL)
@@ -612,7 +614,7 @@ static int cmd_tail(int argc, char **argv)
     rt_uint32_t target_line = 0;
     rt_uint32_t current_line = 0;
     rt_uint32_t required_lines = 0;
-    rt_uint32_t after_xxx_line = 0;
+    rt_uint32_t start_line = 0;
 
     if (argc < 2)
     {
@@ -632,7 +634,7 @@ static int cmd_tail(int argc, char **argv)
         }
         else
         {
-            after_xxx_line = atoi(&argv[2][1]); /* eg: +100, to get the 100 */
+            start_line = atoi(&argv[2][1]); /* eg: +100, to get the 100 */
         }
         file_name = argv[3];
     }
@@ -651,6 +653,10 @@ static int cmd_tail(int argc, char **argv)
 
     while ((read(fd, &c, sizeof(char))) > 0)
     {
+        if(total_lines == 0)
+        {
+            total_lines++;
+        }
         if (c == '\n')
         {
             total_lines++;
@@ -659,11 +665,11 @@ static int cmd_tail(int argc, char **argv)
 
     rt_kprintf("\nTotal Number of lines:%d\n", total_lines);
 
-    if (after_xxx_line != 0)
+    if (start_line != 0)
     {
-        if (total_lines > after_xxx_line)
+        if (total_lines >= start_line)
         {
-            required_lines = total_lines - after_xxx_line;
+            required_lines = total_lines - start_line + 1;
         }
         else
         {
@@ -686,13 +692,13 @@ static int cmd_tail(int argc, char **argv)
 
     while ((read(fd, &c, sizeof(char))) > 0)
     {
+        if (current_line >= target_line)
+        {
+            rt_kprintf("%c", c);
+        }
         if (c == '\n')
         {
             current_line++;
-        }
-        if (current_line > target_line)
-        {
-            rt_kprintf("%c", c);
         }
     }
     rt_kprintf("\n");
@@ -702,5 +708,4 @@ static int cmd_tail(int argc, char **argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_tail, tail, print the last N - lines data of the given file);
 
-#endif /* defined(RT_USING_FINSH) && defined(RT_USING_DFS) */
-
+#endif /* defined(RT_USING_FINSH) && defined(DFS_USING_POSIX) */

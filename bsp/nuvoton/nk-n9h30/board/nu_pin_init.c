@@ -115,7 +115,7 @@ static void nu_pin_vpost_init(void)
     outpw(REG_SYS_GPA_MFPL, 0x22222222);
     /* PA[8, 15] */
     outpw(REG_SYS_GPA_MFPH, 0x22222222);
-#if (LCM_USING_BPP==4)
+#if (BSP_LCD_BPP==32)
     /* PD[8, 15 ] */
     outpw(REG_SYS_GPD_MFPH, 0x22222222);
 #endif

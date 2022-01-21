@@ -49,40 +49,12 @@ enum
 #ifdef BSP_USING_HW_TIM8
     TIM8_INDEX,
 #endif
-
-#ifdef BSP_USING_HWTIM9
-    TIM9_INDEX,
-#endif
-
-#ifdef BSP_USING_HWTIM10
-    TIM10_INDEX,
-#endif
-
-#ifdef BSP_USING_HWTIM11
-    TIM11_INDEX,
-#endif
-
-#ifdef BSP_USING_HWTIM12
-    TIM12_INDEX,
-#endif
-
-#ifdef BSP_USING_HWTIM13
-    TIM13_INDEX,
-#endif
-
-#ifdef BSP_USING_HWTIM14
-    TIM14_INDEX,
-#endif
-
-#ifdef BSP_USING_HWTIM15
-    TIM15_INDEX,
-#endif
 };
 
 struct n32_hwtimer
 {
     rt_hwtimer_t    time_device;
-    TIM_Module*     tim_handle;
+    TIM_Module     *tim_handle;
     IRQn_Type       tim_irqn;
     char            *name;
 };
@@ -120,34 +92,6 @@ static struct n32_hwtimer n32_hwtimer_obj[] =
 #ifdef BSP_USING_HWTIM8
     TIM8_CONFIG,
 #endif
-
-#ifdef BSP_USING_HWTIM9
-    TIM9_CONFIG,
-#endif
-
-#ifdef BSP_USING_HWTIM10
-    TIM10_CONFIG,
-#endif
-
-#ifdef BSP_USING_HWTIM11
-    TIM11_CONFIG,
-#endif
-
-#ifdef BSP_USING_HWTIM12
-    TIM12_CONFIG,
-#endif
-
-#ifdef BSP_USING_HWTIM13
-    TIM13_CONFIG,
-#endif
-
-#ifdef BSP_USING_HWTIM14
-    TIM14_CONFIG,
-#endif
-
-#ifdef BSP_USING_HWTIM15
-    TIM15_CONFIG,
-#endif
 };
 
 static void n32_timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
@@ -155,6 +99,8 @@ static void n32_timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
     RCC_ClocksType RCC_ClockStruct;
     TIM_TimeBaseInitType TIM_TimeBaseStructure;
     NVIC_InitType NVIC_InitStructure;
+    uint32_t freq = 0;
+    uint32_t input_clock;
     uint32_t prescaler_value = 0;
     TIM_Module *tim = RT_NULL;
     struct n32_hwtimer *tim_device = RT_NULL;
@@ -165,18 +111,22 @@ static void n32_timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         tim = (TIM_Module *)timer->parent.user_data;
         tim_device = (struct n32_hwtimer *)timer;
 
+        RT_ASSERT((tim == TIM2) || (tim == TIM3) || (tim == TIM4) || (tim == TIM5)
+            || (tim == TIM6) || (tim == TIM7));
+
         /* timer clock enable */
         n32_msp_hwtim_init(tim);
 
-        /* timer init */
+        freq = timer->freq;
         RCC_GetClocksFreqValue(&RCC_ClockStruct);
-        /* Set timer clock is 1Mhz */
-        prescaler_value = (uint32_t)(RCC_ClockStruct.SysclkFreq / 10000) - 1;
+        if (1 == (RCC_ClockStruct.HclkFreq / RCC_ClockStruct.Pclk1Freq))
+            input_clock = RCC_ClockStruct.Pclk1Freq;
+        else
+            input_clock = RCC_ClockStruct.Pclk1Freq * 2;
+        prescaler_value = (uint32_t)(input_clock / freq) - 1;
 
-        TIM_TimeBaseStructure.Period = 10000 - 1;
-        rt_kprintf("Period=[%d]", TIM_TimeBaseStructure.Period);
+        TIM_TimeBaseStructure.Period = freq - 1;
         TIM_TimeBaseStructure.Prescaler = prescaler_value;
-        rt_kprintf("Prescaler=[%d]", TIM_TimeBaseStructure.Prescaler);
         TIM_TimeBaseStructure.ClkDiv = TIM_CLK_DIV1;
         TIM_TimeBaseStructure.RepetCnt = 0;
 
@@ -198,7 +148,7 @@ static void n32_timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
         NVIC_Init(&NVIC_InitStructure);
 
-        TIM_ConfigInt(tim, TIM_INT_UPDATE ,ENABLE);
+        TIM_ConfigInt(tim, TIM_INT_UPDATE, ENABLE);
         TIM_ClrIntPendingBit(tim, TIM_INT_UPDATE);
 
         LOG_D("%s init success", tim_device->name);
@@ -270,29 +220,32 @@ static rt_err_t n32_timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 
     tim = (TIM_Module *)timer->parent.user_data;
 
-    switch(cmd)
+    switch (cmd)
     {
-        case HWTIMER_CTRL_FREQ_SET:
-        {
-            rt_uint32_t freq;
-            rt_uint16_t val;
+    case HWTIMER_CTRL_FREQ_SET:
+    {
+        rt_uint32_t input_clock;
+        rt_uint32_t freq;
+        rt_uint16_t val;
 
-            /* set timer frequence */
-            freq = *((rt_uint32_t *)arg);
+        /* set timer frequence */
+        freq = *((rt_uint32_t *)arg);
 
-            /* time init */
-            RCC_GetClocksFreqValue(&RCC_ClockStruct);
-
-            val = RCC_ClockStruct.SysclkFreq / freq;
-
-            TIM_ConfigPrescaler(tim, val - 1, TIM_PSC_RELOAD_MODE_IMMEDIATE);
-        }
-        break;
-        default:
-        {
-            result = -RT_ENOSYS;
-        }
-        break;
+        /* time init */
+        RCC_GetClocksFreqValue(&RCC_ClockStruct);
+        if (1 == (RCC_ClockStruct.HclkFreq / RCC_ClockStruct.Pclk1Freq))
+            input_clock = RCC_ClockStruct.Pclk1Freq;
+        else
+            input_clock = RCC_ClockStruct.Pclk1Freq * 2;
+        val = input_clock / freq;
+        TIM_ConfigPrescaler(tim, val - 1, TIM_PSC_RELOAD_MODE_IMMEDIATE);
+    }
+    break;
+    default:
+    {
+        result = -RT_ENOSYS;
+    }
+    break;
     }
 
     return result;
@@ -314,7 +267,7 @@ void TIM2_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if(TIM_GetIntStatus(TIM2, TIM_INT_UPDATE) == SET)
+    if (TIM_GetIntStatus(TIM2, TIM_INT_UPDATE) == SET)
     {
 
         rt_device_hwtimer_isr(&n32_hwtimer_obj[TIM2_INDEX].time_device);
@@ -332,7 +285,7 @@ void TIM3_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if(TIM_GetIntStatus(TIM3, TIM_INT_UPDATE) == SET)
+    if (TIM_GetIntStatus(TIM3, TIM_INT_UPDATE) == SET)
     {
 
         rt_device_hwtimer_isr(&n32_hwtimer_obj[TIM3_INDEX].time_device);
@@ -350,7 +303,7 @@ void TIM4_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if(TIM_GetIntStatus(TIM4, TIM_INT_UPDATE) == SET)
+    if (TIM_GetIntStatus(TIM4, TIM_INT_UPDATE) == SET)
     {
 
         rt_device_hwtimer_isr(&n32_hwtimer_obj[TIM4_INDEX].time_device);
@@ -368,7 +321,7 @@ void TIM5_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if(TIM_GetIntStatus(TIM5, TIM_INT_UPDATE) == SET)
+    if (TIM_GetIntStatus(TIM5, TIM_INT_UPDATE) == SET)
     {
 
         rt_device_hwtimer_isr(&n32_hwtimer_obj[TIM5_INDEX].time_device);
@@ -386,7 +339,7 @@ void TIM6_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if(TIM_GetIntStatus(TIM6, TIM_INT_UPDATE) == SET)
+    if (TIM_GetIntStatus(TIM6, TIM_INT_UPDATE) == SET)
     {
 
         rt_device_hwtimer_isr(&n32_hwtimer_obj[TIM6_INDEX].time_device);
@@ -404,7 +357,7 @@ void TIM7_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if(TIM_GetIntStatus(TIM7, TIM_INT_UPDATE) == SET)
+    if (TIM_GetIntStatus(TIM7, TIM_INT_UPDATE) == SET)
     {
 
         rt_device_hwtimer_isr(&n32_hwtimer_obj[TIM7_INDEX].time_device);

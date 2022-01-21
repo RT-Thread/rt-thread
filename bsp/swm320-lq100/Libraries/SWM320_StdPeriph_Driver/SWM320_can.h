@@ -1,22 +1,22 @@
 #ifndef __SWM320_CAN_H__
 #define __SWM320_CAN_H__
 
-#define CAN_FRAME_STD   0
-#define CAN_FRAME_EXT   1
+#define CAN_FRAME_STD 0
+#define CAN_FRAME_EXT 1
 
 typedef struct
 {
-    uint8_t  Mode;          //CAN_MODE_NORMAL¡¢CAN_MODE_LISTEN¡¢CAN_MODE_SELFTEST
-    uint8_t  CAN_BS1;       //CAN_BS1_1tq¡¢CAN_BS1_2tq¡¢... ... ¡¢CAN_BS1_16tq
-    uint8_t  CAN_BS2;       //CAN_BS2_1tq¡¢CAN_BS2_2tq¡¢... ... ¡¢CAN_BS2_8tq
-    uint8_t  CAN_SJW;       //CAN_SJW_1tq¡¢CAN_SJW_2tq¡¢CAN_SJW_3tq¡¢CAN_SJW_4tq
-    uint32_t Baudrate;      //²¨ÌØÂÊ£¬¼´Î»´«ÊäËÙÂÊ£¬È¡Öµ1--1000000
-    uint8_t  FilterMode;    //CAN_FILTER_16b¡¢CAN_FILTER_32b
+    uint8_t Mode;       //CAN_MODE_NORMALã€CAN_MODE_LISTENã€CAN_MODE_SELFTEST
+    uint8_t CAN_BS1;    //CAN_BS1_1tqã€CAN_BS1_2tqã€... ... ã€CAN_BS1_16tq
+    uint8_t CAN_BS2;    //CAN_BS2_1tqã€CAN_BS2_2tqã€... ... ã€CAN_BS2_8tq
+    uint8_t CAN_SJW;    //CAN_SJW_1tqã€CAN_SJW_2tqã€CAN_SJW_3tqã€CAN_SJW_4tq
+    uint32_t Baudrate;  //æ³¢ç‰¹ç‡ï¼Œå³ä½ä¼ è¾“é€Ÿç‡ï¼Œå–å€¼1--1000000
+    uint8_t FilterMode; //CAN_FILTER_16bã€CAN_FILTER_32b
     union
     {
-        uint32_t FilterMask32b;     //FilterCheck & (~FilterMask) == ID & (~FilterMask)µÄMessageÍ¨¹ı¹ıÂË
-        struct                      // 0 must match    1 don't care
-        {
+        uint32_t FilterMask32b; //FilterCheck & (~FilterMask) == ID & (~FilterMask)çš„Messageé€šè¿‡è¿‡æ»¤
+        struct
+        { // 0 must match    1 don't care
             uint16_t FilterMask16b1;
             uint16_t FilterMask16b2;
         };
@@ -30,58 +30,58 @@ typedef struct
             uint16_t FilterCheck16b2;
         };
     };
-    uint8_t  RXNotEmptyIEn;     //½ÓÊÕFIFO·Ç¿Õ£¬ÓĞÊı¾İ¿É¶Á
-    uint8_t  RXOverflowIEn;     //½ÓÊÕFIFOÒç³ö£¬ÓĞÊı¾İ¶ªÊ§
-    uint8_t  ArbitrLostIEn;     //¿ØÖÆÆ÷¶ªÊ§ÖÙ²Ã±ä³É½ÓÊÕ·½
-    uint8_t  ErrPassiveIEn;     //½ÓÊÕ/·¢ËÍ´íÎó¼ÆÊıÖµ´ïµ½127
+    uint8_t RXNotEmptyIEn; //æ¥æ”¶FIFOéç©ºï¼Œæœ‰æ•°æ®å¯è¯»
+    uint8_t RXOverflowIEn; //æ¥æ”¶FIFOæº¢å‡ºï¼Œæœ‰æ•°æ®ä¸¢å¤±
+    uint8_t ArbitrLostIEn; //æ§åˆ¶å™¨ä¸¢å¤±ä»²è£å˜æˆæ¥æ”¶æ–¹
+    uint8_t ErrPassiveIEn; //æ¥æ”¶/å‘é€é”™è¯¯è®¡æ•°å€¼è¾¾åˆ°127
 } CAN_InitStructure;
 
-#define CAN_MODE_NORMAL     0   //³£¹æÄ£Ê½
-#define CAN_MODE_LISTEN     1   //¼àÌıÄ£Ê½
-#define CAN_MODE_SELFTEST   2   //×Ô²âÄ£Ê½
+#define CAN_MODE_NORMAL 0   //å¸¸è§„æ¨¡å¼
+#define CAN_MODE_LISTEN 1   //ç›‘å¬æ¨¡å¼
+#define CAN_MODE_SELFTEST 2 //è‡ªæµ‹æ¨¡å¼
 
-#define CAN_BS1_1tq         0
-#define CAN_BS1_2tq         1
-#define CAN_BS1_3tq         2
-#define CAN_BS1_4tq         3
-#define CAN_BS1_5tq         4
-#define CAN_BS1_6tq         5
-#define CAN_BS1_7tq         6
-#define CAN_BS1_8tq         7
-#define CAN_BS1_9tq         8
-#define CAN_BS1_10tq        9
-#define CAN_BS1_11tq        10
-#define CAN_BS1_12tq        11
-#define CAN_BS1_13tq        12
-#define CAN_BS1_14tq        13
-#define CAN_BS1_15tq        14
-#define CAN_BS1_16tq        15
+#define CAN_BS1_1tq 0
+#define CAN_BS1_2tq 1
+#define CAN_BS1_3tq 2
+#define CAN_BS1_4tq 3
+#define CAN_BS1_5tq 4
+#define CAN_BS1_6tq 5
+#define CAN_BS1_7tq 6
+#define CAN_BS1_8tq 7
+#define CAN_BS1_9tq 8
+#define CAN_BS1_10tq 9
+#define CAN_BS1_11tq 10
+#define CAN_BS1_12tq 11
+#define CAN_BS1_13tq 12
+#define CAN_BS1_14tq 13
+#define CAN_BS1_15tq 14
+#define CAN_BS1_16tq 15
 
-#define CAN_BS2_1tq         0
-#define CAN_BS2_2tq         1
-#define CAN_BS2_3tq         2
-#define CAN_BS2_4tq         3
-#define CAN_BS2_5tq         4
-#define CAN_BS2_6tq         5
-#define CAN_BS2_7tq         6
-#define CAN_BS2_8tq         7
+#define CAN_BS2_1tq 0
+#define CAN_BS2_2tq 1
+#define CAN_BS2_3tq 2
+#define CAN_BS2_4tq 3
+#define CAN_BS2_5tq 4
+#define CAN_BS2_6tq 5
+#define CAN_BS2_7tq 6
+#define CAN_BS2_8tq 7
 
-#define CAN_SJW_1tq         0
-#define CAN_SJW_2tq         1
-#define CAN_SJW_3tq         2
-#define CAN_SJW_4tq         3
+#define CAN_SJW_1tq 0
+#define CAN_SJW_2tq 1
+#define CAN_SJW_3tq 2
+#define CAN_SJW_4tq 3
 
-#define CAN_FILTER_16b      0   //Á½¸ö16Î»¹ıÂËÆ÷
-#define CAN_FILTER_32b      1   //Ò»¸ö32Î»¹ıÂËÆ÷
+#define CAN_FILTER_16b 0 //ä¸¤ä¸ª16ä½è¿‡æ»¤å™¨
+#define CAN_FILTER_32b 1 //ä¸€ä¸ª32ä½è¿‡æ»¤å™¨
 
 typedef struct
 {
-    uint32_t id;        //ÏûÏ¢ID
-    uint8_t  remote;    //ÏûÏ¢ÊÇ·ñÎªÔ¶³ÌÖ¡
-    uint8_t  data[8];   //½ÓÊÕµ½µÄÊı¾İ
-    uint8_t  size;      //½ÓÊÕµ½µÄÊı¾İ¸öÊı
+    uint32_t id;     //æ¶ˆæ¯ID
+    uint8_t format;  //å¸§æ ¼å¼ï¼šCAN_FRAME_STDã€CAN_FRAME_EXT
+    uint8_t remote;  //æ¶ˆæ¯æ˜¯å¦ä¸ºè¿œç¨‹å¸§
+    uint8_t size;    //æ¥æ”¶åˆ°çš„æ•°æ®ä¸ªæ•°
+    uint8_t data[8]; //æ¥æ”¶åˆ°çš„æ•°æ®
 } CAN_RXMessage;
-
 
 void CAN_Init(CAN_TypeDef *CANx, CAN_InitStructure *initStruct);
 void CAN_Open(CAN_TypeDef *CANx);
@@ -104,38 +104,31 @@ void CAN_SetBaudrate(CAN_TypeDef *CANx, uint32_t baudrate, uint32_t CAN_BS1, uin
 void CAN_SetFilter32b(CAN_TypeDef *CANx, uint32_t check, uint32_t mask);
 void CAN_SetFilter16b(CAN_TypeDef *CANx, uint16_t check1, uint16_t mask1, uint16_t check2, uint16_t mask2);
 
-
 void CAN_INTRXNotEmptyEn(CAN_TypeDef *CANx);
 void CAN_INTRXNotEmptyDis(CAN_TypeDef *CANx);
-uint32_t CAN_INTRXNotEmptyStat(CAN_TypeDef *CANx);
 
 void CAN_INTTXBufEmptyEn(CAN_TypeDef *CANx);
 void CAN_INTTXBufEmptyDis(CAN_TypeDef *CANx);
-uint32_t CAN_INTTXBufEmptyStat(CAN_TypeDef *CANx);
 
 void CAN_INTErrWarningEn(CAN_TypeDef *CANx);
 void CAN_INTErrWarningDis(CAN_TypeDef *CANx);
-uint32_t CAN_INTErrWarningStat(CAN_TypeDef *CANx);
 
 void CAN_INTRXOverflowEn(CAN_TypeDef *CANx);
 void CAN_INTRXOverflowDis(CAN_TypeDef *CANx);
-uint32_t CAN_INTRXOverflowStat(CAN_TypeDef *CANx);
 void CAN_INTRXOverflowClear(CAN_TypeDef *CANx);
 
 void CAN_INTWakeupEn(CAN_TypeDef *CANx);
 void CAN_INTWakeupDis(CAN_TypeDef *CANx);
-uint32_t CAN_INTWakeupStat(CAN_TypeDef *CANx);
 
 void CAN_INTErrPassiveEn(CAN_TypeDef *CANx);
 void CAN_INTErrPassiveDis(CAN_TypeDef *CANx);
-uint32_t CAN_INTErrPassiveStat(CAN_TypeDef *CANx);
 
 void CAN_INTArbitrLostEn(CAN_TypeDef *CANx);
 void CAN_INTArbitrLostDis(CAN_TypeDef *CANx);
-uint32_t CAN_INTArbitrLostStat(CAN_TypeDef *CANx);
 
 void CAN_INTBusErrorEn(CAN_TypeDef *CANx);
 void CAN_INTBusErrorDis(CAN_TypeDef *CANx);
-uint32_t CAN_INTBusErrorStat(CAN_TypeDef *CANx);
+
+uint32_t CAN_INTStat(CAN_TypeDef *CANx);
 
 #endif //__SWM320_CAN_H__

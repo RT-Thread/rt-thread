@@ -44,7 +44,7 @@ static struct clk plla = {
 static struct clk mck = {
     "mck",
     0,
-    NULL,
+    RT_NULL,
     {RT_NULL, RT_NULL},
 };
 

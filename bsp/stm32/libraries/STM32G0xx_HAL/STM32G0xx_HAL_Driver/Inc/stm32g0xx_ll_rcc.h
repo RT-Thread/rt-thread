@@ -495,7 +495,7 @@ typedef struct
 
 /**
   * @}
-*/
+  */
 #endif /* CEC */
 
 #if defined(FDCAN1) || defined(FDCAN2)
@@ -508,7 +508,7 @@ typedef struct
 
 /**
   * @}
-*/
+  */
 #endif /* FDCAN1 || FDCAN2 */
 
 #if defined(RNG)
@@ -857,7 +857,7 @@ typedef struct
   */
 #define __LL_RCC_CALC_PLLCLK_FREQ(__INPUTFREQ__, __PLLM__, __PLLN__, __PLLR__)   \
   ((__INPUTFREQ__) * (__PLLN__) / ((((__PLLM__)>> RCC_PLLCFGR_PLLM_Pos) + 1U)) / \
-                   (((__PLLR__) >> RCC_PLLCFGR_PLLR_Pos) + 1U))
+   (((__PLLR__) >> RCC_PLLCFGR_PLLR_Pos) + 1U))
 
 /**
   * @brief  Helper macro to calculate the PLLPCLK frequency used on I2S domain
@@ -910,7 +910,7 @@ typedef struct
   */
 #define __LL_RCC_CALC_PLLCLK_I2S1_FREQ(__INPUTFREQ__, __PLLM__, __PLLN__, __PLLP__)  \
   ((__INPUTFREQ__)  * (__PLLN__) / ((((__PLLM__)>> RCC_PLLCFGR_PLLM_Pos) + 1U)) /    \
-                   (((__PLLP__) >> RCC_PLLCFGR_PLLP_Pos) + 1U))
+   (((__PLLP__) >> RCC_PLLCFGR_PLLP_Pos) + 1U))
 
 #if defined(RCC_CCIPR2_I2S2SEL)
 /**
@@ -964,7 +964,7 @@ typedef struct
   */
 #define __LL_RCC_CALC_PLLCLK_I2S2_FREQ(__INPUTFREQ__, __PLLM__, __PLLN__, __PLLP__)  \
   ((__INPUTFREQ__)  * (__PLLN__) / ((((__PLLM__)>> RCC_PLLCFGR_PLLM_Pos) + 1U)) /    \
-                   (((__PLLP__) >> RCC_PLLCFGR_PLLP_Pos) + 1U))
+   (((__PLLP__) >> RCC_PLLCFGR_PLLP_Pos) + 1U))
 #endif /* RCC_CCIPR2_I2S2SEL */
 
 /**
@@ -1018,7 +1018,7 @@ typedef struct
   */
 #define __LL_RCC_CALC_PLLCLK_ADC_FREQ(__INPUTFREQ__, __PLLM__, __PLLN__, __PLLP__)  \
   ((__INPUTFREQ__) * (__PLLN__) / ((((__PLLM__)>> RCC_PLLCFGR_PLLM_Pos) + 1U)) /    \
-                   (((__PLLP__) >> RCC_PLLCFGR_PLLP_Pos) + 1U))
+   (((__PLLP__) >> RCC_PLLCFGR_PLLP_Pos) + 1U))
 
 #if defined(RNG)
 /**
@@ -1048,7 +1048,7 @@ typedef struct
   */
 #define __LL_RCC_CALC_PLLCLK_RNG_FREQ(__INPUTFREQ__, __PLLM__, __PLLN__, __PLLQ__)   \
   ((__INPUTFREQ__) * (__PLLN__) / ((((__PLLM__)>> RCC_PLLCFGR_PLLM_Pos) + 1U)) /     \
-                   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
+   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
 #endif /* RNG */
 
 #if defined(RCC_PLLQ_SUPPORT)
@@ -1079,7 +1079,7 @@ typedef struct
   */
 #define __LL_RCC_CALC_PLLCLK_TIM1_FREQ(__INPUTFREQ__, __PLLM__, __PLLN__, __PLLQ__) \
   ((__INPUTFREQ__) * (__PLLN__) / ((((__PLLM__)>> RCC_PLLCFGR_PLLM_Pos) + 1U)) /    \
-                   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
+   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
 #if defined(TIM15)
 /**
   * @brief  Helper macro to calculate the PLLQCLK frequency used on TIM15 domain
@@ -1108,7 +1108,7 @@ typedef struct
   */
 #define __LL_RCC_CALC_PLLCLK_TIM15_FREQ(__INPUTFREQ__, __PLLM__, __PLLN__, __PLLQ__)  \
   ((__INPUTFREQ__) * (__PLLN__) / ((((__PLLM__)>> RCC_PLLCFGR_PLLM_Pos) + 1U)) /      \
-                   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
+   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
 #endif /* TIM15 */
 #endif /* RCC_PLLQ_SUPPORT */
 
@@ -1140,7 +1140,7 @@ typedef struct
   */
 #define __LL_RCC_CALC_PLLCLK_FDCAN_FREQ(__INPUTFREQ__, __PLLM__, __PLLN__, __PLLQ__) \
   ((__INPUTFREQ__) * (__PLLN__) / ((((__PLLM__)>> RCC_PLLCFGR_PLLM_Pos) + 1U)) /     \
-                   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
+   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
 #endif /* FDCAN1 || FDCAN2 */
 
 #if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
@@ -1171,7 +1171,7 @@ typedef struct
   */
 #define __LL_RCC_CALC_PLLCLK_USB_FREQ(__INPUTFREQ__, __PLLM__, __PLLN__, __PLLQ__) \
   ((__INPUTFREQ__) * (__PLLN__) / ((((__PLLM__)>> RCC_PLLCFGR_PLLM_Pos) + 1U)) /   \
-                   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
+   (((__PLLQ__) >> RCC_PLLCFGR_PLLQ_Pos) + 1U))
 #endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 
 /**
@@ -2083,7 +2083,7 @@ __STATIC_INLINE void LL_RCC_SetUSBClockSource(uint32_t USBxSource)
 }
 #endif /* STM32G0C1xx || STM32G0B1xx || STM32G0B0xx */
 
-#if defined (FDCAN1) || defined (FDCAN2) 
+#if defined (FDCAN1) || defined (FDCAN2)
 /**
   * @brief  Configure FDCAN clock source
   * @rmtoll CCIPR2        FDCANSEL        LL_RCC_SetFDCANClockSource

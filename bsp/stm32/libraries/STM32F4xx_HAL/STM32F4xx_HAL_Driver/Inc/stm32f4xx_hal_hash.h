@@ -247,13 +247,6 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef *hhash);  /*!< pointer
 /**
   * @}
   */
-/** @defgroup HASH_alias HASH API alias
-  * @{
-  */
-#define HAL_HASHEx_IRQHandler   HAL_HASH_IRQHandler  /*!< Redirection for compatibility with legacy code */
-/**
-  * @}
-  */
 
 /** @defgroup HASH_Error_Definition   HASH Error Definition
   * @{

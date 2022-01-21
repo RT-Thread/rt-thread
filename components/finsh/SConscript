@@ -9,7 +9,7 @@ msh.c
 if GetDepend('MSH_USING_BUILT_IN_COMMANDS'):
     src += ['cmd.c']
 
-if GetDepend('RT_USING_DFS'):
+if GetDepend('DFS_USING_POSIX'):
     src += ['msh_file.c']
 
 CPPPATH = [cwd]

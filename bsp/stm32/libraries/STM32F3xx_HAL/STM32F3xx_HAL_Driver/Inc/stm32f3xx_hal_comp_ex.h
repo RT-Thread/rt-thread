@@ -53,7 +53,7 @@ extern "C" {
 #define COMP_INVERTINGINPUT_VREFINT          (COMP_CSR_COMPxINSEL_1|COMP_CSR_COMPxINSEL_0) /*!< VREFINT connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_DAC1_CH1         COMP_CSR_COMPxINSEL_2                         /*!< DAC1_CH1_OUT (PA4) connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_DAC1_CH2         (COMP_CSR_COMPxINSEL_2|COMP_CSR_COMPxINSEL_0) /*!< DAC1_CH2_OUT (PA5) connected to comparator inverting input */
-#define COMP_INVERTINGINPUT_IO1              (COMP_CSR_COMPxINSEL_2|COMP_CSR_COMPxINSEL_1) /*!< IO1 (PA0 for COMP1, PA2 for COMP2, PD15 for COMP3,
+#define COMP_INVERTINGINPUT_IO1              (COMP_CSR_COMPxINSEL_2|COMP_CSR_COMPxINSEL_1) /*!< IO1 (PA0 for COMP1, PA2 for COMP2, PD15 for COMP3, 
                                                                                                 PE8 for COMP4, PD13 for COMP5, PD10 for COMP6,
                                                                                                 PC0 for COMP7) connected to comparator inverting input */
 #define COMP_INVERTINGINPUT_IO2               COMP_CSR_COMPxINSEL                          /*!< IO2 (PB12 for COMP3, PB2 for COMP4, PB10 for COMP5,
@@ -134,7 +134,7 @@ extern "C" {
 /** @defgroup COMPEx_NonInvertingInput  COMP Extended NonInvertingInput (STM32F302xC/STM32F303xC/STM32F358xx Product devices)
   * @{
   */
-#define COMP_NONINVERTINGINPUT_IO1               (0x00000000U) /*!< IO1 (PA1 for COMP1, PA7 for COMP2, PB14 for COMP3,
+#define COMP_NONINVERTINGINPUT_IO1               (0x00000000U) /*!< IO1 (PA1 for COMP1, PA7 for COMP2, PB14 for COMP3, 
                                                                              PB0 for COMP4, PD12 for COMP5, PD11 for COMP6,
                                                                              PA0 for COMP7) connected to comparator non inverting input */
 #define COMP_NONINVERTINGINPUT_IO2               COMP_CSR_COMPxNONINSEL /*!< IO2 (PA3 for COMP2, PD14 for COMP3, PE7 for COMP4, PB13 for COMP5,
@@ -157,7 +157,7 @@ extern "C" {
 /** @defgroup COMPEx_NonInvertingInput COMP Extended NonInvertingInput (STM32F373xC/STM32F378xx Product devices)
   * @{
   */
-#define COMP_NONINVERTINGINPUT_IO1               (0x00000000U) /*!< IO1 (PA1 for COMP1, PA3 for COMP2)
+#define COMP_NONINVERTINGINPUT_IO1               (0x00000000U) /*!< IO1 (PA1 for COMP1, PA3 for COMP2) 
                                                                              connected to comparator non inverting input */
 #define COMP_NONINVERTINGINPUT_DAC1SWITCHCLOSED  COMP_CSR_COMP1SW1  /*!< DAC ouput connected to comparator COMP1 non inverting input */
 /**
@@ -167,7 +167,7 @@ extern "C" {
 /** @defgroup COMPEx_NonInvertingInput  COMP Extended NonInvertingInput (STM32F302xE/STM32F303xE/STM32F398xx Product devices)
   * @{
   */
-#define COMP_NONINVERTINGINPUT_IO1             (0x00000000U)   /*!< IO1 (PA1 for COMP1, PA7 for COMP2, PB14 for COMP3,
+#define COMP_NONINVERTINGINPUT_IO1             (0x00000000U)   /*!< IO1 (PA1 for COMP1, PA7 for COMP2, PB14 for COMP3, 
                                                                             PB0 for COMP4, PD12 for COMP5, PD11 for COMP6,
                                                                             PA0 for COMP7) connected to comparator non inverting input */
 #define COMP_NONINVERTINGINPUT_DAC1SWITCHCLOSED COMP1_CSR_COMP1SW1      /*!< DAC ouput connected to comparator COMP1 non inverting input */
@@ -178,7 +178,7 @@ extern "C" {
 /** @defgroup COMPEx_NonInvertingInput COMP Extended NonInvertingInput (Other Product devices)
   * @{
   */
-#define COMP_NONINVERTINGINPUT_IO1             (0x00000000U) /*!< IO1 (PA7 for COMP2, PB0 for COMP4, PB11 for COMP6)
+#define COMP_NONINVERTINGINPUT_IO1             (0x00000000U) /*!< IO1 (PA7 for COMP2, PB0 for COMP4, PB11 for COMP6) 
                                                                            connected to comparator non inverting input */
 /**
   * @}
@@ -2341,7 +2341,7 @@ extern "C" {
       ((BLANKINGSRCE) == COMP_BLANKINGSRCE_TIM1OC5) ||        \
       ((BLANKINGSRCE) == COMP_BLANKINGSRCE_TIM8OC5) ||        \
       ((BLANKINGSRCE) == COMP_BLANKINGSRCE_TIM15OC2))))
-
+     
 #endif /* STM32F303xC || STM32F358xx */
 
 #endif /* STM32F302xC || STM32F303xC || STM32F358xx */
@@ -2680,7 +2680,7 @@ extern "C" {
       ((BLANKINGSRCE) == COMP_BLANKINGSRCE_TIM1OC5) ||        \
       ((BLANKINGSRCE) == COMP_BLANKINGSRCE_TIM8OC5) ||        \
       ((BLANKINGSRCE) == COMP_BLANKINGSRCE_TIM15OC2))))
-
+     
 #endif /* STM32F303xE || STM32F398xx */
 
 #endif /* STM32F302xE || STM32F303xE || STM32F398xx */
@@ -2760,7 +2760,7 @@ extern "C" {
 /* STM32F373xB/STM32F373xC/STM32F378xx devices comparator instances blanking source values */
 #define IS_COMP_BLANKINGSRCE_INSTANCE(INSTANCE, BLANKINGSRCE) \
    ((((INSTANCE) == COMP1) || ((INSTANCE) == COMP2))  &&     \
-     ((BLANKINGSRCE) == COMP_BLANKINGSRCE_NONE))
+     ((BLANKINGSRCE) == COMP_BLANKINGSRCE_NONE))         
 
 #endif /* STM32F373xC || STM32F378xx */
 

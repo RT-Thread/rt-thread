@@ -1242,14 +1242,11 @@ typedef struct
   __IO uint32_t EXTICR[4];           /*!< EXTI Configuration Register mask register,                Address offset: 0x60 */
   uint32_t      RESERVED4[4];        /*!< Reserved, offset 0x70 -> 0x7C                                                  */
   __IO uint32_t C1IMR1;              /*!< EXTI wakeup with interrupt mask register for cpu1 [31:0], Address offset: 0x80 */
-  __IO uint32_t C1EMR1;              /*!< EXTI wakeup with event mask register for cpu1 [31:0],     Address offset: 0x84 */
-  __IO uint32_t RESERVED5[2];        /*!< Reserved,                                                 Address offset: 0x88 - 0x8C */
+  __IO uint32_t RESERVED5[3];        /*!< Reserved,                                                 Address offset: 0x84 - 0x8C */
   __IO uint32_t C1IMR2;              /*!< EXTI wakeup with interrupt mask register for cpu1 [31:0], Address offset: 0x90 */
-  __IO uint32_t C1EMR2;              /*!< EXTI wakeup with event mask register for cpu1 [31:0],     Address offset: 0x94 */
-  __IO uint32_t RESERVED6[2];        /*!< Reserved,                                                 Address offset: 0x98 - 0x9C */
+  __IO uint32_t RESERVED6[3];        /*!< Reserved,                                                 Address offset: 0x94 - 0x9C */
   __IO uint32_t C1IMR3;              /*!< EXTI wakeup with interrupt mask register for cpu1 [31:0], Address offset: 0xA0 */
-  __IO uint32_t C1EMR3;              /*!< EXTI wakeup with event mask register for cpu1 [31:0],     Address offset: 0xA4 */
-  __IO uint32_t RESERVED7[6];        /*!< Reserved,                                                 Address offset: 0xA8 - 0xBC */
+  __IO uint32_t RESERVED7[7];        /*!< Reserved,                                                 Address offset: 0xA4 - 0xBC */
   __IO uint32_t C2IMR1;              /*!< EXTI wakeup with interrupt mask register for cpu2 [31:0], Address offset: 0xC0 */
   __IO uint32_t C2EMR1;              /*!< EXTI wakeup with event mask register for cpu2 [31:0],     Address offset: 0xC4 */
   __IO uint32_t RESERVED8[2];        /*!< Reserved,                                                 Address offset: 0xC8 - 0xCC */
@@ -2568,17 +2565,16 @@ typedef struct
 /**
   * @brief RNG
   */
-
 typedef struct
 {
-  __IO uint32_t CR;      /*!< RNG control register,             Address offset: 0x00  */
-  __IO uint32_t SR;      /*!< RNG status register,              Address offset: 0x04  */
-  __IO uint32_t DR;      /*!< RNG data register,                Address offset: 0x08  */
-  __IO uint32_t RESERVED1[249];   /*!< Reserved                 0x0C - 0x3EC          */
-  __IO uint32_t HWCFGR;  /*!< RNG HW Configuration register,    Address offset: 0x3F0 */
-  __IO uint32_t VERR;    /*!< RNG Version register,             Address offset: 0x3F4 */
-  __IO uint32_t IPIDR;   /*!< RNG identification register,      Address offset: 0x3F8 */
-  __IO uint32_t SIDR;    /*!< RNG HW magic ID,                  Address offset: 0x3FC */
+  __IO uint32_t CR;              /*!< RNG control register,             Address offset: 0x00  */
+  __IO uint32_t SR;              /*!< RNG status register,              Address offset: 0x04  */
+  __IO uint32_t DR;              /*!< RNG data register,                Address offset: 0x08  */
+  __IO uint32_t RESERVED1[249];  /*!< Reserved                          Address offset: 0x0C - 0x3EC */
+  __IO uint32_t HWCFGR;          /*!< RNG HW Configuration register,    Address offset: 0x3F0 */
+  __IO uint32_t VERR;            /*!< RNG Version register,             Address offset: 0x3F4 */
+  __IO uint32_t IPIDR;           /*!< RNG identification register,      Address offset: 0x3F8 */
+  __IO uint32_t SIDR;            /*!< RNG HW magic ID,                  Address offset: 0x3FC */
 } RNG_TypeDef;
 
 /**
