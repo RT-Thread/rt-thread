@@ -388,7 +388,6 @@ static rt_err_t _timer_start(rt_timer_t timer, rt_tick_t current_tick)
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
-    RT_ASSERT(timer->init_tick < RT_TICK_MAX / 2);
 
     /* stop timer firstly */
     level = rt_hw_interrupt_disable();
@@ -399,10 +398,6 @@ static rt_err_t _timer_start(rt_timer_t timer, rt_tick_t current_tick)
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(timer->parent)));
 
-    /*
-     * get timeout tick,
-     * the max timeout tick shall not great than RT_TICK_MAX/2
-     */
     timer->timeout_tick = current_tick + timer->init_tick;
 
 #ifdef RT_USING_TIMER_SOFT
