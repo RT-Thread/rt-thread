@@ -1,0 +1,15 @@
+# for module compiling
+import os
+from building import *
+
+cwd = GetCurrentDir()
+group = []
+list = os.listdir(cwd)
+path =  [cwd]
+src = ['project_demo.c']
+
+CPPDEFINES = []
+
+group = DefineGroup('Project-Demo', src, depend = ['PROJECT_USING_DEMO'], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

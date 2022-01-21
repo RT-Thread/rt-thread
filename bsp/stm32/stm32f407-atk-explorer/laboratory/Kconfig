@@ -1,0 +1,7 @@
+menu "Project Laboratory Config"
+
+config PROJECT_USING_DEMO
+    bool "This is a project demo"
+    default n
+
+endmenu
