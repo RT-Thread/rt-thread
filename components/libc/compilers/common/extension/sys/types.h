@@ -28,6 +28,8 @@ typedef signed int       ssize_t;       /* Used for a count of bytes or an error
 #else
 typedef long signed int  ssize_t;       /* Used for a count of bytes or an error indication. */
 #endif
+typedef unsigned long    __timer_t;
+typedef __timer_t        timer_t;
 typedef long             suseconds_t;   /* microseconds. */
 typedef unsigned long    useconds_t;    /* microseconds (unsigned) */
 

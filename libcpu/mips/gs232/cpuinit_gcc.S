@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,5 +19,5 @@
 
     .globl  rt_cpu_early_init
 rt_cpu_early_init:
-     jr	ra
+     jr ra
      nop

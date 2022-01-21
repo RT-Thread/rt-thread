@@ -502,42 +502,42 @@ _push_svc_reg    .macro
         cps     #0x13
         str     sp, [r0, #13*4]         ;/* Save calling SP                 */
         str     lr, [r0, #14*4]         ;/* Save calling PC                 */
-	.endm
+    .endm
 
-	.ref    rt_hw_trap_svc
-    .def	vector_svc
+    .ref    rt_hw_trap_svc
+    .def    vector_svc
     .asmfunc
 vector_svc:
         _push_svc_reg
         bl      rt_hw_trap_svc
-		sub     pc, pc, #-4
+        sub     pc, pc, #-4
     .endasmfunc
 
-	.ref    rt_hw_trap_pabt
-    .def	vector_pabort
+    .ref    rt_hw_trap_pabt
+    .def    vector_pabort
     .asmfunc
 vector_pabort:
         _push_svc_reg
         bl      rt_hw_trap_pabt
-		sub     pc, pc, #-4
+        sub     pc, pc, #-4
     .endasmfunc
 
-	.ref    rt_hw_trap_dabt
-    .def	vector_dabort
+    .ref    rt_hw_trap_dabt
+    .def    vector_dabort
     .asmfunc
 vector_dabort:
         _push_svc_reg
         bl      rt_hw_trap_dabt
-		sub     pc, pc, #-4
+        sub     pc, pc, #-4
     .endasmfunc
 
-	.ref    rt_hw_trap_resv
-    .def	vector_resv
+    .ref    rt_hw_trap_resv
+    .def    vector_resv
     .asmfunc
 vector_resv:
         _push_svc_reg
         bl      rt_hw_trap_resv
-		sub     pc, pc, #-4
+        sub     pc, pc, #-4
     .endasmfunc
 
 ;-------------------------------------------------------------------------------
