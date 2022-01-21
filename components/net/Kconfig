@@ -138,6 +138,7 @@ config RT_USING_LWIP
 
         config RT_LWIP_MEM_ALIGNMENT
             int "Memory alignment"
+            default 8 if ARCH_CPU_64BIT
             default 4
 
         config RT_LWIP_IGMP
@@ -258,6 +259,7 @@ config RT_USING_LWIP
 
         config RT_LWIP_TCPTHREAD_STACKSIZE
             int "the stack size of lwIP thread"
+            default 2048 if ARCH_CPU_64BIT
             default 1024
 
         config LWIP_NO_RX_THREAD
@@ -274,6 +276,7 @@ config RT_USING_LWIP
 
         config RT_LWIP_ETHTHREAD_STACKSIZE
             int "the stack size of ethernet thread"
+            default 2048 if ARCH_CPU_64BIT
             default 1024
 
         config RT_LWIP_ETHTHREAD_MBOX_SIZE
