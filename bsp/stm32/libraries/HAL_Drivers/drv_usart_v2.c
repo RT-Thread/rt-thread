@@ -967,7 +967,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         DMA_Handle = &uart->dma_rx.handle;
         dma_config = uart->config->dma_rx;
     }
-    else
+    else /* RT_DEVICE_FLAG_DMA_TX == flag */
     {
         DMA_Handle = &uart->dma_tx.handle;
         dma_config = uart->config->dma_tx;
