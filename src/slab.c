@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -55,52 +55,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#define RT_MEM_STATS
-
-#if defined (RT_USING_HEAP) && defined (RT_USING_SLAB)
-/* some statistical variable */
-#ifdef RT_MEM_STATS
-static rt_size_t used_mem, max_mem;
-#endif
-
-#ifdef RT_USING_HOOK
-static void (*rt_malloc_hook)(void *ptr, rt_size_t size);
-static void (*rt_free_hook)(void *ptr);
-
-/**
- * @addtogroup Hook
- */
-
-/**@{*/
-
-/**
- * This function will set a hook function, which will be invoked when a memory
- * block is allocated from heap memory.
- *
- * @param hook the hook function
- */
-void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
-{
-    rt_malloc_hook = hook;
-}
-RTM_EXPORT(rt_malloc_sethook);
-
-/**
- * This function will set a hook function, which will be invoked when a memory
- * block is released to heap memory.
- *
- * @param hook the hook function
- */
-void rt_free_sethook(void (*hook)(void *ptr))
-{
-    rt_free_hook = hook;
-}
-RTM_EXPORT(rt_free_sethook);
-
-/**@}*/
-
-#endif
-
+#if defined (RT_USING_SLAB)
 /*
  * slab allocator implementation
  *
@@ -155,47 +110,11 @@ RTM_EXPORT(rt_free_sethook);
  *    + ability to allocate arbitrarily large chunks of memory
  */
 
-/*
- * Chunk structure for free elements
- */
-typedef struct slab_chunk
-{
-    struct slab_chunk *c_next;
-} slab_chunk;
-
-/*
- * The IN-BAND zone header is placed at the beginning of each zone.
- */
-typedef struct slab_zone
-{
-    rt_int32_t  z_magic;        /* magic number for sanity check */
-    rt_int32_t  z_nfree;        /* total free chunks / ualloc space in zone */
-    rt_int32_t  z_nmax;         /* maximum free chunks */
-
-    struct slab_zone *z_next;   /* zoneary[] link if z_nfree non-zero */
-    rt_uint8_t  *z_baseptr;     /* pointer to start of chunk array */
-
-    rt_int32_t  z_uindex;       /* current initial allocation index */
-    rt_int32_t  z_chunksize;    /* chunk size for validation */
-
-    rt_int32_t  z_zoneindex;    /* zone index */
-    slab_chunk  *z_freechunk;   /* free chunk list */
-} slab_zone;
-
 #define ZALLOC_SLAB_MAGIC       0x51ab51ab
 #define ZALLOC_ZONE_LIMIT       (16 * 1024)     /* max slab-managed alloc */
 #define ZALLOC_MIN_ZONE_SIZE    (32 * 1024)     /* minimum zone size */
 #define ZALLOC_MAX_ZONE_SIZE    (128 * 1024)    /* maximum zone size */
-#define NZONES                  72              /* number of zones */
 #define ZONE_RELEASE_THRESH     2               /* threshold number of zones */
-
-static slab_zone *zone_array[NZONES];   /* linked list of zones NFree > 0 */
-static slab_zone *zone_free;            /* whole zones that have become free */
-
-static int zone_free_cnt;
-static int zone_size;
-static int zone_limit;
-static int zone_page_cnt;
 
 /*
  * Misc constants.  Note that allocations that are exact multiples of
@@ -210,40 +129,95 @@ static int zone_page_cnt;
 #define PAGE_TYPE_FREE      0x00
 #define PAGE_TYPE_SMALL     0x01
 #define PAGE_TYPE_LARGE     0x02
-struct memusage
-{
-    rt_uint32_t type: 2 ;       /* page type */
-    rt_uint32_t size: 30;       /* pages allocated or offset from zone */
-};
-static struct memusage *memusage = RT_NULL;
+
 #define btokup(addr)    \
-    (&memusage[((rt_ubase_t)(addr) - heap_start) >> RT_MM_PAGE_BITS])
+    (&slab->memusage[((rt_ubase_t)(addr) - slab->heap_start) >> RT_MM_PAGE_BITS])
 
-static rt_ubase_t heap_start, heap_end;
+/**
+ * Base structure of slab memory object
+ */
 
-/* page allocator */
-struct rt_page_head
+/*
+ * The IN-BAND zone header is placed at the beginning of each zone.
+ */
+struct rt_slab_zone
 {
-    struct rt_page_head *next;      /* next valid page */
-    rt_size_t page;                 /* number of page  */
+    rt_uint32_t  z_magic;                    /**< magic number for sanity check */
+    rt_uint32_t  z_nfree;                    /**< total free chunks / ualloc space in zone */
+    rt_uint32_t  z_nmax;                     /**< maximum free chunks */
+    struct rt_slab_zone *z_next;            /**< zoneary[] link if z_nfree non-zero */
+    rt_uint8_t  *z_baseptr;                 /**< pointer to start of chunk array */
+
+    rt_uint32_t  z_uindex;                   /**< current initial allocation index */
+    rt_uint32_t  z_chunksize;                /**< chunk size for validation */
+
+    rt_uint32_t  z_zoneindex;                /**< zone index */
+    struct rt_slab_chunk  *z_freechunk;     /**< free chunk list */
+};
+
+/*
+ * Chunk structure for free elements
+ */
+struct rt_slab_chunk
+{
+    struct rt_slab_chunk *c_next;
+};
+
+struct rt_slab_memusage
+{
+    rt_uint32_t     type: 2 ;               /**< page type */
+    rt_uint32_t     size: 30;               /**< pages allocated or offset from zone */
+};
+
+/*
+ * slab page allocator
+ */
+struct rt_slab_page
+{
+    struct rt_slab_page *next;      /**< next valid page */
+    rt_size_t page;                 /**< number of page  */
 
     /* dummy */
-    char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_page_head *) + sizeof(rt_size_t))];
+    char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_slab_page *) + sizeof(rt_size_t))];
 };
-static struct rt_page_head *rt_page_list;
-static struct rt_semaphore heap_sem;
 
-void *rt_page_alloc(rt_size_t npages)
+#define RT_SLAB_NZONES                  72              /* number of zones */
+
+/*
+ * slab object
+ */
+struct rt_slab
 {
-    struct rt_page_head *b, *n;
-    struct rt_page_head **prev;
+    struct rt_memory            parent;                         /**< inherit from rt_memory */
+    rt_ubase_t                  heap_start;                     /**< memory start address */
+    rt_ubase_t                  heap_end;                       /**< memory end address */
+    struct rt_slab_memusage    *memusage;
+    struct rt_slab_zone        *zone_array[RT_SLAB_NZONES];     /* linked list of zones NFree > 0 */
+    struct rt_slab_zone        *zone_free;                      /* whole zones that have become free */
+    rt_uint32_t                 zone_free_cnt;
+    rt_uint32_t                 zone_size;
+    rt_uint32_t                 zone_limit;
+    rt_uint32_t                 zone_page_cnt;
+    struct rt_slab_page        *page_list;
+};
+
+/**
+ * @brief Alloc memory size by page.
+ *
+ * @param slab the slab memory management object.
+ *
+ * @param npages the number of pages.
+ */
+void *rt_slab_page_alloc(rt_slab_t m, rt_size_t npages)
+{
+    struct rt_slab_page *b, *n;
+    struct rt_slab_page **prev;
+    struct rt_slab *slab = (struct rt_slab *)m;
 
     if (npages == 0)
         return RT_NULL;
 
-    /* lock heap */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
-    for (prev = &rt_page_list; (b = *prev) != RT_NULL; prev = &(b->next))
+    for (prev = &slab->page_list; (b = *prev) != RT_NULL; prev = &(b->next))
     {
         if (b->page > npages)
         {
@@ -263,27 +237,31 @@ void *rt_page_alloc(rt_size_t npages)
         }
     }
 
-    /* unlock heap */
-    rt_sem_release(&heap_sem);
-
     return b;
 }
 
-void rt_page_free(void *addr, rt_size_t npages)
+/**
+ * @brief Free memory by page.
+ *
+ * @param slab the slab memory management object.
+ *
+ * @param addr is the head address of first page.
+ *
+ * @param npages is the number of pages.
+ */
+void rt_slab_page_free(rt_slab_t m, void *addr, rt_size_t npages)
 {
-    struct rt_page_head *b, *n;
-    struct rt_page_head **prev;
+    struct rt_slab_page *b, *n;
+    struct rt_slab_page **prev;
+    struct rt_slab *slab = (struct rt_slab *)m;
 
     RT_ASSERT(addr != RT_NULL);
     RT_ASSERT((rt_ubase_t)addr % RT_MM_PAGE_SIZE == 0);
     RT_ASSERT(npages != 0);
 
-    n = (struct rt_page_head *)addr;
+    n = (struct rt_slab_page *)addr;
 
-    /* lock heap */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
-
-    for (prev = &rt_page_list; (b = *prev) != RT_NULL; prev = &(b->next))
+    for (prev = &slab->page_list; (b = *prev) != RT_NULL; prev = &(b->next))
     {
         RT_ASSERT(b->page > 0);
         RT_ASSERT(b > n || b + b->page <= n);
@@ -295,8 +273,7 @@ void rt_page_free(void *addr, rt_size_t npages)
                 b->page += b->next->page;
                 b->next  = b->next->next;
             }
-
-            goto _return;
+            return;
         }
 
         if (b == n + npages)
@@ -304,8 +281,7 @@ void rt_page_free(void *addr, rt_size_t npages)
             n->page = b->page + npages;
             n->next = b->next;
             *prev   = n;
-
-            goto _return;
+            return;
         }
 
         if (b > n + npages)
@@ -315,84 +291,115 @@ void rt_page_free(void *addr, rt_size_t npages)
     n->page = npages;
     n->next = b;
     *prev   = n;
-
-_return:
-    /* unlock heap */
-    rt_sem_release(&heap_sem);
 }
 
 /*
  * Initialize the page allocator
  */
-static void rt_page_init(void *addr, rt_size_t npages)
+static void rt_slab_page_init(struct rt_slab *slab, void *addr, rt_size_t npages)
 {
     RT_ASSERT(addr != RT_NULL);
     RT_ASSERT(npages != 0);
 
-    rt_page_list = RT_NULL;
-    rt_page_free(addr, npages);
+    slab->page_list = RT_NULL;
+    rt_slab_page_free((rt_slab_t)(&slab->parent), addr, npages);
 }
 
 /**
- * @ingroup SystemInit
+ * @brief This function will init slab memory management algorithm
  *
- * This function will init system heap
+ * @param slab the slab memory management object.
  *
- * @param begin_addr the beginning address of system page
- * @param end_addr the end address of system page
+ * @param name is the name of the slab memory management object.
+ *
+ * @param begin_addr the beginning address of system page.
+ *
+ * @param size is the size of the memory.
+ *
+ * @return Return a pointer to the slab memory object.
  */
-void rt_system_heap_init(void *begin_addr, void *end_addr)
+rt_slab_t rt_slab_init(const char *name, void *begin_addr, rt_size_t size)
 {
     rt_uint32_t limsize, npages;
+    rt_ubase_t start_addr, begin_align, end_align;
+    struct rt_slab *slab;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
+    slab = (struct rt_slab *)RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
+    start_addr = (rt_ubase_t)slab + sizeof(*slab);
     /* align begin and end addr to page */
-    heap_start = RT_ALIGN((rt_ubase_t)begin_addr, RT_MM_PAGE_SIZE);
-    heap_end   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_MM_PAGE_SIZE);
-
-    if (heap_start >= heap_end)
+    begin_align = RT_ALIGN((rt_ubase_t)start_addr, RT_MM_PAGE_SIZE);
+    end_align   = RT_ALIGN_DOWN((rt_ubase_t)begin_addr + size, RT_MM_PAGE_SIZE);
+    if (begin_align >= end_align)
     {
-        rt_kprintf("rt_system_heap_init, wrong address[0x%x - 0x%x]\n",
-                   (rt_ubase_t)begin_addr, (rt_ubase_t)end_addr);
-
-        return;
+        rt_kprintf("slab init errr. wrong address[0x%x - 0x%x]\n",
+                   (rt_ubase_t)begin_addr, (rt_ubase_t)begin_addr + size);
+        return RT_NULL;
     }
 
-    limsize = heap_end - heap_start;
+    limsize = end_align - begin_align;
     npages  = limsize / RT_MM_PAGE_SIZE;
-
-    /* initialize heap semaphore */
-    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
-
     RT_DEBUG_LOG(RT_DEBUG_SLAB, ("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n",
-                                 heap_start, heap_end, limsize, npages));
+                                begin_align, end_align, limsize, npages));
+
+    rt_memset(slab, 0, sizeof(*slab));
+    /* initialize slab memory object */
+    rt_object_init(&(slab->parent.parent), RT_Object_Class_Memory, name);
+    slab->parent.algorithm = "slab";
+    slab->parent.address = begin_align;
+    slab->parent.total = limsize;
+    slab->parent.used = 0;
+    slab->parent.max = 0;
+    slab->heap_start = begin_align;
+    slab->heap_end = end_align;
 
     /* init pages */
-    rt_page_init((void *)heap_start, npages);
+    rt_slab_page_init(slab, (void *)slab->heap_start, npages);
 
     /* calculate zone size */
-    zone_size = ZALLOC_MIN_ZONE_SIZE;
-    while (zone_size < ZALLOC_MAX_ZONE_SIZE && (zone_size << 1) < (limsize / 1024))
-        zone_size <<= 1;
+    slab->zone_size = ZALLOC_MIN_ZONE_SIZE;
+    while (slab->zone_size < ZALLOC_MAX_ZONE_SIZE && (slab->zone_size << 1) < (limsize / 1024))
+        slab->zone_size <<= 1;
 
-    zone_limit = zone_size / 4;
-    if (zone_limit > ZALLOC_ZONE_LIMIT)
-        zone_limit = ZALLOC_ZONE_LIMIT;
+    slab->zone_limit = slab->zone_size / 4;
+    if (slab->zone_limit > ZALLOC_ZONE_LIMIT)
+        slab->zone_limit = ZALLOC_ZONE_LIMIT;
 
-    zone_page_cnt = zone_size / RT_MM_PAGE_SIZE;
+    slab->zone_page_cnt = slab->zone_size / RT_MM_PAGE_SIZE;
 
     RT_DEBUG_LOG(RT_DEBUG_SLAB, ("zone size 0x%x, zone page count 0x%x\n",
-                                 zone_size, zone_page_cnt));
+                                 slab->zone_size, slab->zone_page_cnt));
 
-    /* allocate memusage array */
-    limsize  = npages * sizeof(struct memusage);
+    /* allocate slab->memusage array */
+    limsize  = npages * sizeof(struct rt_slab_memusage);
     limsize  = RT_ALIGN(limsize, RT_MM_PAGE_SIZE);
-    memusage = rt_page_alloc(limsize / RT_MM_PAGE_SIZE);
+    slab->memusage = rt_slab_page_alloc((rt_slab_t)(&slab->parent), limsize / RT_MM_PAGE_SIZE);
 
-    RT_DEBUG_LOG(RT_DEBUG_SLAB, ("memusage 0x%x, size 0x%x\n",
-                                 (rt_ubase_t)memusage, limsize));
+    RT_DEBUG_LOG(RT_DEBUG_SLAB, ("slab->memusage 0x%x, size 0x%x\n",
+                                 (rt_ubase_t)slab->memusage, limsize));
+    return &slab->parent;
 }
+RTM_EXPORT(rt_slab_init);
+
+/**
+ * @brief This function will remove a slab object from the system.
+ *
+ * @param m the slab memory management object.
+ *
+ * @return RT_EOK
+ */
+rt_err_t rt_slab_detach(rt_slab_t m)
+{
+    struct rt_slab *slab = (struct rt_slab *)m;
+
+    RT_ASSERT(slab != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&slab->parent.parent) == RT_Object_Class_Memory);
+    RT_ASSERT(rt_object_is_systemobject(&slab->parent.parent));
+
+    rt_object_detach(&(slab->parent.parent));
+
+    return RT_EOK;
+}
+RTM_EXPORT(rt_slab_detach);
 
 /*
  * Calculate the zone index for the allocation request size and set the
@@ -465,22 +472,25 @@ rt_inline int zoneindex(rt_size_t *bytes)
 /**@{*/
 
 /**
- * This function will allocate a block from system heap memory.
- * - If the nbytes is less than zero,
- * or
- * - If there is no nbytes sized memory valid in system,
- * the RT_NULL is returned.
+ * @brief This function will allocate a block from slab object.
  *
- * @param size the size of memory to be allocated
+ * @note the RT_NULL is returned if
+ *         - the nbytes is less than zero.
+ *         - there is no nbytes sized memory valid in system.
  *
- * @return the allocated memory
+ * @param m the slab memory management object.
+ *
+ * @param size is the size of memory to be allocated.
+ *
+ * @return the allocated memory.
  */
-void *rt_malloc(rt_size_t size)
+void *rt_slab_alloc(rt_slab_t m, rt_size_t size)
 {
-    slab_zone *z;
+    struct rt_slab_zone *z;
     rt_int32_t zi;
-    slab_chunk *chunk;
-    struct memusage *kup;
+    struct rt_slab_chunk *chunk;
+    struct rt_slab_memusage *kup;
+    struct rt_slab *slab = (struct rt_slab *)m;
 
     /* zero size, return RT_NULL */
     if (size == 0)
@@ -490,11 +500,11 @@ void *rt_malloc(rt_size_t size)
      * Handle large allocations directly.  There should not be very many of
      * these so performance is not a big issue.
      */
-    if (size >= zone_limit)
+    if (size >= slab->zone_limit)
     {
         size = RT_ALIGN(size, RT_MM_PAGE_SIZE);
 
-        chunk = rt_page_alloc(size >> RT_MM_PAGE_BITS);
+        chunk = rt_slab_page_alloc(m, size >> RT_MM_PAGE_BITS);
         if (chunk == RT_NULL)
             return RT_NULL;
 
@@ -504,24 +514,16 @@ void *rt_malloc(rt_size_t size)
         kup->size = size >> RT_MM_PAGE_BITS;
 
         RT_DEBUG_LOG(RT_DEBUG_SLAB,
-                     ("malloc a large memory 0x%x, page cnt %d, kup %d\n",
+                     ("alloc a large memory 0x%x, page cnt %d, kup %d\n",
                       size,
                       size >> RT_MM_PAGE_BITS,
-                      ((rt_ubase_t)chunk - heap_start) >> RT_MM_PAGE_BITS));
-
-        /* lock heap */
-        rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
-
-#ifdef RT_MEM_STATS
-        used_mem += size;
-        if (used_mem > max_mem)
-            max_mem = used_mem;
-#endif
-        goto done;
+                      ((rt_ubase_t)chunk - slab->heap_start) >> RT_MM_PAGE_BITS));
+        /* mem stat */
+        slab->parent.used += size;
+        if (slab->parent.used > slab->parent.max)
+            slab->parent.max = slab->parent.used;
+        return chunk;
     }
-
-    /* lock heap */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
     /*
      * Attempt to allocate out of an existing zone.  First try the free list,
@@ -532,18 +534,18 @@ void *rt_malloc(rt_size_t size)
      * Note: zoneindex() will panic of size is too large.
      */
     zi = zoneindex(&size);
-    RT_ASSERT(zi < NZONES);
+    RT_ASSERT(zi < RT_SLAB_NZONES);
 
-    RT_DEBUG_LOG(RT_DEBUG_SLAB, ("try to malloc 0x%x on zone: %d\n", size, zi));
+    RT_DEBUG_LOG(RT_DEBUG_SLAB, ("try to alloc 0x%x on zone: %d\n", size, zi));
 
-    if ((z = zone_array[zi]) != RT_NULL)
+    if ((z = slab->zone_array[zi]) != RT_NULL)
     {
         RT_ASSERT(z->z_nfree > 0);
 
-        /* Remove us from the zone_array[] when we become empty */
+        /* Remove us from the zone_array[] when we become full */
         if (--z->z_nfree == 0)
         {
-            zone_array[zi] = z->z_next;
+            slab->zone_array[zi] = z->z_next;
             z->z_next = RT_NULL;
         }
 
@@ -556,7 +558,7 @@ void *rt_malloc(rt_size_t size)
         if (z->z_uindex + 1 != z->z_nmax)
         {
             z->z_uindex = z->z_uindex + 1;
-            chunk = (slab_chunk *)(z->z_baseptr + z->z_uindex * size);
+            chunk = (struct rt_slab_chunk *)(z->z_baseptr + z->z_uindex * size);
         }
         else
         {
@@ -566,14 +568,12 @@ void *rt_malloc(rt_size_t size)
             /* remove this chunk from list */
             z->z_freechunk = z->z_freechunk->c_next;
         }
+        /* mem stats */
+        slab->parent.used += z->z_chunksize;
+        if (slab->parent.used > slab->parent.max)
+            slab->parent.max = slab->parent.used;
 
-#ifdef RT_MEM_STATS
-        used_mem += z->z_chunksize;
-        if (used_mem > max_mem)
-            max_mem = used_mem;
-#endif
-
-        goto done;
+        return chunk;
     }
 
     /*
@@ -585,35 +585,28 @@ void *rt_malloc(rt_size_t size)
      * adjusting the base offset below.
      */
     {
-        rt_int32_t off;
+        rt_uint32_t off;
 
-        if ((z = zone_free) != RT_NULL)
+        if ((z = slab->zone_free) != RT_NULL)
         {
             /* remove zone from free zone list */
-            zone_free = z->z_next;
-            -- zone_free_cnt;
+            slab->zone_free = z->z_next;
+            -- slab->zone_free_cnt;
         }
         else
         {
-            /* unlock heap, since page allocator will think about lock */
-            rt_sem_release(&heap_sem);
-
             /* allocate a zone from page */
-            z = rt_page_alloc(zone_size / RT_MM_PAGE_SIZE);
+            z = rt_slab_page_alloc(m, slab->zone_size / RT_MM_PAGE_SIZE);
             if (z == RT_NULL)
             {
-                chunk = RT_NULL;
-                goto __exit;
+                return RT_NULL;
             }
-
-            /* lock heap */
-            rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
             RT_DEBUG_LOG(RT_DEBUG_SLAB, ("alloc a new zone: 0x%x\n",
                                          (rt_ubase_t)z));
 
             /* set message usage */
-            for (off = 0, kup = btokup(z); off < zone_page_cnt; off ++)
+            for (off = 0, kup = btokup(z); off < slab->zone_page_cnt; off ++)
             {
                 kup->type = PAGE_TYPE_SMALL;
                 kup->size = off;
@@ -623,10 +616,10 @@ void *rt_malloc(rt_size_t size)
         }
 
         /* clear to zero */
-        rt_memset(z, 0, sizeof(slab_zone));
+        rt_memset(z, 0, sizeof(struct rt_slab_zone));
 
         /* offset of slab zone struct in zone */
-        off = sizeof(slab_zone);
+        off = sizeof(struct rt_slab_zone);
 
         /*
          * Guarentee power-of-2 alignment for power-of-2-sized chunks.
@@ -639,54 +632,51 @@ void *rt_malloc(rt_size_t size)
 
         z->z_magic     = ZALLOC_SLAB_MAGIC;
         z->z_zoneindex = zi;
-        z->z_nmax      = (zone_size - off) / size;
+        z->z_nmax      = (slab->zone_size - off) / size;
         z->z_nfree     = z->z_nmax - 1;
         z->z_baseptr   = (rt_uint8_t *)z + off;
         z->z_uindex    = 0;
         z->z_chunksize = size;
 
-        chunk = (slab_chunk *)(z->z_baseptr + z->z_uindex * size);
+        chunk = (struct rt_slab_chunk *)(z->z_baseptr + z->z_uindex * size);
 
         /* link to zone array */
-        z->z_next = zone_array[zi];
-        zone_array[zi] = z;
-
-#ifdef RT_MEM_STATS
-        used_mem += z->z_chunksize;
-        if (used_mem > max_mem)
-            max_mem = used_mem;
-#endif
+        z->z_next = slab->zone_array[zi];
+        slab->zone_array[zi] = z;
+        /* mem stats */
+        slab->parent.used += z->z_chunksize;
+        if (slab->parent.used > slab->parent.max)
+            slab->parent.max = slab->parent.used;
     }
 
-done:
-    rt_sem_release(&heap_sem);
-    RT_OBJECT_HOOK_CALL(rt_malloc_hook, ((char *)chunk, size));
-
-__exit:
     return chunk;
 }
-RTM_EXPORT(rt_malloc);
+RTM_EXPORT(rt_slab_alloc);
 
 /**
- * This function will change the size of previously allocated memory block.
+ * @brief This function will change the size of previously allocated memory block.
  *
- * @param ptr the previously allocated memory block
- * @param size the new size of memory block
+ * @param m the slab memory management object.
  *
- * @return the allocated memory
+ * @param ptr is the previously allocated memory block.
+ *
+ * @param size is the new size of memory block.
+ *
+ * @return the allocated memory.
  */
-void *rt_realloc(void *ptr, rt_size_t size)
+void *rt_slab_realloc(rt_slab_t m, void *ptr, rt_size_t size)
 {
     void *nptr;
-    slab_zone *z;
-    struct memusage *kup;
+    struct rt_slab_zone *z;
+    struct rt_slab_memusage *kup;
+    struct rt_slab *slab = (struct rt_slab *)m;
 
     if (ptr == RT_NULL)
-        return rt_malloc(size);
+        return rt_slab_alloc(m, size);
+
     if (size == 0)
     {
-        rt_free(ptr);
-
+        rt_slab_free(m, ptr);
         return RT_NULL;
     }
 
@@ -700,16 +690,16 @@ void *rt_realloc(void *ptr, rt_size_t size)
         rt_size_t osize;
 
         osize = kup->size << RT_MM_PAGE_BITS;
-        if ((nptr = rt_malloc(size)) == RT_NULL)
+        if ((nptr = rt_slab_alloc(m, size)) == RT_NULL)
             return RT_NULL;
         rt_memcpy(nptr, ptr, size > osize ? osize : size);
-        rt_free(ptr);
+        rt_slab_free(m, ptr);
 
         return nptr;
     }
     else if (kup->type == PAGE_TYPE_SMALL)
     {
-        z = (slab_zone *)(((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK) -
+        z = (struct rt_slab_zone *)(((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK) -
                           kup->size * RT_MM_PAGE_SIZE);
         RT_ASSERT(z->z_magic == ZALLOC_SLAB_MAGIC);
 
@@ -722,63 +712,37 @@ void *rt_realloc(void *ptr, rt_size_t size)
          * already adjusted the request size to the appropriate chunk size, which
          * should optimize our bcopy().  Then copy and return the new pointer.
          */
-        if ((nptr = rt_malloc(size)) == RT_NULL)
+        if ((nptr = rt_slab_alloc(m, size)) == RT_NULL)
             return RT_NULL;
 
         rt_memcpy(nptr, ptr, size > z->z_chunksize ? z->z_chunksize : size);
-        rt_free(ptr);
+        rt_slab_free(m, ptr);
 
         return nptr;
     }
 
     return RT_NULL;
 }
-RTM_EXPORT(rt_realloc);
+RTM_EXPORT(rt_slab_realloc);
 
 /**
- * This function will contiguously allocate enough space for count objects
- * that are size bytes of memory each and returns a pointer to the allocated
- * memory.
+ * @brief This function will release the previous allocated memory block by rt_slab_alloc.
  *
- * The allocated memory is filled with bytes of value zero.
+ * @note The released memory block is taken back to system heap.
  *
- * @param count number of objects to allocate
- * @param size size of the objects to allocate
- *
- * @return pointer to allocated memory / NULL pointer if there is an error
+ * @param m the slab memory management object.
+ * @param ptr is the address of memory which will be released
  */
-void *rt_calloc(rt_size_t count, rt_size_t size)
+void rt_slab_free(rt_slab_t m, void *ptr)
 {
-    void *p;
-
-    /* allocate 'count' objects of size 'size' */
-    p = rt_malloc(count * size);
-
-    /* zero the memory */
-    if (p)
-        rt_memset(p, 0, count * size);
-
-    return p;
-}
-RTM_EXPORT(rt_calloc);
-
-/**
- * This function will release the previous allocated memory block by rt_malloc.
- * The released memory block is taken back to system heap.
- *
- * @param ptr the address of memory which will be released
- */
-void rt_free(void *ptr)
-{
-    slab_zone *z;
-    slab_chunk *chunk;
-    struct memusage *kup;
+    struct rt_slab_zone *z;
+    struct rt_slab_chunk *chunk;
+    struct rt_slab_memusage *kup;
+    struct rt_slab *slab = (struct rt_slab *)m;
 
     /* free a RT_NULL pointer */
     if (ptr == RT_NULL)
         return ;
-
-    RT_OBJECT_HOOK_CALL(rt_free_hook, (ptr));
 
     /* get memory usage */
 #if RT_DEBUG_SLAB
@@ -788,9 +752,9 @@ void rt_free(void *ptr)
                      ("free a memory 0x%x and align to 0x%x, kup index %d\n",
                       (rt_ubase_t)ptr,
                       (rt_ubase_t)addr,
-                      ((rt_ubase_t)(addr) - heap_start) >> RT_MM_PAGE_BITS));
+                      ((rt_ubase_t)(addr) - slab->heap_start) >> RT_MM_PAGE_BITS));
     }
-#endif
+#endif /* RT_DEBUG_SLAB */
 
     kup = btokup((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK);
     /* release large allocation */
@@ -798,42 +762,32 @@ void rt_free(void *ptr)
     {
         rt_ubase_t size;
 
-        /* lock heap */
-        rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
         /* clear page counter */
         size = kup->size;
         kup->size = 0;
-
-#ifdef RT_MEM_STATS
-        used_mem -= size * RT_MM_PAGE_SIZE;
-#endif
-        rt_sem_release(&heap_sem);
+        /* mem stats */
+        slab->parent.used -= size * RT_MM_PAGE_SIZE;
 
         RT_DEBUG_LOG(RT_DEBUG_SLAB,
                      ("free large memory block 0x%x, page count %d\n",
                       (rt_ubase_t)ptr, size));
 
         /* free this page */
-        rt_page_free(ptr, size);
+        rt_slab_page_free(m, ptr, size);
 
         return;
     }
 
-    /* lock heap */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
-
     /* zone case. get out zone. */
-    z = (slab_zone *)(((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK) -
+    z = (struct rt_slab_zone *)(((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK) -
                       kup->size * RT_MM_PAGE_SIZE);
     RT_ASSERT(z->z_magic == ZALLOC_SLAB_MAGIC);
 
-    chunk          = (slab_chunk *)ptr;
+    chunk          = (struct rt_slab_chunk *)ptr;
     chunk->c_next  = z->z_freechunk;
     z->z_freechunk = chunk;
-
-#ifdef RT_MEM_STATS
-    used_mem -= z->z_chunksize;
-#endif
+    /* mem stats */
+    slab->parent.used -= z->z_chunksize;
 
     /*
      * Bump the number of free chunks.  If it becomes non-zero the zone
@@ -841,8 +795,8 @@ void rt_free(void *ptr)
      */
     if (z->z_nfree++ == 0)
     {
-        z->z_next = zone_array[z->z_zoneindex];
-        zone_array[z->z_zoneindex] = z;
+        z->z_next = slab->zone_array[z->z_zoneindex];
+        slab->zone_array[z->z_zoneindex] = z;
     }
 
     /*
@@ -852,86 +806,51 @@ void rt_free(void *ptr)
      * with kernel_map here.  Hysteresis will be performed at malloc() time.
      */
     if (z->z_nfree == z->z_nmax &&
-        (z->z_next || zone_array[z->z_zoneindex] != z))
+        (z->z_next || slab->zone_array[z->z_zoneindex] != z))
     {
-        slab_zone **pz;
+        struct rt_slab_zone **pz;
 
         RT_DEBUG_LOG(RT_DEBUG_SLAB, ("free zone 0x%x\n",
                                      (rt_ubase_t)z, z->z_zoneindex));
 
         /* remove zone from zone array list */
-        for (pz = &zone_array[z->z_zoneindex]; z != *pz; pz = &(*pz)->z_next)
+        for (pz = &slab->zone_array[z->z_zoneindex]; z != *pz; pz = &(*pz)->z_next)
             ;
         *pz = z->z_next;
 
         /* reset zone */
-        z->z_magic = -1;
+        z->z_magic = RT_UINT32_MAX;
 
         /* insert to free zone list */
-        z->z_next = zone_free;
-        zone_free = z;
+        z->z_next = slab->zone_free;
+        slab->zone_free = z;
 
-        ++ zone_free_cnt;
+        ++ slab->zone_free_cnt;
 
         /* release zone to page allocator */
-        if (zone_free_cnt > ZONE_RELEASE_THRESH)
+        if (slab->zone_free_cnt > ZONE_RELEASE_THRESH)
         {
-            register rt_base_t i;
+            register rt_uint32_t i;
 
-            z         = zone_free;
-            zone_free = z->z_next;
-            -- zone_free_cnt;
+            z         = slab->zone_free;
+            slab->zone_free = z->z_next;
+            -- slab->zone_free_cnt;
 
             /* set message usage */
-            for (i = 0, kup = btokup(z); i < zone_page_cnt; i ++)
+            for (i = 0, kup = btokup(z); i < slab->zone_page_cnt; i ++)
             {
                 kup->type = PAGE_TYPE_FREE;
                 kup->size = 0;
                 kup ++;
             }
 
-            /* unlock heap */
-            rt_sem_release(&heap_sem);
-
             /* release pages */
-            rt_page_free(z, zone_size / RT_MM_PAGE_SIZE);
+            rt_slab_page_free(m, z, slab->zone_size / RT_MM_PAGE_SIZE);
 
             return;
         }
     }
-    /* unlock heap */
-    rt_sem_release(&heap_sem);
 }
-RTM_EXPORT(rt_free);
+RTM_EXPORT(rt_slab_free);
 
-#ifdef RT_MEM_STATS
-void rt_memory_info(rt_uint32_t *total,
-                    rt_uint32_t *used,
-                    rt_uint32_t *max_used)
-{
-    if (total != RT_NULL)
-        *total = heap_end - heap_start;
-
-    if (used  != RT_NULL)
-        *used = used_mem;
-
-    if (max_used != RT_NULL)
-        *max_used = max_mem;
-}
-
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-
-void list_mem(void)
-{
-    rt_kprintf("total memory: %d\n", heap_end - heap_start);
-    rt_kprintf("used memory : %d\n", used_mem);
-    rt_kprintf("maximum allocated memory: %d\n", max_mem);
-}
-FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)
-#endif
-#endif
-
-/**@}*/
-
-#endif
+#endif /* defined (RT_USING_SLAB) */

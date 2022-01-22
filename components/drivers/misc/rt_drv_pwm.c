@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,6 +9,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <drivers/rt_drv_pwm.h>
 
@@ -104,7 +105,7 @@ rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, 
 {
     rt_err_t result = RT_EOK;
 
-    memset(device, 0, sizeof(struct rt_device_pwm));
+    rt_memset(device, 0, sizeof(struct rt_device_pwm));
 
 #ifdef RT_USING_DEVICE_OPS
     device->parent.ops = &pwm_device_ops;
@@ -198,7 +199,7 @@ rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *c
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pwm_enable, pwm_enable, enable pwm by channel.);
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pwm_set, pwm_set, set pwm.);
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_FINSH
 static int pwm_enable(int argc, char **argv)
 {
     int result = 0;
@@ -323,5 +324,5 @@ _exit:
 }
 MSH_CMD_EXPORT(pwm_get, pwm_get <pwm_dev> <channel>);
 
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */
 #endif /* RT_USING_FINSH */

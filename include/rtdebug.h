@@ -1,31 +1,16 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date                 Author             Notes
  */
 
 #ifndef __RTDEBUG_H__
 #define __RTDEBUG_H__
 
 #include <rtconfig.h>
-
-/* settings depend check */
-#ifdef RT_USING_POSIX
-#if !defined(RT_USING_DFS) || !defined(RT_USING_DFS_DEVFS)
-#error "POSIX poll/select, stdin need file system(RT_USING_DFS) and device file system(RT_USING_DFS_DEVFS)"
-#endif
-
-#if !defined(RT_USING_LIBC)
-#error "POSIX layer need standard C library(RT_USING_LIBC)"
-#endif
-
-#endif
-
-#ifdef RT_USING_POSIX_TERMIOS
-#if !defined(RT_USING_POSIX)
-#error "termios need POSIX layer(RT_USING_POSIX)"
-#endif
-#endif
 
 /* Using this macro to control all kernel debug features. */
 #ifdef RT_DEBUG

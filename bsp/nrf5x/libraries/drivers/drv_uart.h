@@ -11,9 +11,7 @@
 
 #define UART0_RB_SIZE        1024
 
-// #define USE_UART0_1         0
-
-void rt_hw_uart_init(void);
+int rt_hw_uart_init(void);
 
 #endif
 

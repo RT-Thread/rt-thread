@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,18 +23,19 @@ extern "C" {
     {                                               \
         .Instance = SPI1,                           \
         .bus_name = "spi1",                         \
+        .irq_type = SPI1_IRQn,                      \
     }
 #endif /* SPI1_BUS_CONFIG */
 #endif /* BSP_USING_SPI1 */
-    
+
 #ifdef BSP_SPI1_TX_USING_DMA
 #ifndef SPI1_TX_DMA_CONFIG
 #define SPI1_TX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = SPI1_TX_DMA_RCC,                 \
         .Instance = SPI1_TX_DMA_INSTANCE,           \
-        .channel = SPI1_TX_DMA_CHANNEL,             \
         .dma_irq = SPI1_TX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI1_TX              \
     }
 #endif /* SPI1_TX_DMA_CONFIG */
 #endif /* BSP_SPI1_TX_USING_DMA */
@@ -45,8 +46,8 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI1_RX_DMA_RCC,                 \
         .Instance = SPI1_RX_DMA_INSTANCE,           \
-        .channel = SPI1_RX_DMA_CHANNEL,             \
         .dma_irq = SPI1_RX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI1_RX              \
     }
 #endif /* SPI1_RX_DMA_CONFIG */
 #endif /* BSP_SPI1_RX_USING_DMA */
@@ -57,18 +58,19 @@ extern "C" {
     {                                               \
         .Instance = SPI2,                           \
         .bus_name = "spi2",                         \
+        .irq_type = SPI2_IRQn,                      \
     }
 #endif /* SPI2_BUS_CONFIG */
 #endif /* BSP_USING_SPI2 */
-    
+
 #ifdef BSP_SPI2_TX_USING_DMA
 #ifndef SPI2_TX_DMA_CONFIG
 #define SPI2_TX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = SPI2_TX_DMA_RCC,                 \
         .Instance = SPI2_TX_DMA_INSTANCE,           \
-        .channel = SPI2_TX_DMA_CHANNEL,             \
         .dma_irq = SPI2_TX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI2_TX              \
     }
 #endif /* SPI2_TX_DMA_CONFIG */
 #endif /* BSP_SPI2_TX_USING_DMA */
@@ -79,8 +81,8 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI2_RX_DMA_RCC,                 \
         .Instance = SPI2_RX_DMA_INSTANCE,           \
-        .channel = SPI2_RX_DMA_CHANNEL,             \
         .dma_irq = SPI2_RX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI2_RX              \
     }
 #endif /* SPI2_RX_DMA_CONFIG */
 #endif /* BSP_SPI2_RX_USING_DMA */
@@ -91,18 +93,19 @@ extern "C" {
     {                                               \
         .Instance = SPI3,                           \
         .bus_name = "spi3",                         \
+        .irq_type = SPI3_IRQn,                      \
     }
 #endif /* SPI3_BUS_CONFIG */
 #endif /* BSP_USING_SPI3 */
-    
+
 #ifdef BSP_SPI3_TX_USING_DMA
 #ifndef SPI3_TX_DMA_CONFIG
 #define SPI3_TX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = SPI3_TX_DMA_RCC,                 \
         .Instance = SPI3_TX_DMA_INSTANCE,           \
-        .channel = SPI3_TX_DMA_CHANNEL,             \
         .dma_irq = SPI3_TX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI3_TX              \
     }
 #endif /* SPI3_TX_DMA_CONFIG */
 #endif /* BSP_SPI3_TX_USING_DMA */
@@ -113,8 +116,8 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI3_RX_DMA_RCC,                 \
         .Instance = SPI3_RX_DMA_INSTANCE,           \
-        .channel = SPI3_RX_DMA_CHANNEL,             \
         .dma_irq = SPI3_RX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI3_RX              \
     }
 #endif /* SPI3_RX_DMA_CONFIG */
 #endif /* BSP_SPI3_RX_USING_DMA */
@@ -125,18 +128,19 @@ extern "C" {
     {                                               \
         .Instance = SPI4,                           \
         .bus_name = "spi4",                         \
+        .irq_type = SPI4_IRQn,                      \
     }
 #endif /* SPI4_BUS_CONFIG */
 #endif /* BSP_USING_SPI4 */
-    
+
 #ifdef BSP_SPI4_TX_USING_DMA
 #ifndef SPI4_TX_DMA_CONFIG
 #define SPI4_TX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = SPI4_TX_DMA_RCC,                 \
         .Instance = SPI4_TX_DMA_INSTANCE,           \
-        .channel = SPI4_TX_DMA_CHANNEL,             \
         .dma_irq = SPI4_TX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI4_TX              \
     }
 #endif /* SPI4_TX_DMA_CONFIG */
 #endif /* BSP_SPI4_TX_USING_DMA */
@@ -147,8 +151,8 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI4_RX_DMA_RCC,                 \
         .Instance = SPI4_RX_DMA_INSTANCE,           \
-        .channel = SPI4_RX_DMA_CHANNEL,             \
         .dma_irq = SPI4_RX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI4_RX              \
     }
 #endif /* SPI4_RX_DMA_CONFIG */
 #endif /* BSP_SPI4_RX_USING_DMA */
@@ -159,18 +163,19 @@ extern "C" {
     {                                               \
         .Instance = SPI5,                           \
         .bus_name = "spi5",                         \
+        .irq_type = SPI5_IRQn,                      \
     }
 #endif /* SPI5_BUS_CONFIG */
 #endif /* BSP_USING_SPI5 */
-    
+
 #ifdef BSP_SPI5_TX_USING_DMA
 #ifndef SPI5_TX_DMA_CONFIG
 #define SPI5_TX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = SPI5_TX_DMA_RCC,                 \
         .Instance = SPI5_TX_DMA_INSTANCE,           \
-        .channel = SPI5_TX_DMA_CHANNEL,             \
         .dma_irq = SPI5_TX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI5_TX              \
     }
 #endif /* SPI5_TX_DMA_CONFIG */
 #endif /* BSP_SPI5_TX_USING_DMA */
@@ -181,8 +186,8 @@ extern "C" {
     {                                               \
         .dma_rcc = SPI5_RX_DMA_RCC,                 \
         .Instance = SPI5_RX_DMA_INSTANCE,           \
-        .channel = SPI5_RX_DMA_CHANNEL,             \
         .dma_irq = SPI5_RX_DMA_IRQ,                 \
+        .request = DMA_REQUEST_SPI5_RX              \
     }
 #endif /* SPI5_RX_DMA_CONFIG */
 #endif /* BSP_SPI5_RX_USING_DMA */

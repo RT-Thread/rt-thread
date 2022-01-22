@@ -1819,7 +1819,7 @@ __STATIC_INLINE uint32_t LL_C2_AHB2_GRP1_IsEnabledClockSleep(uint32_t Periphs)
   * @rmtoll C2AHB2SMENR  GPIOASMEN     LL_C2_AHB2_GRP1_DisableClockSleep\n
   *         C2AHB2SMENR  GPIOBSMEN     LL_C2_AHB2_GRP1_DisableClockSleep\n
   *         C2AHB2SMENR  GPIOCSMEN     LL_C2_AHB2_GRP1_DisableClockSleep\n
-  *         C2AHB2SMENR  GPIODSMEN     LL_C2_AHB2_GRP1_DisableClockSleep\n
+  *         C2AHB2SMENR  GPIOHSMEN     LL_C2_AHB2_GRP1_DisableClockSleep\n
 
   * @param  Periphs This parameter can be a combination of the following values:
   *         @arg @ref LL_C2_AHB2_GRP1_PERIPH_GPIOA

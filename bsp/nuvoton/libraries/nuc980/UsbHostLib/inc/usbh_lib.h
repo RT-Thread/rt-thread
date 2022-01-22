@@ -53,7 +53,7 @@ extern "C"
 #define USBH_ERR_DISCONNECTED       -259   /*!< USB device was disconnected                     */
 
 #define USBH_ERR_TRANSACTION        -271   /*!< USB transaction timeout, CRC, Bad PID, etc.     */
-#define USBH_ERR_BABBLE_DETECTED    -272   /*!< A ¡§babble¡¨ is detected during the transaction   */
+#define USBH_ERR_BABBLE_DETECTED    -272   /*!< A 'babble' is detected during the transaction   */
 #define USBH_ERR_DATA_BUFF          -274   /*!< Data buffer overrun or underrun                 */
 
 #define USBH_ERR_CC_NO_ERR          -280   /*!< OHCI CC code - no error                         */

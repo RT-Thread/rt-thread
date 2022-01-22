@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author            Notes
  * 2018-11-06     balanceTWK        first version
  * 2020-06-16     thread-liu        add stm32mp1
- * 2020-09-01     thread-liu        add GPIOZ 
+ * 2020-09-01     thread-liu        add GPIOZ
  * 2020-09-18     geniusgogo        optimization design pin-index algorithm
  */
 

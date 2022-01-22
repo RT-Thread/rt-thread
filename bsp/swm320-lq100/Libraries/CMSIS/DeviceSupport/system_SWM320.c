@@ -38,14 +38,15 @@
 #define SYS_CLK_DIV SYS_CLK_DIV_1
 
 #define __HSI (20000000UL) //高速内部时钟
-#define __LSI (32000UL) //低速内部时钟
+#define __LSI (32000UL)    //低速内部时钟
 #define __HSE (20000000UL) //高速外部时钟
 
 /********************************** PLL 设定 **********************************************
  * VCO输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV
  * PLL输出频率 = PLL输入时钟 / INDIV * 4 * FBDIV / OUTDIV = VCO输出频率 / OUTDIV
+ * 注意：VCO输出频率需要在 [600MHz, 1200MHz] 之间
  *****************************************************************************************/
-#define SYS_PLL_SRC SYS_CLK_XTAL //可取值SYS_CLK_20MHz、SYS_CLK_XTAL
+#define SYS_PLL_SRC SYS_CLK_20MHz //可取值SYS_CLK_20MHz、SYS_CLK_XTAL
 
 #define PLL_IN_DIV 5
 
@@ -57,8 +58,8 @@
 
 #define PLL_OUT_DIV PLL_OUT_DIV8
 
-uint32_t SystemCoreClock = (120000000UL);         //System Clock Frequency (Core Clock)
-uint32_t CyclesPerUs = ((120000000UL) / 1000000); //Cycles per micro second
+uint32_t SystemCoreClock = __HSI;         //System Clock Frequency (Core Clock)
+uint32_t CyclesPerUs = (__HSI / 1000000); //Cycles per micro second
 
 /******************************************************************************************************************************************
 * 函数名称:
@@ -110,6 +111,8 @@ void SystemCoreClockUpdate(void)
 
     if (SYS->CLKDIV & SYS_CLKDIV_SYS_Msk)
         SystemCoreClock /= 2;
+
+    CyclesPerUs = SystemCoreClock / 1000000;
 }
 
 /******************************************************************************************************************************************
@@ -121,56 +124,30 @@ void SystemCoreClockUpdate(void)
 ******************************************************************************************************************************************/
 void SystemInit(void)
 {
-    uint32_t i;
-
     SYS->CLKEN |= (1 << SYS_CLKEN_ANAC_Pos);
+
+    Flash_Param_at_xMHz(120);
 
     switch (SYS_CLK)
     {
     case SYS_CLK_20MHz: //0 内部高频20MHz RC振荡器
-        SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
-                     (0 << SYS_HRCCR_DBL_Pos); //HRC = 20MHz
-
-        SYS->CLKSEL &= ~SYS_CLKSEL_HFCK_Msk;      //HFCK  <=  HRC
-        SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos); //SYS_CLK  <= HFCK
+        switchCLK_20MHz();
         break;
 
     case SYS_CLK_40MHz: //1 内部高频40MHz RC振荡器
-        SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
-                     (1 << SYS_HRCCR_DBL_Pos); //HRC = 40MHz
-
-        SYS->CLKSEL &= ~SYS_CLKSEL_HFCK_Msk;      //HFCK  <=  HRC
-        SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos); //SYS_CLK  <= HFCK
+        switchCLK_40MHz();
         break;
 
     case SYS_CLK_32KHz: //2 内部低频32KHz RC振荡器
-        SYS->CLKEN |= (1 << SYS_CLKEN_RTCBKP_Pos);
-
-        SYS->LRCCR &= ~(1 << SYS_LRCCR_OFF_Pos);
-
-        for (i = 0; i < 20000; i++)
-            ;
-
-        SYS->CLKSEL &= ~SYS_CLKSEL_LFCK_Msk; //LFCK  <=  LRC
-        SYS->CLKSEL &= ~SYS_CLKSEL_SYS_Msk;  //SYS_CLK  <= LFCK
+        switchCLK_32KHz();
         break;
 
     case SYS_CLK_XTAL: //3 外部晶体振荡器（2-30MHz）
-        SYS->XTALCR = (1 << SYS_XTALCR_EN_Pos);
-
-        for (i = 0; i < 20000; i++)
-            ;
-
-        SYS->CLKSEL |= (1 << SYS_CLKSEL_HFCK_Pos); //HFCK  <=  XTAL
-        SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos);  //SYS_CLK  <= HFCK
+        switchCLK_XTAL();
         break;
 
     case SYS_CLK_PLL: //4 片内锁相环输出
-        PLLInit();
-        SYS->PLLCR |= (1 << SYS_PLLCR_OUTEN_Pos);
-
-        SYS->CLKSEL |= (1 << SYS_CLKSEL_LFCK_Pos); //LFCK  <=  PLL
-        SYS->CLKSEL &= ~SYS_CLKSEL_SYS_Msk;        //SYS_CLK  <= LFCK
+        switchCLK_PLL();
         break;
     }
 
@@ -178,16 +155,105 @@ void SystemInit(void)
     SYS->CLKDIV |= (SYS_CLK_DIV << SYS_CLKDIV_SYS_Pos);
 
     SystemCoreClockUpdate();
+
+    if (SystemCoreClock > 80000000)
+    {
+        Flash_Param_at_xMHz(120);
+    }
+    else if (SystemCoreClock > 40000000)
+    {
+        Flash_Param_at_xMHz(80);
+    }
+    else if (SystemCoreClock > 30000000)
+    {
+        Flash_Param_at_xMHz(40);
+    }
+    else
+    {
+        Flash_Param_at_xMHz(30);
+    }
+}
+
+static void delay_3ms(void)
+{
+    uint32_t i;
+
+    if (((SYS->CLKSEL & SYS_CLKSEL_SYS_Msk) == 0) &&
+        ((SYS->CLKSEL & SYS_CLKSEL_LFCK_Msk) == 0)) //32KHz
+    {
+        for (i = 0; i < 20; i++)
+            __NOP();
+    }
+    else
+    {
+        for (i = 0; i < 20000; i++)
+            __NOP();
+    }
+}
+
+void switchCLK_20MHz(void)
+{
+    SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
+                 (0 << SYS_HRCCR_DBL_Pos); //HRC = 20MHz
+
+    delay_3ms();
+
+    SYS->CLKSEL &= ~SYS_CLKSEL_HFCK_Msk;      //HFCK  <=  HRC
+    SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos); //SYS_CLK  <= HFCK
+}
+
+void switchCLK_40MHz(void)
+{
+    SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
+                 (1 << SYS_HRCCR_DBL_Pos); //HRC = 40MHz
+
+    delay_3ms();
+
+    SYS->CLKSEL &= ~SYS_CLKSEL_HFCK_Msk;      //HFCK  <=  HRC
+    SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos); //SYS_CLK  <= HFCK
+}
+
+void switchCLK_32KHz(void)
+{
+    SYS->CLKEN |= (1 << SYS_CLKEN_RTCBKP_Pos);
+
+    SYS->LRCCR &= ~(1 << SYS_LRCCR_OFF_Pos);
+
+    delay_3ms();
+
+    SYS->CLKSEL &= ~SYS_CLKSEL_LFCK_Msk; //LFCK  <=  LRC
+    SYS->CLKSEL &= ~SYS_CLKSEL_SYS_Msk;  //SYS_CLK  <= LFCK
+}
+
+void switchCLK_XTAL(void)
+{
+    SYS->XTALCR = (1 << SYS_XTALCR_EN_Pos);
+
+    delay_3ms();
+    delay_3ms();
+
+    SYS->CLKSEL |= (1 << SYS_CLKSEL_HFCK_Pos); //HFCK  <=  XTAL
+    SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos);  //SYS_CLK  <= HFCK
+}
+
+void switchCLK_PLL(void)
+{
+    PLLInit();
+
+    SYS->PLLCR |= (1 << SYS_PLLCR_OUTEN_Pos);
+
+    SYS->CLKSEL |= (1 << SYS_CLKSEL_LFCK_Pos); //LFCK  <=  PLL
+    SYS->CLKSEL &= ~SYS_CLKSEL_SYS_Msk;        //SYS_CLK  <= LFCK
 }
 
 void PLLInit(void)
 {
-    uint32_t i;
-
     if (SYS_PLL_SRC == SYS_CLK_20MHz)
     {
         SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
                      (0 << SYS_HRCCR_DBL_Pos); //HRC = 20MHz
+
+        delay_3ms();
 
         SYS->PLLCR |= (1 << SYS_PLLCR_INSEL_Pos); //PLL_SRC <= HRC
     }
@@ -195,8 +261,8 @@ void PLLInit(void)
     {
         SYS->XTALCR = (1 << SYS_XTALCR_EN_Pos);
 
-        for (i = 0; i < 20000; i++)
-            ;
+        delay_3ms();
+        delay_3ms();
 
         SYS->PLLCR &= ~(1 << SYS_PLLCR_INSEL_Pos); //PLL_SRC <= XTAL
     }

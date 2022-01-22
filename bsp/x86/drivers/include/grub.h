@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2006-10-09     Bernard      the grub related definitions 
+ * 2006-10-09     Bernard      the grub related definitions
  *                             (multiboot)
  */
 
@@ -13,13 +13,13 @@
 #define __GRUB_H__
 
 /* the magic number for the multiboot header.  */
-#define MULTIBOOT_HEADER_MAGIC		0x1BADB002
+#define MULTIBOOT_HEADER_MAGIC      0x1BADB002
 
 /* the flags for the multiboot header.  */
-#define MULTIBOOT_HEADER_FLAGS		0x00000003
+#define MULTIBOOT_HEADER_FLAGS      0x00000003
 
 /* the magic number passed by a multiboot-compliant boot loader.  */
-#define MULTIBOOT_BOOTLOADER_MAGIC	0x2BADB002
+#define MULTIBOOT_BOOTLOADER_MAGIC  0x2BADB002
 
 #ifndef __ASM__
 /* the multiboot header.  */

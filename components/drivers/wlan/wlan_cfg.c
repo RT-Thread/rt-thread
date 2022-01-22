@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -84,7 +84,7 @@ void rt_wlan_cfg_init(void)
             rt_memset(cfg_cache, 0, sizeof(struct rt_wlan_cfg_des));
         }
         /* init mutex lock */
-        rt_mutex_init(&cfg_mutex, "wlan_cfg", RT_IPC_FLAG_FIFO);
+        rt_mutex_init(&cfg_mutex, "wlan_cfg", RT_IPC_FLAG_PRIO);
     }
 }
 

@@ -483,7 +483,7 @@ HAL_StatusTypeDef HAL_UARTEx_EnableStopMode(UART_HandleTypeDef *huart)
   __HAL_LOCK(huart);
 
   /* Set UESM bit */
-  SET_BIT(huart->Instance->CR1, USART_CR1_UESM);
+  ATOMIC_SET_BIT(huart->Instance->CR1, USART_CR1_UESM);
 
   /* Process Unlocked */
   __HAL_UNLOCK(huart);
@@ -502,7 +502,7 @@ HAL_StatusTypeDef HAL_UARTEx_DisableStopMode(UART_HandleTypeDef *huart)
   __HAL_LOCK(huart);
 
   /* Clear UESM bit */
-  CLEAR_BIT(huart->Instance->CR1, USART_CR1_UESM);
+  ATOMIC_CLEAR_BIT(huart->Instance->CR1, USART_CR1_UESM);
 
   /* Process Unlocked */
   __HAL_UNLOCK(huart);
@@ -890,7 +890,7 @@ HAL_StatusTypeDef HAL_UARTEx_ReceiveToIdle_IT(UART_HandleTypeDef *huart, uint8_t
       if (huart->ReceptionType == HAL_UART_RECEPTION_TOIDLE)
       {
         __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_IDLEF);
-        SET_BIT(huart->Instance->CR1, USART_CR1_IDLEIE);
+        ATOMIC_SET_BIT(huart->Instance->CR1, USART_CR1_IDLEIE);
       }
       else
       {
@@ -969,7 +969,7 @@ HAL_StatusTypeDef HAL_UARTEx_ReceiveToIdle_DMA(UART_HandleTypeDef *huart, uint8_
       if (huart->ReceptionType == HAL_UART_RECEPTION_TOIDLE)
       {
         __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_IDLEF);
-        SET_BIT(huart->Instance->CR1, USART_CR1_IDLEIE);
+        ATOMIC_SET_BIT(huart->Instance->CR1, USART_CR1_IDLEIE);
       }
       else
       {
@@ -1031,8 +1031,8 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart)
   uint8_t tx_fifo_depth;
   uint8_t rx_fifo_threshold;
   uint8_t tx_fifo_threshold;
-  uint8_t numerator[] = {1U, 1U, 1U, 3U, 7U, 1U, 0U, 0U};
-  uint8_t denominator[] = {8U, 4U, 2U, 4U, 8U, 1U, 1U, 1U};
+  static const uint8_t numerator[] = {1U, 1U, 1U, 3U, 7U, 1U, 0U, 0U};
+  static const uint8_t denominator[] = {8U, 4U, 2U, 4U, 8U, 1U, 1U, 1U};
 
   if (huart->FifoMode == UART_FIFOMODE_DISABLE)
   {

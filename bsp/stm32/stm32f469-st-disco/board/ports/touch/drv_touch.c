@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-02-08     Zhangyihong  the first version
  */
- 
+
 #include "drv_touch.h"
 #include <string.h>
 #ifdef BSP_USING_TOUCH
@@ -16,6 +16,10 @@
 #include <rtgui/rtgui_server.h>
 #elif defined(PKG_USING_LITTLEVGL2RTT)
 #include <littlevgl2rtt.h>
+#elif defined(PKG_USING_LVGL)
+#include <lvgl.h>
+#include <lv_port_indev.h>
+static rt_bool_t touch_down = RT_FALSE;
 #endif
 #define BSP_TOUCH_SAMPLE_HZ    (50)
 
@@ -50,6 +54,9 @@ static void post_down_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 #elif defined(PKG_USING_LITTLEVGL2RTT)
     littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_DOWN);
+#elif defined(PKG_USING_LVGL)
+    touch_down = RT_TRUE;
+    lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
 #endif
 }
 
@@ -70,6 +77,8 @@ static void post_motion_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 #elif defined(PKG_USING_LITTLEVGL2RTT)
     littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_MOVE);
+#elif defined(PKG_USING_LVGL)
+    lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
 #endif
 }
 
@@ -90,6 +99,9 @@ static void post_up_event(rt_uint16_t x, rt_uint16_t y, rt_tick_t ts)
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 #elif defined(PKG_USING_LITTLEVGL2RTT)
     littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_MOVE);
+#elif defined(PKG_USING_LVGL)
+    touch_down = RT_FALSE;
+    lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
 #endif
 }
 
@@ -105,7 +117,7 @@ static void touch_thread_entry(void *parameter)
         {
             continue;
         }
-        
+
         while(touch->ops->read_point(&msg) == RT_EOK)
         {
             switch (msg.event)

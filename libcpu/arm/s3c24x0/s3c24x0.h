@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,7 +22,7 @@ extern "C" {
  */
 /*@{*/
 
-// Memory control 
+// Memory control
 #define BWSCON    (*(volatile unsigned *)0x48000000) //Bus width & wait status
 #define BANKCON0  (*(volatile unsigned *)0x48000004) //Boot ROM control
 #define BANKCON1  (*(volatile unsigned *)0x48000008) //BANK1 control
@@ -101,7 +101,7 @@ extern "C" {
 #define CLKCON     (*(volatile unsigned *)0x4c00000c) //Clock generator control
 #define CLKSLOW    (*(volatile unsigned *)0x4c000010) //Slow clock control
 #define CLKDIVN    (*(volatile unsigned *)0x4c000014) //Clock divider control
-#define CAMDIVN    (*(volatile unsigned *)0x4c000018)	//USB, CAM Clock divider control
+#define CAMDIVN    (*(volatile unsigned *)0x4c000018)   //USB, CAM Clock divider control
 
 
 // LCD CONTROLLER
@@ -114,7 +114,7 @@ extern "C" {
 #define LCDSADDR2  (*(volatile unsigned *)0x4d000018) //STN/TFT Frame buffer start address 2
 #define LCDSADDR3  (*(volatile unsigned *)0x4d00001c) //STN/TFT Virtual screen address set
 #define REDLUT     (*(volatile unsigned *)0x4d000020) //STN Red lookup table
-#define GREENLUT   (*(volatile unsigned *)0x4d000024) //STN Green lookup table 
+#define GREENLUT   (*(volatile unsigned *)0x4d000024) //STN Green lookup table
 #define BLUELUT    (*(volatile unsigned *)0x4d000028) //STN Blue lookup table
 #define DITHMODE   (*(volatile unsigned *)0x4d00004c) //STN Dithering mode
 #define TPAL       (*(volatile unsigned *)0x4d000050) //TFT Temporary palette
@@ -223,10 +223,10 @@ extern "C" {
 #define TCNTO4 (*(volatile unsigned *)0x51000040) //Timer count observation 4
 
 // Added for 2440
-#define FLTOUT		(*(volatile unsigned *)0x560000c0)	// Filter output(Read only)
-#define DSC0			(*(volatile unsigned *)0x560000c4)	// Strength control register 0
-#define DSC1			(*(volatile unsigned *)0x560000c8)	// Strength control register 1
-#define MSLCON		(*(volatile unsigned *)0x560000cc)	// Memory sleep control register
+#define FLTOUT      (*(volatile unsigned *)0x560000c0)  // Filter output(Read only)
+#define DSC0            (*(volatile unsigned *)0x560000c4)  // Strength control register 0
+#define DSC1            (*(volatile unsigned *)0x560000c8)  // Strength control register 1
+#define MSLCON      (*(volatile unsigned *)0x560000cc)  // Memory sleep control register
 
 
 // USB DEVICE
@@ -388,9 +388,9 @@ extern "C" {
 #define GPHDAT    (*(volatile unsigned *)0x56000074) //Port H data
 #define GPHUP     (*(volatile unsigned *)0x56000078) //Pull-up control H
 
-#define GPJCON    (*(volatile unsigned *)0x560000d0)	//Port J control
-#define GPJDAT    (*(volatile unsigned *)0x560000d4)	//Port J data
-#define GPJUP     (*(volatile unsigned *)0x560000d8)	//Pull-up control J
+#define GPJCON    (*(volatile unsigned *)0x560000d0)    //Port J control
+#define GPJDAT    (*(volatile unsigned *)0x560000d4)    //Port J data
+#define GPJUP     (*(volatile unsigned *)0x560000d8)    //Pull-up control J
 
 #define MISCCR    (*(volatile unsigned *)0x56000080) //Miscellaneous control
 #define DCLKCON   (*(volatile unsigned *)0x56000084) //DCLK0/1 control
@@ -495,7 +495,7 @@ extern "C" {
 #ifdef __BIG_ENDIAN  /* edited for 2440A */
 #define SDIDAT     (*(volatile unsigned *)0x5a00004c)
 #else  // Little Endian
-#define SDIDAT     (*(volatile unsigned *)0x5a000040)  
+#define SDIDAT     (*(volatile unsigned *)0x5a000040)
 #endif   //SD Interface
 
 // PENDING BIT
@@ -562,40 +562,40 @@ extern "C" {
 #define ClearPending(bit) {SRCPND = bit;INTPND = bit;INTPND;}
 //Wait until INTPND is changed for the case that the ISR is very short.
 
-#define INTGLOBAL		32
+#define INTGLOBAL       32
 
 /*****************************/
 /* CPU Mode                  */
 /*****************************/
-#define USERMODE		0x10
-#define FIQMODE			0x11
-#define IRQMODE			0x12
-#define SVCMODE			0x13
-#define ABORTMODE		0x17
-#define UNDEFMODE		0x1b
-#define MODEMASK		0x1f
-#define NOINT			0xc0
+#define USERMODE        0x10
+#define FIQMODE         0x11
+#define IRQMODE         0x12
+#define SVCMODE         0x13
+#define ABORTMODE       0x17
+#define UNDEFMODE       0x1b
+#define MODEMASK        0x1f
+#define NOINT           0xc0
 
 struct rt_hw_register
 {
-	rt_uint32_t r0;
-	rt_uint32_t r1;
-	rt_uint32_t r2;
-	rt_uint32_t r3;
-	rt_uint32_t r4;
-	rt_uint32_t r5;
-	rt_uint32_t r6;
-	rt_uint32_t r7;
-	rt_uint32_t r8;
-	rt_uint32_t r9;
-	rt_uint32_t r10;
-	rt_uint32_t fp;
-	rt_uint32_t ip;
-	rt_uint32_t sp;
-	rt_uint32_t lr;
-	rt_uint32_t pc;
-	rt_uint32_t cpsr;
-	rt_uint32_t ORIG_r0;
+    rt_uint32_t r0;
+    rt_uint32_t r1;
+    rt_uint32_t r2;
+    rt_uint32_t r3;
+    rt_uint32_t r4;
+    rt_uint32_t r5;
+    rt_uint32_t r6;
+    rt_uint32_t r7;
+    rt_uint32_t r8;
+    rt_uint32_t r9;
+    rt_uint32_t r10;
+    rt_uint32_t fp;
+    rt_uint32_t ip;
+    rt_uint32_t sp;
+    rt_uint32_t lr;
+    rt_uint32_t pc;
+    rt_uint32_t cpsr;
+    rt_uint32_t ORIG_r0;
 };
 
 #ifdef __cplusplus

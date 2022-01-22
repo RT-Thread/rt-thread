@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2012, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
  * All rights reserved
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -72,7 +72,7 @@ enum rym_code
 
 enum rym_stage
 {
-    RYM_STAGE_NONE,
+    RYM_STAGE_NONE = 0,
     /* set when C is send */
     RYM_STAGE_ESTABLISHING,
     /* set when we've got the packet 0 and sent ACK and second C */

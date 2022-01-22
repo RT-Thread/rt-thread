@@ -23,6 +23,7 @@ config BCM2711_SOC
     select ARCH_ARMV8
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_GIC_V2
     default y
 
 source "driver/Kconfig"

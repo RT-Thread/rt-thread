@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,7 +18,7 @@ struct mci_device
 {
     struct rt_device                parent;      /**< RT-Thread device struct */
     struct rt_device_blk_geometry   geometry;    /**< sector size, sector count */
-    sd_card_t                   	card;   	 /**< Card descriptor */
+    sd_card_t                       card;        /**< Card descriptor */
     rt_event_t finish_event;                     /**< data send finish event*/
     rt_bool_t data_error;                        /**< data send error*/
     struct rt_mutex lock;

@@ -40,7 +40,7 @@ void rt_hw_systick_init(void)
 
     if (error != E_NO_ERROR)
     {
-        printf("ERROR: Ticks is not valid");
+        rt_kprintf("ERROR: Ticks is not valid");
     }
 }
 
@@ -57,7 +57,7 @@ void rt_hw_board_init(void)
     rt_hw_usart_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
@@ -66,3 +66,16 @@ void rt_hw_board_init(void)
 #endif
 }
 
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t start, now, delta, reload, us_tick;
+    start = SysTick->VAL;
+    reload = SysTick->LOAD;
+    us_tick = SystemCoreClock / 1000000UL;
+    do
+    {
+        now = SysTick->VAL;
+        delta = start >= now ? start - now : reload + start - now;
+    }
+    while (delta < us_tick * us);
+}

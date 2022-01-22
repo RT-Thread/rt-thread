@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+
 #include <rtthread.h>
 #include "board.h"
 
@@ -129,16 +138,16 @@ static rt_err_t rt_led_control (rt_device_t dev, int cmd, void *args)
 
 void rt_led_hw_init(void)
 {
-    fm3_led.parent.type 		= RT_Device_Class_Char;
+    fm3_led.parent.type         = RT_Device_Class_Char;
     fm3_led.parent.rx_indicate  = RT_NULL;
     fm3_led.parent.tx_complete  = RT_NULL;
-    fm3_led.parent.init 		= rt_led_init;
-    fm3_led.parent.open		    = rt_led_open;
-    fm3_led.parent.close		= rt_led_close;
+    fm3_led.parent.init         = rt_led_init;
+    fm3_led.parent.open         = rt_led_open;
+    fm3_led.parent.close        = rt_led_close;
     fm3_led.parent.read         = rt_led_read;
-    fm3_led.parent.write 		= rt_led_write;
-    fm3_led.parent.control 	    = rt_led_control;
-    fm3_led.parent.user_data	= RT_NULL;
+    fm3_led.parent.write        = rt_led_write;
+    fm3_led.parent.control      = rt_led_control;
+    fm3_led.parent.user_data    = RT_NULL;
 
     /* register a character device */
     rt_device_register(&fm3_led.parent, "led", RT_DEVICE_FLAG_RDWR);

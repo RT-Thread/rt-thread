@@ -43,6 +43,14 @@ extern "C" {
 /* Private constants ---------------------------------------------------------*/
 
 /* Private macros ------------------------------------------------------------*/
+/** @defgroup COMP_LL_Private_Macros COMP Private Macros
+  * @{
+  */
+
+/**
+  * @}
+  */
+
 /* Exported types ------------------------------------------------------------*/
 #if defined(USE_FULL_LL_DRIVER)
 /** @defgroup COMP_LL_ES_INIT COMP Exported Init structure
@@ -282,7 +290,7 @@ typedef struct
   * @note   In case of comparator input selected to be connected to IO:
   *         GPIO pins are specific to each comparator instance.
   *         Refer to description of parameters or to reference manual.
-  * @note   On this STM32 serie, scaler bridge is configurable:
+  * @note   On this STM32 series, scaler bridge is configurable:
   *         to optimize power consumption, this function enables the
   *         voltage scaler bridge only when required
   *         (when selecting comparator input based on VrefInt: VrefInt or
@@ -365,7 +373,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetInputPlus(COMP_TypeDef *COMPx)
   * @note   In case of comparator input selected to be connected to IO:
   *         GPIO pins are specific to each comparator instance.
   *         Refer to description of parameters or to reference manual.
-  * @note   On this STM32 serie, scaler bridge is configurable:
+  * @note   On this STM32 series, scaler bridge is configurable:
   *         to optimize power consumption, this function enables the
   *         voltage scaler bridge only when required
   *         (when selecting comparator input based on VrefInt: VrefInt or
@@ -689,7 +697,7 @@ __STATIC_INLINE uint32_t LL_COMP_IsLocked(COMP_TypeDef *COMPx)
 
 /**
   * @brief  Read comparator instance output level.
-  * @note   On this STM32 serie, comparator 'value' is taken before
+  * @note   On this STM32 series, comparator 'value' is taken before
   *         polarity and blanking are applied, thus:
   *          - Comparator output is low when the input plus
   *            is at a lower voltage than the input minus

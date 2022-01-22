@@ -69,22 +69,22 @@
 /** @defgroup RCC_LL_Private_Functions RCC Private functions
   * @{
   */
-uint32_t RCC_PLL_GetFreqDomain_SYS(void);
-uint32_t RCC_PLL_GetFreqDomain_ADC(void);
-uint32_t RCC_PLL_GetFreqDomain_RNG(void);
-uint32_t RCC_PLL_GetFreqDomain_I2S(void);
+static uint32_t RCC_PLL_GetFreqDomain_SYS(void);
+static uint32_t RCC_PLL_GetFreqDomain_ADC(void);
+static uint32_t RCC_PLL_GetFreqDomain_RNG(void);
+static uint32_t RCC_PLL_GetFreqDomain_I2S(void);
 
-uint32_t RCC_GetSystemClockFreq(void);
+static uint32_t RCC_GetSystemClockFreq(void);
 
-uint32_t RCC_GetHCLK1ClockFreq(uint32_t SYSCLK_Frequency);
+static uint32_t RCC_GetHCLK1ClockFreq(uint32_t SYSCLK_Frequency);
 #if defined(DUAL_CORE)
-uint32_t RCC_GetHCLK2ClockFreq(uint32_t SYSCLK_Frequency);
+static uint32_t RCC_GetHCLK2ClockFreq(uint32_t SYSCLK_Frequency);
 #endif /* DUAL_CORE */
-uint32_t RCC_GetHCLK3ClockFreq(uint32_t SYSCLK_Frequency);
+static uint32_t RCC_GetHCLK3ClockFreq(uint32_t SYSCLK_Frequency);
 
 
-uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency);
-uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency);
+static uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency);
+static uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency);
 /**
   * @}
   */
@@ -778,7 +778,7 @@ uint32_t LL_RCC_GetRTCClockFreq(void)
   * @brief  Return SYSTEM clock (SYSCLK) frequency
   * @retval SYSTEM clock frequency (in Hz)
   */
-uint32_t RCC_GetSystemClockFreq(void)
+static uint32_t RCC_GetSystemClockFreq(void)
 {
   uint32_t frequency;
 
@@ -828,7 +828,7 @@ uint32_t RCC_GetSystemClockFreq(void)
   * @param  SYSCLK_Frequency SYSCLK clock frequency
   * @retval HCLK1 clock frequency (in Hz)
   */
-uint32_t RCC_GetHCLK1ClockFreq(uint32_t SYSCLK_Frequency)
+static uint32_t RCC_GetHCLK1ClockFreq(uint32_t SYSCLK_Frequency)
 {
   /* HCLK clock frequency */
   return __LL_RCC_CALC_HCLK1_FREQ(SYSCLK_Frequency, LL_RCC_GetAHBPrescaler());
@@ -840,7 +840,7 @@ uint32_t RCC_GetHCLK1ClockFreq(uint32_t SYSCLK_Frequency)
   * @param  SYSCLK_Frequency SYSCLK clock frequency
   * @retval HCLK2 clock frequency (in Hz)
   */
-uint32_t RCC_GetHCLK2ClockFreq(uint32_t SYSCLK_Frequency)
+static uint32_t RCC_GetHCLK2ClockFreq(uint32_t SYSCLK_Frequency)
 {
   /* HCLK clock frequency */
   return __LL_RCC_CALC_HCLK2_FREQ(SYSCLK_Frequency, LL_C2_RCC_GetAHBPrescaler());
@@ -852,7 +852,7 @@ uint32_t RCC_GetHCLK2ClockFreq(uint32_t SYSCLK_Frequency)
   * @param  SYSCLK_Frequency SYSCLK clock frequency
   * @retval HCLK3 clock frequency (in Hz)
   */
-uint32_t RCC_GetHCLK3ClockFreq(uint32_t SYSCLK_Frequency)
+static uint32_t RCC_GetHCLK3ClockFreq(uint32_t SYSCLK_Frequency)
 {
   /* HCLK clock frequency */
   return __LL_RCC_CALC_HCLK3_FREQ(SYSCLK_Frequency, LL_RCC_GetAHB3Prescaler());
@@ -863,7 +863,7 @@ uint32_t RCC_GetHCLK3ClockFreq(uint32_t SYSCLK_Frequency)
   * @param  HCLK_Frequency HCLK clock frequency
   * @retval PCLK1 clock frequency (in Hz)
   */
-uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)
+static uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)
 {
   /* PCLK1 clock frequency */
   return __LL_RCC_CALC_PCLK1_FREQ(HCLK_Frequency, LL_RCC_GetAPB1Prescaler());
@@ -874,7 +874,7 @@ uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)
   * @param  HCLK_Frequency HCLK clock frequency
   * @retval PCLK2 clock frequency (in Hz)
   */
-uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency)
+static uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency)
 {
   /* PCLK2 clock frequency */
   return __LL_RCC_CALC_PCLK2_FREQ(HCLK_Frequency, LL_RCC_GetAPB2Prescaler());
@@ -884,7 +884,7 @@ uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency)
   * @brief  Return PLL clock (PLLRCLK) frequency used for system domain
   * @retval PLLRCLK clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_SYS(void)
+static uint32_t RCC_PLL_GetFreqDomain_SYS(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -934,7 +934,7 @@ uint32_t RCC_PLL_GetFreqDomain_SYS(void)
   * @brief  Return PLL clock (PLLPCLK) frequency used for ADC domain
   * @retval PLLPCLK clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_ADC(void)
+static uint32_t RCC_PLL_GetFreqDomain_ADC(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -982,7 +982,7 @@ uint32_t RCC_PLL_GetFreqDomain_ADC(void)
   * @brief  Return PLL clock (PLLQCLK) frequency used for RNG domain
   * @retval PLLQCLK clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_RNG(void)
+static uint32_t RCC_PLL_GetFreqDomain_RNG(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;
@@ -1030,7 +1030,7 @@ uint32_t RCC_PLL_GetFreqDomain_RNG(void)
   * @brief  Return PLL clock (PLLQCLK) frequency used for I2S domain
   * @retval PLLQCLK clock frequency (in Hz)
   */
-uint32_t RCC_PLL_GetFreqDomain_I2S(void)
+static uint32_t RCC_PLL_GetFreqDomain_I2S(void)
 {
   uint32_t pllinputfreq;
   uint32_t pllsource;

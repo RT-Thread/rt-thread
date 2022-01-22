@@ -1,11 +1,7 @@
 /*
- * File      : board.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -30,7 +26,7 @@
 #define UP_KEY       0x1b
 #define DOWN_KEY     0x17
 #define LEFT_KEY     0x0f
-#define RIGHT_KEY    0x1e  
+#define RIGHT_KEY    0x1e
 
 void rt_hw_board_init(void);
 rt_uint8_t get_key(void);

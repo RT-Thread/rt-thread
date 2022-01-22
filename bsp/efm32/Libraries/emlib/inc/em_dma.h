@@ -251,7 +251,7 @@ typedef struct
   /** Enable repeated loop */
   bool      enable;
   /** Width of transfer, reload value for nMinus1 */
-  uint16_t  nMinus1;  
+  uint16_t  nMinus1;
 } DMA_CfgLoop_TypeDef;
 
 
@@ -335,20 +335,20 @@ typedef struct
    * Pointer to the controlblock in memory holding descriptors (channel
    * control data structures). This memory must be properly aligned
    * according to requirements.
-   * 
+   *
    * Alignment requirements are
    *   a) 5 bits base requirement, bits [4:0]
    *   b) Add the number of bits needed to represent the wanted number
    *      of channels
    *   c) Align structure with this number of bits set to zero
-   *  
+   *
    * Examples: 4 channels, 5 + 2 (channels 0 to 3) = 7 bits
    *           7 bit alignment, 64 byte address alignment
    *           8 channels, 5 + 3 (channels 0 to 7) = 8 bits
    *           8 bit alignment, 256 byte address alignment
    *           12 channels, 5 + 4 (channels 0 to 11) = 9 bits
    *           9 bit alignment, 512 byte address alignment
-   * 
+   *
    * Please refer to the reference manual, DMA chapter for more details.
    *
    * It is possible to provide a smaller memory block, only covering

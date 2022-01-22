@@ -972,7 +972,7 @@ static void nu_pdma_memfun_actor_init(void)
         nu_pdma_memfun_actor_pool_sem = rt_sem_create("mempool_sem", nu_pdma_memfun_actor_maxnum, RT_IPC_FLAG_FIFO);
         RT_ASSERT(nu_pdma_memfun_actor_pool_sem != RT_NULL);
 
-        nu_pdma_memfun_actor_pool_lock = rt_mutex_create("mempool_lock", RT_IPC_FLAG_FIFO);
+        nu_pdma_memfun_actor_pool_lock = rt_mutex_create("mempool_lock", RT_IPC_FLAG_PRIO);
         RT_ASSERT(nu_pdma_memfun_actor_pool_lock != RT_NULL);
     }
 }

@@ -221,7 +221,7 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     {
         if (imxrt_i2c->msg[i].flags & RT_I2C_RD)
         {
-            if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Write) != kStatus_Success)
+            if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
             {
                 i = 0;
                 break;
@@ -229,12 +229,6 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
             while (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
             {
-            }
-
-            if (LPI2C_MasterRepeatedStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
-            {
-                i = 0;
-                break;
             }
 
             if (LPI2C_MasterReceive(imxrt_i2c->I2C, imxrt_i2c->msg[i].buf, imxrt_i2c->msg[i].len) != kStatus_Success)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,7 +35,7 @@ rt_err_t mma8562_read_reg(rt_uint8_t reg, rt_uint8_t len, rt_uint8_t *buf)
     struct rt_i2c_msg msgs[2];
 
     msgs[0].addr  = kMMA8562_ADDR;
-    msgs[0].flags = RT_I2C_WR; 
+    msgs[0].flags = RT_I2C_WR;
     msgs[0].buf   = &reg;
     msgs[0].len   = 1;
 
@@ -60,7 +60,7 @@ rt_err_t mma8562_write_reg(rt_uint8_t reg, rt_uint8_t data)
 
     buf[0] = reg;
     buf[1] = data;
-       
+
     if (rt_i2c_master_send(mma8562_i2c_bus, kMMA8562_ADDR, 0, buf ,2) == 2)
     {
         return RT_EOK;
@@ -78,15 +78,15 @@ rt_err_t mma8562_write_reg(rt_uint8_t reg, rt_uint8_t data)
 void get_mma8562(uint8_t data)
 {
     volatile acceleration_t accel;
-    
+
     uint8_t ucVal1 = 0;
     uint8_t ucVal2 = 0;
     uint8_t ucStatus = 0;
-    
+
     do {
        mma8562_read_reg(kMMA8562_STATUS, 1, &ucStatus);
     } while (!(ucStatus & 0x08));
-    
+
     mma8562_read_reg(kMMA8562_OUT_X_MSB, 1, &ucVal1);
     mma8562_read_reg(kMMA8562_OUT_X_LSB, 1, &ucVal2);
 
@@ -150,7 +150,7 @@ int mma8562_hw_init(void)
     /*   databyte = 0x0D; */
     val = 0x0D;
     mma8562_write_reg(kMMA8562_CTRL_REG1, val);
-    
+
     return 0;
 }
 

@@ -87,7 +87,7 @@ static void rt_cga_putc(int c)
         break;
     case '\n':
         crt_pos += CRT_COLS;
-        /* cascade	*/
+        /* cascade  */
     case '\r':
         crt_pos -= (crt_pos % CRT_COLS);
         break;
@@ -99,7 +99,7 @@ static void rt_cga_putc(int c)
         rt_console_putc(' ');
         break;
     default:
-        crt_buf[crt_pos++] = c;		/* write the character */
+        crt_buf[crt_pos++] = c;     /* write the character */
         break;
     }
 
@@ -289,14 +289,14 @@ int rt_hw_console_init(void)
     rt_hw_interrupt_install(INTUART0_RX, rt_console_isr, RT_NULL, "COM1");
     rt_hw_interrupt_umask(INTUART0_RX);
 
-    console_device.type 		= RT_Device_Class_Char;
+    console_device.type         = RT_Device_Class_Char;
     console_device.rx_indicate  = RT_NULL;
     console_device.tx_complete  = RT_NULL;
-    console_device.init 		= rt_console_init;
-    console_device.open		    = rt_console_open;
-    console_device.close		= rt_console_close;
-    console_device.read 		= rt_console_read;
-    console_device.write 	    = rt_console_write;
+    console_device.init         = rt_console_init;
+    console_device.open         = rt_console_open;
+    console_device.close        = rt_console_close;
+    console_device.read         = rt_console_read;
+    console_device.write        = rt_console_write;
     console_device.control      = rt_console_control;
     console_device.user_data    = RT_NULL;
 
@@ -316,8 +316,8 @@ INIT_DEVICE_EXPORT(rt_hw_console_init);
  * @param str the displayed string
  *
  * Modified:
- *	caoxl 2009-10-14
- *	the name is change to rt_hw_console_output in the v0.3.0
+ *  caoxl 2009-10-14
+ *  the name is change to rt_hw_console_output in the v0.3.0
  *
  */
 void rt_hw_console_output(const char* str)

@@ -245,25 +245,6 @@ HAL_StatusTypeDef HAL_EXTI_SetConfigLine(EXTI_HandleTypeDef *hexti, EXTI_ConfigT
     /* Store interrupt mode */
     *regaddr = regval;
 
-    /* The event mode cannot be configured if the line does not support it */
-    assert_param(((pExtiConfig->Line & EXTI_EVENT) == EXTI_EVENT) || ((pExtiConfig->Mode & EXTI_MODE_EVENT) != EXTI_MODE_EVENT));
-
-    regaddr = (&EXTI->C1EMR1 + (EXTI_MODE_OFFSET * offset));
-
-    regval = *regaddr;
-
-    /* Mask or set line */
-    if ((pExtiConfig->Mode & EXTI_MODE_EVENT) != 0x00u)
-    {
-      regval |= maskline;
-    }
-    else
-    {
-      regval &= ~maskline;
-    }
-
-    /* Store event mode */
-    *regaddr = regval;
   }
 
   /*Set Interrupt And Event Mask for Core 2 if configuration for Core 2 given into parameter mode  */
@@ -354,16 +335,6 @@ HAL_StatusTypeDef HAL_EXTI_GetConfigLine(EXTI_HandleTypeDef *hexti, EXTI_ConfigT
   else
   {
     pExtiConfig->Mode = EXTI_MODE_C1_NONE;
-  }
-
-  /* Get Core 1 mode : event */
-  regaddr = (&EXTI->C1EMR1 + (EXTI_MODE_OFFSET * offset));
-  regval = *regaddr;
-
-  /* Check if selected line is enable */
-  if ((regval & maskline) != 0x00u)
-  {
-    pExtiConfig->Mode |= EXTI_MODE_C1_EVENT;
   }
 
   /* Get core 2 mode : interrupt */
@@ -476,9 +447,6 @@ HAL_StatusTypeDef HAL_EXTI_ClearConfigLine(EXTI_HandleTypeDef *hexti)
   *regaddr = regval;
 
   /* 2] Clear event mode */
-  regaddr = (&EXTI->C1EMR1 + (EXTI_MODE_OFFSET * offset));
-  regval = (*regaddr & ~maskline);
-  *regaddr = regval;
 
   regaddr = (&EXTI->C2EMR1 + (EXTI_MODE_OFFSET * offset));
   regval = (*regaddr & ~maskline);

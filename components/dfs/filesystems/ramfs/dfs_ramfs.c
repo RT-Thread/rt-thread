@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -106,7 +106,7 @@ int dfs_ramfs_read(struct dfs_fd *file, void *buf, size_t count)
         length = file->size - file->pos;
 
     if (length > 0)
-        memcpy(buf, &(dirent->data[file->pos]), length);
+        rt_memcpy(buf, &(dirent->data[file->pos]), length);
 
     /* update file current position */
     file->pos += length;
@@ -143,7 +143,7 @@ int dfs_ramfs_write(struct dfs_fd *fd, const void *buf, size_t count)
     }
 
     if (count > 0)
-        memcpy(dirent->data + fd->pos, buf, count);
+        rt_memcpy(dirent->data + fd->pos, buf, count);
 
     /* update file current position */
     fd->pos += count;
@@ -442,7 +442,7 @@ struct dfs_ramfs *dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
     ramfs->memheap.parent.type = RT_Object_Class_MemHeap | RT_Object_Class_Static;
 
     /* initialize root directory */
-    memset(&(ramfs->root), 0x00, sizeof(ramfs->root));
+    rt_memset(&(ramfs->root), 0x00, sizeof(ramfs->root));
     rt_list_init(&(ramfs->root.list));
     ramfs->root.size = 0;
     strcpy(ramfs->root.name, ".");

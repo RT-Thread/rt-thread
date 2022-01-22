@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,7 +17,7 @@
 int main(int argc, char** argv)
 {
     rt_kprintf("Hi, this is RT-Thread!!\n");
-    
+
     rt_pin_mode(ACTLED, PIN_MODE_OUTPUT);
 
     while(1)

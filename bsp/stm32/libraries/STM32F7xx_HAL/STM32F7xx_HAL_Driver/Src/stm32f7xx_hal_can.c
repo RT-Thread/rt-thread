@@ -120,7 +120,7 @@
           submitted (the sleep mode is not yet entered), and become
           HAL_CAN_STATE_SLEEP_ACTIVE when the sleep mode is effective.
 
-      (#) The wake-up from sleep mode can be trigged by two ways:
+      (#) The wake-up from sleep mode can be triggered by two ways:
             (++) Using HAL_CAN_WakeUp(). When returning from this function,
                  the sleep mode is exited (if return status is HAL_OK).
             (++) When a start of Rx CAN frame is detected by the CAN peripheral,
@@ -1556,7 +1556,7 @@ HAL_StatusTypeDef HAL_CAN_GetRxMessage(CAN_HandleTypeDef *hcan, uint32_t RxFifo,
     {
       pHeader->ExtId = ((CAN_RI0R_EXID | CAN_RI0R_STID) & hcan->Instance->sFIFOMailBox[RxFifo].RIR) >> CAN_RI0R_EXID_Pos;
     }
-    pHeader->RTR = (CAN_RI0R_RTR & hcan->Instance->sFIFOMailBox[RxFifo].RIR) >> CAN_RI0R_RTR_Pos;
+    pHeader->RTR = (CAN_RI0R_RTR & hcan->Instance->sFIFOMailBox[RxFifo].RIR);
     pHeader->DLC = (CAN_RDT0R_DLC & hcan->Instance->sFIFOMailBox[RxFifo].RDTR) >> CAN_RDT0R_DLC_Pos;
     pHeader->FilterMatchIndex = (CAN_RDT0R_FMI & hcan->Instance->sFIFOMailBox[RxFifo].RDTR) >> CAN_RDT0R_FMI_Pos;
     pHeader->Timestamp = (CAN_RDT0R_TIME & hcan->Instance->sFIFOMailBox[RxFifo].RDTR) >> CAN_RDT0R_TIME_Pos;
@@ -1901,7 +1901,7 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef *hcan)
     /* Check if message is still pending */
     if ((hcan->Instance->RF0R & CAN_RF0R_FMP0) != 0U)
     {
-      /* Receive FIFO 0 mesage pending Callback */
+      /* Receive FIFO 0 message pending Callback */
 #if USE_HAL_CAN_REGISTER_CALLBACKS == 1
       /* Call registered callback*/
       hcan->RxFifo0MsgPendingCallback(hcan);
@@ -1950,7 +1950,7 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef *hcan)
     /* Check if message is still pending */
     if ((hcan->Instance->RF1R & CAN_RF1R_FMP1) != 0U)
     {
-      /* Receive FIFO 1 mesage pending Callback */
+      /* Receive FIFO 1 message pending Callback */
 #if USE_HAL_CAN_REGISTER_CALLBACKS == 1
       /* Call registered callback*/
       hcan->RxFifo1MsgPendingCallback(hcan);

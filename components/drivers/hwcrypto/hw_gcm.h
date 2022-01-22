@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,9 +22,9 @@ struct hwcrypto_gcm;
 struct hwcrypto_gcm_ops
 {
     rt_err_t (*start)(struct hwcrypto_gcm *gcm_ctx,
-                      const unsigned char *add, size_t add_len);    /**< Set additional data. start GCM operation */
+                      const unsigned char *add, rt_size_t add_len);    /**< Set additional data. start GCM operation */
     rt_err_t (*finish)(struct hwcrypto_gcm *gcm_ctx,
-                       const unsigned char *tag, size_t tag_len);   /**< finish GCM operation. get tag */
+                       const unsigned char *tag, rt_size_t tag_len);   /**< finish GCM operation. get tag */
 };
 
 /**

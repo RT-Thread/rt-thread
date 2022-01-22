@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,7 +11,10 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 #ifndef RT_USING_DFS
     #error  "lwp need file system(RT_USING_DFS)"

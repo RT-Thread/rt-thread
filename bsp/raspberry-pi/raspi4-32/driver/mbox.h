@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,6 +12,7 @@
 #define __MBOX_H__
 
 #include <rtthread.h>
+#include "board.h"
 
 //https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
 //https://github.com/hermanhermitage/videocoreiv

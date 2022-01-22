@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -184,9 +184,9 @@ static DSTATUS disk_initialize(
     if (CardDetect)
     {
         /*
-			 * Card detection check
-			 * If the HC detects the No Card State, power will be cleared
-			 */
+             * Card detection check
+             * If the HC detects the No Card State, power will be cleared
+             */
         while (!((XSDPS_PSR_CARD_DPL_MASK |
                   XSDPS_PSR_CARD_STABLE_MASK |
                   XSDPS_PSR_CARD_INSRT_MASK) ==
@@ -198,8 +198,8 @@ static DSTATUS disk_initialize(
     }
 
     /*
-	 * Initialize the host controller
-	 */
+     * Initialize the host controller
+     */
     SdConfig = XSdPs_LookupConfig((u16)pdrv);
     if (NULL == SdConfig)
     {
@@ -223,9 +223,9 @@ static DSTATUS disk_initialize(
     }
 
     /*
-	 * Disk is initialized.
-	 * Store the same in Stat.
-	 */
+     * Disk is initialized.
+     * Store the same in Stat.
+     */
     s &= (~STA_NOINIT);
 
     Stat[pdrv] = s;
@@ -339,7 +339,7 @@ static rt_err_t rt_sdcard_init(rt_device_t dev)
     BYTE drvnum = *((BYTE *)dev->user_data);
 
     rt_snprintf(sdlock_name, sizeof(sdlock_name), "sdlock%d", drvnum);
-    if (rt_mutex_init(&sd_lock[drvnum], sdlock_name, RT_IPC_FLAG_FIFO) != RT_EOK)
+    if (rt_mutex_init(&sd_lock[drvnum], sdlock_name, RT_IPC_FLAG_PRIO) != RT_EOK)
     {
         LOG_E("init sdlock semaphore failed\n");
     }

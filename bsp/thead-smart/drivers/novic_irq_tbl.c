@@ -22,7 +22,7 @@ void irq_vectors_init(void)
 {
     int i;
 
-    for (i = 0; i < 48; i++) 
+    for (i = 0; i < 48; i++)
     {
         g_irqvector[i] = Default_Handler;
     }

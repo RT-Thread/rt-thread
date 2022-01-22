@@ -224,13 +224,6 @@ SECTIONS
         __bss_end__ = .;
     } > RAM
 
-    .heap (COPY):
-    {
-        __end__ = .;
-        end = __end__;
-        *(.heap*)
-        __HeapLimit = .;
-    } > RAM
 
     /* .stack*_dummy section doesn't contains any symbols. It is only
      * used for linker to calculate size of stack sections, and assign
@@ -263,7 +256,7 @@ SECTIONS
     PROVIDE(__stack = __StackTop);
 
     /* Check if data + heap + stack exceeds RAM limit */
-    ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed")
+    ASSERT(__StackLimit >= __bss_end__, "region RAM overflowed")
     /* todo assert on extra code */
 }
 

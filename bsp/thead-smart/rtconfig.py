@@ -1,9 +1,11 @@
 import os
 
 # toolchains options
+# CPUNAME = e906/e906f/e906fd/e906p/e906fp/e906fdp
+# CPUNAME = e907/e907f/e907fd/e907p/e907fp/e907fdp
 ARCH        ='risc-v'
-CPU         ='e906'
-CPUNAME     ='e906f'
+CPU         ='e9xx'
+CPUNAME     ='e906fdp'
 VENDOR      ='t-head'
 CROSS_TOOL  ='gcc'
 
@@ -12,9 +14,9 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/home/xinge/tools/riscv64-elf-x86_64-20200616-1.9.6/bin'
+    EXEC_PATH   = r'/home/chenzx/.thead/riscv64-elf-x86_64-2.0.1/bin/'
 else:
-    print 'Please make sure your toolchains is GNU GCC!'
+    print ('Please make sure your toolchains is GNU GCC!')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -37,16 +39,23 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
     STRIP   = PREFIX + 'strip'
 
-    if CPUNAME == 'e906fd':
-        DEVICE = ' -march=rv32imafdcxthead -mabi=ilp32d'
-    if CPUNAME == 'e906f':
-        DEVICE = ' -march=rv32imafcxthead -mabi=ilp32f'
-    if CPUNAME == 'e906':
-        DEVICE = ' -march=rv32imacxthead -mabi=ilp32'
+
+    if CPUNAME == 'e906fdp' or CPUNAME == 'e907fdp':
+        DEVICE = ' -march=rv32imafdcpzp64_xtheade -mabi=ilp32d'
+    if CPUNAME == 'e906fp' or CPUNAME == 'e907fp':
+        DEVICE = ' -march=rv32imafcpzp64_xtheade -mabi=ilp32f'
+    if CPUNAME == 'e906p' or CPUNAME == 'e907p':
+        DEVICE = ' -march=rv32imacpzp64_xtheade -mabi=ilp32'
+    if CPUNAME == 'e906fd' or CPUNAME == 'e907fd':
+        DEVICE = ' -march=rv32imafdc_xtheade -mabi=ilp32d'
+    if CPUNAME == 'e906f' or CPUNAME == 'e907f':
+        DEVICE = ' -march=rv32imafc_xtheade -mabi=ilp32f'
+    if CPUNAME == 'e906' or CPUNAME == 'e907':
+        DEVICE = ' -march=rv32imac_xtheade -mabi=ilp32'
 
     CFLAGS  = DEVICE + ' -c -g -ffunction-sections -fdata-sections -Wall -mcmodel=medlow'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--no-whole-archive -T gcc_csky.ld -lm -lc -lgcc -Wl,-gc-sections -Wl,-zmax-page-size=1024'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--no-whole-archive -T gcc_csky.ld -lm -lc -lgcc -Wl,-gc-sections -Wl,-zmax-page-size=1024 -Wl,-Map=rtt.map'
     CPATH   = ''
     LPATH   = ''
 
@@ -57,12 +66,6 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -O2 -g2'
 
     CXXFLAGS = CFLAGS
-
-#    M_CFLAGS = DEVICE + ' -EL -G0 -O2 -mno-abicalls -fno-common -fno-exceptions -fno-omit-frame-pointer -mlong-calls -fno-pic '
- #   M_CXXFLAGS = M_CFLAGS
- #   M_LFLAGS = DEVICE + ' -EL -r -Wl,--gc-sections,-z,max-page-size=0x4' +\
-  #                                  ' -nostartfiles -static-libgcc'
- #   M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'

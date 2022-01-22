@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,21 +34,32 @@
  * 2013-09-14     Grissiom     add an option check in rt_event_recv
  * 2018-10-02     Bernard      add 64bit support for mailbox
  * 2019-09-16     tyx          add send wait support for message queue
- * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
+ * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an
  *                             event without pending
  * 2020-10-11     Meco Man     add value overflow-check code
- * 2021-01-03     Meco Man     add rt_mb_urgent()
- * 2021-01-20     hupu         fix priority inversion bug of mutex
+ * 2021-01-03     Meco Man     implement rt_mb_urgent()
+ * 2021-05-30     Meco Man     implement rt_mutex_trytake()
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to ipc.c
  */
 
 #include <rtthread.h>
 #include <rthw.h>
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_object_trytake_hook
+    #define __on_rt_object_trytake_hook(parent)     __ON_HOOK_ARGS(rt_object_trytake_hook, (parent))
+#endif
+#ifndef __on_rt_object_take_hook
+    #define __on_rt_object_take_hook(parent)        __ON_HOOK_ARGS(rt_object_take_hook, (parent))
+#endif
+#ifndef __on_rt_object_put_hook
+    #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
 extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);
-#endif
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup IPC
@@ -57,13 +68,18 @@ extern void (*rt_object_put_hook)(struct rt_object *object);
 /**@{*/
 
 /**
- * This function will initialize an IPC object
+ * @brief    This function will initialize an IPC object, such as semaphore, mutex, messagequeue and mailbox.
  *
- * @param ipc the IPC object
+ * @note     Executing this function will complete an initialization of the suspend thread list of the ipc object.
  *
- * @return the operation status, RT_EOK on successful
+ * @param    ipc is a pointer to the IPC object.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           When the return value is any other values, it means the initialization failed.
+ *
+ * @warning  This function can be called from all IPC initialization and creation.
  */
-rt_inline rt_err_t rt_ipc_object_init(struct rt_ipc_object *ipc)
+rt_inline rt_err_t _ipc_object_init(struct rt_ipc_object *ipc)
 {
     /* initialize ipc object */
     rt_list_init(&(ipc->suspend_thread));
@@ -71,20 +87,39 @@ rt_inline rt_err_t rt_ipc_object_init(struct rt_ipc_object *ipc)
     return RT_EOK;
 }
 
+
 /**
- * This function will suspend a thread to a specified list. IPC object or some
- * double-queue object (mailbox etc.) contains this kind of list.
+ * @brief    This function will suspend a thread to a IPC object list.
  *
- * @param list the IPC suspended thread list
- * @param thread the thread object to be suspended
- * @param flag the IPC object flag,
- *        which shall be RT_IPC_FLAG_FIFO/RT_IPC_FLAG_PRIO.
+ * @param    list is a pointer to a suspended thread list of the IPC object.
  *
- * @return the operation status, RT_EOK on successful
+ * @param    thread is a pointer to the thread object to be suspended.
+ *
+ * @param    flag is a flag for the thread object to be suspended. It determines how the thread is suspended.
+ *           The flag can be ONE of the following values:
+ *
+ *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *
+ *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+ *
+ *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to use
+ *               RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *               the first-in-first-out principle, and you clearly understand that all threads involved in
+ *               this semaphore will become non-real-time threads.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the function is successfully executed.
+ *           When the return value is any other values, it means the initialization failed.
+ *
+ * @warning  This function can ONLY be called in the thread context, you can use RT_DEBUG_IN_THREAD_CONTEXT to
+ *           check the context.
+ *           In addition, this function is generally called by the following functions:
+ *           rt_sem_take(),  rt_mutex_take(),  rt_event_recv(),   rt_mb_send_wait(),
+ *           rt_mb_recv(),   rt_mq_recv(),     rt_mq_send_wait()
  */
-rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
-                                       struct rt_thread *thread,
-                                       rt_uint8_t        flag)
+rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
+                                     struct rt_thread *thread,
+                                     rt_uint8_t        flag)
 {
     /* suspend thread */
     rt_thread_suspend(thread);
@@ -93,7 +128,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
     {
     case RT_IPC_FLAG_FIFO:
         rt_list_insert_before(list, &(thread->tlist));
-        break;
+        break; /* RT_IPC_FLAG_FIFO */
 
     case RT_IPC_FLAG_PRIO:
         {
@@ -121,25 +156,37 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
             if (n == list)
                 rt_list_insert_before(list, &(thread->tlist));
         }
-        break;
+        break;/* RT_IPC_FLAG_PRIO */
 
     default:
-        break;  
+        RT_ASSERT(0);
+        break;
     }
 
     return RT_EOK;
 }
 
+
 /**
- * This function will resume the first thread in the list of a IPC object:
- * - remove the thread from suspend queue of IPC object
- * - put the thread into system ready queue
+ * @brief    This function will resume a thread.
  *
- * @param list the thread list
+ * @note     This function will resume the first thread in the list of a IPC object.
+ *           1. remove the thread from suspend queue of a IPC object.
+ *           2. put the thread into system ready queue.
  *
- * @return the operation status, RT_EOK on successful
+ *           By contrast, the rt_ipc_list_resume_all() function will resume all suspended threads
+ *           in the list of a IPC object.
+ *
+ * @param    list is a pointer to a suspended thread list of the IPC object.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the function is successfully executed.
+ *           When the return value is any other values, it means this operation failed.
+ *
+ * @warning  This function is generally called by the following functions:
+ *           rt_sem_release(),    rt_mutex_release(),    rt_mb_send_wait(),    rt_mq_send_wait(),
+ *           rt_mb_urgent(),      rt_mb_recv(),          rt_mq_urgent(),       rt_mq_recv(),
  */
-rt_inline rt_err_t rt_ipc_list_resume(rt_list_t *list)
+rt_inline rt_err_t _ipc_list_resume(rt_list_t *list)
 {
     struct rt_thread *thread;
 
@@ -154,15 +201,21 @@ rt_inline rt_err_t rt_ipc_list_resume(rt_list_t *list)
     return RT_EOK;
 }
 
+
 /**
- * This function will resume all suspended threads in a list, including
- * suspend list of IPC object and private list of mailbox etc.
+ * @brief   This function will resume all suspended threads in the IPC object list,
+ *          including the suspended list of IPC object, and private list of mailbox etc.
  *
- * @param list of the threads to resume
+ * @note    This function will resume all threads in the IPC object list.
+ *          By contrast, the rt_ipc_list_resume() function will resume a suspended thread in the list of a IPC object.
  *
- * @return the operation status, RT_EOK on successful
+ * @param   list is a pointer to a suspended thread list of the IPC object.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the function is successfully executed.
+ *           When the return value is any other values, it means this operation failed.
+ *
  */
-rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
+rt_inline rt_err_t _ipc_list_resume_all(rt_list_t *list)
 {
     struct rt_thread *thread;
     register rt_ubase_t temp;
@@ -192,42 +245,51 @@ rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
     return RT_EOK;
 }
 
-/**
- * This function will get the highest priority from the specified
- * list of threads
- *
- * @param list of the threads
- *
- * @return the highest priority
- */
-rt_uint8_t rt_ipc_get_highest_priority(rt_list_t *list)
-{
-    struct rt_list_node *n;
-    struct rt_thread *sthread;
-    rt_uint8_t priority = RT_THREAD_PRIORITY_MAX - 1;
-
-    for (n = list->next; n != list; n = n->next)
-    {
-        sthread = rt_list_entry(n, struct rt_thread, tlist);
-
-        priority = priority < sthread->current_priority ?
-                    priority :
-                    sthread->current_priority;
-    }
-    return priority;
-}
+/**@}*/
 
 #ifdef RT_USING_SEMAPHORE
 /**
- * This function will initialize a semaphore and put it under control of
- * resource management.
+ * @addtogroup semaphore
+ */
+
+/**@{*/
+/**
+ * @brief    This function will initialize a static semaphore object.
  *
- * @param sem the semaphore object
- * @param name the name of semaphore
- * @param value the initial value of semaphore
- * @param flag the flag of semaphore
+ * @note     For the static semaphore object, its memory space is allocated by the compiler during compiling,
+ *           and shall placed on the read-write data segment or on the uninitialized data segment.
+ *           By contrast, the rt_sem_create() function will allocate memory space automatically and initialize
+ *           the semaphore.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_sem_create()
+ *
+ * @param    sem is a pointer to the semaphore to initialize. It is assumed that storage for the semaphore will be
+ *           allocated in your application.
+ *
+ * @param    name is a pointer to the name you would like to give the semaphore.
+ *
+ * @param    value is the initial value for the semaphore.
+ *           If used to share resources, you should initialize the value as the number of available resources.
+ *           If used to signal the occurrence of an event, you should initialize the value as 0.
+ *
+ * @param    flag is the semaphore flag, which determines the queuing way of how multiple threads wait
+ *           when the semaphore is not available.
+ *           The semaphore flag can be ONE of the following values:
+ *
+ *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *
+ *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+ *
+ *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to
+ *               use RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *               the first-in-first-out principle, and you clearly understand that all threads involved in
+ *               this semaphore will become non-real-time threads.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it represents the initialization failed.
+ *
+ * @warning  This function can ONLY be called from threads.
  */
 rt_err_t rt_sem_init(rt_sem_t    sem,
                      const char *name,
@@ -236,12 +298,13 @@ rt_err_t rt_sem_init(rt_sem_t    sem,
 {
     RT_ASSERT(sem != RT_NULL);
     RT_ASSERT(value < 0x10000U);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* initialize object */
     rt_object_init(&(sem->parent.parent), RT_Object_Class_Semaphore, name);
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(sem->parent));
+    _ipc_object_init(&(sem->parent));
 
     /* set initial value */
     sem->value = (rt_uint16_t)value;
@@ -253,14 +316,24 @@ rt_err_t rt_sem_init(rt_sem_t    sem,
 }
 RTM_EXPORT(rt_sem_init);
 
+
 /**
- * This function will detach a semaphore from resource management
+ * @brief    This function will detach a static semaphore object.
  *
- * @param sem the semaphore object
+ * @note     This function is used to detach a static semaphore object which is initialized by rt_sem_init() function.
+ *           By contrast, the rt_sem_delete() function will delete a semaphore object.
+ *           When the semaphore is successfully detached, it will resume all suspended threads in the semaphore list.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_sem_delete()
  *
- * @see rt_sem_delete
+ * @param    sem is a pointer to a semaphore object to be detached.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it means that the semaphore detach failed.
+ *
+ * @warning  This function can ONLY detach a static semaphore initialized by the rt_sem_init() function.
+ *           If the semaphore is created by the rt_sem_create() function, you MUST NOT USE this function to detach it,
+ *           ONLY USE the rt_sem_delete() function to complete the deletion.
  */
 rt_err_t rt_sem_detach(rt_sem_t sem)
 {
@@ -270,7 +343,7 @@ rt_err_t rt_sem_detach(rt_sem_t sem)
     RT_ASSERT(rt_object_is_systemobject(&sem->parent.parent));
 
     /* wakeup all suspended threads */
-    rt_ipc_list_resume_all(&(sem->parent.suspend_thread));
+    _ipc_list_resume_all(&(sem->parent.suspend_thread));
 
     /* detach semaphore object */
     rt_object_detach(&(sem->parent.parent));
@@ -281,22 +354,45 @@ RTM_EXPORT(rt_sem_detach);
 
 #ifdef RT_USING_HEAP
 /**
- * This function will create a semaphore from system resource
+ * @brief    Creating a semaphore object.
  *
- * @param name the name of semaphore
- * @param value the initial value of semaphore
- * @param flag the flag of semaphore
+ * @note     For the semaphore object, its memory space is allocated automatically.
+ *           By contrast, the rt_sem_init() function will initialize a static semaphore object.
  *
- * @return the created semaphore, RT_NULL on error happen
+ * @see      rt_sem_init()
  *
- * @see rt_sem_init
+ * @param    name is a pointer to the name you would like to give the semaphore.
+ *
+ * @param    value is the initial value for the semaphore.
+ *           If used to share resources, you should initialize the value as the number of available resources.
+ *           If used to signal the occurrence of an event, you should initialize the value as 0.
+ *
+ * @param    flag is the semaphore flag, which determines the queuing way of how multiple threads wait
+ *           when the semaphore is not available.
+ *           The semaphore flag can be ONE of the following values:
+ *
+ *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *
+ *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+ *
+ *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to
+ *               use RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *               the first-in-first-out principle, and you clearly understand that all threads involved in
+ *               this semaphore will become non-real-time threads.
+ *
+ * @return   Return a pointer to the semaphore object. When the return value is RT_NULL, it means the creation failed.
+ *
+ * @warning  This function can NOT be called in interrupt context. You can use macor RT_DEBUG_NOT_IN_INTERRUPT to check it.
  */
 rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
 {
     rt_sem_t sem;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
     RT_ASSERT(value < 0x10000U);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* allocate object */
     sem = (rt_sem_t)rt_object_allocate(RT_Object_Class_Semaphore, name);
@@ -304,7 +400,7 @@ rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
         return sem;
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(sem->parent));
+    _ipc_object_init(&(sem->parent));
 
     /* set initial value */
     sem->value = value;
@@ -316,26 +412,36 @@ rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
 }
 RTM_EXPORT(rt_sem_create);
 
+
 /**
- * This function will delete a semaphore object and release the memory
+ * @brief    This function will delete a semaphore object and release the memory space.
  *
- * @param sem the semaphore object
+ * @note     This function is used to delete a semaphore object which is created by the rt_sem_create() function.
+ *           By contrast, the rt_sem_detach() function will detach a static semaphore object.
+ *           When the semaphore is successfully deleted, it will resume all suspended threads in the semaphore list.
  *
- * @return the error code
+ * @see      rt_sem_detach()
  *
- * @see rt_sem_detach
+ * @param    sem is a pointer to a semaphore object to be deleted.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the semaphore detach failed.
+ *
+ * @warning  This function can ONLY delete a semaphore initialized by the rt_sem_create() function.
+ *           If the semaphore is initialized by the rt_sem_init() function, you MUST NOT USE this function to delete it,
+ *           ONLY USE the rt_sem_detach() function to complete the detachment.
  */
 rt_err_t rt_sem_delete(rt_sem_t sem)
 {
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* parameter check */
     RT_ASSERT(sem != RT_NULL);
     RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
     RT_ASSERT(rt_object_is_systemobject(&sem->parent.parent) == RT_FALSE);
 
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
     /* wakeup all suspended threads */
-    rt_ipc_list_resume_all(&(sem->parent.suspend_thread));
+    _ipc_list_resume_all(&(sem->parent.suspend_thread));
 
     /* delete semaphore object */
     rt_object_delete(&(sem->parent.parent));
@@ -343,16 +449,31 @@ rt_err_t rt_sem_delete(rt_sem_t sem)
     return RT_EOK;
 }
 RTM_EXPORT(rt_sem_delete);
-#endif
+#endif /* RT_USING_HEAP */
+
 
 /**
- * This function will take a semaphore, if the semaphore is unavailable, the
- * thread shall wait for a specified time.
+ * @brief    This function will take a semaphore, if the semaphore is unavailable, the thread shall wait for
+ *           the semaphore up to a specified time.
  *
- * @param sem the semaphore object
- * @param time the waiting time
+ * @note     When this function is called, the count value of the sem->value will decrease 1 until it is equal to 0.
+ *           When the sem->value is 0, it means that the semaphore is unavailable. At this time, it will suspend the
+ *           thread preparing to take the semaphore.
+ *           On the contrary, the rt_sem_release() function will increase the count value of sem->value by 1 each time.
  *
- * @return the error code
+ * @see      rt_sem_trytake()
+ *
+ * @param    sem is a pointer to a semaphore object.
+ *
+ * @param    time is a timeout period (unit: an OS tick). If the semaphore is unavailable, the thread will wait for
+ *           the semaphore up to the amount of time specified by the argument.
+ *           NOTE: Generally, we use the macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *           semaphore is unavailable, the thread will be waitting forever.
+ *
+ * @return   Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the semaphore take failed.
+ *
+ * @warning  This function can ONLY be called in the thread context. It MUST NOT BE called in interrupt context.
  */
 rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 {
@@ -406,7 +527,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
                                         thread->name));
 
             /* suspend thread */
-            rt_ipc_list_suspend(&(sem->parent.suspend_thread),
+            _ipc_list_suspend(&(sem->parent.suspend_thread),
                                 thread,
                                 sem->parent.parent.flag);
 
@@ -442,26 +563,39 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 }
 RTM_EXPORT(rt_sem_take);
 
+
 /**
- * This function will try to take a semaphore and immediately return
+ * @brief    This function will try to take a semaphore, if the semaphore is unavailable, the thread returns immediately.
  *
- * @param sem the semaphore object
+ * @note     This function is very similar to the rt_sem_take() function, when the semaphore is not available,
+ *           the rt_sem_trytake() function will return immediately without waiting for a timeout.
+ *           In other words, rt_sem_trytake(sem) has the same effect as rt_sem_take(sem, 0).
  *
- * @return the error code
+ * @see      rt_sem_take()
+ *
+ * @param    sem is a pointer to a semaphore object.
+ *
+ * @return   Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the semaphore take failed.
  */
 rt_err_t rt_sem_trytake(rt_sem_t sem)
 {
-    return rt_sem_take(sem, 0);
+    return rt_sem_take(sem, RT_WAITING_NO);
 }
 RTM_EXPORT(rt_sem_trytake);
 
+
 /**
- * This function will release a semaphore, if there are threads suspended on
- * semaphore, it will be waked up.
+ * @brief    This function will release a semaphore. If there is thread suspended on the semaphore, it will get resumed.
  *
- * @param sem the semaphore object
+ * @note     If there are threads suspended on this semaphore, the first thread in the list of this semaphore object
+ *           will be resumed, and a thread scheduling (rt_schedule) will be executed.
+ *           If no threads are suspended on this semaphore, the count value sem->value of this semaphore will increase by 1.
  *
- * @return the error code
+ * @param    sem is a pointer to a semaphore object.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the semaphore release failed.
  */
 rt_err_t rt_sem_release(rt_sem_t sem)
 {
@@ -487,7 +621,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
     if (!rt_list_isempty(&sem->parent.suspend_thread))
     {
         /* resume the suspended thread */
-        rt_ipc_list_resume(&(sem->parent.suspend_thread));
+        _ipc_list_resume(&(sem->parent.suspend_thread));
         need_schedule = RT_TRUE;
     }
     else
@@ -514,14 +648,20 @@ rt_err_t rt_sem_release(rt_sem_t sem)
 }
 RTM_EXPORT(rt_sem_release);
 
+
 /**
- * This function can get or set some extra attributions of a semaphore object.
+ * @brief    This function will set some extra attributions of a semaphore object.
  *
- * @param sem the semaphore object
- * @param cmd the execution command
- * @param arg the execution argument
+ * @note     Currently this function only supports the RT_IPC_CMD_RESET command to reset the semaphore.
  *
- * @return the error code
+ * @param    sem is a pointer to a semaphore object.
+ *
+ * @param    cmd is a command word used to configure some attributions of the semaphore.
+ *
+ * @param    arg is the argument of the function to execute the command.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that this function failed to execute.
  */
 rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
 {
@@ -541,7 +681,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
         level = rt_hw_interrupt_disable();
 
         /* resume all waiting thread */
-        rt_ipc_list_resume_all(&sem->parent.suspend_thread);
+        _ipc_list_resume_all(&sem->parent.suspend_thread);
 
         /* set new value */
         sem->value = (rt_uint16_t)value;
@@ -557,21 +697,46 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_sem_control);
-#endif /* end of RT_USING_SEMAPHORE */
+
+/**@}*/
+#endif /* RT_USING_SEMAPHORE */
 
 #ifdef RT_USING_MUTEX
 /**
- * This function will initialize a mutex and put it under control of resource
- * management.
+ * @addtogroup mutex
+ */
+
+/**@{*/
+
+/**
+ * @brief    Initialize a static mutex object.
  *
- * @param mutex the mutex object
- * @param name the name of mutex
- * @param flag the flag of mutex
+ * @note     For the static mutex object, its memory space is allocated by the compiler during compiling,
+ *           and shall placed on the read-write data segment or on the uninitialized data segment.
+ *           By contrast, the rt_mutex_create() function will automatically allocate memory space
+ *           and initialize the mutex.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_mutex_create()
+ *
+ * @param    mutex is a pointer to the mutex to initialize. It is assumed that storage for the mutex will be
+ *           allocated in your application.
+ *
+ * @param    name is a pointer to the name that given to the mutex.
+ *
+ * @param    flag is the mutex flag, which determines the queuing way of how multiple threads wait
+ *           when the mutex is not available.
+ *           NOTE: This parameter has been obsoleted. It can be RT_IPC_FLAG_PRIO, RT_IPC_FLAG_FIFO or RT_NULL.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it represents the initialization failed.
+ *
+ * @warning  This function can ONLY be called from threads.
  */
 rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
 {
+    /* flag parameter has been obsoleted */
+    RT_UNUSED(flag);
+
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
 
@@ -579,28 +744,38 @@ rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
     rt_object_init(&(mutex->parent.parent), RT_Object_Class_Mutex, name);
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(mutex->parent));
+    _ipc_object_init(&(mutex->parent));
 
     mutex->value = 1;
     mutex->owner = RT_NULL;
     mutex->original_priority = 0xFF;
     mutex->hold  = 0;
 
-    /* set flag */
-    mutex->parent.parent.flag = flag;
+    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
+    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
 
     return RT_EOK;
 }
 RTM_EXPORT(rt_mutex_init);
 
+
 /**
- * This function will detach a mutex from resource management
+ * @brief    This function will detach a static mutex object.
  *
- * @param mutex the mutex object
+ * @note     This function is used to detach a static mutex object which is initialized by rt_mutex_init() function.
+ *           By contrast, the rt_mutex_delete() function will delete a mutex object.
+ *           When the mutex is successfully detached, it will resume all suspended threads in the mutex list.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_mutex_delete()
  *
- * @see rt_mutex_delete
+ * @param    mutex is a pointer to a mutex object to be detached.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it means that the mutex detach failed.
+ *
+ * @warning  This function can ONLY detach a static mutex initialized by the rt_mutex_init() function.
+ *           If the mutex is created by the rt_mutex_create() function, you MUST NOT USE this function to detach it,
+ *           ONLY USE the rt_mutex_delete() function to complete the deletion.
  */
 rt_err_t rt_mutex_detach(rt_mutex_t mutex)
 {
@@ -610,9 +785,9 @@ rt_err_t rt_mutex_detach(rt_mutex_t mutex)
     RT_ASSERT(rt_object_is_systemobject(&mutex->parent.parent));
 
     /* wakeup all suspended threads */
-    rt_ipc_list_resume_all(&(mutex->parent.suspend_thread));
+    _ipc_list_resume_all(&(mutex->parent.suspend_thread));
 
-    /* detach semaphore object */
+    /* detach mutex object */
     rt_object_detach(&(mutex->parent.parent));
 
     return RT_EOK;
@@ -621,18 +796,29 @@ RTM_EXPORT(rt_mutex_detach);
 
 #ifdef RT_USING_HEAP
 /**
- * This function will create a mutex from system resource
+ * @brief    This function will create a mutex object.
  *
- * @param name the name of mutex
- * @param flag the flag of mutex
+ * @note     For the mutex object, its memory space is automatically allocated.
+ *           By contrast, the rt_mutex_init() function will initialize a static mutex object.
  *
- * @return the created mutex, RT_NULL on error happen
+ * @see      rt_mutex_init()
  *
- * @see rt_mutex_init
+ * @param    name is a pointer to the name that given to the mutex.
+ *
+ * @param    flag is the mutex flag, which determines the queuing way of how multiple threads wait
+ *           when the mutex is not available.
+ *           NOTE: This parameter has been obsoleted. It can be RT_IPC_FLAG_PRIO, RT_IPC_FLAG_FIFO or RT_NULL.
+ *
+ * @return   Return a pointer to the mutex object. When the return value is RT_NULL, it means the creation failed.
+ *
+ * @warning  This function can ONLY be called from threads.
  */
 rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
 {
     struct rt_mutex *mutex;
+
+    /* flag parameter has been obsoleted */
+    RT_UNUSED(flag);
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -642,40 +828,50 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
         return mutex;
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(mutex->parent));
+    _ipc_object_init(&(mutex->parent));
 
     mutex->value              = 1;
     mutex->owner              = RT_NULL;
     mutex->original_priority  = 0xFF;
     mutex->hold               = 0;
 
-    /* set flag */
-    mutex->parent.parent.flag = flag;
+    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
+    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
 
     return mutex;
 }
 RTM_EXPORT(rt_mutex_create);
 
+
 /**
- * This function will delete a mutex object and release the memory
+ * @brief    This function will delete a mutex object and release this memory space.
  *
- * @param mutex the mutex object
+ * @note     This function is used to delete a mutex object which is created by the rt_mutex_create() function.
+ *           By contrast, the rt_mutex_detach() function will detach a static mutex object.
+ *           When the mutex is successfully deleted, it will resume all suspended threads in the mutex list.
  *
- * @return the error code
+ * @see      rt_mutex_detach()
  *
- * @see rt_mutex_detach
+ * @param    mutex is a pointer to a mutex object to be deleted.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mutex detach failed.
+ *
+ * @warning  This function can ONLY delete a mutex initialized by the rt_mutex_create() function.
+ *           If the mutex is initialized by the rt_mutex_init() function, you MUST NOT USE this function to delete it,
+ *           ONLY USE the rt_mutex_detach() function to complete the detachment.
  */
 rt_err_t rt_mutex_delete(rt_mutex_t mutex)
 {
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
     RT_ASSERT(rt_object_is_systemobject(&mutex->parent.parent) == RT_FALSE);
 
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
     /* wakeup all suspended threads */
-    rt_ipc_list_resume_all(&(mutex->parent.suspend_thread));
+    _ipc_list_resume_all(&(mutex->parent.suspend_thread));
 
     /* delete mutex object */
     rt_object_delete(&(mutex->parent.parent));
@@ -683,16 +879,31 @@ rt_err_t rt_mutex_delete(rt_mutex_t mutex)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mutex_delete);
-#endif
+#endif /* RT_USING_HEAP */
+
 
 /**
- * This function will take a mutex, if the mutex is unavailable, the
- * thread shall wait for a specified time.
+ * @brief    This function will take a mutex, if the mutex is unavailable, the thread shall wait for
+ *           the mutex up to a specified time.
  *
- * @param mutex the mutex object
- * @param time the waiting time
+ * @note     When this function is called, the count value of the mutex->value will decrease 1 until it is equal to 0.
+ *           When the mutex->value is 0, it means that the mutex is unavailable. At this time, it will suspend the
+ *           thread preparing to take the mutex.
+ *           On the contrary, the rt_mutex_release() function will increase the count value of mutex->value by 1 each time.
  *
- * @return the error code
+ * @see      rt_mutex_trytake()
+ *
+ * @param    mutex is a pointer to a mutex object.
+ *
+ * @param    time is a timeout period (unit: an OS tick). If the mutex is unavailable, the thread will wait for
+ *           the mutex up to the amount of time specified by the argument.
+ *           NOTE: Generally, we set this parameter to RT_WAITING_FOREVER, which means that when the mutex is unavailable,
+ *           the thread will be waitting forever.
+ *
+ * @return   Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mutex take failed.
+ *
+ * @warning  This function can ONLY be called in the thread context. It MUST NOT BE called in interrupt context.
  */
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
@@ -738,7 +949,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     {
 #ifdef RT_USING_SIGNALS
 __again:
-#endif /* end of RT_USING_SIGNALS */
+#endif /* RT_USING_SIGNALS */
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -789,7 +1000,7 @@ __again:
                 }
 
                 /* suspend current thread */
-                rt_ipc_list_suspend(&(mutex->parent.suspend_thread),
+                _ipc_list_suspend(&(mutex->parent.suspend_thread),
                                     thread,
                                     mutex->parent.parent.flag);
 
@@ -818,7 +1029,7 @@ __again:
 #ifdef RT_USING_SIGNALS
                     /* interrupt by signal, try it again */
                     if (thread->error == -RT_EINTR) goto __again;
-#endif /* end of RT_USING_SIGNALS */
+#endif /* RT_USING_SIGNALS */
 
                     /* return error */
                     return thread->error;
@@ -842,20 +1053,46 @@ __again:
 }
 RTM_EXPORT(rt_mutex_take);
 
+
 /**
- * This function will release a mutex, if there are threads suspended on mutex,
- * it will be waked up.
+ * @brief    This function will try to take a mutex, if the mutex is unavailable, the thread returns immediately.
  *
- * @param mutex the mutex object
+ * @note     This function is very similar to the rt_mutex_take() function, when the mutex is not available,
+ *           except that rt_mutex_trytake() will return immediately without waiting for a timeout
+ *           when the mutex is not available.
+ *           In other words, rt_mutex_trytake(mutex) has the same effect as rt_mutex_take(mutex, 0).
  *
- * @return the error code
+ * @see      rt_mutex_take()
+ *
+ * @param    mutex is a pointer to a mutex object.
+ *
+ * @return   Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mutex take failed.
+ */
+rt_err_t rt_mutex_trytake(rt_mutex_t mutex)
+{
+    return rt_mutex_take(mutex, RT_WAITING_NO);
+}
+RTM_EXPORT(rt_mutex_trytake);
+
+
+/**
+ * @brief    This function will release a mutex. If there is thread suspended on the mutex, the thread will be resumed.
+ *
+ * @note     If there are threads suspended on this mutex, the first thread in the list of this mutex object
+ *           will be resumed, and a thread scheduling (rt_schedule) will be executed.
+ *           If no threads are suspended on this mutex, the count value mutex->value of this mutex will increase by 1.
+ *
+ * @param    mutex is a pointer to a mutex object.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mutex release failed.
  */
 rt_err_t rt_mutex_release(rt_mutex_t mutex)
 {
     register rt_base_t temp;
     struct rt_thread *thread;
     rt_bool_t need_schedule;
-    rt_uint8_t max_priority_in_queue = RT_THREAD_PRIORITY_MAX - 1;
 
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
@@ -917,21 +1154,6 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
 
-            /* Priority adjustment occurs only when the following conditions
-             * are met simultaneously:
-             * 1.The type of mutex is RT_IPC_FLAG_FIFO;
-             * 2.The priority of the thread to be resumed is not equal to the
-             *   highest priority in the queue;
-             */
-            max_priority_in_queue = rt_ipc_get_highest_priority(&mutex->parent.suspend_thread);
-            if (mutex->parent.parent.flag == RT_IPC_FLAG_FIFO &&
-                thread->current_priority != max_priority_in_queue)
-            {
-                rt_thread_control(thread,
-                        RT_THREAD_CTRL_CHANGE_PRIORITY,
-                        &(max_priority_in_queue));
-            }
-
             if(mutex->hold < RT_MUTEX_HOLD_MAX)
             {
                 mutex->hold ++;
@@ -943,7 +1165,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             }
 
             /* resume thread */
-            rt_ipc_list_resume(&(mutex->parent.suspend_thread));
+            _ipc_list_resume(&(mutex->parent.suspend_thread));
 
             need_schedule = RT_TRUE;
         }
@@ -959,7 +1181,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
                 rt_hw_interrupt_enable(temp); /* enable interrupt */
                 return -RT_EFULL; /* value overflowed */
             }
-            
+
             /* clear owner */
             mutex->owner             = RT_NULL;
             mutex->original_priority = 0xff;
@@ -977,14 +1199,20 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 }
 RTM_EXPORT(rt_mutex_release);
 
+
 /**
- * This function can get or set some extra attributions of a mutex object.
+ * @brief    This function will set some extra attributions of a mutex object.
  *
- * @param mutex the mutex object
- * @param cmd the execution command
- * @param arg the execution argument
+ * @note     Currently this function does not implement the control function.
  *
- * @return the error code
+ * @param    mutex is a pointer to a mutex object.
+ *
+ * @param    cmd is a command word used to configure some attributions of the mutex.
+ *
+ * @param    arg is the argument of the function to execute the command.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that this function failed to execute.
  */
 rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg)
 {
@@ -995,23 +1223,56 @@ rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_mutex_control);
-#endif /* end of RT_USING_MUTEX */
+
+/**@}*/
+#endif /* RT_USING_MUTEX */
 
 #ifdef RT_USING_EVENT
 /**
- * This function will initialize an event and put it under control of resource
- * management.
+ * @addtogroup event
+ */
+
+/**@{*/
+
+/**
+ * @brief    The function will initialize a static event object.
  *
- * @param event the event object
- * @param name the name of event
- * @param flag the flag of event
+ * @note     For the static event object, its memory space is allocated by the compiler during compiling,
+ *           and shall placed on the read-write data segment or on the uninitialized data segment.
+ *           By contrast, the rt_event_create() function will allocate memory space automatically
+ *           and initialize the event.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_event_create()
+ *
+ * @param    event is a pointer to the event to initialize. It is assumed that storage for the event
+ *           will be allocated in your application.
+ *
+ * @param    name is a pointer to the name that given to the event.
+ *
+ * @param    flag is the event flag, which determines the queuing way of how multiple threads wait
+ *           when the event is not available.
+ *           The event flag can be ONE of the following values:
+ *
+ *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *
+ *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+ *
+ *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to
+ *               use RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *               the first-in-first-out principle, and you clearly understand that all threads involved in
+ *               this event will become non-real-time threads.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it represents the initialization failed.
+ *
+ * @warning  This function can ONLY be called from threads.
  */
 rt_err_t rt_event_init(rt_event_t event, const char *name, rt_uint8_t flag)
 {
     /* parameter check */
     RT_ASSERT(event != RT_NULL);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* initialize object */
     rt_object_init(&(event->parent.parent), RT_Object_Class_Event, name);
@@ -1020,7 +1281,7 @@ rt_err_t rt_event_init(rt_event_t event, const char *name, rt_uint8_t flag)
     event->parent.parent.flag = flag;
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(event->parent));
+    _ipc_object_init(&(event->parent));
 
     /* initialize event */
     event->set = 0;
@@ -1029,12 +1290,24 @@ rt_err_t rt_event_init(rt_event_t event, const char *name, rt_uint8_t flag)
 }
 RTM_EXPORT(rt_event_init);
 
+
 /**
- * This function will detach an event object from resource management
+ * @brief    This function will detach a static event object.
  *
- * @param event the event object
+ * @note     This function is used to detach a static event object which is initialized by rt_event_init() function.
+ *           By contrast, the rt_event_delete() function will delete an event object.
+ *           When the event is successfully detached, it will resume all suspended threads in the event list.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_event_delete()
+ *
+ * @param    event is a pointer to an event object to be detached.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it means that the event detach failed.
+ *
+ * @warning  This function can ONLY detach a static event initialized by the rt_event_init() function.
+ *           If the event is created by the rt_event_create() function, you MUST NOT USE this function to detach it,
+ *           ONLY USE the rt_event_delete() function to complete the deletion.
  */
 rt_err_t rt_event_detach(rt_event_t event)
 {
@@ -1044,7 +1317,7 @@ rt_err_t rt_event_detach(rt_event_t event)
     RT_ASSERT(rt_object_is_systemobject(&event->parent.parent));
 
     /* resume all suspended thread */
-    rt_ipc_list_resume_all(&(event->parent.suspend_thread));
+    _ipc_list_resume_all(&(event->parent.suspend_thread));
 
     /* detach event object */
     rt_object_detach(&(event->parent.parent));
@@ -1055,16 +1328,38 @@ RTM_EXPORT(rt_event_detach);
 
 #ifdef RT_USING_HEAP
 /**
- * This function will create an event object from system resource
+ * @brief    Creating an event object.
  *
- * @param name the name of event
- * @param flag the flag of event
+ * @note     For the event object, its memory space is allocated automatically.
+ *           By contrast, the rt_event_init() function will initialize a static event object.
  *
- * @return the created event, RT_NULL on error happen
+ * @see      rt_event_init()
+ *
+ * @param    name is a pointer to the name that given to the event.
+ *
+ * @param    flag is the event flag, which determines the queuing way of how multiple threads wait when the event
+ *           is not available.
+ *           The event flag can be ONE of the following values:
+ *
+ *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *
+ *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+ *
+ *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to
+ *               use RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *               the first-in-first-out principle, and you clearly understand that all threads involved in
+ *               this event will become non-real-time threads.
+ *
+ * @return   Return a pointer to the event object. When the return value is RT_NULL, it means the creation failed.
+ *
+ * @warning  This function can ONLY be called from threads.
  */
 rt_event_t rt_event_create(const char *name, rt_uint8_t flag)
 {
     rt_event_t event;
+
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -1077,7 +1372,7 @@ rt_event_t rt_event_create(const char *name, rt_uint8_t flag)
     event->parent.parent.flag = flag;
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(event->parent));
+    _ipc_object_init(&(event->parent));
 
     /* initialize event */
     event->set = 0;
@@ -1086,12 +1381,24 @@ rt_event_t rt_event_create(const char *name, rt_uint8_t flag)
 }
 RTM_EXPORT(rt_event_create);
 
+
 /**
- * This function will delete an event object and release the memory
+ * @brief    This function will delete an event object and release the memory space.
  *
- * @param event the event object
+ * @note     This function is used to delete an event object which is created by the rt_event_create() function.
+ *           By contrast, the rt_event_detach() function will detach a static event object.
+ *           When the event is successfully deleted, it will resume all suspended threads in the event list.
  *
- * @return the error code
+ * @see      rt_event_detach()
+ *
+ * @param    event is a pointer to an event object to be deleted.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the event detach failed.
+ *
+ * @warning  This function can ONLY delete an event initialized by the rt_event_create() function.
+ *           If the event is initialized by the rt_event_init() function, you MUST NOT USE this function to delete it,
+ *           ONLY USE the rt_event_detach() function to complete the detachment.
  */
 rt_err_t rt_event_delete(rt_event_t event)
 {
@@ -1103,7 +1410,7 @@ rt_err_t rt_event_delete(rt_event_t event)
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* resume all suspended thread */
-    rt_ipc_list_resume_all(&(event->parent.suspend_thread));
+    _ipc_list_resume_all(&(event->parent.suspend_thread));
 
     /* delete event object */
     rt_object_delete(&(event->parent.parent));
@@ -1111,16 +1418,25 @@ rt_err_t rt_event_delete(rt_event_t event)
     return RT_EOK;
 }
 RTM_EXPORT(rt_event_delete);
-#endif
+#endif /* RT_USING_HEAP */
+
 
 /**
- * This function will send an event to the event object, if there are threads
- * suspended on event object, it will be waked up.
+ * @brief    This function will send an event to the event object.
+ *           If there is a thread suspended on the event, the thread will be resumed.
  *
- * @param event the event object
- * @param set the event set
+ * @note     When using this function, you need to use the parameter (set) to specify the event flag of the event object,
+ *           then the function will traverse the list of suspended threads waiting on the event object.
+ *           If there is a thread suspended on the event, and the thread's event_info and the event flag of
+ *           the current event object matches, the thread will be resumed.
  *
- * @return the error code
+ * @param    event is a pointer to the event object to be sent.
+ *
+ * @param    set is a flag that you will set for this event's flag.
+ *           You can set an event flag, or you can set multiple flags through OR logic operation.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the event detach failed.
  */
 rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 {
@@ -1214,18 +1530,38 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 }
 RTM_EXPORT(rt_event_send);
 
+
 /**
- * This function will receive an event from event object, if the event is
- * unavailable, the thread shall wait for a specified time.
+ * @brief  This function will receive an event from event object. if the event is unavailable, the thread shall wait for
+ *         the event up to a specified time.
  *
- * @param event the fast event object
- * @param set the interested event set
- * @param option the receive option, either RT_EVENT_FLAG_AND or
- *        RT_EVENT_FLAG_OR should be set.
- * @param timeout the waiting time
- * @param recved the received event, if you don't care, RT_NULL can be set.
+ * @note   If there are threads suspended on this semaphore, the first thread in the list of this semaphore object
+ *         will be resumed, and a thread scheduling (rt_schedule) will be executed.
+ *         If no threads are suspended on this semaphore, the count value sem->value of this semaphore will increase by 1.
  *
- * @return the error code
+ * @param    event is a pointer to the event object to be received.
+ *
+ * @param    set is a flag that you will set for this event's flag.
+ *           You can set an event flag, or you can set multiple flags through OR logic operation.
+ *
+ * @param    option is the option of this receiving event, it indicates how the receiving event is operated.
+ *           The option can be one or more of the following values, When selecting multiple values,use logical OR to operate.
+ *           (NOTE: RT_EVENT_FLAG_OR and RT_EVENT_FLAG_AND can only select one):
+ *
+ *
+ *               RT_EVENT_FLAG_OR           The thread select to use logical OR to receive the event.
+ *
+ *               RT_EVENT_FLAG_AND          The thread select to use logical OR to receive the event.
+ *
+ *               RT_EVENT_FLAG_CLEAR        When the thread receives the corresponding event, the function
+ *                                          determines whether to clear the event flag.
+ *
+ * @param    timeout is a timeout period (unit: an OS tick).
+ *
+ * @param    recved is a pointer to the received event. If you don't care about this value, you can use RT_NULL to set.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the semaphore release failed.
  */
 rt_err_t rt_event_recv(rt_event_t   event,
                        rt_uint32_t  set,
@@ -1280,11 +1616,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
         /* set received event */
         if (recved)
             *recved = (event->set & set);
-            
-        /* fill thread event info */            
+
+        /* fill thread event info */
         thread->event_set = (event->set & set);
         thread->event_info = option;
-        
+
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
             event->set &= ~set;
@@ -1306,7 +1642,7 @@ rt_err_t rt_event_recv(rt_event_t   event,
         thread->event_info = option;
 
         /* put thread to suspended thread list */
-        rt_ipc_list_suspend(&(event->parent.suspend_thread),
+        _ipc_list_suspend(&(event->parent.suspend_thread),
                             thread,
                             event->parent.parent.flag);
 
@@ -1349,14 +1685,20 @@ rt_err_t rt_event_recv(rt_event_t   event,
 }
 RTM_EXPORT(rt_event_recv);
 
+
 /**
- * This function can get or set some extra attributions of an event object.
+ * @brief    This function will set some extra attributions of an event object.
  *
- * @param event the event object
- * @param cmd the execution command
- * @param arg the execution argument
+ * @note     Currently this function only supports the RT_IPC_CMD_RESET command to reset the event.
  *
- * @return the error code
+ * @param    event is a pointer to an event object.
+ *
+ * @param    cmd is a command word used to configure some attributions of the event.
+ *
+ * @param    arg is the argument of the function to execute the command.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that this function failed to execute.
  */
 rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
 {
@@ -1372,7 +1714,7 @@ rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
         level = rt_hw_interrupt_disable();
 
         /* resume all waiting thread */
-        rt_ipc_list_resume_all(&event->parent.suspend_thread);
+        _ipc_list_resume_all(&event->parent.suspend_thread);
 
         /* initialize event set */
         event->set = 0;
@@ -1388,20 +1730,52 @@ rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_event_control);
-#endif /* end of RT_USING_EVENT */
+
+/**@}*/
+#endif /* RT_USING_EVENT */
 
 #ifdef RT_USING_MAILBOX
 /**
- * This function will initialize a mailbox and put it under control of resource
- * management.
+ * @addtogroup mailbox
+ */
+
+/**@{*/
+
+/**
+ * @brief    Initialize a static mailbox object.
  *
- * @param mb the mailbox object
- * @param name the name of mailbox
- * @param msgpool the begin address of buffer to save received mail
- * @param size the size of mailbox
- * @param flag the flag of mailbox
+ * @note     For the static mailbox object, its memory space is allocated by the compiler during compiling,
+ *           and shall placed on the read-write data segment or on the uninitialized data segment.
+ *           By contrast, the rt_mb_create() function will allocate memory space automatically and initialize the mailbox.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_mb_create()
+ *
+ * @param    mb is a pointer to the mailbox to initialize.
+ *           It is assumed that storage for the mailbox will be allocated in your application.
+ *
+ * @param    name is a pointer to the name that given to the mailbox.
+ *
+ * @param    size is the maximum number of mails in the mailbox.
+ *           For example, when the mailbox buffer capacity is N, size is N/4.
+ *
+ * @param    flag is the mailbox flag, which determines the queuing way of how multiple threads wait
+ *           when the mailbox is not available.
+ *           The mailbox flag can be ONE of the following values:
+ *
+ *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *
+ *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                       (also known as first-come-first-served (FCFS) scheduling strategy).
+ *
+ *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to
+ *               use RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *               the first-in-first-out principle, and you clearly understand that all threads involved in
+ *               this mailbox will become non-real-time threads.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it represents the initialization failed.
+ *
+ * @warning  This function can ONLY be called from threads.
  */
 rt_err_t rt_mb_init(rt_mailbox_t mb,
                     const char  *name,
@@ -1410,6 +1784,7 @@ rt_err_t rt_mb_init(rt_mailbox_t mb,
                     rt_uint8_t   flag)
 {
     RT_ASSERT(mb != RT_NULL);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* initialize object */
     rt_object_init(&(mb->parent.parent), RT_Object_Class_MailBox, name);
@@ -1418,7 +1793,7 @@ rt_err_t rt_mb_init(rt_mailbox_t mb,
     mb->parent.parent.flag = flag;
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(mb->parent));
+    _ipc_object_init(&(mb->parent));
 
     /* initialize mailbox */
     mb->msg_pool   = (rt_ubase_t *)msgpool;
@@ -1434,12 +1809,24 @@ rt_err_t rt_mb_init(rt_mailbox_t mb,
 }
 RTM_EXPORT(rt_mb_init);
 
+
 /**
- * This function will detach a mailbox from resource management
+ * @brief    This function will detach a static mailbox object.
  *
- * @param mb the mailbox object
+ * @note     This function is used to detach a static mailbox object which is initialized by rt_mb_init() function.
+ *           By contrast, the rt_mb_delete() function will delete a mailbox object.
+ *           When the mailbox is successfully detached, it will resume all suspended threads in the mailbox list.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_mb_delete()
+ *
+ * @param    mb is a pointer to a mailbox object to be detached.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it means that the mailbox detach failed.
+ *
+ * @warning  This function can ONLY detach a static mailbox initialized by the rt_mb_init() function.
+ *           If the mailbox is created by the rt_mb_create() function, you MUST NOT USE this function to detach it,
+ *           ONLY USE the rt_mb_delete() function to complete the deletion.
  */
 rt_err_t rt_mb_detach(rt_mailbox_t mb)
 {
@@ -1449,9 +1836,9 @@ rt_err_t rt_mb_detach(rt_mailbox_t mb)
     RT_ASSERT(rt_object_is_systemobject(&mb->parent.parent));
 
     /* resume all suspended thread */
-    rt_ipc_list_resume_all(&(mb->parent.suspend_thread));
+    _ipc_list_resume_all(&(mb->parent.suspend_thread));
     /* also resume all mailbox private suspended thread */
-    rt_ipc_list_resume_all(&(mb->suspend_sender_thread));
+    _ipc_list_resume_all(&(mb->suspend_sender_thread));
 
     /* detach mailbox object */
     rt_object_detach(&(mb->parent.parent));
@@ -1462,17 +1849,41 @@ RTM_EXPORT(rt_mb_detach);
 
 #ifdef RT_USING_HEAP
 /**
- * This function will create a mailbox object from system resource
+ * @brief  Creating a mailbox object.
  *
- * @param name the name of mailbox
- * @param size the size of mailbox
- * @param flag the flag of mailbox
+ * @note   For the mailbox object, its memory space is allocated automatically.
+ *         By contrast, the rt_mb_init() function will initialize a static mailbox object.
  *
- * @return the created mailbox, RT_NULL on error happen
+ * @see    rt_mb_init()
+ *
+ * @param  name is a pointer that given to the mailbox.
+ *
+ * @param    size is the maximum number of mails in the mailbox.
+ *           For example, when mailbox buffer capacity is N, size is N/4.
+ *
+ * @param    flag is the mailbox flag, which determines the queuing way of how multiple threads wait
+ *           when the mailbox is not available.
+ *           The mailbox flag can be ONE of the following values:
+ *
+ *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *
+ *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+ *
+ *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to
+ *               use RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *               the first-in-first-out principle, and you clearly understand that all threads involved in
+ *               this mailbox will become non-real-time threads.
+ *
+ * @return   Return a pointer to the mailbox object. When the return value is RT_NULL, it means the creation failed.
+ *
+ * @warning  This function can ONLY be called from threads.
  */
 rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 {
     rt_mailbox_t mb;
+
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -1485,7 +1896,7 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
     mb->parent.parent.flag = flag;
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(mb->parent));
+    _ipc_object_init(&(mb->parent));
 
     /* initialize mailbox */
     mb->size     = size;
@@ -1508,27 +1919,39 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 }
 RTM_EXPORT(rt_mb_create);
 
+
 /**
- * This function will delete a mailbox object and release the memory
+ * @brief    This function will delete a mailbox object and release the memory space.
  *
- * @param mb the mailbox object
+ * @note     This function is used to delete a mailbox object which is created by the rt_mb_create() function.
+ *           By contrast, the rt_mb_detach() function will detach a static mailbox object.
+ *           When the mailbox is successfully deleted, it will resume all suspended threads in the mailbox list.
  *
- * @return the error code
+ * @see      rt_mb_detach()
+ *
+ * @param    mb is a pointer to a mailbox object to be deleted.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mailbox detach failed.
+ *
+ * @warning  This function can only delete mailbox created by the rt_mb_create() function.
+ *           If the mailbox is initialized by the rt_mb_init() function, you MUST NOT USE this function to delete it,
+ *           ONLY USE the rt_mb_detach() function to complete the detachment.
  */
 rt_err_t rt_mb_delete(rt_mailbox_t mb)
 {
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mb->parent.parent) == RT_Object_Class_MailBox);
     RT_ASSERT(rt_object_is_systemobject(&mb->parent.parent) == RT_FALSE);
 
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
     /* resume all suspended thread */
-    rt_ipc_list_resume_all(&(mb->parent.suspend_thread));
+    _ipc_list_resume_all(&(mb->parent.suspend_thread));
 
     /* also resume all mailbox private suspended thread */
-    rt_ipc_list_resume_all(&(mb->suspend_sender_thread));
+    _ipc_list_resume_all(&(mb->suspend_sender_thread));
 
     /* free mailbox pool */
     RT_KERNEL_FREE(mb->msg_pool);
@@ -1539,17 +1962,31 @@ rt_err_t rt_mb_delete(rt_mailbox_t mb)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mb_delete);
-#endif
+#endif /* RT_USING_HEAP */
+
 
 /**
- * This function will send a mail to mailbox object. If the mailbox is full,
- * current thread will be suspended until timeout.
+ * @brief    This function will send an mail to the mailbox object. If there is a thread suspended on the mailbox,
+ *           the thread will be resumed.
  *
- * @param mb the mailbox object
- * @param value the mail
- * @param timeout the waiting time
+ * @note     When using this function to send a mail, if the mailbox if fully used, the current thread will
+ *           wait for a timeout. If the set timeout time is reached and there is still no space available,
+ *           the sending thread will be resumed and an error code will be returned.
+ *           By contrast, the rt_mb_send() function will return an error code immediately without waiting time
+ *           when the mailbox if fully used.
  *
- * @return the error code
+ * @see      rt_mb_send()
+ *
+ * @param    mb is a pointer to the mailbox object to be sent.
+ *
+ * @param    value is a value to the content of the mail you want to send.
+ *
+ * @param    timeout is a timeout period (unit: an OS tick).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mailbox detach failed.
+ *
+ * @warning  This function can be called in interrupt context and thread context.
  */
 rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
                          rt_ubase_t   value,
@@ -1597,7 +2034,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
 
         RT_DEBUG_IN_THREAD_CONTEXT;
         /* suspend current thread */
-        rt_ipc_list_suspend(&(mb->suspend_sender_thread),
+        _ipc_list_suspend(&(mb->suspend_sender_thread),
                             thread,
                             mb->parent.parent.flag);
 
@@ -1649,7 +2086,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     ++ mb->in_offset;
     if (mb->in_offset >= mb->size)
         mb->in_offset = 0;
-    
+
     if(mb->entry < RT_MB_ENTRY_MAX)
     {
         /* increase message entry */
@@ -1660,11 +2097,11 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
-        rt_ipc_list_resume(&(mb->parent.suspend_thread));
+        _ipc_list_resume(&(mb->parent.suspend_thread));
 
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
@@ -1681,15 +2118,23 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
 }
 RTM_EXPORT(rt_mb_send_wait);
 
+
 /**
- * This function will send a mail to mailbox object, if there are threads
- * suspended on mailbox object, it will be waked up. This function will return
- * immediately, if you want blocking send, use rt_mb_send_wait instead.
+ * @brief    This function will send an mail to the mailbox object. If there is a thread suspended on the mailbox,
+ *           the thread will be resumed.
  *
- * @param mb the mailbox object
- * @param value the mail
+ * @note     When using this function to send a mail, if the mailbox is fully used, this function will return an error
+ *           code immediately without waiting time.
+ *           By contrast, the rt_mb_send_wait() function is set a timeout to wait for the mail to be sent.
  *
- * @return the error code
+ * @see      rt_mb_send_wait()
+ *
+ * @param    mb is a pointer to the mailbox object to be sent.
+ *
+ * @param    value is a value to the content of the mail you want to send.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mailbox detach failed.
  */
 rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value)
 {
@@ -1697,15 +2142,22 @@ rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value)
 }
 RTM_EXPORT(rt_mb_send);
 
+
 /**
- * This function will send an urgent mail to mailbox object, if there are threads
- * suspended on mailbox object, it will be waked up. This function will return
- * immediately.
+ * @brief    This function will send an urgent mail to the mailbox object.
  *
- * @param mb the mailbox object
- * @param value the mail
+ * @note     This function is almost the same as the rt_mb_send() function. The only difference is that
+ *           when sending an urgent mail, the mail will be placed at the head of the mail queue so that
+ *           the recipient can receive the urgent mail first.
  *
- * @return the error code
+ * @see      rt_mb_send()
+ *
+ * @param    mb is a pointer to the mailbox object to be sent.
+ *
+ * @param    value is the content of the mail you want to send.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mailbox detach failed.
  */
 rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
 {
@@ -1745,7 +2197,7 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
-        rt_ipc_list_resume(&(mb->parent.suspend_thread));
+        _ipc_list_resume(&(mb->parent.suspend_thread));
 
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
@@ -1762,15 +2214,24 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
 }
 RTM_EXPORT(rt_mb_urgent);
 
+
 /**
- * This function will receive a mail from mailbox object, if there is no mail
- * in mailbox object, the thread shall wait for a specified time.
+ * @brief    This function will receive a mail from mailbox object, if there is no mail in mailbox object,
+ *           the thread shall wait for a specified time.
  *
- * @param mb the mailbox object
- * @param value the received mail will be saved in
- * @param timeout the waiting time
+ * @note     Only when there is mail in the mailbox, the receiving thread can get the mail immediately and
+ *           return RT_EOK, otherwise the receiving thread will be suspended until the set timeout. If the mail
+ *           is still not received within the specified time, it will return-RT_ETIMEOUT.
  *
- * @return the error code
+ * @param    mb is a pointer to the mailbox object to be received.
+ *
+ * @param    value is a flag that you will set for this mailbox's flag.
+ *           You can set an mailbox flag, or you can set multiple flags through OR logic operations.
+ *
+ * @param    timeout is a timeout period (unit: an OS tick).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mailbox release failed.
  */
 rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
@@ -1819,7 +2280,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 
         RT_DEBUG_IN_THREAD_CONTEXT;
         /* suspend current thread */
-        rt_ipc_list_suspend(&(mb->parent.suspend_thread),
+        _ipc_list_suspend(&(mb->parent.suspend_thread),
                             thread,
                             mb->parent.parent.flag);
 
@@ -1882,7 +2343,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     /* resume suspended thread */
     if (!rt_list_isempty(&(mb->suspend_sender_thread)))
     {
-        rt_ipc_list_resume(&(mb->suspend_sender_thread));
+        _ipc_list_resume(&(mb->suspend_sender_thread));
 
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
@@ -1903,14 +2364,20 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 }
 RTM_EXPORT(rt_mb_recv);
 
+
 /**
- * This function can get or set some extra attributions of a mailbox object.
+ * @brief    This function will set some extra attributions of a mailbox object.
  *
- * @param mb the mailbox object
- * @param cmd the execution command
- * @param arg the execution argument
+ * @note     Currently this function only supports the RT_IPC_CMD_RESET command to reset the mailbox.
  *
- * @return the error code
+ * @param    mb is a pointer to a mailbox object.
+ *
+ * @param    cmd is a command used to configure some attributions of the mailbox.
+ *
+ * @param    arg is the argument of the function to execute the command.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that this function failed to execute.
  */
 rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
 {
@@ -1926,9 +2393,9 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
         level = rt_hw_interrupt_disable();
 
         /* resume all waiting thread */
-        rt_ipc_list_resume_all(&(mb->parent.suspend_thread));
+        _ipc_list_resume_all(&(mb->parent.suspend_thread));
         /* also resume all mailbox private suspended thread */
-        rt_ipc_list_resume_all(&(mb->suspend_sender_thread));
+        _ipc_list_resume_all(&(mb->suspend_sender_thread));
 
         /* re-init mailbox */
         mb->entry      = 0;
@@ -1946,26 +2413,64 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_mb_control);
-#endif /* end of RT_USING_MAILBOX */
+
+/**@}*/
+#endif /* RT_USING_MAILBOX */
 
 #ifdef RT_USING_MESSAGEQUEUE
+/**
+ * @addtogroup messagequeue
+ */
+
+/**@{*/
+
 struct rt_mq_message
 {
     struct rt_mq_message *next;
 };
 
+
 /**
- * This function will initialize a message queue and put it under control of
- * resource management.
+ * @brief    Initialize a static messagequeue object.
  *
- * @param mq the message object
- * @param name the name of message queue
- * @param msgpool the beginning address of buffer to save messages
- * @param msg_size the maximum size of message
- * @param pool_size the size of buffer to save messages
- * @param flag the flag of message queue
+ * @note     For the static messagequeue object, its memory space is allocated by the compiler during compiling,
+ *           and shall placed on the read-write data segment or on the uninitialized data segment.
+ *           By contrast, the rt_mq_create() function will allocate memory space automatically
+ *           and initialize the messagequeue.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_mq_create()
+ *
+ * @param    mq is a pointer to the messagequeue to initialize. It is assumed that storage for
+ *           the messagequeue will be allocated in your application.
+ *
+ * @param    name is a pointer to the name that given to the messagequeue.
+ *
+ * @param    msgpool is a pointer to the starting address of the memory space you allocated for
+ *           the messagequeue in advance.
+ *           In other words, msgpool is a pointer to the messagequeue buffer of the starting address.
+ *
+ * @param    msg_size is the maximum length of a message in the messagequeue (Unit: Byte).
+ *
+ * @param    pool_size is the size of the memory space allocated for the messagequeue in advance.
+ *
+ * @param    flag is the messagequeue flag, which determines the queuing way of how multiple threads wait
+ *           when the messagequeue is not available.
+ *           The messagequeue flag can be ONE of the following values:
+ *
+ *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *
+ *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+ *
+ *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to
+ *               use RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *               the first-in-first-out principle, and you clearly understand that all threads involved in
+ *               this messagequeue will become non-real-time threads.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it represents the initialization failed.
+ *
+ * @warning  This function can ONLY be called from threads.
  */
 rt_err_t rt_mq_init(rt_mq_t     mq,
                     const char *name,
@@ -1979,6 +2484,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     /* initialize object */
     rt_object_init(&(mq->parent.parent), RT_Object_Class_MessageQueue, name);
@@ -1987,7 +2493,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     mq->parent.parent.flag = flag;
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(mq->parent));
+    _ipc_object_init(&(mq->parent));
 
     /* set message pool */
     mq->msg_pool = msgpool;
@@ -2020,12 +2526,24 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
 }
 RTM_EXPORT(rt_mq_init);
 
+
 /**
- * This function will detach a message queue object from resource management
+ * @brief    This function will detach a static messagequeue object.
  *
- * @param mq the message queue object
+ * @note     This function is used to detach a static messagequeue object which is initialized by rt_mq_init() function.
+ *           By contrast, the rt_mq_delete() function will delete a messagequeue object.
+ *           When the messagequeue is successfully detached, it will resume all suspended threads in the messagequeue list.
  *
- * @return the operation status, RT_EOK on successful
+ * @see      rt_mq_delete()
+ *
+ * @param    mq is a pointer to a messagequeue object to be detached.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           If the return value is any other values, it means that the messagequeue detach failed.
+ *
+ * @warning  This function can ONLY detach a static messagequeue initialized by the rt_mq_init() function.
+ *           If the messagequeue is created by the rt_mq_create() function, you MUST NOT USE this function to detach it,
+ *           and ONLY USE the rt_mq_delete() function to complete the deletion.
  */
 rt_err_t rt_mq_detach(rt_mq_t mq)
 {
@@ -2035,9 +2553,9 @@ rt_err_t rt_mq_detach(rt_mq_t mq)
     RT_ASSERT(rt_object_is_systemobject(&mq->parent.parent));
 
     /* resume all suspended thread */
-    rt_ipc_list_resume_all(&mq->parent.suspend_thread);
+    _ipc_list_resume_all(&mq->parent.suspend_thread);
     /* also resume all message queue private suspended thread */
-    rt_ipc_list_resume_all(&(mq->suspend_sender_thread));
+    _ipc_list_resume_all(&(mq->suspend_sender_thread));
 
     /* detach message queue object */
     rt_object_detach(&(mq->parent.parent));
@@ -2048,14 +2566,36 @@ RTM_EXPORT(rt_mq_detach);
 
 #ifdef RT_USING_HEAP
 /**
- * This function will create a message queue object from system resource
+ * @brief    Creating a messagequeue object.
  *
- * @param name the name of message queue
- * @param msg_size the size of message
- * @param max_msgs the maximum number of message in queue
- * @param flag the flag of message queue
+ * @note     For the messagequeue object, its memory space is allocated automatically.
+ *           By contrast, the rt_mq_init() function will initialize a static messagequeue object.
  *
- * @return the created message queue, RT_NULL on error happen
+ * @see      rt_mq_init()
+ *
+ * @param    name is a pointer that given to the messagequeue.
+ *
+ * @param    msg_size is the maximum length of a message in the messagequeue (Unit: Byte).
+ *
+ * @param    max_msgs is the maximum number of messages in the messagequeue.
+ *
+ * @param    flag is the messagequeue flag, which determines the queuing way of how multiple threads wait
+ *           when the messagequeue is not available.
+ *           The messagequeue flag can be ONE of the following values:
+ *
+ *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *
+ *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+ *
+ *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to
+ *               use RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *               the first-in-first-out principle, and you clearly understand that all threads involved in
+ *               this messagequeue will become non-real-time threads.
+ *
+ * @return   Return a pointer to the messagequeue object. When the return value is RT_NULL, it means the creation failed.
+ *
+ * @warning  This function can NOT be called in interrupt context. You can use macor RT_DEBUG_NOT_IN_INTERRUPT to check it.
  */
 rt_mq_t rt_mq_create(const char *name,
                      rt_size_t   msg_size,
@@ -2065,6 +2605,8 @@ rt_mq_t rt_mq_create(const char *name,
     struct rt_messagequeue *mq;
     struct rt_mq_message *head;
     register rt_base_t temp;
+
+    RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -2077,7 +2619,7 @@ rt_mq_t rt_mq_create(const char *name,
     mq->parent.parent.flag = flag;
 
     /* initialize ipc object */
-    rt_ipc_object_init(&(mq->parent));
+    _ipc_object_init(&(mq->parent));
 
     /* initialize message queue */
 
@@ -2118,26 +2660,39 @@ rt_mq_t rt_mq_create(const char *name,
 }
 RTM_EXPORT(rt_mq_create);
 
+
 /**
- * This function will delete a message queue object and release the memory
+ * @brief    This function will delete a messagequeue object and release the memory.
  *
- * @param mq the message queue object
+ * @note     This function is used to delete a messagequeue object which is created by the rt_mq_create() function.
+ *           By contrast, the rt_mq_detach() function will detach a static messagequeue object.
+ *           When the messagequeue is successfully deleted, it will resume all suspended threads in the messagequeue list.
  *
- * @return the error code
+ * @see      rt_mq_detach()
+ *
+ * @param    mq is a pointer to a messagequeue object to be deleted.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the messagequeue detach failed.
+ *
+ * @warning  This function can ONLY delete a messagequeue initialized by the rt_mq_create() function.
+ *           If the messagequeue is initialized by the rt_mq_init() function, you MUST NOT USE this function to delete it,
+ *           ONLY USE the rt_mq_detach() function to complete the detachment.
+ *           for example,the rt_mq_create() function, it cannot be called in interrupt context.
  */
 rt_err_t rt_mq_delete(rt_mq_t mq)
 {
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mq->parent.parent) == RT_Object_Class_MessageQueue);
     RT_ASSERT(rt_object_is_systemobject(&mq->parent.parent) == RT_FALSE);
 
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
     /* resume all suspended thread */
-    rt_ipc_list_resume_all(&(mq->parent.suspend_thread));
+    _ipc_list_resume_all(&(mq->parent.suspend_thread));
     /* also resume all message queue private suspended thread */
-    rt_ipc_list_resume_all(&(mq->suspend_sender_thread));
+    _ipc_list_resume_all(&(mq->suspend_sender_thread));
 
     /* free message queue pool */
     RT_KERNEL_FREE(mq->msg_pool);
@@ -2148,18 +2703,37 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mq_delete);
-#endif
+#endif /* RT_USING_HEAP */
+
 
 /**
- * This function will send a message to message queue object. If the message queue is full,
- * current thread will be suspended until timeout.
+ * @brief    This function will send a message to the messagequeue object. If
+ *           there is a thread suspended on the messagequeue, the thread will be
+ *           resumed.
  *
- * @param mq the message queue object
- * @param buffer the message
- * @param size the size of buffer
- * @param timeout the waiting time
+ * @note     When using this function to send a message, if the messagequeue is
+ *           fully used, the current thread will wait for a timeout. If reaching
+ *           the timeout and there is still no space available, the sending
+ *           thread will be resumed and an error code will be returned. By
+ *           contrast, the rt_mq_send() function will return an error code
+ *           immediately without waiting when the messagequeue if fully used.
  *
- * @return the error code
+ * @see      rt_mq_send()
+ *
+ * @param    mq is a pointer to the messagequeue object to be sent.
+ *
+ * @param    buffer is the content of the message.
+ *
+ * @param    size is the length of the message(Unit: Byte).
+ *
+ * @param    timeout is a timeout period (unit: an OS tick).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the
+ *           operation is successful. If the return value is any other values,
+ *           it means that the messagequeue detach failed.
+ *
+ * @warning  This function can be called in interrupt context and thread
+ * context.
  */
 rt_err_t rt_mq_send_wait(rt_mq_t     mq,
                          const void *buffer,
@@ -2219,7 +2793,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
 
         RT_DEBUG_IN_THREAD_CONTEXT;
         /* suspend current thread */
-        rt_ipc_list_suspend(&(mq->suspend_sender_thread),
+        _ipc_list_suspend(&(mq->suspend_sender_thread),
                             thread,
                             mq->parent.parent.flag);
 
@@ -2305,7 +2879,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {
-        rt_ipc_list_resume(&(mq->parent.suspend_thread));
+        _ipc_list_resume(&(mq->parent.suspend_thread));
 
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
@@ -2322,15 +2896,28 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
 }
 RTM_EXPORT(rt_mq_send_wait)
 
+
 /**
- * This function will send a message to message queue object, if there are
- * threads suspended on message queue object, it will be waked up.
+ * @brief    This function will send a message to the messagequeue object.
+ *           If there is a thread suspended on the messagequeue, the thread will be resumed.
  *
- * @param mq the message queue object
- * @param buffer the message
- * @param size the size of buffer
+ * @note     When using this function to send a message, if the messagequeue is fully used,
+ *           the current thread will wait for a timeout.
+ *           By contrast, when the messagequeue is fully used, the rt_mq_send_wait() function will
+ *           return an error code immediately without waiting.
  *
- * @return the error code
+ * @see      rt_mq_send_wait()
+ *
+ * @param    mq is a pointer to the messagequeue object to be sent.
+ *
+ * @param    buffer is the content of the message.
+ *
+ * @param    size is the length of the message(Unit: Byte).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the messagequeue detach failed.
+ *
+ * @warning  This function can be called in interrupt context and thread context.
  */
 rt_err_t rt_mq_send(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
@@ -2338,16 +2925,24 @@ rt_err_t rt_mq_send(rt_mq_t mq, const void *buffer, rt_size_t size)
 }
 RTM_EXPORT(rt_mq_send);
 
+
 /**
- * This function will send an urgent message to message queue object, which
- * means the message will be inserted to the head of message queue. If there
- * are threads suspended on message queue object, it will be waked up.
+ * @brief    This function will send an urgent message to the messagequeue object.
  *
- * @param mq the message queue object
- * @param buffer the message
- * @param size the size of buffer
+ * @note     This function is almost the same as the rt_mq_send() function. The only difference is that
+ *           when sending an urgent message, the message is placed at the head of the messagequeue so that
+ *           the recipient can receive the urgent message first.
  *
- * @return the error code
+ * @see      rt_mq_send()
+ *
+ * @param    mq is a pointer to the messagequeue object to be sent.
+ *
+ * @param    buffer is the content of the message.
+ *
+ * @param    size is the length of the message(Unit: Byte).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mailbox detach failed.
  */
 rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
@@ -2409,11 +3004,11 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {
-        rt_ipc_list_resume(&(mq->parent.suspend_thread));
+        _ipc_list_resume(&(mq->parent.suspend_thread));
 
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
@@ -2430,17 +3025,25 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 }
 RTM_EXPORT(rt_mq_urgent);
 
+
 /**
- * This function will receive a message from message queue object, if there is
- * no message in message queue object, the thread shall wait for a specified
- * time.
+ * @brief    This function will receive a message from message queue object,
+ *           if there is no message in messagequeue object, the thread shall wait for a specified time.
  *
- * @param mq the message queue object
- * @param buffer the received message will be saved in
- * @param size the size of buffer
- * @param timeout the waiting time
+ * @note     Only when there is mail in the mailbox, the receiving thread can get the mail immediately and return RT_EOK,
+ *           otherwise the receiving thread will be suspended until timeout.
+ *           If the mail is not received within the specified time, it will return -RT_ETIMEOUT.
  *
- * @return the error code
+ * @param    mq is a pointer to the messagequeue object to be received.
+ *
+ * @param    buffer is the content of the message.
+ *
+ * @param    size is the length of the message(Unit: Byte).
+ *
+ * @param    timeout is a timeout period (unit: an OS tick).
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mailbox release failed.
  */
 rt_err_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
@@ -2495,7 +3098,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
         }
 
         /* suspend current thread */
-        rt_ipc_list_suspend(&(mq->parent.suspend_thread),
+        _ipc_list_suspend(&(mq->parent.suspend_thread),
                             thread,
                             mq->parent.parent.flag);
 
@@ -2571,7 +3174,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
     /* resume suspended thread */
     if (!rt_list_isempty(&(mq->suspend_sender_thread)))
     {
-        rt_ipc_list_resume(&(mq->suspend_sender_thread));
+        _ipc_list_resume(&(mq->suspend_sender_thread));
 
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
@@ -2592,15 +3195,20 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
 }
 RTM_EXPORT(rt_mq_recv);
 
+
 /**
- * This function can get or set some extra attributions of a message queue
- * object.
+ * @brief    This function will set some extra attributions of a messagequeue object.
  *
- * @param mq the message queue object
- * @param cmd the execution command
- * @param arg the execution argument
+ * @note     Currently this function only supports the RT_IPC_CMD_RESET command to reset the messagequeue.
  *
- * @return the error code
+ * @param    mq is a pointer to a messagequeue object.
+ *
+ * @param    cmd is a command used to configure some attributions of the messagequeue.
+ *
+ * @param    arg is the argument of the function to execute the command.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that this function failed to execute.
  */
 rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
 {
@@ -2617,9 +3225,9 @@ rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
         level = rt_hw_interrupt_disable();
 
         /* resume all waiting thread */
-        rt_ipc_list_resume_all(&mq->parent.suspend_thread);
+        _ipc_list_resume_all(&mq->parent.suspend_thread);
         /* also resume all message queue private suspended thread */
-        rt_ipc_list_resume_all(&(mq->suspend_sender_thread));
+        _ipc_list_resume_all(&(mq->suspend_sender_thread));
 
         /* release all message in the queue */
         while (mq->msg_queue_head != RT_NULL)
@@ -2652,6 +3260,8 @@ rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_mq_control);
-#endif /* end of RT_USING_MESSAGEQUEUE */
+
+/**@}*/
+#endif /* RT_USING_MESSAGEQUEUE */
 
 /**@}*/

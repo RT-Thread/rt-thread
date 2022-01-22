@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,10 +23,10 @@ extern int __bss_end__;
 
 extern usart_handle_t console_handle;
 extern void ioreuse_initial(void);
-
+extern int rt_hw_usart_init(void);
 
 /**
- * This function will initial smartl-evb(e906) board.
+ * This function will initial smart-evb board.
  */
 void rt_hw_board_init(void)
 {
@@ -36,7 +36,7 @@ void rt_hw_board_init(void)
     /* initialize hardware usart */
     rt_hw_usart_init();
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 

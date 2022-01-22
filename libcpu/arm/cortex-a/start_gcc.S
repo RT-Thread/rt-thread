@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,21 +22,27 @@
 .equ I_Bit,           0x80            @ when I bit is set, IRQ is disabled
 .equ F_Bit,           0x40            @ when F bit is set, FIQ is disabled
 
-#ifdef RT_USING_FPU
 .equ UND_Stack_Size,     0x00000400
-#else
-.equ UND_Stack_Size,     0x00000000
-#endif
 .equ SVC_Stack_Size,     0x00000400
-.equ ABT_Stack_Size,     0x00000000
+.equ ABT_Stack_Size,     0x00000400
 .equ RT_FIQ_STACK_PGSZ,  0x00000000
 .equ RT_IRQ_STACK_PGSZ,  0x00000800
 .equ USR_Stack_Size,     0x00000400
 
+.equ SUB_UND_Stack_Size,     0x00000400
+.equ SUB_SVC_Stack_Size,     0x00000400
+.equ SUB_ABT_Stack_Size,     0x00000400
+.equ SUB_RT_FIQ_STACK_PGSZ,  0x00000000
+.equ SUB_RT_IRQ_STACK_PGSZ,  0x00000400
+.equ SUB_USR_Stack_Size,     0x00000400
+
 #define ISR_Stack_Size  (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + \
                  RT_FIQ_STACK_PGSZ + RT_IRQ_STACK_PGSZ)
 
-.section .data.share.isr
+#define SUB_ISR_Stack_Size  (SUB_UND_Stack_Size + SUB_SVC_Stack_Size + SUB_ABT_Stack_Size + \
+                 SUB_RT_FIQ_STACK_PGSZ + SUB_RT_IRQ_STACK_PGSZ)
+
+.section .bss.share.isr
 /* stack */
 .globl stack_start
 .globl stack_top
@@ -82,9 +88,40 @@ continue:
 
     /* disable the data alignment check */
     mrc p15, 0, r1, c1, c0, 0
-    bic r1, #(1<<1)
+    bic r1, #(1<<0)             /* Disable MMU */
+    bic r1, #(1<<1)             /* Disable Alignment fault checking */
+    bic r1, #(1<<2)             /* Disable data cache */
+    bic r1, #(1<<11)            /* Disable program flow prediction */
+    bic r1, #(1<<12)            /* Disable instruction cache */
+    bic r1, #(3<<19)            /* bit[20:19] must be zero */
     mcr p15, 0, r1, c1, c0, 0
 
+    @ get cpu id, and subtract the offset from the stacks base address
+    bl rt_hw_cpu_id
+    mov r5, r0
+
+    cmp     r5, #0              @ cpu id == 0
+    beq     normal_setup
+
+    @ cpu id > 0, stop or wait
+#ifdef RT_SMP_AUTO_BOOT
+    ldr r0, =secondary_cpu_entry
+    mov r1, #0
+    str r1, [r0] /* clean secondary_cpu_entry */
+#endif /* RT_SMP_AUTO_BOOT */
+
+secondary_loop:
+    @ cpu core 1 goes into sleep until core 0 wakeup it
+    wfe
+#ifdef RT_SMP_AUTO_BOOT
+    ldr r1, =secondary_cpu_entry
+    ldr r0, [r1]
+    cmp r0, #0
+    blxne r0 /* if(secondary_cpu_entry) secondary_cpu_entry(); */
+#endif /* RT_SMP_AUTO_BOOT */
+    b secondary_loop
+
+normal_setup:
     /* setup stack */
     bl      stack_setup
 
@@ -104,6 +141,11 @@ bss_loop:
     orr r1, r0
     mcr p15, 0, r1, c1, c0, 1 //enable smp
 #endif
+
+    /* enable branch prediction */
+    mrc p15, 0, r0, c1, c0, 0
+    orr     r0, r0, #(1<<11)
+    mcr p15, 0, r0, c1, c0, 0
 
     /* initialize the mmu table and enable mmu */
     ldr r0, =platform_mem_desc
@@ -137,6 +179,7 @@ stack_setup:
 
     @  Set the startup stack for svc
     mov     sp, r0
+    sub     r0, r0, #SVC_Stack_Size
 
     @  Enter Undefined Instruction Mode and set its Stack Pointer
     msr     cpsr_c, #Mode_UND|I_Bit|F_Bit
@@ -298,6 +341,8 @@ rt_hw_context_switch_interrupt_do:
     ldr     r6,  [r6]
     ldr     sp,  [r6]       @ get new task's stack pointer
 
+    bl rt_interrupt_hook
+
 #ifdef RT_USING_FPU
 /* fpu context */
     ldmfd sp!, {r6}
@@ -330,9 +375,18 @@ rt_hw_context_switch_interrupt_do:
     mrs     r6, spsr                @/* Save CPSR                       */
     str     lr, [r0, #15*4]         @/* Push PC                         */
     str     r6, [r0, #16*4]         @/* Push CPSR                       */
-    cps     #Mode_SVC
+    mrs     r5, cpsr                @/* Save CPSR                       */
+
+    and     r4, r6, #0x1F
+    cmp     r4, #Mode_USR
+    moveq   r6, #Mode_SYS
+
+    orr     r6, r6, #0x80           @/* Switch to previous mode, then save SP & PC */
+    msr     cpsr_c, r6
     str     sp, [r0, #13*4]         @/* Save calling SP                 */
     str     lr, [r0, #14*4]         @/* Save calling PC                 */
+
+    msr     cpsr_c, r5              @/* Switch back to current mode */
 .endm
 
     .align  5
@@ -378,16 +432,6 @@ vector_resv:
     b       .
 
 #ifdef RT_USING_SMP
-.global set_secondary_cpu_boot_address
-set_secondary_cpu_boot_address:
-    ldr r0, =secondary_cpu_start
-
-    mvn r1, #0 //0xffffffff
-    ldr r2, =0x10000034
-    str r1, [r2]
-    str r0, [r2, #-4]
-    mov pc, lr
-
 .global secondary_cpu_start
 secondary_cpu_start:
 
@@ -405,38 +449,54 @@ secondary_cpu_start:
     bic r0, #(1<<13)
     mcr p15, 0, r0, c1, c0, 0
 
-#ifdef RT_USING_FPU
-    cps #Mode_UND
-    ldr sp, =und_stack_2_limit
-#endif
+    /* enable branch prediction */
+    mrc p15, 0, r0, c1, c0, 0
+    orr     r0, r0, #(1<<11)
+    mcr p15, 0, r0, c1, c0, 0
 
-    cps #Mode_IRQ
-    ldr sp, =irq_stack_2_limit
+    @ get cpu id, and subtract the offset from the stacks base address
+    bl rt_hw_cpu_id
+    sub r5, r0, #1
 
-    cps #Mode_FIQ
-    ldr sp, =irq_stack_2_limit
+    ldr r0, =SUB_ISR_Stack_Size
+    mul r0, r0, r5                      @r0 = SUB_ISR_Stack_Size * (cpuid - 1)
+    ldr r1, =sub_stack_top
+    sub r0, r1, r0                      @r0 = sub_stack_top - (SUB_ISR_Stack_Size * (cpuid - 1))
 
     cps #Mode_SVC
-    ldr sp, =svc_stack_2_limit
+    mov     sp, r0
+    sub     r0, r0, #SUB_SVC_Stack_Size
+
+    cps #Mode_UND
+    mov     sp, r0
+    sub     r0, r0, #SUB_UND_Stack_Size
+
+    cps #Mode_ABT
+    mov     sp, r0
+    sub     r0, r0, #SUB_ABT_Stack_Size
+
+    cps #Mode_FIQ
+    mov     sp, r0
+    sub     r0, r0, #SUB_RT_FIQ_STACK_PGSZ
+
+    cps #Mode_IRQ
+    mov     sp, r0
+    sub     r0, r0, #SUB_RT_IRQ_STACK_PGSZ
+
+    cps #Mode_SVC
 
     /* initialize the mmu table and enable mmu */
     bl rt_hw_mmu_init
 
     b secondary_cpu_c_start
-#endif
 
 .bss
 .align 2   //align to  2~2=4
-svc_stack_2:
-    .space (1 << 10)
-svc_stack_2_limit:
 
-irq_stack_2:
-    .space (1 << 10)
-irq_stack_2_limit:
+.global sub_stack_top /* used for backtrace to calculate stack top of irq mode */
 
-#ifdef RT_USING_FPU
-und_stack_2:
-    .space (1 << 10)
-und_stack_2_limit:
+sub_stack_start:
+    .space (SUB_ISR_Stack_Size * (RT_CPUS_NR-1))
+sub_stack_top:
+
 #endif

@@ -57,7 +57,7 @@ __vector_table
         DCD     GPIOA5_Handler
         DCD     GPIOA6_Handler
         DCD     GPIOA7_Handler
-		DCD     GPIOB0_Handler
+        DCD     GPIOB0_Handler
         DCD     GPIOB1_Handler
         DCD     GPIOB2_Handler
         DCD     GPIOB3_Handler
@@ -72,7 +72,7 @@ __vector_table
         DCD     GPIOC4_Handler
         DCD     GPIOC5_Handler
         DCD     GPIOC6_Handler
-        DCD     GPIOC7_Handler                                 
+        DCD     GPIOC7_Handler
         DCD     GPIOM0_Handler
         DCD     GPIOM1_Handler
         DCD     GPIOM2_Handler
@@ -80,25 +80,25 @@ __vector_table
         DCD     GPIOM4_Handler
         DCD     GPIOM5_Handler
         DCD     GPIOM6_Handler
-        DCD     GPIOM7_Handler                                            
-		DCD     DMA_Handler
+        DCD     GPIOM7_Handler
+        DCD     DMA_Handler
         DCD     LCD_Handler
         DCD     NORFLC_Handler
-		DCD		CAN_Handler
-        DCD     TIMR_Handler
+        DCD     CAN_Handler
+        DCD     PULSE_Handler
         DCD     WDT_Handler
         DCD     PWM_Handler
         DCD     UART0_Handler
-		DCD     UART1_Handler
-		DCD     UART2_Handler
-		DCD     UART3_Handler
-		DCD     0
-		DCD     I2C0_Handler
+        DCD     UART1_Handler
+        DCD     UART2_Handler
+        DCD     UART3_Handler
+        DCD     0
+        DCD     I2C0_Handler
         DCD     I2C1_Handler
         DCD     SPI0_Handler
         DCD     ADC0_Handler
         DCD     RTC_Handler
-        DCD     ANAC_Handler
+        DCD     BOD_Handler
         DCD     SDIO_Handler
         DCD     GPIOA_Handler
         DCD     GPIOB_Handler
@@ -108,7 +108,13 @@ __vector_table
         DCD     GPIOP_Handler
         DCD     ADC1_Handler
         DCD     FPU_Handler
-		DCD     SPI1_Handler
+        DCD     SPI1_Handler
+        DCD     TIMR0_Handler
+        DCD     TIMR1_Handler
+        DCD     TIMR2_Handler
+        DCD     TIMR3_Handler
+        DCD     TIMR4_Handler
+        DCD     TIMR5_Handler
         
 
         THUMB
@@ -345,10 +351,10 @@ NORFLC_Handler
 CAN_Handler
         B CAN_Handler
 
-        PUBWEAK TIMR_Handler
+        PUBWEAK PULSE_Handler
         SECTION .text:CODE:REORDER:NOROOT(1)
-TIMR_Handler
-        B TIMR_Handler
+PULSE_Handler
+        B PULSE_Handler
 
         PUBWEAK WDT_Handler
         SECTION .text:CODE:REORDER:NOROOT(1)
@@ -405,10 +411,10 @@ ADC0_Handler
 RTC_Handler
         B RTC_Handler
 
-        PUBWEAK ANAC_Handler
+        PUBWEAK BOD_Handler
         SECTION .text:CODE:REORDER:NOROOT(1)
-ANAC_Handler
-        B ANAC_Handler
+BOD_Handler
+        B BOD_Handler
 
         PUBWEAK SDIO_Handler
         SECTION .text:CODE:REORDER:NOROOT(1)
@@ -459,6 +465,36 @@ FPU_Handler
         SECTION .text:CODE:REORDER:NOROOT(1)
 SPI1_Handler
         B SPI1_Handler
+        
+        PUBWEAK TIMR0_Handler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+TIMR0_Handler
+        B TIMR0_Handler
+        
+        PUBWEAK TIMR1_Handler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+TIMR1_Handler
+        B TIMR1_Handler
+        
+        PUBWEAK TIMR2_Handler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+TIMR2_Handler
+        B TIMR2_Handler
+        
+        PUBWEAK TIMR3_Handler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+TIMR3_Handler
+        B TIMR3_Handler
+        
+        PUBWEAK TIMR4_Handler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+TIMR4_Handler
+        B TIMR4_Handler
+        
+        PUBWEAK TIMR5_Handler
+        SECTION .text:CODE:REORDER:NOROOT(1)
+TIMR5_Handler
+        B TIMR5_Handler
 
 
         END

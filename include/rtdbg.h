@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -177,6 +177,8 @@ extern "C" {
 #endif
 
 #define LOG_RAW(...)         dbg_raw(__VA_ARGS__)
+
+#define LOG_HEX(name, width, buf, size)
 
 #endif /* defined(RT_USING_ULOG) && define(DBG_ENABLE) */
 

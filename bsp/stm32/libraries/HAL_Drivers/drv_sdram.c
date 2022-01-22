@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,7 +24,7 @@ static struct rt_memheap system_heap;
 #endif
 
 /**
-  * @brief  Perform the SDRAM exernal memory inialization sequence
+  * @brief
   * @param  hsdram: SDRAM handle
   * @param  Command: Pointer to SDRAM command structure
   * @retval None
@@ -51,7 +51,7 @@ static void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM
 
     /* Insert 100 ms delay */
     /* interrupt is not enable, just to delay some time. */
-    for (tmpmrd = 0; tmpmrd < 0xffffff; tmpmrd ++)
+    for (tmpmrd = 0; tmpmrd < 0xffff; tmpmrd ++)
         ;
 
     /* Configure a PALL (precharge all) command */
@@ -212,11 +212,11 @@ int sdram_test(void)
     for (i = 0; i < SDRAM_SIZE / data_width; i++)
     {
 #if SDRAM_DATA_WIDTH == 8
-        *(__IO uint8_t *)(SDRAM_BANK_ADDR + i * data_width) = (uint8_t)0x55;
+        *(__IO uint8_t *)(SDRAM_BANK_ADDR + i * data_width) = (uint8_t)(i % 100);
 #elif SDRAM_DATA_WIDTH == 16
-        *(__IO uint16_t *)(SDRAM_BANK_ADDR + i * data_width) = (uint16_t)0x5555;
+        *(__IO uint16_t *)(SDRAM_BANK_ADDR + i * data_width) = (uint16_t)(i % 1000);
 #else
-        *(__IO uint32_t *)(SDRAM_BANK_ADDR + i * data_width) = (uint32_t)0x55555555;
+        *(__IO uint32_t *)(SDRAM_BANK_ADDR + i * data_width) = (uint32_t)(i % 1000);
 #endif
     }
     time_cast = rt_tick_get() - start_time;
@@ -229,21 +229,21 @@ int sdram_test(void)
     {
 #if SDRAM_DATA_WIDTH == 8
         data = *(__IO uint8_t *)(SDRAM_BANK_ADDR + i * data_width);
-        if (data != 0x55)
+        if (data != i % 100)
         {
             LOG_E("SDRAM test failed!");
             break;
         }
 #elif SDRAM_DATA_WIDTH == 16
         data = *(__IO uint16_t *)(SDRAM_BANK_ADDR + i * data_width);
-        if (data != 0x5555)
+        if (data != i % 1000)
         {
             LOG_E("SDRAM test failed!");
             break;
         }
 #else
         data = *(__IO uint32_t *)(SDRAM_BANK_ADDR + i * data_width);
-        if (data != 0x55555555)
+        if (data != i % 1000)
         {
             LOG_E("SDRAM test failed!");
             break;

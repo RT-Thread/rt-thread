@@ -236,7 +236,6 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
 
     menuconfig BSP_USING_SPI
@@ -245,11 +244,11 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         if BSP_USING_SPI
             config BSP_USING_SPI0
-                bool "Enable SPI0 BUS(CS/A12,MISO/A11,MOSI/A10,CLK/A9)"
+                bool "Enable SPI0 BUS(CS/P22,MISO/P19,MOSI/P18,CLK/P23)"
                 default n
 
             config BSP_USING_SPI1
-                bool "Enable SPI1 BUS(CS/C4,MISO/C5,MOSI/C6,CLK/C7)"
+                bool "Enable SPI1 BUS(CS/B6,MISO/B3,MOSI/B2,CLK/B1)"
                 default n
         endif
 

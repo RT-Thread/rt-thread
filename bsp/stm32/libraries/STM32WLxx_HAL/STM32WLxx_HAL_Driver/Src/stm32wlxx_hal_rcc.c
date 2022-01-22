@@ -133,7 +133,7 @@ static HAL_StatusTypeDef RCC_SetFlashLatency(uint32_t Flash_ClkSrcFreq, uint32_t
 
          (+) MSI (Multiple Speed Internal): Its frequency is software trimmable from 100KHZ to 48MHZ.
              The number of flash wait states is automatically adjusted when MSI range is updated with
-             @ref HAL_RCC_OscConfig() and the MSI is used as System clock source.
+             HAL_RCC_OscConfig() and the MSI is used as System clock source.
 
          (+) LSI (low-speed internal): 32 KHz low consumption RC used as IWDG and/or RTC
              clock source.
@@ -173,14 +173,14 @@ static HAL_StatusTypeDef RCC_SetFlashLatency(uint32_t Flash_ClkSrcFreq, uint32_t
              on AHB bus (DMA, GPIO...). APB1 (PCLK1) and APB2 (PCLK2) clocks are derived
              from AHB clock through configurable prescalers and used to clock
              the peripherals mapped on these buses. You can use
-             "@ref HAL_RCC_GetSysClockFreq()" function to retrieve the frequencies of these clocks.
+             "HAL_RCC_GetSysClockFreq()" function to retrieve the frequencies of these clocks.
              The AHB3 clock (HCLK3) is derived from System clock through configurable
              prescaler and used to clock the FLASH. APB3 (PCLK3) is derived from AHB3 clock.
 
          -@- All the peripheral clocks are derived from the System clock (SYSCLK) except:
 
            (+@) RTC: the RTC clock can be derived either from the LSI, LSE or HSE clock divided by 32.
-                You have to use @ref __HAL_RCC_RTC_ENABLE() and @ref HAL_RCCEx_PeriphCLKConfig() function
+                You have to use __HAL_RCC_RTC_ENABLE() and HAL_RCCEx_PeriphCLKConfig() function
                 to configure this clock.
 
            (+@) IWDG clock which is always the LSI clock.
@@ -1589,6 +1589,25 @@ __weak void HAL_RCC_CSSCallback(void)
   /* NOTE : This function should not be modified, when the callback is needed,
             the @ref HAL_RCC_CSSCallback should be implemented in the user file
    */
+}
+
+/**
+  * @brief  Get and clear reset flags
+  * @note   Once reset flags are retrieved, this API is clearing them in order
+  *         to isolate next reset reason.
+  * @retval can be a combination of @ref RCC_Reset_Flag
+  */
+uint32_t HAL_RCC_GetResetSource(void)
+{
+  uint32_t reset;
+
+  /* Get all reset flags */
+  reset = RCC->CSR & RCC_RESET_FLAG_ALL;
+
+  /* Clear Reset flags */
+  RCC->CSR |= RCC_CSR_RMVF;
+
+  return reset;
 }
 
 /**

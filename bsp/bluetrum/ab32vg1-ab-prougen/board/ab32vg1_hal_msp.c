@@ -35,6 +35,22 @@ void hal_uart_mspinit(struct uart_handle *huart)
         gpio_init.af_con    = GPIO_AFEN | GPIO_AFCON0 | UT1RXMAP_AF;
         hal_gpio_init(GPIOA_BASE, &gpio_init);
         /* Interrupt */
+    } else if (huart->instance == UART2_BASE) {
+        gpio_init.pin       = GPIO_PIN_2;
+        gpio_init.dir       = GPIO_DIR_OUTPUT;
+        gpio_init.de        = GPIO_DIGITAL;
+        gpio_init.alternate = GPIO_AF_MAP_Gx(UT2TXMAP_AF, GPIO_AF_G2);
+        gpio_init.af_con    = GPIO_AFEN | GPIO_AFCON1 | UT2TXMAP_AF;
+        hal_gpio_init(GPIOB_BASE, &gpio_init);
+
+        gpio_init.pin       = GPIO_PIN_1;
+        gpio_init.pull      = GPIO_PULLUP;
+        gpio_init.dir       = GPIO_DIR_INPUT;
+        gpio_init.de        = GPIO_DIGITAL;
+        gpio_init.alternate = GPIO_AF_MAP_Gx(UT2RXMAP_AF, GPIO_AF_G2);
+        gpio_init.af_con    = GPIO_AFEN | GPIO_AFCON1 | UT2RXMAP_AF;
+        hal_gpio_init(GPIOB_BASE, &gpio_init);
+        /* Interrupt */
     }
 }
 

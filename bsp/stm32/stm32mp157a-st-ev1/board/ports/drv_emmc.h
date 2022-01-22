@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -76,7 +76,7 @@ struct stm32_sdio
     volatile rt_uint32_t idmalar;
     volatile rt_uint32_t idmabar;
     volatile rt_uint32_t reserved2[5];
-    volatile rt_uint32_t fifo;          
+    volatile rt_uint32_t fifo;
     volatile rt_uint32_t reserved3[220];
     volatile rt_uint32_t verr;
     volatile rt_uint32_t ipidr;

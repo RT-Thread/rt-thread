@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 #if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && \
     !defined(BSP_USING_UART3)
     #error "Please define at least one BSP_USING_UARTx"
-    /* this driver can be disabled at menuconfig ¡ú RT-Thread Components ¡ú Device Drivers */
+    /* this driver can be disabled at menuconfig â†’ RT-Thread Components â†’ Device Drivers */
 #endif
 
 struct at32_usart {

@@ -6,8 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-10-30     CDT          first version
+ * 2021-01-18     CDT          MOdify SRAM_SIZE
  */
- 
 
 #ifndef __BOARD_H__
 #define __BOARD_H__
@@ -18,7 +18,7 @@
 
 /* board configuration */
 #define SRAM_BASE 0x1FFE0000
-#define SRAM_SIZE 0x20000
+#define SRAM_SIZE 0x80000
 #define SRAM_END (SRAM_BASE + SRAM_SIZE)
 
 /* High speed sram. */

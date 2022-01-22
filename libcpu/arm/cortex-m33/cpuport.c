@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 #include <rtthread.h>
 
 #if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
-                  /* Clang */ || (defined ( __CLANG_ARM ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
+                  /* Clang */ || (defined ( __clang__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
                   /* IAR */   || (defined ( __ICCARM__ ) && defined ( __ARMVFP__ ))        \
                   /* GNU */   || (defined ( __GNUC__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) )
 #define USE_FPU   1
@@ -373,7 +373,9 @@ struct exception_info
 
 void rt_hw_hard_fault_exception(struct exception_info *exception_info)
 {
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     extern long list_thread(void);
+#endif
     struct exception_stack_frame *exception_stack = &exception_info->stack_frame.exception_stack_frame;
     struct stack_frame *context = &exception_info->stack_frame;
 
@@ -407,7 +409,7 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
     {
         rt_kprintf("hard fault on thread: %s\r\n\r\n", rt_thread_self()->name);
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         list_thread();
 #endif
     }
@@ -457,7 +459,7 @@ RT_WEAK void rt_hw_cpu_reset(void)
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
-#if defined(__CC_ARM) 
+#if defined(__CC_ARM)
 __asm int __rt_ffs(int value)
 {
     CMP     r0, #0x00
@@ -470,19 +472,15 @@ __asm int __rt_ffs(int value)
 exit
     BX      lr
 }
-#elif defined(__CLANG_ARM)
+#elif defined(__clang__)
 int __rt_ffs(int value)
 {
-    __asm volatile(
-        "CMP     r0, #0x00            \n"
-        "BEQ     1f                   \n"
+    if (value == 0) return value;
 
+    __asm volatile(
         "RBIT    r0, r0               \n"
         "CLZ     r0, r0               \n"
         "ADDS    r0, r0, #0x01        \n"
-
-        "1:                           \n"
-        "BX      lr                   \n"
 
         : "=r"(value)
         : "r"(value)

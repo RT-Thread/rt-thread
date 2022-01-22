@@ -361,33 +361,33 @@
 #define USBSysErrIntClr (*((volatile unsigned long *) 0xE00900BC))
 #define USBSysErrIntSet (*((volatile unsigned long *) 0xE00900C0))
 
-#define VIC_BASE_ADDR	0xFFFFF000
+#define VIC_BASE_ADDR   0xFFFFF000
 
 enum LPC214x_INT
 {
-	WDT_INT	= 0,
-	SW_INT_reserved,
-	DbgCommRx_INT,
-	DbgCommTx_INT,
-	TIMER0_INT,
-	TIMER1_INT,
-	UART0_INT,
-	UART1_INT,
-	PWM0_INT,
-	I2C0_INT,
-	SP0_INT,
-	SP1_INT,
-	PLL_INT,
-	RTC_INT,
-	EINT0_INT,
-	EINT1_INT,
-	EINT2_INT,
-	EINT3_INT,
-	ADC0_INT,
-	I2C1_INT,
-	BOD_INT,
-	ADC1_INT,
-	USB_INT
+    WDT_INT = 0,
+    SW_INT_reserved,
+    DbgCommRx_INT,
+    DbgCommTx_INT,
+    TIMER0_INT,
+    TIMER1_INT,
+    UART0_INT,
+    UART1_INT,
+    PWM0_INT,
+    I2C0_INT,
+    SP0_INT,
+    SP1_INT,
+    PLL_INT,
+    RTC_INT,
+    EINT0_INT,
+    EINT1_INT,
+    EINT2_INT,
+    EINT3_INT,
+    ADC0_INT,
+    I2C1_INT,
+    BOD_INT,
+    ADC1_INT,
+    USB_INT
 };
 
 #endif  // __LPC214x_H

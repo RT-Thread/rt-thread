@@ -208,10 +208,10 @@ static void nu_pdma_init(void)
     if (nu_pdma_inited)
         return;
 
-    g_mutex_res = rt_mutex_create("pdmalock", RT_IPC_FLAG_FIFO);
+    g_mutex_res = rt_mutex_create("pdmalock", RT_IPC_FLAG_PRIO);
     RT_ASSERT(g_mutex_res != RT_NULL);
 
-    g_mutex_sg = rt_mutex_create("sgtbles", RT_IPC_FLAG_FIFO);
+    g_mutex_sg = rt_mutex_create("sgtbles", RT_IPC_FLAG_PRIO);
     RT_ASSERT(g_mutex_sg != RT_NULL);
 
     nu_pdma_chn_mask = ~NU_PDMA_CH_Msk;
@@ -894,7 +894,7 @@ static void nu_pdma_memfun_actor_init(void)
         nu_pdma_memfun_actor_pool_sem = rt_sem_create("mempool_sem", nu_pdma_memfun_actor_maxnum, RT_IPC_FLAG_FIFO);
         RT_ASSERT(nu_pdma_memfun_actor_pool_sem != RT_NULL);
 
-        nu_pdma_memfun_actor_pool_lock = rt_mutex_create("mempool_lock", RT_IPC_FLAG_FIFO);
+        nu_pdma_memfun_actor_pool_lock = rt_mutex_create("mempool_lock", RT_IPC_FLAG_PRIO);
         RT_ASSERT(nu_pdma_memfun_actor_pool_lock != RT_NULL);
     }
 }

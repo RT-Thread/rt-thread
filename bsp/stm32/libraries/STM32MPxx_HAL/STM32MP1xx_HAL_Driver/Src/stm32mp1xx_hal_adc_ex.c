@@ -3,7 +3,7 @@
   * @file    stm32mp1xx_hal_adc_ex.c
   * @author  MCD Application Team
   * @brief   This file provides firmware functions to manage the following
-  *          functionalities of the Analog to Digital Convertor (ADC)
+  *          functionalities of the Analog to Digital Converter (ADC)
   *          peripheral:
   *           + Operation functions
   *             ++ Start, stop, get result of conversions of ADC group injected,
@@ -62,8 +62,7 @@
 
 #define ADC_JSQR_FIELDS  ((ADC_JSQR_JL | ADC_JSQR_JEXTSEL | ADC_JSQR_JEXTEN |\
                            ADC_JSQR_JSQ1  | ADC_JSQR_JSQ2 |\
-                           ADC_JSQR_JSQ3 | ADC_JSQR_JSQ4 ))  /*!< ADC_JSQR fields of parameters that can be updated anytime
-                                                                  once the ADC is enabled */
+                           ADC_JSQR_JSQ3 | ADC_JSQR_JSQ4 ))  /*!< ADC_JSQR fields of parameters that can be updated anytime once the ADC is enabled */
 
 /* Fixed timeout value for ADC calibration.                                   */
 /* Values defined to be higher than worst cases: maximum ratio between ADC    */
@@ -230,14 +229,14 @@ HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_GetValue(ADC_HandleTypeDef* hadc, 
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Enable the ADC ADEN = 1 to be able to read the linear calibration factor */
-  if(LL_ADC_IsEnabled(hadc->Instance) == 0UL) 
+  if (LL_ADC_IsEnabled(hadc->Instance) == 0UL) 
     {
       tmp_hal_status = ADC_Enable(hadc);
     }
 
   if (tmp_hal_status == HAL_OK)
   {
-   if(LL_ADC_REG_IsConversionOngoing(hadc->Instance) != 0UL)
+   if (LL_ADC_REG_IsConversionOngoing(hadc->Instance) != 0UL)
     {
       LL_ADC_REG_StopConversion(hadc->Instance);
       temp_REG_IsConversionOngoing = 1UL;
@@ -246,7 +245,7 @@ HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_GetValue(ADC_HandleTypeDef* hadc, 
     {
       LinearCalib_Buffer[cnt-1U]=LL_ADC_GetCalibrationLinearFactor(hadc->Instance, ADC_CR_LINCALRDYW6 >> (ADC_LINEAR_CALIB_REG_COUNT-cnt));
     }
-   if(temp_REG_IsConversionOngoing != 0UL)
+   if (temp_REG_IsConversionOngoing != 0UL)
     {
       LL_ADC_REG_StartConversion(hadc->Instance);
     }
@@ -265,7 +264,8 @@ HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_GetValue(ADC_HandleTypeDef* hadc, 
   * @param CalibrationFactor Calibration factor (coded on 7 bits maximum)
   * @retval HAL state
   */
-HAL_StatusTypeDef HAL_ADCEx_Calibration_SetValue(ADC_HandleTypeDef *hadc, uint32_t SingleDiff, uint32_t CalibrationFactor)
+HAL_StatusTypeDef HAL_ADCEx_Calibration_SetValue(ADC_HandleTypeDef *hadc, uint32_t SingleDiff,
+                                                 uint32_t CalibrationFactor)
 {
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
   uint32_t tmp_adc_is_conversion_on_going_regular;
@@ -2057,19 +2057,23 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc, ADC_I
     {
       /* Scan each offset register to check if the selected channel is targeted. */
       /* If this is the case, the corresponding offset number is disabled.       */
-      if(__LL_ADC_CHANNEL_TO_DECIMAL_NB(LL_ADC_GetOffsetChannel(hadc->Instance, LL_ADC_OFFSET_1)) == __LL_ADC_CHANNEL_TO_DECIMAL_NB(sConfigInjected->InjectedChannel))
+      if (__LL_ADC_CHANNEL_TO_DECIMAL_NB(LL_ADC_GetOffsetChannel(hadc->Instance, LL_ADC_OFFSET_1))
+          == __LL_ADC_CHANNEL_TO_DECIMAL_NB(sConfigInjected->InjectedChannel))
       {
         LL_ADC_SetOffset(hadc->Instance, LL_ADC_OFFSET_1, sConfigInjected->InjectedChannel, LL_ADC_OFFSET_SIGNED_SATURATION_DISABLE);
       }
-      if(__LL_ADC_CHANNEL_TO_DECIMAL_NB(LL_ADC_GetOffsetChannel(hadc->Instance, LL_ADC_OFFSET_2)) == __LL_ADC_CHANNEL_TO_DECIMAL_NB(sConfigInjected->InjectedChannel))
+      if (__LL_ADC_CHANNEL_TO_DECIMAL_NB(LL_ADC_GetOffsetChannel(hadc->Instance, LL_ADC_OFFSET_2))
+          == __LL_ADC_CHANNEL_TO_DECIMAL_NB(sConfigInjected->InjectedChannel))
       {
         LL_ADC_SetOffset(hadc->Instance, LL_ADC_OFFSET_2, sConfigInjected->InjectedChannel, LL_ADC_OFFSET_SIGNED_SATURATION_DISABLE);
       }
-      if(__LL_ADC_CHANNEL_TO_DECIMAL_NB(LL_ADC_GetOffsetChannel(hadc->Instance, LL_ADC_OFFSET_3)) == __LL_ADC_CHANNEL_TO_DECIMAL_NB(sConfigInjected->InjectedChannel))
+      if (__LL_ADC_CHANNEL_TO_DECIMAL_NB(LL_ADC_GetOffsetChannel(hadc->Instance, LL_ADC_OFFSET_3))
+          == __LL_ADC_CHANNEL_TO_DECIMAL_NB(sConfigInjected->InjectedChannel))
       {
         LL_ADC_SetOffset(hadc->Instance, LL_ADC_OFFSET_4, sConfigInjected->InjectedChannel, LL_ADC_OFFSET_SIGNED_SATURATION_DISABLE);
       }
-      if(__LL_ADC_CHANNEL_TO_DECIMAL_NB(LL_ADC_GetOffsetChannel(hadc->Instance, LL_ADC_OFFSET_4)) == __LL_ADC_CHANNEL_TO_DECIMAL_NB(sConfigInjected->InjectedChannel))
+      if (__LL_ADC_CHANNEL_TO_DECIMAL_NB(LL_ADC_GetOffsetChannel(hadc->Instance, LL_ADC_OFFSET_4))
+          == __LL_ADC_CHANNEL_TO_DECIMAL_NB(sConfigInjected->InjectedChannel))
       {
         LL_ADC_SetOffset(hadc->Instance, LL_ADC_OFFSET_4, sConfigInjected->InjectedChannel, LL_ADC_OFFSET_SIGNED_SATURATION_DISABLE);
       }
@@ -2091,7 +2095,9 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc, ADC_I
     if (sConfigInjected->InjectedSingleDiff == ADC_DIFFERENTIAL_ENDED)
     {
       /* Set sampling time of the selected ADC channel */
-      LL_ADC_SetChannelSamplingTime(hadc->Instance, (uint32_t)(__LL_ADC_DECIMAL_NB_TO_CHANNEL((__LL_ADC_CHANNEL_TO_DECIMAL_NB((uint32_t)sConfigInjected->InjectedChannel) + 1UL) & 0x1FUL)), sConfigInjected->InjectedSamplingTime);
+      LL_ADC_SetChannelSamplingTime(hadc->Instance,
+                                    (uint32_t)(__LL_ADC_DECIMAL_NB_TO_CHANNEL((__LL_ADC_CHANNEL_TO_DECIMAL_NB((uint32_t)sConfigInjected->InjectedChannel)
+                                                                               + 1UL) & 0x1FUL)), sConfigInjected->InjectedSamplingTime);
     }
 
     /* Management of internal measurement channels: Vbat/VrefInt/TempSensor/VddCore   */
@@ -2100,7 +2106,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc, ADC_I
     /* Note: these internal measurement paths can be disabled using           */
     /* HAL_ADC_DeInit().                                                      */
 
-    if(__LL_ADC_IS_CHANNEL_INTERNAL(sConfigInjected->InjectedChannel))
+    if (__LL_ADC_IS_CHANNEL_INTERNAL(sConfigInjected->InjectedChannel))
     {
       /* Configuration of common ADC parameters (continuation)                */
       /* Software is allowed to change common parameters only when all ADCs   */

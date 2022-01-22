@@ -1,96 +1,70 @@
 #ifndef __SWM320_LCD_H__
 #define __SWM320_LCD_H__
 
-
 typedef struct
 {
-    uint8_t  Interface;     //LCDÆÁ½Ó¿Ú£ºLCD_INTERFACE_RGB¡¢LCD_INTERFACE_I80¡¢LCD_INTERFACE_M68
+    uint16_t HnPixel;   //æ°´å¹³æ–¹å‘åƒç´ ä¸ªæ•°ï¼Œæœ€å¤§å–å€¼1024
+    uint16_t VnPixel;   //å‚ç›´æ–¹å‘åƒç´ ä¸ªæ•°ï¼Œæœ€å¤§å–å€¼ 768
+    uint8_t Hfp;        //horizonal front porchï¼Œæœ€å¤§å–å€¼32
+    uint8_t Hbp;        //horizonal back porchï¼Œ æœ€å¤§å–å€¼128
+    uint8_t Vfp;        //vertical front porchï¼Œ æœ€å¤§å–å€¼8
+    uint8_t Vbp;        //vertical back porchï¼Œ  æœ€å¤§å–å€¼32
+    uint8_t ClkDiv;     //ç³»ç»Ÿæ—¶é’Ÿç»ClkDivåˆ†é¢‘åäº§ç”ŸDOCCLKï¼Œ0 2åˆ†é¢‘    1 4åˆ†é¢‘    2 6åˆ†é¢‘    ... ...    31 64åˆ†é¢‘
+    uint8_t SamplEdge;  //å±å¹•åœ¨DOTCLKçš„å“ªä¸ªè¾¹æ²¿é‡‡æ ·æ•°æ®ï¼šLCD_SAMPLEDGE_RISEã€LCD_SAMPLEDGE_FALL
+    uint8_t ClkAlways;  //1 ä¸€ç›´è¾“å‡ºDOTCLK    0 åªåœ¨ä¼ è¾“æ•°æ®æ—¶è¾“å‡ºDOTCLK
+    uint8_t HsyncWidth; //HSYNCä½ç”µå¹³æŒç»­å¤šå°‘ä¸ªDOTCLKï¼Œå–å€¼ï¼šLCD_HSYNC_1DOTCLKã€LCD_HSYNC_2DOTCLKã€LCD_HSYNC_3DOTCLKã€LCD_HSYNC_4DOTCLK
 
-    /* RGBÍ¬²½½Ó¿Ú²ÎÊı */
-    uint8_t  Dir;           //LCD_DIR_LANDSCAPE ºáÆÁ    LCD_DIR_PORTRAIT ÊúÆÁ
-    uint16_t HnPixel;       //Ë®Æ½·½ÏòÏñËØ¸öÊı£¬×î´óÈ¡Öµ1024
-    uint16_t VnPixel;       //´¹Ö±·½ÏòÏñËØ¸öÊı£¬×î´óÈ¡Öµ 768
-    uint8_t  Hfp;           //horizonal front porch£¬×î´óÈ¡Öµ32
-    uint8_t  Hbp;           //horizonal back porch£¬ ×î´óÈ¡Öµ128
-    uint8_t  Vfp;           //vertical front porch£¬ ×î´óÈ¡Öµ8
-    uint8_t  Vbp;           //vertical back porch£¬  ×î´óÈ¡Öµ32
-    uint8_t  ClkDiv;        //ÏµÍ³Ê±ÖÓ¾­ClkDiv·ÖÆµºó²úÉúDOCCLK£¬0 2·ÖÆµ    1 4·ÖÆµ    2 6·ÖÆµ    ... ...    31 64·ÖÆµ
-    uint8_t  SamplEdge;     //ÆÁÄ»ÔÚDOTCLKµÄÄÄ¸ö±ßÑØ²ÉÑùÊı¾İ£ºLCD_SAMPLEDGE_RISE¡¢LCD_SAMPLEDGE_FALL
-    uint8_t  ClkAlways;     //1 Ò»Ö±Êä³öDOTCLK    0 Ö»ÔÚ´«ÊäÊı¾İÊ±Êä³öDOTCLK
-    uint8_t  HsyncWidth;    //HSYNCµÍµçÆ½³ÖĞø¶àÉÙ¸öDOTCLK£¬È¡Öµ£ºLCD_HSYNC_1DOTCLK¡¢LCD_HSYNC_2DOTCLK¡¢LCD_HSYNC_3DOTCLK¡¢LCD_HSYNC_4DOTCLK
-
-    /* MPU£¨8080£©½Ó¿Ú²ÎÊı */
-    uint8_t  T_CSf_WRf;     //CSnÏÂ½µÑØµ½WRnÏÂ½µÑØµÄÊ±¼ä£¬È¡Öµ0--3
-    uint8_t  T_WRnHold;     //WRnµÍµçÆ½µÄ³ÖĞøÊ±¼ä£¬       È¡Öµ0--7
-    uint8_t  T_WRr_CSr;     //WRnÉÏÉıÑØµ½CSnÉÏÉıÑØµÄÊ±¼ä£¬È¡Öµ0--3
-    uint8_t  T_CSr_CSf;     //CSnÉÏÉıÑØµ½CSnÏÂ½µÑØµÄÊ±¼ä£¬È¡Öµ0--7
-
-    uint8_t  IntEOTEn;      //End of Transter£¨´«ÊäÍê³É£©ÖĞ¶ÏÊ¹ÄÜ
+    uint8_t IntEOTEn; //End of Transterï¼ˆä¼ è¾“å®Œæˆï¼‰ä¸­æ–­ä½¿èƒ½
 } LCD_InitStructure;
 
+#define LCD_SAMPLEDGE_RISE 0 //å±å¹•åœ¨DOTCLKçš„ä¸Šå‡æ²¿é‡‡æ ·æ•°æ®
+#define LCD_SAMPLEDGE_FALL 1 //å±å¹•åœ¨DOTCLKçš„ä¸‹é™æ²¿é‡‡æ ·æ•°æ®
 
-#define LCD_INTERFACE_RGB   0
-#define LCD_INTERFACE_I80   1
-#define LCD_INTERFACE_M68   2
+#define LCD_HSYNC_1DOTCLK 0 //1ä¸ªDOTCLK
+#define LCD_HSYNC_2DOTCLK 1
+#define LCD_HSYNC_3DOTCLK 2
+#define LCD_HSYNC_4DOTCLK 3
 
-#define LCD_DIR_LANDSCAPE   0   //ºáÆÁ
-#define LCD_DIR_PORTRAIT    1   //ÊúÆÁ
-
-#define LCD_SAMPLEDGE_RISE  0   //ÆÁÄ»ÔÚDOTCLKµÄÉÏÉıÑØ²ÉÑùÊı¾İ
-#define LCD_SAMPLEDGE_FALL  1   //ÆÁÄ»ÔÚDOTCLKµÄÏÂ½µÑØ²ÉÑùÊı¾İ
-
-#define LCD_HSYNC_1DOTCLK   0   //1¸öDOTCLK
-#define LCD_HSYNC_2DOTCLK   1
-#define LCD_HSYNC_3DOTCLK   2
-#define LCD_HSYNC_4DOTCLK   3
-
-#define LCD_CLKDIV_2        0
-#define LCD_CLKDIV_4        1
-#define LCD_CLKDIV_6        2
-#define LCD_CLKDIV_8        3
-#define LCD_CLKDIV_10       4
-#define LCD_CLKDIV_12       5
-#define LCD_CLKDIV_14       6
-#define LCD_CLKDIV_16       7
-#define LCD_CLKDIV_18       8
-#define LCD_CLKDIV_20       9
-#define LCD_CLKDIV_22       10
-#define LCD_CLKDIV_24       11
-#define LCD_CLKDIV_26       12
-#define LCD_CLKDIV_28       13
-#define LCD_CLKDIV_30       14
-#define LCD_CLKDIV_32       15
-#define LCD_CLKDIV_34       16
-#define LCD_CLKDIV_36       17
-#define LCD_CLKDIV_38       18
-#define LCD_CLKDIV_40       19
-#define LCD_CLKDIV_42       20
-#define LCD_CLKDIV_44       21
-#define LCD_CLKDIV_46       22
-#define LCD_CLKDIV_48       23
-#define LCD_CLKDIV_50       24
-#define LCD_CLKDIV_52       25
-#define LCD_CLKDIV_54       26
-#define LCD_CLKDIV_56       27
-#define LCD_CLKDIV_58       28
-#define LCD_CLKDIV_60       29
-#define LCD_CLKDIV_62       30
-#define LCD_CLKDIV_64       31
-
+#define LCD_CLKDIV_2 0
+#define LCD_CLKDIV_4 1
+#define LCD_CLKDIV_6 2
+#define LCD_CLKDIV_8 3
+#define LCD_CLKDIV_10 4
+#define LCD_CLKDIV_12 5
+#define LCD_CLKDIV_14 6
+#define LCD_CLKDIV_16 7
+#define LCD_CLKDIV_18 8
+#define LCD_CLKDIV_20 9
+#define LCD_CLKDIV_22 10
+#define LCD_CLKDIV_24 11
+#define LCD_CLKDIV_26 12
+#define LCD_CLKDIV_28 13
+#define LCD_CLKDIV_30 14
+#define LCD_CLKDIV_32 15
+#define LCD_CLKDIV_34 16
+#define LCD_CLKDIV_36 17
+#define LCD_CLKDIV_38 18
+#define LCD_CLKDIV_40 19
+#define LCD_CLKDIV_42 20
+#define LCD_CLKDIV_44 21
+#define LCD_CLKDIV_46 22
+#define LCD_CLKDIV_48 23
+#define LCD_CLKDIV_50 24
+#define LCD_CLKDIV_52 25
+#define LCD_CLKDIV_54 26
+#define LCD_CLKDIV_56 27
+#define LCD_CLKDIV_58 28
+#define LCD_CLKDIV_60 29
+#define LCD_CLKDIV_62 30
+#define LCD_CLKDIV_64 31
 
 void LCD_Init(LCD_TypeDef *LCDx, LCD_InitStructure *initStruct);
 void LCD_Start(LCD_TypeDef *LCDx);
 uint32_t LCD_IsBusy(LCD_TypeDef *LCDx);
 
-void LCD_I80_WriteReg(LCD_TypeDef *LCDx, uint16_t reg, uint16_t val[], uint16_t cnt);
-void LCD_I80_WriteOneReg(LCD_TypeDef *LCDx, uint16_t reg, uint16_t val);
-void LCD_I80_WriteData(LCD_TypeDef *LCDx, uint16_t data[], uint16_t cnt);
-void LCD_I80_WriteOneData(LCD_TypeDef *LCDx, uint16_t val);
-
 void LCD_INTEn(LCD_TypeDef *LCDx);
 void LCD_INTDis(LCD_TypeDef *LCDx);
 void LCD_INTClr(LCD_TypeDef *LCDx);
 uint32_t LCD_INTStat(LCD_TypeDef *LCDx);
-
 
 #endif //__SWM320_LCD_H__

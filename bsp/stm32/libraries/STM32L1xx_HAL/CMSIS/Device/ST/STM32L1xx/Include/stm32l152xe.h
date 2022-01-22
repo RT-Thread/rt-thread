@@ -650,6 +650,7 @@ typedef struct
 #define FLASH_BANK2_BASE      (0x08040000UL)              /*!< FLASH BANK2 base address in the alias region */
 #define FLASH_BANK1_END       (0x0803FFFFUL)              /*!< Program end FLASH BANK1 address  */
 #define FLASH_BANK2_END       (0x0807FFFFUL)              /*!< Program end FLASH BANK2 address  */
+#define FLASH_END             (0x0807FFFFUL)              /*!< Program end FLASH address for Cat5 */
 #define FLASH_EEPROM_END      (0x08083FFFUL)              /*!< FLASH EEPROM end address (16KB) */
 
 /*!< Peripheral memory map */
@@ -825,6 +826,15 @@ typedef struct
   * @{
   */
 
+  /** @addtogroup Hardware_Constant_Definition
+    * @{
+    */
+#define LSI_STARTUP_TIME 200U /*!< LSI Maximum startup time in us */
+
+  /**
+    * @}
+    */
+
 /** @addtogroup Peripheral_Registers_Bits_Definition
   * @{
   */
@@ -837,6 +847,9 @@ typedef struct
 /*                      Analog to Digital Converter (ADC)                     */
 /*                                                                            */
 /******************************************************************************/
+#define VREFINT_CAL_ADDR_CMSIS                    0x1FF800F8      /*!<Internal voltage reference, address of parameter VREFINT_CAL: VrefInt ADC raw data acquired at temperature 30 DegC (tolerance: +-5 DegC), Vref+ = 3.0 V (tolerance: +-10 mV).                      */
+#define TEMPSENSOR_CAL1_ADDR_CMSIS                0x1FF800FA      /*!<Internal temperature sensor, address of parameter TS_CAL1: On STM32L1, temperature sensor ADC raw data acquired at temperature  30 DegC (tolerance: +-5 DegC), Vref+ = 3.0 V (tolerance: +-10 mV). */
+#define TEMPSENSOR_CAL2_ADDR_CMSIS                0x1FF800FE      /*!<Internal temperature sensor, address of parameter TS_CAL2: On STM32L1, temperature sensor ADC raw data acquired at temperature 110 DegC (tolerance: +-5 DegC), Vref+ = 3.0 V (tolerance: +-10 mV). */
 
 /********************  Bit definition for ADC_SR register  ********************/
 #define ADC_SR_AWD_Pos                       (0U)                              
@@ -3058,6 +3071,10 @@ typedef struct
 /*                        (FLASH, DATA_EEPROM, OB)                            */
 /*                                                                            */
 /******************************************************************************/
+/*
+ * @brief Specific device feature definitions (not present on all devices in the STM32L1 serie)
+ */
+#define FLASH_CUT5
 
 /*******************  Bit definition for FLASH_ACR register  ******************/
 #define FLASH_ACR_LATENCY_Pos                (0U)                              
@@ -5957,8 +5974,8 @@ typedef struct
 #define SYSCFG_EXTICR1_EXTI3_PC         (0x00002000U)                          /*!< PC[3] pin */
 #define SYSCFG_EXTICR1_EXTI3_PD         (0x00003000U)                          /*!< PD[3] pin */
 #define SYSCFG_EXTICR1_EXTI3_PE         (0x00004000U)                          /*!< PE[3] pin */
-#define SYSCFG_EXTICR1_EXTI3_PF         (0x00003000U)                          /*!< PF[3] pin */
-#define SYSCFG_EXTICR1_EXTI3_PG         (0x00004000U)                          /*!< PG[3] pin */
+#define SYSCFG_EXTICR1_EXTI3_PF         (0x00006000U)                          /*!< PF[3] pin */
+#define SYSCFG_EXTICR1_EXTI3_PG         (0x00007000U)                          /*!< PG[3] pin */
 
 /*****************  Bit definition for SYSCFG_EXTICR2 register  *****************/
 #define SYSCFG_EXTICR2_EXTI4_Pos        (0U)                                   
@@ -6133,7 +6150,7 @@ typedef struct
 #define SYSCFG_EXTICR4_EXTI15_PE        (0x00004000U)                          /*!< PE[15] pin */
 #define SYSCFG_EXTICR4_EXTI15_PF        (0x00006000U)                          /*!< PF[15] pin */
 #define SYSCFG_EXTICR4_EXTI15_PG        (0x00007000U)                          /*!< PG[15] pin */
- 
+
 /******************************************************************************/
 /*                                                                            */
 /*                       Routing Interface (RI)                               */
@@ -8566,443 +8583,6 @@ typedef struct
 #define WWDG_SR_EWIF_Msk                    (0x1UL << WWDG_SR_EWIF_Pos)         /*!< 0x00000001 */
 #define WWDG_SR_EWIF                        WWDG_SR_EWIF_Msk                   /*!< Early Wakeup Interrupt Flag */
 
-/******************************************************************************/
-/*                                                                            */
-/*                        SystemTick (SysTick)                                */
-/*                                                                            */
-/******************************************************************************/
-
-/*****************  Bit definition for SysTick_CTRL register  *****************/
-#define SysTick_CTRL_ENABLE                 (0x00000001U)                      /*!< Counter enable */
-#define SysTick_CTRL_TICKINT                (0x00000002U)                      /*!< Counting down to 0 pends the SysTick handler */
-#define SysTick_CTRL_CLKSOURCE              (0x00000004U)                      /*!< Clock source */
-#define SysTick_CTRL_COUNTFLAG              (0x00010000U)                      /*!< Count Flag */
-
-/*****************  Bit definition for SysTick_LOAD register  *****************/
-#define SysTick_LOAD_RELOAD                 (0x00FFFFFFU)                      /*!< Value to load into the SysTick Current Value Register when the counter reaches 0 */
-
-/*****************  Bit definition for SysTick_VAL register  ******************/
-#define SysTick_VAL_CURRENT                 (0x00FFFFFFU)                      /*!< Current value at the time the register is accessed */
-
-/*****************  Bit definition for SysTick_CALIB register  ****************/
-#define SysTick_CALIB_TENMS                 (0x00FFFFFFU)                      /*!< Reload value to use for 10ms timing */
-#define SysTick_CALIB_SKEW                  (0x40000000U)                      /*!< Calibration value is not exactly 10 ms */
-#define SysTick_CALIB_NOREF                 (0x80000000U)                      /*!< The reference clock is not provided */
-
-/******************************************************************************/
-/*                                                                            */
-/*               Nested Vectored Interrupt Controller (NVIC)                  */
-/*                                                                            */
-/******************************************************************************/
-
-/******************  Bit definition for NVIC_ISER register  *******************/
-#define NVIC_ISER_SETENA_Pos                (0U)                               
-#define NVIC_ISER_SETENA_Msk                (0xFFFFFFFFUL << NVIC_ISER_SETENA_Pos) /*!< 0xFFFFFFFF */
-#define NVIC_ISER_SETENA                    NVIC_ISER_SETENA_Msk               /*!< Interrupt set enable bits */
-#define NVIC_ISER_SETENA_0                  (0x00000001UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000001 */
-#define NVIC_ISER_SETENA_1                  (0x00000002UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000002 */
-#define NVIC_ISER_SETENA_2                  (0x00000004UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000004 */
-#define NVIC_ISER_SETENA_3                  (0x00000008UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000008 */
-#define NVIC_ISER_SETENA_4                  (0x00000010UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000010 */
-#define NVIC_ISER_SETENA_5                  (0x00000020UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000020 */
-#define NVIC_ISER_SETENA_6                  (0x00000040UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000040 */
-#define NVIC_ISER_SETENA_7                  (0x00000080UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000080 */
-#define NVIC_ISER_SETENA_8                  (0x00000100UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000100 */
-#define NVIC_ISER_SETENA_9                  (0x00000200UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000200 */
-#define NVIC_ISER_SETENA_10                 (0x00000400UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000400 */
-#define NVIC_ISER_SETENA_11                 (0x00000800UL << NVIC_ISER_SETENA_Pos) /*!< 0x00000800 */
-#define NVIC_ISER_SETENA_12                 (0x00001000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00001000 */
-#define NVIC_ISER_SETENA_13                 (0x00002000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00002000 */
-#define NVIC_ISER_SETENA_14                 (0x00004000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00004000 */
-#define NVIC_ISER_SETENA_15                 (0x00008000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00008000 */
-#define NVIC_ISER_SETENA_16                 (0x00010000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00010000 */
-#define NVIC_ISER_SETENA_17                 (0x00020000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00020000 */
-#define NVIC_ISER_SETENA_18                 (0x00040000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00040000 */
-#define NVIC_ISER_SETENA_19                 (0x00080000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00080000 */
-#define NVIC_ISER_SETENA_20                 (0x00100000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00100000 */
-#define NVIC_ISER_SETENA_21                 (0x00200000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00200000 */
-#define NVIC_ISER_SETENA_22                 (0x00400000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00400000 */
-#define NVIC_ISER_SETENA_23                 (0x00800000UL << NVIC_ISER_SETENA_Pos) /*!< 0x00800000 */
-#define NVIC_ISER_SETENA_24                 (0x01000000UL << NVIC_ISER_SETENA_Pos) /*!< 0x01000000 */
-#define NVIC_ISER_SETENA_25                 (0x02000000UL << NVIC_ISER_SETENA_Pos) /*!< 0x02000000 */
-#define NVIC_ISER_SETENA_26                 (0x04000000UL << NVIC_ISER_SETENA_Pos) /*!< 0x04000000 */
-#define NVIC_ISER_SETENA_27                 (0x08000000UL << NVIC_ISER_SETENA_Pos) /*!< 0x08000000 */
-#define NVIC_ISER_SETENA_28                 (0x10000000UL << NVIC_ISER_SETENA_Pos) /*!< 0x10000000 */
-#define NVIC_ISER_SETENA_29                 (0x20000000UL << NVIC_ISER_SETENA_Pos) /*!< 0x20000000 */
-#define NVIC_ISER_SETENA_30                 (0x40000000UL << NVIC_ISER_SETENA_Pos) /*!< 0x40000000 */
-#define NVIC_ISER_SETENA_31                 (0x80000000UL << NVIC_ISER_SETENA_Pos) /*!< 0x80000000 */
-
-/******************  Bit definition for NVIC_ICER register  *******************/
-#define NVIC_ICER_CLRENA_Pos                (0U)                               
-#define NVIC_ICER_CLRENA_Msk                (0xFFFFFFFFUL << NVIC_ICER_CLRENA_Pos) /*!< 0xFFFFFFFF */
-#define NVIC_ICER_CLRENA                    NVIC_ICER_CLRENA_Msk               /*!< Interrupt clear-enable bits */
-#define NVIC_ICER_CLRENA_0                  (0x00000001UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000001 */
-#define NVIC_ICER_CLRENA_1                  (0x00000002UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000002 */
-#define NVIC_ICER_CLRENA_2                  (0x00000004UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000004 */
-#define NVIC_ICER_CLRENA_3                  (0x00000008UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000008 */
-#define NVIC_ICER_CLRENA_4                  (0x00000010UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000010 */
-#define NVIC_ICER_CLRENA_5                  (0x00000020UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000020 */
-#define NVIC_ICER_CLRENA_6                  (0x00000040UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000040 */
-#define NVIC_ICER_CLRENA_7                  (0x00000080UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000080 */
-#define NVIC_ICER_CLRENA_8                  (0x00000100UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000100 */
-#define NVIC_ICER_CLRENA_9                  (0x00000200UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000200 */
-#define NVIC_ICER_CLRENA_10                 (0x00000400UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000400 */
-#define NVIC_ICER_CLRENA_11                 (0x00000800UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00000800 */
-#define NVIC_ICER_CLRENA_12                 (0x00001000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00001000 */
-#define NVIC_ICER_CLRENA_13                 (0x00002000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00002000 */
-#define NVIC_ICER_CLRENA_14                 (0x00004000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00004000 */
-#define NVIC_ICER_CLRENA_15                 (0x00008000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00008000 */
-#define NVIC_ICER_CLRENA_16                 (0x00010000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00010000 */
-#define NVIC_ICER_CLRENA_17                 (0x00020000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00020000 */
-#define NVIC_ICER_CLRENA_18                 (0x00040000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00040000 */
-#define NVIC_ICER_CLRENA_19                 (0x00080000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00080000 */
-#define NVIC_ICER_CLRENA_20                 (0x00100000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00100000 */
-#define NVIC_ICER_CLRENA_21                 (0x00200000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00200000 */
-#define NVIC_ICER_CLRENA_22                 (0x00400000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00400000 */
-#define NVIC_ICER_CLRENA_23                 (0x00800000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x00800000 */
-#define NVIC_ICER_CLRENA_24                 (0x01000000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x01000000 */
-#define NVIC_ICER_CLRENA_25                 (0x02000000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x02000000 */
-#define NVIC_ICER_CLRENA_26                 (0x04000000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x04000000 */
-#define NVIC_ICER_CLRENA_27                 (0x08000000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x08000000 */
-#define NVIC_ICER_CLRENA_28                 (0x10000000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x10000000 */
-#define NVIC_ICER_CLRENA_29                 (0x20000000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x20000000 */
-#define NVIC_ICER_CLRENA_30                 (0x40000000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x40000000 */
-#define NVIC_ICER_CLRENA_31                 (0x80000000UL << NVIC_ICER_CLRENA_Pos) /*!< 0x80000000 */
-
-/******************  Bit definition for NVIC_ISPR register  *******************/
-#define NVIC_ISPR_SETPEND_Pos               (0U)                               
-#define NVIC_ISPR_SETPEND_Msk               (0xFFFFFFFFUL << NVIC_ISPR_SETPEND_Pos) /*!< 0xFFFFFFFF */
-#define NVIC_ISPR_SETPEND                   NVIC_ISPR_SETPEND_Msk              /*!< Interrupt set-pending bits */
-#define NVIC_ISPR_SETPEND_0                 (0x00000001UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000001 */
-#define NVIC_ISPR_SETPEND_1                 (0x00000002UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000002 */
-#define NVIC_ISPR_SETPEND_2                 (0x00000004UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000004 */
-#define NVIC_ISPR_SETPEND_3                 (0x00000008UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000008 */
-#define NVIC_ISPR_SETPEND_4                 (0x00000010UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000010 */
-#define NVIC_ISPR_SETPEND_5                 (0x00000020UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000020 */
-#define NVIC_ISPR_SETPEND_6                 (0x00000040UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000040 */
-#define NVIC_ISPR_SETPEND_7                 (0x00000080UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000080 */
-#define NVIC_ISPR_SETPEND_8                 (0x00000100UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000100 */
-#define NVIC_ISPR_SETPEND_9                 (0x00000200UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000200 */
-#define NVIC_ISPR_SETPEND_10                (0x00000400UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000400 */
-#define NVIC_ISPR_SETPEND_11                (0x00000800UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00000800 */
-#define NVIC_ISPR_SETPEND_12                (0x00001000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00001000 */
-#define NVIC_ISPR_SETPEND_13                (0x00002000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00002000 */
-#define NVIC_ISPR_SETPEND_14                (0x00004000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00004000 */
-#define NVIC_ISPR_SETPEND_15                (0x00008000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00008000 */
-#define NVIC_ISPR_SETPEND_16                (0x00010000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00010000 */
-#define NVIC_ISPR_SETPEND_17                (0x00020000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00020000 */
-#define NVIC_ISPR_SETPEND_18                (0x00040000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00040000 */
-#define NVIC_ISPR_SETPEND_19                (0x00080000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00080000 */
-#define NVIC_ISPR_SETPEND_20                (0x00100000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00100000 */
-#define NVIC_ISPR_SETPEND_21                (0x00200000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00200000 */
-#define NVIC_ISPR_SETPEND_22                (0x00400000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00400000 */
-#define NVIC_ISPR_SETPEND_23                (0x00800000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x00800000 */
-#define NVIC_ISPR_SETPEND_24                (0x01000000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x01000000 */
-#define NVIC_ISPR_SETPEND_25                (0x02000000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x02000000 */
-#define NVIC_ISPR_SETPEND_26                (0x04000000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x04000000 */
-#define NVIC_ISPR_SETPEND_27                (0x08000000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x08000000 */
-#define NVIC_ISPR_SETPEND_28                (0x10000000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x10000000 */
-#define NVIC_ISPR_SETPEND_29                (0x20000000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x20000000 */
-#define NVIC_ISPR_SETPEND_30                (0x40000000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x40000000 */
-#define NVIC_ISPR_SETPEND_31                (0x80000000UL << NVIC_ISPR_SETPEND_Pos) /*!< 0x80000000 */
-
-/******************  Bit definition for NVIC_ICPR register  *******************/
-#define NVIC_ICPR_CLRPEND_Pos               (0U)                               
-#define NVIC_ICPR_CLRPEND_Msk               (0xFFFFFFFFUL << NVIC_ICPR_CLRPEND_Pos) /*!< 0xFFFFFFFF */
-#define NVIC_ICPR_CLRPEND                   NVIC_ICPR_CLRPEND_Msk              /*!< Interrupt clear-pending bits */
-#define NVIC_ICPR_CLRPEND_0                 (0x00000001UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000001 */
-#define NVIC_ICPR_CLRPEND_1                 (0x00000002UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000002 */
-#define NVIC_ICPR_CLRPEND_2                 (0x00000004UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000004 */
-#define NVIC_ICPR_CLRPEND_3                 (0x00000008UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000008 */
-#define NVIC_ICPR_CLRPEND_4                 (0x00000010UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000010 */
-#define NVIC_ICPR_CLRPEND_5                 (0x00000020UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000020 */
-#define NVIC_ICPR_CLRPEND_6                 (0x00000040UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000040 */
-#define NVIC_ICPR_CLRPEND_7                 (0x00000080UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000080 */
-#define NVIC_ICPR_CLRPEND_8                 (0x00000100UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000100 */
-#define NVIC_ICPR_CLRPEND_9                 (0x00000200UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000200 */
-#define NVIC_ICPR_CLRPEND_10                (0x00000400UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000400 */
-#define NVIC_ICPR_CLRPEND_11                (0x00000800UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00000800 */
-#define NVIC_ICPR_CLRPEND_12                (0x00001000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00001000 */
-#define NVIC_ICPR_CLRPEND_13                (0x00002000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00002000 */
-#define NVIC_ICPR_CLRPEND_14                (0x00004000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00004000 */
-#define NVIC_ICPR_CLRPEND_15                (0x00008000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00008000 */
-#define NVIC_ICPR_CLRPEND_16                (0x00010000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00010000 */
-#define NVIC_ICPR_CLRPEND_17                (0x00020000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00020000 */
-#define NVIC_ICPR_CLRPEND_18                (0x00040000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00040000 */
-#define NVIC_ICPR_CLRPEND_19                (0x00080000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00080000 */
-#define NVIC_ICPR_CLRPEND_20                (0x00100000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00100000 */
-#define NVIC_ICPR_CLRPEND_21                (0x00200000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00200000 */
-#define NVIC_ICPR_CLRPEND_22                (0x00400000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00400000 */
-#define NVIC_ICPR_CLRPEND_23                (0x00800000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x00800000 */
-#define NVIC_ICPR_CLRPEND_24                (0x01000000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x01000000 */
-#define NVIC_ICPR_CLRPEND_25                (0x02000000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x02000000 */
-#define NVIC_ICPR_CLRPEND_26                (0x04000000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x04000000 */
-#define NVIC_ICPR_CLRPEND_27                (0x08000000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x08000000 */
-#define NVIC_ICPR_CLRPEND_28                (0x10000000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x10000000 */
-#define NVIC_ICPR_CLRPEND_29                (0x20000000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x20000000 */
-#define NVIC_ICPR_CLRPEND_30                (0x40000000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x40000000 */
-#define NVIC_ICPR_CLRPEND_31                (0x80000000UL << NVIC_ICPR_CLRPEND_Pos) /*!< 0x80000000 */
-
-/******************  Bit definition for NVIC_IABR register  *******************/
-#define NVIC_IABR_ACTIVE_Pos                (0U)                               
-#define NVIC_IABR_ACTIVE_Msk                (0xFFFFFFFFUL << NVIC_IABR_ACTIVE_Pos) /*!< 0xFFFFFFFF */
-#define NVIC_IABR_ACTIVE                    NVIC_IABR_ACTIVE_Msk               /*!< Interrupt active flags */
-#define NVIC_IABR_ACTIVE_0                  (0x00000001UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000001 */
-#define NVIC_IABR_ACTIVE_1                  (0x00000002UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000002 */
-#define NVIC_IABR_ACTIVE_2                  (0x00000004UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000004 */
-#define NVIC_IABR_ACTIVE_3                  (0x00000008UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000008 */
-#define NVIC_IABR_ACTIVE_4                  (0x00000010UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000010 */
-#define NVIC_IABR_ACTIVE_5                  (0x00000020UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000020 */
-#define NVIC_IABR_ACTIVE_6                  (0x00000040UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000040 */
-#define NVIC_IABR_ACTIVE_7                  (0x00000080UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000080 */
-#define NVIC_IABR_ACTIVE_8                  (0x00000100UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000100 */
-#define NVIC_IABR_ACTIVE_9                  (0x00000200UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000200 */
-#define NVIC_IABR_ACTIVE_10                 (0x00000400UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000400 */
-#define NVIC_IABR_ACTIVE_11                 (0x00000800UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00000800 */
-#define NVIC_IABR_ACTIVE_12                 (0x00001000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00001000 */
-#define NVIC_IABR_ACTIVE_13                 (0x00002000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00002000 */
-#define NVIC_IABR_ACTIVE_14                 (0x00004000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00004000 */
-#define NVIC_IABR_ACTIVE_15                 (0x00008000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00008000 */
-#define NVIC_IABR_ACTIVE_16                 (0x00010000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00010000 */
-#define NVIC_IABR_ACTIVE_17                 (0x00020000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00020000 */
-#define NVIC_IABR_ACTIVE_18                 (0x00040000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00040000 */
-#define NVIC_IABR_ACTIVE_19                 (0x00080000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00080000 */
-#define NVIC_IABR_ACTIVE_20                 (0x00100000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00100000 */
-#define NVIC_IABR_ACTIVE_21                 (0x00200000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00200000 */
-#define NVIC_IABR_ACTIVE_22                 (0x00400000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00400000 */
-#define NVIC_IABR_ACTIVE_23                 (0x00800000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x00800000 */
-#define NVIC_IABR_ACTIVE_24                 (0x01000000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x01000000 */
-#define NVIC_IABR_ACTIVE_25                 (0x02000000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x02000000 */
-#define NVIC_IABR_ACTIVE_26                 (0x04000000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x04000000 */
-#define NVIC_IABR_ACTIVE_27                 (0x08000000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x08000000 */
-#define NVIC_IABR_ACTIVE_28                 (0x10000000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x10000000 */
-#define NVIC_IABR_ACTIVE_29                 (0x20000000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x20000000 */
-#define NVIC_IABR_ACTIVE_30                 (0x40000000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x40000000 */
-#define NVIC_IABR_ACTIVE_31                 (0x80000000UL << NVIC_IABR_ACTIVE_Pos) /*!< 0x80000000 */
-
-/******************  Bit definition for NVIC_PRI0 register  *******************/
-#define NVIC_IPR0_PRI_0                     (0x000000FFU)                      /*!< Priority of interrupt 0 */
-#define NVIC_IPR0_PRI_1                     (0x0000FF00U)                      /*!< Priority of interrupt 1 */
-#define NVIC_IPR0_PRI_2                     (0x00FF0000U)                      /*!< Priority of interrupt 2 */
-#define NVIC_IPR0_PRI_3                     (0xFF000000U)                      /*!< Priority of interrupt 3 */
-
-/******************  Bit definition for NVIC_PRI1 register  *******************/
-#define NVIC_IPR1_PRI_4                     (0x000000FFU)                      /*!< Priority of interrupt 4 */
-#define NVIC_IPR1_PRI_5                     (0x0000FF00U)                      /*!< Priority of interrupt 5 */
-#define NVIC_IPR1_PRI_6                     (0x00FF0000U)                      /*!< Priority of interrupt 6 */
-#define NVIC_IPR1_PRI_7                     (0xFF000000U)                      /*!< Priority of interrupt 7 */
-
-/******************  Bit definition for NVIC_PRI2 register  *******************/
-#define NVIC_IPR2_PRI_8                     (0x000000FFU)                      /*!< Priority of interrupt 8 */
-#define NVIC_IPR2_PRI_9                     (0x0000FF00U)                      /*!< Priority of interrupt 9 */
-#define NVIC_IPR2_PRI_10                    (0x00FF0000U)                      /*!< Priority of interrupt 10 */
-#define NVIC_IPR2_PRI_11                    (0xFF000000U)                      /*!< Priority of interrupt 11 */
-
-/******************  Bit definition for NVIC_PRI3 register  *******************/
-#define NVIC_IPR3_PRI_12                    (0x000000FFU)                      /*!< Priority of interrupt 12 */
-#define NVIC_IPR3_PRI_13                    (0x0000FF00U)                      /*!< Priority of interrupt 13 */
-#define NVIC_IPR3_PRI_14                    (0x00FF0000U)                      /*!< Priority of interrupt 14 */
-#define NVIC_IPR3_PRI_15                    (0xFF000000U)                      /*!< Priority of interrupt 15 */
-
-/******************  Bit definition for NVIC_PRI4 register  *******************/
-#define NVIC_IPR4_PRI_16                    (0x000000FFU)                      /*!< Priority of interrupt 16 */
-#define NVIC_IPR4_PRI_17                    (0x0000FF00U)                      /*!< Priority of interrupt 17 */
-#define NVIC_IPR4_PRI_18                    (0x00FF0000U)                      /*!< Priority of interrupt 18 */
-#define NVIC_IPR4_PRI_19                    (0xFF000000U)                      /*!< Priority of interrupt 19 */
-
-/******************  Bit definition for NVIC_PRI5 register  *******************/
-#define NVIC_IPR5_PRI_20                    (0x000000FFU)                      /*!< Priority of interrupt 20 */
-#define NVIC_IPR5_PRI_21                    (0x0000FF00U)                      /*!< Priority of interrupt 21 */
-#define NVIC_IPR5_PRI_22                    (0x00FF0000U)                      /*!< Priority of interrupt 22 */
-#define NVIC_IPR5_PRI_23                    (0xFF000000U)                      /*!< Priority of interrupt 23 */
-
-/******************  Bit definition for NVIC_PRI6 register  *******************/
-#define NVIC_IPR6_PRI_24                    (0x000000FFU)                      /*!< Priority of interrupt 24 */
-#define NVIC_IPR6_PRI_25                    (0x0000FF00U)                      /*!< Priority of interrupt 25 */
-#define NVIC_IPR6_PRI_26                    (0x00FF0000U)                      /*!< Priority of interrupt 26 */
-#define NVIC_IPR6_PRI_27                    (0xFF000000U)                      /*!< Priority of interrupt 27 */
-
-/******************  Bit definition for NVIC_PRI7 register  *******************/
-#define NVIC_IPR7_PRI_28                    (0x000000FFU)                      /*!< Priority of interrupt 28 */
-#define NVIC_IPR7_PRI_29                    (0x0000FF00U)                      /*!< Priority of interrupt 29 */
-#define NVIC_IPR7_PRI_30                    (0x00FF0000U)                      /*!< Priority of interrupt 30 */
-#define NVIC_IPR7_PRI_31                    (0xFF000000U)                      /*!< Priority of interrupt 31 */
-
-/******************  Bit definition for SCB_CPUID register  *******************/
-#define SCB_CPUID_REVISION                  (0x0000000FU)                      /*!< Implementation defined revision number */
-#define SCB_CPUID_PARTNO                    (0x0000FFF0U)                      /*!< Number of processor within serie */
-#define SCB_CPUID_Constant                  (0x000F0000U)                      /*!< Reads as 0x0F */
-#define SCB_CPUID_VARIANT                   (0x00F00000U)                      /*!< Implementation defined variant number */
-#define SCB_CPUID_IMPLEMENTER               (0xFF000000U)                      /*!< Implementer code. ARM is 0x41 */
-
-/*******************  Bit definition for SCB_ICSR register  *******************/
-#define SCB_ICSR_VECTACTIVE                 (0x000001FFU)                      /*!< Active ISR number field */
-#define SCB_ICSR_RETTOBASE                  (0x00000800U)                      /*!< All active exceptions minus the IPSR_current_exception yields the empty set */
-#define SCB_ICSR_VECTPENDING                (0x003FF000U)                      /*!< Pending ISR number field */
-#define SCB_ICSR_ISRPENDING                 (0x00400000U)                      /*!< Interrupt pending flag */
-#define SCB_ICSR_ISRPREEMPT                 (0x00800000U)                      /*!< It indicates that a pending interrupt becomes active in the next running cycle */
-#define SCB_ICSR_PENDSTCLR                  (0x02000000U)                      /*!< Clear pending SysTick bit */
-#define SCB_ICSR_PENDSTSET                  (0x04000000U)                      /*!< Set pending SysTick bit */
-#define SCB_ICSR_PENDSVCLR                  (0x08000000U)                      /*!< Clear pending pendSV bit */
-#define SCB_ICSR_PENDSVSET                  (0x10000000U)                      /*!< Set pending pendSV bit */
-#define SCB_ICSR_NMIPENDSET                 (0x80000000U)                      /*!< Set pending NMI bit */
-
-/*******************  Bit definition for SCB_VTOR register  *******************/
-#define SCB_VTOR_TBLOFF                     (0x1FFFFF80U)                      /*!< Vector table base offset field */
-#define SCB_VTOR_TBLBASE                    (0x20000000U)                      /*!< Table base in code(0) or RAM(1) */
-
-/*!<*****************  Bit definition for SCB_AIRCR register  *******************/
-#define SCB_AIRCR_VECTRESET                 (0x00000001U)                      /*!< System Reset bit */
-#define SCB_AIRCR_VECTCLRACTIVE             (0x00000002U)                      /*!< Clear active vector bit */
-#define SCB_AIRCR_SYSRESETREQ               (0x00000004U)                      /*!< Requests chip control logic to generate a reset */
-
-#define SCB_AIRCR_PRIGROUP                  (0x00000700U)                      /*!< PRIGROUP[2:0] bits (Priority group) */
-#define SCB_AIRCR_PRIGROUP_0                (0x00000100U)                      /*!< Bit 0 */
-#define SCB_AIRCR_PRIGROUP_1                (0x00000200U)                      /*!< Bit 1 */
-#define SCB_AIRCR_PRIGROUP_2                (0x00000400U)                      /*!< Bit 2  */
-
-/* prority group configuration */
-#define SCB_AIRCR_PRIGROUP0                 (0x00000000U)                      /*!< Priority group=0 (7 bits of pre-emption priority, 1 bit of subpriority) */
-#define SCB_AIRCR_PRIGROUP1                 (0x00000100U)                      /*!< Priority group=1 (6 bits of pre-emption priority, 2 bits of subpriority) */
-#define SCB_AIRCR_PRIGROUP2                 (0x00000200U)                      /*!< Priority group=2 (5 bits of pre-emption priority, 3 bits of subpriority) */
-#define SCB_AIRCR_PRIGROUP3                 (0x00000300U)                      /*!< Priority group=3 (4 bits of pre-emption priority, 4 bits of subpriority) */
-#define SCB_AIRCR_PRIGROUP4                 (0x00000400U)                      /*!< Priority group=4 (3 bits of pre-emption priority, 5 bits of subpriority) */
-#define SCB_AIRCR_PRIGROUP5                 (0x00000500U)                      /*!< Priority group=5 (2 bits of pre-emption priority, 6 bits of subpriority) */
-#define SCB_AIRCR_PRIGROUP6                 (0x00000600U)                      /*!< Priority group=6 (1 bit of pre-emption priority, 7 bits of subpriority) */
-#define SCB_AIRCR_PRIGROUP7                 (0x00000700U)                      /*!< Priority group=7 (no pre-emption priority, 8 bits of subpriority) */
-
-#define SCB_AIRCR_ENDIANESS                 (0x00008000U)                      /*!< Data endianness bit */
-#define SCB_AIRCR_VECTKEY                   (0xFFFF0000U)                      /*!< Register key (VECTKEY) - Reads as 0xFA05 (VECTKEYSTAT) */
-
-/*******************  Bit definition for SCB_SCR register  ********************/
-#define SCB_SCR_SLEEPONEXIT                 (0x00000002U)                      /*!< Sleep on exit bit */
-#define SCB_SCR_SLEEPDEEP                   (0x00000004U)                      /*!< Sleep deep bit */
-#define SCB_SCR_SEVONPEND                   (0x00000010U)                      /*!< Wake up from WFE */
-
-/********************  Bit definition for SCB_CCR register  *******************/
-#define SCB_CCR_NONBASETHRDENA              (0x00000001U)                      /*!< Thread mode can be entered from any level in Handler mode by controlled return value */
-#define SCB_CCR_USERSETMPEND                (0x00000002U)                      /*!< Enables user code to write the Software Trigger Interrupt register to trigger (pend) a Main exception */
-#define SCB_CCR_UNALIGN_TRP                 (0x00000008U)                      /*!< Trap for unaligned access */
-#define SCB_CCR_DIV_0_TRP                   (0x00000010U)                      /*!< Trap on Divide by 0 */
-#define SCB_CCR_BFHFNMIGN                   (0x00000100U)                      /*!< Handlers running at priority -1 and -2 */
-#define SCB_CCR_STKALIGN                    (0x00000200U)                      /*!< On exception entry, the SP used prior to the exception is adjusted to be 8-byte aligned */
-
-/*******************  Bit definition for SCB_SHPR register ********************/
-#define SCB_SHPR_PRI_N_Pos                  (0U)                               
-#define SCB_SHPR_PRI_N_Msk                  (0xFFUL << SCB_SHPR_PRI_N_Pos)      /*!< 0x000000FF */
-#define SCB_SHPR_PRI_N                      SCB_SHPR_PRI_N_Msk                 /*!< Priority of system handler 4,8, and 12. Mem Manage, reserved and Debug Monitor */
-#define SCB_SHPR_PRI_N1_Pos                 (8U)                               
-#define SCB_SHPR_PRI_N1_Msk                 (0xFFUL << SCB_SHPR_PRI_N1_Pos)     /*!< 0x0000FF00 */
-#define SCB_SHPR_PRI_N1                     SCB_SHPR_PRI_N1_Msk                /*!< Priority of system handler 5,9, and 13. Bus Fault, reserved and reserved */
-#define SCB_SHPR_PRI_N2_Pos                 (16U)                              
-#define SCB_SHPR_PRI_N2_Msk                 (0xFFUL << SCB_SHPR_PRI_N2_Pos)     /*!< 0x00FF0000 */
-#define SCB_SHPR_PRI_N2                     SCB_SHPR_PRI_N2_Msk                /*!< Priority of system handler 6,10, and 14. Usage Fault, reserved and PendSV */
-#define SCB_SHPR_PRI_N3_Pos                 (24U)                              
-#define SCB_SHPR_PRI_N3_Msk                 (0xFFUL << SCB_SHPR_PRI_N3_Pos)     /*!< 0xFF000000 */
-#define SCB_SHPR_PRI_N3                     SCB_SHPR_PRI_N3_Msk                /*!< Priority of system handler 7,11, and 15. Reserved, SVCall and SysTick */
-
-/******************  Bit definition for SCB_SHCSR register  *******************/
-#define SCB_SHCSR_MEMFAULTACT               (0x00000001U)                      /*!< MemManage is active */
-#define SCB_SHCSR_BUSFAULTACT               (0x00000002U)                      /*!< BusFault is active */
-#define SCB_SHCSR_USGFAULTACT               (0x00000008U)                      /*!< UsageFault is active */
-#define SCB_SHCSR_SVCALLACT                 (0x00000080U)                      /*!< SVCall is active */
-#define SCB_SHCSR_MONITORACT                (0x00000100U)                      /*!< Monitor is active */
-#define SCB_SHCSR_PENDSVACT                 (0x00000400U)                      /*!< PendSV is active */
-#define SCB_SHCSR_SYSTICKACT                (0x00000800U)                      /*!< SysTick is active */
-#define SCB_SHCSR_USGFAULTPENDED            (0x00001000U)                      /*!< Usage Fault is pended */
-#define SCB_SHCSR_MEMFAULTPENDED            (0x00002000U)                      /*!< MemManage is pended */
-#define SCB_SHCSR_BUSFAULTPENDED            (0x00004000U)                      /*!< Bus Fault is pended */
-#define SCB_SHCSR_SVCALLPENDED              (0x00008000U)                      /*!< SVCall is pended */
-#define SCB_SHCSR_MEMFAULTENA               (0x00010000U)                      /*!< MemManage enable */
-#define SCB_SHCSR_BUSFAULTENA               (0x00020000U)                      /*!< Bus Fault enable */
-#define SCB_SHCSR_USGFAULTENA               (0x00040000U)                      /*!< UsageFault enable */
-
-/*******************  Bit definition for SCB_CFSR register  *******************/
-/*!< MFSR */
-#define SCB_CFSR_IACCVIOL_Pos              (SCB_SHCSR_MEMFAULTACT_Pos + 0U)    /*!< SCB CFSR (MMFSR): IACCVIOL Position */
-#define SCB_CFSR_IACCVIOL_Msk              (1UL /*<< SCB_CFSR_IACCVIOL_Pos*/)  /*!< SCB CFSR (MMFSR): IACCVIOL Mask */
-#define SCB_CFSR_IACCVIOL                   SCB_CFSR_IACCVIOL_Msk              /*!< Instruction access violation */
-#define SCB_CFSR_DACCVIOL_Pos              (SCB_SHCSR_MEMFAULTACT_Pos + 1U)    /*!< SCB CFSR (MMFSR): DACCVIOL Position */
-#define SCB_CFSR_DACCVIOL_Msk              (1UL << SCB_CFSR_DACCVIOL_Pos)      /*!< SCB CFSR (MMFSR): DACCVIOL Mask */
-#define SCB_CFSR_DACCVIOL                   SCB_CFSR_DACCVIOL_Msk              /*!< Data access violation */
-#define SCB_CFSR_MUNSTKERR_Pos             (SCB_SHCSR_MEMFAULTACT_Pos + 3U)    /*!< SCB CFSR (MMFSR): MUNSTKERR Position */
-#define SCB_CFSR_MUNSTKERR_Msk             (1UL << SCB_CFSR_MUNSTKERR_Pos)     /*!< SCB CFSR (MMFSR): MUNSTKERR Mask */
-#define SCB_CFSR_MUNSTKERR                  SCB_CFSR_MUNSTKERR_Msk             /*!< Unstacking error */
-#define SCB_CFSR_MSTKERR_Pos               (SCB_SHCSR_MEMFAULTACT_Pos + 4U)    /*!< SCB CFSR (MMFSR): MSTKERR Position */
-#define SCB_CFSR_MSTKERR_Msk               (1UL << SCB_CFSR_MSTKERR_Pos)       /*!< SCB CFSR (MMFSR): MSTKERR Mask */
-#define SCB_CFSR_MSTKERR                    SCB_CFSR_MSTKERR_Msk               /*!< Stacking error */
-#define SCB_CFSR_MMARVALID_Pos             (SCB_SHCSR_MEMFAULTACT_Pos + 7U)    /*!< SCB CFSR (MMFSR): MMARVALID Position */
-#define SCB_CFSR_MMARVALID_Msk             (1UL << SCB_CFSR_MMARVALID_Pos)     /*!< SCB CFSR (MMFSR): MMARVALID Mask */
-#define SCB_CFSR_MMARVALID                  SCB_CFSR_MMARVALID_Msk             /*!< Memory Manage Address Register address valid flag */
-/*!< BFSR */
-#define SCB_CFSR_IBUSERR_Pos              (SCB_CFSR_BUSFAULTSR_Pos + 0U)       /*!< SCB CFSR (BFSR): IBUSERR Position */
-#define SCB_CFSR_IBUSERR_Msk              (1UL << SCB_CFSR_IBUSERR_Pos)        /*!< SCB CFSR (BFSR): IBUSERR Mask */
-#define SCB_CFSR_IBUSERR                    SCB_CFSR_IBUSERR_Msk               /*!< Instruction bus error flag */
-#define SCB_CFSR_PRECISERR_Pos            (SCB_CFSR_BUSFAULTSR_Pos + 1U)       /*!< SCB CFSR (BFSR): PRECISERR Position */
-#define SCB_CFSR_PRECISERR_Msk            (1UL << SCB_CFSR_PRECISERR_Pos)      /*!< SCB CFSR (BFSR): PRECISERR Mask */
-#define SCB_CFSR_PRECISERR                  SCB_CFSR_PRECISERR_Msk             /*!< Precise data bus error */
-#define SCB_CFSR_IMPRECISERR_Pos          (SCB_CFSR_BUSFAULTSR_Pos + 2U)       /*!< SCB CFSR (BFSR): IMPRECISERR Position */
-#define SCB_CFSR_IMPRECISERR_Msk          (1UL << SCB_CFSR_IMPRECISERR_Pos)    /*!< SCB CFSR (BFSR): IMPRECISERR Mask */
-#define SCB_CFSR_IMPRECISERR                SCB_CFSR_IMPRECISERR_Msk           /*!< Imprecise data bus error */
-#define SCB_CFSR_UNSTKERR_Pos             (SCB_CFSR_BUSFAULTSR_Pos + 3U)       /*!< SCB CFSR (BFSR): UNSTKERR Position */
-#define SCB_CFSR_UNSTKERR_Msk             (1UL << SCB_CFSR_UNSTKERR_Pos)       /*!< SCB CFSR (BFSR): UNSTKERR Mask */
-#define SCB_CFSR_UNSTKERR                   SCB_CFSR_UNSTKERR_Msk              /*!< Unstacking error */
-#define SCB_CFSR_STKERR_Pos               (SCB_CFSR_BUSFAULTSR_Pos + 4U)       /*!< SCB CFSR (BFSR): STKERR Position */
-#define SCB_CFSR_STKERR_Msk               (1UL << SCB_CFSR_STKERR_Pos)         /*!< SCB CFSR (BFSR): STKERR Mask */
-#define SCB_CFSR_STKERR                     SCB_CFSR_STKERR_Msk                /*!< Stacking error */
-#define SCB_CFSR_BFARVALID_Pos            (SCB_CFSR_BUSFAULTSR_Pos + 7U)       /*!< SCB CFSR (BFSR): BFARVALID Position */
-#define SCB_CFSR_BFARVALID_Msk            (1UL << SCB_CFSR_BFARVALID_Pos)      /*!< SCB CFSR (BFSR): BFARVALID Mask */
-#define SCB_CFSR_BFARVALID                  SCB_CFSR_BFARVALID_Msk             /*!< Bus Fault Address Register address valid flag */
-/*!< UFSR */
-#define SCB_CFSR_UNDEFINSTR_Pos           (SCB_CFSR_USGFAULTSR_Pos + 0U)       /*!< SCB CFSR (UFSR): UNDEFINSTR Position */
-#define SCB_CFSR_UNDEFINSTR_Msk           (1UL << SCB_CFSR_UNDEFINSTR_Pos)     /*!< SCB CFSR (UFSR): UNDEFINSTR Mask */
-#define SCB_CFSR_UNDEFINSTR                 SCB_CFSR_UNDEFINSTR_Msk            /*!< The processor attempt to excecute an undefined instruction */
-#define SCB_CFSR_INVSTATE_Pos             (SCB_CFSR_USGFAULTSR_Pos + 1U)       /*!< SCB CFSR (UFSR): INVSTATE Position */
-#define SCB_CFSR_INVSTATE_Msk             (1UL << SCB_CFSR_INVSTATE_Pos)       /*!< SCB CFSR (UFSR): INVSTATE Mask */
-#define SCB_CFSR_INVSTATE                   SCB_CFSR_INVSTATE_Msk              /*!< Invalid combination of EPSR and instruction */
-#define SCB_CFSR_INVPC_Pos                (SCB_CFSR_USGFAULTSR_Pos + 2U)       /*!< SCB CFSR (UFSR): INVPC Position */
-#define SCB_CFSR_INVPC_Msk                (1UL << SCB_CFSR_INVPC_Pos)          /*!< SCB CFSR (UFSR): INVPC Mask */
-#define SCB_CFSR_INVPC                      SCB_CFSR_INVPC_Msk                 /*!< Attempt to load EXC_RETURN into pc illegally */
-#define SCB_CFSR_NOCP_Pos                 (SCB_CFSR_USGFAULTSR_Pos + 3U)       /*!< SCB CFSR (UFSR): NOCP Position */
-#define SCB_CFSR_NOCP_Msk                 (1UL << SCB_CFSR_NOCP_Pos)           /*!< SCB CFSR (UFSR): NOCP Mask */
-#define SCB_CFSR_NOCP                       SCB_CFSR_NOCP_Msk                  /*!< Attempt to use a coprocessor instruction */
-#define SCB_CFSR_UNALIGNED_Pos            (SCB_CFSR_USGFAULTSR_Pos + 8U)       /*!< SCB CFSR (UFSR): UNALIGNED Position */
-#define SCB_CFSR_UNALIGNED_Msk            (1UL << SCB_CFSR_UNALIGNED_Pos)      /*!< SCB CFSR (UFSR): UNALIGNED Mask */
-#define SCB_CFSR_UNALIGNED                  SCB_CFSR_UNALIGNED_Msk             /*!< Fault occurs when there is an attempt to make an unaligned memory access */
-#define SCB_CFSR_DIVBYZERO_Pos            (SCB_CFSR_USGFAULTSR_Pos + 9U)       /*!< SCB CFSR (UFSR): DIVBYZERO Position */
-#define SCB_CFSR_DIVBYZERO_Msk            (1UL << SCB_CFSR_DIVBYZERO_Pos)      /*!< SCB CFSR (UFSR): DIVBYZERO Mask */
-#define SCB_CFSR_DIVBYZERO                  SCB_CFSR_DIVBYZERO_Msk             /*!< Fault occurs when SDIV or DIV instruction is used with a divisor of 0 */
-
-/*******************  Bit definition for SCB_HFSR register  *******************/
-#define SCB_HFSR_VECTTBL                    (0x00000002U)                      /*!< Fault occures because of vector table read on exception processing */
-#define SCB_HFSR_FORCED                     (0x40000000U)                      /*!< Hard Fault activated when a configurable Fault was received and cannot activate */
-#define SCB_HFSR_DEBUGEVT                   (0x80000000U)                      /*!< Fault related to debug */
-
-/*******************  Bit definition for SCB_DFSR register  *******************/
-#define SCB_DFSR_HALTED                     (0x00000001U)                      /*!< Halt request flag */
-#define SCB_DFSR_BKPT                       (0x00000002U)                      /*!< BKPT flag */
-#define SCB_DFSR_DWTTRAP                    (0x00000004U)                      /*!< Data Watchpoint and Trace (DWT) flag */
-#define SCB_DFSR_VCATCH                     (0x00000008U)                      /*!< Vector catch flag */
-#define SCB_DFSR_EXTERNAL                   (0x00000010U)                      /*!< External debug request flag */
-
-/*******************  Bit definition for SCB_MMFAR register  ******************/
-#define SCB_MMFAR_ADDRESS_Pos               (0U)                               
-#define SCB_MMFAR_ADDRESS_Msk               (0xFFFFFFFFUL << SCB_MMFAR_ADDRESS_Pos) /*!< 0xFFFFFFFF */
-#define SCB_MMFAR_ADDRESS                   SCB_MMFAR_ADDRESS_Msk              /*!< Mem Manage fault address field */
-
-/*******************  Bit definition for SCB_BFAR register  *******************/
-#define SCB_BFAR_ADDRESS_Pos                (0U)                               
-#define SCB_BFAR_ADDRESS_Msk                (0xFFFFFFFFUL << SCB_BFAR_ADDRESS_Pos) /*!< 0xFFFFFFFF */
-#define SCB_BFAR_ADDRESS                    SCB_BFAR_ADDRESS_Msk               /*!< Bus fault address field */
-
-/*******************  Bit definition for SCB_afsr register  *******************/
-#define SCB_AFSR_IMPDEF_Pos                 (0U)                               
-#define SCB_AFSR_IMPDEF_Msk                 (0xFFFFFFFFUL << SCB_AFSR_IMPDEF_Pos) /*!< 0xFFFFFFFF */
-#define SCB_AFSR_IMPDEF                     SCB_AFSR_IMPDEF_Msk                /*!< Implementation defined */
-/**
-  * @}
-  */
-
  /**
   * @}
   */ 
@@ -9166,9 +8746,9 @@ typedef struct
                                           ((INSTANCE) == TIM3)  || \
                                           ((INSTANCE) == TIM4)  || \
                                           ((INSTANCE) == TIM5)  || \
+                                          ((INSTANCE) == TIM6)  || \
+                                          ((INSTANCE) == TIM7)  || \
                                           ((INSTANCE) == TIM9))
-
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
 
 #define IS_TIM_SLAVE_INSTANCE(INSTANCE) (((INSTANCE) == TIM2)  || \
                                          ((INSTANCE) == TIM3)  || \

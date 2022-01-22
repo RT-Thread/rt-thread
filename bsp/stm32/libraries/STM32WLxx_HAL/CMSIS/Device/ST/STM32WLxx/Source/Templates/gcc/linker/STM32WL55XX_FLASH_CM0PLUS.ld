@@ -1,5 +1,7 @@
 /*
 ** LinkerScript
+** Note: For specific memory allocation, linker and startup files must be customized.
+**       Refer to STM32CubeIDE user guide (UM2609), chapter "Modify the linker script".
 */
 
 /* Entry Point */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,11 +26,11 @@ static rt_adc_device_t adc_dev = RT_NULL;
 static rt_err_t timeout_cb(rt_device_t dev, rt_size_t size)
 {
     rt_uint32_t value = 0 , vol = 0;
-    
+
     /* read adc value */
     value = rt_adc_read(adc_dev, ADC_DEV_CHANNEL);
     rt_kprintf("the value is :%d \n", value);
-    
+
     vol = value * REFER_VOLTAGE / CONVERT_BITS;
     rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
 
@@ -55,21 +55,21 @@ static int hwtimer_stop(void)
         rt_kprintf("close %s device failed!\n", HWTIMER_DEV_NAME);
         return ret;
     }
-    
+
     /* close adc channel */
     ret = rt_adc_disable(adc_dev, ADC_DEV_CHANNEL);
-    
+
     return ret;
 }
 
 static int hwtimer_start(void)
 {
     rt_err_t ret = RT_EOK;
-    rt_hwtimerval_t timeout_s;     
+    rt_hwtimerval_t timeout_s;
     rt_device_t hw_dev = RT_NULL;
-    
+
     rt_hwtimer_mode_t mode;
-        
+
     hw_dev = rt_device_find(HWTIMER_DEV_NAME);
     if (hw_dev == RT_NULL)
     {
@@ -84,7 +84,7 @@ static int hwtimer_start(void)
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", HWADC_DEV_NAME);
         return RT_ERROR;
     }
-    
+
     /* Open the device in read/write mode */
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
     if (ret != RT_EOK)
@@ -118,10 +118,10 @@ static int hwtimer_start(void)
 
     rt_device_read(hw_dev, 0, &timeout_s, sizeof(timeout_s));
     rt_kprintf("Read: Sec = %d, Usec = %d\n", timeout_s.sec, timeout_s.usec);
-    
+
     /* enable adc channel */
     ret = rt_adc_enable(adc_dev, ADC_DEV_CHANNEL);
-    
+
     return ret;
 }
 
@@ -130,8 +130,8 @@ static int tim_sample(int argc, char *argv[])
     if (argc > 1)
     {
         if (!rt_strcmp(argv[1], "start"))
-        { 
-           rt_kprintf("tim14 will start\n"); 
+        {
+           rt_kprintf("tim14 will start\n");
            hwtimer_start();
            return RT_EOK;
         }
@@ -152,7 +152,7 @@ _exit:
         rt_kprintf("tim_sample start         - start TIM14 \n");
         rt_kprintf("tim_sample stop          - stop TIM14 \n");
     }
-    
+
     return RT_ERROR;
 }
 MSH_CMD_EXPORT(tim_sample, tim sample);

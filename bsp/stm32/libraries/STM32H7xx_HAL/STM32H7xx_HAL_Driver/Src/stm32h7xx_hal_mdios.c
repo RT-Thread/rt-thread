@@ -55,8 +55,8 @@
         (@) HAL_MDIOS_IRQHandler() must be called from the MDIOS IRQ Handler, to handle the interrupt
             and execute the previous callbacks
 
-    (#) Reset the MDIOS peripheral and all related ressources by calling the HAL_MDIOS_DeInit() API.
-        (##) HAL_MDIOS_MspDeInit() must be implemented to reset low level ressources
+    (#) Reset the MDIOS peripheral and all related resources by calling the HAL_MDIOS_DeInit() API.
+        (##) HAL_MDIOS_MspDeInit() must be implemented to reset low level resources
             (GPIO, Clocks, NVIC configuration ...)
 
   *** Callback registration ***

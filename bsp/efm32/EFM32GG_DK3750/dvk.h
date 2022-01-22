@@ -164,7 +164,7 @@ int  DVK_BRD3600A_usbVBUSGetOCFlagState(void);
 
 /* For "backward compatibility" with DVK */
 /** DVK_enablePeripheral() backward compatibility */
-#define DVK_enablePeripheral(X)     DVK_peripheralAccess(X, true) 
+#define DVK_enablePeripheral(X)     DVK_peripheralAccess(X, true)
 /** DVK_disablePeripheral() backward compatibility */
 #define DVK_disablePeripheral(X)    DVK_peripheralAccess(X, false)
 
@@ -193,7 +193,7 @@ __STATIC_INLINE uint16_t DVK_EBI_readRegister(volatile uint16_t *addr)
 /**************************************************************************//**
  * @brief Read data from 16-bit board control register
  * @param addr Register to read
- * @return Value of board controller register 
+ * @return Value of board controller register
  *****************************************************************************/
 __STATIC_INLINE uint16_t DVK_readRegister(volatile uint16_t *addr)
 {

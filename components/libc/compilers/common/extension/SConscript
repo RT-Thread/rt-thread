@@ -1,0 +1,14 @@
+from building import *
+
+Import('rtconfig')
+
+src   = []
+cwd   = GetCurrentDir()
+CPPPATH = [cwd]
+group = []
+
+src += Glob('*.c')
+
+if rtconfig.PLATFORM != 'gcc' or rtconfig.ARCH == 'sim':
+    group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

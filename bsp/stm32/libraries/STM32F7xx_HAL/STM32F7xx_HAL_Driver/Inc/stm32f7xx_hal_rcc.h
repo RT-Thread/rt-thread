@@ -74,7 +74,7 @@ typedef struct
 }RCC_OscInitTypeDef;
 
 /**
-  * @brief  RCC System, AHB and APB busses clock configuration structure definition  
+  * @brief  RCC System, AHB and APB buses clock configuration structure definition  
   */
 typedef struct
 {

@@ -1,5 +1,5 @@
 ;
-; Copyright (c) 2006-2018, RT-Thread Development Team
+; Copyright (c) 2006-2022, RT-Thread Development Team
 ;
 ; SPDX-License-Identifier: Apache-2.0
 ;
@@ -25,7 +25,7 @@
     .def   _rt_hw_interrupt_thread_switch
     .def   _rt_hw_interrupt_disable
     .def   _rt_hw_interrupt_enable
-    
+
 ;workaround for importing fpu settings from the compiler
     .cdecls C,NOLIST
     %{
@@ -37,7 +37,7 @@
     %}
 
 
-RT_CTX_SAVE  .macro      
+RT_CTX_SAVE  .macro
 
 
     PUSH    AR1H:AR0H
@@ -49,38 +49,38 @@ RT_CTX_SAVE  .macro
     PUSH    XAR7
     PUSH    XT
     PUSH    RPC
-    
+
     .if __FPU32__
-    PUSH	RB
-    MOV32	*SP++, STF
-    MOV32	*SP++, R0H
-    MOV32	*SP++, R1H
-    MOV32	*SP++, R2H
-    MOV32	*SP++, R3H
-    MOV32	*SP++, R4H
-    MOV32	*SP++, R5H
-    MOV32	*SP++, R6H
-    MOV32	*SP++, R7H
+    PUSH    RB
+    MOV32   *SP++, STF
+    MOV32   *SP++, R0H
+    MOV32   *SP++, R1H
+    MOV32   *SP++, R2H
+    MOV32   *SP++, R3H
+    MOV32   *SP++, R4H
+    MOV32   *SP++, R5H
+    MOV32   *SP++, R6H
+    MOV32   *SP++, R7H
     .endif
- 
+
     .endm
 
 
 RT_CTX_RESTORE  .macro
 
     .if __FPU32__
-    MOV32	R7H, *--SP, UNCF
-    MOV32	R6H, *--SP, UNCF
-    MOV32	R5H, *--SP, UNCF
-    MOV32	R4H, *--SP, UNCF
-    MOV32	R3H, *--SP, UNCF
-    MOV32	R2H, *--SP, UNCF
-    MOV32	R1H, *--SP, UNCF
-    MOV32	R0H, *--SP, UNCF
-    MOV32	STF, *--SP
-    POP		RB
+    MOV32   R7H, *--SP, UNCF
+    MOV32   R6H, *--SP, UNCF
+    MOV32   R5H, *--SP, UNCF
+    MOV32   R4H, *--SP, UNCF
+    MOV32   R3H, *--SP, UNCF
+    MOV32   R2H, *--SP, UNCF
+    MOV32   R1H, *--SP, UNCF
+    MOV32   R0H, *--SP, UNCF
+    MOV32   STF, *--SP
+    POP     RB
     .endif
-                                  
+
     POP     RPC
     POP     XT
     POP     XAR7
@@ -91,7 +91,7 @@ RT_CTX_RESTORE  .macro
     POP     XAR2
 
 
-    MOVZ    AR0 , @SP                                           
+    MOVZ    AR0 , @SP
     SUBB    XAR0, #6
     MOVL    ACC , *XAR0
     AND     ACC, #0xFFFF << 16
@@ -127,13 +127,13 @@ _rt_hw_interrupt_enable:
     POP   ST1
     LRETR
     .endasmfunc
-    
+
 ;
 ; void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
 ; r0 --> from
 ; r4 --> to
 
- 
+
     .asmfunc
 _rt_hw_context_switch_interrupt:
     MOVL    XAR0, #0
@@ -169,7 +169,7 @@ _rt_hw_context_switch:
     MOVL    XAR0, #0
     MOV     AR0, AL
     MOVL    XAR4, *-SP[4]
-    ; set rt_thread_switch_interrupt_flag to 1 
+    ; set rt_thread_switch_interrupt_flag to 1
     MOVL    XAR5, #_rt_thread_switch_interrupt_flag
     MOVL    XAR6, *XAR5
     MOVL    ACC, XAR6
@@ -188,20 +188,20 @@ _reswitch2:
     TRAP    #16
     LRETR
     .endasmfunc
-     
+
      .asmfunc
 _RTOSINT_Handler:
-; disable interrupt to protect context switch 
+; disable interrupt to protect context switch
     DINT
 
-    ; get rt_thread_switch_interrupt_flag 
+    ; get rt_thread_switch_interrupt_flag
     MOV     AR0, #_rt_thread_switch_interrupt_flag
     MOV     AL, *AR0
     MOV     AR1, AL
     CMP     AR1, #0
-    B       rtosint_exit, EQ         ; pendsv already handled 
+    B       rtosint_exit, EQ         ; pendsv already handled
 
-    ; clear rt_thread_switch_interrupt_flag to 0 
+    ; clear rt_thread_switch_interrupt_flag to 0
     MOV     AR1, #0x00
     MOV     *AR0, AR1
 
@@ -209,22 +209,22 @@ _RTOSINT_Handler:
     MOV     AL, *AR0
     MOV     AR1, AL
     CMP     AR1, #0
-    B       switch_to_thread, EQ    ; skip register save at the first time 
-    
+    B       switch_to_thread, EQ    ; skip register save at the first time
+
 ;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-;    TST     lr, #0x10           ; if(!EXC_RETURN[4]) 
-;    VSTMDBEQ r1!, {d8 - d15}    ; push FPU register s16~s31 
+;    TST     lr, #0x10           ; if(!EXC_RETURN[4])
+;    VSTMDBEQ r1!, {d8 - d15}    ; push FPU register s16~s31
 ;#endif
-    
-    RT_CTX_SAVE     ; push r4 - r11 register 
+
+    RT_CTX_SAVE     ; push r4 - r11 register
 
 ;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-;    MOV     r4, #0x00           ; flag = 0 
+;    MOV     r4, #0x00           ; flag = 0
 
-;    TST     lr, #0x10           ; if(!EXC_RETURN[4]) 
-;    MOVEQ   r4, #0x01           ; flag = 1 
+;    TST     lr, #0x10           ; if(!EXC_RETURN[4])
+;    MOVEQ   r4, #0x01           ; flag = 1
 
-;    STMFD   r1!, {r4}           ; push flag 
+;    STMFD   r1!, {r4}           ; push flag
 ;#endif
 
     MOV     AL, *AR0
@@ -237,10 +237,10 @@ switch_to_thread:
     MOV     AL, *AR1
     MOV     AR1, AL
     MOV     AL, *AR1
-    MOV     AR1, AL                ; load thread stack pointer 
+    MOV     AR1, AL                ; load thread stack pointer
 
 ;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-;    LDMFD   r1!, {r3}           ; pop flag 
+;    LDMFD   r1!, {r3}           ; pop flag
 ;#endif
 
     MOV     @SP, AR1
@@ -248,7 +248,7 @@ switch_to_thread:
     RT_CTX_RESTORE     ; pop r4 - r11 register
 
 rtosint_exit:
-    ; restore interrupt 
+    ; restore interrupt
     EINT
 
     IRET
@@ -290,25 +290,25 @@ _rt_hw_calc_csb:
 ;
 ; * void rt_hw_context_switch_to(rt_uint32 to);
 ; * r0 --> to
- 
+
     .asmfunc
 _rt_hw_context_switch_to:
     MOV     AR1, #_rt_interrupt_to_thread
     MOV     *AR1, AL
 
 ;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
-    ; CLEAR CONTROL.FPCA 
-;    MRS     r2, CONTROL         ; read 
-;    BIC     r2, #0x04           ; modify 
-;    MSR     CONTROL, r2         ; write-back 
+    ; CLEAR CONTROL.FPCA
+;    MRS     r2, CONTROL         ; read
+;    BIC     r2, #0x04           ; modify
+;    MSR     CONTROL, r2         ; write-back
 ;#endif
 
-    ; set from thread to 0 
+    ; set from thread to 0
     MOV     AR1, #_rt_interrupt_from_thread
     MOV     AR0, #0x0
     MOV     *AR1, AR0
 
-    ; set interrupt flag to 1 
+    ; set interrupt flag to 1
     MOV     AR1, #_rt_thread_switch_interrupt_flag
     MOV     AR0, #1
     MOV     *AR1, AR0
@@ -316,14 +316,14 @@ _rt_hw_context_switch_to:
     TRAP    #16
 
 
-    ; never reach here! 
+    ; never reach here!
     .endasmfunc
-    
-; compatible with old version 
+
+; compatible with old version
     .asmfunc
 _rt_hw_interrupt_thread_switch:
     LRETR
     NOP
     .endasmfunc
-    
+
 .end

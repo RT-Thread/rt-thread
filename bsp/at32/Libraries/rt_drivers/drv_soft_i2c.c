@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -205,10 +205,10 @@ int rt_hw_i2c_init(void)
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, soft_i2c_config[i].bus_name);
         RT_ASSERT(result == RT_EOK);
         at32_i2c_bus_unlock(&soft_i2c_config[i]);
-        
+
         LOG_D("software simulation %s init done, pin scl: %d, pin sda %d",
-        soft_i2c_config[i].bus_name, 
-        soft_i2c_config[i].scl, 
+        soft_i2c_config[i].bus_name,
+        soft_i2c_config[i].scl,
         soft_i2c_config[i].sda);
     }
 

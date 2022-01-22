@@ -1,0 +1,92 @@
+name: AutoTestCI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  # Runs at 16:00 UTC (BeiJing 00:00) on the 1st of every month
+  schedule:
+    - cron:  '0 16 1 * *'
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - documentation/**
+      - '**/README.md'
+      - '**/README_zh.md'
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - documentation/**
+      - '**/README.md'
+      - '**/README_zh.md'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.legs.UTEST }}
+    strategy:
+      fail-fast: false
+      matrix:
+       legs:
+         - {UTEST: "kernel/mem",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/mem.conf",     SD_FILE: "sd.bin"}
+         - {UTEST: "kernel/ipc",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/ipc.conf",     SD_FILE: "sd.bin"}
+         - {UTEST: "kernel/irq",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/irq.conf",     SD_FILE: "sd.bin"}
+         - {UTEST: "kernel/timer",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/timer.conf",   SD_FILE: "sd.bin"}
+         - {UTEST: "kernel/thread",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/thread.conf",  SD_FILE: "sd.bin"}
+         - {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "utest_self/self.conf", SD_FILE: "sd.bin"}
+         - {UTEST: "kernel/mem/riscv64", RTT_BSP: "bsp/qemu-riscv-virt64", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/mem.conf",   SD_FILE: "None"}
+    env:
+      TEST_QEMU_ARCH: ${{ matrix.legs.QEMU_ARCH }}
+      TEST_QEMU_MACHINE: ${{ matrix.legs.QEMU_MACHINE }}
+      TEST_BSP_ROOT: ${{ matrix.legs.RTT_BSP }}
+      TEST_CONFIG_FILE: ${{ matrix.legs.CONFIG_FILE }}
+      TEST_SD_FILE: ${{ matrix.legs.SD_FILE }}
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Install Tools
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get -yqq install scons qemu-system git
+
+    - name: Install Arm ToolChains
+      if: ${{ matrix.legs.QEMU_ARCH == 'arm' && success() }}
+      shell: bash
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+        sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
+        /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
+        echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
+
+    - name: Install RISC-V ToolChains
+      if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && success() }}
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+        sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
+        /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
+        echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+
+    - name: Build BSP
+      run: |
+        echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
+        cat examples/utest/configs/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
+        scons --pyconfig-silent -C $TEST_BSP_ROOT
+        scons -j$(nproc) -C $TEST_BSP_ROOT
+
+    - name: Start Test
+      if: ${{ success() }}
+      run: |
+        git clone https://github.com/armink/UtestRunner.git
+        pushd $TEST_BSP_ROOT
+        dd if=/dev/zero of=sd.bin bs=1024 count=65536
+        popd
+        pushd UtestRunner
+        if [ $TEST_SD_FILE != "None" ]; then
+          python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.elf --sd ../$TEST_BSP_ROOT/$TEST_SD_FILE
+        else
+          python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.elf
+        fi
+        cat rtt_console.log
+        popd

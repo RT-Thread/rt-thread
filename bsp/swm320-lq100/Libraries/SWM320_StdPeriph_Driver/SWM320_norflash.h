@@ -3,16 +3,14 @@
 
 typedef struct
 {
-    uint8_t DataWidth;          // 8¡¢16
+    uint8_t DataWidth; // 8ã€16
 
-    uint8_t WELowPulseTime;     // WE# pulse width£¬µ¥Î»ÎªÏµÍ³Ê±ÖÓÖÜÆÚ£¬×î´óÖµÎª7
-    uint8_t OEPreValidTime;     // Valid data output after OE# low£¬µ¥Î»ÎªÏµÍ³Ê±ÖÓÖÜÆÚ£¬×î´óÖµÎª15
+    uint8_t WELowPulseTime; // WE# pulse widthï¼Œå•ä½ä¸ºç³»ç»Ÿæ—¶é’Ÿå‘¨æœŸï¼Œæœ€å¤§å€¼ä¸º7
+    uint8_t OEPreValidTime; // Valid data output after OE# lowï¼Œå•ä½ä¸ºç³»ç»Ÿæ—¶é’Ÿå‘¨æœŸï¼Œæœ€å¤§å€¼ä¸º15
 
-    uint8_t OperFinishIEn;      // ²Ù×÷(Ğ´Èë¡¢²Á³ı)Íê³ÉÖĞ¶ÏÊ¹ÄÜ
+    uint8_t OperFinishIEn; // æ“ä½œ(å†™å…¥ã€æ“¦é™¤)å®Œæˆä¸­æ–­ä½¿èƒ½
     uint8_t OperTimeoutIEn;
 } NORFL_InitStructure;
-
-
 
 void NORFL_Init(NORFL_InitStructure *initStruct);
 uint32_t NORFL_ChipErase(void);
@@ -21,19 +19,16 @@ uint32_t NORFL_Write(uint32_t addr, uint32_t data);
 uint32_t NORFL_Read(uint32_t addr);
 uint16_t NORFL_ReadID(uint32_t id_addr);
 
+/* å½“å‰ç‰ˆæœ¬æ€»çº¿è¯»åªæ”¯æŒå­—è¯»
+#define NORFL_Read8(addr)   *((volatile uint8_t  *)(NORFLM_BASE + addr))
+#define NORFL_Read16(addr)  *((volatile uint16_t *)(NORFLM_BASE + addr))    */
+#define NORFL_Read32(addr) *((volatile uint32_t *)(NORFLM_BASE + addr))
 
-/* µ±Ç°°æ±¾×ÜÏß¶ÁÖ»Ö§³Ö×Ö¶Á
-#define NORFL_Read8(addr)           *((volatile uint8_t  *)(NORFLM_BASE + addr))
-#define NORFL_Read16(addr)          *((volatile uint16_t *)(NORFLM_BASE + addr))    */
-#define NORFL_Read32(addr)          *((volatile uint32_t *)(NORFLM_BASE + addr))
-
-
-
-#define NORFL_CMD_READ              0
-#define NORFL_CMD_RESET             1
-#define NORFL_CMD_AUTO_SELECT       2
-#define NORFL_CMD_PROGRAM           3
-#define NORFL_CMD_CHIP_ERASE        4
-#define NORFL_CMD_SECTOR_ERASE      5
+#define NORFL_CMD_READ 0
+#define NORFL_CMD_RESET 1
+#define NORFL_CMD_AUTO_SELECT 2
+#define NORFL_CMD_PROGRAM 3
+#define NORFL_CMD_CHIP_ERASE 4
+#define NORFL_CMD_SECTOR_ERASE 5
 
 #endif // __SWM320_NORFLASH_H__

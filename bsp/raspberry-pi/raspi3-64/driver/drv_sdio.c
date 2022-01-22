@@ -1,6 +1,6 @@
 /*
  * File      : drv_sdio.c
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -128,7 +128,7 @@ rt_err_t sd_status(struct sdhci_pdata_t * pdat, unsigned int mask)
     else if (read32(pdat->virt + EMMC_INTERRUPT) & INT_ERROR_MASK)
     {
         return  -RT_ERROR;
-    } 
+    }
 
     return RT_EOK;
 }

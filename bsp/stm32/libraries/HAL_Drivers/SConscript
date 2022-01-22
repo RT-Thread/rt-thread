@@ -12,7 +12,10 @@ if GetDepend(['RT_USING_PIN']):
     src += ['drv_gpio.c']
 
 if GetDepend(['RT_USING_SERIAL']):
-    src += ['drv_usart.c']
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['drv_usart_v2.c']
+    else:
+        src += ['drv_usart.c']
 
 if GetDepend(['RT_USING_HWTIMER']):
     src += ['drv_hwtimer.c']

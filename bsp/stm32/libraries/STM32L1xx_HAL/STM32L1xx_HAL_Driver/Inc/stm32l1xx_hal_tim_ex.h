@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @brief   Header file of TIM HAL Extended module.
   ******************************************************************************
-    * @attention
+  * @attention
   *
   * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
   * All rights reserved.</center></h2>
@@ -123,18 +123,18 @@ extern "C" {
   */
 #if defined(DMA2)
 #define IS_TIM_REMAP(INSTANCE, TIM_REMAP)               \
-        ( (((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_ITR1_TIM10_OC) || ((TIM_REMAP) == TIM_TIM2_ITR1_TIM5_TGO)))  || \
-          (((INSTANCE) == TIM3)  && (((TIM_REMAP) == TIM_TIM3_ITR2_TIM11_OC) || ((TIM_REMAP) == TIM_TIM3_ITR2_TIM5_TGO)))  || \
-          (((INSTANCE) == TIM9)  && ((TIM_REMAP) <= (TIM_TIM9_ITR1_TS | TIM_TIM9_GPIO2)))                                  || \
-          (((INSTANCE) == TIM10) && ((TIM_REMAP) <= (TIM_TIM10_RI | TIM_TIM10_ETR_TIM9_TGO | TIM_TIM10_RTC)))              || \
-          (((INSTANCE) == TIM11) && ((TIM_REMAP) <= (TIM_TIM11_RI | TIM_TIM11_ETR_TIM9_TGO | TIM_TIM11_GPIO1)))               \
-        )
+  ( (((INSTANCE) == TIM2)  && (((TIM_REMAP) == TIM_TIM2_ITR1_TIM10_OC) || ((TIM_REMAP) == TIM_TIM2_ITR1_TIM5_TGO)))  || \
+    (((INSTANCE) == TIM3)  && (((TIM_REMAP) == TIM_TIM3_ITR2_TIM11_OC) || ((TIM_REMAP) == TIM_TIM3_ITR2_TIM5_TGO)))  || \
+    (((INSTANCE) == TIM9)  && ((TIM_REMAP) <= (TIM_TIM9_ITR1_TS | TIM_TIM9_GPIO2)))                                  || \
+    (((INSTANCE) == TIM10) && ((TIM_REMAP) <= (TIM_TIM10_RI | TIM_TIM10_ETR_TIM9_TGO | TIM_TIM10_RTC)))              || \
+    (((INSTANCE) == TIM11) && ((TIM_REMAP) <= (TIM_TIM11_RI | TIM_TIM11_ETR_TIM9_TGO | TIM_TIM11_GPIO1)))               \
+  )
 #else
 #define IS_TIM_REMAP(INSTANCE, TIM_REMAP)               \
-        ( (((INSTANCE) == TIM9)  && (((TIM_REMAP) == TIM_TIM9_GPIO) || ((TIM_REMAP) == TIM_TIM9_LSE) || ((TIM_REMAP) == TIM_TIM9_GPIO1) || ((TIM_REMAP) == TIM_TIM9_GPIO2)))       || \
-          (((INSTANCE) == TIM10) && (((TIM_REMAP) == TIM_TIM10_GPIO) || ((TIM_REMAP) == TIM_TIM10_LSI) || ((TIM_REMAP) == TIM_TIM10_LSE) || ((TIM_REMAP) == TIM_TIM10_RTC)))       || \
-          (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO) || ((TIM_REMAP) == TIM_TIM11_MSI) || ((TIM_REMAP) == TIM_TIM11_HSE_RTC) || ((TIM_REMAP) == TIM_TIM11_GPIO1)))    \
-        )
+  ( (((INSTANCE) == TIM9)  && (((TIM_REMAP) == TIM_TIM9_GPIO) || ((TIM_REMAP) == TIM_TIM9_LSE) || ((TIM_REMAP) == TIM_TIM9_GPIO1) || ((TIM_REMAP) == TIM_TIM9_GPIO2)))       || \
+    (((INSTANCE) == TIM10) && (((TIM_REMAP) == TIM_TIM10_GPIO) || ((TIM_REMAP) == TIM_TIM10_LSI) || ((TIM_REMAP) == TIM_TIM10_LSE) || ((TIM_REMAP) == TIM_TIM10_RTC)))       || \
+    (((INSTANCE) == TIM11) && (((TIM_REMAP) == TIM_TIM11_GPIO) || ((TIM_REMAP) == TIM_TIM11_MSI) || ((TIM_REMAP) == TIM_TIM11_HSE_RTC) || ((TIM_REMAP) == TIM_TIM11_GPIO1)))    \
+  )
 #endif /* DMA2 */
 
 /**
@@ -148,11 +148,12 @@ extern "C" {
   */
 
 /** @addtogroup TIMEx_Exported_Functions_Group5 Extended Peripheral Control functions
- *  @brief    Peripheral Control functions
- * @{
- */
+  *  @brief    Peripheral Control functions
+  * @{
+  */
 /* Extended Control functions  ************************************************/
-HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim, TIM_MasterConfigTypeDef *sMasterConfig);
+HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
+                                                        TIM_MasterConfigTypeDef *sMasterConfig);
 HAL_StatusTypeDef HAL_TIMEx_RemapConfig(TIM_HandleTypeDef *htim, uint32_t Remap);
 /**
   * @}

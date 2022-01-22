@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,20 +15,20 @@
 #include "finsh.h"
 
 #ifndef FINSH_THREAD_PRIORITY
-#define FINSH_THREAD_PRIORITY 20
+    #define FINSH_THREAD_PRIORITY 20
 #endif
 #ifndef FINSH_THREAD_STACK_SIZE
-#define FINSH_THREAD_STACK_SIZE 2048
+    #define FINSH_THREAD_STACK_SIZE 2048
 #endif
 #ifndef FINSH_CMD_SIZE
-#define FINSH_CMD_SIZE      80
+    #define FINSH_CMD_SIZE      80
 #endif
 
 #define FINSH_OPTION_ECHO   0x01
 
 #define FINSH_PROMPT        finsh_get_prompt()
-const char* finsh_get_prompt(void);
-int finsh_set_prompt(const char * prompt);
+const char *finsh_get_prompt(void);
+int finsh_set_prompt(const char *prompt);
 
 #ifdef FINSH_USING_HISTORY
     #ifndef FINSH_HISTORY_LINES
@@ -49,7 +49,7 @@ int finsh_set_prompt(const char * prompt);
 #endif /* FINSH_USING_AUTH */
 
 #ifndef FINSH_THREAD_NAME
-#define FINSH_THREAD_NAME   "tshell"
+    #define FINSH_THREAD_NAME   "tshell"
 #endif
 
 enum input_stat
@@ -64,7 +64,7 @@ struct finsh_shell
 
     enum input_stat stat;
 
-    rt_uint8_t echo_mode:1;
+    rt_uint8_t echo_mode: 1;
     rt_uint8_t prompt_mode: 1;
 
 #ifdef FINSH_USING_HISTORY
@@ -74,15 +74,11 @@ struct finsh_shell
     char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
 #endif
 
-#ifndef FINSH_USING_MSH_ONLY
-    struct finsh_parser parser;
-#endif
-
     char line[FINSH_CMD_SIZE + 1];
     rt_uint16_t line_position;
     rt_uint16_t line_curpos;
 
-#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     rt_device_t device;
 #endif
 
@@ -95,15 +91,15 @@ void finsh_set_echo(rt_uint32_t echo);
 rt_uint32_t finsh_get_echo(void);
 
 int finsh_system_init(void);
-void finsh_set_device(const char* device_name);
-const char* finsh_get_device(void);
+const char *finsh_get_device(void);
+int finsh_getchar(void);
 
 rt_uint32_t finsh_get_prompt_mode(void);
 void finsh_set_prompt_mode(rt_uint32_t prompt_mode);
 
 #ifdef FINSH_USING_AUTH
-rt_err_t finsh_set_password(const char *password);
-const char *finsh_get_password(void);
+    rt_err_t finsh_set_password(const char *password);
+    const char *finsh_get_password(void);
 #endif
 
 #endif

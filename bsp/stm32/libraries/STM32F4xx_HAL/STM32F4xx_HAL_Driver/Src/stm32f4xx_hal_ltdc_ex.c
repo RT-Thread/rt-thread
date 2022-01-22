@@ -24,14 +24,14 @@
   * @{
   */
 
+#if defined(HAL_LTDC_MODULE_ENABLED) && defined(HAL_DSI_MODULE_ENABLED)
+
 #if defined (LTDC) && defined (DSI)
 
 /** @defgroup LTDCEx LTDCEx
   * @brief LTDC HAL module driver
   * @{
   */
-
-#if defined(HAL_LTDC_MODULE_ENABLED) && defined(HAL_DSI_MODULE_ENABLED)
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -134,13 +134,13 @@ HAL_StatusTypeDef HAL_LTDCEx_StructInitFromAdaptedCommandConfig(LTDC_HandleTypeD
   * @}
   */
 
-#endif /* HAL_LTCD_MODULE_ENABLED && HAL_DSI_MODULE_ENABLED */
-
 /**
   * @}
   */
 
 #endif /* LTDC && DSI */
+
+#endif /* HAL_LTCD_MODULE_ENABLED && HAL_DSI_MODULE_ENABLED */
 
 /**
   * @}

@@ -750,19 +750,19 @@ int nu_hwcrypto_device_init(void)
 
     /* init cipher mutex */
 #if defined(RT_HWCRYPTO_USING_AES)
-    result = rt_mutex_init(&s_AES_mutex, NU_HWCRYPTO_AES_NAME, RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&s_AES_mutex, NU_HWCRYPTO_AES_NAME, RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
     AES_ENABLE_INT(CRPT);
 #endif
 
 #if defined(RT_HWCRYPTO_USING_SHA1) || defined(RT_HWCRYPTO_USING_SHA2)
-    result = rt_mutex_init(&s_SHA_mutex, NU_HWCRYPTO_SHA_NAME, RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&s_SHA_mutex, NU_HWCRYPTO_SHA_NAME, RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
     SHA_ENABLE_INT(CRPT);
 #endif
 
 #if defined(RT_HWCRYPTO_USING_RNG)
-    result = rt_mutex_init(&s_PRNG_mutex, NU_HWCRYPTO_PRNG_NAME, RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&s_PRNG_mutex, NU_HWCRYPTO_PRNG_NAME, RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
 #endif
 

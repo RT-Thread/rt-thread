@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,43 +12,43 @@
 /* the exception stack without VFP registers */
 struct rt_hw_exp_stack
 {
-	unsigned long r0;
-	unsigned long r1;
-	unsigned long r2;
-	unsigned long r3;
-	unsigned long r4;
-	unsigned long r5;
-	unsigned long r6;
-	unsigned long r7;
-	unsigned long r8;
-	unsigned long r9;
-	unsigned long r10;
-	unsigned long fp;
-	unsigned long ip;
-	unsigned long sp;
-	unsigned long lr;
-	unsigned long pc;
-	unsigned long cpsr;
+    unsigned long r0;
+    unsigned long r1;
+    unsigned long r2;
+    unsigned long r3;
+    unsigned long r4;
+    unsigned long r5;
+    unsigned long r6;
+    unsigned long r7;
+    unsigned long r8;
+    unsigned long r9;
+    unsigned long r10;
+    unsigned long fp;
+    unsigned long ip;
+    unsigned long sp;
+    unsigned long lr;
+    unsigned long pc;
+    unsigned long cpsr;
 };
 
 struct rt_hw_stack
 {
-	unsigned long cpsr;
-	unsigned long r0;
-	unsigned long r1;
-	unsigned long r2;
-	unsigned long r3;
-	unsigned long r4;
-	unsigned long r5;
-	unsigned long r6;
-	unsigned long r7;
-	unsigned long r8;
-	unsigned long r9;
-	unsigned long r10;
-	unsigned long fp;
-	unsigned long ip;
-	unsigned long lr;
-	unsigned long pc;
+    unsigned long cpsr;
+    unsigned long r0;
+    unsigned long r1;
+    unsigned long r2;
+    unsigned long r3;
+    unsigned long r4;
+    unsigned long r5;
+    unsigned long r6;
+    unsigned long r7;
+    unsigned long r8;
+    unsigned long r9;
+    unsigned long r10;
+    unsigned long fp;
+    unsigned long ip;
+    unsigned long lr;
+    unsigned long pc;
 };
 
 #define USERMODE    0x10
@@ -68,5 +68,11 @@ struct rt_hw_stack
 #define A_Bit       (1<<8)
 #define E_Bit       (1<<9)
 #define J_Bit       (1<<24)
+
+#define PABT_EXCEPTION 0x1
+#define DABT_EXCEPTION 0x2
+#define UND_EXCEPTION  0x3
+#define SWI_EXCEPTION  0x4
+#define RESV_EXCEPTION 0xF
 
 #endif

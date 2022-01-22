@@ -38,6 +38,19 @@ extern "C" {
   * @{
   */
 /* Private constants ---------------------------------------------------------*/
+/** @addtogroup RCCEx_Private_Constants
+  * @{
+  */
+/* Define used for IS_RCC_* macros below */
+#define RCC_PERIPHCLOCK_ALL             (RCC_PERIPHCLK_USART1 | RCC_PERIPHCLK_USART2 | RCC_PERIPHCLK_I2S2 | \
+                                         RCC_PERIPHCLK_LPUART1 | RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_I2C2 | \
+                                         RCC_PERIPHCLK_I2C3 | RCC_PERIPHCLK_LPTIM1 | RCC_PERIPHCLK_LPTIM2 | \
+                                         RCC_PERIPHCLK_LPTIM3 | RCC_PERIPHCLK_ADC | RCC_PERIPHCLK_RNG | \
+                                         RCC_PERIPHCLK_RTC )
+/**
+  * @}
+  */
+
 /* Private macros ------------------------------------------------------------*/
 /** @addtogroup RCCEx_Private_Macros
   * @{
@@ -46,19 +59,8 @@ extern "C" {
 #define IS_RCC_LSCOSOURCE(__SOURCE__) (((__SOURCE__) == RCC_LSCOSOURCE_LSI) || \
                                        ((__SOURCE__) == RCC_LSCOSOURCE_LSE))
 
-#define IS_RCC_PERIPHCLOCK(__SELECTION__) ((((__SELECTION__) & RCC_PERIPHCLK_USART1)   == RCC_PERIPHCLK_USART1)  || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_USART2)   == RCC_PERIPHCLK_USART2)  || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_LPUART1)  == RCC_PERIPHCLK_LPUART1) || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_I2S2)     == RCC_PERIPHCLK_I2S2)    || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_I2C1)     == RCC_PERIPHCLK_I2C1)    || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_I2C2)     == RCC_PERIPHCLK_I2C2)    || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_I2C3)     == RCC_PERIPHCLK_I2C3)    || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_LPTIM1)   == RCC_PERIPHCLK_LPTIM1)  || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_LPTIM2)   == RCC_PERIPHCLK_LPTIM2)  || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_LPTIM3)   == RCC_PERIPHCLK_LPTIM3)  || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_RNG)      == RCC_PERIPHCLK_RNG)     || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_ADC)      == RCC_PERIPHCLK_ADC)     || \
-                                           (((__SELECTION__) & RCC_PERIPHCLK_RTC)      == RCC_PERIPHCLK_RTC))
+#define IS_RCC_PERIPHCLOCK(__SELECTION__)   ((((__SELECTION__) & RCC_PERIPHCLOCK_ALL) != 0x00u) && \
+                                             (((__SELECTION__) & ~RCC_PERIPHCLOCK_ALL) == 0x00u))
 
 #define IS_RCC_USART1CLKSOURCE(__SOURCE__)  (((__SOURCE__) == RCC_USART1CLKSOURCE_PCLK2)  || \
                                              ((__SOURCE__) == RCC_USART1CLKSOURCE_SYSCLK) || \

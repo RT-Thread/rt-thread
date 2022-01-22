@@ -33,8 +33,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_LL_CORTEX_H
-#define __STM32L4xx_LL_CORTEX_H
+#ifndef STM32L4xx_LL_CORTEX_H
+#define STM32L4xx_LL_CORTEX_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -634,6 +634,6 @@ __STATIC_INLINE void LL_MPU_DisableRegion(uint32_t Region)
 }
 #endif
 
-#endif /* __STM32L4xx_LL_CORTEX_H */
+#endif /* STM32L4xx_LL_CORTEX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -275,7 +275,8 @@
 #if defined(STM32L451xx) || defined(STM32L452xx) || defined(STM32L462xx) || \
     defined(STM32L471xx) || defined(STM32L475xx) || defined(STM32L476xx) || defined(STM32L485xx) || defined(STM32L486xx) || \
     defined(STM32L496xx) || defined(STM32L4A6xx) || \
-    defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+    defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
 
 /** @defgroup DFSDM DFSDM
   * @brief DFSDM HAL driver module
@@ -291,11 +292,12 @@
 #define DFSDM_MSB_MASK                  0xFFFF0000U
 #define DFSDM_LSB_MASK                  0x0000FFFFU
 #define DFSDM_CKAB_TIMEOUT              5000U
-#if defined(STM32L451xx) || defined(STM32L452xx) || defined(STM32L462xx)
+#if defined(STM32L451xx) || defined(STM32L452xx) || defined(STM32L462xx) || \
+    defined(STM32L4P5xx) || defined(STM32L4Q5xx)
 #define DFSDM1_CHANNEL_NUMBER           4U
-#else /* STM32L451xx || STM32L452xx || STM32L462xx */
+#else /* STM32L451xx || STM32L452xx || STM32L462xx || STM32L4P5xx || STM32L4Q5xx */
 #define DFSDM1_CHANNEL_NUMBER           8U
-#endif /* STM32L451xx || STM32L452xx || STM32L462xx */
+#endif /* STM32L451xx || STM32L452xx || STM32L462xx || STM32L4P5xx || STM32L4Q5xx */
 /**
   * @}
   */
@@ -2186,17 +2188,12 @@ HAL_StatusTypeDef HAL_DFSDM_FilterRegularStop_DMA(DFSDM_Filter_HandleTypeDef *hd
   else
   {
     /* Stop current DMA transfer */
-    if (HAL_DMA_Abort(hdfsdm_filter->hdmaReg) != HAL_OK)
-    {
-      /* Set DFSDM filter in error state */
-      hdfsdm_filter->State = HAL_DFSDM_FILTER_STATE_ERROR;
-      status = HAL_ERROR;
-    }
-    else
-    {
-      /* Stop regular conversion */
-      DFSDM_RegConvStop(hdfsdm_filter);
-    }
+    /* No need to check the returned value of HAL_DMA_Abort. */
+    /* Only HAL_DMA_ERROR_NO_XFER can be returned in case of error and it's not an error for DFSDM. */
+    (void) HAL_DMA_Abort(hdfsdm_filter->hdmaReg);
+
+    /* Stop regular conversion */
+    DFSDM_RegConvStop(hdfsdm_filter);
   }
   /* Return function status */
   return status;
@@ -2603,17 +2600,12 @@ HAL_StatusTypeDef HAL_DFSDM_FilterInjectedStop_DMA(DFSDM_Filter_HandleTypeDef *h
   else
   {
     /* Stop current DMA transfer */
-    if (HAL_DMA_Abort(hdfsdm_filter->hdmaInj) != HAL_OK)
-    {
-      /* Set DFSDM filter in error state */
-      hdfsdm_filter->State = HAL_DFSDM_FILTER_STATE_ERROR;
-      status = HAL_ERROR;
-    }
-    else
-    {
-      /* Stop regular conversion */
-      DFSDM_InjConvStop(hdfsdm_filter);
-    }
+    /* No need to check the returned value of HAL_DMA_Abort. */
+    /* Only HAL_DMA_ERROR_NO_XFER can be returned in case of error and it's not an error for DFSDM. */
+    (void) HAL_DMA_Abort(hdfsdm_filter->hdmaInj);
+
+    /* Stop regular conversion */
+    DFSDM_InjConvStop(hdfsdm_filter);
   }
   /* Return function status */
   return status;
@@ -3373,10 +3365,6 @@ static uint32_t DFSDM_GetChannelFromInstance(const DFSDM_Channel_TypeDef *Instan
   {
     channel = 2;
   }
-  else if (Instance == DFSDM1_Channel3)
-  {
-    channel = 3;
-  }
 #if defined(STM32L471xx) || defined(STM32L475xx) || defined(STM32L476xx) || defined(STM32L485xx) || defined(STM32L486xx) || \
     defined(STM32L496xx) || defined(STM32L4A6xx) || \
     defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
@@ -3397,9 +3385,9 @@ static uint32_t DFSDM_GetChannelFromInstance(const DFSDM_Channel_TypeDef *Instan
     channel = 7;
   }
 #endif /* STM32L471xx || STM32L475xx || STM32L476xx || STM32L485xx || STM32L486xx || STM32L496xx || STM32L4A6xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
-  else
+  else /* DFSDM1_Channel3 */
   {
-    channel = 0;
+    channel = 3;
   }
 
   return channel;
@@ -3579,7 +3567,7 @@ static void DFSDM_InjConvStop(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
   * @}
   */
 
-#endif /* STM32L451xx || STM32L452xx || STM32L462xx || STM32L471xx || STM32L475xx || STM32L476xx || STM32L485xx || STM32L486xx || STM32L496xx || STM32L4A6xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L451xx || STM32L452xx || STM32L462xx || STM32L471xx || STM32L475xx || STM32L476xx || STM32L485xx || STM32L486xx || STM32L496xx || STM32L4A6xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx || STM32L4P5xx || STM32L4Q5xx */
 
 #endif /* HAL_DFSDM_MODULE_ENABLED */
 

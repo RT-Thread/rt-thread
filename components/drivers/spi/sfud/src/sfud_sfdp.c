@@ -223,7 +223,7 @@ static bool read_basic_table(sfud_flash *flash, sfdp_para_header *basic_header) 
         return false;
     }
     /* get write granularity */
-    //TODO Ä¿Ç°Îª 1.0 ËùÌá¹©µÄ·½Ê½£¬ºóÆÚÖ§³Ö V1.5 ¼°ÒÔÉÏµÄ·½Ê½¶ÁÈ¡ page size
+    //TODO ç›®å‰ä¸º 1.0 æ‰€æä¾›çš„æ–¹å¼ï¼ŒåæœŸæ”¯æŒ V1.5 åŠä»¥ä¸Šçš„æ–¹å¼è¯»å– page size
     switch ((table[0] & (0x01 << 2)) >> 2) {
     case 0:
         sfdp->write_gran = 1;
