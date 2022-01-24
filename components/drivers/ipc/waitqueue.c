@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018/06/26     Bernard      Fix the wait queue issue when wakeup a soon
  *                             to blocked thread.
+ * 2022-01-24     THEWON       let rt_wqueue_wait return thread->error when using signal
  */
 
 #include <stdint.h>
@@ -141,6 +142,10 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     rt_list_init(&__wait.list);
 
     level = rt_hw_interrupt_disable();
+
+    /* reset thread error */
+    tid->error = RT_EOK;
+
     if (queue->flag == RT_WQ_FLAG_WAKEUP)
     {
         /* already wakeup */
@@ -171,5 +176,5 @@ __exit_wakeup:
 
     rt_wqueue_remove(&__wait);
 
-    return 0;
+    return tid->error;
 }
