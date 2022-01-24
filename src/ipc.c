@@ -40,6 +40,7 @@
  * 2021-01-03     Meco Man     implement rt_mb_urgent()
  * 2021-05-30     Meco Man     implement rt_mutex_trytake()
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to ipc.c
+ * 2022-01-24     THEWON       let rt_mutex_take return thread->error when using signal
  */
 
 #include <rtthread.h>
@@ -947,9 +948,6 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     }
     else
     {
-#ifdef RT_USING_SIGNALS
-__again:
-#endif /* RT_USING_SIGNALS */
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -1026,11 +1024,6 @@ __again:
 
                 if (thread->error != RT_EOK)
                 {
-#ifdef RT_USING_SIGNALS
-                    /* interrupt by signal, try it again */
-                    if (thread->error == -RT_EINTR) goto __again;
-#endif /* RT_USING_SIGNALS */
-
                     /* return error */
                     return thread->error;
                 }
