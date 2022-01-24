@@ -34,13 +34,11 @@ config ARCH_ARM_MPU
 config ARCH_ARM_CORTEX_M4
     bool
     select ARCH_ARM_CORTEX_M
-    select ARCH_ARM_CORTEX_FPU
     select RT_USING_CPU_FFS
 
 config ARCH_ARM_CORTEX_M7
     bool
     select ARCH_ARM_CORTEX_M
-    select ARCH_ARM_CORTEX_FPU
     select RT_USING_CPU_FFS
 
 config ARCH_ARM_CORTEX_R
