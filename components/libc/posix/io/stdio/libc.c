@@ -15,9 +15,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/time.h>
+#include <sys/errno.h>
 #include "libc.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 int libc_system_init(void)
 {
@@ -108,7 +107,7 @@ int libc_stdio_get_console(void)
         return -1;
 }
 
-#else
+#elif defined(RT_USING_POSIX_STDIO)
 #define STDIO_DEVICE_NAME_MAX   32
 static int std_fd = -1;
 int libc_stdio_set_console(const char* device_name, int mode)
@@ -136,3 +135,24 @@ int libc_stdio_get_console(void) {
     return std_fd;
 }
 #endif /* defined(RT_USING_POSIX_STDIO) && defined(RT_USING_NEWLIB) */
+
+int isatty(int fd)
+{
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+    if(fd == STDOUT_FILENO || fd == STDERR_FILENO)
+    {
+        return 1;
+    }
+#endif
+
+#ifdef RT_USING_POSIX_STDIO
+    if(fd == STDIN_FILENO)
+    {
+        return 1;
+    }
+#endif
+
+    rt_set_errno(ENOTTY);
+    return 0;
+}
+RTM_EXPORT(isatty);
