@@ -16,8 +16,7 @@
 + tolower()
 + toupper()
 
-<errno.h> -> for gcc, keil, iar platform at the same time;
-                             Suggest to choose <sys/errno.h>
+<errno.h> -> Suggesting to use <sys/errno.h> instead of <errno.h> to be compatible with three compilation platforms of IAR Keil GCC at the same time.
 + errno
 
 <fcntl.h>
@@ -138,8 +137,7 @@
 + longjmp()
 + setjmp()
 
-<signal.h> -> for gcc, keil, iar platform at the same time;
-                             Suggest to choose <sys/signal.h>
+<signal.h> ->  Suggesting to use <sys/signal.h> instead of <signal.h> to be compatible with three compilation platforms of IAR Keil GCC at the same time.
 + kill()
 + pthread_kill()
 + pthread_sigmask()
@@ -174,7 +172,7 @@
 + fflush()
 + fgetc()
 + fgets()
-- fileno()
++ fileno()    ; GCC and IAR support, but Keil doesn't support
 - flockfile()
 + fopen()
 + fprintf()
@@ -285,8 +283,7 @@
 <sys/utsname.h>
 + uname()
 
-<time.h>   -> for gcc, keil, iar platform at the same time;
-                             Suggest to choose <sys/time.h>
+<time.h>   -> Suggesting to use <sys/time.h> instead of <time.h> to be compatible with three compilation platforms of IAR Keil GCC at the same time.
 + asctime()
 + asctime_r()
 + clock_getres()
@@ -309,8 +306,8 @@
 + timer_getoverrun()
 + timer_gettime()
 + timer_settime()
-% tzname       ; you should better use 'tz_xxx' in the rt-thread.
-% tzset()      ; you should better use 'tz_xxx' in the rt-thread.
+- tzname       ; you should better use 'tz_xxx' in the rt-thread.
+- tzset()      ; you should better use 'tz_xxx' in the rt-thread.
 
 <unistd.h>
 + alarm()
