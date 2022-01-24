@@ -852,7 +852,6 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
     struct timer_obj *timer = (struct timer_obj *)timerid;
     rt_tick_t remaining;
     rt_uint32_t seconds, nanoseconds;
-    rt_int64_t nsecs, secs;
 
     if (timer == NULL)
     {
@@ -918,7 +917,6 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
                   struct itimerspec *ovalue)
 {
     struct timer_obj *timer = (struct timer_obj *)timerid;
-    rt_uint32_t duration, current;
 
     if (timer == NULL ||
         value->it_interval.tv_nsec < 0 ||
