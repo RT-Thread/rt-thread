@@ -3,8 +3,15 @@
 import os
 from building import *
 
+src     = []
 cwd     = GetCurrentDir()
+CPPPATH = [cwd]
 group   = []
+
+if GetDepend('RT_USING_POSIX_STDIO'):
+    src += ['libc.c']
+
+group = DefineGroup('POSIX', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)
 for d in list:

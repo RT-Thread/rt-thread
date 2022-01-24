@@ -1,7 +1,7 @@
 from building import *
 Import('rtconfig')
 
-src = Glob('*.c') + Glob('*.cpp') + Glob('arch/*.c')
+src = Glob('*.c') + Glob('arch/*.c')
 cwd = GetCurrentDir()
 group   = []
 CPPPATH = [cwd]
