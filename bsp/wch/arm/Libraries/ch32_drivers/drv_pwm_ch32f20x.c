@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,7 +34,7 @@ struct rtdevice_pwm_device
 };
 
 /*
-* channel = 0xFF: the channel is not use. 
+* channel = 0xFF: the channel is not use.
 */
 struct rtdevice_pwm_device pwm_device_list[] =
     {
@@ -422,7 +422,7 @@ static rt_err_t ch32f2_pwm_device_set(struct rt_device_pwm *device, struct rt_pw
 
   TIM_TimeBaseInit(pwm_device->periph, &TIM_TimeBaseInitType);
 
- 
+
   TIM_OCStructInit(&TIM_OCInitType);
   TIM_OCInitType.TIM_OCMode = TIM_OCMode_PWM1;
   TIM_OCInitType.TIM_OutputState = TIM_OutputState_Enable;

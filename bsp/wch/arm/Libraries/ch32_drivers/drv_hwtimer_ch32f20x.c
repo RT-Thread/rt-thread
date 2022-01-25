@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -64,7 +64,7 @@ struct hwtimer_device hwtimer_device5 =
         .irqn = TIM5_IRQn,
         .name = "timer5"};
 #endif
-				
+
 #ifdef BSP_USING_TIM6_HWTIMER
 struct hwtimer_device hwtimer_device6 =
     {
