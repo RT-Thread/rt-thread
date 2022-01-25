@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,7 +28,7 @@ extern "C" {
   }
 #endif /* PWM1_CONFIG */
 #endif /* BSP_USING_TMR1_CH1 */
-  
+
 #ifdef BSP_USING_TMR1_CH2
 #ifndef PWM2_CONFIG
 #define PWM2_CONFIG              \
@@ -72,7 +72,7 @@ extern "C" {
   }
 #endif /* PWM5_CONFIG */
 #endif /* BSP_USING_TMR2_CH1 */
-  
+
 #ifdef BSP_USING_TMR2_CH2
 #ifndef PWM6_CONFIG
 #define PWM6_CONFIG              \
@@ -82,8 +82,8 @@ extern "C" {
     .channel      = 2            \
   }
 #endif /* PWM6_CONFIG */
-#endif /* BSP_USING_TMR2_CH2 */  
-  
+#endif /* BSP_USING_TMR2_CH2 */
+
 #ifdef BSP_USING_TMR2_CH3
 #ifndef PWM7_CONFIG
 #define PWM7_CONFIG              \
@@ -93,7 +93,7 @@ extern "C" {
     .channel      = 3            \
   }
 #endif /* PWM7_CONFIG */
-#endif /* BSP_USING_TMR2_CH3 */  
+#endif /* BSP_USING_TMR2_CH3 */
 
 #ifdef BSP_USING_TMR2_CH4
 #ifndef PWM8_CONFIG
@@ -115,7 +115,7 @@ extern "C" {
     .channel      = 1            \
   }
 #endif /* PWM9_CONFIG */
-#endif /* BSP_USING_TMR3_CH1 */   
+#endif /* BSP_USING_TMR3_CH1 */
 
 #ifdef BSP_USING_TMR3_CH2
 #ifndef PWM10_CONFIG
@@ -149,7 +149,7 @@ extern "C" {
   }
 #endif /* PWM12_CONFIG */
 #endif /* BSP_USING_TMR3_CH4 */
-  
+
 #ifdef __cplusplus
 }
 #endif

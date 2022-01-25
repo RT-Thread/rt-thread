@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -391,5 +391,6 @@ int _aaci_pl041_reg_dump(int argc, char **argv)
     PL041_DUMP(PL041->dr4[0]);
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(_aaci_pl041_reg_dump, __cmd_pl041_dump, aaci pl041 dump reg.);
+MSH_CMD_EXPORT_ALIAS(_aaci_pl041_reg_dump, pl041_dump, aaci pl041 dump reg);
+
 #endif

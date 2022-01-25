@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@
 
 struct stm32_spdifrx
 {
-    struct rt_device dev;  
+    struct rt_device dev;
     SPDIFRX_HandleTypeDef spdifrx;
     SAI_HandleTypeDef sai4;
     volatile rt_uint8_t complate;
@@ -46,7 +46,7 @@ static void sai4a_init(SAI_HandleTypeDef* sai)
     sai->Init.DataSize            = SAI_DATASIZE_24;
     sai->Init.FirstBit            = SAI_FIRSTBIT_MSB;
     sai->Init.ClockStrobing       = SAI_CLOCKSTROBING_FALLINGEDGE;
-    
+
     sai->FrameInit.FrameLength       = 64;
     sai->FrameInit.ActiveFrameLength = 32;
     sai->FrameInit.FSDefinition      = SAI_FS_STARTFRAME;
@@ -57,7 +57,7 @@ static void sai4a_init(SAI_HandleTypeDef* sai)
     sai->SlotInit.SlotSize       = SAI_SLOTSIZE_DATASIZE;
     sai->SlotInit.SlotNumber     = 4;
     sai->SlotInit.SlotActive     = SAI_SLOTACTIVE_ALL;
-    
+
     if (HAL_SAI_Init(sai) != HAL_OK)
     {
         Error_Handler();
@@ -65,12 +65,12 @@ static void sai4a_init(SAI_HandleTypeDef* sai)
 }
 
 void DMA1_Stream7_IRQHandler(void)
-{ 
+{
     /* enter interrupt */
     rt_interrupt_enter();
-    
+
     HAL_DMA_IRQHandler(&hdma_spdifrx_rx);
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -79,9 +79,9 @@ void DMA1_Stream2_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    
+
     HAL_DMA_IRQHandler(&hdma_sai4_a);
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -95,10 +95,10 @@ static rt_err_t _init(rt_device_t dev)
 {
     RT_ASSERT(dev != RT_NULL);
     struct stm32_spdifrx *device = (struct stm32_spdifrx *)dev;
-    
+
     device->spdifrx.Instance = SPDIFRX;
-    HAL_SPDIFRX_DeInit(&device->spdifrx); 
-    
+    HAL_SPDIFRX_DeInit(&device->spdifrx);
+
     device->spdifrx.Init.InputSelection     = SPDIFRX_INPUT_IN1;
     device->spdifrx.Init.Retries            = SPDIFRX_MAXRETRIES_15;
     device->spdifrx.Init.WaitForActivity    = SPDIFRX_WAITFORACTIVITY_ON;
@@ -106,53 +106,53 @@ static rt_err_t _init(rt_device_t dev)
     device->spdifrx.Init.DataFormat         = SPDIFRX_DATAFORMAT_MSB;
     device->spdifrx.Init.StereoMode         = SPDIFRX_STEREOMODE_ENABLE;
     device->spdifrx.Init.PreambleTypeMask   = SPDIFRX_PREAMBLETYPEMASK_ON;
-    device->spdifrx.Init.ChannelStatusMask  = SPDIFRX_CHANNELSTATUS_ON;  
-    
+    device->spdifrx.Init.ChannelStatusMask  = SPDIFRX_CHANNELSTATUS_ON;
+
     if (HAL_SPDIFRX_Init(&device->spdifrx) != HAL_OK)
     {
         return RT_ERROR;
     }
-    
+
     sai4a_init(&device->sai4);
-    
+
     rt_spdifrx.complate = RESET;
-    
+
     return RT_EOK;
 }
 
 static rt_err_t _open(rt_device_t dev, rt_uint16_t oflag)
 {
     RT_ASSERT(dev != RT_NULL);
-    
+
     return RT_EOK;
 }
 
 static rt_err_t _close(rt_device_t dev)
 {
     RT_ASSERT(dev != RT_NULL);
-    
+
     return RT_EOK;
 }
 
 static rt_size_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_uint32_t tickstart = 0;
-    
+
     RT_ASSERT(dev != RT_NULL);
     struct stm32_spdifrx *device = (struct stm32_spdifrx *)dev;
     rt_err_t result = RT_EOK;
-    
+
     result = HAL_SPDIFRX_ReceiveDataFlow_DMA(&device->spdifrx, (uint32_t *)buffer, size);
     if (result != HAL_OK)
     {
         return 0;
     }
-    
+
     if(device->spdifrx.ErrorCode != HAL_SPDIFRX_ERROR_NONE)
     {
         return 0;
     }
-    
+
     tickstart = rt_tick_get();
     while (rt_spdifrx.complate == RESET)
     {
@@ -161,9 +161,9 @@ static rt_size_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t si
             return 0;
         }
     }
-    
+
     rt_spdifrx.complate = RESET;
-    
+
     return size;
 }
 
@@ -173,13 +173,13 @@ static rt_size_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_si
 
     struct stm32_spdifrx *device = (struct stm32_spdifrx *)dev;
     rt_err_t result = RT_EOK;
-    
+
     result = HAL_SAI_Transmit_DMA(&device->sai4, (rt_uint8_t *)buffer, size);
     if (result != HAL_OK)
     {
         return RT_ERROR;
     }
-    
+
     return RT_EOK;
 }
 
@@ -203,10 +203,10 @@ int spdifrx_init(void)
 
     rt_device_register(&rt_spdifrx.dev, "spdifrx", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
     rt_device_init(&rt_spdifrx.dev);
-    
+
     LOG_I("spdifrx init success!");
-    
-    return RT_EOK; 
+
+    return RT_EOK;
 }
 INIT_DEVICE_EXPORT(spdifrx_init);
 
@@ -247,8 +247,8 @@ static int spdifrx_sample(int argc, char **argv)
         rt_kprintf("spdifrx_sample\n");
         return -1;
     }
-    
-    /* 16 bit Data Buffer for Transmission */ 
+
+    /* 16 bit Data Buffer for Transmission */
     static rt_uint16_t tx_buffer[64] = {
     0x5152, 0x5354, 0x5556, 0x5758, 0x595A, 0x5B5C, 0x5D5E, 0x5F60,
     0x6162, 0x6364, 0x6566, 0x6768, 0x696A, 0x6B6C, 0x6D6E, 0x6F70,
@@ -258,11 +258,11 @@ static int spdifrx_sample(int argc, char **argv)
     0x6162, 0x6364, 0x6566, 0x6768, 0x696A, 0x6B6C, 0x6D6E, 0x6F70,
     0x7172, 0x7374, 0x7576, 0x7778, 0x797A, 0x7B7C, 0x7D7E, 0x7F80,
     0x8182, 0x8384, 0x8586, 0x8788, 0x898A, 0x8B8C, 0x8D8E, 0x8F90};
-    
+
     static rt_uint32_t *rx_buffer = NULL;
     rt_uint8_t size = 64;
     struct rt_device *dev = RT_NULL;
-    
+
     dev = rt_device_find("spdifrx");
     if (dev == RT_NULL)
     {
@@ -270,31 +270,31 @@ static int spdifrx_sample(int argc, char **argv)
     }
 
     rt_device_open(dev, RT_DEVICE_OFLAG_RDWR);
-    
+
     rt_kprintf("spdifrx test tx data : \n");
     dump_hex((rt_uint8_t *)tx_buffer, size);
-    
+
     rx_buffer = (rt_uint32_t *)rt_malloc(size);
-    
+
     rt_device_write(dev, 0, tx_buffer, size);
     rt_device_read(dev, 0, rx_buffer, size);
-    
-    /* Compare the received data with the expected one */    
+
+    /* Compare the received data with the expected one */
     while (size--)
     {
         if (((rx_buffer[size] & 0x00ffff00) >>  8) != (tx_buffer[size]))
         {
             rt_kprintf("spdirex loopback mode test failed!\n");
-            
+
             return RT_ERROR;
         }
     }
-    
+
     rt_kprintf("spdifrx rx : \n");
     dump_hex((rt_uint8_t *)rx_buffer, size);
-    
+
     rt_kprintf("spdirex loopback mode test success!\n");
-    
+
     return RT_EOK;
 }
 MSH_CMD_EXPORT(spdifrx_sample, spdifrx loopback test);

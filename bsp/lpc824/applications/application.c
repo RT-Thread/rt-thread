@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
- * 2014-04-27     Bernard      make code cleanup. 
+ * 2014-04-27     Bernard      make code cleanup.
  */
 
 #include <board.h>
@@ -29,26 +29,26 @@ static struct rt_thread led_thread;
 #endif
 
 void rt_init_thread_entry(void* parameter)
-{    
+{
      /* initialization RT-Thread Components */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_init();
 #endif
-    
+
 }
 
 void rt_led_thread_entry(void *parameter)
 {
     /* Initialize GPIO */
-	Chip_GPIO_Init(LPC_GPIO_PORT);
+    Chip_GPIO_Init(LPC_GPIO_PORT);
     Chip_GPIO_PinSetDIR(LPC_GPIO_PORT, 0, 7, 1);
     Chip_GPIO_PinSetState(LPC_GPIO_PORT, 0, 7, true);
-    
+
     while (1)
     {
         Chip_GPIO_PinSetState(LPC_GPIO_PORT, 0, 7, true);
         rt_thread_delay(RT_TICK_PER_SECOND / 2);
-        
+
         Chip_GPIO_PinSetState(LPC_GPIO_PORT, 0, 7, false);
         rt_thread_delay(RT_TICK_PER_SECOND / 2);
     }
@@ -64,7 +64,7 @@ int rt_application_init()
         INIT_STACK_SIZE, RT_THREAD_PRIORITY_MAX/3, 20);
 #else
     {
-        
+
         rt_err_t result;
 
         tid = &init_thread;
@@ -75,14 +75,14 @@ int rt_application_init()
 #endif
     if (tid != RT_NULL)
         rt_thread_startup(tid);
-    
+
 #ifdef RT_USING_HEAP
     tid = rt_thread_create("led",
         rt_led_thread_entry, RT_NULL,
         LED_STACK_SIZE, RT_THREAD_PRIORITY_MAX/3, 20);
 #else
     {
-        
+
         rt_err_t result;
 
         tid = &led_thread;

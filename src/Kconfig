@@ -80,6 +80,11 @@ config RT_USING_HOOK
     help
         Enable the hook function when system running, such as idle thread hook,
         thread context switch etc.
+    if RT_USING_HOOK
+        config RT_HOOK_USING_FUNC_PTR
+        bool "Using function pointers as system hook"
+        default y
+    endif
 
 config RT_USING_IDLE_HOOK
     bool "Enable IDLE Task hook"
@@ -98,6 +103,11 @@ config IDLE_THREAD_STACK_SIZE
     int "The stack size of idle thread"
     default 256
 
+config SYSTEM_THREAD_STACK_SIZE
+    int "The stack size of system thread (for defunct etc.)"
+    depends on RT_USING_SMP
+    default IDLE_THREAD_STACK_SIZE
+
 config RT_USING_TIMER_SOFT
     bool "Enable software timer with a timer thread"
     default y
@@ -106,15 +116,44 @@ config RT_USING_TIMER_SOFT
         thread.
 
 if RT_USING_TIMER_SOFT
-config RT_TIMER_THREAD_PRIO
-    int "The priority level value of timer thread"
-    default 4
+    config RT_TIMER_THREAD_PRIO
+        int "The priority level value of timer thread"
+        default 4
 
-config RT_TIMER_THREAD_STACK_SIZE
-    int "The stack size of timer thread"
-    default 512
-
+    config RT_TIMER_THREAD_STACK_SIZE
+        int "The stack size of timer thread"
+        default 512
 endif
+
+menu "kservice optimization"
+
+    config RT_KSERVICE_USING_STDLIB
+        bool "Enable kservice to use standard C library"
+        default n
+
+    if RT_KSERVICE_USING_STDLIB
+        config RT_KSERVICE_USING_STDLIB_MEMCPY
+            bool "Use memcpy to replace rt_memcpy (faster, but not safe)"
+            default n
+
+        config RT_KSERVICE_USING_STDLIB_MEMSET
+            bool "Use memset to replace rt_memset (faster, but not safe)"
+            default n
+    endif
+
+    config RT_KSERVICE_USING_TINY_SIZE
+        bool "Enable kservice to use tiny size"
+        default n
+
+    config RT_USING_TINY_FFS
+        bool "Enable kservice to use tiny finding first bit set method"
+        default n
+
+    config RT_PRINTF_LONGLONG
+        bool "Enable rt_printf-family functions to support long long format"
+        default n
+
+endmenu
 
 menuconfig RT_DEBUG
     bool "Enable debugging features"
@@ -122,121 +161,122 @@ menuconfig RT_DEBUG
 
 if RT_DEBUG
 
-config RT_DEBUG_COLOR
-    bool "Enable color debugging log"
-    default n
+    config RT_DEBUG_COLOR
+        bool "Enable color debugging log"
+        default n
 
-config RT_DEBUG_INIT_CONFIG
-    bool "Enable debugging of components initialization"
-    default n
+    config RT_DEBUG_INIT_CONFIG
+        bool "Enable debugging of components initialization"
+        default n
 
-config RT_DEBUG_INIT
-    int
-    default 1 if RT_DEBUG_INIT_CONFIG
+    config RT_DEBUG_INIT
+        int
+        default 1 if RT_DEBUG_INIT_CONFIG
 
-config RT_DEBUG_THREAD_CONFIG
-    bool "Enable debugging of Thread State Changes"
-    default n
+    config RT_DEBUG_THREAD_CONFIG
+        bool "Enable debugging of Thread State Changes"
+        default n
 
-config RT_DEBUG_THREAD
-    int
-    default 1 if RT_DEBUG_THREAD_CONFIG
+    config RT_DEBUG_THREAD
+        int
+        default 1 if RT_DEBUG_THREAD_CONFIG
 
-config RT_DEBUG_SCHEDULER_CONFIG
-    bool "Enable debugging of Scheduler"
-    default n
+    config RT_DEBUG_SCHEDULER_CONFIG
+        bool "Enable debugging of Scheduler"
+        default n
 
-config RT_DEBUG_SCHEDULER
-    int
-    default 1 if RT_DEBUG_SCHEDULER_CONFIG
+    config RT_DEBUG_SCHEDULER
+        int
+        default 1 if RT_DEBUG_SCHEDULER_CONFIG
 
-config RT_DEBUG_IPC_CONFIG
-    bool "Enable debugging of IPC"
-    default n
+    config RT_DEBUG_IPC_CONFIG
+        bool "Enable debugging of IPC"
+        default n
 
-config RT_DEBUG_IPC
-    int
-    default 1 if RT_DEBUG_IPC_CONFIG
+    config RT_DEBUG_IPC
+        int
+        default 1 if RT_DEBUG_IPC_CONFIG
 
-config RT_DEBUG_TIMER_CONFIG
-    bool "Enable debugging of Timer"
-    default n
+    config RT_DEBUG_TIMER_CONFIG
+        bool "Enable debugging of Timer"
+        default n
 
-config RT_DEBUG_TIMER
-    int
-    default 1 if RT_DEBUG_TIMER_CONFIG
+    config RT_DEBUG_TIMER
+        int
+        default 1 if RT_DEBUG_TIMER_CONFIG
 
-config RT_DEBUG_IRQ_CONFIG
-    bool "Enable debugging of IRQ(Interrupt Request)"
-    default n
+    config RT_DEBUG_IRQ_CONFIG
+        bool "Enable debugging of IRQ(Interrupt Request)"
+        default n
 
-config RT_DEBUG_IRQ
-    int
-    default 1 if RT_DEBUG_IRQ_CONFIG
+    config RT_DEBUG_IRQ
+        int
+        default 1 if RT_DEBUG_IRQ_CONFIG
 
-config RT_DEBUG_MEM_CONFIG
-    bool "Enable debugging of Small Memory Algorithm"
-    default n
+    config RT_DEBUG_MEM_CONFIG
+        bool "Enable debugging of Small Memory Algorithm"
+        default n
 
-config RT_DEBUG_MEM
-    int
-    default 1 if RT_DEBUG_MEM_CONFIG
+    config RT_DEBUG_MEM
+        int
+        default 1 if RT_DEBUG_MEM_CONFIG
 
-config RT_DEBUG_SLAB_CONFIG
-    bool "Enable debugging of SLAB Memory Algorithm"
-    default n
+    config RT_DEBUG_SLAB_CONFIG
+        bool "Enable debugging of SLAB Memory Algorithm"
+        default n
 
-config RT_DEBUG_SLAB
-    int
-    default 1 if RT_DEBUG_SLAB_CONFIG
+    config RT_DEBUG_SLAB
+        int
+        default 1 if RT_DEBUG_SLAB_CONFIG
 
-config RT_DEBUG_MEMHEAP_CONFIG
-    bool "Enable debugging of Memory Heap Algorithm"
-    default n
+    config RT_DEBUG_MEMHEAP_CONFIG
+        bool "Enable debugging of Memory Heap Algorithm"
+        default n
 
-config RT_DEBUG_MEMHEAP
-    int
-    default 1 if RT_DEBUG_MEMHEAP_CONFIG
+    config RT_DEBUG_MEMHEAP
+        int
+        default 1 if RT_DEBUG_MEMHEAP_CONFIG
 
-config RT_DEBUG_MODULE_CONFIG
-    bool "Enable debugging of Application Module"
-    default n
+    config RT_DEBUG_MODULE_CONFIG
+        bool "Enable debugging of Application Module"
+        default n
 
-config RT_DEBUG_MODULE
-    int
-    default 1 if RT_DEBUG_MODULE_CONFIG
+    config RT_DEBUG_MODULE
+        int
+        default 1 if RT_DEBUG_MODULE_CONFIG
 
 endif
 
 menu "Inter-Thread communication"
 
-config RT_USING_SEMAPHORE
-    bool "Enable semaphore"
-    default y
+    config RT_USING_SEMAPHORE
+        bool "Enable semaphore"
+        default y
 
-config RT_USING_MUTEX
-    bool "Enable mutex"
-    default y
+    config RT_USING_MUTEX
+        bool "Enable mutex"
+        default y
 
-config RT_USING_EVENT
-    bool "Enable event flag"
-    default y
+    config RT_USING_EVENT
+        bool "Enable event flag"
+        default y
 
-config RT_USING_MAILBOX
-    bool "Enable mailbox"
-    default y
+    config RT_USING_MAILBOX
+        bool "Enable mailbox"
+        default y
 
-config RT_USING_MESSAGEQUEUE
-    bool "Enable message queue"
-    default y
+    config RT_USING_MESSAGEQUEUE
+        bool "Enable message queue"
+        default y
 
-config RT_USING_SIGNALS
-    bool "Enable signals"
-    select RT_USING_MEMPOOL
-    default n
-    help
-        A signal is an asynchronous notification sent to a specific thread
-        in order to notify it of an event that occurred.
+    config RT_USING_SIGNALS
+        bool "Enable signals"
+        select RT_USING_MEMPOOL
+        default n
+        help
+            A signal is an asynchronous notification sent to a specific thread
+            in order to notify it of an event that occurred.
+
 endmenu
 
 menu "Memory Management"
@@ -247,29 +287,67 @@ menu "Memory Management"
         help
             Using static memory fixed partition
 
-    config RT_USING_MEMHEAP
-        bool "Using memory heap object"
+    config RT_USING_SMALL_MEM
+        bool "Using Small Memory Algorithm"
         default n
         help
-            Using memory heap object to manage dynamic memory heap.
+            Using Small Memory Algorithm
 
-    choice
-        prompt "Dynamic Memory Management"
-        default RT_USING_SMALL_MEM
+    config RT_USING_SLAB
+        bool "Using SLAB Memory Algorithm"
+        default n
+        help
+            The slab allocator of RT-Thread is a memory allocation algorithm
+             optimizedfor embedded systems based on the slab allocator
+             implemented by Matthew Dillon, founder of dragonfly BSD.
+             The original slab algorithm is an efficient kernel memory
+             allocation algorithm introduced by Jeff bonwick for
+             Solaris Operating System.
 
-        config RT_USING_NOHEAP
-            bool "Disable Heap"
-
-        config RT_USING_SMALL_MEM
-            bool "Small Memory Algorithm"
-
-        config RT_USING_SLAB
-            bool "SLAB Algorithm for large memory"
+    menuconfig RT_USING_MEMHEAP
+        bool "Using memheap Memory Algorithm"
+        default n
 
         if RT_USING_MEMHEAP
-        config RT_USING_MEMHEAP_AS_HEAP
-            bool "Use all of memheap objects as heap"
+            choice
+                prompt "Memheap memory allocation mode"
+                default RT_MEMHEAP_FAST_MODE
+
+                config RT_MEMHEAP_FAST_MODE
+                    bool "fast mode"
+                    help
+                        Speed priority mode.
+                        As long as the memory block size meets the requirements, the search ends immediately.
+
+                config RT_MEMHEAP_BSET_MODE
+                    bool "best mode"
+                    help
+                        Best size first.
+                        The search does not end until the memory block of the most appropriate size is found
+            endchoice
         endif
+
+    choice
+        prompt "System Heap Memory Management"
+        default RT_USING_SMALL_MEM_AS_HEAP
+
+        config RT_USING_SMALL_MEM_AS_HEAP
+            bool "Small Memory Algorithm"
+            select RT_USING_SMALL_MEM
+
+        config RT_USING_MEMHEAP_AS_HEAP
+            bool "Use memheap objects as heap"
+            select RT_USING_MEMHEAP
+
+            if RT_USING_MEMHEAP_AS_HEAP
+                config RT_USING_MEMHEAP_AUTO_BINDING
+                    bool "Use all of memheap objects as heap"
+                    default y
+            endif
+
+        config RT_USING_SLAB_AS_HEAP
+            bool "SLAB Algorithm for large memory"
+            select RT_USING_SLAB
 
         config RT_USING_USERHEAP
             bool "Use user heap"
@@ -278,27 +356,32 @@ menu "Memory Management"
                     rt_malloc(), rt_malloc_sethook()
                     rt_free(),   rt_free_sethook()
                     rt_calloc(), rt_realloc()
+                    rt_memory_info()
                     rt_system_heap_init()
 
-                And if FinSH is used at the same time, please implement list_mem()
-
+        config RT_USING_NOHEAP
+            bool "Disable Heap"
     endchoice
 
-    if RT_USING_SMALL_MEM
-        config RT_USING_MEMTRACE
-            bool "Enable memory trace"
-            default n
-            help
-                When enable RT_USING_MEMTRACE with shell, developer can call cmd:
-                1. memtrace
-                   to dump memory block information.
-                2. memcheck
-                   to check memory block to avoid memory overwritten.
+    config RT_USING_MEMTRACE
+        bool "Enable memory trace"
+        default n
+        help
+            When enable RT_USING_MEMTRACE with shell, developer can call cmd:
+            1. memtrace
+                to dump memory block information.
+            2. memcheck
+                to check memory block to avoid memory overwritten.
 
-                And developer also can call memcheck() in each of scheduling
-                to check memory block to find which thread has wrongly modified
-                memory.
-    endif
+            And developer also can call memcheck() in each of scheduling
+            to check memory block to find which thread has wrongly modified
+            memory.
+
+    config RT_USING_HEAP_ISR
+        bool "Using heap in ISR"
+        default n
+        help
+            When this option is enabled, the critical zone will be protected with disable interrupt.
 
     config RT_USING_HEAP
         bool
@@ -343,7 +426,7 @@ endmenu
 
 config RT_VER_NUM
     hex
-    default 0x40003
+    default 0x40100
     help
         RT-Thread version number
 

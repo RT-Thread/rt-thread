@@ -7,6 +7,7 @@ group = []
 
 if GetDepend(['RT_USING_PM']):
     src = src + ['pm.c']
+    src = src + ['lptimer.c']
 
 if len(src):
     group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)

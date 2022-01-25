@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -110,7 +110,7 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
     /* enter interrupt */
     rt_interrupt_enter();
 
-	jpeg_data_process();
+    jpeg_data_process();
     __HAL_DCMI_ENABLE_IT(&dcmi,DCMI_IT_FRAME);
     /* leave interrupt */
     rt_interrupt_leave();
@@ -127,7 +127,7 @@ void DMA1_Stream3_IRQHandler(void)
         __HAL_DMA_CLEAR_FLAG(&hdma_dcmi, DMA_FLAG_TCIF3_7);
         rt_hw_camera_rx_callback();
     }
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -435,7 +435,7 @@ static rt_err_t _write_block(struct rt_spi_device *device, const void *buffer, u
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops msd_ops = 
+const static struct rt_device_ops msd_ops =
 {
     rt_msd_init,
     rt_msd_open,
@@ -445,7 +445,7 @@ const static struct rt_device_ops msd_ops =
     rt_msd_control
 };
 
-const static struct rt_device_ops msd_sdhc_ops = 
+const static struct rt_device_ops msd_sdhc_ops =
 {
     rt_msd_init,
     rt_msd_open,
@@ -500,7 +500,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
             uint8_t send_buffer[100]; /* 100byte > 74 clock */
 
             /* initial message */
-            memset(send_buffer, DUMMY, sizeof(send_buffer));
+            rt_memset(send_buffer, DUMMY, sizeof(send_buffer));
             message.send_buf = send_buffer;
             message.recv_buf = RT_NULL;
             message.length = sizeof(send_buffer);
@@ -697,7 +697,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                     uint8_t send_buffer[100];
 
                     /* initial message */
-                    memset(send_buffer, DUMMY, sizeof(send_buffer));
+                    rt_memset(send_buffer, DUMMY, sizeof(send_buffer));
                     message.send_buf = send_buffer;
                     message.recv_buf = RT_NULL;
                     message.length = sizeof(send_buffer);

@@ -1,11 +1,7 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -33,7 +29,7 @@ void thread_led1_entry(void* parameter)
 
 static void thread_led2_entry(void* parameter)
 {
-	// configure PORTD.RD2 = output
+    // configure PORTD.RD2 = output
     mPORTDSetPinsDigitalOut(BIT_2);
 
     while (1)

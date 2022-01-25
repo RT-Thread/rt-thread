@@ -43,7 +43,7 @@
 /* normal memory mapping type */
 #define NORMAL_MEM     (SHARED | AP_RW | DOMAIN0 | MEMWBWA | DESC_SEC)
 #define STRONG_ORDER_MEM (SHARED | AP_RO | XN | DESC_SEC)
-#define BUS_ADDRESS(phys)	(((phys) & ~0xC0000000)  |  0xC0000000)
+#define BUS_ADDRESS(phys)   (((phys) & ~0xC0000000)  |  0xC0000000)
 
 void rt_hw_change_mmu_table(rt_uint32_t vaddrStart,
                       rt_uint32_t size,

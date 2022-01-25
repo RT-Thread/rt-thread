@@ -425,8 +425,8 @@ EMSTATUS DMD_writeData(uint16_t x, uint16_t y, const uint8_t data[],
 *  DMD_OK on success, otherwise error code
 ******************************************************************************/
 EMSTATUS DMD_writeDataRLEFade(uint16_t x, uint16_t y, uint16_t xlen, uint16_t ylen,
-			      const uint8_t *data,
-			      int red, int green, int blue, int weight)
+                  const uint8_t *data,
+                  int red, int green, int blue, int weight)
 {
    uint32_t color = 0;
    int xpos, ypos;

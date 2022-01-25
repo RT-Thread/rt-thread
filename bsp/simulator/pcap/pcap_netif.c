@@ -1,11 +1,7 @@
 /*
- * File      : pcap_netif.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -37,12 +33,12 @@
 
 struct pcap_netif
 {
-	/* inherit from ethernet device */
-	struct eth_device parent;
+    /* inherit from ethernet device */
+    struct eth_device parent;
 
     pcap_t *tap;
-	/* interface address info. */
-	rt_uint8_t  dev_addr[MAX_ADDR_LEN];		/* hw address	*/
+    /* interface address info. */
+    rt_uint8_t  dev_addr[MAX_ADDR_LEN];     /* hw address   */
 };
 static struct pcap_netif pcap_netif_device;
 static struct rt_semaphore sem_lock;
@@ -61,7 +57,7 @@ static void pcap_thread_entry(void* parameter)
 
     /* Open the adapter */
     if ((tap = pcap_open_live(netif->name,
-        65536, // portion of the packet to capture. 
+        65536, // portion of the packet to capture.
         1,     // promiscuous mode (nonzero means promiscuous)
         1,     // read timeout, 0 blocked, -1 no timeout
         errbuf )) == NULL)
@@ -88,7 +84,7 @@ static void pcap_thread_entry(void* parameter)
 
         p = pbuf_alloc(PBUF_LINK, header->len, PBUF_RAM);
         pbuf_take(p, pkt_data, header->len);
-        
+
         /* send to packet mailbox */
         rt_mb_send_wait(packet_mb, (rt_uint32_t)p, RT_WAITING_FOREVER);
         /* notify eth rx thread to receive packet */
@@ -134,7 +130,7 @@ static rt_err_t pcap_netif_init(rt_device_t dev)
     {
         rt_kprintf("Select (%s) as network interface\n", d->description);
         packet_mb = rt_mb_create("pcap", 64, RT_IPC_FLAG_FIFO);
-        tid = rt_thread_create("pcap", pcap_thread_entry, d, 
+        tid = rt_thread_create("pcap", pcap_thread_entry, d,
             2048, RT_THREAD_PRIORITY_MAX - 1, 10);
         if (tid != RT_NULL)
         {
@@ -151,7 +147,7 @@ static rt_err_t pcap_netif_init(rt_device_t dev)
 
 static rt_err_t pcap_netif_open(rt_device_t dev, rt_uint16_t oflag)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t pcap_netif_close(rt_device_t dev)
@@ -161,42 +157,42 @@ static rt_err_t pcap_netif_close(rt_device_t dev)
     tap = NETIF_PCAP(dev);
 
     pcap_close(tap);
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_size_t pcap_netif_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-	rt_set_errno(-RT_ENOSYS);
-	return 0;
+    rt_set_errno(-RT_ENOSYS);
+    return 0;
 }
 
 static rt_size_t pcap_netif_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-	rt_set_errno(-RT_ENOSYS);
-	return 0;
+    rt_set_errno(-RT_ENOSYS);
+    return 0;
 }
 
 static rt_err_t pcap_netif_control(rt_device_t dev, int cmd, void *args)
 {
-	switch (cmd)
-	{
-	case NIOCTL_GADDR:
-		/* get mac address */
-		if (args) rt_memcpy(args, pcap_netif_device.dev_addr, 6);
-		else return -RT_ERROR;
-		break;
+    switch (cmd)
+    {
+    case NIOCTL_GADDR:
+        /* get mac address */
+        if (args) rt_memcpy(args, pcap_netif_device.dev_addr, 6);
+        else return -RT_ERROR;
+        break;
 
-	default :
-		break;
-	}
+    default :
+        break;
+    }
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 rt_err_t pcap_netif_tx( rt_device_t dev, struct pbuf* p)
 {
-	struct pbuf *q;
-	rt_uint8_t *ptr;
+    struct pbuf *q;
+    rt_uint8_t *ptr;
     rt_uint8_t buf[2048];
     rt_err_t result = RT_EOK;
     pcap_t *tap;
@@ -204,18 +200,18 @@ rt_err_t pcap_netif_tx( rt_device_t dev, struct pbuf* p)
 
     tap = NETIF_PCAP(dev);
 
-	/* lock EMAC device */
-	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
+    /* lock EMAC device */
+    rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
 
-	/* copy data to tx buffer */
-	q = p;
-	ptr = (rt_uint8_t*)buf;
-	while (q)
-	{
-		memcpy(ptr, q->payload, q->len);
-		ptr += q->len;
-		q = q->next;
-	}
+    /* copy data to tx buffer */
+    q = p;
+    ptr = (rt_uint8_t*)buf;
+    while (q)
+    {
+        memcpy(ptr, q->payload, q->len);
+        ptr += q->len;
+        q = q->next;
+    }
 
     rt_enter_critical();
     res = pcap_sendpacket(tap, buf, p->tot_len);
@@ -227,15 +223,15 @@ rt_err_t pcap_netif_tx( rt_device_t dev, struct pbuf* p)
         result = -RT_ERROR;
     }
 
-	/* unlock EMAC device */
-	rt_sem_release(&sem_lock);
+    /* unlock EMAC device */
+    rt_sem_release(&sem_lock);
 
     return result;
 }
 
 struct pbuf *pcap_netif_rx(rt_device_t dev)
 {
-	struct pbuf* p = RT_NULL;
+    struct pbuf* p = RT_NULL;
 
     rt_mb_recv(packet_mb, (rt_uint32_t*)&p, 0);
 
@@ -244,28 +240,28 @@ struct pbuf *pcap_netif_rx(rt_device_t dev)
 
 void pcap_netif_hw_init(void)
 {
-	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
 
-	pcap_netif_device.dev_addr[0] = 0x00;
-	pcap_netif_device.dev_addr[1] = 0x60;
-	pcap_netif_device.dev_addr[2] = 0x37;
-	/* set mac address: (only for test) */
-	pcap_netif_device.dev_addr[3] = 0x12;
-	pcap_netif_device.dev_addr[4] = 0x34;
-	pcap_netif_device.dev_addr[5] = 0x56;
+    pcap_netif_device.dev_addr[0] = 0x00;
+    pcap_netif_device.dev_addr[1] = 0x60;
+    pcap_netif_device.dev_addr[2] = 0x37;
+    /* set mac address: (only for test) */
+    pcap_netif_device.dev_addr[3] = 0x12;
+    pcap_netif_device.dev_addr[4] = 0x34;
+    pcap_netif_device.dev_addr[5] = 0x56;
 
-	pcap_netif_device.parent.parent.init		= pcap_netif_init;
-	pcap_netif_device.parent.parent.open		= pcap_netif_open;
-	pcap_netif_device.parent.parent.close		= pcap_netif_close;
-	pcap_netif_device.parent.parent.read		= pcap_netif_read;
-	pcap_netif_device.parent.parent.write		= pcap_netif_write;
-	pcap_netif_device.parent.parent.control	    = pcap_netif_control;
-	pcap_netif_device.parent.parent.user_data	= RT_NULL;
+    pcap_netif_device.parent.parent.init        = pcap_netif_init;
+    pcap_netif_device.parent.parent.open        = pcap_netif_open;
+    pcap_netif_device.parent.parent.close       = pcap_netif_close;
+    pcap_netif_device.parent.parent.read        = pcap_netif_read;
+    pcap_netif_device.parent.parent.write       = pcap_netif_write;
+    pcap_netif_device.parent.parent.control     = pcap_netif_control;
+    pcap_netif_device.parent.parent.user_data   = RT_NULL;
 
-	pcap_netif_device.parent.eth_rx			= pcap_netif_rx;
-	pcap_netif_device.parent.eth_tx			= pcap_netif_tx;
+    pcap_netif_device.parent.eth_rx         = pcap_netif_rx;
+    pcap_netif_device.parent.eth_tx         = pcap_netif_tx;
 
-	eth_device_init(&(pcap_netif_device.parent), "e0");
+    eth_device_init(&(pcap_netif_device.parent), "e0");
 }
 
 #include <finsh.h>

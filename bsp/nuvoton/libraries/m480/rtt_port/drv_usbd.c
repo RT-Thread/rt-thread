@@ -288,7 +288,7 @@ __STATIC_INLINE void _USBD_IRQHandler(void)
         }
         else
         {
-            /* USB Un-plug */
+            /* USB Unplug */
             USBD_DISABLE_USB();
             rt_usbd_disconnect_handler(&_rt_obj_udc);
         }
@@ -447,7 +447,6 @@ void USBD_IRQHandler(void)
 
     _USBD_IRQHandler();
 
-    /* leave interrupt */
     rt_interrupt_leave();
 }
 
@@ -523,7 +522,7 @@ int nu_usbd_register(void)
 
     _rt_obj_udc.parent.user_data = &nu_usbd;
     _rt_obj_udc.ops = &_udc_ops;
-    /* Register endpoint infomation */
+    /* Register endpoint information */
     _rt_obj_udc.ep_pool = _ep_pool;
     _rt_obj_udc.ep0.id = &_ep_pool[0];
 

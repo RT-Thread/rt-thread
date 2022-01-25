@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,8 @@
 #ifndef __ALARM_H__
 #define __ALARM_H__
 
-#include <time.h>
+#include <sys/time.h>
+#include <rtdef.h>
 
 #define RT_ALARM_TM_NOW        -1    /* set the alarm tm_day,tm_mon,tm_sec,etc.
                                         to now.we also call it "don't care" value */

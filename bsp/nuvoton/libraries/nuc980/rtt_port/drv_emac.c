@@ -12,26 +12,21 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_EMAC)
-
-#if defined(RT_USING_LWIP)
+#if defined(BSP_USING_EMAC) && defined(RT_USING_LWIP)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <netif/ethernetif.h>
 #include <netif/etharp.h>
 #include <lwip/icmp.h>
+#include <lwip/pbuf.h>
 #include "lwipopts.h"
 
 #include "drv_sys.h"
-#include "drv_pdma.h"
+//#include "drv_pdma.h"
 
 /* Private define ---------------------------------------------------------------*/
 // RT_DEV_NAME_PREFIX e
-
-#if !defined(NU_EMAC_PDMA_MEMCOPY_THRESHOLD)
-    #define NU_EMAC_PDMA_MEMCOPY_THRESHOLD  1024
-#endif
 
 #define NU_EMAC_DEBUG
 #if defined(NU_EMAC_DEBUG)
@@ -45,6 +40,28 @@
 #define NU_EMAC_TID_STACK_SIZE  1024
 
 /* Private typedef --------------------------------------------------------------*/
+enum
+{
+    EMAC_START = -1,
+#if defined(BSP_USING_EMAC0)
+    EMAC0_IDX,
+#endif
+#if defined(BSP_USING_EMAC1)
+    EMAC1_IDX,
+#endif
+    EMAC_CNT
+};
+
+struct nu_emac_lwip_pbuf
+{
+    struct pbuf_custom p;  // lwip pbuf
+    EMAC_FRAME_T *psPktFrameDataBuf; // gmac descriptor
+    EMAC_MEMMGR_T *psMemMgr;
+    EMAC_DESCRIPTOR_T *rx_desc;
+    const struct memp_desc *memp_rx_pool;
+};
+typedef struct nu_emac_lwip_pbuf *nu_emac_lwip_pbuf_t;
+
 struct nu_emac
 {
     struct eth_device   eth;
@@ -57,20 +74,9 @@ struct nu_emac
     rt_thread_t         link_monitor;
     rt_uint8_t          mac_addr[6];
     struct rt_semaphore eth_sem;
+    const struct memp_desc *memp_rx_pool;
 };
 typedef struct nu_emac *nu_emac_t;
-
-enum
-{
-    EMAC_START = -1,
-#if defined(BSP_USING_EMAC0)
-    EMAC0_IDX,
-#endif
-#if defined(BSP_USING_EMAC1)
-    EMAC1_IDX,
-#endif
-    EMAC_CNT
-};
 
 /* Private functions ------------------------------------------------------------*/
 #if defined(NU_EMAC_RX_DUMP) || defined(NU_EMAC_TX_DUMP)
@@ -100,6 +106,14 @@ static void nu_emac_rx_isr(int vector, void *param);
 /* Public functions -------------------------------------------------------------*/
 
 /* Private variables ------------------------------------------------------------*/
+#if defined(BSP_USING_EMAC0)
+    LWIP_MEMPOOL_DECLARE(emac0_rx, EMAC_RX_DESC_SIZE, sizeof(struct nu_emac_lwip_pbuf), "EMAC0 RX PBUF pool");
+#endif
+
+#if defined(BSP_USING_EMAC1)
+    LWIP_MEMPOOL_DECLARE(emac1_rx, EMAC_RX_DESC_SIZE, sizeof(struct nu_emac_lwip_pbuf), "EMAC1 RX PBUF pool");
+#endif
+
 static struct nu_emac nu_emac_arr[] =
 {
 #if defined(BSP_USING_EMAC0)
@@ -110,6 +124,7 @@ static struct nu_emac nu_emac_arr[] =
         .irqn_rx         =  IRQ_EMC0_RX,
         .rstidx          =  EMAC0RST,
         .clkidx          =  EMAC0CKEN,
+        .memp_rx_pool    =  &memp_emac0_rx
     },
 #endif
 #if defined(BSP_USING_EMAC1)
@@ -117,9 +132,10 @@ static struct nu_emac nu_emac_arr[] =
         .name           =  "e1",
         .memmgr.psEmac  = (EMAC_T *)EMC1_BA,
         .irqn_tx        =  IRQ_EMC1_TX,
-        .irqn_rx        =  IRQ_EMC1_RX
+        .irqn_rx        =  IRQ_EMC1_RX,
         .rstidx         =  EMAC1RST,
         .clkidx         =  EMAC1CKEN,
+        .memp_rx_pool   =  &memp_emac1_rx
     },
 #endif
 };
@@ -158,11 +174,7 @@ static void nu_emac_halt(nu_emac_t psNuEmac)
 
 static void *nu_emac_memcpy(void *dest, void *src, unsigned int count)
 {
-#if defined(NU_EMAC_PDMA_MEMCOPY)
-    if ((count >= NU_EMAC_PDMA_MEMCOPY_THRESHOLD))
-        return nu_pdma_memcpy(dest, src, count);
-#endif
-    return memcpy(dest, src, count);
+    return rt_memcpy(dest, src, count);
 }
 
 static void nu_emac_reinit(nu_emac_t psNuEmac)
@@ -232,7 +244,6 @@ static void link_monitor(void *param)
     nu_emac_t psNuEmac = (nu_emac_t)param;
     EMAC_T *EMAC = psNuEmac->memmgr.psEmac;
     uint32_t LinkStatus_Last = EMAC_LINK_DOWN;
-    rt_err_t result = RT_EOK;
 
     EMAC_PhyInit(EMAC);
 
@@ -274,9 +285,6 @@ static void link_monitor(void *param)
             else
             {
                 eth_device_linkchange(&psNuEmac->eth, RT_TRUE);
-
-                result = rt_sem_release(&psNuEmac->eth_sem);
-                RT_ASSERT(result == RT_EOK);
             }
             LinkStatus_Last = LinkStatus_Current;
 
@@ -317,7 +325,8 @@ static rt_err_t nu_emac_init(rt_device_t dev)
 
     snprintf(szTmp, sizeof(szTmp), "%sphy", psNuEmac->name);
 
-    rt_sem_init(&psNuEmac->eth_sem, "eth_sem", 0, RT_IPC_FLAG_FIFO);
+    ret = rt_sem_init(&psNuEmac->eth_sem, "eth_sem", 0, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(ret == RT_EOK);
 
     EMAC_Reset(EMAC);
 
@@ -402,26 +411,21 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
     rt_uint32_t offset = 0;
     rt_uint8_t *buf;
 
-    if (psNuEmac->eth.link_status == RT_FALSE)
-    {
-        rt_kprintf("[%s]Stand here.\n", psNuEmac->name);
-        while (rt_sem_take(&psNuEmac->eth_sem, RT_WAITING_FOREVER) != RT_EOK);
-        rt_kprintf("[%s]Leave.\n", psNuEmac->name);
-    }
-
     buf = (rt_uint8_t *)EMAC_ClaimFreeTXBuf(&psNuEmac->memmgr);
-
     /* Get free TX buffer */
     if (buf == RT_NULL)
     {
-        rt_sem_control(&psNuEmac->eth_sem, RT_IPC_CMD_RESET, 0);
+        rt_err_t result;
+
+        result = rt_sem_control(&psNuEmac->eth_sem, RT_IPC_CMD_RESET, 0);
+        RT_ASSERT(result != RT_EOK);
 
         EMAC_CLEAR_INT_FLAG(EMAC, EMAC_INTSTS_TXCPIF_Msk);
         EMAC_ENABLE_INT(EMAC, EMAC_INTEN_TXCPIEN_Msk);
 
         do
         {
-            rt_sem_take(&psNuEmac->eth_sem, 1);
+            result = rt_sem_take(&psNuEmac->eth_sem, 10);
             buf = (rt_uint8_t *)EMAC_ClaimFreeTXBuf(&psNuEmac->memmgr);
         }
         while (buf == RT_NULL);
@@ -445,10 +449,23 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
 #endif
 
     /* Return SUCCESS? */
-#if defined(BSP_USING_MMU)
-    mmu_clean_invalidated_dcache((uint32_t)psNuEmac->memmgr.psCurrentTxDesc, sizeof(EMAC_DESCRIPTOR_T));
-#endif
     return (EMAC_SendPktWoCopy(&psNuEmac->memmgr, offset) == 1) ? RT_EOK : RT_ERROR;
+}
+
+void nu_emac_pbuf_free(struct pbuf *p)
+{
+    nu_emac_lwip_pbuf_t my_buf = (nu_emac_lwip_pbuf_t)p;
+
+    SYS_ARCH_DECL_PROTECT(old_level);
+    SYS_ARCH_PROTECT(old_level);
+
+    //rt_kprintf("%08x %08x\n",my_buf, my_buf->rx_desc);
+
+    /* Update RX descriptor & trigger */
+    EMAC_RxTrigger(my_buf->psMemMgr, my_buf->rx_desc);
+
+    memp_free_pool(my_buf->memp_rx_pool, my_buf);
+    SYS_ARCH_UNPROTECT(old_level);
 }
 
 static struct pbuf *nu_emac_rx(rt_device_t dev)
@@ -460,30 +477,40 @@ static struct pbuf *nu_emac_rx(rt_device_t dev)
     EMAC_T *EMAC = psNuEmac->memmgr.psEmac;
 
     /* Check available data. */
-#if defined(BSP_USING_MMU)
-    mmu_clean_invalidated_dcache((uint32_t)psNuEmac->memmgr.psCurrentRxDesc, sizeof(EMAC_DESCRIPTOR_T));
-#endif
     if ((avaialbe_size = EMAC_GetAvailRXBufSize(&psNuEmac->memmgr, &pu8DataBuf)) > 0)
     {
-        /* Allocate RX packet buffer. */
-        p = pbuf_alloc(PBUF_RAW, avaialbe_size, PBUF_RAM);
-        if (p != RT_NULL)
+        EMAC_DESCRIPTOR_T *cur_rx = EMAC_RecvPktDoneWoRxTrigger(&psNuEmac->memmgr);
+        nu_emac_lwip_pbuf_t my_pbuf  = (nu_emac_lwip_pbuf_t)memp_malloc_pool(psNuEmac->memp_rx_pool);
+        if (my_pbuf != RT_NULL)
         {
-            RT_ASSERT(p->next == RT_NULL);
 
-            nu_emac_memcpy((void *)p->payload, (void *)pu8DataBuf, avaialbe_size);
+            my_pbuf->p.custom_free_function = nu_emac_pbuf_free;
+            my_pbuf->psPktFrameDataBuf      = (EMAC_FRAME_T *)pu8DataBuf;
+            my_pbuf->rx_desc                = cur_rx;
+            my_pbuf->psMemMgr               = &psNuEmac->memmgr;
+            my_pbuf->memp_rx_pool           = psNuEmac->memp_rx_pool;
 
-#if defined(NU_EMAC_RX_DUMP)
-            nu_emac_pkt_dump("RX dump", p);
+#if defined(BSP_USING_MMU)
+            mmu_invalidate_dcache((rt_uint32_t)pu8DataBuf, (rt_uint32_t)avaialbe_size);
 #endif
+            //rt_kprintf("%08x, %08x, %d\n", my_pbuf, cur_rx, avaialbe_size);
+            p = pbuf_alloced_custom(PBUF_RAW,
+                                    avaialbe_size,
+                                    PBUF_REF,
+                                    &my_pbuf->p,
+                                    pu8DataBuf,
+                                    EMAC_MAX_PKT_SIZE);
+            if (p == RT_NULL)
+            {
+                rt_kprintf("%s : failed to alloted %08x\n", __func__, p);
+                EMAC_RxTrigger(&psNuEmac->memmgr, cur_rx);
+            }
         }
         else
         {
-            NU_EMAC_TRACE("Can't allocate memory for RX packet.(%d)\n", avaialbe_size);
+            rt_kprintf("LWIP_MEMPOOL_ALLOC < 0!!\n");
+            EMAC_RxTrigger(&psNuEmac->memmgr, cur_rx);
         }
-
-        /* Update RX descriptor & New trigger */
-        EMAC_RecvPktDone(&psNuEmac->memmgr);
     }
     else    /* If it hasn't RX packet, it will enable interrupt. */
     {
@@ -622,6 +649,9 @@ static int rt_hw_nu_emac_init(void)
         rt_hw_interrupt_install(psNuEMAC->irqn_rx, nu_emac_rx_isr, (void *)psNuEMAC, szTmp);
         rt_hw_interrupt_umask(psNuEMAC->irqn_rx);
 
+        /* Initial zero_copy rx pool */
+        memp_init_pool(psNuEMAC->memp_rx_pool);
+
         /* Register eth device */
         ret = eth_device_init(&psNuEMAC->eth, psNuEMAC->name);
         RT_ASSERT(ret == RT_EOK);
@@ -632,6 +662,31 @@ static int rt_hw_nu_emac_init(void)
 
 INIT_APP_EXPORT(rt_hw_nu_emac_init);
 
-#endif /* #if defined( RT_USING_LWIP ) */
 
-#endif /* #if defined( BSP_USING_EMAC ) */
+#if 0
+/*
+    Remeber src += lwipiperf_SRCS in components\net\lwip-*\SConscript
+*/
+#include "lwip/apps/lwiperf.h"
+
+static void
+lwiperf_report(void *arg, enum lwiperf_report_type report_type,
+               const ip_addr_t *local_addr, u16_t local_port, const ip_addr_t *remote_addr, u16_t remote_port,
+               u32_t bytes_transferred, u32_t ms_duration, u32_t bandwidth_kbitpsec)
+{
+    LWIP_UNUSED_ARG(arg);
+    LWIP_UNUSED_ARG(local_addr);
+    LWIP_UNUSED_ARG(local_port);
+
+    rt_kprintf("IPERF report: type=%d, remote: %s:%d, total bytes: %"U32_F", duration in ms: %"U32_F", kbits/s: %"U32_F"\n",
+               (int)report_type, ipaddr_ntoa(remote_addr), (int)remote_port, bytes_transferred, ms_duration, bandwidth_kbitpsec);
+}
+
+void lwiperf_example_init(int argc, char **argv)
+{
+    lwiperf_start_tcp_server_default(lwiperf_report, NULL);
+}
+MSH_CMD_EXPORT(lwiperf_example_init, start lwip tcp server);
+#endif
+
+#endif /* #if defined( BSP_USING_EMAC ) && defined( RT_USING_LWIP )*/

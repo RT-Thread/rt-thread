@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  * Copyright (c) 2019-2020, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -43,15 +43,15 @@ void rt_hw_board_init()
 {
     /* Hardware Initialization */
     BOARD_InitPins();
-    
+
     CLOCK_EnableClock(kCLOCK_InputMux);
-    
+
     CLOCK_EnableClock(kCLOCK_Gpio0);
     CLOCK_EnableClock(kCLOCK_Gpio1);
-    
+
     GPIO_PortInit(GPIO, 0);
     GPIO_PortInit(GPIO, 1);
-    
+
     /* NVIC Configuration */
 #define NVIC_VTOR_MASK              0x3FFFFF80
 #ifdef  VECT_TAB_RAM
@@ -73,16 +73,15 @@ void rt_hw_board_init()
     BOARD_BootClockPLL150M();
 #endif
     //BOARD_BootClockFROHF96M();
-    
-    /* init systick  1 systick = 1/(100M / 100) 100¸ösystick = 1s*/
+
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
 
     /*init uart device*/
     rt_hw_uart_init();
-    
-#ifdef RT_USING_CONSOLE    
+
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
@@ -106,4 +105,34 @@ void MemManage_Handler(void)
 
     rt_kprintf("Memory Fault!\n");
     HardFault_Handler();
+}
+
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t ticks;
+    rt_uint32_t told, tnow, tcnt = 0;
+    rt_uint32_t reload = SysTick->LOAD;
+
+    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    told = SysTick->VAL;
+    while (1)
+    {
+        tnow = SysTick->VAL;
+        if (tnow != told)
+        {
+            if (tnow < told)
+            {
+                tcnt += told - tnow;
+            }
+            else
+            {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+            if (tcnt >= ticks)
+            {
+                break;
+            }
+        }
+    }
 }

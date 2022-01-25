@@ -1,9 +1,11 @@
 /*
-*********************************************************************************************************
-* Filename      : uart.c
-*********************************************************************************************************
-*/
-
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 
 #include <rthw.h>
 #include <rtthread.h>
@@ -22,18 +24,18 @@
 
 
                           /* Clock selection control */
-#define SCI_CKS_MIN		0
-#define SCI_CKS_MAX		3
-#define SCI_CKS_STEP	1
+#define SCI_CKS_MIN     0
+#define SCI_CKS_MAX     3
+#define SCI_CKS_STEP    1
 
 
-#define	IPR_ADDRESS(a) ((volatile unsigned char *)&ICU.IPR[IPR_SCI0_ + a])
+#define IPR_ADDRESS(a) ((volatile unsigned char *)&ICU.IPR[IPR_SCI0_ + a])
 //#define IER_ADDRESS(a) ((volatile unsigned char *)&(ICU.IER[IER_SCI0_ERI0 + a])/sizeof(unsigned char))
-#define	ERI_ADDRESS(a) ((volatile unsigned char *)&ICU.IR[IR_SCI0_ERI0] + ((4 * a) / sizeof(unsigned char)) )
-#define	IER_ADDRESS(a) ((volatile unsigned char *)&ICU.IER[IER_SCI0_ERI0] + ((4 * a) / sizeof(unsigned char)) )
-#define	RXI_ADDRESS(a) ((volatile unsigned char *)&ICU.IR[IR_SCI0_RXI0] + ((4 * a) / sizeof(unsigned char)) )
-#define	TXI_ADDRESS(a) ((volatile unsigned char *)&ICU.IR[IR_SCI0_TXI0] + ((4 * a) / sizeof(unsigned char)) )
-#define	TEI_ADDRESS(a) ((volatile unsigned char *)&ICU.IR[IR_SCI0_TEI0] + ((4 * a) / sizeof(unsigned char)) )
+#define ERI_ADDRESS(a) ((volatile unsigned char *)&ICU.IR[IR_SCI0_ERI0] + ((4 * a) / sizeof(unsigned char)) )
+#define IER_ADDRESS(a) ((volatile unsigned char *)&ICU.IER[IER_SCI0_ERI0] + ((4 * a) / sizeof(unsigned char)) )
+#define RXI_ADDRESS(a) ((volatile unsigned char *)&ICU.IR[IR_SCI0_RXI0] + ((4 * a) / sizeof(unsigned char)) )
+#define TXI_ADDRESS(a) ((volatile unsigned char *)&ICU.IR[IR_SCI0_TXI0] + ((4 * a) / sizeof(unsigned char)) )
+#define TEI_ADDRESS(a) ((volatile unsigned char *)&ICU.IR[IR_SCI0_TEI0] + ((4 * a) / sizeof(unsigned char)) )
 #define  RXI_DTCER_ADDRESS(a) (( volatile unsigned char *)&ICU.DTCER[IR_SCI0_RXI0]+ ((4*a)/sizeof(unsigned char)))
 #define  TXI_DTCER_ADDRESS(a) (( volatile unsigned char *)&ICU.DTCER[IR_SCI0_TXI0]+ ((4*a) / sizeof(unsigned char)))
 //#define SCI1_USE_B
@@ -44,8 +46,8 @@
 #define SourceClk 12000000
 #define rpdl_CGC_f_pclk SourceClk * 4
 /* Idle output options */
-#define SPACE	0
-#define MARK	1
+#define SPACE   0
+#define MARK    1
 
 typedef int UART_ID_Type;
 typedef int IRQn_Type;
@@ -55,14 +57,14 @@ typedef int IRQn_Type;
 struct rx_uart
 {
     UART_ID_Type UART;
-    volatile struct st_sci __sfr * sci;    
+    volatile struct st_sci __sfr * sci;
 };
 
 static rt_err_t rx_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     #if 1
     struct rx_uart *uart;
-    
+
     unsigned char smr_copy;
     unsigned char semr_copy;
     unsigned char scr_copy;
@@ -81,7 +83,7 @@ static rt_err_t rx_configure(struct rt_serial_device *serial, struct serial_conf
     semr_copy = 0x00u;
     scmr_copy = 0x72u;
     brr_divider = 0;
-    
+
     switch (uart->UART) {
 case 0:
         SYSTEM.MSTPCRB.BIT.MSTPB31 = 0;
@@ -257,11 +259,11 @@ case 0:
     }
 
     /*parity*/
-    if (cfg->parity == PARITY_ODD) 
+    if (cfg->parity == PARITY_ODD)
         smr_copy |= BIT_5;
-        else if (cfg->parity == PARITY_EVEN) 
+        else if (cfg->parity == PARITY_EVEN)
             smr_copy |= BIT_4 | BIT_5;
-    
+
 
 
     brr_divider = rpdl_CGC_f_pclk / cfg->baud_rate;
@@ -304,13 +306,13 @@ case 0:
     }while (bit_interval_counter != 0);
 
     scr_copy = 0x00u;
-	
+
     /*enable rx an tx*/
     scr_copy |= BIT_5  | BIT_4 ;
 
     uart->sci->SCR.BYTE &= 0x5B;
     uart->sci->SCR.BYTE |= scr_copy;
-                             
+
     *(IPR_ADDRESS(uart->UART)) = 5;
     uart->sci->SSR.BYTE = 0xC0;
     uart->sci->SSR.BYTE &= INV_BIT_5;
@@ -363,9 +365,9 @@ case 0:
           break;
   }
 
-  flag |= PDL_SCI_ASYNC | 
-      PDL_SCI_TX_CONNECTED | 
-      PDL_SCI_RX_CONNECTED | 
+  flag |= PDL_SCI_ASYNC |
+      PDL_SCI_TX_CONNECTED |
+      PDL_SCI_RX_CONNECTED |
       PDL_SCI_CLK_INT_IO ;
   /* Configure the RS232 port */
   err &=    R_SCI_Create(
@@ -373,12 +375,12 @@ case 0:
     flag,
     cfg->baud_rate,
     5);
-                  
+
   uart->sci->SCR.BYTE |= BIT_4|BIT_5;
 
  __enable_interrupt();
     #endif
-                          
+
     switch (uart->UART) {
     case 0:
 
@@ -430,7 +432,7 @@ case 0:
 
         break;
     }
-    
+
     return RT_EOK;
 }
 
@@ -464,7 +466,7 @@ static int rx_putc(struct rt_serial_device *serial, char c)
     uart = (struct rx_uart *)serial->parent.user_data;
     while (uart->sci->SSR.BIT.TDRE == 0);
     uart->sci->TDR = c;
-    return 1; 
+    return 1;
 }
 
 static int rx_getc(struct rt_serial_device *serial)
@@ -528,15 +530,15 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-	config.bufsz     = RT_SERIAL_RB_BUFSZ;
+    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial2.ops    = &rx_uart_ops;
     serial2.config = config;
 
     /* register UART1 device */
     rt_hw_serial_register(&serial2, "uart2",
-                          RT_DEVICE_FLAG_RDWR | 
-                          RT_DEVICE_FLAG_INT_RX | 
+                          RT_DEVICE_FLAG_RDWR |
+                          RT_DEVICE_FLAG_INT_RX |
                           RT_DEVICE_FLAG_STREAM,
                           uart);
 #endif

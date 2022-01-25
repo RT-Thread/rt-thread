@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,9 +11,9 @@
 
 #include <dfs.h>
 #include <dfs_file.h>
-#include <dfs_poll.h>
+#include <poll.h>
 #include <dfs_net.h>
-
+#include <sys/errno.h>
 #include <sys/socket.h>
 
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
@@ -95,7 +95,7 @@ int shutdown(int s, int how)
         rt_set_errno(-EBADF);
         return -1;
     }
-    
+
     if (sal_shutdown(socket, how) == 0)
     {
         error = 0;
@@ -105,7 +105,7 @@ int shutdown(int s, int how)
         rt_set_errno(-ENOTSOCK);
         error = -1;
     }
-    
+
     fd_put(d);
 
     return error;

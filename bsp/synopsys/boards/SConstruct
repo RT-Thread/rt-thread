@@ -270,7 +270,7 @@ else :
 
 env = Environment(ENV = os.environ, tools = ['mingw'],
         AS = AS, ASFLAGS = AFLAGS,
-        CC = CC, CCFLAGS = CFLAGS,
+        CC = CC, CFLAGS = CFLAGS,
         AR = AR, ARFLAGS = '-rc',
         LINK = LINK, LINKFLAGS = LFLAGS,
         LIBS = ['embarc'], LIBPATH = EMBARC_LIB_PATH,

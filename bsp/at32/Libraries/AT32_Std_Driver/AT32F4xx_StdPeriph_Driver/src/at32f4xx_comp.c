@@ -1,95 +1,11 @@
 /**
-  ******************************************************************************
-  * @file    at32f4xx_comp.c
-  * @author  Artery
-  * @version V1.0.1
-  * @date    20-April-2012
-  * @brief   This file provides firmware functions to manage the following 
-  *          functionalities of the comparators (COMP1 and COMP2) peripheral: 
-  *           + Comparators configuration
-  *           + Window mode control
-  *
-  *  @verbatim
-  *
- ===============================================================================
-                     ##### How to use this driver #####
- ===============================================================================
-    [..]           
-   
-         The device integrates two analog comparators COMP1 and COMP2:
-         (+) The non inverting input is set to PA1 for COMP1 and to PA3
-             for COMP2.
-  
-         (+) The inverting input can be selected among: DAC_OUT1, 
-             1/4 VREFINT, 1/2 VERFINT, 3/4 VREFINT, VREFINT,
-             I/O (PA0 for COMP1 and PA2 for COMP2)
-  
-         (+) The COMP output is internally is available using COMP_GetOutputState()
-             and can be set on GPIO pins: PA0, PA6, PA11 for COMP1
-             and PA2, PA7, PA12 for COMP2
-  
-         (+) The COMP output can be redirected to embedded timers (TIM1, TIM2
-             and TIM3)
-  
-         (+) The two comparators COMP1 and COMP2 can be combined in window
-             mode and only COMP1 non inverting (PA1) can be used as non-
-             inverting input.
-  
-         (+) The two comparators COMP1 and COMP2 have interrupt capability 
-             with wake-up from Sleep and Stop modes (through the EXTI controller).
-             COMP1 and COMP2 outputs are internally connected to EXTI Line 21
-             and EXTI Line 22 respectively.
-                   
-
-                     ##### How to configure the comparator #####
- ===============================================================================
-    [..] 
-           This driver provides functions to configure and program the Comparators 
-           of all AT32F4xx devices.
-             
-    [..]   To use the comparator, perform the following steps:
-  
-         (#) Enable the SYSCFG APB clock to get write access to comparator
-             register using RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-  
-         (#) Configure the comparator input in analog mode using GPIO_Init()
-  
-         (#) Configure the comparator output in alternate function mode
-             using GPIO_Init() and use GPIO_PinAFConfig() function to map the
-             comparator output to the GPIO pin
-  
-         (#) Configure the comparator using COMP_Init() function:
-                 (++)  Select the inverting input
-                 (++)  Select the output polarity  
-                 (++)  Select the output redirection
-                 (++)  Select the hysteresis level
-                 (++)  Select the power mode
-    
-         (#) Enable the comparator using COMP_Cmd() function
-  
-         (#) If required enable the COMP interrupt by configuring and enabling
-             EXTI line in Interrupt mode and selecting the desired sensitivity
-             level using EXTI_Init() function. After that enable the comparator
-             interrupt vector using NVIC_Init() function.
-  
-     @endverbatim
-  *    
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2012 Artery</center></h2>
-  *
-  * Licensed under Artery Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
+ **************************************************************************
+ * File Name    : at32f4xx_comp.c
+ * Description  : at32f4xx COMP source file
+ * Date         : 2018-02-26
+ * Version      : V1.0.4
+ **************************************************************************
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "at32f4xx_comp.h"

@@ -1,22 +1,22 @@
 from building import *
-
 Import('rtconfig')
 
 src   = []
 cwd   = GetCurrentDir()
 group = []
 CPPPATH = [cwd]
+CPPDEFINES = []
 
-if GetDepend('RT_USING_LIBC'):
-        src += Glob('*.c')      
-else:
-        if GetDepend('RT_LIBC_USING_TIME') and not GetDepend('RT_USING_MINILIBC'):
-                src += ['time.c']
+if rtconfig.CROSS_TOOL == 'keil':
+    CPPDEFINES += ['__CLK_TCK=RT_TICK_PER_SECOND']
 
-if GetDepend('RT_USING_POSIX') == False:
-        SrcRemove(src, ['unistd.c'])
+src += Glob('*.c')
 
-if not GetDepend('RT_USING_MINILIBC') and (GetDepend('RT_USING_LIBC') or GetDepend('RT_LIBC_USING_TIME')):
-	group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

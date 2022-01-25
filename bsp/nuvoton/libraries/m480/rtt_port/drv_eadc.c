@@ -11,7 +11,7 @@
 
 #include <rtconfig.h>
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 #ifdef BSP_USING_EADC
 

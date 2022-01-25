@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,21 +18,21 @@ void rt_serial_init(void);
 void rt_console_puts(const char* str);
 void rt_serial_putc(const char c);
 
-#define	USTAT_RCV_READY		0x01	/* receive data ready */
-#define	USTAT_TXB_EMPTY		0x02	/* tx buffer empty */
+#define USTAT_RCV_READY     0x01    /* receive data ready */
+#define USTAT_TXB_EMPTY     0x02    /* tx buffer empty */
 
 rt_inline void serial_flush_input(void)
 {
-	volatile unsigned int tmp;
+    volatile unsigned int tmp;
 
-	/* keep on reading as long as the receiver is not empty */
-	while(UTRSTAT0 & USTAT_RCV_READY) tmp = URXH0;
+    /* keep on reading as long as the receiver is not empty */
+    while(UTRSTAT0 & USTAT_RCV_READY) tmp = URXH0;
 }
 
 rt_inline void serial_flush_output(void)
 {
-	/* wait until the transmitter is no longer busy */
-	while(!(UTRSTAT0 & USTAT_TXB_EMPTY)) ;
+    /* wait until the transmitter is no longer busy */
+    while(!(UTRSTAT0 & USTAT_TXB_EMPTY)) ;
 }
 
 /**
@@ -48,10 +48,10 @@ rt_inline void serial_flush_output(void)
  */
 void rt_console_puts(const char* str)
 {
-	while (*str)
-	{
-		rt_serial_putc (*str++);
-	}
+    while (*str)
+    {
+        rt_serial_putc (*str++);
+    }
 }
 
 /**
@@ -59,25 +59,25 @@ void rt_console_puts(const char* str)
  */
 void rt_serial_init()
 {
-	rt_uint32_t divisor = 0;
+    rt_uint32_t divisor = 0;
 
-	divisor = 0x20;
+    divisor = 0x20;
 
-	serial_flush_output();
-	serial_flush_input();
+    serial_flush_output();
+    serial_flush_input();
 
-	/* UART interrupt off */
-	UCON0 	= 0;
-	/* FIFO disable */
-	UFCON0	=0x0;
-	UMCON0	=0x0;
-	/* set baudrate */
- 	UBRDIV0 = divisor;
+    /* UART interrupt off */
+    UCON0   = 0;
+    /* FIFO disable */
+    UFCON0  =0x0;
+    UMCON0  =0x0;
+    /* set baudrate */
+    UBRDIV0 = divisor;
 
-	/* word length=8bit, stop bit = 1, no parity, use external clock */
-	ULCON0 	= 0x03|0x00|0x00;
+    /* word length=8bit, stop bit = 1, no parity, use external clock */
+    ULCON0  = 0x03|0x00|0x00;
 
- 	UCON0 	= 0x5;
+    UCON0   = 0x5;
 }
 
 /**
@@ -87,9 +87,9 @@ void rt_serial_init()
  */
 char rt_serial_getc()
 {
-	while ((UTRSTAT0 & USTAT_RCV_READY) == 0);
+    while ((UTRSTAT0 & USTAT_RCV_READY) == 0);
 
-	return URXH0;
+    return URXH0;
 }
 
 /**
@@ -99,16 +99,16 @@ char rt_serial_getc()
  */
 void rt_serial_putc(const char c)
 {
-	/*
-		to be polite with serial console add a line feed
-		to the carriage return character
-	*/
-	if (c=='\n')rt_serial_putc('\r');
+    /*
+        to be polite with serial console add a line feed
+        to the carriage return character
+    */
+    if (c=='\n')rt_serial_putc('\r');
 
-	/* wait for room in the transmit FIFO */
-	while(!(UTRSTAT0 & USTAT_TXB_EMPTY));
+    /* wait for room in the transmit FIFO */
+    while(!(UTRSTAT0 & USTAT_TXB_EMPTY));
 
-	UTXH0 = (rt_uint8_t)c;
+    UTXH0 = (rt_uint8_t)c;
 }
 
 /*@}*/

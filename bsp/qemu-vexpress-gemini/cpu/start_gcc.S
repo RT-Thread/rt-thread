@@ -1,21 +1,7 @@
 /*
- * File      : start_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013-2014, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -215,35 +201,35 @@ rt_hw_context_switch_interrupt_do:
 .endm
 
     .align  5
-    .globl	vector_swi
+    .globl  vector_swi
 vector_swi:
     push_svc_reg
     bl      rt_hw_trap_swi
     b       .
 
     .align  5
-    .globl	vector_undef
+    .globl  vector_undef
 vector_undef:
     push_svc_reg
     bl      rt_hw_trap_undef
     b       .
 
     .align  5
-    .globl	vector_pabt
+    .globl  vector_pabt
 vector_pabt:
     push_svc_reg
     bl      rt_hw_trap_pabt
     b       .
 
     .align  5
-    .globl	vector_dabt
+    .globl  vector_dabt
 vector_dabt:
     push_svc_reg
     bl      rt_hw_trap_dabt
     b       .
 
     .align  5
-    .globl	vector_resv
+    .globl  vector_resv
 vector_resv:
     push_svc_reg
     bl      rt_hw_trap_resv

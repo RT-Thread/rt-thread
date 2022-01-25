@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -37,52 +37,52 @@ struct at32_pwm
     char *name;
 };
 
-static struct at32_pwm at32_pwm_obj[] = 
+static struct at32_pwm at32_pwm_obj[] =
 {
   #ifdef BSP_USING_TMR1_CH1
     PWM1_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR1_CH2
     PWM2_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR1_CH3
     PWM3_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR1_CH4
     PWM4_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR2_CH1
     PWM5_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR2_CH2
     PWM6_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR2_CH3
     PWM7_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR2_CH4
     PWM8_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR3_CH1
     PWM9_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR3_CH2
     PWM10_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR3_CH3
     PWM11_CONFIG,
   #endif
-  
+
   #ifdef BSP_USING_TMR3_CH4
     PWM12_CONFIG,
   #endif
@@ -97,7 +97,7 @@ static struct rt_pwm_ops drv_ops =
 static rt_err_t drv_pwm_enable(TMR_Type* TMRx, struct rt_pwm_configuration *configuration, rt_bool_t enable)
 {
     /* Get the value of channel */
-    rt_uint32_t channel = configuration->channel;   
+    rt_uint32_t channel = configuration->channel;
 
     if (!enable)
     {
@@ -137,7 +137,7 @@ static rt_err_t drv_pwm_enable(TMR_Type* TMRx, struct rt_pwm_configuration *conf
           TMR_CCxCmd(TMRx, TMR_Channel_1, TMR_CCx_Enable);
         }
     }
-    
+
     /* TMRx enable counter */
     TMR_Cmd(TMRx, ENABLE);
 
@@ -173,7 +173,7 @@ static rt_err_t drv_pwm_get(TMR_Type* TMRx, struct rt_pwm_configuration *configu
       configuration->pulse = (cc3 + 1) * (div + 1) * 1000UL / tim_clock;
     if(channel == 4)
       configuration->pulse = (cc4 + 1) * (div + 1) * 1000UL / tim_clock;
-       
+
     return RT_EOK;
 }
 
@@ -185,15 +185,15 @@ static rt_err_t drv_pwm_set(TMR_Type* TMRx, struct rt_pwm_configuration *configu
     rt_uint64_t psc;
     /* Get the channel number */
     rt_uint32_t channel = configuration->channel;
-    
+
     /* Init timer pin and enable clock */
     at32_msp_tmr_init(TMRx);
-  
+
     /* Convert nanosecond to frequency and duty cycle. */
     period = (unsigned long long)configuration->period ;
     psc = period / MAX_PERIOD + 1;
     period = period / psc;
-  
+
     /* TMRe base configuration */
     TMR_TimeBaseStructInit(&TMR_TMReBaseStructure);
     TMR_TMReBaseStructure.TMR_Period = period;
@@ -204,14 +204,14 @@ static rt_err_t drv_pwm_set(TMR_Type* TMRx, struct rt_pwm_configuration *configu
     TMR_TimeBaseInit(TMRx, &TMR_TMReBaseStructure);
 
     pulse = (unsigned long long)configuration->pulse;
-    
+
     /* PWM1 Mode configuration: Channel1 */
     TMR_OCStructInit(&TMR_OCInitStructure);
     TMR_OCInitStructure.TMR_OCMode = TMR_OCMode_PWM1;
     TMR_OCInitStructure.TMR_OutputState = TMR_OutputState_Enable;
     TMR_OCInitStructure.TMR_Pulse = pulse;
     TMR_OCInitStructure.TMR_OCPolarity = TMR_OCPolarity_High;
-    
+
     if(channel == 1)
     {
       TMR_OC1Init(TMRx, &TMR_OCInitStructure);
@@ -232,7 +232,7 @@ static rt_err_t drv_pwm_set(TMR_Type* TMRx, struct rt_pwm_configuration *configu
       TMR_OC4Init(TMRx, &TMR_OCInitStructure);
       TMR_OC4PreloadConfig(TMRx, TMR_OCPreload_Enable);
     }
-    
+
     TMR_ARPreloadConfig(TMRx, ENABLE);
 
 #if defined (SOC_SERIES_AT32F415)
@@ -271,7 +271,7 @@ static int rt_hw_pwm_init(void)
 {
     int i = 0;
     int result = RT_EOK;
- 
+
     for(i = 0; i < sizeof(at32_pwm_obj) / sizeof(at32_pwm_obj[0]); i++)
     {
         if(rt_device_pwm_register(&at32_pwm_obj[i].pwm_device, at32_pwm_obj[i].name, &drv_ops, at32_pwm_obj[i].tim_handle) == RT_EOK)
@@ -280,9 +280,9 @@ static int rt_hw_pwm_init(void)
         }
         else
         {
-          LOG_D("%s register failed", at32_pwm_obj[i].name); 
-          result = -RT_ERROR; 
-        }            
+          LOG_D("%s register failed", at32_pwm_obj[i].name);
+          result = -RT_ERROR;
+        }
     }
 
     return result;

@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2020-2021, WangHuachen
+ *
+ * SPDX-License-Identifier: MIT
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-11-30     WangHuachen  the first version
+ */
 #ifndef XIL_ASSERT_H /* prevent circular inclusions */
 #define XIL_ASSERT_H /* by using protection macros */
 

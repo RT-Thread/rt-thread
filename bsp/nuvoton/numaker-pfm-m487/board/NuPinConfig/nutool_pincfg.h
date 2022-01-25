@@ -1,7 +1,7 @@
 /****************************************************************************
  * @file     nutool_pincfg.h
  * @version  V1.20
- * @Date     2020/05/27-17:17:14 
+ * @Date     2020/05/27-17:17:14
  * @brief    NuMicro generated code file
  *
  * SPDX-License-Identifier: Apache-2.0

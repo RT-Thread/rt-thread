@@ -1,21 +1,7 @@
 /*
- * File      : mips_cache.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -28,7 +14,7 @@
 extern void cache_init(rt_ubase_t cache_size, rt_ubase_t cache_line_size);
 void r4k_cache_init(void)
 {
-//	cache_init(dcache_size, cpu_dcache_line_size);
+//  cache_init(dcache_size, cpu_dcache_line_size);
 }
 
 void r4k_cache_flush_all(void)
@@ -45,7 +31,7 @@ void r4k_icache_flush_all(void)
 
 void r4k_icache_flush_range(rt_ubase_t addr, rt_ubase_t size)
 {
-	rt_ubase_t end, a;
+    rt_ubase_t end, a;
 
     if (size > g_mips_core.icache_size)
     {
@@ -53,7 +39,7 @@ void r4k_icache_flush_range(rt_ubase_t addr, rt_ubase_t size)
     }
     else
     {
-    	rt_ubase_t ic_lsize = g_mips_core.icache_line_size;
+        rt_ubase_t ic_lsize = g_mips_core.icache_line_size;
 
         a = addr & ~(ic_lsize - 1);
         end = ((addr + size) - 1) & ~(ic_lsize - 1);
@@ -69,8 +55,8 @@ void r4k_icache_flush_range(rt_ubase_t addr, rt_ubase_t size)
 
 void r4k_icache_lock_range(rt_ubase_t addr, rt_ubase_t size)
 {
-	rt_ubase_t end, a;
-	rt_ubase_t ic_lsize = g_mips_core.icache_line_size;
+    rt_ubase_t end, a;
+    rt_ubase_t ic_lsize = g_mips_core.icache_line_size;
 
     a = addr & ~(ic_lsize - 1);
     end = ((addr + size) - 1) & ~(ic_lsize - 1);
@@ -85,7 +71,7 @@ void r4k_icache_lock_range(rt_ubase_t addr, rt_ubase_t size)
 
 void r4k_dcache_inv(rt_ubase_t addr, rt_ubase_t size)
 {
-	rt_ubase_t end, a;
+    rt_ubase_t end, a;
     rt_ubase_t dc_lsize = g_mips_core.dcache_line_size;
 
     a = addr & ~(dc_lsize - 1);
@@ -101,7 +87,7 @@ void r4k_dcache_inv(rt_ubase_t addr, rt_ubase_t size)
 
 void r4k_dcache_wback_inv(rt_ubase_t addr, rt_ubase_t size)
 {
-	rt_ubase_t end, a;
+    rt_ubase_t end, a;
 
     if (size >= g_mips_core.dcache_size)
     {
@@ -109,7 +95,7 @@ void r4k_dcache_wback_inv(rt_ubase_t addr, rt_ubase_t size)
     }
     else
     {
-    	rt_ubase_t dc_lsize = g_mips_core.dcache_line_size;
+        rt_ubase_t dc_lsize = g_mips_core.dcache_line_size;
 
         a = addr & ~(dc_lsize - 1);
         end = ((addr + size) - 1) & ~(dc_lsize - 1);

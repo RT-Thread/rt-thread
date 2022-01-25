@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,11 @@
 
 #include <dfs_elm.h>
 #include <dfs_fs.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include "drv_gpio.h"
 #include "drv_sdio.h"
 
@@ -29,7 +33,7 @@
 static void _sdcard_mount(void)
 {
     rt_device_t device;
-    
+
     device = rt_device_find("sd0");
     if (device == NULL)
     {
@@ -56,7 +60,7 @@ static void _sdcard_unmount(void)
     rt_thread_mdelay(200);
     dfs_unmount("/");
     LOG_I("Unmount \"/\"");
-    
+
     mmcsd_wait_cd_changed(0);
     stm32_mmcsd_change();
     mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
@@ -65,7 +69,7 @@ static void _sdcard_unmount(void)
 static void sd_mount(void *parameter)
 {
     rt_uint8_t re_sd_check_pin = 1;
-    
+
     while (1)
     {
         rt_thread_mdelay(200);
@@ -73,7 +77,7 @@ static void sd_mount(void *parameter)
         {
             _sdcard_mount();
         }
-        
+
         if (!re_sd_check_pin && (re_sd_check_pin = rt_pin_read(SD_CHECK_PIN)) != 0)
         {
             _sdcard_unmount();
@@ -84,7 +88,7 @@ static void sd_mount(void *parameter)
 int stm32_sdcard_mount(void)
 {
     rt_thread_t tid;
-    
+
     rt_pin_mode(SD_CHECK_PIN, PIN_MODE_INPUT_PULLUP);
 
     tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,

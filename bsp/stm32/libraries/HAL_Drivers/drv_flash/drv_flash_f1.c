@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -155,7 +155,7 @@ int stm32_flash_erase_bank(uint32_t bank, rt_uint32_t addr, size_t size)
     EraseInitStruct.PageAddress = GetPage(addr);
     EraseInitStruct.NbPages     = (size + FLASH_PAGE_SIZE - 1) / FLASH_PAGE_SIZE;
     EraseInitStruct.Banks       = bank;
-    
+
     if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK)
     {
         result = -RT_ERROR;
@@ -186,8 +186,8 @@ __exit:
  */
 int stm32_flash_erase(rt_uint32_t addr, size_t size)
 {
-#if defined(FLASH_BANK2_END)    
-    rt_err_t result = RT_EOK;   
+#if defined(FLASH_BANK2_END)
+    rt_err_t result = RT_EOK;
     rt_uint32_t addr_bank1 = 0;
     rt_uint32_t size_bank1 = 0;
     rt_uint32_t addr_bank2 = 0;
@@ -203,7 +203,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
     {
         size_bank1 = 0;
         addr_bank2 = addr;
-        size_bank2 = size; 
+        size_bank2 = size;
     }
     else
     {
@@ -222,7 +222,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
             goto __exit;
         }
     }
-    
+
     if(size_bank2)
     {
         LOG_D("bank2: addr (0x%p), size %d", (void *)addr_bank2, size_bank2);
@@ -233,12 +233,12 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
         }
     }
 
-__exit:    
+__exit:
     if(result != RT_EOK)
     {
         return result;
     }
-    
+
     return size_bank1 + size_bank2;
 #else
     return stm32_flash_erase_bank(FLASH_BANK_1, addr, size);

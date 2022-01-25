@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,12 +18,20 @@
 #define PWM_CMD_DISABLE     (128 + 1)
 #define PWM_CMD_SET         (128 + 2)
 #define PWM_CMD_GET         (128 + 3)
+#define PWMN_CMD_ENABLE     (128 + 4)
+#define PWMN_CMD_DISABLE    (128 + 5)
 
 struct rt_pwm_configuration
 {
     rt_uint32_t channel; /* 0-n */
     rt_uint32_t period;  /* unit:ns 1ns~4.29s:1Ghz~0.23hz */
     rt_uint32_t pulse;   /* unit:ns (pulse<=period) */
+
+    /*
+     * RT_TRUE  : The channel of pwm is complememtary.
+     * RT_FALSE : The channel of pwm is nomal.
+    */
+    rt_bool_t  complementary;
 };
 
 struct rt_device_pwm;

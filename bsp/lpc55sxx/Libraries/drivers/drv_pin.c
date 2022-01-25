@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -83,8 +83,8 @@ static struct lpc_pin lpc_pin_map[] =
     __LPC55S69_PIN(30, GPIO, 0, 29),    /* PIO0_29 */
     __LPC55S69_PIN(31, GPIO, 0, 30),    /* PIO0_30 */
     __LPC55S69_PIN(32, GPIO, 0, 31),    /* PIO0_31 */
-    
-    
+
+
     /* PIO1 / GPIO, 1 */
     __LPC55S69_PIN(33, GPIO, 1,  0),    /* PIO1_00 */
     __LPC55S69_PIN(34, GPIO, 1,  1),    /* PIO1_01 */
@@ -129,7 +129,7 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},    
+    {-1, 0, RT_NULL, RT_NULL},
 };
 
 static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
@@ -179,15 +179,15 @@ static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         }
         break;
     }
-    
+
     /* Enable IOCON Clock */
     CLOCK_EnableClock(kCLOCK_Iocon);
-    IOCON->PIO[lpc_pin_map[pin].gpio_port][lpc_pin_map[pin].gpio_pin] = pin_cfg;       
+    IOCON->PIO[lpc_pin_map[pin].gpio_port][lpc_pin_map[pin].gpio_pin] = pin_cfg;
     /* Disable IOCON Clock -- To Save Power */
     CLOCK_DisableClock(kCLOCK_Iocon);
-    
+
     gpio_pin_config_t pin_config = {(gpio_pin_direction_t)dir, 1};
-    GPIO_PinInit(GPIO, lpc_pin_map[pin].gpio_port, lpc_pin_map[pin].gpio_pin, &pin_config); 
+    GPIO_PinInit(GPIO, lpc_pin_map[pin].gpio_port, lpc_pin_map[pin].gpio_pin, &pin_config);
 }
 
 
@@ -197,20 +197,20 @@ static void lpc_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     {
         return;
     }
-    
+
     GPIO_PinWrite(lpc_pin_map[pin].gpio, lpc_pin_map[pin].gpio_port, lpc_pin_map[pin].gpio_pin, value);
 }
 
 static int lpc_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;   
+    int value;
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
         return RT_ERROR;
     }
 
     value = GPIO_PinRead(lpc_pin_map[pin].gpio, lpc_pin_map[pin].gpio_port, lpc_pin_map[pin].gpio_pin);
-    
+
     return value;
 }
 
@@ -225,10 +225,10 @@ static void pin_irq_hdr(pint_pin_int_t pintr, uint32_t pmatch_status)
             break;
         }
     }
-    
+
     if(irqno >= IRQ_MAX_VAL)
         return;
-    
+
     if (pin_irq_hdr_tab[irqno].hdr)
     {
         pin_irq_hdr_tab[irqno].hdr(pin_irq_hdr_tab[irqno].args);
@@ -250,7 +250,7 @@ void PIN_INT0_IRQHandler(void)
     pmstatus = PINT_PatternMatchResetDetectLogic(PINT);
 
     pin_irq_hdr(kPINT_PinInt0, pmstatus);
-    
+
     if ((PINT->ISEL & 0x1U) == 0x0U)
     {
         /* Edge sensitive: clear Pin interrupt after callback */
@@ -264,8 +264,8 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device,
                                    void (*hdr)(void *args),
                                    void *args)
 {
-    int trigger_mode, pin_initx, pintsel, pin_cfg, i;    
-    
+    int trigger_mode, pin_initx, pintsel, pin_cfg, i;
+
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
         return RT_ERROR;
@@ -289,10 +289,10 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device,
             trigger_mode = kPINT_PinIntEnableLowLevel;
             break;
     }
-    
-    /* Get inputmux_connection_t */        
+
+    /* Get inputmux_connection_t */
     pintsel = (pin - 1 + (0xC0U << 20));
-    
+
     for(i = 0; i < IRQ_MAX_VAL; i++)
     {
         if(pin_irq_hdr_tab[i].pin == -1)
@@ -308,43 +308,43 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device,
 
     if(i >= IRQ_MAX_VAL)
         return RT_ERROR;
-    
+
     /* Initialize PINT */
     PINT_Init(PINT);
-    
+
     /* Enable Input and IOCon clk */
-    /* AttachSignal */    
+    /* AttachSignal */
     /* Connect trigger sources to PINT */
     INPUTMUX_Init(INPUTMUX);
     INPUTMUX_AttachSignal(INPUTMUX, i, (inputmux_connection_t)pintsel);
     /* Turnoff clock to inputmux to save power. Clock is only needed to make changes */
     INPUTMUX_Deinit(INPUTMUX);
-    
+
     pin_cfg = ((IOCON->PIO[lpc_pin_map[pin].gpio_port][lpc_pin_map[pin].gpio_pin] &
               (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK | IOCON_PIO_FILTEROFF_MASK))) /* Mask bits to zero which are setting */
               | IOCON_PIO_FUNC(0)                /* Selects pin function.: PORT18 (pin 28) is configured as PIO1_8 */
               | IOCON_PIO_DIGIMODE(1)            /* Select Analog/Digital mode.: Digital mode. */
               | IOCON_PIO_FILTEROFF(0));         /* Controls input glitch filter.: Filter enabled. Noise pulses below approximately 10 ns are filtered out. */
-                   
-    IOCON_PinMuxSet(IOCON, lpc_pin_map[pin].gpio_port, lpc_pin_map[pin].gpio_pin, pin_cfg);    
-    
+
+    IOCON_PinMuxSet(IOCON, lpc_pin_map[pin].gpio_port, lpc_pin_map[pin].gpio_pin, pin_cfg);
+
     /* PINT_PinInterruptConfig */
-    PINT_PinInterruptConfig(PINT, (pint_pin_int_t)pin_initx, (pint_pin_enable_t)(pin_irq_hdr_tab[i].mode), callback);    
+    PINT_PinInterruptConfig(PINT, (pint_pin_int_t)pin_initx, (pint_pin_enable_t)(pin_irq_hdr_tab[i].mode), callback);
     /* Enable callbacks for PINTx by Index */
     PINT_EnableCallbackByIndex(PINT, (pint_pin_int_t)pin_initx);
-    
+
     return RT_EOK;
 }
 
 static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
-    int i;    
+    int i;
 
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
         return RT_ERROR;
     }
-    
+
     for(i = 0; i < IRQ_MAX_VAL; i++)
     {
         if(pin_irq_hdr_tab[i].pin == pin)
@@ -355,19 +355,19 @@ static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
             pin_irq_hdr_tab[i].args = RT_NULL;
             break;
         }
-    }        
+    }
     return RT_EOK;
 }
 
 static rt_err_t lpc_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
 {
     int irqn_type, i;
-    
+
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
         return RT_ERROR;
     }
-    
+
     for(i = 0; i < IRQ_MAX_VAL; i++)
     {
         if(pin_irq_hdr_tab[i].pin == pin)
@@ -401,8 +401,8 @@ static rt_err_t lpc_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
             }
             break;
         }
-    }  
-        
+    }
+
     if(i >= IRQ_MAX_VAL)
         return RT_ERROR;
 

@@ -116,6 +116,10 @@ nrf5x
 - 进入Bluetooth Samples 选择ble beacon sample
 - 执行`pkgs --update` 下载需要的软件包
 - 执行`scons --target=mdk5` 
+- 打开keil工程，勾选GNU extensions
+
+![screen2021-08-19_100407](docs/images/screen2021-08-19_100407.jpg)
+
 - 打开keil工程烧入代码，这个时候需要注意的是，如果之前有softdevice存在flash中，需要擦除芯片中的softdevice。
 - 烧入之后执行cmd `ble_ibeacon`
 - 之后用nrf connect 软件可以搜索到对应的beacon设备。
@@ -133,3 +137,53 @@ nrf5x
 下面提供一种擦写softdevice的方法。在keil中选择softdevice Erase的FLASH算法，这个时候就烧写之前可以擦除之前的softdevice。
 
 ![image-20201017194935643](docs/images/softdevice_erase.png)
+
+
+
+### 2.如果在使用softdevice的时候，连上手机时候出现一些hardfault
+
+如下所示：
+
+```
+psr: 0x8100000f
+r00: 0x00000000
+r01: 0x200034e6
+r02: 0x00000000
+r03: 0x200034dc
+r04: 0x200034dc
+r05: 0x00000000
+r06: 0x200034e6
+r07: 0xdeadbeef
+r08: 0xdeadbeef
+r09: 0xdeadbeef
+r10: 0xdeadbeef
+r11: 0xdeadbeef
+r12: 0x00000000
+ lr: 0x000369af
+ pc: 0x00036972
+hard fault on handler
+
+```
+
+这个hardfault发生在SOFTDEVICE内部，由于代码不开源，这边尝试了修改如下函数，可以不触发hardfault。
+
+```
+rt_hw_interrupt_disable    PROC
+    EXPORT  rt_hw_interrupt_disable
+    ;MRS     r0, PRIMASK
+    ;CPSID   I
+    BX      LR
+    ENDP
+
+;/*
+; * void rt_hw_interrupt_enable(rt_base_t level);
+; */
+rt_hw_interrupt_enable    PROC
+    EXPORT  rt_hw_interrupt_enable
+    ;MSR     PRIMASK, r0
+    BX      LR
+    ENDP
+```
+
+
+

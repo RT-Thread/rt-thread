@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2010-11-17     Bernard      first version
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/fcntl.h>
@@ -142,59 +152,59 @@ int printf_test()
     int i;
 
     printf ("snprintf (\"%%30s\", \"foo\") == %d, \"%.*s\"\n",
-	    snprintf (buf, sizeof (buf), "%30s", "foo"), (int) sizeof (buf),
-	    buf);
+        snprintf (buf, sizeof (buf), "%30s", "foo"), (int) sizeof (buf),
+        buf);
     memset(buf2,0,sizeof(buf));
     i=snprintf(buf2, 256, "%.9999u", 10);
     printf("%i %i\n",i,strlen(buf2));
 
     printf ("snprintf (\"%%.999999u\", 10) == %d\n",
-    	    snprintf(buf2, sizeof(buf2), "%.999999u", 10));
+            snprintf(buf2, sizeof(buf2), "%.999999u", 10));
   }
   return 0;
 }
 
 void libc_printf()
 {
-	printf("stdout test!!\n");
-	fprintf(stdout, "fprintf test!!\n");
-	fprintf(stderr, "fprintf test!!\n");
-	puts("puts test!!\n");
+    printf("stdout test!!\n");
+    fprintf(stdout, "fprintf test!!\n");
+    fprintf(stderr, "fprintf test!!\n");
+    puts("puts test!!\n");
 
-	putc('1', stderr);
-	putc('2', stderr);
-	putc('\n', stderr);
+    putc('1', stderr);
+    putc('2', stderr);
+    putc('\n', stderr);
 
-	printf_test();
+    printf_test();
 }
 FINSH_FUNCTION_EXPORT(libc_printf, printf test in libc);
 
 
 void libc_dprintf()
 {
-	int fd;
+    int fd;
 
-	fd = open("/dev/console", O_WRONLY, 0);
-	if (fd >0)
-	{
-		dprintf(fd, "fd:%d printf test!!\n", fd);
-		close(fd);
-	}
+    fd = open("/dev/console", O_WRONLY, 0);
+    if (fd >0)
+    {
+        dprintf(fd, "fd:%d printf test!!\n", fd);
+        close(fd);
+    }
 }
 FINSH_FUNCTION_EXPORT(libc_dprintf, dprintf test);
 
 
 void libc_fdopen()
 {
-	int fd;
-	FILE* fp;
+    int fd;
+    FILE* fp;
 
-	fd = open("/dev/console", O_WRONLY, 0);
-	if (fd >0)
-	{
-		fp = fdopen(fd, "w");
-		fprintf(fp, "fdopen test, fd %d!!\n", fileno(fp));
-		fclose(fp);
-	}
+    fd = open("/dev/console", O_WRONLY, 0);
+    if (fd >0)
+    {
+        fp = fdopen(fd, "w");
+        fprintf(fp, "fdopen test, fd %d!!\n", fileno(fp));
+        fclose(fp);
+    }
 }
 FINSH_FUNCTION_EXPORT(libc_fdopen, fdopen test);

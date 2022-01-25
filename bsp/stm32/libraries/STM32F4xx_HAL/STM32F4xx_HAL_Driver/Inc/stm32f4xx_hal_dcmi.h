@@ -49,6 +49,16 @@
   * @{
   */
 /**
+  * @brief   DCMI Embedded Synchronisation CODE Init structure definition
+  */
+typedef struct
+{
+  uint8_t FrameStartUnmask; /*!< Specifies the frame start delimiter unmask. */
+  uint8_t LineStartUnmask;  /*!< Specifies the line start delimiter unmask.  */
+  uint8_t LineEndUnmask;    /*!< Specifies the line end delimiter unmask.    */
+  uint8_t FrameEndUnmask;   /*!< Specifies the frame end delimiter unmask.   */
+}DCMI_SyncUnmaskTypeDef;
+/**
   * @brief  HAL DCMI State structures definition
   */ 
 typedef enum
@@ -458,6 +468,7 @@ void              HAL_DCMI_IRQHandler(DCMI_HandleTypeDef *hdcmi);
 HAL_StatusTypeDef HAL_DCMI_ConfigCrop(DCMI_HandleTypeDef *hdcmi, uint32_t X0, uint32_t Y0, uint32_t XSize, uint32_t YSize);
 HAL_StatusTypeDef HAL_DCMI_EnableCrop(DCMI_HandleTypeDef *hdcmi);
 HAL_StatusTypeDef HAL_DCMI_DisableCrop(DCMI_HandleTypeDef *hdcmi);
+HAL_StatusTypeDef HAL_DCMI_ConfigSyncUnmask(DCMI_HandleTypeDef *hdcmi, DCMI_SyncUnmaskTypeDef *SyncUnmask);
 /**
   * @}
   */

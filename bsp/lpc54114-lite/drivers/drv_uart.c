@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -42,14 +42,14 @@ static rt_err_t lpc_configure(struct rt_serial_device *serial, struct serial_con
      * config.enableRx = false;
      */
     USART_GetDefaultConfig(&u0_config);
-    
-    u0_config.baudRate_Bps = cfg->baud_rate;    
+
+    u0_config.baudRate_Bps = cfg->baud_rate;
     u0_config.parityMode = kUSART_ParityDisabled,
     u0_config.stopBitCount = kUSART_OneStopBit,
     u0_config.bitCountPerChar = kUSART_8BitsPerChar,
     u0_config.loopback = false,
     u0_config.txWatermark = kUSART_TxFifo0,
-    u0_config.rxWatermark = kUSART_RxFifo1,    
+    u0_config.rxWatermark = kUSART_RxFifo1,
     u0_config.enableTx = true;
     u0_config.enableRx = true;
 
@@ -143,7 +143,7 @@ int rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef BSP_USING_UART0
-    
+
     uart = &uart0;
 
     serial0.ops    = &lpc_uart_ops;
@@ -152,40 +152,40 @@ int rt_hw_uart_init(void)
 
     /* attach 12 MHz clock to FLEXCOMM0 (debug console) */
     CLOCK_AttachClk(kFRO12M_to_FLEXCOMM0);
-    
+
     /* reset FLEXCOMM for USART */
     RESET_PeripheralReset(kFC0_RST_SHIFT_RSTn);
-    
+
     /* Enables the clock for the IOCON block. 0 = Disable; 1 = Enable.: 0x01u */
     CLOCK_EnableClock(kCLOCK_Iocon);
-    
+
     const uint32_t port0_pin0_config = ((IOCON->PIO[PORT0_IDX][PIN0_IDX] &
-                                        (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))    /* Mask bits to zero which are setting */                                            
-                                        | IOCON_PIO_FUNC(1)                   /* Selects pin function: PORT00 (pin 31) is configured as FC0_RXD_SDA_MOSI. */                                            
-                                        | IOCON_PIO_DIGIMODE(1));             /* Select Analog/Digital mode : Digital mode. */              
-                    
-    IOCON_PinMuxSet(IOCON, PORT0_IDX, PIN0_IDX, port0_pin0_config);           /* PORT0 PIN0 (coords: 31) is configured as FC0_RXD_SDA_MOSI */
-    
-    const uint32_t port0_pin1_config = ((IOCON->PIO[PORT0_IDX][PIN1_IDX] &                                             
-                                        (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))    /* Mask bits to zero which are setting */                                            
-                                        | IOCON_PIO_FUNC(1)                   /* Selects pin function: PORT01 (pin 32) is configured as FC0_TXD_SCL_MISO. */                                            
+                                        (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))    /* Mask bits to zero which are setting */
+                                        | IOCON_PIO_FUNC(1)                   /* Selects pin function: PORT00 (pin 31) is configured as FC0_RXD_SDA_MOSI. */
                                         | IOCON_PIO_DIGIMODE(1));             /* Select Analog/Digital mode : Digital mode. */
-    
+
+    IOCON_PinMuxSet(IOCON, PORT0_IDX, PIN0_IDX, port0_pin0_config);           /* PORT0 PIN0 (coords: 31) is configured as FC0_RXD_SDA_MOSI */
+
+    const uint32_t port0_pin1_config = ((IOCON->PIO[PORT0_IDX][PIN1_IDX] &
+                                        (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))    /* Mask bits to zero which are setting */
+                                        | IOCON_PIO_FUNC(1)                   /* Selects pin function: PORT01 (pin 32) is configured as FC0_TXD_SCL_MISO. */
+                                        | IOCON_PIO_DIGIMODE(1));             /* Select Analog/Digital mode : Digital mode. */
+
     IOCON_PinMuxSet(IOCON, PORT0_IDX, PIN1_IDX, port0_pin1_config);           /* PORT0 PIN1 (coords: 32) is configured as FC0_TXD_SCL_MISO */
-    
+
     /* Enable RX interrupt. */
     USART_EnableInterrupts(uart->UART, kUSART_RxLevelInterruptEnable | kUSART_RxErrorInterruptEnable);
     EnableIRQ(uart->UART_IRQn);
-     
-    CLOCK_DisableClock(kCLOCK_Iocon);    
-    
+
+    CLOCK_DisableClock(kCLOCK_Iocon);
+
     /* register UART0 device */
     rt_hw_serial_register(&serial0, "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           uart);
 
-#endif    
-    
+#endif
+
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_uart_init);

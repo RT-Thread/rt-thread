@@ -1,0 +1,1 @@
+pico_add_subdirectory(rp2040_usb_device_enumeration)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,7 +35,7 @@ extern "C" {
 
 /* DMA2 stream0 */
 #if defined(BSP_UART3_RX_USING_DMA) && !defined(UART3_RX_DMA_INSTANCE)
-#define UART3_RX_DMA_IRQHandler          DMA2_Stream0_IRQHandler
+#define UART3_DMA_RX_IRQHandler          DMA2_Stream0_IRQHandler
 #define UART3_RX_DMA_RCC                 RCC_MC_AHB2ENSETR_DMA2EN
 #define UART3_RX_DMA_INSTANCE            DMA2_Stream0
 #define UART3_RX_DMA_CHANNEL             DMA_REQUEST_USART3_RX
@@ -47,10 +47,10 @@ extern "C" {
 #define SPI5_RX_DMA_CHANNEL              DMA_REQUEST_SPI5_RX
 #define SPI5_RX_DMA_IRQ                  DMA2_Stream0_IRQn
 #endif
-    
+
 /* DMA2 stream1 */
 #if defined(BSP_UART3_TX_USING_DMA) && !defined(BSP_UART3_TX_USING_INSTANCE)
-#define UART3_TX_DMA_IRQHandler           DMA2_Stream1_IRQHandler
+#define UART3_DMA_TX_IRQHandler           DMA2_Stream1_IRQHandler
 #define UART3_TX_DMA_RCC                  RCC_MC_AHB2ENSETR_DMA2EN
 #define UART3_TX_DMA_INSTANCE             DMA2_Stream1
 #define UART3_TX_DMA_CHANNEL              DMA_REQUEST_USART3_TX
@@ -78,7 +78,7 @@ extern "C" {
 #define UART4_RX_DMA_RCC                 RCC_MC_AHB2ENSETR_DMA2EN
 #define UART4_RX_DMA_INSTANCE            DMA2_Stream3
 #define UART4_RX_DMA_CHANNEL             DMA_REQUEST_UART4_RX
-#define UART4_RX_DMA_IRQ                 DMA2_Stream3_IRQn        
+#define UART4_RX_DMA_IRQ                 DMA2_Stream3_IRQn
 #endif
 
 /* DMA2 stream4 */
@@ -87,7 +87,7 @@ extern "C" {
 #define UART4_TX_DMA_RCC                 RCC_MC_AHB2ENSETR_DMA2EN
 #define UART4_TX_DMA_INSTANCE            DMA2_Stream4
 #define UART4_TX_DMA_CHANNEL             DMA_REQUEST_UART4_TX
-#define UART4_TX_DMA_IRQ                 DMA2_Stream4_IRQn   
+#define UART4_TX_DMA_IRQ                 DMA2_Stream4_IRQn
 #endif
 
 /* DMA2 stream5 */
@@ -105,7 +105,7 @@ extern "C" {
 #define CRYP2_IN_DMA_RCC                 RCC_MC_AHB2ENSETR_DMA2EN
 #define CRYP2_IN_DMA_INSTANCE            DMA2_Stream6
 #define CRYP2_IN_DMA_CHANNEL             DMA_REQUEST_CRYP2_IN
-#define CRYP2_IN_DMA_IRQ                 DMA2_Stream6_IRQn    
+#define CRYP2_IN_DMA_IRQ                 DMA2_Stream6_IRQn
 #endif
 
 /* DMA2 stream7 */
@@ -114,9 +114,9 @@ extern "C" {
 #define HASH2_IN_DMA_RCC                 RCC_MC_AHB2ENSETR_DMA2EN
 #define HASH2_IN_DMA_INSTANCE            DMA2_Stream7
 #define HASH2_IN_DMA_CHANNEL             DMA_REQUEST_HASH2_IN
-#define HASH2_IN_DMA_IRQ                 DMA2_Stream7_IRQn  
+#define HASH2_IN_DMA_IRQ                 DMA2_Stream7_IRQn
 #endif
-    
+
 #ifdef __cplusplus
 }
 #endif

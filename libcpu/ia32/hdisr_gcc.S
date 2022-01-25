@@ -1,11 +1,7 @@
 /*
- * File      : hdisr_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -18,23 +14,23 @@
 /*@{*/
 
 #define ENTRY(proc)\
-	.align 2;\
-	.globl proc;\
-	.type proc,@function;\
-	proc:
+    .align 2;\
+    .globl proc;\
+    .type proc,@function;\
+    proc:
 #define HDINTERRUPTFNC(name,num) \
-	ENTRY(name)\
-	pushl $(num);\
-	jmp _hdinterrupts;\
-	.data;\
-	.long name;\
-	.text
+    ENTRY(name)\
+    pushl $(num);\
+    jmp _hdinterrupts;\
+    .data;\
+    .long name;\
+    .text
 
 .globl hdinterrupt_func
-	.data
-	.align 4
-	.type hdinterrupt_func,@object
-	hdinterrupt_func :
+    .data
+    .align 4
+    .type hdinterrupt_func,@object
+    hdinterrupt_func :
 .text
 
 /* the external device interrupts */
@@ -66,57 +62,57 @@ HDINTERRUPTFNC(irq15, 15)
 .globl rt_interrupt_to_thread
 
 _hdinterrupts:
-	push %ds
-	push %es
-	pushal
-	movw $0x10, %ax
-	movw %ax, %ds
-	movw %ax, %es
-	pushl %esp
+    push %ds
+    push %es
+    pushal
+    movw $0x10, %ax
+    movw %ax, %ds
+    movw %ax, %es
+    pushl %esp
 
-	call rt_interrupt_enter
+    call rt_interrupt_enter
 
-	movl %esp, %eax	      /* copy esp to eax */
-	addl $0x2c, %eax      /* move to vector address */
-	movl (%eax), %eax     /* vector(eax) = *eax */
+    movl %esp, %eax       /* copy esp to eax */
+    addl $0x2c, %eax      /* move to vector address */
+    movl (%eax), %eax     /* vector(eax) = *eax */
 
-	pushl %eax            /* push argument : int vector */
-	call rt_hw_isr
-	add $4, %esp          /* restore argument */
+    pushl %eax            /* push argument : int vector */
+    call rt_hw_isr
+    add $4, %esp          /* restore argument */
 
-	call rt_interrupt_leave
+    call rt_interrupt_leave
 
-	/* if rt_thread_switch_interrupt_flag set, jump to _interrupt_thread_switch and don't return */
-	movl $rt_thread_switch_interrupt_flag, %eax
-	movl (%eax), %ebx
-	cmp $0x1, %ebx
-	jz _interrupt_thread_switch
+    /* if rt_thread_switch_interrupt_flag set, jump to _interrupt_thread_switch and don't return */
+    movl $rt_thread_switch_interrupt_flag, %eax
+    movl (%eax), %ebx
+    cmp $0x1, %ebx
+    jz _interrupt_thread_switch
 
-	popl %esp
-	popal
-	pop %es
-	pop %ds
-	add $4,%esp
-	iret
+    popl %esp
+    popal
+    pop %es
+    pop %ds
+    add $4,%esp
+    iret
 
 _interrupt_thread_switch:
-	popl %esp
+    popl %esp
 
-	movl $0x0, %ebx
-	movl %ebx, (%eax)
+    movl $0x0, %ebx
+    movl %ebx, (%eax)
 
-	movl $rt_interrupt_from_thread, %eax
-	movl (%eax), %ebx
-	movl %esp, (%ebx)
+    movl $rt_interrupt_from_thread, %eax
+    movl (%eax), %ebx
+    movl %esp, (%ebx)
 
-	movl $rt_interrupt_to_thread, %ecx
-	movl (%ecx), %edx
-	movl (%edx), %esp
+    movl $rt_interrupt_to_thread, %ecx
+    movl (%ecx), %edx
+    movl (%edx), %esp
 
-	popal
-	pop %es
-	pop %ds
-	add $4,%esp
-	iret
+    popal
+    pop %es
+    pop %ds
+    add $4,%esp
+    iret
 
 /*@}*/

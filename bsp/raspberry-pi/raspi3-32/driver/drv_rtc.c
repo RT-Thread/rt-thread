@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,12 +8,15 @@
  * 2019-07-29     zdzn           first version
  */
 
+#include <rtthread.h>
+#include <rtdevice.h>
+#include <sys/time.h>
 #include "drv_rtc.h"
 
 #ifdef BSP_USING_RTC
 
 #define RTC_I2C_BUS_NAME      "i2c0"
-#define RTC_ADDR            0x68
+#define RTC_ADDR               0x68
 
 static struct rt_device rtc_device;
 static struct rt_i2c_bus_device *i2c_bus = RT_NULL;
@@ -185,13 +188,13 @@ static time_t raspi_get_timestamp(void)
     tm_new.tm_min  = ((buf[1] & 0x7F) / 16 + 0x30) + (buf[1] & 0x7F) % 16+ 0x30;
     tm_new.tm_sec  = ((buf[0] & 0x7F) / 16 + 0x30) + (buf[0] & 0x7F) % 16+ 0x30;
 
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 }
 
 static int raspi_set_timestamp(time_t timestamp)
 {
     struct tm *tblock;
-    tblock = localtime(&timestamp);
+    tblock = gmtime(&timestamp);
     buf[0] = 0;
     buf[1] = tblock->tm_sec;
     buf[2] = tblock->tm_min;

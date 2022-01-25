@@ -35,6 +35,7 @@ Each peripheral supporting condition for this BSP is as follows:
 | UART              |     Support     | UART0                            |
 | TIMER     |     Support     |     TTC0 provides system clock         |
 | EMMC | Support | SD0 Controller |
+| EMAC | Support | e0 Net Interface |
 
 ## Execution Instruction
 
@@ -99,14 +100,31 @@ msh />
 
 This BSP enables EMMC driver and DFS file system by default. If you need to use a file system, you can format and mount it by yourself.
 
+This BSP is enabled and configured with net interface driver and LwIP protocol stack by default, and note the following configuration:
+
+1. Note that `RT_LWIP_PBUF_NUM` is set to at least 256
+
+2. Note that `RT_ LWIP_ MEM_ Alignment` is set to 32. If the version other than lwip 2.0.2 in RTT is used, the `MEM_ALIGNMENT` in `lwipopts.h` needs to be modified manually because the macro is not used in other versions.
+
 ## BSP Migration
 
 If you need to ported the BSP to another development board of Xilinx Zynq UltraScale+ MPSOC development platform, it is also convenient. The main modifications are as follows:
 
-1. Memory: `psu_r5_ddr_0_MEM_0` in `zynqmp-r5.ld` (if DDR memory is less than 2G)
+1. Memory: `psu_r5_ddr_0_MEM_0` in `zynqmp-r5.ld`  and `HEAP_END` in `board.h ` (if DDR memory is less than 2G) 
 2. Main Frequency: `XPAR_CPU_CORTEXR5_0_CPU_CLK_FREQ_HZ` in `zynqmp-r5.h`
 3. Pin and Frequency of Serial Port: `rxmio`, `txmio` and `XPAR_PSU_UART_0_UART_CLK_FREQ_HZ` in `drv_uart.c`
 4. Timer Frequency: `XPAR_PSU_TTC_0_TTC_CLK_FREQ_HZ` in `drv_timer.c`
 5. SD Controller: Block device driver initialization in `drv_sdcard.c`
+6. Net interface: If the PHY chip used is not in the range of driver support, it may be necessary to realize the rate identification function of the corresponding chip in `xemacpsif_physpeed.c`. You can refer to the corresponding tutorial of Alinx.
 
 The parameter macro definition in `xparameters.h` does not need to be modified manually. You can directly copy the `xparameters.h` file of the development board generated in Xilinx Vitis.
+
+## Attention
+
+-None
+
+## Contact
+
+Maintainer:
+
+-  [Wang Huachen](https://github.com/Wang-Huachen/)

@@ -31,9 +31,22 @@ Kendryte中文含义为勘智，而勘智取自勘物探智。这颗芯片主要
 
 ## 2. 编译说明
 
-编译K210，需要有RT-Thread的代码，因为K210的sdk是以软件包方式，所以需要在bsp/k210下做软件包更新。Windows下推进使用[env工具][1]，然后在console下进入bsp/k210目录中，运行：
+编译 K210，需要有 RT-Thread 的代码，因为 K210 的 sdk 是以软件包方式，所以需要在 bsp/k210 下做软件包更新。注意，需要使用 latest 的 RT-Thread 源码和 Latest 的软件包，软件包在menuconfig中的配置路径如下:
+
+```
+RT-Thread online packages ---> peripheral libraries and drivers ---> kendryte K210 SDK package for rt-thread
+```
+
+最新的 k210 SDK 使用了 C++17 编写了部分代码，因此需要打开 C++ 组件，C++组件在menuconfig中的配置路径如下：
+
+```
+RT-Thread Components --->  C++ features
+```
+
+Windows下推荐使用[env工具][1]，然后在console下进入bsp/k210目录中，运行：
 
     cd bsp/k210
+    menuconfig # 在软件包中选择最新的 k210 SDK
     pkgs --update
 
 如果在Linux平台下，可以先执行

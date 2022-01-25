@@ -78,7 +78,8 @@ typedef struct
 
 /**
   * @brief HAL IRDA State definition
-  * @note  HAL IRDA State value is a combination of 2 different substates: gState and RxState (see @ref IRDA_State_Definition).
+  * @note  HAL IRDA State value is a combination of 2 different substates:
+  *        gState and RxState (see @ref IRDA_State_Definition).
   *        - gState contains IRDA state information related to global Handle management
   *          and also information related to Tx operations.
   *          gState value coding follow below described bitmap :
@@ -87,14 +88,14 @@ typedef struct
   *             01 : (Not Used)
   *             10 : Timeout
   *             11 : Error
-  *          b5     IP initilisation status
-  *             0  : Reset (IP not initialized)
-  *             1  : Init done (IP not initialized. HAL IRDA Init function already called)
+  *          b5     Peripheral initialization status
+  *             0  : Reset (Peripheral not initialized)
+  *             1  : Init done (Peripheral initialized. HAL IRDA Init function already called)
   *          b4-b3  (not used)
   *             xx : Should be set to 00
   *          b2     Intrinsic process state
   *             0  : Ready
-  *             1  : Busy (IP busy with some configuration or internal operations)
+  *             1  : Busy (Peripheral busy with some configuration or internal operations)
   *          b1     (not used)
   *             x  : Should be set to 0
   *          b0     Tx state
@@ -104,9 +105,9 @@ typedef struct
   *          RxState value coding follow below described bitmap :
   *          b7-b6  (not used)
   *             xx : Should be set to 00
-  *          b5     IP initilisation status
-  *             0  : Reset (IP not initialized)
-  *             1  : Init done (IP not initialized)
+  *          b5     Peripheral initialization status
+  *             0  : Reset (Peripheral not initialized)
+  *             1  : Init done (Peripheral initialized)
   *          b4-b2  (not used)
   *            xxx : Should be set to 000
   *          b1     Rx state

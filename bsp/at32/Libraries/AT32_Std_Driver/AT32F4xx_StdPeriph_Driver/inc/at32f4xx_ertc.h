@@ -11,6 +11,9 @@
 #ifndef __AT32F4xx_ERTC_H
 #define __AT32F4xx_ERTC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "at32f4xx.h"

@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                       opensource.org/licenses/BSD-3-Clause
   *
@@ -98,7 +98,7 @@ typedef struct {
 
 /* Those define should reflect NVM_USER section
  * For ES Eval Configuration this is specified as
- * 	0xF7,
+ *  0xF7,
  0x92,
  0xC0,
  0x02,
@@ -146,12 +146,12 @@ typedef struct {
 
  *
  */
-#define OTP_VINOK_HYST  	((NVM_SECTOR3_REGISTER_0 & 0xC0) >> 6) 	// nvm_vinok_hyst
-#define OTP_VINOK		  	((NVM_SECTOR3_REGISTER_0 & 0x30) >> 4) 	// nvm_vinok
-#define OTP_LDO4_FORCED     ((NVM_SECTOR3_REGISTER_0 & 0x08) >> 3) 	// Otp_ldo4_forced
-#define OTP_LONGKEYPRESSED  ((NVM_SECTOR3_REGISTER_0 & 0x04) >> 2)	// nvm_longkeypress
-#define OTP_AUTOTURNON  	((NVM_SECTOR3_REGISTER_0 & 0x02) >> 1)	// nvm_autoturnon
-#define OTP_CC_KEEPOFF  	((NVM_SECTOR3_REGISTER_0 & 0x01))		// nvm_cc_keepoff
+#define OTP_VINOK_HYST      ((NVM_SECTOR3_REGISTER_0 & 0xC0) >> 6)  // nvm_vinok_hyst
+#define OTP_VINOK           ((NVM_SECTOR3_REGISTER_0 & 0x30) >> 4)  // nvm_vinok
+#define OTP_LDO4_FORCED     ((NVM_SECTOR3_REGISTER_0 & 0x08) >> 3)  // Otp_ldo4_forced
+#define OTP_LONGKEYPRESSED  ((NVM_SECTOR3_REGISTER_0 & 0x04) >> 2)  // nvm_longkeypress
+#define OTP_AUTOTURNON      ((NVM_SECTOR3_REGISTER_0 & 0x02) >> 1)  // nvm_autoturnon
+#define OTP_CC_KEEPOFF      ((NVM_SECTOR3_REGISTER_0 & 0x01))       // nvm_cc_keepoff
 
 /*
  * nvm_rank_buck4:
@@ -176,10 +176,10 @@ typedef struct {
  11:  rank3
  *
  */
-#define OTP_RANK_BUCK4  	((NVM_SECTOR3_REGISTER_1 & 0xC0) >> 6) 	// nvm_rank_buck4
-#define OTP_RANK_BUCK3		((NVM_SECTOR3_REGISTER_1 & 0x30) >> 4) 	// nvm_rank_buck3
-#define OTP_RANK_BUCK2     	((NVM_SECTOR3_REGISTER_1 & 0x0C) >> 2) 	// nvm_rank_buck2
-#define OTP_RANK_BUCK1  	((NVM_SECTOR3_REGISTER_1 & 0x03))		// nvm_rank_buck1
+#define OTP_RANK_BUCK4      ((NVM_SECTOR3_REGISTER_1 & 0xC0) >> 6)  // nvm_rank_buck4
+#define OTP_RANK_BUCK3      ((NVM_SECTOR3_REGISTER_1 & 0x30) >> 4)  // nvm_rank_buck3
+#define OTP_RANK_BUCK2      ((NVM_SECTOR3_REGISTER_1 & 0x0C) >> 2)  // nvm_rank_buck2
+#define OTP_RANK_BUCK1      ((NVM_SECTOR3_REGISTER_1 & 0x03))       // nvm_rank_buck1
 
 
 /*
@@ -205,10 +205,10 @@ typedef struct {
  11:  rank3
  *
  */
-#define OTP_RANK_LDO4  		((NVM_SECTOR3_REGISTER_2 & 0xC0) >> 6) 	// nvm_rank_ldo4
-#define OTP_RANK_LDO3		((NVM_SECTOR3_REGISTER_2 & 0x30) >> 4) 	// nvm_rank_ldo3
-#define OTP_RANK_LDO2     	((NVM_SECTOR3_REGISTER_2 & 0x0C) >> 2) 	// nvm_rank_ldo2
-#define OTP_RANK_LDO1  		((NVM_SECTOR3_REGISTER_2 & 0x03))		// nvm_rank_ldo1
+#define OTP_RANK_LDO4       ((NVM_SECTOR3_REGISTER_2 & 0xC0) >> 6)  // nvm_rank_ldo4
+#define OTP_RANK_LDO3       ((NVM_SECTOR3_REGISTER_2 & 0x30) >> 4)  // nvm_rank_ldo3
+#define OTP_RANK_LDO2       ((NVM_SECTOR3_REGISTER_2 & 0x0C) >> 2)  // nvm_rank_ldo2
+#define OTP_RANK_LDO1       ((NVM_SECTOR3_REGISTER_2 & 0x03))       // nvm_rank_ldo1
 
 /*
  * nvm_clamp_output_buck: Clamp output value to 1.3V max
@@ -238,11 +238,11 @@ nvm_rank_ldo5:
  11:  rank3
  *
  */
-#define OTP_CLAMP_OUTPUT_BUCK4  ((NVM_SECTOR3_REGISTER_3 & 0x80) >> 7) 	// nvm_clamp_output_buck4
-#define OTP_BYPASS_MODE_LDO3  	((NVM_SECTOR3_REGISTER_3 & 0x40) >> 6) 	// nvm_bypass_mode_ldo3
-#define OTP_RANK_VREFDDR		((NVM_SECTOR3_REGISTER_3 & 0x30) >> 4) 	// nvm_rank_vrefddr
-#define OTP_RANK_LDO6     		((NVM_SECTOR3_REGISTER_3 & 0x0C) >> 2) 	// nvm_rank_ldo6
-#define OTP_RANK_LDO5  			((NVM_SECTOR3_REGISTER_3 & 0x03))		// nvm_rank_ldo5
+#define OTP_CLAMP_OUTPUT_BUCK4  ((NVM_SECTOR3_REGISTER_3 & 0x80) >> 7)  // nvm_clamp_output_buck4
+#define OTP_BYPASS_MODE_LDO3    ((NVM_SECTOR3_REGISTER_3 & 0x40) >> 6)  // nvm_bypass_mode_ldo3
+#define OTP_RANK_VREFDDR        ((NVM_SECTOR3_REGISTER_3 & 0x30) >> 4)  // nvm_rank_vrefddr
+#define OTP_RANK_LDO6           ((NVM_SECTOR3_REGISTER_3 & 0x0C) >> 2)  // nvm_rank_ldo6
+#define OTP_RANK_LDO5           ((NVM_SECTOR3_REGISTER_3 & 0x03))       // nvm_rank_ldo5
 
 /*
  * nvm_output_buck4: Buck4 default output selection
@@ -267,31 +267,31 @@ nvm_rank_ldo5:
  11:  1.25V
  *
  */
-#define OTP_OUTPUT_BUCK4  		((NVM_SECTOR3_REGISTER_4 & 0xC0) >> 6) 	// nvm_output_buck4
-#define OTP_OUTPUT_BUCK3		((NVM_SECTOR3_REGISTER_4 & 0x30) >> 4) 	// nvm_output_buck3
-#define OTP_OUTPUT_BUCK2     	((NVM_SECTOR3_REGISTER_4 & 0x0C) >> 2) 	// nvm_output_buck2
-#define OTP_OUTPUT_BUCK1  		((NVM_SECTOR3_REGISTER_4 & 0x03))		// nvm_output_buck1
+#define OTP_OUTPUT_BUCK4        ((NVM_SECTOR3_REGISTER_4 & 0xC0) >> 6)  // nvm_output_buck4
+#define OTP_OUTPUT_BUCK3        ((NVM_SECTOR3_REGISTER_4 & 0x30) >> 4)  // nvm_output_buck3
+#define OTP_OUTPUT_BUCK2        ((NVM_SECTOR3_REGISTER_4 & 0x0C) >> 2)  // nvm_output_buck2
+#define OTP_OUTPUT_BUCK1        ((NVM_SECTOR3_REGISTER_4 & 0x03))       // nvm_output_buck1
 
 /*
- * [7]	OTP_SWOFF_BY_BOOST_OVP:
+ * [7]  OTP_SWOFF_BY_BOOST_OVP:
  0 -> SWOUT will not turnoff bu boost OVP
  1 -> SWOUT will be turnoff by BOOST OVP
 
- [6]	reserved
+ [6]    reserved
 
- [5:4]	nvm_output_ldo3: LDO3 default output selection
+ [5:4]  nvm_output_ldo3: LDO3 default output selection
  00:  1.8V
  01:  2.5V
  10:  3.3V
  11:  output_buck2<4:0>/2 (VTT termination for DDR3 x32, Analog divider implemented in Analog)
 
- [3:2]	nvm_output_ldo2: LDO2 default output selection
+ [3:2]  nvm_output_ldo2: LDO2 default output selection
  00: 1.8V
  01: 2.5V
  10: 2.9V
  11: 3.3V
 
- [1:0]	nvm_output_ldo1: LDO1 default output selection
+ [1:0]  nvm_output_ldo1: LDO1 default output selection
  00: 1.8V
  01: 2.5V
  10: 2.9V
@@ -299,21 +299,21 @@ nvm_rank_ldo5:
 
  *
  */
-#define OTP_SWOFF_BY_BOOST_OVP  ((NVM_SECTOR3_REGISTER_5 & 0x80) >> 7) 	// OTP_SWOFF_BY_BOOST_OVP
-#define OTP_OUTPUT_LDO3			((NVM_SECTOR3_REGISTER_5 & 0x30) >> 4) 	// nvm_output_ldo3
-#define OTP_OUTPUT_LDO2     	((NVM_SECTOR3_REGISTER_5 & 0x0C) >> 2) 	// nvm_output_ldo2
-#define OTP_OUTPUT_LDO1  		((NVM_SECTOR3_REGISTER_5 & 0x03))		// nvm_output_ldo1
+#define OTP_SWOFF_BY_BOOST_OVP  ((NVM_SECTOR3_REGISTER_5 & 0x80) >> 7)  // OTP_SWOFF_BY_BOOST_OVP
+#define OTP_OUTPUT_LDO3         ((NVM_SECTOR3_REGISTER_5 & 0x30) >> 4)  // nvm_output_ldo3
+#define OTP_OUTPUT_LDO2         ((NVM_SECTOR3_REGISTER_5 & 0x0C) >> 2)  // nvm_output_ldo2
+#define OTP_OUTPUT_LDO1         ((NVM_SECTOR3_REGISTER_5 & 0x03))       // nvm_output_ldo1
 
 /*
- * 	[7:4]	reserved
+ *  [7:4]   reserved
  *
- [3:2]	nvm_output_ldo6: LDO6 default output selection
+ [3:2]  nvm_output_ldo6: LDO6 default output selection
  00:  1.0V
  01:  1.2V
  10:  1.8V
  11:  3.3V
 
- [1:0]	nvm_output_ldo5: LDO5 default output selection
+ [1:0]  nvm_output_ldo5: LDO5 default output selection
  00:  1.8V
  01:  2.5V
  10:  2.9V
@@ -321,8 +321,8 @@ nvm_rank_ldo5:
  *
  */
 
-#define OTP_OUTPUT_LDO6     	((NVM_SECTOR3_REGISTER_6 & 0x0C) >> 2) 	// nvm_output_ldo6
-#define OTP_OUTPUT_LDO5  		((NVM_SECTOR3_REGISTER_6 & 0x03))		// nvm_output_ldo5
+#define OTP_OUTPUT_LDO6         ((NVM_SECTOR3_REGISTER_6 & 0x0C) >> 2)  // nvm_output_ldo6
+#define OTP_OUTPUT_LDO5         ((NVM_SECTOR3_REGISTER_6 & 0x03))       // nvm_output_ldo5
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #define BIT(_x)  (1<<(_x))
@@ -417,7 +417,7 @@ nvm_rank_ldo5:
 #define LDO_BUCK_PULL_DOWN_MASK     0x03
 
 
-/* Main PMIC Control Register 
+/* Main PMIC Control Register
  * MAIN_CONTROL_REG
  * Address : 0x10
  * */
@@ -427,7 +427,7 @@ nvm_rank_ldo5:
 #define RESTART_REQUEST_ENABLED     BIT(1)
 #define SOFTWARE_SWITCH_OFF_ENABLED BIT(0)
 
-/* Main PMIC PADS Control Register 
+/* Main PMIC PADS Control Register
  * PADS_PULL_REG
  * Address : 0x11
  * */
@@ -438,7 +438,7 @@ nvm_rank_ldo5:
 #define PONKEY_PU_ACTIVE            BIT(0)
 
 
-/* Main PMIC VINLOW Control Register 
+/* Main PMIC VINLOW Control Register
  * VIN_CONTROL_REGC DMSC
  * Address : 0x15
  * */
@@ -452,7 +452,7 @@ nvm_rank_ldo5:
 #define VINLOW_CTRL_REG_MASK        0xFF
 
 
-/* USB Control Register 
+/* USB Control Register
  * Address : 0x40
  * */
 #define BOOST_OVP_DISABLED          BIT(7)

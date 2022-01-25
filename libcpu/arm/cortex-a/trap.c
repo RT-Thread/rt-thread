@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 #include "armv7.h"
 #include "interrupt.h"
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
 extern long list_thread(void);
 #endif
 
@@ -35,6 +35,18 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
     rt_kprintf("cpsr:0x%08x\n", regs->cpsr);
 }
 
+void (*rt_trap_hook)(struct rt_hw_exp_stack *regs, const char *ex, unsigned int exception_type);
+
+/**
+ * This function will set a hook function to trap handler.
+ *
+ * @param hook the hook function
+ */
+void rt_hw_trap_set_hook(void (*hook)(struct rt_hw_exp_stack *regs, const char *ex, unsigned int exception_type))
+{
+    rt_trap_hook = hook;
+}
+
 /**
  * When comes across an instruction which it cannot handle,
  * it takes the undefined instruction trap.
@@ -47,30 +59,24 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
 {
 #ifdef RT_USING_FPU
     {
-        uint32_t ins;
+        uint32_t val;
         uint32_t addr;
 
         if (regs->cpsr & (1 << 5))
         {
             /* thumb mode */
             addr = regs->pc - 2;
-            ins = (uint32_t)*(uint16_t*)addr;
-            if ((ins & (3 << 11)) != 0)
-            {
-                /* 32 bit ins */
-                ins <<= 16;
-                ins += *(uint16_t*)(addr + 2);
-            }
         }
         else
         {
             addr = regs->pc - 4;
-            ins = *(uint32_t*)addr;
         }
-        if ((ins & 0xe00) == 0xa00)
+        asm volatile ("vmrs %0, fpexc" : "=r"(val)::"memory");
+
+        if (!(val & 0x40000000))
         {
             /* float ins */
-            uint32_t val = (1U << 30);
+            val = (1U << 30);
 
             asm volatile ("vmsr fpexc, %0"::"r"(val):"memory");
             regs->pc = addr;
@@ -78,12 +84,20 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
         }
     }
 #endif
-    rt_kprintf("undefined instruction:\n");
-    rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
-    list_thread();
+
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("undefined instruction:\n");
+        rt_hw_show_register(regs);
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "undefined instruction", UND_EXCEPTION);
+    }
 }
 
 /**
@@ -97,12 +111,19 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_swi(struct rt_hw_exp_stack *regs)
 {
-    rt_kprintf("software interrupt:\n");
-    rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
-    list_thread();
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("software interrupt:\n");
+        rt_hw_show_register(regs);
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "software instruction", SWI_EXCEPTION);
+    }
 }
 
 /**
@@ -115,12 +136,19 @@ void rt_hw_trap_swi(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
 {
-    rt_kprintf("prefetch abort:\n");
-    rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
-    list_thread();
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("prefetch abort:\n");
+        rt_hw_show_register(regs);
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "prefetch abort", PABT_EXCEPTION);
+    }
 }
 
 /**
@@ -133,12 +161,19 @@ void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
 {
-    rt_kprintf("data abort:");
-    rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
-    list_thread();
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("data abort:");
+        rt_hw_show_register(regs);
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "data abort", DABT_EXCEPTION);
+    }
 }
 
 /**
@@ -150,23 +185,32 @@ void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
 {
-    rt_kprintf("reserved trap:\n");
-    rt_hw_show_register(regs);
-#ifdef RT_USING_FINSH
-    list_thread();
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("reserved trap:\n");
+        rt_hw_show_register(regs);
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "reserved trap", RESV_EXCEPTION);
+    }
 }
 
 void rt_hw_trap_irq(void)
 {
     void *param;
+    int int_ack;
     int ir;
     rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
 
-    ir = rt_hw_interrupt_get_irq();
+    int_ack = rt_hw_interrupt_get_irq();
 
+    ir = int_ack & GIC_ACK_INTID_MASK;
     if (ir == 1023)
     {
         /* Spurious interrupt */
@@ -187,7 +231,7 @@ void rt_hw_trap_irq(void)
     }
 
     /* end of interrupt */
-    rt_hw_interrupt_ack(ir);
+    rt_hw_interrupt_ack(int_ack);
 }
 
 void rt_hw_trap_fiq(void)

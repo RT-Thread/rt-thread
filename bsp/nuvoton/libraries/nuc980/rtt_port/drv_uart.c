@@ -16,7 +16,7 @@
 
 #include <rtdevice.h>
 #include <rthw.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_uart.h>
 #include <drv_sys.h>
 
@@ -25,6 +25,7 @@
 #endif
 
 /* Private define ---------------------------------------------------------------*/
+
 enum
 {
     UART_START = -1,
@@ -70,6 +71,7 @@ struct nu_uart
     IRQn_Type irqn;
     E_SYS_IPRST rstidx;
     E_SYS_IPCLK clkidx;
+
 #if defined(RT_SERIAL_USING_DMA)
     uint32_t dma_flag;
     int16_t pdma_perp_tx;
@@ -81,7 +83,6 @@ struct nu_uart
     int32_t rxdma_trigger_len;
 
     nu_pdma_desc_t pdma_rx_desc;
-
 #endif
 
 };
@@ -396,6 +397,34 @@ static void nu_uart_isr(int vector, void *param)
 }
 
 /**
+ * Set RS-485 AUD mode
+ */
+void nu_uart_set_rs485aud(struct rt_serial_device *serial, rt_bool_t bRTSActiveLowLevel)
+{
+    UART_T *uart_base;
+    RT_ASSERT(serial != RT_NULL);
+
+    /* Get base address of uart register */
+    uart_base = ((nu_uart_t)serial)->uart_base;
+
+    /* Set RTS as RS-485 phy direction controlling ping. */
+    UART_SelectRS485Mode(uart_base, UART_ALTCTL_RS485AUD_Msk, 0);
+
+    if (bRTSActiveLowLevel)
+    {
+        /* Set direction pin as active-low. */
+        uart_base->MODEM |= UART_MODEM_RTSACTLV_Msk;
+    }
+    else
+    {
+        /* Set direction pin as active-high. */
+        uart_base->MODEM &= ~UART_MODEM_RTSACTLV_Msk;
+    }
+
+    rt_kprintf("Set %s to RS-485 AUD function mode. ActiveLowLevel-%s\n", ((nu_uart_t)serial)->name, bRTSActiveLowLevel ? "YES" : "NO");
+}
+
+/**
  * Configure uart port
  */
 static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -572,7 +601,6 @@ static void nu_pdma_uart_rx_cb(void *pvOwner, uint32_t u32Events)
     struct rt_serial_device *serial = (struct rt_serial_device *)pvOwner;
     nu_uart_t puart = (nu_uart_t)serial;
     RT_ASSERT(serial != RT_NULL);
-    struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
 
     /* Get base address of uart register */
     UART_T *uart_base = puart->uart_base;
@@ -581,6 +609,9 @@ static void nu_pdma_uart_rx_cb(void *pvOwner, uint32_t u32Events)
 
     if (u32Events & (NU_PDMA_EVENT_TRANSFER_DONE | NU_PDMA_EVENT_TIMEOUT))
     {
+#if defined(BSP_USING_MMU)
+        struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+#endif
         if (u32Events & NU_PDMA_EVENT_TRANSFER_DONE)
         {
             transferred_rxbyte = puart->rxdma_trigger_len;

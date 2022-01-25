@@ -10,6 +10,20 @@
  * @note
  *
  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
+  *
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
  *
  @verbatim
  ==============================================================================
@@ -397,8 +411,8 @@ ald_status_t ald_i2c_reset(i2c_handle_t *hperh)
 	WRITE_REG(hperh->perh->ADDR2, 0);
 	WRITE_REG(hperh->perh->TIMINGR, 0);
 	WRITE_REG(hperh->perh->TIMEOUTR, 0);
-	WRITE_REG(hperh->perh->FCON, 0);
-	WRITE_REG(hperh->perh->TXDATA, 0);
+	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 	WRITE_REG(hperh->perh->IDR, I2C_FLAG_MASK);
 	WRITE_REG(hperh->perh->ICR, I2C_FLAG_MASK);
 

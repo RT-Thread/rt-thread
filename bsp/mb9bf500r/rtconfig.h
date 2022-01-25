@@ -3,16 +3,16 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX		8
+#define RT_NAME_MAX     8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -53,20 +53,20 @@
 #define RT_USING_DEVICE
 /* RT_USING_UART */
 #define RT_USING_UART0
-#define RT_UART_RX_BUFFER_SIZE	64
+#define RT_UART_RX_BUFFER_SIZE  64
 
 /* SECTION: Console options */
 #define RT_TINY_SIZE
 #define RT_USING_CONSOLE
 /* the buffer size of console */
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 
 /* SECTION: RTGUI support */
 /* using RTGUI support */
 /* #define RT_USING_RTGUI */
 
 /* name length of RTGUI object */
-#define RTGUI_NAME_MAX		16
+#define RTGUI_NAME_MAX      16
 /* support 16 weight font */
 //#define RTGUI_USING_FONT16
 /* support 12 weight font */

@@ -1,11 +1,7 @@
 /*
- * File      : eth_driver.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -35,16 +31,16 @@
 //#define EMAC_TX_DUMP
 
 #ifdef EMAC_DEBUG
-#define EMAC_TRACE	        rt_kprintf
+#define EMAC_TRACE          rt_kprintf
 #else
 #define EMAC_TRACE(...)
 #endif
 
-#define EMAC_RXBUFNB        	4
-#define EMAC_TXBUFNB        	2
+#define EMAC_RXBUFNB            4
+#define EMAC_TXBUFNB            2
 
-#define EMAC_PHY_AUTO		    0
-#define EMAC_PHY_10MBIT		    1
+#define EMAC_PHY_AUTO           0
+#define EMAC_PHY_10MBIT         1
 #define EMAC_PHY_100MBIT        2
 
 #define MAX_ADDR_LEN 6
@@ -55,14 +51,14 @@ struct gd32_emac
 
     rt_uint8_t phy_mode;
     /* interface address info. */
-    rt_uint8_t  dev_addr[MAX_ADDR_LEN];		/* hw address	*/
+    rt_uint8_t  dev_addr[MAX_ADDR_LEN];     /* hw address   */
 
     struct rt_synopsys_eth * ETHERNET_MAC;
     IRQn_Type ETHER_MAC_IRQ;
-    
+
     EMAC_DMADESCTypeDef  *DMATxDescToSet;
     EMAC_DMADESCTypeDef  *DMARxDescToGet;
-    
+
 #pragma pack(4)
     EMAC_DMADESCTypeDef DMARxDscrTab[EMAC_RXBUFNB];
 #pragma pack(4)
@@ -71,7 +67,7 @@ struct gd32_emac
     rt_uint8_t Rx_Buff[EMAC_RXBUFNB][EMAC_MAX_PACKET_SIZE];
 #pragma pack(4)
     rt_uint8_t Tx_Buff[EMAC_TXBUFNB][EMAC_MAX_PACKET_SIZE];
-    
+
     struct rt_semaphore tx_buf_free;
 };
 
@@ -548,14 +544,14 @@ static void enet_gpio_config(void)
     rcu_periph_clock_enable(RCU_GPIOG);
     rcu_periph_clock_enable(RCU_GPIOH);
     rcu_periph_clock_enable(RCU_GPIOI);
-  
+
     gpio_af_set(GPIOA, GPIO_AF_0, GPIO_PIN_8);
     gpio_mode_set(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_8);
     gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_8);
-  
+
     /* enable SYSCFG clock */
     rcu_periph_clock_enable(RCU_SYSCFG);
-  
+
     /* choose DIV2 to get 50MHz from 200MHz on CKOUT0 pin (PA8) to clock the PHY */
     rcu_ckout0_config(RCU_CKOUT0SRC_PLLP, RCU_CKOUT0_DIV4);
     syscfg_enet_phy_interface_config(SYSCFG_ENET_PHY_RMII);
@@ -563,31 +559,31 @@ static void enet_gpio_config(void)
     /* PA1: ETH_RMII_REF_CLK */
     gpio_mode_set(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_1);
     gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_1);
-    
+
     /* PA2: ETH_MDIO */
     gpio_mode_set(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_2);
     gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_2);
-    
+
     /* PA7: ETH_RMII_CRS_DV */
     gpio_mode_set(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_7);
-    gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_7);   
-    
+    gpio_output_options_set(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_7);
+
     gpio_af_set(GPIOA, GPIO_AF_11, GPIO_PIN_1);
     gpio_af_set(GPIOA, GPIO_AF_11, GPIO_PIN_2);
     gpio_af_set(GPIOA, GPIO_AF_11, GPIO_PIN_7);
-    
+
     /* PB11: ETH_RMII_TX_EN */
     gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_11);
     gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_11);
-    
+
     /* PB12: ETH_RMII_TXD0 */
     gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_12);
     gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_12);
-    
+
     /* PB13: ETH_RMII_TXD1 */
     gpio_mode_set(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_13);
-    gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_13);   
-    
+    gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_13);
+
     gpio_af_set(GPIOB, GPIO_AF_11, GPIO_PIN_11);
     gpio_af_set(GPIOB, GPIO_AF_11, GPIO_PIN_12);
     gpio_af_set(GPIOB, GPIO_AF_11, GPIO_PIN_13);
@@ -599,11 +595,11 @@ static void enet_gpio_config(void)
     /* PC4: ETH_RMII_RXD0 */
     gpio_mode_set(GPIOC, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_4);
     gpio_output_options_set(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_4);
-    
+
     /* PC5: ETH_RMII_RXD1 */
     gpio_mode_set(GPIOC, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_5);
-    gpio_output_options_set(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_5); 
-    
+    gpio_output_options_set(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,GPIO_PIN_5);
+
     gpio_af_set(GPIOC, GPIO_AF_11, GPIO_PIN_1);
     gpio_af_set(GPIOC, GPIO_AF_11, GPIO_PIN_4);
     gpio_af_set(GPIOC, GPIO_AF_11, GPIO_PIN_5);
@@ -613,17 +609,17 @@ static void enet_gpio_config(void)
 int rt_hw_gd32_eth_init(void)
 {
     rt_kprintf("rt_gd32_eth_init...\n");
-    
+
     /* enable ethernet clock  */
     rcu_periph_clock_enable(RCU_ENET);
     rcu_periph_clock_enable(RCU_ENETTX);
     rcu_periph_clock_enable(RCU_ENETRX);
-    
+
     nvic_configuration();
-  
+
     /* configure the GPIO ports for ethernet pins */
     enet_gpio_config();
-    
+
     /* set autonegotiation mode */
     gd32_emac_device0.phy_mode = EMAC_PHY_AUTO;
     gd32_emac_device0.ETHERNET_MAC = ETHERNET_MAC0;
@@ -638,16 +634,16 @@ int rt_hw_gd32_eth_init(void)
     gd32_emac_device0.dev_addr[4] = 0x34;
     gd32_emac_device0.dev_addr[5] = 0x56;
 
-    gd32_emac_device0.parent.parent.init		 = gd32_emac_init;
-    gd32_emac_device0.parent.parent.open		 = gd32_emac_open;
-    gd32_emac_device0.parent.parent.close	 = gd32_emac_close;
-    gd32_emac_device0.parent.parent.read		 = gd32_emac_read;
-    gd32_emac_device0.parent.parent.write	 = gd32_emac_write;
-    gd32_emac_device0.parent.parent.control	 = gd32_emac_control;
+    gd32_emac_device0.parent.parent.init         = gd32_emac_init;
+    gd32_emac_device0.parent.parent.open         = gd32_emac_open;
+    gd32_emac_device0.parent.parent.close    = gd32_emac_close;
+    gd32_emac_device0.parent.parent.read         = gd32_emac_read;
+    gd32_emac_device0.parent.parent.write    = gd32_emac_write;
+    gd32_emac_device0.parent.parent.control  = gd32_emac_control;
     gd32_emac_device0.parent.parent.user_data = RT_NULL;
 
-    gd32_emac_device0.parent.eth_rx			 = gd32_emac_rx;
-    gd32_emac_device0.parent.eth_tx			 = gd32_emac_tx;
+    gd32_emac_device0.parent.eth_rx          = gd32_emac_rx;
+    gd32_emac_device0.parent.eth_tx          = gd32_emac_tx;
 
     /* init tx buffer free semaphore */
     rt_sem_init(&gd32_emac_device0.tx_buf_free, "tx_buf0", EMAC_TXBUFNB, RT_IPC_FLAG_FIFO);

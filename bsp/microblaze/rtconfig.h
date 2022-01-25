@@ -87,13 +87,11 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_STACK_SIZE 8192
-#define RT_USING_TC
 
 
 /* SECTION: a runtime libc library */
 /* a runtime libc library*/
 /* #define RT_USING_NEWLIB */
-#define RT_USING_MINILIBC
 
 /* SECTION: C++ support */
 /* Using C++ support*/

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,11 +10,12 @@
 
 #include <rtdevice.h>
 #include <rtthread.h>
+#include <sys/errno.h>
 
 static const struct rt_clock_cputime_ops *_cputime_ops  = RT_NULL;
 
 /**
- * The clock_cpu_getres() function shall return the resolution of CPU time, the 
+ * The clock_cpu_getres() function shall return the resolution of CPU time, the
  * number of nanosecond per tick.
  *
  * @return the number of nanosecond per tick
@@ -24,7 +25,7 @@ float clock_cpu_getres(void)
     if (_cputime_ops)
         return _cputime_ops->cputime_getres();
 
-    rt_set_errno(-ENOSYS);
+    rt_set_errno(ENOSYS);
     return 0;
 }
 
@@ -33,17 +34,17 @@ float clock_cpu_getres(void)
  *
  * @return the cpu tick
  */
-uint32_t clock_cpu_gettime(void)
+uint64_t clock_cpu_gettime(void)
 {
     if (_cputime_ops)
         return _cputime_ops->cputime_gettime();
 
-    rt_set_errno(-ENOSYS);
+    rt_set_errno(ENOSYS);
     return 0;
 }
 
 /**
- * The clock_cpu_microsecond() fucntion shall return the microsecond according to 
+ * The clock_cpu_microsecond() fucntion shall return the microsecond according to
  * cpu_tick parameter.
  *
  * @param cpu_tick the cpu tick
@@ -58,7 +59,7 @@ uint32_t clock_cpu_microsecond(uint32_t cpu_tick)
 }
 
 /**
- * The clock_cpu_microsecond() fucntion shall return the millisecond according to 
+ * The clock_cpu_microsecond() fucntion shall return the millisecond according to
  * cpu_tick parameter.
  *
  * @param cpu_tick the cpu tick
@@ -74,7 +75,7 @@ uint32_t clock_cpu_millisecond(uint32_t cpu_tick)
 
 /**
  * The clock_cpu_seops() function shall set the ops of cpu time.
- * 
+ *
  * @return always return 0.
  */
 int clock_cpu_setops(const struct rt_clock_cputime_ops *ops)

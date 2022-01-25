@@ -16,17 +16,23 @@
 
 #include "wavrecorder.h"
 #include "wavplayer.h"
-#include "dfs_posix.h"
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 /*
   The routine just for test automatically.
   - For record function: Run it w/o parameter.
   - For replay function: Run it with parameter.
 */
-static void audio_test(int argc, char **argv)
+static int audio_test(int argc, char **argv)
 {
 #define DEF_MAX_ARGV_NUM 8
-    int smplrate[] = {8000, 11025, 16000, 22050, 32000, 44100, 48000};
+#define DEF_MAX_TEST_SECOND 5
+
+    int smplrate[] = {8000, 16000, 44100, 48000};
     int smplbit[] = {16};
     int chnum[] = {1, 2};
     struct wavrecord_info info;
@@ -54,9 +60,9 @@ static void audio_test(int argc, char **argv)
                     info.samplebits = smplbit[j];
                     info.channels = chnum[k];
                     wavrecorder_start(&info);
-                    rt_thread_mdelay(10000);
+                    rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
                     wavrecorder_stop();
-                    rt_thread_mdelay(1000);
+                    rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
                 }
                 else
                 {
@@ -68,15 +74,59 @@ static void audio_test(int argc, char **argv)
 
                     rt_kprintf("Replay file at %s\n", strbuf);
                     wavplayer_play(strbuf);
-                    rt_thread_mdelay(10000);
+                    rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
                     wavplayer_stop();
                 }
             } // k
         } // j
     } // i
+
+    return 0;
 }
 
 #ifdef FINSH_USING_MSH
     MSH_CMD_EXPORT(audio_test, Audio record / replay);
 #endif
+
+
+static int audio_overnight(int argc, char **argv)
+{
+#define DEF_MAX_TEST_SECOND 5
+
+    struct wavrecord_info info;
+    char strbuf[128];
+    struct stat stat_buf;
+
+    snprintf(strbuf, sizeof(strbuf), "/test.wav");
+    while (1)
+    {
+        rt_kprintf("Recording file at %s\n", strbuf);
+        info.uri = strbuf;
+        info.samplerate = 16000;
+        info.samplebits = 16;
+        info.channels = 2;
+        wavrecorder_start(&info);
+        rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
+        wavrecorder_stop();
+        rt_thread_mdelay(1000);
+
+        if (stat((const char *)strbuf, &stat_buf) < 0)
+        {
+            rt_kprintf("%s non-exist.\n", strbuf);
+            break;
+        }
+
+        rt_kprintf("Replay file at %s\n", strbuf);
+        wavplayer_play(strbuf);
+        rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
+        wavplayer_stop();
+        rt_thread_mdelay(1000);
+    }
+    return 0;
+}
+
+#ifdef FINSH_USING_MSH
+    MSH_CMD_EXPORT(audio_overnight, auto test record / replay);
+#endif
+
 #endif /* PKG_USING_WAVPLAYER */

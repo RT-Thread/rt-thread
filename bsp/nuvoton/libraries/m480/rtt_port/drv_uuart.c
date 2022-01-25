@@ -16,7 +16,7 @@
 
 #include <rtdevice.h>
 #include <rthw.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 #if defined(RT_SERIAL_USING_DMA)
     #include <drv_pdma.h>
@@ -484,7 +484,7 @@ static int nu_hw_uuart_dma_allocate(nu_uuart_t puuart)
 static rt_err_t nu_uuart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     rt_err_t result = RT_EOK;
-    rt_uint32_t flag;
+    rt_uint32_t flag = 0;
     rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
 
     RT_ASSERT(serial != RT_NULL);

@@ -1,11 +1,7 @@
 /*
- * File      : serial.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -258,16 +254,16 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name,
 {
     RT_ASSERT(device != RT_NULL);
 
-    device->type 		= RT_Device_Class_Char;
+    device->type        = RT_Device_Class_Char;
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
-    device->init 		= rt_serial_init;
-    device->open		= rt_serial_open;
-    device->close		= rt_serial_close;
-    device->read 		= rt_serial_read;
-    device->write 		= rt_serial_write;
-    device->control 	= rt_serial_control;
-    device->user_data	= serial;
+    device->init        = rt_serial_init;
+    device->open        = rt_serial_open;
+    device->close       = rt_serial_close;
+    device->read        = rt_serial_read;
+    device->write       = rt_serial_write;
+    device->control     = rt_serial_control;
+    device->user_data   = serial;
 
     /* register a character device */
     return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
@@ -303,7 +299,7 @@ void rt_hw_serial_isr(rt_device_t device)
 
 #ifdef RT_USING_UART0
 /* UART0 device driver structure */
-#define UART0	FM4_MFS0
+#define UART0   FM4_MFS0
 struct serial_int_rx uart0_int_rx;
 struct serial_device uart0 =
 {
@@ -316,8 +312,8 @@ struct serial_device uart0 =
 struct rt_device uart0_device;
 
 void MFS0_RX_IRQHandler(void)
-{	 
-		/* enter interrupt */
+{
+        /* enter interrupt */
     rt_interrupt_enter();
     rt_hw_serial_isr(&uart0_device);
     /* leave interrupt */
@@ -330,28 +326,28 @@ void MFS0_RX_IRQHandler(void)
 
 void rt_hw_serial_init(void)
 {
-		uint32_t APB2_clock = (SystemCoreClock >> (APBC2_PSR_Val & 0x03));
-	
+        uint32_t APB2_clock = (SystemCoreClock >> (APBC2_PSR_Val & 0x03));
+
 #ifdef RT_USING_UART0
      // Initialize ports for MFS0
-		FM4_GPIO->PFR2   = 0x06u;   // P21>SIN0_0, P22>SOT0_0
-		FM4_GPIO->EPFR07 &= 0xFFFFFF0Ful;
-		FM4_GPIO->EPFR07 |= 0x00000040ul;
-		
-		// Initialize MFS to UART asynchronous mode
-		
-		uart0.uart_device->SMR = SMR_MD_UART | SMR_SOE;;
+        FM4_GPIO->PFR2   = 0x06u;   // P21>SIN0_0, P22>SOT0_0
+        FM4_GPIO->EPFR07 &= 0xFFFFFF0Ful;
+        FM4_GPIO->EPFR07 |= 0x00000040ul;
+
+        // Initialize MFS to UART asynchronous mode
+
+        uart0.uart_device->SMR = SMR_MD_UART | SMR_SOE;;
     uart0.uart_device->BGR = (APB2_clock + (BPS/2))/BPS - 1; /* round */
     uart0.uart_device->ESCR = ESCR_DATABITS_8;
     uart0.uart_device->SCR = SCR_RXE | SCR_TXE | SCR_RIE;
-		
+
     /* register UART0 device */
     rt_hw_serial_register(&uart0_device,
                           "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           &uart0);
-													
-		
+
+
 #endif /**< #ifdef RT_USING_UART0 */
 
 }

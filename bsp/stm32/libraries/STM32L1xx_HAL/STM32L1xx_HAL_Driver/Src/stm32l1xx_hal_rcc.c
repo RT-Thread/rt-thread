@@ -458,7 +458,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   if(((RCC_OscInitStruct->OscillatorType) & RCC_OSCILLATORTYPE_MSI) == RCC_OSCILLATORTYPE_MSI)
   {
     /* When the MSI is used as system clock it will not be disabled */
-    if((sysclk_source == RCC_CFGR_SWS_MSI) )
+    if(sysclk_source == RCC_CFGR_SWS_MSI)
     {
       if((__HAL_RCC_GET_FLAG(RCC_FLAG_MSIRDY) != 0U) && (RCC_OscInitStruct->MSIState == RCC_MSI_OFF))
       {
@@ -1106,12 +1106,12 @@ uint32_t HAL_RCC_GetSysClockFreq(void)
       if (__HAL_RCC_GET_PLL_OSCSOURCE() != RCC_PLLSOURCE_HSI)
       {
         /* HSE used as PLL clock source */
-        pllvco = (HSE_VALUE * pllm) / plld;
+        pllvco = (uint32_t)(((uint64_t)HSE_VALUE * (uint64_t)pllm) / (uint64_t)plld);
       }
       else
       {
         /* HSI used as PLL clock source */
-        pllvco = (HSI_VALUE * pllm) / plld;
+        pllvco = (uint32_t)(((uint64_t)HSI_VALUE * (uint64_t)pllm) / (uint64_t)plld);
       }
       sysclockfreq = pllvco;
       break;

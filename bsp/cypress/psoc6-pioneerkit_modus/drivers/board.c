@@ -31,19 +31,19 @@ void SysTick_Handler_CB(void)
 void rt_hw_board_init()
 {
     /* init systick */
-	init_cycfg_all();
+    init_cycfg_all();
 
-	SystemCoreClockUpdate();
+    SystemCoreClockUpdate();
 
     Cy_SysTick_Init(CY_SYSTICK_CLOCK_SOURCE_CLK_CPU, SystemCoreClock/RT_TICK_PER_SECOND);
     Cy_SysTick_SetCallback(0, SysTick_Handler_CB);
     Cy_SysTick_EnableInterrupt();
-    
+
     rt_system_heap_init((void*)ucHeap, (void*)(ucHeap+configTOTAL_HEAP_SIZE));
     /* initialize UART device */
     rt_hw_uart_init();
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }

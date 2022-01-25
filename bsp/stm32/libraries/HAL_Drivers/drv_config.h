@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2018-10-30     SummerGift        first version
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  */
- 
+
 #ifndef __DRV_CONFIG_H__
 #define __DRV_CONFIG_H__
 
@@ -43,7 +43,12 @@ extern "C" {
 #include "f2/adc_config.h"
 #include "f2/tim_config.h"
 #include "f2/sdio_config.h"
-#include "f2/pwm_config.h"	
+#include "f2/pwm_config.h"
+#elif  defined(SOC_SERIES_STM32F3)
+#include "f3/uart_config.h"
+#include "f3/tim_config.h"
+#include "f3/pwm_config.h"
+#include "f3/dma_config.h"
 #elif  defined(SOC_SERIES_STM32F4)
 #include "f4/dma_config.h"
 #include "f4/uart_config.h"
@@ -79,6 +84,17 @@ extern "C" {
 #include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
 #include "l4/usbd_config.h"
+#elif  defined(SOC_SERIES_STM32L5)
+#include "l5/dma_config.h"
+#include "l5/uart_config.h"
+#include "l5/spi_config.h"
+#include "l5/qspi_config.h"
+#include "l5/adc_config.h"
+#include "l5/dac_config.h"
+#include "l5/tim_config.h"
+#include "l5/sdio_config.h"
+#include "l5/pwm_config.h"
+#include "l5/usbd_config.h"
 #elif  defined(SOC_SERIES_STM32G0)
 #include "g0/dma_config.h"
 #include "g0/uart_config.h"
@@ -108,20 +124,36 @@ extern "C" {
 #include "h7/sdio_config.h"
 #include "h7/pwm_config.h"
 #include "h7/usbd_config.h"
+#elif defined(SOC_SERIES_STM32U5)
+#include "u5/dma_config.h"
+#include "u5/uart_config.h"
+#include "u5/spi_config.h"
+#include "u5/qspi_config.h"
+#include "u5/adc_config.h"
+#include "u5/dac_config.h"
+#include "u5/tim_config.h"
+#include "u5/sdio_config.h"
+#include "u5/pwm_config.h"
+#include "u5/usbd_config.h"
 #elif  defined(SOC_SERIES_STM32MP1)
 #include "mp1/dma_config.h"
 #include "mp1/uart_config.h"
 #include "mp1/qspi_config.h"
 #include "mp1/spi_config.h"
 #include "mp1/adc_config.h"
-#include "mp1/dac_config.h"    
+#include "mp1/dac_config.h"
 #include "mp1/tim_config.h"
-#include "mp1/pwm_config.h"    
+#include "mp1/pwm_config.h"
+#elif  defined(SOC_SERIES_STM32WL)
+#include "wl/dma_config.h"
+#include "wl/uart_config.h"
+#include "wl/spi_config.h"
+#include "wl/tim_config.h"
 #elif  defined(SOC_SERIES_STM32WB)
 #include "wb/adc_config.h"
 #include "wb/dma_config.h"
 #include "wb/pwm_config.h"
-#include "wb/qspi_config.h" 
+#include "wb/qspi_config.h"
 #include "wb/spi_config.h"
 #include "wb/tim_config.h"
 #include "wb/uart_config.h"

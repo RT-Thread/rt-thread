@@ -16,7 +16,7 @@
 
 #include <rtdevice.h>
 #include <rthw.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_uart.h>
 
 #if defined(RT_SERIAL_USING_DMA)

@@ -1,0 +1,512 @@
+#pragma once
+
+#if __cplusplus < 201103L
+#error "C++ version lower than C++11"
+#endif
+
+//#if defined(RT_USING_PTHREADS)
+
+#include <pthread.h>
+
+#include <system_error>
+#include <chrono>
+#include <utility>
+#include <functional>
+
+#include "__utils.h"
+
+#define rt_cpp_mutex_t  pthread_mutex_t
+
+namespace std 
+{
+    // Base class on which to build std::mutex and std::timed_mutex
+    class __mutex_base
+    {
+        protected:
+            typedef rt_cpp_mutex_t  __native_type;
+
+            __native_type _m_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+            constexpr __mutex_base() noexcept = default;
+            __mutex_base(const __mutex_base&) = delete;
+            __mutex_base& operator=(const __mutex_base&) = delete;
+    };
+
+    
+    class mutex : private __mutex_base
+    {
+        public:
+            constexpr mutex() = default;
+            ~mutex() = default;
+
+            mutex(const mutex&) = delete;
+            mutex& operator=(const mutex&) = delete;
+
+            void lock()
+            {
+                int err  = pthread_mutex_lock(&_m_mutex);
+
+                if (err)
+                {
+                    throw_system_error(err, "mutex:lock failed.");
+                }
+            }
+
+            bool try_lock() noexcept
+            {
+                return !pthread_mutex_trylock(&_m_mutex);
+            }
+
+            void unlock() noexcept
+            {
+                pthread_mutex_unlock(&_m_mutex);
+            }
+
+            typedef __native_type* native_handle_type;
+
+            native_handle_type native_handle() 
+            {
+                return &_m_mutex;
+            };
+
+    };
+
+    inline int __rt_cpp_recursive_mutex_init(rt_cpp_mutex_t* m)
+    {
+        pthread_mutexattr_t attr;
+        int res;
+
+        res = pthread_mutexattr_init(&attr);
+        if (res)
+            return res;
+        res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+        if (res)
+            goto attr_cleanup;
+        res = pthread_mutex_init(m, &attr);
+
+        attr_cleanup:
+            int err = pthread_mutexattr_destroy(&attr);
+            return res ? res : err;
+    }
+
+    class __recursive_mutex_base
+    {
+        protected:
+            typedef rt_cpp_mutex_t __native_type;
+
+            __native_type _m_recursive_mutex;
+
+            __recursive_mutex_base(const __recursive_mutex_base&) = delete;
+            __recursive_mutex_base& operator=(const __recursive_mutex_base&) = delete;
+
+            __recursive_mutex_base()
+            {
+                int err = __rt_cpp_recursive_mutex_init(&_m_recursive_mutex);
+                if (err)
+                    throw_system_error(err, "Recursive mutex failed to construct");
+            }
+
+            ~__recursive_mutex_base()
+            {
+                pthread_mutex_destroy(&_m_recursive_mutex);
+            }
+    };
+
+    class recursive_mutex : private __recursive_mutex_base
+    {
+        public:
+            typedef __native_type* native_handle_type; 
+            recursive_mutex() = default;
+            ~recursive_mutex() = default;
+
+            recursive_mutex(const recursive_mutex&) = delete;
+            recursive_mutex& operator=(const recursive_mutex&) = delete;
+            void lock()
+            {
+                int err = pthread_mutex_lock(&_m_recursive_mutex);
+
+                if (err)
+                    throw_system_error(err, "recursive_mutex::lock failed");
+            }
+
+            bool try_lock() noexcept
+            {
+                return !pthread_mutex_trylock(&_m_recursive_mutex);
+            }
+
+            void unlock() noexcept
+            {
+                pthread_mutex_unlock(&_m_recursive_mutex);
+            }
+
+            native_handle_type native_handle()
+            { return &_m_recursive_mutex; }
+    };
+
+#ifdef RT_PTHREAD_TIMED_MUTEX
+
+    class timed_mutex;
+
+    class recursive_timed_mutex;
+
+#endif // RT_PTHREAD_TIMED_MUTEX
+
+    
+    struct defer_lock_t {};
+    struct try_to_lock_t {};
+    struct adopt_lock_t {}; // take ownership of a locked mtuex
+
+    constexpr defer_lock_t defer_lock { };
+    constexpr try_to_lock_t try_to_lock { };
+    constexpr adopt_lock_t adopt_lock { };
+
+    template <class Mutex> 
+    class lock_guard
+    {
+        public:
+            typedef Mutex mutex_type;
+
+            explicit lock_guard(mutex_type& m) : pm(m) { pm.lock(); }
+            lock_guard(mutex_type& m, adopt_lock_t) noexcept : pm(m)
+            { }
+            ~lock_guard() 
+            { pm.unlock(); }
+
+            lock_guard(lock_guard const&) = delete;
+            lock_guard& operator=(lock_guard const&) = delete;
+
+        private:
+            mutex_type& pm;
+
+    };
+
+    template <class Mutex>
+    class unique_lock
+    {
+        public:
+            typedef Mutex mutex_type;
+
+            unique_lock() noexcept : pm(nullptr), owns(false) { }
+            
+            explicit unique_lock(mutex_type& m) 
+                : pm(std::addressof(m)), owns(false)
+            {
+                lock();
+                owns = true;
+            }
+
+            unique_lock(mutex_type& m, defer_lock_t) noexcept 
+                : pm(std::addressof(m)), owns(false)
+            { }
+
+            unique_lock(mutex_type& m, try_to_lock_t) noexcept
+                : pm(std::addressof(m)), owns(pm->try_lock())
+            { }
+
+            unique_lock(mutex_type& m, adopt_lock_t) noexcept
+                : pm(std::addressof(m)), owns(true)
+            { }
+
+            // any lock-involving timed mutex API is currently only for custom implementations
+            // the standard ones are not available
+            template <class Clock, class Duration>
+            unique_lock(mutex_type& m, const chrono::time_point<Clock, Duration>& abs_time) noexcept
+                : pm(std::addressof(m)), owns(pm->try_lock_until(abs_time))
+            { }
+
+            template <class Rep, class Period>
+            unique_lock(mutex_type& m, const chrono::duration<Rep, Period>& rel_time) noexcept
+                : pm(std::addressof(m)), owns(pm->try_lock_for(rel_time))
+            { }
+            
+            ~unique_lock()
+            {
+                if (owns)
+                    unlock();
+            }
+            
+            unique_lock(unique_lock const&) = delete;
+            unique_lock& operator=(unique_lock const&) = delete;
+
+            unique_lock(unique_lock&& u) noexcept
+                : pm(u.pm), owns(u.owns)
+            {
+                u.pm = nullptr;
+                u.owns = false;
+            }
+
+            unique_lock& operator=(unique_lock&& u) noexcept                
+            {
+                if (owns)
+                    unlock();
+                
+                unique_lock(std::move(u)).swap(*this);
+
+                u.pm = nullptr;
+                u.owns = false;
+
+                return *this;
+            }
+
+            void lock()
+            {
+                if (!pm)
+                    throw_system_error(int(errc::operation_not_permitted), 
+                                        "unique_lock::lock: references null mutex");
+                else if (owns)
+                    throw_system_error(int(errc::resource_deadlock_would_occur),
+                                        "unique_lock::lock: already locked" );
+                else {
+                    pm->lock();
+                    owns = true;
+                }
+            }
+
+            bool try_lock()
+            {
+                if (!pm)
+                    throw_system_error(int(errc::operation_not_permitted), 
+                                        "unique_lock::try_lock: references null mutex");
+                else if (owns)
+                    throw_system_error(int(errc::resource_deadlock_would_occur),
+                                        "unique_lock::try_lock: already locked" );
+                else {
+                    owns = pm->try_lock();
+                }
+                return owns;
+            }
+
+            template <class Rep, class Period>
+            bool try_lock_for(const chrono::duration<Rep, Period>& rel_time)
+            {
+                if (!pm)
+                    throw_system_error(int(errc::operation_not_permitted),
+                                        "unique_lock::try_lock_for: references null mutex");
+                else if (owns)
+                    throw_system_error(int(errc::resource_deadlock_would_occur),
+                                        "unique_lock::try_lock_for: already locked");
+                else {
+                    owns = pm->try_lock_for(rel_time);
+                }
+                return owns;
+            }
+            
+            template <class Clock, class Duration>
+            bool try_lock_until(const chrono::time_point<Clock, Duration>& abs_time)
+            {
+                if (!pm)
+                    throw_system_error(int(errc::operation_not_permitted),
+                                        "unique_lock::try_lock_until: references null mutex");
+                else if (owns)
+                    throw_system_error(int(errc::resource_deadlock_would_occur),
+                                        "unique_lock::try_lock_until: already locked");
+                else {
+                    owns = pm->try_lock_until(abs_time);
+                }
+                return owns;
+            }
+            
+            void unlock()
+            {
+                if (!owns)
+                    throw_system_error(int(errc::operation_not_permitted), 
+                                        "unique_lock::unlock: not locked");
+                else {
+                    pm->unlock();
+                    owns = false;
+                }
+            }
+
+            void swap(unique_lock& u) noexcept
+            {
+                std::swap(pm, u.pm);
+                std::swap(owns, u.owns);
+            }
+
+            mutex_type *release() noexcept
+            {
+                mutex_type* ret_mutex = pm;
+                pm = nullptr;
+                owns = false;
+                
+                return ret_mutex;
+            }
+
+            bool owns_lock() const noexcept
+            { return owns; }
+
+            explicit operator bool() const noexcept
+            { return owns_lock(); }
+
+            mutex_type* mutex() const noexcept
+            { return pm; }
+            
+            
+        private:
+            mutex_type *pm; 
+            bool owns;
+    };
+
+    template <class Mutex>
+    void swap(unique_lock<Mutex>& x, unique_lock<Mutex>& y)
+    {
+        x.swap(y);
+    }
+
+    template <class L0, class L1>
+    int try_lock(L0& l0, L1& l1)
+    {
+        unique_lock<L0> u0(l0, try_to_lock); // try to lock the first Lockable
+        // using unique_lock since we don't want to unlock l0 manually if l1 fails to lock
+        if (u0.owns_lock())
+        {
+            if (l1.try_lock()) // lock the second one
+            {
+                u0.release(); // do not let RAII of a unique_lock unlock l0
+                return -1;
+            }
+            else
+                return 1; 
+        }
+        return 0;
+    } 
+
+    
+    template <class L0, class L1, class L2, class... L3>
+    int try_lock(L0& l0, L1& l1, L2& l2, L3&... l3)
+    {
+        int r = 0;
+        unique_lock<L0> u0(l0, try_to_lock);
+        // automatically unlock is done through RAII of unique_lock
+        if (u0.owns_lock())
+        {
+            r = try_lock(l1, l2, l3...);
+            if (r == -1)
+                u0.release();
+            else
+                ++r;
+        }
+        return r;
+    }
+
+    template <class L0, class L1, class L2, class ...L3>
+    void
+    __lock_first(int i, L0& l0, L1& l1, L2& l2, L3&... l3)
+    {
+        while (true)
+        {
+            // we first lock the one that is the most difficult to lock 
+            switch (i) 
+            {
+            case 0:
+                {
+                    unique_lock<L0> u0(l0);
+                    i = try_lock(l1, l2, l3...);
+                    if (i == -1)
+                    {
+                        u0.release();
+                        return;
+                    }
+                }
+                ++i;
+                sched_yield();
+                break;
+            case 1:
+                {
+                    unique_lock<L1> u1(l1);
+                    i = try_lock(l2, l3..., l0);
+                    if (i == -1)
+                    {
+                        u1.release();
+                        return;
+                    }
+                }
+                if (i == sizeof...(L3) + 1) // all except l0 are locked
+                    i = 0;
+                else
+                    i += 2; // since i was two-based above
+                sched_yield();
+                break;
+            default:
+                __lock_first(i - 2, l2, l3..., l0, l1);
+                return;
+            }
+        }
+    }
+
+
+    template <class L0, class L1>
+    void lock(L0& l0, L1& l1)
+    {
+        while (true)
+        {
+            {
+                unique_lock<L0> u0(l0);
+                if (l1.try_lock())
+                {
+                    u0.release();
+                    break;
+                }
+            }
+            sched_yield();
+            // wait and try the other way
+            {
+                unique_lock<L1> u1(l1);
+                if (l0.try_lock())
+                {
+                    u1.release();
+                    break;
+                }
+            }
+            sched_yield();
+        }
+    }
+
+    template <class L0, class L1, class... L2>
+    void lock(L0& l0, L1& l1, L2&... l2)
+    {
+        __lock_first(0, l0, l1, l2...);
+    }
+
+    struct once_flag 
+    {
+        constexpr once_flag() noexcept = default;
+
+        once_flag(const once_flag&) = delete;
+        once_flag& operator=(const once_flag&) = delete;
+
+        template <class Callable, class... Args>
+        friend void call_once(once_flag& flag, Callable&& func, Args&&... args);
+
+        private:
+            pthread_once_t _m_once = PTHREAD_ONCE_INIT;
+    };
+
+    mutex& get_once_mutex();
+    extern function<void()> once_functor;
+    extern void set_once_functor_lock_ptr(unique_lock<mutex>*);
+
+    extern "C" void once_proxy(); // passed into pthread_once
+
+    template <class Callable, class... Args>
+    void call_once(once_flag& flag, Callable&& func, Args&&... args)
+    {
+        // use a lock to ensure the call to the functor
+        // is exclusive to only the first calling thread
+        unique_lock<mutex> functor_lock(get_once_mutex()); 
+
+        auto call_wrapper = std::bind(std::forward<Callable>(func), std::forward<Args>(args)...);
+        once_functor = [&]() { call_wrapper(); };
+
+        set_once_functor_lock_ptr(&functor_lock); // so as to unlock when actually calling
+
+        int err = pthread_once(&flag._m_once, &once_proxy);
+
+        if (functor_lock)
+            set_once_functor_lock_ptr(nullptr);
+        if (err)
+            throw_system_error(err, "call_once failed");
+    }
+}
+
+//#endif //(RT_USING_PTHREADS)

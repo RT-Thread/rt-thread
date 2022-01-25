@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,7 +22,7 @@
 
 struct wm8994_dev
 {
-    struct rt_device dev; 
+    struct rt_device dev;
     struct rt_i2c_bus_device *i2c_bus;
     rt_uint16_t id;
     rt_uint16_t type;
@@ -34,12 +34,12 @@ static rt_err_t read_reg(struct rt_i2c_bus_device *bus, rt_uint16_t reg, rt_uint
 {
     struct rt_i2c_msg msg[2] = {0, 0};
     static rt_uint8_t i2c_reg[2] = {0, 0};
-    
+
     RT_ASSERT(bus != RT_NULL);
-    
+
     i2c_reg[0] = ((uint16_t)(reg >> 8) & 0xFF);
     i2c_reg[1] = ((uint16_t)(reg) & 0xFF);
-    
+
     msg[0].addr  = CHIP_ADDRESS;
     msg[0].flags = RT_I2C_WR;
     msg[0].buf   = i2c_reg;
@@ -68,7 +68,7 @@ static rt_err_t write_reg(struct rt_i2c_bus_device *bus, rt_uint16_t reg, rt_uin
 
     buf[0] = ((uint16_t)(reg >> 8) & 0xFF);
     buf[1] = ((uint16_t)(reg) & 0xFF);
-    
+
     buf[2] = ((uint16_t)(data >> 8) & 0xFF);
     buf[3] = ((uint16_t)(data) & 0xFF);
 
@@ -247,14 +247,14 @@ static rt_err_t wm8994_set_input_mode(struct rt_i2c_bus_device *bus, rt_uint16_t
         /* Actually, no other input devices supported */
         break;
     }
-    
+
     return RT_EOK;
 }
 
 static rt_err_t _wm8994_init(struct wm8994_dev *dev)
 {
     RT_ASSERT(dev != RT_NULL);
-    
+
     /* wm8994 Errata Work-Arounds */
     write_reg(dev->i2c_bus, 0x0102, 0x0003);
     write_reg(dev->i2c_bus, 0x0817, 0x0000);
@@ -275,7 +275,7 @@ static rt_err_t _wm8994_init(struct wm8994_dev *dev)
         write_reg(dev->i2c_bus, 0x0001, 0x0003);
     }
     rt_thread_mdelay(50);
-    
+
     if ((dev->type & 0x000F) != 0 )
     {
         /* Path Configurations for output */
@@ -297,7 +297,7 @@ static rt_err_t _wm8994_init(struct wm8994_dev *dev)
         /* AIF1 Word Length = 16-bits, AIF1 Format = I2S (Default Register Value) */
         write_reg(dev->i2c_bus, 0x0300, 0x4010);
     }
-    
+
     /* slave mode */
     write_reg(dev->i2c_bus, 0x0302, 0x0000);
 
@@ -308,7 +308,7 @@ static rt_err_t _wm8994_init(struct wm8994_dev *dev)
     write_reg(dev->i2c_bus, 0x0200, 0x0001);
 
     /* Audio output selected */
-    if ((dev->type & 0x000F) != 0 ) 
+    if ((dev->type & 0x000F) != 0 )
     {
         if (dev->type & OUTPUT_DEVICE_HEADPHONE)
         {
@@ -409,7 +409,7 @@ static rt_err_t _wm8994_init(struct wm8994_dev *dev)
     }
 
     /* Audio input selected */
-    if ((dev->type & 0x01F0) != 0 ) 
+    if ((dev->type & 0x01F0) != 0 )
     {
         if ((dev->type & INPUT_DEVICE_DIGITAL_MICROPHONE_1) || (dev->type & INPUT_DEVICE_DIGITAL_MICROPHONE_2))
         {
@@ -449,17 +449,17 @@ static rt_err_t _wm8994_init(struct wm8994_dev *dev)
             write_reg(dev->i2c_bus, 0x0410, 0x1800);
         }
     }
-    
+
     /* Return communication control value */
     return RT_EOK;
-    
+
 }
 
 static rt_err_t _read_id(struct rt_i2c_bus_device *bus, rt_uint16_t *id)
 {
     rt_uint8_t read_value[2];
-        
-    read_reg(bus, 0x0000, 2, read_value); 
+
+    read_reg(bus, 0x0000, 2, read_value);
     *id  = ((uint16_t)(read_value[0] << 8) & 0xFF00);
     *id |= ((uint16_t)(read_value[1])& 0x00FF);
 
@@ -468,9 +468,9 @@ static rt_err_t _read_id(struct rt_i2c_bus_device *bus, rt_uint16_t *id)
         LOG_E("error id: 0x%04x", *id);
         return RT_ERROR;
     }
-    
+
     LOG_I("wm8994 init success, id: %04x", *id);
-        
+
     return RT_EOK;
 }
 
@@ -493,7 +493,7 @@ static rt_err_t _set_mute(struct rt_i2c_bus_device *bus, uint32_t cmd)
         /* Unmute the AIF1 Timeslot 1 DAC2 path L&R */
         write_reg(bus, 0x422, 0x0010);
     }
-    
+
     return RT_EOK;
 }
 
@@ -507,7 +507,7 @@ static rt_err_t _play(struct rt_i2c_bus_device *bus)
 static rt_err_t _set_volume(struct rt_i2c_bus_device *bus, rt_uint16_t type, rt_uint8_t volume)
 {
     rt_uint8_t convertedvol = VOLUME_CONVERT(volume);
-    
+
     if (type & 0x000F)
     {
         /* Output volume */
@@ -575,9 +575,9 @@ static rt_err_t _set_volume(struct rt_i2c_bus_device *bus, rt_uint16_t type, rt_
 static rt_err_t _get_volume(struct rt_i2c_bus_device *bus, rt_uint32_t *value)
 {
     rt_uint8_t read_value[2];
-    
+
     read_reg(bus, 0x001C, 2, read_value);
-    
+
     *value  = ((uint16_t)(read_value[0] << 8) & 0xFF00);
     *value |= ((uint16_t)(read_value[1])& 0x00FF);
 
@@ -618,11 +618,11 @@ static rt_err_t _set_frequency(struct rt_i2c_bus_device *bus, rt_uint32_t freq)
 
         case AUDIO_FREQUENCY_44K:
             write_reg(bus, 0x210, 0x0073);
-        break; 
+        break;
 
         default:
             write_reg(bus, 0x210, 0x0083);
-        break; 
+        break;
     }
 
     return RT_EOK;
@@ -641,36 +641,36 @@ static rt_err_t rt_wm8994_init(rt_device_t dev)
     RT_ASSERT(dev != RT_NULL);
     rt_err_t result = RT_EOK;
     static rt_uint16_t old_type = DEVICE_NONE;
-        
+
     struct wm8994_dev *device = (struct wm8994_dev *)dev;
-    
+
     if (old_type == device->type)
     {
         return RT_EOK;
     }
-    
+
     old_type = device->type;
-    
+
     device->i2c_bus = rt_i2c_bus_device_find(I2C_NAME);
     if (device->i2c_bus == RT_NULL)
     {
         LOG_E("can't find %c deivce", I2C_NAME);
         return RT_ERROR;
     }
-    
+
     result = _wm8994_init(device);
     /* set volume */
     _set_volume(device->i2c_bus, device->type, VOLUME_CONVERT(100));
     /* set frequency */
     _set_frequency(device->i2c_bus, AUDIO_FREQUENCY_44K);
-    
+
     return result;
 }
 
 static rt_err_t rt_wm8994_open(rt_device_t dev, rt_uint16_t oflag)
 {
     RT_ASSERT(dev != RT_NULL);
-    
+
     return RT_EOK;
 }
 
@@ -678,7 +678,7 @@ static rt_err_t rt_wm8994_close(rt_device_t dev)
 {
     RT_ASSERT(dev != RT_NULL);
     struct wm8994_dev *device = (struct wm8994_dev *)dev;
-    
+
     _set_mute(device->i2c_bus, AUDIO_MUTE_ON);
 
     /* Mute the AIF1 Timeslot 0 DAC1 path */
@@ -721,19 +721,19 @@ static rt_err_t rt_wm8994_control(rt_device_t dev, int cmd, void *args)
         case GET_ID:
             result = _read_id(device->i2c_bus, (rt_uint16_t*)args);
             break;
-        
+
         case SET_FREQUENCE:
             result = _set_frequency(device->i2c_bus, (*(rt_uint32_t *)args));
             break;
-        
+
         case SET_VOLUME:
             result = _set_volume(device->i2c_bus, device->type, (*(rt_uint8_t*)args));
             break;
-        
+
         case GET_VOLUME:
             result = _get_volume(device->i2c_bus, (rt_uint32_t *)args);
             break;
-        
+
         case SET_MUTE:
             result = _set_mute(device->i2c_bus, (*(rt_uint32_t*)args));
             break;
@@ -741,23 +741,23 @@ static rt_err_t rt_wm8994_control(rt_device_t dev, int cmd, void *args)
         case SET_RESET:
             result = _reset(device->i2c_bus);
             break;
-        
+
         case START_PLAY:
             result = _play(device->i2c_bus);
             break;
-        
+
         case SET_PLAY_TYPE:
             device->type = 0;
             device->type = *(rt_uint32_t *)args;
             rt_wm8994_init(dev);
             break;
-        
+
         default:
             LOG_D("not support cmd");
             break;
     }
-    
-    return result;  
+
+    return result;
 }
 
 int wm8994_init(void)
@@ -772,9 +772,9 @@ int wm8994_init(void)
     rt_wm8994.dev.user_data = RT_NULL;
 
     rt_device_register(&rt_wm8994.dev, "decoder", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
-    
+
     LOG_I("lowlevel decoder device init success!");
-    
+
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(wm8994_init);

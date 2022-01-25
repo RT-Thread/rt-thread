@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -102,6 +102,6 @@ int _ac97_reg_dump(int argc, char **argv)
     AC97_DUMP(AC97_ADC_SLOT_MAP);
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(_ac97_reg_dump, __cmd_ac97_dump, ac97 dump reg.);
+MSH_CMD_EXPORT_ALIAS(_ac97_reg_dump, ac97_dump, ac97 dump reg);
 
 #endif

@@ -73,7 +73,7 @@
 
 /** @defgroup I2CEx_Exported_Functions_Group1 Extended features functions
   * @brief    Extended features functions
- *
+  *
 @verbatim
  ===============================================================================
                       ##### Extended features functions #####
@@ -276,6 +276,8 @@ HAL_StatusTypeDef HAL_I2CEx_DisableWakeUp(I2C_HandleTypeDef *hi2c)
   *        only by using I2C_FASTMODEPLUS_I2C3 parameter.
   * @note  For all I2C4 pins fast mode plus driving capability can be enabled
   *        only by using I2C_FASTMODEPLUS_I2C4 parameter.
+  * @note  For all I2C5 pins fast mode plus driving capability can be enabled
+  *        only by using I2C_FASTMODEPLUS_I2C5 parameter.
   * @retval None
   */
 void HAL_I2CEx_EnableFastModePlus(uint32_t ConfigFastModePlus)
@@ -305,6 +307,8 @@ void HAL_I2CEx_EnableFastModePlus(uint32_t ConfigFastModePlus)
   *        only by using I2C_FASTMODEPLUS_I2C3 parameter.
   * @note  For all I2C4 pins fast mode plus driving capability can be disabled
   *        only by using I2C_FASTMODEPLUS_I2C4 parameter.
+  * @note  For all I2C5 pins fast mode plus driving capability can be disabled
+  *        only by using I2C_FASTMODEPLUS_I2C5 parameter.
   * @retval None
   */
 void HAL_I2CEx_DisableFastModePlus(uint32_t ConfigFastModePlus)

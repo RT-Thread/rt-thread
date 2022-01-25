@@ -39,16 +39,31 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+
 /** @defgroup HAL_Exported_Constants HAL Exported Constants
   * @{
+  */
+
+/** @defgroup HAL_TICK_FREQ Tick Frequency
+  * @{
+  */
+typedef enum
+{
+  HAL_TICK_FREQ_10HZ         = 100U,
+  HAL_TICK_FREQ_100HZ        = 10U,
+  HAL_TICK_FREQ_1KHZ         = 1U,
+  HAL_TICK_FREQ_DEFAULT      = HAL_TICK_FREQ_1KHZ
+} HAL_TickFreqTypeDef;
+/**
+  * @}
   */
 
 /** @defgroup SYSCFG_BootMode Boot Mode
   * @{
   */
-#define SYSCFG_BOOT_MAINFLASH          ((uint32_t)0x00000000U)
-#define SYSCFG_BOOT_SYSTEMFLASH        ((uint32_t)SYSCFG_CFGR1_BOOT_MODE_0)
-#define SYSCFG_BOOT_SRAM               ((uint32_t)SYSCFG_CFGR1_BOOT_MODE)
+#define SYSCFG_BOOT_MAINFLASH          (0x00000000U)
+#define SYSCFG_BOOT_SYSTEMFLASH        SYSCFG_CFGR1_BOOT_MODE_0
+#define SYSCFG_BOOT_SRAM               SYSCFG_CFGR1_BOOT_MODE
 
 /**
   * @}
@@ -90,7 +105,7 @@
 /** @defgroup SYSCFG_VREFINT_OUT_SELECT SYSCFG VREFINT Out Selection
   * @{
   */
-#define SYSCFG_VREFINT_OUT_NONE          ((uint32_t)0x00000000U) /* no pad connected */
+#define SYSCFG_VREFINT_OUT_NONE          (0x00000000U)           /* no pad connected */
 #define SYSCFG_VREFINT_OUT_PB0           SYSCFG_CFGR3_VREF_OUT_0 /* Selects PBO as output for the Vrefint */
 #define SYSCFG_VREFINT_OUT_PB1           SYSCFG_CFGR3_VREF_OUT_1 /* Selects PB1 as output for the Vrefint */
 #define SYSCFG_VREFINT_OUT_PB0_PB1       SYSCFG_CFGR3_VREF_OUT   /* Selects PBO and PB1 as output for the Vrefint */
@@ -350,11 +365,24 @@
   * @}
   */
 
+/** @defgroup HAL_Private_Macros HAL Private Macros
+  * @{
+  */
+#define IS_TICKFREQ(FREQ) (((FREQ) == HAL_TICK_FREQ_10HZ)  || \
+                           ((FREQ) == HAL_TICK_FREQ_100HZ) || \
+                           ((FREQ) == HAL_TICK_FREQ_1KHZ))
+/**
+  * @}
+  */
+
 /* Exported variables --------------------------------------------------------*/
 /** @defgroup HAL_Exported_Variables HAL Exported Variables
   * @{
   */
 extern __IO uint32_t uwTick;
+extern uint32_t uwTickPrio;
+extern HAL_TickFreqTypeDef uwTickFreq;
+
 /**
   * @}
   */
@@ -384,6 +412,9 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority);
 void HAL_IncTick(void);
 void HAL_Delay(uint32_t Delay);
 uint32_t HAL_GetTick(void);
+uint32_t HAL_GetTickPrio(void);
+HAL_StatusTypeDef HAL_SetTickFreq(HAL_TickFreqTypeDef Freq);
+HAL_TickFreqTypeDef HAL_GetTickFreq(void);
 void HAL_SuspendTick(void);
 void HAL_ResumeTick(void);
 uint32_t HAL_GetHalVersion(void);

@@ -258,7 +258,7 @@ void LL_SetSystemCoreClock(uint32_t HCLKFrequency)
   */
 ErrorStatus LL_SetFlashLatency(uint32_t HCLK4Frequency)
 {
-  ErrorStatus status = SUCCESS;
+  ErrorStatus status = ERROR;
   uint32_t latency   = LL_FLASH_LATENCY_0;  /* default value 0WS */
   uint16_t index;
   uint32_t timeout;
@@ -283,11 +283,7 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK4Frequency)
   const uint32_t UTILS_LATENCY_RANGE[] = {LL_FLASH_LATENCY_0, LL_FLASH_LATENCY_1, LL_FLASH_LATENCY_2, LL_FLASH_LATENCY_3};
 
   /* Frequency cannot be equal to 0 or greater than max clock */
-  if ((HCLK4Frequency == 0U) || (HCLK4Frequency > maxfreq))
-  {
-    status = ERROR;
-  }
-  else
+  if ((HCLK4Frequency > 0U) && (HCLK4Frequency <= maxfreq))
   {
 #if defined(PWR_CR1_VOS)
     if (voltagescaling == LL_PWR_REGU_VOLTAGE_SCALE1)
@@ -297,6 +293,7 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK4Frequency)
         if (HCLK4Frequency <= UTILS_CLK_SRC_RANGE_VOS1[index])
         {
           latency = UTILS_LATENCY_RANGE[index];
+          status = SUCCESS;
           break;
         }
       }
@@ -308,6 +305,7 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK4Frequency)
         if (HCLK4Frequency <= UTILS_CLK_SRC_RANGE_VOS2[index])
         {
           latency = UTILS_LATENCY_RANGE[index];
+          status = SUCCESS;
           break;
         }
       }
@@ -318,11 +316,15 @@ ErrorStatus LL_SetFlashLatency(uint32_t HCLK4Frequency)
       if (HCLK4Frequency <= UTILS_CLK_SRC_RANGE_VOS1[index])
       {
         latency = UTILS_LATENCY_RANGE[index];
+        status = SUCCESS;
         break;
       }
     }
 #endif
+  }
 
+  if (status != ERROR)
+  {
     LL_FLASH_SetLatency(latency);
 
     /* Check that the new number of wait states is taken into account to access the Flash

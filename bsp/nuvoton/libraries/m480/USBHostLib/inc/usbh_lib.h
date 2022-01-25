@@ -51,7 +51,7 @@ extern "C"
 #define USBH_ERR_DISCONNECTED       -259   /*!< USB device was disconnected                     */
 
 #define USBH_ERR_TRANSACTION        -271   /*!< USB transaction timeout, CRC, Bad PID, etc.     */
-#define USBH_ERR_BABBLE_DETECTED    -272   /*!< A ¡§babble¡¨ is detected during the transaction   */
+#define USBH_ERR_BABBLE_DETECTED    -272   /*!< A 'babble' is detected during the transaction   */
 #define USBH_ERR_DATA_BUFF          -274   /*!< Data buffer overrun or underrun                 */
 
 #define USBH_ERR_CC_NO_ERR          -280   /*!< OHCI CC code - no error                         */
@@ -145,7 +145,7 @@ extern int  usbh_polling_root_hubs(void);
 extern void usbh_install_conn_callback(CONN_FUNC *conn_func, CONN_FUNC *disconn_func);
 extern void usbh_suspend(void);
 extern void usbh_resume(void);
-extern struct udev_t * usbh_find_device(char *hub_id, int port);
+extern struct udev_t *usbh_find_device(char *hub_id, int port);
 
 /**
  * @brief  A function return current tick count.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,9 +15,9 @@
 #ifndef __PM_H__
 #define __PM_H__
 
+#include <stdint.h>
 #include <rtthread.h>
-
-#ifndef PM_HAS_CUSTOM_CONFIG
+#include <drivers/lptimer.h>
 
 /* All modes used for rt_pm_request() and rt_pm_release() */
 enum
@@ -47,10 +47,6 @@ enum
     RT_PM_FREQUENCY_PENDING = 0x01,
 };
 
-#define RT_PM_DEFAULT_SLEEP_MODE PM_SLEEP_MODE_NONE
-#define RT_PM_DEFAULT_DEEPSLEEP_MODE PM_SLEEP_MODE_DEEP
-#define RT_PM_DEFAULT_RUN_MODE   PM_RUN_MODE_NORMAL_SPEED
-
 /* The name of all modes used in the msh command "pm_dump" */
 #define PM_SLEEP_MODE_NAMES     \
 {                               \
@@ -70,6 +66,7 @@ enum
     "Low Mode",                 \
 }
 
+#ifndef PM_USING_CUSTOM_CONFIG
 /**
  * Modules used for
  * pm_module_request(PM_BOARD_ID, PM_SLEEP_MODE_IDLE)
@@ -97,11 +94,23 @@ enum pm_module_id {
     PM_MODULE_MAX_ID, /* enum must! */
 };
 
-#else /* PM_HAS_CUSTOM_CONFIG */
+#else
 
 #include <pm_cfg.h>
 
-#endif /* PM_HAS_CUSTOM_CONFIG */
+#endif /* PM_USING_CUSTOM_CONFIG */
+
+#ifndef RT_PM_DEFAULT_SLEEP_MODE
+#define RT_PM_DEFAULT_SLEEP_MODE        PM_SLEEP_MODE_NONE
+#endif
+
+#ifndef RT_PM_DEFAULT_DEEPSLEEP_MODE
+#define RT_PM_DEFAULT_DEEPSLEEP_MODE    PM_SLEEP_MODE_DEEP
+#endif
+
+#ifndef RT_PM_DEFAULT_RUN_MODE
+#define RT_PM_DEFAULT_RUN_MODE          PM_RUN_MODE_NORMAL_SPEED
+#endif
 
 /**
  * device control flag to request or release power
@@ -159,6 +168,9 @@ struct rt_pm
     /* modules request status*/
     struct rt_pm_module module_status[PM_MODULE_MAX_ID];
 
+    /* sleep request table */
+    rt_uint32_t sleep_status[PM_SLEEP_MODE_MAX - 1][(PM_MODULE_MAX_ID + 31) / 32];
+
     /* the list of device, which has PM feature */
     rt_uint8_t device_pm_number;
     struct rt_device_pm *device_pm;
@@ -202,5 +214,16 @@ void rt_pm_module_release_all(uint8_t module_id, rt_uint8_t sleep_mode);
 void rt_pm_module_delay_sleep(rt_uint8_t module_id, rt_tick_t timeout);
 rt_uint32_t rt_pm_module_get_status(void);
 rt_uint8_t rt_pm_get_sleep_mode(void);
+struct rt_pm *rt_pm_get_handle(void);
+
+/* sleep : request or release */
+void rt_pm_sleep_request(rt_uint16_t module_id, rt_uint8_t mode);
+void rt_pm_sleep_release(rt_uint16_t module_id, rt_uint8_t mode);
+void rt_pm_sleep_none_request(rt_uint16_t module_id);
+void rt_pm_sleep_none_release(rt_uint16_t module_id);
+void rt_pm_sleep_idle_request(rt_uint16_t module_id);
+void rt_pm_sleep_idle_release(rt_uint16_t module_id);
+void rt_pm_sleep_light_request(rt_uint16_t module_id);
+void rt_pm_sleep_light_release(rt_uint16_t module_id);
 
 #endif /* __PM_H__ */

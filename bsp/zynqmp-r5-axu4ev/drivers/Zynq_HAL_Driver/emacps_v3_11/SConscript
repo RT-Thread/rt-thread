@@ -1,0 +1,15 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+# The set of source files associated with this SConscript file.
+
+src = Glob('*.c')
+path = cwd
+
+group = DefineGroup('ZYNQMP_HAL', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

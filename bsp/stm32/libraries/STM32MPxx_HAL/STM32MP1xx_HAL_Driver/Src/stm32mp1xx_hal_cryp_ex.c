@@ -110,7 +110,7 @@ HAL_StatusTypeDef HAL_CRYPEx_AESGCM_GenerateAuthTAG(CRYP_HandleTypeDef *hcryp, u
 {
   uint32_t tickstart;
   uint64_t headerlength = (uint64_t)(hcryp->Init.HeaderSize) * 32U; /* Header length in bits */
-  uint64_t inputlength = (uint64_t)(hcryp->Size) * 8U; /* input length in bits */
+  uint64_t inputlength = (uint64_t)hcryp->SizesSum * 8U; /* input length in bits */
   uint32_t tagaddr = (uint32_t)AuthTag;
 
   if (hcryp->State == HAL_CRYP_STATE_READY)

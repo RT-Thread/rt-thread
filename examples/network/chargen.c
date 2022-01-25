@@ -1,9 +1,22 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+
 #include <rtthread.h>
 #include <sys/socket.h>
 
 #ifdef SAL_USING_POSIX
 #include <sys/select.h> // only dfs_net
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #else
 #define read        lwip_read
 #define write       lwip_write

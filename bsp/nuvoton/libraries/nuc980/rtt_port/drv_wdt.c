@@ -16,7 +16,7 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include <rtdbg.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_sys.h>
 
 /* Private define ---------------------------------------------------------------*/

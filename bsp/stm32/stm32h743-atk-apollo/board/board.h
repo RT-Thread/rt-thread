@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#if !defined  (LSI_VALUE) 
+#if !defined  (LSI_VALUE)
   #define LSI_VALUE  ((uint32_t)32000)
 #endif
 
@@ -31,7 +31,7 @@ extern "C" {
 #define STM32_SRAM_SIZE           (512)
 #define STM32_SRAM_END            (0x24000000 + STM32_SRAM_SIZE * 1024)
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      (&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__

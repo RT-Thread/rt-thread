@@ -2279,7 +2279,7 @@ static HAL_StatusTypeDef IRDA_SetConfig(IRDA_HandleTypeDef *hirda)
   IRDA_ClockSourceTypeDef clocksource;
   HAL_StatusTypeDef ret = HAL_OK;
 #if defined(USART_PRESC_PRESCALER)
-  const uint16_t IRDAPrescTable[12] = {1U, 2U, 4U, 6U, 8U, 10U, 12U, 16U, 32U, 64U, 128U, 256U};
+  static const uint16_t IRDAPrescTable[12] = {1U, 2U, 4U, 6U, 8U, 10U, 12U, 16U, 32U, 64U, 128U, 256U};
 #endif /* USART_PRESC_PRESCALER */
 
   /* Check the communication parameters */

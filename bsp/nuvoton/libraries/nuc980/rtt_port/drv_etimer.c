@@ -15,7 +15,7 @@
 #if defined(BSP_USING_TIMER) && defined(RT_USING_HWTIMER)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_sys.h>
 
 /* Private define ---------------------------------------------------------------*/

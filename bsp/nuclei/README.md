@@ -6,7 +6,7 @@ currently we mainly provided the following board support packages.
 | **BSP**                              | **Development Board Name**                                                                                 |
 | :----------------------------------- | :--------------------------------------------------------------------------------------------------------- |
 | [gd32vf103_rvstar](gd32vf103_rvstar) | [Nuclei RV-STAR Arduino Compatible Development Board](https://www.rvmcu.com/quickstart-doc-u-rvstar.html)  |
-| [hbird_eval](hbird_eval)             | [Nuclei HummingBird FPGA Evaluation Development Board](https://nucleisys.com/developboard.php#ddr200t)     |
+| [nuclei_fpga_eval](nuclei_fpga_eval) | [Nuclei FPGA Evaluation Development Board](https://nucleisys.com/developboard.php#ddr200t)     |
 
 **If you want to learn more about Nuclei Processors, please click the following links:**
 

@@ -236,7 +236,7 @@ int cmd_ping(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_ping, __cmd_ping, ping network host);
+MSH_CMD_EXPORT_ALIAS(cmd_ping, ping, ping network host);
 #endif /* RT_USING_FINSH */
 
 #endif /* RT_USING_NETDEV */

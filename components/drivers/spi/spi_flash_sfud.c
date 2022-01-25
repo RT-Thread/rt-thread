@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,6 +9,7 @@
  */
 
 #include <stdint.h>
+#include <string.h>
 #include <rtdevice.h>
 #include "spi_flash.h"
 #include "spi_flash_sfud.h"
@@ -317,7 +318,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, con
     if (rtt_dev) {
         rt_memset(rtt_dev, 0, sizeof(struct spi_flash_device));
         /* initialize lock */
-        rt_mutex_init(&(rtt_dev->lock), spi_flash_dev_name, RT_IPC_FLAG_FIFO);
+        rt_mutex_init(&(rtt_dev->lock), spi_flash_dev_name, RT_IPC_FLAG_PRIO);
     }
 
     if (rtt_dev && sfud_dev && spi_flash_dev_name_bak && spi_dev_name_bak) {
@@ -508,7 +509,7 @@ __error:
     return RT_NULL;
 }
 
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
+#if defined(RT_USING_FINSH)
 
 #include <finsh.h>
 
@@ -773,6 +774,6 @@ static void sf(uint8_t argc, char **argv) {
     }
 }
 MSH_CMD_EXPORT(sf, SPI Flash operate.);
-#endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
+#endif /* defined(RT_USING_FINSH) */
 
 #endif /* RT_USING_SFUD */

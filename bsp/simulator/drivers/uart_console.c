@@ -1,5 +1,13 @@
-#include <stdio.h>
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 
+#include <stdio.h>
 #include <rthw.h>
 #include <rtdevice.h>
 #include <rtthread.h>
@@ -88,11 +96,11 @@ static struct termios oldt, newt;
 /*simulate windows' getch(), it works!!*/
 static void set_stty(void)
 {
-	/* get terminal input's attribute */
+    /* get terminal input's attribute */
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
 
-	/* set termios' local mode */
+    /* set termios' local mode */
     newt.c_lflag &= ~(ECHO|ICANON);
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 }
@@ -117,10 +125,10 @@ static void * ThreadforKeyGet(void * lpParam)
 
 #ifndef _WIN32
     sigset_t  sigmask, oldmask;
-	/* set the getchar without buffer */
-	sigfillset(&sigmask);
-	pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
-	set_stty();
+    /* set the getchar without buffer */
+    sigfillset(&sigmask);
+    pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
+    set_stty();
 #endif
 
     (void)lpParam;              //prevent compiler warnings
@@ -217,7 +225,7 @@ static int console_putc(struct rt_serial_device *serial, char c)
 
     level = rt_hw_interrupt_disable();
     fwrite(&c, 1, 1, stdout);
-	fflush(stdout);
+    fflush(stdout);
     rt_hw_interrupt_enable(level);
     return 1;
 }

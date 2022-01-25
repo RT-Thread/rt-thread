@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,10 +24,11 @@ extern "C" {
     {                                               \
         .Instance = SPI1,                           \
         .bus_name = "spi1",                         \
+        .irq_type = SPI1_IRQn,                      \
     }
 #endif /* SPI1_BUS_CONFIG */
 #endif /* BSP_USING_SPI1 */
-    
+
 #ifdef BSP_SPI1_TX_USING_DMA
 #ifndef SPI1_TX_DMA_CONFIG
 #define SPI1_TX_DMA_CONFIG                          \
@@ -56,10 +57,11 @@ extern "C" {
     {                                               \
         .Instance = SPI2,                           \
         .bus_name = "spi2",                         \
+        .irq_type = SPI2_IRQn,                      \
     }
 #endif /* SPI2_BUS_CONFIG */
 #endif /* BSP_USING_SPI2 */
-    
+
 #ifdef BSP_SPI2_TX_USING_DMA
 #ifndef SPI2_TX_DMA_CONFIG
 #define SPI2_TX_DMA_CONFIG                          \
@@ -88,10 +90,11 @@ extern "C" {
     {                                               \
         .Instance = SPI3,                           \
         .bus_name = "spi3",                         \
+        .irq_type = SPI3_IRQn,                      \
     }
 #endif /* SPI3_BUS_CONFIG */
 #endif /* BSP_USING_SPI3 */
-    
+
 #ifdef BSP_SPI3_TX_USING_DMA
 #ifndef SPI3_TX_DMA_CONFIG
 #define SPI3_TX_DMA_CONFIG                          \

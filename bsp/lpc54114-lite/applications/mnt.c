@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,7 +11,10 @@
 
 #if defined(RT_USING_DFS)
 #include <dfs_file.h>
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #endif
 
 #define BSP_FLASH_MOUNT_PATH  "/mnt/flash"
@@ -24,15 +27,15 @@ int mnt_init(void)
     {
         rt_kprintf("spi flash mount '%s' failed.\n", BSP_FLASH_MOUNT_PATH);
     }
-#endif 
-    
+#endif
+
 #if defined(BSP_USING_SDCARD)
     if(dfs_mount("sd0", BSP_SDCARD_MOUNT_PATH, "elm", 0, 0) != 0)
     {
         rt_kprintf("sdcard mount '%s' failed.\n", BSP_SDCARD_MOUNT_PATH);
     }
-#endif 
+#endif
 
     return 0;
 }
-INIT_APP_EXPORT(mnt_init); 
+INIT_APP_EXPORT(mnt_init);

@@ -15,7 +15,9 @@ if GetDepend('RT_USING_PIN'):
 
 # add serial driver code
 if  GetDepend('BSP_USING_UART0') or GetDepend('BSP_USING_UART1') or GetDepend('BSP_USING_UART2') or GetDepend('BSP_USING_UART3') or \
-    GetDepend('BSP_USING_UART4') or GetDepend('BSP_USING_UART5'):
+    GetDepend('BSP_USING_UART4') or GetDepend('BSP_USING_UART5') or \
+    GetDepend('BSP_USING_USART0') or GetDepend('BSP_USING_USART1') or GetDepend('BSP_USING_USART2') or GetDepend('BSP_USING_USART3') or \
+    GetDepend('BSP_USING_USART4') or GetDepend('BSP_USING_USART5'):
     src += ['drv_uart.c']
 
 # add spi driver code
@@ -27,23 +29,32 @@ if  GetDepend('BSP_USING_I2C0') or GetDepend('BSP_USING_I2C1'):
     src += ['drv_i2c.c']
 
 # add can driver code
-if  GetDepend('BSP_USING_CAN'):
+if  GetDepend('BSP_USING_CAN') or GetDepend('BSP_USING_CAN0') or GetDepend('RT_USING_CAN'):
     src += ['drv_can.c']
 
 # add adc driver code
-if GetDepend(['BSP_USING_ADC']):
+if GetDepend(['BSP_USING_ADC0']) or GetDepend('BSP_USING_ADC1'):
     src += ['drv_adc.c']
 
 # add rtc driver code
 if GetDepend(['BSP_USING_RTC']):
     src += ['drv_rtc.c']
 
+# add spi flash driver code
+if GetDepend('BSP_USING_SPI_FLASH'):
+    src += ['drv_spiflash.c']
+
 # add hwtimer driver code
-if GetDepend('BSP_USING_HWTIMER0') or GetDepend('BSP_USING_HWTIMER1'):
+if GetDepend('BSP_USING_AD16C4T0_HWTIMER') or GetDepend('BSP_USING_AD16C4T1_HWTIMER') or \
+    GetDepend('BSP_USING_GP32C4T0_HWTIMER') or GetDepend('BSP_USING_GP32C4T1_HWTIMER') or \
+    GetDepend('BSP_USING_GP16C4T0_HWTIMER') or GetDepend('BSP_USING_GP16C4T1_HWTIMER') or \
+    GetDepend('BSP_USING_BS16T0_HWTIMER') or GetDepend('BSP_USING_BS16T1_HWTIMER'):
     src += ['drv_hwtimer.c']
 
 # add pwm driver code
-if GetDepend('BSP_USING_PWM0') or GetDepend('BSP_USING_PWM1'):
+if GetDepend('BSP_USING_AD16C4T0_PWM') or GetDepend('BSP_USING_AD16C4T1_PWM') or \
+    GetDepend('BSP_USING_GP32C4T0_PWM') or GetDepend('BSP_USING_GP32C4T1_PWM') or \
+    GetDepend('BSP_USING_GP16C4T0_PWM') or GetDepend('BSP_USING_GP16C4T1_PWM'):
     src += ['drv_pwm.c']
 
 # add pm driver code
@@ -56,7 +67,7 @@ objs = objs + group
 
 src   = []
 cwd   = GetCurrentDir()
-include_path = [cwd]
+include_path = [cwd + '/ES']
 
 if GetDepend('BSP_USING_EXAMPLE_ADC_VOL'):
     src += ['bsp_driver_example/adc_vol_sample.c']
@@ -66,6 +77,9 @@ if GetDepend('BSP_USING_EXAMPLE_HWTIMER'):
 
 if GetDepend('BSP_USING_EXAMPLE_I2C'):
     src += ['bsp_driver_example/i2c_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_I2C_E2PROM'):
+    src += ['bsp_driver_example/i2c_e2_sample.c']
 
 if GetDepend('BSP_USING_EXAMPLE_LED_BLINK'):
     src += ['bsp_driver_example/led_blink_sample.c']
@@ -81,6 +95,9 @@ if GetDepend('BSP_USING_EXAMPLE_RTC'):
 
 if GetDepend('BSP_USING_EXAMPLE_UART'):
     src += ['bsp_driver_example/uart_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_UART_DMA'):
+    src += ['bsp_driver_example/uart_dma_sample.c']
 
 if GetDepend('BSP_USING_EXAMPLE_SPI'):
     src += ['bsp_driver_example/spi_sample.c']

@@ -1,7 +1,7 @@
 /*
  * Cache Ops For Loongson GS232
  *
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,8 +15,8 @@
 #include <rtthread.h>
 #include <mips.h>
 
-#define K0BASE			0x80000000
-#define PRID_LS1C		0x4220
+#define K0BASE          0x80000000
+#define PRID_LS1C       0x4220
 
 extern void Clear_TagLo (void);
 extern void Invalidate_Icache_Ls1c(unsigned int);
@@ -27,10 +27,10 @@ extern void enable_cpu_cache(void);
 
 typedef struct cacheinfo_t
 {
-    unsigned int	icache_size;
-    unsigned int	dcache_size;
-    unsigned int	icacheline_size;
-    unsigned int	dcacheline_size;
+    unsigned int    icache_size;
+    unsigned int    dcache_size;
+    unsigned int    icacheline_size;
+    unsigned int    dcacheline_size;
 } cacheinfo_t ;
 
 typedef struct cacheop_t
@@ -183,12 +183,12 @@ void rt_hw_cache_init(void)
     end = (start + pcacheinfo->icache_size);
 
     /*
-     *	2. clear CP0 taglo/taghi register;
+     *  2. clear CP0 taglo/taghi register;
      */
     pcacheop->Clear_TagLo();
 
     /*
-     *	3. invalidate instruction cache;
+     *  3. invalidate instruction cache;
      */
     while (start < end)
     {
@@ -197,7 +197,7 @@ void rt_hw_cache_init(void)
     }
 
     /*
-     *	4. invalidate data cache;
+     *  4. invalidate data cache;
      */
     start = K0BASE;
     end = (start + pcacheinfo->dcache_size);

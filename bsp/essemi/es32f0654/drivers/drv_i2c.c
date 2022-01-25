@@ -1,7 +1,18 @@
 /*
- * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Change Logs:
  * Date           Author        Notes
@@ -10,19 +21,24 @@
  * 2020-12-15     liuhy         update libraries
  */
 
+#include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <rtdbg.h>
 #include "board.h"
 #include "drv_i2c.h"
-#include <ald_i2c.h>
-#include <ald_gpio.h>
+
 
 #ifdef RT_USING_I2C
 
 #define TIMEOUT 0x0FFF
 /* I2C struct definition */
-static i2c_handle_t _h_i2c0, _h_i2c1;
+#ifdef BSP_USING_I2C0
+    static i2c_handle_t _h_i2c0;
+#endif
+
+#ifdef BSP_USING_I2C1
+    static i2c_handle_t _h_i2c1;
+#endif
 
 static void _i2c_init(void)
 {
@@ -38,35 +54,55 @@ static void _i2c_init(void)
     gpio_instruct.func = GPIO_FUNC_5;
 
 #ifdef BSP_USING_I2C0
+
+#if  defined(ES_I2C0_SCL_GPIO_FUNC)&&defined(ES_I2C0_SCL_GPIO_PORT)&&defined(ES_I2C0_SCL_GPIO_PIN)
+    gpio_instruct.func = ES_I2C0_SCL_GPIO_FUNC;
+    ald_gpio_init(ES_I2C0_SCL_GPIO_PORT, ES_I2C0_SCL_GPIO_PIN, &gpio_instruct);
+#endif
+
+#if  defined(ES_I2C0_SDA_GPIO_FUNC)&&defined(ES_I2C0_SDA_GPIO_PORT)&&defined(ES_I2C0_SDA_GPIO_PIN)
+    gpio_instruct.func = ES_I2C0_SDA_GPIO_FUNC;
+    ald_gpio_init(ES_I2C0_SDA_GPIO_PORT, ES_I2C0_SDA_GPIO_PIN, &gpio_instruct);
+#endif
+
     /* Initialize I2C Function */
     _h_i2c0.perh = I2C0;
-    _h_i2c0.init.clk_speed    = 100000;
     _h_i2c0.init.duty         = I2C_DUTYCYCLE_2;
-    _h_i2c0.init.own_addr1    = 0x0A;
-    _h_i2c0.init.addr_mode    = I2C_ADDR_7BIT;
-    _h_i2c0.init.general_call = I2C_GENERALCALL_DISABLE;
-    _h_i2c0.init.no_stretch   = I2C_NOSTRETCH_ENABLE;
+    _h_i2c0.init.clk_speed    = ES_I2C0_CLK_SPEED;
+    _h_i2c0.init.own_addr1    = ES_I2C0_OWN_ADDR1;
+    _h_i2c0.init.addr_mode    = ES_I2C0_ADDR_MODE;
+    _h_i2c0.init.general_call = ES_I2C0_GENERAL_CALL;
+    _h_i2c0.init.no_stretch   = ES_I2C0_STRETCH;
 
     ald_i2c_reset(&_h_i2c0);
     ald_i2c_init(&_h_i2c0);
-    /* I2C0_SCL->PB8,  I2C0_SDA->PB9 */
-    ald_gpio_init(GPIOB, GPIO_PIN_8 | GPIO_PIN_9, &gpio_instruct);
+
 #endif
 
 #ifdef BSP_USING_I2C1
+
+#if  defined(ES_I2C1_SCL_GPIO_FUNC)&&defined(ES_I2C1_SCL_GPIO_PORT)&&defined(ES_I2C1_SCL_GPIO_PIN)
+    gpio_instruct.func = ES_I2C1_SCL_GPIO_FUNC;
+    ald_gpio_init(ES_I2C1_SCL_GPIO_PORT, ES_I2C1_SCL_GPIO_PIN, &gpio_instruct);
+#endif
+
+#if  defined(ES_I2C1_SDA_GPIO_FUNC)&&defined(ES_I2C1_SDA_GPIO_PORT)&&defined(ES_I2C1_SDA_GPIO_PIN)
+    gpio_instruct.func = ES_I2C1_SDA_GPIO_FUNC;
+    ald_gpio_init(ES_I2C1_SDA_GPIO_PORT, ES_I2C1_SDA_GPIO_PIN, &gpio_instruct);
+#endif
+
     /* Initialize i2c function */
     _h_i2c1.perh = I2C1;
-    _h_i2c1.init.clk_speed    = 100000;
     _h_i2c1.init.duty         = I2C_DUTYCYCLE_2;
-    _h_i2c1.init.own_addr1    = 0xA0;
-    _h_i2c1.init.addr_mode    = I2C_ADDR_7BIT;
-    _h_i2c1.init.general_call = I2C_GENERALCALL_DISABLE;
-    _h_i2c1.init.no_stretch   = I2C_NOSTRETCH_ENABLE;
+    _h_i2c1.init.clk_speed    = ES_I2C1_CLK_SPEED;
+    _h_i2c1.init.own_addr1    = ES_I2C1_OWN_ADDR1;
+    _h_i2c1.init.addr_mode    = ES_I2C1_ADDR_MODE;
+    _h_i2c1.init.general_call = ES_I2C1_GENERAL_CALL;
+    _h_i2c1.init.no_stretch   = ES_I2C1_STRETCH;
 
     ald_i2c_reset(&_h_i2c1);
     ald_i2c_init(&_h_i2c1);
-    /* I2C1_SCL->PB10, I2C1_SDA->PB11 */
-    ald_gpio_init(GPIOB, GPIO_PIN_10 | GPIO_PIN_11, &gpio_instruct);
+
 #endif
 }
 
@@ -116,6 +152,8 @@ const struct rt_i2c_bus_device_ops es32f0_i2c_ops =
 
 int rt_hw_i2c_init(void)
 {
+    int result = RT_EOK;
+
     _i2c_init();
 
 #ifdef BSP_USING_I2C0
@@ -124,16 +162,25 @@ int rt_hw_i2c_init(void)
     rt_memset((void *)&_i2c_device0, 0, sizeof(struct rt_i2c_bus_device));
     _i2c_device0.ops = &es32f0_i2c_ops;
     _i2c_device0.priv = &_h_i2c0;
-    rt_i2c_bus_device_register(&_i2c_device0, "i2c0");
+    result = rt_i2c_bus_device_register(&_i2c_device0, ES_DEVICE_NAME_I2C0);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
 #endif
 
 #ifdef BSP_USING_I2C1
     /* define i2c Instance */
     static struct rt_i2c_bus_device _i2c_device1;
     rt_memset((void *)&_i2c_device1, 0, sizeof(struct rt_i2c_bus_device));
+
     _i2c_device1.ops = &es32f0_i2c_ops;
     _i2c_device1.priv = &_h_i2c1;
-    rt_i2c_bus_device_register(&_i2c_device1, "i2c1");
+    rt_i2c_bus_device_register(&_i2c_device1, ES_DEVICE_NAME_I2C1);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
 #endif
 
     return RT_EOK;

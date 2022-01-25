@@ -1,21 +1,7 @@
 /*
- * File      : drv_wlan.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,14 +11,14 @@
 #ifndef __DRV_WLAN_H__
 #define __DRV_WLAN_H__
 
-typedef enum 
+typedef enum
 {
-	RTHW_MODE_NONE = 0,
-	RTHW_MODE_STA,
-	RTHW_MODE_AP,
-	RTHW_MODE_STA_AP,
-	RTHW_MODE_PROMISC,
-	RTHW_MODE_P2P
+    RTHW_MODE_NONE = 0,
+    RTHW_MODE_STA,
+    RTHW_MODE_AP,
+    RTHW_MODE_STA_AP,
+    RTHW_MODE_PROMISC,
+    RTHW_MODE_P2P
 }rthw_mode_t;
 
 #define SHARED_ENABLED  0x00008000
@@ -66,7 +52,7 @@ typedef enum {
 typedef enum {
     RTHW_WIFI_EVENT_CONNECT = 0,
     RTHW_WIFI_EVENT_DISCONNECT = 1,
-    RTHW_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = 2,	
+    RTHW_WIFI_EVENT_FOURWAY_HANDSHAKE_DONE = 2,
     RTHW_WIFI_EVENT_SCAN_RESULT_REPORT = 3,
     RTHW_WIFI_EVENT_SCAN_DONE = 4,
     RTHW_WIFI_EVENT_RECONNECTION_FAIL = 5,

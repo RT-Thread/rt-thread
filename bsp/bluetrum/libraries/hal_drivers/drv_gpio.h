@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020, Bluetrum Development Team
+ * Copyright (c) 2020-2021, Bluetrum Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,6 +15,10 @@
 #include "board.h"
 
 #define __AB32_PORT(port)   GPIO##port
+#define __AB32_GET_PIN_A(PIN)  PIN
+#define __AB32_GET_PIN_B(PIN)  8 + PIN
+#define __AB32_GET_PIN_E(PIN)  13 + PIN
+#define __AB32_GET_PIN_F(PIN)  21 + PIN
 
 int rt_hw_pin_init(void);
 

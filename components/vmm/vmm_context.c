@@ -1,7 +1,7 @@
 /*
- * COPYRIGHT (C) 2013-2014, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
  * All rights reserved
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -18,7 +18,7 @@
 
 #include "vmm_context.h"
 
-struct rt_vmm_share_layout rt_vmm_share SECTION(".vmm.share");
+struct rt_vmm_share_layout rt_vmm_share RT_SECTION(".vmm.share");
 
 volatile struct vmm_context *_vmm_context = RT_NULL;
 
@@ -31,13 +31,13 @@ void vmm_context_init(void *context_addr)
 }
 
 #ifdef RT_VMM_USING_DOMAIN
-unsigned long guest_domain_val SECTION(".bss.share");
-unsigned long vmm_domain_val SECTION(".bss.share");
+unsigned long guest_domain_val RT_SECTION(".bss.share");
+unsigned long vmm_domain_val RT_SECTION(".bss.share");
 /* some RT-Thread code need to be called in the guest
  * context(rt_thread_idle_excute for example). To simplify the code, we need a
  * "super" domain mode to have access of both side. The code executed in super
  * domain mode is restricted and should be harmless. */
-unsigned long super_domain_val SECTION(".bss.share");
+unsigned long super_domain_val RT_SECTION(".bss.share");
 void vmm_context_init_domain(struct vmm_domain *domain)
 {
     asm volatile ("mrc p15, 0, %0, c3, c0\n" : "=r" (guest_domain_val));

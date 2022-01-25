@@ -402,16 +402,16 @@ void EMU_EM4Init(EMU_EM4Init_TypeDef *em4init)
     _EMU_EM4CONF_OSC_MASK|
     _EMU_EM4CONF_BURTCWU_MASK|
     _EMU_EM4CONF_VREGEN_MASK);
-  
+
   /* Configure new settings */
   em4conf |= (
     (em4init->lockConfig << _EMU_EM4CONF_LOCKCONF_SHIFT)|
     (em4init->osc)|
     (em4init->buRtcWakeup << _EMU_EM4CONF_BURTCWU_SHIFT)|
     (em4init->vreg << _EMU_EM4CONF_VREGEN_SHIFT));
-  
+
   /* Apply configuration. Note that lock can be set after this stage. */
-  EMU->EM4CONF = em4conf;    
+  EMU->EM4CONF = em4conf;
 }
 
 
@@ -432,15 +432,15 @@ void EMU_BUPDInit(EMU_BUPDInit_TypeDef *bupdInit)
     _EMU_PWRCONF_VOUTSTRONG_MASK|
     _EMU_PWRCONF_VOUTMED_MASK|
     _EMU_PWRCONF_VOUTWEAK_MASK);
-  
+
   reg |= (bupdInit->resistor|
          (bupdInit->voutStrong << _EMU_PWRCONF_VOUTSTRONG_SHIFT)|
          (bupdInit->voutMed    << _EMU_PWRCONF_VOUTMED_SHIFT)|
-         (bupdInit->voutWeak   << _EMU_PWRCONF_VOUTWEAK_SHIFT)); 
-  
+         (bupdInit->voutWeak   << _EMU_PWRCONF_VOUTWEAK_SHIFT));
+
   EMU->PWRCONF = reg;
 
-  /* Set backup domain inactive mode configuration */ 
+  /* Set backup domain inactive mode configuration */
   reg = EMU->BUINACT & ~(_EMU_BUINACT_PWRCON_MASK);
   reg |= (bupdInit->inactivePower);
   EMU->BUINACT = reg;
@@ -456,14 +456,14 @@ void EMU_BUPDInit(EMU_BUPDInit_TypeDef *bupdInit)
     _EMU_BUCTRL_BODCAL_MASK|
     _EMU_BUCTRL_STATEN_MASK|
     _EMU_BUCTRL_EN_MASK);
-             
-  /* Note use of ->enable to both enable BUPD, use BU_VIN pin input and 
+
+  /* Note use of ->enable to both enable BUPD, use BU_VIN pin input and
      release reset */
   reg |= (bupdInit->probe|
          (bupdInit->bodCal          << _EMU_BUCTRL_BODCAL_SHIFT)|
          (bupdInit->statusPinEnable << _EMU_BUCTRL_STATEN_SHIFT)|
          (bupdInit->enable          << _EMU_BUCTRL_EN_SHIFT));
-  
+
   /* Enable configuration */
   EMU->BUCTRL = reg;
 
@@ -479,14 +479,14 @@ void EMU_BUPDInit(EMU_BUPDInit_TypeDef *bupdInit)
  * @brief
  *   Configure Backup Power Domain BOD Threshold value
  * @note
- *   These values are precalibrated 
+ *   These values are precalibrated
  * @param[in] mode Active or Inactive mode
  * @param[in] value
  ******************************************************************************/
 void EMU_BUThresholdSet(EMU_BODMode_TypeDef mode, uint32_t value)
 {
   EFM_ASSERT(value<4);
-  
+
   switch(mode)
   {
   case emuBODMode_Active:
@@ -503,7 +503,7 @@ void EMU_BUThresholdSet(EMU_BODMode_TypeDef mode, uint32_t value)
  * @brief
  *  Configure Backup Power Domain BOD Threshold Range
  * @note
- *  These values are precalibrated 
+ *  These values are precalibrated
  * @param[in] mode Active or Inactive mode
  * @param[in] value
  ******************************************************************************/

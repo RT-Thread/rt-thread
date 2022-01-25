@@ -46,7 +46,7 @@
 /** @defgroup ADCEx_Channel_Mode ADC Single Ended
   * @{
   */
-#define ADC_SINGLE_ENDED                        (uint32_t)0x00000000U   /* dummy value */
+#define ADC_SINGLE_ENDED                        0x00000000U   /* dummy value */
 /**
   * @}
   */
@@ -54,20 +54,20 @@
 /** @defgroup ADC_regular_external_trigger_source ADC External Trigger Source
   * @{
   */
-#define ADC_EXTERNALTRIGCONV_T6_TRGO            ((uint32_t)0x00000000U)
+#define ADC_EXTERNALTRIGCONV_T6_TRGO            (0x00000000U)
 #define ADC_EXTERNALTRIGCONV_T21_CC2            (ADC_CFGR1_EXTSEL_0)
 #define ADC_EXTERNALTRIGCONV_T2_TRGO            (ADC_CFGR1_EXTSEL_1)
 #define ADC_EXTERNALTRIGCONV_T2_CC4             (ADC_CFGR1_EXTSEL_1 | ADC_CFGR1_EXTSEL_0)
 #define ADC_EXTERNALTRIGCONV_T22_TRGO           (ADC_CFGR1_EXTSEL_2)
 #define ADC_EXTERNALTRIGCONV_T3_TRGO            (ADC_CFGR1_EXTSEL_2 | ADC_CFGR1_EXTSEL_1)
 #define ADC_EXTERNALTRIGCONV_EXT_IT11           (ADC_CFGR1_EXTSEL_2 | ADC_CFGR1_EXTSEL_1 | ADC_CFGR1_EXTSEL_0)
-#define ADC_SOFTWARE_START                      (ADC_CFGR1_EXTSEL + (uint32_t)1)
+#define ADC_SOFTWARE_START                      (ADC_CFGR1_EXTSEL + 1U)
 
 /* ADC group regular external trigger TIM21_TRGO available only on            */
 /* STM32L0 devices categories: Cat.2, Cat.3, Cat.5                            */
 #if defined (STM32L031xx) || defined (STM32L041xx) || \
     defined (STM32L051xx) || defined (STM32L052xx) || defined (STM32L053xx) || \
-    defined (STM32L061xx) || defined (STM32L062xx) || defined (STM32L063xx) || \
+    defined (STM32L062xx) || defined (STM32L063xx) || \
     defined (STM32L071xx) || defined (STM32L072xx) || defined (STM32L073xx) || \
     defined (STM32L081xx) || defined (STM32L082xx) || defined (STM32L083xx) || \
     defined (STM32L010x6) || defined (STM32L010x8) || defined (STM32L010xB)
@@ -117,7 +117,7 @@
   * @param _Calibration_Factor_: Calibration factor value
   * @retval None
   */
-#define IS_ADC_CALFACT(_Calibration_Factor_) ((_Calibration_Factor_) <= ((uint32_t)0x7FU))
+#define IS_ADC_CALFACT(_Calibration_Factor_) ((_Calibration_Factor_) <= (0x7FU))
 /**
   * @}
   */ 
@@ -150,7 +150,7 @@
                               ((CONV) == ADC_EXTERNALTRIGCONV_EXT_IT11 ) || \
                               ((CONV) == ADC_SOFTWARE_START))
 #elif defined (STM32L051xx) || defined (STM32L052xx) || defined (STM32L053xx) || \
-      defined (STM32L061xx) || defined (STM32L062xx) || defined (STM32L063xx)
+      defined (STM32L062xx) || defined (STM32L063xx)
 #define IS_ADC_EXTTRIG(CONV) (((CONV) == ADC_EXTERNALTRIGCONV_T6_TRGO  ) || \
                               ((CONV) == ADC_EXTERNALTRIGCONV_T21_CC2  ) || \
                               ((CONV) == ADC_EXTERNALTRIGCONV_T2_TRGO  ) || \
