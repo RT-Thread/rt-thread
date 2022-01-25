@@ -1,51 +1,33 @@
-/*
- * Copyright (c) 2006-2018, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2018-11-06     SummerGift   first version
- * 2018-11-19     flybreak     add stm32f407-atk-explorer bsp
- */
-
 /****************************************************************************
  *
- * File Name：
+ * File Name��
  *  
- * Author：
+ * Author��
  *  
- * Date：
+ * Date��
  * 
  * Descriptions:
  * 
  *
  ******************************************************************************/
+ #ifndef __ _H__
+#define __ _H__
 /*----------------------------------------------------------------------------*
 **                             Dependencies                                   *
 **----------------------------------------------------------------------------*/
-#include <rtthread.h>
-#include <rtdevice.h>
-#include <board.h>
-#include <time.h>
-#include "board_def_map.h"
 
-#ifdef __cplusplus
-extern   "C"
-{
-#endif
 
 /**---------------------------------------------------------------------------*
  **                            Debugging Flag                                 *
  **---------------------------------------------------------------------------*/
-#define DBG_TAG     "MAIN"
-#define DBG_LVL     DBG_LOG
-#include <rtdbg.h>
-
 
 /**---------------------------------------------------------------------------*
 **                             Compiler Flag                                  *
 **----------------------------------------------------------------------------*/
+#ifdef __cplusplus
+extern   "C"
+{
+#endif
 
 /*----------------------------------------------------------------------------*
 **                             Mcaro Definitions                              *
@@ -74,47 +56,6 @@ extern   "C"
 /*----------------------------------------------------------------------------*
 **                             Function Define                                *
 **----------------------------------------------------------------------------*/
-
-//static int rtc_sample(int argc, char *argv[])
-//{
-//    rt_err_t ret = RT_EOK;
-//    time_t now;
-
-//    /* 设置日期 */
-//    ret = set_date(2021, 12, 29);
-//    if (ret != RT_EOK)
-//    {
-//        rt_kprintf("set RTC date failed\n");
-//        return ret;
-//    }
-
-//    /* 设置时间 */
-//    ret = set_time(10, 22, 50);
-//    if (ret != RT_EOK)
-//    {
-//        rt_kprintf("set RTC time failed\n");
-//        return ret;
-//    }
-
-//    /* 延时3秒 */
-//    rt_thread_mdelay(3000);
-
-//    /* 获取时间 */
-//    now = time(RT_NULL);
-//    rt_kprintf("%s\n", time(&now));
-
-//    return ret;
-//}
-///* 导出到 msh 命令列表中 */
-//MSH_CMD_EXPORT(rtc_sample, rtc sample);
-
-
-
-
-
-
-
-
 /*************************************************
 * Function:
 * Description:
@@ -123,20 +64,7 @@ extern   "C"
 * Parameter:
 * History:
 *************************************************/
-int main(void)
-{	
-		/*编译时间*/
-	  LOG_D("BUILD=%s\n", BUILD);
 
-
-    while (1)
-    {
-//	rt_pin_mode(RGB_B,PIN_MODE_OUTPUT);
-//	rt_pin_write(RGB_B,PIN_HIGH);		
-
-				rt_thread_mdelay(1000);
-    }
-}
 
 
 
@@ -145,5 +73,7 @@ int main(void)
  **---------------------------------------------------------------------------*/
 #ifdef   __cplusplus
 }
-#endif
-// End of xxx.c
+#endif  
+// End of __cplusplus
+#endif  
+// End of xxx.H

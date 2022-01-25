@@ -13,6 +13,7 @@
 #define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
@@ -34,6 +35,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -42,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40004
+#define RT_VER_NUM 0x40100
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
@@ -54,6 +56,7 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
+#define RT_USING_LEGACY
 
 /* C++ features */
 
@@ -77,6 +80,7 @@
 /* Device virtual file system */
 
 #define RT_USING_DFS
+#define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FILESYSTEMS_MAX 4
 #define DFS_FILESYSTEM_TYPES_MAX 4
@@ -101,29 +105,37 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_ADC
 #define RT_USING_MTD_NOR
+#define RT_USING_RTC
 #define RT_USING_SPI
 #define RT_USING_SPI_MSD
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
 #define RT_SFUD_SPI_MAX_HZ 50000000
+#define RT_USING_SENSOR
+#define RT_USING_SENSOR_CMD
 
 /* Using USB */
 
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
-#define RT_USING_POSIX
-#define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
+
+/* POSIX (Portable Operating System Interface) layer */
+
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
 
 /* Network */
 
@@ -181,6 +193,12 @@
 
 /* tools packages */
 
+#define PKG_USING_CMBACKTRACE
+#define PKG_CMBACKTRACE_PLATFORM_M4
+#define PKG_CMBACKTRACE_DUMP_STACK
+#define PKG_CMBACKTRACE_PRINT_ENGLISH
+#define PKG_USING_CMBACKTRACE_LATEST_VERSION
+#define PKG_CMBACKTRACE_VER_NUM 0x99999
 
 /* system packages */
 
@@ -192,6 +210,9 @@
 
 /* peripheral libraries and drivers */
 
+#define PKG_USING_MISAKA_RGB_BLING
+#define PKG_USING_MISAKA_RGB_BLING_DEMO
+#define PKG_USING_MISAKA_RGB_BLING_V100
 
 /* AI packages */
 
@@ -215,6 +236,9 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_ONCHIP_RTC
+#define BSP_USING_ADC
+#define BSP_USING_ADC1
 #define BSP_USING_SPI
 #define BSP_USING_SPI3
 

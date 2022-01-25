@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER, STM32F407xx, RT_USING_ARM_LIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>USE_HAL_DRIVER, STM32F407xx, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\nogcc;..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\libraries\STM32F4xx_HAL\CMSIS\Include;..\..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;packages\CmBacktrace-latest;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\legacy;..\..\..\components\legacy\dfs;..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc;..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include;..\libraries\STM32F4xx_HAL\CMSIS\Include;packages\Misaka_RGB_Bling-1.0.0;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\sensors;..\..\..\components\drivers\include;..\..\..\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -385,20 +385,75 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
+              <FileName>ds18b20_sample.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\ds18b20_sample.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc_power.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\adc_power.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>sensor_dallas_ds18b20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\sensor_dallas_ds18b20.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cm_backtrace</GroupName>
+          <Files>
+            <File>
+              <FileName>cm_backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\CmBacktrace-latest\cm_backtrace.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_flash_log.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\CmBacktrace-latest\cmb_flash_log.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\CmBacktrace-latest\cmb_port.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Compiler</GroupName>
+          <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+            <File>
+              <FileName>stdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
           <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
@@ -408,6 +463,11 @@
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+            <File>
+              <FileName>backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
             <File>
               <FileName>cpuport.c</FileName>
@@ -494,6 +554,11 @@
           </GroupOption>
           <Files>
             <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\misc\adc.c</FilePath>
+            </File>
+            <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
@@ -502,6 +567,11 @@
               <FileName>mtd_nor.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\mtd\mtd_nor.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\rtc\rtc.c</FilePath>
             </File>
             <File>
               <FileName>serial.c</FileName>
@@ -539,24 +609,9 @@
               <FilePath>..\..\..\components\drivers\spi\spi_flash_sfud.c</FilePath>
             </File>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
-            </File>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
+              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
             </File>
             <File>
               <FileName>ringbuffer.c</FileName>
@@ -564,14 +619,29 @@
               <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
             <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
+            </File>
+            <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -609,6 +679,21 @@
               <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
             </File>
             <File>
+              <FileName>drv_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_adc.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
@@ -617,11 +702,6 @@
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -634,14 +714,9 @@
               <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
             <File>
-              <FileName>dfs_poll.c</FileName>
+              <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_poll.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
+              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
             </File>
             <File>
               <FileName>dfs.c</FileName>
@@ -649,14 +724,9 @@
               <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
             </File>
             <File>
-              <FileName>dfs_fs.c</FileName>
+              <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_select.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_select.c</FilePath>
+              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
             </File>
             <File>
               <FileName>devfs.c</FileName>
@@ -664,14 +734,14 @@
               <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
             </File>
             <File>
-              <FileName>dfs_elm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
-            </File>
-            <File>
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_elm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
             </File>
             <File>
               <FileName>ffunicode.c</FileName>
@@ -709,14 +779,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>clock.c</FileName>
+              <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\thread.c</FilePath>
+              <FilePath>..\..\..\src\object.c</FilePath>
             </File>
             <File>
               <FileName>irq.c</FileName>
@@ -724,14 +789,9 @@
               <FilePath>..\..\..\src\irq.c</FilePath>
             </File>
             <File>
-              <FileName>object.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
-            </File>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mem.c</FilePath>
+              <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
             <File>
               <FileName>device.c</FileName>
@@ -739,19 +799,9 @@
               <FilePath>..\..\..\src\device.c</FilePath>
             </File>
             <File>
-              <FileName>mempool.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\mempool.c</FilePath>
-            </File>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\components.c</FilePath>
+              <FilePath>..\..\..\src\mem.c</FilePath>
             </File>
             <File>
               <FileName>idle.c</FileName>
@@ -764,59 +814,44 @@
               <FilePath>..\..\..\src\scheduler.c</FilePath>
             </File>
             <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\mempool.c</FilePath>
+            </File>
+            <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\ipc.c</FilePath>
+            </File>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\components.c</FilePath>
+            </File>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\thread.c</FilePath>
             </File>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\kservice.c</FilePath>
             </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\timer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>libc</GroupName>
+          <GroupName>Legacy</GroupName>
           <Files>
             <File>
-              <FileName>stdio.c</FileName>
+              <FileName>workqueue_legacy.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
-            </File>
-            <File>
-              <FileName>mem_std.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
-            </File>
-            <File>
-              <FileName>syscalls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
-            </File>
-            <File>
-              <FileName>libc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\libc.c</FilePath>
-            </File>
-            <File>
-              <FileName>unistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\unistd.c</FilePath>
-            </File>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
-            </File>
-            <File>
-              <FileName>stdlib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
-            </File>
-            <File>
-              <FileName>delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\delay.c</FilePath>
+              <FilePath>..\..\..\components\legacy\ipc\workqueue_legacy.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -824,9 +859,44 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
+              <FileName>stm32f4xx_hal_rtc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_qspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_qspi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32f4xx_hal_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_cryp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cryp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_rcc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_nor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_nor.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hal_cryp_ex.c</FileName>
@@ -839,29 +909,9 @@
               <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_rng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rng.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f4xx_hal_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_rcc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hal_usart.c</FileName>
@@ -869,14 +919,19 @@
               <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_usart.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_cec.c</FileName>
+              <FileName>stm32f4xx_hal_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cec.c</FilePath>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_crc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_qspi.c</FileName>
+              <FileName>stm32f4xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_qspi.c</FilePath>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hal_rcc.c</FileName>
@@ -889,19 +944,14 @@
               <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_pwr.c</FileName>
+              <FileName>stm32f4xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c</FilePath>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>system_stm32f4xx.c</FileName>
+              <FileName>stm32f4xx_hal_rng.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_hal_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_crc.c</FilePath>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rng.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hal_cortex.c</FileName>
@@ -909,19 +959,54 @@
               <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_nor.c</FileName>
+              <FileName>stm32f4xx_hal_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_nor.c</FilePath>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_cryp.c</FileName>
+              <FileName>stm32f4xx_hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cryp.c</FilePath>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_gpio.c</FileName>
+              <FileName>stm32f4xx_hal_cec.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c</FilePath>
+              <FilePath>..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cec.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_stm32f4xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Misaka_rgb_bling</GroupName>
+          <Files>
+            <File>
+              <FileName>Misaka_rgb_bling.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\Misaka_RGB_Bling-1.0.0\Misaka_rgb_bling.c</FilePath>
+            </File>
+            <File>
+              <FileName>Misaka_rgb_bling_port_rtt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\Misaka_RGB_Bling-1.0.0\Examples\Misaka_rgb_bling_port_rtt.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Sensors</GroupName>
+          <Files>
+            <File>
+              <FileName>sensor_cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\sensors\sensor_cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>sensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\sensors\sensor.c</FilePath>
             </File>
           </Files>
         </Group>
