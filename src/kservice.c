@@ -19,6 +19,7 @@
  * 2015-07-06     Bernard      Add rt_assert_handler routine.
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  * 2021-12-20     Meco Man     implement rt_strcpy()
+ * 2022-01-07     Gabriel      add __on_rt_assert_hook
  */
 
 #include <rtthread.h>
@@ -460,7 +461,17 @@ RTM_EXPORT(rt_strncpy);
  */
 char *rt_strcpy(char *dst, const char *src)
 {
-    return rt_strncpy(dst, src, (rt_size_t)-1);
+    char *dest = dst;
+
+    while (*src != '\0')
+    {
+        *dst = *src;
+        dst++;
+        src++;
+    }
+
+    *dst = '\0';
+    return dest;
 }
 RTM_EXPORT(rt_strcpy);
 
@@ -602,7 +613,7 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__, __TIME__);
-    rt_kprintf(" 2006 - 2021 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2022 Copyright by RT-Thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 
@@ -1744,6 +1755,10 @@ int __rt_ffs(int value)
 }
 #endif /* RT_USING_TINY_FFS */
 #endif /* RT_USING_CPU_FFS */
+
+#ifndef __on_rt_assert_hook
+    #define __on_rt_assert_hook(ex, func, line)         __ON_HOOK_ARGS(rt_assert_hook, (ex, func, line))
+#endif
 
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */

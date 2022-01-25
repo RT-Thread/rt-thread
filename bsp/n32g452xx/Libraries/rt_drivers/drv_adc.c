@@ -124,9 +124,9 @@ static rt_err_t n32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
     ADC_InitStructure.ChsNumber             = 1;
     ADC_Init(n32_adc_handler, &ADC_InitStructure);
 
-    if (((n32_adc_handler == ADC2) || (n32_adc_handler == ADC2))
-            && ((n32_adc_get_channel(channel) == ADC_CH_16)
-                || (n32_adc_get_channel(channel) == ADC_CH_18)))
+    if (((n32_adc_handler == ADC1) || (n32_adc_handler == ADC2))
+        && ((n32_adc_get_channel(channel) == ADC_CH_16)
+            || (n32_adc_get_channel(channel) == ADC_CH_18)))
     {
         ADC_EnableTempSensorVrefint(ENABLE);
     }

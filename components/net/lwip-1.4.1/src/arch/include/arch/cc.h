@@ -41,11 +41,11 @@
 #include <stdint.h>
 
 #ifndef BYTE_ORDER
-#ifdef RT_USING_BIG_ENDIAN
+#ifdef ARCH_CPU_BIG_ENDIAN
 #define BYTE_ORDER BIG_ENDIAN
 #else
 #define BYTE_ORDER LITTLE_ENDIAN
-#endif /* RT_USING_BIG_ENDIAN */
+#endif /* ARCH_CPU_BIG_ENDIAN */
 #endif /* BYTE_ORDER */
 
 typedef uint8_t   u8_t;

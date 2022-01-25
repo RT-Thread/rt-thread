@@ -9,7 +9,11 @@
 
 #include <rtthread.h>
 #include <ymodem.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <stdlib.h>
 
 #include <board.h>

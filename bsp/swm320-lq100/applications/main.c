@@ -260,7 +260,11 @@ MSH_CMD_EXPORT(wdt_sample, wdt sample);
 
 #include "drv_spi.h"
 #include "spi_flash_sfud.h"
-#include "dfs_posix.h"
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 static int rt_hw_spi_flash_init(void)
 {
@@ -380,7 +384,11 @@ MSH_CMD_EXPORT(spi_w25q_sample, spi w25q sample);
 //#define SDCARD_NAME "sd0"
 
 //#include "drv_spi.h"
-//#include "dfs_posix.h"
+// #include <dfs_file.h>
+// #include <unistd.h>
+// #include <stdio.h>
+// #include <sys/stat.h>
+// #include <sys/statfs.h>
 //#include "spi_msd.h"
 
 //static int rt_hw_spi1_tfcard(void)
@@ -437,7 +445,11 @@ MSH_CMD_EXPORT(spi_w25q_sample, spi w25q sample);
 #ifdef RT_USING_SDIO
 #define SDCARD_NAME "sd0"
 
-#include "dfs_posix.h"
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 static void sdio_elmfat_sample(void)
 {

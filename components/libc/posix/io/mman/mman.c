@@ -12,7 +12,9 @@
 #include <stdio.h>
 
 #include <rtthread.h>
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 #include "sys/mman.h"
 
