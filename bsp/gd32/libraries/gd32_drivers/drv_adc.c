@@ -1,15 +1,14 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
- * 2021-01-03     iysheng           first version
+ * 2021-02-25     iysheng           first version
  */
 
 #include <board.h>
-#include <drivers/drv_comm.h>
 #include <drivers/adc.h>
 
 #define DBG_TAG             "drv.adc"
@@ -39,7 +38,7 @@ static gd32_adc_device g_gd32_devs[] = {
             GET_PIN(B, 0), GET_PIN(B, 1), GET_PIN(C, 0), GET_PIN(C, 1),
             GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4), GET_PIN(C, 5),
         },
-        ADC0,
+        (void *)ADC0,
     },
 #endif
 
@@ -53,7 +52,7 @@ static gd32_adc_device g_gd32_devs[] = {
             GET_PIN(B, 0), GET_PIN(B, 1), GET_PIN(C, 0), GET_PIN(C, 1),
             GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4), GET_PIN(C, 5),
         },
-        ADC1,
+        (void *)ADC1,
     },
 #endif
 };
@@ -61,53 +60,41 @@ static gd32_adc_device g_gd32_devs[] = {
 /*
  * static void init_pin4adc
  *
- * 初始化指定的管腳爲 analog 模式
  * @ rt_uint32_t pin: pin information
  * return: N/A
  */
 static void init_pin4adc(rt_base_t pin)
 {
-    GPIO_InitPara GPIO_InitStruct = {0};
-
-    GPIO_InitStruct.GPIO_Pin  = PIN_GDPIN(pin);
-    GPIO_InitStruct.GPIO_Speed = GPIO_SPEED_50MHZ;
-    GPIO_InitStruct.GPIO_Mode = GPIO_MODE_AIN;
-    GPIO_Init(PIN_GDPORT(pin), &GPIO_InitStruct);
+    gpio_init(PIN_GDPORT(pin), GPIO_MODE_AIN, GPIO_OSPEED_50MHZ, PIN_GDPIN(pin));
 }
 
 static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
 {
-    ADC_TypeDef *ADCx;
-    ADC_InitPara ADC_InitParaStruct = {0};
+    uint32_t adc_periph;
     gd32_adc_device * gd32_adc = (gd32_adc_device *)device;
 
     if (channel >= MAX_EXTERN_ADC_CHANNEL)
     {
         LOG_E("invalid channel");
-        return -E2BIG;
+        return -RT_EINVAL;
     }
 
-    ADCx = (ADC_TypeDef *)(device->parent.user_data);
+    adc_periph = (uint32_t )(device->parent.user_data);
 
     if (enabled == ENABLE)
     {
         init_pin4adc(gd32_adc->adc_pins[channel]);
-        ADC_InitParaStruct.ADC_Trig_External = ADC_EXTERNAL_TRIGGER_MODE_NONE;
-        /* Fix the channel number to fit the firmware library */
-        ADC_InitParaStruct.ADC_Channel_Number = 1 + channel;
-        ADC_InitParaStruct.ADC_Data_Align = ADC_DATAALIGN_RIGHT;
-        ADC_InitParaStruct.ADC_Mode_Scan = DISABLE;
-        ADC_InitParaStruct.ADC_Mode = ADC_MODE_INDEPENDENT;
-        ADC_InitParaStruct.ADC_Mode_Continuous = ENABLE;
-        ADC_Init(ADCx, &ADC_InitParaStruct);
-
-        ADC_RegularChannel_Config(ADCx, channel, 1, ADC_SAMPLETIME_13POINT5);
-        ADC_Enable(ADCx, ENABLE);
-        ADC_SoftwareStartConv_Enable(ADCx, ENABLE);
+        adc_deinit(adc_periph);
+        adc_channel_length_config(adc_periph, ADC_REGULAR_CHANNEL, 1);
+        adc_data_alignment_config(adc_periph, ADC_DATAALIGN_RIGHT);
+        adc_external_trigger_source_config(adc_periph, ADC_REGULAR_CHANNEL, ADC0_1_2_EXTTRIG_INSERTED_NONE);
+        adc_external_trigger_config(adc_periph, ADC_REGULAR_CHANNEL, ENABLE);
+        adc_regular_channel_config(adc_periph, 0, channel, ADC_SAMPLETIME_13POINT5);
+        adc_enable(adc_periph);
     }
     else
     {
-        ADC_Enable(ADCx, DISABLE);
+        adc_disable(adc_periph);
     }
 
     return 0;
@@ -115,16 +102,17 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
 
 static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
-    ADC_TypeDef *ADCx;
+    uint32_t adc_periph;
 
     if (!value)
     {
         LOG_E("invalid param");
-        return -EINVAL;
+        return -RT_EINVAL;
     }
 
-    ADCx = (ADC_TypeDef *)(device->parent.user_data);
-    *value = ADC_GetConversionValue(ADCx);
+    adc_periph = (uint32_t )(device->parent.user_data);
+    adc_software_trigger_enable(adc_periph, ADC_REGULAR_CHANNEL);
+    *value = adc_regular_data_read(adc_periph);
 
     return 0;
 }
@@ -148,11 +136,11 @@ static int rt_hw_adc_init(void)
     rcu_periph_clock_enable(RCU_ADC1);
 #endif
 
-    for (; i < ARRAY_SIZE(g_gd32_devs); i++)
+    for (; i < sizeof(g_gd32_devs) / sizeof(g_gd32_devs[0]); i++)
     {
         ret = rt_hw_adc_register(&g_gd32_devs[i].adc_dev, \
             (const char *)g_gd32_devs[i].name, \
-            &g_gd32_adc_ops, g_gd32_devs[i].private_data);
+            &g_gd32_adc_ops, (void *)g_gd32_devs[i].private_data);
         if (ret != RT_EOK)
         {
             /* TODO err handler */

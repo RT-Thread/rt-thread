@@ -38,7 +38,7 @@ extern "C" {
                                     EXTI_SOURCE_PIN##pin}
 #else
 #define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,        \
-                                      GPIO##port, GPIO_PIN_##pin,   \
+                                    GPIO##port, GPIO_PIN_##pin,   \
                                     GPIO_PORT_SOURCE_GPIO##port,  \
                                     GPIO_PIN_SOURCE_##pin}
 
@@ -47,6 +47,12 @@ extern "C" {
 #define GD32_PIN_DEFAULT            {-1, (rcu_periph_enum)0, 0, 0, 0, 0}
 
 #define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__GD32_PORT(PORTx) - (rt_base_t)GPIO_BASE)/(0x0400UL) )) + PIN)
+
+#define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
+#define PIN_NO(pin) ((uint8_t)((pin) & 0xFu))
+
+#define PIN_GDPORT(pin) (GPIO_BASE + (0x400u * PIN_PORT(pin)))
+#define PIN_GDPIN(pin) ((uint16_t)(1u << PIN_NO(pin)))
 
 struct pin_index
 {

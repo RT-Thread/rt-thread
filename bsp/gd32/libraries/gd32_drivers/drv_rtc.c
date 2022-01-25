@@ -1,16 +1,15 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
- * 2021-02-20     iysheng           first version
+ * 2022-01-25     iysheng           first version
  */
 
 #include <board.h>
 #include <sys/time.h>
-#include <drivers/drv_comm.h>
 
 #define DBG_TAG             "drv.rtc"
 #define DBG_LVL             DBG_INFO
@@ -29,7 +28,7 @@ static time_t get_rtc_timestamp(void)
 {
     time_t rtc_counter;
 
-    rtc_counter = (time_t)RTC_GetCounter();
+    rtc_counter = (time_t)rtc_counter_get();
 
     return rtc_counter;
 }
@@ -41,15 +40,15 @@ static rt_err_t set_rtc_timestamp(time_t time_stamp)
     rtc_counter = (uint32_t)time_stamp;
 
     /* wait until LWOFF bit in RTC_CTL to 1 */
-    RTC_WaitLWOFF();
+    rtc_lwoff_wait();
     /* enter configure mode */
-    RTC_EnterConfigMode();
+    rtc_configuration_mode_enter();
     /* write data to rtc register */
-    RTC_SetCounter(rtc_counter);
+    rtc_counter_set(rtc_counter);
     /* exit configure mode */
-    RTC_ExitConfigMode();
+    rtc_configuration_mode_exit();
     /* wait until LWOFF bit in RTC_CTL to 1 */
-    RTC_WaitLWOFF();
+    rtc_lwoff_wait();
 
     return RT_EOK;
 }
@@ -94,7 +93,7 @@ static int rt_hw_rtc_init(void)
     time_t rtc_counter;
 
     rcu_periph_clock_enable(RCU_PMU);
-    PWR_BackupAccess_Enable(ENABLE);
+    pmu_backup_write_enable();
     rcu_periph_clock_enable(RCU_BKPI);
 
     rtc_counter = get_rtc_timestamp();
