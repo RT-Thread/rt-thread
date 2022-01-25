@@ -38,7 +38,6 @@ menu "Hardware Drivers Config"
             default y
 
         config BOARD_USING_USB_D_H
-            select BSP_USING_HSOTG
             bool "Enable USB Device or Host function"
             help
                 Choose this option if you need USB function.
