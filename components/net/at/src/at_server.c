@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -38,6 +38,10 @@ static at_server_t at_server_local = RT_NULL;
 static at_cmd_t cmd_table = RT_NULL;
 static rt_size_t cmd_num;
 
+extern rt_size_t at_utils_send(rt_device_t dev,
+                               rt_off_t    pos,
+                               const void *buffer,
+                               rt_size_t   size);
 extern void at_vprintf(rt_device_t device, const char *format, va_list args);
 extern void at_vprintfln(rt_device_t device, const char *format, va_list args);
 
@@ -187,7 +191,7 @@ rt_size_t at_server_send(at_server_t server, const char *buf, rt_size_t size)
         return 0;
     }
 
-    return rt_device_write(server->device, 0, buf, size);
+    return at_utils_send(server->device, 0, buf, size);
 }
 
 /**
@@ -402,7 +406,7 @@ static rt_err_t at_cmd_get_name(const char *cmd_buffer, char *cmd_name)
                 || (*(cmd_buffer + i) >= AT_CMD_CHAR_0 && *(cmd_buffer + i) <= AT_CMD_CHAR_9))
         {
             cmd_name_len = i;
-            memcpy(cmd_name, cmd_buffer, cmd_name_len);
+            rt_memcpy(cmd_name, cmd_buffer, cmd_name_len);
             *(cmd_name + cmd_name_len) = '\0';
 
             return RT_EOK;
@@ -412,7 +416,7 @@ static rt_err_t at_cmd_get_name(const char *cmd_buffer, char *cmd_name)
     return -RT_ERROR;
 }
 
-static rt_err_t at_server_gerchar(at_server_t server, char *ch, rt_int32_t timeout)
+static rt_err_t at_server_getchar(at_server_t server, char *ch, rt_int32_t timeout)
 {
     rt_err_t result = RT_EOK;
 
@@ -504,7 +508,7 @@ static void server_parser(at_server_t server)
         }
 
 __retry:
-        memset(server->recv_buffer, 0x00, AT_SERVER_RECV_BUFF_LEN);
+        rt_memset(server->recv_buffer, 0x00, AT_SERVER_RECV_BUFF_LEN);
         server->cur_recv_len = 0;
     }
 }
@@ -560,7 +564,7 @@ int at_server_init(void)
     at_server_local->echo_mode = 1;
     at_server_local->status = AT_STATUS_UNINITIALIZED;
 
-    memset(at_server_local->recv_buffer, 0x00, AT_SERVER_RECV_BUFF_LEN);
+    rt_memset(at_server_local->recv_buffer, 0x00, AT_SERVER_RECV_BUFF_LEN);
     at_server_local->cur_recv_len = 0;
 
     at_server_local->rx_notice = rt_sem_create("at_svr", 0, RT_IPC_FLAG_FIFO);
@@ -595,8 +599,8 @@ int at_server_init(void)
         goto __exit;
     }
 
-    at_server_local->get_char = at_server_gerchar;
-    memcpy(at_server_local->end_mark, AT_CMD_END_MARK, sizeof(AT_CMD_END_MARK));
+    at_server_local->get_char = at_server_getchar;
+    rt_memcpy(at_server_local->end_mark, AT_CMD_END_MARK, sizeof(AT_CMD_END_MARK));
 
     at_server_local->parser_entry = server_parser;
     at_server_local->parser = rt_thread_create("at_svr",

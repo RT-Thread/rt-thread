@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,12 +13,11 @@
 #include <lwp_mem.h>
 #include <lwp_syscall.h>
 
-#include <dfs_poll.h>
-#include <dfs_select.h>
+#include <poll.h>
+#include <sys/select.h>
 
 #if (defined(RT_USING_SAL) && defined(SAL_USING_POSIX))
 #include <sys/socket.h>
-
 #define SYSCALL_NET(f) ((void*)(f))
 #else
 #define SYSCALL_NET(f) ((void*)sys_notimpl)

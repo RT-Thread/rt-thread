@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,10 +16,10 @@
 void set_led(int state) //set state LED nyala atau mati
 {
     if (state==1)                       //LED nyala
-    { 
+    {
         mbox[0] = 8*4;                  // length of the message
         mbox[1] = MBOX_REQUEST;         // this is a request message
-    
+
         mbox[2] = 0x00038041;   // get serial number command
         mbox[3] = 8;                    // buffer size
         mbox[4] = 0;
@@ -29,10 +29,10 @@ void set_led(int state) //set state LED nyala atau mati
         mbox_call(8, MMU_DISABLE);
     }
     else if (state==0)                  //LED mati
-    { 
+    {
         mbox[0] = 8*4;                  // length of the message
         mbox[1] = MBOX_REQUEST;         // this is a request message
-    
+
         mbox[2] = 0x00038041;   // get serial number command
         mbox[3] = 8;                    // buffer size
         mbox[4] = 0;

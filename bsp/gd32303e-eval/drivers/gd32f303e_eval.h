@@ -17,9 +17,9 @@
 #endif
 
 #include "gd32f30x.h"
-     
+
 /* exported types */
-typedef enum 
+typedef enum
 {
     LED2 = 0,
     LED3 = 1,
@@ -27,7 +27,7 @@ typedef enum
     LED5 = 3
 } led_typedef_enum;
 
-typedef enum 
+typedef enum
 {
     KEY_WAKEUP = 0,
     KEY_TAMPER = 1,
@@ -35,7 +35,7 @@ typedef enum
     KEY_USER2 = 3
 } key_typedef_enum;
 
-typedef enum 
+typedef enum
 {
     KEY_MODE_GPIO = 0,
     KEY_MODE_EXTI = 1
@@ -47,15 +47,15 @@ typedef enum
 #define LED2_PIN                         GPIO_PIN_0
 #define LED2_GPIO_PORT                   GPIOF
 #define LED2_GPIO_CLK                    RCU_GPIOF
-  
+
 #define LED3_PIN                         GPIO_PIN_1
 #define LED3_GPIO_PORT                   GPIOF
 #define LED3_GPIO_CLK                    RCU_GPIOF
-  
+
 #define LED4_PIN                         GPIO_PIN_2
 #define LED4_GPIO_PORT                   GPIOF
 #define LED4_GPIO_CLK                    RCU_GPIOF
-  
+
 #define LED5_PIN                         GPIO_PIN_3
 #define LED5_GPIO_PORT                   GPIOF
 #define LED5_GPIO_CLK                    RCU_GPIOF
@@ -85,7 +85,7 @@ typedef enum
 #define WAKEUP_KEY_EXTI_LINE             EXTI_0
 #define WAKEUP_KEY_EXTI_PORT_SOURCE      GPIO_PORT_SOURCE_GPIOA
 #define WAKEUP_KEY_EXTI_PIN_SOURCE       GPIO_PIN_SOURCE_0
-#define WAKEUP_KEY_EXTI_IRQn             EXTI0_IRQn  
+#define WAKEUP_KEY_EXTI_IRQn             EXTI0_IRQn
 
 /* tamper push-button */
 #define TAMPER_KEY_PIN                   GPIO_PIN_13

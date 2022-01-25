@@ -22,6 +22,7 @@
 /* defined the LED_Y pin: PB8 */
 #define LED_Y   NU_GET_PININDEX(NU_PB, 8)
 
+#if !defined(BSP_USING_USBH)
 /* defined the Key1 pin: PE10 */
 #define KEY_1   NU_GET_PININDEX(NU_PE, 10)
 
@@ -47,6 +48,8 @@ void nu_button_cb(void *args)
 }
 #endif
 
+#endif
+
 int main(int argc, char **argv)
 {
 #if defined(RT_USING_PIN)
@@ -58,6 +61,7 @@ int main(int argc, char **argv)
     /* set LED_Y pin mode to output */
     rt_pin_mode(LED_Y, PIN_MODE_OUTPUT);
 
+#if !defined(BSP_USING_USBH)
     /* set KEY_1 pin mode to input */
     rt_pin_mode(KEY_1, PIN_MODE_INPUT_PULLUP);
 
@@ -69,6 +73,7 @@ int main(int argc, char **argv)
 
     rt_pin_attach_irq(KEY_2, PIN_IRQ_MODE_FALLING, nu_button_cb, &u32Key2);
     rt_pin_irq_enable(KEY_2, PIN_IRQ_ENABLE);
+#endif
 
     while (counter--)
     {

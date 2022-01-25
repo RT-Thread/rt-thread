@@ -1,23 +1,12 @@
-/**
-  ******************************************************************************
-  * @file    at32_msp.c
-  * @author  Artery Technology
-  * @version V1.0.0
-  * @date    2020-01-10
-  * @brief   Msp source file
-  ******************************************************************************
-  * @attention
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, ARTERYTEK SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2018 ArteryTek</center></h2>
-  ******************************************************************************
-  */
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2021-04-13     shelton      first version
+ */
 
 #include <at32f4xx.h>
 #include <rtthread.h>
@@ -195,34 +184,34 @@ void at32_msp_adc_init(void *Instance)
     GPIO_InitType GPIO_InitStruct;
     ADC_Type *ADCx = (ADC_Type *)Instance;
 
-#ifdef BSP_USING_ADC1  
+#ifdef BSP_USING_ADC1
     if(ADCx == ADC1)
-    {   
+    {
         /* ADC1 & GPIO clock enable */
         RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_ADC1 | RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB | RCC_APB2PERIPH_GPIOC,ENABLE);
-		
-        /* Configure ADC Channel as analog input */      
+
+        /* Configure ADC Channel as analog input */
         GPIO_StructInit(&GPIO_InitStruct);
         GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | GPIO_Pins_4 | GPIO_Pins_5;
         GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
         GPIO_Init(GPIOC, &GPIO_InitStruct);
-        
+
     }
 #endif
 
-#ifdef BSP_USING_ADC2  
+#ifdef BSP_USING_ADC2
     if(ADCx == ADC2)
     {
         /* ADC2 & GPIO clock enable */
         RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_ADC2 | RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB | RCC_APB2PERIPH_GPIOC,ENABLE);
-      
-        /* Configure ADC Channel as analog input */      
+
+        /* Configure ADC Channel as analog input */
         GPIO_StructInit(&GPIO_InitStruct);
         GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | GPIO_Pins_4 | GPIO_Pins_5;
         GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
         GPIO_Init(GPIOC, &GPIO_InitStruct);
     }
-#endif     
+#endif
 }
 #endif /* BSP_USING_ADC */
 
@@ -237,7 +226,7 @@ void at32_msp_hwtmr_init(void *Instance)
         /* TMR3 clock enable */
         RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3, ENABLE);
     }
-#endif 
+#endif
 
 #ifdef BSP_USING_HWTMR4
     if(TMRx == TMR4)
@@ -256,3 +245,44 @@ void at32_msp_hwtmr_init(void *Instance)
 #endif
 }
 #endif
+
+#ifdef BSP_USING_CAN
+void at32_msp_can_init(void *Instance)
+{
+    GPIO_InitType GPIO_InitStruct;
+    CAN_Type *CANx = (CAN_Type *)Instance;
+
+    GPIO_StructInit(&GPIO_InitStruct);
+    GPIO_InitStruct.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+#ifdef BSP_USING_CAN1
+    if(CAN1 == CANx)
+    {
+        RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_CAN1, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA, ENABLE);
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_12;
+        GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_11;
+        GPIO_Init(GPIOA, &GPIO_InitStruct);
+    }
+#endif
+#ifdef BSP_USING_CAN2
+    if(CAN2 == CANx)
+    {
+        RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_CAN2, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_AFIO, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOB, ENABLE);
+        GPIO_PinsRemapConfig(AFIO_MAP6_CAN2_0001, ENABLE);
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_6;
+        GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_5;
+        GPIO_Init(GPIOB, &GPIO_InitStruct);
+    }
+#endif
+}
+#endif /* BSP_USING_CAN */

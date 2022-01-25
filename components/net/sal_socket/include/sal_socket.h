@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,6 +11,7 @@
 #ifndef SAL_SOCKET_H__
 #define SAL_SOCKET_H__
 
+#include <stddef.h>
 #include <arpa/inet.h>
 
 #ifdef __cplusplus
@@ -171,7 +172,7 @@ struct sockaddr_in
 #endif /* NETDEV_IPV4 */
 
 #if NETDEV_IPV6
-struct sockaddr_in6 
+struct sockaddr_in6
 {
   uint8_t         sin6_len;      /* length of this structure    */
   sa_family_t     sin6_family;   /* AF_INET6                    */

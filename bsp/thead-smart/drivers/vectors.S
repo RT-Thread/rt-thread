@@ -10,6 +10,8 @@
 
 
 #include <csi_config.h>
+#include <rtconfig.h>
+#include <cpuport.h>
 
 /* Enable interrupts when returning from the handler */
 #define MSTATUS_PRV1 0x1880
@@ -47,7 +49,7 @@ irq_mstatus_fs_flag:
 Default_IRQHandler:
     ipush
 
-#ifdef ARCH_RISCV_FPU
+#ifdef __riscv_flen
     csrr    t1, mstatus
     srli    t1, t1, 13
     andi    t1, t1, 0x3
@@ -92,7 +94,7 @@ Default_IRQHandler:
     li      t0, MSTATUS_PRV1
     csrs    mstatus, t0
 
-#ifdef ARCH_RISCV_FPU    
+#ifdef __riscv_flen
     la      t0, irq_mstatus_fs_flag
     lw      t1, (t0)
     li      t0, 0x3
@@ -135,6 +137,7 @@ Default_IRQHandler:
     .type   trap, %function
 trap:
     /* Check for interrupt */
+    j       .
     addi    sp, sp, -4
     sw      t0, 0x0(sp)
     csrr    t0, mcause
@@ -235,7 +238,7 @@ Default_Handler:
     sw      t5, 56(sp)
     sw      t6, 60(sp)
 
-#ifdef ARCH_RISCV_FPU
+#ifdef __riscv_flen
     addi    sp,    sp, -(20*FREGBYTES)
     FSTORE  ft0,   0 * FREGBYTES(sp)
     FSTORE  ft1,   1 * FREGBYTES(sp)
@@ -263,7 +266,7 @@ Default_Handler:
     lw      t0, (t0)
     jalr    t0
 
-#ifdef ARCH_RISCV_FPU
+#ifdef __riscv_flen
     FLOAD   ft0,   0 * FREGBYTES(sp)
     FLOAD   ft1,   1 * FREGBYTES(sp)
     FLOAD   ft2,   2 * FREGBYTES(sp)

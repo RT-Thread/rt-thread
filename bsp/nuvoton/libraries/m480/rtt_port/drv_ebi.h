@@ -13,7 +13,7 @@
 #define __DRV_EBI_H___
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /**
   * @brief      Initialize EBI for specify Bank

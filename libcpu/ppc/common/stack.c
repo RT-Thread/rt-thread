@@ -1,7 +1,7 @@
 /*
  * File      : stack.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2011, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2021, RT-Thread Development Team
  *
  * The license and distribution terms for this file may be
  * found in the file LICENSE in this distribution or at
@@ -9,7 +9,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-02-14     Fred         first implementation for 
+ * 2011-02-14     Fred         first implementation for
  */
 
 #include <rtthread.h>

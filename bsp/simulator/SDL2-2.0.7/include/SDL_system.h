@@ -42,7 +42,7 @@ extern "C" {
 
 /* Platform specific functions for Windows */
 #ifdef __WIN32__
-	
+
 /**
    \brief Set a function that is called for every windows message, before TranslateMessage()
 */

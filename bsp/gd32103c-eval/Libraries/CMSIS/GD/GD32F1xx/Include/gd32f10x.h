@@ -173,13 +173,13 @@ typedef enum IRQn {
     CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
     CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
     EXTI9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
-    TIMER1_BRK_IRQn             = 24,     /*!< TIMER1 Break Interrupt                               */
-    TIMER1_UP_IRQn              = 25,     /*!< TIMER1 Update Interrupt                              */
-    TIMER1_TRG_COM_IRQn         = 26,     /*!< TIMER1 Trigger and Commutation Interrupt             */
-    TIMER1_CC_IRQn              = 27,     /*!< TIMER1 Capture Compare Interrupt                     */
-    TIMER2_IRQn                 = 28,     /*!< TIMER2 global Interrupt                              */
-    TIMER3_IRQn                 = 29,     /*!< TIMER3 global Interrupt                              */
-    TIMER4_IRQn                 = 30,     /*!< TIMER4 global Interrupt                              */
+    TIMER0_BRK_IRQn             = 24,     /*!< TIMER0 Break Interrupt                               */
+    TIMER0_UP_IRQn              = 25,     /*!< TIMER0 Update Interrupt                              */
+    TIMER0_TRG_COM_IRQn         = 26,     /*!< TIMER0 Trigger and Commutation Interrupt             */
+    TIMER0_CC_IRQn              = 27,     /*!< TIMER0 Capture Compare Interrupt                     */
+    TIMER1_IRQn                 = 28,     /*!< TIMER1 global Interrupt                              */
+    TIMER2_IRQn                 = 29,     /*!< TIMER2 global Interrupt                              */
+    TIMER3_IRQn                 = 30,     /*!< TIMER3 global Interrupt                              */
     I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
     I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
     I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt                                 */
@@ -202,13 +202,13 @@ typedef enum IRQn {
                                   CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
                                   CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
                                   EXTI9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
-                                  TIMER1_BRK_IRQn             = 24,     /*!< TIMER1 Break Interrupt                               */
-                                  TIMER1_UP_IRQn              = 25,     /*!< TIMER1 Update Interrupt                              */
-                                  TIMER1_TRG_COM_IRQn         = 26,     /*!< TIMER1 Trigger and Commutation Interrupt             */
-                                  TIMER1_CC_IRQn              = 27,     /*!< TIMER1 Capture Compare Interrupt                     */
-                                  TIMER2_IRQn                 = 28,     /*!< TIMER2 global Interrupt                              */
-                                  TIMER3_IRQn                 = 29,     /*!< TIMER3 global Interrupt                              */
-                                  TIMER4_IRQn                 = 30,     /*!< TIMER4 global Interrupt                              */
+                                  TIMER0_BRK_IRQn             = 24,     /*!< TIMER0 Break Interrupt                               */
+                                  TIMER0_UP_IRQn              = 25,     /*!< TIMER0 Update Interrupt                              */
+                                  TIMER0_TRG_COM_IRQn         = 26,     /*!< TIMER0 Trigger and Commutation Interrupt             */
+                                  TIMER0_CC_IRQn              = 27,     /*!< TIMER0 Capture Compare Interrupt                     */
+                                  TIMER1_IRQn                 = 28,     /*!< TIMER1 global Interrupt                              */
+                                  TIMER2_IRQn                 = 29,     /*!< TIMER2 global Interrupt                              */
+                                  TIMER3_IRQn                 = 30,     /*!< TIMER3 global Interrupt                              */
                                   I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
                                   I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
                                   I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt                                 */
@@ -221,19 +221,19 @@ typedef enum IRQn {
                                   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
                                   RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
                                   USBWakeUp_IRQn              = 42,     /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */
-                                  TIMER8_BRK_IRQn             = 43,     /*!< TIMER8 Break Interrupt                               */
-                                  TIMER8_UP_IRQn              = 44,     /*!< TIMER8 Update Interrupt                              */
-                                  TIMER8_TRG_COM_IRQn         = 45,     /*!< TIMER8 Trigger and Commutation Interrupt             */
-                                  TIMER8_CC_IRQn              = 46,     /*!< TIMER8 Capture Compare Interrupt                     */
+                                  TIMER7_BRK_IRQn             = 43,     /*!< TIMER7 Break Interrupt                               */
+                                  TIMER7_UP_IRQn              = 44,     /*!< TIMER7 Update Interrupt                              */
+                                  TIMER7_TRG_COM_IRQn         = 45,     /*!< TIMER7 Trigger and Commutation Interrupt             */
+                                  TIMER7_CC_IRQn              = 46,     /*!< TIMER7 Capture Compare Interrupt                     */
                                   ADC3_IRQn                   = 47,     /*!< ADC3 global Interrupt                                */
                                   EXMC_IRQn                   = 48,     /*!< EXMC global Interrupt                                */
                                   SDIO_IRQn                   = 49,     /*!< SDIO global Interrupt                                */
-                                  TIMER5_IRQn                 = 50,     /*!< TIMER5 global Interrupt                              */
+                                  TIMER4_IRQn                 = 50,     /*!< TIMER4 global Interrupt                              */
                                   SPI3_IRQn                   = 51,     /*!< SPI3 global Interrupt                                */
                                   UART3_IRQn                  = 52,     /*!< UART4 global Interrupt                               */
                                   UART4_IRQn                  = 53,     /*!< UART5 global Interrupt                               */
-                                  TIMER6_IRQn                 = 54,     /*!< TIMER6 global Interrupt                              */
-                                  TIMER7_IRQn                 = 55,     /*!< TIMER7 global Interrupt                              */
+                                  TIMER5_IRQn                 = 54,     /*!< TIMER5 global Interrupt                              */
+                                  TIMER6_IRQn                 = 55,     /*!< TIMER6 global Interrupt                              */
                                   DMA2_Channel1_IRQn          = 56,     /*!< DMA2 Channel 1 global Interrupt                      */
                                   DMA2_Channel2_IRQn          = 57,     /*!< DMA2 Channel 2 global Interrupt                      */
                                   DMA2_Channel3_IRQn          = 58,     /*!< DMA2 Channel 3 global Interrupt                      */
@@ -247,13 +247,13 @@ typedef enum IRQn {
                                           CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
                                           CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
                                           EXTI9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
-                                          TIMER1_BRK_TIMER9_IRQn      = 24,     /*!< TIMER1 Break Interrupt and TIMER9 global Interrupt   */
-                                          TIMER1_UP_TIMER10_IRQn      = 25,     /*!< TIMER1 Update Interrupt and TIMER10 global Interrupt */
-                                          TIMER1_TRG_COM_TIMER11_IRQn = 26,     /*!< TIMER1 Trigger and Commutation Interrupt and TIMER11 global interrupt */
-                                          TIMER1_CC_IRQn              = 27,     /*!< TIMER1 Capture Compare Interrupt                     */
-                                          TIMER2_IRQn                 = 28,     /*!< TIMER2 global Interrupt                              */
-                                          TIMER3_IRQn                 = 29,     /*!< TIMER3 global Interrupt                              */
-                                          TIMER4_IRQn                 = 30,     /*!< TIMER4 global Interrupt                              */
+                                          TIMER0_BRK_TIMER8_IRQn      = 24,     /*!< TIMER0 Break Interrupt and TIMER8 global Interrupt   */
+                                          TIMER0_UP_TIMER9_IRQn       = 25,     /*!< TIMER0 Update Interrupt and TIMER9 global Interrupt */
+                                          TIMER0_TRG_COM_TIMER10_IRQn = 26,     /*!< TIMER0 Trigger and Commutation Interrupt and TIMER10 global interrupt */
+                                          TIMER0_CC_IRQn              = 27,     /*!< TIMER0 Capture Compare Interrupt                     */
+                                          TIMER1_IRQn                 = 28,     /*!< TIMER1 global Interrupt                              */
+                                          TIMER2_IRQn                 = 29,     /*!< TIMER2 global Interrupt                              */
+                                          TIMER3_IRQn                 = 30,     /*!< TIMER3 global Interrupt                              */
                                           I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
                                           I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
                                           I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt                                 */
@@ -266,19 +266,19 @@ typedef enum IRQn {
                                           EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
                                           RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
                                           USBWakeUp_IRQn              = 42,     /*!< USB Device WakeUp from suspend through EXTI Line Interrupt */
-                                          TIMER8_BRK_TIMER12_IRQn     = 43,     /*!< TIMER8 Break Interrupt and TIMER12 global Interrupt  */
-                                          TIMER8_UP_TIMER13_IRQn      = 44,     /*!< TIMER8 Update Interrupt and TIMER13 global Interrupt */
-                                          TIMER8_TRG_COM_TIMER14_IRQn = 45,     /*!< TIMER8 Trigger and Commutation Interrupt and TIMER14 global interrupt */
-                                          TIMER8_CC_IRQn              = 46,     /*!< TIMER8 Capture Compare Interrupt                     */
+                                          TIMER7_BRK_TIMER11_IRQn     = 43,     /*!< TIMER7 Break Interrupt and TIMER11 global Interrupt  */
+                                          TIMER7_UP_TIMER12_IRQn      = 44,     /*!< TIMER7 Update Interrupt and TIMER12 global Interrupt */
+                                          TIMER7_TRG_COM_TIMER13_IRQn = 45,     /*!< TIMER7 Trigger and Commutation Interrupt and TIMER13 global interrupt */
+                                          TIMER7_CC_IRQn              = 46,     /*!< TIMER7 Capture Compare Interrupt                     */
                                           ADC3_IRQn                   = 47,     /*!< ADC3 global Interrupt                                */
                                           EXMC_IRQn                   = 48,     /*!< EXMC global Interrupt                                */
                                           SDIO_IRQn                   = 49,     /*!< SDIO global Interrupt                                */
-                                          TIMER5_IRQn                 = 50,     /*!< TIMER5 global Interrupt                              */
+                                          TIMER4_IRQn                 = 50,     /*!< TIMER4 global Interrupt                              */
                                           SPI3_IRQn                   = 51,     /*!< SPI3 global Interrupt                                */
                                           UART4_IRQn                  = 52,     /*!< UART4 global Interrupt                               */
                                           UART5_IRQn                  = 53,     /*!< UART5 global Interrupt                               */
-                                          TIMER6_IRQn                 = 54,     /*!< TIMER6 global Interrupt                              */
-                                          TIMER7_IRQn                 = 55,     /*!< TIMER7 global Interrupt                              */
+                                          TIMER5_IRQn                 = 54,     /*!< TIMER5 global Interrupt                              */
+                                          TIMER6_IRQn                 = 55,     /*!< TIMER6 global Interrupt                              */
                                           DMA2_Channel1_IRQn          = 56,     /*!< DMA2 Channel 1 global Interrupt                      */
                                           DMA2_Channel2_IRQn          = 57,     /*!< DMA2 Channel 2 global Interrupt                      */
                                           DMA2_Channel3_IRQn          = 58,     /*!< DMA2 Channel 3 global Interrupt                      */
@@ -292,13 +292,13 @@ typedef enum IRQn {
                                                   CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
                                                   CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
                                                   EXTI9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
-                                                  TIMER1_BRK_TIMER9_IRQn      = 24,     /*!< TIMER1 Break Interrupt and TIMER9 global Interrupt   */
-                                                  TIMER1_UP_TIMER10_IRQn      = 25,     /*!< TIMER1 Update Interrupt and TIMER10 global Interrupt */
-                                                  TIMER1_TRG_COM_TIMER11_IRQn = 26,     /*!< TIMER1 Trigger and Commutation Interrupt and TIMER11 global interrupt */
-                                                  TIMER1_CC_IRQn              = 27,     /*!< TIMER1 Capture Compare Interrupt                     */
-                                                  TIMER2_IRQn                 = 28,     /*!< TIMER2 global Interrupt                              */
-                                                  TIMER3_IRQn                 = 29,     /*!< TIMER3 global Interrupt                              */
-                                                  TIMER4_IRQn                 = 30,     /*!< TIMER4 global Interrupt                              */
+                                                  TIMER0_BRK_TIMER8_IRQn      = 24,     /*!< TIMER0 Break Interrupt and TIMER8 global Interrupt   */
+                                                  TIMER0_UP_TIMER9_IRQn       = 25,     /*!< TIMER0 Update Interrupt and TIMER9 global Interrupt */
+                                                  TIMER0_TRG_COM_TIMER10_IRQn = 26,     /*!< TIMER0 Trigger and Commutation Interrupt and TIMER10 global interrupt */
+                                                  TIMER0_CC_IRQn              = 27,     /*!< TIMER0 Capture Compare Interrupt                     */
+                                                  TIMER1_IRQn                 = 28,     /*!< TIMER1 global Interrupt                              */
+                                                  TIMER2_IRQn                 = 29,     /*!< TIMER2 global Interrupt                              */
+                                                  TIMER3_IRQn                 = 30,     /*!< TIMER3 global Interrupt                              */
                                                   I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
                                                   I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
                                                   I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt                                 */
@@ -311,18 +311,18 @@ typedef enum IRQn {
                                                   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
                                                   RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
                                                   OTG_FS_WKUP_IRQn            = 42,     /*!< USB OTG FS WakeUp from suspend through EXTI Line Interrupt */
-                                                  TIMER8_BRK_TIMER12_IRQn     = 43,     /*!< TIMER8 Break Interrupt and TIMER12 global Interrupt  */
-                                                  TIMER8_UP_TIMER13_IRQn      = 44,     /*!< TIMER8 Update Interrupt and TIMER13 global Interrupt */
-                                                  TIMER8_TRG_COM_TIMER14_IRQn = 45,     /*!< TIMER8 Trigger and Commutation Interrupt and TIMER14 global interrupt */
-                                                  TIMER8_CC_IRQn              = 46,     /*!< TIMER8 Capture Compare Interrupt                     */
+                                                  TIMER7_BRK_TIMER11_IRQn     = 43,     /*!< TIMER7 Break Interrupt and TIMER11 global Interrupt  */
+                                                  TIMER7_UP_TIMER12_IRQn      = 44,     /*!< TIMER7 Update Interrupt and TIMER12 global Interrupt */
+                                                  TIMER7_TRG_COM_TIMER13_IRQn = 45,     /*!< TIMER7 Trigger and Commutation Interrupt and TIMER13 global interrupt */
+                                                  TIMER7_CC_IRQn              = 46,     /*!< TIMER7 Capture Compare Interrupt                     */
                                                   ADC3_IRQn                   = 47,     /*!< ADC3 global Interrupt                                */
                                                   EXMC_IRQn                   = 48,     /*!< EXMC global Interrupt                                */
-                                                  TIMER5_IRQn                 = 50,     /*!< TIMER5 global Interrupt                              */
+                                                  TIMER4_IRQn                 = 50,     /*!< TIMER4 global Interrupt                              */
                                                   SPI3_IRQn                   = 51,     /*!< SPI3 global Interrupt                                */
                                                   UART4_IRQn                  = 52,     /*!< UART4 global Interrupt                               */
                                                   UART5_IRQn                  = 53,     /*!< UART5 global Interrupt                               */
-                                                  TIMER6_IRQn                 = 54,     /*!< TIMER6 global Interrupt                              */
-                                                  TIMER7_IRQn                 = 55,     /*!< TIMER7 global Interrupt                              */
+                                                  TIMER5_IRQn                 = 54,     /*!< TIMER5 global Interrupt                              */
+                                                  TIMER6_IRQn                 = 55,     /*!< TIMER6 global Interrupt                              */
                                                   DMA2_Channel1_IRQn          = 56,     /*!< DMA2 Channel 1 global Interrupt                      */
                                                   DMA2_Channel2_IRQn          = 57,     /*!< DMA2 Channel 2 global Interrupt                      */
                                                   DMA2_Channel3_IRQn          = 58,     /*!< DMA2 Channel 3 global Interrupt                      */
@@ -1090,15 +1090,15 @@ typedef struct {
 #define APB2PERIPH_BASE       (PERIPH_BASE + 0x10000)
 #define AHBPERIPH_BASE        (PERIPH_BASE + 0x20000)
 
-#define TIMER2_BASE           (APB1PERIPH_BASE + 0x0000)
-#define TIMER3_BASE           (APB1PERIPH_BASE + 0x0400)
-#define TIMER4_BASE           (APB1PERIPH_BASE + 0x0800)
-#define TIMER5_BASE           (APB1PERIPH_BASE + 0x0C00)
-#define TIMER6_BASE           (APB1PERIPH_BASE + 0x1000)
-#define TIMER7_BASE           (APB1PERIPH_BASE + 0x1400)
-#define TIMER12_BASE          (APB1PERIPH_BASE + 0x1800)
-#define TIMER13_BASE          (APB1PERIPH_BASE + 0x1C00)
-#define TIMER14_BASE          (APB1PERIPH_BASE + 0x2000)
+#define TIMER1_BASE           (APB1PERIPH_BASE + 0x0000)
+#define TIMER2_BASE           (APB1PERIPH_BASE + 0x0400)
+#define TIMER3_BASE           (APB1PERIPH_BASE + 0x0800)
+#define TIMER4_BASE           (APB1PERIPH_BASE + 0x0C00)
+#define TIMER5_BASE           (APB1PERIPH_BASE + 0x1000)
+#define TIMER6_BASE           (APB1PERIPH_BASE + 0x1400)
+#define TIMER11_BASE          (APB1PERIPH_BASE + 0x1800)
+#define TIMER12_BASE          (APB1PERIPH_BASE + 0x1C00)
+#define TIMER13_BASE          (APB1PERIPH_BASE + 0x2000)
 #define RTC_BASE              (APB1PERIPH_BASE + 0x2800)
 #define WWDG_BASE             (APB1PERIPH_BASE + 0x2C00)
 #define IWDG_BASE             (APB1PERIPH_BASE + 0x3000)
@@ -1126,17 +1126,17 @@ typedef struct {
 #define GPIOG_BASE            (APB2PERIPH_BASE + 0x2000)
 #define ADC0_BASE             (APB2PERIPH_BASE + 0x2400)
 #define ADC1_BASE             (APB2PERIPH_BASE + 0x2800)
-#define TIMER1_BASE           (APB2PERIPH_BASE + 0x2C00)
+#define TIMER0_BASE           (APB2PERIPH_BASE + 0x2C00)
 #define SPI1_BASE             (APB2PERIPH_BASE + 0x3000)
-#define TIMER8_BASE           (APB2PERIPH_BASE + 0x3400)
+#define TIMER7_BASE           (APB2PERIPH_BASE + 0x3400)
 #define USART0_BASE           (APB2PERIPH_BASE + 0x3800)
 #define ADC3_BASE             (APB2PERIPH_BASE + 0x3C00)
-#define TIMER15_BASE          (APB2PERIPH_BASE + 0x4000)
-#define TIMER16_BASE          (APB2PERIPH_BASE + 0x4400)
-#define TIMER17_BASE          (APB2PERIPH_BASE + 0x4800)
-#define TIMER9_BASE           (APB2PERIPH_BASE + 0x4C00)
-#define TIMER10_BASE          (APB2PERIPH_BASE + 0x5000)
-#define TIMER11_BASE          (APB2PERIPH_BASE + 0x5400)
+#define TIMER14_BASE          (APB2PERIPH_BASE + 0x4000)
+#define TIMER15_BASE          (APB2PERIPH_BASE + 0x4400)
+#define TIMER16_BASE          (APB2PERIPH_BASE + 0x4800)
+#define TIMER8_BASE           (APB2PERIPH_BASE + 0x4C00)
+#define TIMER9_BASE           (APB2PERIPH_BASE + 0x5000)
+#define TIMER10_BASE          (APB2PERIPH_BASE + 0x5400)
 
 #define SDIO_BASE             (PERIPH_BASE + 0x18000)
 
@@ -1183,15 +1183,15 @@ typedef struct {
   * @{
   */
 
+#define TIMER1                ((TIMER_TypeDef *) TIMER1_BASE)
 #define TIMER2                ((TIMER_TypeDef *) TIMER2_BASE)
 #define TIMER3                ((TIMER_TypeDef *) TIMER3_BASE)
 #define TIMER4                ((TIMER_TypeDef *) TIMER4_BASE)
 #define TIMER5                ((TIMER_TypeDef *) TIMER5_BASE)
 #define TIMER6                ((TIMER_TypeDef *) TIMER6_BASE)
-#define TIMER7                ((TIMER_TypeDef *) TIMER7_BASE)
+#define TIMER11               ((TIMER_TypeDef *) TIMER11_BASE)
 #define TIMER12               ((TIMER_TypeDef *) TIMER12_BASE)
 #define TIMER13               ((TIMER_TypeDef *) TIMER13_BASE)
-#define TIMER14               ((TIMER_TypeDef *) TIMER14_BASE)
 #define RTC                   ((RTC_TypeDef *) RTC_BASE)
 #define WWDG                  ((WWDG_TypeDef *) WWDG_BASE)
 #define IWDG                  ((IWDG_TypeDef *) IWDG_BASE)
@@ -1220,18 +1220,18 @@ typedef struct {
 #define GPIOG                 ((GPIO_TypeDef *) GPIOG_BASE)
 #define ADC0                  ((ADC_TypeDef *) ADC0_BASE)
 #define ADC1                  ((ADC_TypeDef *) ADC1_BASE)
-#define TIMER1                ((TIMER_TypeDef *) TIMER1_BASE)
+#define TIMER0                ((TIMER_TypeDef *) TIMER0_BASE)
 #define SPI1                  ((SPI_TypeDef *) SPI1_BASE)
-#define TIMER8                ((TIMER_TypeDef *) TIMER8_BASE)
+#define TIMER7                ((TIMER_TypeDef *) TIMER7_BASE)
 #define USART0                ((USART_TypeDef *) USART0_BASE)
 #define USART1                ((USART_TypeDef *) USART1_BASE)
 #define ADC3                  ((ADC_TypeDef *) ADC3_BASE)
+#define TIMER14               ((TIMER_TypeDef *) TIMER14_BASE)
 #define TIMER15               ((TIMER_TypeDef *) TIMER15_BASE)
 #define TIMER16               ((TIMER_TypeDef *) TIMER16_BASE)
-#define TIMER17               ((TIMER_TypeDef *) TIMER17_BASE)
+#define TIMER8                ((TIMER_TypeDef *) TIMER8_BASE)
 #define TIMER9                ((TIMER_TypeDef *) TIMER9_BASE)
 #define TIMER10               ((TIMER_TypeDef *) TIMER10_BASE)
-#define TIMER11               ((TIMER_TypeDef *) TIMER11_BASE)
 #define SDIO                  ((SDIO_TypeDef *) SDIO_BASE)
 #define DMA1                  ((DMA_TypeDef *) DMA1_BASE)
 #define DMA2                  ((DMA_TypeDef *) DMA2_BASE)
@@ -7050,26 +7050,26 @@ typedef struct {
 #define  RCC_APB2RCR_PGRST                          ((uint32_t)0x00000100)         /*!< GPIOF clock reset */
 #define  RCC_APB2RCR_ADC0RST                        ((uint32_t)0x00000200)         /*!< ADC0 clock reset */
 #define  RCC_APB2RCR_ADC1RST                        ((uint32_t)0x00000400)         /*!< ADC1 clock reset */
-#define  RCC_APB2RCR_TIMER1RST                      ((uint32_t)0x00000800)         /*!< TIMER1 clock reset */
+#define  RCC_APB2RCR_TIMER0RST                      ((uint32_t)0x00000800)         /*!< TIMER0 clock reset */
 #define  RCC_APB2RCR_SPI1RST                        ((uint32_t)0x00001000)         /*!< SPI1 clock reset */
-#define  RCC_APB2RCR_TIMER8RST                      ((uint32_t)0x00002000)         /*!< TIMER8 clock reset */
+#define  RCC_APB2RCR_TIMER7RST                      ((uint32_t)0x00002000)         /*!< TIMER7 clock reset */
 #define  RCC_APB2RCR_USART0RST                      ((uint32_t)0x00004000)         /*!< USART1 clock reset */
 #define  RCC_APB2RCR_ADC3RST                        ((uint32_t)0x00008000)         /*!< ADC3 clock reset */
-#define  RCC_APB2RCR_TIMER9RST                      ((uint32_t)0x00080000)         /*!< TIMER9 clock reset */
-#define  RCC_APB2RCR_TIMER10RST                     ((uint32_t)0x00100000)         /*!< TIMER10 clock reset */
-#define  RCC_APB2RCR_TIMER11RST                     ((uint32_t)0x00200000)         /*!< TIMER11 clock reset */
+#define  RCC_APB2RCR_TIMER8RST                      ((uint32_t)0x00080000)         /*!< TIMER8 clock reset */
+#define  RCC_APB2RCR_TIMER9RST                      ((uint32_t)0x00100000)         /*!< TIMER9 clock reset */
+#define  RCC_APB2RCR_TIMER10RST                     ((uint32_t)0x00200000)         /*!< TIMER10 clock reset */
 
 /*****************  Bit definition for RCC_APB1RCR register  *****************/
 
-#define  RCC_APB1RCR_TIMER2RST                      ((uint32_t)0x00000001)        /*!< TIMER2 clock reset */
-#define  RCC_APB1RCR_TIMER3RST                      ((uint32_t)0x00000002)        /*!< TIMER3 clock reset */
-#define  RCC_APB1RCR_TIMER4RST                      ((uint32_t)0x00000004)        /*!< TIMER4 clock reset */
-#define  RCC_APB1RCR_TIMER5RST                      ((uint32_t)0x00000008)        /*!< TIMER8 clock reset */
-#define  RCC_APB1RCR_TIMER6RST                      ((uint32_t)0x00000010)        /*!< TIMER6 clock reset */
-#define  RCC_APB1RCR_TIMER7RST                      ((uint32_t)0x00000020)        /*!< TIMER7 clock reset */
-#define  RCC_APB1RCR_TIMER12RST                     ((uint32_t)0x00000040)        /*!< TIMER12 clock reset */
-#define  RCC_APB1RCR_TIMER13RST                     ((uint32_t)0x00000080)        /*!< TIMER13 clock reset */
-#define  RCC_APB1RCR_TIMER14RST                     ((uint32_t)0x00000100)        /*!< TIMER14 clock reset */
+#define  RCC_APB1RCR_TIMER1RST                      ((uint32_t)0x00000001)        /*!< TIMER1 clock reset */
+#define  RCC_APB1RCR_TIMER2RST                      ((uint32_t)0x00000002)        /*!< TIMER2 clock reset */
+#define  RCC_APB1RCR_TIMER3RST                      ((uint32_t)0x00000004)        /*!< TIMER3 clock reset */
+#define  RCC_APB1RCR_TIMER4RST                      ((uint32_t)0x00000008)        /*!< TIMER7 clock reset */
+#define  RCC_APB1RCR_TIMER5RST                      ((uint32_t)0x00000010)        /*!< TIMER5 clock reset */
+#define  RCC_APB1RCR_TIMER6RST                      ((uint32_t)0x00000020)        /*!< TIMER6 clock reset */
+#define  RCC_APB1RCR_TIMER11RST                     ((uint32_t)0x00000040)        /*!< TIMER11 clock reset */
+#define  RCC_APB1RCR_TIMER12RST                     ((uint32_t)0x00000080)        /*!< TIMER12 clock reset */
+#define  RCC_APB1RCR_TIMER13RST                     ((uint32_t)0x00000100)        /*!< TIMER13 clock reset */
 #define  RCC_APB1RCR_WWDGRST                        ((uint32_t)0x00000800)        /*!< Window Watchdog clock reset */
 #define  RCC_APB1RCR_SPI2RST                        ((uint32_t)0x00004000)        /*!< SPI2 clock reset */
 #define  RCC_APB1RCR_SPI3RST                        ((uint32_t)0x00008000)        /*!< SPI3 clock reset */
@@ -7115,26 +7115,26 @@ typedef struct {
 #define  RCC_APB2CCR_PGEN                           ((uint32_t)0x00000100)         /*!< GPIOF clock enable */
 #define  RCC_APB2CCR_ADC0EN                         ((uint32_t)0x00000200)         /*!< ADC0 clock enable */
 #define  RCC_APB2CCR_ADC1EN                         ((uint32_t)0x00000400)         /*!< ADC1 clock enable */
-#define  RCC_APB2CCR_TIMER1EN                       ((uint32_t)0x00000800)         /*!< TIMER1 clock enable */
+#define  RCC_APB2CCR_TIMER0EN                       ((uint32_t)0x00000800)         /*!< TIMER0 clock enable */
 #define  RCC_APB2CCR_SPI1EN                         ((uint32_t)0x00001000)         /*!< SPI1 clock enable */
-#define  RCC_APB2CCR_TIMER8EN                       ((uint32_t)0x00002000)         /*!< TIMER8 clock enable */
+#define  RCC_APB2CCR_TIMER7EN                       ((uint32_t)0x00002000)         /*!< TIMER7 clock enable */
 #define  RCC_APB2CCR_USART1EN                       ((uint32_t)0x00004000)         /*!< USART1 clock enable */
 #define  RCC_APB2CCR_ADC3EN                         ((uint32_t)0x00008000)         /*!< ADC3 clock enable */
-#define  RCC_APB2CCR_TIMER9EN                       ((uint32_t)0x00080000)         /*!< TIMER9 clock enable */
-#define  RCC_APB2CCR_TIMER10EN                      ((uint32_t)0x00100000)         /*!< TIMER10 clock enable */
-#define  RCC_APB2CCR_TIMER11EN                      ((uint32_t)0x00200000)         /*!< TIMER11 clock enable */
+#define  RCC_APB2CCR_TIMER8EN                       ((uint32_t)0x00080000)         /*!< TIMER8 clock enable */
+#define  RCC_APB2CCR_TIMER9EN                       ((uint32_t)0x00100000)         /*!< TIMER9 clock enable */
+#define  RCC_APB2CCR_TIMER10EN                      ((uint32_t)0x00200000)         /*!< TIMER10 clock enable */
 
 /*****************  Bit definition for RCC_APB1CCR register  ******************/
 
-#define  RCC_APB1CCR_TIMER2EN                       ((uint32_t)0x00000001)        /*!< TIMER2 clock enable */
-#define  RCC_APB1CCR_TIMER3EN                       ((uint32_t)0x00000002)        /*!< TIMER3 clock enable */
-#define  RCC_APB1CCR_TIMER4EN                       ((uint32_t)0x00000004)        /*!< TIMER4 clock enable */
-#define  RCC_APB1CCR_TIMER5EN                       ((uint32_t)0x00000008)        /*!< TIMER8 clock enable */
-#define  RCC_APB1CCR_TIMER6EN                       ((uint32_t)0x00000010)        /*!< TIMER6 clock enable */
-#define  RCC_APB1CCR_TIMER7EN                       ((uint32_t)0x00000020)        /*!< TIMER7 clock enable */
-#define  RCC_APB1CCR_TIMER12EN                      ((uint32_t)0x00000040)        /*!< TIMER12 clock enable */
-#define  RCC_APB1CCR_TIMER13EN                      ((uint32_t)0x00000080)        /*!< TIMER13 clock enable */
-#define  RCC_APB1CCR_TIMER14EN                      ((uint32_t)0x00000100)        /*!< TIMER14 clock enable */
+#define  RCC_APB1CCR_TIMER1EN                       ((uint32_t)0x00000001)        /*!< TIMER1 clock enable */
+#define  RCC_APB1CCR_TIMER2EN                       ((uint32_t)0x00000002)        /*!< TIMER2 clock enable */
+#define  RCC_APB1CCR_TIMER3EN                       ((uint32_t)0x00000004)        /*!< TIMER3 clock enable */
+#define  RCC_APB1CCR_TIMER4EN                       ((uint32_t)0x00000008)        /*!< TIMER7 clock enable */
+#define  RCC_APB1CCR_TIMER5EN                       ((uint32_t)0x00000010)        /*!< TIMER5 clock enable */
+#define  RCC_APB1CCR_TIMER6EN                       ((uint32_t)0x00000020)        /*!< TIMER6 clock enable */
+#define  RCC_APB1CCR_TIMER11EN                      ((uint32_t)0x00000040)        /*!< TIMER11 clock enable */
+#define  RCC_APB1CCR_TIMER12EN                      ((uint32_t)0x00000080)        /*!< TIMER12 clock enable */
+#define  RCC_APB1CCR_TIMER13EN                      ((uint32_t)0x00000100)        /*!< TIMER13 clock enable */
 #define  RCC_APB1CCR_WWDGEN                         ((uint32_t)0x00000800)        /*!< Window Watchdog clock enable */
 #define  RCC_APB1CCR_SPI2EN                         ((uint32_t)0x00004000)        /*!< SPI2 clock enable */
 #define  RCC_APB1CCR_SPI3EN                         ((uint32_t)0x00008000)        /*!< SPI3 clock enable*/

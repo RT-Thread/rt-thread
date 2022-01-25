@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -33,7 +33,7 @@ int mnt_init(void)
     dfs_romfs_init();
 
     /* mount rom file system */
-	if (dfs_mount(RT_NULL, "/", "rom", 0, &(romfs_root)) == 0)
+    if (dfs_mount(RT_NULL, "/", "rom", 0, &(romfs_root)) == 0)
     {
         rt_kprintf("ROM file system initializated!\n");
     }
@@ -44,14 +44,14 @@ int mnt_init(void)
      mci_hw_init("sd0");
 #endif
 
-#ifdef RT_DFS_ELM_REENTRANT    
+#ifdef RT_DFS_ELM_REENTRANT
     /* mount sd card fat partition 1 as root directory */
     if (dfs_mount("sd0", SD_ROOT, "elm", 0, 0) == 0)
         rt_kprintf("File System initialized!\n");
     else
         rt_kprintf("File System init failed!\n");
 #endif
-    
+
     return 0;
 }
 INIT_ENV_EXPORT(mnt_init);

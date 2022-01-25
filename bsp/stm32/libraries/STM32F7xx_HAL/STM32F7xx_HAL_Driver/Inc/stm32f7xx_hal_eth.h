@@ -591,7 +591,7 @@ typedef struct
 
 
 /** 
-  * @brief  Received Frame Informations structure definition
+  * @brief  Received Frame Information structure definition
   */ 
 typedef struct  
 {

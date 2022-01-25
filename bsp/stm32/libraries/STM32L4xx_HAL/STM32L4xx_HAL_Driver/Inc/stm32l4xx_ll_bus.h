@@ -131,6 +131,9 @@ extern "C" {
 #if defined(OCTOSPIM)
 #define LL_AHB2_GRP1_PERIPH_OSPIM          RCC_AHB2ENR_OSPIMEN
 #endif /* OCTOSPIM */
+#if defined(PKA)
+#define LL_AHB2_GRP1_PERIPH_PKA            RCC_AHB2ENR_PKAEN
+#endif /* PKA */
 #if defined(SDMMC1) && defined(RCC_AHB2ENR_SDMMC1EN)
 #define LL_AHB2_GRP1_PERIPH_SDMMC1         RCC_AHB2ENR_SDMMC1EN
 #endif /* SDMMC1 && RCC_AHB2ENR_SDMMC1EN */

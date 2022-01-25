@@ -1,0 +1,30 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+""")
+
+# add serial driver code
+if  GetDepend('RT_USING_SERIAL'):
+    src += ['drv_uart.c']
+
+# add gpio driver code
+if  GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+
+# add lcd driver code
+if  GetDepend(['BSP_USING_LCD']):
+    src += Glob('./lcd/*.c')
+    src += ['drv_lcd.c']
+
+CPPPATH = [cwd]
+CPPPATH += [cwd+'/lcd']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

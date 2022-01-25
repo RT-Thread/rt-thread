@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -323,7 +323,7 @@ int dfs_mount(const char   *device_name,
         {
             /* The underlying device has error, clear the entry. */
             dfs_lock();
-            memset(fs, 0, sizeof(struct dfs_filesystem));
+            rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 
             goto err1;
         }
@@ -339,7 +339,7 @@ int dfs_mount(const char   *device_name,
         /* mount failed */
         dfs_lock();
         /* clear filesystem table entry */
-        memset(fs, 0, sizeof(struct dfs_filesystem));
+        rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 
         goto err1;
     }
@@ -403,7 +403,7 @@ int dfs_unmount(const char *specialfile)
         rt_free(fs->path);
 
     /* clear this filesystem table entry */
-    memset(fs, 0, sizeof(struct dfs_filesystem));
+    rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 
     dfs_unlock();
     rt_free(fullpath);
@@ -522,16 +522,16 @@ INIT_ENV_EXPORT(dfs_mount_table);
 int dfs_mount_device(rt_device_t dev)
 {
   int index = 0;
-  
+
   if(dev == RT_NULL) {
     rt_kprintf("the device is NULL to be mounted.\n");
     return -RT_ERROR;
   }
-  
+
   while (1)
   {
     if (mount_table[index].path == NULL) break;
-    
+
     if(strcmp(mount_table[index].device_name, dev->parent.name) == 0) {
       if (dfs_mount(mount_table[index].device_name,
                     mount_table[index].path,
@@ -548,10 +548,10 @@ int dfs_mount_device(rt_device_t dev)
         return RT_EOK;
       }
     }
-    
+
     index ++;
   }
-  
+
   rt_kprintf("can't find device:%s to be mounted.\n", dev->parent.name);
   return -RT_ERROR;
 }
@@ -590,7 +590,7 @@ int dfs_unmount_device(rt_device_t dev)
         rt_free(fs->path);
 
     /* clear this filesystem table entry */
-    memset(fs, 0, sizeof(struct dfs_filesystem));
+    rt_memset(fs, 0, sizeof(struct dfs_filesystem));
 
     dfs_unlock();
 

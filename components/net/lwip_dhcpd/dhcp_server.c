@@ -80,6 +80,22 @@
 #define LWIP_DHCP   1
 #include <lwip/dhcp.h>
 
+#ifndef DHCP_CLIENT_PORT
+#define DHCP_CLIENT_PORT  68
+#endif
+
+#ifndef DHCP_SERVER_PORT
+#define DHCP_SERVER_PORT  67
+#endif
+
+#ifndef ETHADDR32_COPY
+#define ETHADDR32_COPY(dst, src)  SMEMCPY(dst, src, ETH_HWADDR_LEN)
+#endif
+
+#ifndef ETHADDR16_COPY
+#define ETHADDR16_COPY(dst, src)  SMEMCPY(dst, src, ETH_HWADDR_LEN)
+#endif
+
 /* buffer size for receive DHCP packet */
 #define BUFSZ               1024
 
@@ -290,7 +306,7 @@ static void dhcpd_thread_entry(void *parameter)
     while (1)
     {
         bytes_read = recvfrom(sock, recv_data, BUFSZ - 1, 0,
-                              (struct sockaddr *)&client_addr, &addr_len);
+                              (struct sockaddr *)&client_addr, (socklen_t *)&addr_len);
         if (bytes_read <= 0)
         {
             closesocket(sock);

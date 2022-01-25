@@ -1,7 +1,15 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 /* Multi-thread searching.
    Illustrates: thread cancellation, cleanup handlers. */
 
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>

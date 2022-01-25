@@ -241,11 +241,13 @@ exit_nu_spi_bus_configure:
 #if defined(BSP_USING_SPI_PDMA)
 static void nu_pdma_spi_rx_cb(void *pvUserData, uint32_t u32EventFilter)
 {
+    rt_err_t result;
     struct nu_spi *spi_bus = (struct nu_spi *)pvUserData;
 
     RT_ASSERT(spi_bus != RT_NULL);
 
-    rt_sem_release(spi_bus->m_psSemBus);
+    result = rt_sem_release(spi_bus->m_psSemBus);
+    RT_ASSERT(result == RT_EOK);
 }
 static rt_err_t nu_pdma_spi_rx_config(struct nu_spi *spi_bus, uint8_t *pu8Buf, int32_t i32RcvLen, uint8_t bytes_per_word)
 {
@@ -362,7 +364,8 @@ static rt_size_t nu_spi_pdma_transmit(struct nu_spi *spi_bus, const uint8_t *sen
         SPI_TRIGGER_TX_RX_PDMA(spi_base);
 
         /* Wait RX-PDMA transfer done */
-        rt_sem_take(spi_bus->m_psSemBus, RT_WAITING_FOREVER);
+        result = rt_sem_take(spi_bus->m_psSemBus, RT_WAITING_FOREVER);
+        RT_ASSERT(result == RT_EOK);
 
         /* Stop TX/RX DMA transfer. */
         SPI_DISABLE_TX_RX_PDMA(spi_base);
@@ -391,6 +394,7 @@ rt_err_t nu_hw_spi_pdma_allocate(struct nu_spi *spi_bus)
     }
 
     spi_bus->m_psSemBus = rt_sem_create("spibus_sem", 0, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(spi_bus->m_psSemBus != RT_NULL);
 
     return RT_EOK;
 

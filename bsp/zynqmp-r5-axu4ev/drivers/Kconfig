@@ -24,6 +24,19 @@ menu "Hardware Drivers Config"
                 bool "Enable SD0 EMMC"
                 default y
         endif
+    comment "Please set RT_LWIP_PBUF_NUM is at least 256 if Enable Ethernet!"
+    comment "Please set RT_LWIP_MEM_ALIGNMENT is at 32 if Enable Ethernet!"
+    menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_NETDEV
+        select RT_USING_LWIP
+        if BSP_USING_ETH
+            config RT_LWIP_PBUF_POOL_BUFSIZE
+                int "The size of each pbuf in the pbuf pool"
+                range 1500 2000
+                default 1700
+        endif
 
     endmenu
 

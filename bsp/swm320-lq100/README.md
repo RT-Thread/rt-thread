@@ -31,7 +31,7 @@ SWXT-LQ100-32102 V1.1 开发板板载资源如下：
 - 常用接口：USB打印接口，TFT LCD接口，SD卡接口
 - 调试接口：SWD
 
-更多详细信息请咨询[华芯微特技术支持][http://www.synwit.cn/support.html]
+更多详细信息请咨询[华芯微特技术支持](https://www.synwit.cn)
 
 ### 1.2  MCU 简介
 
@@ -89,36 +89,30 @@ msh />
 
 ## 4. 驱动支持情况及计划
 
-|**板载外设**     |**支持情况**|**备注**                    |
-| ----------------- | :----------: | ----------------------- |
-| Nor Flash         | 支持          |                        |
-| SDIO TF 卡        | 暂不支持      |                        |
-| SRAM              | 支持          |      |
-| TFT-LCD           |   暂不支持    |   即将支持             |
-|**片上外设**     |**支持情况** |**备注**                  |
-| GPIO              |     支持     | PIN：1...100 |
-| UART              |     支持     | UART0 / UART1 / UART2 / UART3  |
-| SPI               |     支持     | SPI0 / SPI1        |
-| I2C               |   支持   |    I2C0 IO模拟   |
-| ADC               | 暂不支持 | 即将支持 |
-| PWM               |   支持   |  PWM0 / PWM1 /PWM2 /PWM3 其余两个后续补充|
-| IWG               |   支持   |                            |
-| TIMER             |   支持   |                       |
-| RTC               |   支持   |                             |
-| CAN               |   暂不支持   |                |
+| **片上外设**        | **支持情况**  | **备注**                              |
+| :----------------- | :----------: | :----------------------------------- |
+| GPIO               |     支持     | PA0, PA1... PP23 ---> PIN: 0, 1...100 |
+| UART               |     支持     | UART0/1/2/3                           |
+| ADC                |     支持     | ADC0/1                                |
+| TIM                |     支持     | TIM0/1/2/3/4/5                        |
+| I2C                |     支持     | 软件 I2C0/1                            |
+| PWM                |     支持     | PWM0/1/2/3/4/5                        |
+| RTC                |     支持     | RTC                                   |
+| SPI                |     支持     | SPI0/1                                |
+| WDT                |     支持     | WDT                                   |
+| CRC                |     支持     | CRC                                   |
+| SDIO               |     支持     | SDIO                                  |
+| SRAM               |     支持     | SRAM                                  |
+| NOR FLASH          |     支持     | NOR FLASH                             |
+| CAN                |    暂不支持   |                                       |
 
 ## 5. 联系人信息
 
-维护人：
+- [yanmowudi](https://github.com/yanmowudi)
+- [邮箱](lik@synwit.cn)
 
--[Zohar_Lee](https://github.com/zohar123) email: lizhh@synwit.cn
+## 参考资料
 
-## 6. 参考
+* [RT-Thread 文档中心](https://www.rt-thread.org/document/site/)
 
-- 芯片[SWM320系列数据手册][http://www.synwit.cn/Public/Uploads/2018-11-05/5bdff49b396d1.pdf]
-
-- [ SWM320_LQFP100原理图](http://www.synwit.cn/Public/Uploads/2018-11-01/5bdab8ad2e5b9.pdf)
-
-- [ SWM320_LQFP64原理图](http://www.synwit.cn/Public/Uploads/2018-11-05/5bdfea74d5712.pdf)
-
-- [ keil pack及其他资料](http://www.synwit.cn/support-1/2.html)
+* [SWM320数据手册](https://www.synwit.cn/col.jsp?id=155)

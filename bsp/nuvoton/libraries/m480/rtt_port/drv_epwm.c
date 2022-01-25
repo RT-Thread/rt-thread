@@ -228,41 +228,4 @@ int rt_hw_epwm_init(void)
 
 INIT_DEVICE_EXPORT(rt_hw_epwm_init);
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-
-#ifdef FINSH_USING_MSH
-
-static int pwm_get(int argc, char **argv)
-{
-    int result = 0;
-    struct rt_device_pwm *device = RT_NULL;
-    struct rt_pwm_configuration configuration = {0};
-
-    if (argc != 3)
-    {
-        rt_kprintf("Usage: pwm_get pwm1 1\n");
-        result = -RT_ERROR;
-        goto _exit;
-    }
-
-    device = (struct rt_device_pwm *)rt_device_find(argv[1]);
-    if (!device)
-    {
-        result = -RT_EIO;
-        goto _exit;
-    }
-
-    configuration.channel = atoi(argv[2]);
-    result = rt_device_control(&device->parent, PWM_CMD_GET, &configuration);
-
-_exit:
-    return result;
-}
-
-MSH_CMD_EXPORT(pwm_get, pwm_get epwm1 1);
-
-#endif /* FINSH_USING_MSH */
-#endif /* RT_USING_FINSH */
-
 #endif

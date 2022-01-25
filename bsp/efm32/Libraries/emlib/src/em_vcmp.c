@@ -133,7 +133,7 @@ void VCMP_Init(const VCMP_Init_TypeDef *vcmpInit)
     while(!VCMP_Ready());
     VCMP_LowPowerRefSet(vcmpInit->lowPowerRef);
   }
-  
+
   /* Clear edge interrupt */
   VCMP_IntClear(VCMP_IF_EDGE);
 }

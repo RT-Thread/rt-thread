@@ -1,12 +1,12 @@
 /*
- * File      : mnt.c
- * COPYRIGHT (C) 2008 - 2016, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017Äê4ÔÂ3ÈÕ     Urey         the first version
+ * 2017-04-03     Urey         the first version
  */
-
 #include <rtthread.h>
 #include <rtdevice.h>
 
@@ -15,12 +15,10 @@
 
 int mnt_init(void)
 {
-    dfs_init();
-
 #ifdef RT_USING_DFS_WINSHAREDIR
     extern int dfs_win32_init(void);
     extern rt_err_t rt_win_sharedir_init(const char *name);
-    
+
     dfs_win32_init();
     rt_win_sharedir_init("wshare");
 
@@ -54,5 +52,5 @@ int mnt_init(void)
 
     return 0;
 }
-
+INIT_COMPONENT_EXPORT(mnt_init);
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2018-01-30     armink       the first version
  */
 
-#include <time.h>
+#include <sys/time.h>
 #include <string.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -61,7 +61,7 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
     struct tm time_temp;
 
     RT_ASSERT(dev != RT_NULL);
-    memset(&time_temp, 0, sizeof(struct tm));
+    rt_memset(&time_temp, 0, sizeof(struct tm));
 
     switch (cmd)
     {
@@ -93,7 +93,7 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops soft_rtc_ops = 
+const static struct rt_device_ops soft_rtc_ops =
 {
     RT_NULL,
     RT_NULL,
@@ -104,7 +104,7 @@ const static struct rt_device_ops soft_rtc_ops =
 };
 #endif
 
-int rt_soft_rtc_init(void)
+static int rt_soft_rtc_init(void)
 {
     static rt_bool_t init_ok = RT_FALSE;
     struct tm time_new = SOFT_RTC_TIME_DEFAULT;
@@ -126,7 +126,7 @@ int rt_soft_rtc_init(void)
 #endif
 
     init_tick = rt_tick_get();
-    init_time = mktime(&time_new);
+    init_time = timegm(&time_new);
 
     soft_rtc_dev.type    = RT_Device_Class_RTC;
 

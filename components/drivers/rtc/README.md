@@ -55,26 +55,11 @@ msh />date 2018 02 16 01 15 30    # 设置当前时间为 2018-02-16 01:15:30
 msh />
 ```
 
-### 2.4 启用 NTP 时间自动同步
-
-如果 RT-Thread 已接入互联网，可启用 NTP 时间自动同步功能，定期同步本地时间。
-
-在 menuconfig 中启用 `RTC_SYNC_USING_NTP` 配置。启用该功能后，会自动开启 [netutils package](https://github.com/RT-Thread-packages/netutils) 的 NTP 功能。同时务必确保 RT-Thread 网络访问正常。
-
-启用该配置后，还有两个配置是用户可选配置：
-
-- `RTC_NTP_FIRST_SYNC_DELAY`: 首次执行 NTP 时间同步的延时。延时的目的在于，给网络连接预留一定的时间，尽量提高第一次执行 NTP 时间同步时的成功率。默认时间为 30S；
-- `RTC_NTP_SYNC_PERIOD`: NTP 自动同步周期，单位为秒，默认一小时（即 3600S）同步一次。
-
-> 注意：如果没有使用组件自动初始化功能，则需手动调用 `int rt_rtc_ntp_sync_init(void)` ，完成该功能初始化。
-
-### 2.5 启用 Soft RTC （软件模拟 RTC）
+### 2.4 启用 Soft RTC （软件模拟 RTC）
 
 这个模式非常适用于对时间精度要求不高，没有硬件 RTC 的产品。
 
-#### 2.5.1 使用方法
+#### 2.4.1 使用方法
 
 在 menuconfig 中启用 `RT_USING_SOFT_RTC` 配置。
-
-> 注意：如果没有使用组件自动初始化功能，则需手动调用 `int rt_soft_rtc_init(void)` ，完成该功能初始化。
 

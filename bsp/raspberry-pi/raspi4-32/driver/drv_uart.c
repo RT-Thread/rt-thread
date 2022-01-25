@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -211,7 +211,7 @@ static const struct rt_uart_ops _uart_ops =
 #ifdef RT_USING_UART1
 static void rt_hw_aux_uart_isr(int irqno, void *param)
 {
-    struct rt_serial_device *serial = (struct rt_serial_device*)param; 
+    struct rt_serial_device *serial = (struct rt_serial_device*)param;
     rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 }
 #endif
@@ -220,7 +220,7 @@ static void rt_hw_uart_isr(int irqno, void *param)
 {
 #ifdef RT_USING_UART0
     if((PACTL_CS & IRQ_UART0) == IRQ_UART0)
-    {   
+    {
         PACTL_CS &=  ~(IRQ_UART0);
         rt_hw_serial_isr(&_serial0, RT_SERIAL_EVENT_RX_IND);
         PL011_REG_ICR(UART0_BASE) = PL011_INTERRUPT_RECEIVE;

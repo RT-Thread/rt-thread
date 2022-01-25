@@ -47,6 +47,9 @@ msh />
 | UART      | 支持     |          UART0~4           |
 | GPIO      | 支持     |          GPIOA~G           |
 | ADC       | 支持     |          ADC0~1            |
+| HWTIMER   | 支持     |          TIMER0~7          |
+| RTC       | 支持     |          RTC               |
+| WDT       | 支持     |    Free watchdog timer     |
 | IIC       | 未支持   |          I2C0~1            |
 | SPI       | 未支持   |          SPI0~2            |
 | ETH       | 未支持   |                            |

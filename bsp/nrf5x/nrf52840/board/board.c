@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020-04-29     supperthomas first version
+ * 2020-04-29     supperthomas fix component init
  *
  */
 #include <rtthread.h>
@@ -53,9 +54,6 @@ void SysTick_Configuration(void)
 void rt_hw_board_init(void)
 {
     rt_hw_interrupt_enable(0);
-    // sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
-    /* Activate deep sleep mode */
-    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
     SysTick_Configuration();
 
@@ -67,13 +65,14 @@ void rt_hw_board_init(void)
     rt_hw_uart_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+
 
 #ifdef BSP_USING_SOFTDEVICE
     extern uint32_t  Image$$RW_IRAM1$$Base;

@@ -521,8 +521,13 @@ typedef enum
                                                          (((__INTERRUPT__) & SYSCFG_IT_FPU_IDC) == SYSCFG_IT_FPU_IDC) || \
                                                          (((__INTERRUPT__) & SYSCFG_IT_FPU_IXC) == SYSCFG_IT_FPU_IXC))
 
+#if defined(STM32WB15xx)
+#define IS_SYSCFG_SRAM2WRP_PAGE(__PAGE__)               (((__PAGE__) > 0U) && ((__PAGE__) <= 0xFFFFFFFFU))
+#define IS_SYSCFG_SRAM2WRP2_PAGE(__PAGE__)              (((__PAGE__) > 0U) && ((__PAGE__) <= 0x0000000FU))
+#else
 #define IS_SYSCFG_SRAM2WRP_PAGE(__PAGE__)               (((__PAGE__) > 0U) && ((__PAGE__) <= 0xFFFFFFFFU))
 #define IS_SYSCFG_SRAM2WRP2_PAGE(__PAGE__)              IS_SYSCFG_SRAM2WRP_PAGE(__PAGE__)
+#endif
 
 #if defined(VREFBUF)
 #define IS_SYSCFG_VREFBUF_VOLTAGE_SCALE(__SCALE__)      (((__SCALE__) == SYSCFG_VREFBUF_VOLTAGE_SCALE0) || \

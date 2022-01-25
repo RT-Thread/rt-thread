@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -128,7 +128,7 @@ rt_err_t sd_status(struct sdhci_pdata_t * pdat, unsigned int mask)
     else if (read32(pdat->virt + EMMC_INTERRUPT) & INT_ERROR_MASK)
     {
         return  -RT_ERROR;
-    } 
+    }
 
     return RT_EOK;
 }
@@ -450,7 +450,7 @@ static rt_err_t sdhci_setclock(struct sdhci_t * sdhci, rt_uint32_t clock)
     sdHostVer = (temp & HOST_SPEC_NUM) >> HOST_SPEC_NUM_SHIFT;
     int cdiv = sd_get_clock_divider(sdHostVer, mmc_base_clock, clock);
     temp = read32((pdat->virt + EMMC_CONTROL1));
-    temp |= 1;    
+    temp |= 1;
     temp |= cdiv;
     temp |= (7 << 16);
 
@@ -639,7 +639,7 @@ int raspi_sdmmc_init(void)
 #endif
     mmcsd_change(host);
 #endif
-    return RT_EOK;   
+    return RT_EOK;
 err:
     if (host)  rt_free(host);
     if (sdhci) rt_free(sdhci);

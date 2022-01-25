@@ -305,7 +305,7 @@ extern "C" {
   */
 #define LL_VREFBUF_VOLTAGE_SCALE0          ((uint32_t)0x00000000) /*!< Voltage reference scale 0 (VREFBUF_OUT = 2.048V) */
 #define LL_VREFBUF_VOLTAGE_SCALE1          VREFBUF_CSR_VRS_0      /*!< Voltage reference scale 1 (VREFBUF_OUT = 2.5V)   */
-#define LL_VREFBUF_VOLTAGE_SCALE2          VREFBUF_CSR_VRS_1      /*!< Voltage reference scale 2 (VREFBUF_OUT = 2.8V)   */
+#define LL_VREFBUF_VOLTAGE_SCALE2          VREFBUF_CSR_VRS_1      /*!< Voltage reference scale 2 (VREFBUF_OUT = 2.9V)   */
 /**
   * @}
   */

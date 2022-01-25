@@ -15,7 +15,7 @@
 
 #include <rtconfig.h>
 #include <rtthread.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <board.h>
 
 #define NU_PDMA_CAP_NONE    (0 << 0)

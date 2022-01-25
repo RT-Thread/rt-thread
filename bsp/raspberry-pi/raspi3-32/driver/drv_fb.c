@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,6 +19,7 @@
 
 #define COLOR_DELTA     0.05
 static struct rt_hdmi_fb_device _hdmi;
+fb_t fb_info;
 
 // https://github.com/xinu-os/xinu/blob/1789b7a50b5b73c2ea76ebd764c54a034097d04d/device/framebuffer_rpi/font.c
 unsigned char FONT[] = {
@@ -306,7 +307,7 @@ rt_err_t hdmi_fb_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-const static struct rt_device_ops hdmi_fb_ops = 
+const static struct rt_device_ops hdmi_fb_ops =
 {
     RT_NULL,
     hdmi_fb_open,
@@ -368,7 +369,7 @@ static void hdmi_blit_line(const char* pixels, int x, int y, rt_size_t size)
     }
 }
 
-static struct rt_device_graphic_ops hdmi_ops = 
+static struct rt_device_graphic_ops hdmi_ops =
 {
     hdmi_set_pixel,
     hdmi_get_pixel,

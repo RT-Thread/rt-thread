@@ -85,7 +85,7 @@ typedef struct
   *             01 : Abort (Abort user request on going)
   *             10 : Timeout
   *             11 : Error
-  *          b5     Peripheral initilisation status
+  *          b5     Peripheral initialization status
   *             0  : Reset (Peripheral not initialized)
   *             1  : Init done (Peripheral initialized and ready to use. HAL I2C Init function called)
   *          b4     (not used)
@@ -170,6 +170,7 @@ typedef enum
 #define HAL_I2C_ERROR_TIMEOUT           0x00000020U    /*!< Timeout Error         */
 #define HAL_I2C_ERROR_SIZE              0x00000040U    /*!< Size Management error */
 #define HAL_I2C_ERROR_DMA_PARAM         0x00000080U    /*!< DMA Parameter Error   */
+#define HAL_I2C_WRONG_START             0x00000200U    /*!< Wrong start Error     */
 #if (USE_HAL_I2C_REGISTER_CALLBACKS == 1)
 #define HAL_I2C_ERROR_INVALID_CALLBACK  0x00000100U    /*!< Invalid Callback error */
 #endif /* USE_HAL_I2C_REGISTER_CALLBACKS */
@@ -181,7 +182,11 @@ typedef enum
   * @brief  I2C handle Structure definition
   * @{
   */
+#if (USE_HAL_I2C_REGISTER_CALLBACKS == 1)
 typedef struct __I2C_HandleTypeDef
+#else
+typedef struct
+#endif  /* USE_HAL_I2C_REGISTER_CALLBACKS */
 {
   I2C_TypeDef                *Instance;      /*!< I2C registers base address               */
 

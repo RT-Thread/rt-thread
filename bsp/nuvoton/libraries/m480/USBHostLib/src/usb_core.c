@@ -22,7 +22,7 @@
 USBH_T     *_ohci;
 HSUSBH_T   *_ehci;
 
-static UDEV_DRV_T *  _drivers[MAX_UDEV_DRIVER];
+static UDEV_DRV_T   *_drivers[MAX_UDEV_DRIVER];
 static CONN_FUNC  *g_conn_func, *g_disconn_func;
 
 /**
@@ -130,7 +130,7 @@ int usbh_connect_device(UDEV_T *udev)
 
     if (g_conn_func)
         g_conn_func(udev, 0);
-    
+
     return 0;
 }
 
@@ -142,8 +142,8 @@ void usbh_disconnect_device(UDEV_T *udev)
     if (g_disconn_func)
         g_disconn_func(udev, 0);
 
-    
-#if 1    //CHECK: Maybe create a new API to quit_xfer and free udev for application    
+
+#if 1    //CHECK: Maybe create a new API to quit_xfer and free udev for application
     usbh_quit_xfer(udev, &(udev->ep0));    /* Quit control transfer if hw_pipe is not NULL.  */
 
     /* remove device from global device list */
@@ -172,7 +172,7 @@ int usbh_reset_port(UDEV_T *udev)
     if (udev->parent == NULL)
     {
         if (udev->hc_driver)
-            return udev->hc_driver->rthub_port_reset(udev->port_num-1);
+            return udev->hc_driver->rthub_port_reset(udev->port_num - 1);
         else
             return USBH_ERR_NOT_FOUND;
     }

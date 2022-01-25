@@ -10,6 +10,7 @@
 *.idb
 *.ilk
 *.old
+*.crf
 build
 Debug
 documentation/html
@@ -24,6 +25,8 @@ documentation/html
 *.d
 tools/kconfig-frontends/kconfig-mconf
 packages
+dist
+dist_ide_project
 cconfig.h
 GPUCache
 
@@ -34,3 +37,8 @@ ncscope.*
 #ctag files
 tags
 
+.idea
+.vscode
+.history
+CMakeLists.txt
+cmake-build-debug

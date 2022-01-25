@@ -48,28 +48,28 @@ extern XSdPs_Config XSdPs_ConfigTable[XPAR_XSDPS_NUM_INSTANCES];
 * Looks up the device configuration based on the unique device ID. A table
 * contains the configuration info for each device in the system.
 *
-* @param	DeviceId contains the ID of the device to look up the
-*		configuration for.
+* @param    DeviceId contains the ID of the device to look up the
+*        configuration for.
 *
 * @return
 *
 * A pointer to the configuration found or NULL if the specified device ID was
 * not found. See xsdps.h for the definition of XSdPs_Config.
 *
-* @note		None.
+* @note        None.
 *
 ******************************************************************************/
 XSdPs_Config *XSdPs_LookupConfig(u16 DeviceId)
 {
-	XSdPs_Config *CfgPtr = NULL;
-	u32 Index;
+    XSdPs_Config *CfgPtr = NULL;
+    u32 Index;
 
-	for (Index = 0U; Index < (u32)XPAR_XSDPS_NUM_INSTANCES; Index++) {
-		if (XSdPs_ConfigTable[Index].DeviceId == DeviceId) {
-			CfgPtr = &XSdPs_ConfigTable[Index];
-			break;
-		}
-	}
-	return (XSdPs_Config *)CfgPtr;
+    for (Index = 0U; Index < (u32)XPAR_XSDPS_NUM_INSTANCES; Index++) {
+        if (XSdPs_ConfigTable[Index].DeviceId == DeviceId) {
+            CfgPtr = &XSdPs_ConfigTable[Index];
+            break;
+        }
+    }
+    return (XSdPs_Config *)CfgPtr;
 }
 /** @} */

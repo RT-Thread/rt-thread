@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -137,7 +137,7 @@ static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t valu
     if (value)
         BCM283X_GPIO_GPSET(pin / 32) |= (1 << (pin %32));
     else
-        BCM283X_GPIO_GPCLR(pin / 32) |= (0 << (pin %32));
+        BCM283X_GPIO_GPCLR(pin / 32) |= (1 << (pin %32));
 
 }
 

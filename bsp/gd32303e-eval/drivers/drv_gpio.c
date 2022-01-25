@@ -1,11 +1,7 @@
 /*
- * File      : drv_gpio.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -261,7 +257,7 @@ void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     /* GPIO Periph clock enable */
     rcu_periph_clock_enable(index->clk);
     pin_mode = GPIO_MODE_OUT_PP;
-    
+
    switch(mode)
    {
    case PIN_MODE_OUTPUT:
@@ -442,7 +438,7 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
             return RT_EINVAL;
         }
         irqmap = &pin_irq_map[hdr_index];
-   
+
         switch (pin_irq_hdr_tab[hdr_index].mode)
         {
             case PIN_IRQ_MODE_RISING:
@@ -463,14 +459,14 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
 
         /* enable and set interrupt priority */
         nvic_irq_enable(irqmap->irqno, 5U, 0U);
-        
+
         /* connect EXTI line to  GPIO pin */
         gpio_exti_source_select(index->port_src, index->pin_src);
 
         /* configure EXTI line */
         exti_init((exti_line_enum)(index->pin), EXTI_INTERRUPT, trigger_mode);
         exti_interrupt_flag_clear((exti_line_enum)(index->pin));
-        
+
         rt_hw_interrupt_enable(level);
     }
     else if (enabled == PIN_IRQ_DISABLE)
@@ -505,7 +501,7 @@ int rt_hw_pin_init(void)
     int result;
 
     result = rt_device_pin_register("pin", &_gd32_pin_ops, RT_NULL);
-    
+
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
@@ -524,7 +520,7 @@ void GD32_GPIO_EXTI_IRQHandler(rt_int8_t exti_line)
     {
         pin_irq_hdr(exti_line);
         exti_interrupt_flag_clear((exti_line_enum)(1 << exti_line));
-    } 
+    }
 }
 void EXTI0_IRQHandler(void)
 {

@@ -15,14 +15,14 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32L0xx_HAL_GPIO_EX_H
 #define __STM32L0xx_HAL_GPIO_EX_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -42,8 +42,8 @@
 
 /** @defgroup GPIOEx_Exported_Constants GPIOEx Exported Constants
   * @{
-  */ 
-  
+  */
+
 
 /*----------------------------------------------------------------------------*/
 /*------------------------- STM32L083xx/STM32L073xx---------------------------*/
@@ -154,7 +154,7 @@
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
  * @{
- */
+   */
 
 /*
  * Alternate function AF0
@@ -174,8 +174,8 @@
 #define GPIO_AF0_TIM2          ((uint8_t)0x00U)  /* TIM2 Alternate Function mapping     */
 #define GPIO_AF0_USB           ((uint8_t)0x00U)  /* USB Alternate Function mapping      */
 /**
- *
- */
+  *
+  */
 
 /*
  * Alternate function AF1
@@ -185,8 +185,8 @@
 #define GPIO_AF1_TIM21         ((uint8_t)0x01U)  /* TIM21 Alternate Function mapping    */
 #define GPIO_AF1_LCD           ((uint8_t)0x01U)  /* LCD Alternate Function mapping      */
 /**
- *
- */
+  *
+  */
 
 /*
  * Alternate function AF2
@@ -203,8 +203,8 @@
 #define GPIO_AF2_SPI1          ((uint8_t)0x02U)  /* SPI1 Alternate Function mapping     */
 #define GPIO_AF2_USB           ((uint8_t)0x00U)  /* USB Alternate Function mapping      */
 /**
- *
- */
+  *
+  */
 
 /*
  * Alternate function AF3
@@ -213,8 +213,8 @@
 #define GPIO_AF3_I2C1          ((uint8_t)0x03U)  /* I2C1 Alternate Function mapping     */
 #define GPIO_AF3_TSC           ((uint8_t)0x03U)  /* TSC  Alternate Function mapping     */
 /**
- *
- */
+  *
+  */
 
 /*
  * Alternate function AF4
@@ -227,8 +227,8 @@
 #define GPIO_AF4_TIM3            ((uint8_t)0x04U)  /* TIM3 Alternate Function mapping    */
 #define GPIO_AF4_I2C1            ((uint8_t)0x04U)  /* I2C1 Alternate Function mapping    */
 /**
- *
- */
+  *
+  */
 
 /*
  * Alternate function AF5
@@ -240,8 +240,8 @@
 #define GPIO_AF5_SPI2          ((uint8_t)0x05U)  /* SPI2 Alternate Function mapping     */
 #define GPIO_AF5_I2C2          ((uint8_t)0x05U)  /* I2C2 Alternate Function mapping     */
 /**
- *
- */
+  *
+  */
 
 /*
  * Alternate function AF6
@@ -255,8 +255,8 @@
 #define GPIO_AF6_USART5        ((uint8_t)0x06U)  /* USART5 Alternate Function mapping   */
 #define GPIO_AF6_TIM21         ((uint8_t)0x06U)  /* TIM21 Alternate Function mapping    */
 /**
- *
- */
+  *
+  */
 
 /*
  * Alternate function AF7
@@ -278,14 +278,14 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 /**
- *  IS_GPIO_AF macro definition
- */
+  *  IS_GPIO_AF macro definition
+  */
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
- /**
+/**
   * @}
   */
 #endif /* (STM32L083xx) || (STM32L073xx) */
@@ -397,8 +397,8 @@
  */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -487,7 +487,7 @@
   */
 
 /*
-  * Alternate function AF6
+ * Alternate function AF6
  */
 #define GPIO_AF6_USART4        ((uint8_t)0x06U)  /* USART4 Alternate Function mapping    */
 #define GPIO_AF6_LPUART1       ((uint8_t)0x06U)  /* LPUART1 Alternate Function mapping   */
@@ -500,8 +500,8 @@
   *
   */
 
- /*
-  * Alternate function AF7
+/*
+ * Alternate function AF7
  */
 #define GPIO_AF7_COMP1        ((uint8_t)0x07U)  /* COMP1 Alternate Function mapping     */
 #define GPIO_AF7_COMP2        ((uint8_t)0x07U)  /* COMP2 Alternate Function mapping     */
@@ -511,7 +511,7 @@
   *
   */
 
- /**
+/**
   * @}
   */
 
@@ -520,14 +520,14 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 /**
- * @brief IS_GPIO_AF macro definition
- */
+  * @brief IS_GPIO_AF macro definition
+  */
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
- /**
+/**
   * @}
   */
 #endif /* (STM32L082xx) || (STM32L072xx) */
@@ -641,8 +641,8 @@
  */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -769,15 +769,15 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 
- /**
- * IS_GPIO_AF macro definition
- */
+/**
+  * IS_GPIO_AF macro definition
+  */
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
- /**
+/**
   * @}
   */
 #endif /* (STM32L081xx) || (STM32L071xx) */
@@ -852,8 +852,8 @@
  */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -877,8 +877,8 @@
   *
   */
 
- /*
-  * Alternate function AF1
+/*
+ * Alternate function AF1
  */
 #define GPIO_AF1_SPI1          ((uint8_t)0x01U)  /* SPI1 Alternate Function mapping  */
 #define GPIO_AF1_SPI2          ((uint8_t)0x01U)  /* SPI2 Alternate Function mapping  */
@@ -925,7 +925,7 @@
   *
   */
 
- /*
+/*
  * Alternate function AF5
  */
 #define GPIO_AF5_SPI2          ((uint8_t)0x05U)  /* SPI2 Alternate Function mapping     */
@@ -965,11 +965,11 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 /**
- * @brief  IS_GPIO_AF macro definition
- */
+  * @brief  IS_GPIO_AF macro definition
+  */
 
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
@@ -1050,8 +1050,8 @@
  */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -1086,8 +1086,8 @@
   */
 
 /**
- * Alternate function AF2
- */
+  * Alternate function AF2
+  */
 #define GPIO_AF2_SPI2          ((uint8_t)0x02U)  /* SPI2 Alternate Function mapping       */
 #define GPIO_AF2_LPUART1       ((uint8_t)0x02U)  /* LPUART1 Alternate Function mapping    */
 #define GPIO_AF2_USB           ((uint8_t)0x02U)  /* USB Alternate Function mapping        */
@@ -1162,11 +1162,11 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 /**
- * @brief  IS_GPIO_AF macro definition
- */
+  * @brief  IS_GPIO_AF macro definition
+  */
 
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
@@ -1177,9 +1177,9 @@
 /*------------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------*/
-/*------------------------- STM32L051xx/STM32L061xx---------------------------*/
+/*------------------------------- STM32L051xx---------------------------------*/
 /*----------------------------------------------------------------------------*/
-#if defined (STM32L051xx)|| defined (STM32L061xx)
+#if defined (STM32L051xx)
 /* The table below gives an overview of the different alternate functions per port.
  * For more details refer yourself to the product data sheet.
  *
@@ -1245,8 +1245,8 @@
  */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -1278,8 +1278,8 @@
   *
   */
 
- /*
-  * Alternate function AF2
+/*
+ * Alternate function AF2
  */
 #define GPIO_AF2_SPI2          ((uint8_t)0x02U)  /* SPI2 Alternate Function mapping       */
 #define GPIO_AF2_LPUART1       ((uint8_t)0x02U)  /* LPUART1 Alternate Function mapping    */
@@ -1354,18 +1354,18 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 
 /**
- * @brief  IS_GPIO_AF macro definition
- */
+  * @brief  IS_GPIO_AF macro definition
+  */
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
 /**
   * @}
   */
-#endif /* STM32L051xx/STM32L061xx*/
+#endif /* STM32L051xx */
 /*------------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------*/
@@ -1423,8 +1423,8 @@
  */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -1521,11 +1521,11 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 /**
- * @brief  IS_GPIO_AF macro definition
- */
+  * @brief  IS_GPIO_AF macro definition
+  */
 
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
@@ -1580,8 +1580,8 @@
  */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -1675,11 +1675,11 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 /**
- *  IS_GPIO_AF macro definition
- */
+  *  IS_GPIO_AF macro definition
+  */
 
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
@@ -1748,11 +1748,11 @@
  *_______________________________________________________________________________________________|
  * PD2 |LPUART1_RTS|          |           |         |           |         |           |          |
  *_______________________________________________________________________________________________|
- */                                      
+ */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -1858,12 +1858,12 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 
- /**
- * IS_GPIO_AF macro definition
- */
+/**
+  * IS_GPIO_AF macro definition
+  */
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
 /**
@@ -1930,8 +1930,8 @@
  */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -1956,8 +1956,8 @@
   *
   */
 
- /*
-  * Alternate function AF2
+/*
+ * Alternate function AF2
  */
 #define GPIO_AF2_TIM2          ((uint8_t)0x02U)  /* TIM2 Alternate Function mapping       */
 #define GPIO_AF2_EVENTOUT      ((uint8_t)0x02U)  /* EVENTOUT Alternate Function mapping   */
@@ -2015,12 +2015,12 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 
 /**
- * @brief  IS_GPIO_AF macro definition
- */
+  * @brief  IS_GPIO_AF macro definition
+  */
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x06)
 
 /**
@@ -2076,8 +2076,8 @@
  *__________________________________________________________________________________________________|
 */
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -2172,11 +2172,11 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 /**
- * @brief  IS_GPIO_AF macro definition
- */
+  * @brief  IS_GPIO_AF macro definition
+  */
 
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x06)
 
@@ -2224,8 +2224,8 @@
 */
 
 /** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
- * @{
- */
+  * @{
+  */
 
 /*
  * Alternate function AF0
@@ -2312,11 +2312,11 @@
   */
 
 /** @defgroup GPIOEx_Private  GPIOEx Private
- * @{
- */
+  * @{
+  */
 /**
- *  IS_GPIO_AF macro definition
- */
+  *  IS_GPIO_AF macro definition
+  */
 
 #define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x06)
 
@@ -2330,12 +2330,12 @@
     defined (STM32L073xx) || defined (STM32L072xx) || defined (STM32L071xx) || \
     defined (STM32L010xB)
 
- /** @addtogroup GPIOEx_Exported_Constants
- * @{
- */
- /** @defgroup GPIOEx_Pin_Available Pin available
- * @{
- */
+/** @addtogroup GPIOEx_Exported_Constants
+  * @{
+  */
+/** @defgroup GPIOEx_Pin_Available Pin available
+  * @{
+  */
 #define GPIOA_PIN_AVAILABLE  GPIO_PIN_All
 #define GPIOB_PIN_AVAILABLE  GPIO_PIN_All
 #define GPIOC_PIN_AVAILABLE  GPIO_PIN_All
@@ -2349,9 +2349,9 @@
   * @}
   */
 
- /** @addtogroup GPIOEx_Private
- * @{
- */
+/** @addtogroup GPIOEx_Private
+  * @{
+  */
 #define GPIO_GET_INDEX(__GPIOx__)    (((__GPIOx__) == (GPIOA))? 0U :\
                                       ((__GPIOx__) == (GPIOB))? 1U :\
                                       ((__GPIOx__) == (GPIOC))? 2U :\
@@ -2372,11 +2372,11 @@
 #elif defined (STM32L031xx) || defined (STM32L041xx) || defined (STM32L010x6)
 
 /** @addtogroup GPIOEx_Exported_Constants
- * @{
- */
+  * @{
+  */
 /** @defgroup GPIOEx_Pin_Available Pin available
- * @{
- */
+  * @{
+  */
 
 #define GPIOA_PIN_AVAILABLE  GPIO_PIN_All
 #define GPIOB_PIN_AVAILABLE  GPIO_PIN_All
@@ -2390,8 +2390,8 @@
   */
 
 /** @addtogroup GPIOEx_Private
- * @{
- */
+  * @{
+  */
 #define GPIO_GET_INDEX(__GPIOx__)    (((__GPIOx__) == (GPIOA))? 0U :\
                                       ((__GPIOx__) == (GPIOB))? 1U :\
                                       ((__GPIOx__) == (GPIOC))? 2U :\
@@ -2411,11 +2411,11 @@
 #elif defined (STM32L011xx) || defined (STM32L021xx) || defined (STM32L010x4)
 
 /** @addtogroup GPIOEx_Exported_Constants
- * @{
- */
+  * @{
+  */
 /** @defgroup GPIOEx_Pin_Available Pin available
- * @{
- */
+  * @{
+  */
 
 #define GPIOA_PIN_AVAILABLE  GPIO_PIN_All
 #define GPIOB_PIN_AVAILABLE  (GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | \
@@ -2430,8 +2430,8 @@
   */
 
 /** @addtogroup GPIOEx_Private
- * @{
- */
+  * @{
+  */
 #define GPIO_GET_INDEX(__GPIOx__)    (((__GPIOx__) == (GPIOA))? 0U :\
                                       ((__GPIOx__) == (GPIOB))? 1U :\
                                       ((__GPIOx__) == (GPIOC))? 2U : 6U)
@@ -2445,16 +2445,15 @@
   * @}
   */
 
-#elif defined (STM32L063xx) || defined (STM32L062xx) || defined (STM32L061xx) || \
-      defined (STM32L053xx) || defined (STM32L052xx) || defined (STM32L051xx) || \
-      defined (STM32L010x8)
+#elif defined (STM32L063xx) || defined (STM32L062xx) || defined (STM32L053xx) || \
+      defined (STM32L052xx) || defined (STM32L051xx) || defined (STM32L010x8)
 
 /** @addtogroup GPIOEx_Exported_Constants
- * @{
- */
+  * @{
+  */
 /** @defgroup GPIOEx_Pin_Available Pin available
- * @{
- */
+  * @{
+  */
 #define GPIOA_PIN_AVAILABLE  GPIO_PIN_All
 #define GPIOB_PIN_AVAILABLE  GPIO_PIN_All
 #define GPIOC_PIN_AVAILABLE  GPIO_PIN_All
@@ -2468,8 +2467,8 @@
   */
 
 /** @addtogroup GPIOEx_Private
- * @{
- */
+  * @{
+  */
 #define GPIO_GET_INDEX(__GPIOx__)    (((__GPIOx__) == (GPIOA))? 0U :\
                                       ((__GPIOx__) == (GPIOB))? 1U :\
                                       ((__GPIOx__) == (GPIOC))? 2U :\
@@ -2490,12 +2489,12 @@
 
 
 /**
- * @}
- */
+  * @}
+  */
 
 /**
- * @}
- */
+  * @}
+  */
 #ifdef __cplusplus
 }
 #endif

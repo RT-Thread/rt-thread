@@ -72,12 +72,16 @@ void hal_gpio_init(hal_sfr_t gpiox, gpio_init_t gpio_init)
             switch (gpio_init->pull)
             {
             case GPIO_PULLUP:
+                gpiox[GPIOxPD] &= ~BIT(iocurrent);
                 gpiox[GPIOxPU] |= BIT(iocurrent);
                 break;
             case GPIO_PULLDOWN:
+                gpiox[GPIOxPU] &= ~BIT(iocurrent);
                 gpiox[GPIOxPD] |= BIT(iocurrent);
                 break;
             case GPIO_NOPULL:
+                gpiox[GPIOxPU] &= ~BIT(iocurrent);
+                gpiox[GPIOxPD] &= ~BIT(iocurrent);
             default:
                 break;
             }
@@ -105,7 +109,7 @@ void hal_gpio_init(hal_sfr_t gpiox, gpio_init_t gpio_init)
 
 /**
  * @brief Read the specified input port pin.
- * 
+ *
  * @param port GPIO port(GPIOAN, GPIOBN, GPIOEN, GPIOFN).
  * @param pin This parameter can be GPIO_PIN_x where x can be (0.15).
  * @return uint8_t The input port pin value.
@@ -117,7 +121,7 @@ uint8_t hal_gpio_read(hal_sfr_t gpiox, uint8_t pin)
 
 /**
  * @brief Set or clear the selected data port bit.
- * 
+ *
  * @param port GPIO port(GPIOAN, GPIOBN, GPIOEN, GPIOFN).
  * @param pin This parameter can be GPIO_PIN_x where x can be (0.15).
  * @param state specifies the value to be written to the selected bit.
@@ -135,7 +139,7 @@ void hal_gpio_write(hal_sfr_t gpiox, uint8_t pin, uint8_t state)
 
 /**
  * @brief Toggle the specified GPIO pin.
- * 
+ *
  * @param port GPIO port(GPIOAN, GPIOBN, GPIOEN, GPIOFN).
  * @param pin This parameter can be GPIO_PIN_x where x can be (0.15).
  */

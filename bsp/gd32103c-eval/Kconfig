@@ -66,5 +66,44 @@ menu "On-chip Peripheral Drivers"
                 bool "using adc1"
                 default n
         endif
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable hwtimer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+            config BSP_USING_HWTIMER0
+                bool "using hwtimer0"
+                default n
+            config BSP_USING_HWTIMER1
+                bool "using hwtimer1"
+                default n
+            config BSP_USING_HWTIMER2
+                bool "using hwtimer2"
+                default n
+            config BSP_USING_HWTIMER3
+                bool "using hwtimer3"
+                default n
+            config BSP_USING_HWTIMER4
+                bool "using hwtimer4"
+                default n
+            config BSP_USING_HWTIMER5
+                bool "using hwtimer5"
+                default n
+            config BSP_USING_HWTIMER6
+                bool "using hwtimer6"
+                default n
+            config BSP_USING_HWTIMER7
+                bool "using hwtimer7"
+                default n
+        endif
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    config BSP_USING_RTC
+        bool "using internal rtc"
+        default n
+        select RT_USING_RTC
 
 endmenu

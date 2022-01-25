@@ -246,10 +246,10 @@ extern "C" {
 #define LL_DMAMUX_REQ_SPI4_TX         0x0000006BU  /*!< DMAMUX SPI4 TX request     */
 #define LL_DMAMUX_REQ_SAI1_A          0x0000006CU  /*!< DMAMUX SAI1 A request      */
 #define LL_DMAMUX_REQ_SAI1_B          0x0000006DU  /*!< DMAMUX SAI1 B request      */
-#define LL_DMAMUX_REQ_FMAC_WRITE      0x0000006EU  /*!< DMAMUX FMAC WRITE request  */
-#define LL_DMAMUX_REQ_FMAC_READ       0x0000006FU  /*!< DMAMUX FMAC READ request   */
-#define LL_DMAMUX_REQ_CORDIC_WRITE    0x00000070U  /*!< DMAMUX CORDIC WRITE request*/
-#define LL_DMAMUX_REQ_CORDIC_READ     0x00000071U  /*!< DMAMUX CORDIC READ request */
+#define LL_DMAMUX_REQ_FMAC_READ       0x0000006EU  /*!< DMAMUX FMAC READ request   */
+#define LL_DMAMUX_REQ_FMAC_WRITE      0x0000006FU  /*!< DMAMUX FMAC WRITE request  */
+#define LL_DMAMUX_REQ_CORDIC_READ     0x00000070U  /*!< DMAMUX CORDIC READ request */
+#define LL_DMAMUX_REQ_CORDIC_WRITE    0x00000071U  /*!< DMAMUX CORDIC WRITE request*/
 #define LL_DMAMUX_REQ_UCPD1_RX        0x00000072U  /*!< DMAMUX USBPD1_RX request   */
 #define LL_DMAMUX_REQ_UCPD1_TX        0x00000073U  /*!< DMAMUX USBPD1_TX request   */
 
@@ -314,7 +314,7 @@ extern "C" {
 #define LL_DMAMUX_SYNC_DMAMUX_CH1      (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_0)                                                 /*!< Synchronization signal from DMAMUX channel1 Event */
 #define LL_DMAMUX_SYNC_DMAMUX_CH2      (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_1)                                                 /*!< Synchronization signal from DMAMUX channel2 Event */
 #define LL_DMAMUX_SYNC_DMAMUX_CH3      (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_1 | DMAMUX_CxCR_SYNC_ID_0)                         /*!< Synchronization signal from DMAMUX channel3 Event */
-#define LL_DMAMUX_SYNC_LPTIM1_OUT      (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_2)                                                 /*!< Synchronization signal from LPTIM1 Ouput */
+#define LL_DMAMUX_SYNC_LPTIM1_OUT      (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_2)                                                 /*!< Synchronization signal from LPTIM1 Output */
 /**
   * @}
   */
@@ -364,7 +364,7 @@ extern "C" {
 #define LL_DMAMUX_REQ_GEN_DMAMUX_CH1      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_0)                                                 /*!< Request signal generation from DMAMUX channel1 Event */
 #define LL_DMAMUX_REQ_GEN_DMAMUX_CH2      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_1)                                                 /*!< Request signal generation from DMAMUX channel2 Event */
 #define LL_DMAMUX_REQ_GEN_DMAMUX_CH3      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_1 | DMAMUX_RGxCR_SIG_ID_0)                         /*!< Request signal generation from DMAMUX channel3 Event */
-#define LL_DMAMUX_REQ_GEN_LPTIM1_OUT      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_2)                                                 /*!< Request signal generation from LPTIM1 Ouput */
+#define LL_DMAMUX_REQ_GEN_LPTIM1_OUT      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_2)                                                 /*!< Request signal generation from LPTIM1 Output */
 /**
   * @}
   */

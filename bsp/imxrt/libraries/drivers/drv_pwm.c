@@ -16,8 +16,12 @@
 #if !defined(BSP_USING_PWM1_CH0) && !defined(BSP_USING_PWM1_CH1) && !defined(BSP_USING_PWM1_CH2) && !defined(BSP_USING_PWM1_CH3) && \
     !defined(BSP_USING_PWM2_CH0) && !defined(BSP_USING_PWM2_CH1) && !defined(BSP_USING_PWM2_CH2) && !defined(BSP_USING_PWM2_CH3) && \
     !defined(BSP_USING_PWM3_CH0) && !defined(BSP_USING_PWM3_CH1) && !defined(BSP_USING_PWM3_CH2) && !defined(BSP_USING_PWM3_CH3) && \
-    !defined(BSP_USING_PWM4_CH0) && !defined(BSP_USING_PWM4_CH1) && !defined(BSP_USING_PWM4_CH2) && !defined(BSP_USING_PWM4_CH3)
-#error "Please define at least one BSP_USING_PWMx_CHx"
+    !defined(BSP_USING_PWM4_CH0) && !defined(BSP_USING_PWM4_CH1) && !defined(BSP_USING_PWM4_CH2) && !defined(BSP_USING_PWM4_CH3) && \
+    !defined(BSP_USING_QTMR1_CH0) && !defined(BSP_USING_QTMR1_CH1) && !defined(BSP_USING_QTMR1_CH2) && !defined(BSP_USING_QTMR1_CH3) && \
+    !defined(BSP_USING_QTMR2_CH0) && !defined(BSP_USING_QTMR2_CH1) && !defined(BSP_USING_QTMR2_CH2) && !defined(BSP_USING_QTMR2_CH3) && \
+    !defined(BSP_USING_QTMR3_CH0) && !defined(BSP_USING_QTMR3_CH1) && !defined(BSP_USING_QTMR3_CH2) && !defined(BSP_USING_QTMR3_CH3) && \
+    !defined(BSP_USING_QTMR4_CH0) && !defined(BSP_USING_QTMR4_CH1) && !defined(BSP_USING_QTMR4_CH2) && !defined(BSP_USING_QTMR4_CH3)
+#error "Please define at least one BSP_USING_PWMx_CHx or BSP_USING_QTMRx_CHx"
 #endif
 
 #define LOG_TAG             "drv.pwm"
@@ -25,6 +29,9 @@
 
 #include <rtdevice.h>
 #include "fsl_pwm.h"
+#if defined(FSL_FEATURE_SOC_TMR_COUNT) && FSL_FEATURE_SOC_TMR_COUNT > 0
+    #include "fsl_qtmr.h"
+#endif
 #include "drv_pwm.h"
 
 #define DEFAULT_PRE                   5
@@ -153,7 +160,7 @@ static rt_err_t imxrt_drv_pwm_init(PWM_Type *base, pwm_submodule_t pwm_submodule
     if (PWM_Init(base, pwm_submodule, &PwmConfig) == kStatus_Fail)
     {
         LOG_E("init pwm failed \n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     base->SM[fault_input].DISMAP[0] = 0x00;
@@ -176,28 +183,28 @@ static rt_err_t imxrt_pwm1_init(PWM_Type *base)
 #ifdef BSP_USING_PWM1_CH0
     if (imxrt_drv_pwm_init(base, kPWM_Module_0, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM1_CH0 */
 
 #ifdef BSP_USING_PWM1_CH1
     if (imxrt_drv_pwm_init(base, kPWM_Module_1, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM1_CH1 */
 
 #ifdef BSP_USING_PWM1_CH2
     if (imxrt_drv_pwm_init(base, kPWM_Module_2, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /*BSP_USING_PWM1_CH2 */
 
 #ifdef BSP_USING_PWM1_CH3
     if (imxrt_drv_pwm_init(base, kPWM_Module_3, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM1_CH3 */
 
@@ -213,28 +220,28 @@ static rt_err_t imxrt_pwm2_init(PWM_Type *base)
 #ifdef BSP_USING_PWM2_CH0
     if (imxrt_drv_pwm_init(base, kPWM_Module_0, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM2_CH0 */
 
 #ifdef BSP_USING_PWM2_CH1
     if (imxrt_drv_pwm_init(base, kPWM_Module_1, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM2_CH1 */
 
 #ifdef BSP_USING_PWM2_CH2
     if (imxrt_drv_pwm_init(base, kPWM_Module_2, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /*BSP_USING_PWM2_CH2 */
 
 #ifdef BSP_USING_PWM2_CH3
     if (imxrt_drv_pwm_init(base, kPWM_Module_3, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM2_CH3 */
 
@@ -250,28 +257,28 @@ static rt_err_t imxrt_pwm3_init(PWM_Type *base)
 #ifdef BSP_USING_PWM3_CH0
     if (imxrt_drv_pwm_init(base, kPWM_Module_0, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM3_CH0 */
 
 #ifdef BSP_USING_PWM3_CH1
     if (imxrt_drv_pwm_init(base, kPWM_Module_1, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM3_CH1 */
 
 #ifdef BSP_USING_PWM3_CH2
     if (imxrt_drv_pwm_init(base, kPWM_Module_2, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /*BSP_USING_PWM3_CH2 */
 
 #ifdef BSP_USING_PWM3_CH3
     if (imxrt_drv_pwm_init(base, kPWM_Module_3, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM3_CH3 */
 
@@ -287,28 +294,28 @@ static rt_err_t imxrt_pwm4_init(PWM_Type *base)
 #ifdef BSP_USING_PWM4_CH0
     if (imxrt_drv_pwm_init(base, kPWM_Module_0, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM4_CH0 */
 
 #ifdef BSP_USING_PWM4_CH1
     if (imxrt_drv_pwm_init(base, kPWM_Module_1, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM4_CH1 */
 
 #ifdef BSP_USING_PWM4_CH2
     if (imxrt_drv_pwm_init(base, kPWM_Module_2, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /*BSP_USING_PWM4_CH2 */
 
 #ifdef BSP_USING_PWM4_CH3
     if (imxrt_drv_pwm_init(base, kPWM_Module_3, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM4_CH3 */
 
@@ -316,6 +323,224 @@ static rt_err_t imxrt_pwm4_init(PWM_Type *base)
 }
 
 #endif /* BSP_USING_PWM4 */
+
+static rt_err_t imxrt_drv_qtmr_control(struct rt_device_pwm *device, int cmd, void *arg);
+
+static struct rt_pwm_ops imxrt_drv_qtmr_ops =
+{
+    .control = imxrt_drv_qtmr_control
+};
+
+static rt_err_t imxrt_drv_qtmr_enable(struct rt_device_pwm *device, struct rt_pwm_configuration *configuration, rt_bool_t enable)
+{
+    TMR_Type *base;
+    base = (TMR_Type *)device->parent.user_data;
+
+    if (!enable)
+    {
+        QTMR_StopTimer(base, configuration->channel);
+        base->CHANNEL[configuration->channel].SCTRL |= (TMR_SCTRL_FORCE_MASK | TMR_SCTRL_OEN_MASK);
+    }
+    else
+    {
+        QTMR_StartTimer(base, configuration->channel, kQTMR_PriSrcRiseEdge);
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t imxrt_drv_qtmr_get(struct rt_device_pwm *device, struct rt_pwm_configuration *configuration)
+{
+    TMR_Type *base;
+    rt_uint32_t high_count, low_count, clk_divider, clk_freq;
+
+    base = (TMR_Type *)device->parent.user_data;
+
+    low_count = base->CHANNEL[configuration->channel].COMP1;
+    high_count = base->CHANNEL[configuration->channel].COMP2;
+    clk_divider = 1 << (((base->CHANNEL[configuration->channel].CTRL & TMR_CTRL_PCS_MASK) >> TMR_CTRL_PCS_SHIFT) - 8);
+    clk_freq = CLOCK_GetFreq(kCLOCK_IpgClk) / clk_divider;
+
+    configuration->period = 1000000000 / clk_freq * (high_count + low_count);
+    configuration->pulse = 1000000000 / clk_freq * high_count;
+
+    return RT_EOK;
+}
+
+static rt_err_t imxrt_drv_qtmr_set(struct rt_device_pwm *device, struct rt_pwm_configuration *configuration)
+{
+    RT_ASSERT(configuration->period > 0);
+    RT_ASSERT(configuration->pulse <= configuration->period);
+
+    TMR_Type *base = (TMR_Type *)device->parent.user_data;
+
+    rt_size_t clk_freq = CLOCK_GetFreq(kCLOCK_IpgClk) / (1 << (((base->CHANNEL[configuration->channel].CTRL & TMR_CTRL_PCS_MASK) >> TMR_CTRL_PCS_SHIFT) - 8));
+    rt_size_t current_period_count = base->CHANNEL[configuration->channel].CMPLD1 + base->CHANNEL[configuration->channel].CMPLD2;
+    rt_size_t period_count = clk_freq / (1000000000 / configuration->period);
+    if (current_period_count == period_count)
+    {
+        rt_size_t high_count   = period_count * configuration->pulse / configuration->period;
+        rt_size_t low_count    = period_count - high_count;
+        base->CHANNEL[configuration->channel].CMPLD1 = (uint16_t)low_count;
+        base->CHANNEL[configuration->channel].CMPLD2 = (uint16_t)high_count;
+    }
+    else
+    {
+        rt_bool_t timer_is_on = base->CHANNEL[configuration->channel].CTRL & TMR_CTRL_CM_MASK;
+        rt_uint8_t duty = configuration->pulse * 100 / configuration->period;
+        QTMR_StopTimer(base, configuration->channel);
+        if (kStatus_Success != QTMR_SetupPwm(base, configuration->channel, 1000000000 / configuration->period, duty, DEFAULT_POLARITY, clk_freq))
+        {
+            LOG_E(LOG_TAG" setup pwm failed \n");
+            return -RT_ERROR;
+        }
+        if (timer_is_on)
+        {
+            QTMR_StartTimer(base, configuration->channel, kQTMR_PriSrcRiseEdge);
+        }
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t imxrt_drv_qtmr_control(struct rt_device_pwm *device, int cmd, void *arg)
+{
+    struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
+
+    switch (cmd)
+    {
+    case PWM_CMD_ENABLE:
+        return imxrt_drv_qtmr_enable(device, configuration, RT_TRUE);
+    case PWM_CMD_DISABLE:
+        return imxrt_drv_qtmr_enable(device, configuration, RT_FALSE);
+    case PWM_CMD_SET:
+        return imxrt_drv_qtmr_set(device, configuration);
+    case PWM_CMD_GET:
+        return imxrt_drv_qtmr_get(device, configuration);
+    default:
+        return RT_EINVAL;
+    }
+}
+
+static rt_err_t imxrt_drv_qtmr_init(TMR_Type *base, qtmr_channel_selection_t channel, uint16_t psc, uint32_t fre, uint8_t duty)
+{
+    qtmr_config_t qtmr_config;
+    rt_uint32_t qtmr_clock_freq;
+    QTMR_GetDefaultConfig(&qtmr_config);
+
+    qtmr_config.primarySource = (qtmr_primary_count_source_t)(psc + 8);
+    qtmr_clock_freq = CLOCK_GetFreq(kCLOCK_IpgClk) / (1 << psc);
+
+    QTMR_Init(base, channel, &qtmr_config);
+
+    if (kStatus_Success != QTMR_SetupPwm(base, channel, fre, duty, DEFAULT_POLARITY, qtmr_clock_freq))
+    {
+        LOG_E(LOG_TAG" setup pwm failed \n");
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t imxrt_qtmr_init()
+{
+    TMR_Type *base_list[] =
+    {
+#ifdef BSP_USING_QTMR1
+        TMR1,
+#endif
+#ifdef BSP_USING_QTMR2
+        TMR2,
+#endif
+#ifdef BSP_USING_QTMR3
+        TMR3,
+#endif
+#ifdef BSP_USING_QTMR4
+        TMR4,
+#endif
+    };
+
+    rt_uint8_t channel_list[] =
+    {
+#ifdef BSP_USING_QTMR1
+#ifdef BSP_USING_QTMR1_CH0
+        1 << 0 |
+#endif
+#ifdef BSP_USING_QTMR1_CH1
+        1 << 1 |
+#endif
+#ifdef BSP_USING_QTMR1_CH2
+        1 << 2 |
+#endif
+#ifdef BSP_USING_QTMR1_CH3
+        1 << 3 |
+#endif
+        0,
+#endif
+#ifdef BSP_USING_QTMR2
+#ifdef BSP_USING_QTMR2_CH0
+        1 << 0 |
+#endif
+#ifdef BSP_USING_QTMR2_CH1
+        1 << 1 |
+#endif
+#ifdef BSP_USING_QTMR2_CH2
+        1 << 2 |
+#endif
+#ifdef BSP_USING_QTMR2_CH3
+        1 << 3 |
+#endif
+        0,
+#endif
+#ifdef BSP_USING_QTMR3
+#ifdef BSP_USING_QTMR3_CH0
+        1 << 0 |
+#endif
+#ifdef BSP_USING_QTMR3_CH1
+        1 << 1 |
+#endif
+#ifdef BSP_USING_QTMR3_CH2
+        1 << 2 |
+#endif
+#ifdef BSP_USING_QTMR3_CH3
+        1 << 3 |
+#endif
+        0,
+#endif
+#ifdef BSP_USING_QTMR4
+#ifdef BSP_USING_QTMR4_CH0
+        1 << 0 |
+#endif
+#ifdef BSP_USING_QTMR4_CH1
+        1 << 1 |
+#endif
+#ifdef BSP_USING_QTMR4_CH2
+        1 << 2 |
+#endif
+#ifdef BSP_USING_QTMR4_CH3
+        1 << 3 |
+#endif
+        0,
+#endif
+    };
+
+    for (rt_uint8_t i = 0; i < sizeof(base_list)/sizeof(TMR_Type *); ++i)
+    {
+        for (rt_uint8_t j = 0; j < 8; ++j)
+        {
+            if ((channel_list[i] >> j) & 1)
+            {
+                if (imxrt_drv_qtmr_init(base_list[i], j, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
+                {
+                    return -RT_ERROR;
+                }
+            }
+        }
+    }
+    return RT_EOK;
+}
+
+
 
 int rt_hw_pwm_init(void)
 {
@@ -391,9 +616,52 @@ int rt_hw_pwm_init(void)
     }
 #endif /* BSP_USING_PWM4 */
 
+#if defined(BSP_USING_QTMR1) || defined(BSP_USING_QTMR2) || defined(BSP_USING_QTMR3) || defined(BSP_USING_QTMR4)
+    if (imxrt_qtmr_init() != RT_EOK)
+    {
+        LOG_E(LOG_TAG" init qtmr failed");
+    }
+#endif
+
+#ifdef BSP_USING_QTMR1
+    static struct rt_device_pwm qtmr1_device;
+    ret = rt_device_pwm_register(&qtmr1_device, "pwm5", &imxrt_drv_qtmr_ops, TMR1);
+    if (ret != RT_EOK)
+    {
+        LOG_E("%s register failed", "pwm5");
+    }
+#endif /* BSP_USING_QTMR1 */
+
+#ifdef BSP_USING_QTMR2
+    static struct rt_device_pwm qtmr2_device;
+    ret = rt_device_pwm_register(&qtmr2_device, "pwm6", &imxrt_drv_qtmr_ops, TMR2);
+    if (ret != RT_EOK)
+    {
+        LOG_E("%s register failed", "pwm6");
+    }
+#endif /* BSP_USING_QTMR2 */
+
+#ifdef BSP_USING_QTMR3
+    static struct rt_device_pwm qtmr3_device;
+    ret = rt_device_pwm_register(&qtmr3_device, "pwm7", &imxrt_drv_qtmr_ops, TMR3);
+    if (ret != RT_EOK)
+    {
+        LOG_E("%s register failed", "pwm7");
+    }
+#endif /* BSP_USING_QTMR3 */
+
+#ifdef BSP_USING_QTMR4
+    static struct rt_device_pwm qtmr4_device;
+    ret = rt_device_pwm_register(&qtmr4_device, "pwm8", &imxrt_drv_qtmr_ops, TMR4);
+    if (ret != RT_EOK)
+    {
+        LOG_E("%s register failed", "pwm8");
+    }
+#endif /* BSP_USING_QTMR4 */
+
     return ret;
 }
 
-INIT_DEVICE_EXPORT(rt_hw_pwm_init);
+INIT_BOARD_EXPORT(rt_hw_pwm_init);
 
 #endif /* BSP_USING_PWM */

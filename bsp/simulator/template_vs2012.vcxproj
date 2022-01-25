@@ -38,12 +38,12 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\;..\..\include;..\..\bsp\vs2008;..\..\components\finsh;..\..\components\dfs\include;..\..\components\dfs\filesystems\uffs\src\inc\;..\..\components\dfs\filesystems\uffs;..\..\components\drivers\include;..\..\components\dfs\filesystems\jffs2\src;..\..\components\dfs\filesystems\jffs2\kernel;..\..\components\dfs\filesystems\jffs2\include;..\..\components\dfs\filesystems\jffs2\;..\..\components\dfs\filesystems\jffs2\cyg\compress;..\..\components\init;.\drivers;..\..\components\net\lwip\src\include\;..\..\components\net\lwip\src;..\..\components\net\lwip\src\arch\include;..\..\components\net\lwip\src\include\ipv4;.\pcap\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;MSVC;_TIME_T_DEFINED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;Packet.lib;wpcap.lib;%(AdditionalDependencies)</AdditionalDependencies>

@@ -12,9 +12,12 @@ board.c
 CubeMX_Config/Src/stm32l4xx_hal_msp.c
 ''')
 
+if GetDepend('BSP_USING_SPI_LCD'):
+    src += ['ports/lcd/drv_lcd.c']
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
-
+path += [cwd + '/ports/lcd']
 startup_path_prefix = SDK_LIB
 
 if rtconfig.CROSS_TOOL == 'gcc':
@@ -33,7 +36,7 @@ elif rtconfig.CROSS_TOOL == 'iar':
 # STM32L4R7xx || STM32L4R9xx || STM32L4S5xx
 # STM32L4S7xx || STM32L4S9xx
 # You can select chips from the list above	
-CPPDEFINES = ['STM32L432xx']
+CPPDEFINES = ['STM32L431xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

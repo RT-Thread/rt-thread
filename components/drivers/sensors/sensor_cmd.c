@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -74,6 +74,12 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     case RT_SENSOR_CLASS_ECO2:
         LOG_I("num:%3d, eco2:%5d ppm, timestamp:%5d", num, sensor_data->data.eco2, sensor_data->timestamp);
         break;
+    case RT_SENSOR_CLASS_IAQ:
+        LOG_I("num:%3d, IAQ:%5d.%d , timestamp:%5d", num, sensor_data->data.iaq / 10, sensor_data->data.iaq % 10, sensor_data->timestamp);
+        break;
+    case RT_SENSOR_CLASS_ETOH:
+        LOG_I("num:%3d, EtOH:%5d.%03d ppm, timestamp:%5d", num, sensor_data->data.etoh / 1000, sensor_data->data.etoh % 1000, sensor_data->timestamp);
+        break;
     default:
         break;
     }
@@ -92,7 +98,7 @@ static void sensor_fifo_rx_entry(void *parameter)
     struct rt_sensor_data *data = RT_NULL;
     struct rt_sensor_info info;
     rt_size_t res, i;
-    
+
     rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
 
     data = (struct rt_sensor_data *)rt_malloc(sizeof(struct rt_sensor_data) * info.fifo_max);
@@ -126,7 +132,7 @@ static void sensor_fifo(int argc, char **argv)
         return;
     }
     sensor = (rt_sensor_t)dev;
-    
+
     if (rt_device_open(dev, RT_DEVICE_FLAG_FIFO_RX) != RT_EOK)
     {
         LOG_E("open device failed!");
@@ -155,8 +161,8 @@ static void sensor_fifo(int argc, char **argv)
 
     rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)20);
 }
-#ifdef FINSH_USING_MSH
-MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
+#ifdef RT_USING_FINSH
+    MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
 #endif
 
 static void sensor_irq_rx_entry(void *parameter)
@@ -219,18 +225,19 @@ static void sensor_int(int argc, char **argv)
     }
     rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)20);
 }
-#ifdef FINSH_USING_MSH
-MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
+#ifdef RT_USING_FINSH
+    MSH_CMD_EXPORT(sensor_int, Sensor interrupt mode test function);
 #endif
 
 static void sensor_polling(int argc, char **argv)
 {
-    uint16_t num = 10;
+    rt_uint16_t num = 10;
     rt_device_t dev = RT_NULL;
     rt_sensor_t sensor;
     struct rt_sensor_data data;
     rt_size_t res, i;
     rt_int32_t delay;
+    rt_err_t result;
 
     dev = rt_device_find(argv[1]);
     if (dev == RT_NULL)
@@ -244,9 +251,10 @@ static void sensor_polling(int argc, char **argv)
     sensor = (rt_sensor_t)dev;
     delay  = sensor->info.period_min > 100 ? sensor->info.period_min : 100;
 
-    if (rt_device_open(dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+    result = rt_device_open(dev, RT_DEVICE_FLAG_RDONLY);
+    if (result != RT_EOK)
     {
-        LOG_E("open device failed!");
+        LOG_E("open device failed! error code : %d", result);
         return;
     }
     rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)100);
@@ -266,8 +274,8 @@ static void sensor_polling(int argc, char **argv)
     }
     rt_device_close(dev);
 }
-#ifdef FINSH_USING_MSH
-MSH_CMD_EXPORT(sensor_polling, Sensor polling mode test function);
+#ifdef RT_USING_FINSH
+    MSH_CMD_EXPORT(sensor_polling, Sensor polling mode test function);
 #endif
 
 static void sensor(int argc, char **argv)
@@ -304,103 +312,103 @@ static void sensor(int argc, char **argv)
         rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
         switch (info.vendor)
         {
-            case RT_SENSOR_VENDOR_UNKNOWN:
-                rt_kprintf("vendor    :unknown vendor\n");
-                break;
-            case RT_SENSOR_VENDOR_STM:
-                rt_kprintf("vendor    :STMicroelectronics\n");
-                break;
-            case RT_SENSOR_VENDOR_BOSCH:
-                rt_kprintf("vendor    :Bosch\n");
-                break;
-            case RT_SENSOR_VENDOR_INVENSENSE:
-                rt_kprintf("vendor    :Invensense\n");
-                break;
-            case RT_SENSOR_VENDOR_SEMTECH:
-                rt_kprintf("vendor    :Semtech\n");
-                break;
-            case RT_SENSOR_VENDOR_GOERTEK:
-                rt_kprintf("vendor    :Goertek\n");
-                break;
-            case RT_SENSOR_VENDOR_MIRAMEMS:
-                rt_kprintf("vendor    :MiraMEMS\n");
-                break;
-            case RT_SENSOR_VENDOR_DALLAS:
-                rt_kprintf("vendor    :Dallas\n");
-                break;
-            case RT_SENSOR_VENDOR_ASAIR:
-                rt_kprintf("vendor    :Asair\n");
-                break;
-            case RT_SENSOR_VENDOR_SHARP:
-                rt_kprintf("vendor    :Sharp\n");
-                break;
-            case RT_SENSOR_VENDOR_SENSIRION:
-                rt_kprintf("vendor    :Sensirion\n");
-                break;
-            case RT_SENSOR_VENDOR_TI:
-                rt_kprintf("vendor    :Texas Instruments\n");
-                break;
-            case RT_SENSOR_VENDOR_PLANTOWER:
-                rt_kprintf("vendor    :Plantower\n");
-                break;
-            case RT_SENSOR_VENDOR_AMS:
-                rt_kprintf("vendor    :AMS\n");
-                break;
-            case RT_SENSOR_VENDOR_MAXIM:
-                rt_kprintf("vendor    :Maxim Integrated\n");
-                break;
+        case RT_SENSOR_VENDOR_UNKNOWN:
+            rt_kprintf("vendor    :unknown vendor\n");
+            break;
+        case RT_SENSOR_VENDOR_STM:
+            rt_kprintf("vendor    :STMicroelectronics\n");
+            break;
+        case RT_SENSOR_VENDOR_BOSCH:
+            rt_kprintf("vendor    :Bosch\n");
+            break;
+        case RT_SENSOR_VENDOR_INVENSENSE:
+            rt_kprintf("vendor    :Invensense\n");
+            break;
+        case RT_SENSOR_VENDOR_SEMTECH:
+            rt_kprintf("vendor    :Semtech\n");
+            break;
+        case RT_SENSOR_VENDOR_GOERTEK:
+            rt_kprintf("vendor    :Goertek\n");
+            break;
+        case RT_SENSOR_VENDOR_MIRAMEMS:
+            rt_kprintf("vendor    :MiraMEMS\n");
+            break;
+        case RT_SENSOR_VENDOR_DALLAS:
+            rt_kprintf("vendor    :Dallas\n");
+            break;
+        case RT_SENSOR_VENDOR_ASAIR:
+            rt_kprintf("vendor    :Asair\n");
+            break;
+        case RT_SENSOR_VENDOR_SHARP:
+            rt_kprintf("vendor    :Sharp\n");
+            break;
+        case RT_SENSOR_VENDOR_SENSIRION:
+            rt_kprintf("vendor    :Sensirion\n");
+            break;
+        case RT_SENSOR_VENDOR_TI:
+            rt_kprintf("vendor    :Texas Instruments\n");
+            break;
+        case RT_SENSOR_VENDOR_PLANTOWER:
+            rt_kprintf("vendor    :Plantower\n");
+            break;
+        case RT_SENSOR_VENDOR_AMS:
+            rt_kprintf("vendor    :AMS\n");
+            break;
+        case RT_SENSOR_VENDOR_MAXIM:
+            rt_kprintf("vendor    :Maxim Integrated\n");
+            break;
         }
         rt_kprintf("model     :%s\n", info.model);
         switch (info.unit)
         {
-            case RT_SENSOR_UNIT_NONE:
-                rt_kprintf("unit      :none\n");
-                break;
-            case RT_SENSOR_UNIT_MG:
-                rt_kprintf("unit      :mG\n");
-                break;
-            case RT_SENSOR_UNIT_MDPS:
-                rt_kprintf("unit      :mdps\n");
-                break;
-            case RT_SENSOR_UNIT_MGAUSS:
-                rt_kprintf("unit      :mGauss\n");
-                break;
-            case RT_SENSOR_UNIT_LUX:
-                rt_kprintf("unit      :lux\n");
-                break;
-            case RT_SENSOR_UNIT_CM:
-                rt_kprintf("unit      :cm\n");
-                break;
-            case RT_SENSOR_UNIT_PA:
-                rt_kprintf("unit      :pa\n");
-                break;
-            case RT_SENSOR_UNIT_PERMILLAGE:
-                rt_kprintf("unit      :permillage\n");
-                break;
-            case RT_SENSOR_UNIT_DCELSIUS:
-                rt_kprintf("unit      :Celsius\n");
-                break;
-            case RT_SENSOR_UNIT_HZ:
-                rt_kprintf("unit      :HZ\n");
-                break;
-            case RT_SENSOR_UNIT_ONE:
-                rt_kprintf("unit      :1\n");
-                break;
-            case RT_SENSOR_UNIT_BPM:
-                rt_kprintf("unit      :bpm\n");
-                break;
-            case RT_SENSOR_UNIT_MM:
-                rt_kprintf("unit      :mm\n");
-                break;
-            case RT_SENSOR_UNIT_MN:
-                rt_kprintf("unit      :mN\n");
-                break;
-            case RT_SENSOR_UNIT_PPM:
-                rt_kprintf("unit      :ppm\n");
-                break;
-            case RT_SENSOR_UNIT_PPB:
-                rt_kprintf("unit      :ppb\n");
-                break;
+        case RT_SENSOR_UNIT_NONE:
+            rt_kprintf("unit      :none\n");
+            break;
+        case RT_SENSOR_UNIT_MG:
+            rt_kprintf("unit      :mG\n");
+            break;
+        case RT_SENSOR_UNIT_MDPS:
+            rt_kprintf("unit      :mdps\n");
+            break;
+        case RT_SENSOR_UNIT_MGAUSS:
+            rt_kprintf("unit      :mGauss\n");
+            break;
+        case RT_SENSOR_UNIT_LUX:
+            rt_kprintf("unit      :lux\n");
+            break;
+        case RT_SENSOR_UNIT_CM:
+            rt_kprintf("unit      :cm\n");
+            break;
+        case RT_SENSOR_UNIT_PA:
+            rt_kprintf("unit      :pa\n");
+            break;
+        case RT_SENSOR_UNIT_PERMILLAGE:
+            rt_kprintf("unit      :permillage\n");
+            break;
+        case RT_SENSOR_UNIT_DCELSIUS:
+            rt_kprintf("unit      :Celsius\n");
+            break;
+        case RT_SENSOR_UNIT_HZ:
+            rt_kprintf("unit      :HZ\n");
+            break;
+        case RT_SENSOR_UNIT_ONE:
+            rt_kprintf("unit      :1\n");
+            break;
+        case RT_SENSOR_UNIT_BPM:
+            rt_kprintf("unit      :bpm\n");
+            break;
+        case RT_SENSOR_UNIT_MM:
+            rt_kprintf("unit      :mm\n");
+            break;
+        case RT_SENSOR_UNIT_MN:
+            rt_kprintf("unit      :mN\n");
+            break;
+        case RT_SENSOR_UNIT_PPM:
+            rt_kprintf("unit      :ppm\n");
+            break;
+        case RT_SENSOR_UNIT_PPB:
+            rt_kprintf("unit      :ppb\n");
+            break;
         }
         rt_kprintf("range_max :%d\n", info.range_max);
         rt_kprintf("range_min :%d\n", info.range_min);
@@ -409,7 +417,7 @@ static void sensor(int argc, char **argv)
     }
     else if (!strcmp(argv[1], "read"))
     {
-        uint16_t num = 5;
+        rt_uint16_t num = 5;
 
         if (dev == RT_NULL)
         {
@@ -451,7 +459,7 @@ static void sensor(int argc, char **argv)
             dev = rt_device_find(argv[2]);
             if (dev == RT_NULL)
             {
-                LOG_E("Can't find device:%s", argv[1]);
+                LOG_E("Can't find device:%s", argv[2]);
                 return;
             }
             if (rt_device_open(dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
@@ -494,6 +502,6 @@ static void sensor(int argc, char **argv)
         LOG_W("Unknown command, please enter 'sensor' get help information!");
     }
 }
-#ifdef FINSH_USING_MSH
-MSH_CMD_EXPORT(sensor, sensor test function);
+#ifdef RT_USING_FINSH
+    MSH_CMD_EXPORT(sensor, sensor test function);
 #endif

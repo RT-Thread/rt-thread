@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,7 +34,7 @@ static rt_err_t lpc_lpadc_convert(struct rt_adc_device *device, rt_uint32_t chan
     lpadc_conv_trigger_config_t mLpadcTriggerConfigStruct;
     lpadc_conv_command_config_t mLpadcCommandConfigStruct;
     lpadc_conv_result_t mLpadcResultConfigStruct;
-    
+
     ADC_Type *base;
     base = (ADC_Type *)(device->parent.user_data);
 
@@ -42,13 +42,13 @@ static rt_err_t lpc_lpadc_convert(struct rt_adc_device *device, rt_uint32_t chan
     LPADC_GetDefaultConvCommandConfig(&mLpadcCommandConfigStruct);
     mLpadcCommandConfigStruct.channelNumber = channel;
     LPADC_SetConvCommandConfig(base, 1U, &mLpadcCommandConfigStruct);
-    
+
     /* Set trigger configuration. */
     LPADC_GetDefaultConvTriggerConfig(&mLpadcTriggerConfigStruct);
     mLpadcTriggerConfigStruct.targetCommandId       = 1U;
     mLpadcTriggerConfigStruct.enableHardwareTrigger = false;
     LPADC_SetConvTriggerConfig(base, 0U, &mLpadcTriggerConfigStruct); /* Configurate the trigger0. */
-    
+
     LPADC_DoSoftwareTrigger(base, 1U); /* 1U is trigger0 mask. */
     while (!LPADC_GetConvResult(base, &mLpadcResultConfigStruct, 0U));
 
@@ -74,12 +74,12 @@ int rt_hw_adc_init(void)
 
 #if defined(BSP_USING_ADC0_CH0)
     lpadc_config_t mLpadcConfigStruct;
-    
+
     CLOCK_SetClkDiv(kCLOCK_DivAdcAsyncClk, 16U, true);
     CLOCK_AttachClk(kMAIN_CLK_to_ADC_CLK);
     /* Disable LDOGPADC power down */
     POWER_DisablePD(kPDRUNCFG_PD_LDOGPADC);
-    
+
     LPADC_GetDefaultConfig(&mLpadcConfigStruct);
     mLpadcConfigStruct.enableAnalogPreliminary = true;
     mLpadcConfigStruct.referenceVoltageSource = kLPADC_ReferenceVoltageAlt2;
@@ -91,7 +91,7 @@ int rt_hw_adc_init(void)
     LPADC_SetOffsetValue(ADC0, 10U, 10U);
     /* Request gain calibration. */
     LPADC_DoAutoCalibration(ADC0);
-    
+
     result = rt_hw_adc_register(&adc0_device, "adc0", &lpc_adc_ops, ADC0);
 
     if (result != RT_EOK)

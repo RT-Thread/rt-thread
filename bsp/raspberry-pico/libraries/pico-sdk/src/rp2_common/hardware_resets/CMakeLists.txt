@@ -1,0 +1,2 @@
+add_library(hardware_resets INTERFACE)
+target_include_directories(hardware_resets INTERFACE include)

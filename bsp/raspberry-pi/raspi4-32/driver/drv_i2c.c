@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@
 /*
 * (3.3v)          -1   2-
 * (SDA1/SDA3)     -3   4-
-* (SCL1/SCL3)     -5   6-  
+* (SCL1/SCL3)     -5   6-
 * (SDA3)          -7   8-
 *                 -9  10-
 *                 -11 12-
@@ -268,7 +268,7 @@ static struct raspi_i2c_hw_config hw_device4 =
     .scl_pin = GPIO_PIN_7,
 #else
     .sda_pin = GPIO_PIN_8,
-    .scl_pin = GPIO_PIN_9, 
+    .scl_pin = GPIO_PIN_9,
 #endif
     .sda_mode = ALT5,
     .scl_mode = ALT5,

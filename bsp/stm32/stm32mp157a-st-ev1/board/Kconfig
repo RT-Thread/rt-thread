@@ -138,6 +138,9 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_DMA
         bool "Enable DMA Test"
+        select BSP_USING_UART
+        select BSP_USING_UART3
+        select BSP_UART3_RX_USING_DMA
         default name
 
     config BSP_USING_QSPI

@@ -88,7 +88,7 @@ typedef enum
 
 #if defined (_EFM32_GIANT_FAMILY)
 /** Strategy for prioritized bus access */
-typedef enum { 
+typedef enum {
   mscBusStrategyCPU = MSC_READCTRL_BUSSTRATEGY_CPU, /**< Prioritize CPU bus accesses */
   mscBusStrategyDMA = MSC_READCTRL_BUSSTRATEGY_DMA, /**< Prioritize DMA bus accesses */
   mscBusStrategyDMAEM1 = MSC_READCTRL_BUSSTRATEGY_DMAEM1, /**< Prioritize DMAEM1 for bus accesses */

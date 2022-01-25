@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -374,6 +374,8 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
     struct rt_i2c_bit_ops *ops = (struct rt_i2c_bit_ops *)bus->priv;
     rt_int32_t i, ret;
     rt_uint16_t ignore_nack;
+
+    if (num == 0) return 0;
 
     for (i = 0; i < num; i++)
     {

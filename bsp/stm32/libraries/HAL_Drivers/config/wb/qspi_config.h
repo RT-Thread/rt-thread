@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       		Notes
+ * Date           Author            Notes
  * 2020-10-14     Dozingfiretruck   first version
  */
 
@@ -28,7 +28,7 @@ extern "C" {
     }
 #endif /* QSPI_BUS_CONFIG */
 #endif /* BSP_USING_QSPI */
-    
+
 #ifdef BSP_QSPI_USING_DMA
 #ifndef QSPI_DMA_CONFIG
 #define QSPI_DMA_CONFIG                                        \

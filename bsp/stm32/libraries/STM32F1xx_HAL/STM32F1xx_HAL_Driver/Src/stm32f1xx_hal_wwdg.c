@@ -5,84 +5,110 @@
   * @brief   WWDG HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the Window Watchdog (WWDG) peripheral:
-  *           + Initialization and de-initialization functions
+  *           + Initialization and Configuration functions
   *           + IO operation functions
-  *           + Peripheral State functions
   @verbatim
   ==============================================================================
-                      ##### WWDG specific features #####
+                      ##### WWDG Specific features #####
   ==============================================================================
   [..]
     Once enabled the WWDG generates a system reset on expiry of a programmed
-    time period, unless the program refreshes the counter (downcounter)
+    time period, unless the program refreshes the counter (T[6;0] downcounter)
     before reaching 0x3F value (i.e. a reset is generated when the counter
-    value rolls over from 0x40 to 0x3F).
+    value rolls down from 0x40 to 0x3F).
 
     (+) An MCU reset is also generated if the counter value is refreshed
         before the counter has reached the refresh window value. This
         implies that the counter must be refreshed in a limited window.
     (+) Once enabled the WWDG cannot be disabled except by a system reset.
-    (+) WWDGRST flag in RCC_CSR register can be used to inform when a WWDG
+    (+) If required by application, an Early Wakeup Interrupt can be triggered
+        in order to be warned before WWDG expiration. The Early Wakeup Interrupt
+        (EWI) can be used if specific safety operations or data logging must
+        be performed before the actual reset is generated. When the downcounter
+        reaches 0x40, interrupt occurs. This mechanism requires WWDG interrupt
+        line to be enabled in NVIC. Once enabled, EWI interrupt cannot be
+        disabled except by a system reset.
+    (+) WWDGRST flag in RCC CSR register can be used to inform when a WWDG
         reset occurs.
     (+) The WWDG counter input clock is derived from the APB clock divided
         by a programmable prescaler.
     (+) WWDG clock (Hz) = PCLK1 / (4096 * Prescaler)
-    (+) WWDG timeout (mS) = 1000 * Counter / WWDG clock
+    (+) WWDG timeout (mS) = 1000 * (T[5;0] + 1) / WWDG clock (Hz)
+        where T[5;0] are the lowest 6 bits of Counter.
     (+) WWDG Counter refresh is allowed between the following limits :
-        (++) min time (mS) = 1000 * (Counter _ Window) / WWDG clock
-        (++) max time (mS) = 1000 * (Counter _ 0x40) / WWDG clock
-
-    (+) Min-max timeout value at 36 MHz(PCLK1): 910 us / 58.25 ms
-
-    (+) The Early Wakeup Interrupt (EWI) can be used if specific safety
-        operations or data logging must be performed before the actual reset is
-        generated. When the downcounter reaches the value 0x40, an EWI interrupt
-        is generated and the corresponding interrupt service routine (ISR) can
-        be used to trigger specific actions (such as communications or data
-        logging), before resetting the device.
-        In some applications, the EWI interrupt can be used to manage a software
-        system check and/or system recovery/graceful degradation, without
-        generating a WWDG reset. In this case, the corresponding interrupt
-        service routine (ISR) should reload the WWDG counter to avoid the WWDG
-        reset, then trigger the required actions.
-        Note:When the EWI interrupt cannot be served, e.g. due to a system lock
-        in a higher priority task, the WWDG reset will eventually be generated.
-
-    (+) Debug mode : When the microcontroller enters debug mode (core halted),
-        the WWDG counter either continues to work normally or stops, depending
-        on DBG_WWDG_STOP configuration bit in DBG module, accessible through
-        __HAL_DBGMCU_FREEZE_WWDG() and __HAL_DBGMCU_UNFREEZE_WWDG() macros
+        (++) min time (mS) = 1000 * (Counter - Window) / WWDG clock
+        (++) max time (mS) = 1000 * (Counter - 0x40) / WWDG clock
+    (+) Typical values:
+        (++) Counter min (T[5;0] = 0x00) at 36MHz (PCLK1) with zero prescaler:
+             max timeout before reset: approximately 910µs
+        (++) Counter max (T[5;0] = 0x3F) at 36MHz (PCLK1) with prescaler
+             dividing by 8:
+             max timeout before reset: approximately 58.25ms
 
                      ##### How to use this driver #####
   ==============================================================================
+
+    *** Common driver usage ***
+    ===========================
+
   [..]
     (+) Enable WWDG APB1 clock using __HAL_RCC_WWDG_CLK_ENABLE().
-
-    (+) Set the WWDG prescaler, refresh window, counter value and Early Wakeup
-        Interrupt mode using using HAL_WWDG_Init() function.
-        This enables WWDG peripheral and the downcounter starts downcounting
-        from given counter value.
-        Init function can be called again to modify all watchdog parameters,
-        however if EWI mode has been set once, it can't be clear until next
-        reset.
-
-    (+) The application program must refresh the WWDG counter at regular
-        intervals during normal operation to prevent an MCU reset using
+    (+) Configure the WWDG prescaler, refresh window value, counter value and early
+        interrupt status using HAL_WWDG_Init() function. This will automatically
+        enable WWDG and start its downcounter. Time reference can be taken from 
+        function exit. Care must be taken to provide a counter value
+        greater than 0x40 to prevent generation of immediate reset.
+    (+) If the Early Wakeup Interrupt (EWI) feature is enabled, an interrupt is
+        generated when the counter reaches 0x40. When HAL_WWDG_IRQHandler is
+        triggered by the interrupt service routine, flag will be automatically
+        cleared and HAL_WWDG_WakeupCallback user callback will be executed. User
+        can add his own code by customization of callback HAL_WWDG_WakeupCallback.
+    (+) Then the application program must refresh the WWDG counter at regular
+        intervals during normal operation to prevent an MCU reset, using
         HAL_WWDG_Refresh() function. This operation must occur only when
-        the counter is lower than the window value already programmed.
+        the counter is lower than the refresh window value already programmed.
 
-    (+) if Early Wakeup Interrupt mode is enable an interrupt is generated when
-        the counter reaches 0x40. User can add his own code in weak function
-        HAL_WWDG_EarlyWakeupCallback().
+    *** Callback registration ***
+    =============================
 
-     *** WWDG HAL driver macros list ***
-     ==================================
-     [..]
-       Below the list of most used macros in WWDG HAL driver.
+  [..]
+    The compilation define USE_HAL_WWDG_REGISTER_CALLBACKS when set to 1 allows
+    the user to configure dynamically the driver callbacks. Use Functions
+    HAL_WWDG_RegisterCallback() to register a user callback.
 
-      (+) __HAL_WWDG_GET_IT_SOURCE: Check the selected WWDG's interrupt source.
-      (+) __HAL_WWDG_GET_FLAG: Get the selected WWDG's flag status.
-      (+) __HAL_WWDG_CLEAR_FLAG: Clear the WWDG's pending flags.
+    (+) Function HAL_WWDG_RegisterCallback() allows to register following
+        callbacks:
+        (++) EwiCallback : callback for Early WakeUp Interrupt.
+        (++) MspInitCallback : WWDG MspInit.
+    This function takes as parameters the HAL peripheral handle, the Callback ID
+    and a pointer to the user callback function.
+
+    (+) Use function HAL_WWDG_UnRegisterCallback() to reset a callback to
+    the default weak (surcharged) function. HAL_WWDG_UnRegisterCallback()
+    takes as parameters the HAL peripheral handle and the Callback ID.
+    This function allows to reset following callbacks:
+        (++) EwiCallback : callback for  Early WakeUp Interrupt.
+        (++) MspInitCallback : WWDG MspInit.
+
+    [..]
+    When calling HAL_WWDG_Init function, callbacks are reset to the
+    corresponding legacy weak (surcharged) functions:
+    HAL_WWDG_EarlyWakeupCallback() and HAL_WWDG_MspInit() only if they have
+    not been registered before.
+
+    [..]
+    When compilation define USE_HAL_WWDG_REGISTER_CALLBACKS is set to 0 or
+    not defined, the callback registering feature is not available
+    and weak (surcharged) callbacks are used.
+
+    *** WWDG HAL driver macros list ***
+    ===================================
+    [..]
+      Below the list of available macros in WWDG HAL driver.
+      (+) __HAL_WWDG_ENABLE: Enable the WWDG peripheral
+      (+) __HAL_WWDG_GET_FLAG: Get the selected WWDG's flag status
+      (+) __HAL_WWDG_CLEAR_FLAG: Clear the WWDG's pending flags
+      (+) __HAL_WWDG_ENABLE_IT: Enable the WWDG early wakeup interrupt
 
   @endverbatim
   ******************************************************************************
@@ -164,12 +190,12 @@ HAL_StatusTypeDef HAL_WWDG_Init(WWDG_HandleTypeDef *hwwdg)
 
 #if (USE_HAL_WWDG_REGISTER_CALLBACKS == 1)
   /* Reset Callback pointers */
-  if(hwwdg->EwiCallback == NULL)
+  if (hwwdg->EwiCallback == NULL)
   {
     hwwdg->EwiCallback = HAL_WWDG_EarlyWakeupCallback;
   }
 
-  if(hwwdg->MspInitCallback == NULL)
+  if (hwwdg->MspInitCallback == NULL)
   {
     hwwdg->MspInitCallback = HAL_WWDG_MspInit;
   }
@@ -179,7 +205,7 @@ HAL_StatusTypeDef HAL_WWDG_Init(WWDG_HandleTypeDef *hwwdg)
 #else
   /* Init the low level hardware */
   HAL_WWDG_MspInit(hwwdg);
-#endif
+#endif /* USE_HAL_WWDG_REGISTER_CALLBACKS */
 
   /* Set WWDG Counter */
   WRITE_REG(hwwdg->Instance->CR, (WWDG_CR_WDGA | hwwdg->Init.Counter));
@@ -190,6 +216,7 @@ HAL_StatusTypeDef HAL_WWDG_Init(WWDG_HandleTypeDef *hwwdg)
   /* Return function status */
   return HAL_OK;
 }
+
 
 /**
   * @brief  Initialize the WWDG MSP.
@@ -223,17 +250,18 @@ __weak void HAL_WWDG_MspInit(WWDG_HandleTypeDef *hwwdg)
   * @param  pCallback pointer to the Callback function
   * @retval status
   */
-HAL_StatusTypeDef HAL_WWDG_RegisterCallback(WWDG_HandleTypeDef *hwwdg, HAL_WWDG_CallbackIDTypeDef CallbackID, pWWDG_CallbackTypeDef pCallback)
+HAL_StatusTypeDef HAL_WWDG_RegisterCallback(WWDG_HandleTypeDef *hwwdg, HAL_WWDG_CallbackIDTypeDef CallbackID,
+                                            pWWDG_CallbackTypeDef pCallback)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
-  if(pCallback == NULL)
+  if (pCallback == NULL)
   {
     status = HAL_ERROR;
   }
   else
   {
-    switch(CallbackID)
+    switch (CallbackID)
     {
       case HAL_WWDG_EWI_CB_ID:
         hwwdg->EwiCallback = pCallback;
@@ -255,7 +283,7 @@ HAL_StatusTypeDef HAL_WWDG_RegisterCallback(WWDG_HandleTypeDef *hwwdg, HAL_WWDG_
 
 /**
   * @brief  Unregister a WWDG Callback
-  *         WWDG Callback is redirected to the weak (surcharged) predefined callback 
+  *         WWDG Callback is redirected to the weak (surcharged) predefined callback
   * @param  hwwdg WWDG handle
   * @param  CallbackID ID of the callback to be registered
   *         This parameter can be one of the following values:
@@ -267,7 +295,7 @@ HAL_StatusTypeDef HAL_WWDG_UnRegisterCallback(WWDG_HandleTypeDef *hwwdg, HAL_WWD
 {
   HAL_StatusTypeDef status = HAL_OK;
 
-  switch(CallbackID)
+  switch (CallbackID)
   {
     case HAL_WWDG_EWI_CB_ID:
       hwwdg->EwiCallback = HAL_WWDG_EarlyWakeupCallback;
@@ -284,15 +312,15 @@ HAL_StatusTypeDef HAL_WWDG_UnRegisterCallback(WWDG_HandleTypeDef *hwwdg, HAL_WWD
 
   return status;
 }
-#endif
+#endif /* USE_HAL_WWDG_REGISTER_CALLBACKS */
 
 /**
   * @}
   */
 
 /** @defgroup WWDG_Exported_Functions_Group2 IO operation functions
- *  @brief    IO operation functions
- *
+  *  @brief    IO operation functions
+  *
 @verbatim
   ==============================================================================
                       ##### IO operation functions #####
@@ -352,14 +380,15 @@ void HAL_WWDG_IRQHandler(WWDG_HandleTypeDef *hwwdg)
 #else
       /* Early Wakeup callback */
       HAL_WWDG_EarlyWakeupCallback(hwwdg);
-#endif
+#endif /* USE_HAL_WWDG_REGISTER_CALLBACKS */
     }
   }
 }
 
+
 /**
   * @brief  WWDG Early Wakeup callback.
-  * @param  hwwdg : pointer to a WWDG_HandleTypeDef structure that contains
+  * @param  hwwdg  pointer to a WWDG_HandleTypeDef structure that contains
   *                the configuration information for the specified WWDG module.
   * @retval None
   */

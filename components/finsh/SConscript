@@ -1,39 +1,19 @@
-Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
 src     = Split('''
 shell.c
-cmd.c
+msh.c
 ''')
 
-fsh_src = Split('''
-finsh_compiler.c
-finsh_error.c
-finsh_heap.c
-finsh_init.c
-finsh_node.c
-finsh_ops.c
-finsh_parser.c
-finsh_var.c
-finsh_vm.c
-finsh_token.c
-''')
+if GetDepend('MSH_USING_BUILT_IN_COMMANDS'):
+    src += ['cmd.c']
 
-msh_src = Glob('msh.c')
-
-if GetDepend('RT_USING_DFS'):
-    msh_src += ['msh_file.c']
-
-if not GetDepend('FINSH_USING_SYMTAB'):
-    src += ['symbol.c']
-if GetDepend('FINSH_USING_MSH'):
-	src = src + msh_src
-if not GetDepend('FINSH_USING_MSH_ONLY'):
-    src = src + fsh_src
+if GetDepend('DFS_USING_POSIX'):
+    src += ['msh_file.c']
 
 CPPPATH = [cwd]
 
-group = DefineGroup('finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH)
+group = DefineGroup('Finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH)
 
 Return('group')

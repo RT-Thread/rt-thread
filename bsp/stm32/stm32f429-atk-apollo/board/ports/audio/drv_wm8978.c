@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -763,8 +763,8 @@ rt_err_t wm8978_init(struct rt_i2c_bus_device *dev)
 
     wm8978_interface_cfg(dev, I2S_FOMAT_SELECT, 16);
     wm8978_mic_enabled(dev, 0);
-	
-  	return RT_EOK;
+
+    return RT_EOK;
 }
 
 void wm8978_DAC_enabled(struct rt_i2c_bus_device *dev, rt_bool_t bool)

@@ -15,13 +15,17 @@
 #if defined(BSP_USING_SDH)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_pdma.h>
 #include <string.h>
 
 #if defined(RT_USING_DFS)
-    #include <dfs_fs.h>
-    #include <dfs_posix.h>
+#include <dfs_fs.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #endif
 
 /* Private define ---------------------------------------------------------------*/
@@ -270,11 +274,13 @@ static rt_size_t nu_sdh_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
 {
     rt_uint32_t ret = 0;
     nu_sdh_t sdh = (nu_sdh_t)dev;
+    rt_err_t result;
 
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
-    rt_sem_take(&sdh->lock, RT_WAITING_FOREVER);
+    result = rt_sem_take(&sdh->lock, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     /* Check alignment. */
     if (((uint32_t)buffer & 0x03) != 0)
@@ -315,7 +321,8 @@ exit_nu_sdh_read:
         sdh->pbuf = RT_NULL;
     }
 
-    rt_sem_release(&sdh->lock);
+    result = rt_sem_release(&sdh->lock);
+    RT_ASSERT(result == RT_EOK);
 
     if (ret == Successful)
         return blk_nb;
@@ -329,11 +336,13 @@ static rt_size_t nu_sdh_write(rt_device_t dev, rt_off_t pos, const void *buffer,
 {
     rt_uint32_t ret = 0;
     nu_sdh_t sdh = (nu_sdh_t)dev;
+    rt_err_t result;
 
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
-    rt_sem_take(&sdh->lock, RT_WAITING_FOREVER);
+    result = rt_sem_take(&sdh->lock, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     /* Check alignment. */
     if (((uint32_t)buffer & 0x03) != 0)
@@ -372,7 +381,8 @@ exit_nu_sdh_write:
         sdh->pbuf = RT_NULL;
     }
 
-    rt_sem_release(&sdh->lock);
+    result = rt_sem_release(&sdh->lock);
+    RT_ASSERT(result == RT_EOK);
 
     if (ret == Successful) return blk_nb;
 
@@ -427,11 +437,13 @@ static int rt_hw_sdh_init(void)
         /* Private */
         nu_sdh_arr[i].dev.user_data = (void *)&nu_sdh_arr[i];
 
-        rt_sem_init(&nu_sdh_arr[i].lock, "sdhlock", 1, RT_IPC_FLAG_FIFO);
+        ret = rt_sem_init(&nu_sdh_arr[i].lock, "sdhlock", 1, RT_IPC_FLAG_FIFO);
+        RT_ASSERT(ret == RT_EOK);
 
         SDH_Open(nu_sdh_arr[i].base, CardDetect_From_GPIO);
 
         nu_sdh_arr[i].pbuf = RT_NULL;
+
         ret = rt_device_register(&nu_sdh_arr[i].dev, nu_sdh_arr[i].name, flags);
         RT_ASSERT(ret == RT_EOK);
     }
@@ -620,7 +632,11 @@ static void sdh_hotplugger(void *param)
 
 int mnt_init_sdcard_hotplug(void)
 {
-    rt_thread_init(&sdh_tid, "hotplug", sdh_hotplugger, NULL, sdh_stack, sizeof(sdh_stack), RT_THREAD_PRIORITY_MAX - 2, 10);
+    rt_err_t result;
+
+    result = rt_thread_init(&sdh_tid, "hotplug", sdh_hotplugger, NULL, sdh_stack, sizeof(sdh_stack), RT_THREAD_PRIORITY_MAX - 2, 10);
+    RT_ASSERT(result == RT_EOK);
+
     rt_thread_startup(&sdh_tid);
 
     return 0;

@@ -18,7 +18,7 @@
 /*----------------------------------------------------------------------------------------*/
 /*   Hardware settings                                                                    */
 /*----------------------------------------------------------------------------------------*/
-#define HCLK_MHZ               192          /* used for loop-delay. must be larger than 
+#define HCLK_MHZ               192          /* used for loop-delay. must be larger than
                                                true HCLK clock MHz                        */
 
 #define ENABLE_OHCI_IRQ()      NVIC_EnableIRQ(USBH_IRQn)
@@ -29,26 +29,26 @@
 #define ENABLE_OHCI                         /* Enable OHCI host controller                */
 
 #if defined(BSP_USING_HSUSBH)
-#define ENABLE_EHCI                         /* Enable EHCI host controller                */
+    #define ENABLE_EHCI                         /* Enable EHCI host controller                */
 #endif
 
 #define EHCI_PORT_CNT          1            /* Number of EHCI roothub ports               */
 #define OHCI_PORT_CNT          2            /* Number of OHCI roothub ports               */
 #define OHCI_PER_PORT_POWER                 /* OHCI root hub per port powered             */
 
-#define OHCI_ISO_DELAY         4            /* preserved number frames while scheduling 
+#define OHCI_ISO_DELAY         4            /* preserved number frames while scheduling
                                                OHCI isochronous transfer                  */
 
-#define EHCI_ISO_DELAY         2            /* preserved number of frames while 
+#define EHCI_ISO_DELAY         2            /* preserved number of frames while
                                                scheduling EHCI isochronous transfer       */
 
-#define EHCI_ISO_RCLM_RANGE    32           /* When inspecting activated iTD/siTD, 
+#define EHCI_ISO_RCLM_RANGE    32           /* When inspecting activated iTD/siTD,
                                                unconditionally reclaim iTD/isTD scheduled
                                                in just elapsed EHCI_ISO_RCLM_RANGE ms.    */
 
-#define MAX_DESC_BUFF_SIZE     512          /* To hold the configuration descriptor, USB 
+#define MAX_DESC_BUFF_SIZE     512          /* To hold the configuration descriptor, USB
                                                core will allocate a buffer with this size
-                                               for each connected device. USB core does 
+                                               for each connected device. USB core does
                                                not release it until device disconnected.  */
 
 /*----------------------------------------------------------------------------------------*/
@@ -75,7 +75,7 @@
 /*   Re-defined staff for various compiler                                                */
 /*----------------------------------------------------------------------------------------*/
 #ifdef __ICCARM__
-#define   __inline    inline
+    #define   __inline    inline
 #endif
 
 
@@ -88,21 +88,21 @@
 //#define DUMP_DESCRIPTOR                     /* dump descriptors                           */
 
 #ifdef ENABLE_ERROR_MSG
-#define USB_error            rt_kprintf
+    #define USB_error            rt_kprintf
 #else
-#define USB_error(...)
+    #define USB_error(...)
 #endif
 
 #ifdef ENABLE_DEBUG_MSG
-#define USB_debug            rt_kprintf
-#ifdef ENABLE_VERBOSE_DEBUG
-#define USB_vdebug          rt_kprintf
+    #define USB_debug            rt_kprintf
+    #ifdef ENABLE_VERBOSE_DEBUG
+        #define USB_vdebug          rt_kprintf
+    #else
+        #define USB_vdebug(...)
+    #endif
 #else
-#define USB_vdebug(...)
-#endif
-#else
-#define USB_debug(...)
-#define USB_vdebug(...)
+    #define USB_debug(...)
+    #define USB_vdebug(...)
 #endif
 
 

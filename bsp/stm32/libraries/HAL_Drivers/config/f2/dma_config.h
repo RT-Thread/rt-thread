@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -134,7 +134,7 @@ extern "C" {
 #endif
 /* DMA2 stream3 */
 
-#if defined(BSP_SPI1_TX_USING_DMA) && !defined(SPI1_TX_DMA_INSTANCE)	
+#if defined(BSP_SPI1_TX_USING_DMA) && !defined(SPI1_TX_DMA_INSTANCE)
 #define SPI1_DMA_TX_IRQHandler           DMA2_Stream3_IRQHandler
 #define SPI1_TX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
 #define SPI1_TX_DMA_INSTANCE             DMA2_Stream3

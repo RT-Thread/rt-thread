@@ -5,15 +5,33 @@ from building import *
 Import('rtconfig')
 
 cwd     = GetCurrentDir()
-src     = Glob('*.c') + Glob('*.cpp')
+src     = Split('''
+cache.c
+cpu.c
+mmu.c
+stack.c
+''')
 CPPPATH = [cwd]
 
-if rtconfig.PLATFORM == 'armcc':
+if GetDepend('RT_USING_GIC_V2'):
+    src += ['interrupt.c']
+    src += ['gic.c']
+    src += ['trap.c']
+
+if GetDepend('RT_USING_GIC_V3'):
+    src += ['interrupt.c']
+    src += ['gicv3.c']
+    src += ['trap.c']
+
+if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
     src += Glob('*_rvds.S')
 
 if rtconfig.PLATFORM == 'gcc':
     src += Glob('*_init.S')
     src += Glob('*_gcc.S')
+
+if rtconfig.PLATFORM == 'iar':
+    src += Glob('*_iar.S')
 
 if rtconfig.PLATFORM == 'iar':
     src += Glob('*_iar.S')
