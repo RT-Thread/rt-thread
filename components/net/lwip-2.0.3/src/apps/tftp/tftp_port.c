@@ -10,7 +10,9 @@
 
 
 #include <rtthread.h>
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <lwip/apps/tftp_server.h>
 
 static struct tftp_context ctx;

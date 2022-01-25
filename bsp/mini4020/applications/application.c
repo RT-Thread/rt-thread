@@ -22,7 +22,11 @@
 #include <dfs.h>
 #include <dfs_elm.h>
 #include <dfs_fs.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #endif
 
 #ifdef RT_USING_RTGUI

@@ -396,6 +396,28 @@ void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id)
     at91_sys_write(AT91_AIC_EOICR, 0x0);
 }
 
+void rt_interrupt_dispatch(rt_uint32_t fiq_irq)
+{
+    rt_isr_handler_t isr_func;
+    rt_uint32_t irq;
+    void *param;
+
+    /* get irq number */
+    irq = rt_hw_interrupt_get_active(fiq_irq);
+
+    /* get interrupt service routine */
+    isr_func = irq_desc[irq].handler;
+    param = irq_desc[irq].param;
+
+    /* turn to interrupt service routine */
+    isr_func(irq, param);
+
+    rt_hw_interrupt_ack(fiq_irq, irq);
+#ifdef RT_USING_INTERRUPT_INFO
+    irq_desc[irq].counter ++;
+#endif
+}
+
 #ifdef RT_USING_FINSH
 #ifdef RT_USING_INTERRUPT_INFO
 void list_irq(void)

@@ -10,7 +10,11 @@
  */
 
 #include <rtthread.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 void readspeed(const char* filename, int block_size)
 {

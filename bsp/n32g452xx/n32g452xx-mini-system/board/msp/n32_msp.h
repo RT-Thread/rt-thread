@@ -18,6 +18,7 @@ void n32_msp_sdio_init(void *Instance);
 void n32_msp_adc_init(void *Instance);
 void n32_msp_hwtim_init(void *Instance);
 void n32_msp_can_init(void *Instance);
+void n32_msp_jtag_init(void *Instance);
 
 #endif /* __N32_MSP_H__ */
 

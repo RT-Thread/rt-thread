@@ -151,7 +151,7 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP202
+#define RT_USING_LWIP203
 #define RT_LWIP_MEM_ALIGNMENT 8
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP

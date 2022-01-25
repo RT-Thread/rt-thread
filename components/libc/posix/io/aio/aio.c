@@ -8,9 +8,12 @@
  * 2017/12/30     Bernard      The first version.
  */
 
-#include <stdint.h>
+#include <rtthread.h>
 #include <rthw.h>
-#include <dfs_posix.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/errno.h>
 #include "aio.h"
 
 struct rt_workqueue* aio_queue = NULL;

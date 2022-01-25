@@ -88,7 +88,7 @@ def IARProject(target, script):
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
-    CCFLAGS = ''
+    CFLAGS = ''
     Libs = []
     lib_prefix = ['lib', '']
     lib_suffix = ['.a', '.o', '']

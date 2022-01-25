@@ -565,6 +565,7 @@
 #define LWIP_SOCKET                     1
 #endif
 #include <fcntl.h>
+#include <sys/ioctl.h>
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.

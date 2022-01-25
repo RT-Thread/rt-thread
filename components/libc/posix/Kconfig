@@ -49,6 +49,11 @@ config RT_USING_POSIX_CLOCK
     select RT_USING_POSIX_DELAY
     default n
 
+config RT_USING_POSIX_TIMER
+    select RT_USING_TIMER_SOFT
+    bool "Enable posix time functions, timer_create()/timer_gettime()/timer_settime() etc"
+    default n
+
 config RT_USING_PTHREADS
     bool "Enable pthreads APIs"
     select RT_USING_POSIX_CLOCK
@@ -58,6 +63,16 @@ if RT_USING_PTHREADS
     config PTHREAD_NUM_MAX
         int "Maximum number of pthreads"
         default 8
+endif
+
+config RT_USING_MODULE
+    bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
+    default n
+
+if RT_USING_MODULE
+    config RT_USING_CUSTOM_DLMODULE
+        bool "Enable load dynamic module by custom"
+        default n
 endif
 
 source "$RTT_DIR/components/libc/posix/ipc/Kconfig"
