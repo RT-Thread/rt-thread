@@ -13,6 +13,32 @@
 #include <rtdevice.h>
 #include <drv_gpio.h>
 
+
+
+#if defined(BOARD_USING_LCD_ILI9341) && defined(NU_PKG_USING_ILI9341_SPI)
+#include <lcd_ili9341.h>
+#if defined(PKG_USING_GUIENGINE)
+    #include <rtgui/driver.h>
+#endif
+int rt_hw_ili9341_port(void)
+{
+    if (rt_hw_lcd_ili9341_spi_init("spi1") != RT_EOK)
+        return -1;
+
+    rt_hw_lcd_ili9341_init();
+
+#if defined(PKG_USING_GUIENGINE)
+    rt_device_t lcd_ili9341;
+    lcd_ili9341 = rt_device_find("lcd");
+    if (lcd_ili9341)
+    {
+        rtgui_graphic_set_device(lcd_ili9341);
+    }
+#endif
+    return 0;
+}
+INIT_COMPONENT_EXPORT(rt_hw_ili9341_port);
+#endif /* BOARD_USING_LCD_ILI9341 */
 #if defined(BOARD_USING_ESP8266)
 #include <at_device_esp8266.h>
 
