@@ -98,6 +98,12 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
 
+    /* current context checking */
+    if (timeout != 0)
+    {
+        RT_DEBUG_SCHEDULER_AVAILABLE;
+    }
+
     result = RT_EOK;
     thread = rt_thread_self();
 
@@ -111,9 +117,6 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
 
             goto __exit;
         }
-
-        /* current context checking */
-        RT_DEBUG_NOT_IN_INTERRUPT;
 
         /* reset thread error number */
         thread->error = RT_EOK;
@@ -217,6 +220,12 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     RT_ASSERT(data_ptr != RT_NULL);
     RT_ASSERT(size != RT_NULL);
 
+    /* current context checking */
+    if (timeout != 0)
+    {
+        RT_DEBUG_SCHEDULER_AVAILABLE;
+    }
+
     result = RT_EOK;
     thread = rt_thread_self();
 
@@ -229,9 +238,6 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
             result = -RT_ETIMEOUT;
             goto __exit;
         }
-
-        /* current context checking */
-        RT_DEBUG_NOT_IN_INTERRUPT;
 
         /* reset thread error number */
         thread->error = RT_EOK;
