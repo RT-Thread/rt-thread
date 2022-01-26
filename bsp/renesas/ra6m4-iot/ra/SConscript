@@ -1,0 +1,26 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = []
+CPPDEFINES = ['SOC_R7FA6M4AF']
+
+if rtconfig.CROSS_TOOL == 'iar':
+    print("\nThe current project does not support iar build\n")
+    Return('group')
+elif rtconfig.CROSS_TOOL == 'gcc':
+    src += Glob(cwd + '/fsp/src/bsp/mcu/all/*.c')
+    src += [cwd + '/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c']
+    src += [cwd + '/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c']
+    src += Glob(cwd + '/fsp/src/r_*/*.c')
+
+    CPPPATH = [ cwd + '/arm/CMSIS_5/CMSIS/Core/Include',
+                cwd + '/fsp/inc',
+                cwd + '/fsp/inc/api',
+                cwd + '/fsp/inc/instances',]
+
+group = DefineGroup('ra', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+Return('group')
