@@ -33,7 +33,7 @@ typedef unsigned long Boolean;
 /**
  * @brief A struct for Bitmap on LCD screen
  */
-typedef struct _Bmp_t 
+typedef struct _Bmp_t
 {
   U32  H_Size;
   U32  V_Size;
@@ -47,8 +47,8 @@ typedef struct _Bmp_t
 /**
  * @brief A struct for Font Type on LCD screen
  */
- 
-typedef struct _FontType_t 
+
+typedef struct _FontType_t
 {
   U32 H_Size;
   U32 V_Size;
@@ -62,9 +62,9 @@ typedef U32 LdcPixel_t, *pLdcPixel_t;
 
 #define C_GLCD_REFRESH_FREQ     (60HZ)
 #define C_GLCD_H_SIZE           480
-#define C_GLCD_H_PULSE          2	//
-#define C_GLCD_H_FRONT_PORCH    5	//
-#define C_GLCD_H_BACK_PORCH     40 	//
+#define C_GLCD_H_PULSE          2   //
+#define C_GLCD_H_FRONT_PORCH    5   //
+#define C_GLCD_H_BACK_PORCH     40  //
 #define C_GLCD_V_SIZE           272
 #define C_GLCD_V_PULSE          2
 #define C_GLCD_V_FRONT_PORCH    8

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,6 +11,63 @@
 #include "drv_gpio.h"
 
 #ifdef BSP_USING_PIN
+
+uint32_t raspi_get_pin_state(uint32_t fselnum)
+{
+    uint32_t gpfsel = 0;
+
+    switch (fselnum)
+    {
+    case 0:
+        gpfsel = GPIO_REG_GPFSEL0(GPIO_BASE);
+        break;
+    case 1:
+        gpfsel = GPIO_REG_GPFSEL1(GPIO_BASE);
+        break;
+    case 2:
+        gpfsel = GPIO_REG_GPFSEL2(GPIO_BASE);
+        break;
+    case 3:
+        gpfsel = GPIO_REG_GPFSEL3(GPIO_BASE);
+        break;
+    case 4:
+        gpfsel = GPIO_REG_GPFSEL4(GPIO_BASE);
+        break;
+    case 5:
+        gpfsel = GPIO_REG_GPFSEL5(GPIO_BASE);
+        break;
+    default:
+        break;
+    }
+    return gpfsel;
+}
+
+void raspi_set_pin_state(uint32_t fselnum, uint32_t gpfsel)
+{
+    switch (fselnum)
+    {
+    case 0:
+        GPIO_REG_GPFSEL0(GPIO_BASE) = gpfsel;
+        break;
+    case 1:
+        GPIO_REG_GPFSEL1(GPIO_BASE) = gpfsel;
+        break;
+    case 2:
+        GPIO_REG_GPFSEL2(GPIO_BASE) = gpfsel;
+        break;
+    case 3:
+        GPIO_REG_GPFSEL3(GPIO_BASE) = gpfsel;
+        break;
+    case 4:
+        GPIO_REG_GPFSEL4(GPIO_BASE) = gpfsel;
+        break;
+    case 5:
+        GPIO_REG_GPFSEL5(GPIO_BASE) = gpfsel;
+        break;
+    default:
+        break;
+    }
+}
 
 static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
 {
@@ -46,6 +103,18 @@ static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
+void prev_raspi_pin_mode(GPIO_PIN pin, GPIO_FUNC mode)
+{
+    uint32_t fselnum = pin / 10;
+    uint32_t fselrest = pin % 10;
+    uint32_t gpfsel = 0;
+
+    gpfsel = raspi_get_pin_state(fselnum);
+    gpfsel &= ~((uint32_t)(0x07 << (fselrest * 3)));
+    gpfsel |= (uint32_t)(mode << (fselrest * 3));
+    raspi_set_pin_state(fselnum, gpfsel);
+}
+
 static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
 {
     uint32_t num = pin / 32;
@@ -71,7 +140,7 @@ static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t valu
         {
             GPIO_REG_GPCLR1(GPIO_BASE) = 1 << (pin % 32);
         }
-        
+
     }
 }
 

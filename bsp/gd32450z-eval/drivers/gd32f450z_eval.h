@@ -17,23 +17,23 @@
 #endif
 
 #include "gd32f4xx.h"
-     
+
 /* exported types */
-typedef enum 
+typedef enum
 {
     LED1 = 0,
     LED2 = 1,
     LED3 = 2
 } led_typedef_enum;
 
-typedef enum 
+typedef enum
 {
     KEY_WAKEUP = 0,
     KEY_TAMPER = 1,
     KEY_USER = 2
 } key_typedef_enum;
 
-typedef enum 
+typedef enum
 {
     KEY_MODE_GPIO = 0,
     KEY_MODE_EXTI = 1
@@ -45,11 +45,11 @@ typedef enum
 #define LED1_PIN                         GPIO_PIN_4
 #define LED1_GPIO_PORT                   GPIOD
 #define LED1_GPIO_CLK                    RCU_GPIOD
-  
+
 #define LED2_PIN                         GPIO_PIN_5
 #define LED2_GPIO_PORT                   GPIOD
 #define LED2_GPIO_CLK                    RCU_GPIOD
-  
+
 #define LED3_PIN                         GPIO_PIN_3
 #define LED3_GPIO_PORT                   GPIOG
 #define LED3_GPIO_CLK                    RCU_GPIOG
@@ -83,7 +83,7 @@ typedef enum
 #define WAKEUP_KEY_EXTI_LINE             EXTI_0
 #define WAKEUP_KEY_EXTI_PORT_SOURCE      EXTI_SOURCE_GPIOA
 #define WAKEUP_KEY_EXTI_PIN_SOURCE       EXTI_SOURCE_PIN0
-#define WAKEUP_KEY_EXTI_IRQn             EXTI0_IRQn  
+#define WAKEUP_KEY_EXTI_IRQn             EXTI0_IRQn
 
 /* user push-button */
 #define USER_KEY_PIN                     GPIO_PIN_14

@@ -34,9 +34,9 @@
  * 2011-12-20   onelife     Add 9-bit SPI mode support
  * 2011-12-20   onelife     Change SPI write format (same as SPI read)
  * 2011-12-20   onelife     Change USART status format
- * 2011-12-27	onelife		Utilize "USART_PRESENT", "USART_COUNT",
+ * 2011-12-27   onelife     Utilize "USART_PRESENT", "USART_COUNT",
  *  "UART_PRESENT" and "UART_COUNT"
- * 2012-05-16	onelife		Fix a bug in rt_hw_usart_init()
+ * 2012-05-16   onelife     Fix a bug in rt_hw_usart_init()
  ******************************************************************************/
 
 /***************************************************************************//**

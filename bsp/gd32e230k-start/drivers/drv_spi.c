@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -115,7 +115,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
             spi_init_struct.prescale = SPI_PSC_256;
         }
     } /* baudrate */
-    
+
     switch(configuration->mode & RT_SPI_MODE_3)
     {
     case RT_SPI_MODE_0:
@@ -131,7 +131,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_HIGH_PH_2EDGE;
         break;
     }
-    
+
     /* MSB or LSB */
     if(configuration->mode & RT_SPI_MSB)
     {
@@ -141,7 +141,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
     {
         spi_init_struct.endian = SPI_ENDIAN_LSB;
     }
-    
+
     spi_init_struct.trans_mode = SPI_TRANSMODE_FULLDUPLEX;
     spi_init_struct.device_mode = SPI_MASTER;
     spi_init_struct.nss = SPI_NSS_SOFT;
@@ -177,7 +177,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
             const rt_uint8_t * send_ptr = message->send_buf;
             rt_uint8_t * recv_ptr = message->recv_buf;
             rt_uint32_t size = message->length;
-            
+
             DEBUG_PRINTF("spi poll transfer start: %d\n", size);
 
             while(size--)
@@ -188,7 +188,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                 {
                     data = *send_ptr++;
                 }
-                
+
                 // Todo: replace register read/write by gd32f3 lib
                 //Wait until the transmit buffer is empty
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));

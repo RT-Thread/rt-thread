@@ -16,7 +16,7 @@
 #include <rtconfig.h>
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <nu_bitutil.h>
 
 #if defined(BSP_USING_SPI_PDMA)

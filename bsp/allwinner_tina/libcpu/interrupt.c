@@ -1,25 +1,12 @@
 /*
- * File      : interrupt.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-02-08     RT-Thread    the first version
+ * 2020-03-02     Howard Su    Use structure to access registers
  */
 
 #include <rthw.h>
@@ -37,9 +24,6 @@ static void rt_hw_interrupt_handler(int vector, void *param)
 {
     rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 }
-
-#define readl(addr)           (*(volatile unsigned int *)(addr))
-#define writel(value,addr)    (*(volatile unsigned int *)(addr) = (value))
 
 /**
  * This function will initialize hardware interrupt
@@ -63,20 +47,20 @@ void rt_hw_interrupt_init(void)
     /* set base_addr reg */
     INTC->base_addr_reg = 0x00000000;
     /* clear enable */
-    INTC->en_reg0 = 0x00000000;
-    INTC->en_reg1 = 0x00000000;
+    INTC->en_reg[0] = 0x00000000;
+    INTC->en_reg[1] = 0x00000000;
     /* mask interrupt */
-    INTC->mask_reg0 = 0xFFFFFFFF;
-    INTC->mask_reg1 = 0xFFFFFFFF;
+    INTC->mask_reg[0] = 0xFFFFFFFF;
+    INTC->mask_reg[1] = 0xFFFFFFFF;
     /* clear pending */
-    INTC->pend_reg0 = 0x00000000;
-    INTC->pend_reg1 = 0x00000000;
+    INTC->pend_reg[0] = 0x00000000;
+    INTC->pend_reg[1] = 0x00000000;
     /* set priority */
-    INTC->resp_reg0 = 0x00000000;
-    INTC->resp_reg1 = 0x00000000;
+    INTC->resp_reg[0] = 0x00000000;
+    INTC->resp_reg[1] = 0x00000000;
     /* close fiq interrupt */
-    INTC->ff_reg0 = 0x00000000;
-    INTC->ff_reg1 = 0x00000000;
+    INTC->ff_reg[0] = 0x00000000;
+    INTC->ff_reg[1] = 0x00000000;
 }
 
 /**
@@ -85,20 +69,16 @@ void rt_hw_interrupt_init(void)
  */
 void rt_hw_interrupt_mask(int vector)
 {
-    rt_uint32_t mask_addr, data;
-
+    int index;
     if ((vector < 0) || (vector > INTERRUPTS_MAX))
     {
         return;
     }
 
-    mask_addr = (rt_uint32_t)(&INTC->mask_reg0);
-    mask_addr += vector & 0xE0 ? sizeof(rt_uint32_t *) : 0;
+    index = (vector & 0xE0) != 0;
+    vector = (vector & 0x1F);
 
-    vector &= 0x1F;
-    data = readl(mask_addr);
-    data |= 0x1 << vector;
-    writel(data, mask_addr);
+    INTC->mask_reg[index] |= 1 << vector;
 }
 
 /**
@@ -108,20 +88,16 @@ void rt_hw_interrupt_mask(int vector)
  */
 void rt_hw_interrupt_umask(int vector)
 {
-    rt_uint32_t mask_addr, data;
-
+    int index;
     if ((vector < 0) || (vector > INTERRUPTS_MAX))
     {
         return;
     }
 
-    mask_addr = (rt_uint32_t)(&INTC->mask_reg0);
-    mask_addr += vector & 0xE0 ? sizeof(rt_uint32_t *) : 0;
+    index = (vector & 0xE0) != 0;
+    vector = (vector & 0x1F);
 
-    vector &= 0x1F;
-    data = readl(mask_addr);
-    data &= ~(0x1 << vector);
-    writel(data, mask_addr);
+    INTC->mask_reg[index] &= ~(1 << vector);
 }
 
 /**
@@ -136,7 +112,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
-    rt_uint32_t pend_addr, en_addr, data;
+    int index;
 
     if ((vector < 0) || (vector > INTERRUPTS_MAX))
     {
@@ -151,19 +127,11 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     isr_table[vector].handler = handler;
     isr_table[vector].param = param;
 
-    pend_addr = (rt_uint32_t)(&INTC->pend_reg0);
-    en_addr = (rt_uint32_t)(&INTC->en_reg0);
-    pend_addr += vector & 0xE0 ? sizeof(rt_uint32_t *) : 0;
-    en_addr += vector & 0xE0 ? sizeof(rt_uint32_t *) : 0;
+    index = (vector & 0xE0) != 0;
+    vector = (vector & 0x1F);
 
-    vector &= 0x1F;
-    data = readl(pend_addr);
-    data &= ~(0x1 << vector);
-    writel(data, pend_addr);
-
-    data = readl(en_addr);
-    data |= 0x1 << vector;
-    writel(data, en_addr);
+    INTC->pend_reg[index] &= ~(0x1 << vector);
+    INTC->en_reg[index] |= 0x1 << vector;
 
     return old_handler;
 }
@@ -173,7 +141,7 @@ void rt_interrupt_dispatch(rt_uint32_t fiq_irq)
     void *param;
     int vector;
     rt_isr_handler_t isr_func;
-    rt_uint32_t pend_addr, data;
+    int index;
 
     vector = INTC->vector_reg - INTC->base_addr_reg;
     vector = vector >> 2;
@@ -184,13 +152,11 @@ void rt_interrupt_dispatch(rt_uint32_t fiq_irq)
     /* jump to fun */
     isr_func(vector, param);
     /* clear pend bit */
-    pend_addr = (rt_uint32_t)(&INTC->pend_reg0);
-    pend_addr += vector & 0xE0 ? sizeof(rt_uint32_t *) : 0;
 
-    vector &= 0x1F;
-    data = readl(pend_addr);
-    data &= ~(0x1 << vector);
-    writel(data, pend_addr);
+    index = (vector & 0xE0) != 0;
+    vector = (vector & 0x1F);
+
+    INTC->pend_reg[index] &= ~(0x1 << vector);
 
 #ifdef RT_USING_INTERRUPT_INFO
     isr_table[vector].counter ++;

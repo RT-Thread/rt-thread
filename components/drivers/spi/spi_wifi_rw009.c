@@ -1,6 +1,6 @@
 /*
- * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
- * 
+ * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -94,7 +94,7 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
         WIFI_DEBUG("resp_handler RW009_CMD_INIT\n");
         resp_return = (struct rw009_resp *)rt_malloc(member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_init)); //TODO:
         if(resp_return == RT_NULL) break;
-        memcpy(resp_return, resp, member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_init));
+        rt_memcpy(resp_return, resp, member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_init));
 
         WIFI_DEBUG("sn:%-*.*s\n", sizeof(resp->resp.init.sn), sizeof(resp->resp.init.sn), resp->resp.init.sn);
         WIFI_DEBUG("version:%-*.*s\n", sizeof(resp->resp.init.version), sizeof(resp->resp.init.version), resp->resp.init.version);
@@ -108,7 +108,7 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
             rw009_ap_info *ap_scan = rt_realloc(wifi_device->ap_scan, sizeof(rw009_ap_info) * (wifi_device->ap_scan_count + 1) );
             if(ap_scan != RT_NULL)
             {
-                memcpy( &ap_scan[wifi_device->ap_scan_count], &resp->resp.ap_info, sizeof(rw009_ap_info) );
+                rt_memcpy( &ap_scan[wifi_device->ap_scan_count], &resp->resp.ap_info, sizeof(rw009_ap_info) );
 
                 //dump
                 if(1)
@@ -142,11 +142,11 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
         WIFI_DEBUG("resp_handler RW009_CMD_EASY_JOIN\n");
         resp_return = (struct rw009_resp *)rt_malloc(member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_join)); //TODO:
         if(resp_return == RT_NULL) break;
-        memcpy(resp_return, resp, member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_join));
+        rt_memcpy(resp_return, resp, member_offset(struct rw009_resp, resp) + sizeof(rw009_resp_join));
 
         if( resp->result == 0 )
         {
-            memcpy(&wifi_device->ap_info, &resp_return->resp.ap_info, sizeof(rw009_resp_join));
+            rt_memcpy(&wifi_device->ap_info, &resp_return->resp.ap_info, sizeof(rw009_resp_join));
             wifi_device->active = 1;
             eth_device_linkchange(&wifi_device->parent, RT_TRUE);
         }
@@ -284,7 +284,7 @@ static rt_err_t rw009_cmd(struct rw009_wifi *wifi_device, uint32_t cmd, void *ar
     }
 
     if(wifi_cmd->len)
-        memcpy(&wifi_cmd->params, args, wifi_cmd->len);
+        rt_memcpy(&wifi_cmd->params, args, wifi_cmd->len);
 
     data_packet->data_type = data_type_cmd;
     data_packet->data_len = member_offset(struct rw009_cmd, params) + wifi_cmd->len;
@@ -326,7 +326,7 @@ static rt_err_t spi_wifi_transfer(struct rw009_wifi *dev)
     while (spi_wifi_is_busy());
     SPI_DEBUG("sequence start!\n");
 
-    memset(&cmd, 0, sizeof(struct spi_cmd_request));
+    rt_memset(&cmd, 0, sizeof(struct spi_cmd_request));
     cmd.magic1 = CMD_MAGIC1;
     cmd.magic2 = CMD_MAGIC2;
 
@@ -523,7 +523,7 @@ static rt_err_t rw009_wifi_control(rt_device_t dev, int cmd, void *args)
 
     if (cmd == NIOCTL_GADDR)
     {
-        memcpy(args, wifi_device->dev_addr, 6);
+        rt_memcpy(args, wifi_device->dev_addr, 6);
     }
     else
     {
@@ -633,7 +633,7 @@ rt_err_t rt_hw_wifi_init(const char *spi_device_name, wifi_mode_t mode)
     RT_ASSERT( (SPI_MAX_DATA_LEN & 0x03) == 0);
     RT_ASSERT( sizeof(struct rw009_resp) <= SPI_MAX_DATA_LEN);
 
-    memset(&rw009_wifi_device, 0, sizeof(struct rw009_wifi));
+    rt_memset(&rw009_wifi_device, 0, sizeof(struct rw009_wifi));
 
     rw009_wifi_device.rt_spi_device = (struct rt_spi_device *)rt_device_find(spi_device_name);
 

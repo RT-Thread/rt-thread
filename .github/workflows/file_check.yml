@@ -1,0 +1,20 @@
+name: Check File Format and License
+
+on: [pull_request]
+
+jobs:
+  scancode_job:
+    runs-on: ubuntu-latest
+    name: Scan code format and license
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@master
+        with:
+          python-version: 3.8
+      
+      - name: Check Format and License
+        shell: bash
+        run: |
+          pip install click chardet PyYaml
+          python tools/file_check.py check 'https://github.com/RT-Thread/rt-thread' 'master'

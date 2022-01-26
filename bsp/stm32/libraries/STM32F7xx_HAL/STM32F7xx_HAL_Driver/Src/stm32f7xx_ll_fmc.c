@@ -969,9 +969,7 @@ HAL_StatusTypeDef FMC_SDRAM_WriteProtection_Disable(FMC_SDRAM_TypeDef *Device, u
   * @retval HAL state
   */  
 HAL_StatusTypeDef FMC_SDRAM_SendCommand(FMC_SDRAM_TypeDef *Device, FMC_SDRAM_CommandTypeDef *Command, uint32_t Timeout)
-{
-  __IO uint32_t tmpr = 0;
-  
+{ 
   /* Check the parameters */
   assert_param(IS_FMC_SDRAM_DEVICE(Device));
   assert_param(IS_FMC_COMMAND_MODE(Command->CommandMode));
@@ -980,13 +978,10 @@ HAL_StatusTypeDef FMC_SDRAM_SendCommand(FMC_SDRAM_TypeDef *Device, FMC_SDRAM_Com
   assert_param(IS_FMC_MODE_REGISTER(Command->ModeRegisterDefinition));  
 
   /* Set command register */
-  tmpr = (uint32_t)((Command->CommandMode)                  |\
-                    (Command->CommandTarget)                |\
-                    (((Command->AutoRefreshNumber)-1) << 5) |\
-                    ((Command->ModeRegisterDefinition) << 9)
-                    );
-    
-  Device->SDCMR = tmpr;
+  MODIFY_REG(Device->SDCMR, (FMC_SDCMR_MODE | FMC_SDCMR_CTB2 | FMC_SDCMR_CTB1 | 
+             FMC_SDCMR_NRFS | FMC_SDCMR_MRD), ((Command->CommandMode) | 
+             (Command->CommandTarget) | (((Command->AutoRefreshNumber) - 1U) << FMC_SDCMR_NRFS_Pos) |
+             ((Command->ModeRegisterDefinition) << FMC_SDCMR_MRD_Pos)));
   
   return HAL_OK;  
 }

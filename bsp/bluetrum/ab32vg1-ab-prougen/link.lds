@@ -1,17 +1,19 @@
 /* Define the flash max size */
-__max_flash_size = 1024k;
+__max_flash_size = 1020k;
 
-__data_ram_size = 8k;
+__data_ram_size = 16k;
 __stack_ram_size = 4k;
-__comm_ram_size = 83k;
-__heap_ram_size = 29k;
+__comm_ram_size = 42k;
+__heap_ram_size = 52k;
+__ble_ram_size = 10k;
 
 __base = 0x10000000;
 
-__data_vma = 0x11000;
+__bram_vma = 0x11000;
+__heap_vma = __bram_vma + __ble_ram_size;
+__data_vma = __heap_vma + __heap_ram_size;
 __stack_vma = __data_vma + __data_ram_size;
 __comm_vma = __stack_vma + __stack_ram_size;
-__heap_vma = __comm_vma + __comm_ram_size;
 
 __ram1_vma = 0x50000;
 
@@ -21,6 +23,7 @@ MEMORY
     flash(rx)       : org = __base + 512,       len = __max_flash_size
     comm(rx)        : org = __comm_vma,         len = __comm_ram_size
 
+    bram            : org = __bram_vma,         len = __ble_ram_size
     data            : org = __data_vma,         len = __data_ram_size
     stack           : org = __stack_vma,        len = __stack_ram_size
     heap            : org = __heap_vma,         len = __heap_ram_size
@@ -34,8 +37,8 @@ SECTIONS
     } > init
 
     .ram1 __ram1_vma : {
-        . = ALIGN(4);
         /* section information for initial */
+        . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
@@ -43,35 +46,61 @@ SECTIONS
         . = ALIGN(4);
         PROVIDE(__ctors_start__ = .);
         KEEP (*(SORT(.init_array.*)))
-        KEEP (*(.init_array))
+        KEEP (*(.init_array*))
         PROVIDE(__ctors_end__ = .);
 
+        /* section information for at server */
         . = ALIGN(4);
-        *components*drivers**.o (.text*)
-        *components.o (.text*)
+        __rtatcmdtab_start = .;
+        KEEP(*(RtAtCmdTab))
+        __rtatcmdtab_end = .;
+
+        . = ALIGN(4);
+        *save-restore.o (.text* .rodata*)
+        *libcpu*cpu*context_gcc.o (.text* .rodata*)
+        *libcpu*cpu*interrupt.o (.text* .rodata*)
+        *libcpu**.o (.rodata*)
+
+        *components*drivers*misc*pin.o(.text*)
+        *components*drivers*misc*adc.o(.text*)
+
+        . = ALIGN(4);
+        *src*ipc.o (.text* .rodata*)
+        *src*irq.o (.text* .rodata*)
+        *src*object.o (.text* .rodata*)
+        *src*thread.o (.text* .rodata*)
+        *src*timer.o (.text* .rodata*)
+        *src*mempool.o (.text* .rodata*)
+        *src*scheduler.o (.text* .rodata*)
+        *src*clock.o (.text* .rodata*)
+        *src*kservice.o (.text* .rodata*)
+        *src*device.o (.text* .rodata*)
+        *src*idle.o (.text* .rodata*)
+        *src*components.o (.text* .rodata*)
     } > ram1 AT > flash
 
     .comm __comm_vma : {
         . = ALIGN(4);
         KEEP(*(.vector))
-        EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *dfs*filesystems**.o  
-        *romfs.o *lib_a**.o *divdi3.o *moddi3.o *divdf3.o *muldf3.o *eqtf2.o *getf2.o
-        *letf2.o *multf3.o *subtf3.o *fixtfsi.o *floatsitf.o *extenddftf2.o
-        *trunctfdf2.o *_clzsi2.o *cp-demangle.o *unwind*.o
-        *fixdfsi.o *addsf3.o *divsf3.o *eqsf2.o *gesf2.o *float*.o
-        *lesf2.o *mulsf3.o *subsf3.o *fixsfsi.o *fixunssfsi.o) *(.text)
-        *finsh*shell.o (.text*)
-        *(.text.unlikely)
-        *(.text.startup)
-        EXCLUDE_FILE (*components*libc**.o *dfs*filesystems**.o *romfs.o *lib_a**.o 
-        *cp-demangle.o *divdf3.o *muldf3.o *multf3.o *unwind*.o *_clz.o) *(.rodata)
-        *(.rodata.name)
-        EXCLUDE_FILE(*lib_a**.o *cp-demangle.o *cp-demangle.o) *(.rodata.str1.4)
-        EXCLUDE_FILE(*lib_a**.o *unwind*.o) *(.srodata)
+        *(.irq.cache)
+        *(.irq*)
+        *ab32vg1_hal**.o (.text* .rodata*)
+        *drv_gpio.o (.text* .rodata*)
+        *drv_usart.o (.rodata*)
+        EXCLUDE_FILE(*lib_a**.o *unwind*.o) *(.srodata*)
         *(.rela*)
         *(.data*)
         *(.sdata*)
+        *(.com_text*)
+        *(.text.ble_mqueue_get)
+        *(.text.ble_mqueue_put)
+        *(.text.os_memblock_get)
     } > comm AT > flash
+
+    .bram __bram_vma (NOLOAD) : {
+        *(.btmem.bthw)
+        *(.btmem*)
+    } > bram
 
     .bss (NOLOAD):
     {
@@ -98,7 +127,6 @@ SECTIONS
     } > heap
 
     .flash : {
-        
         . = ALIGN(4);
         __fsymtab_start = .;
         KEEP(*(FSymTab))
@@ -109,6 +137,7 @@ SECTIONS
         KEEP(*(VSymTab))
         __vsymtab_end = .;
 
+        . = ALIGN(4);
         *(.text*)
         *(.rodata*)
         *(.srodata*)

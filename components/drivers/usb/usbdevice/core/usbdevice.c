@@ -1,9 +1,9 @@
 /*
  * File      : hid.c
- * COPYRIGHT (C) 2008 - 2018, RT-Thread Development Team
+ * COPYRIGHT (C) 2006 - 2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
- * 
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2012-10-02     Yi Qiu       first version
@@ -62,7 +62,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 #endif
 
-struct usb_os_comp_id_descriptor usb_comp_id_desc = 
+struct usb_os_comp_id_descriptor usb_comp_id_desc =
 {
     //head section
     {

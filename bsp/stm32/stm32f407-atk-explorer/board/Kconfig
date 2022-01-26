@@ -17,6 +17,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_COM2
         bool "Enable COM2 (uart2 pin conflict with Ethernet and PWM)"
+        depends on (!BSP_USING_ETH && !BSP_USING_PWM)
         select BSP_USING_UART
         select BSP_USING_UART2
         default n
@@ -26,11 +27,38 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART3
         default n
-    
+
     config BSP_USING_SRAM
         bool "Enable SRAM"
         select BSP_USING_EXT_FMC_IO
         select BSP_USING_FMC
+        default n
+
+    config BSP_USING_MCU_LCD
+        bool "Enable ATK LCD"
+        select BSP_USING_SRAM
+        default n
+        if BSP_USING_MCU_LCD
+            config BSP_USING_MCU_LCD_TEST
+                bool "Enable lcd fill test"
+                default y
+        endif
+
+    config BSP_USING_TOUCH
+        bool "Use LCD TOUCH"
+        select BSP_USING_I2C2
+        default n
+        if BSP_USING_TOUCH
+            config BSP_TOUCH_INT_PIN
+                int "Touch interrupt pin, PB1"
+                default 17
+        endif
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select BSP_USING_MCU_LCD
+        select BSP_USING_TOUCH
+        select PKG_USING_LVGL
         default n
 
     config BSP_USING_SPI_FLASH
@@ -46,14 +74,23 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         default n
 
-    config PHY_USING_LAN8720A
-        bool
-    
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
         select RT_USING_LWIP
-        select PHY_USING_LAN8720A
+        select RT_LWIP_USING_HW_CHECKSUM
+
+    config BSP_USING_ETH_SAL
+        bool "Enable Ethernet with SAL"
+        depends on BSP_USING_ETH
+        default y
+        select RT_USING_SAL
+        select SAL_USING_POSIX
+
+    config PHY_USING_LAN8720A
+        bool
+        depends on BSP_USING_ETH
+        default y
 
     config BSP_USING_MPU6050
         bool "Enable MPU6050 (i2c1)"
@@ -61,18 +98,40 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
 
-    config BSP_USING_SDCARD
-        bool "Enable SDCARD (sdio)"
-        select BSP_USING_SDIO
-        select RT_USING_DFS
-        select RT_USING_DFS_ELMFAT
-        default n
-    if BSP_USING_SDCARD
-    config SDIO_MAX_FREQ
-        int "sdio max freq"
-        range 0 24000000
-        default 1000000
-    endif
+    menu "Enable File System"
+        config BSP_USING_FS
+            bool
+            default n
+
+        config BSP_USING_SDCARD_FATFS
+            bool "Enable SDCARD (FATFS)"
+            select BSP_USING_SDIO
+            select RT_USING_DFS
+            select RT_USING_DFS_ELMFAT
+            select RT_USING_DFS_ROMFS
+            select BSP_USING_FS
+            default n
+
+        config SDIO_MAX_FREQ
+            int "sdio max freq"
+            range 0 24000000
+            depends on BSP_USING_SDCARD
+            default 1000000
+
+        config BSP_USING_SPI_FLASH_LITTLEFS
+            bool "Enable SPI-FLASH (LittleFS)"
+            select RT_USING_DFS
+            select RT_USING_DFS_ROMFS
+            select RT_USING_MTD_NOR
+            select BSP_USING_SPI_FLASH
+            select BSP_USING_FS
+            select PKG_USING_FAL
+            select FAL_USING_AUTO_INIT
+            select FAL_PART_HAS_TABLE_CFG
+            select PKG_USING_LITTLEFS
+            default n
+
+    endmenu
 
 endmenu
 
@@ -123,7 +182,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
-                default n  
+                default n
 
             config BSP_UART3_TX_USING_DMA
                 bool "Enable UART3 TX DMA"
@@ -137,7 +196,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
-                default n  
+                default n
 
             config BSP_UART4_TX_USING_DMA
                 bool "Enable UART4 TX DMA"
@@ -151,7 +210,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART5_RX_USING_DMA
                 bool "Enable UART5 RX DMA"
                 depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
-                default n  
+                default n
 
             config BSP_UART5_TX_USING_DMA
                 bool "Enable UART5 TX DMA"
@@ -165,7 +224,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART6_RX_USING_DMA
                 bool "Enable UART6 RX DMA"
                 depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                default n  
+                default n
 
             config BSP_UART6_TX_USING_DMA
                 bool "Enable UART6 TX DMA"
@@ -223,7 +282,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -238,7 +297,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
@@ -273,6 +332,23 @@ menu "On-chip Peripheral Drivers"
                 default 25
         endif
 
+    menuconfig BSP_USING_I2C2
+        bool "Enable LCD Touch BUS (software simulation)"
+        default y
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C2
+            config BSP_I2C2_SCL_PIN
+                int "i2c2 scl pin number, PB0"
+                range 0 143
+                default 16
+            config BSP_I2C2_SDA_PIN
+                int "I2C2 sda pin number, PF11"
+                range 0 143
+                default 91
+        endif
+
     menuconfig BSP_USING_DAC
         bool "Enable DAC"
         default n
@@ -286,7 +362,6 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
         if BSP_USING_ONCHIP_RTC
             choice
@@ -342,7 +417,7 @@ menu "On-chip Peripheral Drivers"
                 default n
 
         endif
-    
+
     config BSP_USING_EXT_FMC_IO
         bool
         default n
@@ -351,10 +426,41 @@ menu "On-chip Peripheral Drivers"
         bool
         default n
  source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
+
+    menuconfig BSP_USING_AT_ESP8266
+        bool "Enable ESP8266(AT Command, COM3)"
+        default n
+        select BSP_USING_COM3
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP8266
+        select AT_DEVICE_ESP8266_SAMPLE
+        select AT_DEVICE_ESP8266_SAMPLE_BSP_TAKEOVER
+
+        if BSP_USING_AT_ESP8266
+
+            config ESP8266_SAMPLE_WIFI_SSID
+                string "WIFI ssid"
+                default "rtthread"
+
+            config ESP8266_SAMPLE_WIFI_PASSWORD
+                string "WIFI password"
+                default "12345678"
+
+            config ESP8266_SAMPLE_CLIENT_NAME
+                string "AT client device name (Must be 'uart3')"
+                default "uart3"
+
+            config ESP8266_SAMPLE_RECV_BUFF_LEN
+                int "The maximum length of receive line buffer"
+                default 512
+
+            comment "May adjust RT_SERIAL_RB_BUFSZ up to 512 if using the Serial V1 device driver"
+
+        endif
 
 endmenu
 

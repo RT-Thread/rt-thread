@@ -15,7 +15,7 @@
 #if (defined(BSP_USING_TIMER) && defined(RT_USING_HWTIMER))
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /* Private define ---------------------------------------------------------------*/
 #define NU_TIMER_DEVICE(timer) (nu_timer_t *)(timer)

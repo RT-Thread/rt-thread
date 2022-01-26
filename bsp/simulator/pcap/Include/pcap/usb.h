@@ -11,8 +11,8 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote 
- * products derived from this software without specific prior written 
+ * 3. The name of the author may not be used to endorse or promote
+ * products derived from this software without specific prior written
  * permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -32,11 +32,11 @@
  *
  * @(#) $Header: /tcpdump/master/libpcap/pcap/usb.h,v 1.6 2007/09/22 02:06:08 guy Exp $
  */
- 
+
 #ifndef _PCAP_USB_STRUCTS_H__
 #define _PCAP_USB_STRUCTS_H__
 
-/* 
+/*
  * possible transfer mode
  */
 #define URB_TRANSFER_IN   0x80
@@ -57,11 +57,11 @@
  * Appears at the front of each packet in DLT_USB captures.
  */
 typedef struct _usb_setup {
-	u_int8_t bmRequestType;
-	u_int8_t bRequest;
-	u_int16_t wValue;
-	u_int16_t wIndex;
-	u_int16_t wLength;
+    u_int8_t bmRequestType;
+    u_int8_t bRequest;
+    u_int16_t wValue;
+    u_int16_t wIndex;
+    u_int16_t wLength;
 } pcap_usb_setup;
 
 
@@ -70,20 +70,20 @@ typedef struct _usb_setup {
  * Appears at the front of each packet in DLT_USB_LINUX captures.
  */
 typedef struct _usb_header {
-	u_int64_t id;
-	u_int8_t event_type;
-	u_int8_t transfer_type;
-	u_int8_t endpoint_number;
-	u_int8_t device_address;
-	u_int16_t bus_id;
-	char setup_flag;/*if !=0 the urb setup header is not present*/
-	char data_flag; /*if !=0 no urb data is present*/
-	int64_t ts_sec;
-	int32_t ts_usec;
-	int32_t status;
-	u_int32_t urb_len;
-	u_int32_t data_len; /* amount of urb data really present in this event*/
-	pcap_usb_setup setup;
+    u_int64_t id;
+    u_int8_t event_type;
+    u_int8_t transfer_type;
+    u_int8_t endpoint_number;
+    u_int8_t device_address;
+    u_int16_t bus_id;
+    char setup_flag;/*if !=0 the urb setup header is not present*/
+    char data_flag; /*if !=0 no urb data is present*/
+    int64_t ts_sec;
+    int32_t ts_usec;
+    int32_t status;
+    u_int32_t urb_len;
+    u_int32_t data_len; /* amount of urb data really present in this event*/
+    pcap_usb_setup setup;
 } pcap_usb_header;
 
 

@@ -191,7 +191,7 @@ void EMAC_PhyInit(EMAC_T *EMAC)
 
     while (!(EMAC_MdioRead(EMAC, PHY_STATUS_REG, EMAC_PHY_ADDR) & PHY_STATUS_LINK_VALID))
     {
-        if (i++ > 2000000UL)      /* Cable not connected */
+        if (i++ > 10000UL)      /* Cable not connected */
         {
             EMAC->CTL &= ~EMAC_CTL_OPMODE_Msk;
             EMAC->CTL &= ~EMAC_CTL_FUDUP_Msk;
@@ -199,7 +199,7 @@ void EMAC_PhyInit(EMAC_T *EMAC)
         }
     }
 
-    if (i <= 2000000UL)
+    if (i <= 10000UL)
     {
         /* Configure auto negotiation capability */
         EMAC_MdioWrite(EMAC, PHY_ANA_REG, EMAC_PHY_ADDR, PHY_ANA_DR100_TX_FULL |
@@ -298,7 +298,7 @@ static void EMAC_RxDescInit(EMAC_MEMMGR_T *psMemMgr)
     for (i = 0UL; i < psMemMgr->u32RxDescSize; i++)
     {
         psMemMgr->psRXDescs[i].u32Status1 = EMAC_DESC_OWN_EMAC;
-        psMemMgr->psRXDescs[i].u32Data = (uint32_t)&psMemMgr->psRXFrames[i] | BIT31;
+        psMemMgr->psRXDescs[i].u32Data = (uint32_t)&psMemMgr->psRXFrames[i];
         psMemMgr->psRXDescs[i].u32Status2 = 0UL;
         psMemMgr->psRXDescs[i].u32Next = (uint32_t)(&psMemMgr->psRXDescs[(i + 1UL) % EMAC_RX_DESC_SIZE]) | BIT31;
         psMemMgr->psRXDescs[i].u32Backup1 = psMemMgr->psRXDescs[i].u32Data;
@@ -1129,25 +1129,37 @@ uint32_t EMAC_GetAvailRXBufSize(EMAC_MEMMGR_T *psMemMgr, uint8_t **ppuDataBuf)
   * @note Application can only call this function once every time \ref EMAC_RecvPkt or \ref EMAC_RecvPktTS returns 1
   * @note This function is without doing EMAC_TRIGGER_RX.
   */
-void EMAC_RecvPktDoneWoRxTrigger(EMAC_MEMMGR_T *psMemMgr)
+EMAC_DESCRIPTOR_T *EMAC_RecvPktDoneWoRxTrigger(EMAC_MEMMGR_T *psMemMgr)
 {
     /* Get Rx Frame Descriptor */
     EMAC_DESCRIPTOR_T *desc = (EMAC_DESCRIPTOR_T *)psMemMgr->psCurrentRxDesc;
+    EMAC_DESCRIPTOR_T *ret = desc;
 
     /* Restore descriptor link list and data pointer they will be overwrite if time stamp enabled */
     desc->u32Data = desc->u32Backup1;
     desc->u32Next = desc->u32Backup2;
 
     /* Change ownership to DMA for next use */
-    desc->u32Status1 |= EMAC_DESC_OWN_EMAC;
+    // desc->u32Status1 |= EMAC_DESC_OWN_EMAC;
 
     /* Get Next Frame Descriptor pointer to process */
     desc = (EMAC_DESCRIPTOR_T *)desc->u32Next;
 
     /* Save last processed Rx descriptor */
     psMemMgr->psCurrentRxDesc = desc;
+
+    return ret;
 }
 
+void EMAC_RxTrigger(EMAC_MEMMGR_T *psMemMgr, EMAC_DESCRIPTOR_T *rx_desc)
+{
+    EMAC_T *EMAC = psMemMgr->psEmac;
+
+    rx_desc->u32Status1 |= EMAC_DESC_OWN_EMAC;
+
+    /* Trigger EMAC to send the packet */
+    EMAC_TRIGGER_RX(EMAC);
+}
 
 /*@}*/ /* end of group EMAC_EXPORTED_FUNCTIONS */
 

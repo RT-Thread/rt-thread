@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -747,7 +747,7 @@ static struct pbuf *enc28j60_rx(rt_device_t dev)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops enc28j60_ops = 
+const static struct rt_device_ops enc28j60_ops =
 {
     enc28j60_init,
     enc28j60_open,
@@ -778,7 +778,7 @@ rt_err_t enc28j60_attach(const char *spi_device_name)
         rt_spi_configure(spi_device, &cfg);
     } /* config spi */
 
-    memset(&enc28j60_dev, 0, sizeof(enc28j60_dev));
+    rt_memset(&enc28j60_dev, 0, sizeof(enc28j60_dev));
 
     rt_event_init(&tx_event, "eth_tx", RT_IPC_FLAG_FIFO);
     enc28j60_dev.spi_device = spi_device;
@@ -834,7 +834,7 @@ rt_err_t enc28j60_attach(const char *spi_device_name)
     enc28j60_dev.parent.eth_rx  = enc28j60_rx;
     enc28j60_dev.parent.eth_tx  = enc28j60_tx;
 
-    rt_mutex_init(&enc28j60_dev.lock, "enc28j60", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&enc28j60_dev.lock, "enc28j60", RT_IPC_FLAG_PRIO);
 
     eth_device_init(&(enc28j60_dev.parent), "e0");
 

@@ -1,11 +1,7 @@
 /*
- * File      : fs_test.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -15,7 +11,11 @@
  */
 
 #include <rtthread.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 static rt_uint32_t stop_flag = 0;
 static rt_thread_t fsrw1_thread = RT_NULL;

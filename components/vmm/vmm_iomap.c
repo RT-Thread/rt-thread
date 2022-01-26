@@ -1,9 +1,9 @@
 /*
  *  VMM IO map table
  *
- * COPYRIGHT (C) 2013-2014, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
  * All rights reserved
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:

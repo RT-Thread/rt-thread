@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * Date           Author        Notes
  * 2020-09-27     wangqiang     first version
  */
-
+#include <stddef.h>
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -34,9 +34,9 @@ static rt_size_t phy_device_write(rt_device_t dev, rt_off_t pos, const void *buf
 
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops phy_ops = 
+const static struct rt_device_ops phy_ops =
 {
-    RT_NULL, 
+    RT_NULL,
     RT_NULL,
     RT_NULL,
     phy_device_read,
@@ -60,7 +60,7 @@ rt_err_t rt_hw_phy_register(struct rt_phy_device *phy, const char *name)
     device->tx_complete = RT_NULL;
 
 #ifdef RT_USING_DEVICE_OPS
-    device->ops = phy_ops;
+    device->ops = &phy_ops;
 #else
     device->init = NULL;
     device->open = NULL;

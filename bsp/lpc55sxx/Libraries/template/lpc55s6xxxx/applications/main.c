@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,14 +20,14 @@ int main(void)
 {
 #if defined(__CC_ARM)
     rt_kprintf("using armcc, version: %d\n", __ARMCC_VERSION);
-#elif defined(__CLANG_ARM)
+#elif defined(__clang__)
     rt_kprintf("using armclang, version: %d\n", __ARMCC_VERSION);
 #elif defined(__ICCARM__)
     rt_kprintf("using iccarm, version: %d\n", __VER__);
 #elif defined(__GNUC__)
     rt_kprintf("using gcc, version: %d.%d\n", __GNUC__, __GNUC_MINOR__);
 #endif
-  
+
     rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
     while (1)
     {

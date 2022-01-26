@@ -1,8 +1,8 @@
 /***************************************************************************//**
- * @file 	drv_emu.h
- * @brief 	EMU driver of RT-Thread RTOS for EFM32
+ * @file    drv_emu.h
+ * @brief   EMU driver of RT-Thread RTOS for EFM32
  *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author 	onelife
+ * @author  onelife
  * @version 1.0
  *******************************************************************************
  * @section License
@@ -10,9 +10,9 @@
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
- * 2011-02-21	onelife		Initial creation for EFM32
- * 2011-07-14	onelife		Add multiple channels support for scan mode
+ * Date         Author      Notes
+ * 2011-02-21   onelife     Initial creation for EFM32
+ * 2011-07-14   onelife     Add multiple channels support for scan mode
  ******************************************************************************/
 #ifndef __DRV_EMU_H__
 #define __DRV_EMU_H__

@@ -133,6 +133,121 @@ extern "C" {
 
 #define LL_DMAMUX_REQ_ADC1             5U   /*!< DMAMUX ADC1 request        */
 
+#if defined (ADC2)
+
+#define LL_DMAMUX_REQ_ADC2             6U   /*!< DMAMUX ADC1 request        */
+
+#define LL_DMAMUX_REQ_DAC1_CH1         7U   /*!< DMAMUX DAC1 CH1 request    */
+#define LL_DMAMUX_REQ_DAC1_CH2         8U   /*!< DMAMUX DAC1 CH2 request    */
+
+#define LL_DMAMUX_REQ_TIM6_UP          9U   /*!< DMAMUX TIM6 UP request     */
+#define LL_DMAMUX_REQ_TIM7_UP         10U   /*!< DMAMUX TIM7 UP request     */
+
+#define LL_DMAMUX_REQ_SPI1_RX         11U   /*!< DMAMUX SPI1 RX request     */
+#define LL_DMAMUX_REQ_SPI1_TX         12U   /*!< DMAMUX SPI1 TX request     */
+#define LL_DMAMUX_REQ_SPI2_RX         13U   /*!< DMAMUX SPI2 RX request     */
+#define LL_DMAMUX_REQ_SPI2_TX         14U   /*!< DMAMUX SPI2 TX request     */
+#define LL_DMAMUX_REQ_SPI3_RX         15U   /*!< DMAMUX SPI3 RX request     */
+#define LL_DMAMUX_REQ_SPI3_TX         16U   /*!< DMAMUX SPI3 TX request     */
+
+#define LL_DMAMUX_REQ_I2C1_RX         17U   /*!< DMAMUX I2C1 RX request     */
+#define LL_DMAMUX_REQ_I2C1_TX         18U   /*!< DMAMUX I2C1 TX request     */
+#define LL_DMAMUX_REQ_I2C2_RX         19U   /*!< DMAMUX I2C2 RX request     */
+#define LL_DMAMUX_REQ_I2C2_TX         20U   /*!< DMAMUX I2C2 TX request     */
+#define LL_DMAMUX_REQ_I2C3_RX         21U   /*!< DMAMUX I2C3 RX request     */
+#define LL_DMAMUX_REQ_I2C3_TX         22U   /*!< DMAMUX I2C3 TX request     */
+#define LL_DMAMUX_REQ_I2C4_RX         23U   /*!< DMAMUX I2C4 RX request     */
+#define LL_DMAMUX_REQ_I2C4_TX         24U   /*!< DMAMUX I2C4 TX request     */
+
+#define LL_DMAMUX_REQ_USART1_RX       25U   /*!< DMAMUX USART1 RX request   */
+#define LL_DMAMUX_REQ_USART1_TX       26U   /*!< DMAMUX USART1 TX request   */
+#define LL_DMAMUX_REQ_USART2_RX       27U   /*!< DMAMUX USART2 RX request   */
+#define LL_DMAMUX_REQ_USART2_TX       28U   /*!< DMAMUX USART2 TX request   */
+#define LL_DMAMUX_REQ_USART3_RX       29U   /*!< DMAMUX USART3 RX request   */
+#define LL_DMAMUX_REQ_USART3_TX       30U   /*!< DMAMUX USART3 TX request   */
+
+#define LL_DMAMUX_REQ_UART4_RX        31U   /*!< DMAMUX UART4 RX request    */
+#define LL_DMAMUX_REQ_UART4_TX        32U   /*!< DMAMUX UART4 TX request    */
+#define LL_DMAMUX_REQ_UART5_RX        33U   /*!< DMAMUX UART5 RX request    */
+#define LL_DMAMUX_REQ_UART5_TX        34U   /*!< DMAMUX UART5 TX request    */
+
+#define LL_DMAMUX_REQ_LPUART1_RX      35U   /*!< DMAMUX LPUART1 RX request  */
+#define LL_DMAMUX_REQ_LPUART1_TX      36U   /*!< DMAMUX LPUART1 TX request  */
+
+#define LL_DMAMUX_REQ_SAI1_A          37U   /*!< DMAMUX SAI1 A request      */
+#define LL_DMAMUX_REQ_SAI1_B          38U   /*!< DMAMUX SAI1 B request      */
+#define LL_DMAMUX_REQ_SAI2_A          39U   /*!< DMAMUX SAI2 A request      */
+#define LL_DMAMUX_REQ_SAI2_B          40U   /*!< DMAMUX SAI2 B request      */
+
+#define LL_DMAMUX_REQ_OSPI1           41U   /*!< DMAMUX OCTOSPI1 request    */
+#define LL_DMAMUX_REQ_OSPI2           42U   /*!< DMAMUX OCTOSPI2 request    */
+
+#define LL_DMAMUX_REQ_TIM1_CH1        43U   /*!< DMAMUX TIM1 CH1 request    */
+#define LL_DMAMUX_REQ_TIM1_CH2        44U   /*!< DMAMUX TIM1 CH2 request    */
+#define LL_DMAMUX_REQ_TIM1_CH3        45U   /*!< DMAMUX TIM1 CH3 request    */
+#define LL_DMAMUX_REQ_TIM1_CH4        46U   /*!< DMAMUX TIM1 CH4 request    */
+#define LL_DMAMUX_REQ_TIM1_UP         47U   /*!< DMAMUX TIM1 UP request     */
+#define LL_DMAMUX_REQ_TIM1_TRIG       48U   /*!< DMAMUX TIM1 TRIG request   */
+#define LL_DMAMUX_REQ_TIM1_COM        49U   /*!< DMAMUX TIM1 COM request    */
+
+#define LL_DMAMUX_REQ_TIM8_CH1        50U   /*!< DMAMUX TIM8 CH1 request    */
+#define LL_DMAMUX_REQ_TIM8_CH2        51U   /*!< DMAMUX TIM8 CH2 request    */
+#define LL_DMAMUX_REQ_TIM8_CH3        52U   /*!< DMAMUX TIM8 CH3 request    */
+#define LL_DMAMUX_REQ_TIM8_CH4        53U   /*!< DMAMUX TIM8 CH4 request    */
+#define LL_DMAMUX_REQ_TIM8_UP         54U   /*!< DMAMUX TIM8 UP request     */
+#define LL_DMAMUX_REQ_TIM8_TRIG       55U   /*!< DMAMUX TIM8 TRIG request   */
+#define LL_DMAMUX_REQ_TIM8_COM        56U   /*!< DMAMUX TIM8 COM request    */
+
+#define LL_DMAMUX_REQ_TIM2_CH1        57U   /*!< DMAMUX TIM2 CH1 request    */
+#define LL_DMAMUX_REQ_TIM2_CH2        58U   /*!< DMAMUX TIM2 CH2 request    */
+#define LL_DMAMUX_REQ_TIM2_CH3        59U   /*!< DMAMUX TIM2 CH3 request    */
+#define LL_DMAMUX_REQ_TIM2_CH4        60U   /*!< DMAMUX TIM2 CH4 request    */
+#define LL_DMAMUX_REQ_TIM2_UP         61U   /*!< DMAMUX TIM2 UP request     */
+
+#define LL_DMAMUX_REQ_TIM3_CH1        62U   /*!< DMAMUX TIM3 CH1 request    */
+#define LL_DMAMUX_REQ_TIM3_CH2        63U   /*!< DMAMUX TIM3 CH2 request    */
+#define LL_DMAMUX_REQ_TIM3_CH3        64U   /*!< DMAMUX TIM3 CH3 request    */
+#define LL_DMAMUX_REQ_TIM3_CH4        65U   /*!< DMAMUX TIM3 CH4 request    */
+#define LL_DMAMUX_REQ_TIM3_UP         66U   /*!< DMAMUX TIM3 UP request     */
+#define LL_DMAMUX_REQ_TIM3_TRIG       67U   /*!< DMAMUX TIM3 TRIG request   */
+
+#define LL_DMAMUX_REQ_TIM4_CH1        68U   /*!< DMAMUX TIM4 CH1 request    */
+#define LL_DMAMUX_REQ_TIM4_CH2        69U   /*!< DMAMUX TIM4 CH2 request    */
+#define LL_DMAMUX_REQ_TIM4_CH3        70U   /*!< DMAMUX TIM4 CH3 request    */
+#define LL_DMAMUX_REQ_TIM4_CH4        71U   /*!< DMAMUX TIM4 CH4 request    */
+#define LL_DMAMUX_REQ_TIM4_UP         72U   /*!< DMAMUX TIM4 UP request     */
+
+#define LL_DMAMUX_REQ_TIM5_CH1        73U   /*!< DMAMUX TIM5 CH1 request    */
+#define LL_DMAMUX_REQ_TIM5_CH2        74U   /*!< DMAMUX TIM5 CH2 request    */
+#define LL_DMAMUX_REQ_TIM5_CH3        75U   /*!< DMAMUX TIM5 CH3 request    */
+#define LL_DMAMUX_REQ_TIM5_CH4        76U   /*!< DMAMUX TIM5 CH4 request    */
+#define LL_DMAMUX_REQ_TIM5_UP         77U   /*!< DMAMUX TIM5 UP request     */
+#define LL_DMAMUX_REQ_TIM5_TRIG       78U   /*!< DMAMUX TIM5 TRIG request   */
+#define LL_DMAMUX_REQ_TIM15_CH1       79U   /*!< DMAMUX TIM15 CH1 request   */
+#define LL_DMAMUX_REQ_TIM15_UP        80U   /*!< DMAMUX TIM15 UP request    */
+#define LL_DMAMUX_REQ_TIM15_TRIG      81U   /*!< DMAMUX TIM15 TRIG request  */
+#define LL_DMAMUX_REQ_TIM15_COM       82U   /*!< DMAMUX TIM15 COM request   */
+
+#define LL_DMAMUX_REQ_TIM16_CH1       83U   /*!< DMAMUX TIM16 CH1 request   */
+#define LL_DMAMUX_REQ_TIM16_UP        84U   /*!< DMAMUX TIM16 UP request    */
+#define LL_DMAMUX_REQ_TIM17_CH1       85U   /*!< DMAMUX TIM17 CH1 request   */
+#define LL_DMAMUX_REQ_TIM17_UP        86U   /*!< DMAMUX TIM17 UP request    */
+
+#define LL_DMAMUX_REQ_DFSDM1_FLT0     87U   /*!< DMAMUX DFSDM1_FLT0 request */
+#define LL_DMAMUX_REQ_DFSDM1_FLT1     88U   /*!< DMAMUX DFSDM1_FLT1 request */
+#define LL_DMAMUX_REQ_DFSDM1_FLT2     89U   /*!< DMAMUX DFSDM1_FLT2 request */
+#define LL_DMAMUX_REQ_DFSDM1_FLT3     90U   /*!< DMAMUX DFSDM1_FLT3 request */
+
+#define LL_DMAMUX_REQ_DCMI            91U   /*!< DMAMUX DCMI request        */
+#define LL_DMAMUX_REQ_DCMI_PSSI       91U   /*!< DMAMUX PSSI request        */
+
+#define LL_DMAMUX_REQ_AES_IN          92U   /*!< DMAMUX AES_IN request      */
+#define LL_DMAMUX_REQ_AES_OUT         93U   /*!< DMAMUX AES_OUT request     */
+
+#define LL_DMAMUX_REQ_HASH_IN         94U   /*!< DMAMUX HASH_IN request     */
+
+#else
+
 #define LL_DMAMUX_REQ_DAC1_CH1         6U   /*!< DMAMUX DAC1 CH1 request    */
 #define LL_DMAMUX_REQ_DAC1_CH2         7U   /*!< DMAMUX DAC1 CH2 request    */
 
@@ -240,6 +355,8 @@ extern "C" {
 #define LL_DMAMUX_REQ_AES_OUT         92U   /*!< DMAMUX AES_OUT request     */
 
 #define LL_DMAMUX_REQ_HASH_IN         93U   /*!< DMAMUX HASH_IN request     */
+
+#endif
 
 /**
   * @}

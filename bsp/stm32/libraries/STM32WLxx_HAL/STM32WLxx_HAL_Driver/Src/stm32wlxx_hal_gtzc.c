@@ -15,16 +15,16 @@
                 ##### GTZC main features #####
   ==============================================================================
   [..]
-    (+) Global TrustZone Controller (GTZC) composed of two sub-blocks:
-      (++) TZSC: TrustZone security controller
+    (+) Global Security Controller (GTZC) composed of two sub-blocks:
+      (++) TZSC: Security controller
             This sub-block defines the secure/privileged state of slave
             peripherals. It also controls the unprivileged area size for the
             watermark memory peripheral controller (MPCWM).
-      (++) TZIC: TrustZone illegal access controller
+      (++) TZIC: Security Illegal access controller
             This sub-block gathers all illegal access events in the system and
             generates a secure interrupt towards the secure CPU2 NVIC.
 
-    (+) These sub-blocks are used to configure TrustZone system security and
+    (+) These sub-blocks are used to configure system security and
         privilege such as:
       (++) on-chip Flash memory and RAM with programmable secure or privilege or
       both area
@@ -112,7 +112,7 @@
   ==============================================================================
   [..]
     This section provides functions allowing to initialize/configure TZSC
-    TZSC: TrustZone Security Controller
+    TZSC: Security Controller
   @endverbatim
   * @{
   */
@@ -503,7 +503,7 @@ HAL_StatusTypeDef HAL_GTZC_TZSC_MPCWM_GetConfigMemAttributes(uint32_t MemBaseAdd
   [..]
     This section provides functions allowing to manage the common TZSC and TZSC-MPCWM lock.
     It includes lock enable, and current value read.
-    TZSC: TrustZone Security Controller
+    TZSC: Security Controller
     MPCWM: Memory Protection Controller WaterMark
   @endverbatim
   * @{
@@ -544,7 +544,7 @@ void HAL_GTZC_TZSC_Lock(GTZC_TZSC_TypeDef *TZSCx)
   ==============================================================================
   [..]
     This section provides functions allowing to initialize/configure TZIC
-    TZIC: Trust Zone Interrupt Controller
+    TZIC: Security Interrupt Controller
   @endverbatim
   * @{
   */

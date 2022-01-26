@@ -279,15 +279,15 @@ int rt_hw_spi_init(void)
     rt_err_t result;
 
 #ifdef BSP_USING_SPI0
-    PORT_Init(PORTA, PIN9, FUNMUX1_SPI0_SCLK, 0);
-    PORT_Init(PORTA, PIN10, FUNMUX0_SPI0_MOSI, 0);
-    PORT_Init(PORTA, PIN11, FUNMUX1_SPI0_MISO, 1);
+    PORT_Init(PORTP, PIN23, FUNMUX1_SPI0_SCLK, 0);
+    PORT_Init(PORTP, PIN18, FUNMUX0_SPI0_MOSI, 0);
+    PORT_Init(PORTP, PIN19, FUNMUX1_SPI0_MISO, 1);
 #endif //BSP_USING_SPI0
 
 #ifdef BSP_USING_SPI1
-    PORT_Init(PORTC, PIN7, FUNMUX1_SPI1_SCLK, 0);
-    PORT_Init(PORTC, PIN6, FUNMUX0_SPI1_MOSI, 0);
-    PORT_Init(PORTC, PIN5, FUNMUX1_SPI1_MISO, 1);
+    PORT_Init(PORTB, PIN1, FUNMUX1_SPI1_SCLK, 0);
+    PORT_Init(PORTB, PIN2, FUNMUX0_SPI1_MOSI, 0);
+    PORT_Init(PORTB, PIN3, FUNMUX1_SPI1_MISO, 1);
 #endif //BSP_USING_SPI1
     for (int i = 0; i < sizeof(spi_cfg) / sizeof(spi_cfg[0]); i++)
     {

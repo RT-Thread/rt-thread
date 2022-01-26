@@ -475,6 +475,7 @@ static void rt_hw_pin_isr(GPIO_TypeDef *GPIOx)
         }
     }
 }
+
 void GPIOA_Handler(void)
 {
     rt_interrupt_enter();

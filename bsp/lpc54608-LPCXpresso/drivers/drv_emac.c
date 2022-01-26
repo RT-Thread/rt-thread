@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -73,14 +73,14 @@ struct lpc_emac
     /* inherit from ethernet device */
     struct eth_device parent;
     struct rt_semaphore tx_wait;
-    
+
     ENET_Type *base;
     enet_handle_t handle;
-    
+
     /* interface address info. */
     rt_uint8_t  dev_addr[MAX_ADDR_LEN];     /* hw address   */
     uint32_t phyAddr;
-    
+
     uint8_t RxBuffDescrip[ENET_RXBD_NUM * sizeof(enet_rx_bd_struct_t) + ENET_BUFF_ALIGNMENT];
     uint8_t TxBuffDescrip[ENET_TXBD_NUM * sizeof(enet_tx_bd_struct_t) + ENET_BUFF_ALIGNMENT];
     uint8_t RxDataBuff[ENET_RXBD_NUM * ENET_ALIGN(ENET_RXBUFF_SIZE) + ENET_BUFF_ALIGNMENT];
@@ -273,7 +273,7 @@ static rt_err_t lpc_emac_phy_init(phy_speed_t * speed, phy_duplex_t * duplex)
 {
     bool link = false;
     int32_t status;
-    
+
     RT_ASSERT(speed != NULL);
     RT_ASSERT(duplex != NULL);
 
@@ -284,9 +284,9 @@ static rt_err_t lpc_emac_phy_init(phy_speed_t * speed, phy_duplex_t * duplex)
         *duplex = kPHY_HalfDuplex;
         /* 10M speed. */
         *speed = kPHY_Speed10M;
-        
+
         eth_device_linkchange(&lpc_emac_device.parent, RT_FALSE);
-        
+
         ETH_PRINTF("PHY_Init failed!\n");
         return RT_ERROR;
     }
@@ -305,7 +305,7 @@ static rt_err_t lpc_emac_phy_init(phy_speed_t * speed, phy_duplex_t * duplex)
     }
 
     PHY_GetLinkSpeedDuplex(lpc_emac_device.base, lpc_emac_device.phyAddr, speed, duplex);
-    
+
     eth_device_linkchange(&lpc_emac_device.parent, RT_TRUE);
 
     return RT_EOK;
@@ -338,19 +338,19 @@ static rt_err_t lpc_emac_init(rt_device_t dev)
     buffCfg.rxDescTailAddrAlign  = get_rx_desc(ENET_RXBD_NUM);
     buffCfg.rxBufferStartAddr    = rxBufferStartAddr;
     buffCfg.rxBuffSizeAlign      = ENET_ALIGN(ENET_RXBUFF_SIZE);
-    
+
     /* Get default configuration 100M RMII. */
     ENET_GetDefaultConfig(&config);
     /* Use the actual speed and duplex when phy success to finish the autonegotiation. */
     config.miiSpeed = (enet_mii_speed_t)speed;
     config.miiDuplex = (enet_mii_duplex_t)duplex;
-    
+
     ETH_PRINTF("Auto negotiation, Speed: ");
     if (config.miiSpeed == kENET_MiiSpeed100M)
         ETH_PRINTF("100M");
     else
         ETH_PRINTF("10M");
-    
+
     ETH_PRINTF(", Duplex: ");
     if (config.miiSpeed == kENET_MiiSpeed100M)
         ETH_PRINTF("Full\n");
@@ -363,10 +363,10 @@ static rt_err_t lpc_emac_init(rt_device_t dev)
     /* Enable the tx/rx interrupt. */
     ENET_EnableInterrupts(lpc_emac_device.base, (kENET_DmaTx | kENET_DmaRx));
     ENET_CreateHandler(lpc_emac_device.base, &lpc_emac_device.handle, &config, &buffCfg, ethernet_callback, NULL);
-    
+
     /* Initialize Descriptor. */
     ENET_DescriptorInit(lpc_emac_device.base, &config, &buffCfg);
-    
+
     /* Active TX/RX. */
     ENET_StartRxTx(lpc_emac_device.base, 1, 1);
 
@@ -416,23 +416,23 @@ static rt_err_t lpc_emac_control(rt_device_t dev, int cmd, void *args)
 /* transmit packet. */
 rt_err_t lpc_emac_tx(rt_device_t dev, struct pbuf *p)
 {
-	rt_err_t result = RT_EOK;
-	enet_handle_t * enet_handle = &lpc_emac_device.handle;
+    rt_err_t result = RT_EOK;
+    enet_handle_t * enet_handle = &lpc_emac_device.handle;
     ENET_Type *enet_base = lpc_emac_device.base;
     uint8_t * data;
-	
-	uint16_t 	len;
 
-	RT_ASSERT(p != NULL);
+    uint16_t    len;
+
+    RT_ASSERT(p != NULL);
     RT_ASSERT(enet_handle != RT_NULL);
 
     if (p->tot_len > ENET_TXBUFF_SIZE)
     {
         return RT_ERROR;
     }
-    
+
     packet_dump("TX dump", p);
-    
+
     /* get free tx buffer */
     {
         rt_err_t result;
@@ -442,18 +442,18 @@ rt_err_t lpc_emac_tx(rt_device_t dev, struct pbuf *p)
             return RT_ERROR;
         }
     }
-    
-	//	fix RxDataBuff -> TxDataBuff, ENET_RXBUFF_SIZE -> ENET_TXBUFF_SIZE
+
+    //  fix RxDataBuff -> TxDataBuff, ENET_RXBUFF_SIZE -> ENET_TXBUFF_SIZE
     data = (uint8_t *)ENET_ALIGN(&lpc_emac_device.TxDataBuff[lpc_emac_device.txIdx * ENET_ALIGN(ENET_TXBUFF_SIZE)]);
     len = pbuf_copy_partial(p, data, p->tot_len, 0);
     lpc_emac_device.txIdx = (lpc_emac_device.txIdx + 1) / ENET_TXBD_NUM;
-    
-	// fix 'p->len' to 'len', avoid send wrong partial packet.
+
+    // fix 'p->len' to 'len', avoid send wrong partial packet.
     result = ENET_SendFrame(enet_base, enet_handle, data, len);
-        
+
     if ((result == kStatus_ENET_TxFrameFail) || (result == kStatus_ENET_TxFrameOverLen) || (result == kStatus_ENET_TxFrameBusy))
     {
-        return RT_ERROR; 
+        return RT_ERROR;
     }
 
     return RT_EOK;
@@ -462,22 +462,22 @@ rt_err_t lpc_emac_tx(rt_device_t dev, struct pbuf *p)
 /* reception packet. */
 struct pbuf *lpc_emac_rx(rt_device_t dev)
 {
-  	uint32_t length = 0;
-	status_t status;
-    
-	struct pbuf* p = RT_NULL;
-	enet_handle_t * enet_handle = &lpc_emac_device.handle;
-    ENET_Type *enet_base = lpc_emac_device.base;
-    
-	/* Get the Frame size */
-	status = ENET_GetRxFrameSize(enet_base, enet_handle, &length, 0);
+    uint32_t length = 0;
+    status_t status;
 
-	/* Call ENET_ReadFrame when there is a received frame. */
-	if (length != 0)
-	{
-		/* Received valid frame. Deliver the rx buffer with the size equal to length. */
-		p = pbuf_alloc(PBUF_RAW, length, PBUF_POOL);
-        
+    struct pbuf* p = RT_NULL;
+    enet_handle_t * enet_handle = &lpc_emac_device.handle;
+    ENET_Type *enet_base = lpc_emac_device.base;
+
+    /* Get the Frame size */
+    status = ENET_GetRxFrameSize(enet_base, enet_handle, &length, 0);
+
+    /* Call ENET_ReadFrame when there is a received frame. */
+    if (length != 0)
+    {
+        /* Received valid frame. Deliver the rx buffer with the size equal to length. */
+        p = pbuf_alloc(PBUF_RAW, length, PBUF_POOL);
+
         if (p != NULL)
         {
             status = ENET_ReadFrame(enet_base, enet_handle, p->payload, length, 0);
@@ -496,12 +496,12 @@ struct pbuf *lpc_emac_rx(rt_device_t dev)
         {
             ETH_PRINTF(" pbuf_alloc faild\n");
         }
-	}
-	else if (status == kStatus_ENET_RxFrameError)
-	{
-		ETH_PRINTF("ENET_GetRxFrameSize: kStatus_ENET_RxFrameError\n");
-		ENET_ReadFrame(enet_base, enet_handle, NULL, 0, 0);
-	}
+    }
+    else if (status == kStatus_ENET_RxFrameError)
+    {
+        ETH_PRINTF("ENET_GetRxFrameSize: kStatus_ENET_RxFrameError\n");
+        ENET_ReadFrame(enet_base, enet_handle, NULL, 0, 0);
+    }
 
     return NULL;
 }
@@ -510,11 +510,11 @@ int lpc_emac_hw_init(void)
 {
     /* init tx semaphore */
     rt_sem_init(&lpc_emac_device.tx_wait, "tx_wait", ENET_TXBD_NUM, RT_IPC_FLAG_FIFO);
-    
+
     lpc_emac_device.phyAddr = 0;
     lpc_emac_device.txIdx = 0;
     lpc_emac_device.base = ENET;
-    
+
     // OUI 00-60-37 NXP Semiconductors
     lpc_emac_device.dev_addr[0] = 0x00;
     lpc_emac_device.dev_addr[1] = 0x60;
@@ -536,7 +536,7 @@ int lpc_emac_hw_init(void)
     lpc_emac_device.parent.eth_tx           = lpc_emac_tx;
 
     eth_device_init(&(lpc_emac_device.parent), "e0");
-    
+
     return 0;
 }
 INIT_DEVICE_EXPORT(lpc_emac_hw_init);
@@ -546,7 +546,7 @@ int emac_stat(void)
 {
     rt_kprintf("enter rx isr coutner : %d\n", isr_rx_counter);
     rt_kprintf("enter tx isr coutner : %d\n", isr_tx_counter);
-    
+
     return 0;
 }
 #endif
@@ -556,14 +556,14 @@ void phy_dump(void)
     status_t PHY_Read(ENET_Type *base, uint32_t phyAddr, uint32_t phyReg, uint32_t *dataPtr);
 
     int i;
-    
+
     for (i = 0; i < 31; i++)
     {
         status_t result = kStatus_Success;
         uint32_t reg;
-        
+
         result = PHY_Read(lpc_emac_device.base, lpc_emac_device.phyAddr, i, &reg);
-        
+
         if (result == kStatus_Success)
         {
             rt_kprintf("%02d: %08d\n", i, reg);
@@ -630,7 +630,7 @@ void emac_dump(void)
     DUMP_REG(DMA_SYSBUS_MODE);
     DUMP_REG(DMA_INTR_STAT);
     DUMP_REG(DMA_DBG_STAT);
-    
+
     DUMP_REG(MTL_QUEUE[0].MTL_TXQX_OP_MODE);
     DUMP_REG(MTL_QUEUE[0].MTL_TXQX_UNDRFLW);
     DUMP_REG(MTL_QUEUE[0].MTL_TXQX_DBG);
@@ -660,7 +660,7 @@ void emac_dump(void)
     DUMP_REG(MTL_QUEUE[1].MTL_RXQX_MISSPKT_OVRFLW_CNT);
     DUMP_REG(MTL_QUEUE[1].MTL_RXQX_DBG);
     DUMP_REG(MTL_QUEUE[1].MTL_RXQX_CTRL);
-                                      
+
     DUMP_REG(DMA_CH[0].DMA_CHX_CTRL);
     DUMP_REG(DMA_CH[0].DMA_CHX_TX_CTRL);
     DUMP_REG(DMA_CH[0].DMA_CHX_RX_CTRL);
@@ -678,7 +678,7 @@ void emac_dump(void)
     DUMP_REG(DMA_CH[0].DMA_CHX_CUR_HST_TXBUF);
     DUMP_REG(DMA_CH[0].DMA_CHX_CUR_HST_RXBUF);
     DUMP_REG(DMA_CH[0].DMA_CHX_STAT);
-    
+
     DUMP_REG(DMA_CH[1].DMA_CHX_CTRL);
     DUMP_REG(DMA_CH[1].DMA_CHX_TX_CTRL);
     DUMP_REG(DMA_CH[1].DMA_CHX_RX_CTRL);
@@ -701,23 +701,23 @@ void emac_dump(void)
 void emac_bd_dump(void)
 {
     int i;
-    
+
     rt_kprintf("rx bd dump: \n");
     for (i = 0; i < ENET_RXBD_NUM; i++)
     {
         enet_rx_bd_struct_t * rx_bd = get_rx_desc(i);
-        rt_kprintf("buf1: %p, buf2: %p, ctrl: %08x\n", 
-                        rx_bd->buff1Addr, 
+        rt_kprintf("buf1: %p, buf2: %p, ctrl: %08x\n",
+                        rx_bd->buff1Addr,
                         rx_bd->buff2Addr,
                         rx_bd->control);
     }
-    
+
     rt_kprintf("tx bd dump: \n");
     for (i = 0; i < ENET_TXBD_NUM; i++)
     {
         enet_tx_bd_struct_t * tx_bd = get_tx_desc(i);
-        rt_kprintf("buf1: %p, buf2: %p, len: %08x, ctrl: %08x\n", 
-                        tx_bd->buff1Addr, 
+        rt_kprintf("buf1: %p, buf2: %p, len: %08x, ctrl: %08x\n",
+                        tx_bd->buff1Addr,
                         tx_bd->buff2Addr,
                         tx_bd->buffLen,
                         tx_bd->controlStat);

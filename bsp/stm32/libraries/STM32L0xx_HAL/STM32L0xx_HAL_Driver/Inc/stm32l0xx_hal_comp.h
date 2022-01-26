@@ -78,7 +78,7 @@ typedef struct
 /**
   * @brief  HAL COMP state machine: HAL COMP states definition
   */
-#define COMP_STATE_BITFIELD_LOCK  ((uint32_t)0x10)
+#define COMP_STATE_BITFIELD_LOCK  (0x10U)
 typedef enum
 {
   HAL_COMP_STATE_RESET             = 0x00U,                                             /*!< COMP not yet initialized                             */
@@ -147,7 +147,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /** @defgroup COMP_WindowMode COMP Window Mode
   * @{
   */
-#define COMP_WINDOWMODE_DISABLE                 ((uint32_t)0x00000000U) /*!< Window mode disable: Comparators instances pair COMP1 and COMP2 are independent */
+#define COMP_WINDOWMODE_DISABLE                 (0x00000000U)          /*!< Window mode disable: Comparators instances pair COMP1 and COMP2 are independent */
 #define COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON (COMP_CSR_COMP1WM)     /*!< Window mode enable: Comparators instances pair COMP1 and COMP2 have their input plus connected together. The common input is COMP1 input plus (COMP2 input plus is no more accessible). */
 /**
   * @}
@@ -160,7 +160,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /*       (propagation delay and power consumption),                           */
 /*       refer to device datasheet.                                           */
 #define COMP_POWERMODE_MEDIUMSPEED     (COMP_CSR_COMP2SPEED)       /*!< COMP power mode to low power (indicated as "high speed" in reference manual) (only for COMP instance: COMP2) */
-#define COMP_POWERMODE_ULTRALOWPOWER   ((uint32_t)0x00000000U)     /*!< COMP power mode to ultra low power (indicated as "low speed" in reference manual) (only for COMP instance: COMP2) */
+#define COMP_POWERMODE_ULTRALOWPOWER   (0x00000000U)               /*!< COMP power mode to ultra low power (indicated as "low speed" in reference manual) (only for COMP instance: COMP2) */
 /**
   * @}
   */
@@ -168,7 +168,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /** @defgroup COMP_InputPlus COMP input plus (non-inverting input)
   * @{
   */
-#define COMP_INPUT_PLUS_IO1            ((uint32_t)0x00000000U)                            /*!< Comparator input plus connected to IO1 (pin PA1 for COMP1, pin PA3 for COMP2) */
+#define COMP_INPUT_PLUS_IO1            (0x00000000U)                                      /*!< Comparator input plus connected to IO1 (pin PA1 for COMP1, pin PA3 for COMP2) */
 #define COMP_INPUT_PLUS_IO2            (COMP_CSR_COMP2INPSEL_0)                           /*!< Comparator input plus connected to IO2 (pin PB4 for COMP2) (only for COMP instance: COMP2) */
 #define COMP_INPUT_PLUS_IO3            (COMP_CSR_COMP2INPSEL_1)                           /*!< Comparator input plus connected to IO3 (pin PA5 for COMP2) (only for COMP instance: COMP2) */
 #define COMP_INPUT_PLUS_IO4            (COMP_CSR_COMP2INPSEL_0 | COMP_CSR_COMP2INPSEL_1)  /*!< Comparator input plus connected to IO4 (pin PB6 for COMP2) (only for COMP instance: COMP2) */
@@ -186,7 +186,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #define COMP_INPUT_MINUS_1_4VREFINT    (COMP_CSR_COMP2INNSEL_2                                                  ) /*!< Comparator input minus connected to 1/4 VREFINT (only for COMP instance: COMP2) */
 #define COMP_INPUT_MINUS_1_2VREFINT    (COMP_CSR_COMP2INNSEL_2 |                          COMP_CSR_COMP2INNSEL_0) /*!< Comparator input minus connected to 1/2 VREFINT (only for COMP instance: COMP2) */
 #define COMP_INPUT_MINUS_3_4VREFINT    (COMP_CSR_COMP2INNSEL_2 | COMP_CSR_COMP2INNSEL_1                         ) /*!< Comparator input minus connected to 3/4 VREFINT (only for COMP instance: COMP2) */
-#define COMP_INPUT_MINUS_VREFINT       ((uint32_t)0x00000000U)                                                    /*!< Comparator input minus connected to VrefInt */
+#define COMP_INPUT_MINUS_VREFINT       (0x00000000U)                                                              /*!< Comparator input minus connected to VrefInt */
 #define COMP_INPUT_MINUS_DAC1_CH1      (                         COMP_CSR_COMP2INNSEL_1                         ) /*!< Comparator input minus connected to DAC1 channel 1 (DAC_OUT1) */
 #define COMP_INPUT_MINUS_DAC1_CH2      (                         COMP_CSR_COMP2INNSEL_1 | COMP_CSR_COMP2INNSEL_0) /*!< Comparator input minus connected to DAC1 channel 2 (DAC_OUT2) */
 #define COMP_INPUT_MINUS_IO1           (                                                  COMP_CSR_COMP2INNSEL_0) /*!< Comparator input minus connected to IO1 (pin PA0 for COMP1, pin PA2 for COMP2) */
@@ -200,9 +200,9 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @{
   */
 
-#define COMP_LPTIMCONNECTION_DISABLED               ((uint32_t)0x00000000U)    /*!< COMPx signal is gated */
-#define COMP_LPTIMCONNECTION_IN1_ENABLED            ((uint32_t)0x00000001U)    /*!< COMPx signal is connected to LPTIM input 1 */
-#define COMP_LPTIMCONNECTION_IN2_ENABLED            ((uint32_t)0x00000002U)    /*!< COMPx signal is connected to LPTIM input 2 */
+#define COMP_LPTIMCONNECTION_DISABLED               (0x00000000U)    /*!< COMPx signal is gated */
+#define COMP_LPTIMCONNECTION_IN1_ENABLED            (0x00000001U)    /*!< COMPx signal is connected to LPTIM input 1 */
+#define COMP_LPTIMCONNECTION_IN2_ENABLED            (0x00000002U)    /*!< COMPx signal is connected to LPTIM input 2 */
 /**
   * @}
   */
@@ -210,7 +210,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /** @defgroup COMP_OutputPolarity COMP output Polarity
   * @{
   */
-#define COMP_OUTPUTPOL_NONINVERTED             ((uint32_t)0x00000000U)  /*!< COMP output on GPIO isn't inverted */
+#define COMP_OUTPUTPOL_NONINVERTED             (0x00000000U)                /*!< COMP output on GPIO isn't inverted */
 #define COMP_OUTPUTPOL_INVERTED                COMP_CSR_COMPxPOLARITY       /*!< COMP output on GPIO is inverted */
 /**
   * @}
@@ -225,10 +225,10 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 
 /* When output polarity is not inverted, comparator output is low when
    the input plus is at a lower voltage than the input minus */
-#define COMP_OUTPUT_LEVEL_LOW              ((uint32_t)0x00000000U)
+#define COMP_OUTPUT_LEVEL_LOW              (0x00000000U)
 /* When output polarity is not inverted, comparator output is high when
    the input plus is at a higher voltage than the input minus */
-#define COMP_OUTPUT_LEVEL_HIGH             ((uint32_t)0x00000001U)
+#define COMP_OUTPUT_LEVEL_HIGH             (0x00000001U)
 /**
   * @}
   */
@@ -236,7 +236,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /** @defgroup COMP_EXTI_TriggerMode COMP output to EXTI
   * @{
   */
-#define COMP_TRIGGERMODE_NONE                 ((uint32_t)0x00000000U)                                    /*!< Comparator output triggering no External Interrupt Line */
+#define COMP_TRIGGERMODE_NONE                 (0x00000000U)                                    /*!< Comparator output triggering no External Interrupt Line */
 #define COMP_TRIGGERMODE_IT_RISING            (COMP_EXTI_IT | COMP_EXTI_RISING)                         /*!< Comparator output triggering External Interrupt Line event with interruption, on rising edge */
 #define COMP_TRIGGERMODE_IT_FALLING           (COMP_EXTI_IT | COMP_EXTI_FALLING)                        /*!< Comparator output triggering External Interrupt Line event with interruption, on falling edge */
 #define COMP_TRIGGERMODE_IT_RISING_FALLING    (COMP_EXTI_IT | COMP_EXTI_RISING | COMP_EXTI_FALLING)     /*!< Comparator output triggering External Interrupt Line event with interruption, on both rising and falling edges */
@@ -515,10 +515,10 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /** @defgroup COMP_ExtiLine COMP EXTI Lines
   * @{
   */
-#define COMP_EXTI_IT                        ((uint32_t) 0x01U)  /*!< EXTI line event with interruption */
-#define COMP_EXTI_EVENT                     ((uint32_t) 0x02U)  /*!< EXTI line event only (without interruption) */
-#define COMP_EXTI_RISING                    ((uint32_t) 0x10U)  /*!< EXTI line event on rising edge */
-#define COMP_EXTI_FALLING                   ((uint32_t) 0x20U)  /*!< EXTI line event on falling edge */
+#define COMP_EXTI_IT                        (0x01U)  /*!< EXTI line event with interruption */
+#define COMP_EXTI_EVENT                     (0x02U)  /*!< EXTI line event only (without interruption) */
+#define COMP_EXTI_RISING                    (0x10U)  /*!< EXTI line event on rising edge */
+#define COMP_EXTI_FALLING                   (0x20U)  /*!< EXTI line event on falling edge */
 /**
   * @}
   */

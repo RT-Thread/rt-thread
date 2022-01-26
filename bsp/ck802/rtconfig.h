@@ -11,13 +11,17 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
+#define RT_USING_OVERFLOW_CHECK
+#define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
+#define RT_USING_IDLE_HOOK
+#define RT_IDLE_HOOK_LIST_SIZE 4
+#define IDLE_THREAD_STACK_SIZE 256
+
+/* kservice optimization */
+
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
-#define RT_USING_OVERFLOW_CHECK
-#define RT_DEBUG_INIT 0
-#define RT_DEBUG_THREAD 0
-#define RT_USING_HOOK
-#define IDLE_THREAD_STACK_SIZE 256
 
 /* Inter-Thread communication */
 
@@ -31,6 +35,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -39,12 +44,14 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_VER_NUM 0x40100
 
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
 
 /* C++ features */
 
@@ -52,17 +59,17 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define RT_USING_MSH
+#define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 512
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 1
 #define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 512
 #define FINSH_CMD_SIZE 80
-#define FINSH_USING_MSH
-#define FINSH_USING_MSH_DEFAULT
-#define FINSH_USING_MSH_ONLY
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -72,7 +79,9 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
 /* Using USB */
@@ -80,19 +89,37 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_LIBC_DEFAULT_TIMEZONE 8
 
-/* Network stack */
+/* POSIX (Portable Operating System Interface) layer */
+
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
+
+/* Network */
+
+/* Socket abstraction layer */
+
+
+/* Network interface device */
+
 
 /* light weight TCP/IP stack */
 
 
-/* Modbus master and slave stack */
+/* AT commands */
 
 
 /* VBUS(Virtual Software BUS) */
 
 
 /* Utilities */
+
+
+/* RT-Thread Utestcases */
 
 
 /* RT-Thread online packages */
@@ -108,6 +135,9 @@
 /* Wiced WiFi */
 
 
+/* IoT Cloud */
+
+
 /* security packages */
 
 
@@ -116,32 +146,49 @@
 
 /* multimedia packages */
 
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+
+/* u8g2: a monochrome graphic library */
+
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
 
 /* tools packages */
 
 
 /* system packages */
 
-/* RT-Thread GUI Engine */
+/* enhanced kernel services */
+
+
+/* POSIX extension functions */
+
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
 
 
 /* peripheral libraries and drivers */
 
 
+/* AI packages */
+
+
 /* miscellaneous packages */
 
-
-/* sample package */
-
-
-/* example package: hello */
+/* samples: kernel and components samples */
 
 
-/* Privated Packages of RealThread */
+/* entertainment: terminal games and other interesting software packages */
 
-
-/* Network Utilities */
-
+#define SOC_CK802
 #define RT_USING_UART1
 
 #endif

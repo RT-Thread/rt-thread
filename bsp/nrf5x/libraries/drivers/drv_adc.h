@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2020-08-18     guohp1128    the first version
  */
- 
+
 #ifndef __DRV_ADC_H__
 #define __DRV_ADC_H__
 
@@ -18,12 +18,12 @@
 
 #define ADC_NAME "adc"
 
-/* 
+/*
     previous definition in application
-    
+
     set single-ended mode or differential mode.
     selection ADC input pin, and config the number of Channel.
-   
+
     mode: 0 single-ended mode,1 differential mode
     pin_p: 0-7
     pin_n: 0-7,if single-ended mode, pin_n invalid
@@ -40,9 +40,9 @@ typedef struct
 typedef struct
 {
     nrfx_saadc_channel_t    channels[8];
-    uint8_t                 channel_count; 
-    nrf_saadc_value_t       result_buffer[8]; 
-    uint8_t                 done;    
+    uint8_t                 channel_count;
+    nrf_saadc_value_t       result_buffer[8];
+    uint8_t                 done;
 } drv_nrfx_saadc_result_t;
 
 #endif /* __DRV_ADC_H__ */

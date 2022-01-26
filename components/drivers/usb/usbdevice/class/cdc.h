@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2012-10-03     Yi Qiu       first version
  * 2012-12-12     heyuanjie87  add CDC endpoints collection
  */
- 
+
 #ifndef  __CDC_H__
 #define  __CDC_H__
 
@@ -96,7 +96,7 @@ struct ucdc_header_descriptor
     rt_uint8_t length;
     rt_uint8_t type;
     rt_uint8_t subtype;
-    rt_uint16_t bcd;        
+    rt_uint16_t bcd;
 };
 typedef struct ucdc_header_descriptor* ucdc_hdr_desc_t;
 
@@ -114,7 +114,7 @@ struct ucdc_call_mgmt_descriptor
     rt_uint8_t length;
     rt_uint8_t type;
     rt_uint8_t subtype;
-    rt_uint8_t capabilties;    
+    rt_uint8_t capabilties;
     rt_uint8_t data_interface;
 };
 typedef struct ucdc_call_mgmt_descriptor* ucdc_call_mgmt_desc_t;
@@ -136,9 +136,9 @@ struct ucdc_comm_descriptor
 #endif
     struct uinterface_descriptor intf_desc;
     struct ucdc_header_descriptor hdr_desc;
-    struct ucdc_call_mgmt_descriptor call_mgmt_desc;    
-    struct ucdc_acm_descriptor acm_desc;    
-    struct ucdc_union_descriptor union_desc;    
+    struct ucdc_call_mgmt_descriptor call_mgmt_desc;
+    struct ucdc_acm_descriptor acm_desc;
+    struct ucdc_union_descriptor union_desc;
     struct uendpoint_descriptor ep_desc;
 };
 typedef struct ucdc_comm_descriptor* ucdc_comm_desc_t;
@@ -170,7 +170,7 @@ typedef struct ucdc_eth_descriptor* ucdc_eth_desc_t;
 struct ucdc_data_descriptor
 {
     struct uinterface_descriptor intf_desc;
-    struct uendpoint_descriptor ep_out_desc;        
+    struct uendpoint_descriptor ep_out_desc;
     struct uendpoint_descriptor ep_in_desc;
 };
 typedef struct ucdc_data_descriptor* ucdc_data_desc_t;

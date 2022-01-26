@@ -2458,6 +2458,9 @@ HAL_StatusTypeDef HAL_RTCEx_SecureModeSet(RTC_HandleTypeDef *hrtc, RTC_SecureSta
   * @}
   */
 
+/**
+  * @}
+  */
 #endif /* HAL_RTC_MODULE_ENABLED */
 
 /**

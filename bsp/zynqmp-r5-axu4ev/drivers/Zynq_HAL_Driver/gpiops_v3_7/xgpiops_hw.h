@@ -23,13 +23,13 @@
 * 1.02a hk   08/22/13 Added low level reset API function prototype and
 *                     related constant definitions
 * 3.00  kvn  02/13/15 Modified code for MISRA-C:2012 compliance.
-* 3.1	kvn  04/13/15 Corrected reset values of banks.
+* 3.1    kvn  04/13/15 Corrected reset values of banks.
 * 3.5   sne  03/14/19 Added versal support.
 * </pre>
 *
 ******************************************************************************/
-#ifndef XGPIOPS_HW_H		/* prevent circular inclusions */
-#define XGPIOPS_HW_H		/* by using protection macros */
+#ifndef XGPIOPS_HW_H        /* prevent circular inclusions */
+#define XGPIOPS_HW_H        /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,17 +48,17 @@ extern "C" {
  */
 #define XGPIOPS_DATA_LSW_OFFSET  0x00000000U  /* Mask and Data Register LSW, WO */
 #define XGPIOPS_DATA_MSW_OFFSET  0x00000004U  /* Mask and Data Register MSW, WO */
-#define XGPIOPS_DATA_OFFSET	 0x00000040U  /* Data Register, RW */
-#define XGPIOPS_DATA_RO_OFFSET	 0x00000060U  /* Data Register - Input, RO */
-#define XGPIOPS_DIRM_OFFSET	 0x00000204U  /* Direction Mode Register, RW */
-#define XGPIOPS_OUTEN_OFFSET	 0x00000208U  /* Output Enable Register, RW */
-#define XGPIOPS_INTMASK_OFFSET	 0x0000020CU  /* Interrupt Mask Register, RO */
-#define XGPIOPS_INTEN_OFFSET	 0x00000210U  /* Interrupt Enable Register, WO */
-#define XGPIOPS_INTDIS_OFFSET	 0x00000214U  /* Interrupt Disable Register, WO*/
-#define XGPIOPS_INTSTS_OFFSET	 0x00000218U  /* Interrupt Status Register, RO */
-#define XGPIOPS_INTTYPE_OFFSET	 0x0000021CU  /* Interrupt Type Register, RW */
-#define XGPIOPS_INTPOL_OFFSET	 0x00000220U  /* Interrupt Polarity Register, RW */
-#define XGPIOPS_INTANY_OFFSET	 0x00000224U  /* Interrupt On Any Register, RW */
+#define XGPIOPS_DATA_OFFSET     0x00000040U  /* Data Register, RW */
+#define XGPIOPS_DATA_RO_OFFSET     0x00000060U  /* Data Register - Input, RO */
+#define XGPIOPS_DIRM_OFFSET     0x00000204U  /* Direction Mode Register, RW */
+#define XGPIOPS_OUTEN_OFFSET     0x00000208U  /* Output Enable Register, RW */
+#define XGPIOPS_INTMASK_OFFSET     0x0000020CU  /* Interrupt Mask Register, RO */
+#define XGPIOPS_INTEN_OFFSET     0x00000210U  /* Interrupt Enable Register, WO */
+#define XGPIOPS_INTDIS_OFFSET     0x00000214U  /* Interrupt Disable Register, WO*/
+#define XGPIOPS_INTSTS_OFFSET     0x00000218U  /* Interrupt Status Register, RO */
+#define XGPIOPS_INTTYPE_OFFSET     0x0000021CU  /* Interrupt Type Register, RW */
+#define XGPIOPS_INTPOL_OFFSET     0x00000220U  /* Interrupt Polarity Register, RW */
+#define XGPIOPS_INTANY_OFFSET     0x00000224U  /* Interrupt On Any Register, RW */
 /* @} */
 
 /** @name Register offsets for each Bank.
@@ -70,7 +70,7 @@ extern "C" {
 /* @} */
 
 /* For backwards compatibility */
-#define XGPIOPS_BYPM_MASK_OFFSET	(u32)0x40
+#define XGPIOPS_BYPM_MASK_OFFSET    (u32)0x40
 
 /** @name Interrupt type reset values for each bank
  *  @{
@@ -106,33 +106,33 @@ extern "C" {
 *
 * This macro reads the given register.
 *
-* @param	BaseAddr is the base address of the device.
-* @param	RegOffset is the register offset to be read.
+* @param    BaseAddr is the base address of the device.
+* @param    RegOffset is the register offset to be read.
 *
-* @return	The 32-bit value of the register
+* @return    The 32-bit value of the register
 *
-* @note		None.
+* @note        None.
 *
 *****************************************************************************/
-#define XGpioPs_ReadReg(BaseAddr, RegOffset)		\
-		Xil_In32((BaseAddr) + (u32)(RegOffset))
+#define XGpioPs_ReadReg(BaseAddr, RegOffset)        \
+        Xil_In32((BaseAddr) + (u32)(RegOffset))
 
 /****************************************************************************/
 /**
 *
 * This macro writes to the given register.
 *
-* @param	BaseAddr is the base address of the device.
-* @param	RegOffset is the offset of the register to be written.
-* @param	Data is the 32-bit value to write to the register.
+* @param    BaseAddr is the base address of the device.
+* @param    RegOffset is the offset of the register to be written.
+* @param    Data is the 32-bit value to write to the register.
 *
-* @return	None.
+* @return    None.
 *
-* @note		None.
+* @note        None.
 *
 *****************************************************************************/
-#define XGpioPs_WriteReg(BaseAddr, RegOffset, Data)	\
-		Xil_Out32((BaseAddr) + (u32)(RegOffset), (u32)(Data))
+#define XGpioPs_WriteReg(BaseAddr, RegOffset, Data)    \
+        Xil_Out32((BaseAddr) + (u32)(RegOffset), (u32)(Data))
 
 /************************** Function Prototypes ******************************/
 

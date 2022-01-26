@@ -59,10 +59,10 @@ typedef enum
 {
 #if defined(_EFM32_GIANT_FAMILY)
   /** Reset control over Backup Power Domain */
-  rmuResetBU = _RMU_CTRL_BURSTEN_SHIFT,        
+  rmuResetBU = _RMU_CTRL_BURSTEN_SHIFT,
 #endif
   /** Allow Cortex-M3 lock up signal */
-  rmuResetLockUp = _RMU_CTRL_LOCKUPRDIS_SHIFT 
+  rmuResetLockUp = _RMU_CTRL_LOCKUPRDIS_SHIFT
 } RMU_Reset_TypeDef;
 
 /*******************************************************************************

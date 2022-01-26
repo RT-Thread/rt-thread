@@ -1,0 +1,36 @@
+menu "Interprocess Communication (IPC)"
+
+config RT_USING_POSIX_PIPE
+    bool "Enable pipe and FIFO"
+    select RT_USING_POSIX_FS
+    select RT_USING_POSIX_DEVIO
+    select RT_USING_POSIX_POLL
+    default n
+
+config RT_USING_POSIX_PIPE_SIZE
+    int "Set pipe buffer size"
+    depends on RT_USING_POSIX_PIPE
+    default 512
+
+# We have't implement of 'systemv ipc', so hide it firstly.
+#
+# config RT_USING_POSIX_IPC_SYSTEM_V
+#     bool "Enable System V IPC"
+#     default n
+#     help
+#         System V supplies an alternative form of interprocess communication consisting of thress
+#         features: shared memory, message, and semaphores.
+
+config RT_USING_POSIX_MESSAGE_QUEUE
+    bool "Enable posix message queue <mqueue.h>"
+    select RT_USING_POSIX_CLOCK
+    default n
+
+config RT_USING_POSIX_MESSAGE_SEMAPHORE
+    bool "Enable posix semaphore <semaphore.h>"
+    select RT_USING_POSIX_CLOCK
+    default n
+
+comment "Socket is in the 'Network' category"
+
+endmenu

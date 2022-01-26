@@ -10,7 +10,7 @@
  *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
+ * Date         Author      Notes
  * 2009-01-05   Bernard     the first version
  * 2010-12-27   onelife     Modification for EFM32
  *********************************************************************/

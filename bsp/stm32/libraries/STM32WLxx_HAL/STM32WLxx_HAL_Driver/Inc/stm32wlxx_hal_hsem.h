@@ -43,7 +43,7 @@ extern "C" {
 
 /**
   * @brief  SemID to mask helper Macro.
-  * @param  __SEMID__: semaphore ID from 0 to 31
+  * @param  __SEMID__: semaphore ID from 0 to 15
   * @retval Semaphore Mask.
   */
 #define __HAL_HSEM_SEMID_TO_MASK(__SEMID__) (1 << (__SEMID__))

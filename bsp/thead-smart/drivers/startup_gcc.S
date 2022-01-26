@@ -24,7 +24,7 @@ __Vectors:
     .long   Default_Handler
     .long   Default_Handler
     .long   Default_Handler
-    .long   Default_IRQHandler
+    .long   SysTick_Handler
     .long   Default_Handler
     .long   Default_Handler
     .long   Default_Handler
@@ -35,38 +35,39 @@ __Vectors:
     .long   Default_Handler
 
     /* External interrupts */
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
-    .long   Default_IRQHandler
+    .long   USART_IRQHandler
+    .long   Default_Handler
+    .long   TIM0_IRQHandler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .long   Default_Handler
+    .size __Vectors,.-__Vectors
 
     .text
     .align  2

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -197,6 +197,8 @@ static struct uhcd_ops _uhcd_ops =
 
 static rt_err_t stm32_hcd_init(rt_device_t device)
 {
+    HAL_StatusTypeDef state;
+
     HCD_HandleTypeDef *hhcd = (HCD_HandleTypeDef *)device->user_data;
     hhcd->Instance = USB_OTG_FS;
     hhcd->Init.Host_channels = 8;
@@ -204,7 +206,11 @@ static rt_err_t stm32_hcd_init(rt_device_t device)
     hhcd->Init.dma_enable = DISABLE;
     hhcd->Init.phy_itface = HCD_PHY_EMBEDDED;
     hhcd->Init.Sof_enable = DISABLE;
-    RT_ASSERT(HAL_HCD_Init(hhcd) == HAL_OK);
+    state = HAL_HCD_Init(hhcd);
+    if (state != HAL_OK)
+    {
+        return -RT_ERROR;
+    }
     HAL_HCD_Start(hhcd);
 #ifdef USBH_USING_CONTROLLABLE_POWER
     rt_pin_mode(USBH_POWER_PIN, PIN_MODE_OUTPUT);
@@ -241,7 +247,7 @@ int stm_usbh_register(void)
         return -RT_ERROR;
     }
 
-    rt_usb_host_init();
+    rt_usb_host_init("usbh");
 
     return RT_EOK;
 }

@@ -1,0 +1,58 @@
+menu "Kernel Testcase"
+
+config UTEST_MEMHEAP_TC
+    bool "memheap stability test"
+    default y
+    depends on RT_USING_MEMHEAP
+
+config UTEST_SMALL_MEM_TC
+    bool "mem test"
+    default y
+    depends on RT_USING_SMALL_MEM
+
+config UTEST_SLAB_TC
+    bool "slab test"
+    default n
+    depends on RT_USING_SLAB
+
+config UTEST_IRQ_TC
+    bool "IRQ test"
+    default n
+
+config UTEST_SEMAPHORE_TC
+    bool "semaphore test"
+    default n
+    depends on RT_USING_SEMAPHORE
+
+config UTEST_EVENT_TC
+    bool "event test"
+    default n
+    depends on RT_USING_EVENT
+
+config UTEST_TIMER_TC
+    bool "timer test"
+    default n
+
+config UTEST_MESSAGEQUEUE_TC
+    bool "message queue test"
+    default n
+
+config UTEST_SIGNAL_TC
+    bool "signal test"
+    default n
+
+config UTEST_MUTEX_TC
+    bool "mutex test"
+    default n
+
+config UTEST_MAILBOX_TC
+    bool "mailbox test"
+    default n
+
+config UTEST_THREAD_TC
+    bool "thread test"
+    default n
+    select RT_USING_TIMER_SOFT
+    select RT_USING_THREAD
+
+endmenu

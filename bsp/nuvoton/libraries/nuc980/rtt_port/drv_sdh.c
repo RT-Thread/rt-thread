@@ -16,13 +16,17 @@
 
 #include <rtdevice.h>
 #include <string.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_pdma.h>
 #include <drv_sys.h>
 
 #if defined(RT_USING_DFS)
-    #include <dfs_fs.h>
-    #include <dfs_posix.h>
+#include <dfs_fs.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #endif
 
 /* Private define ---------------------------------------------------------------*/

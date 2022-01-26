@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,7 +18,7 @@
 #include "../common/stackframe.h"
 
     .section ".text", "ax"
-	.set 		noat
+    .set        noat
     .set noreorder
 
 /*
@@ -92,7 +92,7 @@ _reswitch:
     mfc0    t0, CP0_CAUSE                  /* t0 = Cause */
     ori     t0, t0, (1<<8)                 /* t0 |= (1<<8) */
     mtc0    t0, CP0_CAUSE                  /* cause = t0 */
-    addiu   t1,	zero,   -257               /* t1 = ~(1<<8) */
+    addiu   t1, zero,   -257               /* t1 = ~(1<<8) */
     and     t0, t0, t1                     /* t0 &= t1 */
     mtc0    t0, CP0_CAUSE                  /* cause = t0 */
     jr      ra
@@ -103,17 +103,17 @@ _reswitch:
  */
     .section ".text", "ax"
     .set noreorder
-	.set 		noat
- 	.ent		CoreSW0Handler
+    .set        noat
+    .ent        CoreSW0Handler
 
-	    .globl CoreSW0Handler
+        .globl CoreSW0Handler
 CoreSW0Handler:
     SAVE_ALL
 
-	/* mCS0ClearIntFlag(); */
-	la      t0, IFS0CLR             /* t0 = IFS0CLR */
-	addiu   t1,zero,0x02            /* t1 = (1<<2) */
-	sw      t1, 0(t0)               /* IFS0CLR = t1 */
+    /* mCS0ClearIntFlag(); */
+    la      t0, IFS0CLR             /* t0 = IFS0CLR */
+    addiu   t1,zero,0x02            /* t1 = (1<<2) */
+    sw      t1, 0(t0)               /* IFS0CLR = t1 */
 
     la      k0, rt_thread_switch_interrupt_flag
     sw      zero, 0(k0)                     /* clear flag */
@@ -133,4 +133,4 @@ CoreSW0Handler:
 
     RESTORE_ALL_AND_RET
 
-	.end		CoreSW0Handler
+    .end        CoreSW0Handler

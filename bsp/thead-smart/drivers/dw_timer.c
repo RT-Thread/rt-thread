@@ -20,7 +20,7 @@
 
 #define TIMER_NULL_PARAM_CHK(para)  HANDLE_PARAM_CHK(para, ERR_TIMER(DRV_ERROR_PARAMETER))
 
-typedef struct 
+typedef struct
 {
 #ifdef CONFIG_LPM
     uint8_t timer_power_status;
@@ -59,7 +59,7 @@ void dw_timer_irqhandler(int idx)
 
     addr->TxEOI;
 
-    if (timer_priv->cb_event) 
+    if (timer_priv->cb_event)
     {
         return timer_priv->cb_event(idx, TIMER_EVENT_TIMEOUT);
     }
@@ -69,10 +69,10 @@ void dw_timer_irqhandler(int idx)
 #ifdef CONFIG_LPM
 static void manage_clock(timer_handle_t handle, uint8_t enable)
 {
-    if (handle == &timer_instance[0] || handle == &timer_instance[1]) 
+    if (handle == &timer_instance[0] || handle == &timer_instance[1])
     {
         drv_clock_manager_config(CLOCK_MANAGER_TIM, enable);
-    } else if (handle == &timer_instance[3] || handle == &timer_instance[2]) 
+    } else if (handle == &timer_instance[3] || handle == &timer_instance[2])
     {
         drv_clock_manager_config(CLOCK_MANAGER_TIM1, enable);
     }
@@ -103,7 +103,7 @@ static void do_wakeup_sleep_action(timer_handle_t handle)
 */
 timer_handle_t csi_timer_initialize(int32_t idx, timer_event_cb_t cb_event)
 {
-    if (idx < 0 || idx >= CONFIG_TIMER_NUM) 
+    if (idx < 0 || idx >= CONFIG_TIMER_NUM)
     {
         return NULL;
     }
@@ -114,7 +114,7 @@ timer_handle_t csi_timer_initialize(int32_t idx, timer_event_cb_t cb_event)
 
     int32_t real_idx = target_get_timer(idx, &base, &irq, &handler);
 
-    if (real_idx != idx) 
+    if (real_idx != idx)
     {
         return NULL;
     }
@@ -134,7 +134,7 @@ timer_handle_t csi_timer_initialize(int32_t idx, timer_event_cb_t cb_event)
     timer_deactive_control(addr);
     timer_priv->cb_event = cb_event;
 
-    if (cb_event != NULL) 
+    if (cb_event != NULL)
     {
         drv_irq_register(timer_priv->irq, handler);
         drv_irq_enable(timer_priv->irq);
@@ -172,7 +172,7 @@ int32_t csi_timer_power_control(timer_handle_t handle, csi_power_stat_e state)
 {
     TIMER_NULL_PARAM_CHK(handle);
 #ifdef CONFIG_LPM
-    power_cb_t callback = 
+    power_cb_t callback =
     {
         .wakeup = do_wakeup_sleep_action,
         .sleep = do_prepare_sleep_action,
@@ -197,7 +197,7 @@ int32_t csi_timer_config(timer_handle_t handle, timer_mode_e mode)
     dw_timer_priv_t *timer_priv = handle;
     dw_timer_reg_t *addr = (dw_timer_reg_t *)(timer_priv->base);
 
-    switch (mode) 
+    switch (mode)
     {
         case TIMER_MODE_FREE_RUNNING:
             addr->TxControl &= ~DW_TIMER_TXCONTROL_MODE;
@@ -248,15 +248,15 @@ int32_t csi_timer_start(timer_handle_t handle)
     uint32_t min_us = drv_get_timer_freq(timer_priv->idx) / 1000000;
     uint32_t load;
 
-    if (((timer_priv->timeout * drv_get_timer_freq(timer_priv->idx)) / 1000000) > 0xffffffff) 
+    if (((timer_priv->timeout * drv_get_timer_freq(timer_priv->idx)) / 1000000) > 0xffffffff)
     {
         return ERR_TIMER(DRV_ERROR_PARAMETER);
     }
 
-    if (min_us) 
+    if (min_us)
     {
         load = (uint32_t)(timer_priv->timeout * min_us);
-    } else 
+    } else
     {
         load = (uint32_t)(((uint64_t)(timer_priv->timeout) * drv_get_timer_freq(timer_priv->idx)) / 1000000);
     }
@@ -265,11 +265,11 @@ int32_t csi_timer_start(timer_handle_t handle)
 
     if (timer_priv->timeout == 0) {
         addr->TxLoadCount = 0xffffffff;                           /* load time(us) */
-    } else 
+    } else
     {
         if ((addr->TxControl | 0x2) == 0x2) {
             addr->TxLoadCount = 0xffffffff;                           /* load time(us) */
-        } else 
+        } else
         {
             addr->TxLoadCount = load;                           /* load time(us) */
         }
@@ -368,7 +368,7 @@ timer_status_t csi_timer_get_status(timer_handle_t handle)
 {
     timer_status_t timer_status = {0};
 
-    if (handle == NULL) 
+    if (handle == NULL)
     {
         return timer_status;
     }
@@ -376,12 +376,12 @@ timer_status_t csi_timer_get_status(timer_handle_t handle)
     dw_timer_priv_t *timer_priv = handle;
     dw_timer_reg_t *addr = (dw_timer_reg_t *)(timer_priv->base);
 
-    if (addr->TxControl & DW_TIMER_TXCONTROL_ENABLE) 
+    if (addr->TxControl & DW_TIMER_TXCONTROL_ENABLE)
     {
         timer_status.active = 1;
     }
 
-    if (timer_priv->timeout_flag == 1) 
+    if (timer_priv->timeout_flag == 1)
     {
         timer_status.timeout = 1;
     }

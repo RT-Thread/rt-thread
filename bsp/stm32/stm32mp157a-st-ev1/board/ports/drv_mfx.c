@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 
 struct st_mfx
 {
-    struct rt_device dev; 
+    struct rt_device dev;
     struct rt_i2c_bus_device *i2c_bus;
     rt_uint8_t id;
     rt_uint16_t type;
@@ -31,7 +31,7 @@ static IO_DrvTypeDef *IoDrv = NULL;
 static rt_err_t read_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint16_t len, rt_uint8_t *buf)
 {
     struct rt_i2c_msg msg[2] = {0, 0};
-    
+
     RT_ASSERT(bus != RT_NULL);
 
     msg[0].addr  = CHIP_ADDRESS;
@@ -134,11 +134,11 @@ RT_WEAK void MFX_IO_Delay(rt_uint32_t Delay)
     rt_thread_delay(Delay);
 }
 
-RT_WEAK void MFX_IO_Wakeup(void) 
+RT_WEAK void MFX_IO_Wakeup(void)
 {
 }
 
-RT_WEAK void MFX_IO_EnableWakeupPin(void) 
+RT_WEAK void MFX_IO_EnableWakeupPin(void)
 {
 }
 
@@ -172,7 +172,7 @@ void BSP_IO_ITClearPin(rt_uint32_t IO_Pins_To_Clear)
 
 /**
   * @brief  Configures the IO pin(s) according to IO mode structure value.
-  * @param  IoPin: IO pin(s) to be configured. 
+  * @param  IoPin: IO pin(s) to be configured.
   *          This parameter can be one of the following values:
   *            @arg  MFXSTM32L152_GPIO_PIN_x: where x can be from 0 to 23.
   * @param  IoMode: IO pin mode to configure
@@ -182,7 +182,7 @@ void BSP_IO_ITClearPin(rt_uint32_t IO_Pins_To_Clear)
   *            @arg  IO_MODE_IT_RISING_EDGE
   *            @arg  IO_MODE_IT_FALLING_EDGE
   *            @arg  IO_MODE_IT_LOW_LEVEL
-  *            @arg  IO_MODE_IT_HIGH_LEVEL            
+  *            @arg  IO_MODE_IT_HIGH_LEVEL
   *            @arg  IO_MODE_ANALOG
   *            @arg  IO_MODE_OFF
   *            @arg  IO_MODE_INPUT_PU,
@@ -201,20 +201,20 @@ void BSP_IO_ITClearPin(rt_uint32_t IO_Pins_To_Clear)
   *            @arg  IO_MODE_IT_FALLING_EDGE_PD
   *            @arg  IO_MODE_IT_LOW_LEVEL_PD
   *            @arg  IO_MODE_IT_HIGH_LEVEL_PD
-  * @retval RT_EOK if all initializations are OK. Other value if error.  
+  * @retval RT_EOK if all initializations are OK. Other value if error.
   */
 rt_uint8_t rt_mfx_pin_mode(rt_uint32_t IoPin, IO_ModeTypedef IoMode)
 {
     /* Configure the selected IO pin(s) mode */
     IoDrv->Config(0, IoPin, IoMode);
 
-    return RT_EOK;  
+    return RT_EOK;
 }
 
 /**
   * @brief  Sets the IRQ_OUT pin polarity and type
   * @param  IoIrqOutPinPolarity: High/Low
-  * @param  IoIrqOutPinType:     OpenDrain/PushPull 
+  * @param  IoIrqOutPinType:     OpenDrain/PushPull
   * @retval OK
   */
 rt_uint8_t rt_mfx_config_irq(rt_uint8_t IoIrqOutPinPolarity, rt_uint8_t IoIrqOutPinType)
@@ -231,9 +231,9 @@ rt_uint8_t rt_mfx_config_irq(rt_uint8_t IoIrqOutPinPolarity, rt_uint8_t IoIrqOut
 
 /**
   * @brief  Sets the selected pins state.
-  * @param  IoPin: Selected pins to write. 
-  *          This parameter can be any combination of the IO pins. 
-  * @param  PinState: New pins state to write  
+  * @param  IoPin: Selected pins to write.
+  *          This parameter can be any combination of the IO pins.
+  * @param  PinState: New pins state to write
   * @retval None
   */
 void rt_mfx_pin_write(rt_uint32_t IoPin, rt_base_t PinState)
@@ -244,9 +244,9 @@ void rt_mfx_pin_write(rt_uint32_t IoPin, rt_base_t PinState)
 
 /**
   * @brief  Gets the selected pins current state.
-  * @param  IoPin: Selected pins to read. 
-  *          This parameter can be any combination of the IO pins. 
-  * @retval The current pins state 
+  * @param  IoPin: Selected pins to read.
+  *          This parameter can be any combination of the IO pins.
+  * @retval The current pins state
   */
 rt_uint32_t rt_mfx_pin_read(rt_uint32_t IoPin)
 {
@@ -255,9 +255,9 @@ rt_uint32_t rt_mfx_pin_read(rt_uint32_t IoPin)
 
 /**
   * @brief  Toggles the selected pins state.
-  * @param  IoPin: Selected pins to toggle. 
-  *          This parameter can be any combination of the IO pins.  
-  * @note   This function is only used to toggle one pin in the same time  
+  * @param  IoPin: Selected pins to toggle.
+  *          This parameter can be any combination of the IO pins.
+  * @note   This function is only used to toggle one pin in the same time
   * @retval None
   */
 void rt_mfx_pin_toggle(rt_uint32_t IoPin)
@@ -270,7 +270,7 @@ void rt_mfx_pin_toggle(rt_uint32_t IoPin)
     else
     {
         IoDrv->WritePin(0, IoPin, 1); /* Set */
-    } 
+    }
 }
 
 int rt_mfx_init(void)
@@ -285,13 +285,13 @@ int rt_mfx_init(void)
         /* Initialize MFX */
         IoDrv->Init(0);
         IoDrv->Start(0, IO_PIN_ALL);
-        
+
         LOG_I("mfx init success, id: 0x%x", rt_mfx.id);
-        
+
         return RT_EOK;
     }
     LOG_I("mfx init error, id: 0x%x", rt_mfx.id);
-    
+
     return RT_ERROR;
 }
 INIT_DEVICE_EXPORT(rt_mfx_init);

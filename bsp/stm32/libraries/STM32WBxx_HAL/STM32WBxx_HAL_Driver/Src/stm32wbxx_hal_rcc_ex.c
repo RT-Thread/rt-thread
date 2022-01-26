@@ -139,7 +139,6 @@ static uint32_t          RCC_PLLSAI1_GetFreqDomain_Q(void);
   *            @arg @ref RCC_PERIPHCLK_RTC      RTC peripheral clock
   *            @arg @ref RCC_PERIPHCLK_RFWAKEUP RFWKP peripheral clock
   *            @arg @ref RCC_PERIPHCLK_SMPS     SMPS peripheral clock
-  *            @arg @ref RCC_PERIPHCLK_I2S      I2S peripheral clock
   *
   *
   * @note   Care must be taken when @ref HAL_RCCEx_PeriphCLKConfig() is used to select
@@ -429,23 +428,6 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
   }
 #endif
 
-#if defined(SPI_I2S_SUPPORT)
-  /*-------------------- I2S clock source configuration ----------------------*/
-  if (((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_I2S) == (RCC_PERIPHCLK_I2S))
-  {
-    /* Check the parameters */
-    assert_param(IS_RCC_I2SCLKSOURCE(PeriphClkInit->I2sClockSelection));
-
-    /* Configure the I2S clock source */
-    __HAL_RCC_I2S_CONFIG(PeriphClkInit->I2sClockSelection);
-
-    if (PeriphClkInit->I2sClockSelection == RCC_I2SCLKSOURCE_PLL)
-    {
-      /* Enable RCC_PLL_I2SCLK output */
-      __HAL_RCC_PLLCLKOUT_ENABLE(RCC_PLL_I2SCLK);
-    }
-  }
-#endif
 
   return status;
 }
@@ -456,7 +438,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
   * @param  PeriphClkInit  pointer to an RCC_PeriphCLKInitTypeDef structure that
   *         returns the configuration information for the Extended Peripherals
   *         clocks(SAI1, LPTIM1, LPTIM2, I2C1, I2C3, LPUART1,
-  *         USART1, RTC, ADCx, USB, RNG, RFWKP, SMPS, I2S).
+  *         USART1, RTC, ADCx, USB, RNG, RFWKP, SMPS).
   * @retval None
   */
 void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
@@ -487,9 +469,6 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
   PeriphClkInit->PeriphClockSelection |= RCC_PERIPHCLK_SMPS;
 #endif
 
-#if defined(SPI_I2S_SUPPORT)
-  PeriphClkInit->PeriphClockSelection |= RCC_PERIPHCLK_I2S;
-#endif
 
 #if defined(SAI1)
   /* Get the PLLSAI1 Clock configuration -----------------------------------------------*/
@@ -551,10 +530,6 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
   PeriphClkInit->SmpsClockSelection     = __HAL_RCC_GET_SMPS_SOURCE();
 #endif
 
-#if defined(SPI_I2S_SUPPORT)
-  /* Get the I2S clock source -----------------------------------------------*/
-  PeriphClkInit->I2sClockSelection      = __HAL_RCC_GET_I2S_SOURCE();
-#endif
 }
 
 /**
@@ -575,7 +550,6 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
   *            @arg @ref RCC_PERIPHCLK_USB  USB peripheral clock
   *            @arg @ref RCC_PERIPHCLK_RFWAKEUP  RFWKP peripheral clock
   *            @arg @ref RCC_PERIPHCLK_SMPS  SMPS peripheral clock
-  *            @arg @ref RCC_PERIPHCLK_I2S  I2S peripheral clock
   * @retval Frequency in Hz
   */
 uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
@@ -724,6 +698,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     }
     else                                                    /* HSI48 clock divided by 3 used as RNG clock source */
     {
+#if defined(RCC_HSI48_SUPPORT)
       if (LL_RCC_HSI48_IsReady() == 1U)
       {
         frequency = HSI48_VALUE / 3U;
@@ -732,6 +707,9 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
       {
         /* Nothing to do as frequency already initialized to 0U */
       }
+#else
+      /* Nothing to do as frequency already initialized to 0U */
+#endif
     }
   }
 #if defined(USB)
@@ -870,6 +848,17 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
       if (LL_RCC_PLLSAI1_IsReady() == 1U)
       {
         frequency = RCC_PLLSAI1_GetFreqDomain_R();
+      }
+      else
+      {
+        /* Nothing to do as frequency already initialized to 0U */
+      }
+      break;
+#elif defined(STM32WB15xx)
+    case LL_RCC_ADC_CLKSOURCE_HSI:           /* HSI clock used as ADC clock source */
+      if (LL_RCC_HSI_IsReady() == 1U)
+      {
+        frequency = HSI_VALUE;
       }
       else
       {
@@ -1050,19 +1039,6 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
     }
-    else if (rfwkpClockSource == LL_RCC_RFWKP_CLKSOURCE_LSI) /* LSI clock used as RF Wakeup clock source */
-    {
-      const uint32_t temp_lsi1ready = LL_RCC_LSI1_IsReady();
-      const uint32_t temp_lsi2ready = LL_RCC_LSI2_IsReady();
-      if ((temp_lsi1ready == 1U) || (temp_lsi2ready == 1U))
-      {
-        frequency = LSI_VALUE;
-      }
-      else
-      {
-        /* Nothing to do as frequency already initialized to 0U */
-      }
-    }
     else if (rfwkpClockSource == LL_RCC_RFWKP_CLKSOURCE_HSE_DIV1024) /* HSE clock used as RF Wakeup clock source */
     {
       frequency = HSE_VALUE / 1024U;
@@ -1125,32 +1101,6 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     else /* SMPS has no Clock */
     {
       /* Nothing to do as frequency already initialized to 0U */
-    }
-  }
-#endif
-#if defined(SPI_I2S_SUPPORT)
-  if (PeriphClk == RCC_PERIPHCLK_I2S)
-  {
-    switch (LL_RCC_GetI2SClockSource(LL_RCC_I2S_CLKSOURCE))
-    {
-    case LL_RCC_I2S_CLKSOURCE_PIN:          /* I2S Clock is External clock */
-      frequency = EXTERNAL_CLOCK_VALUE;
-      break;
-      
-    case LL_RCC_I2S_CLKSOURCE_HSI:          /* I2S Clock is HSI Osc. */
-      if (LL_RCC_HSI_IsReady() == 1U)
-      {
-        frequency = HSI_VALUE;
-      }
-      break;
-      
-    case LL_RCC_I2S_CLKSOURCE_PLL:          /* I2S Clock is PLL */
-      frequency = RCC_PLL_GetFreqDomain_P();
-      break;
-      
-    case LL_RCC_I2S_CLKSOURCE_NONE:          /* No clock used as I2S clock source */
-    default:
-      break;
     }
   }
 #endif

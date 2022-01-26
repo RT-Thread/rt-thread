@@ -14,7 +14,7 @@
 
 #if defined(BSP_USING_SCUART)
 
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <rtdevice.h>
 #include <rthw.h>
 

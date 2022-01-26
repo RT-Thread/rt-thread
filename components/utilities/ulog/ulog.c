@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -77,6 +77,7 @@
 struct rt_ulog
 {
     rt_bool_t init_ok;
+    rt_bool_t output_lock_enabled;
     struct rt_semaphore output_locker;
     /* all backends */
     rt_slist_t backend_list;
@@ -186,6 +187,9 @@ size_t ulog_ultoa(char *s, unsigned long int n)
 
 static void output_unlock(void)
 {
+    if (!ulog.output_lock_enabled)
+        return;
+
     /* is in thread context */
     if (rt_interrupt_get_nest() == 0)
     {
@@ -201,6 +205,9 @@ static void output_unlock(void)
 
 static void output_lock(void)
 {
+    if (!ulog.output_lock_enabled)
+        return;
+
     /* is in thread context */
     if (rt_interrupt_get_nest() == 0)
     {
@@ -212,6 +219,11 @@ static void output_lock(void)
         ulog.output_locker_isr_lvl = rt_hw_interrupt_disable();
 #endif
     }
+}
+
+void ulog_output_lock_enabled(rt_bool_t enabled)
+{
+    ulog.output_lock_enabled = enabled;
 }
 
 static char *get_log_buf(void)
@@ -256,23 +268,43 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     }
 #endif /* ULOG_USING_COLOR */
 
+    log_buf[log_len] = '\0';
+
 #ifdef ULOG_OUTPUT_TIME
     /* add time info */
     {
 #ifdef ULOG_TIME_USING_TIMESTAMP
-        static time_t now;
+        extern struct tm* localtime_r(const time_t* t, struct tm* r);
+        static struct timeval now;
         static struct tm *tm, tm_tmp;
+        static rt_bool_t check_usec_support = RT_FALSE, usec_is_support = RT_FALSE;
 
-        now = time(NULL);
-        tm = gmtime_r(&now, &tm_tmp);
-
-#ifdef RT_USING_SOFT_RTC
-        rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d.%03d", tm->tm_mon + 1,
-                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, rt_tick_get() % 1000);
-#else
-        rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d", tm->tm_mon + 1,
-                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
-#endif /* RT_USING_SOFT_RTC */
+        if (gettimeofday(&now, NULL) >= 0)
+        {
+            time_t t = now.tv_sec;
+            tm = localtime_r(&t, &tm_tmp);
+            /* show the time format MM-DD HH:MM:SS */
+            rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d", tm->tm_mon + 1,
+                    tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+            /* check the microseconds support when kernel is startup */
+            if (!check_usec_support && rt_thread_self() != RT_NULL)
+            {
+                long old_usec = now.tv_usec;
+                /* delay some time for wait microseconds changed */
+                rt_thread_mdelay(10);
+                gettimeofday(&now, NULL);
+                check_usec_support = RT_TRUE;
+                /* the microseconds is not equal between two gettimeofday calls */
+                if (now.tv_usec != old_usec)
+                    usec_is_support = RT_TRUE;
+            }
+            if (usec_is_support)
+            {
+                /* show the millisecond */
+                log_len += rt_strlen(log_buf + log_len);
+                rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, ".%03d", now.tv_usec / 1000);
+            }
+        }
 
 #else
         static rt_size_t tick_len = 0;
@@ -318,9 +350,14 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
         /* is not in interrupt context */
         if (rt_interrupt_get_nest() == 0)
         {
-            rt_size_t name_len = rt_strnlen(rt_thread_self()->name, RT_NAME_MAX);
-
-            rt_strncpy(log_buf + log_len, rt_thread_self()->name, name_len);
+            rt_size_t name_len = 0;
+            const char *thread_name = "N/A";
+            if (rt_thread_self())
+            {
+                thread_name = rt_thread_self()->name;
+            }
+            name_len = rt_strnlen(thread_name, RT_NAME_MAX);
+            rt_strncpy(log_buf + log_len, thread_name, name_len);
             log_len += name_len;
         }
         else
@@ -403,6 +440,11 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
 #if !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG)
         backend->output(backend, level, tag, is_raw, log, size);
 #else
+        if (backend->filter && backend->filter(backend, level, tag, is_raw, log, size) == RT_FALSE)
+        {
+            /* backend's filter is not match, so skip output */
+            continue;
+        }
         if (backend->support_color || is_raw)
         {
             backend->output(backend, level, tag, is_raw, log, size);
@@ -411,6 +453,7 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
         {
             /* recalculate the log start address and log size when backend not supported color */
             rt_size_t color_info_len = 0, output_size = size;
+            const char *output_log = log;
 
             if (color_output_info[level] != RT_NULL)
                 color_info_len = rt_strlen(color_output_info[level]);
@@ -419,10 +462,10 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
             {
                 rt_size_t color_hdr_len = rt_strlen(CSI_START) + color_info_len;
 
-                log += color_hdr_len;
+                output_log += color_hdr_len;
                 output_size -= (color_hdr_len + (sizeof(CSI_END) - 1));
             }
-            backend->output(backend, level, tag, is_raw, log, output_size);
+            backend->output(backend, level, tag, is_raw, output_log, output_size);
         }
 #endif /* !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG) */
     }
@@ -667,6 +710,9 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
 
     rt_size_t i, j;
     rt_size_t log_len = 0, name_len = rt_strlen(tag);
+#ifdef ULOG_OUTPUT_TIME
+    rt_size_t time_head_len = 0;
+#endif
     char *log_buf = NULL, dump_string[8];
     int fmt_result;
 
@@ -703,6 +749,35 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
         /* package header */
         if (i == 0)
         {
+#ifdef ULOG_OUTPUT_TIME
+            /* add time info */
+#ifdef ULOG_TIME_USING_TIMESTAMP
+            static time_t now;
+            static struct tm *tm, tm_tmp;
+
+            now = time(NULL);
+            tm = gmtime_r(&now, &tm_tmp);
+
+#ifdef RT_USING_SOFT_RTC
+            rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d.%03d ", tm->tm_mon + 1,
+                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, rt_tick_get() % 1000);
+#else
+            rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d ", tm->tm_mon + 1,
+                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+#endif /* RT_USING_SOFT_RTC */
+
+#else
+            static rt_size_t tick_len = 0;
+
+            log_buf[log_len] = '[';
+            tick_len = ulog_ultoa(log_buf + log_len + 1, rt_tick_get());
+            log_buf[log_len + 1 + tick_len] = ']';
+            log_buf[log_len + 2 + tick_len] = ' ';
+            log_buf[log_len + 3 + tick_len] = '\0';
+#endif /* ULOG_TIME_USING_TIMESTAMP */
+            time_head_len = rt_strlen(log_buf + log_len);
+            log_len += time_head_len;
+#endif /* ULOG_OUTPUT_TIME */
             log_len += ulog_strcpy(log_len, log_buf + log_len, "D/HEX ");
             log_len += ulog_strcpy(log_len, log_buf + log_len, tag);
             log_len += ulog_strcpy(log_len, log_buf + log_len, ": ");
@@ -710,6 +785,9 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
         else
         {
             log_len = 6 + name_len + 2;
+#ifdef ULOG_OUTPUT_TIME
+            log_len += time_head_len;
+#endif
             rt_memset(log_buf, ' ', log_len);
         }
         fmt_result = rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE, "%04X-%04X: ", i, i + width - 1);
@@ -1006,7 +1084,7 @@ const char *ulog_global_filter_kw_get(void)
     return ulog.filter.keyword;
 }
 
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
+#ifdef RT_USING_FINSH
 #include <finsh.h>
 
 static void _print_lvl_info(void)
@@ -1181,7 +1259,7 @@ static void ulog_filter(uint8_t argc, char **argv)
     }
 }
 MSH_CMD_EXPORT(ulog_filter, Show ulog filter settings);
-#endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
+#endif /* RT_USING_FINSH */
 #endif /* ULOG_USING_FILTER */
 
 rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color)
@@ -1226,6 +1304,41 @@ rt_err_t ulog_backend_unregister(ulog_backend_t backend)
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
+}
+
+rt_err_t ulog_backend_set_filter(ulog_backend_t backend, ulog_backend_filter_t filter)
+{
+    rt_base_t level;
+    RT_ASSERT(backend);
+
+    level = rt_hw_interrupt_disable();
+    backend->filter = filter;
+    rt_hw_interrupt_enable(level);
+
+    return RT_EOK;
+}
+
+ulog_backend_t ulog_backend_find(const char *name)
+{
+    rt_base_t level;
+    rt_slist_t *node;
+    ulog_backend_t backend;
+
+    RT_ASSERT(ulog.init_ok);
+
+    level = rt_hw_interrupt_disable();
+    for (node = rt_slist_first(&ulog.backend_list); node; node = rt_slist_next(node))
+    {
+        backend = rt_slist_entry(node, struct ulog_backend, list);
+        if (rt_strncmp(backend->name, name, RT_NAME_MAX) == 0)
+        {
+            rt_hw_interrupt_enable(level);
+            return backend;
+        }
+    }
+
+    rt_hw_interrupt_enable(level);
+    return RT_NULL;
 }
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
@@ -1335,6 +1448,7 @@ int ulog_init(void)
         return 0;
 
     rt_sem_init(&ulog.output_locker, "ulog lock", 1, RT_IPC_FLAG_FIFO);
+    ulog.output_lock_enabled = RT_TRUE;
     rt_slist_init(&ulog.backend_list);
 
 #ifdef ULOG_USING_FILTER

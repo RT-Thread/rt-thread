@@ -1,21 +1,7 @@
 /*
- * File      : spi.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -180,7 +166,7 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message* mes
         am_hal_gpio_out_bit_clear(am_spi_cs->chip_select);
     }
 
-    // ¶ÁÊý¾Ý
+    // è¯»æ•°æ®
     if (recv_ptr != RT_NULL)
     {
         while (u32BytesRemaining)
@@ -213,7 +199,7 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message* mes
         }
     }
 
-    // Ð´Êý¾Ý
+    // å†™æ•°æ®
     else
     {
         while (u32BytesRemaining)
@@ -225,7 +211,7 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message* mes
                 u32TransferSize = 64;
                 am_hal_iom_spi_write(am_spi_bus->u32Module, am_spi_cs->chip_select,
                                     (uint32_t *)send_ptr, u32TransferSize, AM_HAL_IOM_RAW);
-        
+
             }
             else
             {
@@ -257,7 +243,7 @@ static const struct rt_spi_ops am_spi_ops =
 };
 
 #ifdef RT_USING_SPI0
-static struct am_spi_bus am_spi_bus_0 = 
+static struct am_spi_bus am_spi_bus_0 =
 {
     {0},
     AM_SPI0_IOM_INST

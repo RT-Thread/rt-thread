@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,7 @@
  * 2018-12-04   balanceTWK    first version
  * 2020-10-14   Dozingfiretruck Porting for stm32wbxx
  * 2021-02-05   Meco Man      fix the problem of mixing local time and UTC time
+ * 2021-07-05   iysheng       implement RTC framework V2.0
  */
 
 #include "board.h"
@@ -25,8 +26,6 @@
 
 #define BKUP_REG_DATA 0xA5A5
 
-static struct rt_device rtc;
-
 static RTC_HandleTypeDef RTC_Handler;
 
 RT_WEAK uint32_t HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister)
@@ -39,7 +38,7 @@ RT_WEAK void HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegiste
     return;
 }
 
-static time_t get_rtc_timestamp(void)
+static void get_rtc_timeval(struct timeval *tv)
 {
     RTC_TimeTypeDef RTC_TimeStruct = {0};
     RTC_DateTypeDef RTC_DateStruct = {0};
@@ -55,29 +54,32 @@ static time_t get_rtc_timestamp(void)
     tm_new.tm_mon  = RTC_DateStruct.Month - 1;
     tm_new.tm_year = RTC_DateStruct.Year + 100;
 
-    LOG_D("get rtc time.");
-    return timegm(&tm_new);
+    tv->tv_sec = timegm(&tm_new);
+
+#if defined(SOC_SERIES_STM32H7)
+    tv->tv_usec = (255.0 - RTC_TimeStruct.SubSeconds * 1.0) / 256.0 * 1000.0 * 1000.0;
+#endif
 }
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
     RTC_TimeTypeDef RTC_TimeStruct = {0};
     RTC_DateTypeDef RTC_DateStruct = {0};
-    struct tm *p_tm;
+    struct tm tm = {0};
 
-    p_tm = gmtime(&time_stamp);
-    if (p_tm->tm_year < 100)
+    gmtime_r(&time_stamp, &tm);
+    if (tm.tm_year < 100)
     {
         return -RT_ERROR;
     }
 
-    RTC_TimeStruct.Seconds = p_tm->tm_sec ;
-    RTC_TimeStruct.Minutes = p_tm->tm_min ;
-    RTC_TimeStruct.Hours   = p_tm->tm_hour;
-    RTC_DateStruct.Date    = p_tm->tm_mday;
-    RTC_DateStruct.Month   = p_tm->tm_mon + 1 ;
-    RTC_DateStruct.Year    = p_tm->tm_year - 100;
-    RTC_DateStruct.WeekDay = p_tm->tm_wday + 1;
+    RTC_TimeStruct.Seconds = tm.tm_sec ;
+    RTC_TimeStruct.Minutes = tm.tm_min ;
+    RTC_TimeStruct.Hours   = tm.tm_hour;
+    RTC_DateStruct.Date    = tm.tm_mday;
+    RTC_DateStruct.Month   = tm.tm_mon + 1 ;
+    RTC_DateStruct.Year    = tm.tm_year - 100;
+    RTC_DateStruct.WeekDay = tm.tm_wday + 1;
 
     if (HAL_RTC_SetTime(&RTC_Handler, &RTC_TimeStruct, RTC_FORMAT_BIN) != HAL_OK)
     {
@@ -100,34 +102,6 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 #endif
 
     return RT_EOK;
-}
-
-static void rt_rtc_init(void)
-{
-#if !defined(SOC_SERIES_STM32H7) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32WB)
-    __HAL_RCC_PWR_CLK_ENABLE();
-#endif
-
-    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-#ifdef BSP_RTC_USING_LSI
-#ifdef SOC_SERIES_STM32WB
-RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI1;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-    RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
-    RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-#else
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-    RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
-    RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-#endif
-#else
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-    RCC_OscInitStruct.LSEState = RCC_LSE_ON;
-    RCC_OscInitStruct.LSIState = RCC_LSI_OFF;
-#endif
-    HAL_RCC_OscConfig(&RCC_OscInitStruct);
 }
 
 #ifdef SOC_SERIES_STM32F1
@@ -160,7 +134,7 @@ static void rt_rtc_f1_bkp_update(void)
 }
 #endif
 
-static rt_err_t rt_rtc_config(struct rt_device *dev)
+static rt_err_t rt_rtc_config(void)
 {
     RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
@@ -234,81 +208,99 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t stm32_rtc_init(void)
+{
+#if !defined(SOC_SERIES_STM32H7) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32WB)
+    __HAL_RCC_PWR_CLK_ENABLE();
+#endif
+
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+#ifdef BSP_RTC_USING_LSI
+#ifdef SOC_SERIES_STM32WB
+RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI1;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+    RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
+    RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+#else
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+    RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
+    RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+#endif
+#else
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+    RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+    RCC_OscInitStruct.LSIState = RCC_LSI_OFF;
+#endif
+    HAL_RCC_OscConfig(&RCC_OscInitStruct);
+
+    if (rt_rtc_config() != RT_EOK)
+    {
+        LOG_E("rtc init failed.");
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t stm32_rtc_get_secs(void *args)
+{
+    struct timeval tv;
+    get_rtc_timeval(&tv);
+    *(rt_uint32_t *) args = tv.tv_sec;
+    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
+
+    return RT_EOK;
+}
+
+static rt_err_t stm32_rtc_set_secs(void *args)
 {
     rt_err_t result = RT_EOK;
-    RT_ASSERT(dev != RT_NULL);
-    switch (cmd)
-    {
-    case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(rt_uint32_t *)args = get_rtc_timestamp();
-        LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
-        break;
 
-    case RT_DEVICE_CTRL_RTC_SET_TIME:
-        if (set_rtc_time_stamp(*(rt_uint32_t *)args))
-        {
-            result = -RT_ERROR;
-        }
-        LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
-        break;
+    if (set_rtc_time_stamp(*(rt_uint32_t *)args))
+    {
+        result = -RT_ERROR;
     }
+    LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
 
     return result;
 }
 
-#ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops rtc_ops =
+static rt_err_t stm32_rtc_get_timeval(void *args)
 {
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-    rt_rtc_control
-};
-#endif
+    get_rtc_timeval((struct timeval *) args);
 
-static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint32_t flag)
-{
-    RT_ASSERT(device != RT_NULL);
-
-    rt_rtc_init();
-    if (rt_rtc_config(device) != RT_EOK)
-    {
-        return -RT_ERROR;
-    }
-#ifdef RT_USING_DEVICE_OPS
-    device->ops         = &rtc_ops;
-#else
-    device->init        = RT_NULL;
-    device->open        = RT_NULL;
-    device->close       = RT_NULL;
-    device->read        = RT_NULL;
-    device->write       = RT_NULL;
-    device->control     = rt_rtc_control;
-#endif
-    device->type        = RT_Device_Class_RTC;
-    device->rx_indicate = RT_NULL;
-    device->tx_complete = RT_NULL;
-    device->user_data   = RT_NULL;
-
-    /* register a character device */
-    return rt_device_register(device, name, flag);
+    return RT_EOK;
 }
 
-int rt_hw_rtc_init(void)
+static const struct rt_rtc_ops stm32_rtc_ops =
+{
+    stm32_rtc_init,
+    stm32_rtc_get_secs,
+    stm32_rtc_set_secs,
+    RT_NULL,
+    RT_NULL,
+    stm32_rtc_get_timeval,
+    RT_NULL,
+};
+
+static rt_rtc_dev_t stm32_rtc_dev;
+
+static int rt_hw_rtc_init(void)
 {
     rt_err_t result;
-    result = rt_hw_rtc_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
+
+    stm32_rtc_dev.ops = &stm32_rtc_ops;
+    result = rt_hw_rtc_register(&stm32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);
         return result;
     }
     LOG_D("rtc init success");
+
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);
-
 #endif /* BSP_USING_ONCHIP_RTC */

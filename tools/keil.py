@@ -122,12 +122,18 @@ def MDK4AddLibToGroup(ProjectFiles, group, name, filename, project_path):
     if ProjectFiles.count(obj_name):
         name = basename + '_' + name
     ProjectFiles.append(obj_name)
-    file_name.text = name.decode(fs_encoding)
+    try:
+        file_name.text = name.decode(fs_encoding)
+    except:
+        file_name.text = name
     file_type = SubElement(file, 'FileType')
     file_type.text = '%d' % _get_filetype(name)
     file_path = SubElement(file, 'FilePath')
 
-    file_path.text = path.decode(fs_encoding)
+    try:
+        file_path.text = path.decode(fs_encoding)
+    except:
+        file_path.text = path
 
     return group
 
@@ -186,7 +192,7 @@ def MDK45Project(tree, target, script):
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
-    CCFLAGS = ''
+    CFLAGS = ''
     ProjectFiles = []
 
     # add group
@@ -198,14 +204,14 @@ def MDK45Project(tree, target, script):
         group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
 
         # for local CPPPATH/CPPDEFINES
-        if (group_tree != None) and ('LOCAL_CPPPATH' in group or 'LOCAL_CCFLAGS' in group or 'LOCAL_CPPDEFINES' in group):
+        if (group_tree != None) and ('LOCAL_CPPPATH' in group or 'LOCAL_CFLAGS' in group or 'LOCAL_CPPDEFINES' in group):
             GroupOption     = SubElement(group_tree,  'GroupOption')
             GroupArmAds     = SubElement(GroupOption, 'GroupArmAds')
             Cads            = SubElement(GroupArmAds, 'Cads')
             VariousControls = SubElement(Cads, 'VariousControls')
             MiscControls    = SubElement(VariousControls, 'MiscControls')
-            if 'LOCAL_CCFLAGS' in group:
-                MiscControls.text = group['LOCAL_CCFLAGS']
+            if 'LOCAL_CFLAGS' in group:
+                MiscControls.text = group['LOCAL_CFLAGS']
             else:
                 MiscControls.text = ' '
             Define          = SubElement(VariousControls, 'Define')
@@ -323,7 +329,7 @@ def MDKProject(target, script):
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
-    CCFLAGS = ''
+    CFLAGS = ''
 
     # number of groups
     group_index = 1

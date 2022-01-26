@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,7 @@
 #define MSTATUS_FS      0x00006000U /* initial state of FPU     */
 #include <cpuport.h>
 
-  .global	_start
+  .global   _start
   .section ".start", "ax"
 _start:
   j 1f

@@ -3,8 +3,7 @@
 
 #include <rtconfig.h>
 
-#define ERRNO                       1
-
+#define LWIP_ERRNO_STDINCLUDE
 #define LWIP_SOCKET_SELECT 1
 #define LWIP_SOCKET_POLL 1
 
@@ -47,10 +46,6 @@
 #define LWIP_HAVE_LOOPIF            0
 
 #define LWIP_PLATFORM_BYTESWAP      0
-
-#ifndef BYTE_ORDER
-#define BYTE_ORDER                  LITTLE_ENDIAN
-#endif
 
 /* #define RT_LWIP_DEBUG */
 
@@ -236,16 +231,15 @@
 #  define SSIZE_MAX LONG_MAX
 # endif
 
-#ifdef RT_USING_LIBC
 #define LWIP_NO_UNISTD_H 0
-#else
-#define LWIP_NO_UNISTD_H 1
-#endif
 
 /* ---------- Memory options ---------- */
+#define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
+#define SMEMCPY(dst,src,len)            MEMCPY(dst,src,len)
+
 #define MEM_ALIGNMENT               4
-#define MEMP_OVERFLOW_CHECK         1 ////
-#define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1 ////
+#define MEMP_OVERFLOW_CHECK         1
+#define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1
 //#define MEM_LIBC_MALLOC             1
 //#define MEM_USE_POOLS               1
 //#define MEMP_USE_CUSTOM_POOLS       1
@@ -573,6 +567,8 @@
 #ifndef LWIP_SOCKET
 #define LWIP_SOCKET                     1
 #endif
+#include <fcntl.h>
+#include <sys/ioctl.h>
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
@@ -640,5 +636,9 @@
 #define TFTP_MAX_FILENAME_LEN           64
 #endif
 
+
+#define LWIP_HOOK_IP4_ROUTE_SRC(dest, src)  lwip_ip4_route_src(dest, src)
+#include "lwip/ip_addr.h"
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
 
 #endif /* __LWIPOPTS_H__ */

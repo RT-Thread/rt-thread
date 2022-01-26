@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,9 +29,11 @@
 // <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
 
 // </RDTConfigurator>
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
 extern int Image$$ARM_LIB_HEAP$$ZI$$Base;
+extern int Image$$ARM_LIB_STACK$$ZI$$Base;
 #define HEAP_BEGIN  ((void *)&Image$$ARM_LIB_HEAP$$ZI$$Base)
+#define HEAP_END    ((void*)&Image$$ARM_LIB_STACK$$ZI$$Base)
 #elif defined(__ICCARM__)
 #pragma section="HEAP"
 #define HEAP_BEGIN  (__segment_end("HEAP"))
@@ -39,8 +41,8 @@ extern int Image$$ARM_LIB_HEAP$$ZI$$Base;
 extern int __HeapBase;
 extern int __HeapLimit;
 #define HEAP_BEGIN  ((void *)&__HeapBase)
+#define HEAP_END  ((void *)&__HeapLimit)
 #endif
-#define HEAP_END    ((void*)&__HeapLimit)
 
 void rt_hw_board_init(void);
 

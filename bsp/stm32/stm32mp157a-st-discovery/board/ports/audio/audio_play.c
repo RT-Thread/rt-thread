@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,9 +10,13 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
-#if defined(BSP_USING_AUDIO) && defined(BSP_USING_SDMMC)  
+#if defined(BSP_USING_AUDIO) && defined(BSP_USING_SDMMC)
 #define BUFSZ   1024
 #define SOUND_DEVICE_NAME    "sound0"
 static rt_device_t snd_dev;
@@ -217,7 +221,7 @@ int wavrecord_sample(int argc, char **argv)
     caps.main_type               = AUDIO_TYPE_INPUT;
     caps.sub_type                = AUDIO_DSP_PARAM;
     caps.udata.config.samplerate = RECORD_SAMPLERATE;
-    caps.udata.config.channels   = RECORD_CHANNEL; 
+    caps.udata.config.channels   = RECORD_CHANNEL;
     caps.udata.config.samplebits = 16;
     rt_device_control(mic_dev, AUDIO_CTL_CONFIGURE, &caps);
 

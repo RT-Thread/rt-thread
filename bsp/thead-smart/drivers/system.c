@@ -40,6 +40,23 @@ static void _system_init_for_kernel(void)
 }
 
 /**
+  * @brief  initialize system map
+  * @param  None
+  * @return None
+  */
+void systemmap_config(void)
+{
+   csi_sysmap_config_region(0, 0x20000000, SYSMAP_SYSMAPCFG_B_Msk | SYSMAP_SYSMAPCFG_C_Msk);
+   csi_sysmap_config_region(1, 0x40000000, SYSMAP_SYSMAPCFG_B_Msk | SYSMAP_SYSMAPCFG_C_Msk);
+   csi_sysmap_config_region(2, 0x50000000, SYSMAP_SYSMAPCFG_SO_Msk);
+   csi_sysmap_config_region(3, 0x50700000, SYSMAP_SYSMAPCFG_B_Msk | SYSMAP_SYSMAPCFG_C_Msk);
+   csi_sysmap_config_region(4, 0x60000000, SYSMAP_SYSMAPCFG_SO_Msk);
+   csi_sysmap_config_region(5, 0x80000000, SYSMAP_SYSMAPCFG_B_Msk | SYSMAP_SYSMAPCFG_C_Msk);
+   csi_sysmap_config_region(6, 0x90000000, SYSMAP_SYSMAPCFG_B_Msk | SYSMAP_SYSMAPCFG_C_Msk);
+   csi_sysmap_config_region(7, 0xf0000000, SYSMAP_SYSMAPCFG_SO_Msk);
+}
+
+/**
   * @brief  initialize the system
   *         Initialize the psr and vbr.
   * @param  None
@@ -48,8 +65,12 @@ static void _system_init_for_kernel(void)
 void SystemInit(void)
 {
     int i;
+#if ((CONFIG_CPU_E902 != 1) && (CONFIG_CPU_E902M != 1))
+    systemmap_config();
+#endif
+
     /* enable mstatus FS */
-#if ((CONFIG_CPU_E906F==1) || (CONFIG_CPU_E906FD==1))
+#if (__riscv_flen)
     uint32_t mstatus = __get_MSTATUS();
     mstatus |= (1 << 13);
     __set_MSTATUS(mstatus);
@@ -68,7 +89,7 @@ void SystemInit(void)
     /* get interrupt level from info */
     CLIC->CLICCFG = (((CLIC->CLICINFO & CLIC_INFO_CLICINTCTLBITS_Msk) >> CLIC_INFO_CLICINTCTLBITS_Pos) << CLIC_CLICCFG_NLBIT_Pos);
 
-    for (i = 0; i < 64; i++) 
+    for (i = 0; i < 64; i++)
     {
         CLIC->CLICINT[i].IP = 0;
         CLIC->CLICINT[i].ATTR = 1; /* use vector interrupt */
@@ -77,7 +98,9 @@ void SystemInit(void)
     /* tspend use positive interrupt */
     CLIC->CLICINT[Machine_Software_IRQn].ATTR = 0x3;
 
+#if ((CONFIG_CPU_E902 != 1) && (CONFIG_CPU_E902M != 1))
     csi_dcache_enable();
+#endif
     csi_icache_enable();
     drv_irq_enable(Machine_Software_IRQn);
 

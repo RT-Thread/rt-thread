@@ -35,7 +35,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
 
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
@@ -79,7 +79,7 @@ extern uint32_t SD_HighSpeed(SD_HandleTypeDef *hsd);
   *         This API must be used after "Transfer State"
   * @note   This operation should be followed by the configuration
   *         of PLL to have SDMMCCK clock between 50 and 120 MHz
-  * @param  hsd: SD handle
+  * @param  hsd SD handle
   * @retval SD Card error state
   */
 uint32_t HAL_SDEx_HighSpeed(SD_HandleTypeDef *hsd)
@@ -89,7 +89,7 @@ uint32_t HAL_SDEx_HighSpeed(SD_HandleTypeDef *hsd)
 
 /**
   * @brief  Enable/Disable the SD Transceiver 1.8V Mode Callback.
-  * @param  status: Voltage Switch State
+  * @param  status Voltage Switch State
   * @retval None
   */
 __weak void HAL_SDEx_DriveTransceiver_1_8V_Callback(FlagStatus status)
@@ -123,10 +123,10 @@ __weak void HAL_SDEx_DriveTransceiver_1_8V_Callback(FlagStatus status)
 
 /**
   * @brief  Configure DMA Dual Buffer mode. The Data transfer is managed by an Internal DMA.
-  * @param  hsd: SD handle
-  * @param  pDataBuffer0: Pointer to the buffer0 that will contain/receive the transfered data
-  * @param  pDataBuffer1: Pointer to the buffer1 that will contain/receive the transfered data
-  * @param  BufferSize: Size of Buffer0 in Blocks. Buffer0 and Buffer1 must have the same size.
+  * @param  hsd SD handle
+  * @param  pDataBuffer0 Pointer to the buffer0 that will contain/receive the transfered data
+  * @param  pDataBuffer1 Pointer to the buffer1 that will contain/receive the transfered data
+  * @param  BufferSize Size of Buffer0 in Blocks. Buffer0 and Buffer1 must have the same size.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_SDEx_ConfigDMAMultiBuffer(SD_HandleTypeDef *hsd, uint32_t *pDataBuffer0, uint32_t *pDataBuffer1, uint32_t BufferSize)
@@ -148,9 +148,9 @@ HAL_StatusTypeDef HAL_SDEx_ConfigDMAMultiBuffer(SD_HandleTypeDef *hsd, uint32_t 
 /**
   * @brief  Reads block(s) from a specified address in a card. The received Data will be stored in Buffer0 and Buffer1.
   *         Buffer0, Buffer1 and BufferSize need to be configured by function HAL_SDEx_ConfigDMAMultiBuffer before call this function.
-  * @param  hsd: SD handle
-  * @param  BlockAdd: Block Address from where data is to be read
-  * @param  NumberOfBlocks: Total number of blocks to read
+  * @param  hsd SD handle
+  * @param  BlockAdd Block Address from where data is to be read
+  * @param  NumberOfBlocks Total number of blocks to read
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_SDEx_ReadBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint32_t BlockAdd, uint32_t NumberOfBlocks)
@@ -189,17 +189,6 @@ HAL_StatusTypeDef HAL_SDEx_ReadBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint3
       add *= 512U;
     }
 
-    /* Set Block Size for Card */
-    errorstate = SDMMC_CmdBlockLength(hsd->Instance, BLOCKSIZE);
-    if(errorstate != HAL_SD_ERROR_NONE)
-    {
-      /* Clear all the static flags */
-      __HAL_SD_CLEAR_FLAG(hsd, SDMMC_STATIC_FLAGS);
-      hsd->ErrorCode |= errorstate;
-      hsd->State = HAL_SD_STATE_READY;
-      return HAL_ERROR;
-    }
-
     /* Configure the SD DPSM (Data Path State Machine) */
     config.DataTimeOut   = SDMMC_DATATIMEOUT;
     config.DataLength    = BLOCKSIZE * NumberOfBlocks;
@@ -215,8 +204,6 @@ HAL_StatusTypeDef HAL_SDEx_ReadBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint3
 
     hsd->Instance->IDMACTRL = SDMMC_ENABLE_IDMA_DOUBLE_BUFF0;
 
-    __HAL_SD_ENABLE_IT(hsd, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND | SDMMC_IT_IDMABTC));
-
     /* Read Blocks in DMA mode */
     hsd->Context = (SD_CONTEXT_READ_MULTIPLE_BLOCK | SD_CONTEXT_DMA);
 
@@ -228,6 +215,8 @@ HAL_StatusTypeDef HAL_SDEx_ReadBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint3
       hsd->ErrorCode |= errorstate;
       return HAL_ERROR;
     }
+
+    __HAL_SD_ENABLE_IT(hsd, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR | SDMMC_IT_DATAEND | SDMMC_IT_IDMABTC));
 
     return HAL_OK;
   }
@@ -241,9 +230,9 @@ HAL_StatusTypeDef HAL_SDEx_ReadBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint3
 /**
   * @brief  Write block(s) to a specified address in a card. The transfered Data are stored in Buffer0 and Buffer1.
   *         Buffer0, Buffer1 and BufferSize need to be configured by function HAL_SDEx_ConfigDMAMultiBuffer before call this function.
-  * @param  hsd: SD handle
-  * @param  BlockAdd: Block Address from where data is to be read
-  * @param  NumberOfBlocks: Total number of blocks to read
+  * @param  hsd SD handle
+  * @param  BlockAdd Block Address from where data is to be read
+  * @param  NumberOfBlocks Total number of blocks to read
   * @retval HAL status
 */
 HAL_StatusTypeDef HAL_SDEx_WriteBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint32_t BlockAdd, uint32_t NumberOfBlocks)
@@ -281,17 +270,6 @@ HAL_StatusTypeDef HAL_SDEx_WriteBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint
       add *= 512U;
     }
 
-    /* Set Block Size for Card */
-    errorstate = SDMMC_CmdBlockLength(hsd->Instance, BLOCKSIZE);
-    if(errorstate != HAL_SD_ERROR_NONE)
-    {
-      /* Clear all the static flags */
-      __HAL_SD_CLEAR_FLAG(hsd, SDMMC_STATIC_FLAGS);
-      hsd->ErrorCode |= errorstate;
-      hsd->State = HAL_SD_STATE_READY;
-      return HAL_ERROR;
-    }
-
     /* Configure the SD DPSM (Data Path State Machine) */
     config.DataTimeOut   = SDMMC_DATATIMEOUT;
     config.DataLength    = BLOCKSIZE * NumberOfBlocks;
@@ -305,8 +283,6 @@ HAL_StatusTypeDef HAL_SDEx_WriteBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint
 
     hsd->Instance->IDMACTRL = SDMMC_ENABLE_IDMA_DOUBLE_BUFF0;
 
-    __HAL_SD_ENABLE_IT(hsd, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND | SDMMC_IT_IDMABTC));
-
     /* Write Blocks in DMA mode */
     hsd->Context = (SD_CONTEXT_WRITE_MULTIPLE_BLOCK | SD_CONTEXT_DMA);
 
@@ -319,6 +295,8 @@ HAL_StatusTypeDef HAL_SDEx_WriteBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint
       return HAL_ERROR;
     }
 
+    __HAL_SD_ENABLE_IT(hsd, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR | SDMMC_IT_DATAEND | SDMMC_IT_IDMABTC));
+
     return HAL_OK;
   }
   else
@@ -330,10 +308,10 @@ HAL_StatusTypeDef HAL_SDEx_WriteBlocksDMAMultiBuffer(SD_HandleTypeDef *hsd, uint
 
 /**
   * @brief  Change the DMA Buffer0 or Buffer1 address on the fly.
-  * @param  hsd:           pointer to a SD_HandleTypeDef structure.
-  * @param  Buffer:        the buffer to be changed, This parameter can be one of
+  * @param  hsd            pointer to a SD_HandleTypeDef structure.
+  * @param  Buffer         the buffer to be changed, This parameter can be one of
   *                        the following values: SD_DMA_BUFFER0 or SD_DMA_BUFFER1
-  * @param  pDataBuffer:   The new address
+  * @param  pDataBuffer    The new address
   * @note   The BUFFER0 address can be changed only when the current transfer use
   *         BUFFER1 and the BUFFER1 address can be changed only when the current
   *         transfer use BUFFER0.
@@ -433,6 +411,6 @@ __weak void HAL_SDEx_Write_DMADoubleBuffer1CpltCallback(SD_HandleTypeDef *hsd)
   * @}
   */
 
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -15,7 +15,7 @@
 
 #include <rtdevice.h>
 #include <sys/time.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /* Private define ---------------------------------------------------------------*/
 

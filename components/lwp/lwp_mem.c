@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -98,7 +98,7 @@ void rt_lwp_mem_init(struct rt_lwp *lwp)
 void rt_lwp_mem_deinit(struct rt_lwp *lwp)
 {
     struct rt_list_node *node;
-    
+
     RT_ASSERT(lwp != RT_NULL);
 
     node = lwp->hlist.next;
@@ -161,7 +161,7 @@ void rt_lwp_mem_free(void *addr)
     /* get memory item */
     header_ptr = (struct rt_lwp_memheap_item *)((rt_uint8_t *)addr - RT_MEMHEAP_SIZE);
     RT_ASSERT(header_ptr);
-    
+
     lwp_heap = header_ptr->pool_ptr;
     RT_ASSERT(lwp_heap);
 

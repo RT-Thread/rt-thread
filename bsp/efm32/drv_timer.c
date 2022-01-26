@@ -10,7 +10,7 @@
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
+ * Date         Author      Notes
  * 2011-01-18   onelife     Initial creation for EFM32
  * 2011-06-17   onelife     Modify init function for efm32lib v2 upgrading
  ******************************************************************************/

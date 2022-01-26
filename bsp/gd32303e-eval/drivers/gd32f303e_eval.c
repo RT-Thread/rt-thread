@@ -23,15 +23,15 @@ static uint32_t COM_RX_PIN[COMn] = {EVAL_COM1_RX_PIN, EVAL_COM2_RX_PIN};
 static uint32_t COM_GPIO_PORT[COMn] = {EVAL_COM1_GPIO_PORT, EVAL_COM2_GPIO_PORT};
 static rcu_periph_enum COM_GPIO_CLK[COMn] = {EVAL_COM1_GPIO_CLK, EVAL_COM2_GPIO_CLK};
 
-static rcu_periph_enum GPIO_CLK[LEDn] = {LED2_GPIO_CLK, LED3_GPIO_CLK, 
+static rcu_periph_enum GPIO_CLK[LEDn] = {LED2_GPIO_CLK, LED3_GPIO_CLK,
                                          LED4_GPIO_CLK, LED5_GPIO_CLK};
 
-static uint32_t KEY_PORT[KEYn] = {WAKEUP_KEY_GPIO_PORT, 
+static uint32_t KEY_PORT[KEYn] = {WAKEUP_KEY_GPIO_PORT,
                                   TAMPER_KEY_GPIO_PORT,
                                   USER_KEY1_GPIO_PORT,
                                   USER_KEY2_GPIO_PORT};
 static uint32_t KEY_PIN[KEYn] = {WAKEUP_KEY_PIN, TAMPER_KEY_PIN,USER_KEY1_PIN,USER_KEY2_PIN};
-static rcu_periph_enum KEY_CLK[KEYn] = {WAKEUP_KEY_GPIO_CLK, 
+static rcu_periph_enum KEY_CLK[KEYn] = {WAKEUP_KEY_GPIO_CLK,
                                         TAMPER_KEY_GPIO_CLK,
                                         USER_KEY1_GPIO_CLK,
                                         USER_KEY2_GPIO_CLK};
@@ -47,7 +47,7 @@ static uint8_t KEY_PIN_SOURCE[KEYn] = {WAKEUP_KEY_EXTI_PIN_SOURCE,
                                        TAMPER_KEY_EXTI_PIN_SOURCE,
                                        USER_KEY1_EXTI_PIN_SOURCE,
                                        USER_KEY2_EXTI_PIN_SOURCE};
-static uint8_t KEY_IRQn[KEYn] = {WAKEUP_KEY_EXTI_IRQn, 
+static uint8_t KEY_IRQn[KEYn] = {WAKEUP_KEY_EXTI_IRQn,
                                  TAMPER_KEY_EXTI_IRQn,
                                  USER_KEY1_EXTI_IRQn,
                                  USER_KEY2_EXTI_IRQn};
@@ -66,7 +66,7 @@ void  gd_eval_led_init (led_typedef_enum lednum)
 {
     /* enable the led clock */
     rcu_periph_clock_enable(GPIO_CLK[lednum]);
-    /* configure led GPIO port */ 
+    /* configure led GPIO port */
     gpio_init(GPIO_PORT[lednum], GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ,GPIO_PIN[lednum]);
 
     GPIO_BC(GPIO_PORT[lednum]) = GPIO_PIN[lednum];
@@ -114,7 +114,7 @@ void gd_eval_led_off(led_typedef_enum lednum)
 */
 void gd_eval_led_toggle(led_typedef_enum lednum)
 {
-    gpio_bit_write(GPIO_PORT[lednum], GPIO_PIN[lednum], 
+    gpio_bit_write(GPIO_PORT[lednum], GPIO_PIN[lednum],
                     (bit_status)(1-gpio_input_bit_get(GPIO_PORT[lednum], GPIO_PIN[lednum])));
 }
 
@@ -184,7 +184,7 @@ void gd_eval_com_init(uint32_t com)
     }else if(EVAL_COM2 == com){
         com_id = 1U;
     }
-    
+
     /* enable GPIO clock */
     rcu_periph_clock_enable(COM_GPIO_CLK[com_id]);
 

@@ -15,13 +15,17 @@
 #if defined(BSP_USING_SDH)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_pdma.h>
 #include <string.h>
 
 #if defined(RT_USING_DFS)
-    #include <dfs_fs.h>
-    #include <dfs_posix.h>
+#include <dfs_fs.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #endif
 
 /* Private define ---------------------------------------------------------------*/

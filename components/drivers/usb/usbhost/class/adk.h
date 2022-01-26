@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@ struct uadkinst
     upipe_t pipe_out;
 
     struct rt_device device;
-};    
+};
 typedef struct uadkinst* uadk_t;
 
 #define USB_ACCESSORY_VENDOR_ID         0x18D1

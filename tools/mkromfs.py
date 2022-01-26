@@ -5,7 +5,7 @@ import os
 
 import struct
 from collections import namedtuple
-import StringIO
+import io
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -43,8 +43,10 @@ class File(object):
 
         if self.entry_size == 0:
             return ''
-
-        return head + ','.join(('0x%02x' % ord(i) for i in self._data)) + tail
+        if len(self._data) > 0 and type(self._data[0]) == int:
+            return head + ','.join(('0x%02x' % i for i in self._data)) + tail
+        else:
+            return head + ','.join(('0x%02x' % ord(i) for i in self._data)) + tail
 
     @property
     def entry_size(self):
@@ -85,7 +87,7 @@ class Folder(object):
         # TODO: take care of the unicode names
         for ent in os.listdir(u'.'):
             if os.path.isdir(ent):
-                cwd = os.getcwdu()
+                cwd = os.getcwd()
                 d = Folder(ent)
                 # depth-first
                 os.chdir(os.path.join(cwd, ent))
@@ -104,7 +106,8 @@ class Folder(object):
                 return 1
             else:
                 return -1
-        self._children.sort(cmp=_sort)
+        from functools import cmp_to_key
+        self._children.sort(key=cmp_to_key(_sort))
 
         # sort recursively
         for c in self._children:
@@ -255,7 +258,7 @@ if __name__ == '__main__':
     if args.binary:
         data = get_bin_data(tree, int(args.addr, 16))
     else:
-        data = get_c_data(tree)
+        data = get_c_data(tree).encode()
 
     output = args.output
     if not output:

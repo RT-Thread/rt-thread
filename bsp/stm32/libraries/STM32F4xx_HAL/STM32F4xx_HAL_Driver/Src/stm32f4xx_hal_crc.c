@@ -69,8 +69,8 @@
   */
 
 /** @defgroup CRC_Exported_Functions_Group1 Initialization and de-initialization functions
- *  @brief    Initialization and Configuration functions.
- *
+  *  @brief    Initialization and Configuration functions.
+  *
 @verbatim
  ===============================================================================
             ##### Initialization and de-initialization functions #####
@@ -110,8 +110,6 @@ HAL_StatusTypeDef HAL_CRC_Init(CRC_HandleTypeDef *hcrc)
     /* Init the low level hardware */
     HAL_CRC_MspInit(hcrc);
   }
-
-  hcrc->State = HAL_CRC_STATE_BUSY;
 
   /* Change CRC peripheral state */
   hcrc->State = HAL_CRC_STATE_READY;
@@ -199,8 +197,8 @@ __weak void HAL_CRC_MspDeInit(CRC_HandleTypeDef *hcrc)
   */
 
 /** @defgroup CRC_Exported_Functions_Group2 Peripheral Control functions
- *  @brief    management functions.
- *
+  *  @brief    management functions.
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral Control functions #####
@@ -287,8 +285,8 @@ uint32_t HAL_CRC_Calculate(CRC_HandleTypeDef *hcrc, uint32_t pBuffer[], uint32_t
   */
 
 /** @defgroup CRC_Exported_Functions_Group3 Peripheral State functions
- *  @brief    Peripheral State functions.
- *
+  *  @brief    Peripheral State functions.
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral State functions #####

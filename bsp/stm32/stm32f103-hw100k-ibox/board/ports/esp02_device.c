@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,6 +21,6 @@ int esp_02_device_init()
     rt_pin_write(ESP8266_CH_PD_Pin,PIN_HIGH) ;
     rt_pin_write(ESP8266_RST,PIN_HIGH) ;
 
-    return RT_EOK ;	
+    return RT_EOK ;
 }
 INIT_DEVICE_EXPORT(esp_02_device_init);

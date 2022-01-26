@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,11 +46,16 @@ static rt_uint8_t utest_log_lv = UTEST_LOG_ALL;
 static utest_tc_export_t tc_table = RT_NULL;
 static rt_size_t tc_num;
 static rt_uint32_t tc_loop;
+static rt_uint8_t *tc_fail_list;
 static struct utest local_utest = {UTEST_PASSED, 0, 0};
 
 #if defined(__ICCARM__) || defined(__ICCRX__)         /* for IAR compiler */
 #pragma section="UtestTcTab"
 #endif
+
+#define TC_FAIL_LIST_SIZE                (RT_ALIGN(tc_num, 8) / 8)
+#define TC_FAIL_LIST_MARK_FAILED(index)  (tc_fail_list[index / 8] |= (1UL << (index % 8)))
+#define TC_FAIL_LIST_IS_FAILED(index)    (tc_fail_list[index / 8] &  (1UL << (index % 8)))
 
 void utest_log_lv_set(rt_uint8_t lv)
 {
@@ -63,7 +68,7 @@ void utest_log_lv_set(rt_uint8_t lv)
 int utest_init(void)
 {
     /* initialize the utest commands table.*/
-#if defined(__CC_ARM) || defined(__CLANG_ARM)       /* ARM C Compiler */
+#if defined(__ARMCC_VERSION)       /* ARM C Compiler */
     extern const int UtestTcTab$$Base;
     extern const int UtestTcTab$$Limit;
     tc_table = (utest_tc_export_t)&UtestTcTab$$Base;
@@ -80,6 +85,14 @@ int utest_init(void)
 
     LOG_I("utest is initialize success.");
     LOG_I("total utest testcase num: (%d)", tc_num);
+    if (tc_num > 0)
+    {
+        tc_fail_list = rt_malloc(TC_FAIL_LIST_SIZE);
+        if(!tc_fail_list)
+        {
+            LOG_E("no memory, tc_fail_list init failed!");
+        }
+    }
     return tc_num;
 }
 INIT_COMPONENT_EXPORT(utest_init);
@@ -147,6 +160,8 @@ static void utest_run(const char *utest_name)
     rt_size_t i;
     rt_uint32_t index;
     rt_bool_t is_find;
+    rt_uint32_t tc_fail_num = 0;
+    rt_uint32_t tc_run_num = 0;
 
     rt_thread_mdelay(1000);
 
@@ -154,6 +169,14 @@ static void utest_run(const char *utest_name)
     {
         i = 0;
         is_find = RT_FALSE;
+
+        tc_fail_num = 0;
+        tc_run_num = 0;
+        if (tc_fail_list)
+        {
+            rt_memset(tc_fail_list, 0, TC_FAIL_LIST_SIZE);
+        }
+
         LOG_I("[==========] [ utest    ] loop %d/%d", index + 1, tc_loop);
         LOG_I("[==========] [ utest    ] started");
         while(i < tc_num)
@@ -192,6 +215,8 @@ static void utest_run(const char *utest_name)
                 }
                 else
                 {
+                    TC_FAIL_LIST_MARK_FAILED(i);
+                    tc_fail_num ++;
                     LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
                 }
             }
@@ -212,6 +237,7 @@ static void utest_run(const char *utest_name)
     __tc_continue:
             LOG_I("[----------] [ testcase ] (%s) finished", tc_table[i].name);
 
+            tc_run_num ++;
             i++;
         }
 
@@ -223,6 +249,20 @@ static void utest_run(const char *utest_name)
         }
 
         LOG_I("[==========] [ utest    ] finished");
+        LOG_I("[==========] [ utest    ] %d tests from %d testcase ran.", tc_run_num, tc_num);
+        LOG_I("[  PASSED  ] [ result   ] %d tests.", tc_run_num - tc_fail_num);
+
+        if(tc_fail_list && (tc_fail_num > 0))
+        {
+            LOG_E("[  FAILED  ] [ result   ] %d tests, listed below:", tc_fail_num);
+            for(i = 0; i < tc_num; i ++)
+            {
+                if (TC_FAIL_LIST_IS_FAILED(i))
+                {
+                    LOG_E("[  FAILED  ] [ result   ] %s", tc_table[i].name);
+                }
+            }
+        }
     }
 }
 
