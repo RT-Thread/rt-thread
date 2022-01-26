@@ -83,6 +83,10 @@ if GetDepend(['BSP_USING_PULSE_ENCODER']):
 src += ['MIMXRT1052/drivers/fsl_xbara.c']
 src += ['MIMXRT1052/drivers/fsl_xbarb.c']
 
+#fsl os abstract files
+src += ['MIMXRT1052/drivers/fsl_os_abstraction_rtthread.c']
+src += ['MIMXRT1052/drivers/generic_list.c']
+
 if rtconfig.CROSS_TOOL == 'gcc':
     group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, ASFLAGS = '$ASFLAGS -D __STARTUP_CLEAR_BSS')
 else:
