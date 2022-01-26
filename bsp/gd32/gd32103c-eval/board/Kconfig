@@ -74,12 +74,66 @@ menu "On-chip Peripheral Drivers"
                 range 1 216
                 default 25
         endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    config BSP_USING_RTC
+        bool "Enable Internal RTC"
+        select RT_USING_RTC
+        default n
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable hwtimer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+            config BSP_USING_HWTIMER0
+                bool "using hwtimer0"
+                default n
+            config BSP_USING_HWTIMER1
+                bool "using hwtimer1"
+                default n
+            config BSP_USING_HWTIMER2
+                bool "using hwtimer2"
+                default n
+            config BSP_USING_HWTIMER3
+                bool "using hwtimer3"
+                default n
+            config BSP_USING_HWTIMER4
+                bool "using hwtimer4"
+                default n
+            config BSP_USING_HWTIMER5
+                bool "using hwtimer5"
+                default n
+            config BSP_USING_HWTIMER6
+                bool "using hwtimer6"
+                default n
+            config BSP_USING_HWTIMER7
+                bool "using hwtimer7"
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC0
+                bool "using adc0"
+                default n
+            config BSP_USING_ADC1
+                bool "using adc1"
+                default n
+        endif
     source "../libraries/gd32_drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu
