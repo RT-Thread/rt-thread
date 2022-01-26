@@ -26,6 +26,28 @@
 static volatile rt_tick_t rt_tick = 0;
 #endif /* RT_USING_SMP */
 
+#ifdef RT_USING_HOOK
+static void (*rt_tick_hook)(void);
+
+/**
+ * @addtogroup Hook
+ */
+
+/**@{*/
+
+/**
+ * This function will set a hook function, which will be invoked when tick increase
+ *
+ *
+ * @param hook the hook function
+ */
+void rt_tick_sethook(void (*hook)(void))
+{
+    rt_tick_hook = hook;
+}
+/**@}*/
+#endif
+
 /**
  * @addtogroup Clock
  */
@@ -66,6 +88,13 @@ void rt_tick_increase(void)
 {
     struct rt_thread *thread;
     rt_base_t level;
+
+#ifdef RT_USING_HOOK
+    if (rt_tick_hook != RT_NULL)
+    {
+        rt_tick_hook();
+    }
+#endif
 
     level = rt_hw_interrupt_disable();
 
