@@ -484,6 +484,11 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
     /* parameter check */
     RT_ASSERT(sem != RT_NULL);
     RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
+    /* current context checking */
+    if (time != 0)
+    {
+        RT_DEBUG_SCHEDULER_AVAILABLE;
+    }
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(sem->parent.parent)));
 
@@ -514,9 +519,6 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
         }
         else
         {
-            /* current context checking */
-            RT_DEBUG_IN_THREAD_CONTEXT;
-
             /* semaphore is unavailable, push to suspend list */
             /* get current thread */
             thread = rt_thread_self();
@@ -913,6 +915,12 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
     /* this function must not be used in interrupt even if time = 0 */
     RT_DEBUG_IN_THREAD_CONTEXT;
+
+    /* current context checking */
+    if (time != 0)
+    {
+        RT_DEBUG_SCHEDULER_AVAILABLE;
+    }
 
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
@@ -1566,11 +1574,17 @@ rt_err_t rt_event_recv(rt_event_t   event,
     register rt_ubase_t level;
     register rt_base_t status;
 
-    RT_DEBUG_IN_THREAD_CONTEXT;
-
     /* parameter check */
     RT_ASSERT(event != RT_NULL);
     RT_ASSERT(rt_object_get_type(&event->parent.parent) == RT_Object_Class_Event);
+
+    /* current context checking */
+    RT_DEBUG_IN_THREAD_CONTEXT;
+
+    if (timeout != 0)
+    {
+        RT_DEBUG_SCHEDULER_AVAILABLE;
+    }
 
     if (set == 0)
         return -RT_ERROR;
@@ -1993,6 +2007,12 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     RT_ASSERT(mb != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mb->parent.parent) == RT_Object_Class_MailBox);
 
+    /* current context checking */
+    if (timeout != 0)
+    {
+        RT_DEBUG_SCHEDULER_AVAILABLE;
+    }
+
     /* initialize delta tick */
     tick_delta = 0;
     /* get current thread */
@@ -2025,7 +2045,6 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
             return -RT_EFULL;
         }
 
-        RT_DEBUG_IN_THREAD_CONTEXT;
         /* suspend current thread */
         _ipc_list_suspend(&(mb->suspend_sender_thread),
                             thread,
@@ -2236,6 +2255,12 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     RT_ASSERT(mb != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mb->parent.parent) == RT_Object_Class_MailBox);
 
+    /* current context checking */
+    if (timeout != 0)
+    {
+        RT_DEBUG_SCHEDULER_AVAILABLE;
+    }
+
     /* initialize delta tick */
     tick_delta = 0;
     /* get current thread */
@@ -2271,7 +2296,6 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
             return -RT_ETIMEOUT;
         }
 
-        RT_DEBUG_IN_THREAD_CONTEXT;
         /* suspend current thread */
         _ipc_list_suspend(&(mb->parent.suspend_thread),
                             thread,
@@ -2744,6 +2768,12 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     RT_ASSERT(buffer != RT_NULL);
     RT_ASSERT(size != 0);
 
+    /* current context checking */
+    if (timeout != 0)
+    {
+        RT_DEBUG_SCHEDULER_AVAILABLE;
+    }
+
     /* greater than one message size */
     if (size > mq->msg_size)
         return -RT_ERROR;
@@ -2784,7 +2814,6 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
             return -RT_EFULL;
         }
 
-        RT_DEBUG_IN_THREAD_CONTEXT;
         /* suspend current thread */
         _ipc_list_suspend(&(mq->suspend_sender_thread),
                             thread,
@@ -3054,6 +3083,12 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
     RT_ASSERT(buffer != RT_NULL);
     RT_ASSERT(size != 0);
 
+    /* current context checking */
+    if (timeout != 0)
+    {
+        RT_DEBUG_SCHEDULER_AVAILABLE;
+    }
+
     /* initialize delta tick */
     tick_delta = 0;
     /* get current thread */
@@ -3074,8 +3109,6 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
     /* message queue is empty */
     while (mq->entry == 0)
     {
-        RT_DEBUG_IN_THREAD_CONTEXT;
-
         /* reset error number in thread */
         thread->error = RT_EOK;
 
