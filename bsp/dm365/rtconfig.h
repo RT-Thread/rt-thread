@@ -126,7 +126,6 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_MODULE
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* POSIX (Portable Operating System Interface) layer */
@@ -135,6 +134,7 @@
 #define RT_USING_POSIX_CLOCK
 #define RT_USING_PTHREADS
 #define PTHREAD_NUM_MAX 8
+#define RT_USING_MODULE
 
 /* Interprocess Communication (IPC) */
 
@@ -153,7 +153,7 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP202
+#define RT_USING_LWIP203
 #define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
