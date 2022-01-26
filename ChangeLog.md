@@ -1,3 +1,315 @@
+# RT-Thread v4.1.0 Beta released
+
+Change log since v4.0.4
+
+## Kernel
+
+- rt_show_version update the year
+- Improve comments and parameter checking
+- [pm] beautify code
+- remove RT_THREAD_BLOCK
+- remove .init_priority
+- update notes
+- Delete an extra semicolon
+- change all double-empty-lines to single-empty-lines
+- move some __on_rt_xxxxx_hook from rtdef.h to dedicated c soure files
+- [kservice] add RT_KSERVICE_USING_STDLIB_MEMSET、 RT_KSERVICE_USING_STDLIB_MEMCPY
+- [memheap] Fix 64 bit potential risk
+- update Kconfig, add RT_HOOK_USING_FUNC_PTR
+- Improving hooking methods
+- Backward compatible with existing function-pointer based hooking method
+- Using RT_USING_HOOK as an on/off switch
+- Introducing a new low-overhead macro-based hooking method
+- [include/rtthread.h] Add function declarations to avoid compilation warnings
+- ipc init/create add flag judgement
+- Adjust RT_ASSERT and RT_DEBUG_NOT_IN_INTERRUPT to maintain code style
+- Add a new algorithm to find the lowest non-zero bit of a byte
+- Add weak RT_KSERVICE_USING_TINY_FFS definition
+- A simplified version of rt_ffs function
+- Add RT_WEAK for rt_vsnprintf
+- Change the return value type from signed int to int, in accordance with ISO C standards, to prevent compiler errors
+- Fix rt_size_t as rt_uint32_t
+- Cfg cancels rt_kprintf declaration
+- [kservice] add return value's comment
+- Modify rt_size_t's type
+- [timer] Update the RT_TIMER_CTRL_GET_STATE code in rt_timer_control
+- Fix up .bss size define in link.lds and set spsel=1 in aarch64
+- remove duplicate work between idle and thread_exit
+- When memheap memory management is used, rT_malloc 0 returns RT_NULL, consistent with slab and small memory management algorithms.
+- Aligns the address passed in by rt_system_heap_init when using the memheap memory management algorithm
+- Set rt_thread_timeout to a private function
+- Add __attribute__(...) for rt_kprintf() to let the compiler check the format string parameters
+- Return thread error when resumed by signal
+
+## Components
+
+- libc
+  - Clear the POSIX/IO folder
+  - Move libdl to posix folder
+  - Add the support for PSE51
+  - Optimize the nanosleep function
+  - Add RT_USING_POSIX_STDIO
+  - To deal with compilation problems under win32 platform
+  - Remove getline
+  - Create 'posix' folder and move related files into it
+  - Put getline into posix folder
+  - Optimize posix structure in libc
+  - Eliminate judgments in code that rely on RT_LIBC_USING_FILEIO
+  - Move libc.c/.h to posix folder
+  - Remove gettid and other functions that do not comply with PSE51
+  - Add RT_USING_POSIX_SELECT RT_USING_POSIX_POLL
+  - Add RT_USING_POSIX_DELAY
+  - Add RT_USING_POSIX_STDIO
+  - Add delay.c as default
+  - Select RT_USING_POSIX_STDIO for RT_LIBC_USING_FILEIO
+  - Add readme
+  - Revert kconfig of pthread
+  - Move mmap to src folder
+  - Implement delay functions as RT_USING_POSIX_DELAY
+  - Fix a bug caused by two different macro encoding methods in fcntl.h  
+  - Improve IAR and KEIL's read write pile function
+  - Memory functions add error warnings when HEAP is not enabled
+  - Revise some RT_USING_POSIX to RT_USING_POSIX_DEVIO
+  - Add RT_USING_POSIX_FS
+  - Separate posix into a Kconfig directory
+  - Fix the bug of _sys_read and _sys_write
+  - Modify time.h to sys/time.h
+  - Add dataqueue.c function annotation
+  - Fix armclang Cpp11 memory leak and compilation warning issues
+  - Add ipc header files
+  - Create the mman folder
+  
+- drivers
+  - Rename src folder as ipc
+  - Optimize scripts for compiler judgment
+  - Add rt_work_urgent
+  - Change the time parameter to ticks to prevent misinterpretation of the unit as ms
+  - Improve comment
+  - [sdio] Fix compile warning and optimized code.
+  - Rename rt_workqueue_critical_work as rt_workqueue_urgent_work
+  - Fix sensor_cmd.c build error.
+  - Cputime support 64bit.
+  - Update cputime_cortexm.c support 64bit.
+  - Add IPC for POSIX and add pipe for it
+  - [components] framework update
+  - Add waitqueue.c function annotation
+  - Fix compile warning in cdc_vcom.c
+
+- lwip
+  - Improve lwip support for 64-bit architecture
+  - Remove lwip 2.0.2
+  - Fix ioctl and lwip socket definitions
+  - modify annotation for sys_arch_mbox_tryfetch
+  - Fix the return value for sys_arch_mbox_fetch in lwip stack
+  - Fix dhcpd not including version 2.0.3
+  - Define RT_USING_BIG_ENDIAN for the long-term version
+  - ping cmd with specified netif in lwip-2.1.2
+  - Fix sys_arch.c
+  - Solve the conflict between multi BYTE_ORDER(s)
+  - Fix the problem of implicit declaration for "lwip_ip4_route_src".
+
+- dfs
+  - Move dfs_posix.h to legacy/dfs/dfs_posix.h
+  - Move dfs_posix dfs_poll dfs_select.c to posix folder
+  - Remove dfs_select.h and dfs_poll.h
+  - Update fatfs to the latest version
+  - Saved dfs_poll.h dfs_select.h，add warning log
+  - Remove RT_USING_LIBC from dfs_fs.h
+  - Move dfs back
+
+- Shrink pThread to POSIX. Change DFS from POSIX to POSIX from DFS  
+- Adjust the SAL dependency
+- Implement legacy support
+- Revise RT_USING_POSIX_STDIO to RT_USING_POSIX_DEVIO
+- Add macro definition restrictions to finsh set Device calls
+
+- shell
+  - Update the list_timer cmd.
+  - Update the code format
+
+- kservice
+  - Optimize RT_PRINTF_LONGLONG，reduce duplicate code
+  - Simplification RT_PRINTF_PRECISION
+  - Fix the problem of rt_strlen crashed in win32
+
+- [kernel] Collating of Kconfig
+- [ulog] Add ulog backend filter.
+- [posix] Organize IO categories according to advanced Unix environment programming
+- Add creat() function
+- [Ymodem]  silent warnings
+- Use rt_memcpy rt_memset instead of  memcpy memset
+- Fixed AT component in CLI mode, the command input is too long, resulting in the array out of bounds  
+- [example] Remove RT_USING_TC
+- Fix armclang Cpp11 memory leak and compilation warning issues
+- Improve and add comments in examples/network/ including tcpserver.c
+
+## BSP and CPU porting
+
+- [at91sam9260] Fix "rt_interrupt_dispatch" Undefined error
+- Add pulse encoder porting to imxrt1052
+- libcpu
+  - Solve the problem of mixing tab and space
+  - [arm] Fix thumb instruction set assembly syntax error
+  - [aarch64] Add smp support
+  - [nuclei] Fix context switch  in nuclei
+  - Fix s-mode issue
+  - [t-head] Fix rt_hw_interrupt_disable/rt_hw_interrupt_enable bug
+  - [libcpu] Add ARCH_CPU_BIG_ENDIAN
+
+- Add and update gd32 bsp
+  - gd32103c-eval
+  - gd32105c-eval
+  - gd32107c-eval
+  - gd32303e-eval
+  - gd32450z-eval
+  - gd32105r-start
+  - gd32205r-start
+  - gd32305r-start
+
+- Update n32g452xx
+  - Reinit .config based on default setting
+  - Regenerate rtconfig.h based on default configuration
+  - Reformat code
+  - Init update
+  - Add rt_pin_get support
+  - Add n32g45x can driver
+  - Unified header file definition. "GPIO_H__" to "DRV_GPIO_H". "USART_H" to "DRV_USART_H"
+  - In drv_pwm.c, variable meaning is different with RT-Thread interface definition. Fixed and tested.
+  - Add support for UART4/UART5.
+  - In drv_gpio.c Modify "N32F10X_PIN_NUMBERS" to "N32G45X_PIN_NUMBERS"
+  - Perfect ADC driver and format code
+  - Add ble support
+  - Fix formatting issues
+  - Remove unnecessary comments
+  - Add gpio input nopull
+  - rtc add version check
+  - n32g452xx direct structure base at32
+
+- Nuvoton
+  - Support LVGLv81 RTT music demo for N9H30 and NUC980.
+  - Update drivers
+  - [N9H30/NUC980] Update SDH driver
+  - Fix SDH_Set_clock function.
+  - Correct EMMC, SDH0 and SDH1 options for N9H30.
+  - Fix IRQ trap issues.
+  - Update porting drivers and configurations.
+
+- [raspberry-pico] Add lvgl_8.1.0 support
+- simulator
+  - Resolves the warning that the "Gm" option was rejected and will be removed in a future release 
+  - Clear the warning under vs
+  - update project
+
+- [gd32] Repair startup_gd32f30x_cl.s
+- Remove the problematic rtconfig.h
+- [console] Fixed an error when using device without defining RT_USING_DEVICE  
+- Use __clang__ instead of __CLANG_ARM
+
+- Update essemi bsp
+  - es32f0654
+  - es32f369x
+  - es32f365x
+
+- [nuclei] change hbird_eval bsp to nuclei_fpga_eval
+- The sconscript script in the application folder increases the recursion searching capability
+- [Vango V85xx] modify NULL to RT_NULL
+- fix the compiling issue for qemu-riscv64
+- update K210 bsp and base on https://github.com/kendryte/K210-Micropython-OpenMV
+
+- [lpc55s69_nxp_evk]
+  - Fix the scons --dist
+  - Add the fixed gcc version
+  - Add the ci machine
+
+- Correction of 'BSP /Copyright notice.md' errors
+
+- nrf5x
+  - Add the fixed lds
+  - Add hwtimer driver
+  - Add hwtimer config & tinyusb config
+  - Fix i2c driver bug
+
+- Remove the bsp of nrf51822
+- Add tkm32f499 bsp and  flash_download app
+- Remove empty rt_hw_us_delay
+- [at32] Optimized the pin-index algorithm
+
+- ra6m4
+  - Organize the project configuration
+  - Add DAC, ADC and SPI drivers
+  - Formatting code Style
+  - Add Flash Driver
+  - Add SPI, Flash, ADC, DAC documentation
+  - Add PWM driver
+  - Fix incorrect dependency macros in scons scripts
+  - Fix bugs in the code
+  - Update the error description in the documentation
+
+- MAX32660-EVK
+  - Update pin map instruction
+  - Add MAX32660-EVK pin map
+  - drv_soft_i2c.c was not in libraries
+  - delete drv_soft_i2c.c for it was not be used
+
+- [bluetrum] add flash support
+- [ra6m4-cpk] add gcc build support.
+
+- stm32
+  - Fix STM32 USB driver matching hal library version
+  - stm32h743-openmv-h7plus bsp add sdram for openmv
+  - Add tinyusb for stm32 driver
+  - Add stm32g474-st-nucleo bsp
+  - Add stm32u575-st-nucleo bsp
+  - Add stm32l552ze-nucleo bsp
+  - [gcc] Fix stack 0 bug, expand stack to 0x400 (same as Keil IAR)  
+  - Modify variable name p_tm to tm
+  - drv_common.c add LOW_E for Error_Handler
+  - Add i2c config for stm32l496-st-nucleo bsp
+  - For STM32F4 series, CAN is configured according to different ABP1 bus frequencies
+  - Improved STM32H7 series SPI driver using DMA
+  - Add BSP ART-PI download algorithm
+  - Add lvgl music demo for stm32f469-st-disco bsp.
+  - Refresh using dma2d,screen refresh average 25fps for stm32f469-st-disco bsp
+  - Add esp8266 configuration option takeover
+  - add SOC_SERIES_STM32G0 to use "stm32_wdt.hiwdg.Init.Window = 0x00000FFF", otherwise the watchdog always reset.
+  - Fix STM32L4 series flash will fail to erase the first time after downloading the program  
+
+  - stm32l475-atk-pandora
+    - Add ADC PWM pin definition
+    - Preliminary realization of Arduino ecological compatibility
+    - Add lcd_fill_array()
+    - Add lvgl demo
+    - Add BSP_USING_LCD_SAMPLE in rttlogo.h
+    - Enable SPI3-DMA2 for LCD
+    - Beautify kconfig of board
+    - Fix issue where board folder sconscript script did not continue scanning subfolders
+    - Improve the structrue of sconscript
+    - Add ESP8266 quick build option, serial port driver is changed from V2 to V1
+
+- Fix compile warnings on qemu-vexpress-a9 platform (-Wimplicit-function-declaration)
+- [qemu-a9] add lvgl support.
+- [fix] The baud rate is configured according to the different APB1 frequencies. f4-series only.
+- [qemu] update Kconfig
+- Fix Raspi3 GPIO driver write bug
+- [ls1cdev] add stack size to avoid stack overflow when boot
+- [rp6m4-cpk] Add new drivers and improve BSP
+
+## Tools
+
+- CI
+  - Optimize AutoTestCI trigger timing
+  - Add scons tools test
+  - Add the ci of nrf5x
+  - Ci toolchain download using github link.
+  
+- Fix bug with missing brackets in eclipse.py
+- Change ccflags to cflags，add LOCAL_CCFLAGS、LOCAL_CLFAGS、LOCAL_CXXFLAGS
+- Fix generate .project file error
+- Remove unused file 1.txt
+- Update buildbot.py
+- Fix adding empty lists and empty strings
+- Add function of auto-update rtconfig.h
+
 # RT-Thread v4.0.4 released
 
 Change log since v4.0.3
