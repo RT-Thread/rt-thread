@@ -477,6 +477,76 @@ void DMA1_Channel8_IRQHandler(void)
 }
 #endif /* BSP_USING_UART5 */
 
+#if defined(BSP_USING_UART6)
+/* UART6 device driver structure */
+struct n32_uart uart6 =
+{
+    UART6,
+    UART6_IRQn,
+    {
+        DMA2_CH1,
+        DMA2,
+        DMA2_FLAG_GL1,
+        DMA2_Channel1_IRQn,
+        0,
+    },
+};
+struct rt_serial_device serial6;
+
+void UART6_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    uart_isr(&serial6);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+void DMA2_Channel1_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    dma_rx_done_isr(&serial6);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_UART6 */
+
+#if defined(BSP_USING_UART7)
+/* UART7 device driver structure */
+struct n32_uart uart7 =
+{
+    UART7,
+    UART7_IRQn,
+    {
+        DMA2_CH6,
+        DMA2,
+        DMA2_FLAG_GL6,
+        DMA2_Channel6_IRQn,
+        0,
+    },
+};
+struct rt_serial_device serial7;
+
+void UART7_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    uart_isr(&serial7);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+void DMA2_Channel6_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    dma_rx_done_isr(&serial7);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_UART7 */
+
 static void NVIC_Configuration(struct n32_uart *uart)
 {
     NVIC_InitType NVIC_InitStructure;
@@ -582,7 +652,7 @@ int rt_hw_usart_init(void)
     /* register UART3 device */
     rt_hw_serial_register(&serial3, "uart3",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
-                          RT_DEVICE_FLAG_INT_TX |   RT_DEVICE_FLAG_DMA_RX,
+                          RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_RX,
                           uart);
 #endif /* BSP_USING_UART3 */
 
@@ -592,7 +662,7 @@ int rt_hw_usart_init(void)
     serial4.ops    = &n32_uart_ops;
     serial4.config = config;
     NVIC_Configuration(uart);
-    /* register UART3 device */
+    /* register UART4 device */
     rt_hw_serial_register(&serial4, "uart4",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
                           RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_RX,
@@ -605,12 +675,40 @@ int rt_hw_usart_init(void)
     serial5.ops    = &n32_uart_ops;
     serial5.config = config;
     NVIC_Configuration(uart);
-    /* register UART3 device */
+    /* register UART5 device */
     rt_hw_serial_register(&serial5, "uart5",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
                           RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_RX,
                           uart);
     #endif /* BSP_USING_UART5 */
+
+    #if defined(BSP_USING_UART6)
+    uart = &uart6;
+    config.baud_rate = BAUD_RATE_115200;
+    serial6.ops    = &n32_uart_ops;
+    serial6.config = config;
+    NVIC_Configuration(uart);
+    /* register UART6 device */
+    rt_hw_serial_register(&serial6, "uart6",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
+                          RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_RX,
+                          uart);
+    #endif /* BSP_USING_UART6 */
+
+    #if defined(BSP_USING_UART7)
+    uart = &uart7;
+    config.baud_rate = BAUD_RATE_115200;
+    serial7.ops    = &n32_uart_ops;
+    serial7.config = config;
+    NVIC_Configuration(uart);
+    /* register UART7 device */
+    rt_hw_serial_register(&serial7, "uart7",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
+                          RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_RX,
+                          uart);
+    #endif /* BSP_USING_UART7 */
+
+
     return RT_EOK;
 }
 

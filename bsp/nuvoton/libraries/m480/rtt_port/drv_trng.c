@@ -77,10 +77,8 @@ rt_uint32_t nu_trng_rand(struct hwcrypto_rng *ctx)
 {
     if (!s_i32TRNGEnable)
     {
-        uint32_t u32RNGValue;
-        //use software rand
-        u32RNGValue = rand();
-        return u32RNGValue;
+        /* Use software rand */
+        return (rt_uint32_t)rand();
     }
 
     return nu_trng_run();

@@ -7,7 +7,10 @@ src     = []
 CPPPATH = [cwd]
 
 if GetDepend('RT_USING_POSIX_POLL'):
-	src += ['poll.c']
+    src += ['poll.c']
+
+if GetDepend('RT_USING_POSIX_SELECT'):
+    src += ['select.c']
 
 group = DefineGroup('POSIX', src, depend = [''], CPPPATH = CPPPATH)
 

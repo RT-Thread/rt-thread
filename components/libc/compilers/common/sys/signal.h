@@ -17,6 +17,19 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <sys/types.h>
+
+
+/* sigev_notify values
+   NOTE: P1003.1c/D10, p. 34 adds SIGEV_THREAD.  */
+
+#define SIGEV_NONE   1  /* No asynchronous notification shall be delivered */
+                        /*   when the event of interest occurs. */
+#define SIGEV_SIGNAL 2  /* A queued signal, with an application defined */
+                        /*  value, shall be delivered when the event of */
+                        /*  interest occurs. */
+#define SIGEV_THREAD 3  /* A notification function shall be called to */
+                        /*   perform notification. */
 
 /*  Signal Generation and Delivery, P1003.1b-1993, p. 63
     NOTE: P1003.1c/D10, p. 34 adds sigev_notify_function and
@@ -62,6 +75,16 @@ struct sigaction
     int sa_flags;
 };
 
+/*
+ * Structure used in sigaltstack call.
+ */
+typedef struct sigaltstack
+{
+  void     *ss_sp;    /* Stack base or pointer.  */
+  int       ss_flags; /* Flags.  */
+  size_t    ss_size;  /* Stack size.  */
+} stack_t;
+
 #define SIG_SETMASK 0   /* set mask with sigprocmask() */
 #define SIG_BLOCK   1   /* set of signals to block */
 #define SIG_UNBLOCK 2   /* set of signals to, well, unblock */
@@ -73,6 +96,15 @@ struct sigaction
 #define sigismember(what,sig) (((*(what)) & (1<<(sig))) != 0)
 
 int sigprocmask (int how, const sigset_t *set, sigset_t *oset);
+int sigpending (sigset_t *set);
+int sigsuspend (const sigset_t *set);
+
+#include "time.h"
+int sigtimedwait(const sigset_t *set, siginfo_t *info, const struct timespec *timeout);
+int sigwait(const sigset_t *set, int *sig);
+int sigwaitinfo(const sigset_t *set, siginfo_t *info);
+int raise(int sig);
+int sigqueue(pid_t pid, int signo, const union sigval value);
 int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
 
 #ifdef __ARMCC_VERSION
@@ -100,6 +132,9 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #define SIGTTOU     22
 #define SIGPOLL     23
 #define SIGWINCH    24
+#define SIGXCPU     24  /* exceeded CPU time limit */
+#define SIGXFSZ     25  /* exceeded file size limit */
+#define SIGVTALRM   26  /* virtual time alarm */
 /* #define SIGUSR1     25 */
 /* #define SIGUSR2     26 */
 #define SIGRTMIN    27
@@ -133,6 +168,9 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #define SIGTTOU     22
 #define SIGPOLL     23
 #define SIGWINCH    24
+#define SIGXCPU     24  /* exceeded CPU time limit */
+#define SIGXFSZ     25  /* exceeded file size limit */
+#define SIGVTALRM   26  /* virtual time alarm */
 #define SIGUSR1     25
 #define SIGUSR2     26
 #define SIGRTMIN    27

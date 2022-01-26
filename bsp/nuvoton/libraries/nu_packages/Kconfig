@@ -38,7 +38,7 @@ menu "Nuvoton Packages Config"
         bool "ILI9341 LCD Panel"
         select BSP_USING_GPIO
         default n
-        
+
         if NU_PKG_USING_ILI9341
 
             choice
@@ -62,8 +62,20 @@ menu "Nuvoton Packages Config"
                 default n
 
             config NU_PKG_ILI9341_HORIZONTAL
-                bool "Set horizontal view. (320x240)"
-                default n
+                bool
+                default y
+
+            config BSP_LCD_BPP
+                int
+                default 16     if NU_PKG_USING_ILI9341
+
+            config BSP_LCD_WIDTH
+                int
+                default 320    if NU_PKG_ILI9341_HORIZONTAL
+
+            config BSP_LCD_HEIGHT
+                int
+                default 240    if NU_PKG_ILI9341_HORIZONTAL
 
         endif
 
