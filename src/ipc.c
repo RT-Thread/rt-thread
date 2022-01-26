@@ -40,6 +40,7 @@
  * 2021-01-03     Meco Man     implement rt_mb_urgent()
  * 2021-05-30     Meco Man     implement rt_mutex_trytake()
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to ipc.c
+ * 2022-01-24     THEWON       let rt_mutex_take return thread->error when using signal
  */
 
 #include <rtthread.h>
@@ -725,8 +726,7 @@ RTM_EXPORT(rt_sem_control);
  *
  * @param    flag is the mutex flag, which determines the queuing way of how multiple threads wait
  *           when the mutex is not available.
- *           NOTE: The mutex flag can ONLY be RT_IPC_FLAG_PRIO. Using RT_IPC_FLAG_FIFO will seriously affect
- *           the real-time performance of the system.
+ *           NOTE: This parameter has been obsoleted. It can be RT_IPC_FLAG_PRIO, RT_IPC_FLAG_FIFO or RT_NULL.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
  *           If the return value is any other values, it represents the initialization failed.
@@ -735,7 +735,8 @@ RTM_EXPORT(rt_sem_control);
  */
 rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
 {
-    (void)flag;
+    /* flag parameter has been obsoleted */
+    RT_UNUSED(flag);
 
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
@@ -807,8 +808,7 @@ RTM_EXPORT(rt_mutex_detach);
  *
  * @param    flag is the mutex flag, which determines the queuing way of how multiple threads wait
  *           when the mutex is not available.
- *           NOTE: The mutex flag can ONLY be RT_IPC_FLAG_PRIO. Using RT_IPC_FLAG_FIFO will seriously affect
- *           the real-time performance of the system.
+ *           NOTE: This parameter has been obsoleted. It can be RT_IPC_FLAG_PRIO, RT_IPC_FLAG_FIFO or RT_NULL.
  *
  * @return   Return a pointer to the mutex object. When the return value is RT_NULL, it means the creation failed.
  *
@@ -817,7 +817,9 @@ RTM_EXPORT(rt_mutex_detach);
 rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
 {
     struct rt_mutex *mutex;
-    (void)flag;
+
+    /* flag parameter has been obsoleted */
+    RT_UNUSED(flag);
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -946,9 +948,6 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     }
     else
     {
-#ifdef RT_USING_SIGNALS
-__again:
-#endif /* RT_USING_SIGNALS */
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -1025,11 +1024,6 @@ __again:
 
                 if (thread->error != RT_EOK)
                 {
-#ifdef RT_USING_SIGNALS
-                    /* interrupt by signal, try it again */
-                    if (thread->error == -RT_EINTR) goto __again;
-#endif /* RT_USING_SIGNALS */
-
                     /* return error */
                     return thread->error;
                 }

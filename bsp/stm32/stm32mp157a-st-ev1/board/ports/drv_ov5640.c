@@ -13,7 +13,11 @@
 #if defined(BSP_USING_DCMI)
 
 #include "drv_mfx.h"
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include "drv_ov5640.h"
 
 //#define DRV_DEBUG

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,18 +12,18 @@
  * 2013-06-18   aozima       add restore MSP feature.
  * 2013-11-04   bright       fixed hardfault bug for gcc.
  */
- 
+
     .cpu    cortex-m0
     .fpu    softvfp
     .syntax unified
     .thumb
     .text
 
-	.equ 	SCB_VTOR, 0xE000ED08            /* Vector Table Offset Register */
-	.equ 	NVIC_INT_CTRL, 0xE000ED04       /* interrupt control state register */
-	.equ 	NVIC_SHPR3, 0xE000ED20          /* system priority register (3) */
-	.equ 	NVIC_PENDSV_PRI, 0xFFFF0000     /* PendSV and SysTick priority value (lowest) */
-	.equ 	NVIC_PENDSVSET, 0x10000000      /* value to trigger PendSV exception */
+    .equ    SCB_VTOR, 0xE000ED08            /* Vector Table Offset Register */
+    .equ    NVIC_INT_CTRL, 0xE000ED04       /* interrupt control state register */
+    .equ    NVIC_SHPR3, 0xE000ED20          /* system priority register (3) */
+    .equ    NVIC_PENDSV_PRI, 0xFFFF0000     /* PendSV and SysTick priority value (lowest) */
+    .equ    NVIC_PENDSVSET, 0x10000000      /* value to trigger PendSV exception */
 
 /*
  * rt_base_t rt_hw_interrupt_disable();
@@ -90,7 +90,7 @@ PendSV_Handler:
     LDR     R0, =rt_thread_switch_interrupt_flag
     LDR     R1, [R0]
     CMP     R1, #0x00
-    BEQ     pendsv_exit		/* pendsv aLReady handled */
+    BEQ     pendsv_exit     /* pendsv aLReady handled */
 
     /* clear rt_thread_switch_interrupt_flag to 0 */
     MOVS    R1, #0
@@ -101,7 +101,7 @@ PendSV_Handler:
     CMP     R1, #0x00
     BEQ     switch_to_thread    /* skip register save at the first time */
 
-	MRS     R1, PSP                 /* get from thread stack pointer */
+    MRS     R1, PSP                 /* get from thread stack pointer */
 
     SUBS    R1, R1, #0x20           /* space for {R4 - R7} and {R8 - R11} */
     LDR     R0, [R0]
@@ -119,7 +119,7 @@ switch_to_thread:
     LDR     R1, [R1]
     LDR     R1, [R1]                /* load thread stack pointer */
 
-	LDMIA   R1!, {R4 - R7}          /* pop thread {R4 - R7} register from thread stack */
+    LDMIA   R1!, {R4 - R7}          /* pop thread {R4 - R7} register from thread stack */
     PUSH    {R4 - R7}               /* push {R4 - R7} to MSP for copy {R8 - R11} */
 
     LDMIA   R1!, {R4 - R7}          /* pop thread {R8 - R11} high register from thread stack to {R4 - R7} */

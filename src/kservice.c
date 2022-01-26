@@ -461,7 +461,17 @@ RTM_EXPORT(rt_strncpy);
  */
 char *rt_strcpy(char *dst, const char *src)
 {
-    return rt_strncpy(dst, src, (rt_size_t)-1);
+    char *dest = dst;
+
+    while (*src != '\0')
+    {
+        *dst = *src;
+        dst++;
+        src++;
+    }
+
+    *dst = '\0';
+    return dest;
 }
 RTM_EXPORT(rt_strcpy);
 
@@ -603,7 +613,7 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__, __TIME__);
-    rt_kprintf(" 2006 - 2021 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2022 Copyright by RT-Thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 

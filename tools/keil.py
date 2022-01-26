@@ -192,7 +192,7 @@ def MDK45Project(tree, target, script):
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
-    CCFLAGS = ''
+    CFLAGS = ''
     ProjectFiles = []
 
     # add group
@@ -204,14 +204,14 @@ def MDK45Project(tree, target, script):
         group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path)
 
         # for local CPPPATH/CPPDEFINES
-        if (group_tree != None) and ('LOCAL_CPPPATH' in group or 'LOCAL_CCFLAGS' in group or 'LOCAL_CPPDEFINES' in group):
+        if (group_tree != None) and ('LOCAL_CPPPATH' in group or 'LOCAL_CFLAGS' in group or 'LOCAL_CPPDEFINES' in group):
             GroupOption     = SubElement(group_tree,  'GroupOption')
             GroupArmAds     = SubElement(GroupOption, 'GroupArmAds')
             Cads            = SubElement(GroupArmAds, 'Cads')
             VariousControls = SubElement(Cads, 'VariousControls')
             MiscControls    = SubElement(VariousControls, 'MiscControls')
-            if 'LOCAL_CCFLAGS' in group:
-                MiscControls.text = group['LOCAL_CCFLAGS']
+            if 'LOCAL_CFLAGS' in group:
+                MiscControls.text = group['LOCAL_CFLAGS']
             else:
                 MiscControls.text = ' '
             Define          = SubElement(VariousControls, 'Define')
@@ -329,7 +329,7 @@ def MDKProject(target, script):
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
-    CCFLAGS = ''
+    CFLAGS = ''
 
     # number of groups
     group_index = 1

@@ -65,10 +65,18 @@
 #include <rtgui/widgets/box.h>
 #include <rtgui/image.h>
 
-#if defined(RTGUI_USING_DFS_FILERW)
+ #if defined(RTGUI_USING_DFS_FILERW)
  #include <dfs_posix.h>
  #define PATH_SEPARATOR     '/'
  #endif
+#if defined(RTGUI_USING_DFS_FILERW)
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
+#define PATH_SEPARATOR     '/'
+#endif
 #endif
 
 /* Private typedef -----------------------------------------------------------*/

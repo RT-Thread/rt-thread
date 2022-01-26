@@ -185,6 +185,10 @@ int pthread_setschedprio(pthread_t thread, int prio);
 void pthread_exit (void *value_ptr);
 int pthread_once(pthread_once_t * once_control, void (*init_routine) (void));
 
+#ifdef RT_USING_SIGNALS
+int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset);
+#endif
+
 /* pthread cleanup */
 void pthread_cleanup_pop(int execute);
 void pthread_cleanup_push(void (*routine)(void*), void *arg);

@@ -273,6 +273,7 @@ config SOC_SERIES_N9H30
     menuconfig BSP_USING_SDH
         bool "Enable Secure Digital Host Controller(SDH)"
         select RT_USING_DFS
+        select DFS_USING_POSIX
 
         if BSP_USING_SDH
 
@@ -475,6 +476,9 @@ config SOC_SERIES_N9H30
                 config LCM_USING_FW043TFT
                     bool "LCM_FW043TFT(480x272-RGB888)"
 
+                config LCM_USING_FW070TFT_WSVGA
+                    bool "LCM_USING_FW070TFT_WSVGA(1024x600-RGB888)"
+
             endchoice
 
             config VPOST_USING_LCD_IDX
@@ -483,6 +487,7 @@ config SOC_SERIES_N9H30
                 default 2    if LCM_USING_LSA40AT9001
                 default 3    if LCM_USING_FW070TFT
                 default 4    if LCM_USING_FW043TFT
+                default 5    if LCM_USING_FW070TFT_WSVGA
 
            config BSP_LCD_BPP
                 int
@@ -490,6 +495,7 @@ config SOC_SERIES_N9H30
                 default 16    if LCM_USING_LSA40AT9001
                 default 32    if LCM_USING_FW070TFT
                 default 32    if LCM_USING_FW043TFT
+                default 32    if LCM_USING_FW070TFT_WSVGA
 
            config BSP_LCD_WIDTH
                 int
@@ -497,6 +503,7 @@ config SOC_SERIES_N9H30
                 default 800    if LCM_USING_LSA40AT9001
                 default 800    if LCM_USING_FW070TFT
                 default 480    if LCM_USING_FW043TFT
+                default 1024   if LCM_USING_FW070TFT_WSVGA
 
            config BSP_LCD_HEIGHT
                 int
@@ -504,6 +511,7 @@ config SOC_SERIES_N9H30
                 default 600    if LCM_USING_LSA40AT9001
                 default 480    if LCM_USING_FW070TFT
                 default 272    if LCM_USING_FW043TFT
+                default 600    if LCM_USING_FW070TFT_WSVGA
 
            config BSP_USING_VPOST_OSD
                 bool "Enable VPOST OSD layer"

@@ -49,7 +49,7 @@ def SESProject(env) :
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
-    CCFLAGS = ''
+    CFLAGS = ''
 
     project_node = tree.find('project')
 
@@ -59,11 +59,11 @@ def SESProject(env) :
         group_tree = SDKAddGroup(project_node, group['name'], group['src'], project_path)
 
         # get each group's cc flags
-        if 'CCFLAGS' in group and group['CCFLAGS']:
-            if CCFLAGS:
-                CCFLAGS += ' ' + group['CCFLAGS']
+        if 'CFLAGS' in group and group['CFLAGS']:
+            if CFLAGS:
+                CFLAGS += ' ' + group['CFLAGS']
             else:
-                CCFLAGS += group['CCFLAGS']   
+                CFLAGS += group['CFLAGS']
                 
         # get each group's link flags
         if 'LINKFLAGS' in group and group['LINKFLAGS']:

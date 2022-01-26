@@ -76,6 +76,12 @@
 
 /* Device virtual file system */
 
+#define RT_USING_DFS
+#define DFS_USING_POSIX
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
+#define DFS_FD_MAX 16
 
 /* Device Drivers */
 
@@ -85,9 +91,6 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-#define RT_USING_ADC
-#define RT_USING_PWM
-#define RT_USING_WDT
 
 /* Using USB */
 
@@ -157,24 +160,12 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
 /* system packages */
 
-/* enhanced kernel services */
-
-
-/* POSIX extension functions */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -204,7 +195,14 @@
 
 /* On-chip Peripheral Drivers */
 
+#define N32G45X_PIN_NUMBERS_64
+#define N32G45X_PIN_NUMBERS 64
 #define BSP_USING_GPIO
+
+/* Remap JTAG Port */
+
+#define BSP_RMP_SW_JTAG_SW_ENABLE
 #define BSP_USING_UART1
+#define BSP_USING_UART1_NO_RMP
 
 #endif

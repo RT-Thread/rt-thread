@@ -108,7 +108,12 @@ void nutool_pincfg_deinit_epwm0(void)
 void nutool_pincfg_init_epwm1(void)
 {
     SYS->GPC_MFPH &= ~(SYS_GPC_MFPH_PC12MFP_Msk | SYS_GPC_MFPH_PC11MFP_Msk | SYS_GPC_MFPH_PC10MFP_Msk | SYS_GPC_MFPH_PC9MFP_Msk);
+#if !defined(BOARD_USING_LCD_ILI9341)
     SYS->GPC_MFPH |= (SYS_GPC_MFPH_PC12MFP_EPWM1_CH0 | SYS_GPC_MFPH_PC11MFP_EPWM1_CH1 | SYS_GPC_MFPH_PC10MFP_EPWM1_CH2 | SYS_GPC_MFPH_PC9MFP_EPWM1_CH3);
+#else
+    SYS->GPC_MFPH |= (SYS_GPC_MFPH_PC12MFP_EPWM1_CH0 | SYS_GPC_MFPH_PC10MFP_EPWM1_CH2 | SYS_GPC_MFPH_PC9MFP_EPWM1_CH3);
+#endif
+
     SYS->GPC_MFPL &= ~(SYS_GPC_MFPL_PC1MFP_Msk | SYS_GPC_MFPL_PC0MFP_Msk);
     SYS->GPC_MFPL |= (SYS_GPC_MFPL_PC1MFP_EPWM1_CH4 | SYS_GPC_MFPL_PC0MFP_EPWM1_CH5);
 
@@ -396,7 +401,9 @@ void nutool_pincfg_init(void)
     nutool_pincfg_init_spi0();
     nutool_pincfg_init_spi1();
     nutool_pincfg_init_uart0();
+#if !defined(BOARD_USING_LCD_ILI9341)
     nutool_pincfg_init_uart1();
+#endif
     nutool_pincfg_init_uart4();
     nutool_pincfg_init_usb();
 

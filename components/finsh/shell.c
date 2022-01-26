@@ -28,7 +28,8 @@
 #include "msh.h"
 
 #ifdef DFS_USING_POSIX
-#include <dfs_posix.h>
+#include <unistd.h>
+#include <fcntl.h>
 #endif /* DFS_USING_POSIX */
 
 /* finsh thread */

@@ -13,7 +13,11 @@
 
 #ifdef BSP_USING_AUDIO
 #include "drv_wm8994.h"
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 #define DRV_DEBUG
 #define LOG_TAG             "drv.sound"
