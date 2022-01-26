@@ -19,14 +19,12 @@
 #include "NuMicro.h"
 #include <drv_sys.h>
 
-#if defined(RT_USING_DFS)
 #include <dfs_fs.h>
 #include <dfs_file.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
-#endif
 
 /* Private define ---------------------------------------------------------------*/
 
@@ -602,8 +600,6 @@ static rt_bool_t nu_sdh_hotplug_is_mounted(const char *mounting_path)
 {
     rt_bool_t ret = RT_FALSE;
 
-#if defined(RT_USING_DFS)
-
     struct dfs_filesystem *psFS = dfs_filesystem_lookup(mounting_path);
     if (psFS == RT_NULL)
     {
@@ -620,15 +616,11 @@ static rt_bool_t nu_sdh_hotplug_is_mounted(const char *mounting_path)
 
 exit_nu_sdh_hotplug_is_mounted:
 
-#endif
-
     return ret;
 }
 static rt_err_t nu_sdh_hotplug_mount(nu_sdh_t sdh)
 {
     rt_err_t ret = RT_ERROR;
-
-#if defined(RT_USING_DFS)
     DIR *t;
 
     if (nu_sdh_hotplug_is_mounted(sdh->mounted_point) == RT_TRUE)
@@ -678,7 +670,6 @@ static rt_err_t nu_sdh_hotplug_mount(nu_sdh_t sdh)
 
 exit_nu_sdh_hotplug_mount:
 
-#endif
     return -(ret);
 }
 
@@ -686,7 +677,6 @@ static rt_err_t nu_sdh_hotplug_unmount(nu_sdh_t sdh)
 {
     rt_err_t ret = RT_ERROR;
 
-#if defined(RT_USING_DFS)
     if (nu_sdh_hotplug_is_mounted(sdh->mounted_point) == RT_FALSE)
     {
         ret = RT_EOK;
@@ -705,8 +695,6 @@ static rt_err_t nu_sdh_hotplug_unmount(nu_sdh_t sdh)
     }
 
 exit_nu_sdh_hotplug_unmount:
-
-#endif
 
     return -(ret);
 }
