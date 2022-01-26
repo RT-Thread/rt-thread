@@ -273,6 +273,7 @@ config SOC_SERIES_N9H30
     menuconfig BSP_USING_SDH
         bool "Enable Secure Digital Host Controller(SDH)"
         select RT_USING_DFS
+        select DFS_USING_POSIX
 
         if BSP_USING_SDH
 
