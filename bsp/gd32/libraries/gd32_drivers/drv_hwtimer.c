@@ -1,18 +1,31 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
- * 2021-01-28     iysheng           first version
+ * 2021-02-25     iysheng           first version
  */
 
 #include <board.h>
-#include <drivers/drv_comm.h>
-#include <drivers/drv_hwtimer.h>
+#include <rtdevice.h>
+#include <drivers/hwtimer.h>
 
 #ifdef BSP_USING_HWTIMER
+
+typedef struct {
+    uint32_t reg_base;
+    IRQn_Type irqn;
+    rcu_periph_enum rcu;
+} gd32_hwtimer_data;
+
+typedef struct {
+    char dev_name[RT_NAME_MAX];
+    const gd32_hwtimer_data hw_data;
+    rt_hwtimer_t hwtimer_dev;
+    const struct rt_hwtimer_info hwtimer_info;
+} gd32_hwtimer_device;
 
 enum timer_index_E {
 #ifdef BSP_USING_HWTIMER0
@@ -67,49 +80,48 @@ enum timer_index_E {
  * @param freq of the timer clock
  * @retval None
  */
-static void __set_timerx_freq(TIMER_TypeDef *timerx, uint32_t freq)
+static void __set_timerx_freq(uint32_t timerx, uint32_t freq)
 {
-    RCC_ClocksPara RCC_Clocks = {0};
+    uint32_t ap1freq, ap2freq;
     uint16_t prescaler;
     uint32_t temp;
 
-    RCC_GetClocksFreq(&RCC_Clocks);
     if (timerx == TIMER0 || timerx == TIMER7 || timerx == TIMER8 \
         || timerx == TIMER9 || timerx == TIMER10)
     {
-        temp = RCC->GCFGR & RCC_GCFGR_APB2PS;
+        ap2freq = rcu_clock_freq_get(CK_APB2);
+        temp = RCU_CFG0 & RCU_CFG0_APB2PSC;
         temp >>= 11;
         /* whether should frequency doubling */
         temp = (temp < 4) ? 0 : 1;
 
-        prescaler = (RCC_Clocks.APB2_Frequency << temp) / freq - 1;
+        prescaler = (ap2freq << temp) / freq - 1;
     }
     else
     {
-        temp = RCC->GCFGR & RCC_GCFGR_APB1PS;
+        ap1freq = rcu_clock_freq_get(CK_APB1);
+        temp = RCU_CFG0 & RCU_CFG0_APB1PSC;
         temp >>= 8;
         /* whether should frequency doubling */
         temp = (temp < 4) ? 0 : 1;
 
-        prescaler = (RCC_Clocks.APB1_Frequency << temp) / freq - 1;
+        prescaler = (ap1freq << temp) / freq - 1;
     }
 
-    TIMER_PrescalerConfig(timerx, prescaler, TIMER_PSC_RELOAD_NOW);
+    timer_prescaler_config(timerx, prescaler, TIMER_PSC_RELOAD_NOW);
 }
 
 static void gd32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
 {
-    TIMER_TypeDef * timer_base = timer->parent.user_data;
-    TIMER_BaseInitPara TIMER_Init;
-
-    RT_ASSERT(timer_base);
+    uint32_t timer_base = (uint32_t)timer->parent.user_data;
+    timer_parameter_struct initpara;
 
     if (state)
     {
-        TIMER_InternalClockConfig(timer_base);
-        TIMER_BaseStructInit(&TIMER_Init);
-        TIMER_Init.TIMER_Period =  timer->info->maxcnt;
-        TIMER_BaseInit(timer_base, &TIMER_Init);
+        timer_internal_clock_config(timer_base);
+        timer_struct_para_init(&initpara);
+        initpara.period =  timer->info->maxcnt;
+        timer_init(timer_base, &initpara);
         __set_timerx_freq(timer_base, timer->info->maxfreq);
     }
 }
@@ -117,37 +129,37 @@ static void gd32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state
 static rt_err_t gd32_hwtimer_start(struct rt_hwtimer_device *timer, \
     rt_uint32_t cnt, rt_hwtimer_mode_t mode)
 {
-    TIMER_TypeDef * timer_base = timer->parent.user_data;
+    uint32_t timer_base = (uint32_t)timer->parent.user_data;
 
     if (mode == HWTIMER_MODE_ONESHOT)
     {
-        TIMER_SinglePulseMode(timer_base, TIMER_SP_MODE_SINGLE);
+        timer_single_pulse_mode_config(timer_base, TIMER_SP_MODE_SINGLE);
     }
     else if (mode == HWTIMER_MODE_PERIOD)
     {
-        TIMER_SinglePulseMode(timer_base, TIMER_SP_MODE_REPETITIVE);
+        timer_single_pulse_mode_config(timer_base, TIMER_SP_MODE_REPETITIVE);
     }
 
-    TIMER_SetCounter(timer_base, 0);
-    TIMER_SetAutoreload(timer_base, cnt - 1);
-    TIMER_Enable(timer_base, ENABLE);
+    timer_counter_value_config(timer_base, 0);
+    timer_autoreload_value_config(timer_base, cnt - 1);
+    timer_enable(timer_base);
 
     return 0;
 }
 
 static void gd32_hwtimer_stop(struct rt_hwtimer_device *timer)
 {
-    TIMER_TypeDef * timer_base = timer->parent.user_data;
+    uint32_t timer_base = (uint32_t)timer->parent.user_data;
 
-    TIMER_Enable(timer_base, DISABLE);
+    timer_disable(timer_base);
 }
 
 static rt_uint32_t gd32_hwtimer_count_get(struct rt_hwtimer_device *timer)
 {
-    TIMER_TypeDef * timer_base = timer->parent.user_data;
+    uint32_t timer_base = (uint32_t)timer->parent.user_data;
     rt_uint32_t count;
 
-    count = TIMER_GetCounter(timer_base);
+    count = timer_counter_read(timer_base);
 
     return count;
 }
@@ -163,11 +175,11 @@ static rt_err_t gd32_hwtimer_control(struct rt_hwtimer_device *timer, rt_uint32_
     {
     case HWTIMER_CTRL_FREQ_SET:
         freq = *(rt_uint32_t *)args;
-        __set_timerx_freq(timer->parent.user_data, freq);
+        __set_timerx_freq((uint32_t)timer->parent.user_data, freq);
         break;
     default:
         rt_kprintf("invalid cmd:%x\n", cmd);
-        ret = -EINVAL;
+        ret = -RT_EINVAL;
         break;
     }
 
@@ -428,8 +440,8 @@ void TIMER0_UP_IRQHandler(void)
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&g_gd32_hwtimer[TIM0_INDEX].hwtimer_dev);
-    TIMER_ClearIntBitState(g_gd32_hwtimer[TIM0_INDEX].hwtimer_dev.parent.user_data, \
-        TIMER_INT_UPDATE);
+    timer_flag_clear((uint32_t)g_gd32_hwtimer[TIM0_INDEX].hwtimer_dev.parent.user_data, \
+        TIMER_INT_UP);
     rt_interrupt_leave();
 }
 #endif
@@ -439,8 +451,8 @@ void TIMER1_IRQHandler(void)
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&g_gd32_hwtimer[TIM1_INDEX].hwtimer_dev);
-    TIMER_ClearIntBitState(g_gd32_hwtimer[TIM1_INDEX].hwtimer_dev.parent.user_data, \
-        TIMER_INT_UPDATE);
+    timer_flag_clear((uint32_t)g_gd32_hwtimer[TIM1_INDEX].hwtimer_dev.parent.user_data, \
+        TIMER_INT_UP);
     rt_interrupt_leave();
 }
 #endif
@@ -450,8 +462,8 @@ void TIMER2_IRQHandler(void)
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&g_gd32_hwtimer[TIM2_INDEX].hwtimer_dev);
-    TIMER_ClearIntBitState(g_gd32_hwtimer[TIM2_INDEX].hwtimer_dev.parent.user_data, \
-        TIMER_INT_UPDATE);
+    timer_flag_clear((uint32_t)g_gd32_hwtimer[TIM2_INDEX].hwtimer_dev.parent.user_data, \
+        TIMER_INT_UP);
     rt_interrupt_leave();
 }
 #endif
@@ -461,8 +473,8 @@ void TIMER3_IRQHandler(void)
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&g_gd32_hwtimer[TIM3_INDEX].hwtimer_dev);
-    TIMER_ClearIntBitState(g_gd32_hwtimer[TIM3_INDEX].hwtimer_dev.parent.user_data, \
-        TIMER_INT_UPDATE);
+    timer_flag_clear((uint32_t)g_gd32_hwtimer[TIM3_INDEX].hwtimer_dev.parent.user_data, \
+        TIMER_INT_UP);
     rt_interrupt_leave();
 }
 #endif
@@ -472,8 +484,8 @@ void TIMER4_IRQHandler(void)
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&g_gd32_hwtimer[TIM4_INDEX].hwtimer_dev);
-    TIMER_ClearIntBitState(g_gd32_hwtimer[TIM4_INDEX].hwtimer_dev.parent.user_data, \
-        TIMER_INT_UPDATE);
+    timer_flag_clear((uint32_t)g_gd32_hwtimer[TIM4_INDEX].hwtimer_dev.parent.user_data, \
+        TIMER_INT_UP);
     rt_interrupt_leave();
 }
 #endif
@@ -483,8 +495,8 @@ void TIMER5_IRQHandler(void)
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&g_gd32_hwtimer[TIM5_INDEX].hwtimer_dev);
-    TIMER_ClearIntBitState(g_gd32_hwtimer[TIM5_INDEX].hwtimer_dev.parent.user_data, \
-        TIMER_INT_UPDATE);
+    timer_flag_clear((uint32_t)g_gd32_hwtimer[TIM5_INDEX].hwtimer_dev.parent.user_data, \
+        TIMER_INT_UP);
     rt_interrupt_leave();
 }
 #endif
@@ -494,8 +506,8 @@ void TIMER6_IRQHandler(void)
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&g_gd32_hwtimer[TIM6_INDEX].hwtimer_dev);
-    TIMER_ClearIntBitState(g_gd32_hwtimer[TIM6_INDEX].hwtimer_dev.parent.user_data, \
-        TIMER_INT_UPDATE);
+    timer_flag_clear((uint32_t)g_gd32_hwtimer[TIM6_INDEX].hwtimer_dev.parent.user_data, \
+        TIMER_INT_UP);
     rt_interrupt_leave();
 }
 #endif
@@ -505,8 +517,8 @@ void TIMER7_UP_IRQHandler(void)
 {
     rt_interrupt_enter();
     rt_device_hwtimer_isr(&g_gd32_hwtimer[TIM7_INDEX].hwtimer_dev);
-    TIMER_ClearIntBitState(g_gd32_hwtimer[TIM7_INDEX].hwtimer_dev.parent.user_data, \
-        TIMER_INT_UPDATE);
+    timer_flag_clear((uint32_t)g_gd32_hwtimer[TIM7_INDEX].hwtimer_dev.parent.user_data, \
+        TIMER_INT_UP);
     rt_interrupt_leave();
 }
 #endif
@@ -515,7 +527,7 @@ static int rt_hwtimer_init(void)
 {
     int ret = 0, i = 0;
 
-    for (; i < ARRAY_SIZE(g_gd32_hwtimer); i++)
+    for (; i < sizeof(g_gd32_hwtimer) / sizeof(g_gd32_hwtimer[0]); i++)
     {
         g_gd32_hwtimer[i].hwtimer_dev.ops = &g_gd32_hwtimer_ops;
         g_gd32_hwtimer[i].hwtimer_dev.info = &g_gd32_hwtimer[i].hwtimer_info;
@@ -523,9 +535,9 @@ static int rt_hwtimer_init(void)
         rcu_periph_clock_enable(g_gd32_hwtimer[i].hw_data.rcu);
         NVIC_SetPriority(g_gd32_hwtimer[i].hw_data.irqn, 0);
         NVIC_EnableIRQ(g_gd32_hwtimer[i].hw_data.irqn);
-        TIMER_INTConfig(g_gd32_hwtimer[i].hw_data.reg_base, TIMER_INT_UPDATE, ENABLE);
+        timer_interrupt_enable(g_gd32_hwtimer[i].hw_data.reg_base, TIMER_INT_UP);
         ret = rt_device_hwtimer_register(&g_gd32_hwtimer[i].hwtimer_dev, \
-            g_gd32_hwtimer[i].dev_name, g_gd32_hwtimer[i].hw_data.reg_base);
+            g_gd32_hwtimer[i].dev_name, (void *)g_gd32_hwtimer[i].hw_data.reg_base);
         if (RT_EOK != ret)
         {
             rt_kprintf("failed register %s, err=%d\n", g_gd32_hwtimer[i].dev_name, \
