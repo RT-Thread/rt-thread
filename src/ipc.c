@@ -484,11 +484,9 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
     /* parameter check */
     RT_ASSERT(sem != RT_NULL);
     RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
+
     /* current context checking */
-    if (time != 0)
-    {
-        RT_DEBUG_SCHEDULER_AVAILABLE;
-    }
+    RT_DEBUG_SCHEDULER_AVAILABLE(time != 0);
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(sem->parent.parent)));
 
@@ -914,13 +912,8 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     struct rt_thread *thread;
 
     /* this function must not be used in interrupt even if time = 0 */
-    RT_DEBUG_IN_THREAD_CONTEXT;
-
     /* current context checking */
-    if (time != 0)
-    {
-        RT_DEBUG_SCHEDULER_AVAILABLE;
-    }
+    RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
 
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
@@ -1579,12 +1572,7 @@ rt_err_t rt_event_recv(rt_event_t   event,
     RT_ASSERT(rt_object_get_type(&event->parent.parent) == RT_Object_Class_Event);
 
     /* current context checking */
-    RT_DEBUG_IN_THREAD_CONTEXT;
-
-    if (timeout != 0)
-    {
-        RT_DEBUG_SCHEDULER_AVAILABLE;
-    }
+    RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
 
     if (set == 0)
         return -RT_ERROR;
@@ -2008,10 +1996,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     RT_ASSERT(rt_object_get_type(&mb->parent.parent) == RT_Object_Class_MailBox);
 
     /* current context checking */
-    if (timeout != 0)
-    {
-        RT_DEBUG_SCHEDULER_AVAILABLE;
-    }
+    RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* initialize delta tick */
     tick_delta = 0;
@@ -2256,10 +2241,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     RT_ASSERT(rt_object_get_type(&mb->parent.parent) == RT_Object_Class_MailBox);
 
     /* current context checking */
-    if (timeout != 0)
-    {
-        RT_DEBUG_SCHEDULER_AVAILABLE;
-    }
+    RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* initialize delta tick */
     tick_delta = 0;
@@ -2769,10 +2751,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     RT_ASSERT(size != 0);
 
     /* current context checking */
-    if (timeout != 0)
-    {
-        RT_DEBUG_SCHEDULER_AVAILABLE;
-    }
+    RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* greater than one message size */
     if (size > mq->msg_size)
@@ -3084,10 +3063,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
     RT_ASSERT(size != 0);
 
     /* current context checking */
-    if (timeout != 0)
-    {
-        RT_DEBUG_SCHEDULER_AVAILABLE;
-    }
+    RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* initialize delta tick */
     tick_delta = 0;
