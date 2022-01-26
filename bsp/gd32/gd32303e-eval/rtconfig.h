@@ -13,6 +13,7 @@
 #define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
@@ -34,6 +35,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -42,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40004
+#define RT_VER_NUM 0x40100
 
 /* RT-Thread Components */
 
@@ -76,7 +78,6 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SYSTEM_WORKQUEUE
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
@@ -91,8 +92,15 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
+
+/* POSIX (Portable Operating System Interface) layer */
+
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
 
 /* Network */
 
@@ -158,6 +166,9 @@
 /* enhanced kernel services */
 
 
+/* POSIX extension functions */
+
+
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 
@@ -184,7 +195,7 @@
 /* Hardware Drivers Config */
 
 #define SOC_SERIES_GD32F30x
-#define SOC_GD32305R
+#define SOC_GD32303Z
 
 /* Onboard Peripheral Drivers */
 
