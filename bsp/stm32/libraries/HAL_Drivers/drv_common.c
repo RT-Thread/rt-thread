@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,8 +12,16 @@
 #include "board.h"
 
 #ifdef RT_USING_SERIAL
+#ifdef RT_USING_SERIAL_V2
+#include "drv_usart_v2.h"
+#else
 #include "drv_usart.h"
-#endif
+#endif /* RT_USING_SERIAL */
+#endif /* RT_USING_SERIAL_V2 */
+
+#define DBG_TAG    "drv_common"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -21,23 +29,22 @@ static void reboot(uint8_t argc, char **argv)
 {
     rt_hw_cpu_reset();
 }
-FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
+MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
+
+extern __IO uint32_t uwTick;
+static uint32_t _systick_ms = 1;
 
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
-#if defined (SOC_SERIES_STM32H7)
-    HAL_SYSTICK_Config((HAL_RCCEx_GetD1SysClockFreq()) / RT_TICK_PER_SECOND);
-#elif defined (SOC_SERIES_STM32MP1)
-    HAL_SYSTICK_Config(HAL_RCC_GetSystemCoreClockFreq() / RT_TICK_PER_SECOND);
-#else
-    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);
-#endif
-#if !defined (SOC_SERIES_STM32MP1)
-    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-#endif
+    HAL_SYSTICK_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
+
+    _systick_ms = 1000u / RT_TICK_PER_SECOND;
+    if(_systick_ms == 0)
+        _systick_ms = 1;
 }
 
 /**
@@ -49,7 +56,9 @@ void SysTick_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    HAL_IncTick();
+    if(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+        HAL_IncTick();
+
     rt_tick_increase();
 
     /* leave interrupt */
@@ -58,7 +67,15 @@ void SysTick_Handler(void)
 
 uint32_t HAL_GetTick(void)
 {
-    return rt_tick_get_millisecond();
+    if(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+        HAL_IncTick();
+
+    return uwTick;
+}
+
+void HAL_IncTick(void)
+{
+    uwTick += _systick_ms;
 }
 
 void HAL_SuspendTick(void)
@@ -87,6 +104,8 @@ void HAL_Delay(__IO uint32_t Delay)
 /* re-implement tick interface for STM32 HAL */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
+    rt_hw_systick_init();
+
     /* Return function status */
     return HAL_OK;
 }
@@ -100,6 +119,7 @@ void _Error_Handler(char *s, int num)
 {
     /* USER CODE BEGIN Error_Handler */
     /* User can add his own implementation to report the HAL error return state */
+    LOG_E("Error_Handler at file:%s num:%d", s, num);
     while (1)
     {
     }
@@ -113,16 +133,32 @@ void _Error_Handler(char *s, int num)
  */
 void rt_hw_us_delay(rt_uint32_t us)
 {
-    rt_uint32_t start, now, delta, reload, us_tick;
-    start = SysTick->VAL;
-    reload = SysTick->LOAD;
-    us_tick = SystemCoreClock / 1000000UL;
-    do
+    rt_uint32_t ticks;
+    rt_uint32_t told, tnow, tcnt = 0;
+    rt_uint32_t reload = SysTick->LOAD;
+
+    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    told = SysTick->VAL;
+    while (1)
     {
-        now = SysTick->VAL;
-        delta = start >= now ? start - now : reload + start - now;
+        tnow = SysTick->VAL;
+        if (tnow != told)
+        {
+            if (tnow < told)
+            {
+                tcnt += told - tnow;
+            }
+            else
+            {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+            if (tcnt >= ticks)
+            {
+                break;
+            }
+        }
     }
-    while (delta < us_tick * us);
 }
 
 /**
@@ -130,12 +166,12 @@ void rt_hw_us_delay(rt_uint32_t us)
  */
 RT_WEAK void rt_hw_board_init()
 {
-#ifdef SCB_EnableICache
+#ifdef BSP_SCB_ENABLE_I_CACHE
     /* Enable I-Cache---------------------------------------------------------*/
     SCB_EnableICache();
 #endif
 
-#ifdef SCB_EnableDCache
+#ifdef BSP_SCB_ENABLE_D_CACHE
     /* Enable D-Cache---------------------------------------------------------*/
     SCB_EnableDCache();
 #endif
@@ -143,14 +179,8 @@ RT_WEAK void rt_hw_board_init()
     /* HAL_Init() function is called at the beginning of the program */
     HAL_Init();
 
-    /* enable interrupt */
-    __set_PRIMASK(0);
     /* System clock initialization */
     SystemClock_Config();
-    /* disable interrupt */
-    __set_PRIMASK(1);
-
-    rt_hw_systick_init();
 
     /* Heap initialization */
 #if defined(RT_USING_HEAP)
@@ -168,7 +198,7 @@ RT_WEAK void rt_hw_board_init()
 #endif
 
     /* Set the shell console output device */
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 

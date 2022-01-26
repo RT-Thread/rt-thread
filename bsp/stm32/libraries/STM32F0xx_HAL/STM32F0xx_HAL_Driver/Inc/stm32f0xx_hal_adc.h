@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_HAL_ADC_H
-#define __STM32F0xx_HAL_ADC_H
+#ifndef STM32F0xx_HAL_ADC_H
+#define STM32F0xx_HAL_ADC_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -85,21 +69,21 @@ typedef struct
                                        This parameter can be a value of @ref ADC_Scan_mode */
   uint32_t EOCSelection;          /*!< Specifies what EOC (End Of Conversion) flag is used for conversion by polling and interruption: end of conversion of each rank or complete sequence.
                                        This parameter can be a value of @ref ADC_EOCSelection. */ 
-  uint32_t LowPowerAutoWait;      /*!< Selects the dynamic low power Auto Delay: new conversion start only when the previous
+  FunctionalState LowPowerAutoWait;      /*!< Selects the dynamic low power Auto Delay: new conversion start only when the previous
                                        conversion (for regular group) has been treated by user software, using function HAL_ADC_GetValue().
                                        This feature automatically adapts the ADC conversions trigs to the speed of the system that reads the data. Moreover, this avoids risk of overrun for low frequency applications. 
                                        This parameter can be set to ENABLE or DISABLE.
                                        Note: Do not use with interruption or DMA (HAL_ADC_Start_IT(), HAL_ADC_Start_DMA()) since they have to clear immediately the EOC flag to free the IRQ vector sequencer.
                                              Do use with polling: 1. Start conversion with HAL_ADC_Start(), 2. Later on, when conversion data is needed: use HAL_ADC_PollForConversion() to ensure that conversion is completed
                                              and use HAL_ADC_GetValue() to retrieve conversion result and trig another conversion. */
-  uint32_t LowPowerAutoPowerOff;  /*!< Selects the auto-off mode: the ADC automatically powers-off after a conversion and automatically wakes-up when a new conversion is triggered (with startup time between trigger and start of sampling).
+  FunctionalState LowPowerAutoPowerOff;  /*!< Selects the auto-off mode: the ADC automatically powers-off after a conversion and automatically wakes-up when a new conversion is triggered (with startup time between trigger and start of sampling).
                                        This feature can be combined with automatic wait mode (parameter 'LowPowerAutoWait').
                                        This parameter can be set to ENABLE or DISABLE.
                                        Note: If enabled, this feature also turns off the ADC dedicated 14 MHz RC oscillator (HSI14) */
-  uint32_t ContinuousConvMode;    /*!< Specifies whether the conversion is performed in single mode (one conversion) or continuous mode for regular group,
+  FunctionalState ContinuousConvMode;    /*!< Specifies whether the conversion is performed in single mode (one conversion) or continuous mode for regular group,
                                        after the selected trigger occurred (software start or external trigger).
                                        This parameter can be set to ENABLE or DISABLE. */
-  uint32_t DiscontinuousConvMode; /*!< Specifies whether the conversions sequence of regular group is performed in Complete-sequence/Discontinuous-sequence (main sequence subdivided in successive parts).
+  FunctionalState DiscontinuousConvMode; /*!< Specifies whether the conversions sequence of regular group is performed in Complete-sequence/Discontinuous-sequence (main sequence subdivided in successive parts).
                                        Discontinuous mode is used only if sequencer is enabled (parameter 'ScanConvMode'). If sequencer is disabled, this parameter is discarded.
                                        Discontinuous mode can be enabled only if continuous mode is disabled. If continuous mode is enabled, this parameter setting is discarded.
                                        This parameter can be set to ENABLE or DISABLE
@@ -110,7 +94,7 @@ typedef struct
   uint32_t ExternalTrigConvEdge;  /*!< Selects the external trigger edge of regular group.
                                        If trigger is set to ADC_SOFTWARE_START, this parameter is discarded.
                                        This parameter can be a value of @ref ADC_External_trigger_edge_Regular */
-  uint32_t DMAContinuousRequests; /*!< Specifies whether the DMA requests are performed in one shot mode (DMA transfer stop when number of conversions is reached)
+  FunctionalState DMAContinuousRequests; /*!< Specifies whether the DMA requests are performed in one shot mode (DMA transfer stop when number of conversions is reached)
                                        or in Continuous mode (DMA transfer unlimited, whatever number of conversions).
                                        Note: In continuous mode, DMA must be configured in circular mode. Otherwise an overrun will be triggered when DMA buffer maximum pointer is reached.
                                        This parameter can be set to ENABLE or DISABLE. */
@@ -168,7 +152,7 @@ typedef struct
   uint32_t Channel;           /*!< Selects which ADC channel to monitor by analog watchdog.
                                    This parameter has an effect only if parameter 'WatchdogMode' is configured on single channel. Only 1 channel can be monitored.
                                    This parameter can be a value of @ref ADC_channels. */
-  uint32_t ITMode;            /*!< Specifies whether the analog watchdog is configured in interrupt or polling mode.
+  FunctionalState ITMode;     /*!< Specifies whether the analog watchdog is configured in interrupt or polling mode.
                                    This parameter can be set to ENABLE or DISABLE */
   uint32_t HighThreshold;     /*!< Configures the ADC analog watchdog High threshold value.
                                    Depending of ADC resolution selected (12, 10, 8 or 6 bits), this parameter must be a number between Min_Data = 0x000 and Max_Data = 0xFFF, 0x3FF, 0xFF or 0x3F respectively. */
@@ -220,7 +204,7 @@ typedef struct
 /** 
   * @brief  ADC handle Structure definition  
   */ 
-typedef struct
+typedef struct __ADC_HandleTypeDef
 {
   ADC_TypeDef                   *Instance;              /*!< Register base address */
 
@@ -233,7 +217,40 @@ typedef struct
   __IO uint32_t                 State;                  /*!< ADC communication state (bitmap of ADC states) */
 
   __IO uint32_t                 ErrorCode;              /*!< ADC Error code */
+
+
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+  void (* ConvCpltCallback)(struct __ADC_HandleTypeDef *hadc);              /*!< ADC conversion complete callback */
+  void (* ConvHalfCpltCallback)(struct __ADC_HandleTypeDef *hadc);          /*!< ADC conversion DMA half-transfer callback */
+  void (* LevelOutOfWindowCallback)(struct __ADC_HandleTypeDef *hadc);      /*!< ADC analog watchdog 1 callback */
+  void (* ErrorCallback)(struct __ADC_HandleTypeDef *hadc);                 /*!< ADC error callback */
+  void (* MspInitCallback)(struct __ADC_HandleTypeDef *hadc);               /*!< ADC Msp Init callback */
+  void (* MspDeInitCallback)(struct __ADC_HandleTypeDef *hadc);             /*!< ADC Msp DeInit callback */
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
 }ADC_HandleTypeDef;
+
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL ADC Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_ADC_CONVERSION_COMPLETE_CB_ID     = 0x00U,  /*!< ADC conversion complete callback ID */
+  HAL_ADC_CONVERSION_HALF_CB_ID         = 0x01U,  /*!< ADC conversion DMA half-transfer callback ID */
+  HAL_ADC_LEVEL_OUT_OF_WINDOW_1_CB_ID   = 0x02U,  /*!< ADC analog watchdog 1 callback ID */
+  HAL_ADC_ERROR_CB_ID                   = 0x03U,  /*!< ADC error callback ID */
+  HAL_ADC_INJ_CONVERSION_COMPLETE_CB_ID = 0x04U,  /*!< ADC group injected conversion complete callback ID */
+  HAL_ADC_MSPINIT_CB_ID                 = 0x09U,  /*!< ADC Msp Init callback ID          */
+  HAL_ADC_MSPDEINIT_CB_ID               = 0x0AU   /*!< ADC Msp DeInit callback ID        */
+} HAL_ADC_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL ADC Callback pointer definition
+  */
+typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to a ADC callback function */
+
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
+
 /**
   * @}
   */
@@ -251,9 +268,13 @@ typedef struct
   */ 
 #define HAL_ADC_ERROR_NONE        (0x00U)   /*!< No error                                              */
 #define HAL_ADC_ERROR_INTERNAL    (0x01U)   /*!< ADC IP internal error: if problem of clocking, 
-                                                          enable/disable, erroneous state                       */
+                                                 enable/disable, erroneous state                       */
 #define HAL_ADC_ERROR_OVR         (0x02U)   /*!< Overrun error                                         */
 #define HAL_ADC_ERROR_DMA         (0x04U)   /*!< DMA transfer error                                    */
+
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+#define HAL_ADC_ERROR_INVALID_CALLBACK  (0x10U)   /*!< Invalid Callback error */
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
 
 /**
   * @}
@@ -561,8 +582,17 @@ typedef struct
   * @param  __HANDLE__ ADC handle
   * @retval None
   */
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+#define __HAL_ADC_RESET_HANDLE_STATE(__HANDLE__)                               \
+  do{                                                                          \
+     (__HANDLE__)->State = HAL_ADC_STATE_RESET;                                \
+     (__HANDLE__)->MspInitCallback = NULL;                                     \
+     (__HANDLE__)->MspDeInitCallback = NULL;                                   \
+    } while(0)
+#else
 #define __HAL_ADC_RESET_HANDLE_STATE(__HANDLE__)                               \
   ((__HANDLE__)->State = HAL_ADC_STATE_RESET)
+#endif
 
 /**
   * @}
@@ -897,6 +927,13 @@ HAL_StatusTypeDef HAL_ADC_Init(ADC_HandleTypeDef* hadc);
 HAL_StatusTypeDef HAL_ADC_DeInit(ADC_HandleTypeDef *hadc);
 void              HAL_ADC_MspInit(ADC_HandleTypeDef* hadc);
 void              HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc);
+
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+/* Callbacks Register/UnRegister functions  ***********************************/
+HAL_StatusTypeDef HAL_ADC_RegisterCallback(ADC_HandleTypeDef *hadc, HAL_ADC_CallbackIDTypeDef CallbackID, pADC_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_ADC_UnRegisterCallback(ADC_HandleTypeDef *hadc, HAL_ADC_CallbackIDTypeDef CallbackID);
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
+
 /**
   * @}
   */
@@ -976,7 +1013,7 @@ uint32_t                HAL_ADC_GetError(ADC_HandleTypeDef *hadc);
 #endif
 
 
-#endif /* __STM32F0xx_HAL_ADC_H */
+#endif /* STM32F0xx_HAL_ADC_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

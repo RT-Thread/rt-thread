@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,10 +46,10 @@ void SD_LowLevel_DMA_TxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
     DMA2_Channel4->CCR &= ~0x00000001;
 
     DMA2->IFCR = DMA_ISR_GIF1 << 4;
-    
+
     DMA2_CSELR->CSELR &= ~(0xf << (3 * 4));   // channel 4
-    DMA2_CSELR->CSELR |= (uint32_t) (0x07 << (3 * 4)); 
-    
+    DMA2_CSELR->CSELR |= (uint32_t) (0x07 << (3 * 4));
+
     DMA2_Channel4->CCR   = DMA_MEMORY_TO_PERIPH | DMA_PINC_DISABLE | DMA_MINC_ENABLE | \
                            DMA_PDATAALIGN_WORD | DMA_MDATAALIGN_WORD | DMA_NORMAL | DMA_PRIORITY_MEDIUM;
     DMA2_Channel4->CNDTR = BufferSize;
@@ -57,7 +57,7 @@ void SD_LowLevel_DMA_TxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
     DMA2_Channel4->CMAR = (uint32_t)src;
 
     DMA2_Channel4->CCR  |= 0x00000001;
-    
+
 //    HAL_DMA_Start(&SDTxDMAHandler, (uint32_t)src, (uint32_t)dst, BufferSize);
 }
 
@@ -73,9 +73,9 @@ void SD_LowLevel_DMA_RxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
     DMA2_Channel4->CCR &= ~0x00000001;
 
     DMA2->IFCR = DMA_ISR_GIF1 << 4;
-    
+
     DMA2_CSELR->CSELR &= ~(0xf << (3 * 4));   // channel 4
-    DMA2_CSELR->CSELR |= (uint32_t) (0x07 << (3 * 4)); 
+    DMA2_CSELR->CSELR |= (uint32_t) (0x07 << (3 * 4));
 
     DMA2_Channel4->CCR   = DMA_PERIPH_TO_MEMORY | DMA_PINC_DISABLE | DMA_MINC_ENABLE | \
                            DMA_PDATAALIGN_WORD | DMA_MDATAALIGN_WORD | DMA_NORMAL | DMA_PRIORITY_MEDIUM;
@@ -130,7 +130,7 @@ void SD_LowLevel_Init(void)
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
         GPIO_InitStruct.Alternate = GPIO_AF12_SDMMC1;
         HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-        
+
         GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_10 | GPIO_PIN_11
                               | GPIO_PIN_12;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;

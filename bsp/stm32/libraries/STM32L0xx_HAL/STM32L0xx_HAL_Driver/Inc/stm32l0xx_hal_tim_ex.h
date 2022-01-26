@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @brief   Header file of TIM HAL Extended module.
   ******************************************************************************
-    * @attention
+  * @attention
   *
   * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
   * All rights reserved.</center></h2>
@@ -74,17 +74,17 @@ extern "C" {
 #if defined(TIM3)
 #if defined(USB)
 #define TIM3_TI4_USB_NOE                  0x00000000U                               /*!< USB_NOE selected selected for PC9 (AF2) remapping */
-#define TIM3_TI4_GPIOC9_AF2               TIM3_OR_TI4_RMP                           /*!< TIM3_CH4 selected for PC9 (AF2) remapping */
 #endif /* USB */
 
+#define TIM3_TI4_GPIOC9_AF2               TIM3_OR_TI4_RMP                           /*!< TIM3_CH4 selected for PC9 (AF2) remapping */
 #define TIM3_TI2_GPIO_DEF                 0x00000000U                               /*!< TIM3_CH2 selected for PB5 (AF4) remapping */
 #define TIM3_TI2_GPIOB5_AF4               TIM3_OR_TI2_RMP                           /*!< TIM22_CH2 selected for PB5 (AF4) remapping */
 
 #if defined(USB)
 #define TIM3_TI1_USB_SOF                  0x00000000U                               /*!< TIM3 TI1 input connected to USB_SOF */
-#define TIM3_TI1_GPIO                     TIM3_OR_TI1_RMP                           /*!< TIM3 TI1 input connected to ORed GPIOs */
 #endif /* USB */
 
+#define TIM3_TI1_GPIO                     TIM3_OR_TI1_RMP                           /*!< TIM3 TI1 input connected to ORed GPIOs */
 #define TIM3_ETR_GPIO                     0x00000000U                               /*!< TIM3 ETR input connected to ORed GPIOs */
 #define TIM3_ETR_HSI                      TIM3_OR_ETR_RMP_1                         /*!< TIM3_ETR input is connected to HSI48 clock */
 #endif /* TIM3 */
@@ -152,54 +152,54 @@ extern "C" {
 #if defined(TIM3) && defined(TIM22)
 
 #define IS_TIM_REMAP(__INSTANCE__, __TIM_REMAP__)               \
-        ((((__INSTANCE__) == TIM2)   &&  ((__TIM_REMAP__) <=  (TIM2_OR_TI4_RMP  | TIM2_OR_ETR_RMP))) || \
-         (((__INSTANCE__) == TIM22)  &&  ((__TIM_REMAP__) <=  (TIM22_OR_TI1_RMP | TIM22_OR_ETR_RMP))) || \
-         (((__INSTANCE__) == TIM21)  &&  ((__TIM_REMAP__) <=  (TIM21_OR_ETR_RMP | TIM21_OR_TI1_RMP | TIM21_OR_TI2_RMP))) || \
-         (((__INSTANCE__) == TIM3)   &&  ((__TIM_REMAP__) <=  (TIM3_OR_ETR_RMP  | TIM3_OR_TI1_RMP  | TIM3_OR_TI2_RMP | TIM3_OR_TI4_RMP))))
+  ((((__INSTANCE__) == TIM2)   &&  ((__TIM_REMAP__) <=  (TIM2_OR_TI4_RMP  | TIM2_OR_ETR_RMP))) || \
+   (((__INSTANCE__) == TIM22)  &&  ((__TIM_REMAP__) <=  (TIM22_OR_TI1_RMP | TIM22_OR_ETR_RMP))) || \
+   (((__INSTANCE__) == TIM21)  &&  ((__TIM_REMAP__) <=  (TIM21_OR_ETR_RMP | TIM21_OR_TI1_RMP | TIM21_OR_TI2_RMP))) || \
+   (((__INSTANCE__) == TIM3)   &&  ((__TIM_REMAP__) <=  (TIM3_OR_ETR_RMP  | TIM3_OR_TI1_RMP  | TIM3_OR_TI2_RMP | TIM3_OR_TI4_RMP))))
 
 #define IS_CHANNEL_AVAILABLE(__INSTANCE__, __CHANNEL__)     \
-        ((((__INSTANCE__) == TIM2)   &&  (((__CHANNEL__) == TIM_CHANNEL_1)   ||   \
-                                          ((__CHANNEL__) == TIM_CHANNEL_2)   ||   \
-                                          ((__CHANNEL__) == TIM_CHANNEL_3)   ||   \
-                                          ((__CHANNEL__) == TIM_CHANNEL_4))) ||   \
-          (((__INSTANCE__) == TIM3) &&   (((__CHANNEL__) == TIM_CHANNEL_1)   ||   \
-                                          ((__CHANNEL__) == TIM_CHANNEL_2)   ||   \
-                                          ((__CHANNEL__) == TIM_CHANNEL_3)   ||   \
-                                          ((__CHANNEL__) == TIM_CHANNEL_4))) ||   \
-          (((__INSTANCE__) == TIM21) &&  (((__CHANNEL__) == TIM_CHANNEL_1)   ||   \
-                                          ((__CHANNEL__) == TIM_CHANNEL_2))) ||   \
-          (((__INSTANCE__) == TIM22) &&  (((__CHANNEL__) == TIM_CHANNEL_1)   ||   \
-                                          ((__CHANNEL__) == TIM_CHANNEL_2))))
+  ((((__INSTANCE__) == TIM2)  &&  (((__CHANNEL__) == TIM_CHANNEL_1)   ||   \
+                                   ((__CHANNEL__) == TIM_CHANNEL_2)   ||   \
+                                   ((__CHANNEL__) == TIM_CHANNEL_3)   ||   \
+                                   ((__CHANNEL__) == TIM_CHANNEL_4))) ||   \
+   (((__INSTANCE__) == TIM3) &&   (((__CHANNEL__) == TIM_CHANNEL_1)   ||   \
+                                   ((__CHANNEL__) == TIM_CHANNEL_2)   ||   \
+                                   ((__CHANNEL__) == TIM_CHANNEL_3)   ||   \
+                                   ((__CHANNEL__) == TIM_CHANNEL_4))) ||   \
+   (((__INSTANCE__) == TIM21) &&  (((__CHANNEL__) == TIM_CHANNEL_1)   ||   \
+                                   ((__CHANNEL__) == TIM_CHANNEL_2))) ||   \
+   (((__INSTANCE__) == TIM22) &&  (((__CHANNEL__) == TIM_CHANNEL_1)   ||   \
+                                   ((__CHANNEL__) == TIM_CHANNEL_2))))
 
 #elif defined(TIM22)
 
 #define IS_TIM_REMAP(__INSTANCE__, __TIM_REMAP__)               \
-        ((((__INSTANCE__) == TIM2)   &&  ((__TIM_REMAP__) <=  (TIM2_OR_TI4_RMP  | TIM2_OR_ETR_RMP))) || \
-         (((__INSTANCE__) == TIM22)  &&  ((__TIM_REMAP__) <=  (TIM22_OR_TI1_RMP | TIM22_OR_ETR_RMP))) || \
-         (((__INSTANCE__) == TIM21)  &&  ((__TIM_REMAP__) <=  (TIM21_OR_ETR_RMP | TIM21_OR_TI1_RMP | TIM21_OR_TI2_RMP))))
+  ((((__INSTANCE__) == TIM2)   &&  ((__TIM_REMAP__) <=  (TIM2_OR_TI4_RMP  | TIM2_OR_ETR_RMP))) || \
+   (((__INSTANCE__) == TIM22)  &&  ((__TIM_REMAP__) <=  (TIM22_OR_TI1_RMP | TIM22_OR_ETR_RMP))) || \
+   (((__INSTANCE__) == TIM21)  &&  ((__TIM_REMAP__) <=  (TIM21_OR_ETR_RMP | TIM21_OR_TI1_RMP | TIM21_OR_TI2_RMP))))
 
 #define IS_CHANNEL_AVAILABLE(__INSTANCE__, __CHANNEL__)     \
-        ((((__INSTANCE__) == TIM2)   &&   (((__CHANNEL__) == TIM_CHANNEL_1)   || \
-                                           ((__CHANNEL__) == TIM_CHANNEL_2)   || \
-                                           ((__CHANNEL__) == TIM_CHANNEL_3)   || \
-                                           ((__CHANNEL__) == TIM_CHANNEL_4))) || \
-          (((__INSTANCE__) == TIM21)  &&  (((__CHANNEL__) == TIM_CHANNEL_1)   || \
-                                           ((__CHANNEL__) == TIM_CHANNEL_2))) || \
-          (((__INSTANCE__) == TIM22)  &&  (((__CHANNEL__) == TIM_CHANNEL_1)   || \
-                                           ((__CHANNEL__) == TIM_CHANNEL_2))))
+  ((((__INSTANCE__) == TIM2)  &&   (((__CHANNEL__) == TIM_CHANNEL_1)   || \
+                                    ((__CHANNEL__) == TIM_CHANNEL_2)   || \
+                                    ((__CHANNEL__) == TIM_CHANNEL_3)   || \
+                                    ((__CHANNEL__) == TIM_CHANNEL_4))) || \
+   (((__INSTANCE__) == TIM21)  &&  (((__CHANNEL__) == TIM_CHANNEL_1)   || \
+                                    ((__CHANNEL__) == TIM_CHANNEL_2))) || \
+   (((__INSTANCE__) == TIM22)  &&  (((__CHANNEL__) == TIM_CHANNEL_1)   || \
+                                    ((__CHANNEL__) == TIM_CHANNEL_2))))
 #else
 
 #define IS_TIM_REMAP(__INSTANCE__, __TIM_REMAP__)               \
-        ((((__INSTANCE__) == TIM2)   &&  ((__TIM_REMAP__) <=  (TIM2_OR_TI4_RMP  | TIM2_OR_ETR_RMP))) || \
-         (((__INSTANCE__) == TIM21)  &&  ((__TIM_REMAP__) <=  (TIM21_OR_ETR_RMP | TIM21_OR_TI1_RMP | TIM21_OR_TI2_RMP))))
+  ((((__INSTANCE__) == TIM2)   &&  ((__TIM_REMAP__) <=  (TIM2_OR_TI4_RMP  | TIM2_OR_ETR_RMP))) || \
+   (((__INSTANCE__) == TIM21)  &&  ((__TIM_REMAP__) <=  (TIM21_OR_ETR_RMP | TIM21_OR_TI1_RMP | TIM21_OR_TI2_RMP))))
 
 #define IS_CHANNEL_AVAILABLE(__INSTANCE__, __CHANNEL__)     \
-        ((((__INSTANCE__) == TIM2)   &&   (((__CHANNEL__) == TIM_CHANNEL_1)   || \
-                                           ((__CHANNEL__) == TIM_CHANNEL_2)   || \
-                                           ((__CHANNEL__) == TIM_CHANNEL_3)   || \
-                                           ((__CHANNEL__) == TIM_CHANNEL_4))) || \
-          (((__INSTANCE__) == TIM21)  &&  (((__CHANNEL__) == TIM_CHANNEL_1)   || \
-                                           ((__CHANNEL__) == TIM_CHANNEL_2))))
+  ((((__INSTANCE__) == TIM2)  &&   (((__CHANNEL__) == TIM_CHANNEL_1)   || \
+                                    ((__CHANNEL__) == TIM_CHANNEL_2)   || \
+                                    ((__CHANNEL__) == TIM_CHANNEL_3)   || \
+                                    ((__CHANNEL__) == TIM_CHANNEL_4))) || \
+   (((__INSTANCE__) == TIM21)  &&  (((__CHANNEL__) == TIM_CHANNEL_1)   || \
+                                    ((__CHANNEL__) == TIM_CHANNEL_2))))
 #endif /* TIM3 && TIM22 */
 
 /**
@@ -213,11 +213,12 @@ extern "C" {
   */
 
 /** @addtogroup TIMEx_Exported_Functions_Group5 Extended Peripheral Control functions
- *  @brief    Peripheral Control functions
- * @{
- */
+  *  @brief    Peripheral Control functions
+  * @{
+  */
 /* Extended Control functions  ************************************************/
-HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim, TIM_MasterConfigTypeDef *sMasterConfig);
+HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
+                                                        TIM_MasterConfigTypeDef *sMasterConfig);
 HAL_StatusTypeDef HAL_TIMEx_RemapConfig(TIM_HandleTypeDef *htim, uint32_t Remap);
 /**
   * @}

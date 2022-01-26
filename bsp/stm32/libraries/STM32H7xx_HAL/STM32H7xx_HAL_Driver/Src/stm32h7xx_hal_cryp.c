@@ -65,7 +65,13 @@
          new parametres, finally user can  start encryption/decryption.
 
        (#)Call HAL_CRYP_DeInit() to deinitialize the CRYP peripheral.
-
+       
+       (#)To process a single message with consecutive calls to HAL_CRYP_Encrypt() or HAL_CRYP_Decrypt()
+          without having to configure again the Key or the Initialization Vector between each API call,
+          the field KeyIVConfigSkip of the initialization structure must be set to CRYP_KEYIVCONFIG_ONCE.
+          Same is true for consecutive calls of HAL_CRYP_Encrypt_IT(), HAL_CRYP_Decrypt_IT(), HAL_CRYP_Encrypt_DMA()
+          or HAL_CRYP_Decrypt_DMA().
+          
     [..]
       The cryptographic processor supports following standards:
       (#) The data encryption standard (DES) and Triple-DES (TDES) supported only by CRYP1 IP:
@@ -97,6 +103,8 @@
          (##) Payload phase: IP processes the plaintext (P) with hash computation + keystream
           encryption + data XORing. It works in a similar way for ciphertext (C).
          (##) Final phase: IP generates the authenticated tag (T) using the last block of data.
+          HAL_CRYPEx_AESGCM_GenerateAuthTAG API used in this phase to generate 4 words which correspond
+          to the Tag. user should consider only part of this 4 words, if Tag length is less than 128 bits. 
       (#)  structure of message construction in GCM is defined as below  :
          (##) 16 bytes Initial Counter Block (ICB)composed of IV and counter
          (##) The authenticated header A (also knows as Additional Authentication Data AAD)
@@ -137,6 +145,8 @@
          (##) Payload phase: IP processes the plaintext (P) with hash computation + keystream
           encryption + data XORing. It works in a similar way for ciphertext (C).
          (##) Final phase: IP generates the authenticated tag (T) using the last block of data.
+         HAL_CRYPEx_AESCCM_GenerateAuthTAG API used in this phase to generate 4 words which correspond to the Tag.
+         user should consider only part of this 4 words, if Tag length is less than 128 bits
 
   *** Callback registration ***
   =============================
@@ -415,6 +425,7 @@ HAL_StatusTypeDef HAL_CRYP_Init(CRYP_HandleTypeDef *hcryp)
   assert_param(IS_CRYP_KEYSIZE(hcryp->Init.KeySize));
   assert_param(IS_CRYP_DATATYPE(hcryp->Init.DataType));
   assert_param(IS_CRYP_ALGORITHM(hcryp->Init.Algorithm));
+  assert_param(IS_CRYP_INIT(hcryp->Init.KeyIVConfigSkip));
 
 #if (USE_HAL_CRYP_REGISTER_CALLBACKS == 1)
   if (hcryp->State == HAL_CRYP_STATE_RESET)
@@ -455,6 +466,9 @@ HAL_StatusTypeDef HAL_CRYP_Init(CRYP_HandleTypeDef *hcryp)
   /* Reset Error Code field */
   hcryp->ErrorCode = HAL_CRYP_ERROR_NONE;
 
+  /* Reset peripheral Key and IV configuration flag */
+  hcryp->KeyIVConfig = 0U;
+  
   /* Change the CRYP state */
   hcryp->State = HAL_CRYP_STATE_READY;
 
@@ -890,7 +904,7 @@ HAL_StatusTypeDef HAL_CRYP_UnRegisterCallback(CRYP_HandleTypeDef *hcryp, HAL_CRY
   * @param  hcryp: pointer to a CRYP_HandleTypeDef structure that contains
   *         the configuration information for CRYP module
   * @param  Input: Pointer to the input buffer (plaintext)
-  * @param  Size: Length of the plaintext buffer in word.
+  * @param  Size: Length of the plaintext buffer either in word or in byte, according to DataWidthUnit.
   * @param  Output: Pointer to the output buffer(ciphertext)
   * @param  Timeout: Specify Timeout value
   * @retval HAL status
@@ -1020,7 +1034,7 @@ HAL_StatusTypeDef HAL_CRYP_Encrypt(CRYP_HandleTypeDef *hcryp, uint32_t *Input, u
   * @param  hcryp: pointer to a CRYP_HandleTypeDef structure that contains
   *         the configuration information for CRYP module
   * @param  Input: Pointer to the input buffer (ciphertext )
-  * @param  Size: Length of the plaintext buffer in word.
+  * @param  Size: Length of the plaintext buffer either in word or in byte, according to DataWidthUnit
   * @param  Output: Pointer to the output buffer(plaintext)
   * @param  Timeout: Specify Timeout value
   * @retval HAL status
@@ -1151,7 +1165,7 @@ HAL_StatusTypeDef HAL_CRYP_Decrypt(CRYP_HandleTypeDef *hcryp, uint32_t *Input, u
   * @param  hcryp: pointer to a CRYP_HandleTypeDef structure that contains
   *         the configuration information for CRYP module
   * @param  Input: Pointer to the input buffer (plaintext)
-  * @param  Size: Length of the plaintext buffer in word
+  * @param  Size: Length of the plaintext buffer either in word or in byte, according to DataWidthUnit
   * @param  Output: Pointer to the output buffer(ciphertext)
   * @retval HAL status
   */
@@ -1268,7 +1282,7 @@ HAL_StatusTypeDef HAL_CRYP_Encrypt_IT(CRYP_HandleTypeDef *hcryp, uint32_t *Input
   * @param  hcryp: pointer to a CRYP_HandleTypeDef structure that contains
   *         the configuration information for CRYP module
   * @param  Input: Pointer to the input buffer (ciphertext )
-  * @param  Size: Length of the plaintext buffer in word.
+  * @param  Size: Length of the plaintext buffer either in word or in byte, according to DataWidthUnit
   * @param  Output: Pointer to the output buffer(plaintext)
   * @retval HAL status
   */
@@ -1387,14 +1401,15 @@ HAL_StatusTypeDef HAL_CRYP_Decrypt_IT(CRYP_HandleTypeDef *hcryp, uint32_t *Input
   * @param  hcryp: pointer to a CRYP_HandleTypeDef structure that contains
   *         the configuration information for CRYP module
   * @param  Input: Pointer to the input buffer (plaintext)
-  * @param  Size: Length of the plaintext buffer in word.
+  * @param  Size: Length of the plaintext buffer either in word or in byte, according to DataWidthUnit
   * @param  Output: Pointer to the output buffer(ciphertext)
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYP_Encrypt_DMA(CRYP_HandleTypeDef *hcryp, uint32_t *Input, uint16_t Size, uint32_t *Output)
 {
-  uint32_t algo;
   HAL_StatusTypeDef status = HAL_OK;
+  uint32_t algo;
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
   if (hcryp->State == HAL_CRYP_STATE_READY)
   {
@@ -1466,17 +1481,37 @@ HAL_StatusTypeDef HAL_CRYP_Encrypt_DMA(CRYP_HandleTypeDef *hcryp, uint32_t *Inpu
       case CRYP_AES_CBC:
       case CRYP_AES_CTR:
 
-        /*  Set the Key*/
-        CRYP_SetKey(hcryp, hcryp->Init.KeySize);
-
-        /* Set the Initialization Vector IV */
-        if (hcryp->Init.Algorithm != CRYP_AES_ECB)
+        if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
         {
-          hcryp->Instance->IV0LR = *(uint32_t *)(hcryp->Init.pInitVect);
-          hcryp->Instance->IV0RR = *(uint32_t *)(hcryp->Init.pInitVect + 1);
-          hcryp->Instance->IV1LR = *(uint32_t *)(hcryp->Init.pInitVect + 2);
-          hcryp->Instance->IV1RR = *(uint32_t *)(hcryp->Init.pInitVect + 3);
+          if (hcryp->KeyIVConfig == 1U)
+          {
+            /* If the Key and IV configuration has to be done only once
+               and if it has already been done, skip it */
+            DoKeyIVConfig = 0U;
+          }
+          else
+          {
+            /* If the Key and IV configuration has to be done only once
+               and if it has not been done already, do it and set KeyIVConfig
+               to keep track it won't have to be done again next time */
+            hcryp->KeyIVConfig = 1U;
+          }
         }
+
+        if (DoKeyIVConfig == 1U)
+        {
+          /*  Set the Key*/
+          CRYP_SetKey(hcryp, hcryp->Init.KeySize);
+
+          /* Set the Initialization Vector*/
+          if (hcryp->Init.Algorithm != CRYP_AES_ECB)
+          {
+          hcryp->Instance->IV0LR = *(uint32_t *)(hcryp->Init.pInitVect);
+          hcryp->Instance->IV0RR = *(uint32_t *)(hcryp->Init.pInitVect + 1U);
+          hcryp->Instance->IV1LR = *(uint32_t *)(hcryp->Init.pInitVect + 2U);
+          hcryp->Instance->IV1RR = *(uint32_t *)(hcryp->Init.pInitVect + 3U);
+          }
+        } /* if (DoKeyIVConfig == 1U) */
 
         /* Set the phase */
         hcryp->Phase = CRYP_PHASE_PROCESS;
@@ -1519,7 +1554,7 @@ HAL_StatusTypeDef HAL_CRYP_Encrypt_DMA(CRYP_HandleTypeDef *hcryp, uint32_t *Inpu
   * @param  hcryp: pointer to a CRYP_HandleTypeDef structure that contains
   *         the configuration information for CRYP module
   * @param  Input: Pointer to the input buffer (ciphertext )
-  * @param  Size: Length of the plaintext buffer in word
+  * @param  Size: Length of the plaintext buffer either in word or in byte, according to DataWidthUnit
   * @param  Output: Pointer to the output buffer(plaintext)
   * @retval HAL status
   */
@@ -1955,18 +1990,39 @@ static void CRYP_TDES_IT(CRYP_HandleTypeDef *hcryp)
 static HAL_StatusTypeDef CRYP_AES_Encrypt(CRYP_HandleTypeDef *hcryp, uint32_t Timeout)
 {
   uint16_t outcount;  /* Temporary CrypOutCount Value */
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
-  /*  Set the Key*/
-  CRYP_SetKey(hcryp, hcryp->Init.KeySize);
-
-  if (hcryp->Init.Algorithm != CRYP_AES_ECB)
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
   {
-    /* Set the Initialization Vector*/
-    hcryp->Instance->IV0LR = *(uint32_t *)(hcryp->Init.pInitVect);
-    hcryp->Instance->IV0RR = *(uint32_t *)(hcryp->Init.pInitVect + 1);
-    hcryp->Instance->IV1LR = *(uint32_t *)(hcryp->Init.pInitVect + 2);
-    hcryp->Instance->IV1RR = *(uint32_t *)(hcryp->Init.pInitVect + 3);
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has not been done already, do it and set KeyIVConfig
+         to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+    }
   }
+
+  if (DoKeyIVConfig == 1U)
+  {
+    /*  Set the Key*/
+    CRYP_SetKey(hcryp, hcryp->Init.KeySize);
+
+    if (hcryp->Init.Algorithm != CRYP_AES_ECB)
+    {
+      /* Set the Initialization Vector*/
+      hcryp->Instance->IV0LR = *(uint32_t *)(hcryp->Init.pInitVect);
+      hcryp->Instance->IV0RR = *(uint32_t *)(hcryp->Init.pInitVect + 1U);
+      hcryp->Instance->IV1LR = *(uint32_t *)(hcryp->Init.pInitVect + 2U);
+      hcryp->Instance->IV1RR = *(uint32_t *)(hcryp->Init.pInitVect + 3U);
+    }
+  } /* if (DoKeyIVConfig == 1U) */
 
   /* Set the phase */
   hcryp->Phase = CRYP_PHASE_PROCESS;
@@ -2002,18 +2058,40 @@ static HAL_StatusTypeDef CRYP_AES_Encrypt(CRYP_HandleTypeDef *hcryp, uint32_t Ti
   */
 static HAL_StatusTypeDef CRYP_AES_Encrypt_IT(CRYP_HandleTypeDef *hcryp)
 {
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
-  /*  Set the Key*/
-  CRYP_SetKey(hcryp, hcryp->Init.KeySize);
-
-  if (hcryp->Init.Algorithm != CRYP_AES_ECB)
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
   {
-    /* Set the Initialization Vector*/
-    hcryp->Instance->IV0LR = *(uint32_t *)(hcryp->Init.pInitVect);
-    hcryp->Instance->IV0RR = *(uint32_t *)(hcryp->Init.pInitVect + 1);
-    hcryp->Instance->IV1LR = *(uint32_t *)(hcryp->Init.pInitVect + 2);
-    hcryp->Instance->IV1RR = *(uint32_t *)(hcryp->Init.pInitVect + 3);
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has not been done already, do it and set KeyIVConfig
+         to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+    }
   }
+
+  if (DoKeyIVConfig == 1U)
+  {
+    /*  Set the Key*/
+    CRYP_SetKey(hcryp, hcryp->Init.KeySize);
+
+    if (hcryp->Init.Algorithm != CRYP_AES_ECB)
+    {
+      /* Set the Initialization Vector*/
+      hcryp->Instance->IV0LR = *(uint32_t *)(hcryp->Init.pInitVect);
+      hcryp->Instance->IV0RR = *(uint32_t *)(hcryp->Init.pInitVect + 1U);
+      hcryp->Instance->IV1LR = *(uint32_t *)(hcryp->Init.pInitVect + 2U);
+      hcryp->Instance->IV1RR = *(uint32_t *)(hcryp->Init.pInitVect + 3U);
+    }
+  } /* if (DoKeyIVConfig == 1U) */
+
   /* Set the phase */
   hcryp->Phase = CRYP_PHASE_PROCESS;
 
@@ -2047,7 +2125,27 @@ static HAL_StatusTypeDef CRYP_AES_Encrypt_IT(CRYP_HandleTypeDef *hcryp)
 static HAL_StatusTypeDef CRYP_AES_Decrypt(CRYP_HandleTypeDef *hcryp, uint32_t Timeout)
 {
   uint16_t outcount;  /* Temporary CrypOutCount Value */
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
+  {
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has not been done already, do it and set KeyIVConfig
+         to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+    }
+  }
+
+  if (DoKeyIVConfig == 1U)
+  {
   /*  Key preparation for ECB/CBC */
   if (hcryp->Init.Algorithm != CRYP_AES_CTR)   /*ECB or CBC*/
   {
@@ -2092,6 +2190,8 @@ static HAL_StatusTypeDef CRYP_AES_Decrypt(CRYP_HandleTypeDef *hcryp, uint32_t Ti
     hcryp->Instance->IV1LR = *(uint32_t *)(hcryp->Init.pInitVect + 2);
     hcryp->Instance->IV1RR = *(uint32_t *)(hcryp->Init.pInitVect + 3);
   }
+} /* if (DoKeyIVConfig == 1U) */
+    
   /* Set the phase */
   hcryp->Phase = CRYP_PHASE_PROCESS;
 
@@ -2127,7 +2227,27 @@ static HAL_StatusTypeDef CRYP_AES_Decrypt(CRYP_HandleTypeDef *hcryp, uint32_t Ti
 static HAL_StatusTypeDef CRYP_AES_Decrypt_IT(CRYP_HandleTypeDef *hcryp)
 {
   __IO uint32_t count = 0U;
+   uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
+  {
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has not been done already, do it and set KeyIVConfig
+         to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+    }
+  }
+
+  if (DoKeyIVConfig == 1U)
+  {
   /*  Key preparation for ECB/CBC */
   if (hcryp->Init.Algorithm != CRYP_AES_CTR)
   {
@@ -2175,6 +2295,8 @@ static HAL_StatusTypeDef CRYP_AES_Decrypt_IT(CRYP_HandleTypeDef *hcryp)
     hcryp->Instance->IV1LR = *(uint32_t *)(hcryp->Init.pInitVect + 2);
     hcryp->Instance->IV1RR = *(uint32_t *)(hcryp->Init.pInitVect + 3);
   }
+} /* if (DoKeyIVConfig == 1U) */
+    
   /* Set the phase */
   hcryp->Phase = CRYP_PHASE_PROCESS;
   if (hcryp->Size != 0U)
@@ -2205,7 +2327,27 @@ static HAL_StatusTypeDef CRYP_AES_Decrypt_IT(CRYP_HandleTypeDef *hcryp)
 static HAL_StatusTypeDef CRYP_AES_Decrypt_DMA(CRYP_HandleTypeDef *hcryp)
 {
   __IO uint32_t count = 0U;
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
+  {
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has not been done already, do it and set KeyIVConfig
+         to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+    }
+  }
+
+  if (DoKeyIVConfig == 1U)
+  {
   /*  Key preparation for ECB/CBC */
   if (hcryp->Init.Algorithm != CRYP_AES_CTR)
   {
@@ -2255,6 +2397,8 @@ static HAL_StatusTypeDef CRYP_AES_Decrypt_DMA(CRYP_HandleTypeDef *hcryp)
     hcryp->Instance->IV1LR = *(uint32_t *)(hcryp->Init.pInitVect + 2);
     hcryp->Instance->IV1RR = *(uint32_t *)(hcryp->Init.pInitVect + 3);
   }
+} /* if (DoKeyIVConfig == 1U) */
+
   /* Set the phase */
   hcryp->Phase = CRYP_PHASE_PROCESS;
 
@@ -2313,8 +2457,8 @@ static void CRYP_DMAOutCplt(DMA_HandleTypeDef *hdma)
   uint32_t temp;  /* Temporary CrypOutBuff */
   uint32_t temp_cr_algodir;  
   CRYP_HandleTypeDef *hcryp = (CRYP_HandleTypeDef *)((DMA_HandleTypeDef *)hdma)->Parent;
-  
-  
+
+
   /* Disable the DMA transfer for output FIFO */
   hcryp->Instance->DMACR &= (uint32_t)(~CRYP_DMACR_DOEN);
   
@@ -2332,17 +2476,17 @@ static void CRYP_DMAOutCplt(DMA_HandleTypeDef *hdma)
     if (hcryp->Version >= REV_ID_B)
 #endif /*End of not defined CRYP_VER_2_2*/
     {
-	  /* Case of AES GCM payload encryption or AES CCM payload decryption to get right tag */
+    /* Case of AES GCM payload encryption or AES CCM payload decryption to get right tag */
       temp_cr_algodir = hcryp->Instance->CR & CRYP_CR_ALGODIR;
       if (((temp_cr_algodir == CRYP_OPERATINGMODE_ENCRYPT) && (hcryp->Init.Algorithm == CRYP_AES_GCM)) ||
           ((temp_cr_algodir == CRYP_OPERATINGMODE_DECRYPT) && (hcryp->Init.Algorithm == CRYP_AES_CCM)))
       {
         /* Disable the CRYP */
         __HAL_CRYP_DISABLE(hcryp);
-      
+
         /* Specify the number of non-valid bytes using NPBLB register*/
         MODIFY_REG(hcryp->Instance->CR, CRYP_CR_NPBLB, npblb << 20);
-      
+
         /* Enable CRYP to start the final phase */
         __HAL_CRYP_ENABLE(hcryp);
       }
@@ -2524,9 +2668,10 @@ static void CRYP_SetDMAConfig(CRYP_HandleTypeDef *hcryp, uint32_t inputaddr, uin
 static void CRYP_AES_ProcessData(CRYP_HandleTypeDef *hcryp, uint32_t Timeout)
 {
 
-  uint32_t temp;  /* Temporary CrypOutBuff */
+  uint32_t temp[4];  /* Temporary CrypOutBuff */
   uint16_t incount;  /* Temporary CrypInCount Value */
   uint16_t outcount;  /* Temporary CrypOutCount Value */
+  uint32_t i;
 
   /*Temporary CrypOutCount Value*/
   incount = hcryp->CrypInCount;
@@ -2570,18 +2715,17 @@ static void CRYP_AES_ProcessData(CRYP_HandleTypeDef *hcryp, uint32_t Timeout)
   if (((hcryp->Instance->SR & CRYP_FLAG_OFNE) != 0x0U) && (outcount < ((hcryp->Size) / 4U)))
   {
     /* Read the output block from the Output FIFO and put them in temporary buffer then get CrypOutBuff from temporary buffer  */
-    temp  = hcryp->Instance->DOUT;
-    *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-    hcryp->CrypOutCount++;
-    temp  = hcryp->Instance->DOUT;
-    *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-    hcryp->CrypOutCount++;
-    temp  = hcryp->Instance->DOUT;
-    *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-    hcryp->CrypOutCount++;
-    temp  = hcryp->Instance->DOUT;
-    *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-    hcryp->CrypOutCount++;
+    for (i = 0U; i < 4U; i++)
+    {
+      temp[i] = hcryp->Instance->DOUT;
+    }
+    i = 0U;
+    while(((hcryp->CrypOutCount < ((hcryp->Size)/4U))) && (i<4U))
+    {
+      *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp[i];
+      hcryp->CrypOutCount++;
+      i++;
+    }
   }
 }
 
@@ -2595,9 +2739,10 @@ static void CRYP_AES_ProcessData(CRYP_HandleTypeDef *hcryp, uint32_t Timeout)
   */
 static void CRYP_AES_IT(CRYP_HandleTypeDef *hcryp)
 {
-  uint32_t temp;  /* Temporary CrypOutBuff */
+  uint32_t temp[4];  /* Temporary CrypOutBuff */
   uint16_t incount; /* Temporary CrypInCount Value */
   uint16_t outcount;  /* Temporary CrypOutCount Value */
+  uint32_t i;
 
   if (hcryp->State == HAL_CRYP_STATE_BUSY)
   {
@@ -2637,18 +2782,17 @@ static void CRYP_AES_IT(CRYP_HandleTypeDef *hcryp)
     if (((hcryp->Instance->SR & CRYP_FLAG_OFNE) != 0x0U) && (outcount < (hcryp->Size / 4U)))
     {
       /* Read the output block from the output FIFO and put them in temporary buffer then get CrypOutBuff from temporary buffer  */
-      temp  = hcryp->Instance->DOUT;
-      *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-      hcryp->CrypOutCount++;
-      temp  = hcryp->Instance->DOUT;
-      *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-      hcryp->CrypOutCount++;
-      temp  = hcryp->Instance->DOUT;
-      *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-      hcryp->CrypOutCount++;
-      temp  = hcryp->Instance->DOUT;
-      *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-      hcryp->CrypOutCount++;
+      for (i = 0U; i < 4U; i++)
+      {
+        temp[i] = hcryp->Instance->DOUT;
+      }
+      i = 0U;
+      while(((hcryp->CrypOutCount < ((hcryp->Size)/4U))) && (i<4U))
+      {
+        *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp[i];
+        hcryp->CrypOutCount++;
+        i++;
+      }
       if (hcryp->CrypOutCount == (hcryp->Size / 4U))
       {
         /* Disable interrupts */
@@ -2743,11 +2887,37 @@ static HAL_StatusTypeDef CRYP_AESGCM_Process(CRYP_HandleTypeDef *hcryp, uint32_t
   uint32_t tickstart;
   uint32_t wordsize = (uint32_t)(hcryp->Size) / 4U;
   uint32_t npblb ;
-  uint32_t temp ;  /* Temporary CrypOutBuff */
+  uint32_t temp[4];  /* Temporary CrypOutBuff */
   uint32_t index ;
   uint32_t lastwordsize ;
   uint16_t outcount;  /* Temporary CrypOutCount Value */
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
+  {
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+      hcryp->SizesSum += hcryp->Size; /* Compute message total payload length */
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has not been done already, do it and set KeyIVConfig
+         to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+      hcryp->SizesSum = hcryp->Size; /* Merely store payload length */
+    }
+  }
+  else
+  {
+    hcryp->SizesSum = hcryp->Size;
+  }
+
+  if (DoKeyIVConfig == 1U)
+  {
   /*  Reset CrypHeaderCount */
   hcryp->CrypHeaderCount = 0U;
 
@@ -2820,7 +2990,8 @@ static HAL_StatusTypeDef CRYP_AESGCM_Process(CRYP_HandleTypeDef *hcryp, uint32_t
 
   /* Enable the CRYP peripheral */
   __HAL_CRYP_ENABLE(hcryp);
-
+} /* if (DoKeyIVConfig == 1U) */
+  
   if ((hcryp->Size % 16U) != 0U)
   {
     /* recalculate  wordsize */
@@ -2933,9 +3104,11 @@ static HAL_StatusTypeDef CRYP_AESGCM_Process(CRYP_HandleTypeDef *hcryp, uint32_t
         for (index = 0U; index < 4U; index++)
         {
           /* Read the output block from the output FIFO and put them in temporary buffer then get CrypOutBuff from temporary buffer */
-          temp = hcryp->Instance->DOUT;
-
-          *(uint32_t *)(hcryp->pCrypOutBuffPtr + (hcryp->CrypOutCount)) = temp;
+          temp[index] = hcryp->Instance->DOUT;
+        }
+        for (index=0; index<lastwordsize; index++)
+        {
+          *(uint32_t *)(hcryp->pCrypOutBuffPtr + (hcryp->CrypOutCount)) = temp[index];
           hcryp->CrypOutCount++;
         }
       }
@@ -2950,7 +3123,6 @@ static HAL_StatusTypeDef CRYP_AESGCM_Process(CRYP_HandleTypeDef *hcryp, uint32_t
 #endif /*End of not defined CRYP_VER_2_2*/
   }
 
-
   /* Return function status */
   return HAL_OK;
 }
@@ -2964,7 +3136,34 @@ static HAL_StatusTypeDef CRYP_AESGCM_Process(CRYP_HandleTypeDef *hcryp, uint32_t
 static HAL_StatusTypeDef CRYP_AESGCM_Process_IT(CRYP_HandleTypeDef *hcryp)
 {
   __IO uint32_t count = 0U;
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
+  {
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+      and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+      hcryp->SizesSum += hcryp->Size; /* Compute message total payload length */
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+      and if it has not been done already, do it and set KeyIVConfig
+      to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+      hcryp->SizesSum = hcryp->Size; /* Merely store payload length */
+    }
+  }
+  else
+  {
+    hcryp->SizesSum = hcryp->Size;
+  }
+
+  /* Configure Key, IV and process message (header and payload) */
+  if (DoKeyIVConfig == 1U)
+  {
   /*  Reset CrypHeaderCount */
   hcryp->CrypHeaderCount = 0U;
 
@@ -3008,7 +3207,7 @@ static HAL_StatusTypeDef CRYP_AESGCM_Process_IT(CRYP_HandleTypeDef *hcryp)
 
   /* Select header phase */
   CRYP_SET_PHASE(hcryp, CRYP_PHASE_HEADER);
-
+  } /* end of if (DoKeyIVConfig == 1U) */
   /* Enable interrupts */
   __HAL_CRYP_ENABLE_IT(hcryp, CRYP_IT_INI);
 
@@ -3033,8 +3232,35 @@ static HAL_StatusTypeDef CRYP_AESGCM_Process_DMA(CRYP_HandleTypeDef *hcryp)
   uint32_t index;
   uint32_t npblb;
   uint32_t lastwordsize;
-  uint32_t temp;  /* Temporary CrypOutBuff */
-  /*  Reset CrypHeaderCount */
+  uint32_t temp[4];  /* Temporary CrypOutBuff */
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
+
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
+  {
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+      hcryp->SizesSum += hcryp->Size; /* Compute message total payload length */
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+         and if it has not been done already, do it and set KeyIVConfig
+         to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+      hcryp->SizesSum = hcryp->Size; /* Merely store payload length */
+    }
+  }
+  else
+  {
+    hcryp->SizesSum = hcryp->Size;
+  }
+
+  if (DoKeyIVConfig == 1U)
+  {
+ /*  Reset CrypHeaderCount */
   hcryp->CrypHeaderCount = 0U;
 
   /*************************** Init phase ************************************/
@@ -3099,6 +3325,8 @@ static HAL_StatusTypeDef CRYP_AESGCM_Process_DMA(CRYP_HandleTypeDef *hcryp)
   /* Select payload phase once the header phase is performed */
   CRYP_SET_PHASE(hcryp, CRYP_PHASE_PAYLOAD);
 
+} /* if (DoKeyIVConfig == 1U) */
+    
   if (hcryp->Size == 0U)
   {
     /* Process unLocked */
@@ -3191,11 +3419,14 @@ static HAL_StatusTypeDef CRYP_AESGCM_Process_DMA(CRYP_HandleTypeDef *hcryp)
     for (index = 0U; index < 4U; index++)
     {
       /* Read the output block from the output FIFO and put them in temporary buffer then get CrypOutBuff from temporary buffer */
-      temp = hcryp->Instance->DOUT;
-
-      *(uint32_t *)(hcryp->pCrypOutBuffPtr + (hcryp->CrypOutCount)) = temp;
+      temp[index] = hcryp->Instance->DOUT;
+    }
+    for (index=0; index<lastwordsize; index++)
+    {
+      *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp[index];
       hcryp->CrypOutCount++;
     }
+
     /* Change the CRYP state to ready */
     hcryp->State = HAL_CRYP_STATE_READY;
 
@@ -3221,10 +3452,36 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process(CRYP_HandleTypeDef *hcryp, uint32_t
   uint32_t wordsize = (uint32_t)(hcryp->Size) / 4U;
   uint32_t npblb ;
   uint32_t lastwordsize ;
-  uint32_t temp ;  /* Temporary CrypOutBuff */
+  uint32_t temp[4] ;  /* Temporary CrypOutBuff */
   uint32_t index ;
   uint16_t outcount;  /* Temporary CrypOutCount Value */
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
+  {
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+      and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+      hcryp->SizesSum += hcryp->Size; /* Compute message total payload length */
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+      and if it has not been done already, do it and set KeyIVConfig
+      to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+      hcryp->SizesSum = hcryp->Size; /* Merely store payload length */
+    }
+  }
+  else
+  {
+    hcryp->SizesSum = hcryp->Size;
+  }
+
+  if (DoKeyIVConfig == 1U)
+  {
   /*  Reset CrypHeaderCount */
   hcryp->CrypHeaderCount = 0U;
 
@@ -3347,6 +3604,8 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process(CRYP_HandleTypeDef *hcryp, uint32_t
   /* Enable the CRYP peripheral */
   __HAL_CRYP_ENABLE(hcryp);
 
+} /* if (DoKeyIVConfig == 1U) */
+   
   if ((hcryp->Size % 16U) != 0U)
   {
     /* recalculate  wordsize */
@@ -3458,11 +3717,13 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process(CRYP_HandleTypeDef *hcryp, uint32_t
         for (index = 0U; index < 4U; index++)
         {
           /* Read the output block from the output FIFO and put them in temporary buffer then get CrypOutBuff from temporary buffer */
-          temp = hcryp->Instance->DOUT;
-
-          *(uint32_t *)(hcryp->pCrypOutBuffPtr + (hcryp->CrypOutCount)) = temp;
-          hcryp->CrypOutCount++;
+          temp[index] = hcryp->Instance->DOUT;
         }
+        for (index=0; index<lastwordsize; index++)
+        {
+          *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp[index];
+          hcryp->CrypOutCount++;
+        } 
       }
     }
 #if !defined (CRYP_VER_2_2)
@@ -3489,7 +3750,34 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process(CRYP_HandleTypeDef *hcryp, uint32_t
 static HAL_StatusTypeDef CRYP_AESCCM_Process_IT(CRYP_HandleTypeDef *hcryp)
 {
   __IO uint32_t count = 0U;
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
+  {
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+      and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+      hcryp->SizesSum += hcryp->Size; /* Compute message total payload length */
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+      and if it has not been done already, do it and set KeyIVConfig
+      to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+      hcryp->SizesSum = hcryp->Size; /* Merely store payload length */
+    }
+  }
+  else
+  {
+    hcryp->SizesSum = hcryp->Size;
+  }
+
+  /* Configure Key, IV and process message (header and payload) */
+  if (DoKeyIVConfig == 1U)
+  {
   /*  Reset CrypHeaderCount */
   hcryp->CrypHeaderCount = 0U;
 
@@ -3575,7 +3863,7 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process_IT(CRYP_HandleTypeDef *hcryp)
 
   /* Select header phase */
   CRYP_SET_PHASE(hcryp, CRYP_PHASE_HEADER);
-
+} /* end of if (DoKeyIVConfig == 1U) */
   /* Enable interrupts */
   __HAL_CRYP_ENABLE_IT(hcryp, CRYP_IT_INI);
 
@@ -3598,8 +3886,34 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process_DMA(CRYP_HandleTypeDef *hcryp)
   uint32_t index;
   uint32_t npblb;
   uint32_t lastwordsize;
-  uint32_t temp;  /* Temporary CrypOutBuff */
+  uint32_t temp[4];  /* Temporary CrypOutBuff */
+  uint32_t DoKeyIVConfig = 1U; /* By default, carry out peripheral Key and IV configuration */
 
+  if (hcryp->Init.KeyIVConfigSkip == CRYP_KEYIVCONFIG_ONCE)
+  {
+    if (hcryp->KeyIVConfig == 1U)
+    {
+      /* If the Key and IV configuration has to be done only once
+      and if it has already been done, skip it */
+      DoKeyIVConfig = 0U;
+      hcryp->SizesSum += hcryp->Size; /* Compute message total payload length */
+    }
+    else
+    {
+      /* If the Key and IV configuration has to be done only once
+      and if it has not been done already, do it and set KeyIVConfig
+      to keep track it won't have to be done again next time */
+      hcryp->KeyIVConfig = 1U;
+      hcryp->SizesSum = hcryp->Size; /* Merely store payload length */
+    }
+  }
+  else
+  {
+    hcryp->SizesSum = hcryp->Size;
+  }
+
+  if (DoKeyIVConfig == 1U)
+  {
   /*  Reset CrypHeaderCount */
   hcryp->CrypHeaderCount = 0U;
 
@@ -3707,6 +4021,7 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process_DMA(CRYP_HandleTypeDef *hcryp)
 
   /* Select payload phase once the header phase is performed */
   CRYP_SET_PHASE(hcryp, CRYP_PHASE_PAYLOAD);
+  } /* if (DoKeyIVConfig == 1U) */
 
   if (hcryp->Size == 0U)
   {
@@ -3798,11 +4113,14 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process_DMA(CRYP_HandleTypeDef *hcryp)
     for (index = 0U; index < 4U; index++)
     {
       /* Read the output block from the output FIFO and put them in temporary buffer then get CrypOutBuff from temporary buffer */
-      temp = hcryp->Instance->DOUT;
-
-      *(uint32_t *)(hcryp->pCrypOutBuffPtr + (hcryp->CrypOutCount)) = temp;
+      temp[index] = hcryp->Instance->DOUT;
+    }
+    for (index=0; index<lastwordsize; index++)
+    {
+      *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp[index];
       hcryp->CrypOutCount++;
     }
+
     /* Change the CRYP state to ready */
     hcryp->State = HAL_CRYP_STATE_READY;
 
@@ -3815,7 +4133,7 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process_DMA(CRYP_HandleTypeDef *hcryp)
 }
 
 /**
-  * @brief  Sets the payload phase in iterrupt mode
+  * @brief  Sets the payload phase in interrupt mode
   * @param  hcryp: pointer to a CRYP_HandleTypeDef structure that contains
   *         the configuration information for CRYP module
   * @retval state
@@ -3823,11 +4141,12 @@ static HAL_StatusTypeDef CRYP_AESCCM_Process_DMA(CRYP_HandleTypeDef *hcryp)
 static void CRYP_GCMCCM_SetPayloadPhase_IT(CRYP_HandleTypeDef *hcryp)
 {
   uint32_t loopcounter;
-  uint32_t temp;  /* Temporary CrypOutBuff */
+  uint32_t temp[4];  /* Temporary CrypOutBuff */
   uint32_t lastwordsize;
   uint32_t npblb;
   uint32_t temp_cr_algodir;
   uint8_t negative = 0U;
+  uint32_t i;
 
   /***************************** Payload phase *******************************/
 
@@ -3866,7 +4185,6 @@ static void CRYP_GCMCCM_SetPayloadPhase_IT(CRYP_HandleTypeDef *hcryp)
       {
         /* Disable interrupts */
         __HAL_CRYP_DISABLE_IT(hcryp, CRYP_IT_INI);
-        
         /* Call the input data transfer complete callback */
 #if (USE_HAL_CRYP_REGISTER_CALLBACKS == 1U)
         /*Call registered Input complete callback*/
@@ -3882,23 +4200,22 @@ static void CRYP_GCMCCM_SetPayloadPhase_IT(CRYP_HandleTypeDef *hcryp)
         if ((hcryp->Instance->SR & CRYP_FLAG_OFNE) != 0x0U)
         {
           /* Read the output block from the Output FIFO and put them in temporary buffer then get CrypOutBuff from temporary buffer  */
-          temp  = hcryp->Instance->DOUT;
-          *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-          hcryp->CrypOutCount++;
-          temp  = hcryp->Instance->DOUT;
-          *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-          hcryp->CrypOutCount++;
-          temp  = hcryp->Instance->DOUT;
-          *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-          hcryp->CrypOutCount++;
-          temp  = hcryp->Instance->DOUT;
-          *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp;
-          hcryp->CrypOutCount++;
+          for (i = 0U; i < 4U; i++)
+          {
+            temp[i] = hcryp->Instance->DOUT;
+          }
+          i = 0U;
+          while(((hcryp->CrypOutCount < ((hcryp->Size)/4U))) && (i<4U))
+          {
+            *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp[i];
+            hcryp->CrypOutCount++;
+            i++;
+          }
           if (((hcryp->Size / 4U) == hcryp->CrypOutCount) && ((hcryp->Size % 16U) == 0U))
           {
             /* Disable interrupts */
             __HAL_CRYP_DISABLE_IT(hcryp, CRYP_IT_OUTI);
-            
+
             /* Change the CRYP state */
             hcryp->State = HAL_CRYP_STATE_READY;
             
@@ -3935,16 +4252,16 @@ static void CRYP_GCMCCM_SetPayloadPhase_IT(CRYP_HandleTypeDef *hcryp)
     {
       /* Set Npblb in case of AES GCM payload encryption and CCM decryption to get right tag */
       temp_cr_algodir = hcryp->Instance->CR & CRYP_CR_ALGODIR;
-      
+
       if (((temp_cr_algodir == CRYP_OPERATINGMODE_ENCRYPT) && (hcryp->Init.Algorithm == CRYP_AES_GCM)) ||
           ((temp_cr_algodir == CRYP_OPERATINGMODE_DECRYPT) && (hcryp->Init.Algorithm == CRYP_AES_CCM)))
       {
         /* Disable the CRYP */
         __HAL_CRYP_DISABLE(hcryp);
-        
+
         /* Specify the number of non-valid bytes using NPBLB register*/
         MODIFY_REG(hcryp->Instance->CR, CRYP_CR_NPBLB, npblb << 20);
-        
+
         /* Enable CRYP to start the final phase */
         __HAL_CRYP_ENABLE(hcryp);
       }
@@ -3980,18 +4297,29 @@ static void CRYP_GCMCCM_SetPayloadPhase_IT(CRYP_HandleTypeDef *hcryp)
     /*Read the output block from the output FIFO */
     if ((hcryp->Instance->SR & CRYP_FLAG_OFNE) != 0x0U)
     {
-      for (loopcounter = 0U; loopcounter < 4U; loopcounter++)
+      for (i = 0U; i < 4U; i++)
       {
-        /* Read the output block from the output FIFO and put them in temporary buffer then get CrypOutBuff from temporary buffer */
-        temp = hcryp->Instance->DOUT;
-
-        *(uint32_t *)(hcryp->pCrypOutBuffPtr + (hcryp->CrypOutCount)) = temp;
+        temp[i] = hcryp->Instance->DOUT;
+      }
+      if (( (hcryp->Size)/4U)==0U)
+      {
+        for (i = 0U; (uint16_t)i<((hcryp->Size)%4U); i++)
+        {
+          *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp[i];
+          hcryp->CrypOutCount++;
+        }     
+      }
+      i = 0U;
+      while(((hcryp->CrypOutCount < ((hcryp->Size)/4U))) && (i<4U))
+      {
+        *(uint32_t *)(hcryp->pCrypOutBuffPtr + hcryp->CrypOutCount) = temp[i];
         hcryp->CrypOutCount++;
+        i++;
       }
     }
 
     /* Disable the output FIFO Interrupt */
-    if (hcryp->CrypOutCount > ((hcryp->Size) / 4U))
+    if (hcryp->CrypOutCount >= ((hcryp->Size) / 4U))
     {
       /* Disable interrupts */
       __HAL_CRYP_DISABLE_IT(hcryp, CRYP_IT_OUTI | CRYP_IT_INI);
@@ -4029,10 +4357,23 @@ static void CRYP_GCMCCM_SetPayloadPhase_IT(CRYP_HandleTypeDef *hcryp)
 static HAL_StatusTypeDef CRYP_GCMCCM_SetHeaderPhase(CRYP_HandleTypeDef *hcryp, uint32_t Timeout)
 {
   uint32_t loopcounter;
+  uint32_t size_in_bytes;
+  uint32_t tmp;
+  uint32_t mask[4] = {0x0U, 0x0FFU, 0x0FFFFU, 0x0FFFFFFU};
 
   /***************************** Header phase for GCM/GMAC or CCM *********************************/
 
-  if ((hcryp->Init.HeaderSize != 0U))
+
+  if (hcryp->Init.HeaderWidthUnit == CRYP_HEADERWIDTHUNIT_WORD)
+  {
+    size_in_bytes = hcryp->Init.HeaderSize * 4U;
+  }
+  else
+  {
+    size_in_bytes = hcryp->Init.HeaderSize;
+  }
+
+  if ((size_in_bytes != 0U))
   {
     /* Select header phase */
     CRYP_SET_PHASE(hcryp, CRYP_PHASE_HEADER);
@@ -4040,10 +4381,12 @@ static HAL_StatusTypeDef CRYP_GCMCCM_SetHeaderPhase(CRYP_HandleTypeDef *hcryp, u
     /* Enable the CRYP peripheral */
     __HAL_CRYP_ENABLE(hcryp);
 
-    if ((hcryp->Init.HeaderSize % 4U) == 0U)
+    /* If size_in_bytes is a multiple of blocks (a multiple of four 32-bits words ) */
+    if ((size_in_bytes % 16U) == 0U)
     {
-      /* HeaderSize %4, no padding */
-      for (loopcounter = 0U; (loopcounter < hcryp->Init.HeaderSize); loopcounter += 4U)
+      /*  No padding */
+      for (loopcounter = 0U; (loopcounter < (size_in_bytes / 4U)); loopcounter += 4U)
+      
       {
         hcryp->Instance->DIN = *(uint32_t *)(hcryp->Init.Header + hcryp->CrypHeaderCount);
         hcryp->CrypHeaderCount++ ;
@@ -4072,8 +4415,8 @@ static HAL_StatusTypeDef CRYP_GCMCCM_SetHeaderPhase(CRYP_HandleTypeDef *hcryp, u
     }
     else
     {
-      /*Write header block in the IN FIFO without last block */
-      for (loopcounter = 0U; (loopcounter < ((hcryp->Init.HeaderSize) - (hcryp->Init.HeaderSize % 4U))); loopcounter += 4U)
+      /* Write header block in the IN FIFO without last block */
+      for (loopcounter = 0U; (loopcounter < ((size_in_bytes / 16U) * 4U)); loopcounter += 4U)
       {
         hcryp->Instance->DIN = *(uint32_t *)(hcryp->Init.Header + hcryp->CrypHeaderCount);
         hcryp->CrypHeaderCount++ ;
@@ -4100,16 +4443,34 @@ static HAL_StatusTypeDef CRYP_GCMCCM_SetHeaderPhase(CRYP_HandleTypeDef *hcryp, u
         }
       }
       /*  Last block optionally pad the data with zeros*/
-      for (loopcounter = 0U; (loopcounter < (hcryp->Init.HeaderSize % 4U)); loopcounter++)
+      for (loopcounter = 0U; (loopcounter < ((size_in_bytes / 4U) % 4U)); loopcounter++)
       {
         hcryp->Instance->DIN = *(uint32_t *)(hcryp->Init.Header + hcryp->CrypHeaderCount);
         hcryp->CrypHeaderCount++ ;
       }
-      while (loopcounter < 4U)
+      /* If the header size is a multiple of words */
+      if ((size_in_bytes % 4U) == 0U)
       {
-        /* pad the data with zeros to have a complete block */
-        hcryp->Instance->DIN = 0x0U;
-        loopcounter++;
+        /* Pad the data with zeros to have a complete block */
+        while (loopcounter < 4U)
+        {
+          hcryp->Instance->DIN = 0x0U;
+          loopcounter++;
+        }
+      }
+      else
+      {
+         /* Enter last bytes, padded with zeroes */
+         tmp =  *(uint32_t *)(hcryp->Init.Header + hcryp->CrypHeaderCount);
+         tmp &= mask[size_in_bytes % 4U];
+         hcryp->Instance->DIN = tmp;
+         loopcounter++;
+         /* Pad the data with zeros to have a complete block */
+         while (loopcounter < 4U)
+         {
+           hcryp->Instance->DIN = 0x0U;
+           loopcounter++;
+         }
       }
       /* Wait for CCF IFEM to be raised */
       if (CRYP_WaitOnIFEMFlag(hcryp, Timeout) != HAL_OK)
@@ -4591,7 +4952,7 @@ static void CRYP_Workaround(CRYP_HandleTypeDef *hcryp, uint32_t Timeout)
       __HAL_CRYP_ENABLE(hcryp);
     }
     /*  Last block optionally pad the data with zeros*/
-    for (index = 0; index < lastwordsize; index ++)
+    for (index = 0U; index < lastwordsize; index ++)
     {
       /* Write the last Input block in the IN FIFO */
       hcryp->Instance->DIN  = *(uint32_t *)(hcryp->pCrypInBuffPtr + hcryp->CrypInCount);

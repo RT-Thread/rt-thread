@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -65,24 +65,41 @@ const char *at_get_last_cmd(rt_size_t *cmd_size)
     return send_buf;
 }
 
+RT_WEAK rt_size_t at_utils_send(rt_device_t dev,
+                                rt_off_t    pos,
+                                const void *buffer,
+                                rt_size_t   size)
+{
+    return rt_device_write(dev, pos, buffer, size);
+}
+
 rt_size_t at_vprintf(rt_device_t device, const char *format, va_list args)
 {
     last_cmd_len = vsnprintf(send_buf, sizeof(send_buf), format, args);
+    if(last_cmd_len > sizeof(send_buf))
+        last_cmd_len = sizeof(send_buf);
 
 #ifdef AT_PRINT_RAW_CMD
     at_print_raw_cmd("sendline", send_buf, last_cmd_len);
 #endif
 
-    return rt_device_write(device, 0, send_buf, last_cmd_len);
+    return at_utils_send(device, 0, send_buf, last_cmd_len);
 }
 
 rt_size_t at_vprintfln(rt_device_t device, const char *format, va_list args)
 {
     rt_size_t len;
 
-    len = at_vprintf(device, format, args);
+    last_cmd_len = vsnprintf(send_buf, sizeof(send_buf) - 2, format, args);
+    if(last_cmd_len > sizeof(send_buf) - 2)
+        last_cmd_len = sizeof(send_buf) - 2;
+    rt_memcpy(send_buf + last_cmd_len, "\r\n", 2);
 
-    rt_device_write(device, 0, "\r\n", 2);
+    len = last_cmd_len + 2;
 
-    return len + 2;
+#ifdef AT_PRINT_RAW_CMD
+    at_print_raw_cmd("sendline", send_buf, len);
+#endif
+
+    return at_utils_send(device, 0, send_buf, len);
 }

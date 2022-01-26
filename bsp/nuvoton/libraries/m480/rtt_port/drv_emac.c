@@ -17,7 +17,7 @@
 #if defined(RT_USING_LWIP)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <netif/ethernetif.h>
 #include <netif/etharp.h>
 #include <lwip/icmp.h>

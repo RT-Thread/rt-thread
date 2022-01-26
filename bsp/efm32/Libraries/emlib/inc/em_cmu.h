@@ -432,7 +432,7 @@ typedef enum
 #endif
 
 #if defined(USB_PRESENT)
-  cmuClock_USBC = (CMU_NODIV_REG << CMU_DIV_REG_POS) | 
+  cmuClock_USBC = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                   (CMU_USBCCLKSEL_REG << CMU_SEL_REG_POS) |
                   (CMU_HFCORECLKEN0_EN_REG << CMU_EN_REG_POS) |
                   (_CMU_HFCORECLKEN0_USBC_SHIFT << CMU_EN_BIT_POS) |
@@ -441,7 +441,7 @@ typedef enum
 #endif
 
 #if defined(USB_PRESENT)
-  cmuClock_USB = (CMU_NODIV_REG << CMU_DIV_REG_POS) | 
+  cmuClock_USB = (CMU_NODIV_REG << CMU_DIV_REG_POS) |
                  (CMU_NOSEL_REG << CMU_SEL_REG_POS) |
                  (CMU_HFCORECLKEN0_EN_REG << CMU_EN_REG_POS) |
                  (_CMU_HFCORECLKEN0_USB_SHIFT << CMU_EN_BIT_POS) |

@@ -1,21 +1,7 @@
 /*
- * File      :_i2c.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -133,7 +119,7 @@ static const struct rt_i2c_bus_device_ops am_i2c_ops =
 };
 
 #ifdef RT_USING_I2C0
-static struct am_i2c_bus am_i2c_bus_0 = 
+static struct am_i2c_bus am_i2c_bus_0 =
 {
     {0},
     AM_I2C0_IOM_INST
@@ -141,7 +127,7 @@ static struct am_i2c_bus am_i2c_bus_0 =
 #endif
 
 #ifdef RT_USING_I2C1
-static struct am_i2c_bus am_i2c_bus_1 = 
+static struct am_i2c_bus am_i2c_bus_1 =
 {
     {1},
     AM_I2C1_IOM_INST
@@ -149,7 +135,7 @@ static struct am_i2c_bus am_i2c_bus_1 =
 #endif
 
 #ifdef RT_USING_I2C2
-static struct am_i2c_bus am_i2c_bus_2 = 
+static struct am_i2c_bus am_i2c_bus_2 =
 {
     {2},
     AM_I2C2_IOM_INST
@@ -157,7 +143,7 @@ static struct am_i2c_bus am_i2c_bus_2 =
 #endif
 
 #ifdef RT_USING_I2C3
-static struct am_i2c_bus am_i2c_bus_3 = 
+static struct am_i2c_bus am_i2c_bus_3 =
 {
     {3},
     AM_I2C3_IOM_INST
@@ -165,7 +151,7 @@ static struct am_i2c_bus am_i2c_bus_3 =
 #endif
 
 #ifdef RT_USING_I2C4
-static struct am_i2c_bus am_i2c_bus_4 = 
+static struct am_i2c_bus am_i2c_bus_4 =
 {
     {4},
     AM_I2C4_IOM_INST

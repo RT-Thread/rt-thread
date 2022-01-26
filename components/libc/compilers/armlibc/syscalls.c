@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,23 +9,28 @@
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
  * 2014-08-03     bernard      If using msh, use system() implementation
  *                             in msh.
- * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when 
+ * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when
  *                             RT_USING_DFS is not defined
  * 2020-02-13     Meco Man     re-implement exit() and abort()
  * 2020-02-14     Meco Man     implement _sys_tmpnam()
  */
 
-#include <string.h>
 #include <rt_sys.h>
-
 #include <rtthread.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <compiler_private.h>
+#ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
+#endif /* RT_USING_POSIX_STDIO */
 
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#endif
+#define DBG_TAG    "armlibc.syscalls"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
-#ifdef __CLANG_ARM
+#ifdef __clang__
 __asm(".global __use_no_semihosting\n\t");
 #else
 #pragma import(__use_no_semihosting_swi)
@@ -51,10 +56,10 @@ const char __stderr_name[] = "STDERR";
  */
 FILEHANDLE _sys_open(const char *name, int openmode)
 {
-#ifdef RT_USING_DFS
+#ifdef DFS_USING_POSIX
     int fd;
     int mode = O_RDONLY;
-#endif
+#endif /* DFS_USING_POSIX */
 
     /* Register standard Input Output devices. */
     if (strcmp(name, __stdin_name) == 0)
@@ -64,8 +69,9 @@ FILEHANDLE _sys_open(const char *name, int openmode)
     if (strcmp(name, __stderr_name) == 0)
         return (STDERR);
 
-#ifndef RT_USING_DFS
-    return -1;
+#ifndef DFS_USING_POSIX
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+    return 0; /* error */
 #else
     /* Correct openmode from fopen to open */
     if (openmode & OPEN_PLUS)
@@ -95,21 +101,23 @@ FILEHANDLE _sys_open(const char *name, int openmode)
 
     fd = open(name, mode, 0);
     if (fd < 0)
-        return -1;
+        return 0; /* error */
     else
         return fd;
-#endif
+#endif /* DFS_USING_POSIX */
 }
 
 int _sys_close(FILEHANDLE fh)
 {
-#ifndef RT_USING_DFS
-    return 0;
-#else
-    if (fh <= STDERR) return 0;
+#ifdef DFS_USING_POSIX
+    if (fh <= STDERR)
+        return 0; /* error */
 
     return close(fh);
-#endif
+#else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+    return 0;
+#endif /* DFS_USING_POSIX */
 }
 
 /*
@@ -139,77 +147,96 @@ int _sys_close(FILEHANDLE fh)
  */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_DFS
+#ifdef DFS_USING_POSIX
     int size;
-#endif
 
     if (fh == STDIN)
     {
-#ifdef RT_USING_POSIX
-        size = libc_stdio_read(buf, len);
-        return len - size;
+#ifdef RT_USING_POSIX_STDIO
+        if (libc_stdio_get_console() < 0)
+        {
+            LOG_W("Do not invoke standard output before initializing Compiler");
+            return 0; /* error, but keep going */
+        }
+        size = read(STDIN_FILENO, buf, len);
+        return len - size; /* success */
 #else
-        /* no stdin */
-        return -1;
-#endif
+        LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);
+        return 0; /* error */
+#endif /* RT_USING_POSIX_STDIO */
     }
-
-    if ((fh == STDOUT) || (fh == STDERR))
-        return -1;
-
-#ifndef RT_USING_DFS
-    return 0;
-#else
-    size = read(fh, buf, len);
-    if (size >= 0)
-        return len - size;
+    else if (fh == STDOUT || fh == STDERR)
+    {
+        return -1; /* 100% error */
+    }
     else
-        return -1;
-#endif
+    {
+        size = read(fh, buf, len);
+        if (size >= 0)
+        {
+            return len - size; /* success */
+        }
+        else
+        {
+            return 0; /* error */
+        }
+    }
+#else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+    return 0; /* error */
+#endif /* DFS_USING_POSIX */
 }
 
 /*
  * Write to a file. Returns 0 on success, negative on error, and
  * the number of characters _not_ written on partial success.
  * `mode' exists for historical reasons and must be ignored.
+ * The return value is either:
+ * A positive number representing the number of characters not written
+ * (so any nonzero return value denotes a failure of some sort).
+ * A negative number indicating an error.
  */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
-#ifdef RT_USING_DFS
+#ifdef DFS_USING_POSIX
     int size;
-#endif
+#endif /* DFS_USING_POSIX */
 
-    if ((fh == STDOUT) || (fh == STDERR))
+    if (fh == STDOUT || fh == STDERR)
     {
-#if !defined(RT_USING_CONSOLE) || !defined(RT_USING_DEVICE)
-        return 0;
-#else
-#ifdef RT_USING_POSIX
-        size = libc_stdio_write(buf, len);
-        return len - size;
-#else
-        if (rt_console_get_device())
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+        rt_device_t console;
+        console = rt_console_get_device();
+        if (console)
         {
-            rt_device_write(rt_console_get_device(), -1, buf, len);
-            return 0;
+            rt_device_write(console, -1, buf, len);
         }
-
-        return -1;
-#endif
-#endif
-    }
-
-    if (fh == STDIN) return -1;
-
-#ifndef RT_USING_DFS
-    return 0;
+        return 0; /* success */
 #else
-    size = write(fh, buf, len);
-    if (size >= 0)
-        return len - size;
+        return 0; /* error */
+#endif /* defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE) */
+    }
+    else if (fh == STDIN)
+    {
+        return -1; /* 100% error */
+    }
     else
-        return -1;
-#endif
+    {
+#ifdef DFS_USING_POSIX
+        size = write(fh, buf, len);
+        if (size >= 0)
+        {
+            return len - size; /* success */
+        }
+        else
+        {
+            return 0; /* error */
+        }
+#else
+        LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+        return 0; /* error */
+#endif /* DFS_USING_POSIX */
+    }
 }
 
 /*
@@ -218,16 +245,16 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
  */
 int _sys_seek(FILEHANDLE fh, long pos)
 {
+#ifdef DFS_USING_POSIX
     if (fh < STDERR)
-        return -1;
-
-#ifndef RT_USING_DFS
-    return -1;
-#else
+        return 0; /* error */
 
     /* position is relative to the start of file fh */
     return lseek(fh, pos, 0);
-#endif
+#else
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+    return 0; /* error */
+#endif /* DFS_USING_POSIX */
 }
 
 /**
@@ -249,11 +276,8 @@ char *_sys_command_string(char *cmd, int len)
 void _ttywrch(int ch)
 {
 #ifdef RT_USING_CONSOLE
-    char c;
-
-    c = (char)ch;
-    rt_kprintf(&c);
-#endif
+    rt_kprintf("%c", (char)ch);
+#endif /* RT_USING_CONSOLE */
 }
 
 /* for exit() and abort() */
@@ -272,17 +296,18 @@ RT_WEAK void _sys_exit(int return_code)
  */
 long _sys_flen(FILEHANDLE fh)
 {
-#ifdef RT_USING_DFS
+#ifdef DFS_USING_POSIX
     struct stat stat;
 
     if (fh < STDERR)
-        return -1;
+        return 0; /* error */
 
     fstat(fh, &stat);
     return stat.st_size;
 #else
-    return -1;
-#endif
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+    return 0;
+#endif /* DFS_USING_POSIX */
 }
 
 int _sys_istty(FILEHANDLE fh)
@@ -295,44 +320,43 @@ int _sys_istty(FILEHANDLE fh)
 
 int remove(const char *filename)
 {
-#ifndef RT_USING_DFS
-    return -1;
-#else
+#ifdef DFS_USING_POSIX
     return unlink(filename);
-#endif
-}
-
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) && defined(RT_USING_MODULE) && defined(RT_USING_DFS)
-/* use system(const char *string) implementation in the msh */
 #else
-int system(const char *string)
-{
-    extern int __rt_libc_system(const char *string);
-    return __rt_libc_system(string);
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+    return 0; /* error */
+#endif /* DFS_USING_POSIX */
 }
-#endif
 
 #ifdef __MICROLIB
 #include <stdio.h>
 
-int fputc(int c, FILE *f) 
+int fputc(int c, FILE *f)
 {
-    char ch[2] = {0};
-
-    ch[0] = c;
-    rt_kprintf(&ch[0]);
+#ifdef RT_USING_CONSOLE
+    rt_kprintf("%c", (char)c);
     return 1;
+#else
+    return 0; /* error */
+#endif /* RT_USING_CONSOLE */
 }
 
-int fgetc(FILE *f) 
+int fgetc(FILE *f)
 {
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_STDIO
     char ch;
 
-    if (libc_stdio_read(&ch, 1) == 1)
-        return ch;
-#endif
+    if (libc_stdio_get_console() < 0)
+    {
+        LOG_W("Do not invoke standard output before initializing Compiler");
+        return 0;
+    }
 
-    return -1;
+    if(read(STDIN_FILENO, &ch, 1) == 1)
+        return ch;
+#endif /* RT_USING_POSIX_STDIO */
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);
+    return 0; /* error */
 }
-#endif
+
+#endif /* __MICROLIB */

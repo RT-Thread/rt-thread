@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 /* CS42L51 address */
 #define CHIP_ADDRESS 0x4A
 /* reset pin, active low */
-#define CS42L51_RESET_PIN   GET_PIN(G, 9) 
+#define CS42L51_RESET_PIN   GET_PIN(G, 9)
 
 static uint16_t CS42L51_Device             = OUT_HEADPHONE;
 static struct rt_i2c_bus_device *audio_dev = RT_NULL;
@@ -31,12 +31,12 @@ static rt_err_t read_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint8
     struct rt_i2c_msg msg[2] = {0, 0};
 
     RT_ASSERT(bus != RT_NULL);
-    
+
     msg[0].addr  = CHIP_ADDRESS;    /* Slave address */
     msg[0].flags = RT_I2C_WR;        /* Write flag */
     msg[0].buf   = &reg;             /* Slave register address */
     msg[0].len   = 1;                /* Number of bytes sent */
-        
+
     msg[1].addr  = CHIP_ADDRESS;
     msg[1].flags = RT_I2C_RD;
     msg[1].len   = len;
@@ -57,8 +57,8 @@ static rt_err_t write_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint
     struct rt_i2c_msg msgs;
 
     RT_ASSERT(bus != RT_NULL);
-    
-    buf[0] = reg; 
+
+    buf[0] = reg;
     buf[1] = data;
 
     msgs.addr  = CHIP_ADDRESS;
@@ -119,10 +119,10 @@ static void cs42l51_lowlevel_init(void)
     /* Power off the cs42l51 */
     rt_pin_write(CS42L51_RESET_PIN, PIN_LOW);
 
-    /* wait until power supplies are stable */    
+    /* wait until power supplies are stable */
     rt_thread_mdelay(10);
 
-    /* Power on the cs42l51 */    
+    /* Power on the cs42l51 */
     rt_pin_write(CS42L51_RESET_PIN, PIN_HIGH);
 
     /* Wait at least 500ns after reset */
@@ -150,12 +150,12 @@ static rt_err_t cs42l51_init(uint16_t device, const char *bus_name, uint8_t volu
     static uint8_t init_flag  = 0;
     rt_uint8_t temp = 0;
     rt_uint8_t value = 0;
-    
+
     /* check if codec is already initialized */
     if (init_flag == 0)
     {
         audio_dev = rt_i2c_bus_device_find(bus_name);
-        
+
         if (audio_dev == RT_NULL)
         {
             LOG_E("%s bus not found\n", bus_name);
@@ -172,7 +172,7 @@ static rt_err_t cs42l51_init(uint16_t device, const char *bus_name, uint8_t volu
         write_reg(audio_dev, CS42L51_POWER_CTL1, 0x7F);
         read_reg(audio_dev, CS42L51_MIC_POWER_CTL, 1, &temp);
         write_reg(audio_dev, CS42L51_MIC_POWER_CTL, (temp | 0x0E));
-        
+
         init_flag = 1;
     }
     else
@@ -187,7 +187,7 @@ static rt_err_t cs42l51_init(uint16_t device, const char *bus_name, uint8_t volu
 
         /* Power control : Enter standby (PDN = 1) */
         read_reg(audio_dev, CS42L51_POWER_CTL1, 1, &temp);
-        write_reg(audio_dev, CS42L51_POWER_CTL1, (temp | 0x01)); 
+        write_reg(audio_dev, CS42L51_POWER_CTL1, (temp | 0x01));
     }
     /* Mic Power and Speed Control : Auto detect on, Speed mode SSM, tri state off, MCLK divide by 2 off */
     read_reg(audio_dev, CS42L51_MIC_POWER_CTL, 1, &temp);
@@ -204,9 +204,9 @@ static rt_err_t cs42l51_init(uint16_t device, const char *bus_name, uint8_t volu
     write_reg(audio_dev, CS42L51_DAC_OUT_CTL, 0xC3);
     /* DAC control : Signal processing to DAC, Freeze off, De-emphasis off, Analog output auto mute off, DAC soft ramp */
     write_reg(audio_dev, CS42L51_DAC_CTL, 0x42);
-    /* ALCA and PGAA Control : ALCA soft ramp disable on, ALCA zero cross disable on, PGA A Gain 0dB */  
+    /* ALCA and PGAA Control : ALCA soft ramp disable on, ALCA zero cross disable on, PGA A Gain 0dB */
     write_reg(audio_dev, CS42L51_ALC_PGA_CTL, 0xC0);
-    /* ALCB and PGAB Control : ALCB soft ramp disable on, ALCB zero cross disable on, PGA B Gain 0dB */  
+    /* ALCB and PGAB Control : ALCB soft ramp disable on, ALCB zero cross disable on, PGA B Gain 0dB */
     write_reg(audio_dev, CS42L51_ALC_PGB_CTL, 0xC0);
     /* ADCA Attenuator : 0dB */
     write_reg(audio_dev, CS42L51_ADCA_ATT, 0x00);
@@ -229,12 +229,12 @@ static rt_err_t cs42l51_init(uint16_t device, const char *bus_name, uint8_t volu
         /* AOUTA volume control : AOUTA volume */
         write_reg(audio_dev, CS42L51_AOUTA_VOL, value);
         /* AOUTB volume control : AOUTB volume */
-        write_reg(audio_dev, CS42L51_AOUTB_VOL, value); 
+        write_reg(audio_dev, CS42L51_AOUTB_VOL, value);
     }
-    
+
     CS42L51_Device = device;
-    
-    return RT_EOK;  
+
+    return RT_EOK;
 }
 
 /**
@@ -271,7 +271,7 @@ static void cs42l51_deinit(void)
 }
 
 /**
-  * @brief Verify that we have a CS42L51.   
+  * @brief Verify that we have a CS42L51.
   * @retval 0 if correct communication, else wrong communication
   */
 
@@ -283,20 +283,20 @@ static uint32_t cs42l51_read_id(void)
     read_reg(audio_dev, CS42L51_CHIP_REV_ID, 1, &temp);
 
     if ((temp != CS42L51_MK_CHIP_REV(CS42L51_CHIP_ID, CS42L51_CHIP_REV_A)) &&
-        (temp != CS42L51_MK_CHIP_REV(CS42L51_CHIP_ID, CS42L51_CHIP_REV_B))) 
+        (temp != CS42L51_MK_CHIP_REV(CS42L51_CHIP_ID, CS42L51_CHIP_REV_B)))
     {
-      LOG_E("device id : 0x%02x", temp);  
-        return RT_ERROR;     
+      LOG_E("device id : 0x%02x", temp);
+        return RT_ERROR;
     }
-    
-    LOG_D("device id : 0x%02x", temp);  
-    
+
+    LOG_D("device id : 0x%02x", temp);
+
     return RT_EOK;
 }
 
 /**
   * @brief Start the audio Codec play feature.
-  * @note For this codec no Play options are required.  
+  * @note For this codec no Play options are required.
   * @retval 0 if correct communication, else wrong communication
   */
 static uint32_t cs42l51_play(void)
@@ -316,7 +316,7 @@ static uint32_t cs42l51_play(void)
         write_reg(audio_dev, CS42L51_POWER_CTL1, (temp & 0x9F));
         break;
         }
-        
+
     case IN_LINE1:
         {
         /* ADC Input Select, Invert and Mute : AIN1B to PGAB, AIN1A to PGAA, ADCB invert off, ADCA invert off, ADCB mute off, ADCA mute off */
@@ -326,7 +326,7 @@ static uint32_t cs42l51_play(void)
         write_reg(audio_dev, CS42L51_POWER_CTL1, (temp & 0x9F));
         break;
         }
-        
+
     case IN_MIC1:
         {
         /* ADC Input Select, Invert and Mute : AIN1B to PGAB, AIN3A to PreAmp to PGAA, ADCB invert off, ADCA invert off, ADCB mute on, ADCA mute off */
@@ -339,7 +339,7 @@ static uint32_t cs42l51_play(void)
         write_reg(audio_dev, CS42L51_MIC_POWER_CTL,(temp & 0xF9));
         break;
         }
-        
+
     case IN_MIC2:
         {
          /* Power control 1 : PDN_PGAB, PDN_ADCB disable. */
@@ -350,7 +350,7 @@ static uint32_t cs42l51_play(void)
          write_reg(audio_dev, CS42L51_MIC_POWER_CTL,(temp & 0xF5));
          break;
         }
-        
+
     default:
         LOG_D("error audio play mode!");
         break;
@@ -365,11 +365,11 @@ static uint32_t cs42l51_play(void)
 
 /**
   * @brief Pause playing on the audio codec.
-  * @param audio_dev: Device address on communication Bus. 
+  * @param audio_dev: Device address on communication Bus.
   * @retval 0 if correct communication, else wrong communication
   */
 static uint32_t cs42l51_pause(void)
-{  
+{
 
   /* Pause the audio file playing */
   /* Mute the output first */
@@ -379,7 +379,7 @@ static uint32_t cs42l51_pause(void)
 
 /**
   * @brief Resume playing on the audio codec.
-  * @param audio_dev: Device address on communication Bus. 
+  * @param audio_dev: Device address on communication Bus.
   * @retval 0 if correct communication, else wrong communication
   */
 static uint32_t cs42l51_resume(void)
@@ -423,7 +423,7 @@ static uint32_t cs42l51_set_frequency(uint32_t AudioFreq)
 }
 
 /**
-  * @brief Set higher or lower the codec volume level.  
+  * @brief Set higher or lower the codec volume level.
   * @param Volume: output volume level (from 0 (-100dB) to 100 (0dB)).
   * @retval 0 if correct communication, else wrong communication
   */
@@ -440,23 +440,23 @@ static uint32_t cs42l51_set_volume(uint8_t Volume)
 }
 
 /**
-  * @brief get higher or lower the codec volume level.  
+  * @brief get higher or lower the codec volume level.
   * @retval value if correct communication
   */
 static uint32_t cs42l51_get_volume(void)
 {
     rt_uint8_t temp = 0;
-    
+
     /* AOUTA volume control : AOUTA volume */
     read_reg(audio_dev, CS42L51_AOUTA_VOL, 1, &temp);
 
     temp = VOLUME_INVERT(temp);
-    
+
     return temp;
 }
 
 /**
-* @brief Enable or disable the mute feature on the audio codec.  
+* @brief Enable or disable the mute feature on the audio codec.
 * @param Cmd: AUDIO_MUTE_ON to enable the mute or AUDIO_MUTE_OFF to disable the
 *             mute mode.
 * @retval 0 if correct communication, else wrong communication
@@ -464,7 +464,7 @@ static uint32_t cs42l51_get_volume(void)
 static uint32_t cs42l51_set_mute(uint32_t cmd)
 {
     rt_uint8_t temp = 0;
-    
+
     /* Read DAC output control register */
     read_reg(audio_dev, 0x08, 1, &temp);
 
@@ -484,10 +484,10 @@ static uint32_t cs42l51_set_mute(uint32_t cmd)
 }
 
 /**
-  * @brief Switch dynamically (while audio file is played) the output target 
+  * @brief Switch dynamically (while audio file is played) the output target
   *         (speaker, headphone, etc).
   * @note This function is currently not used (only headphone output device).
-  * @param Output: specifies the audio output device target. 
+  * @param Output: specifies the audio output device target.
   * @retval 0 if correct communication, else wrong communication
   */
 static uint32_t cs42l51_set_output_mode(uint8_t Output)
@@ -496,7 +496,7 @@ static uint32_t cs42l51_set_output_mode(uint8_t Output)
 }
 
 /**
-  * @brief Reset CS42L51 registers. 
+  * @brief Reset CS42L51 registers.
   * @retval 0 if correct communication, else wrong communication
   */
 static uint32_t cs42l51_reset(void)
@@ -508,8 +508,8 @@ static uint32_t cs42l51_reset(void)
     return RT_EOK;
 }
 
-/* Audio codec driver structure initialization */  
-AUDIO_DrvTypeDef cs42l51_drv = 
+/* Audio codec driver structure initialization */
+AUDIO_DrvTypeDef cs42l51_drv =
 {
   cs42l51_init,
   cs42l51_deinit,
@@ -518,12 +518,12 @@ AUDIO_DrvTypeDef cs42l51_drv =
   cs42l51_play,
   cs42l51_pause,
   cs42l51_resume,
-  cs42l51_stop,  
-  
-  cs42l51_set_frequency,  
+  cs42l51_stop,
+
+  cs42l51_set_frequency,
   cs42l51_set_volume,
   cs42l51_get_volume,
-  cs42l51_set_mute,  
+  cs42l51_set_mute,
   cs42l51_set_output_mode,
   cs42l51_reset,
 };

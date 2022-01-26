@@ -23,24 +23,24 @@
 /* Exported types ------------------------------------------------------------*/
 struct efm32_acmp_device_t
 {
-	ACMP_TypeDef 		*acmp_device;
-	efm32_irq_hook_t 	hook;
+    ACMP_TypeDef        *acmp_device;
+    efm32_irq_hook_t    hook;
 };
 
 struct efm32_acmp_output_t
 {
-	rt_uint32_t 		location;
-	rt_bool_t 			enable;
-	rt_bool_t 			invert;
+    rt_uint32_t         location;
+    rt_bool_t           enable;
+    rt_bool_t           invert;
 };
 
 struct efm32_acmp_control_t
 {
-	ACMP_Init_TypeDef			*init;
-	ACMP_Channel_TypeDef		posInput;
-	ACMP_Channel_TypeDef		negInput;
-	struct efm32_acmp_output_t 	*output;
-	efm32_irq_hook_t 			hook;
+    ACMP_Init_TypeDef           *init;
+    ACMP_Channel_TypeDef        posInput;
+    ACMP_Channel_TypeDef        negInput;
+    struct efm32_acmp_output_t  *output;
+    efm32_irq_hook_t            hook;
 };
 
 /* Exported constants --------------------------------------------------------*/

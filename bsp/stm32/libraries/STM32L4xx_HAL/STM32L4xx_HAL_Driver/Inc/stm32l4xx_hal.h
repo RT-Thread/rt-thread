@@ -38,26 +38,32 @@
   */
 
 /* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-
-/** @defgroup HAL_Exported_Constants HAL Exported Constants
+/** @defgroup HAL_Exported_Types HAL Exported Types
   * @{
   */
 
 /** @defgroup HAL_TICK_FREQ Tick Frequency
   * @{
   */
-#define  HAL_TICK_FREQ_10HZ         100U
-#define  HAL_TICK_FREQ_100HZ        10U
-#define  HAL_TICK_FREQ_1KHZ         1U
-#define  HAL_TICK_FREQ_DEFAULT      HAL_TICK_FREQ_1KHZ
-
+typedef enum
+{
+  HAL_TICK_FREQ_10HZ         = 100U,
+  HAL_TICK_FREQ_100HZ        = 10U,
+  HAL_TICK_FREQ_1KHZ         = 1U,
+  HAL_TICK_FREQ_DEFAULT      = HAL_TICK_FREQ_1KHZ
+} HAL_TickFreqTypeDef;
 /**
   * @}
   */
 
 /**
   * @}
+  */
+
+/* Exported constants --------------------------------------------------------*/
+
+/** @defgroup HAL_Exported_Constants HAL Exported Constants
+  * @{
   */
 
 /** @defgroup SYSCFG_Exported_Constants SYSCFG Exported Constants
@@ -72,20 +78,22 @@
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 #define SYSCFG_BOOT_FMC                SYSCFG_MEMRMP_MEM_MODE_1
 #endif /* STM32L471xx || STM32L475xx || STM32L476xx || STM32L485xx || STM32L486xx || */
        /* STM32L496xx || STM32L4A6xx || */
+       /* STM32L4P5xx || STM32L4Q5xx || */
        /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 #define SYSCFG_BOOT_SRAM               (SYSCFG_MEMRMP_MEM_MODE_1 | SYSCFG_MEMRMP_MEM_MODE_0)
 
-#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 #define SYSCFG_BOOT_OCTOPSPI1          (SYSCFG_MEMRMP_MEM_MODE_2)
 #define SYSCFG_BOOT_OCTOPSPI2          (SYSCFG_MEMRMP_MEM_MODE_2 | SYSCFG_MEMRMP_MEM_MODE_0)
 #else
 #define SYSCFG_BOOT_QUADSPI            (SYSCFG_MEMRMP_MEM_MODE_2 | SYSCFG_MEMRMP_MEM_MODE_1)
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 /**
   * @}
@@ -245,7 +253,14 @@
   * @}
   */
 
+/**
+  * @}
+  */
+
 /* Exported macros -----------------------------------------------------------*/
+/** @defgroup HAL_Exported_Macros HAL Exported Macros
+  * @{
+  */
 
 /** @defgroup DBGMCU_Exported_Macros DBGMCU Exported Macros
   * @{
@@ -385,6 +400,7 @@
 
 #if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
     defined (STM32L496xx) || defined (STM32L4A6xx) || \
+    defined (STM32L4P5xx) || defined (STM32L4Q5xx) || \
     defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 
 /** @brief  FMC Bank1 (NOR/PSRAM 1 and 2) mapped at 0x00000000.
@@ -393,9 +409,10 @@
 
 #endif /* STM32L471xx || STM32L475xx || STM32L476xx || STM32L485xx || STM32L486xx || */
        /* STM32L496xx || STM32L4A6xx || */
+       /* STM32L4P5xx || STM32L4Q5xx || */
        /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
-#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
+#if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 
 /** @brief  OCTOSPI mapped at 0x00000000.
   */
@@ -408,7 +425,7 @@
   */
 #define __HAL_SYSCFG_REMAPMEMORY_QUADSPI()     MODIFY_REG(SYSCFG->MEMRMP, SYSCFG_MEMRMP_MEM_MODE, (SYSCFG_MEMRMP_MEM_MODE_2|SYSCFG_MEMRMP_MEM_MODE_1))
 
-#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
+#endif /* STM32L4P5xx || STM32L4Q5xx || STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 
 /**
   * @brief  Return the boot mode as configured by user.
@@ -420,7 +437,18 @@
   *           @arg @ref SYSCFG_BOOT_FMC
   @endif
   *           @arg @ref SYSCFG_BOOT_SRAM
+  @if STM32L422xx
   *           @arg @ref SYSCFG_BOOT_QUADSPI
+  @endif
+  @if STM32L443xx
+  *           @arg @ref SYSCFG_BOOT_QUADSPI
+  @endif
+  @if STM32L462xx
+  *           @arg @ref SYSCFG_BOOT_QUADSPI
+  @endif
+  @if STM32L486xx
+  *           @arg @ref SYSCFG_BOOT_QUADSPI
+  @endif
   */
 #define __HAL_SYSCFG_GET_BOOT_MODE()           READ_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_MEM_MODE)
 
@@ -521,17 +549,13 @@
   * @}
   */
 
+/**
+  * @}
+  */
+
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup HAL_Private_Macros HAL Private Macros
   * @{
-  */
-
-#define IS_TICKFREQ(__FREQ__) (((__FREQ__) == HAL_TICK_FREQ_10HZ)  || \
-                               ((__FREQ__) == HAL_TICK_FREQ_100HZ) || \
-                               ((__FREQ__) == HAL_TICK_FREQ_1KHZ))
-
-/**
-  * @}
   */
 
 /** @defgroup SYSCFG_Private_Macros SYSCFG Private Macros
@@ -583,6 +607,10 @@
   * @}
   */
 
+/**
+  * @}
+  */
+
 /* Exported variables --------------------------------------------------------*/
 
 /** @addtogroup HAL_Exported_Variables
@@ -590,7 +618,7 @@
   */
 extern __IO uint32_t uwTick;
 extern uint32_t uwTickPrio;
-extern uint32_t uwTickFreq;
+extern HAL_TickFreqTypeDef uwTickFreq;
 /**
   * @}
   */
@@ -625,8 +653,8 @@ void               HAL_IncTick(void);
 void               HAL_Delay(uint32_t Delay);
 uint32_t           HAL_GetTick(void);
 uint32_t           HAL_GetTickPrio(void);
-HAL_StatusTypeDef  HAL_SetTickFreq(uint32_t Freq);
-uint32_t           HAL_GetTickFreq(void);
+HAL_StatusTypeDef  HAL_SetTickFreq(HAL_TickFreqTypeDef Freq);
+HAL_TickFreqTypeDef HAL_GetTickFreq(void);
 void               HAL_SuspendTick(void);
 void               HAL_ResumeTick(void);
 uint32_t           HAL_GetHalVersion(void);

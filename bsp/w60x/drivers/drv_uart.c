@@ -208,7 +208,7 @@ static int wm_uart_flow_ctrl_set(TLS_UART_REGS_T *UARTx, TLS_UART_FLOW_CTRL_MODE
 
     case TLS_UART_FLOW_CTRL_HARDWARE:
         UARTx->UR_FC = (1UL << 0) | (6UL << 2);
-    	break;
+        break;
 
     default:
         break;

@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2006-2018, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2021, RT-Thread Development Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -360,7 +360,7 @@ err_t sys_mutex_new(sys_mutex_t *mutex)
     rt_snprintf(tname, RT_NAME_MAX, "%s%d", SYS_LWIP_MUTEX_NAME, counter);
     counter ++;
 
-    tmpmutex = rt_mutex_create(tname, RT_IPC_FLAG_FIFO);
+    tmpmutex = rt_mutex_create(tname, RT_IPC_FLAG_PRIO);
     if (tmpmutex == RT_NULL)
         return ERR_MEM;
     else
@@ -540,10 +540,19 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
     return tick;
 }
 
-/** Wait for a new message to arrive in the mbox
+/**
+ * @ingroup sys_mbox
+ * This is similar to sys_arch_mbox_fetch, however if a message is not
+ * present in the mailbox, it immediately returns with the code
+ * SYS_MBOX_EMPTY. On success 0 is returned.
+ * To allow for efficient implementations, this can be defined as a
+ * function-like macro in sys_arch.h instead of a normal function. For
+ * example, a naive implementation could be:
+ * \#define sys_arch_mbox_tryfetch(mbox,msg) sys_arch_mbox_fetch(mbox,msg,1)
+ * although this would introduce unnecessary delays.
+ *
  * @param mbox mbox to get a message from
  * @param msg pointer where the message is stored
- * @param timeout maximum time (in milliseconds) to wait for a message
  * @return 0 (milliseconds) if a message has been received
  *         or SYS_MBOX_EMPTY if the mailbox is empty
  */
@@ -558,7 +567,7 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
     else
     {
         if (ret == RT_EOK)
-            ret = 1;
+            ret = 0;
     }
 
     return ret;
@@ -778,6 +787,32 @@ void ppp_trace(int level, const char *format, ...)
     va_end(args);
 }
 #endif
+
+#ifdef LWIP_HOOK_IP4_ROUTE_SRC
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src)
+{
+    struct netif *netif;
+
+    /* iterate through netifs */
+    for (netif = netif_list; netif != NULL; netif = netif->next)
+    {
+        /* is the netif up, does it have a link and a valid address? */
+        if (netif_is_up(netif) && netif_is_link_up(netif) && !ip4_addr_isany_val(*netif_ip4_addr(netif)))
+        {
+            /* gateway matches on a non broadcast interface? (i.e. peer in a point to point interface) */
+            if (src != NULL)
+            {
+                if (ip4_addr_cmp(src, netif_ip4_addr(netif)))
+                {
+                    return netif;
+                }
+            }
+        }
+    }
+    netif = netif_default;
+    return netif;
+}
+#endif /* LWIP_HOOK_IP4_ROUTE_SRC */
 
 /*
  * export bsd socket symbol for RT-Thread Application Module

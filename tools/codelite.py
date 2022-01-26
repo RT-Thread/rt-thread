@@ -194,8 +194,8 @@ def TargetCodelite(script, program):
         #print building.Env.get('LIBPATH', [])
         #print building.Env.get('LIBS', [])
         
-        CLSetCFlags(root, building.Env.get('CCFLAGS', []))
-        CLSetCxxFlags(root, building.Env.get('CCFLAGS', []))
+        CLSetCFlags(root, building.Env.get('CFLAGS', []))
+        CLSetCxxFlags(root, building.Env.get('CFLAGS', []))
         
         asflags = building.Env.get('ASFLAGS', [])
         asflags = asflags.replace('-ffunction-sections', '')

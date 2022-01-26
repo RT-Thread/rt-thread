@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -335,7 +335,9 @@ uintptr_t handle_trap(uintptr_t mcause, uintptr_t epc, uintptr_t * sp)
     else
     {
         rt_thread_t tid;
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         extern long list_thread();
+#endif
 
         rt_hw_interrupt_disable();
 
@@ -387,7 +389,7 @@ uintptr_t handle_trap(uintptr_t mcause, uintptr_t epc, uintptr_t * sp)
         print_stack_frame(sp);
         rt_kprintf("exception pc => 0x%08x\n", epc);
         rt_kprintf("current thread: %.*s\n", RT_NAME_MAX, tid->name);
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         list_thread();
 #endif
         while(1);

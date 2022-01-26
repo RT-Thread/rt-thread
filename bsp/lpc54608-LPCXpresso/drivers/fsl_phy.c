@@ -87,7 +87,7 @@ status_t PHY_Init(ENET_Type *base, uint32_t phyAddr, uint32_t srcClock_Hz)
     while ((idReg != PHY_CONTROL_ID1) && (delay != 0))
     {
         PHY_Read(base, phyAddr, PHY_ID1_REG, &idReg);
-        delay --;       
+        delay --;
     }
 
     if (!delay)
@@ -224,7 +224,7 @@ status_t PHY_GetLinkStatus(ENET_Type *base, uint32_t phyAddr, bool *status)
         else
         {
             *status = false;
-        }        
+        }
     }
     return result;
 }
@@ -260,7 +260,7 @@ status_t PHY_GetLinkSpeedDuplex(ENET_Type *base, uint32_t phyAddr, phy_speed_t *
         else
         { /* 10M speed. */
             *speed = kPHY_Speed10M;
-        }        
+        }
     }
     return result;
 }

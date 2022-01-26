@@ -50,7 +50,7 @@ rt_err_t nu_trng_init(void)
 {
     rt_err_t result;
 
-    result = rt_mutex_init(&s_TRNG_mutex, NU_CRYPTO_TRNG_NAME, RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&s_TRNG_mutex, NU_CRYPTO_TRNG_NAME, RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
 
     if ((SYS->CSERVER & SYS_CSERVER_VERSION_Msk) == 0x0)

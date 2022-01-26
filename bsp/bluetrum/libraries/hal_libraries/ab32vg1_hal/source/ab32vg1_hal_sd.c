@@ -232,7 +232,7 @@ static bool sd_go_ready_try(sd_handle_t hsd)
     case CARD_V1:
         sdmmc_acmd_op_cond(hsd, 0x00ff8000);
         break;
-    
+
     case CARD_V2:
         sdmmc_acmd_op_cond(hsd, 0x40ff8000);
         break;
@@ -389,8 +389,8 @@ bool hal_sd_read(sd_handle_t hsd, void *buf, uint32_t lba)
                 return true;
             }
         }
-        hsd->sdcard.state = HAL_SD_STATE_INVAL; 
-        
+        hsd->sdcard.state = HAL_SD_STATE_INVAL;
+
         hal_mdelay(20);
     }
 

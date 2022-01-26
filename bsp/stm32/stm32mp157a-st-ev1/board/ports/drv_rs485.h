@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,7 +17,7 @@ extern "C" {
 
 #define RS485_SEND_MODE      0
 #define RS485_RECV_MODE      1
-    
+
 #ifdef __cplusplus
 }
 #endif

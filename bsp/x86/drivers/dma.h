@@ -101,7 +101,7 @@ static __inline__ void ClearDmaFF(unsigned int dmanr)
         OUTB(0,  DMA2_CLEAR_FF_REG);
 }
 
-/* 
+/*
  * 清空DMA 晶体计数器
  */
 static __inline__ void SetDmaMode(unsigned int dmanr, char mode)

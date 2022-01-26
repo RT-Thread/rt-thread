@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -25,6 +25,7 @@ extern "C" {
  */
 int ulog_init(void);
 int ulog_async_init(void);
+void ulog_output_lock_enabled(rt_bool_t enabled);
 void ulog_deinit(void);
 
 /*
@@ -53,6 +54,8 @@ void ulog_deinit(void);
  */
 rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color);
 rt_err_t ulog_backend_unregister(ulog_backend_t backend);
+rt_err_t ulog_backend_set_filter(ulog_backend_t backend, ulog_backend_filter_t filter);
+ulog_backend_t ulog_backend_find(const char *name);
 
 #ifdef ULOG_USING_FILTER
 /*

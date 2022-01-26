@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  * Copyright (c) 2019-Present Nuclei Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -26,23 +26,23 @@
 
 /**
  * @brief from thread used interrupt context switch
- * 
+ *
  */
 volatile rt_ubase_t  rt_interrupt_from_thread = 0;
 /**
  * @brief to thread used interrupt context switch
- * 
+ *
  */
 volatile rt_ubase_t  rt_interrupt_to_thread   = 0;
 /**
  * @brief flag to indicate context switch in interrupt or not
- * 
+ *
  */
 volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 
 /**
  * @brief thread stack frame of saved context
- * 
+ *
  */
 struct rt_hw_stack_frame
 {
@@ -121,7 +121,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
 
 /**
  * @brief Do rt-thread context switch in interrupt context
- * 
+ *
  * @param from thread sp of from thread
  * @param to thread sp of to thread
  */
@@ -137,20 +137,18 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
 
 /**
  * @brief Do rt-thread context switch in task context
- * 
+ *
  * @param from thread sp of from thread
  * @param to thread sp of to thread
  */
 void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to)
 {
-    rt_interrupt_from_thread = from;
-    rt_interrupt_to_thread = to;
-    RT_YIELD();
+    rt_hw_context_switch_interrupt(from, to);
 }
 
 /**
  * @brief shutdown CPU
- * 
+ *
  */
 RT_WEAK void rt_hw_cpu_shutdown()
 {
@@ -166,9 +164,9 @@ RT_WEAK void rt_hw_cpu_shutdown()
 
 /**
  * @brief Do extra task switch code
- * 
+ *
  * @details
- * 
+ *
  * - Clear software timer interrupt request flag
  * - clear rt_thread_switch_interrupt_flag to 0
  */
@@ -181,9 +179,9 @@ void rt_hw_taskswitch(void)
 
 /**
  * @brief Setup systimer and software timer interrupt
- * 
- * @details 
- * 
+ *
+ * @details
+ *
  * - Set Systimer interrupt as NON-VECTOR interrupt with lowest interrupt level
  * - Set software timer interrupt as VECTOR interrupt with lowest interrupt level
  * - Enable these two interrupts
@@ -216,7 +214,7 @@ void rt_hw_ticksetup(void)
 
 /**
  * @brief This is the timer interrupt service routine.
- * 
+ *
  */
 void SysTick_Handler(void)
 {
@@ -235,13 +233,13 @@ void SysTick_Handler(void)
 
 /**
  * @brief Disable cpu interrupt
- * 
+ *
  * @details
- * 
+ *
  * - Disable cpu interrupt by clear MIE bit in MSTATUS
  * - Return the previous value in MSTATUS before clear MIE bit
- * 
- * @return the previous value in MSTATUS before clear MIE bit 
+ *
+ * @return the previous value in MSTATUS before clear MIE bit
  */
 rt_base_t rt_hw_interrupt_disable(void)
 {
@@ -250,7 +248,7 @@ rt_base_t rt_hw_interrupt_disable(void)
 
 /**
  * @brief Restore previous saved interrupt status
- * 
+ *
  * @param level previous saved MSTATUS value
  */
 void rt_hw_interrupt_enable(rt_base_t level)

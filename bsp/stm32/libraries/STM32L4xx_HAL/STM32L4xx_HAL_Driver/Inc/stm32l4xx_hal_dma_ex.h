@@ -123,8 +123,10 @@ typedef struct
 #define HAL_DMAMUX1_SYNC_DMAMUX1_CH3_EVT     19U           /*!<  Synchronization Signal is DMAMUX1 Channel3 Event  */
 #define HAL_DMAMUX1_SYNC_LPTIM1_OUT          20U           /*!<  Synchronization Signal is LPTIM1 OUT */
 #define HAL_DMAMUX1_SYNC_LPTIM2_OUT          21U           /*!<  Synchronization Signal is LPTIM2 OUT */
+#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 #define HAL_DMAMUX1_SYNC_DSI_TE              22U           /*!<  Synchronization Signal is DSI Tearing Effect      */
 #define HAL_DMAMUX1_SYNC_DSI_EOT             23U           /*!<  Synchronization Signal is DSI End of refresh      */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 #define HAL_DMAMUX1_SYNC_DMA2D_EOT           24U           /*!<  Synchronization Signal is DMA2D End of Transfer   */
 #define HAL_DMAMUX1_SYNC_LDTC_IT             25U           /*!<  Synchronization Signal is LDTC IT    */
 
@@ -170,8 +172,10 @@ typedef struct
 #define HAL_DMAMUX1_REQ_GEN_DMAMUX1_CH3_EVT     19U        /*!< Request generator Signal is DMAMUX1 Channel3 Event */
 #define HAL_DMAMUX1_REQ_GEN_LPTIM1_OUT          20U        /*!< Request generator Signal is LPTIM1 OUT  */
 #define HAL_DMAMUX1_REQ_GEN_LPTIM2_OUT          21U        /*!< Request generator Signal is LPTIM2 OUT  */
+#if defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
 #define HAL_DMAMUX1_REQ_GEN_DSI_TE              22U        /*!< Request generator Signal is DSI Tearing Effect      */
 #define HAL_DMAMUX1_REQ_GEN_DSI_EOT             23U        /*!< Request generator Signal is DSI End of refresh      */
+#endif /* STM32L4R5xx || STM32L4R7xx || STM32L4R9xx || STM32L4S5xx || STM32L4S7xx || STM32L4S9xx */
 #define HAL_DMAMUX1_REQ_GEN_DMA2D_EOT           24U        /*!< Request generator Signal is DMA2D End of Transfer   */
 #define HAL_DMAMUX1_REQ_GEN_LTDC_IT             25U        /*!< Request generator Signal is LTDC IT     */
 
@@ -229,6 +233,7 @@ void HAL_DMAEx_MUX_IRQHandler(DMA_HandleTypeDef *hdma);
   */
 
 
+/* Private defines -----------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup DMAEx_Private_Macros DMAEx Private Macros
   * @brief    DMAEx private macros

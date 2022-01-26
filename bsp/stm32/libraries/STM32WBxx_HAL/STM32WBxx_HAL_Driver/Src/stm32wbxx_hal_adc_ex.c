@@ -3,18 +3,18 @@
   * @file    stm32wbxx_hal_adc_ex.c
   * @author  MCD Application Team
   * @brief   This file provides firmware functions to manage the following
-  *          functionalities of the Analog to Digital Convertor (ADC)
+  *          functionalities of the Analog to Digital Converter (ADC)
   *          peripheral:
   *           + Operation functions
   *             ++ Start, stop, get result of conversions of ADC group injected,
-  *                using 2 possible modes: polling, interruption.
+  *                using 2 possible modes: polling, interruption (not available on devices: STM32WB10xx, STM32WB15xx).
   *             ++ Calibration
   *               +++ ADC automatic self-calibration
   *               +++ Calibration factors get or set
   *           + Control functions
-  *             ++ Channels configuration on ADC group injected
+  *             ++ Channels configuration on ADC group injected (not available on devices: STM32WB10xx, STM32WB15xx)
   *           + State functions
-  *             ++ ADC group injected contexts queue management
+  *             ++ ADC group injected contexts queue management (not available on devices: STM32WB10xx, STM32WB15xx)
   *          Other functions (generic functions) are available in file
   *          "stm32wbxx_hal_adc.c".
   *
@@ -99,12 +99,12 @@
       (+) Get calibration factors for single or differential ending.
       (+) Set calibration factors for single or differential ending.
 
-      (+) Start conversion of ADC group injected.
-      (+) Stop conversion of ADC group injected.
-      (+) Poll for conversion complete on ADC group injected.
-      (+) Get result of ADC group injected channel conversion.
-      (+) Start conversion of ADC group injected and enable interruptions.
-      (+) Stop conversion of ADC group injected and disable interruptions.
+      (+) Start conversion of ADC group injected (not available on devices: STM32WB10xx, STM32WB15xx).
+      (+) Stop conversion of ADC group injected (not available on devices: STM32WB10xx, STM32WB15xx).
+      (+) Poll for conversion complete on ADC group injected (not available on devices: STM32WB10xx, STM32WB15xx).
+      (+) Get result of ADC group injected channel conversion (not available on devices: STM32WB10xx, STM32WB15xx).
+      (+) Start conversion of ADC group injected and enable interruptions (not available on devices: STM32WB10xx, STM32WB15xx).
+      (+) Stop conversion of ADC group injected and disable interruptions (not available on devices: STM32WB10xx, STM32WB15xx).
 
 @endverbatim
   * @{
@@ -118,11 +118,17 @@
   * @param  SingleDiff Selection of single-ended or differential input
   *         This parameter can be one of the following values:
   *           @arg @ref ADC_SINGLE_ENDED       Channel in mode input single ended
-  *           @arg @ref ADC_DIFFERENTIAL_ENDED Channel in mode input differential ended
+  *           @arg @ref ADC_DIFFERENTIAL_ENDED Channel in mode input differential ended (1)
+  *
+  *         (1) On STM32WB serie, parameter not available on devices: STM32WB10xx, STM32WB15xx.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_ADCEx_Calibration_Start(ADC_HandleTypeDef *hadc, uint32_t SingleDiff)
 {
+#if defined (ADC_SUPPORT_2_5_MSPS)
+  UNUSED(SingleDiff);
+#endif
+  
   HAL_StatusTypeDef tmp_hal_status;
   __IO uint32_t wait_loop_index = 0UL;
 
@@ -142,12 +148,22 @@ HAL_StatusTypeDef HAL_ADCEx_Calibration_Start(ADC_HandleTypeDef *hadc, uint32_t 
   if (tmp_hal_status == HAL_OK)
   {
     /* Set ADC state */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+    ADC_STATE_CLR_SET(hadc->State,
+                      HAL_ADC_STATE_REG_BUSY,
+                      HAL_ADC_STATE_BUSY_INTERNAL);
+#else
     ADC_STATE_CLR_SET(hadc->State,
                       HAL_ADC_STATE_REG_BUSY | HAL_ADC_STATE_INJ_BUSY,
                       HAL_ADC_STATE_BUSY_INTERNAL);
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
     /* Start ADC calibration in mode single-ended or differential */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+    LL_ADC_StartCalibration(hadc->Instance);
+#else
     LL_ADC_StartCalibration(hadc->Instance, SingleDiff);
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
     /* Wait for calibration completion */
     while (LL_ADC_IsCalibrationOnGoing(hadc->Instance) != 0UL)
@@ -192,17 +208,27 @@ HAL_StatusTypeDef HAL_ADCEx_Calibration_Start(ADC_HandleTypeDef *hadc, uint32_t 
   * @param hadc ADC handle.
   * @param SingleDiff This parameter can be only:
   *           @arg @ref ADC_SINGLE_ENDED       Channel in mode input single ended
-  *           @arg @ref ADC_DIFFERENTIAL_ENDED Channel in mode input differential ended
+  *           @arg @ref ADC_DIFFERENTIAL_ENDED Channel in mode input differential ended (1)
+  *
+  *         (1) On STM32WB serie, parameter not available on devices: STM32WB10xx, STM32WB15xx.
   * @retval Calibration value.
   */
 uint32_t HAL_ADCEx_Calibration_GetValue(ADC_HandleTypeDef *hadc, uint32_t SingleDiff)
 {
+#if defined (ADC_SUPPORT_2_5_MSPS)
+  UNUSED(SingleDiff);
+#endif
+  
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
   assert_param(IS_ADC_SINGLE_DIFFERENTIAL(SingleDiff));
 
   /* Return the selected ADC calibration value */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+  return LL_ADC_GetCalibrationFactor(hadc->Instance);
+#else
   return LL_ADC_GetCalibrationFactor(hadc->Instance, SingleDiff);
+#endif
 }
 
 /**
@@ -211,15 +237,25 @@ uint32_t HAL_ADCEx_Calibration_GetValue(ADC_HandleTypeDef *hadc, uint32_t Single
   * @param hadc ADC handle
   * @param SingleDiff This parameter can be only:
   *           @arg @ref ADC_SINGLE_ENDED       Channel in mode input single ended
-  *           @arg @ref ADC_DIFFERENTIAL_ENDED Channel in mode input differential ended
+  *           @arg @ref ADC_DIFFERENTIAL_ENDED Channel in mode input differential ended (1)
+  *
+  *         (1) On STM32WB serie, parameter not available on devices: STM32WB10xx, STM32WB15xx.
   * @param CalibrationFactor Calibration factor (coded on 7 bits maximum)
   * @retval HAL state
   */
 HAL_StatusTypeDef HAL_ADCEx_Calibration_SetValue(ADC_HandleTypeDef *hadc, uint32_t SingleDiff, uint32_t CalibrationFactor)
 {
+#if defined (ADC_SUPPORT_2_5_MSPS)
+  UNUSED(SingleDiff);
+#endif
+  
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
   uint32_t tmp_adc_is_conversion_on_going_regular;
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC group injected" not available on ADC peripheral of this STM32WB device */
+#else
   uint32_t tmp_adc_is_conversion_on_going_injected;
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
@@ -232,15 +268,27 @@ HAL_StatusTypeDef HAL_ADCEx_Calibration_SetValue(ADC_HandleTypeDef *hadc, uint32
   /* Verification of hardware constraints before modifying the calibration    */
   /* factors register: ADC must be enabled, no conversion on going.           */
   tmp_adc_is_conversion_on_going_regular = LL_ADC_REG_IsConversionOngoing(hadc->Instance);
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC group injected" not available on ADC peripheral of this STM32WB device */
+#else
   tmp_adc_is_conversion_on_going_injected = LL_ADC_INJ_IsConversionOngoing(hadc->Instance);
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
   if ((LL_ADC_IsEnabled(hadc->Instance) != 0UL)
       && (tmp_adc_is_conversion_on_going_regular == 0UL)
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC group injected" not available on ADC peripheral of this STM32WB device */
+#else
       && (tmp_adc_is_conversion_on_going_injected == 0UL)
+#endif /* ADC_SUPPORT_2_5_MSPS */
      )
   {
     /* Set the selected ADC calibration value */
+#if defined (ADC_SUPPORT_2_5_MSPS)
+    LL_ADC_SetCalibrationFactor(hadc->Instance, CalibrationFactor);
+#else
     LL_ADC_SetCalibrationFactor(hadc->Instance, SingleDiff, CalibrationFactor);
+#endif
   }
   else
   {
@@ -260,6 +308,9 @@ HAL_StatusTypeDef HAL_ADCEx_Calibration_SetValue(ADC_HandleTypeDef *hadc, uint32
   return tmp_hal_status;
 }
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC group injected" not available on ADC peripheral of this STM32WB device */
+#else
 /**
   * @brief  Enable ADC, start conversion of injected group.
   * @note   Interruptions enabled in this function: None.
@@ -454,13 +505,17 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef *hadc, u
     {
       if (((HAL_GetTick() - tickstart) > Timeout) || (Timeout == 0UL))
       {
-        /* Update ADC state machine to timeout */
-        SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
+        /* New check to avoid false timeout detection in case of preemption */
+        if ((hadc->Instance->ISR & tmp_Flag_End) == 0UL)
+        {
+          /* Update ADC state machine to timeout */
+          SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
 
-        /* Process unlocked */
-        __HAL_UNLOCK(hadc);
+          /* Process unlocked */
+          __HAL_UNLOCK(hadc);
 
-        return HAL_TIMEOUT;
+          return HAL_TIMEOUT;
+        }
       }
     }
   }
@@ -705,7 +760,11 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStop_IT(ADC_HandleTypeDef *hadc)
   /* Return function status */
   return tmp_hal_status;
 }
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC group injected" not available on ADC peripheral of this STM32WB device */
+#else
 /**
   * @brief  Get ADC injected group conversion result.
   * @note   Reading register JDRx automatically clears ADC flag JEOC
@@ -797,6 +856,7 @@ __weak void HAL_ADCEx_InjectedQueueOverflowCallback(ADC_HandleTypeDef *hadc)
             function HAL_ADCEx_InjectedQueueOverflowCallback must be implemented in the user file.
   */
 }
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
 /**
   * @brief  Analog watchdog 2 callback in non-blocking mode.
@@ -844,6 +904,9 @@ __weak void HAL_ADCEx_EndOfSamplingCallback(ADC_HandleTypeDef *hadc)
   */
 }
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC group injected" not available on ADC peripheral of this STM32WB device */
+#else
 /**
   * @brief  Stop ADC conversion of regular group (and injected channels in
   *         case of auto_injection mode), disable ADC peripheral if no
@@ -1038,11 +1101,15 @@ HAL_StatusTypeDef HAL_ADCEx_RegularStop_DMA(ADC_HandleTypeDef *hadc)
   /* Return function status */
   return tmp_hal_status;
 }
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
 /**
   * @}
   */
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC group injected" not available on ADC peripheral of this STM32WB device */
+#else
 /** @defgroup ADCEx_Exported_Functions_Group2 ADC Extended Peripheral Control functions
   * @brief    ADC Extended Peripheral Control functions
   *
@@ -1506,7 +1573,11 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef *hadc, ADC_I
   /* Return function status */
   return tmp_hal_status;
 }
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature "ADC group injected" not available on ADC peripheral of this STM32WB device */
+#else
 /**
   * @brief  Enable Injected Queue
   * @note   This function resets CFGR register JQDIS bit in order to enable the
@@ -1584,6 +1655,7 @@ HAL_StatusTypeDef HAL_ADCEx_DisableInjectedQueue(ADC_HandleTypeDef *hadc)
 
   return tmp_hal_status;
 }
+#endif /* ADC_SUPPORT_2_5_MSPS */
 
 /**
   * @brief  Disable ADC voltage regulator.
@@ -1615,8 +1687,11 @@ HAL_StatusTypeDef HAL_ADCEx_DisableVoltageRegulator(ADC_HandleTypeDef *hadc)
   return tmp_hal_status;
 }
 
+#if defined (ADC_SUPPORT_2_5_MSPS)
+/* Feature " ADC deep power-down" not available on ADC peripheral of this STM32WB device */
+#else
 /**
-  * @brief  Enter ADC deep-power-down mode
+  * @brief  Enter ADC deep power-down mode
   * @note   This mode is achieved in setting DEEPPWD bit and allows to save power
   *         in reducing leakage currents. It is particularly interesting before
   *         entering stop modes.
@@ -1651,6 +1726,7 @@ HAL_StatusTypeDef HAL_ADCEx_EnterADCDeepPowerDownMode(ADC_HandleTypeDef *hadc)
 
   return tmp_hal_status;
 }
+#endif
 
 /**
   * @}

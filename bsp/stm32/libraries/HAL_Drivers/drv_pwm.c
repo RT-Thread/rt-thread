@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -285,12 +285,12 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     rt_uint32_t pclk1_doubler, pclk2_doubler;
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
-    
+
     pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
-    
+
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)|| defined(SOC_SERIES_STM32F3)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32MP1)
     if (htim->Instance == TIM4)

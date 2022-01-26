@@ -88,10 +88,10 @@ static int I2C_WriteNAU88L25(uint16_t u16addr, uint16_t u16data)
 static int I2C_ReadNAU88L25(uint16_t u16addr, uint16_t *pu16data)
 {
     struct rt_i2c_msg msgs[2];
-    uint16_t u16data = 0;
     char au8TxData[2];
 
     RT_ASSERT(g_I2cBusDev != NULL);
+    RT_ASSERT(pu16data != NULL);
 
     au8TxData[0] = (uint8_t)((u16addr >> 8) & 0x00FF);   //addr [15:8]
     au8TxData[1] = (uint8_t)(u16addr & 0x00FF);          //addr [ 7:0]
@@ -103,8 +103,8 @@ static int I2C_ReadNAU88L25(uint16_t u16addr, uint16_t *pu16data)
 
     msgs[1].addr  = DEF_NAU88L25_ADDR;        /* Slave address */
     msgs[1].flags = RT_I2C_RD;                /* Read flag */
-    msgs[1].buf   = (rt_uint8_t *)&u16data;   /* Read data pointer */
-    msgs[1].len   = sizeof(u16data);          /* Number of bytes read */
+    msgs[1].buf   = (rt_uint8_t *)pu16data;   /* Read data pointer */
+    msgs[1].len   = sizeof(uint16_t);         /* Number of bytes read */
 
     if (rt_i2c_transfer(g_I2cBusDev, &msgs[0], 2) != 2)
     {

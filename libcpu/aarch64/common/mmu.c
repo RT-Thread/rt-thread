@@ -1,367 +1,251 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author             Notes
- * 2020-02-20     bigmagic           first version
+ * Date           Author       Notes
+ * 2021-11-28     GuEe-GUI     first version
  */
-#include <mmu.h>
-#include <stddef.h>
+
+#include <rtthread.h>
 #include <rthw.h>
 
-#define TTBR_CNP    1
+#include <cpuport.h>
+#include <mmu.h>
 
-typedef unsigned long int    uint64_t;
+#define ARCH_SECTION_SHIFT  21
+#define ARCH_SECTION_SIZE   (1 << ARCH_SECTION_SHIFT)
+#define ARCH_SECTION_MASK   (ARCH_SECTION_SIZE - 1)
+#define ARCH_PAGE_SHIFT     12
+#define ARCH_PAGE_SIZE      (1 << ARCH_PAGE_SHIFT)
+#define ARCH_PAGE_MASK      (ARCH_PAGE_SIZE - 1)
 
-static unsigned long main_tbl[512 * 20] __attribute__((aligned (4096)));
+#define MMU_LEVEL_MASK      0x1ffUL
+#define MMU_LEVEL_SHIFT     9
+#define MMU_ADDRESS_BITS    39
+#define MMU_ADDRESS_MASK    0x0000fffffffff000UL
+#define MMU_ATTRIB_MASK     0xfff0000000000ffcUL
 
-#define IS_ALIGNED(x, a)        (((x) & ((typeof(x))(a) - 1)) == 0)
+#define MMU_TYPE_MASK       3UL
+#define MMU_TYPE_USED       1UL
+#define MMU_TYPE_BLOCK      1UL
+#define MMU_TYPE_TABLE      3UL
+#define MMU_TYPE_PAGE       3UL
 
-#define PMD_TYPE_SECT        (1 << 0)
+#define MMU_TBL_BLOCK_2M_LEVEL  2
+#define MMU_TBL_PAGE_NR_MAX     32
 
-#define PMD_TYPE_TABLE        (3 << 0)
-
-#define PTE_TYPE_PAGE        (3 << 0)
-
-#define BITS_PER_VA          39
-
-/* Granule size of 4KB is being used */
-#define GRANULE_SIZE_SHIFT         12
-#define GRANULE_SIZE               (1 << GRANULE_SIZE_SHIFT)
-#define XLAT_ADDR_MASK             ((1UL << BITS_PER_VA) - GRANULE_SIZE)
-
-#define PMD_TYPE_MASK               (3 << 0)
-
-int free_idx = 1;
-
-void __asm_invalidate_icache_all(void);
-void __asm_flush_dcache_all(void);
-int __asm_flush_l3_cache(void);
-void __asm_flush_dcache_range(unsigned long long start, unsigned long long end);
-void __asm_invalidate_dcache_all(void);
-void __asm_invalidate_icache_all(void);
-
-void mmu_memset(char *dst, char v,  size_t len)
+/* only map 4G io/memory */
+static volatile unsigned long MMUTable[512] __attribute__((aligned(4096)));
+static volatile struct
 {
-    while (len--)
+    unsigned long entry[512];
+} MMUPage[MMU_TBL_PAGE_NR_MAX] __attribute__((aligned(4096)));
+
+static unsigned long _kernel_free_page(void)
+{
+    static unsigned long i = 0;
+
+    if (i >= MMU_TBL_PAGE_NR_MAX)
     {
-        *dst++ = v;
+        return RT_NULL;
     }
+
+    ++i;
+
+    return (unsigned long)&MMUPage[i - 1].entry;
 }
 
-static unsigned long __page_off = 0;
-static unsigned long get_free_page(void) 
-{
-    __page_off += 512;
-    return (unsigned long)(main_tbl + __page_off);
-}
-
-
-static inline unsigned int get_sctlr(void)
-{
-    unsigned int val;
-    asm volatile("mrs %0, sctlr_el1" : "=r" (val) : : "cc");
-    return val;
-}
-
-static inline void set_sctlr(unsigned int val)
-{
-    asm volatile("msr sctlr_el1, %0" : : "r" (val) : "cc");
-    asm volatile("isb");
-}
-
-void mmu_init(void)
-{
-    unsigned long val64;
-    unsigned long val32;
-
-    val64 = 0x007f6eUL;
-    __asm__ volatile("msr MAIR_EL1, %0\n dsb sy\n"::"r"(val64));
-    __asm__ volatile("mrs %0, MAIR_EL1\n dsb sy\n":"=r"(val64));
-
-    //TCR_EL1
-    val32 = (16UL << 0)//48bit
-        | (0x0UL << 6)
-        | (0x0UL << 7)
-        | (0x3UL << 8)
-        | (0x3UL << 10)//Inner Shareable
-        | (0x2UL << 12)
-        | (0x0UL << 14)//4K
-        | (0x0UL << 16)
-        | (0x0UL << 22)
-        | (0x1UL << 23)
-        | (0x2UL << 30)
-        | (0x1UL << 32)
-        | (0x0UL << 35)
-        | (0x0UL << 36)
-        | (0x0UL << 37)
-        | (0x0UL << 38);
-    __asm__ volatile("msr TCR_EL1, %0\n"::"r"(val32));
-    __asm__ volatile("mrs %0, TCR_EL1\n":"=r"(val32));
-
-    __asm__ volatile("msr TTBR0_EL1, %0\n dsb sy\n"::"r"(main_tbl));
-    __asm__ volatile("mrs %0, TTBR0_EL1\n dsb sy\n":"=r"(val64));
-
-    mmu_memset((char *)main_tbl, 0, 4096);
-}
-
-void mmu_enable(void)
-{
-    unsigned long val64;
-    unsigned long val32;
-
-    __asm__ volatile("mrs %0, SCTLR_EL1\n":"=r"(val64));
-    val64 &= ~0x1000; //disable I
-    __asm__ volatile("dmb sy\n msr SCTLR_EL1, %0\n isb sy\n"::"r"(val64));
-
-    __asm__ volatile("IC IALLUIS\n dsb sy\n isb sy\n");
-    __asm__ volatile("tlbi vmalle1\n dsb sy\n isb sy\n");
-
-    //SCTLR_EL1, turn on mmu
-    __asm__ volatile("mrs %0, SCTLR_EL1\n":"=r"(val32));
-    val32 |= 0x1005; //enable mmu, I C M
-    __asm__ volatile("dmb sy\n msr SCTLR_EL1, %0\nisb sy\n"::"r"(val32));
-    rt_hw_icache_enable();
-    rt_hw_dcache_enable();
-
-}
-
-static int map_single_page_2M(unsigned long* lv0_tbl, unsigned long va, unsigned long pa, unsigned long attr) 
+static int _kenrel_map_2M(unsigned long *tbl, unsigned long va, unsigned long pa, unsigned long attr)
 {
     int level;
-    unsigned long* cur_lv_tbl = lv0_tbl;
+    unsigned long *cur_lv_tbl = tbl;
     unsigned long page;
     unsigned long off;
-    int level_shift = 39;
+    int level_shift = MMU_ADDRESS_BITS;
 
-    if (va & (0x200000UL - 1)) 
+    if (va & ARCH_SECTION_MASK)
     {
         return MMU_MAP_ERROR_VANOTALIGN;
     }
-    if (pa & (0x200000UL - 1)) 
+    if (pa & ARCH_SECTION_MASK)
     {
         return MMU_MAP_ERROR_PANOTALIGN;
     }
-    for (level = 0; level < 2; level++) 
+
+    for (level = 0; level < MMU_TBL_BLOCK_2M_LEVEL; ++level)
     {
         off = (va >> level_shift);
         off &= MMU_LEVEL_MASK;
-        if ((cur_lv_tbl[off] & 1) == 0) 
+
+        if (!(cur_lv_tbl[off] & MMU_TYPE_USED))
         {
-            page = get_free_page();
-            if (!page) 
+            page = _kernel_free_page();
+
+            if (!page)
             {
                 return MMU_MAP_ERROR_NOPAGE;
             }
-            mmu_memset((char *)page, 0, 4096);
-            cur_lv_tbl[off] = page | 0x3UL;
+
+            rt_memset((char *)page, 0, ARCH_PAGE_SIZE);
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)page, ARCH_PAGE_SIZE);
+            cur_lv_tbl[off] = page | MMU_TYPE_TABLE;
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off, sizeof(void *));
         }
-        page = cur_lv_tbl[off];
-        if (!(page & 0x2)) 
+        else
         {
-            //is block! error!
+            page = cur_lv_tbl[off];
+            page &= MMU_ADDRESS_MASK;
+        }
+
+        page = cur_lv_tbl[off];
+        if ((page & MMU_TYPE_MASK) == MMU_TYPE_BLOCK)
+        {
+            /* is block! error! */
             return MMU_MAP_ERROR_CONFLICT;
         }
-        cur_lv_tbl = (unsigned long*)(page & 0x0000fffffffff000UL);
-        level_shift -= 9;
+
+        /* next level */
+        cur_lv_tbl = (unsigned long *)(page & MMU_ADDRESS_MASK);
+        level_shift -= MMU_LEVEL_SHIFT;
     }
-    attr &= 0xfff0000000000ffcUL;
-    pa |= (attr | 0x1UL); //block
-    off = (va >> 21);
+
+    attr &= MMU_ATTRIB_MASK;
+    pa |= (attr | MMU_TYPE_BLOCK);
+    off = (va >> ARCH_SECTION_SHIFT);
     off &= MMU_LEVEL_MASK;
     cur_lv_tbl[off] = pa;
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off, sizeof(void *));
+
     return 0;
 }
 
-int armv8_map_2M(unsigned long va, unsigned long pa, int count, unsigned long attr)
+int rt_hw_mmu_setmtt(unsigned long vaddr_start, unsigned long vaddr_end,
+        unsigned long paddr_start, unsigned long attr)
 {
+    int ret = -1;
     int i;
-    int ret;
+    unsigned long count;
+    unsigned long map_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, attr);
 
-    if (va & (0x200000 - 1))
+    if (vaddr_start > vaddr_end)
     {
-        return -1;
+        goto end;
     }
-    if (pa & (0x200000 - 1))
+    if (vaddr_start % ARCH_SECTION_SIZE)
     {
-        return -1;
+        vaddr_start = (vaddr_start / ARCH_SECTION_SIZE) * ARCH_SECTION_SIZE;
     }
+    if (paddr_start % ARCH_SECTION_SIZE)
+    {
+        paddr_start = (paddr_start / ARCH_SECTION_SIZE) * ARCH_SECTION_SIZE;
+    }
+    if (vaddr_end % ARCH_SECTION_SIZE)
+    {
+        vaddr_end = (vaddr_end / ARCH_SECTION_SIZE + 1) * ARCH_SECTION_SIZE;
+    }
+
+    count = (vaddr_end - vaddr_start) >> ARCH_SECTION_SHIFT;
+
     for (i = 0; i < count; i++)
     {
-        ret = map_single_page_2M((unsigned long *)main_tbl, va, pa, attr);
-        va += 0x200000;
-        pa += 0x200000;
+        ret = _kenrel_map_2M((void *)MMUTable, vaddr_start, paddr_start, map_attr);
+        vaddr_start += ARCH_SECTION_SIZE;
+        paddr_start += ARCH_SECTION_SIZE;
+
         if (ret != 0)
         {
-            return ret;
+            goto end;
         }
     }
-    return 0;
+
+end:
+    return ret;
 }
 
-static void set_table(uint64_t *pt, uint64_t *table_addr)
+void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_size_t desc_nr)
 {
-    uint64_t val;
-    val = (0x3UL | (uint64_t)table_addr);
-    *pt = val;
-}
+    rt_memset((void *)MMUTable, 0, sizeof(MMUTable));
+    rt_memset((void *)MMUPage, 0, sizeof(MMUPage));
 
-void mmu_memset2(unsigned char *dst, char v,  int len)
-{
-    while (len--)
+    /* set page table */
+    for (; desc_nr > 0; --desc_nr)
     {
-        *dst++ = v;
+        rt_hw_mmu_setmtt(mdesc->vaddr_start, mdesc->vaddr_end, mdesc->paddr_start, mdesc->attr);
+        ++mdesc;
     }
+
+    rt_hw_dcache_flush_range((unsigned long)MMUTable, sizeof(MMUTable));
 }
 
-static uint64_t *create_table(void)
+void rt_hw_mmu_tlb_invalidate(void)
 {
-    uint64_t *new_table = (uint64_t *)((unsigned char *)&main_tbl[0] + free_idx * 4096); //+ free_idx * GRANULE_SIZE;
-    /* Mark all entries as invalid */
-    mmu_memset2((unsigned char *)new_table, 0, 4096);
-    free_idx++;
-    return new_table;
+    __asm__ volatile (
+        "tlbi vmalle1\n\r"
+        "dsb sy\n\r"
+        "isb sy\n\r"
+        "ic ialluis\n\r"
+        "dsb sy\n\r"
+        "isb sy");
 }
 
-static int pte_type(uint64_t *pte)
+void rt_hw_mmu_init(void)
 {
-    return *pte & PMD_TYPE_MASK;
+    unsigned long reg_val;
+
+    reg_val = 0x00447fUL;
+    __asm__ volatile("msr mair_el1, %0"::"r"(reg_val));
+
+    rt_hw_isb();
+
+    reg_val = (16UL << 0)   /* t0sz 48bit */
+            | (0UL  << 6)   /* reserved */
+            | (0UL  << 7)   /* epd0 */
+            | (3UL  << 8)   /* t0 wb cacheable */
+            | (3UL  << 10)  /* inner shareable */
+            | (2UL  << 12)  /* t0 outer shareable */
+            | (0UL  << 14)  /* t0 4K */
+            | (16UL << 16)  /* t1sz 48bit */
+            | (0UL  << 22)  /* define asid use ttbr0.asid */
+            | (0UL  << 23)  /* epd1 */
+            | (3UL  << 24)  /* t1 inner wb cacheable */
+            | (3UL  << 26)  /* t1 outer wb cacheable */
+            | (2UL  << 28)  /* t1 outer shareable */
+            | (2UL  << 30)  /* t1 4k */
+            | (1UL  << 32)  /* 001b 64GB PA */
+            | (0UL  << 35)  /* reserved */
+            | (1UL  << 36)  /* as: 0:8bit 1:16bit */
+            | (0UL  << 37)  /* tbi0 */
+            | (0UL  << 38); /* tbi1 */
+    __asm__ volatile("msr tcr_el1, %0"::"r"(reg_val));
+
+    rt_hw_isb();
+
+    __asm__ volatile ("mrs %0, sctlr_el1":"=r"(reg_val));
+
+    reg_val |= 1 << 2;  /* enable dcache */
+    reg_val |= 1 << 0;  /* enable mmu */
+
+    __asm__ volatile (
+        "msr ttbr0_el1, %0\n\r"
+        "msr sctlr_el1, %1\n\r"
+        "dsb sy\n\r"
+        "isb sy\n\r"
+        ::"r"(MMUTable), "r"(reg_val) :"memory");
+
+    rt_hw_mmu_tlb_invalidate();
 }
 
-static int level2shift(int level)
-{
-    /* Page is 12 bits wide, every level translates 9 bits */
-    return (12 + 9 * (3 - level));
-}
-
-static uint64_t *get_level_table(uint64_t *pte)
-{
-    uint64_t *table = (uint64_t *)(*pte & XLAT_ADDR_MASK);
-    
-    if (pte_type(pte) != PMD_TYPE_TABLE) 
-    {
-        table = create_table();
-        set_table(pte, table);
-    }
-    return table;
-}
-
-static void map_region(uint64_t virt, uint64_t phys, uint64_t size, uint64_t attr)
-{
-    uint64_t block_size = 0;
-    uint64_t block_shift = 0;
-    uint64_t *pte;
-    uint64_t idx = 0;
-    uint64_t addr = 0;
-    uint64_t *table = 0;
-    int level = 0;
-
-    addr = virt;
-    while (size) 
-    {
-        table = &main_tbl[0];
-        for (level = 0; level < 4; level++) 
-        {
-            block_shift = level2shift(level);
-            idx = addr >> block_shift;
-            idx = idx%512;
-            block_size = (uint64_t)(1L << block_shift);
-            pte = table + idx;
-
-            if (size >= block_size && IS_ALIGNED(addr, block_size)) 
-            {
-                attr &= 0xfff0000000000ffcUL;
-                if(level != 3)
-                {
-                    *pte = phys | (attr | 0x1UL);
-                }
-                else
-                {
-                    *pte = phys | (attr | 0x3UL);
-                }
-                addr += block_size;
-                phys += block_size;
-                size -= block_size;
-                break;
-            }
-            table = get_level_table(pte);
-        }
-    }
-}
-
-void armv8_map(unsigned long va, unsigned long pa, unsigned long size, unsigned long attr)
-{
-    map_region(va, pa, size, attr);
-}
-
-void rt_hw_dcache_enable(void)
-{
-    if (!(get_sctlr() & CR_M)) 
-    {
-        rt_kprintf("please init mmu!\n");
-    }
-    else
-    {
-        set_sctlr(get_sctlr() | CR_C);
-    }
-}
-
-void rt_hw_dcache_flush_all(void)
+int rt_hw_mmu_map(unsigned long addr, unsigned long size, unsigned long attr)
 {
     int ret;
+    rt_ubase_t level;
 
-    __asm_flush_dcache_all();
-    ret = __asm_flush_l3_cache();
-    if (ret)
-    {
-        rt_kprintf("flushing dcache returns 0x%x\n", ret);
-    }
-    else
-    {
-        rt_kprintf("flushing dcache successfully.\n");
-    }
-}
+    level = rt_hw_interrupt_disable();
+    ret = rt_hw_mmu_setmtt(addr, addr + size, addr, attr);
 
-void rt_hw_dcache_flush_range(unsigned long start_addr, unsigned long size)
-{
-    __asm_flush_dcache_range(start_addr, start_addr + size);
-}
-void rt_hw_dcache_invalidate_range(unsigned long start_addr,unsigned long size)
-{
-    __asm_flush_dcache_range(start_addr, start_addr + size);
-}
+    rt_hw_interrupt_enable(level);
 
-void rt_hw_dcache_invalidate_all(void)
-{
-    __asm_invalidate_dcache_all();
-}
-
-void rt_hw_dcache_disable(void)
-{
-    /* if cache isn't enabled no need to disable */
-    if(!(get_sctlr() & CR_C))
-    {
-        rt_kprintf("need enable cache!\n");
-        return;
-    }
-    set_sctlr(get_sctlr() & ~CR_C);
-}
-
-//icache
-void rt_hw_icache_enable(void)
-{
-    __asm_invalidate_icache_all();
-    set_sctlr(get_sctlr() | CR_I);
-}
-
-void rt_hw_icache_invalidate_all(void)
-{
-    __asm_invalidate_icache_all();
-}
-
-void rt_hw_icache_disable(void)
-{
-    set_sctlr(get_sctlr() & ~CR_I);
+    return ret;
 }

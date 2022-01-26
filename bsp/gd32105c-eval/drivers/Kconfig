@@ -1,0 +1,69 @@
+menu "Hardware Drivers Config"
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config SOC_SERIES_GD32F1
+        bool
+        default y
+    config SOC_GD32105C
+        bool
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        select SOC_SERIES_GD32F1
+        default y
+
+    config RT_USING_USART0
+        bool "Using USART0"
+        select RT_USING_SERIAL
+        default y
+
+    config RT_USING_USART1
+        bool "Using USART1"
+        select RT_USING_SERIAL
+        default n
+
+    config RT_USING_USART2
+        bool "Using USART2"
+        select RT_USING_SERIAL
+        default n
+
+    config RT_USING_UART3
+        bool "Using UART3"
+        select RT_USING_SERIAL
+        default n
+
+    config RT_USING_SPI0
+        bool "Using SPI0"
+        select RT_USING_SPI
+        default y
+
+    config RT_USING_SPI1
+        bool "Using SPI1"
+        select RT_USING_SPI
+        default n 
+
+    config RT_USING_SPI2
+        bool "Using SPI2"
+        select RT_USING_SPI
+        default n
+
+    config RT_USING_I2C0
+        bool "Using I2C0"
+        select RT_USING_I2C
+        default n
+
+    config RT_USING_I2C1
+        bool "Using I2C1"
+        select RT_USING_I2C
+        default n 
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

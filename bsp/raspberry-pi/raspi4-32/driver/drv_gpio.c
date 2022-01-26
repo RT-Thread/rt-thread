@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -102,7 +102,7 @@ static void gpio_set_pud(GPIO_PIN pin, GPIO_PUPD_FUNC mode)
     case 3:
         reg_value = GPIO_PUP_PDN_CNTRL_REG3(GPIO_BASE);
         GPIO_PUP_PDN_CNTRL_REG3(GPIO_BASE) = (reg_value | (mode << (fselrest*2)));
-        break;    
+        break;
     default:
         break;
     }
@@ -194,7 +194,7 @@ static int raspi_pin_read(struct rt_device *device, rt_base_t pin)
         else
         {
             pin_level = 0;
-        }  
+        }
 
     }
     else
@@ -422,7 +422,7 @@ int rt_hw_gpio_init(void)
 
     GPIO_REG_GPAFEN0(GPIO_BASE) = 0x0;
     GPIO_REG_GPAFEN0(GPIO_BASE) = 0x0;
-    
+
     rt_hw_interrupt_install(IRQ_GPIO0, gpio_irq_handler, &_g_gpio_irq_tbl[0], "gpio0_irq");
     rt_hw_interrupt_umask(IRQ_GPIO0);
 

@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>rt-thread</name>
+        <name>rtthread</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>SWM320xE	Synwit SWM320xE</state>
+                    <state>STM32F407ZG	ST STM32F407ZG</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -138,7 +138,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>SWM320xE	Synwit SWM320xE</state>
+                    <state>STM32F407ZG	ST STM32F407ZG</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -691,7 +691,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>rtthread.out</state>
+                    <state>project.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
@@ -1229,7 +1229,6 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state></state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>

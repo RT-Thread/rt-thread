@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,14 +7,14 @@
  * Date           Author       Notes
  */
 /*
- * ndis.h 
- * 
+ * ndis.h
+ *
  * Modified by Colin O'Flynn <coflynn@newae.com>
  * ntddndis.h modified by Benedikt Spranger <b.spranger@pengutronix.de>
- * 
- * Thanks to the cygwin development team, 
+ *
+ * Thanks to the cygwin development team,
  * espacially to Casper S. Hornstrup <chorns@users.sourceforge.net>
- * 
+ *
  * THIS SOFTWARE IS NOT COPYRIGHTED
  *
  * This source code is offered for use in the public domain. You may
@@ -30,7 +30,7 @@
 #ifndef  __NDIS_H__
 #define  __NDIS_H__
 
-#define NDIS_STATUS_MULTICAST_FULL	      0xC0010009
+#define NDIS_STATUS_MULTICAST_FULL        0xC0010009
 #define NDIS_STATUS_MULTICAST_EXISTS      0xC001000A
 #define NDIS_STATUS_MULTICAST_NOT_FOUND   0xC001000B
 
@@ -42,21 +42,21 @@
 #define OID_PNP_REMOVE_WAKE_UP_PATTERN          0xFD010104
 #define OID_PNP_ENABLE_WAKE_UP                  0xFD010106
 
-enum NDIS_DEVICE_POWER_STATE 
+enum NDIS_DEVICE_POWER_STATE
 {
-	NdisDeviceStateUnspecified = 0,
-	NdisDeviceStateD0,
-	NdisDeviceStateD1,
-	NdisDeviceStateD2,
-	NdisDeviceStateD3,
-	NdisDeviceStateMaximum
+    NdisDeviceStateUnspecified = 0,
+    NdisDeviceStateD0,
+    NdisDeviceStateD1,
+    NdisDeviceStateD2,
+    NdisDeviceStateD3,
+    NdisDeviceStateMaximum
 };
 
 struct NDIS_PM_WAKE_UP_CAPABILITIES
 {
-	enum NDIS_DEVICE_POWER_STATE  MinMagicPacketWakeUp;
-	enum NDIS_DEVICE_POWER_STATE  MinPatternWakeUp;
-	enum NDIS_DEVICE_POWER_STATE  MinLinkChangeWakeUp;
+    enum NDIS_DEVICE_POWER_STATE  MinMagicPacketWakeUp;
+    enum NDIS_DEVICE_POWER_STATE  MinPatternWakeUp;
+    enum NDIS_DEVICE_POWER_STATE  MinLinkChangeWakeUp;
 };
 
 /* NDIS_PNP_CAPABILITIES.Flags constants */
@@ -194,36 +194,36 @@ struct NDIS_PM_WAKE_UP_CAPABILITIES
 #define NDIS_MINIPORT_SUPPORTS_CANCEL_SEND_PACKETS    0x00800000
 #define NDIS_MINIPORT_64BITS_DMA                      0x01000000
 
-#define NDIS_MEDIUM_802_3		 0x00000000
-#define NDIS_MEDIUM_802_5		 0x00000001
-#define NDIS_MEDIUM_FDDI		 0x00000002
-#define NDIS_MEDIUM_WAN			 0x00000003
-#define NDIS_MEDIUM_LOCAL_TALK	 0x00000004
-#define NDIS_MEDIUM_DIX			 0x00000005
+#define NDIS_MEDIUM_802_3        0x00000000
+#define NDIS_MEDIUM_802_5        0x00000001
+#define NDIS_MEDIUM_FDDI         0x00000002
+#define NDIS_MEDIUM_WAN          0x00000003
+#define NDIS_MEDIUM_LOCAL_TALK   0x00000004
+#define NDIS_MEDIUM_DIX          0x00000005
 #define NDIS_MEDIUM_ARCENT_RAW   0x00000006
 #define NDIS_MEDIUM_ARCENT_878_2 0x00000007
-#define NDIS_MEDIUM_ATM			 0x00000008
+#define NDIS_MEDIUM_ATM          0x00000008
 #define NDIS_MEDIUM_WIRELESS_LAN 0x00000009
-#define NDIS_MEDIUM_IRDA		 0x0000000A
-#define NDIS_MEDIUM_BPC			 0x0000000B
-#define NDIS_MEDIUM_CO_WAN		 0x0000000C
-#define NDIS_MEDIUM_1394		 0x0000000D
+#define NDIS_MEDIUM_IRDA         0x0000000A
+#define NDIS_MEDIUM_BPC          0x0000000B
+#define NDIS_MEDIUM_CO_WAN       0x0000000C
+#define NDIS_MEDIUM_1394         0x0000000D
 
-#define NDIS_PACKET_TYPE_DIRECTED	    0x00000001
-#define NDIS_PACKET_TYPE_MULTICAST	    0x00000002
-#define NDIS_PACKET_TYPE_ALL_MULTICAST	0x00000004
-#define NDIS_PACKET_TYPE_BROADCAST	    0x00000008
-#define NDIS_PACKET_TYPE_SOURCE_ROUTING	0x00000010
-#define NDIS_PACKET_TYPE_PROMISCUOUS	0x00000020
-#define NDIS_PACKET_TYPE_SMT		    0x00000040
-#define NDIS_PACKET_TYPE_ALL_LOCAL	    0x00000080
-#define NDIS_PACKET_TYPE_GROUP		    0x00000100
-#define NDIS_PACKET_TYPE_ALL_FUNCTIONAL	0x00000200
-#define NDIS_PACKET_TYPE_FUNCTIONAL	    0x00000400
-#define NDIS_PACKET_TYPE_MAC_FRAME	    0x00000800
+#define NDIS_PACKET_TYPE_DIRECTED       0x00000001
+#define NDIS_PACKET_TYPE_MULTICAST      0x00000002
+#define NDIS_PACKET_TYPE_ALL_MULTICAST  0x00000004
+#define NDIS_PACKET_TYPE_BROADCAST      0x00000008
+#define NDIS_PACKET_TYPE_SOURCE_ROUTING 0x00000010
+#define NDIS_PACKET_TYPE_PROMISCUOUS    0x00000020
+#define NDIS_PACKET_TYPE_SMT            0x00000040
+#define NDIS_PACKET_TYPE_ALL_LOCAL      0x00000080
+#define NDIS_PACKET_TYPE_GROUP          0x00000100
+#define NDIS_PACKET_TYPE_ALL_FUNCTIONAL 0x00000200
+#define NDIS_PACKET_TYPE_FUNCTIONAL     0x00000400
+#define NDIS_PACKET_TYPE_MAC_FRAME      0x00000800
 
-#define NDIS_MEDIA_STATE_CONNECTED	    0x00000000
-#define NDIS_MEDIA_STATE_DISCONNECTED	0x00000001
+#define NDIS_MEDIA_STATE_CONNECTED      0x00000000
+#define NDIS_MEDIA_STATE_DISCONNECTED   0x00000001
 
 #define NDIS_MAC_OPTION_COPY_LOOKAHEAD_DATA     0x00000001
 #define NDIS_MAC_OPTION_RECEIVE_SERIALIZED      0x00000002

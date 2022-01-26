@@ -6,6 +6,7 @@ ARCH='arm'
 CPU='cortex-m4'
 CROSS_TOOL='gcc'
 BOARD_NAME = 'lpcxpresso'
+BSP_LIBRARY_TYPE = 'LPC55S6X'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
@@ -153,7 +154,7 @@ elif PLATFORM == 'iar':
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
 
-def dist_handle(BSP_ROOT):
+def dist_handle(BSP_ROOT, dist_dir):
     cwd_path = os.getcwd()
     sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
     from sdk_dist import dist_do_building

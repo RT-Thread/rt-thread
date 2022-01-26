@@ -73,7 +73,7 @@ extern "C" {
   */
 
 #if defined(USART_CR1_FIFOEN)
-/** @defgroup SMARTCARDEx_FIFO_mode SMARTCARDEx FIFO mode
+/** @defgroup SMARTCARDEx_FIFO_mode SMARTCARD FIFO mode
   * @brief    SMARTCARD FIFO mode
   * @{
   */
@@ -83,7 +83,7 @@ extern "C" {
   * @}
   */
 
-/** @defgroup SMARTCARDEx_TXFIFO_threshold_level SMARTCARDEx TXFIFO threshold level
+/** @defgroup SMARTCARDEx_TXFIFO_threshold_level SMARTCARD TXFIFO threshold level
   * @brief    SMARTCARD TXFIFO level
   * @{
   */
@@ -97,7 +97,7 @@ extern "C" {
   * @}
   */
 
-/** @defgroup SMARTCARDEx_RXFIFO_threshold_level SMARTCARDEx RXFIFO threshold level
+/** @defgroup SMARTCARDEx_RXFIFO_threshold_level SMARTCARD RXFIFO threshold level
   * @brief    SMARTCARD RXFIFO level
   * @{
   */

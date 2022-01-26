@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,8 +28,8 @@
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.emac"
 
-#define ETH_RXBUFNB        	4
-#define ETH_TXBUFNB        	2
+#define ETH_RXBUFNB         4
+#define ETH_TXBUFNB         2
 
 #define LINK_THREAD_STACK_SIZE   256
 #define LINK_THREAD_PREORITY     21
@@ -131,14 +131,14 @@ void NVIC_Configuration(void)
     NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
 
     /* 2 bit for pre-emption priority, 2 bits for subpriority */
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
     /* Enable the Ethernet global Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = ETH_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);  
+    NVIC_Init(&NVIC_InitStructure);
 }
 
 /**
@@ -173,7 +173,7 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	/*MII Mode GPIO configuration*/
+    /*MII Mode GPIO configuration*/
 #ifdef MII_MODE
 /**********************MII Tx Pin Define****************************/
     /*
@@ -193,7 +193,7 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
-	/**********************MII Rx Pin Define****************************/
+    /**********************MII Rx Pin Define****************************/
 #if MII_RX_REMAP  /*IO PIN remaped*/
     /*
     ETH_MII_RX_DV-->PD8
@@ -208,7 +208,7 @@ void GPIO_Configuration(void)
     */
     GPIO_InitStructure.GPIO_Pins = GPIO_Pins_8 | GPIO_Pins_9 | GPIO_Pins_10 | GPIO_Pins_11 | GPIO_Pins_12;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOD, &GPIO_InitStructure); 
+    GPIO_Init(GPIOD, &GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_3;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -233,11 +233,11 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_4 | GPIO_Pins_5;   
+    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_4 | GPIO_Pins_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_10;  
+    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_10;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -255,8 +255,8 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	/**********************RMII Rx Pin Define****************************/
+
+    /**********************RMII Rx Pin Define****************************/
 #if MII_RX_REMAP  /*IO PIN remaped*/
     /*
     ETH_RMII_RX_DV-->PD8
@@ -266,7 +266,7 @@ void GPIO_Configuration(void)
     */
     GPIO_InitStructure.GPIO_Pins = GPIO_Pins_8 | GPIO_Pins_9 | GPIO_Pins_10;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOD, &GPIO_InitStructure); 
+    GPIO_Init(GPIOD, &GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Pins =  GPIO_Pins_1;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -282,7 +282,7 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_4 | GPIO_Pins_5;   
+    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_4 | GPIO_Pins_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 
@@ -314,7 +314,7 @@ static rt_err_t rt_at32_eth_init(rt_device_t dev)
 
     RCC_AHBPeriphClockCmd(RCC_AHBPERIPH_ETHMAC | RCC_AHBPERIPH_ETHMACTX |
                           RCC_AHBPERIPH_ETHMACRX, ENABLE);
-    
+
     /* MII/RMII Media interface selection ------------------------------------------*/
 #ifdef MII_MODE /* Mode MII with AT32F407-EVAL  */
     GPIO_ETH_MediaInterfaceConfig(GPIO_ETH_MediaInterface_MII);
@@ -361,31 +361,31 @@ static rt_err_t rt_at32_eth_init(rt_device_t dev)
     ETH_InitStructure.ETH_ChecksumOffload = ETH_ChecksumOffload_Enable;
 #endif
 
-    /*------------------------   DMA   -----------------------------------*/  
+    /*------------------------   DMA   -----------------------------------*/
 
-    /* When we use the Checksum offload feature, we need to enable the Store and Forward mode: 
-    the store and forward guarantee that a whole frame is stored in the FIFO, so the MAC can insert/verify the checksum, 
+    /* When we use the Checksum offload feature, we need to enable the Store and Forward mode:
+    the store and forward guarantee that a whole frame is stored in the FIFO, so the MAC can insert/verify the checksum,
     if the checksum is OK the DMA can handle the frame otherwise the frame is dropped */
-    ETH_InitStructure.ETH_DropTCPIPChecksumErrorFrame = ETH_DropTCPIPChecksumErrorFrame_Enable;//ETH_DropTCPIPChecksumErrorFrame_Enable; 
-    ETH_InitStructure.ETH_ReceiveStoreForward = ETH_ReceiveStoreForward_Enable;         
-    ETH_InitStructure.ETH_TransmitStoreForward = ETH_TransmitStoreForward_Enable;     
+    ETH_InitStructure.ETH_DropTCPIPChecksumErrorFrame = ETH_DropTCPIPChecksumErrorFrame_Enable;//ETH_DropTCPIPChecksumErrorFrame_Enable;
+    ETH_InitStructure.ETH_ReceiveStoreForward = ETH_ReceiveStoreForward_Enable;
+    ETH_InitStructure.ETH_TransmitStoreForward = ETH_TransmitStoreForward_Enable;
 
-    ETH_InitStructure.ETH_ForwardErrorFrames = ETH_ForwardErrorFrames_Disable;       
-    ETH_InitStructure.ETH_ForwardUndersizedGoodFrames = ETH_ForwardUndersizedGoodFrames_Disable;   
-    ETH_InitStructure.ETH_SecondFrameOperate = ETH_SecondFrameOperate_Enable;                                                          
-    ETH_InitStructure.ETH_AddressAlignedBeats = ETH_AddressAlignedBeats_Enable;      
-    ETH_InitStructure.ETH_FixedBurst = ETH_FixedBurst_Enable;                
-    ETH_InitStructure.ETH_RxDMABurstLength = ETH_RxDMABurstLength_32Beat;          
-    ETH_InitStructure.ETH_TxDMABurstLength = ETH_TxDMABurstLength_32Beat;                                                                 
+    ETH_InitStructure.ETH_ForwardErrorFrames = ETH_ForwardErrorFrames_Disable;
+    ETH_InitStructure.ETH_ForwardUndersizedGoodFrames = ETH_ForwardUndersizedGoodFrames_Disable;
+    ETH_InitStructure.ETH_SecondFrameOperate = ETH_SecondFrameOperate_Enable;
+    ETH_InitStructure.ETH_AddressAlignedBeats = ETH_AddressAlignedBeats_Enable;
+    ETH_InitStructure.ETH_FixedBurst = ETH_FixedBurst_Enable;
+    ETH_InitStructure.ETH_RxDMABurstLength = ETH_RxDMABurstLength_32Beat;
+    ETH_InitStructure.ETH_TxDMABurstLength = ETH_TxDMABurstLength_32Beat;
     ETH_InitStructure.ETH_DMAArbitration = ETH_DMAArbitration_RoundRobin_RxTx_2_1;
 
     /* Configure Ethernet, check error */
     if(ETH_Init(&ETH_InitStructure, PHY_ADDRESS) == ((uint32_t)0)) {
         return RT_ERROR;
-    }    
+    }
 
     /* Enable DMA Receive interrupt (need to enable in this case Normal interrupt) */
-    ETH_DMAITConfig(ETH_DMA_INT_NIS | ETH_DMA_INT_R, ENABLE);  
+    ETH_DMAITConfig(ETH_DMA_INT_NIS | ETH_DMA_INT_R, ENABLE);
 
     /* Initialize Tx Descriptors list: Chain Mode */
     ETH_DMATxDescChainInit(DMATxDscrTab, &Tx_Buff[0][0], ETH_TXBUFNB);
@@ -396,7 +396,7 @@ static rt_err_t rt_at32_eth_init(rt_device_t dev)
     ETH_MACAddressConfig(ETH_MAC_Address0, (u8*)&at32_eth_device.dev_addr[0]);
 
     /* Enable ETH transmition and recetion */
-    ETH_Start();    
+    ETH_Start();
 
     return RT_EOK;
 }
@@ -581,7 +581,7 @@ struct pbuf *rt_at32_eth_rx(rt_device_t dev)
             {
                 rt_uint32_t i;
                 rt_uint8_t *ptr = (rt_uint8_t*)(DMARxDescToGet->Buffer1Addr);
-                
+
                 AT32_ETH_PRINTF("rx_dump, len:%d\r\n", p->tot_len);
                 for(i=0; i<p->tot_len; i++)
                 {

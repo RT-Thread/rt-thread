@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,7 +31,7 @@
 //#define RT_USING_UART2
 
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart" />
-#define RT_CONSOLE_DEVICE_NAME	"uart0"
+#define RT_CONSOLE_DEVICE_NAME  "uart0"
 
 // </RDTConfigurator>
 

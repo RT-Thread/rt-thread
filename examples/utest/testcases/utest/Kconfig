@@ -1,0 +1,7 @@
+menu "Utest Self Testcase"
+
+config UTEST_SELF_PASS_TC
+    bool "Pass test"
+    default y
+
+endmenu

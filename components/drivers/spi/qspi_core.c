@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,7 +14,7 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-    
+
     struct rt_qspi_device *qspi_device = (struct rt_qspi_device *)device;
     rt_err_t result = RT_EOK;
 
@@ -35,14 +35,14 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
 rt_err_t rt_qspi_bus_register(struct rt_spi_bus *bus, const char *name, const struct rt_spi_ops *ops)
 {
     rt_err_t result = RT_EOK;
-    
+
     result = rt_spi_bus_register(bus, name, ops);
     if(result == RT_EOK)
     {
         /* set SPI bus to qspi modes */
         bus->mode = RT_SPI_BUS_MODE_QSPI;
     }
-    
+
     return result;
 }
 
@@ -243,7 +243,7 @@ rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_si
         message.qspi_data_lines = 0;
 
     }
-    
+
     /* set send buf and send size */
     message.parent.send_buf = ptr + count;
     message.parent.recv_buf = RT_NULL;

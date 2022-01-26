@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_HAL_CRYP_H
-#define __STM32L4xx_HAL_CRYP_H
+#ifndef STM32L4xx_HAL_CRYP_H
+#define STM32L4xx_HAL_CRYP_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -369,7 +369,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
   */
 
 /** @brief Reset CRYP handle state.
-  * @param  __HANDLE__: specifies the CRYP handle.
+  * @param  __HANDLE__ specifies the CRYP handle.
   * @retval None
   */
 #if (USE_HAL_CRYP_REGISTER_CALLBACKS == 1)
@@ -384,22 +384,22 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief  Enable the CRYP AES peripheral.
-  * @param  __HANDLE__: specifies the CRYP handle.
+  * @param  __HANDLE__ specifies the CRYP handle.
   * @retval None
   */
 #define __HAL_CRYP_ENABLE(__HANDLE__)  ((__HANDLE__)->Instance->CR |=  AES_CR_EN)
 
 /**
   * @brief  Disable the CRYP AES peripheral.
-  * @param  __HANDLE__: specifies the CRYP handle.
+  * @param  __HANDLE__ specifies the CRYP handle.
   * @retval None
   */
 #define __HAL_CRYP_DISABLE(__HANDLE__) ((__HANDLE__)->Instance->CR &=  ~AES_CR_EN)
 
 /**
   * @brief  Set the algorithm operating mode.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __OPERATING_MODE__: specifies the operating mode
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __OPERATING_MODE__ specifies the operating mode
   *          This parameter can be one of the following values:
   *            @arg @ref CRYP_ALGOMODE_ENCRYPT encryption
   *            @arg @ref CRYP_ALGOMODE_KEYDERIVATION key derivation
@@ -412,8 +412,8 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief  Set the algorithm chaining mode.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __CHAINING_MODE__: specifies the chaining mode
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __CHAINING_MODE__ specifies the chaining mode
   *          This parameter can be one of the following values:
   *            @arg @ref CRYP_CHAINMODE_AES_ECB Electronic CodeBook
   *            @arg @ref CRYP_CHAINMODE_AES_CBC Cipher Block Chaining
@@ -427,8 +427,8 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 
 /** @brief  Check whether the specified CRYP status flag is set or not.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __FLAG__ specifies the flag to check.
   *         This parameter can be one of the following values:
   *            @arg @ref CRYP_FLAG_BUSY GCM process suspension forbidden
   *            @arg @ref CRYP_IT_WRERR Write Error
@@ -440,8 +440,8 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 
 /** @brief  Clear the CRYP pending status flag.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __FLAG__ specifies the flag to clear.
   *         This parameter can be one of the following values:
   *            @arg @ref CRYP_ERR_CLEAR Read (RDERR) or Write Error (WRERR) Flag Clear
   *            @arg @ref CRYP_CCF_CLEAR Computation Complete Flag (CCF) Clear
@@ -452,8 +452,8 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 
 /** @brief  Check whether the specified CRYP interrupt source is enabled or not.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param __INTERRUPT__: CRYP interrupt source to check
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param __INTERRUPT__ CRYP interrupt source to check
   *         This parameter can be one of the following values:
   *            @arg @ref CRYP_IT_ERRIE Error interrupt (used for RDERR and WRERR)
   *            @arg @ref CRYP_IT_CCFIE Computation Complete interrupt
@@ -463,8 +463,8 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 
 /** @brief  Check whether the specified CRYP interrupt is set or not.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __INTERRUPT__: specifies the interrupt to check.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __INTERRUPT__ specifies the interrupt to check.
   *         This parameter can be one of the following values:
   *            @arg @ref CRYP_IT_WRERR Write Error
   *            @arg @ref CRYP_IT_RDERR Read Error
@@ -476,8 +476,8 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 
 /** @brief  Clear the CRYP pending interrupt.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __INTERRUPT__: specifies the IT to clear.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __INTERRUPT__ specifies the IT to clear.
   *         This parameter can be one of the following values:
   *            @arg @ref CRYP_ERR_CLEAR Read (RDERR) or Write Error (WRERR) Flag Clear
   *            @arg @ref CRYP_CCF_CLEAR Computation Complete Flag (CCF) Clear
@@ -488,8 +488,8 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief  Enable the CRYP interrupt.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __INTERRUPT__: CRYP Interrupt.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __INTERRUPT__ CRYP Interrupt.
   *         This parameter can be one of the following values:
   *            @arg @ref CRYP_IT_ERRIE Error interrupt (used for RDERR and WRERR)
   *            @arg @ref CRYP_IT_CCFIE Computation Complete interrupt
@@ -500,8 +500,8 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief  Disable the CRYP interrupt.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __INTERRUPT__: CRYP Interrupt.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __INTERRUPT__ CRYP Interrupt.
   *         This parameter can be one of the following values:
   *            @arg @ref CRYP_IT_ERRIE Error interrupt (used for RDERR and WRERR)
   *            @arg @ref CRYP_IT_CCFIE Computation Complete interrupt
@@ -520,7 +520,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief Verify the key size length.
-  * @param __KEYSIZE__: Ciphering/deciphering algorithm key size.
+  * @param __KEYSIZE__ Ciphering/deciphering algorithm key size.
   * @retval SET (__KEYSIZE__ is a valid value) or RESET (__KEYSIZE__ is invalid)
   */
 #define IS_CRYP_KEYSIZE(__KEYSIZE__)  (((__KEYSIZE__) == CRYP_KEYSIZE_128B)  || \
@@ -528,7 +528,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief Verify the input data type.
-  * @param __DATATYPE__: Ciphering/deciphering algorithm input data type.
+  * @param __DATATYPE__ Ciphering/deciphering algorithm input data type.
   * @retval SET (__DATATYPE__ is valid) or RESET (__DATATYPE__ is invalid)
   */
 #define IS_CRYP_DATATYPE(__DATATYPE__) (((__DATATYPE__) == CRYP_DATATYPE_32B) || \
@@ -538,7 +538,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief Verify the CRYP AES IP running mode.
-  * @param __MODE__: CRYP AES IP running mode.
+  * @param __MODE__ CRYP AES IP running mode.
   * @retval SET (__MODE__ is valid) or RESET (__MODE__ is invalid)
   */
 #define IS_CRYP_AES(__MODE__) (((__MODE__) == CRYP_AES_DISABLE) || \
@@ -546,7 +546,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief Verify the selected CRYP algorithm.
-  * @param __ALGOMODE__: Selected CRYP algorithm (ciphering, deciphering, key derivation or a combination of the latter).
+  * @param __ALGOMODE__ Selected CRYP algorithm (ciphering, deciphering, key derivation or a combination of the latter).
   * @retval SET (__ALGOMODE__ is valid) or RESET (__ALGOMODE__ is invalid)
   */
 #define IS_CRYP_ALGOMODE(__ALGOMODE__) (((__ALGOMODE__) == CRYP_ALGOMODE_ENCRYPT)        || \
@@ -557,7 +557,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief Verify the selected CRYP chaining algorithm.
-  * @param __CHAINMODE__: Selected CRYP chaining algorithm.
+  * @param __CHAINMODE__ Selected CRYP chaining algorithm.
   * @retval SET (__CHAINMODE__ is valid) or RESET (__CHAINMODE__ is invalid)
   */
 #if defined(AES_CR_NPBLB)
@@ -576,7 +576,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief Verify the deciphering key write option.
-  * @param __WRITE__: deciphering key write option.
+  * @param __WRITE__ deciphering key write option.
   * @retval SET (__WRITE__ is valid) or RESET (__WRITE__ is invalid)
   */
 #define IS_CRYP_WRITE(__WRITE__)   (((__WRITE__) == CRYP_KEY_WRITE_ENABLE)      || \
@@ -584,7 +584,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief Verify the CRYP input data DMA mode.
-  * @param __MODE__: CRYP input data DMA mode.
+  * @param __MODE__ CRYP input data DMA mode.
   * @retval SET (__MODE__ is valid) or RESET (__MODE__ is invalid)
   */
 #define IS_CRYP_DMAIN(__MODE__) (((__MODE__) == CRYP_DMAIN_DISABLE) || \
@@ -592,7 +592,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief Verify the CRYP output data DMA mode.
-  * @param __MODE__: CRYP output data DMA mode.
+  * @param __MODE__ CRYP output data DMA mode.
   * @retval SET (__MODE__ is valid) or RESET (__MODE__ is invalid)
   */
 #define IS_CRYP_DMAOUT(__MODE__) (((__MODE__) == CRYP_DMAOUT_DISABLE) || \
@@ -600,7 +600,7 @@ typedef  void (*pCRYP_CallbackTypeDef)(CRYP_HandleTypeDef * hcryp); /*!< pointer
 
 /**
   * @brief Verify the CRYP AES ciphering/deciphering/authentication algorithm phase.
-  * @param __PHASE__: CRYP AES ciphering/deciphering/authentication algorithm phase.
+  * @param __PHASE__ CRYP AES ciphering/deciphering/authentication algorithm phase.
   * @retval SET (__PHASE__ is valid) or RESET (__PHASE__ is invalid)
   */
 #define IS_CRYP_GCMCMAC_PHASE(__PHASE__) (((__PHASE__) == CRYP_INIT_PHASE)    || \
@@ -728,6 +728,6 @@ uint32_t              HAL_CRYP_GetError(CRYP_HandleTypeDef *hcryp);
 }
 #endif
 
-#endif /* __STM32L4xx_HAL_CRYP_H */
+#endif /* STM32L4xx_HAL_CRYP_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

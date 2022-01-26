@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2012, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
  * All rights reserved
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -13,7 +13,7 @@
 #include <rthw.h>
 #include "ymodem.h"
 
-#ifdef YMODEM_USING_CRC_TABLE 
+#ifdef YMODEM_USING_CRC_TABLE
 static const rt_uint16_t ccitt_table[256] =
 {
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,

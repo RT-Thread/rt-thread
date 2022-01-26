@@ -47,7 +47,7 @@ static void rthw_sdio_wait_completed(struct rthw_sdio *sdio)
     SDIO_TypeDef *hw_sdio = sdio->sdio_des.hw_sdio;
 
     if (rt_event_recv(&sdio->event, 0xffffffff, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
-                      rt_tick_from_millisecond(5000), &status) != RT_EOK)
+                      rt_tick_from_millisecond(1000), &status) != RT_EOK)
     {
         LOG_E("wait completed timeout");
         cmd->err = -RT_ETIMEOUT;
@@ -495,7 +495,7 @@ struct rt_mmcsd_host *sdio_host_create(struct swm_sdio_des *sdio_des)
     rt_memcpy(&sdio->sdio_des, sdio_des, sizeof(struct swm_sdio_des));
 
     rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_PRIO);
 
     /* set host defautl attributes */
     host->ops = &swm_sdio_ops;

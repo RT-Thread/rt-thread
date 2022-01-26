@@ -1,0 +1,16 @@
+menu "RT-Thread Utestcases"
+
+config RT_USING_UTESTCASES
+    bool "RT-Thread Utestcases"
+    default n
+    select RT_USING_UTEST
+
+if RT_USING_UTESTCASES
+
+source "$RTT_DIR/examples/utest/testcases/utest/Kconfig"
+source "$RTT_DIR/examples/utest/testcases/kernel/Kconfig"
+source "$RTT_DIR/examples/utest/testcases/drivers/serial_v2/Kconfig"
+
+endif
+
+endmenu

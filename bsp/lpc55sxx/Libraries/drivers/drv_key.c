@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -47,11 +47,11 @@ int my_button_register(struct my_button *button)
     {
         rt_pin_mode(button->pin, PIN_MODE_INPUT_PULLDOWN);
     }
-    
+
     button->cnt = 0;
     button->event = BUTTON_EVENT_NONE;
     button_manage.button_list[button_manage.num++] = button;
-    
+
     return 0;
 }
 
@@ -100,7 +100,7 @@ static void my_button_scan(void *param)
             else if (cnt_old >= MY_BUTTON_HOLD_MS / MY_BUTTON_SCAN_SPACE_MS) /* BUTTON_HOLD_UP */
             {
                 LOG_D("BUTTON_HOLD_UP");
-                button_manage.button_list[i]->event = BUTTON_EVENT_HOLD_UP; 
+                button_manage.button_list[i]->event = BUTTON_EVENT_HOLD_UP;
                 MY_BUTTON_CALL(button_manage.button_list[i]->cb, (button_manage.button_list[i]));
             }
         }
@@ -117,7 +117,7 @@ int my_button_start(void)
                              my_button_scan,        /* Timeout callback func */
                              RT_NULL,               /* Timeout func entry */
                              RT_TICK_PER_SECOND * MY_BUTTON_SCAN_SPACE_MS / 1000,
-                             RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER); 
+                             RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
     /* Start Timer */
     if (button_manage.timer != RT_NULL)
         rt_timer_start(button_manage.timer);
@@ -159,7 +159,7 @@ void key_test(rt_uint32_t led_num, rt_uint32_t value)
     key.pin = KEY_PIN;
 
     my_button_register(&key);
-    
+
     my_button_start();
 }
 MSH_CMD_EXPORT(key_test, key_test);

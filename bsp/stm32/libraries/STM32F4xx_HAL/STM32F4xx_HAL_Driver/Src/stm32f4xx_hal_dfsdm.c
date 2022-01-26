@@ -157,23 +157,26 @@
 
     *** Callback registration ***
     =============================
-
+    [..]
     The compilation define USE_HAL_DFSDM_REGISTER_CALLBACKS when set to 1
     allows the user to configure dynamically the driver callbacks.
-    Use functions @ref HAL_DFSDM_Channel_RegisterCallback(),
-    @ref HAL_DFSDM_Filter_RegisterCallback() or
-    @ref HAL_DFSDM_Filter_RegisterAwdCallback() to register a user callback.
+    Use functions HAL_DFSDM_Channel_RegisterCallback(),
+    HAL_DFSDM_Filter_RegisterCallback() or
+    HAL_DFSDM_Filter_RegisterAwdCallback() to register a user callback.
 
-    Function @ref HAL_DFSDM_Channel_RegisterCallback() allows to register
+    [..]
+    Function HAL_DFSDM_Channel_RegisterCallback() allows to register
     following callbacks:
       (+) CkabCallback      : DFSDM channel clock absence detection callback.
       (+) ScdCallback       : DFSDM channel short circuit detection callback.
       (+) MspInitCallback   : DFSDM channel MSP init callback.
       (+) MspDeInitCallback : DFSDM channel MSP de-init callback.
+    [..]
     This function takes as parameters the HAL peripheral handle, the Callback ID
     and a pointer to the user callback function.
 
-    Function @ref HAL_DFSDM_Filter_RegisterCallback() allows to register
+    [..]
+    Function HAL_DFSDM_Filter_RegisterCallback() allows to register
     following callbacks:
       (+) RegConvCpltCallback     : DFSDM filter regular conversion complete callback.
       (+) RegConvHalfCpltCallback : DFSDM filter half regular conversion complete callback.
@@ -182,26 +185,33 @@
       (+) ErrorCallback           : DFSDM filter error callback.
       (+) MspInitCallback         : DFSDM filter MSP init callback.
       (+) MspDeInitCallback       : DFSDM filter MSP de-init callback.
+    [..]
     This function takes as parameters the HAL peripheral handle, the Callback ID
     and a pointer to the user callback function.
 
+    [..]
     For specific DFSDM filter analog watchdog callback use dedicated register callback:   
-    @ref HAL_DFSDM_Filter_RegisterAwdCallback().
+    HAL_DFSDM_Filter_RegisterAwdCallback().
 
-    Use functions @ref HAL_DFSDM_Channel_UnRegisterCallback() or
-    @ref HAL_DFSDM_Filter_UnRegisterCallback() to reset a callback to the default
+    [..]
+    Use functions HAL_DFSDM_Channel_UnRegisterCallback() or
+    HAL_DFSDM_Filter_UnRegisterCallback() to reset a callback to the default
     weak function.
 
-    @ref HAL_DFSDM_Channel_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+    [..]
+    HAL_DFSDM_Channel_UnRegisterCallback() takes as parameters the HAL peripheral handle,
     and the Callback ID.
+    [..]
     This function allows to reset following callbacks:
       (+) CkabCallback      : DFSDM channel clock absence detection callback.
       (+) ScdCallback       : DFSDM channel short circuit detection callback.
       (+) MspInitCallback   : DFSDM channel MSP init callback.
       (+) MspDeInitCallback : DFSDM channel MSP de-init callback.
 
-    @ref HAL_DFSDM_Filter_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+    [..]
+    HAL_DFSDM_Filter_UnRegisterCallback() takes as parameters the HAL peripheral handle,
     and the Callback ID.
+    [..]
     This function allows to reset following callbacks:
       (+) RegConvCpltCallback     : DFSDM filter regular conversion complete callback.
       (+) RegConvHalfCpltCallback : DFSDM filter half regular conversion complete callback.
@@ -211,29 +221,34 @@
       (+) MspInitCallback         : DFSDM filter MSP init callback.
       (+) MspDeInitCallback       : DFSDM filter MSP de-init callback.
 
+    [..]
     For specific DFSDM filter analog watchdog callback use dedicated unregister callback:
-    @ref HAL_DFSDM_Filter_UnRegisterAwdCallback().
+    HAL_DFSDM_Filter_UnRegisterAwdCallback().
 
+    [..]
     By default, after the call of init function and if the state is RESET 
     all callbacks are reset to the corresponding legacy weak functions: 
-    examples @ref HAL_DFSDM_ChannelScdCallback(), @ref HAL_DFSDM_FilterErrorCallback().
+    examples HAL_DFSDM_ChannelScdCallback(), HAL_DFSDM_FilterErrorCallback().
     Exception done for MspInit and MspDeInit callbacks that are respectively
     reset to the legacy weak functions in the init and de-init only when these 
     callbacks are null (not registered beforehand).
     If not, MspInit or MspDeInit are not null, the init and de-init keep and use
     the user MspInit/MspDeInit callbacks (registered beforehand)
 
+    [..]
     Callbacks can be registered/unregistered in READY state only.
     Exception done for MspInit/MspDeInit callbacks that can be registered/unregistered
     in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
     during the init/de-init.
     In that case first register the MspInit/MspDeInit user callbacks using 
-    @ref HAL_DFSDM_Channel_RegisterCallback() or
-    @ref HAL_DFSDM_Filter_RegisterCallback() before calling init or de-init function.
+    HAL_DFSDM_Channel_RegisterCallback() or
+    HAL_DFSDM_Filter_RegisterCallback() before calling init or de-init function.
 
+    [..]
     When The compilation define USE_HAL_DFSDM_REGISTER_CALLBACKS is set to 0 or
     not defined, the callback registering feature is not available 
     and weak callbacks are used.
+
     @endverbatim
   ******************************************************************************
   * @attention
@@ -4170,7 +4185,7 @@ static uint32_t DFSDM_GetInjChannelsNbr(uint32_t Channels)
   */
 static uint32_t DFSDM_GetChannelFromInstance(DFSDM_Channel_TypeDef* Instance)
 {
-  uint32_t channel = 0xFFU;
+  uint32_t channel;
   
   /* Get channel from instance */
 #if defined(DFSDM2_Channel0)
@@ -4202,14 +4217,11 @@ static uint32_t DFSDM_GetChannelFromInstance(DFSDM_Channel_TypeDef* Instance)
   {
     channel = 6U;
   }
-  else if(Instance == DFSDM2_Channel7)
+  else /* DFSDM2_Channel7 */
   {
     channel = 7U;
   }
-  else
-  {
-    /* channel = 0xFFU;*/
-  }
+
 #else
   if(Instance == DFSDM1_Channel0)
   {
@@ -4223,13 +4235,9 @@ static uint32_t DFSDM_GetChannelFromInstance(DFSDM_Channel_TypeDef* Instance)
   {
     channel = 2U;
   }
-  else if(Instance == DFSDM1_Channel3)
+  else /* DFSDM1_Channel3 */
   {
     channel = 3U;
-  }
-  else
-  {
-    /* channel = 0xFFU;*/
   }
 #endif /* defined(DFSDM2_Channel0) */
 

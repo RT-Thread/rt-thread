@@ -1,16 +1,5 @@
 /*
  **************************************************************************
- * Copyright (C) 2016 by ARTERY Technology Co., Ltd. All Rights Reserved.
- **************************************************************************
- * THIS SOURCE FILE IS DISTRIBUTED IN THE HOPE THAT CAN REDUCE EFFORTS AND
- * TIME, BUT WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- **************************************************************************
  * File Name    : misc.h
  * Description  : at32f4xx MISC header file
  * Date         : 2018-02-26

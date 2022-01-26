@@ -236,11 +236,17 @@ void        LL_mDelay(uint32_t Delay);
   */
 
 void        LL_SetSystemCoreClock(uint32_t HCLKFrequency);
+#if defined(FLASH_ACR_LATENCY)
+ErrorStatus LL_SetFlashLatency(uint32_t Frequency);
+#endif /* FLASH_ACR_LATENCY */
 ErrorStatus LL_PLL_ConfigSystemClock_HSI(LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct,
                                          LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
 ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypass,
                                          LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct, LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
-
+#if defined(RCC_PLL2_SUPPORT)
+ErrorStatus LL_PLL_ConfigSystemClock_PLL2(uint32_t HSEFrequency, uint32_t HSEBypass, LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct,
+                                          LL_UTILS_PLLInitTypeDef *UTILS_PLL2InitStruct, LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct);
+#endif /* RCC_PLL2_SUPPORT */
 /**
   * @}
   */

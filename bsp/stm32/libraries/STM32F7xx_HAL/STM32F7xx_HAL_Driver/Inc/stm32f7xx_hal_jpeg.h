@@ -24,9 +24,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if defined (JPEG)
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal_def.h"
+
+#if defined (JPEG)
 
 /** @addtogroup STM32F7xx_HAL_Driver
   * @{
@@ -397,7 +399,7 @@ typedef  void (*pJPEG_DataReadyCallbackTypeDef)(JPEG_HandleTypeDef *hjpeg, uint8
   *         @arg JPEG_IT_EOC   : End of Conversion Interrupt
   *         @arg JPEG_IT_HPD   : Header Parsing Done Interrupt
   *
-  * @retval No retrun
+  * @retval No return
   */
 #define __HAL_JPEG_ENABLE_IT(__HANDLE__,__INTERRUPT__)  ((__HANDLE__)->Instance->CR |= (__INTERRUPT__) )
 
@@ -415,7 +417,7 @@ typedef  void (*pJPEG_DataReadyCallbackTypeDef)(JPEG_HandleTypeDef *hjpeg, uint8
   *
   * @note    To disable an IT we must use MODIFY_REG macro to avoid writing "1" to the FIFO flush bits
   *          located in the same IT enable register (CR register).
-  * @retval  No retrun
+  * @retval  No return
   */
 #define __HAL_JPEG_DISABLE_IT(__HANDLE__,__INTERRUPT__) MODIFY_REG((__HANDLE__)->Instance->CR, (__INTERRUPT__), 0UL)
 
@@ -643,6 +645,7 @@ uint32_t               HAL_JPEG_GetError(JPEG_HandleTypeDef *hjpeg);
   */
 
 #endif /* JPEG */
+
 #ifdef __cplusplus
 }
 #endif

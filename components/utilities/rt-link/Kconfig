@@ -1,0 +1,25 @@
+# Kconfig file for rt_link
+menuconfig RT_USING_RT_LINK
+    bool "RT-Link"
+    default n
+
+if RT_USING_RT_LINK
+    choice
+        prompt"use hw crc device or not"
+        default RT_LINK_USING_SF_CRC
+        
+        config RT_LINK_USING_SF_CRC
+            bool "use software crc table"
+        config RT_LINK_USING_HW_CRC
+            bool "use hardware crc device"
+    endchoice
+
+    menu "rt link debug option"
+        config USING_RT_LINK_DEBUG
+            bool "Enable RT-Link debug"
+            default n
+        config USING_RT_LINK_HW_DEBUG
+            bool "Enable RT-Link hw debug"
+            default n
+    endmenu
+endif

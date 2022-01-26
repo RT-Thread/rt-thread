@@ -36,17 +36,12 @@
 #define __ARCH_SYS_ARCH_H__
 
 #include "arch/cc.h"
-
 #include <rtthread.h>
-
-#ifndef BYTE_ORDER
-#define BYTE_ORDER LITTLE_ENDIAN
-#endif
 
 #define SYS_MBOX_NULL RT_NULL
 #define SYS_SEM_NULL  RT_NULL
 
-typedef u32_t sys_prot_t;
+typedef rt_uint32_t sys_prot_t;
 
 #define SYS_MBOX_SIZE 10
 #define SYS_LWIP_TIMER_NAME "timer"

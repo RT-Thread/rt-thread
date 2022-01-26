@@ -1438,10 +1438,6 @@ typedef struct
 #define ADC_CFGR2_SMPTRIG_Msk          (0x1UL << ADC_CFGR2_SMPTRIG_Pos)        /*!< 0x08000000 */
 #define ADC_CFGR2_SMPTRIG              ADC_CFGR2_SMPTRIG_Msk                   /*!< ADC Sample Time Control Trigger mode */
 
-#define ADC_CFGR2_LFTRIG_Pos           (29U)
-#define ADC_CFGR2_LFTRIG_Msk           (0x1UL << ADC_CFGR2_LFTRIG_Pos)         /*!< 0x20000000 */
-#define ADC_CFGR2_LFTRIG               ADC_CFGR2_LFTRIG_Msk                    /*!< ADC Low Frequency Trigger */
-
 /********************  Bit definition for ADC_SMPR1 register  *****************/
 #define ADC_SMPR1_SMP0_Pos             (0U)
 #define ADC_SMPR1_SMP0_Msk             (0x7UL << ADC_SMPR1_SMP0_Pos)           /*!< 0x00000007 */
@@ -2228,11 +2224,11 @@ typedef struct
 
 #define COMP_CSR_BRGEN_Pos         (22U)
 #define COMP_CSR_BRGEN_Msk         (0x1UL << COMP_CSR_BRGEN_Pos)               /*!< 0x00400000 */
-#define COMP_CSR_BRGEN             COMP_CSR_BRGEN_Msk                          /*!< Comparator voltage scaler enable */
+#define COMP_CSR_BRGEN             COMP_CSR_BRGEN_Msk                          /*!< Comparator scaler bridge enable */
 
 #define COMP_CSR_SCALEN_Pos        (23U)
 #define COMP_CSR_SCALEN_Msk        (0x1UL << COMP_CSR_SCALEN_Pos)              /*!< 0x00800000 */
-#define COMP_CSR_SCALEN            COMP_CSR_SCALEN_Msk                         /*!< Comparator scaler bridge enable */
+#define COMP_CSR_SCALEN            COMP_CSR_SCALEN_Msk                         /*!< Comparator voltage scaler enable */
 
 #define COMP_CSR_VALUE_Pos         (30U)
 #define COMP_CSR_VALUE_Msk         (0x1UL << COMP_CSR_VALUE_Pos)               /*!< 0x40000000 */
@@ -2302,7 +2298,6 @@ typedef struct
 #define CORDIC_RDATA_RES_Pos     (0U)
 #define CORDIC_RDATA_RES_Msk     (0xFFFFFFFFUL << CORDIC_RDATA_RES_Pos)        /*!< 0xFFFFFFFF */
 #define CORDIC_RDATA_RES         CORDIC_RDATA_RES_Msk                          /*!< Output Result */
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -2452,9 +2447,9 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 /*
- * @brief Specific device feature definitions (not present on all devices in the STM32G4 serie)
+ * @brief Specific device feature definitions (not present on all devices in the STM32G4 series)
  */
- #define DAC_CHANNEL2_SUPPORT                           /*!< DAC feature available only on specific devices: DAC channel 2 available */
+#define DAC_CHANNEL2_SUPPORT                           /*!< DAC feature available only on specific devices: DAC channel 2 available */
 
 /********************  Bit definition for DAC_CR register  ********************/
 #define DAC_CR_EN1_Pos              (0U)
@@ -2657,7 +2652,6 @@ typedef struct
 #define DAC_SR_BWST1_Pos            (15U)
 #define DAC_SR_BWST1_Msk            (0x1UL << DAC_SR_BWST1_Pos)                /*!< 0x00008000 */
 #define DAC_SR_BWST1                DAC_SR_BWST1_Msk                           /*!<DAC channel1 busy writing sample time flag */
-
 
 #define DAC_SR_DAC2RDY_Pos          (27U)
 #define DAC_SR_DAC2RDY_Msk          (0x1UL << DAC_SR_DAC2RDY_Pos)              /*!< 0x08000000 */
@@ -2874,7 +2868,6 @@ typedef struct
 #define DBGMCU_APB1FZR1_DBG_LPTIM1_STOP_Msk    (0x1UL << DBGMCU_APB1FZR1_DBG_LPTIM1_STOP_Pos)/*!< 0x80000000 */
 #define DBGMCU_APB1FZR1_DBG_LPTIM1_STOP        DBGMCU_APB1FZR1_DBG_LPTIM1_STOP_Msk
 
-/********************  Bit definition for DBGMCU_APB1FZR2 register  **********/
 
 /********************  Bit definition for DBGMCU_APB2FZ register  ************/
 #define DBGMCU_APB2FZ_DBG_TIM1_STOP_Pos        (11U)
@@ -8847,19 +8840,19 @@ typedef struct
 #define TAMP_CR2_TAMP3TRG            TAMP_CR2_TAMP3TRG_Msk
 
 /********************  Bits definition for TAMP_FLTCR register  ***************/
-#define TAMP_FLTCR_TAMPFREQ_0        ((uint32_t)0x00000001)
-#define TAMP_FLTCR_TAMPFREQ_1        ((uint32_t)0x00000002)
-#define TAMP_FLTCR_TAMPFREQ_2        ((uint32_t)0x00000004)
+#define TAMP_FLTCR_TAMPFREQ_0        (0x00000001UL)
+#define TAMP_FLTCR_TAMPFREQ_1        (0x00000002UL)
+#define TAMP_FLTCR_TAMPFREQ_2        (0x00000004UL)
 #define TAMP_FLTCR_TAMPFREQ_Pos      (0U)
 #define TAMP_FLTCR_TAMPFREQ_Msk      (0x7UL << TAMP_FLTCR_TAMPFREQ_Pos)        /*!< 0x00000007 */
 #define TAMP_FLTCR_TAMPFREQ          TAMP_FLTCR_TAMPFREQ_Msk
-#define TAMP_FLTCR_TAMPFLT_0         ((uint32_t)0x00000008)
-#define TAMP_FLTCR_TAMPFLT_1         ((uint32_t)0x00000010)
+#define TAMP_FLTCR_TAMPFLT_0         (0x00000008UL)
+#define TAMP_FLTCR_TAMPFLT_1         (0x00000010UL)
 #define TAMP_FLTCR_TAMPFLT_Pos       (3U)
 #define TAMP_FLTCR_TAMPFLT_Msk       (0x3UL << TAMP_FLTCR_TAMPFLT_Pos)         /*!< 0x00000018 */
 #define TAMP_FLTCR_TAMPFLT           TAMP_FLTCR_TAMPFLT_Msk
-#define TAMP_FLTCR_TAMPPRCH_0        ((uint32_t)0x00000020)
-#define TAMP_FLTCR_TAMPPRCH_1        ((uint32_t)0x00000040)
+#define TAMP_FLTCR_TAMPPRCH_0        (0x00000020UL)
+#define TAMP_FLTCR_TAMPPRCH_1        (0x00000040UL)
 #define TAMP_FLTCR_TAMPPRCH_Pos      (5U)
 #define TAMP_FLTCR_TAMPPRCH_Msk      (0x3UL << TAMP_FLTCR_TAMPPRCH_Pos)        /*!< 0x00000060 */
 #define TAMP_FLTCR_TAMPPRCH          TAMP_FLTCR_TAMPPRCH_Msk
@@ -9903,35 +9896,36 @@ typedef struct
 
 /******************  Bit definition for SYSCFG_SWPR register  ****************/
 #define SYSCFG_SWPR_PAGE0_Pos          (0U)
-#define SYSCFG_SWPR_PAGE0_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE0_Pos)       /*!< 0x00000001 */
-#define SYSCFG_SWPR_PAGE0              (uint32_t)(SYSCFG_SWPR_PAGE0_Msk)                  /*!< CCMSRAM  Write protection page 0 */
+#define SYSCFG_SWPR_PAGE0_Msk          (0x1UL << SYSCFG_SWPR_PAGE0_Pos)       /*!< 0x00000001 */
+#define SYSCFG_SWPR_PAGE0              (SYSCFG_SWPR_PAGE0_Msk)                /*!< CCMSRAM  Write protection page 0 */
 #define SYSCFG_SWPR_PAGE1_Pos          (1U)
-#define SYSCFG_SWPR_PAGE1_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE1_Pos)       /*!< 0x00000002 */
-#define SYSCFG_SWPR_PAGE1              (uint32_t)(SYSCFG_SWPR_PAGE1_Msk)                  /*!< CCMSRAM  Write protection page 1 */
+#define SYSCFG_SWPR_PAGE1_Msk          (0x1UL << SYSCFG_SWPR_PAGE1_Pos)       /*!< 0x00000002 */
+#define SYSCFG_SWPR_PAGE1              (SYSCFG_SWPR_PAGE1_Msk)                /*!< CCMSRAM  Write protection page 1 */
 #define SYSCFG_SWPR_PAGE2_Pos          (2U)
-#define SYSCFG_SWPR_PAGE2_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE2_Pos)       /*!< 0x00000004 */
-#define SYSCFG_SWPR_PAGE2              (uint32_t)(SYSCFG_SWPR_PAGE2_Msk)                  /*!< CCMSRAM  Write protection page 2 */
+#define SYSCFG_SWPR_PAGE2_Msk          (0x1UL << SYSCFG_SWPR_PAGE2_Pos)       /*!< 0x00000004 */
+#define SYSCFG_SWPR_PAGE2              (SYSCFG_SWPR_PAGE2_Msk)                /*!< CCMSRAM  Write protection page 2 */
 #define SYSCFG_SWPR_PAGE3_Pos          (3U)
-#define SYSCFG_SWPR_PAGE3_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE3_Pos)       /*!< 0x00000008 */
-#define SYSCFG_SWPR_PAGE3              (uint32_t)(SYSCFG_SWPR_PAGE3_Msk)                  /*!< CCMSRAM  Write protection page 3 */
+#define SYSCFG_SWPR_PAGE3_Msk          (0x1UL << SYSCFG_SWPR_PAGE3_Pos)       /*!< 0x00000008 */
+#define SYSCFG_SWPR_PAGE3              (SYSCFG_SWPR_PAGE3_Msk)                /*!< CCMSRAM  Write protection page 3 */
 #define SYSCFG_SWPR_PAGE4_Pos          (4U)
-#define SYSCFG_SWPR_PAGE4_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE4_Pos)       /*!< 0x00000010 */
-#define SYSCFG_SWPR_PAGE4              (uint32_t)(SYSCFG_SWPR_PAGE4_Msk)                  /*!< CCMSRAM  Write protection page 4 */
+#define SYSCFG_SWPR_PAGE4_Msk          (0x1UL << SYSCFG_SWPR_PAGE4_Pos)       /*!< 0x00000010 */
+#define SYSCFG_SWPR_PAGE4              (SYSCFG_SWPR_PAGE4_Msk)                /*!< CCMSRAM  Write protection page 4 */
 #define SYSCFG_SWPR_PAGE5_Pos          (5U)
-#define SYSCFG_SWPR_PAGE5_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE5_Pos)       /*!< 0x00000020 */
-#define SYSCFG_SWPR_PAGE5              (uint32_t)(SYSCFG_SWPR_PAGE5_Msk)                  /*!< CCMSRAM  Write protection page 5 */
+#define SYSCFG_SWPR_PAGE5_Msk          (0x1UL << SYSCFG_SWPR_PAGE5_Pos)       /*!< 0x00000020 */
+#define SYSCFG_SWPR_PAGE5              (SYSCFG_SWPR_PAGE5_Msk)                /*!< CCMSRAM  Write protection page 5 */
 #define SYSCFG_SWPR_PAGE6_Pos          (6U)
-#define SYSCFG_SWPR_PAGE6_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE6_Pos)       /*!< 0x00000040 */
-#define SYSCFG_SWPR_PAGE6              (uint32_t)(SYSCFG_SWPR_PAGE6_Msk)                  /*!< CCMSRAM  Write protection page 6 */
+#define SYSCFG_SWPR_PAGE6_Msk          (0x1UL << SYSCFG_SWPR_PAGE6_Pos)       /*!< 0x00000040 */
+#define SYSCFG_SWPR_PAGE6              (SYSCFG_SWPR_PAGE6_Msk)                /*!< CCMSRAM  Write protection page 6 */
 #define SYSCFG_SWPR_PAGE7_Pos          (7U)
-#define SYSCFG_SWPR_PAGE7_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE7_Pos)       /*!< 0x00000080 */
-#define SYSCFG_SWPR_PAGE7              (uint32_t)(SYSCFG_SWPR_PAGE7_Msk)                  /*!< CCMSRAM  Write protection page 7 */
+#define SYSCFG_SWPR_PAGE7_Msk          (0x1UL << SYSCFG_SWPR_PAGE7_Pos)       /*!< 0x00000080 */
+#define SYSCFG_SWPR_PAGE7              (SYSCFG_SWPR_PAGE7_Msk)                /*!< CCMSRAM  Write protection page 7 */
 #define SYSCFG_SWPR_PAGE8_Pos          (8U)
-#define SYSCFG_SWPR_PAGE8_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE8_Pos)       /*!< 0x00000100 */
-#define SYSCFG_SWPR_PAGE8              (uint32_t)(SYSCFG_SWPR_PAGE8_Msk)                  /*!< CCMSRAM  Write protection page 8 */
+#define SYSCFG_SWPR_PAGE8_Msk          (0x1UL << SYSCFG_SWPR_PAGE8_Pos)       /*!< 0x00000100 */
+#define SYSCFG_SWPR_PAGE8              (SYSCFG_SWPR_PAGE8_Msk)                /*!< CCMSRAM  Write protection page 8 */
 #define SYSCFG_SWPR_PAGE9_Pos          (9U)
-#define SYSCFG_SWPR_PAGE9_Msk          (uint32_t)(0x1UL << SYSCFG_SWPR_PAGE9_Pos)       /*!< 0x00000200 */
-#define SYSCFG_SWPR_PAGE9              (uint32_t)(SYSCFG_SWPR_PAGE9_Msk)                  /*!< CCMSRAM  Write protection page 9 */
+#define SYSCFG_SWPR_PAGE9_Msk          (0x1UL << SYSCFG_SWPR_PAGE9_Pos)       /*!< 0x00000200 */
+#define SYSCFG_SWPR_PAGE9              (SYSCFG_SWPR_PAGE9_Msk)                /*!< CCMSRAM  Write protection page 9 */
+
 /******************  Bit definition for SYSCFG_SKR register  ****************/
 #define SYSCFG_SKR_KEY_Pos              (0U)
 #define SYSCFG_SKR_KEY_Msk              (0xFFUL << SYSCFG_SKR_KEY_Pos)         /*!< 0x000000FF */
@@ -12538,7 +12532,6 @@ typedef struct
   */
 
 /******************************* ADC Instances ********************************/
-
 #define IS_ADC_ALL_INSTANCE(INSTANCE) (((INSTANCE) == ADC1) || \
                                        ((INSTANCE) == ADC2))
 
@@ -12617,7 +12610,6 @@ typedef struct
 #define IS_OPAMP_ALL_INSTANCE(INSTANCE) (((INSTANCE) == OPAMP1) || \
                                          ((INSTANCE) == OPAMP2) || \
                                          ((INSTANCE) == OPAMP3))
-
 
 /******************************** PCD Instances *******************************/
 #define IS_PCD_ALL_INSTANCE(INSTANCE) ((INSTANCE) == USB)
@@ -12945,7 +12937,6 @@ typedef struct
                                             ((INSTANCE) == TIM15))
 
 /****************** TIM Instances : supporting OCxREF clear *******************/
-
 #define IS_TIM_OCXREF_CLEAR_INSTANCE(INSTANCE)        (((INSTANCE) == TIM1) || \
                                                        ((INSTANCE) == TIM2) || \
                                                        ((INSTANCE) == TIM3) || \
@@ -12978,9 +12969,6 @@ typedef struct
                                                        ((INSTANCE) == TIM16) || \
                                                        ((INSTANCE) == TIM17))
 
-/****************** TIM Instances : supporting synchronization ****************/
-#define IS_TIM_SYNCHRO_INSTANCE(INSTANCE)  IS_TIM_MASTER_INSTANCE(INSTANCE)
-
 /****************** TIM Instances : supporting ADC triggering through TRGO2 ***/
 #define IS_TIM_TRGO2_INSTANCE(INSTANCE)    (((INSTANCE) == TIM1)    || \
                                             ((INSTANCE) == TIM8))
@@ -13002,7 +12990,6 @@ typedef struct
                                          ((INSTANCE) == TIM15)  || \
                                          ((INSTANCE) == TIM16)  || \
                                          ((INSTANCE) == TIM17))
-
 
 /****************** TIM Instances : Advanced timer instances *******************/
 #define IS_TIM_ADVANCED_INSTANCE(INSTANCE)       (((INSTANCE) == TIM1)   || \

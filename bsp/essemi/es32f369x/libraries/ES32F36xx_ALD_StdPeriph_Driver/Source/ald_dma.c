@@ -11,6 +11,20 @@
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
+  * SPDX-License-Identifier: Apache-2.0
+  *
+  * Licensed under the Apache License, Version 2.0 (the License); you may
+  * not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   *********************************************************************************
   * @verbatim
   ==============================================================================
@@ -172,19 +186,20 @@ void ald_dma_irq_handler(void)
 	uint32_t i, reg = DMA0->IFLAG;
 
 	for (i = 0; i < DMA_CH_COUNT; ++i) {
-		if (READ_BIT(reg, (1 << i))) {
+		if (READ_BIT(reg, (1U << i))) {
+			DMA0->ICFR    = (1U << i);
+			DMA0->CHENCLR = (1U << i);
+
 			if (dma0_cbk[i].cplt_cbk != NULL)
 				dma0_cbk[i].cplt_cbk(dma0_cbk[i].cplt_arg);
-
-			ald_dma_clear_flag_status(DMA0, i);
 		}
 	}
 
 	if (READ_BIT(reg, (1U << DMA_ERR))) {
-		ald_dma_clear_flag_status(DMA0, DMA_ERR);
+		DMA0->ICFR = (1U << DMA_ERR);
 
 		for (i = 0; i < DMA_CH_COUNT; ++i) {
-			if (((DMA0->CHENSET >> i) & 0x1) && (dma0_cbk[i].err_cbk != NULL))
+			if (dma0_cbk[i].err_cbk != NULL)
 				dma0_cbk[i].err_cbk(dma0_cbk[i].err_arg);
 		}
 	}

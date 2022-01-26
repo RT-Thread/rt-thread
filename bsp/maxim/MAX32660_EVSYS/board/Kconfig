@@ -66,6 +66,25 @@ menu "On-chip Peripheral Drivers"
         select PKG_USING_FAL
         bool "Enable on-chip FLASH"
         default n
+    config BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0 bus [SCL P0.8; SDA P0.9]"
+                default y
+            
+            config BSP_USING_I2C1
+                bool "Enable I2C1 bus [SCL P0.2; SDA P0.3]"
+                default n
+        endif
+            
+     config BSP_USING_ONCHIP_RTC
+         bool "Enable RTC"
+         select RT_USING_RTC
+         default n
         
 endmenu
 

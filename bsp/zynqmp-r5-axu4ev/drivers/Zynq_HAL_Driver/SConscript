@@ -11,6 +11,9 @@ if GetDepend('BSP_USING_SDIO'):
     objs = objs + SConscript('sdps_v3_9/SConscript')
 if GetDepend('RT_USING_PIN'):
     objs = objs + SConscript('gpiops_v3_7/SConscript')
+if GetDepend('BSP_USING_ETH'):
+    objs = objs + SConscript('emacps_v3_11/SConscript')
+    objs = objs + SConscript('xemacpsif/SConscript')
 
 objs = objs + group
 

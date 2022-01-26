@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -126,8 +126,7 @@ typedef struct
 #define LL_UCPD_IMR_RXORDDET         UCPD_IMR_RXORDDETIE          /*!< Enable Rx ordered set (4 K-codes) detected interrupt */
 #define LL_UCPD_IMR_RXHRSTDET        UCPD_IMR_RXHRSTDETIE         /*!< Enable Rx Hard Reset detect interrupt                */
 #define LL_UCPD_IMR_RXOVR            UCPD_IMR_RXOVRIE             /*!< Enable Rx data overflow interrupt                    */
-#define LL_UCPD_IMR_RXMSGEND         UCPD_IMR_RXMSGEND            /*!< Enable Rx message received                           */
-#define LL_UCPD_IMR_RXERR            UCPD_IMR_RXMSGENDIE          /*!< Enable Rx error                                      */
+#define LL_UCPD_IMR_RXMSGEND         UCPD_IMR_RXMSGENDIE          /*!< Enable Rx message received                           */
 #define LL_UCPD_IMR_TYPECEVT1        UCPD_IMR_TYPECEVT1IE         /*!< Enable Type C voltage level event on CC1             */
 #define LL_UCPD_IMR_TYPECEVT2        UCPD_IMR_TYPECEVT2IE         /*!< Enable Type C voltage level event on CC2             */
 #define LL_UCPD_IMR_FRSEVT           UCPD_IMR_FRSEVTIE            /*!< Enable fast Role Swap detection event                */

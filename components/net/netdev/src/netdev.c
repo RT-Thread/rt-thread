@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <rtthread.h>
 #include <rthw.h>
@@ -76,6 +77,14 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     }
     netdev->status_callback = RT_NULL;
     netdev->addr_callback = RT_NULL;
+
+    if(rt_strlen(name) > RT_NAME_MAX)
+    {
+        char netdev_name[RT_NAME_MAX + 1] = {0};
+
+        rt_strncpy(netdev_name, name, RT_NAME_MAX);
+        LOG_E("netdev name[%s] length is so long that have been cut into [%s].", name, netdev_name);
+    }
 
     /* fill network interface device */
     rt_strncpy(netdev->name, name, RT_NAME_MAX);
@@ -260,7 +269,7 @@ struct netdev *netdev_get_by_name(const char *name)
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_slist_entry(node, struct netdev, list);
-        if (netdev && (rt_strncmp(netdev->name, name, RT_NAME_MAX) == 0))
+        if (netdev && (rt_strncmp(netdev->name, name, rt_strlen(netdev->name) < RT_NAME_MAX ? rt_strlen(netdev->name) : RT_NAME_MAX) == 0))
         {
             rt_hw_interrupt_enable(level);
             return netdev;
@@ -821,6 +830,34 @@ void netdev_low_level_set_link_status(struct netdev *netdev, rt_bool_t is_up)
 }
 
 /**
+ * This function will set network interface device active internet status.
+ * @NOTE it can only be called in the network interface device driver.
+ *
+ * @param netdev the network interface device to change
+ * @param is_up the new internet status
+ */
+void netdev_low_level_set_internet_status(struct netdev *netdev, rt_bool_t is_up)
+{
+    if (netdev && netdev_is_internet_up(netdev) != is_up)
+    {
+        if (is_up)
+        {
+            netdev->flags |= NETDEV_FLAG_INTERNET_UP;
+        }
+        else
+        {
+            netdev->flags &= ~NETDEV_FLAG_INTERNET_UP;
+        }
+
+        /* execute  network interface device status change callback function */
+        if (netdev->status_callback)
+        {
+            netdev->status_callback(netdev, is_up ? NETDEV_CB_STATUS_INTERNET_UP : NETDEV_CB_STATUS_INTERNET_DOWN);
+        }
+    }
+}
+
+/**
  * This function will set network interface device DHCP status.
  * @NOTE it can only be called in the network interface device driver.
  *
@@ -1011,11 +1048,11 @@ int netdev_ifconfig(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(netdev_ifconfig, __cmd_ifconfig, list the information of all network interfaces);
+MSH_CMD_EXPORT_ALIAS(netdev_ifconfig, ifconfig, list the information of all network interfaces);
 #endif /* NETDEV_USING_IFCONFIG */
 
 #ifdef NETDEV_USING_PING
-int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
+int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_size_t size)
 {
 #define NETDEV_PING_DATA_SIZE       32
 /** ping receive timeout - in milliseconds */
@@ -1034,6 +1071,16 @@ int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
     if (size == 0)
     {
         size = NETDEV_PING_DATA_SIZE;
+    }
+
+    if (netdev_name != RT_NULL)
+    {
+        netdev = netdev_get_by_name(netdev_name);
+        if (netdev == RT_NULL)
+        {
+            netdev = netdev_default;
+            rt_kprintf("ping: not found specified netif, using default netdev %s.\n", netdev->name);
+        }
     }
 
     if (NETDEV_PING_IS_COMMONICABLE(netdev_default))
@@ -1107,16 +1154,20 @@ int netdev_ping(int argc, char **argv)
 {
     if (argc == 1)
     {
-        rt_kprintf("Please input: ping <host address>\n");
+        rt_kprintf("Please input: ping [netdev name] <host address>\n");
     }
-    else
+    else if (argc == 2)
     {
-        netdev_cmd_ping(argv[1], 4, 0);
+        netdev_cmd_ping(argv[1], RT_NULL, 4, 0);
+    }
+    else if (argc == 3)
+    {
+        netdev_cmd_ping(argv[1], argv[2], 4, 0);
     }
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(netdev_ping, __cmd_ping, ping network host);
+MSH_CMD_EXPORT_ALIAS(netdev_ping, ping, ping network host);
 #endif /* NETDEV_USING_IFCONFIG */
 
 static void netdev_list_dns(void)
@@ -1186,8 +1237,7 @@ int netdev_dns(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(netdev_dns, __cmd_dns, list and set the information of dns);
-
+MSH_CMD_EXPORT_ALIAS(netdev_dns, dns, list and set the information of dns);
 #ifdef NETDEV_USING_NETSTAT
 static void netdev_cmd_netstat(void)
 {
@@ -1234,7 +1284,7 @@ int netdev_netstat(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(netdev_netstat, __cmd_netstat, list the information of TCP / IP);
+MSH_CMD_EXPORT_ALIAS(netdev_netstat, netstat, list the information of TCP / IP);
 #endif /* NETDEV_USING_NETSTAT */
 
 #endif /* RT_USING_FINSH */

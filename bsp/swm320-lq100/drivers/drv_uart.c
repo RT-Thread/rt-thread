@@ -7,193 +7,253 @@
  * Date           Author       Notes
  * 2018-05-31     ZYH          first version
  * 2018-12-10     Zohar_Lee    format file
+ * 2020-07-10     lik          format file
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
-#include <board.h>
-#include <SWM320_port.h>
-#include <SWM320_uart.h>
+#include "drv_uart.h"
 
-struct swm320_uart
+#ifdef RT_USING_SERIAL
+#ifdef BSP_USING_UART
+
+//#define DRV_DEBUG
+#define LOG_TAG "drv.uart"
+#include <drv_log.h>
+
+#if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && \
+    !defined(BSP_USING_UART3)
+#error "Please define at least one BSP_USING_UARTx"
+/* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
+#endif
+
+enum
 {
-    UART_TypeDef *uart;
-    IRQn_Type irq;
+#ifdef BSP_USING_UART0
+    UART0_INDEX,
+#endif
+#ifdef BSP_USING_UART1
+    UART1_INDEX,
+#endif
+#ifdef BSP_USING_UART2
+    UART2_INDEX,
+#endif
+#ifdef BSP_USING_UART3
+    UART3_INDEX,
+#endif
 };
 
-static rt_err_t swm320_uart_configure(struct rt_serial_device *serial,
-                                      struct serial_configure *cfg)
+static struct swm_uart_cfg uart_cfg[] =
+    {
+#ifdef BSP_USING_UART0
+        UART0_CFG,
+#endif
+#ifdef BSP_USING_UART1
+        UART1_CFG,
+#endif
+#ifdef BSP_USING_UART2
+        UART2_CFG,
+#endif
+#ifdef BSP_USING_UART3
+        UART3_CFG,
+#endif
+};
+
+static struct swm_uart uart_drv[sizeof(uart_cfg) / sizeof(uart_cfg[0])] = {0};
+
+static rt_err_t swm_uart_init(struct rt_serial_device *serial_device, struct serial_configure *configure)
 {
-    struct swm320_uart *uart;
-    UART_InitStructure UART_initStruct;
-    RT_ASSERT(serial != RT_NULL);
-    RT_ASSERT(cfg != RT_NULL);
-    uart = (struct swm320_uart *)serial->parent.user_data;
-    NVIC_DisableIRQ(uart->irq);
-    UART_initStruct.Baudrate = cfg->baud_rate;
-    UART_initStruct.RXThreshold = 1;
-    UART_initStruct.RXThresholdIEn = 1;
-    UART_initStruct.TXThresholdIEn = 0;
-    UART_initStruct.TimeoutTime = 10;
-    UART_initStruct.TimeoutIEn = 0;
-    switch (cfg->data_bits)
+    struct swm_uart_cfg *cfg;
+    RT_ASSERT(serial_device != RT_NULL);
+    RT_ASSERT(configure != RT_NULL);
+    cfg = serial_device->parent.user_data;
+
+    cfg->uart_initstruct.Baudrate = configure->baud_rate;
+    switch (configure->data_bits)
     {
+    case DATA_BITS_8:
+        cfg->uart_initstruct.DataBits = UART_DATA_8BIT;
+        break;
     case DATA_BITS_9:
-        UART_initStruct.DataBits = UART_DATA_9BIT;
+        cfg->uart_initstruct.DataBits = UART_DATA_9BIT;
         break;
     default:
-        UART_initStruct.DataBits = UART_DATA_8BIT;
+        cfg->uart_initstruct.DataBits = UART_DATA_8BIT;
         break;
     }
-    switch (cfg->stop_bits)
+    switch (configure->stop_bits)
     {
+    case STOP_BITS_1:
+        cfg->uart_initstruct.StopBits = UART_STOP_1BIT;
+        break;
     case STOP_BITS_2:
-        UART_initStruct.StopBits = UART_STOP_2BIT;
+        cfg->uart_initstruct.StopBits = UART_STOP_2BIT;
         break;
     default:
-        UART_initStruct.StopBits = UART_STOP_1BIT;
+        cfg->uart_initstruct.StopBits = UART_STOP_1BIT;
         break;
     }
-    switch (cfg->parity)
+    switch (configure->parity)
     {
+    case PARITY_NONE:
+        cfg->uart_initstruct.Parity = UART_PARITY_NONE;
+        break;
     case PARITY_ODD:
-        UART_initStruct.Parity = UART_PARITY_ODD;
+        cfg->uart_initstruct.Parity = UART_PARITY_ODD;
         break;
     case PARITY_EVEN:
-        UART_initStruct.Parity = UART_PARITY_EVEN;
+        cfg->uart_initstruct.Parity = UART_PARITY_EVEN;
         break;
     default:
-        UART_initStruct.Parity = UART_PARITY_NONE;
+        cfg->uart_initstruct.Parity = UART_PARITY_NONE;
         break;
     }
-    UART_Init(uart->uart, &UART_initStruct);
-    UART_Open(uart->uart);
+    switch ((uint32_t)cfg->UARTx)
+    {
+    case ((uint32_t)UART0):
+        PORT_Init(PORTA, PIN2, FUNMUX0_UART0_RXD, 1);
+        PORT_Init(PORTA, PIN3, FUNMUX1_UART0_TXD, 0);
+        break;
+    case ((uint32_t)UART1):
+        PORT_Init(PORTC, PIN2, FUNMUX0_UART1_RXD, 1);
+        PORT_Init(PORTC, PIN3, FUNMUX1_UART1_TXD, 0);
+        break;
+    case ((uint32_t)UART2):
+        PORT_Init(PORTC, PIN4, FUNMUX0_UART2_RXD, 1);
+        PORT_Init(PORTC, PIN5, FUNMUX1_UART2_TXD, 0);
+        break;
+    case ((uint32_t)UART3):
+        PORT_Init(PORTC, PIN6, FUNMUX0_UART3_RXD, 1);
+        PORT_Init(PORTC, PIN7, FUNMUX1_UART3_TXD, 0);
+        break;
+    default:
+        break;
+    }
+    UART_Init(cfg->UARTx, &(cfg->uart_initstruct));
+    UART_Open(cfg->UARTx);
     return RT_EOK;
 }
 
-static rt_err_t swm320_uart_control(struct rt_serial_device *serial,
-                                    int cmd, void *arg)
+static rt_err_t swm_uart_control(struct rt_serial_device *serial_device, int cmd, void *arg)
 {
-    struct swm320_uart *uart;
-    RT_ASSERT(serial != RT_NULL);
-    uart = (struct swm320_uart *)serial->parent.user_data;
+    struct swm_uart_cfg *cfg;
+    RT_ASSERT(serial_device != RT_NULL);
+    cfg = serial_device->parent.user_data;
+
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
-        NVIC_DisableIRQ(uart->irq);
+        NVIC_DisableIRQ(cfg->irq);
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
-        NVIC_EnableIRQ(uart->irq);
+        NVIC_EnableIRQ(cfg->irq);
         break;
     }
     return RT_EOK;
 }
 
-static int swm320_uart_putc(struct rt_serial_device *serial, char c)
+static int swm_uart_putc(struct rt_serial_device *serial_device, char c)
 {
-    struct swm320_uart *uart;
-    RT_ASSERT(serial != RT_NULL);
-    uart = (struct swm320_uart *)serial->parent.user_data;
-    while (UART_IsTXBusy(uart->uart));
-    uart->uart->DATA = c;
+    struct swm_uart_cfg *cfg;
+    RT_ASSERT(serial_device != RT_NULL);
+    cfg = serial_device->parent.user_data;
+
+    while (UART_IsTXFIFOFull(cfg->UARTx))
+        ;
+    UART_WriteByte(cfg->UARTx, c);
+    while (UART_IsTXBusy(cfg->UARTx))
+        ;
     return 1;
 }
 
-static int swm320_uart_getc(struct rt_serial_device *serial)
+static int swm_uart_getc(struct rt_serial_device *serial_device)
 {
     int ch;
-    struct swm320_uart *uart;
-    RT_ASSERT(serial != RT_NULL);
-    uart = (struct swm320_uart *)serial->parent.user_data;
+    struct swm_uart_cfg *cfg;
+    RT_ASSERT(serial_device != RT_NULL);
+    cfg = serial_device->parent.user_data;
+
     ch = -1;
-    if (UART_IsRXFIFOEmpty(uart->uart) == 0)
+    if (UART_IsRXFIFOEmpty(cfg->UARTx) == 0)
     {
-        UART_ReadByte(uart->uart, (uint32_t *)&ch);
+        UART_ReadByte(cfg->UARTx, (uint32_t *)&ch);
     }
     return ch;
 }
 
-static const struct rt_uart_ops swm320_uart_ops =
+static const struct rt_uart_ops swm_uart_ops =
+    {
+        .configure = swm_uart_init,
+        .control = swm_uart_control,
+        .putc = swm_uart_putc,
+        .getc = swm_uart_getc,
+        .dma_transmit = RT_NULL};
+
+/**
+ * Uart common interrupt process. This need add to uart ISR.
+ *
+ * @param serial serial device
+ */
+static void rt_hw_uart_isr(struct rt_serial_device *serial_device)
 {
-    swm320_uart_configure,
-    swm320_uart_control,
-    swm320_uart_putc,
-    swm320_uart_getc,
-};
+    struct swm_uart_cfg *cfg;
+    RT_ASSERT(serial_device != RT_NULL);
+    cfg = serial_device->parent.user_data;
+
+    /* UART in mode Receiver -------------------------------------------------*/
+    if (UART_INTRXThresholdStat(cfg->UARTx) || UART_INTTimeoutStat(cfg->UARTx))
+    {
+        rt_hw_serial_isr(serial_device, RT_SERIAL_EVENT_RX_IND);
+    }
+}
 
 #if defined(BSP_USING_UART0)
-/* UART0 device driver structure */
-static struct swm320_uart uart0;
-static struct rt_serial_device serial0;
 void UART0_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
 
-    /* UART in mode Receiver */
-    if (UART_INTRXThresholdStat(uart0.uart) || UART_INTTimeoutStat(uart0.uart))
-    {
-        rt_hw_serial_isr(&serial0, RT_SERIAL_EVENT_RX_IND);
-    }
+    rt_hw_uart_isr(&(uart_drv[UART0_INDEX].serial_device));
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
 #endif /* BSP_USING_UART0 */
 
 #if defined(BSP_USING_UART1)
-/* UART1 device driver structure */
-static struct swm320_uart uart1;
-static struct rt_serial_device serial1;
 void UART1_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
 
-    /* UART in mode Receiver */
-    if (UART_INTRXThresholdStat(uart1.uart) || UART_INTTimeoutStat(uart1.uart))
-    {
-        rt_hw_serial_isr(&serial1, RT_SERIAL_EVENT_RX_IND);
-    }
+    rt_hw_uart_isr(&(uart_drv[UART1_INDEX].serial_device));
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
 #endif /* BSP_USING_UART1 */
 
 #if defined(BSP_USING_UART2)
-/* UART2 device driver structure */
-static struct swm320_uart uart2;
-static struct rt_serial_device serial2;
 void UART2_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
 
-    /* UART in mode Receiver */
-    if (UART_INTRXThresholdStat(uart2.uart) || UART_INTTimeoutStat(uart2.uart))
-    {
-        rt_hw_serial_isr(&serial2, RT_SERIAL_EVENT_RX_IND);
-    }
+    rt_hw_uart_isr(&(uart_drv[UART2_INDEX].serial_device));
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
 #endif /* BSP_USING_UART2 */
 
 #if defined(BSP_USING_UART3)
-/* UART3 device driver structure */
-static struct swm320_uart uart3;
-static struct rt_serial_device serial3;
 void UART3_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
 
-    /* UART in mode Receiver */
-    if (UART_INTRXThresholdStat(uart3.uart) || UART_INTTimeoutStat(uart3.uart))
-    {
-        rt_hw_serial_isr(&serial3, RT_SERIAL_EVENT_RX_IND);
-    }
+    rt_hw_uart_isr(&(uart_drv[UART3_INDEX].serial_device));
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -201,60 +261,24 @@ void UART3_Handler(void)
 
 int rt_hw_uart_init(void)
 {
-    struct swm320_uart *uart;
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-#ifdef BSP_USING_UART0
-    PORT_Init(PORTA, PIN2, FUNMUX0_UART0_RXD, 1);
-    PORT_Init(PORTA, PIN3, FUNMUX1_UART0_TXD, 0);
-    uart = &uart0;
-    uart->uart = UART0;
-    uart->irq = UART0_IRQn;
-    serial0.ops = &swm320_uart_ops;
-    serial0.config = config;
-    /* register UART0 device */
-    rt_hw_serial_register(&serial0, "uart0",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                          uart);
-#endif /* BSP_USING_UART0 */
-#ifdef BSP_USING_UART1
-    PORT_Init(PORTC, PIN2, FUNMUX0_UART1_RXD, 1);
-    PORT_Init(PORTC, PIN3, FUNMUX1_UART1_TXD, 0);
-    uart = &uart1;
-    uart->uart = UART1;
-    uart->irq = UART1_IRQn;
-    serial1.ops = &swm320_uart_ops;
-    serial1.config = config;
-    /* register UART1 device */
-    rt_hw_serial_register(&serial1, "uart1",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                          uart);
-#endif /* BSP_USING_UART1 */
-#ifdef BSP_USING_UART2
-    PORT_Init(PORTC, PIN4, FUNMUX0_UART2_RXD, 1);
-    PORT_Init(PORTC, PIN5, FUNMUX1_UART2_TXD, 0);
-    uart = &uart2;
-    uart->uart = UART2;
-    uart->irq = UART2_IRQn;
-    serial2.ops = &swm320_uart_ops;
-    serial2.config = config;
-    /* register UART2 device */
-    rt_hw_serial_register(&serial2, "uart2",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                          uart);
-#endif /* BSP_USING_UART2 */
-#ifdef BSP_USING_UART3
-    PORT_Init(PORTC, PIN6, FUNMUX0_UART3_RXD, 1);
-    PORT_Init(PORTC, PIN7, FUNMUX1_UART3_TXD, 0);
-    uart = &uart3;
-    uart->uart = UART3;
-    uart->irq = UART3_IRQn;
-    serial3.ops = &swm320_uart_ops;
-    serial3.config = config;
-    /* register UART3 device */
-    rt_hw_serial_register(&serial3, "uart3",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                          uart);
-#endif /* BSP_USING_UART3 */
-    return 0;
+    struct serial_configure cfg = RT_SERIAL_CONFIG_DEFAULT;
+    int i = 0;
+    rt_err_t result = RT_EOK;
+
+    for (i = 0; i < sizeof(uart_cfg) / sizeof(uart_cfg[0]); i++)
+    {
+        uart_drv[i].cfg = &uart_cfg[i];
+        uart_drv[i].serial_device.ops = &swm_uart_ops;
+        uart_drv[i].serial_device.config = cfg;
+        /* register UART device */
+        result = rt_hw_serial_register(&uart_drv[i].serial_device, uart_drv[i].cfg->name,
+                                       RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, uart_drv[i].cfg);
+        RT_ASSERT(result == RT_EOK);
+    }
+
+    return result;
 }
 INIT_BOARD_EXPORT(rt_hw_uart_init);
+
+#endif /* BSP_USING_UART */
+#endif /* RT_USING_SERIAL */

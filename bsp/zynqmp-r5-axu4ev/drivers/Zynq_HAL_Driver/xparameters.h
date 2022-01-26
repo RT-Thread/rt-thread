@@ -38,16 +38,16 @@
 
 /* Platform specific definitions */
 #define PLATFORM_ZYNQMP
- 
+
 /* Definitions for debug logic configuration in lockstep mode */
 #define LOCKSTEP_MODE_DEBUG 0U
- 
+
 /* Definitions for sleep timer configuration */
 #define XSLEEP_TIMER_IS_DEFAULT_TIMER
- 
+
 /* Definitions for processor access to RPU/IOU slcr address space*/
 #define PROCESSOR_ACCESS_VALUE 255
- 
+
 /******************************************************************/
 /* Definitions for driver AVBUF */
 #define XPAR_XAVBUF_NUM_INSTANCES 1
@@ -750,11 +750,11 @@
 #define  XPAR_PSU_IPI_1_INT_ID  65U
 
 /* Canonical definitions for peripheral psu_ipi_1 */
-#define  XPAR_XIPIPSU_0_DEVICE_ID	XPAR_PSU_IPI_1_DEVICE_ID
-#define  XPAR_XIPIPSU_0_BASE_ADDRESS	XPAR_PSU_IPI_1_S_AXI_BASEADDR
-#define  XPAR_XIPIPSU_0_BIT_MASK	XPAR_PSU_IPI_1_BIT_MASK
-#define  XPAR_XIPIPSU_0_BUFFER_INDEX	XPAR_PSU_IPI_1_BUFFER_INDEX
-#define  XPAR_XIPIPSU_0_INT_ID	XPAR_PSU_IPI_1_INT_ID
+#define  XPAR_XIPIPSU_0_DEVICE_ID    XPAR_PSU_IPI_1_DEVICE_ID
+#define  XPAR_XIPIPSU_0_BASE_ADDRESS    XPAR_PSU_IPI_1_S_AXI_BASEADDR
+#define  XPAR_XIPIPSU_0_BIT_MASK    XPAR_PSU_IPI_1_BIT_MASK
+#define  XPAR_XIPIPSU_0_BUFFER_INDEX    XPAR_PSU_IPI_1_BUFFER_INDEX
+#define  XPAR_XIPIPSU_0_INT_ID    XPAR_PSU_IPI_1_INT_ID
 
 #define  XPAR_XIPIPSU_NUM_TARGETS  7U
 

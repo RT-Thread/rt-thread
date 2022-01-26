@@ -117,8 +117,8 @@ typedef struct
                                        This feature automatically adapts the frequency of ADC conversions triggers to the speed of the system that reads the data. Moreover, this avoids risk of overrun
                                        for low frequency applications.
                                        This parameter can be set to ENABLE or DISABLE.
-                                       Note: Do not use with interruption or DMA (HAL_ADC_Start_IT(), HAL_ADC_Start_DMA()) since they clear immediately the EOC flag
-                                             to free the IRQ vector sequencer.
+                                       Note: It is not recommended to use with interruption or DMA (HAL_ADC_Start_IT(), HAL_ADC_Start_DMA()) since these modes have to clear immediately the EOC flag (by CPU to free the IRQ pending event or by DMA).
+                                             Auto wait will work but fort a very short time, discarding its intended benefit (except specific case of high load of CPU or DMA transfers which can justify usage of auto wait).
                                              Do use with polling: 1. Start conversion with HAL_ADC_Start(), 2. Later on, when ADC conversion data is needed:
                                              use HAL_ADC_PollForConversion() to ensure that conversion is completed and HAL_ADC_GetValue() to retrieve conversion result and trig another conversion start.
                                              (in case of usage of ADC group injected, use the equivalent functions HAL_ADCExInjected_Start(), HAL_ADCEx_InjectedGetValue(), ...). */
@@ -152,7 +152,7 @@ typedef struct
                                        If trigger source is set to ADC_SOFTWARE_START, this parameter is discarded.
                                        This parameter can be a value of @ref ADC_regular_external_trigger_edge */
 
-  uint32_t ConversionDataManagement; /*!< Specifies whether the Data conversion data is managed: using the DMA (oneshot or circular), or stored in the DR register or transfered to DFSDM register.
+  uint32_t ConversionDataManagement; /*!< Specifies whether the Data conversion data is managed: using the DMA (oneshot or circular), or stored in the DR register or transferred to DFSDM register.
                                        Note: In continuous mode, DMA must be configured in circular mode. Otherwise an overrun will be triggered when DMA buffer maximum pointer is reached.
                                        This parameter can be a value of @ref ADC_ConversionDataManagement.
                                        Note: This parameter must be modified when no conversion is on going on both regular and injected groups
@@ -334,7 +334,7 @@ typedef struct
                                                               external trigger, low power auto power-on (if feature available), multimode ADC master control (if feature available)) */
 #define HAL_ADC_STATE_REG_EOC           (0x00000200UL)   /*!< Conversion data available on group regular */
 #define HAL_ADC_STATE_REG_OVR           (0x00000400UL)   /*!< Overrun occurrence */
-#define HAL_ADC_STATE_REG_EOSMP         (0x00000800UL)   /*!< Not available on this STM32 serie: End Of Sampling flag raised  */
+#define HAL_ADC_STATE_REG_EOSMP         (0x00000800UL)   /*!< Not available on this STM32 series: End Of Sampling flag raised  */
 
 /* States of ADC group injected */
 #define HAL_ADC_STATE_INJ_BUSY          (0x00001000UL)   /*!< A conversion on ADC group injected is ongoing or can occur (either by auto-injection mode,
@@ -361,7 +361,7 @@ typedef struct
 typedef struct __ADC_HandleTypeDef
 #else
 typedef struct
-#endif
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
 {
   ADC_TypeDef                   *Instance;              /*!< Register base address */
   ADC_InitTypeDef               Init;                   /*!< ADC initialization parameters and regular conversions setting */
@@ -715,7 +715,6 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @}
   */
 
-
 /** @defgroup ADC_Event_type ADC Event type
   * @{
   */
@@ -813,10 +812,10 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @param __HANDLE__ ADC handle
   * @retval SET (ADC enabled) or RESET (ADC disabled)
   */
-#define ADC_IS_ENABLE(__HANDLE__)                                                    \
-       (( ((((__HANDLE__)->Instance->CR) & (ADC_CR_ADEN | ADC_CR_ADDIS)) == ADC_CR_ADEN) && \
-          ((((__HANDLE__)->Instance->ISR) & ADC_FLAG_RDY) == ADC_FLAG_RDY)                  \
-        ) ? SET : RESET)
+#define ADC_IS_ENABLE(__HANDLE__)                                                     \
+  ((((((__HANDLE__)->Instance->CR) & (ADC_CR_ADEN | ADC_CR_ADDIS)) == ADC_CR_ADEN) && \
+    ((((__HANDLE__)->Instance->ISR) & ADC_FLAG_RDY) == ADC_FLAG_RDY)                  \
+   ) ? SET : RESET)
 
 /**
   * @brief Check if conversion is on going on regular group.
@@ -1063,7 +1062,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #else
 #define __HAL_ADC_RESET_HANDLE_STATE(__HANDLE__)                               \
   ((__HANDLE__)->State = HAL_ADC_STATE_RESET)
-#endif
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
 
 /**
   * @brief Enable ADC interrupt.
@@ -1214,7 +1213,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (1)
-  *         
+  *
   *         (1) On STM32MP1, parameter available only on ADC instance: ADC2.\n
   *         (3) On STM32MP1, fast channel (0.125 us for 14-bit resolution (ADC conversion rate up to 8 Ms/s)).
   *             Other channels are slow channels (conversion rate: refer to reference manual).
@@ -1257,7 +1256,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (1)
-  *         
+  *
   *         (1) On STM32MP1, parameter available only on ADC instance: ADC2.\n
   *         (3) On STM32MP1, fast channel (0.125 us for 14-bit resolution (ADC conversion rate up to 8 Ms/s)).
   *             Other channels are slow channels (conversion rate: refer to reference manual).\n
@@ -1312,7 +1311,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (1)
-  *         
+  *
   *         (1) On STM32MP1, parameter available only on ADC instance: ADC2.\n
   *         (3) On STM32MP1, fast channel (0.125 us for 14-bit resolution (ADC conversion rate up to 8 Ms/s)).
   *             Other channels are slow channels (conversion rate: refer to reference manual).
@@ -1362,7 +1361,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (1)
-  *         
+  *
   *         (1) On STM32MP1, parameter available only on ADC instance: ADC2.\n
   *         (3) On STM32MP1, fast channel (0.125 us for 14-bit resolution (ADC conversion rate up to 8 Ms/s)).
   *             Other channels are slow channels (conversion rate: refer to reference manual).
@@ -1411,7 +1410,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (1)
-  *         
+  *
   *         (1) On STM32MP1, parameter available only on ADC instance: ADC2.
   * @retval Value "0" if the internal channel selected is not available on the ADC instance selected.
   *         Value "1" if the internal channel selected is available on the ADC instance selected.
@@ -1435,7 +1434,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   */
 #define __HAL_ADC_MULTI_CONV_DATA_MASTER_SLAVE(__ADC_MULTI_MASTER_SLAVE__, __ADC_MULTI_CONV_DATA__)  \
   __LL_ADC_MULTI_CONV_DATA_MASTER_SLAVE((__ADC_MULTI_MASTER_SLAVE__), (__ADC_MULTI_CONV_DATA__))
-#endif
+#endif /* ADC_MULTIMODE_SUPPORT */
 
 /**
   * @brief  Helper macro to select the ADC common instance
@@ -1509,10 +1508,10 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   */
 #define __HAL_ADC_CONVERT_DATA_RESOLUTION(__DATA__,\
                                           __ADC_RESOLUTION_CURRENT__,\
-                                          __ADC_RESOLUTION_TARGET__)            \
-  __LL_ADC_CONVERT_DATA_RESOLUTION((__DATA__),                                  \
-                                   (__ADC_RESOLUTION_CURRENT__),                \
-                                   (__ADC_RESOLUTION_TARGET__))
+                                          __ADC_RESOLUTION_TARGET__) \
+__LL_ADC_CONVERT_DATA_RESOLUTION((__DATA__),\
+                                 (__ADC_RESOLUTION_CURRENT__),\
+                                 (__ADC_RESOLUTION_TARGET__))
 
 /**
   * @brief  Helper macro to calculate the voltage (unit: mVolt)
@@ -1533,10 +1532,10 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   */
 #define __HAL_ADC_CALC_DATA_TO_VOLTAGE(__VREFANALOG_VOLTAGE__,\
                                        __ADC_DATA__,\
-                                       __ADC_RESOLUTION__)                     \
-  __LL_ADC_CALC_DATA_TO_VOLTAGE((__VREFANALOG_VOLTAGE__),                      \
-                                (__ADC_DATA__),                                \
-                                (__ADC_RESOLUTION__))
+                                       __ADC_RESOLUTION__) \
+__LL_ADC_CALC_DATA_TO_VOLTAGE((__VREFANALOG_VOLTAGE__),\
+                              (__ADC_DATA__),\
+                              (__ADC_RESOLUTION__))
 
 /**
   * @brief  Helper macro to calculate analog reference voltage (Vref+)
@@ -1548,7 +1547,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         connected to pin Vref+.
   *         On devices with small package, the pin Vref+ is not present
   *         and internally bonded to pin Vdda.
-  * @note   On this STM32 serie, calibration data of internal voltage reference
+  * @note   On this STM32 series, calibration data of internal voltage reference
   *         VrefInt corresponds to a resolution of 12 bits,
   *         this is the recommended ADC resolution to convert voltage of
   *         internal voltage reference VrefInt.
@@ -1565,9 +1564,9 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @retval Analog reference voltage (unit: mV)
   */
 #define __HAL_ADC_CALC_VREFANALOG_VOLTAGE(__VREFINT_ADC_DATA__,\
-                                          __ADC_RESOLUTION__)                  \
-  __LL_ADC_CALC_VREFANALOG_VOLTAGE((__VREFINT_ADC_DATA__),                     \
-                                  (__ADC_RESOLUTION__))
+                                          __ADC_RESOLUTION__) \
+__LL_ADC_CALC_VREFANALOG_VOLTAGE((__VREFINT_ADC_DATA__),\
+                                 (__ADC_RESOLUTION__))
 
 /**
   * @brief  Helper macro to calculate the temperature (unit: degree Celsius)
@@ -1596,7 +1595,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @note   Analog reference voltage (Vref+) must be either known from
   *         user board environment or can be calculated using ADC measurement
   *         and ADC helper macro @ref __LL_ADC_CALC_VREFANALOG_VOLTAGE().
-  * @note   On this STM32 serie, calibration data of temperature sensor
+  * @note   On this STM32 series, calibration data of temperature sensor
   *         corresponds to a resolution of 12 bits,
   *         this is the recommended ADC resolution to convert voltage of
   *         temperature sensor.
@@ -1617,10 +1616,10 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   */
 #define __HAL_ADC_CALC_TEMPERATURE(__VREFANALOG_VOLTAGE__,\
                                    __TEMPSENSOR_ADC_DATA__,\
-                                   __ADC_RESOLUTION__)                         \
-  __LL_ADC_CALC_TEMPERATURE((__VREFANALOG_VOLTAGE__),                          \
-                            (__TEMPSENSOR_ADC_DATA__),                         \
-                            (__ADC_RESOLUTION__))
+                                   __ADC_RESOLUTION__) \
+__LL_ADC_CALC_TEMPERATURE((__VREFANALOG_VOLTAGE__),\
+                          (__TEMPSENSOR_ADC_DATA__),\
+                          (__ADC_RESOLUTION__))
 
 /**
   * @brief  Helper macro to calculate the temperature (unit: degree Celsius)
@@ -1672,13 +1671,13 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
                                               __TEMPSENSOR_CALX_TEMP__,\
                                               __VREFANALOG_VOLTAGE__,\
                                               __TEMPSENSOR_ADC_DATA__,\
-                                              __ADC_RESOLUTION__)              \
-  __LL_ADC_CALC_TEMPERATURE_TYP_PARAMS((__TEMPSENSOR_TYP_AVGSLOPE__),          \
-                                      (__TEMPSENSOR_TYP_CALX_V__),             \
-                                      (__TEMPSENSOR_CALX_TEMP__),              \
-                                      (__VREFANALOG_VOLTAGE__),                \
-                                      (__TEMPSENSOR_ADC_DATA__),               \
-                                      (__ADC_RESOLUTION__))
+                                              __ADC_RESOLUTION__) \
+__LL_ADC_CALC_TEMPERATURE_TYP_PARAMS((__TEMPSENSOR_TYP_AVGSLOPE__),\
+                                     (__TEMPSENSOR_TYP_CALX_V__),\
+                                     (__TEMPSENSOR_CALX_TEMP__),\
+                                     (__VREFANALOG_VOLTAGE__),\
+                                     (__TEMPSENSOR_ADC_DATA__),\
+                                     (__ADC_RESOLUTION__))
 
 /**
   * @}

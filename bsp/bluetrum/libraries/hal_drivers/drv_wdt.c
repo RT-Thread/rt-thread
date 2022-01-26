@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020-2021, Bluetrum Development Team
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -11,6 +11,8 @@
 #include <board.h>
 
 #ifdef RT_USING_WDT
+
+#include <drv_wdt.h>
 
 // #define DRV_DEBUG
 #define LOG_TAG             "drv.wdt"
@@ -49,35 +51,35 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 
         switch (*((rt_uint32_t *)arg))
         {
-        case 0:
+        case AB32_WDT_TIMEOUT_1MS:
             LOG_I("The watchdog timeout is set to 1ms");
             tmp |= (0xa << 24) | (0x00 << 20);
             break;
-        case 1:
+        case AB32_WDT_TIMEOUT_256MS:
             LOG_I("The watchdog timeout is set to 256ms");
             tmp |= (0xa << 24) | (0x01 << 20);
             break;
-        case 2:
+        case AB32_WDT_TIMEOUT_512MS:
             LOG_I("The watchdog timeout is set to 512ms");
             tmp |= (0xa << 24) | (0x02 << 20);
             break;
-        case 3:
+        case AB32_WDT_TIMEOUT_1024MS:
             LOG_I("The watchdog timeout is set to 1024ms");
             tmp |= (0xa << 24) | (0x03 << 20);
             break;
-        case 4:
+        case AB32_WDT_TIMEOUT_2048MS:
             LOG_I("The watchdog timeout is set to 2048ms");
             tmp |= (0xa << 24) | (0x04 << 20);
             break;
-        case 5:
+        case AB32_WDT_TIMEOUT_4096MS:
             LOG_I("The watchdog timeout is set to 4096ms");
             tmp |= (0xa << 24) | (0x05 << 20);
             break;
-        case 6:
+        case AB32_WDT_TIMEOUT_8192MS:
             LOG_I("The watchdog timeout is set to 8192ms");
             tmp |= (0xa << 24) | (0x06 << 20);
             break;
-        case 7:
+        case AB32_WDT_TIMEOUT_16384MS:
             LOG_I("The watchdog timeout is set to 16384ms");
             tmp |= (0xa << 24) | (0x07 << 20);
             break;
@@ -92,28 +94,28 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
         switch ((WDTCON >> 20) & 0x7)
         {
-        case 0:
+        case AB32_WDT_TIMEOUT_1MS:
             LOG_D("The watchdog timeout is set to 1ms");
             break;
-        case 1:
+        case AB32_WDT_TIMEOUT_256MS:
             LOG_D("The watchdog timeout is set to 256ms");
             break;
-        case 2:
+        case AB32_WDT_TIMEOUT_512MS:
             LOG_D("The watchdog timeout is set to 512ms");
             break;
-        case 3:
+        case AB32_WDT_TIMEOUT_1024MS:
             LOG_D("The watchdog timeout is set to 1024ms");
             break;
-        case 4:
+        case AB32_WDT_TIMEOUT_2048MS:
             LOG_D("The watchdog timeout is set to 2048ms");
             break;
-        case 5:
+        case AB32_WDT_TIMEOUT_4096MS:
             LOG_D("The watchdog timeout is set to 4096ms");
             break;
-        case 6:
+        case AB32_WDT_TIMEOUT_8192MS:
             LOG_D("The watchdog timeout is set to 8192ms");
             break;
-        case 7:
+        case AB32_WDT_TIMEOUT_16384MS:
             LOG_D("The watchdog timeout is set to 16384ms");
             break;
         default:

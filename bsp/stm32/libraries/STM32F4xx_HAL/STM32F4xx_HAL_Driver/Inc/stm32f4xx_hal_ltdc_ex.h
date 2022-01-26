@@ -25,10 +25,11 @@
 extern "C" {
 #endif
 
-#if defined (LTDC) && defined (DSI)
-
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal_def.h"
+
+#if defined (LTDC) && defined (DSI)
+
 #include "stm32f4xx_hal_dsi.h"
 
 /** @addtogroup STM32F4xx_HAL_Driver

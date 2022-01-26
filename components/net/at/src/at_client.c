@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,8 @@
  * 2018-03-30     chenyong     first version
  * 2018-04-12     chenyong     add client implement
  * 2018-08-17     chenyong     multiple client support
+ * 2021-03-17     Meco Man     fix a buf of leaking memory
+ * 2021-07-14     Sszl         fix a buf of leaking memory
  */
 
 #include <at.h>
@@ -27,6 +29,10 @@
 
 static struct at_client at_client_table[AT_CLIENT_NUM_MAX] = { 0 };
 
+extern rt_size_t at_utils_send(rt_device_t dev,
+                               rt_off_t    pos,
+                               const void *buffer,
+                               rt_size_t   size);
 extern rt_size_t at_vprintfln(rt_device_t device, const char *format, va_list args);
 extern void at_print_raw_cmd(const char *type, const char *cmd, rt_size_t size);
 extern const char *at_get_last_cmd(rt_size_t *cmd_size);
@@ -104,17 +110,22 @@ void at_delete_resp(at_response_t resp)
  */
 at_response_t at_resp_set_info(at_response_t resp, rt_size_t buf_size, rt_size_t line_num, rt_int32_t timeout)
 {
+    char *p_temp;
     RT_ASSERT(resp);
 
     if (resp->buf_size != buf_size)
     {
         resp->buf_size = buf_size;
 
-        resp->buf = (char *) rt_realloc(resp->buf, buf_size);
-        if (!resp->buf)
+        p_temp = (char *) rt_realloc(resp->buf, buf_size);
+        if (p_temp == RT_NULL)
         {
             LOG_D("No memory for realloc response buffer size(%d).", buf_size);
             return RT_NULL;
+        }
+        else
+        {
+            resp->buf = p_temp;
         }
     }
 
@@ -299,13 +310,15 @@ int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr
     rt_mutex_take(client->lock, RT_WAITING_FOREVER);
 
     client->resp_status = AT_RESP_OK;
-    client->resp = resp;
 
     if (resp != RT_NULL)
     {
         resp->buf_len = 0;
         resp->line_counts = 0;
     }
+
+    client->resp = resp;
+    rt_sem_control(client->resp_notice, RT_IPC_CMD_RESET, RT_NULL);
 
     va_start(args, cmd_expr);
     at_vprintfln(client->device, cmd_expr, args);
@@ -316,7 +329,7 @@ int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr
         if (rt_sem_take(client->resp_notice, resp->timeout) != RT_EOK)
         {
             cmd = at_get_last_cmd(&cmd_size);
-            LOG_D("execute command (%.*s) timeout (%d ticks)!", cmd_size, cmd, resp->timeout);
+            LOG_W("execute command (%.*s) timeout (%d ticks)!", cmd_size, cmd, resp->timeout);
             client->resp_status = AT_RESP_TIMEOUT;
             result = -RT_ETIMEOUT;
             goto __exit;
@@ -370,6 +383,7 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
 
     rt_mutex_take(client->lock, RT_WAITING_FOREVER);
     client->resp = resp;
+    rt_sem_control(client->resp_notice, RT_IPC_CMD_RESET, RT_NULL);
 
     start_time = rt_tick_get();
 
@@ -386,7 +400,7 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
         /* Check whether it is already connected */
         resp->buf_len = 0;
         resp->line_counts = 0;
-        rt_device_write(client->device, 0, "AT\r\n", 4);
+        at_utils_send(client->device, 0, "AT\r\n", 4);
 
         if (rt_sem_take(client->resp_notice, resp->timeout) != RT_EOK)
             continue;
@@ -415,6 +429,8 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
  */
 rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size)
 {
+    rt_size_t len;
+
     RT_ASSERT(buf);
 
     if (client == RT_NULL)
@@ -427,27 +443,31 @@ rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size
     at_print_raw_cmd("sendline", buf, size);
 #endif
 
-    return rt_device_write(client->device, 0, buf, size);
+    rt_mutex_take(client->lock, RT_WAITING_FOREVER);
+
+    len = at_utils_send(client->device, 0, buf, size);
+
+    rt_mutex_release(client->lock);
+
+    return len;
 }
 
 static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeout)
 {
     rt_err_t result = RT_EOK;
 
-__retry:
-    result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
-    if (result != RT_EOK)
+    while (rt_device_read(client->device, 0, ch, 1) == 0)
     {
-        return result;
+        result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+
+        rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
     }
-    if(rt_device_read(client->device, 0, ch, 1) == 1)
-    {
-        return RT_EOK;
-    }
-    else
-    {
-        goto __retry;
-    }
+
+    return RT_EOK;
 }
 
 /**
@@ -465,9 +485,7 @@ __retry:
  */
 rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_int32_t timeout)
 {
-    rt_size_t read_idx = 0;
-    rt_err_t result = RT_EOK;
-    char ch;
+    rt_size_t len = 0;
 
     RT_ASSERT(buf);
 
@@ -479,28 +497,30 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_i
 
     while (1)
     {
-        if (read_idx < size)
-        {
-            result = at_client_getchar(client, &ch, timeout);
-            if (result != RT_EOK)
-            {
-                LOG_E("AT Client receive failed, uart device get data error(%d)", result);
-                return 0;
-            }
+        rt_size_t read_len;
 
-            buf[read_idx++] = ch;
-        }
-        else
+        rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
+
+        read_len = rt_device_read(client->device, 0, buf + len, size);
+        if(read_len > 0)
         {
-            break;
+            len += read_len;
+            size -= read_len;
+            if(size == 0)
+                break;
+
+            continue;
         }
+
+        if(rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout)) != RT_EOK)
+            break;
     }
 
 #ifdef AT_PRINT_RAW_CMD
-    at_print_raw_cmd("urc_recv", buf, size);
+    at_print_raw_cmd("urc_recv", buf, len);
 #endif
 
-    return read_idx;
+    return len;
 }
 
 /**
@@ -557,30 +577,19 @@ int at_obj_set_urc_table(at_client_t client, const struct at_urc *urc_table, rt_
     }
     else
     {
-        struct at_urc_table *old_urc_table = RT_NULL;
-        size_t old_table_size = client->urc_table_size * sizeof(struct at_urc_table);
-
-        old_urc_table = (struct at_urc_table *) rt_malloc(old_table_size);
-        if (old_urc_table == RT_NULL)
-        {
-            return -RT_ENOMEM;
-        }
-        rt_memcpy(old_urc_table, client->urc_table, old_table_size);
+        struct at_urc_table *new_urc_table = RT_NULL;
 
         /* realloc urc table space */
-        client->urc_table = (struct at_urc_table *) rt_realloc(client->urc_table,
-                old_table_size + sizeof(struct at_urc_table));
-        if (client->urc_table == RT_NULL)
+        new_urc_table = (struct at_urc_table *) rt_realloc(client->urc_table,client->urc_table_size * sizeof(struct at_urc_table) + sizeof(struct at_urc_table));
+        if (new_urc_table == RT_NULL)
         {
-            rt_free(old_urc_table);
             return -RT_ENOMEM;
         }
-        rt_memcpy(client->urc_table, old_urc_table, old_table_size);
+        client->urc_table = new_urc_table;
         client->urc_table[client->urc_table_size].urc = urc_table;
         client->urc_table[client->urc_table_size].urc_size = table_sz;
         client->urc_table_size++;
-        
-        rt_free(old_urc_table);
+
     }
 
     return RT_EOK;
@@ -731,6 +740,8 @@ static void client_parser(at_client_t client)
             {
                 at_response_t resp = client->resp;
 
+                char end_ch = client->recv_line_buf[client->recv_line_len - 1];
+
                 /* current receive is response */
                 client->recv_line_buf[client->recv_line_len - 1] = '\0';
                 if (resp->buf_len + client->recv_line_len < resp->buf_size)
@@ -748,7 +759,12 @@ static void client_parser(at_client_t client)
                     LOG_E("Read response buffer failed. The Response buffer size is out of buffer size(%d)!", resp->buf_size);
                 }
                 /* check response result */
-                if (rt_memcmp(client->recv_line_buf, AT_RESP_END_OK, rt_strlen(AT_RESP_END_OK)) == 0
+                if ((client->end_sign != 0) && (end_ch == client->end_sign) && (resp->line_num == 0))
+                {
+                    /* get the end sign, return response state END_OK.*/
+                    client->resp_status = AT_RESP_OK;
+                }
+                else if (rt_memcmp(client->recv_line_buf, AT_RESP_END_OK, rt_strlen(AT_RESP_END_OK)) == 0
                         && resp->line_num == 0)
                 {
                     /* get the end data by response result, return response state END_OK. */
@@ -819,7 +835,7 @@ static int at_client_para_init(at_client_t client)
     }
 
     rt_snprintf(name, RT_NAME_MAX, "%s%d", AT_CLIENT_LOCK_NAME, at_client_num);
-    client->lock = rt_mutex_create(name, RT_IPC_FLAG_FIFO);
+    client->lock = rt_mutex_create(name, RT_IPC_FLAG_PRIO);
     if (client->lock == RT_NULL)
     {
         LOG_E("AT client initialize failed! at_client_recv_lock create failed!");

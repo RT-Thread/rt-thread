@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2011-3-12     Yi Qiu      first version
+ * 2021-02-23     Leslie Lee  provide possibility for multi usb host
  */
 
 #ifndef __RT_USB_HOST_H__
@@ -44,10 +45,10 @@ struct uclass_driver
     rt_list_t list;
     int class_code;
     int subclass_code;
-    
+
     rt_err_t (*enable)(void* arg);
     rt_err_t (*disable)(void* arg);
-    
+
     void* user_data;
 };
 typedef struct uclass_driver* ucd_t;
@@ -56,9 +57,9 @@ struct uprotocal
 {
     rt_list_t list;
     int pro_id;
-    
+
     rt_err_t (*init)(void* arg);
-    rt_err_t (*callback)(void* arg);    
+    rt_err_t (*callback)(void* arg);
 };
 typedef struct uprotocal* uprotocal_t;
 
@@ -77,13 +78,13 @@ struct uinstance
     rt_uint8_t status;
     rt_uint8_t type;
     rt_uint8_t index;
-    rt_uint8_t address;    
+    rt_uint8_t address;
     rt_uint8_t speed;
-    rt_uint8_t max_packet_size;    
+    rt_uint8_t max_packet_size;
     rt_uint8_t port;
 
     struct uhub* parent_hub;
-    struct uhintf* intf[USB_MAX_INTERFACE];        
+    struct uhintf* intf[USB_MAX_INTERFACE];
 };
 typedef struct uinstance* uinst_t;
 
@@ -113,14 +114,14 @@ struct uhub
     struct uhub_descriptor hub_desc;
     rt_uint8_t num_ports;
     rt_uint32_t port_status[USB_HUB_PORT_NUM];
-    struct uinstance* child[USB_HUB_PORT_NUM];        
+    struct uinstance* child[USB_HUB_PORT_NUM];
 
     rt_bool_t is_roothub;
 
-    rt_uint8_t buffer[8];    
+    rt_uint8_t buffer[8];
     struct uinstance* self;
     struct uhcd *hcd;
-};    
+};
 typedef struct uhub* uhub_t;
 
 struct uhcd_ops
@@ -128,7 +129,7 @@ struct uhcd_ops
     rt_err_t    (*reset_port)   (rt_uint8_t port);
     int         (*pipe_xfer)    (upipe_t pipe, rt_uint8_t token, void* buffer, int nbytes, int timeout);
     rt_err_t    (*open_pipe)    (upipe_t pipe);
-    rt_err_t    (*close_pipe)   (upipe_t pipe);  
+    rt_err_t    (*close_pipe)   (upipe_t pipe);
 };
 typedef struct uhcd_ops* uhcd_ops_t;
 struct uhcd
@@ -136,7 +137,8 @@ struct uhcd
     struct rt_device parent;
     uhcd_ops_t ops;
     rt_uint8_t num_ports;
-    uhub_t roothub; 
+    uhub_t roothub;
+    struct rt_messagequeue *usb_mq;
 };
 typedef struct uhcd* uhcd_t;
 
@@ -149,11 +151,11 @@ typedef enum uhost_msg_type uhost_msg_type;
 
 struct uhost_msg
 {
-    uhost_msg_type type; 
+    uhost_msg_type type;
     union
     {
         struct uhub* hub;
-        struct 
+        struct
         {
             func_callback function;
             void *context;
@@ -163,7 +165,7 @@ struct uhost_msg
 typedef struct uhost_msg* uhost_msg_t;
 
 /* usb host system interface */
-rt_err_t rt_usb_host_init(void);
+rt_err_t rt_usb_host_init(const char *name);
 void rt_usbh_hub_init(struct uhcd *hcd);
 
 /* usb host core interface */
@@ -193,17 +195,17 @@ ucd_t rt_usbh_class_driver_storage(void);
 
 
 /* usb hub interface */
-rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer, 
+rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer,
     rt_size_t size);
 rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint32_t* buffer);
-rt_err_t rt_usbh_hub_get_port_status(uhub_t uhub, rt_uint16_t port, 
+rt_err_t rt_usbh_hub_get_port_status(uhub_t uhub, rt_uint16_t port,
     rt_uint32_t* buffer);
-rt_err_t rt_usbh_hub_clear_port_feature(uhub_t uhub, rt_uint16_t port, 
+rt_err_t rt_usbh_hub_clear_port_feature(uhub_t uhub, rt_uint16_t port,
     rt_uint16_t feature);
-rt_err_t rt_usbh_hub_set_port_feature(uhub_t uhub, rt_uint16_t port, 
+rt_err_t rt_usbh_hub_set_port_feature(uhub_t uhub, rt_uint16_t port,
     rt_uint16_t feature);
 rt_err_t rt_usbh_hub_reset_port(uhub_t uhub, rt_uint16_t port);
-rt_err_t rt_usbh_event_signal(struct uhost_msg* msg);
+rt_err_t rt_usbh_event_signal(uhcd_t uhcd, struct uhost_msg* msg);
 
 
 void rt_usbh_root_hub_connect_handler(struct uhcd *hcd, rt_uint8_t port, rt_bool_t isHS);
@@ -265,5 +267,3 @@ rt_inline int rt_usb_hcd_setup_xfer(uhcd_t hcd, upipe_t pipe, ureq_t setup, int 
 #endif
 
 #endif
-
-

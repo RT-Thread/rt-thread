@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,7 +11,7 @@
 #include <at.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <stdint.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
@@ -27,7 +27,7 @@ static rt_err_t (*odev_rx_ind)(rt_device_t dev, rt_size_t size) = RT_NULL;
 #ifdef AT_USING_CLIENT
 static struct rt_semaphore client_rx_notice;
 static struct rt_ringbuffer *client_rx_fifo = RT_NULL;
-#endif 
+#endif
 
 static char console_getchar(void)
 {
@@ -123,14 +123,14 @@ static void server_cli_parser(void)
         device_bak = server->device;
         getchar_bak = server->get_char;
 
-        memset(endmark_back, 0x00, AT_END_MARK_LEN);
-        memcpy(endmark_back, server->end_mark, strlen(server->end_mark));
+        rt_memset(endmark_back, 0x00, AT_END_MARK_LEN);
+        rt_memcpy(endmark_back, server->end_mark, strlen(server->end_mark));
 
         /* setup server device as console device */
         server->device = rt_console_get_device();
         server->get_char = at_server_console_getchar;
 
-        memset(server->end_mark, 0x00, AT_END_MARK_LEN);
+        rt_memset(server->end_mark, 0x00, AT_END_MARK_LEN);
         server->end_mark[0] = '\r';
 
         rt_hw_interrupt_enable(int_lvl);
@@ -154,8 +154,8 @@ static void server_cli_parser(void)
         server->device = device_bak;
         server->get_char = getchar_bak;
 
-        memset(server->end_mark, 0x00, AT_END_MARK_LEN);
-        memcpy(server->end_mark, endmark_back, strlen(endmark_back));
+        rt_memset(server->end_mark, 0x00, AT_END_MARK_LEN);
+        rt_memcpy(server->end_mark, endmark_back, strlen(endmark_back));
 
         rt_hw_interrupt_enable(int_lvl);
     }
@@ -264,6 +264,10 @@ static void client_cli_parser(at_client_t  client)
                 }
                 else
                 {
+                    if(cur_line_len >= FINSH_CMD_SIZE)
+                    {
+                        continue;
+                    }
                     rt_kprintf("%c", ch);
                     cur_line[cur_line_len++] = ch;
                 }

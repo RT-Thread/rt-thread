@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -589,7 +589,7 @@ rt_err_t rt_wlan_dev_report_data(struct rt_wlan_device *device, void *buff, int 
 /*
  * wlan device register interface
  */
-rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name, 
+rt_err_t rt_wlan_dev_register(struct rt_wlan_device *wlan, const char *name,
     const struct rt_wlan_dev_ops *ops, rt_uint32_t flag, void *user_data);
 
 #ifdef __cplusplus

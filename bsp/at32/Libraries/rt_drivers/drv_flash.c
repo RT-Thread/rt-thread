@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -160,14 +160,14 @@ int at32_flash_erase(rt_uint32_t addr, size_t size)
         addr += FLASH_PAGE_SIZE;
     }
 
-		FLASH_Lock();
-		
-__exit:    
+        FLASH_Lock();
+
+__exit:
     if(result != RT_EOK)
     {
         return result;
     }
-    
+
     return size;
 }
 
@@ -177,7 +177,7 @@ static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_erase(long offset, size_t size);
 
-const struct fal_flash_dev at32_onchip_flash = 
+const struct fal_flash_dev at32_onchip_flash =
 {
     "onchip_flash",
     AT32_FLASH_START_ADRESS,

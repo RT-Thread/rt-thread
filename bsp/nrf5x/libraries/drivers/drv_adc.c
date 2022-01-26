@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,7 +31,7 @@ static void nrf5x_saadc_event_hdr(nrfx_saadc_evt_t const * p_event)
                 j ++;
             }
         }
-        results.done = 1;  
+        results.done = 1;
     }
 }
 
@@ -72,22 +72,22 @@ static void set_channels(drv_nrfx_saadc_channel_t * channel)
 
 /* channel: 0-7 */
 static rt_err_t nrf5x_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
-{      
-    nrfx_err_t err_code = NRFX_SUCCESS; 
+{
+    nrfx_err_t err_code = NRFX_SUCCESS;
     uint8_t i,j;
 
     if (enabled)
-    { 
+    {
         RT_ASSERT(device != RT_NULL);
         RT_ASSERT(device->parent.user_data != RT_NULL);
-        
+
         drv_nrfx_saadc_channel_t * drv_channel_config = NULL;
-        drv_channel_config = (drv_nrfx_saadc_channel_t *)device->parent.user_data;   
-    
+        drv_channel_config = (drv_nrfx_saadc_channel_t *)device->parent.user_data;
+
         set_channels(drv_channel_config);
-        
+
         nrfx_saadc_channel_t channels_cache[results.channel_count];
-        
+
         j = 0;
         for(i = 0; i < 8; i++)
         {
@@ -97,20 +97,20 @@ static rt_err_t nrf5x_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
                 j ++;
             }
         }
-        
+
         err_code = nrfx_saadc_channels_config(channels_cache,results.channel_count);
 
         err_code = nrfx_saadc_simple_mode_set(get_channels_mask(),
                                       NRF_SAADC_RESOLUTION_12BIT,
                                       NRF_SAADC_OVERSAMPLE_DISABLED,
                                       nrf5x_saadc_event_hdr);
-        
-        err_code = nrfx_saadc_buffer_set(result_buff_cache, results.channel_count);                                     
+
+        err_code = nrfx_saadc_buffer_set(result_buff_cache, results.channel_count);
     }
     else
     {
         results.channels[channel].channel_index = 0xff;
-        
+
         results.channel_count = 0;
         for(i = 0; i < 8; i++)
         {
@@ -119,7 +119,7 @@ static rt_err_t nrf5x_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
                 results.channel_count ++;
             }
         }
-        
+
         if(results.channel_count == 0)
         {
             nrfx_saadc_channel_t channels_cache[1];
@@ -129,7 +129,7 @@ static rt_err_t nrf5x_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
         else
         {
             nrfx_saadc_channel_t channels_cache[results.channel_count];
-            
+
             j = 0;
             for(i = 0; i < 8; i++)
             {
@@ -139,25 +139,25 @@ static rt_err_t nrf5x_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
                     j ++;
                 }
             }
-            
+
             err_code = nrfx_saadc_channels_config(channels_cache,results.channel_count);
 
             err_code = nrfx_saadc_simple_mode_set(get_channels_mask(),
                                           NRF_SAADC_RESOLUTION_12BIT,
                                           NRF_SAADC_OVERSAMPLE_DISABLED,
                                           nrf5x_saadc_event_hdr);
-            
+
             err_code = nrfx_saadc_buffer_set(result_buff_cache, results.channel_count);
         }
     }
 
-    return err_code;   
+    return err_code;
 }
 
 static rt_err_t nrf5x_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
-    nrfx_err_t err_code = NRFX_SUCCESS; 
-    
+    nrfx_err_t err_code = NRFX_SUCCESS;
+
     if (results.channels[channel].channel_index != 0xff)
     {
         results.done = 0;
@@ -169,7 +169,7 @@ static rt_err_t nrf5x_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
         * value = results.result_buffer[channel];
         results.done = 0;
     }
-    
+
     return err_code;
 }
 
@@ -184,7 +184,7 @@ int rt_hw_adc_init(void)
     int result = RT_EOK;
     uint8_t i;
     char name_buf[6] = ADC_NAME;
-    
+
     for(i = 0; i < 8; i++)
     {
         results.channels[i].channel_index = 0xff;
@@ -192,7 +192,7 @@ int rt_hw_adc_init(void)
         results.channel_count = 0;
         results.done = 0;
     }
-        
+
     /* initializing SAADC interrupt priority */
     if (nrfx_saadc_init(NRFX_SAADC_CONFIG_IRQ_PRIORITY) != NRFX_SUCCESS)
     {
@@ -236,43 +236,43 @@ INIT_BOARD_EXPORT(rt_hw_adc_init);
 void saadc_sample(void)
 {
     drv_nrfx_saadc_channel_t channel_config;
-    rt_uint32_t result; 
-    
+    rt_uint32_t result;
+
     rt_adc_device_t adc_dev;
     adc_dev = (rt_adc_device_t)rt_device_find(ADC_NAME);
     adc_dev->parent.user_data = &channel_config;
-    
-    channel_config = (drv_nrfx_saadc_channel_t){.mode = SAMPLE_ADC_MODE_SINGLE_ENDED, 
-                                                .pin_p = SAMPLE_ADC_AIN1, 
-                                                .pin_n = SAMPLE_ADC_AIN_NC, 
+
+    channel_config = (drv_nrfx_saadc_channel_t){.mode = SAMPLE_ADC_MODE_SINGLE_ENDED,
+                                                .pin_p = SAMPLE_ADC_AIN1,
+                                                .pin_n = SAMPLE_ADC_AIN_NC,
                                                 .channel_num = SAMPLE_ADC_CHANNEL_0};
     rt_adc_enable(adc_dev, channel_config.channel_num);
-        
-    channel_config = (drv_nrfx_saadc_channel_t){.mode = SAMPLE_ADC_MODE_SINGLE_ENDED, 
-                                                .pin_p = SAMPLE_ADC_AIN2, 
-                                                .pin_n = SAMPLE_ADC_AIN_NC, 
+
+    channel_config = (drv_nrfx_saadc_channel_t){.mode = SAMPLE_ADC_MODE_SINGLE_ENDED,
+                                                .pin_p = SAMPLE_ADC_AIN2,
+                                                .pin_n = SAMPLE_ADC_AIN_NC,
                                                 .channel_num = SAMPLE_ADC_CHANNEL_1};
     rt_adc_enable(adc_dev, channel_config.channel_num);
-    
-    channel_config = (drv_nrfx_saadc_channel_t){.mode = SAMPLE_ADC_MODE_SINGLE_ENDED, 
-                                                .pin_p = SAMPLE_ADC_AIN7, 
-                                                .pin_n = SAMPLE_ADC_AIN_NC, 
+
+    channel_config = (drv_nrfx_saadc_channel_t){.mode = SAMPLE_ADC_MODE_SINGLE_ENDED,
+                                                .pin_p = SAMPLE_ADC_AIN7,
+                                                .pin_n = SAMPLE_ADC_AIN_NC,
                                                 .channel_num = SAMPLE_ADC_CHANNEL_5};
     rt_adc_enable(adc_dev, channel_config.channel_num);
-    
-    int count = 1; 
+
+    int count = 1;
     while(count++)
     {
         result = rt_adc_read(adc_dev, 0);
         rt_kprintf("saadc channel 0 value = %d, ",result);
-        
+
         result = rt_adc_read(adc_dev, 1);
         rt_kprintf("saadc channel 1 value = %d, ",result);
-        
+
         result = rt_adc_read(adc_dev, 5);
-        rt_kprintf("saadc channel 5 value = %d",result);  
-        
-        rt_kprintf("\r\n"); 
+        rt_kprintf("saadc channel 5 value = %d",result);
+
+        rt_kprintf("\r\n");
         rt_thread_mdelay(1000);
     }
 }
