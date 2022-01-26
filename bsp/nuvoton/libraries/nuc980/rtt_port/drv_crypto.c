@@ -57,11 +57,6 @@ static struct rt_mutex s_AES_mutex;
 static struct rt_mutex s_SHA_mutex;
 static struct rt_mutex s_PRNG_mutex;
 
-static void nu_crypto_isr(int vector, void *param)
-{
-    /* Nothing */
-}
-
 static rt_err_t nu_aes_crypt_run(
     rt_bool_t bEncrypt,
     uint32_t u32OpMode,
@@ -153,7 +148,7 @@ static void nu_prng_open(uint32_t u32Seed)
     result = rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
     RT_ASSERT(result == RT_EOK);
 
-    //Open PRNG 64 bits. But always return 32 bits
+    //Open PRNG 64 bits
     PRNG_Open(CRPT, PRNG_KEY_SIZE_64, PRNG_SEED_RELOAD, u32Seed);
 
     result = rt_mutex_release(&s_PRNG_mutex);
@@ -179,7 +174,7 @@ static rt_uint32_t nu_prng_run(void)
     result = rt_mutex_release(&s_PRNG_mutex);
     RT_ASSERT(result == RT_EOK);
 
-    return au32RNGValue[0];
+    return au32RNGValue[0] ^ au32RNGValue[1];
 }
 
 static rt_err_t nu_aes_crypt(struct hwcrypto_symmetric *symmetric_ctx, struct hwcrypto_symmetric_info *symmetric_info)
@@ -665,6 +660,8 @@ static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx)
         break;
     }
 
+    nu_hwcrypto_reset(ctx);
+
     return res;
 }
 
@@ -769,9 +766,6 @@ int nu_hwcrypto_device_init(void)
     /* register hwcrypto operation */
     result = rt_hwcrypto_register(&nu_hwcrypto_dev, RT_HWCRYPTO_DEFAULT_NAME);
     RT_ASSERT(result == RT_EOK);
-
-    /* Enable Crypto engine interrupt */
-    rt_hw_interrupt_install(IRQ_CRYPTO, nu_crypto_isr, RT_NULL, "crypto");
 
     return 0;
 }
