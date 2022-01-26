@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,9 +35,9 @@ struct imxrt_i2c_bus
     volatile rt_uint32_t msg_ptr;
     volatile rt_uint32_t dptr;
     char *device_name;
-#ifdef SOC_IMXRT1170_SERIES	
-	clock_root_t clock_root;
-#endif	
+#ifdef SOC_IMXRT1170_SERIES
+    clock_root_t clock_root;
+#endif
 };
 
 #if defined (BSP_USING_I2C1)
@@ -70,7 +70,7 @@ struct imxrt_i2c_bus
 
 /* Select USB1 PLL (360 MHz) as master lpi2c clock source */
 #define LPI2C_CLOCK_SOURCE_SELECT (1U)
-#ifdef SOC_IMXRT1170_SERIES	
+#ifdef SOC_IMXRT1170_SERIES
 /* Clock divider for master lpi2c clock source */
 #define LPI2C_CLOCK_SOURCE_DIVIDER (12U)
 #else
@@ -157,19 +157,19 @@ static rt_err_t imxrt_lpi2c_configure(struct imxrt_i2c_bus *bus, lpi2c_master_co
     RT_ASSERT(cfg != RT_NULL);
 
     bus->parent.ops = &imxrt_i2c_ops;
-#ifdef SOC_IMXRT1170_SERIES	
-	clock_root_config_t rootCfg = {0};
-	rootCfg.mux = LPI2C_CLOCK_SOURCE_SELECT;
-	rootCfg.div = LPI2C_CLOCK_SOURCE_DIVIDER + 1;
-	CLOCK_SetRootClock(bus->clock_root, &rootCfg);
-	volatile uint32_t freq = CLOCK_GetRootClockFreq(bus->clock_root);
-	LPI2C_MasterInit(bus->I2C, cfg, freq);
+#ifdef SOC_IMXRT1170_SERIES
+    clock_root_config_t rootCfg = {0};
+    rootCfg.mux = LPI2C_CLOCK_SOURCE_SELECT;
+    rootCfg.div = LPI2C_CLOCK_SOURCE_DIVIDER + 1;
+    CLOCK_SetRootClock(bus->clock_root, &rootCfg);
+    volatile uint32_t freq = CLOCK_GetRootClockFreq(bus->clock_root);
+    LPI2C_MasterInit(bus->I2C, cfg, freq);
 #else
-	CLOCK_SetMux(kCLOCK_Lpi2cMux, LPI2C_CLOCK_SOURCE_SELECT);
-	CLOCK_SetDiv(kCLOCK_Lpi2cDiv, LPI2C_CLOCK_SOURCE_DIVIDER);
+    CLOCK_SetMux(kCLOCK_Lpi2cMux, LPI2C_CLOCK_SOURCE_SELECT);
+    CLOCK_SetDiv(kCLOCK_Lpi2cDiv, LPI2C_CLOCK_SOURCE_DIVIDER);
     LPI2C_MasterInit(bus->I2C, cfg, LPI2C_CLOCK_FREQUENCY);
-#endif	
-    
+#endif
+
     return RT_EOK;
 }
 
@@ -267,36 +267,36 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     {
         if (imxrt_i2c->msg[i].flags & RT_I2C_RD)
         {
-			if ((imxrt_i2c->msg[i].flags & RT_I2C_NO_START) != RT_I2C_NO_START)
-			{
-				if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Write) != kStatus_Success)
-				{
-					i = 0;
-					break;
-				}
+            if ((imxrt_i2c->msg[i].flags & RT_I2C_NO_START) != RT_I2C_NO_START)
+            {
+                if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Write) != kStatus_Success)
+                {
+                    i = 0;
+                    break;
+                }
 
-				while (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
-				{
-				}
-				
-				if (LPI2C_MasterRepeatedStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
-				{
-					i = 0;
-					break;
-				}
-			}
-			else
-			{
-				if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
-				{
-					i = 0;
-					break;
-				}
-				
-				while (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
-				{
-				}
-			}
+                while (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
+                {
+                }
+
+                if (LPI2C_MasterRepeatedStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
+                {
+                    i = 0;
+                    break;
+                }
+            }
+            else
+            {
+                if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
+                {
+                    i = 0;
+                    break;
+                }
+
+                while (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
+                {
+                }
+            }
 
             if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
             {
@@ -321,16 +321,16 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 i = 0;
                 break;
             }
-			
+
             if(LPI2C_MasterWaitForTxFifoAllEmpty(imxrt_i2c->I2C) != kStatus_Success)
             {
                 i = 0;
                 break;
             }
-			
-			if (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
+
+            if (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
             {
-			    i = 0;
+                i = 0;
                 break;
             }
 
@@ -346,12 +346,12 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 break;
             }
         }
-		
-		if (LPI2C_MasterStop(imxrt_i2c->I2C) != kStatus_Success)
-		{
-			i = 0;
-		}
-		
+
+        if (LPI2C_MasterStop(imxrt_i2c->I2C) != kStatus_Success)
+        {
+            i = 0;
+        }
+
     }
 
     imxrt_i2c->msg = RT_NULL;
@@ -434,7 +434,7 @@ int rt_hw_i2c_init(void)
 #elif defined(HW_I2C5_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
 #endif  /* HW_I2C5_BADURATE_400kHZ */
-	lpi2c5.clock_root = kCLOCK_Root_Lpi2c5;
+    lpi2c5.clock_root = kCLOCK_Root_Lpi2c5;
     imxrt_lpi2c_configure(&lpi2c5, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c5.parent, lpi2c5.device_name);
 #endif /* BSP_USING_I2C5 */
@@ -446,7 +446,7 @@ int rt_hw_i2c_init(void)
 #elif defined(HW_I2C6_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
 #endif  /* HW_I2C6_BADURATE_400kHZ */
-	lpi2c6.clock_root = kCLOCK_Root_Lpi2c6;
+    lpi2c6.clock_root = kCLOCK_Root_Lpi2c6;
     imxrt_lpi2c_configure(&lpi2c6, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c6.parent, lpi2c6.device_name);
 #endif /* BSP_USING_I2C6 */
