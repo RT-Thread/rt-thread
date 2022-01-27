@@ -605,7 +605,7 @@ rt_err_t eth_device_ready(struct eth_device* dev)
         if(dev->rx_notice == RT_FALSE)
         {
             dev->rx_notice = RT_TRUE;
-            return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+            return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
         }
         else
             return RT_EOK;

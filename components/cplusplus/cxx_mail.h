@@ -51,7 +51,7 @@ public:
         else
             tick = rt_tick_from_millisecond(millisec);
 
-        return rt_mb_send_wait(&mID, (rt_uint32_t)mptr, tick) == RT_EOK;
+        return rt_mb_send_wait(&mID, (rt_ubase_t)mptr, tick) == RT_EOK;
     }
 
     /** Get a mail from a queue.

@@ -374,7 +374,7 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
     /* send a message to eth tx thread */
     msg.netif = netif;
     msg.buf   = p;
-    if (rt_mb_send(&eth_tx_thread_mb, (rt_uint32_t) &msg) == RT_EOK)
+    if (rt_mb_send(&eth_tx_thread_mb, (rt_ubase_t) &msg) == RT_EOK)
     {
         /* waiting for ack */
         rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
@@ -556,7 +556,7 @@ rt_err_t eth_device_ready(struct eth_device* dev)
         if(dev->rx_notice == RT_FALSE)
         {
             dev->rx_notice = RT_TRUE;
-            return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+            return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
         }
         else
             return RT_EOK;
@@ -581,7 +581,7 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
     rt_hw_interrupt_enable(level);
 
     /* post message to ethernet thread */
-    return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+    return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
 }
 #else
 /* NOTE: please not use it in interrupt when no RxThread exist */
