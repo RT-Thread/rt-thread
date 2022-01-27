@@ -191,7 +191,7 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP202
+#define RT_USING_LWIP203
 #define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
@@ -282,8 +282,8 @@
 #define NETUTILS_NTP_HOSTNAME "cn.ntp.org.cn"
 #define NETUTILS_NTP_HOSTNAME2 "ntp.rt-thread.org"
 #define NETUTILS_NTP_HOSTNAME3 "edu.ntp.org.cn"
-#define PKG_USING_NETUTILS_V131
-#define PKG_NETUTILS_VER_NUM 0x10301
+#define PKG_USING_NETUTILS_LATEST_VERSION
+#define PKG_NETUTILS_VER_NUM 0x99999
 
 /* IoT Cloud */
 

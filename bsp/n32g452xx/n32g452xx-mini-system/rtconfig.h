@@ -76,12 +76,6 @@
 
 /* Device virtual file system */
 
-#define RT_USING_DFS
-#define DFS_USING_POSIX
-#define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
-#define DFS_FD_MAX 16
 
 /* Device Drivers */
 
@@ -160,12 +154,24 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
 /* system packages */
 
+/* enhanced kernel services */
+
+
+/* POSIX extension functions */
+
+
 /* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */
