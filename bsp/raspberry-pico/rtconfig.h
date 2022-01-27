@@ -191,6 +191,12 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
+
+/* Hardware Drivers Config */
+
 #define SOC_RP2040
+
+/* Onboard Peripheral Drivers */
+
 
 #endif
