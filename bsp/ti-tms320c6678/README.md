@@ -1,11 +1,8 @@
-
 # 1. 简介
-	TMS320C6678是TI基于KeyStone的多核固定浮点数字信号处理器，DSP集成C66x CorePac，每个核心在1至1.25 GHz到10 GHz的运行。
-该设备支持高性能的信号处理应用，如任务关键，医疗成像，测试和自动化。
+	TMS320C6678是TI基于KeyStone的多核固定浮点数字信号处理器，DSP集成C66x CorePac，每个核心在1至1.25 GHz到10 GHz的运行。该设备支持高性能的信号处理应用，如任务关键，医疗成像，测试和自动化。
 
 ## 2. 编译说明
-	TMS320C6678 工程的编译和下载要使用的是 TI 官方提供的 Code Composer Studio。在本工程使用的是 CCS5.5 版本编译调试，
-CCS5.5 Compiler version:TIv8.3.5进行编译，需要安装TI提供的CSL库pdk_C6678_1_1_2_6。
+	TMS320C6678 工程的编译和下载要使用的是 TI 官方提供的 Code Composer Studio。在本工程使用的是 CCS5.5 版本编译调试，CCS5.5 Compiler version:TIv8.3.5进行编译，需要安装TI提供的CSL库pdk_C6678_1_1_2_6。
 
 ## 2.1 导入工程
 
@@ -38,3 +35,5 @@ CCS5.5 Compiler version:TIv8.3.5进行编译，需要安装TI提供的CSL库pdk_
 
     加载可执行文件完成后，CCS将进入调试模式，可以选择继续运行、单步调试、复位等操作。
 ![输入图片说明](figures/debug(2).png)
+
+    到此，可以开启tms320c6678 + rt-thread的愉快旅程了。
