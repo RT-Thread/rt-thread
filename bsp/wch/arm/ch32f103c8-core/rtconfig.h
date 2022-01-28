@@ -209,18 +209,7 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_UART
-#define BSP_USING_UART1
 #define BSP_USING_UART2
-#define BSP_USING_UART3
-#define BSP_USING_SPI
-#define BSP_USING_SPI1
-#define BSP_USING_SPI2
-#define BSP_USING_HWI2C
-#define BSP_USING_HWI2C1
-#define BSP_USING_HWI2C2
-#define BSP_USING_IWDT
-#define BSP_USING_RTC
-#define BSP_USING_RTC_LSI
 #define LSI_VALUE 40000
 
 /* Onboard Peripheral Drivers */
