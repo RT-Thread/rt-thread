@@ -57,6 +57,9 @@ rt_err_t rt_completion_wait(struct rt_completion *completion,
     rt_thread_t thread;
     RT_ASSERT(completion != RT_NULL);
 
+    /* current context checking */
+    RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
+
     result = RT_EOK;
     thread = rt_thread_self();
 
@@ -81,9 +84,6 @@ rt_err_t rt_completion_wait(struct rt_completion *completion,
             /* add to suspended list */
             rt_list_insert_before(&(completion->suspended_list),
                                   &(thread->tlist));
-
-            /* current context checking */
-            RT_DEBUG_NOT_IN_INTERRUPT;
 
             /* start timer */
             if (timeout > 0)
