@@ -204,7 +204,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 /* initialization export */
 #ifdef RT_USING_COMPONENTS_INIT
 typedef int (*init_fn_t)(void);
-#ifdef _MSC_VER /* we do not support MS VC++ compiler */
+#ifdef _MSC_VER
 #pragma section("rti_fn$f",read)
     #if RT_DEBUG_INIT
         struct rt_init_desc
