@@ -1,9 +1,9 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : startup_ch32f10x.s
+* File Name          : startup_ch32f20x.s
 * Author             : WCH
 * Version            : V1.0.0
 * Date               : 2020/11/01
-* Description        : CH32F10x vector table for GCC toolchain.
+* Description        : CH32F20x vector table for GCC toolchain.
 *******************************************************************************/
     
   .syntax unified
@@ -148,7 +148,51 @@ g_pfnVectors:
   .word  EXTI15_10_IRQHandler
   .word  RTCAlarm_IRQHandler
   .word  USBWakeUp_IRQHandler
-  .word  USBHD_IRQHandler
+    .word  TIM8_BRK_IRQHandler
+    .word  TIM8_UP_IRQHandler
+    .word  TIM8_TRG_COM_IRQHandler
+    .word  TIM8_CC_IRQHandler
+	.word  RNG_IRQHandler
+	.word  FSMC_IRQHandler
+	.word  SDIO_IRQHandler
+	.word  TIM5_IRQHandler
+	.word  SPI3_IRQHandler
+	.word  UART4_IRQHandler
+	.word  UART5_IRQHandler
+	.word  TIM6_IRQHandler
+	.word  TIM7_IRQHandler
+	.word  DMA2_Channel1_IRQHandler
+	.word  DMA2_Channel2_IRQHandler
+	.word  DMA2_Channel3_IRQHandler
+	.word  DMA2_Channel4_IRQHandler
+	.word  DMA2_Channel5_IRQHandler
+	.word  ETH_IRQHandler
+	.word  ETH_WKUP_IRQHandler
+	.word  CAN2_TX_IRQHandler
+	.word  CAN2_RX0_IRQHandler
+	.word  CAN2_RX1_IRQHandler
+	.word  CAN2_SCE_IRQHandler
+	.word  OTG_FS_IRQHandler
+	.word  USBHSWakeup_IRQHandler
+	.word  USBHS_IRQHandler
+	.word  DVP_IRQHandler
+	.word  UART6_IRQHandler
+	.word  UART7_IRQHandler
+	.word  UART8_IRQHandler
+	.word  TIM9_BRK_IRQHandler
+	.word  TIM9_UP_IRQHandler
+	.word  TIM9_TRG_COM_IRQHandler
+	.word  TIM9_CC_IRQHandler
+	.word  TIM10_BRK_IRQHandler
+	.word  TIM10_UP_IRQHandler
+	.word  TIM10_TRG_COM_IRQHandler
+	.word  TIM10_CC_IRQHandler
+	.word  DMA2_Channel6_IRQHandler
+	.word  DMA2_Channel7_IRQHandler
+	.word  DMA2_Channel8_IRQHandler
+	.word  DMA2_Channel9_IRQHandler
+	.word  DMA2_Channel10_IRQHandler
+	.word  DMA2_Channel11_IRQHandler
    
 /*******************************************************************************
  Dummy Exception Handlers (infinite loops which can be modified)
@@ -309,5 +353,137 @@ g_pfnVectors:
   .weak  USBWakeUp_IRQHandler
   .thumb_set USBWakeUp_IRQHandler,Default_Handler
 
-  .weak  USBHD_IRQHandler
-  .thumb_set USBHD_IRQHandler,Default_Handler
+  .weak  TIM8_BRK_IRQHandler
+  .thumb_set TIM8_BRK_IRQHandler,Default_Handler
+
+  .weak  TIM8_UP_IRQHandler
+  .thumb_set TIM8_UP_IRQHandler,Default_Handler
+
+  .weak  TIM8_TRG_COM_IRQHandler
+  .thumb_set TIM8_TRG_COM_IRQHandler,Default_Handler
+
+  .weak  TIM8_CC_IRQHandler
+  .thumb_set TIM8_CC_IRQHandler,Default_Handler
+
+  .weak  RNG_IRQHandler
+  .thumb_set RNG_IRQHandler,Default_Handler
+
+  .weak  FSMC_IRQHandler
+  .thumb_set FSMC_IRQHandler,Default_Handler
+
+  .weak  SDIO_IRQHandler
+  .thumb_set SDIO_IRQHandler,Default_Handler
+
+  .weak  TIM5_IRQHandler
+  .thumb_set TIM5_IRQHandler,Default_Handler
+
+  .weak  SPI3_IRQHandler
+  .thumb_set SPI3_IRQHandler,Default_Handler
+
+  .weak  UART4_IRQHandler
+  .thumb_set UART4_IRQHandler,Default_Handler
+
+  .weak  UART5_IRQHandler
+  .thumb_set UART5_IRQHandler,Default_Handler
+
+  .weak  TIM6_IRQHandler
+  .thumb_set TIM6_IRQHandler,Default_Handler
+
+  .weak  TIM7_IRQHandler
+  .thumb_set TIM7_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel1_IRQHandler
+  .thumb_set DMA2_Channel1_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel2_IRQHandler
+  .thumb_set DMA2_Channel2_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel3_IRQHandler
+  .thumb_set DMA2_Channel3_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel4_IRQHandler
+  .thumb_set DMA2_Channel4_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel5_IRQHandler
+  .thumb_set DMA2_Channel5_IRQHandler,Default_Handler
+
+  .weak  ETH_IRQHandler
+  .thumb_set ETH_IRQHandler,Default_Handler
+
+  .weak  ETH_WKUP_IRQHandler
+  .thumb_set ETH_WKUP_IRQHandler,Default_Handler
+
+  .weak  CAN2_TX_IRQHandler
+  .thumb_set CAN2_TX_IRQHandler,Default_Handler
+
+  .weak  CAN2_RX0_IRQHandler
+  .thumb_set CAN2_RX0_IRQHandler,Default_Handler
+
+  .weak  CAN2_RX1_IRQHandler
+  .thumb_set CAN2_RX1_IRQHandler,Default_Handler
+
+  .weak  CAN2_SCE_IRQHandler
+  .thumb_set CAN2_SCE_IRQHandler,Default_Handler
+
+  .weak  OTG_FS_IRQHandler
+  .thumb_set OTG_FS_IRQHandler,Default_Handler
+
+  .weak  USBHSWakeup_IRQHandler
+  .thumb_set USBHSWakeup_IRQHandler,Default_Handler
+
+  .weak  USBHS_IRQHandler
+  .thumb_set USBHS_IRQHandler,Default_Handler
+
+  .weak  DVP_IRQHandler
+  .thumb_set DVP_IRQHandler,Default_Handler
+
+  .weak  UART6_IRQHandler
+  .thumb_set UART6_IRQHandler,Default_Handler
+
+  .weak  UART7_IRQHandler
+  .thumb_set UART7_IRQHandler,Default_Handler
+
+  .weak  UART8_IRQHandler
+  .thumb_set UART8_IRQHandler,Default_Handler
+
+  .weak  TIM9_BRK_IRQHandler
+  .thumb_set TIM9_BRK_IRQHandler,Default_Handler
+
+  .weak  TIM9_UP_IRQHandler
+  .thumb_set TIM9_UP_IRQHandler,Default_Handler
+
+  .weak  TIM9_TRG_COM_IRQHandler
+  .thumb_set TIM9_TRG_COM_IRQHandler,Default_Handler
+
+  .weak  TIM9_CC_IRQHandler
+  .thumb_set TIM9_CC_IRQHandler,Default_Handler
+
+  .weak  TIM10_BRK_IRQHandler
+  .thumb_set TIM10_BRK_IRQHandler,Default_Handler
+
+  .weak  TIM10_UP_IRQHandler
+  .thumb_set TIM10_UP_IRQHandler,Default_Handler
+
+  .weak  TIM10_TRG_COM_IRQHandler
+  .thumb_set TIM10_TRG_COM_IRQHandler,Default_Handler
+
+  .weak  TIM10_CC_IRQHandler
+  .thumb_set TIM10_CC_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel6_IRQHandler
+  .thumb_set DMA2_Channel6_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel7_IRQHandler
+  .thumb_set DMA2_Channel7_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel8_IRQHandler
+  .thumb_set DMA2_Channel8_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel9_IRQHandler
+  .thumb_set DMA2_Channel9_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel10_IRQHandler
+  .thumb_set DMA2_Channel10_IRQHandler,Default_Handler
+
+  .weak  DMA2_Channel11_IRQHandler
+  .thumb_set DMA2_Channel11_IRQHandler,Default_Handler
