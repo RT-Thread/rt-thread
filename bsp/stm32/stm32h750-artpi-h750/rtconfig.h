@@ -86,6 +86,7 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -198,6 +199,13 @@
 
 #define SOC_STM32H750XB
 
+/* Board extended module */
+
+#define ART_PI_USING_MEDIA_IO
+#define BSP_USING_SPI_LCD_ILI9488
+#define PKG_USING_PERSIMMON_SRC
+#define MEDIA_IO_USING_SCREEN
+
 /* Onboard Peripheral Drivers */
 
 
@@ -207,6 +215,9 @@
 #define BSP_USING_UART
 #define BSP_USING_UART3
 #define BSP_USING_UART4
+#define BSP_USING_SPI
+#define BSP_USING_SPI2
+#define BSP_USING_SDRAM
 
 /* External Libraries */
 
