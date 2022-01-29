@@ -652,13 +652,13 @@ struct rt_thread
 #endif
     rt_uint32_t number_mask;
 
-#if defined(RT_USING_EVENT)
+#ifdef RT_USING_EVENT
     /* thread event */
     rt_uint32_t event_set;
     rt_uint8_t  event_info;
 #endif
 
-#if defined(RT_USING_SIGNALS)
+#ifdef RT_USING_SIGNALS
     rt_sigset_t     sig_pending;                        /**< the pending signals */
     rt_sigset_t     sig_mask;                           /**< the mask bits of signal */
 
