@@ -65,6 +65,7 @@ struct stm32_spi
     } dma;
 
     rt_uint8_t spi_dma_flag;
+    rt_uint32_t wait_event;
     struct rt_spi_bus spi_bus;
 };
 
