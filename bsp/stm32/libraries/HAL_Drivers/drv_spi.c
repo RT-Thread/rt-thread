@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,6 +11,7 @@
  * 2020-01-15     whj4674672   Porting for stm32h7xx
  * 2020-06-18     thread-liu   Porting for stm32mp1xx
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2022-01-31     qinge        Wait in blocking mode for transmission complete
  */
 
 #include <rtthread.h>
@@ -350,7 +351,7 @@ static void set_wait_event(struct stm32_spi *spi,enum T_R_TYPE tx_rx_type)
             }
         }break;
 #endif
-#ifdef BSP_USING_SPI3    
+#ifdef BSP_USING_SPI3
         case (int)SPI3:
         {
             switch(tx_rx_type)
@@ -360,9 +361,9 @@ static void set_wait_event(struct stm32_spi *spi,enum T_R_TYPE tx_rx_type)
                 case SPI_TxRx:spi->wait_event = SPI3_TxRxCplt_EVENT;break;
                 default:break;
             }
-        }break;   
+        }break;
 #endif
-#ifdef BSP_USING_SPI4     
+#ifdef BSP_USING_SPI4
         case (int)SPI4:
         {
             switch(tx_rx_type)
@@ -374,7 +375,7 @@ static void set_wait_event(struct stm32_spi *spi,enum T_R_TYPE tx_rx_type)
             }
         }break;
 #endif
-#ifdef BSP_USING_SPI5    
+#ifdef BSP_USING_SPI5
         case (int)SPI5:
         {
             switch(tx_rx_type)
@@ -386,7 +387,7 @@ static void set_wait_event(struct stm32_spi *spi,enum T_R_TYPE tx_rx_type)
             }
         }break;
 #endif
-#ifdef BSP_USING_SPI6    
+#ifdef BSP_USING_SPI6
         case (int)SPI6:
         {
             switch(tx_rx_type)
@@ -416,7 +417,7 @@ static void rthw_spi_wait_completed(struct stm32_spi *spi)
     {
         return;
     }
-} 
+}
 
 static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
@@ -1136,7 +1137,7 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 #endif
 #ifdef BSP_USING_SPI6
         case (int)SPI6: event = SPI6_TxCplt_EVENT;break;
-#endif       
+#endif
         default: break;
     }
     rt_event_send(&spi_event, event);
@@ -1150,13 +1151,13 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 #ifdef BSP_USING_SPI1
         case (int)SPI1: event = SPI1_RxCplt_EVENT;break;
 #endif
-#ifdef BSP_USING_SPI2        
+#ifdef BSP_USING_SPI2
         case (int)SPI2: event = SPI2_RxCplt_EVENT;break;
 #endif
-#ifdef BSP_USING_SPI3        
+#ifdef BSP_USING_SPI3
         case (int)SPI3: event = SPI3_RxCplt_EVENT;break;
 #endif
-#ifdef BSP_USING_SPI4        
+#ifdef BSP_USING_SPI4
         case (int)SPI4: event = SPI4_RxCplt_EVENT;break;
 #endif
 #ifdef BSP_USING_SPI5
