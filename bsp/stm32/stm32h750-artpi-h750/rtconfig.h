@@ -152,6 +152,10 @@
 
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
+#define PKG_USING_LVGL
+#define PKG_USING_LVGL_V810
+#define PKG_LVGL_VER_NUM 0x08010
+#define PKG_USING_LV_MUSIC_DEMO
 
 /* u8g2: a monochrome graphic library */
 
@@ -205,15 +209,16 @@
 #define BSP_USING_SPI_LCD_ILI9488
 #define PKG_USING_PERSIMMON_SRC
 #define MEDIA_IO_USING_SCREEN
+#define BSP_USING_LVGL
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
-#define BSP_USING_UART3
 #define BSP_USING_UART4
 #define BSP_USING_SPI
 #define BSP_USING_SPI2

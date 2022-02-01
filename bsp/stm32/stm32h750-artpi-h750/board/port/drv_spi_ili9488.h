@@ -5,8 +5,9 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2018-08-14    flybreak           the first version
- * 2018-09-18    balanceTWK         add sleep mode function
+ * 2018-08-14     flybreak          the first version
+ * 2018-09-18     balanceTWK        add sleep mode function
+ * 2022-02-01     Rudy Lo           add lcd_fill_array function
  */
 
 #ifndef __DRV_LCD_SPI_H__
@@ -46,6 +47,7 @@ void lcd_draw_circle(rt_uint16_t x0, rt_uint16_t y0, rt_uint8_t r);
 void lcd_draw_line(rt_uint16_t x1, rt_uint16_t y1, rt_uint16_t x2, rt_uint16_t y2);
 void lcd_draw_rectangle(rt_uint16_t x1, rt_uint16_t y1, rt_uint16_t x2, rt_uint16_t y2);
 void lcd_fill(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_uint16_t y_end, rt_uint32_t color);
+void lcd_fill_array(rt_uint16_t x_start, rt_uint16_t y_start, rt_uint16_t x_end, rt_uint16_t y_end, void *pcolor);
 
 void lcd_show_num(rt_uint16_t x, rt_uint16_t y, rt_uint32_t num, rt_uint8_t len, rt_uint32_t size);
 rt_err_t lcd_show_string(rt_uint16_t x, rt_uint16_t y, rt_uint32_t size, const char *fmt, ...);
