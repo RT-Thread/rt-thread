@@ -32,7 +32,7 @@
 
 #define LCD_DEVICE(dev)     (struct drv_lcd_device*)(dev)
 
-#define LCD_CLEAR_SEND_NUMBER (320 * 480 *3)
+#define LCD_CLEAR_SEND_NUMBER (LCD_H * LCD_W *3)
 
 static rt_uint32_t BACK_COLOR = WHITE, FORE_COLOR = BLACK;
 static struct rt_spi_device *spi_dev_lcd;
@@ -1109,7 +1109,7 @@ int ili9488_test()
     lcd_show_string(10, 69+16, 24, "RT-Thread");
     lcd_show_string(10, 69+16+24, 32, "RT-Thread");
 
-    lcd_draw_line(0, 69+16+24+32, 320, 69+16+24+32);
+    lcd_draw_line(0, 69+16+24+32, LCD_H, 69+16+24+32);
 
     lcd_draw_point(160, 310);
     for (int i = 0; i < 150; i += 4)

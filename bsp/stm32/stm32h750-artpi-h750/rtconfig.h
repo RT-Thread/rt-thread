@@ -85,8 +85,11 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_SPI
+#define RT_USING_TOUCH
 
 /* Using USB */
 
@@ -185,6 +188,9 @@
 
 /* peripheral libraries and drivers */
 
+#define PKG_USING_TOUCH_DRIVERS
+#define PKG_USING_FT6236
+#define PKG_USING_FT6236_LATEST_VERSION
 
 /* AI packages */
 
@@ -210,6 +216,7 @@
 #define PKG_USING_PERSIMMON_SRC
 #define MEDIA_IO_USING_SCREEN
 #define BSP_USING_LVGL
+#define MEDIA_IO_USING_TOUCH
 
 /* Onboard Peripheral Drivers */
 
@@ -222,6 +229,13 @@
 #define BSP_USING_UART4
 #define BSP_USING_SPI
 #define BSP_USING_SPI2
+#define BSP_USING_I2C
+#define BSP_USING_I2C2
+
+/* Notice: PH13 --> 125; PH15 --> 127 */
+
+#define BSP_I2C2_SCL_PIN 127
+#define BSP_I2C2_SDA_PIN 125
 #define BSP_USING_SDRAM
 
 /* External Libraries */

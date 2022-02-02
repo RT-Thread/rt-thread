@@ -15,6 +15,9 @@
 
 #include <rtthread.h>
 
+#define LCD_W 480
+#define LCD_H 320
+
 //POINT_COLOR
 #define WHITE            0xFFFFFF
 #define BLACK            0x000000
