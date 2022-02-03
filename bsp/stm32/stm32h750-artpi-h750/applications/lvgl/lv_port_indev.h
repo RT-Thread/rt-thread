@@ -20,7 +20,6 @@ extern "C" {
 extern lv_indev_t * button_indev;
 
 void lv_port_indev_init(void);
-//void lv_port_indev_input(rt_int16_t x, rt_int16_t y, lv_indev_state_t state); // Optional
 
 #ifdef __cplusplus
 } /*extern "C"*/
