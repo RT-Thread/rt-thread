@@ -20,8 +20,7 @@
 #define REST_PIN             GET_PIN(A, 3) /* reset pin */
 #define USER_BUTTON_PIN      GET_PIN(H, 4) /* Reserve for LV_INDEV_TYPE_BUTTON */
 
-
-static rt_device_t touch_dev;             /* Touch 设备句柄 */
+static rt_device_t ts;    /* Touch 设备句柄 Touchscreen */
 static struct rt_touch_data *read_data;
 
 static rt_int16_t last_x = 0;
@@ -29,11 +28,19 @@ static rt_int16_t last_y = 0;
 
 static bool touchpad_is_pressed(void)
 {
-    if (RT_EOK == rt_device_read(touch_dev, 0, read_data, 1))  // return RT_EOK is a bug (ft6236)
+    if (RT_EOK == rt_device_read(ts, 0, read_data, 1))  /* return RT_EOK is a bug (ft6236) */
     {
         if (read_data->event == RT_TOUCH_EVENT_DOWN) {
-            last_x = read_data->x_coordinate;
-            last_y = read_data->y_coordinate;
+            /* swap x and y */
+            rt_int16_t tmp_x = read_data->y_coordinate;
+            rt_int16_t tmp_y = read_data->x_coordinate;
+
+            /* invert y */
+            tmp_y = 320 - tmp_y;
+
+            /* restore data */
+            last_x = tmp_x;
+            last_y = tmp_y;
 
             rt_kprintf("touch: x = %d, y = %d\n", last_x, last_y);
             return true;
@@ -66,8 +73,8 @@ rt_err_t rt_hw_ft6236_register(void)
     config.dev_name = TOUCH_DEVICE_I2C_BUS;
     rt_hw_ft6236_init(TOUCH_DEVICE_NAME, &config, REST_PIN);
 
-    touch_dev = rt_device_find(TOUCH_DEVICE_NAME);
-    if (!touch_dev) {
+    ts = rt_device_find(TOUCH_DEVICE_NAME);
+    if (!ts) {
         return -RT_ERROR;
     }
 
@@ -76,9 +83,9 @@ rt_err_t rt_hw_ft6236_register(void)
         return -RT_ENOMEM;
     }
 
-    if (!rt_device_open(touch_dev, RT_DEVICE_FLAG_RDONLY)) {
+    if (!rt_device_open(ts, RT_DEVICE_FLAG_RDONLY)) {
         struct rt_touch_info info;
-        rt_device_control(touch_dev, RT_TOUCH_CTRL_GET_INFO, &info);
+        rt_device_control(ts, RT_TOUCH_CTRL_GET_INFO, &info);
         rt_kprintf("type       :%d\n", info.type);
         rt_kprintf("vendor     :%s\n", info.vendor);
         rt_kprintf("point_num  :%d\n", info.point_num);
