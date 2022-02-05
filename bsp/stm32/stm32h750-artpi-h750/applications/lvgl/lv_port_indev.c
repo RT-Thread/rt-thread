@@ -15,12 +15,12 @@
 
 #include "ft6236.h"
 
-#define TOUCH_DEVICE_NAME    "touch_ft"    /* Touch 设备名称 */
+#define TOUCH_DEVICE_NAME    "touch_ft"    /* Touch device name */
 #define TOUCH_DEVICE_I2C_BUS "i2c2"        /* SCL -> PH15(127), SDA -> PH13(125) */
 #define REST_PIN             GET_PIN(A, 3) /* reset pin */
 #define USER_BUTTON_PIN      GET_PIN(H, 4) /* Reserve for LV_INDEV_TYPE_BUTTON */
 
-static rt_device_t ts;    /* Touch 设备句柄 Touchscreen */
+static rt_device_t ts;    /* Touch device handle, Touchscreen */
 static struct rt_touch_data *read_data;
 
 static rt_int16_t last_x = 0;

@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2022-01-28     Rudy Lo       First version
+ * 2022-01-28     Rudy Lo       The first version
  */
 #include <rtthread.h>
 #include <lvgl.h>
