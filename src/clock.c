@@ -26,7 +26,11 @@
 static volatile rt_tick_t rt_tick = 0;
 #endif /* RT_USING_SMP */
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_tick_hook
+    #define __on_rt_tick_hook()          __ON_HOOK_ARGS(rt_tick_hook, ())
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_tick_hook)(void);
 
 /**
@@ -46,7 +50,7 @@ void rt_tick_sethook(void (*hook)(void))
     rt_tick_hook = hook;
 }
 /**@}*/
-#endif
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup Clock
@@ -89,12 +93,7 @@ void rt_tick_increase(void)
     struct rt_thread *thread;
     rt_base_t level;
 
-#ifdef RT_USING_HOOK
-    if (rt_tick_hook != RT_NULL)
-    {
-        rt_tick_hook();
-    }
-#endif
+    RT_OBJECT_HOOK_CALL(rt_tick_hook,());
 
     level = rt_hw_interrupt_disable();
 
