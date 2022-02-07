@@ -8,8 +8,11 @@
   * @date    21 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          21 Nov 2019     AE Team         The first version
   *
-  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved. 
+  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
   * SPDX-License-Identifier: Apache-2.0
   *
@@ -24,8 +27,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
 #ifndef __ALD_UART_H__
@@ -190,10 +192,10 @@ typedef struct uart_handle_s {
 	uint8_t *rx_buf;	/**< Pointer to UART Rx transfer Buffer */
 	uint16_t rx_size;	/**< UART Rx Transfer size */
 	uint16_t rx_count;	/**< UART Rx Transfer Counter */
-#ifdef ALD_DMA
+
 	dma_handle_t hdmatx;	/**< UART Tx DMA Handle parameters */
 	dma_handle_t hdmarx;	/**< UART Rx DMA Handle parameters */
-#endif
+
 	lock_state_t lock;	/**< Locking object */
 	uart_state_t state;	/**< UART communication state */
 	uart_error_t err_code;	/**< UART Error code */
@@ -485,13 +487,13 @@ ald_status_t ald_uart_recv_n_lock(uart_handle_t *hperh, uint8_t *buf, uint16_t s
 ald_status_t ald_uart_send_by_it(uart_handle_t *hperh, uint8_t *buf, uint16_t size);
 ald_status_t ald_uart_recv_by_it(uart_handle_t *hperh, uint8_t *buf, uint16_t size);
 ald_status_t ald_uart_recv_frame_by_it(uart_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t t_out);
-#ifdef ALD_DMA
+
 ald_status_t ald_uart_send_by_dma(uart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel);
 ald_status_t ald_uart_recv_by_dma(uart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel);
 ald_status_t ald_uart_dma_pause(uart_handle_t *hperh);
 ald_status_t ald_uart_dma_resume(uart_handle_t *hperh);
 ald_status_t ald_uart_dma_stop(uart_handle_t *hperh);
-#endif
+
 void ald_uart_irq_handler(uart_handle_t *hperh);
 void ald_uart_irq_handler_fast(uart_handle_t *hperh);
 /**

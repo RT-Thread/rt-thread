@@ -14,6 +14,9 @@
   * @date    21 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          21 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -30,8 +33,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   * @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -100,8 +102,7 @@
   ******************************************************************************
   */
 
-#include "ald_uart.h"
-#include "ald_cmu.h"
+#include "ald_conf.h"
 
 
 /** @addtogroup ES32FXXX_ALD
@@ -541,7 +542,6 @@ ald_status_t ald_uart_send(uart_handle_t *hperh, uint8_t *buf, uint16_t size, ui
 			hperh->state = UART_STATE_READY;
 			return TIMEOUT;
 		}
-		
 		while(hperh->perh->STAT & (0x1 << 17));
 		hperh->perh->TXBUF = (*buf++ & 0xFF);
 		hperh->tx_count++;
@@ -669,7 +669,6 @@ ald_status_t ald_uart_send_n_lock(uart_handle_t *hperh, uint8_t *buf, uint16_t s
 			hperh->state = UART_STATE_READY;
 			return TIMEOUT;
 		}
-		
 		while(hperh->perh->STAT & (0x1 << 17));
 		hperh->perh->TXBUF = (*buf++ & 0xFF);
 		hperh->tx_count++;
@@ -1376,7 +1375,6 @@ ald_status_t ald_uart_rs485_send_addr(uart_handle_t *hperh, uint16_t addr, uint3
 		hperh->state = UART_STATE_READY;
 		return TIMEOUT;
 	}
-
 	while(hperh->perh->STAT & (0x1 << 17));
 	WRITE_REG(hperh->perh->TXBUF, (addr | 0x100));
 
