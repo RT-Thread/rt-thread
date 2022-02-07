@@ -2687,5 +2687,6 @@ static const struct pin_index pins[] =
 
 
 
+#define   ES_RTT_APP_LED_PIN   ES_PIN_GPIO_C_8
 
 #endif
