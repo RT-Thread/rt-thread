@@ -696,6 +696,7 @@ exit_nu_adc_convert:
     return (-ret) ;
 }
 
+#if defined(BSP_USING_ADC_TOUCH)
 static void nu_adc_touch_smpl(void *p)
 {
     /* Enable interrupt */
@@ -704,7 +705,7 @@ static void nu_adc_touch_smpl(void *p)
     /* Start conversion */
     outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_MST);
 }
-
+#endif
 
 int rt_hw_adc_init(void)
 {
