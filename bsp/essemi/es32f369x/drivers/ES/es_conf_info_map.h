@@ -2904,5 +2904,6 @@ static const struct pin_index pins[] =
 /* GP16C2T_CH2N */
 
 
+#define   ES_RTT_APP_LED_PIN   ES_PIN_GPIO_F_0
 
 #endif

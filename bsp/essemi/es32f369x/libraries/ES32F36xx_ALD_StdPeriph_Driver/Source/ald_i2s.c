@@ -14,6 +14,9 @@
   * @date    13 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          13 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -30,8 +33,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -67,9 +69,7 @@
   * @endverbatim
   */
 
-#include "ald_i2s.h"
-#include "ald_cmu.h"
-
+#include "ald_conf.h"
 
 /** @addtogroup ES32FXXX_ALD
   * @{

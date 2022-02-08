@@ -7,10 +7,15 @@
   *           + Initialization  functions
   *           + IO operation functions
   *           + Peripheral Control functions
+  *           + Peripheral Control functions
   *           + Peripheral State and Error functions
   * @version V1.0
   * @date    25 Apr 2019
   * @author  AE Team
+  * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          25 Apr 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -27,8 +32,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  ********************************************************************************
+  **********************************************************************************
   * @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -80,7 +84,7 @@
   ******************************************************************************
   */
 
-#include "ald_can.h"
+#include "ald_conf.h"
 
 
 /** @addtogroup ES32FXXX_ALD
@@ -443,8 +447,8 @@ ald_status_t ald_can_recv(can_handle_t *hperh, can_rx_fifo_t num, can_rx_msg_t *
 		}
 	}
 
-//	if (__can_rx_check(hperh, num))
-//		return ERROR;
+	if (__can_rx_check(hperh, num))
+		return ERROR;
 
 	stid = READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_STDID_MSK, CAN_RXF0ID_STDID_POSS);
 	exid = READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_EXID_MSK, CAN_RXF0ID_EXID_POSS);
