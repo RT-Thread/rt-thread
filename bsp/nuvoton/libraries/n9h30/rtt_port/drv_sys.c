@@ -234,6 +234,8 @@ static void _nu_sys_ipclk(E_SYS_IPCLK eIPClkIdx, uint32_t bEnable)
     /* Enter critical section */
     level = rt_hw_interrupt_disable();
 
+    SYS_UnlockReg();
+
     if (bEnable)
     {
         /* Enable IP CLK */
@@ -244,6 +246,8 @@ static void _nu_sys_ipclk(E_SYS_IPCLK eIPClkIdx, uint32_t bEnable)
         /* Disable IP CLK */
         outpw(u32IPCLKRegAddr, inpw(u32IPCLKRegAddr) & ~(1 << u32IPCLKRegBit));
     }
+
+    SYS_LockReg();
 
     /* Leave critical section */
     rt_hw_interrupt_enable(level);
