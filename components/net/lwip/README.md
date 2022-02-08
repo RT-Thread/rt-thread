@@ -1,17 +1,19 @@
-INTRODUCTION
+# LWIP
 
-lwIP is a small independent implementation of the TCP/IP protocol
-suite that has been developed by Adam Dunkels at the Computer and
-Networks Architectures (CNA) lab at the Swedish Institute of Computer
-Science (SICS).
+## INTRODUCTION
+
+lwIP is a small independent implementation of the TCP/IP protocol suite.
 
 The focus of the lwIP TCP/IP implementation is to reduce the RAM usage
 while still having a full scale TCP. This making lwIP suitable for use
 in embedded systems with tens of kilobytes of free RAM and room for
 around 40 kilobytes of code ROM.
 
+lwIP was originally developed by Adam Dunkels at the Computer and Networks
+Architectures (CNA) lab at the Swedish Institute of Computer Science (SICS)
+and is now developed and maintained by a worldwide network of developers.
 
-FEATURES
+## FEATURES
 
   * IP (Internet Protocol, IPv4 and IPv6) including packet forwarding over
     multiple network interfaces
@@ -22,30 +24,33 @@ FEATURES
   * ND (Neighbor discovery and stateless address autoconfiguration for IPv6).
     Aims to be compliant with RFC 4861 (Neighbor discovery) and RFC 4862
     (Address autoconfiguration)
+  * DHCP, AutoIP/APIPA (Zeroconf) and (stateless) DHCPv6
   * UDP (User Datagram Protocol) including experimental UDP-lite extensions
   * TCP (Transmission Control Protocol) with congestion control, RTT estimation
-    and fast recovery/fast retransmit
+    fast recovery/fast retransmit and sending SACKs
   * raw/native API for enhanced performance
   * Optional Berkeley-like socket API
-  * DNS (Domain names resolver)
+  * TLS: optional layered TCP ("altcp") for nearly transparent TLS for any
+    TCP-based protocol (ported to mbedTLS) (see changelog for more info)
+  * PPPoS and PPPoE (Point-to-point protocol over Serial/Ethernet)
+  * DNS (Domain name resolver incl. mDNS)
+  * 6LoWPAN (via IEEE 802.15.4, BLE or ZEP)
 
+## APPLICATIONS
 
-APPLICATIONS
-
-  * HTTP server with SSI and CGI
-  * SNMPv2c agent with MIB compiler (Simple Network Management Protocol)
+  * HTTP server with SSI and CGI (HTTPS via altcp)
+  * SNMPv2c agent with MIB compiler (Simple Network Management Protocol), v3 via altcp
   * SNTP (Simple network time protocol)
   * NetBIOS name service responder
   * MDNS (Multicast DNS) responder
   * iPerf server implementation
+  * MQTT client (TLS support via altcp)
 
-
-LICENSE
+## LICENSE
 
 lwIP is freely available under a BSD license.
 
-
-DEVELOPMENT
+## DEVELOPMENT
 
 lwIP has grown into an excellent TCP/IP stack for embedded devices,
 and developers using the stack often submit bug fixes, improvements,
@@ -73,8 +78,7 @@ Submit patches and bugs via the lwIP project page:
 Continuous integration builds (GCC, clang):
   https://travis-ci.org/yarrick/lwip-merged
 
-
-DOCUMENTATION
+## DOCUMENTATION
 
 Self documentation of the source code is regularly extracted from the current
 Git sources and is available from this web page:
