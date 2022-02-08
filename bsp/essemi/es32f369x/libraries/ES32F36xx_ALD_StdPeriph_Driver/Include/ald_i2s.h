@@ -8,6 +8,9 @@
   * @date    13 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          13 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -24,8 +27,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
 #ifndef __ALD_I2S_H__
@@ -226,10 +228,10 @@ typedef struct i2s_handle_s {
 	uint16_t *rx_buf;	/**< Pointer to I2S Rx transfer buffer */
 	uint32_t rx_size;	/**< I2S Rx Transfer size */
 	uint32_t rx_count;	/**< I2S Rx Transfer Counter */
-#ifdef ALD_DMA
+
 	dma_handle_t hdmatx;	/**< I2S DMA handle parameters */
 	dma_handle_t hdmarx;	/**< I2S DMA handle parameters */
-#endif
+
 	lock_state_t lock;	/**< Locking object */
 	i2s_state_t state;	/**< I2S communication state */
 	uint8_t side;		/**< I2S channel side */
@@ -337,13 +339,13 @@ ald_status_t ald_i2s_master_send(i2s_handle_t *hperh, uint16_t *buf, uint32_t si
 ald_status_t ald_i2s_master_recv(i2s_handle_t *hperh, uint16_t *buf, uint32_t size, uint32_t timeout);
 ald_status_t ald_i2s_master_send_by_it(i2s_handle_t *hperh, uint16_t *buf, uint32_t size);
 ald_status_t ald_i2s_master_recv_by_it(i2s_handle_t *hperh, uint16_t *buf, uint32_t size);
-#ifdef ALD_DMA
+
 ald_status_t ald_i2s_master_send_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint32_t size, uint8_t channel);
 ald_status_t ald_i2s_master_recv_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint32_t size, uint8_t dma_ch, uint8_t _dma_ch);
 ald_status_t ald_i2s_dma_pause(i2s_handle_t *hperh);
 ald_status_t ald_i2s_dma_resume(i2s_handle_t *hperh);
 ald_status_t ald_i2s_dma_stop(i2s_handle_t *hperh);
-#endif
+
 /**
   * @}
   */

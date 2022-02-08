@@ -8,6 +8,9 @@
   * @date    17 Apr 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          17 Apr 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -24,8 +27,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
 #ifndef __TYPE_H__
@@ -37,7 +39,6 @@ extern "C" {
 
 #include <stdint.h>
 #include "es_conf_info_select.h"
-
 #if defined (__CC_ARM)
 #define __INLINE__		__inline
 #define __STATIC_INLINE__	static __inline
