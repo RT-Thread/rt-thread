@@ -79,48 +79,49 @@ static struct stm32_spi_config spi_config[] =
 #endif
 };
 
-enum T_R_TYPE{
-    SPI_TX=0,
+enum T_R_TYPE
+{
+    SPI_TX = 0,
     SPI_RX,
     SPI_TxRx,
 };
 
 #ifdef BSP_USING_SPI1
-#define SPI1_TxRxCplt_EVENT (1 << 1)
-#define SPI1_TxCplt_EVENT (1 << 2)
-#define SPI1_RxCplt_EVENT (1 << 3)
+    #define SPI1_TxRxCplt_EVENT (1 << 1)
+    #define SPI1_TxCplt_EVENT (1 << 2)
+    #define SPI1_RxCplt_EVENT (1 << 3)
 #endif
 #ifdef BSP_USING_SPI2
-#define SPI2_TxRxCplt_EVENT (1 << 4)
-#define SPI2_TxCplt_EVENT (1 << 5)
-#define SPI2_RxCplt_EVENT (1 << 6)
+    #define SPI2_TxRxCplt_EVENT (1 << 4)
+    #define SPI2_TxCplt_EVENT (1 << 5)
+    #define SPI2_RxCplt_EVENT (1 << 6)
 #endif
 #ifdef BSP_USING_SPI3
-#define SPI3_TxRxCplt_EVENT (1 << 7)
-#define SPI3_TxCplt_EVENT (1 << 8)
-#define SPI3_RxCplt_EVENT (1 << 9)
+    #define SPI3_TxRxCplt_EVENT (1 << 7)
+    #define SPI3_TxCplt_EVENT (1 << 8)
+    #define SPI3_RxCplt_EVENT (1 << 9)
 #endif
 #ifdef BSP_USING_SPI4
-#define SPI4_TxRxCplt_EVENT (1 << 10)
-#define SPI4_TxCplt_EVENT (1 << 11)
-#define SPI4_RxCplt_EVENT (1 << 12)
+    #define SPI4_TxRxCplt_EVENT (1 << 10)
+    #define SPI4_TxCplt_EVENT (1 << 11)
+    #define SPI4_RxCplt_EVENT (1 << 12)
 #endif
 #ifdef BSP_USING_SPI5
-#define SPI5_TxRxCplt_EVENT (1 << 13)
-#define SPI5_TxCplt_EVENT (1 << 14)
-#define SPI5_RxCplt_EVENT (1 << 15)
+    #define SPI5_TxRxCplt_EVENT (1 << 13)
+    #define SPI5_TxCplt_EVENT (1 << 14)
+    #define SPI5_RxCplt_EVENT (1 << 15)
 #endif
 #ifdef BSP_USING_SPI6
-#define SPI5_TxRxCplt_EVENT (1 << 16)
-#define SPI5_TxCplt_EVENT (1 << 17)
-#define SPI5_RxCplt_EVENT (1 << 18)
+    #define SPI5_TxRxCplt_EVENT (1 << 16)
+    #define SPI5_TxCplt_EVENT (1 << 17)
+    #define SPI5_RxCplt_EVENT (1 << 18)
 #endif
 
 static struct rt_event spi_event;
 static struct stm32_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])] = {0};
 
 static void rthw_spi_wait_completed(struct stm32_spi *spi);
-static void set_wait_event(struct stm32_spi *spi,enum T_R_TYPE tx_rx_type);
+static void set_wait_event(struct stm32_spi *spi, enum T_R_TYPE tx_rx_type);
 
 static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configuration *cfg)
 {
@@ -306,7 +307,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         HAL_NVIC_EnableIRQ(spi_drv->config->dma_tx->dma_irq);
     }
 
-    if(spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG || spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
+    if (spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG || spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
     {
         HAL_NVIC_SetPriority(spi_drv->config->irq_type, 2, 0);
         HAL_NVIC_EnableIRQ(spi_drv->config->irq_type);
@@ -322,84 +323,133 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
   *         tx_rx_type --  SPI_TX / SPI_RX / SPI_TxRx
   * @retval None
   */
-static void set_wait_event(struct stm32_spi *spi,enum T_R_TYPE tx_rx_type)
+static void set_wait_event(struct stm32_spi *spi, enum T_R_TYPE tx_rx_type)
 {
     SPI_HandleTypeDef *hspi = &spi->handle;
-    switch((int)(hspi->Instance))
+    switch ((int)(hspi->Instance))
     {
 #ifdef BSP_USING_SPI1
-        case (int)SPI1:
+    case (int)SPI1:
+    {
+        switch (tx_rx_type)
         {
-            switch(tx_rx_type)
-            {
-                case SPI_TX:spi->wait_event = SPI1_TxCplt_EVENT;break;
-                case SPI_RX:spi->wait_event = SPI1_RxCplt_EVENT;break;
-                case SPI_TxRx:spi->wait_event = SPI1_TxRxCplt_EVENT;break;
-                default:break;
-            }
-        }break;
+        case SPI_TX:
+            spi->wait_event = SPI1_TxCplt_EVENT;
+            break;
+        case SPI_RX:
+            spi->wait_event = SPI1_RxCplt_EVENT;
+            break;
+        case SPI_TxRx:
+            spi->wait_event = SPI1_TxRxCplt_EVENT;
+            break;
+        default:
+            break;
+        }
+    }
+    break;
 #endif
 #ifdef BSP_USING_SPI2
-        case (int)SPI2:
+    case (int)SPI2:
+    {
+        switch (tx_rx_type)
         {
-            switch(tx_rx_type)
-            {
-                case SPI_TX:spi->wait_event = SPI2_TxCplt_EVENT;break;
-                case SPI_RX:spi->wait_event = SPI2_RxCplt_EVENT;break;
-                case SPI_TxRx:spi->wait_event = SPI2_TxRxCplt_EVENT;break;
-                default:break;
-            }
-        }break;
+        case SPI_TX:
+            spi->wait_event = SPI2_TxCplt_EVENT;
+            break;
+        case SPI_RX:
+            spi->wait_event = SPI2_RxCplt_EVENT;
+            break;
+        case SPI_TxRx:
+            spi->wait_event = SPI2_TxRxCplt_EVENT;
+            break;
+        default:
+            break;
+        }
+    }
+    break;
 #endif
 #ifdef BSP_USING_SPI3
-        case (int)SPI3:
+    case (int)SPI3:
+    {
+        switch (tx_rx_type)
         {
-            switch(tx_rx_type)
-            {
-                case SPI_TX:spi->wait_event = SPI3_TxCplt_EVENT;break;
-                case SPI_RX:spi->wait_event = SPI3_RxCplt_EVENT;break;
-                case SPI_TxRx:spi->wait_event = SPI3_TxRxCplt_EVENT;break;
-                default:break;
-            }
-        }break;
+        case SPI_TX:
+            spi->wait_event = SPI3_TxCplt_EVENT;
+            break;
+        case SPI_RX:
+            spi->wait_event = SPI3_RxCplt_EVENT;
+            break;
+        case SPI_TxRx:
+            spi->wait_event = SPI3_TxRxCplt_EVENT;
+            break;
+        default:
+            break;
+        }
+    }
+    break;
 #endif
 #ifdef BSP_USING_SPI4
-        case (int)SPI4:
+    case (int)SPI4:
+    {
+        switch (tx_rx_type)
         {
-            switch(tx_rx_type)
-            {
-                case SPI_TX:spi->wait_event = SPI4_TxCplt_EVENT;break;
-                case SPI_RX:spi->wait_event = SPI4_RxCplt_EVENT;break;
-                case SPI_TxRx:spi->wait_event = SPI4_TxRxCplt_EVENT;break;
-                default:break;
-            }
-        }break;
+        case SPI_TX:
+            spi->wait_event = SPI4_TxCplt_EVENT;
+            break;
+        case SPI_RX:
+            spi->wait_event = SPI4_RxCplt_EVENT;
+            break;
+        case SPI_TxRx:
+            spi->wait_event = SPI4_TxRxCplt_EVENT;
+            break;
+        default:
+            break;
+        }
+    }
+    break;
 #endif
 #ifdef BSP_USING_SPI5
-        case (int)SPI5:
+    case (int)SPI5:
+    {
+        switch (tx_rx_type)
         {
-            switch(tx_rx_type)
-            {
-                case SPI_TX:spi->wait_event = SPI5_TxCplt_EVENT;break;
-                case SPI_RX:spi->wait_event = SPI5_RxCplt_EVENT;break;
-                case SPI_TxRx:spi->wait_event = SPI5_TxRxCplt_EVENT;break;
-                default:break;
-            }
-        }break;
+        case SPI_TX:
+            spi->wait_event = SPI5_TxCplt_EVENT;
+            break;
+        case SPI_RX:
+            spi->wait_event = SPI5_RxCplt_EVENT;
+            break;
+        case SPI_TxRx:
+            spi->wait_event = SPI5_TxRxCplt_EVENT;
+            break;
+        default:
+            break;
+        }
+    }
+    break;
 #endif
 #ifdef BSP_USING_SPI6
-        case (int)SPI6:
+    case (int)SPI6:
+    {
+        switch (tx_rx_type)
         {
-            switch(tx_rx_type)
-            {
-                case SPI_TX:spi->wait_event = SPI6_TxCplt_EVENT;break;
-                case SPI_RX:spi->wait_event = SPI6_RxCplt_EVENT;break;
-                case SPI_TxRx:spi->wait_event = SPI6_TxRxCplt_EVENT;break;
-                default:break;
-            }
-        }break;
+        case SPI_TX:
+            spi->wait_event = SPI6_TxCplt_EVENT;
+            break;
+        case SPI_RX:
+            spi->wait_event = SPI6_RxCplt_EVENT;
+            break;
+        case SPI_TxRx:
+            spi->wait_event = SPI6_TxRxCplt_EVENT;
+            break;
+        default:
+            break;
+        }
+    }
+    break;
 #endif
-        default: break;
+    default:
+        break;
     }
 }
 
@@ -412,8 +462,8 @@ static void rthw_spi_wait_completed(struct stm32_spi *spi)
 {
     rt_uint32_t e;
     if (rt_event_recv(&spi_event, (spi->wait_event),
-                    RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
-                    RT_WAITING_FOREVER, &e) == RT_EOK)
+                      RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+                      RT_WAITING_FOREVER, &e) == RT_EOK)
     {
         return;
     }
@@ -475,9 +525,9 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
         {
-            set_wait_event(spi_drv,SPI_TxRx);
             if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG) && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))
             {
+                set_wait_event(spi_drv, SPI_TxRx);
                 state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length);
             }
             else
@@ -487,9 +537,9 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         }
         else if (message->send_buf)
         {
-            set_wait_event(spi_drv,SPI_TX);
             if (spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG)
             {
+                set_wait_event(spi_drv, SPI_TX);
                 state = HAL_SPI_Transmit_DMA(spi_handle, (uint8_t *)send_buf, send_length);
             }
             else
@@ -505,10 +555,10 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         }
         else
         {
-            set_wait_event(spi_drv,SPI_RX);
             memset((uint8_t *)recv_buf, 0xff, send_length);
             if (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
             {
+                set_wait_event(spi_drv, SPI_RX);
                 state = HAL_SPI_Receive_DMA(spi_handle, (uint8_t *)recv_buf, send_length);
             }
             else
@@ -530,8 +580,15 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             LOG_D("%s transfer done", spi_drv->config->bus_name);
         }
 
-        /* blocking the thread,and the other tasks can run */
-        rthw_spi_wait_completed(spi_drv);
+        if (spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG || spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
+        {
+            /* blocking the thread,and the other tasks can run */
+            rthw_spi_wait_completed(spi_drv);
+        }
+        else
+        {
+            while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
+        }
     }
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
@@ -567,7 +624,7 @@ static int rt_hw_spi_bus_init(void)
 {
     rt_err_t result;
     result = rt_event_init(&spi_event, "spi_event", RT_IPC_FLAG_PRIO);
-    if(result != RT_EOK)
+    if (result != RT_EOK)
     {
         LOG_E("spi event init fail");
         return -1;
@@ -1090,27 +1147,40 @@ void SPI2_DMA_RX_TX_IRQHandler(void)
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     rt_uint32_t event = 0;
-    switch((int)(hspi->Instance))
+    switch ((int)(hspi->Instance))
     {
 #ifdef BSP_USING_SPI1
-        case (int)SPI1: event = SPI1_TxRxCplt_EVENT;break;
+    case (int)SPI1:
+        event = SPI1_TxRxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI2
-        case (int)SPI2: event = SPI2_TxRxCplt_EVENT;break;
+    case (int)SPI2:
+        event = SPI2_TxRxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI3
-        case (int)SPI3: event = SPI3_TxRxCplt_EVENT;break;
+    case (int)SPI3:
+        event = SPI3_TxRxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI4
-        case (int)SPI4: event = SPI4_TxRxCplt_EVENT;break;
+    case (int)SPI4:
+        event = SPI4_TxRxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI5
-        case (int)SPI5: event = SPI5_TxRxCplt_EVENT;break;
+    case (int)SPI5:
+        event = SPI5_TxRxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI6
-        case (int)SPI6: event = SPI6_TxRxCplt_EVENT;break;
+    case (int)SPI6:
+        event = SPI6_TxRxCplt_EVENT;
+        break;
 #endif
-        default: break;
+    default:
+        break;
     }
     rt_event_send(&spi_event, event);
 }
@@ -1118,27 +1188,40 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     rt_uint32_t event = 0;
-    switch((int)(hspi->Instance))
+    switch ((int)(hspi->Instance))
     {
 #ifdef BSP_USING_SPI1
-        case (int)SPI1: event = SPI1_TxCplt_EVENT;break;
+    case (int)SPI1:
+        event = SPI1_TxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI2
-        case (int)SPI2: event = SPI2_TxCplt_EVENT;break;
+    case (int)SPI2:
+        event = SPI2_TxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI3
-        case (int)SPI3: event = SPI3_TxCplt_EVENT;break;
+    case (int)SPI3:
+        event = SPI3_TxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI4
-        case (int)SPI4: event = SPI4_TxCplt_EVENT;break;
+    case (int)SPI4:
+        event = SPI4_TxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI5
-        case (int)SPI5: event = SPI5_TxCplt_EVENT;break;
+    case (int)SPI5:
+        event = SPI5_TxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI6
-        case (int)SPI6: event = SPI6_TxCplt_EVENT;break;
+    case (int)SPI6:
+        event = SPI6_TxCplt_EVENT;
+        break;
 #endif
-        default: break;
+    default:
+        break;
     }
     rt_event_send(&spi_event, event);
 }
@@ -1146,27 +1229,40 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     rt_uint32_t event = 0;
-    switch((int)(hspi->Instance))
+    switch ((int)(hspi->Instance))
     {
 #ifdef BSP_USING_SPI1
-        case (int)SPI1: event = SPI1_RxCplt_EVENT;break;
+    case (int)SPI1:
+        event = SPI1_RxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI2
-        case (int)SPI2: event = SPI2_RxCplt_EVENT;break;
+    case (int)SPI2:
+        event = SPI2_RxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI3
-        case (int)SPI3: event = SPI3_RxCplt_EVENT;break;
+    case (int)SPI3:
+        event = SPI3_RxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI4
-        case (int)SPI4: event = SPI4_RxCplt_EVENT;break;
+    case (int)SPI4:
+        event = SPI4_RxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI5
-        case (int)SPI5: event = SPI5_RxCplt_EVENT;break;
+    case (int)SPI5:
+        event = SPI5_RxCplt_EVENT;
+        break;
 #endif
 #ifdef BSP_USING_SPI6
-        case (int)SPI6: event = SPI6_RxCplt_EVENT;break;
+    case (int)SPI6:
+        event = SPI6_RxCplt_EVENT;
+        break;
 #endif
-        default: break;
+    default:
+        break;
     }
     rt_event_send(&spi_event, event);
 }
