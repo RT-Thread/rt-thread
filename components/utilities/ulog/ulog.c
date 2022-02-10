@@ -191,7 +191,7 @@ static void output_unlock(void)
         return;
 
     /* If the scheduler is started and in thread context */
-    if (rt_thread_self() && (rt_interrupt_get_nest() == 0))
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
     {
         rt_sem_release(&ulog.output_locker);
     }
@@ -209,7 +209,7 @@ static void output_lock(void)
         return;
 
     /* If the scheduler is started and in thread context */
-    if (rt_thread_self() && (rt_interrupt_get_nest() == 0))
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
     {
         rt_sem_take(&ulog.output_locker, RT_WAITING_FOREVER);
     }
