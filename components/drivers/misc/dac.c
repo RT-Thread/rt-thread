@@ -124,7 +124,7 @@ rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel)
     return result;
 }
 
-rt_err_t rt_dac_disabled(rt_dac_device_t dev, rt_uint32_t channel)
+rt_err_t rt_dac_disable(rt_dac_device_t dev, rt_uint32_t channel)
 {
     rt_err_t result = RT_EOK;
 
@@ -200,7 +200,7 @@ static int dac(int argc, char **argv)
             {
                 if (argc == 3)
                 {
-                    result = rt_dac_disabled(dac_device, atoi(argv[2]));
+                    result = rt_dac_disable(dac_device, atoi(argv[2]));
                     result_str = (result == RT_EOK) ? "success" : "failure";
                     rt_kprintf("%s channel %d disable %s \n", dac_device->parent.parent.name, atoi(argv[2]), result_str);
                 }
