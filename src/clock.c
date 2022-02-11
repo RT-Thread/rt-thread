@@ -93,7 +93,7 @@ void rt_tick_increase(void)
     struct rt_thread *thread;
     rt_base_t level;
 
-    RT_OBJECT_HOOK_CALL(rt_tick_hook,());
+    RT_OBJECT_HOOK_CALL(rt_tick_hook, ());
 
     level = rt_hw_interrupt_disable();
 
