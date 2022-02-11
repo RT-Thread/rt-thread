@@ -43,17 +43,17 @@ RT_USED const struct ve_exporter __ve_table_end = { "ve_end", "ve_end", 2};
 int var_export_init(void)
 {
     /* initialize the var export table.*/
-#if defined(__ARMCC_VERSION)       /* for ARM C Compiler */
+#if defined(__ARMCC_VERSION)                        /* for ARM C Compiler */
     ve_exporter_table = &__ve_table_start + 1;
     ve_exporter_num = &__ve_table_end - &__ve_table_start;
+#elif defined (__IAR_SYSTEMS_ICC__)                 /* for IAR Compiler */
+    ve_exporter_table = &__ve_table_start + 1;
+    ve_exporter_num = &__ve_table_end - &__ve_table_start - 1;
 #elif defined (__GNUC__)                            /* for GCC Compiler */
     extern const int __ve_table_start;
     extern const int __ve_table_end;
     ve_exporter_table = (const ve_exporter_t *)&__ve_table_start;
     ve_exporter_num = (const ve_exporter_t *)&__ve_table_end - ve_exporter_table;
-#elif defined (__ICCARM__) || defined(__ICCRX__)    /* for IAR Compiler */
-    ve_exporter_table = &__ve_table_start + 1;
-    ve_exporter_num = &__ve_table_end - &__ve_table_start - 1;
 #elif defined (_MSC_VER)                            /* for MS VC++ compiler */
     unsigned int *ptr_begin = (unsigned int *)&__ve_table_start;
     unsigned int *ptr_end = (unsigned int *)&__ve_table_end;
