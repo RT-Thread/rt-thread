@@ -1,5 +1,4 @@
 import os
-import platform
 
 # toolchains options
 ARCH        ='aarch64'
