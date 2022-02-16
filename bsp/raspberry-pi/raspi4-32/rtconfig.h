@@ -13,6 +13,7 @@
 #define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 2048
@@ -128,8 +129,6 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
-#define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* POSIX (Portable Operating System Interface) layer */
@@ -169,7 +168,7 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP202
+#define RT_USING_LWIP203
 #define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
@@ -260,7 +259,10 @@
 
 /* system packages */
 
-/* rt_kprintf: enhanced rt_kprintf packages */
+/* enhanced kernel services */
+
+
+/* POSIX extension functions */
 
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
@@ -284,12 +286,6 @@
 
 
 /* entertainment: terminal games and other interesting software packages */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 #define BCM2711_SOC
 

@@ -215,7 +215,7 @@ static void nu_pdma_init(void)
     RT_ASSERT(g_mutex_sg != RT_NULL);
 
     nu_pdma_chn_mask = ~NU_PDMA_CH_Msk;
-    rt_memset(nu_pdma_chn_arr, 0x00, sizeof(nu_pdma_chn_t));
+    rt_memset(nu_pdma_chn_arr, 0x00, NU_PDMA_CH_MAX*sizeof(nu_pdma_chn_t));
 
     NVIC_EnableIRQ(PDMA_IRQn);
 

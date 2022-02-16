@@ -211,8 +211,8 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>__RTTHREAD__</state>
           <state>RT_USING_DLIBC</state>
+          <state>__RTTHREAD__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -338,17 +338,18 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\nogcc</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\platform</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\arm926</state>
           <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\platform</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
@@ -1237,8 +1238,8 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>__RTTHREAD__</state>
           <state>RT_USING_DLIBC</state>
+          <state>__RTTHREAD__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1364,17 +1365,18 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\nogcc</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\platform</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\arm926</state>
           <state>$PROJ_DIR$\..\..\examples\utest\testcases\kernel</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\platform</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
@@ -2059,7 +2061,46 @@
     </file>
   </group>
   <group>
+    <name>Compiler</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\time.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\stdlib.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\environ.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscalls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+  </group>
+  <group>
     <name>CPU</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
@@ -2067,16 +2108,7 @@
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\machine.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\mmu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\context_iar.S</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\start_iar.S</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\stack.c</name>
@@ -2085,7 +2117,13 @@
       <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\cpuport.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\start_iar.S</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\machine.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\mmu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\arm926\trap.c</name>
@@ -2094,28 +2132,28 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\workqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\pipe.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\dataqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringblk_buf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\waitqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringbuffer.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\dataqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\completion.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\waitqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\pipe.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\workqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\src\ringblk_buf.c</name>
     </file>
   </group>
   <group>
@@ -2130,25 +2168,25 @@
       <name>$PROJ_DIR$\drivers\led.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\platform\system_clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\platform\rt_low_level_init.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\platform\gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\platform\timer0.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\platform\reset.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\platform\uart.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\platform\system_clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\platform\timer0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\platform\rt_low_level_init.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\platform\interrupt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\platform\gpio.c</name>
     </file>
   </group>
   <group>
@@ -2166,13 +2204,34 @@
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\src\idle.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\timer.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\src\mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\slab.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\object.c</name>
@@ -2181,70 +2240,13 @@
       <name>$PROJ_DIR$\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
+      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\memheap.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\slab.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
-    <name>libc</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\stdlib.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\time.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\environ.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscalls.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_read.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_close.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
     </file>
   </group>
   <group>

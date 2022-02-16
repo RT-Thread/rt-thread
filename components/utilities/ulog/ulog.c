@@ -190,8 +190,8 @@ static void output_unlock(void)
     if (!ulog.output_lock_enabled)
         return;
 
-    /* is in thread context */
-    if (rt_interrupt_get_nest() == 0)
+    /* If the scheduler is started and in thread context */
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
     {
         rt_sem_release(&ulog.output_locker);
     }
@@ -208,8 +208,8 @@ static void output_lock(void)
     if (!ulog.output_lock_enabled)
         return;
 
-    /* is in thread context */
-    if (rt_interrupt_get_nest() == 0)
+    /* If the scheduler is started and in thread context */
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
     {
         rt_sem_take(&ulog.output_locker, RT_WAITING_FOREVER);
     }
@@ -274,7 +274,6 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     /* add time info */
     {
 #ifdef ULOG_TIME_USING_TIMESTAMP
-        extern struct tm* localtime_r(const time_t* t, struct tm* r);
         static struct timeval now;
         static struct tm *tm, tm_tmp;
         static rt_bool_t check_usec_support = RT_FALSE, usec_is_support = RT_FALSE;
@@ -428,6 +427,13 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
 
     if (!ulog.init_ok)
         return;
+
+    /* if there is no backend */
+    if (!rt_slist_first(&ulog.backend_list))
+    {
+        rt_kputs(log);
+        return;
+    }
 
     /* output for all backends */
     for (node = rt_slist_first(&ulog.backend_list); node; node = rt_slist_next(node))

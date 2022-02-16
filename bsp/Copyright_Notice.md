@@ -705,7 +705,6 @@ Path:
 bsp 列表：
 
 - swm320
-- swm320-lq100
 
 ------
 
@@ -716,7 +715,6 @@ Copyright: COPYRIGHT 2012 Synwit Technology
 Path:
 
 - bsp/swm320/libraries/CMSIS/DeviceSupport
-- bsp/swm320-lq100/Libraries/SWM320_StdPeriph_Driver
 
 ------
 
@@ -727,7 +725,6 @@ Copyright:  Copyright (c) 2009 - 2014 ARM LIMITED
 Path:
 
 - bsp/swm320/libraries/CMSIS
-- bsp/swm320-lq100/Libraries/CMSIS/CoreSupport
 
 ### tae32f5300
 

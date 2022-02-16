@@ -82,6 +82,7 @@ RTM_EXPORT(rt_device_register);
  */
 rt_err_t rt_device_unregister(rt_device_t dev)
 {
+    /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
     RT_ASSERT(rt_object_is_systemobject(&dev->parent));
@@ -143,6 +144,7 @@ RTM_EXPORT(rt_device_create);
  */
 void rt_device_destroy(rt_device_t dev)
 {
+    /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
     RT_ASSERT(rt_object_is_systemobject(&dev->parent) == RT_FALSE);
@@ -202,6 +204,7 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
 {
     rt_err_t result = RT_EOK;
 
+    /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 
@@ -267,6 +270,7 @@ rt_err_t rt_device_close(rt_device_t dev)
 {
     rt_err_t result = RT_EOK;
 
+    /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 
@@ -312,6 +316,7 @@ rt_size_t rt_device_read(rt_device_t dev,
                          void       *buffer,
                          rt_size_t   size)
 {
+    /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 
@@ -354,6 +359,7 @@ rt_size_t rt_device_write(rt_device_t dev,
                           const void *buffer,
                           rt_size_t   size)
 {
+    /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 
@@ -389,6 +395,7 @@ RTM_EXPORT(rt_device_write);
  */
 rt_err_t rt_device_control(rt_device_t dev, int cmd, void *arg)
 {
+    /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 
@@ -412,10 +419,11 @@ RTM_EXPORT(rt_device_control);
  *
  * @return RT_EOK
  */
-rt_err_t
-rt_device_set_rx_indicate(rt_device_t dev,
-                          rt_err_t (*rx_ind)(rt_device_t dev, rt_size_t size))
+rt_err_t rt_device_set_rx_indicate(rt_device_t dev,
+                                   rt_err_t (*rx_ind)(rt_device_t dev,
+                                   rt_size_t size))
 {
+    /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 
@@ -435,10 +443,11 @@ RTM_EXPORT(rt_device_set_rx_indicate);
  *
  * @return RT_EOK
  */
-rt_err_t
-rt_device_set_tx_complete(rt_device_t dev,
-                          rt_err_t (*tx_done)(rt_device_t dev, void *buffer))
+rt_err_t rt_device_set_tx_complete(rt_device_t dev,
+                                   rt_err_t (*tx_done)(rt_device_t dev,
+                                   void *buffer))
 {
+    /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 

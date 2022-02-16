@@ -19,10 +19,12 @@
 #include <drv_pdma.h>
 #include <string.h>
 
-#if defined(RT_USING_DFS)
-    #include <dfs_fs.h>
-    #include <dfs_posix.h>
-#endif
+#include <dfs_fs.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 /* Private define ---------------------------------------------------------------*/
 
@@ -453,8 +455,6 @@ static rt_bool_t nu_sdh_hotplug_is_mounted(const char *mounting_path)
 {
     rt_bool_t ret = RT_FALSE;
 
-#if defined(RT_USING_DFS)
-
     struct dfs_filesystem *psFS = dfs_filesystem_lookup(mounting_path);
     if (psFS == RT_NULL)
     {
@@ -469,8 +469,6 @@ static rt_bool_t nu_sdh_hotplug_is_mounted(const char *mounting_path)
         ret = RT_FALSE;
     }
 
-#endif
-
 exit_nu_sdh_hotplug_is_mounted:
 
     return ret;
@@ -479,8 +477,6 @@ static rt_err_t nu_sdh_hotplug_mount(nu_sdh_t sdh)
 {
     rt_err_t ret = RT_ERROR;
     DIR *t;
-
-#if defined(RT_USING_DFS)
 
     if (nu_sdh_hotplug_is_mounted(sdh->mounted_point) == RT_TRUE)
     {
@@ -529,7 +525,6 @@ static rt_err_t nu_sdh_hotplug_mount(nu_sdh_t sdh)
 
 exit_nu_sdh_hotplug_mount:
 
-#endif
     return -(ret);
 }
 
@@ -537,7 +532,6 @@ static rt_err_t nu_sdh_hotplug_unmount(nu_sdh_t sdh)
 {
     rt_err_t ret = RT_ERROR;
 
-#if defined(RT_USING_DFS)
     if (nu_sdh_hotplug_is_mounted(sdh->mounted_point) == RT_FALSE)
     {
         ret = RT_EOK;
@@ -554,7 +548,6 @@ static rt_err_t nu_sdh_hotplug_unmount(nu_sdh_t sdh)
         rt_kprintf("Succeed to unmount %s.\n", sdh->mounted_point);
         ret = RT_EOK;
     }
-#endif
 
 exit_nu_sdh_hotplug_unmount:
 

@@ -9,6 +9,9 @@
   * @date    06 Nov 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          06 Nov 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -25,8 +28,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
 #ifndef __ALD_TIMER_H__
@@ -200,10 +202,8 @@ typedef struct timer_handle_s {
 	lock_state_t lock;		/**< Locking object */
 	timer_state_t state;		/**< TIMER operation state */
 	
-#ifdef ALD_DMA
 	dma_handle_t hdma1;              /**< Timer DMA handle parameters */
 	dma_handle_t hdma2;
-#endif
 
 	void (*period_elapse_cbk)(struct timer_handle_s *arg);		/**< Period elapse callback */
 	void (*delay_elapse_cbk)(struct timer_handle_s *arg);		/**< Delay_elapse callback */
@@ -1011,11 +1011,11 @@ void ald_timer_base_start(timer_handle_t *hperh);
 void ald_timer_base_stop(timer_handle_t *hperh);
 void ald_timer_base_start_by_it(timer_handle_t *hperh);
 void ald_timer_base_stop_by_it(timer_handle_t *hperh);
-#ifdef ALD_DMA
+
 ald_status_t ald_timer_base_start_by_dma(timer_handle_t *hperh, 
                                   uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_base_stop_by_dma(timer_handle_t *hperh);
-#endif
+
 /**
   * @}
   */
@@ -1029,11 +1029,11 @@ void ald_timer_oc_start(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_oc_stop(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_oc_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_oc_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
-#ifdef ALD_DMA
+
 ald_status_t ald_timer_oc_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
                       uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_oc_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
-#endif
+
 /**
   * @}
   */
@@ -1050,11 +1050,11 @@ void ald_timer_pwm_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_pwm_set_freq(timer_handle_t *hperh, uint32_t freq);
 void ald_timer_pwm_set_duty(timer_handle_t *hperh, timer_channel_t ch, uint16_t duty);
 void ald_timer_pwm_set_input(timer_handle_t *hperh, timer_channel_t ch);
-#ifdef ALD_DMA
+
 ald_status_t ald_timer_pwm_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
                       uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_pwm_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
-#endif
+
 /**
   * @}
   */
@@ -1068,11 +1068,11 @@ void ald_timer_ic_start(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_ic_stop(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_ic_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_ic_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
-#ifdef ALD_DMA
+
 ald_status_t ald_timer_ic_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
                      uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_ic_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
-#endif
+
 /**
   * @}
   */
@@ -1099,12 +1099,12 @@ void ald_timer_encoder_start(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_encoder_stop(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_encoder_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_encoder_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
-#ifdef ALD_DMA
+
 ald_status_t ald_timer_encoder_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
                            uint16_t *buf1, uint16_t *buf2, uint32_t len, 
 			   uint8_t dma_ch1, uint8_t dma_ch2);
 void ald_timer_encoder_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
-#endif
+
 /**
   * @}
   */
@@ -1118,11 +1118,11 @@ void ald_timer_hall_sensor_start(timer_handle_t *hperh);
 void ald_timer_hall_sensor_stop(timer_handle_t *hperh);
 void ald_timer_hall_sensor_start_by_it(timer_handle_t *hperh);
 void ald_timer_hall_sensor_stop_by_it(timer_handle_t *hperh);
-#ifdef ALD_DMA
+
 ald_status_t ald_timer_hall_sensor_start_by_dma(timer_handle_t *hperh, 
 		                       uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_hall_sensor_stop_by_dma(timer_handle_t *hperh);
-#endif
+
 /**
   * @}
   */
@@ -1135,11 +1135,11 @@ void ald_timer_ocn_start(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_ocn_stop(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_ocn_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_ocn_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
-#ifdef ALD_DMA
+
 ald_status_t ald_timer_ocn_start_by_dma(timer_handle_t *hperh,
 		          timer_channel_t ch, uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_ocn_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
-#endif
+
 /**
   * @}
   */
@@ -1152,11 +1152,11 @@ void ald_timer_pwmn_start(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_pwmn_stop(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_pwmn_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_pwmn_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
-#ifdef ALD_DMA
+
 ald_status_t ald_timer_pwmn_start_by_dma(timer_handle_t *hperh, 
 		          timer_channel_t ch, uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_pwmn_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
-#endif
+
 /**
   * @}
   */

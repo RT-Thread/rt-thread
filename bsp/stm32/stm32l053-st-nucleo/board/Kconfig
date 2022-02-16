@@ -11,6 +11,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
         bool "Enable USB TO USART (uart2)"
+        select BSP_USING_UART
         select BSP_USING_UART2
         default y
 

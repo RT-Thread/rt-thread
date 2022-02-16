@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2009-05-27     Yi.qiu       The first version
  * 2018-02-07     Bernard      Change the 3rd parameter of open/fcntl/ioctl to '...'
+ * 2022-01-19     Meco Man     add creat()
  */
 
 #include <dfs_file.h>
@@ -55,6 +56,21 @@ int open(const char *file, int flags, ...)
     return fd;
 }
 RTM_EXPORT(open);
+
+/**
+ * this function is a POSIX compliant version,
+ * which will create a new file or rewrite an existing one
+ *
+ * @param path the path name of file.
+ * @param mode the file permission bits to be used in creating the file (not used, can be 0)
+ *
+ * @return the non-negative integer on successful open, others for failed.
+ */
+int creat(const char *path, mode_t mode)
+{
+    return open(path, O_WRONLY | O_CREAT | O_TRUNC, mode);
+}
+RTM_EXPORT(creat);
 
 /**
  * this function is a POSIX compliant version, which will close the open
@@ -639,7 +655,7 @@ DIR *opendir(const char *name)
         }
         else
         {
-            memset(t, 0, sizeof(DIR));
+            rt_memset(t, 0, sizeof(DIR));
 
             t->fd = fd;
         }

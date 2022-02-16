@@ -8,10 +8,6 @@ config RT_NAME_MAX
         Each kernel object, such as thread, timer, semaphore etc, has a name,
         the RT_NAME_MAX is the maximal size of this object name.
 
-config RT_USING_BIG_ENDIAN
-    bool
-    default n
-
 config RT_USING_ARCH_DATA_TYPE
     bool "Use the data types defined in ARCH_CPU"
     default n
@@ -134,6 +130,16 @@ menu "kservice optimization"
     config RT_KSERVICE_USING_STDLIB
         bool "Enable kservice to use standard C library"
         default n
+
+    if RT_KSERVICE_USING_STDLIB
+        config RT_KSERVICE_USING_STDLIB_MEMCPY
+            bool "Use memcpy to replace rt_memcpy (faster, but not safe)"
+            default n
+
+        config RT_KSERVICE_USING_STDLIB_MEMSET
+            bool "Use memset to replace rt_memset (faster, but not safe)"
+            default n
+    endif
 
     config RT_KSERVICE_USING_TINY_SIZE
         bool "Enable kservice to use tiny size"

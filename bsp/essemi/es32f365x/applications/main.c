@@ -12,7 +12,11 @@
 #include <rtdevice.h>
 #include "drv_gpio.h"
 
+#ifdef ES_RTT_APP_LED_PIN
+#define LED_PIN    ES_RTT_APP_LED_PIN
+#else
 #define LED_PIN    GET_PIN( F , 0 )
+#endif
 
 int main(void)
 {

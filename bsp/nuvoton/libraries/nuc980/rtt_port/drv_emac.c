@@ -682,7 +682,7 @@ lwiperf_report(void *arg, enum lwiperf_report_type report_type,
                (int)report_type, ipaddr_ntoa(remote_addr), (int)remote_port, bytes_transferred, ms_duration, bandwidth_kbitpsec);
 }
 
-void lwiperf_example_init(void)
+void lwiperf_example_init(int argc, char **argv)
 {
     lwiperf_start_tcp_server_default(lwiperf_report, NULL);
 }

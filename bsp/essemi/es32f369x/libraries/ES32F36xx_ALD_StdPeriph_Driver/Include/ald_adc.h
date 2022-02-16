@@ -6,9 +6,12 @@
  * @version V1.0
  * @date    28 Jun 2019
  * @author  AE Team
- * @note
- *
- * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
+  * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          28 Jun 2019     AE Team         The first version
+  *
+  * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
   * SPDX-License-Identifier: Apache-2.0
   *
@@ -23,8 +26,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
- *
- ******************************************************************************
+  **********************************************************************************
  */
 
 #ifndef __ALD_ADC_H__
@@ -320,7 +322,7 @@ typedef struct {
 	type_func_t scan;         	/**< Choose scan mode enable or not */
 	type_func_t cont;       	/**< Choose continuous mode enable or not */
 	adc_nch_nr_t nch_nr;  		/**< Length of normal ranks will be converted */
-	adc_ich_nr_t ich_nr;  		/**< Length of insert ranks will be converted */
+	adc_ich_nr_t ich_nr;            /**< Length of insert ranks will be converted */
 	adc_disc_mode_t disc;    	/**< Discontinuous mode enable or not */
 	adc_disc_nr_t disc_nr;		/**< Number of discontinuous conversions channel */
 	adc_conv_bit_t data_bit;   	/**< The precision of conversion */
@@ -368,10 +370,10 @@ typedef struct {
 typedef struct adc_handle_s {
 	ADC_TypeDef *perh;			/**< Register base address */
 	adc_init_t init;			/**< ADC required parameters */
-#ifdef ALD_DMA
+
 	dma_handle_t hdma;			/**< Pointer DMA Handler */
 	pis_handle_t hpis;			/**< Pointer PIS Handler for connect adc and dma */
-#endif
+
 	lock_state_t lock;			/**< ADC locking object */
 	adc_state_t state;			/**< ADC communication state  */
 	adc_error_t error_code;			/**< ADC Error code */
@@ -405,7 +407,7 @@ typedef struct {
 	timer_handle_t h_timer;	/**< Handle of TIMER module */
 	adc_handle_t h_adc;	/**< Handle of ADC module */
 	adc_nch_conf_t config;	/**< Struct for chanel configure */
-	adc_ich_conf_t i_config;  /**< Struct for insert channel configure */
+	adc_ich_conf_t i_config;/**< Struct for insert channel configuration */
 } adc_timer_config_t;
 /**
   * @}

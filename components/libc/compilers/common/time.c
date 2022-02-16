@@ -25,6 +25,10 @@
 #include <sys/errno.h>
 #include <rtthread.h>
 #include <rthw.h>
+#include <unistd.h>
+#ifdef RT_USING_POSIX_DELAY
+#include <delay.h>
+#endif
 #ifdef RT_USING_RTC
 #include <rtdevice.h>
 #endif
@@ -217,7 +221,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
 
-    local_tz = *t + tz_get() * 3600;
+    local_tz = *t + (time_t)tz_get() * 3600;
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -234,7 +238,7 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
 
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * tz_get();
+    timestamp = timestamp - 3600 * (time_t)tz_get();
     return timestamp;
 }
 RTM_EXPORT(mktime);
@@ -367,7 +371,7 @@ time_t timegm(struct tm * const t)
 {
     register time_t day;
     register time_t i;
-    register time_t years = t->tm_year - 70;
+    register time_t years = (time_t)t->tm_year - 70;
 
     if (t->tm_sec > 60)
     {
@@ -488,8 +492,17 @@ RTM_EXPORT(settimeofday);
 RTM_EXPORT(difftime);
 RTM_EXPORT(strftime);
 
+#ifdef RT_USING_POSIX_DELAY
+int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
+{
+    sleep(rqtp->tv_sec);
+    ndelay(rqtp->tv_nsec);
+    return 0;
+}
+RTM_EXPORT(nanosleep);
+#endif /* RT_USING_POSIX_DELAY */
+
 #ifdef RT_USING_POSIX_CLOCK
-#include <delay.h>
 #ifdef RT_USING_RTC
 static volatile struct timeval _timevalue;
 static int _rt_clock_time_system_init()
@@ -670,33 +683,6 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 }
 RTM_EXPORT(clock_settime);
 
-int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
-{
-    uint32_t time_ms = rqtp->tv_sec * 1000;
-    uint32_t time_us = rqtp->tv_nsec / 1000;
-
-    time_ms += time_us / 1000 ;
-    time_us = time_us % 1000;
-
-    if (rt_thread_self() != RT_NULL)
-    {
-        rt_thread_mdelay(time_ms);
-    }
-    else  /* scheduler has not run yet */
-    {
-        while(time_ms > 0)
-        {
-            udelay(1000u);
-            time_ms -= 1;
-        }
-    }
-
-    udelay(time_us);
-
-    return 0;
-}
-RTM_EXPORT(nanosleep);
-
 int rt_timespec_to_tick(const struct timespec *time)
 {
     int tick;
@@ -731,6 +717,267 @@ int rt_timespec_to_tick(const struct timespec *time)
 RTM_EXPORT(rt_timespec_to_tick);
 
 #endif /* RT_USING_POSIX_CLOCK */
+
+#ifdef RT_USING_POSIX_TIMER
+
+#define ACTIVE 1
+#define NOT_ACTIVE 0
+
+struct timer_obj
+{
+    struct rt_timer timer;
+    void (*sigev_notify_function)(union sigval val);
+    union sigval val;
+    struct timespec interval;              /* Reload value */
+    rt_uint32_t reload;                    /* Reload value in ms */
+    rt_uint32_t status;
+};
+
+static void rtthread_timer_wrapper(void *timerobj)
+{
+    struct timer_obj *timer;
+
+    timer = (struct timer_obj *)timerobj;
+
+    if (timer->reload == 0U)
+    {
+        timer->status = NOT_ACTIVE;
+    }
+
+    if(timer->sigev_notify_function != RT_NULL)
+    {
+        (timer->sigev_notify_function)(timer->val);
+    }
+}
+
+/**
+ * @brief Create a per-process timer.
+ *
+ * This API does not accept SIGEV_THREAD as valid signal event notification
+ * type.
+ *
+ * See IEEE 1003.1
+ */
+int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
+{
+    static int num = 0;
+    struct timer_obj *timer;
+    char timername[RT_NAME_MAX] = {0};
+
+    if (clockid != CLOCK_MONOTONIC || evp == NULL ||
+        (evp->sigev_notify != SIGEV_NONE &&
+         evp->sigev_notify != SIGEV_SIGNAL))
+    {
+        rt_set_errno(EINVAL);
+        return -RT_ERROR;
+    }
+
+    timer = rt_malloc(sizeof(struct timer_obj));
+    if(timer == RT_NULL)
+    {
+        rt_set_errno(ENOMEM);
+        return -RT_ENOMEM;
+    }
+
+    RT_ASSERT(evp->sigev_notify_function != RT_NULL);
+    rt_snprintf(timername, RT_NAME_MAX, "psx_tm%02d", num++);
+    num %= 100;
+    timer->sigev_notify_function = evp->sigev_notify_function;
+    timer->val = evp->sigev_value;
+    timer->interval.tv_sec = 0;
+    timer->interval.tv_nsec = 0;
+    timer->reload = 0U;
+    timer->status = NOT_ACTIVE;
+
+    if (evp->sigev_notify == SIGEV_NONE)
+    {
+        rt_timer_init(&timer->timer, timername, RT_NULL, RT_NULL, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+    }
+    else
+    {
+        rt_timer_init(&timer->timer, timername, rtthread_timer_wrapper, timer, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+    }
+
+    *timerid = (timer_t)timer;
+
+    return RT_EOK;
+}
+RTM_EXPORT(timer_create);
+
+/**
+ * @brief Delete a per-process timer.
+ *
+ * See IEEE 1003.1
+ */
+int timer_delete(timer_t timerid)
+{
+    struct timer_obj *timer = (struct timer_obj *)timerid;
+
+    if (timer == RT_NULL)
+    {
+        rt_set_errno(EINVAL);
+        return -RT_ERROR;
+    }
+
+    if (timer->status == ACTIVE)
+    {
+        timer->status = NOT_ACTIVE;
+        rt_timer_stop(&timer->timer);
+    }
+
+    rt_free(timer);
+
+    return RT_EOK;
+}
+RTM_EXPORT(timer_delete);
+
+/**
+ *
+ *  Return the overrun count for the last timer expiration.
+ *  It is subefficient to create a new structure to get overrun count.
+ **/
+int timer_getoverrun(timer_t timerid)
+{
+    rt_set_errno(ENOSYS);
+    return -RT_ERROR;
+}
+
+/**
+ * @brief Get amount of time left for expiration on a per-process timer.
+ *
+ * See IEEE 1003.1
+ */
+int timer_gettime(timer_t timerid, struct itimerspec *its)
+{
+    struct timer_obj *timer = (struct timer_obj *)timerid;
+    rt_tick_t remaining;
+    rt_uint32_t seconds, nanoseconds;
+
+    if (timer == NULL)
+    {
+        rt_set_errno(EINVAL);
+        return -RT_ERROR;
+    }
+
+    if (its == NULL)
+    {
+        rt_set_errno(EFAULT);
+        return -RT_ERROR;
+    }
+
+    if (timer->status == ACTIVE)
+    {
+        rt_tick_t remain_tick;
+
+        rt_timer_control(&timer->timer, RT_TIMER_CTRL_GET_REMAIN_TIME, &remain_tick);
+
+        /* 'remain_tick' is minimum-unit in the RT-Thread' timer,
+         * so the seconds, nanoseconds will be calculated by 'remain_tick'.
+         */
+        remaining = remain_tick - rt_tick_get();
+
+        /* calculate 'second' */
+        seconds = remaining / RT_TICK_PER_SECOND;
+
+        /* calculate 'nanosecond';  To avoid lost of accuracy, because "RT_TICK_PER_SECOND" maybe 100, 1000, 1024 and so on.
+         *
+         *        remain_tick                  millisecond                                 remain_tick * MILLISECOND_PER_SECOND
+         *  ------------------------- = --------------------------  --->  millisecond = -------------------------------------------
+         *    RT_TICK_PER_SECOND          MILLISECOND_PER_SECOND                                RT_TICK_PER_SECOND
+         *
+         *                    remain_tick * MILLISECOND_PER_SECOND                          remain_tick * MILLISECOND_PER_SECOND * MICROSECOND_PER_SECOND
+         *   millisecond = ----------------------------------------  ---> nanosecond = -------------------------------------------------------------------
+         *                         RT_TICK_PER_SECOND                                                           RT_TICK_PER_SECOND
+         *
+         */
+        nanoseconds = (((remaining % RT_TICK_PER_SECOND) * MILLISECOND_PER_SECOND) * MICROSECOND_PER_SECOND) / RT_TICK_PER_SECOND ;
+
+        its->it_value.tv_sec = (rt_int32_t)seconds;
+        its->it_value.tv_nsec = (rt_int32_t)nanoseconds;
+    }
+    else
+    {
+        /* Timer is disarmed */
+        its->it_value.tv_sec = 0;
+        its->it_value.tv_nsec = 0;
+    }
+
+    /* The interval last set by timer_settime() */
+    its->it_interval = timer->interval;
+    return RT_EOK;
+}
+RTM_EXPORT(timer_gettime);
+
+/**
+ * @brief Sets expiration time of per-process timer.
+ *
+ * See IEEE 1003.1
+ */
+int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
+                  struct itimerspec *ovalue)
+{
+    struct timer_obj *timer = (struct timer_obj *)timerid;
+
+    if (timer == NULL ||
+        value->it_interval.tv_nsec < 0 ||
+        value->it_interval.tv_nsec >= NANOSECOND_PER_SECOND ||
+        value->it_value.tv_nsec < 0 ||
+        value->it_value.tv_nsec >= NANOSECOND_PER_SECOND)
+    {
+        rt_set_errno(EINVAL);
+        return -RT_ERROR;
+    }
+
+    if (value == NULL || ovalue == NULL)
+    {
+        rt_set_errno(EFAULT);
+        return -RT_ERROR;
+    }
+
+    /*  Save time to expire and old reload value. */
+    if (ovalue != NULL)
+    {
+        timer_gettime(timerid, ovalue);
+    }
+
+    /* Stop the timer if the value is 0 */
+    if ((value->it_value.tv_sec == 0) && (value->it_value.tv_nsec == 0))
+    {
+        if (timer->status == ACTIVE)
+        {
+            rt_timer_stop(&timer->timer);
+        }
+
+        timer->status = NOT_ACTIVE;
+        return RT_EOK;
+    }
+
+    /* calculate timer period(tick);  To avoid lost of accuracy, because "RT_TICK_PER_SECOND" maybe 100, 1000, 1024 and so on.
+        *
+        *          tick                        nanosecond                          nanosecond * RT_TICK_PER_SECOND
+        *  ------------------------- = --------------------------  --->  tick = -------------------------------------
+        *    RT_TICK_PER_SECOND           NANOSECOND_PER_SECOND                         NANOSECOND_PER_SECOND
+        *
+        */
+    timer->reload = (value->it_interval.tv_sec * RT_TICK_PER_SECOND) + (value->it_interval.tv_nsec * RT_TICK_PER_SECOND) / NANOSECOND_PER_SECOND;
+    timer->interval.tv_sec = value->it_interval.tv_sec;
+    timer->interval.tv_nsec = value->it_interval.tv_nsec;
+
+    if (timer->status == ACTIVE)
+    {
+        rt_timer_stop(&timer->timer);
+    }
+
+    timer->status = ACTIVE;
+    rt_timer_control(&timer->timer, RT_TIMER_CTRL_SET_TIME, (void *)timer->reload);
+    rt_timer_control(&timer->timer, RT_TIMER_CTRL_SET_PERIODIC, RT_NULL);
+    rt_timer_start(&timer->timer);
+
+    return RT_EOK;
+}
+RTM_EXPORT(timer_settime);
+#endif /* RT_USING_POSIX_TIMER */
+
 
 /* timezone */
 #ifndef RT_LIBC_DEFAULT_TIMEZONE

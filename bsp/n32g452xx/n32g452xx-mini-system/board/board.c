@@ -76,6 +76,7 @@ void rt_hw_board_init()
 #ifdef RT_USING_PIN
     int n32_hw_pin_init(void);
     n32_hw_pin_init();
+    n32_msp_jtag_init(RT_NULL);
 #endif
 
 #ifdef RT_USING_SERIAL
@@ -87,7 +88,7 @@ void rt_hw_board_init()
     rt_components_board_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 

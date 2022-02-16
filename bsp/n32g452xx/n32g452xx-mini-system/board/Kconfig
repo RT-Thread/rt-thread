@@ -19,10 +19,49 @@ endmenu
 
 menu "On-chip Peripheral Drivers"
 
+            choice
+                prompt "Package of N32G45NXX chip:"
+                default N32G45X_PIN_NUMBERS_64
+                config N32G45X_PIN_NUMBERS_48
+                    bool "LQFP48/TQFP48(QFN48 is not supported.)"
+                config N32G45X_PIN_NUMBERS_64
+                    bool "LQFP64"
+                config N32G45X_PIN_NUMBERS_100
+                    bool "LQFP100"
+                config N32G45X_PIN_NUMBERS_128
+                    bool "LQFP128"
+            endchoice
+
+            config N32G45X_PIN_NUMBERS
+                int
+                range 0 128
+                default 48 if N32G45X_PIN_NUMBERS_48
+                default 64 if N32G45X_PIN_NUMBERS_64
+                default 100 if N32G45X_PIN_NUMBERS_100
+                default 128 if N32G45X_PIN_NUMBERS_128
+
+
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+        if BSP_USING_GPIO
+
+            menu "Remap JTAG Port"
+                choice 
+                    prompt "Remap JTAG Port"
+                        default BSP_RMP_SW_JTAG_SW_ENABLE
+                        config BSP_RMP_SW_JTAG_FULL_ENABLE
+                            bool "Full SWJ Enabled (JTAG-DP+SW-DP). No GPIO available."
+                        config BSP_RMP_SW_JTAG_NO_NJTRST
+                            bool "Full SWJ Enabled (JTAG-DP+SW-DP) without JTRST. PB4 available."
+                        config BSP_RMP_SW_JTAG_SW_ENABLE
+                            bool "JTAG-DP Disabled and SW-DP Enabled. PA15,PB3,PB4 available."
+                        config BSP_RMP_SW_JTAG_DISABLE
+                            bool "Full SWJ Disabled (JTAG-DP+SW-DP). PA13,PA14,PA15,PB3,PB4 available."
+                endchoice
+            endmenu
+        endif
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
@@ -39,16 +78,121 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         if BSP_USING_UART
             config BSP_USING_UART1
-                bool "Enable UART1"
+                bool "Enable USART1"
                 default y
+                if BSP_USING_UART1
+                    choice 
+                        prompt "Select TX/RX Pin of USART1"
+                        default BSP_USING_UART1_NO_RMP
+                        config BSP_USING_UART1_PIN_RMP
+                            bool "USART1(Remap):(TX:PB6,RX:PB7)"
+                        config BSP_USING_UART1_NO_RMP
+                            bool "USART1(Default):(TX:PA9,RX:PA10)"
+                    endchoice
+                endif
 
             config BSP_USING_UART2
-                bool "Enable UART2"
+                bool "Enable USART2"
                 default n
+                if BSP_USING_UART2
+                    choice 
+                        prompt "Select TX/RX Pin of USART2"
+                        default BSP_USING_UART2_NO_RMP
+                        config BSP_USING_UART2_NO_RMP
+                            bool "USART2(Default):(TX:PA2, RX:PA3)"
+                        config BSP_USING_UART2_PIN_RMP1
+                            bool "USART2:(TX:PD5, RX:PD6)"
+                        config BSP_USING_UART2_PIN_RMP2
+                            bool "USART2:(TX:PC8, RX:PC9)"
+                        config BSP_USING_UART2_PIN_RMP3
+                            bool "USART2:(TX:PB4, RX:PB5)"
 
+                            endchoice
+                endif
+                
             config BSP_USING_UART3
-                bool "Enable UART3"
+                bool "Enable USART3"
                 default n
+                if BSP_USING_UART3
+                    choice 
+                        prompt "Select TX/RX Pin of USART3"
+                        default BSP_USING_UART3_PIN_NO_RMP
+                        config BSP_USING_UART3_PIN_NO_RMP
+                            bool "USART3:Default (TX:PB10, RX:PB11)"
+                        config BSP_USING_UART3_PIN_PART_RMP
+                            bool "USART3:Partial remap (TX:PC10, RX:PC11)"
+                        config BSP_USING_UART3_PIN_ALL_RMP
+                            bool "USART3:Full remap (TX:PD8, RX:PD9)"
+                    endchoice
+                endif
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+                if BSP_USING_UART4
+                    choice 
+                        prompt "Select TX/RX Pin of UART4"
+                        default BSP_USING_UART4_PIN_NORMP
+                        config BSP_USING_UART4_PIN_NORMP
+                            bool "UART4(Default):TX:PC10, RX:PC11"
+                        config BSP_USING_UART4_PIN_RMP1
+                            bool "UART4:TX:PB2, RX:PE7"
+                        config BSP_USING_UART4_PIN_RMP2
+                            bool "UART4:TX:PA13, RX:PA14"
+                        config BSP_USING_UART4_PIN_RMP3
+                            bool "UART4:TX:PD0, RX:PD1"
+                    endchoice
+                endif
+
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+                if BSP_USING_UART5
+                    choice 
+                        prompt "Select TX/RX Pin of UART5"
+                        default BSP_USING_UART5_PIN_NORMP
+                        config BSP_USING_UART5_PIN_NORMP
+                            bool "UART5(Default):TX:PC12, RX:PD2"
+                        config BSP_USING_UART5_PIN_RMP1
+                            bool "UART5:TX:PB13, RX:PB14"
+                        config BSP_USING_UART5_PIN_RMP2
+                            bool "UART5:TX:PE8, RX:PE9"
+                        config BSP_USING_UART5_PIN_RMP3
+                            bool "UART5:TX:PB8, RX:PB9"
+                    endchoice
+                endif
+            
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+                if BSP_USING_UART6
+                    choice 
+                        prompt "Select TX/RX Pin of UART6"
+                        default BSP_USING_UART6_PIN_NORMP
+                        config BSP_USING_UART6_PIN_NORMP
+                            bool "UART6(Default):TX:PE2, RX:PE3"
+                        config BSP_USING_UART6_PIN_RMP2
+                            bool "UART6:TX:PC0, RX:PC1"
+                        config BSP_USING_UART6_PIN_RMP3
+                            bool "UART6:TX:PB0, RX:PB1"
+                    endchoice
+                endif
+            
+            config BSP_USING_UART7
+                bool "Enable UART7"
+                default n
+                if BSP_USING_UART7
+                    choice 
+                        prompt "Select TX/RX Pin of UART7"
+                        default BSP_USING_UART7_PIN_NORMP
+                        config BSP_USING_UART7_PIN_NORMP
+                            bool "UART7(Default):TX:PC4, RX:PC5"
+                        config BSP_USING_UART7_PIN_RMP1
+                            bool "UART7:TX:PC2, RX:PC3"
+                        config BSP_USING_UART7_PIN_RMP3
+                            bool "UART7:TX:PG0, RX:PG1"
+                    endchoice
+                endif
         endif
 
     menuconfig BSP_USING_PWM
@@ -204,13 +348,13 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         if BSP_USING_I2C1
             config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number"
-                range 0 63
-                default 22
+                int "I2C1 scl pin number"
+                range 1 N32G45X_PIN_NUMBERS
+                default 29
             config BSP_I2C1_SDA_PIN
                 int "I2C1 sda pin number"
-                range 0 63
-                default 23
+                range 1 N32G45X_PIN_NUMBERS
+                default 30
         endif
 
     menuconfig BSP_USING_ADC
