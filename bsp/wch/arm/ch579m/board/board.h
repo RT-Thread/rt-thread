@@ -5,9 +5,9 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2022-02-16     Tuber           	first version
+ * 2022-02-16     Tuber             first version
  */
- 
+
 #ifndef __BOARD_H__
 #define __BOARD_H__
 

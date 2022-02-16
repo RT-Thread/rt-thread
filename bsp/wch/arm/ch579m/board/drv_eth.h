@@ -5,9 +5,9 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2022-02-16     Tuber           	first version
+ * 2022-02-16     Tuber             first version
  */
- 
+
 #ifndef __DRV_ETH_H__
 #define __DRV_ETH_H__
 #include <rtthread.h>

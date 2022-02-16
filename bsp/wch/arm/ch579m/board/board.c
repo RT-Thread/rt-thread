@@ -5,16 +5,16 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2022-02-16     Tuber           	first version
+ * 2022-02-16     Tuber             first version
  */
- 
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
 #include "board.h"
 
 #ifdef RT_USING_SERIAL
-    #include "drv_uart.h"
+#include "drv_uart.h"
 #endif
 
 #ifdef RT_USING_FINSH
