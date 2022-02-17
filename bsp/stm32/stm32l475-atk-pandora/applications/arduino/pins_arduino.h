@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2021-12-10     Meco Man     first version
  */
-#ifndef __UNO_PINOUT_H__
-#define __UNO_PINOUT_H__
+#ifndef Pins_Arduino_h
+#define Pins_Arduino_h
 
 #define LED_BUILTIN  13 /* Built-in LED */
 
@@ -25,4 +25,4 @@
 #define A4   (18)
 #define A5   (19)
 
-#endif /* __UNO_PINOUT_H__ */
+#endif /* Pins_Arduino_h */
