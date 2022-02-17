@@ -11,49 +11,49 @@
 #include "CH579SFR.h"
 #include "core_cm0.h"
 
-/* ÒÔÏÂ»º´æÇøÊÇUSBÄ£¿éÊÕ·¢Ê¹ÓÃµÄÊı¾İ»º³åÇø£¬×Ü¹²9¸öÍ¨µÀ£¨9¿é»º´æ£©£¬ÓÃ»§¿É¸ù¾İÊµ¼ÊÊ¹ÓÃµÄÍ¨µÀÊı¶¨ÒåÏàÓ¦»º´æÇø */
-extern PUINT8  pEP0_RAM_Addr;		//ep0(64)+ep4_out(64)+ep4_in(64)
-extern PUINT8  pEP1_RAM_Addr;		//ep1_out(64)+ep1_in(64)
-extern PUINT8  pEP2_RAM_Addr;		//ep2_out(64)+ep2_in(64)
-extern PUINT8  pEP3_RAM_Addr;		//ep3_out(64)+ep3_in(64)
+/* ä»¥ä¸‹ç¼“å­˜åŒºæ˜¯USBæ¨¡å—æ”¶å‘ä½¿ç”¨çš„æ•°æ®ç¼“å†²åŒºï¼Œæ€»å…±9ä¸ªé€šé“ï¼ˆ9å—ç¼“å­˜ï¼‰ï¼Œç”¨æˆ·å¯æ ¹æ®å®é™…ä½¿ç”¨çš„é€šé“æ•°å®šä¹‰ç›¸åº”ç¼“å­˜åŒº */
+extern PUINT8  pEP0_RAM_Addr;       //ep0(64)+ep4_out(64)+ep4_in(64)
+extern PUINT8  pEP1_RAM_Addr;       //ep1_out(64)+ep1_in(64)
+extern PUINT8  pEP2_RAM_Addr;       //ep2_out(64)+ep2_in(64)
+extern PUINT8  pEP3_RAM_Addr;       //ep3_out(64)+ep3_in(64)
 
-#define	pSetupReqPak		((PUSB_SETUP_REQ)pEP0_RAM_Addr)
-#define pEP0_DataBuf		(pEP0_RAM_Addr)
-#define pEP1_OUT_DataBuf	(pEP1_RAM_Addr)
-#define pEP1_IN_DataBuf		(pEP1_RAM_Addr+64)
-#define pEP2_OUT_DataBuf	(pEP2_RAM_Addr)
-#define pEP2_IN_DataBuf		(pEP2_RAM_Addr+64)
-#define pEP3_OUT_DataBuf	(pEP3_RAM_Addr)
-#define pEP3_IN_DataBuf		(pEP3_RAM_Addr+64)
-#define pEP4_OUT_DataBuf	(pEP0_RAM_Addr+64)
-#define pEP4_IN_DataBuf		(pEP0_RAM_Addr+128)	 
-	 
-
-	 
-void USB_DeviceInit( void );			/* USBÉè±¸¹¦ÄÜ³õÊ¼»¯£¬4¸ö¶Ëµã£¬8¸öÍ¨µÀ */	 
-void USB_DevTransProcess( void );		/* USBÉè±¸Ó¦´ğ´«Êä´¦Àí */	 
-	 
-void DevEP1_OUT_Deal( UINT8 l );		/* Éè±¸¶Ëµã1ÏÂ´«Í¨µÀ´¦Àí */
-void DevEP2_OUT_Deal( UINT8 l );		/* Éè±¸¶Ëµã2ÏÂ´«Í¨µÀ´¦Àí */
-void DevEP3_OUT_Deal( UINT8 l );		/* Éè±¸¶Ëµã3ÏÂ´«Í¨µÀ´¦Àí */
-void DevEP4_OUT_Deal( UINT8 l );		/* Éè±¸¶Ëµã4ÏÂ´«Í¨µÀ´¦Àí */
-
-void DevEP1_IN_Deal( UINT8 l );		/* Éè±¸¶Ëµã1ÉÏ´«Í¨µÀ´¦Àí */
-void DevEP2_IN_Deal( UINT8 l );		/* Éè±¸¶Ëµã2ÉÏ´«Í¨µÀ´¦Àí */
-void DevEP3_IN_Deal( UINT8 l );		/* Éè±¸¶Ëµã3ÉÏ´«Í¨µÀ´¦Àí */
-void DevEP4_IN_Deal( UINT8 l );		/* Éè±¸¶Ëµã4ÉÏ´«Í¨µÀ´¦Àí */
-
-// 0-Î´Íê³É  (!0)-ÒÑÍê³É
-#define EP1_GetINSta()		(R8_UEP1_CTRL&UEP_T_RES_NAK)		/* ²éÑ¯¶Ëµã1ÊÇ·ñÉÏ´«Íê³É */
-#define EP2_GetINSta()		(R8_UEP2_CTRL&UEP_T_RES_NAK)		/* ²éÑ¯¶Ëµã2ÊÇ·ñÉÏ´«Íê³É */
-#define EP3_GetINSta()		(R8_UEP3_CTRL&UEP_T_RES_NAK)		/* ²éÑ¯¶Ëµã3ÊÇ·ñÉÏ´«Íê³É */
-#define EP4_GetINSta()		(R8_UEP4_CTRL&UEP_T_RES_NAK)		/* ²éÑ¯¶Ëµã4ÊÇ·ñÉÏ´«Íê³É */
+#define pSetupReqPak        ((PUSB_SETUP_REQ)pEP0_RAM_Addr)
+#define pEP0_DataBuf        (pEP0_RAM_Addr)
+#define pEP1_OUT_DataBuf    (pEP1_RAM_Addr)
+#define pEP1_IN_DataBuf     (pEP1_RAM_Addr+64)
+#define pEP2_OUT_DataBuf    (pEP2_RAM_Addr)
+#define pEP2_IN_DataBuf     (pEP2_RAM_Addr+64)
+#define pEP3_OUT_DataBuf    (pEP3_RAM_Addr)
+#define pEP3_IN_DataBuf     (pEP3_RAM_Addr+64)
+#define pEP4_OUT_DataBuf    (pEP0_RAM_Addr+64)
+#define pEP4_IN_DataBuf     (pEP0_RAM_Addr+128)
 
 
-	 
+
+void USB_DeviceInit( void );            /* USBè®¾å¤‡åŠŸèƒ½åˆå§‹åŒ–ï¼Œ4ä¸ªç«¯ç‚¹ï¼Œ8ä¸ªé€šé“ */
+void USB_DevTransProcess( void );       /* USBè®¾å¤‡åº”ç­”ä¼ è¾“å¤„ç† */
+
+void DevEP1_OUT_Deal( UINT8 l );        /* è®¾å¤‡ç«¯ç‚¹1ä¸‹ä¼ é€šé“å¤„ç† */
+void DevEP2_OUT_Deal( UINT8 l );        /* è®¾å¤‡ç«¯ç‚¹2ä¸‹ä¼ é€šé“å¤„ç† */
+void DevEP3_OUT_Deal( UINT8 l );        /* è®¾å¤‡ç«¯ç‚¹3ä¸‹ä¼ é€šé“å¤„ç† */
+void DevEP4_OUT_Deal( UINT8 l );        /* è®¾å¤‡ç«¯ç‚¹4ä¸‹ä¼ é€šé“å¤„ç† */
+
+void DevEP1_IN_Deal( UINT8 l );     /* è®¾å¤‡ç«¯ç‚¹1ä¸Šä¼ é€šé“å¤„ç† */
+void DevEP2_IN_Deal( UINT8 l );     /* è®¾å¤‡ç«¯ç‚¹2ä¸Šä¼ é€šé“å¤„ç† */
+void DevEP3_IN_Deal( UINT8 l );     /* è®¾å¤‡ç«¯ç‚¹3ä¸Šä¼ é€šé“å¤„ç† */
+void DevEP4_IN_Deal( UINT8 l );     /* è®¾å¤‡ç«¯ç‚¹4ä¸Šä¼ é€šé“å¤„ç† */
+
+// 0-æœªå®Œæˆ  (!0)-å·²å®Œæˆ
+#define EP1_GetINSta()      (R8_UEP1_CTRL&UEP_T_RES_NAK)        /* æŸ¥è¯¢ç«¯ç‚¹1æ˜¯å¦ä¸Šä¼ å®Œæˆ */
+#define EP2_GetINSta()      (R8_UEP2_CTRL&UEP_T_RES_NAK)        /* æŸ¥è¯¢ç«¯ç‚¹2æ˜¯å¦ä¸Šä¼ å®Œæˆ */
+#define EP3_GetINSta()      (R8_UEP3_CTRL&UEP_T_RES_NAK)        /* æŸ¥è¯¢ç«¯ç‚¹3æ˜¯å¦ä¸Šä¼ å®Œæˆ */
+#define EP4_GetINSta()      (R8_UEP4_CTRL&UEP_T_RES_NAK)        /* æŸ¥è¯¢ç«¯ç‚¹4æ˜¯å¦ä¸Šä¼ å®Œæˆ */
+
+
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // __CH57x_USBDEV_H__	
+#endif  // __CH57x_USBDEV_H__
 

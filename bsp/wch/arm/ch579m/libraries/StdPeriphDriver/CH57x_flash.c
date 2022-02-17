@@ -3,280 +3,280 @@
 * Author             : WCH
 * Version            : V1.1
 * Date               : 2020/03/20
-* Description        : 
+* Description        :
 *******************************************************************************/
 
 /******************************************************************************/
-/* Í·ÎÄ¼ş°üº¬ */
+/* å¤´æ–‡ä»¶åŒ…å« */
 #include "CH57x_common.h"
 
-/* ²Ù×÷FlashµÄ±£»¤×´Ì¬±êÖ¾ */
+/* æ“ä½œFlashçš„ä¿æŠ¤çŠ¶æ€æ ‡å¿— */
 #define CODEFLASH_SAFE_FLAG1          0x57
 #define CODEFLASH_SAFE_FLAG2          0xA8
 
-/* ²Ù×÷FlashµÄ±£»¤×´Ì¬±äÁ¿ */
+/* æ“ä½œFlashçš„ä¿æŠ¤çŠ¶æ€å˜é‡ */
 unsigned char codeflash_access_flag1 = 0x0;
 unsigned char codeflash_access_flag2 = 0x0;
 
 /*******************************************************************************
 * Function Name  : GetUniqueID
-* Description    : »ñÈ¡Ğ¾Æ¬Î¨Ò»ID£¬Ğ¡¶ËÄ£Ê½£¬6B-ID£¬ 2B-CKS
-* Input          : buf: ´æ´¢8×Ö½Ú£¬Ç°6×Ö½Ú£¨Ğ¡¶Ë£©ID£¬ºó2×Ö½Ú£¨Ğ¡¶Ë£©Ğ£ÑéºÍ
+* Description    : è·å–èŠ¯ç‰‡å”¯ä¸€IDï¼Œå°ç«¯æ¨¡å¼ï¼Œ6B-IDï¼Œ 2B-CKS
+* Input          : buf: å­˜å‚¨8å­—èŠ‚ï¼Œå‰6å­—èŠ‚ï¼ˆå°ç«¯ï¼‰IDï¼Œå2å­—èŠ‚ï¼ˆå°ç«¯ï¼‰æ ¡éªŒå’Œ
 * Return         : None
 *******************************************************************************/
 void GetUniqueID(PUINT8 buf)
 {
     PUINT8  pID;
     UINT8   i;
-    
+
     pID = (PUINT8)ROM_UUID_ADDR;
     for(i=0; i<8; i++) *buf++ = *pID++;
 }
 
 /*******************************************************************************
 * Function Name  : GetMACAddress
-* Description    : »ñÈ¡ÍøÂçMAC£¬Ğ¡¶ËÄ£Ê½£¬6B-MAC
-* Input          : buf: ´æ´¢6×Ö½Ú£¬6×Ö½Ú£¨Ğ¡¶Ë£©ÎïÀí MAC
+* Description    : è·å–ç½‘ç»œMACï¼Œå°ç«¯æ¨¡å¼ï¼Œ6B-MAC
+* Input          : buf: å­˜å‚¨6å­—èŠ‚ï¼Œ6å­—èŠ‚ï¼ˆå°ç«¯ï¼‰ç‰©ç† MAC
 * Return         : None
 *******************************************************************************/
 void GetMACAddress(PUINT8 buf)
 {
     PUINT8  pMAC;
     UINT8   i;
-    
+
     pMAC = (PUINT8)ROM_MAC_ADDR;
     for(i=0; i<6; i++) *buf++ = *pMAC++;
 }
 
 /*******************************************************************************
 * Function Name  : FlashBlockErase
-* Description    : Flash ¿é²Á³ı£¬Ò»´Î²Á³ı512B
-* Input          : addr: 32Î»µØÖ·£¬ĞèÒª512¶ÔÆë	
-*                  		codeflash:  startAddr - 0x00000000    size - 0x3E800
-*                  		dataflash:  startAddr - 0x3E800(DATA_FLASH_ADDR)	   size -  0x0800(DATA_FLASH_SIZE)				
-* Return         : 0 - ³É¹¦£¬ÆäËû  - ´íÎó
+* Description    : Flash å—æ“¦é™¤ï¼Œä¸€æ¬¡æ“¦é™¤512B
+* Input          : addr: 32ä½åœ°å€ï¼Œéœ€è¦512å¯¹é½
+*                       codeflash:  startAddr - 0x00000000    size - 0x3E800
+*                       dataflash:  startAddr - 0x3E800(DATA_FLASH_ADDR)       size -  0x0800(DATA_FLASH_SIZE)
+* Return         : 0 - æˆåŠŸï¼Œå…¶ä»–  - é”™è¯¯
 *******************************************************************************/
 UINT8 FlashBlockErase(UINT32 addr)
 {
     UINT8  status = 0;
-	volatile UINT8  op_step;
-	
-    if( addr & (0x200-1) )          return 1;  //µØÖ·²»¶ÔÆë
-	
-	op_step = 0x11;
-	codeflash_access_flag1 = 0;
-	codeflash_access_flag2 = 0;
-	R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
-	
-	//¿ªÆôµçÑ¹¼à¿ØÖĞ¶Ï
-	op_step += 0x11;	
-	if((R8_BAT_DET_CTRL & 0x0F) != 0x0D)		PowerMonitor( ENABLE );
-	
-	op_step += 0x11;
-	if((R8_BAT_STATUS & 0x03) != 0x00) 		return 2;  //µçÔ´µçÑ¹Æ«µÍ£¬Flash²»ÔÊĞí²Ù×÷
-		
-	op_step += 0x11;
-	if(((R8_BAT_STATUS & 0x03) == 0x00)
-		&&(op_step == 0x44))
-	{
-		codeflash_access_flag1 = CODEFLASH_SAFE_FLAG1;
-	}
-	
-	op_step += 0x11;
-	if(((R8_BAT_STATUS & 0x03) == 0x00)
-		&&(op_step == 0x55)
-	    &&(codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1))
-	{
-		codeflash_access_flag2 = CODEFLASH_SAFE_FLAG2;
-	}	
-	
-	op_step += 0x11;
-	if((codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1)
-	 &&(codeflash_access_flag2 == CODEFLASH_SAFE_FLAG2)
-	 &&(op_step == 0x66))
-	{
-		R32_FLASH_ADDR = addr;
-        if( addr < DATA_FLASH_ADDR  )    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_CODE_WE;	// CodefalshÇø
-        else       R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_DATA_WE;         // datafalshÇø
-	}
-	
-	op_step += 0x11;
-	/* ÅĞ¶Ï²Ù×÷FlashµÄ±£»¤×´Ì¬±êÖ¾ */
-	if((codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1)
-	 &&(codeflash_access_flag2 == CODEFLASH_SAFE_FLAG2)
-	 &&(op_step == 0x77))
-	{
-		R8_FLASH_COMMAND = ROM_CMD_ERASE;
-		status = (unsigned char)(R16_FLASH_STATUS & 0xff);
-	}
-	
-	op_step = 0x00;
-	codeflash_access_flag1 = 0x00;
-	codeflash_access_flag2 = 0x00;
-	R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;		// LOCK
-	
-	if( status != RB_ROM_ADDR_OK )  return 3;   //²Ù×÷Ê§°Ü	
-	return 0;
+    volatile UINT8  op_step;
+
+    if( addr & (0x200-1) )          return 1;  //åœ°å€ä¸å¯¹é½
+
+    op_step = 0x11;
+    codeflash_access_flag1 = 0;
+    codeflash_access_flag2 = 0;
+    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
+
+    //å¼€å¯ç”µå‹ç›‘æ§ä¸­æ–­
+    op_step += 0x11;
+    if((R8_BAT_DET_CTRL & 0x0F) != 0x0D)        PowerMonitor( ENABLE );
+
+    op_step += 0x11;
+    if((R8_BAT_STATUS & 0x03) != 0x00)      return 2;  //ç”µæºç”µå‹åä½ï¼ŒFlashä¸å…è®¸æ“ä½œ
+
+    op_step += 0x11;
+    if(((R8_BAT_STATUS & 0x03) == 0x00)
+        &&(op_step == 0x44))
+    {
+        codeflash_access_flag1 = CODEFLASH_SAFE_FLAG1;
+    }
+
+    op_step += 0x11;
+    if(((R8_BAT_STATUS & 0x03) == 0x00)
+        &&(op_step == 0x55)
+        &&(codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1))
+    {
+        codeflash_access_flag2 = CODEFLASH_SAFE_FLAG2;
+    }
+
+    op_step += 0x11;
+    if((codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1)
+     &&(codeflash_access_flag2 == CODEFLASH_SAFE_FLAG2)
+     &&(op_step == 0x66))
+    {
+        R32_FLASH_ADDR = addr;
+        if( addr < DATA_FLASH_ADDR  )    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_CODE_WE;   // CodefalshåŒº
+        else       R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_DATA_WE;         // datafalshåŒº
+    }
+
+    op_step += 0x11;
+    /* åˆ¤æ–­æ“ä½œFlashçš„ä¿æŠ¤çŠ¶æ€æ ‡å¿— */
+    if((codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1)
+     &&(codeflash_access_flag2 == CODEFLASH_SAFE_FLAG2)
+     &&(op_step == 0x77))
+    {
+        R8_FLASH_COMMAND = ROM_CMD_ERASE;
+        status = (unsigned char)(R16_FLASH_STATUS & 0xff);
+    }
+
+    op_step = 0x00;
+    codeflash_access_flag1 = 0x00;
+    codeflash_access_flag2 = 0x00;
+    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;       // LOCK
+
+    if( status != RB_ROM_ADDR_OK )  return 3;   //æ“ä½œå¤±è´¥
+    return 0;
 }
 
 /*******************************************************************************
 * Function Name  : FlashWriteDW
-* Description    : Flash Ë«×ÖĞ´£¬µØÖ·Ğè4×Ö½Ú¶ÔÆë
-* Input          : addr: 32Î»µØÖ·£¬ĞèÒª4¶ÔÆë
-*                  		codeflash:  startAddr - 0x00000000    size - 0x3E800
-*                  		dataflash:  startAddr - 0x3E800(DATA_FLASH_ADDR)	   size -  0x0800(DATA_FLASH_SIZE)
-				    dat: 32Î»Ğ´ÈëÊı¾İ
-* Return         : FAILED  - ´íÎó
-				   SUCCESS - ³É¹¦
+* Description    : Flash åŒå­—å†™ï¼Œåœ°å€éœ€4å­—èŠ‚å¯¹é½
+* Input          : addr: 32ä½åœ°å€ï¼Œéœ€è¦4å¯¹é½
+*                       codeflash:  startAddr - 0x00000000    size - 0x3E800
+*                       dataflash:  startAddr - 0x3E800(DATA_FLASH_ADDR)       size -  0x0800(DATA_FLASH_SIZE)
+                    dat: 32ä½å†™å…¥æ•°æ®
+* Return         : FAILED  - é”™è¯¯
+                   SUCCESS - æˆåŠŸ
 *******************************************************************************/
 UINT8 FlashWriteDW(UINT32 addr, UINT32 dat)
 {
     UINT32  add = addr;
     UINT32  val = dat;
-    UINT8  status = 0;	
-	volatile UINT8  op_step;
+    UINT8  status = 0;
+    volatile UINT8  op_step;
 
-    if( addr & (4-1) )              return 1; //µØÖ·²»¶ÔÆë
-	
-	op_step = 0x11;
-	codeflash_access_flag1 = 0;
-	codeflash_access_flag2 = 0;
-	R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
-	
-	//¿ªÆôµçÑ¹¼à¿ØÖĞ¶Ï
-	op_step += 0x11;	
-	if((R8_BAT_DET_CTRL & 0x0F) != 0x0D)		PowerMonitor( ENABLE );
+    if( addr & (4-1) )              return 1; //åœ°å€ä¸å¯¹é½
 
-	op_step += 0x11;
-	if((R8_BAT_STATUS & 0x03) != 0x00) 		return 2;  //µçÔ´µçÑ¹Æ«µÍ£¬Flash²»ÔÊĞí²Ù×÷
+    op_step = 0x11;
+    codeflash_access_flag1 = 0;
+    codeflash_access_flag2 = 0;
+    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
 
-	op_step += 0x11;
-	if(((R8_BAT_STATUS & 0x01) == 0x00)
-		&&(op_step == 0x44))
-	{
-		codeflash_access_flag1 = CODEFLASH_SAFE_FLAG1;
-	}
-	
-	op_step += 0x11;
-	if(((R8_BAT_STATUS & 0x01) == 0x00)
-		&&(op_step == 0x55)
-		&&(codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1))
-	{
-		codeflash_access_flag2 = CODEFLASH_SAFE_FLAG2;
-	}
-
-	op_step += 0x11;
-	if((codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1)
-	 &&(codeflash_access_flag2 == CODEFLASH_SAFE_FLAG2)
-	 &&(op_step == 0x66))
-	{
-		if( addr < DATA_FLASH_ADDR  )    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_CODE_WE;	// CodefalshÇø
-        else       R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_DATA_WE;         // datafalshÇø
-	}
-	
+    //å¼€å¯ç”µå‹ç›‘æ§ä¸­æ–­
     op_step += 0x11;
-	/* ÅĞ¶ÏOTA²Ù×÷FlashµÄ±£»¤×´Ì¬±êÖ¾ */
-	if((codeflash_access_flag1==CODEFLASH_SAFE_FLAG1)
-	 &&(codeflash_access_flag2==CODEFLASH_SAFE_FLAG2)
-	 &&(op_step == 0x77))
-	{
-		R32_FLASH_ADDR = add;
-		R32_FLASH_DATA = val;		
-		R8_FLASH_COMMAND = ROM_CMD_PROG;
-		status = (unsigned char)(R16_FLASH_STATUS & 0xff);
-	}
-	
-	op_step = 0x00;
-	codeflash_access_flag1 = 0x00;
-	codeflash_access_flag2 = 0x00;
-	R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
-	if( status != RB_ROM_ADDR_OK )  return 3;  //²Ù×÷Ê§°Ü
-	
-	return 0;	
-	
+    if((R8_BAT_DET_CTRL & 0x0F) != 0x0D)        PowerMonitor( ENABLE );
+
+    op_step += 0x11;
+    if((R8_BAT_STATUS & 0x03) != 0x00)      return 2;  //ç”µæºç”µå‹åä½ï¼ŒFlashä¸å…è®¸æ“ä½œ
+
+    op_step += 0x11;
+    if(((R8_BAT_STATUS & 0x01) == 0x00)
+        &&(op_step == 0x44))
+    {
+        codeflash_access_flag1 = CODEFLASH_SAFE_FLAG1;
+    }
+
+    op_step += 0x11;
+    if(((R8_BAT_STATUS & 0x01) == 0x00)
+        &&(op_step == 0x55)
+        &&(codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1))
+    {
+        codeflash_access_flag2 = CODEFLASH_SAFE_FLAG2;
+    }
+
+    op_step += 0x11;
+    if((codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1)
+     &&(codeflash_access_flag2 == CODEFLASH_SAFE_FLAG2)
+     &&(op_step == 0x66))
+    {
+        if( addr < DATA_FLASH_ADDR  )    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_CODE_WE;   // CodefalshåŒº
+        else       R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_DATA_WE;         // datafalshåŒº
+    }
+
+    op_step += 0x11;
+    /* åˆ¤æ–­OTAæ“ä½œFlashçš„ä¿æŠ¤çŠ¶æ€æ ‡å¿— */
+    if((codeflash_access_flag1==CODEFLASH_SAFE_FLAG1)
+     &&(codeflash_access_flag2==CODEFLASH_SAFE_FLAG2)
+     &&(op_step == 0x77))
+    {
+        R32_FLASH_ADDR = add;
+        R32_FLASH_DATA = val;
+        R8_FLASH_COMMAND = ROM_CMD_PROG;
+        status = (unsigned char)(R16_FLASH_STATUS & 0xff);
+    }
+
+    op_step = 0x00;
+    codeflash_access_flag1 = 0x00;
+    codeflash_access_flag2 = 0x00;
+    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
+    if( status != RB_ROM_ADDR_OK )  return 3;  //æ“ä½œå¤±è´¥
+
+    return 0;
+
 }
 
 /*******************************************************************************
 * Function Name  : FlashWriteBuf
-* Description    : Flash Á¬Ğø¶à¸öË«×ÖĞ´Èë
-* Input          : addr: 32Î»µØÖ·£¬ĞèÒª4¶ÔÆë
-*                  		codeflash:  startAddr - 0x00000000    size - 0x3E800
-*                  		dataflash:  startAddr - 0x3E800(DATA_FLASH_ADDR)	   size -  0x0800(DATA_FLASH_SIZE)
-*				   pdat: ´ıĞ´ÈëÊı¾İ»º´æÇøÊ×µØÖ·
-*				    len: ´ıĞ´ÈëÊı¾İ×Ö½Ú³¤¶È
-* Return         : 0 - ³É¹¦£¬ÆäËû  - ´íÎó
+* Description    : Flash è¿ç»­å¤šä¸ªåŒå­—å†™å…¥
+* Input          : addr: 32ä½åœ°å€ï¼Œéœ€è¦4å¯¹é½
+*                       codeflash:  startAddr - 0x00000000    size - 0x3E800
+*                       dataflash:  startAddr - 0x3E800(DATA_FLASH_ADDR)       size -  0x0800(DATA_FLASH_SIZE)
+*                  pdat: å¾…å†™å…¥æ•°æ®ç¼“å­˜åŒºé¦–åœ°å€
+*                   len: å¾…å†™å…¥æ•°æ®å­—èŠ‚é•¿åº¦
+* Return         : 0 - æˆåŠŸï¼Œå…¶ä»–  - é”™è¯¯
 *******************************************************************************/
 UINT8 FlashWriteBuf(UINT32 addr, PUINT32 pdat, UINT16 len)
 {
     UINT32  add = addr;
     PUINT32 p32 = pdat;
-    UINT8  status = 0;	
-	UINT16  i;
-	volatile UINT8  op_step;
+    UINT8  status = 0;
+    UINT16  i;
+    volatile UINT8  op_step;
 
-    if( addr & (4-1) )              return 1; //µØÖ·²»¶ÔÆë
-	
-	op_step = 0x11;
-	codeflash_access_flag1 = 0;
-	codeflash_access_flag2 = 0;
-	R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
-	
-	//¿ªÆôµçÑ¹¼à¿ØÖĞ¶Ï
-	op_step += 0x11;	
-	if((R8_BAT_DET_CTRL & 0x0F) != 0x0D)		PowerMonitor( ENABLE );
+    if( addr & (4-1) )              return 1; //åœ°å€ä¸å¯¹é½
 
-	op_step += 0x11;
-	if((R8_BAT_STATUS & 0x03) != 0x00) 		return 2;  //µçÔ´µçÑ¹Æ«µÍ£¬Flash²»ÔÊĞí²Ù×÷
+    op_step = 0x11;
+    codeflash_access_flag1 = 0;
+    codeflash_access_flag2 = 0;
+    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
 
-	op_step += 0x11;
-	if(((R8_BAT_STATUS & 0x01) == 0x00)
-		&&(op_step == 0x44))
-	{
-		codeflash_access_flag1 = CODEFLASH_SAFE_FLAG1;
-	}
-	
-	op_step += 0x11;
-	if(((R8_BAT_STATUS & 0x01) == 0x00)
-		&&(op_step == 0x55)
-		&&(codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1))
-	{
-		codeflash_access_flag2 = CODEFLASH_SAFE_FLAG2;
-	}
-
-	op_step += 0x11;
-	if((codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1)
-	 &&(codeflash_access_flag2 == CODEFLASH_SAFE_FLAG2)
-	 &&(op_step == 0x66))
-	{
-		if( addr < DATA_FLASH_ADDR  )    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_CODE_WE;	// CodefalshÇø
-        else       R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_DATA_WE;         // datafalshÇø
-	}
-	
+    //å¼€å¯ç”µå‹ç›‘æ§ä¸­æ–­
     op_step += 0x11;
-	/* ÅĞ¶ÏOTA²Ù×÷FlashµÄ±£»¤×´Ì¬±êÖ¾ */
-	if((codeflash_access_flag1==CODEFLASH_SAFE_FLAG1)
-	 &&(codeflash_access_flag2==CODEFLASH_SAFE_FLAG2)
-	 &&(op_step == 0x77))
-	{
-		for(i=0; i<len; i+=4)
-		{
-			R32_FLASH_ADDR = add;
-			R32_FLASH_DATA = *p32++;		
-			R8_FLASH_COMMAND = ROM_CMD_PROG;		
-			add += 4;
-			//status = R8_FLASH_STATUS;
-			status = (unsigned char)(R16_FLASH_STATUS & 0xff);
-			if( status != RB_ROM_ADDR_OK )  break;
-		}
-	}
-	
-	op_step = 0x00;
-	codeflash_access_flag1 = 0x00;
-	codeflash_access_flag2 = 0x00;
-	R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
-	if( status != RB_ROM_ADDR_OK )  return 3;  //²Ù×÷Ê§°Ü
-	
-	return 0;
+    if((R8_BAT_DET_CTRL & 0x0F) != 0x0D)        PowerMonitor( ENABLE );
+
+    op_step += 0x11;
+    if((R8_BAT_STATUS & 0x03) != 0x00)      return 2;  //ç”µæºç”µå‹åä½ï¼ŒFlashä¸å…è®¸æ“ä½œ
+
+    op_step += 0x11;
+    if(((R8_BAT_STATUS & 0x01) == 0x00)
+        &&(op_step == 0x44))
+    {
+        codeflash_access_flag1 = CODEFLASH_SAFE_FLAG1;
+    }
+
+    op_step += 0x11;
+    if(((R8_BAT_STATUS & 0x01) == 0x00)
+        &&(op_step == 0x55)
+        &&(codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1))
+    {
+        codeflash_access_flag2 = CODEFLASH_SAFE_FLAG2;
+    }
+
+    op_step += 0x11;
+    if((codeflash_access_flag1 == CODEFLASH_SAFE_FLAG1)
+     &&(codeflash_access_flag2 == CODEFLASH_SAFE_FLAG2)
+     &&(op_step == 0x66))
+    {
+        if( addr < DATA_FLASH_ADDR  )    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_CODE_WE;   // CodefalshåŒº
+        else       R8_FLASH_PROTECT = RB_ROM_WE_MUST_10|RB_ROM_DATA_WE;         // datafalshåŒº
+    }
+
+    op_step += 0x11;
+    /* åˆ¤æ–­OTAæ“ä½œFlashçš„ä¿æŠ¤çŠ¶æ€æ ‡å¿— */
+    if((codeflash_access_flag1==CODEFLASH_SAFE_FLAG1)
+     &&(codeflash_access_flag2==CODEFLASH_SAFE_FLAG2)
+     &&(op_step == 0x77))
+    {
+        for(i=0; i<len; i+=4)
+        {
+            R32_FLASH_ADDR = add;
+            R32_FLASH_DATA = *p32++;
+            R8_FLASH_COMMAND = ROM_CMD_PROG;
+            add += 4;
+            //status = R8_FLASH_STATUS;
+            status = (unsigned char)(R16_FLASH_STATUS & 0xff);
+            if( status != RB_ROM_ADDR_OK )  break;
+        }
+    }
+
+    op_step = 0x00;
+    codeflash_access_flag1 = 0x00;
+    codeflash_access_flag2 = 0x00;
+    R8_FLASH_PROTECT = RB_ROM_WE_MUST_10;
+    if( status != RB_ROM_ADDR_OK )  return 3;  //æ“ä½œå¤±è´¥
+
+    return 0;
 }
 
 

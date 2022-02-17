@@ -3,7 +3,7 @@
 * Author             : WCH
 * Version            : V1.0
 * Date               : 2018/12/15
-* Description 
+* Description
 *******************************************************************************/
 
 #include "CH57x_common.h"
@@ -11,59 +11,59 @@
 
 /*******************************************************************************
 * Function Name  : PWR_DCDCCfg
-* Description    : ∆Ù”√ƒ⁄≤øDC/DCµÁ‘¥£¨”√”⁄Ω⁄‘ºœµÕ≥π¶∫ƒ
-* Input          : s:  
-                    ENABLE  - ¥Úø™DCDCµÁ‘¥
-                    DISABLE - πÿ±’DCDCµÁ‘¥   				
+* Description    : ÂêØÁî®ÂÜÖÈÉ®DC/DCÁîµÊ∫êÔºåÁî®‰∫éËäÇÁ∫¶Á≥ªÁªüÂäüËÄó
+* Input          : s:
+                    ENABLE  - ÊâìÂºÄDCDCÁîµÊ∫ê
+                    DISABLE - ÂÖ≥Èó≠DCDCÁîµÊ∫ê
 * Return         : None
 *******************************************************************************/
 void PWR_DCDCCfg( UINT8 s )
 {
     if(s == DISABLE)
-    {		
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+    {
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-        R16_POWER_PLAN &= ~(RB_PWR_DCDC_EN|RB_PWR_DCDC_PRE);		// ≈‘¬∑ DC/DC 
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG0;		
+        R16_POWER_PLAN &= ~(RB_PWR_DCDC_EN|RB_PWR_DCDC_PRE);        // ÊóÅË∑Ø DC/DC
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG0;
     }
     else
     {
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
         R16_POWER_PLAN |= RB_PWR_DCDC_PRE;
         DelayUs(10);
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-        R16_POWER_PLAN |= RB_PWR_DCDC_EN;		
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG0;			
+        R16_POWER_PLAN |= RB_PWR_DCDC_EN;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG0;
     }
 }
 
 /*******************************************************************************
 * Function Name  : PWR_UnitModCfg
-* Description    : ø…øÿµ•‘™ƒ£øÈµƒµÁ‘¥øÿ÷∆
-* Input          : s:  
-                    ENABLE  - ¥Úø™   
-                    DISABLE - πÿ±’
+* Description    : ÂèØÊéßÂçïÂÖÉÊ®°ÂùóÁöÑÁîµÊ∫êÊéßÂà∂
+* Input          : s:
+                    ENABLE  - ÊâìÂºÄ
+                    DISABLE - ÂÖ≥Èó≠
                    unit:
-                    please refer to unit of controllable power supply 				
+                    please refer to unit of controllable power supply
 * Return         : None
 *******************************************************************************/
 void PWR_UnitModCfg( UINT8 s, UINT8 unit )
 {
-    if(s == DISABLE)		//πÿ±’
+    if(s == DISABLE)        //ÂÖ≥Èó≠
     {
-    	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-    	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-        if(unit&UNIT_ETH_PHY)		R8_SLP_POWER_CTRL |= RB_SLP_ETH_PWR_DN;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+        if(unit&UNIT_ETH_PHY)       R8_SLP_POWER_CTRL |= RB_SLP_ETH_PWR_DN;
         R8_HFCK_PWR_CTRL &= ~(unit&0x1c);
         R8_CK32K_CONFIG &= ~(unit&0x03);
     }
-    else					//¥Úø™
+    else                    //ÊâìÂºÄ
     {
-    	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-    	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-        if(unit&UNIT_ETH_PHY)		R8_SLP_POWER_CTRL &= ~RB_SLP_ETH_PWR_DN;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+        if(unit&UNIT_ETH_PHY)       R8_SLP_POWER_CTRL &= ~RB_SLP_ETH_PWR_DN;
         R8_HFCK_PWR_CTRL |= (unit&0x1c);
         R8_CK32K_CONFIG |= (unit&0x03);
     }
@@ -72,25 +72,25 @@ void PWR_UnitModCfg( UINT8 s, UINT8 unit )
 
 /*******************************************************************************
 * Function Name  : PWR_PeriphClkCfg
-* Description    : Õ‚…Ë ±÷”øÿ÷∆Œª
-* Input          : s:  
-                    ENABLE  - ¥Úø™Õ‚…Ë ±÷”   
-                    DISABLE - πÿ±’Õ‚…Ë ±÷”
+* Description    : Â§ñËÆæÊó∂ÈíüÊéßÂà∂‰Ωç
+* Input          : s:
+                    ENABLE  - ÊâìÂºÄÂ§ñËÆæÊó∂Èíü
+                    DISABLE - ÂÖ≥Èó≠Â§ñËÆæÊó∂Èíü
                    perph:
-                    please refer to Peripher CLK control bit define						
+                    please refer to Peripher CLK control bit define
 * Return         : None
 *******************************************************************************/
 void PWR_PeriphClkCfg( UINT8 s, UINT16 perph )
 {
     if( s == DISABLE )
     {
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
         R32_SLEEP_CONTROL |= perph;
     }
     else
     {
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
         R32_SLEEP_CONTROL &= ~perph;
     }
@@ -99,30 +99,30 @@ void PWR_PeriphClkCfg( UINT8 s, UINT16 perph )
 
 /*******************************************************************************
 * Function Name  : PWR_PeriphWakeUpCfg
-* Description    : ÀØ√ﬂªΩ–—‘¥≈‰÷√
-* Input          : s:  
-                    ENABLE  - ¥Úø™¥ÀÕ‚…ËÀØ√ﬂªΩ–—π¶ƒ‹   
-                    DISABLE - πÿ±’¥ÀÕ‚…ËÀØ√ﬂªΩ–—π¶ƒ‹
+* Description    : Áù°Áú†Âî§ÈÜíÊ∫êÈÖçÁΩÆ
+* Input          : s:
+                    ENABLE  - ÊâìÂºÄÊ≠§Â§ñËÆæÁù°Áú†Âî§ÈÜíÂäüËÉΩ
+                    DISABLE - ÂÖ≥Èó≠Ê≠§Â§ñËÆæÁù°Áú†Âî§ÈÜíÂäüËÉΩ
                    perph:
-                    RB_SLP_USB_WAKE	    -  USB Œ™ªΩ–—‘¥
-                    RB_SLP_ETH_WAKE	    -  ETH Œ™ªΩ–—‘¥
-                    RB_SLP_RTC_WAKE	    -  RTC Œ™ªΩ–—‘¥
-                    RB_SLP_GPIO_WAKE	-  GPIO Œ™ªΩ–—‘¥
-                    RB_SLP_BAT_WAKE	    -  BAT Œ™ªΩ–—‘¥
-                    ALL     -  “‘…œÀ˘”–
+                    RB_SLP_USB_WAKE     -  USB ‰∏∫Âî§ÈÜíÊ∫ê
+                    RB_SLP_ETH_WAKE     -  ETH ‰∏∫Âî§ÈÜíÊ∫ê
+                    RB_SLP_RTC_WAKE     -  RTC ‰∏∫Âî§ÈÜíÊ∫ê
+                    RB_SLP_GPIO_WAKE    -  GPIO ‰∏∫Âî§ÈÜíÊ∫ê
+                    RB_SLP_BAT_WAKE     -  BAT ‰∏∫Âî§ÈÜíÊ∫ê
+                    ALL     -  ‰ª•‰∏äÊâÄÊúâ
 * Return         : None
 *******************************************************************************/
 void PWR_PeriphWakeUpCfg( UINT8 s, UINT16 perph )
 {
     if( s == DISABLE )
     {
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-        R8_SLP_WAKE_CTRL &= ~perph;		
+        R8_SLP_WAKE_CTRL &= ~perph;
     }
     else
     {
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
         R8_SLP_WAKE_CTRL |= perph;
     }
@@ -131,88 +131,88 @@ void PWR_PeriphWakeUpCfg( UINT8 s, UINT16 perph )
 
 /*******************************************************************************
 * Function Name  : PowerMonitor
-* Description    : µÁ‘¥º‡øÿ
-* Input          : s:  
-                    ENABLE  - ¥Úø™¥Àπ¶ƒ‹   
-                    DISABLE - πÿ±’¥Àπ¶ƒ‹
+* Description    : ÁîµÊ∫êÁõëÊéß
+* Input          : s:
+                    ENABLE  - ÊâìÂºÄÊ≠§ÂäüËÉΩ
+                    DISABLE - ÂÖ≥Èó≠Ê≠§ÂäüËÉΩ
 * Return         : None
 *******************************************************************************/
 void PowerMonitor( UINT8 s )
 {
     if( s == DISABLE )
     {
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
         R8_BAT_DET_CTRL = 0;
-        R8_SAFE_ACCESS_SIG = 0; 
+        R8_SAFE_ACCESS_SIG = 0;
     }
     else
     {
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
         R8_BAT_DET_CFG = 1;                     // 2.05V - 2.33V
         R8_BAT_DET_CTRL = RB_BAT_DET_EN;
-        R8_SAFE_ACCESS_SIG = 0; 
-        mDelayuS(1); 	
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+        R8_SAFE_ACCESS_SIG = 0;
+        mDelayuS(1);
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-        R8_BAT_DET_CTRL = RB_BAT_LOW_IE|RB_BAT_LOWER_IE|RB_BAT_DET_EN;  
-        R8_SAFE_ACCESS_SIG = 0;  
-    }   
+        R8_BAT_DET_CTRL = RB_BAT_LOW_IE|RB_BAT_LOWER_IE|RB_BAT_DET_EN;
+        R8_SAFE_ACCESS_SIG = 0;
+    }
 }
 
 /*******************************************************************************
 * Function Name  : LowPower_Idle
-* Description    : µÕπ¶∫ƒ-Idleƒ£ Ω
+* Description    : ‰ΩéÂäüËÄó-IdleÊ®°Âºè
 * Input          : None
 * Return         : None
 *******************************************************************************/
 void LowPower_Idle( void )
 {
-    SCB -> SCR &= ~SCB_SCR_SLEEPDEEP_Msk;				// sleep
+    SCB -> SCR &= ~SCB_SCR_SLEEPDEEP_Msk;               // sleep
     __WFI();
 }
 
 /*******************************************************************************
 * Function Name  : EnterCodeUpgrade
-* Description    : Ã¯»ÎBOOT≥Ã–Ú£¨◊º±∏¥˙¬Î…˝º∂
+* Description    : Ë∑≥ÂÖ•BOOTÁ®ãÂ∫èÔºåÂáÜÂ§á‰ª£Á†ÅÂçáÁ∫ß
 * Input          : None
 * Return         : None
 *******************************************************************************/
 void EnterCodeUpgrade( void )
-{	
-/* RTC wakeup */	
+{
+/* RTC wakeup */
     UINT32 t;
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R8_SLP_WAKE_CTRL |= RB_SLP_RTC_WAKE;
-    R16_POWER_PLAN = RB_PWR_PLAN_EN		    \
+    R16_POWER_PLAN = RB_PWR_PLAN_EN         \
                     |RB_PWR_MUST_0010;
-    R8_SAFE_ACCESS_SIG = 0; 
+    R8_SAFE_ACCESS_SIG = 0;
 
-	do{
-    	t = R32_RTC_CNT_32K;
+    do{
+        t = R32_RTC_CNT_32K;
     }while( t != R32_RTC_CNT_32K );
-    
-    t = t + 10;
-    if( t>0xA8C00000 )	t -= 0xA8C00000;	 
-    if( t&0xFFFF )	t = t+0x10000;	
 
-	R8_RTC_FLAG_CTRL = RB_RTC_TRIG_CLR|RB_RTC_TMR_CLR;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+    t = t + 10;
+    if( t>0xA8C00000 )  t -= 0xA8C00000;
+    if( t&0xFFFF )  t = t+0x10000;
+
+    R8_RTC_FLAG_CTRL = RB_RTC_TRIG_CLR|RB_RTC_TMR_CLR;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R32_RTC_TRIG = t;    
-    R8_RTC_MODE_CTRL = 0x2f;    // Ω¯»Îbootœ¬‘ÿ±ÿ“™Ãıº˛
+    R32_RTC_TRIG = t;
+    R8_RTC_MODE_CTRL = 0x2f;    // ËøõÂÖ•boot‰∏ãËΩΩÂøÖË¶ÅÊù°‰ª∂
     R8_SAFE_ACCESS_SIG = 0;
-	
-	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R16_CLK_SYS_CFG = 5;		        // Ωµ∆µ HSI/5=6.4M    
+    R16_CLK_SYS_CFG = 5;                // ÈôçÈ¢ë HSI/5=6.4M
     R8_SAFE_ACCESS_SIG = 0;
-    	
-/* ready to BOOT */	
-	__SEV();
+
+/* ready to BOOT */
+    __SEV();
     __WFE();
     __WFE();
     while(1);

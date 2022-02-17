@@ -13,152 +13,152 @@
 
 typedef enum
 {
-	CLK_SOURCE_LSI = 0,
-	CLK_SOURCE_LSE,
-	CLK_SOURCE_HSE_32MHz,
-	CLK_SOURCE_HSE_16MHz,
-	CLK_SOURCE_HSE_8MHz,
-	CLK_SOURCE_HSI_32MHz,				//ÉÏµçÄ¬ÈÏÇé¿ö	
-	CLK_SOURCE_HSI_16MHz,
-	CLK_SOURCE_HSI_8MHz,
-	CLK_SOURCE_PLL_40MHz,
-	CLK_SOURCE_PLL_32MHz,
-	CLK_SOURCE_PLL_24MHz,
-	CLK_SOURCE_PLL_20MHz,
-	CLK_SOURCE_PLL_16MHz,
-	
+    CLK_SOURCE_LSI = 0,
+    CLK_SOURCE_LSE,
+    CLK_SOURCE_HSE_32MHz,
+    CLK_SOURCE_HSE_16MHz,
+    CLK_SOURCE_HSE_8MHz,
+    CLK_SOURCE_HSI_32MHz,               //ä¸Šç”µé»˜è®¤æƒ…å†µ
+    CLK_SOURCE_HSI_16MHz,
+    CLK_SOURCE_HSI_8MHz,
+    CLK_SOURCE_PLL_40MHz,
+    CLK_SOURCE_PLL_32MHz,
+    CLK_SOURCE_PLL_24MHz,
+    CLK_SOURCE_PLL_20MHz,
+    CLK_SOURCE_PLL_16MHz,
+
 }SYS_CLKTypeDef;
 
 
 typedef enum
 {
-	Clk32M_HSI = 0,
-	Clk32M_HSE,
-	
+    Clk32M_HSI = 0,
+    Clk32M_HSE,
+
 }HClk32MTypeDef;
 
 typedef enum
 {
-	Clk32K_LSI = 0,
-	Clk32K_LSE,
-	
+    Clk32K_LSI = 0,
+    Clk32K_LSE,
+
 }LClk32KTypeDef;
 
 typedef enum
 {
-	HSE_RCur_75 = 0,
-	HSE_RCur_100,
+    HSE_RCur_75 = 0,
+    HSE_RCur_100,
     HSE_RCur_125,
     HSE_RCur_150
-	
+
 }HSECurrentTypeDef;
 
 typedef enum
 {
-	HSECap_10p = 0,
-	HSECap_12p,  HSECap_14p,  HSECap_16p,  HSECap_18p,  
+    HSECap_10p = 0,
+    HSECap_12p,  HSECap_14p,  HSECap_16p,  HSECap_18p,
     HSECap_20p,  HSECap_22p,  HSECap_24p
-	
+
 }HSECapTypeDef;
 
 typedef enum
 {
-	LSE_RCur_70 = 0,
-	LSE_RCur_100,
+    LSE_RCur_70 = 0,
+    LSE_RCur_100,
     LSE_RCur_140,
     LSE_RCur_200
-	
+
 }LSECurrentTypeDef;
 
 typedef enum
 {
-	LSECap_2p = 0,
-	LSECap_13p,  LSECap_14p,  LSECap_15p,  LSECap_16p,  
+    LSECap_2p = 0,
+    LSECap_13p,  LSECap_14p,  LSECap_15p,  LSECap_16p,
     LSECap_17p,  LSECap_18p,  LSECap_19p,  LSECap_20p,
     LSECap_21p,  LSECap_22p,  LSECap_23p,  LSECap_24p,
     LSECap_25p,  LSECap_26p,  LSECap_27p
-	
+
 }LSECapTypeDef;
 
-#define  MAX_DAY		0x00004000 
-#define	 MAX_2_SEC		0x0000A8C0
-//#define	 MAX_SEC		0x545FFFFF	
+#define  MAX_DAY        0x00004000
+#define  MAX_2_SEC      0x0000A8C0
+//#define    MAX_SEC        0x545FFFFF
 
-#define BEGYEAR													2020
-#define	IsLeapYear(yr)									(!((yr) % 400) || (((yr) % 100) && !((yr) % 4)))
-#define	YearLength(yr)									(IsLeapYear(yr) ? 366 : 365)
-#define monthLength(lpyr,mon)						((mon==1) ? (28+lpyr) : ((mon>6) ? ((mon&1)?31:30) : ((mon&1)?30:31)))
+#define BEGYEAR                                                 2020
+#define IsLeapYear(yr)                                  (!((yr) % 400) || (((yr) % 100) && !((yr) % 4)))
+#define YearLength(yr)                                  (IsLeapYear(yr) ? 366 : 365)
+#define monthLength(lpyr,mon)                       ((mon==1) ? (28+lpyr) : ((mon>6) ? ((mon&1)?31:30) : ((mon&1)?30:31)))
 
 /**
   * @brief  rtc timer mode period define
   */
 typedef enum
 {
-	Period_0_125_S = 0,			// 0.125s ÖÜÆÚ
-	Period_0_25_S,				// 0.25s ÖÜÆÚ
-	Period_0_5_S,				// 0.5s ÖÜÆÚ
-	Period_1_S,					// 1s ÖÜÆÚ
-	Period_2_S,					// 2s ÖÜÆÚ
-	Period_4_S,					// 4s ÖÜÆÚ
-	Period_8_S,					// 8s ÖÜÆÚ
-	Period_16_S,				// 16s ÖÜÆÚ
-}RTC_TMRCycTypeDef;	 
-	 
+    Period_0_125_S = 0,         // 0.125s å‘¨æœŸ
+    Period_0_25_S,              // 0.25s å‘¨æœŸ
+    Period_0_5_S,               // 0.5s å‘¨æœŸ
+    Period_1_S,                 // 1s å‘¨æœŸ
+    Period_2_S,                 // 2s å‘¨æœŸ
+    Period_4_S,                 // 4s å‘¨æœŸ
+    Period_8_S,                 // 8s å‘¨æœŸ
+    Period_16_S,                // 16s å‘¨æœŸ
+}RTC_TMRCycTypeDef;
+
 
 /**
   * @brief  rtc interrupt event define
   */
 typedef enum
 {
-	RTC_TRIG_EVENT = 0,			// RTC ´¥·¢ÊÂ¼ş
-	RTC_TMR_EVENT,				// RTC ÖÜÆÚ¶¨Ê±ÊÂ¼ş
+    RTC_TRIG_EVENT = 0,         // RTC è§¦å‘äº‹ä»¶
+    RTC_TMR_EVENT,              // RTC å‘¨æœŸå®šæ—¶äº‹ä»¶
 
-}RTC_EVENTTypeDef;	 
+}RTC_EVENTTypeDef;
 
 /**
   * @brief  rtc interrupt event define
   */
 typedef enum
 {
-	RTC_TRIG_MODE = 0,			// RTC ´¥·¢Ä£Ê½
-	RTC_TMR_MODE,				// RTC ÖÜÆÚ¶¨Ê±Ä£Ê½
+    RTC_TRIG_MODE = 0,          // RTC è§¦å‘æ¨¡å¼
+    RTC_TMR_MODE,               // RTC å‘¨æœŸå®šæ—¶æ¨¡å¼
 
 }RTC_MODETypeDef;
 
 
-void SystemInit(void);							/* ÏµÍ³Ê±ÖÓ³õÊ¼»¯ */	 
-void SetSysClock( SYS_CLKTypeDef sc);			/* ÖØÉèÏµÍ³ÔËĞĞÊ±ÖÓ */
-UINT32 GetSysClock( void );						/* »ñÈ¡µ±Ç°ÏµÍ³Ê±ÖÓ */	
-void HClk32M_Select( HClk32MTypeDef hc);		/* 32M ¸ßÆµÊ±ÖÓÀ´Ô´ */
-void LClk32K_Select( LClk32KTypeDef hc);		/* 32K µÍÆµÊ±ÖÓÀ´Ô´ */
+void SystemInit(void);                          /* ç³»ç»Ÿæ—¶é’Ÿåˆå§‹åŒ– */
+void SetSysClock( SYS_CLKTypeDef sc);           /* é‡è®¾ç³»ç»Ÿè¿è¡Œæ—¶é’Ÿ */
+UINT32 GetSysClock( void );                     /* è·å–å½“å‰ç³»ç»Ÿæ—¶é’Ÿ */
+void HClk32M_Select( HClk32MTypeDef hc);        /* 32M é«˜é¢‘æ—¶é’Ÿæ¥æº */
+void LClk32K_Select( LClk32KTypeDef hc);        /* 32K ä½é¢‘æ—¶é’Ÿæ¥æº */
 
-void HSECFG_Current( HSECurrentTypeDef c );     /* HSE¾§Ìå Æ«ÖÃµçÁ÷ÅäÖÃ */
-void HSECFG_Capacitance( HSECapTypeDef c );     /* HSE¾§Ìå ¸ºÔØµçÈİÅäÖÃ */
-void LSECFG_Current( LSECurrentTypeDef c );     /* LSE¾§Ìå Æ«ÖÃµçÁ÷ÅäÖÃ */
-void LSECFG_Capacitance( LSECapTypeDef c );     /* LSE¾§Ìå ¸ºÔØµçÈİÅäÖÃ */
+void HSECFG_Current( HSECurrentTypeDef c );     /* HSEæ™¶ä½“ åç½®ç”µæµé…ç½® */
+void HSECFG_Capacitance( HSECapTypeDef c );     /* HSEæ™¶ä½“ è´Ÿè½½ç”µå®¹é…ç½® */
+void LSECFG_Current( LSECurrentTypeDef c );     /* LSEæ™¶ä½“ åç½®ç”µæµé…ç½® */
+void LSECFG_Capacitance( LSECapTypeDef c );     /* LSEæ™¶ä½“ è´Ÿè½½ç”µå®¹é…ç½® */
 
-UINT16 Calibration_LSI( void );				/* Íâ²¿32MÊ±ÖÓĞ£×¼ÄÚ²¿32KÊ±ÖÓ */
+UINT16 Calibration_LSI( void );             /* å¤–éƒ¨32Mæ—¶é’Ÿæ ¡å‡†å†…éƒ¨32Kæ—¶é’Ÿ */
 
-	 
-void RTC_InitTime( UINT16 y, UINT16 mon, UINT16 d, UINT16 h, UINT16 m, UINT16 s );			/* RTCÊ±ÖÓ³õÊ¼»¯µ±Ç°Ê±¼ä */
-void RTC_GetTime( PUINT16 py, PUINT16 pmon, PUINT16 pd, PUINT16 ph, PUINT16 pm, PUINT16 ps );		/* »ñÈ¡µ±Ç°Ê±¼ä */
-	 
-void RTC_SetCycle32k( UINT32 cyc );							/* »ùÓÚLSE/LSIÊ±ÖÓ£¬ÅäÖÃµ±Ç°RTC ÖÜÆÚÊı */	 
-UINT32 RTC_GetCycle32k( void );				                /* »ùÓÚLSE/LSIÊ±ÖÓ£¬»ñÈ¡µ±Ç°RTC ÖÜÆÚÊı */
 
-void RTC_TRIGFunCfg( UINT32 cyc );							/* RTC´¥·¢Ä£Ê½ÅäÖÃ¼ä¸ôÊ±¼ä,»ùÓÚLSE/LSIÊ±ÖÓ£¬Æ¥ÅäÖÜÆÚÊı */
-void RTC_TMRFunCfg( RTC_TMRCycTypeDef t );					/* RTC¶¨Ê±Ä£Ê½ÅäÖÃ */
-void RTC_ModeFunDisable( RTC_MODETypeDef m );               /* RTC Ä£Ê½¹¦ÄÜ¹Ø±Õ */
+void RTC_InitTime( UINT16 y, UINT16 mon, UINT16 d, UINT16 h, UINT16 m, UINT16 s );          /* RTCæ—¶é’Ÿåˆå§‹åŒ–å½“å‰æ—¶é—´ */
+void RTC_GetTime( PUINT16 py, PUINT16 pmon, PUINT16 pd, PUINT16 ph, PUINT16 pm, PUINT16 ps );       /* è·å–å½“å‰æ—¶é—´ */
 
-UINT8 RTC_GetITFlag( RTC_EVENTTypeDef f );					/* »ñÈ¡RTCÖĞ¶Ï±êÖ¾ */	 
-void RTC_ClearITFlag( RTC_EVENTTypeDef f );					/* Çå³ıRTCÖĞ¶Ï±êÖ¾ */ 
+void RTC_SetCycle32k( UINT32 cyc );                         /* åŸºäºLSE/LSIæ—¶é’Ÿï¼Œé…ç½®å½“å‰RTC å‘¨æœŸæ•° */
+UINT32 RTC_GetCycle32k( void );                             /* åŸºäºLSE/LSIæ—¶é’Ÿï¼Œè·å–å½“å‰RTC å‘¨æœŸæ•° */
 
-	 
+void RTC_TRIGFunCfg( UINT32 cyc );                          /* RTCè§¦å‘æ¨¡å¼é…ç½®é—´éš”æ—¶é—´,åŸºäºLSE/LSIæ—¶é’Ÿï¼ŒåŒ¹é…å‘¨æœŸæ•° */
+void RTC_TMRFunCfg( RTC_TMRCycTypeDef t );                  /* RTCå®šæ—¶æ¨¡å¼é…ç½® */
+void RTC_ModeFunDisable( RTC_MODETypeDef m );               /* RTC æ¨¡å¼åŠŸèƒ½å…³é—­ */
 
-	 
+UINT8 RTC_GetITFlag( RTC_EVENTTypeDef f );                  /* è·å–RTCä¸­æ–­æ ‡å¿— */
+void RTC_ClearITFlag( RTC_EVENTTypeDef f );                 /* æ¸…é™¤RTCä¸­æ–­æ ‡å¿— */
+
+
+
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // __CH57x_CLK_H__	
+#endif  // __CH57x_CLK_H__
 

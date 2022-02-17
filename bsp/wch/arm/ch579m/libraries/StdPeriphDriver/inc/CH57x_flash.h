@@ -10,26 +10,26 @@
 
 #include "CH579SFR.h"
 #include "core_cm0.h"
-     
+
 #define ROM_UUID_ADDR        0x40608         // chip UID address ( ID-48bit + CKS-16bit )
 #define ROM_MAC_ADDR         0x40608         // NET MAC address 48bit
 
-// »ñÈ¡Î¨Ò»ID
-void GetUniqueID(PUINT8 buf);                                           /* »ñÈ¡Ğ¾Æ¬Î¨Ò»ID£¬Ğ¡¶ËÄ£Ê½£¬6B-ID£¬ 2B-CKS */    
-     
-// »ñÈ¡ÍøÂçMAC
-void GetMACAddress(PUINT8 buf);                                         /* »ñÈ¡ÍøÂçMAC£¬Ğ¡¶ËÄ£Ê½£¬6B-MAC */   
+// è·å–å”¯ä¸€ID
+void GetUniqueID(PUINT8 buf);                                           /* è·å–èŠ¯ç‰‡å”¯ä¸€IDï¼Œå°ç«¯æ¨¡å¼ï¼Œ6B-IDï¼Œ 2B-CKS */
+
+// è·å–ç½‘ç»œMAC
+void GetMACAddress(PUINT8 buf);                                         /* è·å–ç½‘ç»œMACï¼Œå°ç«¯æ¨¡å¼ï¼Œ6B-MAC */
 
 
-UINT8 FlashBlockErase(UINT32 addr);     
+UINT8 FlashBlockErase(UINT32 addr);
 UINT8 FlashWriteDW(UINT32 addr, UINT32 dat);
-UINT8 FlashWriteBuf(UINT32 addr, PUINT32 pdat, UINT16 len);	 
+UINT8 FlashWriteBuf(UINT32 addr, PUINT32 pdat, UINT16 len);
 
-	 
-	 
+
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // __CH57x_FLASH_H__	
+#endif  // __CH57x_FLASH_H__
 

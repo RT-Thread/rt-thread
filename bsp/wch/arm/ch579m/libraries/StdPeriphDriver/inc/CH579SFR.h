@@ -429,7 +429,7 @@ extern "C" {
 #define  RB_ADC_CH_INX      0x0F                      // RW, ADC input channel index
 #define R8_ADC_CFG          (*((PUINT8V)0x40001059))  // RW, ADC configure
 #define  RB_ADC_POWER_ON    0x01                      // RW, ADC power control: 0=power down, 1=power on
-#define  RB_ADC_BUF_EN      0x02                      // RW, ADC input buffer enable 
+#define  RB_ADC_BUF_EN      0x02                      // RW, ADC input buffer enable
 #define  RB_ADC_DIFF_EN     0x04                      // RW, ADC input channel mode: 0=single-end, 1=differnetial
 #define  RB_ADC_OFS_TEST    0x08                      // RW, enable ADC offset test mode: 0=normal mode, 1=short port4 to test offset
 #define  RB_ADC_PGA_GAIN    0x30                      // RW, set ADC input PGA gain: 00=-12dB, 01=-6dB, 10=0dB, 11=6dB
@@ -1162,7 +1162,7 @@ extern "C" {
 #define  RB_LCD_BIAS        0x04                      // RW, LCD bias select:  0=1/2 bias,  1=1/3 bias
 #define  RB_LCD_DUTY        0x18                      // RW, LCD duty select:  00=1/2 duty,  01=1/3 duty,  10=1/4 duty
 #define  RB_LCD_SCAN_CLK    0x60                      // RW, LCD scan clock select: 00=256Hz, 01=512Hz, 10=1KHz, 11=128Hz
-#define  RB_LCD_V_SEL       0x80                      // RW, LCD drive voltage£º0=VIO33*100%(3.3V),1=VIO33*76%(2.5V)
+#define  RB_LCD_V_SEL       0x80                      // RW, LCD drive voltageï¼š0=VIO33*100%(3.3V),1=VIO33*76%(2.5V)
 
 #define R32_LCD_RAM0        (*((PUINT32V)(0x40006004))) // RW, LCD driver data0, address 0-3
 #define R32_LCD_RAM1        (*((PUINT32V)(0x40006008))) // RW, LCD driver data1, address 4-7
@@ -1286,50 +1286,50 @@ extern "C" {
 /******************************************************************************/
 /*                       ETH  Peripheral memory map                              */
 /******************************************************************************/
-/* ETH addresses         
+/* ETH addresses
 //      ETH:     +9000H - 93FFH                                                    */
 #define ETH_BASE_ADDR           (0x40009000)
 
 /* ETH register */
-#define R8_ETH_EIE              (*((PUINT8V)(0x40009003))) /* ÖÐ¶ÏÊ¹ÄÜ¼Ä´æÆ÷ */
-#define  RB_ETH_EIE_INTIE       0x80                  /* RW ÖÐ¶ÏÊ¹ÄÜ */
-#define  RB_ETH_EIE_RXIE        0x40                  /* RW ½ÓÊÕÍê³ÉÖÐ¶ÏÊ¹ÄÜ */
-#define  RB_ETH_EIE_LINKIE      0x10                  /* RW Link ±ä»¯ÖÐ¶ÏÊ¹ÄÜ */
-#define  RB_ETH_EIE_TXIE        0x08                  /* RW ·¢ËÍÍê³ÉÖÐ¶ÏÊ¹ÄÜ */
-#define  RB_ETH_EIE_R_EN50      0x04                  /* RW TX 50¦¸µç×èµ÷½Ú¡£1£ºÆ¬ÄÚ 50¦¸Á¬½Ó 0£ºÆ¬ÄÚ 50¦¸¶Ï¿ª */
-#define  RB_ETH_EIE_TXERIE      0x02                  /* RW ·¢ËÍ´íÎóÖÐ¶ÏÊ¹ÄÜ */
-#define  RB_ETH_EIE_RXERIE      0x01                  /* RW1 ½ÓÊÕ´íÎó±êÖ¾ */
+#define R8_ETH_EIE              (*((PUINT8V)(0x40009003))) /* ä¸­æ–­ä½¿èƒ½å¯„å­˜å™¨ */
+#define  RB_ETH_EIE_INTIE       0x80                  /* RW ä¸­æ–­ä½¿èƒ½ */
+#define  RB_ETH_EIE_RXIE        0x40                  /* RW æŽ¥æ”¶å®Œæˆä¸­æ–­ä½¿èƒ½ */
+#define  RB_ETH_EIE_LINKIE      0x10                  /* RW Link å˜åŒ–ä¸­æ–­ä½¿èƒ½ */
+#define  RB_ETH_EIE_TXIE        0x08                  /* RW å‘é€å®Œæˆä¸­æ–­ä½¿èƒ½ */
+#define  RB_ETH_EIE_R_EN50      0x04                  /* RW TX 50Î©ç”µé˜»è°ƒèŠ‚ã€‚1ï¼šç‰‡å†… 50Î©è¿žæŽ¥ 0ï¼šç‰‡å†… 50Î©æ–­å¼€ */
+#define  RB_ETH_EIE_TXERIE      0x02                  /* RW å‘é€é”™è¯¯ä¸­æ–­ä½¿èƒ½ */
+#define  RB_ETH_EIE_RXERIE      0x01                  /* RW1 æŽ¥æ”¶é”™è¯¯æ ‡å¿— */
 #define R32_ETH_CON             (*((PUINT32V)(0x40009004)))
-#define R8_ETH_EIR              (*((PUINT8V)(0x40009004))) /* ÖÐ¶Ï±êÖ¾¼Ä´æÆ÷ */ 
-#define  RB_ETH_EIR_RXIF        0x40                  /* RW1 ½ÓÊÕÍê³É±êÖ¾ */
-#define  RB_ETH_EIR_LINKIF      0x10                  /* RW1 Link ±ä»¯±êÖ¾ */
-#define  RB_ETH_EIR_TXIF        0x08                  /* RW1 ·¢ËÍÍê³É±êÖ¾ */
-#define  RB_ETH_EIR_TXERIF      0x02                  /* RW1 ·¢ËÍ´íÎó±êÖ¾ */
-#define  RB_ETH_EIR_RXERIF      0x01 
-#define R8_ETH_ESTAT            (*((PUINT8V)(0x40009005))) /* ×´Ì¬¼Ä´æÆ÷ */
-#define  RB_ETH_ESTAT_INT       0x80                  /* RW1 ÖÐ¶Ï */
-#define  RB_ETH_ESTAT_BUFER     0x40                  /* RW1 Buffer ´íÎó£¬ÀíÂÛÉÏ mcu Ö÷ÆµÌ«µÍ²Å»á·¢Éú */
-#define  RB_ETH_ESTAT_RXCRCER   0x20                  /* RO ½ÓÊÕ crc ³ö´í */
-#define  RB_ETH_ESTAT_RXNIBBLE  0x10                  /* RO ½ÓÊÕ nibble ´íÎó */
-#define  RB_ETH_ESTAT_RXMORE    0x08                  /* RO ½ÓÊÕ³¬¹ý×î´óÊý¾Ý°ü */
-#define  RB_ETH_ESTAT_RXBUSY    0x04                  /* RO ½ÓÊÕ½øÐÐÖÐ */
-#define  RB_ETH_ESTAT_TXABRT    0x02                  /* RO ·¢ËÍ±» mcu ´ò¶Ï */
-#define R8_ETH_ECON2            (*((PUINT8V)(0x40009006))) /* ETH PHYÄ£ÄâÄ£¿é¿ØÖÆ¼Ä´æÆ÷ */
-#define  RB_ETH_ECON2_RX        0x0E                  /* ±ØÐëÐ´Èë011 */
+#define R8_ETH_EIR              (*((PUINT8V)(0x40009004))) /* ä¸­æ–­æ ‡å¿—å¯„å­˜å™¨ */
+#define  RB_ETH_EIR_RXIF        0x40                  /* RW1 æŽ¥æ”¶å®Œæˆæ ‡å¿— */
+#define  RB_ETH_EIR_LINKIF      0x10                  /* RW1 Link å˜åŒ–æ ‡å¿— */
+#define  RB_ETH_EIR_TXIF        0x08                  /* RW1 å‘é€å®Œæˆæ ‡å¿— */
+#define  RB_ETH_EIR_TXERIF      0x02                  /* RW1 å‘é€é”™è¯¯æ ‡å¿— */
+#define  RB_ETH_EIR_RXERIF      0x01
+#define R8_ETH_ESTAT            (*((PUINT8V)(0x40009005))) /* çŠ¶æ€å¯„å­˜å™¨ */
+#define  RB_ETH_ESTAT_INT       0x80                  /* RW1 ä¸­æ–­ */
+#define  RB_ETH_ESTAT_BUFER     0x40                  /* RW1 Buffer é”™è¯¯ï¼Œç†è®ºä¸Š mcu ä¸»é¢‘å¤ªä½Žæ‰ä¼šå‘ç”Ÿ */
+#define  RB_ETH_ESTAT_RXCRCER   0x20                  /* RO æŽ¥æ”¶ crc å‡ºé”™ */
+#define  RB_ETH_ESTAT_RXNIBBLE  0x10                  /* RO æŽ¥æ”¶ nibble é”™è¯¯ */
+#define  RB_ETH_ESTAT_RXMORE    0x08                  /* RO æŽ¥æ”¶è¶…è¿‡æœ€å¤§æ•°æ®åŒ… */
+#define  RB_ETH_ESTAT_RXBUSY    0x04                  /* RO æŽ¥æ”¶è¿›è¡Œä¸­ */
+#define  RB_ETH_ESTAT_TXABRT    0x02                  /* RO å‘é€è¢« mcu æ‰“æ–­ */
+#define R8_ETH_ECON2            (*((PUINT8V)(0x40009006))) /* ETH PHYæ¨¡æ‹Ÿæ¨¡å—æŽ§åˆ¶å¯„å­˜å™¨ */
+#define  RB_ETH_ECON2_RX        0x0E                  /* å¿…é¡»å†™å…¥011 */
 #define  RB_ETH_ECON2_TX        0x01
-#define  RB_ETH_ECON2_MUST      0x06                  /* ±ØÐëÐ´Èë011 */
-#define R8_ETH_ECON1            (*((PUINT8V)(0x40009007))) /* ÊÕ·¢¿ØÖÆ¼Ä´æÆ÷ */
-#define  RB_ETH_ECON1_TXRST     0x80                  /* RW ·¢ËÍÄ£¿é¸´Î» */
-#define  RB_ETH_ECON1_RXRST     0x40                  /* RW ½ÓÊÕÄ£¿é¸´Î» */
-#define  RB_ETH_ECON1_TXRTS     0x08                  /* RW ·¢ËÍ¿ªÊ¼£¬·¢ËÍÍê³Éºó×Ô¶¯ÇåÁã£¬ÈçÖ÷¶¯ÇåÁã»áÊ¹·¢ËÍ´íÎó±êÖ¾TXERIFºÍTXABRT±ä1 */
-#define  RB_ETH_ECON1_RXEN      0x04                  /* RW ½ÓÊÕÊ¹ÄÜ£¬ÇåÁãÊ±ÈçÕýÔÚ½ÓÊÜÔò´íÎó±êÖ¾RXERIF±ä1 */
+#define  RB_ETH_ECON2_MUST      0x06                  /* å¿…é¡»å†™å…¥011 */
+#define R8_ETH_ECON1            (*((PUINT8V)(0x40009007))) /* æ”¶å‘æŽ§åˆ¶å¯„å­˜å™¨ */
+#define  RB_ETH_ECON1_TXRST     0x80                  /* RW å‘é€æ¨¡å—å¤ä½ */
+#define  RB_ETH_ECON1_RXRST     0x40                  /* RW æŽ¥æ”¶æ¨¡å—å¤ä½ */
+#define  RB_ETH_ECON1_TXRTS     0x08                  /* RW å‘é€å¼€å§‹ï¼Œå‘é€å®ŒæˆåŽè‡ªåŠ¨æ¸…é›¶ï¼Œå¦‚ä¸»åŠ¨æ¸…é›¶ä¼šä½¿å‘é€é”™è¯¯æ ‡å¿—TXERIFå’ŒTXABRTå˜1 */
+#define  RB_ETH_ECON1_RXEN      0x04                  /* RW æŽ¥æ”¶ä½¿èƒ½ï¼Œæ¸…é›¶æ—¶å¦‚æ­£åœ¨æŽ¥å—åˆ™é”™è¯¯æ ‡å¿—RXERIFå˜1 */
 
-#define R32_ETH_TX              (*((PUINT32V)(0x40009008))) /* ·¢ËÍ¿ØÖÆ */
-#define R16_ETH_ETXST           (*((PUINT16V)(0x40009008))) /* RW ·¢ËÍ DMA »º³åÇøÆðÊ¼µØÖ· */
-#define R16_ETH_ETXLN           (*((PUINT16V)(0x4000900A))) /* RW ·¢ËÍ³¤¶È */
-#define R32_ETH_RX              (*((PUINT32V)(0x4000900C))) /* ½ÓÊÕ¿ØÖÆ */
-#define R16_ETH_ERXST           (*((PUINT16V)(0x4000900C))) /* RW ½ÓÊÕ DMA »º³åÇøÆðÊ¼µØÖ· */
-#define R16_ETH_ERXLN           (*((PUINT16V)(0x4000900E))) /* RO ½ÓÊÕ³¤¶È */
+#define R32_ETH_TX              (*((PUINT32V)(0x40009008))) /* å‘é€æŽ§åˆ¶ */
+#define R16_ETH_ETXST           (*((PUINT16V)(0x40009008))) /* RW å‘é€ DMA ç¼“å†²åŒºèµ·å§‹åœ°å€ */
+#define R16_ETH_ETXLN           (*((PUINT16V)(0x4000900A))) /* RW å‘é€é•¿åº¦ */
+#define R32_ETH_RX              (*((PUINT32V)(0x4000900C))) /* æŽ¥æ”¶æŽ§åˆ¶ */
+#define R16_ETH_ERXST           (*((PUINT16V)(0x4000900C))) /* RW æŽ¥æ”¶ DMA ç¼“å†²åŒºèµ·å§‹åœ°å€ */
+#define R16_ETH_ERXLN           (*((PUINT16V)(0x4000900E))) /* RO æŽ¥æ”¶é•¿åº¦ */
 
 #define R32_ETH_HTL             (*((PUINT32V)(0x40009010)))
 #define R8_ETH_EHT0             (*((PUINT8V)(0x40009010))) /* RW Hash Table Byte0 */
@@ -1343,40 +1343,40 @@ extern "C" {
 #define R8_ETH_EHT7             (*((PUINT8V)(0x40009017))) /* RW Hash Table Byte7 */
 
 #define R32_ETH_MACON           (*((PUINT32V)(0x40009018)))
-#define R8_ETH_ERXFCON          (*((PUINT8V)(0x40009018))) /* ½ÓÊÕ°ü¹ýÂË¿ØÖÆ¼Ä´æÆ÷ */
-#define  RB_ETH_ERXFCON_UCEN    0x80                  /* RW 0=²»ÆôÓÃ¸Ã¹ýÂËÌõ¼þ£¬1=µ±ANDOR=1£¬Ä¿±êµØÖ·²»Æ¥Åä½«±»¹ýÂË£¬µ±ANDOR=0£¬Ä¿±êµØÖ·Æ¥Åä½«±»½ÓÊÕ */
-#define  RB_ETH_ERXFCON_ANDOR   0x40                  /* RW 1=AND£¬ËùÓÐ¹ýÂËÌõ¼þ¶¼Âú×ã°ü²Å±»½ÓÊÕ 0=OR£¬ÈÎÒ»¹ýÂËÌõ¼þÂú×ã°ü¾ù±»½ÓÊÕ */
-#define  RB_ETH_ERXFCON_CRCEN   0x20                  /* RW 0=²»ÆôÓÃ¸Ã¹ýÂËÌõ¼þ£¬1=µ±ANDOR=1£¬CRCÐ£Ñé´í½«±»¹ýÂË£¬µ±ANDOR=0£¬CRCÐ£ÑéÕýÈ·½«±»½ÓÊÕ */
-#define  RB_ETH_ERXFCON_MPEN    0x08                  /* RW 0=²»ÆôÓÃ¸Ã¹ýÂËÌõ¼þ£¬1=µ±ANDOR=1£¬·ÇÄ§·¨°ü½«±»¹ýÂË£¬µ±ANDOR=0£¬Ä§·¨°ü½«±»½ÓÊÕ */
-#define  RB_ETH_ERXFCON_HTEN    0x04                  /* RW 0=²»ÆôÓÃ¸Ã¹ýÂËÌõ¼þ£¬1=µ±ANDOR=1£¬hash table²»Æ¥Åä½«±»¹ýÂË£¬µ±ANDOR=0£¬hash tableÆ¥Åä½«±»½ÓÊÕ */
-#define  RB_ETH_ERXFCON_MCEN    0x02                  /* RW 0=²»ÆôÓÃ¸Ã¹ýÂËÌõ¼þ£¬1=µ±ANDOR=1£¬×é²¥°ü²»Æ¥Åä½«±»¹ýÂË£¬µ±ANDOR=0£¬×é²¥°üÆ¥Åä½«±»½ÓÊÕ */
-#define  RB_ETH_ERXFCON_BCEN    0x01                  /* RW 0=²»ÆôÓÃ¸Ã¹ýÂËÌõ¼þ£¬1=µ±ANDOR=1£¬·Ç¹ã²¥°ü½«±»¹ýÂË£¬µ±ANDOR=0£¬¹ã²¥°ü½«±»½ÓÊÕ */
-#define R8_ETH_MACON1           (*((PUINT8V)(0x40009019))) /* Mac ²ãÁ÷¿ØÖÆ¼Ä´æÆ÷ */
-#define  RB_ETH_MACON1_FCEN     0x30                  /* RW µ±FULDPX=0¾ùÎÞÐ§£¬µ±FULDPX=1£¬11=·¢ËÍ0 timerÔÝÍ£Ö¡£¬È»ºóÍ£Ö¹·¢ËÍ£¬10=ÖÜÆÚÐÔ·¢ËÍÔÝÍ£Ö¡£¬01=·¢ËÍÒ»´ÎÔÝÍ£Ö¡£¬È»ºóÍ£Ö¹·¢ËÍ£¬00=Í£Ö¹·¢ËÍÔÝÍ£Ö¡ */
-#define  RB_ETH_MACON1_TXPAUS   0x08                  /* RW ·¢ËÍpauseÖ¡Ê¹ÄÜ */
-#define  RB_ETH_MACON1_RXPAUS   0x04                  /* RW ½ÓÊÕpauseÖ¡Ê¹ÄÜ */
-#define  RB_ETH_MACON1_PASSALL  0x02                  /* RW 1=Ã»±»¹ýÂËµÄ¿ØÖÆÖ¡½«Ð´Èë»º´æ£¬0=¿ØÖÆÖ¡½«±»¹ýÂË */
-#define  RB_ETH_MACON1_MARXEN   0x01                  /* RW MAC²ã½ÓÊÕÊ¹ÄÜ */
-#define R8_ETH_MACON2           (*((PUINT8V)(0x4000901A))) /* Mac ²ã·â°ü¿ØÖÆ¼Ä´æÆ÷ */
-#define  RB_ETH_MACON2_PADCFG   0xE0                  /* RW ¶Ì°üÌî³äÉèÖÃ */
-#define  RB_ETH_MACON2_TXCRCEN  0x10                  /* RW ·¢ËÍÌí¼Ócrc£¬PADCFGÖÐÈçÐèÒªÌí¼Ócrc£¬¸ÃÎ»ÖÃ1 */
-#define  RB_ETH_MACON2_PHDREN   0x08                  /* RW ÌØÊâ4×Ö½Ú²»²ÎÓëcrcÐ£Ñé */
-#define  RB_ETH_MACON2_HFRMEN   0x04                  /* RW ÔÊÐí½ÓÊÕ¾ÞÐÍÖ¡ */
-#define  RB_ETH_MACON2_FULDPX   0x01                  /* RW È«Ë«¹¤ */
-#define R8_ETH_MABBIPG          (*((PUINT8V)(0x4000901B))) /* ×îÐ¡°ü¼ä¼ä¸ô¼Ä´æÆ÷ */
-#define  RB_ETH_MABBIPG_MABBIPG 0x7F                  /* RW ×îÐ¡°ü¼ä¼ä¸ô×Ö½ÚÊý */
+#define R8_ETH_ERXFCON          (*((PUINT8V)(0x40009018))) /* æŽ¥æ”¶åŒ…è¿‡æ»¤æŽ§åˆ¶å¯„å­˜å™¨ */
+#define  RB_ETH_ERXFCON_UCEN    0x80                  /* RW 0=ä¸å¯ç”¨è¯¥è¿‡æ»¤æ¡ä»¶ï¼Œ1=å½“ANDOR=1ï¼Œç›®æ ‡åœ°å€ä¸åŒ¹é…å°†è¢«è¿‡æ»¤ï¼Œå½“ANDOR=0ï¼Œç›®æ ‡åœ°å€åŒ¹é…å°†è¢«æŽ¥æ”¶ */
+#define  RB_ETH_ERXFCON_ANDOR   0x40                  /* RW 1=ANDï¼Œæ‰€æœ‰è¿‡æ»¤æ¡ä»¶éƒ½æ»¡è¶³åŒ…æ‰è¢«æŽ¥æ”¶ 0=ORï¼Œä»»ä¸€è¿‡æ»¤æ¡ä»¶æ»¡è¶³åŒ…å‡è¢«æŽ¥æ”¶ */
+#define  RB_ETH_ERXFCON_CRCEN   0x20                  /* RW 0=ä¸å¯ç”¨è¯¥è¿‡æ»¤æ¡ä»¶ï¼Œ1=å½“ANDOR=1ï¼ŒCRCæ ¡éªŒé”™å°†è¢«è¿‡æ»¤ï¼Œå½“ANDOR=0ï¼ŒCRCæ ¡éªŒæ­£ç¡®å°†è¢«æŽ¥æ”¶ */
+#define  RB_ETH_ERXFCON_MPEN    0x08                  /* RW 0=ä¸å¯ç”¨è¯¥è¿‡æ»¤æ¡ä»¶ï¼Œ1=å½“ANDOR=1ï¼Œéžé­”æ³•åŒ…å°†è¢«è¿‡æ»¤ï¼Œå½“ANDOR=0ï¼Œé­”æ³•åŒ…å°†è¢«æŽ¥æ”¶ */
+#define  RB_ETH_ERXFCON_HTEN    0x04                  /* RW 0=ä¸å¯ç”¨è¯¥è¿‡æ»¤æ¡ä»¶ï¼Œ1=å½“ANDOR=1ï¼Œhash tableä¸åŒ¹é…å°†è¢«è¿‡æ»¤ï¼Œå½“ANDOR=0ï¼Œhash tableåŒ¹é…å°†è¢«æŽ¥æ”¶ */
+#define  RB_ETH_ERXFCON_MCEN    0x02                  /* RW 0=ä¸å¯ç”¨è¯¥è¿‡æ»¤æ¡ä»¶ï¼Œ1=å½“ANDOR=1ï¼Œç»„æ’­åŒ…ä¸åŒ¹é…å°†è¢«è¿‡æ»¤ï¼Œå½“ANDOR=0ï¼Œç»„æ’­åŒ…åŒ¹é…å°†è¢«æŽ¥æ”¶ */
+#define  RB_ETH_ERXFCON_BCEN    0x01                  /* RW 0=ä¸å¯ç”¨è¯¥è¿‡æ»¤æ¡ä»¶ï¼Œ1=å½“ANDOR=1ï¼Œéžå¹¿æ’­åŒ…å°†è¢«è¿‡æ»¤ï¼Œå½“ANDOR=0ï¼Œå¹¿æ’­åŒ…å°†è¢«æŽ¥æ”¶ */
+#define R8_ETH_MACON1           (*((PUINT8V)(0x40009019))) /* Mac å±‚æµæŽ§åˆ¶å¯„å­˜å™¨ */
+#define  RB_ETH_MACON1_FCEN     0x30                  /* RW å½“FULDPX=0å‡æ— æ•ˆï¼Œå½“FULDPX=1ï¼Œ11=å‘é€0 timeræš‚åœå¸§ï¼Œç„¶åŽåœæ­¢å‘é€ï¼Œ10=å‘¨æœŸæ€§å‘é€æš‚åœå¸§ï¼Œ01=å‘é€ä¸€æ¬¡æš‚åœå¸§ï¼Œç„¶åŽåœæ­¢å‘é€ï¼Œ00=åœæ­¢å‘é€æš‚åœå¸§ */
+#define  RB_ETH_MACON1_TXPAUS   0x08                  /* RW å‘é€pauseå¸§ä½¿èƒ½ */
+#define  RB_ETH_MACON1_RXPAUS   0x04                  /* RW æŽ¥æ”¶pauseå¸§ä½¿èƒ½ */
+#define  RB_ETH_MACON1_PASSALL  0x02                  /* RW 1=æ²¡è¢«è¿‡æ»¤çš„æŽ§åˆ¶å¸§å°†å†™å…¥ç¼“å­˜ï¼Œ0=æŽ§åˆ¶å¸§å°†è¢«è¿‡æ»¤ */
+#define  RB_ETH_MACON1_MARXEN   0x01                  /* RW MACå±‚æŽ¥æ”¶ä½¿èƒ½ */
+#define R8_ETH_MACON2           (*((PUINT8V)(0x4000901A))) /* Mac å±‚å°åŒ…æŽ§åˆ¶å¯„å­˜å™¨ */
+#define  RB_ETH_MACON2_PADCFG   0xE0                  /* RW çŸ­åŒ…å¡«å……è®¾ç½® */
+#define  RB_ETH_MACON2_TXCRCEN  0x10                  /* RW å‘é€æ·»åŠ crcï¼ŒPADCFGä¸­å¦‚éœ€è¦æ·»åŠ crcï¼Œè¯¥ä½ç½®1 */
+#define  RB_ETH_MACON2_PHDREN   0x08                  /* RW ç‰¹æ®Š4å­—èŠ‚ä¸å‚ä¸Žcrcæ ¡éªŒ */
+#define  RB_ETH_MACON2_HFRMEN   0x04                  /* RW å…è®¸æŽ¥æ”¶å·¨åž‹å¸§ */
+#define  RB_ETH_MACON2_FULDPX   0x01                  /* RW å…¨åŒå·¥ */
+#define R8_ETH_MABBIPG          (*((PUINT8V)(0x4000901B))) /* æœ€å°åŒ…é—´é—´éš”å¯„å­˜å™¨ */
+#define  RB_ETH_MABBIPG_MABBIPG 0x7F                  /* RW æœ€å°åŒ…é—´é—´éš”å­—èŠ‚æ•° */
 
 #define R32_ETH_TIM             (*((PUINT32V)(0x4000901C)))
-#define R16_ETH_EPAUS           (*((PUINT16V)(0x4000901C))) /* RW Á÷¿ØÖÆÔÝÍ£Ö¡Ê±¼ä¼Ä´æÆ÷ */
-#define R16_ETH_MAMXFL          (*((PUINT16V)(0x4000901E))) /* RW ×î´ó½ÓÊÕ°ü³¤¶È¼Ä´æÆ÷ */
-#define R16_ETH_MIRD            (*((PUINT16V)(0x40009020))) /* RW MII ¶ÁÊý¾Ý¼Ä´æÆ÷ */
+#define R16_ETH_EPAUS           (*((PUINT16V)(0x4000901C))) /* RW æµæŽ§åˆ¶æš‚åœå¸§æ—¶é—´å¯„å­˜å™¨ */
+#define R16_ETH_MAMXFL          (*((PUINT16V)(0x4000901E))) /* RW æœ€å¤§æŽ¥æ”¶åŒ…é•¿åº¦å¯„å­˜å™¨ */
+#define R16_ETH_MIRD            (*((PUINT16V)(0x40009020))) /* RW MII è¯»æ•°æ®å¯„å­˜å™¨ */
 
 #define R32_ETH_MIWR            (*((PUINT32V)(0x40009024)))
-#define R8_ETH_MIREGADR         (*((PUINT8V)(0x40009024))) /* MII µØÖ·¼Ä´æÆ÷ */
-#define  RB_ETH_MIREGADR_MASK   0x1F                  /* RW PHY ¼Ä´æÆ÷µØÖ·ÑÚÂë */    
-#define R8_ETH_MISTAT           (*((PUINT8V)(0x40009025))) /* MII ×´Ì¬¼Ä´æÆ÷ */
-//#define  RB_ETH_MIREGADR_MIIWR  0x20                  /* WO MII Ð´ÃüÁî */
-#define R16_ETH_MIWR            (*((PUINT16V)(0x40009026))) /* WO MII Ð´Êý¾Ý¼Ä´æÆ÷ */
+#define R8_ETH_MIREGADR         (*((PUINT8V)(0x40009024))) /* MII åœ°å€å¯„å­˜å™¨ */
+#define  RB_ETH_MIREGADR_MASK   0x1F                  /* RW PHY å¯„å­˜å™¨åœ°å€æŽ©ç  */
+#define R8_ETH_MISTAT           (*((PUINT8V)(0x40009025))) /* MII çŠ¶æ€å¯„å­˜å™¨ */
+//#define  RB_ETH_MIREGADR_MIIWR  0x20                  /* WO MII å†™å‘½ä»¤ */
+#define R16_ETH_MIWR            (*((PUINT16V)(0x40009026))) /* WO MII å†™æ•°æ®å¯„å­˜å™¨ */
 #define R32_ETH_MAADRL          (*((PUINT32V)(0x40009028))) /* RW MAC 1-4 */
 #define R16_ETH_MAADRH          (*((PUINT16V)(0x4000902C))) /* RW MAC 5-6 */
 
@@ -1397,7 +1397,7 @@ extern "C" {
 /******************************************************************************/
 /*                         Peripheral memory map                              */
 /******************************************************************************/
-/* usb addresses         
+/* usb addresses
 //      USB:     +8000H - 83FFH                                                    */
 #define USB_BASE_ADDR        (0x40008000)
 
@@ -1649,7 +1649,7 @@ extern "C" {
 #define USB_PID_IN              0x09
 #define USB_PID_OUT             0x01
 #define USB_PID_ACK             0x02
-#define USB_PID_NAK							0x0A
+#define USB_PID_NAK                         0x0A
 #define USB_PID_STALL           0x0E
 #define USB_PID_DATA0           0x03
 #define USB_PID_DATA1           0x0B
@@ -1785,7 +1785,7 @@ extern "C" {
 #endif
 
 #ifndef USB_DEVICE_ADDR
-#define USB_DEVICE_ADDR         0x02    /* Ä¬ÈÏµÄUSBÉè±¸µØÖ· */
+#define USB_DEVICE_ADDR         0x02    /* é»˜è®¤çš„USBè®¾å¤‡åœ°å€ */
 #endif
 #ifndef DEFAULT_ENDP0_SIZE
 #define DEFAULT_ENDP0_SIZE      8       /* default maximum packet size for endpoint 0 */
@@ -1794,12 +1794,12 @@ extern "C" {
 #define MAX_PACKET_SIZE         64      /* maximum packet size */
 #endif
 #ifndef USB_BO_CBW_SIZE
-#define USB_BO_CBW_SIZE         0x1F    /* ÃüÁî¿éCBWµÄ×Ü³¤¶È */
-#define USB_BO_CSW_SIZE         0x0D    /* ÃüÁî×´Ì¬¿éCSWµÄ×Ü³¤¶È */
+#define USB_BO_CBW_SIZE         0x1F    /* å‘½ä»¤å—CBWçš„æ€»é•¿åº¦ */
+#define USB_BO_CSW_SIZE         0x0D    /* å‘½ä»¤çŠ¶æ€å—CSWçš„æ€»é•¿åº¦ */
 #endif
 #ifndef USB_BO_CBW_SIG
-#define USB_BO_CBW_SIG          0x43425355    /* ÃüÁî¿éCBWÊ¶±ð±êÖ¾'USBC' */
-#define USB_BO_CSW_SIG          0x53425355    /* ÃüÁî×´Ì¬¿éCSWÊ¶±ð±êÖ¾'USBS' */
+#define USB_BO_CBW_SIG          0x43425355    /* å‘½ä»¤å—CBWè¯†åˆ«æ ‡å¿—'USBC' */
+#define USB_BO_CSW_SIG          0x53425355    /* å‘½ä»¤çŠ¶æ€å—CSWè¯†åˆ«æ ‡å¿—'USBS' */
 #endif
 
 //#define __PACKED

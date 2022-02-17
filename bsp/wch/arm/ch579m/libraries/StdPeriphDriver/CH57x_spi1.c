@@ -3,7 +3,7 @@
 * Author             : WCH
 * Version            : V1.0
 * Date               : 2019/4/29
-* Description 
+* Description
 *******************************************************************************/
 
 #include "CH57x_common.h"
@@ -11,39 +11,39 @@
 
 /*******************************************************************************
 * Function Name  : SPI1_MasterDefInit
-* Description    : Ö÷»úÄ£Ê½Ä¬ÈÏ³õÊ¼»¯£ºÄ£Ê½0+3ÏßÈ«Ë«¹¤+8MHz
-* Input          : None			   				
+* Description    : ä¸»æœºæ¨¡å¼é»˜è®¤åˆå§‹åŒ–ï¼šæ¨¡å¼0+3çº¿å…¨åŒå·¥+8MHz
+* Input          : None
 * Return         : None
 *******************************************************************************/
 void SPI1_MasterDefInit( void )
 {
-    R8_SPI1_CLOCK_DIV = 4;		// Ö÷ÆµÊ±ÖÓ4·ÖÆµ
+    R8_SPI1_CLOCK_DIV = 4;      // ä¸»é¢‘æ—¶é’Ÿ4åˆ†é¢‘
     R8_SPI1_CTRL_MOD = RB_SPI_ALL_CLEAR;
     R8_SPI1_CTRL_MOD = RB_SPI_MOSI_OE | RB_SPI_SCK_OE ;
-    R8_SPI1_CTRL_CFG |= RB_SPI_AUTO_IF;		   // ·ÃÎÊBUFFER/FIFO×Ô¶¯Çå³ıIF_BYTE_END±êÖ¾
-    R8_SPI1_CTRL_CFG &= ~RB_SPI_DMA_ENABLE;    // ²»Æô¶¯DMA·½Ê½ 
+    R8_SPI1_CTRL_CFG |= RB_SPI_AUTO_IF;        // è®¿é—®BUFFER/FIFOè‡ªåŠ¨æ¸…é™¤IF_BYTE_ENDæ ‡å¿—
+    R8_SPI1_CTRL_CFG &= ~RB_SPI_DMA_ENABLE;    // ä¸å¯åŠ¨DMAæ–¹å¼
 }
 
 /*******************************************************************************
 * Function Name  : SPI1_CLKCfg
-* Description    : SPI1 »ù×¼Ê±ÖÓÅäÖÃ£¬= d*Tsys
-* Input          : c: Ê±ÖÓ·ÖÆµÏµÊı			   				
+* Description    : SPI1 åŸºå‡†æ—¶é’Ÿé…ç½®ï¼Œ= d*Tsys
+* Input          : c: æ—¶é’Ÿåˆ†é¢‘ç³»æ•°
 * Return         : None
 *******************************************************************************/
 void SPI1_CLKCfg( UINT8 c )
 {
     if(c==2)
         R8_SPI1_CTRL_CFG |= RB_SPI_MST_DLY_EN;
-    else 
+    else
         R8_SPI1_CTRL_CFG &= ~RB_SPI_MST_DLY_EN;
     R8_SPI1_CLOCK_DIV = c;
 }
 
 /*******************************************************************************
 * Function Name  : SPI1_DataMode
-* Description    : ÉèÖÃÊı¾İÁ÷Ä£Ê½
-* Input          : m: Êı¾İÁ÷Ä£Ê½
-					refer to ModeBitOrderTypeDef
+* Description    : è®¾ç½®æ•°æ®æµæ¨¡å¼
+* Input          : m: æ•°æ®æµæ¨¡å¼
+                    refer to ModeBitOrderTypeDef
 * Return         : None
 *******************************************************************************/
 void SPI1_DataMode( ModeBitOrderTypeDef m )
@@ -73,27 +73,27 @@ void SPI1_DataMode( ModeBitOrderTypeDef m )
 
 /*******************************************************************************
 * Function Name  : SPI1_MasterSendByte
-* Description    : ·¢ËÍµ¥×Ö½Ú (buffer)
-* Input          : d: ·¢ËÍ×Ö½Ú
+* Description    : å‘é€å•å­—èŠ‚ (buffer)
+* Input          : d: å‘é€å­—èŠ‚
 * Return         : None
 *******************************************************************************/
 void SPI1_MasterSendByte( UINT8 d )
 {
     R8_SPI1_CTRL_MOD &= ~RB_SPI_FIFO_DIR;
     R8_SPI1_BUFFER = d;
-    while( !(R8_SPI1_INT_FLAG & RB_SPI_FREE) );	
+    while( !(R8_SPI1_INT_FLAG & RB_SPI_FREE) );
 }
 
 /*******************************************************************************
 * Function Name  : SPI1_MasterRecvByte
-* Description    : ½ÓÊÕµ¥×Ö½Ú (buffer)
+* Description    : æ¥æ”¶å•å­—èŠ‚ (buffer)
 * Input          : None
-* Return         : ½ÓÊÕµ½µÄ×Ö½Ú
+* Return         : æ¥æ”¶åˆ°çš„å­—èŠ‚
 *******************************************************************************/
 UINT8 SPI1_MasterRecvByte( void )
 {
     R8_SPI1_CTRL_MOD &= ~RB_SPI_FIFO_DIR;
-    R8_SPI1_BUFFER = 0xFF;           // Æô¶¯´«Êä
+    R8_SPI1_BUFFER = 0xFF;           // å¯åŠ¨ä¼ è¾“
     while( !(R8_SPI1_INT_FLAG & RB_SPI_FREE) );
     return ( R8_SPI1_BUFFER );
 }
@@ -101,9 +101,9 @@ UINT8 SPI1_MasterRecvByte( void )
 
 /*******************************************************************************
 * Function Name  : SPI1_MasterTrans
-* Description    : Ê¹ÓÃFIFOÁ¬Ğø·¢ËÍ¶à×Ö½Ú
-* Input          : pbuf: ´ı·¢ËÍµÄÊı¾İÄÚÈİÊ×µØÖ·
-                   len: ÇëÇó·¢ËÍµÄÊı¾İ³¤¶È£¬×î´ó4095				   
+* Description    : ä½¿ç”¨FIFOè¿ç»­å‘é€å¤šå­—èŠ‚
+* Input          : pbuf: å¾…å‘é€çš„æ•°æ®å†…å®¹é¦–åœ°å€
+                   len: è¯·æ±‚å‘é€çš„æ•°æ®é•¿åº¦ï¼Œæœ€å¤§4095
 * Return         : None
 *******************************************************************************/
 void SPI1_MasterTrans( UINT8 *pbuf, UINT16 len )
@@ -111,26 +111,26 @@ void SPI1_MasterTrans( UINT8 *pbuf, UINT16 len )
     UINT16 sendlen;
 
     sendlen = len;
-    R8_SPI1_CTRL_MOD &= ~RB_SPI_FIFO_DIR;                     // ÉèÖÃÊı¾İ·½ÏòÎªÊä³ö 
-    R16_SPI1_TOTAL_CNT = sendlen;                             // ÉèÖÃÒª·¢ËÍµÄÊı¾İ³¤¶È	
+    R8_SPI1_CTRL_MOD &= ~RB_SPI_FIFO_DIR;                     // è®¾ç½®æ•°æ®æ–¹å‘ä¸ºè¾“å‡º
+    R16_SPI1_TOTAL_CNT = sendlen;                             // è®¾ç½®è¦å‘é€çš„æ•°æ®é•¿åº¦
     R8_SPI1_INT_FLAG = RB_SPI_IF_CNT_END;
     while( sendlen )
-    {                                         
+    {
         if( R8_SPI1_FIFO_COUNT < SPI_FIFO_SIZE )
-        {                              
+        {
             R8_SPI1_FIFO = *pbuf;
             pbuf++;
             sendlen--;
         }
     }
-    while( R8_SPI1_FIFO_COUNT != 0 );                         // µÈ´ıFIFOÖĞµÄÊı¾İÈ«²¿·¢ËÍÍê³É 
+    while( R8_SPI1_FIFO_COUNT != 0 );                         // ç­‰å¾…FIFOä¸­çš„æ•°æ®å…¨éƒ¨å‘é€å®Œæˆ
 }
 
 /*******************************************************************************
 * Function Name  : SPI1_MasterRecv
-* Description    : Ê¹ÓÃFIFOÁ¬Ğø½ÓÊÕ¶à×Ö½Ú
-* Input          : pbuf: ´ı·¢ËÍµÄÊı¾İÄÚÈİÊ×µØÖ·
-                   len: ÇëÇó·¢ËÍµÄÊı¾İ³¤¶È£¬×î´ó4095
+* Description    : ä½¿ç”¨FIFOè¿ç»­æ¥æ”¶å¤šå­—èŠ‚
+* Input          : pbuf: å¾…å‘é€çš„æ•°æ®å†…å®¹é¦–åœ°å€
+                   len: è¯·æ±‚å‘é€çš„æ•°æ®é•¿åº¦ï¼Œæœ€å¤§4095
 * Return         : None
 *******************************************************************************/
 void SPI1_MasterRecv( UINT8 *pbuf, UINT16 len )
@@ -138,14 +138,14 @@ void SPI1_MasterRecv( UINT8 *pbuf, UINT16 len )
     UINT16  readlen;
 
     readlen = len;
-    R8_SPI1_CTRL_MOD |= RB_SPI_FIFO_DIR;                     // ÉèÖÃÊı¾İ·½ÏòÎªÊäÈë 
-    R16_SPI1_TOTAL_CNT = len;                                // ÉèÖÃĞèÒª½ÓÊÕµÄÊı¾İ³¤¶È£¬FIFO·½ÏòÎªÊäÈë³¤¶È²»Îª0Ôò»áÆô¶¯´«Êä */
+    R8_SPI1_CTRL_MOD |= RB_SPI_FIFO_DIR;                     // è®¾ç½®æ•°æ®æ–¹å‘ä¸ºè¾“å…¥
+    R16_SPI1_TOTAL_CNT = len;                                // è®¾ç½®éœ€è¦æ¥æ”¶çš„æ•°æ®é•¿åº¦ï¼ŒFIFOæ–¹å‘ä¸ºè¾“å…¥é•¿åº¦ä¸ä¸º0åˆ™ä¼šå¯åŠ¨ä¼ è¾“ */
     R8_SPI1_INT_FLAG = RB_SPI_IF_CNT_END;
     while( readlen )
-    {                                                          
+    {
         if( R8_SPI1_FIFO_COUNT )
-        {                                               
-            *pbuf = R8_SPI1_FIFO;                                             
+        {
+            *pbuf = R8_SPI1_FIFO;
             pbuf++;
             readlen--;
         }

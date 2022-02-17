@@ -3,7 +3,7 @@
 * Author             : WCH
 * Version            : V1.0
 * Date               : 2018/12/15
-* Description 
+* Description
 *******************************************************************************/
 
 #include "CH57x_common.h"
@@ -11,39 +11,39 @@
 
 /*******************************************************************************
 * Function Name  : TMR1_TimerInit
-* Description    : ¶¨Ê±¹¦ÄÜ³õÊ¼»¯
-* Input          : t: ¶¨Ê±Ê±¼ä£¬»ùÓÚµ±Ç°ÏµÍ³Ê±ÖÓTsys, ×î³¤¶¨Ê±ÖÜÆÚ 67108864
-					
+* Description    : å®šæ—¶åŠŸèƒ½åˆå§‹åŒ–
+* Input          : t: å®šæ—¶æ—¶é—´ï¼ŒåŸºäºå½“å‰ç³»ç»Ÿæ—¶é’ŸTsys, æœ€é•¿å®šæ—¶å‘¨æœŸ 67108864
+
 * Return         : None
 *******************************************************************************/
 void TMR1_TimerInit( UINT32 t )
-{	
+{
     R32_TMR1_CNT_END = t;
-    R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;	
+    R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;
     R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN;
 }
 
 /*******************************************************************************
 * Function Name  : TMR1_EXTSingleCounterInit
-* Description    : Íâ²¿ĞÅºÅ¼ÆÊı¹¦ÄÜ³õÊ¼»¯
-* Input          : c: Íâ²¿ËÍÈëĞÅºÅÂö³å¼ÆÊı, ×î³¤¼ÆÊı 67108864	   		
+* Description    : å¤–éƒ¨ä¿¡å·è®¡æ•°åŠŸèƒ½åˆå§‹åŒ–
+* Input          : c: å¤–éƒ¨é€å…¥ä¿¡å·è„‰å†²è®¡æ•°, æœ€é•¿è®¡æ•° 67108864
 * Return         : None
 *******************************************************************************/
 void TMR1_EXTSingleCounterInit( UINT32 c )
-{	
+{
     R32_TMR1_CNT_END = c;
-    R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;	
+    R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;
     R8_TMR1_CTRL_MOD = RB_TMR_CAP_COUNT|RB_TMR_MODE_IN|RB_TMR_COUNT_EN;
 }
 
 /*******************************************************************************
 * Function Name  : TMR1_CountInit
-* Description    : ±ßÑØ¼ÆÊı¹¦ÄÜ³õÊ¼»¯
-* Input          : cap: ²É¼¯¼ÆÊıÀàĞÍ
-                    CAP_NULL - ²»¼ÆÊı
-                    Edge_To_Edge - ¼ÆÊıÈÎÒâ±ßÑØ
-                    FallEdge_To_FallEdge - ¼ÆÊıÏÂ½µÑØ
-					RiseEdge_To_RiseEdge - ¼ÆÊıÉÏÉıÑØ
+* Description    : è¾¹æ²¿è®¡æ•°åŠŸèƒ½åˆå§‹åŒ–
+* Input          : cap: é‡‡é›†è®¡æ•°ç±»å‹
+                    CAP_NULL - ä¸è®¡æ•°
+                    Edge_To_Edge - è®¡æ•°ä»»æ„è¾¹æ²¿
+                    FallEdge_To_FallEdge - è®¡æ•°ä¸‹é™æ²¿
+                    RiseEdge_To_RiseEdge - è®¡æ•°ä¸Šå‡æ²¿
 * Return         : None
 *******************************************************************************/
 void TMR1_CountInit( CapModeTypeDef cap )
@@ -52,16 +52,16 @@ void TMR1_CountInit( CapModeTypeDef cap )
     R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN      \
                       |RB_TMR_CAP_COUNT     \
                       |RB_TMR_MODE_IN       \
-                      |(cap<<6);    
+                      |(cap<<6);
 }
 
 /*******************************************************************************
 * Function Name  : TMR1_PWMInit
-* Description    : PWM Êä³ö³õÊ¼»¯
-* Input          : pr:  select wave polar 	
-					refer to PWMX_PolarTypeDef	
-				   ts:	set pwm repeat times
-					refer to PWM_RepeatTsTypeDef					
+* Description    : PWM è¾“å‡ºåˆå§‹åŒ–
+* Input          : pr:  select wave polar
+                    refer to PWMX_PolarTypeDef
+                   ts:  set pwm repeat times
+                    refer to PWM_RepeatTsTypeDef
 * Return         : None
 *******************************************************************************/
 void TMR1_PWMInit( PWMX_PolarTypeDef pr, PWM_RepeatTsTypeDef ts )
@@ -76,9 +76,9 @@ void TMR1_PWMInit( PWMX_PolarTypeDef pr, PWM_RepeatTsTypeDef ts )
 
 /*******************************************************************************
 * Function Name  : TMR1_CapInit
-* Description    : Íâ²¿ĞÅºÅ²¶×½¹¦ÄÜ³õÊ¼»¯
-* Input          : cap:  select capture mode 	
-					refer to CapModeTypeDef						
+* Description    : å¤–éƒ¨ä¿¡å·æ•æ‰åŠŸèƒ½åˆå§‹åŒ–
+* Input          : cap:  select capture mode
+                    refer to CapModeTypeDef
 * Return         : None
 *******************************************************************************/
 void TMR1_CapInit( CapModeTypeDef cap )
@@ -86,18 +86,18 @@ void TMR1_CapInit( CapModeTypeDef cap )
         R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;
         R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN      \
                             |RB_TMR_MODE_IN     \
-                            |(cap<<6);	
+                            |(cap<<6);
 }
 
 /*******************************************************************************
 * Function Name  : TMR1_DMACfg
-* Description    : ÅäÖÃDMA¹¦ÄÜ
-* Input          : s:  
-                    ENABLE  - ´ò¿ª   
-                    DISABLE - ¹Ø±Õ	
-                   startAddr£º DMA ÆğÊ¼µØÖ·
-                   endAddr£º DMA½áÊøµØÖ·
-                   m£ºÅäÖÃDMAÄ£Ê½
+* Description    : é…ç½®DMAåŠŸèƒ½
+* Input          : s:
+                    ENABLE  - æ‰“å¼€
+                    DISABLE - å…³é—­
+                   startAddrï¼š DMA èµ·å§‹åœ°å€
+                   endAddrï¼š DMAç»“æŸåœ°å€
+                   mï¼šé…ç½®DMAæ¨¡å¼
 * Return         : None
 *******************************************************************************/
 void TMR1_DMACfg( UINT8 s, UINT16 startAddr, UINT16 endAddr, DMAModeTypeDef m )
@@ -105,7 +105,7 @@ void TMR1_DMACfg( UINT8 s, UINT16 startAddr, UINT16 endAddr, DMAModeTypeDef m )
         if(s == DISABLE){
             R8_TMR1_CTRL_DMA = 0;
         }
-        else{            
+        else{
             R16_TMR1_DMA_BEG = startAddr;
             R16_TMR1_DMA_END = endAddr;
             if(m)   R8_TMR1_CTRL_DMA = RB_TMR_DMA_LOOP|RB_TMR_DMA_ENABLE;

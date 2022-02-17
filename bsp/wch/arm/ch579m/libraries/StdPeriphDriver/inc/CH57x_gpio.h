@@ -11,8 +11,8 @@
 #include "CH579SFR.h"
 #include "core_cm0.h"
 
-/** 
-  * @brief	GPIO_pins_define
+/**
+  * @brief  GPIO_pins_define
   */
 #define GPIO_Pin_0                 (0x00000001)  /*!< Pin 0 selected */
 #define GPIO_Pin_1                 (0x00000002)  /*!< Pin 1 selected */
@@ -38,18 +38,18 @@
 #define GPIO_Pin_21                (0x00200000)  /*!< Pin 21 selected */
 #define GPIO_Pin_22                (0x00400000)  /*!< Pin 22 selected */
 #define GPIO_Pin_23                (0x00800000)  /*!< Pin 23 selected */
-#define GPIO_Pin_All               (0xFFFFFFFF)  /*!< All pins selected */	 
-	 
+#define GPIO_Pin_All               (0xFFFFFFFF)  /*!< All pins selected */
+
 /**
   * @brief  Configuration GPIO Mode
   */
 typedef enum
 {
-    GPIO_ModeIN_Floating,			//¸¡¿ÕÊäÈë
-    GPIO_ModeIN_PU,					//ÉÏÀ­ÊäÈë
-    GPIO_ModeIN_PD,					//ÏÂÀ­ÊäÈë
-    GPIO_ModeOut_PP_5mA,			//ÍÆÍìÊä³ö×î´ó5mA
-    GPIO_ModeOut_PP_20mA,			//ÍÆÍìÊä³ö×î´ó20mA
+    GPIO_ModeIN_Floating,           //æµ®ç©ºè¾“å…¥
+    GPIO_ModeIN_PU,                 //ä¸Šæ‹‰è¾“å…¥
+    GPIO_ModeIN_PD,                 //ä¸‹æ‹‰è¾“å…¥
+    GPIO_ModeOut_PP_5mA,            //æŽ¨æŒ½è¾“å‡ºæœ€å¤§5mA
+    GPIO_ModeOut_PP_20mA,           //æŽ¨æŒ½è¾“å‡ºæœ€å¤§20mA
 
 }GPIOModeTypeDef;
 
@@ -58,45 +58,45 @@ typedef enum
   */
 typedef enum
 {
-    GPIO_ITMode_LowLevel,			//µÍµçÆ½´¥·¢
-    GPIO_ITMode_HighLevel,			//¸ßµçÆ½´¥·¢
-    GPIO_ITMode_FallEdge,			//ÏÂ½µÑØ´¥·¢
-    GPIO_ITMode_RiseEdge,			//ÉÏÉýÑØ´¥·¢
+    GPIO_ITMode_LowLevel,           //ä½Žç”µå¹³è§¦å‘
+    GPIO_ITMode_HighLevel,          //é«˜ç”µå¹³è§¦å‘
+    GPIO_ITMode_FallEdge,           //ä¸‹é™æ²¿è§¦å‘
+    GPIO_ITMode_RiseEdge,           //ä¸Šå‡æ²¿è§¦å‘
 
 }GPIOITModeTpDef;
 
 
 
-		
-void GPIOA_ModeCfg( UINT32 pin, GPIOModeTypeDef mode );				/* GPIOA¶Ë¿ÚÒý½ÅÄ£Ê½ÅäÖÃ */
-void GPIOB_ModeCfg( UINT32 pin, GPIOModeTypeDef mode );				/* GPIOB¶Ë¿ÚÒý½ÅÄ£Ê½ÅäÖÃ */
-#define	GPIOA_ResetBits( pin )			(R32_PA_CLR |= pin)			/* GPIOA¶Ë¿ÚÒý½ÅÊä³öÖÃµÍ */
-#define	GPIOA_SetBits( pin )			(R32_PA_OUT |= pin)			/* GPIOA¶Ë¿ÚÒý½ÅÊä³öÖÃ¸ß */
-#define	GPIOB_ResetBits( pin )			(R32_PB_CLR |= pin)			/* GPIOB¶Ë¿ÚÒý½ÅÊä³öÖÃµÍ */
-#define	GPIOB_SetBits( pin )			(R32_PB_OUT |= pin)			/* GPIOB¶Ë¿ÚÒý½ÅÊä³öÖÃ¸ß */	 
-#define	GPIOA_InverseBits( pin )		(R32_PA_OUT ^= pin)			/* GPIOA¶Ë¿ÚÒý½ÅÊä³öµçÆ½·­×ª */
-#define	GPIOB_InverseBits( pin )		(R32_PB_OUT ^= pin)			/* GPIOB¶Ë¿ÚÒý½ÅÊä³öµçÆ½·­×ª */
-#define	GPIOA_ReadPort()				(R32_PA_PIN)				/* GPIOA¶Ë¿Ú32Î»Êý¾Ý·µ»Ø£¬µÍ16Î»ÓÐÐ§ */
-#define	GPIOB_ReadPort()				(R32_PB_PIN)				/* GPIOB¶Ë¿Ú32Î»Êý¾Ý·µ»Ø£¬µÍ24Î»ÓÐÐ§ */
-#define	GPIOA_ReadPortPin( pin )		(R32_PA_PIN&pin)			/* GPIOA¶Ë¿ÚÒý½Å×´Ì¬£¬0-Òý½ÅµÍµçÆ½£¬(!0)-Òý½Å¸ßµçÆ½ */
-#define	GPIOB_ReadPortPin( pin )		(R32_PB_PIN&pin)			/* GPIOB¶Ë¿ÚÒý½Å×´Ì¬£¬0-Òý½ÅµÍµçÆ½£¬(!0)-Òý½Å¸ßµçÆ½ */
 
-void GPIOA_ITModeCfg( UINT32 pin, GPIOITModeTpDef mode );			/* GPIOAÒý½ÅÖÐ¶ÏÄ£Ê½ÅäÖÃ */
-void GPIOB_ITModeCfg( UINT32 pin, GPIOITModeTpDef mode );			/* GPIOBÒý½ÅÖÐ¶ÏÄ£Ê½ÅäÖÃ */
-#define	GPIOA_ReadITFlagPort()			(R16_PA_INT_IF)				/* ¶ÁÈ¡GPIOA¶Ë¿ÚÖÐ¶Ï±êÖ¾×´Ì¬ */
-#define	GPIOB_ReadITFlagPort()			(R16_PB_INT_IF)				/* ¶ÁÈ¡GPIOB¶Ë¿ÚÖÐ¶Ï±êÖ¾×´Ì¬ */
-#define	GPIOA_ReadITFlagBit( pin )		(R16_PA_INT_IF&pin)		    /* ¶ÁÈ¡GPIOA¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬ */
-#define	GPIOB_ReadITFlagBit( pin )		(R16_PB_INT_IF&pin)		    /* ¶ÁÈ¡GPIOB¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬ */
-#define	GPIOA_ClearITFlagBit( pin )		(R16_PA_INT_IF = pin)		/* Çå³ýGPIOA¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬ */
-#define	GPIOB_ClearITFlagBit( pin )		(R16_PB_INT_IF = pin)		/* Çå³ýGPIOB¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬ */
+void GPIOA_ModeCfg( UINT32 pin, GPIOModeTypeDef mode );             /* GPIOAç«¯å£å¼•è„šæ¨¡å¼é…ç½® */
+void GPIOB_ModeCfg( UINT32 pin, GPIOModeTypeDef mode );             /* GPIOBç«¯å£å¼•è„šæ¨¡å¼é…ç½® */
+#define GPIOA_ResetBits( pin )          (R32_PA_CLR |= pin)         /* GPIOAç«¯å£å¼•è„šè¾“å‡ºç½®ä½Ž */
+#define GPIOA_SetBits( pin )            (R32_PA_OUT |= pin)         /* GPIOAç«¯å£å¼•è„šè¾“å‡ºç½®é«˜ */
+#define GPIOB_ResetBits( pin )          (R32_PB_CLR |= pin)         /* GPIOBç«¯å£å¼•è„šè¾“å‡ºç½®ä½Ž */
+#define GPIOB_SetBits( pin )            (R32_PB_OUT |= pin)         /* GPIOBç«¯å£å¼•è„šè¾“å‡ºç½®é«˜ */
+#define GPIOA_InverseBits( pin )        (R32_PA_OUT ^= pin)         /* GPIOAç«¯å£å¼•è„šè¾“å‡ºç”µå¹³ç¿»è½¬ */
+#define GPIOB_InverseBits( pin )        (R32_PB_OUT ^= pin)         /* GPIOBç«¯å£å¼•è„šè¾“å‡ºç”µå¹³ç¿»è½¬ */
+#define GPIOA_ReadPort()                (R32_PA_PIN)                /* GPIOAç«¯å£32ä½æ•°æ®è¿”å›žï¼Œä½Ž16ä½æœ‰æ•ˆ */
+#define GPIOB_ReadPort()                (R32_PB_PIN)                /* GPIOBç«¯å£32ä½æ•°æ®è¿”å›žï¼Œä½Ž24ä½æœ‰æ•ˆ */
+#define GPIOA_ReadPortPin( pin )        (R32_PA_PIN&pin)            /* GPIOAç«¯å£å¼•è„šçŠ¶æ€ï¼Œ0-å¼•è„šä½Žç”µå¹³ï¼Œ(!0)-å¼•è„šé«˜ç”µå¹³ */
+#define GPIOB_ReadPortPin( pin )        (R32_PB_PIN&pin)            /* GPIOBç«¯å£å¼•è„šçŠ¶æ€ï¼Œ0-å¼•è„šä½Žç”µå¹³ï¼Œ(!0)-å¼•è„šé«˜ç”µå¹³ */
 
-void GPIOPinRemap( UINT8 s, UINT16 perph );				/* ÍâÉè¹¦ÄÜÒý½ÅÓ³Éä */
-void GPIOAGPPCfg( UINT8 s, UINT16 perph );				/* Ä£ÄâÍâÉèGPIOÒý½Å¹¦ÄÜ¿ØÖÆ */
-	 
-	 
+void GPIOA_ITModeCfg( UINT32 pin, GPIOITModeTpDef mode );           /* GPIOAå¼•è„šä¸­æ–­æ¨¡å¼é…ç½® */
+void GPIOB_ITModeCfg( UINT32 pin, GPIOITModeTpDef mode );           /* GPIOBå¼•è„šä¸­æ–­æ¨¡å¼é…ç½® */
+#define GPIOA_ReadITFlagPort()          (R16_PA_INT_IF)             /* è¯»å–GPIOAç«¯å£ä¸­æ–­æ ‡å¿—çŠ¶æ€ */
+#define GPIOB_ReadITFlagPort()          (R16_PB_INT_IF)             /* è¯»å–GPIOBç«¯å£ä¸­æ–­æ ‡å¿—çŠ¶æ€ */
+#define GPIOA_ReadITFlagBit( pin )      (R16_PA_INT_IF&pin)         /* è¯»å–GPIOAç«¯å£å¼•è„šä¸­æ–­æ ‡å¿—çŠ¶æ€ */
+#define GPIOB_ReadITFlagBit( pin )      (R16_PB_INT_IF&pin)         /* è¯»å–GPIOBç«¯å£å¼•è„šä¸­æ–­æ ‡å¿—çŠ¶æ€ */
+#define GPIOA_ClearITFlagBit( pin )     (R16_PA_INT_IF = pin)       /* æ¸…é™¤GPIOAç«¯å£å¼•è„šä¸­æ–­æ ‡å¿—çŠ¶æ€ */
+#define GPIOB_ClearITFlagBit( pin )     (R16_PB_INT_IF = pin)       /* æ¸…é™¤GPIOBç«¯å£å¼•è„šä¸­æ–­æ ‡å¿—çŠ¶æ€ */
+
+void GPIOPinRemap( UINT8 s, UINT16 perph );             /* å¤–è®¾åŠŸèƒ½å¼•è„šæ˜ å°„ */
+void GPIOAGPPCfg( UINT8 s, UINT16 perph );              /* æ¨¡æ‹Ÿå¤–è®¾GPIOå¼•è„šåŠŸèƒ½æŽ§åˆ¶ */
+
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // __CH57x_GPIO_H__	
+#endif  // __CH57x_GPIO_H__
 

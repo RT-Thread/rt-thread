@@ -11,8 +11,8 @@
 #include "CH579SFR.h"
 #include "core_cm0.h"
 
-/** 
-  * @brief	Peripher CLK control bit define
+/**
+  * @brief  Peripher CLK control bit define
   */
 #define BIT_SLP_CLK_TMR0                 (0x00000001)  /*!< TMR0 peripher clk bit */
 #define BIT_SLP_CLK_TMR1                 (0x00000002)  /*!< TMR1 peripher clk bit */
@@ -32,38 +32,38 @@
 #define BIT_SLP_CLK_BLE                  (0x00008000)  /*!< BLE peripher clk bit */
 #define BIT_SLP_CLK_RAMX                 (0x10000000)  /*!< RAM14K peripher clk bit */
 #define BIT_SLP_CLK_RAM2K                (0x20000000)  /*!< RAM2K peripher clk bit */
-#define BIT_SLP_CLK_ALL                  (0x3000FFFF)  /*!< All peripher clk bit */	 
+#define BIT_SLP_CLK_ALL                  (0x3000FFFF)  /*!< All peripher clk bit */
 
 /**
-  * @brief  unit of controllable power supply 
+  * @brief  unit of controllable power supply
   */
-#define UNIT_SYS_LSE                RB_CLK_XT32K_PON        // Íâ²¿32K Ê±ÖÓÕñµ´
-#define UNIT_SYS_LSI                RB_CLK_INT32K_PON       // ÄÚ²¿32K Ê±ÖÓÕñµ´
-#define UNIT_SYS_HSE                RB_CLK_XT32M_PON        // Íâ²¿32M Ê±ÖÓÕñµ´
-#define UNIT_SYS_HSI               	RB_CLK_INT32M_PON       // ÄÚ²¿32M Ê±ÖÓÕñµ´
-#define UNIT_SYS_PLL                RB_CLK_PLL_PON          // PLL Ê±ÖÓÕñµ´
-#define UNIT_ETH_PHY                (0x80)                  // ÒÔÌ«ÍøÊÕ·¢Æ÷ ETH-PHY 
+#define UNIT_SYS_LSE                RB_CLK_XT32K_PON        // å¤–éƒ¨32K æ—¶é’ŸæŒ¯è¡
+#define UNIT_SYS_LSI                RB_CLK_INT32K_PON       // å†…éƒ¨32K æ—¶é’ŸæŒ¯è¡
+#define UNIT_SYS_HSE                RB_CLK_XT32M_PON        // å¤–éƒ¨32M æ—¶é’ŸæŒ¯è¡
+#define UNIT_SYS_HSI                RB_CLK_INT32M_PON       // å†…éƒ¨32M æ—¶é’ŸæŒ¯è¡
+#define UNIT_SYS_PLL                RB_CLK_PLL_PON          // PLL æ—¶é’ŸæŒ¯è¡
+#define UNIT_ETH_PHY                (0x80)                  // ä»¥å¤ªç½‘æ”¶å‘å™¨ ETH-PHY
 
 
-void PWR_DCDCCfg( UINT8 s );	                              /* ÄÚ²¿DC/DCµçÔ´¿ØÖÆ */ 
-void PWR_UnitModCfg( UINT8 s, UINT8 unit );                   /* ¿É¿Øµ¥ÔªÄ£¿éµÄµçÔ´¿ØÖÆ */
-void PWR_PeriphClkCfg( UINT8 s, UINT16 perph );               /* ÍâÉèÊ±ÖÓ¿ØÖÆÎ» */
+void PWR_DCDCCfg( UINT8 s );                                  /* å†…éƒ¨DC/DCç”µæºæŽ§åˆ¶ */
+void PWR_UnitModCfg( UINT8 s, UINT8 unit );                   /* å¯æŽ§å•å…ƒæ¨¡å—çš„ç”µæºæŽ§åˆ¶ */
+void PWR_PeriphClkCfg( UINT8 s, UINT16 perph );               /* å¤–è®¾æ—¶é’ŸæŽ§åˆ¶ä½ */
 
-void PowerMonitor( UINT8 s );                                 /* µçÔ´µçÑ¹¼à¿Ø¹¦ÄÜ¿ØÖÆ */
+void PowerMonitor( UINT8 s );                                 /* ç”µæºç”µåŽ‹ç›‘æŽ§åŠŸèƒ½æŽ§åˆ¶ */
 
-void PWR_PeriphWakeUpCfg( UINT8 s, UINT16 perph );              /* Ë¯Ãß»½ÐÑÔ´ÅäÖÃ */
-void LowPower_Idle( void );                                 /* µÍ¹¦ºÄ-IDLEÄ£Ê½ */	 
-void LowPower_Halt_1( void );                               /* µÍ¹¦ºÄ-Halt_1Ä£Ê½ */
-void LowPower_Halt_2( void );                               /* µÍ¹¦ºÄ-Halt_2Ä£Ê½ */
-void LowPower_Sleep( UINT8 rm );                            /* µÍ¹¦ºÄ-SleepÄ£Ê½ */
-void LowPower_Shutdown( UINT8 rm );                         /* µÍ¹¦ºÄ-ShutdownÄ£Ê½ */
-void EnterCodeUpgrade( void );								/* ÌøÈëBOOT³ÌÐò£¬×¼±¸´úÂëÉý¼¶ */
+void PWR_PeriphWakeUpCfg( UINT8 s, UINT16 perph );              /* ç¡çœ å”¤é†’æºé…ç½® */
+void LowPower_Idle( void );                                 /* ä½ŽåŠŸè€—-IDLEæ¨¡å¼ */
+void LowPower_Halt_1( void );                               /* ä½ŽåŠŸè€—-Halt_1æ¨¡å¼ */
+void LowPower_Halt_2( void );                               /* ä½ŽåŠŸè€—-Halt_2æ¨¡å¼ */
+void LowPower_Sleep( UINT8 rm );                            /* ä½ŽåŠŸè€—-Sleepæ¨¡å¼ */
+void LowPower_Shutdown( UINT8 rm );                         /* ä½ŽåŠŸè€—-Shutdownæ¨¡å¼ */
+void EnterCodeUpgrade( void );                              /* è·³å…¥BOOTç¨‹åºï¼Œå‡†å¤‡ä»£ç å‡çº§ */
 
-	 
-	 
+
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // __CH57x_PWR_H__	
+#endif  // __CH57x_PWR_H__
 
