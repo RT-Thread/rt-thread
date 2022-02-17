@@ -9,7 +9,7 @@
  */
 #include <Arduino.h>
 #include <board.h>
-#include "arduino_pinout.h"
+#include "pins_arduino.h"
 
 const pin_map_t pin_map_table[ARDUINO_PINOUT_PIN_MAX]=
 {
