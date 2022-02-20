@@ -2021,15 +2021,6 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         /* reset error number in thread */
         thread->error = RT_EOK;
 
-        /* no waiting, return timeout */
-        if (timeout == 0)
-        {
-            /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
-
-            return -RT_EFULL;
-        }
-
         /* suspend current thread */
         _ipc_list_suspend(&(mb->suspend_sender_thread),
                             thread,
@@ -2266,18 +2257,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     {
         /* reset error number in thread */
         thread->error = RT_EOK;
-
-        /* no waiting, return timeout */
-        if (timeout == 0)
-        {
-            /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
-
-            thread->error = -RT_ETIMEOUT;
-
-            return -RT_ETIMEOUT;
-        }
-
+        
         /* suspend current thread */
         _ipc_list_suspend(&(mb->parent.suspend_thread),
                             thread,
