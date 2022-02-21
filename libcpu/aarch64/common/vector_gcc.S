@@ -8,9 +8,6 @@
  * 2022-02-16     GuEe-GUI     replace vectors entry to macro
  */
 
-#include "rtconfig.h"
-
-#ifndef RT_USING_VMTHREAD
 .macro  ventry label
     .align 7
     b   \label
@@ -45,4 +42,3 @@ system_vectors:
     ventry  vector_error    /* IRQ/vIRQ */
     ventry  vector_error    /* FIQ/vFIQ */
     ventry  vector_error    /* SError/vSError */
-#endif /* !RT_USING_VMTHREAD */

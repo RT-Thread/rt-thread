@@ -150,15 +150,15 @@ rt_hw_get_gtimer_frq:
     B.EQ    1f
     B       .
 3:
-    MOV     X3, 0x0d
+    MOV     X3, #((3 << 6) | 0x0d)  /* EL3h */
     MOV     X2, X30
     B       0f
 2:
-    MOV     X3, 0x09
+    MOV     X3, #((3 << 6) | 0x09)  /* EL2h */
     MOV     X2, X30
     B       0f
 1:
-    MOV     X3, 0x05
+    MOV     X3, #((3 << 6) | 0x05)  /* EL1h */
     MOV     X2, X30
     B       0f
 0:
