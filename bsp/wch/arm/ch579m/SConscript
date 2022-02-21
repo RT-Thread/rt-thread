@@ -1,9 +1,10 @@
-# for network related component
+# for module compiling
 import os
+Import('RTT_ROOT')
 from building import *
 
-objs = []
 cwd = GetCurrentDir()
+objs = []
 list = os.listdir(cwd)
 
 for d in list:

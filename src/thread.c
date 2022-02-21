@@ -191,6 +191,12 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->current_priority = priority;
 
     thread->number_mask = 0;
+
+#ifdef RT_USING_EVENT
+    thread->event_set = 0;
+    thread->event_info = 0;
+#endif
+
 #if RT_THREAD_PRIORITY_MAX > 32
     thread->number = 0;
     thread->high_mask = 0;
@@ -246,6 +252,13 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #ifdef RT_USING_CPU_USAGE
     thread->duration_tick = 0;
 #endif
+
+
+#ifdef RT_USING_MODULE
+    thread->module_id = 0;
+#endif
+
+    thread->user_data = 0;
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
 
