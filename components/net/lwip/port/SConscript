@@ -1,0 +1,9 @@
+from building import *
+
+cwd = GetCurrentDir()
+path = [cwd + '/arch/include']
+src = ['arch/sys_arch.c']
+
+group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
+
+Return('group')

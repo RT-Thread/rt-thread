@@ -1,7 +1,6 @@
 from building import *
 
 src = Split("""
-src/arch/sys_arch.c
 src/api/api_lib.c
 src/api/api_msg.c
 src/api/err.c
@@ -64,7 +63,6 @@ src = src + ipv4_src
 path = [GetCurrentDir() + '/src',
     GetCurrentDir() + '/src/include',
     GetCurrentDir() + '/src/include/ipv4',
-    GetCurrentDir() + '/src/arch/include',
     GetCurrentDir() + '/src/include/netif']
 
 if not GetDepend('RT_USING_SAL'):

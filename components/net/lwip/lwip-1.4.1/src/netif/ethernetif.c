@@ -39,7 +39,7 @@
  * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
  */
 
-#include <rtthread.h>
+#include <string.h>
 
 #include "lwip/opt.h"
 #include "lwip/debug.h"
@@ -50,10 +50,9 @@
 #include "lwip/netif.h"
 #include "lwip/stats.h"
 #include "lwip/tcpip.h"
-
+#include "lwip/inet.h"
 #include "netif/etharp.h"
 #include "netif/ethernetif.h"
-#include "lwip/inet.h"
 
 #define netifapi_netif_set_link_up(n)      netifapi_netif_common(n, netif_set_link_up, NULL)
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)

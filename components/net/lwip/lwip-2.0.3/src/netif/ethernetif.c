@@ -41,7 +41,7 @@
  * 2020-08-10     lizhirui     fixed some problems when this is running on 64-bit cpu
  */
 
-#include "lwip/opt.h"
+#include <string.h>
 
 #include "lwip/opt.h"
 #include "lwip/debug.h"
@@ -53,12 +53,10 @@
 #include "lwip/stats.h"
 #include "lwip/tcpip.h"
 #include "lwip/dhcp.h"
+#include "lwip/inet.h"
 #include "lwip/netifapi.h"
-
 #include "netif/etharp.h"
 #include "netif/ethernetif.h"
-
-#include "lwip/inet.h"
 
 #if LWIP_IPV6
 #include "lwip/ethip6.h"
