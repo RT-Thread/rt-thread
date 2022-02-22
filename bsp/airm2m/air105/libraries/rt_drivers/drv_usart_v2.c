@@ -9,7 +9,7 @@
  */
 
 
-#include "air105_hal.h"
+#include "board.h"
 #include "drv_usart_v2.h"
 
 #ifdef RT_USING_SERIAL_V2

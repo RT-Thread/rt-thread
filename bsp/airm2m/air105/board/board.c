@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "air105_hal.h"
+#include "board.h"
 uint32_t SystemCoreClock;
 extern const uint32_t __isr_start_address;
 

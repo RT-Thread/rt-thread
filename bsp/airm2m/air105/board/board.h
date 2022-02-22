@@ -1,6 +1,6 @@
 
-#ifndef __AIR105_HAL_H__
-#define __AIR105_HAL_H__
+#ifndef __BOARD_H__
+#define __BOARD_H__
 
 #include "app_inc.h"
 #include <rtthread.h>

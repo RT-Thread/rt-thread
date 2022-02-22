@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <air105_hal.h>
+#include <board.h>
 #include "drv_gpio.h"
 
 /* defined the LED2 pin: PD14 */
@@ -44,7 +44,5 @@ int main(void)
         rt_thread_mdelay(Speed);
         rt_pin_write(LED2_PIN, PIN_HIGH);
         rt_thread_mdelay(Speed);
-		WDT_Feed();
     }
 }
-

@@ -11,7 +11,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "air105_hal.h"
+#include "board.h"
 #include <sys/time.h>
 
 #ifdef BSP_USING_ONCHIP_RTC

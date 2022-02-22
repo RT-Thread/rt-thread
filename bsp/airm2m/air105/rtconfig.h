@@ -85,6 +85,7 @@
 #define RT_USING_SERIAL_V2
 #define RT_SERIAL_USING_DMA
 #define RT_USING_PIN
+#define RT_USING_WDT
 
 /* Using USB */
 
@@ -195,5 +196,6 @@
 #define BSP_USING_UART0
 #define BSP_UART0_RX_BUFSIZE 256
 #define BSP_UART0_TX_BUFSIZE 0
+#define BSP_USING_WDT
 
 #endif

@@ -8,7 +8,7 @@
  * 2022-02-22     airm2m       first version
  */
 
-#include <air105_hal.h>
+#include <board.h>
 #include "drv_gpio.h"
 
 #ifdef RT_USING_PIN

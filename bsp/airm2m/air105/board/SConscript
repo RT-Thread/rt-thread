@@ -8,6 +8,7 @@ cwd = GetCurrentDir()
 CPPDEFINES = ['__USE_XTL__']
 # add general drivers
 src = Split('''
+board.c
 ''')
 
 if GetDepend(['BSP_USING_ETH']):

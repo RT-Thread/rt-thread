@@ -8,7 +8,6 @@ CPPPATH = [cwd+"/HAL_Driver/Inc",cwd+"/rt_drivers",cwd+"/rt_drivers/config"]
 CPPDEFINES = ['__USE_XTL__']
 # add general drivers
 src = Split('''
-HAL_Driver/Src/startup.c
 HAL_Driver/Src/bsp_common.c
 HAL_Driver/Src/core_uart.c
 HAL_Driver/Src/core_dma.c

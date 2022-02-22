@@ -5,6 +5,7 @@ config SOC_AIR105
     select ARCH_ARM_CORTEX_M4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select BSP_USING_WDT
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -46,21 +47,6 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-
-    config BSP_USING_I2C
-        bool "Enable HW I2C"
-        select RT_USING_I2C
-        default n
-        if BSP_USING_I2C
-            config I2C_BUS_NAME
-                string "HW I2C bus name"
-                default "i2c"			
-        endif
-
-    config BSP_USING_ONCHIP_RTC
-        bool "Enable HW onchip rtc"
-        select RT_USING_ONCHIP_RTC
-        default n
 
     menuconfig BSP_USING_UART
         bool "Enable UART"
@@ -136,6 +122,16 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    config BSP_USING_I2C
+        bool "Enable HW I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_I2C
+            config I2C_BUS_NAME
+                string "HW I2C bus name"
+                default "i2c"			
+        endif
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
@@ -161,6 +157,16 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI0S BUS"
                 default n
         endif
+
+    config BSP_USING_ONCHIP_RTC
+        bool "Enable HW onchip rtc"
+        select RT_USING_ONCHIP_RTC
+        default n
+    
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
 
 endmenu
 

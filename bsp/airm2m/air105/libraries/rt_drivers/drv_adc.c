@@ -8,7 +8,7 @@
  * 2022-02-22     airm2m       first version
  */
 
-#include "../include/air105_hal.h"
+#include "board.h"
 
 #if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2) || defined(BSP_USING_ADC3)
 #include "drv_config.h"

@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "air105_hal.h"
+#include "board.h"
 
 #ifdef RT_USING_SPI
 

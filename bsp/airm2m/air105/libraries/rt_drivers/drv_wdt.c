@@ -8,14 +8,16 @@
  * 2022-02-22     airm2m       first version
  */
 
-#include "air105_hal.h"
+#include "board.h"
+#include <drivers/watchdog.h>
+
 #ifdef RT_USING_WDT
 
 #define LOG_TAG             "drv.wdt"
 #include <drv_log.h>
 
 
-static struct rt_watchdog_t watchdog;
+static rt_watchdog_t watchdog;
 static struct rt_watchdog_ops ops;
 
 static rt_err_t wdt_init(rt_watchdog_t *wdt)

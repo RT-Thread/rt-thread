@@ -10,7 +10,7 @@
 
 #include <rtdevice.h>
 #include <rtthread.h>
-#include "air105_hal.h"
+#include "board.h"
 #ifdef BSP_USING_I2C
 
 static struct rt_i2c_bus_device prv_air105_i2c;
