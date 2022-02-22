@@ -501,16 +501,13 @@ sys_thread_t sys_thread_new(const char    *name,
 sys_prot_t sys_arch_protect(void)
 {
     rt_base_t level;
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable(); /* disable interrupt */
     return level;
 }
 
 void sys_arch_unprotect(sys_prot_t pval)
 {
-    /* enable interrupt */
-    rt_hw_interrupt_enable(pval);
-    return;
+    rt_hw_interrupt_enable(pval); /* enable interrupt */
 }
 
 void sys_arch_assert(const char *file, int line)
@@ -638,7 +635,7 @@ void mem_overflow_check_raw(void *p, size_t size, const char *descr1, const char
   LWIP_UNUSED_ARG(p);
   LWIP_UNUSED_ARG(desc);
   LWIP_UNUSED_ARG(descr);
-#endif
+#endif /* MEM_SANITY_REGION_AFTER_ALIGNED || MEM_SANITY_REGION_BEFORE_ALIGNED */
 }
 
 /**

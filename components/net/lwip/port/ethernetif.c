@@ -166,11 +166,11 @@ static int lwip_netdev_set_addr_info(struct netdev *netif, ip_addr_t *ip_addr, i
 #ifdef RT_LWIP_DNS
 static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_addr_t *dns_server)
 {
-#if LWIP_VERSION_MAJOR < 2U /* 1.4.1 */
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
     extern void dns_setserver(u8_t numdns, ip_addr_t *dnsserver);
-#else
+#else /* >=2.x */
     extern void dns_setserver(uint8_t dns_num, const ip_addr_t *dns_server);
-#endif
+#endif /* LWIP_VERSION_MAJOR == 1U */
 
     dns_setserver(dns_num, dns_server);
     return ERR_OK;
@@ -206,10 +206,10 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     int s, ttl, recv_len, result = 0;
     int elapsed_time;
     rt_tick_t recv_start_tick;
-#if LWIP_VERSION_MAJOR >= 2U
-    struct timeval recv_timeout = { timeout / RT_TICK_PER_SECOND, timeout % RT_TICK_PER_SECOND };
-#else
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
     int recv_timeout = timeout * 1000UL / RT_TICK_PER_SECOND;
+#else /* >= v2.x */
+    struct timeval recv_timeout = { timeout / RT_TICK_PER_SECOND, timeout % RT_TICK_PER_SECOND };
 #endif
     ip_addr_t target_addr;
     struct addrinfo hint, *res = RT_NULL;
@@ -868,7 +868,7 @@ void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
     ip = (struct ip_addr *)&addr;
 #else /* >= v2.x */
     ip = (ip4_addr_t *)&addr;
-#endif
+#endif /* LWIP_VERSION_MAJOR == 1U */
 
 
     /* set ip address */

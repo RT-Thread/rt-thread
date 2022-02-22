@@ -11,6 +11,10 @@
 #ifndef __NETIF_ETHERNETIF_H__
 #define __NETIF_ETHERNETIF_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "lwip/netif.h"
 #include <rtthread.h>
 
@@ -43,17 +47,12 @@ struct eth_device
     rt_err_t (*eth_tx)(rt_device_t dev, struct pbuf* p);
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+int eth_system_device_init(void);
+void eth_device_deinit(struct eth_device *dev);
 rt_err_t eth_device_ready(struct eth_device* dev);
 rt_err_t eth_device_init(struct eth_device * dev, const char *name);
 rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_uint16_t flag);
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up);
-void eth_device_deinit(struct eth_device *dev);
-
-int eth_system_device_init(void);
 
 #ifdef __cplusplus
 }
