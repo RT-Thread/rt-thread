@@ -14,15 +14,17 @@
 static char device_name[] = "wdt";
 static rt_device_t wdg_dev;
 
-static void idle_hook(void)
+static struct rt_work wdt_feed;
+static void wdt_feed_func(struct rt_work *work, void *work_data)
 {
     rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, RT_NULL);
+    rt_work_submit(&wdt_feed, 1200);
 }
 
-static int wdt_sample(void)
+static int wdt_feed_init(void)
 {
     rt_err_t ret = RT_EOK;
-    rt_uint32_t timeout = 1;
+    rt_uint32_t timeout = 2;
 
     wdg_dev = rt_device_find(device_name);
     if (!wdg_dev)
@@ -43,7 +45,9 @@ static int wdt_sample(void)
         rt_kprintf("start %s failed!\n", device_name);
         return -RT_ERROR;
     }
-    rt_thread_idle_sethook(idle_hook);
-    return ret;
+
+    rt_work_init(&wdt_feed, wdt_feed_func, RT_NULL);
+    rt_work_submit(&wdt_feed, 1200);
+    return RT_EOK;
 }
-INIT_COMPONENT_EXPORT(wdt_sample);
+INIT_COMPONENT_EXPORT(wdt_feed_init);
