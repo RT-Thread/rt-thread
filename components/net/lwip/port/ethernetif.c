@@ -50,20 +50,20 @@
 
 #include <string.h>
 
-#include "lwip/opt.h"
-#include "lwip/debug.h"
-#include "lwip/def.h"
-#include "lwip/mem.h"
-#include "lwip/pbuf.h"
-#include "lwip/sys.h"
-#include "lwip/netif.h"
-#include "lwip/stats.h"
-#include "lwip/tcpip.h"
-#include "lwip/dhcp.h"
-#include "lwip/netifapi.h"
-#include "lwip/inet.h"
-#include "netif/etharp.h"
-#include "netif/ethernetif.h"
+#include <lwip/opt.h>
+#include <lwip/debug.h>
+#include <lwip/def.h>
+#include <lwip/mem.h>
+#include <lwip/pbuf.h>
+#include <lwip/sys.h>
+#include <lwip/netif.h>
+#include <lwip/stats.h>
+#include <lwip/tcpip.h>
+#include <lwip/dhcp.h>
+#include <lwip/netifapi.h>
+#include <lwip/inet.h>
+#include <netif/etharp.h>
+#include <netif/ethernetif.h>
 
 #include <ipc/completion.h>
 
