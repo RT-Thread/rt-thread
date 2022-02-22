@@ -5,8 +5,6 @@ config SOC_AIR105
     select ARCH_ARM_CORTEX_M4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select RT_USING_DEVICE_IPC
-    select RT_USING_SYSTEM_WORKQUEUE
     select BSP_USING_WDT
     default y
 
@@ -168,6 +166,8 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
+        select RT_USING_DEVICE_IPC
+        select RT_USING_SYSTEM_WORKQUEUE
         default n
 
 endmenu
