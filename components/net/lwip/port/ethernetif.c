@@ -1,6 +1,24 @@
 /*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2010-07-07     Bernard      fix send mail to mailbox issue.
+ * 2011-07-30     mbbill       port lwIP 1.4.0 to RT-Thread
+ * 2012-04-10     Bernard      add more compatible with RT-Thread.
+ * 2012-11-12     Bernard      The network interface can be initialized
+ *                             after lwIP initialization.
+ * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
+ * 2016-08-18     Bernard      port to lwIP 2.0.0
+ * 2018-11-02     MurphyZhao   port to lwIP 2.1.0
+ * 2021-09-07     Grissiom     fix eth_tx_msg ack bug
+ * 2022-02-22     liuxianliang integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
+ */
+
+/*
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * COPYRIGHT (C) 2006-2021, RT-Thread Development Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,18 +46,6 @@
  * This file is part of the lwIP TCP/IP stack.
  *
  * Author: Adam Dunkels <adam@sics.se>
- *
- * Change Logs:
- * Date           Author       Notes
- * 2010-07-07     Bernard      fix send mail to mailbox issue.
- * 2011-07-30     mbbill       port lwIP 1.4.0 to RT-Thread
- * 2012-04-10     Bernard      add more compatible with RT-Thread.
- * 2012-11-12     Bernard      The network interface can be initialized
- *                             after lwIP initialization.
- * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
- * 2016-08-18     Bernard      port to lwIP 2.0.0
- * 2018-11-02     MurphyZhao   port to lwIP 2.1.0
- * 2021-09-07     Grissiom     fix eth_tx_msg ack bug
  */
 
 #include <string.h>
@@ -356,12 +362,12 @@ static int netdev_flags_sync(struct netif *lwip_netif)
     {
         netdev->flags |= NETDEV_FLAG_IGMP;
     }
-#if LWIP_VERSION_MAJOR >= 2U
+#if LWIP_VERSION_MAJOR >= 2U /* >= v2.x */
     if(lwip_netif->flags & NETIF_FLAG_MLD6)
     {
         netdev->flags |= NETDEV_FLAG_MLD6;
     }
-#endif
+#endif /* LWIP_VERSION_MAJOR >= 2U */
 
 #if LWIP_DHCP
     netdev_low_level_set_dhcp_status(netdev, RT_TRUE);
@@ -585,11 +591,11 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     /* if tcp thread has been started up, we add this netif to the system */
     if (rt_thread_find("tcpip") != RT_NULL)
     {
-#if LWIP_VERSION_MAJOR < 2U /* 1.4.1 */
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
         struct ip_addr ipaddr, netmask, gw;
-#else
+#else /* >= v2.x */
         ip4_addr_t ipaddr, netmask, gw;
-#endif
+#endif /* LWIP_VERSION_MAJOR == 1U */
 
 #if !LWIP_DHCP
         ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
@@ -829,13 +835,13 @@ int eth_system_device_init_private(void)
 
 void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
 {
-#if LWIP_VERSION_MAJOR < 2U /* 1.4.1 */
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
     struct ip_addr *ip;
     struct ip_addr addr;
-#else
+#else /* >= v2.x */
     ip4_addr_t *ip;
     ip4_addr_t addr;
-#endif
+#endif /* LWIP_VERSION_MAJOR == 1U */
 
     struct netif * netif = netif_list;
 
@@ -858,9 +864,9 @@ void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
         }
     }
 
-#if LWIP_VERSION_MAJOR < 2U /* 1.4.1 */
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
     ip = (struct ip_addr *)&addr;
-#else
+#else /* >= v2.x */
     ip = (ip4_addr_t *)&addr;
 #endif
 
@@ -962,7 +968,7 @@ void list_if(void)
 
 #if LWIP_DNS
     {
-#if LWIP_VERSION_MAJOR < 2U /* 1.4.1 */
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
         struct ip_addr ip_addr;
 
         for(index=0; index<DNS_MAX_SERVERS; index++)
@@ -970,7 +976,7 @@ void list_if(void)
             ip_addr = dns_getserver(index);
             rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(&(ip_addr)));
         }
-#else
+#else /* >= v2.x */
         const ip_addr_t *ip_addr;
 
         for(index=0; index<DNS_MAX_SERVERS; index++)
@@ -978,7 +984,7 @@ void list_if(void)
             ip_addr = dns_getserver(index);
             rt_kprintf("dns server #%d: %s\n", index, inet_ntoa(ip_addr));
         }
-#endif
+#endif /* LWIP_VERSION_MAJOR == 1U */
 
     }
 #endif /**< #if LWIP_DNS */
@@ -989,13 +995,11 @@ FINSH_FUNCTION_EXPORT(list_if, list network interface information);
 
 #if LWIP_TCP
 #include <lwip/tcp.h>
-#if (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR * 10 + LWIP_VERSION_REVISION) == 141U /* v1.4.1 */
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
 #include <lwip/tcp_impl.h>
-#elif LWIP_VERSION_MAJOR >= 2U /* >= v2.0.x, >= v2.1.x */
+#else /* >= v2.x */
 #include <lwip/priv/tcp_priv.h>
-#else
-#error "Unsupport this version protocol stack of lwIP !!!"
-#endif
+#endif /* LWIP_VERSION_MAJOR == 1U */
 
 void list_tcps(void)
 {
