@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-27     SummerGift   add spi flash port file
+ * 2022-02-22     airm2m       first version
  */
 
 #include <rtthread.h>

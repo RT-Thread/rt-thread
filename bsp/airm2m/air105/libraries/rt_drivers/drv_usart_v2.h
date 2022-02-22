@@ -5,8 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-06-01     KyleChan     first version
+ * 2022-02-22     airm2m       first version
  */
+
 
 #ifndef __DRV_USART_V2_H__
 #define __DRV_USART_V2_H__

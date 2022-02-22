@@ -5,9 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   first version
- * 2019-01-03     zylx         modify DMA support
+ * 2022-02-22     airm2m       first version
  */
+
 
 #ifndef __SPI_CONFIG_H__
 #define __SPI_CONFIG_H__

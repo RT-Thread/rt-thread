@@ -5,12 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-15     SummerGift   first version
+ * 2022-02-22     airm2m       first version
  */
 
-/*
- * NOTE: DO NOT include this file on the header file.
- */
 
 #ifndef LOG_TAG
 #define DBG_TAG               "drv"

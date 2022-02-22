@@ -5,8 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      SummerGift   first version
+ * 2022-02-22     airm2m       first version
  */
+
 
 #ifndef __DRV_SPI_H__
 #define __DRV_SPI_H__

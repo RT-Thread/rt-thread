@@ -5,8 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-06-01     KyleChan     first version
+ * 2022-02-22     airm2m       first version
  */
+
 
 #include "air105_hal.h"
 #include "drv_usart_v2.h"

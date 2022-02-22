@@ -5,8 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   first version
+ * 2022-02-22     airm2m       first version
  */
+
 
 #ifndef __UART_CONFIG_H__
 #define __UART_CONFIG_H__
