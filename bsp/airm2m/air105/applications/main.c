@@ -12,17 +12,12 @@
 #include <rtdevice.h>
 #include <air105_hal.h>
 
-/* defined the LED0 pin: PD14 */
-#define LED0_PIN    GPIOD_14
 static uint8_t gMainWDTEnable;
 int main(void)
 {
 	gMainWDTEnable = 1;
 	while(1)
 	{
-//		GPIO_Output(LED0_PIN, 1);
-//		rt_thread_mdelay(500);
-//		GPIO_Output(LED0_PIN, 0);
 		rt_thread_mdelay(12000);
 		if (gMainWDTEnable)
 		{
