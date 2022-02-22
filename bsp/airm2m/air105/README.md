@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-AIR105 是合宙定制的mh2903，是一款基于 ARM Cortex-M4 内核的10mm x 10mm 大小的MCU，最高主频为 204Mhz，不仅提供UART/GPIO/I2C/ADC/SPI等基础外设，更提供DAC/USB/DCMI/HSPI等高级外设接口，内置充电功能，支持5V/3.3V供电，同时自带5v转3.3V的LDO，4M字节Flash，640K字节RAM。
+AIR105 是合宙推出的一款基于 ARM Cortex-M4 内核的10mm x 10mm 大小的MCU，最高主频为 204Mhz，不仅提供UART/GPIO/I2C/ADC/SPI等基础外设，更提供DAC/USB/DCMI/HSPI等高级外设接口，内置充电功能，支持5V/3.3V供电，同时自带5v转3.3V的LDO，4M字节Flash，640K字节RAM。
 
 开发板外观如下图所示：
 
