@@ -1,8 +1,11 @@
 from building import *
 
 cwd = GetCurrentDir()
-path = [cwd + '/arch/include']
-src = ['arch/sys_arch.c']
+path  = [cwd + '/arch/include']
+path += [cwd]
+
+src  = ['arch/sys_arch.c']
+src += ['ethernetif.c']
 
 group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
 

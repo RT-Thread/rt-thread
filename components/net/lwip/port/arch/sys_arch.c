@@ -37,114 +37,10 @@
 #include <netif/etharp.h>
 
 /*
- * Initialize the network interface device
- *
- * @return the operation status, ERR_OK on OK, ERR_IF on error
- */
-static err_t netif_device_init(struct netif *netif)
-{
-    struct eth_device *ethif;
-
-    ethif = (struct eth_device *)netif->state;
-    if (ethif != RT_NULL)
-    {
-        rt_device_t device;
-
-        /* get device object */
-        device = (rt_device_t) ethif;
-        if (rt_device_init(device) != RT_EOK)
-        {
-            return ERR_IF;
-        }
-
-        netif->flags = ethif->flags; /* copy device flags to netif flags */
-#if (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 /* >= v2.1.0 TODO */
-        netif->mtu = ETHERNET_MTU;
-        netif->output = etharp_output; /* set output */
-#endif /* (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 */
-        return ERR_OK;
-    }
-
-    return ERR_IF;
-}
-
-/*
  * Initialize the ethernetif layer and set network interface device up
  */
 static void tcpip_init_done_callback(void *arg)
 {
-    rt_device_t device;
-    struct eth_device *ethif;
-#if LWIP_VERSION_MAJOR == 1U /* v1.x */
-    struct ip_addr ipaddr, netmask, gw;
-#else /* >= v2.x */
-    ip4_addr_t ipaddr, netmask, gw;
-#endif /* LWIP_VERSION_MAJOR == 1U */
-    struct rt_list_node* node;
-    struct rt_object* object;
-    struct rt_object_information *information;
-
-    LWIP_ASSERT("invalid arg.\n",arg);
-
-    IP4_ADDR(&gw, 0, 0, 0, 0);
-    IP4_ADDR(&ipaddr, 0, 0, 0, 0);
-    IP4_ADDR(&netmask, 0, 0, 0, 0);
-
-    /* enter critical */
-    rt_enter_critical();
-
-    /* for each network interfaces */
-    information = rt_object_get_information(RT_Object_Class_Device);
-    RT_ASSERT(information != RT_NULL);
-    for (node = information->object_list.next;
-         node != &(information->object_list);
-         node = node->next)
-    {
-        object = rt_list_entry(node, struct rt_object, list);
-        device = (rt_device_t)object;
-        if (device->type == RT_Device_Class_NetIf)
-        {
-            ethif = (struct eth_device *)device;
-
-            /* leave critical */
-            rt_exit_critical();
-            LOCK_TCPIP_CORE();
-
-            netif_add(ethif->netif, &ipaddr, &netmask, &gw,
-                      ethif, netif_device_init, tcpip_input);
-
-            if (netif_default == RT_NULL)
-                netif_set_default(ethif->netif);
-
-#if LWIP_DHCP
-            if (ethif->flags & NETIF_FLAG_DHCP)
-            {
-                /* set interface up */
-                netif_set_up(ethif->netif);
-
-                /* if this interface uses DHCP, start the DHCP client */
-                dhcp_start(ethif->netif);
-            }
-            else
-#endif
-            {
-                /* set interface up */
-                netif_set_up(ethif->netif);
-            }
-
-            if (!(ethif->flags & ETHIF_LINK_PHYUP))
-            {
-                netif_set_link_up(ethif->netif);
-            }
-
-            UNLOCK_TCPIP_CORE();
-            /* enter critical */
-            rt_enter_critical();
-        }
-    }
-
-    /* leave critical */
-    rt_exit_critical();
     rt_sem_release((rt_sem_t)arg);
 }
 
@@ -163,10 +59,8 @@ int lwip_system_init(void)
         return 0;
     }
 
-#if LWIP_VERSION_MAJOR >= 2U /* >= v2.x */
     extern int eth_system_device_init_private(void);
     eth_system_device_init_private();
-#endif /* LWIP_VERSION_MAJOR >= 2U */
 
     /* set default netif to NULL */
     netif_default = RT_NULL;
@@ -190,22 +84,6 @@ int lwip_system_init(void)
     }
     rt_sem_detach(&done_sem);
 
-    /* set default ip address */
-#if !LWIP_DHCP
-    if (netif_default != RT_NULL)
-    {
-#if LWIP_VERSION_MAJOR == 1U /* v1.x */
-        struct ip_addr ipaddr, netmask, gw;
-#else /* >= v2.x */
-        struct ip4_addr ipaddr, netmask, gw;
-#endif /* LWIP_VERSION_MAJOR == 1U */
-        ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
-        gw.addr = inet_addr(RT_LWIP_GWADDR);
-        netmask.addr = inet_addr(RT_LWIP_MSKADDR);
-
-        netifapi_netif_set_addr(netif_default, &ipaddr, &netmask, &gw);
-    }
-#endif
     rt_kprintf("lwIP-%d.%d.%d initialized!\n", LWIP_VERSION_MAJOR, LWIP_VERSION_MINOR, LWIP_VERSION_REVISION);
 
     init_ok = RT_TRUE;
@@ -718,7 +596,7 @@ void ppp_trace(int level, const char *format, ...)
 }
 #endif /* RT_LWIP_PPP */
 
-#if (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 /* >= v2.1.0 TODO */
+#if (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 /* >= v2.1.0 */
 #if MEM_OVERFLOW_CHECK || MEMP_OVERFLOW_CHECK
 /**
  * Check if a mep element was victim of an overflow or underflow

@@ -71,7 +71,6 @@ src/api/tcpip.c
 # 3. Files implementing various generic network interface functions
 lwipnetif_SRCS = Split("""
 src/netif/ethernet.c
-src/netif/ethernetif.c
 """)
 
 # 3.1 Files implementing an IEEE 802.1D bridge by using a multilayer netif approach

@@ -34,7 +34,6 @@ src/core/ipv4/ip.c
 src/core/ipv4/ip_addr.c
 src/core/ipv4/ip_frag.c
 src/netif/etharp.c
-src/netif/ethernetif.c
 src/netif/slipif.c
 """)
 
