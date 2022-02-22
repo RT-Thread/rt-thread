@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#ifdef __AIR105_BSP__
+#ifdef SOC_AIR105
 #include "air105/spi_config.h"
 #include "air105/uart_config.h"
 #endif

@@ -1,5 +1,12 @@
 menu "Hardware Drivers Config"
 
+config SOC_AIR105
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_SHELL_TO_USART

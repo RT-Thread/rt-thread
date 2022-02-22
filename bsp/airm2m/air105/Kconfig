@@ -19,15 +19,3 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "board/Kconfig"
 
-menu "chip select"
-    choice
-        prompt "chip system type"
-        default __AIR105_BSP__
-        config __AIR105_BSP__
-            bool "AIR105"
-            select ARCH_ARM_CORTEX_M4
-            select RT_USING_COMPONENTS_INIT
-            select RT_USING_USER_MAIN
-            default y
-    endchoice
-endmenu

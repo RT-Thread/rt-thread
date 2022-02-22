@@ -182,6 +182,8 @@
 
 /* Hardware Drivers Config */
 
+#define SOC_AIR105
+
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_SHELL_TO_USART
@@ -193,9 +195,5 @@
 #define BSP_USING_UART0
 #define BSP_UART0_RX_BUFSIZE 256
 #define BSP_UART0_TX_BUFSIZE 0
-
-/* chip select */
-
-#define __AIR105_BSP__
 
 #endif
