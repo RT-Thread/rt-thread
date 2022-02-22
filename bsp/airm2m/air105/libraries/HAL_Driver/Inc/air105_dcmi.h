@@ -249,9 +249,9 @@ typedef struct
 /** @defgroup DCMI_DMA_Request_FIFO_Size
   * @{
   */
-#define DCMI_DMARequestFIFOSize_1Word     ((uint32_t)0x20000000) /*!< DCMI FIFO����һ���־ͻ����һ��DMARequest*/
-#define DCMI_DMARequestFIFOSize_2Word     ((uint32_t)0x40000000) /*!< DCMI FIFO���������־ͻ����һ��DMARequest*/
-#define DCMI_DMARequestFIFOSize_4Word     ((uint32_t)0x80000000) /*!< DCMI FIFO�����ĸ��־ͻ����һ��DMARequest*/
+#define DCMI_DMARequestFIFOSize_1Word     ((uint32_t)0x20000000) /*!< DCMI FIFO DMARequest*/
+#define DCMI_DMARequestFIFOSize_2Word     ((uint32_t)0x40000000) /*!< DCMI FIFO DMARequest*/
+#define DCMI_DMARequestFIFOSize_4Word     ((uint32_t)0x80000000) /*!< DCMI FIFO DMARequest*/
 #define DCMI_DMARequestFIFOSize_MSK       ((uint32_t)0xE0000000)
 #define IS_DCMI_DMAREQUESTFIFO_SIZE(SIZE) (((SIZE) == DCMI_DMARequestFIFOSize_1Word) ||\
                                            ((SIZE) == DCMI_DMARequestFIFOSize_2Word) ||\
