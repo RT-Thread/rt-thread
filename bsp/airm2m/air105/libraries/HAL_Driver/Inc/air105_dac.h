@@ -20,33 +20,33 @@
  */
 
 
- 
+
 #ifndef __AIR105_DAC_H__
 #define __AIR105_DAC_H__
- 
- 
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
+
 /* Include ------------------------------------------------------------------*/
-#include "air105.h"	
+#include "air105.h"
 
 
-#define DAC_CR1_IS_RUNNING              ((uint32_t)0x20000000)	
-#define DAC_CR1_POWER_DOWN              ((uint32_t)0x00000010)		
-#define DAC_CR1_FIFO_RESET              ((uint32_t)0x00000008)	
+#define DAC_CR1_IS_RUNNING              ((uint32_t)0x20000000)
+#define DAC_CR1_POWER_DOWN              ((uint32_t)0x00000010)
+#define DAC_CR1_FIFO_RESET              ((uint32_t)0x00000008)
 #define DAC_CR1_DMA_ENABLE              ((uint32_t)0x00000004)
 
 
-#define IS_DAC_DATA(DATA)               ((DATA) <= 0x3FF)	
-	
+#define IS_DAC_DATA(DATA)               ((DATA) <= 0x3FF)
 
-#define DAC_CURR_SEL_MASK               ((uint32_t)0x00000020)		
-#define DAC_CURR_SEL_20K                ((uint32_t)0x00000000)	
+
+#define DAC_CURR_SEL_MASK               ((uint32_t)0x00000020)
+#define DAC_CURR_SEL_20K                ((uint32_t)0x00000000)
 #define DAC_CURR_SEL_2K                 ((uint32_t)0x00000020)
 #define IS_DAC_CURR_SEL(CURR)           (((CURR) == DAC_CURR_SEL_20K) || \
-	                                     ((CURR) == DAC_CURR_SEL_2K))
+                                         ((CURR) == DAC_CURR_SEL_2K))
 
 #define IS_DAC_FIFO_THR(THR)            ((THR) <= 0xF)
 
@@ -56,10 +56,10 @@ typedef struct _DAC_InitTypeDef
     uint32_t DAC_CurrSel;            /* DAC mode select */
     uint32_t DAC_TimerExp;           /* DAC timer expectation */
     uint32_t DAC_FIFOThr;            /* DAC FIFO Threshold */
-} DAC_InitTypeDef;  
+} DAC_InitTypeDef;
 
 
-#define DAC_FIFO_DEPTH		            (16)
+#define DAC_FIFO_DEPTH                  (16)
 #define DAC_IT_STATUS_SHIFT             (30)
 
 #define DAC_IT_FIFO_THR                 ((uint32_t)0x0002)
@@ -93,6 +93,6 @@ void DAC_ClearITPendingBit(uint32_t DAC_IT);
 
 #ifdef __cplusplus
 }
-#endif	 
+#endif
 
-#endif	/* __AIR105_DAC_H__ */
+#endif  /* __AIR105_DAC_H__ */

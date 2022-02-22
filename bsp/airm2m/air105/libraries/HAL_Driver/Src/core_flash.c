@@ -23,11 +23,11 @@
 #if 0
 void CACHE_CleanAll(CACHE_TypeDef *Cache)
 {
-	while (Cache->CACHE_CS & CACHE_IS_BUSY);
+    while (Cache->CACHE_CS & CACHE_IS_BUSY);
 
-	Cache->CACHE_REF = CACHE_REFRESH_ALLTAG;
-	Cache->CACHE_REF |= CACHE_REFRESH;
-	while ((Cache->CACHE_REF & CACHE_REFRESH));
+    Cache->CACHE_REF = CACHE_REFRESH_ALLTAG;
+    Cache->CACHE_REF |= CACHE_REFRESH;
+    while ((Cache->CACHE_REF & CACHE_REFRESH));
 }
 
 /**
@@ -39,13 +39,13 @@ uint8_t FLASH_EraseSector(uint32_t sectorAddress)
 {
     uint8_t ret;
 
-	__disable_irq();
-	//__disable_fault_irq();
+    __disable_irq();
+    //__disable_fault_irq();
 
     ret = ROM_QSPI_EraseSector(NULL, sectorAddress);
 
-	//__enable_fault_irq();
-	__enable_irq();
+    //__enable_fault_irq();
+    __enable_irq();
 
     return ret;
 }
@@ -60,19 +60,19 @@ uint8_t FLASH_EraseSector(uint32_t sectorAddress)
 uint8_t FLASH_ProgramPage(uint32_t addr, uint32_t size, uint8_t *buffer)
 {
     uint8_t ret;
-	QSPI_CommandTypeDef cmdType;
+    QSPI_CommandTypeDef cmdType;
 
     cmdType.Instruction = QUAD_INPUT_PAGE_PROG_CMD;
     cmdType.BusMode = QSPI_BUSMODE_114;
     cmdType.CmdFormat = QSPI_CMDFORMAT_CMD8_ADDR24_PDAT;
 
-	__disable_irq();
-	//__disable_fault_irq();
+    __disable_irq();
+    //__disable_fault_irq();
 
     ret = ROM_QSPI_ProgramPage(&cmdType, DMA_Channel_1, addr, size, buffer);
 
-	//__enable_fault_irq();
-	__enable_irq();
+    //__enable_fault_irq();
+    __enable_irq();
 
     return ret;
 }
@@ -80,60 +80,60 @@ uint8_t FLASH_ProgramPage(uint32_t addr, uint32_t size, uint8_t *buffer)
 
 int Flash_EraseSector(uint32_t address, uint8_t NeedCheck)
 {
-	uint8_t buf[256];
-	uint32_t i;
-	uint8_t retry = 1;
-	void *res;
-	memset(buf, 0xff, 256);
+    uint8_t buf[256];
+    uint32_t i;
+    uint8_t retry = 1;
+    void *res;
+    memset(buf, 0xff, 256);
 BL_ERASESECTOR_AGAIN:
-	FLASH_EraseSector(address);
-	CACHE_CleanAll(CACHE);
-	if (!NeedCheck) return ERROR_NONE;
-	for(i = 0; i < 4096; i+=256)
-	{
-		res = memcmp(address + i, buf, 256);
-		if (res)
-		{
-			DBG_INFO("%x", res);
-			if (retry)
-			{
-				retry = 0;
-				goto BL_ERASESECTOR_AGAIN;
-			}
-			else
-			{
-				return -1;
-			}
-		}
-	}
-	return 0;
+    FLASH_EraseSector(address);
+    CACHE_CleanAll(CACHE);
+    if (!NeedCheck) return ERROR_NONE;
+    for(i = 0; i < 4096; i+=256)
+    {
+        res = memcmp(address + i, buf, 256);
+        if (res)
+        {
+            DBG_INFO("%x", res);
+            if (retry)
+            {
+                retry = 0;
+                goto BL_ERASESECTOR_AGAIN;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+    }
+    return 0;
 }
 
 int Flash_ProgramData(uint32_t address, uint32_t *Data, uint32_t Len, uint8_t NeedCheck)
 {
-	void *res;
-	uint32_t size = (Len + (4 - 1)) & (~(4 - 1));
-	if (size > 256)
-	{
-		size = 256;
-	}
-	FLASH_ProgramPage(address, size, Data);
-	CACHE_CleanAll(CACHE);
-	if (!NeedCheck) return ERROR_NONE;
-	res = memcmp(address, Data, Len);
-	if (res)
-	{
-		DBG_INFO("%x", res);
-		FLASH_ProgramPage(address, size, Data);
-		CACHE_CleanAll(CACHE);
-		res = memcmp(address, Data, size);
-		if (res)
-		{
-			DBG_INFO("%x", res);
-			return -1;
-		}
-	}
-	return 0;
+    void *res;
+    uint32_t size = (Len + (4 - 1)) & (~(4 - 1));
+    if (size > 256)
+    {
+        size = 256;
+    }
+    FLASH_ProgramPage(address, size, Data);
+    CACHE_CleanAll(CACHE);
+    if (!NeedCheck) return ERROR_NONE;
+    res = memcmp(address, Data, Len);
+    if (res)
+    {
+        DBG_INFO("%x", res);
+        FLASH_ProgramPage(address, size, Data);
+        CACHE_CleanAll(CACHE);
+        res = memcmp(address, Data, size);
+        if (res)
+        {
+            DBG_INFO("%x", res);
+            return -1;
+        }
+    }
+    return 0;
 }
 
 #endif

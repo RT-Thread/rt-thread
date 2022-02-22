@@ -24,7 +24,7 @@
 #include "bsp_common.h"
 typedef struct
 {
-	uint8_t Data[2];
+    uint8_t Data[2];
 }I2C_CommonRegDataStruct;
 
 void I2C_GlobalInit(void);
@@ -50,9 +50,9 @@ void I2C_Prepare(uint8_t I2CID, uint16_t ChipAddress, uint8_t ChipAddressLen, CB
  *
  * @param I2CID I2C通道号
  * @param Operate 操作类型
- *  I2C_OP_READ_REG = 0,	//i2c通用读寄存器，一写一读，自动带start信号
-	I2C_OP_READ,		//i2c通用读，只读
-	I2C_OP_WRITE,		//i2c通用写，只写
+ *  I2C_OP_READ_REG = 0,    //i2c通用读寄存器，一写一读，自动带start信号
+    I2C_OP_READ,        //i2c通用读，只读
+    I2C_OP_WRITE,       //i2c通用写，只写
  * @param RegAddress 寄存器地址，在通用读写时忽略
  * @param Data 读写数据缓存，直接使用用户的空间，在完成前不可以释放空间
  * @param Len 读写数据长度

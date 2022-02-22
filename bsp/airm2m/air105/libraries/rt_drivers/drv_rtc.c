@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,7 +26,7 @@
 
 static rt_err_t air105_rtc_init(void)
 {
-	RTC_GlobalInit();
+    RTC_GlobalInit();
     return RT_EOK;
 }
 
@@ -50,7 +50,7 @@ static rt_err_t air105_rtc_set_secs(void *args)
 
 static rt_err_t air105_rtc_get_timeval(void *args)
 {
-	struct timeval *tv = (struct timeval *) args;
+    struct timeval *tv = (struct timeval *) args;
     tv->tv_sec = RTC_GetUTC();
     return RT_EOK;
 }

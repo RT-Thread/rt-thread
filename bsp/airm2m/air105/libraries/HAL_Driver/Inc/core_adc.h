@@ -21,7 +21,7 @@
 
 #ifndef __CORE_ADC_H__
 #define __CORE_ADC_H__
-#define ADC_VALUE_ERROR	(0xffffffff)
+#define ADC_VALUE_ERROR (0xffffffff)
 void ADC_GlobalInit(void);
 /**
  * @brief 通道开关，在globalinit时只打开了0，0也无法被关闭，目前已经废弃，ADC_GetChannelValue的时候临时打开

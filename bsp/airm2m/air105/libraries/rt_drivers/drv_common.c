@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -37,7 +37,7 @@ MSH_CMD_EXPORT(reboot, Reboot System);
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
-	SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+    SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
 }

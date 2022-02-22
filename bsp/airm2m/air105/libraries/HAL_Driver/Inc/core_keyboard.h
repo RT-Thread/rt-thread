@@ -26,14 +26,14 @@
  *
  * @param PinConfigMap 硬盘扫描通道配置，bit0~bit8对应通道0到8,0为输入,1为输出，开发板配置为0x0f0
  * @param Debounce 按键滤波，目前强制为7
-	0： 5ms~75ms；
-	1： 17.5ms~75ms；
-	2： 27.5ms~75ms；
-	3： 37.5 ms~75ms；
-	4： 45ms~75ms；
-	5： 50ms~75ms；
-	6： 60ms~75ms；
-	7： 70ms~75ms。
+    0： 5ms~75ms；
+    1： 17.5ms~75ms；
+    2： 27.5ms~75ms；
+    3： 37.5 ms~75ms；
+    4： 45ms~75ms；
+    5： 50ms~75ms；
+    6： 60ms~75ms；
+    7： 70ms~75ms。
  * @param CB 按键中断回调，pData为按键参数32bit，pParam为用户数据，按键参数中bit16=1按下0释放，bit0~3，输入通道值，bit4~bit7，输出通道值
  * @param pParam 按键中断回调用户数据
  */

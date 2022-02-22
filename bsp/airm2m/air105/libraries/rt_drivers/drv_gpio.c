@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -54,22 +54,22 @@ static rt_base_t air105_pin_get(const char *name)
 
 static void air105_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
-	if (pin < GPIO_MAX)
-	{
-		GPIO_Output(pin, value);
-	}
+    if (pin < GPIO_MAX)
+    {
+        GPIO_Output(pin, value);
+    }
 }
 
 static int air105_pin_read(rt_device_t dev, rt_base_t pin)
 {
-	if (pin < GPIO_MAX)
-	{
-		return GPIO_Input(pin);
-	}
-	else
-	{
-		return -1;
-	}
+    if (pin < GPIO_MAX)
+    {
+        return GPIO_Input(pin);
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 static void air105_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
@@ -81,21 +81,21 @@ static void air105_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     switch(mode)
     {
     case PIN_MODE_OUTPUT:
-    	GPIO_PullConfig(pin, 0, 0);
-    	GPIO_Config(pin, 0, 0);
-    	break;
+        GPIO_PullConfig(pin, 0, 0);
+        GPIO_Config(pin, 0, 0);
+        break;
     case PIN_MODE_INPUT:
     case PIN_MODE_INPUT_PULLDOWN:
-    	GPIO_PullConfig(pin, 0, 0);
-    	GPIO_Config(pin, 1, 0);
-    	break;
+        GPIO_PullConfig(pin, 0, 0);
+        GPIO_Config(pin, 1, 0);
+        break;
     case PIN_MODE_INPUT_PULLUP:
-    	GPIO_PullConfig(pin, 1, 1);
-    	GPIO_Config(pin, 1, 0);
-    	break;
+        GPIO_PullConfig(pin, 1, 1);
+        GPIO_Config(pin, 1, 0);
+        break;
     case PIN_MODE_OUTPUT_OD:
-    	GPIO_ODConfig(pin, 0);
-    	break;
+        GPIO_ODConfig(pin, 0);
+        break;
     }
 }
 
@@ -158,13 +158,13 @@ static rt_err_t air105_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         switch (pin_irq_hdr_tab[pin].mode)
         {
         case PIN_IRQ_MODE_RISING:
-        	GPIO_ExtiConfig(pin, 0, 1, 0);
+            GPIO_ExtiConfig(pin, 0, 1, 0);
             break;
         case PIN_IRQ_MODE_FALLING:
-        	GPIO_ExtiConfig(pin, 0, 0, 1);
+            GPIO_ExtiConfig(pin, 0, 0, 1);
             break;
         case PIN_IRQ_MODE_RISING_FALLING:
-        	GPIO_ExtiConfig(pin, 0, 1, 1);
+            GPIO_ExtiConfig(pin, 0, 1, 1);
             break;
         }
         rt_hw_interrupt_enable(level);
@@ -195,7 +195,7 @@ const static struct rt_pin_ops _air105_pin_ops =
 
 static int pin_irq_hdr(void *pData, void *pParam)
 {
-	rt_uint32_t irqno = (rt_uint32_t)pData;
+    rt_uint32_t irqno = (rt_uint32_t)pData;
     if (pin_irq_hdr_tab[irqno].hdr)
     {
         pin_irq_hdr_tab[irqno].hdr(pin_irq_hdr_tab[irqno].args);
@@ -206,7 +206,7 @@ static int pin_irq_hdr(void *pData, void *pParam)
 
 int rt_hw_pin_init(void)
 {
-	GPIO_GlobalInit(pin_irq_hdr);
+    GPIO_GlobalInit(pin_irq_hdr);
     return rt_device_pin_register("pin", &_air105_pin_ops, RT_NULL);
 }
 

@@ -29,22 +29,22 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "air105.h"
-	 
-/** 
-  * @brief  KCU Init structure definition  
+
+/**
+  * @brief  KCU Init structure definition
   */
 typedef struct
 {
-	uint32_t KCU_DebounceTimeLevel;
-	uint32_t KCU_PortInput;
-	uint32_t KCU_PortOutput;
-	uint32_t KCU_Rand;
+    uint32_t KCU_DebounceTimeLevel;
+    uint32_t KCU_PortInput;
+    uint32_t KCU_PortOutput;
+    uint32_t KCU_Rand;
 }KCU_InitTypeDef;
 
 
-#define KCU_IT_PUSH							(KCU_CTRL1_PUSH_IT)
-#define KCU_IT_RELEASE						(KCU_CTRL1_RELEASE_IT)
-#define KCU_IT_OVERRUN						(KCU_CTRL1_OVERRUN_IT)
+#define KCU_IT_PUSH                         (KCU_CTRL1_PUSH_IT)
+#define KCU_IT_RELEASE                      (KCU_CTRL1_RELEASE_IT)
+#define KCU_IT_OVERRUN                      (KCU_CTRL1_OVERRUN_IT)
 
 void KCU_DeInit(void);
 
@@ -66,7 +66,7 @@ uint32_t KCU_GetEvenReg(void);
 }
 #endif
 
-#endif 
+#endif
 
 
 /**************************      (C) COPYRIGHT Megahunt    *****END OF FILE****/

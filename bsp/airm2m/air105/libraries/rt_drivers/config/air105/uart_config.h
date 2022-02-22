@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -58,7 +58,7 @@ extern "C" {
 #define UART3_CONFIG                                                \
     {                                                               \
         .name = "uart3",                                            \
-        .id = USART3,                                               \ 
+        .id = USART3,                                               \
     }
 #endif /* UART3_CONFIG */
 #endif /* BSP_USING_UART3 */

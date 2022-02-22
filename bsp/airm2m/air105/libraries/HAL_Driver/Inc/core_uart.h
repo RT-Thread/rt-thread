@@ -24,19 +24,19 @@
 #include "bsp_common.h"
 /**
  * @brief 对串口做基本的初始化工作，不开启任何中断和DMA
- * 
+ *
  * @param UartID 串口号 0~MAX，对应USART1~UARTX，0默认用于log输出
  * @param BaudRate 波特率
  * @param IsRxCacheEnable 是否打开RX缓存功能，打开后，只有接收超时中断才会返回，否则每次数据到来都会返回
  * @param DataBits 数据位5~8
  * @param Parity 奇偶校验，可选下列
- * 	UART_PARITY_NONE,
-	UART_PARITY_ODD,
-	UART_PARITY_EVEN,
+ *  UART_PARITY_NONE,
+    UART_PARITY_ODD,
+    UART_PARITY_EVEN,
  * @param StopBits 停止位
- * 	UART_STOP_BIT1,
-	UART_STOP_BIT1_5,
-	UART_STOP_BIT2,
+ *  UART_STOP_BIT1,
+    UART_STOP_BIT1_5,
+    UART_STOP_BIT2,
  * @param CB 回调函数，用于通知是否有新数据达到，DMA TX或者RX完成，是否有错误
  */
 void Uart_BaseInit(uint8_t UartID, uint32_t BaudRate, uint8_t IsRxCacheEnable, uint8_t DataBits, uint8_t Parity, uint8_t StopBits, CBFuncEx_t CB);
@@ -47,10 +47,10 @@ void Uart_SetCb(uint8_t UartID, CBFuncEx_t CB);
 void Uart_DeInit(uint8_t UartID);
 /**
  * @brief 串口做阻塞输出，一般用于bootloader或者紧急场合
- * 
+ *
  * @param UartID 串口号 0~MAX，对应USART1~UARTX，0默认用于log输出
- * @param Data 
- * @param Len 
+ * @param Data
+ * @param Len
  */
 void Uart_BlockTx(uint8_t UartID, uint8_t *Data, uint32_t Len);
 
@@ -61,7 +61,7 @@ void Uart_EnableRxIrq(uint8_t UartID);
 void Uart_EnableTxDoneIrq(uint8_t UartID);
 /**
  * @brief 串口的DMA配置
- * 
+ *
  * @param UartID 串口号 0~5
  * @param Stream DMA流序号
  * @param Channel DMA通道
@@ -73,11 +73,11 @@ int Uart_DMARxInit(uint8_t UartID, uint8_t Stream, uint32_t Channel);
 
 /**
  * @brief 串口做DMA非阻塞输出，只能用于APP
- * 
+ *
  * @param UartID 串口号 0~5
  * @param Stream DMA流序号
- * @param Data 
- * @param Len 
+ * @param Data
+ * @param Len
  */
 void Uart_DMATx(uint8_t UartID, uint8_t Stream, const uint8_t *Data, uint32_t Len);
 

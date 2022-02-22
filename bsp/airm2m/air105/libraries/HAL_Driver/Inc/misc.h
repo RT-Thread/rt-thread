@@ -34,7 +34,7 @@
 typedef struct
 {
   uint32_t NVIC_IRQChannel;                    /*!< Specifies the IRQ channel to be enabled or disabled.
-                                                   This parameter can be a value of @ref IRQn_Type 
+                                                   This parameter can be a value of @ref IRQn_Type
                                                    (For the complete SCPU Devices IRQ Channels list, please
                                                     refer to cpu.h file) */
 
@@ -47,10 +47,10 @@ typedef struct
                                                    between 0 and 15 as described in the table @ref NVIC_Priority_Table */
 
   FunctionalState NVIC_IRQChannelCmd;         /*!< Specifies whether the IRQ channel defined in NVIC_IRQChannel
-                                                   will be enabled or disabled. 
-                                                   This parameter can be set either to ENABLE or DISABLE */   
+                                                   will be enabled or disabled.
+                                                   This parameter can be set either to ENABLE or DISABLE */
 } NVIC_InitTypeDef;
- 
+
 
 
 #define NVIC_VectTab_RAM             ((uint32_t)0x20000000)
@@ -80,7 +80,7 @@ typedef struct
 #define IS_NVIC_OFFSET(OFFSET)  ((OFFSET) < 0x000FFFFF)
 
 
-/** @defgroup MISC_SysTick_clock_source 
+/** @defgroup MISC_SysTick_clock_source
   * @{
   */
 

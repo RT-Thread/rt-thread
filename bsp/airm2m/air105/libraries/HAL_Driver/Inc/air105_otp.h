@@ -26,11 +26,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
+
 /* Includes ------------------------------------------------------------------*/
 #include "air105.h"
 
-/* Exported types ------------------------------------------------------------*/    
+/* Exported types ------------------------------------------------------------*/
 typedef enum
 {
     OTP_Complete = 0,
@@ -40,11 +40,11 @@ typedef enum
     OTP_ProgramOnSleep,                     //������״̬���б�̲���
     OTP_WakeUpOnNoSleep,                    //�ڷ�����״̬�½��л��Ѳ���
     OTP_TimeOut,                            //OTP��ɱ�־λ��ʱû����λ
-    OTP_DataWrong,  
+    OTP_DataWrong,
 }OTP_StatusTypeDef;
 
 #define IS_OTP_ADDRESS(ADDRESS) (((ADDRESS) > AIR105_OTP_SIZE - 1) && ((ADDRESS) < AIR105_OTP_BASE + AIR105_OTP_SIZE))
-     
+
 
 void OTP_WakeUp(void);
 void OTP_Unlock(void);

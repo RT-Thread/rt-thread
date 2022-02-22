@@ -24,8 +24,8 @@
 
 typedef enum
 {
-	TIMER_SN_START = 0,
-	TIMER_SN_MAX,
+    TIMER_SN_START = 0,
+    TIMER_SN_MAX,
 }STATIC_TIMER_ENUM;
 
 typedef struct Timer_InfoStruct Timer_t;

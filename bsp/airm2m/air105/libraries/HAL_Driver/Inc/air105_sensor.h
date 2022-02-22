@@ -31,7 +31,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "air105.h"
 
-typedef struct  
+typedef struct
 {
     uint32_t SENSOR_Port_Pull;
     uint32_t SENSOR_Port_Static;
@@ -101,7 +101,7 @@ typedef struct
                                                      (TIME) == SENSOR_PUPU_HoldTime_1_4 ||\
                                                      (TIME) == SENSOR_PUPU_HoldTime_1_8 ||\
                                                      (TIME) == SENSOR_PUPU_HoldTime_1_16)
-                                                    
+
 /* ��̬���������Ƶ�� */
 #define SENSOR_DynamicFrequency_Default             ((uint32_t)0x0003)
 #define SENSOR_DynamicFrequency_31_25ms             ((uint32_t)0x0000)
@@ -184,8 +184,8 @@ FunctionalState SENSOR_GetEXTFilter(void);
 FunctionalState SENSOR_SetEXTFilter(FunctionalState NewState);
 
 
-#define SENSOR_STATIC_PULSE_PERIOD_500MS     (0)     
-#define SENSOR_STATIC_PULSE_PERIOD_1S        (1)     
+#define SENSOR_STATIC_PULSE_PERIOD_500MS     (0)
+#define SENSOR_STATIC_PULSE_PERIOD_1S        (1)
 
 uint32_t SENSOR_GetEXTPulsePeriod(void);
 uint32_t SENSOR_SetEXTPulsePeriod(uint32_t u32Period);
@@ -224,6 +224,6 @@ uint32_t SENSOR_SetEXTDynamicFreq(uint32_t u32Freq);
 }
 #endif
 
-#endif 
+#endif
 
 /**************************      (C) COPYRIGHT Megahunt    *****END OF FILE****/

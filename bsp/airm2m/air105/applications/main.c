@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,14 +15,14 @@
 static uint8_t gMainWDTEnable;
 int main(void)
 {
-	gMainWDTEnable = 1;
-	while(1)
-	{
-		rt_thread_mdelay(12000);
-		if (gMainWDTEnable)
-		{
-			WDT_Feed();
-		}
-	}
+    gMainWDTEnable = 1;
+    while(1)
+    {
+        rt_thread_mdelay(12000);
+        if (gMainWDTEnable)
+        {
+            WDT_Feed();
+        }
+    }
     return RT_EOK;
 }

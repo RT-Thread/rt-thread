@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -49,34 +49,34 @@ static rt_size_t air105_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         {
             if (msg[i].flags & RT_I2C_ADDR_10BIT)
             {
-            	I2C_Prepare(i2c_id, msg[i].addr, 2, NULL, NULL);
+                I2C_Prepare(i2c_id, msg[i].addr, 2, NULL, NULL);
             }
             else
             {
-            	I2C_Prepare(i2c_id, msg[i].addr, 1, NULL, NULL);
+                I2C_Prepare(i2c_id, msg[i].addr, 1, NULL, NULL);
             }
         }
         if (msg[i].flags & RT_I2C_RD)
         {
-        	tick = GetSysTick();
-        	I2C_MasterXfer(i2c_id, I2C_OP_READ, 0, msg[i].buf, msg[i].len, bus->timeout);
-        	while(!I2C_WaitResult(i2c_id, &Result) && !SysTickCheckTimeout(tick, bus->timeout * CORE_TICK_1MS)){;}
-        	if (!I2C_WaitResult(i2c_id, &Result))
-        	{
-        		I2C_ForceStop(i2c_id);
-        		return -RT_EIO;
-        	}
+            tick = GetSysTick();
+            I2C_MasterXfer(i2c_id, I2C_OP_READ, 0, msg[i].buf, msg[i].len, bus->timeout);
+            while(!I2C_WaitResult(i2c_id, &Result) && !SysTickCheckTimeout(tick, bus->timeout * CORE_TICK_1MS)){;}
+            if (!I2C_WaitResult(i2c_id, &Result))
+            {
+                I2C_ForceStop(i2c_id);
+                return -RT_EIO;
+            }
         }
         else
         {
-        	tick = GetSysTick();
-        	I2C_MasterXfer(i2c_id, I2C_OP_WRITE, 0, msg[i].buf, msg[i].len, bus->timeout);
-        	while(!I2C_WaitResult(i2c_id, &Result) && !SysTickCheckTimeout(tick, bus->timeout * CORE_TICK_1MS)){;}
-        	if (!I2C_WaitResult(i2c_id, &Result))
-        	{
-        		I2C_ForceStop(i2c_id);
-        		return -RT_EIO;
-        	}
+            tick = GetSysTick();
+            I2C_MasterXfer(i2c_id, I2C_OP_WRITE, 0, msg[i].buf, msg[i].len, bus->timeout);
+            while(!I2C_WaitResult(i2c_id, &Result) && !SysTickCheckTimeout(tick, bus->timeout * CORE_TICK_1MS)){;}
+            if (!I2C_WaitResult(i2c_id, &Result))
+            {
+                I2C_ForceStop(i2c_id);
+                return -RT_EIO;
+            }
         }
     }
     return i;
@@ -97,7 +97,7 @@ static rt_err_t air105_i2c_bus_control(struct rt_i2c_bus_device *bus,
     switch (cmd)
     {
     case RT_I2C_DEV_CTRL_CLK:
-    	I2C_MasterSetup(i2c_id, arg);
+        I2C_MasterSetup(i2c_id, arg);
         break;
     default:
         return -RT_EIO;

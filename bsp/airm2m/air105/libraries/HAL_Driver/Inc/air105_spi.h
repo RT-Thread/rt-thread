@@ -20,7 +20,7 @@
  */
 
 
- 
+
 #ifndef __AIR105_SPI_H
 #define __AIR105_SPI_H
 
@@ -31,19 +31,19 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "air105.h"
 
-#define SPI_DMACR_RDMAE_Pos								(0)
-#define SPI_DMACR_RDMAE_Mask							(0x01U << SPI_DMACR_RDMAE_Pos)
+#define SPI_DMACR_RDMAE_Pos                             (0)
+#define SPI_DMACR_RDMAE_Mask                            (0x01U << SPI_DMACR_RDMAE_Pos)
 
-#define SPI_DMACR_TDMAE_Pos								(1)
-#define SPI_DMACR_TDMAE_Mask							(0x01U << SPI_DMACR_TDMAE_Pos)
+#define SPI_DMACR_TDMAE_Pos                             (1)
+#define SPI_DMACR_TDMAE_Mask                            (0x01U << SPI_DMACR_TDMAE_Pos)
 
 
 /** @defgroup SPI_Exported_Types
   * @{
   */
 
-/** 
-  * @brief  SPI Init structure definition  
+/**
+  * @brief  SPI Init structure definition
   */
 typedef struct
 {
@@ -75,8 +75,8 @@ typedef struct
 }SPI_InitTypeDef;
 
 
-/** 
-  * @brief  Texas Instruments Synchronous Serial Protocol (SSP) Init structure definition  
+/**
+  * @brief  Texas Instruments Synchronous Serial Protocol (SSP) Init structure definition
   */
 typedef struct
 {
@@ -102,8 +102,8 @@ typedef struct
 }SSP_InitTypeDef;
 
 
-/** 
-  * @brief  National Semiconductor Microwire (NSM) Init structure definition  
+/**
+  * @brief  National Semiconductor Microwire (NSM) Init structure definition
   */
 typedef struct
 {
@@ -133,39 +133,39 @@ typedef struct
 }NSM_InitTypeDef;
 
 
-/** 
-  * @brief  SPI DMA Init structure definition  
+/**
+  * @brief  SPI DMA Init structure definition
   */
 typedef struct
 {
-	uint32_t SPI_DMAReq;
-	uint32_t SPI_DMAReceiveLevel;
-	uint32_t SPI_DMATransmitLevel;
-	FunctionalState SPI_DMAEnCmd;
+    uint32_t SPI_DMAReq;
+    uint32_t SPI_DMAReceiveLevel;
+    uint32_t SPI_DMATransmitLevel;
+    FunctionalState SPI_DMAEnCmd;
 }SPI_DMAInitTypeDef;
 
 
-/** @defgroup SPI_data_direction 
+/** @defgroup SPI_data_direction
   * @{
   */
-#define SPI_Direction_2Lines_FullDuplex 		((uint32_t)0x0000)
-#define SPI_Direction_1Line_Tx					((uint32_t)0x0100)
-#define SPI_Direction_1Line_Rx					((uint32_t)0x0200)
-#define SPI_Direction_EEPROM_Read				((uint32_t)0x0300)
+#define SPI_Direction_2Lines_FullDuplex         ((uint32_t)0x0000)
+#define SPI_Direction_1Line_Tx                  ((uint32_t)0x0100)
+#define SPI_Direction_1Line_Rx                  ((uint32_t)0x0200)
+#define SPI_Direction_EEPROM_Read               ((uint32_t)0x0300)
 #define IS_SPI_DIRECTION_MODE(MODE)             (((MODE) == SPI_Direction_2Lines_FullDuplex) || \
                                                 ((MODE) == SPI_Direction_1Line_Tx) || \
                                                 ((MODE) == SPI_Direction_1Line_Rx) || \
                                                 ((MODE) == SPI_Direction_EEPROM_Read))
 /**
   * @}
-  */ 
+  */
 
 #define SPI_Mode_Master                 ((uint32_t)0x0001)
 #define SPI_Mode_Slave                  ((uint32_t)0x0000)
 #define IS_SPI_MODE(MODE)               (((MODE) == SPI_Mode_Master) || \
                                         ((MODE) == SPI_Mode_Slave))
 
-/** @defgroup SPI_data_size 
+/** @defgroup SPI_data_size
   * @{
   */
 #define SPI_DataSize_8b                 ((uint32_t)0x0007)
@@ -174,9 +174,9 @@ typedef struct
                                         ((DATASIZE) == SPI_DataSize_8b))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup SPI_Clock_Polarity 
+/** @defgroup SPI_Clock_Polarity
   * @{
   */
 
@@ -188,7 +188,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SPI_Clock_Phase 
+/** @defgroup SPI_Clock_Phase
   * @{
   */
 #define SPI_CPHA_1Edge                  ((uint32_t)0x0000)
@@ -202,9 +202,9 @@ typedef struct
 #define SPI_NSS_0                    ((uint32_t)0x0001)
 #define SPI_NSS_Null                 ((uint32_t)0x0000)
 #define IS_SPI_NSS(NSS)              (((NSS) == SPI_NSS_0) || \
-						             ((NSS) == SPI_NSS_Null))
+                                     ((NSS) == SPI_NSS_Null))
 
-/** @defgroup SPI_BaudRate_Prescaler 
+/** @defgroup SPI_BaudRate_Prescaler
   * @{
   */
 #define SPI_BaudRatePrescaler_2         ((uint32_t)0x0002)
@@ -225,9 +225,9 @@ typedef struct
                                               ((PRESCALER) == SPI_BaudRatePrescaler_256))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup SPI_RXFIFOFullThreshold 
+/** @defgroup SPI_RXFIFOFullThreshold
   * @{
   */
 #define SPI_RXFIFOFullThreshold_1        ((uint32_t)0x0000)
@@ -247,30 +247,30 @@ typedef struct
 #define SPI_RXFIFOFullThreshold_15       ((uint32_t)0x000E)
 #define SPI_RXFIFOFullThreshold_16       ((uint32_t)0x000F)
 
-#define IS_SPI_RX_FIFO_FULL_THRESHOLD(THRESHOLD)	(((THRESHOLD) == SPI_RXFIFOFullThreshold_1) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_2) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_3) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_4) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_5) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_6) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_7) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_8) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_9) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_10) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_11) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_12) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_13) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_14) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_15) || \
-													((THRESHOLD) == SPI_RXFIFOFullThreshold_16))
+#define IS_SPI_RX_FIFO_FULL_THRESHOLD(THRESHOLD)    (((THRESHOLD) == SPI_RXFIFOFullThreshold_1) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_2) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_3) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_4) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_5) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_6) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_7) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_8) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_9) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_10) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_11) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_12) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_13) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_14) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_15) || \
+                                                    ((THRESHOLD) == SPI_RXFIFOFullThreshold_16))
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup SPI_TXFIFOEmptyThreshold
   * @{
   */
-#define SPI_TXFIFOEmptyThreshold_0		  ((uint32_t)0x0000)
+#define SPI_TXFIFOEmptyThreshold_0        ((uint32_t)0x0000)
 #define SPI_TXFIFOEmptyThreshold_1        ((uint32_t)0x0001)
 #define SPI_TXFIFOEmptyThreshold_2        ((uint32_t)0x0002)
 #define SPI_TXFIFOEmptyThreshold_3        ((uint32_t)0x0003)
@@ -287,169 +287,169 @@ typedef struct
 #define SPI_TXFIFOEmptyThreshold_14       ((uint32_t)0x000E)
 #define SPI_TXFIFOEmptyThreshold_15       ((uint32_t)0x000F)
 
-#define IS_SPI_TX_FIFO_EMPTY_THRESHOLD(THRESHOLD)	(((THRESHOLD) == SPI_TXFIFOEmptyThreshold_0) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_1) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_2) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_3) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_4) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_5) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_6) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_7) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_8) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_9) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_10) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_11) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_12) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_13) || \
-													((THRESHOLD) == SPI_TXFIFOEmptyThreshold_14) || \
-													((THRESHOLD) <= SPI_TXFIFOEmptyThreshold_15))
+#define IS_SPI_TX_FIFO_EMPTY_THRESHOLD(THRESHOLD)   (((THRESHOLD) == SPI_TXFIFOEmptyThreshold_0) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_1) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_2) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_3) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_4) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_5) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_6) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_7) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_8) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_9) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_10) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_11) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_12) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_13) || \
+                                                    ((THRESHOLD) == SPI_TXFIFOEmptyThreshold_14) || \
+                                                    ((THRESHOLD) <= SPI_TXFIFOEmptyThreshold_15))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup SPI_DMAReceiveLevel 
+/** @defgroup SPI_DMAReceiveLevel
   * @{
   */
-#define SPI_DMAReceiveLevel_1				    ((uint32_t)0x0000)
-#define SPI_DMAReceiveLevel_2			        ((uint32_t)0x0001)
-#define SPI_DMAReceiveLevel_3					((uint32_t)0x0002)
-#define SPI_DMAReceiveLevel_4					((uint32_t)0x0003)
-#define SPI_DMAReceiveLevel_5					((uint32_t)0x0004)
-#define SPI_DMAReceiveLevel_6					((uint32_t)0x0005)
-#define SPI_DMAReceiveLevel_7					((uint32_t)0x0006)
-#define SPI_DMAReceiveLevel_8					((uint32_t)0x0007)
-#define SPI_DMAReceiveLevel_9					((uint32_t)0x0008)
-#define SPI_DMAReceiveLevel_10					((uint32_t)0x0009)
-#define SPI_DMAReceiveLevel_11					((uint32_t)0x000A)
-#define SPI_DMAReceiveLevel_12					((uint32_t)0x000B)
-#define SPI_DMAReceiveLevel_13					((uint32_t)0x000C)
-#define SPI_DMAReceiveLevel_14					((uint32_t)0x000D)
-#define SPI_DMAReceiveLevel_15					((uint32_t)0x000E)
-#define SPI_DMAReceiveLevel_16					((uint32_t)0x000F)
+#define SPI_DMAReceiveLevel_1                   ((uint32_t)0x0000)
+#define SPI_DMAReceiveLevel_2                   ((uint32_t)0x0001)
+#define SPI_DMAReceiveLevel_3                   ((uint32_t)0x0002)
+#define SPI_DMAReceiveLevel_4                   ((uint32_t)0x0003)
+#define SPI_DMAReceiveLevel_5                   ((uint32_t)0x0004)
+#define SPI_DMAReceiveLevel_6                   ((uint32_t)0x0005)
+#define SPI_DMAReceiveLevel_7                   ((uint32_t)0x0006)
+#define SPI_DMAReceiveLevel_8                   ((uint32_t)0x0007)
+#define SPI_DMAReceiveLevel_9                   ((uint32_t)0x0008)
+#define SPI_DMAReceiveLevel_10                  ((uint32_t)0x0009)
+#define SPI_DMAReceiveLevel_11                  ((uint32_t)0x000A)
+#define SPI_DMAReceiveLevel_12                  ((uint32_t)0x000B)
+#define SPI_DMAReceiveLevel_13                  ((uint32_t)0x000C)
+#define SPI_DMAReceiveLevel_14                  ((uint32_t)0x000D)
+#define SPI_DMAReceiveLevel_15                  ((uint32_t)0x000E)
+#define SPI_DMAReceiveLevel_16                  ((uint32_t)0x000F)
 
-#define IS_SPI_DMA_RECEIVE_LEVEL(LEVEL)			((((int32_t)(LEVEL)) >= SPI_DMAReceiveLevel_1) && \
-											    (((int32_t)(LEVEL)) <= SPI_DMAReceiveLevel_16))
+#define IS_SPI_DMA_RECEIVE_LEVEL(LEVEL)         ((((int32_t)(LEVEL)) >= SPI_DMAReceiveLevel_1) && \
+                                                (((int32_t)(LEVEL)) <= SPI_DMAReceiveLevel_16))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup SPI_DMATransmitLevel 
+/** @defgroup SPI_DMATransmitLevel
   * @{
   */
-#define SPI_DMATransmitLevel_0					((uint32_t)0x0000)
-#define SPI_DMATransmitLevel_1					((uint32_t)0x0001)
-#define SPI_DMATransmitLevel_2					((uint32_t)0x0002)
-#define SPI_DMATransmitLevel_3					((uint32_t)0x0003)
-#define SPI_DMATransmitLevel_4					((uint32_t)0x0004)
-#define SPI_DMATransmitLevel_5					((uint32_t)0x0005)
-#define SPI_DMATransmitLevel_6					((uint32_t)0x0006)
-#define SPI_DMATransmitLevel_7					((uint32_t)0x0007)
-#define SPI_DMATransmitLevel_8					((uint32_t)0x0008)
-#define SPI_DMATransmitLevel_9					((uint32_t)0x0009)
-#define SPI_DMATransmitLevel_10					((uint32_t)0x000A)
-#define SPI_DMATransmitLevel_11					((uint32_t)0x000B)
-#define SPI_DMATransmitLevel_12					((uint32_t)0x000C)
-#define SPI_DMATransmitLevel_13					((uint32_t)0x000D)
-#define SPI_DMATransmitLevel_14					((uint32_t)0x000E)
-#define SPI_DMATransmitLevel_15					((uint32_t)0x000F)
+#define SPI_DMATransmitLevel_0                  ((uint32_t)0x0000)
+#define SPI_DMATransmitLevel_1                  ((uint32_t)0x0001)
+#define SPI_DMATransmitLevel_2                  ((uint32_t)0x0002)
+#define SPI_DMATransmitLevel_3                  ((uint32_t)0x0003)
+#define SPI_DMATransmitLevel_4                  ((uint32_t)0x0004)
+#define SPI_DMATransmitLevel_5                  ((uint32_t)0x0005)
+#define SPI_DMATransmitLevel_6                  ((uint32_t)0x0006)
+#define SPI_DMATransmitLevel_7                  ((uint32_t)0x0007)
+#define SPI_DMATransmitLevel_8                  ((uint32_t)0x0008)
+#define SPI_DMATransmitLevel_9                  ((uint32_t)0x0009)
+#define SPI_DMATransmitLevel_10                 ((uint32_t)0x000A)
+#define SPI_DMATransmitLevel_11                 ((uint32_t)0x000B)
+#define SPI_DMATransmitLevel_12                 ((uint32_t)0x000C)
+#define SPI_DMATransmitLevel_13                 ((uint32_t)0x000D)
+#define SPI_DMATransmitLevel_14                 ((uint32_t)0x000E)
+#define SPI_DMATransmitLevel_15                 ((uint32_t)0x000F)
 
-#define IS_SPI_DMA_TRANSMIT_LEVEL(LEVEL)	((((int32_t)(LEVEL)) >= SPI_DMATransmitLevel_0) && \
-											(((int32_t)(LEVEL)) <= SPI_DMATransmitLevel_15))
+#define IS_SPI_DMA_TRANSMIT_LEVEL(LEVEL)    ((((int32_t)(LEVEL)) >= SPI_DMATransmitLevel_0) && \
+                                            (((int32_t)(LEVEL)) <= SPI_DMATransmitLevel_15))
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup SPI_DMA_transfer_requests 
+/** @defgroup SPI_DMA_transfer_requests
   * @{
   */
 #define SPI_DMAReq_Rx               ((uint32_t)0x0001)
 #define SPI_DMAReq_Tx               ((uint32_t)0x0002)
-#define IS_SPI_DMAREQ(DMAREQ)		((((DMAREQ) & (uint32_t)0xFFFC) == (uint32_t)0x00) && \
-									((DMAREQ) != (uint32_t)0x00))
+#define IS_SPI_DMAREQ(DMAREQ)       ((((DMAREQ) & (uint32_t)0xFFFC) == (uint32_t)0x00) && \
+                                    ((DMAREQ) != (uint32_t)0x00))
 /**
   * @}
   */
 
-/** @defgroup SPI_Interrupt Mask and Status Flag 
+/** @defgroup SPI_Interrupt Mask and Status Flag
   * @{
   */
-#define SPI_IT_TXE						((uint32_t)0x0001)				//clear by hardware
-#define SPI_IT_TXOVF					((uint32_t)0x0002)				//clear by read TXOICR register
-#define SPI_IT_RXF						((uint32_t)0x0010)				//clear by hardware
-#define SPI_IT_RXOVF					((uint32_t)0x0008)				//clear by read RXOICR register
-#define SPI_IT_RXUDF					((uint32_t)0x0004)				//clear by read RXURCR register
-#define SPI_IT_MMC						((uint32_t)0x0020)				//clear by read MSTICR register
-#define SPI_IT_All						((uint32_t)0x002E)
-#define IS_SPI_GET_IT(IT)				(((IT) == SPI_IT_TXE) || \
-										((IT) == SPI_IT_TXOVF) || \
-										((IT) == SPI_IT_RXF) || \
-										((IT) == SPI_IT_RXUDF) || \
-										((IT) == SPI_IT_RXOVF) || \
-										((IT) == SPI_IT_MMC))
+#define SPI_IT_TXE                      ((uint32_t)0x0001)              //clear by hardware
+#define SPI_IT_TXOVF                    ((uint32_t)0x0002)              //clear by read TXOICR register
+#define SPI_IT_RXF                      ((uint32_t)0x0010)              //clear by hardware
+#define SPI_IT_RXOVF                    ((uint32_t)0x0008)              //clear by read RXOICR register
+#define SPI_IT_RXUDF                    ((uint32_t)0x0004)              //clear by read RXURCR register
+#define SPI_IT_MMC                      ((uint32_t)0x0020)              //clear by read MSTICR register
+#define SPI_IT_All                      ((uint32_t)0x002E)
+#define IS_SPI_GET_IT(IT)               (((IT) == SPI_IT_TXE) || \
+                                        ((IT) == SPI_IT_TXOVF) || \
+                                        ((IT) == SPI_IT_RXF) || \
+                                        ((IT) == SPI_IT_RXUDF) || \
+                                        ((IT) == SPI_IT_RXOVF) || \
+                                        ((IT) == SPI_IT_MMC))
 
-#define SPI_FLAG_BSY	                ((uint32_t)0x0001)
-#define SPI_FLAG_TXNF	                ((uint32_t)0x0002)				//clear by hardware
-#define SPI_FLAG_TXE					((uint32_t)0x0004)				//clear by hardware
-#define SPI_FLAG_RXNE	                ((uint32_t)0x0008)				//clear by hardware
-#define SPI_FLAG_RXF					((uint32_t)0x0010)				//clear by hardware
-#define SPI_FLAG_TXERR					((uint32_t)0x0020)				//read clear
-#define SPI_FLAG_DCERR					((uint32_t)0x0040)				//read clear
-#define IS_SPI_GET_FLAG(FLAG)			(((FLAG) == SPI_SR_RFNE) || \
-										((FLAG) == SPI_SR_RFF) || \
-										((FLAG) == SPI_SR_TFE) || \
-										((FLAG) == SPI_SR_TFNF) || \
-										((FLAG) == SPI_SR_BUSY))
+#define SPI_FLAG_BSY                    ((uint32_t)0x0001)
+#define SPI_FLAG_TXNF                   ((uint32_t)0x0002)              //clear by hardware
+#define SPI_FLAG_TXE                    ((uint32_t)0x0004)              //clear by hardware
+#define SPI_FLAG_RXNE                   ((uint32_t)0x0008)              //clear by hardware
+#define SPI_FLAG_RXF                    ((uint32_t)0x0010)              //clear by hardware
+#define SPI_FLAG_TXERR                  ((uint32_t)0x0020)              //read clear
+#define SPI_FLAG_DCERR                  ((uint32_t)0x0040)              //read clear
+#define IS_SPI_GET_FLAG(FLAG)           (((FLAG) == SPI_SR_RFNE) || \
+                                        ((FLAG) == SPI_SR_RFF) || \
+                                        ((FLAG) == SPI_SR_TFE) || \
+                                        ((FLAG) == SPI_SR_TFNF) || \
+                                        ((FLAG) == SPI_SR_BUSY))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup NSM_Direction 
+/** @defgroup NSM_Direction
   * @{
   */
-#define NSM_Direction_Data_Transmit			((uint32_t)(0x0001))
-#define NSM_Direction_Data_Receive			((uint32_t)(0x0002))
-#define IS_NSM_DIRECTION_MODE(MODE)			(((MODE) == NSM_Direction_Data_Transmit) || \
-											((MODE) == NSM_Direction_Data_Receive))
+#define NSM_Direction_Data_Transmit         ((uint32_t)(0x0001))
+#define NSM_Direction_Data_Receive          ((uint32_t)(0x0002))
+#define IS_NSM_DIRECTION_MODE(MODE)         (((MODE) == NSM_Direction_Data_Transmit) || \
+                                            ((MODE) == NSM_Direction_Data_Receive))
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup NSM_TransferMode 
+/** @defgroup NSM_TransferMode
   * @{
-  */											
-#define NSM_TransferMode_Non_Sequential		((uint32_t)(0x0001))
-#define NSM_TransferMode_Sequential			((uint32_t)(0x0002))
-#define IS_NSM_TRANSFER_MODE(MODE)			(((MODE) == NSM_TransferMode_Non_Sequential) || \
-											((MODE) == NSM_TransferMode_Sequential))											
+  */
+#define NSM_TransferMode_Non_Sequential     ((uint32_t)(0x0001))
+#define NSM_TransferMode_Sequential         ((uint32_t)(0x0002))
+#define IS_NSM_TRANSFER_MODE(MODE)          (((MODE) == NSM_TransferMode_Non_Sequential) || \
+                                            ((MODE) == NSM_TransferMode_Sequential))
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup NSM_DataSize 
+/** @defgroup NSM_DataSize
   * @{
   */
 #define NSM_DataSize_8b                 ((uint32_t)0x0007)
 #define NSM_DataSize_16b                ((uint32_t)0x000F)
-#define IS_NSM_DATASIZE(DATASIZE)		(((DATASIZE) == NSM_DataSize_8b) || \
-										((DATASIZE) == NSM_DataSize_16b))
+#define IS_NSM_DATASIZE(DATASIZE)       (((DATASIZE) == NSM_DataSize_8b) || \
+                                        ((DATASIZE) == NSM_DataSize_16b))
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup NSM_ControlDataSize 
+/** @defgroup NSM_ControlDataSize
   * @{
   */
 #define NSM_ControlDataSize_8b           ((uint32_t)0x0007)
 #define NSM_ControlDataSize_16b          ((uint32_t)0x000F)
-#define IS_NSM_CONTROL_DATASIZE(DATASIZE)		(((DATASIZE) == NSM_ControlDataSize_8b) || \
-												((DATASIZE) == NSM_ControlDataSize_16b))
+#define IS_NSM_CONTROL_DATASIZE(DATASIZE)       (((DATASIZE) == NSM_ControlDataSize_8b) || \
+                                                ((DATASIZE) == NSM_ControlDataSize_16b))
 /**
   * @}
-  */ 
+  */
 
 void SPI_DeInit(SPI_TypeDef* SPIx);
 void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct);
@@ -489,7 +489,7 @@ void NSM_StructInit(NSM_InitTypeDef* NSM_InitStruct);
 
 /**
   * @}
-  */ 
+  */
 
 #endif /*__MSSCPU_SPI_H */
 

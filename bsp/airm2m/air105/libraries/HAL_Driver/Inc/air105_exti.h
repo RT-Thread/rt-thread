@@ -26,21 +26,21 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
-/* Includes -----------------------------------------------------------------*/	
+/* Includes -----------------------------------------------------------------*/
 #include "air105.h"
 
 
-/** 
-  * @brief  EXTI Trigger enumeration  
+/**
+  * @brief  EXTI Trigger enumeration
   */
 typedef enum
 {
-	EXTI_Trigger_Off			= (uint32_t)0x00,
-	EXTI_Trigger_Rising			= (uint32_t)0x01,
-	EXTI_Trigger_Falling		= (uint32_t)0x02,  
-	EXTI_Trigger_Rising_Falling	= (uint32_t)0x03
+    EXTI_Trigger_Off            = (uint32_t)0x00,
+    EXTI_Trigger_Rising         = (uint32_t)0x01,
+    EXTI_Trigger_Falling        = (uint32_t)0x02,
+    EXTI_Trigger_Rising_Falling = (uint32_t)0x03
 }EXTI_TriggerTypeDef;
 
 #define IS_EXTI_TRIGGER(TRIGGER) (((TRIGGER) == EXTI_Trigger_Off) || \
@@ -52,24 +52,24 @@ typedef enum
   */
 
 
-/** @defgroup EXTI_Lines 
+/** @defgroup EXTI_Lines
   * @{
   */
-#define EXTI_Line0						((uint32_t)0x0000)  /*!< External interrupt line 0 */
-#define EXTI_Line1						((uint32_t)0x0001)  /*!< External interrupt line 1 */
-#define EXTI_Line2						((uint32_t)0x0002)  /*!< External interrupt line 2 */
-#define EXTI_Line3						((uint32_t)0x0003)  /*!< External interrupt line 3 */
-#define EXTI_Line4						((uint32_t)0x0004)  /*!< External interrupt line 4 */
-#define EXTI_Line5						((uint32_t)0x0005)  /*!< External interrupt line 5 */
-                                          
-#define IS_EXTI_LINE(LINE)				(((LINE) == EXTI_Line0) || ((LINE) == EXTI_Line1) || \
-										 ((LINE) == EXTI_Line2) || ((LINE) == EXTI_Line3) || \
+#define EXTI_Line0                      ((uint32_t)0x0000)  /*!< External interrupt line 0 */
+#define EXTI_Line1                      ((uint32_t)0x0001)  /*!< External interrupt line 1 */
+#define EXTI_Line2                      ((uint32_t)0x0002)  /*!< External interrupt line 2 */
+#define EXTI_Line3                      ((uint32_t)0x0003)  /*!< External interrupt line 3 */
+#define EXTI_Line4                      ((uint32_t)0x0004)  /*!< External interrupt line 4 */
+#define EXTI_Line5                      ((uint32_t)0x0005)  /*!< External interrupt line 5 */
+
+#define IS_EXTI_LINE(LINE)              (((LINE) == EXTI_Line0) || ((LINE) == EXTI_Line1) || \
+                                         ((LINE) == EXTI_Line2) || ((LINE) == EXTI_Line3) || \
                                          ((LINE) == EXTI_Line4) || ((LINE) == EXTI_Line5))
 /**
   * @}
   */
 
-/** @defgroup EXTI_PinSource 
+/** @defgroup EXTI_PinSource
   * @{
   */
 #define EXTI_PinSource0                 ((uint32_t)0x0001)  /*!< Pin 0 selected */
@@ -90,7 +90,7 @@ typedef enum
 #define EXTI_PinSource15                ((uint32_t)0x8000)  /*!< Pin 15 selected */
 #define EXTI_PinSourceAll               ((uint32_t)0xffff)  /*!< Pin All selected */
 
-#define IS_EXTI_PIN_SOURCE(PIN)			(((((PIN) & ~(uint32_t)0xFFFF)) == 0x00) && ((PIN) != (uint32_t)0x00))
+#define IS_EXTI_PIN_SOURCE(PIN)         (((((PIN) & ~(uint32_t)0xFFFF)) == 0x00) && ((PIN) != (uint32_t)0x00))
 /**
   * @}
   */

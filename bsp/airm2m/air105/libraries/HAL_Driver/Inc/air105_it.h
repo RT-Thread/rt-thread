@@ -24,7 +24,7 @@
 
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "air105.h"
@@ -48,5 +48,5 @@ void SysTick_Handler(void);
 }
 #endif
 
-#endif 
+#endif
 

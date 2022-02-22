@@ -24,5 +24,5 @@
 #include "bl_inc.h"
 #include "app_inc.h"
 #include "rtdbg.h"
-#define DBG	LOG_E
+#define DBG LOG_E
 #endif

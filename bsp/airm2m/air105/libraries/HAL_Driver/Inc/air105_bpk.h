@@ -30,18 +30,18 @@
 /* Includes ------------------------------------------------------------------*/
 #include "air105.h"
 
-	 
+
 /** @defgroup BPK_Exported_Types
   * @{
   */
-	 
+
 #define BPK_KEY_REGION_0                      ((uint32_t)0x0001)
 #define BPK_KEY_REGION_1                      ((uint32_t)0x0002)
 #define BPK_KEY_REGION_ALL                    ((uint32_t)0x0003)
-#define IS_BPK_KEY_REGION(REGION)			  ((((REGION) & ~BPK_KEY_REGION_ALL) == 0x00) && ((REGION) != 0x00))
-	 
+#define IS_BPK_KEY_REGION(REGION)             ((((REGION) & ~BPK_KEY_REGION_ALL) == 0x00) && ((REGION) != 0x00))
 
-#define IS_BPK_LOCK(LOCK)					  ((((LOCK) & ~BPK_LR_LOCK_ALL) == 0x00) && ((LOCK) != (uint32_t)0x00))
+
+#define IS_BPK_LOCK(LOCK)                     ((((LOCK) & ~BPK_LR_LOCK_ALL) == 0x00) && ((LOCK) != (uint32_t)0x00))
 
 
 FlagStatus BPK_IsReady(void);
@@ -61,6 +61,6 @@ FlagStatus BPK_GetLockStatus(uint32_t BPK_LOCK);
 }
 #endif
 
-#endif 
+#endif
 
 /**************************      (C) COPYRIGHT Megahunt    *****END OF FILE****/

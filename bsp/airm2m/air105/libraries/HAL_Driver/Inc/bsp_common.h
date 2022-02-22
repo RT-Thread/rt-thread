@@ -31,124 +31,124 @@
 
 typedef struct
 {
-	uint32_t param_max_num;
-	uint32_t param_max_len;
-	uint32_t param_num;
-	int8_t *param_str;
+    uint32_t param_max_num;
+    uint32_t param_max_len;
+    uint32_t param_num;
+    int8_t *param_str;
 }CmdParam;
 
 typedef struct
 {
-	uint8_t Sec;
-	uint8_t Min;
-	uint8_t Hour;
-	uint8_t Week;//表示日期0~6,sun~sat，表示预约时，bit0~bit6,sun~sat
+    uint8_t Sec;
+    uint8_t Min;
+    uint8_t Hour;
+    uint8_t Week;//表示日期0~6,sun~sat，表示预约时，bit0~bit6,sun~sat
 }Time_UserDataStruct;
 
 typedef struct
 {
-	uint16_t Year;
-	uint8_t Mon;
-	uint8_t Day;
+    uint16_t Year;
+    uint8_t Mon;
+    uint8_t Day;
 }Date_UserDataStruct;
 
 typedef union
 {
-	uint32_t dwTime;
-	Time_UserDataStruct Time;
+    uint32_t dwTime;
+    Time_UserDataStruct Time;
 }Time_Union;
 
 typedef union
 {
-	uint32_t dwDate;
-	Date_UserDataStruct Date;
+    uint32_t dwDate;
+    Date_UserDataStruct Date;
 }Date_Union;
 
 typedef struct
 {
-	uint8_t *Data;
-	uint32_t Len;
-	uint32_t Offset;
-	uint32_t MaxLength;
-	uint32_t DataSize;
+    uint8_t *Data;
+    uint32_t Len;
+    uint32_t Offset;
+    uint32_t MaxLength;
+    uint32_t DataSize;
 }Loop_Buffer;
 
 typedef struct
 {
-	uint8_t *Data;
-	uint32_t Pos;
-	uint32_t MaxLen;
+    uint8_t *Data;
+    uint32_t Pos;
+    uint32_t MaxLen;
 }Buffer_Struct;
 
 typedef union
 {
-	void *p;
-	char *pc8;
-	uint8_t *pu8;
-	uint16_t *pu16;
-	uint32_t *pu32;
-	uint32_t u32;
-	uint8_t u8[4];
-	uint16_t u16[2];
+    void *p;
+    char *pc8;
+    uint8_t *pu8;
+    uint16_t *pu16;
+    uint32_t *pu32;
+    uint32_t u32;
+    uint8_t u8[4];
+    uint16_t u16[2];
 }PV_Union;
 
 enum
 {
-	ERROR_NONE,
-	ERROR_NO_SUCH_ID,
-	ERROR_PERMISSION_DENIED,
-	ERROR_PARAM_INVALID,
-	ERROR_PARAM_OVERFLOW,
-	ERROR_DEVICE_BUSY,
-	ERROR_OPERATION_FAILED,
-	ERROR_BUFFER_FULL,
-	ERROR_NO_MEMORY,
-	ERROR_CMD_NOT_SUPPORT,
-	ERROR_NO_DATA,
-	ERROR_NO_FLASH,
-	ERROR_NO_TIMER,
-	ERROR_TIMEOUT,
-	ERROR_SSL_HANDSHAKE,
-	ERROR_PROTOCL,
-	ERROR_ID_INVALID,
-	ERROR_MID_INVALID,
-	ERROR_RETRY_TOO_MUCH,
-	ERROR_CMD_BLOCK,
-	LIST_FIND = 1,
-	LIST_PASS = 0,
-	LIST_DEL = -1,
+    ERROR_NONE,
+    ERROR_NO_SUCH_ID,
+    ERROR_PERMISSION_DENIED,
+    ERROR_PARAM_INVALID,
+    ERROR_PARAM_OVERFLOW,
+    ERROR_DEVICE_BUSY,
+    ERROR_OPERATION_FAILED,
+    ERROR_BUFFER_FULL,
+    ERROR_NO_MEMORY,
+    ERROR_CMD_NOT_SUPPORT,
+    ERROR_NO_DATA,
+    ERROR_NO_FLASH,
+    ERROR_NO_TIMER,
+    ERROR_TIMEOUT,
+    ERROR_SSL_HANDSHAKE,
+    ERROR_PROTOCL,
+    ERROR_ID_INVALID,
+    ERROR_MID_INVALID,
+    ERROR_RETRY_TOO_MUCH,
+    ERROR_CMD_BLOCK,
+    LIST_FIND = 1,
+    LIST_PASS = 0,
+    LIST_DEL = -1,
 
-	DMA_CB_DONE = 0,
-	UART_CB_TX_BUFFER_DONE,
-	UART_CB_TX_ALL_DONE,
-	UART_CB_RX_NEW,
-	UART_CB_RX_TIMEOUT,
-	UART_CB_RX_BUFFER_FULL,
-	UART_CB_ERROR,
-	UART_CB_CONNECTED,	//串口工具对方已经打开
-	DMA_CB_ERROR = 0xffffffff,
+    DMA_CB_DONE = 0,
+    UART_CB_TX_BUFFER_DONE,
+    UART_CB_TX_ALL_DONE,
+    UART_CB_RX_NEW,
+    UART_CB_RX_TIMEOUT,
+    UART_CB_RX_BUFFER_FULL,
+    UART_CB_ERROR,
+    UART_CB_CONNECTED,  //串口工具对方已经打开
+    DMA_CB_ERROR = 0xffffffff,
 
-	CORE_EVENT_ID_START = 0,
-	CORE_EVENT_ID_ANY = 0,
-	CORE_EVENT_TIMEOUT,
-	CORE_TIMER_TIMEOUT = 0x00010000,
-	SERVICE_EVENT_ID_START = 0x00100000,
-	USER_EVENT_ID_START = 0x10000000,
-	INVALID_EVENT_ID = 0xffffffff,
+    CORE_EVENT_ID_START = 0,
+    CORE_EVENT_ID_ANY = 0,
+    CORE_EVENT_TIMEOUT,
+    CORE_TIMER_TIMEOUT = 0x00010000,
+    SERVICE_EVENT_ID_START = 0x00100000,
+    USER_EVENT_ID_START = 0x10000000,
+    INVALID_EVENT_ID = 0xffffffff,
 };
 
 #define INVALID_HANDLE_VALUE  ((void *)0xffffffff)
 #define INVALID_PARAM  (0xffffffff)
-#define CRC32_GEN		(0x04C11DB7)
-#define CRC32_START		(0xffffffff)
-#define CRC16_CCITT_GEN		(0x1021)
-#define CRC16_MODBUS_GEN		(0x8005)
-#define CRC16_START		(0xffff)
-#define CRC16_IBM_SEED	(0xffff)
-#define CRC16_CCITT_SEED		(0x1D0F)
-#define HANDLE			void *
+#define CRC32_GEN       (0x04C11DB7)
+#define CRC32_START     (0xffffffff)
+#define CRC16_CCITT_GEN     (0x1021)
+#define CRC16_MODBUS_GEN        (0x8005)
+#define CRC16_START     (0xffff)
+#define CRC16_IBM_SEED  (0xffff)
+#define CRC16_CCITT_SEED        (0x1D0F)
+#define HANDLE          void *
 
-#define MIN(X,Y)	(((X) < (Y))?(X):(Y))
+#define MIN(X,Y)    (((X) < (Y))?(X):(Y))
 
 typedef void (* TaskFun_t)( void * );
 typedef void(* CBDataFun_t)(uint8_t *Data, uint32_t Len);
@@ -157,25 +157,25 @@ typedef uint64_t LongInt;
 
 typedef struct
 {
-	CBFuncEx_t CB;
-	union {
-		void *pParam;	//用户回调模式
-		uint32_t MaxCnt;	//设置捕获模式时的最大tick，捕获时的tick
-	}uParam;
+    CBFuncEx_t CB;
+    union {
+        void *pParam;   //用户回调模式
+        uint32_t MaxCnt;    //设置捕获模式时的最大tick，捕获时的tick
+    }uParam;
 
     union {
-    	struct {
-    	    uint8_t Level;	//IO输入输出电平，捕获模式下中断时IO电平
-    	    uint8_t PullMode; //IO上下拉控制
-    	} IOArg;
-    	struct {
-    	    uint8_t ExtiMode;	//中断模式
-    	    uint8_t PullMode; //IO上下拉控制
-    	} ExitArg;
-    	uint16_t Time;	//delay时间，us
+        struct {
+            uint8_t Level;  //IO输入输出电平，捕获模式下中断时IO电平
+            uint8_t PullMode; //IO上下拉控制
+        } IOArg;
+        struct {
+            uint8_t ExtiMode;   //中断模式
+            uint8_t PullMode; //IO上下拉控制
+        } ExitArg;
+        uint16_t Time;  //delay时间，us
     } uArg;
-    uint8_t Operation;	//操作类型
-    uint8_t Arg1;		//IO操作时为IOpin，delay操作时则为微调值，0~47，48为1us
+    uint8_t Operation;  //操作类型
+    uint8_t Arg1;       //IO操作时为IOpin，delay操作时则为微调值，0~47，48为1us
 }OPQueue_CmdStruct;
 
 __attribute__((weak)) uint8_t OS_CheckInIrq(void);
@@ -231,13 +231,13 @@ uint32_t TransferUnpack(uint8_t Flag, uint8_t Code, uint8_t F1, uint8_t F2, uint
 /**
  * container_of - cast a member of a structure out to the containing structure
  *
- * @ptr:	the pointer to the member.
- * @type:	the type of the container struct this is embedded in.
- * @member:	the name of the member within the struct.
+ * @ptr:    the pointer to the member.
+ * @type:   the type of the container struct this is embedded in.
+ * @member: the name of the member within the struct.
  *
  */
-#define container_of(ptr, type, member) ({			\
-        const typeof( ((type *)0)->member ) *__mptr = (ptr);	\
+#define container_of(ptr, type, member) ({          \
+        const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
         (type *)( (char *)__mptr - offsetof(type,member) );})
 
 
@@ -266,10 +266,10 @@ typedef struct llist_head_t{
 #define LLIST_HEAD_INIT(name) { &(name), &(name) }
 
 #define LLIST_HEAD(name) \
-	llist_head name = LLIST_HEAD_INIT(name)
+    llist_head name = LLIST_HEAD_INIT(name)
 
 #define INIT_LLIST_HEAD(ptr) do { \
-	(ptr)->next = (ptr); (ptr)->prev = (ptr); \
+    (ptr)->next = (ptr); (ptr)->prev = (ptr); \
 } while (0)
 
 /*
@@ -339,7 +339,7 @@ void llist_move(llist_head *llist, llist_head *head);
  * @head: the head that will follow our entry
  */
 void llist_move_tail(llist_head *llist,
-				  llist_head *head);
+                  llist_head *head);
 
 /**
  * llist_empty - tests whether a llist is empty
@@ -352,12 +352,12 @@ uint32_t llist_num(const llist_head *head);
 void *llist_traversal(llist_head *head, CBFuncEx_t cb, void *pData);
 /**
  * llist_entry - get the struct for this entry
- * @ptr:	the &llist_head pointer.
- * @type:	the type of the struct this is embedded in.
- * @member:	the name of the llist_struct within the struct.
+ * @ptr:    the &llist_head pointer.
+ * @type:   the type of the struct this is embedded in.
+ * @member: the name of the llist_struct within the struct.
  */
 #define llist_entry(ptr, type, member) \
-	container_of(ptr, type, member)
+    container_of(ptr, type, member)
 
 
 uint8_t BytesGet8(const void *ptr);

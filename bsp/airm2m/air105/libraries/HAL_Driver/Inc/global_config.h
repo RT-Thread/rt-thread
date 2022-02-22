@@ -25,15 +25,15 @@
 #define HSE_VALUE    ((uint32_t)12000000) /*!< Value of the HSE oscillator in Hz */
 #endif
 //#define __DEBUG__
-#define IRQ_LINE_OFFSET	(16)	//如果想要用sys_tick,改成15
+#define IRQ_LINE_OFFSET (16)    //如果想要用sys_tick,改成15
 #define IRQ_LINE_MAX (52)
-#define CORE_TICK_BASE	(1000)
-#define HW_TICK_BASE	(48000000)
-#define __WDT_TO_MS__	(15000)
+#define CORE_TICK_BASE  (1000)
+#define HW_TICK_BASE    (48000000)
+#define __WDT_TO_MS__   (15000)
 #define __FLASH_SECTOR_SIZE__ (0x00001000)
 #define __FLASH_PAGE_SIZE__ (0x00000100)
-#define __CORE_FLASH_SECTOR_NUM__ (768)	//__FLASH_BASE_ADDR__ + __CORE_FLASH_SECTOR_NUM__ * __FLASH_SECTOR_SIZE__，是脚本区， 3M开始
-#define __SCRIPT_FLASH_SECTOR_NUM__	 (128)	//__SCRIPT_FLASH_SECTOR_NUM__ * __FLASH_SECTOR_SIZE__，是脚本区长度，512K，剩余512K是文件区
+#define __CORE_FLASH_SECTOR_NUM__ (768) //__FLASH_BASE_ADDR__ + __CORE_FLASH_SECTOR_NUM__ * __FLASH_SECTOR_SIZE__，是脚本区， 3M开始
+#define __SCRIPT_FLASH_SECTOR_NUM__  (128)  //__SCRIPT_FLASH_SECTOR_NUM__ * __FLASH_SECTOR_SIZE__，是脚本区长度，512K，剩余512K是文件区
 #define __FLASH_BASE_ADDR__ (0x01000000)
 #define __RAMRUN_ISR_ADDR__ (0x20004000)
 #define __SRAM_BASE_ADDR__ (0x20000000)
@@ -41,6 +41,6 @@
 #ifndef __BUILD_OS__
 #define __FUNC_IN_RAM__
 #else
-#define __FUNC_IN_RAM__	__attribute__((section (".RamFunc")))
+#define __FUNC_IN_RAM__ __attribute__((section (".RamFunc")))
 #endif
 #endif

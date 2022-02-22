@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -56,34 +56,34 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-        	GPIO_Output(cs_pin, 1);
+            GPIO_Output(cs_pin, 1);
         else
-        	GPIO_Output(cs_pin, 0);
+            GPIO_Output(cs_pin, 0);
     }
 
 
     if (message->length)
     {
         LOG_D("spi%d 0x%X, 0x%X, %d",
-        		spi_id,
+                spi_id,
               (uint32_t)message->send_buf,
               (uint32_t)message->recv_buf, message->length);
-    	if (!message->send_buf)
-    	{
-    		SPI_BlockTransfer(spi_id, message->recv_buf, message->recv_buf, message->length);
-    	}
-    	else
-    	{
-    		SPI_BlockTransfer(spi_id, message->send_buf, message->recv_buf, message->length);
-    	}
-    	LOG_D("spi%d done", spi_id);
+        if (!message->send_buf)
+        {
+            SPI_BlockTransfer(spi_id, message->recv_buf, message->recv_buf, message->length);
+        }
+        else
+        {
+            SPI_BlockTransfer(spi_id, message->send_buf, message->recv_buf, message->length);
+        }
+        LOG_D("spi%d done", spi_id);
     }
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-        	GPIO_Output(cs_pin, 0);
+            GPIO_Output(cs_pin, 0);
         else
-        	GPIO_Output(cs_pin, 1);
+            GPIO_Output(cs_pin, 1);
     }
 
     return message->length;
@@ -100,26 +100,26 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     switch(spi_id)
     {
     case 0:
-	    GPIO_Iomux(GPIOC_12,3);
-	    GPIO_Iomux(GPIOC_13,3);
-	    GPIO_Iomux(GPIOC_15,3);
-    	break;
+        GPIO_Iomux(GPIOC_12,3);
+        GPIO_Iomux(GPIOC_13,3);
+        GPIO_Iomux(GPIOC_15,3);
+        break;
     case 1:
         GPIO_Iomux(GPIOB_12, 0);
         GPIO_Iomux(GPIOB_14, 0);
         GPIO_Iomux(GPIOB_15, 0);
         break;
     case 2:
-	    GPIO_Iomux(GPIOA_06,3);
-	    GPIO_Iomux(GPIOA_08,3);
-	    GPIO_Iomux(GPIOA_09,3);
+        GPIO_Iomux(GPIOA_06,3);
+        GPIO_Iomux(GPIOA_08,3);
+        GPIO_Iomux(GPIOA_09,3);
 
-	    break;
+        break;
     case 3:
-	    GPIO_Iomux(GPIOB_02,0);
-	    GPIO_Iomux(GPIOB_04,0);
-	    GPIO_Iomux(GPIOB_05,0);
-	    break;
+        GPIO_Iomux(GPIOB_02,0);
+        GPIO_Iomux(GPIOB_04,0);
+        GPIO_Iomux(GPIOB_05,0);
+        break;
     }
     SPI_MasterInit(spi_id, configuration->data_width, mode, configuration->max_hz, RT_NULL, RT_NULL);
 

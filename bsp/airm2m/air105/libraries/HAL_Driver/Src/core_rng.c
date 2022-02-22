@@ -23,8 +23,8 @@
 
 void RNG_Init(void)
 {
-	TRNG->RNG_ANA = 0;
-	TRNG->RNG_CSR = 0;
+    TRNG->RNG_ANA = 0;
+    TRNG->RNG_CSR = 0;
 }
 /**
  * @brief 获取随机数
@@ -33,20 +33,20 @@ void RNG_Init(void)
  */
 void RNG_GetData(uint32_t Buf[4])
 {
-	if (TRNG->RNG_CSR & TRNG_RNG_CSR_S128_TRNG0_Mask)
-	{
-		;
-	}
-	else
-	{
-		TRNG->RNG_CSR = 0;
-		while(!(TRNG->RNG_CSR & TRNG_RNG_CSR_S128_TRNG0_Mask)){;}
-	}
-	Buf[0] = TRNG->RNG_DATA[0];
-	Buf[1] = TRNG->RNG_DATA[0];
-	Buf[2] = TRNG->RNG_DATA[0];
-	Buf[3] = TRNG->RNG_DATA[0];
-	TRNG->RNG_CSR = 0;
+    if (TRNG->RNG_CSR & TRNG_RNG_CSR_S128_TRNG0_Mask)
+    {
+        ;
+    }
+    else
+    {
+        TRNG->RNG_CSR = 0;
+        while(!(TRNG->RNG_CSR & TRNG_RNG_CSR_S128_TRNG0_Mask)){;}
+    }
+    Buf[0] = TRNG->RNG_DATA[0];
+    Buf[1] = TRNG->RNG_DATA[0];
+    Buf[2] = TRNG->RNG_DATA[0];
+    Buf[3] = TRNG->RNG_DATA[0];
+    TRNG->RNG_CSR = 0;
 
 
 }

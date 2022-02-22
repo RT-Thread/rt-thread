@@ -20,26 +20,26 @@
  */
 
 #include "user.h"
-#define COUNTER_RELOAD_KEY				((uint32_t)0x76)
+#define COUNTER_RELOAD_KEY              ((uint32_t)0x76)
 void WDT_SetTimeout(uint32_t ms)
 {
-	WDT->WDT_RLD = SYSCTRL->PCLK_1MS_VAL * ms;
+    WDT->WDT_RLD = SYSCTRL->PCLK_1MS_VAL * ms;
 }
 
 void WDT_Feed(void)
 {
-	WDT->WDT_CRR = COUNTER_RELOAD_KEY;
+    WDT->WDT_CRR = COUNTER_RELOAD_KEY;
 }
 
 void WDT_Enable(void)
 {
-	WDT->WDT_CR |= WDT_CR_WDT_EN;
+    WDT->WDT_CR |= WDT_CR_WDT_EN;
 }
 
 void WDT_ModeConfig(WDT_ModeTypeDef WDT_Mode)
 {
-	if(WDT_Mode == WDT_Mode_Interrupt)
-		WDT->WDT_CR |= WDT_CR_RMOD;
-	else if(WDT_Mode == WDT_Mode_CPUReset)
-		WDT->WDT_CR &= ~WDT_CR_RMOD;
+    if(WDT_Mode == WDT_Mode_Interrupt)
+        WDT->WDT_CR |= WDT_CR_RMOD;
+    else if(WDT_Mode == WDT_Mode_CPUReset)
+        WDT->WDT_CR &= ~WDT_CR_RMOD;
 }

@@ -37,13 +37,13 @@ extern "C" {
 typedef enum{
     TRNG0
 } TRNG_ChannelTypeDef;
-#define IS_TRNG_CHANNEL(CHANNEL)  	(((CHANNEL) == TRNG0))
+#define IS_TRNG_CHANNEL(CHANNEL)    (((CHANNEL) == TRNG0))
 
 
 #define TRNG_IT_RNG0_S128           ((uint32_t)0x00000001)
-#define TRNG_IT_RNG0_ATTACK         ((uint32_t)0x00000004)    
-#define IS_TRNG_GET_IT(IT)  		(((IT) == TRNG_IT_RNG0_S128) || \
-									((IT) == TRNG_IT_RNG0_ATTACK))
+#define TRNG_IT_RNG0_ATTACK         ((uint32_t)0x00000004)
+#define IS_TRNG_GET_IT(IT)          (((IT) == TRNG_IT_RNG0_S128) || \
+                                    ((IT) == TRNG_IT_RNG0_ATTACK))
 
 /** @defgroup RNG_Exported_Functions
   * @{
@@ -63,6 +63,6 @@ void TRNG_ClearITPendingBit(uint32_t TRNG_IT);
 }
 #endif
 
-#endif 
+#endif
 
 /**************************      (C) COPYRIGHT Megahunt    *****END OF FILE****/

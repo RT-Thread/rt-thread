@@ -27,18 +27,18 @@
 
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 
 /** @addtogroup BSP
   * @{
-  */ 
+  */
 
 /** @addtogroup Components
   * @{
-  */ 
-  
+  */
+
 /** @addtogroup W25Q80BV
   * @{
   */
@@ -46,20 +46,20 @@
 /** @defgroup W25Q80BV_Exported_Types
   * @{
   */
-   
+
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup W25Q80BV_Exported_Constants
   * @{
   */
-   
-/** 
-  * @brief  W25Q80BV Configuration  
-  */  
+
+/**
+  * @brief  W25Q80BV Configuration
+  */
 #define W25Q80BV_FLASH_SIZE                 0x100000 /* 8MBits => 1MBytes */
-#define W25Q80BV_SECTOR_SIZE			0x1000   /* 256 sectors of 4KBytes */
+#define W25Q80BV_SECTOR_SIZE            0x1000   /* 256 sectors of 4KBytes */
 #define W25Q80BV_SUBSECTOR_SIZE          0x100     /* 4096 subsectors of 4kBytes */
 #define W25Q80BV_PAGE_SIZE                   0x100    /* 65536 pages of 256 bytes */
 
@@ -70,33 +70,33 @@
 #define W25Q80BV_SECTOR_ERASE_MAX_TIME       3000
 #define W25Q80BV_SUBSECTOR_ERASE_MAX_TIME    800
 
-/** 
-  * @brief  W25Q80BV Commands  
-  */  
+/**
+  * @brief  W25Q80BV Commands
+  */
 /* Reset Operations */
-#define RESET_ENABLE_CMD                   	0x66
-#define RESET_MEMORY_CMD                     	0x99
+#define RESET_ENABLE_CMD                    0x66
+#define RESET_MEMORY_CMD                        0x99
 
-#define ENTER_QPI_MODE_CMD                  	0x38
-#define EXIT_QPI_MODE_CMD                    	0xFF
+#define ENTER_QPI_MODE_CMD                      0x38
+#define EXIT_QPI_MODE_CMD                       0xFF
 
 /* Identification Operations */
-#define READ_ID_CMD                          	0x90
-#define DUAL_READ_ID_CMD                     	0x92
-#define QUAD_READ_ID_CMD                     	0x94
-#define READ_JEDEC_ID_CMD                    	0x9F
+#define READ_ID_CMD                             0x90
+#define DUAL_READ_ID_CMD                        0x92
+#define QUAD_READ_ID_CMD                        0x94
+#define READ_JEDEC_ID_CMD                       0x9F
 
 /* Read Operations */
-#define READ_CMD                             		0x03
-#define FAST_READ_CMD                        	0x0B
-#define DUAL_OUT_FAST_READ_CMD     	0x3B
+#define READ_CMD                                    0x03
+#define FAST_READ_CMD                           0x0B
+#define DUAL_OUT_FAST_READ_CMD      0x3B
 #define DUAL_INOUT_FAST_READ_CMD        0xBB
-#define QUAD_OUT_FAST_READ_CMD          	0x6B
-#define QUAD_INOUT_FAST_READ_CMD     	0xEB
+#define QUAD_OUT_FAST_READ_CMD              0x6B
+#define QUAD_INOUT_FAST_READ_CMD        0xEB
 
 /* Write Operations */
-#define WRITE_ENABLE_CMD				0x06
-#define WRITE_DISABLE_CMD				0x04
+#define WRITE_ENABLE_CMD                0x06
+#define WRITE_DISABLE_CMD               0x04
 
 /* Register Operations */
 #define READ_STATUS_REG1_CMD                  0x05
@@ -109,18 +109,18 @@
 
 
 /* Program Operations */
-#define PAGE_PROG_CMD						0x02
-#define QUAD_INPUT_PAGE_PROG_CMD             	0x32
+#define PAGE_PROG_CMD                       0x02
+#define QUAD_INPUT_PAGE_PROG_CMD                0x32
 
 
 /* Erase Operations */
-#define SECTOR_ERASE_CMD                     	0x20
-#define CHIP_ERASE_CMD                       	0xC7
+#define SECTOR_ERASE_CMD                        0x20
+#define CHIP_ERASE_CMD                          0xC7
 
 #define PROG_ERASE_RESUME_CMD             0x7A
 #define PROG_ERASE_SUSPEND_CMD           0x75
 
-#define SET_BURST_WITH_WRAP			0x77
+#define SET_BURST_WITH_WRAP         0x77
 
 
 /* Flag Status Register */
@@ -131,26 +131,26 @@
 /**
   * @}
   */
-  
+
 /** @defgroup W25Q80BV_Exported_Functions
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
-      
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
+  */
 
 /**
   * @}
   */
-  
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
 #ifdef __cplusplus
 }
 #endif

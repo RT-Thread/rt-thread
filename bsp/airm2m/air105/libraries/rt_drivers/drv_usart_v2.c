@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -108,11 +108,11 @@ static int air105_uart_irq(void *pData, void *pParam)
         case UART_CB_TX_BUFFER_DONE:
             break;
         case DMA_CB_DONE:
-        	DMA_ClearStreamFlag(DBG_UART_TX_DMA_STREAM);
-        	rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
+            DMA_ClearStreamFlag(DBG_UART_TX_DMA_STREAM);
+            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
             break;
         case UART_CB_TX_ALL_DONE:
-        	rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
+            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
             break;
         case UART_CB_RX_BUFFER_FULL:
             break;
@@ -122,7 +122,7 @@ static int air105_uart_irq(void *pData, void *pParam)
             len = Uart_FifoRead(uartid, temp);
             if (len)
             {
-            	rt_ringbuffer_put(&(rx_fifo->rb), temp, len);
+                rt_ringbuffer_put(&(rx_fifo->rb), temp, len);
                 rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
             }
             break;
@@ -130,50 +130,50 @@ static int air105_uart_irq(void *pData, void *pParam)
             break;
         case DMA_CB_ERROR:
             break;
-	}
+    }
 }
 
 static rt_err_t air105_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-	rt_uint32_t uart_id = serial->parent.user_data;
+    rt_uint32_t uart_id = serial->parent.user_data;
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
     switch (cfg->stop_bits)
     {
     case STOP_BITS_1:
-    	cfg->stop_bits = UART_STOP_BIT1;
-    	break;
+        cfg->stop_bits = UART_STOP_BIT1;
+        break;
     case STOP_BITS_2:
-    	cfg->stop_bits = UART_STOP_BIT2;
-    	break;
+        cfg->stop_bits = UART_STOP_BIT2;
+        break;
     default:
-    	cfg->stop_bits = UART_STOP_BIT1_5;
-    	break;
+        cfg->stop_bits = UART_STOP_BIT1_5;
+        break;
     }
 
     Uart_BaseInit(uart_id, cfg->baud_rate, 0, cfg->data_bits, cfg->parity, cfg->stop_bits, air105_uart_irq);
-	switch (uart_id){
-	case UART_ID0:
-		GPIO_Iomux(GPIOA_01, 0);
-		GPIO_Iomux(GPIOA_00, 0);
-		break;
-	case UART_ID1:
-		GPIO_Iomux(GPIOC_01, 3);
-		GPIO_Iomux(GPIOC_00, 3);
-		break;
-	case UART_ID2:
-		GPIO_Iomux(GPIOD_13, 0);
-		GPIO_Iomux(GPIOD_12, 0);
-		break;
-	case UART_ID3:
-		GPIO_Iomux(GPIOE_08, 2);
-		GPIO_Iomux(GPIOE_09, 2);
-		break;
-	default:
-		break;
-	}
-	return RT_EOK;
+    switch (uart_id){
+    case UART_ID0:
+        GPIO_Iomux(GPIOA_01, 0);
+        GPIO_Iomux(GPIOA_00, 0);
+        break;
+    case UART_ID1:
+        GPIO_Iomux(GPIOC_01, 3);
+        GPIO_Iomux(GPIOC_00, 3);
+        break;
+    case UART_ID2:
+        GPIO_Iomux(GPIOD_13, 0);
+        GPIO_Iomux(GPIOD_12, 0);
+        break;
+    case UART_ID3:
+        GPIO_Iomux(GPIOE_08, 2);
+        GPIO_Iomux(GPIOE_09, 2);
+        break;
+    default:
+        break;
+    }
+    return RT_EOK;
 }
 
 static rt_err_t air105_control(struct rt_serial_device *serial, int cmd, void *arg)
@@ -187,22 +187,22 @@ static rt_err_t air105_control(struct rt_serial_device *serial, int cmd, void *a
     {
     /* disable interrupt */
     case RT_DEVICE_CTRL_CLR_INT:
-    	Uart_IrqOnOff(uart_id, 0);
-    	if (DBG_UART_ID == uart_id)
-    	{
-    		DMA_StopStream(DBG_UART_TX_DMA_STREAM);
-    	}
+        Uart_IrqOnOff(uart_id, 0);
+        if (DBG_UART_ID == uart_id)
+        {
+            DMA_StopStream(DBG_UART_TX_DMA_STREAM);
+        }
         break;
 
     case RT_DEVICE_CTRL_SET_INT:
         break;
 
     case RT_DEVICE_CTRL_CONFIG:
-    	if (ctrl_arg & (RT_SERIAL_RX_NON_BLOCKING|RT_SERIAL_RX_BLOCKING))
-    	{
-    		Uart_EnableRxIrq(uart_id);
-    	}
-    	Uart_IrqOnOff(uart_id, 1);
+        if (ctrl_arg & (RT_SERIAL_RX_NON_BLOCKING|RT_SERIAL_RX_BLOCKING))
+        {
+            Uart_EnableRxIrq(uart_id);
+        }
+        Uart_IrqOnOff(uart_id, 1);
         break;
 
     case RT_DEVICE_CHECK_OPTMODE:
@@ -210,29 +210,29 @@ static rt_err_t air105_control(struct rt_serial_device *serial, int cmd, void *a
 
     case RT_DEVICE_CTRL_CLOSE:
         Uart_DeInit(uart_id);
-    	switch (uart_id){
-    	case UART_ID0:
-    		GPIO_Iomux(GPIOA_01, 1);
-    		GPIO_Iomux(GPIOA_00, 1);
-    		break;
-    	case UART_ID1:
-    		GPIO_Iomux(GPIOC_01, 1);
-    		GPIO_Iomux(GPIOC_00, 1);
-    		break;
-    	case UART_ID2:
-    		GPIO_Iomux(GPIOD_13, 1);
-    		GPIO_Iomux(GPIOD_12, 1);
-    		break;
-    	case UART_ID3:
-    		GPIO_Iomux(GPIOE_08, 1);
-    		GPIO_Iomux(GPIOE_09, 1);
-    		break;
-    	default:
-    		break;
-    	}
+        switch (uart_id){
+        case UART_ID0:
+            GPIO_Iomux(GPIOA_01, 1);
+            GPIO_Iomux(GPIOA_00, 1);
+            break;
+        case UART_ID1:
+            GPIO_Iomux(GPIOC_01, 1);
+            GPIO_Iomux(GPIOC_00, 1);
+            break;
+        case UART_ID2:
+            GPIO_Iomux(GPIOD_13, 1);
+            GPIO_Iomux(GPIOD_12, 1);
+            break;
+        case UART_ID3:
+            GPIO_Iomux(GPIOE_08, 1);
+            GPIO_Iomux(GPIOE_09, 1);
+            break;
+        default:
+            break;
+        }
         break;
     default:
-    	return RT_ERROR;
+        return RT_ERROR;
 
     }
     return RT_EOK;
@@ -240,7 +240,7 @@ static rt_err_t air105_control(struct rt_serial_device *serial, int cmd, void *a
 
 static int air105_putc(struct rt_serial_device *serial, char c)
 {
-	rt_uint32_t uart_id = serial->parent.user_data;
+    rt_uint32_t uart_id = serial->parent.user_data;
     RT_ASSERT(serial != RT_NULL);
     Uart_NoBlockTx(uart_id, c);
     return 1;
@@ -249,16 +249,16 @@ static int air105_putc(struct rt_serial_device *serial, char c)
 
 static int air105_getc(struct rt_serial_device *serial)
 {
-	rt_uint32_t uart_id = serial->parent.user_data;
+    rt_uint32_t uart_id = serial->parent.user_data;
     RT_ASSERT(serial != RT_NULL);
     uint8_t data;
     if (Uart_ReadByte(uart_id, &data) < 0)
     {
-    	return -1;
+        return -1;
     }
     else
     {
-    	return data;
+        return data;
     }
 }
 
@@ -267,12 +267,12 @@ static rt_size_t air105_transmit(struct rt_serial_device     *serial,
                                        rt_size_t             size,
                                        rt_uint32_t           tx_flag)
 {
-	rt_uint32_t uart_id = serial->parent.user_data;
+    rt_uint32_t uart_id = serial->parent.user_data;
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
     if (DBG_UART_ID == uart_id)
     {
-    	Uart_BlockTx(uart_id, buf, size);
+        Uart_BlockTx(uart_id, buf, size);
     }
     else
     {

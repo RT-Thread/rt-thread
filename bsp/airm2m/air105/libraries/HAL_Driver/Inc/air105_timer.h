@@ -29,42 +29,42 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "air105.h"    
+#include "air105.h"
 
-/* Exported types ------------------------------------------------------------*/	
+/* Exported types ------------------------------------------------------------*/
 typedef enum
 {
-	TIM_0 = 0,
-	TIM_1,
-	TIM_2,
-	TIM_3,
-	TIM_4,
-	TIM_5,
+    TIM_0 = 0,
+    TIM_1,
+    TIM_2,
+    TIM_3,
+    TIM_4,
+    TIM_5,
     TIM_6,
     TIM_7,
 }TIM_NumTypeDef;
 
-typedef struct 
+typedef struct
 {
-	TIM_NumTypeDef TIMx;
-	uint32_t TIM_Period;			/*!< Specifies the period value to be loaded into the active
-									   Auto-Reload Register at the next update event.
-									   This parameter must be a number between 0x0000 and 0xFFFFFFFF.  */ 
+    TIM_NumTypeDef TIMx;
+    uint32_t TIM_Period;            /*!< Specifies the period value to be loaded into the active
+                                       Auto-Reload Register at the next update event.
+                                       This parameter must be a number between 0x0000 and 0xFFFFFFFF.  */
 }TIM_InitTypeDef;
 
-typedef struct 
+typedef struct
 {
-	TIM_NumTypeDef TIMx;
-	uint32_t TIM_LowLevelPeriod;
-	uint32_t TIM_HighLevelPeriod;
+    TIM_NumTypeDef TIMx;
+    uint32_t TIM_LowLevelPeriod;
+    uint32_t TIM_HighLevelPeriod;
 }TIM_PWMInitTypeDef;
 
 typedef enum
 {
-	TIM_Mode_General	= 0,
-	TIM_Mode_PWM		= 1
+    TIM_Mode_General    = 0,
+    TIM_Mode_PWM        = 1
 }TIM_ModeTypeDef;
-#define IS_TIM_MODE(MODE)			(MODE == TIM_Mode_General || MODE == TIM_Mode_PWM)
+#define IS_TIM_MODE(MODE)           (MODE == TIM_Mode_General || MODE == TIM_Mode_PWM)
 
 
 void TIM_DeInit(TIM_Module_TypeDef *TIMMx);

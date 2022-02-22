@@ -25,10 +25,10 @@
 #define __AIR105_SCI_H
 
 #ifdef __cplusplus
-extern "C" 
+extern "C"
 {
-#endif 
-     
+#endif
+
 #include "air105.h"
 #include <arm_math.h>
 
@@ -45,7 +45,7 @@ extern "C"
 
 int32_t SCI_ConfigEMV(uint8_t SCI_Bitmap, uint32_t SCIx_Clk);
 
-	
+
 #ifdef __cplusplus
 }
 #endif

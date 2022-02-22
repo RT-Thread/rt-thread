@@ -25,21 +25,21 @@
 
 typedef struct
 {
-	uint32_t Speed;
-	uint32_t x1;
-	uint32_t y1;
-	uint32_t x2;
-	uint32_t y2;
-	uint32_t xoffset;
-	uint32_t yoffset;
-	uint32_t Size;
-	uint32_t DCDelay;
-	uint8_t *Data;
-	uint8_t SpiID;
-	uint8_t Mode;
-	uint8_t CSPin;
-	uint8_t DCPin;
-	uint8_t ColorMode;
+    uint32_t Speed;
+    uint32_t x1;
+    uint32_t y1;
+    uint32_t x2;
+    uint32_t y2;
+    uint32_t xoffset;
+    uint32_t yoffset;
+    uint32_t Size;
+    uint32_t DCDelay;
+    uint8_t *Data;
+    uint8_t SpiID;
+    uint8_t Mode;
+    uint8_t CSPin;
+    uint8_t DCPin;
+    uint8_t ColorMode;
 }LCD_DrawStruct;
 
 void Core_ServiceInit(void);
