@@ -38,6 +38,7 @@ AIR105 是合宙定制的mh2903，是一款基于 ARM Cortex-M4 内核的10mm x 
 | SPI      | 支持         |
 | I2C      | 支持         |
 | RTC      | 支持         |
+| WDT      | 支持         |
 
 
 ## 使用说明
@@ -97,11 +98,13 @@ msh >
 
    
 
-**Luatos同样也上线了rtt 软件包，仓库：https://github.com/openLuat/luatos-soc-rtt**
+**Luatos同样也上线了RTthread 软件包，仓库：https://github.com/openLuat/luatos-soc-rtt**
 
 ## 注意事项
 
 **烧录前请设置波特率为1500000**
+
+**air105必须启用看门狗，默认启用**
 
 **更多资料参考[WIKI](https://wiki.luatos.com/)**
 
@@ -110,4 +113,5 @@ msh >
 维护人:
 
 - [**合宙Luat**](https://gitee.com/openLuat)
+- [**淘宝地址**](https://item.taobao.com/item.htm?spm=a1z10.5-c-s.w4002-24045920841.15.29395bcdUExSHR&id=666216389131)
 
