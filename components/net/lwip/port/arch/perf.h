@@ -30,30 +30,23 @@
  *
  * Author: Adam Dunkels <adam@sics.se>
  *
- * $Id: sys_arch.h,v 1.3 2005/03/13 16:03:23 bear Exp $
+ * $Id: perf.h,v 1.1.1.1 2004/12/16 14:17:13 bear Exp $
  */
-#ifndef __ARCH_SYS_ARCH_H__
-#define __ARCH_SYS_ARCH_H__
+#ifndef __ARCH_PERF_H__
+#define __ARCH_PERF_H__
 
-#include "arch/cc.h"
-#include <rtthread.h>
+//#include <sys/times.h>
 
-#define SYS_MBOX_NULL RT_NULL
-#define SYS_SEM_NULL  RT_NULL
+#define PERF_START    /* null definition */
+#define PERF_STOP(x)  /* null definition */
 
-typedef rt_uint32_t sys_prot_t;
+/*
+void perf_print(unsigned long c1l, unsigned long c1h,
+        unsigned long c2l, unsigned long c2h,
+        char *key);
 
-#define SYS_MBOX_SIZE 10
-#define SYS_LWIP_TIMER_NAME "timer"
-#define SYS_LWIP_MBOX_NAME "mbox"
-#define SYS_LWIP_SEM_NAME "sem"
-#define SYS_LWIP_MUTEX_NAME "mu"
+void perf_print_times(struct tms *start, struct tms *end, char *key);
 
-typedef rt_sem_t sys_sem_t;
-typedef rt_mutex_t sys_mutex_t;
-typedef rt_mailbox_t  sys_mbox_t;
-typedef rt_thread_t sys_thread_t;
-
-// err_t sys_mbox_trypost_fromisr(sys_mbox_t *q, void *msg);
-
-#endif /* __ARCH_SYS_ARCH_H__ */
+void perf_init(char *fname);
+*/
+#endif /* __ARCH_PERF_H__ */

@@ -1,6 +1,24 @@
 /*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2010-07-07     Bernard      fix send mail to mailbox issue.
+ * 2011-07-30     mbbill       port lwIP 1.4.0 to RT-Thread
+ * 2012-04-10     Bernard      add more compatible with RT-Thread.
+ * 2012-11-12     Bernard      The network interface can be initialized
+ *                             after lwIP initialization.
+ * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
+ * 2016-08-18     Bernard      port to lwIP 2.0.0
+ * 2018-11-02     MurphyZhao   port to lwIP 2.1.0
+ * 2021-09-07     Grissiom     fix eth_tx_msg ack bug
+ * 2022-02-22     xiangxistu   integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
+ */
+
+/*
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * COPYRIGHT (C) 2006-2010, RT-Thread Development Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,40 +46,39 @@
  * This file is part of the lwIP TCP/IP stack.
  *
  * Author: Adam Dunkels <adam@sics.se>
- *
- * Change Logs:
- * Date           Author       Notes
- * 2010-07-07     Bernard      fix send mail to mailbox issue.
- * 2011-07-30     mbbill       port lwIP 1.4.0 to RT-Thread
- * 2012-04-10     Bernard      add more compatible with RT-Thread.
- * 2012-11-12     Bernard      The network interface can be initialized
- *                             after lwIP initialization.
- * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
  */
 
-#include <rtthread.h>
+#include <string.h>
 
-#include "lwip/opt.h"
-#include "lwip/debug.h"
-#include "lwip/def.h"
-#include "lwip/mem.h"
-#include "lwip/pbuf.h"
-#include "lwip/sys.h"
-#include "lwip/netif.h"
-#include "lwip/stats.h"
-#include "lwip/tcpip.h"
+#include <lwip/init.h>
+#include <lwip/opt.h>
+#include <lwip/debug.h>
+#include <lwip/def.h>
+#include <lwip/mem.h>
+#include <lwip/pbuf.h>
+#include <lwip/sys.h>
+#include <lwip/netif.h>
+#include <lwip/stats.h>
+#include <lwip/tcpip.h>
+#include <lwip/dhcp.h>
+#include <lwip/netifapi.h>
+#include <lwip/inet.h>
+#include <netif/etharp.h>
+#include <netif/ethernetif.h>
 
-#include "netif/etharp.h"
-#include "netif/ethernetif.h"
-#include "lwip/inet.h"
+#include <ipc/completion.h>
+
+#if LWIP_IPV6
+#include "lwip/ethip6.h"
+#endif /* LWIP_IPV6 */
 
 #define netifapi_netif_set_link_up(n)      netifapi_netif_common(n, netif_set_link_up, NULL)
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
 
 #ifndef RT_LWIP_ETHTHREAD_PRIORITY
-#define RT_ETHERNETIF_THREAD_PREORITY	0x90
+#define RT_ETHERNETIF_THREAD_PREORITY   0x90
 #else
-#define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
+#define RT_ETHERNETIF_THREAD_PREORITY   RT_LWIP_ETHTHREAD_PRIORITY
 #endif
 
 #ifndef LWIP_NO_TX_THREAD
@@ -70,17 +87,18 @@
  */
 struct eth_tx_msg
 {
-    struct netif 	*netif;
-    struct pbuf 	*buf;
+    struct netif    *netif;
+    struct pbuf     *buf;
+    struct rt_completion ack;
 };
 
 static struct rt_mailbox eth_tx_thread_mb;
 static struct rt_thread eth_tx_thread;
 #ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
-static char eth_tx_thread_mb_pool[32 * 4];
+static char eth_tx_thread_mb_pool[32 * sizeof(rt_ubase_t)];
 static char eth_tx_thread_stack[512];
 #else
-static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
+static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * sizeof(rt_ubase_t)];
 static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
 #endif
@@ -89,10 +107,10 @@ static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
 #ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
-static char eth_rx_thread_mb_pool[48 * 4];
+static char eth_rx_thread_mb_pool[48 * sizeof(rt_ubase_t)];
 static char eth_rx_thread_stack[1024];
 #else
-static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
+static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * sizeof(rt_ubase_t)];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
 #endif
@@ -116,27 +134,30 @@ static int lwip_netdev_set_down(struct netdev *netif)
     return ERR_OK;
 }
 
+#ifndef ip_2_ip4
+#define ip_2_ip4(ipaddr) (ipaddr)
+#endif
 static int lwip_netdev_set_addr_info(struct netdev *netif, ip_addr_t *ip_addr, ip_addr_t *netmask, ip_addr_t *gw)
 {
     if (ip_addr && netmask && gw)
     {
-        netif_set_addr((struct netif *)netif->user_data, ip_addr, netmask, gw);
+        netif_set_addr((struct netif *)netif->user_data, ip_2_ip4(ip_addr), ip_2_ip4(netmask), ip_2_ip4(gw));
     }
     else
     {
         if (ip_addr)
         {
-            netif_set_ipaddr((struct netif *)netif->user_data, ip_addr);
+            netif_set_ipaddr((struct netif *)netif->user_data, ip_2_ip4(ip_addr));
         }
 
         if (netmask)
         {
-            netif_set_netmask((struct netif *)netif->user_data, netmask);
+            netif_set_netmask((struct netif *)netif->user_data, ip_2_ip4(netmask));
         }
 
         if (gw)
         {
-            netif_set_gw((struct netif *)netif->user_data, gw);
+            netif_set_gw((struct netif *)netif->user_data, ip_2_ip4(gw));
         }
     }
 
@@ -146,7 +167,12 @@ static int lwip_netdev_set_addr_info(struct netdev *netif, ip_addr_t *ip_addr, i
 #ifdef RT_LWIP_DNS
 static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_addr_t *dns_server)
 {
-    extern void dns_setserver(uint8_t dns_num, ip_addr_t *dns_server);
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
+    extern void dns_setserver(u8_t numdns, ip_addr_t *dnsserver);
+#else /* >=2.x */
+    extern void dns_setserver(uint8_t dns_num, const ip_addr_t *dns_server);
+#endif /* LWIP_VERSION_MAJOR == 1U */
+
     dns_setserver(dns_num, dns_server);
     return ERR_OK;
 }
@@ -181,15 +207,16 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     int s, ttl, recv_len, result = 0;
     int elapsed_time;
     rt_tick_t recv_start_tick;
-#if LWIP_VERSION_MAJOR >= 2U
-    struct timeval recv_timeout = { timeout / RT_TICK_PER_SECOND, timeout % RT_TICK_PER_SECOND };
-#else
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
     int recv_timeout = timeout * 1000UL / RT_TICK_PER_SECOND;
+#else /* >= v2.x */
+    struct timeval recv_timeout = { timeout / RT_TICK_PER_SECOND, timeout % RT_TICK_PER_SECOND };
 #endif
     ip_addr_t target_addr;
     struct addrinfo hint, *res = RT_NULL;
     struct sockaddr_in *h = RT_NULL;
     struct in_addr ina;
+    struct sockaddr_in local;
 
     RT_ASSERT(netif);
     RT_ASSERT(host);
@@ -215,6 +242,12 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     {
         return -RT_ERROR;
     }
+
+    local.sin_len = sizeof(local);
+    local.sin_family = AF_INET;
+    local.sin_port = 0;
+    local.sin_addr.s_addr = (netif->ip_addr.addr);
+    lwip_bind(s, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
 
     lwip_setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &recv_timeout, sizeof(recv_timeout));
 
@@ -302,6 +335,50 @@ const struct netdev_ops lwip_netdev_ops =
     lwip_netdev_set_default,
 };
 
+/* synchronize lwIP network interface device and network interface device flags */
+static int netdev_flags_sync(struct netif *lwip_netif)
+{
+    struct netdev *netdev = NULL;
+
+    RT_ASSERT(lwip_netif);
+
+    netdev = netdev_get_by_name(lwip_netif->name);
+    if (netdev == RT_NULL)
+    {
+        return -ERR_IF;
+    }
+
+    netdev->mtu = lwip_netif->mtu;
+
+    /* the macro definition is different from lwip-1.4.1 and lwip-2.x.x about 'flags'. */
+    if(lwip_netif->flags & NETIF_FLAG_BROADCAST)
+    {
+        netdev->flags |= NETDEV_FLAG_BROADCAST;
+    }
+    if(lwip_netif->flags & NETIF_FLAG_ETHARP)
+    {
+        netdev->flags |= NETDEV_FLAG_ETHARP;
+    }
+    if(lwip_netif->flags & NETIF_FLAG_IGMP)
+    {
+        netdev->flags |= NETDEV_FLAG_IGMP;
+    }
+#if LWIP_VERSION_MAJOR >= 2U /* >= v2.x */
+    if(lwip_netif->flags & NETIF_FLAG_MLD6)
+    {
+        netdev->flags |= NETDEV_FLAG_MLD6;
+    }
+#endif /* LWIP_VERSION_MAJOR >= 2U */
+
+#if LWIP_DHCP
+    netdev_low_level_set_dhcp_status(netdev, RT_TRUE);
+#else
+    netdev_low_level_set_dhcp_status(netdev, RT_FALSE);
+#endif
+
+    return ERR_OK;
+}
+
 static int netdev_add(struct netif *lwip_netif)
 {
 #define LWIP_NETIF_NAME_LEN 2
@@ -327,8 +404,7 @@ static int netdev_add(struct netif *lwip_netif)
     result = netdev_register(netdev, name, (void *)lwip_netif);
 
     /* Update netdev info after registered */
-    netdev->flags = lwip_netif->flags;
-    netdev->mtu = lwip_netif->mtu;
+    netdev_flags_sync(lwip_netif);
     netdev->ops = &lwip_netdev_ops;
     netdev->hwaddr_len =  lwip_netif->hwaddr_len;
     SMEMCPY(netdev->hwaddr, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
@@ -336,29 +412,20 @@ static int netdev_add(struct netif *lwip_netif)
     netdev->gw = lwip_netif->gw;
     netdev->netmask = lwip_netif->netmask;
 
-#ifdef RT_LWIP_DHCP
-    netdev_low_level_set_dhcp_status(netdev, RT_TRUE);
-#endif
-
     return result;
 }
 
-/* synchronize lwIP network interface device and network interface device flags */
-static int netdev_flags_sync(struct netif *lwip_netif)
+static void netdev_del(struct netif *lwip_netif)
 {
-    struct netdev *netdev = NULL;
+    char name[LWIP_NETIF_NAME_LEN + 1];
+    struct netdev *netdev;
 
     RT_ASSERT(lwip_netif);
 
-    netdev = netdev_get_by_name(lwip_netif->name);
-    if (netdev == RT_NULL)
-    {
-        return -ERR_IF;
-    }
-
-    netdev->flags |= lwip_netif->flags;
-
-    return ERR_OK;
+    rt_strncpy(name, lwip_netif->name, LWIP_NETIF_NAME_LEN);
+    netdev = netdev_get_by_name(name);
+    netdev_unregister(netdev);
+    rt_free(netdev);
 }
 #endif /* RT_USING_NETDEV */
 
@@ -366,29 +433,28 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 {
 #ifndef LWIP_NO_TX_THREAD
     struct eth_tx_msg msg;
-    struct eth_device* enetif;
 
-	RT_ASSERT(netif != RT_NULL);
-    enetif = (struct eth_device*)netif->state;
+    RT_ASSERT(netif != RT_NULL);
 
     /* send a message to eth tx thread */
     msg.netif = netif;
     msg.buf   = p;
+    rt_completion_init(&msg.ack);
     if (rt_mb_send(&eth_tx_thread_mb, (rt_ubase_t) &msg) == RT_EOK)
     {
         /* waiting for ack */
-        rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
+        rt_completion_wait(&msg.ack, RT_WAITING_FOREVER);
     }
 #else
     struct eth_device* enetif;
 
-	RT_ASSERT(netif != RT_NULL);
+    RT_ASSERT(netif != RT_NULL);
     enetif = (struct eth_device*)netif->state;
 
-	if (enetif->eth_tx(&(enetif->parent), p) != RT_EOK)
-	{
-		return ERR_IF;
-	}
+    if (enetif->eth_tx(&(enetif->parent), p) != RT_EOK)
+    {
+        return ERR_IF;
+    }
 #endif
     return ERR_OK;
 }
@@ -416,29 +482,56 @@ static err_t eth_netif_device_init(struct netif *netif)
 
         /* copy device flags to netif flags */
         netif->flags = (ethif->flags & 0xff);
+        netif->mtu = ETHERNET_MTU;
+
+        /* set output */
+        netif->output       = etharp_output;
+
+#if LWIP_IPV6
+        netif->output_ip6 = ethip6_output;
+        netif->ip6_autoconfig_enabled = 1;
+        netif_create_ip6_linklocal_address(netif, 1);
+
+#if LWIP_IPV6_MLD
+        netif->flags |= NETIF_FLAG_MLD6;
+
+        /*
+        * For hardware/netifs that implement MAC filtering.
+        * All-nodes link-local is handled by default, so we must let the hardware know
+        * to allow multicast packets in.
+        * Should set mld_mac_filter previously. */
+        if (netif->mld_mac_filter != NULL)
+        {
+            ip6_addr_t ip6_allnodes_ll;
+            ip6_addr_set_allnodes_linklocal(&ip6_allnodes_ll);
+            netif->mld_mac_filter(netif, &ip6_allnodes_ll, NETIF_ADD_MAC_FILTER);
+        }
+#endif /* LWIP_IPV6_MLD */
+
+#endif /* LWIP_IPV6 */
 
         /* set default netif */
         if (netif_default == RT_NULL)
             netif_set_default(ethif->netif);
 
-#if LWIP_DHCP
-        if (ethif->flags & NETIF_FLAG_DHCP)
-        {
-            /* if this interface uses DHCP, start the DHCP client */
-            dhcp_start(ethif->netif);
-        }
-        else
-#endif
-        {
-            /* set interface up */
-            netif_set_up(ethif->netif);
-        }
+        /* set interface up */
+        netif_set_up(ethif->netif);
 
-        if (!(ethif->flags & ETHIF_LINK_PHYUP))
+#if LWIP_DHCP
+        /* if this interface uses DHCP, start the DHCP client */
+        dhcp_start(ethif->netif);
+#endif
+
+        if (ethif->flags & ETHIF_LINK_PHYUP)
         {
             /* set link_up for this netif */
             netif_set_link_up(ethif->netif);
         }
+
+#ifdef RT_USING_NETDEV
+        /* network interface device flags synchronize */
+        netdev_flags_sync(netif);
+#endif /* RT_USING_NETDEV */
 
         return ERR_OK;
     }
@@ -465,7 +558,6 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 
     /* set netif */
     dev->netif = netif;
-    /* device flags, which will be set to netif flags when initializing */
     dev->flags = flags;
     /* link changed status of device */
     dev->link_changed = 0x00;
@@ -474,23 +566,21 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     dev->parent.type = RT_Device_Class_NetIf;
     /* register to RT-Thread device manager */
     rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
-    rt_sem_init(&(dev->tx_ack), name, 0, RT_IPC_FLAG_FIFO);
 
     /* set name */
     netif->name[0] = name[0];
     netif->name[1] = name[1];
 
     /* set hw address to 6 */
-    netif->hwaddr_len 	= 6;
+    netif->hwaddr_len   = 6;
     /* maximum transfer unit */
-    netif->mtu			= ETHERNET_MTU;
+    netif->mtu          = ETHERNET_MTU;
+
+    /* set linkoutput */
+    netif->linkoutput   = ethernetif_linkoutput;
 
     /* get hardware MAC address */
     rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
-
-    /* set output */
-    netif->output		= etharp_output;
-    netif->linkoutput	= ethernetif_linkoutput;
 
 #if LWIP_NETIF_HOSTNAME
     /* Initialize interface hostname */
@@ -502,31 +592,23 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     /* if tcp thread has been started up, we add this netif to the system */
     if (rt_thread_find("tcpip") != RT_NULL)
     {
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
         struct ip_addr ipaddr, netmask, gw;
+#else /* >= v2.x */
+        ip4_addr_t ipaddr, netmask, gw;
+#endif /* LWIP_VERSION_MAJOR == 1U */
 
-    #if LWIP_DHCP
-        if (dev->flags & NETIF_FLAG_DHCP)
-        {
-            IP4_ADDR(&ipaddr, 0, 0, 0, 0);
-            IP4_ADDR(&gw, 0, 0, 0, 0);
-            IP4_ADDR(&netmask, 0, 0, 0, 0);
-        }
-        else
-    #endif
-        {
-            ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
-            gw.addr = inet_addr(RT_LWIP_GWADDR);
-            netmask.addr = inet_addr(RT_LWIP_MSKADDR);
-        }
-
+#if !LWIP_DHCP
+        ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
+        gw.addr = inet_addr(RT_LWIP_GWADDR);
+        netmask.addr = inet_addr(RT_LWIP_MSKADDR);
+#else
+        IP4_ADDR(&ipaddr, 0, 0, 0, 0);
+        IP4_ADDR(&gw, 0, 0, 0, 0);
+        IP4_ADDR(&netmask, 0, 0, 0, 0);
+#endif
         netifapi_netif_add(netif, &ipaddr, &netmask, &gw, dev, eth_netif_device_init, tcpip_input);
     }
-
-#ifdef RT_USING_NETDEV
-    /* network interface device flags synchronize */
-    netdev_flags_sync(netif);
-#endif /* RT_USING_NETDEV */
-
 
     return RT_EOK;
 }
@@ -535,17 +617,30 @@ rt_err_t eth_device_init(struct eth_device * dev, const char *name)
 {
     rt_uint16_t flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
 
-#if LWIP_DHCP
-    /* DHCP support */
-    flags |= NETIF_FLAG_DHCP;
-#endif
-
 #if LWIP_IGMP
     /* IGMP support */
     flags |= NETIF_FLAG_IGMP;
 #endif
 
     return eth_device_init_with_flag(dev, name, flags);
+}
+
+void eth_device_deinit(struct eth_device *dev)
+{
+    struct netif* netif = dev->netif;
+
+#if LWIP_DHCP
+    dhcp_stop(netif);
+    dhcp_cleanup(netif);
+#endif
+    netif_set_down(netif);
+    netif_remove(netif);
+#ifdef RT_USING_NETDEV
+    netdev_del(netif);
+#endif
+    rt_device_close(&(dev->parent));
+    rt_device_unregister(&(dev->parent));
+    rt_free(netif);
 }
 
 #ifndef LWIP_NO_RX_THREAD
@@ -587,12 +682,12 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 /* NOTE: please not use it in interrupt when no RxThread exist */
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 {
-	if (up == RT_TRUE)
-		netifapi_netif_set_link_up(dev->netif);
-	else
-		netifapi_netif_set_link_down(dev->netif);
+    if (up == RT_TRUE)
+        netifapi_netif_set_link_up(dev->netif);
+    else
+        netifapi_netif_set_link_down(dev->netif);
 
-	return RT_EOK;
+    return RT_EOK;
 }
 #endif
 
@@ -604,7 +699,7 @@ static void eth_tx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_tx_thread_mb, (rt_ubase_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_tx_thread_mb, (rt_ubase_t *)&msg, RT_WAITING_FOREVER) == RT_EOK)
         {
             struct eth_device* enetif;
 
@@ -622,7 +717,7 @@ static void eth_tx_thread_entry(void* parameter)
             }
 
             /* send ACK */
-            rt_sem_release(&(enetif->tx_ack));
+            rt_completion_done(&msg->ack);
         }
     }
 }
@@ -636,7 +731,7 @@ static void eth_rx_thread_entry(void* parameter)
 
     while (1)
     {
-        if (rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t *)&device, RT_WAITING_FOREVER) == RT_EOK)
         {
             rt_base_t level;
             struct pbuf *p;
@@ -664,9 +759,9 @@ static void eth_rx_thread_entry(void* parameter)
             rt_hw_interrupt_enable(level);
 
             /* receive all of buffer */
-            while(1)
+            while (1)
             {
-            	if(device->eth_rx == RT_NULL) break;
+                if(device->eth_rx == RT_NULL) break;
 
                 p = device->eth_rx(&(device->parent));
                 if (p != RT_NULL)
@@ -690,7 +785,16 @@ static void eth_rx_thread_entry(void* parameter)
 }
 #endif
 
+/* this function does not need,
+ * use eth_system_device_init_private()
+ * call by lwip_system_init().
+ */
 int eth_system_device_init(void)
+{
+    return 0;
+}
+
+int eth_system_device_init_private(void)
 {
     rt_err_t result = RT_EOK;
 
@@ -698,7 +802,7 @@ int eth_system_device_init(void)
 #ifndef LWIP_NO_RX_THREAD
     /* initialize mailbox and create Ethernet Rx thread */
     result = rt_mb_init(&eth_rx_thread_mb, "erxmb",
-                        &eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/4,
+                        &eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/sizeof(rt_ubase_t),
                         RT_IPC_FLAG_FIFO);
     RT_ASSERT(result == RT_EOK);
 
@@ -714,7 +818,7 @@ int eth_system_device_init(void)
 #ifndef LWIP_NO_TX_THREAD
     /* initialize mailbox and create Ethernet Tx thread */
     result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
-                        &eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/4,
+                        &eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/sizeof(rt_ubase_t),
                         RT_IPC_FLAG_FIFO);
     RT_ASSERT(result == RT_EOK);
 
@@ -729,12 +833,17 @@ int eth_system_device_init(void)
 
     return (int)result;
 }
-INIT_PREV_EXPORT(eth_system_device_init);
 
 void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
 {
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
     struct ip_addr *ip;
     struct ip_addr addr;
+#else /* >= v2.x */
+    ip4_addr_t *ip;
+    ip4_addr_t addr;
+#endif /* LWIP_VERSION_MAJOR == 1U */
+
     struct netif * netif = netif_list;
 
     if(strlen(netif_name) > sizeof(netif->name))
@@ -756,22 +865,27 @@ void set_if(char* netif_name, char* ip_addr, char* gw_addr, char* nm_addr)
         }
     }
 
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
     ip = (struct ip_addr *)&addr;
+#else /* >= v2.x */
+    ip = (ip4_addr_t *)&addr;
+#endif /* LWIP_VERSION_MAJOR == 1U */
+
 
     /* set ip address */
-    if ((ip_addr != RT_NULL) && ipaddr_aton(ip_addr, &addr))
+    if ((ip_addr != RT_NULL) && inet_aton(ip_addr, &addr))
     {
         netif_set_ipaddr(netif, ip);
     }
 
     /* set gateway address */
-    if ((gw_addr != RT_NULL) && ipaddr_aton(gw_addr, &addr))
+    if ((gw_addr != RT_NULL) && inet_aton(gw_addr, &addr))
     {
         netif_set_gw(netif, ip);
     }
 
     /* set netmask address */
-    if ((nm_addr != RT_NULL) && ipaddr_aton(nm_addr, &addr))
+    if ((nm_addr != RT_NULL) && inet_aton(nm_addr, &addr))
     {
         netif_set_netmask(netif, ip);
     }
@@ -785,7 +899,7 @@ FINSH_FUNCTION_EXPORT(set_if, set network interface address);
 #include <lwip/dns.h>
 void set_dns(uint8_t dns_num, char* dns_server)
 {
-    struct ip_addr addr;
+    ip_addr_t addr;
 
     if ((dns_server != RT_NULL) && ipaddr_aton(dns_server, &addr))
     {
@@ -819,21 +933,43 @@ void list_if(void)
         else rt_kprintf(" DOWN");
         if (netif->flags & NETIF_FLAG_LINK_UP) rt_kprintf(" LINK_UP");
         else rt_kprintf(" LINK_DOWN");
-        if (netif->flags & NETIF_FLAG_DHCP) rt_kprintf(" DHCP");
-        if (netif->flags & NETIF_FLAG_POINTTOPOINT) rt_kprintf(" PPP");
         if (netif->flags & NETIF_FLAG_ETHARP) rt_kprintf(" ETHARP");
+        if (netif->flags & NETIF_FLAG_BROADCAST) rt_kprintf(" BROADCAST");
         if (netif->flags & NETIF_FLAG_IGMP) rt_kprintf(" IGMP");
         rt_kprintf("\n");
         rt_kprintf("ip address: %s\n", ipaddr_ntoa(&(netif->ip_addr)));
         rt_kprintf("gw address: %s\n", ipaddr_ntoa(&(netif->gw)));
         rt_kprintf("net mask  : %s\n", ipaddr_ntoa(&(netif->netmask)));
-        rt_kprintf("\r\n");
+#if LWIP_IPV6
+        {
+            ip6_addr_t *addr;
+            int addr_state;
+            int i;
 
+            addr = (ip6_addr_t *)&netif->ip6_addr[0];
+            addr_state = netif->ip6_addr_state[0];
+
+            rt_kprintf("\nipv6 link-local: %s state:%02X %s\n", ip6addr_ntoa(addr),
+            addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
+
+            for(i=1; i<LWIP_IPV6_NUM_ADDRESSES; i++)
+            {
+                addr = (ip6_addr_t *)&netif->ip6_addr[i];
+                addr_state = netif->ip6_addr_state[i];
+
+                rt_kprintf("ipv6[%d] address: %s state:%02X %s\n", i, ip6addr_ntoa(addr),
+                addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
+            }
+
+        }
+        rt_kprintf("\r\n");
+#endif /* LWIP_IPV6 */
         netif = netif->next;
     }
 
 #if LWIP_DNS
     {
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
         struct ip_addr ip_addr;
 
         for(index=0; index<DNS_MAX_SERVERS; index++)
@@ -841,6 +977,16 @@ void list_if(void)
             ip_addr = dns_getserver(index);
             rt_kprintf("dns server #%d: %s\n", index, ipaddr_ntoa(&(ip_addr)));
         }
+#else /* >= v2.x */
+        const ip_addr_t *ip_addr;
+
+        for(index=0; index<DNS_MAX_SERVERS; index++)
+        {
+            ip_addr = dns_getserver(index);
+            rt_kprintf("dns server #%d: %s\n", index, inet_ntoa(ip_addr));
+        }
+#endif /* LWIP_VERSION_MAJOR == 1U */
+
     }
 #endif /**< #if LWIP_DNS */
 
@@ -850,7 +996,11 @@ FINSH_FUNCTION_EXPORT(list_if, list network interface information);
 
 #if LWIP_TCP
 #include <lwip/tcp.h>
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
 #include <lwip/tcp_impl.h>
+#else /* >= v2.x */
+#include <lwip/priv/tcp_priv.h>
+#endif /* LWIP_VERSION_MAJOR == 1U */
 
 void list_tcps(void)
 {
@@ -862,7 +1012,6 @@ void list_tcps(void)
     extern struct tcp_pcb *tcp_active_pcbs;
     extern union tcp_listen_pcbs_t tcp_listen_pcbs;
     extern struct tcp_pcb *tcp_tw_pcbs;
-    extern const char *tcp_state_str[];
 
     rt_enter_critical();
     rt_kprintf("Active PCB states:\n");
@@ -879,7 +1028,7 @@ void list_tcps(void)
                    pcb->remote_port,
                    pcb->snd_nxt,
                    pcb->rcv_nxt);
-        rt_kprintf("state: %s\n", tcp_state_str[pcb->state]);
+        rt_kprintf("state: %s\n", tcp_debug_state_str(pcb->state));
     }
 
     rt_kprintf("Listen PCB states:\n");
@@ -887,7 +1036,7 @@ void list_tcps(void)
     for(pcb = (struct tcp_pcb *)tcp_listen_pcbs.pcbs; pcb != NULL; pcb = pcb->next)
     {
         rt_kprintf("#%d local port %d ", num++, pcb->local_port);
-        rt_kprintf("state: %s\n", tcp_state_str[pcb->state]);
+        rt_kprintf("state: %s\n", tcp_debug_state_str(pcb->state));
     }
 
     rt_kprintf("TIME-WAIT PCB states:\n");
@@ -905,12 +1054,12 @@ void list_tcps(void)
                    pcb->remote_port,
                    pcb->snd_nxt,
                    pcb->rcv_nxt);
-        rt_kprintf("state: %s\n", tcp_state_str[pcb->state]);
+        rt_kprintf("state: %s\n", tcp_debug_state_str(pcb->state));
     }
     rt_exit_critical();
 }
 FINSH_FUNCTION_EXPORT(list_tcps, list all of tcp connections);
-#endif
+#endif /* LWIP_TCP */
 
 #if LWIP_UDP
 #include "lwip/udp.h"

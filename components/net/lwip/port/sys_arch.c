@@ -1,153 +1,46 @@
 /*
- * COPYRIGHT (C) 2006-2021, RT-Thread Development Team
- * All rights reserved.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2012-12-8      Bernard      add file header
  *                             export bsd socket symbol for RT-Thread Application Module
- * 2017-11-15     Bernard      add lock for init_done callback.
+ * 2013-05-25     Bernard      port to v1.4.1
+ * 2017-03-26     HuangXiHans  port to v2.0.2
+ * 2017-11-15     Bernard      add lock for init_done callback
+ * 2018-11-02     MurphyZhao   port to v2.1.0
+ * 2020-06-20     liuxianliang port to v2.1.2
+ * 2021-06-25     liuxianliang port to v2.0.3
+ * 2022-01-18     Meco Man     remove v2.0.2
+ * 2022-02-20     Meco Man     integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
  */
 
 #include <rtthread.h>
 #include <rthw.h>
 
-#include "lwip/sys.h"
-#include "lwip/opt.h"
-#include "lwip/stats.h"
-#include "lwip/err.h"
-#include "arch/sys_arch.h"
-#include "lwip/debug.h"
-#include "lwip/netif.h"
-#include "lwip/tcpip.h"
-#include "netif/ethernetif.h"
-#include "lwip/sio.h"
+#include <arch/sys_arch.h>
+#include <lwip/sys.h>
+#include <lwip/opt.h>
+#include <lwip/stats.h>
+#include <lwip/err.h>
+#include <lwip/debug.h>
+#include <lwip/netif.h>
+#include <lwip/netifapi.h>
+#include <lwip/tcpip.h>
+#include <lwip/sio.h>
 #include <lwip/init.h>
-#include "lwip/inet.h"
+#include <lwip/dhcp.h>
+#include <lwip/inet.h>
+#include <netif/ethernetif.h>
+#include <netif/etharp.h>
 
-#include <string.h>
-
-/*
- * Initialize the network interface device
- *
- * @return the operation status, ERR_OK on OK, ERR_IF on error
- */
-static err_t netif_device_init(struct netif *netif)
-{
-    struct eth_device *ethif;
-
-    ethif = (struct eth_device *)netif->state;
-    if (ethif != RT_NULL)
-    {
-        rt_device_t device;
-
-        /* get device object */
-        device = (rt_device_t) ethif;
-        if (rt_device_init(device) != RT_EOK)
-        {
-            return ERR_IF;
-        }
-
-        /* copy device flags to netif flags */
-        netif->flags = ethif->flags;
-
-        return ERR_OK;
-    }
-
-    return ERR_IF;
-}
 /*
  * Initialize the ethernetif layer and set network interface device up
  */
 static void tcpip_init_done_callback(void *arg)
 {
-    rt_device_t device;
-    struct eth_device *ethif;
-    struct ip_addr ipaddr, netmask, gw;
-    struct rt_list_node* node;
-    struct rt_object* object;
-    struct rt_object_information *information;
-
-    LWIP_ASSERT("invalid arg.\n",arg);
-
-    IP4_ADDR(&gw, 0,0,0,0);
-    IP4_ADDR(&ipaddr, 0,0,0,0);
-    IP4_ADDR(&netmask, 0,0,0,0);
-
-    /* enter critical */
-    rt_enter_critical();
-
-    /* for each network interfaces */
-    information = rt_object_get_information(RT_Object_Class_Device);
-    RT_ASSERT(information != RT_NULL);
-    for (node = information->object_list.next;
-         node != &(information->object_list);
-         node = node->next)
-    {
-        object = rt_list_entry(node, struct rt_object, list);
-        device = (rt_device_t)object;
-        if (device->type == RT_Device_Class_NetIf)
-        {
-            ethif = (struct eth_device *)device;
-
-            /* leave critical */
-            rt_exit_critical();
-            LOCK_TCPIP_CORE();
-
-            netif_add(ethif->netif, &ipaddr, &netmask, &gw,
-                      ethif, netif_device_init, tcpip_input);
-
-            if (netif_default == RT_NULL)
-                netif_set_default(ethif->netif);
-
-#if LWIP_DHCP
-            if (ethif->flags & NETIF_FLAG_DHCP)
-            {
-                /* if this interface uses DHCP, start the DHCP client */
-                dhcp_start(ethif->netif);
-            }
-            else
-#endif
-            {
-                /* set interface up */
-                netif_set_up(ethif->netif);
-            }
-
-            if (!(ethif->flags & ETHIF_LINK_PHYUP))
-            {
-                netif_set_link_up(ethif->netif);
-            }
-
-            UNLOCK_TCPIP_CORE();
-            /* enter critical */
-            rt_enter_critical();
-        }
-    }
-
-    /* leave critical */
-    rt_exit_critical();
     rt_sem_release((rt_sem_t)arg);
 }
 
@@ -158,12 +51,21 @@ int lwip_system_init(void)
 {
     rt_err_t rc;
     struct rt_semaphore done_sem;
+    static rt_bool_t init_ok = RT_FALSE;
+
+    if (init_ok)
+    {
+        rt_kprintf("lwip system already init.\n");
+        return 0;
+    }
+
+    extern int eth_system_device_init_private(void);
+    eth_system_device_init_private();
 
     /* set default netif to NULL */
     netif_default = RT_NULL;
 
     rc = rt_sem_init(&done_sem, "done", 0, RT_IPC_FLAG_FIFO);
-
     if (rc != RT_EOK)
     {
         LWIP_ASSERT("Failed to create semaphore", 0);
@@ -182,20 +84,9 @@ int lwip_system_init(void)
     }
     rt_sem_detach(&done_sem);
 
-    /* set default ip address */
-#if !LWIP_DHCP
-    if (netif_default != RT_NULL)
-    {
-        struct ip_addr ipaddr, netmask, gw;
-
-        ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
-        gw.addr = inet_addr(RT_LWIP_GWADDR);
-        netmask.addr = inet_addr(RT_LWIP_MSKADDR);
-
-        netifapi_netif_set_addr(netif_default, &ipaddr, &netmask, &gw);
-    }
-#endif
     rt_kprintf("lwIP-%d.%d.%d initialized!\n", LWIP_VERSION_MAJOR, LWIP_VERSION_MINOR, LWIP_VERSION_REVISION);
+
+    init_ok = RT_TRUE;
 
     return 0;
 }
@@ -229,7 +120,9 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t count)
 
     tmpsem = rt_sem_create(tname, count, RT_IPC_FLAG_FIFO);
     if (tmpsem == RT_NULL)
+    {
         return ERR_MEM;
+    }
     else
     {
         *sem = tmpsem;
@@ -274,20 +167,24 @@ u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout)
     /* get the begin tick */
     tick = rt_tick_get();
     if (timeout == 0)
+    {
         t = RT_WAITING_FOREVER;
+    }
     else
     {
         /* convert msecond to os tick */
-        if (timeout < (1000/RT_TICK_PER_SECOND))
+        if (timeout < (1000 / RT_TICK_PER_SECOND))
             t = 1;
         else
-            t = timeout / (1000/RT_TICK_PER_SECOND);
+            t = timeout / (1000 / RT_TICK_PER_SECOND);
     }
 
     ret = rt_sem_take(*sem, t);
 
     if (ret == -RT_ETIMEOUT)
+    {
         return SYS_ARCH_TIMEOUT;
+    }
     else
     {
         if (ret == RT_EOK)
@@ -343,11 +240,12 @@ err_t sys_mutex_new(sys_mutex_t *mutex)
 
     tmpmutex = rt_mutex_create(tname, RT_IPC_FLAG_PRIO);
     if (tmpmutex == RT_NULL)
+    {
         return ERR_MEM;
+    }
     else
     {
         *mutex = tmpmutex;
-
         return ERR_OK;
     }
 }
@@ -359,7 +257,6 @@ void sys_mutex_lock(sys_mutex_t *mutex)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
     rt_mutex_take(*mutex, RT_WAITING_FOREVER);
-
     return;
 }
 
@@ -377,7 +274,6 @@ void sys_mutex_unlock(sys_mutex_t *mutex)
 void sys_mutex_free(sys_mutex_t *mutex)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
-
     rt_mutex_delete(*mutex);
 }
 
@@ -435,9 +331,7 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 void sys_mbox_free(sys_mbox_t *mbox)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
-
     rt_mb_delete(*mbox);
-
     return;
 }
 
@@ -449,9 +343,7 @@ void sys_mbox_free(sys_mbox_t *mbox)
 void sys_mbox_post(sys_mbox_t *mbox, void *msg)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
-
     rt_mb_send_wait(*mbox, (rt_ubase_t)msg, RT_WAITING_FOREVER);
-
     return;
 }
 
@@ -463,10 +355,19 @@ void sys_mbox_post(sys_mbox_t *mbox, void *msg)
 err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg)
 {
     if (rt_mb_send(*mbox, (rt_ubase_t)msg) == RT_EOK)
+    {
         return ERR_OK;
+    }
 
     return ERR_MEM;
 }
+
+#if (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 /* >= v2.1.0 */
+err_t sys_mbox_trypost_fromisr(sys_mbox_t *q, void *msg)
+{
+  return sys_mbox_trypost(q, msg);
+}
+#endif /* (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 */
 
 /** Wait for a new message to arrive in the mbox
  * @param mbox mbox to get a message from
@@ -488,14 +389,16 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
     tick = rt_tick_get();
 
     if(timeout == 0)
+    {
         t = RT_WAITING_FOREVER;
+    }
     else
     {
         /* convirt msecond to os tick */
-        if (timeout < (1000/RT_TICK_PER_SECOND))
+        if (timeout < (1000 / RT_TICK_PER_SECOND))
             t = 1;
         else
-            t = timeout / (1000/RT_TICK_PER_SECOND);
+            t = timeout / (1000 / RT_TICK_PER_SECOND);
     }
 
     ret = rt_mb_recv(*mbox, (rt_ubase_t *)msg, t);
@@ -598,19 +501,13 @@ sys_thread_t sys_thread_new(const char    *name,
 sys_prot_t sys_arch_protect(void)
 {
     rt_base_t level;
-
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
-
+    level = rt_hw_interrupt_disable(); /* disable interrupt */
     return level;
 }
 
 void sys_arch_unprotect(sys_prot_t pval)
 {
-    /* enable interrupt */
-    rt_hw_interrupt_enable(pval);
-
-    return;
+    rt_hw_interrupt_enable(pval); /* enable interrupt */
 }
 
 void sys_arch_assert(const char *file, int line)
@@ -630,6 +527,34 @@ u32_t sys_now(void)
     return rt_tick_get_millisecond();
 }
 
+#if LWIP_VERSION_MAJOR >= 2U /* >= v2.x */
+RT_WEAK void mem_init(void)
+{
+}
+
+void *mem_calloc(mem_size_t count, mem_size_t size)
+{
+    return rt_calloc(count, size);
+}
+
+void *mem_trim(void *mem, mem_size_t size)
+{
+    // return rt_realloc(mem, size);
+    /* not support trim yet */
+    return mem;
+}
+
+void *mem_malloc(mem_size_t size)
+{
+    return rt_malloc(size);
+}
+
+void  mem_free(void *mem)
+{
+    rt_free(mem);
+}
+#endif /* LWIP_VERSION_MAJOR >= 2U */
+
 #ifdef RT_LWIP_PPP
 u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
 {
@@ -647,7 +572,6 @@ u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
 u32_t sio_write(sio_fd_t fd, u8_t *buf, u32_t size)
 {
     RT_ASSERT(fd != RT_NULL);
-
     return rt_device_write((rt_device_t)fd, 0, buf, size);
 }
 
@@ -667,11 +591,102 @@ void ppp_trace(int level, const char *format, ...)
     rt_device_write((rt_device_t)rt_console_get_device(), 0, rt_log_buf, length);
     va_end(args);
 }
-#endif
+#endif /* RT_LWIP_PPP */
 
-/*
- * export bsd socket symbol for RT-Thread Application Module
+#if (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 /* >= v2.1.0 */
+#if MEM_OVERFLOW_CHECK || MEMP_OVERFLOW_CHECK
+/**
+ * Check if a mep element was victim of an overflow or underflow
+ * (e.g. the restricted area after/before it has been altered)
+ *
+ * @param p the mem element to check
+ * @param size allocated size of the element
+ * @param descr1 description of the element source shown on error
+ * @param descr2 description of the element source shown on error
  */
+void mem_overflow_check_raw(void *p, size_t size, const char *descr1, const char *descr2)
+{
+#if MEM_SANITY_REGION_AFTER_ALIGNED || MEM_SANITY_REGION_BEFORE_ALIGNED
+  u16_t k;
+  u8_t *m;
+
+#if MEM_SANITY_REGION_AFTER_ALIGNED > 0
+  m = (u8_t *)p + size;
+  for (k = 0; k < MEM_SANITY_REGION_AFTER_ALIGNED; k++) {
+    if (m[k] != 0xcd) {
+      char errstr[128];
+      rt_snprintf(errstr, sizeof(errstr), "detected mem overflow in %s%s", descr1, descr2);
+      LWIP_ASSERT(errstr, 0);
+    }
+  }
+#endif /* MEM_SANITY_REGION_AFTER_ALIGNED > 0 */
+
+#if MEM_SANITY_REGION_BEFORE_ALIGNED > 0
+  m = (u8_t *)p - MEM_SANITY_REGION_BEFORE_ALIGNED;
+  for (k = 0; k < MEM_SANITY_REGION_BEFORE_ALIGNED; k++) {
+    if (m[k] != 0xcd) {
+      char errstr[128];
+      rt_snprintf(errstr, sizeof(errstr), "detected mem underflow in %s%s", descr1, descr2);
+      LWIP_ASSERT(errstr, 0);
+    }
+  }
+#endif /* MEM_SANITY_REGION_BEFORE_ALIGNED > 0 */
+#else
+  LWIP_UNUSED_ARG(p);
+  LWIP_UNUSED_ARG(desc);
+  LWIP_UNUSED_ARG(descr);
+#endif /* MEM_SANITY_REGION_AFTER_ALIGNED || MEM_SANITY_REGION_BEFORE_ALIGNED */
+}
+
+/**
+ * Initialize the restricted area of a mem element.
+ */
+void mem_overflow_init_raw(void *p, size_t size)
+{
+#if MEM_SANITY_REGION_BEFORE_ALIGNED > 0 || MEM_SANITY_REGION_AFTER_ALIGNED > 0
+  u8_t *m;
+#if MEM_SANITY_REGION_BEFORE_ALIGNED > 0
+  m = (u8_t *)p - MEM_SANITY_REGION_BEFORE_ALIGNED;
+  rt_memset(m, 0xcd, MEM_SANITY_REGION_BEFORE_ALIGNED);
+#endif
+#if MEM_SANITY_REGION_AFTER_ALIGNED > 0
+  m = (u8_t *)p + size;
+  rt_memset(m, 0xcd, MEM_SANITY_REGION_AFTER_ALIGNED);
+#endif
+#else /* MEM_SANITY_REGION_BEFORE_ALIGNED > 0 || MEM_SANITY_REGION_AFTER_ALIGNED > 0 */
+  LWIP_UNUSED_ARG(p);
+  LWIP_UNUSED_ARG(desc);
+#endif /* MEM_SANITY_REGION_BEFORE_ALIGNED > 0 || MEM_SANITY_REGION_AFTER_ALIGNED > 0 */
+}
+#endif /* MEM_OVERFLOW_CHECK || MEMP_OVERFLOW_CHECK */
+
+#ifdef LWIP_HOOK_IP4_ROUTE_SRC
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src)
+{
+    struct netif *netif;
+
+    /* iterate through netifs */
+    for (netif = netif_list; netif != NULL; netif = netif->next)
+    {
+        /* is the netif up, does it have a link and a valid address? */
+        if (netif_is_up(netif) && netif_is_link_up(netif) && !ip4_addr_isany_val(*netif_ip4_addr(netif)))
+        {
+            /* gateway matches on a non broadcast interface? (i.e. peer in a point to point interface) */
+            if (src != NULL)
+            {
+                if (ip4_addr_cmp(src, netif_ip4_addr(netif)))
+                {
+                    return netif;
+                }
+            }
+        }
+    }
+    netif = netif_default;
+    return netif;
+}
+#endif /* LWIP_HOOK_IP4_ROUTE_SRC */
+#endif /* (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 */
+
 #if LWIP_SOCKET
 #include <lwip/sockets.h>
 RTM_EXPORT(lwip_accept);
@@ -694,12 +709,10 @@ RTM_EXPORT(lwip_write);
 RTM_EXPORT(lwip_select);
 RTM_EXPORT(lwip_ioctl);
 RTM_EXPORT(lwip_fcntl);
-
 RTM_EXPORT(lwip_htons);
 RTM_EXPORT(lwip_ntohs);
 RTM_EXPORT(lwip_htonl);
 RTM_EXPORT(lwip_ntohl);
-
 RTM_EXPORT(ipaddr_aton);
 RTM_EXPORT(ipaddr_ntoa);
 
@@ -709,29 +722,28 @@ RTM_EXPORT(lwip_gethostbyname);
 RTM_EXPORT(lwip_gethostbyname_r);
 RTM_EXPORT(lwip_freeaddrinfo);
 RTM_EXPORT(lwip_getaddrinfo);
-#endif
-
-#endif
+#endif /* LWIP_DNS */
+#endif /* LWIP_SOCKET */
 
 #if LWIP_DHCP
 #include <lwip/dhcp.h>
 RTM_EXPORT(dhcp_start);
 RTM_EXPORT(dhcp_renew);
 RTM_EXPORT(dhcp_stop);
-#endif
+#endif /* LWIP_DHCP */
 
 #if LWIP_NETIF_API
 #include <lwip/netifapi.h>
 RTM_EXPORT(netifapi_netif_set_addr);
-#endif
+#endif /* LWIP_NETIF_API */
 
 #if LWIP_NETIF_LINK_CALLBACK
 RTM_EXPORT(netif_set_link_callback);
-#endif
+#endif /* LWIP_NETIF_LINK_CALLBACK */
 
 #if LWIP_NETIF_STATUS_CALLBACK
 RTM_EXPORT(netif_set_status_callback);
-#endif
+#endif /* LWIP_NETIF_STATUS_CALLBACK */
 
 RTM_EXPORT(netif_find);
 RTM_EXPORT(netif_set_addr);
