@@ -1,4 +1,14 @@
 /*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-02-20     Meco Man     add RT-Thread copyright
+ */
+
+/*
  * Copyright (c) 2001, Swedish Institute of Computer Science.
  * All rights reserved.
  *
@@ -37,8 +47,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <string.h>
-#include <stdint.h>
 
 #ifndef BYTE_ORDER
 #ifdef ARCH_CPU_BIG_ENDIAN
@@ -48,6 +56,8 @@
 #endif /* ARCH_CPU_BIG_ENDIAN */
 #endif /* BYTE_ORDER */
 
+#ifdef RT_USING_LWIP141
+#include <stdint.h>
 typedef uint8_t   u8_t;
 typedef int8_t    s8_t;
 typedef uint16_t  u16_t;
@@ -62,6 +72,7 @@ typedef uintptr_t mem_ptr_t;
 #define U32_F "lu"
 #define S32_F "ld"
 #define X32_F "lx"
+#endif /* RT_USING_LWIP141 */
 
 #include <sys/errno.h>
 /* some errno not defined in newlib */
