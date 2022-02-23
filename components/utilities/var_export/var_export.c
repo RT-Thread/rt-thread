@@ -41,10 +41,11 @@ RT_USED const struct ve_exporter __ve_table_end = { "ve_end", "ve_end", 2};
 /* Find var objects in VarExpTab segments */
 static int ve_init_find_obj(unsigned int *begin, unsigned int *end, ve_exporter_t *table)
 {
-    int obj_count = 0x00;
+    int obj_count = 0;
+
     while (begin < end)
     {
-        if (*begin != 0)
+        if (*begin != RT_NULL)
         {
             *table++ = *((struct ve_exporter *)begin);
             begin += sizeof(struct ve_exporter) / sizeof(unsigned int);
@@ -55,6 +56,7 @@ static int ve_init_find_obj(unsigned int *begin, unsigned int *end, ve_exporter_
             begin++;
         }
     }
+
     return obj_count;
 }
 #endif /* _MSC_VER */
