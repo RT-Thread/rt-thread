@@ -1,6 +1,7 @@
 menuconfig RT_USING_LWIP
     bool "Enable light weight TCP/IP stack (lwIP)"
     select RT_USING_DEVICE
+    select RT_USING_DEVICE_IPC
     default n
 
 if RT_USING_LWIP

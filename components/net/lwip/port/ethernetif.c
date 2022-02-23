@@ -14,7 +14,7 @@
  * 2016-08-18     Bernard      port to lwIP 2.0.0
  * 2018-11-02     MurphyZhao   port to lwIP 2.1.0
  * 2021-09-07     Grissiom     fix eth_tx_msg ack bug
- * 2022-02-22     liuxianliang integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
+ * 2022-02-22     xiangxistu   integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
  */
 
 /*
@@ -50,6 +50,7 @@
 
 #include <string.h>
 
+#include <lwip/init.h>
 #include <lwip/opt.h>
 #include <lwip/debug.h>
 #include <lwip/def.h>
