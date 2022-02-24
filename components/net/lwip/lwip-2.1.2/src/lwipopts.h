@@ -18,13 +18,22 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <stdlib.h>
-
+#include <sys/time.h>
+#include <sys/errno.h>
 #define LWIP_ERRNO_INCLUDE "sys/errno.h"
 
 #define LWIP_RAND rand
 
+/* LWIP_TIMEVAL_PRIVATE: provided by <sys/time.h> */
+#define LWIP_TIMEVAL_PRIVATE       0
+
 #ifndef SSIZE_MAX
 #define SSIZE_MAX INT_MAX
+#endif
+
+/* some errno not defined in newlib */
+#ifndef ENSRNOTFOUND
+#define ENSRNOTFOUND 163  /* Domain name not found */
 #endif
 
 /* ---------- Basic Configuration ---------- */

@@ -74,19 +74,6 @@ typedef uintptr_t mem_ptr_t;
 #define X32_F "lx"
 #endif /* RT_USING_LWIP_VER_NUM < 0x20000 */
 
-#include <sys/errno.h>
-/* some errno not defined in newlib */
-#ifndef ENSRNOTFOUND
-#define ENSRNOTFOUND 163  /* Domain name not found */
-/* WARNING: ESHUTDOWN also not defined in newlib. We chose
-            180 here because the number "108" which is used
-            in arch.h has been assigned to another error code. */
-#endif
-
-/* LWIP_TIMEVAL_PRIVATE: provided by <sys/time.h> */
-#include <sys/time.h>
-#define LWIP_TIMEVAL_PRIVATE       0
-
 #if defined(__CC_ARM)   /* ARMCC compiler */
 #define PACK_STRUCT_FIELD(x) x
 #define PACK_STRUCT_STRUCT __attribute__ ((__packed__))
