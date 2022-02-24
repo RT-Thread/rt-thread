@@ -1,10 +1,42 @@
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-02-23     Meco Man     integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
+ */
+
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
 #include <rtconfig.h>
 
-#define LWIP_ERRNO_STDINCLUDE
+/* ---------- LIBC and standard header files ---------- */
+#include <limits.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <sys/errno.h>
+#define LWIP_ERRNO_INCLUDE "sys/errno.h"
 
+#define LWIP_RAND rand
+
+/* LWIP_TIMEVAL_PRIVATE: provided by <sys/time.h> */
+#define LWIP_TIMEVAL_PRIVATE       0
+
+#ifndef SSIZE_MAX
+#define SSIZE_MAX INT_MAX
+#endif
+
+/* some errno not defined in newlib */
+#ifndef ENSRNOTFOUND
+#define ENSRNOTFOUND 163  /* Domain name not found */
+#endif
+
+/* ---------- Basic Configuration ---------- */
 #define LWIP_IPV4                   1
 
 #ifdef RT_USING_LWIP_IPV6
@@ -310,13 +342,6 @@
 #define ETH_PAD_SIZE                RT_LWIP_ETH_PAD_SIZE
 #endif
 
-/** SYS_LIGHTWEIGHT_PROT
- * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection
- * for certain critical regions during buffer allocation, deallocation and memory
- * allocation and deallocation.
- */
-#define SYS_LIGHTWEIGHT_PROT        (NO_SYS==0)
-
 #ifdef LWIP_USING_NAT
 #define IP_NAT                      1
 #else
@@ -549,24 +574,6 @@
 #define LWIP_NETIF_API                  1
 #endif
 
-#ifdef LWIP_IGMP
-#include <stdlib.h>
-#define LWIP_RAND                  rand
-#endif
-/*
-   ------------------------------------
-   ---------- Socket options ----------
-   ------------------------------------
-*/
-/*
- * LWIP_SOCKET==1: Enable Socket API (require to use sockets.c)
- */
-#ifndef LWIP_SOCKET
-#define LWIP_SOCKET                     1
-#endif
-#include <fcntl.h>
-#include <sys/ioctl.h>
-
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
  * (only used if you use sockets.c)
@@ -633,5 +640,10 @@
 #define TFTP_MAX_FILENAME_LEN           64
 #endif
 
+#if RT_USING_LWIP_VER_NUM >= 0x20100 /* >= v2.1.0 */
+#define LWIP_HOOK_IP4_ROUTE_SRC(dest, src)  lwip_ip4_route_src(dest, src)
+#include "lwip/ip_addr.h"
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
+#endif /* RT_USING_LWIP_VER_NUM >= 0x20100 */
 
 #endif /* __LWIPOPTS_H__ */

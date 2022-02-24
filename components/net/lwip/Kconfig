@@ -32,7 +32,7 @@ if RT_USING_LWIP
         default 0x20003    if RT_USING_LWIP203
         default 0x10401    if RT_USING_LWIP141
 
-    if (RT_USING_LWIP_VER_NUM < 0x20000)
+    if (RT_USING_LWIP_VER_NUM >= 0x20000)
         config RT_USING_LWIP_IPV6
             bool "IPV6 protocol"
             default n
