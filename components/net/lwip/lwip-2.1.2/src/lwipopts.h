@@ -1,12 +1,33 @@
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-02-23     Meco Man     add copyright
+ */
+
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
 #include <rtconfig.h>
 
-#define LWIP_ERRNO_STDINCLUDE
-#define LWIP_SOCKET_SELECT 1
-#define LWIP_SOCKET_POLL 1
+/* ---------- LIBC and standard header files ---------- */
+#include <limits.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <stdlib.h>
 
+#define LWIP_ERRNO_INCLUDE "sys/errno.h"
+
+#define LWIP_RAND rand
+
+#ifndef SSIZE_MAX
+#define SSIZE_MAX INT_MAX
+#endif
+
+/* ---------- Basic Configuration ---------- */
 #define LWIP_IPV4                   1
 
 #ifdef RT_USING_LWIP_IPV6
@@ -227,17 +248,16 @@
 
 #define LWIP_DBG_TYPES_ON           (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
 
-# ifndef __STRICT_ANSI__
-#  define SSIZE_MAX LONG_MAX
-# endif
-
-#define LWIP_NO_UNISTD_H 0
-
 /* ---------- Memory options ---------- */
 #define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
 #define SMEMCPY(dst,src,len)            MEMCPY(dst,src,len)
 
+#ifdef RT_LWIP_MEM_ALIGNMENT
+#define MEM_ALIGNMENT RT_LWIP_MEM_ALIGNMENT
+#else
 #define MEM_ALIGNMENT               4
+#endif
+
 #define MEMP_OVERFLOW_CHECK         1
 #define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1
 //#define MEM_LIBC_MALLOC             1
@@ -312,13 +332,6 @@
 #ifdef RT_LWIP_ETH_PAD_SIZE
 #define ETH_PAD_SIZE                RT_LWIP_ETH_PAD_SIZE
 #endif
-
-/** SYS_LIGHTWEIGHT_PROT
- * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection
- * for certain critical regions during buffer allocation, deallocation and memory
- * allocation and deallocation.
- */
-#define SYS_LIGHTWEIGHT_PROT        (NO_SYS==0)
 
 #ifdef LWIP_USING_NAT
 #define IP_NAT                      1
@@ -551,24 +564,6 @@
 #ifndef LWIP_NETIF_API
 #define LWIP_NETIF_API                  1
 #endif
-
-#ifdef LWIP_IGMP
-#include <stdlib.h>
-#define LWIP_RAND                  rand
-#endif
-/*
-   ------------------------------------
-   ---------- Socket options ----------
-   ------------------------------------
-*/
-/*
- * LWIP_SOCKET==1: Enable Socket API (require to use sockets.c)
- */
-#ifndef LWIP_SOCKET
-#define LWIP_SOCKET                     1
-#endif
-#include <fcntl.h>
-#include <sys/ioctl.h>
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
