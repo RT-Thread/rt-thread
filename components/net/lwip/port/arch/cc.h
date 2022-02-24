@@ -56,7 +56,7 @@
 #endif /* ARCH_CPU_BIG_ENDIAN */
 #endif /* BYTE_ORDER */
 
-#ifdef RT_USING_LWIP141
+#if RT_USING_LWIP_VER_NUM < 0x20000
 #include <stdint.h>
 typedef uint8_t   u8_t;
 typedef int8_t    s8_t;
@@ -72,7 +72,7 @@ typedef uintptr_t mem_ptr_t;
 #define U32_F "lu"
 #define S32_F "ld"
 #define X32_F "lx"
-#endif /* RT_USING_LWIP141 */
+#endif /* RT_USING_LWIP_VER_NUM < 0x20000 */
 
 #include <sys/errno.h>
 /* some errno not defined in newlib */
