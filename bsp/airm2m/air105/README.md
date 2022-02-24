@@ -68,7 +68,7 @@ AIR105 是合宙推出的一款基于 ARM Cortex-M4 内核的10mm x 10mm 大小�
 2. 输入`menuconfig`。
 3. 输入`scons`进行编译。
 
-编译完成会生成rtthread_air105.soc，使用[Luatools](http://cdndownload.openluat.com/Luat_tool_src/last_release/Luatools_v2.exe)下载进开发板即可。
+编译完成会自动打包bl : bootloader.bin和下载工具:soc_download.exe在bsp目录下生成rtthread_air105.soc，使用[Luatools](http://cdndownload.openluat.com/Luat_tool_src/last_release/Luatools_v2.exe)下载进开发板即可。
 
 #### 运行结果
 
