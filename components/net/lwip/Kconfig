@@ -20,14 +20,10 @@ if RT_USING_LWIP
         config RT_USING_LWIP212
             bool "lwIP v2.1.2"
 
-        config RT_USING_LWIP_LATEST
-            bool "lwIP latest version"
-
     endchoice
 
     config RT_USING_LWIP_VER_NUM
         hex
-        default 0x99999    if RT_USING_LWIP_LATEST
         default 0x20102    if RT_USING_LWIP212
         default 0x20003    if RT_USING_LWIP203
         default 0x10401    if RT_USING_LWIP141
