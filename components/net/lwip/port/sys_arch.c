@@ -591,7 +591,7 @@ void ppp_trace(int level, const char *format, ...)
 }
 #endif /* RT_LWIP_PPP */
 
-#if LWIP_VERSION_MAJOR >= 2 /* >= v2.1.x, v2.0.x */
+#if LWIP_VERSION_MAJOR >= 2 /* >= v2.x */
 #if MEM_OVERFLOW_CHECK || MEMP_OVERFLOW_CHECK
 /**
  * Check if a mep element was victim of an overflow or underflow

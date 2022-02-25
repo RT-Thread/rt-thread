@@ -344,13 +344,6 @@
 #define ETH_PAD_SIZE                RT_LWIP_ETH_PAD_SIZE
 #endif
 
-/** SYS_LIGHTWEIGHT_PROT
- * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection
- * for certain critical regions during buffer allocation, deallocation and memory
- * allocation and deallocation.
- */
-#define SYS_LIGHTWEIGHT_PROT        (NO_SYS==0)
-
 #ifdef LWIP_USING_NAT
 #define IP_NAT                      1
 #else
@@ -585,23 +578,6 @@
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */
 #define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT)
-#ifdef LWIP_IGMP
-#include <stdlib.h>
-#define LWIP_RAND                  rand
-#endif
-/*
-   ------------------------------------
-   ---------- Socket options ----------
-   ------------------------------------
-*/
-/*
- * LWIP_SOCKET==1: Enable Socket API (require to use sockets.c)
- */
-#ifndef LWIP_SOCKET
-#define LWIP_SOCKET                     1
-#endif
-#include <fcntl.h>
-#include <sys/ioctl.h>
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
@@ -652,10 +628,10 @@
 #define SO_REUSE                        0
 #endif
 
-#if RT_USING_LWIP_VER_NUM >= 0x20000 /* >= v2.1.0 */
+#if RT_USING_LWIP_VER_NUM >= 0x20000 /* >= v2.0.0 */
 #define LWIP_HOOK_IP4_ROUTE_SRC(dest, src)  lwip_ip4_route_src(dest, src)
 #include "lwip/ip_addr.h"
 struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
-#endif /* RT_USING_LWIP_VER_NUM >= 0x20100 */
+#endif /* RT_USING_LWIP_VER_NUM >= 0x20000 */
 
 #endif /* __LWIPOPTS_H__ */
