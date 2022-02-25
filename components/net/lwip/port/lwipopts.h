@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-02-23     Meco Man     integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
+ * 2022-02-25     xiangxistu   modify the default config through v1.4.1
  */
 
 #ifndef __LWIPOPTS_H__
@@ -269,6 +270,7 @@
 
 #define MEMP_OVERFLOW_CHECK         1
 #define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1
+
 //#define MEM_LIBC_MALLOC             1
 //#define MEM_USE_POOLS               1
 //#define MEMP_USE_CUSTOM_POOLS       1
@@ -341,6 +343,13 @@
 #ifdef RT_LWIP_ETH_PAD_SIZE
 #define ETH_PAD_SIZE                RT_LWIP_ETH_PAD_SIZE
 #endif
+
+/** SYS_LIGHTWEIGHT_PROT
+ * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection
+ * for certain critical regions during buffer allocation, deallocation and memory
+ * allocation and deallocation.
+ */
+#define SYS_LIGHTWEIGHT_PROT        (NO_SYS==0)
 
 #ifdef LWIP_USING_NAT
 #define IP_NAT                      1
@@ -574,6 +583,26 @@
 #define LWIP_NETIF_API                  1
 #endif
 
+/* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */
+#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT)
+#ifdef LWIP_IGMP
+#include <stdlib.h>
+#define LWIP_RAND                  rand
+#endif
+/*
+   ------------------------------------
+   ---------- Socket options ----------
+   ------------------------------------
+*/
+/*
+ * LWIP_SOCKET==1: Enable Socket API (require to use sockets.c)
+ */
+#ifndef LWIP_SOCKET
+#define LWIP_SOCKET                     1
+#endif
+#include <fcntl.h>
+#include <sys/ioctl.h>
+
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
  * (only used if you use sockets.c)
@@ -623,24 +652,7 @@
 #define SO_REUSE                        0
 #endif
 
-/*
-   ------------------------------------
-   ------- Applications options -------
-   ------------------------------------
-*/
-
-/**
- * Max. length of TFTP filename
- */
-#ifdef RT_LWIP_TFTP_MAX_FILENAME_LEN
-#define TFTP_MAX_FILENAME_LEN           RT_LWIP_TFTP_MAX_FILENAME_LEN
-#elif defined(RT_DFS_ELM_MAX_LFN)
-#define TFTP_MAX_FILENAME_LEN           RT_DFS_ELM_MAX_LFN
-#else
-#define TFTP_MAX_FILENAME_LEN           64
-#endif
-
-#if RT_USING_LWIP_VER_NUM >= 0x20100 /* >= v2.1.0 */
+#if RT_USING_LWIP_VER_NUM >= 0x20000 /* >= v2.1.0 */
 #define LWIP_HOOK_IP4_ROUTE_SRC(dest, src)  lwip_ip4_route_src(dest, src)
 #include "lwip/ip_addr.h"
 struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
