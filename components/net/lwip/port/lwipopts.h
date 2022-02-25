@@ -23,10 +23,17 @@
 #include <sys/errno.h>
 #define LWIP_ERRNO_INCLUDE "sys/errno.h"
 
-#define LWIP_RAND rand
+#define LWIP_TIMEVAL_PRIVATE    0
+#define LWIP_NO_UNISTD_H        0
+#define LWIP_NO_STDDEF_H        0
+#define LWIP_NO_STDINT_H        0
+#define LWIP_NO_INTTYPES_H      0
+#define LWIP_NO_LIMITS_H        0
+#define LWIP_NO_CTYPE_H         0
+#define LWIP_SOCKET_SELECT      1
+#define LWIP_SOCKET_POLL        1
 
-/* LWIP_TIMEVAL_PRIVATE: provided by <sys/time.h> */
-#define LWIP_TIMEVAL_PRIVATE       0
+#define LWIP_RAND rand
 
 #ifndef SSIZE_MAX
 #define SSIZE_MAX INT_MAX
@@ -47,6 +54,7 @@
 #endif /* RT_USING_LWIP_IPV6 */
 
 #define NO_SYS                      0
+#define SYS_LIGHTWEIGHT_PROT        1
 #define LWIP_SOCKET                 1
 #define LWIP_NETCONN                1
 
