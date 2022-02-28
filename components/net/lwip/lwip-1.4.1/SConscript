@@ -63,8 +63,7 @@ src/netif/ppp/vj.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [GetCurrentDir() + '/src',
-    GetCurrentDir() + '/src/include',
+path = [GetCurrentDir() + '/src/include',
     GetCurrentDir() + '/src/include/ipv4',
     GetCurrentDir() + '/src/include/netif']
 

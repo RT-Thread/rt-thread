@@ -234,8 +234,7 @@ src += lwipsixlowpan_SRCS
 
 src += lwipcore4_SRCS
 
-path = [cwd + '/src',
-    cwd + '/src/include',
+path = [cwd + '/src/include',
     cwd + '/src/include/netif']
 
 if not GetDepend('RT_USING_SAL'):

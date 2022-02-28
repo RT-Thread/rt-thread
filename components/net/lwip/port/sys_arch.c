@@ -527,7 +527,6 @@ u32_t sys_now(void)
     return rt_tick_get_millisecond();
 }
 
-#if LWIP_VERSION_MAJOR >= 2U /* >= v2.x */
 RT_WEAK void mem_init(void)
 {
 }
@@ -553,7 +552,6 @@ void  mem_free(void *mem)
 {
     rt_free(mem);
 }
-#endif /* LWIP_VERSION_MAJOR >= 2U */
 
 #ifdef RT_LWIP_PPP
 u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
@@ -593,7 +591,7 @@ void ppp_trace(int level, const char *format, ...)
 }
 #endif /* RT_LWIP_PPP */
 
-#if (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 /* >= v2.1.0 */
+#if LWIP_VERSION_MAJOR >= 2 /* >= v2.x */
 #if MEM_OVERFLOW_CHECK || MEMP_OVERFLOW_CHECK
 /**
  * Check if a mep element was victim of an overflow or underflow
@@ -633,8 +631,8 @@ void mem_overflow_check_raw(void *p, size_t size, const char *descr1, const char
 #endif /* MEM_SANITY_REGION_BEFORE_ALIGNED > 0 */
 #else
   LWIP_UNUSED_ARG(p);
-  LWIP_UNUSED_ARG(desc);
-  LWIP_UNUSED_ARG(descr);
+  LWIP_UNUSED_ARG(descr1);
+  LWIP_UNUSED_ARG(descr2);
 #endif /* MEM_SANITY_REGION_AFTER_ALIGNED || MEM_SANITY_REGION_BEFORE_ALIGNED */
 }
 
@@ -655,7 +653,7 @@ void mem_overflow_init_raw(void *p, size_t size)
 #endif
 #else /* MEM_SANITY_REGION_BEFORE_ALIGNED > 0 || MEM_SANITY_REGION_AFTER_ALIGNED > 0 */
   LWIP_UNUSED_ARG(p);
-  LWIP_UNUSED_ARG(desc);
+  LWIP_UNUSED_ARG(size);
 #endif /* MEM_SANITY_REGION_BEFORE_ALIGNED > 0 || MEM_SANITY_REGION_AFTER_ALIGNED > 0 */
 }
 #endif /* MEM_OVERFLOW_CHECK || MEMP_OVERFLOW_CHECK */
@@ -685,7 +683,7 @@ struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src)
     return netif;
 }
 #endif /* LWIP_HOOK_IP4_ROUTE_SRC */
-#endif /* (LWIP_VERSION_MAJOR * 100 + LWIP_VERSION_MINOR) >= 201 */
+#endif /*LWIP_VERSION_MAJOR >= 2 */
 
 #if LWIP_SOCKET
 #include <lwip/sockets.h>

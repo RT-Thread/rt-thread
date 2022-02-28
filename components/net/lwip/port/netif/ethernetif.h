@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-02-22     liuxianliang integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
+ * 2022-02-22     xiangxistu integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
  */
 
 #ifndef __NETIF_ETHERNETIF_H__
