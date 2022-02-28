@@ -100,7 +100,7 @@ class CmdExecutor(threading.Thread):
 def ExecCmd(cmd):
     global executor
     if executor:
-        print 'last task does not exit'
+        print('last task does not exit')
         return
 
     executor = CmdExecutor(cmd, builder)

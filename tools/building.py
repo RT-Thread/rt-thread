@@ -876,9 +876,9 @@ def DoBuilding(target, objects):
 def GenTargetProject(program = None):
 
     if GetOption('target') == 'mdk':
-        from keil import MDKProject
-        from keil import MDK4Project
-        from keil import MDK5Project
+        from proj_gen.keil import MDKProject
+        from proj_gen.keil import MDK4Project
+        from proj_gen.keil import MDK5Project
 
         template = os.path.isfile('template.Uv2')
         if template:
@@ -895,59 +895,59 @@ def GenTargetProject(program = None):
                     print ('No template project file found.')
 
     if GetOption('target') == 'mdk4':
-        from keil import MDK4Project
+        from proj_gen.keil import MDK4Project
         MDK4Project('project.uvproj', Projects)
 
     if GetOption('target') == 'mdk5':
-        from keil import MDK5Project
+        from proj_gen.keil import MDK5Project
         MDK5Project('project.uvprojx', Projects)
 
     if GetOption('target') == 'iar':
-        from iar import IARProject
+        from proj_gen.iar import IARProject
         IARProject('project.ewp', Projects)
 
     if GetOption('target') == 'vs':
-        from vs import VSProject
+        from proj_gen.vs import VSProject
         VSProject('project.vcproj', Projects, program)
 
     if GetOption('target') == 'vs2012':
-        from vs2012 import VS2012Project
+        from proj_gen.vs2012 import VS2012Project
         VS2012Project('project.vcxproj', Projects, program)
 
     if GetOption('target') == 'cb':
-        from codeblocks import CBProject
+        from proj_gen.codeblocks import CBProject
         CBProject('project.cbp', Projects, program)
 
     if GetOption('target') == 'ua':
-        from ua import PrepareUA
+        from proj_gen.ua import PrepareUA
         PrepareUA(Projects, Rtt_Root, str(Dir('#')))
 
     if GetOption('target') == 'vsc':
-        from vsc import GenerateVSCode
+        from proj_gen.vsc import GenerateVSCode
         GenerateVSCode(Env)
 
     if GetOption('target') == 'cdk':
-        from cdk import CDKProject
+        from proj_gen.cdk import CDKProject
         CDKProject('project.cdkproj', Projects)
 
     if GetOption('target') == 'ses':
-        from ses import SESProject
+        from proj_gen.ses import SESProject
         SESProject(Env)
 
     if GetOption('target') == 'makefile':
-        from makefile import TargetMakefile
+        from proj_gen.makefile import TargetMakefile
         TargetMakefile(Env)
 
     if GetOption('target') == 'eclipse':
-        from eclipse import TargetEclipse
+        from proj_gen.eclipse import TargetEclipse
         TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
         
     if GetOption('target') == 'codelite':
-        from codelite import TargetCodelite
+        from proj_gen.codelite import TargetCodelite
         TargetCodelite(Projects, program)
 
     if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
-        from cmake import CMakeProject
+        from proj_gen.cmake import CMakeProject
         CMakeProject(Env,Projects)
 
 
