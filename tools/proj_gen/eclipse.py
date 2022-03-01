@@ -13,7 +13,7 @@ import glob
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 
-import rt_studio
+from . import rt_studio
 from building import *
 from utils import *
 from utils import _make_path_relative
