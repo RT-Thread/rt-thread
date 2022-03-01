@@ -32,7 +32,8 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
     rt_ubase_t *stk;
     rt_ubase_t current_el;
 
-    stk      = (rt_ubase_t*)stack_addr;
+    /* The 64-bit APCS requires 128-bit (16 byte) stack alignment */
+    stk      = (rt_ubase_t*)(((rt_ubase_t)stack_addr/16) * 16);
 
     *(--stk) = (rt_ubase_t) 0;              /* Q0 */
     *(--stk) = (rt_ubase_t) 0;              /* Q0 */
