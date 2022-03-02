@@ -3,11 +3,11 @@ Import('rtconfig')
 from building import *
 
 cwd     = os.path.join(str(Dir('#')), 'lib')
-src	= Glob('./src/*.c')
+src = Glob('./src/*.c')
 
 src += Glob('./src/*.s')
 path = [cwd + '/inc'
-	]
+    ]
 
 CPPDEFINES = ['NV32', 'KEIL']
 

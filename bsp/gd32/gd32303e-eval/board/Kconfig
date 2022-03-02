@@ -3,14 +3,14 @@ menu "Hardware Drivers Config"
 config SOC_SERIES_GD32F30x
     bool
     default y
-	
+
 config SOC_GD32303Z
     bool
     select SOC_SERIES_GD32F30x
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
-	
+
 menu "Onboard Peripheral Drivers"
 
 endmenu
@@ -50,7 +50,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -75,11 +75,11 @@ menu "On-chip Peripheral Drivers"
                 default 25
         endif
     source "../libraries/gd32_drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

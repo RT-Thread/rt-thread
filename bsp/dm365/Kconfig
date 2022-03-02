@@ -19,7 +19,7 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 config SOC_DM365
-    bool    
+    bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -28,13 +28,13 @@ comment "BSP configure"
 
 config RT_USING_GPIO_DEVICE
     bool "Using GPIO"
-    default y    
+    default y
 
 config RT_USING_I2C_CONTROL
     bool "Using I2C control"
     select RT_USING_I2C
     default y
-    
+
 config RT_USING_SDIO_CONTROL
     bool "Using SDIO control"
     select RT_USING_SDIO
@@ -43,7 +43,7 @@ config RT_USING_SDIO_CONTROL
 config RT_USING_SPI_CONTROL
     bool "Using SPI control"
     depends on RT_USING_SPI
-    default y 
+    default y
 
 config RT_USING_EMAC
     bool "Using EMAC control"

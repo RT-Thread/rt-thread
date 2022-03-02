@@ -4,8 +4,8 @@ config RT_USING_UART0
 
 config BSP_DRV_SDCARD
     bool "Enable SD Card"
-    default y 
+    default y
 
 config BSP_DRV_SDRAM
-	bool "Enable SDRAM"
-	default y 
+    bool "Enable SDRAM"
+    default y

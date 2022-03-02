@@ -19,7 +19,7 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 config IA32
-    bool 
+    bool
     select ARCH_IA32
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN

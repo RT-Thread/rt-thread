@@ -15,7 +15,7 @@ APM32F10x_StdPeriphDriver/src/apm32f10x_usart.c
 APM32F10x_StdPeriphDriver/src/apm32f10x_eint.c
 """)
 
-path = [cwd + '/Device/Geehy/APM32F10x/Include', 
+path = [cwd + '/Device/Geehy/APM32F10x/Include',
     cwd + '/APM32F10x_StdPeriphDriver/inc',
     cwd + '/CMSIS/Include']
 

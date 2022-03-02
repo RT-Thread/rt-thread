@@ -173,7 +173,7 @@ menu "On-chip Peripheral Drivers"
                 default 19
             endif
     endif
-    
+
     config BSP_USING_I2C
         bool "Enable I2C"
         select RT_USING_I2C
@@ -195,12 +195,12 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_SOFT_I2C1
                 bool "Enabel SOFT I2C1"
                 default n
-        endif   
+        endif
 
         if BSP_USING_SOFT_I2C
             config BSP_USING_SOFT_I2C2
                 bool "Enabel SOFT I2C2"
-                default n      
+                default n
         endif
 
     menuconfig BSP_USING_SPI

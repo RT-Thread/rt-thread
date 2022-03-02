@@ -6,7 +6,7 @@ config SOC_STM32H743II
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
-    
+
 menu "On-chip Peripheral Drivers"
 
     config BSP_USING_GPIO
@@ -35,8 +35,8 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-				
-			config BSP_USING_LPUART1
+
+            config BSP_USING_LPUART1
                 bool "Enable LPUART1"
                 default n
 
@@ -48,9 +48,9 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
-        
+
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 endmenu

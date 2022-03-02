@@ -25,7 +25,7 @@ common/wdt/dw_wdt.c
 """)
 
 path = [cwd + '/include',
-    cwd + '/common/aes', 
+    cwd + '/common/aes',
     cwd + '/common/aes',
     cwd + '/common/crc',
     cwd + '/common/dmac',

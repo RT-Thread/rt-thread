@@ -13,7 +13,7 @@ uart.c
 """)
 
 if GetDepend('RT_USING_LWIP'):
-	src += ['dm9000.c']
+    src += ['dm9000.c']
 
 if GetDepend('RT_MINI2440_LCD_A70'):
     src += ['lcd_a70.c']

@@ -12,22 +12,22 @@ CPPPATH = [cwd]
 
 # add driver code
 if GetDepend('BSP_USING_UART0'):
-    src = src + ['drv_uart.c'] 
+    src = src + ['drv_uart.c']
 
 if GetDepend('BSP_USING_SPI2'):
-    src = src + ['drv_spi.c'] 
+    src = src + ['drv_spi.c']
 
 if GetDepend('BSP_USING_I2C4'):
-    src = src + ['drv_i2c.c'] 
+    src = src + ['drv_i2c.c']
 
 if GetDepend('BSP_USING_ROMFS'):
-    src = src + ['drv_romfs.c'] 
+    src = src + ['drv_romfs.c']
 
 if GetDepend('BSP_USING_SDCARD'):
-    src = src + ['drv_sdcard.c'] 
+    src = src + ['drv_sdcard.c']
 
 if GetDepend('BSP_USING_SPIFLASH'):
-    src = src + ['drv_spi_flash.c'] 
+    src = src + ['drv_spi_flash.c']
 
 if GetDepend('BSP_USING_AUDIO_REPLAY'):
     src = src + ['audio/drv_sound.c']

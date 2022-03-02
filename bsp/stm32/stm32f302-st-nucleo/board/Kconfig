@@ -38,11 +38,11 @@ menu "On-chip Peripheral Drivers"
                 default n
 
         endif
-            
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

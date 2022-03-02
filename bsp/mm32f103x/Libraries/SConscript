@@ -1,7 +1,7 @@
 from building import *
 import rtconfig
 cwd     = GetCurrentDir()
-src	= ['MM32F103/Source/system_MM32F103.c']
+src = ['MM32F103/Source/system_MM32F103.c']
 CPPPATH = [cwd + '/CMSIS/KEIL_CORE', cwd + '/MM32F103/Include',  cwd + '/MM32F103/Source', cwd + '/MM32F103/HAL_lib/inc']
 
 src += Glob('MM32F103/HAL_lib/src/*.c')

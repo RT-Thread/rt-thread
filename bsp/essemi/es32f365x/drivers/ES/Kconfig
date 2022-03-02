@@ -4,7 +4,7 @@ menu "UART Drivers"
         bool "Register UART0 "
         select RT_USING_SERIAL
         default y
-        
+
     if BSP_USING_UART0
         config BSP_UART0_TX_USING_DMA
             bool "UART0 using DMA TX"
@@ -15,12 +15,12 @@ menu "UART Drivers"
             select RT_SERIAL_USING_DMA
             default n
     endif
-    
+
     config BSP_USING_UART1
         bool "Register UART1 "
         select RT_USING_SERIAL
         default n
-        
+
     if BSP_USING_UART1
         config BSP_UART1_TX_USING_DMA
             bool "UART1 using DMA TX"
@@ -36,7 +36,7 @@ menu "UART Drivers"
         bool "Register UART2 "
         select RT_USING_SERIAL
         default n
-        
+
     if BSP_USING_UART2
         config BSP_UART2_TX_USING_DMA
             bool "UART2 using DMA TX"
@@ -52,7 +52,7 @@ menu "UART Drivers"
         bool "Register UART3 "
         select RT_USING_SERIAL
         default n
-        
+
     if BSP_USING_UART3
         config BSP_UART3_TX_USING_DMA
             bool "UART3 using DMA TX"
@@ -66,7 +66,7 @@ menu "UART Drivers"
         bool "Register UART4 "
         select RT_USING_SERIAL
         default n
-        
+
     if BSP_USING_UART4
         config BSP_UART4_TX_USING_DMA
             bool "UART4 using DMA TX"
@@ -82,7 +82,7 @@ menu "UART Drivers"
         bool "Register UART5 "
         select RT_USING_SERIAL
         default n
-        
+
     if BSP_USING_UART5
         config BSP_UART5_TX_USING_DMA
             bool "UART5 using DMA TX"

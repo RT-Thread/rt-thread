@@ -96,7 +96,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_SPI
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
+                default n
         endif
 
     config BSP_USING_QSPI

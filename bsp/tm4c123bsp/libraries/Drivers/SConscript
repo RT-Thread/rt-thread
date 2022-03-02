@@ -10,7 +10,7 @@ src = Split("""
 
 if GetDepend(['RT_USING_PIN']):
     src += ['drv_gpio.c']
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['drv_uart.c']
 
@@ -72,10 +72,10 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F7']):
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32L4']):
     src += ['drv_flash/drv_flash_l4.c']
-	
+
 if GetDepend('RT_USING_HWCRYPTO'):
     src += ['drv_crypto.c']
-	
+
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
 

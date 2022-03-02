@@ -1,16 +1,16 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = [] 
+src = []
 
 CPPPATH = [cwd + '/../include']
 group = []
 
 if GetDepend(['RT_USING_RTC']):
     src = src + ['rtc.c']
-    if GetDepend(['RT_USING_ALARM']): 
+    if GetDepend(['RT_USING_ALARM']):
         src = src + ['alarm.c']
-    if GetDepend(['RT_USING_SOFT_RTC']): 
+    if GetDepend(['RT_USING_SOFT_RTC']):
         src = src + ['soft_rtc.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_RTC'], CPPPATH = CPPPATH)
