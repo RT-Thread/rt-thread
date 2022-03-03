@@ -134,12 +134,6 @@ config RT_USING_ULOG
         endif
 
         menu "log format"
-            config ULOG_OUTPUT_FLOAT
-                bool "Enable float number support. It will using more thread stack."
-                default n
-                help
-                    The default formater is using rt_vsnprint and it not supported float number.
-                    When enable this option then it will enable libc. The formater will change to vsnprint on libc.
 
             if !ULOG_USING_SYSLOG
                 config ULOG_USING_COLOR

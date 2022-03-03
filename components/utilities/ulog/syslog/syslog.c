@@ -14,10 +14,6 @@
 #include <stdint.h>
 #include "syslog.h"
 
-#ifdef ULOG_OUTPUT_FLOAT
-#include <stdio.h>
-#endif
-
 /*
  * reference:
  * http://pubs.opengroup.org/onlinepubs/7908799/xsh/syslog.h.html
@@ -174,8 +170,6 @@ static const char *get_month_str(uint8_t month)
 
 RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_bool_t newline, const char *format, va_list args)
 {
-    extern size_t ulog_strcpy(size_t cur_len, char *dst, const char *src);
-
     rt_size_t log_len = 0, newline_len = rt_strlen(ULOG_NEWLINE_SIGN);
     int fmt_result;
 
@@ -205,34 +199,29 @@ RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_
 #ifdef ULOG_OUTPUT_TAG
     /* add identification (tag) info */
     {
-        log_len += ulog_strcpy(log_len, log_buf + log_len, " ");
-        log_len += ulog_strcpy(log_len, log_buf + log_len, tag);
+        log_len += rt_strcpy(log_len, log_buf + log_len, " ");
+        log_len += rt_strcpy(log_len, log_buf + log_len, tag);
     }
 #endif /* ULOG_OUTPUT_TAG */
 
 #ifdef ULOG_OUTPUT_THREAD_NAME
     /* add thread info */
     {
-        log_len += ulog_strcpy(log_len, log_buf + log_len, " ");
+        log_len += rt_strcpy(log_len, log_buf + log_len, " ");
         /* is not in interrupt context */
         if (rt_interrupt_get_nest() == 0)
         {
-            log_len += ulog_strcpy(log_len, log_buf + log_len, rt_thread_self()->name);
+            log_len += rt_strcpy(log_len, log_buf + log_len, rt_thread_self()->name);
         }
         else
         {
-            log_len += ulog_strcpy(log_len, log_buf + log_len, "ISR");
+            log_len += rt_strcpy(log_len, log_buf + log_len, "ISR");
         }
     }
 #endif /* ULOG_OUTPUT_THREAD_NAME */
 
-    log_len += ulog_strcpy(log_len, log_buf + log_len, ": ");
-
-#ifdef ULOG_OUTPUT_FLOAT
-    fmt_result = vsnprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, format, args);
-#else
+    log_len += rt_strcpy(log_len, log_buf + log_len, ": ");
     fmt_result = rt_vsnprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, format, args);
-#endif /* ULOG_OUTPUT_FLOAT */
 
     /* calculate log length */
     if ((log_len + fmt_result <= ULOG_LINE_BUF_SIZE) && (fmt_result > -1))
@@ -257,7 +246,7 @@ RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_
     /* package newline sign */
     if (newline)
     {
-        log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+        log_len += rt_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
     }
 
     return log_len;

@@ -16,10 +16,6 @@
 #include <syslog.h>
 #endif
 
-#ifdef ULOG_OUTPUT_FLOAT
-#include <stdio.h>
-#endif
-
 #ifdef ULOG_TIME_USING_TIMESTAMP
 #include <sys/time.h>
 #endif
@@ -143,28 +139,6 @@ static const char * const color_output_info[] =
 /* ulog local object */
 static struct rt_ulog ulog = { 0 };
 
-size_t ulog_strcpy(size_t cur_len, char *dst, const char *src)
-{
-    const char *src_old = src;
-
-    RT_ASSERT(dst);
-    RT_ASSERT(src);
-
-    while (*src != 0)
-    {
-        /* make sure destination has enough space */
-        if (cur_len++ < ULOG_LINE_BUF_SIZE)
-        {
-            *dst++ = *src++;
-        }
-        else
-        {
-            break;
-        }
-    }
-    return src - src_old;
-}
-
 size_t ulog_ultoa(char *s, unsigned long int n)
 {
     size_t i = 0, j = 0, len = 0;
@@ -263,8 +237,8 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     /* add CSI start sign and color info */
     if (color_output_info[level])
     {
-        log_len += ulog_strcpy(log_len, log_buf + log_len, CSI_START);
-        log_len += ulog_strcpy(log_len, log_buf + log_len, color_output_info[level]);
+        log_len += rt_strcpy(log_len, log_buf + log_len, CSI_START);
+        log_len += rt_strcpy(log_len, log_buf + log_len, color_output_info[level]);
     }
 #endif /* ULOG_USING_COLOR */
 
@@ -321,21 +295,21 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
 #ifdef ULOG_OUTPUT_LEVEL
 
 #ifdef ULOG_OUTPUT_TIME
-    log_len += ulog_strcpy(log_len, log_buf + log_len, " ");
+    log_len += rt_strcpy(log_len, log_buf + log_len, " ");
 #endif
 
     /* add level info */
-    log_len += ulog_strcpy(log_len, log_buf + log_len, level_output_info[level]);
+    log_len += rt_strcpy(log_len, log_buf + log_len, level_output_info[level]);
 #endif /* ULOG_OUTPUT_LEVEL */
 
 #ifdef ULOG_OUTPUT_TAG
 
 #if !defined(ULOG_OUTPUT_LEVEL) && defined(ULOG_OUTPUT_TIME)
-    log_len += ulog_strcpy(log_len, log_buf + log_len, " ");
+    log_len += rt_strcpy(log_len, log_buf + log_len, " ");
 #endif
 
     /* add tag info */
-    log_len += ulog_strcpy(log_len, log_buf + log_len, tag);
+    log_len += rt_strcpy(log_len, log_buf + log_len, tag);
 #endif /* ULOG_OUTPUT_TAG */
 
 #ifdef ULOG_OUTPUT_THREAD_NAME
@@ -343,7 +317,7 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     {
 
 #if defined(ULOG_OUTPUT_TIME) || defined(ULOG_OUTPUT_LEVEL) || defined(ULOG_OUTPUT_TAG)
-        log_len += ulog_strcpy(log_len, log_buf + log_len, " ");
+        log_len += rt_strcpy(log_len, log_buf + log_len, " ");
 #endif
 
         /* is not in interrupt context */
@@ -361,18 +335,13 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
         }
         else
         {
-            log_len += ulog_strcpy(log_len, log_buf + log_len, "ISR");
+            log_len += rt_strcpy(log_len, log_buf + log_len, "ISR");
         }
     }
 #endif /* ULOG_OUTPUT_THREAD_NAME */
 
-    log_len += ulog_strcpy(log_len, log_buf + log_len, ": ");
-
-#ifdef ULOG_OUTPUT_FLOAT
-    fmt_result = vsnprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, format, args);
-#else
+    log_len += rt_strcpy(log_len, log_buf + log_len, ": ");
     fmt_result = rt_vsnprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, format, args);
-#endif /* ULOG_OUTPUT_FLOAT */
 
     /* calculate log length */
     if ((log_len + fmt_result <= ULOG_LINE_BUF_SIZE) && (fmt_result > -1))
@@ -406,14 +375,14 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     /* package newline sign */
     if (newline)
     {
-        log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+        log_len += rt_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
     }
 
 #ifdef ULOG_USING_COLOR
     /* add CSI end sign  */
     if (color_output_info[level])
     {
-        log_len += ulog_strcpy(log_len, log_buf + log_len, CSI_END);
+        log_len += rt_strcpy(log_len, log_buf + log_len, CSI_END);
     }
 #endif /* ULOG_USING_COLOR */
 
@@ -674,15 +643,10 @@ void ulog_raw(const char *format, ...)
 
     /* lock output */
     output_lock();
+
     /* args point to the first variable parameter */
     va_start(args, format);
-
-#ifdef ULOG_OUTPUT_FLOAT
-    fmt_result = vsnprintf(log_buf, ULOG_LINE_BUF_SIZE, format, args);
-#else
     fmt_result = rt_vsnprintf(log_buf, ULOG_LINE_BUF_SIZE, format, args);
-#endif /* ULOG_OUTPUT_FLOAT */
-
     va_end(args);
 
     /* calculate log length */
@@ -784,9 +748,9 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
             time_head_len = rt_strlen(log_buf + log_len);
             log_len += time_head_len;
 #endif /* ULOG_OUTPUT_TIME */
-            log_len += ulog_strcpy(log_len, log_buf + log_len, "D/HEX ");
-            log_len += ulog_strcpy(log_len, log_buf + log_len, tag);
-            log_len += ulog_strcpy(log_len, log_buf + log_len, ": ");
+            log_len += rt_strcpy(log_len, log_buf + log_len, "D/HEX ");
+            log_len += rt_strcpy(log_len, log_buf + log_len, tag);
+            log_len += rt_strcpy(log_len, log_buf + log_len, ": ");
         }
         else
         {
@@ -817,20 +781,20 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
             {
                 rt_strncpy(dump_string, "   ", sizeof(dump_string));
             }
-            log_len += ulog_strcpy(log_len, log_buf + log_len, dump_string);
+            log_len += rt_strcpy(log_len, log_buf + log_len, dump_string);
             if ((j + 1) % 8 == 0)
             {
-                log_len += ulog_strcpy(log_len, log_buf + log_len, " ");
+                log_len += rt_strcpy(log_len, log_buf + log_len, " ");
             }
         }
-        log_len += ulog_strcpy(log_len, log_buf + log_len, "  ");
+        log_len += rt_strcpy(log_len, log_buf + log_len, "  ");
         /* dump char for hex */
         for (j = 0; j < width; j++)
         {
             if (i + j < size)
             {
                 rt_snprintf(dump_string, sizeof(dump_string), "%c", __is_print(buf[i + j]) ? buf[i + j] : '.');
-                log_len += ulog_strcpy(log_len, log_buf + log_len, dump_string);
+                log_len += rt_strcpy(log_len, log_buf + log_len, dump_string);
             }
         }
         /* overflow check and reserve some space for newline sign */
@@ -839,7 +803,7 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
             log_len = ULOG_LINE_BUF_SIZE - rt_strlen(ULOG_NEWLINE_SIGN);
         }
         /* package newline sign */
-        log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+        log_len += rt_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
         /*add string end sign*/
         log_buf[log_len] = '\0';
         /* do log output */
