@@ -26,25 +26,6 @@ if RT_USING_LWIP
 
     endchoice
 
-    # ---- auxiliary package ------
-    # https://github.com/RT-Thread-packages/lwip
-
-    config PKG_USING_LWIP
-        bool
-        default n
-
-    if PKG_USING_LWIP
-        config PKG_LWIP_PATH
-            string
-            default "/packages/iot/lwip"
-
-        config PKG_LWIP_VER
-            string
-            default "latest" if RT_USING_LWIP_LATEST
-    endif
-
-    # -----------------------------
-
     config RT_USING_LWIP_VER_NUM
         hex
         default 0x99999    if RT_USING_LWIP_LATEST
