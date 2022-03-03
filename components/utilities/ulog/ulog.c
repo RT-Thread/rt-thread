@@ -1447,7 +1447,7 @@ int ulog_init(void)
 
     return 0;
 }
-INIT_BOARD_EXPORT(ulog_init);
+INIT_COMPONENT_EXPORT(ulog_init);
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
 int ulog_async_init(void)
@@ -1467,7 +1467,7 @@ int ulog_async_init(void)
     }
     return 0;
 }
-INIT_PREV_EXPORT(ulog_async_init);
+INIT_ENV_EXPORT(ulog_async_init);
 #endif /* ULOG_USING_ASYNC_OUTPUT */
 
 void ulog_deinit(void)
