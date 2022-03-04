@@ -42,7 +42,7 @@ GD32的BSP架构主要分为三个部分：libraries、tools和具体的Boards�
 
 安装完成后会自动打开，我们将其关闭。
 
-接下来我们下载GD32F30x的软件支持包。
+接下来我们下载GD32F4xx的软件支持包。
 
 [下载地址](http://www.gd32mcu.com/cn/download)
 
