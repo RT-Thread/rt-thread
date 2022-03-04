@@ -3,20 +3,34 @@
  *
  * @brief       This file contains all the functions prototypes for the ADC firmware library
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_ADC_H
 #define __APM32F10X_ADC_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
   extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -62,7 +76,7 @@ typedef enum
     ADC_EXT_TRIG_CONV_None            = ((uint32_t)0x000E0000),
 
     ADC_EXT_TRIG_CONV_TMR3_CC1        = ((uint32_t)0x00000000),
-    ADC_EXT_TRIG_CONV_TMR2_CC3        = ((uint32_t)0x00030000),
+    ADC_EXT_TRIG_CONV_TMR2_CC3        = ((uint32_t)0x00020000),
     ADC_EXT_TRIG_CONV_TMR8_CC1        = ((uint32_t)0x00060000),
     ADC_EXT_TRIG_CONV_TMR8_TRGO       = ((uint32_t)0x00080000),
     ADC_EXT_TRIG_CONV_TMR5_CC1        = ((uint32_t)0x000A0000),
@@ -110,15 +124,15 @@ typedef enum
  */
 typedef enum
 {
-    ADC_SAMPLE_TIME_1_5   = ((uint8_t)0x00),
-    ADC_SAMPLE_TIME_7_5   = ((uint8_t)0x01),
-    ADC_SAMPLE_TIME_13_5  = ((uint8_t)0x02),
-    ADC_SAMPLE_TIME_28_5  = ((uint8_t)0x03),
-    ADC_SAMPLE_TIME_41_5  = ((uint8_t)0x04),
-    ADC_SAMPLE_TIME_55_5  = ((uint8_t)0x05),
-    ADC_SAMPLE_TIME_71_5  = ((uint8_t)0x06),
-    ADC_SAMPLE_TIME_239_5 = ((uint8_t)0x07)
-} ADC_SAMPLE_TIME_T;
+    ADC_SAMPLETIME_1CYCLES5   = ((uint8_t)0x00),
+    ADC_SAMPLETIME_7CYCLES5   = ((uint8_t)0x01),
+    ADC_SAMPLETIME_13CYCLES5  = ((uint8_t)0x02),
+    ADC_SAMPLETIME_28CYCLES5  = ((uint8_t)0x03),
+    ADC_SAMPLETIME_41CYCLES5  = ((uint8_t)0x04),
+    ADC_SAMPLETIME_55CYCLES5  = ((uint8_t)0x05),
+    ADC_SAMPLETIME_71CYCLES5  = ((uint8_t)0x06),
+    ADC_SAMPLETIME_239CYCLES5 = ((uint8_t)0x07)
+} ADC_SAMPLETIME_T;
 
 /**
  * @brief    ADC external trigger sources for injected channels conversion
@@ -269,7 +283,7 @@ void ADC_DisableSoftwareStartConv(ADC_T* adc);
 uint8_t ADC_ReadSoftwareStartConvStatus(ADC_T* adc);
 
 /** ADC Discontinuous mode */
-void ADC_ConfigDiscModeChannel(ADC_T* adc, uint8_t number);
+void ADC_ConfigDiscMode(ADC_T* adc, uint8_t number);
 void ADC_EnableDiscMode(ADC_T* adc);
 void ADC_DisableDiscMode(ADC_T* adc);
 
@@ -282,8 +296,8 @@ uint16_t ADC_ReadConversionValue(ADC_T* adc);
 uint32_t ADC_ReadDualModeConversionValue(ADC_T* adc);
 
 /** ADC Automatic injected group */
-void ADC_EnableInjectedConv(ADC_T* adc);
-void ADC_DisableInjectedConv(ADC_T* adc);
+void ADC_EnableAutoInjectedConv(ADC_T* adc);
+void ADC_DisableAutoInjectedConv(ADC_T* adc);
 void ADC_EnableInjectedDiscMode(ADC_T* adc);
 void ADC_DisableInjectedDiscMode(ADC_T* adc);
 
@@ -318,8 +332,8 @@ void ADC_EnableInterrupt(ADC_T* adc, uint16_t interrupt);
 void ADC_DisableInterrupt(ADC_T* adc, uint16_t interrupt);
 uint8_t ADC_ReadStatusFlag(ADC_T* adc, ADC_FLAG_T flag);
 void ADC_ClearStatusFlag(ADC_T* adc, uint8_t flag);
-uint8_t ADC_ReadIntFlag(ADC_T* adc, ADC_INT_T interrupt);
-void ADC_ClearIntFlag(ADC_T* adc, uint16_t interrupt);
+uint8_t ADC_ReadIntFlag(ADC_T* adc, ADC_INT_T flag);
+void ADC_ClearIntFlag(ADC_T* adc, uint16_t flag);
 
 /**@} end of group ADC_Fuctions*/
 /**@} end of group ADC_Driver*/

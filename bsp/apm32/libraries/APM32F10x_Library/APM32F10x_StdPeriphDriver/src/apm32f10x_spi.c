@@ -3,10 +3,24 @@
  *
  * @brief       This file provides all the SPI firmware functions
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_spi.h"
@@ -84,7 +98,7 @@ void I2S_Config(SPI_T* spi, I2S_Config_T* i2sConfig)
     uint32_t tmp = 0;
     uint32_t sysClock = 0;
 
-  /* Clear MODESEL, I2SEN, I2SMOD, PFSSEL, I2SSSEL, CPOL, DATALEN and CHLEN bits */
+    /** Clear MODESEL, I2SEN, I2SMOD, PFSSEL, I2SSSEL, CPOL, DATALEN and CHLEN bits */
     spi->I2SCFG &= 0xF040;
     spi->I2SPSC = 0x0002;
 
@@ -130,7 +144,10 @@ void I2S_Config(SPI_T* spi, I2S_Config_T* i2sConfig)
     spi->I2SPSC_B.ODDPSC = i2sOdd;
     spi->I2SPSC |= i2sConfig->MCLKOutput;
 
-    spi->I2SCFG = i2sConfig->mode | i2sConfig->standard | i2sConfig->length | i2sConfig->polarity;
+    spi->I2SCFG = (uint32_t)i2sConfig->mode | \
+                  (uint32_t)i2sConfig->standard | \
+                  (uint32_t)i2sConfig->length | \
+                  (uint32_t)i2sConfig->polarity;
 
     /** select I2S mode */
     spi->I2SCFG_B.MODESEL = BIT_SET;
@@ -347,11 +364,14 @@ void SPI_DisableSSOutput(SPI_T* spi)
  *
  * @param     spi: The SPIx can be 1,2,3
  *
- * @param     length: Select the SPI data Size
+ * @param     length: specifies the SPI data size.
+ *                    This parameter can be one of the following values:
+ *                    @arg SPI_DATA_LENGTH_16B: Set data frame format to 16bit
+ *                    @arg SPI_DATA_LENGTH_8B : Set data frame format to 8bit
  *
  * @retval    None
  */
-void SPI_ConfigDataSize(SPI_T* spi, uint16_t length)
+void SPI_ConfigDataSize(SPI_T* spi, SPI_DATA_LENGTH_T length)
 {
     spi->CTRL1_B.DFLSEL = BIT_RESET;
     spi->CTRL1 |= length;
@@ -366,7 +386,7 @@ void SPI_ConfigDataSize(SPI_T* spi, uint16_t length)
  */
 void SPI_TxCRC(SPI_T* spi)
 {
-    spi->CTRL1_B.CECNXT = BIT_SET;
+    spi->CTRL1_B.CRCNXT = BIT_SET;
 }
 
 /*!

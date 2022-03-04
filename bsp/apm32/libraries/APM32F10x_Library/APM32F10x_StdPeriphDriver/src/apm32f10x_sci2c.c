@@ -3,10 +3,24 @@
  *
  * @brief       This file contains all the functions for the SCI2C peripheral
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_sci2c.h"
@@ -442,7 +456,7 @@ void SCI2C_ConfigSpeed(SCI2C_T *i2c, SCI2C_SPEED_T speed)
  *                      @arg SCI2C_ADDR_MODE_10BIT:     10-bit address mode.
  *
  * @param       addr:   Specifies the address.
-
+ *
  * @retval      None
  */
 void SCI2C_ConfigMasterAddr(SCI2C_T *i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
@@ -462,7 +476,7 @@ void SCI2C_ConfigMasterAddr(SCI2C_T *i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
  *                      @arg SCI2C_ADDR_MODE_10BIT:     10-bit address mode.
  *
  * @param       addr:   Specifies the address.
-
+ *
  * @retval      None
  */
 void SCI2C_ConfigSlaveAddr(SCI2C_T *i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
@@ -570,7 +584,6 @@ void SCI2C_TxData(SCI2C_T *i2c, uint8_t data)
  *
  * @retval      Received data
  *
- * @note
  */
 uint8_t SCI2C_RxData(SCI2C_T *i2c)
 {
@@ -895,4 +908,3 @@ void SCI2C_ConfigSpikeSuppressionLimit(SCI2C_T *i2c, SCI2C_SPEED_T speed, uint8_
 /**@} end of group SCI2C_Fuctions*/
 /**@} end of group SCI2C_Driver*/
 /**@} end of group Peripherals_Library*/
-

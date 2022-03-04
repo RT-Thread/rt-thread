@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-08-20     Abbcc        first version
+ * 2022-03-04     stevetong459 FINSH_FUNCTION_EXPORT_ALIAS change to MSH_CMD_EXPORT for reboot function.
  */
 
 #include "drv_common.h"
@@ -25,7 +26,7 @@ static void reboot(uint8_t argc, char **argv)
 {
     rt_hw_cpu_reset();
 }
-FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
+MSH_CMD_EXPORT(reboot, Reboot System);
 #endif /* RT_USING_FINSH */
 
 /* SysTick configuration */

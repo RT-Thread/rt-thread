@@ -1,12 +1,26 @@
 /*!
- * @file       apm32f10x_tmr.c
+ * @file        apm32f10x_tmr.c
  *
- * @brief      This file provides all the TMR firmware functions.
+ * @brief       This file provides all the TMR firmware functions.
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_tmr.h"
@@ -36,7 +50,6 @@ static void TI4Config(TMR_T* tmr, uint16_t ICpolarity, uint16_t ICselection, uin
  *
  * @retval    None
  *
- * @note
  */
 void TMR_Reset(TMR_T* tmr)
 {
@@ -116,7 +129,7 @@ void TMR_ConfigTimeBase(TMR_T* tmr, TMR_BaseConfig_T* baseConfig)
     {
         tmr->REPCNT = baseConfig->repetitionCounter;
     }
-    tmr->CEG_B.BEG = 0x01;
+    tmr->CEG_B.UEG = 0x01;
 }
 
 /*!
@@ -124,31 +137,31 @@ void TMR_ConfigTimeBase(TMR_T* tmr, TMR_BaseConfig_T* baseConfig)
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
- * @param     OC1Config: Pointer to a TMR_OCConfig_T structure
+ * @param     OCConfig: Pointer to a TMR_OCConfig_T structure
  *
  * @retval    None
  */
-void TMR_ConfigOC1(TMR_T* tmr, TMR_OCConfig_T* OC1Config)
+void TMR_ConfigOC1(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
 {
     tmr->CCEN_B.CC1EN = BIT_RESET;
 
     tmr->CCM1_COMPARE_B.CC1SEL = BIT_RESET;
-    tmr->CCM1_COMPARE_B.OC1MOD = OC1Config->mode;
+    tmr->CCM1_COMPARE_B.OC1MOD = OCConfig->mode;
 
-    tmr->CCEN_B.CC1POL = OC1Config->polarity;
-    tmr->CCEN_B.CC1EN = OC1Config->outputState;
+    tmr->CCEN_B.CC1POL = OCConfig->polarity;
+    tmr->CCEN_B.CC1EN = OCConfig->outputState;
 
     if ((tmr == TMR1) || (tmr == TMR8))
     {
-        tmr->CCEN_B.CC1NPOL = OC1Config->nPolarity;
-        tmr->CCEN_B.CC1NEN = OC1Config->outputNState;
+        tmr->CCEN_B.CC1NPOL = OCConfig->nPolarity;
+        tmr->CCEN_B.CC1NEN = OCConfig->outputNState;
 
         tmr->CTRL2_B.OC1OIS = BIT_RESET;
         tmr->CTRL2_B.OC1NOIS = BIT_RESET;
-        tmr->CTRL2_B.OC1OIS = OC1Config->idleState;
-        tmr->CTRL2_B.OC1NOIS = OC1Config->nIdleState;
+        tmr->CTRL2_B.OC1OIS = OCConfig->idleState;
+        tmr->CTRL2_B.OC1NOIS = OCConfig->nIdleState;
     }
-    tmr->CC1 = OC1Config->pulse;
+    tmr->CC1 = OCConfig->pulse;
 }
 
 /*!
@@ -156,36 +169,36 @@ void TMR_ConfigOC1(TMR_T* tmr, TMR_OCConfig_T* OC1Config)
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
- * @param     OC2Config: Pointer to a TMR_OCConfig_T structure
+ * @param     OCConfig: Pointer to a TMR_OCConfig_T structure
  *
  * @retval    None
  */
-void TMR_ConfigOC2(TMR_T* tmr, TMR_OCConfig_T* OC2Config)
+void TMR_ConfigOC2(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
 {
     tmr->CCEN_B.CC2EN = BIT_RESET;
 
     tmr->CCM1_COMPARE_B.OC2MOD = BIT_RESET;
     tmr->CCM1_COMPARE_B.CC2SEL = BIT_RESET;
-    tmr->CCM1_COMPARE_B.OC2MOD = OC2Config->mode;
+    tmr->CCM1_COMPARE_B.OC2MOD = OCConfig->mode;
 
     tmr->CCEN_B.CC2POL = BIT_RESET;
-    tmr->CCEN_B.CC2POL = OC2Config->polarity;
-    tmr->CCEN_B.CC2EN = OC2Config->outputState;
+    tmr->CCEN_B.CC2POL = OCConfig->polarity;
+    tmr->CCEN_B.CC2EN = OCConfig->outputState;
 
     if ((tmr == TMR1) || (tmr == TMR8))
     {
         tmr->CCEN_B.CC2NPOL = BIT_RESET;
-        tmr->CCEN_B.CC2NPOL = OC2Config->nPolarity;
+        tmr->CCEN_B.CC2NPOL = OCConfig->nPolarity;
 
         tmr->CCEN_B.CC2NEN = BIT_RESET;
-        tmr->CCEN_B.CC2NEN = OC2Config->outputNState;
+        tmr->CCEN_B.CC2NEN = OCConfig->outputNState;
 
         tmr->CTRL2_B.OC2OIS = BIT_RESET;
         tmr->CTRL2_B.OC2NOIS = BIT_RESET;
-        tmr->CTRL2_B.OC2OIS = OC2Config->idleState;
-        tmr->CTRL2_B.OC2NOIS = OC2Config->nIdleState;
+        tmr->CTRL2_B.OC2OIS = OCConfig->idleState;
+        tmr->CTRL2_B.OC2NOIS = OCConfig->nIdleState;
     }
-    tmr->CC2 = OC2Config->pulse;
+    tmr->CC2 = OCConfig->pulse;
 }
 
 /*!
@@ -193,35 +206,35 @@ void TMR_ConfigOC2(TMR_T* tmr, TMR_OCConfig_T* OC2Config)
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
- * @param     OC3Config: Pointer to a TMR_OCConfig_T structure
+ * @param     OCConfig: Pointer to a TMR_OCConfig_T structure
  *
  * @retval    None
  */
-void TMR_ConfigOC3(TMR_T* tmr, TMR_OCConfig_T* OC3Config)
+void TMR_ConfigOC3(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
 {
     tmr->CCEN_B.CC3EN = BIT_RESET;
 
-    tmr->CCM2_COMPARE_B.OC3MODE = BIT_RESET;
+    tmr->CCM2_COMPARE_B.OC3MOD = BIT_RESET;
     tmr->CCM2_COMPARE_B.CC3SEL = BIT_RESET;
-    tmr->CCM2_COMPARE_B.OC3MODE = OC3Config->mode;
+    tmr->CCM2_COMPARE_B.OC3MOD = OCConfig->mode;
 
     tmr->CCEN_B.CC3POL = BIT_RESET;
-    tmr->CCEN_B.CC3POL = OC3Config->polarity;
-    tmr->CCEN_B.CC3EN = OC3Config->outputState;
+    tmr->CCEN_B.CC3POL = OCConfig->polarity;
+    tmr->CCEN_B.CC3EN = OCConfig->outputState;
 
     if ((tmr == TMR1) || (tmr == TMR8))
     {
         tmr->CCEN_B.CC3NPOL = BIT_RESET;
-        tmr->CCEN_B.CC3NPOL = OC3Config->nPolarity;
+        tmr->CCEN_B.CC3NPOL = OCConfig->nPolarity;
         tmr->CCEN_B.CC3NEN = BIT_RESET;
-        tmr->CCEN_B.CC3NEN = OC3Config->outputNState;
+        tmr->CCEN_B.CC3NEN = OCConfig->outputNState;
 
         tmr->CTRL2_B.OC3OIS = BIT_RESET;
         tmr->CTRL2_B.OC3NOIS = BIT_RESET;
-        tmr->CTRL2_B.OC3OIS = OC3Config->idleState;
-        tmr->CTRL2_B.OC3NOIS = OC3Config->nIdleState;
+        tmr->CTRL2_B.OC3OIS = OCConfig->idleState;
+        tmr->CTRL2_B.OC3NOIS = OCConfig->nIdleState;
     }
-    tmr->CC3 = OC3Config->pulse;
+    tmr->CC3 = OCConfig->pulse;
 }
 
 /*!
@@ -229,28 +242,28 @@ void TMR_ConfigOC3(TMR_T* tmr, TMR_OCConfig_T* OC3Config)
  *
  * @param     tmr: The TMRx can be 1 to 8 except 6 and 7
  *
- * @param     OC4Config: Pointer to a TMR_OCConfig_T structure
+ * @param     OCConfig: Pointer to a TMR_OCConfig_T structure
  *
  * @retval    None
  */
-void TMR_ConfigOC4(TMR_T* tmr, TMR_OCConfig_T* OC4Config)
+void TMR_ConfigOC4(TMR_T* tmr, TMR_OCConfig_T* OCConfig)
 {
     tmr->CCEN_B.CC4EN = BIT_RESET;
 
-    tmr->CCM2_COMPARE_B.OC4MODE = BIT_RESET;
+    tmr->CCM2_COMPARE_B.OC4MOD = BIT_RESET;
     tmr->CCM2_COMPARE_B.CC4SEL = BIT_RESET;
-    tmr->CCM2_COMPARE_B.OC4MODE = OC4Config->mode;
+    tmr->CCM2_COMPARE_B.OC4MOD = OCConfig->mode;
 
     tmr->CCEN_B.CC4POL = BIT_RESET;
-    tmr->CCEN_B.CC4POL = OC4Config->polarity;
-    tmr->CCEN_B.CC4EN = OC4Config->outputState;
+    tmr->CCEN_B.CC4POL = OCConfig->polarity;
+    tmr->CCEN_B.CC4EN = OCConfig->outputState;
 
     if ((tmr == TMR1) || (tmr == TMR8))
     {
         tmr->CTRL2_B.OC4OIS = BIT_RESET;
-        tmr->CTRL2_B.OC4OIS = OC4Config->idleState;
+        tmr->CTRL2_B.OC4OIS = OCConfig->idleState;
     }
-    tmr->CC4 = OC4Config->pulse;
+    tmr->CC4 = OCConfig->pulse;
 }
 
 /*!
@@ -484,7 +497,7 @@ void TMR_DisablePWMOutputs(TMR_T* tmr)
  */
 void TMR_ConfigDMA(TMR_T* tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T burstLength)
 {
-    tmr->DCTRL = baseAddress | burstLength;
+    tmr->DCTRL = (uint32_t)baseAddress | (uint32_t)burstLength;
 }
 
 /*!
@@ -503,7 +516,6 @@ void TMR_ConfigDMA(TMR_T* tmr, TMR_DMA_BASE_T baseAddress, TMR_DMA_BURSTLENGTH_T
  *                    @arg TMR_DMA_SOURCE_TRG:    TMR Trigger DMA souces
  * @retval    None
  *
- * @note
  */
 void TMR_EnableDMASoure(TMR_T* tmr, uint16_t dmaSource)
 {
@@ -526,7 +538,6 @@ void TMR_EnableDMASoure(TMR_T* tmr, uint16_t dmaSource)
  *                    @arg TMR_DMA_SOURCE_TRG:    TMR Trigger DMA souces
  * @retval    None
  *
- * @note
  */
 void TMR_DisableDMASoure(TMR_T* tmr, uint16_t dmaSource)
 {
@@ -696,11 +707,11 @@ void TMR_ConfigETR(TMR_T* tmr, TMR_EXTTRG_PSC_T prescaler,
  *
  * @param     pscReloadMode: specifies the TMR prescaler Reload mode
  *                     The parameter can be one of following values:
- *                     @arg TMR_PRESCALER_RELOAD_UPDATA:  The Prescaler is loaded at the update event
- *                     @arg TMR_PRESCALER_RELOAD_IMMEDIATE: The Prescaler is loaded immediately
+ *                     @arg TMR_PSC_RELOAD_UPDATE:  The Prescaler is loaded at the update event
+ *                     @arg TMR_PSC_RELOAD_IMMEDIATE: The Prescaler is loaded immediately
  * @retval    None
  */
-void TMR_ConfigPrescaler(TMR_T* tmr, uint16_t prescaler, TMR_PRESCALER_RELOAD_T pscReloadMode)
+void TMR_ConfigPrescaler(TMR_T* tmr, uint16_t prescaler, TMR_PSC_RELOAD_T pscReloadMode)
 {
     tmr->PSC = prescaler;
     tmr->CEG_B.UEG = pscReloadMode;
@@ -838,8 +849,8 @@ void TMR_ConfigForcedOC2(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
  */
 void TMR_ConfigForcedOC3(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
 {
-    tmr->CCM2_COMPARE_B.OC3MODE = BIT_RESET;
-    tmr->CCM2_COMPARE_B.OC3MODE = forcesAction;
+    tmr->CCM2_COMPARE_B.OC3MOD = BIT_RESET;
+    tmr->CCM2_COMPARE_B.OC3MOD = forcesAction;
 }
 
 /*!
@@ -856,8 +867,8 @@ void TMR_ConfigForcedOC3(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
  */
 void TMR_ConfigForcedOC4(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
 {
-    tmr->CCM2_COMPARE_B.OC4MODE = BIT_RESET;
-    tmr->CCM2_COMPARE_B.OC4MODE = forcesAction;
+    tmr->CCM2_COMPARE_B.OC4MOD = BIT_RESET;
+    tmr->CCM2_COMPARE_B.OC4MOD = forcesAction;
 }
 
 /*!
@@ -867,7 +878,7 @@ void TMR_ConfigForcedOC4(TMR_T* tmr, TMR_FORCED_ACTION_T forcesAction)
  *
  * @retval    None
  */
-void TMR_EnableAUTOReload(TMR_T* tmr)
+void TMR_EnableAutoReload(TMR_T* tmr)
 {
     tmr->CTRL1_B.ARPEN = ENABLE;
 }
@@ -879,7 +890,7 @@ void TMR_EnableAUTOReload(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisableAUTOReload(TMR_T* tmr)
+void TMR_DisableAutoReload(TMR_T* tmr)
 {
     tmr->CTRL1_B.ARPEN = DISABLE;
 }
@@ -1367,11 +1378,11 @@ void TMR_SelectOCxMode(TMR_T* tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T mode)
     }
     else if (channel == TMR_CHANNEL_3)
     {
-        tmr->CCM2_COMPARE_B.OC3MODE = mode;
+        tmr->CCM2_COMPARE_B.OC3MOD = mode;
     }
     else if (channel == TMR_CHANNEL_4)
     {
-        tmr->CCM2_COMPARE_B.OC4MODE = mode;
+        tmr->CCM2_COMPARE_B.OC4MOD = mode;
     }
 }
 
@@ -1382,9 +1393,9 @@ void TMR_SelectOCxMode(TMR_T* tmr, TMR_CHANNEL_T channel, TMR_OC_MODE_T mode)
  *
  * @retval    None
  */
-void TMR_EnableNoUpdate(TMR_T* tmr)
+void TMR_EnableUpdate(TMR_T* tmr)
 {
-    tmr->CTRL1_B.UD = ENABLE;
+    tmr->CTRL1_B.UD = DISABLE;
 }
 
 /*!
@@ -1394,9 +1405,9 @@ void TMR_EnableNoUpdate(TMR_T* tmr)
  *
  * @retval    None
  */
-void TMR_DisableNoUpdate(TMR_T* tmr)
+void TMR_DisableUpdate(TMR_T* tmr)
 {
-    tmr->CTRL1_B.UD = DISABLE;
+    tmr->CTRL1_B.UD = ENABLE;
 }
 
 /*!
@@ -1410,7 +1421,7 @@ void TMR_DisableNoUpdate(TMR_T* tmr)
  *                     @arg TMR_UPDATE_SOURCE_REGULAR
  * @retval    None
  */
-void TMR_ConfigUPdateRequest(TMR_T* tmr, TMR_UPDATE_SOURCE_T updateSource)
+void TMR_ConfigUpdateRequest(TMR_T* tmr, TMR_UPDATE_SOURCE_T updateSource)
 {
     if (updateSource != TMR_UPDATE_SOURCE_GLOBAL)
     {
@@ -1447,7 +1458,7 @@ void TMR_DisableHallSensor(TMR_T* tmr)
 }
 
 /*!
- * @brief     Selects the Sing pulse Mode.
+ * @brief     Config the Sing pulse Mode.
  *
  * @param     tmr: The TMRx can be 1 to 8
  *
@@ -1457,7 +1468,7 @@ void TMR_DisableHallSensor(TMR_T* tmr)
  *                     @arg TMR_SPM_SINGLE
  * @retval    None
  */
-void TMR_SelectSinglePulseMode(TMR_T* tmr, TMR_SPM_T singlePulseMode)
+void TMR_ConfigSinglePulseMode(TMR_T* tmr, TMR_SPM_T singlePulseMode)
 {
     tmr->CTRL1_B.SPMEN = singlePulseMode;
 }
@@ -1495,7 +1506,7 @@ void TMR_SelectOutputTrigger(TMR_T* tmr, TMR_TRGO_SOURCE_T TRGOSource)
  *                     @arg TMR_SLAVE_MODE_RESET
  *                     @arg TMR_SLAVE_MODE_GATED
  *                     @arg TMR_SLAVE_MODE_TRIGGER
- *                     @arg TMR_SLAVE_MODE_EXTERNALL
+ *                     @arg TMR_SLAVE_MODE_EXTERNAL1
  * @retval    None
  */
 void TMR_SelectSlaveMode(TMR_T* tmr, TMR_SLAVE_MODE_T slaveMode)
@@ -1872,14 +1883,7 @@ void TMR_GenerateEvent(TMR_T* tmr, uint16_t eventSources)
  */
 uint16_t TMR_ReadStatusFlag(TMR_T* tmr, TMR_FLAG_T flag)
 {
-    if ((tmr->STS & flag) != RESET)
-    {
-        return SET;
-    }
-    else
-    {
-        return RESET;
-    }
+    return (tmr->STS & flag) ? SET : RESET;
 }
 
 /*!

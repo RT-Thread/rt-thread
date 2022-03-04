@@ -1,12 +1,26 @@
 /*!
- * @file       apm32f10x_i2c.c
+ * @file        apm32f10x_i2c.c
  *
- * @brief      This file provides all the I2C firmware functions
+ * @brief       This file provides all the I2C firmware functions
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_i2c.h"
@@ -973,7 +987,7 @@ uint8_t I2C_ReadIntFlag(I2C_T* i2c, I2C_INT_FLAG_T flag)
  * @param     i2c: I2C selet 1 or 2
  *
  * @param     flag: specifies the I2C flag
- *              The parameter can be one of the following values:
+ *              The parameter can be any combination of the following values:
  *              @arg I2C_INT_FLAG_SMBALT:   SMBus Alert flag
  *              @arg I2C_INT_FLAG_TTE:      Timeout or Tlow error flag
  *              @arg I2C_INT_FLAG_PECE:     PEC error in reception flag
@@ -1000,12 +1014,9 @@ uint8_t I2C_ReadIntFlag(I2C_T* i2c, I2C_INT_FLAG_T flag)
  *              a read operation to I2C_STS1 register (I2C_ReadIntFlag())
  *              followed by a write operation to I2C_DATA register (I2C_TxData()).
  */
-void I2C_ClearIntFlag(I2C_T* i2c, I2C_INT_FLAG_T flag)
+void I2C_ClearIntFlag(I2C_T* i2c, uint32_t flag)
 {
-    uint32_t flagpos = 0;
-
-    flagpos = flag & 0x00FFFFFF;
-    i2c->STS1 = ~flagpos;
+    i2c->STS1 = (uint16_t)~(flag & 0x00FFFFFF);
 }
 
 /**@} end of group I2C_Fuctions*/

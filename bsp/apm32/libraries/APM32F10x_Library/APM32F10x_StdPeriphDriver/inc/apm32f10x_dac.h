@@ -3,20 +3,34 @@
  *
  * @brief       This file contains all the functions prototypes for the DAC firmware library
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_DAC_H
 #define __APM32F10X_DAC_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
- extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -71,30 +85,30 @@ typedef enum
 typedef enum
 {
     DAC_LFSR_MASK_BIT11_1  = 0x00000000, //!< Mask bit[11:1] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11_2  = 0x00001000, //!< Mask bit[11:2] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11_3  = 0x00002000, //!< Mask bit[11:3] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11_4  = 0x00003000, //!< Mask bit[11:4] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11_5  = 0x00004000, //!< Mask bit[11:5] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11_6  = 0x00005000, //!< Mask bit[11:6] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11_7  = 0x00006000, //!< Mask bit[11:7] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11_8  = 0x00007000, //!< Mask bit[11:8] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11_9  = 0x00008000, //!< Mask bit[11:9] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11_10 = 0x00009000, //!< Mask bit[11:10] of LFSR for noise wave generation
-    DAC_LFSR_MASK_BIT11    = 0x0000A000, //!< Mask bit11 of LFSR for noise wave generation
-    DAC_LFSR_MASK_NONE     = 0x0000B000, //!< Mask none bit of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11_2  = 0x00000100, //!< Mask bit[11:2] of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11_3  = 0x00000200, //!< Mask bit[11:3] of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11_4  = 0x00000300, //!< Mask bit[11:4] of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11_5  = 0x00000400, //!< Mask bit[11:5] of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11_6  = 0x00000500, //!< Mask bit[11:6] of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11_7  = 0x00000600, //!< Mask bit[11:7] of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11_8  = 0x00000700, //!< Mask bit[11:8] of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11_9  = 0x00000800, //!< Mask bit[11:9] of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11_10 = 0x00000900, //!< Mask bit[11:10] of LFSR for noise wave generation
+    DAC_LFSR_MASK_BIT11    = 0x00000A00, //!< Mask bit11 of LFSR for noise wave generation
+    DAC_LFSR_MASK_NONE     = 0x00000B00, //!< Mask none bit of LFSR for noise wave generation
 
     DAC_TRIANGLE_AMPLITUDE_1    = 0x00000000, //!< Triangle amplitude equal to 1
-    DAC_TRIANGLE_AMPLITUDE_3    = 0x00001000, //!< Triangle amplitude equal to 3
-    DAC_TRIANGLE_AMPLITUDE_7    = 0x00002000, //!< Triangle amplitude equal to 7
-    DAC_TRIANGLE_AMPLITUDE_15   = 0x00003000, //!< Triangle amplitude equal to 15
-    DAC_TRIANGLE_AMPLITUDE_31   = 0x00004000, //!< Triangle amplitude equal to 31
-    DAC_TRIANGLE_AMPLITUDE_63   = 0x00005000, //!< Triangle amplitude equal to 63
-    DAC_TRIANGLE_AMPLITUDE_127  = 0x00006000, //!< Triangle amplitude equal to 127
-    DAC_TRIANGLE_AMPLITUDE_255  = 0x00007000, //!< Triangle amplitude equal to 255
-    DAC_TRIANGLE_AMPLITUDE_511  = 0x00008000, //!< Triangle amplitude equal to 511
-    DAC_TRIANGLE_AMPLITUDE_1023 = 0x00009000, //!< Triangle amplitude equal to 1023
-    DAC_TRIANGLE_AMPLITUDE_2047 = 0x0000A000, //!< Triangle amplitude equal to 2047
-    DAC_TRIANGLE_AMPLITUDE_4095 = 0x0000B000  //!< Triangle amplitude equal to 4095
+    DAC_TRIANGLE_AMPLITUDE_3    = 0x00000100, //!< Triangle amplitude equal to 3
+    DAC_TRIANGLE_AMPLITUDE_7    = 0x00000200, //!< Triangle amplitude equal to 7
+    DAC_TRIANGLE_AMPLITUDE_15   = 0x00000300, //!< Triangle amplitude equal to 15
+    DAC_TRIANGLE_AMPLITUDE_31   = 0x00000400, //!< Triangle amplitude equal to 31
+    DAC_TRIANGLE_AMPLITUDE_63   = 0x00000500, //!< Triangle amplitude equal to 63
+    DAC_TRIANGLE_AMPLITUDE_127  = 0x00000600, //!< Triangle amplitude equal to 127
+    DAC_TRIANGLE_AMPLITUDE_255  = 0x00000700, //!< Triangle amplitude equal to 255
+    DAC_TRIANGLE_AMPLITUDE_511  = 0x00000800, //!< Triangle amplitude equal to 511
+    DAC_TRIANGLE_AMPLITUDE_1023 = 0x00000900, //!< Triangle amplitude equal to 1023
+    DAC_TRIANGLE_AMPLITUDE_2047 = 0x00000A00, //!< Triangle amplitude equal to 2047
+    DAC_TRIANGLE_AMPLITUDE_4095 = 0x00000B00  //!< Triangle amplitude equal to 4095
 }DAC_MASK_AMPLITUDE_SEL_T;
 
 /**
@@ -132,7 +146,7 @@ typedef struct
     DAC_OUTPUT_BUFFER_T         outputBuffer;
     DAC_WAVE_GENERATION_T       waveGeneration;
     DAC_MASK_AMPLITUDE_SEL_T    maskAmplitudeSelect;
-}DAC_ConfigStruct_T;
+}DAC_Config_T;
 
 /**@} end of group DAC_Structure*/
 
@@ -143,8 +157,8 @@ typedef struct
 
 /** DAC Reset and Configuration */
 void DAC_Reset(void);
-void DAC_Config(uint32_t channel, DAC_ConfigStruct_T* configStruct);
-void DAC_ConfigStructInit(DAC_ConfigStruct_T* configStruct);
+void DAC_Config(uint32_t channel, DAC_Config_T* dacConfig);
+void DAC_ConfigStructInit(DAC_Config_T* dacConfig);
 void DAC_Enable(DAC_CHANNEL_T channel);
 void DAC_Disable(DAC_CHANNEL_T channel);
 
@@ -171,7 +185,7 @@ void DAC_ConfigDualChannelData(DAC_ALIGN_T align, uint16_t data2, uint16_t data1
 uint16_t DAC_ReadDataOutputValue(DAC_CHANNEL_T channel);
 
 /**@} end of group DAC_Fuctions*/
-/**@} end of group DAC_Driver */
+/**@} end of group DAC_Driver*/
 /**@} end of group Peripherals_Library*/
 
 #ifdef __cplusplus

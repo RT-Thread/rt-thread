@@ -1,15 +1,29 @@
 /*!
- * @file        apm32f10x_usb.c
+ * @file        drv_usb_device.c
  *
  * @brief       This file contains all the functions for the USBD peripheral
  *
- * @version     V1.0.1
+ * @version     V1.0.0
  *
- * @date        2021-03-23
+ * @date        2021-12-06
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
-#include "apm32f10x_usb.h"
+#include "drv_usb_device.h"
 
 /*!
  * @brief       Set Endpoint type
@@ -20,7 +34,7 @@
  *
  * @retval      None
  */
-void USBD_SetEPType(USBD_EP_T ep, USBD_EP_TYPE_T type)
+void USBD_SetEPType(uint8_t ep, USBD_REG_EP_TYPE_T type)
 {
     __IOM uint32_t reg;
 
@@ -40,7 +54,7 @@ void USBD_SetEPType(USBD_EP_T ep, USBD_EP_TYPE_T type)
  *
  * @retval      None
  */
-void USBD_SetEPKind(USBD_EP_T ep)
+void USBD_SetEPKind(uint8_t ep)
 {
     __IOM uint32_t reg;
 
@@ -59,7 +73,7 @@ void USBD_SetEPKind(USBD_EP_T ep)
  *
  * @retval      None
  */
-void USBD_ResetEPKind(USBD_EP_T ep)
+void USBD_ResetEPKind(uint8_t ep)
 {
     __IOM uint32_t reg;
 
@@ -79,7 +93,7 @@ void USBD_ResetEPKind(USBD_EP_T ep)
  *
  * @retval      None
  */
-void USBD_ResetEPRxFlag(USBD_EP_T ep)
+void USBD_ResetEPRxFlag(uint8_t ep)
 {
     __IOM uint32_t reg;
 
@@ -98,7 +112,7 @@ void USBD_ResetEPRxFlag(USBD_EP_T ep)
  *
  * @retval      None
  */
-void USBD_ResetEPTxFlag(USBD_EP_T ep)
+void USBD_ResetEPTxFlag(uint8_t ep)
 {
     __IOM uint32_t reg;
 
@@ -117,7 +131,7 @@ void USBD_ResetEPTxFlag(USBD_EP_T ep)
  *
  * @retval      None
  */
-void USBD_ToggleTx(USBD_EP_T ep)
+void USBD_ToggleTx(uint8_t ep)
 {
     __IOM uint32_t reg;
 
@@ -136,7 +150,7 @@ void USBD_ToggleTx(USBD_EP_T ep)
  *
  * @retval      None
  */
-void USBD_ToggleRx(USBD_EP_T ep)
+void USBD_ToggleRx(uint8_t ep)
 {
     __IOM uint32_t reg;
 
@@ -155,7 +169,7 @@ void USBD_ToggleRx(USBD_EP_T ep)
  *
  * @retval      None
  */
-void USBD_ResetTxToggle(USBD_EP_T ep)
+void USBD_ResetTxToggle(uint8_t ep)
 {
     if(USBD->EP[ep].EP_B.TXDTOG)
     {
@@ -170,7 +184,7 @@ void USBD_ResetTxToggle(USBD_EP_T ep)
  *
  * @retval      None
  */
-void USBD_ResetRxToggle(USBD_EP_T ep)
+void USBD_ResetRxToggle(uint8_t ep)
 {
     if(USBD->EP[ep].EP_B.RXDTOG)
     {
@@ -187,7 +201,7 @@ void USBD_ResetRxToggle(USBD_EP_T ep)
  *
  * @retval      None
  */
-void USBD_SetEpAddr(USBD_EP_T ep, uint8_t addr)
+void USBD_SetEpAddr(uint8_t ep, uint8_t addr)
 {
     __IOM uint32_t reg;
 
@@ -209,7 +223,7 @@ void USBD_SetEpAddr(USBD_EP_T ep, uint8_t addr)
  *
  * @retval      None
  */
-void USBD_SetEPTxStatus(USBD_EP_T ep, USBD_EP_STATUS_T status)
+void USBD_SetEPTxStatus(uint8_t ep, USBD_EP_STATUS_T status)
 {
     __IOM uint32_t reg;
 
@@ -218,7 +232,7 @@ void USBD_SetEPTxStatus(USBD_EP_T ep, USBD_EP_STATUS_T status)
     reg = USBD->EP[ep].EP;
 
     reg &= (uint32_t)(USBD_EP_MASK_DEFAULT | USBD_EP_BIT_TXSTS);
-    reg ^= (status & USBD_EP_BIT_TXSTS);
+    reg ^= ((uint32_t)status & (uint32_t)USBD_EP_BIT_TXSTS);
 
     USBD->EP[ep].EP = reg;
 }
@@ -232,7 +246,7 @@ void USBD_SetEPTxStatus(USBD_EP_T ep, USBD_EP_STATUS_T status)
  *
  * @retval      None
  */
-void USBD_SetEPRxStatus(USBD_EP_T ep, USBD_EP_STATUS_T status)
+void USBD_SetEPRxStatus(uint8_t ep, USBD_EP_STATUS_T status)
 {
     __IOM uint32_t reg;
     uint32_t tmp;
@@ -249,7 +263,7 @@ void USBD_SetEPRxStatus(USBD_EP_T ep, USBD_EP_STATUS_T status)
 
 
 /*!
- * @brief       Set EP Rx and Txstatus
+ * @brief       Set EP Tx and Rx status
  *
  * @param       ep: Endpoint number
  *
@@ -257,7 +271,7 @@ void USBD_SetEPRxStatus(USBD_EP_T ep, USBD_EP_STATUS_T status)
  *
  * @retval      None
  */
-void USBD_SetEPRxTxStatus(USBD_EP_T ep, USBD_EP_STATUS_T txStatus, USBD_EP_STATUS_T rxStatus)
+void USBD_SetEPTxRxStatus(uint8_t ep, USBD_EP_STATUS_T txStatus, USBD_EP_STATUS_T rxStatus)
 {
     __IOM uint32_t reg;
     uint32_t tmp;
@@ -284,10 +298,10 @@ void USBD_SetEPRxTxStatus(USBD_EP_T ep, USBD_EP_STATUS_T txStatus, USBD_EP_STATU
  *
  * @retval      None
  */
-void USBD_SetEPRxCnt(USBD_EP_T ep, uint32_t cnt)
+void USBD_SetEPRxCnt(uint8_t ep, uint32_t cnt)
 {
-    __IOM uint32_t *p;
-    __IOM uint32_t block = 0;
+    __IOM uint16_t *p;
+    __IOM uint16_t block = 0;
 
     p = USBD_ReadEPRxCntPointer(ep);
 
@@ -326,23 +340,27 @@ void USBD_SetEPRxCnt(USBD_EP_T ep, uint32_t cnt)
  *
  * @retval      None
  */
-void USBD_WriteDataToEP(USBD_EP_T ep, uint8_t *wBuf, uint32_t wLen)
+void USBD_WriteDataToEP(uint8_t ep, uint8_t *wBuf, uint32_t wLen)
 {
     uint32_t i;
-    uint32_t *addrEP;
+#ifdef APM32F0xx_USB
+    uint16_t *epAddr;
+    uint16_t tmp;
+#else
+    uint32_t *epAddr;
     uint32_t tmp;
+#endif
 
     wLen = (wLen + 1) >> 1;
 
-    addrEP = (uint32_t *)USBD_ReadEPTxAddr(ep);
-    addrEP = (uint32_t *)(((uint32_t)addrEP << 1) + USBD_PMA_ADDR);
+    epAddr = USBD_ReadEPTxBufferPointer(ep);
 
     for(i = 0; i < wLen; i++)
     {
         tmp = *wBuf++;
         tmp = ((*wBuf++) << 8) | tmp;
 
-        *addrEP++ = tmp;
+        *epAddr++ = tmp;
     }
 }
 
@@ -357,22 +375,29 @@ void USBD_WriteDataToEP(USBD_EP_T ep, uint8_t *wBuf, uint32_t wLen)
  *
  * @retval      None
  */
-void USBD_ReadDataFromEP(USBD_EP_T ep, uint8_t *rBuf, uint32_t rLen)
+void USBD_ReadDataFromEP(uint8_t ep, uint8_t *rBuf, uint32_t rLen)
 {
-    uint32_t i;
-    uint32_t *addrEP;
-    uint32_t tmp;
+#ifdef APM32F0xx_USB
+    uint16_t *epAddr;
+#else
+    uint32_t *epAddr;
+#endif
+    uint32_t i, tmp, cnt;
 
-    rLen = (rLen + 1) >> 1;
+    cnt = rLen >> 1;
 
-    addrEP = (uint32_t *)USBD_ReadEPRxAddr(ep);
-    addrEP = (uint32_t *)(((uint32_t)addrEP << 1) + USBD_PMA_ADDR);
+    epAddr = USBD_ReadEPRxBufferPointer(ep);
 
-    for(i = 0; i < rLen; i++)
+    for(i = 0; i < cnt; i++)
     {
-        tmp = *addrEP++;
-        *rBuf++ = tmp & 0XFF;
-        *rBuf++ = (tmp >> 8) & 0xff;
+        tmp = *epAddr++;
+        *rBuf++ = tmp & 0xFF;
+        *rBuf++ = (tmp >> 8) & 0xFF;
+    }
+
+    if (rLen & 1)
+    {
+        tmp = *epAddr;
+        *rBuf = tmp & 0xFF;
     }
 }
-

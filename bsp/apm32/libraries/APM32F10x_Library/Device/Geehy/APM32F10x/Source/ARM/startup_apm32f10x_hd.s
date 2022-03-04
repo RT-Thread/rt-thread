@@ -1,12 +1,26 @@
 ;/*!
-; * @file       startup_apm32f10x_hd.s
+; * @file        startup_apm32f10x_hd.s
 ; *
-; * @brief      CMSIS Cortex-M3 based Core Device Startup File for Device startup_apm32f10x_hd
+; * @brief       CMSIS Cortex-M3 based Core Device Startup File for Device startup_apm32f10x_hd
 ; *
-; * @version    V1.0.1
+; * @version     V1.0.2
 ; *
-; * @date       2021-03-23
+; * @date        2022-01-05
 ; *
+; * @attention
+; *
+; *  Copyright (C) 2020-2022 Geehy Semiconductor
+; *
+; *  You may not use this file except in compliance with the
+; *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+; *
+; *  The program is only for reference, which is distributed in the hope
+; *  that it will be usefull and instructional for customers to develop
+; *  their software. Unless required by applicable law or agreed to in
+; *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+; *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+; *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+; *  and limitations under the License.
 ; */
 
 ; <h> Stack Configuration
@@ -63,7 +77,7 @@ __Vectors       DCD     __initial_sp                 ; Top of Stack
                 DCD     PVD_IRQHandler               ; PVD through EINT Line detect
                 DCD     TAMPER_IRQHandler            ; Tamper
                 DCD     RTC_IRQHandler               ; RTC
-                DCD     FMC_IRQHandler               ; Flash
+                DCD     FLASH_IRQHandler             ; Flash
                 DCD     RCM_IRQHandler               ; RCM
                 DCD     EINT0_IRQHandler             ; EINT Line 0
                 DCD     EINT1_IRQHandler             ; EINT Line 1
@@ -191,7 +205,7 @@ Default_Handler PROC
                 EXPORT  PVD_IRQHandler               [WEAK]
                 EXPORT  TAMPER_IRQHandler            [WEAK]
                 EXPORT  RTC_IRQHandler               [WEAK]
-                EXPORT  FMC_IRQHandler               [WEAK]
+                EXPORT  FLASH_IRQHandler             [WEAK]
                 EXPORT  RCM_IRQHandler               [WEAK]
                 EXPORT  EINT0_IRQHandler             [WEAK]
                 EXPORT  EINT1_IRQHandler             [WEAK]
@@ -256,7 +270,7 @@ WWDT_IRQHandler
 PVD_IRQHandler
 TAMPER_IRQHandler
 RTC_IRQHandler
-FMC_IRQHandler
+FLASH_IRQHandler
 RCM_IRQHandler
 EINT0_IRQHandler
 EINT1_IRQHandler

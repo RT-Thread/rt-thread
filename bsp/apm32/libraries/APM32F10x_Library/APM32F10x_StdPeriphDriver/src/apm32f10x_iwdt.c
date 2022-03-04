@@ -3,10 +3,24 @@
  *
  * @brief       This file provides all the IWDT firmware functions
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_iwdt.h"
@@ -113,7 +127,6 @@ void IWDT_ConfigDivider(uint8_t div)
  *
  * @retval       status of IWDT_FLAG (SET or RESET)
  *
- * @note
  */
 uint8_t IWDT_ReadStatusFlag(uint16_t flag)
 {
@@ -131,5 +144,5 @@ uint8_t IWDT_ReadStatusFlag(uint16_t flag)
 }
 
 /**@} end of group IWDT_Fuctions*/
-/**@} end of group IWDT_Driver */
+/**@} end of group IWDT_Driver*/
 /**@} end of group Peripherals_Library*/

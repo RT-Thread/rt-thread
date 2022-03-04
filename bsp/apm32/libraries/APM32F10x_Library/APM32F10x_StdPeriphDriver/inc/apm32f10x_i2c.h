@@ -1,22 +1,36 @@
 /*!
- * @file       apm32f10x_i2c.h
+ * @file        apm32f10x_i2c.h
  *
- * @brief      This file contains all the functions prototypes for the I2C firmware library
+ * @brief       This file contains all the functions prototypes for the I2C firmware library
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_I2C_H
 #define __APM32F10X_I2C_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -321,7 +335,7 @@ uint32_t I2C_ReadLastEvent(I2C_T* i2c);
 uint8_t I2C_ReadStatusFlag(I2C_T* i2c, I2C_FLAG_T flag);
 void I2C_ClearStatusFlag(I2C_T* i2c, I2C_FLAG_T flag);
 uint8_t I2C_ReadIntFlag(I2C_T* i2c, I2C_INT_FLAG_T flag);
-void I2C_ClearIntFlag(I2C_T* i2c, I2C_INT_FLAG_T flag);
+void I2C_ClearIntFlag(I2C_T* i2c, uint32_t flag);
 
 /**@} end of group I2C_Fuctions*/
 /**@} end of group I2C_Driver*/

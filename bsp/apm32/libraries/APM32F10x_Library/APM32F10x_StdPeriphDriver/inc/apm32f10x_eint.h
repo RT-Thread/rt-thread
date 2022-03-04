@@ -1,22 +1,36 @@
 /*!
- * @file       apm32f10x_eint.h
+ * @file        apm32f10x_eint.h
  *
- * @brief      This file contains all the functions prototypes for the EINT firmware library
+ * @brief       This file contains all the functions prototypes for the EINT firmware library
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_EINT_H
 #define __APM32F10X_EINT_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -51,6 +65,7 @@ typedef enum
 
 typedef enum
 {
+    EINT_LINENONE = 0x00000,  //!<No interrupt selected >
     EINT_LINE_0   = 0x00001,  //!< External interrupt line 0
     EINT_LINE_1   = 0x00002,  //!< External interrupt line 1
     EINT_LINE_2   = 0x00004,  //!< External interrupt line 2
@@ -100,6 +115,7 @@ typedef struct
 /** Reset and configuration */
 void EINT_Reset(void);
 void EINT_Config( EINT_Config_T* eintConfig);
+void EINT_ConfigStructInit(EINT_Config_T* eintConfig);
 
 /** Interrupt and flag */
 void EINT_SelectSWInterrupt(uint32_t line);
@@ -109,11 +125,11 @@ uint8_t EINT_ReadIntFlag(EINT_LINE_T line);
 void EINT_ClearIntFlag(uint32_t line);
 
 /**@} end of group EINT_Fuctions*/
-/**@} end of group EINT_Driver */
+/**@} end of group EINT_Driver*/
 /**@} end of group Peripherals_Library*/
 
-#ifdef __APM32F10X_cplusplus
+#ifdef __cplusplus
 }
 #endif
 
-#endif /* __EINT_H */
+#endif /* __APM32F10XEINT_H */

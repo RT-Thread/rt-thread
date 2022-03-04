@@ -1,12 +1,26 @@
 /*!
- * @file       apm32f10x_fmc.c
+ * @file        apm32f10x_fmc.c
  *
- * @brief      This file provides all the FMC firmware functions
+ * @brief       This file provides all the FMC firmware functions
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_fmc.h"
@@ -347,11 +361,11 @@ FMC_STATUS_T FMC_ProgramOptionByteData(uint32_t address, uint8_t data)
  *
  * @param     page:the address of the pages to be write protection
  *                This parameter can be any combination of the following values:
- *                 for APM32F10X_LD
+ *                 for APM32F10X_LD £º
  *                    @arg FLASH_WRP_PAGE_0_3 to FLASH_WRP_PAGE_28_31
- *                 for APM32F10X_MD
+ *                 for APM32F10X_MD £º
  *                    @arg FLASH_WRP_PAGE_0_3 to FLASH_WRP_PAGE_124_127
- *                 for APM32F10X_HD
+ *                 for APM32F10X_HD £º
  *                    @arg FLASH_WRP_PAGE_0_1 to FLASH_WRP_PAGE_60_61 or FLASH_WRP_PAGE_62_127
  *                 @arg FMC_WRP_PAGE_ALL
  *
@@ -527,7 +541,9 @@ FMC_STATUS_T FMC_ConfigUserOptionByte(FMC_UserConfig_T* userConfig)
     if(status == FMC_STATUS_COMPLETE)
     {
         FMC->CTRL2_B.OBP = BIT_SET;
-        OB->USER = userConfig->iwdtSet | userConfig->stopSet | userConfig->stdbySet | 0xF8;
+        OB->USER = (uint32_t)userConfig->iwdtSet | \
+                   (uint32_t)userConfig->stopSet | \
+                   (uint32_t)userConfig->stdbySet | 0xF8;
         status = FMC_WaitForLastOperation(0x000B0000);
         if(status == FMC_STATUS_TIMEOUT)
         {
@@ -676,9 +692,8 @@ uint8_t FMC_ReadStatusFlag(FMC_FLAG_T flag)
  *
  * @retval    None
  *
- * @note
  */
-void FMC_ClearStatusFlag(FMC_FLAG_T flag)
+void FMC_ClearStatusFlag(uint32_t flag)
 {
     FMC->STS = flag;
 }

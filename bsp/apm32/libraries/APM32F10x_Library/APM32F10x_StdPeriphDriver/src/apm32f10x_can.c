@@ -1,12 +1,26 @@
 /*!
- * @file       apm32f10x_can.c
+ * @file        apm32f10x_can.c
  *
- * @brief      This file provides all the CAN firmware functions
+ * @brief       This file provides all the CAN firmware functions
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_can.h"
@@ -80,15 +94,6 @@ uint8_t CAN_Config(CAN_T* can, CAN_Config_T* canConfig)
     }
     else
     {
-        if(canConfig->timeTrigComMode == ENABLE)
-        {
-            can->MCTRL_B.TTCM = BIT_SET;
-        }
-        else
-        {
-            can->MCTRL_B.TTCM = BIT_RESET;
-        }
-
         if(canConfig->autoBusOffManage == ENABLE)
         {
             can->MCTRL_B.ALBOFFM = BIT_SET;
@@ -169,13 +174,13 @@ uint8_t CAN_Config(CAN_T* can, CAN_Config_T* canConfig)
  *
  * @param     can: Select the CAN peripheral which can be CAN1 or CAN2.
  *
- * @param     filterConfig :Point to a CAN_FILTER_CONFIG_T structure.
+ * @param     filterConfig :Point to a CAN_FilterConfig_T structure.
  *
  * @retval    None
  *
  * @note      CAN2 applies only to APM32F103xC device.
  */
-void CAN_ConfigFilter(CAN_T* can, CAN_FILTER_CONFIG_T* filterConfig)
+void CAN_ConfigFilter(CAN_T* can, CAN_FilterConfig_T* filterConfig)
 {
     can->FCTRL_B.FINITEN = BIT_SET;
 
@@ -248,7 +253,6 @@ void CAN_ConfigFilter(CAN_T* can, CAN_FILTER_CONFIG_T* filterConfig)
  */
 void CAN_ConfigStructInit(CAN_Config_T* canConfig)
 {
-    canConfig->timeTrigComMode  = DISABLE;
     canConfig->autoBusOffManage = DISABLE;
     canConfig->autoWakeUpMode   = DISABLE;
     canConfig->nonAutoRetran    = DISABLE;
@@ -290,39 +294,17 @@ void CAN_DisableDBGFreeze(CAN_T* can)
 }
 
 /*!
- * @brief     Enables the CAN Time TriggerOperation communication mode.
+ * @brief     Select the start bank filter for slave CAN.
  *
- * @param     can: Select the CAN peripheral.
- *
- * @retval    None
- *
- * @note      CAN2 applies only to APM32F103xC device.
- */
-void CAN_EnableTTCComMode(CAN_T* can)
-{
-    can->MCTRL_B.TTCM = ENABLE;
-
-    can->sTxMailBox[0].TXDLEN_B.TXTS = BIT_SET;
-    can->sTxMailBox[1].TXDLEN_B.TXTS = BIT_SET;
-    can->sTxMailBox[2].TXDLEN_B.TXTS = BIT_SET;
-}
-
-/*!
- * @brief     Disable the CAN Time TriggerOperation communication mode.
- *
- * @param     can: Select the CAN peripheral.
+ * @param     bankNum: the start slave bank filter from 1..27.
  *
  * @retval    None
- *
- * @note      CAN2 applies only to APM32F103xC device.
  */
-void CAN_DisableTTCComMode(CAN_T* can)
+void CAN_SlaveStartBank(CAN_T* can, uint8_t bankNum)
 {
-    can->MCTRL_B.TTCM = DISABLE;
-
-    can->sTxMailBox[0].TXDLEN_B.TXTS = BIT_RESET;
-    can->sTxMailBox[1].TXDLEN_B.TXTS = BIT_RESET;
-    can->sTxMailBox[2].TXDLEN_B.TXTS = BIT_RESET;
+    can->FCTRL_B.FINITEN = SET;
+    can->FCTRL_B.CAN2BN  = bankNum;
+    can->FCTRL_B.FINITEN = RESET;
 }
 
 /*!
@@ -330,13 +312,13 @@ void CAN_DisableTTCComMode(CAN_T* can)
  *
  * @param     can: Select the CAN peripheral.
  *
- * @param     TxMessage: pointer to a CAN_TX_MESSAGE_T structure.
+ * @param     TxMessage: pointer to a CAN_TxMessage_T structure.
  *
  * @retval    The number of the mailbox which is used for transmission or 3 if No mailbox is empty.
  *
  * @note      CAN2 applies only to APM32F103xC device.
  */
-uint8_t CAN_TxMessage(CAN_T* can, CAN_TX_MESSAGE_T* TxMessage)
+uint8_t CAN_TxMessage(CAN_T* can, CAN_TxMessage_T* TxMessage)
 {
     uint8_t transmit_milbox = 0;
 
@@ -417,17 +399,17 @@ uint8_t CAN_TxMessageStatus(CAN_T* can, CAN_TX_MAILBIX_T TxMailbox)
     }
     switch (state)
     {
-        /** transmit pending  */
+        /** Transmit pending  */
         case (0x0): state = 2;
         break;
-        /* transmit failed  */
+        /** Transmit failed  */
         case (0x00000001 | 0x04000000): state = 0;
         break;
         case (0x00000100 | 0x08000000): state = 0;
         break;
         case (0x00010000 | 0x10000000): state = 0;
         break;
-        /* transmit succeeded  */
+        /** Transmit succeeded  */
         case (0x00000001 | 0x00000002 | 0x04000000):state = 1;
         break;
         case (0x00000100 | 0x00000200 | 0x08000000):state = 1;
@@ -474,7 +456,7 @@ void CAN_CancelTxMailbox(CAN_T* can, CAN_TX_MAILBIX_T TxMailbox)
 }
 
 /*!
- * @brief     Receives a message and save to a CAN_RX_MESSAGE_T structure.
+ * @brief     Receives a message and save to a CAN_RxMessage_T structure.
  *
  * @param     can: Select the CAN peripheral.
  *
@@ -489,9 +471,9 @@ void CAN_CancelTxMailbox(CAN_T* can, CAN_TX_MAILBIX_T TxMailbox)
  *
  * @note      CAN2 applies only to APM32F103xC device.
  */
-void CAN_RxMessage(CAN_T* can, CAN_RX_FIFO_T FIFONumber, CAN_RX_MESSAGE_T* RxMessage)
+void CAN_RxMessage(CAN_T* can, CAN_RX_FIFO_T FIFONumber, CAN_RxMessage_T* RxMessage)
 {
-    /* Get the Id */
+    /** Get the Id */
     RxMessage->typeID = ((uint8_t)0x04 & (can->sRxMailBox[FIFONumber].RXMID));
     if(RxMessage->typeID == CAN_TYPEID_STD)
     {
@@ -506,14 +488,14 @@ void CAN_RxMessage(CAN_T* can, CAN_RX_FIFO_T FIFONumber, CAN_RX_MESSAGE_T* RxMes
     RxMessage->dataLengthCode = can->sRxMailBox[FIFONumber].RXDLEN_B.DLCODE;
     RxMessage->filterMatchIndex = can->sRxMailBox[FIFONumber].RXDLEN_B.FMIDX;
     /** Get the data field */
-    RxMessage->data[0] = can->sRxMailBox[FIFONumber].RXMDL_B.DATABYTE1;
-    RxMessage->data[1] = can->sRxMailBox[FIFONumber].RXMDL_B.DATABYTE2;
-    RxMessage->data[2] = can->sRxMailBox[FIFONumber].RXMDL_B.DATABYTE3;
-    RxMessage->data[3] = can->sRxMailBox[FIFONumber].RXMDL_B.DATABYTE4;
-    RxMessage->data[4] = can->sRxMailBox[FIFONumber].RXMDH_B.DATABYTE5;
-    RxMessage->data[5] = can->sRxMailBox[FIFONumber].RXMDH_B.DATABYTE6;
-    RxMessage->data[6] = can->sRxMailBox[FIFONumber].RXMDH_B.DATABYTE7;
-    RxMessage->data[7] = can->sRxMailBox[FIFONumber].RXMDH_B.DATABYTE8;
+    RxMessage->data[0] = can->sRxMailBox[FIFONumber].RXMDL_B.DATABYTE0;
+    RxMessage->data[1] = can->sRxMailBox[FIFONumber].RXMDL_B.DATABYTE1;
+    RxMessage->data[2] = can->sRxMailBox[FIFONumber].RXMDL_B.DATABYTE2;
+    RxMessage->data[3] = can->sRxMailBox[FIFONumber].RXMDL_B.DATABYTE3;
+    RxMessage->data[4] = can->sRxMailBox[FIFONumber].RXMDH_B.DATABYTE4;
+    RxMessage->data[5] = can->sRxMailBox[FIFONumber].RXMDH_B.DATABYTE5;
+    RxMessage->data[6] = can->sRxMailBox[FIFONumber].RXMDH_B.DATABYTE6;
+    RxMessage->data[7] = can->sRxMailBox[FIFONumber].RXMDH_B.DATABYTE7;
 
     if(FIFONumber == CAN_RX_FIFO_0)
     {
@@ -979,7 +961,9 @@ uint8_t CAN_ReadIntFlag(CAN_T* can, CAN_INT_T flag)
         switch (flag)
         {
         case CAN_INT_TXME:
-            status = can->TXSTS_B.REQCFLG0 | can->TXSTS_B.REQCFLG1 | can->TXSTS_B.REQCFLG2;
+            status = can->TXSTS_B.REQCFLG0;
+            status |= can->TXSTS_B.REQCFLG1;
+            status |= can->TXSTS_B.REQCFLG2;
             break;
         case CAN_INT_F0MP:
             status = can->RXF0_B.FMNUM0;

@@ -1,12 +1,26 @@
 /*!
- * @file       apm32f10x_rcm.c
+ * @file        apm32f10x_rcm.c
  *
- * @brief      This file provides all the RCM firmware functions
+ * @brief       This file provides all the RCM firmware functions
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_rcm.h"
@@ -102,14 +116,14 @@ uint8_t RCM_WaitHSEReady(void)
 }
 
 /*!
- * @brief     Set HSI trimming value
+ * @brief     Config HSI trimming value
  *
  * @param     HSITrim: HSI trimming value
  *                     This parameter must be a number between 0 and 0x1F.
  *
  * @retval    None
  */
-void RCM_SetHSITrim(uint8_t HSITrim)
+void RCM_ConfigHSITrim(uint8_t HSITrim)
 {
     RCM->CTRL_B.HSITRIM = HSITrim;
 }
@@ -145,10 +159,12 @@ void RCM_DisableHSI(void)
  * @brief     Configures the External Low Speed oscillator (LSE)
  *
  * @param     state : Specifies the new state of the LSE
+ *                    This parameter can be one of the following values:
+ *                    @arg RCM_LSE_CLOSE  : Close the LSE
+ *                    @arg RCM_LSE_OPEN   : Open the LSE
+ *                    @arg RCM_LSE_BYPASS : LSE bypass
  *
  * @retval    None
- *
- * @note
  */
 void RCM_ConfigLSE(RCM_LSE_T state)
 {
@@ -172,8 +188,6 @@ void RCM_ConfigLSE(RCM_LSE_T state)
  * @param     None
  *
  * @retval    None
- *
- * @note
  */
 void RCM_EnableLSI(void)
 {
@@ -186,8 +200,6 @@ void RCM_EnableLSI(void)
  * @param     None
  *
  * @retval    None
- *
- * @note
  */
 void RCM_DisableLSI(void)
 {
@@ -273,14 +285,12 @@ void RCM_DisableCSS(void)
  * @param     mcoClock: specifies the clock source to output
  *                      This parameter can be one of the following values:
  *                      @arg RCM_MCOCLK_NO_CLOCK     : No clock selected.
- *                      @arg RCM_MCOCLK_SYSCLK       : HSI14 oscillator clock selected.
- *                      @arg RCM_MCOCLK_HSI          : LSI oscillator clock selected.
- *                      @arg RCM_MCOCLK_HSE          : LSE oscillator clock selected.
- *                      @arg RCM_MCOCLK_PLLCLK_DIV_2 : System clock selected.
+ *                      @arg RCM_MCOCLK_SYSCLK       : System clock selected.
+ *                      @arg RCM_MCOCLK_HSI          : HSI oscillator clock selected.
+ *                      @arg RCM_MCOCLK_HSE          : HSE oscillator clock selected.
+ *                      @arg RCM_MCOCLK_PLLCLK_DIV_2 : PLL clock divided by 2 selected.
  *
  * @retval    None
- *
- * @note
  */
 void RCM_ConfigMCO(RCM_MCOCLK_T mcoClock)
 {
@@ -300,7 +310,7 @@ void RCM_ConfigMCO(RCM_MCOCLK_T mcoClock)
  */
 void RCM_ConfigSYSCLK(RCM_SYSCLK_SEL_T sysClkSelect)
 {
-    RCM->CFG_B.SCLKSW = sysClkSelect;
+    RCM->CFG_B.SCLKSEL = sysClkSelect;
 }
 
 /*!
@@ -312,11 +322,7 @@ void RCM_ConfigSYSCLK(RCM_SYSCLK_SEL_T sysClkSelect)
  */
 RCM_SYSCLK_SEL_T RCM_ReadSYSCLKSource(void)
 {
-    RCM_SYSCLK_SEL_T sysClock;
-
-    sysClock = (RCM_SYSCLK_SEL_T)RCM->CFG_B.SCLKSWSTS;
-
-    return sysClock;
+    return (RCM_SYSCLK_SEL_T)RCM->CFG_B.SCLKSELSTS;
 }
 
 /*!
@@ -335,8 +341,6 @@ RCM_SYSCLK_SEL_T RCM_ReadSYSCLKSource(void)
  *                     @arg RCM_AHB_DIV_512 : HCLK = SYSCLK / 512
  *
  * @retval    None
- *
- * @note
  */
 void RCM_ConfigAHB(RCM_AHB_DIV_T AHBDiv)
 {
@@ -482,7 +486,7 @@ uint32_t RCM_ReadSYSCLKFreq(void)
     uint32_t sysClock, pllMull, pllSource;
 
     /** get sys clock */
-    sysClock = RCM->CFG_B.SCLKSW;
+    sysClock = RCM->CFG_B.SCLKSEL;
 
     switch (sysClock)
     {
@@ -897,7 +901,6 @@ void RCM_DisableAPB1PeriphReset(uint32_t APB1Periph)
  *
  * @retval    None
  *
- * @note
  */
 void RCM_EnableBackupReset(void)
 {
@@ -948,7 +951,7 @@ void RCM_EnableInterrupt(uint32_t interrupt)
  *                        @arg RCM_INT_HSIRDY : HSI ready interrupt
  *                        @arg RCM_INT_HSERDY : HSE ready interrupt
  *                        @arg RCM_INT_PLLRDY : PLL ready interrupt
-RCM_DisableInterrupt(RCM_INT_LSIRDY) *
+ *
  * @retval    None
  */
 void RCM_DisableInterrupt(uint32_t interrupt)
@@ -1032,7 +1035,7 @@ void RCM_ClearStatusFlag(void)
 /*!
  * @brief     Reads the specified RCM interrupt Flag
  *
- * @param     flag : Reads specifies RCM interrupt flag.
+ * @param     flag £ºReads specifies RCM interrupt flag.
  *                   This parameter can be one of the following values:
  *                   @arg RCM_INT_LSIRDY : LSI ready interrupt flag
  *                   @arg RCM_INT_LSERDY : LSE ready interrupt flag
@@ -1045,11 +1048,7 @@ void RCM_ClearStatusFlag(void)
  */
 uint8_t RCM_ReadIntFlag(RCM_INT_T flag)
 {
-    uint8_t ret;
-
-    ret = (RCM->INT& flag) ? SET : RESET;
-
-    return  ret;
+    return (RCM->INT& flag) ? SET : RESET;
 }
 
 /*!

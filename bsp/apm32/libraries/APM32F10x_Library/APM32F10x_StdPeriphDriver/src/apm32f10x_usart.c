@@ -1,12 +1,26 @@
 /*!
- * @file       apm32f10x_usart.c
+ * @file        apm32f10x_usart.c
  *
- * @brief      This file provides all the USART firmware functions
+ * @brief       This file provides all the USART firmware functions
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_usart.h"
@@ -79,7 +93,9 @@ void USART_Config(USART_T* uart, USART_Config_T* usartConfig)
 
     temp = uart->CTRL1;
     temp &= 0xE9F3;
-    temp |= usartConfig->mode | usartConfig->parity | usartConfig->wordLength;
+    temp |= (uint32_t)usartConfig->mode | \
+            (uint32_t)usartConfig->parity | \
+            (uint32_t)usartConfig->wordLength;
     uart->CTRL1 = temp;
 
     temp = uart->CTRL2;
@@ -152,7 +168,6 @@ void USART_ConfigClock(USART_T* usart, USART_ClockConfig_T* clockConfig)
  *
  * @retval    None
  *
- * @note
  */
 void USART_ConfigClockStructInit(USART_ClockConfig_T* clockConfig)
 {
@@ -628,17 +643,17 @@ void USART_EnableInterrupt(USART_T* usart, USART_INT_T interrupt)
 
     temp = (uint32_t)(interrupt & 0xffff);
 
-    if (interrupt & 0X10000)
+    if (interrupt & 0x10000)
     {
         usart->CTRL1 |= temp;
     }
 
-    if (interrupt & 0X20000)
+    if (interrupt & 0x20000)
     {
         usart->CTRL2 |= temp;
     }
 
-    if (interrupt & 0X40000)
+    if (interrupt & 0x40000)
     {
         usart->CTRL3 |= temp;
     }
@@ -670,17 +685,17 @@ void USART_DisableInterrupt(USART_T* usart, USART_INT_T interrupt)
 
     temp = (uint32_t)~(interrupt & 0xffff);
 
-    if (interrupt & 0X10000)
+    if (interrupt & 0x10000)
     {
         usart->CTRL1 &= temp;
     }
 
-    if (interrupt & 0X20000)
+    if (interrupt & 0x20000)
     {
         usart->CTRL2 &= temp;
     }
 
-    if (interrupt & 0X40000)
+    if (interrupt & 0x40000)
     {
         usart->CTRL3 &= temp;
     }

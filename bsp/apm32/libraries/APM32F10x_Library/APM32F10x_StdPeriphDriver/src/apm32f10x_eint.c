@@ -1,12 +1,26 @@
 /*!
- * @file       apm32f10x_eint.c
+ * @file        apm32f10x_eint.c
  *
- * @brief      This file provides all the EINT firmware functions
+ * @brief       This file provides all the EINT firmware functions
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_eint.h"
@@ -81,6 +95,21 @@ void EINT_Config(EINT_Config_T* eintConfig)
 
         *(__IOM uint32_t *) temp &= ~eintConfig->line;
     }
+}
+
+/*!
+ * @brief        Fills each EINT_Config_T member with its reset value.
+ *
+ * @param        eintConfig: pointer to a EINT_Config_T structure
+ *
+ * @retval       None
+ */
+void EINT_ConfigStructInit(EINT_Config_T* eintConfig)
+{
+    eintConfig->line = EINT_LINENONE;
+    eintConfig->mode = EINT_MODE_INTERRUPT;
+    eintConfig->trigger = EINT_TRIGGER_FALLING;
+    eintConfig->lineCmd = DISABLE;
 }
 
 /*!
@@ -172,5 +201,5 @@ void EINT_ClearIntFlag(uint32_t line)
 }
 
 /**@} end of group EINT_Fuctions*/
-/**@} end of group EINT_Driver */
+/**@} end of group EINT_Driver*/
 /**@} end of group Peripherals_Library*/

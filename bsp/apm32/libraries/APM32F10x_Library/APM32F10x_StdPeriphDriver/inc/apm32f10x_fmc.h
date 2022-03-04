@@ -1,22 +1,36 @@
 /*!
- * @file       apm32f10x_fmc.h
+ * @file        apm32f10x_fmc.h
  *
- * @brief      This file contains all the functions prototypes for the FMC firmware library
+ * @brief       This file contains all the functions prototypes for the FMC firmware library
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_FMC_H
 #define __APM32F10X_FMC_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
-extern "C" {
+  extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -234,7 +248,7 @@ uint8_t FMC_ReadPrefetchBufferStatus(void);
 void FMC_EnableInterrupt(FMC_INT_T interrupt);
 void FMC_DisableInterrupt(FMC_INT_T interrupt);
 uint8_t FMC_ReadStatusFlag(FMC_FLAG_T flag);
-void FMC_ClearStatusFlag(FMC_FLAG_T flag);
+void FMC_ClearStatusFlag(uint32_t flag);
 
 /** Status management */
 FMC_STATUS_T FMC_ReadStatus(void);

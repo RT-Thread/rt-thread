@@ -18,7 +18,6 @@
     /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
-/* stm32 config class */
 struct apm32_usart
 {
     const char *name;
@@ -204,7 +203,7 @@ static void usart_isr(struct rt_serial_device *serial)
 
     RT_ASSERT(usart != RT_NULL);
 
-    /* UART in mode Receiver -------------------------------------------------*/
+    /* UART in mode Receiver */
     if ((USART_ReadStatusFlag(usart->usartx, USART_FLAG_RXBNE) != RESET) &&
             (USART_ReadIntFlag(usart->usartx, USART_INT_RXBNE) != RESET))
     {

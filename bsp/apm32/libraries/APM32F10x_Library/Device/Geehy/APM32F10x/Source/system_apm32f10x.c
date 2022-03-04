@@ -3,13 +3,32 @@
  *
  * @brief       CMSIS Cortex-M3 Device Peripheral Access Layer System Source File
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x.h"
+
+/*****************************************************************
+ * If SYSCLK source is PLL,SystemCoreClock will contain the      *
+ * HSE_VALUE or HSI_VALUE multiplied/divided by the PLL factors. *
+******************************************************************/
 
 //#define SYSTEM_CLOCK_HSE    HSE_VALUE
 //#define SYSTEM_CLOCK_24MHz  (24000000)
@@ -20,7 +39,7 @@
 //#define SYSTEM_CLOCK_96MHz  (96000000)
 
 
-/* #define VECT_TAB_SRAM */
+/** #define VECT_TAB_SRAM */
 #define VECT_TAB_OFFSET     0x00
 
 #ifdef SYSTEM_CLOCK_HSE
@@ -65,13 +84,12 @@ static void SystemClock96M(void);
  *
  * @retval      None
  *
- * @note
  */
 void SystemInit (void)
 {
     /** Set HSIEN bit */
     RCM->CTRL_B.HSIEN = BIT_SET;
-    /** Reset SCLKSW, AHBPSC, APB1PSC, APB2PSC, ADCPSC and MCOSEL bits */
+    /** Reset SCLKSEL, AHBPSC, APB1PSC, APB2PSC, ADCPSC and MCOSEL bits */
     RCM->CFG &= (uint32_t)0xF8FF0000;
     /** Reset HSEEN, CSSEN and PLLEN bits */
     RCM->CTRL &= (uint32_t)0xFEF6FFFF;
@@ -99,14 +117,13 @@ void SystemInit (void)
  *
  * @retval      None
  *
- * @note
  */
 void SystemCoreClockUpdate (void)
 {
     uint32_t sysClock, pllMull, pllSource, Prescaler;
     uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
 
-    sysClock = RCM->CFG_B.SCLKSWSTS;
+    sysClock = RCM->CFG_B.SCLKSELSTS;
 
     switch(sysClock)
     {
@@ -159,7 +176,6 @@ void SystemCoreClockUpdate (void)
  *
  * @retval      None
  *
- * @note
  */
 static void SystemClockConfig(void)
 {
@@ -188,7 +204,6 @@ static void SystemClockConfig(void)
  *
  * @retval      None
  *
- * @note
  */
 static void SystemClockHSE(void)
 {
@@ -206,23 +221,23 @@ static void SystemClockHSE(void)
 
     if(RCM->CTRL_B.HSERDYFLG)
     {
-        /* Enable Prefetch Buffer */
+        /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
-        /* Flash 0 wait state */
+        /** Flash 0 wait state */
         FMC->CTRL1_B.WS = 0;
 
-        /* HCLK = SYSCLK */
+        /** HCLK = SYSCLK */
         RCM->CFG_B.AHBPSC= 0X00;
-        /* PCLK2 = HCLK */
+        /** PCLK2 = HCLK */
         RCM->CFG_B.APB2PSC= 0;
-        /* PCLK1 = HCLK */
+        /** PCLK1 = HCLK */
         RCM->CFG_B.APB1PSC = 0;
 
-        /* Select HSE as system clock source */
-        RCM->CFG_B.SCLKSW = 1;
+        /** Select HSE as system clock source */
+        RCM->CFG_B.SCLKSEL = 1;
 
         /** Wait till HSE is used as system clock source */
-        while(RCM->CFG_B.SCLKSWSTS!= 0x01);
+        while(RCM->CFG_B.SCLKSELSTS!= 0x01);
     }
 }
 
@@ -235,7 +250,6 @@ static void SystemClockHSE(void)
  *
  * @retval      None
  *
- * @note
  */
 static void SystemClock24M(void)
 {
@@ -253,16 +267,16 @@ static void SystemClock24M(void)
 
     if(RCM->CTRL_B.HSERDYFLG)
     {
-        /* Enable Prefetch Buffer */
+        /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
-        /* Flash 0 wait state */
+        /** Flash 0 wait state */
         FMC->CTRL1_B.WS = 0;
 
-        /* HCLK = SYSCLK */
+        /** HCLK = SYSCLK */
         RCM->CFG_B.AHBPSC= 0X00;
-        /* PCLK2 = HCLK */
+        /** PCLK2 = HCLK */
         RCM->CFG_B.APB2PSC= 0;
-        /* PCLK1 = HCLK */
+        /** PCLK1 = HCLK */
         RCM->CFG_B.APB1PSC = 0;
 
         /** PLL: (HSE / 2) * 6 */
@@ -275,10 +289,10 @@ static void SystemClock24M(void)
         /** Wait PLL Ready */
         while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
-        /* Select PLL as system clock source */
-        RCM->CFG_B.SCLKSW = 2;
-        /* Wait till PLL is used as system clock source */
-        while(RCM->CFG_B.SCLKSWSTS!= 0x02);
+        /** Select PLL as system clock source */
+        RCM->CFG_B.SCLKSEL = 2;
+        /** Wait till PLL is used as system clock source */
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 }
 
@@ -290,7 +304,6 @@ static void SystemClock24M(void)
  *
  * @retval      None
  *
- * @note
  */
 static void SystemClock36M(void)
 {
@@ -308,16 +321,16 @@ static void SystemClock36M(void)
 
     if(RCM->CTRL_B.HSERDYFLG)
     {
-        /* Enable Prefetch Buffer */
+        /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
-        /* Flash 1 wait state */
+        /** Flash 1 wait state */
         FMC->CTRL1_B.WS = 1;
 
-        /* HCLK = SYSCLK */
+        /** HCLK = SYSCLK */
         RCM->CFG_B.AHBPSC= 0X00;
-        /* PCLK2 = HCLK */
+        /** PCLK2 = HCLK */
         RCM->CFG_B.APB2PSC= 0;
-        /* PCLK1 = HCLK */
+        /** PCLK1 = HCLK */
         RCM->CFG_B.APB1PSC = 0;
 
         /** PLL: (HSE / 2) * 9 */
@@ -330,10 +343,10 @@ static void SystemClock36M(void)
         /** Wait PLL Ready */
         while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
-        /* Select PLL as system clock source */
-        RCM->CFG_B.SCLKSW = 2;
-        /* Wait till PLL is used as system clock source */
-        while(RCM->CFG_B.SCLKSWSTS != 0x02);
+        /** Select PLL as system clock source */
+        RCM->CFG_B.SCLKSEL = 2;
+        /** Wait till PLL is used as system clock source */
+        while(RCM->CFG_B.SCLKSELSTS != 0x02);
     }
 }
 
@@ -345,7 +358,6 @@ static void SystemClock36M(void)
  *
  * @retval      None
  *
- * @note
  */
 static void SystemClock48M(void)
 {
@@ -363,16 +375,16 @@ static void SystemClock48M(void)
 
     if(RCM->CTRL_B.HSERDYFLG)
     {
-        /* Enable Prefetch Buffer */
+        /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
-        /* Flash 1 wait state */
+        /** Flash 1 wait state */
         FMC->CTRL1_B.WS = 1;
 
-        /* HCLK = SYSCLK */
+        /** HCLK = SYSCLK */
         RCM->CFG_B.AHBPSC= 0X00;
-        /* PCLK2 = HCLK */
+        /** PCLK2 = HCLK */
         RCM->CFG_B.APB2PSC= 0;
-        /* PCLK1 = HCLK / 2 */
+        /** PCLK1 = HCLK / 2 */
         RCM->CFG_B.APB1PSC = 4;
 
         /** PLL: HSE * 6 */
@@ -384,10 +396,10 @@ static void SystemClock48M(void)
         /** Wait PLL Ready */
         while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
-        /* Select PLL as system clock source */
-        RCM->CFG_B.SCLKSW = 2;
-        /* Wait till PLL is used as system clock source */
-        while(RCM->CFG_B.SCLKSWSTS!= 0x02);
+        /** Select PLL as system clock source */
+        RCM->CFG_B.SCLKSEL = 2;
+        /** Wait till PLL is used as system clock source */
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 }
 
@@ -399,7 +411,6 @@ static void SystemClock48M(void)
  *
  * @retval      None
  *
- * @note
  */
 static void SystemClock56M(void)
 {
@@ -417,16 +428,16 @@ static void SystemClock56M(void)
 
     if(RCM->CTRL_B.HSERDYFLG)
     {
-        /* Enable Prefetch Buffer */
+        /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
-        /* Flash 2 wait state */
+        /** Flash 2 wait state */
         FMC->CTRL1_B.WS = 2;
 
-        /* HCLK = SYSCLK */
+        /** HCLK = SYSCLK */
         RCM->CFG_B.AHBPSC= 0X00;
-        /* PCLK2 = HCLK */
+        /** PCLK2 = HCLK */
         RCM->CFG_B.APB2PSC= 0;
-        /* PCLK1 = HCLK / 2 */
+        /** PCLK1 = HCLK / 2 */
         RCM->CFG_B.APB1PSC = 4;
 
         /** PLL: HSE * 7 */
@@ -438,10 +449,10 @@ static void SystemClock56M(void)
         /** Wait PLL Ready */
         while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
-        /* Select PLL as system clock source */
-        RCM->CFG_B.SCLKSW = 2;
-        /* Wait till PLL is used as system clock source */
-        while(RCM->CFG_B.SCLKSWSTS!= 0x02);
+        /** Select PLL as system clock source */
+        RCM->CFG_B.SCLKSEL = 2;
+        /** Wait till PLL is used as system clock source */
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 }
 
@@ -453,7 +464,6 @@ static void SystemClock56M(void)
  *
  * @retval      None
  *
- * @note
  */
 static void SystemClock72M(void)
 {
@@ -471,16 +481,16 @@ static void SystemClock72M(void)
 
     if(RCM->CTRL_B.HSERDYFLG)
     {
-        /* Enable Prefetch Buffer */
+        /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
-        /* Flash 2 wait state */
+        /** Flash 2 wait state */
         FMC->CTRL1_B.WS = 2;
 
-        /* HCLK = SYSCLK */
+        /** HCLK = SYSCLK */
         RCM->CFG_B.AHBPSC= 0X00;
-        /* PCLK2 = HCLK */
+        /** PCLK2 = HCLK */
         RCM->CFG_B.APB2PSC= 0;
-        /* PCLK1 = HCLK / 2 */
+        /** PCLK1 = HCLK / 2 */
         RCM->CFG_B.APB1PSC = 4;
 
         /** PLL: HSE * 9 */
@@ -492,10 +502,10 @@ static void SystemClock72M(void)
         /** Wait PLL Ready */
         while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
-        /* Select PLL as system clock source */
-        RCM->CFG_B.SCLKSW = 2;
-        /* Wait till PLL is used as system clock source */
-        while(RCM->CFG_B.SCLKSWSTS!= 0x02);
+        /** Select PLL as system clock source */
+        RCM->CFG_B.SCLKSEL = 2;
+        /** Wait till PLL is used as system clock source */
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 
 }
@@ -508,7 +518,6 @@ static void SystemClock72M(void)
  *
  * @retval      None
  *
- * @note
  */
 static void SystemClock96M(void)
 {
@@ -526,16 +535,16 @@ static void SystemClock96M(void)
 
     if(RCM->CTRL_B.HSERDYFLG)
     {
-        /* Enable Prefetch Buffer */
+        /** Enable Prefetch Buffer */
         FMC->CTRL1_B.PBEN = BIT_SET;
-        /* Flash 3 wait state */
+        /** Flash 3 wait state */
         FMC->CTRL1_B.WS = 3;
 
-        /* HCLK = SYSCLK */
+        /** HCLK = SYSCLK */
         RCM->CFG_B.AHBPSC= 0X00;
-        /* PCLK2 = HCLK */
+        /** PCLK2 = HCLK */
         RCM->CFG_B.APB2PSC= 0;
-        /* PCLK1 = HCLK / 2 */
+        /** PCLK1 = HCLK / 2 */
         RCM->CFG_B.APB1PSC = 4;
 
         /** PLL: HSE * 12 */
@@ -547,10 +556,10 @@ static void SystemClock96M(void)
         /** Wait PLL Ready */
         while(RCM->CTRL_B.PLLRDYFLG == BIT_RESET);
 
-        /* Select PLL as system clock source */
-        RCM->CFG_B.SCLKSW = 2;
-        /* Wait till PLL is used as system clock source */
-        while(RCM->CFG_B.SCLKSWSTS!= 0x02);
+        /** Select PLL as system clock source */
+        RCM->CFG_B.SCLKSEL = 2;
+        /** Wait till PLL is used as system clock source */
+        while(RCM->CFG_B.SCLKSELSTS!= 0x02);
     }
 }
 #endif

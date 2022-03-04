@@ -1,18 +1,32 @@
 /*!
- * @file       apm32f10x.h
+ * @file        apm32f10x.h
  *
- * @brief      CMSIS Cortex-M3 Device Peripheral Access Layer Header File.
+ * @brief       CMSIS Cortex-M3 Device Peripheral Access Layer Header File.
  *
- * @details    This file contains all the peripheral register's definitions, bits definitions and memory mapping
+ * @details     This file contains all the peripheral register's definitions, bits definitions and memory mapping
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
-#ifndef __APM32F10x_H
-#define __APM32F10x_H
+#ifndef __APM32F10X_H
+#define __APM32F10X_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -35,7 +49,7 @@
 #endif
 
 /** Time out for HSE start up */
-#define HSE_STARTUP_TIMEOUT         ((uint16_t)0x0500)
+#define HSE_STARTUP_TIMEOUT         ((uint16_t)0x05000)
 
 /** Value of the Internal oscillator in Hz */
 #define HSI_VALUE                   ((uint32_t)8000000)
@@ -45,7 +59,7 @@
  */
 #define __APM32F10X_STDPERIPH_VERSION_MAIN   (0x01) /*!< [31:24] main version */
 #define __APM32F10X_STDPERIPH_VERSION_SUB1   (0x00) /*!< [23:16] sub1 version */
-#define __APM32F10X_STDPERIPH_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
+#define __APM32F10X_STDPERIPH_VERSION_SUB2   (0x02) /*!< [15:8]  sub2 version */
 #define __APM32F10X_STDPERIPH_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __APM32F10X_STDPERIPH_VERSION       ( (__APM32F10X_STDPERIPH_VERSION_MAIN << 24)\
                                              |(__APM32F10X_STDPERIPH_VERSION_SUB1 << 16)\
@@ -81,7 +95,7 @@ typedef enum IRQn
   PVD_IRQn                    = 1,      /*!< PVD through EINT Line detection Interrupt            */
   TAMPER_IRQn                 = 2,      /*!< Tamper Interrupt                                     */
   RTC_IRQn                    = 3,      /*!< RTC global Interrupt                                 */
-  FMC_IRQn                    = 4,      /*!< FMC global Interrupt                                 */
+  FLASH_IRQn                  = 4,      /*!< FLASH global Interrupt                               */
   RCM_IRQn                    = 5,      /*!< RCM global Interrupt                                 */
   EINT0_IRQn                  = 6,      /*!< EINT Line0 Interrupt                                 */
   EINT1_IRQn                  = 7,      /*!< EINT Line1 Interrupt                                 */
@@ -305,8 +319,8 @@ typedef struct
 
         struct
         {
-            __IOM uint32_t SCLKSW          : 2;
-            __IM  uint32_t SCLKSWSTS       : 2;
+            __IOM uint32_t SCLKSEL         : 2;
+            __IM  uint32_t SCLKSELSTS      : 2;
             __IOM uint32_t AHBPSC          : 4;
             __IOM uint32_t APB1PSC         : 3;
             __IOM uint32_t APB2PSC         : 3;
@@ -2041,7 +2055,7 @@ typedef struct
             __OM  uint32_t COMG            : 1;
             __OM  uint32_t TEG             : 1;
             __OM  uint32_t BEG             : 1;
-            __OM  uint32_t RESERVED        : 24;
+            __IM  uint32_t RESERVED        : 24;
         } CEG_B;
     };
 
@@ -2090,12 +2104,12 @@ typedef struct
             __IOM uint32_t CC3SEL          : 2;
             __IOM uint32_t OC3FEN          : 1;
             __IOM uint32_t OC3PEN          : 1;
-            __IOM uint32_t OC3MODE         : 3;
+            __IOM uint32_t OC3MOD          : 3;
             __IOM uint32_t OC3CEN          : 1;
             __IOM uint32_t CC4SEL          : 2;
             __IOM uint32_t OC4FEN          : 1;
             __IOM uint32_t OC4PEN          : 1;
-            __IOM uint32_t OC4MODE         : 3;
+            __IOM uint32_t OC4MOD          : 3;
             __IOM uint32_t OC4CEN          : 1;
             __IM  uint32_t RESERVED        : 16;
         } CCM2_COMPARE_B;
@@ -2455,10 +2469,7 @@ typedef struct
         struct
         {
             __IOM uint32_t DLCODE          : 4;
-            __IM  uint32_t RESERVED1       : 4;
-            __IOM uint32_t TXTS            : 1;
-            __IM  uint32_t RESERVED2       : 7;
-            __IOM uint32_t MTS             : 16;
+            __IOM uint32_t RESERVED        : 28;
         } TXDLEN_B;
     };
 
@@ -2519,9 +2530,9 @@ typedef struct
         struct
         {
             __IM  uint32_t DLCODE          : 4;
-            __IM  uint32_t RESERVED        : 4;
+            __IM  uint32_t RESERVED1       : 4;
             __IM  uint32_t FMIDX           : 8;
-            __IM  uint32_t MTS             : 16;
+            __IM  uint32_t RESERVED2       : 16;
         } RXDLEN_B;
     };
 
@@ -2532,10 +2543,10 @@ typedef struct
 
         struct
         {
+            __IM  uint32_t DATABYTE0       : 8;
             __IM  uint32_t DATABYTE1       : 8;
             __IM  uint32_t DATABYTE2       : 8;
             __IM  uint32_t DATABYTE3       : 8;
-            __IM  uint32_t DATABYTE4       : 8;
         } RXMDL_B;
     };
 
@@ -2546,10 +2557,10 @@ typedef struct
 
         struct
         {
+            __IM  uint32_t DATABYTE4       : 8;
             __IM  uint32_t DATABYTE5       : 8;
             __IM  uint32_t DATABYTE6       : 8;
             __IM  uint32_t DATABYTE7       : 8;
-            __IM  uint32_t DATABYTE8       : 8;
         } RXMDH_B;
     };
 } CAN_RxMailBox_T;
@@ -2601,7 +2612,7 @@ typedef struct
         } FBANK1_B;
     };
 
-    /** @brief CAN Filter bank register 1 */
+    /** @brief CAN Filter bank register 2 */
     union
     {
         __IOM uint32_t  FBANK2;
@@ -2663,8 +2674,7 @@ typedef struct
             __IOM uint32_t ARTXMD          : 1;
             __IOM uint32_t AWUPCFG         : 1;
             __IOM uint32_t ALBOFFM         : 1;
-            __IOM uint32_t TTCM            : 1;
-            __IM  uint32_t RESERVED1       : 7;
+            __IM  uint32_t RESERVED1       : 8;
             __IOM uint32_t SWRST           : 1;
             __IOM uint32_t DBGFRZE         : 1;
             __IM  uint32_t RESERVED2       : 15;
@@ -2739,7 +2749,7 @@ typedef struct
             __IOM uint32_t FFULLFLG0       : 1;
             __IOM uint32_t FOVRFLG0        : 1;
             __IOM uint32_t RFOM0           : 1;
-            __IM  uint32_t RESERVED2       : 26;
+            __IM  uint32_t RESERVED1       : 26;
         } RXF0_B;
     };
 
@@ -2838,7 +2848,9 @@ typedef struct
         struct
         {
             __IOM uint32_t FINITEN         : 1;
-            __IM  uint32_t RESERVED        : 31;
+            __IM  uint32_t RESERVED        : 7;
+            __IOM uint32_t CAN2BN          : 6;
+            __IM  uint32_t RESERVED1       : 18;
         } FCTRL_B;
     };
 
@@ -2863,7 +2875,21 @@ typedef struct
             __IOM uint32_t FMCFG11         : 1;
             __IOM uint32_t FMCFG12         : 1;
             __IOM uint32_t FMCFG13         : 1;
-            __IM  uint32_t RESERVED        : 18;
+            __IOM uint32_t FMCFG14         : 1;
+            __IOM uint32_t FMCFG15         : 1;
+            __IOM uint32_t FMCFG16         : 1;
+            __IOM uint32_t FMCFG17         : 1;
+            __IOM uint32_t FMCFG18         : 1;
+            __IOM uint32_t FMCFG19         : 1;
+            __IOM uint32_t FMCFG20         : 1;
+            __IOM uint32_t FMCFG21         : 1;
+            __IOM uint32_t FMCFG22         : 1;
+            __IOM uint32_t FMCFG23         : 1;
+            __IOM uint32_t FMCFG24         : 1;
+            __IOM uint32_t FMCFG25         : 1;
+            __IOM uint32_t FMCFG26         : 1;
+            __IOM uint32_t FMCFG27         : 1;
+            __IM  uint32_t RESERVED        : 4;
         } FMCFG_B;
     };
 
@@ -2890,7 +2916,21 @@ typedef struct
             __IOM uint32_t FSCFG11         : 1;
             __IOM uint32_t FSCFG12         : 1;
             __IOM uint32_t FSCFG13         : 1;
-            __IM uint32_t RESERVED         : 18;
+            __IOM uint32_t FSCFG14         : 1;
+            __IOM uint32_t FSCFG15         : 1;
+            __IOM uint32_t FSCFG16         : 1;
+            __IOM uint32_t FSCFG17         : 1;
+            __IOM uint32_t FSCFG18         : 1;
+            __IOM uint32_t FSCFG19         : 1;
+            __IOM uint32_t FSCFG20         : 1;
+            __IOM uint32_t FSCFG21         : 1;
+            __IOM uint32_t FSCFG22         : 1;
+            __IOM uint32_t FSCFG23         : 1;
+            __IOM uint32_t FSCFG24         : 1;
+            __IOM uint32_t FSCFG25         : 1;
+            __IOM uint32_t FSCFG26         : 1;
+            __IOM uint32_t FSCFG27         : 1;
+            __IM  uint32_t RESERVED        : 4;
         }FSCFG_B;
     };
 
@@ -2917,7 +2957,21 @@ typedef struct
             __IOM uint32_t FFASS11         : 1;
             __IOM uint32_t FFASS12         : 1;
             __IOM uint32_t FFASS13         : 1;
-            __IM uint32_t RESERVED         : 18;
+            __IOM uint32_t FFASS14         : 1;
+            __IOM uint32_t FFASS15         : 1;
+            __IOM uint32_t FFASS16         : 1;
+            __IOM uint32_t FFASS17         : 1;
+            __IOM uint32_t FFASS18         : 1;
+            __IOM uint32_t FFASS19         : 1;
+            __IOM uint32_t FFASS20         : 1;
+            __IOM uint32_t FFASS21         : 1;
+            __IOM uint32_t FFASS22         : 1;
+            __IOM uint32_t FFASS23         : 1;
+            __IOM uint32_t FFASS24         : 1;
+            __IOM uint32_t FFASS25         : 1;
+            __IOM uint32_t FFASS26         : 1;
+            __IOM uint32_t FFASS27         : 1;
+            __IM  uint32_t RESERVED        : 4;
         } FFASS_B;
     };
 
@@ -2944,13 +2998,27 @@ typedef struct
             __IOM uint32_t FACT11          : 1;
             __IOM uint32_t FACT12          : 1;
             __IOM uint32_t FACT13          : 1;
-            __IM uint32_t RESERVED         : 18;
+            __IOM uint32_t FACT14          : 1;
+            __IOM uint32_t FACT15          : 1;
+            __IOM uint32_t FACT16          : 1;
+            __IOM uint32_t FACT17          : 1;
+            __IOM uint32_t FACT18          : 1;
+            __IOM uint32_t FACT19          : 1;
+            __IOM uint32_t FACT20          : 1;
+            __IOM uint32_t FACT21          : 1;
+            __IOM uint32_t FACT22          : 1;
+            __IOM uint32_t FACT23          : 1;
+            __IOM uint32_t FACT24          : 1;
+            __IOM uint32_t FACT25          : 1;
+            __IOM uint32_t FACT26          : 1;
+            __IOM uint32_t FACT27          : 1;
+            __IM  uint32_t RESERVED        : 4;
         } FACT_B;
     };
 
     __IM uint32_t RESERVED5[8];
 
-    CAN_FilterRegister_T sFilterRegister[14];
+    CAN_FilterRegister_T sFilterRegister[28];
 
 } CAN_T;
 
@@ -3532,25 +3600,25 @@ typedef struct
 
         struct
         {
-            __IOM uint32_t PTEN0           : 1;
-            __IOM uint32_t PTEN1           : 1;
-            __IOM uint32_t PTEN2           : 1;
-            __IOM uint32_t PTEN3           : 1;
-            __IOM uint32_t PTEN4           : 1;
-            __IOM uint32_t PTEN5           : 1;
-            __IOM uint32_t PTEN6           : 1;
-            __IOM uint32_t PTEN7           : 1;
-            __IOM uint32_t PTEN8           : 1;
-            __IOM uint32_t PTEN9           : 1;
-            __IOM uint32_t PTEN10          : 1;
-            __IOM uint32_t PTEN11          : 1;
-            __IOM uint32_t PTEN12          : 1;
-            __IOM uint32_t PTEN13          : 1;
-            __IOM uint32_t PTEN14          : 1;
-            __IOM uint32_t PTEN15          : 1;
-            __IOM uint32_t PTEN16          : 1;
-            __IOM uint32_t PTEN17          : 1;
-            __IOM uint32_t PTEN18          : 1;
+            __IOM uint32_t RTEN0           : 1;
+            __IOM uint32_t RTEN1           : 1;
+            __IOM uint32_t RTEN2           : 1;
+            __IOM uint32_t RTEN3           : 1;
+            __IOM uint32_t RTEN4           : 1;
+            __IOM uint32_t RTEN5           : 1;
+            __IOM uint32_t RTEN6           : 1;
+            __IOM uint32_t RTEN7           : 1;
+            __IOM uint32_t RTEN8           : 1;
+            __IOM uint32_t RTEN9           : 1;
+            __IOM uint32_t RTEN10          : 1;
+            __IOM uint32_t RTEN11          : 1;
+            __IOM uint32_t RTEN12          : 1;
+            __IOM uint32_t RTEN13          : 1;
+            __IOM uint32_t RTEN14          : 1;
+            __IOM uint32_t RTEN15          : 1;
+            __IOM uint32_t RTEN16          : 1;
+            __IOM uint32_t RTEN17          : 1;
+            __IOM uint32_t RTEN18          : 1;
             __IM  uint32_t RESERVED        : 12;
         } RTEN_B;
     };
@@ -3724,7 +3792,7 @@ typedef struct
             __IOM uint32_t SSEN            : 1;
             __IOM uint32_t RXOMEN          : 1;
             __IOM uint32_t DFLSEL          : 1;
-            __IOM uint32_t CECNXT          : 1;
+            __IOM uint32_t CRCNXT          : 1;
             __IOM uint32_t CRCEN           : 1;
             __IOM uint32_t BMOEN           : 1;
             __IOM uint32_t BMEN            : 1;
@@ -4056,7 +4124,7 @@ typedef struct
             __IOM uint32_t DMAEN           : 1;
             __IOM uint32_t DBSIZE          : 4;
             __IOM uint32_t RWSTR           : 1;
-            __IOM uint32_t PWSTOP          : 1;
+            __IOM uint32_t RWSTOP          : 1;
             __IOM uint32_t RDWAIT          : 1;
             __IOM uint32_t SDIOF           : 1;
             __IM  uint32_t RESERVED        : 20;
@@ -4166,7 +4234,7 @@ typedef struct
             __IOM uint32_t RXDAVB          : 1;
             __IOM uint32_t SDIOINTREC      : 1;
             __IOM uint32_t ATACLPREC       : 1;
-            __IM  uint32_t RESERVEDIE      : 8;
+            __IM  uint32_t RESERVED        : 8;
         } MASK_B;
     };
 
@@ -4232,12 +4300,12 @@ typedef struct
     /** Software trigger register */
     union
     {
-        __IOM uint32_t SWTRG;
+        __OM uint32_t SWTRG;
 
         struct
         {
-            __IOM  uint32_t SWTRG1         : 1;
-            __IOM  uint32_t SWTRG2         : 1;
+            __OM   uint32_t SWTRG1         : 1;
+            __OM   uint32_t SWTRG2         : 1;
             __IM   uint32_t RESERVED       : 30;
         } SWTRG_B;
     };
@@ -4351,8 +4419,8 @@ typedef struct
 
         struct
         {
-            __IOM uint32_t CH1DH           : 8;
-            __IOM uint32_t CH2DH           : 8;
+            __IOM uint32_t DATACH1         : 8;
+            __IOM uint32_t DATACH2         : 8;
             __IM  uint32_t RESERVED        : 16;
         } DH8RDUAL_B;
     };
@@ -4360,11 +4428,11 @@ typedef struct
     /** Channel1 data output register */
     union
     {
-        __IOM uint32_t DATAOCH1;
+        __IM uint32_t DATAOCH1;
 
         struct
         {
-            __IOM uint32_t DATA            : 12;
+            __IM  uint32_t DATA            : 12;
             __IM  uint32_t RESERVED        : 20;
         } DATAOCH1_B;
     };
@@ -4372,11 +4440,11 @@ typedef struct
     /** Channel2 data output register */
     union
     {
-        __IOM uint32_t DATAOCH2;
+        __IM uint32_t DATAOCH2;
 
         struct
         {
-            __IOM uint32_t DATA            : 12;
+            __IM  uint32_t DATA            : 12;
             __IM  uint32_t RESERVED        : 20;
         } DATAOCH2_B;
     };
@@ -5697,7 +5765,9 @@ typedef struct
             __IOM uint32_t RDDEN           : 1;
             __IOM uint32_t RDDCFG          : 3;
             __IOM uint32_t WPEN            : 1;
-            __IM  uint32_t RESERVED        : 26;
+            __IOM uint32_t BUFFEN          : 1;
+            __IOM uint32_t WRPBSEL         : 1;
+            __IM  uint32_t RESERVED        : 24;
         }CTRL2_B;
     };
 }DMC_T;
@@ -5778,12 +5848,12 @@ typedef union
         __IOM uint32_t CTFR                : 1;
         __IM  uint32_t RESERVED            : 16;
     }EP_B;
-}USB_EP_REG_T;
+}USBD_EP_REG_T;
 
 typedef struct
 {
     /** Endpoint */
-    USB_EP_REG_T EP[8];
+    USBD_EP_REG_T EP[8];
 
     __IM  uint32_t  RESERVED[8];
 
@@ -6096,11 +6166,12 @@ typedef struct
 
 #if defined (APM32F10X_MD) || defined (APM32F10X_LD)
 #define QSPI                    ((QSPI_T *)QSPI_BASE)
-#elif defined (APM32F10X_HD)
-#define DMC                    ((DMC_T *)DMC_BASE)
+#endif
+#if defined (APM32F10X_HD)
+#define DMC                     ((DMC_T *)DMC_BASE)
 #endif
 
-/* Define one bit mask */
+/** Define one bit mask */
 #define BIT0                    ((uint32_t)0x00000001)
 #define BIT1                    ((uint32_t)0x00000002)
 #define BIT2                    ((uint32_t)0x00000004)
@@ -6153,6 +6224,6 @@ typedef struct
 }
 #endif
 
-#endif /* __APM32F10x_H */
+#endif /* __APM32F10X_H */
 
 
