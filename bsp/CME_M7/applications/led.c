@@ -28,7 +28,7 @@ static int led_thread_init(void)
                            led_thread_entry,
                            RT_NULL,
                            2048,
-                           RT_THREAD_PRIORITY_MAX - 1,
+                           RT_THREAD_PRIORITY_MAX - 2,
                            1);
 
     if (tid != RT_NULL)
