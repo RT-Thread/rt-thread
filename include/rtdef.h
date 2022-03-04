@@ -214,7 +214,7 @@ typedef int (*init_fn_t)(void);
             const char* fn_name;
         };
         #define INIT_EXPORT(fn, level)                                  \
-                                const char __rti_level_##fn[] = level"__rt_init_"#fn;   \
+                                const char __rti_level_##fn[] = ".rti_fn." level;       \
                                 const char __rti_##fn##_name[] = #fn;                   \
                                 __declspec(allocate("rti_fn$f"))                        \
                                 RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
@@ -226,7 +226,7 @@ typedef int (*init_fn_t)(void);
             const init_fn_t fn;
         };
         #define INIT_EXPORT(fn, level)                                  \
-                                const char __rti_level_##fn[] = level"__rt_init_"#fn;   \
+                                const char __rti_level_##fn[] = ".rti_fn." level;       \
                                 __declspec(allocate("rti_fn$f"))                        \
                                 RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
                                 {__rti_level_##fn, fn };
