@@ -20,7 +20,7 @@ if __name__=='__main__':
         urllib.urlretrieve("http://cdndownload.openluat.com/rt-thread/airm2m/air105/bootloader.bin", pack_path+'/bootloader.bin')
 
     if not os.path.exists(pack_path+'/soc_download.exe'):
-        urllib.urlretrieve("http://cdndownload.openluat.com/rt-thread/airm2m/air105/bootloader.bin", pack_path+'/soc_download.exe')
+        urllib.urlretrieve("http://cdndownload.openluat.com/rt-thread/airm2m/air105/soc_download.exe", pack_path+'/soc_download.exe')
 
     shutil.copy(out_path+bin_file_name, pack_path+'/'+bin_file_name)
     shutil.make_archive(out_file, 'zip', root_dir=pack_path)
