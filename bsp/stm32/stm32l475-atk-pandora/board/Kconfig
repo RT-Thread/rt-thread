@@ -7,6 +7,10 @@ config SOC_STM32L475VE
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32L475_ATK_PANDORA
+    bool
+    default y
+
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_STLINK_TO_USART
