@@ -335,16 +335,16 @@ def gen_project_file(output_file_path):
 
 
 def gen_projcfg_ini_file(chip_name, project_name, output_file_path):
-	try:
-		projcfg_file_tmp = Template(projcfg_ini_temp)
-		w_str = projcfg_file_tmp.substitute(time=time.strftime("%a %b %d %H:%M:%S %Y", time.localtime()),
-											project_name=project_name,
-											output_project_path=os.path.abspath(""))
-		dir_name = os.path.dirname(output_file_path)
-		if not os.path.exists(dir_name):
-			os.makedirs(dir_name)
-		with open(output_file_path, 'w') as f:
-			f.write(w_str)
-			return True
-	except Exception as e:
-		return False
+    try:
+        projcfg_file_tmp = Template(projcfg_ini_temp)
+        w_str = projcfg_file_tmp.substitute(time=time.strftime("%a %b %d %H:%M:%S %Y", time.localtime()),
+                                            project_name=project_name,
+                                            output_project_path=os.path.abspath(""))
+        dir_name = os.path.dirname(output_file_path)
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+        with open(output_file_path, 'w') as f:
+            f.write(w_str)
+            return True
+    except Exception as e:
+        return False
