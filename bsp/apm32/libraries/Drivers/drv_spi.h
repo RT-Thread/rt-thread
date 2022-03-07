@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 
 struct apm32_spi_cs
 {
-    GPIO_T* GPIOx;
+    GPIO_T *GPIOx;
     uint16_t GPIO_Pin;
 };
 

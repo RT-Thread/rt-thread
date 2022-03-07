@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,11 +13,11 @@
 #include "board.h"
 
 #ifdef RT_USING_SERIAL
-#ifdef RT_USING_SERIAL_V2
-#include "drv_usart_v2.h"
-#else
-#include "drv_usart.h"
-#endif
+    #ifdef RT_USING_SERIAL_V2
+        #include "drv_usart_v2.h"
+    #else
+        #include "drv_usart.h"
+    #endif
 #endif
 
 #ifdef RT_USING_FINSH
@@ -32,11 +32,11 @@ MSH_CMD_EXPORT(reboot, Reboot System);
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
-    SysTick_Config(RCM_ReadHCLKFreq()/RT_TICK_PER_SECOND);
-    
+    SysTick_Config(RCM_ReadHCLKFreq() / RT_TICK_PER_SECOND);
+
     /*  AHB clock selected as SysTick clock source. */
     SysTick->CTRL |= 0x00000004U;
-    
+
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,7 +18,7 @@
 #include <rtdbg.h>
 
 #if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4)
-#error "Please define at least one BSP_USING_I2Cx"
+    #error "Please define at least one BSP_USING_I2Cx"
 #endif
 
 /* apm32 i2c config class */
@@ -77,7 +77,7 @@ static struct apm32_soft_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_c
  */
 static void _soft_i2c_gpio_init(struct apm32_soft_i2c *i2c)
 {
-    struct apm32_soft_i2c_config* cfg = (struct apm32_soft_i2c_config*)i2c->ops.data;
+    struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)i2c->ops.data;
 
     rt_pin_mode(cfg->scl_pin, PIN_MODE_OUTPUT_OD);
     rt_pin_mode(cfg->sda_pin, PIN_MODE_OUTPUT_OD);
@@ -95,7 +95,7 @@ static void _soft_i2c_gpio_init(struct apm32_soft_i2c *i2c)
  */
 static void _soft_i2c_set_sda(void *data, rt_int32_t state)
 {
-    struct apm32_soft_i2c_config* cfg = (struct apm32_soft_i2c_config*)data;
+    struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)data;
 
     rt_pin_write(cfg->sda_pin, state ? PIN_HIGH : PIN_LOW);
 }
@@ -109,7 +109,7 @@ static void _soft_i2c_set_sda(void *data, rt_int32_t state)
  */
 static void _soft_i2c_set_scl(void *data, rt_int32_t state)
 {
-    struct apm32_soft_i2c_config* cfg = (struct apm32_soft_i2c_config*)data;
+    struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)data;
 
     rt_pin_write(cfg->scl_pin, state ? PIN_HIGH : PIN_LOW);
 }
@@ -121,7 +121,7 @@ static void _soft_i2c_set_scl(void *data, rt_int32_t state)
  */
 static rt_int32_t _soft_i2c_get_sda(void *data)
 {
-    struct apm32_soft_i2c_config* cfg = (struct apm32_soft_i2c_config*)data;
+    struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)data;
     return rt_pin_read(cfg->sda_pin);
 }
 
@@ -132,7 +132,7 @@ static rt_int32_t _soft_i2c_get_sda(void *data)
  */
 static rt_int32_t _soft_i2c_get_scl(void *data)
 {
-    struct apm32_soft_i2c_config* cfg = (struct apm32_soft_i2c_config*)data;
+    struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)data;
     return rt_pin_read(cfg->scl_pin);
 }
 
@@ -221,7 +221,7 @@ int rt_hw_i2c_init(void)
     for (int i = 0; i < obj_num; i++)
     {
         i2c_obj[i].ops = apm32_bit_ops_default;
-        i2c_obj[i].ops.data = (void*)&soft_i2c_config[i];
+        i2c_obj[i].ops.data = (void *)&soft_i2c_config[i];
         i2c_obj[i].i2c2_bus.priv = &i2c_obj[i].ops;
         _soft_i2c_gpio_init(&i2c_obj[i]);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,10 +18,10 @@
 #include <rtdbg.h>
 
 #ifndef LSI_VALUE
-#define  LSI_VALUE            ((uint32_t)40000)
+    #define  LSI_VALUE            ((uint32_t)40000)
 #endif
 #ifndef LSE_VALUE
-#define  LSE_VALUE            ((uint32_t)32768)
+    #define  LSE_VALUE            ((uint32_t)32768)
 #endif
 
 #define DRV_RTC_TIME_OUT      0xFFF

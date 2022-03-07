@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,7 +18,7 @@
 #include <rtdbg.h>
 
 #ifndef LSI_VALUE
-#define LSI_VALUE            ((uint32_t)40000)
+    #define LSI_VALUE            ((uint32_t)40000)
 #endif
 
 #define DRV_WDT_TIME_OUT      0xFFFF
@@ -88,7 +88,7 @@ static rt_err_t _iwdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
         param = *(rt_uint32_t *) arg;
         if ((param > wdt_config.max_threshold) || \
-            (param < wdt_config.min_threshold))
+                (param < wdt_config.min_threshold))
         {
             LOG_E("invalid param@%u.", param);
             return -RT_ERROR;
@@ -136,7 +136,7 @@ static int rt_hw_wdt_init(void)
     wdt_config.wdt.ops = &_wdt_ops;
     /* register watchdog device */
     if (rt_hw_watchdog_register(&wdt_config.wdt, "wdt", \
-        RT_DEVICE_FLAG_DEACTIVATE, RT_NULL) != RT_EOK)
+                                RT_DEVICE_FLAG_DEACTIVATE, RT_NULL) != RT_EOK)
     {
         LOG_E("wdt device register failed.");
         return -RT_ERROR;

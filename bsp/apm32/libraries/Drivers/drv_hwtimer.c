@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -141,35 +141,35 @@ static void _hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
     if (state)
     {
         timer_config = (struct apm32_timer *)timer->parent.user_data;
-        if(timer_config->tmr == TMR1)
+        if (timer_config->tmr == TMR1)
         {
             RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR1);
         }
-        else if(timer_config->tmr == TMR8)
+        else if (timer_config->tmr == TMR8)
         {
             RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR8);
         }
-        else if(timer_config->tmr == TMR2)
+        else if (timer_config->tmr == TMR2)
         {
             RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR2);
         }
-        else if(timer_config->tmr == TMR3)
+        else if (timer_config->tmr == TMR3)
         {
             RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR3);
         }
-        else if(timer_config->tmr == TMR4)
+        else if (timer_config->tmr == TMR4)
         {
             RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR4);
         }
-        else if(timer_config->tmr == TMR5)
+        else if (timer_config->tmr == TMR5)
         {
             RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR5);
         }
-        else if(timer_config->tmr == TMR6)
+        else if (timer_config->tmr == TMR6)
         {
             RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR6);
         }
-        else if(timer_config->tmr == TMR7)
+        else if (timer_config->tmr == TMR7)
         {
             RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR7);
         }
@@ -188,7 +188,7 @@ static void _hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
             base_config.countMode   = TMR_COUNTER_MODE_DOWN;
         }
         base_config.repetitionCounter = 0;
-        TMR_ConfigTimeBase(timer_config->tmr,&base_config);
+        TMR_ConfigTimeBase(timer_config->tmr, &base_config);
 
         /* set the TIMx priority */
         NVIC_EnableIRQRequest(timer_config->irqn, 3, 0);
@@ -196,7 +196,7 @@ static void _hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         /* clear update flag */
         TMR_ClearStatusFlag(timer_config->tmr, TMR_FLAG_UPDATE);
         /* enable update request source */
-        TMR_ConfigUpdateRequest(timer_config->tmr,TMR_UPDATE_SOURCE_REGULAR);
+        TMR_ConfigUpdateRequest(timer_config->tmr, TMR_UPDATE_SOURCE_REGULAR);
         LOG_D("%s init success", timer_config->name);
     }
 }
@@ -218,19 +218,19 @@ static rt_err_t _hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mo
     if (opmode == HWTIMER_MODE_ONESHOT)
     {
         /* set timer to single mode */
-        TMR_ConfigSinglePulseMode(timer_config->tmr,TMR_SPM_SINGLE);
+        TMR_ConfigSinglePulseMode(timer_config->tmr, TMR_SPM_SINGLE);
     }
     else
     {
-        TMR_ConfigSinglePulseMode(timer_config->tmr,TMR_SPM_REPETITIVE);
+        TMR_ConfigSinglePulseMode(timer_config->tmr, TMR_SPM_REPETITIVE);
     }
 
-    TMR_EnableInterrupt(timer_config->tmr,TMR_INT_UPDATE);
+    TMR_EnableInterrupt(timer_config->tmr, TMR_INT_UPDATE);
 
-    if(timer_config->tmr == TMR1 || timer_config->tmr == TMR8 || timer_config->tmr == TMR2 ||
-        timer_config->tmr == TMR3 || timer_config->tmr == TMR4  || timer_config->tmr == TMR5)
+    if (timer_config->tmr == TMR1 || timer_config->tmr == TMR8 || timer_config->tmr == TMR2 ||
+            timer_config->tmr == TMR3 || timer_config->tmr == TMR4  || timer_config->tmr == TMR5)
     {
-        if(timer_config->tmr->SMCTRL_B.SMFSEL != TMR_SLAVE_MODE_TRIGGER)
+        if (timer_config->tmr->SMCTRL_B.SMFSEL != TMR_SLAVE_MODE_TRIGGER)
         {
             TMR_Enable(timer_config->tmr);
             result = -RT_EOK;
@@ -250,7 +250,7 @@ static void _hwtimer_stop(rt_hwtimer_t *timer)
     RT_ASSERT(timer != RT_NULL);
     timer_config = (struct apm32_timer *)timer->parent.user_data;
 
-    TMR_DisableInterrupt(timer_config->tmr,TMR_INT_UPDATE);
+    TMR_DisableInterrupt(timer_config->tmr, TMR_INT_UPDATE);
     TMR_Enable(timer_config->tmr);
     TMR_ConfigCounter(timer_config->tmr, 0);
 }
@@ -275,7 +275,7 @@ static rt_err_t _hwtimer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 
         val = _hwtimer_clock_get(timer_config->tmr) / freq;
 
-        TMR_ConfigPrescaler(timer_config->tmr, val-1, TMR_PSC_RELOAD_IMMEDIATE);
+        TMR_ConfigPrescaler(timer_config->tmr, val - 1, TMR_PSC_RELOAD_IMMEDIATE);
         break;
     default:
         result = -RT_ENOSYS;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,7 +21,7 @@ static rt_err_t _spi_configure(struct rt_spi_device *spi_drv, struct rt_spi_conf
     RT_ASSERT(spi_drv != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
     SPI_Config_T hw_spi_config;
-    SPI_T *spi= (SPI_T *)spi_drv->bus->parent.user_data;
+    SPI_T *spi = (SPI_T *)spi_drv->bus->parent.user_data;
     uint32_t hw_spi_apb_clock;
 #if (DBG_LVL == DBG_LOG)
     uint32_t hw_spi_sys_clock = RCM_ReadSYSCLKFreq();
@@ -47,7 +47,7 @@ static rt_err_t _spi_configure(struct rt_spi_device *spi_drv, struct rt_spi_conf
         return RT_EIO;
     }
 
-    RCM_ReadPCLKFreq(NULL,&hw_spi_apb_clock);
+    RCM_ReadPCLKFreq(NULL, &hw_spi_apb_clock);
 
     if (cfg->max_hz >= hw_spi_apb_clock / 2)
     {
@@ -86,7 +86,7 @@ static rt_err_t _spi_configure(struct rt_spi_device *spi_drv, struct rt_spi_conf
     LOG_D("sys freq: %d, pclk2 freq: %d, SPI limiting freq: %d, BaudRatePrescaler: %d",
           hw_spi_sys_clock, hw_spi_apb_clock, cfg->max_hz, hw_spi_config.baudrateDiv);
 
-    SPI_Config(spi,&hw_spi_config);
+    SPI_Config(spi, &hw_spi_config);
     SPI_Enable(spi);
 
     return RT_EOK;
@@ -98,76 +98,76 @@ static rt_uint32_t _spi_xfer(struct rt_spi_device *device, struct rt_spi_message
     RT_ASSERT(message != NULL);
 
     rt_base_t cs_pin = (rt_base_t)device->parent.user_data;
-    SPI_T *spi= (SPI_T *)device->bus->parent.user_data;
-    struct rt_spi_configuration * config = &device->config;
+    SPI_T *spi = (SPI_T *)device->bus->parent.user_data;
+    struct rt_spi_configuration *config = &device->config;
 
     /* take CS */
-    if(message->cs_take)
+    if (message->cs_take)
     {
         rt_pin_write(cs_pin, PIN_LOW);
         LOG_D("spi take cs\n");
     }
 
-    if(config->data_width <= 8)
+    if (config->data_width <= 8)
     {
-        const rt_uint8_t * send_ptr = message->send_buf;
-        rt_uint8_t * recv_ptr = message->recv_buf;
+        const rt_uint8_t *send_ptr = message->send_buf;
+        rt_uint8_t *recv_ptr = message->recv_buf;
         rt_uint32_t size = message->length;
 
         LOG_D("spi poll transfer start: %d\n", size);
 
-        while(size--)
+        while (size--)
         {
             rt_uint8_t data = 0xFF;
 
-            if(send_ptr != RT_NULL)
+            if (send_ptr != RT_NULL)
             {
                 data = *send_ptr++;
             }
 
             /* Wait until the transmit buffer is empty */
-            while(SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
+            while (SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
 
             SPI_I2S_TxData(spi, data);
 
             /* Wait until a data is received */
-            while(SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_RXBNE)== RESET);
+            while (SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
 
             data = SPI_I2S_RxData(spi);
 
-            if(recv_ptr != RT_NULL)
+            if (recv_ptr != RT_NULL)
             {
                 *recv_ptr++ = data;
             }
         }
         LOG_D("spi poll transfer finsh\n");
     }
-    else if(config->data_width <= 16)
+    else if (config->data_width <= 16)
     {
-        const rt_uint16_t * send_ptr = message->send_buf;
-        rt_uint16_t * recv_ptr = message->recv_buf;
+        const rt_uint16_t *send_ptr = message->send_buf;
+        rt_uint16_t *recv_ptr = message->recv_buf;
         rt_uint32_t size = message->length;
 
-        while(size--)
+        while (size--)
         {
             rt_uint16_t data = 0xFF;
 
-            if(send_ptr != RT_NULL)
+            if (send_ptr != RT_NULL)
             {
                 data = *send_ptr++;
             }
 
             /*Wait until the transmit buffer is empty */
-            while(SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
+            while (SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
             /* Send the byte */
             SPI_I2S_TxData(spi, data);
 
             /*Wait until a data is received */
-            while(SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_RXBNE)== RESET);
+            while (SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
             /* Get the received data */
             data = SPI_I2S_RxData(spi);
 
-            if(recv_ptr != RT_NULL)
+            if (recv_ptr != RT_NULL)
             {
                 *recv_ptr++ = data;
             }
@@ -175,7 +175,7 @@ static rt_uint32_t _spi_xfer(struct rt_spi_device *device, struct rt_spi_message
     }
 
     /* release CS */
-    if(message->cs_release)
+    if (message->cs_release)
     {
         rt_pin_write(cs_pin, PIN_HIGH);
         LOG_D("spi release cs\n");
@@ -208,12 +208,12 @@ static int rt_hw_spi_init(void)
     gpio_config.mode = GPIO_MODE_AF_PP;
     gpio_config.speed = GPIO_SPEED_50MHz;
     gpio_config.pin = (GPIO_PIN_5 | GPIO_PIN_7);
-    GPIO_Config(GPIOA,&gpio_config);
+    GPIO_Config(GPIOA, &gpio_config);
     /* SPI1_MISO(PA6) */
     gpio_config.mode = GPIO_MODE_IN_FLOATING;
     gpio_config.speed = GPIO_SPEED_50MHz;
     gpio_config.pin = GPIO_PIN_6;
-    GPIO_Config(GPIOA,&gpio_config);
+    GPIO_Config(GPIOA, &gpio_config);
 #endif
 
 #ifdef BSP_USING_SPI2
@@ -229,12 +229,12 @@ static int rt_hw_spi_init(void)
     gpio_config.mode = GPIO_MODE_AF_PP;
     gpio_config.speed = GPIO_SPEED_50MHz;
     gpio_config.pin = (GPIO_PIN_13 | GPIO_PIN_15);
-    GPIO_Config(GPIOB,&gpio_config);
+    GPIO_Config(GPIOB, &gpio_config);
     /* SPI2_MISO(PB14) */
     gpio_config.mode = GPIO_MODE_IN_FLOATING;
     gpio_config.speed = GPIO_SPEED_50MHz;
     gpio_config.pin = GPIO_PIN_14;
-    GPIO_Config(GPIOB,&gpio_config);
+    GPIO_Config(GPIOB, &gpio_config);
 #endif
 
 #ifdef BSP_USING_SPI3
@@ -250,12 +250,12 @@ static int rt_hw_spi_init(void)
     gpio_config.mode = GPIO_MODE_AF_PP;
     gpio_config.speed = GPIO_SPEED_50MHz;
     gpio_config.pin = (GPIO_PIN_3 | GPIO_PIN_5);
-    GPIO_Config(GPIOB,&gpio_config);
+    GPIO_Config(GPIOB, &gpio_config);
     /* SPI3_MISO(PB4) */
     gpio_config.mode = GPIO_MODE_IN_FLOATING;
     gpio_config.speed = GPIO_SPEED_50MHz;
     gpio_config.pin = GPIO_PIN_4;
-    GPIO_Config(GPIOB,&gpio_config);
+    GPIO_Config(GPIOB, &gpio_config);
 #endif
     return result;
 }

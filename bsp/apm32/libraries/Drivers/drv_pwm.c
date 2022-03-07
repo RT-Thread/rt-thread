@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -222,27 +222,27 @@ static rt_err_t _pwm_hw_init(struct apm32_pwm *device)
 
     tmr = (TMR_T *)device->tmr;
 
-    if(tmr == TMR1)
+    if (tmr == TMR1)
     {
         RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR1);
     }
-    else if(tmr == TMR8)
+    else if (tmr == TMR8)
     {
         RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_TMR8);
     }
-    else if(tmr == TMR2)
+    else if (tmr == TMR2)
     {
         RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR2);
     }
-    else if(tmr == TMR3)
+    else if (tmr == TMR3)
     {
         RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR3);
     }
-    else if(tmr == TMR4)
+    else if (tmr == TMR4)
     {
         RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR4);
     }
-    else if(tmr == TMR5)
+    else if (tmr == TMR5)
     {
         RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR5);
     }
@@ -286,7 +286,7 @@ static rt_err_t _pwm_hw_init(struct apm32_pwm *device)
     }
 
     /* enable update request source */
-    TMR_ConfigUpdateRequest(tmr,TMR_UPDATE_SOURCE_REGULAR);
+    TMR_ConfigUpdateRequest(tmr, TMR_UPDATE_SOURCE_REGULAR);
 
     return result;
 }
@@ -314,7 +314,7 @@ static rt_err_t _pwm_enable(TMR_T *tmr, struct rt_pwm_configuration *configurati
         {
             TMR_EnableCCxChannel(tmr, (TMR_CHANNEL_T)(0x01 << (channel & 0x1FU)));
         }
-        if(tmr == TMR1 || tmr == TMR8)
+        if (tmr == TMR1 || tmr == TMR8)
         {
             TMR_EnablePWMOutputs(tmr);
         }
@@ -330,7 +330,7 @@ static rt_err_t _pwm_enable(TMR_T *tmr, struct rt_pwm_configuration *configurati
         {
             TMR_DisableCCxChannel(tmr, (TMR_CHANNEL_T)(0x01 << (channel & 0x1FU)));
         }
-        if(tmr == TMR1 || tmr == TMR8)
+        if (tmr == TMR1 || tmr == TMR8)
         {
             TMR_DisablePWMOutputs(tmr);
         }
@@ -360,7 +360,7 @@ static rt_err_t _pwm_get(TMR_T *tmr, struct rt_pwm_configuration *configuration)
 
     uint32_t temp;
     temp = (uint32_t)tmr;
-    temp +=(uint32_t)(0x34 + channel);
+    temp += (uint32_t)(0x34 + channel);
     /* Convert nanosecond to frequency and duty cycle.*/
     timer_clock /= 1000000UL;
 
@@ -404,7 +404,7 @@ static rt_err_t _pwm_set(TMR_T *tmr, struct rt_pwm_configuration *configuration)
         pulse = period;
     }
 
-    temp +=(uint32_t)(0x34 + channel);
+    temp += (uint32_t)(0x34 + channel);
     *(__IO uint32_t *)temp = pulse - 1;
 
     tmr->CNT = 0;
