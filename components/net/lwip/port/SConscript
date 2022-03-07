@@ -1,0 +1,10 @@
+from building import *
+
+cwd = GetCurrentDir()
+path  = [cwd]
+
+src  = Glob('*.c')
+
+group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP'], CPPPATH = path)
+
+Return('group')

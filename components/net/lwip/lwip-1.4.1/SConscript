@@ -10,7 +10,6 @@ src/api/netdb.c
 src/api/netifapi.c
 src/api/sockets.c
 src/api/tcpip.c
-src/arch/sys_arch.c
 src/core/def.c
 src/core/dhcp.c
 src/core/dns.c
@@ -35,7 +34,6 @@ src/core/ipv4/ip.c
 src/core/ipv4/ip_addr.c
 src/core/ipv4/ip_frag.c
 src/netif/etharp.c
-src/netif/ethernetif.c
 src/netif/slipif.c
 """)
 
@@ -65,10 +63,8 @@ src/netif/ppp/vj.c
 """)
 
 # The set of source files associated with this SConscript file.
-path = [GetCurrentDir() + '/src',
-    GetCurrentDir() + '/src/include',
+path = [GetCurrentDir() + '/src/include',
     GetCurrentDir() + '/src/include/ipv4',
-    GetCurrentDir() + '/src/arch/include',
     GetCurrentDir() + '/src/include/netif']
 
 if GetDepend(['RT_LWIP_SNMP']):

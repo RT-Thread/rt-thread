@@ -7,6 +7,10 @@ config SOC_STM32L475VE
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32L475_ATK_PANDORA
+    bool
+    default y
+
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_STLINK_TO_USART
@@ -25,6 +29,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM4_CH3
         select BSP_USING_ADC
         select BSP_USING_ADC1
+        select BSP_USING_I2C
+        select BSP_USING_I2C4
         default n
 
     config BSP_USING_KEY

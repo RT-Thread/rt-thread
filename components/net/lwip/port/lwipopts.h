@@ -1,11 +1,60 @@
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-02-23     Meco Man     integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
+ * 2022-02-25     xiangxistu   modify the default config through v1.4.1
+ */
+
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
 #include <rtconfig.h>
 
-#define ERRNO
+/* ---------- LIBC and standard header files ---------- */
+#include <limits.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <sys/errno.h>
+#define LWIP_ERRNO_INCLUDE "sys/errno.h"
+
+#define LWIP_TIMEVAL_PRIVATE    0
+#define LWIP_NO_UNISTD_H        0
+#define LWIP_NO_STDDEF_H        0
+#define LWIP_NO_STDINT_H        0
+#define LWIP_NO_INTTYPES_H      0
+#define LWIP_NO_LIMITS_H        0
+#define LWIP_NO_CTYPE_H         0
+#define LWIP_SOCKET_SELECT      1
+#define LWIP_SOCKET_POLL        1
+
+#define LWIP_RAND rand
+
+#ifndef SSIZE_MAX
+#define SSIZE_MAX INT_MAX
+#endif
+
+/* some errno not defined in newlib */
+#ifndef ENSRNOTFOUND
+#define ENSRNOTFOUND 163  /* Domain name not found */
+#endif
+
+/* ---------- Basic Configuration ---------- */
+#define LWIP_IPV4                   1
+
+#ifdef RT_USING_LWIP_IPV6
+#define LWIP_IPV6                   1
+#else
+#define LWIP_IPV6                   0
+#endif /* RT_USING_LWIP_IPV6 */
 
 #define NO_SYS                      0
+#define SYS_LIGHTWEIGHT_PROT        1
 #define LWIP_SOCKET                 1
 #define LWIP_NETCONN                1
 
@@ -221,19 +270,26 @@
 #define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
 #define SMEMCPY(dst,src,len)            MEMCPY(dst,src,len)
 
+#ifdef RT_LWIP_MEM_ALIGNMENT
+#define MEM_ALIGNMENT RT_LWIP_MEM_ALIGNMENT
+#else
 #define MEM_ALIGNMENT               4
+#endif
 
-#define MEM_LIBC_MALLOC             1
-#define mem_malloc                  rt_malloc
-#define mem_free                    rt_free
-#define mem_calloc                  rt_calloc
+#define MEMP_OVERFLOW_CHECK         1
+#define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1
+
+//#define MEM_LIBC_MALLOC             1
+//#define MEM_USE_POOLS               1
+//#define MEMP_USE_CUSTOM_POOLS       1
+//#define MEM_SIZE                    (1024*64)
 
 #define MEMP_MEM_MALLOC             0
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
    should be set high. */
-#define MEMP_NUM_PBUF               16
+#define MEMP_NUM_PBUF               32 //16
 
 /* the number of struct netconns */
 #ifdef RT_MEMP_NUM_NETCONN
@@ -295,13 +351,6 @@
 #ifdef RT_LWIP_ETH_PAD_SIZE
 #define ETH_PAD_SIZE                RT_LWIP_ETH_PAD_SIZE
 #endif
-
-/** SYS_LIGHTWEIGHT_PROT
- * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection
- * for certain critical regions during buffer allocation, deallocation and memory
- * allocation and deallocation.
- */
-#define SYS_LIGHTWEIGHT_PROT        (NO_SYS==0)
 
 #ifdef LWIP_USING_NAT
 #define IP_NAT                      1
@@ -435,6 +484,12 @@
 #define DEFAULT_UDP_RECVMBOX_SIZE   1
 
 /* ---------- RAW options ---------- */
+#ifdef RT_LWIP_RAW
+#define LWIP_RAW                    1
+#else
+#define LWIP_RAW                    0
+#endif
+
 #define DEFAULT_RAW_RECVMBOX_SIZE   1
 #define DEFAULT_ACCEPTMBOX_SIZE     10
 
@@ -458,6 +513,7 @@
 #define MEMP_STATS                  1
 #define PBUF_STATS                  1
 #define SYS_STATS                   1
+#define MIB2_STATS                  1
 #endif /* LWIP_STATS */
 
 /* ---------- PPP options ---------- */
@@ -496,8 +552,23 @@
 
 #endif /* PPP_SUPPORT */
 
-/* no read/write/close for socket */
-#define LWIP_POSIX_SOCKETS_IO_NAMES 0
+/**
+ * LWIP_POSIX_SOCKETS_IO_NAMES==1: Enable POSIX-style sockets functions names.
+ * Disable this option if you use a POSIX operating system that uses the same
+ * names (read, write & close). (only used if you use sockets.c)
+ */
+#ifndef LWIP_POSIX_SOCKETS_IO_NAMES
+#define LWIP_POSIX_SOCKETS_IO_NAMES     0
+#endif
+
+/**
+ * LWIP_TCP_KEEPALIVE==1: Enable TCP_KEEPIDLE, TCP_KEEPINTVL and TCP_KEEPCNT
+ * options processing. Note that TCP_KEEPIDLE and TCP_KEEPINTVL have to be set
+ * in seconds. (does not require sockets.c, and will affect tcp.c)
+ */
+#ifndef LWIP_TCP_KEEPALIVE
+#define LWIP_TCP_KEEPALIVE              1
+#endif
 
 /**
  * LWIP_NETIF_HOSTNAME==1: Support netif hostname
@@ -506,27 +577,15 @@
 #define LWIP_NETIF_HOSTNAME             1
 #endif
 
-#define LWIP_NETIF_API  1
+/**
+ * LWIP_NETIF_API==1: Support netif api (in netifapi.c)
+ */
+#ifndef LWIP_NETIF_API
+#define LWIP_NETIF_API                  1
+#endif
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */
 #define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT)
-#ifdef LWIP_IGMP
-#include <stdlib.h>
-#define LWIP_RAND                  rand
-#endif
-/*
-   ------------------------------------
-   ---------- Socket options ----------
-   ------------------------------------
-*/
-/*
- * LWIP_SOCKET==1: Enable Socket API (require to use sockets.c)
- */
-#ifndef LWIP_SOCKET
-#define LWIP_SOCKET                     1
-#endif
-#include <fcntl.h>
-#include <sys/ioctl.h>
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
@@ -539,7 +598,6 @@
 #define LWIP_COMPAT_SOCKETS             1
 #endif
 #endif
-
 
 /**
  * LWIP_SO_SNDTIMEO==1: Enable send timeout for sockets/netconns and
@@ -577,5 +635,11 @@
 #ifndef SO_REUSE
 #define SO_REUSE                        0
 #endif
+
+#if RT_USING_LWIP_VER_NUM >= 0x20000 /* >= v2.0.0 */
+#define LWIP_HOOK_IP4_ROUTE_SRC(dest, src)  lwip_ip4_route_src(dest, src)
+#include "lwip/ip_addr.h"
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
+#endif /* RT_USING_LWIP_VER_NUM >= 0x20000 */
 
 #endif /* __LWIPOPTS_H__ */

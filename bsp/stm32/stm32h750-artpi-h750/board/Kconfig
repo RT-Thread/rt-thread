@@ -7,6 +7,10 @@ config SOC_STM32H750XB
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32H750_ARTPI
+    bool
+    default y
+
 menu "Board extended module"
 
     menuconfig ART_PI_USING_MEDIA_IO

@@ -18,6 +18,8 @@
 #define ARDUINO_PINOUT_ADC_MAX  6  /* Arduino UNO has 6 ADC pins */
 #define ARDUINO_PINOUT_PWM_MAX  5  /* Arduino UNO has 5 PWM pins */
 
+#define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
+
 #define A0   (14)
 #define A1   (15)
 #define A2   (16)

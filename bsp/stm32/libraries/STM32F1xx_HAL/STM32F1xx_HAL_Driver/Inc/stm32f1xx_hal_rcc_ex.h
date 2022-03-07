@@ -1242,7 +1242,7 @@ typedef struct
 #define __HAL_RCC_GPIOG_CLK_DISABLE()       (RCC->APB2ENR &= ~(RCC_APB2ENR_IOPGEN))
 #endif /* STM32F101xE || STM32F103xE || STM32F101xG || STM32F103xG*/
 
-#if defined(STM32F103xE) || defined(STM32F103xG)
+#if defined(STM32F103xC) || defined(STM32F103xE) || defined(STM32F103xG)
 #define __HAL_RCC_TIM8_CLK_ENABLE()   do { \
                                         __IO uint32_t tmpreg; \
                                         SET_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM8EN);\

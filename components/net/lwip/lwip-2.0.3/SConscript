@@ -1,7 +1,6 @@
 from building import *
 
 src = Split("""
-src/arch/sys_arch.c
 src/api/api_lib.c
 src/api/api_msg.c
 src/api/err.c
@@ -27,7 +26,6 @@ src/core/tcp_out.c
 src/core/timeouts.c
 src/core/udp.c
 src/netif/ethernet.c
-src/netif/ethernetif.c
 src/netif/lowpan6.c
 """)
 
@@ -61,10 +59,8 @@ ppp_src = Glob("src/netif/ppp/*.c") + Glob("src/netif/ppp/polarssl/*c")
 src = src + ipv4_src
 
 # The set of source files associated with this SConscript file.
-path = [GetCurrentDir() + '/src',
-    GetCurrentDir() + '/src/include',
+path = [GetCurrentDir() + '/src/include',
     GetCurrentDir() + '/src/include/ipv4',
-    GetCurrentDir() + '/src/arch/include',
     GetCurrentDir() + '/src/include/netif']
 
 if not GetDepend('RT_USING_SAL'):

@@ -1,4 +1,14 @@
 /*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-02-20     Meco Man     add RT-Thread copyright
+ */
+
+/*
  * Copyright (c) 2001, Swedish Institute of Computer Science.
  * All rights reserved.
  *
@@ -37,8 +47,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <string.h>
-#include <stdint.h>
 
 #ifndef BYTE_ORDER
 #ifdef ARCH_CPU_BIG_ENDIAN
@@ -48,6 +56,8 @@
 #endif /* ARCH_CPU_BIG_ENDIAN */
 #endif /* BYTE_ORDER */
 
+#if RT_USING_LWIP_VER_NUM < 0x20000
+#include <stdint.h>
 typedef uint8_t   u8_t;
 typedef int8_t    s8_t;
 typedef uint16_t  u16_t;
@@ -62,19 +72,7 @@ typedef uintptr_t mem_ptr_t;
 #define U32_F "lu"
 #define S32_F "ld"
 #define X32_F "lx"
-
-#include <sys/errno.h>
-/* some errno not defined in newlib */
-#ifndef ENSRNOTFOUND
-#define ENSRNOTFOUND 163  /* Domain name not found */
-/* WARNING: ESHUTDOWN also not defined in newlib. We chose
-            180 here because the number "108" which is used
-            in arch.h has been assigned to another error code. */
-#endif
-
-/* LWIP_TIMEVAL_PRIVATE: provided by <sys/time.h> */
-#include <sys/time.h>
-#define LWIP_TIMEVAL_PRIVATE       0
+#endif /* RT_USING_LWIP_VER_NUM < 0x20000 */
 
 #if defined(__CC_ARM)   /* ARMCC compiler */
 #define PACK_STRUCT_FIELD(x) x
@@ -107,9 +105,5 @@ typedef uintptr_t mem_ptr_t;
 void sys_arch_assert(const char* file, int line);
 #define LWIP_PLATFORM_DIAG(x)   do {rt_kprintf x;} while(0)
 #define LWIP_PLATFORM_ASSERT(x) do {rt_kprintf(x); sys_arch_assert(__FILE__, __LINE__);}while(0)
-
-#define SYS_ARCH_DECL_PROTECT(level)    register rt_base_t level
-#define SYS_ARCH_PROTECT(level)         do {level = rt_hw_interrupt_disable();} while(0)
-#define SYS_ARCH_UNPROTECT(level)       do {rt_hw_interrupt_enable(level);} while(0)
 
 #endif /* __ARCH_CC_H__ */
