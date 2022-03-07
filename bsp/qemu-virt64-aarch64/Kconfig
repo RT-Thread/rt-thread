@@ -20,14 +20,10 @@ source "$PKGS_DIR/Kconfig"
 
 config SOC_VIRT64_AARCH64
     bool
-    select ARCH_ARM_CORTEX_A53
+    select ARCH_ARMV8
     select ARCH_CPU_64BIT
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select BSP_USING_GIC
-    select RT_USING_GIC
-    select BSP_USING_GIC390
-    select RT_USING_RTC
     default y
 
 source "$BSP_DIR/driver/Kconfig"
