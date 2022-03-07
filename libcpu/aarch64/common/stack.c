@@ -13,10 +13,6 @@
 #include <rtthread.h>
 #include <armv8.h>
 
-#define INITIAL_SPSR_EL3 (PSTATE_EL3 | SP_ELx)
-#define INITIAL_SPSR_EL2 (PSTATE_EL2 | SP_ELx)
-#define INITIAL_SPSR_EL1 (PSTATE_EL1 | SP_ELx)
-
 /**
  * This function will initialize thread stack
  *
@@ -29,10 +25,14 @@
  */
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_addr, void *texit)
 {
-    rt_ubase_t *stk;
-    rt_ubase_t current_el;
-
-    stk      = (rt_ubase_t*)stack_addr;
+    static const rt_ubase_t initial_spsr[] =
+    {
+        [1] = PSTATE_EL1 | SP_ELx,
+        [2] = PSTATE_EL2 | SP_ELx,
+        [3] = PSTATE_EL3 | SP_ELx
+    };
+    /* The AAPCS64 requires 128-bit (16 byte) stack alignment */
+    rt_ubase_t *stk = (rt_ubase_t*)RT_ALIGN_DOWN((rt_ubase_t)stack_addr, 16);
 
     *(--stk) = (rt_ubase_t) 0;              /* Q0 */
     *(--stk) = (rt_ubase_t) 0;              /* Q0 */
@@ -102,21 +102,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
     *(--stk) = ( rt_ubase_t ) 0;            /* XZR - has no effect, used so there are an even number of registers. */
     *(--stk) = ( rt_ubase_t ) texit;        /* X30 - procedure call link register. */
 
-    current_el = rt_hw_get_current_el();
-
-    if(current_el == 3)
-    {
-        *(--stk) = INITIAL_SPSR_EL3;
-    }
-    else if(current_el == 2)
-    {
-        *(--stk) = INITIAL_SPSR_EL2;
-    }
-    else
-    {
-        *(--stk) = INITIAL_SPSR_EL1;
-    }
-
+    *(--stk) = initial_spsr[rt_hw_get_current_el()];
     *(--stk) = ( rt_ubase_t ) tentry;       /* Exception return address. */
 
     /* return task's current stack address */

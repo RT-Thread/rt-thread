@@ -232,7 +232,6 @@
 /* entertainment: terminal games and other interesting software packages */
 
 #define BCM2836_SOC
-#define BSP_SUPPORT_FPU
 
 /* Hardware Drivers Config */
 
