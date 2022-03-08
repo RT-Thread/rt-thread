@@ -437,7 +437,7 @@ static int gd32_uart_putc(struct rt_serial_device *serial, char ch)
     uart = (struct gd32_uart *)serial->parent.user_data;
 
     usart_data_transmit(uart->uart_periph, ch);
-    while((usart_flag_get(uart->uart_periph, USART_FLAG_TC) == RESET));
+    while((usart_flag_get(uart->uart_periph, USART_FLAG_TBE) == RESET));
 
     return RT_EOK;
 }

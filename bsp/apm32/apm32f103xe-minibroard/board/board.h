@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2020-08-20     Abbcc        first version
+ * Date           Author         Notes
+ * 2020-08-20     Abbcc          first version
+ * 2022-03-04     stevetong459   Add head file of new driver
  */
 
 #ifndef __BOARD_H__
@@ -20,6 +21,27 @@
 #include "apm32f10x_rcm.h"
 #include "apm32f10x_eint.h"
 #include "apm32f10x_usart.h"
+
+#if defined(RT_USING_ADC)
+    #include "apm32f10x_adc.h"
+#endif
+#if defined(RT_USING_DAC)
+    #include "apm32f10x_dac.h"
+#endif
+#if defined(RT_USING_RTC)
+    #include "apm32f10x_rtc.h"
+    #include "apm32f10x_pmu.h"
+#endif
+#if defined(RT_USING_SPI)
+    #include "apm32f10x_spi.h"
+#endif
+#if defined(RT_USING_HWTIMER) || defined(RT_USING_PWM)
+    #include "apm32f10x_tmr.h"
+#endif
+#if defined(RT_USING_WDT)
+    #include "apm32f10x_iwdt.h"
+    #include "apm32f10x_wwdt.h"
+#endif
 
 #include "drv_common.h"
 #include "drv_gpio.h"

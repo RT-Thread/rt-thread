@@ -53,6 +53,7 @@
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x40100
 #define ARCH_CPU_64BIT
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 
@@ -220,7 +221,6 @@
 /* entertainment: terminal games and other interesting software packages */
 
 #define SOC_VIRT64_AARCH64
-#define BSP_SUPPORT_FPU
 
 /* AARCH64 qemu virt64 configs */
 

@@ -7,6 +7,10 @@ config SOC_STM32F407ZG
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32F407_ATK_EXPLORER
+    bool
+    default y
+
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
