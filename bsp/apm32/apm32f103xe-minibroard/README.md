@@ -78,15 +78,15 @@ APM32F103ZE MINI BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO
 
 ##### 1、建立J-Flash工程
 
-![board](figures/JFlash_leader_01.png)
+![board](figures/JFlash_Leader_01.png)
 
 ##### 2、连接开发板
 
-![board](figures/JFlash_leader_02.png)
+![board](figures/JFlash_Leader_02.png)
 ##### 3、将bin文件拖至工程，起始地址设为0x8000000
-![board](figures/JFlash_leader_03.png)
+![board](figures/JFlash_Leader_03.png)
 ##### 4、点击下载
-![board](figures/JFlash_leader_04.png)
+![board](figures/JFlash_Leader_04.png)
 
 #### 运行结果
 
