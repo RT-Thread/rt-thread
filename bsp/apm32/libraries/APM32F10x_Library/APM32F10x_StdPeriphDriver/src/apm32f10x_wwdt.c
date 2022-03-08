@@ -3,10 +3,24 @@
  *
  * @brief       This file contains all the functions for the WWDT peripheral
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #include "apm32f10x_wwdt.h"
@@ -125,7 +139,7 @@ void WWDT_Enable(uint8_t counter)
  */
 uint8_t WWDT_ReadFlag(void)
 {
-    return (uint8_t) (WWDT->STS);
+    return (uint8_t)(WWDT->STS);
 }
 
 /*!
@@ -141,5 +155,5 @@ void WWDT_ClearFlag(void)
 }
 
 /**@} end of group WWDT_Fuctions*/
-/**@} end of group WWDT_Driver */
+/**@} end of group WWDT_Driver*/
 /**@} end of group Peripherals_Library*/
