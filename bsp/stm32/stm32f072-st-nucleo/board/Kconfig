@@ -8,6 +8,16 @@ config SOC_STM32F072RB
     default y
 
 menu "Onboard Peripheral Drivers"
+    config BSP_USING_STLINK_TO_USART
+        bool "Enable STLINK TO USART (uart2)"
+        select BSP_USING_UART
+        select BSP_USING_UART2
+        default y
+
+    config BSP_USING_ARDUINO
+        bool "Support Arduino"
+        select RT_USING_ARDUINO
+        default n
 
 endmenu
 
@@ -34,7 +44,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_UART2
                 bool "Enable UART2"
-                default y
+                default n
 
             config BSP_UART2_RX_USING_DMA
                 bool "Enable UART2 RX DMA"
