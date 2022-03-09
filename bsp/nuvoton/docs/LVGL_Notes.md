@@ -9,7 +9,7 @@ Current supported LVGL running environment on Nuvoton's boards shown in below ta
 | nk-980iot | Music | Nu-TFT v1.3 | config_lvgl |
 | numaker-m2354 | Music | Nu-TFT v1.3 | config_lvgl |
 | nk-n9h30 | Music | No | .config |
-| numaker-m032ki | widgets | Nu-TFT v1.3 | config_lvgl |
+| numaker-m032ki | Widgets | Nu-TFT v1.3 | config_lvgl |
 
 ## Download related packages
 
@@ -27,7 +27,7 @@ To execute below commands in env command-line window to download related package
 To program built rt-thread.bin into flash. You can refer steps in README.md in corresponding supported board folder or CN quick-start guide in rt-thread documents site.
 
 ```
-<path-to-rt-thread>bsp/nuvoton/<board-name>/README.md
+<path-to-rt-thread>/bsp/nuvoton/<board-name>/README.md
 ```
 
    or
