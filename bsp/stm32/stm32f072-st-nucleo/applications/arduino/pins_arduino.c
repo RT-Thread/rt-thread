@@ -35,12 +35,12 @@ const pin_map_t pin_map_table[]=
     {13, GET_PIN(A,5)}, /* D13 */
     {14, GET_PIN(B,9)}, /* D14 */
     {15, GET_PIN(B,8)}, /* D15 */
-    {16, GET_PIN(A,0)}, /* A0 */
-    {17, GET_PIN(A,1)}, /* A1 */
-    {18, GET_PIN(A,4)}, /* A2 */
-    {19, GET_PIN(B,0)}, /* A3 */
-    {20, GET_PIN(C,1)}, /* A4 */
-    {21, GET_PIN(C,0)}  /* A5 */
+    {16, GET_PIN(A,0), "adc1", 0}, /* A0 */
+    {17, GET_PIN(A,1), "adc1", 1}, /* A1 */
+    {18, GET_PIN(A,4), "adc1", 4}, /* A2 */
+    {19, GET_PIN(B,0), "adc1", 8}, /* A3 */
+    {20, GET_PIN(C,1), "adc1", 11}, /* A4 */
+    {21, GET_PIN(C,0), "adc1", 10}  /* A5 */
 };
 
 /* initialization for BSP; maybe a blank function  */

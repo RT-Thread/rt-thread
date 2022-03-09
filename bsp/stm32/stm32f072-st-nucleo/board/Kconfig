@@ -17,6 +17,8 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_ARDUINO
         bool "Support Arduino"
         select RT_USING_ARDUINO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
         default n
 
 endmenu
@@ -51,6 +53,17 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
         endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
     source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
