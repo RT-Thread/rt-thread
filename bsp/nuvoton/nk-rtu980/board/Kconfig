@@ -39,7 +39,7 @@ menu "Hardware Drivers Config"
         config BOARD_USING_IP101GR
             bool "Enable ethernet phy supporting(over emac/mdio)"
             select BSP_USING_EMAC
-            select BSP_USING_EMAC1
+            select BSP_USING_EMAC0
             default n
 
     endmenu
