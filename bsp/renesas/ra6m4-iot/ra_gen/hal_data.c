@@ -30,7 +30,7 @@ sci_uart_instance_ctrl_t     g_uart6_ctrl;
                 .data_bits           = UART_DATA_BITS_8,
                 .parity              = UART_PARITY_OFF,
                 .stop_bits           = UART_STOP_BITS_1,
-                .p_callback          = uart6_isr_cb,
+                .p_callback          = user_uart6_callback,
                 .p_context           = NULL,
                 .p_extend            = &g_uart6_cfg_extend,
 #define RA_NOT_DEFINED (1)
