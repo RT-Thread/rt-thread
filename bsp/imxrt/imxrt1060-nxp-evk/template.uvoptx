@@ -113,7 +113,7 @@
         <tDllPa></tDllPa>
         <tDlgDll></tDlgDll>
         <tDlgPa></tDlgPa>
-        <tIfile>..\libraries\MIMXRT1060\MIMXRT1060\arm\evkbmimxrt1060_flexspi_nor.ini</tIfile>
+        <tIfile>..\libraries\MIMXRT1060\MIMXRT1060\arm\evkbmimxrt1060_flexspi_nor_sdram.ini</tIfile>
         <pMon>BIN\CMSIS_AGDI.dll</pMon>
       </DebugOpt>
       <TargetDriverDllRegistry>

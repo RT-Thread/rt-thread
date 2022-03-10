@@ -12,7 +12,7 @@ if GetDepend('BSP_USING_4MFLASH'):
         LINKFLAGS += '--keep=*(.boot_hdr.boot_data)'
         LINKFLAGS += '--keep=*(.boot_hdr.dcd_data)'
         LINKFLAGS += '--keep=*(.boot_hdr.conf)'
-        LINKFLAGS += '--entry=Reset_Handler'
+        LINKFLAGS += '--entry=Reset_Handler '
         LINKFLAGS += '--predefine="-DXIP_BOOT_HEADER_ENABLE=1"'
     else:
         LINKFLAGS = ''

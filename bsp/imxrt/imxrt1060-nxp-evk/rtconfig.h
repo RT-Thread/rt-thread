@@ -20,8 +20,6 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -139,6 +137,10 @@
 
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
+#define PKG_USING_LVGL
+#define PKG_USING_LVGL_V820
+#define PKG_LVGL_VER_NUM 0x08020
+#define PKG_USING_LV_MUSIC_DEMO
 
 /* u8g2: a monochrome graphic library */
 
@@ -192,9 +194,23 @@
 #define BSP_USING_GPIO
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
+#define BSP_USING_PXP
+#define BSP_USING_CACHE
+#define BSP_USING_LCD
+#define LCD_WIDTH 480
+#define LCD_HEIGHT 272
+#define LCD_HFP 4
+#define LCD_VFP 4
+#define LCD_HBP 8
+#define LCD_VBP 2
+#define LCD_HSW 41
+#define LCD_VSW 10
+#define LCD_BL_PIN 63
+#define LCD_RST_PIN 2
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_LVGL
 
 /* Board extended module Drivers */
 

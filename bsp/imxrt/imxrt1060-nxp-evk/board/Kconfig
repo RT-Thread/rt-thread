@@ -55,6 +55,14 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    config BSP_USING_PXP
+        bool "Enable PXP"
+        default n
+
+    config BSP_USING_CACHE
+        bool "Enable CACHE"
+        default n
+
     menuconfig BSP_USING_LCD
         bool "Enable LCD"
         default n
@@ -99,6 +107,14 @@ menu "Onboard Peripheral Drivers"
     
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
+        default n
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select PKG_USING_LVGL
+        select PKG_USING_LV_MUSIC_DEMO
+        select BSP_USING_PXP
+        select BSP_USING_CACHE
         default n
 
 endmenu

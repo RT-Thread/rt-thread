@@ -31,54 +31,153 @@
 #define NVIC_PRIORITYGROUP_4         0x00000003U /*!< 4 bits for pre-emption priority
                                                       0 bits for subpriority */
 
-/* MPU configuration. */
-static void BOARD_ConfigMPU(void)
+void BOARD_ConfigMPU(void)
 {
+#if defined(__CC_ARM) || defined(__ARMCC_VERSION)
+    extern uint32_t Image$$RW_m_ncache$$Base[];
+    /* RW_m_ncache_unused is a auxiliary region which is used to get the whole size of noncache section */
+    extern uint32_t Image$$RW_m_ncache_unused$$Base[];
+    extern uint32_t Image$$RW_m_ncache_unused$$ZI$$Limit[];
+    uint32_t nonCacheStart = (uint32_t)Image$$RW_m_ncache$$Base;
+    uint32_t size          = ((uint32_t)Image$$RW_m_ncache_unused$$Base == nonCacheStart) ?
+                        0 :
+                        ((uint32_t)Image$$RW_m_ncache_unused$$ZI$$Limit - nonCacheStart);
+#elif defined(__MCUXPRESSO)
+    extern uint32_t __base_NCACHE_REGION;
+    extern uint32_t __top_NCACHE_REGION;
+    uint32_t nonCacheStart = (uint32_t)(&__base_NCACHE_REGION);
+    uint32_t size          = (uint32_t)(&__top_NCACHE_REGION) - nonCacheStart;
+#elif defined(__ICCARM__) || defined(__GNUC__)
+    extern uint32_t __NCACHE_REGION_START[];
+    extern uint32_t __NCACHE_REGION_SIZE[];
+    uint32_t nonCacheStart = (uint32_t)__NCACHE_REGION_START;
+    uint32_t size          = (uint32_t)__NCACHE_REGION_SIZE;
+#endif
+    volatile uint32_t i = 0;
+
     /* Disable I cache and D cache */
-    SCB_DisableICache();
-    SCB_DisableDCache();
+    if (SCB_CCR_IC_Msk == (SCB_CCR_IC_Msk & SCB->CCR))
+    {
+        SCB_DisableICache();
+    }
+    if (SCB_CCR_DC_Msk == (SCB_CCR_DC_Msk & SCB->CCR))
+    {
+        SCB_DisableDCache();
+    }
 
     /* Disable MPU */
     ARM_MPU_Disable();
 
-    /* Region 0 setting */
-    MPU->RBAR = ARM_MPU_RBAR(0, 0xC0000000U);
+    /* MPU configure:
+     * Use ARM_MPU_RASR(DisableExec, AccessPermission, TypeExtField, IsShareable, IsCacheable, IsBufferable,
+     * SubRegionDisable, Size)
+     * API in mpu_armv7.h.
+     * param DisableExec       Instruction access (XN) disable bit,0=instruction fetches enabled, 1=instruction fetches
+     * disabled.
+     * param AccessPermission  Data access permissions, allows you to configure read/write access for User and
+     * Privileged mode.
+     *      Use MACROS defined in mpu_armv7.h:
+     * ARM_MPU_AP_NONE/ARM_MPU_AP_PRIV/ARM_MPU_AP_URO/ARM_MPU_AP_FULL/ARM_MPU_AP_PRO/ARM_MPU_AP_RO
+     * Combine TypeExtField/IsShareable/IsCacheable/IsBufferable to configure MPU memory access attributes.
+     *  TypeExtField  IsShareable  IsCacheable  IsBufferable   Memory Attribtue    Shareability        Cache
+     *     0             x           0           0             Strongly Ordered    shareable
+     *     0             x           0           1              Device             shareable
+     *     0             0           1           0              Normal             not shareable   Outer and inner write
+     * through no write allocate
+     *     0             0           1           1              Normal             not shareable   Outer and inner write
+     * back no write allocate
+     *     0             1           1           0              Normal             shareable       Outer and inner write
+     * through no write allocate
+     *     0             1           1           1              Normal             shareable       Outer and inner write
+     * back no write allocate
+     *     1             0           0           0              Normal             not shareable   outer and inner
+     * noncache
+     *     1             1           0           0              Normal             shareable       outer and inner
+     * noncache
+     *     1             0           1           1              Normal             not shareable   outer and inner write
+     * back write/read acllocate
+     *     1             1           1           1              Normal             shareable       outer and inner write
+     * back write/read acllocate
+     *     2             x           0           0              Device              not shareable
+     *  Above are normal use settings, if your want to see more details or want to config different inner/outter cache
+     * policy.
+     *  please refer to Table 4-55 /4-56 in arm cortex-M7 generic user guide <dui0646b_cortex_m7_dgug.pdf>
+     * param SubRegionDisable  Sub-region disable field. 0=sub-region is enabled, 1=sub-region is disabled.
+     * param Size              Region size of the region to be configured. use ARM_MPU_REGION_SIZE_xxx MACRO in
+     * mpu_armv7.h.
+     */
+
+    /*
+     * Add default region to deny access to whole address space to workaround speculative prefetch.
+     * Refer to Arm errata 1013783-B for more details.
+     *
+     */
+    /* Region 0 setting: Instruction access disabled, No data access permission. */
+    MPU->RBAR = ARM_MPU_RBAR(0, 0x00000000U);
+    MPU->RASR = ARM_MPU_RASR(1, ARM_MPU_AP_NONE, 0, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_4GB);
+
+    /* Region 1 setting: Memory with Device type, not shareable, non-cacheable. */
+    MPU->RBAR = ARM_MPU_RBAR(1, 0x80000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_512MB);
 
-    /* Region 1 setting */
-    MPU->RBAR = ARM_MPU_RBAR(1, 0x80000000U);
-    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_1GB);
-
-    /* Region 2 setting */
-    // spi flash: normal type, cacheable, no bufferable, no shareable
+    /* Region 2 setting: Memory with Device type, not shareable,  non-cacheable. */
     MPU->RBAR = ARM_MPU_RBAR(2, 0x60000000U);
-    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 0, 0, ARM_MPU_REGION_SIZE_512MB);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_512MB);
 
-    /* Region 3 setting */
-    MPU->RBAR = ARM_MPU_RBAR(3, 0x00000000U);
+#if defined(XIP_EXTERNAL_FLASH) && (XIP_EXTERNAL_FLASH == 1)
+    /* Region 3 setting: Memory with Normal type, not shareable, outer/inner write back. */
+    MPU->RBAR = ARM_MPU_RBAR(3, 0x60000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_RO, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_8MB);
+#endif
+
+    /* Region 4 setting: Memory with Device type, not shareable, non-cacheable. */
+    MPU->RBAR = ARM_MPU_RBAR(4, 0x00000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_1GB);
 
-    /* Region 4 setting */
-    MPU->RBAR = ARM_MPU_RBAR(4, 0x00000000U);
+    /* Region 5 setting: Memory with Normal type, not shareable, outer/inner write back */
+    MPU->RBAR = ARM_MPU_RBAR(5, 0x00000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_128KB);
 
-    /* Region 5 setting */
-    MPU->RBAR = ARM_MPU_RBAR(5, 0x20000000U);
+    /* Region 6 setting: Memory with Normal type, not shareable, outer/inner write back */
+    MPU->RBAR = ARM_MPU_RBAR(6, 0x20000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_128KB);
 
-    /* Region 6 setting */
-    MPU->RBAR = ARM_MPU_RBAR(6, 0x20200000U);
+    /* Region 7 setting: Memory with Normal type, not shareable, outer/inner write back */
+    MPU->RBAR = ARM_MPU_RBAR(7, 0x20200000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_512KB);
+
+    /* Region 8 setting: Memory with Normal type, not shareable, outer/inner write back */
+    MPU->RBAR = ARM_MPU_RBAR(8, 0x20280000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_256KB);
 
-#if defined(BSP_USING_SDRAM)
-    /* Region 7 setting */
-    MPU->RBAR = ARM_MPU_RBAR(7, 0x80000000U);
+    /* Region 9 setting: Memory with Normal type, not shareable, outer/inner write back */
+    MPU->RBAR = ARM_MPU_RBAR(9, 0x80000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_32MB);
 
-    /* Region 8 setting */
-    MPU->RBAR = ARM_MPU_RBAR(8, 0x81E00000U);
-    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 1, 1, 0, 0, 0, ARM_MPU_REGION_SIZE_2MB);
-#endif
+    while ((size >> i) > 0x1U)
+    {
+        i++;
+    }
+
+    if (i != 0)
+    {
+        /* The MPU region size should be 2^N, 5<=N<=32, region base should be multiples of size. */
+        assert(!(nonCacheStart % size));
+        assert(size == (uint32_t)(1 << i));
+        assert(i >= 5);
+
+        /* Region 10 setting: Memory with Normal type, not shareable, non-cacheable */
+        MPU->RBAR = ARM_MPU_RBAR(10, nonCacheStart);
+        MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 1, 0, 0, 0, 0, i - 1);
+    }
+
+    /* Region 10 setting: Memory with Device type, not shareable, non-cacheable */
+    MPU->RBAR = ARM_MPU_RBAR(11, 0x40000000);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_4MB);
+
+    /* Region 12 setting: Memory with Device type, not shareable, non-cacheable */
+    MPU->RBAR = ARM_MPU_RBAR(12, 0x42000000);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_1MB);
 
     /* Enable MPU */
     ARM_MPU_Enable(MPU_CTRL_PRIVDEFENA_Msk);
@@ -87,7 +186,6 @@ static void BOARD_ConfigMPU(void)
     SCB_EnableDCache();
     SCB_EnableICache();
 }
-
 
 /* This is the timer interrupt service routine. */
 void SysTick_Handler(void)
@@ -857,17 +955,76 @@ void imxrt_phy_pins_init( void )
 }
 #endif /* BSP_USING_PHY */
 
-rt_uint8_t heap_buf[1024 * 16];
+/*
+ * When PXP fetch images from FlexSPI flash, the default FlexSPI RX buffer
+ * configuration does not meet the PXP bandwidth requirement. Reconfigure
+ * here.
+ */
+void BOARD_ReconfigFlexSpiRxBuffer(void)
+{
+    uint32_t ahbcr;
+
+    /* Disable I cache and D cache */
+    if (SCB_CCR_IC_Msk == (SCB_CCR_IC_Msk & SCB->CCR))
+    {
+        SCB_DisableICache();
+    }
+
+    if (SCB_CCR_DC_Msk == (SCB_CCR_DC_Msk & SCB->CCR))
+    {
+        SCB_DisableDCache();
+    }
+
+    ahbcr = FLEXSPI->AHBCR;
+
+    /* Temporarily disable prefetching while changing the buffer settings */
+    FLEXSPI->AHBCR = ahbcr & ~(FLEXSPI_AHBCR_CACHABLEEN_MASK | FLEXSPI_AHBCR_PREFETCHEN_MASK);
+
+    /* Wait for FlexSPI idle to make sure no flash data transfer. */
+    while ((FLEXSPI->STS0 & FLEXSPI_STS0_ARBIDLE_MASK) == 0U)
+    {
+    }
+
+    /* Allocate half of the prefetch buffer to the core */
+    FLEXSPI->AHBRXBUFCR0[0] =
+        FLEXSPI_AHBRXBUFCR0_PREFETCHEN_MASK | FLEXSPI_AHBRXBUFCR0_MSTRID(0) | FLEXSPI_AHBRXBUFCR0_BUFSZ(0x40);
+
+    /* Disable dedicate prefetch buffer for DMA. */
+    FLEXSPI->AHBRXBUFCR0[1] =
+        FLEXSPI_AHBRXBUFCR0_PREFETCHEN_MASK | FLEXSPI_AHBRXBUFCR0_MSTRID(1) | FLEXSPI_AHBRXBUFCR0_BUFSZ(0x00);
+
+    /* Disable dedicate prefetch buffer for DCP. */
+    FLEXSPI->AHBRXBUFCR0[2] =
+        FLEXSPI_AHBRXBUFCR0_PREFETCHEN_MASK | FLEXSPI_AHBRXBUFCR0_MSTRID(2) | FLEXSPI_AHBRXBUFCR0_BUFSZ(0x00);
+
+    /* Other half of the buffer for other masters incl. PXP */
+    FLEXSPI->AHBRXBUFCR0[3] =
+        FLEXSPI_AHBRXBUFCR0_PREFETCHEN_MASK | FLEXSPI_AHBRXBUFCR0_MSTRID(3) | FLEXSPI_AHBRXBUFCR0_BUFSZ(0x40);
+
+    FLEXSPI->AHBCR = ahbcr; /* Set AHBCR back to the original value */
+
+    /* Enable I cache and D cache */
+    SCB_EnableDCache();
+    SCB_EnableICache();
+}
+
 
 /**
  * This function will initial rt1050 board.
  */
 void rt_hw_board_init()
 {
+    /* Init board hardware. */
+    /* Set the eLCDIF read_qos priority high, to make sure eLCDIF
+     * can fetch data in time when PXP is used.
+     */
+    *((volatile uint32_t *)0x41044100) = 5;
+	
     BOARD_ConfigMPU();
+	BOARD_ReconfigFlexSpiRxBuffer();
     BOARD_InitPins();
+	BOARD_InitSemcPins();
     BOARD_BootClockRUN();
-
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 

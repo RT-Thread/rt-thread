@@ -47,14 +47,14 @@
 #define m_qacode_start                 0x00000000
 #define m_qacode_size                  0x00020000
 
-#define m_interrupts_ram_start         0x20000000
+#define m_interrupts_ram_start         0x80000000
 #define m_interrupts_ram_size          __ram_vector_table_size__
 
 #define m_data_start                   (m_interrupts_ram_start + m_interrupts_ram_size)
-#define m_data_size                    (0x00020000 - m_interrupts_ram_size)
+#define m_data_size                    (0x01E00000 - m_interrupts_ram_size)
 
 #define m_data2_start                  0x20200000
-#define m_data2_size                   0x000C0000
+#define m_data2_size                   0x00020000
 
 /* Sizes */
 #if (defined(__stack_size__))
