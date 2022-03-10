@@ -19,6 +19,7 @@
 
 #define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
 
+/* pins alias */
 #define D0   (0)
 #define D1   (1)
 #define D2   (2)
@@ -33,11 +34,13 @@
 #define D11  (11)
 #define D12  (12)
 #define D13  (13)
-#define A0   (14)
-#define A1   (15)
-#define A2   (16)
-#define A3   (17)
-#define A4   (18)
-#define A5   (19)
+#define D14  (14)
+#define D15  (15)
+#define A0   (16)
+#define A1   (17)
+#define A2   (18)
+#define A3   (19)
+#define A4   (20)
+#define A5   (21)
 
 #endif /* Pins_Arduino_h */
