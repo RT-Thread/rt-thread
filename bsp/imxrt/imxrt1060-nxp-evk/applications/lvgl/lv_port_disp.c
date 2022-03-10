@@ -47,7 +47,6 @@ static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
  * Variables
  ******************************************************************************/
 static volatile bool s_framePending;
-static volatile bool s_frameDone = false;
 
 static lv_disp_drv_t disp_drv; /*Descriptor of a display driver*/
 
@@ -143,10 +142,10 @@ static void DEMO_InitLcd(void)
     /* Clear frame buffer. */
     rt_memset((void *)s_frameBuffer, 0, sizeof(s_frameBuffer));
 
-    s_frameSema = rt_sem_create("dsem", 1, RT_IPC_FLAG_FIFO);
-    if (NULL == s_frameSema)
+    s_frameSema = rt_sem_create("lvgl_sem", 1, RT_IPC_FLAG_PRIO);
+    if (RT_NULL == s_frameSema)
     {
-        rt_kprintf("Frame semaphore create failed\r\n");
+        rt_kprintf("lvgl semaphore create failed\r\n");
         RT_ASSERT(0);
     }
 

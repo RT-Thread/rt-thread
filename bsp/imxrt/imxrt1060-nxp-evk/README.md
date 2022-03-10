@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为 MIMXRT1064-EVK 开发板的 BSP (板级支持包) 说明。
+本文档为 MIMXRT1060-EVK 开发板的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -16,11 +16,11 @@
 
 开发板外观如下图所示：
 
-![board](figures/MIMXRT1064EVK-TOP.jpg)
+![board](figures/MIMXRT1060EVKB.jpg)
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：MIMXRT1064DVL6A，主频 600MHz，4096KB FLASH ，1024KB RAM
+- MCU：MIMXRT1062DVL6A，主频 600MHz，4096KB FLASH ，1024KB RAM
 - 外部 RAM：型号IS42S16160J-6BLI，32MB
 - 外部 FLASH：型号S26KS512SDPBHI02，64MB
 - 常用外设
@@ -29,7 +29,7 @@
 - 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口等
 - 调试接口，标准 JTAG/SWD
 
-开发板更多详细信息请参考【NXP】 [MIMXRT1064-EVK开发板介绍](https://www.nxp.com/support/developer-resources/evaluation-and-development-boards/i.mx-evaluation-and-development-boards/mimxrt1064-evk-i.mx-rt1064-evaluation-kit:MIMXRT1064-EVK)。
+开发板更多详细信息请参考【NXP】 [MIMXRT1064-EVK开发板介绍](https://www.nxp.com.cn/design/development-boards/i-mx-evaluation-and-development-boards/i-mx-rt1060-evaluation-kit:MIMXRT1060-EVK)。
 
 ## 外设支持
 
@@ -40,21 +40,19 @@
 | USB 转串口        |     支持     |                                       |
 | SPI Flash         |     支持     |                                       |
 | 以太网            |      支持    |                                       |
-| SD卡              |   暂不支持   |                                       |
-| CAN               |   暂不支持   |                                       |
-| **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
-| UART              |     支持     | UART1                                 |
-| SPI               |   暂不支持     | 即将支持                              |
-| I2C               |   暂不支持   | 即将支持                               |
-| SDIO              |   暂不支持   | 即将支持                              |
-| RTC               |   暂不支持   | 即将支持                              |
-| PWM               |   暂不支持   | 即将支持                              |
-| USB Device        |   暂不支持   | 即将支持                              |
-| USB Host          |   暂不支持   | 即将支持                              |
-| IWG               |   暂不支持   | 即将支持                              |
-| **扩展模块**      | **支持情况** | **备注**                              |
-|     xxx 模块      |   支持   |                                      |
+| **片上外设** | **支持情况** | **备注**                              |
+| GPIO         |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
+| UART         |     支持     | UART1                                 |
+| SPI          |   暂不支持   | 即将支持                              |
+| I2C          |   暂不支持   | 即将支持                              |
+| SDIO         |   暂不支持   | 即将支持                              |
+| RTC          |   暂不支持   | 即将支持                              |
+| PWM          |   暂不支持   | 即将支持                              |
+| USB Device   |   暂不支持   | 即将支持                              |
+| USB Host     |   暂不支持   | 即将支持                              |
+| IWG          |   暂不支持   | 即将支持                              |
+| **扩展模块** | **支持情况** | **备注**                              |
+| LVGL         |     支持     |                                       |
 
 ## 使用说明
 
@@ -92,8 +90,8 @@
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.2 build Jul  5 2019
- 2006 - 2019 Copyright by rt-thread team
+ / | \     4.1.0 build Mar 10 2022 18:07:41
+ 2006 - 2022 Copyright by RT-Thread team
 msh >
 ```
 ### 进阶使用
@@ -109,10 +107,3 @@ msh >
 4. 输入`scons --target=mdk/iar` 命令重新生成工程。
 
 本章节更多详细的介绍请参考 [IMXRT 系列 BSP 外设驱动使用教程](../docs/IMXRT系列BSP外设驱动使用教程.md)。
-
-
-## 联系人信息
-
-维护人:
-
--  [王强](https://github.com/xfwangqiang, https://gitee.com/xfwangqiang), 邮箱：<164877907@qq.com>
