@@ -15,9 +15,9 @@
 #include <drv_log.h>
 
 #if LV_USE_NXP_SOC
-#include "fsl_gpio.h"
-#include "fsl_elcdif.h"
-#include "fsl_cache.h"
+    #include "fsl_gpio.h"
+    #include "fsl_elcdif.h"
+    #include "fsl_cache.h"
 #endif
 
 /*A static or global variable to store the buffers*/
@@ -26,6 +26,9 @@ static lv_disp_draw_buf_t disp_buf;
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
 /* Macros for panel. */
+#define LCD_WIDTH             480
+#define LCD_HEIGHT            272
+#define LCD_FB_BYTE_PER_PIXEL 2
 #define LCD_HSW 41
 #define LCD_HFP 4
 #define LCD_HBP 8
@@ -41,7 +44,7 @@ static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 #define LCD_BL_GPIO_PIN 31
 
 #define DEMO_FB_ALIGN LV_ATTRIBUTE_MEM_ALIGN_SIZE
-#define DISP_BUF_SIZE (((LCD_WIDTH * LCD_HEIGHT * 2) + DEMO_FB_ALIGN - 1) & ~(DEMO_FB_ALIGN - 1))
+#define DISP_BUF_SIZE (((LCD_WIDTH * LCD_HEIGHT * LCD_FB_BYTE_PER_PIXEL) + DEMO_FB_ALIGN - 1) & ~(DEMO_FB_ALIGN - 1))
 
 /*******************************************************************************
  * Variables
@@ -56,8 +59,8 @@ static rt_sem_t s_frameSema = RT_NULL;
 
 static void lcd_fb_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
-	rt_sem_take(s_frameSema, RT_WAITING_FOREVER);
-	
+    rt_sem_take(s_frameSema, RT_WAITING_FOREVER);
+
     DCACHE_CleanInvalidateByRange((uint32_t)color_p, DISP_BUF_SIZE);
 
     ELCDIF_SetNextBufferAddr(LCDIF, (uint32_t)color_p);
@@ -77,7 +80,8 @@ static void DEMO_InitLcdClock(void)
      * Initialize the Video PLL.
      * Video PLL output clock is OSC24M * (loopDivider + (denominator / numerator)) / postDivider = 93MHz.
      */
-    clock_video_pll_config_t config = {
+    clock_video_pll_config_t config =
+    {
         .loopDivider = 31,
         .postDivider = 8,
         .numerator   = 0,
@@ -103,7 +107,8 @@ static void DEMO_InitLcdClock(void)
 
 static void DEMO_InitLcdBackLight(void)
 {
-    const gpio_pin_config_t config = {
+    const gpio_pin_config_t config =
+    {
         kGPIO_DigitalOutput,
         1,
         kGPIO_NoIntmode,
@@ -123,7 +128,8 @@ static void DEMO_CleanInvalidateCache(lv_disp_drv_t *disp_drv)
 static void DEMO_InitLcd(void)
 {
     /* Initialize the display. */
-    const elcdif_rgb_mode_config_t config = {
+    const elcdif_rgb_mode_config_t config =
+    {
         .panelWidth    = LCD_WIDTH,
         .panelHeight   = LCD_HEIGHT,
         .hsw           = LCD_HSW,
@@ -143,6 +149,7 @@ static void DEMO_InitLcd(void)
     rt_memset((void *)s_frameBuffer, 0, sizeof(s_frameBuffer));
 
     s_frameSema = rt_sem_create("lvgl_sem", 1, RT_IPC_FLAG_PRIO);
+
     if (RT_NULL == s_frameSema)
     {
         rt_kprintf("lvgl semaphore create failed\r\n");
@@ -151,7 +158,7 @@ static void DEMO_InitLcd(void)
 
     /* No frame pending. */
     s_framePending = false;
-	
+
     NVIC_SetPriority(LCDIF_IRQn, 3);
 
     DEMO_InitLcdClock();
@@ -159,9 +166,9 @@ static void DEMO_InitLcd(void)
     ELCDIF_RgbModeInit(LCDIF, &config);
 
     ELCDIF_EnableInterrupts(LCDIF, kELCDIF_CurFrameDoneInterruptEnable);
-	
+
     NVIC_EnableIRQ(LCDIF_IRQn);
-	
+
     ELCDIF_RgbModeStart(LCDIF);
 
     DEMO_InitLcdBackLight();
@@ -169,8 +176,8 @@ static void DEMO_InitLcd(void)
 
 void LCDIF_IRQHandler(void)
 {
-	rt_interrupt_enter();
-	
+    rt_interrupt_enter();
+
     uint32_t intStatus = ELCDIF_GetInterruptStatus(LCDIF);
 
     ELCDIF_ClearInterruptStatus(LCDIF, intStatus);
@@ -189,8 +196,8 @@ void LCDIF_IRQHandler(void)
         }
     }
 
-	rt_interrupt_leave();
-	
+    rt_interrupt_leave();
+
     SDK_ISR_EXIT_BARRIER;
 }
 
@@ -220,9 +227,9 @@ void lv_port_disp_init(void)
     /*Used to copy the buffer's content to the display*/
     disp_drv.flush_cb = lcd_fb_flush;
 
-#if LV_USE_GPU_NXP_PXP
+    #if LV_USE_GPU_NXP_PXP
     disp_drv.clean_dcache_cb = DEMO_CleanInvalidateCache;
-#endif
+    #endif
 
     /*Set a display buffer*/
     disp_drv.draw_buf = &disp_buf;

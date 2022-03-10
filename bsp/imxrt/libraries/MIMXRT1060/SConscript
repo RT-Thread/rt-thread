@@ -53,6 +53,12 @@ if GetDepend(['BSP_USING_SDRAM']):
 if GetDepend(['BSP_USING_LCD']):
     src += ['MIMXRT1060/drivers/fsl_elcdif.c']
 
+if GetDepend(['BSP_USING_CACHE']):
+    src += ['MIMXRT1060/drivers/fsl_cache.c']
+
+if GetDepend(['BSP_USING_PXP']):
+    src += ['MIMXRT1060/drivers/fsl_pxp.c']
+
 if GetDepend(['BSP_USING_CAN']):
     src += ['MIMXRT1060/drivers/fsl_flexcan.c']
 

@@ -26,7 +26,7 @@ void lv_port_indev_input(rt_int16_t x, rt_int16_t y, lv_indev_state_t state)
 {
     last_state = state;
     last_x = x;
-    last_y = LCD_HEIGHT - y;
+    last_y = LV_HOR_RES_MAX - y;
 }
 
 lv_indev_t * button_indev;

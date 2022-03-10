@@ -29,7 +29,7 @@
 - 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口等
 - 调试接口，标准 JTAG/SWD
 
-开发板更多详细信息请参考【NXP】 [MIMXRT1064-EVK开发板介绍](https://www.nxp.com.cn/design/development-boards/i-mx-evaluation-and-development-boards/i-mx-rt1060-evaluation-kit:MIMXRT1060-EVK)。
+开发板更多详细信息请参考【NXP】 [MIMXRT1060-EVK开发板介绍](https://www.nxp.com.cn/design/development-boards/i-mx-evaluation-and-development-boards/i-mx-rt1060-evaluation-kit:MIMXRT1060-EVK)。
 
 ## 外设支持
 
