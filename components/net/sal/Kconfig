@@ -2,6 +2,7 @@ menuconfig RT_USING_SAL
     bool "Enable socket abstraction layer (SAL)"
     select RT_USING_NETDEV
     select RT_USING_SYSTEM_WORKQUEUE
+    select SAL_USING_POSIX if DFS_USING_POSIX
     default n
 
 if RT_USING_SAL
