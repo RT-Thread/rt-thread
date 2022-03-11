@@ -124,7 +124,7 @@ static void *nu_emac_memcpy(void *dest, void *src, unsigned int count)
     if (count >= NU_EMAC_PDMA_MEMCOPY_THRESHOLD)
         return nu_pdma_memcpy(dest, src, count);
 #endif
-    return memcpy(dest, src, count);
+    return rt_memcpy(dest, src, count);
 }
 
 static void nu_emac_reinit(void)
