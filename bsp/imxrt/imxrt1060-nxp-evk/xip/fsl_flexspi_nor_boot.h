@@ -75,8 +75,8 @@ extern uint32_t __Vectors[];
 extern uint32_t __VECTOR_TABLE[];
 #define IMAGE_ENTRY_ADDRESS ((uint32_t)__VECTOR_TABLE)
 #elif defined(__GNUC__)
-extern uint32_t __VECTOR_TABLE[];
-#define IMAGE_ENTRY_ADDRESS ((uint32_t)__VECTOR_TABLE)
+extern uint32_t __isr_vector[];
+#define IMAGE_ENTRY_ADDRESS ((uint32_t)__isr_vector)
 #endif
 
 #if defined(XIP_BOOT_HEADER_DCD_ENABLE) && (1 == XIP_BOOT_HEADER_DCD_ENABLE)
