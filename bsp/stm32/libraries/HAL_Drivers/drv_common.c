@@ -88,13 +88,15 @@ void HAL_ResumeTick(void)
 
 void HAL_Delay(__IO uint32_t Delay)
 {
+    rt_uint32_t count;
+
     if (rt_thread_self())
     {
         rt_thread_mdelay(Delay);
     }
     else
     {
-        for (rt_uint32_t count = 0; count < Delay; count++)
+        for (count = 0; count < Delay; count++)
         {
             rt_hw_us_delay(1000);
         }

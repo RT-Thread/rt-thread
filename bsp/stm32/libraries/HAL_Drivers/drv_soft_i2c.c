@@ -195,10 +195,12 @@ static rt_err_t stm32_i2c_bus_unlock(const struct stm32_soft_i2c_config *cfg)
 /* I2C initialization function */
 int rt_hw_i2c_init(void)
 {
+    rt_uint8_t i;
+
     rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct stm32_i2c);
     rt_err_t result;
 
-    for (int i = 0; i < obj_num; i++)
+    for (i = 0; i < obj_num; i++)
     {
         i2c_obj[i].ops = stm32_bit_ops_default;
         i2c_obj[i].ops.data = (void*)&soft_i2c_config[i];
