@@ -10,6 +10,6 @@ LOCAL_CCFLAGS = ''
 if GetDepend(['FAL_USING_SFUD_PORT']):
     src += Glob('samples/porting/fal_flash_sfud_port.c')
 
-group = DefineGroup('Fal', src, depend = ['PKG_USING_FAL'], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
+group = DefineGroup('Fal', src, depend = ['RT_USING_FAL'], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
 
 Return('group')
