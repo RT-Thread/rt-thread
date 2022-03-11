@@ -1,109 +1,97 @@
-# BSP README 模板
+# NXP MIMXRT1060-EVK BSP Introduction
 
-## 简介
+[中文页](README_zh.md) |
 
-本文档为 MIMXRT1060-EVK 开发板的 BSP (板级支持包) 说明。
+This document records the instruction of the BSP (board support package) that provided by the RT-Thread development team for the MIMXRT1060-EVK development board.
 
-主要内容如下：
+The document is covered in three parts:
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+- Resources Introduction
+- Quickly Get Started
+- Advanced Features
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+By reading the ***Quickly Get Started*** section developers can quickly get their hands on this BSP and run RT-Thread on the board. More advanced features will be introduced in the Advanced Features section to help developers take advantage of RT-Thread to drive more on-board resources.
 
-## 开发板介绍
+## Resources Introduction
 
-开发板外观如下图所示：
+[![board](https://github.com/RT-Thread/rt-thread/raw/master/bsp/imxrt/imxrt1060-nxp-evk/figures/MIMXRT1060EVKB.jpg)](https://github.com/RT-Thread/rt-thread/blob/master/bsp/imxrt/imxrt1060-nxp-evk/figures/MIMXRT1060EVKB.jpg)
 
-![board](figures/MIMXRT1060EVKB.jpg)
+Features:
 
-该开发板常用 **板载资源** 如下：
+- MCU: MIMXRT1062DVL6A, 600MHz, 4096KB FLASH, 1024KB RAM
+- External RAM: IS42S16160J-6BLI, 32MB
+- External FLASH: S26KS512SDPBHI02, 64MB
+- Common-used Peripherals:
+  - LED: One, D18(Green)
+  - Button: One
+- Common-used Interfaces: USB 、SD Card、Ethernet、LCD, etc
+- Debugging interface, standard JTAG/SWD
 
-- MCU：MIMXRT1062DVL6A，主频 600MHz，4096KB FLASH ，1024KB RAM
-- 外部 RAM：型号IS42S16160J-6BLI，32MB
-- 外部 FLASH：型号S26KS512SDPBHI02，64MB
-- 常用外设
-  - LED：1个，D18（绿色） 
-  - 按键：1个
-- 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口等
-- 调试接口，标准 JTAG/SWD
-
-开发板更多详细信息请参考【NXP】 [MIMXRT1060-EVK开发板介绍](https://www.nxp.com.cn/design/development-boards/i-mx-evaluation-and-development-boards/i-mx-rt1060-evaluation-kit:MIMXRT1060-EVK)。
-
-## 外设支持
-
-本 BSP 目前对外设的支持情况如下：
-
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持     |                                       |
-| SPI Flash         |     支持     |                                       |
-| 以太网            |      支持    |                                       |
-| **片上外设** | **支持情况** | **备注**                              |
-| GPIO         |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
-| UART         |     支持     | UART1                                 |
-| SPI          |   暂不支持   | 即将支持                              |
-| I2C          |   暂不支持   | 即将支持                              |
-| SDIO         |   暂不支持   | 即将支持                              |
-| RTC          |   暂不支持   | 即将支持                              |
-| PWM          |   暂不支持   | 即将支持                              |
-| USB Device   |   暂不支持   | 即将支持                              |
-| USB Host     |   暂不支持   | 即将支持                              |
-| IWG          |   暂不支持   | 即将支持                              |
-| **扩展模块** | **支持情况** | **备注**                              |
-| LVGL         |     支持     |                                       |
-
-## 使用说明
-
-使用说明分为如下两个章节：
-
-- 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
-- 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+### For more details about these boards, please refer to [NXP Official Website](https://www.nxp.com/part/MIMXRT1060-EVK#/)
 
 
-### 快速上手
 
-本 BSP 为开发者提供 MDK4、MDK5 和 IAR 工程，以及GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
-#### 硬件连接
 
-使用数据线连接开发板到 PC，打开电源开关。
+## Peripherals Condition
 
-#### 编译下载
+Each peripheral supporting condition for this BSP is as follows:
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+| **On-board Peripherals** | **Support** | **Remark**                            |
+| ------------------------ | ----------- | ------------------------------------- |
+| USB                      | √           |                                       |
+| SPI Flash                | √           |                                       |
+| Ethernet                 | √           |                                       |
+| **On-chip Peripherals**  | **Support** | **Remark**                            |
+| GPIO                     | √           | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
+| UART                     | √           | UART1                                 |
+| SPI                      |             | Coming Soon                           |
+| I2C                      |             | Coming Soon                           |
+| SDIO                     |             | Coming Soon                           |
+| RTC                      |             | Coming Soon                           |
+| PWM                      |             | Coming Soon                           |
+| USB Device               |             | Coming Soon                           |
+| USB Host                 |             | Coming Soon                           |
+| IWG                      |             | Coming Soon                           |
+| **Expansion Module**     | **Support** | **Remark**                            |
+| LVGL                     | √           |                                       |
 
-> 工程默认配置使用 CMSIS-DAP 仿真器下载程序，在通过 USB 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+## Quickly Get Started
 
-#### 运行结果
+This BSP provides MDK4, MDK5, and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
-下载程序成功之后，系统会自动运行，LED会以1Hz的频率闪烁。
+#### Hardware Connection
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+Use a cable to connect the development board to the PC and turn on the power switch.
 
-```bash
+### Compile and Download
+
+Double-click the `project.uvprojx` file to open the MDK5 project, compile and download the program to the development board.
+
+> The project defaults to use the CMSIS-DAP emulator to download the program, and as we're connecting the development board via USB, click the Download button can directly download the program to the development board
+
+#### Running Results
+
+After the program is successfully downloaded, the system runs automatically. Observe the running results of the LED on the development board, the LED will light in 1Hz.
+
+Connect the corresponding serial port of the development board to the PC, and when the corresponding serial port ( 115200-8-1-N) is opened in the terminal tool, the output information of RT-Thread can be seen when the device is reset:
+
+```
  \ | /
 - RT -     Thread Operating System
  / | \     4.1.0 build Mar 10 2022 18:07:41
  2006 - 2022 Copyright by RT-Thread team
 msh >
 ```
-### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置(暂时还不支持，等待第二阶段)，步骤如下：
+## **Advanced Features**
 
-1. 在 bsp 下打开 env 工具。
+This BSP only enables GPIO and UART1 by default. If you need more advanced features such as SD Card, Flash, or you need to configure the BSP with RT-Thread homegrown [ENV tool](https://www.rt-thread.io/download.html?download=Env), as follows:
 
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
+1. Open the ENV tool under the specific BSP folder;
+2. Enter `menuconfig` command to configure the project, then save and exit;
+3. Enter `pkgs --update` command to update the package;
+4. Enter `scons --target=mdk4/mdk5/iar` command to regenerate the project.
 
-3. 输入`pkgs --update`命令更新软件包。
+More details about NXP MIMXRT1060-EVK , check out [Here](https://github.com/RT-Thread/rt-thread/blob/master/bsp/imxrt/docs/IMXRT%E7%B3%BB%E5%88%97BSP%E5%A4%96%E8%AE%BE%E9%A9%B1%E5%8A%A8%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B.md). 
 
-4. 输入`scons --target=mdk/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [IMXRT 系列 BSP 外设驱动使用教程](../docs/IMXRT系列BSP外设驱动使用教程.md)。
