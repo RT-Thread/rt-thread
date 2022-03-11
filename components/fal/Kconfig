@@ -3,7 +3,6 @@
 menuconfig RT_USING_FAL
     depends on RT_VER_NUM >= 0x40100
     bool "fal: Flash Abstraction Layer implement. Manage flash device and partition."
-    select RT_USING_LIBC
     default n
 
 if RT_USING_FAL

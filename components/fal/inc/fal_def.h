@@ -13,37 +13,15 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <rtthread.h>
 
 #define FAL_SW_VERSION                 "1.0.0"
 
-#ifdef __RTTHREAD__ /* for RT-Thread platform */
-#include <rtthread.h>
 #define FAL_PRINTF      rt_kprintf
 #define FAL_MALLOC      rt_malloc
 #define FAL_CALLOC      rt_calloc
 #define FAL_REALLOC     rt_realloc
 #define FAL_FREE        rt_free
-#endif
-
-#ifndef FAL_MALLOC
-#define FAL_MALLOC                     malloc
-#endif
-
-#ifndef FAL_CALLOC
-#define FAL_CALLOC                     calloc
-#endif
-
-#ifndef FAL_REALLOC
-#define FAL_REALLOC                    realloc
-#endif
-
-#ifndef FAL_FREE
-#define FAL_FREE                       free
-#endif
-
-#ifndef FAL_PRINTF
-#define FAL_PRINTF                     printf
-#endif
 
 #ifndef FAL_DEBUG
 #define FAL_DEBUG                      0
