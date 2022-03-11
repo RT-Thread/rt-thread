@@ -153,7 +153,7 @@ static void nu_emac_halt(nu_emac_t psNuEmac)
 
 static void *nu_emac_memcpy(void *dest, void *src, unsigned int count)
 {
-    return memcpy(dest, src, count);
+    return rt_memcpy(dest, src, count);
 }
 
 static void nu_emac_reinit(nu_emac_t psNuEmac)
