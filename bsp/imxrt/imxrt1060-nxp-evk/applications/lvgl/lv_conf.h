@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,9 +14,9 @@
 #define LV_USE_PERF_MONITOR     1
 #define LV_COLOR_DEPTH          16
 
-#define LV_USE_NXP_SOC 			1
-//#define LV_USE_GPU_NXP_PXP 		1
-//#define LV_USE_GPU_NXP_VG_LITE 	0
+#define LV_USE_NXP_SOC          1
+//#define LV_USE_GPU_NXP_PXP        1
+//#define LV_USE_GPU_NXP_VG_LITE    0
 //#define LV_USE_GPU_NXP_PXP_AUTO_INIT 1
 
 #define LV_ATTRIBUTE_MEM_ALIGN_SIZE 64

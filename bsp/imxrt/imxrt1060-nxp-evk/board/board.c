@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -1019,11 +1019,11 @@ void rt_hw_board_init()
      * can fetch data in time when PXP is used.
      */
     *((volatile uint32_t *)0x41044100) = 5;
-	
+
     BOARD_ConfigMPU();
-	BOARD_ReconfigFlexSpiRxBuffer();
+    BOARD_ReconfigFlexSpiRxBuffer();
     BOARD_InitPins();
-	BOARD_InitSemcPins();
+    BOARD_InitSemcPins();
     BOARD_BootClockRUN();
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
