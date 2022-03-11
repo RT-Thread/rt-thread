@@ -113,11 +113,14 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_elc.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_feature.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_mcu_info.h" path=""/>
+        <file category="other" name="ra/fsp/src/r_dtc/r_dtc.o"/>
         <file category="source" name="ra/fsp/src/r_icu/r_icu.c"/>
+        <file category="other" name="ra/fsp/src/r_icu/r_icu.o"/>
         <file category="source" name="ra/fsp/src/r_ioport/r_ioport.c"/>
         <file category="other" name="ra/fsp/src/r_ioport/r_ioport.o"/>
         <file category="source" name="ra/fsp/src/r_sci_uart/r_sci_uart.c"/>
         <file category="other" name="ra/fsp/src/r_sci_uart/r_sci_uart.o"/>
+        <file category="other" name="ra/fsp/src/r_spi/r_spi.o"/>
         <file category="other" name="ra/SConscript"/>
       </files>
     </component>
