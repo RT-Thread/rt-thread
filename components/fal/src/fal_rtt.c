@@ -274,7 +274,7 @@ static rt_err_t mtd_nor_dev_erase(struct rt_mtd_nor_device* device, rt_off_t off
     }
 }
 
-static const struct rt_mtd_nor_driver_ops _ops = 
+static const struct rt_mtd_nor_driver_ops _ops =
 {
     RT_NULL,
     mtd_nor_dev_read,

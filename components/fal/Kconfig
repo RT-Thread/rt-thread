@@ -1,16 +1,12 @@
 
 # Kconfig file for package fal
-menuconfig PKG_USING_FAL
+menuconfig RT_USING_FAL
+    depends on RT_VER_NUM >= 0x40100
     bool "fal: Flash Abstraction Layer implement. Manage flash device and partition."
-    select RT_USING_LIBC if (PKG_FAL_VER_NUM <= 0x00300 && RT_VER_NUM < 0x40100)
+    select RT_USING_LIBC
     default n
 
-if PKG_USING_FAL
-
-    config PKG_FAL_PATH
-        string
-        default "/packages/system/fal"
-
+if RT_USING_FAL
     config FAL_DEBUG_CONFIG
         bool "Enable debug log output"
         default y
