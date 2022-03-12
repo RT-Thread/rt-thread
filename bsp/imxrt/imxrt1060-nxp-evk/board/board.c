@@ -1008,7 +1008,6 @@ void BOARD_ReconfigFlexSpiRxBuffer(void)
     SCB_EnableICache();
 }
 
-
 /**
  * This function will initial rt1050 board.
  */
@@ -1021,7 +1020,7 @@ void rt_hw_board_init()
     *((volatile uint32_t *)0x41044100) = 5;
 
     BOARD_ConfigMPU();
-    BOARD_ReconfigFlexSpiRxBuffer();
+    // BOARD_ReconfigFlexSpiRxBuffer();
     BOARD_InitPins();
     BOARD_InitSemcPins();
     BOARD_BootClockRUN();
