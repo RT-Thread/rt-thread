@@ -6,7 +6,7 @@ menuconfig RT_USING_LWIP
 
 if RT_USING_LWIP
     config RT_USING_LWIP_LOCAL_VERSION
-        bool "Use local LwIP version only"
+        bool "Use LwIP local version only"
         default n
         help
             If don't select this option, both local version and upstream
@@ -27,7 +27,7 @@ if RT_USING_LWIP
         config RT_USING_LWIP212
             bool "lwIP v2.1.2"
 
-        # upstream versions
+        # online version
         if !RT_USING_LWIP_LOCAL_VERSION
             config RT_USING_LWIP_LATEST
                 bool "lwIP latest"
