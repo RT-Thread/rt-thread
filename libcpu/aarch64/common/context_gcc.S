@@ -65,6 +65,19 @@ rt_hw_get_gtimer_frq:
     MRS X0,CNTFRQ_EL0
     RET
 
+/*
+ *set gtimer frq value (only in EL3)
+ */
+.globl rt_hw_set_gtimer_frq
+rt_hw_set_gtimer_frq:
+    MRS X1, CurrentEL
+    CMP X1, 0xc
+    BNE rt_hw_set_gtimer_frq_exit
+    MSR CNTFRQ_EL0, X0
+    MOV X0, XZR
+rt_hw_set_gtimer_frq_exit:
+    RET
+
 .macro SAVE_CONTEXT
     /* Save the entire context. */
     SAVE_FPU SP
@@ -150,15 +163,15 @@ rt_hw_get_gtimer_frq:
     B.EQ    1f
     B       .
 3:
-    MOV     X3, 0x0d
+    MOV     X3, #((3 << 6) | 0x0d)  /* EL3h */
     MOV     X2, X30
     B       0f
 2:
-    MOV     X3, 0x09
+    MOV     X3, #((3 << 6) | 0x09)  /* EL2h */
     MOV     X2, X30
     B       0f
 1:
-    MOV     X3, 0x05
+    MOV     X3, #((3 << 6) | 0x05)  /* EL1h */
     MOV     X2, X30
     B       0f
 0:

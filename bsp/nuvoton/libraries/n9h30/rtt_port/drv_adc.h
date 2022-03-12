@@ -15,13 +15,10 @@
 
 #include <rtthread.h>
 #include "nu_adc.h"
+
 #if defined(BSP_USING_ADC_TOUCH)
     #include "touch.h"
 #endif
-
-#define TOUCH_MQ_LENGTH      64
-
-#define DEF_CAL_POINT_NUM    5
 
 typedef enum
 {
@@ -57,28 +54,10 @@ typedef struct
 typedef nu_adc_cb *nu_adc_cb_t;
 
 #if defined(BSP_USING_ADC_TOUCH)
-typedef struct
-{
-    int32_t   x;
-    int32_t   y;
-} S_COORDINATE_POINT;
-
-typedef struct
-{
-    int32_t   a;
-    int32_t   b;
-    int32_t   c;
-    int32_t   d;
-    int32_t   e;
-    int32_t   f;
-    int32_t   div;
-} S_CALIBRATION_MATRIX;
-
-int32_t nu_adc_touch_read_xyz(uint32_t *bufX, uint32_t *bufY, uint32_t *bufZ0, uint32_t *bufZ1, int32_t dataCnt);
-rt_err_t nu_adc_touch_enable(rt_touch_t psRtTouch);
-rt_err_t nu_adc_touch_disable(void);
-void nu_adc_touch_detect(rt_bool_t bStartDetect);
-void nu_adc_touch_start_conv(void);
+    void nu_adc_touch_detect(rt_bool_t bStartDetect);
+    int32_t nu_adc_touch_read_xyz(uint32_t *bufX, uint32_t *bufY, uint32_t *bufZ0, uint32_t *bufZ1, int32_t dataCnt);
+    rt_err_t nu_adc_touch_enable(rt_touch_t psRtTouch);
+    rt_err_t nu_adc_touch_disable(void);
 #endif
 
 #endif /* __DRV_ADC_H__ */

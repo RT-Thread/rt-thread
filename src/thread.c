@@ -258,8 +258,6 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->module_id = 0;
 #endif
 
-    thread->user_data = 0;
-
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
 
     return RT_EOK;

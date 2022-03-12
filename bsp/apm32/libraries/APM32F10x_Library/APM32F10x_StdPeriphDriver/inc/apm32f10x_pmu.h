@@ -1,22 +1,36 @@
 /*!
- * @file       apm32f10x_pmu.h
+ * @file        apm32f10x_pmu.h
  *
- * @brief      This file contains all the functions prototypes for the PMU firmware library.
+ * @brief       This file contains all the functions prototypes for the PMU firmware library.
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_PMU_H
 #define __APM32F10X_PMU_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -30,6 +44,9 @@ extern "C" {
   @{
 */
 
+/**
+ * @brief PMU PVD detection level
+ */
 typedef enum
 {
     PMU_PVD_LEVEL_2V2    = 0x00,    //!< PVD detection level set to 2.2V
@@ -42,18 +59,27 @@ typedef enum
     PMU_PVD_LEVEL_2V9    = 0x07,    //!< PVD detection level set to 2.9V
 } PMU_PVD_LEVEL_T;
 
+/**
+ * @brief PMU Regulator state in STOP mode
+ */
 typedef enum
 {
     PMU_REGULATOR_ON       = 0x00,
     PMU_REGULATOR_LOWPOWER = 0x01
 } PMU_REGULATOR_T;
 
+/**
+ * @brief PMU STOP mode entry
+ */
 typedef enum
 {
     PMU_STOP_ENTRY_WFI     = 0x01,
     PMU_STOP_ENTRY_WFE     = 0x02
 } PMU_STOP_ENTRY_T;
 
+/**
+ * @brief PMU Flag
+ */
 typedef enum
 {
     PMU_FLAG_WUE,
@@ -87,7 +113,7 @@ uint8_t PMU_ReadStatusFlag(PMU_FLAG_T flag);
 void PMU_ClearStatusFlag(PMU_FLAG_T flag);
 
 /**@} end of group PMU_Fuctions*/
-/**@} end of group PMU_Driver */
+/**@} end of group PMU_Driver*/
 /**@} end of group Peripherals_Library*/
 
 #ifdef __cplusplus

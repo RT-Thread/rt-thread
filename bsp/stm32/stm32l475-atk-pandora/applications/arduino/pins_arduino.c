@@ -11,7 +11,7 @@
 #include <board.h>
 #include "pins_arduino.h"
 
-const pin_map_t pin_map_table[ARDUINO_PINOUT_PIN_MAX]=
+const pin_map_t pin_map_table[]=
 {
     /*
         {Arduino Pin, RT-Thread Pin [, Device Name(PWM or ADC), Channel]}
@@ -34,11 +34,11 @@ const pin_map_t pin_map_table[ARDUINO_PINOUT_PIN_MAX]=
     {12, GET_PIN(B,2)}, /* D12, BSP: BEEP */
     {13, GET_PIN(E,8)}, /* D13, LED_BUILTIN, BSP: GREEN-LED */
     {14, GET_PIN(C,2), "adc1", 3}, /* D14, A0 */
-    {15}, /* D15, A1 */
-    {16}, /* D16, A2 */
-    {17}, /* D17, A3 */
-    {18}, /* D18, A4 */
-    {19} /* D19, A5 */
+    {15}, /* A1 */
+    {16}, /* A2 */
+    {17}, /* A3 */
+    {18}, /* A4 */
+    {19} /*  A5 */
 };
 
 /* initialization for BSP; maybe a blank function  */

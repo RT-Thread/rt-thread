@@ -23,14 +23,14 @@ src/core/timeouts.c
 src/core/udp.c
 """)
 
-# 1.1 
+# 1.1
 lwipcore_altcp_SRCS = Split("""
 src/core/altcp.c
 src/core/altcp_alloc.c
 src/core/altcp_tcp.c
 """)
 
-# 1.2 
+# 1.2
 lwipcore4_SRCS = Split("""
 src/core/ipv4/autoip.c
 src/core/ipv4/dhcp.c
@@ -42,7 +42,7 @@ src/core/ipv4/ip4.c
 src/core/ipv4/ip4_addr.c
 """)
 
-# 1.3 
+# 1.3
 lwipcore6_SRCS = Split("""
 src/core/ipv6/dhcp6.c
 src/core/ipv6/ethip6.c
@@ -71,7 +71,6 @@ src/api/tcpip.c
 # 3. Files implementing various generic network interface functions
 lwipnetif_SRCS = Split("""
 src/netif/ethernet.c
-src/netif/ethernetif.c
 """)
 
 # 3.1 Files implementing an IEEE 802.1D bridge by using a multilayer netif approach
@@ -226,11 +225,8 @@ lwipping_SRCS = Split("""
 src/apps/ping/ping.c
 """)
 
-src = Split("""
-src/arch/sys_arch.c
-""")
-
-src += lwipcore_SRCS       # rm mem.c
+src = []
+src += lwipcore_SRCS
 src += lwipcore_altcp_SRCS
 src += lwipapi_SRCS
 src += lwipnetif_SRCS
@@ -238,9 +234,7 @@ src += lwipsixlowpan_SRCS
 
 src += lwipcore4_SRCS
 
-path = [cwd + '/src',
-    cwd + '/src/include',
-    cwd + '/src/arch/include',
+path = [cwd + '/src/include',
     cwd + '/src/include/netif']
 
 if not GetDepend('RT_USING_SAL'):
