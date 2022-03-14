@@ -1,4 +1,4 @@
-# Get Raspberry Pi PICO Running on RT-Thread RTOS with an Opensource Light Versatile Graphics Library
+# How to Run LVGL on Raspberry Pi PICO
 
 [中文页](README_zh.md) |
 
