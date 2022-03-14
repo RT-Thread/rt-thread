@@ -30,37 +30,37 @@
 
 * Double-click `RT-Thread Settings` to enter the configuration page.
 
-![](.\img_en\1.png)
+![](./img_en/1.png)
 
 * Click `Add it now`
 
-![](.\img_en\2.png)
+<img src="./img_en/2.png" style="zoom:80%;" />
 
 * Choose the packages of LVGL and lv_music_demo 
 
-![](.\img_en\3.png)
+<img src="./img_en/3.png" style="zoom:80%;" />
 
 ## Enable LVGL for LCD 
 
-![](.\img_en\4.png)
+![](./img_en/4.png)
 
 ## Configure Screen Parameter
 
 Select the screen size according to your project requirements (This tutorial is using ST7789).
 
-![](.\img_en\5.png)
+<img src="./img_en/5.png" style="zoom:80%;" />
 
 ## LVGL Display Interface Adopting
 
-![](.\img_en\6.png)
+<img src="./img_en/6.png" style="zoom:80%;" />
 
 
 
-![]()![7](.\img_en\7.png)
+![]()<img src="./img_en/7.png" alt="7" style="zoom: 80%;" />
 
 
 
-![](.\img_en\8.png)
+<img src="./img_en/8.png" style="zoom:80%;" />
 
 ## Presentation
 
