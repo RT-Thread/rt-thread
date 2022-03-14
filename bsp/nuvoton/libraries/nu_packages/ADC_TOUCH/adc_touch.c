@@ -11,7 +11,7 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_ADC_TOUCH)
+#if defined(NU_PKG_USING_ADC_TOUCH)
 
 #include "NuMicro.h"
 #include <rtdevice.h>
@@ -20,13 +20,18 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
-#include "drv_adc.h"
 #include "touch.h"
+//#include "drv_adc.h"
+#include "adc_touch.h"
 
 #if !defined(PATH_CALIBRATION_FILE)
     #define PATH_CALIBRATION_FILE "/mnt/filesystem/ts_calibration"
 #endif
 
+rt_err_t nu_adc_touch_disable(void);
+rt_err_t nu_adc_touch_enable(rt_touch_t psRtTouch);
+void nu_adc_touch_detect(rt_bool_t bStartDetect);
+int32_t nu_adc_touch_read_xyz(uint32_t *bufX, uint32_t *bufY, uint32_t *bufZ0, uint32_t *bufZ1, int32_t dataCnt);
 
 typedef struct
 {
@@ -38,16 +43,9 @@ typedef nu_adc_touch *nu_adc_touch_t;
 
 static nu_adc_touch s_NuAdcTouch = {0};
 
-#if (BSP_LCD_WIDTH==480) && (BSP_LCD_HEIGHT==272)
-static S_CALIBRATION_MATRIX g_sCalMat = { 8824, -34, -2261272, -70, -6302, 21805816, 65536 };
-static volatile uint32_t g_u32Calibrated = 1;
-#elif (BSP_LCD_WIDTH==800) && (BSP_LCD_HEIGHT==480)
-static S_CALIBRATION_MATRIX g_sCalMat = { 13230, -66, -1161952, -85, 8600, -1636996, 65536 };
-static volatile uint32_t g_u32Calibrated = 1;
-#else
-static S_CALIBRATION_MATRIX g_sCalMat = { 1, 0, 0, 0, 1, 0, 1 };
+/* User can define ADC touch calibration matrix in board_dev.c. */
+RT_WEAK S_CALIBRATION_MATRIX g_sCalMat = { 1, 0, 0, 0, 1, 0, 1 };
 static volatile uint32_t g_u32Calibrated = 0;
-#endif
 
 static int nu_adc_touch_readfile(void);
 
@@ -97,7 +95,7 @@ static int nu_adc_cal_mat_get(const S_COORDINATE_POINT *psDispCP, S_COORDINATE_P
     n = x = y = xx = yy = xy = 0;
     for (i = 0; i < DEF_CAL_POINT_NUM; i++)
     {
-        n  += 1.0;
+        n  += (float)1.0;
         x  += (float)psADCCP[i].x;
         y  += (float)psADCCP[i].y;
         xx += (float)psADCCP[i].x * psADCCP[i].x;
@@ -106,7 +104,7 @@ static int nu_adc_cal_mat_get(const S_COORDINATE_POINT *psDispCP, S_COORDINATE_P
     }
 
     d = n * (xx * yy - xy * xy) + x * (xy * y - x * yy) + y * (x * xy - y * xx);
-    if (d < 0.1 && d > -0.1)
+    if (d < (float)0.1 && d > (float) -0.1)
     {
         return -1;
     }
@@ -340,15 +338,42 @@ static void lcd_cleanscreen(void)
 {
     if (info.framebuffer != RT_NULL)
     {
-        /* Rendering */
-        struct rt_device_rect_info rect;
+        if (rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)info.framebuffer) == RT_EOK)
+        {
+            /* Sync-type LCD panel, will fill to VRAM directly. */
+            rt_memset(info.framebuffer, 0, (info.pitch * info.height));
+        }
+        else
+        {
+            /* MPU-type LCD panel, fill to shadow RAM, then flush. */
+            struct rt_device_rect_info rectinfo;
+            int filled_line_num = 0;
+            int i32LineBufNum = info.smem_len / info.pitch;
+            int i32RemainLineNum = info.height;
 
-        rt_memset(info.framebuffer, 0, (info.pitch * info.height));
-        rect.x = 0;
-        rect.y = 0;
-        rect.width = info.width;
-        rect.height = info.height;
-        rt_device_control(lcd_device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect);
+            i32LineBufNum = (i32LineBufNum > info.height) ? info.height : i32LineBufNum;
+
+            while (i32RemainLineNum > 0)
+            {
+                int pixel_count;
+                rectinfo.x = 0;
+                rectinfo.y = filled_line_num;
+                rectinfo.width = info.width;
+                rectinfo.height = (i32RemainLineNum > i32LineBufNum) ? i32LineBufNum : i32RemainLineNum ;
+
+                pixel_count = info.width * rectinfo.height;
+                rt_uint16_t *pu16ShadowBuf = (rt_uint16_t *)info.framebuffer;
+
+                while (pixel_count > 0)
+                {
+                    *pu16ShadowBuf++ = 0;
+                    pixel_count--;
+                }
+                rt_device_control(lcd_device, RTGRAPHIC_CTRL_RECT_UPDATE, &rectinfo);
+                filled_line_num += i32LineBufNum;
+                i32RemainLineNum -= rectinfo.height;
+            }
+        }
     }
     else
     {
@@ -367,42 +392,70 @@ static void nu_draw_bots(int x, int y)
         int i, j;
         int start_x = x - (DEF_DOT_NUMBER / 2);
         int start_y = y - (DEF_DOT_NUMBER / 2);
+        rt_bool_t bDrawDirect;
+
+        if (rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)info.framebuffer) == RT_EOK)
+        {
+            /* Sync-type LCD panel, will draw to VRAM directly. */
+            bDrawDirect = RT_TRUE;
+        }
+        else
+        {
+            /* MPU-type LCD panel, draw to shadow RAM, then flush. */
+            bDrawDirect = RT_FALSE;
+        }
 
         if (info.pixel_format == RTGRAPHIC_PIXEL_FORMAT_RGB565)
         {
-            uint16_t *pu16Start = (uint16_t *)((uint32_t)info.framebuffer + (start_y) * info.pitch + (start_x * 2));
-            for (j = 0; j < DEF_DOT_NUMBER; j++)
+            uint16_t *pu16Start = (bDrawDirect == RT_TRUE) ? (uint16_t *)((uint32_t)info.framebuffer + (start_y) * info.pitch + (start_x * 2)) : (uint16_t *)info.framebuffer;
+            for (i = 0; i < DEF_DOT_NUMBER; i++)
             {
-                for (i = 0; i < DEF_DOT_NUMBER; i++)
-                    pu16Start[i] = 0x07E0; //Green, RGB
-                pu16Start += info.width;
+                for (j = 0; j < DEF_DOT_NUMBER; j++)
+                {
+                    *pu16Start = 0x07E0; //Green, RGB565
+                    pu16Start++;
+                }
+                if (bDrawDirect)
+                    pu16Start += (info.width - DEF_DOT_NUMBER);
             }
         }
         else if (info.pixel_format == RTGRAPHIC_PIXEL_FORMAT_ARGB888)
         {
-            uint32_t *pu32Start = (uint32_t *)((uint32_t)info.framebuffer + (start_y) * info.pitch + (start_x * 4));
-            for (j = 0; j < DEF_DOT_NUMBER; j++)
+            uint32_t *pu32Start = (bDrawDirect == RT_TRUE) ? (uint32_t *)((uint32_t)info.framebuffer + (start_y) * info.pitch + (start_x * 4)) : (uint32_t *)info.framebuffer;
+            for (i = 0; i < DEF_DOT_NUMBER; i++)
             {
-                for (i = 0; i < DEF_DOT_NUMBER; i++)
-                    pu32Start[i] = 0xff00ff00; //Green, ARGB
-                pu32Start += info.width;
+                for (j = 0; j < DEF_DOT_NUMBER; j++)
+                {
+                    *pu32Start = 0xff00ff00; //Green, ARGB888
+                    pu32Start++;
+                }
+                if (bDrawDirect)
+                    pu32Start += (info.width - DEF_DOT_NUMBER);
             }
         }
         else
         {
             //Not supported
+            return;
         }
 
-        rect.x = 0;
-        rect.y = 0;
-        rect.width = info.width;
-        rect.height = info.height;
-        rt_device_control(lcd_device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect);
+        if (!bDrawDirect)
+        {
+            /* Region updating */
+            rect.x      = start_x;
+            rect.y      = start_y;
+            rect.width  = DEF_DOT_NUMBER;
+            rect.height = DEF_DOT_NUMBER;
+            rt_device_control(lcd_device, RTGRAPHIC_CTRL_RECT_UPDATE, &rect);
+        }
     }
     else
     {
         // TODO
     }
+
+    return;
+
 }
 
 #if (DEF_CAL_POINT_NUM==3)
@@ -574,7 +627,6 @@ static void adc_touch_entry(void *parameter)
 
     rt_err_t result;
     rt_device_t pdev;
-
     int max_range;
 
     adc_touch_sem = rt_sem_create("adc_touch_sem", 0, RT_IPC_FLAG_FIFO);
@@ -586,6 +638,9 @@ static void adc_touch_entry(void *parameter)
         rt_kprintf("Not found\n");
         return ;
     }
+
+    if (rt_memcmp((void *)&g_sCalMat, (void *)&g_sCalZero, sizeof(S_CALIBRATION_MATRIX)) != 0)
+        g_u32Calibrated = 1;
 
     nu_adc_touch_readfile();
 
@@ -650,8 +705,8 @@ static rt_err_t nu_touch_start(int argc, char **argv)
         adc_touch_thread = rt_thread_create("adc_touch_thread",
                                             adc_touch_entry,
                                             RT_NULL,
-                                            4096,
-                                            25,
+                                            2048,
+                                            5,
                                             5);
         adc_touch_worker_run = 1;
         if (adc_touch_thread != RT_NULL)
@@ -685,4 +740,4 @@ static rt_err_t nu_touch_calibration(int argc, char **argv)
 }
 MSH_CMD_EXPORT(nu_touch_calibration, for adc touch);
 
-#endif //#if defined(BSP_USING_ADC_TOUCH)
+#endif //#if defined(NU_PKG_USING_ADC_TOUCH)
