@@ -1,4 +1,4 @@
-# Raspberry_pico 使用 RT-Thread 运行 lvgl
+# Raspberry Pi PICO 运行 LVGL 指南
 
 ## 硬件参数
 
