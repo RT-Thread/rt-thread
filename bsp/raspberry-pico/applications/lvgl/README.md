@@ -26,20 +26,6 @@
 - [RT-Thread Studio](https://www.rt-thread.io/studio.html) IDE (Free)
 - Opensource [LVGL](https://lvgl.io/) Project
 
-## Add LVGL Software Package
-
-* Double-click `RT-Thread Settings` to enter the configuration page.
-
-![](./img_en/1.png)
-
-* Click `Add it now`
-
-<img src="./img_en/2.png" style="zoom:80%;" />
-
-* Choose the packages of LVGL and lv_music_demo 
-
-<img src="./img_en/3.png" style="zoom:80%;" />
-
 ## Enable LVGL for LCD 
 
 ![](./img_en/4.png)
