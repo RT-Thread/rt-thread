@@ -1,5 +1,7 @@
 # Get Raspberry Pi PICO Running on RT-Thread RTOS with an Opensource Light Versatile Graphics Library
 
+[中文页](README_zh.md) |
+
 ## Hardware: 
 
 - [Raspberry Pi PICO](https://www.raspberrypi.com/products/raspberry-pi-pico/)
@@ -28,25 +30,25 @@
 
 ## Enable LVGL for LCD 
 
-![](./img_en/4.png)
+![](./img_en/1.png)
 
 ## Configure Screen Parameter
 
 Select the screen size according to your project requirements (This tutorial is using ST7789).
 
-<img src="./img_en/5.png" style="zoom:80%;" />
+<img src="./img_en/2.png" style="zoom:80%;" />
 
 ## LVGL Display Interface Adopting
 
-<img src="./img_en/6.png" style="zoom:80%;" />
+<img src="./img_en/3.png" style="zoom:80%;" />
 
 
 
-![]()<img src="./img_en/7.png" alt="7" style="zoom: 80%;" />
+![]()<img src="./img_en/4.png" alt="7" style="zoom: 80%;" />
 
 
 
-<img src="./img_en/8.png" style="zoom:80%;" />
+<img src="./img_en/5.png" style="zoom:80%;" />
 
 ## Presentation
 
