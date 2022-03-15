@@ -15,8 +15,6 @@
 #include <stdio.h>
 #include <rtthread.h>
 
-#define FAL_SW_VERSION                 "1.0.0"
-
 #define FAL_PRINTF      rt_kprintf
 #define FAL_MALLOC      rt_malloc
 #define FAL_CALLOC      rt_calloc
