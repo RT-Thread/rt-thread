@@ -18,7 +18,7 @@
 
 #include <rtthread.h>
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
     #include "fal.h"
 #endif
 
@@ -190,7 +190,7 @@ int _flash_erase_32k(rt_uint32_t addr, size_t size)
     return size;
 }
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 
 static int fal_flash_read_8k(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_read_32k(long offset, rt_uint8_t *buf, size_t size);

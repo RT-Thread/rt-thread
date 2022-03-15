@@ -28,7 +28,7 @@
 #include <sys/stat.h>
 #include <sys/statfs.h>
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
     #include <fal.h>
 #endif
 
@@ -212,7 +212,7 @@ INIT_ENV_EXPORT(filesystem_init);
 #if defined(BOARD_USING_STORAGE_SPIFLASH)
 int mnt_init_spiflash0(void)
 {
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
     extern int fal_init_check(void);
     if (!fal_init_check())
         fal_init();
