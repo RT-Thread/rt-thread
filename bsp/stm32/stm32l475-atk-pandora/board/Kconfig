@@ -156,7 +156,7 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_LWIP
             select RT_USING_DFS
             select DFS_USING_POSIX
-            select PKG_USING_FAL
+            select RT_USING_FAL
             select PKG_USING_EASYFLASH
             select RT_USING_WIFI_6181_LIB
             select RT_USING_OTA_LIB

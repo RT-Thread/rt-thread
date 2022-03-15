@@ -14,7 +14,7 @@
 
 #ifdef BSP_USING_ON_CHIP_FS
 
-#ifndef PKG_USING_FAL
+#ifndef RT_USING_FAL
 #error "if you want to use on chip filesystem, you need to enable FAL package()"
 #endif
 
