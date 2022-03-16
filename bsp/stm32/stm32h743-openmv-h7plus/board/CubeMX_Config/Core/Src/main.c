@@ -40,6 +40,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+QSPI_HandleTypeDef hqspi;
+
 UART_HandleTypeDef huart1;
 
 SDRAM_HandleTypeDef hsdram1;
@@ -53,6 +55,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_FMC_Init(void);
+static void MX_QUADSPI_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -92,6 +95,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_FMC_Init();
+  MX_QUADSPI_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -160,6 +164,41 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief QUADSPI Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_QUADSPI_Init(void)
+{
+
+  /* USER CODE BEGIN QUADSPI_Init 0 */
+
+  /* USER CODE END QUADSPI_Init 0 */
+
+  /* USER CODE BEGIN QUADSPI_Init 1 */
+
+  /* USER CODE END QUADSPI_Init 1 */
+  /* QUADSPI parameter configuration*/
+  hqspi.Instance = QUADSPI;
+  hqspi.Init.ClockPrescaler = 1;
+  hqspi.Init.FifoThreshold = 3;
+  hqspi.Init.SampleShifting = QSPI_SAMPLE_SHIFTING_HALFCYCLE;
+  hqspi.Init.FlashSize = 24;
+  hqspi.Init.ChipSelectHighTime = QSPI_CS_HIGH_TIME_2_CYCLE;
+  hqspi.Init.ClockMode = QSPI_CLOCK_MODE_0;
+  hqspi.Init.FlashID = QSPI_FLASH_ID_1;
+  hqspi.Init.DualFlash = QSPI_DUALFLASH_DISABLE;
+  if (HAL_QSPI_Init(&hqspi) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN QUADSPI_Init 2 */
+
+  /* USER CODE END QUADSPI_Init 2 */
+
 }
 
 /**
