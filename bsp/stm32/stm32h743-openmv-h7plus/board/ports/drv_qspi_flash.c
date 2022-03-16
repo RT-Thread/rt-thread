@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -81,14 +81,14 @@ static int mnt_qspi_flash_init(void)
 {
     if (dfs_mount("W25Q256", "/", "elm", 0, 0) == RT_EOK)
     {
-        rt_kprintf("Mount spi flash successfully!\n"); 
+        rt_kprintf("Mount spi flash successfully!\n");
         return RT_EOK;
     }
     else
     {
         rt_kprintf("Mount spi flash fail!\n");
         return -RT_ERROR;
-    }   
+    }
 }
 INIT_APP_EXPORT(mnt_qspi_flash_init);
 
