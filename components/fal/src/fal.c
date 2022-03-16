@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,7 +10,11 @@
 
 #include <fal.h>
 
-static uint8_t init_ok = 0;
+#define DBG_TAG    "fal"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
+static rt_uint8_t init_ok = 0;
 
 /**
  * FAL (Flash Abstraction Layer) initialization.
@@ -40,12 +44,12 @@ __exit:
     if ((result > 0) && (!init_ok))
     {
         init_ok = 1;
-        log_i("RT-Thread Flash Abstraction Layer initialize success.");
+        LOG_I("RT-Thread Flash Abstraction Layer initialize success.");
     }
     else if(result <= 0)
     {
         init_ok = 0;
-        log_e("RT-Thread Flash Abstraction Layer initialize failed.");
+        LOG_E("RT-Thread Flash Abstraction Layer initialize failed.");
     }
 
     return result;

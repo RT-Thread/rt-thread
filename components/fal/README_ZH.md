@@ -86,7 +86,7 @@ fal package 遵循 Apache-2.0 许可，详见 `LICENSE` 文件。
 定义具体的 Flash 设备对象，用户需要根据自己的 Flash 情况分别实现 `init`、 `read`、 `write`、 `erase` 这些操作函数：
 
 - `static int init(void)`：**可选** 的初始化操作。
-- `static int read(long offset, uint8_t *buf, size_t size)`：读取操作。
+- `static int read(long offset, rt_uint8_t *buf, rt_size_t size)`：读取操作。
 
 | 参数   | 描述                      |
 | ------ | ------------------------- |
@@ -95,7 +95,7 @@ fal package 遵循 Apache-2.0 许可，详见 `LICENSE` 文件。
 | size   | 待读取数据的大小          |
 | return | 返回实际读取的数据大小    |
 
-- `static int write(long offset, const uint8_t *buf, size_t size)` ：写入操作。
+- `static int write(long offset, const rt_uint8_t *buf, rt_size_t size)` ：写入操作。
 
 | 参数   | 描述                      |
 | ------ | ------------------------- |
@@ -104,7 +104,7 @@ fal package 遵循 Apache-2.0 许可，详见 `LICENSE` 文件。
 | size   | 待写入数据的大小          |
 | return | 返回实际写入的数据大小    |
 
-- `static int erase(long offset, size_t size)` ：擦除操作。
+- `static int erase(long offset, rt_size_t size)` ：擦除操作。
 
 | 参数   | 描述                      |
 | ------ | ------------------------- |

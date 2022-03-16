@@ -87,7 +87,7 @@ Before defining the Flash device table, you need to define the Flash device firs
 To define specific Flash device objects, users need to implement the operation functions of `init`, `read`, `write`, and `erase` according to their own Flash conditions:
 
 - `static int init(void)`: **Optional** initialization operation.
-- `static int read(long offset, uint8_t *buf, size_t size)`: read operation.
+- `static int read(long offset, rt_uint8_t *buf, rt_size_t size)`: read operation.
 
 | Parameters | Description |
 | ------ | ------------------------- |
@@ -96,7 +96,7 @@ To define specific Flash device objects, users need to implement the operation f
 | size | The size of the data to be read |
 | return | Return the actual read data size |
 
-- `static int write(long offset, const uint8_t *buf, size_t size)`: write operation.
+- `static int write(long offset, const rt_uint8_t *buf, rt_size_t size)`: write operation.
 
 | Parameters | Description |
 | ------ | ------------------------- |
@@ -105,7 +105,7 @@ To define specific Flash device objects, users need to implement the operation f
 | size | The size of the data to be written |
 | return | Return the actual written data size |
 
-- `static int erase(long offset, size_t size)`: erase operation.
+- `static int erase(long offset, rt_size_t size)`: erase operation.
 
 | Parameters | Description |
 | ------ | ------------------------- |

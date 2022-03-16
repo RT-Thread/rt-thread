@@ -48,8 +48,8 @@ static int init(void)
 
 static int read(long offset, uint8_t *buf, size_t size)
 {
-    assert(sfud_dev);
-    assert(sfud_dev->init_ok);
+    RT_ASSERT(sfud_dev);
+    RT_ASSERT(sfud_dev->init_ok);
     sfud_read(sfud_dev, w25q128.addr + offset, size, buf);
 
     return size;
@@ -57,8 +57,8 @@ static int read(long offset, uint8_t *buf, size_t size)
 
 static int write(long offset, const uint8_t *buf, size_t size)
 {
-    assert(sfud_dev);
-    assert(sfud_dev->init_ok);
+    RT_ASSERT(sfud_dev);
+    RT_ASSERT(sfud_dev->init_ok);
     if (sfud_write(sfud_dev, w25q128.addr + offset, size, buf) != SFUD_SUCCESS)
     {
         return -1;
@@ -69,8 +69,8 @@ static int write(long offset, const uint8_t *buf, size_t size)
 
 static int erase(long offset, size_t size)
 {
-    assert(sfud_dev);
-    assert(sfud_dev->init_ok);
+    RT_ASSERT(sfud_dev);
+    RT_ASSERT(sfud_dev->init_ok);
     if (sfud_erase(sfud_dev, w25q128.addr + offset, size) != SFUD_SUCCESS)
     {
         return -1;

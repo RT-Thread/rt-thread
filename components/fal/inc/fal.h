@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,8 +29,8 @@ int fal_init(void);
  *
  * @param name flash device name
  *
- * @return != NULL: flash device
- *            NULL: not found
+ * @return != RT_NULL: flash device
+ *            RT_NULL: not found
  */
 const struct fal_flash_dev *fal_flash_device_find(const char *name);
 
@@ -40,8 +40,8 @@ const struct fal_flash_dev *fal_flash_device_find(const char *name);
  *
  * @param name partition name
  *
- * @return != NULL: partition
- *            NULL: not found
+ * @return != RT_NULL: partition
+ *            RT_NULL: not found
  */
 const struct fal_partition *fal_partition_find(const char *name);
 
@@ -52,7 +52,7 @@ const struct fal_partition *fal_partition_find(const char *name);
  *
  * @return partition table
  */
-const struct fal_partition *fal_get_partition_table(size_t *len);
+const struct fal_partition *fal_get_partition_table(rt_size_t *len);
 
 /**
  * set partition table temporarily
@@ -61,7 +61,7 @@ const struct fal_partition *fal_get_partition_table(size_t *len);
  * @param table partition table
  * @param len partition table length
  */
-void fal_set_partition_table_temp(struct fal_partition *table, size_t len);
+void fal_set_partition_table_temp(struct fal_partition *table, rt_size_t len);
 
 /**
  * read data from partition
@@ -74,7 +74,7 @@ void fal_set_partition_table_temp(struct fal_partition *table, size_t len);
  * @return >= 0: successful read data size
  *           -1: error
  */
-int fal_partition_read(const struct fal_partition *part, uint32_t addr, uint8_t *buf, size_t size);
+int fal_partition_read(const struct fal_partition *part, rt_uint32_t addr, rt_uint8_t *buf, rt_size_t size);
 
 /**
  * write data to partition
@@ -87,7 +87,7 @@ int fal_partition_read(const struct fal_partition *part, uint32_t addr, uint8_t 
  * @return >= 0: successful write data size
  *           -1: error
  */
-int fal_partition_write(const struct fal_partition *part, uint32_t addr, const uint8_t *buf, size_t size);
+int fal_partition_write(const struct fal_partition *part, rt_uint32_t addr, const rt_uint8_t *buf, rt_size_t size);
 
 /**
  * erase partition data
@@ -99,7 +99,7 @@ int fal_partition_write(const struct fal_partition *part, uint32_t addr, const u
  * @return >= 0: successful erased data size
  *           -1: error
  */
-int fal_partition_erase(const struct fal_partition *part, uint32_t addr, size_t size);
+int fal_partition_erase(const struct fal_partition *part, rt_uint32_t addr, rt_size_t size);
 
 /**
  * erase partition all data
@@ -122,8 +122,8 @@ void fal_show_part_table(void);
  *
  * @param parition_name partition name
  *
- * @return != NULL: created block device
- *            NULL: created failed
+ * @return != RT_NULL: created block device
+ *            RT_NULL: created failed
  */
 struct rt_device *fal_blk_device_create(const char *parition_name);
 
@@ -133,8 +133,8 @@ struct rt_device *fal_blk_device_create(const char *parition_name);
  *
  * @param parition_name partition name
  *
- * @return != NULL: created MTD NOR device
- *            NULL: created failed
+ * @return != RT_NULL: created MTD NOR device
+ *            RT_NULL: created failed
  */
 struct rt_device *fal_mtd_nor_device_create(const char *parition_name);
 #endif /* defined(RT_USING_MTD_NOR) */
@@ -144,8 +144,8 @@ struct rt_device *fal_mtd_nor_device_create(const char *parition_name);
  *
  * @param parition_name partition name
  *
- * @return != NULL: created char device
- *            NULL: created failed
+ * @return != RT_NULL: created char device
+ *            RT_NULL: created failed
  */
 struct rt_device *fal_char_device_create(const char *parition_name);
 
