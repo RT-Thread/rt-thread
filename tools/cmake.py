@@ -8,6 +8,7 @@ import sys
 import re
 import utils
 import rtconfig
+from utils import _make_path_relative
 
 
 def GenerateCFiles(env,project):
@@ -106,7 +107,9 @@ def GenerateCFiles(env,project):
 
         cm_file.write("INCLUDE_DIRECTORIES(\n")
         for i in info['CPPPATH']:
-            cm_file.write( "\t" + i.replace("\\", "/") + "\n")
+            # use relative path
+            path = _make_path_relative(os.getcwd(), i)
+            cm_file.write( "\t" + path.replace("\\", "/") + "\n")
         cm_file.write(")\n\n")
 
         cm_file.write("ADD_DEFINITIONS(\n")
@@ -117,7 +120,9 @@ def GenerateCFiles(env,project):
         cm_file.write("SET(PROJECT_SOURCES\n")
         for group in project:
             for f in group['src']:
-                cm_file.write( "\t" + os.path.normpath(f.rfile().abspath).replace("\\", "/") + "\n" )
+                # use relative path
+                path = _make_path_relative(os.getcwd(), os.path.normpath(f.rfile().abspath))
+                cm_file.write( "\t" + path.replace("\\", "/") + "\n" )
         cm_file.write(")\n\n")
 
         if rtconfig.PLATFORM == 'gcc':
