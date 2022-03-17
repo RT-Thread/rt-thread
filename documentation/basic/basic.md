@@ -174,9 +174,9 @@ int main(void)
 
 ## RT-Thread Program Memory Distribution
 
-The general MCU contains storage space that includes: on-chip Flash and on-chip RAM, RAM is equivalent to memory, and Flash is equivalent to hard disk. The compiler classifies a program into several parts, which are stored in different memory areas of the MCU.
+The general MCU contains storage space that includes the on-chip Flash and the on-chip RAM. RAM is equivalent to memory, and Flash is comparable to a hard disk. The compiler classifies a program into several parts stored in different memory areas of the MCU.
 
-After the Keil project is compiled, there will prompt information for occupied space by the corresponding program, as shown below:
+After the Keil project is compiled, there will be a prompt stating the occupied space by the corresponding program, for example:
 
 ```
 linking...
@@ -188,13 +188,10 @@ Build Time Elapsed: 00:00:07
 
 The Program Size mentioned above contains the following sections:
 
-1) Code: code segment, section of code that store the program;
-
-2) RO-data: read-only data segment, stores the constants defined in the program;
-
-3) RW-data: read and write data segment, stores global variables initialized to non-zero values;
-
-4) ZI-data: 0 data segment, stores uninitialized global variables and initialized-to-0 variables;
+1. **Code**: Code Segment, section of code that stores the program
+2. **RO-data**: Read-Only data segment, stores the constants defined in the program
+3. **RW-data**: Read and Write data segment, stores global variables initialized to non-zero values
+4. **ZI-data**: 0 data segment, stores uninitialized global variables and initialized-to-0 variables
 
 After compiling the project, there will be a generated .map file that describes the size and address of each function. The last few lines of the file also illustrate the relationship between the above fields:
 
@@ -204,21 +201,19 @@ Total RW Size (RW Data + ZI Data) 2728 ( 2.66kB)
 Total ROM Size (Code + RO Data + RW Data) 53780 ( 52.52kB)
 ```
 
-1) RO Size contains Code and RO-data, indicating the size of the Flash occupied by the program;
+1. RO Size contains Code and RO-data, indicating the size of the Flash occupied by the program
+2. RW Size contains RW-data and ZI-data, indicating the size of the RAM occupied when operating
+3. ROM Size contains Code, RO Data, and RW Data. Indicating the size of the Flash occupied by the programming system;
 
-2) RW Size contains RW-data and ZI-data, indicating the size of the RAM occupied when operating;
+Before the program runs, the file entity needs to be flashed into the STM32 Flash, usually a bin or hex file. The burned file is called an executable image file. The left part in the figure below shows the memory distribution after the executable image file is flashed into STM32 which includes the RO and RW segments. The RO segment stores data of Code and RO-data, and the RW segment holds the data of RW-data. Since ZI-data is 0, it is not included in the image file.
 
-3) ROM Size contains Code, RO Data and RW Data, indicating the size of the Flash occupied by the programming system;
-
-Before the program runs, the file entity need to be burned into STM32 Flash, usually it is bin or hex file. The burned file is called executable image file. The left figure, Figure 3-3, shows the memory distribution after the executable image file is burned to STM32 which includes two parts: the RO segment and the RW segment. The RO segment stores data of Code and RO-data and the RW segment holds the data of RW-data. Since ZI-data is 0, it is not included in the image file.
-
-STM32 is launched from Flash by default after power-on. After launching, RW-data (initialized global variable) in RW segment is transferred to RAM, but RO segment is not transferred. This means execution code of CPU  is read from Flash, the ZI segment is allocated according to the ZI address and size given by the compiler, and the RAM area is cleared.
+STM32 is launched from Flash by default after power-on. After launching, RW-data (initialized global variable) the RW segment is transferred to RAM, but the RO segment is not transferred. Meaning the execution code of the CPU is read from the Flash. The ZI segment is allocated according to the ZI address and size is given by the compiler, and the RAM area is cleared.
 
 ![RT-Thread Memory Distribution](figures/03Memory_distribution.png)
 
 The dynamic memory heap is unused RAM space, and the memory blocks requested and released by the application come from this space.
 
-As the following example:
+Like the following example:
 
 ```c
 rt_uint8_t* msg_ptr;
@@ -226,9 +221,9 @@ msg_ptr = (rt_uint8_t*) rt_malloc (128);
 rt_memset(msg_ptr, 0, 128);
 ```
 
-The 128-byte memory space pointed to by the msg_ptr pointer in the code is in the dynamic memory heap space.
+The 128-byte memory space pointed by the `msg_ptr` pointer in the code is in the dynamic memory heap space.
 
-Some global variables are stored in the RW segment and the ZI segment. The RW segment stores the global variable with the initial value (the global variable in the constant form is placed in the RO segment, which is a read-only property), and uninitialized global variable is stored in the ZI segment, as in the following example:
+Some global variables are stored in the RW segment and the ZI segment. The RW segment holds the global variable with the initial value (the global variable in the constant form is placed in the RO segment, which is a read-only property), and uninitialized global variable is stored in the ZI segment, as in the following example:
 
 ```c
 #include <rtthread.h>
@@ -242,11 +237,9 @@ void sensor_init()
      /* ... */
 }
 ```
+The `sensor_value` is stored in the ZI segment and is automatically initialized to zero after system startup (some library functions provided by the user program or compiler are initialized to zero). The sensor_inited variable is stored in the RW segment, and the sensor_enable is stored in the RO segment.
 
-The sensor_value is stored in the ZI segment and is automatically initialized to zero after system startup (some library functions provided by the user program or compiler are initialized to zero). The sensor_inited variable is stored in the RW segment, and the sensor_enable is stored in the RO segment.
-
-RT-Thread Automatic Initialization Mechanism
------------------------
+## RT-Thread Automatic Initialization Mechanism
 
 The automatic initialization mechanism means that the initialization function does not need to be called by explicit function. It only needs to be declared by macro definition at the function definition, and it will be executed during system startup.
 
