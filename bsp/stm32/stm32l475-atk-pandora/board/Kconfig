@@ -7,6 +7,10 @@ config SOC_STM32L475VE
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32L475_ATK_PANDORA
+    bool
+    default y
+
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_STLINK_TO_USART
@@ -25,6 +29,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM4_CH3
         select BSP_USING_ADC
         select BSP_USING_ADC1
+        select BSP_USING_I2C
+        select BSP_USING_I2C4
         default n
 
     config BSP_USING_KEY
@@ -150,7 +156,7 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_LWIP
             select RT_USING_DFS
             select DFS_USING_POSIX
-            select PKG_USING_FAL
+            select RT_USING_FAL
             select PKG_USING_EASYFLASH
             select RT_USING_WIFI_6181_LIB
             select RT_USING_OTA_LIB

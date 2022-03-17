@@ -80,16 +80,19 @@ cpu_check_el:
     orr     x2, x2, #(1 << 10)      /* The next lower level is AArch64 */
     msr     scr_el3, x2
 
-    /* Change execution level to EL2 */
-    mov     x2, #0x3c9
-    msr     spsr_el3, x2            /* 0b1111001001 */
-    adr     x2, cpu_not_in_el3
+    mov     x2, #9                  /* Next level is 0b1001->EL2h */
+    orr     x2, x2, #(1 << 6)       /* Mask FIQ */
+    orr     x2, x2, #(1 << 7)       /* Mask IRQ */
+    orr     x2, x2, #(1 << 8)       /* Mask SError */
+    orr     x2, x2, #(1 << 9)       /* Mask Debug Exception */
+    msr     spsr_el3, x2
+    adr     x2, cpu_in_el2
     msr     elr_el3, x2
-    eret                            /* Exception Return: from EL3, continue from cpu_not_in_el3 */
+    eret
 
 cpu_not_in_el3:                     /* Running at EL2 or EL1 */
     cmp     x0, #4                  /* EL1 = 0100  */
-    beq     cpu_in_el1              /* Halt this core if running in El1 */
+    beq     cpu_in_el1
 
 cpu_in_el2:
     /* Enable CNTP for EL1 */
@@ -102,9 +105,12 @@ cpu_in_el2:
     orr     x0, x0, #(1 << 1)       /* SWIO hardwired on Pi3 */
     msr     hcr_el2, x0
 
-    /* Change execution level to EL1 */
-    mov     x2, #0x3c4
-    msr     spsr_el2, x2            /* 0b1111000100 */
+    mov     x2, #5                  /* Next level is 0b0101->EL1h */
+    orr     x2, x2, #(1 << 6)       /* Mask FIQ */
+    orr     x2, x2, #(1 << 7)       /* Mask IRQ */
+    orr     x2, x2, #(1 << 8)       /* Mask SError */
+    orr     x2, x2, #(1 << 9)       /* Mask Debug Exception */
+    msr     spsr_el2, x2
     adr     x2, cpu_in_el1
     msr     elr_el2, x2
     eret
