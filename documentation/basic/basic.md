@@ -174,10 +174,7 @@ int main(void)
 
 ## RT-Thread Program Memory Distribution
 
-The general MCU contains storage space that includes: 
-on-chip Flash 
-on-chip RAM. 
-RAM is equivalent to memory, and Flash is comparable to a hard disk. The compiler classifies a program into several parts stored in different memory areas of the MCU.
+The general MCU contains storage space that includes the on-chip Flash and the on-chip RAM. RAM is equivalent to memory, and Flash is comparable to a hard disk. The compiler classifies a program into several parts stored in different memory areas of the MCU.
 
 After the Keil project is compiled, there will be a prompt stating the occupied space by the corresponding program, for example:
 
