@@ -485,9 +485,6 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
     RT_ASSERT(sem != RT_NULL);
     RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
 
-    /* current context checking */
-    RT_DEBUG_SCHEDULER_AVAILABLE(time != 0);
-
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(sem->parent.parent)));
 
     /* disable interrupt */
@@ -517,6 +514,9 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
         }
         else
         {
+            /* current context checking */
+            RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
+
             /* semaphore is unavailable, push to suspend list */
             /* get current thread */
             thread = rt_thread_self();
