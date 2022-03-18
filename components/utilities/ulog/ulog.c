@@ -550,9 +550,9 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
  */
 void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const char *format, va_list args)
 {
+    static rt_bool_t ulog_voutput_recursion = RT_FALSE;
     char *log_buf = NULL;
     rt_size_t log_len = 0;
-    static rt_uint8_t _ulog_voutput_recursion = 0;
 
     RT_ASSERT(tag);
     RT_ASSERT(format);
@@ -594,13 +594,19 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const c
     /* lock output */
     output_lock();
 
-    if (_ulog_voutput_recursion != 0)
+    /* If there is a recursion, we use a simple way */
+    if (ulog_voutput_recursion == RT_TRUE)
     {
+        rt_kprintf(format, args);
+        if(newline == RT_TRUE)
+        {
+            rt_kprintf(ULOG_NEWLINE_SIGN);
+        }
         output_unlock();
         return;
     }
 
-    _ulog_voutput_recursion = 1;
+    ulog_voutput_recursion = RT_TRUE;
 
 #ifndef ULOG_USING_SYSLOG
     log_len = ulog_formater(log_buf, level, tag, newline, format, args);
@@ -618,7 +624,7 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const c
         /* find the keyword */
         if (!rt_strstr(log_buf, ulog.filter.keyword))
         {
-            _ulog_voutput_recursion = 0;
+            ulog_voutput_recursion = RT_FALSE;
             /* unlock output */
             output_unlock();
             return;
@@ -628,7 +634,7 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const c
     /* do log output */
     do_output(level, tag, RT_FALSE, log_buf, log_len);
 
-    _ulog_voutput_recursion = 0;
+    ulog_voutput_recursion = RT_FALSE;
 
     /* unlock output */
     output_unlock();
