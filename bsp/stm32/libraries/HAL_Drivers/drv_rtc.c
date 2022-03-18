@@ -21,8 +21,7 @@
 #endif
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.rtc"
-#include <drv_log.h>
+#include <rtdbg.h>
 
 #define BKUP_REG_DATA 0xA5A5
 
@@ -90,7 +89,9 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
         return -RT_ERROR;
     }
 
-    LOG_D("set rtc time.");
+#ifdef DRV_DEBUG
+    LOG_RAW("set RTC time\n");
+#endif
     HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR1, BKUP_REG_DATA);
 
 #ifdef SOC_SERIES_STM32F1
@@ -157,7 +158,7 @@ static rt_err_t rt_rtc_config(void)
     RTC_Handler.Instance = RTC;
     if (HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR1) != BKUP_REG_DATA)
     {
-        LOG_I("RTC hasn't been configured, please use <date> command to config.");
+        LOG_RAW("RTC hasn't been configured, please use <date> command to config.\n");
 
 #if defined(SOC_SERIES_STM32F1)
         RTC_Handler.Init.OutPut = RTC_OUTPUTSOURCE_NONE;
@@ -237,7 +238,7 @@ RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI1;
 
     if (rt_rtc_config() != RT_EOK)
     {
-        LOG_E("rtc init failed.");
+        LOG_RAW("stm32_rtc_init failed\n");
         return -RT_ERROR;
     }
 
@@ -249,8 +250,9 @@ static rt_err_t stm32_rtc_get_secs(void *args)
     struct timeval tv;
     get_rtc_timeval(&tv);
     *(rt_uint32_t *) args = tv.tv_sec;
-    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
-
+#ifdef DRV_DEBUG
+    LOG_RAW("stm32_rtc_get_secs: %x\n", *(rt_uint32_t *)args);
+#endif
     return RT_EOK;
 }
 
@@ -262,8 +264,9 @@ static rt_err_t stm32_rtc_set_secs(void *args)
     {
         result = -RT_ERROR;
     }
-    LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
-
+#ifdef DRV_DEBUG
+    LOG_RAW("stm32_rtc_set_secs: %x\n", *(rt_uint32_t *)args);
+#endif
     return result;
 }
 
@@ -295,11 +298,12 @@ static int rt_hw_rtc_init(void)
     result = rt_hw_rtc_register(&stm32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
     if (result != RT_EOK)
     {
-        LOG_E("rtc register err code: %d", result);
+        LOG_RAW("rtc register err code: %d\n", result);
         return result;
     }
-    LOG_D("rtc init success");
-
+#ifdef DRV_DEBUG
+    LOG_RAW("rt_hw_rtc_init success\n");
+#endif
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);

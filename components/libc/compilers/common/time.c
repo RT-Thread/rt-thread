@@ -33,11 +33,9 @@
 #include <rtdevice.h>
 #endif
 
-#define DBG_TAG    "time"
-#define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#define _WARNING_NO_RTC "Cannot find a RTC device!"
+#define _WARNING_NO_RTC "Cannot find a RTC device!\n"
 
 /* seconds per day */
 #define SPD 24*60*60
@@ -113,16 +111,14 @@ static rt_err_t get_timeval(struct timeval *tv)
     }
     else
     {
-        /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
-        rt_kprintf(_WARNING_NO_RTC);
+        LOG_RAW(_WARNING_NO_RTC);
         return -RT_ENOSYS;
     }
 
     return rst;
 
 #else
-    /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
-    rt_kprintf(_WARNING_NO_RTC);
+    LOG_RAW(_WARNING_NO_RTC);
     return -RT_ENOSYS;
 #endif /* RT_USING_RTC */
 }
@@ -159,14 +155,14 @@ static int set_timeval(struct timeval *tv)
     }
     else
     {
-        LOG_W(_WARNING_NO_RTC);
+        LOG_RAW(_WARNING_NO_RTC);
         return -RT_ENOSYS;
     }
 
     return rst;
 
 #else
-    LOG_W(_WARNING_NO_RTC);
+    LOG_RAW(_WARNING_NO_RTC);
     return -RT_ENOSYS;
 #endif /* RT_USING_RTC */
 }
@@ -248,7 +244,7 @@ char* asctime_r(const struct tm *t, char *buf)
     /* Checking input validity */
     if ((int)rt_strlen(days) <= (t->tm_wday << 2) || (int)rt_strlen(months) <= (t->tm_mon << 2))
     {
-        LOG_W("asctime_r: the input parameters exceeded the limit, please check it.");
+        LOG_RAW("asctime_r: the input parameters exceeded the limit, please check it.\n");
         *(int*) buf = *(int*) days;
         *(int*) (buf + 4) = *(int*) months;
         num2str(buf + 8, t->tm_mday);
@@ -540,7 +536,7 @@ INIT_COMPONENT_EXPORT(_rt_clock_time_system_init);
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
 #ifndef RT_USING_RTC
-    LOG_W(_WARNING_NO_RTC);
+    LOG_RAW(_WARNING_NO_RTC);
     return -1;
 #else
     int ret = 0;
@@ -579,7 +575,7 @@ RTM_EXPORT(clock_getres);
 int clock_gettime(clockid_t clockid, struct timespec *tp)
 {
 #ifndef RT_USING_RTC
-    LOG_W(_WARNING_NO_RTC);
+    LOG_RAW(_WARNING_NO_RTC);
     return -1;
 #else
     int ret = 0;
@@ -643,7 +639,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
 int clock_settime(clockid_t clockid, const struct timespec *tp)
 {
 #ifndef RT_USING_RTC
-    LOG_W(_WARNING_NO_RTC);
+    LOG_RAW(_WARNING_NO_RTC);
     return -1;
 #else
     register rt_base_t level;
