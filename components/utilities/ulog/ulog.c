@@ -111,28 +111,28 @@ struct rt_ulog
 /* level output info */
 static const char * const level_output_info[] =
 {
-        "A/",
-        NULL,
-        NULL,
-        "E/",
-        "W/",
-        NULL,
-        "I/",
-        "D/",
+    "A/",
+    NULL,
+    NULL,
+    "E/",
+    "W/",
+    NULL,
+    "I/",
+    "D/",
 };
 
 #ifdef ULOG_USING_COLOR
 /* color output info */
 static const char * const color_output_info[] =
 {
-        ULOG_COLOR_ASSERT,
-        NULL,
-        NULL,
-        ULOG_COLOR_ERROR,
-        ULOG_COLOR_WARN,
-        NULL,
-        ULOG_COLOR_INFO,
-        ULOG_COLOR_DEBUG,
+    ULOG_COLOR_ASSERT,
+    NULL,
+    NULL,
+    ULOG_COLOR_ERROR,
+    ULOG_COLOR_WARN,
+    NULL,
+    ULOG_COLOR_INFO,
+    ULOG_COLOR_DEBUG,
 };
 #endif /* ULOG_USING_COLOR */
 
