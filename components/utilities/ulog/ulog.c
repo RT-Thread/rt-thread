@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -74,7 +74,7 @@ struct rt_ulog
 {
     rt_bool_t init_ok;
     rt_bool_t output_lock_enabled;
-    struct rt_semaphore output_locker;
+    struct rt_mutex output_locker;
     /* all backends */
     rt_slist_t backend_list;
     /* the thread log's line buffer */
@@ -111,28 +111,28 @@ struct rt_ulog
 /* level output info */
 static const char * const level_output_info[] =
 {
-        "A/",
-        NULL,
-        NULL,
-        "E/",
-        "W/",
-        NULL,
-        "I/",
-        "D/",
+    "A/",
+    NULL,
+    NULL,
+    "E/",
+    "W/",
+    NULL,
+    "I/",
+    "D/",
 };
 
 #ifdef ULOG_USING_COLOR
 /* color output info */
 static const char * const color_output_info[] =
 {
-        ULOG_COLOR_ASSERT,
-        NULL,
-        NULL,
-        ULOG_COLOR_ERROR,
-        ULOG_COLOR_WARN,
-        NULL,
-        ULOG_COLOR_INFO,
-        ULOG_COLOR_DEBUG,
+    ULOG_COLOR_ASSERT,
+    NULL,
+    NULL,
+    ULOG_COLOR_ERROR,
+    ULOG_COLOR_WARN,
+    NULL,
+    ULOG_COLOR_INFO,
+    ULOG_COLOR_DEBUG,
 };
 #endif /* ULOG_USING_COLOR */
 
@@ -183,13 +183,16 @@ size_t ulog_ultoa(char *s, unsigned long int n)
 
 static void output_unlock(void)
 {
-    if (!ulog.output_lock_enabled)
+    /* earlier stage */
+    if (ulog.output_lock_enabled == RT_FALSE)
+    {
         return;
+    }
 
     /* If the scheduler is started and in thread context */
     if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
     {
-        rt_sem_release(&ulog.output_locker);
+        rt_mutex_release(&ulog.output_locker);
     }
     else
     {
@@ -201,13 +204,16 @@ static void output_unlock(void)
 
 static void output_lock(void)
 {
-    if (!ulog.output_lock_enabled)
+    /* earlier stage */
+    if (ulog.output_lock_enabled == RT_FALSE)
+    {
         return;
+    }
 
     /* If the scheduler is started and in thread context */
     if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
     {
-        rt_sem_take(&ulog.output_locker, RT_WAITING_FOREVER);
+        rt_mutex_take(&ulog.output_locker, RT_WAITING_FOREVER);
     }
     else
     {
@@ -546,15 +552,16 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const c
 {
     char *log_buf = NULL;
     rt_size_t log_len = 0;
+    static rt_uint8_t _ulog_voutput_recursion = 0;
 
+    RT_ASSERT(tag);
+    RT_ASSERT(format);
 #ifndef ULOG_USING_SYSLOG
     RT_ASSERT(level <= LOG_LVL_DBG);
 #else
     RT_ASSERT(LOG_PRI(level) <= LOG_DEBUG);
 #endif /* ULOG_USING_SYSLOG */
 
-    RT_ASSERT(tag);
-    RT_ASSERT(format);
 
     if (!ulog.init_ok)
     {
@@ -577,7 +584,6 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const c
 #endif /* ULOG_USING_SYSLOG */
     else if (!rt_strstr(tag, ulog.filter.tag))
     {
-        /* tag filter */
         return;
     }
 #endif /* ULOG_USING_FILTER */
@@ -587,6 +593,14 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const c
 
     /* lock output */
     output_lock();
+
+    if (_ulog_voutput_recursion != 0)
+    {
+        output_unlock();
+        return;
+    }
+
+    _ulog_voutput_recursion = 1;
 
 #ifndef ULOG_USING_SYSLOG
     log_len = ulog_formater(log_buf, level, tag, newline, format, args);
@@ -604,6 +618,7 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const c
         /* find the keyword */
         if (!rt_strstr(log_buf, ulog.filter.keyword))
         {
+            _ulog_voutput_recursion = 0;
             /* unlock output */
             output_unlock();
             return;
@@ -612,6 +627,8 @@ void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const c
 #endif /* ULOG_USING_FILTER */
     /* do log output */
     do_output(level, tag, RT_FALSE, log_buf, log_len);
+
+    _ulog_voutput_recursion = 0;
 
     /* unlock output */
     output_unlock();
@@ -1439,7 +1456,7 @@ int ulog_init(void)
     if (ulog.init_ok)
         return 0;
 
-    rt_sem_init(&ulog.output_locker, "ulog lock", 1, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&ulog.output_locker, "ulog", RT_IPC_FLAG_PRIO);
     ulog.output_lock_enabled = RT_TRUE;
     rt_slist_init(&ulog.backend_list);
 
@@ -1455,7 +1472,7 @@ int ulog_init(void)
     if (ulog.async_rbb == NULL)
     {
         rt_kprintf("Error: ulog init failed! No memory for async rbb.\n");
-        rt_sem_detach(&ulog.output_locker);
+        rt_mutex_detach(&ulog.output_locker);
         return -RT_ENOMEM;
     }
     rt_sem_init(&ulog.async_notice, "ulog", 0, RT_IPC_FLAG_FIFO);
@@ -1522,7 +1539,7 @@ void ulog_deinit(void)
     }
 #endif /* ULOG_USING_FILTER */
 
-    rt_sem_detach(&ulog.output_locker);
+    rt_mutex_detach(&ulog.output_locker);
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
     rt_rbb_destroy(ulog.async_rbb);
