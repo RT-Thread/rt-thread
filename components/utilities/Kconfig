@@ -209,6 +209,8 @@ config RT_USING_VAR_EXPORT
     bool "Enable Var Export"
     default n
 
+source "$RTT_DIR/components/utilities/fal/Kconfig"
+
 source "$RTT_DIR/components/utilities/rt-link/Kconfig"
 
 endmenu
