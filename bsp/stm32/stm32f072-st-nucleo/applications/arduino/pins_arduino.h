@@ -10,16 +10,7 @@
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
-#define LED_BUILTIN  13 /* Built-in LED */
-
-#define ARDUINO_PWM_HZ 500 /* Arduino UNO's PWM is around 500Hz */
-
-#define ARDUINO_PINOUT_ADC_MAX  6  /* Arduino UNO has 6 ADC pins */
-#define ARDUINO_PINOUT_PWM_MAX  5  /* Arduino UNO has 5 PWM pins */
-
-#define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
-
-/* pins alias */
+/* pins alias. Must keep in sequence */
 #define D0   (0)
 #define D1   (1)
 #define D2   (2)
@@ -42,5 +33,12 @@
 #define A3   (19)
 #define A4   (20)
 #define A5   (21)
+
+#define LED_BUILTIN  D13 /* Built-in LED */
+
+#define ARDUINO_PINOUT_PWM_MAX  5  /* This Arduino variant has 5 PWM pins */
+#define ARDUINO_PWM_HZ 500 /* Arduino UNO's PWM is around 500Hz */
+
+#define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
 
 #endif /* Pins_Arduino_h */
