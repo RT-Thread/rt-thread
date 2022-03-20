@@ -279,7 +279,7 @@ static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 {
-    int i;
+    rt_uint8_t i;
     for (i = 0; i < 32; i++)
     {
         if ((0x01 << i) == bit)

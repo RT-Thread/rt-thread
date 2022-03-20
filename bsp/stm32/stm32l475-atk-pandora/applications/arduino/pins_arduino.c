@@ -22,18 +22,18 @@ const pin_map_t pin_map_table[]=
 {
     {D0}, /* RX */
     {D1}, /* TX */
-    {D2},
+    {D2, GET_PIN(B,9)},
     {D3}, /* PWM */
-    {D4},
-    {D5},
+    {D4, GET_PIN(A,8)},
+    {D5, GET_PIN(D,14)},
     {D6}, /* PWM */
-    {D7},
-    {D8},
+    {D7, GET_PIN(B,14)},
+    {D8, GET_PIN(B,12)},
     {D9}, /* PWM */
     {D10}, /* PWM */
     {D11, GET_PIN(B,8), "pwm4", 3}, /* PWM */
-    {D12},
-    {D13},
+    {D12, GET_PIN(B,15)},
+    {D13, GET_PIN(B,13)},
     {D14, GET_PIN(A,1)}, /* BSP: MOTOR-A */
     {D15, GET_PIN(A,0)}, /* BSP: MOTOR-B */
     {D16, GET_PIN(B,2)}, /* BSP: BEEP */
@@ -45,7 +45,7 @@ const pin_map_t pin_map_table[]=
     {D22, GET_PIN(E,8)}, /* LED_BUILTIN, BSP: GREEN-LED */
     {D23, GET_PIN(E,9), "pwm1", 1}, /* PWM, BSP: BLUE-LED */
     {A0, GET_PIN(C,2), "adc1", 3},
-    {A1},
+    {A1, GET_PIN(C,4), "adc1", 13},
     {A2},
     {A3},
     {A4},
