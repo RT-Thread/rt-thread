@@ -20,11 +20,11 @@
 */
 const pin_map_t pin_map_table[]=
 {
-    {D0, GET_PIN(A,3)}, /* RX */
-    {D1, GET_PIN(A,2)}, /* TX */
+    {D0}, /* RX */
+    {D1}, /* TX */
     {D2, GET_PIN(A,10)},
     {D3, GET_PIN(B,3), "pwm2", 2}, /* PWM */
-    {D4, GET_PIN(B,5)},  /* D4 */
+    {D4, GET_PIN(B,5)},
     {D5, GET_PIN(B,4), "pwm3", 1}, /* PWM */
     {D6, GET_PIN(B,10), "pwm2", 3}, /* PWM */
     {D7, GET_PIN(A,8)},
@@ -36,12 +36,12 @@ const pin_map_t pin_map_table[]=
     {D13, GET_PIN(A,5)},
     {D14, GET_PIN(B,9)},
     {D15, GET_PIN(B,8)},
-    {A0, GET_PIN(A,0), "adc1", 0},
-    {A1, GET_PIN(A,1), "adc1", 1},
-    {A2, GET_PIN(A,4), "adc1", 4},
-    {A3, GET_PIN(B,0), "adc1", 8},
-    {A4, GET_PIN(C,1), "adc1", 11},
-    {A5, GET_PIN(C,0), "adc1", 10}
+    {A0, GET_PIN(A,0), "adc1", 0}, /* ADC */
+    {A1, GET_PIN(A,1), "adc1", 1}, /* ADC */
+    {A2, GET_PIN(A,4), "adc1", 4}, /* ADC */
+    {A3, GET_PIN(B,0), "adc1", 8}, /* ADC */
+    {A4, GET_PIN(C,1), "adc1", 11}, /* ADC */
+    {A5, GET_PIN(C,0), "adc1", 10} /* ADC */
 };
 
 /* initialization for BSP; maybe a blank function  */

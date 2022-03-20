@@ -238,10 +238,15 @@ void lcd_display_brightness(rt_uint8_t percent)
 {
     struct rt_device_pwm *pwm_dev;
 
+    if(percent > 100)
+    {
+        percent = 100;
+    }
+
     pwm_dev = (struct rt_device_pwm*)rt_device_find("pwm4");
     if(pwm_dev != RT_NULL)
     {
-        rt_pwm_set(pwm_dev, 2, 1000000, percent*10000); /* PWM4 CH2 with 1000Hz */
+        rt_pwm_set(pwm_dev, 2, 1000000, percent*10000); /* PB7, PWM4 CH2 with 1000Hz */
         rt_pwm_enable(pwm_dev, 2);
     }
 }
