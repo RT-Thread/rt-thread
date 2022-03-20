@@ -52,6 +52,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI
         select BSP_USING_SPI3
         select BSP_SPI3_TX_USING_DMA
+        select BSP_USING_PWM
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH2
         default n
 
     config BSP_USING_LCD_SAMPLE

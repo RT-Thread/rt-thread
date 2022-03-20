@@ -24,7 +24,6 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#define LCD_PWR_PIN           GET_PIN(B, 7)
 #define LCD_DC_PIN            GET_PIN(B, 4)
 #define LCD_RES_PIN           GET_PIN(B, 6)
 
@@ -120,9 +119,6 @@ static void lcd_gpio_init(void)
     rt_pin_mode(LCD_DC_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(LCD_RES_PIN, PIN_MODE_OUTPUT);
 
-    rt_pin_mode(LCD_PWR_PIN, PIN_MODE_OUTPUT);
-    rt_pin_write(LCD_PWR_PIN, PIN_LOW);
-
     rt_pin_write(LCD_RES_PIN, PIN_LOW);
 
     //wait at least 100ms for reset
@@ -133,8 +129,10 @@ static void lcd_gpio_init(void)
 static int rt_hw_lcd_init(void)
 {
     __HAL_RCC_GPIOD_CLK_ENABLE();
+
     rt_hw_spi_device_attach("spi3", "spi30", GPIOD, GPIO_PIN_7);
     lcd_gpio_init();
+
     /* Memory Data Access Control */
     lcd_write_cmd(0x36);
     lcd_write_data(0x00);
@@ -213,7 +211,7 @@ static int rt_hw_lcd_init(void)
     rt_thread_mdelay(100);
 
     /* display on */
-    rt_pin_write(LCD_PWR_PIN, PIN_HIGH);
+    lcd_display_on();
     lcd_write_cmd(0x29);
 
     return RT_EOK;
@@ -236,27 +234,39 @@ void lcd_set_color(rt_uint16_t back, rt_uint16_t fore)
 }
 #endif /* BSP_USING_LVGL */
 
+void lcd_display_brightness(rt_uint8_t percent)
+{
+    struct rt_device_pwm *pwm_dev;
+
+    pwm_dev = (struct rt_device_pwm*)rt_device_find("pwm4");
+    if(pwm_dev != RT_NULL)
+    {
+        rt_pwm_set(pwm_dev, 2, 1000000, percent*10000); /* PWM4 CH2 with 1000Hz */
+        rt_pwm_enable(pwm_dev, 2);
+    }
+}
+
 void lcd_display_on(void)
 {
-    rt_pin_write(LCD_PWR_PIN, PIN_HIGH);
+    lcd_display_brightness(100);
 }
 
 void lcd_display_off(void)
 {
-    rt_pin_write(LCD_PWR_PIN, PIN_LOW);
+    lcd_display_brightness(0);
 }
 
 /* lcd enter the minimum power consumption mode and backlight off. */
 void lcd_enter_sleep(void)
 {
-    rt_pin_write(LCD_PWR_PIN, PIN_LOW);
+    lcd_display_off();
     rt_thread_mdelay(5);
     lcd_write_cmd(0x10);
 }
 /* lcd turn off sleep mode and backlight on. */
 void lcd_exit_sleep(void)
 {
-    rt_pin_write(LCD_PWR_PIN, PIN_HIGH);
+    lcd_display_on();
     rt_thread_mdelay(5);
     lcd_write_cmd(0x11);
     rt_thread_mdelay(120);
