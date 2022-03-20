@@ -23,14 +23,14 @@ const pin_map_t pin_map_table[]=
     {D0}, /* RX */
     {D1}, /* TX */
     {D2, GET_PIN(B,9)},
-    {D3}, /* PWM */
+    {D3, GET_PIN(D,15), "pwm4", 4}, /* PWM */
     {D4, GET_PIN(A,8)},
     {D5, GET_PIN(D,14)},
-    {D6}, /* PWM */
+    {D6, GET_PIN(B,11), "pwm2", 4}, /* PWM */
     {D7, GET_PIN(B,14)},
     {D8, GET_PIN(B,12)},
-    {D9}, /* PWM */
-    {D10}, /* PWM */
+    {D9, GET_PIN(D,12), "pwm4", 1}, /* PWM */
+    {D10, GET_PIN(B,10), "pwm2", 3}, /* PWM */
     {D11, GET_PIN(B,8), "pwm4", 3}, /* PWM */
     {D12, GET_PIN(B,15)},
     {D13, GET_PIN(B,13)},
