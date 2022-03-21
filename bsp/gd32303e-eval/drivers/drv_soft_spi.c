@@ -1,15 +1,11 @@
 /*
- * File      : drv_soft_spi.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2022 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-10-11     kyle         first version
+ * 2021-10-11     kyle         first implementation.
  */
 
 #include "drv_soft_spi.h"
@@ -42,16 +38,6 @@ struct gd32_spi_bit_data
     } sclk, mosi, miso;
 };
 
-#if 0
-
-#define GPIO_OUTPUT_BIT_GET(port, pin)    gpio_output_bit_get(port, pin)
-#define GPIO_BIT_RESET(port, pin)         gpio_bit_reset(port, pin)
-#define GPIO_BIT_SET(port, pin)           gpio_bit_set(port, pin)
-#define GPIO_INPUT_BIT_GET(port, pin)     gpio_input_bit_get(port, pin)
-#define GPIO_SET_OUTPUT(port, pin)        gpio_init(port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, pin)
-#define GPIO_SET_INPUT(port, pin)         gpio_init(port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, pin)
-
-#else /* 使用内联减少函数调用耗时 */
 
 rt_inline FlagStatus GPIO_OUTPUT_BIT_GET(uint32_t gpio_periph, uint32_t pin)
 {
@@ -149,7 +135,6 @@ rt_inline void GPIO_INIT(uint32_t gpio_periph, uint32_t mode, uint32_t speed, ui
 #define GPIO_SET_OUTPUT(port, pin)        GPIO_INIT(port, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, pin)
 #define GPIO_SET_INPUT(port, pin)         GPIO_INIT(port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, pin)
 
-#endif
 
 static void gpio_tog_sclk(void *data)
 {
@@ -258,13 +243,12 @@ static void gpio_dir_miso(void *data, rt_int32_t state)
 
 static void gpio_udelay(rt_uint32_t us)
 {
-////    int i = ((rcu_clock_freq_get(CK_SYS) / 4000000) * us);
-//    int i = us;
+    int i = ((rcu_clock_freq_get(CK_SYS) / 4000000) * us);
 
-//    while (i)
-//    {
-//        i--;
-//    }
+    while (i)
+    {
+        i--;
+    }
 }
 
 static void soft_spi_gpio_init(const struct gd32_spi_bit_data *bd)
