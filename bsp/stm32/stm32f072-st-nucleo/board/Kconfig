@@ -17,6 +17,7 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_ARDUINO
         bool "Support Arduino"
         select RT_USING_ARDUINO
+        select ARDUINO_USING_SERVO
         select RT_USING_PIN
         select BSP_USING_ADC
         select BSP_USING_ADC1
@@ -29,7 +30,6 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM3_CH2
         select BSP_USING_PWM16
         select BSP_USING_PWM17
-        select BSP_USING_I2C
         default n
 
 endmenu
