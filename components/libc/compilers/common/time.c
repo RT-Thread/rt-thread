@@ -113,16 +113,14 @@ static rt_err_t get_timeval(struct timeval *tv)
     }
     else
     {
-        /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
-        rt_kprintf(_WARNING_NO_RTC);
+        LOG_W(_WARNING_NO_RTC);
         return -RT_ENOSYS;
     }
 
     return rst;
 
 #else
-    /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
-    rt_kprintf(_WARNING_NO_RTC);
+    LOG_W(_WARNING_NO_RTC);
     return -RT_ENOSYS;
 #endif /* RT_USING_RTC */
 }
