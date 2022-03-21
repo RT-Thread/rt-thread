@@ -29,7 +29,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM3_CH1
         select BSP_USING_PWM3_CH2
         select BSP_USING_PWM16
+        select BSP_USING_PWM16_CH1
         select BSP_USING_PWM17
+        select BSP_USING_PWM17_CH1
         default n
 
 endmenu
@@ -110,11 +112,20 @@ menu "On-chip Peripheral Drivers"
             menuconfig BSP_USING_PWM16
                 bool "Enable timer16 output PWM"
                 default n
+                if BSP_USING_PWM16
+                    config BSP_USING_PWM16_CH1
+                        bool "Enable PWM16 channel1"
+                        default n
+                endif
 
             menuconfig BSP_USING_PWM17
                 bool "Enable timer17 output PWM"
                 default n
-
+                if BSP_USING_PWM17
+                    config BSP_USING_PWM17_CH1
+                        bool "Enable PWM17 channel1"
+                        default n
+                endif
         endif
 
     menuconfig BSP_USING_I2C
