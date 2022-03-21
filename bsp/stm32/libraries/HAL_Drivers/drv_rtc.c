@@ -249,7 +249,7 @@ static rt_err_t stm32_rtc_get_secs(void *args)
     struct timeval tv;
     get_rtc_timeval(&tv);
     *(rt_uint32_t *) args = tv.tv_sec;
-    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
+    LOG_D("RTC: get rtc_time %x", *(rt_uint32_t *)args);
 
     return RT_EOK;
 }
@@ -262,7 +262,7 @@ static rt_err_t stm32_rtc_set_secs(void *args)
     {
         result = -RT_ERROR;
     }
-    LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
+    LOG_D("RTC: set rtc_time %x", *(rt_uint32_t *)args);
 
     return result;
 }
