@@ -9,12 +9,16 @@ src = []
 CPPPATH = []
 list = os.listdir(cwd)
 
-if rtconfig.CROSS_TOOL == 'iar':
+if rtconfig.PLATFORM == 'iar':
     print("\nThe current project does not support iar build\n")
     Return('group')
-elif rtconfig.CROSS_TOOL == 'gcc':
+elif rtconfig.PLATFORM == 'gcc' :
     CPPPATH = [cwd]
     src = Glob('./src/*.c')
+elif rtconfig.PLATFORM == 'armclang':
+    if GetOption('target') != 'mdk5':
+        CPPPATH = [cwd]
+        src = Glob('./src/*.c')
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 

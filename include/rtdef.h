@@ -1151,6 +1151,7 @@ struct rt_device_graphic_info
     rt_uint16_t height;                                 /**< height of graphic device */
 
     rt_uint8_t *framebuffer;                            /**< frame buffer */
+    rt_uint32_t smem_len;                               /**< allocated frame buffer size */
 };
 
 /**

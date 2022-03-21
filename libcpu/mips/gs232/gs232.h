@@ -51,8 +51,8 @@
 
 /* Watch Dog registers */
 #define WDT_EN              HWREG32(WDT_BASE + 0x00)
-#define WDT_SET             HWREG32(WDT_BASE + 0x04)
-#define WDT_TIMER           HWREG32(WDT_BASE + 0x08)
+#define WDT_SET             HWREG32(WDT_BASE + 0x08)
+#define WDT_TIMER           HWREG32(WDT_BASE + 0x04)
 
 #define PLL_FREQ            HWREG32(0xbfe78030)
 #define PLL_DIV_PARAM       HWREG32(0xbfe78034)
