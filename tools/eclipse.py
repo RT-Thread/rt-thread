@@ -291,7 +291,8 @@ def HandleToolOption(tools, env, project, reset):
 
         listOptionValue = option.find('listOptionValue')
         if listOptionValue != None:
-            listOptionValue.set('value', linker_script)
+            if reset is True or IsRttEclipsePathFormat(listOptionValue.get('value')):
+                listOptionValue.set('value', linker_script)
         else:
             SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': linker_script})
     # scriptfile in stm32cubeIDE
