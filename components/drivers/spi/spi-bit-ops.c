@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -233,25 +233,25 @@ rt_inline rt_size_t spi_xfer_3line_data8(struct rt_spi_bit_ops       *ops,
                         TOG_SCLK(ops);
                     }
                 }
-                
+
                 rx_data = tx_data;
             }
             else
             {
                 for (i = 0; i < 8; i++)
-                {                
+                {
                     spi_delay2(ops);
-                
+
                     TOG_SCLK(ops);
-                
+
                     if (config->mode & RT_SPI_MSB) { rx_data <<= 1; bit = 0x01; }
                     else                           { rx_data >>= 1; bit = 0x80; }
-                
+
                     if (GET_MOSI(ops)) { rx_data |=  bit; }
                     else               { rx_data &= ~bit; }
-                
+
                     spi_delay2(ops);
-                
+
                     if (!(config->mode & RT_SPI_CPHA) || (size != 0) || (i < 7))
                     {
                         TOG_SCLK(ops);
@@ -334,25 +334,25 @@ rt_inline rt_size_t spi_xfer_3line_data16(struct rt_spi_bit_ops       *ops,
                         TOG_SCLK(ops);
                     }
                 }
-                
+
                 rx_data = tx_data;
             }
             else
             {
                 for (i = 0; i < 16; i++)
-                {                
+                {
                     spi_delay2(ops);
-                
+
                     TOG_SCLK(ops);
-                
+
                     if (config->mode & RT_SPI_MSB) { rx_data <<= 1; bit = 0x0001; }
                     else                           { rx_data >>= 1; bit = 0x8000; }
-                
+
                     if (GET_MOSI(ops)) { rx_data |=  bit; }
                     else               { rx_data &= ~bit; }
-                
+
                     spi_delay2(ops);
-                
+
                     if (!(config->mode & RT_SPI_CPHA) || (size != 0) || (i < 15))
                     {
                         TOG_SCLK(ops);
@@ -383,7 +383,7 @@ rt_err_t spi_bit_configure(struct rt_spi_device *device, struct rt_spi_configura
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(configuration != RT_NULL);
-    
+
     if (configuration->mode & RT_SPI_SLAVE)
     {
         return -RT_EIO;
@@ -502,13 +502,13 @@ rt_uint32_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *me
     return message->length;
 }
 
-static const struct rt_spi_ops spi_bit_bus_ops = 
+static const struct rt_spi_ops spi_bit_bus_ops =
 {
     .configure = spi_bit_configure,
     .xfer      = spi_bit_xfer,
 };
 
-rt_err_t rt_spi_bit_add_bus(struct rt_spi_bit_obj *obj, 
+rt_err_t rt_spi_bit_add_bus(struct rt_spi_bit_obj *obj,
                             const char            *bus_name,
                             struct rt_spi_bit_ops *ops)
 {
@@ -516,10 +516,10 @@ rt_err_t rt_spi_bit_add_bus(struct rt_spi_bit_obj *obj,
     obj->config.data_width = 8;
     obj->config.max_hz     = 1 * 1000 * 1000;
     obj->config.mode       = RT_SPI_MASTER | RT_SPI_MSB | RT_SPI_MODE_0;
-    
+
     /* idle status */
     if (obj->config.mode & RT_SPI_CPOL) SCLK_H(ops);
     else                                SCLK_L(ops);
-    
+
     return rt_spi_bus_register(&obj->bus, bus_name, &spi_bit_bus_ops);
 }
