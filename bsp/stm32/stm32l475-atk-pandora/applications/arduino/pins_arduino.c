@@ -44,12 +44,10 @@ const pin_map_t pin_map_table[]=
     {D21, GET_PIN(E,7)}, /* BSP: RED-LED */
     {D22, GET_PIN(E,8)}, /* LED_BUILTIN, BSP: GREEN-LED */
     {D23, GET_PIN(E,9), "pwm1", 1}, /* PWM, BSP: BLUE-LED */
-    {A0, GET_PIN(C,2), "adc1", 3},
-    {A1, GET_PIN(C,4), "adc1", 13},
-    {A2},
-    {A3},
-    {A4},
-    {A5}
+    {A0, GET_PIN(C,2), "adc1", 3}, /* ADC */
+    {A1, GET_PIN(C,4), "adc1", 13}, /* ADC */
+    {A2, RT_NULL, "adc1", 0}, /* ADC, On-Chip: internal reference voltage */
+    {A3, RT_NULL, "adc1", 17} /* ADC, On-Chip: internal temperature sensor */
 };
 
 /* initialization for BSP; maybe a blank function  */

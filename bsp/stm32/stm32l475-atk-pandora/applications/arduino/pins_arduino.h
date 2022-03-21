@@ -39,12 +39,9 @@
 #define A1   (25)
 #define A2   (26)
 #define A3   (27)
-#define A4   (28)
-#define A5   (29)
 
 #define LED_BUILTIN  D22 /* Built-in LED */
 
-#define ARDUINO_PINOUT_PWM_MAX  6  /* This Arduino variant has 6 PWM pins */
 #define ARDUINO_PWM_HZ 500 /* Arduino UNO's PWM is around 500Hz */
 
 #define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
