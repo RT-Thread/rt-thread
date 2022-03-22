@@ -110,7 +110,7 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
             goto _exit;
 #endif /* defined(CRC_POLYLENGTH_7B) && defined(CRC_POLYLENGTH_8B) && defined(CRC_POLYLENGTH_16B) && defined(CRC_POLYLENGTH_32B) */
         }
-		
+
         if (HW_TypeDef->Init.DefaultInitValueUse == DEFAULT_INIT_VALUE_DISABLE)
         {
             HW_TypeDef->Init.InitValue = ctx ->crc_cfg.last_val;
