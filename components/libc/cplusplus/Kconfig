@@ -1,7 +1,5 @@
-menu "C++ features"
-
-config RT_USING_CPLUSPLUS
-    bool "Support C++ features"
+menuconfig RT_USING_CPLUSPLUS
+    bool "Enable C++ features"
     default n
 
 if RT_USING_CPLUSPLUS
@@ -15,5 +13,3 @@ if RT_USING_CPLUSPLUS
         select RT_USING_RTC
 
 endif
-
-endmenu
