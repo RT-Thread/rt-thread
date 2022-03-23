@@ -64,6 +64,12 @@ config RT_USING_SPI2
     select RT_USING_SPI
     default n 
 
+config RT_USING_SPI3
+    bool "Using SPI2 BUS (software simulation)"
+    select RT_USING_SPI
+    select RT_USING_SPI_BITOPS
+    default n 
+
 config RT_USING_I2C0
     bool "Using I2C0"
     select RT_USING_I2C
