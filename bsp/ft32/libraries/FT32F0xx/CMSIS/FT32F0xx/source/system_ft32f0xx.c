@@ -20,7 +20,7 @@
   * @{
   */
 
-#include "FT32f0xx.h"
+#include "ft32f0xx.h"
 
 /**
   * @}
