@@ -23,7 +23,7 @@
 
 #if !defined(BSP_USING_I2C0) && !defined(BSP_USING_I2C1)
     #error "Please define at least one BSP_USING_I2Cx"
-    /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
+    /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
 static const struct ra_soft_i2c_config soft_i2c_config[] =
