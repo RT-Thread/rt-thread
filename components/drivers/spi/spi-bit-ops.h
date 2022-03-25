@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author        Notes
- * 2021-10-11     kyle         first version
+ * 2021-10-11     kyle          first version
  */
 
 #ifndef __SPI_BIT_OPS_H__
