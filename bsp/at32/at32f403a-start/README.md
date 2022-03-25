@@ -19,7 +19,7 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | IDE/编译器 | 已测试版本                   |
 | ---------- | ---------------------------- |
 | MDK4       | MDK4.74                      |
-| MDK5       | MDK523                       |
+| MDK5       | MDK531                       |
 | IAR        | IAR8.20                      |
 | GCC        | GCC 5.4.1 20160919 (release) |
 
@@ -122,8 +122,8 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.3 build Mar  9 2020
- 2006 - 2020 Copyright by rt-thread team
+ / | \     4.1.0 build Mar 23 2022
+ 2006 - 2022 Copyright by RT-Thread team
 msh />
 ```
 
@@ -135,4 +135,4 @@ msh />
 
 维护人:
 
-- [sheltonyu](https://github.com/sheltonyu) 
+- [sheltonyu]
