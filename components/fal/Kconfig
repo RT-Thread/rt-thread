@@ -1,7 +1,7 @@
 
 # Kconfig file for package fal
 menuconfig RT_USING_FAL
-    bool "fal: Flash Abstraction Layer implement. Manage flash device and partition."
+    bool "FAL: flash abstraction layer"
     default n
 
 if RT_USING_FAL
