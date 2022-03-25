@@ -215,7 +215,7 @@ static void nu_pdma_init(void)
     RT_ASSERT(g_mutex_sg != RT_NULL);
 
     nu_pdma_chn_mask = ~NU_PDMA_CH_Msk;
-    rt_memset(nu_pdma_chn_arr, 0x00, sizeof(nu_pdma_chn_t));
+    rt_memset(nu_pdma_chn_arr, 0x00, NU_PDMA_CH_MAX * sizeof(nu_pdma_chn_t));
 
     NVIC_EnableIRQ(PDMA_IRQn);
 
@@ -998,7 +998,7 @@ static rt_size_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, un
             }
 
             u32TransferCnt -= u32TxCnt;
-            u32Offset += u32TxCnt;
+            u32Offset += u32TxCnt * (u32DataWidth / 8);
         }
         while (u32TransferCnt > 0);
 

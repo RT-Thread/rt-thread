@@ -21,6 +21,7 @@
 
 /* Private define ---------------------------------------------------------------*/
 #define DEF_ADC_TOUCH_SMPL_TICK  40
+#define TOUCH_MQ_LENGTH      64
 
 /* Private Typedef --------------------------------------------------------------*/
 struct nu_adc
@@ -35,24 +36,27 @@ struct nu_adc
     uint32_t chn_mask;
     rt_sem_t m_psSem;
 
+#if defined(BSP_USING_ADC_TOUCH)
     rt_touch_t psRtTouch;
     rt_timer_t psRtTouchMenuTimer;
+    rt_mq_t m_pmqTouchXYZ;
+#endif
 
     nu_adc_cb m_isr[eAdc_ISR_CNT];
     nu_adc_cb m_wkisr[eAdc_WKISR_CNT];
-
-    rt_mq_t m_pmqTouchXYZ;
 };
 typedef struct nu_adc *nu_adc_t;
 
+#if defined(BSP_USING_ADC_TOUCH)
 struct nu_adc_touch_data
 {
-    uint16_t    u16X;
-    uint16_t    u16Y;
-    uint16_t    u16Z0;
-    uint16_t    u16Z1;
+    uint32_t    u32X;
+    uint32_t    u32Y;
+    uint32_t    u32Z0;
+    uint32_t    u32Z1;
 };
 typedef struct nu_adc_touch_data *nu_adc_touch_data_t;
+#endif
 
 /* Private functions ------------------------------------------------------------*/
 static rt_err_t nu_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled);
@@ -134,6 +138,64 @@ static rt_err_t _nu_adc_init(rt_device_t dev)
     return RT_EOK;
 }
 
+static int32_t AdcMenuStartCallback(uint32_t status, uint32_t userData)
+{
+    nu_adc_t psNuAdc = (nu_adc_t)userData;
+
+#if defined(BSP_USING_ADC_TOUCH)
+
+    static struct nu_adc_touch_data point;
+    static rt_bool_t bDrop = RT_FALSE;
+    static uint32_t u32LastZ0 = 0xffffu;
+
+    if (psNuAdc->psRtTouch != RT_NULL)
+    {
+        uint32_t value;
+
+        value = inpw(REG_ADC_XYDATA);
+        point.u32X = (value & 0x0ffful);
+        point.u32Y = ((value >> 16) & 0x0ffful);
+
+        value = inpw(REG_ADC_ZDATA);
+        point.u32Z0 = (value & 0x0ffful);
+        point.u32Z1 = ((value >> 16) & 0x0ffful);
+
+        /* Trigger next or not. */
+        if (point.u32Z0 == 0)
+        {
+            /* Stop sampling procedure. */
+            rt_timer_stop(g_sNuADC.psRtTouchMenuTimer);
+
+            /* Re-start pendown detection */
+            nu_adc_touch_detect(RT_TRUE);
+
+            bDrop = RT_TRUE;
+        }
+        else
+        {
+            bDrop = RT_FALSE;
+        }
+
+        /* Notify upper layer. */
+        if ((!bDrop || (u32LastZ0 != 0)) && rt_mq_send(psNuAdc->m_pmqTouchXYZ, (const void *)&point, sizeof(struct nu_adc_touch_data)) == RT_EOK)
+        {
+            rt_hw_touch_isr(psNuAdc->psRtTouch);
+        }
+
+        u32LastZ0 = point.u32Z0;
+    }
+    else
+#endif
+    {
+        rt_err_t result = rt_sem_release(psNuAdc->m_psSem);
+        RT_ASSERT(result == RT_EOK);
+    }
+
+    return 0;
+}
+
+#if defined(BSP_USING_ADC_TOUCH)
+
 void nu_adc_touch_detect(rt_bool_t bStartDetect)
 {
     nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
@@ -150,60 +212,6 @@ void nu_adc_touch_detect(rt_bool_t bStartDetect)
     }
 }
 
-static int32_t AdcMenuStartCallback(uint32_t status, uint32_t userData)
-{
-    static struct nu_adc_touch_data point;
-    static rt_bool_t bDrop = RT_FALSE;
-    static uint16_t u16LastZ0 = 0xfffful;
-
-    nu_adc_t psNuAdc = (nu_adc_t)userData;
-
-    if (psNuAdc->psRtTouch != RT_NULL)
-    {
-        uint32_t value;
-
-        value = inpw(REG_ADC_XYDATA);
-        point.u16X = (uint16_t)(value & 0x0ffful);
-        point.u16Y = (uint16_t)((value >> 16) & 0x0ffful);
-
-        value = inpw(REG_ADC_ZDATA);
-        point.u16Z0 = (uint16_t)(value & 0x0ffful);
-        point.u16Z1 = (uint16_t)((value >> 16) & 0x0ffful);
-
-        /* Trigger next or not. */
-        if (point.u16Z0 == 0)
-        {
-            /* Stop sampling procedure. */
-            rt_timer_stop(g_sNuADC.psRtTouchMenuTimer);
-
-            /* Re-start pendown detection */
-            nu_adc_touch_detect(RT_TRUE);
-
-            bDrop = RT_TRUE;
-        }
-        else
-        {
-            bDrop = RT_FALSE;
-        }
-
-        /* Notify upper layer. */
-        if ((!bDrop || (u16LastZ0 != 0)) && rt_mq_send(psNuAdc->m_pmqTouchXYZ, (const void *)&point, sizeof(struct nu_adc_touch_data)) == RT_EOK)
-        {
-            rt_hw_touch_isr(psNuAdc->psRtTouch);
-        }
-
-        u16LastZ0 = point.u16Z0;
-    }
-    else
-    {
-        rt_err_t result = rt_sem_release(psNuAdc->m_psSem);
-        RT_ASSERT(result == RT_EOK);
-    }
-
-    return 0;
-}
-
-
 static int32_t PenDownCallback(uint32_t status, uint32_t userData)
 {
     nu_adc_touch_detect(RT_FALSE);
@@ -213,7 +221,7 @@ static int32_t PenDownCallback(uint32_t status, uint32_t userData)
     return 0;
 }
 
-int32_t nu_adc_read_touch_xyz(uint16_t *bufX, uint16_t *bufY, uint16_t *bufZ0, uint16_t *bufZ1, int32_t dataCnt)
+int32_t nu_adc_touch_read_xyz(uint32_t *bufX, uint32_t *bufY, uint32_t *bufZ0, uint32_t *bufZ1, int32_t dataCnt)
 {
     int i;
     struct nu_adc_touch_data value;
@@ -223,13 +231,70 @@ int32_t nu_adc_read_touch_xyz(uint16_t *bufX, uint16_t *bufY, uint16_t *bufZ0, u
         if (rt_mq_recv(g_sNuADC.m_pmqTouchXYZ, (void *)&value, sizeof(struct nu_adc_touch_data), 0) == -RT_ETIMEOUT)
             break;
 
-        bufX[i]  = value.u16X;
-        bufY[i]  = value.u16Y;
-        bufZ0[i] = value.u16Z0;
-        bufZ1[i] = value.u16Z1;
+        bufX[i]  = value.u32X;
+        bufY[i]  = value.u32Y;
+        bufZ0[i] = value.u32Z0;
+        bufZ1[i] = value.u32Z1;
     }
     return i;
 }
+
+void nu_adc_touch_start_conv(void)
+{
+    nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
+    _nu_adc_control((rt_device_t)psNuAdc, START_MST, RT_NULL);
+}
+
+rt_err_t nu_adc_touch_enable(rt_touch_t psRtTouch)
+{
+    nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
+    nu_adc_cb sNuAdcCb;
+
+    rt_adc_enable((rt_adc_device_t)psNuAdc, 4);
+    rt_adc_enable((rt_adc_device_t)psNuAdc, 5);
+    rt_adc_enable((rt_adc_device_t)psNuAdc, 6);
+    rt_adc_enable((rt_adc_device_t)psNuAdc, 7);
+
+    outpw(REG_ADC_CONF, (inpw(REG_ADC_CONF) & ~(0xfful << 24)) | 0xfful << 24);
+
+    /* Register touch device. */
+    psNuAdc->psRtTouch = psRtTouch;
+
+    /* Enable TouchXY. */
+    _nu_adc_control((rt_device_t)psNuAdc, T_ON, RT_NULL);
+
+    /* Enable TouchZZ. */
+    _nu_adc_control((rt_device_t)psNuAdc, Z_ON, RT_NULL);
+
+    /* Register PenDown callback. */
+    sNuAdcCb.cbfunc = PenDownCallback;
+    sNuAdcCb.private_data = (rt_uint32_t)psRtTouch;
+    _nu_adc_control((rt_device_t)psNuAdc, PEDEF_ON, (void *)&sNuAdcCb);
+
+    nu_adc_touch_detect(RT_TRUE);
+
+    return RT_EOK;
+}
+
+rt_err_t nu_adc_touch_disable(void)
+{
+    nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
+
+    nu_adc_touch_detect(RT_FALSE);
+
+    _nu_adc_control((rt_device_t)psNuAdc, T_OFF, RT_NULL);
+    _nu_adc_control((rt_device_t)psNuAdc, Z_OFF, RT_NULL);
+    _nu_adc_control((rt_device_t)psNuAdc, PEDEF_OFF, RT_NULL);
+
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 4);
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 5);
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 6);
+    rt_adc_disable((rt_adc_device_t)psNuAdc, 7);
+
+    return RT_EOK;
+}
+
+#endif
 
 static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
 {
@@ -443,7 +508,9 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
     case Z_OFF:   /* Disable Press measure function */
     {
         outpw(REG_ADC_CONF, inpw(REG_ADC_CONF) & ~ADC_CONF_ZEN);
+#if defined(BSP_USING_ADC_TOUCH)
         rt_mq_control(psNuAdc->m_pmqTouchXYZ, RT_IPC_CMD_RESET, RT_NULL);
+#endif
     }
     break;
 
@@ -518,61 +585,6 @@ static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
     default:
         return -(ret);
     }
-
-    return RT_EOK;
-}
-
-void nu_adc_touch_start_conv(void)
-{
-    nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
-    _nu_adc_control((rt_device_t)psNuAdc, START_MST, RT_NULL);
-}
-
-rt_err_t nu_adc_touch_enable(rt_touch_t psRtTouch)
-{
-    nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
-    nu_adc_cb sNuAdcCb;
-
-    rt_adc_enable((rt_adc_device_t)psNuAdc, 4);
-    rt_adc_enable((rt_adc_device_t)psNuAdc, 5);
-    rt_adc_enable((rt_adc_device_t)psNuAdc, 6);
-    rt_adc_enable((rt_adc_device_t)psNuAdc, 7);
-
-    outpw(REG_ADC_CONF, (inpw(REG_ADC_CONF) & ~(0xfful << 24)) | 0xfful << 24);
-
-    /* Register touch device. */
-    psNuAdc->psRtTouch = psRtTouch;
-
-    /* Enable TouchXY. */
-    _nu_adc_control((rt_device_t)psNuAdc, T_ON, RT_NULL);
-
-    /* Enable TouchZZ. */
-    _nu_adc_control((rt_device_t)psNuAdc, Z_ON, RT_NULL);
-
-    /* Register PenDown callback. */
-    sNuAdcCb.cbfunc = PenDownCallback;
-    sNuAdcCb.private_data = (rt_uint32_t)psRtTouch;
-    _nu_adc_control((rt_device_t)psNuAdc, PEDEF_ON, (void *)&sNuAdcCb);
-
-    nu_adc_touch_detect(RT_TRUE);
-
-    return RT_EOK;
-}
-
-rt_err_t nu_adc_touch_disable(void)
-{
-    nu_adc_t psNuAdc = (nu_adc_t)&g_sNuADC;
-
-    nu_adc_touch_detect(RT_FALSE);
-
-    _nu_adc_control((rt_device_t)psNuAdc, T_OFF, RT_NULL);
-    _nu_adc_control((rt_device_t)psNuAdc, Z_OFF, RT_NULL);
-    _nu_adc_control((rt_device_t)psNuAdc, PEDEF_OFF, RT_NULL);
-
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 4);
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 5);
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 6);
-    rt_adc_disable((rt_adc_device_t)psNuAdc, 7);
 
     return RT_EOK;
 }
@@ -685,6 +697,7 @@ exit_nu_adc_convert:
     return (-ret) ;
 }
 
+#if defined(BSP_USING_ADC_TOUCH)
 static void nu_adc_touch_smpl(void *p)
 {
     /* Enable interrupt */
@@ -693,7 +706,7 @@ static void nu_adc_touch_smpl(void *p)
     /* Start conversion */
     outpw(REG_ADC_CTL, inpw(REG_ADC_CTL) | ADC_CTL_MST);
 }
-
+#endif
 
 int rt_hw_adc_init(void)
 {
@@ -709,11 +722,13 @@ int rt_hw_adc_init(void)
     g_sNuADC.m_psSem = rt_sem_create("adc_mst_sem", 0, RT_IPC_FLAG_FIFO);
     RT_ASSERT(g_sNuADC.m_psSem != RT_NULL);
 
+#if defined(BSP_USING_ADC_TOUCH)
     g_sNuADC.m_pmqTouchXYZ = rt_mq_create("ADC_TOUCH_XYZ", sizeof(struct nu_adc_touch_data), TOUCH_MQ_LENGTH, RT_IPC_FLAG_FIFO);
     RT_ASSERT(g_sNuADC.m_pmqTouchXYZ != RT_NULL);
 
     g_sNuADC.psRtTouchMenuTimer = rt_timer_create("TOUCH_SMPL_TIMER", nu_adc_touch_smpl, (void *)&g_sNuADC, DEF_ADC_TOUCH_SMPL_TICK, RT_TIMER_FLAG_PERIODIC);
     RT_ASSERT(g_sNuADC.psRtTouchMenuTimer != RT_NULL);
+#endif
 
     rt_memset(&g_sNuADC.m_isr, 0, sizeof(g_sNuADC.m_isr));
     rt_memset(&g_sNuADC.m_wkisr, 0, sizeof(g_sNuADC.m_wkisr));

@@ -13,7 +13,7 @@ IMXRT 系列 BSP 目前支持情况如下表所示：
 | imxrt1052-fire-pro | 野火 i.MX RT1052 EVK PRO |
 | imxrt1052-nxp-evk | 恩智浦 i.MX RT1050 EVKB |
 | **i.MX RT1060 系列** |  |
-| 暂无 |  |
+| imxrt1060-nxp-evk | 恩智浦 i.MX RT1060 EVK |
 | **i.MX RT1064 系列** |  |
 | imxrt1064-nxp-evk | 恩智浦 i.MX RT1064 EVK |
 

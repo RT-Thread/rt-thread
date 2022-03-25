@@ -13,6 +13,7 @@
 #include <rtthread.h>
 
 #include <board.h>
+#include <drv_clk.h>
 
 #ifdef BSP_USING_SRAM
     #include "drv_sram.h"
@@ -72,11 +73,22 @@ void rt_hw_board_init()
 
     SystemClock_Config();
 
+#ifdef RT_USING_PIN
+    int n32_hw_pin_init(void);
+    n32_hw_pin_init();
+    n32_msp_jtag_init(RT_NULL);
+#endif
+
+#ifdef RT_USING_SERIAL
+    int rt_hw_usart_init(void);
+    rt_hw_usart_init();
+#endif
+
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
 
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 

@@ -50,7 +50,7 @@ static uint32_t  _MemoryPoolBase, _MemoryPoolEnd;
 
 void  USB_InitializeMemoryPool()
 {
-    _MemoryPoolBase = (UINT32)&_USBMemoryPool[0] | NON_CACHE_MASK;
+    _MemoryPoolBase = (uint32_t)&_USBMemoryPool[0] | NON_CACHE_MASK;
     _MemoryPoolEnd = _MemoryPoolBase + USB_MEMORY_POOL_SIZE;
     _FreeMemorySize = _MemoryPoolEnd - _MemoryPoolBase;
     _AllocatedMemorySize = 0;
@@ -71,41 +71,30 @@ int  USB_allocated_memory()
 }
 
 
-void  *USB_malloc(INT wanted_size, INT boundary)
+void  *USB_malloc(int wanted_size, int boundary)
 {
+#if 0
+    void   *paddr = rt_malloc_align(wanted_size, 32);
+    return (void *)((uint32_t)paddr | NON_CACHE_MASK);
+#else
     USB_MHDR_T  *pPrimitivePos = _pCurrent;
     USB_MHDR_T  *pFound;
-    INT   found_size = -1;
-    INT   i, block_count;
-    INT   wrap = 0;
-    int   disable_ohci_irq, disable_ehci_irq;
+    int   found_size = -1;
+    int   i, block_count;
+    int   wrap = 0;
+    void   *pvBuf = NULL;
+    rt_base_t level;
 
-    if (IS_OHCI_IRQ_ENABLED())
-        disable_ohci_irq = 1;
-    else
-        disable_ohci_irq = 0;
-
-    if (IS_EHCI_IRQ_ENABLED())
-        disable_ehci_irq = 1;
-    else
-        disable_ehci_irq = 0;
-
-    if (disable_ohci_irq)
-        DISABLE_OHCI_IRQ();
-    if (disable_ehci_irq)
-        DISABLE_EHCI_IRQ();
+    level = rt_hw_interrupt_disable();
 
     if (wanted_size >= _FreeMemorySize)
     {
         rt_kprintf("USB_malloc - want=%d, free=%d\n", wanted_size, _FreeMemorySize);
-        if (disable_ohci_irq)
-            ENABLE_OHCI_IRQ();
-        if (disable_ehci_irq)
-            ENABLE_EHCI_IRQ();
-        return NULL;
+        goto exit_USB_malloc;
     }
 
-    if ((UINT32)_pCurrent >= _MemoryPoolEnd)
+
+    if ((uint32_t)_pCurrent >= _MemoryPoolEnd)
         _pCurrent = (USB_MHDR_T *)_MemoryPoolBase;   /* wrapped */
 
     do
@@ -114,26 +103,22 @@ void  *USB_malloc(INT wanted_size, INT boundary)
         {
             if (_pCurrent->magic != USB_MEM_ALLOC_MAGIC)
             {
-                rt_kprintf("\nUSB_malloc - incorrect magic number! C:%x F:%x, wanted:%d, Base:0x%x, End:0x%x\n", (UINT32)_pCurrent, _FreeMemorySize, wanted_size, (UINT32)_MemoryPoolBase, (UINT32)_MemoryPoolEnd);
-                if (disable_ohci_irq)
-                    ENABLE_OHCI_IRQ();
-                if (disable_ehci_irq)
-                    ENABLE_EHCI_IRQ();
-                return NULL;
+                rt_kprintf("\nUSB_malloc - incorrect magic number! C:%x F:%x, wanted:%d, Base:0x%x, End:0x%x\n", (uint32_t)_pCurrent, _FreeMemorySize, wanted_size, (uint32_t)_MemoryPoolBase, (uint32_t)_MemoryPoolEnd);
+                goto exit_USB_malloc;
             }
 
             if (_pCurrent->flag == 0x3)
-                _pCurrent = (USB_MHDR_T *)((UINT32)_pCurrent + _pCurrent->bcnt * USB_MEM_BLOCK_SIZE);
+                _pCurrent = (USB_MHDR_T *)((uint32_t)_pCurrent + _pCurrent->bcnt * USB_MEM_BLOCK_SIZE);
             else
             {
                 rt_kprintf("USB_malloc warning - not the first block!\n");
-                _pCurrent = (USB_MHDR_T *)((UINT32)_pCurrent + USB_MEM_BLOCK_SIZE);
+                _pCurrent = (USB_MHDR_T *)((uint32_t)_pCurrent + USB_MEM_BLOCK_SIZE);
             }
 
-            if ((UINT32)_pCurrent > _MemoryPoolEnd)
+            if ((uint32_t)_pCurrent > _MemoryPoolEnd)
                 rt_kprintf("USB_malloc - behind limit!!\n");
 
-            if ((UINT32)_pCurrent == _MemoryPoolEnd)
+            if ((uint32_t)_pCurrent == _MemoryPoolEnd)
             {
                 //rt_kprintf("USB_alloc - warp!!\n");
                 wrap = 1;
@@ -161,8 +146,8 @@ void  *USB_malloc(INT wanted_size, INT boundary)
                  * used as a header only.
                  */
                 if ((boundary > BOUNDARY_WORD) &&
-                        ((((UINT32)_pCurrent) + USB_MEM_BLOCK_SIZE >= _MemoryPoolEnd) ||
-                         ((((UINT32)_pCurrent) + USB_MEM_BLOCK_SIZE) % boundary != 0)))
+                        ((((uint32_t)_pCurrent) + USB_MEM_BLOCK_SIZE >= _MemoryPoolEnd) ||
+                         ((((uint32_t)_pCurrent) + USB_MEM_BLOCK_SIZE) % boundary != 0)))
                     found_size = -1;   /* violate boundary, reset the accumlator */
             }
             else                      /* not the leading block */
@@ -181,34 +166,26 @@ void  *USB_malloc(INT wanted_size, INT boundary)
                 for (i = 0; i < block_count; i++)
                 {
                     _pCurrent->flag = 1;     /* allocate block */
-                    _pCurrent = (USB_MHDR_T *)((UINT32)_pCurrent + USB_MEM_BLOCK_SIZE);
+                    _pCurrent = (USB_MHDR_T *)((uint32_t)_pCurrent + USB_MEM_BLOCK_SIZE);
                 }
                 pFound->flag = 0x3;
 
                 if (boundary > BOUNDARY_WORD)
                 {
-                    if (disable_ohci_irq)
-                        ENABLE_OHCI_IRQ();
-                    if (disable_ehci_irq)
-                        ENABLE_EHCI_IRQ();
-                    //rt_kprintf("- 0x%x, %d\n", (int)pFound, wanted_size);
-                    return (void *)((UINT32)pFound + USB_MEM_BLOCK_SIZE);
+                    pvBuf = (void *)((uint32_t)pFound + USB_MEM_BLOCK_SIZE);
+                    goto exit_USB_malloc;
                 }
                 else
                 {
-                    //USB_debug("USB_malloc(%d,%d):%x\tsize:%d, C:0x%x, %d\n", wanted_size, boundary, (UINT32)pFound + sizeof(USB_MHDR_T), block_count * USB_MEM_BLOCK_SIZE, _pCurrent, block_count);
-                    if (disable_ohci_irq)
-                        ENABLE_OHCI_IRQ();
-                    if (disable_ehci_irq)
-                        ENABLE_EHCI_IRQ();
-                    //rt_kprintf("- 0x%x, %d\n", (int)pFound, wanted_size);
-                    return (void *)((UINT32)pFound + sizeof(USB_MHDR_T));
+                    //USB_debug("USB_malloc(%d,%d):%x\tsize:%d, C:0x%x, %d\n", wanted_size, boundary, (uint32_t)pFound + sizeof(USB_MHDR_T), block_count * USB_MEM_BLOCK_SIZE, _pCurrent, block_count);
+                    pvBuf = (void *)((uint32_t)pFound + sizeof(USB_MHDR_T));
+                    goto exit_USB_malloc;
                 }
             }
 
             /* advance to the next block */
-            _pCurrent = (USB_MHDR_T *)((UINT32)_pCurrent + USB_MEM_BLOCK_SIZE);
-            if ((UINT32)_pCurrent >= _MemoryPoolEnd)
+            _pCurrent = (USB_MHDR_T *)((uint32_t)_pCurrent + USB_MEM_BLOCK_SIZE);
+            if ((uint32_t)_pCurrent >= _MemoryPoolEnd)
             {
                 wrap = 1;
                 _pCurrent = (USB_MHDR_T *)_MemoryPoolBase;   /* wrapped */
@@ -219,49 +196,40 @@ void  *USB_malloc(INT wanted_size, INT boundary)
     while ((wrap == 0) || (_pCurrent < pPrimitivePos));
 
     rt_kprintf("USB_malloc - No free memory!\n");
-    if (disable_ohci_irq)
-        ENABLE_OHCI_IRQ();
-    if (disable_ehci_irq)
-        ENABLE_EHCI_IRQ();
-    return NULL;
-}
 
+exit_USB_malloc:
+
+    rt_hw_interrupt_enable(level);
+
+    return pvBuf;
+#endif
+
+}
 
 void  USB_free(void *alloc_addr)
 {
+#if 0
+    rt_free_align((void *)((uint32_t)alloc_addr & ~NON_CACHE_MASK));
+#else
     USB_MHDR_T  *pMblk;
-    UINT32  addr = (UINT32)alloc_addr;
-    INT     i, count;
-    int     disable_ohci_irq, disable_ehci_irq;
-
-    if (IS_OHCI_IRQ_ENABLED())
-        disable_ohci_irq = 1;
-    else
-        disable_ohci_irq = 0;
-
-    if (IS_EHCI_IRQ_ENABLED())
-        disable_ehci_irq = 1;
-    else
-        disable_ehci_irq = 0;
+    uint32_t  addr = (uint32_t)alloc_addr;
+    int     i, count;
+    rt_base_t level;
 
     //rt_kprintf("USB_free: 0x%x\n", (int)alloc_addr);
+
+    level = rt_hw_interrupt_disable();
 
     if ((addr < _MemoryPoolBase) || (addr >= _MemoryPoolEnd))
     {
         if (addr)
         {
             rt_kprintf("[%s]Wrong!!\n", __func__);
-            //free(alloc_addr);
         }
-        return;
+        goto Exit_USB_free;
     }
 
-    if (disable_ohci_irq)
-        DISABLE_OHCI_IRQ();
-    if (disable_ehci_irq)
-        DISABLE_EHCI_IRQ();
-
-    //rt_kprintf("USB_free:%x\n", (INT)addr+USB_MEM_BLOCK_SIZE);
+    //rt_kprintf("USB_free:%x\n", (int32_t)addr+USB_MEM_BLOCK_SIZE);
 
     /* get the leading block address */
     if (addr % USB_MEM_BLOCK_SIZE == 0)
@@ -271,32 +239,20 @@ void  USB_free(void *alloc_addr)
 
     if (addr % USB_MEM_BLOCK_SIZE != 0)
     {
-        rt_kprintf("USB_free fatal error on address: %x!!\n", (UINT32)alloc_addr);
-        if (disable_ohci_irq)
-            ENABLE_OHCI_IRQ();
-        if (disable_ehci_irq)
-            ENABLE_EHCI_IRQ();
-        return;
+        rt_kprintf("USB_free fatal error on address: %x!!\n", (uint32_t)alloc_addr);
+        goto Exit_USB_free;
     }
 
     pMblk = (USB_MHDR_T *)addr;
     if (pMblk->flag == 0)
     {
-        rt_kprintf("USB_free(), warning - try to free a free block: %x\n", (UINT32)alloc_addr);
-        if (disable_ohci_irq)
-            ENABLE_OHCI_IRQ();
-        if (disable_ehci_irq)
-            ENABLE_EHCI_IRQ();
-        return;
+        rt_kprintf("USB_free(), warning - try to free a free block: %x\n", (uint32_t)alloc_addr);
+        goto Exit_USB_free;
     }
     if (pMblk->magic != USB_MEM_ALLOC_MAGIC)
     {
         rt_kprintf("USB_free(), warning - try to free an unknow block at address:%x.\n", addr);
-        if (disable_ohci_irq)
-            ENABLE_OHCI_IRQ();
-        if (disable_ehci_irq)
-            ENABLE_EHCI_IRQ();
-        return;
+        goto Exit_USB_free;
     }
 
     //_pCurrent = pMblk;
@@ -307,15 +263,17 @@ void  USB_free(void *alloc_addr)
     for (i = 0; i < count; i++)
     {
         pMblk->flag = 0;     /* release block */
-        pMblk = (USB_MHDR_T *)((UINT32)pMblk + USB_MEM_BLOCK_SIZE);
+        pMblk = (USB_MHDR_T *)((uint32_t)pMblk + USB_MEM_BLOCK_SIZE);
     }
 
     _FreeMemorySize += count * USB_MEM_BLOCK_SIZE;
     _AllocatedMemorySize -= count * USB_MEM_BLOCK_SIZE;
-    if (disable_ohci_irq)
-        ENABLE_OHCI_IRQ();
-    if (disable_ehci_irq)
-        ENABLE_EHCI_IRQ();
+
+
+Exit_USB_free:
+
+    rt_hw_interrupt_enable(level);
+#endif
     return;
 }
 

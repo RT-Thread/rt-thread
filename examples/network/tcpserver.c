@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2022-01-24     ChungHsuan   improve code comments
  */
 
 #include <rtthread.h>
@@ -16,7 +17,7 @@
 #include <sys/time.h>
 #include <sys/select.h>
 #endif
-#include <sys/socket.h> /* 使用BSD socket，需要包含socket.h头文件 */
+#include <sys/socket.h> /* socket.h header file is needed when using BSD socket */ /* 使用BSD socket，需要包含socket.h头文件 */
 #include "netdb.h"
 
 #define DEBUG_TCP_SERVER
@@ -34,12 +35,15 @@
 static int started = 0;
 static int is_running = 0;
 static int port = 5000;
-static const char send_data[] = "This is TCP Server from RT-Thread."; /* 发送用到的数据 */
+static const char send_data[] = "This is TCP Server from RT-Thread."; /* The message be sent */ /* 发送用到的数据 */
 
+/**
+* @brief  This function is for creating a tcp server on RT-Thread
+*/
 static void tcpserv(void *arg)
 {
     int ret;
-    char *recv_data; /* 用于接收的指针，后面会做一次动态分配以请求可用内存 */
+    char *recv_data; /* recv_data is a pointer used to receive data */ /* 用于接收的指针，后面会做一次动态分配以请求可用内存 */
     int sock, connected, bytes_received;
     struct sockaddr_in server_addr, client_addr;
 
@@ -47,33 +51,33 @@ static void tcpserv(void *arg)
     fd_set readset, readset_c;
     socklen_t sin_size = sizeof(struct sockaddr_in);
 
-    recv_data = rt_malloc(BUFSZ + 1); /* 分配接收用的数据缓冲 */
+    recv_data = rt_malloc(BUFSZ + 1);/* Allocate space for recv_data */ /* 分配接收用的数据缓冲 */
     if (recv_data == RT_NULL)
     {
         LOG_E("No memory");
         return;
     }
-
+    /* Before making use of  socket, socket should be created first and set the socket created to SOCK_STREAM(TCP) */
     /* 一个socket在使用前，需要预先创建出来，指定SOCK_STREAM为TCP的socket */
     if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
     {
         LOG_E("Create socket error");
         goto __exit;
     }
-
+    /* Initialize server side address */
     /* 初始化服务端地址 */
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(port); /* 服务端工作的端口 */
+    server_addr.sin_port = htons(port); /*Server side port number*//* 服务端工作的端口 */
     server_addr.sin_addr.s_addr = INADDR_ANY;
     rt_memset(&(server_addr.sin_zero), 0x0, sizeof(server_addr.sin_zero));
-
+    /* Bind socket to server side address */
     /* 绑定socket到服务端地址 */
     if (bind(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
     {
         LOG_E("Unable to bind");
         goto __exit;
     }
-
+    /* Listen on socket */
     /* 在socket上进行监听 */
     if (listen(sock, 10) == -1)
     {
@@ -99,20 +103,21 @@ static void tcpserv(void *arg)
         /* Wait for read or write */
         if (select(sock + 1, &readset, RT_NULL, RT_NULL, &timeout) == 0)
             continue;
-
+        /* Accept a request from client and the function is blocking */
         /* 接受一个客户端连接socket的请求，这个函数调用是阻塞式的 */
         connected = accept(sock, (struct sockaddr *)&client_addr, &sin_size);
+        /* Return the socket connected sucessfully */
         /* 返回的是连接成功的socket */
         if (connected < 0)
         {
             LOG_E("accept connection failed! errno = %d", errno);
             continue;
         }
-
+        /* Accept the message which points by client address */
         /* 接受返回的client_addr指向了客户端的地址信息 */
         LOG_I("I got a connection from (%s , %d)\n",
                    inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-
+        /* Handle method of client connection */
         /* 客户端连接的处理 */
         while (is_running)
         {
@@ -122,7 +127,7 @@ static void tcpserv(void *arg)
             /* Wait for read or write */
             if (select(connected + 1, &readset_c, RT_NULL, RT_NULL, &timeout) == 0)
                 continue;
-
+            /* Receive message from connected socket. Buffer size is 1024 bytes,but it's not guranteed to receive size exactly 1024 */
             /* 从connected socket中接收数据，接收buffer是1024大小，但并不一定能够收到1024大小的数据 */
             bytes_received = recv(connected, recv_data, BUFSZ, 0);
             if (bytes_received < 0)
@@ -134,16 +139,18 @@ static void tcpserv(void *arg)
             }
             else if (bytes_received == 0)
             {
+                /* Print warning message when recv function return 0 */
                 /* 打印recv函数返回值为0的警告信息 */
                 LOG_W("Received warning, recv function return 0.");
                 continue;
             }
             else
-            {
+            {   /* Receive data sucessfully and append '\0' at the end of message */
                 /* 有接收到数据，把末端清零 */
                 recv_data[bytes_received] = '\0';
                 if (strcmp(recv_data, "q") == 0 || strcmp(recv_data, "Q") == 0)
                 {
+                    /* If the first letter is 'q' or 'Q', close the connection */
                     /* 如果是首字母是q或Q，关闭这个连接 */
                     LOG_I("Got a 'q' or 'Q', close the connect.");
                     closesocket(connected);
@@ -152,6 +159,7 @@ static void tcpserv(void *arg)
                 }
                 else if (strcmp(recv_data, "exit") == 0)
                 {
+                    /* If the message received is 'exit', close the whole server side. */
                     /* 如果接收的是exit，则关闭整个服务端 */
                     closesocket(connected);
                     connected = -1;
@@ -159,11 +167,12 @@ static void tcpserv(void *arg)
                 }
                 else
                 {
+                    /* Show the message in terminal */
                     /* 在控制终端显示收到的数据 */
                     LOG_D("Received data = %s", recv_data);
                 }
             }
-
+            /* Send message to connected socket */
             /* 发送数据到connected socket */
             ret = send(connected, send_data, rt_strlen(send_data), 0);
             if (ret < 0)
@@ -175,6 +184,7 @@ static void tcpserv(void *arg)
             }
             else if (ret == 0)
             {
+                /* Print warning message when send function return 0 */
                 /* 打印send函数返回值为0的警告信息 */
                 LOG_W("Send warning, send function return 0.");
             }
@@ -202,6 +212,9 @@ __exit:
     return;
 }
 
+/**
+* @brief    The usage description of tcp server on rt-Thread
+*/
 static void usage(void)
 {
     rt_kprintf("Usage: tcpserver -p <port>\n");
@@ -214,6 +227,9 @@ static void usage(void)
     rt_kprintf("  --help       Print help information\n");
 }
 
+/**
+* @brief    This function is for testing tcp server on rt-Thread
+*/
 static void tcpserver_test(int argc, char** argv)
 {
     rt_thread_t tid;

@@ -44,5 +44,6 @@ menu "Hardware Drivers Config"
 
     endmenu
 
+    source "$BSP_DIR/../libraries/nu_packages/Kconfig"
 
 endmenu

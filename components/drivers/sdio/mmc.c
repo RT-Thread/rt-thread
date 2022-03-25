@@ -294,11 +294,6 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     EXT_CSD_BUS_WIDTH_4,
     EXT_CSD_BUS_WIDTH_1
   };
-  rt_uint32_t bus_widths[] = {
-    MMCSD_BUS_WIDTH_8,
-    MMCSD_BUS_WIDTH_4,
-    MMCSD_BUS_WIDTH_1
-  };
   struct rt_mmcsd_host *host = card->host;
   unsigned idx, trys, bus_width = 0;
   int err = 0;
@@ -312,7 +307,7 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
   * the supported bus width or compare the ext csd values of current
   * bus width and ext csd values of 1 bit mode read earlier.
   */
-  for (idx = 0; idx < sizeof(bus_widths)/sizeof(rt_uint32_t); idx++) {
+  for (idx = 0; idx < sizeof(ext_csd_bits)/sizeof(rt_uint32_t); idx++) {
     /*
     * Host is capable of 8bit transfer, then switch
     * the device to work in 8bit transfer mode. If the

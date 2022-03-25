@@ -12,12 +12,14 @@
 
 #include <rtthread.h>
 
-#if defined(RT_USING_DFS)
-    #include <dfs_fs.h>
-    #include <dfs_posix.h>
-#endif
+#include <dfs_fs.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
     #include <fal.h>
 #endif
 

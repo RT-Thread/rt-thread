@@ -105,7 +105,7 @@ rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, 
 {
     rt_err_t result = RT_EOK;
 
-    memset(device, 0, sizeof(struct rt_device_pwm));
+    rt_memset(device, 0, sizeof(struct rt_device_pwm));
 
 #ifdef RT_USING_DEVICE_OPS
     device->parent.ops = &pwm_device_ops;

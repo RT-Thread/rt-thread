@@ -15,7 +15,7 @@
 
 extern int  rt_application_init(void);
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
     extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
     #pragma section="HEAP"
@@ -55,7 +55,7 @@ void rt_hw_board_init(void)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
 #ifdef RT_USING_HEAP
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__ARMCC_VERSION)
     rt_system_heap_init((void *)&Image$$RW_IRAM1$$ZI$$Limit, (void *)SOC_SRAM_END_ADDR);
 #elif __ICCARM__
     rt_system_heap_init(__segment_end("HEAP"), (void *)SOC_SRAM_END_ADDR);

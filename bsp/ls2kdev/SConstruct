@@ -12,7 +12,7 @@ TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+	CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
 	CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
 	AR = rtconfig.AR, ARFLAGS = '-rc',
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
@@ -30,7 +30,7 @@ rtconfig.LFLAGS += " -Ttext 0xffffffff80200000"
 env.Replace(LINKFLAGS = rtconfig.LFLAGS)
 
 if GetDepend('RT_USING_FPU'):
-    env['CCFLAGS']   = env['CCFLAGS'].replace('-msoft-float', '-mhard-float')
+    env['CFLAGS']   = env['CFLAGS'].replace('-msoft-float', '-mhard-float')
     env['ASFLAGS']   = env['ASFLAGS'].replace('-msoft-float', '-mhard-float')
     env['CXXFLAGS']  = env['CXXFLAGS'].replace('-msoft-float', '-mhard-float')
     env['LINKFLAGS'] = env['LINKFLAGS'].replace('-msoft-float', '-mhard-float')

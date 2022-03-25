@@ -37,7 +37,6 @@ typedef struct
     uint32_t u32BlockSize;
 } S_SHA_CONTEXT;
 
-
 /* Private functions ------------------------------------------------------------*/
 static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx);
 static void nu_hwcrypto_destroy(struct rt_hwcrypto_ctx *ctx);
@@ -67,57 +66,32 @@ static struct rt_mutex s_SHA_mutex;
 
 #if !defined(BSP_USING_TRNG)
     static struct rt_mutex s_PRNG_mutex;
-    static volatile int s_PRNG_done;
 #endif
-
-static volatile int s_AES_done;
-static volatile int s_SHA_done;
 
 static rt_err_t nu_crypto_init(void)
 {
-    /* Enable Crypto engine interrupt */
-    NVIC_EnableIRQ(CRPT_IRQn);
+    rt_err_t result = RT_EOK;
 
+    /* init cipher mutex */
+#if defined(RT_HWCRYPTO_USING_AES)
+    result = rt_mutex_init(&s_AES_mutex, NU_HWCRYPTO_AES_NAME, RT_IPC_FLAG_PRIO);
+    RT_ASSERT(result == RT_EOK);
     AES_ENABLE_INT(CRPT);
+#endif
+
+#if defined(RT_HWCRYPTO_USING_SHA1) || defined(RT_HWCRYPTO_USING_SHA2)
+    result = rt_mutex_init(&s_SHA_mutex, NU_HWCRYPTO_SHA_NAME, RT_IPC_FLAG_PRIO);
+    RT_ASSERT(result == RT_EOK);
     SHA_ENABLE_INT(CRPT);
+#endif
 
-    //init cipher mutex
-    rt_mutex_init(&s_AES_mutex, NU_HWCRYPTO_AES_NAME, RT_IPC_FLAG_PRIO);
-    rt_mutex_init(&s_SHA_mutex, NU_HWCRYPTO_SHA_NAME, RT_IPC_FLAG_PRIO);
-#if !defined(BSP_USING_TRNG)
+#if defined(RT_HWCRYPTO_USING_RNG) && !defined(BSP_USING_TRNG)
+    result = rt_mutex_init(&s_PRNG_mutex, NU_HWCRYPTO_PRNG_NAME, RT_IPC_FLAG_PRIO);
+    RT_ASSERT(result == RT_EOK);
     PRNG_ENABLE_INT(CRPT);
-    rt_mutex_init(&s_PRNG_mutex, NU_HWCRYPTO_PRNG_NAME, RT_IPC_FLAG_PRIO);
 #endif
 
-    return RT_EOK;
-}
-
-//Crypto engine IRQ handler
-void CRPT_IRQHandler()
-{
-    if (AES_GET_INT_FLAG(CRPT))
-    {
-        if (CRPT->INTSTS & (CRPT_INTSTS_AESEIF_Msk) || (CRPT->AES_STS & (CRPT_AES_STS_BUSERR_Msk | CRPT_AES_STS_CNTERR_Msk | (0x1ul << 21))))
-            rt_kprintf("AES ERROR\n");
-        s_AES_done = 1;
-        AES_CLR_INT_FLAG(CRPT);
-    }
-
-    if (SHA_GET_INT_FLAG(CRPT))
-    {
-        if (CRPT->INTSTS & (CRPT_INTSTS_HMACEIF_Msk) || (CRPT->HMAC_STS & (CRPT_HMAC_STS_DMAERR_Msk | (0x1ul << 9))))
-            rt_kprintf("SHA ERROR\n");
-        s_SHA_done = 1;
-        SHA_CLR_INT_FLAG(CRPT);
-    }
-
-#if !defined(BSP_USING_TRNG)
-    if (PRNG_GET_INT_FLAG(CRPT))
-    {
-        s_PRNG_done = 1;
-        PRNG_CLR_INT_FLAG(CRPT);
-    }
-#endif
+    return result;
 }
 
 static rt_err_t nu_aes_crypt_run(
@@ -133,6 +107,7 @@ static rt_err_t nu_aes_crypt_run(
 {
     uint32_t au32SwapKey[8];
     uint32_t au32SwapIV[4];
+    rt_err_t result;
 
     au32SwapKey[0] = nu_get32_be(&pu8Key[0]);
     au32SwapKey[1] = nu_get32_be(&pu8Key[4]);
@@ -156,22 +131,34 @@ static rt_err_t nu_aes_crypt_run(
     au32SwapIV[2] = nu_get32_be(&pu8IV[8]);
     au32SwapIV[3] = nu_get32_be(&pu8IV[12]);
 
-    rt_mutex_take(&s_AES_mutex, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&s_AES_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     //Using Channel 0
     AES_Open(CRPT, 0, bEncrypt, u32OpMode, u32KeySize, AES_IN_OUT_SWAP);
-    AES_SetKey(CRPT, 0, (uint32_t *)au32SwapKey, u32KeySize);
+    AES_SetKey(CRPT, 0, (uint32_t *)&au32SwapKey[0], u32KeySize);
     AES_SetInitVect(CRPT, 0, (uint32_t *)au32SwapIV);
 
     //Setup AES DMA
     AES_SetDMATransfer(CRPT, 0, (uint32_t)pu8InData, (uint32_t)pu8OutData, u32DataLen);
     AES_CLR_INT_FLAG(CRPT);
-    //Start AES encryption/decryption
-    s_AES_done = 0;
-    AES_Start(CRPT, 0, CRYPTO_DMA_ONE_SHOT);
-    while (!s_AES_done) {};
 
-    rt_mutex_release(&s_AES_mutex);
+    /* Start AES encryption/decryption */
+    AES_Start(CRPT, 0, CRYPTO_DMA_ONE_SHOT);
+
+    /* Wait done */
+    while (!(CRPT->INTSTS & CRPT_INTEN_AESIEN_Msk)) {};
+
+    if ((u32DataLen % 16) && (CRPT->AES_STS & (CRPT_AES_STS_OUTBUFEMPTY_Msk | CRPT_AES_STS_INBUFEMPTY_Msk)))
+        rt_kprintf("AES WARNING - AES Data length(%d) is not enough. -> %d \n", u32DataLen, RT_ALIGN(u32DataLen, 16));
+    else if (CRPT->INTSTS & (CRPT_INTSTS_AESEIF_Msk) || (CRPT->AES_STS & (CRPT_AES_STS_BUSERR_Msk | CRPT_AES_STS_CNTERR_Msk)))
+        rt_kprintf("AES ERROR - CRPT->INTSTS-%08x, CRPT->AES_STS-%08x\n", CRPT->INTSTS, CRPT->AES_STS);
+
+    /* Clear AES interrupt status */
+    AES_CLR_INT_FLAG(CRPT);
+
+    result = rt_mutex_release(&s_AES_mutex);
+    RT_ASSERT(result == RT_EOK);
 
     return RT_EOK;
 }
@@ -180,28 +167,38 @@ static rt_err_t nu_aes_crypt_run(
 //Using PRNG instead of TRNG
 static void nu_prng_open(uint32_t u32Seed)
 {
-    rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
+    rt_err_t result;
 
-    //Open PRNG 128 bits. But always return 32 bits
+    result = rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
+
+    //Open PRNG 128 bits.
     PRNG_Open(CRPT, PRNG_KEY_SIZE_128, PRNG_SEED_RELOAD, u32Seed);
 
-    rt_mutex_release(&s_PRNG_mutex);
+    result = rt_mutex_release(&s_PRNG_mutex);
+    RT_ASSERT(result == RT_EOK);
 }
 
 static rt_uint32_t nu_prng_run(void)
 {
-    uint32_t au32RNGValue[2];
+    uint32_t au32RNGValue[4];
+    rt_err_t result;
 
-    rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
-    s_PRNG_done = 0;
     PRNG_Start(CRPT);
-    while (!s_PRNG_done) {};
+    while ((CRPT->PRNG_CTL & CRPT_PRNG_CTL_BUSY_Msk)) {};
 
-    PRNG_Read(CRPT, au32RNGValue);
+    /* Clear PRNG interrupt status */
+    PRNG_CLR_INT_FLAG(CRPT);
 
-    rt_mutex_release(&s_PRNG_mutex);
-    return au32RNGValue[0];
+    PRNG_Read(CRPT, &au32RNGValue[0]);
+
+    result = rt_mutex_release(&s_PRNG_mutex);
+    RT_ASSERT(result == RT_EOK);
+
+    return au32RNGValue[0] ^ au32RNGValue[1] ^ au32RNGValue[2] ^ au32RNGValue[3];
 }
 
 #endif
@@ -214,6 +211,8 @@ static rt_err_t nu_aes_crypt(struct hwcrypto_symmetric *symmetric_ctx, struct hw
     unsigned char in_align_flag = 0;
     unsigned char out_align_flag = 0;
     unsigned char iv_temp[16];
+    RT_ASSERT(symmetric_ctx != RT_NULL);
+    RT_ASSERT(symmetric_info != RT_NULL);
 
     if ((symmetric_info->length % 4) != 0)
     {
@@ -336,18 +335,23 @@ static void SHABlockUpdate(uint32_t u32OpMode, uint32_t u32SrcAddr, uint32_t u32
 
     //Setup SHA DMA
     SHA_SetDMATransfer(CRPT, u32SrcAddr, u32Len);
-    SHA_CLR_INT_FLAG(CRPT);
-
-    //Start SHA
-    s_SHA_done = 0;
 
     if (u32Mode == CRYPTO_DMA_FIRST)
         CRPT->HMAC_CTL |= CRPT_HMAC_CTL_DMAFIRST_Msk;
     else
         CRPT->HMAC_CTL &= ~CRPT_HMAC_CTL_DMAFIRST_Msk;
+    //Start SHA
+    SHA_CLR_INT_FLAG(CRPT);
     SHA_Start(CRPT, u32Mode);
 
-    while (!s_SHA_done) {};
+    /* Wait done */
+    while (!(CRPT->INTSTS & CRPT_INTSTS_HMACIF_Msk)) {};
+
+    if (CRPT->INTSTS & (CRPT_INTSTS_HMACEIF_Msk) || (CRPT->HMAC_STS & (CRPT_HMAC_STS_DMAERR_Msk)))
+        rt_kprintf("SHA ERROR - CRPT->INTSTS-%08x, CRPT->HMAC_STS-%08x\n", CRPT->INTSTS, CRPT->HMAC_STS);
+
+    /* Clear SHA interrupt status */
+    SHA_CLR_INT_FLAG(CRPT);
 }
 
 static rt_err_t nu_sha_hash_run(
@@ -357,12 +361,18 @@ static rt_err_t nu_sha_hash_run(
     uint32_t u32DataLen
 )
 {
-    rt_mutex_take(&s_SHA_mutex, RT_WAITING_FOREVER);
+    rt_err_t result;
+
+    RT_ASSERT(psSHACtx != RT_NULL);
+    RT_ASSERT(pu8InData != RT_NULL);
+
+    result = rt_mutex_take(&s_SHA_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     uint8_t *pu8SrcAddr = (uint8_t *)pu8InData;
     uint32_t u32CopyLen = 0;
 
-    while ((psSHACtx->u32SHATempBufLen + u32DataLen) >= psSHACtx->u32BlockSize)
+    while ((psSHACtx->u32SHATempBufLen + u32DataLen) > psSHACtx->u32BlockSize)
     {
         if (psSHACtx->pu8SHATempBuf)
         {
@@ -397,7 +407,8 @@ static rt_err_t nu_sha_hash_run(
             if (psSHACtx->pu8SHATempBuf == RT_NULL)
             {
                 LOG_E("fun[%s] memory allocate %d bytes failed!", __FUNCTION__, psSHACtx->u32BlockSize);
-                rt_mutex_release(&s_SHA_mutex);
+                result = rt_mutex_release(&s_SHA_mutex);
+                RT_ASSERT(result == RT_EOK);
                 return -RT_ENOMEM;
             }
 
@@ -425,7 +436,8 @@ static rt_err_t nu_sha_hash_run(
             if (psSHACtx->pu8SHATempBuf == RT_NULL)
             {
                 LOG_E("fun[%s] memory allocate %d bytes failed!", __FUNCTION__, psSHACtx->u32BlockSize);
-                rt_mutex_release(&s_SHA_mutex);
+                result = rt_mutex_release(&s_SHA_mutex);
+                RT_ASSERT(result == RT_EOK);
                 return -RT_ENOMEM;
             }
 
@@ -436,7 +448,8 @@ static rt_err_t nu_sha_hash_run(
         psSHACtx->u32SHATempBufLen += u32DataLen;
     }
 
-    rt_mutex_release(&s_SHA_mutex);
+    result = rt_mutex_release(&s_SHA_mutex);
+    RT_ASSERT(result == RT_EOK);
 
     return RT_EOK;
 }
@@ -446,6 +459,8 @@ static rt_err_t nu_sha_update(struct hwcrypto_hash *hash_ctx, const rt_uint8_t *
     uint32_t u32SHAOpMode;
     unsigned char *nu_in;
     unsigned char in_align_flag = 0;
+    RT_ASSERT(hash_ctx != RT_NULL);
+    RT_ASSERT(in != RT_NULL);
 
     //Select SHA operation mode
     switch (hash_ctx->parent.type & (HWCRYPTO_MAIN_TYPE_MASK | HWCRYPTO_SUB_TYPE_MASK))
@@ -500,7 +515,11 @@ static rt_err_t nu_sha_finish(struct hwcrypto_hash *hash_ctx, rt_uint8_t *out, r
     unsigned char *nu_out;
     unsigned char out_align_flag = 0;
     uint32_t u32SHAOpMode;
-    S_SHA_CONTEXT *psSHACtx = hash_ctx->parent.contex;
+    S_SHA_CONTEXT *psSHACtx = RT_NULL;
+    RT_ASSERT(hash_ctx != RT_NULL);
+    RT_ASSERT(out != RT_NULL);
+
+    psSHACtx = hash_ctx->parent.contex;
 
     //Check SHA Hash value buffer length
     switch (hash_ctx->parent.type & (HWCRYPTO_MAIN_TYPE_MASK | HWCRYPTO_SUB_TYPE_MASK))
@@ -639,6 +658,7 @@ static const struct hwcrypto_rng_ops nu_rng_ops =
 static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx)
 {
     rt_err_t res = RT_EOK;
+    RT_ASSERT(ctx != RT_NULL);
 
     switch (ctx->type & HWCRYPTO_MAIN_TYPE_MASK)
     {
@@ -672,18 +692,6 @@ static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx)
     }
 
     case HWCRYPTO_TYPE_SHA1:
-    {
-        ctx->contex = rt_malloc(sizeof(S_SHA_CONTEXT));
-
-        if (ctx->contex == RT_NULL)
-            return -RT_ERROR;
-
-        rt_memset(ctx->contex, 0, sizeof(S_SHA_CONTEXT));
-        //Setup SHA1 operation
-        ((struct hwcrypto_hash *)ctx)->ops = &nu_sha_ops;
-        break;
-    }
-
     case HWCRYPTO_TYPE_SHA2:
     {
         ctx->contex = rt_malloc(sizeof(S_SHA_CONTEXT));
@@ -692,7 +700,7 @@ static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx)
             return -RT_ERROR;
 
         rt_memset(ctx->contex, 0, sizeof(S_SHA_CONTEXT));
-        //Setup SHA2 operation
+        //Setup operation
         ((struct hwcrypto_hash *)ctx)->ops = &nu_sha_ops;
         break;
     }
@@ -718,11 +726,15 @@ static rt_err_t nu_hwcrypto_create(struct rt_hwcrypto_ctx *ctx)
         break;
     }
 
+    nu_hwcrypto_reset(ctx);
+
     return res;
 }
 
 static void nu_hwcrypto_destroy(struct rt_hwcrypto_ctx *ctx)
 {
+    RT_ASSERT(ctx != RT_NULL);
+
     if (ctx->contex)
         rt_free(ctx->contex);
 }
@@ -730,6 +742,8 @@ static void nu_hwcrypto_destroy(struct rt_hwcrypto_ctx *ctx)
 static rt_err_t nu_hwcrypto_clone(struct rt_hwcrypto_ctx *des, const struct rt_hwcrypto_ctx *src)
 {
     rt_err_t res = RT_EOK;
+    RT_ASSERT(des != RT_NULL);
+    RT_ASSERT(src != RT_NULL);
 
     if (des->contex && src->contex)
     {
@@ -791,6 +805,7 @@ static void nu_hwcrypto_reset(struct rt_hwcrypto_ctx *ctx)
 
 int nu_hwcrypto_device_init(void)
 {
+    rt_err_t result;
     static struct rt_hwcrypto_device nu_hwcrypto_dev;
 
     nu_hwcrypto_dev.ops = &nu_hwcrypto_ops;
@@ -809,11 +824,9 @@ int nu_hwcrypto_device_init(void)
     nu_trng_init();
 #endif
 
-    // register hwcrypto operation
-    if (rt_hwcrypto_register(&nu_hwcrypto_dev, RT_HWCRYPTO_DEFAULT_NAME) != RT_EOK)
-    {
-        return -1;
-    }
+    /* register hwcrypto operation */
+    result = rt_hwcrypto_register(&nu_hwcrypto_dev, RT_HWCRYPTO_DEFAULT_NAME);
+    RT_ASSERT(result == RT_EOK);
 
     return 0;
 }

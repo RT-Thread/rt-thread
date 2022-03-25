@@ -189,6 +189,26 @@ int pthread_attr_getguardsize(pthread_attr_t const *attr, size_t *guard_size)
 }
 RTM_EXPORT(pthread_attr_getguardsize);
 
+int pthread_attr_setinheritsched(pthread_attr_t *attr, int inheritsched)
+{
+    RT_ASSERT(attr != RT_NULL);
+
+    attr->inheritsched = inheritsched;
+
+    return 0;
+}
+RTM_EXPORT(pthread_attr_setinheritsched);
+
+int pthread_attr_getinheritsched(const pthread_attr_t *attr, int *inheritsched)
+{
+    RT_ASSERT(attr != RT_NULL);
+
+    *inheritsched = attr->inheritsched;
+
+    return 0;
+}
+RTM_EXPORT(pthread_attr_getinheritsched);
+
 int pthread_attr_setscope(pthread_attr_t *attr, int scope)
 {
     if (scope == PTHREAD_SCOPE_SYSTEM)
@@ -200,7 +220,7 @@ int pthread_attr_setscope(pthread_attr_t *attr, int scope)
 }
 RTM_EXPORT(pthread_attr_setscope);
 
-int pthread_attr_getscope(pthread_attr_t const *attr)
+int pthread_attr_getscope(pthread_attr_t const *attr, int *scope)
 {
     return PTHREAD_SCOPE_SYSTEM;
 }

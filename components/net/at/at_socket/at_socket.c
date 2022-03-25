@@ -173,7 +173,7 @@ static size_t at_recvpkt_get(rt_slist_t *rlist, char *mem, size_t len)
 
         if (page_pos >= len - content_pos)
         {
-            memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, len - content_pos);
+            rt_memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, len - content_pos);
             pkt->bfsz_index += len - content_pos;
             if (pkt->bfsz_index == pkt->bfsz_totle)
             {
@@ -184,7 +184,7 @@ static size_t at_recvpkt_get(rt_slist_t *rlist, char *mem, size_t len)
         }
         else
         {
-            memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, page_pos);
+            rt_memcpy((char *) mem + content_pos, pkt->buff + pkt->bfsz_index, page_pos);
             content_pos += page_pos;
             pkt->bfsz_index += page_pos;
             at_recvpkt_node_delete(rlist, node);
@@ -313,7 +313,7 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
     if (at_slock == RT_NULL)
     {
         /* create AT socket lock */
-        at_slock = rt_mutex_create("at_slock", RT_IPC_FLAG_FIFO);
+        at_slock = rt_mutex_create("at_slock", RT_IPC_FLAG_PRIO);
         if (at_slock == RT_NULL)
         {
             LOG_E("No memory for socket allocation lock!");
@@ -367,7 +367,7 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
 
     rt_snprintf(name, RT_NAME_MAX, "%s%d", "at_skt", idx);
     /* create AT socket receive ring buffer lock */
-    if((sock->recv_lock = rt_mutex_create(name, RT_IPC_FLAG_FIFO)) == RT_NULL)
+    if((sock->recv_lock = rt_mutex_create(name, RT_IPC_FLAG_PRIO)) == RT_NULL)
     {
         LOG_E("No memory for socket receive mutex create.");
         rt_sem_delete(sock->recv_notice);
@@ -1107,7 +1107,7 @@ static uint32_t ipstr_to_u32(char *ipstr)
 struct hostent *at_gethostbyname(const char *name)
 {
     struct at_device *device = RT_NULL;
-    ip_addr_t addr;
+    ip_addr_t addr = {0};
     char ipstr[16] = { 0 };
     /* buffer variables for at_gethostbyname() */
     static struct hostent s_hostent;
@@ -1288,7 +1288,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
     {
         return EAI_MEMORY;
     }
-    memset(ai, 0, total_size);
+    rt_memset(ai, 0, total_size);
     /* cast through void* to get rid of alignment warnings */
     sa = (struct sockaddr_storage *) (void *) ((uint8_t *) ai + sizeof(struct addrinfo));
     struct sockaddr_in *sa4 = (struct sockaddr_in *) sa;
@@ -1317,7 +1317,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
     {
         /* copy nodename to canonname if specified */
         ai->ai_canonname = ((char *) ai + sizeof(struct addrinfo) + sizeof(struct sockaddr_storage));
-        memcpy(ai->ai_canonname, nodename, namelen);
+        rt_memcpy(ai->ai_canonname, nodename, namelen);
         ai->ai_canonname[namelen] = 0;
     }
     ai->ai_addrlen = sizeof(struct sockaddr_storage);

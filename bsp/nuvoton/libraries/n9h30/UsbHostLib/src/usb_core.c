@@ -67,7 +67,7 @@ void  usbh_core_init()
 #ifdef ENABLE_OHCI
     //sysInstallISR(IRQ_LEVEL_1, IRQ_OHCI, (PVOID)OHCI_IRQHandler);
     rt_hw_interrupt_install(IRQ_OHCI, nu_ohci_isr, NULL, "ohci");
-    rt_hw_interrupt_set_priority(IRQ_OHCI, IRQ_LEVEL_1);
+    //rt_hw_interrupt_set_priority(IRQ_OHCI, IRQ_LEVEL_1);
 
     ohci_driver.init();
     ENABLE_OHCI_IRQ();
@@ -76,7 +76,7 @@ void  usbh_core_init()
 #ifdef ENABLE_EHCI
     //sysInstallISR(IRQ_LEVEL_1, IRQ_EHCI, (PVOID)EHCI_IRQHandler);
     rt_hw_interrupt_install(IRQ_EHCI, nu_ehci_isr, NULL, "ehci");
-    rt_hw_interrupt_set_priority(IRQ_EHCI, IRQ_LEVEL_1);
+    //rt_hw_interrupt_set_priority(IRQ_EHCI, IRQ_LEVEL_1);
 
     ehci_driver.init();
     ENABLE_EHCI_IRQ();

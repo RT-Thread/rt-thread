@@ -40,14 +40,6 @@
 
 #define LIST_FIND_OBJ_NR 8
 
-long hello(void)
-{
-    rt_kprintf("Hello RT-Thread!\n");
-
-    return 0;
-}
-MSH_CMD_EXPORT(hello, say hello world);
-
 static long clear(void)
 {
     rt_kprintf("\x1b[2J\x1b[H");
@@ -751,9 +743,9 @@ long list_timer(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s  periodic   timeout       flag\n", maxlen, item_title);
+    rt_kprintf("%-*.s  periodic   timeout    activated     mode\n", maxlen, item_title);
     object_split(maxlen);
-    rt_kprintf(" ---------- ---------- -----------\n");
+    rt_kprintf(" ---------- ---------- ----------- ---------\n");
     do
     {
         next = list_get_next(next, &find_arg);
@@ -781,9 +773,13 @@ long list_timer(void)
                            timer->init_tick,
                            timer->timeout_tick);
                 if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
-                    rt_kprintf("activated\n");
+                    rt_kprintf("activated   ");
                 else
-                    rt_kprintf("deactivated\n");
+                    rt_kprintf("deactivated ");
+                if (timer->parent.flag & RT_TIMER_FLAG_PERIODIC)
+                    rt_kprintf("periodic\n");
+                else
+                    rt_kprintf("one shot\n");
 
             }
         }
@@ -881,29 +877,5 @@ long list_device(void)
 }
 MSH_CMD_EXPORT(list_device, list device in system);
 #endif
-
-long list(void)
-{
-    rt_kprintf("--Commands List:\n");
-    {
-        struct finsh_syscall *index;
-        for (index = _syscall_table_begin;
-                index < _syscall_table_end;
-                FINSH_NEXT_SYSCALL(index))
-        {
-            /* skip the internal command */
-            if (strncmp((char *)index->name, "__", 2) == 0) continue;
-
-#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
-            rt_kprintf("%-16s -- %s\n", index->name, index->desc);
-#else
-            rt_kprintf("%s\n", index->name);
-#endif
-        }
-    }
-
-    return 0;
-}
-MSH_CMD_EXPORT(list, list all commands in system)
 
 #endif /* RT_USING_FINSH */

@@ -16,8 +16,12 @@
 #include "drv_usart_v2.h"
 #else
 #include "drv_usart.h"
-#endif
-#endif
+#endif /* RT_USING_SERIAL */
+#endif /* RT_USING_SERIAL_V2 */
+
+#define DBG_TAG    "drv_common"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -115,6 +119,7 @@ void _Error_Handler(char *s, int num)
 {
     /* USER CODE BEGIN Error_Handler */
     /* User can add his own implementation to report the HAL error return state */
+    LOG_E("Error_Handler at file:%s num:%d", s, num);
     while (1)
     {
     }

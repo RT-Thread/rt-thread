@@ -28,16 +28,11 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
 #include <string.h>
-#include "utils.h"
-#include "ald_dma.h"
-#include "ald_cmu.h"  
-#include "ald_iap.h"
-
+#include "ald_conf.h"
 
 /** @defgroup ES32FXXX_ALD EASTSOFT ES32F3xx ALD
   * @brief Shanghai Eastsoft Microelectronics Cortex-M Chip Abstraction Layer Driver(ALD)
@@ -175,6 +170,8 @@ __weak void ald_tick_init(uint32_t prio)
 void ald_systick_interval_select(systick_interval_t value)
 {
 	assert_param(IS_SYSTICK_INTERVAL(value));
+	
+	if (value == 0) return;
 
 	SysTick_Config(ald_cmu_get_sys_clock() / value);
 	__systick_interval = value;
@@ -251,9 +248,9 @@ __weak uint32_t ald_get_tick(void)
 {
 	return lib_tick;
 }
- 
+
 /**
-  * @brief  This function provides accurate delay (in milliseconds) based
+  * @brief  This function provides accurate delay (in microseconds) based
   *         on variable incremented.
   * @note   In the default implementation, SysTick timer is the source of time base.
   *         It is used to generate interrupts at regular time intervals where lib_tick
@@ -506,7 +503,7 @@ void sys_config(void)
 {
 	uint32_t i = 0, tmp = 0;
 	uint8_t err = 0, flag = 0;
-	uint32_t inf014 = 0, inf0154 = 0;
+	uint32_t inf014 = 0, inf0154 = 0, inf0244 = 0;
 	uint8_t cnt = 4;
 
 	uint32_t *inf0_addr = (uint32_t *)0x20003C00;
@@ -514,7 +511,12 @@ void sys_config(void)
 	inf014  = *((uint32_t *)(0x80000 + 56));
 	/* read VR1_VREF register */
 	inf0154 = *((uint32_t *)(0x80000 + 616));
-
+	/* read Chip_v */
+	inf0244 = *((uint32_t *)(0x80000 + 0x03D0));
+	
+	/* if D version ,do nothing */
+	if (inf0244 == 0xFFFFFF44) return;
+	
 	if (inf0154 == 0xFFFFFFFF)
 		while(1);
 	
@@ -528,7 +530,7 @@ void sys_config(void)
 	/* change CFG_VR1_VREF value, FLASH ref 0xA */
 	tmp = (inf0154 >> 8) & 0xF;
 	if (0xA != tmp) {
-		inf0154 &= ~(0xF << 8);
+		inf0154 &= (uint32_t)~(0xF << 8);
 		inf0154 |= (0xA << 8);
 		inf0154 = (inf0154 & (0x0000FFFF)) | ((~(inf0154 & 0xFFFF)) << 16);
 		flag = 0x1;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,6 +20,8 @@
 #define DBG_LVL DBG_INFO
 #include "rtdbg.h"
 
+#ifdef BSP_DRV_MOUSE
+
 #define MOUSE_ADDRESS    (0x10007000)
 #define MOUSE_IRQ_NUM    (IRQ_VEXPRESS_A9_MOUSE)
 #define MOUSE_XMAX       (BSP_LCD_WIDTH)
@@ -34,9 +36,15 @@
 #define MOUSE_BUTTON_WHELL   (0x80)
 
 #ifdef PKG_USING_GUIENGINE
-
 #include <rtgui/event.h>
 #include <rtgui/rtgui_server.h>
+#elif defined(PKG_USING_LITTLEVGL2RTT)
+#include <littlevgl2rtt.h>
+#elif defined(PKG_USING_LVGL)
+#include <lvgl.h>
+#include <lv_port_indev.h>
+static rt_bool_t touch_down = RT_FALSE;
+#endif
 
 typedef rt_uint32_t virtual_addr_t;
 
@@ -110,6 +118,7 @@ static rt_uint32_t emouse_id;
 
 void push_event_touch_move(int x, int y)
 {
+#ifdef PKG_USING_GUIENGINE
     struct rtgui_event_mouse emouse;
 
     emouse.parent.sender = RT_NULL;
@@ -124,10 +133,16 @@ void push_event_touch_move(int x, int y)
 
     LOG_D("[line]:%d motion event id:%d x:%d y:%d", __LINE__, emouse.id, x, y);
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
+#elif defined(PKG_USING_LITTLEVGL2RTT)
+    littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_MOVE);
+#elif defined(PKG_USING_LVGL)
+    lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
+#endif
 }
 
 void push_event_touch_begin(int x, int y)
 {
+#ifdef PKG_USING_GUIENGINE
     struct rtgui_event_mouse emouse;
 
     emouse_id = rt_tick_get();
@@ -143,10 +158,17 @@ void push_event_touch_begin(int x, int y)
     emouse.id = emouse_id;
     LOG_D("[line]:%d down event id:%d x:%d y:%d", __LINE__, emouse.id, x, y);
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
+#elif defined(PKG_USING_LITTLEVGL2RTT)
+    littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_DOWN);
+#elif defined(PKG_USING_LVGL)
+    touch_down = RT_TRUE;
+    lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
+#endif
 }
 
 void push_event_touch_end(int x, int y)
 {
+#ifdef PKG_USING_GUIENGINE
     struct rtgui_event_mouse emouse;
 
     emouse.parent.sender = RT_NULL;
@@ -158,9 +180,15 @@ void push_event_touch_end(int x, int y)
     emouse.y = y;
     emouse.ts = rt_tick_get();
     emouse.id = emouse_id;
-    
+
     LOG_D("[line]:%d up event id:%d x:%d y:%d", __LINE__, emouse.id, x, y);
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
+#elif defined(PKG_USING_LITTLEVGL2RTT)
+    littlevgl2rtt_send_input_event(x, y, LITTLEVGL2RTT_INPUT_MOVE);
+#elif defined(PKG_USING_LVGL)
+    touch_down = RT_FALSE;
+    lv_port_indev_input(x, y, (touch_down == RT_TRUE) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
+#endif
 }
 
 static void mouse_pl050_interrupt(int irq, void * data)
@@ -243,7 +271,7 @@ int rt_hw_mouse_init(void)
                 ((read32(virt + 0xfe8) & 0xff) << 16) |
                 ((read32(virt + 0xfe4) & 0xff) <<  8) |
                 ((read32(virt + 0xfe0) & 0xff) <<  0));
-    
+
     if(((id >> 12) & 0xff) != 0x41 || (id & 0xfff) != 0x050)
     {
         LOG_E("read id fail id:0x%08x", id);

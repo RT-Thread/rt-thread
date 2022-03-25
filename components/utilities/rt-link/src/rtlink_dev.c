@@ -19,8 +19,10 @@
 
 #define RTLINK_SERV(dev)  (((struct rt_link_device*)dev)->service)
 
-#ifdef RT_USING_POSIX
-#include <dfs_posix.h>
+#ifdef RT_USING_POSIX_DEVIO
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <poll.h>
 
 int rtlink_fops_open(struct dfs_fd *fd)
@@ -148,7 +150,7 @@ const static struct dfs_file_ops _rtlink_fops =
     RT_NULL, /* getdents */
     rtlink_fops_poll,
 };
-#endif /* RT_USING_POSIX */
+#endif /* RT_USING_POSIX_DEVIO */
 
 /* The event type for the service channel number,
  * which is used to wake up the service thread in blocking receive mode */
@@ -386,7 +388,7 @@ rt_err_t rt_link_dev_register(struct rt_link_device *rtlink,
     /* register a character device */
     ret = rt_device_register(device, name, flag);
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX_DEVIO
     /* set fops */
     device->fops        = &_rtlink_fops;
 #endif

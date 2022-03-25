@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,8 +17,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define ULOG_VERSION_STR               "0.1.1"
 
 /*
  * ulog init and deint
@@ -42,18 +40,20 @@ void ulog_deinit(void);
  * LOG_D("this is a debug log!");
  * LOG_E("this is a error log!");
  */
-#define LOG_E(...)                     ulog_e(LOG_TAG, __VA_ARGS__)
-#define LOG_W(...)                     ulog_w(LOG_TAG, __VA_ARGS__)
-#define LOG_I(...)                     ulog_i(LOG_TAG, __VA_ARGS__)
-#define LOG_D(...)                     ulog_d(LOG_TAG, __VA_ARGS__)
-#define LOG_RAW(...)                   ulog_raw(__VA_ARGS__)
-#define LOG_HEX(name, width, buf, size)      ulog_hex(name, width, buf, size)
+#define LOG_E(...)                      ulog_e(LOG_TAG, __VA_ARGS__)
+#define LOG_W(...)                      ulog_w(LOG_TAG, __VA_ARGS__)
+#define LOG_I(...)                      ulog_i(LOG_TAG, __VA_ARGS__)
+#define LOG_D(...)                      ulog_d(LOG_TAG, __VA_ARGS__)
+#define LOG_RAW(...)                    ulog_raw(__VA_ARGS__)
+#define LOG_HEX(name, width, buf, size) ulog_hex(name, width, buf, size)
 
 /*
  * backend register and unregister
  */
 rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color);
 rt_err_t ulog_backend_unregister(ulog_backend_t backend);
+rt_err_t ulog_backend_set_filter(ulog_backend_t backend, ulog_backend_filter_t filter);
+ulog_backend_t ulog_backend_find(const char *name);
 
 #ifdef ULOG_USING_FILTER
 /*

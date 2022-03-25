@@ -52,7 +52,7 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -gdwarf-2 -g'
+        CFLAGS += ' -O2 -gdwarf-2 -g'
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2'
@@ -83,7 +83,7 @@ elif PLATFORM == 'armcc':
     EXEC_PATH += '/ARM/ARMCC/bin/'
 
     if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
+        CFLAGS += ' -g -O2'
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'
@@ -165,7 +165,7 @@ elif PLATFORM == 'iar':
 
     if BUILD == 'debug':
         CFLAGS += ' --debug'
-        CFLAGS += ' -On'
+        CFLAGS += ' -Oh'
     else:
         CFLAGS += ' -Oh'
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@ static rt_size_t ve_exporter_num = 0;
 #endif
 
 /* for ARM C and IAR Compiler */
-#if defined(__CC_ARM) || defined(__CLANG_ARM) || defined (__ICCARM__) || defined(__ICCRX__)
+#if defined(__ARMCC_VERSION) || defined (__ICCARM__) || defined(__ICCRX__)
 static RT_USED const struct ve_exporter __ve_table_start
 RT_SECTION("0.""VarExpTab") = {"ve_start", "ve_start", 0};
 
@@ -37,64 +37,92 @@ RT_USED const struct ve_exporter __ve_table_start = { "ve_start", "ve_start", 0}
 #pragma section("VarExpTab$z", read)
 __declspec(allocate("VarExpTab$z"))
 RT_USED const struct ve_exporter __ve_table_end = { "ve_end", "ve_end", 2};
-#endif
+
+/* Find var objects in VarExpTab segments */
+static int ve_init_find_obj(unsigned int *begin, unsigned int *end, ve_exporter_t *table)
+{
+    int obj_count = 0;
+
+    while (begin < end)
+    {
+        if (*begin != RT_NULL)
+        {
+            *table++ = *((struct ve_exporter *)begin);
+            begin += sizeof(struct ve_exporter) / sizeof(unsigned int);
+            obj_count += 1;
+        }
+        else
+        {
+            begin++;
+        }
+    }
+
+    return obj_count;
+}
+#endif /* _MSC_VER */
 
 /* initialize var export */
 int var_export_init(void)
 {
     /* initialize the var export table.*/
-#if defined(__CC_ARM) || defined(__CLANG_ARM)       /* for ARM C Compiler */
+#if defined(__ARMCC_VERSION)                        /* for ARM C Compiler */
     ve_exporter_table = &__ve_table_start + 1;
     ve_exporter_num = &__ve_table_end - &__ve_table_start;
+#elif defined (__IAR_SYSTEMS_ICC__)                 /* for IAR Compiler */
+    ve_exporter_table = &__ve_table_start + 1;
+    ve_exporter_num = &__ve_table_end - &__ve_table_start - 1;
 #elif defined (__GNUC__)                            /* for GCC Compiler */
     extern const int __ve_table_start;
     extern const int __ve_table_end;
     ve_exporter_table = (const ve_exporter_t *)&__ve_table_start;
     ve_exporter_num = (const ve_exporter_t *)&__ve_table_end - ve_exporter_table;
-#elif defined (__ICCARM__) || defined(__ICCRX__)    /* for IAR Compiler */
-    ve_exporter_table = &__ve_table_start + 1;
-    ve_exporter_num = &__ve_table_end - &__ve_table_start - 1;
 #elif defined (_MSC_VER)                            /* for MS VC++ compiler */
     unsigned int *ptr_begin = (unsigned int *)&__ve_table_start;
     unsigned int *ptr_end = (unsigned int *)&__ve_table_end;
     static ve_exporter_t ve_exporter_tab[2048];
+    static char __vexp_strbuf1[1024];
+    static char __vexp_strbuf2[1024];
     ve_exporter_t ve_exporter_temp;
-    int index_i, index_j, index_min;
+    int index_i, index_j;
 
     /* past the three members in first ptr_begin */
     ptr_begin += (sizeof(struct ve_exporter) / sizeof(unsigned int));
     while (*ptr_begin == 0) ptr_begin++;
     do ptr_end--; while (*ptr_end == 0);
 
-    ve_exporter_table = (const ve_exporter_t *)ptr_begin;
-    ve_exporter_num = (ptr_end - ptr_begin) / (sizeof(struct ve_exporter) / sizeof(unsigned int)) + 1;
+    /* Find var objects in custom segments to solve the problem of holes in objects in different files */
+    ve_exporter_num = ve_init_find_obj(ptr_begin, ptr_end, ve_exporter_tab);
 
     /* check if the ve_exporter_num is out of bounds */
     RT_ASSERT(ve_exporter_num < (sizeof(ve_exporter_tab) / sizeof(ve_exporter_t)));
 
-    for (index_i = 0; index_i < ve_exporter_num; index_i++)
-    {
-        ve_exporter_tab[index_i] = ve_exporter_table[index_i];
-    }
-
+    /* bubble sort algorithms */
     for (index_i = 0; index_i < (ve_exporter_num - 1); index_i++)
     {
-        index_min = index_i;
-
-        for (index_j = index_i + 1; index_j < ve_exporter_num; index_j++)
+        for (index_j = 0; index_j < ((ve_exporter_num - 1) - index_i); index_j++)
         {
-            if (rt_strcmp(ve_exporter_tab[index_j].module, ve_exporter_tab[index_min].module) < 0 &&
-                rt_strcmp(ve_exporter_tab[index_j].identifier, ve_exporter_tab[index_min].identifier) < 0)
+            /* splice ve_exporter's module and ve_exporter's identifier into a complete string */
+            rt_snprintf(__vexp_strbuf1,
+                        sizeof(__vexp_strbuf1),
+                        "%s%s",
+                        ve_exporter_tab[index_j].module,
+                        ve_exporter_tab[index_j].identifier);
+            rt_snprintf(__vexp_strbuf2,
+                        sizeof(__vexp_strbuf2),
+                        "%s%s",
+                        ve_exporter_tab[index_j + 1].module,
+                        ve_exporter_tab[index_j + 1].identifier);
+            if (rt_strcmp(__vexp_strbuf1, __vexp_strbuf2) > 0)
             {
-                index_min = index_j;
-                ve_exporter_temp = ve_exporter_tab[index_min];
-                ve_exporter_tab[index_min] = ve_exporter_tab[index_i];
-                ve_exporter_tab[index_i] = ve_exporter_temp;
+                ve_exporter_temp = ve_exporter_tab[index_j];
+                ve_exporter_tab[index_j] = ve_exporter_tab[index_j + 1];
+                ve_exporter_tab[index_j + 1] = ve_exporter_temp;
             }
         }
     }
+
     ve_exporter_table = ve_exporter_tab;
-#endif /* __CC_ARM || __CLANG_ARM */
+#endif /* __ARMCC_VERSION */
 
     return ve_exporter_num;
 }
@@ -155,14 +183,14 @@ const ve_exporter_t *ve_iter_next(ve_iterator_t *iter)
 /* binary search based on identifier */
 static const ve_exporter_t *ve_binary_search(ve_module_t *mod, const char *identifier)
 {
-    rt_size_t ve_low_num = mod->begin - ve_exporter_table;
-    rt_size_t ve_high_num = mod->end - ve_exporter_table;
-    rt_size_t ve_mid_num;
-    int strcmp_rst;
+    int ve_low_num = 0;
+    int ve_high_num = mod->end - mod->begin;
+    int ve_mid_num = 0;
+    int strcmp_rst = 0;
 
-    while (ve_low_num <= ve_high_num)
+    while ((ve_low_num <= ve_high_num) && (ve_high_num >= 0) && (ve_low_num >= 0))
     {
-        ve_mid_num = (ve_high_num - ve_low_num) / 2;
+        ve_mid_num = (ve_high_num + ve_low_num) / 2;
         strcmp_rst = rt_strcmp(mod->begin[ve_mid_num].identifier, identifier);
 
         if (strcmp_rst == 0)
@@ -171,11 +199,11 @@ static const ve_exporter_t *ve_binary_search(ve_module_t *mod, const char *ident
         }
         else if (strcmp_rst > 0)
         {
-            ve_high_num = ve_mid_num + 1;
+            ve_high_num = ve_mid_num - 1;
         }
         else
         {
-            ve_low_num = ve_mid_num - 1;
+            ve_low_num = ve_mid_num + 1;
         }
     }
 

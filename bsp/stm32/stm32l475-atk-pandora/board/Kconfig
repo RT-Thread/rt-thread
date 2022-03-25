@@ -7,6 +7,10 @@ config SOC_STM32L475VE
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32L475_ATK_PANDORA
+    bool
+    default y
+
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_STLINK_TO_USART
@@ -14,6 +18,27 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART1
         default y
+
+    config BSP_USING_ARDUINO
+        bool "Support Arduino"
+        select RT_USING_ARDUINO
+        select ARDUINO_USING_SERVO
+        select ARDUINO_USING_WIRE
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH1
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM2_CH4
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH1
+        select BSP_USING_PWM4_CH3
+        select BSP_USING_PWM4_CH4
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_I2C
+        select BSP_USING_I2C4
+        default n
 
     config BSP_USING_KEY
         bool "Enable onboard keys"
@@ -34,6 +59,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI
         select BSP_USING_SPI3
         select BSP_SPI3_TX_USING_DMA
+        select BSP_USING_PWM
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH2
         default n
 
     config BSP_USING_LCD_SAMPLE
@@ -136,10 +164,9 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_WIFI
             select RT_WLAN_PROT_LWIP_PBUF_FORCE
             select RT_USING_LWIP
-            select RT_USING_LIBC
-            select RT_USING_POSIX
             select RT_USING_DFS
-            select PKG_USING_FAL
+            select DFS_USING_POSIX
+            select RT_USING_FAL
             select PKG_USING_EASYFLASH
             select RT_USING_WIFI_6181_LIB
             select RT_USING_OTA_LIB
@@ -348,12 +375,12 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_PWM
-        bool "Enable pwm"
+        bool "Enable PWM"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
         menuconfig BSP_USING_PWM1
-            bool "Enable timer1 output pwm"
+            bool "Enable timer1 output PWM"
             default n
             if BSP_USING_PWM1
                 config BSP_USING_PWM1_CH1
@@ -362,7 +389,7 @@ menu "On-chip Peripheral Drivers"
             endif
 
         menuconfig BSP_USING_PWM2
-            bool "Enable timer2 output pwm"
+            bool "Enable timer2 output PWM"
             default n
             if BSP_USING_PWM2
                 config BSP_USING_PWM2_CH3
@@ -375,15 +402,23 @@ menu "On-chip Peripheral Drivers"
             endif
 
         menuconfig BSP_USING_PWM4
-            bool "Enable timer4 output pwm"
+            bool "Enable timer4 output PWM"
             default n
             if BSP_USING_PWM4
+                config BSP_USING_PWM4_CH1
+                    bool "Enable PWM4 channel1"
+                    default n
+
                 config BSP_USING_PWM4_CH2
                     bool "Enable PWM4 channel2"
                     default n
             
                 config BSP_USING_PWM4_CH3
                     bool "Enable PWM4 channel3"
+                    default n
+
+                config BSP_USING_PWM4_CH4
+                    bool "Enable PWM4 channel4"
                     default n
             endif
         endif
@@ -454,6 +489,37 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Board extended module Drivers"
+
+    menuconfig BSP_USING_AT_ESP8266
+        bool "Enable ESP8266(AT Command, COM2)"
+        default n
+        select BSP_USING_COM2
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP8266
+        select AT_DEVICE_ESP8266_SAMPLE
+        select AT_DEVICE_ESP8266_SAMPLE_BSP_TAKEOVER
+
+        if BSP_USING_AT_ESP8266
+
+            config ESP8266_SAMPLE_WIFI_SSID
+                string "WIFI ssid"
+                default "rtthread"
+
+            config ESP8266_SAMPLE_WIFI_PASSWORD
+                string "WIFI password"
+                default "12345678"
+
+            config ESP8266_SAMPLE_CLIENT_NAME
+                string "AT client device name (Must be 'uart2')"
+                default "uart2"
+
+            config ESP8266_SAMPLE_RECV_BUFF_LEN
+                int "The maximum length of receive line buffer"
+                default 512
+
+            comment "May adjust RT_SERIAL_RB_BUFSZ up to 512 if using the Serial V1 device driver"
+
+        endif
 
     config BSP_USING_NRF24L01
         bool "Enable NRF24L01"

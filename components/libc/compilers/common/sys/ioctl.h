@@ -7,40 +7,83 @@
  * Date           Author       Notes
  * 2020-09-01     Meco Man     First Version
  */
-#ifndef _SYS_IOCTL_H
-#define _SYS_IOCTL_H
 
-#include <rtconfig.h>
-#ifdef RT_USING_POSIX
-#include <dfs_posix.h>
-#endif
+#ifndef __SYS_IOCTL_H__
+#define __SYS_IOCTL_H__
 
 #ifdef _WIN32
 #include <winsock.h>
 #endif
 
-struct winsize {
+struct winsize
+{
     unsigned short ws_row;
     unsigned short ws_col;
     unsigned short ws_xpixel;
     unsigned short ws_ypixel;
 };
 
-#define _IOC(a,b,c,d) ( ((a)<<30) | ((b)<<8) | (c) | ((d)<<16) )
+/*
+ * Direction bits, which any architecture can choose to override
+ * before including this file.
+ */
+
+#ifndef _IOC_NONE
 #define _IOC_NONE  0U
+#endif
+
+#ifndef _IOC_WRITE
 #define _IOC_WRITE 1U
+#endif
+
+#ifndef _IOC_READ
 #define _IOC_READ  2U
+#endif
 
-#if !defined (_WIN32) && !defined (__TASKING__)
-#define _IO(a,b)    _IOC(_IOC_NONE,(a),(b),0)
-#define _IOW(a,b,c) _IOC(_IOC_WRITE,(a),(b),sizeof(c))
-#define _IOR(a,b,c) _IOC(_IOC_READ,(a),(b),sizeof(c))
-#define _IOWR(a,b,c) _IOC(_IOC_READ|_IOC_WRITE,(a),(b),sizeof(c))
+#ifndef _IOC
+#define _IOC(a,b,c,d) (((a)<<30) | ((b)<<8) | (c) | ((d)<<16))
+#endif
 
+#ifndef _IO
+#define _IO(a,b)    _IOC(_IOC_NONE, (a), (b), 0)
+#endif
+
+#ifndef _IOW
+#define _IOW(a,b,c) _IOC(_IOC_WRITE, (a), (b), sizeof(c))
+#endif
+
+#ifndef _IOR
+#define _IOR(a,b,c) _IOC(_IOC_READ, (a), (b), sizeof(c))
+#endif
+
+#ifndef _IOWR
+#define _IOWR(a,b,c) _IOC(_IOC_READ|_IOC_WRITE, (a), (b), sizeof(c))
+#endif
+
+#ifndef FIONREAD
 #define FIONREAD    _IOR('f', 127, int) /* get # bytes to read */
+#endif
+
+#ifndef FIONBIO
 #define FIONBIO     _IOW('f', 126, int) /* set/clear non-blocking i/o */
 #endif
+
+#ifndef FIOASYNC
+#define FIOASYNC    _IOW('f', 125, int) /* set/clear async i/o */
+#endif
+
+#ifndef FIONWRITE
 #define FIONWRITE   _IOR('f', 121, int) /* get # bytes outstanding in send queue */
+#endif
+
+/* Socket I/O Controls */
+#ifndef SIOCSHIWAT
+#define SIOCSHIWAT  _IOW('s',  0, int)  /* set high watermark */
+#define SIOCGHIWAT  _IOR('s',  1, int)  /* get high watermark */
+#define SIOCSLOWAT  _IOW('s',  2, int)  /* set low watermark */
+#define SIOCGLOWAT  _IOR('s',  3, int)  /* get low watermark */
+#define SIOCATMARK  _IOR('s',  7, int)  /* at oob mark? */
+#endif
 
 #define TCGETS      0x5401
 #define TCSETS      0x5402
@@ -68,18 +111,12 @@ struct winsize {
 #define TIOCMSET    0x5418
 #define TIOCGSOFTCAR    0x5419
 #define TIOCSSOFTCAR    0x541A
-#ifndef FIONREAD
-#define FIONREAD 0x541B
-#endif
 #define TIOCINQ     FIONREAD
 #define TIOCLINUX   0x541C
 #define TIOCCONS    0x541D
 #define TIOCGSERIAL 0x541E
 #define TIOCSSERIAL 0x541F
 #define TIOCPKT     0x5420
-#ifndef FIONBIO
-#define FIONBIO  0x5421
-#endif
 #define TIOCNOTTY   0x5422
 #define TIOCSETD    0x5423
 #define TIOCGETD    0x5424
@@ -104,10 +141,6 @@ struct winsize {
 
 #define FIONCLEX    0x5450
 #define FIOCLEX     0x5451
-
-#ifndef _WIN32
-#define FIOASYNC    0x5452
-#endif
 
 #define TIOCSERCONFIG   0x5453
 #define TIOCSERGWILD    0x5454
@@ -170,9 +203,6 @@ struct winsize {
 #define SIOCSPGRP       0x8902
 #define FIOGETOWN       0x8903
 #define SIOCGPGRP       0x8904
-#ifndef SIOCATMARK
-#define SIOCATMARK      0x8905
-#endif
 #define SIOCGSTAMP      0x8906
 #define SIOCGSTAMPNS    0x8907
 

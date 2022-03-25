@@ -21,6 +21,9 @@
   * @date    28 Jun 2019
   * @author  AE Team.
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          28 Jun 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -37,14 +40,11 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
 
-#include "ald_cmu.h"
-#include "ald_adc.h"
-
+#include "ald_conf.h"
 
 /** @addtogroup ES32FXXX_ALD
   * @{
@@ -57,6 +57,11 @@
 
 #ifdef ALD_ADC
 
+#define  INFO_ADC0DA      *(uint32_t*)0x000802C0
+#define  INFO_ADC1DA      *(uint32_t*)0x000802C8
+#define  CFG_ADC0DA       *(uint32_t*)0x40083C60      
+#define  CFG_ADC1DA       *(uint32_t*)0x40083C64
+
 /** @addtogroup ADC_Private_Functions
   * @{
   */
@@ -67,7 +72,6 @@ static void adc_dma_error(void *arg);
 /**
   * @}
   */
-
 
 /** @defgroup ADC_Public_Functions ADC Public Functions
   * @{
@@ -155,8 +159,7 @@ ald_status_t ald_adc_init(adc_handle_t *hperh)
 	SET_BIT(ADC0->CCR, ADC_CCR_TRMEN_MSK);
 	SET_BIT(ADC1->CCR, ADC_CCR_TRMEN_MSK);
 
-	
-MODIFY_REG(hperh->perh->CON1, ADC_CON1_NCHESEL_MSK, hperh->init.nche_sel << ADC_CON1_NCHESEL_POS);
+	MODIFY_REG(hperh->perh->CON1, ADC_CON1_NCHESEL_MSK, hperh->init.nche_sel << ADC_CON1_NCHESEL_POS);
 	ald_adc_interrupt_config(hperh, ADC_IT_OVR, ENABLE);
 	ADC_ENABLE(hperh);
 
@@ -1116,6 +1119,43 @@ uint32_t ald_adc_get_state(adc_handle_t *hperh)
 uint32_t ald_adc_get_error(adc_handle_t *hperh)
 {
 	return hperh->error_code;
+}
+
+
+/**
+  * @brief  Adc offset adjust
+  * @param  refmv: ADC reference voltage, unit: mV.
+  * @retval None
+  */
+void ald_adc_offset_adjust(uint32_t refmv)
+{
+	uint32_t tmp = 0, os = 0;
+	
+	if (refmv == 0) return;
+		
+	*((volatile uint32_t *)(0x40080000)) = 0x55AA6996;
+	*((volatile uint32_t *)(0x40080100)) = 0x5A962814;
+	*((volatile uint32_t *)(0x40080100)) = 0xE7CB69A5;
+	
+	tmp = INFO_ADC0DA;
+	os  = tmp & 0x7F;
+	os  = (uint32_t)((os * 5000) / refmv + 0.5);
+	tmp = tmp & 0xFF80;
+	tmp |= os;
+	tmp |= 0x55AA0000;
+	CFG_ADC0DA = tmp;
+	
+	tmp = INFO_ADC1DA;
+	os  = tmp & 0x7F;
+	os  = (uint32_t)((os * 5000) / refmv + 0.5);
+	tmp = tmp & 0xFF80;
+	tmp |= os;
+	tmp |= 0x55AA0000;
+	CFG_ADC1DA = tmp;
+	
+	*((volatile uint32_t *)(0x40080100)) = 0x123456;
+	*((volatile uint32_t *)(0x40080100)) = 0x123456;
+	*((volatile uint32_t *)(0x40080000)) = 0x123456;
 }
 
 /**

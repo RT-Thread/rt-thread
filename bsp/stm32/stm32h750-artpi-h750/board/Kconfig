@@ -7,6 +7,78 @@ config SOC_STM32H750XB
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32H750_ARTPI
+    bool
+    default y
+
+menu "Board extended module"
+
+    menuconfig ART_PI_USING_MEDIA_IO
+        bool "Media-IO"
+        default n
+        if ART_PI_USING_MEDIA_IO
+            config BSP_USING_SPI_LCD_ILI9488
+                bool
+            config PKG_USING_PERSIMMON_SRC
+                bool
+
+            config MEDIA_IO_USING_SCREEN
+                select BSP_USING_SPI
+                select BSP_USING_SPI2
+                select BSP_USING_SDRAM
+                select BSP_USING_SPI_LCD_ILI9488
+                select PKG_USING_PERSIMMON_SRC
+                bool "Enable Screen"
+                default y
+
+            if MEDIA_IO_USING_SCREEN
+                config BSP_USING_LVGL
+                    bool "Enable LVGL for LCD"
+                    select BSP_USING_SPI_LCD_ILI9488
+                    select PKG_USING_LVGL
+                    select PKG_USING_LV_MUSIC_DEMO
+                    default n
+            endif
+
+            config MEDIA_IO_USING_TOUCH
+                select RT_USING_I2C
+                select RT_USING_I2C_BITOPS
+                select BSP_USING_I2C
+                select BSP_USING_I2C2
+                select PKG_USING_TOUCH_DRIVERS
+                select PKG_USING_FT6236
+                bool "Enable Touch"
+                default y
+            
+            config MEDIA_IO_USING_AUDIO
+                select RT_USING_AUDIO
+                select RT_USING_I2C
+                select RT_USING_I2C_BITOPS
+                select BSP_USING_I2C
+                select BSP_USING_I2C3
+                bool "Enable Audio"
+                default y
+                if MEDIA_IO_USING_AUDIO
+                    config AUDIO_MP3
+                    bool "Support MP3"
+                    select PKG_USING_HELIX
+                    default y
+                endif
+        endif
+
+    menuconfig ART_PI_USING_INDUSTRY_IO
+        bool "Industry-IO"
+        default n
+        if ART_PI_USING_INDUSTRY_IO
+            config INDUSTRY_IO_USING_ETH
+                select BSP_USING_ETH
+                select PHY_USING_LAN8720A
+                bool "Enable Ethernet"
+                default y
+        endif
+        
+endmenu
+
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
@@ -19,7 +91,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable SPI FLASH (spi1)"
         select BSP_USING_SPI
         select BSP_USING_SPI1
-        select PKG_USING_FAL
+        select RT_USING_FAL
         select FAL_USING_SFUD_PORT
         select RT_USING_SFUD
         default n
@@ -102,6 +174,28 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+            config BSP_USING_SPI4
+                bool "Enable SPI4"
+                default n
+        endif
+        
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
     config BSP_USING_ONCHIP_RTC
         bool "Enable Onchip RTC"
         select RT_USING_RTC
@@ -160,22 +254,6 @@ menu "On-chip Peripheral Drivers"
                         default 124
                 endif
         endif
-        
-    menuconfig BSP_USING_SPI
-        bool "Enable SPI"
-        default n
-        select RT_USING_SPI
-        if BSP_USING_SPI
-            config BSP_USING_SPI1
-                bool "Enable SPI1"
-                default n
-        endif
-        
-    config BSP_USING_QSPI
-        bool "Enable QSPI BUS"
-        select RT_USING_QSPI
-        select RT_USING_SPI
-        default n
 
     config BSP_USING_SDRAM
         bool "Enable SDRAM"

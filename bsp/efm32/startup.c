@@ -111,7 +111,9 @@ void rtthread_startup(void)
     /* init finsh */
 #ifdef RT_USING_FINSH
     finsh_system_init();
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     finsh_set_device(CONSOLE_DEVICE);
+#endif
 #endif
 
     /* Initialize gui server */

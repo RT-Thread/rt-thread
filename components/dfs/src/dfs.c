@@ -34,7 +34,6 @@ char working_directory[DFS_PATH_MAX] = {"/"};
 #endif
 
 static struct dfs_fdtable _fdtab;
-static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 
 /**
  * @addtogroup DFS
@@ -56,18 +55,18 @@ int dfs_init(void)
     }
 
     /* clear filesystem operations table */
-    memset((void *)filesystem_operation_table, 0, sizeof(filesystem_operation_table));
+    rt_memset((void *)filesystem_operation_table, 0, sizeof(filesystem_operation_table));
     /* clear filesystem table */
-    memset(filesystem_table, 0, sizeof(filesystem_table));
+    rt_memset(filesystem_table, 0, sizeof(filesystem_table));
     /* clean fd table */
-    memset(&_fdtab, 0, sizeof(_fdtab));
+    rt_memset(&_fdtab, 0, sizeof(_fdtab));
 
     /* create device filesystem lock */
-    rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_PRIO);
 
 #ifdef DFS_USING_WORKDIR
     /* set current working directory */
-    memset(working_directory, 0, sizeof(working_directory));
+    rt_memset(working_directory, 0, sizeof(working_directory));
     working_directory[0] = '/';
 #endif
 
@@ -118,6 +117,7 @@ void dfs_unlock(void)
     rt_mutex_release(&fslock);
 }
 
+#ifdef DFS_USING_POSIX
 static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
@@ -275,6 +275,8 @@ void fd_put(struct dfs_fd *fd)
     }
     dfs_unlock();
 }
+
+#endif /* DFS_USING_POSIX */
 
 /**
  * @ingroup Fd

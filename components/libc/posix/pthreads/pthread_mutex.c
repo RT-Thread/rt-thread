@@ -121,7 +121,7 @@ int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
         mutex->attr = *attr;
 
     /* init mutex lock */
-    result = rt_mutex_init(&(mutex->lock), name, RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&(mutex->lock), name, RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
         return EINVAL;
 
@@ -246,3 +246,45 @@ int pthread_mutex_trylock(pthread_mutex_t *mutex)
     return EBUSY;
 }
 RTM_EXPORT(pthread_mutex_trylock);
+
+int pthread_mutexattr_getprioceiling(const pthread_mutexattr_t *attr, int *prioceiling)
+{
+    return EINVAL;
+}
+RTM_EXPORT(pthread_mutexattr_getprioceiling);
+
+int pthread_mutexattr_setprioceiling(const pthread_mutexattr_t *attr, int prioceiling)
+{
+    return EINVAL;
+}
+RTM_EXPORT(pthread_mutexattr_setprioceiling);
+
+int pthread_mutexattr_getprotocol(const pthread_mutexattr_t *attr, int *protocol)
+{
+    return EINVAL;
+}
+RTM_EXPORT(pthread_mutexattr_getprotocol);
+
+int pthread_mutexattr_setprotocol(const pthread_mutexattr_t *attr, int protocol)
+{
+    return EINVAL;
+}
+RTM_EXPORT(pthread_mutexattr_setprotocol);
+
+int pthread_mutex_getprioceiling(const pthread_mutex_t *mutex, int *prioceiling)
+{
+    return pthread_mutexattr_getprioceiling(&mutex->attr, prioceiling);
+}
+RTM_EXPORT(pthread_mutex_getprioceiling);
+
+int pthread_mutex_setprioceiling(pthread_mutex_t *mutex, int prioceiling, int *old_ceiling)
+{
+    *old_ceiling = pthread_mutexattr_getprioceiling(&mutex->attr, old_ceiling);
+    if(*old_ceiling != 0)
+    {
+        return EINVAL;
+    }
+
+    return pthread_mutexattr_setprioceiling(&mutex->attr, prioceiling);
+}
+RTM_EXPORT(pthread_mutex_setprioceiling);

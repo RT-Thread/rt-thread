@@ -8,6 +8,9 @@
   * @date    15 Dec 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          15 Dec 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -24,13 +27,10 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
-#include "ald_bkpc.h"
-#include "ald_rtc.h"
-
+#include "ald_conf.h"
 
 /** @addtogroup ES32FXXX_ALD
   * @{
