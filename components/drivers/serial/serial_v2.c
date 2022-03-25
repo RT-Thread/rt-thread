@@ -21,6 +21,7 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <sys/ioctl.h>
+#include <dfs_file.h>
 
 #ifdef getc
 #undef getc

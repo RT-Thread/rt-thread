@@ -25,7 +25,7 @@ menu "Hardware Drivers Config"
             config OCFLASH_USE_FAL
                 bool "Enable On Chip Flash FAL Driver"
                 depends on BSP_USING_OCFLASH
-                select PKG_USING_FAL
+                select RT_USING_FAL
                 default n
             config OCFLASH_USE_LFS
                 bool "Enable On Chip Flash DFS Driver"

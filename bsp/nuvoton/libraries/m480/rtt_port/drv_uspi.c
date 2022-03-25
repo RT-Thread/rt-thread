@@ -31,6 +31,11 @@
     #include <drv_pdma.h>
 #endif
 /* Private define ---------------------------------------------------------------*/
+
+#ifndef NU_SPI_USE_PDMA_MIN_THRESHOLD
+    #define NU_SPI_USE_PDMA_MIN_THRESHOLD (128)
+#endif
+
 enum
 {
     USPI_START = -1,
@@ -131,11 +136,13 @@ static rt_err_t nu_uspi_bus_configure(struct rt_spi_device *device,
     uint32_t u32SPIMode;
     uint32_t u32BusClock;
     rt_err_t ret = RT_EOK;
+    void *pvUserData;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(configuration != RT_NULL);
 
     uspi_bus = (struct nu_uspi *) device->bus;
+    pvUserData = device->parent.user_data;
 
     /* Check mode */
     switch (configuration->mode & RT_SPI_MODE_3)
@@ -183,12 +190,29 @@ static rt_err_t nu_uspi_bus_configure(struct rt_spi_device *device,
         if (configuration->mode & RT_SPI_CS_HIGH)
         {
             /* Set CS pin to LOW */
-            USPI_SET_SS_LOW(uspi_bus->uspi_base);
+            if (pvUserData != RT_NULL)
+            {
+                // set to LOW */
+                rt_pin_write(*((rt_base_t *)pvUserData), PIN_LOW);
+            }
+            else
+            {
+                USPI_SET_SS_LOW(uspi_bus->uspi_base);
+            }
         }
         else
         {
             /* Set CS pin to HIGH */
-            USPI_SET_SS_HIGH(uspi_bus->uspi_base);
+            if (pvUserData != RT_NULL)
+            {
+                // set to HIGH */
+                rt_pin_write(*((rt_base_t *)pvUserData), PIN_HIGH);
+            }
+            else
+            {
+                /* Set CS pin to HIGH */
+                USPI_SET_SS_HIGH(uspi_bus->uspi_base);
+            }
         }
 
         if (configuration->mode & RT_SPI_MSB)
@@ -319,27 +343,40 @@ exit_nu_pdma_uspi_tx_config:
  **/
 static rt_size_t nu_uspi_pdma_transmit(struct nu_uspi *uspi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word)
 {
-    rt_err_t result;
+    rt_err_t result = RT_EOK;
+    rt_uint32_t u32Offset = 0;
+    rt_uint32_t u32TransferCnt = length / bytes_per_word;
+    rt_uint32_t u32TxCnt = 0;
 
     /* Get base address of uspi register */
     USPI_T *uspi_base = uspi_bus->uspi_base;
 
-    result = nu_pdma_uspi_rx_config(uspi_bus, recv_addr, length, bytes_per_word);
-    RT_ASSERT(result == RT_EOK);
-    result = nu_pdma_uspi_tx_config(uspi_bus, send_addr, length, bytes_per_word);
-    RT_ASSERT(result == RT_EOK);
+    do
+    {
+        u32TxCnt = (u32TransferCnt > NU_PDMA_MAX_TXCNT) ? NU_PDMA_MAX_TXCNT : u32TransferCnt;
+        result = nu_pdma_uspi_rx_config(uspi_bus, (recv_addr == RT_NULL) ? recv_addr : &recv_addr[u32Offset], (u32TxCnt * bytes_per_word), bytes_per_word);
+        RT_ASSERT(result == RT_EOK);
 
-    /* Trigger TX/RX at the same time. */
-    USPI_TRIGGER_TX_RX_PDMA(uspi_base);
+        result = nu_pdma_uspi_tx_config(uspi_bus, (send_addr == RT_NULL) ? send_addr : &send_addr[u32Offset], (u32TxCnt * bytes_per_word), bytes_per_word);
+        RT_ASSERT(result == RT_EOK);
 
-    /* Wait PDMA transfer done */
-    result = rt_sem_take(uspi_bus->m_psSemBus, RT_WAITING_FOREVER);
-    RT_ASSERT(result == RT_EOK);
+        /* Trigger TX/RX PDMA transfer. */
+        USPI_TRIGGER_TX_RX_PDMA(uspi_base);
 
-    /* Stop DMA TX/RX transfer */
-    USPI_DISABLE_TX_RX_PDMA(uspi_base);
+        /* Wait RX-PDMA transfer done */
+        result = rt_sem_take(uspi_bus->m_psSemBus, RT_WAITING_FOREVER);
+        RT_ASSERT(result == RT_EOK);
 
-    return result;
+        /* Stop TX/RX DMA transfer. */
+        USPI_DISABLE_TX_RX_PDMA(uspi_base);
+
+        u32TransferCnt -= u32TxCnt;
+        u32Offset += u32TxCnt;
+
+    }
+    while (u32TransferCnt > 0);
+
+    return length;
 }
 
 static rt_err_t nu_hw_uspi_pdma_allocate(struct nu_uspi *uspi_bus)
@@ -504,11 +541,14 @@ static void nu_uspi_transmission_with_poll(struct nu_uspi *uspi_bus,
 
 static void nu_uspi_transfer(struct nu_uspi *uspi_bus, uint8_t *tx, uint8_t *rx, int length, uint8_t bytes_per_word)
 {
+    RT_ASSERT(uspi_bus != RT_NULL);
+
 #if defined(BSP_USING_USPI_PDMA)
     /* PDMA transfer constrains */
     if ((uspi_bus->pdma_chanid_rx >= 0) &&
-            (!((uint32_t)tx % bytes_per_word)) &&
-            (!((uint32_t)rx % bytes_per_word)))
+            !((uint32_t)tx % bytes_per_word) &&
+            !((uint32_t)rx % bytes_per_word) &&
+            (length >= NU_SPI_USE_PDMA_MIN_THRESHOLD))
         nu_uspi_pdma_transmit(uspi_bus, tx, rx, length, bytes_per_word);
     else
         nu_uspi_transmission_with_poll(uspi_bus, tx, rx, length, bytes_per_word);
@@ -522,6 +562,7 @@ static rt_uint32_t nu_uspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
     struct nu_uspi *uspi_bus;
     struct rt_spi_configuration *configuration;
     uint8_t bytes_per_word;
+    void *pvUserData;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
@@ -530,6 +571,7 @@ static rt_uint32_t nu_uspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
     uspi_bus = (struct nu_uspi *) device->bus;
     configuration = &uspi_bus->configuration;
     bytes_per_word = configuration->data_width / 8;
+    pvUserData = device->parent.user_data;
 
     if ((message->length % bytes_per_word) != 0)
     {
@@ -542,13 +584,29 @@ static rt_uint32_t nu_uspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
     {
         if (message->cs_take && !(configuration->mode & RT_SPI_NO_CS))
         {
-            if (configuration->mode & RT_SPI_CS_HIGH)
+            if (pvUserData != RT_NULL)
             {
-                USPI_SET_SS_HIGH(uspi_bus->uspi_base);
+                if (configuration->mode & RT_SPI_CS_HIGH)
+                {
+                    // set to HIGH */
+                    rt_pin_write(*((rt_base_t *)pvUserData), PIN_HIGH);
+                }
+                else
+                {
+                    // set to LOW */
+                    rt_pin_write(*((rt_base_t *)pvUserData), PIN_LOW);
+                }
             }
             else
             {
-                USPI_SET_SS_LOW(uspi_bus->uspi_base);
+                if (configuration->mode & RT_SPI_CS_HIGH)
+                {
+                    USPI_SET_SS_HIGH(uspi_bus->uspi_base);
+                }
+                else
+                {
+                    USPI_SET_SS_LOW(uspi_bus->uspi_base);
+                }
             }
         }
 
@@ -556,13 +614,29 @@ static rt_uint32_t nu_uspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
 
         if (message->cs_release && !(configuration->mode & RT_SPI_NO_CS))
         {
-            if (configuration->mode & RT_SPI_CS_HIGH)
+            if (pvUserData != RT_NULL)
             {
-                USPI_SET_SS_LOW(uspi_bus->uspi_base);
+                if (configuration->mode & RT_SPI_CS_HIGH)
+                {
+                    // set to LOW */
+                    rt_pin_write(*((rt_base_t *)pvUserData), PIN_LOW);
+                }
+                else
+                {
+                    // set to HIGH */
+                    rt_pin_write(*((rt_base_t *)pvUserData), PIN_HIGH);
+                }
             }
             else
             {
-                USPI_SET_SS_HIGH(uspi_bus->uspi_base);
+                if (configuration->mode & RT_SPI_CS_HIGH)
+                {
+                    USPI_SET_SS_LOW(uspi_bus->uspi_base);
+                }
+                else
+                {
+                    USPI_SET_SS_HIGH(uspi_bus->uspi_base);
+                }
             }
         }
 

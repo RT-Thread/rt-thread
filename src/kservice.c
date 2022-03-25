@@ -1383,8 +1383,8 @@ rt_inline void _heap_unlock(rt_base_t level)
 
 #if defined(RT_USING_SMALL_MEM_AS_HEAP)
 static rt_smem_t system_heap;
-rt_inline void _smem_info(rt_uint32_t *total,
-    rt_uint32_t *used, rt_uint32_t *max_used)
+rt_inline void _smem_info(rt_size_t *total,
+    rt_size_t *used, rt_size_t *max_used)
 {
     if (total)
         *total = system_heap->total;
@@ -1420,8 +1420,8 @@ void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize);
     rt_memheap_info(&system_heap, _total, _used, _max)
 #elif defined(RT_USING_SLAB_AS_HEAP)
 static rt_slab_t system_heap;
-rt_inline void _slab_info(rt_uint32_t *total,
-    rt_uint32_t *used, rt_uint32_t *max_used)
+rt_inline void _slab_info(rt_size_t *total,
+    rt_size_t *used, rt_size_t *max_used)
 {
     if (total)
         *total = system_heap->total;

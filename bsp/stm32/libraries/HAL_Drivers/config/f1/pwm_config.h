@@ -72,6 +72,94 @@ extern "C" {
 #endif /* PWM5_CONFIG */
 #endif /* BSP_USING_PWM5 */
 
+#ifdef BSP_USING_PWM6
+#ifndef PWM6_CONFIG
+#define PWM6_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM6,         \
+       .name                    = "pwm6",       \
+       .channel                 = 0             \
+    }
+#endif /* PWM6_CONFIG */
+#endif /* BSP_USING_PWM6 */
+
+#ifdef BSP_USING_PWM7
+#ifndef PWM7_CONFIG
+#define PWM7_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM7,         \
+       .name                    = "pwm7",       \
+       .channel                 = 0             \
+    }
+#endif /* PWM7_CONFIG */
+#endif /* BSP_USING_PWM7 */
+
+#ifdef BSP_USING_PWM8
+#ifndef PWM8_CONFIG
+#define PWM8_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM8,         \
+       .name                    = "pwm8",       \
+       .channel                 = 12             \
+    }
+#endif /* PWM8_CONFIG */
+#endif /* BSP_USING_PWM8 */
+
+#ifdef BSP_USING_PWM9
+#ifndef PWM9_CONFIG
+#define PWM9_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM9,         \
+       .name                    = "pwm9",       \
+       .channel                 = 0             \
+    }
+#endif /* PWM9_CONFIG */
+#endif /* BSP_USING_PWM9 */
+
+#ifdef BSP_USING_PWM10
+#ifndef PWM10_CONFIG
+#define PWM10_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM10,         \
+       .name                    = "pwm10",       \
+       .channel                 = 0             \
+    }
+#endif /* PWM10_CONFIG */
+#endif /* BSP_USING_PWM10 */
+
+#ifdef BSP_USING_PWM11
+#ifndef PWM11_CONFIG
+#define PWM11_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM11,         \
+       .name                    = "pwm11",       \
+       .channel                 = 0             \
+    }
+#endif /* PWM11_CONFIG */
+#endif /* BSP_USING_PWM11 */
+
+#ifdef BSP_USING_PWM12
+#ifndef PWM12_CONFIG
+#define PWM12_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM12,         \
+       .name                    = "pwm12",       \
+       .channel                 = 0             \
+    }
+#endif /* PWM12_CONFIG */
+#endif /* BSP_USING_PWM12 */
+
+#ifdef BSP_USING_PWM13
+#ifndef PWM13_CONFIG
+#define PWM13_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM13,         \
+       .name                    = "pwm13",       \
+       .channel                 = 0             \
+    }
+#endif /* PWM13_CONFIG */
+#endif /* BSP_USING_PWM13 */
+
 #ifdef __cplusplus
 }
 #endif

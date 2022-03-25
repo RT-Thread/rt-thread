@@ -19,7 +19,7 @@
 #if !defined(BSP_USING_PULSE_ENCODER1) && !defined(BSP_USING_PULSE_ENCODER2) && !defined(BSP_USING_PULSE_ENCODER3) \
     && !defined(BSP_USING_PULSE_ENCODER4) && !defined(BSP_USING_PULSE_ENCODER5) && !defined(BSP_USING_PULSE_ENCODER6)
     #error "Please define at least one BSP_USING_PULSE_ENCODERx"
-    /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
+    /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
 #define AUTO_RELOAD_VALUE 0x7FFF

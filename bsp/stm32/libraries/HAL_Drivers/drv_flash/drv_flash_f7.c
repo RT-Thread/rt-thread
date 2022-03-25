@@ -17,7 +17,7 @@
 #include "drv_config.h"
 #include "drv_flash.h"
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 #include "fal.h"
 #endif
 
@@ -307,7 +307,7 @@ __exit:
     return size;
 }
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
 #define FLASH_SIZE_GRANULARITY_32K      (4 * 32 * 1024)
 #define FLASH_SIZE_GRANULARITY_128K     (128 * 1024)
 #define FLASH_SIZE_GRANULARITY_256K     (7 * 256 *1024)

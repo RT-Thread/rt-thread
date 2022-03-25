@@ -15,7 +15,7 @@
 #if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) \
     && !defined(BSP_USING_UART3) && !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5)
     #error "Please define at least one BSP_USING_UARTx"
-    /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
+    /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
 struct gd32_usart {

@@ -1,0 +1,24 @@
+
+from building import *
+import rtconfig
+
+cwd     = GetCurrentDir()
+
+src = []
+
+if GetDepend(['BSP_USING_RW007']):
+    src += Glob('drv_rw007.c')
+
+CPPPATH = [cwd]
+LOCAL_CCFLAGS = ''
+
+if rtconfig.PLATFORM == 'gcc' or 'armclang':
+    LOCAL_CCFLAGS += ' -std=c99'
+elif rtconfig.PLATFORM == 'armcc':
+    LOCAL_CCFLAGS += ' --c99'
+elif rtconfig.PLATFORM == 'armclang':
+    LOCAL_CCFLAGS += ' -std=c99'
+
+group = DefineGroup('Drivers', src, depend = [], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
+
+Return('group')

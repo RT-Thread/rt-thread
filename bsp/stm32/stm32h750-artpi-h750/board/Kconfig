@@ -7,6 +7,10 @@ config SOC_STM32H750XB
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32H750_ARTPI
+    bool
+    default y
+
 menu "Board extended module"
 
     menuconfig ART_PI_USING_MEDIA_IO
@@ -87,7 +91,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable SPI FLASH (spi1)"
         select BSP_USING_SPI
         select BSP_USING_SPI1
-        select PKG_USING_FAL
+        select RT_USING_FAL
         select FAL_USING_SFUD_PORT
         select RT_USING_SFUD
         default n
