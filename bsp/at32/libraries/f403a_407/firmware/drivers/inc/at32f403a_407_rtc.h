@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -31,8 +31,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
- 
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "at32f403a_407.h"
 
@@ -44,24 +44,24 @@ extern "C" {
   * @{
   */
 
-/** @defgroup RTC_interrupts_definition 
-  * @brief rtc interrupt   
+/** @defgroup RTC_interrupts_definition
+  * @brief rtc interrupt
   * @{
   */
-                                    
+
 #define RTC_TS_INT                       ((uint16_t)0x0001) /*!< rtc time second interrupt */
 #define RTC_TA_INT                       ((uint16_t)0x0002) /*!< rtc time alarm interrupt */
-#define RTC_OVF_INT                      ((uint16_t)0x0004) /*!< rtc overflow interrupt */   
+#define RTC_OVF_INT                      ((uint16_t)0x0004) /*!< rtc overflow interrupt */
 
 /**
   * @}
   */
 
-/** @defgroup RTC_flags_definition 
-  * @brief rtc flag   
+/** @defgroup RTC_flags_definition
+  * @brief rtc flag
   * @{
   */
-  
+
 #define RTC_TS_FLAG                      ((uint16_t)0x0001) /*!< rtc time second flag */
 #define RTC_TA_FLAG                      ((uint16_t)0x0002) /*!< rtc time alarm flag */
 #define RTC_OVF_FLAG                     ((uint16_t)0x0004) /*!< rtc overflow flag */
@@ -71,19 +71,19 @@ extern "C" {
 /**
   * @}
   */
- 
+
 /** @defgroup RTC_exported_types
   * @{
   */
-  
+
 /**
   * @brief type define rtc register all
   */
 typedef struct
-{  
-  
+{
+
   /**
-    * @brief rtc ctrlh register, offset:0x00 
+    * @brief rtc ctrlh register, offset:0x00
     */
   union
   {
@@ -96,9 +96,9 @@ typedef struct
       __IO uint32_t reserved1            : 29;/* [31:3] */
     } ctrlh_bit;
   };
-  
+
   /**
-    * @brief rtc ctrll register, offset:0x04 
+    * @brief rtc ctrll register, offset:0x04
     */
   union
   {
@@ -113,10 +113,10 @@ typedef struct
       __IO uint32_t cfgf                 : 1; /* [5] */
       __IO uint32_t reserved1            : 26;/* [31:6] */
     } ctrll_bit;
-  };  
-  
+  };
+
   /**
-    * @brief rtc divh register, offset:0x08 
+    * @brief rtc divh register, offset:0x08
     */
   union
   {
@@ -126,10 +126,10 @@ typedef struct
       __IO uint32_t div                  : 4; /* [3:0] */
       __IO uint32_t reserved1            : 28;/* [31:4] */
     } divh_bit;
-  };  
-  
+  };
+
   /**
-    * @brief rtc divl register, offset:0x0C 
+    * @brief rtc divl register, offset:0x0C
     */
   union
   {
@@ -139,10 +139,10 @@ typedef struct
       __IO uint32_t div                  : 16;/* [15:0] */
       __IO uint32_t reserved1            : 16;/* [31:15] */
     } divl_bit;
-  };  
-  
+  };
+
   /**
-    * @brief rtc divcnth register, offset:0x10 
+    * @brief rtc divcnth register, offset:0x10
     */
   union
   {
@@ -152,10 +152,10 @@ typedef struct
       __IO uint32_t divcnt               : 4; /* [3:0] */
       __IO uint32_t reserved1            : 28;/* [31:15] */
     } divcnth_bit;
-  };  
-  
+  };
+
   /**
-    * @brief rtc divcntl register, offset:0x14 
+    * @brief rtc divcntl register, offset:0x14
     */
   union
   {
@@ -165,10 +165,10 @@ typedef struct
       __IO uint32_t divcnt               : 16;/* [15:0] */
       __IO uint32_t reserved1            : 16;/* [31:15] */
     } divcntl_bit;
-  };  
-  
+  };
+
   /**
-    * @brief rtc cnth register, offset:0x18 
+    * @brief rtc cnth register, offset:0x18
     */
   union
   {
@@ -178,10 +178,10 @@ typedef struct
       __IO uint32_t cnt                  : 16;/* [15:0] */
       __IO uint32_t reserved1            : 16;/* [31:15] */
     } cnth_bit;
-  };  
-  
+  };
+
   /**
-    * @brief rtc cntl register, offset:0x1C 
+    * @brief rtc cntl register, offset:0x1C
     */
   union
   {
@@ -191,10 +191,10 @@ typedef struct
       __IO uint32_t cnt                  : 16;/* [15:0] */
       __IO uint32_t reserved1            : 16;/* [31:15] */
     } cntl_bit;
-  };   
-  
+  };
+
   /**
-    * @brief rtc tah register, offset:0x20 
+    * @brief rtc tah register, offset:0x20
     */
   union
   {
@@ -204,10 +204,10 @@ typedef struct
       __IO uint32_t ta                   : 16;/* [15:0] */
       __IO uint32_t reserved1            : 16;/* [31:15] */
     } tah_bit;
-  };   
-  
+  };
+
   /**
-    * @brief rtc tal register, offset:0x24 
+    * @brief rtc tal register, offset:0x24
     */
   union
   {
@@ -217,15 +217,15 @@ typedef struct
       __IO uint32_t ta                   : 16;/* [15:0] */
       __IO uint32_t reserved1            : 16;/* [31:15] */
     } tal_bit;
-  };  
-  
-} rtc_type;  
- 
+  };
+
+} rtc_type;
+
 /**
   * @}
   */
 
-#define RTC                              ((rtc_type *) RTC_BASE)  
+#define RTC                              ((rtc_type *) RTC_BASE)
 
 /** @defgroup RTC_exported_functions
   * @{

@@ -70,7 +70,7 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
         /* enable adc_x */
         adc_enable(adc_x, TRUE);
 
-        /* enable adc_x calibration */   
+        /* enable adc_x calibration */
         adc_calibration_init(adc_x);
         /* check the end of adc_x reset calibration register */
         while(adc_calibration_init_status_get(adc_x) == SET)

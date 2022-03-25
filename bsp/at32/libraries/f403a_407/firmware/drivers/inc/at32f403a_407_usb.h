@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -31,7 +31,7 @@
 /** @addtogroup USB
   * @{
   */
-  
+
 /* define to prevent recursive inclusion -------------------------------------*/
 #ifndef __AT32F403A_407_USB_H
 #define __AT32F403A_407_USB_H
@@ -45,12 +45,12 @@ extern "C" {
 #include "at32f403a_407.h"
 
 
-  
-/** @defgroup USB_interrupts_definition 
+
+/** @defgroup USB_interrupts_definition
   * @brief usb interrupt mask
   * @{
   */
-  
+
 #define USB_LSOF_INT                     ((uint32_t)0x00000100) /*!< usb lost sof interrupt */
 #define USB_SOF_INT                      ((uint32_t)0x00000200) /*!< usb sof interrupt */
 #define USB_RST_INT                      ((uint32_t)0x00000400) /*!< usb reset interrupt */
@@ -64,7 +64,7 @@ extern "C" {
   * @}
   */
 
-/** @defgroup USB_interrupt_flags_definition 
+/** @defgroup USB_interrupt_flags_definition
   * @brief usb interrupt flag
   * @{
   */
@@ -84,7 +84,7 @@ extern "C" {
   * @}
   */
 
-/** @defgroup USB_endpoint_register_bit_definition 
+/** @defgroup USB_endpoint_register_bit_definition
   * @brief usb endpoint register bit define
   * @{
   */
@@ -107,12 +107,12 @@ extern "C" {
 /**
   * @}
   */
- 
-/** @defgroup USB_endpoint_tx_and_rx_status_definition 
+
+/** @defgroup USB_endpoint_tx_and_rx_status_definition
   * @brief usb endpoint tx and rx status
   * @{
   */
- 
+
 #define USB_TX_DISABLE                   ((uint32_t)0x00000000) /*!< usb tx status disable */
 #define USB_TX_STALL                     ((uint32_t)0x00000010) /*!< usb tx status stall */
 #define USB_TX_NAK                       ((uint32_t)0x00000020) /*!< usb tx status nak */
@@ -132,9 +132,9 @@ extern "C" {
 /**
   * @}
   */
-  
+
 /** @defgroup USB_device_endpoint_register_type_definition
-  * @brief usb device endpoint register type define 
+  * @brief usb device endpoint register type define
   * @{
   */
 
@@ -146,12 +146,12 @@ extern "C" {
 /**
   * @}
   */
- 
-/** @defgroup USB_buffer_table_default_offset_address_definition 
+
+/** @defgroup USB_buffer_table_default_offset_address_definition
   * @brief usb buffer table default offset address
   * @{
   */
-  
+
 #define USB_BUFFER_TABLE_ADDRESS          0x0000 /*!< usb buffer table address */
 
 /**
@@ -159,7 +159,7 @@ extern "C" {
   */
 
 /** @defgroup USB_packet_buffer_start_address_definition
-  * @brief usb packet buffer start address 
+  * @brief usb packet buffer start address
   * @{
   */
 
@@ -173,7 +173,7 @@ extern "C" {
 /** @defgroup USB_exported_enum_types
   * @{
   */
-  
+
 /**
   * @brief usb endpoint number define
   */
@@ -295,7 +295,7 @@ typedef enum
 #define USB_DBUF1_GET_LEN(eptn) USB_GET_RX_LEN(eptn)
 
 /**
-  * @brief  set usb length of rx buffer 
+  * @brief  set usb length of rx buffer
   * @param  reg: usb rx length register
   * @param  len: rx max length
   * @param  blks: number of blocks
@@ -493,16 +493,16 @@ typedef enum
 /** @defgroup USB_exported_types
   * @{
   */
-  
-/** 
-  * @brief  usb endpoint infomation structure definition  
+
+/**
+  * @brief  usb endpoint infomation structure definition
   */
 typedef struct
 {
   uint8_t                                eptn;                        /*!< endpoint register number (0~7) */
   uint8_t                                ept_address;                 /*!< endpoint address */
   uint8_t                                inout;                       /*!< endpoint dir DATA_TRANS_IN or DATA_TRANS_OUT */
-  uint8_t                                trans_type;                  /*!< endpoint type: 
+  uint8_t                                trans_type;                  /*!< endpoint type:
                                                                            EPT_CONTROL_TYPE, EPT_BULK_TYPE, EPT_INT_TYPE, EPT_ISO_TYPE*/
   uint16_t                               tx_addr;                     /*!< endpoint tx buffer offset address */
   uint16_t                               rx_addr;                     /*!< endpoint rx buffer offset address */
@@ -510,23 +510,23 @@ typedef struct
   uint8_t                                is_double_buffer;            /*!< endpoint double buffer flag */
   uint8_t                                stall;                       /*!< endpoint is stall state */
   uint16_t                               status;                      /*!< endpoint status */
-  
+
   /* transmission buffer and count */
   uint16_t                               total_len;                   /*!< endpoint transmission total length */
   uint16_t                               trans_len;                   /*!< endpoint transmission length*/
   uint8_t                                *trans_buf;                  /*!< endpoint transmission buffer */
-  
+
   uint16_t                               last_len;                    /*!< last transfer length */
   uint16_t                               ept0_slen;                   /*!< endpoint 0 transfer sum length */
 }usb_ept_info;
-  
+
 /**
  * @brief type define usb register all
  */
 typedef struct
 {
   /**
-  * @brief usb endpoint register, offset:0x00 
+  * @brief usb endpoint register, offset:0x00
   */
   union
   {
@@ -546,11 +546,11 @@ typedef struct
       __IO uint32_t reserved1                : 16; /* [31:16] */
     } ept_bit[8];
   };
-  
+
   __IO uint32_t reserved1[8];
-  
+
   /**
-  * @brief usb control register, offset:0x40 
+  * @brief usb control register, offset:0x40
   */
   union
   {
@@ -574,7 +574,7 @@ typedef struct
       __IO uint32_t reserved2                : 16; /* [31:16] */
     } ctrl_bit;
   };
-  
+
   /**
   * @brief usb interrupt status register, offset:0x44
   */
@@ -597,7 +597,7 @@ typedef struct
       __IO uint32_t reserved2                : 16; /* [31:16] */
     } intsts_bit;
   };
-  
+
   /**
   * @brief usb frame number register, offset:0x48
   */
@@ -614,7 +614,7 @@ typedef struct
       __IO uint32_t reserved1                : 16; /* [31:16] */
     } sofrnum_bit;
   };
-  
+
   /**
   * @brief usb device address register, offset:0x4c
   */
@@ -628,7 +628,7 @@ typedef struct
       __IO uint32_t reserved1                : 24; /* [31:8] */
     } devaddr_bit;
   };
-  
+
   /**
   * @brief usb buffer address register, offset:0x50
   */
@@ -656,7 +656,7 @@ typedef struct
       __IO uint32_t reserved1                : 30; /* [31:2] */
     } cfg_bit;
   };
-  
+
 } usbd_type;
 
 /**

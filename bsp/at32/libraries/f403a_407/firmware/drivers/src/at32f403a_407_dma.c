@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -44,21 +44,21 @@
 /**
   * @brief  reset the dmax channely registers.
   * @param  dmax_channely:
-  *         this parameter can be one of the following values:  
-  *         - DMA1_CHANNEL1      
-  *         - DMA1_CHANNEL2  
-  *         - DMA1_CHANNEL3      
-  *         - DMA1_CHANNEL4 
-  *         - DMA1_CHANNEL5      
-  *         - DMA1_CHANNEL6  
-  *         - DMA1_CHANNEL7      
-  *         - DMA2_CHANNEL1      
-  *         - DMA2_CHANNEL2  
-  *         - DMA2_CHANNEL3      
-  *         - DMA2_CHANNEL4 
-  *         - DMA2_CHANNEL5      
-  *         - DMA2_CHANNEL6  
-  *         - DMA2_CHANNEL7    
+  *         this parameter can be one of the following values:
+  *         - DMA1_CHANNEL1
+  *         - DMA1_CHANNEL2
+  *         - DMA1_CHANNEL3
+  *         - DMA1_CHANNEL4
+  *         - DMA1_CHANNEL5
+  *         - DMA1_CHANNEL6
+  *         - DMA1_CHANNEL7
+  *         - DMA2_CHANNEL1
+  *         - DMA2_CHANNEL2
+  *         - DMA2_CHANNEL3
+  *         - DMA2_CHANNEL4
+  *         - DMA2_CHANNEL5
+  *         - DMA2_CHANNEL6
+  *         - DMA2_CHANNEL7
   * @retval none
   */
 void dma_reset(dma_channel_type* dmax_channely)
@@ -71,7 +71,7 @@ void dma_reset(dma_channel_type* dmax_channely)
   dmax_channely->maddr = 0;
 
   temp = (uint32_t)dmax_channely;
-  
+
   if((temp & 0x4ff) < 0x408)
   {
     /* dma1 channel */
@@ -85,24 +85,24 @@ void dma_reset(dma_channel_type* dmax_channely)
 }
 
 /**
-  * @brief  set the number of data to be transferred 
-  * @param  dmax_channely: 
-  *         this parameter can be one of the following values:  
-  *         - DMA1_CHANNEL1      
-  *         - DMA1_CHANNEL2  
-  *         - DMA1_CHANNEL3      
-  *         - DMA1_CHANNEL4 
-  *         - DMA1_CHANNEL5      
-  *         - DMA1_CHANNEL6  
-  *         - DMA1_CHANNEL7      
-  *         - DMA2_CHANNEL1      
-  *         - DMA2_CHANNEL2  
-  *         - DMA2_CHANNEL3      
-  *         - DMA2_CHANNEL4 
-  *         - DMA2_CHANNEL5      
-  *         - DMA2_CHANNEL6  
-  *         - DMA2_CHANNEL7  
-  * @param  data_number: the number of data to be transferred(0x0000~0xFFFF) 
+  * @brief  set the number of data to be transferred
+  * @param  dmax_channely:
+  *         this parameter can be one of the following values:
+  *         - DMA1_CHANNEL1
+  *         - DMA1_CHANNEL2
+  *         - DMA1_CHANNEL3
+  *         - DMA1_CHANNEL4
+  *         - DMA1_CHANNEL5
+  *         - DMA1_CHANNEL6
+  *         - DMA1_CHANNEL7
+  *         - DMA2_CHANNEL1
+  *         - DMA2_CHANNEL2
+  *         - DMA2_CHANNEL3
+  *         - DMA2_CHANNEL4
+  *         - DMA2_CHANNEL5
+  *         - DMA2_CHANNEL6
+  *         - DMA2_CHANNEL7
+  * @param  data_number: the number of data to be transferred(0x0000~0xFFFF)
   *         transfer.
   * @retval none.
   */
@@ -112,23 +112,23 @@ void dma_data_number_set(dma_channel_type* dmax_channely, uint16_t data_number)
 }
 
 /**
-  * @brief  get number of data from dtcnt register 
-  * @param  dmax_channely: 
-  *         this parameter can be one of the following values:  
-  *         - DMA1_CHANNEL1      
-  *         - DMA1_CHANNEL2  
-  *         - DMA1_CHANNEL3      
-  *         - DMA1_CHANNEL4 
-  *         - DMA1_CHANNEL5      
-  *         - DMA1_CHANNEL6  
-  *         - DMA1_CHANNEL7      
-  *         - DMA2_CHANNEL1      
-  *         - DMA2_CHANNEL2  
-  *         - DMA2_CHANNEL3      
-  *         - DMA2_CHANNEL4 
-  *         - DMA2_CHANNEL5      
-  *         - DMA2_CHANNEL6  
-  *         - DMA2_CHANNEL7  
+  * @brief  get number of data from dtcnt register
+  * @param  dmax_channely:
+  *         this parameter can be one of the following values:
+  *         - DMA1_CHANNEL1
+  *         - DMA1_CHANNEL2
+  *         - DMA1_CHANNEL3
+  *         - DMA1_CHANNEL4
+  *         - DMA1_CHANNEL5
+  *         - DMA1_CHANNEL6
+  *         - DMA1_CHANNEL7
+  *         - DMA2_CHANNEL1
+  *         - DMA2_CHANNEL2
+  *         - DMA2_CHANNEL3
+  *         - DMA2_CHANNEL4
+  *         - DMA2_CHANNEL5
+  *         - DMA2_CHANNEL6
+  *         - DMA2_CHANNEL7
   * @retval the number of data.
   */
 uint16_t dma_data_number_get(dma_channel_type* dmax_channely)
@@ -137,29 +137,29 @@ uint16_t dma_data_number_get(dma_channel_type* dmax_channely)
 }
 
 /**
-  * @brief  enable or disable dma interrupt 
-  * @param  dmax_channely: 
-  *         this parameter can be one of the following values:  
-  *         - DMA1_CHANNEL1      
-  *         - DMA1_CHANNEL2  
-  *         - DMA1_CHANNEL3      
-  *         - DMA1_CHANNEL4 
-  *         - DMA1_CHANNEL5      
-  *         - DMA1_CHANNEL6  
-  *         - DMA1_CHANNEL7      
-  *         - DMA2_CHANNEL1      
-  *         - DMA2_CHANNEL2  
-  *         - DMA2_CHANNEL3      
-  *         - DMA2_CHANNEL4 
-  *         - DMA2_CHANNEL5      
-  *         - DMA2_CHANNEL6  
-  *         - DMA2_CHANNEL7 
-  * @param  dma_int: 
-  *         this parameter can be any combination of the following values: 
-  *         - DMA_FDT_INT                   
-  *         - DMA_HDT_INT                      
-  *         - DMA_DTERR_INT                       
-  * @param  new_state (TRUE or FALSE)   
+  * @brief  enable or disable dma interrupt
+  * @param  dmax_channely:
+  *         this parameter can be one of the following values:
+  *         - DMA1_CHANNEL1
+  *         - DMA1_CHANNEL2
+  *         - DMA1_CHANNEL3
+  *         - DMA1_CHANNEL4
+  *         - DMA1_CHANNEL5
+  *         - DMA1_CHANNEL6
+  *         - DMA1_CHANNEL7
+  *         - DMA2_CHANNEL1
+  *         - DMA2_CHANNEL2
+  *         - DMA2_CHANNEL3
+  *         - DMA2_CHANNEL4
+  *         - DMA2_CHANNEL5
+  *         - DMA2_CHANNEL6
+  *         - DMA2_CHANNEL7
+  * @param  dma_int:
+  *         this parameter can be any combination of the following values:
+  *         - DMA_FDT_INT
+  *         - DMA_HDT_INT
+  *         - DMA_DTERR_INT
+  * @param  new_state (TRUE or FALSE)
   * @retval none
   */
 void dma_interrupt_enable(dma_channel_type* dmax_channely, uint32_t dma_int, confirm_state new_state)
@@ -176,23 +176,23 @@ void dma_interrupt_enable(dma_channel_type* dmax_channely, uint32_t dma_int, con
 
 /**
   * @brief  enable or disable dma channely
-  * @param  dmax_channely: 
-  *         this parameter can be one of the following values:  
-  *         - DMA1_CHANNEL1      
-  *         - DMA1_CHANNEL2  
-  *         - DMA1_CHANNEL3      
-  *         - DMA1_CHANNEL4 
-  *         - DMA1_CHANNEL5      
-  *         - DMA1_CHANNEL6  
-  *         - DMA1_CHANNEL7      
-  *         - DMA2_CHANNEL1      
-  *         - DMA2_CHANNEL2  
-  *         - DMA2_CHANNEL3      
-  *         - DMA2_CHANNEL4 
-  *         - DMA2_CHANNEL5      
-  *         - DMA2_CHANNEL6  
+  * @param  dmax_channely:
+  *         this parameter can be one of the following values:
+  *         - DMA1_CHANNEL1
+  *         - DMA1_CHANNEL2
+  *         - DMA1_CHANNEL3
+  *         - DMA1_CHANNEL4
+  *         - DMA1_CHANNEL5
+  *         - DMA1_CHANNEL6
+  *         - DMA1_CHANNEL7
+  *         - DMA2_CHANNEL1
+  *         - DMA2_CHANNEL2
+  *         - DMA2_CHANNEL3
+  *         - DMA2_CHANNEL4
+  *         - DMA2_CHANNEL5
+  *         - DMA2_CHANNEL6
   *         - DMA2_CHANNEL7
-  * @param  new_state (TRUE or FALSE) 
+  * @param  new_state (TRUE or FALSE)
   * @retval None
   */
 void dma_channel_enable(dma_channel_type* dmax_channely, confirm_state new_state)
@@ -202,41 +202,41 @@ void dma_channel_enable(dma_channel_type* dmax_channely, confirm_state new_state
 
 /**
   * @brief  initialize the dma_x flexible function according to the specified parameters.
-  * @param  dma_x: 
-  *         this parameter can be one of the following values:  
-  *         - DMA1      
-  *         - DMA2 
-  * @param  flex_channelx: 
-  *         this parameter can be one of the following values:  
-  *         - FLEX_CHANNEL1      
-  *         - FLEX_CHANNEL2 
-  *         - FLEX_CHANNEL3      
-  *         - FLEX_CHANNEL4 
-  *         - FLEX_CHANNEL5      
-  *         - FLEX_CHANNEL6  
-  *         - FLEX_CHANNEL7          
+  * @param  dma_x:
+  *         this parameter can be one of the following values:
+  *         - DMA1
+  *         - DMA2
+  * @param  flex_channelx:
+  *         this parameter can be one of the following values:
+  *         - FLEX_CHANNEL1
+  *         - FLEX_CHANNEL2
+  *         - FLEX_CHANNEL3
+  *         - FLEX_CHANNEL4
+  *         - FLEX_CHANNEL5
+  *         - FLEX_CHANNEL6
+  *         - FLEX_CHANNEL7
   * @param  flexible_request: every peripheral have specified hardware_id.
-  *         this parameter can be one of the following values:    
-  *         - DMA_FLEXIBLE_ADC1         - DMA_FLEXIBLE_ADC3         - DMA_FLEXIBLE_DAC1         - DMA_FLEXIBLE_DAC2                     
-  *         - DMA_FLEXIBLE_SPI1_RX      - DMA_FLEXIBLE_SPI1_TX      - DMA_FLEXIBLE_SPI2_RX      - DMA_FLEXIBLE_SPI2_TX                 
-  *         - DMA_FLEXIBLE_SPI3_RX      - DMA_FLEXIBLE_SPI3_TX      - DMA_FLEXIBLE_SPI4_RX      - DMA_FLEXIBLE_SPI4_TX                  
-  *         - DMA_FLEXIBLE_I2S2EXT_RX   - DMA_FLEXIBLE_I2S2EXT_TX   - DMA_FLEXIBLE_I2S3EXT_RX   - DMA_FLEXIBLE_I2S3EXT_TX              
-  *         - DMA_FLEXIBLE_UART1_RX     - DMA_FLEXIBLE_UART1_TX     - DMA_FLEXIBLE_UART2_RX     - DMA_FLEXIBLE_UART2_TX                 
+  *         this parameter can be one of the following values:
+  *         - DMA_FLEXIBLE_ADC1         - DMA_FLEXIBLE_ADC3         - DMA_FLEXIBLE_DAC1         - DMA_FLEXIBLE_DAC2
+  *         - DMA_FLEXIBLE_SPI1_RX      - DMA_FLEXIBLE_SPI1_TX      - DMA_FLEXIBLE_SPI2_RX      - DMA_FLEXIBLE_SPI2_TX
+  *         - DMA_FLEXIBLE_SPI3_RX      - DMA_FLEXIBLE_SPI3_TX      - DMA_FLEXIBLE_SPI4_RX      - DMA_FLEXIBLE_SPI4_TX
+  *         - DMA_FLEXIBLE_I2S2EXT_RX   - DMA_FLEXIBLE_I2S2EXT_TX   - DMA_FLEXIBLE_I2S3EXT_RX   - DMA_FLEXIBLE_I2S3EXT_TX
+  *         - DMA_FLEXIBLE_UART1_RX     - DMA_FLEXIBLE_UART1_TX     - DMA_FLEXIBLE_UART2_RX     - DMA_FLEXIBLE_UART2_TX
   *         - DMA_FLEXIBLE_UART3_RX     - DMA_FLEXIBLE_UART3_TX     - DMA_FLEXIBLE_UART4_RX     - DMA_FLEXIBLE_UART4_TX
-  *         - DMA_FLEXIBLE_UART5_RX     - DMA_FLEXIBLE_UART5_TX     - DMA_FLEXIBLE_UART6_RX     - DMA_FLEXIBLE_UART6_TX 
-  *         - DMA_FLEXIBLE_UART7_RX     - DMA_FLEXIBLE_UART7_TX     - DMA_FLEXIBLE_UART8_RX     - DMA_FLEXIBLE_UART8_TX  
-  *         - DMA_FLEXIBLE_I2C1_RX      - DMA_FLEXIBLE_I2C1_TX      - DMA_FLEXIBLE_I2C2_RX      - DMA_FLEXIBLE_I2C2_TX  
-  *         - DMA_FLEXIBLE_I2C3_RX      - DMA_FLEXIBLE_I2C3_TX      - DMA_FLEXIBLE_SDIO1        - DMA_FLEXIBLE_SDIO2  
-  *         - DMA_FLEXIBLE_TMR1_TRIG    - DMA_FLEXIBLE_TMR1_HALL    - DMA_FLEXIBLE_TMR1_OVERFLOW- DMA_FLEXIBLE_TMR1_CH1 
-  *         - DMA_FLEXIBLE_TMR1_CH2     - DMA_FLEXIBLE_TMR1_CH3     - DMA_FLEXIBLE_TMR1_CH4     - DMA_FLEXIBLE_TMR2_TRIG  
-  *         - DMA_FLEXIBLE_TMR2_OVERFLOW- DMA_FLEXIBLE_TMR2_CH1     - DMA_FLEXIBLE_TMR2_CH2     - DMA_FLEXIBLE_TMR2_CH3 
-  *         - DMA_FLEXIBLE_TMR2_CH4     - DMA_FLEXIBLE_TMR3_TRIG    - DMA_FLEXIBLE_TMR3_OVERFLOW- DMA_FLEXIBLE_TMR3_CH1  
-  *         - DMA_FLEXIBLE_TMR3_CH2     - DMA_FLEXIBLE_TMR3_CH3     - DMA_FLEXIBLE_TMR3_CH4     - DMA_FLEXIBLE_TMR4_TRIG  
-  *         - DMA_FLEXIBLE_TMR4_OVERFLOW- DMA_FLEXIBLE_TMR4_CH1     - DMA_FLEXIBLE_TMR4_CH2     - DMA_FLEXIBLE_TMR4_CH3  
-  *         - DMA_FLEXIBLE_TMR4_CH4     - DMA_FLEXIBLE_TMR5_TRIG    - DMA_FLEXIBLE_TMR5_OVERFLOW- DMA_FLEXIBLE_TMR5_CH1   
-  *         - DMA_FLEXIBLE_TMR5_CH2     - DMA_FLEXIBLE_TMR5_CH3     - DMA_FLEXIBLE_TMR5_CH4     - DMA_FLEXIBLE_TMR6_OVERFLOW   
-  *         - DMA_FLEXIBLE_TMR7_OVERFLOW- DMA_FLEXIBLE_TMR8_TRIG    - DMA_FLEXIBLE_TMR8_HALL    - DMA_FLEXIBLE_TMR8_OVERFLOW   
-  *         - DMA_FLEXIBLE_TMR8_CH1     - DMA_FLEXIBLE_TMR8_CH2     - DMA_FLEXIBLE_TMR8_CH3     - DMA_FLEXIBLE_TMR8_CH4     
+  *         - DMA_FLEXIBLE_UART5_RX     - DMA_FLEXIBLE_UART5_TX     - DMA_FLEXIBLE_UART6_RX     - DMA_FLEXIBLE_UART6_TX
+  *         - DMA_FLEXIBLE_UART7_RX     - DMA_FLEXIBLE_UART7_TX     - DMA_FLEXIBLE_UART8_RX     - DMA_FLEXIBLE_UART8_TX
+  *         - DMA_FLEXIBLE_I2C1_RX      - DMA_FLEXIBLE_I2C1_TX      - DMA_FLEXIBLE_I2C2_RX      - DMA_FLEXIBLE_I2C2_TX
+  *         - DMA_FLEXIBLE_I2C3_RX      - DMA_FLEXIBLE_I2C3_TX      - DMA_FLEXIBLE_SDIO1        - DMA_FLEXIBLE_SDIO2
+  *         - DMA_FLEXIBLE_TMR1_TRIG    - DMA_FLEXIBLE_TMR1_HALL    - DMA_FLEXIBLE_TMR1_OVERFLOW- DMA_FLEXIBLE_TMR1_CH1
+  *         - DMA_FLEXIBLE_TMR1_CH2     - DMA_FLEXIBLE_TMR1_CH3     - DMA_FLEXIBLE_TMR1_CH4     - DMA_FLEXIBLE_TMR2_TRIG
+  *         - DMA_FLEXIBLE_TMR2_OVERFLOW- DMA_FLEXIBLE_TMR2_CH1     - DMA_FLEXIBLE_TMR2_CH2     - DMA_FLEXIBLE_TMR2_CH3
+  *         - DMA_FLEXIBLE_TMR2_CH4     - DMA_FLEXIBLE_TMR3_TRIG    - DMA_FLEXIBLE_TMR3_OVERFLOW- DMA_FLEXIBLE_TMR3_CH1
+  *         - DMA_FLEXIBLE_TMR3_CH2     - DMA_FLEXIBLE_TMR3_CH3     - DMA_FLEXIBLE_TMR3_CH4     - DMA_FLEXIBLE_TMR4_TRIG
+  *         - DMA_FLEXIBLE_TMR4_OVERFLOW- DMA_FLEXIBLE_TMR4_CH1     - DMA_FLEXIBLE_TMR4_CH2     - DMA_FLEXIBLE_TMR4_CH3
+  *         - DMA_FLEXIBLE_TMR4_CH4     - DMA_FLEXIBLE_TMR5_TRIG    - DMA_FLEXIBLE_TMR5_OVERFLOW- DMA_FLEXIBLE_TMR5_CH1
+  *         - DMA_FLEXIBLE_TMR5_CH2     - DMA_FLEXIBLE_TMR5_CH3     - DMA_FLEXIBLE_TMR5_CH4     - DMA_FLEXIBLE_TMR6_OVERFLOW
+  *         - DMA_FLEXIBLE_TMR7_OVERFLOW- DMA_FLEXIBLE_TMR8_TRIG    - DMA_FLEXIBLE_TMR8_HALL    - DMA_FLEXIBLE_TMR8_OVERFLOW
+  *         - DMA_FLEXIBLE_TMR8_CH1     - DMA_FLEXIBLE_TMR8_CH2     - DMA_FLEXIBLE_TMR8_CH3     - DMA_FLEXIBLE_TMR8_CH4
   * @retval none
   */
 
@@ -244,9 +244,9 @@ void dma_flexible_config(dma_type* dma_x, uint8_t flex_channelx, dma_flexible_re
 {
   if(dma_x->src_sel1_bit.dma_flex_en == RESET)
   {
-    dma_x->src_sel1_bit.dma_flex_en = TRUE;  
+    dma_x->src_sel1_bit.dma_flex_en = TRUE;
   }
-  
+
   if(flex_channelx == FLEX_CHANNEL1)
   {
     dma_x->src_sel0_bit.ch1_src = flexible_request;
@@ -281,40 +281,40 @@ void dma_flexible_config(dma_type* dma_x, uint8_t flex_channelx, dma_flexible_re
 }
 
 /**
-  * @brief  get dma flag 
+  * @brief  get dma flag
   * @param  dmax_flag
-  *         this parameter can be one of the following values:  
-  *         - DMA1_GL1_FLAG        - DMA1_FDT1_FLAG        - DMA1_HDT1_FLAG        - DMA1_DTERR1_FLAG  
-  *         - DMA1_GL2_FLAG        - DMA1_FDT2_FLAG        - DMA1_HDT2_FLAG        - DMA1_DTERR2_FLAG   
-  *         - DMA1_GL3_FLAG        - DMA1_FDT3_FLAG        - DMA1_HDT3_FLAG        - DMA1_DTERR3_FLAG   
-  *         - DMA1_GL4_FLAG        - DMA1_FDT4_FLAG        - DMA1_HDT4_FLAG        - DMA1_DTERR4_FLAG   
-  *         - DMA1_GL5_FLAG        - DMA1_FDT5_FLAG        - DMA1_HDT5_FLAG        - DMA1_DTERR5_FLAG   
-  *         - DMA1_GL6_FLAG        - DMA1_FDT6_FLAG        - DMA1_HDT6_FLAG        - DMA1_DTERR6_FLAG   
-  *         - DMA1_GL7_FLAG        - DMA1_FDT7_FLAG        - DMA1_HDT7_FLAG        - DMA1_DTERR7_FLAG 
-  *         - DMA2_GL1_FLAG        - DMA2_FDT1_FLAG        - DMA2_HDT1_FLAG        - DMA2_DTERR1_FLAG   
-  *         - DMA2_GL2_FLAG        - DMA2_FDT2_FLAG        - DMA2_HDT2_FLAG        - DMA2_DTERR2_FLAG   
-  *         - DMA2_GL3_FLAG        - DMA2_FDT3_FLAG        - DMA2_HDT3_FLAG        - DMA2_DTERR3_FLAG    
-  *         - DMA2_GL4_FLAG        - DMA2_FDT4_FLAG        - DMA2_HDT4_FLAG        - DMA2_DTERR4_FLAG   
-  *         - DMA2_GL5_FLAG        - DMA2_FDT5_FLAG        - DMA2_HDT5_FLAG        - DMA2_DTERR5_FLAG  
-  *         - DMA2_GL6_FLAG        - DMA2_FDT6_FLAG        - DMA2_HDT6_FLAG        - DMA2_DTERR6_FLAG  
-  *         - DMA2_GL7_FLAG        - DMA2_FDT7_FLAG        - DMA2_HDT7_FLAG        - DMA2_DTERR7_FLAG                       
-  * @retval state of dma flag                             
+  *         this parameter can be one of the following values:
+  *         - DMA1_GL1_FLAG        - DMA1_FDT1_FLAG        - DMA1_HDT1_FLAG        - DMA1_DTERR1_FLAG
+  *         - DMA1_GL2_FLAG        - DMA1_FDT2_FLAG        - DMA1_HDT2_FLAG        - DMA1_DTERR2_FLAG
+  *         - DMA1_GL3_FLAG        - DMA1_FDT3_FLAG        - DMA1_HDT3_FLAG        - DMA1_DTERR3_FLAG
+  *         - DMA1_GL4_FLAG        - DMA1_FDT4_FLAG        - DMA1_HDT4_FLAG        - DMA1_DTERR4_FLAG
+  *         - DMA1_GL5_FLAG        - DMA1_FDT5_FLAG        - DMA1_HDT5_FLAG        - DMA1_DTERR5_FLAG
+  *         - DMA1_GL6_FLAG        - DMA1_FDT6_FLAG        - DMA1_HDT6_FLAG        - DMA1_DTERR6_FLAG
+  *         - DMA1_GL7_FLAG        - DMA1_FDT7_FLAG        - DMA1_HDT7_FLAG        - DMA1_DTERR7_FLAG
+  *         - DMA2_GL1_FLAG        - DMA2_FDT1_FLAG        - DMA2_HDT1_FLAG        - DMA2_DTERR1_FLAG
+  *         - DMA2_GL2_FLAG        - DMA2_FDT2_FLAG        - DMA2_HDT2_FLAG        - DMA2_DTERR2_FLAG
+  *         - DMA2_GL3_FLAG        - DMA2_FDT3_FLAG        - DMA2_HDT3_FLAG        - DMA2_DTERR3_FLAG
+  *         - DMA2_GL4_FLAG        - DMA2_FDT4_FLAG        - DMA2_HDT4_FLAG        - DMA2_DTERR4_FLAG
+  *         - DMA2_GL5_FLAG        - DMA2_FDT5_FLAG        - DMA2_HDT5_FLAG        - DMA2_DTERR5_FLAG
+  *         - DMA2_GL6_FLAG        - DMA2_FDT6_FLAG        - DMA2_HDT6_FLAG        - DMA2_DTERR6_FLAG
+  *         - DMA2_GL7_FLAG        - DMA2_FDT7_FLAG        - DMA2_HDT7_FLAG        - DMA2_DTERR7_FLAG
+  * @retval state of dma flag
   */
 flag_status dma_flag_get(uint32_t dmax_flag)
-{   
+{
   flag_status status = RESET;
   uint32_t temp = 0;
-  
+
   if(dmax_flag > 0x10000000)
   {
-    temp = DMA2->sts;  
+    temp = DMA2->sts;
   }
   else
   {
-    temp = DMA1->sts;    
+    temp = DMA1->sts;
   }
 
-  if ((temp & dmax_flag) != (uint16_t)RESET)    
+  if ((temp & dmax_flag) != (uint16_t)RESET)
   {
     status = SET;
   }
@@ -327,24 +327,24 @@ flag_status dma_flag_get(uint32_t dmax_flag)
 }
 
 /**
-  * @brief  clear dma flag  
+  * @brief  clear dma flag
   * @param  dmax_flag
-  *         this parameter can be one of the following values:  
-  *         - DMA1_GL1_FLAG        - DMA1_FDT1_FLAG        - DMA1_HDT1_FLAG        - DMA1_DTERR1_FLAG  
-  *         - DMA1_GL2_FLAG        - DMA1_FDT2_FLAG        - DMA1_HDT2_FLAG        - DMA1_DTERR2_FLAG   
-  *         - DMA1_GL3_FLAG        - DMA1_FDT3_FLAG        - DMA1_HDT3_FLAG        - DMA1_DTERR3_FLAG   
-  *         - DMA1_GL4_FLAG        - DMA1_FDT4_FLAG        - DMA1_HDT4_FLAG        - DMA1_DTERR4_FLAG   
-  *         - DMA1_GL5_FLAG        - DMA1_FDT5_FLAG        - DMA1_HDT5_FLAG        - DMA1_DTERR5_FLAG   
-  *         - DMA1_GL6_FLAG        - DMA1_FDT6_FLAG        - DMA1_HDT6_FLAG        - DMA1_DTERR6_FLAG   
-  *         - DMA1_GL7_FLAG        - DMA1_FDT7_FLAG        - DMA1_HDT7_FLAG        - DMA1_DTERR7_FLAG 
-  *         - DMA2_GL1_FLAG        - DMA2_FDT1_FLAG        - DMA2_HDT1_FLAG        - DMA2_DTERR1_FLAG   
-  *         - DMA2_GL2_FLAG        - DMA2_FDT2_FLAG        - DMA2_HDT2_FLAG        - DMA2_DTERR2_FLAG   
-  *         - DMA2_GL3_FLAG        - DMA2_FDT3_FLAG        - DMA2_HDT3_FLAG        - DMA2_DTERR3_FLAG    
-  *         - DMA2_GL4_FLAG        - DMA2_FDT4_FLAG        - DMA2_HDT4_FLAG        - DMA2_DTERR4_FLAG   
-  *         - DMA2_GL5_FLAG        - DMA2_FDT5_FLAG        - DMA2_HDT5_FLAG        - DMA2_DTERR5_FLAG  
-  *         - DMA2_GL6_FLAG        - DMA2_FDT6_FLAG        - DMA2_HDT6_FLAG        - DMA2_DTERR6_FLAG  
-  *         - DMA2_GL7_FLAG        - DMA2_FDT7_FLAG        - DMA2_HDT7_FLAG        - DMA2_DTERR7_FLAG                                 
-  * @retval none                            
+  *         this parameter can be one of the following values:
+  *         - DMA1_GL1_FLAG        - DMA1_FDT1_FLAG        - DMA1_HDT1_FLAG        - DMA1_DTERR1_FLAG
+  *         - DMA1_GL2_FLAG        - DMA1_FDT2_FLAG        - DMA1_HDT2_FLAG        - DMA1_DTERR2_FLAG
+  *         - DMA1_GL3_FLAG        - DMA1_FDT3_FLAG        - DMA1_HDT3_FLAG        - DMA1_DTERR3_FLAG
+  *         - DMA1_GL4_FLAG        - DMA1_FDT4_FLAG        - DMA1_HDT4_FLAG        - DMA1_DTERR4_FLAG
+  *         - DMA1_GL5_FLAG        - DMA1_FDT5_FLAG        - DMA1_HDT5_FLAG        - DMA1_DTERR5_FLAG
+  *         - DMA1_GL6_FLAG        - DMA1_FDT6_FLAG        - DMA1_HDT6_FLAG        - DMA1_DTERR6_FLAG
+  *         - DMA1_GL7_FLAG        - DMA1_FDT7_FLAG        - DMA1_HDT7_FLAG        - DMA1_DTERR7_FLAG
+  *         - DMA2_GL1_FLAG        - DMA2_FDT1_FLAG        - DMA2_HDT1_FLAG        - DMA2_DTERR1_FLAG
+  *         - DMA2_GL2_FLAG        - DMA2_FDT2_FLAG        - DMA2_HDT2_FLAG        - DMA2_DTERR2_FLAG
+  *         - DMA2_GL3_FLAG        - DMA2_FDT3_FLAG        - DMA2_HDT3_FLAG        - DMA2_DTERR3_FLAG
+  *         - DMA2_GL4_FLAG        - DMA2_FDT4_FLAG        - DMA2_HDT4_FLAG        - DMA2_DTERR4_FLAG
+  *         - DMA2_GL5_FLAG        - DMA2_FDT5_FLAG        - DMA2_HDT5_FLAG        - DMA2_DTERR5_FLAG
+  *         - DMA2_GL6_FLAG        - DMA2_FDT6_FLAG        - DMA2_HDT6_FLAG        - DMA2_DTERR6_FLAG
+  *         - DMA2_GL7_FLAG        - DMA2_FDT7_FLAG        - DMA2_HDT7_FLAG        - DMA2_DTERR7_FLAG
+  * @retval none
   */
 void dma_flag_clear(uint32_t dmax_flag)
 {
@@ -354,8 +354,8 @@ void dma_flag_clear(uint32_t dmax_flag)
   }
   else
   {
-    DMA1->clr = dmax_flag;     
-  } 
+    DMA1->clr = dmax_flag;
+  }
 }
 
 /**
@@ -366,36 +366,36 @@ void dma_flag_clear(uint32_t dmax_flag)
   */
 void dma_default_para_init(dma_init_type* dma_init_struct)
 {
-  dma_init_struct->peripheral_base_addr = 0x0;                                            
-  dma_init_struct->memory_base_addr = 0x0;                                              
-  dma_init_struct->direction = DMA_DIR_PERIPHERAL_TO_MEMORY;                                                        
-  dma_init_struct->buffer_size = 0x0;                                                 
-  dma_init_struct->peripheral_inc_enable = FALSE;                                                 
-  dma_init_struct->memory_inc_enable = FALSE;                                                      
-  dma_init_struct->peripheral_data_width = DMA_PERIPHERAL_DATA_WIDTH_BYTE;                                                
-  dma_init_struct->memory_data_width = DMA_MEMORY_DATA_WIDTH_BYTE;                                                      
-  dma_init_struct->loop_mode_enable = FALSE;                                                                  
-  dma_init_struct->priority = DMA_PRIORITY_LOW;                                                      
+  dma_init_struct->peripheral_base_addr = 0x0;
+  dma_init_struct->memory_base_addr = 0x0;
+  dma_init_struct->direction = DMA_DIR_PERIPHERAL_TO_MEMORY;
+  dma_init_struct->buffer_size = 0x0;
+  dma_init_struct->peripheral_inc_enable = FALSE;
+  dma_init_struct->memory_inc_enable = FALSE;
+  dma_init_struct->peripheral_data_width = DMA_PERIPHERAL_DATA_WIDTH_BYTE;
+  dma_init_struct->memory_data_width = DMA_MEMORY_DATA_WIDTH_BYTE;
+  dma_init_struct->loop_mode_enable = FALSE;
+  dma_init_struct->priority = DMA_PRIORITY_LOW;
 }
 
 /**
   * @brief  dma init
-  * @param  dmax_channely: 
-  *         this parameter can be one of the following values:  
-  *         - DMA1_CHANNEL1      
-  *         - DMA1_CHANNEL2  
-  *         - DMA1_CHANNEL3      
-  *         - DMA1_CHANNEL4 
-  *         - DMA1_CHANNEL5      
-  *         - DMA1_CHANNEL6  
-  *         - DMA1_CHANNEL7      
-  *         - DMA2_CHANNEL1      
-  *         - DMA2_CHANNEL2  
-  *         - DMA2_CHANNEL3      
-  *         - DMA2_CHANNEL4 
-  *         - DMA2_CHANNEL5      
-  *         - DMA2_CHANNEL6  
-  *         - DMA2_CHANNEL7 
+  * @param  dmax_channely:
+  *         this parameter can be one of the following values:
+  *         - DMA1_CHANNEL1
+  *         - DMA1_CHANNEL2
+  *         - DMA1_CHANNEL3
+  *         - DMA1_CHANNEL4
+  *         - DMA1_CHANNEL5
+  *         - DMA1_CHANNEL6
+  *         - DMA1_CHANNEL7
+  *         - DMA2_CHANNEL1
+  *         - DMA2_CHANNEL2
+  *         - DMA2_CHANNEL3
+  *         - DMA2_CHANNEL4
+  *         - DMA2_CHANNEL5
+  *         - DMA2_CHANNEL6
+  *         - DMA2_CHANNEL7
   * @param  dma_initstruct : pointer to a dma_init_type structure.
   * @retval none
   */
@@ -405,15 +405,15 @@ void dma_init(dma_channel_type* dmax_channely, dma_init_type* dma_init_struct)
   dmax_channely->ctrl &= 0xbfef;
   dmax_channely->ctrl |= dma_init_struct->direction;
 
-  dmax_channely->ctrl_bit.chpl =  dma_init_struct->priority; 
+  dmax_channely->ctrl_bit.chpl =  dma_init_struct->priority;
   dmax_channely->ctrl_bit.mwidth = dma_init_struct->memory_data_width;
   dmax_channely->ctrl_bit.pwidth = dma_init_struct->peripheral_data_width;
-  dmax_channely->ctrl_bit.mincm = dma_init_struct->memory_inc_enable;  
-  dmax_channely->ctrl_bit.pincm = dma_init_struct->peripheral_inc_enable;  
-  dmax_channely->ctrl_bit.lm = dma_init_struct->loop_mode_enable;   
+  dmax_channely->ctrl_bit.mincm = dma_init_struct->memory_inc_enable;
+  dmax_channely->ctrl_bit.pincm = dma_init_struct->peripheral_inc_enable;
+  dmax_channely->ctrl_bit.lm = dma_init_struct->loop_mode_enable;
   dmax_channely->dtcnt = dma_init_struct->buffer_size;
   dmax_channely->paddr = dma_init_struct->peripheral_base_addr;
-  dmax_channely->maddr = dma_init_struct->memory_base_addr; 
+  dmax_channely->maddr = dma_init_struct->memory_base_addr;
 }
 
 /**

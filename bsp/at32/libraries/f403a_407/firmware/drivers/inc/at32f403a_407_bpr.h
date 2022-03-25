@@ -43,19 +43,19 @@ extern "C" {
 /** @addtogroup BPR
   * @{
   */
- 
+
 /** @defgroup BPR_flags_definition
-  * @brief bpr flag  
+  * @brief bpr flag
   * @{
   */
-  
+
 #define BPR_TAMPER_INTERRUPT_FLAG        ((uint32_t)0x00000001) /*!< bpr tamper interrupt flag */
 #define BPR_TAMPER_EVENT_FLAG            ((uint32_t)0x00000002) /*!< bpr tamper event flag */
 
 /**
   * @}
   */
-  
+
 /** @defgroup BPR_exported_types
   * @{
   */

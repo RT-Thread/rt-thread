@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -42,12 +42,12 @@ extern "C" {
 
 /** @addtogroup CAN
   * @{
-  */ 
-  
+  */
+
 
 /** @defgroup CAN_timeout_count
   * @{
-  */  
+  */
 
 #define FZC_TIMEOUT                      ((uint32_t)0x0000FFFF) /*!< time out for fzc bit */
 #define DZC_TIMEOUT                      ((uint32_t)0x0000FFFF) /*!< time out for dzc bit */
@@ -57,10 +57,10 @@ extern "C" {
   */
 
 /** @defgroup CAN_flags_definition
-  * @brief can flag  
+  * @brief can flag
   * @{
   */
-  
+
 #define CAN_EAF_FLAG                     ((uint32_t)0x01) /*!< error active flag */
 #define CAN_EPF_FLAG                     ((uint32_t)0x02) /*!< error passive flag */
 #define CAN_BOF_FLAG                     ((uint32_t)0x03) /*!< bus-off flag */
@@ -84,7 +84,7 @@ extern "C" {
   */
 
 /** @defgroup CAN_interrupts_definition
-  * @brief can interrupt  
+  * @brief can interrupt
   * @{
   */
 
@@ -281,7 +281,7 @@ typedef enum
 typedef enum
 {
   CAN_ENTER_DOZE_FAILED                  = 0x00, /*!< can enter the doze mode failed */
-  CAN_ENTER_DOZE_SUCCESSFUL              = 0x01  /*!< can enter the doze mode successful */ 
+  CAN_ENTER_DOZE_SUCCESSFUL              = 0x01  /*!< can enter the doze mode successful */
 } can_enter_doze_status_type;
 
 /**
@@ -290,7 +290,7 @@ typedef enum
 typedef enum
 {
   CAN_QUIT_DOZE_FAILED                   = 0x00, /*!< can quit doze mode failed */
-  CAN_QUIT_DOZE_SUCCESSFUL               = 0x01  /*!< can quit doze mode successful */ 
+  CAN_QUIT_DOZE_SUCCESSFUL               = 0x01  /*!< can quit doze mode successful */
 } can_quit_doze_status_type;
 
 /**
@@ -299,7 +299,7 @@ typedef enum
 typedef enum
 {
   CAN_DISCARDING_FIRST_RECEIVED          = 0x00, /*!< can discarding the first received message */
-  CAN_DISCARDING_LAST_RECEIVED           = 0x01  /*!< can discarding the last received message */ 
+  CAN_DISCARDING_LAST_RECEIVED           = 0x01  /*!< can discarding the last received message */
 } can_msg_discarding_rule_type;
 
 /**
@@ -308,7 +308,7 @@ typedef enum
 typedef enum
 {
   CAN_SENDING_BY_ID                      = 0x00, /*!< can sending the minimum id message first*/
-  CAN_SENDING_BY_REQUEST                 = 0x01  /*!< can sending the first request message first */ 
+  CAN_SENDING_BY_REQUEST                 = 0x01  /*!< can sending the first request message first */
 } can_msg_sending_rule_type;
 
 /**
@@ -323,7 +323,7 @@ typedef enum
   CAN_ERRORRECORD_BITRECESSIVEERR        = 0x04, /*!< bit recessive error */
   CAN_ERRORRECORD_BITDOMINANTERR         = 0x05, /*!< bit dominant error */
   CAN_ERRORRECORD_CRCERR                 = 0x06, /*!< crc error */
-  CAN_ERRORRECORD_SOFTWARESETERR         = 0x07  /*!< software set error */   
+  CAN_ERRORRECORD_SOFTWARESETERR         = 0x07  /*!< software set error */
 } can_error_record_type;
 
 /**
@@ -331,20 +331,20 @@ typedef enum
   */
 typedef struct
 {
-  can_mode_type mode_selection;          /*!< specifies the can mode.*/                   
- 
-  confirm_state ttc_enable;              /*!< time triggered communication mode enable */   
- 
+  can_mode_type mode_selection;          /*!< specifies the can mode.*/
+
+  confirm_state ttc_enable;              /*!< time triggered communication mode enable */
+
   confirm_state aebo_enable;             /*!< automatic exit bus-off enable */
- 
+
   confirm_state aed_enable;              /*!< automatic exit doze mode enable */
- 
-  confirm_state prsf_enable;             /*!< prohibit retransmission when sending fails enable */   
- 
-  can_msg_discarding_rule_type mdrsel_selection; /*!< message discarding rule select when overflow */        
- 
+
+  confirm_state prsf_enable;             /*!< prohibit retransmission when sending fails enable */
+
+  can_msg_discarding_rule_type mdrsel_selection; /*!< message discarding rule select when overflow */
+
   can_msg_sending_rule_type mmssr_selection;     /*!< multiple message sending sequence rule */
-  
+
 } can_base_type;
 
 /**
@@ -352,14 +352,14 @@ typedef struct
   */
 typedef struct
 {
-  uint16_t baudrate_div;                  /*!< baudrate division,this parameter can be 0x001~0x400.*/                   
- 
-  can_rsaw_type rsaw_size;                /*!< resynchronization adjust width */   
- 
+  uint16_t baudrate_div;                  /*!< baudrate division,this parameter can be 0x001~0x400.*/
+
+  can_rsaw_type rsaw_size;                /*!< resynchronization adjust width */
+
   can_bts1_type bts1_size;                /*!< bit time segment 1 */
- 
+
   can_bts2_type bts2_size;                /*!< bit time segment 2 */
-  
+
 } can_baudrate_type;
 
 /**
@@ -368,24 +368,24 @@ typedef struct
 typedef struct
 {
   confirm_state filter_activate_enable;  /*!< enable or disable the filter activate.*/
-  
-  can_filter_mode_type filter_mode;      /*!< config the filter mode mask or list.*/  
-  
-  can_filter_fifo_type filter_fifo;      /*!< config the fifo which will be assigned to the filter. */ 
-  
-  uint8_t filter_number;                 /*!< config the filter number, parameter ranges from 0 to 13. */ 
-  
-  can_filter_bit_width_type filter_bit;  /*!< config the filter bit width 16bit or 32bit.*/  
-  
-  uint16_t filter_id_high;               /*!< config the filter identification, for 32-bit configuration 
-                                              it's high 16 bits, for 16-bit configuration it's first. */  
-  
-  uint16_t filter_id_low;                /*!< config the filter identification, for 32-bit configuration 
-                                              it's low 16 bits, for 16-bit configuration it's second. */  
-  
+
+  can_filter_mode_type filter_mode;      /*!< config the filter mode mask or list.*/
+
+  can_filter_fifo_type filter_fifo;      /*!< config the fifo which will be assigned to the filter. */
+
+  uint8_t filter_number;                 /*!< config the filter number, parameter ranges from 0 to 13. */
+
+  can_filter_bit_width_type filter_bit;  /*!< config the filter bit width 16bit or 32bit.*/
+
+  uint16_t filter_id_high;               /*!< config the filter identification, for 32-bit configuration
+                                              it's high 16 bits, for 16-bit configuration it's first. */
+
+  uint16_t filter_id_low;                /*!< config the filter identification, for 32-bit configuration
+                                              it's low 16 bits, for 16-bit configuration it's second. */
+
   uint16_t filter_mask_high;             /*!< config the filter mask or identification, according to the filtering mode,
-                                              for 32-bit configuration it's high 16 bits, for 16-bit configuration it's first. */ 
-  
+                                              for 32-bit configuration it's high 16 bits, for 16-bit configuration it's first. */
+
   uint16_t filter_mask_low;              /*!< config the filter mask or identification, according to the filtering mode,
                                               for 32-bit configuration it's low 16 bits, for 16-bit configuration it's second. */
 } can_filter_init_type;
@@ -397,19 +397,19 @@ typedef struct
 {
   uint32_t standard_id;                  /*!< specifies the 11 bits standard identifier.
                                               this parameter can be a value between 0 to 0x7FF. */
-                                          
+
   uint32_t extended_id;                  /*!< specifies the 29 bits extended identifier.
                                               this parameter can be a value between 0 to 0x1FFFFFFF. */
-                                          
+
   can_identifier_type id_type;           /*!< specifies identifier type for the transmit message.*/
-                                          
+
   can_trans_frame_type frame_type;       /*!< specifies frame type for the transmit message.*/
-                                          
-  uint8_t dlc;                           /*!< specifies frame data length that will be transmitted. 
+
+  uint8_t dlc;                           /*!< specifies frame data length that will be transmitted.
                                               this parameter can be a value between 0 to 8 */
-                                          
+
   uint8_t data[8];                       /*!< contains the transmit data. it ranges from 0 to 0xFF. */
- 
+
 } can_tx_message_type;
 
 /**
@@ -417,22 +417,22 @@ typedef struct
   */
 typedef struct
 {
-    uint32_t standard_id;                /*!< specifies the 11 bits standard identifier 
+    uint32_t standard_id;                /*!< specifies the 11 bits standard identifier
                                               this parameter can be a value between 0 to 0x7FF. */
-                                            
+
     uint32_t extended_id;                /*!< specifies the 29 bits extended identifier.
                                               this parameter can be a value between 0 to 0x1FFFFFFF. */
-                                            
+
     can_identifier_type id_type;         /*!< specifies identifier type for the receive message.*/
-                                            
+
     can_trans_frame_type frame_type;     /*!< specifies frame type for the receive message.*/
-                                            
+
     uint8_t dlc;                         /*!< specifies the frame data length that will be received.
                                               this parameter can be a value between 0 to 8 */
-                                            
+
     uint8_t data[8];                     /*!< contains the receive data. it ranges from 0 to 0xFF.*/
-                                            
-    uint8_t filter_index;                /*!< specifies the message stored in which filter 
+
+    uint8_t filter_index;                /*!< specifies the message stored in which filter
                                               this parameter can be a value between 0 to 0xFF */
 } can_rx_message_type;
 
@@ -443,36 +443,36 @@ typedef struct
 {
   /**
     * @brief can tmi register
-    */  
+    */
   union
   {
     __IO uint32_t tmi;
     struct
     {
-      __IO uint32_t tmsr                 : 1; /* [0] */      
+      __IO uint32_t tmsr                 : 1; /* [0] */
       __IO uint32_t tmfrsel              : 1; /* [1] */
       __IO uint32_t tmidsel              : 1; /* [2] */
-      __IO uint32_t tmeid                : 18;/* [20:3] */  
-      __IO uint32_t tmsid                : 11;/* [31:21] */     
-    } tmi_bit;            
-  }; 
-  
+      __IO uint32_t tmeid                : 18;/* [20:3] */
+      __IO uint32_t tmsid                : 11;/* [31:21] */
+    } tmi_bit;
+  };
+
   /**
     * @brief can tmc register
-    */ 
+    */
   union
   {
     __IO uint32_t tmc;
     struct
     {
-      __IO uint32_t tmdtbl               : 4; /* [3:0] */      
-      __IO uint32_t reserved1            : 4; /* [7:4] */   
+      __IO uint32_t tmdtbl               : 4; /* [3:0] */
+      __IO uint32_t reserved1            : 4; /* [7:4] */
       __IO uint32_t tmtsten              : 1; /* [8] */
-      __IO uint32_t reserved2            : 7; /* [15:9] */  
-      __IO uint32_t tmts                 : 16;/* [31:16] */     
-    } tmc_bit;            
+      __IO uint32_t reserved2            : 7; /* [15:9] */
+      __IO uint32_t tmts                 : 16;/* [31:16] */
+    } tmc_bit;
   };
-  
+
   /**
     * @brief can tmdtl register
     */
@@ -481,13 +481,13 @@ typedef struct
     __IO uint32_t tmdtl;
     struct
     {
-      __IO uint32_t tmdt0                : 8; /* [7:0] */      
-      __IO uint32_t tmdt1                : 8; /* [15:8] */ 
-      __IO uint32_t tmdt2                : 8; /* [23:16] */ 
-      __IO uint32_t tmdt3                : 8; /* [31:24] */      
-    } tmdtl_bit;            
+      __IO uint32_t tmdt0                : 8; /* [7:0] */
+      __IO uint32_t tmdt1                : 8; /* [15:8] */
+      __IO uint32_t tmdt2                : 8; /* [23:16] */
+      __IO uint32_t tmdt3                : 8; /* [31:24] */
+    } tmdtl_bit;
   };
-  
+
   /**
     * @brief can tmdth register
     */
@@ -496,11 +496,11 @@ typedef struct
     __IO uint32_t tmdth;
     struct
     {
-      __IO uint32_t tmdt4                : 8; /* [7:0] */      
-      __IO uint32_t tmdt5                : 8; /* [15:8] */ 
-      __IO uint32_t tmdt6                : 8; /* [23:16] */ 
-      __IO uint32_t tmdt7                : 8; /* [31:24] */      
-    } tmdth_bit;            
+      __IO uint32_t tmdt4                : 8; /* [7:0] */
+      __IO uint32_t tmdt5                : 8; /* [15:8] */
+      __IO uint32_t tmdt6                : 8; /* [23:16] */
+      __IO uint32_t tmdt7                : 8; /* [31:24] */
+    } tmdth_bit;
   };
 } can_tx_mailbox_type;
 
@@ -517,28 +517,28 @@ typedef struct
     __IO uint32_t rfi;
     struct
     {
-      __IO uint32_t reserved1            : 1; /* [0] */      
-      __IO uint32_t rffri                : 1; /* [1] */ 
-      __IO uint32_t rfidi                : 1; /* [2] */ 
-      __IO uint32_t rfeid                : 18;/* [20:3] */ 
-      __IO uint32_t rfsid                : 11;/* [31:21] */ 
-    } rfi_bit;            
+      __IO uint32_t reserved1            : 1; /* [0] */
+      __IO uint32_t rffri                : 1; /* [1] */
+      __IO uint32_t rfidi                : 1; /* [2] */
+      __IO uint32_t rfeid                : 18;/* [20:3] */
+      __IO uint32_t rfsid                : 11;/* [31:21] */
+    } rfi_bit;
   };
 
   /**
-    * @brief can rfc register 
+    * @brief can rfc register
     */
   union
   {
     __IO uint32_t rfc;
     struct
-    {  
-      __IO uint32_t rfdtl                : 4; /* [3:0] */ 
-      __IO uint32_t reserved1            : 4; /* [7:4] */ 
-      __IO uint32_t rffmn                : 8; /* [15:8] */ 
-      __IO uint32_t rfts                 : 16;/* [31:16] */ 
-    } rfc_bit;            
-  };  
+    {
+      __IO uint32_t rfdtl                : 4; /* [3:0] */
+      __IO uint32_t reserved1            : 4; /* [7:4] */
+      __IO uint32_t rffmn                : 8; /* [15:8] */
+      __IO uint32_t rfts                 : 16;/* [31:16] */
+    } rfc_bit;
+  };
 
   /**
     * @brief can rfdtl register
@@ -547,13 +547,13 @@ typedef struct
   {
     __IO uint32_t rfdtl;
     struct
-    {  
-      __IO uint32_t rfdt0                : 8; /* [7:0] */      
-      __IO uint32_t rfdt1                : 8; /* [15:8] */ 
-      __IO uint32_t rfdt2                : 8; /* [23:16] */ 
-      __IO uint32_t rfdt3                : 8; /* [31:24] */  
-    } rfdtl_bit;            
-  };  
+    {
+      __IO uint32_t rfdt0                : 8; /* [7:0] */
+      __IO uint32_t rfdt1                : 8; /* [15:8] */
+      __IO uint32_t rfdt2                : 8; /* [23:16] */
+      __IO uint32_t rfdt3                : 8; /* [31:24] */
+    } rfdtl_bit;
+  };
 
   /**
     * @brief can rfdth register
@@ -562,13 +562,13 @@ typedef struct
   {
     __IO uint32_t rfdth;
     struct
-    {  
-      __IO uint32_t rfdt4                : 8; /* [7:0] */      
-      __IO uint32_t rfdt5                : 8; /* [15:8] */ 
-      __IO uint32_t rfdt6                : 8; /* [23:16] */ 
-      __IO uint32_t rfdt7                : 8; /* [31:24] */  
-    } rfdth_bit;            
-  };  
+    {
+      __IO uint32_t rfdt4                : 8; /* [7:0] */
+      __IO uint32_t rfdt5                : 8; /* [15:8] */
+      __IO uint32_t rfdt6                : 8; /* [23:16] */
+      __IO uint32_t rfdt7                : 8; /* [31:24] */
+    } rfdth_bit;
+  };
 } can_fifo_mailbox_type;
 
 /**
@@ -585,9 +585,9 @@ typedef struct
   */
 typedef struct
 {
-  
+
   /**
-    * @brief can mctrl register, offset:0x00 
+    * @brief can mctrl register, offset:0x00
     */
   union
   {
@@ -596,21 +596,21 @@ typedef struct
     {
       __IO uint32_t fzen                 : 1; /* [0] */
       __IO uint32_t dzen                 : 1; /* [1] */
-      __IO uint32_t mmssr                : 1; /* [2] */  
+      __IO uint32_t mmssr                : 1; /* [2] */
       __IO uint32_t mdrsel               : 1; /* [3] */
       __IO uint32_t prsfen               : 1; /* [4] */
-      __IO uint32_t aeden                : 1; /* [5] */   
+      __IO uint32_t aeden                : 1; /* [5] */
       __IO uint32_t aeboen               : 1; /* [6] */
       __IO uint32_t ttcen                : 1; /* [7] */
-      __IO uint32_t reserved1            : 7; /* [14:8] */  
+      __IO uint32_t reserved1            : 7; /* [14:8] */
       __IO uint32_t sprst                : 1; /* [15] */
-      __IO uint32_t ptd                  : 1; /* [16] */     
+      __IO uint32_t ptd                  : 1; /* [16] */
       __IO uint32_t reserved2            : 15;/*[31:17] */
     } mctrl_bit;
   };
-  
+
   /**
-    * @brief can msts register, offset:0x04 
+    * @brief can msts register, offset:0x04
     */
   union
   {
@@ -619,20 +619,20 @@ typedef struct
     {
       __IO uint32_t fzc                  : 1; /* [0] */
       __IO uint32_t dzc                  : 1; /* [1] */
-      __IO uint32_t eoif                 : 1; /* [2] */  
+      __IO uint32_t eoif                 : 1; /* [2] */
       __IO uint32_t qdzif                : 1; /* [3] */
       __IO uint32_t edzif                : 1; /* [4] */
-      __IO uint32_t reserved1            : 3; /* [7:5] */   
+      __IO uint32_t reserved1            : 3; /* [7:5] */
       __IO uint32_t cuss                 : 1; /* [8] */
       __IO uint32_t curs                 : 1; /* [9] */
       __IO uint32_t lsamprx              : 1; /* [10] */
-      __IO uint32_t realrx               : 1; /* [11] */       
+      __IO uint32_t realrx               : 1; /* [11] */
       __IO uint32_t reserved2            : 20;/*[31:12] */
     } msts_bit;
   };
-  
+
    /**
-     * @brief can tsts register, offset:0x08 
+     * @brief can tsts register, offset:0x08
      */
   union
   {
@@ -641,34 +641,34 @@ typedef struct
     {
       __IO uint32_t tm0tcf               : 1; /* [0] */
       __IO uint32_t tm0tsf               : 1; /* [1] */
-      __IO uint32_t tm0alf               : 1; /* [2] */  
+      __IO uint32_t tm0alf               : 1; /* [2] */
       __IO uint32_t tm0tef               : 1; /* [3] */
       __IO uint32_t reserved1            : 3; /* [6:4] */
-      __IO uint32_t tm0ct                : 1; /* [7] */   
+      __IO uint32_t tm0ct                : 1; /* [7] */
       __IO uint32_t tm1tcf               : 1; /* [8] */
       __IO uint32_t tm1tsf               : 1; /* [9] */
       __IO uint32_t tm1alf               : 1; /* [10] */
-      __IO uint32_t tm1tef               : 1; /* [11] */   
+      __IO uint32_t tm1tef               : 1; /* [11] */
       __IO uint32_t reserved2            : 3; /* [14:12] */
       __IO uint32_t tm1ct                : 1; /* [15] */
-      __IO uint32_t tm2tcf               : 1; /* [16] */  
+      __IO uint32_t tm2tcf               : 1; /* [16] */
       __IO uint32_t tm2tsf               : 1; /* [17] */
       __IO uint32_t tm2alf               : 1; /* [18] */
-      __IO uint32_t tm2tef               : 1; /* [19] */   
+      __IO uint32_t tm2tef               : 1; /* [19] */
       __IO uint32_t reserved3            : 3; /* [22:20] */
       __IO uint32_t tm2ct                : 1; /* [23] */
       __IO uint32_t tmnr                 : 2; /* [25:24] */
-      __IO uint32_t tm0ef                : 1; /* [26] */   
-      __IO uint32_t tm1ef                : 1; /* [27] */  
-      __IO uint32_t tm2ef                : 1; /* [28] */  
-      __IO uint32_t tm0lpf               : 1; /* [29] */        
-      __IO uint32_t tm1lpf               : 1; /* [30] */  
-      __IO uint32_t tm2lpf               : 1; /* [31] */        
+      __IO uint32_t tm0ef                : 1; /* [26] */
+      __IO uint32_t tm1ef                : 1; /* [27] */
+      __IO uint32_t tm2ef                : 1; /* [28] */
+      __IO uint32_t tm0lpf               : 1; /* [29] */
+      __IO uint32_t tm1lpf               : 1; /* [30] */
+      __IO uint32_t tm2lpf               : 1; /* [31] */
     } tsts_bit;
   };
-   
+
   /**
-    * @brief can rf0 register, offset:0x0C 
+    * @brief can rf0 register, offset:0x0C
     */
   union
   {
@@ -677,15 +677,15 @@ typedef struct
     {
       __IO uint32_t rf0mn                : 2; /* [1:0] */
       __IO uint32_t reserved1            : 1; /* [2] */
-      __IO uint32_t rf0ff                : 1; /* [3] */  
+      __IO uint32_t rf0ff                : 1; /* [3] */
       __IO uint32_t rf0of                : 1; /* [4] */
       __IO uint32_t rf0r                 : 1; /* [5] */
       __IO uint32_t reserved2            : 26;/* [31:6] */
     } rf0_bit;
   };
-   
+
   /**
-    * @brief can rf1 register, offset:0x10 
+    * @brief can rf1 register, offset:0x10
     */
   union
   {
@@ -694,231 +694,231 @@ typedef struct
     {
       __IO uint32_t rf1mn                : 2; /* [1:0] */
       __IO uint32_t reserved1            : 1; /* [2] */
-      __IO uint32_t rf1ff                : 1; /* [3] */  
+      __IO uint32_t rf1ff                : 1; /* [3] */
       __IO uint32_t rf1of                : 1; /* [4] */
       __IO uint32_t rf1r                 : 1; /* [5] */
       __IO uint32_t reserved2            : 26;/* [31:6] */
     } rf1_bit;
-  };   
-   
+  };
+
   /**
-    * @brief can inten register, offset:0x14 
+    * @brief can inten register, offset:0x14
     */
   union
   {
     __IO uint32_t inten;
     struct
     {
-      __IO uint32_t tcien               : 1; /* [0] */      
+      __IO uint32_t tcien               : 1; /* [0] */
       __IO uint32_t rf0mien              : 1; /* [1] */
       __IO uint32_t rf0fien              : 1; /* [2] */
-      __IO uint32_t rf0oien              : 1; /* [3] */  
+      __IO uint32_t rf0oien              : 1; /* [3] */
       __IO uint32_t rf1mien              : 1; /* [4] */
       __IO uint32_t rf1fien              : 1; /* [5] */
       __IO uint32_t rf1oien              : 1; /* [6] */
       __IO uint32_t reserved1            : 1; /* [7] */
-      __IO uint32_t eaien                : 1; /* [8] */  
+      __IO uint32_t eaien                : 1; /* [8] */
       __IO uint32_t epien                : 1; /* [9] */
       __IO uint32_t boien                : 1; /* [10] */
       __IO uint32_t etrien               : 1; /* [11] */
       __IO uint32_t reserved2            : 3; /* [14:12] */
-      __IO uint32_t eoien                : 1; /* [15] */  
+      __IO uint32_t eoien                : 1; /* [15] */
       __IO uint32_t qdzien               : 1; /* [16] */
-      __IO uint32_t edzien               : 1; /* [17] */     
+      __IO uint32_t edzien               : 1; /* [17] */
       __IO uint32_t reserved3            : 14;/* [31:18] */
     } inten_bit;
   };
 
   /**
-    * @brief can ests register, offset:0x18 
+    * @brief can ests register, offset:0x18
     */
   union
   {
     __IO uint32_t ests;
     struct
     {
-      __IO uint32_t eaf                  : 1; /* [0] */      
+      __IO uint32_t eaf                  : 1; /* [0] */
       __IO uint32_t epf                  : 1; /* [1] */
       __IO uint32_t bof                  : 1; /* [2] */
-      __IO uint32_t reserved1            : 1; /* [3] */  
+      __IO uint32_t reserved1            : 1; /* [3] */
       __IO uint32_t etr                  : 3; /* [6:4] */
       __IO uint32_t reserved2            : 9; /* [15:7] */
-      __IO uint32_t tec                  : 8; /* [23:16] */  
+      __IO uint32_t tec                  : 8; /* [23:16] */
       __IO uint32_t rec                  : 8; /* [31:24] */
-    } ests_bit;    
+    } ests_bit;
   };
 
   /**
-    * @brief can btmg register, offset:0x1C 
+    * @brief can btmg register, offset:0x1C
     */
   union
   {
     __IO uint32_t btmg;
     struct
     {
-      __IO uint32_t brdiv                : 12;/* [11:0] */      
+      __IO uint32_t brdiv                : 12;/* [11:0] */
       __IO uint32_t reserved1            : 4; /* [15:12] */
       __IO uint32_t bts1                 : 4; /* [19:16] */
-      __IO uint32_t bts2                 : 3; /* [22:20] */  
+      __IO uint32_t bts2                 : 3; /* [22:20] */
       __IO uint32_t reserved2            : 1; /* [23] */
       __IO uint32_t rsaw                 : 2; /* [25:24] */
-      __IO uint32_t reserved3            : 4; /* [29:26] */  
+      __IO uint32_t reserved3            : 4; /* [29:26] */
       __IO uint32_t lben                 : 1; /* [30] */
-      __IO uint32_t loen                 : 1; /* [31] */      
-    } btmg_bit;            
-  }; 
-  
+      __IO uint32_t loen                 : 1; /* [31] */
+    } btmg_bit;
+  };
+
   /**
     * @brief can reserved register, offset:0x20~0x17C
     */
   __IO uint32_t reserved1[88];
-  
+
   /**
     * @brief can controller area network tx mailbox register, offset:0x180~0x1AC
     */
   can_tx_mailbox_type tx_mailbox[3];
-  
+
   /**
     * @brief can controller area network fifo mailbox register, offset:0x1B0~0x1CC
     */
   can_fifo_mailbox_type fifo_mailbox[2];
-    
+
   /**
     * @brief can reserved register, offset:0x1D0~0x1FC
     */
   __IO uint32_t reserved2[12];
 
   /**
-    * @brief can fctrl register, offset:0x200 
+    * @brief can fctrl register, offset:0x200
     */
   union
   {
     __IO uint32_t fctrl;
     struct
-    {  
-      __IO uint32_t fcs                  : 1; /* [0] */      
-      __IO uint32_t reserved1            : 31;/* [31:1] */  
-    } fctrl_bit;            
-  };  
+    {
+      __IO uint32_t fcs                  : 1; /* [0] */
+      __IO uint32_t reserved1            : 31;/* [31:1] */
+    } fctrl_bit;
+  };
 
   /**
-    * @brief can fmcfg register, offset:0x204 
+    * @brief can fmcfg register, offset:0x204
     */
   union
   {
     __IO uint32_t fmcfg;
     struct
-    {  
-      __IO uint32_t fmsel0               : 1; /* [0] */      
-      __IO uint32_t fmsel1               : 1; /* [1] */      
-      __IO uint32_t fmsel2               : 1; /* [2] */      
-      __IO uint32_t fmsel3               : 1; /* [3] */      
-      __IO uint32_t fmsel4               : 1; /* [4] */       
-      __IO uint32_t fmsel5               : 1; /* [5] */      
-      __IO uint32_t fmsel6               : 1; /* [6] */      
-      __IO uint32_t fmsel7               : 1; /* [7] */      
-      __IO uint32_t fmsel8               : 1; /* [8] */      
-      __IO uint32_t fmsel9               : 1; /* [9] */      
-      __IO uint32_t fmsel10              : 1; /* [10] */      
-      __IO uint32_t fmsel11              : 1; /* [11] */      
-      __IO uint32_t fmsel12              : 1; /* [12] */       
-      __IO uint32_t fmsel13              : 1; /* [13] */         
-      __IO uint32_t reserved1            : 18;/* [31:14] */  
-    } fmcfg_bit;            
-  };  
-  
+    {
+      __IO uint32_t fmsel0               : 1; /* [0] */
+      __IO uint32_t fmsel1               : 1; /* [1] */
+      __IO uint32_t fmsel2               : 1; /* [2] */
+      __IO uint32_t fmsel3               : 1; /* [3] */
+      __IO uint32_t fmsel4               : 1; /* [4] */
+      __IO uint32_t fmsel5               : 1; /* [5] */
+      __IO uint32_t fmsel6               : 1; /* [6] */
+      __IO uint32_t fmsel7               : 1; /* [7] */
+      __IO uint32_t fmsel8               : 1; /* [8] */
+      __IO uint32_t fmsel9               : 1; /* [9] */
+      __IO uint32_t fmsel10              : 1; /* [10] */
+      __IO uint32_t fmsel11              : 1; /* [11] */
+      __IO uint32_t fmsel12              : 1; /* [12] */
+      __IO uint32_t fmsel13              : 1; /* [13] */
+      __IO uint32_t reserved1            : 18;/* [31:14] */
+    } fmcfg_bit;
+  };
+
   /**
-    * @brief can reserved register, offset:0x208 
+    * @brief can reserved register, offset:0x208
     */
   __IO uint32_t reserved3;
 
   /**
-    * @brief can fbwcfg register, offset:0x20C 
+    * @brief can fbwcfg register, offset:0x20C
     */
   union
   {
     __IO uint32_t fbwcfg;
     struct
-    {  
-      __IO uint32_t fbwsel0              : 1; /* [0] */      
-      __IO uint32_t fbwsel1              : 1; /* [1] */      
-      __IO uint32_t fbwsel2              : 1; /* [2] */      
-      __IO uint32_t fbwsel3              : 1; /* [3] */      
-      __IO uint32_t fbwsel4              : 1; /* [4] */       
-      __IO uint32_t fbwsel5              : 1; /* [5] */      
-      __IO uint32_t fbwsel6              : 1; /* [6] */      
-      __IO uint32_t fbwsel7              : 1; /* [7] */      
-      __IO uint32_t fbwsel8              : 1; /* [8] */      
-      __IO uint32_t fbwsel9              : 1; /* [9] */      
-      __IO uint32_t fbwsel10             : 1; /* [10] */      
-      __IO uint32_t fbwsel11             : 1; /* [11] */      
-      __IO uint32_t fbwsel12             : 1; /* [12] */       
-      __IO uint32_t fbwsel13             : 1; /* [13] */         
-      __IO uint32_t reserved1            : 18;/* [31:14] */  
-    } fbwcfg_bit;            
-  }; 
-  
+    {
+      __IO uint32_t fbwsel0              : 1; /* [0] */
+      __IO uint32_t fbwsel1              : 1; /* [1] */
+      __IO uint32_t fbwsel2              : 1; /* [2] */
+      __IO uint32_t fbwsel3              : 1; /* [3] */
+      __IO uint32_t fbwsel4              : 1; /* [4] */
+      __IO uint32_t fbwsel5              : 1; /* [5] */
+      __IO uint32_t fbwsel6              : 1; /* [6] */
+      __IO uint32_t fbwsel7              : 1; /* [7] */
+      __IO uint32_t fbwsel8              : 1; /* [8] */
+      __IO uint32_t fbwsel9              : 1; /* [9] */
+      __IO uint32_t fbwsel10             : 1; /* [10] */
+      __IO uint32_t fbwsel11             : 1; /* [11] */
+      __IO uint32_t fbwsel12             : 1; /* [12] */
+      __IO uint32_t fbwsel13             : 1; /* [13] */
+      __IO uint32_t reserved1            : 18;/* [31:14] */
+    } fbwcfg_bit;
+  };
+
   /**
-    * @brief can reserved register, offset:0x210 
+    * @brief can reserved register, offset:0x210
     */
   __IO uint32_t reserved4;
 
   /**
-    * @brief can frf register, offset:0x214 
-    */ 
+    * @brief can frf register, offset:0x214
+    */
   union
   {
     __IO uint32_t frf;
     struct
-    {  
-      __IO uint32_t frfsel0              : 1; /* [0] */      
-      __IO uint32_t frfsel1              : 1; /* [1] */      
-      __IO uint32_t frfsel2              : 1; /* [2] */      
-      __IO uint32_t frfsel3              : 1; /* [3] */      
-      __IO uint32_t frfsel4              : 1; /* [4] */       
-      __IO uint32_t frfsel5              : 1; /* [5] */      
-      __IO uint32_t frfsel6              : 1; /* [6] */      
-      __IO uint32_t frfsel7              : 1; /* [7] */      
-      __IO uint32_t frfsel8              : 1; /* [8] */      
-      __IO uint32_t frfsel9              : 1; /* [9] */      
-      __IO uint32_t frfsel10             : 1; /* [10] */      
-      __IO uint32_t frfsel11             : 1; /* [11] */      
-      __IO uint32_t frfsel12             : 1; /* [12] */       
-      __IO uint32_t frfsel13             : 1; /* [13] */         
-      __IO uint32_t reserved1            : 18;/* [31:14] */  
-    } frf_bit;            
-  }; 
-  
+    {
+      __IO uint32_t frfsel0              : 1; /* [0] */
+      __IO uint32_t frfsel1              : 1; /* [1] */
+      __IO uint32_t frfsel2              : 1; /* [2] */
+      __IO uint32_t frfsel3              : 1; /* [3] */
+      __IO uint32_t frfsel4              : 1; /* [4] */
+      __IO uint32_t frfsel5              : 1; /* [5] */
+      __IO uint32_t frfsel6              : 1; /* [6] */
+      __IO uint32_t frfsel7              : 1; /* [7] */
+      __IO uint32_t frfsel8              : 1; /* [8] */
+      __IO uint32_t frfsel9              : 1; /* [9] */
+      __IO uint32_t frfsel10             : 1; /* [10] */
+      __IO uint32_t frfsel11             : 1; /* [11] */
+      __IO uint32_t frfsel12             : 1; /* [12] */
+      __IO uint32_t frfsel13             : 1; /* [13] */
+      __IO uint32_t reserved1            : 18;/* [31:14] */
+    } frf_bit;
+  };
+
   /**
-    * @brief can reserved register, offset:0x218 
+    * @brief can reserved register, offset:0x218
     */
   __IO uint32_t reserved5;
 
   /**
-    * @brief can facfg register, offset:0x21C 
-    */ 
+    * @brief can facfg register, offset:0x21C
+    */
   union
   {
     __IO uint32_t facfg;
     struct
-    {  
-      __IO uint32_t faen0                : 1; /* [0] */      
-      __IO uint32_t faen1                : 1; /* [1] */      
-      __IO uint32_t faen2                : 1; /* [2] */      
-      __IO uint32_t faen3                : 1; /* [3] */      
-      __IO uint32_t faen4                : 1; /* [4] */       
-      __IO uint32_t faen5                : 1; /* [5] */      
-      __IO uint32_t faen6                : 1; /* [6] */      
-      __IO uint32_t faen7                : 1; /* [7] */      
-      __IO uint32_t faen8                : 1; /* [8] */      
-      __IO uint32_t faen9                : 1; /* [9] */      
-      __IO uint32_t faen10               : 1; /* [10] */      
-      __IO uint32_t faen11               : 1; /* [11] */      
-      __IO uint32_t faen12               : 1; /* [12] */       
-      __IO uint32_t faen13               : 1; /* [13] */         
-      __IO uint32_t reserved1            : 18;/* [31:14] */  
-    } facfg_bit;            
-  }; 
+    {
+      __IO uint32_t faen0                : 1; /* [0] */
+      __IO uint32_t faen1                : 1; /* [1] */
+      __IO uint32_t faen2                : 1; /* [2] */
+      __IO uint32_t faen3                : 1; /* [3] */
+      __IO uint32_t faen4                : 1; /* [4] */
+      __IO uint32_t faen5                : 1; /* [5] */
+      __IO uint32_t faen6                : 1; /* [6] */
+      __IO uint32_t faen7                : 1; /* [7] */
+      __IO uint32_t faen8                : 1; /* [8] */
+      __IO uint32_t faen9                : 1; /* [9] */
+      __IO uint32_t faen10               : 1; /* [10] */
+      __IO uint32_t faen11               : 1; /* [11] */
+      __IO uint32_t faen12               : 1; /* [12] */
+      __IO uint32_t faen13               : 1; /* [13] */
+      __IO uint32_t reserved1            : 18;/* [31:14] */
+    } facfg_bit;
+  };
 
   /**
     * @brief can reserved register, offset:0x220~0x23C
@@ -929,19 +929,19 @@ typedef struct
     * @brief can ffb register, offset:0x240~0x2AC
     */
   can_filter_register_type ffb[14];
-} can_type;  
+} can_type;
 
 /**
   * @}
   */
-  
+
 #define CAN1                             ((can_type *) CAN1_BASE)
 #define CAN2                             ((can_type *) CAN2_BASE)
 
 /** @defgroup CAN_exported_functions
   * @{
   */
-  
+
 void can_reset(can_type* can_x);
 void can_baudrate_default_para_init(can_baudrate_type* can_baudrate_struct);
 error_status can_baudrate_set(can_type* can_x, can_baudrate_type* can_baudrate_struct);

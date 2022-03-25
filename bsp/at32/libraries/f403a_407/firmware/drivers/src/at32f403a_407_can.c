@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -70,16 +70,16 @@ void can_reset(can_type* can_x)
 void can_baudrate_default_para_init(can_baudrate_type* can_baudrate_struct)
 {
   /* reset can baudrate structure parameters values */
-  
+
   /* baud rate division */
   can_baudrate_struct->baudrate_div = 1;
-  
+
   /* resynchronization adjust width */
   can_baudrate_struct->rsaw_size = CAN_RSAW_2TQ;
-  
+
   /* bit time segment 1 */
   can_baudrate_struct->bts1_size = CAN_BTS1_4TQ;
-  
+
   /* bit time segment 2 */
   can_baudrate_struct->bts2_size = CAN_BTS2_3TQ;
 }
@@ -102,16 +102,16 @@ error_status can_baudrate_set(can_type* can_x, can_baudrate_type* can_baudrate_s
   uint32_t wait_ack_index = 0x00000000;
   /* exit from doze mode */
   can_x->mctrl_bit.dzen = FALSE;
-  
+
   /* request freeze mode */
   can_x->mctrl_bit.fzen = TRUE;
-  
+
   /* wait the acknowledge */
   while((!can_x->msts_bit.fzc) && (wait_ack_index != FZC_TIMEOUT))
   {
     wait_ack_index++;
   }
-  
+
   /* check acknowledge */
   if(can_x->msts_bit.fzc)
   {
@@ -122,14 +122,14 @@ error_status can_baudrate_set(can_type* can_x, can_baudrate_type* can_baudrate_s
 
     /* request leave freeze mode */
     can_x->mctrl_bit.fzen = FALSE;
-    
+
     /* wait the acknowledge */
     wait_ack_index = 0;
     while((can_x->msts_bit.fzc) && (wait_ack_index != FZC_TIMEOUT))
     {
       wait_ack_index++;
     }
-    
+
     /* check acknowledged */
     if(can_x->msts_bit.fzc)
     {
@@ -144,7 +144,7 @@ error_status can_baudrate_set(can_type* can_x, can_baudrate_type* can_baudrate_s
   {
     status_index = ERROR;
   }
-  
+
   /* return the status of baudrate set */
   return status_index;
 }
@@ -157,25 +157,25 @@ error_status can_baudrate_set(can_type* can_x, can_baudrate_type* can_baudrate_s
 void can_default_para_init(can_base_type* can_base_struct)
 {
   /* reset can init structure parameters values */
-  
+
   /* initialize the time triggered communication mode */
   can_base_struct->ttc_enable = FALSE;
-  
+
   /* initialize the automatic exit bus-off management */
   can_base_struct->aebo_enable = FALSE;
-  
+
   /* initialize the automatic exit doze mode */
   can_base_struct->aed_enable = FALSE;
-  
+
   /* initialize the prohibit retransmission when sending fails */
   can_base_struct->prsf_enable = FALSE;
-  
+
   /* initialize the message discarding rule select when overflow */
   can_base_struct->mdrsel_selection = CAN_DISCARDING_FIRST_RECEIVED;
-  
+
   /* initialize the multiple message sending sequence rule */
   can_base_struct->mmssr_selection = CAN_SENDING_BY_ID;
-  
+
   /* initialize the can_mode */
   can_base_struct->mode_selection = CAN_MODE_COMMUNICATE;
 }
@@ -197,51 +197,51 @@ error_status can_base_init(can_type* can_x, can_base_type* can_base_struct)
   uint32_t wait_ack_index = 0x00000000;
   /* exit from doze mode */
   can_x->mctrl_bit.dzen = FALSE;
-  
+
   /* request freeze mode */
   can_x->mctrl_bit.fzen = TRUE;
-  
+
   /* wait the acknowledge */
   while((!can_x->msts_bit.fzc) && (wait_ack_index != FZC_TIMEOUT))
   {
     wait_ack_index++;
   }
-  
+
   /* check acknowledge */
   if(can_x->msts_bit.fzc)
   {
     /* set the time triggered communication mode */
     can_x->mctrl_bit.ttcen = can_base_struct->ttc_enable;
-    
+
     /* set the automatic exit bus-off management */
     can_x->mctrl_bit.aeboen = can_base_struct->aebo_enable;
-    
+
     /* set the automatic automatic exit doze mode */
     can_x->mctrl_bit.aeden = can_base_struct->aed_enable;
-    
+
     /* set the prohibit retransmission when sending fails */
     can_x->mctrl_bit.prsfen = can_base_struct->prsf_enable;
-    
+
     /* set the message discarding rule select when overflow */
     can_x->mctrl_bit.mdrsel = can_base_struct->mdrsel_selection;
-    
+
     /* set the multiple message sending sequence rule */
     can_x->mctrl_bit.mmssr = can_base_struct->mmssr_selection;
-    
+
     /* set the test mode */
     can_x->btmg_bit.lben = can_base_struct->mode_selection & 0x01;
     can_x->btmg_bit.loen = (can_base_struct->mode_selection >> 1) & 0x01;
-    
+
     /* request leave freeze mode */
     can_x->mctrl_bit.fzen = FALSE;
-    
+
     /* wait the acknowledge */
     wait_ack_index = 0;
     while((can_x->msts_bit.fzc) && (wait_ack_index != FZC_TIMEOUT))
     {
       wait_ack_index++;
     }
-    
+
     /* check acknowledged */
     if(can_x->msts_bit.fzc)
     {
@@ -256,7 +256,7 @@ error_status can_base_init(can_type* can_x, can_base_type* can_base_struct)
   {
     init_status_index = ERROR;
   }
-  
+
   /* return the status of initialization */
   return init_status_index;
 }
@@ -269,22 +269,22 @@ error_status can_base_init(can_type* can_x, can_base_type* can_base_struct)
 void can_filter_default_para_init(can_filter_init_type* can_filter_init_struct)
 {
   /* reset can filter init structure parameters values */
-  
+
   /* initialize the filter activate state */
   can_filter_init_struct->filter_activate_enable = FALSE;
-  
+
   /* filter mode */
   can_filter_init_struct->filter_mode = CAN_FILTER_MODE_ID_MASK;
-  
+
   /* filter relation fifo select */
   can_filter_init_struct->filter_fifo = CAN_FILTER_FIFO0;
-  
+
   /* filter number select */
   can_filter_init_struct->filter_number = 0;
-  
+
   /* initialize the filter bit width */
   can_filter_init_struct->filter_bit = CAN_FILTER_16BIT;
-  
+
   /* initialize the filters filter data bit */
   can_filter_init_struct->filter_id_high = 0;
   can_filter_init_struct->filter_id_low = 0;
@@ -307,39 +307,39 @@ void can_filter_init(can_type* can_x, can_filter_init_type* can_filter_init_stru
   filter_number_bit_pos = ((uint32_t)1) << can_filter_init_struct->filter_number;
   /* set the filter turn into configuration condition */
   can_x->fctrl_bit.fcs = TRUE;
-  
+
   /* filter activate disable */
   can_x->facfg &= ~(uint32_t)filter_number_bit_pos;
-  
+
   /* filter bit width */
   switch(can_filter_init_struct->filter_bit)
   {
     case CAN_FILTER_16BIT:
-      can_x->fbwcfg &= ~(uint32_t)filter_number_bit_pos;     
+      can_x->fbwcfg &= ~(uint32_t)filter_number_bit_pos;
       /* first 16-bit identifier and first 16-bit mask or first 16-bit identifier and second 16-bit identifier */
       can_x->ffb[can_filter_init_struct->filter_number].ffdb1 = ((0x0000FFFF & (uint32_t)can_filter_init_struct->filter_mask_low) << 16);
       can_x->ffb[can_filter_init_struct->filter_number].ffdb1 |= (0x0000FFFF & (uint32_t)can_filter_init_struct->filter_id_low);
-      
+
       /* second 16-bit identifier and second 16-bit mask or third 16-bit identifier and fourth 16-bit identifier */
       can_x->ffb[can_filter_init_struct->filter_number].ffdb2 = ((0x0000FFFF & (uint32_t)can_filter_init_struct->filter_mask_high) << 16);
       can_x->ffb[can_filter_init_struct->filter_number].ffdb2 |= (0x0000FFFF & (uint32_t)can_filter_init_struct->filter_id_high);
-    
+
       break;
     case CAN_FILTER_32BIT:
       can_x->fbwcfg |= filter_number_bit_pos;
       /* 32-bit identifier or first 32-bit identifier */
       can_x->ffb[can_filter_init_struct->filter_number].ffdb1 = ((0x0000FFFF & (uint32_t)can_filter_init_struct->filter_id_high) << 16);
       can_x->ffb[can_filter_init_struct->filter_number].ffdb1 |= (0x0000FFFF & (uint32_t)can_filter_init_struct->filter_id_low);
-      
+
       /* 32-bit mask or second 32-bit identifier */
       can_x->ffb[can_filter_init_struct->filter_number].ffdb2 = ((0x0000FFFF & (uint32_t)can_filter_init_struct->filter_mask_high) << 16);
       can_x->ffb[can_filter_init_struct->filter_number].ffdb2 |= (0x0000FFFF & (uint32_t)can_filter_init_struct->filter_mask_low);
-    
+
       break;
     default:
       break;
   }
-  
+
   /* filter mode */
   switch(can_filter_init_struct->filter_mode)
   {
@@ -352,7 +352,7 @@ void can_filter_init(can_type* can_x, can_filter_init_type* can_filter_init_stru
     default:
       break;
   }
-  
+
   /* filter relation fifo select */
   switch(can_filter_init_struct->filter_fifo)
   {
@@ -365,7 +365,7 @@ void can_filter_init(can_type* can_x, can_filter_init_type* can_filter_init_stru
     default:
       break;
   }
-  
+
   /* filter activate enable */
   switch(can_filter_init_struct->filter_activate_enable)
   {
@@ -378,7 +378,7 @@ void can_filter_init(can_type* can_x, can_filter_init_type* can_filter_init_stru
     default:
       break;
   }
-  
+
   /* set the filter turn into working condition */
   can_x->fctrl_bit.fcs = FALSE;
 }
@@ -388,7 +388,7 @@ void can_filter_init(can_type* can_x, can_filter_init_type* can_filter_init_stru
   * @param  can_x: select the can peripheral.
   *         this parameter can be one of the following values:
   *         CAN1,CAN2.
-  * @param  new_state: new state of debug transmission prohibit. 
+  * @param  new_state: new state of debug transmission prohibit.
   *         this parameter can be: TRUE or FALSE.
   * @retval none.
   */
@@ -404,7 +404,7 @@ void can_debug_transmission_prohibit(can_type* can_x, confirm_state new_state)
   *         CAN1 or CAN2.
   * @param  new_state : new state of time trigger operation communication mode.
   *         this parameter can be: TRUE or FALSE.
-  * @note   
+  * @note
   *         note1:
   *         when enabled, transmit mailbox time stamp(tmts[15:0]) value is sent in the last two data bytes of
   *         the 8-byte message: tmts[7:0] in data byte 6 and tmts[15:8] in data byte 7
@@ -417,7 +417,7 @@ void can_ttc_mode_enable(can_type* can_x, confirm_state new_state)
 {
   /* config the ttc mode new_state */
   can_x->mctrl_bit.ttcen = new_state;
-  
+
   /* config tmtsten bits new_state */
   can_x->tx_mailbox[0].tmc_bit.tmtsten = new_state;
   can_x->tx_mailbox[1].tmc_bit.tmtsten = new_state;
@@ -440,7 +440,7 @@ void can_ttc_mode_enable(can_type* can_x, confirm_state new_state)
 uint8_t can_message_transmit(can_type* can_x, can_tx_message_type* tx_message_struct)
 {
   uint8_t transmit_mailbox = CAN_TX_STATUS_NO_EMPTY;
-  
+
   /* select one empty transmit mailbox */
   if(can_x->tsts_bit.tm0ef)
   {
@@ -458,7 +458,7 @@ uint8_t can_message_transmit(can_type* can_x, can_tx_message_type* tx_message_st
   {
     transmit_mailbox = CAN_TX_STATUS_NO_EMPTY;
   }
-  
+
   if(transmit_mailbox != CAN_TX_STATUS_NO_EMPTY)
   {
     /* set up the id */
@@ -478,7 +478,7 @@ uint8_t can_message_transmit(can_type* can_x, can_tx_message_type* tx_message_st
     can_x->tx_mailbox[transmit_mailbox].tmi_bit.tmfrsel = tx_message_struct->frame_type;
     /* set up the dlc */
     can_x->tx_mailbox[transmit_mailbox].tmc_bit.tmdtbl = (tx_message_struct->dlc & ((uint8_t)0x0F));
-    
+
     /* set up the data field */
     can_x->tx_mailbox[transmit_mailbox].tmdtl = (((uint32_t)tx_message_struct->data[3] << 24) |
                                                 ((uint32_t)tx_message_struct->data[2] << 16) |
@@ -488,7 +488,7 @@ uint8_t can_message_transmit(can_type* can_x, can_tx_message_type* tx_message_st
                                                 ((uint32_t)tx_message_struct->data[6] << 16) |
                                                 ((uint32_t)tx_message_struct->data[5] << 8) |
                                                 ((uint32_t)tx_message_struct->data[4]));
-    
+
     /* request transmission */
     can_x->tx_mailbox[transmit_mailbox].tmi_bit.tmsr = TRUE;
   }
@@ -635,10 +635,10 @@ void can_message_receive(can_type* can_x, can_rx_fifo_num_type fifo_number, can_
   rx_message_struct->frame_type = (can_trans_frame_type)can_x->fifo_mailbox[fifo_number].rfi_bit.rffri;
   /* get the dlc */
   rx_message_struct->dlc = can_x->fifo_mailbox[fifo_number].rfc_bit.rfdtl;
-  
+
   /* get the filter match number */
   rx_message_struct->filter_index = can_x->fifo_mailbox[fifo_number].rfc_bit.rffmn;
-  
+
   /* get the data field */
   rx_message_struct->data[0] = can_x->fifo_mailbox[fifo_number].rfdtl_bit.rfdt0;
   rx_message_struct->data[1] = can_x->fifo_mailbox[fifo_number].rfdtl_bit.rfdt1;
@@ -725,14 +725,14 @@ error_status can_operating_mode_set(can_type* can_x, can_operating_mode_type can
 {
   error_status status = ERROR;
   uint32_t time_out_index = FZC_TIMEOUT;
-  
+
   if (can_operating_mode == CAN_OPERATINGMODE_FREEZE)
   {
     /* request enter freeze mode */
     can_x->mctrl_bit.dzen = FALSE;
     can_x->mctrl_bit.fzen = TRUE;
-    
-    while(((can_x->msts_bit.dzc) || (!can_x->msts_bit.fzc)) && (time_out_index != 0)) 
+
+    while(((can_x->msts_bit.dzc) || (!can_x->msts_bit.fzc)) && (time_out_index != 0))
     {
       time_out_index--;
     }
@@ -750,8 +750,8 @@ error_status can_operating_mode_set(can_type* can_x, can_operating_mode_type can
     /* request enter doze mode */
     can_x->mctrl_bit.dzen = TRUE;
     can_x->mctrl_bit.fzen = FALSE;
-    
-    while(((!can_x->msts_bit.dzc) || (can_x->msts_bit.fzc)) && (time_out_index != 0)) 
+
+    while(((!can_x->msts_bit.dzc) || (can_x->msts_bit.fzc)) && (time_out_index != 0))
     {
       time_out_index--;
     }
@@ -769,8 +769,8 @@ error_status can_operating_mode_set(can_type* can_x, can_operating_mode_type can
     /* request enter normal mode */
     can_x->mctrl_bit.dzen = FALSE;
     can_x->mctrl_bit.fzen = FALSE;
-    
-    while(((can_x->msts_bit.dzc) || (can_x->msts_bit.fzc)) && (time_out_index != 0)) 
+
+    while(((can_x->msts_bit.dzc) || (can_x->msts_bit.fzc)) && (time_out_index != 0))
     {
       time_out_index--;
     }
@@ -782,7 +782,7 @@ error_status can_operating_mode_set(can_type* can_x, can_operating_mode_type can
     {
       status = SUCCESS;
     }
-  }  
+  }
   else
   {
     status = ERROR;
@@ -805,7 +805,7 @@ can_enter_doze_status_type can_doze_mode_enter(can_type* can_x)
   uint32_t time_out_index = FZC_TIMEOUT;
   can_x->mctrl_bit.fzen = FALSE;
   can_x->mctrl_bit.dzen = TRUE;
-  while(((!can_x->msts_bit.dzc) || (can_x->msts_bit.fzc)) && (time_out_index != 0)) 
+  while(((!can_x->msts_bit.dzc) || (can_x->msts_bit.fzc)) && (time_out_index != 0))
   {
     time_out_index--;
   }
@@ -834,7 +834,7 @@ can_quit_doze_status_type can_doze_mode_exit(can_type* can_x)
   can_quit_doze_status_type status = CAN_QUIT_DOZE_FAILED;
   uint32_t time_out_index = DZC_TIMEOUT;
   can_x->mctrl_bit.dzen = FALSE;
-  while((can_x->msts_bit.dzc) && (time_out_index != 0))   
+  while((can_x->msts_bit.dzc) && (time_out_index != 0))
   {
     time_out_index--;
   }
@@ -852,19 +852,19 @@ can_quit_doze_status_type can_doze_mode_exit(can_type* can_x)
   *         CAN1,CAN2.
   * @retval the value of the error code
   *         the return can be one of the follow values:
-  *         - CAN_ERRORRECORD_NOERR                  
-  *         - CAN_ERRORRECORD_STUFFERR,                  
-  *         - CAN_ERRORRECORD_FORMERR,                      
-  *         - CAN_ERRORRECORD_ACKERR,                      
-  *         - CAN_ERRORRECORD_BITRECESSIVEERR,            
-  *         - CAN_ERRORRECORD_BITDOMINANTERR,              
-  *         - CAN_ERRORRECORD_CRCERR,                     
-  *         - CAN_ERRORRECORD_SOFTWARESETERR               
+  *         - CAN_ERRORRECORD_NOERR
+  *         - CAN_ERRORRECORD_STUFFERR,
+  *         - CAN_ERRORRECORD_FORMERR,
+  *         - CAN_ERRORRECORD_ACKERR,
+  *         - CAN_ERRORRECORD_BITRECESSIVEERR,
+  *         - CAN_ERRORRECORD_BITDOMINANTERR,
+  *         - CAN_ERRORRECORD_CRCERR,
+  *         - CAN_ERRORRECORD_SOFTWARESETERR
   */
 can_error_record_type can_error_type_record_get(can_type* can_x)
 {
   can_error_record_type error_code = CAN_ERRORRECORD_NOERR;
-  
+
   error_code = (can_error_record_type)can_x->ests_bit.etr;
   return error_code;
 }
@@ -904,20 +904,20 @@ uint8_t can_transmit_error_counter_get(can_type* can_x)
   *         CAN1,CAN2.
   * @param  can_int: specifies the can interrupt sources to be enabled or disabled.
   *         this parameter can be one of the following values:
-  *         - CAN_TCIEN_INT 
-  *         - CAN_RF0MIEN_INT                
-  *         - CAN_RF0FIEN_INT                 
-  *         - CAN_RF0OIEN_INT               
-  *         - CAN_RF1MIEN_INT                 
-  *         - CAN_RF1FIEN_INT                 
-  *         - CAN_RF1OIEN_INT                 
-  *         - CAN_EAIEN_INT                    
-  *         - CAN_EPIEN_INT                    
-  *         - CAN_BOIEN_INT                     
-  *         - CAN_ETRIEN_INT                   
-  *         - CAN_EOIEN_INT                       
-  *         - CAN_QDZIEN_INT                      
-  *         - CAN_EDZIEN_INT                    
+  *         - CAN_TCIEN_INT
+  *         - CAN_RF0MIEN_INT
+  *         - CAN_RF0FIEN_INT
+  *         - CAN_RF0OIEN_INT
+  *         - CAN_RF1MIEN_INT
+  *         - CAN_RF1FIEN_INT
+  *         - CAN_RF1OIEN_INT
+  *         - CAN_EAIEN_INT
+  *         - CAN_EPIEN_INT
+  *         - CAN_BOIEN_INT
+  *         - CAN_ETRIEN_INT
+  *         - CAN_EOIEN_INT
+  *         - CAN_QDZIEN_INT
+  *         - CAN_EDZIEN_INT
   * @param  new_state: new state of the can interrupts.
   *         this parameter can be: TRUE or FALSE.
   * @retval none.
@@ -941,7 +941,7 @@ void can_interrupt_enable(can_type* can_x, uint32_t can_int, confirm_state new_s
   *         CAN1,CAN2.
   * @param  can_flag: select the flag.
   *         this parameter can be one of the following flags:
-  *         - CAN_EAF_FLAG     
+  *         - CAN_EAF_FLAG
   *         - CAN_EPF_FLAG
   *         - CAN_BOF_FLAG
   *         - CAN_ETR_FLAG
@@ -1090,9 +1090,9 @@ void can_flag_clear(can_type* can_x, uint32_t can_flag)
   switch(can_flag)
   {
     case CAN_EAF_FLAG:
-    case CAN_EPF_FLAG: 
-    case CAN_BOF_FLAG:  
-    case CAN_EOIF_FLAG:     
+    case CAN_EPF_FLAG:
+    case CAN_BOF_FLAG:
+    case CAN_EOIF_FLAG:
       can_x->msts = CAN_MSTS_EOIF_VAL;
       break;
     case CAN_ETR_FLAG:

@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -42,7 +42,7 @@
   */
 
 /**
-  * @brief  get debug device id 
+  * @brief  get debug device id
   * @param  none
   * @retval the debug device id
   */
@@ -52,9 +52,9 @@ uint32_t debug_device_id_get(void)
 }
 
 /**
-  * @brief  set periph debug mode                  
+  * @brief  set periph debug mode
   * @param  periph_debug_mode
-  *         this parameter can be any combination of the following values: 
+  *         this parameter can be any combination of the following values:
   *         - DEBUG_SLEEP                           - DEBUG_DEEPSLEEP
   *         - DEBUG_STANDBY                         - DEBUG_WDT_PAUSE
   *         - DEBUG_WWDT_PAUSE                      - DEBUG_TMR1_PAUSE
@@ -67,19 +67,19 @@ uint32_t debug_device_id_get(void)
   *         - DEBUG_TMR12_PAUSE                     - DEBUG_TMR13_PAUSE
   *         - DEBUG_TMR14_PAUSE                     - DEBUG_TMR9_PAUSE
   *         - DEBUG_TMR10_PAUSE                     - DEBUG_TMR11_PAUSE
-  * @param  new_state (TRUE or FALSE) 
+  * @param  new_state (TRUE or FALSE)
   * @retval none
   */
 void debug_periph_mode_set(uint32_t periph_debug_mode, confirm_state new_state)
 {
   if(new_state != FALSE)
   {
-    DEBUGMCU->ctrl |= periph_debug_mode; 
+    DEBUGMCU->ctrl |= periph_debug_mode;
   }
   else
   {
-    DEBUGMCU->ctrl &= ~periph_debug_mode;  
-  }    
+    DEBUGMCU->ctrl &= ~periph_debug_mode;
+  }
 }
 
 /**

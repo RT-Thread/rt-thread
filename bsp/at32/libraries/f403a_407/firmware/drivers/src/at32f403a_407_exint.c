@@ -182,7 +182,7 @@ void exint_software_interrupt_event_generate(uint32_t exint_line)
   *         - EXINT_LINE_19
   * @param  new_state: new state of exint interrupt.
   *         this parameter can be: TRUE or FALSE.
-  * @retval none                            
+  * @retval none
   */
 void exint_interrupt_enable(uint32_t exint_line, confirm_state new_state)
 {
@@ -207,7 +207,7 @@ void exint_interrupt_enable(uint32_t exint_line, confirm_state new_state)
   *         - EXINT_LINE_19
   * @param  new_state: new state of exint event.
   *         this parameter can be: TRUE or FALSE.
-  * @retval none                            
+  * @retval none
   */
 void exint_event_enable(uint32_t exint_line, confirm_state new_state)
 {

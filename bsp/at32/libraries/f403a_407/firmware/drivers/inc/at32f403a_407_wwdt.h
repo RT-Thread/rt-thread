@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -31,8 +31,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
- 
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "at32f403a_407.h"
 
@@ -43,12 +43,12 @@ extern "C" {
 /** @addtogroup WWDT
   * @{
   */
- 
-/** @defgroup WWDT_enable_bit_definition 
+
+/** @defgroup WWDT_enable_bit_definition
   * @brief wwdt enable bit
   * @{
   */
- 
+
 #define WWDT_EN_BIT                      ((uint32_t)0x00000080) /*!< wwdt enable bit */
 
 /**
@@ -124,7 +124,7 @@ typedef struct
   * @}
   */
 
-#define WWDT                             ((wwdt_type *) WWDT_BASE) 
+#define WWDT                             ((wwdt_type *) WWDT_BASE)
 
 /** @defgroup WWDT_exported_functions
   * @{

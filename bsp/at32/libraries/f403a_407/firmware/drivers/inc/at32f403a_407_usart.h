@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -31,10 +31,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 
 /* includes ------------------------------------------------------------------*/
-#include "at32f403a_407.h" 
+#include "at32f403a_407.h"
 
 /** @addtogroup AT32F403A_407_periph_driver
   * @{
@@ -45,10 +45,10 @@ extern "C" {
   */
 
 /** @defgroup USART_flags_definition
-  * @brief usart flag  
+  * @brief usart flag
   * @{
   */
-  
+
 #define USART_PERR_FLAG                  ((uint32_t)0x00000001) /*!< usart parity error flag */
 #define USART_FERR_FLAG                  ((uint32_t)0x00000002) /*!< usart framing error flag */
 #define USART_NERR_FLAG                  ((uint32_t)0x00000004) /*!< usart noise error flag */
@@ -64,7 +64,7 @@ extern "C" {
   * @}
   */
 
-/** @defgroup USART_interrupts_definition 
+/** @defgroup USART_interrupts_definition
   * @brief usart interrupt
   * @{
   */
@@ -81,11 +81,11 @@ extern "C" {
 /**
   * @}
   */
- 
+
 /** @defgroup USART_exported_types
   * @{
   */
-  
+
 /**
   * @brief  usart parity selection type
   */
@@ -179,7 +179,7 @@ typedef struct
 {
   /**
     * @brief usart sts register, offset:0x00
-    */ 
+    */
   union
   {
     __IO uint32_t sts;
@@ -198,10 +198,10 @@ typedef struct
       __IO uint32_t reserved1            : 22;/* [31:10] */
     } sts_bit;
   };
- 
+
   /**
     * @brief usart dt register, offset:0x04
-    */ 
+    */
   union
   {
     __IO uint32_t dt;
@@ -211,7 +211,7 @@ typedef struct
       __IO uint32_t reserved1            : 23;/* [31:9] */
     } dt_bit;
   };
-  
+
   /**
     * @brief usart baudr register, offset:0x08
     */
@@ -224,7 +224,7 @@ typedef struct
       __IO uint32_t reserved1            : 16;/* [31:16] */
     } baudr_bit;
   };
-  
+
   /**
     * @brief usart ctrl1 register, offset:0x0C
     */
@@ -273,7 +273,7 @@ typedef struct
       __IO uint32_t reserved3            : 17;/* [31:15] */
     } ctrl2_bit;
   };
-  
+
   /**
     * @brief usart ctrl3 register, offset:0x14
     */
@@ -285,7 +285,7 @@ typedef struct
       __IO uint32_t errien               : 1; /* [0] */
       __IO uint32_t irdaen               : 1; /* [1] */
       __IO uint32_t irdalp               : 1; /* [2] */
-      __IO uint32_t slben                : 1; /* [3] */ 
+      __IO uint32_t slben                : 1; /* [3] */
       __IO uint32_t scnacken             : 1; /* [4] */
       __IO uint32_t scmen                : 1; /* [5] */
       __IO uint32_t dmaren               : 1; /* [6] */
@@ -309,7 +309,7 @@ typedef struct
       __IO uint32_t scgt                 : 8; /* [15:8] */
       __IO uint32_t reserved1            : 16;/* [31:16] */
     } gdiv_bit;
-  };  
+  };
 } usart_type;
 
 /**

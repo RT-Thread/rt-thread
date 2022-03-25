@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -40,11 +40,11 @@
 /** @defgroup SDIO_private_functions
   * @{
   */
-  
-/** 
+
+/**
   * @brief  reset the sdio register
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @retval none
   */
@@ -61,13 +61,13 @@ void sdio_reset(sdio_type *sdio_x)
   sdio_x->intclr = 0x004007FF;
 }
 
-/** 
+/**
   * @brief  set the power status of the controller
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  power_state
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - SDIO_POWER_OFF
   *         - SDIO_POWER_ON
   * @retval none
@@ -80,7 +80,7 @@ void sdio_power_set(sdio_type *sdio_x, sdio_power_state_type power_state)
 /**
   * @brief  get power status.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @retval flag_status (SET or RESET)
   */
@@ -103,12 +103,12 @@ flag_status sdio_power_status_get(sdio_type *sdio_x)
 /**
   * @brief  config sdio clock
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  clk_div: sdio clock divide factor(frequency = sdio_clk / [clk_psc + 2]).
   * @param  clk_edg
-  *         this parameter can be one of the following values:  
-  *         - SDIO_CLOCK_EDGE_RISING 
+  *         this parameter can be one of the following values:
+  *         - SDIO_CLOCK_EDGE_RISING
   *         - SDIO_CLOCK_EDGE_FALLING
   * @retval none
   */
@@ -127,10 +127,10 @@ void sdio_clock_config(sdio_type *sdio_x, uint16_t clk_div, sdio_edge_phase_type
 /**
   * @brief  config sdio bus width
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  width
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - SDIO_BUS_WIDTH_D1
   *         - SDIO_BUS_WIDTH_D4
   *         - SDIO_BUS_WIDTH_D8
@@ -144,7 +144,7 @@ void sdio_bus_width_config(sdio_type *sdio_x, sdio_bus_width_type width)
 /**
   * @brief  enable or disable clock divider bypss
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -158,7 +158,7 @@ void sdio_clock_bypass(sdio_type *sdio_x, confirm_state new_state)
   * @brief  enable or disable power saving mode, config sdio_ck clock output
   *         when the bus is idle.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -171,7 +171,7 @@ void sdio_power_saving_mode_enable(sdio_type *sdio_x, confirm_state new_state)
 /**
   * @brief  enable or disable hardware flow control.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -184,7 +184,7 @@ void sdio_flow_control_enable(sdio_type *sdio_x, confirm_state new_state)
 /**
   * @brief  enable or disable sdio_ck output.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -197,7 +197,7 @@ void sdio_clock_enable(sdio_type *sdio_x, confirm_state new_state)
 /**
   * @brief  enable or disable dma.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -210,10 +210,10 @@ void sdio_dma_enable(sdio_type *sdio_x, confirm_state new_state)
 /**
   * @brief  config corresponding interrupt.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  int_opt
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - SDIO_CMDFAIL_INT
   *         - SDIO_DTFAIL_INT
   *         - SDIO_CMDTIMEOUT_INT
@@ -250,17 +250,17 @@ void sdio_interrupt_enable(sdio_type *sdio_x, uint32_t int_opt,  confirm_state n
   /* disable interrupt */
   else
   {
-    sdio_x->inten &= ~(int_opt); 
+    sdio_x->inten &= ~(int_opt);
   }
 }
 
 /**
   * @brief  get sdio flag.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  flag
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - SDIO_CMDFAIL_FLAG
   *         - SDIO_DTFAIL_FLAG
   *         - SDIO_CMDTIMEOUT_FLAG
@@ -305,10 +305,10 @@ flag_status sdio_flag_get(sdio_type *sdio_x, uint32_t flag)
 /**
   * @brief  clear sdio flag.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  int_opt
-  *         this parameter can be any combination of the following values: 
+  *         this parameter can be any combination of the following values:
   *         - SDIO_CMDFAIL_FLAG
   *         - SDIO_DTFAIL_FLAG
   *         - SDIO_CMDTIMEOUT_FLAG
@@ -331,9 +331,9 @@ void sdio_flag_clear(sdio_type *sdio_x, uint32_t flag)
 /**
   * @brief  config sdio command.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
-  * @param  command_struct : pointer to a sdio_command_struct_type structure 
+  * @param  command_struct : pointer to a sdio_command_struct_type structure
   *         that contains the configuration information for the sdio command.
   * @retval none
   */
@@ -355,7 +355,7 @@ void sdio_command_config(sdio_type *sdio_x, sdio_command_struct_type *command_st
 /**
   * @brief  enable or disable command path state machine(CPSM).
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -368,7 +368,7 @@ void sdio_command_state_machine_enable(sdio_type *sdio_x, confirm_state new_stat
 /**
   * @brief  get command index of last command for which response received.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval uint8_t: command index
@@ -381,10 +381,10 @@ uint8_t sdio_command_response_get(sdio_type *sdio_x)
 /**
   * @brief  get response received from the card for the last command.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  reg_index
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - SDIO_RSP1_INDEX
   *         - SDIO_RSP2_INDEX
   *         - SDIO_RSP3_INDEX
@@ -418,9 +418,9 @@ uint32_t sdio_response_get(sdio_type *sdio_x, sdio_rsp_index_type reg_index)
 /**
   * @brief  config sdio data.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
-  * @param  data_struct : pointer to a sdio_data_struct_type structure 
+  * @param  data_struct : pointer to a sdio_data_struct_type structure
   *         that contains the configuration information for the sdio data.
   * @retval none
   */
@@ -444,7 +444,7 @@ void sdio_data_config(sdio_type *sdio_x, sdio_data_struct_type *data_struct)
 /**
   * @brief  enable or disable data path state machine(DPSM).
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -457,7 +457,7 @@ void sdio_data_state_machine_enable(sdio_type *sdio_x, confirm_state new_state)
 /**
   * @brief  get the number of remaining data bytes to be transferred.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @retval uint32_t: number of bytes
   */
@@ -469,7 +469,7 @@ uint32_t sdio_data_counter_get(sdio_type *sdio_x)
 /**
   * @brief  read a word data from sdio fifo.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @retval uint32_t: data received
   */
@@ -481,7 +481,7 @@ uint32_t sdio_data_read(sdio_type *sdio_x)
 /**
   * @brief  get the number of words left to be written to or read from fifo..
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @retval uint32_t: number of words
   */
@@ -493,7 +493,7 @@ uint32_t sdio_buffer_counter_get(sdio_type *sdio_x)
 /**
   * @brief  write one word data to fifo.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  data: data to be transferred.
   * @retval none
@@ -506,10 +506,10 @@ void sdio_data_write(sdio_type *sdio_x, uint32_t data)
 /**
   * @brief  set the read wait mode.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  mode
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         - SDIO_READ_WAIT_CONTROLLED_BY_D2
   *         - SDIO_READ_WAIT_CONTROLLED_BY_CK
   * @retval none
@@ -522,7 +522,7 @@ void sdio_read_wait_mode_set(sdio_type *sdio_x, sdio_read_wait_mode_type mode)
 /**
   * @brief  enable or disable to start sd i/o read wait operation.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -535,7 +535,7 @@ void sdio_read_wait_start(sdio_type *sdio_x, confirm_state new_state)
 /**
   * @brief  enable or disable to stop sd i/o read wait operation.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -548,7 +548,7 @@ void sdio_read_wait_stop(sdio_type *sdio_x, confirm_state new_state)
 /**
   * @brief  enable or disable the sd i/o function.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none
@@ -561,7 +561,7 @@ void sdio_io_function_enable(sdio_type *sdio_x, confirm_state new_state)
 /**
   * @brief  enable or disable sd i/o suspend command sending.
   * @param  sdio_x: to select the sdio peripheral.
-  *         this parameter can be one of the following values:  
+  *         this parameter can be one of the following values:
   *         SDIO1, SDIO2.
   * @param  new_state (TRUE or FALSE)
   * @retval none

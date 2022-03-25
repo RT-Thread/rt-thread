@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -45,23 +45,23 @@
   * @brief  check whether the specified flash flag is set or not.
   * @param  flash_flag: specifies the flash flag to check.
   *         this parameter can be one of flash flag status:
-  *         - FLASH_OBF_FLAG           
-  *         - FLASH_ODF_FLAG           
-  *         - FLASH_PRGMERR_FLAG       
-  *         - FLASH_EPPERR_FLAG        
-  *         - FLASH_BANK1_OBF_FLAG     
-  *         - FLASH_BANK1_ODF_FLAG     
-  *         - FLASH_BANK1_PRGMERR_FLAG 
-  *         - FLASH_BANK1_EPPERR_FLAG      
-  *         - FLASH_BANK2_OBF_FLAG         
-  *         - FLASH_BANK2_ODF_FLAG            
-  *         - FLASH_BANK2_PRGMERR_FLAG        
-  *         - FLASH_BANK2_EPPERR_FLAG           
-  *         - FLASH_SPIM_OBF_FLAG             
-  *         - FLASH_SPIM_ODF_FLAG             
-  *         - FLASH_SPIM_PRGMERR_FLAG        
-  *         - FLASH_SPIM_EPPERR_FLAG          
-  *         - FLASH_USDERR_FLAG                       
+  *         - FLASH_OBF_FLAG
+  *         - FLASH_ODF_FLAG
+  *         - FLASH_PRGMERR_FLAG
+  *         - FLASH_EPPERR_FLAG
+  *         - FLASH_BANK1_OBF_FLAG
+  *         - FLASH_BANK1_ODF_FLAG
+  *         - FLASH_BANK1_PRGMERR_FLAG
+  *         - FLASH_BANK1_EPPERR_FLAG
+  *         - FLASH_BANK2_OBF_FLAG
+  *         - FLASH_BANK2_ODF_FLAG
+  *         - FLASH_BANK2_PRGMERR_FLAG
+  *         - FLASH_BANK2_EPPERR_FLAG
+  *         - FLASH_SPIM_OBF_FLAG
+  *         - FLASH_SPIM_ODF_FLAG
+  *         - FLASH_SPIM_PRGMERR_FLAG
+  *         - FLASH_SPIM_EPPERR_FLAG
+  *         - FLASH_USDERR_FLAG
   * @retval the new state of flash_flag (SET or RESET).
   */
 flag_status flash_flag_get(uint32_t flash_flag)
@@ -99,18 +99,18 @@ flag_status flash_flag_get(uint32_t flash_flag)
   * @brief  clear the flash flag.
   * @param  flash_flag: specifies the flash flags to clear.
   *         this parameter can be any combination of the following values:
-  *         - FLASH_ODF_FLAG    
-  *         - FLASH_PRGMERR_FLAG     
-  *         - FLASH_EPPERR_FLAG 
-  *         - FLASH_BANK1_ODF_FLAG    
-  *         - FLASH_BANK1_PRGMERR_FLAG     
-  *         - FLASH_BANK1_EPPERR_FLAG             
-  *         - FLASH_BANK2_ODF_FLAG            
-  *         - FLASH_BANK2_PRGMERR_FLAG          
-  *         - FLASH_BANK2_EPPERR_FLAG                 
-  *         - FLASH_SPIM_ODF_FLAG            
-  *         - FLASH_SPIM_PRGMERR_FLAG         
-  *         - FLASH_SPIM_EPPERR_FLAG        
+  *         - FLASH_ODF_FLAG
+  *         - FLASH_PRGMERR_FLAG
+  *         - FLASH_EPPERR_FLAG
+  *         - FLASH_BANK1_ODF_FLAG
+  *         - FLASH_BANK1_PRGMERR_FLAG
+  *         - FLASH_BANK1_EPPERR_FLAG
+  *         - FLASH_BANK2_ODF_FLAG
+  *         - FLASH_BANK2_PRGMERR_FLAG
+  *         - FLASH_BANK2_EPPERR_FLAG
+  *         - FLASH_SPIM_ODF_FLAG
+  *         - FLASH_SPIM_PRGMERR_FLAG
+  *         - FLASH_SPIM_EPPERR_FLAG
   * @retval none
   */
 void flash_flag_clear(uint32_t flash_flag)
@@ -131,13 +131,13 @@ void flash_flag_clear(uint32_t flash_flag)
       break;
     default:
       break;
-  } 
+  }
 }
 
 /**
   * @brief  return the flash operation status.
   * @param  none
-  * @retval status: the returned value can be: FLASH_OPERATE_BUSY, 
+  * @retval status: the returned value can be: FLASH_OPERATE_BUSY,
   *         FLASH_PROGRAM_ERROR, FLASH_EPP_ERROR or FLASH_OPERATE_DONE.
   */
 flash_status_type flash_operation_status_get(void)
@@ -166,7 +166,7 @@ flash_status_type flash_operation_status_get(void)
 /**
   * @brief  return the flash bank1 operation status.
   * @param  none
-  * @retval status: the returned value can be: FLASH_OPERATE_BUSY, 
+  * @retval status: the returned value can be: FLASH_OPERATE_BUSY,
   *         FLASH_PROGRAM_ERROR, FLASH_EPP_ERROR or FLASH_OPERATE_DONE.
   */
 flash_status_type flash_bank1_operation_status_get(void)
@@ -195,7 +195,7 @@ flash_status_type flash_bank1_operation_status_get(void)
 /**
   * @brief  return the flash bank2 operation status.
   * @param  none
-  * @retval status: the returned value can be: FLASH_OPERATE_BUSY, 
+  * @retval status: the returned value can be: FLASH_OPERATE_BUSY,
   *         FLASH_PROGRAM_ERROR, FLASH_EPP_ERROR or FLASH_OPERATE_DONE.
   */
 flash_status_type flash_bank2_operation_status_get(void)
@@ -224,7 +224,7 @@ flash_status_type flash_bank2_operation_status_get(void)
 /**
   * @brief  return the flash spim operation status.
   * @param  none
-  * @retval status: the returned value can be: FLASH_OPERATE_BUSY, 
+  * @retval status: the returned value can be: FLASH_OPERATE_BUSY,
   *         FLASH_PROGRAM_ERROR, FLASH_EPP_ERROR or FLASH_OPERATE_DONE.
   */
 flash_status_type flash_spim_operation_status_get(void)
@@ -253,7 +253,7 @@ flash_status_type flash_spim_operation_status_get(void)
 /**
   * @brief  wait for flash operation complete or timeout.
   * @param  time_out: flash operation timeout
-  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR, 
+  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR,
   *         FLASH_EPP_ERROR, FLASH_OPERATE_DONE or FLASH_OPERATE_TIMEOUT.
   */
 flash_status_type flash_operation_wait_for(uint32_t time_out)
@@ -278,7 +278,7 @@ flash_status_type flash_operation_wait_for(uint32_t time_out)
 /**
   * @brief  wait for flash bank1 operation complete or timeout.
   * @param  time_out: flash operation timeout
-  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR, 
+  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR,
   *         FLASH_EPP_ERROR, FLASH_OPERATE_DONE or FLASH_OPERATE_TIMEOUT.
   */
 flash_status_type flash_bank1_operation_wait_for(uint32_t time_out)
@@ -303,7 +303,7 @@ flash_status_type flash_bank1_operation_wait_for(uint32_t time_out)
 /**
   * @brief  wait for flash bank2 operation complete or timeout.
   * @param  time_out: flash operation timeout
-  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR, 
+  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR,
   *         FLASH_EPP_ERROR, FLASH_OPERATE_DONE or FLASH_OPERATE_TIMEOUT.
   */
 flash_status_type flash_bank2_operation_wait_for(uint32_t time_out)
@@ -328,7 +328,7 @@ flash_status_type flash_bank2_operation_wait_for(uint32_t time_out)
 /**
   * @brief  wait for flash spim operation complete or timeout.
   * @param  time_out: flash operation timeout
-  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR, 
+  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR,
   *         FLASH_EPP_ERROR, FLASH_OPERATE_DONE or FLASH_OPERATE_TIMEOUT.
   */
 flash_status_type flash_spim_operation_wait_for(uint32_t time_out)
@@ -440,7 +440,7 @@ void flash_spim_lock(void)
 /**
   * @brief  erase a specified flash sector.
   * @param  sector_address: the sector address to be erased.
-  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR, 
+  * @retval status: the returned value can be: FLASH_PROGRAM_ERROR,
   *         FLASH_EPP_ERROR, FLASH_OPERATE_DONE or FLASH_OPERATE_TIMEOUT.
   */
 flash_status_type flash_sector_erase(uint32_t sector_address)
@@ -450,17 +450,17 @@ flash_status_type flash_sector_erase(uint32_t sector_address)
   {
     /* wait for last operation to be completed */
     status = flash_bank1_operation_wait_for(ERASE_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       /* if the previous operation is completed, continue to erase the sector */
       FLASH->ctrl_bit.secers = TRUE;
       FLASH->addr = sector_address;
       FLASH->ctrl_bit.erstr = TRUE;
-      
+
       /* wait for operation to be completed */
       status = flash_bank1_operation_wait_for(ERASE_TIMEOUT);
-      
+
       /* disable the secers bit */
       FLASH->ctrl_bit.secers = FALSE;
     }
@@ -469,17 +469,17 @@ flash_status_type flash_sector_erase(uint32_t sector_address)
   {
     /* wait for last operation to be completed */
     status = flash_bank2_operation_wait_for(ERASE_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       /* if the previous operation is completed, continue to erase the sector */
       FLASH->ctrl2_bit.secers = TRUE;
       FLASH->addr2 = sector_address;
       FLASH->ctrl2_bit.erstr = TRUE;
-      
+
       /* wait for operation to be completed */
       status = flash_bank2_operation_wait_for(ERASE_TIMEOUT);
-      
+
       /* disable the secers bit */
       FLASH->ctrl2_bit.secers = FALSE;
     }
@@ -489,23 +489,23 @@ flash_status_type flash_sector_erase(uint32_t sector_address)
   {
     /* wait for last operation to be completed */
     status = flash_spim_operation_wait_for(SPIM_ERASE_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       /* if the previous operation is completed, continue to erase the sector */
       FLASH->ctrl3_bit.secers = TRUE;
       FLASH->addr3 = sector_address;
       FLASH->ctrl3_bit.erstr = TRUE;
-      
+
       /* wait for operation to be completed */
       status = flash_spim_operation_wait_for(SPIM_ERASE_TIMEOUT);
-      
+
       /* disable the secers bit */
       FLASH->ctrl3_bit.secers = FALSE;
     }
     return status;
   }
-  
+
   /* return the erase status */
   return status;
 }
@@ -521,16 +521,16 @@ flash_status_type flash_internal_all_erase(void)
   flash_status_type status = FLASH_OPERATE_DONE;
   /* wait for last operation to be completed */
   status = flash_bank1_operation_wait_for(ERASE_TIMEOUT);
-  
+
   if(status == FLASH_OPERATE_DONE)
   {
     /* if the previous operation is completed, continue to erase bank1 */
     FLASH->ctrl_bit.bankers = TRUE;
     FLASH->ctrl_bit.erstr = TRUE;
-    
+
     /* wait for operation to be completed */
     status = flash_bank1_operation_wait_for(ERASE_TIMEOUT);
-    
+
     /* disable the bankers bit */
     FLASH->ctrl_bit.bankers = FALSE;
   }
@@ -539,10 +539,10 @@ flash_status_type flash_internal_all_erase(void)
     /* if the previous operation is completed, continue to erase bank2 */
     FLASH->ctrl2_bit.bankers = TRUE;
     FLASH->ctrl2_bit.erstr = TRUE;
-    
+
     /* wait for operation to be completed */
     status = flash_bank2_operation_wait_for(ERASE_TIMEOUT);
-    
+
     /* disable the bankers bit */
     FLASH->ctrl2_bit.bankers = FALSE;
   }
@@ -561,16 +561,16 @@ flash_status_type flash_bank1_erase(void)
   flash_status_type status = FLASH_OPERATE_DONE;
   /* wait for last operation to be completed */
   status = flash_bank1_operation_wait_for(ERASE_TIMEOUT);
-  
+
   if(status == FLASH_OPERATE_DONE)
   {
     /* if the previous operation is completed, continue to erase bank1 */
     FLASH->ctrl_bit.bankers = TRUE;
     FLASH->ctrl_bit.erstr = TRUE;
-    
+
     /* wait for operation to be completed */
     status = flash_bank1_operation_wait_for(ERASE_TIMEOUT);
-    
+
     /* disable the bankers bit */
     FLASH->ctrl_bit.bankers = FALSE;
   }
@@ -589,16 +589,16 @@ flash_status_type flash_bank2_erase(void)
   flash_status_type status = FLASH_OPERATE_DONE;
   /* wait for last operation to be completed */
   status = flash_bank2_operation_wait_for(ERASE_TIMEOUT);
-  
+
   if(status == FLASH_OPERATE_DONE)
   {
     /* if the previous operation is completed, continue to erase bank2 */
     FLASH->ctrl2_bit.bankers = TRUE;
     FLASH->ctrl2_bit.erstr = TRUE;
-    
+
     /* wait for operation to be completed */
     status = flash_bank2_operation_wait_for(ERASE_TIMEOUT);
-    
+
     /* disable the bankers bit */
     FLASH->ctrl2_bit.bankers = FALSE;
   }
@@ -617,16 +617,16 @@ flash_status_type flash_spim_all_erase(void)
   flash_status_type status = FLASH_OPERATE_DONE;
   /* wait for last operation to be completed */
   status = flash_spim_operation_wait_for(SPIM_ERASE_TIMEOUT);
-  
+
   if(status == FLASH_OPERATE_DONE)
   {
     /* if the previous operation is completed, continue to erase spim */
     FLASH->ctrl3_bit.chpers = TRUE;
     FLASH->ctrl3_bit.erstr = TRUE;
-    
+
     /* wait for operation to be completed */
     status = flash_spim_operation_wait_for(SPIM_ERASE_TIMEOUT);
-    
+
     /* disable the chpers bit */
     FLASH->ctrl3_bit.chpers = FALSE;
   }
@@ -650,38 +650,38 @@ flash_status_type flash_user_system_data_erase(void)
   {
     fap_val = 0x0000;
   }
-  
+
   /* wait for last operation to be completed */
   status = flash_operation_wait_for(ERASE_TIMEOUT);
-  
+
   if(status == FLASH_OPERATE_DONE)
   {
     /* unlock the user system data */
     FLASH->usd_unlock = FLASH_UNLOCK_KEY1;
     FLASH->usd_unlock = FLASH_UNLOCK_KEY2;
     while(FLASH->ctrl_bit.usdulks==RESET);
-   
+
     /* erase the user system data */
     FLASH->ctrl_bit.usders = TRUE;
     FLASH->ctrl_bit.erstr = TRUE;
-    
+
     /* wait for operation to be completed */
     status = flash_operation_wait_for(ERASE_TIMEOUT);
-    
+
     /* disable the usders bit */
     FLASH->ctrl_bit.usders = FALSE;
-    
+
     if((status == FLASH_OPERATE_DONE) && (fap_val == FAP_RELIEVE_KEY))
     {
       /* enable the user system data programming operation */
       FLASH->ctrl_bit.usdprgm = TRUE;
-      
+
       /* restore the last flash access protection value */
       USD->fap = (uint16_t)fap_val;
-      
+
       /* wait for operation to be completed */
       status = flash_operation_wait_for(PROGRAMMING_TIMEOUT);
-      
+
       /*disable the usdprgm bit */
       FLASH->ctrl_bit.usdprgm = FALSE;
     }
@@ -704,14 +704,14 @@ flash_status_type flash_word_program(uint32_t address, uint32_t data)
   {
     /* wait for last operation to be completed */
     status = flash_bank1_operation_wait_for(PROGRAMMING_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       FLASH->ctrl_bit.fprgm = TRUE;
       *(__IO uint32_t*)address = data;
       /* wait for operation to be completed */
       status = flash_bank1_operation_wait_for(PROGRAMMING_TIMEOUT);
-      
+
       /* disable the fprgm bit */
       FLASH->ctrl_bit.fprgm = FALSE;
     }
@@ -720,14 +720,14 @@ flash_status_type flash_word_program(uint32_t address, uint32_t data)
   {
     /* wait for last operation to be completed */
     status = flash_bank2_operation_wait_for(PROGRAMMING_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       FLASH->ctrl2_bit.fprgm = TRUE;
       *(__IO uint32_t*)address = data;
       /* wait for operation to be completed */
       status = flash_bank2_operation_wait_for(PROGRAMMING_TIMEOUT);
-      
+
       /* disable the fprgm bit */
       FLASH->ctrl2_bit.fprgm = FALSE;
     }
@@ -737,19 +737,19 @@ flash_status_type flash_word_program(uint32_t address, uint32_t data)
   {
     /* wait for last operation to be completed */
     status = flash_spim_operation_wait_for(SPIM_PROGRAMMING_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       FLASH->ctrl3_bit.fprgm = TRUE;
       *(__IO uint32_t*)address = data;
       /* wait for operation to be completed */
       status = flash_spim_operation_wait_for(SPIM_PROGRAMMING_TIMEOUT);
-      
+
       /* disable the fprgm bit */
       FLASH->ctrl3_bit.fprgm = FALSE;
     }
   }
-  
+
   /* return the program status */
   return status;
 }
@@ -765,17 +765,17 @@ flash_status_type flash_halfword_program(uint32_t address, uint16_t data)
 {
   flash_status_type status = FLASH_OPERATE_DONE;
   if((address >= FLASH_BANK1_START_ADDR) && (address <= FLASH_BANK1_END_ADDR))
-  { 
+  {
     /* wait for last operation to be completed */
     status = flash_bank1_operation_wait_for(PROGRAMMING_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       FLASH->ctrl_bit.fprgm = TRUE;
       *(__IO uint16_t*)address = data;
       /* wait for operation to be completed */
       status = flash_bank1_operation_wait_for(PROGRAMMING_TIMEOUT);
-      
+
       /* disable the fprgm bit */
       FLASH->ctrl_bit.fprgm = FALSE;
     }
@@ -784,14 +784,14 @@ flash_status_type flash_halfword_program(uint32_t address, uint16_t data)
   {
     /* wait for last operation to be completed */
     status = flash_bank2_operation_wait_for(PROGRAMMING_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       FLASH->ctrl2_bit.fprgm = TRUE;
       *(__IO uint16_t*)address = data;
       /* wait for operation to be completed */
       status = flash_bank2_operation_wait_for(PROGRAMMING_TIMEOUT);
-      
+
       /* disable the fprgm bit */
       FLASH->ctrl2_bit.fprgm = FALSE;
     }
@@ -801,19 +801,19 @@ flash_status_type flash_halfword_program(uint32_t address, uint16_t data)
   {
     /* wait for last operation to be completed */
     status = flash_spim_operation_wait_for(SPIM_PROGRAMMING_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       FLASH->ctrl3_bit.fprgm = TRUE;
       *(__IO uint16_t*)address = data;
       /* wait for operation to be completed */
       status = flash_spim_operation_wait_for(SPIM_PROGRAMMING_TIMEOUT);
-      
+
       /* disable the fprgm bit */
       FLASH->ctrl3_bit.fprgm = FALSE;
     }
   }
-  
+
   /* return the program status */
   return status;
 }
@@ -830,17 +830,17 @@ flash_status_type flash_byte_program(uint32_t address, uint8_t data)
 {
   flash_status_type status = FLASH_OPERATE_DONE;
   if((address >= FLASH_BANK1_START_ADDR) && (address <= FLASH_BANK1_END_ADDR))
-  { 
+  {
     /* wait for last operation to be completed */
     status = flash_bank1_operation_wait_for(PROGRAMMING_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       FLASH->ctrl_bit.fprgm = TRUE;
       *(__IO uint8_t*)address = data;
       /* wait for operation to be completed */
       status = flash_bank1_operation_wait_for(PROGRAMMING_TIMEOUT);
-      
+
       /* disable the fprgm bit */
       FLASH->ctrl_bit.fprgm = FALSE;
     }
@@ -849,14 +849,14 @@ flash_status_type flash_byte_program(uint32_t address, uint8_t data)
   {
     /* wait for last operation to be completed */
     status = flash_bank2_operation_wait_for(PROGRAMMING_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       FLASH->ctrl2_bit.fprgm = TRUE;
       *(__IO uint8_t*)address = data;
       /* wait for operation to be completed */
       status = flash_bank2_operation_wait_for(PROGRAMMING_TIMEOUT);
-      
+
       /* disable the fprgm bit */
       FLASH->ctrl2_bit.fprgm = FALSE;
     }
@@ -882,14 +882,14 @@ flash_status_type flash_user_system_data_program(uint32_t address, uint8_t data)
     FLASH->usd_unlock = FLASH_UNLOCK_KEY1;
     FLASH->usd_unlock = FLASH_UNLOCK_KEY2;
     while(FLASH->ctrl_bit.usdulks==RESET);
-   
+
     /* enable the user system data programming operation */
     FLASH->ctrl_bit.usdprgm = TRUE;
     *(__IO uint16_t*)address = data;
-    
+
     /* wait for operation to be completed */
     status = flash_operation_wait_for(PROGRAMMING_TIMEOUT);
-    
+
     /* disable the usdprgm bit */
     FLASH->ctrl_bit.usdprgm = FALSE;
   }
@@ -899,8 +899,8 @@ flash_status_type flash_user_system_data_program(uint32_t address, uint8_t data)
 
 /**
   * @brief  config erase/program protection for the desired sectors.
-  * @param  sector_bits: 
-  *         the pointer of the address of the sectors to be erase/program protected. 
+  * @param  sector_bits:
+  *         the pointer of the address of the sectors to be erase/program protected.
   *         general every bit is used to protect the 4KB bytes, and the last one bit
   *         is used to protect the rest.
   * @retval status: the returned value can be: FLASH_PROGRAM_ERROR,
@@ -908,7 +908,7 @@ flash_status_type flash_user_system_data_program(uint32_t address, uint8_t data)
   */
 flash_status_type flash_epp_set(uint32_t *sector_bits)
 {
-  uint16_t epp_data[4] = {0xFFFF,0xFFFF,0xFFFF,0xFFFF}; 
+  uint16_t epp_data[4] = {0xFFFF,0xFFFF,0xFFFF,0xFFFF};
   flash_status_type status = FLASH_OPERATE_DONE;
   sector_bits[0] = (uint32_t)(~sector_bits[0]);
   epp_data[0] = (uint16_t)((sector_bits[0] >> 0) & 0xFF);
@@ -917,19 +917,19 @@ flash_status_type flash_epp_set(uint32_t *sector_bits)
   epp_data[3] = (uint16_t)((sector_bits[0] >> 24) & 0xFF);
   /* wait for last operation to be completed */
   status = flash_operation_wait_for(PROGRAMMING_TIMEOUT);
-  
+
   if(status == FLASH_OPERATE_DONE)
   {
     /* unlock the user system data */
     FLASH->usd_unlock = FLASH_UNLOCK_KEY1;
     FLASH->usd_unlock = FLASH_UNLOCK_KEY2;
     while(FLASH->ctrl_bit.usdulks==RESET);
-   
+
     FLASH->ctrl_bit.usdprgm = TRUE;
     USD->epp0 = epp_data[0];
     /* wait for operation to be completed */
     status = flash_operation_wait_for(PROGRAMMING_TIMEOUT);
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       USD->epp1 = epp_data[1];
@@ -957,7 +957,7 @@ flash_status_type flash_epp_set(uint32_t *sector_bits)
 
 /**
   * @brief  return the flash erase/program protection status.
-  * @param  sector_bits: pointer to get the epps register. 
+  * @param  sector_bits: pointer to get the epps register.
   * @retval none
   */
 void flash_epp_status_get(uint32_t *sector_bits)
@@ -985,15 +985,15 @@ flash_status_type flash_fap_enable(confirm_state new_state)
     FLASH->usd_unlock = FLASH_UNLOCK_KEY1;
     FLASH->usd_unlock = FLASH_UNLOCK_KEY2;
     while(FLASH->ctrl_bit.usdulks==RESET);
-   
+
     FLASH->ctrl_bit.usders = TRUE;
     FLASH->ctrl_bit.erstr = TRUE;
     /* wait for operation to be completed */
     status = flash_operation_wait_for(ERASE_TIMEOUT);
-    
+
     /* disable the usders bit */
     FLASH->ctrl_bit.usders = FALSE;
-    
+
     if(status == FLASH_OPERATE_DONE)
     {
       if(new_state == FALSE)
@@ -1001,10 +1001,10 @@ flash_status_type flash_fap_enable(confirm_state new_state)
         /* enable the user system data programming operation */
         FLASH->ctrl_bit.usdprgm = TRUE;
         USD->fap = FAP_RELIEVE_KEY;
-        
+
         /* Wait for operation to be completed */
         status = flash_operation_wait_for(ERASE_TIMEOUT);
-        
+
         /* disable the usdprgm bit */
         FLASH->ctrl_bit.usdprgm = FALSE;
       }
@@ -1027,8 +1027,8 @@ flag_status flash_fap_status_get(void)
 /**
   * @brief  program the flash system setting byte in usd: wdt_ato_en / depslp_rst / stdby_rst / btopt.
   * @param  usd_ssb: the system setting byte
-  * @note   this parameter usd_ssb must contain a combination of all the following 4 types of data  
-  *         type 1: wdt_ato_en, select the wdt auto start 
+  * @note   this parameter usd_ssb must contain a combination of all the following 4 types of data
+  *         type 1: wdt_ato_en, select the wdt auto start
   *         this data can be one of the following values:
   *         - USD_WDT_ATO_DISABLE: disable wdt auto start
   *         - USD_WDT_ATO_ENABLE: enable wdt auto start
@@ -1052,21 +1052,21 @@ flash_status_type flash_ssb_set(uint8_t usd_ssb)
   flash_status_type status = FLASH_OPERATE_DONE;
   /* wait for last operation to be completed */
   status = flash_operation_wait_for(PROGRAMMING_TIMEOUT);
-  
+
   if(status == FLASH_OPERATE_DONE)
   {
     /* unlock the user system data */
     FLASH->usd_unlock = FLASH_UNLOCK_KEY1;
-    FLASH->usd_unlock = FLASH_UNLOCK_KEY2;  
+    FLASH->usd_unlock = FLASH_UNLOCK_KEY2;
     while(FLASH->ctrl_bit.usdulks==RESET);
-   
+
     /* enable the user system data programming operation */
     FLASH->ctrl_bit.usdprgm = TRUE;
-    
+
     USD->ssb = usd_ssb;
     /* wait for operation to be completed */
     status = flash_operation_wait_for(PROGRAMMING_TIMEOUT);
-    
+
     /* disable the usdprgm bit */
     FLASH->ctrl_bit.usdprgm = FALSE;
   }
@@ -1090,14 +1090,14 @@ uint8_t flash_ssb_status_get(void)
   * @brief  enable or disable the specified flash interrupts.
   * @param  flash_int: specifies the flash interrupt sources to be enabled or disabled.
   *         this parameter can be any combination of the following values:
-  *         - FLASH_ERR_INT      
-  *         - FLASH_ODF_INT      
+  *         - FLASH_ERR_INT
+  *         - FLASH_ODF_INT
   *         - FLASH_BANK1_ERR_INT
   *         - FLASH_BANK1_ODF_INT
   *         - FLASH_BANK2_ERR_INT
   *         - FLASH_BANK2_ODF_INT
-  *         - FLASH_SPIM_ERR_INT 
-  *         - FLASH_SPIM_ODF_INT 
+  *         - FLASH_SPIM_ERR_INT
+  *         - FLASH_SPIM_ODF_INT
   * @param  new_state: new state of the specified flash interrupts.
   *         this parameter can be: TRUE or FALSE.
   * @retval none
@@ -1155,18 +1155,18 @@ flash_status_type flash_slib_enable(uint32_t pwd, uint16_t start_sector, uint16_
   flash_status_type status = FLASH_OPERATE_DONE;
   /* wait for last operation to be completed */
   status = flash_operation_wait_for(PROGRAMMING_TIMEOUT);
-  
+
   /*check range param limits*/
   if((start_sector>=data_start_sector) || ((data_start_sector > end_sector) && \
      (data_start_sector != 0x7FF)) || (start_sector > end_sector))
     return FLASH_PROGRAM_ERROR;
-  
+
   if(status == FLASH_OPERATE_DONE)
   {
     /* unlock slib cfg register */
     FLASH->slib_unlock = SLIB_UNLOCK_KEY;
     while(FLASH->slib_misc_sts_bit.slib_ulkf==RESET);
-   
+
     slib_range = ((uint32_t)(data_start_sector << 11) & FLASH_SLIB_DATA_START_SECTOR) | \
                  ((uint32_t)(end_sector << 22) & FLASH_SLIB_END_SECTOR) | \
                  (start_sector & FLASH_SLIB_START_SECTOR);
@@ -1189,7 +1189,7 @@ error_status flash_slib_disable(uint32_t pwd)
   flash_status_type status = FLASH_OPERATE_DONE;
   /* write password to disable slib */
   FLASH->slib_pwd_clr = pwd;
-  
+
   status = flash_operation_wait_for(ERASE_TIMEOUT);
   if(status == FLASH_OPERATE_DONE)
   {
@@ -1203,7 +1203,7 @@ error_status flash_slib_disable(uint32_t pwd)
 
 /**
  * @brief  get remaining count of slib(range: 256~0).
- * @param  none 
+ * @param  none
  * @retval uint32_t
  */
 uint32_t flash_slib_remaining_count_get(void)

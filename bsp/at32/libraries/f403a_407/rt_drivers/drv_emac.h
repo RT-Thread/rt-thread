@@ -27,7 +27,7 @@
 #define PHY_BASIC_STATUS_REG            0x01U
 #define PHY_LINKED_STATUS_MASK          (1<<2)
 #define PHY_AUTONEGO_COMPLETE_MASK      (1<<5)
-                                        
+
 /* the phy id one register */
 #define PHY_ID1_REG                     0x02U
 /* the phy id two register */
@@ -71,7 +71,7 @@
   /* phy status register */
   #define PHY_LINKED_STATUS_BIT         (0x0004)     /*!< link status */
   #define PHY_NEGO_COMPLETE_BIT         (0x0020)     /*!< auto negotiation complete */
-  
+
   #define PHY_DUPLEX_MODE               (0x0004)     /*!< full duplex mode */
   #define PHY_SPEED_MODE                (0x0002)     /*!< 10 mbps */
 

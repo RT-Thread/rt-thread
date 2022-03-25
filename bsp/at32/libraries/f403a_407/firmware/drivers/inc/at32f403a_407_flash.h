@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -31,8 +31,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
- 
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "at32f403a_407.h"
 
@@ -46,7 +46,7 @@ extern "C" {
   */
 
 /** @defgroup FLASH_unlock_keys
-  * @brief flash unlock keys 
+  * @brief flash unlock keys
   * @{
   */
 
@@ -58,12 +58,12 @@ extern "C" {
 /**
   * @}
   */
-  
+
 /** @defgroup FLASH_bank_address
-  * @brief flash bank address 
+  * @brief flash bank address
   * @{
   */
-  
+
 #define FLASH_BANK1_START_ADDR           ((uint32_t)0x08000000) /*!< flash start address of bank1 */
 #define FLASH_BANK1_END_ADDR             ((uint32_t)0x0807FFFF) /*!< flash end address of bank1 */
 #define FLASH_BANK2_START_ADDR           ((uint32_t)0x08080000) /*!< flash start address of bank2 */
@@ -75,7 +75,7 @@ extern "C" {
   */
 
 /** @defgroup FLASH_flags
-  * @brief flash flag 
+  * @brief flash flag
   * @{
   */
 
@@ -102,12 +102,12 @@ extern "C" {
   */
 
 /** @defgroup FLASH_interrupts
-  * @brief flash interrupts 
+  * @brief flash interrupts
   * @{
   */
 
 #define FLASH_ERR_INT                    FLASH_BANK1_ERR_INT    /*!< flash error interrupt */
-#define FLASH_ODF_INT                    FLASH_BANK1_ODF_INT    /*!< flash operate done interrupt */  
+#define FLASH_ODF_INT                    FLASH_BANK1_ODF_INT    /*!< flash operate done interrupt */
 #define FLASH_BANK1_ERR_INT              ((uint32_t)0x00000001) /*!< flash bank1 error interrupt */
 #define FLASH_BANK1_ODF_INT              ((uint32_t)0x00000002) /*!< flash bank1 operate done interrupt */
 #define FLASH_BANK2_ERR_INT              ((uint32_t)0x00000004) /*!< flash bank2 error interrupt */
@@ -118,11 +118,11 @@ extern "C" {
 /**
   * @}
   */
-  
+
 /** @defgroup FLASH_slib_mask
-  * @brief flash slib mask 
+  * @brief flash slib mask
   * @{
-  */  
+  */
 
 #define FLASH_SLIB_START_SECTOR          ((uint32_t)0x000007FF) /*!< flash slib start sector */
 #define FLASH_SLIB_DATA_START_SECTOR     ((uint32_t)0x003FF800) /*!< flash slib d-bus area start sector */
@@ -133,9 +133,9 @@ extern "C" {
   */
 
 /** @defgroup FLASH_user_system_data
-  * @brief flash user system data 
+  * @brief flash user system data
   * @{
-  */  
+  */
 
 #define USD_WDT_ATO_DISABLE              ((uint16_t)0x0001) /*!< wdt auto start disabled  */
 #define USD_WDT_ATO_ENABLE               ((uint16_t)0x0000) /*!< wdt auto start enabled */
@@ -154,7 +154,7 @@ extern "C" {
   */
 
 /** @defgroup FLASH_timeout_definition
-  * @brief flash timeout definition 
+  * @brief flash timeout definition
   * @{
   */
 
@@ -183,7 +183,7 @@ typedef enum
   FLASH_OPERATE_DONE                     = 0x03, /*!< flash status is operate done */
   FLASH_OPERATE_TIMEOUT                  = 0x04  /*!< flash status is operate timeout */
 } flash_status_type;
- 
+
 /**
   * @brief  flash spim model type
   */
@@ -197,9 +197,9 @@ typedef enum
   * @brief type define flash register all
   */
 typedef struct
-{  
+{
   /**
-    * @brief flash psr register, offset:0x00 
+    * @brief flash psr register, offset:0x00
     */
   union
   {
@@ -209,9 +209,9 @@ typedef struct
       __IO uint32_t reserved1            : 32; /* [31:0] */
     } psr_bit;
   };
-  
+
   /**
-    * @brief flash unlock register, offset:0x04 
+    * @brief flash unlock register, offset:0x04
     */
   union
   {
@@ -221,9 +221,9 @@ typedef struct
       __IO uint32_t ukval                : 32;/* [31:0] */
     } unlock_bit;
   };
-  
+
   /**
-    * @brief flash usd unlock register, offset:0x08 
+    * @brief flash usd unlock register, offset:0x08
     */
   union
   {
@@ -235,7 +235,7 @@ typedef struct
   };
 
   /**
-    * @brief flash sts register, offset:0x0C 
+    * @brief flash sts register, offset:0x0C
     */
   union
   {
@@ -243,17 +243,17 @@ typedef struct
     struct
     {
       __IO uint32_t obf                  : 1; /* [0] */
-      __IO uint32_t reserved1            : 1; /* [1] */     
+      __IO uint32_t reserved1            : 1; /* [1] */
       __IO uint32_t prgmerr              : 1; /* [2] */
       __IO uint32_t reserved2            : 1; /* [3] */
       __IO uint32_t epperr               : 1; /* [4] */
       __IO uint32_t odf                  : 1; /* [5] */
-      __IO uint32_t reserved3            : 26;/* [31:6] */ 
+      __IO uint32_t reserved3            : 26;/* [31:6] */
     } sts_bit;
   };
 
   /**
-    * @brief flash ctrl register, offset:0x10 
+    * @brief flash ctrl register, offset:0x10
     */
   union
   {
@@ -261,41 +261,41 @@ typedef struct
     struct
     {
       __IO uint32_t fprgm                : 1; /* [0] */
-      __IO uint32_t secers               : 1; /* [1] */     
+      __IO uint32_t secers               : 1; /* [1] */
       __IO uint32_t bankers              : 1; /* [2] */
       __IO uint32_t reserved1            : 1; /* [3] */
       __IO uint32_t usdprgm              : 1; /* [4] */
       __IO uint32_t usders               : 1; /* [5] */
-      __IO uint32_t erstr                : 1; /* [6] */ 
-      __IO uint32_t oplk                 : 1; /* [7] */ 
-      __IO uint32_t reserved2            : 1; /* [8] */ 
-      __IO uint32_t usdulks              : 1; /* [9] */ 
-      __IO uint32_t errie                : 1; /* [10] */ 
-      __IO uint32_t reserved3            : 1; /* [11] */     
-      __IO uint32_t odfie                : 1; /* [12] */ 
-      __IO uint32_t reserved4            : 19;/* [31:13] */      
+      __IO uint32_t erstr                : 1; /* [6] */
+      __IO uint32_t oplk                 : 1; /* [7] */
+      __IO uint32_t reserved2            : 1; /* [8] */
+      __IO uint32_t usdulks              : 1; /* [9] */
+      __IO uint32_t errie                : 1; /* [10] */
+      __IO uint32_t reserved3            : 1; /* [11] */
+      __IO uint32_t odfie                : 1; /* [12] */
+      __IO uint32_t reserved4            : 19;/* [31:13] */
     } ctrl_bit;
   };
 
   /**
-    * @brief flash addr register, offset:0x14 
+    * @brief flash addr register, offset:0x14
     */
   union
   {
     __IO uint32_t addr;
     struct
     {
-      __IO uint32_t fa                   : 32;/* [31:0] */     
+      __IO uint32_t fa                   : 32;/* [31:0] */
     } addr_bit;
   };
-  
+
   /**
     * @brief flash reserved1 register, offset:0x18
     */
   __IO uint32_t reserved1;
-  
+
   /**
-    * @brief flash usd register, offset:0x1C 
+    * @brief flash usd register, offset:0x1C
     */
   union
   {
@@ -303,27 +303,27 @@ typedef struct
     struct
     {
       __IO uint32_t usderr               : 1; /* [0] */
-      __IO uint32_t fap                  : 1; /* [1] */     
+      __IO uint32_t fap                  : 1; /* [1] */
       __IO uint32_t wdt_ato_en           : 1; /* [2] */
       __IO uint32_t depslp_rst           : 1; /* [3] */
       __IO uint32_t stdby_rst            : 1; /* [4] */
       __IO uint32_t btopt                : 1; /* [5] */
-      __IO uint32_t reserved1            : 4; /* [9:6] */ 
-      __IO uint32_t user_d0              : 8; /* [17:10] */   
-      __IO uint32_t user_d1              : 8; /* [25:18] */ 
-      __IO uint32_t reserved2            : 6; /* [31:26] */      
+      __IO uint32_t reserved1            : 4; /* [9:6] */
+      __IO uint32_t user_d0              : 8; /* [17:10] */
+      __IO uint32_t user_d1              : 8; /* [25:18] */
+      __IO uint32_t reserved2            : 6; /* [31:26] */
     } usd_bit;
   };
 
   /**
-    * @brief flash epps register, offset:0x20 
+    * @brief flash epps register, offset:0x20
     */
   union
   {
     __IO uint32_t epps;
     struct
     {
-      __IO uint32_t epps                 : 32;/* [31:0] */    
+      __IO uint32_t epps                 : 32;/* [31:0] */
     } epps_bit;
   };
 
@@ -333,7 +333,7 @@ typedef struct
   __IO uint32_t reserved2[8];
 
   /**
-    * @brief flash unlock2 register, offset:0x44 
+    * @brief flash unlock2 register, offset:0x44
     */
   union
   {
@@ -343,14 +343,14 @@ typedef struct
       __IO uint32_t ukval                : 32;/* [31:0] */
     } unlock2_bit;
   };
-  
+
   /**
     * @brief flash reserved3 register, offset:0x48
     */
   __IO uint32_t reserved3;
-  
+
   /**
-    * @brief flash sts2 register, offset:0x4C 
+    * @brief flash sts2 register, offset:0x4C
     */
   union
   {
@@ -358,17 +358,17 @@ typedef struct
     struct
     {
       __IO uint32_t obf                  : 1; /* [0] */
-      __IO uint32_t reserved1            : 1; /* [1] */     
+      __IO uint32_t reserved1            : 1; /* [1] */
       __IO uint32_t prgmerr              : 1; /* [2] */
       __IO uint32_t reserved2            : 1; /* [3] */
       __IO uint32_t epperr               : 1; /* [4] */
       __IO uint32_t odf                  : 1; /* [5] */
-      __IO uint32_t reserved3            : 26;/* [31:6] */ 
+      __IO uint32_t reserved3            : 26;/* [31:6] */
     } sts2_bit;
   };
-  
+
   /**
-    * @brief flash ctrl2 register, offset:0x50 
+    * @brief flash ctrl2 register, offset:0x50
     */
   union
   {
@@ -376,28 +376,28 @@ typedef struct
     struct
     {
       __IO uint32_t fprgm                : 1; /* [0] */
-      __IO uint32_t secers               : 1; /* [1] */     
+      __IO uint32_t secers               : 1; /* [1] */
       __IO uint32_t bankers              : 1; /* [2] */
       __IO uint32_t reserved1            : 3; /* [5:3] */
-      __IO uint32_t erstr                : 1; /* [6] */ 
-      __IO uint32_t oplk                 : 1; /* [7] */ 
-      __IO uint32_t reserved2            : 2; /* [9:8] */ 
-      __IO uint32_t errie                : 1; /* [10] */ 
-      __IO uint32_t reserved3            : 1; /* [11] */     
-      __IO uint32_t odfie                : 1; /* [12] */ 
-      __IO uint32_t reserved4            : 19;/* [31:13] */ 
+      __IO uint32_t erstr                : 1; /* [6] */
+      __IO uint32_t oplk                 : 1; /* [7] */
+      __IO uint32_t reserved2            : 2; /* [9:8] */
+      __IO uint32_t errie                : 1; /* [10] */
+      __IO uint32_t reserved3            : 1; /* [11] */
+      __IO uint32_t odfie                : 1; /* [12] */
+      __IO uint32_t reserved4            : 19;/* [31:13] */
     } ctrl2_bit;
-  };  
-  
+  };
+
   /**
-    * @brief flash addr2 register, offset:0x54 
+    * @brief flash addr2 register, offset:0x54
     */
   union
   {
     __IO uint32_t addr2;
     struct
     {
-      __IO uint32_t fa                   : 32;/* [31:0] */     
+      __IO uint32_t fa                   : 32;/* [31:0] */
     } addr2_bit;
   };
 
@@ -407,7 +407,7 @@ typedef struct
   __IO uint32_t reserved4[11];
 
   /**
-    * @brief flash unlock3 register, offset:0x84 
+    * @brief flash unlock3 register, offset:0x84
     */
   union
   {
@@ -417,9 +417,9 @@ typedef struct
       __IO uint32_t ukval                : 32;/* [31:0] */
     } unlock3_bit;
   };
-  
+
   /**
-    * @brief flash select register, offset:0x88 
+    * @brief flash select register, offset:0x88
     */
   union
   {
@@ -429,9 +429,9 @@ typedef struct
       __IO uint32_t select               : 32;/* [31:0] */
     } select_bit;
   };
-  
+
   /**
-    * @brief flash sts3 register, offset:0x8C 
+    * @brief flash sts3 register, offset:0x8C
     */
   union
   {
@@ -439,17 +439,17 @@ typedef struct
     struct
     {
       __IO uint32_t obf                  : 1; /* [0] */
-      __IO uint32_t reserved1            : 1; /* [1] */     
+      __IO uint32_t reserved1            : 1; /* [1] */
       __IO uint32_t prgmerr              : 1; /* [2] */
       __IO uint32_t reserved2            : 1; /* [3] */
       __IO uint32_t epperr               : 1; /* [4] */
       __IO uint32_t odf                  : 1; /* [5] */
-      __IO uint32_t reserved3            : 26;/* [31:6] */ 
+      __IO uint32_t reserved3            : 26;/* [31:6] */
     } sts3_bit;
   };
-  
+
   /**
-    * @brief flash ctrl3 register, offset:0x90 
+    * @brief flash ctrl3 register, offset:0x90
     */
   union
   {
@@ -457,176 +457,176 @@ typedef struct
     struct
     {
       __IO uint32_t fprgm                : 1; /* [0] */
-      __IO uint32_t secers               : 1; /* [1] */     
+      __IO uint32_t secers               : 1; /* [1] */
       __IO uint32_t chpers               : 1; /* [2] */
       __IO uint32_t reserved1            : 3; /* [5:3] */
-      __IO uint32_t erstr                : 1; /* [6] */ 
-      __IO uint32_t oplk                 : 1; /* [7] */ 
-      __IO uint32_t reserved2            : 2; /* [9:8] */ 
-      __IO uint32_t errie                : 1; /* [10] */ 
-      __IO uint32_t reserved3            : 1; /* [11] */     
-      __IO uint32_t odfie                : 1; /* [12] */ 
-      __IO uint32_t reserved4            : 19;/* [31:13] */     
+      __IO uint32_t erstr                : 1; /* [6] */
+      __IO uint32_t oplk                 : 1; /* [7] */
+      __IO uint32_t reserved2            : 2; /* [9:8] */
+      __IO uint32_t errie                : 1; /* [10] */
+      __IO uint32_t reserved3            : 1; /* [11] */
+      __IO uint32_t odfie                : 1; /* [12] */
+      __IO uint32_t reserved4            : 19;/* [31:13] */
     } ctrl3_bit;
-  };  
-  
+  };
+
   /**
-    * @brief flash addr3 register, offset:0x94 
+    * @brief flash addr3 register, offset:0x94
     */
   union
   {
     __IO uint32_t addr3;
     struct
     {
-      __IO uint32_t fa                   : 32;/* [31:0] */     
+      __IO uint32_t fa                   : 32;/* [31:0] */
     } addr3_bit;
   };
 
   /**
-    * @brief flash da register, offset:0x98 
+    * @brief flash da register, offset:0x98
     */
   union
   {
     __IO uint32_t da;
     struct
     {
-      __IO uint32_t fda                  : 32;/* [31:0] */     
+      __IO uint32_t fda                  : 32;/* [31:0] */
     } da_bit;
   };
-  
+
   /**
     * @brief flash reserved5 register, offset:0xC8~0x9C
     */
   __IO uint32_t reserved5[12];
-  
+
   /**
-    * @brief flash slib_sts0 register, offset:0xCC 
+    * @brief flash slib_sts0 register, offset:0xCC
     */
   union
   {
     __IO uint32_t slib_sts0;
     struct
     {
-      __IO uint32_t reserved1            : 3; /* [2:0] */  
-      __IO uint32_t slib_enf             : 1; /* [3] */  
-      __IO uint32_t reserved2            : 28;/* [31:4] */       
+      __IO uint32_t reserved1            : 3; /* [2:0] */
+      __IO uint32_t slib_enf             : 1; /* [3] */
+      __IO uint32_t reserved2            : 28;/* [31:4] */
     } slib_sts0_bit;
   };
 
   /**
-    * @brief flash slib_sts1 register, offset:0xD0 
+    * @brief flash slib_sts1 register, offset:0xD0
     */
   union
   {
     __IO uint32_t slib_sts1;
     struct
     {
-      __IO uint32_t slib_ss              : 11;/* [10:0] */  
-      __IO uint32_t slib_dat_ss          : 11;/* [21:11] */  
-      __IO uint32_t slib_es              : 10;/* [31:22] */       
+      __IO uint32_t slib_ss              : 11;/* [10:0] */
+      __IO uint32_t slib_dat_ss          : 11;/* [21:11] */
+      __IO uint32_t slib_es              : 10;/* [31:22] */
     } slib_sts1_bit;
   };
 
   /**
-    * @brief flash slib_pwd_clr register, offset:0xD4 
+    * @brief flash slib_pwd_clr register, offset:0xD4
     */
   union
   {
     __IO uint32_t slib_pwd_clr;
     struct
     {
-      __IO uint32_t slib_pclr_val        : 32;/* [31:0] */       
+      __IO uint32_t slib_pclr_val        : 32;/* [31:0] */
     } slib_pwd_clr_bit;
   };
-  
+
   /**
-    * @brief flash slib_misc_sts register, offset:0xD8 
+    * @brief flash slib_misc_sts register, offset:0xD8
     */
   union
   {
     __IO uint32_t slib_misc_sts;
     struct
     {
-      __IO uint32_t slib_pwd_err         : 1; /* [0] */  
-      __IO uint32_t slib_pwd_ok          : 1; /* [1] */  
-      __IO uint32_t slib_ulkf            : 1; /* [2] */  
-      __IO uint32_t reserved1            : 13;/* [15:3] */      
-      __IO uint32_t slib_rcnt            : 9; /* [24:16] */      
-      __IO uint32_t reserved2            : 7; /* [31:25] */      
+      __IO uint32_t slib_pwd_err         : 1; /* [0] */
+      __IO uint32_t slib_pwd_ok          : 1; /* [1] */
+      __IO uint32_t slib_ulkf            : 1; /* [2] */
+      __IO uint32_t reserved1            : 13;/* [15:3] */
+      __IO uint32_t slib_rcnt            : 9; /* [24:16] */
+      __IO uint32_t reserved2            : 7; /* [31:25] */
     } slib_misc_sts_bit;
   };
-  
+
   /**
-    * @brief flash slib_set_pwd register, offset:0xDC 
+    * @brief flash slib_set_pwd register, offset:0xDC
     */
   union
   {
     __IO uint32_t slib_set_pwd;
     struct
-    {    
-      __IO uint32_t slib_pset_val        : 32;/* [31:0] */      
+    {
+      __IO uint32_t slib_pset_val        : 32;/* [31:0] */
     } slib_set_pwd_bit;
   };
 
   /**
-    * @brief flash slib_set_range register, offset:0xE0 
+    * @brief flash slib_set_range register, offset:0xE0
     */
   union
   {
     __IO uint32_t slib_set_range;
     struct
     {
-      __IO uint32_t slib_ss_set          : 11;/* [10:0] */  
-      __IO uint32_t slib_dss_set         : 11;/* [21:11] */  
-      __IO uint32_t slib_es_set          : 10;/* [31:22] */       
+      __IO uint32_t slib_ss_set          : 11;/* [10:0] */
+      __IO uint32_t slib_dss_set         : 11;/* [21:11] */
+      __IO uint32_t slib_es_set          : 10;/* [31:22] */
     } slib_set_range_bit;
   };
-  
+
   /**
     * @brief flash reserved6 register, offset:0xEC~0xE4
     */
   __IO uint32_t reserved6[3];
-  
+
   /**
-    * @brief flash slib_unlock register, offset:0xF0 
+    * @brief flash slib_unlock register, offset:0xF0
     */
   union
   {
     __IO uint32_t slib_unlock;
     struct
-    {    
-      __IO uint32_t slib_ukval           : 32;/* [31:0] */      
+    {
+      __IO uint32_t slib_ukval           : 32;/* [31:0] */
     } slib_unlock_bit;
   };
 
   /**
-    * @brief flash crc_ctrl register, offset:0xF4 
+    * @brief flash crc_ctrl register, offset:0xF4
     */
   union
   {
     __IO uint32_t crc_ctrl;
     struct
     {
-      __IO uint32_t crc_ss               : 12;/* [11:0] */  
-      __IO uint32_t crc_sn               : 12;/* [23:12] */  
-      __IO uint32_t reserved1            : 7; /* [30:24] */    
-      __IO uint32_t crc_strt             : 1; /* [31] */         
+      __IO uint32_t crc_ss               : 12;/* [11:0] */
+      __IO uint32_t crc_sn               : 12;/* [23:12] */
+      __IO uint32_t reserved1            : 7; /* [30:24] */
+      __IO uint32_t crc_strt             : 1; /* [31] */
     } crc_ctrl_bit;
   };
 
   /**
-    * @brief flash crc_chkr register, offset:0xF8 
+    * @brief flash crc_chkr register, offset:0xF8
     */
   union
   {
     __IO uint32_t crc_chkr;
     struct
     {
-      __IO uint32_t crc_chkr             : 32;/* [31:0] */        
+      __IO uint32_t crc_chkr             : 32;/* [31:0] */
     } crc_chkr_bit;
   };
 
-} flash_type;  
+} flash_type;
 
 /**
   * @brief user system data
@@ -644,11 +644,11 @@ typedef struct
   __IO uint16_t eopb0;
   __IO uint16_t reserved;
   __IO uint16_t data2;
-  __IO uint16_t data3; 
+  __IO uint16_t data3;
   __IO uint16_t data4;
-  __IO uint16_t data5; 
+  __IO uint16_t data5;
   __IO uint16_t data6;
-  __IO uint16_t data7;  
+  __IO uint16_t data7;
   __IO uint16_t ext_flash_key[8];
 } usd_type;
 

@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -32,8 +32,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
- 
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "at32f403a_407.h"
 
@@ -48,7 +48,7 @@ extern "C" {
 /** @defgroup ACC_exported_constants
   * @{
   */
- 
+
 #define ACC_CAL_HICKCAL                  ((uint16_t)0x0000) /*!< acc hick calibration */
 #define ACC_CAL_HICKTRIM                 ((uint16_t)0x0002) /*!< acc hick trim */
 
@@ -70,10 +70,10 @@ extern "C" {
   * @brief type define acc register all
   */
 typedef struct
-{  
-  
+{
+
   /**
-    * @brief acc sts register, offset:0x00 
+    * @brief acc sts register, offset:0x00
     */
   union
   {
@@ -81,13 +81,13 @@ typedef struct
     struct
     {
       __IO uint32_t calrdy               : 1; /* [0] */
-      __IO uint32_t rslost               : 1; /* [1] */      
+      __IO uint32_t rslost               : 1; /* [1] */
       __IO uint32_t reserved1            : 30;/* [31:2] */
     } sts_bit;
   };
-  
+
   /**
-    * @brief acc ctrl1 register, offset:0x04 
+    * @brief acc ctrl1 register, offset:0x04
     */
   union
   {
@@ -95,18 +95,18 @@ typedef struct
     struct
     {
       __IO uint32_t calon                : 1; /* [0] */
-      __IO uint32_t entrim               : 1; /* [1] */ 
-      __IO uint32_t reserved1            : 2; /* [3:2] */ 
+      __IO uint32_t entrim               : 1; /* [1] */
+      __IO uint32_t reserved1            : 2; /* [3:2] */
       __IO uint32_t eien                 : 1; /* [4] */
-      __IO uint32_t calrdyien            : 1; /* [5] */ 
-      __IO uint32_t reserved2            : 2; /* [7:6] */ 
-      __IO uint32_t step                 : 4; /* [11:8] */       
+      __IO uint32_t calrdyien            : 1; /* [5] */
+      __IO uint32_t reserved2            : 2; /* [7:6] */
+      __IO uint32_t step                 : 4; /* [11:8] */
       __IO uint32_t reserved3            : 20;/* [31:12] */
     } ctrl1_bit;
   };
-  
+
    /**
-    * @brief acc ctrl2 register, offset:0x08 
+    * @brief acc ctrl2 register, offset:0x08
     */
   union
   {
@@ -114,13 +114,13 @@ typedef struct
     struct
     {
       __IO uint32_t hickcal              : 8; /* [7:0] */
-      __IO uint32_t hicktrim             : 6; /* [13:8] */      
+      __IO uint32_t hicktrim             : 6; /* [13:8] */
       __IO uint32_t reserved1            : 18;/* [31:14] */
     } ctrl2_bit;
   };
-   
+
   /**
-  * @brief acc acc_c1 register, offset:0x0C 
+  * @brief acc acc_c1 register, offset:0x0C
   */
   union
   {
@@ -131,9 +131,9 @@ typedef struct
       __IO uint32_t reserved1            : 16;/* [31:16] */
     } c1_bit;
   };
-   
+
   /**
-  * @brief acc acc_c2 register, offset:0x10 
+  * @brief acc acc_c2 register, offset:0x10
   */
   union
   {
@@ -144,9 +144,9 @@ typedef struct
       __IO uint32_t reserved1            : 16;/* [31:16] */
     } c2_bit;
   };
-   
+
   /**
-  * @brief acc acc_c3 register, offset:0x14 
+  * @brief acc acc_c3 register, offset:0x14
   */
   union
   {
@@ -156,8 +156,8 @@ typedef struct
       __IO uint32_t c3                   : 16;/* [15:0] */
       __IO uint32_t reserved1            : 16;/* [31:16] */
     } c3_bit;
-  };  
-} acc_type;  
+  };
+} acc_type;
 
 /**
   * @}
@@ -167,7 +167,7 @@ typedef struct
 
 /** @defgroup ACC_exported_functions
   * @{
-  */  
+  */
 
 void acc_calibration_mode_enable(uint16_t acc_trim, confirm_state new_state);
 void acc_step_set(uint8_t step_value);

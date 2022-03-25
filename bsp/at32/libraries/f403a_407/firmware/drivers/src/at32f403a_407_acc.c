@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -47,7 +47,7 @@
   *         this parameter can be one of the following values:
   *         - ACC_CAL_HICKCAL
   *         - ACC_CAL_HICKTRIM
-  * @param  new_state: specifies the acc calibration to be enabled or disabled.(TRUE or FALSE) 
+  * @param  new_state: specifies the acc calibration to be enabled or disabled.(TRUE or FALSE)
   * @retval none
   */
 void acc_calibration_mode_enable(uint16_t acc_trim, confirm_state new_state)
@@ -65,7 +65,7 @@ void acc_calibration_mode_enable(uint16_t acc_trim, confirm_state new_state)
 
 /**
   * @brief  store calibration step data in acc's ctrl1 register.
-  * @param  step_value:  value to be stored in the acc's ctrl1 register           
+  * @param  step_value:  value to be stored in the acc's ctrl1 register
   * @retval none
   */
 void acc_step_set(uint8_t step_value)
@@ -79,7 +79,7 @@ void acc_step_set(uint8_t step_value)
   *         this parameter can be one of the following values:
   *         - ACC_CALRDYIEN_INT
   *         - ACC_EIEN_INT
-  * @param  new_state (TRUE or FALSE) 
+  * @param  new_state (TRUE or FALSE)
   * @retval none
   */
 void acc_interrupt_enable(uint16_t acc_int, confirm_state new_state)
@@ -180,10 +180,10 @@ uint16_t acc_read_c3(void)
   *         this parameter can be one of the following values:
   *         - ACC_RSLOST_FLAG
   *         - ACC_CALRDY_FLAG
-  * @retval  flag_status (SET or RESET) 
+  * @retval  flag_status (SET or RESET)
   */
 flag_status acc_flag_get(uint16_t acc_flag)
-{  
+{
   if(acc_flag == ACC_CALRDY_FLAG)
     return (flag_status)(ACC->sts_bit.calrdy);
   else

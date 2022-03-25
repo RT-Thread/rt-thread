@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -74,7 +74,7 @@ typedef enum
 typedef struct
 {
   /**
-    * @brief crc dt register, offset:0x00 
+    * @brief crc dt register, offset:0x00
     */
   union
   {
@@ -86,7 +86,7 @@ typedef struct
   };
 
   /**
-    * @brief crc cdt register, offset:0x04 
+    * @brief crc cdt register, offset:0x04
     */
   union
   {
@@ -99,7 +99,7 @@ typedef struct
   };
 
   /**
-    * @brief crc ctrl register, offset:0x08 
+    * @brief crc ctrl register, offset:0x08
     */
   union
   {
@@ -120,7 +120,7 @@ typedef struct
   __IO uint32_t reserved1;
 
   /**
-    * @brief crc idt register, offset:0x10 
+    * @brief crc idt register, offset:0x10
     */
   union
   {

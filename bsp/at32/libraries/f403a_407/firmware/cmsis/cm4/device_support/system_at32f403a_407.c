@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -31,7 +31,7 @@
 /** @addtogroup AT32F403A_407_system
   * @{
   */
-    
+
 #include "at32f403a_407.h"
 
 /** @addtogroup AT32F403A_407_system_private_defines
@@ -81,7 +81,7 @@ void SystemInit (void)
   /* wait sclk switch status */
   while(CRM->cfg_bit.sclksts != CRM_SCLK_HICK);
 
-  /* reset cfg register, include sclk switch, ahbdiv, apb1div, apb2div, adcdiv, 
+  /* reset cfg register, include sclk switch, ahbdiv, apb1div, apb2div, adcdiv,
      clkout pllrcs, pllhextdiv, pllmult, usbdiv and pllrange bits */
   CRM->cfg = 0;
 
@@ -182,7 +182,7 @@ void system_core_clock_update(void)
 /**
   * @}
   */
-  
+
 /**
   * @}
   */

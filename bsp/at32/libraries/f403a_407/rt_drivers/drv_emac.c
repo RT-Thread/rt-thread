@@ -179,14 +179,14 @@ static error_status emac_phy_register_reset(void)
     uint16_t data = 0;
     uint32_t timeout = 0;
     uint32_t i = 0;
-    
+
     if(emac_phy_register_write(phy_addr, PHY_CONTROL_REG, PHY_RESET_BIT) == ERROR)
     {
         return ERROR;
     }
-    
+
     for(i = 0; i < 0x000FFFFF; i++);
-    
+
     do
     {
         timeout++;
@@ -195,7 +195,7 @@ static error_status emac_phy_register_reset(void)
             return ERROR;
         }
     } while((data & PHY_RESET_BIT) && (timeout < PHY_TIMEOUT));
-    
+
     for(i = 0; i < 0x00FFFFF; i++);
     if(timeout == PHY_TIMEOUT)
     {
@@ -221,7 +221,7 @@ static error_status emac_speed_config(emac_auto_negotiation_type nego, emac_dupl
               return ERROR;
             }
         } while(!(data & PHY_LINKED_STATUS_BIT) && (timeout < PHY_TIMEOUT));
-        
+
         if(timeout == PHY_TIMEOUT)
         {
             return ERROR;
@@ -334,7 +334,7 @@ static error_status emac_phy_init(emac_control_config_type *control_para)
     {
         return ERROR;
     }
-    
+
     emac_control_config(control_para);
     return SUCCESS;
 }

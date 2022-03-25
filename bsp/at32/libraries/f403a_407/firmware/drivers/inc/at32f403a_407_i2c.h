@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -44,11 +44,11 @@ extern "C" {
   * @{
   */
 
-/** @defgroup I2C_sts1_flags_definition 
+/** @defgroup I2C_sts1_flags_definition
   * @brief  i2c sts1 flag
   * @{
   */
- 
+
 #define I2C_STARTF_FLAG                  ((uint32_t)0x00000001) /*!< i2c start condition generation complete flag */
 #define I2C_ADDR7F_FLAG                  ((uint32_t)0x00000002) /*!< i2c 0~7 bit address match flag */
 #define I2C_TDC_FLAG                     ((uint32_t)0x00000004) /*!< i2c transmit data complete flag */
@@ -68,11 +68,11 @@ extern "C" {
   * @}
   */
 
-/** @defgroup I2C_sts2_flags_definition 
+/** @defgroup I2C_sts2_flags_definition
   * @brief  i2c sts2 flag
   * @{
   */
-  
+
 #define I2C_TRMODE_FLAG                  ((uint32_t)0x10010000) /*!< i2c transmission mode */
 #define I2C_BUSYF_FLAG                   ((uint32_t)0x10020000) /*!< i2c bus busy flag transmission mode */
 #define I2C_DIRF_FLAG                    ((uint32_t)0x10040000) /*!< i2c transmission direction flag */
@@ -85,12 +85,12 @@ extern "C" {
   * @}
   */
 
-/** @defgroup I2C_interrupts_definition 
-  * @brief i2c interrupt   
+/** @defgroup I2C_interrupts_definition
+  * @brief i2c interrupt
   * @{
   */
-                                   
-#define I2C_DATA_INT                     ((uint16_t)0x0400) /*!< i2c data transmission interrupt */ 
+
+#define I2C_DATA_INT                     ((uint16_t)0x0400) /*!< i2c data transmission interrupt */
 #define I2C_EVT_INT                      ((uint16_t)0x0200) /*!< i2c event interrupt */
 #define I2C_ERR_INT                      ((uint16_t)0x0100) /*!< i2c error interrupt */
 
@@ -101,13 +101,13 @@ extern "C" {
 /** @defgroup I2C_exported_types
   * @{
   */
-  
+
 /**
   * @brief i2c master receiving mode acknowledge control
   */
 typedef enum
 {
-  I2C_MASTER_ACK_CURRENT                 = 0x00, /*!< acken bit acts on the current byte */ 
+  I2C_MASTER_ACK_CURRENT                 = 0x00, /*!< acken bit acts on the current byte */
   I2C_MASTER_ACK_NEXT                    = 0x01  /*!< acken bit acts on the next byte */
 } i2c_master_ack_type;
 
@@ -116,7 +116,7 @@ typedef enum
   */
 typedef enum
 {
-  I2C_PEC_POSITION_CURRENT               = 0x00, /*!< the current byte is pec */ 
+  I2C_PEC_POSITION_CURRENT               = 0x00, /*!< the current byte is pec */
   I2C_PEC_POSITION_NEXT                  = 0x01  /*!< the next byte is pec */
 } i2c_pec_position_type;
 
@@ -126,7 +126,7 @@ typedef enum
   */
 typedef enum
 {
-  I2C_SMBUS_ALERT_HIGH                   = 0x00, /*!< smbus alert pin set high */ 
+  I2C_SMBUS_ALERT_HIGH                   = 0x00, /*!< smbus alert pin set high */
   I2C_SMBUS_ALERT_LOW                    = 0x01  /*!< smbus alert pin set low */
 } i2c_smbus_alert_set_type;
 
@@ -173,7 +173,7 @@ typedef enum
 typedef struct
 {
   /**
-    * @brief i2c ctrl1 register, offset:0x00 
+    * @brief i2c ctrl1 register, offset:0x00
     */
   union
   {
@@ -201,7 +201,7 @@ typedef struct
   };
 
   /**
-    * @brief i2c ctrl2 register, offset:0x04 
+    * @brief i2c ctrl2 register, offset:0x04
     */
   union
   {

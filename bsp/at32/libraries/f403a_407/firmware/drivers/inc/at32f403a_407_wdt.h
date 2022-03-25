@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -31,8 +31,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
- 
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "at32f403a_407.h"
 
@@ -45,14 +45,14 @@ extern "C" {
   */
 
 
-/** @defgroup WDT_flags_definition 
+/** @defgroup WDT_flags_definition
   * @brief wdt flag
   * @{
   */
 
-#define WDT_DIVF_UPDATE_FLAG             ((uint16_t)0x0001) /*!< wdt division value update complete flag */    
-#define WDT_RLDF_UPDATE_FLAG             ((uint16_t)0x0002) /*!< wdt reload value update complete flag */   
- 
+#define WDT_DIVF_UPDATE_FLAG             ((uint16_t)0x0001) /*!< wdt division value update complete flag */
+#define WDT_RLDF_UPDATE_FLAG             ((uint16_t)0x0002) /*!< wdt reload value update complete flag */
+
 /**
   * @}
   */
@@ -60,12 +60,12 @@ extern "C" {
 /** @defgroup WDT_exported_types
   * @{
   */
-  
-/**                                      
-  * @brief wdt division value type       
-  */                                     
-typedef enum                             
-{                                        
+
+/**
+  * @brief wdt division value type
+  */
+typedef enum
+{
   WDT_CLK_DIV_4                          = 0x00, /*!< wdt clock divider value is 4 */
   WDT_CLK_DIV_8                          = 0x01, /*!< wdt clock divider value is 8 */
   WDT_CLK_DIV_16                         = 0x02, /*!< wdt clock divider value is 16 */
@@ -73,15 +73,15 @@ typedef enum
   WDT_CLK_DIV_64                         = 0x04, /*!< wdt clock divider value is 64 */
   WDT_CLK_DIV_128                        = 0x05, /*!< wdt clock divider value is 128 */
   WDT_CLK_DIV_256                        = 0x06  /*!< wdt clock divider value is 256 */
-} wdt_division_type;                     
-                                         
-/**                                      
-  * @brief wdt cmd value type            
-  */                                     
-typedef enum                             
-{                                        
-  WDT_CMD_LOCK                           = 0x0000, /*!< disable write protection command */   
-  WDT_CMD_UNLOCK                         = 0x5555, /*!< enable write protection command */ 
+} wdt_division_type;
+
+/**
+  * @brief wdt cmd value type
+  */
+typedef enum
+{
+  WDT_CMD_LOCK                           = 0x0000, /*!< disable write protection command */
+  WDT_CMD_UNLOCK                         = 0x5555, /*!< enable write protection command */
   WDT_CMD_ENABLE                         = 0xCCCC, /*!< enable wdt command */
   WDT_CMD_RELOAD                         = 0xAAAA  /*!< reload command */
 } wdt_cmd_value_type;
@@ -90,10 +90,10 @@ typedef enum
   * @brief type define wdt register all
   */
 typedef struct
-{  
-  
+{
+
   /**
-    * @brief wdt cmd register, offset:0x00 
+    * @brief wdt cmd register, offset:0x00
     */
   union
   {
@@ -104,9 +104,9 @@ typedef struct
       __IO uint32_t reserved1            : 16;/* [31:16] */
     } cmd_bit;
   };
-  
+
   /**
-    * @brief wdt div register, offset:0x04 
+    * @brief wdt div register, offset:0x04
     */
   union
   {
@@ -117,9 +117,9 @@ typedef struct
       __IO uint32_t reserved1            : 29;/* [31:3] */
     } div_bit;
   };
-  
+
    /**
-    * @brief wdt rld register, offset:0x08 
+    * @brief wdt rld register, offset:0x08
     */
   union
   {
@@ -130,9 +130,9 @@ typedef struct
       __IO uint32_t reserved1            : 20;/* [31:12] */
     } rld_bit;
   };
-   
+
   /**
-  * @brief wdt sts register, offset:0x0C 
+  * @brief wdt sts register, offset:0x0C
   */
   union
   {
@@ -144,9 +144,9 @@ typedef struct
       __IO uint32_t reserved1            : 30;/* [31:2] */
     } sts_bit;
   };
-   
-} wdt_type;  
-  
+
+} wdt_type;
+
 /**
   * @}
   */

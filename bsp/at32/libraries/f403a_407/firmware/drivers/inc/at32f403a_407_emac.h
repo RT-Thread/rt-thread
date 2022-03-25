@@ -44,9 +44,9 @@ extern "C" {
 /** @addtogroup EMAC
   * @{
   */
- 
+
 #define PHY_TIMEOUT                      (0x0FFFFFFF) /*!< timeout for phy response */
- 
+
 /** @defgroup EMAC_smi_clock_border_definition
   * @brief emac smi clock border
   * @{

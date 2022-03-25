@@ -203,16 +203,16 @@ void emac_stop(void)
 {
   /* stop dma transmission */
   emac_dma_operations_set(EMAC_DMA_OPS_START_STOP_TRANSMIT, FALSE);
-  
+
   /* stop dma reception */
   emac_dma_operations_set(EMAC_DMA_OPS_START_STOP_RECEIVE, FALSE);
-  
+
   /* stop receive state machine of the mac for reception from the mii */
   emac_receiver_enable(FALSE);
-  
+
   /* flush transmit fifo */
   emac_dma_operations_set(EMAC_DMA_OPS_FLUSH_TRANSMIT_FIFO, TRUE);
-  
+
   /* stop transmit state machine of the mac for transmission on the mii */
   emac_trasmitter_enable(FALSE);
 }
@@ -285,9 +285,9 @@ error_status emac_phy_register_read(uint8_t address, uint8_t reg, uint16_t *data
 void emac_receiver_enable(confirm_state new_state)
 {
   __IO uint32_t temp = 0;
-  
+
   EMAC->ctrl_bit.re = new_state;
-  
+
   temp = EMAC->ctrl;
   emac_delay(1);
   EMAC->ctrl = temp;
@@ -301,9 +301,9 @@ void emac_receiver_enable(confirm_state new_state)
 void emac_trasmitter_enable(confirm_state new_state)
 {
   __IO uint32_t temp = 0;
-  
+
   EMAC->ctrl_bit.te = new_state;
-  
+
   temp = EMAC->ctrl;
   emac_delay(1);
   EMAC->ctrl = temp;
@@ -2312,7 +2312,7 @@ flag_status emac_dma_flag_get(uint32_t dma_flag)
   *         - EMAC_DMA_FBEI_FLAG
   *         - EMAC_DMA_ERI_FLAG
   *         - EMAC_DMA_AIS_FLAG
-  *         - EMAC_DMA_NIS_FLAG      
+  *         - EMAC_DMA_NIS_FLAG
   * @retval none
   */
 void emac_dma_flag_clear(uint32_t dma_flag)

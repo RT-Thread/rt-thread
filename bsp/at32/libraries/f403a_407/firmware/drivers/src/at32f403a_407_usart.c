@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -41,7 +41,7 @@
 /** @defgroup USART_private_functions
   * @{
   */
-  
+
 /**
   * @brief  deinitialize the usart peripheral registers to their default reset values.
   * @param  usart_x: select the usart or the uart peripheral.
@@ -99,7 +99,7 @@ void usart_reset(usart_type* usart_x)
   *         this parameter can be one of the following values:
   *         USART1, USART2, USART3, UART4 ,UART5, USART6, UART7 or UART8.
   * @param  baud_rate: configure the usart communication baud rate.
-  * @param  data_bit: data bits transmitted or received in a frame    
+  * @param  data_bit: data bits transmitted or received in a frame
   *         this parameter can be one of the following values:
   *         - USART_DATA_8BITS
   *         - USART_DATA_9BITS.
@@ -115,7 +115,7 @@ void usart_init(usart_type* usart_x, uint32_t baud_rate, usart_data_bit_num_type
 {
   crm_clocks_freq_type clocks_freq;
   uint32_t apb_clock, temp_val;
-  crm_clocks_freq_get(&clocks_freq);    
+  crm_clocks_freq_get(&clocks_freq);
   if((usart_x == USART1) || (usart_x == USART6) ||  (usart_x == UART7) || (usart_x == UART8))
   {
     apb_clock = clocks_freq.apb2_freq;
@@ -135,7 +135,7 @@ void usart_init(usart_type* usart_x, uint32_t baud_rate, usart_data_bit_num_type
   }
   usart_x->baudr_bit.div = temp_val;
   usart_x->ctrl1_bit.dbn = data_bit;
-  usart_x->ctrl2_bit.stopbn = stop_bit; 
+  usart_x->ctrl2_bit.stopbn = stop_bit;
 }
 
 /**
@@ -155,17 +155,17 @@ void usart_parity_selection_config(usart_type* usart_x, usart_parity_selection_t
   if(parity == USART_PARITY_NONE)
   {
     usart_x->ctrl1_bit.psel = FALSE;
-    usart_x->ctrl1_bit.pen = FALSE;   
+    usart_x->ctrl1_bit.pen = FALSE;
   }
   else if(parity == USART_PARITY_EVEN)
   {
     usart_x->ctrl1_bit.psel = FALSE;
-    usart_x->ctrl1_bit.pen = TRUE;   
+    usart_x->ctrl1_bit.pen = TRUE;
   }
   else if(parity == USART_PARITY_ODD)
   {
     usart_x->ctrl1_bit.psel = TRUE;
-    usart_x->ctrl1_bit.pen = TRUE;   
+    usart_x->ctrl1_bit.pen = TRUE;
   }
 }
 
@@ -231,9 +231,9 @@ void usart_receiver_enable(usart_type* usart_x, confirm_state new_state)
   */
 void usart_clock_config(usart_type* usart_x, usart_clock_polarity_type clk_pol, usart_clock_phase_type clk_pha, usart_lbcp_type clk_lb)
 {
-  usart_x->ctrl2_bit.clkpol = clk_pol; 
+  usart_x->ctrl2_bit.clkpol = clk_pol;
   usart_x->ctrl2_bit.clkpha = clk_pha;
-  usart_x->ctrl2_bit.lbcp = clk_lb; 
+  usart_x->ctrl2_bit.lbcp = clk_lb;
 }
 
 /**
@@ -270,7 +270,7 @@ void usart_clock_enable(usart_type* usart_x, confirm_state new_state)
   * @retval none
   */
 void usart_interrupt_enable(usart_type* usart_x, uint32_t usart_int, confirm_state new_state)
-{  
+{
   if(new_state == TRUE)
     PERIPH_REG((uint32_t)usart_x, usart_int) |= PERIPH_REG_BIT(usart_int);
   else
@@ -375,7 +375,7 @@ void usart_break_bit_num_set(usart_type* usart_x, usart_break_bit_num_type break
   */
 void usart_lin_mode_enable(usart_type* usart_x, confirm_state new_state)
 {
-  usart_x->ctrl2_bit.linen = new_state; 
+  usart_x->ctrl2_bit.linen = new_state;
 }
 
 /**
@@ -412,7 +412,7 @@ uint16_t usart_data_receive(usart_type* usart_x)
   */
 void usart_break_send(usart_type* usart_x)
 {
-  usart_x->ctrl1_bit.sbf = TRUE; 
+  usart_x->ctrl1_bit.sbf = TRUE;
 }
 
 /**
@@ -426,7 +426,7 @@ void usart_break_send(usart_type* usart_x)
   */
 void usart_smartcard_guard_time_set(usart_type* usart_x, uint8_t guard_time_val)
 {
-  usart_x->gdiv_bit.scgt = guard_time_val; 
+  usart_x->gdiv_bit.scgt = guard_time_val;
 }
 
 /**
@@ -440,7 +440,7 @@ void usart_smartcard_guard_time_set(usart_type* usart_x, uint8_t guard_time_val)
   */
 void usart_irda_smartcard_division_set(usart_type* usart_x, uint8_t div_val)
 {
-  usart_x->gdiv_bit.isdiv = div_val; 
+  usart_x->gdiv_bit.isdiv = div_val;
 }
 
 /**
@@ -455,7 +455,7 @@ void usart_irda_smartcard_division_set(usart_type* usart_x, uint8_t div_val)
   */
 void usart_smartcard_mode_enable(usart_type* usart_x, confirm_state new_state)
 {
-  usart_x->ctrl3_bit.scmen = new_state; 
+  usart_x->ctrl3_bit.scmen = new_state;
 }
 
 /**
@@ -470,7 +470,7 @@ void usart_smartcard_mode_enable(usart_type* usart_x, confirm_state new_state)
   */
 void usart_smartcard_nack_set(usart_type* usart_x, confirm_state new_state)
 {
-  usart_x->ctrl3_bit.scnacken = new_state; 
+  usart_x->ctrl3_bit.scnacken = new_state;
 }
 
 /**
@@ -484,7 +484,7 @@ void usart_smartcard_nack_set(usart_type* usart_x, confirm_state new_state)
   */
 void usart_single_line_halfduplex_select(usart_type* usart_x, confirm_state new_state)
 {
-  usart_x->ctrl3_bit.slben = new_state; 
+  usart_x->ctrl3_bit.slben = new_state;
 }
 
 /**
@@ -498,7 +498,7 @@ void usart_single_line_halfduplex_select(usart_type* usart_x, confirm_state new_
   */
 void usart_irda_mode_enable(usart_type* usart_x, confirm_state new_state)
 {
-  usart_x->ctrl3_bit.irdaen = new_state; 
+  usart_x->ctrl3_bit.irdaen = new_state;
 }
 
 /**
@@ -512,7 +512,7 @@ void usart_irda_mode_enable(usart_type* usart_x, confirm_state new_state)
   */
 void usart_irda_low_power_enable(usart_type* usart_x, confirm_state new_state)
 {
-  usart_x->ctrl3_bit.irdalp = new_state; 
+  usart_x->ctrl3_bit.irdalp = new_state;
 }
 
 /**
@@ -549,7 +549,7 @@ void usart_hardware_flow_control_set(usart_type* usart_x,usart_hardware_flow_con
   {
     usart_x->ctrl3_bit.rtsen = TRUE;
     usart_x->ctrl3_bit.ctsen = TRUE;
-  }  
+  }
 }
 
 /**
@@ -591,9 +591,9 @@ flag_status usart_flag_get(usart_type* usart_x, uint32_t flag)
   * @param  flag: specifies the flag to clear.
   *         this parameter can be any combination of the following values:
   *         - USART_CTSCF_FLAG: (not available for UART4,UART5,USART6,UART7 and UART8).
-  *         - USART_BFF_FLAG:  
-  *         - USART_TDC_FLAG:   
-  *         - USART_RDBF_FLAG: 
+  *         - USART_BFF_FLAG:
+  *         - USART_TDC_FLAG:
+  *         - USART_RDBF_FLAG:
   * @note
   *         - USART_PERR_FLAG, USART_FERR_FLAG, USART_NERR_FLAG, USART_ROERR_FLAG and USART_IDLEF_FLAG are cleared by software
   *           sequence: a read operation to usart sts register (usart_flag_get())

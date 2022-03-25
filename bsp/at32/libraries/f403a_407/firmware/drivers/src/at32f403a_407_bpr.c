@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -34,20 +34,20 @@
   * @brief BPR driver modules
   * @{
   */
-    
+
 #ifdef BPR_MODULE_ENABLED
 
 /** @defgroup BPR_private_functions
   * @{
   */
 
-/** 
+/**
   * @brief  bpr reset by crm reset register
   * @param  none
   * @retval none
   */
 void bpr_reset(void)
-{  
+{
   crm_battery_powered_domain_reset(TRUE);
   crm_battery_powered_domain_reset(FALSE);
 }
@@ -57,8 +57,8 @@ void bpr_reset(void)
   * @param  flag: specifies the flag to check.
   *         this parameter can be one of the following values:
   *         - BPR_TAMPER_INTERRUPT_FLAG: tamper interrupt flag
-  *         - BPR_TAMPER_EVENT_FLAG:   tamper event flag     
-  * @retval state of tamper event flag                            
+  *         - BPR_TAMPER_EVENT_FLAG:   tamper event flag
+  * @retval state of tamper event flag
   */
 flag_status bpr_flag_get(uint32_t flag)
 {
@@ -73,11 +73,11 @@ flag_status bpr_flag_get(uint32_t flag)
 }
 
 /**
-  * @brief  clear bpr tamper flag  
+  * @brief  clear bpr tamper flag
   * @param  flag: specifies the flag to clear.
   *         this parameter can be one of the following values:
   *         - BPR_TAMPER_INTERRUPT_FLAG: tamper interrupt flag
-  *         - BPR_TAMPER_EVENT_FLAG:   tamper event flag   
+  *         - BPR_TAMPER_EVENT_FLAG:   tamper event flag
   * @retval none
   */
 void bpr_flag_clear(uint32_t flag)
@@ -93,8 +93,8 @@ void bpr_flag_clear(uint32_t flag)
 }
 
 /**
-  * @brief  enable or disable bpr tamper interrupt  
-  * @param  new_state (TRUE or FALSE) 
+  * @brief  enable or disable bpr tamper interrupt
+  * @param  new_state (TRUE or FALSE)
   * @retval none
   */
 void bpr_interrupt_enable(confirm_state new_state)
@@ -103,74 +103,74 @@ void bpr_interrupt_enable(confirm_state new_state)
 }
 
 /**
-  * @brief  read bpr bpr data 
+  * @brief  read bpr bpr data
   * @param  bpr_data
   *         this parameter can be one of the following values:
-  *         - BPR_DATA1                    
-  *         - BPR_DATA2 
-  *         ... 
-  *         - BPR_DATA41                           
-  *         - BPR_DATA42         
-  * @retval none                            
+  *         - BPR_DATA1
+  *         - BPR_DATA2
+  *         ...
+  *         - BPR_DATA41
+  *         - BPR_DATA42
+  * @retval none
   */
 uint16_t bpr_data_read(bpr_data_type bpr_data)
-{   
+{
   return (*(__IO uint16_t *)(BPR_BASE + bpr_data));
 }
 
 /**
-  * @brief  write bpr data 
+  * @brief  write bpr data
   * @param  bpr_data
   *         this parameter can be one of the following values:
-  *         - BPR_DATA1                    
-  *         - BPR_DATA2 
-  *         ... 
-  *         - BPR_DATA41                           
-  *         - BPR_DATA42    
-  * @param  data_value (0x0000~0xFFFF) 
-  * @retval none                            
+  *         - BPR_DATA1
+  *         - BPR_DATA2
+  *         ...
+  *         - BPR_DATA41
+  *         - BPR_DATA42
+  * @param  data_value (0x0000~0xFFFF)
+  * @retval none
   */
 void bpr_data_write(bpr_data_type bpr_data, uint16_t data_value)
-{   
+{
   (*(__IO uint32_t *)(BPR_BASE + bpr_data)) = data_value;
 }
 
 /**
-  * @brief  select bpr rtc output 
+  * @brief  select bpr rtc output
   * @param  output_source
   *         this parameter can be one of the following values:
-  *         - BPR_RTC_OUTPUT_NONE: output disable.                     
-  *         - BPR_RTC_OUTPUT_CLOCK_CAL_BEFORE: output clock before calibration.       
-  *         - BPR_RTC_OUTPUT_ALARM: output alarm event with pluse mode.                 
-  *         - BPR_RTC_OUTPUT_SECOND: output second event with pluse mode.            
-  *         - BPR_RTC_OUTPUT_CLOCK_CAL_AFTER: output clock after calibration.       
-  *         - BPR_RTC_OUTPUT_ALARM_TOGGLE: output alarm event with toggle mode.       
-  *         - BPR_RTC_OUTPUT_SECOND_TOGGLE: output second event with toggle mode.  
-  * @retval none                            
+  *         - BPR_RTC_OUTPUT_NONE: output disable.
+  *         - BPR_RTC_OUTPUT_CLOCK_CAL_BEFORE: output clock before calibration.
+  *         - BPR_RTC_OUTPUT_ALARM: output alarm event with pluse mode.
+  *         - BPR_RTC_OUTPUT_SECOND: output second event with pluse mode.
+  *         - BPR_RTC_OUTPUT_CLOCK_CAL_AFTER: output clock after calibration.
+  *         - BPR_RTC_OUTPUT_ALARM_TOGGLE: output alarm event with toggle mode.
+  *         - BPR_RTC_OUTPUT_SECOND_TOGGLE: output second event with toggle mode.
+  * @retval none
   */
 void bpr_rtc_output_select(bpr_rtc_output_type output_source)
-{  
-  /* clear cco,asoe,asos,ccos,togen bits */  
+{
+  /* clear cco,asoe,asos,ccos,togen bits */
   BPR->rtccal &= (uint32_t)~0x0F80;
 
-  /* set output_source value */  
-  BPR->rtccal |= output_source; 
+  /* set output_source value */
+  BPR->rtccal |= output_source;
 }
 
 /**
-  * @brief  set rtc clock calibration value  
-  * @param  calibration_value (0x00~0x7f)            
-  * @retval none                            
+  * @brief  set rtc clock calibration value
+  * @param  calibration_value (0x00~0x7f)
+  * @retval none
   */
 void bpr_rtc_clock_calibration_value_set(uint8_t calibration_value)
-{  
-  /* set rtc clock calibration value */  
-  BPR->rtccal_bit.calval= calibration_value; 
+{
+  /* set rtc clock calibration value */
+  BPR->rtccal_bit.calval= calibration_value;
 }
 
 /**
-  * @brief  enable or disable bpr tamper pin  
-  * @param  new_state (TRUE or FALSE) 
+  * @brief  enable or disable bpr tamper pin
+  * @param  new_state (TRUE or FALSE)
   * @retval none
   */
 void bpr_tamper_pin_enable(confirm_state new_state)
@@ -179,12 +179,12 @@ void bpr_tamper_pin_enable(confirm_state new_state)
 }
 
 /**
-  * @brief  set bpr tamper pin active level 
-  * @param  active_level 
+  * @brief  set bpr tamper pin active level
+  * @param  active_level
   *         this parameter can be one of the following values:
-  *         - BPR_TAMPER_PIN_ACTIVE_HIGH: tamper pin input active level is high.  
-  *         - BPR_TAMPER_PIN_ACTIVE_LOW: tamper pin input active level is low.                            
-  * @retval none                            
+  *         - BPR_TAMPER_PIN_ACTIVE_HIGH: tamper pin input active level is high.
+  *         - BPR_TAMPER_PIN_ACTIVE_LOW: tamper pin input active level is low.
+  * @retval none
   */
 void bpr_tamper_pin_active_level_set(bpr_tamper_pin_active_level_type active_level)
 {

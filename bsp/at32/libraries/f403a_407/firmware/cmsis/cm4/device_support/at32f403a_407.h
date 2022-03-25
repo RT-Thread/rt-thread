@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -42,7 +42,7 @@ extern "C" {
 /** @addtogroup AT32F403A_407
   * @{
   */
-  
+
 /** @addtogroup Library_configuration_section
   * @{
   */
@@ -81,8 +81,8 @@ extern "C" {
 #ifndef USE_STDPERIPH_DRIVER
 /**
   * @brief comment the line below if you will not use the peripherals drivers.
-  * in this case, these drivers will not be included and the application code will 
-  * be based on direct access to peripherals registers 
+  * in this case, these drivers will not be included and the application code will
+  * be based on direct access to peripherals registers
   */
   #ifdef _RTE_
     #include "RTE_Components.h"
@@ -293,7 +293,7 @@ typedef enum IRQn
 
 /** @addtogroup Exported_types
   * @{
-  */  
+  */
 
 typedef int32_t  INT32;
 typedef int16_t  INT16;
@@ -335,19 +335,19 @@ typedef __I uint16_t vuc16;   /*!< read only */
 typedef __I uint8_t  vuc8;    /*!< read only */
 
 /**
-  * @brief flag status 
+  * @brief flag status
   */
-typedef enum {RESET = 0, SET = !RESET} flag_status;  
+typedef enum {RESET = 0, SET = !RESET} flag_status;
 
 /**
   * @brief confirm state
-  */       
-typedef enum {FALSE = 0, TRUE = !FALSE} confirm_state;     
+  */
+typedef enum {FALSE = 0, TRUE = !FALSE} confirm_state;
 
 /**
   * @brief error status
-  */  
-typedef enum {ERROR = 0, SUCCESS = !ERROR} error_status;   
+  */
+typedef enum {ERROR = 0, SUCCESS = !ERROR} error_status;
 
 /**
   * @}
@@ -415,7 +415,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} error_status;
 #define BPR_BASE                         (APB1PERIPH_BASE + 0x6C00)
 #define PWC_BASE                         (APB1PERIPH_BASE + 0x7000)
 #define DAC_BASE                         (APB1PERIPH_BASE + 0x7400)
-/* apb2 bus base address */              
+/* apb2 bus base address */
 #define IOMUX_BASE                       (APB2PERIPH_BASE + 0x0000)
 #define EXINT_BASE                       (APB2PERIPH_BASE + 0x0400)
 #define GPIOA_BASE                       (APB2PERIPH_BASE + 0x0800)
@@ -441,7 +441,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} error_status;
 #define I2S2EXT_BASE                     (APB2PERIPH_BASE + 0x6C00)
 #define I2S3EXT_BASE                     (APB2PERIPH_BASE + 0x7000)
 #define SDIO1_BASE                       (APB2PERIPH_BASE + 0x8000)
-/* ahb bus base address */               
+/* ahb bus base address */
 #define DMA1_BASE                        (AHBPERIPH_BASE + 0x0000)
 #define DMA1_CHANNEL1_BASE               (AHBPERIPH_BASE + 0x0008)
 #define DMA1_CHANNEL2_BASE               (AHBPERIPH_BASE + 0x001C)
@@ -499,7 +499,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} error_status;
 #define BPR_BASE                         (APB1PERIPH_BASE + 0x6C00)
 #define PWC_BASE                         (APB1PERIPH_BASE + 0x7000)
 #define DAC_BASE                         (APB1PERIPH_BASE + 0x7400)
-/* apb2 bus base address */              
+/* apb2 bus base address */
 #define IOMUX_BASE                       (APB2PERIPH_BASE + 0x0000)
 #define EXINT_BASE                       (APB2PERIPH_BASE + 0x0400)
 #define GPIOA_BASE                       (APB2PERIPH_BASE + 0x0800)
@@ -525,7 +525,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} error_status;
 #define I2S2EXT_BASE                     (APB2PERIPH_BASE + 0x6C00)
 #define I2S3EXT_BASE                     (APB2PERIPH_BASE + 0x7000)
 #define SDIO1_BASE                       (APB2PERIPH_BASE + 0x8000)
-/* ahb bus base address */               
+/* ahb bus base address */
 #define DMA1_BASE                        (AHBPERIPH_BASE + 0x0000)
 #define DMA1_CHANNEL1_BASE               (AHBPERIPH_BASE + 0x0008)
 #define DMA1_CHANNEL2_BASE               (AHBPERIPH_BASE + 0x001C)
@@ -566,7 +566,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} error_status;
   * @}
   */
 
-#include "at32f403a_407_def.h"  
+#include "at32f403a_407_def.h"
 #include "at32f403a_407_conf.h"
 
 #ifdef __cplusplus

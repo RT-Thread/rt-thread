@@ -227,15 +227,15 @@ void dac_wave_generate(dac_select_type dac_select, dac_wave_type dac_wave)
   *         - DAC2_SELECT
   * @param  dac_mask_amplitude
   *         this parameter can be one of the following values:
-  *         - DAC_LSFR_BIT0_AMPLITUDE_1    
-  *         - DAC_LSFR_BIT10_AMPLITUDE_3   
-  *         - DAC_LSFR_BIT20_AMPLITUDE_7   
-  *         - DAC_LSFR_BIT30_AMPLITUDE_15  
-  *         - DAC_LSFR_BIT40_AMPLITUDE_31  
-  *         - DAC_LSFR_BIT50_AMPLITUDE_63  
-  *         - DAC_LSFR_BIT60_AMPLITUDE_127 
-  *         - DAC_LSFR_BIT70_AMPLITUDE_255 
-  *         - DAC_LSFR_BIT80_AMPLITUDE_511 
+  *         - DAC_LSFR_BIT0_AMPLITUDE_1
+  *         - DAC_LSFR_BIT10_AMPLITUDE_3
+  *         - DAC_LSFR_BIT20_AMPLITUDE_7
+  *         - DAC_LSFR_BIT30_AMPLITUDE_15
+  *         - DAC_LSFR_BIT40_AMPLITUDE_31
+  *         - DAC_LSFR_BIT50_AMPLITUDE_63
+  *         - DAC_LSFR_BIT60_AMPLITUDE_127
+  *         - DAC_LSFR_BIT70_AMPLITUDE_255
+  *         - DAC_LSFR_BIT80_AMPLITUDE_511
   *         - DAC_LSFR_BIT90_AMPLITUDE_1023
   *         - DAC_LSFR_BITA0_AMPLITUDE_2047
   *         - DAC_LSFR_BITB0_AMPLITUDE_4095

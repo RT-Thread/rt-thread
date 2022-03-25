@@ -106,7 +106,7 @@ Infinite_Loop:
 * The minimal vector table for a Cortex M3. Note that the proper constructs
 * must be placed on this to ensure that it ends up at physical address
 * 0x0000.0000.
-* 
+*
 *******************************************************************************/
    .section  .isr_vector,"a",%progbits
   .type  g_pfnVectors, %object
@@ -130,7 +130,7 @@ g_pfnVectors:
   .word  0
   .word  PendSV_Handler
   .word  SysTick_Handler
-  
+
   /* External Interrupts */
   .word  WWDT_IRQHandler                     /* Window Watchdog Timer                   */
   .word  PVM_IRQHandler                      /* PVM through EXINT Line detect           */
@@ -216,20 +216,20 @@ g_pfnVectors:
 
 /*******************************************************************************
 *
-* Provide weak aliases for each Exception handler to the Default_Handler. 
-* As they are weak aliases, any function with the same name will override 
+* Provide weak aliases for each Exception handler to the Default_Handler.
+* As they are weak aliases, any function with the same name will override
 * this definition.
-* 
+*
 *******************************************************************************/
    .weak      NMI_Handler
    .thumb_set NMI_Handler,Default_Handler
-  
+
    .weak      HardFault_Handler
    .thumb_set HardFault_Handler,Default_Handler
-  
+
    .weak      MemManage_Handler
    .thumb_set MemManage_Handler,Default_Handler
-  
+
    .weak      BusFault_Handler
    .thumb_set BusFault_Handler,Default_Handler
 
@@ -246,10 +246,10 @@ g_pfnVectors:
    .thumb_set PendSV_Handler,Default_Handler
 
    .weak      SysTick_Handler
-   .thumb_set SysTick_Handler,Default_Handler              
-  
+   .thumb_set SysTick_Handler,Default_Handler
+
    .weak      WWDT_IRQHandler
-   .thumb_set WWDT_IRQHandler,Default_Handler      
+   .thumb_set WWDT_IRQHandler,Default_Handler
 
    .weak      PVM_IRQHandler
    .thumb_set PVM_IRQHandler,Default_Handler
@@ -273,7 +273,7 @@ g_pfnVectors:
    .thumb_set EXINT1_IRQHandler,Default_Handler
 
    .weak      EXINT2_IRQHandler
-   .thumb_set EXINT2_IRQHandler,Default_Handler 
+   .thumb_set EXINT2_IRQHandler,Default_Handler
 
    .weak      EXINT3_IRQHandler
    .thumb_set EXINT3_IRQHandler,Default_Handler
@@ -291,7 +291,7 @@ g_pfnVectors:
    .thumb_set DMA1_Channel3_IRQHandler,Default_Handler
 
    .weak      DMA1_Channel4_IRQHandler
-   .thumb_set DMA1_Channel4_IRQHandler,Default_Handler 
+   .thumb_set DMA1_Channel4_IRQHandler,Default_Handler
 
    .weak      DMA1_Channel5_IRQHandler
    .thumb_set DMA1_Channel5_IRQHandler,Default_Handler
@@ -443,10 +443,10 @@ g_pfnVectors:
    .weak      CAN2_TX_IRQHandler
    .thumb_set CAN2_TX_IRQHandler,Default_Handler
 
-   .weak      CAN2_RX0_IRQHandler 
+   .weak      CAN2_RX0_IRQHandler
    .thumb_set CAN2_RX0_IRQHandler ,Default_Handler
 
-   .weak      CAN2_RX1_IRQHandler 
+   .weak      CAN2_RX1_IRQHandler
    .thumb_set CAN2_RX1_IRQHandler ,Default_Handler
 
    .weak      CAN2_SE_IRQHandler

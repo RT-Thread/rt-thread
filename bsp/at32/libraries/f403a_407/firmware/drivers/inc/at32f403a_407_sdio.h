@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -45,10 +45,10 @@ extern "C" {
   */
 
 /** @defgroup SDIO_interrupts_definition
-  * @brief sdio interrupt  
+  * @brief sdio interrupt
   * @{
   */
-  
+
 #define SDIO_CMDFAIL_INT                 ((uint32_t)0x00000001) /*!< command response received check failed interrupt */
 #define SDIO_DTFAIL_INT                  ((uint32_t)0x00000002) /*!< data block sent/received check failed interrupt */
 #define SDIO_CMDTIMEOUT_INT              ((uint32_t)0x00000004) /*!< command response timerout interrupt */
@@ -76,9 +76,9 @@ extern "C" {
 /**
   * @}
   */
- 
-/** @defgroup SDIO_flags_definition 
-  * @brief sdio flag 
+
+/** @defgroup SDIO_flags_definition
+  * @brief sdio flag
   * @{
   */
 
@@ -109,11 +109,11 @@ extern "C" {
 /**
   * @}
   */
- 
+
 /** @defgroup SDIO_exported_types
   * @{
   */
-  
+
 /**
   * @brief sdio power state
   */
@@ -133,7 +133,7 @@ typedef enum
 } sdio_edge_phase_type;
 
 /**
-  * @brief sdio bus width 
+  * @brief sdio bus width
   */
 typedef enum
 {
@@ -143,7 +143,7 @@ typedef enum
 } sdio_bus_width_type;
 
 /**
-  * @brief sdio response type 
+  * @brief sdio response type
   */
 typedef enum
 {
@@ -153,7 +153,7 @@ typedef enum
 } sdio_reponse_type;
 
 /**
-  * @brief sdio wait type 
+  * @brief sdio wait type
   */
 typedef enum
 {
@@ -223,7 +223,7 @@ typedef enum
 } sdio_read_wait_mode_type;
 
 /**
-  * @brief sdio command structure 
+  * @brief sdio command structure
   */
 typedef struct
 {
@@ -234,7 +234,7 @@ typedef struct
 } sdio_command_struct_type;
 
 /**
-  * @brief sdio data structure 
+  * @brief sdio data structure
   */
 typedef struct
 {
@@ -251,7 +251,7 @@ typedef struct
 typedef struct
 {
   /**
-    * @brief sdio pwrctrl register, offset:0x00 
+    * @brief sdio pwrctrl register, offset:0x00
     */
   union
   {
@@ -264,7 +264,7 @@ typedef struct
   };
 
   /**
-    * @brief sdio clkctrl register, offset:0x04 
+    * @brief sdio clkctrl register, offset:0x04
     */
   union
   {

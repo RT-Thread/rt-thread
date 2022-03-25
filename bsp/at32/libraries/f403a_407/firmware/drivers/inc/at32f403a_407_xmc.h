@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -31,8 +31,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
- 
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "at32f403a_407.h"
 
@@ -44,7 +44,7 @@ extern "C" {
   * @{
   */
 
-/** @defgroup XMC_exported_types 
+/** @defgroup XMC_exported_types
   * @{
   */
 
@@ -55,7 +55,7 @@ typedef enum
 {
   XMC_DATA_ADDR_MUX_DISABLE              = 0x00000000, /*!< xmc address/data multiplexing disable */
   XMC_DATA_ADDR_MUX_ENABLE               = 0x00000002  /*!< xmc address/data multiplexing enable */
-} xmc_data_addr_mux_type; 
+} xmc_data_addr_mux_type;
 
 /**
   * @brief xmc burst access mode type
@@ -64,7 +64,7 @@ typedef enum
 {
   XMC_BURST_MODE_DISABLE                 = 0x00000000, /*!< xmc burst mode disable */
   XMC_BURST_MODE_ENABLE                  = 0x00000100  /*!< xmc burst mode enable */
-} xmc_burst_access_mode_type; 
+} xmc_burst_access_mode_type;
 
 /**
   * @brief xmc asynchronous wait type
@@ -73,7 +73,7 @@ typedef enum
 {
   XMC_ASYN_WAIT_DISABLE                  = 0x00000000, /*!< xmc wait signal during asynchronous transfers disbale */
   XMC_ASYN_WAIT_ENABLE                   = 0x00008000  /*!< xmc wait signal during asynchronous transfers enable */
-} xmc_asyn_wait_type; 
+} xmc_asyn_wait_type;
 
 /**
   * @brief xmc wrapped mode type
@@ -82,7 +82,7 @@ typedef enum
 {
   XMC_WRAPPED_MODE_DISABLE               = 0x00000000, /*!< xmc direct wrapped burst is disbale */
   XMC_WRAPPED_MODE_ENABLE                = 0x00000400  /*!< xmc direct wrapped burst is enable */
-} xmc_wrap_mode_type; 
+} xmc_wrap_mode_type;
 
 /**
   * @brief xmc write operation type
@@ -91,7 +91,7 @@ typedef enum
 {
   XMC_WRITE_OPERATION_DISABLE            = 0x00000000, /*!< xmc write operations is disable */
   XMC_WRITE_OPERATION_ENABLE             = 0x00001000  /*!< xmc write operations is enable */
-} xmc_write_operation_type; 
+} xmc_write_operation_type;
 
 /**
   * @brief xmc wait signal type
@@ -100,7 +100,7 @@ typedef enum
 {
   XMC_WAIT_SIGNAL_DISABLE                = 0x00000000, /*!< xmc nwait signal is disable */
   XMC_WAIT_SIGNAL_ENABLE                 = 0x00002000  /*!< xmc nwait signal is enable */
-} xmc_wait_signal_type; 
+} xmc_wait_signal_type;
 
 /**
   * @brief xmc write burst type
@@ -109,7 +109,7 @@ typedef enum
 {
   XMC_WRITE_BURST_SYN_DISABLE            = 0x00000000, /*!< xmc write operations are always performed in asynchronous mode */
   XMC_WRITE_BURST_SYN_ENABLE             = 0x00080000  /*!< xmc write operations are performed in synchronous mode */
-} xmc_write_burst_type; 
+} xmc_write_burst_type;
 
 /**
   * @brief xmc extended mode type
@@ -127,7 +127,7 @@ typedef enum
 {
   XMC_WAIT_OPERATION_DISABLE             = 0x00000000, /*!< xmc wait operation for the nand flash memory bank disable */
   XMC_WAIT_OPERATION_ENABLE              = 0x00000002  /*!< xmc wait operation for the nand flash memory bank enable */
-} xmc_nand_wait_type; 
+} xmc_nand_wait_type;
 
 /**
   * @brief xmc ecc enable type
@@ -145,7 +145,7 @@ typedef enum
 {
   XMC_BANK1_NOR_SRAM1                    = 0x00000000, /*!< xmc nor/sram subbank1 */
   XMC_BANK1_NOR_SRAM4                    = 0x00000003  /*!< xmc nor/sram subbank4 */
-} xmc_nor_sram_subbank_type; 
+} xmc_nor_sram_subbank_type;
 
 /**
   * @brief xmc class bank type
@@ -153,101 +153,101 @@ typedef enum
 typedef enum
 {
   XMC_BANK2_NAND                         = 0x00000010, /*!< xmc nand flash bank2 */
-} xmc_class_bank_type; 
+} xmc_class_bank_type;
 
 /**
   * @brief xmc memory type
   */
 typedef enum
-{ 
+{
   XMC_DEVICE_SRAM                        = 0x00000000, /*!< xmc device choice sram */
   XMC_DEVICE_PSRAM                       = 0x00000004, /*!< xmc device choice psram */
   XMC_DEVICE_NOR                         = 0x00000008  /*!< xmc device choice nor flash */
-} xmc_memory_type; 
+} xmc_memory_type;
 
 /**
   * @brief xmc data width type
   */
 typedef enum
-{ 
+{
   XMC_BUSTYPE_8_BITS                     = 0x00000000, /*!< xmc databuss width 8bits */
-  XMC_BUSTYPE_16_BITS                    = 0x00000010  /*!< xmc databuss width 16bits */ 
-} xmc_data_width_type; 
+  XMC_BUSTYPE_16_BITS                    = 0x00000010  /*!< xmc databuss width 16bits */
+} xmc_data_width_type;
 
 /**
   * @brief xmc wait signal polarity type
   */
 typedef enum
-{ 
+{
   XMC_WAIT_SIGNAL_LEVEL_LOW              = 0x00000000, /*!< xmc nwait active low */
   XMC_WAIT_SIGNAL_LEVEL_HIGH             = 0x00000200  /*!< xmc nwait active high */
-} xmc_wait_signal_polarity_type; 
+} xmc_wait_signal_polarity_type;
 
 /**
   * @brief xmc wait timing type
   */
 typedef enum
-{ 
+{
   XMC_WAIT_SIGNAL_SYN_BEFORE             = 0x00000000, /*!< xmc nwait signal is active one data cycle before wait state */
-  XMC_WAIT_SIGNAL_SYN_DURING             = 0x00000800  /*!< xmc nwait signal is active during wait state */ 
-} xmc_wait_timing_type; 
+  XMC_WAIT_SIGNAL_SYN_DURING             = 0x00000800  /*!< xmc nwait signal is active during wait state */
+} xmc_wait_timing_type;
 
 /**
   * @brief xmc access mode type
   */
 typedef enum
-{ 
+{
   XMC_ACCESS_MODE_A                      = 0x00000000, /*!< xmc access mode A */
   XMC_ACCESS_MODE_B                      = 0x10000000, /*!< xmc access mode B */
   XMC_ACCESS_MODE_C                      = 0x20000000, /*!< xmc access mode C */
   XMC_ACCESS_MODE_D                      = 0x30000000  /*!< xmc access mode D */
-} xmc_access_mode_type; 
+} xmc_access_mode_type;
 
 /**
   * @brief xmc ecc page size type
   */
 typedef enum
-{ 
+{
   XMC_ECC_PAGESIZE_256_BYTES             = 0x00000000, /*!< xmc ecc page size 256 bytes */
   XMC_ECC_PAGESIZE_512_BYTES             = 0x00020000, /*!< xmc ecc page size 512 bytes */
   XMC_ECC_PAGESIZE_1024_BYTES            = 0x00040000, /*!< xmc ecc page size 1024 bytes */
   XMC_ECC_PAGESIZE_2048_BYTES            = 0x00060000, /*!< xmc ecc page size 2048 bytes */
   XMC_ECC_PAGESIZE_4096_BYTES            = 0x00080000, /*!< xmc ecc page size 4096 bytes */
   XMC_ECC_PAGESIZE_8192_BYTES            = 0x000A0000  /*!< xmc ecc page size 8192 bytes */
-} xmc_ecc_pagesize_type; 
+} xmc_ecc_pagesize_type;
 
 /**
   * @brief xmc interrupt sources type
   */
 typedef enum
-{ 
+{
   XMC_INT_RISING_EDGE                    = 0x00000008, /*!< xmc rising edge detection interrupt enable */
   XMC_INT_LEVEL                          = 0x00000010, /*!< xmc high-level edge detection interrupt enable */
   XMC_INT_FALLING_EDGE                   = 0x00000020  /*!< xmc falling edge detection interrupt enable */
-} xmc_interrupt_sources_type; 
+} xmc_interrupt_sources_type;
 
 /**
   * @brief xmc interrupt flag type
   */
 typedef enum
-{ 
+{
   XMC_RISINGEDGE_FLAG                    = 0x00000001, /*!< xmc interrupt rising edge detection flag */
   XMC_LEVEL_FLAG                         = 0x00000002, /*!< xmc interrupt high-level edge detection flag */
   XMC_FALLINGEDGE_FLAG                   = 0x00000004, /*!< xmc interrupt falling edge detection flag */
   XMC_FEMPT_FLAG                         = 0x00000040  /*!< xmc fifo empty flag */
-} xmc_interrupt_flag_type; 
+} xmc_interrupt_flag_type;
 
 /**
-  * @brief   nor/sram banks timing parameters 
+  * @brief   nor/sram banks timing parameters
   */
 typedef struct
 {
   xmc_nor_sram_subbank_type              subbank;             /*!< xmc nor/sram subbank */
-  xmc_extended_mode_type                 write_timing_enable; /*!< xmc nor/sram write timing enable */         
+  xmc_extended_mode_type                 write_timing_enable; /*!< xmc nor/sram write timing enable */
   uint32_t                               addr_setup_time;     /*!< xmc nor/sram address setup time */
-  uint32_t                               addr_hold_time;      /*!< xmc nor/sram address hold time */          
+  uint32_t                               addr_hold_time;      /*!< xmc nor/sram address hold time */
   uint32_t                               data_setup_time;     /*!< xmc nor/sram data setup time */
-  uint32_t                               bus_latency_time;    /*!< xmc nor/sram bus latency time */   
+  uint32_t                               bus_latency_time;    /*!< xmc nor/sram bus latency time */
   uint32_t                               clk_psc;             /*!< xmc nor/sram clock prescale */
   uint32_t                               data_latency_time;   /*!< xmc nor/sram data latency time */
   xmc_access_mode_type                   mode;                /*!< xmc nor/sram access mode */
@@ -259,9 +259,9 @@ typedef struct
 typedef struct
 {
   xmc_nor_sram_subbank_type              subbank;             /*!< xmc nor/sram subbank */
-  xmc_data_addr_mux_type                 data_addr_multiplex; /*!< xmc nor/sram address/data multiplexing enable */     
+  xmc_data_addr_mux_type                 data_addr_multiplex; /*!< xmc nor/sram address/data multiplexing enable */
   xmc_memory_type                        device;              /*!< xmc nor/sram memory device */
-  xmc_data_width_type                    bus_type;            /*!< xmc nor/sram data bus width */ 
+  xmc_data_width_type                    bus_type;            /*!< xmc nor/sram data bus width */
   xmc_burst_access_mode_type             burst_mode_enable;   /*!< xmc nor/sram burst mode enable */
   xmc_asyn_wait_type                     asynwait_enable;     /*!< xmc nor/sram nwait in asynchronous transfer enable */
   xmc_wait_signal_polarity_type          wait_signal_lv;      /*!< xmc nor/sram nwait polarity */
@@ -274,7 +274,7 @@ typedef struct
 } xmc_norsram_init_type;
 
 /**
-  * @brief  nand timing parameters xmc 
+  * @brief  nand timing parameters xmc
   */
 
 typedef struct

@@ -7,11 +7,11 @@
   **************************************************************************
   *                       Copyright notice & Disclaimer
   *
-  * The software Board Support Package (BSP) that is made available to 
-  * download from Artery official website is the copyrighted work of Artery. 
-  * Artery authorizes customers to use, copy, and distribute the BSP 
-  * software and its related documentation for the purpose of design and 
-  * development in conjunction with Artery microcontrollers. Use of the 
+  * The software Board Support Package (BSP) that is made available to
+  * download from Artery official website is the copyrighted work of Artery.
+  * Artery authorizes customers to use, copy, and distribute the BSP
+  * software and its related documentation for the purpose of design and
+  * development in conjunction with Artery microcontrollers. Use of the
   * software is governed by this copyright notice and the following disclaimer.
   *
   * THIS SOFTWARE IS PROVIDED ON "AS IS" BASIS WITHOUT WARRANTIES,
@@ -32,7 +32,7 @@
   * @brief USB driver modules
   * @{
   */
-  
+
 #include "at32f403a_407_conf.h"
 
 
@@ -41,7 +41,7 @@
 /** @defgroup USB_private_functions
   * @{
   */
-  
+
 /**
   * @brief usb packet buffer start address
   */
@@ -59,16 +59,16 @@ void usb_dev_init(usbd_type *usbx)
 {
   /* clear usb core reset */
   usbx->ctrl_bit.csrst = 0;
-  
+
   /* clear usb interrupt status */
   usbx->intsts = 0;
-  
+
   /* set usb packet buffer descirption table address */
   usbx->buftbl = USB_BUFFER_TABLE_ADDRESS;
-  
+
   /* enable usb core and set device address to 0 */
   usbx->devaddr = 0x80;
-  
+
   usb_interrupt_enable(usbx, USB_SOF_INT | USB_RST_INT | USB_SP_INT | USB_WK_INT | USB_TC_INT, TRUE);
 }
 
@@ -82,9 +82,9 @@ void usb_connect(usbd_type *usbx)
 {
   /* enable usb phy */
   usbx->ctrl_bit.disusb = 0;
-    
+
   /* Dp 1.5k pull-up enable */
-  usbx->cfg_bit.puo = 0; 
+  usbx->cfg_bit.puo = 0;
 }
 
 /**
@@ -97,7 +97,7 @@ void usb_disconnect(usbd_type *usbx)
 {
   /* disable usb phy */
   usbx->ctrl_bit.disusb = TRUE;
-     
+
   /* D+ 1.5k pull-up disable */
   usbx->cfg_bit.puo = TRUE;
 }
@@ -109,7 +109,7 @@ void usb_disconnect(usbd_type *usbx)
   *         and are select by the usbbufs in the crm misc1 register.
   *         when usbbufs is 0,sram size is 512 bytes, packet buffer start
   *         address is 0x40006000.when usbbufs is 1, sram size is fixed to
-  *         768~1280 bytes, and the  packet buffer start address is fixed to 
+  *         768~1280 bytes, and the  packet buffer start address is fixed to
   *         0x40007800,packet buffer size decided by whether can1 and can2 are
   *         enabled;when both can1 and can2 are disabled, usb packet buffer can be set to the
   *         maximum of 1280 bytes; when either can1 or can2 is enabled, usb packet buffer can be set to the
@@ -140,15 +140,15 @@ void usb_usbbufs_enable(usbd_type *usbx, confirm_state state)
   * @param  usbx: to select the usb peripheral.
   *         parameter as following values: USB
   * @param  ept_info: endpoint information structure
-  * @retval none                            
+  * @retval none
   */
 void usb_ept_open(usbd_type *usbx, usb_ept_info *ept_info)
 {
   uint16_t type = 0;
-  
+
   /* set endpoint address */
   USB_SET_EPT_ADDRESS(ept_info->eptn, ept_info->ept_address);
-  
+
   /* select endpoint transfer type */
   if(ept_info->trans_type == EPT_CONTROL_TYPE)
   {
@@ -167,10 +167,10 @@ void usb_ept_open(usbd_type *usbx, usb_ept_info *ept_info)
     type = USB_EPT_ISO;
     ept_info->is_double_buffer = TRUE;
   }
-  
+
   /* configure endpoint transfer type (control, bulk, interrupt, isochronous) */
   USB_SET_TRANS_TYPE(ept_info->eptn, type);
-  
+
   /* endpoint is in transfer */
   if(ept_info->inout == DATA_TRANS_IN)
   {
@@ -178,10 +178,10 @@ void usb_ept_open(usbd_type *usbx, usb_ept_info *ept_info)
       {
         /* set in endpoint tx offset address */
         USB_SET_TX_ADDRESS(ept_info->eptn, ept_info->tx_addr);
-        
+
         /* clear in endpoint data toggle */
         USB_CLEAR_TXDTS(ept_info->eptn);
-        
+
         /* set endpoint transmission status: nak */
         USB_SET_TXSTS(ept_info->eptn, USB_TX_NAK);
       }
@@ -189,21 +189,21 @@ void usb_ept_open(usbd_type *usbx, usb_ept_info *ept_info)
       {
         /* set double buffer endpoint*/
         USB_SET_EPT_DOUBLE_BUFFER(ept_info->eptn);
-        
+
         /* set in endpoint offset address0 and address1 */
-        USB_SET_DOUBLE_BUFF0_ADDRESS(ept_info->eptn, ept_info->tx_addr); 
+        USB_SET_DOUBLE_BUFF0_ADDRESS(ept_info->eptn, ept_info->tx_addr);
         USB_SET_DOUBLE_BUFF1_ADDRESS(ept_info->eptn, ept_info->rx_addr);
-        
+
         /* clear in and out data toggle */
         USB_CLEAR_TXDTS(ept_info->eptn);
         USB_CLEAR_RXDTS(ept_info->eptn);
-        
+
         /* toggle rx data toggle flag */
         USB_TOGGLE_RXDTS(ept_info->eptn);
-        
+
         /* set endpoint reception status: disable */
         USB_SET_RXSTS(ept_info->eptn, USB_RX_DISABLE);
-        
+
         /* set endpoint transmision status: nak */
         USB_SET_TXSTS(ept_info->eptn, USB_TX_NAK);
       }
@@ -211,16 +211,16 @@ void usb_ept_open(usbd_type *usbx, usb_ept_info *ept_info)
   else
   {
     if(ept_info->is_double_buffer == 0)
-    { 
+    {
       /* set out endpoint rx offset address */
       USB_SET_RX_ADDRESS(ept_info->eptn, ept_info->rx_addr);
-      
+
       /* clear out endpoint data toggle */
       USB_CLEAR_RXDTS(ept_info->eptn);
-      
+
       /* set out endpoint max reception buffer size */
       USB_SET_RXLEN(ept_info->eptn, ept_info->maxpacket);
-      
+
       /* set endpoint reception status: valid */
       USB_SET_RXSTS(ept_info->eptn, USB_RX_VALID);
     }
@@ -230,23 +230,23 @@ void usb_ept_open(usbd_type *usbx, usb_ept_info *ept_info)
       USB_SET_EPT_DOUBLE_BUFFER(ept_info->eptn);
 
       /* set out endpoint offset address0 and address1 */
-      USB_SET_DOUBLE_BUFF0_ADDRESS(ept_info->eptn, ept_info->tx_addr); 
+      USB_SET_DOUBLE_BUFF0_ADDRESS(ept_info->eptn, ept_info->tx_addr);
       USB_SET_DOUBLE_BUFF1_ADDRESS(ept_info->eptn, ept_info->rx_addr);
-      
+
       /* set out endpoint max reception buffer size */
       USB_SET_EPT_DOUBLE_BUF0_LEN(ept_info->eptn, ept_info->maxpacket, DATA_TRANS_OUT);
       USB_SET_EPT_DOUBLE_BUF1_LEN(ept_info->eptn, ept_info->maxpacket, DATA_TRANS_OUT);
-      
+
       /* clear in and out data toggle */
       USB_CLEAR_TXDTS(ept_info->eptn);
       USB_CLEAR_RXDTS(ept_info->eptn);
-      
+
       /* toggle tx data toggle flag */
       USB_TOGGLE_TXDTS(ept_info->eptn);
-      
+
       /* set endpoint reception status: valid */
       USB_SET_RXSTS(ept_info->eptn, USB_RX_VALID);
-      
+
       /* set endpoint transmision status: disable */
       USB_SET_TXSTS(ept_info->eptn, USB_TX_DISABLE);
     }
@@ -259,7 +259,7 @@ void usb_ept_open(usbd_type *usbx, usb_ept_info *ept_info)
   * @param  usbx: to select the usb peripheral.
   *         parameter as following values: USB
   * @param  ept_info: endpoint information structure
-  * @retval none                            
+  * @retval none
   */
 void usb_ept_close(usbd_type *usbx, usb_ept_info *ept_info)
 {
@@ -269,7 +269,7 @@ void usb_ept_close(usbd_type *usbx, usb_ept_info *ept_info)
     {
       /*clear tx data toggle */
       USB_CLEAR_TXDTS(ept_info->eptn);
-      
+
       /* set tx status: disable */
       USB_SET_TXSTS(ept_info->eptn, USB_TX_DISABLE);
     }
@@ -277,25 +277,25 @@ void usb_ept_close(usbd_type *usbx, usb_ept_info *ept_info)
     {
       /*clear rx data toggle */
       USB_CLEAR_RXDTS(ept_info->eptn);
-      
+
       /* set rx status: disable */
       USB_SET_RXSTS(ept_info->eptn, USB_RX_DISABLE);
-      
+
     }
   }
   else
   {
     /* double buffer */
-    
+
     /*clear rx and tx data toggle */
     USB_CLEAR_TXDTS(ept_info->eptn);
     USB_CLEAR_RXDTS(ept_info->eptn);
-    
+
     if(ept_info->inout == DATA_TRANS_IN)
     {
       /* toggle tx */
       USB_TOGGLE_TXDTS(ept_info->eptn);
-      
+
       /* set tx and rx status: disable */
       USB_SET_TXSTS(ept_info->eptn, USB_TX_DISABLE);
       USB_SET_RXSTS(ept_info->eptn, USB_RX_DISABLE);
@@ -304,7 +304,7 @@ void usb_ept_close(usbd_type *usbx, usb_ept_info *ept_info)
     {
       /* toggle rx */
       USB_TOGGLE_RXDTS(ept_info->eptn);
-      
+
       /* set tx and rx status: disable */
       USB_SET_TXSTS(ept_info->eptn, USB_TX_DISABLE);
       USB_SET_RXSTS(ept_info->eptn, USB_RX_DISABLE);
@@ -316,14 +316,14 @@ void usb_ept_close(usbd_type *usbx, usb_ept_info *ept_info)
   * @brief  write data from user memory to usb buffer
   * @param  pusr_buf: point to user buffer
   * @param  offset_addr: endpoint tx offset address
-  * @param  nbytes: number of bytes data write to usb buffer 
-  * @retval none                            
+  * @param  nbytes: number of bytes data write to usb buffer
+  * @retval none
   */
 void usb_write_packet(uint8_t *pusr_buf, uint16_t offset_addr, uint16_t nbytes)
 {
   /* endpoint tx buffer address */
   __IO uint16_t *d_addr = (__IO uint16_t *)(offset_addr * 2 + g_usb_packet_address);
-  
+
   uint32_t nhbytes = (nbytes + 1) >> 1;
   uint32_t n_index;
   uint16_t *pbuf = (uint16_t *)pusr_buf;
@@ -343,8 +343,8 @@ void usb_write_packet(uint8_t *pusr_buf, uint16_t offset_addr, uint16_t nbytes)
   * @brief  read data from usb buffer to user buffer
   * @param  pusr_buf: point to user buffer
   * @param  offset_addr: endpoint rx offset address
-  * @param  nbytes: number of bytes data write to usb buffer 
-  * @retval none                            
+  * @param  nbytes: number of bytes data write to usb buffer
+  * @retval none
   */
 void usb_read_packet(uint8_t *pusr_buf, uint16_t offset_addr, uint16_t nbytes)
 {
@@ -369,18 +369,18 @@ void usb_read_packet(uint8_t *pusr_buf, uint16_t offset_addr, uint16_t nbytes)
   * @brief  usb interrupt enable
   * @param  usbx: to select the usb peripheral.
   *         parameter as following values: USB
-  * @param  interrupt: 
+  * @param  interrupt:
   *         this parameter can be any combination of the following values:
-  *         - USB_LSOF_INT                    
-  *         - USB_SOF_INT                                            
-  *         - USB_RST_INT                    
-  *         - USB_SP_INT 
-  *         - USB_WK_INT                    
-  *         - USB_BE_INT  
-  *         - USB_UCFOR_INT                    
-  *         - USB_TC_INT  
+  *         - USB_LSOF_INT
+  *         - USB_SOF_INT
+  *         - USB_RST_INT
+  *         - USB_SP_INT
+  *         - USB_WK_INT
+  *         - USB_BE_INT
+  *         - USB_UCFOR_INT
+  *         - USB_TC_INT
   * @param  new_state (TRUE or FALSE)
-  * @retval none                            
+  * @retval none
   */
 void usb_interrupt_enable(usbd_type *usbx, uint16_t interrupt, confirm_state new_state)
 {
@@ -388,9 +388,9 @@ void usb_interrupt_enable(usbd_type *usbx, uint16_t interrupt, confirm_state new
   {
     usbx->ctrl |= interrupt;
   }
-  else 
+  else
   {
-    usbx->ctrl &= ~interrupt;      
+    usbx->ctrl &= ~interrupt;
   }
 }
 
@@ -399,7 +399,7 @@ void usb_interrupt_enable(usbd_type *usbx, uint16_t interrupt, confirm_state new
   * @param  usbx: to select the usb peripheral.
   *         parameter as following values: USB
   * @param  address: host assignment address
-  * @retval none                            
+  * @retval none
   */
 void usb_set_address(usbd_type *usbx, uint8_t address)
 {
@@ -412,7 +412,7 @@ void usb_set_address(usbd_type *usbx, uint8_t address)
   * @param  usbx: to select the usb peripheral.
   *         parameter as following values: USB
   * @param  ept_info: endpoint information structure
-  * @retval none                            
+  * @retval none
   */
 void usb_ept_stall(usbd_type *usbx, usb_ept_info *ept_info)
 {
@@ -430,7 +430,7 @@ void usb_ept_stall(usbd_type *usbx, usb_ept_info *ept_info)
   * @brief  usb device enter suspend mode
   * @param  usbx: to select the usb peripheral.
   *         parameter as following values: USB
-  * @retval none                            
+  * @retval none
   */
 void usb_enter_suspend(usbd_type *usbx)
 {
@@ -442,7 +442,7 @@ void usb_enter_suspend(usbd_type *usbx)
   * @brief  usb device exit suspend mode
   * @param  usbx: to select the usb peripheral.
   *         parameter as following values: USB
-  * @retval none                            
+  * @retval none
   */
 void usb_exit_suspend(usbd_type *usbx)
 {
@@ -454,7 +454,7 @@ void usb_exit_suspend(usbd_type *usbx)
   * @brief  usb remote wakeup set
   * @param  usbx: to select the usb peripheral.
   *         parameter as following values: USB
-  * @retval none                            
+  * @retval none
   */
 void usb_remote_wkup_set(usbd_type *usbx)
 {
@@ -465,7 +465,7 @@ void usb_remote_wkup_set(usbd_type *usbx)
   * @brief  usb remote wakeup clear
   * @param  usbx: to select the usb peripheral.
   *         parameter as following values: USB
-  * @retval none                            
+  * @retval none
   */
 void usb_remote_wkup_clear(usbd_type *usbx)
 {
@@ -475,7 +475,7 @@ void usb_remote_wkup_clear(usbd_type *usbx)
 /**
   * @brief  usb auto malloc endpoint buffer
   * @param  mapacket: endpoint support max packet size
-  * @retval none                            
+  * @retval none
   */
 uint16_t usb_buffer_malloc(uint16_t maxpacket)
 {
@@ -487,7 +487,7 @@ uint16_t usb_buffer_malloc(uint16_t maxpacket)
 /**
   * @brief  free usb endpoint buffer
   * @param  none
-  * @retval none                            
+  * @retval none
   */
 void usb_buffer_free(void)
 {
@@ -501,19 +501,19 @@ void usb_buffer_free(void)
   *         this parameter can be one of the following values:
   *         - USB_INOUT_FLAG
   *         - USB_LSOF_FLAG
-  *         - USB_SOF_FLAG 
+  *         - USB_SOF_FLAG
   *         - USB_RST_FLAG
   *         - USB_SP_FLAG
   *         - USB_WK_FLAG
-  *         - USB_BE_FLAG                  
+  *         - USB_BE_FLAG
   *         - USB_UCFOR_FLAG
-  *         - USB_TC_FLAG 
-  * @retval none                            
+  *         - USB_TC_FLAG
+  * @retval none
   */
 flag_status usb_flag_get(usbd_type *usbx, uint16_t flag)
 {
   flag_status status = RESET;
-  
+
   if((usbx->intsts & flag) == RESET)
   {
     status = RESET;
@@ -532,14 +532,14 @@ flag_status usb_flag_get(usbd_type *usbx, uint16_t flag)
   *         this parameter can be one of the following values:
   *         - USB_INOUT_FLAG
   *         - USB_LSOF_FLAG
-  *         - USB_SOF_FLAG 
+  *         - USB_SOF_FLAG
   *         - USB_RST_FLAG
   *         - USB_SP_FLAG
   *         - USB_WK_FLAG
-  *         - USB_BE_FLAG                  
+  *         - USB_BE_FLAG
   *         - USB_UCFOR_FLAG
-  *         - USB_TC_FLAG 
-  * @retval none                            
+  *         - USB_TC_FLAG
+  * @retval none
   */
 void usb_flag_clear(usbd_type *usbx, uint16_t flag)
 {

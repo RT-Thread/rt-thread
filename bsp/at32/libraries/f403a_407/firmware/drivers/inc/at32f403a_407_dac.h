@@ -46,7 +46,7 @@ extern "C" {
 
 #define DAC1_D1DMAUDRF                   ((uint32_t)(0x00002000))
 #define DAC2_D2DMAUDRF                   ((uint32_t)(0x20000000))
- 
+
 /** @defgroup DAC_exported_types
   * @{
   */
