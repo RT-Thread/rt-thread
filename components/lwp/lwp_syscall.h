@@ -13,9 +13,13 @@
 
 #include <stdint.h>
 #include <rtthread.h>
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/ioctl.h>
 
 typedef long suseconds_t;       /* microseconds (signed) */
 typedef uint32_t id_t;          /* may contain pid, uid or gid */

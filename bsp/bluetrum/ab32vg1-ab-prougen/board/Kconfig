@@ -1,12 +1,12 @@
 menu "Hardware Drivers Config"
 
-config SOC_AB32VG1
-    bool
+menuconfig SOC_AB32VG1
+    bool "SOC_AB32VG1"
     select PKG_USING_BLUETRUM_SDK
     default y
 
-config PKG_USING_BLUETRUM_NIMBLE
-    bool
+menuconfig PKG_USING_BLUETRUM_NIMBLE
+    bool "PKG_USING_BLUETRUM_NIMBLE"
     default n
 
 menu "Onboard Peripheral Drivers"
@@ -33,6 +33,11 @@ menu "Onboard Peripheral Drivers"
         range 0 24000000
         default 24000000
     endif
+
+    config BSP_USING_NIMBLE
+        bool "use nimble stack(iot)"
+        select PKG_USING_BLUETRUM_NIMBLE
+        default n
 
 endmenu
 
@@ -199,7 +204,6 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
         if BSP_USING_ONCHIP_RTC
             config RTC_USING_INTERNAL_CLK
@@ -233,20 +237,10 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
 endmenu
 
-choice
-    prompt "BLE STACK"
-    default BLE_STACK_USING_NULL
-    help
-        Select the ble stack
-
-    config BLE_STACK_USING_NULL
-        bool "not use the ble stack"
-
-    config BSP_USING_NIMBLE
-        bool "use nimble stack(iot)"
-        select PKG_USING_BLUETRUM_NIMBLE
-endchoice
 
 endmenu

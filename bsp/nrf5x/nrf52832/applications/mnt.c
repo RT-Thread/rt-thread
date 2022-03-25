@@ -14,7 +14,7 @@
 
 #ifdef BSP_USING_ON_CHIP_FS
 
-#ifndef PKG_USING_FAL
+#ifndef RT_USING_FAL
 #error "if you want to use on chip filesystem, you need to enable FAL package()"
 #endif
 
@@ -35,7 +35,11 @@
 #endif
 
 #include "fal.h"
-#include <dfs_posix.h>
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 #define LOG_TAG "drv.fs"
 #define DBG_LVL DBG_LOG

@@ -17,7 +17,7 @@
 
 // todo: remove repleat code
 #define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_lwp_memheap_item), RT_ALIGN_SIZE)
-#define MEMITEM_SIZE(item)      ((rt_uint32_t)item->next - (rt_uint32_t)item - RT_MEMHEAP_SIZE)
+#define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
 
 #ifndef LWP_MEM_PAGE_SIZE
     #define LWP_MEM_PAGE_SIZE       (4 * 1024)

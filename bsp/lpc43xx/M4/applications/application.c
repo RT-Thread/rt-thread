@@ -59,7 +59,9 @@ void rt_init_thread_entry(void *parameter)
 #ifdef RT_USING_FINSH
     /* initialize finsh */
     finsh_system_init();
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
 #endif
 
 #ifdef RT_USING_VBUS

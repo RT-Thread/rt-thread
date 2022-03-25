@@ -64,15 +64,16 @@ void rt_hw_trap_irq(void)
     uint32_t irq;
     rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
-    uint32_t value = 0;
-    value = IRQ_PEND_BASIC & 0x3ff;
+    uint32_t value = IRQ_PEND_BASIC & 0x3ff;
 
-#ifdef BSP_USING_CORETIMER
-    uint32_t cpu_id = 0;
 #ifdef RT_USING_SMP
-    cpu_id = rt_hw_cpu_id();
+    uint32_t cpu_id = rt_hw_cpu_id();
+    uint32_t mailbox_data = IPI_MAILBOX_CLEAR(cpu_id);
+#else
+    uint32_t cpu_id = 0;
 #endif
     uint32_t int_source = CORE_IRQSOURCE(cpu_id) & 0x3ff;
+
     if (int_source & 0x02)
     {
         isr_func = isr_table[IRQ_ARM_TIMER].handler;
@@ -84,8 +85,34 @@ void rt_hw_trap_irq(void)
             param = isr_table[IRQ_ARM_TIMER].param;
             isr_func(IRQ_ARM_TIMER, param);
         }
+        return;
     }
+
+#ifdef RT_USING_SMP
+    if (int_source & 0xf0)
+    {
+        /* it's a ipi interrupt */
+        if (mailbox_data & 0x1)
+        {
+            /* clear mailbox */
+            IPI_MAILBOX_CLEAR(cpu_id) = mailbox_data;
+            isr_func = isr_table[IRQ_ARM_MAILBOX].handler;
+#ifdef RT_USING_INTERRUPT_INFO
+            isr_table[IRQ_ARM_MAILBOX].counter++;
 #endif
+            if (isr_func)
+            {
+                param = isr_table[IRQ_ARM_MAILBOX].param;
+                isr_func(IRQ_ARM_MAILBOX, param);
+            }
+        }
+        else
+        {
+            CORE_MAILBOX3_CLEAR(cpu_id) = mailbox_data;
+        }
+        return;
+    }
+#endif /* RT_USING_SMP */
 
     /* local interrupt*/
     if (value)
@@ -121,7 +148,7 @@ void rt_hw_trap_irq(void)
     }
 #else
     void *param;
-    int ir;
+    int ir, ir_self;
     rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
 
@@ -133,17 +160,20 @@ void rt_hw_trap_irq(void)
         return;
     }
 
+    /* bit 10~12 is cpuid, bit 0~9 is interrupt id */
+    ir_self = ir & 0x3ffUL;
+
     /* get interrupt service routine */
-    isr_func = isr_table[ir].handler;
+    isr_func = isr_table[ir_self].handler;
 #ifdef RT_USING_INTERRUPT_INFO
-    isr_table[ir].counter++;
+    isr_table[ir_self].counter++;
 #endif
     if (isr_func)
     {
         /* Interrupt for myself. */
-        param = isr_table[ir].param;
+        param = isr_table[ir_self].param;
         /* turn to interrupt service routine */
-        isr_func(ir, param);
+        isr_func(ir_self, param);
     }
 
     /* end of interrupt */

@@ -158,9 +158,10 @@ int pthread_attr_getstack(pthread_attr_t const *attr,
                           size_t               *stack_size);
 int pthread_attr_setguardsize(pthread_attr_t *attr, size_t guard_size);
 int pthread_attr_getguardsize(pthread_attr_t const *attr, size_t *guard_size);
+int pthread_attr_setinheritsched(pthread_attr_t *attr, int inheritsched);
+int pthread_attr_getinheritsched(const pthread_attr_t *attr, int *inheritsched);
 int pthread_attr_setscope(pthread_attr_t *attr, int scope);
-int pthread_attr_getscope(pthread_attr_t const *attr);
-int pthread_system_init(void);
+int pthread_attr_getscope(pthread_attr_t const *attr, int *scope);
 int pthread_create (pthread_t *tid, const pthread_attr_t *attr,
     void *(*start) (void *), void *arg);
 
@@ -174,8 +175,19 @@ rt_inline int pthread_equal (pthread_t t1, pthread_t t2)
 
 pthread_t pthread_self (void);
 
+int pthread_getcpuclockid(pthread_t thread, clockid_t *clock_id);
+int pthread_getconcurrency(void);
+int pthread_setconcurrency(int new_level);
+int pthread_getschedparam(pthread_t thread, int *policy, struct sched_param *param);
+int pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *param);
+int pthread_setschedprio(pthread_t thread, int prio);
+
 void pthread_exit (void *value_ptr);
 int pthread_once(pthread_once_t * once_control, void (*init_routine) (void));
+
+#ifdef RT_USING_SIGNALS
+int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset);
+#endif
 
 /* pthread cleanup */
 void pthread_cleanup_pop(int execute);
@@ -196,6 +208,8 @@ int pthread_mutex_destroy(pthread_mutex_t *mutex);
 int pthread_mutex_lock(pthread_mutex_t *mutex);
 int pthread_mutex_unlock(pthread_mutex_t *mutex);
 int pthread_mutex_trylock(pthread_mutex_t *mutex);
+int pthread_mutex_getprioceiling(const pthread_mutex_t *mutex, int *prioceiling);
+int pthread_mutex_setprioceiling(pthread_mutex_t *mutex, int prioceiling, int *old_ceiling);
 
 int pthread_mutexattr_init(pthread_mutexattr_t *attr);
 int pthread_mutexattr_destroy(pthread_mutexattr_t *attr);
@@ -203,6 +217,11 @@ int pthread_mutexattr_gettype(const pthread_mutexattr_t *attr, int *type);
 int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type);
 int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int  pshared);
 int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared);
+int pthread_mutexattr_getprioceiling(const pthread_mutexattr_t *attr, int *prioceiling);
+int pthread_mutexattr_setprioceiling(const pthread_mutexattr_t *attr, int prioceiling);
+int pthread_mutexattr_getprotocol(const pthread_mutexattr_t *attr, int *protocol);
+int pthread_mutexattr_setprotocol(const pthread_mutexattr_t *attr, int protocol);
+
 
 /* pthread condition interface */
 int pthread_condattr_destroy(pthread_condattr_t *attr);

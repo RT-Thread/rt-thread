@@ -20,7 +20,7 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM     = 'gcc'
     EXEC_PATH     = r'/opt/gcc-arm-none-eabi-6_2-2016q4/bin'
 elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armcc'
+    PLATFORM    = 'armclang'
     EXEC_PATH   = r'D:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iar'
@@ -63,7 +63,7 @@ if PLATFORM == 'gcc':
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
-elif PLATFORM == 'armcc':
+elif PLATFORM == 'armclang':
     # toolchains
     CC = 'armclang'
     AS = 'armasm'
@@ -90,6 +90,7 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -gdwarf-3 -O1'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
+
 elif PLATFORM == 'iar':
     # toolchains
     CC = 'iccarm'

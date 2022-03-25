@@ -20,6 +20,33 @@ Path:
 
 - bsp/acm32f0x0-nucleo/libraries
 
+### apm32
+
+bsp 列表：
+- apm32f103xe-minibroard
+
+------
+
+License: GEEHY SOFTWARE PACKAGE LICENSE
+
+Copyright: Copyright (C) 2020-2022 Geehy Semiconductor
+
+Path:
+
+- bsp\apm32\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver
+- bsp\apm32\libraries\APM32F10x_Library\Device
+- bsp\apm32\libraries\APM32F10x_Library\USB_Device_Lib
+
+------
+
+License: bsd-new
+
+Copyright (c) 2009-2018 Arm Limited
+
+Path:
+
+- bsp\apm32\libraries\APM32F10x_Library\CMSIS\Include
+
 ### apollo2
 
 License:  bsd-new
@@ -705,7 +732,6 @@ Path:
 bsp 列表：
 
 - swm320
-- swm320-lq100
 
 ------
 
@@ -716,7 +742,6 @@ Copyright: COPYRIGHT 2012 Synwit Technology
 Path:
 
 - bsp/swm320/libraries/CMSIS/DeviceSupport
-- bsp/swm320-lq100/Libraries/SWM320_StdPeriph_Driver
 
 ------
 
@@ -727,7 +752,6 @@ Copyright:  Copyright (c) 2009 - 2014 ARM LIMITED
 Path:
 
 - bsp/swm320/libraries/CMSIS
-- bsp/swm320-lq100/Libraries/CMSIS/CoreSupport
 
 ### tae32f5300
 

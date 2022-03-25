@@ -25,8 +25,9 @@ void rt_init_thread_entry(void *parameter)
 
 
     //finsh_system_init();
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
-
+#endif
 
     /**< init led device */
     {

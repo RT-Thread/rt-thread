@@ -28,7 +28,7 @@ config SOC_SERIES_M480
 
     config BSP_USING_FMC
         bool "Enable Flash Memory Controller(FMC)"
-        select PKG_USING_FAL
+        select RT_USING_FAL
         default n
 
     config BSP_USING_GPIO
@@ -447,6 +447,7 @@ config SOC_SERIES_M480
     menuconfig BSP_USING_SDH
         bool "Enable Secure Digital Host Controller(SDH)"
         select RT_USING_DFS
+        select DFS_USING_POSIX
 
         if BSP_USING_SDH
             config BSP_USING_SDH0

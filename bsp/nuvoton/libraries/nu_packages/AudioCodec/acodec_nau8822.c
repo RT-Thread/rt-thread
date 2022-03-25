@@ -40,7 +40,7 @@ static rt_err_t nau8822_mixer_query(rt_uint32_t ui32Units, rt_uint32_t *ui32Valu
 nu_acodec_ops nu_acodec_ops_nau8822 =
 {
     .name = "NAU8822",
-    .role = NU_ACODEC_ROLE_SLAVE,
+    .role = NU_ACODEC_ROLE_MASTER,
     .config = { // Default settings.
         .samplerate = 16000,
         .channels = 2,
@@ -117,6 +117,20 @@ static int I2C_WriteNAU8822(uint8_t u8addr, uint16_t u16data)
     return RT_EOK;
 }
 
+static void nau8822_phonejack_set(S_NU_NAU8822_CONFIG *psCodecConfig, int bEnable)
+{
+    rt_pin_mode(psCodecConfig->pin_phonejack_en, PIN_MODE_OUTPUT);
+
+    if (bEnable)
+    {
+        rt_pin_write(psCodecConfig->pin_phonejack_en, PIN_LOW);
+    }
+    else
+    {
+        rt_pin_write(psCodecConfig->pin_phonejack_en, PIN_HIGH);
+    }
+}
+
 
 static rt_err_t nau8822_probe(void)
 {
@@ -180,14 +194,16 @@ static rt_err_t nau8822_dsp_config(rt_uint32_t ui32SamplRate, rt_uint8_t u8ChNum
     }
     u16AudIf = (u16AudIf & 0x19F) | (u8WLEN << 5);
 
-    I2C_WriteNAU8822(4,  u16AudIf);
-
     if (ui32SamplRate % 11025)
     {
         I2C_WriteNAU8822(36, 0x008);    //12.288Mhz
         I2C_WriteNAU8822(37, 0x00C);
         I2C_WriteNAU8822(38, 0x093);
         I2C_WriteNAU8822(39, 0x0E9);
+
+        /* FIXME */
+        if (ui32SamplRate > 48000)
+            ui32SamplRate = 8000;
 
         mClkDiv = (48000 * 256 * u8ChNum) / (ui32SamplRate * 256);
         bClkDiv = (ui32SamplRate * 256) / (ui32SamplRate * u8ChNum * u8SamplBit);
@@ -198,6 +214,10 @@ static rt_err_t nau8822_dsp_config(rt_uint32_t ui32SamplRate, rt_uint8_t u8ChNum
         I2C_WriteNAU8822(37, 0x021);
         I2C_WriteNAU8822(38, 0x161);
         I2C_WriteNAU8822(39, 0x026);
+
+        /* FIXME */
+        if (ui32SamplRate > 44100)
+            ui32SamplRate = 11025;
 
         mClkDiv = (44100 * 256 * u8ChNum) / (ui32SamplRate * 256);
         bClkDiv = (ui32SamplRate * 256) / (ui32SamplRate * u8ChNum * u8SamplBit);
@@ -258,10 +278,15 @@ static rt_err_t nau8822_dsp_config(rt_uint32_t ui32SamplRate, rt_uint8_t u8ChNum
         return -RT_ERROR;
     }
 
-    u16ClkCtrl = (1 << 8) | (1 << 0);  //Use internal PLL, FS/BCLK
+    if (nu_acodec_ops_nau8822.role == NU_ACODEC_ROLE_MASTER)
+    {
+        u16ClkCtrl = (1 << 8) | (1 << 0);  //Use internal PLL, FS/BCLK
+    }
 
     u16ClkCtrl = (u16ClkCtrl & 0x11F) | (mClkDiv << 5);
     u16ClkCtrl = (u16ClkCtrl & 0x1E3) | (bClkDiv << 2);
+
+    I2C_WriteNAU8822(4,  u16AudIf);
 
     I2C_WriteNAU8822(6,  u16ClkCtrl);
 
@@ -271,27 +296,35 @@ static rt_err_t nau8822_dsp_config(rt_uint32_t ui32SamplRate, rt_uint8_t u8ChNum
 static rt_err_t nau8822_init(void)
 {
     //input source is MIC
-    I2C_WriteNAU8822(1,  0x03F);
+    if (nu_acodec_ops_nau8822.role == NU_ACODEC_ROLE_MASTER)
+    {
+        I2C_WriteNAU8822(1,  0x03F);   /* PLLEN, MICBIASEN, ABIASEN, IOBUFEN, REFIMP(3kohm)  */
+    }
+    else
+    {
+        I2C_WriteNAU8822(1,  0x01F);   /* MICBIASEN, ABIASEN, IOBUFEN, REFIMP(3kohm)  */
+    }
+
     I2C_WriteNAU8822(2,  0x1BF);   /* Enable L/R Headphone, ADC Mix/Boost, ADC */
     I2C_WriteNAU8822(3,  0x07F);   /* Enable L/R main mixer, DAC */
     I2C_WriteNAU8822(4,  0x010);   /* 16-bit word length, I2S format, Stereo */
     I2C_WriteNAU8822(5,  0x000);   /* Companding control and loop back mode (all disable) */
     nau8822_delay_ms(30);
 
-    if (nu_acodec_ops_nau8822.role == NU_ACODEC_ROLE_SLAVE)
-    {
-        I2C_WriteNAU8822(6,  0x1AD);   /* Divide by 6, 16K */
-        I2C_WriteNAU8822(7,  0x006);   /* 16K for internal filter coefficients */
-    }
-
+    I2C_WriteNAU8822(6,  0x1AD);   /* Divide by 6, 16K */
+    I2C_WriteNAU8822(7,  0x006);   /* 16K for internal filter coefficients */
     I2C_WriteNAU8822(10, 0x008);   /* DAC soft mute is disabled, DAC oversampling rate is 128x */
     I2C_WriteNAU8822(14, 0x108);   /* ADC HP filter is disabled, ADC oversampling rate is 128x */
     I2C_WriteNAU8822(15, 0x1EF);   /* ADC left digital volume control */
     I2C_WriteNAU8822(16, 0x1EF);   /* ADC right digital volume control */
     I2C_WriteNAU8822(44, 0x033);   /* LMICN/LMICP is connected to PGA */
-    I2C_WriteNAU8822(49, 0x042);
+    I2C_WriteNAU8822(47, 0x100);   /* Gain value */
+    I2C_WriteNAU8822(48, 0x100);   /* Gain value */
     I2C_WriteNAU8822(50, 0x001);   /* Left DAC connected to LMIX */
     I2C_WriteNAU8822(51, 0x001);   /* Right DAC connected to RMIX */
+
+    I2C_WriteNAU8822(0x34, 0x13F);
+    I2C_WriteNAU8822(0x35, 0x13F);
 
     nu_acodec_ops_nau8822.config.samplerate = 16000;
     nu_acodec_ops_nau8822.config.channels = 2;
@@ -326,10 +359,12 @@ static rt_err_t nau8822_mixer_control(rt_uint32_t ui32Units, rt_uint32_t ui32Val
         if (ui32Value)
         {
             I2C_WriteNAU8822(10,  u16Data | (1 << 6));
+            nau8822_phonejack_set(g_psCodecConfig, 0);
         }
         else
         {
             I2C_WriteNAU8822(10,  u16Data & ~(1 << 6));
+            nau8822_phonejack_set(g_psCodecConfig, 1);
         }
     }
     break;

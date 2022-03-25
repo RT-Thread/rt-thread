@@ -13,6 +13,7 @@
  * 2010-10-26     yi.qiu       add module support in rt_object_allocate and rt_object_free
  * 2017-12-10     Bernard      Add object_info enum.
  * 2018-01-25     Bernard      Fix the object find issue when enable MODULE.
+ * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to object.c
  */
 
 #include <rtthread.h>
@@ -55,6 +56,9 @@ enum rt_object_info_type
     RT_Object_Info_Timer,                              /**< The object is a timer. */
 #ifdef RT_USING_MODULE
     RT_Object_Info_Module,                             /**< The object is a module. */
+#endif
+#ifdef RT_USING_HEAP
+    RT_Object_Info_Memory,                            /**< The object is a memory. */
 #endif
     RT_Object_Info_Unknown,                            /**< The object is unknown. */
 };
@@ -104,9 +108,29 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
     /* initialize object container - module */
     {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Module), sizeof(struct rt_dlmodule)},
 #endif
+#ifdef RT_USING_HEAP
+    /* initialize object container - small memory */
+    {RT_Object_Class_Memory, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Memory), sizeof(struct rt_memory)},
+#endif
 };
 
-#ifdef RT_USING_HOOK
+#ifndef __on_rt_object_attach_hook
+    #define __on_rt_object_attach_hook(obj)         __ON_HOOK_ARGS(rt_object_attach_hook, (obj))
+#endif
+#ifndef __on_rt_object_detach_hook
+    #define __on_rt_object_detach_hook(obj)         __ON_HOOK_ARGS(rt_object_detach_hook, (obj))
+#endif
+#ifndef __on_rt_object_trytake_hook
+    #define __on_rt_object_trytake_hook(parent)     __ON_HOOK_ARGS(rt_object_trytake_hook, (parent))
+#endif
+#ifndef __on_rt_object_take_hook
+    #define __on_rt_object_take_hook(parent)        __ON_HOOK_ARGS(rt_object_take_hook, (parent))
+#endif
+#ifndef __on_rt_object_put_hook
+    #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
+#endif
+
+#if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_object_attach_hook)(struct rt_object *object);
 static void (*rt_object_detach_hook)(struct rt_object *object);
 void (*rt_object_trytake_hook)(struct rt_object *object);

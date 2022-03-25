@@ -31,6 +31,7 @@ extern "C"
 int sched_yield(void);
 int sched_get_priority_min(int policy);
 int sched_get_priority_max(int policy);
+int sched_rr_get_interval(pid_t pid, struct timespec *tp);
 int sched_setscheduler(pid_t pid, int policy);
 
 #ifdef __cplusplus

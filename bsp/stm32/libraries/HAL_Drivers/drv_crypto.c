@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Winner Microelectronics Co., Ltd.
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -85,7 +85,32 @@ static rt_uint32_t _crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, r
             goto _exit;
         }
 
-        HW_TypeDef->Init.CRCLength = ctx ->crc_cfg.width;
+        switch(ctx ->crc_cfg.width)
+        {
+#if defined(CRC_POLYLENGTH_7B) && defined(CRC_POLYLENGTH_8B) && defined(CRC_POLYLENGTH_16B) && defined(CRC_POLYLENGTH_32B)
+        case 7:
+            HW_TypeDef->Init.CRCLength = CRC_POLYLENGTH_7B;
+            break;
+        case 8:
+            HW_TypeDef->Init.CRCLength = CRC_POLYLENGTH_8B;
+            break;
+        case 16:
+            HW_TypeDef->Init.CRCLength = CRC_POLYLENGTH_16B;
+            break;
+        case 32:
+            HW_TypeDef->Init.CRCLength = CRC_POLYLENGTH_32B;
+            break;
+        default :
+            goto _exit;
+#else
+        case 32:
+            HW_TypeDef->Init.CRCLength = CRC_POLYLENGTH_32B;
+            break;
+        default :
+            goto _exit;
+#endif /* defined(CRC_POLYLENGTH_7B) && defined(CRC_POLYLENGTH_8B) && defined(CRC_POLYLENGTH_16B) && defined(CRC_POLYLENGTH_32B) */
+        }
+
         if (HW_TypeDef->Init.DefaultInitValueUse == DEFAULT_INIT_VALUE_DISABLE)
         {
             HW_TypeDef->Init.InitValue = ctx ->crc_cfg.last_val;
@@ -404,7 +429,7 @@ static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
         hcrc->Instance = CRC;
 #endif
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32MP1)
-        hcrc->Init.DefaultPolynomialUse = DEFAULT_POLYNOMIAL_ENABLE;
+        hcrc->Init.DefaultPolynomialUse = DEFAULT_POLYNOMIAL_DISABLE;
         hcrc->Init.DefaultInitValueUse = DEFAULT_INIT_VALUE_DISABLE;
         hcrc->Init.InputDataInversionMode = CRC_INPUTDATA_INVERSION_BYTE;
         hcrc->Init.OutputDataInversionMode = CRC_OUTPUTDATA_INVERSION_ENABLE;
@@ -709,7 +734,7 @@ int stm32_hw_crypto_device_init(void)
     {
         return -1;
     }
-    rt_mutex_init(&_crypto_dev.mutex, RT_HWCRYPTO_DEFAULT_NAME, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&_crypto_dev.mutex, RT_HWCRYPTO_DEFAULT_NAME, RT_IPC_FLAG_PRIO);
     return 0;
 }
 INIT_DEVICE_EXPORT(stm32_hw_crypto_device_init);

@@ -104,7 +104,6 @@ pipeline {
                         // ['stm32/stm32l496-ali-developer', 'sourcery-arm'], /* CI compile C99 not support */
                         // ['stm32/stm32l496-st-nucleo', 'sourcery-arm'], /* CI compile C99 not support */
                         ['stm32f20x', 'sourcery-arm'],
-                        ['swm320-lq100', 'sourcery-arm'],
                         ['beaglebone', 'sourcery-arm'],
                         ['frdm-k64f', 'sourcery-arm'],
                         ['xplorer4330/M4', 'sourcery-arm'],

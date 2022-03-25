@@ -177,7 +177,7 @@ static void nu_pdma_init(void)
         return;
 
     nu_pdma_chn_mask = ~(NU_PDMA_CH_Msk);
-    rt_memset(nu_pdma_chn_arr, 0x00, sizeof(nu_pdma_chn_t));
+    rt_memset(nu_pdma_chn_arr, 0x00, NU_PDMA_CH_MAX * sizeof(nu_pdma_chn_t));
 
     nu_sys_ipclk_enable(PDMA0CKEN);
     nu_sys_ipclk_enable(PDMA1CKEN);
@@ -1106,7 +1106,8 @@ void *nu_pdma_memcpy(void *dest, void *src, unsigned int count)
         uint32_t u32dest  = (uint32_t)dest + u32Offset;
 
         if (((u32src % i) == (u32dest % i)) &&
-                ((u32src % i) == 0) && (RT_ALIGN_DOWN(u32Remaining, i) >= i))
+                ((u32src % i) == 0) &&
+                (RT_ALIGN_DOWN(u32Remaining, i) >= i))
         {
             uint32_t u32TXCnt = u32Remaining / i;
             if (u32TXCnt != nu_pdma_memfun((void *)u32dest, (void *)u32src, i * 8, u32TXCnt, eMemCtl_SrcInc_DstInc))

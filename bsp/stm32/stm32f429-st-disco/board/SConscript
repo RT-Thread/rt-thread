@@ -15,7 +15,7 @@ CubeMX_Config/Src/stm32f4xx_hal_msp.c
 if GetDepend(['BSP_USING_QSPI_FLASH']):
     src += ['ports/drv_qspi_flash.c']
 
-if GetDepend(['PKG_USING_FAL']):
+if GetDepend(['RT_USING_FAL']):
     src += ['ports/qspi_mnt.c']
 
 if GetDepend(['BSP_USING_TOUCH']):

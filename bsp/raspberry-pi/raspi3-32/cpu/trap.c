@@ -130,6 +130,40 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
     rt_hw_cpu_shutdown();
 }
 
+#ifdef RT_USING_CPU_FFS
+int __rt_ffs(int value)
+{
+    int num = 0;
+
+    if ((value & 0xffff) == 0)
+    {
+        num += 16;
+        value >>= 16;
+    }
+    if ((value & 0xff) == 0)
+    {
+        num += 8;
+        value >>= 8;
+    }
+    if ((value & 0xf) == 0)
+    {
+        num += 4;
+        value >>= 4;
+    }
+    if ((value & 0x3) == 0)
+    {
+        num += 2;
+        value >>= 2;
+    }
+    if ((value & 0x1) == 0)
+    {
+        num += 1;
+    }
+
+    return num;
+}
+#endif
+
 void rt_hw_trap_irq(void)
 {
     void *param;

@@ -15,6 +15,7 @@
 #define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
@@ -39,8 +40,10 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_MEMHEAP
 #define RT_USING_SLAB
+#define RT_USING_MEMHEAP
+#define RT_MEMHEAP_FAST_MODE
+#define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -49,7 +52,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uarths"
-#define RT_VER_NUM 0x40004
+#define RT_VER_NUM 0x40100
 #define ARCH_CPU_64BIT
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
@@ -86,6 +89,7 @@
 /* Device virtual file system */
 
 #define RT_USING_DFS
+#define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FILESYSTEMS_MAX 16
 #define DFS_FILESYSTEM_TYPES_MAX 16
@@ -110,7 +114,6 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
@@ -129,11 +132,16 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
-#define RT_LIBC_USING_TIME
 #define RT_LIBC_DEFAULT_TIMEZONE 8
-#define RT_USING_POSIX
+
+/* POSIX (Portable Operating System Interface) layer */
+
 #define RT_USING_POSIX_DELAY
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
 
 /* Network */
 
@@ -201,10 +209,19 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
 /* system packages */
+
+/* enhanced kernel services */
+
+
+/* POSIX extension functions */
+
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
 

@@ -224,13 +224,13 @@
         <option>
           <name>CCDefines</name>
           <state />
+          <state>RT_USING_DLIBC</state>
           <state>CPU_MIMXRT1052CVL5B</state>
           <state>SKIP_SYSCLK_INIT</state>
           <state>EVK_MCIMXRM</state>
           <state>FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1</state>
           <state>XIP_EXTERNAL_FLASH=1</state>
           <state>__RTTHREAD__</state>
-          <state>RT_USING_DLIBC</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -359,22 +359,24 @@
           <state>$PROJ_DIR$\board\MCUX_Config</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\drivers</state>
           <state>$PROJ_DIR$\..\libraries\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\..\..\..\examples\utest\testcases\kernel</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib</state>
-          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\libraries\MIMXRT1050\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\nogcc</state>
+          <state>$PROJ_DIR$\board</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1068,7 +1070,46 @@
     </file>
   </group>
   <group>
+    <name>Compiler</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\stdlib.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+    </file>
+  </group>
+  <group>
     <name>CPU</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
@@ -1076,13 +1117,10 @@
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpuport.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpuport.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</name>
@@ -1094,31 +1132,31 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\cputime\cputime.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringbuffer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\waitqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\pipe.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringblk_buf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\waitqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\completion.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\workqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\dataqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\pipe.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringblk_buf.c</name>
     </file>
   </group>
   <group>
@@ -1154,91 +1192,52 @@
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\memheap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
     </file>
-  </group>
-  <group>
-    <name>libc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\stdlib.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\libc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\stdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\memheap.c</name>
     </file>
   </group>
   <group>
     <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\system_MIMXRT1052.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\generic_list.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_gpio.c</name>
@@ -1253,11 +1252,23 @@
       <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_clock.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_xbarb.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_cache.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_common.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_xbara.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_os_abstraction_rtthread.c</name>
+    </file>
+  </group>
+  <group>
+    <name>POSIX</name>
   </group>
   <group>
     <name>utestcases</name>

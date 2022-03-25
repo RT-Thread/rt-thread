@@ -74,10 +74,10 @@ void rt_hw_board_init(void)
     rt_hw_interrupt_init();
     /* initialize uart */
     rt_hw_uart_init();      // driver/drv_uart.c
-#ifdef RT_USING_CONSOLE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif /* RT_USING_CONSOLE */
+#endif
 
 #ifdef RT_USING_HEAP
     /* initialize memory system */

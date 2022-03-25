@@ -8,6 +8,9 @@
   * @date    04 Jun 2019
   * @author  AE Team
   * @note
+  *          Change Logs:
+  *          Date            Author          Notes
+  *          04 Jun 2019     AE Team         The first version
   *
   * Copyright (C) Shanghai Eastsoft Microelectronics Co. Ltd. All rights reserved.
   *
@@ -24,9 +27,7 @@
   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
- *
-  *
-  *********************************************************************************
+  **********************************************************************************
   */
 
 #ifndef __ALD_DBGC_H__

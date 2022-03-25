@@ -339,7 +339,7 @@ void rt_floppy_init(void)
 {
     struct rt_device *device;
 
-    rt_mutex_init(&lock,"fdlock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&lock,"fdlock", RT_IPC_FLAG_PRIO);
     rt_sem_init(&sem, "fdsem", 0, RT_IPC_FLAG_FIFO);
 
     rt_hw_interrupt_install(FLOPPY_IRQ, rt_floppy_isr, RT_NULL, "floppy");

@@ -200,6 +200,7 @@ void ch32f1_i2c_config(I2C_TypeDef *i2cx)
     }
 }
 
+#ifdef BSP_USING_TIM
 void ch32f1_tim_clock_init(TIM_TypeDef *timx)
 {
     if (timx == TIM1)
@@ -434,3 +435,4 @@ void ch32f1_pwm_io_init(TIM_TypeDef *timx, rt_uint8_t channel)
         }
     }
 }
+#endif

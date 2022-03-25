@@ -1,0 +1,20 @@
+from shutil import copy
+from building import *
+from gcc import *
+Import('rtconfig')
+
+src   = []
+cwd   = GetCurrentDir()
+CPPPATH = [cwd]
+group = []
+
+# sys/select.h does not exist in newlib 2.2.0 or lower version
+if rtconfig.PLATFORM == 'gcc' and (CheckHeader(rtconfig, 'sys/select.h') == False):
+    try:
+        copy("../../../../common/nogcc/sys/select.h", "./sys/select.h") # copy from 'nogcc/sys/select.h'
+    except:
+        pass
+
+    group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

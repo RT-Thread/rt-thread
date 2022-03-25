@@ -15,19 +15,19 @@
 #ifdef RT_USING_FINSH
 
 #ifndef FINSH_ARG_MAX
-    #define FINSH_ARG_MAX    8
-#endif
+#define FINSH_ARG_MAX    8
+#endif /* FINSH_ARG_MAX */
 
 #include "msh.h"
 #include "shell.h"
-
-#ifdef RT_USING_POSIX
-    #include <dfs_posix.h>
-#endif
-
+#ifdef DFS_USING_POSIX
+#include <dfs_file.h>
+#include <unistd.h>
+#include <fcntl.h>
+#endif /* DFS_USING_POSIX */
 #ifdef RT_USING_MODULE
-    #include <dlmodule.h>
-#endif
+#include <dlmodule.h>
+#endif /* RT_USING_MODULE */
 
 typedef int (*cmd_function_t)(int argc, char **argv);
 
@@ -73,14 +73,12 @@ MSH_CMD_EXPORT_ALIAS(cmd_ps, ps, List threads in the system.);
 #ifdef RT_USING_HEAP
 int cmd_free(int argc, char **argv)
 {
-    extern void list_mem(void);
-    extern void list_memheap(void);
+    rt_size_t total = 0, used = 0, max_used = 0;
 
-#ifdef RT_USING_MEMHEAP_AS_HEAP
-    list_memheap();
-#else /* RT_USING_MEMHEAP_AS_HEAP */
-    list_mem();
-#endif
+    rt_memory_info(&total, &used, &max_used);
+    rt_kprintf("total   : %d\n", total);
+    rt_kprintf("used    : %d\n", used);
+    rt_kprintf("maximum : %d\n", max_used);
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system.);
@@ -186,7 +184,7 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
     return cmd_func;
 }
 
-#if defined(RT_USING_MODULE) && defined(RT_USING_POSIX)
+#if defined(RT_USING_MODULE) && defined(DFS_USING_POSIX)
 /* Return 0 on module executed. Other value indicate error.
  */
 int msh_exec_module(const char *cmd_line, int size)
@@ -211,7 +209,7 @@ int msh_exec_module(const char *cmd_line, int size)
         return -RT_ENOMEM;
 
     /* copy command0 */
-    memcpy(pg_name, cmd_line, cmd_length);
+    rt_memcpy(pg_name, cmd_line, cmd_length);
     pg_name[cmd_length] = '\0';
 
     if (strstr(pg_name, ".mo") != RT_NULL || strstr(pg_name, ".MO") != RT_NULL)
@@ -257,7 +255,7 @@ int msh_exec_module(const char *cmd_line, int size)
     rt_free(pg_name);
     return ret;
 }
-#endif /* defined(RT_USING_MODULE) && defined(RT_USING_POSIX) */
+#endif /* defined(RT_USING_MODULE) && defined(DFS_USING_POSIX) */
 
 static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
 {
@@ -280,7 +278,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
         return -RT_ERROR;
 
     /* split arguments */
-    memset(argv, 0x00, sizeof(argv));
+    rt_memset(argv, 0x00, sizeof(argv));
     argc = msh_split(cmd, length, argv);
     if (argc == 0)
         return -RT_ERROR;
@@ -290,7 +288,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     return 0;
 }
 
-#if defined(RT_USING_LWP) && defined(RT_USING_POSIX)
+#if defined(RT_USING_LWP) && defined(DFS_USING_POSIX)
 static int _msh_exec_lwp(char *cmd, rt_size_t length)
 {
     int argc;
@@ -326,7 +324,7 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
 
     return 0;
 }
-#endif /* defined(RT_USING_LWP) && defined(RT_USING_DFS) */
+#endif /* defined(RT_USING_LWP) && defined(DFS_USING_POSIX) */
 
 int msh_exec(char *cmd, rt_size_t length)
 {
@@ -350,7 +348,7 @@ int msh_exec(char *cmd, rt_size_t length)
     {
         return cmd_ret;
     }
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
 #ifdef DFS_USING_WORKDIR
     if (msh_exec_script(cmd, length) == 0)
     {
@@ -371,7 +369,7 @@ int msh_exec(char *cmd, rt_size_t length)
         return 0;
     }
 #endif /* RT_USING_LWP */
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 
     /* truncate the cmd at the first space. */
     {
@@ -400,7 +398,7 @@ static int str_common(const char *str1, const char *str2)
     return (str - str1);
 }
 
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
 void msh_auto_complete_path(char *path)
 {
     DIR *dir = RT_NULL;
@@ -513,7 +511,7 @@ void msh_auto_complete_path(char *path)
             }
 
             length = index - path;
-            memcpy(index, full_path, min_length);
+            rt_memcpy(index, full_path, min_length);
             path[length + min_length] = '\0';
         }
     }
@@ -521,7 +519,7 @@ void msh_auto_complete_path(char *path)
     closedir(dir);
     rt_free(full_path);
 }
-#endif /* RT_USING_POSIX */
+#endif /* DFS_USING_POSIX */
 
 void msh_auto_complete(char *prefix)
 {
@@ -538,7 +536,7 @@ void msh_auto_complete(char *prefix)
         return;
     }
 
-#ifdef RT_USING_POSIX
+#ifdef DFS_USING_POSIX
     /* check whether a spare in the command */
     {
         char *ptr;
@@ -564,7 +562,7 @@ void msh_auto_complete(char *prefix)
         }
 #endif /* RT_USING_MODULE */
     }
-#endif /* RT_USING_DFS */
+#endif /* DFS_USING_POSIX */
 
     /* checks in internal command */
     {
