@@ -78,6 +78,11 @@ menu "Hardware Drivers Config"
             select RT_USING_DFS_ELMFAT
             default n
 
+        config BSP_USING_USBD
+            bool "Enable OTGFS as USB device"
+            select RT_USING_USB_DEVICE
+            default n 
+
     endmenu
 
 endmenu

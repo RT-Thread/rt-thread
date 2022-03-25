@@ -42,6 +42,7 @@ OPENMV4-H7-PLUS 是 OPENMV公司推出的一款针对 STM32H7系列设计的 Cor
 | SDRAM | 支持 | IS42S32800  BANK1 |
 | QSPI FLASH | 支持 | W25Q256JV |
 | SDIO | 支持 | USD-1040310811 |
+| USBCDC | 支持 |  |
 
 ## 使用说明
 
@@ -99,7 +100,7 @@ msh >
 
 
 
-5. USBD CDC使用，参考文章[STM32L496 USB CDC适配](https://club.rt-thread.org/ask/article/2959.html)
+5. USBD CDC使用，参考文章[STM32L496 USB CDC适配](https://club.rt-thread.org/ask/article/2959.html)（bsp已配置引脚和修改Kconfig）
 
 ## 注意事项
 
