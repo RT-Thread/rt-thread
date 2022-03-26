@@ -23,7 +23,7 @@ HAL_Driver/Src/HAL_CRC.c
 
 
 libpath = ['.', cwd + '/Device', cwd + '/HAL_Driver/Src']
-libs = ['HAL_HRNG_20210422', 'HAL_EFlash_EX', 'HAL_AES_20210422']
+libs = []
 
 if rtconfig.CROSS_TOOL == 'gcc':
     src = src + ['Device/Startup_ACM32F0x0_gcc.s']

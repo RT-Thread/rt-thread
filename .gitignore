@@ -42,3 +42,5 @@ tags
 .history
 CMakeLists.txt
 cmake-build-debug
+bsp/acm32f0x0-nucleo/project.uvguix.AC-LXF
+*.AC-LXF
