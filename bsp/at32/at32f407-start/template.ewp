@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>AT32F407VGT7	ArteryTek AT32F407VGT7</state>
+                    <state>AT32F407VGT7_v2	ArteryTek -AT32F407VGT7</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -138,7 +138,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>AT32F407VGT7	ArteryTek AT32F407VGT7</state>
+                    <state>AT32F407VGT7_v2	ArteryTek -AT32F407VGT7</state>
                 </option>
                 <option>
                     <name>FPU2</name>
