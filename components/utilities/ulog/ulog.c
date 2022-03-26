@@ -753,6 +753,13 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
     }
 #endif /* ULOG_USING_FILTER */
 
+#ifdef ULOG_USING_ASYNC_OUTPUT
+    if (ulog.async_rb == RT_NULL)
+    {
+        ulog.async_rb = rt_ringbuffer_create(ULOG_ASYNC_OUTPUT_BUF_SIZE);
+    }
+#endif
+
     /* get log buffer */
     log_buf = get_log_buf();
 
