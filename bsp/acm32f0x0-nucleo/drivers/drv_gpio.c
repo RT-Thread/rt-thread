@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2021-08-26     AisinoChip        first version
+ * 2021-10-15     AisinoChip        add special pin setting
  */
 
 #include <rthw.h>
@@ -254,7 +255,53 @@ static void acm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 
     /* special PIN process */
-    __HAL_RTC_PC13_DIGIT();
+    if(index->gpio == GPIOC && index->pin == GPIO_PIN_13)
+    {
+        __HAL_RTC_PC13_DIGIT();
+        __HAL_RTC_PC13_SEL(0);  /* GPIO function */
+        __HAL_RTC_PC13_PULL_DOWN_DISABLE();
+        __HAL_RTC_PC13_PULL_UP_DISABLE();
+        if(GPIO_InitStruct.Pull == GPIO_PULLUP)
+        {
+            __HAL_RTC_PC13_PULL_UP_ENABLE();
+        }
+        else if(GPIO_InitStruct.Pull == GPIO_PULLDOWN)
+        {
+            __HAL_RTC_PC13_PULL_DOWN_ENABLE();
+        }
+    }
+
+    if(index->gpio == GPIOC && index->pin == GPIO_PIN_14)
+    {
+        __HAL_RTC_PC14_DIGIT();
+        __HAL_RTC_PC14_SEL(0);  /* GPIO function */
+        __HAL_RTC_PC14_PULL_DOWN_DISABLE();
+        __HAL_RTC_PC14_PULL_UP_DISABLE();
+        if(GPIO_InitStruct.Pull == GPIO_PULLUP)
+        {
+            __HAL_RTC_PC14_PULL_UP_ENABLE();
+        }
+        else if(GPIO_InitStruct.Pull == GPIO_PULLDOWN)
+        {
+            __HAL_RTC_PC14_PULL_DOWN_ENABLE();
+        }
+    }
+
+    if(index->gpio == GPIOC && index->pin == GPIO_PIN_15)
+    {
+        __HAL_RTC_PC15_DIGIT();
+        __HAL_RTC_PC15_SEL(0);  /* GPIO function */
+        __HAL_RTC_PC15_PULL_DOWN_DISABLE();
+        __HAL_RTC_PC15_PULL_UP_DISABLE();
+        if(GPIO_InitStruct.Pull == GPIO_PULLUP)
+        {
+            __HAL_RTC_PC15_PULL_UP_ENABLE();
+        }
+        else if(GPIO_InitStruct.Pull == GPIO_PULLDOWN)
+        {
+            __HAL_RTC_PC15_PULL_DOWN_ENABLE();
+        }
+    }
 
     HAL_GPIO_Init(index->gpio, &GPIO_InitStruct);
 }
@@ -357,6 +404,8 @@ static rt_err_t acm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             rt_hw_interrupt_enable(level);
             return RT_ENOSYS;
         }
+
+        System_Module_Enable(EN_EXTI);
 
         /* Configure GPIO_InitStructure */
         GPIO_InitStruct.Pin = index->pin;

@@ -3,12 +3,27 @@
  *
  * @brief       This file contains all the functions for the QSPI peripheral
  *
- * @version     V1.0.1
+ * @version     V1.0.2
  *
- * @date        2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
+#if defined (APM32F10X_MD) || defined (APM32F10X_LD)
 #include "apm32f10x_qspi.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
@@ -58,7 +73,7 @@ void QSPI_Reset(void)
  *
  * @retval      None
  */
-void QSPI_Config(QSPI_Config_T * qspiConfig)
+void QSPI_Config(QSPI_Config_T *qspiConfig)
 {
     QSPI->CTRL1_B.CPHA = qspiConfig->clockPhase;
     QSPI->CTRL1_B.CPOL = qspiConfig->clockPolarity;
@@ -67,7 +82,6 @@ void QSPI_Config(QSPI_Config_T * qspiConfig)
     QSPI->CTRL1_B.SSTEN = qspiConfig->selectSlaveToggle;
 
     QSPI->BR = qspiConfig->clockDiv;
-
 }
 
 /*!
@@ -571,24 +585,25 @@ void QSPI_ClearIntFlag(uint32_t flag)
 {
     volatile uint32_t dummy = 0;
 
-    if(flag & QSPI_INT_FLAG_TFO)
+    if (flag & QSPI_INT_FLAG_TFO)
     {
         dummy = QSPI->TFOIC;
     }
-    else if(flag & QSPI_INT_FLAG_RFO)
+    else if (flag & QSPI_INT_FLAG_RFO)
     {
         dummy = QSPI->RFOIC;
     }
-    else if(flag & QSPI_INT_FLAG_RFU)
+    else if (flag & QSPI_INT_FLAG_RFU)
     {
         dummy = QSPI->RFUIC;
     }
-    else if(flag & QSPI_INT_FLAG_MST)
+    else if (flag & QSPI_INT_FLAG_MST)
     {
         dummy = QSPI->MIC;
     }
 }
+#endif //defined APM32F10X_MD/LD
 
 /**@} end of group QSPI_Fuctions*/
-/**@} end of group QSPI_Driver */
+/**@} end of group QSPI_Driver*/
 /**@} end of group Peripherals_Library*/

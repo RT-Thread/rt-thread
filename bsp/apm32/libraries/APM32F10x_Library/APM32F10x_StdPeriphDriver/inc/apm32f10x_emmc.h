@@ -1,22 +1,36 @@
 /*!
- * @file       apm32f10x_emmc.h
+ * @file        apm32f10x_emmc.h
  *
- * @brief      This file contains all the functions prototypes for the EMMC firmware library
+ * @brief       This file contains all the functions prototypes for the EMMC firmware library
  *
- * @version    V1.0.1
+ * @version     V1.0.2
  *
- * @date       2021-03-23
+ * @date        2022-01-05
  *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
  */
 
 #ifndef __APM32F10X_EMMC_H
 #define __APM32F10X_EMMC_H
 
-#include "apm32f10x.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "apm32f10x.h"
 
 /** @addtogroup Peripherals_Library Standard Peripheral Library
   @{
@@ -66,7 +80,7 @@ typedef enum
 typedef enum
 {
     EMMC_MEMORY_TYPE_SRAM  = 0x00000000,
-    EMMC_MEMORY_TYPE_PARAM = 0x00000004,
+    EMMC_MEMORY_TYPE_PSRAM = 0x00000004,
     EMMC_MEMORY_TYPE_NOR   = 0x00000008
 } EMMC_MEMORY_TYPE_T;
 
@@ -262,8 +276,8 @@ typedef struct
     EMMC_WAITE_SIGNAL_T         waiteSignal;
     EMMC_EXTENDEN_MODE_T        extendedMode;
     EMMC_WRITE_BURST_T          writeBurst;
-    EMMC_NORSRAMTimingConfig_T*   readWriteTimingStruct;
-    EMMC_NORSRAMTimingConfig_T*   writeTimingStruct;
+    EMMC_NORSRAMTimingConfig_T   *readWriteTimingStruct;
+    EMMC_NORSRAMTimingConfig_T   *writeTimingStruct;
 } EMMC_NORSRAMConfig_T;
 
 /**
@@ -289,8 +303,8 @@ typedef struct
     EMMC_ECC_PAGE_SIZE_BYTE_T ECCPageSize;
     uint32_t                  TCLRSetupTime;
     uint32_t                  TARSetupTime;
-    EMMC_NAND_PCCARDTimingConfig_T* commonSpaceTimingStruct;
-    EMMC_NAND_PCCARDTimingConfig_T* attributeSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T *commonSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T *attributeSpaceTimingStruct;
 } EMMC_NANDConfig_T;
 
 /**
@@ -301,9 +315,9 @@ typedef struct
     EMMC_WAIT_FEATURE_T waitFeature;
     uint32_t            TCLRSetupTime;
     uint32_t            TARSetupTime;
-    EMMC_NAND_PCCARDTimingConfig_T* commonSpaceTimingStruct;
-    EMMC_NAND_PCCARDTimingConfig_T* attributeSpaceTimingStruct;
-    EMMC_NAND_PCCARDTimingConfig_T* IOSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T *commonSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T *attributeSpaceTimingStruct;
+    EMMC_NAND_PCCARDTimingConfig_T *IOSpaceTimingStruct;
 } EMMC_PCCARDConfig_T;
 
 /**@} end of group EMMC_Structure*/
@@ -318,12 +332,12 @@ void EMMC_ResetNAND(EMMC_BANK_NAND_T bank);
 void EMMC_ResetPCCard(void);
 
 /** EMMC Configuration */
-void EMMC_ConfigNORSRAM(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig);
-void EMMC_ConfigNAND(EMMC_NANDConfig_T* emmcNANDConfig);
-void EMMC_ConfigPCCard(EMMC_PCCARDConfig_T* emmcPCCardConfig);
-void EMMC_ConfigNORSRAMStructInit(EMMC_NORSRAMConfig_T* emmcNORSRAMConfig);
-void EMMC_ConfigNANDStructInit(EMMC_NANDConfig_T* emmcNANDConfig);
-void EMMC_ConfigPCCardStructInit(EMMC_PCCARDConfig_T* emmcPCCardConfig);
+void EMMC_ConfigNORSRAM(EMMC_NORSRAMConfig_T *emmcNORSRAMConfig);
+void EMMC_ConfigNAND(EMMC_NANDConfig_T *emmcNANDConfig);
+void EMMC_ConfigPCCard(EMMC_PCCARDConfig_T *emmcPCCardConfig);
+void EMMC_ConfigNORSRAMStructInit(EMMC_NORSRAMConfig_T *emmcNORSRAMConfig);
+void EMMC_ConfigNANDStructInit(EMMC_NANDConfig_T *emmcNANDConfig);
+void EMMC_ConfigPCCardStructInit(EMMC_PCCARDConfig_T *emmcPCCardConfig);
 
 /** EMMC bank control */
 void EMMC_EnableNORSRAM(EMMC_BANK1_NORSRAM_T bank);
@@ -345,7 +359,7 @@ uint8_t EMMC_ReadIntFlag(EMMC_BANK_NAND_T bank, EMMC_INT_T flag);
 void EMMC_ClearIntFlag(EMMC_BANK_NAND_T bank, uint32_t flag);
 
 /**@} end of group EMMC_Fuctions*/
-/**@} end of group EMMC_Driver */
+/**@} end of group EMMC_Driver*/
 /**@} end of group Peripherals_Library*/
 
 #ifdef __cplusplus

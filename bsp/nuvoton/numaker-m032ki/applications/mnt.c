@@ -19,7 +19,7 @@
 #include <sys/stat.h>
 #include <sys/statfs.h>
 
-#if defined(PKG_USING_FAL)
+#if defined(RT_USING_FAL)
     #include <fal.h>
 #endif
 

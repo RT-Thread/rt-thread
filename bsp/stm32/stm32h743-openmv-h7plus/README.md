@@ -38,8 +38,11 @@ OPENMV4-H7-PLUS 是 OPENMV公司推出的一款针对 STM32H7系列设计的 Cor
 | **片上外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
 | GPIO              |     支持     |                                        |
-| UART              |     支持     | UART1(PB14 TX)(PB15 RX) |
+| USART             |     支持     | USART1(PB14 TX)(PB15 RX) |
 | SDRAM | 支持 | IS42S32800  BANK1 |
+| QSPI FLASH | 支持 | W25Q256JV |
+| SDIO | 支持 | USD-1040310811 |
+| USBCDC | 支持 |  |
 
 ## 使用说明
 
@@ -70,9 +73,9 @@ OPENMV4-H7-PLUS 是 OPENMV公司推出的一款针对 STM32H7系列设计的 Cor
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，蓝色的 LED_R 以 500MS 周期闪烁。
+下载程序成功之后，系统会自动运行，红色的 LED_R 以 500MS 周期闪烁。
 
-连接开发板ST-LINK到 PC , 会发现有串口, 在终端工具里打开相应的串口（115200-8-1-N）, 复位设备后，可以看到 RT-Thread 的输出信息:
+串口通信需要使用USB转TTL连接USART1。在终端工具里打开相应的串口（115200-8-1-N）, 复位设备后，可以看到 RT-Thread 的输出信息:
 
 ```bash
  \ | /
@@ -97,7 +100,7 @@ msh >
 
 
 
-5. USBD CDC使用，参考文章[STM32L496 USB CDC适配](https://club.rt-thread.org/ask/article/2959.html)
+5. USBD CDC使用，参考文章[STM32L496 USB CDC适配](https://club.rt-thread.org/ask/article/2959.html)（bsp已配置引脚和修改Kconfig）
 
 ## 注意事项
 

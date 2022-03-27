@@ -123,11 +123,6 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     uart->handle.Init.Mode         = UART_MODE_TX_RX;
     uart->handle.Init.OverSampling = UART_OVERSAMPLING_16;
 
-    if(uart->handle.Instance == USART3)
-    {
-        uart->handle.Init.HwFlowCtl    = UART_HWCONTROL_RTS_CTS;
-    }
-
     switch (cfg->data_bits)
     {
     case DATA_BITS_8:

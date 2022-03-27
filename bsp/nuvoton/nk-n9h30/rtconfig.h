@@ -315,13 +315,13 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
-#define PKG_USING_FAL
+#define RT_USING_FAL
 #define FAL_DEBUG_CONFIG
 #define FAL_DEBUG 1
 #define FAL_PART_HAS_TABLE_CFG
 #define FAL_USING_SFUD_PORT
 #define FAL_USING_NOR_FLASH_DEV_NAME "norflash0"
-#define PKG_USING_FAL_LATEST_VERSION
+#define RT_USING_FAL_LATEST_VERSION
 #define PKG_FAL_VER_NUM 0x99999
 #define PKG_USING_RAMDISK
 #define PKG_USING_RAMDISK_LATEST_VERSION

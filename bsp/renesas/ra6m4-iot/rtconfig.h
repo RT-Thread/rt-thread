@@ -106,17 +106,6 @@
 
 /* Network */
 
-/* Socket abstraction layer */
-
-
-/* Network interface device */
-
-
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
 
 /* VBUS(Virtual Software BUS) */
 
@@ -193,10 +182,12 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
+#define SOC_FAMILY_RENESAS
+#define SOC_SERIES_R7FA6M4
 
 /* Hardware Drivers Config */
 
-#define SOC_SERIES_R7FA6M4AF
+#define SOC_R7FA6M4AF
 
 /* Onboard Peripheral Drivers */
 
@@ -210,6 +201,5 @@
 
 /* Board extended module Drivers */
 
-#define SOC_FAMILY_RENESAS
 
 #endif

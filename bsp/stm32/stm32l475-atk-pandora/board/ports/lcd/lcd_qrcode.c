@@ -105,7 +105,7 @@ static void show_qrcode_by_line(rt_uint16_t x, rt_uint16_t y, rt_uint8_t size, r
  *
  * @param   x           x position
  * @param   y           y position
- * @param   version     version of qrcode
+ * @param   version     version of qrcode (ECC_LOW, ECC_MEDIUM, ECC_QUARTILE or ECC_HIGH)
  * @param   ecc         level of error correction
  * @param   data        string
  * @param   enlargement enlargement_factor

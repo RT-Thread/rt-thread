@@ -129,7 +129,7 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_MTD_NOR
             select BSP_USING_SPI_FLASH
             select BSP_USING_FS
-            select PKG_USING_FAL
+            select RT_USING_FAL
             select FAL_USING_AUTO_INIT
             select FAL_PART_HAS_TABLE_CFG
             select PKG_USING_LITTLEFS
@@ -255,12 +255,12 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_PWM
-        bool "Enable pwm"
+        bool "Enable PWM"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
         menuconfig BSP_USING_PWM2
-            bool "Enable timer2 output pwm"
+            bool "Enable timer2 output PWM"
             default n
             if BSP_USING_PWM2
                 config BSP_USING_PWM2_CH4

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,11 +9,11 @@
  */
 
 #include <board.h>
-#include <rtthread.h>
 #include <rtdevice.h>
 
 #define     ADC_NAME        "adc"
 
+#if defined(RT_USING_ADC)
 #if defined(BSP_USING_ADC)
 
 struct acm32_adc
@@ -24,7 +24,7 @@ struct acm32_adc
 
 static struct acm32_adc acm32_adc_obj = {0};
 
-static rt_err_t acm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
 {
     struct acm32_adc *adcObj = RT_NULL;
 
@@ -70,7 +70,7 @@ static rt_err_t acm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
     return RT_EOK;
 }
 
-static rt_err_t acm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t _get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     struct acm32_adc *adcObj = RT_NULL;
     ADC_ChannelConfTypeDef channelConf = {0};
@@ -107,18 +107,19 @@ static rt_err_t acm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
 
 static const struct rt_adc_ops acm_adc_ops =
 {
-    .enabled = acm32_adc_enabled,
-    .convert = acm32_get_adc_value,
+    .enabled = _adc_enabled,
+    .convert = _get_adc_value,
 };
 
-static int acm32_adc_init(void)
+static int rt_hw_adc_init(void)
 {
     return rt_hw_adc_register(&acm32_adc_obj.acm32_adc_device,
                               ADC_NAME,
                               &acm_adc_ops,
                               RT_NULL);
 }
-INIT_BOARD_EXPORT(acm32_adc_init);
+INIT_BOARD_EXPORT(rt_hw_adc_init);
 
 #endif /* BSP_USING_ADC */
+#endif /* RT_USING_ADC */
 

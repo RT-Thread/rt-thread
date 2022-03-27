@@ -587,6 +587,12 @@ static void pwm_get_channel(void)
 #ifdef BSP_USING_PWM12_CH2
     stm32_pwm_obj[PWM12_INDEX].channel |= 1 << 1;
 #endif
+#ifdef BSP_USING_PWM16_CH1
+    stm32_pwm_obj[PWM16_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM17_CH1
+    stm32_pwm_obj[PWM17_INDEX].channel |= 1 << 0;
+#endif
 }
 
 static int stm32_pwm_init(void)

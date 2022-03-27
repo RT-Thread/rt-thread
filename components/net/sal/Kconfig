@@ -1,5 +1,5 @@
 menuconfig RT_USING_SAL
-    bool "Enable socket abstraction layer (SAL)"
+    bool "SAL: socket abstraction layer"
     select RT_USING_NETDEV
     select RT_USING_SYSTEM_WORKQUEUE
     default n

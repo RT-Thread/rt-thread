@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,9 +8,6 @@
  * 2021-08-25     AisinoChip   first implementation
  */
 
-#include <rthw.h>
-#include <rtthread.h>
-#include "rtconfig.h"
 #include "board.h"
 #include <rtdevice.h>
 
