@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2012-01-01    aozima       first implementation.
  * 2021-09-21    zhuxw        add vango v85xx spi drivers
- * 
+ *
  */
 
 #ifndef __DRV_SPI_H__
