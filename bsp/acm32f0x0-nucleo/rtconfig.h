@@ -16,7 +16,7 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 512
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
@@ -89,9 +89,22 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_HWTIMER
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_ADC
+#define RT_USING_PM
+#define RT_USING_RTC
+#define RT_USING_SPI
 #define RT_USING_WDT
+#define RT_USING_HWCRYPTO
+#define RT_HWCRYPTO_DEFAULT_NAME "hwcryto"
+#define RT_HWCRYPTO_IV_MAX_SIZE 16
+#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
+#define RT_HWCRYPTO_USING_AES
+#define RT_HWCRYPTO_USING_AES_ECB
+#define RT_HWCRYPTO_USING_RNG
+#define RT_HWCRYPTO_USING_CRC
 
 /* Using USB */
 
@@ -221,14 +234,13 @@
 
 #define BSP_USING_UART1
 #define BSP_USING_UART2
-#define BSP_UART2_RX_USING_DMA
-#define BSP_UART2_TX_USING_DMA
 #define BSP_USING_UART3
-#define BSP_UART3_RX_USING_DMA
-#define BSP_UART3_TX_USING_DMA
+#define BSP_USING_RTC
 
 /* Hardware I2C */
 
+#define BSP_USING_I2C1
+#define BSP_USING_I2C2
 
 /* Hardware CAN */
 
@@ -250,9 +262,14 @@
 
 /* Hardware SPI */
 
+#define BSP_USING_SPI1
+#define BSP_USING_SPI2
 
 /* Hardware CRYPTO */
 
+#define BSP_USING_CRC
+#define BSP_USING_AES
+#define BSP_USING_HRNG
 
 /* Board extended module Drivers */
 

@@ -231,12 +231,14 @@ RTM_EXPORT(rt_ringbuffer_get);
  */
 rt_size_t rt_ringbuffer_peak(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
 {
+    rt_size_t size;
+
     RT_ASSERT(rb != RT_NULL);
 
     *ptr = RT_NULL;
 
     /* whether has enough data  */
-    rt_size_t size = rt_ringbuffer_data_len(rb);
+    size = rt_ringbuffer_data_len(rb);
 
     /* no data */
     if (size == 0)

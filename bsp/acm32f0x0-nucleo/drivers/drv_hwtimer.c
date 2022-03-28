@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,10 +12,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#ifdef BSP_USING_TIM
+#ifdef RT_USING_HWTIMER
 #include "tim_config.h"
 
-#ifdef RT_USING_HWTIMER
 enum
 {
 #ifdef BSP_USING_TIM1
@@ -361,5 +360,4 @@ static int acm32_hwtimer_init(void)
 INIT_BOARD_EXPORT(acm32_hwtimer_init);
 
 #endif /* RT_USING_HWTIMER */
-#endif /* BSP_USING_TIM */
 

@@ -15,8 +15,8 @@ FSP_HEADER
             extern const uart_cfg_t g_uart6_cfg;
             extern const sci_uart_extended_cfg_t g_uart6_cfg_extend;
 
-            #ifndef uart6_isr_cb
-            void uart6_isr_cb(uart_callback_args_t * p_args);
+            #ifndef user_uart6_callback
+            void user_uart6_callback(uart_callback_args_t * p_args);
             #endif
 void hal_entry(void);
 void g_hal_init(void);

@@ -38,7 +38,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_QSPI
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
-        select PKG_USING_FAL
+        select RT_USING_FAL
         select FAL_USING_SFUD_PORT
         default n
         
