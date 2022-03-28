@@ -43,13 +43,13 @@ Nuvoton offers HMI platforms which are embedded with Nuvoton N9H MPU.  The N9H s
 |SPI NOR flash | W25Q256JVEQ (32 MB) | Supported |
 
 ## 2. Supported compiler
-Support GCC, MDK4 and MDK5 IDE/compilers. More information of these compiler version as following:
+Support GCC and MDK IDE/compilers. More information of these compiler version as following:
 | IDE/Compiler  | Tested version            |
 | ---------- | ---------------------------- |
-| MDK5       | 5.26.2                       |
+| MDK        | uVision 5.25.2               |
 | GCC        | 6-2017-q1-update             |
 
-Notice: Please install ICE driver for development.
+Notice: Please install ICE driver for development and [NuMicro_ARM9_Device_Database_Keil](https://www.nuvoton.com/resource-download.jsp?tp_GUID=SW1820201207155701).
 
 ## 3. Program firmware
 ### 3.1 SDRAM Downloading using NuWriter
