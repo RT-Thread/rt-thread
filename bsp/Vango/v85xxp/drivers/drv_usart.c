@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -121,7 +121,7 @@ void UART5_IRQHandler(void)
 }
 #endif /* BSP_USING_UART4 */
 
-static const struct V85xxP_uart uarts[] = 
+static const struct V85xxP_uart uarts[] =
 {
 #ifdef BSP_USING_UART0
     {
@@ -285,7 +285,7 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     if ((UART_GetINTStatus((UART_Type *)uart->uart_periph, UART_INTSTS_RX) != RESET) &&
-            (UART_GetFlag((UART_Type *)uart->uart_periph, UART_FLAG_RXFULL) != RESET)) 
+            (UART_GetFlag((UART_Type *)uart->uart_periph, UART_FLAG_RXFULL) != RESET))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
         /* Clear RXNE interrupt flag */
@@ -293,7 +293,7 @@ static void uart_isr(struct rt_serial_device *serial)
     }
 }
 
-static const struct rt_uart_ops V85xxP_uart_ops = 
+static const struct rt_uart_ops V85xxP_uart_ops =
 {
     V85xxP_configure,
     V85xxP_control,
@@ -307,7 +307,7 @@ int V85xxP_hw_usart_init(void)
     int i;
 
 
-    for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++) 
+    for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
         uarts[i].serial->ops    = &V85xxP_uart_ops;
         uarts[i].serial->config = config;
