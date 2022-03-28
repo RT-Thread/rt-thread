@@ -22,7 +22,7 @@ scons
 
 ## 3. 执行
 
-本工程执行环境为`qemu-system-aarch64`模拟器
+本工程执行环境为`qemu-system-aarch64`模拟器，工程可配置为使用`Cortex-A53/A57/A72`等芯片，GIC支持`V2/V3`版本，其中`V2`最多可配置8个处理器。
 
 Windows平台下，可以在此获取到QEMU：
 ```
@@ -34,7 +34,7 @@ sudo apt update
 sudo apt install qemu-system-arm
 ```
 
-在终端执行qemu.bat或qemu.sh可以看到程序运行：
+工程默认配置修改后请注意修改运行脚本。在终端执行qemu.bat或qemu.sh可以看到程序运行：
 ```
 heap: [0x40042aa0 - 0x40142aa0]
 
@@ -52,4 +52,4 @@ msh />
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0 |
 | RTC  | 支持 | - |
-| VIRTIO BLK | 支持 | VIRTIO BLK0 |
+| VIRTIO BLK | 支持 | - |

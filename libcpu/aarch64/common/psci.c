@@ -29,11 +29,19 @@ static psci_call_handle psci_call = psci_smc_call;
 static uint64_t shutdown_args[3] = {0, 0, 0};
 static uint64_t reboot_args[3] = {0, 0, 0};
 
-void arm_psci_init(uint64_t *platform_shutdown_args, uint64_t *platform_reboot_args)
+void arm_psci_init(uint64_t method, uint64_t *platform_shutdown_args, uint64_t *platform_reboot_args)
 {
-    if (rt_hw_get_current_el() < 2)
+    switch (method)
     {
-        psci_call = psci_hvc_call;
+    case PSCI_METHOD_SMC:
+        psci_call = psci_smc_call;
+        break;
+    case PSCI_METHOD_HVC:
+        if (rt_hw_get_current_el() < 2)
+        {
+            psci_call = psci_hvc_call;
+        }
+        break;
     }
 
     if (platform_shutdown_args != RT_NULL)

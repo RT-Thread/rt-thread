@@ -14,6 +14,10 @@
 
 #include "board.h"
 
+#define PL011_UARTDR            0x000
+#define PL011_UARTFR            0x018
+#define PL011_UARTFR_TXFF_BIT   5
+
 unsigned int readl(volatile void *addr)
 {
     return *(volatile unsigned int *)addr;

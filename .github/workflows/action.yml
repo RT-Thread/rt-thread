@@ -166,6 +166,7 @@ jobs:
          - {RTT_BSP: "qemu-virt64-aarch64", RTT_TOOL_CHAIN: "sourcery-aarch64"}
          - {RTT_BSP: "raspberry-pi/raspi3-64", RTT_TOOL_CHAIN: "sourcery-aarch64"}
          - {RTT_BSP: "raspberry-pi/raspi4-64", RTT_TOOL_CHAIN: "sourcery-aarch64"}
+         - {RTT_BSP: "rockchip/rk3568", RTT_TOOL_CHAIN: "sourcery-aarch64"}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
