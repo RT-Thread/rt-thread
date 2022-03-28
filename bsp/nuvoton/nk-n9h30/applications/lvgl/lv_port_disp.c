@@ -135,6 +135,7 @@ static void nu_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t 
     lv_disp_flush_ready(disp_drv);
 }
 
+#if LV_VERSION_EQUAL(8, 1, 0)
 static void nu_fill_cb(struct _lv_disp_drv_t *disp_drv, lv_color_t *dest_buf, lv_coord_t dest_width,
                        const lv_area_t *fill_area, lv_color_t color)
 {
@@ -185,6 +186,7 @@ static void nu_fill_cb(struct _lv_disp_drv_t *disp_drv, lv_color_t *dest_buf, lv
         // -> Leave GE2D
     }
 }
+#endif
 
 void nu_perf_monitor(struct _lv_disp_drv_t *disp_drv, uint32_t time, uint32_t px)
 {
@@ -271,8 +273,10 @@ void lv_port_disp_init(void)
     /*Set a display buffer*/
     disp_drv.draw_buf = &disp_buf;
 
+#if LV_VERSION_EQUAL(8, 1, 0)		
     /*Fill a memory with a color (GPU only)*/
     disp_drv.gpu_fill_cb = nu_fill_cb;
+#endif
 
     /*Called after every refresh cycle to tell the rendering and flushing time + the number of flushed pixels*/
     //disp_drv.monitor_cb = nu_perf_monitor;

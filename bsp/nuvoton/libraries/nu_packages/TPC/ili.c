@@ -122,7 +122,7 @@ exit_ili_i2c_write_and_read:
 static int ili_get_ptl_ver(ili_ts_data_t psIliTs,
                            rt_uint16_t  cmd, rt_uint8_t *inbuf, rt_uint8_t *outbuf)
 {
-    int error;
+    rt_int32_t error;
     rt_uint8_t buf[64];
 
     buf[0] = cmd;
@@ -139,7 +139,7 @@ static int ili_get_ptl_ver(ili_ts_data_t psIliTs,
 static int ili_get_mcu_ver(ili_ts_data_t psIliTs,
                            rt_uint16_t  cmd, rt_uint8_t *inbuf, rt_uint8_t *outbuf)
 {
-    int error;
+    rt_int32_t error;
     rt_uint8_t buf[64];
 
     buf[0] = cmd;
@@ -157,7 +157,7 @@ static int ili_get_mcu_ver(ili_ts_data_t psIliTs,
 static int ili_get_fw_ver(ili_ts_data_t psIliTs,
                           rt_uint16_t  cmd, rt_uint8_t *inbuf, rt_uint8_t *outbuf)
 {
-    int error;
+    rt_int32_t error;
     rt_uint8_t buf[64];
 
     buf[0] = cmd;
@@ -173,7 +173,7 @@ static int ili_get_fw_ver(ili_ts_data_t psIliTs,
 static int ili_get_scrn_res(ili_ts_data_t psIliTs,
                             rt_uint16_t  cmd, rt_uint8_t *inbuf, rt_uint8_t *outbuf)
 {
-    int error;
+    rt_int32_t error;
     rt_uint8_t buf[64];
 
     buf[0] = cmd;
@@ -192,7 +192,7 @@ static int ili_get_scrn_res(ili_ts_data_t psIliTs,
 static int ili_get_tp_res(ili_ts_data_t psIliTs,
                           rt_uint16_t  cmd, rt_uint8_t *inbuf, rt_uint8_t *outbuf)
 {
-    int error;
+    rt_int32_t error;
     rt_uint8_t buf[64];
 
     buf[0] = cmd;
@@ -212,7 +212,7 @@ static int ili_get_tp_res(ili_ts_data_t psIliTs,
 static int ili_get_ic_mode(ili_ts_data_t psIliTs,
                            rt_uint16_t cmd, rt_uint8_t *inbuf, rt_uint8_t *outbuf)
 {
-    int error;
+    rt_int32_t error;
     rt_uint8_t buf[64];
 
     buf[0] = cmd;
@@ -227,7 +227,7 @@ static int ili_get_ic_mode(ili_ts_data_t psIliTs,
 static int ili_send_soft_reset(ili_ts_data_t psIliTs,
                                rt_uint16_t  cmd, rt_uint8_t *inbuf, rt_uint8_t *outbuf)
 {
-    int error;
+    rt_int32_t error;
     rt_uint8_t buf[64];
 
     buf[0] = cmd;
@@ -325,9 +325,9 @@ static void ili_info_dump(ili_ts_data_t psIliTs)
     rt_kprintf("ic_mode: %d\n", psIliTs->ic_mode);
 }
 
-static int16_t pre_x[ILI_MAX_TOUCH] = {-1, -1, -1, -1, -1};
-static int16_t pre_y[ILI_MAX_TOUCH] = {-1, -1, -1, -1, -1};
-static int16_t pre_w[ILI_MAX_TOUCH] = {-1, -1, -1, -1, -1};
+static rt_int16_t pre_x[ILI_MAX_TOUCH] = {-1, -1, -1, -1, -1};
+static rt_int16_t pre_y[ILI_MAX_TOUCH] = {-1, -1, -1, -1, -1};
+static rt_int16_t pre_w[ILI_MAX_TOUCH] = {-1, -1, -1, -1, -1};
 static rt_uint8_t s_tp_dowm[ILI_MAX_TOUCH];
 
 static void ili_touch_up(void *buf, int8_t id)
@@ -386,14 +386,14 @@ static rt_size_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_siz
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
 
     struct ili_ts_data *ts = (ili_ts_data_t)touch;
-    uint8_t tmpbuf[256] = {0};
+    rt_uint8_t tmpbuf[256] = {0};
     rt_err_t error = 0;
-    int packet_len = 5;
-    int packet_max_point = 10;
-    int8_t touch_num;
-    int i, count;
-    uint16_t x, y;
-    int32_t   tip, point_id;
+    rt_int32_t packet_len = 5;
+    rt_int32_t packet_max_point = 10;
+    rt_int8_t touch_num;
+    rt_int32_t i, count;
+    rt_uint16_t x, y;
+    rt_int32_t   tip, point_id;
 
     static rt_uint8_t pre_touch = 0;
     static int8_t pre_id[ILI_MAX_TOUCH] = {0};

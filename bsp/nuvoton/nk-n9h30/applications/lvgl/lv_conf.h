@@ -13,6 +13,8 @@
 
 #include "rtconfig.h"
 
+#define LV_VERSION_EQUAL(x,y,z) (x == LVGL_VERSION_MAJOR && y==LVGL_VERSION_MINOR  && z==LVGL_VERSION_PATCH )
+
 //#define LV_USE_GPU_N9H30_GE2D   1
 
 #define LV_COLOR_DEPTH                  BSP_LCD_BPP
@@ -23,8 +25,13 @@
 #define LV_FONT_MONTSERRAT_16           1
 #define LV_USE_PERF_MONITOR             1
 
+#if LV_VERSION_EQUAL(8, 1, 0)		
 #define LV_USE_DEMO_RTT_MUSIC           1
 #define LV_DEMO_RTT_MUSIC_AUTO_PLAY     1
+#else
+#define LV_USE_DEMO_MUSIC           1
+#define LV_DEMO_MUSIC_AUTO_PLAY     1
+#endif
 
 //#define LV_DISP_DEF_REFR_PERIOD         16
 

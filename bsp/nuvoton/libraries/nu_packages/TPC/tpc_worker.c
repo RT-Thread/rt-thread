@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "ili.h"
+#include "touch.h"
 
 #define THREAD_PRIORITY   5
 #define THREAD_STACK_SIZE 2048
