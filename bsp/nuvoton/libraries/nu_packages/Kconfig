@@ -136,16 +136,29 @@ menu "Nuvoton Packages Config"
 
         endif
 
-    config NU_PKG_USING_ILI_TPC
-        bool "ILI Series TPC"
+    config NU_PKG_USING_TPC
+        bool "Support Touch Panel Controller over I2C"
         select RT_USING_TOUCH
+        select RT_TOUCH_PIN_IRQ
         select RT_USING_I2C
-        select BSP_USING_I2C
-        default n
+
+    if NU_PKG_USING_TPC
+        choice
+            prompt "Select TPC drivers"
+            config NU_PKG_USING_TPC_ILI
+                bool "ILI Series TPC"
+                default n
+
+            config NU_PKG_USING_TPC_GT911
+                bool "GT911 TPC"
+                default n
+        endchoice
+    endif
 
     config NU_PKG_USING_ADC_TOUCH
         bool "ADC touch function"
         default n
+    
 
     if NU_PKG_USING_ADC_TOUCH
         config NU_PKG_USING_ADC_TOUCH_SW
