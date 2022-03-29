@@ -11,7 +11,7 @@ if os.getenv('RTT_CC'):
 
 # only support GNU GCC compiler.
 PLATFORM    = 'gcc'
-EXEC_PATH   = '/usr/lib/arm-none-eabi/bin'
+EXEC_PATH   = r'/usr/lib/arm-none-eabi/bin'
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
