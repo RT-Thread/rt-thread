@@ -29,12 +29,13 @@ jobs:
       fail-fast: false
       matrix:
        legs:
-         - {RTT_BSP: "acm32f0x0-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "acm32/acm32f0x0-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "CME_M7", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apm32/apm32f103xe-minibroard", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apollo2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "at91/at91sam9g45", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "at91/at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "ft32/ft32f072xb-starter", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/gd32103c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -70,13 +71,13 @@ jobs:
          - {RTT_BSP: "lpc2478", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc5410x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc54114-lite", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "ls1bdev", RTT_TOOL_CHAIN: "sourcery-mips"}
-         - {RTT_BSP: "ls1cdev", RTT_TOOL_CHAIN: "sourcery-mips"}
-         - {RTT_BSP: "ls2kdev", RTT_TOOL_CHAIN: "sourcery-mips"}
-         - {RTT_BSP: "mb9bf500r", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "mb9bf506r", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "mb9bf568r", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "loongson/ls1bdev", RTT_TOOL_CHAIN: "sourcery-mips"}
+         - {RTT_BSP: "loongson/ls1cdev", RTT_TOOL_CHAIN: "sourcery-mips"}
+         - {RTT_BSP: "loongson/ls2kdev", RTT_TOOL_CHAIN: "sourcery-mips"}
+         - {RTT_BSP: "fujitsu/mb9x/mb9bf500r", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "fujitsu/mb9x/mb9bf506r", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "fujitsu/mb9x/mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "fujitsu/mb9x/mb9bf568r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mini2440", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf51822", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52832", RTT_TOOL_CHAIN: "sourcery-arm"}
