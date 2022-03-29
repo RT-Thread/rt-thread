@@ -26,6 +26,9 @@ extern "C" {
 /*
  * Some macros define
  */
+#ifndef HWREG64
+#define HWREG64(x)          (*((volatile rt_uint64_t *)(x)))
+#endif
 #ifndef HWREG32
 #define HWREG32(x)          (*((volatile rt_uint32_t *)(x)))
 #endif
