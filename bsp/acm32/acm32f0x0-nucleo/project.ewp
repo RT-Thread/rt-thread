@@ -351,24 +351,22 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\libraries\HAL_Driver\Inc</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\libraries\Device</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\libraries\CMSIS</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1406,24 +1404,22 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\libraries\HAL_Driver\Inc</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\libraries\Device</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\libraries\CMSIS</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2164,143 +2160,98 @@
   <group>
     <name>Compiler</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\time.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\stdlib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\stdlib.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscalls.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\environ.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
     </file>
   </group>
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0\context_iar.S</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0\cpuport.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m0\cpuport.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0\context_iar.S</name>
     </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hw_symmetric.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\hwtimer\hwtimer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hwcrypto.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hw_rng.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringblk_buf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\hwcrypto\hw_crc.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\pipe.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\hwtimer\hwtimer.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c_core.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringbuffer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c_dev.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c-bit-ops.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\waitqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\waitqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\adc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringblk_buf.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\dataqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\workqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\pipe.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\misc\adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\misc\pin.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\pm\lptimer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\pm\pm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\rtc\rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\spi\spi_core.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\spi\spi_dev.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\watchdog\watchdog.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\watchdog\watchdog.c</name>
     </file>
   </group>
   <group>
     <name>Drivers</name>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_hwtimer.c</name>
-    </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_wdt.c</name>
     </file>
@@ -2308,19 +2259,28 @@
       <name>$PROJ_DIR$\drivers\drv_adc.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\drivers\board.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\drivers\drv_soft_i2c.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
+      <name>$PROJ_DIR$\drivers\drv_hwtimer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_pm.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\drivers\drv_rtc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\drivers\drv_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_spi.c</name>
@@ -2329,55 +2289,55 @@
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
   </group>
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\src\components.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\mem.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\clock.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\object.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\idle.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
     </file>
   </group>
   <group>

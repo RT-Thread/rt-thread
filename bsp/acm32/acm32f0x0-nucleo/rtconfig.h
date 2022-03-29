@@ -16,7 +16,7 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 512
+#define IDLE_THREAD_STACK_SIZE 256
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
@@ -58,14 +58,8 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
@@ -78,9 +72,6 @@
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
 
-/* Device virtual file system */
-
-
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
@@ -89,27 +80,14 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_HWTIMER
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_ADC
-#define RT_USING_PM
-#define RT_USING_RTC
-#define RT_USING_SPI
 #define RT_USING_WDT
-#define RT_USING_HWCRYPTO
-#define RT_HWCRYPTO_DEFAULT_NAME "hwcryto"
-#define RT_HWCRYPTO_IV_MAX_SIZE 16
-#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
-#define RT_HWCRYPTO_USING_AES
-#define RT_HWCRYPTO_USING_AES_ECB
-#define RT_HWCRYPTO_USING_RNG
-#define RT_HWCRYPTO_USING_CRC
 
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
@@ -121,21 +99,8 @@
 
 /* Socket is in the 'Network' category */
 
+
 /* Network */
-
-/* Socket abstraction layer */
-
-
-/* Network interface device */
-
-
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
 
 
 /* Utilities */
@@ -164,6 +129,11 @@
 
 
 /* language packages */
+
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
 
 
 /* multimedia packages */
@@ -205,6 +175,8 @@
 
 /* miscellaneous packages */
 
+/* project laboratory */
+
 /* samples: kernel and components samples */
 
 
@@ -234,13 +206,14 @@
 
 #define BSP_USING_UART1
 #define BSP_USING_UART2
+#define BSP_UART2_RX_USING_DMA
+#define BSP_UART2_TX_USING_DMA
 #define BSP_USING_UART3
-#define BSP_USING_RTC
+#define BSP_UART3_RX_USING_DMA
+#define BSP_UART3_TX_USING_DMA
 
 /* Hardware I2C */
 
-#define BSP_USING_I2C1
-#define BSP_USING_I2C2
 
 /* Hardware CAN */
 
@@ -262,14 +235,9 @@
 
 /* Hardware SPI */
 
-#define BSP_USING_SPI1
-#define BSP_USING_SPI2
 
 /* Hardware CRYPTO */
 
-#define BSP_USING_CRC
-#define BSP_USING_AES
-#define BSP_USING_HRNG
 
 /* Board extended module Drivers */
 
