@@ -26,6 +26,12 @@ if RT_USING_POSIX_FS
         select RT_USING_POSIX_POLL
         default n
 
+    config RT_USING_POSIX_SOCKET
+        bool "Enable BSD Socket I/O <sys/socket.h> <netdb.h>"
+        select RT_USING_POSIX_SELECT
+        select RT_USING_SAL
+        default n
+
     config RT_USING_POSIX_TERMIOS
         bool "Enable Terminal I/O <termios.h>"
         select RT_USING_POSIX_STDIO

@@ -83,13 +83,8 @@ menu "Onboard Peripheral Drivers"
         default n
         select RT_USING_LWIP
         select RT_LWIP_USING_HW_CHECKSUM
-
-    config BSP_USING_ETH_SAL
-        bool "Enable Ethernet with SAL"
-        depends on BSP_USING_ETH
-        default y
-        select RT_USING_SAL
-        select SAL_USING_POSIX
+        select RT_USING_POSIX_FS
+        select RT_USING_POSIX_SOCKET
 
     config PHY_USING_LAN8720A
         bool
