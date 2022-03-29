@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -32,14 +32,14 @@ void SystemClock_Config(void)
                         |CLK_TYPE_HCLK   \
                         |CLK_TYPE_PCLK;
   CLK_Struct.AHBSource      = CLK_AHBSEL_LSPLL;
-  
+
   CLK_Struct.PLLL.Frequency = CLK_PLLL_26_2144MHz;
   CLK_Struct.PLLL.Source    = CLK_PLLLSRC_XTALL;
   CLK_Struct.PLLL.State     = CLK_PLLL_ON;
   CLK_Struct.HCLK.Divider   = 1;
   CLK_Struct.PCLK.Divider   = 2;
   CLK_ClockConfig(&CLK_Struct);
-  
+
   SystemCoreClock = 26214400UL;
 }
 
