@@ -75,10 +75,10 @@ jobs:
          - {RTT_BSP: "loongson/ls1bdev", RTT_TOOL_CHAIN: "sourcery-mips"}
          - {RTT_BSP: "loongson/ls1cdev", RTT_TOOL_CHAIN: "sourcery-mips"}
          - {RTT_BSP: "loongson/ls2kdev", RTT_TOOL_CHAIN: "sourcery-mips"}
-         - {RTT_BSP: "mb9bf500r", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "mb9bf506r", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "mb9bf568r", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "fujitsu/mb9x/mb9bf500r", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "fujitsu/mb9x/mb9bf506r", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "fujitsu/mb9x/mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "fujitsu/mb9x/mb9bf568r", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "mini2440", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf51822", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52832", RTT_TOOL_CHAIN: "sourcery-arm"}
