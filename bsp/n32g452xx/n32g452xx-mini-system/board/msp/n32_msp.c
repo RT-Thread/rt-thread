@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -333,8 +333,8 @@ void n32_msp_spi_init(void *Instance)
     GPIO_InitType GPIO_InitCtlStruct;
     SPI_Module *SPIx = (SPI_Module *)Instance;
 
-		n32_msp_deinit(SPIx);
-	
+        n32_msp_deinit(SPIx);
+
     GPIO_InitStruct(&GPIO_InitCtlStruct);
     GPIO_InitCtlStruct.GPIO_Speed = GPIO_Speed_50MHz;
 #ifdef BSP_USING_SPI1
