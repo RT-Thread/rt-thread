@@ -9,20 +9,25 @@
  * 2014-04-03     Grissiom     many enhancements
  * 2018-11-22     Jesven       add rt_hw_ipi_send()
  *                             add rt_hw_ipi_handler_install()
+ * 2022-03-08     GuEe-GUI     add BSP bind SPI CPU self support
  */
 
 #include <rthw.h>
 #include <rtthread.h>
 
+#if defined(BSP_USING_GIC) && defined(BSP_USING_GICV2)
+
 #include <gic.h>
 #include <cpuport.h>
+
+#include <board.h>
 
 struct arm_gic
 {
     rt_uint64_t offset;         /* the first interrupt index in the vector table */
 
     rt_uint64_t dist_hw_base;   /* the base address of the gic distributor */
-    rt_uint64_t cpu_hw_base;    /* the base addrees of the gic cpu interface */
+    rt_uint64_t cpu_hw_base;    /* the base address of the gic cpu interface */
 };
 
 /* 'ARM_GIC_MAX_NR' is the number of cores */
@@ -30,33 +35,33 @@ static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 
 /** Macro to access the Generic Interrupt Controller Interface (GICC)
 */
-#define GIC_CPU_CTRL(hw_base)               __REG32((hw_base) + 0x00U)
-#define GIC_CPU_PRIMASK(hw_base)            __REG32((hw_base) + 0x04U)
-#define GIC_CPU_BINPOINT(hw_base)           __REG32((hw_base) + 0x08U)
-#define GIC_CPU_INTACK(hw_base)             __REG32((hw_base) + 0x0cU)
-#define GIC_CPU_EOI(hw_base)                __REG32((hw_base) + 0x10U)
-#define GIC_CPU_RUNNINGPRI(hw_base)         __REG32((hw_base) + 0x14U)
-#define GIC_CPU_HIGHPRI(hw_base)            __REG32((hw_base) + 0x18U)
-#define GIC_CPU_IIDR(hw_base)               __REG32((hw_base) + 0xFCU)
+#define GIC_CPU_CTRL(hw_base)               HWREG32((hw_base) + 0x00U)
+#define GIC_CPU_PRIMASK(hw_base)            HWREG32((hw_base) + 0x04U)
+#define GIC_CPU_BINPOINT(hw_base)           HWREG32((hw_base) + 0x08U)
+#define GIC_CPU_INTACK(hw_base)             HWREG32((hw_base) + 0x0cU)
+#define GIC_CPU_EOI(hw_base)                HWREG32((hw_base) + 0x10U)
+#define GIC_CPU_RUNNINGPRI(hw_base)         HWREG32((hw_base) + 0x14U)
+#define GIC_CPU_HIGHPRI(hw_base)            HWREG32((hw_base) + 0x18U)
+#define GIC_CPU_IIDR(hw_base)               HWREG32((hw_base) + 0xFCU)
 
 /** Macro to access the Generic Interrupt Controller Distributor (GICD)
 */
-#define GIC_DIST_CTRL(hw_base)              __REG32((hw_base) + 0x000U)
-#define GIC_DIST_TYPE(hw_base)              __REG32((hw_base) + 0x004U)
-#define GIC_DIST_IGROUP(hw_base, n)         __REG32((hw_base) + 0x080U + ((n)/32U) * 4U)
-#define GIC_DIST_ENABLE_SET(hw_base, n)     __REG32((hw_base) + 0x100U + ((n)/32U) * 4U)
-#define GIC_DIST_ENABLE_CLEAR(hw_base, n)   __REG32((hw_base) + 0x180U + ((n)/32U) * 4U)
-#define GIC_DIST_PENDING_SET(hw_base, n)    __REG32((hw_base) + 0x200U + ((n)/32U) * 4U)
-#define GIC_DIST_PENDING_CLEAR(hw_base, n)  __REG32((hw_base) + 0x280U + ((n)/32U) * 4U)
-#define GIC_DIST_ACTIVE_SET(hw_base, n)     __REG32((hw_base) + 0x300U + ((n)/32U) * 4U)
-#define GIC_DIST_ACTIVE_CLEAR(hw_base, n)   __REG32((hw_base) + 0x380U + ((n)/32U) * 4U)
-#define GIC_DIST_PRI(hw_base, n)            __REG32((hw_base) + 0x400U +  ((n)/4U) * 4U)
-#define GIC_DIST_TARGET(hw_base, n)         __REG32((hw_base) + 0x800U +  ((n)/4U) * 4U)
-#define GIC_DIST_CONFIG(hw_base, n)         __REG32((hw_base) + 0xc00U + ((n)/16U) * 4U)
-#define GIC_DIST_SOFTINT(hw_base)           __REG32((hw_base) + 0xf00U)
-#define GIC_DIST_CPENDSGI(hw_base, n)       __REG32((hw_base) + 0xf10U + ((n)/4U) * 4U)
-#define GIC_DIST_SPENDSGI(hw_base, n)       __REG32((hw_base) + 0xf20U + ((n)/4U) * 4U)
-#define GIC_DIST_ICPIDR2(hw_base)           __REG32((hw_base) + 0xfe8U)
+#define GIC_DIST_CTRL(hw_base)              HWREG32((hw_base) + 0x000U)
+#define GIC_DIST_TYPE(hw_base)              HWREG32((hw_base) + 0x004U)
+#define GIC_DIST_IGROUP(hw_base, n)         HWREG32((hw_base) + 0x080U + ((n)/32U) * 4U)
+#define GIC_DIST_ENABLE_SET(hw_base, n)     HWREG32((hw_base) + 0x100U + ((n)/32U) * 4U)
+#define GIC_DIST_ENABLE_CLEAR(hw_base, n)   HWREG32((hw_base) + 0x180U + ((n)/32U) * 4U)
+#define GIC_DIST_PENDING_SET(hw_base, n)    HWREG32((hw_base) + 0x200U + ((n)/32U) * 4U)
+#define GIC_DIST_PENDING_CLEAR(hw_base, n)  HWREG32((hw_base) + 0x280U + ((n)/32U) * 4U)
+#define GIC_DIST_ACTIVE_SET(hw_base, n)     HWREG32((hw_base) + 0x300U + ((n)/32U) * 4U)
+#define GIC_DIST_ACTIVE_CLEAR(hw_base, n)   HWREG32((hw_base) + 0x380U + ((n)/32U) * 4U)
+#define GIC_DIST_PRI(hw_base, n)            HWREG32((hw_base) + 0x400U +  ((n)/4U) * 4U)
+#define GIC_DIST_TARGET(hw_base, n)         HWREG32((hw_base) + 0x800U +  ((n)/4U) * 4U)
+#define GIC_DIST_CONFIG(hw_base, n)         HWREG32((hw_base) + 0xc00U + ((n)/16U) * 4U)
+#define GIC_DIST_SOFTINT(hw_base)           HWREG32((hw_base) + 0xf00U)
+#define GIC_DIST_CPENDSGI(hw_base, n)       HWREG32((hw_base) + 0xf10U + ((n)/4U) * 4U)
+#define GIC_DIST_SPENDSGI(hw_base, n)       HWREG32((hw_base) + 0xf20U + ((n)/4U) * 4U)
+#define GIC_DIST_ICPIDR2(hw_base)           HWREG32((hw_base) + 0xfe8U)
 
 static unsigned int _gic_max_irq;
 
@@ -179,7 +184,7 @@ void arm_gic_clear_pending_irq(rt_uint64_t index, int irq)
     }
 }
 
-void arm_gic_set_configuration(rt_uint64_t index, int irq, uint32_t config)
+void arm_gic_set_configuration(rt_uint64_t index, int irq, rt_uint32_t config)
 {
     rt_uint64_t icfgr;
     rt_uint64_t shift;
@@ -323,6 +328,8 @@ void arm_gic_send_sgi(rt_uint64_t index, int irq, rt_uint64_t target_list, rt_ui
 
     GIC_DIST_SOFTINT(_gic_table[index].dist_hw_base) =
         ((filter_list & 0x3U) << 24U) | ((target_list & 0xFFUL) << 16U) | (irq & 0x0FUL);
+
+    __DSB();
 }
 
 rt_uint64_t arm_gic_get_high_pending_irq(rt_uint64_t index)
@@ -341,8 +348,8 @@ rt_uint64_t arm_gic_get_interface_id(rt_uint64_t index)
 
 void arm_gic_set_group(rt_uint64_t index, int irq, rt_uint64_t group)
 {
-    uint32_t igroupr;
-    uint32_t shift;
+    rt_uint32_t igroupr;
+    rt_uint32_t shift;
 
     RT_ASSERT(index < ARM_GIC_MAX_NR);
     RT_ASSERT(group <= 1U);
@@ -372,6 +379,10 @@ int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start)
 {
     unsigned int gic_type, i;
     rt_uint64_t cpumask = 1U << 0U;
+
+#ifdef ARM_SPI_BIND_CPU_ID
+    cpumask = 1U << ARM_SPI_BIND_CPU_ID;
+#endif
 
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
@@ -502,3 +513,4 @@ long gic_dump(void)
 }
 MSH_CMD_EXPORT(gic_dump, show gic status);
 
+#endif /* defined(BSP_USING_GIC) && defined(BSP_USING_GICV2) */

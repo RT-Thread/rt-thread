@@ -1,19 +1,25 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2013-07-20     Bernard      first version
+ * 2014-04-03     Grissiom     many enhancements
+ * 2018-11-22     Jesven       add rt_hw_ipi_send()
+ *                             add rt_hw_ipi_handler_install()
  */
 
-#ifndef __GIC_H__
-#define __GIC_H__
+#ifndef __GICV3_H__
+#define __GICV3_H__
 
 #include <rtdef.h>
 
-#if defined(BSP_USING_GIC) && defined(BSP_USING_GICV2)
+#if defined(BSP_USING_GIC) && defined(BSP_USING_GICV3)
+
+#define GICV3_ROUTED_TO_ALL   1UL
+#define GICV3_ROUTED_TO_SPEC  0UL
 
 int arm_gic_get_active_irq(rt_uint64_t index);
 void arm_gic_ack(rt_uint64_t index, int irq);
@@ -44,7 +50,9 @@ rt_uint64_t arm_gic_get_binary_point(rt_uint64_t index);
 
 rt_uint64_t arm_gic_get_irq_status(rt_uint64_t index, int irq);
 
-void arm_gic_send_sgi(rt_uint64_t index, int irq, rt_uint64_t target_list, rt_uint64_t filter_list);
+#ifdef RT_USING_SMP
+void arm_gic_send_affinity_sgi(rt_uint64_t index, int irq, rt_uint64_t cpu_masks[], rt_uint64_t routing_mode);
+#endif
 
 rt_uint64_t arm_gic_get_high_pending_irq(rt_uint64_t index);
 
@@ -53,13 +61,17 @@ rt_uint64_t arm_gic_get_interface_id(rt_uint64_t index);
 void arm_gic_set_group(rt_uint64_t index, int irq, rt_uint64_t group);
 rt_uint64_t arm_gic_get_group(rt_uint64_t index, int irq);
 
+int arm_gic_redist_address_set(rt_uint64_t index, rt_uint64_t redist_addr, int cpu_id);
+int arm_gic_cpu_interface_address_set(rt_uint64_t index, rt_uint64_t interface_addr, int cpu_id);
+
 int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start);
+int arm_gic_redist_init(rt_uint64_t index, rt_uint64_t redist_base);
 int arm_gic_cpu_init(rt_uint64_t index, rt_uint64_t cpu_base);
 
 void arm_gic_dump_type(rt_uint64_t index);
 void arm_gic_dump(rt_uint64_t index);
 
-#endif /* defined(BSP_USING_GIC) && defined(BSP_USING_GICV2) */
+#endif /* defined(BSP_USING_GIC) && defined(BSP_USING_GICV3) */
 
 #endif
 

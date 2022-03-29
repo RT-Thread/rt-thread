@@ -18,6 +18,9 @@
  */
 #define PSCI_VER_0_2                        0x00000002
 
+#define PSCI_METHOD_SMC                     3
+#define PSCI_METHOD_HVC                     2
+
 /* PSCI 0.2 interface */
 #define PSCI_0_2_FN_BASE                    0x84000000
 #define PSCI_0_2_FN(n)                      (PSCI_0_2_FN_BASE + (n))
@@ -114,7 +117,7 @@
 #define PSCI_RET_DISABLED                   (-8)
 #define PSCI_RET_INVALID_ADDRESS            (-9)
 
-void arm_psci_init(uint64_t *platform_shutdown_args, uint64_t *platform_reboot_args);
+void arm_psci_init(uint64_t method, uint64_t *platform_shutdown_args, uint64_t *platform_reboot_args);
 
 uint32_t arm_psci_get_version();
 uint32_t arm_psci_get_affinity_info(uint64_t target_affinity, uint64_t lowest_affinity_level);
