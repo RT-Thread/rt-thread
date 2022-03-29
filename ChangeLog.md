@@ -1,3 +1,193 @@
+# RT-Thread v4.1.0 released
+
+Change log since v4.1.0 Beta released
+
+## Kernel
+
+- src/clock.c add hook for rt_tick_increase
+- fix thread init bug if you open RT_USING_MODULE
+- Fixed issue that could all timers stop
+- remove duplicated clear to 0 in the "thread.c"
+- Revert modifications to the semaphore
+- Fix 64 bit compilation warning
+- src/device.c add RT_DEBUG_LOG
+
+## Components
+
+- ulog
+  - Optimize code to improve readability
+  - remove the useless function declaration about "localtime_r"
+  - Optimize "ULOG_OUTPUT_FLOAT" to avoid use "vsnprintf" that provided by complier tools chain
+  - solve the interference when enable the ulog timestamp
+  - Fixed the issue LOG_HEX no output at asyn mode
+- drivers
+  - misc
+    - modify the error name in the "dac.c"
+  - remove useless head file to avoid problem about recursion
+  - add the header file to avoid compiler error
+  - Open RT_USING_POSIX_STDIO caused serial_v2 to compile failed
+  - add the simulative spi bus drivers  that based on spi bus drivers
+  - remove the complier warning in C99 about "ipc/ringbuffer.c"
+  - improve serial_v2 structure
+- dfs
+  - offer complete path when use command "list_fd"
+- libc
+  - posix
+    - add the included head file
+    - add the header file to avoid compiler error
+    - add RT_USING_POSIX_SOCKET
+  - fix a typo
+- net
+  - adjust folder structure
+  - lwip
+    - integrate lwip porting layer
+    - integrate and improve lwipopts.h
+    - add lwip latest version
+- utest
+  - add dependence RT_USING_UTESTCASES
+- finsh
+  - remove extra code
+  - fix finsh bug
+- fal
+  - add fal component
+- utilities
+  - adjust the order of compiler macros
+  - var_export
+    - replace the search algorithm and fix some problems
+- tidy the folder name and structure about Kconfig
+
+## BSP and CPU porting
+
+- libcpu
+  - aarch64
+
+    - rt_hw_trap_irq get irq instead of iar when using gicv2
+    - disable irq/fiq when switch thread
+    - add gtimer frq set and stack align
+    - add gicv3 support
+    
+  - mips
+  
+    - correct the watch dog register address about "gs232.h"
+    - modify the problem that can't feed hardware watch dog 
+  - arm
+    - fix syscall_iar.S compiler error based on cortex-m33
+- essemi
+
+  - fix bugs
+- nuvoton
+
+  - Update configuration files and fix issue
+  - Nuvoton drivers updating and more LVGL supporting
+  - Update drivers and project setting
+  - format code
+- raspberry-pico
+
+  - add Raspberry-Pico-LVGL README.md
+- simulator
+
+  - Optimize the auto initization
+- qemu
+
+  - vexpress-a9
+    - Fix a typo in qemu.sh
+- n32g452xx
+
+  - add drv_spi.c
+- at91sam9260
+
+  - add mtdnand driver to support "uffs" file system
+- at32
+
+  - upload bsp package based firmware library v2.0
+  - add ingore_format.yml
+- gd32
+
+  - Optimize UART
+- add Soft spi for gd32303e-eval
+- ft32
+
+  - modify the name that head files are included
+- apm32
+
+  - apm32f103xe-minibroard
+    - add project and device drivers
+    - update readme picture name
+  - fix the startup files of apm32f1
+- stm32
+
+  - Add support with pwm6 to pwm13
+  -  add qspi flash and sdio for openmv h7plus
+  - modify the bug that the CRC custom configuration can't work
+
+  - stm32f469-st-disco
+    - add readme in english 
+
+  - stm32f072-st-nucleo
+    - add arduino support
+    - support pwm for arduino
+
+  - stm32f407-atk-explorer
+    - add board identification word
+
+  - stm32l475-atk-pandora
+
+    - update application/arduino folder
+    - enable i2c4 bus
+    - fix the bug when using LCD demo
+
+    - fullly  support analog output(PWM) and analog input(ADC)
+    - support backlight with brightness adjustable
+    - Adding dependencies
+
+  - stm32h750-art-pi
+    - porting LVGL to ART-Pi with Media-IO
+
+  - stm32f769-st-disco
+    - fix wrong CPPDEFINES and close lwip
+    - add stm32f7xx_hal_dsi.c when using LTDC/MIPI-DSI
+
+  - stm32h743-openmv-h7plus
+
+    - add usbcdc for openmv
+- imxrt
+
+  - imxrt1060-nxp-evk
+    - add imxrt1060-evk BSP
+    - README_zh.md, led blink
+    - fix gcc can't runing issue
+- vango
+  - add v85xxp bsp
+  - migrate v85xx and v85xxp into the subcatalog of vango
+  - remove duplicated files
+- acm32f0x0-nucleo
+
+  - Add some drivers
+- delete swm320-lq100 bsp
+- add ch579m bsp
+- add air105 bsp
+- add RA  series bsp
+- add bsp-ft32
+- migrate acm32f0x0-nucleo and acm32f4xx-nucleo into the subcatalog of acm32
+- migrate at91sam9260 and at91sam9g45 into the subcatalog of at91
+- migrate mb9xxx series into the subcatalog of fujitsu
+- migrate lsxx series into the subcatalog of loongson
+- add rockchip/rk3568 bsp
+
+## Documentation
+
+- move documentation repo to rt-thread repo
+- update documentation
+- Fixed Program Memory Distribution - Basic.md
+
+## Tools
+
+- fix the problem that print 'b' when complier code that after RT-Threadv4.3.0
+- use the relative path to create "CMakefile.txt" when use "scons" command
+- allow users to set specific link scripts
+- update the template for projcfg.ini in rt-studio
+- keil.py Distinguish LOCAL_CFLAGS/LOCAL_CXXFLAGS, refine file control
+
 # RT-Thread v4.1.0 Beta released
 
 Change log since v4.0.4
