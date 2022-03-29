@@ -24,6 +24,7 @@
 #endif
 
 #define ssd1963_delay_ms(ms)    rt_thread_mdelay(ms)
+static void ssd1963_fillscreen(rt_uint16_t color);
 
 static struct rt_device_graphic_info g_SSD1963Info =
 {
@@ -124,6 +125,8 @@ static rt_err_t ssd1963_lcd_init(rt_device_t dev)
 
     ssd1963_send_cmd(0x29);    //SET display on
     ssd1963_delay_ms(5);
+
+    ssd1963_fillscreen(0);
 
     SET_DISP_ON;
 

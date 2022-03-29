@@ -6,70 +6,52 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-9-16      GuEe-GUI     the first version
+ * 2021-11-11     GuEe-GUI     modify to virtio common interface
  */
 
-#ifndef VIRTIO_MMIO_H
-#define VIRTIO_MMIO_H
+#ifndef __VIRTIO_MMIO_H__
+#define __VIRTIO_MMIO_H__
 
-#include <stdint.h>
-#include <stddef.h>
+#include <rtdef.h>
 
-#define VIRTIO_MMIO_MAGIC               0x74726976
-#define VIRTIO_MMIO_VENDOR              0x554d4551
-
-#define VIRTIO_MMIO_MAGIC_VALUE         0x000   /* VIRTIO_MMIO_MAGIC */
-#define VIRTIO_MMIO_VERSION             0x004   /* version: 1 is legacy */
-#define VIRTIO_MMIO_DEVICE_ID           0x008   /* device type: 1 is net, 2 is disk */
-#define VIRTIO_MMIO_VENDOR_ID           0x00c   /* VIRTIO_MMIO_VENDOR */
-#define VIRTIO_MMIO_DEVICE_FEATURES     0x010
-#define VIRTIO_MMIO_DRIVER_FEATURES     0x020
-#define VIRTIO_MMIO_HOST_FEATURES       0x010
-#define VIRTIO_MMIO_HOST_FEATURES_SEL   0x014
-#define VIRTIO_MMIO_GUEST_FEATURES      0x020
-#define VIRTIO_MMIO_GUEST_FEATURES_SEL  0x024
-#define VIRTIO_MMIO_GUEST_PAGE_SIZE     0x028   /* version 1 only */
-#define VIRTIO_MMIO_QUEUE_SEL           0x030
-#define VIRTIO_MMIO_QUEUE_NUM_MAX       0x034
-#define VIRTIO_MMIO_QUEUE_NUM           0x038
-#define VIRTIO_MMIO_QUEUE_ALIGN         0x03c   /* version 1 only */
-#define VIRTIO_MMIO_QUEUE_PFN           0x040   /* version 1 only */
-#define VIRTIO_MMIO_QUEUE_READY         0x044   /* requires version 2 */
-#define VIRTIO_MMIO_QUEUE_NOTIFY        0x050
-#define VIRTIO_MMIO_INTERRUPT_STATUS    0x060
-#define VIRTIO_MMIO_INTERRUPT_ACK       0x064
-#define VIRTIO_MMIO_STATUS              0x070
-#define VIRTIO_MMIO_QUEUE_DESC_LOW      0x080   /* requires version 2 */
-#define VIRTIO_MMIO_QUEUE_DESC_HIGH     0x084   /* requires version 2 */
-#define VIRTIO_MMIO_QUEUE_AVAIL_LOW     0x090   /* requires version 2 */
-#define VIRTIO_MMIO_QUEUE_AVAIL_HIGH    0x094   /* requires version 2 */
-#define VIRTIO_MMIO_QUEUE_USED_LOW      0x0a0   /* requires version 2 */
-#define VIRTIO_MMIO_QUEUE_USED_HIGH     0x0a4   /* requires version 2 */
-#define VIRTIO_MMIO_CONFIG_GENERATION   0x100   /* requires version 2 */
-#define VIRTIO_MMIO_CONFIG              0x100
-#define VIRTIO_MMIO_INT_VRING           (1 << 0)
-#define VIRTIO_MMIO_INT_CONFIG          (1 << 1)
-#define VIRTIO_MMIO_VRING_ALIGN         4096
-
-static inline uint32_t virtio_mmio_read32(uint32_t *base, size_t offset)
+struct virtio_mmio_config
 {
-    return *((volatile uint32_t*) (((uintptr_t) base) + offset));
-}
+    rt_uint32_t magic;                  /* [0x00]<RO> Magic value */
+    rt_uint32_t version;                /* [0x04]<RO> Device version number */
+    rt_uint32_t device_id;              /* [0x08]<RO> Virtio Subsystem Device ID */
+    rt_uint32_t vendor_id;              /* [0x0c]<RO> Virtio Subsystem Vendor ID */
+    rt_uint32_t device_features;        /* [0x10]<RO> Flags representing features the device supports */
+    rt_uint32_t device_features_sel;    /* [0x14]<WO> Device (host) features word selection. */
+    rt_uint32_t res0[2];                /* [0x18] */
+    rt_uint32_t driver_features;        /* [0x20]<WO> Device features understood and activated by the driver */
+    rt_uint32_t driver_features_sel;    /* [0x24]<WO> Activated (guest) features word selection */
+    rt_uint32_t guest_page_size;        /* [0x28]<WO> Guest page size, this value should be a power of 2 */
+    rt_uint32_t res1[1];                /* [0x2c] */
+    rt_uint32_t queue_sel;              /* [0x30]<WO> Virtual queue index */
+    rt_uint32_t queue_num_max;          /* [0x34]<RO> Maximum virtual queue size */
+    rt_uint32_t queue_num;              /* [0x38]<WO> Virtual queue size */
+    rt_uint32_t queue_align;            /* [0x3c]<WO> Used Ring alignment in the virtual queue */
+    rt_uint32_t queue_pfn;              /* [0x40]<RW> Guest physical page number of the virtual queue */
+    rt_uint32_t queue_ready;            /* [0x44]<RW> Virtual queue ready bit */
+    rt_uint32_t res2[2];                /* [0x48] */
+    rt_uint32_t queue_notify;           /* [0x50]<WO> Queue notifier */
+    rt_uint32_t res3[3];                /* [0x54] */
+    rt_uint32_t interrupt_status;       /* [0x60]<RO> Interrupt status */
+    rt_uint32_t interrupt_ack;          /* [0x64]<WO> Interrupt acknowledge */
+    rt_uint32_t res4[2];                /* [0x68] */
+    rt_uint32_t status;                 /* [0x70]<RW> Device status */
+    rt_uint32_t res5[3];                /* [0x74] */
+    rt_uint32_t queue_desc_low;         /* [0x80]<WO> Virtual queue’s Descriptor Area 64 bit long physical address */
+    rt_uint32_t queue_desc_high;        /* [0x84]<WO> */
+    rt_uint32_t res6[2];                /* [0x88] */
+    rt_uint32_t queue_driver_low;       /* [0x90]<WO> Virtual queue’s Driver Area 64 bit long physical address */
+    rt_uint32_t queue_driver_high;      /* [0x94]<WO> */
+    rt_uint32_t res7[2];                /* [0x98] */
+    rt_uint32_t queue_device_low;       /* [0xa0]<WO> Virtual queue’s Device Area 64 bit long physical address */
+    rt_uint32_t queue_device_high;      /* [0xa4]<WO> */
+    rt_uint32_t res8[21];               /* [0xa8] */
+    rt_uint32_t config_generation;      /* [0xfc]<RO> Configuration atomicity value */
+    rt_uint32_t config[];               /* [0x100+]<RO> Configuration space */
+} __attribute__((packed));
 
-static inline uint16_t virtio_mmio_read16(uint32_t *base, size_t offset)
-{
-    return *((volatile uint16_t*) (((uintptr_t) base) + offset));
-}
-
-static inline uint8_t virtio_mmio_read8(uint32_t *base, size_t offset)
-{
-    return *((volatile uint8_t*) (((uintptr_t) base) + offset));
-}
-
-static inline void virtio_mmio_write32(uint32_t *base, size_t offset, uint32_t val)
-{
-    *((volatile uint32_t*) (((uintptr_t) base) + offset)) = val;
-}
-
-void virtio_mmio_print_configs(uint32_t *device_base);
-
-#endif /* VIRTIO_MMIO_H */
+#endif /* __VIRTIO_MMIO_H__ */
