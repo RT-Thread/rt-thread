@@ -55,7 +55,7 @@ long version(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(version, show RT - Thread version information);
+MSH_CMD_EXPORT(version, show RT-Thread version information);
 
 rt_inline void object_split(int len)
 {
