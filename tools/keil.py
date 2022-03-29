@@ -281,6 +281,11 @@ def MDK45Project(tree, target, script):
     out.close()
 
 def MDK4Project(target, script):
+
+    if os.path.isfile('template.uvproj') is False:
+        print ('Warning: The template project file [template.uvproj] not found!')
+        return
+
     template_tree = etree.parse('template.uvproj')
 
     MDK45Project(template_tree, target, script)
@@ -296,6 +301,10 @@ def MDK4Project(target, script):
         shutil.copy2('template.uvopt', 'project.uvopt')
 
 def MDK5Project(target, script):
+
+    if os.path.isfile('template.uvprojx') is False:
+        print ('Warning: The template project file [template.uvprojx] not found!')
+        return
 
     template_tree = etree.parse('template.uvprojx')
 
