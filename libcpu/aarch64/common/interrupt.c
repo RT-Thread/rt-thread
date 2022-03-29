@@ -13,6 +13,7 @@
 #include <rtthread.h>
 #include "interrupt.h"
 #include "gic.h"
+#include "gicv3.h"
 #include "armv8.h"
 #include "mmu.h"
 #include "cpuport.h"
@@ -52,6 +53,9 @@ void rt_hw_interrupt_init(void)
     /* initialize ARM GIC */
     arm_gic_dist_init(0, platform_get_gic_dist_base(), GIC_IRQ_START);
     arm_gic_cpu_init(0, platform_get_gic_cpu_base());
+#ifdef BSP_USING_GICV3
+    arm_gic_redist_init(0, platform_get_gic_redist_base());
+#endif
 #endif
 }
 
@@ -346,7 +350,11 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
 {
 #ifdef BSP_USING_GIC
+#ifdef BSP_USING_GICV2
     arm_gic_send_sgi(0, ipi_vector, cpu_mask, 0);
+#else
+    arm_gic_send_affinity_sgi(0, ipi_vector, (rt_uint64_t *)&cpu_mask, GICV3_ROUTED_TO_SPEC);
+#endif
 #else
     int i;
 
@@ -359,8 +367,9 @@ void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
             IPI_MAILBOX_SET(i) = 1 << ipi_vector;
         }
     }
-#endif
+
     __DSB();
+#endif
 }
 
 void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)

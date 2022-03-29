@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -273,7 +273,7 @@ void lv_port_disp_init(void)
     /*Set a display buffer*/
     disp_drv.draw_buf = &disp_buf;
 
-#if LV_VERSION_EQUAL(8, 1, 0)		
+#if LV_VERSION_EQUAL(8, 1, 0)
     /*Fill a memory with a color (GPU only)*/
     disp_drv.gpu_fill_cb = nu_fill_cb;
 #endif
