@@ -178,8 +178,8 @@ rt_err_t rt_device_init(rt_device_t dev)
             result = device_init(dev);
             if (result != RT_EOK)
             {
-                rt_kprintf("To initialize device:%s failed. The error code is %d\n",
-                           dev->parent.name, result);
+                RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("To initialize device:%s failed. The error code is %d\n",
+                           dev->parent.name, result));
             }
             else
             {
@@ -216,8 +216,8 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
             result = device_init(dev);
             if (result != RT_EOK)
             {
-                rt_kprintf("To initialize device:%s failed. The error code is %d\n",
-                           dev->parent.name, result);
+                RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("To initialize device:%s failed. The error code is %d\n",
+                           dev->parent.name, result));
 
                 return result;
             }
@@ -307,9 +307,9 @@ RTM_EXPORT(rt_device_close);
  *
  * @param size is the size of buffer.
  *
- * @return the actually read size on successful, otherwise negative returned.
+ * @return the actually read size on successful, otherwise 0 will be returned.
  *
- * @note since 0.4.0, the unit of size/pos is a block for block device.
+ * @note the unit of size/pos is a block for block device.
  */
 rt_size_t rt_device_read(rt_device_t dev,
                          rt_off_t    pos,
@@ -350,9 +350,9 @@ RTM_EXPORT(rt_device_read);
  *
  * @param size is the size of buffer.
  *
- * @return the actually written size on successful, otherwise negative returned.
+ * @return the actually written size on successful, otherwise 0 will be returned.
  *
- * @note since 0.4.0, the unit of size/pos is a block for block device.
+ * @note the unit of size/pos is a block for block device.
  */
 rt_size_t rt_device_write(rt_device_t dev,
                           rt_off_t    pos,

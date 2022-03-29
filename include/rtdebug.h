@@ -52,6 +52,10 @@
 #define RT_DEBUG_IPC                   0
 #endif
 
+#ifndef RT_DEBUG_DEVICE
+#define RT_DEBUG_DEVICE                0
+#endif
+
 #ifndef RT_DEBUG_INIT
 #define RT_DEBUG_INIT                  0
 #endif

@@ -59,14 +59,8 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
@@ -78,9 +72,6 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-
-/* Device virtual file system */
-
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
@@ -104,7 +95,7 @@
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
@@ -116,19 +107,13 @@
 
 /* Socket is in the 'Network' category */
 
+
 /* Network */
 
-/* Socket abstraction layer */
-
-
-/* Network interface device */
-
 #define NETDEV_USING_PING
-
-/* light weight TCP/IP stack */
-
 #define RT_USING_LWIP
 #define RT_USING_LWIP212
+#define RT_USING_LWIP_VER_NUM 0x20102
 #define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
@@ -169,12 +154,6 @@
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
 
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
-
-
 /* Utilities */
 
 
@@ -201,6 +180,11 @@
 
 
 /* language packages */
+
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
 
 
 /* multimedia packages */
@@ -241,6 +225,8 @@
 
 
 /* miscellaneous packages */
+
+/* project laboratory */
 
 /* samples: kernel and components samples */
 

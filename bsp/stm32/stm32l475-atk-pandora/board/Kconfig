@@ -39,6 +39,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_I2C
+        select BSP_USING_I2C3
         select BSP_USING_I2C4
         default n
 
