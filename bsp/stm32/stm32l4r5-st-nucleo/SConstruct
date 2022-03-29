@@ -17,6 +17,7 @@ except:
 
 TARGET = 'rt-thread.' + rtconfig.TARGET_EXT
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
     CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
@@ -40,6 +41,9 @@ if os.path.exists(SDK_ROOT + '/libraries'):
 else:
     libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
 
+from utils import _make_path_relative
+libraries_path_prefix = _make_path_relative(os.path.abspath('./'), libraries_path_prefix)
+
 SDK_LIB = libraries_path_prefix
 Export('SDK_LIB')
 
@@ -49,11 +53,19 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 stm32_library = 'STM32L4xx_HAL'
 rtconfig.BSP_LIBRARY_TYPE = stm32_library
 
+bsp_vdir = 'build'
+
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, stm32_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, stm32_library, 'SConscript'),
+                        variant_dir=bsp_vdir + '/libraries/'+ stm32_library, duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'),
+                        variant_dir=bsp_vdir + '/libraries/HAL_Drivers', duplicate=0))
+
+bsp_port_script = os.path.join(os.getcwd(), 'board', 'ports', 'SConscript')
+if os.path.isfile(bsp_port_script):
+    objs.extend(SConscript(bsp_port_script, variant_dir=bsp_vdir + '/board/ports', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)
