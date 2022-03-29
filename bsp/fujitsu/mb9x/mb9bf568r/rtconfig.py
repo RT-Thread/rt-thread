@@ -14,7 +14,7 @@ if  CROSS_TOOL == 'gcc':
     EXEC_PATH   = r'D:/Program Files (x86)/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin'
 elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
-    EXEC_PATH   = 'C:/Keil_MDK_471'
+    EXEC_PATH   = r'C:/Keil_MDK_471'
 elif CROSS_TOOL == 'iar':
     print('================ERROR============================')
     print('Not support iar yet!')
