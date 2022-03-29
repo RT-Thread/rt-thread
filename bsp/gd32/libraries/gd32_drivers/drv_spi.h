@@ -34,10 +34,13 @@ struct gd32_spi
     rcu_periph_enum gpio_clk;
     struct rt_spi_bus *spi_bus;
     uint32_t spi_port;
+    uint32_t alt_func_num;
     uint16_t sck_pin;
     uint16_t miso_pin;
     uint16_t mosi_pin;
 };
+
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint32_t cs_gpiox, uint16_t cs_gpio_pin);
 
 #ifdef __cplusplus
 }

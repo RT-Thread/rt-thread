@@ -11,7 +11,7 @@
 
 #ifdef RT_USING_SPI
 
-#if defined(BSP_USING_SPI0) || defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2)
+#if defined(BSP_USING_SPI0) || defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4)
 #define LOG_TAG              "drv.spi"
 
 #include <rtdbg.h>
@@ -25,6 +25,12 @@ static struct rt_spi_bus spi_bus1;
 #ifdef BSP_USING_SPI2
 static struct rt_spi_bus spi_bus2;
 #endif
+#ifdef BSP_USING_SPI3
+static struct rt_spi_bus spi_bus3;
+#endif
+#ifdef BSP_USING_SPI4
+static struct rt_spi_bus spi_bus4;
+#endif
 
 static const struct gd32_spi spi_bus_obj[] = {
 
@@ -36,10 +42,11 @@ static const struct gd32_spi spi_bus_obj[] = {
         RCU_GPIOA,
         &spi_bus0,
         GPIOA,
+        GPIO_AF_5,
         GPIO_PIN_5,
         GPIO_PIN_6,
         GPIO_PIN_7,
-    }
+    },
 #endif /* BSP_USING_SPI0 */
 
 #ifdef BSP_USING_SPI1
@@ -50,10 +57,11 @@ static const struct gd32_spi spi_bus_obj[] = {
         RCU_GPIOB,
         &spi_bus1,
         GPIOB,
+        GPIO_AF_5,
         GPIO_PIN_12,
         GPIO_PIN_14,
         GPIO_PIN_15,
-    }
+    },
 #endif /* BSP_USING_SPI1 */
 
 #ifdef BSP_USING_SPI2
@@ -64,11 +72,42 @@ static const struct gd32_spi spi_bus_obj[] = {
         RCU_GPIOB,
         &spi_bus2,
         GPIOB,
+        GPIO_AF_6,
         GPIO_PIN_3,
         GPIO_PIN_4,
         GPIO_PIN_5,
-    }
+    },
 #endif /* BSP_USING_SPI2 */
+
+#ifdef BSP_USING_SPI3
+    {
+        SPI2,
+        "spi2",
+        RCU_SPI3,
+        RCU_GPIOE,
+        &spi_bus3,
+        GPIOB,
+        GPIO_AF_5,
+        GPIO_PIN_2,
+        GPIO_PIN_5,
+        GPIO_PIN_6,
+    },
+#endif /* BSP_USING_SPI3 */
+
+#ifdef BSP_USING_SPI4
+    {
+        SPI4,
+        "spi4",
+        RCU_SPI4,
+        RCU_GPIOF,
+        &spi_bus4,
+        GPIOF,
+        GPIO_AF_5,
+        GPIO_PIN_7,
+        GPIO_PIN_8,
+        GPIO_PIN_9,
+    }
+#endif /* BSP_USING_SPI4 */
 };
 
 /* private rt-thread spi ops function */
@@ -94,11 +133,10 @@ static void gd32_spi_init(struct gd32_spi *gd32_spi)
 
 #if defined SOC_SERIES_GD32F4xx
     /*GPIO pin configuration*/
-    gpio_af_set(gd32_spi->spi_port, GPIO_AF_5,  gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
+    gpio_af_set(gd32_spi->spi_port, gd32_spi->alt_func_num, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
 
-    gpio_mode_set(gd32_spi->spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->miso_pin| gd32_spi->miso_pin);
+    gpio_mode_set(gd32_spi->spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->sck_pin | gd32_spi->mosi_pin | gd32_spi->miso_pin);
     gpio_output_options_set(gd32_spi->spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_200MHZ,gd32_spi->miso_pin| gd32_spi->miso_pin);
-
 #else
     /* Init SPI SCK MOSI */
     gpio_init(gd32_spi->spi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, gd32_spi->sck_pin | gd32_spi->mosi_pin);
@@ -330,6 +368,44 @@ static rt_uint32_t spixfer(struct rt_spi_device* device, struct rt_spi_message* 
 
     return message->length;
 };
+
+/**
+  * Attach the spi device to SPI bus, this function must be used after initialization.
+  */
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint32_t cs_gpiox, uint16_t cs_gpio_pin)
+{
+    RT_ASSERT(bus_name != RT_NULL);
+    RT_ASSERT(device_name != RT_NULL);
+
+    rt_err_t result;
+    struct rt_spi_device *spi_device;
+    struct gd32_spi_cs *cs_pin;
+
+    /* initialize the cs pin && select the slave*/
+    gpio_mode_set(cs_gpiox, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,cs_gpio_pin);
+    gpio_output_options_set(cs_gpiox, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ,cs_gpio_pin);
+    gpio_bit_set(cs_gpiox, cs_gpio_pin);
+
+    /* attach the device to spi bus*/
+    spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
+    RT_ASSERT(spi_device != RT_NULL);
+    cs_pin = (struct gd32_spi_cs *)rt_malloc(sizeof(struct gd32_spi_cs));
+    RT_ASSERT(cs_pin != RT_NULL);
+    cs_pin->GPIOx = cs_gpiox;
+    cs_pin->GPIO_Pin = cs_gpio_pin;
+    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
+
+    if (result != RT_EOK)
+    {
+        LOG_E("%s attach to %s faild, %d\n", device_name, bus_name, result);
+    }
+
+    RT_ASSERT(result == RT_EOK);
+
+    LOG_D("%s attach to %s done", device_name, bus_name);
+
+    return result;
+}
 
 int rt_hw_spi_init(void)
 {
