@@ -78,8 +78,8 @@ USB 转 COM 端口默认连接LPUART1，在终端工具里打开相应的串口�
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.4 build Oct 10 2020
- 2006 - 2021 Copyright by rt-thread team
+ / | \     4.1.0 build Mar 30 2022 14:55:43
+ 2006 - 2022 Copyright by RT-Thread team
 msh >
 ```
 ### 进阶使用
