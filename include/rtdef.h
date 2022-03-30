@@ -39,7 +39,7 @@
  * 2021-11-19     Meco Man     change version number to v4.1.0
  * 2021-12-21     Meco Man     re-implement RT_UNUSED
  * 2022-01-01     Gabriel      improve hooking method
- * 2022-01-07     Gabriel      move some __on_rt_xxxxx_hook to dedicated c soure files
+ * 2022-01-07     Gabriel      move some __on_rt_xxxxx_hook to dedicated c source files
  * 2022-01-12     Meco Man     remove RT_THREAD_BLOCK
  */
 
@@ -106,17 +106,17 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 /**@}*/
 
 /* maximum value of base type */
-#define RT_UINT8_MAX                    0xff            /**< Maxium number of UINT8 */
-#define RT_UINT16_MAX                   0xffff          /**< Maxium number of UINT16 */
-#define RT_UINT32_MAX                   0xffffffff      /**< Maxium number of UINT32 */
-#define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maxium number of tick */
+#define RT_UINT8_MAX                    0xff            /**< Maximum number of UINT8 */
+#define RT_UINT16_MAX                   0xffff          /**< Maximum number of UINT16 */
+#define RT_UINT32_MAX                   0xffffffff      /**< Maximum number of UINT32 */
+#define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maximum number of tick */
 
 /* maximum value of ipc type */
-#define RT_SEM_VALUE_MAX                RT_UINT16_MAX   /**< Maxium number of semaphore .value */
-#define RT_MUTEX_VALUE_MAX              RT_UINT16_MAX   /**< Maxium number of mutex .value */
-#define RT_MUTEX_HOLD_MAX               RT_UINT8_MAX    /**< Maxium number of mutex .hold */
-#define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of mailbox .entry */
-#define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of message queue .entry */
+#define RT_SEM_VALUE_MAX                RT_UINT16_MAX   /**< Maximum number of semaphore .value */
+#define RT_MUTEX_VALUE_MAX              RT_UINT16_MAX   /**< Maximum number of mutex .value */
+#define RT_MUTEX_HOLD_MAX               RT_UINT8_MAX    /**< Maximum number of mutex .hold */
+#define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maximum number of mailbox .entry */
+#define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maximum number of message queue .entry */
 
 #define RT_UNUSED(x)                   ((void)x)
 
@@ -255,7 +255,7 @@ typedef int (*init_fn_t)(void);
 #define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
 
 /* pre/device/component/env/app init routines will be called in init_thread */
-/* components pre-initialization (pure software initilization) */
+/* components pre-initialization (pure software initialization) */
 #define INIT_PREV_EXPORT(fn)            INIT_EXPORT(fn, "2")
 /* device initialization */
 #define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "3")
@@ -263,7 +263,7 @@ typedef int (*init_fn_t)(void);
 #define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "4")
 /* environment initialization (mount disk, ...) */
 #define INIT_ENV_EXPORT(fn)             INIT_EXPORT(fn, "5")
-/* appliation initialization (rtgui application etc ...) */
+/* application initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
 
 #if !defined(RT_USING_FINSH)
@@ -753,7 +753,7 @@ typedef struct rt_mutex *rt_mutex_t;
 
 #ifdef RT_USING_EVENT
 /**
- * flag defintions in event
+ * flag definitions in event
  */
 #define RT_EVENT_FLAG_AND               0x01            /**< logic and */
 #define RT_EVENT_FLAG_OR                0x02            /**< logic or */
@@ -959,7 +959,7 @@ enum rt_device_class_type
 };
 
 /**
- * device flags defitions
+ * device flags definitions
  */
 #define RT_DEVICE_FLAG_DEACTIVATE       0x000           /**< device is not not initialized */
 
@@ -1115,7 +1115,7 @@ struct rt_device_blk_sectors
 #define RTGRAPHIC_CTRL_PAN_DISPLAY      10
 #define RTGRAPHIC_CTRL_WAIT_VSYNC       11
 
-/* graphic deice */
+/* graphic device */
 enum
 {
     RTGRAPHIC_PIXEL_FORMAT_MONO = 0,
