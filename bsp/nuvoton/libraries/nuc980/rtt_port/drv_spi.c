@@ -592,7 +592,7 @@ static rt_uint32_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_m
         LOG_E("%s: error payload length(%d%%%d != 0).\n", spi_bus->name, message->length, bytes_per_word);
         return 0;
     }
-		
+
     if (message->length > 0)
     {
         if (message->cs_take && !(configuration->mode & RT_SPI_NO_CS))
@@ -699,12 +699,12 @@ INIT_DEVICE_EXPORT(rt_hw_spi_init);
 /**
   * Attach the spi device to SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t pin) 
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t pin)
 {
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
-	
-	  rt_err_t ret = RT_EOK;
+
+    rt_err_t ret = RT_EOK;
     struct rt_spi_device *spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
 
