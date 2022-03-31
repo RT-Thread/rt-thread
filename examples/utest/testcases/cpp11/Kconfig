@@ -1,0 +1,7 @@
+menu "CPP11 Testcase"
+
+config UTEST_CPP11_THREAD_TC
+    bool "Cpp11 thread test"
+    default n
+
+endmenu
