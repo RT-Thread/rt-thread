@@ -334,7 +334,7 @@
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
               <Define>XIP_BOOT_HEADER_DCD_ENABLE=1, SKIP_SYSCLK_INIT, __FPU_PRESENT=1, CPU_MIMXRT1064DVL6A, __RTTHREAD__, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, __CLK_TCK=RT_TICK_PER_SECOND, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\libraries\drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1064\CMSIS\Include;..\libraries\MIMXRT1064\MIMXRT1064;..\libraries\MIMXRT1064\MIMXRT1064\drivers;..\libraries\peripherals;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\examples\utest\testcases\kernel;xip</IncludePath>
+              <IncludePath>applications;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1064\CMSIS\Include;..\libraries\MIMXRT1064\MIMXRT1064;..\libraries\MIMXRT1064\MIMXRT1064\drivers;..\libraries\peripherals;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;xip</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -420,13 +420,6 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
@@ -441,9 +434,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -460,6 +453,13 @@
               <FilePath>..\..\..\libcpu\arm\cortex-m7\cpuport.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
@@ -472,13 +472,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
@@ -486,9 +479,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>workqueue.c</FileName>
+              <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
+              <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -496,6 +489,20 @@
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -510,13 +517,6 @@
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -600,16 +600,30 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\kservice.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>thread.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\thread.c</FilePath>
+              <FilePath>..\..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\object.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -621,9 +635,37 @@
           </Files>
           <Files>
             <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -642,51 +684,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kservice.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
+              <FilePath>..\..\..\src\thread.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -746,16 +746,16 @@
           <GroupName>xip</GroupName>
           <Files>
             <File>
-              <FileName>evkmimxrt1064_sdram_ini_dcd.c</FileName>
+              <FileName>fsl_flexspi_nor_boot.c</FileName>
               <FileType>1</FileType>
-              <FilePath>xip\evkmimxrt1064_sdram_ini_dcd.c</FilePath>
+              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>fsl_flexspi_nor_boot.c</FileName>
+              <FileName>evkmimxrt1064_sdram_ini_dcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
+              <FilePath>xip\evkmimxrt1064_sdram_ini_dcd.c</FilePath>
             </File>
           </Files>
           <Files>

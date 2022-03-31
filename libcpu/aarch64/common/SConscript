@@ -6,10 +6,6 @@ Import('rtconfig')
 
 cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
-
-if not GetDepend('BSP_USING_GIC'):
-    SrcRemove(src, 'gic.c')
-
 CPPPATH = [cwd]
 
 group = DefineGroup('common', src, depend = [''], CPPPATH = CPPPATH)

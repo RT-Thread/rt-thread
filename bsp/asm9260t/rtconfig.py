@@ -11,10 +11,10 @@ if os.getenv('RTT_CC'):
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
    # EXEC_PATH  = 'D:/ArdaArmTools/Sourcery_Lite/bin'
-    EXEC_PATH   = 'D:/ArdaArmTools/GNUARM_4.9_2015q1/bin'
+    EXEC_PATH   = r'D:/ArdaArmTools/GNUARM_4.9_2015q1/bin'
 elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
-    EXEC_PATH   = 'C:/Keil_v5'
+    EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iar'
     EXEC_PATH    = 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'

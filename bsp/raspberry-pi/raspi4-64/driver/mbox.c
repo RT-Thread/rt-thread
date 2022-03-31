@@ -53,6 +53,24 @@ int mbox_call(unsigned char ch, int mmu_enable)
     return 0;
 }
 
+int bcm271x_mbox_poweroff_devices(int id)
+{
+    mbox[0] = 8 * 4;                /* length of the message */
+    mbox[1] = MBOX_REQUEST;         /* this is a request message */
+
+    mbox[2] = MBOX_TAG_SETPOWER;    /* set power state */
+    mbox[3] = 8;                    /* buffer size */
+    mbox[4] = 8;                    /* len */
+
+    mbox[5] = (unsigned int)id;     /* device id */
+    mbox[6] = 0;                    /* bit 0: off, bit 1: no wait */
+
+    mbox[7] = MBOX_TAG_LAST;
+    mbox_call(8, MBOX_CH_PROP);
+
+    return 0;
+}
+
 int bcm271x_mbox_get_touch(void)
 {
     mbox[0] = 8 * 4;                    // length of the message

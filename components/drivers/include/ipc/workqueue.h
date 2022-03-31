@@ -20,7 +20,7 @@ enum
 };
 
 /**
- * work type defitions
+ * work type definitions
  */
 enum
 {
