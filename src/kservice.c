@@ -620,6 +620,8 @@ void rt_show_version(void)
 }
 RTM_EXPORT(rt_show_version);
 
+#ifndef RT_KSERVICE_USING_PRINTF
+
 /* private function */
 #define _ISDIGIT(c)  ((unsigned)((c) - '0') < 10)
 
@@ -1182,6 +1184,8 @@ int rt_sprintf(char *buf, const char *format, ...)
 }
 RTM_EXPORT(rt_sprintf);
 
+#endif
+
 #ifdef RT_USING_CONSOLE
 
 #ifdef RT_USING_DEVICE
@@ -1242,6 +1246,7 @@ RT_WEAK void rt_hw_console_output(const char *str)
 }
 RTM_EXPORT(rt_hw_console_output);
 
+#ifndef RT_KSERVICE_USING_PRINTF
 /**
  * This function will put string to the console.
  *
@@ -1304,6 +1309,9 @@ RT_WEAK int rt_kprintf(const char *fmt, ...)
     return length;
 }
 RTM_EXPORT(rt_kprintf);
+
+#endif /* RT_KSERVICE_USING_PRINTF */
+
 #endif /* RT_USING_CONSOLE */
 
 #if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)

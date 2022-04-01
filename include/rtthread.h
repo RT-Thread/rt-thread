@@ -578,10 +578,20 @@ int rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
 #endif
 
+#ifdef RT_KSERVICE_USING_PRINTF
+#include <stdio.h>
+#define rt_vsprintf(d,f,a) vsprintf(d,f,a)
+#define rt_vsnprintf(b,s,f,a) vsnprintf(b,s,f,a)
+#define rt_sprintf(b,f,...) sprintf(b,f,__VA_ARGS__)
+#define rt_snprintf(b,s,f,...) snprintf(b,s,f,__VA_ARGS__)
+#define rt_kprintf(...) printf(__VA_ARGS__)
+#define rt_kputs(s) fputs(s, stdout)
+#else
 int rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
 int rt_sprintf(char *buf, const char *format, ...);
 int rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
+#endif
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
