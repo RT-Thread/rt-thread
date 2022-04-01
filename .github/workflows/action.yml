@@ -169,9 +169,9 @@ jobs:
          - {RTT_BSP: "raspberry-pi/raspi4-64", RTT_TOOL_CHAIN: "sourcery-aarch64"}
          - {RTT_BSP: "rockchip/rk3568", RTT_TOOL_CHAIN: "sourcery-aarch64"}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@master
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
 
