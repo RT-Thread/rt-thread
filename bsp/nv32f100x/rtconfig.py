@@ -47,7 +47,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE  + ' -DNV32F100X' + ' -DNULL=0'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-nv32.map,-cref,-u,Reset_Handler -T nv32_rom.ld'
 
     CPATH = ''

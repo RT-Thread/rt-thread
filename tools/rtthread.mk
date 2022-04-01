@@ -24,7 +24,7 @@ $(eval OBJS += $(LOCALC)) \
 $(if $(strip $(LOCALC)),$(eval $(LOCALC): $(C_SRC)
 	@if [ ! -d $$(@D) ]; then mkdir -p $$(@D); fi
 	@echo cc $$<
-	@$(CROSS_COMPILE)gcc $$(CFLAGS) -c $$< -o $$@))
+	@$(CROSS_COMPILE)gcc -c $$(CFLAGS) $$< -o $$@))
 endef
 
 define add_cxx_file
@@ -38,7 +38,7 @@ $(eval OBJS += $(LOCALCXX)) \
 $(if $(strip $(LOCALCXX)),$(eval $(LOCALCXX): $(CXX_SRC)
 	@if [ ! -d $$(@D) ]; then mkdir -p $$(@D); fi
 	@echo cc $$<
-	@$(CROSS_COMPILE)g++ $$(CXXFLAGS) -c $$< -o $$@))
+	@$(CROSS_COMPILE)g++ -c $$(CXXFLAGS) $$< -o $$@))
 endef
 
 define add_S_file
@@ -52,7 +52,7 @@ $(eval OBJS += $(LOCALS)) \
 $(if $(strip $(LOCALS)),$(eval $(LOCALS): $(S_SRC)
 	@if [ ! -d $$(@D) ]; then mkdir -p $$(@D); fi
 	@echo cc $$<
-	@$(CROSS_COMPILE)gcc $$(AFLAGS) -c $$< -o $$@))
+	@$(CROSS_COMPILE)gcc -c $$(AFLAGS) $$< -o $$@))
 endef
 
 define add_s_file
@@ -66,7 +66,7 @@ $(eval OBJS += $(LOCALS)) \
 $(if $(strip $(LOCALS)),$(eval $(LOCALS): $(S_SRC)
 	@if [ ! -d $$(@D) ]; then mkdir -p $$(@D); fi
 	@echo cc $$<
-	@$(CROSS_COMPILE)gcc $$(AFLAGS) -c $$< -o $$@))
+	@$(CROSS_COMPILE)gcc -c $$(AFLAGS) $$< -o $$@))
 endef
 
 add_flg = $(eval CFLAGS += $1) \

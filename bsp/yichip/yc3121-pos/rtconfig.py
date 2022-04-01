@@ -48,7 +48,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
+    AFLAGS = DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T drivers/linker_scripts/link.lds'
 
     CPATH = ''

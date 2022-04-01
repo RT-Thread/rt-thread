@@ -66,7 +66,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -ffunction-sections -fdata-sections'
     DEVICE = '  '
     CFLAGS = DEVICE + ' -I/usr/include -w -D_REENTRANT -D_LINUX -DHAVE_SYS_SIGNALS'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp'
     #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -lpthread'
     LFLAGS = DEVICE + ' -Wl,-Map=rtthread-linux.map -pthread -T gcc.ld'
 
@@ -97,7 +97,7 @@ elif PLATFORM == 'mingw':
     DEVICE = ''
     CFLAGS = DEVICE + ' -D_Win32 -DNO_OLDNAMES -fno-pic -fno-builtin -fno-exceptions -fno-omit-frame-pointer'
 
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -static-libgcc  -Wl,--gc-sections,-Map=rtthread-win32.map -T mingw.ld '
     CPATH = ''
     LPATH = ''

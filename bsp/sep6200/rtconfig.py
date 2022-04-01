@@ -39,7 +39,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' '
     CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
+    AFLAGS = DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
     LFLAGS = DEVICE + ' -Bstatic --gc-sections -Map=rtthread_sep6200.map -cref -u _start -T sep6200.ld -L/usr/unicore/gnu-toolchain-unicore/uc4-1.0-beta-hard-RHELAS5/lib/gcc/unicore32-linux/4.4.2 -lgcc' + ' -Ttext ' + TextBase
 
     CPATH = ''

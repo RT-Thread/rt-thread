@@ -50,7 +50,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=cortex-m0plus -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-MKL15Z128.map,-cref,-u,Reset_Handler -T MKL15Z128_FLASH.ld'
 
     CPATH = ''

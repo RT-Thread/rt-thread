@@ -35,7 +35,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mfloat-abi=softfp -march=armv8-a -mtune=cortex-a53 -ftree-vectorize -ffast-math'
     CFLAGS = DEVICE + ' -Wall'
-    AFLAGS = ' -c' + ' -march=armv8-a -x assembler-with-cpp -D__ASSEMBLY__'
+    AFLAGS = ' -march=armv8-a -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
     CPATH   = ''
     LPATH   = ''

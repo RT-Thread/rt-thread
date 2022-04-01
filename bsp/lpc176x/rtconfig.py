@@ -39,7 +39,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m3 -mthumb'
     CFLAGS = DEVICE
     CXXFLAGS = CFLAGS
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc17xx.map,-cref,-u,Reset_Handler -T rtthread-lpc17xx.ld'
 
     CPATH = ''

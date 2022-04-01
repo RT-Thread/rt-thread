@@ -220,7 +220,7 @@ if TOOLCHAIN == 'mw':
 
     CFLAGS = OPT_ARG_FILE + COMMON_COMPILE_OPT + COMMON_DEFINES + ' -Hnocplus '
     CXXFLAGS = OPT_ARG_FILE + COMMON_COMPILE_OPT + COMMON_DEFINES
-    AFLAGS = ' -c' + OPT_ARG_FILE + COMMON_COMPILE_OPT + COMMON_DEFINES + ' -Hasmcpp -I%s -I%s/embARC_generated -I%s/include '%(EMBARC_BSP_ROOT, EMBARC_LIB_PATH, EMBARC_BSP_ROOT)
+    AFLAGS = OPT_ARG_FILE + COMMON_COMPILE_OPT + COMMON_DEFINES + ' -Hasmcpp -I%s -I%s/embARC_generated -I%s/include '%(EMBARC_BSP_ROOT, EMBARC_LIB_PATH, EMBARC_BSP_ROOT)
 
     LINKER_SCRIPT_FILE = RTT_ROOT + '/bsp/synopsys/boards/linker_template_mw.ld'
     LINK_SCRIPT = EMBARC_LIB_PATH + '/linker_mw.ldf'

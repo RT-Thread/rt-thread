@@ -40,7 +40,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=' + CPU + ' -mthumb '
     CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T drivers/linker_scripts/link.lds'
     CXXFLAGS = CFLAGS
 	

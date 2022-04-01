@@ -53,7 +53,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -std=gnu99 -w -fno-common -fomit-frame-pointer -fno-short-enums -fsigned-char'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
+    AFLAGS = DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -g --specs=nano.specs -nostartfiles -Wl,-Map=rtthread-w60x.map -Os -Wl,--gc-sections -Wl,--cref -Wl,--entry=Reset_Handler -Wl,--no-enum-size-warning -Wl,--no-wchar-size-warning -T ' + gcc_linkscripts_path
 
     CPATH = ''

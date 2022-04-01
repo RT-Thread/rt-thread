@@ -52,7 +52,7 @@ if PLATFORM == 'gcc':
     if USE_CORE == 'CORE_M4':
         DEVICE += ' -mfpu=fpv4-sp-d16 -mfloat-abi=softfp'
     CFLAGS = DEVICE 
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
+    AFLAGS = DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc43xx.map,-cref,-u,Reset_Handler -T rtthread-lpc43xx_spifi.ld'
 
     CPATH = ''

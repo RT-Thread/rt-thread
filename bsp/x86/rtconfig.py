@@ -31,7 +31,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mtune=generic'
     CFLAGS = DEVICE + ' -Wall'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T x86_ram.lds -nostartfiles'
 
     CPATH = ''

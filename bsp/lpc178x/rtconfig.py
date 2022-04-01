@@ -39,7 +39,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=cortex-m3 -mthumb'
     CFLAGS = DEVICE + ' -DRT_USING_MINILIBC'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc178x.map,-cref,-u,Reset_Handler -T rtthread-lpc178x.ld'
 
     CPATH = ''

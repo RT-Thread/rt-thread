@@ -32,7 +32,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -Wall -mcpu=cortex-r5 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=softfp'
     CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LINK_SCRIPT = 'zynqmp-r5.ld'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=zynqmp-r5.map,-cref,-u,system_vectors -T %s' % LINK_SCRIPT
 

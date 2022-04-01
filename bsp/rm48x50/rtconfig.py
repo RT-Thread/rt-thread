@@ -46,7 +46,7 @@ if PLATFORM == 'gcc':
              ' -ftree-vectorize -ffast-math -mfpu=vfpv3-d16 '+\
              ' -ffunction-sections -fdata-sections '
     CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-rm48x50.map,-cref,-u,system_vectors -T rm48x50.ld'
 
     CPATH = ''

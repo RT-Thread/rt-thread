@@ -34,7 +34,7 @@ if PLATFORM == 'gcc':
              ' -ftree-vectorize -ffast-math -mfpu=vfpv3-d16 -mfloat-abi=softfp'
     #DEVICE = ' '
     CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-beaglebone.map,-cref,-u,Reset_Handler -T beaglebone_ram.lds'
 
     CPATH = ''

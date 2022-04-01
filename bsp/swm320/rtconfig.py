@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     TARGET_EXT = 'elf'
     DEVICE = ' -mcpu=' + CPU + ' -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -g -Wall'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
+    AFLAGS = DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T drivers/linker_scripts/link.lds'
 
     CPATH = ''

@@ -27,7 +27,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=v8 -nostartfiles'
     #DEVICE = ' '
     CFLAGS = DEVICE
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS = DEVICE + ' -Wl,-Map=rtthread-bm3803.map -T bm3803.lds -Ttext=0x40000000'
 
     CPATH = ''

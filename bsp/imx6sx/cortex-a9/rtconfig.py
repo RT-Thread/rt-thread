@@ -36,7 +36,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -march=armv7-a -mtune=cortex-a9 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=softfp'
     CFLAGS = DEVICE + ' -Wall'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
+    AFLAGS = DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LINK_SCRIPT = 'imx6.lds'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-imx6.map,-cref,-u,system_vectors'+\
                       ' -T %s' % LINK_SCRIPT
