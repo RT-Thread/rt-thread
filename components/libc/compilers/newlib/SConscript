@@ -9,7 +9,7 @@ group = []
 LIBS = ['m'] # link libm
 CPPPATH = [cwd]
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM == 'gcc' and GetGCCLibc(rtconfig) == None:
     LIBS += ['c'] # link libc
     src += Glob('*.c')
 

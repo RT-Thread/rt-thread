@@ -177,12 +177,22 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     /* init thread stack */
     rt_memset(thread->stack_addr, '#', thread->stack_size);
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
+#ifdef RT_USING_TLS
+    thread->tls = stack_start;
+    stack_start = ((char *) stack_start) + rt_tls_size();
+    rt_init_tls(thread);
+#endif
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
-                                          (void *)((char *)thread->stack_addr),
+                                          (void *)((char *)stack_start),
                                           (void *)_thread_exit);
 #else
+#ifdef RT_USING_TLS
+    stack_size = stack_size - rt_tls_size(thread);
+    thread->tls = (char *) stack_start + stack_size;
+    rt_init_tls(thread);
+#endif
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
-                                          (rt_uint8_t *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
+                                          (rt_uint8_t *)((char *)stack_start + stack_size - sizeof(rt_ubase_t)),
                                           (void *)_thread_exit);
 #endif /* ARCH_CPU_STACK_GROWS_UPWARD */
 

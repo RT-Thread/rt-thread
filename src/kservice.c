@@ -38,12 +38,13 @@
 
 /**@{*/
 
-/* global errno in RT-Thread */
-static volatile int __rt_errno;
-
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 static rt_device_t _console_device = RT_NULL;
 #endif
+
+#ifndef RT_KSERVICE_USING_LIBC_ERRNO
+/* global errno in RT-Thread */
+static volatile int __rt_errno;
 
 /**
  * This function gets the global errno for the current thread.
@@ -116,6 +117,8 @@ int *_rt_errno(void)
     return (int *)&__rt_errno;
 }
 RTM_EXPORT(_rt_errno);
+
+#endif
 
 #ifndef RT_KSERVICE_USING_STDLIB_MEMSET
 /**

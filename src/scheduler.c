@@ -261,6 +261,7 @@ void rt_system_scheduler_start(void)
     rt_schedule_remove_thread(to_thread);
     to_thread->stat = RT_THREAD_RUNNING;
 
+    rt_set_tls(to_thread);
     /* switch to new thread */
 #ifdef RT_USING_SMP
     rt_hw_context_switch_to((rt_ubase_t)&to_thread->sp, to_thread);
@@ -383,6 +384,7 @@ void rt_schedule(void)
 
                 RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (current_thread));
 
+                rt_set_tls(to_thread);
                 rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
                         (rt_ubase_t)&to_thread->sp, to_thread);
             }
@@ -494,6 +496,7 @@ void rt_schedule(void)
 
                     RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (from_thread));
 
+                    rt_set_tls(to_thread);
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
 
@@ -525,6 +528,7 @@ void rt_schedule(void)
                 {
                     RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
 
+                    rt_set_tls(to_thread);
                     rt_hw_context_switch_interrupt((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
                 }
@@ -632,6 +636,7 @@ void rt_scheduler_do_irq_switch(void *context)
 
                 RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (current_thread));
 
+                rt_set_tls(to_thread);
                 rt_hw_context_switch_interrupt(context, (rt_ubase_t)&current_thread->sp,
                         (rt_ubase_t)&to_thread->sp, to_thread);
             }

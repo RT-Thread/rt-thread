@@ -606,6 +606,20 @@ struct rt_cpu
 
 #endif
 
+#if defined(RT_USING_PICOLIBC) && defined(_HAVE_PICOLIBC_TLS_API)
+#define RT_USING_TLS
+#include <picotls.h>
+#define rt_set_tls(thread)      _set_tls((thread)->tls)
+#define rt_init_tls(thread)     _init_tls((thread)->tls)
+#define rt_tls_size(thread)     _tls_size()
+#endif
+
+#ifndef RT_USING_TLS
+#define rt_set_tls(thread)      ((void) (thread))
+#define rt_init_tls(thread)     ((void) (thread))
+#define rt_tls_size(thread)     (0)
+#endif
+
 /**
  * Thread structure
  */
@@ -629,6 +643,9 @@ struct rt_thread
     void       *parameter;                              /**< parameter */
     void       *stack_addr;                             /**< stack address */
     rt_uint32_t stack_size;                             /**< stack size */
+#ifdef RT_USING_TLS
+    void       *tls;                                    /**< tls address */
+#endif
 
     /* error code */
     rt_err_t    error;                                  /**< error code */

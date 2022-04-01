@@ -588,12 +588,23 @@ rt_device_t rt_console_set_device(const char *name);
 rt_device_t rt_console_get_device(void);
 #endif
 
+#ifdef RT_USING_PICOLIBC
+#define RT_KSERVICE_USING_LIBC_ERRNO
+#endif
+
+#ifdef RT_KSERVICE_USING_LIBC_ERRNO
+#include <errno.h>
+static inline int *_rt_errno(void) { return &errno; }
+static inline rt_err_t rt_get_errno(void) { return errno; }
+static inline void rt_set_errno(rt_err_t no) { errno = no; }
+#else
 rt_err_t rt_get_errno(void);
 void rt_set_errno(rt_err_t no);
 int *_rt_errno(void);
 #if !defined(RT_USING_NEWLIB) && !defined(_WIN32)
 #ifndef errno
 #define errno    *_rt_errno()
+#endif
 #endif
 #endif
 

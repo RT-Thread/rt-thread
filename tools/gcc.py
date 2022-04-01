@@ -24,20 +24,76 @@
 import os
 import re
 import platform
+import subprocess
+
+def GetGCCLibc(rtconfig):
+    try:
+        return rtconfig.LIBC
+    except AttributeError:
+        return None
+
+def GetGCCSysroot(rtconfig):
+    gcc_cmd = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
+
+    if(platform.system() == 'Windows'):
+        child = subprocess.Popen([gcc_cmd, '-print-sysroot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    else:
+        child = subprocess.Popen(gcc_cmd + ' -print-sysroot', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+    stdout, stderr = child.communicate()
+    if stderr:
+        print(stderr)
+
+    return stdout.split(b'\n')[0].decode()
 
 def GetGCCRoot(rtconfig):
-    exec_path = rtconfig.EXEC_PATH
     prefix = rtconfig.PREFIX
 
     if prefix.endswith('-'):
         prefix = prefix[:-1]
 
-    if exec_path == '/usr/bin':
-        root_path = os.path.join('/usr/lib', prefix)
-    else:
-        root_path = os.path.join(exec_path, '..', prefix)
+    # Check to see if GCC was configured with sysroot,
+    # in that case, the library header files will be
+    # found beneath that
 
-    return root_path
+    sysroot = GetGCCSysroot(rtconfig)
+
+    # Check to see if we're using a non-standard libc
+
+    libc = GetGCCLibc(rtconfig)
+
+    # four cases: sysroot/non-sysroot + standard-libc/non-standard-libc
+
+    if sysroot:
+        if libc:
+            # sysroot + non-standard libc: sysroot/libc/prefix
+            # e.g. /opt/gcc-arm-none-eabi-10-2020-q4-major/arm-none-eabi/picolibc/arm-none-eabi
+            return os.path.join(sysroot, libc, prefix)
+        else:
+            # sysroot + standard libc: sysroot
+            # e.g. /opt/gcc-arm-none-eabi-10-2020-q4-major/arm-none-eabi
+            return sysroot
+    else:
+        # Otherwise, libc header files should
+        # be under exec_path/.., *unless* exec_path
+        # is /usr/bin, in which case they'll be under
+        # /usr/lib.
+        exec_path = rtconfig.EXEC_PATH
+
+        if exec_path == '/usr/bin':
+            lib_path = '/usr/lib'
+        else:
+            lib_path = os.path.join(exec_path, '..')
+
+        # tack on the prefix to find the header files
+        if libc:
+            # non sysroot + non-standard libc: lib/libc/prefix
+            # e.g. /usr/lib/picolibc/arm-none-eabi
+            return os.path.join(lib_path, libc, prefix)
+        else:
+            # non sysroot + standard libc: lib/prefix
+            # e.g. /usr/lib/arm-none-eabi
+            return os.path.join(lib_path, prefix)
 
 def CheckHeader(rtconfig, filename):
     root = GetGCCRoot(rtconfig)
@@ -86,9 +142,20 @@ def GetNewLibVersion(rtconfig):
             f.close()
     return version
 
-def GCCResult(rtconfig, str):
-    import subprocess
+def GetPicolibcVersion(rtconfig):
+    version = 'unknown'
+    root = GetGCCRoot(rtconfig)
 
+    if CheckHeader(rtconfig, 'picolibc.h'): # get version from picolibc.h file
+        f = open(os.path.join(root, 'include', 'picolibc.h'), 'r')
+        if f:
+            for line in f:
+                if line.find('_PICOLIBC_VERSION') != -1 and line.find('"') != -1:
+                    version = re.search(r'\"([^"]+)\"', line).groups()[0]
+            f.close()
+    return version
+
+def GCCResult(rtconfig, str):
     result = ''
 
     def checkAndGetResult(pattern, string):
@@ -104,11 +171,21 @@ def GCCResult(rtconfig, str):
         f.write(str)
         f.close()
 
+        libc = GetGCCLibc(rtconfig)
+
+        libc_specs = '--specs=' + libc + '.specs'
+
         # '-fdirectives-only',
         if(platform.system() == 'Windows'):
-            child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            specs = []
+            if libc != None:
+                specs = [libc_specs]
+            child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'] + specs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         else:
-            child = subprocess.Popen(gcc_cmd + ' -E -P __tmp.c', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            specs = ''
+            if libc != None:
+                specs = ' ' + libc_specs
+            child = subprocess.Popen(gcc_cmd + ' -E -P __tmp.c' + specs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
         stdout, stderr = child.communicate()
 
@@ -180,7 +257,11 @@ def GenerateGCCConfig(rtconfig):
     cc_header += '/* Automatically generated file; DO NOT EDIT. */\n'
     cc_header += '/* compiler configure file for RT-Thread in GCC*/\n\n'
 
-    if CheckHeader(rtconfig, 'newlib.h'):
+    if CheckHeader(rtconfig, 'picolibc.h'):
+        str += '#include <picolibc.h>\n'
+        cc_header += '#define HAVE_PICOLIBC_H 1\n'
+        cc_header += '#define LIBC_VERSION "picolibc %s"\n\n' % GetPicolibcVersion(rtconfig)
+    elif CheckHeader(rtconfig, 'newlib.h'):
         str += '#include <newlib.h>\n'
         cc_header += '#define HAVE_NEWLIB_H 1\n'
         cc_header += '#define LIBC_VERSION "newlib %s"\n\n' % GetNewLibVersion(rtconfig)

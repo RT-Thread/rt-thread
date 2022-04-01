@@ -1,0 +1,33 @@
+import os
+from building import *
+from gcc import *
+Import('rtconfig')
+
+src = []
+cwd = GetCurrentDir()
+group = []
+CPPPATH = [cwd]
+LIBS = []
+CCFLAGS = '--specs=picolibc.specs'
+LINKFLAGS = ' --specs=picolibc.specs'
+
+if rtconfig.PLATFORM == 'gcc' and GetGCCLibc(rtconfig) == 'picolibc':
+    LIBS += ['c'] # link libc
+    src += Glob('*.c')
+
+    #report picolibc version
+    print('Picolibc version:' + GetPicolibcVersion(rtconfig))
+
+    # identify this is Picolibc
+    CPPDEFINES = ['RT_USING_PICOLIBC', 'LWIP_DONT_PROVIDE_BYTEORDER_FUNCTIONS']
+
+    group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS, CCFLAGS = CCFLAGS, LINKFLAGS = LINKFLAGS)
+
+
+list = os.listdir(cwd)
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        group = group + SConscript(os.path.join(d, 'SConscript'))
+
+Return('group')
