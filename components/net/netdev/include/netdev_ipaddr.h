@@ -78,10 +78,12 @@ enum netdev_ip_addr_type {
                      (((x) & 0xff000000UL) >> 24))
 #define PP_NTOHL(x) PP_HTONL(x)
 
+#ifndef htons
 #define htons(x) (uint16_t)PP_HTONS(x)
 #define ntohs(x) (uint16_t)PP_NTOHS(x)
 #define htonl(x) (uint32_t)PP_HTONL(x)
 #define ntohl(x) (uint32_t)PP_NTOHL(x)
+#endif
 
 /* If your port already typedef's in_addr_t, define IN_ADDR_T_DEFINED
    to prevent this code from redefining it. */
