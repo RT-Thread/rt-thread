@@ -7,9 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Scan code format and license
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@master
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
       
