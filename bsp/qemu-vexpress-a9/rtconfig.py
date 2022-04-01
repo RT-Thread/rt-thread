@@ -35,6 +35,7 @@ if os.getenv('RTT_CC'):
 
 # only support GNU GCC compiler.
 PLATFORM    = 'gcc'
+LIBC        = 'picolibc'
 EXEC_PATH   = r'/usr/bin'
 
 if os.getenv('RTT_EXEC_PATH'):

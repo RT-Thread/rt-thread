@@ -26,6 +26,10 @@
 
 /* kservice optimization */
 
+#define RT_KSERVICE_USING_STDLIB
+#define RT_KSERVICE_USING_STDLIB_MEMCPY
+#define RT_KSERVICE_USING_STDLIB_MEMSET
+#define RT_KSERVICE_USING_PRINTF
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
 
