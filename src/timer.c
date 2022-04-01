@@ -24,7 +24,7 @@
 #include <rthw.h>
 
 /* hard timer list */
-static rt_list_t _timer_list[RT_TIMER_SKIP_LIST_LEVEL];
+rt_list_t rt_hard_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 
 #ifdef RT_USING_TIMER_SOFT
 
@@ -42,7 +42,7 @@ static rt_list_t _timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 /* soft timer status */
 static rt_uint8_t _soft_timer_status = RT_SOFT_TIMER_IDLE;
 /* soft timer list */
-static rt_list_t _soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
+rt_list_t rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 static struct rt_thread _timer_thread;
 ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t _timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
@@ -425,13 +425,13 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
     {
         /* insert timer to soft timer list */
-        timer_list = _soft_timer_list;
+        timer_list = rt_soft_timer_list;
     }
     else
 #endif /* RT_USING_TIMER_SOFT */
     {
         /* insert timer to system timer list */
-        timer_list = _timer_list;
+        timer_list = rt_hard_timer_list;
     }
 
     row_head[0]  = &timer_list[0];
@@ -630,9 +630,9 @@ void rt_timer_check(void)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    while (!rt_list_isempty(&_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
+    while (!rt_list_isempty(&rt_hard_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
     {
-        t = rt_list_entry(_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1].next,
+        t = rt_list_entry(rt_hard_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1].next,
                           struct rt_timer, row[RT_TIMER_SKIP_LIST_LEVEL - 1]);
 
         /*
@@ -691,7 +691,7 @@ void rt_timer_check(void)
 rt_tick_t rt_timer_next_timeout_tick(void)
 {
     rt_tick_t next_timeout = RT_TICK_MAX;
-    _timer_list_next_timeout(_timer_list, &next_timeout);
+    _timer_list_next_timeout(rt_hard_timer_list, &next_timeout);
     return next_timeout;
 }
 
@@ -714,9 +714,9 @@ void rt_soft_timer_check(void)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    while (!rt_list_isempty(&_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
+    while (!rt_list_isempty(&rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
     {
-        t = rt_list_entry(_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1].next,
+        t = rt_list_entry(rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1].next,
                             struct rt_timer, row[RT_TIMER_SKIP_LIST_LEVEL - 1]);
 
         current_tick = rt_tick_get();
@@ -786,7 +786,7 @@ static void _timer_thread_entry(void *parameter)
     while (1)
     {
         /* get the next timeout tick */
-        if (_timer_list_next_timeout(_soft_timer_list, &next_timeout) != RT_EOK)
+        if (_timer_list_next_timeout(rt_soft_timer_list, &next_timeout) != RT_EOK)
         {
             /* no software timer exist, suspend self. */
             rt_thread_suspend(rt_thread_self());
@@ -822,9 +822,9 @@ void rt_system_timer_init(void)
 {
     int i;
 
-    for (i = 0; i < sizeof(_timer_list) / sizeof(_timer_list[0]); i++)
+    for (i = 0; i < sizeof(rt_hard_timer_list) / sizeof(rt_hard_timer_list[0]); i++)
     {
-        rt_list_init(_timer_list + i);
+        rt_list_init(rt_hard_timer_list + i);
     }
 }
 
@@ -839,10 +839,10 @@ void rt_system_timer_thread_init(void)
     int i;
 
     for (i = 0;
-         i < sizeof(_soft_timer_list) / sizeof(_soft_timer_list[0]);
+         i < sizeof(rt_soft_timer_list) / sizeof(rt_soft_timer_list[0]);
          i++)
     {
-        rt_list_init(_soft_timer_list + i);
+        rt_list_init(rt_soft_timer_list + i);
     }
 
     /* start software timer thread */
