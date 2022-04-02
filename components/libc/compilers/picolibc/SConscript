@@ -21,6 +21,10 @@ if rtconfig.PLATFORM == 'gcc' and GetGCCLibc(rtconfig) == 'picolibc':
     # identify this is Picolibc
     CPPDEFINES = ['RT_USING_PICOLIBC', 'LWIP_DONT_PROVIDE_BYTEORDER_FUNCTIONS']
 
+    if GetDepend('RT_PRINTF_FLOAT') == False:
+        CPPDEFINES += ['-DPICOLIBC_INTEGER_PRINTF_SCANF']
+        LINKFLAGS += ' -DPICOLIBC_INTEGER_PRINTF_SCANF'
+
     group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS, CCFLAGS = CCFLAGS, LINKFLAGS = LINKFLAGS)
 
 

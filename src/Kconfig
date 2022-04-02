@@ -157,6 +157,10 @@ menu "kservice optimization"
         bool "Enable rt_printf-family functions to support long long format"
         default n
 
+    config RT_PRINTF_FLOAT
+	bool "Enable libc printf functions to support float"
+	default n
+
 endmenu
 
 menuconfig RT_DEBUG
