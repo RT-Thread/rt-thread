@@ -13,6 +13,10 @@
 
 #include "sys/types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define O_RDONLY         00
 #define O_WRONLY         01
 #define O_RDWR           02
@@ -67,5 +71,9 @@
 int open(const char *file, int flags, ...);
 int fcntl(int fildes, int cmd, ...);
 int creat(const char *path, mode_t mode);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

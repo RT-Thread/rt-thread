@@ -16,6 +16,10 @@
 #include <stddef.h>
 #include <time.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef int32_t          clockid_t;
 typedef int32_t          key_t;         /* Used for interprocess communication. */
 typedef int              pid_t;         /* Used for process IDs and process group IDs. */
@@ -38,5 +42,9 @@ typedef unsigned long    dev_t;
 typedef unsigned int     u_int;
 typedef unsigned char    u_char;
 typedef unsigned long    u_long;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

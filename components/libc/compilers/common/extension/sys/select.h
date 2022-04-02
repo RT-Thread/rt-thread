@@ -20,6 +20,10 @@
 #include <winsock.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef  FD_SETSIZE
 #define  FD_SETSIZE  32
 #endif
@@ -54,5 +58,9 @@ typedef struct _types_fd_set {
 
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
 #endif /* _WIN32 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __SYS_SELECT_H__ */

@@ -875,7 +875,7 @@ static void fal(uint8_t argc, char **argv) {
                             result = fal_partition_read(part_dev, i, read_data, cur_op_size);
                         }
                         /* data check */
-                        for (int index = 0; index < cur_op_size; index ++)
+                        for (size_t index = 0; index < cur_op_size; index ++)
                         {
                             if (write_data[index] != read_data[index])
                             {
