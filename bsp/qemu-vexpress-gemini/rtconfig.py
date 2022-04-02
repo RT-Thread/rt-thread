@@ -4,6 +4,7 @@ import os
 ARCH='arm'
 CPU='vexpress-a9'
 CROSS_TOOL='gcc'
+LIBC='picolibc'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
