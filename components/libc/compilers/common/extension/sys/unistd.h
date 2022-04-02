@@ -15,6 +15,10 @@
 #include <stddef.h>
 #include "types.h" /* <sys/types.h> */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define STDIN_FILENO    0       /* standard input file descriptor */
 #define STDOUT_FILENO   1       /* standard output file descriptor */
 #define STDERR_FILENO   2       /* standard error file descriptor */
@@ -45,5 +49,9 @@ uid_t getuid(void);
 uid_t geteuid(void);
 gid_t getgid(void);
 gid_t getegid(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _SYS_UNISTD_H */

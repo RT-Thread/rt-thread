@@ -83,7 +83,7 @@ int var_export_init(void)
     static char __vexp_strbuf1[1024];
     static char __vexp_strbuf2[1024];
     ve_exporter_t ve_exporter_temp;
-    int index_i, index_j;
+    rt_size_t index_i, index_j;
 
     /* past the three members in first ptr_begin */
     ptr_begin += (sizeof(struct ve_exporter) / sizeof(unsigned int));
