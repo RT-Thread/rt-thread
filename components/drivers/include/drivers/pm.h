@@ -115,8 +115,8 @@ enum pm_module_id {
 /**
  * device control flag to request or release power
  */
-#define RT_PM_DEVICE_CTRL_REQUEST   0x01
-#define RT_PM_DEVICE_CTRL_RELEASE   0x00
+#define RT_PM_DEVICE_CTRL_RELEASE   (RT_DEVICE_CTRL_BASE(PM) + 0x00)
+#define RT_PM_DEVICE_CTRL_REQUEST   (RT_DEVICE_CTRL_BASE(PM) + 0x01)
 
 struct rt_pm;
 
