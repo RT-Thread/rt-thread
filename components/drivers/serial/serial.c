@@ -36,6 +36,15 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+/* it's possible the 'getc/putc' is defined by stdio.h in gcc/newlib. */
+#ifdef getc
+#undef getc
+#endif
+
+#ifdef putc
+#undef putc
+#endif
+
 #ifdef RT_USING_POSIX_STDIO
 #include <dfs_file.h>
 #include <fcntl.h>
@@ -45,15 +54,6 @@
 
 #ifdef RT_USING_POSIX_TERMIOS
 #include <termios.h>
-#endif
-
-/* it's possible the 'getc/putc' is defined by stdio.h in gcc/newlib. */
-#ifdef getc
-#undef getc
-#endif
-
-#ifdef putc
-#undef putc
 #endif
 
 static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
