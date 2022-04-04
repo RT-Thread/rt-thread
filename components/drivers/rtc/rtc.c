@@ -14,7 +14,6 @@
  * 2021-07-30     Meco Man     move rtc_core.c to rtc.c
  */
 
-#include <sys/time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <rtthread.h>
@@ -22,6 +21,7 @@
 
 #ifdef RT_USING_RTC
 
+static rt_device_t _rtc_device;
 /*
  * This function initializes rtc_core
  */
@@ -145,16 +145,28 @@ rt_err_t rt_hw_rtc_register(rt_rtc_dev_t  *rtc,
  */
 rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 {
-    time_t now;
-    struct tm tm_new;
-    rt_device_t device;
+    time_t now, old_timestamp = 0;
+    struct tm tm_new = {0};
     rt_err_t ret = -RT_ERROR;
 
+    if (_rtc_device == RT_NULL)
+    {
+        _rtc_device = rt_device_find("rtc");
+        if (_rtc_device == RT_NULL)
+        {
+            return -RT_ERROR;
+        }
+    }
+
     /* get current time */
-    now = time(RT_NULL);
+    ret = rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_GET_TIME, &old_timestamp);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
 
     /* converts calendar time into local time. */
-    localtime_r(&now, &tm_new);
+    localtime_r(&old_timestamp, &tm_new);
 
     /* update date. */
     tm_new.tm_year = year - 1900;
@@ -164,15 +176,8 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
     /* converts the local time into the calendar time. */
     now = mktime(&tm_new);
 
-    device = rt_device_find("rtc");
-    if (device == RT_NULL)
-    {
-        return -RT_ERROR;
-    }
-
     /* update to RTC device. */
-    ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
-
+    ret = rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
     return ret;
 }
 
@@ -187,16 +192,28 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
  */
 rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 {
-    time_t now;
-    struct tm tm_new;
-    rt_device_t device;
+    time_t now, old_timestamp = 0;
+    struct tm tm_new = {0};
     rt_err_t ret = -RT_ERROR;
 
+    if (_rtc_device == RT_NULL)
+    {
+        _rtc_device = rt_device_find("rtc");
+        if (_rtc_device == RT_NULL)
+        {
+            return -RT_ERROR;
+        }
+    }
+
     /* get current time */
-    now = time(RT_NULL);
+    ret = rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_GET_TIME, &old_timestamp);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
 
     /* converts calendar time into local time. */
-    localtime_r(&now, &tm_new);
+    localtime_r(&old_timestamp, &tm_new);
 
     /* update time. */
     tm_new.tm_hour = hour;
@@ -206,17 +223,11 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     /* converts the local time into the calendar time. */
     now = mktime(&tm_new);
 
-    device = rt_device_find("rtc");
-    if (device == RT_NULL)
-    {
-        return -RT_ERROR;
-    }
-
     /* update to RTC device. */
-    ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
-
+    ret = rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
     return ret;
 }
+
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
