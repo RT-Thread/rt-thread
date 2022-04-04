@@ -14,6 +14,11 @@
 #define __RTC_H__
 
 #include <rtdef.h>
+#include <sys/time.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define RT_DEVICE_CTRL_RTC_GET_TIME     0x20            /**< get second time */
 #define RT_DEVICE_CTRL_RTC_SET_TIME     0x21            /**< set second time */
@@ -25,12 +30,12 @@
 struct rt_rtc_ops
 {
     rt_err_t (*init)(void);
-    rt_err_t (*get_secs)(void *arg);
-    rt_err_t (*set_secs)(void *arg);
-    rt_err_t (*get_alarm)(void *arg);
-    rt_err_t (*set_alarm)(void *arg);
-    rt_err_t (*get_timeval)(void *arg);
-    rt_err_t (*set_timeval)(void *arg);
+    rt_err_t (*get_secs)(time_t *sec);
+    rt_err_t (*set_secs)(time_t *sec);
+    rt_err_t (*get_alarm)(struct rt_rtc_wkalarm *alarm);
+    rt_err_t (*set_alarm)(struct rt_rtc_wkalarm *alarm);
+    rt_err_t (*get_timeval)(struct timeval *tv);
+    rt_err_t (*set_timeval)(struct timeval *tv);
 };
 
 typedef struct rt_rtc_device
@@ -46,5 +51,9 @@ rt_err_t rt_hw_rtc_register(rt_rtc_dev_t  *rtc,
 
 rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day);
 rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __RTC_H__ */
