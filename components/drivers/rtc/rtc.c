@@ -228,6 +228,49 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     return ret;
 }
 
+/**
+ * Set timestamp(utc).
+ *
+ * @param time_t timestamp
+ *
+ * @return rt_err_t if set success, return RT_EOK.
+ */
+rt_err_t set_timestamp(time_t timestamp)
+{
+    if (_rtc_device == RT_NULL)
+    {
+        _rtc_device = rt_device_find("rtc");
+        if (_rtc_device == RT_NULL)
+        {
+            return -RT_ERROR;
+        }
+    }
+
+    /* update to RTC device. */
+    return rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_SET_TIME, &timestamp);
+}
+
+/**
+ * Get timestamp(utc).
+ *
+ * @param time_t* timestamp
+ *
+ * @return rt_err_t if set success, return RT_EOK.
+ */
+rt_err_t get_timestamp(time_t *timestamp)
+{
+    if (_rtc_device == RT_NULL)
+    {
+        _rtc_device = rt_device_find("rtc");
+        if (_rtc_device == RT_NULL)
+        {
+            return -RT_ERROR;
+        }
+    }
+
+    /* Get timestamp from RTC device. */
+    return rt_device_control(_rtc_device, RT_DEVICE_CTRL_RTC_GET_TIME, timestamp);
+}
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
