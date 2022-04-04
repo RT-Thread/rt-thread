@@ -170,11 +170,14 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
         case RT_ALARM_WEEKLY:
         {
             /* alarm at wday */
-            sec_alarm += alarm->wktime.tm_wday * 24 * 3600;
-            sec_now += now->tm_wday * 24 * 3600;
+            if (alarm->wktime.tm_wday == now->tm_wday)
+            {
+                sec_alarm += alarm->wktime.tm_wday * 24 * 3600;
+                sec_now += now->tm_wday * 24 * 3600;
 
-            if (((sec_now - sec_alarm) <= RT_ALARM_DELAY) && (sec_now >= sec_alarm))
-                wakeup = RT_TRUE;
+                if (sec_now == sec_alarm)
+                    wakeup = RT_TRUE;
+            }
         }
         break;
         case RT_ALARM_MONTHLY:
@@ -201,7 +204,8 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
 
         if ((wakeup == RT_TRUE) && (alarm->callback != RT_NULL))
         {
-            timestamp = time(RT_NULL);
+            timestamp = (time_t)0;
+            get_timestamp(&timestamp);
             alarm->callback(alarm, timestamp);
         }
     }
