@@ -1,0 +1,194 @@
+Author: Kevin Liu
+
+Email：  kevin.liu.mchp@gmail.com
+
+For latest update please visit <https://github.com/klmchp>
+
+## 1. Microchip BSP Introduction
+
+Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
+
+### ARM Cortex-M0+ Series
+- samc21 | 5V Cortex-M0+ with 2 CAN-FD support
+- saml21 | 3.3V low power Cortex-M0+
+- samd21 | 3.3V industrial level Cortex-M0+
+
+### ARM Cortex-M4 Series
+- same54 | 3.3V 120MHz Cortex-M4F core with CAN-FD/USB/Ethernet support
+
+### ARM Cortex-M7 Series
+- same70 | 3.3V 300MHz Cortex-M7 core with CAN-FD/High speed USB/Ethernet support
+
+## 2. RT-Thread porting guide of Microchip SAM MCU
+
+### 2.1 Configure project BSP on Atmel Start
+
+	* Visit <https://start.atmel.com/#> and click CREATE NEW PROJECT.
+
+![在这里插入图片描述](doc/2-1-1-atmel-start-online.png)
+
+	* Input MCU part number and then select device, click CREATE NEW PROJECT.
+
+![在这里插入图片描述](doc/2-1-2-atmel-start-newproject.png)
+
+	* Add STDIO and other driver/middleware to project.
+
+![在这里插入图片描述](doc/2-1-3-atmel-start-add-STDIO.png)
+
+	* Configure STDIO driver.
+
+![在这里插入图片描述](doc/2-1-4-atmel-start-driver-stdio.png)
+
+	* Configure CAN module clock.
+
+![在这里插入图片描述](doc/2-1-5-atmel-start-can-clock.png)
+
+	* Configure CAN module driver.
+
+![在这里插入图片描述](doc/2-1-6-atmel-start-driver-can0.png)
+
+![在这里插入图片描述](doc/2-1-6-atmel-start-driver-can1.png)
+
+	* Add LED pin description.
+
+![在这里插入图片描述](doc/2-1-8-atmel-start-add-LED0.png)
+
+	* Rename project.
+
+![在这里插入图片描述](doc/2-1-7-atmel-start-rename-project.png)
+
+	* Save project configuration.
+
+![在这里插入图片描述](doc/2-1-9-atmel-start-save-configuration.png)
+
+	* Export project source code.
+
+![在这里插入图片描述](doc/2-1-10-atmel-start-export-project.png)
+
+### 2.2 Add project to RT-Thread source code
+
+	* Link: <https://github.com/RT-Thread/rt-thread> and download RT souce code.
+
+![在这里插入图片描述](doc/2-2-1-atmel-start-download-RT-Thread.png)
+
+	* Unzip downloaded RT-Thread and SAME70 CAN Example
+
+![在这里插入图片描述](doc/2-2-2-atmel-start-unzip-file.png)
+
+	* Enter rt-thread-xxx/bsp/microchip directory and copy same70 folder and rename it to same70q20.
+
+![在这里插入图片描述](doc/2-2-3-atmel-start-copy-file.png)
+
+	* Enter same70q20 directory and remove all files except SConscript file.
+
+![在这里插入图片描述](doc/2-2-4-atmel-start-remove-old-files.png)
+
+	* Copy all files from SAME70 CAN Example to rt-thread-xxx/bsp/microchip/same70q20/bsp.
+
+![在这里插入图片描述](doc/2-2-5-atmel-start-copy-files.png)
+
+	* Modify rt-thread-xxx\bsp\microchip\same70q20\rtconfig.py.
+
+![在这里插入图片描述](doc/2-2-6-atmel-start-modify-file0.png)
+
+	* Modify rt-thread-xxx\bsp\microchip\same70q20\bsp\SConscript.
+
+![在这里插入图片描述](doc/2-2-6-atmel-start-modify-file1.png)
+
+	* Modify rt-thread-xxx\bsp\microchip\same70q20\bsp\same70b\gcc\gcc\same70q20b_flash.ld.
+
+![在这里插入图片描述](doc/2-2-6-atmel-start-modify-file2.png)
+
+	* Modify rt-thread-xxx\bsp\microchip\same70q20\bsp\same70b\gcc\gcc\startup_same70q20b.c.
+
+![在这里插入图片描述](doc/2-2-6-atmel-start-modify-file3.png)
+
+	* Alright, now you can use RT-Thread env tools to compile the project.
+
+### 2.3 Compile project with RT-Thread env tools
+
+	* Download RT-Thread env tools <https://www.rt-thread.org/page/download.html>
+
+![在这里插入图片描述](doc/2-3-1-atmel-start-download-env-tools.png)
+
+	* Unzip downloaded file and run env.exe.
+
+![在这里插入图片描述](doc/2-3-2-atmel-start-run-env-tools.png)
+
+	* Enter your project directory and run scons command to compile it.
+
+![在这里插入图片描述](doc/2-3-3-atmel-start-env-tools-compile.png)
+
+	* Compile error you may have and proposed solution.
+
+![在这里插入图片描述](doc/2-3-4-atmel-start-env-tools-errors.png)
+
+	* Fix compiling error
+
+![在这里插入图片描述](doc/2-3-5-atmel-start-env-tools-fixerrors.png)
+
+	* Compiling success
+
+![在这里插入图片描述](doc/2-3-6-atmel-start-env-tools-compiling-OK.png)
+
+
+	* In the following chapter I will show you how to debug RT-Thread with Studio 7.
+
+
+## 3. RT-Thread debugging with Microchip IDE
+
+	* Link: <https://www.microchip.com/en-us/tools-resources/develop/microchip-studio>, download & install Microchip Studio 7.
+
+![在这里插入图片描述](doc/3-1-1-atmel-start-Studio7-download.png)
+
+	* Open installed Microchip Studio 7 and open object file for debugging.
+
+![在这里插入图片描述](doc/3-1-2-atmel-start-Studio7-open-objects.png)
+
+	* Choose object file, fill project name and select where to save this project.
+
+![在这里插入图片描述](doc/3-1-3-atmel-start-Studio7-import-debug.png)
+
+	* Select the right part number and complete object set up.
+
+![在这里插入图片描述](doc/3-1-4-atmel-start-Studio7-select-device.png)
+
+	* Object file import complete and you can see related files are linked to project.
+
+![在这里插入图片描述](doc/3-1-5-atmel-start-Studio7-project-complete.png)
+
+	* Right click the project and choose the debug tools in project propertities setting.
+
+![在这里插入图片描述](doc/3-1-6-atmel-start-Studio7-project-properties.png)
+
+	* Choose debugger/programmer and debugger interface - SWD or JTGA.
+
+![在这里插入图片描述](doc/3-1-7-atmel-start-Studio7-select-tools.png)
+
+	* Press debugging button and enjoy your debugging journey.
+
+![在这里插入图片描述](doc/3-1-8-atmel-start-Studio7-start-debugging1.png)
+
+		* Debugging start and you can add breakpoint.
+
+![在这里插入图片描述](doc/3-1-8-atmel-start-Studio7-start-debugging2.png)
+
+		* Debugging paused at breakpoint and you can monitor local variables at Watch window.
+
+![在这里插入图片描述](doc/3-1-8-atmel-start-Studio7-start-debugging3.png)
+
+
+## 4. Reconfigure MCU BSP
+
+	* Visit <https://start.atmel.com/#> and upload project configuration.
+
+![在这里插入图片描述](doc/4-1-1-atmel-start-Studio7-reimport-project.png)
+
+	* Now you can reconfigure your project.
+
+![在这里插入图片描述](doc/4-1-2-atmel-start-Studio7-project-configurtion.png)
+
+
+## 5. Microchip SAM MCU BSP configuration and user guide
+
+	* To be continued.

@@ -1,0 +1,50 @@
+menu "Hardware Drivers Config"
+
+choice
+    prompt "select chip type"
+    default SOC_SAMC21J18
+
+    config SOC_SAMC21J18
+    bool "SOC_SAMC21J18"
+    select ARCH_ARM
+    select ARCH_ARM_CORTEX_M
+    select ARCH_ARM_CORTEX_M0
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to SAMC21 DataSheet
+
+    config SOC_SAMC21G18
+    bool "SOC_SAMC21G18"
+    select ARCH_ARM
+    select ARCH_ARM_CORTEX_M
+    select ARCH_ARM_CORTEX_M0
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to SAMC21 DataSheet
+
+    config SOC_SAMC21E18
+    bool "SOC_SAMC21E18"
+    select ARCH_ARM
+    select ARCH_ARM_CORTEX_M
+    select ARCH_ARM_CORTEX_M0
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to SAMC21 DataSheet
+
+endchoice 
+endmenu
+
+menu "Onboard Peripheral Drivers"
+    depends on SOC_SAMC21J18
+
+    config SAMC21_CAN0
+        bool "Enable CAN0"
+        default false
+
+    config SAMC21_ADC0
+        bool "Enable ADC0"
+        default false
+endmenu

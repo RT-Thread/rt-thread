@@ -1,0 +1,50 @@
+menu "Hardware Drivers Config"
+
+choice
+    prompt "select chip type"
+    default SOC_SAME70Q21
+
+    config SOC_SAME70Q21
+    bool "SOC_SAME70Q21"
+    select ARCH_ARM
+    select ARCH_ARM_CORTEX_M
+    select ARCH_ARM_CORTEX_M7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to SAME70 DataSheet
+
+    config SOC_SAME70N21
+    bool "SOC_SAME70N21"
+    select ARCH_ARM
+    select ARCH_ARM_CORTEX_M
+    select ARCH_ARM_CORTEX_M7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to SAME70 DataSheet
+
+    config SOC_SAME70J21
+    bool "SOC_SAME70J21"
+    select ARCH_ARM
+    select ARCH_ARM_CORTEX_M
+    select ARCH_ARM_CORTEX_M7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to SAME70 DataSheet
+
+endchoice 
+endmenu
+
+menu "Onboard Peripheral Drivers"
+    depends on SOC_SAME70Q21
+
+    config SAME70_CAN0
+        bool "Enable CAN0"
+        default false
+
+    config SAME70_ADC0
+        bool "Enable ADC0"
+        default false
+endmenu

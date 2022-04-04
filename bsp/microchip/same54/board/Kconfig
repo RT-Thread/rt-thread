@@ -1,0 +1,50 @@
+menu "Hardware Drivers Config"
+
+choice
+    prompt "select chip type"
+    default SOC_SAME54P20
+
+    config SOC_SAME54P20
+    bool "SOC_SAME54P20"
+    select ARCH_ARM
+    select ARCH_ARM_CORTEX_M
+    select ARCH_ARM_CORTEX_M4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to SAME54 DataSheet
+
+    config SOC_SAME54N20
+    bool "SOC_SAME54N20"
+    select ARCH_ARM
+    select ARCH_ARM_CORTEX_M
+    select ARCH_ARM_CORTEX_M4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to SAME54 DataSheet
+
+    config SOC_SAME53J20
+    bool "SOC_SAME53J20"
+    select ARCH_ARM
+    select ARCH_ARM_CORTEX_M
+    select ARCH_ARM_CORTEX_M4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    help
+        Refer to SAME54 DataSheet
+
+endchoice 
+endmenu
+
+menu "Onboard Peripheral Drivers"
+    depends on SOC_SAME54P20
+
+    config SAME54_CAN0
+        bool "Enable CAN0"
+        default false
+
+    config SAME54_ADC0
+        bool "Enable ADC0"
+        default false
+endmenu
