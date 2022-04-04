@@ -51,6 +51,8 @@ rt_err_t rt_hw_rtc_register(rt_rtc_dev_t  *rtc,
 
 rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day);
 rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second);
+rt_err_t set_timestamp(time_t timestamp);
+rt_err_t get_timestamp(time_t *timestamp);
 
 #ifdef __cplusplus
 }
