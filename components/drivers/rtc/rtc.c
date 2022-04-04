@@ -279,57 +279,82 @@ rt_err_t get_timestamp(time_t *timestamp)
  */
 static void date(int argc, char **argv)
 {
+    time_t now = (time_t)0;
+
     if (argc == 1)
     {
-        time_t now;
+        struct timeval tv = { 0 };
+        struct timezone tz = { 0 };
+
+        gettimeofday(&tv, &tz);
+        now = tv.tv_sec;
         /* output current time */
-        now = time(RT_NULL);
-        rt_kprintf("%.*s", 25, ctime(&now));
+        rt_kprintf("local: %.*s", 25, ctime(&now));
+        rt_kprintf("stamp: %ld\n", (long)tv.tv_sec);
+        rt_kprintf("tz: %c%d\n", -tz.tz_minuteswest > 0 ? '+' : '-', -tz.tz_minuteswest / 60);
     }
     else if (argc >= 7)
     {
         /* set time and date */
-        rt_uint16_t year;
-        rt_uint8_t month, day, hour, min, sec;
+        struct tm tm_new = {0};
+        time_t old = (time_t)0;
+        rt_err_t err;
 
-        year = atoi(argv[1]);
-        month = atoi(argv[2]);
-        day = atoi(argv[3]);
-        hour = atoi(argv[4]);
-        min = atoi(argv[5]);
-        sec = atoi(argv[6]);
-        if (year > 2099 || year < 2000)
+        tm_new.tm_year = atoi(argv[1]) - 1900;
+        tm_new.tm_mon = atoi(argv[2]);
+        tm_new.tm_mday = atoi(argv[3]);
+        tm_new.tm_hour = atoi(argv[4]);
+        tm_new.tm_min = atoi(argv[5]);
+        tm_new.tm_sec = atoi(argv[6]);
+        if (tm_new.tm_year > 199 || tm_new.tm_year < 100)
         {
             rt_kprintf("year is out of range [2000-2099]\n");
             return;
         }
-        if (month == 0 || month > 12)
+        if (tm_new.tm_mon == 0 || tm_new.tm_mon > 12)
         {
             rt_kprintf("month is out of range [1-12]\n");
             return;
         }
-        if (day == 0 || day > 31)
+        if (tm_new.tm_mday == 0 || tm_new.tm_mday > 31)
         {
             rt_kprintf("day is out of range [1-31]\n");
             return;
         }
-        if (hour > 23)
+        if (tm_new.tm_hour > 23)
         {
             rt_kprintf("hour is out of range [0-23]\n");
             return;
         }
-        if (min > 59)
+        if (tm_new.tm_min > 59)
         {
             rt_kprintf("minute is out of range [0-59]\n");
             return;
         }
-        if (sec > 59)
+        if (tm_new.tm_sec > 59)
         {
             rt_kprintf("second is out of range [0-59]\n");
             return;
         }
-        set_time(hour, min, sec);
-        set_date(year, month, day);
+        /* save old timestamp */
+        err = get_timestamp(&old);
+        if (err != RT_EOK)
+        {
+            rt_kprintf("Get current timestamp failed. %d\n", err);
+            return;
+        }
+        /* converts the local time into the calendar time. */
+        now = mktime(&tm_new);
+        err = set_timestamp(now);
+        if (err != RT_EOK)
+        {
+            rt_kprintf("set date failed. %d\n", err);
+            return;
+        }
+        /* get new timestamp */
+        get_timestamp(&now);
+        rt_kprintf("old: %.*s", 25, ctime(&old));
+        rt_kprintf("now: %.*s", 25, ctime(&now));
     }
     else
     {
