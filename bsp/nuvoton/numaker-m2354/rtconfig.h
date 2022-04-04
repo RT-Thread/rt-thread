@@ -53,14 +53,8 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
@@ -72,9 +66,6 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-
-/* Device virtual file system */
-
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
@@ -97,6 +88,10 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
+#define RT_USING_FAL
+#define FAL_DEBUG_CONFIG
+#define FAL_DEBUG 1
+#define FAL_PART_HAS_TABLE_CFG
 
 /* Device Drivers */
 
@@ -176,7 +171,7 @@
 #define RT_USB_DEVICE_HID
 #define RT_USB_DEVICE_HID_MOUSE
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
 #define RT_LIBC_DEFAULT_TIMEZONE 8
 
@@ -192,9 +187,8 @@
 
 /* Socket is in the 'Network' category */
 
-/* Network */
 
-/* Socket abstraction layer */
+/* Network */
 
 #define RT_USING_SAL
 #define SAL_INTERNET_CHECK
@@ -203,9 +197,6 @@
 
 #define SAL_USING_AT
 #define SAL_USING_POSIX
-
-/* Network interface device */
-
 #define RT_USING_NETDEV
 #define NETDEV_USING_IFCONFIG
 #define NETDEV_USING_PING
@@ -213,12 +204,6 @@
 #define NETDEV_USING_AUTO_DEFAULT
 #define NETDEV_IPV4 1
 #define NETDEV_IPV6 0
-
-/* light weight TCP/IP stack */
-
-
-/* AT commands */
-
 #define RT_USING_AT
 #define AT_USING_CLIENT
 #define AT_CLIENT_NUM_MAX 1
@@ -226,9 +211,6 @@
 #define AT_USING_CLI
 #define AT_CMD_MAX_LEN 2048
 #define AT_SW_VERSION_NUM 0x10301
-
-/* VBUS(Virtual Software BUS) */
-
 
 /* Utilities */
 
@@ -254,6 +236,7 @@
 #define PKG_USING_AT_DEVICE
 #define AT_DEVICE_USING_ESP8266
 #define AT_DEVICE_ESP8266_INIT_ASYN
+#define AT_DEVICE_ESP8266_SOCKET
 #define PKG_USING_AT_DEVICE_LATEST_VERSION
 #define PKG_AT_DEVICE_VER_NUM 0x99999
 
@@ -264,6 +247,11 @@
 
 
 /* language packages */
+
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
 
 
 /* multimedia packages */
@@ -296,12 +284,6 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
-#define RT_USING_FAL
-#define FAL_DEBUG_CONFIG
-#define FAL_DEBUG 1
-#define FAL_PART_HAS_TABLE_CFG
-#define RT_USING_FAL_LATEST_VERSION
-#define PKG_FAL_VER_NUM 0x99999
 
 /* peripheral libraries and drivers */
 
@@ -310,6 +292,8 @@
 
 
 /* miscellaneous packages */
+
+/* project laboratory */
 
 /* samples: kernel and components samples */
 
@@ -379,7 +363,5 @@
 
 #define NU_PKG_USING_UTILS
 #define NU_PKG_USING_DEMO
-#define BOARD_USE_UTEST
-#define UTEST_CMD_PREFIX "bsp.nuvoton.numaker-m2354.test.utest."
 
 #endif

@@ -331,7 +331,7 @@
               <MiscControls />
               <Define>CPU_MK64FN1M0VLL12, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;device;device\MK64F12;..\..\components\finsh;.;..\..\include;..\..\components\net\lwip-2.0.3\src;..\..\components\net\lwip-2.0.3\src\include;..\..\components\net\lwip-2.0.3\src\include\ipv4;..\..\components\net\lwip-2.0.3\src\arch\include;..\..\components\net\lwip-2.0.3\src\include\netif;..\..\components\net\lwip-2.0.3\src\include\posix;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;device;device\MK64F12;..\..\components\finsh;.;..\..\include;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\net\lwip\lwip-2.0.3\src\include\posix;..\..\components\net\lwip\port;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -376,16 +376,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -407,16 +407,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>stdlib.c</FileName>
+              <FileName>time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\stdlib.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -462,20 +462,6 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -483,9 +469,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\workqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -497,9 +483,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>workqueue.c</FileName>
+              <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\workqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -570,51 +570,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_smc.c</FileName>
+              <FileName>fsl_wdog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_smc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_enet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_enet.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_cmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_cmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_sysmpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_sysmpu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_ewm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_ewm.c</FilePath>
+              <FilePath>device\MK64F12\fsl_wdog.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -626,170 +584,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_i2c_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_i2c_edma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_wdog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_wdog.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_common.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_ftm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_ftm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_adc16.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_adc16.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_MK64F12.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\system_MK64F12.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_rcm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_rcm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>fsl_flexcan.c</FileName>
               <FileType>1</FileType>
               <FilePath>device\MK64F12\fsl_flexcan.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_sai.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_sai.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_pmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_pmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_sim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_sim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_lptmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_lptmr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_rnga.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_rnga.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_sdhc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_sdhc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_llwu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_llwu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_MK64F12.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>device\TOOLCHAIN_ARM_STD\startup_MK64F12.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_pit.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_pit.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dmamux.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_dmamux.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_vref.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_vref.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_pdb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_pdb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_dac.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -801,9 +598,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_dspi.c</FileName>
+              <FileName>fsl_smc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_dspi.c</FilePath>
+              <FilePath>device\MK64F12\fsl_smc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -815,9 +619,37 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_cmt.c</FileName>
+              <FileName>fsl_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_cmt.c</FilePath>
+              <FilePath>device\MK64F12\fsl_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_ftm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_ftm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_rcm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_rcm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_sysmpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_sysmpu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -829,9 +661,114 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_dspi_edma.c</FileName>
+              <FileName>fsl_sdhc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_dspi_edma.c</FilePath>
+              <FilePath>device\MK64F12\fsl_sdhc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_MK64F12.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\system_MK64F12.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_vref.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_vref.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_ewm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_ewm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_sim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_sim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_dmamux.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_rnga.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_rnga.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_lptmr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_lptmr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_cmt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_cmt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_i2c_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_i2c_edma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_sai.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_sai.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_dspi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_MK64F12.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>device\TOOLCHAIN_ARM_STD\startup_MK64F12.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_pit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_pit.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -843,9 +780,72 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_flash.c</FileName>
+              <FileName>fsl_clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>device\MK64F12\fsl_flash.c</FilePath>
+              <FilePath>device\MK64F12\fsl_clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_enet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_enet.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_pdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_pdb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dspi_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_dspi_edma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_pmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_pmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_llwu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_llwu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_adc16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_adc16.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_cmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>device\MK64F12\fsl_cmp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -877,9 +877,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>mem.c</FileName>
+              <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
+              <FilePath>..\..\src\irq.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -891,9 +891,58 @@
           </Files>
           <Files>
             <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -912,58 +961,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -973,259 +973,259 @@
             <File>
               <FileName>netdb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\api\netdb.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\netdb.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\ip.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ip.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>autoip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\ipv4\autoip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ethernet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\netif\ethernet.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\netif.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\sys.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sockets.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\api\sockets.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\autoip.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ping.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\apps\ping\ping.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\apps\ping\ping.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ethernet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\netif\ethernet.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>netif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\netif.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\sys.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sockets.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\sockets.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>netifapi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\api\netifapi.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\netifapi.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tcpip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\api\tcpip.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\tcpip.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ip4_addr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\ipv4\ip4_addr.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_addr.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dhcp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\ipv4\dhcp.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\dhcp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>init.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ethernetif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\netif\ethernetif.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\init.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>etharp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\ipv4\etharp.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\etharp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>memp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\memp.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\memp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ip4.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\ipv4\ip4.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>netbuf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\api\netbuf.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\netbuf.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>raw.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\raw.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\raw.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ip4_frag.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\ipv4\ip4_frag.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_frag.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tcp_out.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\tcp_out.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_out.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>lowpan6.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\netif\lowpan6.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\netif\lowpan6.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>icmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\ipv4\icmp.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\icmp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>api_lib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\api\api_lib.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\api_lib.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>inet_chksum.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\inet_chksum.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\inet_chksum.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>stats.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\stats.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\stats.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>err.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\api\err.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\err.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tcp_in.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\tcp_in.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_in.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dns.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\dns.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sys_arch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\arch\sys_arch.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\dns.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>timeouts.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\timeouts.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\timeouts.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>igmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\ipv4\igmp.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\igmp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>udp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\udp.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\udp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>pbuf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\pbuf.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\pbuf.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>def.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\def.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\def.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>api_msg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\api\api_msg.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\api_msg.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>tcp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip-2.0.3\src\core\tcp.c</FilePath>
+              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\tcp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ethernetif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\port\ethernetif.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sys_arch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip\port\sys_arch.c</FilePath>
             </File>
           </Files>
         </Group>

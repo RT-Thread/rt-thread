@@ -10,6 +10,8 @@
 
 #include <rthw.h>
 #include "drv_wdt.h"
+#include "drv_gpio.h"
+#include "mbox.h"
 #include "raspi4.h"
 
 #ifdef BSP_USING_WDT
@@ -121,6 +123,48 @@ int rt_hw_wdt_init(void)
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_wdt_init);
+
+void poweroff(void)
+{
+    unsigned long r;
+
+    rt_kprintf("poweroff...\n");
+
+    /* power off devices one by one */
+    for (r = 0; r < 16; ++r)
+    {
+        bcm271x_mbox_poweroff_devices(r);
+    }
+
+    /* power off gpio pins (but not VCC pins) */
+    GPIO_REG_GPFSEL0(GPIO_BASE) = 0;
+    GPIO_REG_GPFSEL1(GPIO_BASE) = 0;
+    GPIO_REG_GPFSEL2(GPIO_BASE) = 0;
+    GPIO_REG_GPFSEL3(GPIO_BASE) = 0;
+    GPIO_REG_GPFSEL4(GPIO_BASE) = 0;
+    GPIO_REG_GPFSEL5(GPIO_BASE) = 0;
+    GPIO_REG_GPPUD(GPIO_BASE) = 0;
+    rt_thread_mdelay(150);
+
+    GPIO_REG_GPPUDCLK0(GPIO_BASE) = 0xffffffff;
+    GPIO_REG_GPPUDCLK1(GPIO_BASE) = 0xffffffff;
+    rt_thread_mdelay(150);
+
+    /* flush GPIO setup */
+    GPIO_REG_GPPUDCLK0(GPIO_BASE) = 0;
+    GPIO_REG_GPPUDCLK1(GPIO_BASE) = 0;
+
+    /* power off the SoC (GPU + CPU), partition 63 used to indicate halt */
+    r = PM_RSTS;
+    r &= ~0xfffffaaa;
+    r |= 0x555;
+    PM_RSTS |= PM_PASSWORD | r;
+    PM_WDOG |= PM_PASSWORD | 0x0A;
+    PM_RSTC |= PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET;
+
+    while (1) {};
+}
+MSH_CMD_EXPORT(poweroff, poweroff...);
 
 void reboot(void)
 {
