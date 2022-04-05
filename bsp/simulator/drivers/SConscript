@@ -8,6 +8,20 @@ LIBS = []
 LIBPATH = []
 CPPPATH = [cwd]
 
+CPPDEFINES = \
+[
+# avoid to conflict with the inherent STDC in VS
+'_CRT_DECLARE_NONSTDC_NAMES=0',
+# errno macro redefinition
+'_CRT_ERRNO_DEFINED',
+# disable deprecation of unsafe functions, such as strncpy
+'_CRT_SECURE_NO_WARNINGS',
+# RT_VESRION in winuser.h
+'NORESOURCE',
+# dfs_elm.c time.h conflicts with wtime.inl
+'_INC_WTIME_INL', '_INC_TIME_INL',
+]
+
 # remove no need file.
 if GetDepend('PKG_USING_GUIENGINE') == False:
     SrcRemove(src, 'sdl_fb.c')
@@ -30,7 +44,8 @@ if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_MODULE') == False:
 if sys.platform[0:5]=="linux": #check whether under linux
     SrcRemove(src, ['module_win32.c', 'dfs_win32.c'])
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH)
+group = DefineGroup('Drivers', src, depend = [''],
+            CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH, CPPDEFINES=CPPDEFINES)
 
 list = os.listdir(cwd)
 for item in list:
