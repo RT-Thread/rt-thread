@@ -217,7 +217,7 @@ static void alarm_update(rt_uint32_t event)
     struct rt_alarm *alarm;
     rt_int32_t sec_now, sec_alarm, sec_tmp;
     rt_int32_t sec_next = 24 * 3600, sec_prev = 0;
-    time_t timestamp;
+    time_t timestamp = (time_t)0;
     struct tm now;
     rt_list_t *next;
 
@@ -225,12 +225,8 @@ static void alarm_update(rt_uint32_t event)
     if (!rt_list_isempty(&_container.head))
     {
         /* get time of now */
-        timestamp = time(RT_NULL);
-#ifdef _WIN32
-        _gmtime32_s(&now, &timestamp);
-#else
+        get_timestamp(&timestamp);
         gmtime_r(&timestamp, &now);
-#endif
 
         for (next = _container.head.next; next != &_container.head; next = next->next)
         {
@@ -239,12 +235,9 @@ static void alarm_update(rt_uint32_t event)
             alarm_wakeup(alarm, &now);
         }
 
-        timestamp = time(RT_NULL);
-#ifdef _WIN32
-        _gmtime32_s(&now, &timestamp);
-#else
+        /* get time of now */
+        get_timestamp(&timestamp);
         gmtime_r(&timestamp, &now);
-#endif
         sec_now = alarm_mkdaysec(&now);
 
         for (next = _container.head.next; next != &_container.head; next = next->next)
@@ -297,9 +290,9 @@ static void alarm_update(rt_uint32_t event)
     rt_mutex_release(&_container.mutex);
 }
 
-static rt_uint32_t days_of_year_month(int tm_year, int tm_mon)
+static int days_of_year_month(int tm_year, int tm_mon)
 {
-    rt_uint32_t ret, year;
+    int ret, year;
 
     year = tm_year + 1900;
     if (tm_mon == 1)
@@ -342,18 +335,14 @@ static rt_bool_t is_valid_date(struct tm *date)
 static rt_err_t alarm_setup(rt_alarm_t alarm, struct tm *wktime)
 {
     rt_err_t ret = RT_ERROR;
-    time_t timestamp;
+    time_t timestamp = (time_t)0;
     struct tm *setup, now;
 
     setup = &alarm->wktime;
     *setup = *wktime;
-    timestamp = time(RT_NULL);
-
-#ifdef _WIN32
-    _gmtime32_s(&now, &timestamp);
-#else
+    /* get time of now */
+    get_timestamp(&timestamp);
     gmtime_r(&timestamp, &now);
-#endif
 
     /* if these are a "don't care" value,we set them to now*/
     if ((setup->tm_sec > 59) || (setup->tm_sec < 0))
@@ -551,7 +540,7 @@ rt_err_t rt_alarm_start(rt_alarm_t alarm)
 {
     rt_int32_t sec_now, sec_old, sec_new;
     rt_err_t ret = RT_EOK;
-    time_t timestamp;
+    time_t timestamp = (time_t)0;
     struct tm now;
 
     if (alarm == RT_NULL)
@@ -566,12 +555,9 @@ rt_err_t rt_alarm_start(rt_alarm_t alarm)
             goto _exit;
         }
 
-        timestamp = time(RT_NULL);
-#ifdef _WIN32
-        _gmtime32_s(&now, &timestamp);
-#else
+        /* get time of now */
+        get_timestamp(&timestamp);
         gmtime_r(&timestamp, &now);
-#endif
 
         alarm->flag |= RT_ALARM_STATE_START;
 
