@@ -753,21 +753,20 @@ void rt_alarm_dump(void)
     rt_alarm_t alarm;
     rt_uint8_t index = 0;
 
-    rt_kprintf("| id | YYYY-MM-DD hh:mm:ss | week | flag | en |\n");
-    rt_kprintf("+----+---------------------+------+------+----+\n");
+    rt_kprintf("| hh:mm:ss | week | flag | en |\n");
+    rt_kprintf("+----------+------+------+----+\n");
     for (next = _container.head.next; next != &_container.head; next = next->next)
     {
         alarm = rt_list_entry(next, struct rt_alarm, list);
         rt_uint8_t flag_index = get_alarm_flag_index(alarm->flag);
-        rt_kprintf("| %2d | %04d-%02d-%02d %02d:%02d:%02d |  %2d  |  %2s  | %2d |\n",
-            index++, alarm->wktime.tm_year + 1900, alarm->wktime.tm_mon + 1, alarm->wktime.tm_mday,
+        rt_kprintf("| %02d:%02d:%02d |  %2d  |  %2s  | %2d |\n",
             alarm->wktime.tm_hour, alarm->wktime.tm_min, alarm->wktime.tm_sec,
             alarm->wktime.tm_wday, _alarm_flag_tbl[flag_index].name, alarm->flag & RT_ALARM_STATE_START);
     }
-    rt_kprintf("+----+---------------------+------+------+----+\n");
+    rt_kprintf("+----------+------+------+----+\n");
 }
 
-MSH_CMD_EXPORT_ALIAS(rt_alarm_dump, rt_alarm_dump, dump alarm info);
+MSH_CMD_EXPORT_ALIAS(rt_alarm_dump, list_alarm, list alarm info);
 
 /** \brief initialize alarm service system
  *
