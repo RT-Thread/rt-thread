@@ -1,17 +1,14 @@
 /*
- * File      : cpuport.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 20011-05-23    aozima       the first version for PIC32.
  * 20011-09-05    aozima       merge all of C source code into cpuport.c.
  */
+
 #include <rtthread.h>
 
 /**
