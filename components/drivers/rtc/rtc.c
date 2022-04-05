@@ -229,7 +229,7 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 }
 
 /**
- * Set timestamp(utc).
+ * Set timestamp(UTC).
  *
  * @param time_t timestamp
  *
@@ -251,7 +251,7 @@ rt_err_t set_timestamp(time_t timestamp)
 }
 
 /**
- * Get timestamp(utc).
+ * Get timestamp(UTC).
  *
  * @param time_t* timestamp
  *

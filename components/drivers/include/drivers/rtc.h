@@ -8,6 +8,7 @@
  * 2012-10-10     aozima       first version.
  * 2021-06-11     iysheng      implement RTC framework V2.0
  * 2021-07-30     Meco Man     move rtc_core.h to rtc.h
+ * 2022-04-05     tyx          add timestamp function
  */
 
 #ifndef __RTC_H__
