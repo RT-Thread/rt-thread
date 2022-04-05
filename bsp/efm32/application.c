@@ -1,29 +1,22 @@
-/***************************************************************************//**
- * @file    application.c
- * @brief   Demo application
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  Bernard, onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
- * Date         Author      Notes
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
  * 2009-01-05   Bernard     first version
  * 2010-12-29   onelife     Modify for EFM32
  * 2011-05-06   onelife     Add SPI Flash DEMO
  * 2011-07-15   onelife     Add accelerometer DEMO
  * 2011-07-27   onelife     Modify Ethernet DEMO
  * 2011-08-23   onelife     Modify Ethernet DEMO according to the changes of
- *  lwIP API in reversion 1668
+ *                          lwIP API in reversion 1668
  * 2011-12-20   onelife     Add LCD DEMO
  * 2012-02-16   onelife     Add photo frame DEMO
  * 2012-xx-xx   onelife     Add low energy test code
- * 2012-05-17   onelife     Modify photo frame DEMO according to new version of
- *  RTGUI
- ******************************************************************************/
+ * 2012-05-17   onelife     Modify photo frame DEMO according to new version of RTGUI
+ */
 
 /***************************************************************************//**
  * @addtogroup efm32
