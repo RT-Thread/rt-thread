@@ -81,7 +81,7 @@ void ulog_flush(void);
  */
 void ulog_async_output(void);
 void ulog_async_output_enabled(rt_bool_t enabled);
-void ulog_async_waiting_log(rt_int32_t time);
+rt_err_t ulog_async_waiting_log(rt_int32_t time);
 #endif
 
 /*
