@@ -9,6 +9,6 @@ group = []
 if rtconfig.PLATFORM == 'armcc' or\
    rtconfig.PLATFORM == 'armclang' or\
    rtconfig.PLATFORM == 'iar' or\
-   rtconfig.PLATFORM == 'cl': # msvc
+   rtconfig.CROSS_TOOL == 'msvc':
     group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')
