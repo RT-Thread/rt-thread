@@ -178,6 +178,13 @@ config RT_USING_ULOG
             help
                 The low level output using rt_kprintf().
 
+        config ULOG_BACKEND_USING_FILE
+            bool "Enable file backend."
+            select RT_USING_DFS
+            default n
+            help
+                The file backend of ulog.
+
         config ULOG_USING_FILTER
             bool "Enable runtime log filter."
             default n
