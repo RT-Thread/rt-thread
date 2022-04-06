@@ -62,7 +62,7 @@ config RT_THREAD_PRIORITY_MAX
 config RT_TICK_PER_SECOND
     int "Tick frequency, Hz"
     range 10 1000
-    default 100
+    default 1000
     help
         System's tick frequency, Hz.
 
@@ -80,10 +80,11 @@ config RT_USING_HOOK
     help
         Enable the hook function when system running, such as idle thread hook,
         thread context switch etc.
+
     if RT_USING_HOOK
         config RT_HOOK_USING_FUNC_PTR
-        bool "Using function pointers as system hook"
-        default y
+            bool "Using function pointers as system hook"
+            default y
     endif
 
 config RT_USING_IDLE_HOOK
@@ -91,16 +92,17 @@ config RT_USING_IDLE_HOOK
     default y if RT_USING_HOOK
 
     if RT_USING_IDLE_HOOK
-    config RT_IDLE_HOOK_LIST_SIZE
-        int "The max size of idle hook list"
-        default 4
-        range 1 16
-        help
-            The system has a hook list. This is the hook list size.
+        config RT_IDLE_HOOK_LIST_SIZE
+            int "The max size of idle hook list"
+            default 4
+            range 1 16
+            help
+                The system has a hook list. This is the hook list size.
     endif
 
 config IDLE_THREAD_STACK_SIZE
     int "The stack size of idle thread"
+    default 1024 if ARCH_CPU_64BIT
     default 256
 
 config SYSTEM_THREAD_STACK_SIZE
@@ -122,6 +124,7 @@ if RT_USING_TIMER_SOFT
 
     config RT_TIMER_THREAD_STACK_SIZE
         int "The stack size of timer thread"
+        default 2048 if ARCH_CPU_64BIT
         default 512
 endif
 
