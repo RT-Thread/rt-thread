@@ -21,12 +21,12 @@
 extern "C" {
 #endif
 
-#define RT_DEVICE_CTRL_RTC_GET_TIME     0x20            /**< get second time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME     0x21            /**< set second time */
-#define RT_DEVICE_CTRL_RTC_GET_TIMEVAL  0x22            /**< get timeval for gettimeofday */
-#define RT_DEVICE_CTRL_RTC_SET_TIMEVAL  0x23            /**< set timeval for gettimeofday */
-#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x24            /**< get alarm */
-#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x25            /**< set alarm */
+#define RT_DEVICE_CTRL_RTC_GET_TIME     (RT_DEVICE_CTRL_BASE(RTC) + 0x01)              /**< get second time */
+#define RT_DEVICE_CTRL_RTC_SET_TIME     (RT_DEVICE_CTRL_BASE(RTC) + 0x02)              /**< set second time */
+#define RT_DEVICE_CTRL_RTC_GET_TIMEVAL  (RT_DEVICE_CTRL_BASE(RTC) + 0x03)              /**< get timeval for gettimeofday */
+#define RT_DEVICE_CTRL_RTC_SET_TIMEVAL  (RT_DEVICE_CTRL_BASE(RTC) + 0x04)              /**< set timeval for gettimeofday */
+#define RT_DEVICE_CTRL_RTC_GET_ALARM    (RT_DEVICE_CTRL_BASE(RTC) + 0x05)              /**< get alarm */
+#define RT_DEVICE_CTRL_RTC_SET_ALARM    (RT_DEVICE_CTRL_BASE(RTC) + 0x06)              /**< set alarm */
 
 struct rt_rtc_ops
 {

@@ -21,9 +21,6 @@
 #else
 #define RT_ALARM_DELAY             2
 #endif
-#define RT_ALARM_STATE_INITED   0x02
-#define RT_ALARM_STATE_START    0x01
-#define RT_ALARM_STATE_STOP     0x00
 
 #if (defined(RT_USING_RTC) && defined(RT_USING_ALARM))
 static struct rt_alarm_container _container;
