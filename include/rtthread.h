@@ -631,24 +631,17 @@ rt_size_t rt_strlen(const char *src);
 #define rt_strlen(src)              strlen(src)
 #endif /*RT_KSERVICE_USING_STDLIB*/
 
+char *rt_strdup(const char *s);
+
 #if !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION)
 rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
-#ifdef RT_USING_HEAP
-char *rt_strdup(const char *s);
-#endif /* RT_USING_HEAP */
 #else
 #define rt_strnlen(s, maxlen)       strnlen(s, maxlen)
-#ifdef RT_USING_HEAP
-#define rt_strdup(s)                strdup(s)
-#endif /* RT_USING_HEAP */
 #endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
 
 #ifdef __ARMCC_VERSION
 /* MDK doesn't have these APIs */
 rt_size_t strnlen(const char *s, rt_size_t maxlen);
-#ifdef RT_USING_HEAP
-char* strdup(const char* str);
-#endif /* RT_USING_HEAP */
 #endif /* __ARMCC_VERSION */
 
 void rt_show_version(void);

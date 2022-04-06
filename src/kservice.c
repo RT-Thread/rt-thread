@@ -573,6 +573,7 @@ RTM_EXPORT(rt_strnlen);
 #ifdef __ARMCC_VERSION
 rt_size_t strnlen(const char *s, rt_size_t maxlen) __attribute__((alias("rt_strnlen")));
 #endif /* __ARMCC_VERSION */
+#endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
 
 #ifdef RT_USING_HEAP
 /**
@@ -599,7 +600,6 @@ RTM_EXPORT(rt_strdup);
 char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 #endif /* __ARMCC_VERSION */
 #endif /* RT_USING_HEAP */
-#endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
 
 /**
  * This function will show the version of rt-thread rtos
