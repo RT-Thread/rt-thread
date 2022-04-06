@@ -54,7 +54,7 @@ struct timeval
 };
 #endif /* !defined(_TIMEVAL_DEFINED) && !defined(_WIN32) */
 
-#if defined(__ARMCC_VERSION) || defined(_WIN32)
+#if defined(__ARMCC_VERSION) || defined(_WIN32) || (defined(__ICCARM__) && (__VER__ >= 8010001))
 struct timespec
 {
     time_t  tv_sec;     /* seconds */
