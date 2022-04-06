@@ -639,7 +639,7 @@ char *rt_strdup(const char *s);
 #else
 #define rt_strnlen(s, maxlen)       strnlen(s, maxlen)
 #ifdef RT_USING_HEAP
-#define rt_strdup(s, maxlen)        strdup(s, maxlen)
+#define rt_strdup(s)                strdup(s)
 #endif /* RT_USING_HEAP */
 #endif /* !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION) */
 
