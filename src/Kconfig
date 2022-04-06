@@ -148,9 +148,13 @@ menu "kservice optimization"
         bool "Enable kservice to use tiny finding first bit set method"
         default n
 
-    config RT_PRINTF_LONGLONG
-        bool "Enable rt_printf-family functions to support long long format"
+    config RT_KPRINTF_USING_LONGLONG
+        bool "Enable rt_printf-family functions to support long-long format"
+        default y if ARCH_CPU_64BIT
         default n
+        help
+            Enable rt_printf()/rt_snprintf()/rt_sprintf()/rt_vsnprintf()/rt_vsprintf()
+            functions to support long-long format
 
 endmenu
 
