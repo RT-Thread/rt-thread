@@ -52,6 +52,7 @@ extern "C" {
 #define RT_SENSOR_CLASS_SPO2           (18) /* SpO2 sensor       */
 #define RT_SENSOR_CLASS_IAQ            (19) /* IAQ sensor.       */
 #define RT_SENSOR_CLASS_ETOH           (20) /* EtOH sensor.      */
+#define RT_SENSOR_CLASS_BP             (21) /* Blood Pressure    */
 
 /* Sensor vendor types */
 
@@ -93,6 +94,7 @@ extern "C" {
 #define  RT_SENSOR_UNIT_DMS            (16) /* Coordinates             unit: DMS        */
 #define  RT_SENSOR_UNIT_DD             (17) /* Coordinates             unit: DD         */
 #define  RT_SENSOR_UNIT_MGM3           (18) /* Concentration           unit: mg/m3      */
+#define  RT_SENSOR_UNIT_MMHG           (19) /* Blood Pressure          unit: mmHg       */
 /* Sensor communication interface types */
 
 #define  RT_SENSOR_INTF_I2C            (1 << 0)
@@ -192,6 +194,13 @@ struct sensor_3_axis
     rt_int32_t z;
 };
 
+/* Blood Pressure Data Type */
+struct sensor_bp
+{
+    rt_int32_t sbp; /* SBP : systolic pressure */
+    rt_int32_t dbp; /* DBP : diastolic pressure */
+};
+
 struct coordinates
 {
     double longitude;
@@ -223,6 +232,7 @@ struct rt_sensor_data
         rt_uint32_t          spo2;          /* SpO2 sensor.         unit: permillage  */
         rt_uint32_t          iaq;           /* IAQ sensor.          unit: 1 */
         rt_uint32_t          etoh;          /* EtOH sensor.         unit: ppm */
+        struct sensor_bp     bp;            /* BloodPressure.       unit: mmHg        */
     } data;
 };
 
