@@ -25,6 +25,12 @@ struct romfs_dirent
     rt_size_t        size;  /* file size */
 };
 
+struct root_data
+{
+    struct romfs_dirent *dirent;  /* root dirent */
+    long long offset;
+};
+
 int dfs_romfs_init(void);
 extern const struct romfs_dirent romfs_root;
 
