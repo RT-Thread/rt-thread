@@ -16,18 +16,22 @@
 #include <rtthread.h>
 #include "board.h"
 
+#ifdef RT_USING_SERIAL
+extern int rt_hw_uart_init(void);
+#endif
+
 static struct io_descriptor* g_stdio;
 
 void rt_hw_console_output(const char *str)
 {
-  io_write(g_stdio, (uint8_t *)str, strlen(str));
+    io_write(g_stdio, (uint8_t *)str, strlen(str));
 }
 RTM_EXPORT(rt_hw_console_output);
 
 static inline void hw_board_init_usart(void)
 {
-  usart_sync_get_io_descriptor(&TARGET_IO, &g_stdio);
-  usart_sync_enable(&TARGET_IO);
+    usart_sync_get_io_descriptor(&TARGET_IO, &g_stdio);
+    usart_sync_enable(&TARGET_IO);
 }
 
 /**
@@ -36,13 +40,13 @@ static inline void hw_board_init_usart(void)
  */
 void SysTick_Handler(void)
 {
-  /* enter interrupt */
-  rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-  rt_tick_increase();
+    rt_tick_increase();
 
-  /* leave interrupt */
-  rt_interrupt_leave();
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 /**
@@ -50,17 +54,22 @@ void SysTick_Handler(void)
  */
 void rt_hw_board_init(void)
 {
-  /* Initializes MCU, drivers and middleware */
-  atmel_start_init();
+    /* Initializes MCU, drivers and middleware */
+    atmel_start_init();
 
-  /* enable USART stdout module */
-  hw_board_init_usart();
+    /* enable USART stdout module */
+    hw_board_init_usart();
 
-  /* init systick */
-  SysTick_Config(CONF_CPU_FREQUENCY / RT_TICK_PER_SECOND);
+    /* UART driver initialization is open by default */
+#ifdef RT_USING_SERIAL
+    rt_hw_uart_init();
+#endif
 
-  /* set pend exception priority */
-  NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
+    /* init systick */
+    SysTick_Config(CONF_CPU_FREQUENCY / RT_TICK_PER_SECOND);
+
+    /* set pend exception priority */
+    NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
 
 #ifdef RT_USING_HEAP
     #if defined(__CC_ARM) || defined(__CLANG_ARM)
@@ -73,12 +82,13 @@ void rt_hw_board_init(void)
     #endif
 #endif
 
-#ifdef RT_USING_COMPONENTS_INIT
-  rt_components_board_init();
+    /* Set the shell console output device */
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
-#ifdef RT_USING_CONSOLE
-//  rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
 #endif
 }
 

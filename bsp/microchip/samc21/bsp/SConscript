@@ -24,24 +24,19 @@ src += Glob('hpl/oscctrl/*.c')
 src += Glob('hpl/pm/*.c')
 src += Glob('hpl/port/*.c')
 src += Glob('hpl/sercom/*.c')
-src += [cwd + '/stdio_redirect/stdio_io.c']
 src += [cwd + '/atmel_start.c']
 src += [cwd + '/driver_init.c']
-src += [cwd + '/stdio_start.c']
 
 #add for startup script
 if rtconfig.CROSS_TOOL == 'gcc':
     src += [cwd + '/samc21/gcc/system_samc21.c']
     src += [cwd + '/samc21/gcc/gcc/startup_samc21.c']
-    src += Glob('stdio_redirect/gcc/*.c')
 elif rtconfig.CROSS_TOOL == 'keil':
     src += [cwd + '/samc21/armcc/arm_addon/armcc/' + 'system_samc21.c']
     src += [cwd + '/samc21/armcc/arm_addon/armcc/arm/' + 'startup_samc21.s']
-    src += Glob('stdio_redirect/keil/*.c')
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [cwd + '/samc21/iar/' + 'system_samc21.c']
     src += [cwd + '/samc21/iar/iar/' + 'startup_samc21.c']
-    src += Glob('stdio_redirect/iar/*.c')
 
 path = [
     cwd,
@@ -54,8 +49,7 @@ path = [
     cwd + '/hpl/pm',
     cwd + '/hpl/port',
     cwd + '/hri',
-    cwd + '/samc21/include',
-    cwd + '/stdio_redirect',]
+    cwd + '/samc21/include']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

@@ -24,9 +24,6 @@
         <path>$PROJ_DIR$\hpl\sercom</path>
         <path>$PROJ_DIR$\hri</path>
         <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\config</path>
-        <path>$PROJ_DIR$\stdio_redirect</path>
-        <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\include</path>
     </includePath>
@@ -50,9 +47,6 @@
         <path>$PROJ_DIR$\hpl\ramecc</path>
         <path>$PROJ_DIR$\hpl\sercom</path>
         <path>$PROJ_DIR$\hri</path>
-        <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\config</path>
-        <path>$PROJ_DIR$\stdio_redirect</path>
         <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\include</path>
@@ -80,8 +74,6 @@
             <path>driver_init.c</path>
             <path>driver_init.h</path>
             <path>main.c</path>
-            <path>stdio_start.c</path>
-            <path>stdio_start.h</path>
     
 
         <group name="CMSIS/Core/Include">
@@ -119,7 +111,6 @@
             <path>config/hpl_port_config.h</path>
             <path>config/hpl_sercom_config.h</path>
             <path>config/peripheral_clk_config.h</path>
-            <path>config/stdio_redirect_config.h</path>
         </group>
 
         <group name="examples">
@@ -423,16 +414,6 @@
             <path>include/pio/same54n20a.h</path>
             <path>include/pio/same54p19a.h</path>
             <path>include/pio/same54p20a.h</path>
-        </group>
-
-        <group name="stdio_redirect">
-            <path>stdio_redirect/stdio_io.c</path>
-            <path>stdio_redirect/stdio_io.h</path>
-        </group>
-
-        <group name="stdio_redirect/iar">
-            <path>stdio_redirect/iar/read.c</path>
-            <path>stdio_redirect/iar/write.c</path>
         </group>
     </files>
 </iarProjectConnection>

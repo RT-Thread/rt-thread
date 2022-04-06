@@ -30,12 +30,11 @@ endif
 # List the subdirectories for creating object files
 SUB_DIRS +=  \
  \
-stdio_redirect \
 hpl/pmc \
 hpl/usart \
 hal/src \
-stdio_redirect/gcc \
 hpl/xdmac \
+hpl/mcan \
 hal/utils/src \
 same70b/gcc/gcc \
 examples \
@@ -46,22 +45,20 @@ hpl/core
 # List the object files
 OBJS +=  \
 hal/src/hal_io.o \
-stdio_redirect/stdio_io.o \
-hpl/xdmac/hpl_xdmac.o \
+hal/src/hal_can_async.o \
+atmel_start.o \
 hpl/usart/hpl_usart.o \
 led_switcher_main.o \
 hal/utils/src/utils_syscalls.o \
-stdio_redirect/gcc/read.o \
 hpl/systick/hpl_systick_ARMv7_base.o \
 hal/src/hal_delay.o \
 hpl/core/hpl_init.o \
 hal/utils/src/utils_list.o \
 same70b/gcc/gcc/startup_same70q21b.o \
 hal/utils/src/utils_assert.o \
-atmel_start.o \
+hpl/mcan/hpl_mcan.o \
 hal/src/hal_usart_sync.o \
 hpl/pmc/hpl_pmc.o \
-stdio_start.o \
 hal/src/hal_init.o \
 examples/driver_examples.o \
 driver_init.o \
@@ -73,26 +70,24 @@ hal/src/hal_sleep.o \
 hpl/pmc/hpl_sleep.o \
 hpl/core/hpl_core_m7_base.o \
 hal/src/hal_atomic.o \
-stdio_redirect/gcc/write.o
+hpl/xdmac/hpl_xdmac.o
 
 OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
-"stdio_redirect/stdio_io.o" \
-"hpl/xdmac/hpl_xdmac.o" \
+"hal/src/hal_can_async.o" \
+"atmel_start.o" \
 "hpl/usart/hpl_usart.o" \
 "led_switcher_main.o" \
 "hal/utils/src/utils_syscalls.o" \
-"stdio_redirect/gcc/read.o" \
 "hpl/systick/hpl_systick_ARMv7_base.o" \
 "hal/src/hal_delay.o" \
 "hpl/core/hpl_init.o" \
 "hal/utils/src/utils_list.o" \
 "same70b/gcc/gcc/startup_same70q21b.o" \
 "hal/utils/src/utils_assert.o" \
-"atmel_start.o" \
+"hpl/mcan/hpl_mcan.o" \
 "hal/src/hal_usart_sync.o" \
 "hpl/pmc/hpl_pmc.o" \
-"stdio_start.o" \
 "hal/src/hal_init.o" \
 "examples/driver_examples.o" \
 "driver_init.o" \
@@ -104,7 +99,7 @@ OBJS_AS_ARGS +=  \
 "hpl/pmc/hpl_sleep.o" \
 "hpl/core/hpl_core_m7_base.o" \
 "hal/src/hal_atomic.o" \
-"stdio_redirect/gcc/write.o"
+"hpl/xdmac/hpl_xdmac.o"
 
 # List the directories containing header files
 DIR_INCLUDES +=  \
@@ -114,15 +109,13 @@ DIR_INCLUDES +=  \
 -I"../hal/include" \
 -I"../hal/utils/include" \
 -I"../hpl/core" \
+-I"../hpl/mcan" \
 -I"../hpl/pio" \
 -I"../hpl/pmc" \
 -I"../hpl/systick" \
 -I"../hpl/usart" \
 -I"../hpl/xdmac" \
 -I"../hri" \
--I"../" \
--I"../config" \
--I"../stdio_redirect" \
 -I"../" \
 -I"../CMSIS/Core/Include" \
 -I"../same70b/include"
@@ -131,9 +124,9 @@ DIR_INCLUDES +=  \
 DEPS := $(OBJS:%.o=%.d)
 
 DEPS_AS_ARGS +=  \
-"stdio_redirect/stdio_io.d" \
 "hal/src/hal_gpio.d" \
 "hal/src/hal_io.d" \
+"hal/src/hal_can_async.d" \
 "led_switcher_main.d" \
 "hpl/usart/hpl_usart.d" \
 "hal/utils/src/utils_syscalls.d" \
@@ -141,16 +134,14 @@ DEPS_AS_ARGS +=  \
 "hpl/systick/hpl_systick_ARMv7_base.d" \
 "same70b/gcc/gcc/startup_same70q21b.d" \
 "hal/utils/src/utils_list.d" \
-"stdio_redirect/gcc/write.d" \
 "hal/utils/src/utils_assert.d" \
 "hal/src/hal_delay.d" \
 "hpl/core/hpl_init.d" \
-"stdio_start.d" \
 "hal/src/hal_init.d" \
 "hal/src/hal_usart_sync.d" \
+"hpl/mcan/hpl_mcan.d" \
 "hpl/pmc/hpl_pmc.d" \
 "driver_init.d" \
-"stdio_redirect/gcc/read.d" \
 "examples/driver_examples.d" \
 "hal/src/hal_sleep.d" \
 "hal/utils/src/utils_ringbuffer.d" \

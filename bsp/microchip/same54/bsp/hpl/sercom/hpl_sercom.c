@@ -677,12 +677,85 @@ static uint16_t _usart_calculate_baud_rate(const uint32_t baud, const uint32_t c
 static void _usart_set_baud_rate(void *const hw, const uint32_t baud_rate)
 {
 	bool enabled = hri_sercomusart_get_CTRLA_ENABLE_bit(hw);
+	uint32_t usart_freq, calc_baud, calc_frac;
+	uint8_t i = _usarts[_get_sercom_index(hw)].number;
+
+	switch (i) {
+	case 0:
+#ifdef CONF_GCLK_SERCOM0_CORE_FREQUENCY
+		usart_freq = CONF_GCLK_SERCOM0_CORE_FREQUENCY;
+#endif
+		break;
+
+	case 1:
+#ifdef CONF_GCLK_SERCOM1_CORE_FREQUENCY
+		usart_freq = CONF_GCLK_SERCOM1_CORE_FREQUENCY;
+#endif
+		break;
+
+	case 2:
+#ifdef CONF_GCLK_SERCOM2_CORE_FREQUENCY
+		usart_freq = CONF_GCLK_SERCOM2_CORE_FREQUENCY;
+#endif
+		break;
+
+	case 3:
+#ifdef CONF_GCLK_SERCOM3_CORE_FREQUENCY
+		usart_freq = CONF_GCLK_SERCOM3_CORE_FREQUENCY;
+#endif
+		break;
+
+	case 4:
+#ifdef CONF_GCLK_SERCOM4_CORE_FREQUENCY
+		usart_freq = CONF_GCLK_SERCOM4_CORE_FREQUENCY;
+#endif
+		break;
+
+	case 5:
+#ifdef CONF_GCLK_SERCOM5_CORE_FREQUENCY
+		usart_freq = CONF_GCLK_SERCOM5_CORE_FREQUENCY;
+#endif
+		break;
+
+	case 6:
+#ifdef CONF_GCLK_SERCOM6_CORE_FREQUENCY
+		usart_freq = CONF_GCLK_SERCOM6_CORE_FREQUENCY;
+#endif
+		break;
+
+	case 7:
+#ifdef CONF_GCLK_SERCOM7_CORE_FREQUENCY
+		usart_freq = CONF_GCLK_SERCOM7_CORE_FREQUENCY;
+#endif
+		break;
+
+	default:
+		ASSERT(false);
+	}
+
+	if(usart_freq >= (16U * baud_rate)) {
+		calc_baud = 65536U - (uint32_t)(((uint64_t)65536U * 16U * baud_rate) / usart_freq);
+		calc_frac = 0;
+	} else if(usart_freq >= (8U * baud_rate)) {
+		calc_baud = 65536U - (uint32_t)(((uint64_t)65536U * 8U * baud_rate) / usart_freq);
+		calc_frac = 2;
+	} else if(usart_freq >= (3U * baud_rate)) {
+		calc_baud = 65536U - (uint32_t)(((uint64_t)65536U * 3U * baud_rate) / usart_freq);
+		calc_frac = 4;
+	} else {
+		/* Do nothing */
+	}
 
 	hri_sercomusart_clear_CTRLA_ENABLE_bit(hw);
 
 	CRITICAL_SECTION_ENTER()
 	hri_sercomusart_wait_for_sync(hw, SERCOM_USART_SYNCBUSY_ENABLE);
-	hri_sercomusart_write_BAUD_reg(hw, baud_rate);
+	if ((_usarts[i].ctrl_a & SERCOM_USART_CTRLA_SAMPR(0x1)) || (_usarts[i].ctrl_a & SERCOM_USART_CTRLA_SAMPR(0x3))) {
+		((Sercom *)hw)->USART.BAUD.FRAC.BAUD = calc_baud;
+		((Sercom *)hw)->USART.BAUD.FRAC.FP   = calc_frac;
+	} else {
+		hri_sercomusart_write_BAUD_reg(hw, calc_baud);
+	}
 	CRITICAL_SECTION_LEAVE()
 
 	hri_sercomusart_write_CTRLA_ENABLE_bit(hw, enabled);

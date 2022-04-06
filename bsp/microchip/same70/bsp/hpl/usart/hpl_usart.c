@@ -763,7 +763,7 @@ static void _usart_set_baud_rate(void *const hw, const uint32_t baud_rate)
 	ASSERT(hw);
 	uint32_t usart_freq, cd = 0, fp = 0, clock_select;
 	bool     over;
-	uint8_t  i = _get_usart_index(hw);
+	uint8_t  i = _usarts[_get_usart_index(hw)].number;
 	switch (i) {
 	case 0:
 

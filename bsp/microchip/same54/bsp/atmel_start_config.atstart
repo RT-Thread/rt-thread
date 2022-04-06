@@ -1,5 +1,5 @@
 format_version: '2'
-name: AES Demo
+name: SAME54 LED switcher
 versions:
   api: '1.0'
   backend: 1.8.580
@@ -20,15 +20,7 @@ details: null
 application:
   definition: 'Atmel:Application_Examples:0.0.1::Application:AES_Demo:'
   configuration: null
-middlewares:
-  STDIO_REDIRECT_0:
-    user_label: STDIO_REDIRECT_0
-    configuration: {}
-    definition: Atmel:STDIO_redirect:0.0.1::STDIO_Redirect
-    functionality: STDIO_Redirect
-    api: STDIO:Redirect:IO
-    dependencies:
-      Target IO: TARGET_IO
+middlewares: {}
 drivers:
   CRYPTOGRAPHY_0:
     user_label: CRYPTOGRAPHY_0
@@ -599,10 +591,10 @@ drivers:
     functionality: System
     api: HAL:HPL:GCLK
     configuration:
-      $input: 120000000
-      $input_id: Digital Phase Locked Loop (DPLL0)
-      RESERVED_InputFreq: 120000000
-      RESERVED_InputFreq_id: Digital Phase Locked Loop (DPLL0)
+      $input: 12000000
+      $input_id: External Crystal Oscillator 8-48MHz (XOSC1)
+      RESERVED_InputFreq: 12000000
+      RESERVED_InputFreq_id: External Crystal Oscillator 8-48MHz (XOSC1)
       _$freq_output_Generic clock generator 0: 120000000
       _$freq_output_Generic clock generator 1: 3000000
       _$freq_output_Generic clock generator 10: 12000000
@@ -640,10 +632,10 @@ drivers:
       enable_gclk_gen_9: false
       enable_gclk_gen_9__externalclock: 1000000
       gclk_arch_gen_0_enable: true
-      gclk_arch_gen_0_idc: true
-      gclk_arch_gen_0_oe: true
+      gclk_arch_gen_0_idc: false
+      gclk_arch_gen_0_oe: false
       gclk_arch_gen_0_oov: false
-      gclk_arch_gen_0_runstdby: true
+      gclk_arch_gen_0_runstdby: false
       gclk_arch_gen_10_enable: false
       gclk_arch_gen_10_idc: false
       gclk_arch_gen_10_oe: false
@@ -656,9 +648,9 @@ drivers:
       gclk_arch_gen_11_runstdby: false
       gclk_arch_gen_1_enable: true
       gclk_arch_gen_1_idc: true
-      gclk_arch_gen_1_oe: true
+      gclk_arch_gen_1_oe: false
       gclk_arch_gen_1_oov: false
-      gclk_arch_gen_1_runstdby: true
+      gclk_arch_gen_1_runstdby: false
       gclk_arch_gen_2_enable: true
       gclk_arch_gen_2_idc: false
       gclk_arch_gen_2_oe: false
@@ -711,8 +703,8 @@ drivers:
       gclk_gen_1_div: 4
       gclk_gen_1_div_sel: false
       gclk_gen_1_oscillator: External Crystal Oscillator 8-48MHz (XOSC1)
-      gclk_gen_2_div: 1
-      gclk_gen_2_div_sel: true
+      gclk_gen_2_div: 4
+      gclk_gen_2_div_sel: false
       gclk_gen_2_oscillator: External Crystal Oscillator 8-48MHz (XOSC1)
       gclk_gen_3_div: 1
       gclk_gen_3_div_sel: false
@@ -755,8 +747,8 @@ drivers:
       enable_cpu_clock: true
       mclk_arch_bupdiv: Divide by 8
       mclk_arch_hsdiv: Divide by 1
-      mclk_arch_lpdiv: Divide by 4
-      nvm_wait_states: '4'
+      mclk_arch_lpdiv: Divide by 8
+      nvm_wait_states: '5'
     optional_signals: []
     variant: null
     clocks:
@@ -791,11 +783,11 @@ drivers:
       xosc32k_arch_en1k: false
       xosc32k_arch_en32k: false
       xosc32k_arch_enable: false
-      xosc32k_arch_ondemand: true
+      xosc32k_arch_ondemand: false
       xosc32k_arch_runstdby: false
-      xosc32k_arch_startup: 62592us
+      xosc32k_arch_startup: 125092us
       xosc32k_arch_swben: false
-      xosc32k_arch_xtalen: false
+      xosc32k_arch_xtalen: true
     optional_signals: []
     variant: null
     clocks:
@@ -807,9 +799,9 @@ drivers:
     api: HAL:HPL:OSCCTRL
     configuration:
       $input: 3000000
-      $input_id: Generic clock generator 1
+      $input_id: Generic clock generator 2
       RESERVED_InputFreq: 3000000
-      RESERVED_InputFreq_id: Generic clock generator 1
+      RESERVED_InputFreq_id: Generic clock generator 2
       _$freq_output_Digital Frequency Locked Loop (DFLL48M): 48000000
       _$freq_output_Digital Phase Locked Loop (DPLL0): 120000000
       _$freq_output_Digital Phase Locked Loop (DPLL1): 47985664
@@ -844,14 +836,14 @@ drivers:
       fdpll0_arch_lbypass: false
       fdpll0_arch_ltime: No time-out, automatic lock
       fdpll0_arch_ondemand: false
-      fdpll0_arch_refclk: XOSC1 clock reference
-      fdpll0_arch_runstdby: true
+      fdpll0_arch_refclk: GCLK clock reference
+      fdpll0_arch_runstdby: false
       fdpll0_arch_wuf: false
       fdpll0_clock_dcofilter: 0
       fdpll0_clock_div: 0
       fdpll0_ldr: 39
       fdpll0_ldrfrac: 0
-      fdpll0_ref_clock: Generic clock generator 1
+      fdpll0_ref_clock: Generic clock generator 2
       fdpll1_arch_dcoen: false
       fdpll1_arch_enable: false
       fdpll1_arch_filter: 0
@@ -878,10 +870,10 @@ drivers:
       xosc0_frequency: 12000000
       xosc1_arch_cfden: false
       xosc1_arch_enable: true
-      xosc1_arch_enalc: true
+      xosc1_arch_enalc: false
       xosc1_arch_lowbufgain: false
       xosc1_arch_ondemand: false
-      xosc1_arch_runstdby: true
+      xosc1_arch_runstdby: false
       xosc1_arch_startup: 7813us
       xosc1_arch_swben: false
       xosc1_arch_xtalen: true
@@ -968,7 +960,7 @@ drivers:
     functionality: USART
     api: HAL:Driver:USART_Sync
     configuration:
-      usart_advanced: true
+      usart_advanced: false
       usart_arch_clock_mode: USART with internal clock
       usart_arch_cloden: false
       usart_arch_dbgstop: Keep running

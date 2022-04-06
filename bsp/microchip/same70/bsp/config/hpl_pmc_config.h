@@ -590,14 +590,14 @@
 // <i> This defines the clock source for PCK5
 // <id> clk_gen_pck5_oscillator
 #ifndef CONF_CLK_GEN_PCK5_SRC
-#define CONF_CLK_GEN_PCK5_SRC CLK_SRC_OPTION_MAINCK
+#define CONF_CLK_GEN_PCK5_SRC CLK_SRC_OPTION_UPLLCKDIV
 #endif
 
 // <q> Enable Clock_PCK5
 // <i> Indicates whether PCK5 is enabled or disable
 // <id> clk_gen_pck5_arch_enable
 #ifndef CONF_CLK_PCK5_ENABLE
-#define CONF_CLK_PCK5_ENABLE 0
+#define CONF_CLK_PCK5_ENABLE 1
 #endif
 
 // </h>
@@ -954,7 +954,7 @@
 // <i> Indicates whether configuration for UPLLCK is enabled or not
 // <id> enable_upllck
 #ifndef CONF_UPLLCK_CONFIG
-#define CONF_UPLLCK_CONFIG 0
+#define CONF_UPLLCK_CONFIG 1
 #endif
 
 // <y> UPLLCK Reference Clock Source
@@ -970,7 +970,7 @@
 // <i> Indicates whether UPLLCK Oscillator is enabled or not
 // <id> upllck_arch_enable
 #ifndef CONF_UPLLCK_ENABLE
-#define CONF_UPLLCK_ENABLE 0
+#define CONF_UPLLCK_ENABLE 1
 #endif
 // </h>
 // </e>

@@ -76,6 +76,24 @@
 #define CONF_USART1_FREQUENCY 150000000
 #endif
 
+// <h> MCAN Clock Settings
+// <y> MCAN Clock source
+// <CONF_SRC_PCK5"> Programmable Clock Controller 5 (PMC_PCK5)
+// <i> This defines the clock source for the MCAN
+// <id> mcan_clock_source
+#ifndef CONF_MCAN1_SRC
+#define CONF_MCAN1_SRC CONF_SRC_PCK5
+#endif
+// </h>
+
+/**
+ * \def MCAN FREQUENCY
+ * \brief MCAN's Clock frequency
+ */
+#ifndef CONF_MCAN1_FREQUENCY
+#define CONF_MCAN1_FREQUENCY 40000000
+#endif
+
 // <<< end of configuration section >>>
 
 #endif // PERIPHERAL_CLK_CONFIG_H

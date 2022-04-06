@@ -36,14 +36,6 @@
       <require Dname="ATSAMC21J18A"/>
       <accept Tcompiler="GCC"/>
     </condition>
-    <condition id="IAR">
-      <require Dname="ATSAMC21J18A"/>
-      <accept Tcompiler="IAR"/>
-    </condition>
-    <condition id="ARMCC">
-      <require Dname="ATSAMC21J18A"/>
-      <accept Tcompiler="ARMCC"/>
-    </condition>
   </conditions>
   <components generator="AtmelStart">
     <component Cclass="AtmelStart" Cgroup="Framework" Cversion="1.0.0" condition="CMSIS Device Startup">
@@ -133,14 +125,6 @@
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_tcc_c21.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_tsens_c21.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_wdt_c21.h"/>
-        <file category="doc" condition="ARMCC, GCC, IAR" name="documentation/stdio.rst"/>
-        <file category="source" condition="GCC" name="stdio_redirect/gcc/read.c"/>
-        <file category="source" condition="GCC" name="stdio_redirect/gcc/write.c"/>
-        <file category="source" condition="IAR" name="stdio_redirect/iar/read.c"/>
-        <file category="source" condition="IAR" name="stdio_redirect/iar/write.c"/>
-        <file category="source" condition="ARMCC" name="stdio_redirect/keil/Retarget.c"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="stdio_redirect/stdio_io.c"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="stdio_redirect/stdio_io.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="main.c"/>
         <file category="other" condition="ARMCC, GCC, IAR" name="documentation/rww_flash.rst/"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="driver_init.c"/>
@@ -175,8 +159,6 @@
         <file category="header" condition="ARMCC, GCC, IAR" name="hpl/pm/hpl_pm_base.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hpl/port/hpl_gpio_base.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/sercom/hpl_sercom.c"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="stdio_start.c"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="stdio_start.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="atmel_start.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="atmel_start.c"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_dmac_config.h"/>
@@ -188,7 +170,6 @@
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_port_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_sercom_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/peripheral_clk_config.h"/>
-        <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/stdio_redirect_config.h"/>
         <file category="include" condition="ARMCC, GCC, IAR" name=""/>
         <file category="include" condition="ARMCC, GCC, IAR" name="config"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="examples"/>
@@ -206,9 +187,6 @@
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/port"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/sercom"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hri"/>
-        <file category="include" condition="ARMCC, GCC, IAR" name=""/>
-        <file category="include" condition="ARMCC, GCC, IAR" name="config"/>
-        <file category="include" condition="ARMCC, GCC, IAR" name="stdio_redirect"/>
         <file category="include" condition="ARMCC, GCC, IAR" name=""/>
       </files>
     </component>

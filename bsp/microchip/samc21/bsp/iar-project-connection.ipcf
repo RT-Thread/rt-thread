@@ -23,9 +23,6 @@
         <path>$PROJ_DIR$\hpl\sercom</path>
         <path>$PROJ_DIR$\hri</path>
         <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\config</path>
-        <path>$PROJ_DIR$\stdio_redirect</path>
-        <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\samc21\include</path>
     </includePath>
@@ -48,9 +45,6 @@
         <path>$PROJ_DIR$\hpl\port</path>
         <path>$PROJ_DIR$\hpl\sercom</path>
         <path>$PROJ_DIR$\hri</path>
-        <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\config</path>
-        <path>$PROJ_DIR$\stdio_redirect</path>
         <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\samc21\include</path>
@@ -78,8 +72,6 @@
             <path>driver_init.c</path>
             <path>driver_init.h</path>
             <path>main.c</path>
-            <path>stdio_start.c</path>
-            <path>stdio_start.h</path>
     
 
         <group name="CMSIS/Core/Include">
@@ -117,7 +109,6 @@
             <path>config/hpl_port_config.h</path>
             <path>config/hpl_sercom_config.h</path>
             <path>config/peripheral_clk_config.h</path>
-            <path>config/stdio_redirect_config.h</path>
         </group>
 
         <group name="examples">
@@ -404,16 +395,6 @@
             <path>samc21/include/pio/samc21j17au.h</path>
             <path>samc21/include/pio/samc21j18a.h</path>
             <path>samc21/include/pio/samc21j18au.h</path>
-        </group>
-
-        <group name="stdio_redirect">
-            <path>stdio_redirect/stdio_io.c</path>
-            <path>stdio_redirect/stdio_io.h</path>
-        </group>
-
-        <group name="stdio_redirect/iar">
-            <path>stdio_redirect/iar/read.c</path>
-            <path>stdio_redirect/iar/write.c</path>
         </group>
     </files>
 </iarProjectConnection>

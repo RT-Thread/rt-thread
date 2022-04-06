@@ -20,15 +20,7 @@ details: null
 application:
   definition: 'Atmel:Application_Examples:0.0.1::Application:RWW_FLASH:'
   configuration: null
-middlewares:
-  STDIO_REDIRECT_0:
-    user_label: STDIO_REDIRECT_0
-    configuration: {}
-    definition: Atmel:STDIO_redirect:0.0.1::STDIO_Redirect
-    functionality: STDIO_Redirect
-    api: STDIO:Redirect:IO
-    dependencies:
-      Target IO: TARGET_IO
+middlewares: {}
 drivers:
   DMAC:
     user_label: DMAC

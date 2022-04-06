@@ -35,14 +35,12 @@ gcc \
 hpl/osc32kctrl \
 hpl/ramecc \
 hpl/dmac \
-stdio_redirect \
 hal/src \
 hpl/mclk \
 hpl/aes \
 hpl/sercom \
 examples \
 hpl/gclk \
-stdio_redirect/gcc \
 hpl/oscctrl \
 hal/utils/src \
 gcc/gcc \
@@ -52,12 +50,9 @@ hpl/cmcc
 # List the object files
 OBJS +=  \
 hal/src/hal_io.o \
-stdio_redirect/stdio_io.o \
-stdio_redirect/gcc/write.o \
 hpl/core/hpl_core_m4.o \
 hal/src/hal_cache.o \
 hal/utils/src/utils_syscalls.o \
-stdio_redirect/gcc/read.o \
 gcc/system_same54.o \
 hpl/aes/hpl_aes.o \
 hal/src/hal_delay.o \
@@ -71,7 +66,6 @@ hpl/oscctrl/hpl_oscctrl.o \
 hal/src/hal_usart_sync.o \
 hpl/mclk/hpl_mclk.o \
 hpl/ramecc/hpl_ramecc.o \
-stdio_start.o \
 hal/src/hal_init.o \
 gcc/gcc/startup_same54.o \
 main.o \
@@ -89,12 +83,9 @@ hal/src/hal_atomic.o
 
 OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
-"stdio_redirect/stdio_io.o" \
-"stdio_redirect/gcc/write.o" \
 "hpl/core/hpl_core_m4.o" \
 "hal/src/hal_cache.o" \
 "hal/utils/src/utils_syscalls.o" \
-"stdio_redirect/gcc/read.o" \
 "gcc/system_same54.o" \
 "hpl/aes/hpl_aes.o" \
 "hal/src/hal_delay.o" \
@@ -108,7 +99,6 @@ OBJS_AS_ARGS +=  \
 "hal/src/hal_usart_sync.o" \
 "hpl/mclk/hpl_mclk.o" \
 "hpl/ramecc/hpl_ramecc.o" \
-"stdio_start.o" \
 "hal/src/hal_init.o" \
 "gcc/gcc/startup_same54.o" \
 "main.o" \
@@ -145,9 +135,6 @@ DIR_INCLUDES +=  \
 -I"../hpl/sercom" \
 -I"../hri" \
 -I"../" \
--I"../config" \
--I"../stdio_redirect" \
--I"../" \
 -I"../CMSIS/Core/Include" \
 -I"../include"
 
@@ -155,13 +142,11 @@ DIR_INCLUDES +=  \
 DEPS := $(OBJS:%.o=%.d)
 
 DEPS_AS_ARGS +=  \
-"stdio_redirect/stdio_io.d" \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
 "hpl/gclk/hpl_gclk.d" \
 "hpl/core/hpl_core_m4.d" \
 "hal/utils/src/utils_syscalls.d" \
-"stdio_redirect/gcc/write.d" \
 "hpl/aes/hpl_aes.d" \
 "hal/utils/src/utils_list.d" \
 "hpl/cmcc/hpl_cmcc.d" \
@@ -170,14 +155,12 @@ DEPS_AS_ARGS +=  \
 "hal/src/hal_delay.d" \
 "hpl/core/hpl_init.d" \
 "hpl/pm/hpl_pm.d" \
-"stdio_start.d" \
 "hpl/ramecc/hpl_ramecc.d" \
 "gcc/gcc/startup_same54.d" \
 "hal/src/hal_init.d" \
 "hal/src/hal_usart_sync.d" \
 "hpl/mclk/hpl_mclk.d" \
 "driver_init.d" \
-"stdio_redirect/gcc/read.d" \
 "hpl/osc32kctrl/hpl_osc32kctrl.d" \
 "hal/src/hal_cache.d" \
 "main.d" \

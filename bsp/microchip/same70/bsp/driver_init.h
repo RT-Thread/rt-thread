@@ -25,13 +25,21 @@ extern "C" {
 
 #include <hal_usart_sync.h>
 
+#include <hal_can_async.h>
+
 extern struct usart_sync_descriptor TARGET_IO;
+extern struct can_async_descriptor  CAN_0;
 
 void delay_driver_init(void);
 
 void TARGET_IO_PORT_init(void);
 void TARGET_IO_CLOCK_init(void);
 void TARGET_IO_init(void);
+
+void CAN_0_PORT_init(void);
+void CAN_0_CLOCK_init(void);
+void CAN_0_init(void);
+void CAN_0_example(void);
 
 /**
  * \brief Perform system initialization, initialize pins and clocks for

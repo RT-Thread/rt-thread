@@ -40,8 +40,8 @@ endmenu
 menu "Onboard Peripheral Drivers"
     depends on SOC_SAME70Q21
 
-    config SAME70_CAN0
-        bool "Enable CAN0"
+    config SAME70_CAN1
+        bool "Enable CAN1"
         default false
 
     config SAME70_ADC0

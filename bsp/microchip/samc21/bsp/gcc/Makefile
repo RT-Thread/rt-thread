@@ -34,7 +34,6 @@ hpl/pm \
 hpl/osc32kctrl \
 samc21/gcc/gcc \
 hpl/dmac \
-stdio_redirect \
 hal/src \
 samc21/gcc \
 hpl/mclk \
@@ -42,7 +41,6 @@ hal/utils/src \
 hpl/sercom \
 examples \
 hpl/gclk \
-stdio_redirect/gcc \
 hpl/oscctrl \
 hpl/nvmctrl \
 hpl/core \
@@ -52,11 +50,8 @@ hpl/divas
 OBJS +=  \
 hal/src/hal_io.o \
 samc21/gcc/system_samc21.o \
-stdio_redirect/stdio_io.o \
 samc21/gcc/gcc/startup_samc21.o \
-stdio_redirect/gcc/write.o \
 hal/utils/src/utils_syscalls.o \
-stdio_redirect/gcc/read.o \
 hpl/nvmctrl/hpl_nvmctrl.o \
 hal/src/hal_delay.o \
 hpl/oscctrl/hpl_oscctrl.o \
@@ -69,7 +64,6 @@ hpl/pm/hpl_pm.o \
 hal/src/hal_usart_sync.o \
 hpl/mclk/hpl_mclk.o \
 hpl/gclk/hpl_gclk.o \
-stdio_start.o \
 hal/src/hal_flash.o \
 hal/src/hal_init.o \
 main.o \
@@ -87,11 +81,8 @@ hal/src/hal_atomic.o
 OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
 "samc21/gcc/system_samc21.o" \
-"stdio_redirect/stdio_io.o" \
 "samc21/gcc/gcc/startup_samc21.o" \
-"stdio_redirect/gcc/write.o" \
 "hal/utils/src/utils_syscalls.o" \
-"stdio_redirect/gcc/read.o" \
 "hpl/nvmctrl/hpl_nvmctrl.o" \
 "hal/src/hal_delay.o" \
 "hpl/oscctrl/hpl_oscctrl.o" \
@@ -104,7 +95,6 @@ OBJS_AS_ARGS +=  \
 "hal/src/hal_usart_sync.o" \
 "hpl/mclk/hpl_mclk.o" \
 "hpl/gclk/hpl_gclk.o" \
-"stdio_start.o" \
 "hal/src/hal_flash.o" \
 "hal/src/hal_init.o" \
 "main.o" \
@@ -139,9 +129,6 @@ DIR_INCLUDES +=  \
 -I"../hpl/sercom" \
 -I"../hri" \
 -I"../" \
--I"../config" \
--I"../stdio_redirect" \
--I"../" \
 -I"../CMSIS/Core/Include" \
 -I"../samc21/include"
 
@@ -149,12 +136,10 @@ DIR_INCLUDES +=  \
 DEPS := $(OBJS:%.o=%.d)
 
 DEPS_AS_ARGS +=  \
-"stdio_redirect/stdio_io.d" \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
 "samc21/gcc/gcc/startup_samc21.d" \
 "hal/utils/src/utils_syscalls.d" \
-"stdio_redirect/gcc/write.d" \
 "hpl/nvmctrl/hpl_nvmctrl.d" \
 "hpl/core/hpl_core_m0plus_base.d" \
 "hal/utils/src/utils_list.d" \
@@ -164,14 +149,12 @@ DEPS_AS_ARGS +=  \
 "hpl/core/hpl_init.d" \
 "hpl/pm/hpl_pm.d" \
 "hal/src/hal_flash.d" \
-"stdio_start.d" \
 "hpl/gclk/hpl_gclk.d" \
 "samc21/gcc/system_samc21.d" \
 "hal/src/hal_init.d" \
 "hal/src/hal_usart_sync.d" \
 "hpl/mclk/hpl_mclk.d" \
 "driver_init.d" \
-"stdio_redirect/gcc/read.d" \
 "hpl/osc32kctrl/hpl_osc32kctrl.d" \
 "main.d" \
 "examples/driver_examples.d" \

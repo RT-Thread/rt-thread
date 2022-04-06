@@ -13,6 +13,8 @@
 #include <utils.h>
 #include <hpl_usart_base.h>
 
+struct can_async_descriptor CAN_0;
+
 struct usart_sync_descriptor TARGET_IO;
 
 void delay_driver_init(void)
@@ -38,6 +40,40 @@ void TARGET_IO_init(void)
 	TARGET_IO_CLOCK_init();
 	TARGET_IO_PORT_init();
 	usart_sync_init(&TARGET_IO, USART1, _usart_get_usart_sync());
+}
+
+/**
+ * \brief MCAN Clock initialization function
+ *
+ * Enables register interface and peripheral clock
+ */
+void CAN_0_CLOCK_init()
+{
+	_pmc_enable_periph_clock(ID_MCAN1);
+}
+
+/**
+ * \brief MCAN pinmux initialization function
+ *
+ * Set each required pin to MCAN functionality
+ */
+void CAN_0_PORT_init(void)
+{
+
+	gpio_set_pin_function(PC12, MUX_PC12C_MCAN1_CANRX1);
+
+	gpio_set_pin_function(PC14, MUX_PC14C_MCAN1_CANTX1);
+}
+/**
+ * \brief CAN initialization function
+ *
+ * Enables CAN peripheral, clocks and initializes CAN driver
+ */
+void CAN_0_init(void)
+{
+	CAN_0_CLOCK_init();
+	CAN_0_PORT_init();
+	can_async_init(&CAN_0, MCAN1);
 }
 
 void system_init(void)
@@ -83,4 +119,6 @@ void system_init(void)
 	delay_driver_init();
 
 	TARGET_IO_init();
+
+	CAN_0_init();
 }

@@ -25,24 +25,19 @@ src += Glob('hpl/pm/*.c')
 src += Glob('hpl/port/*.c')
 src += Glob('hpl/ramecc/*.c')
 src += Glob('hpl/sercom/*.c')
-src += [cwd + '/stdio_redirect/stdio_io.c']
 src += [cwd + '/atmel_start.c']
 src += [cwd + '/driver_init.c']
-src += [cwd + '/stdio_start.c']
 
 #add for startup script
 if rtconfig.CROSS_TOOL == 'gcc':
     src += [cwd + '/gcc/system_same54.c']
     src += [cwd + '/gcc/gcc/startup_same54.c']
-    src += Glob('stdio_redirect/gcc/*.c')
 elif rtconfig.CROSS_TOOL == 'keil':
     src += [cwd + '/armcc/arm_addon/armcc/' + 'system_same54.c']
     src += [cwd + '/armcc/arm_addon/armcc/arm/' + 'startup_same54.s']
-    src += Glob('stdio_redirect/keil/*.c')
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [cwd + '/iar/' + 'system_same54.c']
     src += [cwd + '/iar/iar/' + 'startup_same54.c']
-    src += Glob('stdio_redirect/iar/*.c')
 
 path = [
     cwd,
@@ -55,8 +50,7 @@ path = [
     cwd + '/hpl/pm',
     cwd + '/hpl/port',
     cwd + '/hri',
-    cwd + '/include',
-    cwd + '/stdio_redirect',]
+    cwd + '/include',]
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

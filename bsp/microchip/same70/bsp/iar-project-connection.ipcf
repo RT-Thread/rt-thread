@@ -11,15 +11,13 @@
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
         <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\mcan</path>
         <path>$PROJ_DIR$\hpl\pio</path>
         <path>$PROJ_DIR$\hpl\pmc</path>
         <path>$PROJ_DIR$\hpl\systick</path>
         <path>$PROJ_DIR$\hpl\usart</path>
         <path>$PROJ_DIR$\hpl\xdmac</path>
         <path>$PROJ_DIR$\hri</path>
-        <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\config</path>
-        <path>$PROJ_DIR$\stdio_redirect</path>
         <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\same70b\include</path>
@@ -32,15 +30,13 @@
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
         <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\mcan</path>
         <path>$PROJ_DIR$\hpl\pio</path>
         <path>$PROJ_DIR$\hpl\pmc</path>
         <path>$PROJ_DIR$\hpl\systick</path>
         <path>$PROJ_DIR$\hpl\usart</path>
         <path>$PROJ_DIR$\hpl\xdmac</path>
         <path>$PROJ_DIR$\hri</path>
-        <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\config</path>
-        <path>$PROJ_DIR$\stdio_redirect</path>
         <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\same70b\include</path>
@@ -68,8 +64,6 @@
             <path>driver_init.c</path>
             <path>driver_init.h</path>
             <path>led_switcher_main.c</path>
-            <path>stdio_start.c</path>
-            <path>stdio_start.h</path>
     
 
         <group name="CMSIS/Core/Include">
@@ -97,12 +91,12 @@
         </group>
 
         <group name="config">
+            <path>config/hpl_mcan_config.h</path>
             <path>config/hpl_pmc_config.h</path>
             <path>config/hpl_systick_ARMv7_config.h</path>
             <path>config/hpl_usart_config.h</path>
             <path>config/hpl_xdmac_config.h</path>
             <path>config/peripheral_clk_config.h</path>
-            <path>config/stdio_redirect_config.h</path>
         </group>
 
         <group name="examples">
@@ -112,12 +106,15 @@
 
         <group name="hal/include">
             <path>hal/include/hal_atomic.h</path>
+            <path>hal/include/hal_can_async.h</path>
             <path>hal/include/hal_delay.h</path>
             <path>hal/include/hal_gpio.h</path>
             <path>hal/include/hal_init.h</path>
             <path>hal/include/hal_io.h</path>
             <path>hal/include/hal_sleep.h</path>
             <path>hal/include/hal_usart_sync.h</path>
+            <path>hal/include/hpl_can.h</path>
+            <path>hal/include/hpl_can_async.h</path>
             <path>hal/include/hpl_core.h</path>
             <path>hal/include/hpl_delay.h</path>
             <path>hal/include/hpl_dma.h</path>
@@ -137,6 +134,7 @@
 
         <group name="hal/src">
             <path>hal/src/hal_atomic.c</path>
+            <path>hal/src/hal_can_async.c</path>
             <path>hal/src/hal_delay.c</path>
             <path>hal/src/hal_gpio.c</path>
             <path>hal/src/hal_init.c</path>
@@ -170,6 +168,11 @@
             <path>hpl/core/hpl_core_m7_base.c</path>
             <path>hpl/core/hpl_core_port.h</path>
             <path>hpl/core/hpl_init.c</path>
+        </group>
+
+        <group name="hpl/mcan">
+            <path>hpl/mcan/hpl_mcan.c</path>
+            <path>hpl/mcan/hpl_mcan.h</path>
         </group>
 
         <group name="hpl/pio">
@@ -375,16 +378,6 @@
             <path>same70b/include/pio/same70q19b.h</path>
             <path>same70b/include/pio/same70q20b.h</path>
             <path>same70b/include/pio/same70q21b.h</path>
-        </group>
-
-        <group name="stdio_redirect">
-            <path>stdio_redirect/stdio_io.c</path>
-            <path>stdio_redirect/stdio_io.h</path>
-        </group>
-
-        <group name="stdio_redirect/iar">
-            <path>stdio_redirect/iar/read.c</path>
-            <path>stdio_redirect/iar/write.c</path>
         </group>
     </files>
 </iarProjectConnection>
