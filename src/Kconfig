@@ -132,15 +132,11 @@ menu "kservice optimization"
 
     config RT_KSERVICE_USING_STDLIB
         bool "Enable kservice to use standard C library"
-        default n
+        default y
 
     if RT_KSERVICE_USING_STDLIB
-        config RT_KSERVICE_USING_STDLIB_MEMCPY
-            bool "Use memcpy to replace rt_memcpy (faster, but not safe)"
-            default n
-
-        config RT_KSERVICE_USING_STDLIB_MEMSET
-            bool "Use memset to replace rt_memset (faster, but not safe)"
+        config RT_KSERVICE_USING_STDLIB_MEMXXX
+            bool "Use memxxx to replace rt_memxxx (faster, but not safe)"
             default n
     endif
 
