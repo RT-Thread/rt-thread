@@ -1,15 +1,9 @@
-/***************************************************************************//**
- * @file    board.c
- * @brief   Board support of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2010-12-21   onelife     Initial creation for EFM32
  * 2011-05-06   onelife     Add EFM32 development kit and SPI Flash support
@@ -17,15 +11,14 @@
  * 2011-12-08   onelife     Add giant gecko development kit support
  * 2011-12-09   onelife     Add giant gecko support
  * 2011-12-09   onelife     Add LEUART module support
- * 2011-12-14   onelife     Add LFXO enabling routine in driver initialization
- *  function
+ * 2011-12-14   onelife     Add LFXO enabling routine in driver initialization function
  * 2011-12-15   onelife     Add MicroSD initialization routine in driver
- *  initialization function
+ *                          initialization function
  * 2011-12-29   onelife     Add keys and joystick initialization routine in
- *  driver initialization function
+ *                          driver initialization function
  * 2012-02-15   onelife     Modify SWO setup function to support giant gecko
  * 2012-xx-xx   onelife     Modify system clock and ticket related code
- ******************************************************************************/
+ */
 
 /***************************************************************************//**
  * @addtogroup efm32

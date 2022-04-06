@@ -1,15 +1,9 @@
-/***************************************************************************//**
- * @file    hdl_interrupt.c
- * @brief   Interrupt handler of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2010-12-29   onelife     Initial creation for EFM32
  * 2011-07-12   onelife     Disable interrupts in GPIO handler
@@ -17,7 +11,7 @@
  * 2011-12-09   onelife     Add UART module support
  * 2011-12-09   onelife     Add LEUART module support
  * 2011-12-27   onelife     Utilize "XXX_PRESENT" and "XXX_COUNT"
- ******************************************************************************/
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "board.h"

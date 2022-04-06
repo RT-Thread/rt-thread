@@ -1,19 +1,13 @@
-/***************************************************************************//**
- * @file    mma7455l.c
- * @brief   Header file of Freescale MMA7455L 3 axis Low-g digital output
- *  accelerometer
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2011-08-02   onelife     Initial creation
- ******************************************************************************/
+ */
+
 #ifndef __MMA7455L_H__
 #define __MMA7455L_H__
 
