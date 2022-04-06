@@ -89,7 +89,7 @@ rt_err_t rt_hw_watchdog_register(struct rt_watchdog_device *wtd,
 
     device = &(wtd->parent);
 
-    device->type        = RT_Device_Class_Security;
+    device->type        = RT_Device_Class_WDT;
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
 

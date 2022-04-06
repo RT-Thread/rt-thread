@@ -29,6 +29,10 @@
 #define RT_ALARM_MINUTE        0x2000 /* alarm each minute at a certain second */
 #define RT_ALARM_SECOND        0x4000 /* alarm each second */
 
+#define RT_ALARM_STATE_INITED   0x02
+#define RT_ALARM_STATE_START    0x01
+#define RT_ALARM_STATE_STOP     0x00
+
 /* alarm control cmd */
 #define RT_ALARM_CTRL_MODIFY       1 /* modify alarm time or alarm flag */
 

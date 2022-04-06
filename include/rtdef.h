@@ -955,6 +955,12 @@ enum rt_device_class_type
     RT_Device_Class_Touch,                              /**< Touch device */
     RT_Device_Class_PHY,                                /**< PHY device */
     RT_Device_Class_Security,                           /**< Security device */
+    RT_Device_Class_WLAN,                               /**< WLAN device */
+    RT_Device_Class_Pin,                                /**< Pin device */
+    RT_Device_Class_ADC,                                /**< ADC device */
+    RT_Device_Class_DAC,                                /**< DAC device */
+    RT_Device_Class_WDT,                                /**< WDT device */
+    RT_Device_Class_PWM,                                /**< PWM device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 
@@ -998,15 +1004,20 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_GET_INT          0x12            /**< get interrupt status */
 
 /**
+ * device control
+ */
+#define RT_DEVICE_CTRL_BASE(Type)        (RT_Device_Class_##Type * 0x100)
+
+/**
  * special device commands
  */
-#define RT_DEVICE_CTRL_CHAR_STREAM      0x20            /**< stream mode on char device */
-#define RT_DEVICE_CTRL_BLK_GETGEOME     0x20            /**< get geometry information   */
-#define RT_DEVICE_CTRL_BLK_SYNC         0x21            /**< flush data to block device */
-#define RT_DEVICE_CTRL_BLK_ERASE        0x22            /**< erase block on block device */
-#define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x23            /**< block device : enter/exit auto refresh mode */
-#define RT_DEVICE_CTRL_NETIF_GETMAC     0x20            /**< get mac address */
-#define RT_DEVICE_CTRL_MTD_FORMAT       0x20            /**< format a MTD device */
+#define RT_DEVICE_CTRL_CHAR_STREAM      (RT_DEVICE_CTRL_BASE(Char) + 1)             /**< stream mode on char device */
+#define RT_DEVICE_CTRL_BLK_GETGEOME     (RT_DEVICE_CTRL_BASE(Block) + 1)            /**< get geometry information   */
+#define RT_DEVICE_CTRL_BLK_SYNC         (RT_DEVICE_CTRL_BASE(Block) + 2)            /**< flush data to block device */
+#define RT_DEVICE_CTRL_BLK_ERASE        (RT_DEVICE_CTRL_BASE(Block) + 3)            /**< erase block on block device */
+#define RT_DEVICE_CTRL_BLK_AUTOREFRESH  (RT_DEVICE_CTRL_BASE(Block) + 4)            /**< block device : enter/exit auto refresh mode */
+#define RT_DEVICE_CTRL_NETIF_GETMAC     (RT_DEVICE_CTRL_BASE(NetIf) + 1)            /**< get mac address */
+#define RT_DEVICE_CTRL_MTD_FORMAT       (RT_DEVICE_CTRL_BASE(MTD) + 1)              /**< format a MTD device */
 
 typedef struct rt_device *rt_device_t;
 
@@ -1102,18 +1113,18 @@ struct rt_device_blk_sectors
 /**
  * graphic device control command
  */
-#define RTGRAPHIC_CTRL_RECT_UPDATE      0
-#define RTGRAPHIC_CTRL_POWERON          1
-#define RTGRAPHIC_CTRL_POWEROFF         2
-#define RTGRAPHIC_CTRL_GET_INFO         3
-#define RTGRAPHIC_CTRL_SET_MODE         4
-#define RTGRAPHIC_CTRL_GET_EXT          5
-#define RTGRAPHIC_CTRL_SET_BRIGHTNESS   6
-#define RTGRAPHIC_CTRL_GET_BRIGHTNESS   7
-#define RTGRAPHIC_CTRL_GET_MODE         8
-#define RTGRAPHIC_CTRL_GET_STATUS       9
-#define RTGRAPHIC_CTRL_PAN_DISPLAY      10
-#define RTGRAPHIC_CTRL_WAIT_VSYNC       11
+#define RTGRAPHIC_CTRL_RECT_UPDATE      (RT_DEVICE_CTRL_BASE(Graphic) + 0)
+#define RTGRAPHIC_CTRL_POWERON          (RT_DEVICE_CTRL_BASE(Graphic) + 1)
+#define RTGRAPHIC_CTRL_POWEROFF         (RT_DEVICE_CTRL_BASE(Graphic) + 2)
+#define RTGRAPHIC_CTRL_GET_INFO         (RT_DEVICE_CTRL_BASE(Graphic) + 3)
+#define RTGRAPHIC_CTRL_SET_MODE         (RT_DEVICE_CTRL_BASE(Graphic) + 4)
+#define RTGRAPHIC_CTRL_GET_EXT          (RT_DEVICE_CTRL_BASE(Graphic) + 5)
+#define RTGRAPHIC_CTRL_SET_BRIGHTNESS   (RT_DEVICE_CTRL_BASE(Graphic) + 6)
+#define RTGRAPHIC_CTRL_GET_BRIGHTNESS   (RT_DEVICE_CTRL_BASE(Graphic) + 7)
+#define RTGRAPHIC_CTRL_GET_MODE         (RT_DEVICE_CTRL_BASE(Graphic) + 8)
+#define RTGRAPHIC_CTRL_GET_STATUS       (RT_DEVICE_CTRL_BASE(Graphic) + 9)
+#define RTGRAPHIC_CTRL_PAN_DISPLAY      (RT_DEVICE_CTRL_BASE(Graphic) + 10)
+#define RTGRAPHIC_CTRL_WAIT_VSYNC       (RT_DEVICE_CTRL_BASE(Graphic) + 11)
 
 /* graphic device */
 enum

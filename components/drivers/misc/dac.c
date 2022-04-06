@@ -76,7 +76,7 @@ rt_err_t rt_hw_dac_register(rt_dac_device_t device, const char *name, const stru
     rt_err_t result = RT_EOK;
     RT_ASSERT(ops != RT_NULL && ops->convert != RT_NULL);
 
-    device->parent.type = RT_Device_Class_Miscellaneous;
+    device->parent.type = RT_Device_Class_DAC;
     device->parent.rx_indicate = RT_NULL;
     device->parent.tx_complete = RT_NULL;
 
