@@ -60,7 +60,7 @@ struct timespec
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
 };
-#endif /* defined(__ARMCC_VERSION) || defined(_WIN32) */
+#endif /* defined(__ARMCC_VERSION) || defined(_WIN32) || (defined(__ICCARM__) && (__VER__ >= 8010001)) */
 
 #if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/)
 /*
