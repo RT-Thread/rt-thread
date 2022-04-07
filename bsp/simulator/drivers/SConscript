@@ -31,8 +31,8 @@ if GetDepend('PKG_USING_GUIENGINE') == False:
 else:
     LIBS.append('SDL2')
     if sys.platform == 'win32':
-        LIBPATH.append(os.path.abspath(os.path.join(cwd, '../SDL2-2.0.7/lib/x86')))
-        CPPPATH.append(os.path.abspath(os.path.join(cwd, '../SDL2-2.0.7/include')))
+        LIBPATH.append(os.path.abspath(os.path.join(cwd, '../SDL2/lib/x86')))
+        CPPPATH.append(os.path.abspath(os.path.join(cwd, '../SDL2/include')))
 
 if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_DFS_ELMFAT') == False:
     SrcRemove(src, 'sd_sim.c')
