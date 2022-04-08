@@ -57,7 +57,7 @@ if PLATFORM == 'gcc':
     STRIP = PREFIX + 'strip'
 
     DEVICE = ' -march=armv7-a -marm -msoft-float'
-    CFLAGS = DEVICE + ' -Wall'
+    CFLAGS = DEVICE + ' -Wall -Werror'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__ -I.'
     LINK_SCRIPT = 'link.lds'
     LFLAGS = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors'+\
