@@ -748,7 +748,6 @@ void rt_alarm_dump(void)
 {
     rt_list_t *next;
     rt_alarm_t alarm;
-    rt_uint8_t index = 0;
 
     rt_kprintf("| hh:mm:ss | week | flag | en |\n");
     rt_kprintf("+----------+------+------+----+\n");
