@@ -28,6 +28,15 @@ extern "C" {
 #define RT_DEVICE_CTRL_RTC_GET_ALARM    (RT_DEVICE_CTRL_BASE(RTC) + 0x05)              /**< get alarm */
 #define RT_DEVICE_CTRL_RTC_SET_ALARM    (RT_DEVICE_CTRL_BASE(RTC) + 0x06)              /**< set alarm */
 
+/* used for alarm function */
+struct rt_rtc_wkalarm
+{
+    rt_bool_t  enable;               /* 0 = alarm disabled, 1 = alarm enabled */
+    rt_int32_t tm_sec;               /* alarm at tm_sec */
+    rt_int32_t tm_min;               /* alarm at tm_min */
+    rt_int32_t tm_hour;              /* alarm at tm_hour */
+};
+
 struct rt_rtc_ops
 {
     rt_err_t (*init)(void);

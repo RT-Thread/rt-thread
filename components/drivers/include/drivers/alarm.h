@@ -39,15 +39,6 @@
 typedef struct rt_alarm *rt_alarm_t;
 typedef void (*rt_alarm_callback_t)(rt_alarm_t alarm, time_t timestamp);
 
-/* used for low level RTC driver */
-struct rt_rtc_wkalarm
-{
-    rt_bool_t  enable;               /* 0 = alarm disabled, 1 = alarm enabled */
-    rt_int32_t tm_sec;               /* alarm at tm_sec */
-    rt_int32_t tm_min;               /* alarm at tm_min */
-    rt_int32_t tm_hour;              /* alarm at tm_hour */
-};
-
 struct rt_alarm
 {
     rt_list_t list;
