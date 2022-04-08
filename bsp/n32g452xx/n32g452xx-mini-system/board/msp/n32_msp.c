@@ -333,7 +333,7 @@ void n32_msp_spi_init(void *Instance)
     GPIO_InitType GPIO_InitCtlStruct;
     SPI_Module *SPIx = (SPI_Module *)Instance;
 
-        n32_msp_deinit(SPIx);
+    n32_msp_deinit(SPIx);
 
     GPIO_InitStruct(&GPIO_InitCtlStruct);
     GPIO_InitCtlStruct.GPIO_Speed = GPIO_Speed_50MHz;
@@ -945,7 +945,4 @@ static int hwtimer_sample(int argc, char *argv[])
 MSH_CMD_EXPORT(hwtimer_sample, hwtimer sample);
 #endif
 
-
 #endif
-
-
