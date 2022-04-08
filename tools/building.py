@@ -557,6 +557,7 @@ def AddDepend(option):
 
 def MergeGroup(src_group, group):
     src_group['src'] = src_group['src'] + group['src']
+    src_group['src'].sort()
     if 'CFLAGS' in group:
         if 'CFLAGS' in src_group:
             src_group['CFLAGS'] = src_group['CFLAGS'] + group['CFLAGS']
