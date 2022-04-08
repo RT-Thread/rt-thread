@@ -117,7 +117,7 @@ int *_rt_errno(void)
 }
 RTM_EXPORT(_rt_errno);
 
-#ifndef RT_KSERVICE_USING_STDLIB_MEMXXX
+#ifndef RT_KSERVICE_USING_STDLIB_MEMORY
 /**
  * This function will set the content of memory to specified value.
  *
@@ -349,7 +349,7 @@ rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
     return res;
 }
 RTM_EXPORT(rt_memcmp);
-#endif /* RT_KSERVICE_USING_STDLIB_MEMXXX*/
+#endif /* RT_KSERVICE_USING_STDLIB_MEMORY*/
 
 #ifndef RT_KSERVICE_USING_STDLIB
 /**

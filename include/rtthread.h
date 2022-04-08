@@ -599,12 +599,12 @@ int *_rt_errno(void);
 
 int __rt_ffs(int value);
 
-#ifndef RT_KSERVICE_USING_STDLIB_MEMXXX
+#ifndef RT_KSERVICE_USING_STDLIB_MEMORY
 void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 void *rt_memmove(void *dest, const void *src, rt_size_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count);
-#endif /* RT_KSERVICE_USING_STDLIB_MEMXXX */
+#endif /* RT_KSERVICE_USING_STDLIB_MEMORY */
 
 #ifndef RT_KSERVICE_USING_STDLIB
 char *rt_strstr(const char *str1, const char *str2);
@@ -616,12 +616,12 @@ rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 #else
 #include <string.h>
-#ifdef RT_KSERVICE_USING_STDLIB_MEMXXX
+#ifdef RT_KSERVICE_USING_STDLIB_MEMORY
 #define rt_memset(s, c, count)      memset(s, c, count)
 #define rt_memcpy(dst, src, count)  memcpy(dst, src, count)
 #define rt_memmove(dest, src, n)    memmove(dest, src, n)
 #define rt_memcmp(cs, ct, count)    memcmp(cs, ct, count)
-#endif /* RT_KSERVICE_USING_STDLIB_MEMXXX */
+#endif /* RT_KSERVICE_USING_STDLIB_MEMORY */
 #define rt_strstr(str1, str2)       strstr(str1, str2)
 #define rt_strcasecmp(a, b)         strcasecmp(a, b)
 #define rt_strcpy(dest, src)        strcpy(dest, src)
