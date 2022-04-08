@@ -91,8 +91,8 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | PC3  | ADC1/2_IN13       |
 | PC4  | ADC1/2_IN14       |
 | PC5  | ADC1/2_IN15       |
-| PA11 | CAN1_RX           |
-| PA12 | CAN1_TX           |
+| PB8  | CAN1_RX           |
+| PB9  | CAN1_TX           |
 | PB5  | CAN2_RX           |
 | PB6  | CAN2_TX           |
 | PB11 | EMAC_RMII_TX_EN   |
@@ -119,7 +119,7 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 JLink 下载程序，在通过 JLink 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用AT-LINK SWD下载程序，在通过AT-LINK SWD连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
