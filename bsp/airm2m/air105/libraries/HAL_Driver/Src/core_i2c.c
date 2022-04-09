@@ -81,9 +81,18 @@ static int32_t prvI2C_DummyCB(void *pData, void *pParam)
 
 static void I2C_IrqHandle(int32_t IrqLine, void *pData)
 {
-    I2C_TypeDef *I2C = prvI2C.RegBase;
-    uint32_t State = I2C->IC_RAW_INTR_STAT;
-    uint32_t RegValue = I2C->IC_CLR_INTR;
+	int32_t result = ERROR_NONE;
+	I2C_TypeDef *I2C = prvI2C.RegBase;
+	uint32_t Source = I2C->IC_TX_ABRT_SOURCE;
+	uint32_t State = I2C->IC_RAW_INTR_STAT;
+	uint32_t RegValue = I2C->IC_CLR_INTR;
+//	DBG("%d,%x", prvI2C.State, State);
+	if (Source & 0x0000ffff)
+	{
+//		DBG("error stop state %d, result 0x%x", prvI2C.State, Source);
+		result = -ERROR_OPERATION_FAILED;
+		goto I2C_DONE;
+	}
 
     switch(prvI2C.State)
     {
@@ -149,15 +158,25 @@ static void I2C_IrqHandle(int32_t IrqLine, void *pData)
     }
     return;
 I2C_DONE:
-    I2C->IC_INTR_MASK = 0;
-    prvI2C_Done(ERROR_NONE);
+	I2C->IC_INTR_MASK = 0;
+	prvI2C_Done(result);
 }
 
 static void I2C_IrqHandleRegQueue(int32_t IrqLine, void *pData)
 {
-    I2C_TypeDef *I2C = prvI2C.RegBase;
-    uint32_t State = I2C->IC_RAW_INTR_STAT;
-    uint32_t RegValue = I2C->IC_CLR_INTR;
+	int32_t result = ERROR_NONE;
+	I2C_TypeDef *I2C = prvI2C.RegBase;
+	uint32_t Source = I2C->IC_TX_ABRT_SOURCE;
+	uint32_t State = I2C->IC_RAW_INTR_STAT;
+	uint32_t RegValue = I2C->IC_CLR_INTR;
+
+	if (Source & 0x0000ffff)
+	{
+
+		result = -ERROR_OPERATION_FAILED;
+		goto I2C_DONE;
+	}
+
     if (State & I2C_IT_TXE)
     {
         if (prvI2C.DataBuf.Pos >= prvI2C.DataBuf.MaxLen)
@@ -188,8 +207,8 @@ static void I2C_IrqHandleRegQueue(int32_t IrqLine, void *pData)
     }
     return;
 I2C_DONE:
-    I2C->IC_INTR_MASK = 0;
-    prvI2C_Done(ERROR_NONE);
+	I2C->IC_INTR_MASK = 0;
+	prvI2C_Done(result);
 }
 
 void I2C_GlobalInit(void)
