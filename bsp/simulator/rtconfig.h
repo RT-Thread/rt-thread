@@ -68,9 +68,9 @@
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 4
-#define DFS_FD_MAX 4
+#define DFS_FILESYSTEMS_MAX 8
+#define DFS_FILESYSTEM_TYPES_MAX 8
+#define DFS_FD_MAX 32
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
