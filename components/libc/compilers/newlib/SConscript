@@ -6,11 +6,11 @@ Import('rtconfig')
 src = []
 cwd = GetCurrentDir()
 group = []
-LIBS = ['m'] # link libm
+LIBS = []
 CPPPATH = [cwd]
 
 if rtconfig.PLATFORM == 'gcc':
-    LIBS += ['c'] # link libc
+    LIBS += ['c', 'm'] # link libc and libm
     src += Glob('*.c')
 
     #report newlib version
