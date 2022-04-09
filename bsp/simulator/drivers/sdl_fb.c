@@ -11,10 +11,14 @@
 #ifdef _WIN32
 #include <sdl.h>
 #else
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #endif
 #include <rtdevice.h>
 #include <rtgui/driver.h>
+
+#define DBG_TAG    "sdl.fb"
+#define DBG_LVL    DBG_WARNING
+#include <rtdbg.h>
 
 #define SDL_SCREEN_WIDTH    480
 #define SDL_SCREEN_HEIGHT   320
