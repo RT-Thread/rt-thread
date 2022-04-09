@@ -41,6 +41,7 @@
  * 2021-05-30     Meco Man     implement rt_mutex_trytake()
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to ipc.c
  * 2022-01-24     THEWON       let rt_mutex_take return thread->error when using signal
+ * 2022-04-08     Stanley      Add descriptions for rt_mq_recv and rt_sem_take timeout parameters.
  */
 
 #include <rtthread.h>
@@ -467,8 +468,8 @@ RTM_EXPORT(rt_sem_delete);
  * @param    sem is a pointer to a semaphore object.
  *
  * @param    time is a timeout period (unit: an OS tick). If the semaphore is unavailable, the thread will wait for
- *           the semaphore up to the amount of time specified by the argument.
- *           NOTE: Generally, we use the macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *           the semaphore up to the amount of time specified by this parameter.
+ *           NOTE: If use the macro RT_WAITING_FOREVER to set this parameter, which means that when the
  *           semaphore is unavailable, the thread will be waitting forever.
  *
  * @return   Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
@@ -3041,7 +3042,10 @@ RTM_EXPORT(rt_mq_urgent);
  *
  * @param    size is the length of the message(Unit: Byte).
  *
- * @param    timeout is a timeout period (unit: an OS tick).
+ * @param    timeout is a timeout period (unit: an OS tick). If the message is unavailable, the thread will wait for
+ *           the message in the queue up to the amount of time specified by this parameter.
+ *           NOTE: If use Macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *           message is unavailable in the queue, the thread will be waiting forever.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it means that the mailbox release failed.
