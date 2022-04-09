@@ -32,6 +32,7 @@ SUB_DIRS +=  \
  \
 hpl/pm \
 hpl/osc32kctrl \
+hpl/can \
 samc21/gcc/gcc \
 hpl/dmac \
 hal/src \
@@ -51,6 +52,8 @@ OBJS +=  \
 hal/src/hal_io.o \
 samc21/gcc/system_samc21.o \
 samc21/gcc/gcc/startup_samc21.o \
+hal/src/hal_can_async.o \
+hpl/can/hpl_can.o \
 hal/utils/src/utils_syscalls.o \
 hpl/nvmctrl/hpl_nvmctrl.o \
 hal/src/hal_delay.o \
@@ -82,6 +85,8 @@ OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
 "samc21/gcc/system_samc21.o" \
 "samc21/gcc/gcc/startup_samc21.o" \
+"hal/src/hal_can_async.o" \
+"hpl/can/hpl_can.o" \
 "hal/utils/src/utils_syscalls.o" \
 "hpl/nvmctrl/hpl_nvmctrl.o" \
 "hal/src/hal_delay.o" \
@@ -116,6 +121,7 @@ DIR_INCLUDES +=  \
 -I"../examples" \
 -I"../hal/include" \
 -I"../hal/utils/include" \
+-I"../hpl/can" \
 -I"../hpl/core" \
 -I"../hpl/divas" \
 -I"../hpl/dmac" \
@@ -138,8 +144,10 @@ DEPS := $(OBJS:%.o=%.d)
 DEPS_AS_ARGS +=  \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
+"hal/src/hal_can_async.d" \
 "samc21/gcc/gcc/startup_samc21.d" \
 "hal/utils/src/utils_syscalls.d" \
+"hpl/can/hpl_can.d" \
 "hpl/nvmctrl/hpl_nvmctrl.d" \
 "hpl/core/hpl_core_m0plus_base.d" \
 "hal/utils/src/utils_list.d" \

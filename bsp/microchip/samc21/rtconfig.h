@@ -171,4 +171,10 @@
 #define SAMC21_CAN0
 #define SAMC21_ADC0
 
+/* Application Demo Config */
+
+#define SAM_CAN_EXAMPLE
+#define SAM_ADC_EXAMPLE
+#define SOC_SAMC21
+
 #endif

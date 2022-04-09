@@ -191,4 +191,13 @@ Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 
 ## 5. Microchip SAM MCU BSP configuration and user guide
 
+### 5.1 SAMC2x/E5x/E70 CAN Driver
+
+	* CAN driver configuration.
+
+![在这里插入图片描述](doc/5-1-1-atmel-start-driver-can0.png)
+![在这里插入图片描述](doc/5-1-1-atmel-start-driver-can1.png)
+
+	* CAN driver user guide and example.
+
 	* To be continued.

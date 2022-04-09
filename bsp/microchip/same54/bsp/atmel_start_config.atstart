@@ -591,16 +591,16 @@ drivers:
     functionality: System
     api: HAL:HPL:GCLK
     configuration:
-      $input: 12000000
-      $input_id: External Crystal Oscillator 8-48MHz (XOSC1)
-      RESERVED_InputFreq: 12000000
-      RESERVED_InputFreq_id: External Crystal Oscillator 8-48MHz (XOSC1)
+      $input: 120000000
+      $input_id: Digital Phase Locked Loop (DPLL0)
+      RESERVED_InputFreq: 120000000
+      RESERVED_InputFreq_id: Digital Phase Locked Loop (DPLL0)
       _$freq_output_Generic clock generator 0: 120000000
       _$freq_output_Generic clock generator 1: 3000000
       _$freq_output_Generic clock generator 10: 12000000
       _$freq_output_Generic clock generator 11: 12000000
       _$freq_output_Generic clock generator 2: 3000000
-      _$freq_output_Generic clock generator 3: 32768
+      _$freq_output_Generic clock generator 3: 40000000
       _$freq_output_Generic clock generator 4: 12000000
       _$freq_output_Generic clock generator 5: 12000000
       _$freq_output_Generic clock generator 6: 12000000
@@ -617,7 +617,7 @@ drivers:
       enable_gclk_gen_1__externalclock: 1000000
       enable_gclk_gen_2: true
       enable_gclk_gen_2__externalclock: 1000000
-      enable_gclk_gen_3: false
+      enable_gclk_gen_3: true
       enable_gclk_gen_3__externalclock: 1000000
       enable_gclk_gen_4: false
       enable_gclk_gen_4__externalclock: 1000000
@@ -656,7 +656,7 @@ drivers:
       gclk_arch_gen_2_oe: false
       gclk_arch_gen_2_oov: false
       gclk_arch_gen_2_runstdby: false
-      gclk_arch_gen_3_enable: false
+      gclk_arch_gen_3_enable: true
       gclk_arch_gen_3_idc: false
       gclk_arch_gen_3_oe: false
       gclk_arch_gen_3_oov: false
@@ -706,9 +706,9 @@ drivers:
       gclk_gen_2_div: 4
       gclk_gen_2_div_sel: false
       gclk_gen_2_oscillator: External Crystal Oscillator 8-48MHz (XOSC1)
-      gclk_gen_3_div: 1
+      gclk_gen_3_div: 3
       gclk_gen_3_div_sel: false
-      gclk_gen_3_oscillator: 32kHz External Crystal Oscillator (XOSC32K)
+      gclk_gen_3_oscillator: Digital Phase Locked Loop (DPLL0)
       gclk_gen_4_div: 1
       gclk_gen_4_div_sel: false
       gclk_gen_4_oscillator: External Crystal Oscillator 8-48MHz (XOSC1)
@@ -798,10 +798,10 @@ drivers:
     functionality: System
     api: HAL:HPL:OSCCTRL
     configuration:
-      $input: 3000000
-      $input_id: Generic clock generator 2
-      RESERVED_InputFreq: 3000000
-      RESERVED_InputFreq_id: Generic clock generator 2
+      $input: 40000000
+      $input_id: Generic clock generator 3
+      RESERVED_InputFreq: 40000000
+      RESERVED_InputFreq_id: Generic clock generator 3
       _$freq_output_Digital Frequency Locked Loop (DFLL48M): 48000000
       _$freq_output_Digital Phase Locked Loop (DPLL0): 120000000
       _$freq_output_Digital Phase Locked Loop (DPLL1): 47985664
@@ -1003,7 +1003,83 @@ drivers:
         configuration:
           core_gclk_selection: Generic clock generator 0
           slow_gclk_selection: Generic clock generator 1
+  CAN_0:
+    user_label: CAN_0
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::CAN1::driver_config_definition::CAN::HAL:Driver:CAN.Async
+    functionality: CAN
+    api: HAL:Driver:CAN_Async
+    configuration:
+      can_btp_brp: 4
+      can_btp_sjw: 10
+      can_btp_tseg1: 31
+      can_btp_tseg2: 8
+      can_cccr_brse: false
+      can_cccr_fdoe: false
+      can_dbtp_dbrp: 4
+      can_dbtp_dsjw: 4
+      can_dbtp_dtseg1: 31
+      can_dbtp_dtseg2: 8
+      can_dbtp_tdc: false
+      can_gfc_anfe: Reject
+      can_gfc_anfs: Reject
+      can_gfc_rrfe: Filter remote frames with 29-bit standard IDs
+      can_gfc_rrfs: Filter remote frames with 11-bit standard IDs
+      can_ie_bo: true
+      can_ie_do: true
+      can_ie_ea: true
+      can_ie_ep: true
+      can_ie_ew: true
+      can_mrcfg_dqos: Sensitive latency
+      can_mrcfg_runstandby: false
+      can_rxesc_f0ds: 8 byte data field.
+      can_rxf0c_f0om: blocking mode
+      can_rxf0c_f0s: 32
+      can_rxf0c_f0wm: 0
+      can_sidfc_lss: 128
+      can_txbc_tfqs: 32
+      can_txefc_efs: 32
+      can_txefc_efwm: 0
+      can_txesc_tbds: 8 byte data field.
+      can_xidam_eidm: 0
+      can_xidfc_lss: 64
+    optional_signals:
+    - identifier: CAN_0:RX
+      pad: PB13
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::CAN1.RX
+      name: CAN1/RX
+      label: RX
+    - identifier: CAN_0:TX
+      pad: PB12
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::optional_signal_definition::CAN1.TX
+      name: CAN1/TX
+      label: TX
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: CAN
+          input: Generic clock generator 3
+          external: false
+          external_frequency: 0
+        configuration:
+          can_gclk_selection: Generic clock generator 3
 pads:
+  PB12:
+    name: PB12
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PB12
+    mode: Peripheral IO
+    user_label: PB12
+    configuration: null
+  PB13:
+    name: PB13
+    definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PB13
+    mode: Peripheral IO
+    user_label: PB13
+    configuration: null
   LED0:
     name: PC18
     definition: Atmel:SAME54_Drivers:0.0.1::SAME54P20A-AU::pad::PC18

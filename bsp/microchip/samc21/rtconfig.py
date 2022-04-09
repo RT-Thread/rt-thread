@@ -49,7 +49,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m0plus -mthumb -ffunction-sections -fdata-sections -mlong-calls'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref, -T bsp/samc21/gcc/gcc/samc21j18a_flash.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T bsp/samc21/gcc/gcc/samc21j18a_flash.ld'
 
     CPATH = ''
     LPATH = ''

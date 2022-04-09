@@ -29,6 +29,7 @@ SUB_DIRS +=  \
  \
 hpl/pm \
 hpl/osc32kctrl \
+hpl/can \
 hpl/ramecc \
 hpl/dmac \
 hal/src \
@@ -47,7 +48,9 @@ hpl/cmcc
 # List the object files
 OBJS +=  \
 hal/src/hal_io.o \
+hal/src/hal_can_async.o \
 armcc/arm_addon/armcc/system_same54.o \
+hpl/can/hpl_can.o \
 hpl/core/hpl_core_m4.o \
 hal/src/hal_cache.o \
 hpl/aes/hpl_aes.o \
@@ -79,7 +82,9 @@ armcc/arm_addon/armcc/arm/startup_same54.o
 
 OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
+"hal/src/hal_can_async.o" \
 "armcc/arm_addon/armcc/system_same54.o" \
+"hpl/can/hpl_can.o" \
 "hpl/core/hpl_core_m4.o" \
 "hal/src/hal_cache.o" \
 "hpl/aes/hpl_aes.o" \
@@ -116,8 +121,9 @@ DEPS_AS_ARGS +=  \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
 "armcc/arm_addon/armcc/system_same54.d" \
-"hpl/gclk/hpl_gclk.d" \
+"hal/src/hal_can_async.d" \
 "hpl/core/hpl_core_m4.d" \
+"hpl/can/hpl_can.d" \
 "hpl/aes/hpl_aes.d" \
 "hal/utils/src/utils_list.d" \
 "hpl/cmcc/hpl_cmcc.d" \
@@ -127,6 +133,7 @@ DEPS_AS_ARGS +=  \
 "hpl/core/hpl_init.d" \
 "hpl/pm/hpl_pm.d" \
 "hpl/ramecc/hpl_ramecc.d" \
+"hpl/gclk/hpl_gclk.d" \
 "hal/src/hal_init.d" \
 "hal/src/hal_usart_sync.d" \
 "hpl/mclk/hpl_mclk.d" \
@@ -178,7 +185,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Compiler
 	$(QUOTE)armcc$(QUOTE) --c99 -c -DDEBUG -O1 -g --apcs=interwork --split_sections --cpu Cortex-M4 -D__SAME54P20A__ \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/aes" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/aes" -I"../hpl/can" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../include"  \
 --depend "$@"  -o "$@" "$<"
 
 	@echo Finished building: $<
@@ -187,7 +194,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Assembler
 	$(QUOTE)armasm$(QUOTE) -g --apcs=interwork --cpu Cortex-M4 --pd "D__SAME54P20A__ SETA 1" \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/aes" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/aes" -I"../hpl/can" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../include"  \
 --depend "$(@:%.o=%.d)" -o "$@" "$<"
 
 	@echo Finished building: $<
@@ -196,7 +203,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Preprocessing Assembler
 	$(QUOTE)armcc$(QUOTE) --c99 -c -DDEBUG -O1 -g --apcs=interwork --split_sections --cpu Cortex-M4 -D__SAME54P20A__ \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/aes" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/aes" -I"../hpl/can" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../include"  \
 --depend "$@"  -o "$@" "$<"
 
 	@echo Finished building: $<

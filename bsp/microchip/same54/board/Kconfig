@@ -6,31 +6,16 @@ choice
 
     config SOC_SAME54P20
     bool "SOC_SAME54P20"
-    select ARCH_ARM
-    select ARCH_ARM_CORTEX_M
-    select ARCH_ARM_CORTEX_M4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
     help
         Refer to SAME54 DataSheet
 
     config SOC_SAME54N20
     bool "SOC_SAME54N20"
-    select ARCH_ARM
-    select ARCH_ARM_CORTEX_M
-    select ARCH_ARM_CORTEX_M4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
     help
         Refer to SAME54 DataSheet
 
     config SOC_SAME53J20
     bool "SOC_SAME53J20"
-    select ARCH_ARM
-    select ARCH_ARM_CORTEX_M
-    select ARCH_ARM_CORTEX_M4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
     help
         Refer to SAME54 DataSheet
 
@@ -38,13 +23,30 @@ endchoice
 endmenu
 
 menu "Onboard Peripheral Drivers"
-    depends on SOC_SAME54P20
+    depends on SOC_SAME54P20 || SOC_SAME54N20
 
-    config SAME54_CAN0
+    config SAME5X_CAN0
         bool "Enable CAN0"
         default false
 
-    config SAME54_ADC0
+    config SAME5X_ADC0
         bool "Enable ADC0"
         default false
+endmenu
+
+menu "Application Demo Config"
+    config SAM_CAN_EXAMPLE
+        bool "Enable SAM CAN Example"
+        depends on SAME5X_CAN0
+        default true
+        help
+            Add CAN example task to project
+
+    config SAM_ADC_EXAMPLE
+        bool "Enable SAM ADC Example"
+        depends on SAME5X_ADC0
+        default true
+        help
+            Add ADC example task to project
+
 endmenu

@@ -11,7 +11,8 @@
 #include <utils.h>
 #include <hal_init.h>
 
-struct aes_sync_descriptor CRYPTOGRAPHY_0;
+struct aes_sync_descriptor  CRYPTOGRAPHY_0;
+struct can_async_descriptor CAN_0;
 
 struct usart_sync_descriptor TARGET_IO;
 
@@ -49,6 +50,26 @@ void TARGET_IO_init(void)
 	TARGET_IO_PORT_init();
 }
 
+void CAN_0_PORT_init(void)
+{
+
+	gpio_set_pin_function(PB13, PINMUX_PB13H_CAN1_RX);
+
+	gpio_set_pin_function(PB12, PINMUX_PB12H_CAN1_TX);
+}
+/**
+ * \brief CAN initialization function
+ *
+ * Enables CAN peripheral, clocks and initializes CAN driver
+ */
+void CAN_0_init(void)
+{
+	hri_mclk_set_AHBMASK_CAN1_bit(MCLK);
+	hri_gclk_write_PCHCTRL_reg(GCLK, CAN1_GCLK_ID, CONF_GCLK_CAN1_SRC | (1 << GCLK_PCHCTRL_CHEN_Pos));
+	can_async_init(&CAN_0, CAN1);
+	CAN_0_PORT_init();
+}
+
 void system_init(void)
 {
 	init_mcu();
@@ -70,4 +91,5 @@ void system_init(void)
 	CRYPTOGRAPHY_0_init();
 
 	TARGET_IO_init();
+	CAN_0_init();
 }

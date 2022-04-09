@@ -24,10 +24,12 @@ extern "C" {
 #include <hal_aes_sync.h>
 
 #include <hal_usart_sync.h>
+#include <hal_can_async.h>
 
 extern struct aes_sync_descriptor CRYPTOGRAPHY_0;
 
 extern struct usart_sync_descriptor TARGET_IO;
+extern struct can_async_descriptor  CAN_0;
 
 void TARGET_IO_PORT_init(void);
 void TARGET_IO_CLOCK_init(void);

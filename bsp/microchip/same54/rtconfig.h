@@ -170,7 +170,13 @@
 
 /* Onboard Peripheral Drivers */
 
-#define SAME54_CAN0
-#define SAME54_ADC0
+#define SAME5X_CAN0
+#define SAME5X_ADC0
+
+/* Application Demo Config */
+
+#define SAM_CAN_EXAMPLE
+#define SAM_ADC_EXAMPLE
+#define SOC_SAME54
 
 #endif

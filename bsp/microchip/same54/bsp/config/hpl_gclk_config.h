@@ -235,7 +235,7 @@
 // <i> Indicates whether generic clock 3 configuration is enabled or not
 // <id> enable_gclk_gen_3
 #ifndef CONF_GCLK_GENERATOR_3_CONFIG
-#define CONF_GCLK_GENERATOR_3_CONFIG 0
+#define CONF_GCLK_GENERATOR_3_CONFIG 1
 #endif
 
 // <h> Generic Clock Generator Control
@@ -252,7 +252,7 @@
 // <i> This defines the clock source for generic clock generator 3
 // <id> gclk_gen_3_oscillator
 #ifndef CONF_GCLK_GEN_3_SOURCE
-#define CONF_GCLK_GEN_3_SOURCE GCLK_GENCTRL_SRC_XOSC32K
+#define CONF_GCLK_GEN_3_SOURCE GCLK_GENCTRL_SRC_DPLL0
 #endif
 
 // <q> Run in Standby
@@ -294,7 +294,7 @@
 // <i> Indicates whether Generic Clock Generator Enable is enabled or not
 // <id> gclk_arch_gen_3_enable
 #ifndef CONF_GCLK_GEN_3_GENEN
-#define CONF_GCLK_GEN_3_GENEN 0
+#define CONF_GCLK_GEN_3_GENEN 1
 #endif
 // </h>
 
@@ -302,7 +302,7 @@
 //<o> Generic clock generator 3 division <0x0000-0xFFFF>
 // <id> gclk_gen_3_div
 #ifndef CONF_GCLK_GEN_3_DIV
-#define CONF_GCLK_GEN_3_DIV 1
+#define CONF_GCLK_GEN_3_DIV 3
 #endif
 // </h>
 // </e>

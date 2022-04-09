@@ -11,6 +11,7 @@
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
         <path>$PROJ_DIR$\hpl\aes</path>
+        <path>$PROJ_DIR$\hpl\can</path>
         <path>$PROJ_DIR$\hpl\cmcc</path>
         <path>$PROJ_DIR$\hpl\core</path>
         <path>$PROJ_DIR$\hpl\dmac</path>
@@ -35,6 +36,7 @@
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
         <path>$PROJ_DIR$\hpl\aes</path>
+        <path>$PROJ_DIR$\hpl\can</path>
         <path>$PROJ_DIR$\hpl\cmcc</path>
         <path>$PROJ_DIR$\hpl\core</path>
         <path>$PROJ_DIR$\hpl\dmac</path>
@@ -102,6 +104,7 @@
 
         <group name="config">
             <path>config/hpl_aes_config.h</path>
+            <path>config/hpl_can_config.h</path>
             <path>config/hpl_cmcc_config.h</path>
             <path>config/hpl_dmac_config.h</path>
             <path>config/hpl_gclk_config.h</path>
@@ -122,6 +125,7 @@
             <path>hal/include/hal_aes_sync.h</path>
             <path>hal/include/hal_atomic.h</path>
             <path>hal/include/hal_cache.h</path>
+            <path>hal/include/hal_can_async.h</path>
             <path>hal/include/hal_delay.h</path>
             <path>hal/include/hal_gpio.h</path>
             <path>hal/include/hal_init.h</path>
@@ -130,6 +134,8 @@
             <path>hal/include/hal_usart_sync.h</path>
             <path>hal/include/hpl_aes.h</path>
             <path>hal/include/hpl_aes_sync.h</path>
+            <path>hal/include/hpl_can.h</path>
+            <path>hal/include/hpl_can_async.h</path>
             <path>hal/include/hpl_cmcc.h</path>
             <path>hal/include/hpl_core.h</path>
             <path>hal/include/hpl_delay.h</path>
@@ -162,6 +168,7 @@
             <path>hal/src/hal_aes_sync.c</path>
             <path>hal/src/hal_atomic.c</path>
             <path>hal/src/hal_cache.c</path>
+            <path>hal/src/hal_can_async.c</path>
             <path>hal/src/hal_delay.c</path>
             <path>hal/src/hal_gpio.c</path>
             <path>hal/src/hal_init.c</path>
@@ -191,6 +198,11 @@
 
         <group name="hpl/aes">
             <path>hpl/aes/hpl_aes.c</path>
+        </group>
+
+        <group name="hpl/can">
+            <path>hpl/can/hpl_can.c</path>
+            <path>hpl/can/hpl_can_base.h</path>
         </group>
 
         <group name="hpl/cmcc">

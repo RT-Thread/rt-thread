@@ -33,6 +33,7 @@ SUB_DIRS +=  \
 hpl/pm \
 gcc \
 hpl/osc32kctrl \
+hpl/can \
 hpl/ramecc \
 hpl/dmac \
 hal/src \
@@ -50,6 +51,8 @@ hpl/cmcc
 # List the object files
 OBJS +=  \
 hal/src/hal_io.o \
+hal/src/hal_can_async.o \
+hpl/can/hpl_can.o \
 hpl/core/hpl_core_m4.o \
 hal/src/hal_cache.o \
 hal/utils/src/utils_syscalls.o \
@@ -83,6 +86,8 @@ hal/src/hal_atomic.o
 
 OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
+"hal/src/hal_can_async.o" \
+"hpl/can/hpl_can.o" \
 "hpl/core/hpl_core_m4.o" \
 "hal/src/hal_cache.o" \
 "hal/utils/src/utils_syscalls.o" \
@@ -122,6 +127,7 @@ DIR_INCLUDES +=  \
 -I"../hal/include" \
 -I"../hal/utils/include" \
 -I"../hpl/aes" \
+-I"../hpl/can" \
 -I"../hpl/cmcc" \
 -I"../hpl/core" \
 -I"../hpl/dmac" \
@@ -144,9 +150,10 @@ DEPS := $(OBJS:%.o=%.d)
 DEPS_AS_ARGS +=  \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
-"hpl/gclk/hpl_gclk.d" \
+"hal/src/hal_can_async.d" \
 "hpl/core/hpl_core_m4.d" \
 "hal/utils/src/utils_syscalls.d" \
+"hpl/can/hpl_can.d" \
 "hpl/aes/hpl_aes.d" \
 "hal/utils/src/utils_list.d" \
 "hpl/cmcc/hpl_cmcc.d" \
@@ -156,6 +163,7 @@ DEPS_AS_ARGS +=  \
 "hpl/core/hpl_init.d" \
 "hpl/pm/hpl_pm.d" \
 "hpl/ramecc/hpl_ramecc.d" \
+"hpl/gclk/hpl_gclk.d" \
 "gcc/gcc/startup_same54.d" \
 "hal/src/hal_init.d" \
 "hal/src/hal_usart_sync.d" \

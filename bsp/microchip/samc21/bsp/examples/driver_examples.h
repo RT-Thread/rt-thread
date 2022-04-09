@@ -17,6 +17,8 @@ void RWW_FLASH_0_example(void);
 
 void TARGET_IO_example(void);
 
+void CAN_0_example(void);
+
 #ifdef __cplusplus
 }
 #endif

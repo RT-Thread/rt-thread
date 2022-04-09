@@ -43,10 +43,12 @@
       <RTE_Components_h>#define ATMEL_START</RTE_Components_h>
       <files>
         <file category="doc" condition="ARMCC, GCC, IAR" name="hal/documentation/aes_sync.rst"/>
+        <file category="doc" condition="ARMCC, GCC, IAR" name="hal/documentation/can_async.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="hal/documentation/usart_sync.rst"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_aes_sync.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_atomic.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_cache.h"/>
+        <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_can_async.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_delay.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_gpio.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_init.h"/>
@@ -54,6 +56,8 @@
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_sleep.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_aes.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_aes_sync.h"/>
+        <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_can.h"/>
+        <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_can_async.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_cmcc.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_core.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_delay.h"/>
@@ -74,6 +78,7 @@
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_aes_sync.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_atomic.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_cache.c"/>
+        <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_can_async.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_delay.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_gpio.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_init.c"/>
@@ -151,6 +156,8 @@
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_usart_sync.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/utils/include/parts.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/aes/hpl_aes.c"/>
+        <file category="source" condition="ARMCC, GCC, IAR" name="hpl/can/hpl_can.c"/>
+        <file category="header" condition="ARMCC, GCC, IAR" name="hpl/can/hpl_can_base.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/cmcc/hpl_cmcc.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/core/hpl_core_m4.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hpl/core/hpl_core_port.h"/>
@@ -169,6 +176,7 @@
         <file category="header" condition="ARMCC, GCC, IAR" name="atmel_start.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="atmel_start.c"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_aes_config.h"/>
+        <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_can_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_cmcc_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_dmac_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_gclk_config.h"/>
@@ -184,6 +192,7 @@
         <file category="include" condition="ARMCC, GCC, IAR" name="hal/include"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hal/utils/include"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/aes"/>
+        <file category="include" condition="ARMCC, GCC, IAR" name="hpl/can"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/cmcc"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/core"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/dmac"/>

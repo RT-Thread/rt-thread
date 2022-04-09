@@ -638,6 +638,70 @@ drivers:
         configuration:
           core_gclk_selection: Generic clock generator 0
           slow_gclk_selection: Generic clock generator 1
+  CAN_0:
+    user_label: CAN_0
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::CAN0::driver_config_definition::CAN::HAL:Driver:CAN.Async
+    functionality: CAN
+    api: HAL:Driver:CAN_Async
+    configuration:
+      can_btp_brp: 4
+      can_btp_sjw: 10
+      can_btp_tseg1: 31
+      can_btp_tseg2: 8
+      can_cccr_brse: false
+      can_cccr_fdoe: false
+      can_dbtp_dbrp: 4
+      can_dbtp_dsjw: 4
+      can_dbtp_dtseg1: 31
+      can_dbtp_dtseg2: 8
+      can_dbtp_tdc: false
+      can_gfc_anfe: Reject
+      can_gfc_anfs: Reject
+      can_gfc_rrfe: Filter remote frames with 29-bit standard IDs
+      can_gfc_rrfs: Filter remote frames with 11-bit standard IDs
+      can_ie_bo: true
+      can_ie_do: true
+      can_ie_ea: true
+      can_ie_ep: true
+      can_ie_ew: true
+      can_mrcfg_dqos: Sensitive latency
+      can_mrcfg_runstandby: false
+      can_rxesc_f0ds: 8 byte data field.
+      can_rxf0c_f0om: blocking mode
+      can_rxf0c_f0s: 32
+      can_rxf0c_f0wm: 0
+      can_sidfc_lss: 128
+      can_txbc_tfqs: 32
+      can_txefc_efs: 32
+      can_txefc_efwm: 0
+      can_txesc_tbds: 8 byte data field.
+      can_xidam_eidm: 0
+      can_xidfc_lss: 64
+    optional_signals:
+    - identifier: CAN_0:RX
+      pad: PA25
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::optional_signal_definition::CAN0.RX
+      name: CAN0/RX
+      label: RX
+    - identifier: CAN_0:TX
+      pad: PA24
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::optional_signal_definition::CAN0.TX
+      name: CAN0/TX
+      label: TX
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: CAN
+          input: Generic clock generator 0
+          external: false
+          external_frequency: 0
+        configuration:
+          can_gclk_selection: Generic clock generator 0
 pads:
   PB10:
     name: PB10
@@ -656,6 +720,18 @@ pads:
     definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::pad::PA15
     mode: Digital output
     user_label: LED0
+    configuration: null
+  PA24:
+    name: PA24
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::pad::PA24
+    mode: Peripheral IO
+    user_label: PA24
+    configuration: null
+  PA25:
+    name: PA25
+    definition: Atmel:SAMC21_Drivers:0.0.1::SAMC21J18A-AN::pad::PA25
+    mode: Peripheral IO
+    user_label: PA25
     configuration: null
 toolchain_options: []
 static_files: []

@@ -24,10 +24,12 @@ extern "C" {
 #include <hal_flash.h>
 
 #include <hal_usart_sync.h>
+#include <hal_can_async.h>
 
 extern struct flash_descriptor FLASH_0;
 
 extern struct usart_sync_descriptor TARGET_IO;
+extern struct can_async_descriptor  CAN_0;
 
 void FLASH_0_init(void);
 void FLASH_0_CLOCK_init(void);

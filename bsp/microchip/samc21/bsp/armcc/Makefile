@@ -29,6 +29,7 @@ SUB_DIRS +=  \
  \
 hpl/pm \
 hpl/osc32kctrl \
+hpl/can \
 hpl/dmac \
 samc21/armcc/Device/SAMC21/Source/ARM \
 hal/src \
@@ -46,6 +47,8 @@ hpl/divas
 # List the object files
 OBJS +=  \
 hal/src/hal_io.o \
+hal/src/hal_can_async.o \
+hpl/can/hpl_can.o \
 hpl/nvmctrl/hpl_nvmctrl.o \
 samc21/armcc/Device/SAMC21/Source/ARM/startup_SAMC21.o \
 hal/src/hal_delay.o \
@@ -76,6 +79,8 @@ hal/src/hal_atomic.o
 
 OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
+"hal/src/hal_can_async.o" \
+"hpl/can/hpl_can.o" \
 "hpl/nvmctrl/hpl_nvmctrl.o" \
 "samc21/armcc/Device/SAMC21/Source/ARM/startup_SAMC21.o" \
 "hal/src/hal_delay.o" \
@@ -110,6 +115,8 @@ DEPS := $(OBJS:%.o=%.d)
 DEPS_AS_ARGS +=  \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
+"hal/src/hal_can_async.d" \
+"hpl/can/hpl_can.d" \
 "samc21/armcc/Device/SAMC21/Source/ARM/startup_SAMC21.d" \
 "hpl/nvmctrl/hpl_nvmctrl.d" \
 "hpl/core/hpl_core_m0plus_base.d" \
@@ -171,7 +178,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Compiler
 	$(QUOTE)armcc$(QUOTE) --c99 -c -DDEBUG -O1 -g --apcs=interwork --split_sections --cpu Cortex-M0+ -D__SAMC21J18A__ \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/core" -I"../hpl/divas" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/nvmctrl" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../samc21/include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/can" -I"../hpl/core" -I"../hpl/divas" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/nvmctrl" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../samc21/include"  \
 --depend "$@"  -o "$@" "$<"
 
 	@echo Finished building: $<
@@ -180,7 +187,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Assembler
 	$(QUOTE)armasm$(QUOTE) -g --apcs=interwork --cpu Cortex-M0+ --pd "D__SAMC21J18A__ SETA 1" \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/core" -I"../hpl/divas" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/nvmctrl" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../samc21/include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/can" -I"../hpl/core" -I"../hpl/divas" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/nvmctrl" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../samc21/include"  \
 --depend "$(@:%.o=%.d)" -o "$@" "$<"
 
 	@echo Finished building: $<
@@ -189,7 +196,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Preprocessing Assembler
 	$(QUOTE)armcc$(QUOTE) --c99 -c -DDEBUG -O1 -g --apcs=interwork --split_sections --cpu Cortex-M0+ -D__SAMC21J18A__ \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/core" -I"../hpl/divas" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/nvmctrl" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../samc21/include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/can" -I"../hpl/core" -I"../hpl/divas" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/nvmctrl" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/sercom" -I"../hri" -I"../" -I"../CMSIS/Core/Include" -I"../samc21/include"  \
 --depend "$@"  -o "$@" "$<"
 
 	@echo Finished building: $<

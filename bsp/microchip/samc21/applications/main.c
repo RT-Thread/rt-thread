@@ -18,6 +18,10 @@
 #include "atmel_start.h"
 #include <hal_gpio.h>
 
+#ifdef SAM_CAN_EXAMPLE
+#include "can_demo.h"
+#endif
+
 static rt_uint8_t led_stack[ 512 ];
 static struct rt_thread led_thread;
 
@@ -27,9 +31,9 @@ static void led_thread_entry(void* parameter)
 
     while (1)
     {
-        /* led1 on */
+        /* toggle led */
 #ifndef RT_USING_FINSH
-        rt_kprintf("led on, count : %d\r\n",count);
+        rt_kprintf("led toggle, count : %d\r\n",count);
 #endif
         count++;
         gpio_toggle_pin_level(LED0);
@@ -41,7 +45,7 @@ int main(void)
 {
     rt_err_t result;
 
-    /* init led thread */
+    /* initialize led thread */
     result = rt_thread_init(&led_thread,
                             "led",
                             led_thread_entry,
@@ -54,6 +58,10 @@ int main(void)
     {
         rt_thread_startup(&led_thread);
     }
+
+#ifdef SAM_CAN_EXAMPLE
+    can_demo_run();
+#endif
 
     return 0;
 }

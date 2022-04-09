@@ -10,6 +10,7 @@
         <path>$PROJ_DIR$\examples</path>
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\can</path>
         <path>$PROJ_DIR$\hpl\core</path>
         <path>$PROJ_DIR$\hpl\divas</path>
         <path>$PROJ_DIR$\hpl\dmac</path>
@@ -33,6 +34,7 @@
         <path>$PROJ_DIR$\examples</path>
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\can</path>
         <path>$PROJ_DIR$\hpl\core</path>
         <path>$PROJ_DIR$\hpl\divas</path>
         <path>$PROJ_DIR$\hpl\dmac</path>
@@ -99,6 +101,7 @@
         </group>
 
         <group name="config">
+            <path>config/hpl_can_config.h</path>
             <path>config/hpl_divas_config.h</path>
             <path>config/hpl_dmac_config.h</path>
             <path>config/hpl_gclk_config.h</path>
@@ -118,6 +121,7 @@
 
         <group name="hal/include">
             <path>hal/include/hal_atomic.h</path>
+            <path>hal/include/hal_can_async.h</path>
             <path>hal/include/hal_delay.h</path>
             <path>hal/include/hal_flash.h</path>
             <path>hal/include/hal_gpio.h</path>
@@ -125,6 +129,8 @@
             <path>hal/include/hal_io.h</path>
             <path>hal/include/hal_sleep.h</path>
             <path>hal/include/hal_usart_sync.h</path>
+            <path>hal/include/hpl_can.h</path>
+            <path>hal/include/hpl_can_async.h</path>
             <path>hal/include/hpl_core.h</path>
             <path>hal/include/hpl_delay.h</path>
             <path>hal/include/hpl_div.h</path>
@@ -156,6 +162,7 @@
 
         <group name="hal/src">
             <path>hal/src/hal_atomic.c</path>
+            <path>hal/src/hal_can_async.c</path>
             <path>hal/src/hal_delay.c</path>
             <path>hal/src/hal_flash.c</path>
             <path>hal/src/hal_gpio.c</path>
@@ -182,6 +189,11 @@
             <path>hal/utils/src/utils_assert.c</path>
             <path>hal/utils/src/utils_event.c</path>
             <path>hal/utils/src/utils_list.c</path>
+        </group>
+
+        <group name="hpl/can">
+            <path>hpl/can/hpl_can.c</path>
+            <path>hpl/can/hpl_can_base.h</path>
         </group>
 
         <group name="hpl/core">
