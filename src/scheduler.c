@@ -103,12 +103,9 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
         (rt_ubase_t)thread->sp >
         (rt_ubase_t)thread->stack_addr + (rt_ubase_t)thread->stack_size)
     {
-        rt_ubase_t level;
-
         rt_kprintf("thread:%s stack overflow\n", thread->name);
-
-        level = rt_hw_interrupt_disable();
-        while (level);
+        rt_hw_interrupt_disable();
+        RT_ASSERT(0);
     }
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
     else if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
