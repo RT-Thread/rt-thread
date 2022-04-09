@@ -21,6 +21,7 @@
 #include "ffconf.h"
 #include "ff.h"
 #include <string.h>
+#include <time.h>
 #include <sys/time.h>
 
 /* ELM FatFs provide a DIR struct */

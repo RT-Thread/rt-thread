@@ -9,7 +9,7 @@ group = []
 LIBS = []
 CPPPATH = [cwd]
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM == 'gcc' and GetNewLibVersion(rtconfig) != 'unknown':
     LIBS += ['c', 'm'] # link libc and libm
     src += Glob('*.c')
 
@@ -22,10 +22,10 @@ if rtconfig.PLATFORM == 'gcc':
     group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
 
 
-list = os.listdir(cwd)
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        group = group + SConscript(os.path.join(d, 'SConscript'))
+    list = os.listdir(cwd)
+    for d in list:
+        path = os.path.join(cwd, d)
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            group = group + SConscript(os.path.join(d, 'SConscript'))
 
 Return('group')

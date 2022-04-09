@@ -14,7 +14,7 @@
 #include <dfs.h>
 
 #define DBG_TAG    "sd.sim"
-#define DBG_LVL    DBG_INFO
+#define DBG_LVL    DBG_WARNING
 #include <rtdbg.h>
 
 #define SDCARD_SIM  "sd.bin"

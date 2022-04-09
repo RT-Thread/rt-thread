@@ -12,6 +12,7 @@
 #include <semaphore.h>
 #include <time.h>
 #include <sys/time.h>
+#include <string.h>
 
 //#define TRACE       printf
 #define TRACE(...)
@@ -49,14 +50,12 @@ static long interrupt_disable_flag;
 //static int systick_signal_flag;
 
 /* flag in interrupt handling */
-rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrupt_flag;
+rt_ubase_t rt_interrupt_from_thread, rt_interrupt_to_thread;
+rt_ubase_t rt_thread_switch_interrupt_flag;
 
 /* interrupt event mutex */
 static pthread_mutex_t *ptr_int_mutex;
-static pthread_cond_t cond_int_hit; /* interrupt occured! */
 static volatile unsigned int  cpu_pending_interrupts;
-static int (* cpu_isr_table[MAX_INTERRUPT_NUM])(void) = {0};
 
 static pthread_t mainthread_pid;
 
@@ -75,6 +74,7 @@ int signal_install(int sig, void (*func)(int))
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
     sigaction(sig, &act, 0);
+    return 0;
 }
 
 int signal_mask(void)
@@ -85,11 +85,11 @@ int signal_mask(void)
     sigemptyset(&sigmask);
     sigaddset(&sigmask, SIGALRM);
     pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
+    return 0;
 }
 static void thread_suspend_signal_handler(int sig)
 {
     sigset_t sigmask;
-    pthread_t pid = pthread_self();
     thread_t *thread_from;
     thread_t *thread_to;
     rt_thread_t tid;
@@ -131,13 +131,10 @@ static void thread_suspend_signal_handler(int sig)
 
 static void thread_resume_signal_handler(int sig)
 {
-    sigset_t sigmask;
-    pthread_t pid = pthread_self();
-    thread_t *thread_from;
+
     thread_t *thread_to;
     rt_thread_t tid;
 
-    thread_from = (thread_t *) rt_interrupt_from_thread;
     thread_to = (thread_t *) rt_interrupt_to_thread;
 
     /* 注意！此时 rt_thread_self的值是to线程的值！ */
@@ -152,7 +149,6 @@ static void *thread_run(void *parameter)
     rt_thread_t tid;
     thread_t *thread;
     thread = THREAD_T(parameter);
-    int res;
 
     /* set signal mask, mask the timer! */
     signal_mask();
@@ -171,7 +167,7 @@ static void *thread_run(void *parameter)
     thread->exit();
 
     /*TODO:
-     * 最后一行的pthread_exit永远没有机会执行，这是因为在threead->exit函数中
+     * 最后一行的pthread_exit永远没有机会执行，这是因为在thread->exit函数中
      * 会发生线程切换，并永久将此pthread线程挂起，所以更完美的解决方案是在这
      * 里发送信号给主线程，主线程中再次唤醒此线程令其自动退出。
      */
@@ -213,6 +209,7 @@ static int thread_create(
 static int thread_resume(thread_t *thread)
 {
     sem_post(& thread->sem);
+    return 0;
 }
 
 
@@ -227,7 +224,7 @@ rt_uint8_t *rt_hw_stack_init(
     thread = (thread_t *)(pStackAddr - sizeof(thread_t));
 
     /* set the filed to zero */
-    memset(thread, 0x00, sizeof(thread_t));
+    memset((void *)thread, 0x00, sizeof(thread_t));
 
     thread_create(thread, pEntry, pParam, pExit);
     //TRACE("thread %x created\n", (unsigned int)thread_table[t].pthread);
@@ -254,7 +251,6 @@ rt_base_t rt_hw_interrupt_disable(void)
 
 void rt_hw_interrupt_enable(rt_base_t level)
 {
-    struct rt_thread * tid;
     pthread_t pid;
     thread_t *thread_from;
     thread_t *thread_to;
@@ -281,7 +277,6 @@ void rt_hw_interrupt_enable(rt_base_t level)
 
     thread_from = (thread_t *) rt_interrupt_from_thread;
     thread_to = (thread_t *) rt_interrupt_to_thread;
-    tid = rt_thread_self();
     pid = pthread_self();
 
     //pid != mainthread_pid &&
@@ -363,13 +358,9 @@ void rt_hw_interrupt_enable(rt_base_t level)
     /*TODO: It may need to unmask the signal */
 }
 
-void rt_hw_context_switch(rt_uint32_t from,
-                          rt_uint32_t to)
+void rt_hw_context_switch(rt_ubase_t from,
+                          rt_ubase_t to)
 {
-    struct rt_thread * tid;
-    pthread_t pid;
-    thread_t *thread_from;
-    thread_t *thread_to;
 
     RT_ASSERT(from != to);
 
@@ -380,12 +371,12 @@ void rt_hw_context_switch(rt_uint32_t from,
         rt_thread_switch_interrupt_flag = 1;
 
         // set rt_interrupt_from_thread
-        rt_interrupt_from_thread = *((rt_uint32_t *)from);
+        rt_interrupt_from_thread = *((rt_ubase_t *)from);
     }
 #endif
     pthread_mutex_lock(ptr_int_mutex);
-    rt_interrupt_from_thread = *((rt_uint32_t *)from);
-    rt_interrupt_to_thread = *((rt_uint32_t *)to);
+    rt_interrupt_from_thread = *((rt_ubase_t *)from);
+    rt_interrupt_to_thread = *((rt_ubase_t *)to);
 
     /* 这个函数只是并不会真正执行中断处理函数，而只是简单的
      * 设置一下中断挂起标志位
@@ -394,16 +385,16 @@ void rt_hw_context_switch(rt_uint32_t from,
     pthread_mutex_unlock(ptr_int_mutex);
 }
 
-void rt_hw_context_switch_interrupt(rt_uint32_t from,
-                                    rt_uint32_t to)
+void rt_hw_context_switch_interrupt(rt_ubase_t from,
+                                    rt_ubase_t to)
 {
     rt_hw_context_switch(from, to);
 }
 
-void rt_hw_context_switch_to(rt_uint32_t to)
+void rt_hw_context_switch_to(rt_ubase_t to)
 {
     //set to thread
-    rt_interrupt_to_thread = *((rt_uint32_t *)(to));
+    rt_interrupt_to_thread = *((rt_ubase_t *)(to));
 
     //clear from thread
     rt_interrupt_from_thread = 0;
@@ -424,8 +415,7 @@ void rt_hw_context_switch_to(rt_uint32_t to)
 
 static int mainthread_scheduler(void)
 {
-    int i, res, sig;
-    thread_t *thread_from;
+    int sig;
     thread_t *thread_to;
     pthread_mutex_t mutex;
     pthread_mutexattr_t mutexattr;
@@ -453,7 +443,7 @@ static int mainthread_scheduler(void)
     /* create a mutex and condition val, used to indicate interrupts occrue */
     ptr_int_mutex = &mutex;
     pthread_mutexattr_init(&mutexattr);
-    pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE_NP);
+    pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(ptr_int_mutex, &mutexattr);
 
     /* start timer */
@@ -532,8 +522,6 @@ static void start_sys_timer(void)
 
 static void mthread_signal_tick(int sig)
 {
-    int res;
-    pthread_t pid = pthread_self();
 
     if (sig == SIGALRM)
     {
@@ -563,4 +551,3 @@ static int tick_interrupt_isr(void)
     TRACE("isr: systick leave!\n");
     return 0;
 }
-

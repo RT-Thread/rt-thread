@@ -12,7 +12,8 @@ if rtconfig.CROSS_TOOL == 'keil':
 
 src += Glob('*.c')
 
-group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+if rtconfig.CPU != 'posix':
+    group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 list = os.listdir(cwd)
 for item in list:

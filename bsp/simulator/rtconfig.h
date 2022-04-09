@@ -20,6 +20,7 @@
 
 /* kservice optimization */
 
+#define RT_KPRINTF_USING_LONGLONG
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
 
@@ -34,8 +35,10 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_SMALL_MEM
-#define RT_USING_SMALL_MEM_AS_HEAP
+#define RT_USING_MEMHEAP
+#define RT_MEMHEAP_FAST_MODE
+#define RT_USING_MEMHEAP_AS_HEAP
+#define RT_USING_MEMHEAP_AUTO_BINDING
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -196,7 +199,6 @@
 /* entertainment: terminal games and other interesting software packages */
 
 #define SOC_SIMULATOR
-#define RT_USING_DFS_WINSHAREDIR
 #include "rtconfig_project.h"
 
 #endif
