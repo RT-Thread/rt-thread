@@ -1,5 +1,4 @@
-# RT-Thread building script for bridge
-
+# RT-Thread scons bridge
 import os
 from building import *
 

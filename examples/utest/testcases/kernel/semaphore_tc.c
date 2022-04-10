@@ -269,7 +269,6 @@ static void test_static_semaphore_release_isr(void)
 #ifdef RT_USING_HEAP
 static void test_dynamic_semaphore_create(void)
 {
-    rt_err_t result;
     int rand_num = rand() % 0x10000;
 
     for (int i = 0; i < rand_num; i++)

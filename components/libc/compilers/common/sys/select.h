@@ -6,17 +6,22 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-07-21     Meco Man     The first version
+ * 2021-12-25     Meco Man     Handle newlib 2.2.0 or lower version
  */
 
 #ifndef __SYS_SELECT_H__
 #define __SYS_SELECT_H__
 
-#include <rtconfig.h>
+#include <rtthread.h>
 #include <sys/types.h>
 #include <sys/time.h>
 
 #ifdef _WIN32
 #include <winsock.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 #ifndef  FD_SETSIZE
@@ -33,13 +38,12 @@
 typedef long    fd_mask;
 
 #ifndef _WIN32
-#ifndef _SYS_TYPES_FD_SET /* MIPS */
-
+#ifndef _SYS_TYPES_FD_SET /* Newlib 2.2.0 or lower version */
 #define   NBBY    8       /* number of bits in a byte */
 #define   NFDBITS (sizeof (fd_mask) * NBBY)   /* bits per mask */
 #ifndef   howmany
 #define   howmany(x,y)    (((x)+((y)-1))/(y))
-#endif
+#endif /* howmany */
 
 typedef struct _types_fd_set {
     fd_mask fds_bits[howmany(FD_SETSIZE, NFDBITS)];
@@ -49,10 +53,14 @@ typedef struct _types_fd_set {
 #define FD_SET(n, p)    ((p)->fds_bits[(n)/NFDBITS] |= (1L << ((n) % NFDBITS)))
 #define FD_CLR(n, p)    ((p)->fds_bits[(n)/NFDBITS] &= ~(1L << ((n) % NFDBITS)))
 #define FD_ISSET(n, p)  ((p)->fds_bits[(n)/NFDBITS] & (1L << ((n) % NFDBITS)))
-#define FD_ZERO(p)      memset((void*)(p), 0, sizeof(*(p)))
+#define FD_ZERO(p)      rt_memset((void*)(p), 0, sizeof(*(p)))
 #endif /* _SYS_TYPES_FD_SET */
 
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
 #endif /* _WIN32 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __SYS_SELECT_H__ */
