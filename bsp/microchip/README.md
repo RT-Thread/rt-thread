@@ -1,27 +1,21 @@
-Author: Kevin Liu
-
-Email：  kevin.liu.mchp@gmail.com
-
-For latest update please visit <https://github.com/klmchp>
-
-## 1. Microchip BSP Introduction
+# 1. Microchip BSP Introduction
 
 Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 
-### ARM Cortex-M0+ Series
+## ARM Cortex-M0+ Series
 - samc21 | 5V Cortex-M0+ with 2 CAN-FD support
 - saml21 | 3.3V low power Cortex-M0+
 - samd21 | 3.3V industrial level Cortex-M0+
 
-### ARM Cortex-M4 Series
+## ARM Cortex-M4 Series
 - same54 | 3.3V 120MHz Cortex-M4F core with CAN-FD/USB/Ethernet support
 
-### ARM Cortex-M7 Series
+## ARM Cortex-M7 Series
 - same70 | 3.3V 300MHz Cortex-M7 core with CAN-FD/High speed USB/Ethernet support
 
-## 2. RT-Thread porting guide of Microchip SAM MCU
+# 2. RT-Thread porting guide of Microchip SAM MCU
 
-### 2.1 Configure project BSP on Atmel Start
+## 2.1 Configure project BSP on Atmel Start
 
 	* Visit <https://start.atmel.com/#> and click CREATE NEW PROJECT.
 
@@ -65,7 +59,7 @@ Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 
 ![在这里插入图片描述](doc/2-1-10-atmel-start-export-project.png)
 
-### 2.2 Add project to RT-Thread source code
+## 2.2 Add project to RT-Thread source code
 
 	* Link: <https://github.com/RT-Thread/rt-thread> and download RT souce code.
 
@@ -105,7 +99,9 @@ Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 
 	* Alright, now you can use RT-Thread env tools to compile the project.
 
-### 2.3 Compile project with RT-Thread env tools
+## 2.3 Compile project with RT-Thread env tools
+
+About RT-Thread env tools, click [Here](https://github.com/RT-Thread/rt-thread/blob/master/documentation/env/env.md).
 
 	* Download RT-Thread env tools <https://www.rt-thread.org/page/download.html>
 
@@ -131,11 +127,9 @@ Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 
 ![在这里插入图片描述](doc/2-3-6-atmel-start-env-tools-compiling-OK.png)
 
-
 	* In the following chapter I will show you how to debug RT-Thread with Studio 7.
 
-
-## 3. RT-Thread debugging with Microchip IDE
+# 3. RT-Thread debugging with Microchip IDE
 
 	* Link: <https://www.microchip.com/en-us/tools-resources/develop/microchip-studio>, download & install Microchip Studio 7.
 
@@ -178,7 +172,7 @@ Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 ![在这里插入图片描述](doc/3-1-8-atmel-start-Studio7-start-debugging3.png)
 
 
-## 4. Reconfigure MCU BSP
+# 4. Reconfigure MCU BSP
 
 	* Visit <https://start.atmel.com/#> and upload project configuration.
 
@@ -189,9 +183,9 @@ Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 ![在这里插入图片描述](doc/4-1-2-atmel-start-Studio7-project-configurtion.png)
 
 
-## 5. Microchip SAM MCU BSP configuration and user guide
+# 5. Microchip SAM MCU BSP configuration and user guide
 
-### 5.1 SAMC2x/E5x/E70 CAN Driver
+## 5.1 SAMC2x/E5x/E70 CAN Driver
 
 	* CAN driver configuration.
 
@@ -201,3 +195,9 @@ Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 	* CAN driver user guide and example.
 
 	* To be continued.
+
+# 6. Contact Info
+
+- [Kevin Liu](https://github.com/klmchp)
+
+	* https://github.com/klmchp && kevin.liu.mchp@gmail.com

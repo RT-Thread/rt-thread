@@ -1,19 +1,19 @@
-# SAME54P20A BSP Introduction
+# SAME54P20A BSP 介绍
 
-[中文](README_zh.md) 
+[English](README.md) 
 - MCU: ATSAME54P20A @120MHz, 1MB FLASH, 256KB RAM
-- E54: Cortex-M4F + Advanced Feature Set + Ethernet + 2x CAN-FD
-- Pin: G=48 pins, J=64 pins, N=100 pins, P=128 pins
-- Flash: 18=256KB, 19=512KB, 20=1024KB (size=2^n)
+- E54: Cortex-M4F + 100M Ethernet + 2路CAN-FD
+- 管脚: G系列-48 pins, J系列-64 pins, N系列-100 pins, P系列-128 pins
+- Flash: 尾缀18=256KB, 19=512KB, 20=1024KB (size=2^n)
 - SRAM : 128KB(Flash 256KB), 192KB(Flash 512KB), 256KB(Flash 1MB)
-- Datasheet: <https://www.microchip.com/en-us/product/ATSAME54P20>
+- 手册: <https://www.microchip.com/en-us/product/ATSAME54P20>
 
-#### KEY FEATURES
+#### 关键特性
 
-#### Core
-  - 32-bit Arm® Cortex®-M4 core with single-precision FPU and 4 KB combined instruction cache and data cache; frequency up to 120 MHz, MPU, 403 CoreMark® at 120 MHz, and DSP instructions
+#### 内核
+  - 32-bit Arm® Cortex®-M4 内核 + 单精度FPU + 4 KB 复用的指令和数据Cache，最大工作主频120 MHz, 带MPU, 403 CoreMark®@120 MHz, 支持 DSP指令集
 
-#### Memories
+#### 内存
   - 1 MB/512 KB/256 KB in-system self-programmable Flash with:
   - Error Correction Code (ECC)
   - Dual bank with Read-While-Write (RWW) support
@@ -25,7 +25,7 @@
   - Can be retained in backup mode
   - Eight 32-bit backup registers
 
-#### System
+#### 系统特性
   - Power-on Reset (POR) and Brown-out detection (BOD)
   - Internal and external clock options
   - External Interrupt Controller (EIC)
@@ -33,7 +33,7 @@
   - One non-maskable interrupt
   - Two-pin Serial Wire Debug (SWD) programming, test, and debugging interface
 
-#### High-Performance Peripherals
+#### 高性能外设
   - 32-channel Direct Memory Access Controller (DMAC)
   - Up to two SD/MMC Host Controller (SDHC)
   - Up to 50 MHz operation
@@ -56,7 +56,7 @@
   - Eight endpoints
   - On-chip transceiver with integrated serial resistor
 
-#### System Peripherals
+#### 系统外设
   - Up to 114 I/O lines with external interrupt capability (edge- or level-sensitivity), debouncing, glitch filtering and On-die Series Resistor Termination
   - Five Parallel Input/Output Controllers (PIO)
   - 32-channel Event System
@@ -79,7 +79,7 @@
   - Parallel Capture Controller (PCC)
   - Peripheral Touch Controller (PTC) - Capacitive Touch buttons, sliders, and wheels
 
-#### Cryptography
+#### 加密功能
   - One Advanced Encryption System (AES) with 256-bit key length and up to 2 MB/s data rate
   - Five confidential modes of operation (ECB, CBC, CFB, OFB, CTR)
   - Supports counter with CBC-MAC mode
@@ -88,13 +88,13 @@
   - RSA, DSA : Elliptic Curves Cryptography (ECC) ECC GF(2n), ECC GF(p)
   - Integrity Check Module (ICM) based on Secure Hash Algorithm (SHA1, SHA224, SHA256), DMA assisted
 
-#### I/O
-  - Up to 99 programmable I/O pins
+#### I/O管脚
+  - 最多提供99个用户可编程I/O管脚
 
-#### Qualification
+#### 汽车应用
   - AEC-Q100 Grade 1 (-40°C to 125°C)
 
-#### Package Type
+#### 封装
   - VQFN48,    48-lead VQFN, 7x7 mm,   pitch 0.5 mm, I/O Pins up to 37
   - VQFN64,    64-lead VQFN, 9x9 mm,   pitch 0.5 mm, I/O Pins up to 51
   - TQFP64,    64-lead TQFP, 10x10 mm, pitch 0.5 mm, I/O Pins up to 51
@@ -102,5 +102,5 @@
   - TQFP128,  128-lead TQFP, 14x14 mm, pitch 0.4 mm, I/O Pins up to 99
   - TFBGA120, 120-ball TFBGA, 8x8 mm,  pitch 0.5 mm, I/O Pins up to 90
 
-#### Board info
+#### 官方开发板信息
 - [SAM E54 XPLAINED PRO](https://www.microchip.com/en-us/development-tool/DM320019-BNDL)
