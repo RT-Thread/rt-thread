@@ -599,17 +599,14 @@ int *_rt_errno(void);
 
 int __rt_ffs(int value);
 
-#ifndef RT_KSERVICE_USING_STDLIB_MEMSET
+#ifndef RT_KSERVICE_USING_STDLIB_MEMORY
 void *rt_memset(void *src, int c, rt_ubase_t n);
-#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
-#ifndef RT_KSERVICE_USING_STDLIB_MEMCPY
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
-#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
-char *rt_strdup(const char *s);
-
-#ifndef RT_KSERVICE_USING_STDLIB
 void *rt_memmove(void *dest, const void *src, rt_size_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count);
+#endif /* RT_KSERVICE_USING_STDLIB_MEMORY */
+
+#ifndef RT_KSERVICE_USING_STDLIB
 char *rt_strstr(const char *str1, const char *str2);
 rt_int32_t rt_strcasecmp(const char *a, const char *b);
 char *rt_strcpy(char *dst, const char *src);
@@ -619,14 +616,12 @@ rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
 #else
 #include <string.h>
-#ifdef RT_KSERVICE_USING_STDLIB_MEMSET
+#ifdef RT_KSERVICE_USING_STDLIB_MEMORY
 #define rt_memset(s, c, count)      memset(s, c, count)
-#endif /* RT_KSERVICE_USING_STDLIB_MEMSET */
-#ifdef RT_KSERVICE_USING_STDLIB_MEMCPY
 #define rt_memcpy(dst, src, count)  memcpy(dst, src, count)
-#endif /* RT_KSERVICE_USING_STDLIB_MEMCPY */
 #define rt_memmove(dest, src, n)    memmove(dest, src, n)
 #define rt_memcmp(cs, ct, count)    memcmp(cs, ct, count)
+#endif /* RT_KSERVICE_USING_STDLIB_MEMORY */
 #define rt_strstr(str1, str2)       strstr(str1, str2)
 #define rt_strcasecmp(a, b)         strcasecmp(a, b)
 #define rt_strcpy(dest, src)        strcpy(dest, src)
@@ -636,6 +631,8 @@ rt_size_t rt_strlen(const char *src);
 #define rt_strlen(src)              strlen(src)
 #endif /*RT_KSERVICE_USING_STDLIB*/
 
+char *rt_strdup(const char *s);
+
 #if !defined(RT_KSERVICE_USING_STDLIB) || defined(__ARMCC_VERSION)
 rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 #else
@@ -644,7 +641,6 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 
 #ifdef __ARMCC_VERSION
 /* MDK doesn't have these APIs */
-char* strdup(const char* str);
 rt_size_t strnlen(const char *s, rt_size_t maxlen);
 #endif /* __ARMCC_VERSION */
 

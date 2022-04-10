@@ -29,20 +29,15 @@
 #define RT_ALARM_MINUTE        0x2000 /* alarm each minute at a certain second */
 #define RT_ALARM_SECOND        0x4000 /* alarm each second */
 
+#define RT_ALARM_STATE_INITED   0x02
+#define RT_ALARM_STATE_START    0x01
+#define RT_ALARM_STATE_STOP     0x00
+
 /* alarm control cmd */
 #define RT_ALARM_CTRL_MODIFY       1 /* modify alarm time or alarm flag */
 
 typedef struct rt_alarm *rt_alarm_t;
 typedef void (*rt_alarm_callback_t)(rt_alarm_t alarm, time_t timestamp);
-
-/* used for low level RTC driver */
-struct rt_rtc_wkalarm
-{
-    rt_bool_t  enable;               /* 0 = alarm disabled, 1 = alarm enabled */
-    rt_int32_t tm_sec;               /* alarm at tm_sec */
-    rt_int32_t tm_min;               /* alarm at tm_min */
-    rt_int32_t tm_hour;              /* alarm at tm_hour */
-};
 
 struct rt_alarm
 {

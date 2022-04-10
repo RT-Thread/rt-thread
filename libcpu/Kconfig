@@ -41,6 +41,11 @@ config ARCH_ARM_CORTEX_M7
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
 
+config ARCH_ARM_CORTEX_M33
+    bool
+    select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
+
 config ARCH_ARM_CORTEX_R
     bool
     select ARCH_ARM

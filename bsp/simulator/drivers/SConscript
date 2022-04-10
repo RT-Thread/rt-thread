@@ -1,12 +1,29 @@
 import sys
 import os
 from building import *
+Import('rtconfig')
 
 cwd = GetCurrentDir()
 src = Glob('*.c')
 LIBS = []
 LIBPATH = []
 CPPPATH = [cwd]
+CPPDEFINES = []
+
+if rtconfig.CROSS_TOOL == 'msvc':
+    CPPDEFINES += \
+    [
+        # avoid to conflict with the inherent STDC in VS
+        '_CRT_DECLARE_NONSTDC_NAMES=0',
+        # errno macro redefinition
+        '_CRT_ERRNO_DEFINED',
+        # time.h conflicts
+        '_CRT_NO_TIME_T',
+        # disable deprecation of unsafe functions, such as strncpy
+        '_CRT_SECURE_NO_WARNINGS',
+        # RT_VESRION conflicts in winuser.h
+        'NORESOURCE',
+    ]
 
 # remove no need file.
 if GetDepend('PKG_USING_GUIENGINE') == False:
@@ -30,7 +47,8 @@ if GetDepend('RT_USING_DFS') == False or GetDepend('RT_USING_MODULE') == False:
 if sys.platform[0:5]=="linux": #check whether under linux
     SrcRemove(src, ['module_win32.c', 'dfs_win32.c'])
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH)
+group = DefineGroup('Drivers', src, depend = [''],
+            CPPPATH = CPPPATH, LIBS=LIBS, LIBPATH=LIBPATH, CPPDEFINES=CPPDEFINES)
 
 list = os.listdir(cwd)
 for item in list:

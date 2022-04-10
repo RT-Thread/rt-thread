@@ -708,11 +708,7 @@ RTM_EXPORT(lwip_select);
 RTM_EXPORT(lwip_ioctl);
 RTM_EXPORT(lwip_fcntl);
 RTM_EXPORT(lwip_htons);
-RTM_EXPORT(lwip_ntohs);
 RTM_EXPORT(lwip_htonl);
-RTM_EXPORT(lwip_ntohl);
-RTM_EXPORT(ipaddr_aton);
-RTM_EXPORT(ipaddr_ntoa);
 
 #if LWIP_DNS
 #include <lwip/netdb.h>

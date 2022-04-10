@@ -362,7 +362,7 @@
               <MiscControls />
               <Define>USE_STDPERIPH_DRIVER, GD32F10X_CL, __RTTHREAD__, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\finsh;.;..\..\include;Libraries\CMSIS\GD\GD32F10x\Include;Libraries\CMSIS;Libraries\GD32F10x_standard_peripheral\Include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc;..\..\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;.;..\..\components\libc\compilers\common;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\finsh;.;..\..\include;Libraries\CMSIS\GD\GD32F10x\Include;Libraries\CMSIS;Libraries\GD32F10x_standard_peripheral\Include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -447,6 +447,13 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
@@ -457,13 +464,6 @@
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -488,6 +488,18 @@
               <FileName>i2c_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\i2c\i2c_core.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -495,13 +507,18 @@
               <FileName>i2c_dev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\i2c\i2c_dev.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -509,20 +526,37 @@
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\waitqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
+              <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -530,13 +564,37 @@
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\pipe.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -544,6 +602,56 @@
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\workqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\pipe.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -551,6 +659,18 @@
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\misc\pin.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -558,6 +678,18 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -565,6 +697,18 @@
               <FileName>sfud.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\spi\sfud\src\sfud.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -572,6 +716,18 @@
               <FileName>spi_flash_sfud.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\spi\spi_flash_sfud.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -579,6 +735,18 @@
               <FileName>sfud_sfdp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\spi\sfud\src\sfud_sfdp.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -586,6 +754,18 @@
               <FileName>spi_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\spi\spi_core.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -593,20 +773,20 @@
               <FileName>spi_dev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
-          <GroupOption>
-            <GroupArmAds>
-              <Cads>
-                <VariousControls>
-                  <MiscControls> --c99</MiscControls>
-                  <Define> </Define>
-                  <Undefine> </Undefine>
-                  <IncludePath> </IncludePath>
-                </VariousControls>
-              </Cads>
-            </GroupArmAds>
-          </GroupOption>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
@@ -692,9 +872,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ffunicode.c</FileName>
+              <FileName>ff.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\ffunicode.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -706,9 +886,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>ff.c</FileName>
+              <FileName>ffunicode.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\ffunicode.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -747,9 +927,9 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>mempool.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\src\components.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -761,44 +941,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -810,9 +955,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -824,6 +983,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\idle.c</FilePath>
@@ -831,9 +1004,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -841,149 +1021,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>startup_gd32f10x_cl.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F10x\Source\ARM\startup_gd32f10x_cl.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_fwdgt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_fwdgt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_sdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32f10x_exmc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_exmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_wwdgt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_wwdgt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_dbg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dbg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_fmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_fmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_enet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_enet.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_bkp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_bkp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f10x_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_gd32f10x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F10x\Source\system_gd32f10x.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -995,9 +1035,58 @@
           </Files>
           <Files>
             <File>
+              <FileName>gd32f10x_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_pmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_wwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_wwdgt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>gd32f10x_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_fmc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1009,9 +1098,100 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f10x_exti.c</FileName>
+              <FileName>system_gd32f10x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_exti.c</FilePath>
+              <FilePath>Libraries\CMSIS\GD\GD32F10x\Source\system_gd32f10x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_bkp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_fwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_fwdgt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_enet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_enet.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_sdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_dbg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dbg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_gd32f10x_cl.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\GD\GD32F10x\Source\ARM\startup_gd32f10x_cl.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f10x_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_misc.c</FilePath>
             </File>
           </Files>
         </Group>

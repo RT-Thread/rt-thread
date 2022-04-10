@@ -118,7 +118,7 @@ rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, 
     device->parent.control = _pwm_control;
 #endif /* RT_USING_DEVICE_OPS */
 
-    device->parent.type         = RT_Device_Class_Miscellaneous;
+    device->parent.type         = RT_Device_Class_PWM;
     device->ops                 = ops;
     device->parent.user_data    = (void *)user_data;
 

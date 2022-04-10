@@ -43,6 +43,9 @@ struct part_flash_info
 #elif defined (__GNUC__)               /* GNU GCC Compiler */
     #define SECTION(x)                 __attribute__((section(x)))
     #define USED                       __attribute__((used))
+#elif defined (_MSC_VER)
+    #define SECTION(x)
+    #define USED
 #else
     #error not supported tool chain
 #endif /* __CC_ARM */
