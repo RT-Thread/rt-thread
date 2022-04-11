@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -41,7 +41,7 @@
  * 2021-05-30     Meco Man     implement rt_mutex_trytake()
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to ipc.c
  * 2022-01-24     THEWON       let rt_mutex_take return thread->error when using signal
- * 2022-04-08     Stanley      Add descriptions for rt_mq_recv and rt_sem_take timeout parameters.
+ * 2022-04-08     Stanley      Correct descriptions
  */
 
 #include <rtthread.h>
@@ -469,8 +469,12 @@ RTM_EXPORT(rt_sem_delete);
  *
  * @param    time is a timeout period (unit: an OS tick). If the semaphore is unavailable, the thread will wait for
  *           the semaphore up to the amount of time specified by this parameter.
- *           NOTE: If use the macro RT_WAITING_FOREVER to set this parameter, which means that when the
- *           semaphore is unavailable, the thread will be waitting forever.
+ *
+ *           NOTE:
+ *           If use Macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *           message is unavailable in the queue, the thread will be waiting forever.
+ *           If use macro RT_WAITING_NO to set this parameter, which means that this
+ *           function is non-blocking and will return immediately.
  *
  * @return   Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it means that the semaphore take failed.
@@ -3044,8 +3048,12 @@ RTM_EXPORT(rt_mq_urgent);
  *
  * @param    timeout is a timeout period (unit: an OS tick). If the message is unavailable, the thread will wait for
  *           the message in the queue up to the amount of time specified by this parameter.
- *           NOTE: If use Macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *
+ *           NOTE:
+ *           If use Macro RT_WAITING_FOREVER to set this parameter, which means that when the
  *           message is unavailable in the queue, the thread will be waiting forever.
+ *           If use macro RT_WAITING_NO to set this parameter, which means that this
+ *           function is non-blocking and will return immediately.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it means that the mailbox release failed.
