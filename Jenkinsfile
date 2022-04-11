@@ -108,7 +108,9 @@ pipeline {
                         ['frdm-k64f', 'sourcery-arm'],
                         ['xplorer4330/M4', 'sourcery-arm'],
                         // ['at32/at32f403a-start', 'sourcery-arm'],/* CI link not support */
-                        // ['at32/at32f407-start', 'sourcery-arm']/* CI compile C99 not support */
+                        // ['at32/at32f407-start', 'sourcery-arm'],/* CI compile C99 not support */
+                        // ['at32/at32f435-start', 'sourcery-arm'],/* CI compile C99 not support */
+                        // ['at32/at32f437-start', 'sourcery-arm']/* CI compile C99 not support */
                     ]
 
                     for (int i in bsp_array) {
