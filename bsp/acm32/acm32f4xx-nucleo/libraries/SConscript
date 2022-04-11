@@ -18,9 +18,9 @@ HAL_Driver/Src/HAL_EXTI.c
 libpath = ['.', cwd + '/Device', cwd + '/HAL_Driver/Src']
 libs = ['System_Accelerate', 'HAL_EFlash_EX']
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
     src += ['Device/Startup_ACM32F4_gcc.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['Device/Startup_ACM32F4.s']
 elif rtconfig.CROSS_TOOL == 'iar':
     src += ['Device/Startup_ACM32F4_iar.s']
