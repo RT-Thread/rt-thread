@@ -53,7 +53,7 @@ menu "Hardware Drivers Config"
                 select RT_USING_QSPI
                 select RT_USING_SPI
                 default n
-                
+
             config BSP_USING_ONCHIP_RTC
                 bool "Enable RTC"
                 select RT_USING_RTC
@@ -87,6 +87,55 @@ menu "Hardware Drivers Config"
             bool "Enable OTGFS as USB device"
             select RT_USING_USB_DEVICE
             default n 
+
+        config BSP_USING_OV5640
+            bool "Enable camera (ov5640)"
+            select BSP_USING_DCMI
+            select BSP_USING_I2C
+            select BSP_USING_I2C1
+            default n
+
+        config BSP_USING_DCMI
+            bool "Enable DCMI"
+            default n
+        
+        menuconfig BSP_USING_I2C
+            bool "Enable I2C BUS (software simulation)"
+            select RT_USING_I2C
+            select RT_USING_I2C_BITOPS
+            select RT_USING_PIN
+            default n
+            if BSP_USING_I2C
+                menuconfig BSP_USING_I2C1
+                    bool "Enable I2C1 BUS (software simulation)"
+                    default n
+                    if BSP_USING_I2C1
+                        comment "Notice: PB8 --> 24; PB9 --> 25"
+                        config BSP_I2C1_SCL_PIN
+                            int "i2c1 scl pin number"
+                            range 1 176
+                            default 24
+                        config BSP_I2C1_SDA_PIN
+                            int "I2C1 sda pin number"
+                            range 1 176
+                            default 25
+                    endif
+
+                menuconfig BSP_USING_I2C2
+                    bool "Enable I2C2 BUS (software simulation)"
+                    default n
+                    if BSP_USING_I2C2
+                        comment "Notice: PB10 --> 26; PB11 --> 27"
+                        config BSP_I2C2_SCL_PIN
+                            int "i2c2 scl pin number"
+                            range 1 176
+                            default 26
+                        config BSP_I2C2_SDA_PIN
+                            int "I2C2 sda pin number"
+                            range 1 176
+                            default 27
+                    endif
+            endif
 
     endmenu
 
