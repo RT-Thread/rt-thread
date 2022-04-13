@@ -18,7 +18,9 @@ int main(void)
 {
     /* set LED2 pin mode to output */
     rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
-
+    #ifdef BSP_USING_USBD
+        rt_console_set_device("vcom");
+    #endif
     while (1)
     {
         rt_pin_write(LED1_PIN, PIN_HIGH);
