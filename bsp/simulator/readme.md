@@ -53,11 +53,9 @@ RTGUI的最新源码目前托管在github上：https://github.com/RT-Thread/RTGU
  sd.bin--模拟SD卡，挂载fat，大小为16M
  nand.bin-模拟nand flash，挂载uffs，参数page=2048+64bytes，block=64pages，16M
  nor.bin--模拟nor flash，挂载jffs2，型号为sst25vf，2M
-第一次启动时，会看到fatfs挂在失败。
-按下回车，出现finsh，然后输入`mkfs("elm", "sd0")`格式化SD卡，如下所示
-	finsh>>mkfs("elm", "sd0")
-			0, 0x00000000
-重启程序，可以正确挂载fat文件系统。
+第一次启动时，会看到fatfs挂在失败，因为文件系统没有格式化，需要键入以下命令：
+mkfs sd0
+重启运行程序，可以正确挂载、使用FATFS文件系统。
 
 2) 测试RTGUI
 打开RTGUI组件后编译，启动在finsh中输入snake_main()并回车，可运行贪吃蛇程序

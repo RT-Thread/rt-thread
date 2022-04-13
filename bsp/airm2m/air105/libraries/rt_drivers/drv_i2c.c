@@ -112,6 +112,8 @@ int air105_hw_i2c_init(void)
     prv_air105_i2c.ops = &air105_i2c_ops;
     prv_air105_i2c.priv = 0;
     I2C_MasterSetup(0, 400000);
+    GPIO_Iomux(GPIOE_06, 2);
+    GPIO_Iomux(GPIOE_07, 2);
 #ifdef I2C_BUS_NAME
     rt_i2c_bus_device_register(&prv_air105_i2c, I2C_BUS_NAME);
 #else
