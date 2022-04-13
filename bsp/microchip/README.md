@@ -13,6 +13,18 @@ Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 ## ARM Cortex-M7 Series
 - same70 | 3.3V 300MHz Cortex-M7 core with CAN-FD/High speed USB/Ethernet support
 
+## Directory description：
+	* applications: 
+		* user main function entrance,
+		* driver example - like i2c, can, adc ...
+		* application example
+	* board: 
+		* user board initialization
+		* user driver adpater code, like console device, ethernet device
+	* bsp:
+		* MCU BSP files - startup file, peripheral drivers, configuation headers and linker script
+		* generated from start.atmel.com - DO NOT modify it
+
 # 2. RT-Thread porting guide of Microchip SAM MCU
 
 ## 2.1 Configure project BSP on Atmel Start
@@ -185,6 +197,9 @@ About RT-Thread env tools, click [Here](https://github.com/RT-Thread/rt-thread/b
 
 # 5. Microchip SAM MCU BSP configuration and user guide
 
+	* Please refer to <ASF4 API Reference Manual> for more details
+[ASF4 API Reference Manual](https://ww1.microchip.com/downloads/en/DeviceDoc/50002633B.pdf)
+
 ## 5.1 SAMC2x/E5x/E70 CAN Driver
 
 	* CAN driver configuration.
@@ -192,7 +207,7 @@ About RT-Thread env tools, click [Here](https://github.com/RT-Thread/rt-thread/b
 ![在这里插入图片描述](doc/5-1-1-atmel-start-driver-can0.png)
 ![在这里插入图片描述](doc/5-1-1-atmel-start-driver-can1.png)
 
-	* CAN driver user guide and example.
+	* CAN driver user guide - see <ASF4 API Reference Manual.pdf> P121 for more details. 
 
 	* To be continued.
 
