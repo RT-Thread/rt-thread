@@ -53,6 +53,11 @@ menu "Hardware Drivers Config"
                 select RT_USING_QSPI
                 select RT_USING_SPI
                 default n
+                
+            config BSP_USING_ONCHIP_RTC
+                bool "Enable RTC"
+                select RT_USING_RTC
+                default n
 
         source "../libraries/HAL_Drivers/Kconfig"
             
