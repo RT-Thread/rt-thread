@@ -168,6 +168,9 @@ jobs:
          - {RTT_BSP: "raspberry-pi/raspi3-64", RTT_TOOL_CHAIN: "sourcery-aarch64"}
          - {RTT_BSP: "raspberry-pi/raspi4-64", RTT_TOOL_CHAIN: "sourcery-aarch64"}
          - {RTT_BSP: "rockchip/rk3568", RTT_TOOL_CHAIN: "sourcery-aarch64"}
+         - {RTT_BSP: "microchip/samc21", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "microchip/same54", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "microchip/same70", RTT_TOOL_CHAIN: "sourcery-arm"}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
