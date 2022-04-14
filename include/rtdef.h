@@ -41,6 +41,7 @@
  * 2022-01-01     Gabriel      improve hooking method
  * 2022-01-07     Gabriel      move some __on_rt_xxxxx_hook to dedicated c source files
  * 2022-01-12     Meco Man     remove RT_THREAD_BLOCK
+ * 2022-04-10     THEWON       add flush for device & some device flags
  */
 
 #ifndef __RT_DEF_H__
@@ -989,15 +990,21 @@ enum rt_device_class_type
 #define RT_DEVICE_OFLAG_WRONLY          0x002           /**< write only access */
 #define RT_DEVICE_OFLAG_RDWR            0x003           /**< read and write */
 #define RT_DEVICE_OFLAG_OPEN            0x008           /**< device is opened */
+
+#define RT_DEVICE_OFLAG_BLOCKING        0x000           /**< blocking io mode */
+#define RT_DEVICE_OFLAG_NONBLOCKING     0x004           /**< non-blocking io mode */
+
 #define RT_DEVICE_OFLAG_MASK            0xf0f           /**< mask of open flag */
 
 /**
  * general device commands
  */
-#define RT_DEVICE_CTRL_RESUME           0x01            /**< resume device */
-#define RT_DEVICE_CTRL_SUSPEND          0x02            /**< suspend device */
-#define RT_DEVICE_CTRL_CONFIG           0x03            /**< configure device */
-#define RT_DEVICE_CTRL_CLOSE            0x04            /**< close device */
+#define RT_DEVICE_CTRL_OPEN             0x01            /**< open device */
+#define RT_DEVICE_CTRL_RESUME           0x02            /**< resume device */
+#define RT_DEVICE_CTRL_SUSPEND          0x03            /**< suspend device */
+#define RT_DEVICE_CTRL_CONFIG           0x04            /**< configure device */
+#define RT_DEVICE_CTRL_CLOSE            0x05            /**< close device */
+#define RT_DEVICE_CTRL_BLOCKING         0x06            /**< blocking io */
 
 #define RT_DEVICE_CTRL_SET_INT          0x10            /**< set interrupt */
 #define RT_DEVICE_CTRL_CLR_INT          0x11            /**< clear interrupt */
@@ -1034,6 +1041,7 @@ struct rt_device_ops
     rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
+    rt_err_t  (*flush)  (rt_device_t dev);
 };
 #endif
 
@@ -1075,6 +1083,7 @@ struct rt_device
     rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
+    rt_err_t  (*flush)  (rt_device_t dev);
 #endif
 
 #ifdef RT_USING_POSIX_DEVIO
