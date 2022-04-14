@@ -1,0 +1,585 @@
+format_version: '2'
+name: SAME70 LED switcher
+versions:
+  api: '1.0'
+  backend: 1.8.580
+  commit: f3d8d96e294de8dee688333bbbe8d8458a4f6b4c
+  content: unknown
+  content_pack_name: unknown
+  format: '2'
+  frontend: 1.8.580
+  packs_version_avr8: 1.0.1463
+  packs_version_qtouch: unknown
+  packs_version_sam: 1.0.1726
+  version_backend: 1.8.580
+  version_frontend: ''
+board:
+  identifier: SAME70Xplained
+  device: ATSAME70Q21B-AN
+details: null
+application:
+  definition: 'Atmel:Application_Examples:0.0.1::Application:LED_switcher:'
+  configuration: null
+middlewares: {}
+drivers:
+  PMC:
+    user_label: PMC
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::PMC::driver_config_definition::PMC::HAL:HPL:PMC
+    functionality: System
+    api: HAL:HPL:PMC
+    configuration:
+      $input: 240000000
+      $input_id: UDPLL with Divider (MCKR UPLLDIV2)
+      RESERVED_InputFreq: 240000000
+      RESERVED_InputFreq_id: UDPLL with Divider (MCKR UPLLDIV2)
+      _$freq_output_32kHz External Crystal Oscillator (XOSC32K): 0
+      _$freq_output_32kHz High Accuracy Internal Oscillator (OSC32K): 0
+      _$freq_output_Embedded 4/8/12MHz RC Oscillator (OSC12M): '12000000'
+      _$freq_output_External 3-20MHz Oscillator (XOSC20M): 12000000
+      _$freq_output_External Clock: 1
+      _$freq_output_Generic Clock 0 (GCLK0) for I2SC0: 75000000
+      _$freq_output_Generic Clock 1 (GCLK1) for I2SC1: 100000000
+      _$freq_output_MCK / 8 for USART: 18750000
+      _$freq_output_Master Clock (MCK): 150000000
+      _$freq_output_Master Clock Controller (PMC_MCKR): 300000000
+      _$freq_output_PLLA Clock (PLLACK): 300000000
+      _$freq_output_Programmable Clock Controller 0 (PMC_PCK0): 12000000
+      _$freq_output_Programmable Clock Controller 1 (PMC_PCK1): 6000000
+      _$freq_output_Programmable Clock Controller 2 (PMC_PCK2): 4000000
+      _$freq_output_Programmable Clock Controller 3 (PMC_PCK3): 3000000
+      _$freq_output_Programmable Clock Controller 4 (PMC_PCK4): 2400000
+      _$freq_output_Programmable Clock Controller 5 (PMC_PCK5): 40000000
+      _$freq_output_Programmable Clock Controller 6 (PMC_PCK6): 1714285.7142857143
+      _$freq_output_SysTick External Clock: 37500000
+      _$freq_output_UDPLL with Divider (MCKR UPLLDIV2): 240000000
+      _$freq_output_USB 480M Clock (UPLLCK): 480000000
+      _$freq_output_USB Clock Controller (USB_48M): 300000000
+      clk_gen_cfden_enable: false
+      clk_gen_fclk_oscillator: Master Clock Controller (PMC_MCKR)
+      clk_gen_gclk0_arch_enable: true
+      clk_gen_gclk0_oscillator: Master Clock (MCK)
+      clk_gen_gclk1_arch_enable: true
+      clk_gen_gclk1_oscillator: PLLA Clock (PLLACK)
+      clk_gen_mainck_arch_enable: true
+      clk_gen_mainck_oscillator: External 3-20MHz Oscillator (XOSC20M)
+      clk_gen_mck_oscillator: Master Clock Controller (PMC_MCKR)
+      clk_gen_mckr_arch_enable: true
+      clk_gen_mckr_oscillator: PLLA Clock (PLLACK)
+      clk_gen_pck0_arch_enable: false
+      clk_gen_pck0_oscillator: Main Clock (MAINCK)
+      clk_gen_pck1_arch_enable: false
+      clk_gen_pck1_oscillator: Main Clock (MAINCK)
+      clk_gen_pck2_arch_enable: false
+      clk_gen_pck2_oscillator: Main Clock (MAINCK)
+      clk_gen_pck3_arch_enable: false
+      clk_gen_pck3_oscillator: Main Clock (MAINCK)
+      clk_gen_pck4_arch_enable: false
+      clk_gen_pck4_oscillator: Main Clock (MAINCK)
+      clk_gen_pck5_arch_enable: true
+      clk_gen_pck5_oscillator: UDPLL with Divider (MCKR UPLLDIV2)
+      clk_gen_pck6_arch_enable: false
+      clk_gen_pck6_oscillator: Main Clock (MAINCK)
+      clk_gen_slck2_oscillator: Slow Clock (SLCK)
+      clk_gen_slck_arch_enable: true
+      clk_gen_slck_oscillator: 32kHz High Accuracy Internal Oscillator (OSC32K)
+      clk_gen_systick_oscillator: Master Clock Controller (PMC_MCKR)
+      clk_gen_usb_480m_oscillator: USB 480M Clock (UPLLCK)
+      clk_gen_usb_48m_arch_enable: false
+      clk_gen_usb_48m_oscillator: PLLA Clock (PLLACK)
+      dummy_ext_clk_src: External Clock Input
+      dummy_ext_src: Specific clock input from specific pin
+      efc_fws: 6 cycles
+      enable_clk_gen_fclk: true
+      enable_clk_gen_gclk0: true
+      enable_clk_gen_gclk1: true
+      enable_clk_gen_mainck: true
+      enable_clk_gen_mck: true
+      enable_clk_gen_mckr: true
+      enable_clk_gen_pck0: true
+      enable_clk_gen_pck1: true
+      enable_clk_gen_pck2: true
+      enable_clk_gen_pck3: true
+      enable_clk_gen_pck4: true
+      enable_clk_gen_pck5: true
+      enable_clk_gen_pck6: true
+      enable_clk_gen_slck: true
+      enable_clk_gen_slck2: true
+      enable_clk_gen_systick: true
+      enable_clk_gen_usb_480m: true
+      enable_clk_gen_usb_48m: true
+      enable_dummy_ext: true
+      enable_dummy_ext_clk: true
+      enable_hclk_clock: true
+      enable_mck_div_8: false
+      enable_osc12m: false
+      enable_osc32k: true
+      enable_pllack: true
+      enable_systick_clk_clock: true
+      enable_upllck: true
+      enable_upllckdiv: true
+      enable_xosc20m: true
+      enable_xosc32k: false
+      gclk0_div: 2
+      gclk0_gclken_enable: false
+      gclk1_div: 3
+      gclk1_gclken_enable: false
+      hclk_clock_source: Master Clock Controller (PMC_MCKR)
+      mck_div: '2'
+      mck_div_8_src: Master Clock (MCK)
+      mckr_presc: '1'
+      osc12m_arch_enable: false
+      osc12m_selector: '12000000'
+      osc32k_arch_enable: false
+      pck0_presc: 1
+      pck1_presc: 2
+      pck2_presc: 3
+      pck3_presc: 4
+      pck4_presc: 5
+      pck5_presc: 6
+      pck6_presc: 7
+      pllack_arch_enable: true
+      pllack_div: 1
+      pllack_mul: 25
+      pllack_ref_clock: Main Clock (MAINCK)
+      systick_clk_clock_div: '8'
+      systick_clk_clock_source: Master Clock Controller (PMC_MCKR)
+      systick_clock_div: '8'
+      upllck_arch_enable: true
+      upllck_ref_clock: External 3-20MHz Oscillator (XOSC20M)
+      upllckdiv_div: '2'
+      upllckdiv_ref_clock: USB 480M Clock (UPLLCK)
+      usb_48m_div: 1
+      xosc20m_arch_enable: true
+      xosc20m_bypass: The external crystal oscillator is not bypassed.
+      xosc20m_selector: 12000000
+      xosc20m_startup_time: 62
+      xosc32k_arch_enable: false
+      xosc32k_bypass: The 32kHz crystal oscillator is not bypassed.
+    optional_signals: []
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: CPU
+          input: CPU
+          external: false
+          external_frequency: 0
+        configuration: {}
+  DELAY_0:
+    user_label: DELAY_0
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::SysTick::driver_config_definition::Delay::HAL:Driver:Delay
+    functionality: Delay
+    api: HAL:Driver:Delay
+    configuration:
+      systick_arch_tickint: false
+    optional_signals: []
+    variant: null
+    clocks:
+      domain_group: null
+  TARGET_IO:
+    user_label: TARGET_IO
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::USART1::driver_config_definition::UART::HAL:Driver:USART.Sync
+    functionality: USART
+    api: HAL:Driver:USART_Sync
+    configuration:
+      usart_9bits_enable: false
+      usart__inack: The NACK is not generated
+      usart__oversampling_mode: 16 Oversampling
+      usart_advanced: false
+      usart_arch_fractional: 0
+      usart_arch_msbf: LSB is transmitted first
+      usart_baud_rate: 115200
+      usart_channel_mode: Normal Mode
+      usart_character_size: 8 bits
+      usart_clock_output_select: The USART does not drive the SCK pin
+      usart_dsnack: NACK is sent on the ISO line as soon as a parity error occurs
+      usart_invdata: Data isn't inverted, nomal mode
+      usart_manchester_filter_enable: false
+      usart_manchester_synchronization_mode: The Manchester start bit is a 0 to 1
+        transition
+      usart_max_iteration: 0
+      usart_parity: No parity
+      usart_receive_filter_enable: false
+      usart_start_frame_delimiter: Start frame delimiter is COMMAND or DATA SYNC
+      usart_stop_bit: 1 stop bit
+      variable_sync: User defined configuration
+    optional_signals:
+    - identifier: TARGET_IO:RXD/1
+      pad: PA21
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::USART1.RXD.1
+      name: USART1/RXD/1
+      label: RXD/1
+    - identifier: TARGET_IO:TXD/1
+      pad: PB4
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::USART1.TXD.1
+      name: USART1/TXD/1
+      label: TXD/1
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: USART
+          input: Master Clock (MCK)
+          external: false
+          external_frequency: 0
+        configuration:
+          usart_clock_source: Master Clock (MCK)
+  XDMAC:
+    user_label: XDMAC
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::XDMAC::driver_config_definition::DMAC::HAL:HPL:DMAC
+    functionality: System
+    api: HAL:HPL:DMAC
+    configuration:
+      dma_des_interface_0: AHB_IF0
+      dma_des_interface_1: AHB_IF0
+      dma_des_interface_10: AHB_IF0
+      dma_des_interface_11: AHB_IF0
+      dma_des_interface_12: AHB_IF0
+      dma_des_interface_13: AHB_IF0
+      dma_des_interface_14: AHB_IF0
+      dma_des_interface_15: AHB_IF0
+      dma_des_interface_16: AHB_IF0
+      dma_des_interface_17: AHB_IF0
+      dma_des_interface_18: AHB_IF0
+      dma_des_interface_19: AHB_IF0
+      dma_des_interface_2: AHB_IF0
+      dma_des_interface_20: AHB_IF0
+      dma_des_interface_21: AHB_IF0
+      dma_des_interface_22: AHB_IF0
+      dma_des_interface_23: AHB_IF0
+      dma_des_interface_3: AHB_IF0
+      dma_des_interface_4: AHB_IF0
+      dma_des_interface_5: AHB_IF0
+      dma_des_interface_6: AHB_IF0
+      dma_des_interface_7: AHB_IF0
+      dma_des_interface_8: AHB_IF0
+      dma_des_interface_9: AHB_IF0
+      dma_src_interface_0: AHB_IF0
+      dma_src_interface_1: AHB_IF0
+      dma_src_interface_10: AHB_IF0
+      dma_src_interface_11: AHB_IF0
+      dma_src_interface_12: AHB_IF0
+      dma_src_interface_13: AHB_IF0
+      dma_src_interface_14: AHB_IF0
+      dma_src_interface_15: AHB_IF0
+      dma_src_interface_16: AHB_IF0
+      dma_src_interface_17: AHB_IF0
+      dma_src_interface_18: AHB_IF0
+      dma_src_interface_19: AHB_IF0
+      dma_src_interface_2: AHB_IF0
+      dma_src_interface_20: AHB_IF0
+      dma_src_interface_21: AHB_IF0
+      dma_src_interface_22: AHB_IF0
+      dma_src_interface_23: AHB_IF0
+      dma_src_interface_3: AHB_IF0
+      dma_src_interface_4: AHB_IF0
+      dma_src_interface_5: AHB_IF0
+      dma_src_interface_6: AHB_IF0
+      dma_src_interface_7: AHB_IF0
+      dma_src_interface_8: AHB_IF0
+      dma_src_interface_9: AHB_IF0
+      dma_trans_type_0: Memory to Memory Transfer
+      dma_trans_type_1: Memory to Memory Transfer
+      dma_trans_type_10: Memory to Memory Transfer
+      dma_trans_type_11: Memory to Memory Transfer
+      dma_trans_type_12: Memory to Memory Transfer
+      dma_trans_type_13: Memory to Memory Transfer
+      dma_trans_type_14: Memory to Memory Transfer
+      dma_trans_type_15: Memory to Memory Transfer
+      dma_trans_type_16: Memory to Memory Transfer
+      dma_trans_type_17: Memory to Memory Transfer
+      dma_trans_type_18: Memory to Memory Transfer
+      dma_trans_type_19: Memory to Memory Transfer
+      dma_trans_type_2: Memory to Memory Transfer
+      dma_trans_type_20: Memory to Memory Transfer
+      dma_trans_type_21: Memory to Memory Transfer
+      dma_trans_type_22: Memory to Memory Transfer
+      dma_trans_type_23: Memory to Memory Transfer
+      dma_trans_type_3: Memory to Memory Transfer
+      dma_trans_type_4: Memory to Memory Transfer
+      dma_trans_type_5: Memory to Memory Transfer
+      dma_trans_type_6: Memory to Memory Transfer
+      dma_trans_type_7: Memory to Memory Transfer
+      dma_trans_type_8: Memory to Memory Transfer
+      dma_trans_type_9: Memory to Memory Transfer
+      dmac_beatsize_0: 8-bit bus transfer
+      dmac_beatsize_1: 8-bit bus transfer
+      dmac_beatsize_10: 8-bit bus transfer
+      dmac_beatsize_11: 8-bit bus transfer
+      dmac_beatsize_12: 8-bit bus transfer
+      dmac_beatsize_13: 8-bit bus transfer
+      dmac_beatsize_14: 8-bit bus transfer
+      dmac_beatsize_15: 8-bit bus transfer
+      dmac_beatsize_16: 8-bit bus transfer
+      dmac_beatsize_17: 8-bit bus transfer
+      dmac_beatsize_18: 8-bit bus transfer
+      dmac_beatsize_19: 8-bit bus transfer
+      dmac_beatsize_2: 8-bit bus transfer
+      dmac_beatsize_20: 8-bit bus transfer
+      dmac_beatsize_21: 8-bit bus transfer
+      dmac_beatsize_22: 8-bit bus transfer
+      dmac_beatsize_23: 8-bit bus transfer
+      dmac_beatsize_3: 8-bit bus transfer
+      dmac_beatsize_4: 8-bit bus transfer
+      dmac_beatsize_5: 8-bit bus transfer
+      dmac_beatsize_6: 8-bit bus transfer
+      dmac_beatsize_7: 8-bit bus transfer
+      dmac_beatsize_8: 8-bit bus transfer
+      dmac_beatsize_9: 8-bit bus transfer
+      dmac_burstsize_0: 1 burst size
+      dmac_burstsize_1: 1 burst size
+      dmac_burstsize_10: 1 burst size
+      dmac_burstsize_11: 1 burst size
+      dmac_burstsize_12: 1 burst size
+      dmac_burstsize_13: 1 burst size
+      dmac_burstsize_14: 1 burst size
+      dmac_burstsize_15: 1 burst size
+      dmac_burstsize_16: 1 burst size
+      dmac_burstsize_17: 1 burst size
+      dmac_burstsize_18: 1 burst size
+      dmac_burstsize_19: 1 burst size
+      dmac_burstsize_2: 1 burst size
+      dmac_burstsize_20: 1 burst size
+      dmac_burstsize_21: 1 burst size
+      dmac_burstsize_22: 1 burst size
+      dmac_burstsize_23: 1 burst size
+      dmac_burstsize_3: 1 burst size
+      dmac_burstsize_4: 1 burst size
+      dmac_burstsize_5: 1 burst size
+      dmac_burstsize_6: 1 burst size
+      dmac_burstsize_7: 1 burst size
+      dmac_burstsize_8: 1 burst size
+      dmac_burstsize_9: 1 burst size
+      dmac_channel_0_settings: false
+      dmac_channel_10_settings: false
+      dmac_channel_11_settings: false
+      dmac_channel_12_settings: false
+      dmac_channel_13_settings: false
+      dmac_channel_14_settings: false
+      dmac_channel_15_settings: false
+      dmac_channel_16_settings: false
+      dmac_channel_17_settings: false
+      dmac_channel_18_settings: false
+      dmac_channel_19_settings: false
+      dmac_channel_1_settings: false
+      dmac_channel_20_settings: false
+      dmac_channel_21_settings: false
+      dmac_channel_22_settings: false
+      dmac_channel_23_settings: false
+      dmac_channel_2_settings: false
+      dmac_channel_3_settings: false
+      dmac_channel_4_settings: false
+      dmac_channel_5_settings: false
+      dmac_channel_6_settings: false
+      dmac_channel_7_settings: false
+      dmac_channel_8_settings: false
+      dmac_channel_9_settings: false
+      dmac_chunksize_0: 1 data transferred
+      dmac_chunksize_1: 1 data transferred
+      dmac_chunksize_10: 1 data transferred
+      dmac_chunksize_11: 1 data transferred
+      dmac_chunksize_12: 1 data transferred
+      dmac_chunksize_13: 1 data transferred
+      dmac_chunksize_14: 1 data transferred
+      dmac_chunksize_15: 1 data transferred
+      dmac_chunksize_16: 1 data transferred
+      dmac_chunksize_17: 1 data transferred
+      dmac_chunksize_18: 1 data transferred
+      dmac_chunksize_19: 1 data transferred
+      dmac_chunksize_2: 1 data transferred
+      dmac_chunksize_20: 1 data transferred
+      dmac_chunksize_21: 1 data transferred
+      dmac_chunksize_22: 1 data transferred
+      dmac_chunksize_23: 1 data transferred
+      dmac_chunksize_3: 1 data transferred
+      dmac_chunksize_4: 1 data transferred
+      dmac_chunksize_5: 1 data transferred
+      dmac_chunksize_6: 1 data transferred
+      dmac_chunksize_7: 1 data transferred
+      dmac_chunksize_8: 1 data transferred
+      dmac_chunksize_9: 1 data transferred
+      dmac_dstinc_0: false
+      dmac_dstinc_1: false
+      dmac_dstinc_10: false
+      dmac_dstinc_11: false
+      dmac_dstinc_12: false
+      dmac_dstinc_13: false
+      dmac_dstinc_14: false
+      dmac_dstinc_15: false
+      dmac_dstinc_16: false
+      dmac_dstinc_17: false
+      dmac_dstinc_18: false
+      dmac_dstinc_19: false
+      dmac_dstinc_2: false
+      dmac_dstinc_20: false
+      dmac_dstinc_21: false
+      dmac_dstinc_22: false
+      dmac_dstinc_23: false
+      dmac_dstinc_3: false
+      dmac_dstinc_4: false
+      dmac_dstinc_5: false
+      dmac_dstinc_6: false
+      dmac_dstinc_7: false
+      dmac_dstinc_8: false
+      dmac_dstinc_9: false
+      dmac_srcinc_0: false
+      dmac_srcinc_1: false
+      dmac_srcinc_10: false
+      dmac_srcinc_11: false
+      dmac_srcinc_12: false
+      dmac_srcinc_13: false
+      dmac_srcinc_14: false
+      dmac_srcinc_15: false
+      dmac_srcinc_16: false
+      dmac_srcinc_17: false
+      dmac_srcinc_18: false
+      dmac_srcinc_19: false
+      dmac_srcinc_2: false
+      dmac_srcinc_20: false
+      dmac_srcinc_21: false
+      dmac_srcinc_22: false
+      dmac_srcinc_23: false
+      dmac_srcinc_3: false
+      dmac_srcinc_4: false
+      dmac_srcinc_5: false
+      dmac_srcinc_6: false
+      dmac_srcinc_7: false
+      dmac_srcinc_8: false
+      dmac_srcinc_9: false
+      dmac_trifsrc_0: Software Trigger
+      dmac_trifsrc_1: Software Trigger
+      dmac_trifsrc_10: Software Trigger
+      dmac_trifsrc_11: Software Trigger
+      dmac_trifsrc_12: Software Trigger
+      dmac_trifsrc_13: Software Trigger
+      dmac_trifsrc_14: Software Trigger
+      dmac_trifsrc_15: Software Trigger
+      dmac_trifsrc_16: Software Trigger
+      dmac_trifsrc_17: Software Trigger
+      dmac_trifsrc_18: Software Trigger
+      dmac_trifsrc_19: Software Trigger
+      dmac_trifsrc_2: Software Trigger
+      dmac_trifsrc_20: Software Trigger
+      dmac_trifsrc_21: Software Trigger
+      dmac_trifsrc_22: Software Trigger
+      dmac_trifsrc_23: Software Trigger
+      dmac_trifsrc_3: Software Trigger
+      dmac_trifsrc_4: Software Trigger
+      dmac_trifsrc_5: Software Trigger
+      dmac_trifsrc_6: Software Trigger
+      dmac_trifsrc_7: Software Trigger
+      dmac_trifsrc_8: Software Trigger
+      dmac_trifsrc_9: Software Trigger
+      xdmac_enable: false
+    optional_signals: []
+    variant: null
+    clocks:
+      domain_group: null
+  CAN_0:
+    user_label: CAN_0
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::MCAN1::driver_config_definition::CAN::HAL:Driver:CAN.Async
+    functionality: CAN
+    api: HAL:Driver:CAN_Async
+    configuration:
+      can_cccr_niso: ISO11898_1
+      can_dbtp_dbrp: 1
+      can_dbtp_dsjw: 4
+      can_dbtp_dtseg1: 31
+      can_dbtp_dtseg2: 8
+      can_dbtp_tdc: false
+      can_gfc_anfe: Reject
+      can_gfc_anfs: Reject
+      can_gfc_rrfe: Filter remote frames with 29-bit standard IDs
+      can_gfc_rrfs: Filter remote frames with 11-bit standard IDs
+      can_ie_bo: true
+      can_ie_do: true
+      can_ie_ea: true
+      can_ie_ep: true
+      can_ie_ew: true
+      can_nbtp_nbrp: 4
+      can_nbtp_nsjw: 10
+      can_nbtp_ntseg1: 31
+      can_nbtp_ntseg2: 8
+      can_rxesc_f0ds: 8 byte data field.
+      can_rxf0c_f0om: blocking mode
+      can_rxf0c_f0s: 32
+      can_rxf0c_f0wm: 0
+      can_sidfc_lss: 128
+      can_tdcr_tdcf: 11
+      can_tdcr_tdco: 11
+      can_txbc_tfqs: 32
+      can_txefc_efs: 32
+      can_txefc_efwm: 0
+      can_txesc_tbds: 8 byte data field.
+      can_xidam_eidm: 0
+      can_xidfc_lss: 64
+    optional_signals:
+    - identifier: CAN_0:CANRX/1
+      pad: PC12
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::MCAN1.CANRX.1
+      name: MCAN1/CANRX/1
+      label: CANRX/1
+    - identifier: CAN_0:CANTX/1
+      pad: PC14
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::MCAN1.CANTX.1
+      name: MCAN1/CANTX/1
+      label: CANTX/1
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: MCAN
+          input: Programmable Clock Controller 5 (PMC_PCK5)
+          external: false
+          external_frequency: 0
+        configuration:
+          mcan_clock_source: Programmable Clock Controller 5 (PMC_PCK5)
+pads:
+  PC12:
+    name: PC12
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PC12
+    mode: Peripheral IO
+    user_label: PC12
+    configuration: null
+  PA21:
+    name: PA21
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PA21
+    mode: Peripheral IO
+    user_label: PA21
+    configuration: null
+  SW0:
+    name: PA11
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PA11
+    mode: Digital input
+    user_label: SW0
+    configuration:
+      pad_pull_config: Pull-up
+  LED0:
+    name: PC8
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PC8
+    mode: Digital output
+    user_label: LED0
+    configuration:
+      pad_initial_level: High
+  PC14:
+    name: PC14
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PC14
+    mode: Peripheral IO
+    user_label: PC14
+    configuration: null
+  PB4:
+    name: PB4
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PB4
+    mode: Peripheral IO
+    user_label: PB4
+    configuration: null
+toolchain_options: []
+static_files: []
