@@ -49,9 +49,3 @@ const pin_map_t pin_map_table[]=
     {A2, RT_NULL, "adc1", 0}, /* ADC, On-Chip: internal reference voltage */
     {A3, RT_NULL, "adc1", 17} /* ADC, On-Chip: internal temperature sensor */
 };
-
-/* initialization for BSP; maybe a blank function  */
-void initVariant(void)
-{
-    /* Nothing needs to initialize for this BSP */
-}
