@@ -93,6 +93,9 @@ menu "Hardware Drivers Config"
             select BSP_USING_DCMI
             select BSP_USING_I2C
             select BSP_USING_I2C1
+            select BSP_USING_PWM
+            select BSP_USING_PWM1
+            select BSP_USING_PWM1_CH1
             default n
 
         config BSP_USING_DCMI
@@ -135,6 +138,21 @@ menu "Hardware Drivers Config"
                             range 1 176
                             default 27
                     endif
+            endif
+
+        menuconfig BSP_USING_PWM
+            bool "Enable PWM"
+            default n
+            select RT_USING_PWM
+            if BSP_USING_PWM
+            menuconfig BSP_USING_PWM1
+                bool "Enable timer1 output pwm"
+                default n
+                if BSP_USING_PWM1
+                    config BSP_USING_PWM1_CH1
+                        bool "Enable PWM1 channel1"
+                        default n
+                endif
             endif
 
     endmenu
