@@ -37,17 +37,17 @@ extern "C" {
 #define  RT_TOUCH_TYPE_RESISTANCE        (2)  /* resistance ic */
 
 /* Touch control cmd types */
-#define  RT_TOUCH_CTRL_GET_ID            (0)   /* Get device id */
-#define  RT_TOUCH_CTRL_GET_INFO          (1)   /* Get touch info */
-#define  RT_TOUCH_CTRL_SET_MODE          (2)   /* Set touch's work mode. ex. RT_TOUCH_MODE_POLLING,RT_TOUCH_MODE_INT */
-#define  RT_TOUCH_CTRL_SET_X_RANGE       (3)   /* Set x coordinate range */
-#define  RT_TOUCH_CTRL_SET_Y_RANGE       (4)   /* Set y coordinate range */
-#define  RT_TOUCH_CTRL_SET_X_TO_Y        (5)   /* Set X Y coordinate exchange */
-#define  RT_TOUCH_CTRL_DISABLE_INT       (6)   /* Disable interrupt */
-#define  RT_TOUCH_CTRL_ENABLE_INT        (7)   /* Enable interrupt */
-#define  RT_TOUCH_CTRL_POWER_ON          (8)   /* Touch Power On */
-#define  RT_TOUCH_CTRL_POWER_OFF         (9)   /* Touch Power Off */
-#define  RT_TOUCH_CTRL_GET_STATUS        (10)  /* Get Touch Power Status */
+#define  RT_TOUCH_CTRL_GET_ID            (RT_DEVICE_CTRL_BASE(Touch) + 0)   /* Get device id */
+#define  RT_TOUCH_CTRL_GET_INFO          (RT_DEVICE_CTRL_BASE(Touch) + 1)   /* Get touch info */
+#define  RT_TOUCH_CTRL_SET_MODE          (RT_DEVICE_CTRL_BASE(Touch) + 2)   /* Set touch's work mode. ex. RT_TOUCH_MODE_POLLING,RT_TOUCH_MODE_INT */
+#define  RT_TOUCH_CTRL_SET_X_RANGE       (RT_DEVICE_CTRL_BASE(Touch) + 3)   /* Set x coordinate range */
+#define  RT_TOUCH_CTRL_SET_Y_RANGE       (RT_DEVICE_CTRL_BASE(Touch) + 4)   /* Set y coordinate range */
+#define  RT_TOUCH_CTRL_SET_X_TO_Y        (RT_DEVICE_CTRL_BASE(Touch) + 5)   /* Set X Y coordinate exchange */
+#define  RT_TOUCH_CTRL_DISABLE_INT       (RT_DEVICE_CTRL_BASE(Touch) + 6)   /* Disable interrupt */
+#define  RT_TOUCH_CTRL_ENABLE_INT        (RT_DEVICE_CTRL_BASE(Touch) + 7)   /* Enable interrupt */
+#define  RT_TOUCH_CTRL_POWER_ON          (RT_DEVICE_CTRL_BASE(Touch) + 8)   /* Touch Power On */
+#define  RT_TOUCH_CTRL_POWER_OFF         (RT_DEVICE_CTRL_BASE(Touch) + 9)   /* Touch Power Off */
+#define  RT_TOUCH_CTRL_GET_STATUS        (RT_DEVICE_CTRL_BASE(Touch) + 10)  /* Get Touch Power Status */
 
 /* Touch event */
 #define RT_TOUCH_EVENT_NONE              (0)   /* Touch none */

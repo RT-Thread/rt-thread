@@ -1,0 +1,54 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+#var defined
+CPPDEFINES = []
+
+#common lib define
+CPPDEFINES += [rtconfig.DEVICE_TYPE]
+
+# The set of source files associated with this SConscript file.
+
+src  = Glob('hal/src/*.c')
+src += Glob('hal/utils/src/*.c')
+src += Glob('hpl/core/*.c')
+src += Glob('hpl/mcan/*.c')
+src += Glob('hpl/pmc/*.c')
+src += Glob('hpl/systick/*.c')
+src += Glob('hpl/usart/*.c')
+src += Glob('hpl/xdmac/*.c')
+src += [cwd + '/atmel_start.c']
+src += [cwd + '/driver_init.c']
+
+#add for startup script
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [cwd + '/same70b/gcc/system_same70q21b.c']
+    src += [cwd + '/same70b/gcc/gcc/startup_same70q21b.c']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [cwd + '/same70b/armcc/Source/' + 'system_same70q21b.c']
+    src += [cwd + '/same70b/armcc/Source/ARM/' + 'startup_SAME70.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [cwd + '/same70b/iar/' + 'system_same70q21b.c']
+    src += [cwd + '/same70b/iar/iar/' + 'startup_same70q21b.c']
+
+path = [
+    cwd,
+    cwd + '/CMSIS/Core/Include',
+    cwd + '/config',
+    cwd + '/hal/include',
+    cwd + '/hal/utils/include',
+    cwd + '/hpl/core',
+    cwd + '/hpl/mcan',
+    cwd + '/hpl/pio',
+    cwd + '/hpl/pmc',
+    cwd + '/hpl/systick',
+    cwd + '/hpl/usart',
+    cwd + '/hri',
+    cwd + '/same70b/include',]
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

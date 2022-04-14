@@ -1,21 +1,15 @@
-/***************************************************************************//**
- * @file    dev_accel.c
- * @brief   Accelerometer driver of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2011-07-13   onelife     Initial creation for using EFM32 ADC module to
- *  interface the Freescale MMA7361L
+ *                            interface the Freescale MMA7361L
  * 2011-08-02   onelife     Add digital interface support of using EFM32 IIC
- *  module for the Freescale MMA7455L
- ******************************************************************************/
+ *                            module for the Freescale MMA7455L
+ */
 
 /***************************************************************************//**
  * @addtogroup efm32

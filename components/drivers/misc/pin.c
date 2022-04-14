@@ -77,7 +77,7 @@ const static struct rt_device_ops pin_ops =
 
 int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data)
 {
-    _hw_pin.parent.type         = RT_Device_Class_Miscellaneous;
+    _hw_pin.parent.type         = RT_Device_Class_Pin;
     _hw_pin.parent.rx_indicate  = RT_NULL;
     _hw_pin.parent.tx_complete  = RT_NULL;
 

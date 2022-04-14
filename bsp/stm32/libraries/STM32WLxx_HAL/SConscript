@@ -69,7 +69,7 @@ if GetDepend(['BSP_USING_SUBGHZ']):
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_subghz.c']
 	
 path = [cwd + '/STM32WLxx_HAL_Driver/Inc',
-    cwd + '/CMSIS/Device/ST/stm32lwxx/Include',
+    cwd + '/CMSIS/Device/ST/STM32WLxx/Include',
     cwd + '/CMSIS/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']

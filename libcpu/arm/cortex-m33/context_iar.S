@@ -253,6 +253,10 @@ rt_hw_context_switch_to:
     CPSIE   F
     CPSIE   I
 
+    ; ensure PendSV exception taken place before subsequent operation
+    DSB
+    ISB
+
     ; never reach here!
 
 ; compatible with old version

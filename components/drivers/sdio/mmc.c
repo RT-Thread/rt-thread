@@ -290,9 +290,18 @@ out:
 static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 {
   rt_uint32_t ext_csd_bits[] = {
+    EXT_CSD_DDR_BUS_WIDTH_8,
+    EXT_CSD_DDR_BUS_WIDTH_4,
     EXT_CSD_BUS_WIDTH_8,
     EXT_CSD_BUS_WIDTH_4,
     EXT_CSD_BUS_WIDTH_1
+  };
+  rt_uint32_t bus_widths[] = {
+    MMCSD_DDR_BUS_WIDTH_8,
+    MMCSD_DDR_BUS_WIDTH_4,
+    MMCSD_BUS_WIDTH_8,
+    MMCSD_BUS_WIDTH_4,
+    MMCSD_BUS_WIDTH_1
   };
   struct rt_mmcsd_host *host = card->host;
   unsigned idx, trys, bus_width = 0;
@@ -317,12 +326,25 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     * bail out early if corresponding bus capable wasn't
     * set by drivers.
     */
-     if ((!(host->flags & MMCSD_BUSWIDTH_8) &&
-      ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8) ||
-         (!(host->flags & MMCSD_BUSWIDTH_4) &&
-      (ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_4 ||
-      ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8)))
-         continue;
+    if ((!((host->flags & MMCSD_BUSWIDTH_8) &&
+           (host->flags & MMCSD_SUP_HIGHSPEED_DDR)) &&
+         ext_csd_bits[idx] == EXT_CSD_DDR_BUS_WIDTH_8) ||
+        (!((host->flags & MMCSD_BUSWIDTH_4) &&
+           (host->flags & MMCSD_SUP_HIGHSPEED_DDR)) &&
+         ext_csd_bits[idx] == EXT_CSD_DDR_BUS_WIDTH_4) ||
+        (!(host->flags & MMCSD_BUSWIDTH_8) &&
+         ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8) ||
+        (!(host->flags & MMCSD_BUSWIDTH_4) &&
+         ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_4))
+        continue;
+
+    if (host->flags & MMCSD_SUP_HIGHSPEED_DDR)
+    {
+        /* HS_TIMING must be set to "0x1" before setting BUS_WIDTH for dual-data-rate(DDR) operation */
+        err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL, EXT_CSD_HS_TIMING, EXT_CSD_TIMING_HS);
+        if (err)
+            LOG_E("switch to speed mode width hight speed failed!");
+    }
 
     err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
                      EXT_CSD_BUS_WIDTH,
@@ -330,6 +352,7 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     if (err)
       continue;
 
+    bus_width = bus_widths[idx];
     for(trys = 0; trys < 5; trys++){
         mmcsd_set_bus_width(host, bus_width);
         mmcsd_delay_ms(10);
@@ -342,14 +365,20 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
       break;
     } else {
       switch(ext_csd_bits[idx]){
-          case 0:
-            LOG_E("switch to bus width 1 bit failed!");
+          case EXT_CSD_DDR_BUS_WIDTH_8:
+            LOG_E("switch to bus width DDR 8 bit failed!");
             break;
-          case 1:
+          case EXT_CSD_DDR_BUS_WIDTH_4:
+            LOG_E("switch to bus width DDR 4 bit failed!");
+            break;
+          case EXT_CSD_BUS_WIDTH_8:
+            LOG_E("switch to bus width 8 bit failed!");
+            break;
+          case EXT_CSD_BUS_WIDTH_4:
             LOG_E("switch to bus width 4 bit failed!");
             break;
-          case 2:
-            LOG_E("switch to bus width 8 bit failed!");
+          case EXT_CSD_BUS_WIDTH_1:
+            LOG_E("switch to bus width 1 bit failed!");
             break;
           default:
             break;

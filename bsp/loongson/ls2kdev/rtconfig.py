@@ -6,7 +6,7 @@ CPU ='gs264'
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = '../..'
+    RTT_ROOT = '../../..'
 
 # toolchains options
 CROSS_TOOL  = 'gcc'
