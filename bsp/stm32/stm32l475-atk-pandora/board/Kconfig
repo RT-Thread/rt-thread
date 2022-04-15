@@ -40,6 +40,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C3
         select BSP_USING_I2C4
         select BSP_USING_DAC
+        select BSP_USING_DAC1
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         imply RTDUINO_USING_ADAFRUIT
@@ -330,9 +331,9 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C
-            menuconfig BSP_USING_I2C1
-                bool "Enable I2C1 Bus (User I2C)"
-                default n
+            # menuconfig BSP_USING_I2C1
+            #     bool "Enable I2C1 Bus (User I2C)"
+            #     default n
                 # if BSP_USING_I2C1
                 #     comment "Notice: PC1 --> 33; PD6 --> 54" 
                 #     config BSP_I2C1_SCL_PIN
