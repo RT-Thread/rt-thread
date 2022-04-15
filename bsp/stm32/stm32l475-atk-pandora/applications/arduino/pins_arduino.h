@@ -43,8 +43,6 @@
 
 #define LED_BUILTIN  D22 /* Default Built-in LED */
 
-#define ARDUINO_PWM_HZ 500 /* Arduino UNO's PWM is around 500Hz */
-
 /*
  * i2c3 - ICM20608, AP3216C (On Board)
  * i2c4 - AHT10 (On Board)

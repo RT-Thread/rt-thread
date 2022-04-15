@@ -37,8 +37,6 @@
 
 #define LED_BUILTIN  D13 /* Default Built-in LED */
 
-#define ARDUINO_PWM_HZ 500 /* Arduino UNO's PWM is around 500Hz */
-
 #define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c1"
 
 #endif /* Pins_Arduino_h */
