@@ -98,13 +98,11 @@ rt_err_t rt_hw_dac_register(rt_dac_device_t device, const char *name, const stru
     return result;
 }
 
-rt_uint32_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value)
+rt_err_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value)
 {
     RT_ASSERT(dev);
 
-    dev->ops->convert(dev, channel, &value);
-
-    return RT_EOK;
+    return dev->ops->convert(dev, channel, &value);
 }
 
 rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel)
