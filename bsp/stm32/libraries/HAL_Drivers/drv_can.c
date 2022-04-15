@@ -54,7 +54,11 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
 #else  /* APB1 45MHz(max) */
 static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
 {
+#ifdef BSP_USING_CAN168M
+    {CAN1MBaud, (CAN_SJW_1TQ | CAN_BS1_3TQ  | CAN_BS2_3TQ | 6)},
+#else
     {CAN1MBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 3)},
+#endif
     {CAN800kBaud, (CAN_SJW_2TQ | CAN_BS1_8TQ  | CAN_BS2_5TQ | 4)},
     {CAN500kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 6)},
     {CAN250kBaud, (CAN_SJW_2TQ | CAN_BS1_9TQ  | CAN_BS2_5TQ | 12)},
@@ -331,15 +335,26 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 if (filter_cfg->items[i].hdr == -1)
                 {
-                    drv_can->FilterConfig.FilterBank = i;
+                    /* use default filter bank settings */
+                    if (drv_can->name == "can1")
+                    {
+                        /* can1 banks 0~13 */
+                        drv_can->FilterConfig.FilterBank = i;
+                    }
+                    else if (drv_can->name == "can2")
+                    {
+                        /* can1 banks 14~27 */
+                        drv_can->FilterConfig.FilterBank = i + 14;
+                    }
                 }
                 else
                 {
+                    /* use user-defined filter bank settings */
                     drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr;
                 }
                  /**
                  * ID     | CAN_FxR1[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
-                 * MASK   | CAN_FxR2[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
+                 * MASK   | CAN_FxR2[31:24] | CAN_FxR2[23:16] | CAN_FxR2[15:8] | CAN_FxR2[7:0]       |
                  * STD ID |     STID[10:3]  | STDID[2:0] |<-                21bit                  ->|
                  * EXT ID |    EXTID[28:21] | EXTID[20:13]    | EXTID[12:5]    | EXTID[4:0] IDE RTR 0|
                  * @note the 32bit STD ID must << 21 to fill CAN_FxR1[31:21] and EXT ID must << 3,
@@ -477,8 +492,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         case CAN_TX_MAILBOX0:
             if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME0) != SET)
             {
-                /* Change CAN state */
-                hcan->State = HAL_CAN_STATE_ERROR;
                 /* Return function status */
                 return -RT_ERROR;
             }
@@ -486,8 +499,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         case CAN_TX_MAILBOX1:
             if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME1) != SET)
             {
-                /* Change CAN state */
-                hcan->State = HAL_CAN_STATE_ERROR;
                 /* Return function status */
                 return -RT_ERROR;
             }
@@ -495,8 +506,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         case CAN_TX_MAILBOX2:
             if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME2) != SET)
             {
-                /* Change CAN state */
-                hcan->State = HAL_CAN_STATE_ERROR;
                 /* Return function status */
                 return -RT_ERROR;
             }
@@ -728,6 +737,10 @@ void CAN1_TX_IRQHandler(void)
         /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
     }
+    else
+    {
+      rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
+    }
     rt_interrupt_leave();
 }
 
@@ -847,6 +860,10 @@ void CAN2_TX_IRQHandler(void)
         }
         /* Write 0 to Clear transmission status flag RQCPx */
         SET_BIT(hcan->Instance->TSR, CAN_TSR_RQCP2);
+    }
+    else
+    {
+      rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
     }
     rt_interrupt_leave();
 }
