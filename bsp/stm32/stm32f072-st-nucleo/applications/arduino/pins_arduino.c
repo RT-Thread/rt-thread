@@ -15,7 +15,7 @@
     {Arduino Pin, RT-Thread Pin [, Device Name(PWM or ADC), Channel]}
     [] means optional
     Digital pins must NOT give the device name and channel.
-    Analog pins MUST give the device name and channel(ADC or PWM).
+    Analog pins MUST give the device name and channel(ADC, PWM or DAC).
     Arduino Pin must keep in sequence.
 */
 const pin_map_t pin_map_table[]=
