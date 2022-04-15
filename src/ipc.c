@@ -42,6 +42,7 @@
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to ipc.c
  * 2022-01-24     THEWON       let rt_mutex_take return thread->error when using signal
  * 2022-04-08     Stanley      Correct descriptions
+ * 2022-04-14     Stanley      Parameter name standardization
  */
 
 #include <rtthread.h>
@@ -467,7 +468,7 @@ RTM_EXPORT(rt_sem_delete);
  *
  * @param    sem is a pointer to a semaphore object.
  *
- * @param    time is a timeout period (unit: an OS tick). If the semaphore is unavailable, the thread will wait for
+ * @param    timeout is a timeout period (unit: an OS tick). If the semaphore is unavailable, the thread will wait for
  *           the semaphore up to the amount of time specified by this parameter.
  *
  *           NOTE:
@@ -481,7 +482,7 @@ RTM_EXPORT(rt_sem_delete);
  *
  * @warning  This function can ONLY be called in the thread context. It MUST NOT BE called in interrupt context.
  */
-rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
+rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t timeout)
 {
     register rt_base_t temp;
     struct rt_thread *thread;
@@ -511,7 +512,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
     else
     {
         /* no waiting, return with timeout */
-        if (time == 0)
+        if (timeout == 0)
         {
             rt_hw_interrupt_enable(temp);
 
@@ -538,7 +539,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
                                 sem->parent.parent.flag);
 
             /* has waiting time, start thread timer */
-            if (time > 0)
+            if (timeout > 0)
             {
                 RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n",
                                             thread->name));
@@ -546,7 +547,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
                 /* reset the timeout of thread timer and start it */
                 rt_timer_control(&(thread->thread_timer),
                                  RT_TIMER_CTRL_SET_TIME,
-                                 &time);
+                                 &timeout);
                 rt_timer_start(&(thread->thread_timer));
             }
 
@@ -901,7 +902,7 @@ RTM_EXPORT(rt_mutex_delete);
  *
  * @param    mutex is a pointer to a mutex object.
  *
- * @param    time is a timeout period (unit: an OS tick). If the mutex is unavailable, the thread will wait for
+ * @param    timeout is a timeout period (unit: an OS tick). If the mutex is unavailable, the thread will wait for
  *           the mutex up to the amount of time specified by the argument.
  *           NOTE: Generally, we set this parameter to RT_WAITING_FOREVER, which means that when the mutex is unavailable,
  *           the thread will be waitting forever.
@@ -911,7 +912,7 @@ RTM_EXPORT(rt_mutex_delete);
  *
  * @warning  This function can ONLY be called in the thread context. It MUST NOT BE called in interrupt context.
  */
-rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
+rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout)
 {
     register rt_base_t temp;
     struct rt_thread *thread;
@@ -978,7 +979,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
         else
         {
             /* no waiting, return with timeout */
-            if (time == 0)
+            if (timeout == 0)
             {
                 /* set error as timeout */
                 thread->error = -RT_ETIMEOUT;
@@ -1009,7 +1010,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
                                     mutex->parent.parent.flag);
 
                 /* has waiting time, start thread timer */
-                if (time > 0)
+                if (timeout > 0)
                 {
                     RT_DEBUG_LOG(RT_DEBUG_IPC,
                                  ("mutex_take: start the timer of thread:%s\n",
@@ -1018,7 +1019,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread->thread_timer),
                                      RT_TIMER_CTRL_SET_TIME,
-                                     &time);
+                                     &timeout);
                     rt_timer_start(&(thread->thread_timer));
                 }
 
