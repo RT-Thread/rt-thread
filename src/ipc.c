@@ -42,7 +42,6 @@
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to ipc.c
  * 2022-01-24     THEWON       let rt_mutex_take return thread->error when using signal
  * 2022-04-08     Stanley      Correct descriptions
- * 2022-04-14     Stanley      Parameter name standardization
  */
 
 #include <rtthread.h>
