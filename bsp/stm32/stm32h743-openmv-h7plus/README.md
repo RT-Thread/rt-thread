@@ -43,6 +43,10 @@ OPENMV4-H7-PLUS 是 OPENMV公司推出的一款针对 STM32H7系列设计的 Cor
 | QSPI FLASH | 支持 | W25Q256JV |
 | SDIO | 支持 | USD-1040310811 |
 | USBCDC | 支持 |  |
+| RTC | 支持 | |
+| CAMERA | 支持 | OV5640 |
+| DCMI | 支持 |  |
+| I2C | 支持 | I2C1(PB8 SCL)(PB9 SDA); I2C2 (PB10 SCL)(PB11 SDA) |
 
 ## 使用说明
 
@@ -84,23 +88,18 @@ OPENMV4-H7-PLUS 是 OPENMV公司推出的一款针对 STM32H7系列设计的 Cor
  2006 - 2019 Copyright by rt-thread team
 msh >
 ```
+注意：由于BSP默认开启USBCDC，与shell的交互需通过虚拟串口。
+
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 LPUART1 的功能，如果需使用更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认开启了 GPIO 、 USART1、QSPI FLASH、USBCDC和CAMERA的功能，如果需使用更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
-
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
 3. 输入`pkgs --update`命令更新软件包。
-
 4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
 
 本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
-
-
-
-5. USBD CDC使用，参考文章[STM32L496 USB CDC适配](https://club.rt-thread.org/ask/article/2959.html)（bsp已配置引脚和修改Kconfig）
 
 ## 注意事项
 

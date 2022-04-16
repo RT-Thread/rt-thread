@@ -17,7 +17,7 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_ARDUINO
         bool "Support Arduino"
         select PKG_USING_RTDUINO
-        select RT_USING_PIN
+        select BSP_USING_GPIO
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
