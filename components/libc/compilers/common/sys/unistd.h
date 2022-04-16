@@ -13,7 +13,7 @@
 #define __SYS_UNISTD_H__
 
 #include <stddef.h>
-#include "types.h" /* <sys/types.h> */
+#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
