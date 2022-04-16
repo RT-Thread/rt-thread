@@ -149,17 +149,17 @@ static inline uint32_t _get_cycles_for_us_internal(const uint16_t us, const uint
 {
 	switch (power) {
 	case 9:
-		return (us * (freq / 1000000) - 1) + 1;
+		return (us * (freq / 1000000));
 	case 8:
-		return (us * (freq / 100000) - 1) / 10 + 1;
+		return (us * (freq / 100000) + 9) / 10;
 	case 7:
-		return (us * (freq / 10000) - 1) / 100 + 1;
+		return (us * (freq / 10000) + 99) / 100;
 	case 6:
-		return (us * (freq / 1000) - 1) / 1000 + 1;
+		return (us * (freq / 1000) + 999) / 1000;
 	case 5:
-		return (us * (freq / 100) - 1) / 10000 + 1;
+		return (us * (freq / 100) + 9999) / 10000;
 	default:
-		return (us * freq - 1) / 1000000 + 1;
+		return (us * freq + 999999) / 1000000;
 	}
 }
 
@@ -178,17 +178,17 @@ static inline uint32_t _get_cycles_for_ms_internal(const uint16_t ms, const uint
 {
 	switch (power) {
 	case 9:
-		return (ms * (freq / 1000000)) * 1000;
+		return (ms * (freq / 1000000) * 1000);
 	case 8:
-		return (ms * (freq / 100000)) * 100;
+		return (ms * (freq / 100000) * 100);
 	case 7:
-		return (ms * (freq / 10000)) * 10;
+		return (ms * (freq / 10000) * 10);
 	case 6:
 		return (ms * (freq / 1000));
 	case 5:
-		return (ms * (freq / 100) - 1) / 10 + 1;
+		return (ms * (freq / 100) + 9) / 10;
 	default:
-		return (ms * freq - 1) / 1000 + 1;
+		return (ms * (freq / 1) + 999) / 1000;
 	}
 }
 
@@ -198,4 +198,39 @@ static inline uint32_t _get_cycles_for_ms_internal(const uint16_t ms, const uint
 uint32_t _get_cycles_for_ms(const uint16_t ms)
 {
 	return _get_cycles_for_ms_internal(ms, CONF_HCLK_FREQUENCY, HCLK_FREQ_POWER);
+}
+/**
+ * \brief Initialize delay functionality
+ */
+void _delay_init(void *const hw)
+{
+	(void)hw;
+}
+
+/**
+ * \brief Delay loop to delay n number of cycles
+ *
+ * \note In theory, a single loop runs take 2 cycles or more. But we find it
+ * really only needs 1 cycle through debugging.
+ *
+ */
+void _delay_cycles(void *const hw, uint32_t cycles)
+{
+#ifndef _UNIT_TEST_
+	(void)hw;
+	(void)cycles;
+#if defined __GNUC__
+	__asm("__delay:\n"
+	      "subs r1, r1, #1\n"
+	      "bhi __delay\n");
+#elif defined __CC_ARM
+	__asm("__delay:\n"
+	      "subs cycles, cycles, #1\n"
+	      "bhi __delay\n");
+#elif defined __ICCARM__
+	__asm("__delay:\n"
+	      "subs r1, r1, #1\n"
+	      "bhi __delay\n");
+#endif
+#endif
 }

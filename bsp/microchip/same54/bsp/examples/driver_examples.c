@@ -10,6 +10,20 @@
 #include "driver_init.h"
 #include "utils.h"
 
+/**
+ * Example of using ADC_0 to generate waveform.
+ */
+void ADC_0_example(void)
+{
+	uint8_t buffer[2];
+
+	adc_sync_enable_channel(&ADC_0, 0);
+
+	while (1) {
+		adc_sync_read_channel(&ADC_0, 0, buffer, 2);
+	}
+}
+
 static uint8_t aes_plain_text[16]
     = {0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a};
 static uint8_t aes_key[16]
@@ -34,14 +48,41 @@ void CRYPTOGRAPHY_0_example(void)
 
 /**
  * Example of using TARGET_IO to write "Hello World" using the IO abstraction.
+ *
+ * Since the driver is asynchronous we need to use statically allocated memory for string
+ * because driver initiates transfer and then returns before the transmission is completed.
+ *
+ * Once transfer has been completed the tx_cb function will be called.
  */
+
+static uint8_t example_TARGET_IO[12] = "Hello World!";
+
+static void tx_cb_TARGET_IO(const struct usart_async_descriptor *const io_descr)
+{
+	/* Transfer completed */
+}
+
 void TARGET_IO_example(void)
 {
 	struct io_descriptor *io;
-	usart_sync_get_io_descriptor(&TARGET_IO, &io);
-	usart_sync_enable(&TARGET_IO);
 
-	io_write(io, (uint8_t *)"Hello World!", 12);
+	usart_async_register_callback(&TARGET_IO, USART_ASYNC_TXC_CB, tx_cb_TARGET_IO);
+	/*usart_async_register_callback(&TARGET_IO, USART_ASYNC_RXC_CB, rx_cb);
+	usart_async_register_callback(&TARGET_IO, USART_ASYNC_ERROR_CB, err_cb);*/
+	usart_async_get_io_descriptor(&TARGET_IO, &io);
+	usart_async_enable(&TARGET_IO);
+
+	io_write(io, example_TARGET_IO, 12);
+}
+
+void I2C_0_example(void)
+{
+	struct io_descriptor *I2C_0_io;
+
+	i2c_m_sync_get_io_descriptor(&I2C_0, &I2C_0_io);
+	i2c_m_sync_enable(&I2C_0);
+	i2c_m_sync_set_slaveaddr(&I2C_0, 0x12, I2C_M_SEVEN);
+	io_write(I2C_0_io, (uint8_t *)"Hello World!", 12);
 }
 
 void CAN_0_tx_callback(struct can_async_descriptor *const descr)

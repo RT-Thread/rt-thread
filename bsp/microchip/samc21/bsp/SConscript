@@ -11,8 +11,10 @@ CPPDEFINES = []
 CPPDEFINES += [rtconfig.DEVICE_TYPE]
 
 # The set of source files associated with this SConscript file.
+
 src  = Glob('hal/src/*.c')
 src += Glob('hal/utils/src/*.c')
+src += Glob('hpl/adc/*.c')
 src += Glob('hpl/can/*.c')
 src += Glob('hpl/core/*.c')
 src += Glob('hpl/divas/*.c')
@@ -45,6 +47,7 @@ path = [
     cwd + '/config',
     cwd + '/hal/include',
     cwd + '/hal/utils/include',
+    cwd + '/hpl/adc',
     cwd + '/hpl/can',
     cwd + '/hpl/core',
     cwd + '/hpl/gclk',

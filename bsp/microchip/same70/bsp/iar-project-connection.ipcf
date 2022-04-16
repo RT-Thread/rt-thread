@@ -10,14 +10,19 @@
         <path>$PROJ_DIR$\examples</path>
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\afec</path>
         <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\gmac</path>
         <path>$PROJ_DIR$\hpl\mcan</path>
         <path>$PROJ_DIR$\hpl\pio</path>
         <path>$PROJ_DIR$\hpl\pmc</path>
-        <path>$PROJ_DIR$\hpl\systick</path>
+        <path>$PROJ_DIR$\hpl\twihs</path>
         <path>$PROJ_DIR$\hpl\usart</path>
         <path>$PROJ_DIR$\hpl\xdmac</path>
         <path>$PROJ_DIR$\hri</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\ethernet_phy</path>
         <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\same70b\include</path>
@@ -29,14 +34,19 @@
         <path>$PROJ_DIR$\examples</path>
         <path>$PROJ_DIR$\hal\include</path>
         <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\afec</path>
         <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\gmac</path>
         <path>$PROJ_DIR$\hpl\mcan</path>
         <path>$PROJ_DIR$\hpl\pio</path>
         <path>$PROJ_DIR$\hpl\pmc</path>
-        <path>$PROJ_DIR$\hpl\systick</path>
+        <path>$PROJ_DIR$\hpl\twihs</path>
         <path>$PROJ_DIR$\hpl\usart</path>
         <path>$PROJ_DIR$\hpl\xdmac</path>
         <path>$PROJ_DIR$\hri</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\ethernet_phy</path>
         <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\same70b\include</path>
@@ -63,7 +73,9 @@
             <path>atmel_start_pins.h</path>
             <path>driver_init.c</path>
             <path>driver_init.h</path>
-            <path>led_switcher_main.c</path>
+            <path>ethernet_phy_main.c</path>
+            <path>ethernet_phy_main.h</path>
+            <path>main.c</path>
     
 
         <group name="CMSIS/Core/Include">
@@ -91,12 +103,21 @@
         </group>
 
         <group name="config">
+            <path>config/hpl_afec_config.h</path>
+            <path>config/hpl_gmac_config.h</path>
             <path>config/hpl_mcan_config.h</path>
             <path>config/hpl_pmc_config.h</path>
-            <path>config/hpl_systick_ARMv7_config.h</path>
+            <path>config/hpl_twihs_config.h</path>
             <path>config/hpl_usart_config.h</path>
             <path>config/hpl_xdmac_config.h</path>
+            <path>config/ieee8023_mii_standard_config.h</path>
             <path>config/peripheral_clk_config.h</path>
+        </group>
+
+        <group name="ethernet_phy">
+            <path>ethernet_phy/ethernet_phy.c</path>
+            <path>ethernet_phy/ethernet_phy.h</path>
+            <path>ethernet_phy/ieee8023_mii_standard_register.h</path>
         </group>
 
         <group name="examples">
@@ -105,14 +126,19 @@
         </group>
 
         <group name="hal/include">
+            <path>hal/include/hal_adc_sync.h</path>
             <path>hal/include/hal_atomic.h</path>
             <path>hal/include/hal_can_async.h</path>
             <path>hal/include/hal_delay.h</path>
             <path>hal/include/hal_gpio.h</path>
+            <path>hal/include/hal_i2c_m_sync.h</path>
             <path>hal/include/hal_init.h</path>
             <path>hal/include/hal_io.h</path>
+            <path>hal/include/hal_mac_async.h</path>
             <path>hal/include/hal_sleep.h</path>
-            <path>hal/include/hal_usart_sync.h</path>
+            <path>hal/include/hal_usart_async.h</path>
+            <path>hal/include/hpl_adc_async.h</path>
+            <path>hal/include/hpl_adc_sync.h</path>
             <path>hal/include/hpl_can.h</path>
             <path>hal/include/hpl_can_async.h</path>
             <path>hal/include/hpl_core.h</path>
@@ -120,12 +146,16 @@
             <path>hal/include/hpl_dma.h</path>
             <path>hal/include/hpl_ext_irq.h</path>
             <path>hal/include/hpl_gpio.h</path>
+            <path>hal/include/hpl_i2c_m_async.h</path>
+            <path>hal/include/hpl_i2c_m_sync.h</path>
+            <path>hal/include/hpl_i2c_s_async.h</path>
+            <path>hal/include/hpl_i2c_s_sync.h</path>
             <path>hal/include/hpl_init.h</path>
             <path>hal/include/hpl_irq.h</path>
+            <path>hal/include/hpl_mac_async.h</path>
             <path>hal/include/hpl_missing_features.h</path>
             <path>hal/include/hpl_reset.h</path>
             <path>hal/include/hpl_sleep.h</path>
-            <path>hal/include/hpl_time_measure.h</path>
             <path>hal/include/hpl_usart.h</path>
             <path>hal/include/hpl_usart_async.h</path>
             <path>hal/include/hpl_usart_dma.h</path>
@@ -133,14 +163,17 @@
         </group>
 
         <group name="hal/src">
+            <path>hal/src/hal_adc_sync.c</path>
             <path>hal/src/hal_atomic.c</path>
             <path>hal/src/hal_can_async.c</path>
             <path>hal/src/hal_delay.c</path>
             <path>hal/src/hal_gpio.c</path>
+            <path>hal/src/hal_i2c_m_sync.c</path>
             <path>hal/src/hal_init.c</path>
             <path>hal/src/hal_io.c</path>
+            <path>hal/src/hal_mac_async.c</path>
             <path>hal/src/hal_sleep.c</path>
-            <path>hal/src/hal_usart_sync.c</path>
+            <path>hal/src/hal_usart_async.c</path>
         </group>
 
         <group name="hal/utils/include">
@@ -164,10 +197,19 @@
             <path>hal/utils/src/utils_ringbuffer.c</path>
         </group>
 
+        <group name="hpl/afec">
+            <path>hpl/afec/hpl_afec.c</path>
+        </group>
+
         <group name="hpl/core">
             <path>hpl/core/hpl_core_m7_base.c</path>
             <path>hpl/core/hpl_core_port.h</path>
             <path>hpl/core/hpl_init.c</path>
+        </group>
+
+        <group name="hpl/gmac">
+            <path>hpl/gmac/hpl_gmac.c</path>
+            <path>hpl/gmac/hpl_gmac_base.h</path>
         </group>
 
         <group name="hpl/mcan">
@@ -185,8 +227,8 @@
             <path>hpl/pmc/hpl_sleep.c</path>
         </group>
 
-        <group name="hpl/systick">
-            <path>hpl/systick/hpl_systick_ARMv7_base.c</path>
+        <group name="hpl/twihs">
+            <path>hpl/twihs/hpl_twihs.c</path>
         </group>
 
         <group name="hpl/usart">

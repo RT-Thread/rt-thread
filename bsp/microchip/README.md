@@ -183,6 +183,9 @@ About RT-Thread env tools, click [Here](https://github.com/RT-Thread/rt-thread/b
 
 ![](doc/3-1-8-atmel-start-Studio7-start-debugging3.png)
 
+		* Debugging message output.
+
+![](doc/3-1-9-atmel-start-rt-thread-run.png)
 
 # 4. Reconfigure MCU BSP
 
