@@ -32,8 +32,6 @@
 #define A1   (17)
 #define A2   (18)
 #define A3   (19)
-#define A4   (20)
-#define A5   (21)
 
 #define LED_BUILTIN  D13 /* Default Built-in LED */
 
