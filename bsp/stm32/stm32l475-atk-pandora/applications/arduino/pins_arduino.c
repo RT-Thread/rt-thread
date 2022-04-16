@@ -44,6 +44,8 @@ const pin_map_t pin_map_table[]=
     {D21, GET_PIN(E,7)}, /* BSP: RED-LED */
     {D22, GET_PIN(E,8)}, /* LED_BUILTIN, BSP: GREEN-LED */
     {D23, GET_PIN(E,9), "pwm1", 1}, /* PWM, BSP: BLUE-LED */
+    {D24, GET_PIN(B,0)}, /* INFRARED EMISSION */
+    {D25, GET_PIN(B,1)}, /* INFRARED RECEPTION */
     {A0, GET_PIN(C,2), "adc1", 3}, /* ADC */
     {A1, GET_PIN(C,4), "adc1", 13}, /* ADC */
     {A2, RT_NULL, "adc1", 0}, /* ADC, On-Chip: internal reference voltage */

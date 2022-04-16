@@ -36,11 +36,13 @@
 #define D21  (21)
 #define D22  (22)
 #define D23  (23)
-#define A0   (24)
-#define A1   (25)
-#define A2   (26)
-#define A3   (27)
-#define DAC0 (28)
+#define D24  (24)
+#define D25  (25)
+#define A0   (26)
+#define A1   (27)
+#define A2   (28)
+#define A3   (29)
+#define DAC0 (30)
 
 #define LED_BUILTIN  D22 /* Default Built-in LED */
 
