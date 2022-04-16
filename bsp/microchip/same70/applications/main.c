@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date        Author    Email                    Notes
- * 2022-04-16  Kevin.Liu kevin.liu.mchp@gmail.com First Release
+ * 2019-07-16  Kevin.Liu kevin.liu.mchp@gmail.com First Release
  */
 
 #include <rtthread.h>
@@ -20,18 +20,6 @@
 
 #ifdef SAM_CAN_EXAMPLE
 #include "can_demo.h"
-#endif
-
-#ifdef SAM_I2C_EXAMPLE
-#include "i2c_demo.h"
-#endif
-
-#ifdef SAM_ADC_EXAMPLE
-#include "adc_demo.h"
-#endif
-
-#ifdef SAM_LWIP_EXAMPLE
-#include "lwip_demo.h"
 #endif
 
 static rt_uint8_t led_stack[ 512 ];
@@ -73,18 +61,6 @@ int main(void)
 
 #ifdef SAM_CAN_EXAMPLE
     can_demo_run();
-#endif
-
-#ifdef SAM_I2C_EXAMPLE
-//    i2c_demo_run();
-#endif
-
-#ifdef SAM_ADC_EXAMPLE
-    adc_demo_run();
-#endif
-
-#ifdef SAM_LWIP_EXAMPLE
-    lwip_demo_run();
 #endif
 
     return 0;

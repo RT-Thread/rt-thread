@@ -6,7 +6,6 @@ extern "C" {
 #endif
 
 #include "driver_init.h"
-#include "ethernet_phy_main.h"
 
 /**
  * Initializes MCU, drivers and middleware in the project

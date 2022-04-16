@@ -22,14 +22,6 @@
 #include "can_demo.h"
 #endif
 
-#ifdef SAM_I2C_EXAMPLE
-#include "i2c_demo.h"
-#endif
-
-#ifdef SAM_ADC_EXAMPLE
-#include "adc_demo.h"
-#endif
-
 static rt_uint8_t led_stack[ 512 ];
 static struct rt_thread led_thread;
 
@@ -69,14 +61,6 @@ int main(void)
 
 #ifdef SAM_CAN_EXAMPLE
     can_demo_run();
-#endif
-
-#ifdef SAM_I2C_EXAMPLE
-    i2c_demo_run();
-#endif
-
-#ifdef SAM_ADC_EXAMPLE
-    adc_demo_run();
 #endif
 
     return 0;
