@@ -144,15 +144,15 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C1 Bus (User I2C)"
                 default n
                 if BSP_USING_I2C1
-                    comment "Notice: PC1 --> 33; PC0 --> 32" 
+                    comment "Notice: PB9 --> 25; PB8 --> 24" 
                     config BSP_I2C1_SCL_PIN
                         int "i2c1 SCL pin number"
                         range 1 176
-                        default 32
+                        default 24
                     config BSP_I2C1_SDA_PIN
                         int "I2C1 SDA pin number"
                         range 1 176
-                        default 33
+                        default 25
                 endif
         endif
 
