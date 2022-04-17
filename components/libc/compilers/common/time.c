@@ -371,22 +371,22 @@ time_t timegm(struct tm * const t)
     register time_t i;
     register time_t years = (time_t)t->tm_year - 70;
 
-    if (t->tm_sec > 60)
+    if (t->tm_sec > 60)         /* seconds after the minute - [0, 60] including leap second */
     {
         t->tm_min += t->tm_sec / 60;
         t->tm_sec %= 60;
     }
-    if (t->tm_min > 60)
+    if (t->tm_min >= 60)        /* minutes after the hour - [0, 59] */
     {
         t->tm_hour += t->tm_min / 60;
         t->tm_min %= 60;
     }
-    if (t->tm_hour > 24)
+    if (t->tm_hour >= 24)       /* hours since midnight - [0, 23] */
     {
         t->tm_mday += t->tm_hour / 24;
         t->tm_hour %= 24;
     }
-    if (t->tm_mon > 12)
+    if (t->tm_mon >= 12)        /* months since January - [0, 11] */
     {
         t->tm_year += t->tm_mon / 12;
         t->tm_mon %= 12;
@@ -503,7 +503,7 @@ RTM_EXPORT(nanosleep);
 #ifdef RT_USING_POSIX_CLOCK
 #ifdef RT_USING_RTC
 static volatile struct timeval _timevalue;
-static int _rt_clock_time_system_init()
+static int _rt_clock_time_system_init(void)
 {
     register rt_base_t level;
     time_t time = 0;
