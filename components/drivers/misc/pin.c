@@ -58,6 +58,15 @@ static rt_err_t _pin_control(rt_device_t dev, int cmd, void *args)
     mode = (struct rt_device_pin_mode *) args;
     if (mode == RT_NULL) return -RT_ERROR;
 
+    if(RT_DEVICE_CTRL_SUSPEND == cmd)
+    {
+        return RT_EOK;
+    }
+    else if(RT_DEVICE_CTRL_RESUME == cmd)
+    {
+        return RT_EOK;
+    }
+
     pin->ops->pin_mode(dev, (rt_base_t)mode->pin, (rt_base_t)mode->mode);
 
     return 0;
