@@ -819,6 +819,12 @@ static char *const device_type_str[] =
     "Touch Device",
     "Phy Device",
     "Security Device",
+    "WLAN Device",
+    "Pin Device",
+    "ADC Device",
+    "DAC Device",
+    "WDT Device",
+    "PWM Device",
     "Unknown"
 };
 

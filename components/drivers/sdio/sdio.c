@@ -743,7 +743,11 @@ static rt_int32_t sdio_set_highspeed(struct rt_mmcsd_card *card)
     rt_int32_t ret;
     rt_uint8_t speed;
 
-    if (!(card->host->flags & MMCSD_SUP_HIGHSPEED))
+    if (!(card->host->flags &
+        (MMCSD_SUP_HIGHSPEED |
+         MMCSD_SUP_HIGHSPEED_DDR |
+         MMCSD_SUP_HIGHSPEED_HS200 |
+         MMCSD_SUP_HIGHSPEED_HS400)))
         return 0;
 
     if (!card->cccr.high_speed)

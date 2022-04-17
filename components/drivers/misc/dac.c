@@ -76,7 +76,7 @@ rt_err_t rt_hw_dac_register(rt_dac_device_t device, const char *name, const stru
     rt_err_t result = RT_EOK;
     RT_ASSERT(ops != RT_NULL && ops->convert != RT_NULL);
 
-    device->parent.type = RT_Device_Class_Miscellaneous;
+    device->parent.type = RT_Device_Class_DAC;
     device->parent.rx_indicate = RT_NULL;
     device->parent.tx_complete = RT_NULL;
 
@@ -98,13 +98,11 @@ rt_err_t rt_hw_dac_register(rt_dac_device_t device, const char *name, const stru
     return result;
 }
 
-rt_uint32_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value)
+rt_err_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value)
 {
     RT_ASSERT(dev);
 
-    dev->ops->convert(dev, channel, &value);
-
-    return RT_EOK;
+    return dev->ops->convert(dev, channel, &value);
 }
 
 rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel)

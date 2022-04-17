@@ -368,7 +368,6 @@
 #define BSP_USING_QSPI0
 #define BSP_USING_QSPI0_PDMA
 #define BSP_USING_CRYPTO
-#define BSP_USING_TRNG
 #define BSP_USING_CRC
 #define NU_CRC_USE_PDMA
 #define BSP_USING_WDT

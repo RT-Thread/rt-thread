@@ -13,6 +13,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum
 {
     RT_WORK_STATE_PENDING    = 0x0001,     /* Work item pending state */
@@ -70,7 +74,9 @@ rt_err_t rt_work_urgent(struct rt_work *work);
 rt_err_t rt_work_cancel(struct rt_work *work);
 #endif /* RT_USING_SYSTEM_WORKQUEUE */
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* RT_USING_HEAP */
 

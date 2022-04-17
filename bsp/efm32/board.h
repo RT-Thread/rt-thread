@@ -1,28 +1,22 @@
-/***************************************************************************//**
- * @file    board.h
- * @brief   Board support of RT-Thread RTOS for EFM32
- *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author  onelife
- * @version 1.0
- *******************************************************************************
- * @section License
- * The license and distribution terms for this file may be found in the file
- * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
- *******************************************************************************
- * @section Change Logs
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
  * Date         Author      Notes
  * 2010-12-21   onelife     Initial creation for EFM32
  * 2011-05-06   onelife     Add EFM32 development kit and SPI Flash support
  * 2011-07-12   onelife     Add prototype for SWO output enable and interrupt
- *  context check functions
+ *                            context check functions
  * 2011-12-08   onelife     Add giant gecko development kit support
  * 2011-12-09   onelife     Add giant gecko support
  * 2011-12-09   onelife     Add LEUART module support
- * 2011-12-14   onelife     Add LFXO enabling routine in driver initialization
- *  function
+ * 2011-12-14   onelife     Add LFXO enabling routine in driver initialization function
  * 2011-12-20   onelife     Move SPI Auto-CS setting to "rtconfig.h"
  * 2012-05-15   onelife     Modified to compatible with CMSIS v3
- ******************************************************************************/
+ */
+
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
