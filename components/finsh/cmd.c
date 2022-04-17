@@ -793,7 +793,7 @@ long list_timer(void)
 MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
-static char *const device_type_str[] =
+static char *const device_type_str[RT_Device_Class_Unknown] =
 {
     "Character Device",
     "Block Device",
@@ -825,7 +825,6 @@ static char *const device_type_str[] =
     "DAC Device",
     "WDT Device",
     "PWM Device",
-    "Unknown"
 };
 
 long list_device(void)
@@ -834,6 +833,7 @@ long list_device(void)
     list_get_next_t find_arg;
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
+    const char *device_type;
 
     int maxlen;
     const char *item_title = "device";
@@ -866,12 +866,16 @@ long list_device(void)
                 rt_hw_interrupt_enable(level);
 
                 device = (struct rt_device *)obj;
+                device_type = "Unknown";
+                if (device->type < RT_Device_Class_Unknown &&
+                    device_type_str[device->type] != RT_NULL)
+                {
+                    device_type = device_type_str[device->type];
+                }
                 rt_kprintf("%-*.*s %-20s %-8d\n",
                            maxlen, RT_NAME_MAX,
                            device->parent.name,
-                           (device->type <= RT_Device_Class_Unknown) ?
-                           device_type_str[device->type] :
-                           device_type_str[RT_Device_Class_Unknown],
+                           device_type,
                            device->ref_count);
 
             }
