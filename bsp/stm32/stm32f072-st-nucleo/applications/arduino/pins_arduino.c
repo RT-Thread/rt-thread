@@ -40,4 +40,6 @@ const pin_map_t pin_map_table[]=
     {A1, GET_PIN(A,1), "adc1", 1}, /* ADC */
     {A2, GET_PIN(A,4), "adc1", 4}, /* ADC */
     {A3, GET_PIN(B,0), "adc1", 8}, /* ADC */
+    {A4, GET_PIN(C,1), "adc1", 11}, /* ADC */
+    {A5, GET_PIN(C,0), "adc1", 10} /* ADC */
 };
