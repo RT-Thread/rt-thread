@@ -246,7 +246,7 @@ rt_err_t rt_hwcrypto_register(struct rt_hwcrypto_device *device, const char *nam
 #endif
 
     device->parent.user_data  = RT_NULL;
-    device->parent.type = RT_Device_Class_Miscellaneous;
+    device->parent.type = RT_Device_Class_Security;
 
     /* Register device */
     err = rt_device_register(&device->parent, name, RT_DEVICE_FLAG_RDWR);
