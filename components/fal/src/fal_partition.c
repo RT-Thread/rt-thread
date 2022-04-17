@@ -34,24 +34,8 @@ struct part_flash_info
 #error "You must defined FAL_PART_TABLE on 'fal_cfg.h'"
 #endif
 
-#ifdef __CC_ARM                        /* ARM Compiler */
-    #define SECTION(x)                 __attribute__((section(x)))
-    #define USED                       __attribute__((used))
-#elif defined (__IAR_SYSTEMS_ICC__)    /* for IAR Compiler */
-    #define SECTION(x)                 @ x
-    #define USED                       __root
-#elif defined (__GNUC__)               /* GNU GCC Compiler */
-    #define SECTION(x)                 __attribute__((section(x)))
-    #define USED                       __attribute__((used))
-#elif defined (_MSC_VER)
-    #define SECTION(x)
-    #define USED
-#else
-    #error not supported tool chain
-#endif /* __CC_ARM */
-
 /* partition table definition */
-USED static const struct fal_partition partition_table_def[] SECTION("FalPartTable") = FAL_PART_TABLE;
+static const struct fal_partition partition_table_def[] = FAL_PART_TABLE;
 static const struct fal_partition *partition_table = NULL;
 /* partition and flash object information cache table */
 static struct part_flash_info part_flash_cache[sizeof(partition_table_def) / sizeof(partition_table_def[0])] = { 0 };
