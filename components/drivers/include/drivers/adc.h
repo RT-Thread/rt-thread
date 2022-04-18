@@ -29,8 +29,8 @@ typedef struct rt_adc_device *rt_adc_device_t;
 
 typedef enum
 {
-    RT_ADC_CMD_ENABLE,
-    RT_ADC_CMD_DISABLE,
+    RT_ADC_CMD_ENABLE = RT_DEVICE_CTRL_BASE(ADC) + 1,
+    RT_ADC_CMD_DISABLE = RT_DEVICE_CTRL_BASE(ADC) + 2,
 } rt_adc_cmd_t;
 
 rt_err_t rt_hw_adc_register(rt_adc_device_t adc,const char *name, const struct rt_adc_ops *ops, const void *user_data);

@@ -31,7 +31,11 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM16_CH1
         select BSP_USING_PWM17
         select BSP_USING_PWM17_CH1
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
         imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        imply RTDUINO_USING_ADAFRUIT
         default n
 
 endmenu
@@ -136,7 +140,20 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
 
         if BSP_USING_I2C
-
+            config BSP_USING_I2C1
+                bool "Enable I2C1 Bus (User I2C)"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: PB9 --> 25; PB8 --> 24" 
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 SCL pin number"
+                        range 1 176
+                        default 24
+                    config BSP_I2C1_SDA_PIN
+                        int "i2c1 SDA pin number"
+                        range 1 176
+                        default 25
+                endif
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"
