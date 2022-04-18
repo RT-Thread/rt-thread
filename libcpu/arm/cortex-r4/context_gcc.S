@@ -56,7 +56,7 @@ rt_hw_context_switch:
 
     STMDB   sp!, {r4}           @ push cpsr
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && !defined(RT_VFP_LAZY_STACKING)
+#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         VMRS    r4,  fpexc
         TST     r4,  #0x40000000
         BEQ     __no_vfp_frame1
@@ -72,7 +72,7 @@ __no_vfp_frame1:
     STR     sp, [r0]            @ store sp in preempted tasks TCB
     LDR     sp, [r1]            @ get new task stack pointer
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && !defined(RT_VFP_LAZY_STACKING)
+#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         LDMIA   sp!, {r0}       @ get fpexc
         VMSR    fpexc,  r0      @ restore fpexc
         TST     r0,  #0x40000000
@@ -96,7 +96,7 @@ __no_vfp_frame2:
 rt_hw_context_switch_to:
     LDR     sp, [r0]            @ get new task stack pointer
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && !defined(RT_VFP_LAZY_STACKING)
+#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         LDMIA   sp!, {r0}       @ get fpexc
         VMSR    fpexc, r0
         TST     r0,  #0x40000000
@@ -136,7 +136,7 @@ _reswitch:
 IRQ_Handler:
     STMDB   sp!, {r0-r12,lr}
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && !defined(RT_VFP_LAZY_STACKING)
+#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         VMRS    r0,  fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_str_irq
@@ -160,7 +160,7 @@ __no_vfp_frame_str_irq:
     CMP r1, #1
     BEQ rt_hw_context_switch_interrupt_do
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && !defined(RT_VFP_LAZY_STACKING)
+#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         LDMIA   sp!, {r0}       @ get fpexc
         VMSR    fpexc, r0
         TST     r0,  #0x40000000
@@ -182,7 +182,7 @@ rt_hw_context_switch_interrupt_do:
     MOV     r1,  #0           @ clear flag
     STR     r1,  [r0]
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && !defined(RT_VFP_LAZY_STACKING)
+#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         LDMIA   sp!, {r0}       @ get fpexc
         VMSR    fpexc, r0
         TST     r0,  #0x40000000
@@ -212,7 +212,7 @@ __no_vfp_frame_do1:
                               @ use them here.
     STMDB   sp!, {r3}         @ push old task's cpsr
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && !defined(RT_VFP_LAZY_STACKING)
+#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         VMRS    r0,  fpexc
         TST     r0,  #0x40000000
         BEQ     __no_vfp_frame_do2
@@ -233,7 +233,7 @@ __no_vfp_frame_do2:
     LDR     r6,  [r6]
     LDR     sp,  [r6]         @ get new task's stack pointer
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && !defined(RT_VFP_LAZY_STACKING)
+#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         LDMIA   sp!, {r0}       @ get fpexc
         VMSR    fpexc, r0
         TST     r0,  #0x40000000
