@@ -1,0 +1,30 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+msp/at32_msp.c
+msp/system_at32f435_437.c
+''')
+
+path = [cwd]
+path += [cwd + '/msp']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [startup_path_prefix + '/AT32F435_437/cmsis/cm4/device_support/startup/gcc/startup_at32f435_437.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/AT32F435_437/cmsis/cm4/device_support/startup/mdk/startup_at32f435_437.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/AT32F435_437/cmsis/cm4/device_support/startup/iar/startup_at32f435_437.s']
+    
+CPPDEFINES = ['AT32F435ZMT7']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')
