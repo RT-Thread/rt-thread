@@ -34,7 +34,9 @@ struct gd32_spi
     rcu_periph_enum gpio_clk;
     struct rt_spi_bus *spi_bus;
     uint32_t spi_port;
+#if defined SOC_SERIES_GD32F4xx
     uint32_t alt_func_num;
+#endif
     uint16_t sck_pin;
     uint16_t miso_pin;
     uint16_t mosi_pin;

@@ -42,7 +42,9 @@ static const struct gd32_spi spi_bus_obj[] = {
         RCU_GPIOA,
         &spi_bus0,
         GPIOA,
+#if defined SOC_SERIES_GD32F4xx
         GPIO_AF_5,
+#endif
         GPIO_PIN_5,
         GPIO_PIN_6,
         GPIO_PIN_7,
@@ -57,7 +59,9 @@ static const struct gd32_spi spi_bus_obj[] = {
         RCU_GPIOB,
         &spi_bus1,
         GPIOB,
+#if defined SOC_SERIES_GD32F4xx
         GPIO_AF_5,
+#endif
         GPIO_PIN_12,
         GPIO_PIN_14,
         GPIO_PIN_15,
@@ -72,7 +76,9 @@ static const struct gd32_spi spi_bus_obj[] = {
         RCU_GPIOB,
         &spi_bus2,
         GPIOB,
+#if defined SOC_SERIES_GD32F4xx
         GPIO_AF_6,
+#endif
         GPIO_PIN_3,
         GPIO_PIN_4,
         GPIO_PIN_5,
@@ -87,7 +93,9 @@ static const struct gd32_spi spi_bus_obj[] = {
         RCU_GPIOE,
         &spi_bus3,
         GPIOB,
+#if defined SOC_SERIES_GD32F4xx
         GPIO_AF_5,
+#endif
         GPIO_PIN_2,
         GPIO_PIN_5,
         GPIO_PIN_6,
@@ -102,7 +110,9 @@ static const struct gd32_spi spi_bus_obj[] = {
         RCU_GPIOF,
         &spi_bus4,
         GPIOF,
+#if defined SOC_SERIES_GD32F4xx
         GPIO_AF_5,
+#endif
         GPIO_PIN_7,
         GPIO_PIN_8,
         GPIO_PIN_9,
@@ -381,11 +391,17 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     struct rt_spi_device *spi_device;
     struct gd32_spi_cs *cs_pin;
 
+#if defined SOC_SERIES_GD32F4xx
     /* initialize the cs pin && select the slave*/
-    gpio_mode_set(cs_gpiox, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,cs_gpio_pin);
-    gpio_output_options_set(cs_gpiox, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ,cs_gpio_pin);
+    gpio_mode_set(cs_gpiox, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, cs_gpio_pin);
+    gpio_output_options_set(cs_gpiox, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, cs_gpio_pin);
     gpio_bit_set(cs_gpiox, cs_gpio_pin);
-
+#else
+    /* initialize the cs pin && select the slave*/
+    gpio_init(cs_gpiox, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, cs_gpio_pin);
+    gpio_bit_set(cs_gpiox, cs_gpio_pin);
+#endif
+	
     /* attach the device to spi bus*/
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
