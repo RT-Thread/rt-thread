@@ -341,7 +341,7 @@ menu "On-chip Peripheral Drivers"
                         range 1 176
                         default 38
                     config BSP_I2C1_SDA_PIN
-                        int "I2C1 SDA pin number"
+                        int "i2c1 SDA pin number"
                         range 1 176
                         default 39
                 endif
