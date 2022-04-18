@@ -219,11 +219,11 @@ int rt_hw_uart_init(void)
     sam_serial.config    = config;
     sam_serial.serial_rx = RT_NULL;
     sam_serial.serial_rx = RT_NULL;
-    rt_hw_serial_register(&sam_serial, "uart0",
+    rt_hw_serial_register(&sam_serial, RT_CONSOLE_DEVICE_NAME,
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
                           RT_DEVICE_FLAG_INT_TX, (void *)&TARGET_IO);
 
-    usart_async_register_callback(&TARGET_IO, USART_ASYNC_RXC_CB, serial_txcallback);
+    usart_async_register_callback(&TARGET_IO, USART_ASYNC_TXC_CB, serial_txcallback);
     usart_async_register_callback(&TARGET_IO, USART_ASYNC_RXC_CB, serial_rxcallback);
 
     return 0;

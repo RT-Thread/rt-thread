@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date        Author    Email                    Notes
- * 2019-07-16  Kevin.Liu kevin.liu.mchp@gmail.com First Release
+ * 2022-04-16  Kevin.Liu kevin.liu.mchp@gmail.com First Release
  */
 
 #include <rtthread.h>

@@ -54,6 +54,8 @@ path = [
     cwd + '/hpl/pm',
     cwd + '/hpl/port',
     cwd + '/hri',
+    cwd + '/../board',
+    cwd + '/../../common/applications',
     cwd + '/samc21/include']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

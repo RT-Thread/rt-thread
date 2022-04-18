@@ -7,11 +7,7 @@ src = Glob('*.c')
 CPPPATH = [cwd]
 
 #remove other no use files
-if GetDepend('SAM_I2C_EXAMPLE') == False:
-    SrcRemove(src, ['i2c.c'])
-
-if GetDepend('SAM_LWIP_EXAMPLE') == False:
-    SrcRemove(src, ['gmac.c'])
+#SrcRemove(src, '*.c')
 
 # You can select chips from the list above
 CPPDEFINES = ['SAME54xxx']

@@ -8,8 +8,8 @@
  * 2022-04-11  Kevin.Liu kevin.liu.mchp@gmail.com First Release
  */
 
-#ifndef __BOARD_GMAC_H_
-#define __BOARD_GMAC_H_
+#ifndef __BOARD_SAM_GMAC_H_
+#define __BOARD_SAM_GMAC_H_
 
 #include <rtthread.h>
 
@@ -33,4 +33,4 @@ typedef enum
 
 #define CONF_AT24MAC_ADDRESS               0x57
 
-#endif // __BOARD_GMAC_H_
+#endif // __BOARD_SAM_GMAC_H_

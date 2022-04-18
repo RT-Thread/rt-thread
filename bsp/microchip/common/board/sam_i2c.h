@@ -8,8 +8,8 @@
  * 2022-04-11  Kevin.Liu kevin.liu.mchp@gmail.com First Release
  */
 
-#ifndef __BOARD_I2C_H_
-#define __BOARD_I2C_H_
+#ifndef __BOARD_SAM_I2C_H_
+#define __BOARD_SAM_I2C_H_
 
 #include <rtthread.h>
 
@@ -19,4 +19,4 @@
  */
 int rt_hw_i2c_init(void);
 
-#endif // __BOARD_I2C_H_
+#endif // __BOARD_SAM_I2C_H_

@@ -10,16 +10,24 @@
 
 #include <rtthread.h>
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#include <shell.h>
-#endif
-
 #include <atmel_start.h>
 
 #include "adc_demo.h"
 
 #ifdef SAM_ADC_EXAMPLE
+
+#if defined(SOC_SAMC21)
+#define ADC_RESOLUTION_12BIT    ADC_CTRLC_RESSEL_12BIT_Val
+#define ADC_RESOLUTION_16BIT    ADC_CTRLC_RESSEL_16BIT_Val
+#elif defined(SOC_SAME54)
+#define ADC_RESOLUTION_12BIT    ADC_CTRLB_RESSEL_12BIT_Val
+#define ADC_RESOLUTION_16BIT    ADC_CTRLB_RESSEL_16BIT_Val
+#elif defined(SOC_SAME70)
+#define ADC_RESOLUTION_12BIT    AFEC_EMR_RES_NO_AVERAGE_Val
+#define ADC_RESOLUTION_16BIT    AFEC_EMR_RES_OSR256_Val
+#else
+#error "ADC undefined SOC Platform"
+#endif
 
 /**
  * @brief    Call this function will run ADC test code.
@@ -43,41 +51,17 @@ rt_err_t adc_demo_run(void)
     rt_kprintf("buf[0]=0x%02X buf[1]=0x%02X\r\n", buffer[0], buffer[1]);
 #endif
 
-    /* ADC 12-bit resolution */
-    adc_sync_disable_channel(&ADC_0, 0);
-    adc_sync_set_resolution(&ADC_0,  AFEC_EMR_RES_NO_AVERAGE_Val);
-    adc_sync_enable_channel(&ADC_0,  0);
-#ifndef RT_USING_FINSH
-    rt_kprintf("buf[0]=0x%02X buf[1]=0x%02X\r\n", buffer[0], buffer[1]);
-#endif
-
-    /* ADC 13-bit resolution */
-    adc_sync_disable_channel(&ADC_0, 0);
-    adc_sync_set_resolution(&ADC_0,  AFEC_EMR_RES_OSR4_Val);
-    adc_sync_enable_channel(&ADC_0,  0);
-#ifndef RT_USING_FINSH
-    rt_kprintf("buf[0]=0x%02X buf[1]=0x%02X\r\n", buffer[0], buffer[1]);
-#endif
-
-    /* ADC 14-bit resolution */
-    adc_sync_disable_channel(&ADC_0, 0);
-    adc_sync_set_resolution(&ADC_0,  AFEC_EMR_RES_OSR16_Val);
-    adc_sync_enable_channel(&ADC_0,  0);
-#ifndef RT_USING_FINSH
-    rt_kprintf("buf[0]=0x%02X buf[1]=0x%02X\r\n", buffer[0], buffer[1]);
-#endif
-
-    /* ADC 15-bit resolution */
-    adc_sync_disable_channel(&ADC_0, 0);
-    adc_sync_set_resolution(&ADC_0,  AFEC_EMR_RES_OSR64_Val);
-    adc_sync_enable_channel(&ADC_0,  0);
-#ifndef RT_USING_FINSH
-    rt_kprintf("buf[0]=0x%02X buf[1]=0x%02X\r\n", buffer[0], buffer[1]);
-#endif
-
     /* ADC 16-bit resolution */
     adc_sync_disable_channel(&ADC_0, 0);
-    adc_sync_set_resolution(&ADC_0,  AFEC_EMR_RES_OSR256_Val);
+    adc_sync_set_resolution(&ADC_0,  ADC_RESOLUTION_16BIT);
+    adc_sync_enable_channel(&ADC_0,  0);
+#ifndef RT_USING_FINSH
+    rt_kprintf("buf[0]=0x%02X buf[1]=0x%02X\r\n", buffer[0], buffer[1]);
+#endif
+
+    /* ADC 12-bit resolution */
+    adc_sync_disable_channel(&ADC_0, 0);
+    adc_sync_set_resolution(&ADC_0,  ADC_RESOLUTION_12BIT);
     adc_sync_enable_channel(&ADC_0,  0);
 #ifndef RT_USING_FINSH
     rt_kprintf("buf[0]=0x%02X buf[1]=0x%02X\r\n", buffer[0], buffer[1]);

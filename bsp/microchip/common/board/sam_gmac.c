@@ -20,7 +20,7 @@
 #include <ieee8023_mii_standard_config.h>
 
 #include "board.h"
-#include "gmac.h"
+#include "sam_gmac.h"
 
 #ifdef RT_USING_LWIP
 

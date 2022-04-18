@@ -5,15 +5,10 @@
  *
  * Change Logs:
  * Date        Author    Email                    Notes
- * 2019-07-16  Kevin.Liu kevin.liu.mchp@gmail.com First Release
+ * 2022-04-16  Kevin.Liu kevin.liu.mchp@gmail.com First Release
  */
 
 #include <rtthread.h>
-
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#include <shell.h>
-#endif
 
 #include "atmel_start.h"
 #include "driver_init.h"
@@ -22,6 +17,14 @@
 #include "can_demo.h"
 
 #ifdef SAM_CAN_EXAMPLE
+
+#if defined(SOC_SAMC21) || defined(SOC_SAME54)
+#define CAN_HARDWARE            (void *)CAN1
+#elif defined(SOC_SAME70)
+#define CAN_HARDWARE            (void *)MCAN1
+#else
+#error "CAN undefined SOC Platform"
+#endif
 
 static volatile enum can_async_interrupt_type can_errors;
 static rt_sem_t   can_txdone;
@@ -251,7 +254,7 @@ static void can_thread_entry(void* parameter)
         /* CAN task got CAN error message, handler CAN Error Status */
         if ((can_errors == CAN_IRQ_BO) || (can_errors == CAN_IRQ_DO))
         {
-            can_async_init(&CAN_0, CAN1);
+            can_async_init(&CAN_0, CAN_HARDWARE);
         }
     }
 }

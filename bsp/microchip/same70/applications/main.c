@@ -76,7 +76,7 @@ int main(void)
 #endif
 
 #ifdef SAM_I2C_EXAMPLE
-//    i2c_demo_run();
+    i2c_demo_run();
 #endif
 
 #ifdef SAM_ADC_EXAMPLE

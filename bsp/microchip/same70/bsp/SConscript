@@ -53,7 +53,9 @@ path = [
     cwd + '/hpl/systick',
     cwd + '/hpl/usart',
     cwd + '/hri',
-    cwd + '/same70b/include',]
+    cwd + '/same70b/include',
+    cwd + '/../board',
+    cwd + '/../../common/applications']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
