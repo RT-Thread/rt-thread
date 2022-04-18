@@ -130,7 +130,7 @@ msh >
 
 ### 下载配置
 
-> 这里使用 `jlink` 作为下载方式作为参考
+> 这里使用 `jlink` 下载方式作为参考
 
 * 将 `imxrt1052-fire-pro\board\JLink_Vxxx` 路径下的全部文件拷贝
 
@@ -140,35 +140,23 @@ msh >
 
 <img src="figures/5.png" style="zoom: 67%;" />
 
-* 接着到 `RT-Thread Studio`中填写芯片型号
-
-<img src="figures/6.png" style="zoom:80%;" />
-
-* 在  `Device name` 输入框中填写：MIMXRT1052XXXXB
-
-<img src="figures/7.png" style="zoom: 67%;" />
-
-### 编译仿真
+### 编译下载
 
 * 点击编译按钮，进行工程编译
 
-<img src="figures/8.png" style="zoom: 67%;" />
+<img src="figures/6.png" style="zoom: 67%;" />
 
-* 然后选择仿真按钮，进行代码的烧录
+* 然后选择下载按钮，进行代码的烧录
 
-<img src="figures/9.png" style="zoom: 67%;" />
+<img src="figures/7.png" style="zoom: 67%;" />
 
 * 当出现如下提示，恭喜你已经烧录成功
 
-<img src="figures/10.png" style="zoom: 67%;" />
-
-* 点击全速运行后，`RT-Thread` 工程便开始运行
-
-<img src="figures/11.png" style="zoom: 67%;" />
+<img src="figures/8.png" style="zoom: 67%;" />
 
 * 打开串口软件，选择好对应串口、波特率，按下开发板的复位按键，输出以下信息：
 
-<img src="figures/12.png" style="zoom: 67%;" />
+<img src="figures/9.png" style="zoom: 67%;" />
 
 ## 注意事项
 
