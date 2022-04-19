@@ -31,7 +31,7 @@ Hardware Drivers Config --->
 | 6 (D6)          | PB10          | PWM（定时器2发生）                                           |
 | 7 (D7)          | PA8           |                                                              |
 | 8 (D8)          | PA9           |                                                              |
-| 9 (D9)          | PC7           |                                                              |
+| 9 (D9)          | PC7           | PWM（定时器3发生）                                           |
 | 10 (D10)        | PB6           | SPI1-CS，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
 | 11 (D11)        | PA7           | SPI1-MOSI，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
 | 12 (D12)        | PA6           | SPI1-MISO，被RT-Thread的SPI设备框架spi1总线接管，不可当做普通IO |
