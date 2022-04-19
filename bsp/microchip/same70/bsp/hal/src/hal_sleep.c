@@ -38,7 +38,7 @@
  * \brief Driver version
  */
 #define DRIVER_VERSION 0x00000001u
-
+#if 0
 /**
  * \brief Set the sleep mode of the device and put the MCU to sleep
  *
@@ -61,7 +61,7 @@ int sleep(const uint8_t mode)
 
 	return ERR_NONE;
 }
-
+#endif
 /**
  * \brief Retrieve the current driver version
  *

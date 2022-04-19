@@ -147,6 +147,8 @@ static struct usart_configuration _usarts[] = {
 };
 #endif
 
+static struct _usart_async_device *_usart1_dev = NULL;
+
 static uint8_t _usart_get_irq_num(const void *const hw);
 static uint8_t _get_usart_index(const void *const hw);
 static uint8_t _usart_get_hardware_index(const void *const hw);
@@ -179,12 +181,15 @@ static uint8_t _usart_get_irq_num(const void *const hw)
  */
 static void _usart_init_irq_param(const void *const hw, struct _usart_async_device *dev)
 {
+	if (hw == USART1) {
+		_usart1_dev = dev;
+	}
 }
 
 /**
  * \brief Initialize synchronous USART
  */
-int32_t _usart_sync_init(struct _usart_sync_device *const device, void *const hw)
+int32_t _usart_usart_sync_init(struct _usart_sync_device *const device, void *const hw)
 {
 	ASSERT(device);
 	ASSERT(hw);
@@ -197,7 +202,7 @@ int32_t _usart_sync_init(struct _usart_sync_device *const device, void *const hw
 /**
  * \brief Initialize asynchronous USART
  */
-int32_t _usart_usart_async_init(struct _usart_async_device *const device, void *const hw)
+int32_t _usart_async_init(struct _usart_async_device *const device, void *const hw)
 {
 	int32_t init_status;
 
@@ -220,7 +225,7 @@ int32_t _usart_usart_async_init(struct _usart_async_device *const device, void *
 /**
  * \brief De-initialize USART
  */
-void _usart_sync_deinit(struct _usart_sync_device *const device)
+void _usart_usart_sync_deinit(struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	_usart_deinit(device->hw);
@@ -229,7 +234,7 @@ void _usart_sync_deinit(struct _usart_sync_device *const device)
 /**
  * \brief De-initialize USART
  */
-void _usart_usart_async_deinit(struct _usart_async_device *const device)
+void _usart_async_deinit(struct _usart_async_device *const device)
 {
 	ASSERT(device);
 	NVIC_DisableIRQ((IRQn_Type)_usart_get_irq_num(device->hw));
@@ -239,8 +244,8 @@ void _usart_usart_async_deinit(struct _usart_async_device *const device)
 /**
  * \brief Calculate baud rate register value
  */
-uint16_t _usart_sync_calculate_baud_rate(const uint32_t baud, const uint32_t clock_rate, const uint8_t samples,
-                                         const enum usart_baud_rate_mode mode, const uint8_t fraction)
+uint16_t _usart_usart_sync_calculate_baud_rate(const uint32_t baud, const uint32_t clock_rate, const uint8_t samples,
+                                               const enum usart_baud_rate_mode mode, const uint8_t fraction)
 {
 	return _usart_calculate_baud_rate(baud, clock_rate, samples, mode, fraction);
 }
@@ -248,15 +253,15 @@ uint16_t _usart_sync_calculate_baud_rate(const uint32_t baud, const uint32_t clo
 /**
  * \brief Calculate baud rate register value
  */
-uint16_t _usart_usart_async_calculate_baud_rate(const uint32_t baud, const uint32_t clock_rate, const uint8_t samples,
-                                                const enum usart_baud_rate_mode mode, const uint8_t fraction)
+uint16_t _usart_async_calculate_baud_rate(const uint32_t baud, const uint32_t clock_rate, const uint8_t samples,
+                                          const enum usart_baud_rate_mode mode, const uint8_t fraction)
 {
 	return _usart_calculate_baud_rate(baud, clock_rate, samples, mode, fraction);
 }
 /**
  * \brief Enable USART sync module
  */
-void _usart_sync_enable(struct _usart_sync_device *const device)
+void _usart_usart_sync_enable(struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	_usart_enable(device->hw);
@@ -265,7 +270,7 @@ void _usart_sync_enable(struct _usart_sync_device *const device)
 /**
  * \brief Enable USART async module
  */
-void _usart_usart_async_enable(struct _usart_async_device *const device)
+void _usart_async_enable(struct _usart_async_device *const device)
 {
 	ASSERT(device);
 	_usart_enable(device->hw);
@@ -274,7 +279,7 @@ void _usart_usart_async_enable(struct _usart_async_device *const device)
 /**
  * \brief Disable USART sync module
  */
-void _usart_sync_disable(struct _usart_sync_device *const device)
+void _usart_usart_sync_disable(struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	_usart_disable(device->hw);
@@ -283,7 +288,7 @@ void _usart_sync_disable(struct _usart_sync_device *const device)
 /**
  * \brief Disable USART async module
  */
-void _usart_usart_async_disable(struct _usart_async_device *const device)
+void _usart_async_disable(struct _usart_async_device *const device)
 {
 	ASSERT(device);
 	_usart_disable(device->hw);
@@ -292,7 +297,7 @@ void _usart_usart_async_disable(struct _usart_async_device *const device)
 /**
  * \brief Set baud rate
  */
-void _usart_sync_set_baud_rate(struct _usart_sync_device *const device, const uint32_t baud_rate)
+void _usart_usart_sync_set_baud_rate(struct _usart_sync_device *const device, const uint32_t baud_rate)
 {
 	ASSERT(device);
 	_usart_set_baud_rate(device->hw, baud_rate);
@@ -301,7 +306,7 @@ void _usart_sync_set_baud_rate(struct _usart_sync_device *const device, const ui
 /**
  * \brief Set baud rate
  */
-void _usart_usart_async_set_baud_rate(struct _usart_async_device *const device, const uint32_t baud_rate)
+void _usart_async_set_baud_rate(struct _usart_async_device *const device, const uint32_t baud_rate)
 {
 	ASSERT(device);
 	_usart_set_baud_rate(device->hw, baud_rate);
@@ -310,7 +315,7 @@ void _usart_usart_async_set_baud_rate(struct _usart_async_device *const device, 
 /**
  * \brief Set data order
  */
-void _usart_sync_set_data_order(struct _usart_sync_device *const device, const enum usart_data_order order)
+void _usart_usart_sync_set_data_order(struct _usart_sync_device *const device, const enum usart_data_order order)
 {
 	ASSERT(device);
 	_usart_set_data_order(device->hw, order);
@@ -319,7 +324,7 @@ void _usart_sync_set_data_order(struct _usart_sync_device *const device, const e
 /**
  * \brief Set data order
  */
-void _usart_usart_async_set_data_order(struct _usart_async_device *const device, const enum usart_data_order order)
+void _usart_async_set_data_order(struct _usart_async_device *const device, const enum usart_data_order order)
 {
 	ASSERT(device);
 	_usart_set_data_order(device->hw, order);
@@ -328,7 +333,7 @@ void _usart_usart_async_set_data_order(struct _usart_async_device *const device,
 /**
  * \brief Set mode
  */
-void _usart_sync_set_mode(struct _usart_sync_device *const device, const enum usart_mode mode)
+void _usart_usart_sync_set_mode(struct _usart_sync_device *const device, const enum usart_mode mode)
 {
 	ASSERT(device);
 	_usart_set_mode(device->hw, mode);
@@ -337,7 +342,7 @@ void _usart_sync_set_mode(struct _usart_sync_device *const device, const enum us
 /**
  * \brief Set mode
  */
-void _usart_usart_async_set_mode(struct _usart_async_device *const device, const enum usart_mode mode)
+void _usart_async_set_mode(struct _usart_async_device *const device, const enum usart_mode mode)
 {
 	ASSERT(device);
 	_usart_set_mode(device->hw, mode);
@@ -346,7 +351,7 @@ void _usart_usart_async_set_mode(struct _usart_async_device *const device, const
 /**
  * \brief Set parity
  */
-void _usart_sync_set_parity(struct _usart_sync_device *const device, const enum usart_parity parity)
+void _usart_usart_sync_set_parity(struct _usart_sync_device *const device, const enum usart_parity parity)
 {
 	ASSERT(device);
 	_usart_set_parity(device->hw, parity);
@@ -355,7 +360,7 @@ void _usart_sync_set_parity(struct _usart_sync_device *const device, const enum 
 /**
  * \brief Set parity
  */
-void _usart_usart_async_set_parity(struct _usart_async_device *const device, const enum usart_parity parity)
+void _usart_async_set_parity(struct _usart_async_device *const device, const enum usart_parity parity)
 {
 	ASSERT(device);
 	_usart_set_parity(device->hw, parity);
@@ -364,7 +369,7 @@ void _usart_usart_async_set_parity(struct _usart_async_device *const device, con
 /**
  * \brief Set stop bits mode
  */
-void _usart_sync_set_stop_bits(struct _usart_sync_device *const device, const enum usart_stop_bits stop_bits)
+void _usart_usart_sync_set_stop_bits(struct _usart_sync_device *const device, const enum usart_stop_bits stop_bits)
 {
 	ASSERT(device);
 	_usart_set_stop_bits(device->hw, stop_bits);
@@ -373,7 +378,7 @@ void _usart_sync_set_stop_bits(struct _usart_sync_device *const device, const en
 /**
  * \brief Set stop bits mode
  */
-void _usart_usart_async_set_stop_bits(struct _usart_async_device *const device, const enum usart_stop_bits stop_bits)
+void _usart_async_set_stop_bits(struct _usart_async_device *const device, const enum usart_stop_bits stop_bits)
 {
 	ASSERT(device);
 	_usart_set_stop_bits(device->hw, stop_bits);
@@ -382,7 +387,7 @@ void _usart_usart_async_set_stop_bits(struct _usart_async_device *const device, 
 /**
  * \brief Set character size
  */
-void _usart_sync_set_character_size(struct _usart_sync_device *const device, const enum usart_character_size size)
+void _usart_usart_sync_set_character_size(struct _usart_sync_device *const device, const enum usart_character_size size)
 {
 	ASSERT(device);
 	_usart_set_character_size(device->hw, size);
@@ -391,8 +396,7 @@ void _usart_sync_set_character_size(struct _usart_sync_device *const device, con
 /**
  * \brief Set character size
  */
-void _usart_usart_async_set_character_size(struct _usart_async_device *const device,
-                                           const enum usart_character_size   size)
+void _usart_async_set_character_size(struct _usart_async_device *const device, const enum usart_character_size size)
 {
 	ASSERT(device);
 	_usart_set_character_size(device->hw, size);
@@ -401,7 +405,7 @@ void _usart_usart_async_set_character_size(struct _usart_async_device *const dev
 /**
  * \brief Retrieve usart status
  */
-uint32_t _usart_sync_get_status(const struct _usart_sync_device *const device)
+uint32_t _usart_usart_sync_get_status(const struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	return (uint32_t)hri_usart_read_US_CSR_reg(device->hw);
@@ -410,7 +414,7 @@ uint32_t _usart_sync_get_status(const struct _usart_sync_device *const device)
 /**
  * \brief Retrieve usart status
  */
-uint32_t _usart_usart_async_get_status(const struct _usart_async_device *const device)
+uint32_t _usart_async_get_status(const struct _usart_async_device *const device)
 {
 	ASSERT(device);
 	return (uint32_t)hri_usart_read_US_CSR_reg(device->hw);
@@ -419,7 +423,7 @@ uint32_t _usart_usart_async_get_status(const struct _usart_async_device *const d
 /**
  * \brief Write a byte to the given USART instance
  */
-void _usart_sync_write_byte(struct _usart_sync_device *const device, uint8_t data)
+void _usart_usart_sync_write_byte(struct _usart_sync_device *const device, uint8_t data)
 {
 	ASSERT(device);
 	hri_usart_write_US_THR_reg(device->hw, (hri_usart_us_thr_reg_t)data);
@@ -428,7 +432,7 @@ void _usart_sync_write_byte(struct _usart_sync_device *const device, uint8_t dat
 /**
  * \brief Write a byte to the given USART instance
  */
-void _usart_usart_async_write_byte(struct _usart_async_device *const device, uint8_t data)
+void _usart_async_write_byte(struct _usart_async_device *const device, uint8_t data)
 {
 	ASSERT(device);
 	hri_usart_write_US_THR_reg(device->hw, (hri_usart_us_thr_reg_t)data);
@@ -437,7 +441,7 @@ void _usart_usart_async_write_byte(struct _usart_async_device *const device, uin
 /**
  * \brief Read a byte from the given USART instance
  */
-uint8_t _usart_sync_read_byte(const struct _usart_sync_device *const device)
+uint8_t _usart_usart_sync_read_byte(const struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	return (uint8_t)(hri_usart_read_US_RHR_reg(device->hw) & 0xff);
@@ -446,7 +450,7 @@ uint8_t _usart_sync_read_byte(const struct _usart_sync_device *const device)
 /**
  * \brief Check if USART is ready to send next byte
  */
-bool _usart_sync_is_ready_to_send(const struct _usart_sync_device *const device)
+bool _usart_usart_sync_is_ready_to_send(const struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	return hri_usart_get_US_CSR_TXRDY_bit(device->hw);
@@ -455,7 +459,7 @@ bool _usart_sync_is_ready_to_send(const struct _usart_sync_device *const device)
 /**
  * \brief Check if USART transmission complete
  */
-bool _usart_sync_is_transmit_done(const struct _usart_sync_device *const device)
+bool _usart_usart_sync_is_transmit_done(const struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	return hri_usart_get_US_CSR_TXEMPTY_bit(device->hw);
@@ -464,7 +468,7 @@ bool _usart_sync_is_transmit_done(const struct _usart_sync_device *const device)
 /**
  * \brief Check if USART is ready to send next byte
  */
-bool _usart_usart_async_is_byte_sent(const struct _usart_async_device *const device)
+bool _usart_async_is_byte_sent(const struct _usart_async_device *const device)
 {
 	ASSERT(device);
 	return hri_usart_get_US_CSR_TXRDY_bit(device->hw);
@@ -473,7 +477,7 @@ bool _usart_usart_async_is_byte_sent(const struct _usart_async_device *const dev
 /**
  * \brief Check if there is data received by USART
  */
-bool _usart_sync_is_byte_received(const struct _usart_sync_device *const device)
+bool _usart_usart_sync_is_byte_received(const struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	return hri_usart_get_US_CSR_RXRDY_bit(device->hw);
@@ -482,8 +486,8 @@ bool _usart_sync_is_byte_received(const struct _usart_sync_device *const device)
 /**
  * \brief Set the state of flow control pins
  */
-void _usart_sync_set_flow_control_state(struct _usart_sync_device *const     device,
-                                        const union usart_flow_control_state state)
+void _usart_usart_sync_set_flow_control_state(struct _usart_sync_device *const     device,
+                                              const union usart_flow_control_state state)
 {
 	ASSERT(device);
 	(void)device;
@@ -493,8 +497,8 @@ void _usart_sync_set_flow_control_state(struct _usart_sync_device *const     dev
 /**
  * \brief Set the state of flow control pins
  */
-void _usart_usart_async_set_flow_control_state(struct _usart_async_device *const    device,
-                                               const union usart_flow_control_state state)
+void _usart_async_set_flow_control_state(struct _usart_async_device *const    device,
+                                         const union usart_flow_control_state state)
 {
 	ASSERT(device);
 	(void)device;
@@ -504,7 +508,7 @@ void _usart_usart_async_set_flow_control_state(struct _usart_async_device *const
 /**
  * \brief Retrieve the state of flow control pins
  */
-union usart_flow_control_state _usart_sync_get_flow_control_state(const struct _usart_sync_device *const device)
+union usart_flow_control_state _usart_usart_sync_get_flow_control_state(const struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	(void)device;
@@ -518,7 +522,7 @@ union usart_flow_control_state _usart_sync_get_flow_control_state(const struct _
 /**
  * \brief Retrieve the state of flow control pins
  */
-union usart_flow_control_state _usart_usart_async_get_flow_control_state(const struct _usart_async_device *const device)
+union usart_flow_control_state _usart_async_get_flow_control_state(const struct _usart_async_device *const device)
 {
 	ASSERT(device);
 	(void)device;
@@ -532,7 +536,7 @@ union usart_flow_control_state _usart_usart_async_get_flow_control_state(const s
 /**
  * \brief Enable data register empty interrupt
  */
-void _usart_usart_async_enable_byte_sent_irq(struct _usart_async_device *const device)
+void _usart_async_enable_byte_sent_irq(struct _usart_async_device *const device)
 {
 	ASSERT(device);
 	hri_usart_set_US_IMR_TXRDY_bit(device->hw);
@@ -541,7 +545,7 @@ void _usart_usart_async_enable_byte_sent_irq(struct _usart_async_device *const d
 /**
  * \brief Enable transmission complete interrupt
  */
-void _usart_usart_async_enable_tx_done_irq(struct _usart_async_device *const device)
+void _usart_async_enable_tx_done_irq(struct _usart_async_device *const device)
 {
 	ASSERT(device);
 	hri_usart_set_US_IMR_TXEMPTY_bit(device->hw);
@@ -564,7 +568,7 @@ static uint8_t _usart_get_hardware_index(const void *const hw)
 /**
  * \brief Retrieve ordinal number of the given USART hardware instance
  */
-uint8_t _usart_sync_get_hardware_index(const struct _usart_sync_device *const device)
+uint8_t _usart_usart_sync_get_hardware_index(const struct _usart_sync_device *const device)
 {
 	ASSERT(device);
 	return _usart_get_hardware_index(device->hw);
@@ -573,7 +577,7 @@ uint8_t _usart_sync_get_hardware_index(const struct _usart_sync_device *const de
 /**
  * \brief Retrieve ordinal number of the given USART hardware instance
  */
-uint8_t _usart_usart_async_get_hardware_index(const struct _usart_async_device *const device)
+uint8_t _usart_async_get_hardware_index(const struct _usart_async_device *const device)
 {
 	ASSERT(device);
 	return _usart_get_hardware_index(device->hw);
@@ -582,8 +586,8 @@ uint8_t _usart_usart_async_get_hardware_index(const struct _usart_async_device *
 /**
  * \brief Enable/disable USART interrupt
  */
-void _usart_usart_async_set_irq_state(struct _usart_async_device *const     device,
-                                      const enum _usart_async_callback_type type, const bool state)
+void _usart_async_set_irq_state(struct _usart_async_device *const device, const enum _usart_async_callback_type type,
+                                const bool state)
 {
 	ASSERT(device);
 	if (state) {
@@ -633,6 +637,47 @@ void *_usart_get_usart_async(void)
 void *_usart_get_usart_dma(void)
 {
 	return (void *)NULL;
+}
+
+/**
+ * \internal Usart interrupt handler
+ *
+ * \param[in] p The pointer to interrupt parameter
+ */
+static void _usart_interrupt_handler(struct _usart_async_device *device)
+{
+	ASSERT(device);
+	void *hw = device->hw;
+
+	if (hri_usart_get_US_CSR_TXRDY_bit(hw) && hri_usart_get_US_IMR_TXRDY_bit(hw)) {
+		hri_usart_clear_US_IMR_TXRDY_bit(hw);
+		device->usart_cb.tx_byte_sent(device);
+	} else if (hri_usart_get_US_CSR_TXEMPTY_bit(hw) && hri_usart_get_US_IMR_TXEMPTY_bit(hw)) {
+		hri_usart_clear_US_IMR_TXEMPTY_bit(hw);
+		device->usart_cb.tx_done_cb(device);
+	} else if (hri_usart_get_US_CSR_RXRDY_bit(hw) && hri_usart_get_US_IMR_RXRDY_bit(hw)) {
+		if (hri_usart_read_US_CSR_reg(hw) &
+
+		    (US_CSR_OVRE | US_CSR_USART_LIN_FRAME | US_CSR_USART_LIN_PARE | US_CSR_USART_MANERR)) {
+			hri_usart_read_US_RHR_reg(hw);
+			hri_usart_write_US_CR_reg(hw, US_CR_RSTSTA);
+			return;
+		}
+		device->usart_cb.rx_done_cb(device, (uint8_t)hri_usart_read_US_RHR_reg(hw));
+	} else if (hri_usart_read_US_CSR_reg(hw) &
+
+	           (US_CSR_OVRE | US_CSR_USART_LIN_FRAME | US_CSR_USART_LIN_PARE | US_CSR_USART_MANERR)) {
+		hri_usart_write_US_CR_reg(hw, US_CR_RSTSTA);
+		device->usart_cb.error_cb(device);
+	}
+}
+
+/**
+ * \internal USART interrupt handler
+ */
+void USART1_Handler(void)
+{
+	_usart_interrupt_handler(_usart1_dev);
 }
 
 /**
