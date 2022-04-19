@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-12-10     Meco Man     first version
  */
+
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
@@ -26,18 +27,15 @@
 #define D12  (12)
 #define D13  (13)
 #define D14  (14)
-#define D15  (15)
-#define A0   (16)
-#define A1   (17)
-#define A2   (18)
-#define A3   (19)
-#define A4   (20)
-#define A5   (21)
+#define A0   (15)
+#define A1   (16)
+#define A2   (17)
+#define A3   (18)
+#define A4   (19)
+#define A5   (20)
 
-#define LED_BUILTIN  D13 /* Built-in LED */
+#define LED_BUILTIN  D13 /* Default Built-in LED */
 
-#define ARDUINO_PWM_HZ 500 /* Arduino UNO's PWM is around 500Hz */
-
-#define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
+#define ARDUINO_DEFAULT_IIC_BUS_NAME "i2c1"
 
 #endif /* Pins_Arduino_h */

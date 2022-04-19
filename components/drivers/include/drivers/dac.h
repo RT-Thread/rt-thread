@@ -35,7 +35,7 @@ typedef enum
 
 rt_err_t rt_hw_dac_register(rt_dac_device_t dac,const char *name, const struct rt_dac_ops *ops, const void *user_data);
 
-rt_uint32_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value);
+rt_err_t rt_dac_write(rt_dac_device_t dev, rt_uint32_t channel, rt_uint32_t value);
 rt_err_t rt_dac_enable(rt_dac_device_t dev, rt_uint32_t channel);
 rt_err_t rt_dac_disable(rt_dac_device_t dev, rt_uint32_t channel);
 

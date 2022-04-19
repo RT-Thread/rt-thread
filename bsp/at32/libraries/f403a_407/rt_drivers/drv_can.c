@@ -15,11 +15,12 @@
 #define LOG_TAG    "drv_can"
 #include <drv_log.h>
 
+#ifdef SOC_SERIES_AT32F403A
 /* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 120 / ((1 + 8 + 3) * 10) = 1MHz*/
-/* attention !!! apbclk 120 mhz */
+/* attention !!! default apbclk 120 mhz */
 static const struct at32_baud_rate can_baud_rate_tab[] =
 {
-    {CAN1MBaud,   {10 , CAN_RSAW_2TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN1MBaud,   {10 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
     {CAN800kBaud, {15 , CAN_RSAW_2TQ, CAN_BTS1_7TQ,  CAN_BTS2_2TQ}},
     {CAN500kBaud, {20 , CAN_RSAW_2TQ, CAN_BTS1_9TQ,  CAN_BTS2_2TQ}},
     {CAN250kBaud, {40 , CAN_RSAW_2TQ, CAN_BTS1_9TQ,  CAN_BTS2_2TQ}},
@@ -29,6 +30,23 @@ static const struct at32_baud_rate can_baud_rate_tab[] =
     {CAN20kBaud,  {375, CAN_RSAW_2TQ, CAN_BTS1_13TQ, CAN_BTS2_2TQ}},
     {CAN10kBaud,  {750, CAN_RSAW_2TQ, CAN_BTS1_13TQ, CAN_BTS2_2TQ}}
 };
+#endif
+#ifdef SOC_SERIES_AT32F407
+/* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 100 / ((1 + 7 + 2) * 10) = 1MHz*/
+/* attention !!! default apbclk 100 mhz */
+static const struct at32_baud_rate can_baud_rate_tab[] =
+{
+    {CAN1MBaud,   {10 , CAN_RSAW_3TQ, CAN_BTS1_7TQ,  CAN_BTS2_2TQ}},
+    {CAN800kBaud, {25,  CAN_RSAW_1TQ, CAN_BTS1_3TQ,  CAN_BTS2_1TQ}},
+    {CAN500kBaud, {10,  CAN_RSAW_3TQ, CAN_BTS1_16TQ, CAN_BTS2_3TQ}},
+    {CAN250kBaud, {20,  CAN_RSAW_3TQ, CAN_BTS1_16TQ, CAN_BTS2_3TQ}},
+    {CAN125kBaud, {40,  CAN_RSAW_3TQ, CAN_BTS1_16TQ, CAN_BTS2_3TQ}},
+    {CAN100kBaud, {50,  CAN_RSAW_3TQ, CAN_BTS1_16TQ, CAN_BTS2_3TQ}},
+    {CAN50kBaud,  {100, CAN_RSAW_2TQ, CAN_BTS1_16TQ, CAN_BTS2_3TQ}},
+    {CAN20kBaud,  {250, CAN_RSAW_2TQ, CAN_BTS1_16TQ, CAN_BTS2_3TQ}},
+    {CAN10kBaud,  {500, CAN_RSAW_2TQ, CAN_BTS1_16TQ, CAN_BTS2_3TQ}}
+};
+#endif
 
 #ifdef BSP_USING_CAN1
 static struct at32_can can_instance1 =
@@ -399,7 +417,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     hcan = &((struct at32_can *) can->parent.user_data)->config;
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
     can_tx_message_type tx_message;
-    rt_uint32_t timeout = 0;
 
     /* check select mailbox is empty */
     switch (box_num)
@@ -463,10 +480,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     tx_message.data[7] = (uint32_t)pmsg->data[7];
 
     can_message_transmit(hcan->can_x, &tx_message);
-    while((can_transmit_status_get(hcan->can_x, (can_tx_mailbox_num_type)box_num) != CAN_TX_STATUS_SUCCESSFUL) && (timeout != 0xFFFF))
-    {
-        timeout++;
-    }
 
     return RT_EOK;
 }
@@ -683,7 +696,8 @@ void CAN1_SE_IRQHandler(void)
     can_instance1.device.status.rcverrcnt = errtype >> 24;
     can_instance1.device.status.snderrcnt = (errtype >> 16 & 0xFF);
     can_instance1.device.status.errcode = errtype & 0x07;
-    hcan->can_x->msts_bit.eoif = 1;
+    /* clear error flags */
+    can_flag_clear(hcan->can_x, CAN_ETR_FLAG);
     rt_interrupt_leave();
 }
 #endif
@@ -802,7 +816,8 @@ void CAN2_SE_IRQHandler(void)
     can_instance2.device.status.rcverrcnt = errtype >> 24;
     can_instance2.device.status.snderrcnt = (errtype >> 16 & 0xFF);
     can_instance2.device.status.errcode = errtype & 0x07;
-    hcan->can_x->msts_bit.eoif = 1;
+    /* clear error flags */
+    can_flag_clear(hcan->can_x, CAN_ETR_FLAG);
     rt_interrupt_leave();
 }
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -92,6 +92,7 @@ static rt_err_t n32_spi_init(struct n32_spi *spi_drv, struct rt_spi_configuratio
     RT_ASSERT(cfg != RT_NULL);
 
     SPI_InitType *SPI_InitStructure = &spi_drv->SPI_InitStructure;
+    SPI_Module *spi_handle = spi_drv->config->module;
 
     /* GPIO configuration ------------------------------------------------------*/
     n32_msp_spi_init(spi_drv->config->module);
@@ -155,16 +156,51 @@ static rt_err_t n32_spi_init(struct n32_spi *spi_drv, struct rt_spi_configuratio
         SPI_InitStructure->NSS = SPI_NSS_SOFT;
     }
 
-    /* TODO */
-    /*
-    uint32_t SPI_APB_CLOCK;
+    RCC_ClocksType RCC_Clock;
+    RCC_GetClocksFreqValue(&RCC_Clock);
+    rt_uint64_t SPI_APB_CLOCK;
+
+    if (SPI1 == spi_handle)
+    {
+        SPI_APB_CLOCK = RCC_Clock.Pclk1Freq;
+    }
+    else if (SPI2 == spi_handle ||  SPI3 == spi_handle)
+    {
+        SPI_APB_CLOCK = RCC_Clock.Pclk2Freq;
+    }
+
     if (cfg->max_hz >= SPI_APB_CLOCK / 2)
     {
-        SPI_InitStructure->BaudRatePres = SPI_BAUDRATEPRESCALER_2;
+        SPI_InitStructure->BaudRatePres = SPI_BR_PRESCALER_2;
     }
-    */
-    SPI_InitStructure->BaudRatePres = SPI_BR_PRESCALER_4;
-
+    else if (cfg->max_hz >= SPI_APB_CLOCK / 4)
+    {
+        SPI_InitStructure->BaudRatePres = SPI_BR_PRESCALER_4;
+    }
+    else if (cfg->max_hz >= SPI_APB_CLOCK / 8)
+    {
+        SPI_InitStructure->BaudRatePres = SPI_BR_PRESCALER_8;
+    }
+    else if (cfg->max_hz >= SPI_APB_CLOCK / 16)
+    {
+        SPI_InitStructure->BaudRatePres = SPI_BR_PRESCALER_16;
+    }
+    else if (cfg->max_hz >= SPI_APB_CLOCK / 32)
+    {
+        SPI_InitStructure->BaudRatePres = SPI_BR_PRESCALER_32;
+    }
+    else if (cfg->max_hz >= SPI_APB_CLOCK / 64)
+    {
+        SPI_InitStructure->BaudRatePres = SPI_BR_PRESCALER_64;
+    }
+    else if (cfg->max_hz >= SPI_APB_CLOCK / 128)
+    {
+        SPI_InitStructure->BaudRatePres = SPI_BR_PRESCALER_128;
+    }
+    else
+    {
+        SPI_InitStructure->BaudRatePres = SPI_BR_PRESCALER_256;
+    }
 
     if (cfg->mode & RT_SPI_MSB)
     {
@@ -177,12 +213,12 @@ static rt_err_t n32_spi_init(struct n32_spi *spi_drv, struct rt_spi_configuratio
 
     SPI_InitStructure->CRCPoly       = 7;
 
-    SPI_Init(spi_drv->config->module, SPI_InitStructure);
+    SPI_Init(spi_handle, SPI_InitStructure);
     /* Enable SPI_MASTER TXE interrupt */
-    SPI_I2S_EnableInt(spi_drv->config->module, SPI_I2S_INT_TE, ENABLE);
+    SPI_I2S_EnableInt(spi_handle, SPI_I2S_INT_TE, ENABLE);
 
     /* Enable SPI_MASTER */
-    SPI_Enable(spi_drv->config->module, ENABLE);
+    SPI_Enable(spi_handle, ENABLE);
 
     return RT_EOK;
 }
@@ -201,7 +237,8 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
 
 static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    rt_size_t message_length, already_length;
+    rt_size_t message_length;
+    rt_size_t i = 0;
     rt_uint8_t *recv_buf;
     const rt_uint8_t *send_buf;
 
@@ -212,6 +249,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     struct n32_spi *spi_drv =  rt_container_of(device->bus, struct n32_spi, spi_bus);
     struct n32_hw_spi_cs *cs = device->parent.user_data;
+    SPI_Module *spi_handle = spi_drv->config->module;
 
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
     {
@@ -224,29 +262,33 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     message_length = message->length;
     recv_buf = message->recv_buf;
     send_buf = message->send_buf;
-    for (already_length = 0; already_length < message_length; )
-    {
-        /* start once data exchange in DMA mode */
-        if (message->send_buf && message->recv_buf)
-        {
-            LOG_D("%s:%d",__FUNCTION__,__LINE__);
-        }
-        else if (message->send_buf)
-        {
-            /* Wait for SPIy Tx buffer empty */
-            while (SPI_I2S_GetStatus(spi_drv->config->module, SPI_I2S_TE_FLAG) == RESET);
 
-            SPI_I2S_TransmitData(spi_drv->config->module, (send_buf[already_length]));
-        }
-        else
-        {
-            /* Wait for SPIy data reception */
-            while (SPI_I2S_GetStatus(spi_drv->config->module, SPI_I2S_RNE_FLAG) == RESET);
-            /* Read SPIy received data */
-            recv_buf[already_length] = (rt_uint8_t)SPI_I2S_ReceiveData(spi_drv->config->module);
-        }
-        already_length ++;
+    /* start once data exchange in DMA mode */
+    if (message->send_buf && message->recv_buf)
+    {
+        LOG_D("%s:%d", __FUNCTION__, __LINE__);
     }
+    else if (message->send_buf)
+    {
+        while (message_length--)
+        {
+            while (SPI_I2S_GetStatus(spi_handle, SPI_I2S_TE_FLAG) == RESET);
+            SPI_I2S_TransmitData(spi_handle, send_buf[i++]);
+            while (SPI_I2S_GetStatus(spi_handle, SPI_I2S_RNE_FLAG) == RESET);
+            SPI_I2S_ReceiveData(spi_handle);
+        }
+    }
+    else
+    {
+        while (message_length--)
+        {
+            while (SPI_I2S_GetStatus(spi_handle, SPI_I2S_TE_FLAG) == RESET);
+            SPI_I2S_TransmitData(spi_handle, 0xff);
+            while (SPI_I2S_GetStatus(spi_handle, SPI_I2S_RNE_FLAG) == RESET);
+            recv_buf[i++] = (rt_uint8_t)SPI_I2S_ReceiveData(spi_handle);
+        }
+    }
+
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
     {

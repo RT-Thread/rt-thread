@@ -67,6 +67,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             wdt_register_write_enable(TRUE);
             wdt_divider_set(at32_wdt.div);
             wdt_reload_value_set(at32_wdt.reload);
+            wdt_counter_reload();
             wdt_register_write_enable(FALSE);
             wdt_enable();
         }
@@ -89,6 +90,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         wdt_register_write_enable(TRUE);
         wdt_divider_set(at32_wdt.div);
         wdt_reload_value_set(at32_wdt.reload);
+        wdt_counter_reload();
         wdt_register_write_enable(FALSE);
         wdt_enable();
         at32_wdt.is_start = 1;
