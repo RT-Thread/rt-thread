@@ -34,7 +34,9 @@ const pin_map_t pin_map_table[]=
     {D11, GET_PIN(A,7), "pwm17", 1}, /* PWM */
     {D12, GET_PIN(A,6)},
     {D13, GET_PIN(A,5)},
-    {D14, GET_PIN(C,13)}, /* user button */
+    {D14}, /* I2C1-SDA */
+    {D15}, /* I2C1-SCL */
+    {D16, GET_PIN(C,13)}, /* user button */
     {A0, GET_PIN(A,0), "adc1", 0}, /* ADC */
     {A1, GET_PIN(A,1), "adc1", 1}, /* ADC */
     {A2, GET_PIN(A,4), "adc1", 4}, /* ADC */

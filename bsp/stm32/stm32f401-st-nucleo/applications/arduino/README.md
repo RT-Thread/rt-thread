@@ -16,33 +16,37 @@ Hardware Drivers Config --->
 
 ## 2 Arduino引脚排布
 
+![nucleo-f401-pinout](nucleo-f401-pinout.png)
+
 该BSP遵照Arduino UNO板的引脚排列方式。详见 `pins_arduino.c`
 
-| Arduino引脚编号 | STM32引脚编号 | 备注                                           |
-| --------------- | ------------- | ---------------------------------------------- |
-| 0 (D0)          | --            | 该引脚在UNO板中为串口RX引脚，不能被当做普通IO  |
-| 1 (D1)          | --            | 该引脚在UNO板中为串口TX引脚，不能被当做普通IO  |
-| 2 (D2)          | PA10          |                                                |
-| 3 (D3)          | PB3           | PWM（定时器2发生）                             |
-| 4 (D4)          | PB5           |                                                |
-| 5 (D5)          | PB4           | PWM（定时器3发生）                             |
-| 6 (D6)          | PB10          | PWM（定时器2发生）                             |
-| 7 (D7)          | PA8           |                                                |
-| 8 (D8)          | PA9           |                                                |
-| 9 (D9)          | PC7           | PWM（定时器3发生）                             |
-| 10 (D10)        | PB6           | PWM反相位（定时器16发生）                      |
-| 11 (D11)        | PA7           | PWM（定时器17发生）                            |
-| 12 (D12)        | PA6           |                                                |
-| 13 (D13)        | PA5           |                                                |
-| 14 (D14)        | PC13          | 扩展：Nucleo板载用户按键（左侧蓝色）           |
-| A0              | PA0           | ADC                                            |
-| A1              | PA1           | ADC                                            |
-| A2              | PA4           | ADC                                            |
-| A3              | PB0           | ADC                                            |
-| A4              | PC1           | ADC                                            |
-| A5              | PC0           | ADC                                            |
-| --              | PB9           | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管 |
-| --              |               | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管 |
+| Arduino引脚编号 | STM32引脚编号 | 备注                                                         |
+| --------------- | ------------- | ------------------------------------------------------------ |
+| 0 (D0)          | --            | 该引脚在UNO板中为串口RX引脚，不能被当做普通IO                |
+| 1 (D1)          | --            | 该引脚在UNO板中为串口TX引脚，不能被当做普通IO                |
+| 2 (D2)          | PA10          |                                                              |
+| 3 (D3)          | PB3           | PWM（定时器2发生）                                           |
+| 4 (D4)          | PB5           |                                                              |
+| 5 (D5)          | PB4           | PWM（定时器3发生）                                           |
+| 6 (D6)          | PB10          | PWM（定时器2发生）                                           |
+| 7 (D7)          | PA8           |                                                              |
+| 8 (D8)          | PA9           |                                                              |
+| 9 (D9)          | PC7           |                                                              |
+| 10 (D10)        | PB6           | SPI1-CS，被RT-Thread的SPI设备框架spi1总线接管，不能被当做普通IO |
+| 11 (D11)        | PA7           | SPI1-MOSI，被RT-Thread的SPI设备框架spi1总线接管，不能被当做普通IO |
+| 12 (D12)        | PA6           | SPI1-MISO，被RT-Thread的SPI设备框架spi1总线接管，不能被当做普通IO |
+| 13 (D13)        | PA5           | SPI1-SCK，被RT-Thread的SPI设备框架spi1总线接管，不能被当做普通IO |
+| 14 (D14)        | PB9           | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不能被当做普通IO |
+| 15 (D15)        | PB8           | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管，不能被当做普通IO |
+| 16 (D16)        | PC13          | 扩展：Nucleo板载用户按键（左侧蓝色）                         |
+| A0              | PA0           | ADC                                                          |
+| A1              | PA1           | ADC                                                          |
+| A2              | PA4           | ADC                                                          |
+| A3              | PB0           | ADC                                                          |
+| A4              | PC1           | ADC                                                          |
+| A5              | PC0           | ADC                                                          |
+| A6              | --            |                                                              |
+| A7              | --            |                                                              |
 
 > 注意：
 >
@@ -50,6 +54,10 @@ Hardware Drivers Config --->
 > 2. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
 > 3. USART2是Nucleo板的默认串口，理论应对接到了Arduino引脚编号的D0和D1，但是其实际用于串口通信，因此不允许当做普通IO来使用和操作。如果需要将D0、D1与STM32 USART2的引脚相连，需要手动焊接锡桥SB62、SB63。
 > 4. Nucleo板的Arduino接口中AVDD（即AREF）默认是与VDD相连的，如果需要扩展板提供外部参考电压，需要将SB57锡桥挑开。
+
+> 参考资料
+>
+> 【1】[STM32 Nucleo板官方手册](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)
 
 ## 3 I2C总线
 
