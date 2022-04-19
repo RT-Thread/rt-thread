@@ -56,7 +56,7 @@ i.MX RT1052 EVK Pro 是野火推出的一款基于 ARM Cortex-M7 内核的开发
 | GPT               |     支持 |                              |
 | CAN               |     支持 |        CAN1                      |
 
-## 使用说明
+## Keil IDE 使用说明
 
 使用说明分为如下两个章节：
 
@@ -111,6 +111,52 @@ msh >
 4. 输入 `scons --target=mdk4/mdk5/iar` 命令重新生成工程。
 
 本章节更多详细的介绍请参考 [IMXRT系列BSP外设驱动使用教程](../docs/IMXRT系列BSP外设驱动使用教程.md)。
+
+## RT-Thread Studio 使用说明
+
+### 导入工程
+
+* 首选在 `RT-Thread Studio` 中点击导入工程，选择 `RT-Thread Bsp` 到工作空间中。
+
+<img src="figures/1.png" style="zoom:80%;" />
+
+* 选择 `imxrt1052-fire-pro` 目录作为Bsp根目录
+
+<img src="figures/2.png" style="zoom: 67%;" />
+
+* 为本工程起个别名，作为本项目的工程名称
+
+<img src="figures/3.png" style="zoom:80%;" />
+
+### 下载配置
+
+> 这里使用 `jlink` 下载方式作为参考
+
+* 将 `imxrt1052-fire-pro\board\JLink_Vxxx` 路径下的全部文件拷贝
+
+<img src="figures/4.png" style="zoom:80%;" />
+
+* 覆盖到 `RT-Thread Studio` 安装目录下 `repo\Extract\Debugger_Support_Packages\SEGGER\J-Link\JLink_Vxxx` 目录即可
+
+<img src="figures/5.png" style="zoom: 67%;" />
+
+### 编译下载
+
+* 点击编译按钮，进行工程编译
+
+<img src="figures/6.png" style="zoom: 67%;" />
+
+* 然后选择下载按钮，进行代码的烧录
+
+<img src="figures/7.png" style="zoom: 67%;" />
+
+* 当出现如下提示，恭喜你已经烧录成功
+
+<img src="figures/8.png" style="zoom: 67%;" />
+
+* 打开串口软件，选择好对应串口、波特率，按下开发板的复位按键，输出以下信息：
+
+<img src="figures/9.png" style="zoom: 67%;" />
 
 ## 注意事项
 
