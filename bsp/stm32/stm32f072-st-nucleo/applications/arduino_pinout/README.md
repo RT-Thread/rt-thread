@@ -1,8 +1,8 @@
-# STM32F401 Nucleo开发板的Arduino生态兼容说明
+# STM32F072 Nucleo开发板的Arduino生态兼容说明
 
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
-STM32F401 Nucleo开发板已经完整适配了[RTduino软件包](https://github.com/mysterywolf/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/mysterywolf/RTduino)。
+STM32F072 Nucleo开发板已经完整适配了[RTduino软件包](https://github.com/mysterywolf/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/mysterywolf/RTduino)。
 
 ### 1.1 如何开启针对本BSP的Arduino生态兼容层
 
@@ -16,14 +16,14 @@ Hardware Drivers Config --->
 
 ## 2 Arduino引脚排布
 
-![nucleo-f401-pinout](nucleo-f401-pinout.png)
+![nucleo-f072-pinout](nucleo-f072-pinout.png)
 
 该BSP遵照Arduino UNO板的引脚排列方式。详见 `pins_arduino.c`
 
 | Arduino引脚编号 | STM32引脚编号 | 备注                                                         |
 | --------------- | ------------- | ------------------------------------------------------------ |
-| 0 (D0)          | --            | 该引脚在UNO板中为串口RX引脚，不能被当做普通IO                |
-| 1 (D1)          | --            | 该引脚在UNO板中为串口TX引脚，不能被当做普通IO                |
+| 0 (D0)          | --            | 该引脚在UNO板中为串口RX引脚，不可当做普通IO                  |
+| 1 (D1)          | --            | 该引脚在UNO板中为串口TX引脚，不可当做普通IO                  |
 | 2 (D2)          | PA10          |                                                              |
 | 3 (D3)          | PB3           | PWM（定时器2发生）                                           |
 | 4 (D4)          | PB5           |                                                              |
@@ -31,22 +31,22 @@ Hardware Drivers Config --->
 | 6 (D6)          | PB10          | PWM（定时器2发生）                                           |
 | 7 (D7)          | PA8           |                                                              |
 | 8 (D8)          | PA9           |                                                              |
-| 9 (D9)          | PC7           |                                                              |
-| 10 (D10)        | PB6           | SPI1-CS，被RT-Thread的SPI设备框架spi1总线接管，不能被当做普通IO |
-| 11 (D11)        | PA7           | SPI1-MOSI，被RT-Thread的SPI设备框架spi1总线接管，不能被当做普通IO |
-| 12 (D12)        | PA6           | SPI1-MISO，被RT-Thread的SPI设备框架spi1总线接管，不能被当做普通IO |
-| 13 (D13)        | PA5           | SPI1-SCK，被RT-Thread的SPI设备框架spi1总线接管，不能被当做普通IO |
-| 14 (D14)        | PB9           | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不能被当做普通IO |
-| 15 (D15)        | PB8           | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管，不能被当做普通IO |
-| 16 (D16)        | PC13          | 扩展：Nucleo板载用户按键（左侧蓝色）                         |
+| 9 (D9)          | PC7           | PWM（定时器3发生）                                           |
+| 10 (D10)        | PB6           | PWM反相位（定时器16发生）                                    |
+| 11 (D11)        | PA7           | PWM（定时器17发生）                                          |
+| 12 (D12)        | PA6           |                                                              |
+| 13 (D13)        | PA5           |                                                              |
+| 14 (D14)        | PB9           | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
+| 15 (D15)        | PB8           | I2C1_SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
+| 16 (D16)        | PC13          | Nucleo板载用户按键（左侧蓝色）                               |
 | A0              | PA0           | ADC                                                          |
 | A1              | PA1           | ADC                                                          |
 | A2              | PA4           | ADC                                                          |
 | A3              | PB0           | ADC                                                          |
 | A4              | PC1           | ADC                                                          |
 | A5              | PC0           | ADC                                                          |
-| A6              | --            |                                                              |
-| A7              | --            |                                                              |
+| A6              | --            | 芯片内部参考电压 ADC                                         |
+| A7              | --            | 芯片内部温度 ADC                                             |
 
 > 注意：
 >
@@ -61,4 +61,4 @@ Hardware Drivers Config --->
 
 ## 3 I2C总线
 
-STM32F401 Nucleo板的I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
+STM32F072 Nucleo板的I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
