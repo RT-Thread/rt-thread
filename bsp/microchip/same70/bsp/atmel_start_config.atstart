@@ -17,21 +17,168 @@ board:
   identifier: SAME70Xplained
   device: ATSAME70Q21B-AN
 details: null
-application:
-  definition: 'Atmel:Application_Examples:0.0.1::Application:LED_switcher:'
-  configuration: null
-middlewares: {}
+application: null
+middlewares:
+  MACIF_PHY:
+    user_label: MACIF_PHY
+    configuration:
+      ieee8023_mii_control_autoneg_en: true
+      ieee8023_mii_control_duplex_mode: full duplex
+      ieee8023_mii_control_isolate_en: false
+      ieee8023_mii_control_loopback_en: false
+      ieee8023_mii_control_powerdown_en: false
+      ieee8023_mii_control_reg0_setting: true
+      ieee8023_mii_control_speed_lsb: 100 Mb/s
+      ieee8023_mii_phy_address: 0
+    definition: Atmel:Ethernet_PHY:0.0.1::Generic_Ethernet_PHY_Driver
+    functionality: Ethernet_PHY
+    api: Ethernet:GenericPHY:Driver
+    dependencies:
+      Communication IO: MACIF
 drivers:
+  ADC_0:
+    user_label: ADC_0
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::AFEC0::driver_config_definition::ADC::HAL:Driver:ADC.Sync
+    functionality: ADC
+    api: HAL:Driver:ADC_Sync
+    configuration:
+      afec_advanced_settings: true
+      afec_channel0_enable: false
+      afec_channel10_enable: true
+      afec_channel11_enable: false
+      afec_channel1_enable: false
+      afec_channel2_enable: false
+      afec_channel3_enable: false
+      afec_channel4_enable: false
+      afec_channel5_enable: false
+      afec_channel6_enable: false
+      afec_channel7_enable: false
+      afec_channel8_enable: false
+      afec_channel9_enable: false
+      afec_channel_diff0: false
+      afec_channel_diff1: false
+      afec_channel_diff10: false
+      afec_channel_diff11: false
+      afec_channel_diff2: false
+      afec_channel_diff3: false
+      afec_channel_diff4: false
+      afec_channel_diff5: false
+      afec_channel_diff6: false
+      afec_channel_diff7: false
+      afec_channel_diff8: false
+      afec_channel_diff9: false
+      afec_channel_dual0: false
+      afec_channel_dual1: false
+      afec_channel_dual10: true
+      afec_channel_dual11: false
+      afec_channel_dual2: false
+      afec_channel_dual3: false
+      afec_channel_dual4: false
+      afec_channel_dual5: false
+      afec_channel_dual6: false
+      afec_channel_dual7: false
+      afec_channel_dual8: false
+      afec_channel_dual9: false
+      afec_channel_ecorr0: false
+      afec_channel_ecorr1: false
+      afec_channel_ecorr10: true
+      afec_channel_ecorr11: false
+      afec_channel_ecorr2: false
+      afec_channel_ecorr3: false
+      afec_channel_ecorr4: false
+      afec_channel_ecorr5: false
+      afec_channel_ecorr6: false
+      afec_channel_ecorr7: false
+      afec_channel_ecorr8: false
+      afec_channel_ecorr9: false
+      afec_channel_gain0: '1'
+      afec_channel_gain1: '1'
+      afec_channel_gain10: '1'
+      afec_channel_gain11: '1'
+      afec_channel_gain2: '1'
+      afec_channel_gain3: '1'
+      afec_channel_gain4: '1'
+      afec_channel_gain5: '1'
+      afec_channel_gain6: '1'
+      afec_channel_gain7: '1'
+      afec_channel_gain8: '1'
+      afec_channel_gain9: '1'
+      afec_channel_offset0: 512
+      afec_channel_offset1: 512
+      afec_channel_offset10: 512
+      afec_channel_offset11: 512
+      afec_channel_offset2: 512
+      afec_channel_offset3: 512
+      afec_channel_offset4: 512
+      afec_channel_offset5: 512
+      afec_channel_offset6: 512
+      afec_channel_offset7: 512
+      afec_channel_offset8: 512
+      afec_channel_offset9: 512
+      afec_cmpmode: The converted data is lower than the low threshold of the window.
+      afec_cmpsel: Channel 0
+      afec_compare_all_channels: false
+      afec_comparison_settings: false
+      afec_cosr_csel: false
+      afec_fast_wakeup_mode: false
+      afec_freerunning_mode: false
+      afec_gaincorr: 0
+      afec_highthres: 0
+      afec_ibctl: 1
+      afec_lowthres: 0
+      afec_offsetcorr: 0
+      afec_prescaler: 49
+      afec_resolution: 16-bit
+      afec_sign_mode: 'Single-Ended channels: Unsigned. Differential channels: Signed.'
+      afec_sleep_mode: false
+      afec_startup_time: 64 periods of AFE clock
+      afec_stm: true
+      afec_tag: true
+      afec_tracktim: 15
+      afec_transfer: 2
+      afec_trigger_enable: false
+      afec_trigger_selection: AFE0_ADTRG for AFEC0 / AFE1_ADTRG for AFEC1
+      afec_usch0: None
+      afec_usch1: None
+      afec_usch10: None
+      afec_usch11: None
+      afec_usch2: None
+      afec_usch3: None
+      afec_usch4: None
+      afec_usch5: None
+      afec_usch6: None
+      afec_usch7: None
+      afec_usch8: None
+      afec_usch9: None
+      afec_useq: false
+    optional_signals:
+    - identifier: ADC_0:AD/10
+      pad: PB0
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::AFEC0.AD.10
+      name: AFEC0/AD/10
+      label: AD/10
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: AFEC
+          input: Master Clock (MCK)
+          external: false
+          external_frequency: 0
+        configuration:
+          afec_clock_source: Master Clock (MCK)
   PMC:
     user_label: PMC
     definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::PMC::driver_config_definition::PMC::HAL:HPL:PMC
     functionality: System
     api: HAL:HPL:PMC
     configuration:
-      $input: 240000000
-      $input_id: UDPLL with Divider (MCKR UPLLDIV2)
-      RESERVED_InputFreq: 240000000
-      RESERVED_InputFreq_id: UDPLL with Divider (MCKR UPLLDIV2)
+      $input: 12000000
+      $input_id: Main Clock (MAINCK)
+      RESERVED_InputFreq: 12000000
+      RESERVED_InputFreq_id: Main Clock (MAINCK)
       _$freq_output_32kHz External Crystal Oscillator (XOSC32K): 0
       _$freq_output_32kHz High Accuracy Internal Oscillator (OSC32K): 0
       _$freq_output_Embedded 4/8/12MHz RC Oscillator (OSC12M): '12000000'
@@ -165,27 +312,58 @@ drivers:
           external: false
           external_frequency: 0
         configuration: {}
-  DELAY_0:
-    user_label: DELAY_0
-    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::SysTick::driver_config_definition::Delay::HAL:Driver:Delay
-    functionality: Delay
-    api: HAL:Driver:Delay
+  I2C_0:
+    user_label: I2C_0
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::TWIHS0::driver_config_definition::I2C.Master.Standard~2FFast-mode::HAL:Driver:I2C.Master.Sync
+    functionality: I2C
+    api: HAL:Driver:I2C_Master_Sync
     configuration:
-      systick_arch_tickint: false
-    optional_signals: []
+      i2c_master_advanced: true
+      i2c_master_baud_rate: 100000
+      i2c_master_digital_filter_enable: true
+      i2c_master_filter_threshold: '2'
+      i2c_master_packet_error_check: false
+      i2c_master_pad_filter_enable: true
+      i2c_master_smbus_clock_prescaler: Divide by 2
+      i2c_master_smbus_enable: false
+      i2c_master_thigh_max: 0
+      i2c_master_tlow_mext: 0
+      i2c_master_tlow_sext: 0
+    optional_signals:
+    - identifier: I2C_0:TWCK/0
+      pad: PA4
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::TWIHS0.TWCK.0
+      name: TWIHS0/TWCK/0
+      label: TWCK/0
+    - identifier: I2C_0:TWD/0
+      pad: PA3
+      mode: Enabled
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::TWIHS0.TWD.0
+      name: TWIHS0/TWD/0
+      label: TWD/0
     variant: null
     clocks:
-      domain_group: null
+      domain_group:
+        nodes:
+        - name: TWIHS
+          input: Master Clock (MCK)
+          external: false
+          external_frequency: 0
+        configuration:
+          twihs_clock_source: Master Clock (MCK)
   TARGET_IO:
     user_label: TARGET_IO
-    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::USART1::driver_config_definition::UART::HAL:Driver:USART.Sync
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::USART1::driver_config_definition::UART::HAL:Driver:USART.Async
     functionality: USART
-    api: HAL:Driver:USART_Sync
+    api: HAL:Driver:USART_Async
     configuration:
       usart_9bits_enable: false
       usart__inack: The NACK is not generated
       usart__oversampling_mode: 16 Oversampling
-      usart_advanced: false
+      usart_advanced: true
       usart_arch_fractional: 0
       usart_arch_msbf: LSB is transmitted first
       usart_baud_rate: 115200
@@ -479,6 +657,145 @@ drivers:
     variant: null
     clocks:
       domain_group: null
+  MACIF:
+    user_label: MACIF
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::GMAC::driver_config_definition::GMAC::HAL:Driver:GMAC.Async
+    functionality: Ethernet_MAC
+    api: HAL:Driver:GMAC_Async
+    configuration:
+      gmac_arch_adv_cfg: true
+      gmac_arch_cltto: Clause 22 Operation
+      gmac_arch_dcfgr_ddrp: false
+      gmac_arch_dcfgr_drbs: 8
+      gmac_arch_dcfgr_esma: false
+      gmac_arch_dcfgr_espa: false
+      gmac_arch_dcfgr_fbldo: Always use INCR4 AHB bursts
+      gmac_arch_dcfgr_rxbms: 4 Kbytes
+      gmac_arch_dcfgr_txcoen: true
+      gmac_arch_dcfgr_txpbms: 4 Kbytes
+      gmac_arch_dma_cfg: true
+      gmac_arch_ipgs_fl_div: 1
+      gmac_arch_ipgs_fl_mul: 1
+      gmac_arch_mii_cfg: true
+      gmac_arch_ncfgr_caf: false
+      gmac_arch_ncfgr_clk: '64'
+      gmac_arch_ncfgr_dcpf: false
+      gmac_arch_ncfgr_df: true
+      gmac_arch_ncfgr_dnvlan: false
+      gmac_arch_ncfgr_efrhd: false
+      gmac_arch_ncfgr_ipgsen: false
+      gmac_arch_ncfgr_irxer: false
+      gmac_arch_ncfgr_irxfcs: false
+      gmac_arch_ncfgr_jframe: false
+      gmac_arch_ncfgr_lferd: false
+      gmac_arch_ncfgr_maxfs: true
+      gmac_arch_ncfgr_mtihen: false
+      gmac_arch_ncfgr_nbc: false
+      gmac_arch_ncfgr_pen: false
+      gmac_arch_ncfgr_rfcs: false
+      gmac_arch_ncfgr_rty: false
+      gmac_arch_ncfgr_rxbp: false
+      gmac_arch_ncfgr_rxbufo: 0
+      gmac_arch_ncfgr_rxcoen: false
+      gmac_arch_ncfgr_spd: true
+      gmac_arch_ncfgr_unihen: false
+      gmac_arch_ncr_bp: false
+      gmac_arch_ncr_enpbpr: false
+      gmac_arch_ncr_lbl: false
+      gmac_arch_ncr_mpe: true
+      gmac_arch_ncr_txpbpf: false
+      gmac_arch_ncr_westat: false
+      gmac_arch_rpsf_en: false
+      gmac_arch_rpsf_wm: 100
+      gmac_arch_rxdescr_num: 16
+      gmac_arch_svlan_enable: true
+      gmac_arch_svlan_type: 33024
+      gmac_arch_tpsf_en: false
+      gmac_arch_tpsf_wm: 100
+      gmac_arch_txbuf_size: 1500
+      gmac_arch_txdescr_num: 8
+      gmac_arch_ur_rmii: RMII
+    optional_signals:
+    - identifier: MACIF:GMDC
+      pad: PD8
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GMDC
+      name: GMAC/GMDC
+      label: GMDC
+    - identifier: MACIF:GMDIO
+      pad: PD9
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GMDIO
+      name: GMAC/GMDIO
+      label: GMDIO
+    - identifier: MACIF:GRX/0
+      pad: PD5
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GRX.0
+      name: GMAC/GRX/0
+      label: GRX/0
+    - identifier: MACIF:GRX/1
+      pad: PD6
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GRX.1
+      name: GMAC/GRX/1
+      label: GRX/1
+    - identifier: MACIF:GRXDV
+      pad: PD4
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GRXDV
+      name: GMAC/GRXDV
+      label: GRXDV
+    - identifier: MACIF:GRXER
+      pad: PD7
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GRXER
+      name: GMAC/GRXER
+      label: GRXER
+    - identifier: MACIF:GTX/0
+      pad: PD2
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GTX.0
+      name: GMAC/GTX/0
+      label: GTX/0
+    - identifier: MACIF:GTX/1
+      pad: PD3
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GTX.1
+      name: GMAC/GTX/1
+      label: GTX/1
+    - identifier: MACIF:GTXCK
+      pad: PD0
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GTXCK
+      name: GMAC/GTXCK
+      label: GTXCK
+    - identifier: MACIF:GTXEN
+      pad: PD1
+      mode: Enable
+      configuration: null
+      definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::optional_signal_definition::GMAC.GTXEN
+      name: GMAC/GTXEN
+      label: GTXEN
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: GMAC
+          input: Master Clock (MCK)
+          external: false
+          external_frequency: 0
+        configuration:
+          gmac_clock_source: Master Clock (MCK)
   CAN_0:
     user_label: CAN_0
     definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::MCAN1::driver_config_definition::CAN::HAL:Driver:CAN.Async
@@ -543,11 +860,23 @@ drivers:
         configuration:
           mcan_clock_source: Programmable Clock Controller 5 (PMC_PCK5)
 pads:
+  PD0:
+    name: PD0
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD0
+    mode: Peripheral IO
+    user_label: PD0
+    configuration: null
   PC12:
     name: PC12
     definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PC12
     mode: Peripheral IO
     user_label: PC12
+    configuration: null
+  PB0:
+    name: PB0
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PB0
+    mode: Analog
+    user_label: PB0
     configuration: null
   PA21:
     name: PA21
@@ -562,6 +891,12 @@ pads:
     user_label: SW0
     configuration:
       pad_pull_config: Pull-up
+  PA4:
+    name: PA4
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PA4
+    mode: Peripheral IO
+    user_label: PA4
+    configuration: null
   LED0:
     name: PC8
     definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PC8
@@ -569,6 +904,12 @@ pads:
     user_label: LED0
     configuration:
       pad_initial_level: High
+  PA3:
+    name: PA3
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PA3
+    mode: Peripheral IO
+    user_label: PA3
+    configuration: null
   PC14:
     name: PC14
     definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PC14
@@ -580,6 +921,60 @@ pads:
     definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PB4
     mode: Peripheral IO
     user_label: PB4
+    configuration: null
+  PD9:
+    name: PD9
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD9
+    mode: Peripheral IO
+    user_label: PD9
+    configuration: null
+  PD8:
+    name: PD8
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD8
+    mode: Peripheral IO
+    user_label: PD8
+    configuration: null
+  PD7:
+    name: PD7
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD7
+    mode: Peripheral IO
+    user_label: PD7
+    configuration: null
+  PD6:
+    name: PD6
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD6
+    mode: Peripheral IO
+    user_label: PD6
+    configuration: null
+  PD5:
+    name: PD5
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD5
+    mode: Peripheral IO
+    user_label: PD5
+    configuration: null
+  PD4:
+    name: PD4
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD4
+    mode: Peripheral IO
+    user_label: PD4
+    configuration: null
+  PD3:
+    name: PD3
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD3
+    mode: Peripheral IO
+    user_label: PD3
+    configuration: null
+  PD2:
+    name: PD2
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD2
+    mode: Peripheral IO
+    user_label: PD2
+    configuration: null
+  PD1:
+    name: PD1
+    definition: Atmel:SAME70B_Drivers:0.0.1::ATSAME70Q21B-AN::pad::PD1
+    mode: Peripheral IO
+    user_label: PD1
     configuration: null
 toolchain_options: []
 static_files: []

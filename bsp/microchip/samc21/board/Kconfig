@@ -32,6 +32,11 @@ menu "Onboard Peripheral Drivers"
     config SAMC21_ADC0
         bool "Enable ADC0"
         default false
+
+    config SAMC21_I2C0
+        bool "Enable I2C0"
+        default false
+
 endmenu
 
 menu "Application Demo Config"
@@ -49,4 +54,10 @@ menu "Application Demo Config"
         help
             Add ADC example task to project
 
+    config SAM_I2C_EXAMPLE
+        bool "Enable SAM I2C Example"
+        depends on SAMC21_I2C0
+        default true
+        help
+            Add I2C example task to project
 endmenu
