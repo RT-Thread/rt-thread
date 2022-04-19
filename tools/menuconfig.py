@@ -169,7 +169,6 @@ def touch_env():
 
     if not os.path.exists(os.path.join(env_dir, 'packages', 'packages')):
         try:
-            #ret = os.system('git clone https://github.com/RT-Thread/packages.git %s' % os.path.join(env_dir, 'packages', 'packages'))
             ret = os.system('git clone %s %s' % (package_url, os.path.join(env_dir, 'packages', 'packages')))
             if ret != 0:
                 shutil.rmtree(os.path.join(env_dir, 'packages', 'packages'))
