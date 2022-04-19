@@ -17,9 +17,9 @@ path += [cwd + '/inc']
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
     src += [startup_path_prefix + '/f435_437/firmware/cmsis/cm4/device_support/startup/gcc/startup_at32f435_437.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/f435_437/firmware/cmsis/cm4/device_support/startup/mdk/startup_at32f435_437.s']
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [startup_path_prefix + '/f435_437/firmware/cmsis/cm4/device_support/startup/iar/startup_at32f435_437.s']
