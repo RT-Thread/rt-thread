@@ -1,8 +1,8 @@
-# STM32F072 Nucleo开发板的Arduino生态兼容说明
+# STM32F401 Nucleo开发板的Arduino生态兼容说明
 
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
-STM32F072 Nucleo开发板已经完整适配了[RTduino软件包](https://github.com/mysterywolf/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/mysterywolf/RTduino)。
+STM32F401 Nucleo开发板已经完整适配了[RTduino软件包](https://github.com/mysterywolf/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/mysterywolf/RTduino)。
 
 ### 1.1 如何开启针对本BSP的Arduino生态兼容层
 
@@ -53,4 +53,4 @@ Hardware Drivers Config --->
 
 ## 3 I2C总线
 
-STM32F072 Nucleo板的I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
+STM32F401 Nucleo板的I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
