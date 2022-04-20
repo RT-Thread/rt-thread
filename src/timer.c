@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -330,10 +330,10 @@ RTM_EXPORT(rt_timer_detach);
  *
  *          RT_TIMER_FLAG_ONE_SHOT          One shot timing
  *          RT_TIMER_FLAG_PERIODIC          Periodic timing
- *  
+ *
  *          RT_TIMER_FLAG_HARD_TIMER        Hardware timer
  *          RT_TIMER_FLAG_SOFT_TIMER        Software timer
- * 
+ *
  *        NOTE:
  *        You can use multiple values with "|" logical operator.  By default, system will use the RT_TIME_FLAG_HARD_TIMER.
  *
