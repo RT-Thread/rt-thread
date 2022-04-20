@@ -505,7 +505,7 @@ RTM_EXPORT(nanosleep);
 static volatile struct timeval _timevalue;
 static int _rt_clock_time_system_init(void)
 {
-    register rt_base_t level;
+    rt_base_t level;
     time_t time = 0;
     rt_tick_t tick;
     rt_device_t device;
@@ -593,7 +593,7 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     case CLOCK_REALTIME:
         {
             int tick;
-            register rt_base_t level;
+            rt_base_t level;
 
             level = rt_hw_interrupt_disable();
             tick = rt_tick_get(); /* get tick */
@@ -644,7 +644,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     LOG_W(_WARNING_NO_RTC);
     return -1;
 #else
-    register rt_base_t level;
+    rt_base_t level;
     int second;
     rt_tick_t tick;
     rt_device_t device;
@@ -986,7 +986,7 @@ static volatile int8_t _current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
 
 void tz_set(int8_t tz)
 {
-    register rt_base_t level;
+    rt_base_t level;
     level = rt_hw_interrupt_disable();
     _current_timezone = tz;
     rt_hw_interrupt_enable(level);
