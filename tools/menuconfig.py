@@ -151,7 +151,7 @@ def touch_env():
     else:
         home_dir = os.environ['USERPROFILE']
     
-    package_url = os.getenv('RTT_PACKAGE_URl') or DEFAULT_RTT_PACKAGE_URL
+    package_url = os.getenv('RTT_PACKAGE_URL') or DEFAULT_RTT_PACKAGE_URL
 
     env_dir  = os.path.join(home_dir, '.env')
     if not os.path.exists(env_dir):
