@@ -10,7 +10,7 @@ src = Glob('GD32E230_standard_peripheral/Source/*.c')
 src += [cwd + '/CMSIS/GD/GD32E230/Source/system_gd32e230.c']
 
 #add for startup script
-if rtconfig.CROSS_TOOL == 'keil':
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/CMSIS/GD/GD32E230/Source/ARM/startup_gd32e230.s']
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [cwd + '/CMSIS/GD/GD32E230/Source/IAR/startup_gd32e230.s']

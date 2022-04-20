@@ -11,9 +11,9 @@ src = []
 src += Glob('ES32F36xx_ALD_StdPeriph_Driver/Source/*.c')
 
 #add for startup script
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
      src = src + ['CMSIS/Device/EastSoft/ES32F36xx/Startup/gcc/startup_es32f36xx.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
      src = src + ['CMSIS/Device/EastSoft/ES32F36xx/Startup/keil/startup_es32f36xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
      src = src + ['CMSIS/Device/EastSoft/ES32F36xx/Startup/iar/startup_es32f36xx.s']
