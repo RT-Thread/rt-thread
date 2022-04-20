@@ -29,11 +29,13 @@ import sys
 import string
 import utils
 import operator
+import rtconfig
 
 from SCons.Script import *
 from utils import _make_path_relative
 from mkdist import do_copy_file
 from options import AddOptions
+
 
 BuildOptions = {}
 Projects = []
@@ -120,7 +122,6 @@ class Win32Spawn:
 
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
-    import rtconfig
 
     if rtconfig.PLATFORM == 'gcc':
         contents = ''
@@ -145,7 +146,6 @@ def GenCconfigFile(env, BuildOptions):
                 env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
 
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
-    import rtconfig
 
     global BuildOptions
     global Projects
@@ -365,7 +365,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     return objs
 
 def PrepareModuleBuilding(env, root_directory, bsp_directory):
-    import rtconfig
 
     global BuildOptions
     global Env
@@ -606,7 +605,7 @@ def DefineGroup(name, src, depend, **parameters):
             paths.append(os.path.abspath(item))
         group['LOCAL_CPPPATH'] = paths
 
-    import rtconfig
+    
     if rtconfig.PLATFORM == 'gcc':
         if 'CFLAGS' in group:
             group['CFLAGS'] = utils.GCCC99Patch(group['CFLAGS'])
@@ -683,7 +682,7 @@ def PreBuilding():
         a()
 
 def GroupLibName(name, env):
-    import rtconfig
+    
     if rtconfig.PLATFORM == 'armcc':
         return name + '_rvds'
     elif rtconfig.PLATFORM == 'gcc':
@@ -850,7 +849,6 @@ def GenTargetProject(program = None):
 
 
 def EndBuilding(target, program = None):
-    import rtconfig
 
     need_exit = False
 
