@@ -326,14 +326,13 @@ RTM_EXPORT(rt_timer_detach);
  *
  *        NOTE: The max timeout tick should be no more than (RT_TICK_MAX/2 - 1).
  *
- * @param flag is the flag of timer. Timer will invoke the timeout function according to the selected values of 
- *         flag, if one or more of the following flags is set.
- *              
- *              RT_TIMER_FLAG_ONE_SHOT          One shot timing 
- *              RT_TIMER_FLAG_PERIODIC          Periodic timing 
+ * @param flag is the flag of timer. Timer will invoke the timeout function according to the selected values of flag, if one or more of the following flags is set.
+ *
+ *          RT_TIMER_FLAG_ONE_SHOT          One shot timing
+ *          RT_TIMER_FLAG_PERIODIC          Periodic timing
  *  
- *              RT_TIMER_FLAG_HARD_TIMER        Hardware timer 
- *              RT_TIMER_FLAG_SOFT_TIMER        Software timer 
+ *          RT_TIMER_FLAG_HARD_TIMER        Hardware timer
+ *          RT_TIMER_FLAG_SOFT_TIMER        Software timer
  * 
  *        NOTE:
  *        You can use multiple values with "|" logical operator.  By default, system will use the RT_TIME_FLAG_HARD_TIMER.
