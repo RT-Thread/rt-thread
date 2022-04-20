@@ -19,7 +19,7 @@
 #
 # Change Logs:
 # Date           Author       Notes
-# 2022-04-20     Wu Gensheng  Add Options to SCons
+# 2022-04-20     WuGensheng  Add Options to SCons
 #
 
 from SCons.Script import AddOption
