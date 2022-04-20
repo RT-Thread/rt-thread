@@ -19,16 +19,14 @@
 #
 # Change Logs:
 # Date           Author       Notes
-# 2015-01-20     Bernard      Add copyright information
-# 2015-07-25     Bernard      Add LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES for
-#                             group definition.
+# 2022-04-20     Wu Gensheng  Add Options to SCons
 #
 
 from SCons.Script import AddOption
 import platform
 
 def AddOptions():
-    ''' ===== Add option to SCons ===== '''
+    ''' ===== Add options to SCons ===== '''
     
     AddOption('--dist',
                       dest = 'make-dist',
@@ -122,3 +120,4 @@ def AddOptions():
                     action = 'store_true',
                     default = False,
                     help = 'make menuconfig for RT-Thread BSP')
+
