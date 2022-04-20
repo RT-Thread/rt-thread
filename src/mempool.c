@@ -146,7 +146,7 @@ RTM_EXPORT(rt_mp_init);
 rt_err_t rt_mp_detach(struct rt_mempool *mp)
 {
     struct rt_thread *thread;
-    register rt_ubase_t level;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
@@ -264,7 +264,7 @@ RTM_EXPORT(rt_mp_create);
 rt_err_t rt_mp_delete(rt_mp_t mp)
 {
     struct rt_thread *thread;
-    register rt_ubase_t level;
+    rt_base_t level;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -319,7 +319,7 @@ RTM_EXPORT(rt_mp_delete);
 void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
 {
     rt_uint8_t *block_ptr;
-    register rt_base_t level;
+    rt_base_t level;
     struct rt_thread *thread;
     rt_uint32_t before_sleep = 0;
 
@@ -417,7 +417,7 @@ void rt_mp_free(void *block)
     rt_uint8_t **block_ptr;
     struct rt_mempool *mp;
     struct rt_thread *thread;
-    register rt_base_t level;
+    rt_base_t level;
 
     /* parameter check */
     if (block == RT_NULL) return;
