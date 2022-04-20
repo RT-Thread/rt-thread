@@ -238,7 +238,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     return n32_spi_init(spi_drv, configuration);
 }
 
-static int HAL_SPI_TransmitReceive(SPI_Module *hspi,
+static int _spi_recv(SPI_Module *hspi,
         uint8_t *tx_buff,
         uint8_t *rx_buff,
         uint32_t length,
@@ -322,20 +322,20 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     }
     else if (message->send_buf)
     {
-        stat = HAL_SPI_TransmitReceive(spi_handle,
-                                       (uint8_t *)send_buf,
-                                       RT_NULL,
-                                       send_length,
-                                       SPI_TIME_OUT);
+        stat = _spi_recv(spi_handle,
+                         (uint8_t *)send_buf,
+                         RT_NULL,
+                         send_length,
+                         SPI_TIME_OUT);
     }
     else
     {
         rt_memset(recv_buf, 0xff, send_length);
-        stat = HAL_SPI_TransmitReceive(spi_handle,
-                                       (uint8_t *)recv_buf,
-                                       (uint8_t *)recv_buf,
-                                       send_length,
-                                       SPI_TIME_OUT);
+        stat = _spi_recv(spi_handle,
+                         (uint8_t *)recv_buf,
+                         (uint8_t *)recv_buf,
+                         send_length,
+                         SPI_TIME_OUT);
     }
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
