@@ -2230,7 +2230,14 @@ RTM_EXPORT(rt_mb_urgent);
  * @param    value is a flag that you will set for this mailbox's flag.
  *           You can set an mailbox flag, or you can set multiple flags through OR logic operations.
  *
- * @param    timeout is a timeout period (unit: an OS tick).
+ * @param    timeout is a timeout period (unit: an OS tick). If the mailbox object is not avaliable in the queue,
+ *           the thread will wait for the object in the queue up to the amount of time specified by this parameter.
+ *
+ *           NOTE:
+ *           If use Macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *           mailbox object is unavailable in the queue, the thread will be waiting forever.
+ *           If use macro RT_WAITING_NO to set this parameter, which means that this
+ *           function is non-blocking and will return immediately.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it means that the mailbox release failed.
