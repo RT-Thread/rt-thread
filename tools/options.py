@@ -114,15 +114,6 @@ def AddOptions():
                 action = 'store_true',
                 default = False,
                 help = 'Don`t show pyconfig window')
-    AddOption('--buildlib',
-              dest='buildlib',
-              type='string',
-              help='building library of a component')
-    AddOption('--cleanlib',
-              dest='cleanlib',
-              action='store_true',
-              default=False,
-              help='clean up the library by --buildlib')
     if platform.system() != 'Windows':
         AddOption('--menuconfig',
                     dest = 'menuconfig',
