@@ -240,7 +240,7 @@ void rt_hw_mmu_init(void)
 int rt_hw_mmu_map(unsigned long addr, unsigned long size, unsigned long attr)
 {
     int ret;
-    rt_ubase_t level;
+    rt_base_t level;
 
     level = rt_hw_interrupt_disable();
     ret = rt_hw_mmu_setmtt(addr, addr + size, addr, attr);

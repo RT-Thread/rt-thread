@@ -29,10 +29,10 @@ src += [cwd + '/driver_init.c']
 src += [cwd + '/ethernet_phy_main.c']
 
 #add for startup script
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
     src += [cwd + '/same70b/gcc/system_same70q21b.c']
     src += [cwd + '/same70b/gcc/gcc/startup_same70q21b.c']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [cwd + '/same70b/armcc/Source/' + 'system_same70q21b.c']
     src += [cwd + '/same70b/armcc/Source/ARM/' + 'startup_SAME70.s']
 elif rtconfig.CROSS_TOOL == 'iar':

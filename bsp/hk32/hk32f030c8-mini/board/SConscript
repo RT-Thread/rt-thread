@@ -18,9 +18,9 @@ path += [cwd + '/msp']
 startup_path_prefix = SDK_LIB
 
 src += [startup_path_prefix + '/HK32F0xx_StdPeriph_Driver/CMSIS/HK32F0xx/Source/system_hk32f0xx.c']
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM == 'gcc':
     src += [startup_path_prefix + '/HK32F0xx_StdPeriph_Driver/CMSIS/HK32F0xx/Source/gcc/startup_hk32f030x4x6x8.s']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/HK32F0xx_StdPeriph_Driver/CMSIS/HK32F0xx/Source/ARM/startup_hk32f030x4x6x8.s']
 elif rtconfig.CROSS_TOOL == 'iar':
     src += [startup_path_prefix + '/HK32F0xx_StdPeriph_Driver/CMSIS/HK32F0xx/Source/iar/startup_hk32f030x4x6x8.s']

@@ -155,13 +155,13 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
  */
 rt_thread_t rt_thread_defunct_dequeue(void)
 {
-    register rt_base_t lock;
+    rt_base_t level;
     rt_thread_t thread = RT_NULL;
     rt_list_t *l = &_rt_thread_defunct;
 
 #ifdef RT_USING_SMP
     /* disable interrupt */
-    lock = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     if (l->next != l)
     {
         thread = rt_list_entry(l->next,
@@ -169,16 +169,16 @@ rt_thread_t rt_thread_defunct_dequeue(void)
                 tlist);
         rt_list_remove(&(thread->tlist));
     }
-    rt_hw_interrupt_enable(lock);
+    rt_hw_interrupt_enable(level);
 #else
     if (l->next != l)
     {
         thread = rt_list_entry(l->next,
                 struct rt_thread,
                 tlist);
-        lock = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
         rt_list_remove(&(thread->tlist));
-        rt_hw_interrupt_enable(lock);
+        rt_hw_interrupt_enable(level);
     }
 #endif
     return thread;

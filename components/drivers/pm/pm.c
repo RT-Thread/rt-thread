@@ -510,7 +510,7 @@ void rt_pm_request(rt_uint8_t mode)
  */
 void rt_pm_release(rt_uint8_t mode)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -535,7 +535,7 @@ void rt_pm_release(rt_uint8_t mode)
  */
 void rt_pm_release_all(rt_uint8_t mode)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -589,7 +589,7 @@ void rt_pm_module_request(uint8_t module_id, rt_uint8_t mode)
  */
 void rt_pm_module_release(uint8_t module_id, rt_uint8_t mode)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -620,7 +620,7 @@ void rt_pm_module_release(uint8_t module_id, rt_uint8_t mode)
  */
 void rt_pm_module_release_all(uint8_t module_id, rt_uint8_t mode)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     struct rt_pm *pm;
 
     if (_pm_init_flag == 0)
@@ -646,7 +646,7 @@ void rt_pm_module_release_all(uint8_t module_id, rt_uint8_t mode)
  */
 void rt_pm_sleep_request(rt_uint16_t module_id, rt_uint8_t mode)
 {
-    rt_uint32_t level;
+    rt_base_t level;
 
     if (module_id >= PM_MODULE_MAX_ID)
     {
@@ -709,7 +709,7 @@ void rt_pm_sleep_light_request(rt_uint16_t module_id)
  */
 void rt_pm_sleep_release(rt_uint16_t module_id, rt_uint8_t mode)
 {
-    rt_uint32_t level;
+    rt_base_t level;
 
     if (module_id >= PM_MODULE_MAX_ID)
     {
@@ -797,7 +797,7 @@ void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_o
  */
 void rt_pm_device_unregister(struct rt_device *device)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     rt_uint32_t index;
     RT_DEBUG_NOT_IN_INTERRUPT;
 
