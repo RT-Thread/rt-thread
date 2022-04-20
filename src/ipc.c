@@ -219,13 +219,13 @@ rt_inline rt_err_t _ipc_list_resume(rt_list_t *list)
 rt_inline rt_err_t _ipc_list_resume_all(rt_list_t *list)
 {
     struct rt_thread *thread;
-    register rt_ubase_t temp;
+    rt_base_t level;
 
     /* wakeup all suspended threads */
     while (!rt_list_isempty(list))
     {
         /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
 
         /* get next suspended thread */
         thread = rt_list_entry(list->next, struct rt_thread, tlist);
@@ -240,7 +240,7 @@ rt_inline rt_err_t _ipc_list_resume_all(rt_list_t *list)
         rt_thread_resume(thread);
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
     }
 
     return RT_EOK;
@@ -478,7 +478,7 @@ RTM_EXPORT(rt_sem_delete);
  */
 rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 {
-    register rt_base_t temp;
+    rt_base_t level;
     struct rt_thread *thread;
 
     /* parameter check */
@@ -488,7 +488,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(sem->parent.parent)));
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     RT_DEBUG_LOG(RT_DEBUG_IPC, ("thread %s take sem:%s, which value is: %d\n",
                                 rt_thread_self()->name,
@@ -501,14 +501,14 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
         sem->value --;
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
     }
     else
     {
         /* no waiting, return with timeout */
         if (time == 0)
         {
-            rt_hw_interrupt_enable(temp);
+            rt_hw_interrupt_enable(level);
 
             return -RT_ETIMEOUT;
         }
@@ -546,7 +546,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
             }
 
             /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
+            rt_hw_interrupt_enable(level);
 
             /* do schedule */
             rt_schedule();
@@ -600,7 +600,7 @@ RTM_EXPORT(rt_sem_trytake);
  */
 rt_err_t rt_sem_release(rt_sem_t sem)
 {
-    register rt_base_t temp;
+    rt_base_t level;
     register rt_bool_t need_schedule;
 
     /* parameter check */
@@ -612,7 +612,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
     need_schedule = RT_FALSE;
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     RT_DEBUG_LOG(RT_DEBUG_IPC, ("thread %s releases sem:%s, which value is: %d\n",
                                 rt_thread_self()->name,
@@ -633,13 +633,13 @@ rt_err_t rt_sem_release(rt_sem_t sem)
         }
         else
         {
-            rt_hw_interrupt_enable(temp); /* enable interrupt */
+            rt_hw_interrupt_enable(level); /* enable interrupt */
             return -RT_EFULL; /* value overflowed */
         }
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     /* resume a thread, re-schedule */
     if (need_schedule == RT_TRUE)
@@ -666,7 +666,7 @@ RTM_EXPORT(rt_sem_release);
  */
 rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
 {
-    rt_ubase_t level;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(sem != RT_NULL);
@@ -908,7 +908,7 @@ RTM_EXPORT(rt_mutex_delete);
  */
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
-    register rt_base_t temp;
+    rt_base_t level;
     struct rt_thread *thread;
 
     /* this function must not be used in interrupt even if time = 0 */
@@ -923,7 +923,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     thread = rt_thread_self();
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mutex->parent.parent)));
 
@@ -943,7 +943,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
         }
         else
         {
-            rt_hw_interrupt_enable(temp); /* enable interrupt */
+            rt_hw_interrupt_enable(level); /* enable interrupt */
             return -RT_EFULL; /* value overflowed */
         }
     }
@@ -966,7 +966,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
             }
             else
             {
-                rt_hw_interrupt_enable(temp); /* enable interrupt */
+                rt_hw_interrupt_enable(level); /* enable interrupt */
                 return -RT_EFULL; /* value overflowed */
             }
         }
@@ -979,7 +979,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
                 thread->error = -RT_ETIMEOUT;
 
                 /* enable interrupt */
-                rt_hw_interrupt_enable(temp);
+                rt_hw_interrupt_enable(level);
 
                 return -RT_ETIMEOUT;
             }
@@ -1018,7 +1018,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
                 }
 
                 /* enable interrupt */
-                rt_hw_interrupt_enable(temp);
+                rt_hw_interrupt_enable(level);
 
                 /* do schedule */
                 rt_schedule();
@@ -1032,14 +1032,14 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
                 {
                     /* the mutex is taken successfully. */
                     /* disable interrupt */
-                    temp = rt_hw_interrupt_disable();
+                    level = rt_hw_interrupt_disable();
                 }
             }
         }
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mutex->parent.parent)));
 
@@ -1084,7 +1084,7 @@ RTM_EXPORT(rt_mutex_trytake);
  */
 rt_err_t rt_mutex_release(rt_mutex_t mutex)
 {
-    register rt_base_t temp;
+    rt_base_t level;
     struct rt_thread *thread;
     rt_bool_t need_schedule;
 
@@ -1101,7 +1101,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     thread = rt_thread_self();
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     RT_DEBUG_LOG(RT_DEBUG_IPC,
                  ("mutex_release:current thread %s, mutex value: %d, hold: %d\n",
@@ -1115,7 +1115,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
         thread->error = -RT_ERROR;
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         return -RT_ERROR;
     }
@@ -1154,7 +1154,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             }
             else
             {
-                rt_hw_interrupt_enable(temp); /* enable interrupt */
+                rt_hw_interrupt_enable(level); /* enable interrupt */
                 return -RT_EFULL; /* value overflowed */
             }
 
@@ -1172,7 +1172,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             }
             else
             {
-                rt_hw_interrupt_enable(temp); /* enable interrupt */
+                rt_hw_interrupt_enable(level); /* enable interrupt */
                 return -RT_EFULL; /* value overflowed */
             }
 
@@ -1183,7 +1183,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     /* perform a schedule */
     if (need_schedule == RT_TRUE)
@@ -1436,7 +1436,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 {
     struct rt_list_node *n;
     struct rt_thread *thread;
-    register rt_ubase_t level;
+    rt_base_t level;
     register rt_base_t status;
     rt_bool_t need_schedule;
 
@@ -1564,7 +1564,7 @@ rt_err_t rt_event_recv(rt_event_t   event,
                        rt_uint32_t *recved)
 {
     struct rt_thread *thread;
-    register rt_ubase_t level;
+    rt_base_t level;
     register rt_base_t status;
 
     /* parameter check */
@@ -1697,7 +1697,7 @@ RTM_EXPORT(rt_event_recv);
  */
 rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
 {
-    rt_ubase_t level;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(event != RT_NULL);
@@ -1988,7 +1988,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
                          rt_int32_t   timeout)
 {
     struct rt_thread *thread;
-    register rt_ubase_t temp;
+    rt_base_t level;
     rt_uint32_t tick_delta;
 
     /* parameter check */
@@ -2006,12 +2006,12 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mb->parent.parent)));
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* for non-blocking call */
     if (mb->entry == mb->size && timeout == 0)
     {
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
         return -RT_EFULL;
     }
 
@@ -2025,7 +2025,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         if (timeout == 0)
         {
             /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
+            rt_hw_interrupt_enable(level);
 
             return -RT_EFULL;
         }
@@ -2052,7 +2052,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         }
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         /* re-schedule */
         rt_schedule();
@@ -2065,7 +2065,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         }
 
         /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -2091,7 +2091,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     }
     else
     {
-        rt_hw_interrupt_enable(temp); /* enable interrupt */
+        rt_hw_interrupt_enable(level); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
 
@@ -2101,7 +2101,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         _ipc_list_resume(&(mb->parent.suspend_thread));
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         rt_schedule();
 
@@ -2109,7 +2109,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
@@ -2158,7 +2158,7 @@ RTM_EXPORT(rt_mb_send);
  */
 rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
 {
-    register rt_ubase_t temp;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
@@ -2167,11 +2167,11 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mb->parent.parent)));
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     if (mb->entry == mb->size)
     {
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
         return -RT_EFULL;
     }
 
@@ -2197,7 +2197,7 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
         _ipc_list_resume(&(mb->parent.suspend_thread));
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         rt_schedule();
 
@@ -2205,7 +2205,7 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
@@ -2233,7 +2233,7 @@ RTM_EXPORT(rt_mb_urgent);
 rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
     struct rt_thread *thread;
-    register rt_ubase_t temp;
+    rt_base_t level;
     rt_uint32_t tick_delta;
 
     /* parameter check */
@@ -2251,12 +2251,12 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mb->parent.parent)));
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* for non-blocking call */
     if (mb->entry == 0 && timeout == 0)
     {
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         return -RT_ETIMEOUT;
     }
@@ -2271,7 +2271,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
         if (timeout == 0)
         {
             /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
+            rt_hw_interrupt_enable(level);
 
             thread->error = -RT_ETIMEOUT;
 
@@ -2300,7 +2300,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
         }
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         /* re-schedule */
         rt_schedule();
@@ -2313,7 +2313,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
         }
 
         /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -2345,7 +2345,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
         _ipc_list_resume(&(mb->suspend_sender_thread));
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mb->parent.parent)));
 
@@ -2355,7 +2355,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mb->parent.parent)));
 
@@ -2380,7 +2380,7 @@ RTM_EXPORT(rt_mb_recv);
  */
 rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
 {
-    rt_ubase_t level;
+    rt_base_t level;
 
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
@@ -2739,7 +2739,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
                          rt_size_t   size,
                          rt_int32_t  timeout)
 {
-    register rt_ubase_t temp;
+    rt_base_t level;
     struct rt_mq_message *msg;
     rt_uint32_t tick_delta;
     struct rt_thread *thread;
@@ -2765,7 +2765,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mq->parent.parent)));
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* get a free list, there must be an empty item */
     msg = (struct rt_mq_message *)mq->msg_queue_free;
@@ -2773,7 +2773,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     if (msg == RT_NULL && timeout == 0)
     {
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         return -RT_EFULL;
     }
@@ -2788,7 +2788,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
         if (timeout == 0)
         {
             /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
+            rt_hw_interrupt_enable(level);
 
             return -RT_EFULL;
         }
@@ -2815,7 +2815,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
         }
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         /* re-schedule */
         rt_schedule();
@@ -2828,7 +2828,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
         }
 
         /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -2844,7 +2844,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     mq->msg_queue_free = msg->next;
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     /* the msg is the new tailer of list, the next shall be NULL */
     msg->next = RT_NULL;
@@ -2852,7 +2852,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     rt_memcpy(msg + 1, buffer, size);
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     /* link msg to message queue */
     if (mq->msg_queue_tail != RT_NULL)
     {
@@ -2873,7 +2873,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     }
     else
     {
-        rt_hw_interrupt_enable(temp); /* enable interrupt */
+        rt_hw_interrupt_enable(level); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
 
@@ -2883,7 +2883,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
         _ipc_list_resume(&(mq->parent.suspend_thread));
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         rt_schedule();
 
@@ -2891,7 +2891,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
@@ -2947,7 +2947,7 @@ RTM_EXPORT(rt_mq_send);
  */
 rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
-    register rt_ubase_t temp;
+    rt_base_t level;
     struct rt_mq_message *msg;
 
     /* parameter check */
@@ -2963,7 +2963,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mq->parent.parent)));
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* get a free list, there must be an empty item */
     msg = (struct rt_mq_message *)mq->msg_queue_free;
@@ -2971,7 +2971,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     if (msg == RT_NULL)
     {
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         return -RT_EFULL;
     }
@@ -2979,13 +2979,13 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     mq->msg_queue_free = msg->next;
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     /* copy buffer */
     rt_memcpy(msg + 1, buffer, size);
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* link msg to the beginning of message queue */
     msg->next = (struct rt_mq_message *)mq->msg_queue_head;
@@ -3002,7 +3002,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     }
     else
     {
-        rt_hw_interrupt_enable(temp); /* enable interrupt */
+        rt_hw_interrupt_enable(level); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
 
@@ -3012,7 +3012,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
         _ipc_list_resume(&(mq->parent.suspend_thread));
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         rt_schedule();
 
@@ -3020,7 +3020,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
@@ -3052,7 +3052,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
                     rt_int32_t timeout)
 {
     struct rt_thread *thread;
-    register rt_ubase_t temp;
+    rt_base_t level;
     struct rt_mq_message *msg;
     rt_uint32_t tick_delta;
 
@@ -3072,12 +3072,12 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mq->parent.parent)));
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
 
     /* for non-blocking call */
     if (mq->entry == 0 && timeout == 0)
     {
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         return -RT_ETIMEOUT;
     }
@@ -3092,7 +3092,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
         if (timeout == 0)
         {
             /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
+            rt_hw_interrupt_enable(level);
 
             thread->error = -RT_ETIMEOUT;
 
@@ -3121,7 +3121,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
         }
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         /* re-schedule */
         rt_schedule();
@@ -3134,7 +3134,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
         }
 
         /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
 
         /* if it's not waiting forever and then re-calculate timeout tick */
         if (timeout > 0)
@@ -3162,13 +3162,13 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     /* copy message */
     rt_memcpy(buffer, msg + 1, size > mq->msg_size ? mq->msg_size : size);
 
     /* disable interrupt */
-    temp = rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     /* put message to free list */
     msg->next = (struct rt_mq_message *)mq->msg_queue_free;
     mq->msg_queue_free = msg;
@@ -3179,7 +3179,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
         _ipc_list_resume(&(mq->suspend_sender_thread));
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
 
         RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
 
@@ -3189,7 +3189,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
     }
 
     /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
+    rt_hw_interrupt_enable(level);
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
 
@@ -3214,7 +3214,7 @@ RTM_EXPORT(rt_mq_recv);
  */
 rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
 {
-    rt_ubase_t level;
+    rt_base_t level;
     struct rt_mq_message *msg;
 
     /* parameter check */
