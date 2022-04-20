@@ -298,27 +298,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         ThreadStackStaticAnalysis(Env)
         exit(0)
     
-    if env['PLATFORM'] != 'win32':
-        AddOption('--menuconfig',
-                    dest = 'menuconfig',
-                    action = 'store_true',
-                    default = False,
-                    help = 'make menuconfig for RT-Thread BSP')
-        if GetOption('menuconfig'):
-            from menuconfig import menuconfig
-            menuconfig(Rtt_Root)
-            exit(0)
-
-    AddOption('--pyconfig',
-                dest = 'pyconfig',
-                action = 'store_true',
-                default = False,
-                help = 'Python GUI menuconfig for RT-Thread BSP')
-    AddOption('--pyconfig-silent',
-                dest = 'pyconfig_silent',
-                action = 'store_true',
-                default = False,
-                help = 'Don`t show pyconfig window')
+    if GetOption('menuconfig'):
+        from menuconfig import menuconfig
+        menuconfig(Rtt_Root)
+        exit(0)
 
     if GetOption('pyconfig_silent'):    
         from menuconfig import guiconfig_silent
