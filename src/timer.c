@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,6 +18,7 @@
  *                             timeout function.
  * 2021-08-15     supperthomas add the comment
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to timer.c
+ * 2022-04-19     Stanley      Correct descriptions
  */
 
 #include <rtthread.h>
@@ -323,9 +324,18 @@ RTM_EXPORT(rt_timer_detach);
  *
  * @param time is timeout ticks of the timer
  *
- *             NOTE: The max timeout tick should be no more than (RT_TICK_MAX/2 - 1).
+ *        NOTE: The max timeout tick should be no more than (RT_TICK_MAX/2 - 1).
  *
- * @param flag is the flag of timer
+ * @param flag is the flag of timer. Timer will invoke the timeout function according to the selected values of flag, if one or more of the following flags is set.
+ *
+ *          RT_TIMER_FLAG_ONE_SHOT          One shot timing
+ *          RT_TIMER_FLAG_PERIODIC          Periodic timing
+ *
+ *          RT_TIMER_FLAG_HARD_TIMER        Hardware timer
+ *          RT_TIMER_FLAG_SOFT_TIMER        Software timer
+ *
+ *        NOTE:
+ *        You can use multiple values with "|" logical operator.  By default, system will use the RT_TIME_FLAG_HARD_TIMER.
  *
  * @return the created timer object
  */
