@@ -17,8 +17,8 @@ if CROSS_TOOL == 'gcc':
 else:
     print("CROSS_TOOL = {} not yet supported" % CROSS_TOOL)
 
-# if os.getenv('RTT_EXEC_PATH'):
-#     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 
@@ -30,12 +30,12 @@ NUCLEI_SDK_CORE = "n205"
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX  = 'riscv-nuclei-elf-'
-    CC      = PREFIX + 'gcc'
-    CXX     = PREFIX + 'g++'
-    AS      = PREFIX + 'gcc'
-    AR      = PREFIX + 'ar'
-    LINK    = PREFIX + 'gcc'
+    PREFIX = 'riscv-none-embed-'
+    CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
+    AS = PREFIX + 'gcc'
+    AR = PREFIX + 'ar'
+    LINK = PREFIX + 'gcc'
     GDB     = PREFIX + 'gdb'
     TARGET_EXT = 'elf'
     SIZE    = PREFIX + 'size'

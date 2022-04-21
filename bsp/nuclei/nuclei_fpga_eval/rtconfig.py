@@ -36,12 +36,12 @@ NUCLEI_SDK_CORE = "nx600"
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX  = 'riscv-nuclei-elf-'
-    CC      = PREFIX + 'gcc'
-    CXX     = PREFIX + 'g++'
-    AS      = PREFIX + 'gcc'
-    AR      = PREFIX + 'ar'
-    LINK    = PREFIX + 'gcc'
+    PREFIX = 'riscv-none-embed-'
+    CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
+    AS = PREFIX + 'gcc'
+    AR = PREFIX + 'ar'
+    LINK = PREFIX + 'gcc'
     GDB     = PREFIX + 'gdb'
     TARGET_EXT = 'elf'
     SIZE    = PREFIX + 'size'

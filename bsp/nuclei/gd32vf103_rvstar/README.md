@@ -52,6 +52,27 @@ export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
 
 **注意**: 对应的RISC-V GCC和OPENOCD的路径请替换成自己安装的路径。
 
+
+## 配置工具链前缀
+
+由于RT-Thread 仓库在CI时使用的是risc-v通用编译器 `riscv-none-embed-` ,所以在编译前需要更改一下BSP根目录下rtconfig.py：
+
+> 修改工具链前缀PREFIX 为 `riscv-nuclei-elf-`
+
+```
+if PLATFORM == 'gcc':
+    # toolchains
+    PREFIX = 'riscv-nuclei-elf-'
+    CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
+    AS = PREFIX + 'gcc'
+    AR = PREFIX + 'ar'
+    LINK = PREFIX + 'gcc'
+    GDB     = PREFIX + 'gdb'
+    TARGET_EXT = 'elf'
+```
+
+
 ## 烧写及执行
 
 ### [驱动设置](https://doc.nucleisys.com/nuclei_board_labs/hw/hw.html#on-board-debugger-driver)

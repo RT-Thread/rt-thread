@@ -83,6 +83,8 @@ jobs:
          - {RTT_BSP: "nrf5x/nrf52832", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52833", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52840", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nuclei/gd32vf103_rvstar", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"}
+         - {RTT_BSP: "nuclei/nuclei_fpga_eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"}
          - {RTT_BSP: "qemu-vexpress-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "qemu-vexpress-gemini", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "sam7x", RTT_TOOL_CHAIN: "sourcery-arm"}
